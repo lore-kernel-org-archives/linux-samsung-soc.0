@@ -1,110 +1,130 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH] cpufreq: s3c24xx: Change to use DEFINE_SHOW_ATTRIBUTE macro
-Date: Tue, 11 Dec 2018 11:45:05 +0100
-Message-ID: <1989663.EJsIJGg71O@aspire.rjw.lan>
-References: <20181107161346.9887-1-tiny.windzz@gmail.com> <20181108044503.7zqgi3cjsxnsziuo@vireshk-i7>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH 0/3] drm/exynos: add support for dynamic zpos in DECON
+ and FIMD
+Date: Tue, 11 Dec 2018 14:20:24 +0100
+Message-ID: <3f45e0f1-09a2-e82d-226e-50c2b6fd6f38@samsung.com>
+References: <CGME20181206093905eucas1p133ead84adfb9dd7a9756ce91b6b35895@eucas1p1.samsung.com>
+ <20181206093857.22324-1-a.hajda@samsung.com>
+ <fa32dd3a-3e8a-ade1-5b3b-f8394ff34e75@samsung.com>
+ <a3173dbf-24c6-b70f-74d5-eada10ac99ac@samsung.com>
+ <837a0841-cee1-c851-a01e-4b95d1670d32@samsung.com>
+ <7ee83acd-d7ac-b11c-3a84-87006c8c9f8f@samsung.com>
+ <af900fc1-ed07-d784-e8e6-c05aaa583afb@samsung.com>
+ <83ab6162-3d68-1cf9-b969-071475e44603@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181108044503.7zqgi3cjsxnsziuo@vireshk-i7>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>, Yangtao Li <tiny.windzz@gmail.com>
-Cc: kgene@kernel.org, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <83ab6162-3d68-1cf9-b969-071475e44603@samsung.com>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thursday, November 8, 2018 5:45:03 AM CET Viresh Kumar wrote:
-> On 07-11-18, 11:13, Yangtao Li wrote:
-> > Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
-> > 
-> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> > ---
-> >  drivers/cpufreq/s3c24xx-cpufreq-debugfs.c | 46 +++--------------------
-> >  1 file changed, 6 insertions(+), 40 deletions(-)
-> > 
-> > diff --git a/drivers/cpufreq/s3c24xx-cpufreq-debugfs.c b/drivers/cpufreq/s3c24xx-cpufreq-debugfs.c
-> > index 4d976e8dbb2f..0df87b6480fe 100644
-> > --- a/drivers/cpufreq/s3c24xx-cpufreq-debugfs.c
-> > +++ b/drivers/cpufreq/s3c24xx-cpufreq-debugfs.c
-> > @@ -63,18 +63,7 @@ static int board_show(struct seq_file *seq, void *p)
-> >  	return 0;
-> >  }
-> >  
-> > -static int fops_board_open(struct inode *inode, struct file *file)
-> > -{
-> > -	return single_open(file, board_show, NULL);
-> > -}
-> > -
-> > -static const struct file_operations fops_board = {
-> > -	.open		= fops_board_open,
-> > -	.read		= seq_read,
-> > -	.llseek		= seq_lseek,
-> > -	.release	= single_release,
-> > -	.owner		= THIS_MODULE,
-> > -};
-> > +DEFINE_SHOW_ATTRIBUTE(board);
-> >  
-> >  static int info_show(struct seq_file *seq, void *p)
-> >  {
-> > @@ -105,18 +94,7 @@ static int info_show(struct seq_file *seq, void *p)
-> >  	return 0;
-> >  }
-> >  
-> > -static int fops_info_open(struct inode *inode, struct file *file)
-> > -{
-> > -	return single_open(file, info_show, NULL);
-> > -}
-> > -
-> > -static const struct file_operations fops_info = {
-> > -	.open		= fops_info_open,
-> > -	.read		= seq_read,
-> > -	.llseek		= seq_lseek,
-> > -	.release	= single_release,
-> > -	.owner		= THIS_MODULE,
-> > -};
-> > +DEFINE_SHOW_ATTRIBUTE(info);
-> >  
-> >  static int io_show(struct seq_file *seq, void *p)
-> >  {
-> > @@ -162,19 +140,7 @@ static int io_show(struct seq_file *seq, void *p)
-> >  	return 0;
-> >  }
-> >  
-> > -static int fops_io_open(struct inode *inode, struct file *file)
-> > -{
-> > -	return single_open(file, io_show, NULL);
-> > -}
-> > -
-> > -static const struct file_operations fops_io = {
-> > -	.open		= fops_io_open,
-> > -	.read		= seq_read,
-> > -	.llseek		= seq_lseek,
-> > -	.release	= single_release,
-> > -	.owner		= THIS_MODULE,
-> > -};
-> > -
-> > +DEFINE_SHOW_ATTRIBUTE(io);
-> >  
-> >  static int __init s3c_freq_debugfs_init(void)
-> >  {
-> > @@ -185,13 +151,13 @@ static int __init s3c_freq_debugfs_init(void)
-> >  	}
-> >  
-> >  	dbgfs_file_io = debugfs_create_file("io-timing", S_IRUGO, dbgfs_root,
-> > -					    NULL, &fops_io);
-> > +					    NULL, &io_fops);
-> >  
-> >  	dbgfs_file_info = debugfs_create_file("info", S_IRUGO, dbgfs_root,
-> > -					      NULL, &fops_info);
-> > +					      NULL, &info_fops);
-> >  
-> >  	dbgfs_file_board = debugfs_create_file("board", S_IRUGO, dbgfs_root,
-> > -					       NULL, &fops_board);
-> > +					       NULL, &board_fops);
-> >  
-> >  	return 0;
-> >  }
-> 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-
-Patch applied, thanks!
+SGkgYWdhaW4sCgpJdCBzZWVtcyBJIGhhdmUgbWlzc2VkIHR3byBxdWVzdGlvbnM6CgpPbiAxMS4x
+Mi4yMDE4IDA5OjM2LCBBbmRyemVqIEhhamRhIHdyb3RlOgo+IE9uIDExLjEyLjIwMTggMDk6MDEs
+IElua2kgRGFlIHdyb3RlOgo+PiAxOC4gMTIuIDExLiDsmKTtm4QgNDo0OeyXkCBBbmRyemVqIEhh
+amRhIOydtCjqsIApIOyTtCDquIA6Cj4+PiBPbiAxMS4xMi4yMDE4IDAwOjQ1LCBJbmtpIERhZSB3
+cm90ZToKPj4+PiBIaSBBbmRyemVqLAo+Pj4+Cj4+Pj4gMTguIDEyLiAxMC4g7Jik7ZuEIDQ6MzXs
+l5AgQW5kcnplaiBIYWpkYSDsnbQo6rCAKSDsk7Qg6riAOgo+Pj4+PiBIaSBJbmtpLAo+Pj4+Pgo+
+Pj4+PiBPbiAxMC4xMi4yMDE4IDAzOjI1LCBJbmtpIERhZSB3cm90ZToKPj4+Pj4+IEhpIEFuZHJ6
+ZWosCj4+Pj4+Pgo+Pj4+Pj4gMTguIDEyLiA2LiDsmKTtm4QgNjozOOyXkCBBbmRyemVqIEhhamRh
+IOydtCjqsIApIOyTtCDquIA6Cj4+Pj4+Pj4gSGkgSW5raSwKPj4+Pj4+Pgo+Pj4+Pj4+IFRoaXMg
+c21hbGwgcGF0Y2hzZXQgYWRkcyBkeW5hbWljIHpwb3Mgc3VwcG9ydCBmb3IgREVDT04gYW5kIEZJ
+TUQuCj4+Pj4+PiBUaGlzIHBhdGNoIHdpbGwgYWxsb3cgdXNlciBzcGFjZSB0byBjaGFuZ2UgenBv
+cy4gSG93ZXZlciwgREVDT04gYW5kIEZJTUQgZGV2aWNlcyBoYXZlIGZpeGVkIHByaW9yaXR5IG9m
+IEhXIG92ZXJsYXlzLgo+Pj4+Pj4gVGhpcyB3b3VsZCBtZWFuIHRoYXQgenBvcyBjaGFuZ2UgYnkg
+dXNlciBzcGFjZSBkb2Vzbid0IGd1YXJhbnRlZSBjb3JyZWN0IEhXIG92ZXJsYXkgcHJpb3JpdHku
+Cj4+Pj4+Pgo+Pj4+Pj4gV2h5IGRvIHlvdSB3YW50IHRvIHN1cHBvcnQgbXV0YWJsZSB6cG9zPwo+
+Pj4+PiBQcmFjdGljYWxseSB5b3UgaGF2ZSBwYXRjaGVzIHdoaWNoIHByb3ZlcyBpdCB3b3Jrcywg
+eW91IGNhbiBzZWUgdGhhdAo+Pj4+PiBjaGFuZ2luZyB6cG9zIHZhbHVlIHJlc3VsdHMgaW4gYWRl
+cXVhdGUgY2hhbmdlIGluIGRpc3BsYXllZCBpbWFnZS4KPj4+Pj4KPj4+Pj4gQ29uY2VwdHVhbGx5
+IGl0IGlzIGp1c3QgYSBtYXR0ZXIgb2YgZGlzY29ubmVjdGluZyBoYXJkd2FyZSB3aW5kb3dzCj4+
+Pj4+IHByZXNlbnQgaW4gREVDT04gYW5kIEZJTUQgZnJvbSBEUk0gcGxhbmVzIHdoaWNoIGFyZSBz
+b2Z0d2FyZSBlbnRpdGllcy4KPj4+Pj4KPj4+Pj4gWW91IGNhbiByZWFzb24gYWJvdXQgaXQgdGhp
+cyB3YXk6Cj4+Pj4+Cj4+Pj4+IC0gZHJtIHBsYW5lIGlzIGEgZnJhbWVidWZmZXIgcGx1cyBpbmZv
+cm1hdGlvbnMgaG93IGl0IHNob3VsZCBiZQo+Pj4+PiB0cmFuc2Zvcm1lZC9kaXNwbGF5ZWQgb24g
+REVDT04vRklNRCwKPj4+Pj4KPj4+Pj4gLSBodyB3aW5kb3cgaW4gREVDT04vRklNRCBpcyBqdXN0
+IGEgY2hhbm5lbCB0aHJvdWdoIHdoaWNoIHBsYW5lIGlzIHNlbmQKPj4+Pj4gdG8gdGhlIGRpc3Bs
+YXkuCj4+Pj4+Cj4+Pj4+IERFQ09OIGFuZCBGSU1EIGhhcyBmaXhlZCBodyB3aW5kb3dzIG9yZGVy
+IC0gd2luZG93cyB3aXRoIGxvd2VyIG51bWJlcnMKPj4+Pj4gYXJlIGRpc3BsYXllZCBiZWxvdyB3
+aW5kb3dzIHdpdGggaGlnaGVyIG51bWJlci4gVG8gZGlzcGxheSBwbGFuZXMgaW4KPj4+Pj4gZ2l2
+ZW4gei1vcmRlciB5b3UganVzdCBuZWVkIHRvIHNlbmQgdGhlbSB2aWEgd2luZG93cyB3aXRoIGFw
+cHJvcHJpYXRlCj4+Pj4+IGluZGV4IC0gZmFydGhlc3QgcGxhbmUgc2hvdWxkIGdvIGFsd2F5cyB2
+aWEgd2luMCwgY2xvc2VyIG9uZSB2aWEgd2luMSwKPj4+Pj4gLi4uLCB0aWxsIHRoZSBsYXN0IHBs
+YW5lLgo+Pj4+Pgo+Pj4+PiBTbyBmb3IgZXhhbXBsZSBpZiB5b3UgaGF2ZSB0aHJlZSBwbGFuZXMg
+YW5kIHdhbnQgdG8gZGlzcGxheSB0aGVtIGluCj4+Pj4+IGZvbGxvd2luZyBvcmRlciAoZmlyc3Qg
+b25lIGZhcnRoZXN0LCBsYXN0IG9uZSBjbG9zZXN0KToKPj4+Pj4KPj4+Pj4gcGxhbmUyLCBwbGFu
+ZTEsIHBsYW5lMwo+Pj4+Pgo+Pj4+PiB5b3Ugc2hvdWxkIG1hcCB0aGVtIHRvIHBsYW5lcyBhcyBm
+b2xsb3c6Cj4+Pj4+Cj4+Pj4+IHBsYW5lMiAtPiB3aW4wLCBwbGFuZTEgLT4gd2luMSwgcGxhbmUz
+IC0+IHdpbjIKPj4+Pj4KPj4+Pj4gdGhlbiBmb3IgZXhhbXBsZSBwbGFuZTIgaXMgZGlzYWJsZWQs
+IHdlIHdpbGwgaGF2ZSBmb2xsb3dpbmcgbWFwcGluZzoKPj4+Pj4KPj4+Pj4gcGxhbmUxIC0+IHdp
+bjAsIHBsYW5lMyAtPiB3aW4xLCB3aW4yIC0gZGlzYWJsZWQKPj4+PiBQbGFuZTEgaXMgZGlzcGxh
+eWVkIGJlbG93IFBsYW5lMy4KPj4+IEFuZCB0aGlzIGlzIHdoYXQgd2Ugd2FudGVkLCB0aGUgaW5p
+dGlhbCBvcmRlciB3YXM6IHBsYW5lMiwgcGxhbmUxLAo+Pj4gcGxhbmUzLCBmaXJzdCBmYXJ0aGVz
+dCAob3IgbG93ZXN0IGlmIHlvdSBwcmVmZXIgdGhpcyBuYW1pbmcgc2NoZW1hKS4KPj4+Cj4+Pgo+
+Pj4+PiB0aGVuIGlmIHlvdSBjaGFuZ2Ugem9yZGVyIG9mIHBsYW5lcyB0bzogcGxhbmUzLCBwbGFu
+ZTE6Cj4+Pj4+Cj4+Pj4+IHBsYW5lMyAtPiB3aW4wLCBwbGFuZTEgLT4gd2luMQo+Pj4+IFBsYW5l
+MyBpcyBkaXNwbGF5ZWQgYmVsb3cgUGxhbmUxIGJlY2F1c2UgREVDT04vRklNRCBIVyBhcmVuJ3Qg
+YWJsZSB0byBjaGFuZ2UgSFcgb3ZlcmxheSBwcmlyb3R5Lgo+Pj4gTm8sIHBsYW5lMyBpcyBkaXNw
+bGF5ZWQgYmVsb3cgcGxhbmUxIGJlY2F1c2Ugd2Ugc2VudCBpdCB2aWEgd2luMCwgaWYgd2UKPj4+
+IHdhbnQgaW52ZXJzZSB3ZSBjYW4gc2VuZCBwbGFuZTMgdmlhIHdpbjEgYW5kIHBsYW5lMSB2aWEg
+d2luMC4KPj4+Cj4+Pgo+Pj4+IEhvd2V2ZXIsIHVzZXIgc3BhY2Ugd2FudGVkIHRoYXQgUGxhbmUx
+IGlzIGRpc3BsYXllZCBiZWxvdyBQbGFuZTMuIExpa2UgdGhpcywgenBvcyBjaGFuZ2UgYnkgdXNl
+ciBzcGFjZSBkb2Vzbid0IGd1YXJhbnRlZSBjb3JyZWN0IEhXIG92ZXJsYXkgcHJpb3JpdHkuCj4+
+PiBBcyBJIHNhaWQgYmVmb3JlIGluIHRoaXMgZXhhbXBsZSB1c2Vyc3BhY2Ugd2FudGVkIHBsYW5l
+MyBiZWxvdyBwbGFuZTEsCj4+PiBhbmQgYXMgSSB3cm90ZSBpbiBjb21tZW50IGFib3ZlIGFueSBv
+cmRlciBvZiBwbGFuZXMgdXNlciB3YW50IGRyaXZlciBpcwo+Pj4gYWJsZSB0byByZWFsaXplIHdp
+dGggdGhpcyBwYXRjaC4KPj4+Cj4+Pgo+Pj4+IEFuZCB0aGVyZSBpcyBubyBhbnkgcmVhc29uIHRv
+IGNoYW5nZSB6cG9zIGluIHVzZXIgc3BhY2UgZXhjZXB0aW5nIE1peGVyIGRldmljZSB3aGljaCBz
+dXBwb3J0cyBIVyBvdmVybGF5IHByaW9yaXR5IGNoYW5nZS4KPj4+IExhY2sgb2Ygc3BlY2lhbCBy
+ZWdpc3RyeSBmb3IgbWFuaXB1bGF0aW5nIHdpbmRvd3Mgb3JkZXIgZG9lcyBub3QgbWVhbiBpdAo+
+Pj4gY2Fubm90IHN1cHBvcnQgZHluYW1pYyB6cG9zLgo+Pj4KPj4gV2h5IGNoYW5naW5nIHpwb3Mg
+aW4gdXNlciBzcGFjZSBpcyByZXF1aXJlZD8KCgpJIGRpZG4ndCBzYXkgaXQgaXMgcmVxdWlyZWQs
+IGJ1dCB1c3VhbGx5IGl0IGlzIGJldHRlciBpZiB0aGUgZHJpdmVyCnN1cHBvcnRzIG1vcmUgZmVh
+dHVyZXMgdGhhbiBsZXNzLgoKClJlZ2FyZHMKCkFuZHJ6ZWoKCgo+Pgo+Pj4+IEluIGZhY3QsIHdl
+IHN1cHBvcnRlZCBtdXRhYmxlIHpwb3MgYmVmb3JlIGJ1dCBjaGFuZ2VkIGl0IHRvIGltbXV0YWJs
+ZSB3aXRoIHNhbWUgcmVhc29uLgo+Pj4gSXQgd2FzIGp1c3QgYnJva2VuIGlmIEkgcmVtZW1iZXIg
+Y29ycmVjdGx5Lgo+Pj4KPj4gTm8sIEkgd29ya2VkIHdlbGwgYW5kIHJlYWwgdXNlciB1c2VkIGl0
+IEkgcmVtZW1iZXIuCgoKSSB0cmllZCB0byBmaW5kIHRoZSBjb2RlIGluIGdpdCBoaXN0b3J5LCBJ
+IGhhdmUgZm91bmQgc29tZSBwcmUtYXRvbWljCnBhdGNoZXMgZm9yIHpwb3MuIEl0IGlzIG5vdCBj
+bGVhciBob3cgaXQgd29ya2VkIGFuZCB3aHkgbXV0YWJsZSB6cG9zIGhhcwpiZWVuIHJlbW92ZWQu
+IERvIHlvdSByZW1lbWJlciByZWFzb25zPwoKClJlZ2FyZHMKCkFuZHJ6ZWoKCgoKPj4KPj4+PiBM
+YXN0bHksIHlvdXIgcGF0Y2ggbWFkZSByZWFsIHVzZXIgYnJva2VuLgo+Pj4gV2hvPyBIb3c/Cj4+
+IFdpbmRvdyBzZXJ2ZXIgb2YgVGl6ZW4gZGlkbid0IHdvcmsgYW5kIHlvdSBjYW4gdGVzdCBpdCB3
+aXRoIGJlbG93IGltYWdlIC0gSSBkaWRuJ3QgY2hlY2sgd2h5IGl0IGRvZXNuJ3QuIEFueXdheSwg
+d2UgZG9uJ3QgaGF2ZSB0byBicmVhayByZWFsIHVzZXIuCj4+IGh0dHA6Ly9kb3dubG9hZC50aXpl
+bi5vcmcvc25hcHNob3RzL3RpemVuL3VuaWZpZWQvbGF0ZXN0L2ltYWdlcy9zdGFuZGFyZC9tb2Jp
+bGUtd2F5bGFuZC1hcm12N2wtdG0yLwo+Cj4gQXJlIHlvdSBzYXlpbmcgaXQgd29ya3Mgd2l0aCBs
+YXRlc3QgbWFpbmxpbmUgd2l0aG91dCBteSBwYXRjaGVzPwo+Cj4KPiBSZWdhcmRzCj4KPiBBbmRy
+emVqCj4KPgo+PiBUaGFua3MsCj4+IElua2kgRGFlCj4+Cj4+PiBSZWdhcmRzCj4+Pgo+Pj4gQW5k
+cnplago+Pj4KPj4+Cj4+Pj4gVGhhbmtzLAo+Pj4+IElua2kgRGFlCj4+Pj4KPj4+Pj4gQXMgeW91
+IHNlZSB0aGVyZSBpcyBubyByZWxhdGlvbiBiZXR3ZWVuIHBsYW5lIG51bWJlciBhbmQgd2luZG93
+IG51bWJlciwKPj4+Pj4gYnV0IHdpbmRvdyBudW1iZXIgaXMgZXF1YWwgdG8gcGxhbmUncyBwb3Np
+dGlvbiBpbiB6cG9zLW9yZGVyZWQgbGlzdCBvZgo+Pj4+PiBwbGFuZXMgYW5kIHRoaXMgaXMgZXhh
+Y3QgdmFsdWUgb2Ygbm9ybWFsaXplZF96cG9zIGZpZWxkIGluIGRybV9wbGFuZV9zdGF0ZS4KPj4+
+Pj4KPj4+Pj4KPj4+Pj4gSSBob3BlIHRoaXMgZXh0ZW5kZWQgZXhwbGFuYXRpb24gd2lsbCBjbGFy
+aWZ5IHRoaW5ncy4KPj4+Pj4KPj4+Pj4KPj4+Pj4gUmVnYXJkcwo+Pj4+Pgo+Pj4+PiBBbmRyemVq
+Cj4+Pj4+Cj4+Pj4+Cj4+Pj4+Cj4+Pj4+PiBUaGFua3MsCj4+Pj4+PiBJbmtpIERhZQo+Pj4+Pj4K
+Pj4+Pj4+PiBJdCB3YXMgdGVzdGVkIG9uIHRtMiBhbmQgdHJhdHMyLgo+Pj4+Pj4+Cj4+Pj4+Pj4g
+UmVnYXJkcwo+Pj4+Pj4+IEFuZHJ6ZWoKPj4+Pj4+Pgo+Pj4+Pj4+Cj4+Pj4+Pj4gQW5kcnplaiBI
+YWpkYSAoMyk6Cj4+Pj4+Pj4gICBkcm0vZXh5bm9zL2RlY29uNTQzMzogYWRkIGR5bmFtaWMgenBv
+cyBzdXBwb3J0Cj4+Pj4+Pj4gICBkcm0vZXh5bm9zL2ZpbWQ6IGNyZWF0ZSBsb2NhbCBoZWxwZXIg
+Zm9yIGRpc2FibGluZyBoYXJkd2FyZSB3aW5kb3cKPj4+Pj4+PiAgIGRybS9leHlub3MvZmltZDog
+YWRkIGR5bmFtaWMgenBvcyBzdXBwb3J0Cj4+Pj4+Pj4KPj4+Pj4+PiAgZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jIHwgMjMgKysrKystLS0tLQo+Pj4+Pj4+ICBk
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jICAgICAgfCA0MiArKysrKysr
+Ky0tLS0tLS0tLS0tCj4+Pj4+Pj4gIDIgZmlsZXMgY2hhbmdlZCwgMjkgaW5zZXJ0aW9ucygrKSwg
+MzYgZGVsZXRpb25zKC0pCj4+Pj4+Pj4KPj4+Cj4KPgoKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
+YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
