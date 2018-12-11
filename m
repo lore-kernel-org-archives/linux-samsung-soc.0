@@ -1,274 +1,120 @@
-From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: Re: [PATCH v3 2/5] devfreq: add support for suspend/resume of a
- devfreq device
-Date: Tue, 11 Dec 2018 09:26:58 +0100
-Message-ID: <fc1c8d73-176a-f20e-3413-f07863a6c595@partner.samsung.com>
-References: <5C0878C0.4060500@samsung.com>
-        <1544007956-28889-1-git-send-email-l.luba@partner.samsung.com>
-        <1544007956-28889-3-git-send-email-l.luba@partner.samsung.com>
-        <CGME20181205110620eucas1p14de70dc092580b684a0304b5ce771605@epcms1p1>
-        <20181211014315epcms1p153a54217e587fd76a8198db77762699a@epcms1p1>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH 0/3] drm/exynos: add support for dynamic zpos in DECON
+ and FIMD
+Date: Tue, 11 Dec 2018 09:36:51 +0100
+Message-ID: <83ab6162-3d68-1cf9-b969-071475e44603@samsung.com>
+References: <CGME20181206093905eucas1p133ead84adfb9dd7a9756ce91b6b35895@eucas1p1.samsung.com>
+ <20181206093857.22324-1-a.hajda@samsung.com>
+ <fa32dd3a-3e8a-ade1-5b3b-f8394ff34e75@samsung.com>
+ <a3173dbf-24c6-b70f-74d5-eada10ac99ac@samsung.com>
+ <837a0841-cee1-c851-a01e-4b95d1670d32@samsung.com>
+ <7ee83acd-d7ac-b11c-3a84-87006c8c9f8f@samsung.com>
+ <af900fc1-ed07-d784-e8e6-c05aaa583afb@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181211014315epcms1p153a54217e587fd76a8198db77762699a@epcms1p1>
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <af900fc1-ed07-d784-e8e6-c05aaa583afb@samsung.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: myungjoo.ham@samsung.com, Chanwoo Choi <cw00.choi@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Cc: "tjakobi@math.uni-bielefeld.de" <tjakobi@math.uni-bielefeld.de>, Kyungmin Park <kyungmin.park@samsung.com>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "len.brown@intel.com" <len.brown@intel.com>, "pavel@ucw.cz" <pavel@ucw.cz>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "keescook@chromium.org" <keescook@chromium.org>, "anton@enomsg.org" <anton@enomsg.org>, "ccross@android.com" <ccross@android.com>, "tony.luck@intel.com" <tony.luck@intel.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "kgene@kernel.org" <kgene@kernel.org>, "krzk@kernel.org" <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi MyungJoo,
-
-Thank you for taking the patch set.
-Please check my response bellow.
-
-On 12/11/18 2:43 AM, MyungJoo Ham wrote:
->> Hi Lukasz,
->>
->> On 2018년 12월 05일 20:05, Lukasz Luba wrote:
->>> The patch prepares devfreq device for handling suspend/resume
->>> functionality. The new fields will store needed information during this
->>> process. Devfreq framework handles opp-suspend DT entry and there is no
->>> need of modyfications in the drivers code. It uses atomic variables to
->>> make sure no race condition affects the process.
->>>
->>> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->>> Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
->>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
->>> ---
->>>   drivers/devfreq/devfreq.c | 47 +++++++++++++++++++++++++++++++++++++++++------
->>>   include/linux/devfreq.h   |  7 +++++++
->>>   2 files changed, 48 insertions(+), 6 deletions(-)
->>
->> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
->>
-> 
-> Looks goot do me as well.
-> 
-> Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-> 
-> 
-> Anyway, for the sake of curiosity...
-> 
-> Having suspend-frequency is usually required when
-> the frequency configuration is reset with suspend-resume
-> as older Exynos's CPU did (I don't know whether it still does).
-You are right, some Exynos SoCs like 4412 needs the proper configuration.
-> 
-> Does GPU do this as well?
-> (memory-bus won't do this because they are kept turned on during suspend)
-I haven't seen GPU failures.
-The CPU resume process can fail when some buses ('leftbus' (data 
-bus/peripheral bus), 'rightbus', 'memory-bus')
-are not operating with needed frequency.
-
-Here is the log showing CPU1,2,3 booting failure:
--------------------------------------------------------------------
-root@target:~# echo mem > /sys/power/state
-[   43.432066] PM: suspend entry (deep)
-[   43.481742] PM: Syncing filesystems ... done.
-[   43.553433] Freezing user space processes ... (elapsed 0.002 seconds) 
-done.
-[   43.556687] OOM killer disabled.
-[   43.556694] Freezing remaining freezable tasks ... (elapsed 0.001 
-seconds) done.
-[   43.558305] printk: Suspending console(s) (use no_console_suspend to 
-debug)
-
-[   43.718007] dwc2 12480000.hsotg: suspending usb gadget g_ether
-[   43.718229] dwc2 12480000.hsotg: dwc2_hsotg_ep_disable: called for ep0
-[   43.718260] dwc2 12480000.hsotg: dwc2_hsotg_ep_disable: called for ep0
-[   43.722021] dwc2 12480000.hsotg: dwc2_hsotg_ep_disable: called for ep0
-[   43.722038] dwc2 12480000.hsotg: dwc2_hsotg_ep_disable: called for ep0
-[   43.781714] wake enabled for irq 134
-[   43.781822] CAM_ISP_CORE_1.2V: No configuration
-[   43.781918] VMEM_VDDF_3.0V: No configuration
-[   43.781952] VCC_SUB_2.0V: No configuration
-[   43.781986] VCC_SUB_1.35V: No configuration
-[   43.782018] VMEM_1.2V_AP: No configuration
-[   43.787139] MOTOR_VCC_3.0V: No configuration
-[   43.787176] LCD_VCC_3.3V: No configuration
-[   43.787209] TSP_VDD_1.8V: No configuration
-[   43.787242] TSP_AVDD_3.3V: No configuration
-[   43.787273] VMEM_VDD_2.8V: No configuration
-[   43.787305] VTF_2.8V: No configuration
-[   43.787422] VDDQ_PRE_1.8V: No configuration
-[   43.787456] VT_CAM_1.8V: No configuration
-[   43.787488] CAM_ISP_SEN_IO_1.8V: No configuration
-[   43.787521] CAM_SENSOR_CORE_1.2V: No configuration
-[   43.789160] NFC_AVDD_1.8V: No configuration
-[   43.792571] CAM_ISP_MIPI_1.2V: No configuration
-[   43.794209] VCC_1.8V_IO: No configuration
-[   43.794244] VCC_2.8V_AP: No configuration
-[   43.794279] VCC_1.8V_AP: No configuration
-[   43.794331] VALIVE_1.0V_AP: No configuration
-[   43.805821] wake enabled for irq 138
-[   43.806368] wake enabled for irq 160
-[   43.806382] wake enabled for irq 161
-[   43.824045] samsung-pinctrl 11000000.pinctrl: Setting external wakeup 
-interrupt mask: 0xff77ff7d
-[   43.841162] Disabling non-boot CPUs ...
-[   43.863016] Enabling non-boot CPUs ...
-[   43.864749] ------------[ cut here ]------------
-[   43.864779] WARNING: CPU: 1 PID: 0 at 
-./arch/arm/include/asm/proc-fns.h:124 secondary_start_kernel+0x20c/0x268
-[   43.864788] Modules linked in:
-[   43.864805] CPU: 1 PID: 0 Comm: swapper/1 Not tainted 
-4.20.0-rc2-next-20181114-00007-g5506a9cd6bd7 #1042
-[   43.864813] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-[   43.864835] [<c011261c>] (unwind_backtrace) from [<c010e150>] 
-(show_stack+0x10/0x14)
-[   43.864852] [<c010e150>] (show_stack) from [<c0a4b0a0>] 
-(dump_stack+0x98/0xc4)
-[   43.864870] [<c0a4b0a0>] (dump_stack) from [<c01270a4>] 
-(__warn+0x10c/0x124)
-[   43.864884] [<c01270a4>] (__warn) from [<c01271d0>] 
-(warn_slowpath_null+0x40/0x48)
-[   43.864899] [<c01271d0>] (warn_slowpath_null) from [<c0110ee0>] 
-(secondary_start_kernel+0x20c/0x268)
-[   43.864913] [<c0110ee0>] (secondary_start_kernel) from [<401027ac>] 
-(0x401027ac)
-[   43.864923] irq event stamp: 982984
-[   43.864942] hardirqs last  enabled at (982983): [<c0a6cc6c>] 
-_raw_spin_unlock_irqrestore+0x6c/0x74
-[   43.864954] hardirqs last disabled at (982984): [<c0110c68>] 
-arch_cpu_idle_dead+0x18/0x84
-[   43.864969] softirqs last  enabled at (982964): [<c012f0e0>] 
-irq_enter+0x78/0x80
-[   43.864980] softirqs last disabled at (982963): [<c012f0cc>] 
-irq_enter+0x64/0x80
-[   43.864989] ---[ end trace 6401b9331547e26f ]---
-[   43.864996] ------------[ cut here ]------------
-[   43.865009] WARNING: CPU: 1 PID: 0 at 
-./arch/arm/include/asm/proc-fns.h:126 secondary_start_kernel+0x244/0x268
-[   43.865016] Modules linked in:
-[   43.865030] CPU: 1 PID: 0 Comm: swapper/1 Tainted: G        W 
-4.20.0-rc2-next-20181114-00007-g5506a9cd6bd7 #1042
-[   43.865039] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-[   43.865054] [<c011261c>] (unwind_backtrace) from [<c010e150>] 
-(show_stack+0x10/0x14)
-[   43.865068] [<c010e150>] (show_stack) from [<c0a4b0a0>] 
-(dump_stack+0x98/0xc4)
-[   43.865081] [<c0a4b0a0>] (dump_stack) from [<c01270a4>] 
-(__warn+0x10c/0x124)
-[   43.865095] [<c01270a4>] (__warn) from [<c01271d0>] 
-(warn_slowpath_null+0x40/0x48)
-[   43.865109] [<c01271d0>] (warn_slowpath_null) from [<c0110f18>] 
-(secondary_start_kernel+0x244/0x268)
-[   43.865122] [<c0110f18>] (secondary_start_kernel) from [<401027ac>] 
-(0x401027ac)
-[   43.865131] irq event stamp: 982984
-[   43.865144] hardirqs last  enabled at (982983): [<c0a6cc6c>] 
-_raw_spin_unlock_irqrestore+0x6c/0x74
-[   43.865156] hardirqs last disabled at (982984): [<c0110c68>] 
-arch_cpu_idle_dead+0x18/0x84
-[   43.865168] softirqs last  enabled at (982964): [<c012f0e0>] 
-irq_enter+0x78/0x80
-[   43.865179] softirqs last disabled at (982963): [<c012f0cc>] 
-irq_enter+0x64/0x80
-[   43.865187] ---[ end trace 6401b9331547e270 ]---
-[   44.856140] CPU1: failed to boot: -110
-[   44.856956] Error taking CPU1 up: -110
-[   45.856655] CPU2: failed to boot: -110
-[   45.857770] Error taking CPU2 up: -110
-[   46.856059] CPU3: failed to boot: -110
-[   46.856721] Error taking CPU3 up: -110
--------------------------------------------------------------------
-
-With the patch set, the CPUs are up and running.
--------------------------------------------------------------------
-==========================================================
-root@target:~# echo mem > /sys/power/state
-[ 1135.879168] PM: suspend entry (deep)
-[ 1135.906378] PM: Syncing filesystems ...
-[ 1135.919299] mmc_host mmc2: Bus speed (slot 0) = 50000000Hz (slot req 
-400000Hz, actual 396825HZ div = 63)
-[ 1136.137522] mmc_host mmc2: Bus speed (slot 0) = 50000000Hz (slot req 
-52000000Hz, actual 50000000HZ div = 0)
-[ 1136.184722] done.
-[ 1136.196373] Freezing user space processes ... (elapsed 0.001 seconds) 
-done.
-[ 1136.197689] OOM killer disabled.
-[ 1136.197692] Freezing remaining freezable tasks ... (elapsed 0.001 
-seconds) done.
-[ 1136.198923] printk: Suspending console(s) (use no_console_suspend to 
-debug)
-[ 1136.364056] devfreq8, suspend_freq=200000000
-[ 1136.364114] devfreq4, suspend_freq=200000000
-[ 1136.364174] devfreq3, suspend_freq=200000000
-[ 1136.364217] devfreq2, suspend_freq=400000000
-[ 1136.364311] devfreq0, suspend_freq=400000000
-[ 1136.425416] wake enabled for irq 134
-[ 1136.425439] CAM_ISP_CORE_1.2V: No configuration
-[ 1136.425457] VMEM_VDDF_3.0V: No configuration
-[ 1136.425476] VCC_SUB_2.0V: No configuration
-[ 1136.425493] VCC_SUB_1.35V: No configuration
-[ 1136.425510] VMEM_1.2V_AP: No configuration
-[ 1136.426939] MOTOR_VCC_3.0V: No configuration
-[ 1136.426958] LCD_VCC_3.3V: No configuration
-[ 1136.426976] TSP_VDD_1.8V: No configuration
-[ 1136.426994] TSP_AVDD_3.3V: No configuration
-[ 1136.427012] VMEM_VDD_2.8V: No configuration
-[ 1136.427029] VTF_2.8V: No configuration
-[ 1136.427047] VDDQ_PRE_1.8V: No configuration
-[ 1136.427064] VT_CAM_1.8V: No configuration
-[ 1136.427082] CAM_ISP_SEN_IO_1.8V: No configuration
-[ 1136.427100] CAM_SENSOR_CORE_1.2V: No configuration
-[ 1136.427605] NFC_AVDD_1.8V: No configuration
-[ 1136.429020] CAM_ISP_MIPI_1.2V: No configuration
-[ 1136.429859] VCC_1.8V_IO: No configuration
-[ 1136.429879] VCC_2.8V_AP: No configuration
-[ 1136.429898] VCC_1.8V_AP: No configuration
-[ 1136.429926] VALIVE_1.0V_AP: No configuration
-[ 1136.435110] wake enabled for irq 138
-[ 1136.435381] wake enabled for irq 160
-[ 1136.435391] wake enabled for irq 161
-[ 1136.443372] samsung-pinctrl 11000000.pinctrl: Setting external wakeup 
-interrupt mask: 0xff77ff7d
-[ 1136.450942] Disabling non-boot CPUs ...
-[ 1136.575256] Enabling non-boot CPUs ...
-[ 1136.577278] CPU1 is up
-[ 1136.579226] CPU2 is up
-[ 1136.581283] CPU3 is up
-[ 1136.581773] s3c-i2c 13860000.i2c: slave address 0x10
-[ 1136.581788] s3c-i2c 13860000.i2c: bus frequency set to 390 KHz
-[ 1136.581809] s3c-i2c 13890000.i2c: slave address 0x10
-[ 1136.581821] s3c-i2c 13890000.i2c: bus frequency set to 390 KHz
-[ 1136.581841] s3c-i2c 138a0000.i2c: slave address 0x10
-[ 1136.581866] s3c-i2c 138a0000.i2c: bus frequency set to 97 KHz
-[ 1136.581887] s3c-i2c 138b0000.i2c: slave address 0x00
-[ 1136.581899] s3c-i2c 138b0000.i2c: bus frequency set to 97 KHz
-[ 1136.581919] s3c-i2c 138d0000.i2c: slave address 0x10
-[ 1136.581930] s3c-i2c 138d0000.i2c: bus frequency set to 97 KHz
-[ 1136.581949] s3c-i2c 138e0000.i2c: slave address 0x00
-[ 1136.581961] s3c-i2c 138e0000.i2c: bus frequency set to 97 KHz
-[ 1136.590858] s3c-rtc 10070000.rtc: rtc disabled, re-enabling
-[ 1136.592539] s3c2410-wdt 10060000.watchdog: watchdog disabled
-[ 1136.592636] wake disabled for irq 160
-[ 1136.592646] wake disabled for irq 161
-[ 1136.592768] wake disabled for irq 138
-[ 1136.596830] wake disabled for irq 134
-[ 1136.648824] mmc1: queuing unknown CIS tuple 0x80 (7 bytes)
-[ 1136.651430] mmc1: queuing unknown CIS tuple 0x80 (6 bytes)
-[ 1136.721638] devfreq8 resume_freq=200000000
-[ 1136.721664] devfreq4 resume_freq=200000000
-[ 1136.721681] devfreq3 resume_freq=200000000
-[ 1136.721704] devfreq2 resume_freq=267000000
-[ 1136.721738] devfreq0 resume_freq=267000000
-[ 1136.944032] panel-samsung-s6e8aa0 11c80000.dsi.0: ID: 0xa2, 0x20, 0x8c
-[ 1137.754939] OOM killer enabled.
-[ 1137.760515] Restarting tasks ... done.
-root@target:~# [ 1137.768132] PM: suspend exit
--------------------------------------------------------------------
-
-Regards,
-Lukasz
-> 
-> 
-> Cheers,
-> MyungJoo
-> 
-> 
-> 
+T24gMTEuMTIuMjAxOCAwOTowMSwgSW5raSBEYWUgd3JvdGU6Cj4KPiAxOC4gMTIuIDExLiDsmKTt
+m4QgNDo0OeyXkCBBbmRyemVqIEhhamRhIOydtCjqsIApIOyTtCDquIA6Cj4+IE9uIDExLjEyLjIw
+MTggMDA6NDUsIElua2kgRGFlIHdyb3RlOgo+Pj4gSGkgQW5kcnplaiwKPj4+Cj4+PiAxOC4gMTIu
+IDEwLiDsmKTtm4QgNDozNeyXkCBBbmRyemVqIEhhamRhIOydtCjqsIApIOyTtCDquIA6Cj4+Pj4g
+SGkgSW5raSwKPj4+Pgo+Pj4+IE9uIDEwLjEyLjIwMTggMDM6MjUsIElua2kgRGFlIHdyb3RlOgo+
+Pj4+PiBIaSBBbmRyemVqLAo+Pj4+Pgo+Pj4+PiAxOC4gMTIuIDYuIOyYpO2bhCA2OjM47JeQIEFu
+ZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0IOq4gDoKPj4+Pj4+IEhpIElua2ksCj4+Pj4+Pgo+Pj4+
+Pj4gVGhpcyBzbWFsbCBwYXRjaHNldCBhZGRzIGR5bmFtaWMgenBvcyBzdXBwb3J0IGZvciBERUNP
+TiBhbmQgRklNRC4KPj4+Pj4gVGhpcyBwYXRjaCB3aWxsIGFsbG93IHVzZXIgc3BhY2UgdG8gY2hh
+bmdlIHpwb3MuIEhvd2V2ZXIsIERFQ09OIGFuZCBGSU1EIGRldmljZXMgaGF2ZSBmaXhlZCBwcmlv
+cml0eSBvZiBIVyBvdmVybGF5cy4KPj4+Pj4gVGhpcyB3b3VsZCBtZWFuIHRoYXQgenBvcyBjaGFu
+Z2UgYnkgdXNlciBzcGFjZSBkb2Vzbid0IGd1YXJhbnRlZSBjb3JyZWN0IEhXIG92ZXJsYXkgcHJp
+b3JpdHkuCj4+Pj4+Cj4+Pj4+IFdoeSBkbyB5b3Ugd2FudCB0byBzdXBwb3J0IG11dGFibGUgenBv
+cz8KPj4+PiBQcmFjdGljYWxseSB5b3UgaGF2ZSBwYXRjaGVzIHdoaWNoIHByb3ZlcyBpdCB3b3Jr
+cywgeW91IGNhbiBzZWUgdGhhdAo+Pj4+IGNoYW5naW5nIHpwb3MgdmFsdWUgcmVzdWx0cyBpbiBh
+ZGVxdWF0ZSBjaGFuZ2UgaW4gZGlzcGxheWVkIGltYWdlLgo+Pj4+Cj4+Pj4gQ29uY2VwdHVhbGx5
+IGl0IGlzIGp1c3QgYSBtYXR0ZXIgb2YgZGlzY29ubmVjdGluZyBoYXJkd2FyZSB3aW5kb3dzCj4+
+Pj4gcHJlc2VudCBpbiBERUNPTiBhbmQgRklNRCBmcm9tIERSTSBwbGFuZXMgd2hpY2ggYXJlIHNv
+ZnR3YXJlIGVudGl0aWVzLgo+Pj4+Cj4+Pj4gWW91IGNhbiByZWFzb24gYWJvdXQgaXQgdGhpcyB3
+YXk6Cj4+Pj4KPj4+PiAtIGRybSBwbGFuZSBpcyBhIGZyYW1lYnVmZmVyIHBsdXMgaW5mb3JtYXRp
+b25zIGhvdyBpdCBzaG91bGQgYmUKPj4+PiB0cmFuc2Zvcm1lZC9kaXNwbGF5ZWQgb24gREVDT04v
+RklNRCwKPj4+Pgo+Pj4+IC0gaHcgd2luZG93IGluIERFQ09OL0ZJTUQgaXMganVzdCBhIGNoYW5u
+ZWwgdGhyb3VnaCB3aGljaCBwbGFuZSBpcyBzZW5kCj4+Pj4gdG8gdGhlIGRpc3BsYXkuCj4+Pj4K
+Pj4+PiBERUNPTiBhbmQgRklNRCBoYXMgZml4ZWQgaHcgd2luZG93cyBvcmRlciAtIHdpbmRvd3Mg
+d2l0aCBsb3dlciBudW1iZXJzCj4+Pj4gYXJlIGRpc3BsYXllZCBiZWxvdyB3aW5kb3dzIHdpdGgg
+aGlnaGVyIG51bWJlci4gVG8gZGlzcGxheSBwbGFuZXMgaW4KPj4+PiBnaXZlbiB6LW9yZGVyIHlv
+dSBqdXN0IG5lZWQgdG8gc2VuZCB0aGVtIHZpYSB3aW5kb3dzIHdpdGggYXBwcm9wcmlhdGUKPj4+
+PiBpbmRleCAtIGZhcnRoZXN0IHBsYW5lIHNob3VsZCBnbyBhbHdheXMgdmlhIHdpbjAsIGNsb3Nl
+ciBvbmUgdmlhIHdpbjEsCj4+Pj4gLi4uLCB0aWxsIHRoZSBsYXN0IHBsYW5lLgo+Pj4+Cj4+Pj4g
+U28gZm9yIGV4YW1wbGUgaWYgeW91IGhhdmUgdGhyZWUgcGxhbmVzIGFuZCB3YW50IHRvIGRpc3Bs
+YXkgdGhlbSBpbgo+Pj4+IGZvbGxvd2luZyBvcmRlciAoZmlyc3Qgb25lIGZhcnRoZXN0LCBsYXN0
+IG9uZSBjbG9zZXN0KToKPj4+Pgo+Pj4+IHBsYW5lMiwgcGxhbmUxLCBwbGFuZTMKPj4+Pgo+Pj4+
+IHlvdSBzaG91bGQgbWFwIHRoZW0gdG8gcGxhbmVzIGFzIGZvbGxvdzoKPj4+Pgo+Pj4+IHBsYW5l
+MiAtPiB3aW4wLCBwbGFuZTEgLT4gd2luMSwgcGxhbmUzIC0+IHdpbjIKPj4+Pgo+Pj4+IHRoZW4g
+Zm9yIGV4YW1wbGUgcGxhbmUyIGlzIGRpc2FibGVkLCB3ZSB3aWxsIGhhdmUgZm9sbG93aW5nIG1h
+cHBpbmc6Cj4+Pj4KPj4+PiBwbGFuZTEgLT4gd2luMCwgcGxhbmUzIC0+IHdpbjEsIHdpbjIgLSBk
+aXNhYmxlZAo+Pj4gUGxhbmUxIGlzIGRpc3BsYXllZCBiZWxvdyBQbGFuZTMuCj4+Cj4+IEFuZCB0
+aGlzIGlzIHdoYXQgd2Ugd2FudGVkLCB0aGUgaW5pdGlhbCBvcmRlciB3YXM6IHBsYW5lMiwgcGxh
+bmUxLAo+PiBwbGFuZTMsIGZpcnN0IGZhcnRoZXN0IChvciBsb3dlc3QgaWYgeW91IHByZWZlciB0
+aGlzIG5hbWluZyBzY2hlbWEpLgo+Pgo+Pgo+Pj4+IHRoZW4gaWYgeW91IGNoYW5nZSB6b3JkZXIg
+b2YgcGxhbmVzIHRvOiBwbGFuZTMsIHBsYW5lMToKPj4+Pgo+Pj4+IHBsYW5lMyAtPiB3aW4wLCBw
+bGFuZTEgLT4gd2luMQo+Pj4gUGxhbmUzIGlzIGRpc3BsYXllZCBiZWxvdyBQbGFuZTEgYmVjYXVz
+ZSBERUNPTi9GSU1EIEhXIGFyZW4ndCBhYmxlIHRvIGNoYW5nZSBIVyBvdmVybGF5IHByaXJvdHku
+Cj4+Cj4+IE5vLCBwbGFuZTMgaXMgZGlzcGxheWVkIGJlbG93IHBsYW5lMSBiZWNhdXNlIHdlIHNl
+bnQgaXQgdmlhIHdpbjAsIGlmIHdlCj4+IHdhbnQgaW52ZXJzZSB3ZSBjYW4gc2VuZCBwbGFuZTMg
+dmlhIHdpbjEgYW5kIHBsYW5lMSB2aWEgd2luMC4KPj4KPj4KPj4+IEhvd2V2ZXIsIHVzZXIgc3Bh
+Y2Ugd2FudGVkIHRoYXQgUGxhbmUxIGlzIGRpc3BsYXllZCBiZWxvdyBQbGFuZTMuIExpa2UgdGhp
+cywgenBvcyBjaGFuZ2UgYnkgdXNlciBzcGFjZSBkb2Vzbid0IGd1YXJhbnRlZSBjb3JyZWN0IEhX
+IG92ZXJsYXkgcHJpb3JpdHkuCj4+Cj4+IEFzIEkgc2FpZCBiZWZvcmUgaW4gdGhpcyBleGFtcGxl
+IHVzZXJzcGFjZSB3YW50ZWQgcGxhbmUzIGJlbG93IHBsYW5lMSwKPj4gYW5kIGFzIEkgd3JvdGUg
+aW4gY29tbWVudCBhYm92ZSBhbnkgb3JkZXIgb2YgcGxhbmVzIHVzZXIgd2FudCBkcml2ZXIgaXMK
+Pj4gYWJsZSB0byByZWFsaXplIHdpdGggdGhpcyBwYXRjaC4KPj4KPj4KPj4+IEFuZCB0aGVyZSBp
+cyBubyBhbnkgcmVhc29uIHRvIGNoYW5nZSB6cG9zIGluIHVzZXIgc3BhY2UgZXhjZXB0aW5nIE1p
+eGVyIGRldmljZSB3aGljaCBzdXBwb3J0cyBIVyBvdmVybGF5IHByaW9yaXR5IGNoYW5nZS4KPj4K
+Pj4gTGFjayBvZiBzcGVjaWFsIHJlZ2lzdHJ5IGZvciBtYW5pcHVsYXRpbmcgd2luZG93cyBvcmRl
+ciBkb2VzIG5vdCBtZWFuIGl0Cj4+IGNhbm5vdCBzdXBwb3J0IGR5bmFtaWMgenBvcy4KPj4KPiBX
+aHkgY2hhbmdpbmcgenBvcyBpbiB1c2VyIHNwYWNlIGlzIHJlcXVpcmVkPwo+Cj4+PiBJbiBmYWN0
+LCB3ZSBzdXBwb3J0ZWQgbXV0YWJsZSB6cG9zIGJlZm9yZSBidXQgY2hhbmdlZCBpdCB0byBpbW11
+dGFibGUgd2l0aCBzYW1lIHJlYXNvbi4KPj4KPj4gSXQgd2FzIGp1c3QgYnJva2VuIGlmIEkgcmVt
+ZW1iZXIgY29ycmVjdGx5Lgo+Pgo+IE5vLCBJIHdvcmtlZCB3ZWxsIGFuZCByZWFsIHVzZXIgdXNl
+ZCBpdCBJIHJlbWVtYmVyLgo+Cj4+PiBMYXN0bHksIHlvdXIgcGF0Y2ggbWFkZSByZWFsIHVzZXIg
+YnJva2VuLgo+Pgo+PiBXaG8/IEhvdz8KPiBXaW5kb3cgc2VydmVyIG9mIFRpemVuIGRpZG4ndCB3
+b3JrIGFuZCB5b3UgY2FuIHRlc3QgaXQgd2l0aCBiZWxvdyBpbWFnZSAtIEkgZGlkbid0IGNoZWNr
+IHdoeSBpdCBkb2Vzbid0LiBBbnl3YXksIHdlIGRvbid0IGhhdmUgdG8gYnJlYWsgcmVhbCB1c2Vy
+Lgo+IGh0dHA6Ly9kb3dubG9hZC50aXplbi5vcmcvc25hcHNob3RzL3RpemVuL3VuaWZpZWQvbGF0
+ZXN0L2ltYWdlcy9zdGFuZGFyZC9tb2JpbGUtd2F5bGFuZC1hcm12N2wtdG0yLwoKCkFyZSB5b3Ug
+c2F5aW5nIGl0IHdvcmtzIHdpdGggbGF0ZXN0IG1haW5saW5lIHdpdGhvdXQgbXkgcGF0Y2hlcz8K
+CgpSZWdhcmRzCgpBbmRyemVqCgoKPgo+IFRoYW5rcywKPiBJbmtpIERhZQo+Cj4+Cj4+IFJlZ2Fy
+ZHMKPj4KPj4gQW5kcnplago+Pgo+Pgo+Pj4gVGhhbmtzLAo+Pj4gSW5raSBEYWUKPj4+Cj4+Pj4g
+QXMgeW91IHNlZSB0aGVyZSBpcyBubyByZWxhdGlvbiBiZXR3ZWVuIHBsYW5lIG51bWJlciBhbmQg
+d2luZG93IG51bWJlciwKPj4+PiBidXQgd2luZG93IG51bWJlciBpcyBlcXVhbCB0byBwbGFuZSdz
+IHBvc2l0aW9uIGluIHpwb3Mtb3JkZXJlZCBsaXN0IG9mCj4+Pj4gcGxhbmVzIGFuZCB0aGlzIGlz
+IGV4YWN0IHZhbHVlIG9mIG5vcm1hbGl6ZWRfenBvcyBmaWVsZCBpbiBkcm1fcGxhbmVfc3RhdGUu
+Cj4+Pj4KPj4+Pgo+Pj4+IEkgaG9wZSB0aGlzIGV4dGVuZGVkIGV4cGxhbmF0aW9uIHdpbGwgY2xh
+cmlmeSB0aGluZ3MuCj4+Pj4KPj4+Pgo+Pj4+IFJlZ2FyZHMKPj4+Pgo+Pj4+IEFuZHJ6ZWoKPj4+
+Pgo+Pj4+Cj4+Pj4KPj4+Pj4gVGhhbmtzLAo+Pj4+PiBJbmtpIERhZQo+Pj4+Pgo+Pj4+Pj4gSXQg
+d2FzIHRlc3RlZCBvbiB0bTIgYW5kIHRyYXRzMi4KPj4+Pj4+Cj4+Pj4+PiBSZWdhcmRzCj4+Pj4+
+PiBBbmRyemVqCj4+Pj4+Pgo+Pj4+Pj4KPj4+Pj4+IEFuZHJ6ZWogSGFqZGEgKDMpOgo+Pj4+Pj4g
+ICBkcm0vZXh5bm9zL2RlY29uNTQzMzogYWRkIGR5bmFtaWMgenBvcyBzdXBwb3J0Cj4+Pj4+PiAg
+IGRybS9leHlub3MvZmltZDogY3JlYXRlIGxvY2FsIGhlbHBlciBmb3IgZGlzYWJsaW5nIGhhcmR3
+YXJlIHdpbmRvdwo+Pj4+Pj4gICBkcm0vZXh5bm9zL2ZpbWQ6IGFkZCBkeW5hbWljIHpwb3Mgc3Vw
+cG9ydAo+Pj4+Pj4KPj4+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJt
+X2RlY29uLmMgfCAyMyArKysrKy0tLS0tCj4+Pj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2ZpbWQuYyAgICAgIHwgNDIgKysrKysrKystLS0tLS0tLS0tLQo+Pj4+Pj4gIDIg
+ZmlsZXMgY2hhbmdlZCwgMjkgaW5zZXJ0aW9ucygrKSwgMzYgZGVsZXRpb25zKC0pCj4+Pj4+Pgo+
+Pj4+Cj4+Cj4+Cj4KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bAo=
