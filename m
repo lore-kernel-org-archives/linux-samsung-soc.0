@@ -1,61 +1,122 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH 3/3] dt-bindings: iio: adc: exynos-adc: Add S5PV210
- variant
-Date: Wed, 12 Dec 2018 17:26:04 +0000
-Message-ID: <20181212172604.6336779e@archlinux>
-References: <20181207191136.5464-1-pawel.mikolaj.chmiel@gmail.com>
-        <20181207191136.5464-4-pawel.mikolaj.chmiel@gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] ARM: dts: exynos: Specify I2S assigned clocks in proper
+ node
+Date: Wed, 12 Dec 2018 18:57:44 +0100
+Message-ID: <20181212175744.8287-1-s.nawrocki@samsung.com>
+References: <CGME20181212175813epcas2p26f7ec0e0e5e90d1e9cb7aeccd273e0ab@epcas2p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181207191136.5464-4-pawel.mikolaj.chmiel@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, kgene@kernel.org, krzk@kernel.org, xc-racer2@live.ca, broonie@kernel.org, arnaud.pouliquen@st.com, baolin.wang@linaro.org, smohanad@codeaurora.org, eugen.hristev@microchip.com, rdunlap@infradead.org, vilhelm.gray@gmail.com, freeman.liu@spreadtrum.com, marcus.folkesson@gmail.com, geert@linux-m68k.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: krzk@kernel.org
+Cc: robh+dt@kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri,  7 Dec 2018 20:11:36 +0100
-Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com> wrote:
+The assigned parent clocks should be normally specified in the consumer
+device's DT node, this ensures respective driver always sees correct clock
+settings when required.
 
-> From: Jonathan Bakker <xc-racer2@live.ca>
->=20
-> Add information about new compatible for S5PV210
->=20
-> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
-> Signed-off-by: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
+This patch fixes regression in audio subsystem on Odroid XU3/XU4 boards
+that appeared after commits:
 
-Applied to the togreg branch of iio.git and pushed out as
-testing for the autobuilders to play with it.
+'commit 647d04f8e07a ("ASoC: samsung: i2s: Ensure the RCLK rate is properly determined")'
+'commit 995e73e55f46 ("ASoC: samsung: i2s: Fix rclk_srcrate handling")'
+'commit 48279c53fd1d ("ASoC: samsung: i2s: Prevent external abort on exynos5433 I2S1 access")'
 
-Thanks,
+Without this patch the driver gets wrong clock as the I2S function (op_clk)
+clock in probe() and effectively the clock which is finally assigned from DT
+is not being enabled/disabled in the runtime resume/suspend ops.
 
-Jonathan
+Without the above listed commits the EXYNOS_I2S_BUS clock was always set
+as parent of CLK_I2S_RCLK_SRC regardless of DT settings so there was no issue
+with not enabled EXYNOS_SCLK_I2S.
 
-> ---
->  .../devicetree/bindings/iio/adc/samsung,exynos-adc.txt        | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc=
-.txt b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.txt
-> index 6c49db7f8ad2..a10c1f89037d 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.txt
-> +++ b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.txt
-> @@ -11,7 +11,7 @@ New driver handles the following
-> =20
->  Required properties:
->  - compatible:		Must be "samsung,exynos-adc-v1"
-> -				for exynos4412/5250 and s5pv210 controllers.
-> +				for exynos4412/5250 controllers.
->  			Must be "samsung,exynos-adc-v2" for
->  				future controllers.
->  			Must be "samsung,exynos3250-adc" for
-> @@ -28,6 +28,8 @@ Required properties:
->  				the ADC in s3c2443 and compatibles
->  			Must be "samsung,s3c6410-adc" for
->  				the ADC in s3c6410 and compatibles
-> +			Must be "samsung,s5pv210-adc" for
-> +				the ADC in s5pv210 and compatibles
->  - reg:			List of ADC register address range
->  			- The base address and range of ADC register
->  			- The base address and range of ADC_PHY register (every
+Cc: stable@vger.kernel.org # v4.17+
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi | 9 ++++-----
+ arch/arm/boot/dts/exynos5422-odroidxu4.dts        | 9 ++++-----
+ 2 files changed, 8 insertions(+), 10 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
+index 03611d50c5a9..e84544b220b9 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
+@@ -26,8 +26,7 @@
+ 			"Speakers", "SPKL",
+ 			"Speakers", "SPKR";
+ 
+-		assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>,
+-				<&clock CLK_MOUT_EPLL>,
++		assigned-clocks = <&clock CLK_MOUT_EPLL>,
+ 				<&clock CLK_MOUT_MAU_EPLL>,
+ 				<&clock CLK_MOUT_USER_MAU_EPLL>,
+ 				<&clock_audss EXYNOS_MOUT_AUDSS>,
+@@ -36,8 +35,7 @@
+ 				<&clock_audss EXYNOS_DOUT_AUD_BUS>,
+ 				<&clock_audss EXYNOS_DOUT_I2S>;
+ 
+-		assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>,
+-				<&clock CLK_FOUT_EPLL>,
++		assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
+ 				<&clock CLK_MOUT_EPLL>,
+ 				<&clock CLK_MOUT_MAU_EPLL>,
+ 				<&clock CLK_MAU_EPLL>,
+@@ -48,7 +46,6 @@
+ 				<0>,
+ 				<0>,
+ 				<0>,
+-				<0>,
+ 				<196608001>,
+ 				<(196608002 / 2)>,
+ 				<196608000>;
+@@ -84,4 +81,6 @@
+ 
+ &i2s0 {
+ 	status = "okay";
++	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
++	assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>;
+ };
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu4.dts b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
+index 4a30cc849b00..122174ea9e0a 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu4.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
+@@ -33,8 +33,7 @@
+ 		compatible = "samsung,odroid-xu3-audio";
+ 		model = "Odroid-XU4";
+ 
+-		assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>,
+-				<&clock CLK_MOUT_EPLL>,
++		assigned-clocks = <&clock CLK_MOUT_EPLL>,
+ 				<&clock CLK_MOUT_MAU_EPLL>,
+ 				<&clock CLK_MOUT_USER_MAU_EPLL>,
+ 				<&clock_audss EXYNOS_MOUT_AUDSS>,
+@@ -43,8 +42,7 @@
+ 				<&clock_audss EXYNOS_DOUT_AUD_BUS>,
+ 				<&clock_audss EXYNOS_DOUT_I2S>;
+ 
+-		assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>,
+-				<&clock CLK_FOUT_EPLL>,
++		assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
+ 				<&clock CLK_MOUT_EPLL>,
+ 				<&clock CLK_MOUT_MAU_EPLL>,
+ 				<&clock CLK_MAU_EPLL>,
+@@ -55,7 +53,6 @@
+ 				<0>,
+ 				<0>,
+ 				<0>,
+-				<0>,
+ 				<196608001>,
+ 				<(196608002 / 2)>,
+ 				<196608000>;
+@@ -79,6 +76,8 @@
+ 
+ &i2s0 {
+ 	status = "okay";
++	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
++	assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>;
+ };
+ 
+ &pwm {
+-- 
+2.19.2
