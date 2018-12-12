@@ -1,122 +1,39 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] ARM: dts: exynos: Specify I2S assigned clocks in proper
- node
-Date: Wed, 12 Dec 2018 18:57:44 +0100
-Message-ID: <20181212175744.8287-1-s.nawrocki@samsung.com>
-References: <CGME20181212175813epcas2p26f7ec0e0e5e90d1e9cb7aeccd273e0ab@epcas2p2.samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 3/4] arm64: dts: exynos: Pull for v4.21
+Date: Wed, 12 Dec 2018 12:53:18 -0800
+Message-ID: <20181212205318.tyfeilorpgfu6qbd@localhost>
+References: <20181209114911.25194-1-krzk@kernel.org>
+ <20181209114911.25194-4-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20181209114911.25194-4-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: krzk@kernel.org
-Cc: robh+dt@kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, stable@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The assigned parent clocks should be normally specified in the consumer
-device's DT node, this ensures respective driver always sees correct clock
-settings when required.
+On Sun, Dec 09, 2018 at 12:49:10PM +0100, Krzysztof Kozlowski wrote:
+> The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+> 
+>   Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+> 
+> are available in the Git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.21
+> 
+> for you to fetch changes up to 9deffb5ee78e41e2a5d6c448874a24caec6467d0:
+> 
+>   arm64: dts: exynos: Add all CPUs in cooling maps (2018-11-18 15:18:42 +0100)
+> 
+> ----------------------------------------------------------------
+> Samsung DTS ARM64 changes for v4.21
+> 
+> 1. Update DWC3 hardware modules to Exynos5433 specific variant.
+> 2. Update cooling maps to include all CPU devices in multiple DTS files.
 
-This patch fixes regression in audio subsystem on Odroid XU3/XU4 boards
-that appeared after commits:
+Merged, thanks!
 
-'commit 647d04f8e07a ("ASoC: samsung: i2s: Ensure the RCLK rate is properly determined")'
-'commit 995e73e55f46 ("ASoC: samsung: i2s: Fix rclk_srcrate handling")'
-'commit 48279c53fd1d ("ASoC: samsung: i2s: Prevent external abort on exynos5433 I2S1 access")'
 
-Without this patch the driver gets wrong clock as the I2S function (op_clk)
-clock in probe() and effectively the clock which is finally assigned from DT
-is not being enabled/disabled in the runtime resume/suspend ops.
-
-Without the above listed commits the EXYNOS_I2S_BUS clock was always set
-as parent of CLK_I2S_RCLK_SRC regardless of DT settings so there was no issue
-with not enabled EXYNOS_SCLK_I2S.
-
-Cc: stable@vger.kernel.org # v4.17+
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi | 9 ++++-----
- arch/arm/boot/dts/exynos5422-odroidxu4.dts        | 9 ++++-----
- 2 files changed, 8 insertions(+), 10 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
-index 03611d50c5a9..e84544b220b9 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
-@@ -26,8 +26,7 @@
- 			"Speakers", "SPKL",
- 			"Speakers", "SPKR";
- 
--		assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>,
--				<&clock CLK_MOUT_EPLL>,
-+		assigned-clocks = <&clock CLK_MOUT_EPLL>,
- 				<&clock CLK_MOUT_MAU_EPLL>,
- 				<&clock CLK_MOUT_USER_MAU_EPLL>,
- 				<&clock_audss EXYNOS_MOUT_AUDSS>,
-@@ -36,8 +35,7 @@
- 				<&clock_audss EXYNOS_DOUT_AUD_BUS>,
- 				<&clock_audss EXYNOS_DOUT_I2S>;
- 
--		assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>,
--				<&clock CLK_FOUT_EPLL>,
-+		assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
- 				<&clock CLK_MOUT_EPLL>,
- 				<&clock CLK_MOUT_MAU_EPLL>,
- 				<&clock CLK_MAU_EPLL>,
-@@ -48,7 +46,6 @@
- 				<0>,
- 				<0>,
- 				<0>,
--				<0>,
- 				<196608001>,
- 				<(196608002 / 2)>,
- 				<196608000>;
-@@ -84,4 +81,6 @@
- 
- &i2s0 {
- 	status = "okay";
-+	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
-+	assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>;
- };
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu4.dts b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
-index 4a30cc849b00..122174ea9e0a 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu4.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
-@@ -33,8 +33,7 @@
- 		compatible = "samsung,odroid-xu3-audio";
- 		model = "Odroid-XU4";
- 
--		assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>,
--				<&clock CLK_MOUT_EPLL>,
-+		assigned-clocks = <&clock CLK_MOUT_EPLL>,
- 				<&clock CLK_MOUT_MAU_EPLL>,
- 				<&clock CLK_MOUT_USER_MAU_EPLL>,
- 				<&clock_audss EXYNOS_MOUT_AUDSS>,
-@@ -43,8 +42,7 @@
- 				<&clock_audss EXYNOS_DOUT_AUD_BUS>,
- 				<&clock_audss EXYNOS_DOUT_I2S>;
- 
--		assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>,
--				<&clock CLK_FOUT_EPLL>,
-+		assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
- 				<&clock CLK_MOUT_EPLL>,
- 				<&clock CLK_MOUT_MAU_EPLL>,
- 				<&clock CLK_MAU_EPLL>,
-@@ -55,7 +53,6 @@
- 				<0>,
- 				<0>,
- 				<0>,
--				<0>,
- 				<196608001>,
- 				<(196608002 / 2)>,
- 				<196608000>;
-@@ -79,6 +76,8 @@
- 
- &i2s0 {
- 	status = "okay";
-+	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
-+	assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>;
- };
- 
- &pwm {
--- 
-2.19.2
+-Olof
