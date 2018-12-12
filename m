@@ -1,51 +1,60 @@
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: [PATCH 1/3] arm: Convert arm boot_lock to raw
-Date: Wed, 12 Dec 2018 11:15:12 +0000
-Message-ID: <20181212111512.GG9507@n2100.armlinux.org.uk>
-References: <20181207102749.15205-1-bigeasy@linutronix.de>
- <20181207102749.15205-2-bigeasy@linutronix.de>
- <20181207130012.GX6920@n2100.armlinux.org.uk>
- <CACRpkdbvyimBfCCBOEr84P+_y6+sBkqz0+nmFyYeOJ4cXjsA6A@mail.gmail.com>
- <20181209004138.GC9507@n2100.armlinux.org.uk>
- <20181210143718.plwd36vdxxd7q2el@linutronix.de>
- <CACRpkdby=Xreh0VPpHBPLhvupgQyEqDiae+e0u=-n3o2SWVMTw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdby=Xreh0VPpHBPLhvupgQyEqDiae+e0u=-n3o2SWVMTw@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>, viresh kumar <viresh.kumar@linaro.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, David Brown <david.brown@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Viresh Kumar <vireshk@kernel.org>, Xu Wei <xuwei5@hisilicon.com>, ext Tony Lindgren <tony@atomide.com>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, Andy Gross <andy.gross@linaro.org>, Arnd Bergmann <arnd@arndb.de>, linux-arm-msm@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Linux-OMAP <linux-omap@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Barry Song <baohua@kernel.org>, Frank Rowand <frank.rowand@am.sony.com>, Patrice CHOTARD <patrice.chotard@st.com>, shiraz hashim <shiraz.linux.kernel@gmail.com>And
+From: Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH v3] media: exynos4-is: convert to DEFINE_SHOW_ATTRIBUTE
+Date: Wed, 12 Dec 2018 11:20:14 -0500
+Message-ID: <20181212162014.23409-1-tiny.windzz@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: kyungmin.park@samsung.com, s.nawrocki@samsung.com, mchehab@kernel.org, kgene@kernel.org, krzk@kernel.org
+Cc: linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 07:19:32PM +0100, Linus Walleij wrote:
-> On Mon, Dec 10, 2018 at 3:37 PM Sebastian Andrzej Siewior
-> <bigeasy@linutronix.de> wrote:
-> 
-> > Okay. So the whole patch won't get applied, right? If so, may I please
-> > get the
-> >         arch/arm/plat-versatile/platsmp.c
-> >
-> > hunk applied?
-> 
-> Can you please send one patch per mach-* plat-*?
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
-I think just patch arch/arm/plat-versatile/platsmp.c and ignore the
-rest - as I say, the right solution is to eliminate the lock.
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/media/platform/exynos4-is/fimc-is.c | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
 
-I have a patch to simply remove the lock from omap2+.
-
+diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
+index f5fc54de19da..02da0b06e56a 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is.c
++++ b/drivers/media/platform/exynos4-is/fimc-is.c
+@@ -738,7 +738,7 @@ int fimc_is_hw_initialize(struct fimc_is *is)
+ 	return 0;
+ }
+ 
+-static int fimc_is_log_show(struct seq_file *s, void *data)
++static int fimc_is_show(struct seq_file *s, void *data)
+ {
+ 	struct fimc_is *is = s->private;
+ 	const u8 *buf = is->memory.vaddr + FIMC_IS_DEBUG_REGION_OFFSET;
+@@ -752,17 +752,7 @@ static int fimc_is_log_show(struct seq_file *s, void *data)
+ 	return 0;
+ }
+ 
+-static int fimc_is_debugfs_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, fimc_is_log_show, inode->i_private);
+-}
+-
+-static const struct file_operations fimc_is_debugfs_fops = {
+-	.open		= fimc_is_debugfs_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(fimc_is);
+ 
+ static void fimc_is_debugfs_remove(struct fimc_is *is)
+ {
+@@ -777,7 +767,7 @@ static int fimc_is_debugfs_create(struct fimc_is *is)
+ 	is->debugfs_entry = debugfs_create_dir("fimc_is", NULL);
+ 
+ 	dentry = debugfs_create_file("fw_log", S_IRUGO, is->debugfs_entry,
+-				     is, &fimc_is_debugfs_fops);
++				     is, &fimc_is_fops);
+ 	if (!dentry)
+ 		fimc_is_debugfs_remove(is);
+ 
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+2.17.0
