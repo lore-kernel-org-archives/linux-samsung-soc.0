@@ -1,148 +1,88 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 0/3] drm/exynos: add support for dynamic zpos in DECON
- and FIMD
-Date: Wed, 12 Dec 2018 09:43:17 +0100
-Message-ID: <5a81077e-f6ef-c44c-6de6-b7e052482ef0@samsung.com>
-References: <CGME20181206093905eucas1p133ead84adfb9dd7a9756ce91b6b35895@eucas1p1.samsung.com>
- <20181206093857.22324-1-a.hajda@samsung.com>
- <fa32dd3a-3e8a-ade1-5b3b-f8394ff34e75@samsung.com>
- <a3173dbf-24c6-b70f-74d5-eada10ac99ac@samsung.com>
- <837a0841-cee1-c851-a01e-4b95d1670d32@samsung.com>
- <7ee83acd-d7ac-b11c-3a84-87006c8c9f8f@samsung.com>
- <af900fc1-ed07-d784-e8e6-c05aaa583afb@samsung.com>
- <83ab6162-3d68-1cf9-b969-071475e44603@samsung.com>
- <3f37c077-4c0c-fb25-478f-9d41392bc332@samsung.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [RFC/RFT 00/10] i2c: move handling of suspended adapters to the
+ core
+Date: Wed, 12 Dec 2018 11:09:41 +0100
+Message-ID: <e8c68ef5-5085-e304-4959-82c4959f4511@redhat.com>
+References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
+ <2094a0d4-733f-7f74-abd2-bdb28edd0f80@redhat.com>
+ <20181211234102.GA6701@kunai>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <3f37c077-4c0c-fb25-478f-9d41392bc332@samsung.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181211234102.GA6701@kunai>
 Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMTIuMTIuMjAxOCAwMDoyNiwgSW5raSBEYWUgd3JvdGU6Cj4KPiAxOC4gMTIuIDExLiDsmKTt
-m4QgNTozNuyXkCBBbmRyemVqIEhhamRhIOydtCjqsIApIOyTtCDquIA6Cj4+IE9uIDExLjEyLjIw
-MTggMDk6MDEsIElua2kgRGFlIHdyb3RlOgo+Pj4gMTguIDEyLiAxMS4g7Jik7ZuEIDQ6NDnsl5Ag
-QW5kcnplaiBIYWpkYSDsnbQo6rCAKSDsk7Qg6riAOgo+Pj4+IE9uIDExLjEyLjIwMTggMDA6NDUs
-IElua2kgRGFlIHdyb3RlOgo+Pj4+PiBIaSBBbmRyemVqLAo+Pj4+Pgo+Pj4+PiAxOC4gMTIuIDEw
-LiDsmKTtm4QgNDozNeyXkCBBbmRyemVqIEhhamRhIOydtCjqsIApIOyTtCDquIA6Cj4+Pj4+PiBI
-aSBJbmtpLAo+Pj4+Pj4KPj4+Pj4+IE9uIDEwLjEyLjIwMTggMDM6MjUsIElua2kgRGFlIHdyb3Rl
-Ogo+Pj4+Pj4+IEhpIEFuZHJ6ZWosCj4+Pj4+Pj4KPj4+Pj4+PiAxOC4gMTIuIDYuIOyYpO2bhCA2
-OjM47JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0IOq4gDoKPj4+Pj4+Pj4gSGkgSW5raSwK
-Pj4+Pj4+Pj4KPj4+Pj4+Pj4gVGhpcyBzbWFsbCBwYXRjaHNldCBhZGRzIGR5bmFtaWMgenBvcyBz
-dXBwb3J0IGZvciBERUNPTiBhbmQgRklNRC4KPj4+Pj4+PiBUaGlzIHBhdGNoIHdpbGwgYWxsb3cg
-dXNlciBzcGFjZSB0byBjaGFuZ2UgenBvcy4gSG93ZXZlciwgREVDT04gYW5kIEZJTUQgZGV2aWNl
-cyBoYXZlIGZpeGVkIHByaW9yaXR5IG9mIEhXIG92ZXJsYXlzLgo+Pj4+Pj4+IFRoaXMgd291bGQg
-bWVhbiB0aGF0IHpwb3MgY2hhbmdlIGJ5IHVzZXIgc3BhY2UgZG9lc24ndCBndWFyYW50ZWUgY29y
-cmVjdCBIVyBvdmVybGF5IHByaW9yaXR5Lgo+Pj4+Pj4+Cj4+Pj4+Pj4gV2h5IGRvIHlvdSB3YW50
-IHRvIHN1cHBvcnQgbXV0YWJsZSB6cG9zPwo+Pj4+Pj4gUHJhY3RpY2FsbHkgeW91IGhhdmUgcGF0
-Y2hlcyB3aGljaCBwcm92ZXMgaXQgd29ya3MsIHlvdSBjYW4gc2VlIHRoYXQKPj4+Pj4+IGNoYW5n
-aW5nIHpwb3MgdmFsdWUgcmVzdWx0cyBpbiBhZGVxdWF0ZSBjaGFuZ2UgaW4gZGlzcGxheWVkIGlt
-YWdlLgo+Pj4+Pj4KPj4+Pj4+IENvbmNlcHR1YWxseSBpdCBpcyBqdXN0IGEgbWF0dGVyIG9mIGRp
-c2Nvbm5lY3RpbmcgaGFyZHdhcmUgd2luZG93cwo+Pj4+Pj4gcHJlc2VudCBpbiBERUNPTiBhbmQg
-RklNRCBmcm9tIERSTSBwbGFuZXMgd2hpY2ggYXJlIHNvZnR3YXJlIGVudGl0aWVzLgo+Pj4+Pj4K
-Pj4+Pj4+IFlvdSBjYW4gcmVhc29uIGFib3V0IGl0IHRoaXMgd2F5Ogo+Pj4+Pj4KPj4+Pj4+IC0g
-ZHJtIHBsYW5lIGlzIGEgZnJhbWVidWZmZXIgcGx1cyBpbmZvcm1hdGlvbnMgaG93IGl0IHNob3Vs
-ZCBiZQo+Pj4+Pj4gdHJhbnNmb3JtZWQvZGlzcGxheWVkIG9uIERFQ09OL0ZJTUQsCj4+Pj4+Pgo+
-Pj4+Pj4gLSBodyB3aW5kb3cgaW4gREVDT04vRklNRCBpcyBqdXN0IGEgY2hhbm5lbCB0aHJvdWdo
-IHdoaWNoIHBsYW5lIGlzIHNlbmQKPj4+Pj4+IHRvIHRoZSBkaXNwbGF5Lgo+Pj4+Pj4KPj4+Pj4+
-IERFQ09OIGFuZCBGSU1EIGhhcyBmaXhlZCBodyB3aW5kb3dzIG9yZGVyIC0gd2luZG93cyB3aXRo
-IGxvd2VyIG51bWJlcnMKPj4+Pj4+IGFyZSBkaXNwbGF5ZWQgYmVsb3cgd2luZG93cyB3aXRoIGhp
-Z2hlciBudW1iZXIuIFRvIGRpc3BsYXkgcGxhbmVzIGluCj4+Pj4+PiBnaXZlbiB6LW9yZGVyIHlv
-dSBqdXN0IG5lZWQgdG8gc2VuZCB0aGVtIHZpYSB3aW5kb3dzIHdpdGggYXBwcm9wcmlhdGUKPj4+
-Pj4+IGluZGV4IC0gZmFydGhlc3QgcGxhbmUgc2hvdWxkIGdvIGFsd2F5cyB2aWEgd2luMCwgY2xv
-c2VyIG9uZSB2aWEgd2luMSwKPj4+Pj4+IC4uLiwgdGlsbCB0aGUgbGFzdCBwbGFuZS4KPj4+Pj4+
-Cj4+Pj4+PiBTbyBmb3IgZXhhbXBsZSBpZiB5b3UgaGF2ZSB0aHJlZSBwbGFuZXMgYW5kIHdhbnQg
-dG8gZGlzcGxheSB0aGVtIGluCj4+Pj4+PiBmb2xsb3dpbmcgb3JkZXIgKGZpcnN0IG9uZSBmYXJ0
-aGVzdCwgbGFzdCBvbmUgY2xvc2VzdCk6Cj4+Pj4+Pgo+Pj4+Pj4gcGxhbmUyLCBwbGFuZTEsIHBs
-YW5lMwo+Pj4+Pj4KPj4+Pj4+IHlvdSBzaG91bGQgbWFwIHRoZW0gdG8gcGxhbmVzIGFzIGZvbGxv
-dzoKPj4+Pj4+Cj4+Pj4+PiBwbGFuZTIgLT4gd2luMCwgcGxhbmUxIC0+IHdpbjEsIHBsYW5lMyAt
-PiB3aW4yCj4+Pj4+Pgo+Pj4+Pj4gdGhlbiBmb3IgZXhhbXBsZSBwbGFuZTIgaXMgZGlzYWJsZWQs
-IHdlIHdpbGwgaGF2ZSBmb2xsb3dpbmcgbWFwcGluZzoKPj4+Pj4+Cj4+Pj4+PiBwbGFuZTEgLT4g
-d2luMCwgcGxhbmUzIC0+IHdpbjEsIHdpbjIgLSBkaXNhYmxlZAo+Pj4+PiBQbGFuZTEgaXMgZGlz
-cGxheWVkIGJlbG93IFBsYW5lMy4KPj4+PiBBbmQgdGhpcyBpcyB3aGF0IHdlIHdhbnRlZCwgdGhl
-IGluaXRpYWwgb3JkZXIgd2FzOiBwbGFuZTIsIHBsYW5lMSwKPj4+PiBwbGFuZTMsIGZpcnN0IGZh
-cnRoZXN0IChvciBsb3dlc3QgaWYgeW91IHByZWZlciB0aGlzIG5hbWluZyBzY2hlbWEpLgo+Pj4+
-Cj4+Pj4KPj4+Pj4+IHRoZW4gaWYgeW91IGNoYW5nZSB6b3JkZXIgb2YgcGxhbmVzIHRvOiBwbGFu
-ZTMsIHBsYW5lMToKPj4+Pj4+Cj4+Pj4+PiBwbGFuZTMgLT4gd2luMCwgcGxhbmUxIC0+IHdpbjEK
-Pj4+Pj4gUGxhbmUzIGlzIGRpc3BsYXllZCBiZWxvdyBQbGFuZTEgYmVjYXVzZSBERUNPTi9GSU1E
-IEhXIGFyZW4ndCBhYmxlIHRvIGNoYW5nZSBIVyBvdmVybGF5IHByaXJvdHkuCj4+Pj4gTm8sIHBs
-YW5lMyBpcyBkaXNwbGF5ZWQgYmVsb3cgcGxhbmUxIGJlY2F1c2Ugd2Ugc2VudCBpdCB2aWEgd2lu
-MCwgaWYgd2UKPj4+PiB3YW50IGludmVyc2Ugd2UgY2FuIHNlbmQgcGxhbmUzIHZpYSB3aW4xIGFu
-ZCBwbGFuZTEgdmlhIHdpbjAuCj4+Pj4KPj4+Pgo+Pj4+PiBIb3dldmVyLCB1c2VyIHNwYWNlIHdh
-bnRlZCB0aGF0IFBsYW5lMSBpcyBkaXNwbGF5ZWQgYmVsb3cgUGxhbmUzLiBMaWtlIHRoaXMsIHpw
-b3MgY2hhbmdlIGJ5IHVzZXIgc3BhY2UgZG9lc24ndCBndWFyYW50ZWUgY29ycmVjdCBIVyBvdmVy
-bGF5IHByaW9yaXR5Lgo+Pj4+IEFzIEkgc2FpZCBiZWZvcmUgaW4gdGhpcyBleGFtcGxlIHVzZXJz
-cGFjZSB3YW50ZWQgcGxhbmUzIGJlbG93IHBsYW5lMSwKPj4+PiBhbmQgYXMgSSB3cm90ZSBpbiBj
-b21tZW50IGFib3ZlIGFueSBvcmRlciBvZiBwbGFuZXMgdXNlciB3YW50IGRyaXZlciBpcwo+Pj4+
-IGFibGUgdG8gcmVhbGl6ZSB3aXRoIHRoaXMgcGF0Y2guCj4+Pj4KPj4+Pgo+Pj4+PiBBbmQgdGhl
-cmUgaXMgbm8gYW55IHJlYXNvbiB0byBjaGFuZ2UgenBvcyBpbiB1c2VyIHNwYWNlIGV4Y2VwdGlu
-ZyBNaXhlciBkZXZpY2Ugd2hpY2ggc3VwcG9ydHMgSFcgb3ZlcmxheSBwcmlvcml0eSBjaGFuZ2Uu
-Cj4+Pj4gTGFjayBvZiBzcGVjaWFsIHJlZ2lzdHJ5IGZvciBtYW5pcHVsYXRpbmcgd2luZG93cyBv
-cmRlciBkb2VzIG5vdCBtZWFuIGl0Cj4+Pj4gY2Fubm90IHN1cHBvcnQgZHluYW1pYyB6cG9zLgo+
-Pj4+Cj4+PiBXaHkgY2hhbmdpbmcgenBvcyBpbiB1c2VyIHNwYWNlIGlzIHJlcXVpcmVkPwo+Pj4K
-Pj4+Pj4gSW4gZmFjdCwgd2Ugc3VwcG9ydGVkIG11dGFibGUgenBvcyBiZWZvcmUgYnV0IGNoYW5n
-ZWQgaXQgdG8gaW1tdXRhYmxlIHdpdGggc2FtZSByZWFzb24uCj4+Pj4gSXQgd2FzIGp1c3QgYnJv
-a2VuIGlmIEkgcmVtZW1iZXIgY29ycmVjdGx5Lgo+Pj4+Cj4+PiBObywgSSB3b3JrZWQgd2VsbCBh
-bmQgcmVhbCB1c2VyIHVzZWQgaXQgSSByZW1lbWJlci4KPj4+Cj4+Pj4+IExhc3RseSwgeW91ciBw
-YXRjaCBtYWRlIHJlYWwgdXNlciBicm9rZW4uCj4+Pj4gV2hvPyBIb3c/Cj4+PiBXaW5kb3cgc2Vy
-dmVyIG9mIFRpemVuIGRpZG4ndCB3b3JrIGFuZCB5b3UgY2FuIHRlc3QgaXQgd2l0aCBiZWxvdyBp
-bWFnZSAtIEkgZGlkbid0IGNoZWNrIHdoeSBpdCBkb2Vzbid0LiBBbnl3YXksIHdlIGRvbid0IGhh
-dmUgdG8gYnJlYWsgcmVhbCB1c2VyLgo+Pj4gaHR0cDovL2Rvd25sb2FkLnRpemVuLm9yZy9zbmFw
-c2hvdHMvdGl6ZW4vdW5pZmllZC9sYXRlc3QvaW1hZ2VzL3N0YW5kYXJkL21vYmlsZS13YXlsYW5k
-LWFybXY3bC10bTIvCj4+Cj4+IEFyZSB5b3Ugc2F5aW5nIGl0IHdvcmtzIHdpdGggbGF0ZXN0IG1h
-aW5saW5lIHdpdGhvdXQgbXkgcGF0Y2hlcz8KPiBSaWdodC4gYWN0dWFsbHksIEkgY2hlY2tlZCB5
-b3VyIHBhdGNoIHdpdGggVGl6ZW4gaW1hZ2UgcmVsZWFzZWQgaW4gU2VwdCBhbmQgaXQgd29ya2Vk
-IHdlbGwgd2l0aG91dCB5b3VyIHBhdGNoIGJ1dCB3aXRoIHlvdXIgcGF0Y2ggaXQgZGlkbid0IHdv
-cmsuCgoKTm8gc3VycHJpc2UsIGl0IGRpZCBub3Qgd29yayB3aXRoIG1peGVyIGZvciB0aGUgc2Ft
-ZSByZWFzb24gKGJyb2tlbgpkeW5hbWljIHpwb3MgaGFuZGxpbmcpLCB1c2Vyc3BhY2UgY29kZSB3
-YXMgd3JpdHRlbiBmb3IgYW5kIHRlc3RlZCBvbgpzcGVjaWZpYyB2ZXJzaW9uIG9mIGhhcmR3YXJl
-LgoKQmVzaWRlIHVzZXJzcGFjZSB0aGVyZSBjb3VsZCBiZSBzb21lIGRpZmZlcmVuY2VzIG9uIGtl
-cm5lbCBzaWRlCnJlZ2FyZGluZyB6cG9zLCBJIHdpbGwgbG9vayBhbmQgdGVzdCB0aXplbiBrZXJu
-ZWwgYW5kIGxldCB5b3Uga25vdy4KCgo+IFdpdGggbGF0ZXN0IFRpemVuIGltYWdlIERpc3BsYXkg
-aXMga2VlcGluZyBibGFjayBzY3JlZW4gd2l0aG91dCB5b3VyIHBhdGNoIGJ1dCB3aW5kb3cgc2Vy
-dmVyIHdvcmtlZCB3ZWxsLiBTZWVtcyBsYXRlc3QgVGl6ZW4gaW1hZ2UgaGFzIHNvbWUgcHJvYmxl
-bS4KCgpIZXJlIGlzIHNhbXBsZSBzY3JpcHQgZm9yIG1vZGV0ZXN0IG9uIHRtMiB3aXRoIG1haW5s
-aW5lIGtlcm5lbCwgd2hpY2gKc2hvd3MgaG93IGR5bmFtaWMgenBvcyB3b3JrczoKCi0tLS0KCiMh
-L2Jpbi9iYXNoIC14CgpzbGVlcCAzNjAwIHwgbW9kZXRlc3QgLU1leHlub3MgLVA1NTo1MTJ4NTEy
-KzEwKzEwIC1QNTU6NTEyeDUxMisyMTArMjEwCi13MzA6YWxwaGE6MzAwMDAgLXczNTphbHBoYTo1
-MDAwMCAtdzQwOnpwb3M6MCAtdzMwOnpwb3M6MSAtdzM1Onpwb3M6MiAtZCAmCndoaWxlIHJlYWQ7
-IGRvCsKgwqDCoCBtb2RldGVzdCAtTWV4eW5vcyAtdzMwOnpwb3M6MiAtdzM1Onpwb3M6MQrCoMKg
-wqAgcmVhZArCoMKgwqAgbW9kZXRlc3QgLU1leHlub3MgLXczMDp6cG9zOjEgLXczNTp6cG9zOjIK
-ZG9uZQotLS0tLQoKT2YgY291cnNlIENSVEMvUExBTkUgaWRzIGNhbiBkaWZmZXJzIG9uIHlvdXIg
-YnVpbGQsIHNvIHRoZXkgc2hvdWxkIGJlCmFkanVzdGVkLgoKClJlZ2FyZHMKCkFuZHJ6ZWoKCgo+
-Cj4gVGhhbmtzLAo+IElua2kgRGFlCj4KPj4KPj4gUmVnYXJkcwo+Pgo+PiBBbmRyemVqCj4+Cj4+
-Cj4+PiBUaGFua3MsCj4+PiBJbmtpIERhZQo+Pj4KPj4+PiBSZWdhcmRzCj4+Pj4KPj4+PiBBbmRy
-emVqCj4+Pj4KPj4+Pgo+Pj4+PiBUaGFua3MsCj4+Pj4+IElua2kgRGFlCj4+Pj4+Cj4+Pj4+PiBB
-cyB5b3Ugc2VlIHRoZXJlIGlzIG5vIHJlbGF0aW9uIGJldHdlZW4gcGxhbmUgbnVtYmVyIGFuZCB3
-aW5kb3cgbnVtYmVyLAo+Pj4+Pj4gYnV0IHdpbmRvdyBudW1iZXIgaXMgZXF1YWwgdG8gcGxhbmUn
-cyBwb3NpdGlvbiBpbiB6cG9zLW9yZGVyZWQgbGlzdCBvZgo+Pj4+Pj4gcGxhbmVzIGFuZCB0aGlz
-IGlzIGV4YWN0IHZhbHVlIG9mIG5vcm1hbGl6ZWRfenBvcyBmaWVsZCBpbiBkcm1fcGxhbmVfc3Rh
-dGUuCj4+Pj4+Pgo+Pj4+Pj4KPj4+Pj4+IEkgaG9wZSB0aGlzIGV4dGVuZGVkIGV4cGxhbmF0aW9u
-IHdpbGwgY2xhcmlmeSB0aGluZ3MuCj4+Pj4+Pgo+Pj4+Pj4KPj4+Pj4+IFJlZ2FyZHMKPj4+Pj4+
-Cj4+Pj4+PiBBbmRyemVqCj4+Pj4+Pgo+Pj4+Pj4KPj4+Pj4+Cj4+Pj4+Pj4gVGhhbmtzLAo+Pj4+
-Pj4+IElua2kgRGFlCj4+Pj4+Pj4KPj4+Pj4+Pj4gSXQgd2FzIHRlc3RlZCBvbiB0bTIgYW5kIHRy
-YXRzMi4KPj4+Pj4+Pj4KPj4+Pj4+Pj4gUmVnYXJkcwo+Pj4+Pj4+PiBBbmRyemVqCj4+Pj4+Pj4+
-Cj4+Pj4+Pj4+Cj4+Pj4+Pj4+IEFuZHJ6ZWogSGFqZGEgKDMpOgo+Pj4+Pj4+PiAgIGRybS9leHlu
-b3MvZGVjb241NDMzOiBhZGQgZHluYW1pYyB6cG9zIHN1cHBvcnQKPj4+Pj4+Pj4gICBkcm0vZXh5
-bm9zL2ZpbWQ6IGNyZWF0ZSBsb2NhbCBoZWxwZXIgZm9yIGRpc2FibGluZyBoYXJkd2FyZSB3aW5k
-b3cKPj4+Pj4+Pj4gICBkcm0vZXh5bm9zL2ZpbWQ6IGFkZCBkeW5hbWljIHpwb3Mgc3VwcG9ydAo+
-Pj4+Pj4+Pgo+Pj4+Pj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9k
-ZWNvbi5jIHwgMjMgKysrKystLS0tLQo+Pj4+Pj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2ZpbWQuYyAgICAgIHwgNDIgKysrKysrKystLS0tLS0tLS0tLQo+Pj4+Pj4+PiAg
-MiBmaWxlcyBjaGFuZ2VkLCAyOSBpbnNlcnRpb25zKCspLCAzNiBkZWxldGlvbnMoLSkKPj4+Pj4+
-Pj4KPj4+Pgo+Pgo+Pgo+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWwK
+Hi,
+
+On 12-12-18 00:41, Wolfram Sang wrote:
+> Hi Hans,
+> 
+> thanks for testing this series!
+> 
+>> Note that the i2c-sprd driver changes in your patchset also get close
+>> to triggering this problem, but they dodge the bullet because there
+>> are separate system-wide and runtime suspend handlers and only the
+>> system-wide handlers call the new i2c_mark_adapter_suspended() function.
+> 
+> Yes, this what I assumed to be all around - seperate handlers for RPM
+> and PM. And I also assumed that they could be seperated if they aren't
+> already. Until I read...
+> 
+>> As I explain in the commit message of the first attached patch
+>> simply always using split handlers is not really an option because
+>> of adapter drivers using DPM_FLAG_SMART_PREPARE or
+>> DPM_FLAG_SMART_SUSPEND.
+> 
+> ... this. I don't know what these flags do (and reading SMART in there
+> gives me more a 'uh-oh' feeling)
+
+On x86 the lines between runtime suspend and system-suspend are blurring
+with technologies like "connected standby" and in general devices moving
+to suspend2idle as system-suspend state, I guess this also applies to
+modern smartphone platforms but I'm not following those closely.
+
+What this means on x86 is that the firmware is not doing any suspend
+handling anymore and the OS / device-drivers get to do all the suspend.
+For many devices this means that if they are runtime-suspended, and there
+is no difference between the runtime and system suspend handling at the
+driver level, they can be left as is, so during a system suspend they are
+not touched at all (and left runtime suspended during system resume).
+
+The "SMART" bit is really not all that smart, SMART_PREPARE means that
+the drivers pm prepare callback will return positive non 0 (e.g. 1) to
+indicate that the device may not be kept in its runtime suspended
+state when transitioning to system-suspend, otoh when the prepare
+callback returns 0 and the SMART_PREPARE flag is set then *all* suspend/
+resume handling can be skipped during a system suspend.
+
+SMART_SUSPEND means that if the device is runtime-suspended it may be left
+as such, this only gets checked if the driver either does not have the
+SMART_PREPARE flag, or the prepare callback indicated that skipping the
+entire suspend/resume handling is not ok.
+
+So this is not that scary, but it does require driver authors to know
+what they are doing...
+
+> but if the handlers can't be split, the
+> issues you were seeing are a consequence, yes.
+> 
+> For me, this sadly spoils the whole concept. The patches you add make
+> things even more complicated. Not happy about that.
+
+Agreed, they don't fill me with happiness either.
+
+> Looking at the open coded version you did for the designware driver, I
+> wonder now if it is better to just leave it at driver level? Need to
+> sleep over it, though.
+
+I myself was thinking in the same direction (leave the entire suspended
+check at the driver level).
+
+Regards,
+
+Hans
