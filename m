@@ -1,160 +1,65 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 0/3] drm/exynos: add support for dynamic zpos in DECON
- and FIMD
-Date: Thu, 13 Dec 2018 09:50:12 +0900
-Message-ID: <c838da55-d57e-c081-6d64-bf29bb7054bc@samsung.com>
-References: <CGME20181206093905eucas1p133ead84adfb9dd7a9756ce91b6b35895@eucas1p1.samsung.com>
- <20181206093857.22324-1-a.hajda@samsung.com>
- <fa32dd3a-3e8a-ade1-5b3b-f8394ff34e75@samsung.com>
- <a3173dbf-24c6-b70f-74d5-eada10ac99ac@samsung.com>
- <837a0841-cee1-c851-a01e-4b95d1670d32@samsung.com>
- <7ee83acd-d7ac-b11c-3a84-87006c8c9f8f@samsung.com>
- <af900fc1-ed07-d784-e8e6-c05aaa583afb@samsung.com>
- <83ab6162-3d68-1cf9-b969-071475e44603@samsung.com>
- <3f37c077-4c0c-fb25-478f-9d41392bc332@samsung.com>
- <5a81077e-f6ef-c44c-6de6-b7e052482ef0@samsung.com>
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+Subject: Re: [PATCH 1/3] arm: Convert arm boot_lock to raw
+Date: Thu, 13 Dec 2018 11:48:42 +0000
+Message-ID: <20181213114842.GJ9507@n2100.armlinux.org.uk>
+References: <20181207102749.15205-1-bigeasy@linutronix.de>
+ <20181207102749.15205-2-bigeasy@linutronix.de>
+ <20181207130012.GX6920@n2100.armlinux.org.uk>
+ <CACRpkdbvyimBfCCBOEr84P+_y6+sBkqz0+nmFyYeOJ4cXjsA6A@mail.gmail.com>
+ <20181209004138.GC9507@n2100.armlinux.org.uk>
+ <20181210143718.plwd36vdxxd7q2el@linutronix.de>
+ <CACRpkdby=Xreh0VPpHBPLhvupgQyEqDiae+e0u=-n3o2SWVMTw@mail.gmail.com>
+ <20181211212930.kcap5kx6bff6bpuu@linutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <5a81077e-f6ef-c44c-6de6-b7e052482ef0@samsung.com>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20181211212930.kcap5kx6bff6bpuu@linutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>, viresh kumar <viresh.kumar@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, David Brown <david.brown@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Viresh Kumar <vireshk@kernel.org>, Xu Wei <xuwei5@hisilicon.com>, ext Tony Lindgren <tony@atomide.com>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, Andy Gross <andy.gross@linaro.org>, Arnd Bergmann <arnd@arndb.de>, linux-arm-msm@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Linux-OMAP <linux-omap@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Barry Song <baohua@kernel.org>, Frank Rowand <frank.rowand@am.sony.com>, Patrice CHOTARD <patrice.chotard@st.com>, shiraz hashim <shiraz.linux.kernel@gmail.com>, Andreas
 List-Id: linux-samsung-soc@vger.kernel.org
 
-CgoxOC4gMTIuIDEyLiDsmKTtm4QgNTo0M+yXkCBBbmRyemVqIEhhamRhIOydtCjqsIApIOyTtCDq
-uIA6Cj4gT24gMTIuMTIuMjAxOCAwMDoyNiwgSW5raSBEYWUgd3JvdGU6Cj4+Cj4+IDE4LiAxMi4g
-MTEuIOyYpO2bhCA1OjM27JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0IOq4gDoKPj4+IE9u
-IDExLjEyLjIwMTggMDk6MDEsIElua2kgRGFlIHdyb3RlOgo+Pj4+IDE4LiAxMi4gMTEuIOyYpO2b
-hCA0OjQ57JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0IOq4gDoKPj4+Pj4gT24gMTEuMTIu
-MjAxOCAwMDo0NSwgSW5raSBEYWUgd3JvdGU6Cj4+Pj4+PiBIaSBBbmRyemVqLAo+Pj4+Pj4KPj4+
-Pj4+IDE4LiAxMi4gMTAuIOyYpO2bhCA0OjM17JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0
-IOq4gDoKPj4+Pj4+PiBIaSBJbmtpLAo+Pj4+Pj4+Cj4+Pj4+Pj4gT24gMTAuMTIuMjAxOCAwMzoy
-NSwgSW5raSBEYWUgd3JvdGU6Cj4+Pj4+Pj4+IEhpIEFuZHJ6ZWosCj4+Pj4+Pj4+Cj4+Pj4+Pj4+
-IDE4LiAxMi4gNi4g7Jik7ZuEIDY6Mzjsl5AgQW5kcnplaiBIYWpkYSDsnbQo6rCAKSDsk7Qg6riA
-Ogo+Pj4+Pj4+Pj4gSGkgSW5raSwKPj4+Pj4+Pj4+Cj4+Pj4+Pj4+PiBUaGlzIHNtYWxsIHBhdGNo
-c2V0IGFkZHMgZHluYW1pYyB6cG9zIHN1cHBvcnQgZm9yIERFQ09OIGFuZCBGSU1ELgo+Pj4+Pj4+
-PiBUaGlzIHBhdGNoIHdpbGwgYWxsb3cgdXNlciBzcGFjZSB0byBjaGFuZ2UgenBvcy4gSG93ZXZl
-ciwgREVDT04gYW5kIEZJTUQgZGV2aWNlcyBoYXZlIGZpeGVkIHByaW9yaXR5IG9mIEhXIG92ZXJs
-YXlzLgo+Pj4+Pj4+PiBUaGlzIHdvdWxkIG1lYW4gdGhhdCB6cG9zIGNoYW5nZSBieSB1c2VyIHNw
-YWNlIGRvZXNuJ3QgZ3VhcmFudGVlIGNvcnJlY3QgSFcgb3ZlcmxheSBwcmlvcml0eS4KPj4+Pj4+
-Pj4KPj4+Pj4+Pj4gV2h5IGRvIHlvdSB3YW50IHRvIHN1cHBvcnQgbXV0YWJsZSB6cG9zPwo+Pj4+
-Pj4+IFByYWN0aWNhbGx5IHlvdSBoYXZlIHBhdGNoZXMgd2hpY2ggcHJvdmVzIGl0IHdvcmtzLCB5
-b3UgY2FuIHNlZSB0aGF0Cj4+Pj4+Pj4gY2hhbmdpbmcgenBvcyB2YWx1ZSByZXN1bHRzIGluIGFk
-ZXF1YXRlIGNoYW5nZSBpbiBkaXNwbGF5ZWQgaW1hZ2UuCj4+Pj4+Pj4KPj4+Pj4+PiBDb25jZXB0
-dWFsbHkgaXQgaXMganVzdCBhIG1hdHRlciBvZiBkaXNjb25uZWN0aW5nIGhhcmR3YXJlIHdpbmRv
-d3MKPj4+Pj4+PiBwcmVzZW50IGluIERFQ09OIGFuZCBGSU1EIGZyb20gRFJNIHBsYW5lcyB3aGlj
-aCBhcmUgc29mdHdhcmUgZW50aXRpZXMuCj4+Pj4+Pj4KPj4+Pj4+PiBZb3UgY2FuIHJlYXNvbiBh
-Ym91dCBpdCB0aGlzIHdheToKPj4+Pj4+Pgo+Pj4+Pj4+IC0gZHJtIHBsYW5lIGlzIGEgZnJhbWVi
-dWZmZXIgcGx1cyBpbmZvcm1hdGlvbnMgaG93IGl0IHNob3VsZCBiZQo+Pj4+Pj4+IHRyYW5zZm9y
-bWVkL2Rpc3BsYXllZCBvbiBERUNPTi9GSU1ELAo+Pj4+Pj4+Cj4+Pj4+Pj4gLSBodyB3aW5kb3cg
-aW4gREVDT04vRklNRCBpcyBqdXN0IGEgY2hhbm5lbCB0aHJvdWdoIHdoaWNoIHBsYW5lIGlzIHNl
-bmQKPj4+Pj4+PiB0byB0aGUgZGlzcGxheS4KPj4+Pj4+Pgo+Pj4+Pj4+IERFQ09OIGFuZCBGSU1E
-IGhhcyBmaXhlZCBodyB3aW5kb3dzIG9yZGVyIC0gd2luZG93cyB3aXRoIGxvd2VyIG51bWJlcnMK
-Pj4+Pj4+PiBhcmUgZGlzcGxheWVkIGJlbG93IHdpbmRvd3Mgd2l0aCBoaWdoZXIgbnVtYmVyLiBU
-byBkaXNwbGF5IHBsYW5lcyBpbgo+Pj4+Pj4+IGdpdmVuIHotb3JkZXIgeW91IGp1c3QgbmVlZCB0
-byBzZW5kIHRoZW0gdmlhIHdpbmRvd3Mgd2l0aCBhcHByb3ByaWF0ZQo+Pj4+Pj4+IGluZGV4IC0g
-ZmFydGhlc3QgcGxhbmUgc2hvdWxkIGdvIGFsd2F5cyB2aWEgd2luMCwgY2xvc2VyIG9uZSB2aWEg
-d2luMSwKPj4+Pj4+PiAuLi4sIHRpbGwgdGhlIGxhc3QgcGxhbmUuCj4+Pj4+Pj4KPj4+Pj4+PiBT
-byBmb3IgZXhhbXBsZSBpZiB5b3UgaGF2ZSB0aHJlZSBwbGFuZXMgYW5kIHdhbnQgdG8gZGlzcGxh
-eSB0aGVtIGluCj4+Pj4+Pj4gZm9sbG93aW5nIG9yZGVyIChmaXJzdCBvbmUgZmFydGhlc3QsIGxh
-c3Qgb25lIGNsb3Nlc3QpOgo+Pj4+Pj4+Cj4+Pj4+Pj4gcGxhbmUyLCBwbGFuZTEsIHBsYW5lMwo+
-Pj4+Pj4+Cj4+Pj4+Pj4geW91IHNob3VsZCBtYXAgdGhlbSB0byBwbGFuZXMgYXMgZm9sbG93Ogo+
-Pj4+Pj4+Cj4+Pj4+Pj4gcGxhbmUyIC0+IHdpbjAsIHBsYW5lMSAtPiB3aW4xLCBwbGFuZTMgLT4g
-d2luMgo+Pj4+Pj4+Cj4+Pj4+Pj4gdGhlbiBmb3IgZXhhbXBsZSBwbGFuZTIgaXMgZGlzYWJsZWQs
-IHdlIHdpbGwgaGF2ZSBmb2xsb3dpbmcgbWFwcGluZzoKPj4+Pj4+Pgo+Pj4+Pj4+IHBsYW5lMSAt
-PiB3aW4wLCBwbGFuZTMgLT4gd2luMSwgd2luMiAtIGRpc2FibGVkCj4+Pj4+PiBQbGFuZTEgaXMg
-ZGlzcGxheWVkIGJlbG93IFBsYW5lMy4KPj4+Pj4gQW5kIHRoaXMgaXMgd2hhdCB3ZSB3YW50ZWQs
-IHRoZSBpbml0aWFsIG9yZGVyIHdhczogcGxhbmUyLCBwbGFuZTEsCj4+Pj4+IHBsYW5lMywgZmly
-c3QgZmFydGhlc3QgKG9yIGxvd2VzdCBpZiB5b3UgcHJlZmVyIHRoaXMgbmFtaW5nIHNjaGVtYSku
-Cj4+Pj4+Cj4+Pj4+Cj4+Pj4+Pj4gdGhlbiBpZiB5b3UgY2hhbmdlIHpvcmRlciBvZiBwbGFuZXMg
-dG86IHBsYW5lMywgcGxhbmUxOgo+Pj4+Pj4+Cj4+Pj4+Pj4gcGxhbmUzIC0+IHdpbjAsIHBsYW5l
-MSAtPiB3aW4xCj4+Pj4+PiBQbGFuZTMgaXMgZGlzcGxheWVkIGJlbG93IFBsYW5lMSBiZWNhdXNl
-IERFQ09OL0ZJTUQgSFcgYXJlbid0IGFibGUgdG8gY2hhbmdlIEhXIG92ZXJsYXkgcHJpcm90eS4K
-Pj4+Pj4gTm8sIHBsYW5lMyBpcyBkaXNwbGF5ZWQgYmVsb3cgcGxhbmUxIGJlY2F1c2Ugd2Ugc2Vu
-dCBpdCB2aWEgd2luMCwgaWYgd2UKPj4+Pj4gd2FudCBpbnZlcnNlIHdlIGNhbiBzZW5kIHBsYW5l
-MyB2aWEgd2luMSBhbmQgcGxhbmUxIHZpYSB3aW4wLgo+Pj4+Pgo+Pj4+Pgo+Pj4+Pj4gSG93ZXZl
-ciwgdXNlciBzcGFjZSB3YW50ZWQgdGhhdCBQbGFuZTEgaXMgZGlzcGxheWVkIGJlbG93IFBsYW5l
-My4gTGlrZSB0aGlzLCB6cG9zIGNoYW5nZSBieSB1c2VyIHNwYWNlIGRvZXNuJ3QgZ3VhcmFudGVl
-IGNvcnJlY3QgSFcgb3ZlcmxheSBwcmlvcml0eS4KPj4+Pj4gQXMgSSBzYWlkIGJlZm9yZSBpbiB0
-aGlzIGV4YW1wbGUgdXNlcnNwYWNlIHdhbnRlZCBwbGFuZTMgYmVsb3cgcGxhbmUxLAo+Pj4+PiBh
-bmQgYXMgSSB3cm90ZSBpbiBjb21tZW50IGFib3ZlIGFueSBvcmRlciBvZiBwbGFuZXMgdXNlciB3
-YW50IGRyaXZlciBpcwo+Pj4+PiBhYmxlIHRvIHJlYWxpemUgd2l0aCB0aGlzIHBhdGNoLgo+Pj4+
-Pgo+Pj4+Pgo+Pj4+Pj4gQW5kIHRoZXJlIGlzIG5vIGFueSByZWFzb24gdG8gY2hhbmdlIHpwb3Mg
-aW4gdXNlciBzcGFjZSBleGNlcHRpbmcgTWl4ZXIgZGV2aWNlIHdoaWNoIHN1cHBvcnRzIEhXIG92
-ZXJsYXkgcHJpb3JpdHkgY2hhbmdlLgo+Pj4+PiBMYWNrIG9mIHNwZWNpYWwgcmVnaXN0cnkgZm9y
-IG1hbmlwdWxhdGluZyB3aW5kb3dzIG9yZGVyIGRvZXMgbm90IG1lYW4gaXQKPj4+Pj4gY2Fubm90
-IHN1cHBvcnQgZHluYW1pYyB6cG9zLgo+Pj4+Pgo+Pj4+IFdoeSBjaGFuZ2luZyB6cG9zIGluIHVz
-ZXIgc3BhY2UgaXMgcmVxdWlyZWQ/Cj4+Pj4KPj4+Pj4+IEluIGZhY3QsIHdlIHN1cHBvcnRlZCBt
-dXRhYmxlIHpwb3MgYmVmb3JlIGJ1dCBjaGFuZ2VkIGl0IHRvIGltbXV0YWJsZSB3aXRoIHNhbWUg
-cmVhc29uLgo+Pj4+PiBJdCB3YXMganVzdCBicm9rZW4gaWYgSSByZW1lbWJlciBjb3JyZWN0bHku
-Cj4+Pj4+Cj4+Pj4gTm8sIEkgd29ya2VkIHdlbGwgYW5kIHJlYWwgdXNlciB1c2VkIGl0IEkgcmVt
-ZW1iZXIuCj4+Pj4KPj4+Pj4+IExhc3RseSwgeW91ciBwYXRjaCBtYWRlIHJlYWwgdXNlciBicm9r
-ZW4uCj4+Pj4+IFdobz8gSG93Pwo+Pj4+IFdpbmRvdyBzZXJ2ZXIgb2YgVGl6ZW4gZGlkbid0IHdv
-cmsgYW5kIHlvdSBjYW4gdGVzdCBpdCB3aXRoIGJlbG93IGltYWdlIC0gSSBkaWRuJ3QgY2hlY2sg
-d2h5IGl0IGRvZXNuJ3QuIEFueXdheSwgd2UgZG9uJ3QgaGF2ZSB0byBicmVhayByZWFsIHVzZXIu
-Cj4+Pj4gaHR0cDovL2Rvd25sb2FkLnRpemVuLm9yZy9zbmFwc2hvdHMvdGl6ZW4vdW5pZmllZC9s
-YXRlc3QvaW1hZ2VzL3N0YW5kYXJkL21vYmlsZS13YXlsYW5kLWFybXY3bC10bTIvCj4+Pgo+Pj4g
-QXJlIHlvdSBzYXlpbmcgaXQgd29ya3Mgd2l0aCBsYXRlc3QgbWFpbmxpbmUgd2l0aG91dCBteSBw
-YXRjaGVzPwo+PiBSaWdodC4gYWN0dWFsbHksIEkgY2hlY2tlZCB5b3VyIHBhdGNoIHdpdGggVGl6
-ZW4gaW1hZ2UgcmVsZWFzZWQgaW4gU2VwdCBhbmQgaXQgd29ya2VkIHdlbGwgd2l0aG91dCB5b3Vy
-IHBhdGNoIGJ1dCB3aXRoIHlvdXIgcGF0Y2ggaXQgZGlkbid0IHdvcmsuCj4gCj4gCj4gTm8gc3Vy
-cHJpc2UsIGl0IGRpZCBub3Qgd29yayB3aXRoIG1peGVyIGZvciB0aGUgc2FtZSByZWFzb24gKGJy
-b2tlbgo+IGR5bmFtaWMgenBvcyBoYW5kbGluZyksIHVzZXJzcGFjZSBjb2RlIHdhcyB3cml0dGVu
-IGZvciBhbmQgdGVzdGVkIG9uCj4gc3BlY2lmaWMgdmVyc2lvbiBvZiBoYXJkd2FyZS4KPiAKPiBC
-ZXNpZGUgdXNlcnNwYWNlIHRoZXJlIGNvdWxkIGJlIHNvbWUgZGlmZmVyZW5jZXMgb24ga2VybmVs
-IHNpZGUKPiByZWdhcmRpbmcgenBvcywgSSB3aWxsIGxvb2sgYW5kIHRlc3QgdGl6ZW4ga2VybmVs
-IGFuZCBsZXQgeW91IGtub3cuCj4gCj4gCj4+IFdpdGggbGF0ZXN0IFRpemVuIGltYWdlIERpc3Bs
-YXkgaXMga2VlcGluZyBibGFjayBzY3JlZW4gd2l0aG91dCB5b3VyIHBhdGNoIGJ1dCB3aW5kb3cg
-c2VydmVyIHdvcmtlZCB3ZWxsLiBTZWVtcyBsYXRlc3QgVGl6ZW4gaW1hZ2UgaGFzIHNvbWUgcHJv
-YmxlbS4KPiAKPiAKPiBIZXJlIGlzIHNhbXBsZSBzY3JpcHQgZm9yIG1vZGV0ZXN0IG9uIHRtMiB3
-aXRoIG1haW5saW5lIGtlcm5lbCwgd2hpY2gKPiBzaG93cyBob3cgZHluYW1pYyB6cG9zIHdvcmtz
-Ogo+IAo+IC0tLS0KPiAKPiAjIS9iaW4vYmFzaCAteAo+IAo+IHNsZWVwIDM2MDAgfCBtb2RldGVz
-dCAtTWV4eW5vcyAtUDU1OjUxMng1MTIrMTArMTAgLVA1NTo1MTJ4NTEyKzIxMCsyMTAKPiAtdzMw
-OmFscGhhOjMwMDAwIC13MzU6YWxwaGE6NTAwMDAgLXc0MDp6cG9zOjAgLXczMDp6cG9zOjEgLXcz
-NTp6cG9zOjIgLWQgJgo+IHdoaWxlIHJlYWQ7IGRvCj4gwqDCoMKgIG1vZGV0ZXN0IC1NZXh5bm9z
-IC13MzA6enBvczoyIC13MzU6enBvczoxCj4gwqDCoMKgIHJlYWQKPiDCoMKgwqAgbW9kZXRlc3Qg
-LU1leHlub3MgLXczMDp6cG9zOjEgLXczNTp6cG9zOjIKPiBkb25lCj4gLS0tLS0KPiAKPiBPZiBj
-b3Vyc2UgQ1JUQy9QTEFORSBpZHMgY2FuIGRpZmZlcnMgb24geW91ciBidWlsZCwgc28gdGhleSBz
-aG91bGQgYmUKPiBhZGp1c3RlZC4KCkkga25vdy4gWW91ciBwYXRjaCB3aWxsIHNob3cgdGhhdCBw
-bGFuZSBvcmRlciBpcyBjaGFuZ2VkIGJ5IGNoYW5naW5nIG1hcHBpbmcgb2YgcGxhbmUgZnJvbSBv
-bmUgd2luZG93IHRvIGFub3RoZXIgd2luZG93IHJlZ2FyZGxlc3Mgb2Ygb3ZlcmxheSBwcmlvcml0
-eSBjaGFuZ2Ugc3VwcG9ydC4gCkknbSBub3QgY2xlYXIgYnV0IHNlZW1zIG1heWJlIHdlIGNvdWxk
-IGRvIG1vcmUgc29tZXRoaW5nIHdpdGggeW91ciBwYXRjaCBldmVuIHRob3VnaCBERUNPTi9GSU1E
-IGhhdmUgbGltaXQuIFNvIEkgd2lsbCBlbnF1ZXVlIHlvdXIgcGF0Y2ggdW50aWwgcmVhbCB1c2Vy
-IGlzIGZpeGVkLgoKVGhhbmtzLApJbmtpIERhZQoKPiAKPiAKPiBSZWdhcmRzCj4gCj4gQW5kcnpl
-ago+IAo+IAo+Pgo+PiBUaGFua3MsCj4+IElua2kgRGFlCj4+Cj4+Pgo+Pj4gUmVnYXJkcwo+Pj4K
-Pj4+IEFuZHJ6ZWoKPj4+Cj4+Pgo+Pj4+IFRoYW5rcywKPj4+PiBJbmtpIERhZQo+Pj4+Cj4+Pj4+
-IFJlZ2FyZHMKPj4+Pj4KPj4+Pj4gQW5kcnplago+Pj4+Pgo+Pj4+Pgo+Pj4+Pj4gVGhhbmtzLAo+
-Pj4+Pj4gSW5raSBEYWUKPj4+Pj4+Cj4+Pj4+Pj4gQXMgeW91IHNlZSB0aGVyZSBpcyBubyByZWxh
-dGlvbiBiZXR3ZWVuIHBsYW5lIG51bWJlciBhbmQgd2luZG93IG51bWJlciwKPj4+Pj4+PiBidXQg
-d2luZG93IG51bWJlciBpcyBlcXVhbCB0byBwbGFuZSdzIHBvc2l0aW9uIGluIHpwb3Mtb3JkZXJl
-ZCBsaXN0IG9mCj4+Pj4+Pj4gcGxhbmVzIGFuZCB0aGlzIGlzIGV4YWN0IHZhbHVlIG9mIG5vcm1h
-bGl6ZWRfenBvcyBmaWVsZCBpbiBkcm1fcGxhbmVfc3RhdGUuCj4+Pj4+Pj4KPj4+Pj4+Pgo+Pj4+
-Pj4+IEkgaG9wZSB0aGlzIGV4dGVuZGVkIGV4cGxhbmF0aW9uIHdpbGwgY2xhcmlmeSB0aGluZ3Mu
-Cj4+Pj4+Pj4KPj4+Pj4+Pgo+Pj4+Pj4+IFJlZ2FyZHMKPj4+Pj4+Pgo+Pj4+Pj4+IEFuZHJ6ZWoK
-Pj4+Pj4+Pgo+Pj4+Pj4+Cj4+Pj4+Pj4KPj4+Pj4+Pj4gVGhhbmtzLAo+Pj4+Pj4+PiBJbmtpIERh
-ZQo+Pj4+Pj4+Pgo+Pj4+Pj4+Pj4gSXQgd2FzIHRlc3RlZCBvbiB0bTIgYW5kIHRyYXRzMi4KPj4+
-Pj4+Pj4+Cj4+Pj4+Pj4+PiBSZWdhcmRzCj4+Pj4+Pj4+PiBBbmRyemVqCj4+Pj4+Pj4+Pgo+Pj4+
-Pj4+Pj4KPj4+Pj4+Pj4+IEFuZHJ6ZWogSGFqZGEgKDMpOgo+Pj4+Pj4+Pj4gICBkcm0vZXh5bm9z
-L2RlY29uNTQzMzogYWRkIGR5bmFtaWMgenBvcyBzdXBwb3J0Cj4+Pj4+Pj4+PiAgIGRybS9leHlu
-b3MvZmltZDogY3JlYXRlIGxvY2FsIGhlbHBlciBmb3IgZGlzYWJsaW5nIGhhcmR3YXJlIHdpbmRv
-dwo+Pj4+Pj4+Pj4gICBkcm0vZXh5bm9zL2ZpbWQ6IGFkZCBkeW5hbWljIHpwb3Mgc3VwcG9ydAo+
-Pj4+Pj4+Pj4KPj4+Pj4+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczU0MzNfZHJt
-X2RlY29uLmMgfCAyMyArKysrKy0tLS0tCj4+Pj4+Pj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2ZpbWQuYyAgICAgIHwgNDIgKysrKysrKystLS0tLS0tLS0tLQo+Pj4+Pj4+
-Pj4gIDIgZmlsZXMgY2hhbmdlZCwgMjkgaW5zZXJ0aW9ucygrKSwgMzYgZGVsZXRpb25zKC0pCj4+
-Pj4+Pj4+Pgo+Pj4+Pgo+Pj4KPj4+Cj4+Cj4gCj4gCj4gCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
-QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
-bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Tue, Dec 11, 2018 at 10:29:30PM +0100, Sebastian Andrzej Siewior wrote:
+> On 2018-12-11 19:19:32 [+0100], Linus Walleij wrote:
+> > Can you please send one patch per mach-* plat-*?
+> > 
+> > I can apply the plat-versatile patch and send upstream.
+> 
+> I just resent the versatile hunk. Should I really split up and resend
+> the other platforms? Russell was not very amused about it.
+
+Just the Versatile bit, and no I don't see any point in fixing the
+other SoCs - it's an incentive for them to fix up their code.
+
+However, given that hardly any have responded, pointing out this
+problem in email clearly hasn't worked by the resounding silence
+from SoC maintainers.
+
+Removing boot_lock from those platforms who just cargo-culted the
+boot_lock including comments without the pen_release stuff is easy,
+all the lock is doing there is providing a bit of unnecessary
+synchronisation between the requesting CPU and the booting CPU.
+Only a couple of SoCs fall into this case - OMAP4 and qcom.
+
+The rest aren't something that could just be ripped out without
+the involvement of the SoC maintainer to test the changes - so
+I'm of the opinion that we should just send SoC maintainers
+patches that remove the pen_release and boot_lock crap.  If they
+blindly accept the patches, so be it.
+
+I'm preparing a series to attack some of this.
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
