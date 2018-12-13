@@ -1,59 +1,68 @@
-From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-Subject: [PATCH] drm/exynos: Change Andrzej Pietrasiewicz's e-mail address
-Date: Thu, 13 Dec 2018 14:19:46 +0100
-Message-ID: <20181213131946.1880-1-andrzej.p@samsung.com>
-References: <CGME20181213132013eucas1p27cac2e47f756ea4f38c73cf651f5a13d@eucas1p2.samsung.com>
+From: Lukasz Luba <l.luba@partner.samsung.com>
+Subject: Re: [PATCH v3 4/5] drivers: power: suspend: call devfreq
+ suspend/resume
+Date: Thu, 13 Dec 2018 15:35:25 +0100
+Message-ID: <ce1d415d-2a00-ef0e-6b58-23d16cffee4a@partner.samsung.com>
+References: <1544007956-28889-1-git-send-email-l.luba@partner.samsung.com>
+        <CGME20181205110623eucas1p120f9d8b38822bf856a5b7d427d00e49f@eucas1p1.samsung.com>
+        <1544007956-28889-5-git-send-email-l.luba@partner.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, David Airlie <airlied@linux.ie>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1544007956-28889-5-git-send-email-l.luba@partner.samsung.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org
+Cc: tjakobi@math.uni-bielefeld.de, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, cw00.choi@samsung.com, rjw@rjwysocki.net, len.brown@intel.com, pavel@ucw.cz, gregkh@linuxfoundation.org, keescook@chromium.org, anton@enomsg.org, ccross@android.com, tony.luck@intel.com, robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-My @samusung.com address is going to cease existing soon, so change it to
-an address which can actually be used to contact me.
+Hi Rafael,
 
-Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_scaler.c | 2 +-
- drivers/gpu/drm/exynos/regs-scaler.h       | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+I see that you have pulled 3 patches.
+Please take also this patch, which is actually enabling the feature.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_scaler.c b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
-index cd66774..cad9627 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_scaler.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
-@@ -1,7 +1,7 @@
- /*
-  * Copyright (C) 2017 Samsung Electronics Co.Ltd
-  * Author:
-- *	Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-+ *	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-diff --git a/drivers/gpu/drm/exynos/regs-scaler.h b/drivers/gpu/drm/exynos/regs-scaler.h
-index fc7ccad..512a2ba 100644
---- a/drivers/gpu/drm/exynos/regs-scaler.h
-+++ b/drivers/gpu/drm/exynos/regs-scaler.h
-@@ -2,7 +2,7 @@
-  *
-  * Copyright (c) 2017 Samsung Electronics Co., Ltd.
-  *		http://www.samsung.com/
-- * Author: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-+ * Author: Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>
-  *
-  * Register definition file for Samsung scaler driver
-  *
--- 
-2.7.4
+Regards,
+Lukasz
+
+On 12/5/18 12:05 PM, Lukasz Luba wrote:
+> Devfreq framework supports suspend of its devices.
+> Call the the devfreq interface and allow devfreq devices preserve/restore
+> their states during suspend/resume.
+> 
+> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>   drivers/base/power/main.c | 3 +++
+>   1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> index a690fd4..0992e67 100644
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -32,6 +32,7 @@
+>   #include <trace/events/power.h>
+>   #include <linux/cpufreq.h>
+>   #include <linux/cpuidle.h>
+> +#include <linux/devfreq.h>
+>   #include <linux/timer.h>
+>   
+>   #include "../base.h"
+> @@ -1078,6 +1079,7 @@ void dpm_resume(pm_message_t state)
+>   	dpm_show_time(starttime, state, 0, NULL);
+>   
+>   	cpufreq_resume();
+> +	devfreq_resume();
+>   	trace_suspend_resume(TPS("dpm_resume"), state.event, false);
+>   }
+>   
+> @@ -1852,6 +1854,7 @@ int dpm_suspend(pm_message_t state)
+>   	trace_suspend_resume(TPS("dpm_suspend"), state.event, true);
+>   	might_sleep();
+>   
+> +	devfreq_suspend();
+>   	cpufreq_suspend();
+>   
+>   	mutex_lock(&dpm_list_mtx);
+> 
