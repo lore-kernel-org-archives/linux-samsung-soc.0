@@ -1,22 +1,12 @@
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH 1/3] arm: Convert arm boot_lock to raw
-Date: Thu, 13 Dec 2018 13:42:34 +0100
-Message-ID: <20181213124234.gwzl3zft332svaxo@linutronix.de>
-References: <20181207102749.15205-1-bigeasy@linutronix.de>
- <20181207102749.15205-2-bigeasy@linutronix.de>
- <20181207130012.GX6920@n2100.armlinux.org.uk>
- <CACRpkdbvyimBfCCBOEr84P+_y6+sBkqz0+nmFyYeOJ4cXjsA6A@mail.gmail.com>
- <20181209004138.GC9507@n2100.armlinux.org.uk>
- <20181210143718.plwd36vdxxd7q2el@linutronix.de>
- <CACRpkdby=Xreh0VPpHBPLhvupgQyEqDiae+e0u=-n3o2SWVMTw@mail.gmail.com>
- <20181211212930.kcap5kx6bff6bpuu@linutronix.de>
- <20181213114842.GJ9507@n2100.armlinux.org.uk>
+From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Subject: [PATCH] drm/exynos: Change Andrzej Pietrasiewicz's e-mail address
+Date: Thu, 13 Dec 2018 14:19:46 +0100
+Message-ID: <20181213131946.1880-1-andrzej.p@samsung.com>
+References: <CGME20181213132013eucas1p27cac2e47f756ea4f38c73cf651f5a13d@eucas1p2.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20181213114842.GJ9507@n2100.armlinux.org.uk>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -26,28 +16,44 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>, viresh kumar <viresh.kumar@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, David Brown <david.brown@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Viresh Kumar <vireshk@kernel.org>, Xu Wei <xuwei5@hisilicon.com>, ext Tony Lindgren <tony@atomide.com>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, Andy Gross <andy.gross@linaro.org>, Arnd Bergmann <arnd@arndb.de>, linux-arm-msm@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Linux-OMAP <linux-omap@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Barry Song <baohua@kernel.org>, Frank Rowand <frank.rowand@am.sony.com>, Patrice CHOTARD <patrice.chotard@st.com>, shiraz hashim <shiraz.linux.kernel@gmail.com>, Andreas
+To: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, David Airlie <airlied@linux.ie>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2018-12-13 11:48:42 [+0000], Russell King - ARM Linux wrote:
-> On Tue, Dec 11, 2018 at 10:29:30PM +0100, Sebastian Andrzej Siewior wrote:
-> > I just resent the versatile hunk. Should I really split up and resend
-> > the other platforms? Russell was not very amused about it.
-> 
-> Just the Versatile bit, and no I don't see any point in fixing the
-> other SoCs - it's an incentive for them to fix up their code.
+My @samusung.com address is going to cease existing soon, so change it to
+an address which can actually be used to contact me.
 
-Okay. I already resent that.
+Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_scaler.c | 2 +-
+ drivers/gpu/drm/exynos/regs-scaler.h       | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-> The rest aren't something that could just be ripped out without
-> the involvement of the SoC maintainer to test the changes - so
-> I'm of the opinion that we should just send SoC maintainers
-> patches that remove the pen_release and boot_lock crap.  If they
-> blindly accept the patches, so be it.
-> 
-> I'm preparing a series to attack some of this.
-
-Thank you.
-
-Sebastian
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_scaler.c b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
+index cd66774..cad9627 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_scaler.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
+@@ -1,7 +1,7 @@
+ /*
+  * Copyright (C) 2017 Samsung Electronics Co.Ltd
+  * Author:
+- *	Andrzej Pietrasiewicz <andrzej.p@samsung.com>
++ *	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 as
+diff --git a/drivers/gpu/drm/exynos/regs-scaler.h b/drivers/gpu/drm/exynos/regs-scaler.h
+index fc7ccad..512a2ba 100644
+--- a/drivers/gpu/drm/exynos/regs-scaler.h
++++ b/drivers/gpu/drm/exynos/regs-scaler.h
+@@ -2,7 +2,7 @@
+  *
+  * Copyright (c) 2017 Samsung Electronics Co., Ltd.
+  *		http://www.samsung.com/
+- * Author: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
++ * Author: Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>
+  *
+  * Register definition file for Samsung scaler driver
+  *
+-- 
+2.7.4
