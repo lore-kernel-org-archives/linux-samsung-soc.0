@@ -1,48 +1,44 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [GIT PULL v2] exynos-drm-next
-Date: Fri, 14 Dec 2018 16:27:10 +0900
-Message-ID: <1544772430-8295-1-git-send-email-inki.dae@samsung.com>
-References: <CGME20181214072711epcas2p4f9d1016da37bae403a9416d00a1c0e78@epcas2p4.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: airlied@linux.ie
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 0/4] Samsung TM2(e): add Bluetooth support (resend)
+Date: Fri, 14 Dec 2018 12:34:06 +0100
+Message-ID: <20181214113410.22848-1-m.szyprowski@samsung.com>
+References: <CGME20181214113415eucas1p16dd61a4312d88216cb0d737887c751b7@eucas1p1.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Beomho Seo <beomho.seo@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Lee Jones <lee.jones@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgRGF2ZSwKCiAgIEp1c3QgYWRkaW5nIGNvbmZpZ3VyYWJsZSBwbGFuZSBhbHBoYSBhbmQgcGl4
-ZWwgYmxlbmQgbW9kZSBzdXBwb3J0CiAgIGZvciBGSU1EIGRldmljZSBJIG1pc3NlZC4KCiAgIFBs
-ZWFzZSBraW5kbHkgbGV0IG1lIGtub3cgaWYgdGhlcmUgaXMgYW55IHByb2JsZW0uCgpUaGFua3Ms
-Cklua2kgRGFlCgpUaGUgZm9sbG93aW5nIGNoYW5nZXMgc2luY2UgY29tbWl0IDJhM2M4M2Y1ZmUw
-NzcwZDEzYmJiNzFiMjM2NzQ4ODZmZjQxMTFmNDQ6CgogIE1lcmdlIHRhZyAndm13Z2Z4LW5leHQt
-MjAxOC0xMi0xMycgb2YgZ2l0Oi8vcGVvcGxlLmZyZWVkZXNrdG9wLm9yZy9+dGhvbWFzaC9saW51
-eCBpbnRvIGRybS1uZXh0ICgyMDE4LTEyLTE0IDA0OjU3OjQ1ICsxMDAwKQoKYXJlIGF2YWlsYWJs
-ZSBpbiB0aGUgZ2l0IHJlcG9zaXRvcnkgYXQ6CgogIGdpdDovL2dpdC5rZXJuZWwub3JnL3B1Yi9z
-Y20vbGludXgva2VybmVsL2dpdC9kYWVpbmtpL2RybS1leHlub3MgdGFncy9leHlub3MtZHJtLW5l
-eHQtZm9yLXY0LjIxLXYyCgpmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8gM2I1MTI5YjNh
-N2M2MmZkZWM5Y2M2OWIxYjNmMjA5MTdjMzZhYjVkNDoKCiAgZHJtL2V4eW5vczogZmltZDogTWFr
-ZSBwaXhlbCBibGVuZCBtb2RlIGNvbmZpZ3VyYWJsZSAoMjAxOC0xMi0xNCAxNTo0NjoxNSArMDkw
-MCkKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0KQWRkIGNvbmZpZ3VyYWJsZSBwbGFuZSBhbHBoYSBhbmQgcGl4ZWwgYmxlbmQg
-bW9kZSBzdXBwb3J0Ci0gVGhpcyBwYXRjaCBzZXJpZXMgYWRkcyBjb25maWd1cmFibGUgcGxhbmUg
-YWxwaGEgYW5kIHBpeGVsIGJsZW5kIG1vZGUKICBzdXBwb3J0IGZvciBGSU1EIGRldmljZSBkcml2
-ZXIuCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tCkNocmlzdG9waCBNYW5zemV3c2tpICgyKToKICAgICAgZHJtL2V4eW5vczog
-ZmltZDogTWFrZSBwbGFuZSBhbHBoYSBjb25maWd1cmFibGUKICAgICAgZHJtL2V4eW5vczogZmlt
-ZDogTWFrZSBwaXhlbCBibGVuZCBtb2RlIGNvbmZpZ3VyYWJsZQoKIGRyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9maW1kLmMgfCAxMjMgKysrKysrKysrKysrKysrKysrKysrKysrKy0t
-LS0tLQogaW5jbHVkZS92aWRlby9zYW1zdW5nX2ZpbWQuaCAgICAgICAgICAgICB8ICAxMCArKysK
-IDIgZmlsZXMgY2hhbmdlZCwgMTEwIGluc2VydGlvbnMoKyksIDIzIGRlbGV0aW9ucygtKQpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
-bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi All
+
+This patchset enables Bluetooth support on TM2/TM2e boards using mainline
+HCI_BCM driver. It requires a few fixes to Samsung serial driver and
+adding a proper node to device tree description of the mentioned boards.
+Patches can be applied independently to each subsystem.
+
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+
+
+(resend reason: added respective maintainers and lists to cc)
+
+Patch summary:
+
+Beomho Seo (2):
+  mfd: exynos-lpass: Enable UART module support
+  tty: serial: samsung: Properly set flags in autoCTS mode
+
+Marek Szyprowski (1):
+  arm64: dts: exynos: Add Bluetooth chip to TM2(e) boards
+
+Seung-Woo Kim (1):
+  tty: serial: samsung: Increase maximum baudrate
+
+ .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 14 ++++++++++++++
+ drivers/mfd/exynos-lpass.c                         |  4 +++-
+ drivers/tty/serial/samsung.c                       |  5 ++++-
+ 3 files changed, 21 insertions(+), 2 deletions(-)
+
+-- 
+2.17.1
