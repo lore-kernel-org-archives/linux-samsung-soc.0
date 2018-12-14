@@ -1,32 +1,58 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: Use of_node_name_eq for node name comparisons
-Date: Fri, 14 Dec 2018 16:03:31 +0100
-Message-ID: <CACRpkda2qA4AQG3sT+7LEvuGV=8EtnLFnAn8WCPbnoD75X7EbQ@mail.gmail.com>
-References: <20181205195050.4759-20-robh@kernel.org>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [GIT PULL v2] exynos-drm-next
+Date: Fri, 14 Dec 2018 17:11:51 +0100
+Message-ID: <20181214161151.GR21184@phenom.ffwll.local>
+References: <CGME20181214072711epcas2p4f9d1016da37bae403a9416d00a1c0e78@epcas2p4.samsung.com>
+ <1544772430-8295-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181205195050.4759-20-robh@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <1544772430-8295-1-git-send-email-inki.dae@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Dec 5, 2018 at 8:51 PM Rob Herring <robh@kernel.org> wrote:
-
-> Convert string compares of DT node names to use of_node_name_eq helper
-> instead. This removes direct access to the node name pointer.
->
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-gpio@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-
-Patch applied!
-
-Yours,
-Linus Walleij
+T24gRnJpLCBEZWMgMTQsIDIwMTggYXQgMDQ6Mjc6MTBQTSArMDkwMCwgSW5raSBEYWUgd3JvdGU6
+Cj4gSGkgRGF2ZSwKPiAKPiAgICBKdXN0IGFkZGluZyBjb25maWd1cmFibGUgcGxhbmUgYWxwaGEg
+YW5kIHBpeGVsIGJsZW5kIG1vZGUgc3VwcG9ydAo+ICAgIGZvciBGSU1EIGRldmljZSBJIG1pc3Nl
+ZC4KPiAKPiAgICBQbGVhc2Uga2luZGx5IGxldCBtZSBrbm93IGlmIHRoZXJlIGlzIGFueSBwcm9i
+bGVtLgoKVGhhbmtzLCBwdWxsZWQgaW50byBkcm0tbmV4dC4KLURhbmllbAoKPiAKPiBUaGFua3Ms
+Cj4gSW5raSBEYWUKPiAKPiBUaGUgZm9sbG93aW5nIGNoYW5nZXMgc2luY2UgY29tbWl0IDJhM2M4
+M2Y1ZmUwNzcwZDEzYmJiNzFiMjM2NzQ4ODZmZjQxMTFmNDQ6Cj4gCj4gICBNZXJnZSB0YWcgJ3Zt
+d2dmeC1uZXh0LTIwMTgtMTItMTMnIG9mIGdpdDovL3Blb3BsZS5mcmVlZGVza3RvcC5vcmcvfnRo
+b21hc2gvbGludXggaW50byBkcm0tbmV4dCAoMjAxOC0xMi0xNCAwNDo1Nzo0NSArMTAwMCkKPiAK
+PiBhcmUgYXZhaWxhYmxlIGluIHRoZSBnaXQgcmVwb3NpdG9yeSBhdDoKPiAKPiAgIGdpdDovL2dp
+dC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9kYWVpbmtpL2RybS1leHlub3Mg
+dGFncy9leHlub3MtZHJtLW5leHQtZm9yLXY0LjIxLXYyCj4gCj4gZm9yIHlvdSB0byBmZXRjaCBj
+aGFuZ2VzIHVwIHRvIDNiNTEyOWIzYTdjNjJmZGVjOWNjNjliMWIzZjIwOTE3YzM2YWI1ZDQ6Cj4g
+Cj4gICBkcm0vZXh5bm9zOiBmaW1kOiBNYWtlIHBpeGVsIGJsZW5kIG1vZGUgY29uZmlndXJhYmxl
+ICgyMDE4LTEyLTE0IDE1OjQ2OjE1ICswOTAwKQo+IAo+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiBBZGQgY29uZmlndXJh
+YmxlIHBsYW5lIGFscGhhIGFuZCBwaXhlbCBibGVuZCBtb2RlIHN1cHBvcnQKPiAtIFRoaXMgcGF0
+Y2ggc2VyaWVzIGFkZHMgY29uZmlndXJhYmxlIHBsYW5lIGFscGhhIGFuZCBwaXhlbCBibGVuZCBt
+b2RlCj4gICBzdXBwb3J0IGZvciBGSU1EIGRldmljZSBkcml2ZXIuCj4gCj4gLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+IENo
+cmlzdG9waCBNYW5zemV3c2tpICgyKToKPiAgICAgICBkcm0vZXh5bm9zOiBmaW1kOiBNYWtlIHBs
+YW5lIGFscGhhIGNvbmZpZ3VyYWJsZQo+ICAgICAgIGRybS9leHlub3M6IGZpbWQ6IE1ha2UgcGl4
+ZWwgYmxlbmQgbW9kZSBjb25maWd1cmFibGUKPiAKPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2ZpbWQuYyB8IDEyMyArKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tCj4g
+IGluY2x1ZGUvdmlkZW8vc2Ftc3VuZ19maW1kLmggICAgICAgICAgICAgfCAgMTAgKysrCj4gIDIg
+ZmlsZXMgY2hhbmdlZCwgMTEwIGluc2VydGlvbnMoKyksIDIzIGRlbGV0aW9ucygtKQo+IF9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gZHJpLWRldmVsIG1h
+aWxpbmcgbGlzdAo+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBodHRwczovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAoKLS0gCkRhbmll
+bCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIsIEludGVsIENvcnBvcmF0aW9uCmh0dHA6Ly9ibG9n
+LmZmd2xsLmNoCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
+dHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
