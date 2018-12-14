@@ -1,40 +1,47 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 3/4] tty: serial: samsung: Increase maximum baudrate
-Date: Fri, 14 Dec 2018 12:34:09 +0100
-Message-ID: <20181214113410.22848-4-m.szyprowski@samsung.com>
-References: <20181214113410.22848-1-m.szyprowski@samsung.com>
-        <CGME20181214113418eucas1p2bfb6f0d04010e73f6ca35c3a6664b316@eucas1p2.samsung.com>
+From: Christoph Manszewski <c.manszewski@samsung.com>
+Subject: [PATCH 0/6] drm/exynos: mixer: Add color range property
+Date: Fri, 14 Dec 2018 13:10:15 +0100
+Message-ID: <1544789421-5265-1-git-send-email-c.manszewski@samsung.com>
+References: <CGME20181214121030eucas1p265a68ae4067344ea2da52c8291cbc8cf@eucas1p2.samsung.com>
+Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20181214113410.22848-1-m.szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Beomho Seo <beomho.seo@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Lee Jones <lee.jones@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: dri-devel@lists.freedesktop.org
+Cc: Christoph Manszewski <c.manszewski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Sean Paul <sean@poorly.run>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Seung-Woo Kim <sw0312.kim@samsung.com>
+Hi,
 
-This driver can be used to communicate with Bluetooth chip in high-speed
-UART mode, so increase the maximum baudrate to 3Mbps.
+This patch series adds rgb input buffer range property to exynos_mixer.
+It applies on top of drm-exynos/exynos-drm-next with patches:
+- [PATCH 1/2] drm/edid: Add colorimetry helper function,
+- [PATCH 2/2] drm/exynos: mixer: Use colorimetry helper function
 
-Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
-[mszyprow: rephrased commit message]
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/tty/serial/samsung.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch 1 Add apropriate labels
+Patch 2 Split color properties function
+Patch 3 Add default range field to exynos_drm_plane config
+Patch 4 Minor code cleanup
+Patch 5 Add optional range property to exynos plane
+Patch 6 Make input rgb range configurable in exynos_mixer
 
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index 2a49b6d876b8..9fc3559f80d9 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -1287,7 +1287,7 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
- 	 * Ask the core to calculate the divisor for us.
- 	 */
- 
--	baud = uart_get_baud_rate(port, termios, old, 0, 115200*8);
-+	baud = uart_get_baud_rate(port, termios, old, 0, 3000000);
- 	quot = s3c24xx_serial_getclk(ourport, baud, &clk, &clk_sel);
- 	if (baud == 38400 && (port->flags & UPF_SPD_MASK) == UPF_SPD_CUST)
- 		quot = port->custom_divisor;
+Regards,
+Chris
+
+Christoph Manszewski (6):
+  include/drm: color_mgmt: Add enum labels
+  drm: color_mgmt: Split create_color_properties function
+  drm/exynos: drm_drv: Extend exynos_drm_plane_config
+  drm/exynos: plane: Minor cleanup
+  drm/exynos: plane: Add range property to exynos plane
+  drm/exynos: mixer: Make input buffer color range configurable
+
+ drivers/gpu/drm/drm_color_mgmt.c          | 93 ++++++++++++++++++++++++-------
+ drivers/gpu/drm/exynos/exynos_drm_drv.h   |  2 +
+ drivers/gpu/drm/exynos/exynos_drm_plane.c | 15 ++++-
+ drivers/gpu/drm/exynos/exynos_mixer.c     | 57 +++++++++++++++++--
+ drivers/gpu/drm/exynos/regs-mixer.h       |  2 +
+ include/drm/drm_color_mgmt.h              | 10 ++++
+ 6 files changed, 152 insertions(+), 27 deletions(-)
+
 -- 
-2.17.1
+2.7.4
