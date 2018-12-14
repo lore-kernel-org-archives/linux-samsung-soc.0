@@ -1,54 +1,48 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [PATCH] ARM: dts: exynos: Specify I2S assigned clocks in proper
- node
-Date: Fri, 14 Dec 2018 07:59:00 +0100
-Message-ID: <20181214065900.GA22664@kroah.com>
-References: <CGME20181212175813epcas2p26f7ec0e0e5e90d1e9cb7aeccd273e0ab@epcas2p2.samsung.com>
- <20181212175744.8287-1-s.nawrocki@samsung.com>
- <20181213205656.GA799@kozik-lap>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [GIT PULL v2] exynos-drm-next
+Date: Fri, 14 Dec 2018 16:27:10 +0900
+Message-ID: <1544772430-8295-1-git-send-email-inki.dae@samsung.com>
+References: <CGME20181214072711epcas2p4f9d1016da37bae403a9416d00a1c0e78@epcas2p4.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181213205656.GA799@kozik-lap>
-Sender: stable-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, robh+dt@kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 09:56:56PM +0100, Krzysztof Kozlowski wrote:
-> On Wed, Dec 12, 2018 at 06:57:44PM +0100, Sylwester Nawrocki wrote:
-> > The assigned parent clocks should be normally specified in the consumer
-> > device's DT node, this ensures respective driver always sees correct clock
-> > settings when required.
-> > 
-> > This patch fixes regression in audio subsystem on Odroid XU3/XU4 boards
-> > that appeared after commits:
-> > 
-> > 'commit 647d04f8e07a ("ASoC: samsung: i2s: Ensure the RCLK rate is properly determined")'
-> > 'commit 995e73e55f46 ("ASoC: samsung: i2s: Fix rclk_srcrate handling")'
-> > 'commit 48279c53fd1d ("ASoC: samsung: i2s: Prevent external abort on exynos5433 I2S1 access")'
-> > 
-> > Without this patch the driver gets wrong clock as the I2S function (op_clk)
-> > clock in probe() and effectively the clock which is finally assigned from DT
-> > is not being enabled/disabled in the runtime resume/suspend ops.
-> > 
-> > Without the above listed commits the EXYNOS_I2S_BUS clock was always set
-> > as parent of CLK_I2S_RCLK_SRC regardless of DT settings so there was no issue
-> > with not enabled EXYNOS_SCLK_I2S.
-> > 
-> > Cc: stable@vger.kernel.org # v4.17+
-> 
-> I gues your format would work (got recognized by stable scripts) but
-> strictly speaking format is different:
-> 
-> 	Cc: <stable@vger.kernel.org> # 4.17.x
-> 
-> https://elixir.bootlin.com/linux/latest/source/Documentation/process/stable-kernel-rules.rst#L127
-
-Either works just fine, my scripts have to be a bit flexible due to all
-of the odd ways people like to tag things here...
-
-thanks,
-
-greg k-h
+SGkgRGF2ZSwKCiAgIEp1c3QgYWRkaW5nIGNvbmZpZ3VyYWJsZSBwbGFuZSBhbHBoYSBhbmQgcGl4
+ZWwgYmxlbmQgbW9kZSBzdXBwb3J0CiAgIGZvciBGSU1EIGRldmljZSBJIG1pc3NlZC4KCiAgIFBs
+ZWFzZSBraW5kbHkgbGV0IG1lIGtub3cgaWYgdGhlcmUgaXMgYW55IHByb2JsZW0uCgpUaGFua3Ms
+Cklua2kgRGFlCgpUaGUgZm9sbG93aW5nIGNoYW5nZXMgc2luY2UgY29tbWl0IDJhM2M4M2Y1ZmUw
+NzcwZDEzYmJiNzFiMjM2NzQ4ODZmZjQxMTFmNDQ6CgogIE1lcmdlIHRhZyAndm13Z2Z4LW5leHQt
+MjAxOC0xMi0xMycgb2YgZ2l0Oi8vcGVvcGxlLmZyZWVkZXNrdG9wLm9yZy9+dGhvbWFzaC9saW51
+eCBpbnRvIGRybS1uZXh0ICgyMDE4LTEyLTE0IDA0OjU3OjQ1ICsxMDAwKQoKYXJlIGF2YWlsYWJs
+ZSBpbiB0aGUgZ2l0IHJlcG9zaXRvcnkgYXQ6CgogIGdpdDovL2dpdC5rZXJuZWwub3JnL3B1Yi9z
+Y20vbGludXgva2VybmVsL2dpdC9kYWVpbmtpL2RybS1leHlub3MgdGFncy9leHlub3MtZHJtLW5l
+eHQtZm9yLXY0LjIxLXYyCgpmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8gM2I1MTI5YjNh
+N2M2MmZkZWM5Y2M2OWIxYjNmMjA5MTdjMzZhYjVkNDoKCiAgZHJtL2V4eW5vczogZmltZDogTWFr
+ZSBwaXhlbCBibGVuZCBtb2RlIGNvbmZpZ3VyYWJsZSAoMjAxOC0xMi0xNCAxNTo0NjoxNSArMDkw
+MCkKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0KQWRkIGNvbmZpZ3VyYWJsZSBwbGFuZSBhbHBoYSBhbmQgcGl4ZWwgYmxlbmQg
+bW9kZSBzdXBwb3J0Ci0gVGhpcyBwYXRjaCBzZXJpZXMgYWRkcyBjb25maWd1cmFibGUgcGxhbmUg
+YWxwaGEgYW5kIHBpeGVsIGJsZW5kIG1vZGUKICBzdXBwb3J0IGZvciBGSU1EIGRldmljZSBkcml2
+ZXIuCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tCkNocmlzdG9waCBNYW5zemV3c2tpICgyKToKICAgICAgZHJtL2V4eW5vczog
+ZmltZDogTWFrZSBwbGFuZSBhbHBoYSBjb25maWd1cmFibGUKICAgICAgZHJtL2V4eW5vczogZmlt
+ZDogTWFrZSBwaXhlbCBibGVuZCBtb2RlIGNvbmZpZ3VyYWJsZQoKIGRyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9maW1kLmMgfCAxMjMgKysrKysrKysrKysrKysrKysrKysrKysrKy0t
+LS0tLQogaW5jbHVkZS92aWRlby9zYW1zdW5nX2ZpbWQuaCAgICAgICAgICAgICB8ICAxMCArKysK
+IDIgZmlsZXMgY2hhbmdlZCwgMTEwIGluc2VydGlvbnMoKyksIDIzIGRlbGV0aW9ucygtKQpfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
+bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
+cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
