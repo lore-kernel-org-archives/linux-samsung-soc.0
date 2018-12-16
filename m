@@ -1,68 +1,40 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [GIT PULL v2] exynos-drm-next
-Date: Fri, 14 Dec 2018 17:42:08 +0100
-Message-ID: <20181214164208.GV21184@phenom.ffwll.local>
-References: <CGME20181214072711epcas2p4f9d1016da37bae403a9416d00a1c0e78@epcas2p4.samsung.com>
- <1544772430-8295-1-git-send-email-inki.dae@samsung.com>
- <20181214161151.GR21184@phenom.ffwll.local>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: [PATCH] devfreq: Use of_node_name_eq for node name comparisons
+Date: Sun, 16 Dec 2018 18:12:11 +0900
+Message-ID: <CAJ0PZbQRNGoKsMZjpwaemzpK677v0T5n6h9OtZMdd5UTvq-drA@mail.gmail.com>
+References: <20181205195050.4759-6-robh@kernel.org>
+Reply-To: myungjoo.ham@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20181214161151.GR21184@phenom.ffwll.local>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181205195050.4759-6-robh@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gRnJpLCBEZWMgMTQsIDIwMTggYXQgMDU6MTE6NTFQTSArMDEwMCwgRGFuaWVsIFZldHRlciB3
-cm90ZToKPiBPbiBGcmksIERlYyAxNCwgMjAxOCBhdCAwNDoyNzoxMFBNICswOTAwLCBJbmtpIERh
-ZSB3cm90ZToKPiA+IEhpIERhdmUsCj4gPiAKPiA+ICAgIEp1c3QgYWRkaW5nIGNvbmZpZ3VyYWJs
-ZSBwbGFuZSBhbHBoYSBhbmQgcGl4ZWwgYmxlbmQgbW9kZSBzdXBwb3J0Cj4gPiAgICBmb3IgRklN
-RCBkZXZpY2UgSSBtaXNzZWQuCj4gPiAKPiA+ICAgIFBsZWFzZSBraW5kbHkgbGV0IG1lIGtub3cg
-aWYgdGhlcmUgaXMgYW55IHByb2JsZW0uCj4gCj4gVGhhbmtzLCBwdWxsZWQgaW50byBkcm0tbmV4
-dC4KCmJ0dyBwbGVhc2UgZG9uJ3QgcmViYXNlIHB1bGwgcmVxdWVzdHMgcmlnaHQgYmVmb3JlIHNl
-bmRpbmcsIGF0IGxlYXN0IG5vdAphcyBhIHJ1bGUuIEl0J3MgYmV0dGVyIHRvIGhhdmUgdGhlIGZ1
-bGwgaGlzdG9yeSBhbmQgc2VlIHdoZW4gdGhlIHBhdGNoZXMKYWN0dWFsbHkgbGFuZGVkLCB0byBn
-dWVzc3RpbWF0ZSBob3cgbXVjaCB0ZXN0aW5nIGhhcHBlbmVkLgoKQ2hlZXJzLCBEYW5pZWwKCj4g
-LURhbmllbAo+IAo+ID4gCj4gPiBUaGFua3MsCj4gPiBJbmtpIERhZQo+ID4gCj4gPiBUaGUgZm9s
-bG93aW5nIGNoYW5nZXMgc2luY2UgY29tbWl0IDJhM2M4M2Y1ZmUwNzcwZDEzYmJiNzFiMjM2NzQ4
-ODZmZjQxMTFmNDQ6Cj4gPiAKPiA+ICAgTWVyZ2UgdGFnICd2bXdnZngtbmV4dC0yMDE4LTEyLTEz
-JyBvZiBnaXQ6Ly9wZW9wbGUuZnJlZWRlc2t0b3Aub3JnL350aG9tYXNoL2xpbnV4IGludG8gZHJt
-LW5leHQgKDIwMTgtMTItMTQgMDQ6NTc6NDUgKzEwMDApCj4gPiAKPiA+IGFyZSBhdmFpbGFibGUg
-aW4gdGhlIGdpdCByZXBvc2l0b3J5IGF0Ogo+ID4gCj4gPiAgIGdpdDovL2dpdC5rZXJuZWwub3Jn
-L3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9kYWVpbmtpL2RybS1leHlub3MgdGFncy9leHlub3Mt
-ZHJtLW5leHQtZm9yLXY0LjIxLXYyCj4gPiAKPiA+IGZvciB5b3UgdG8gZmV0Y2ggY2hhbmdlcyB1
-cCB0byAzYjUxMjliM2E3YzYyZmRlYzljYzY5YjFiM2YyMDkxN2MzNmFiNWQ0Ogo+ID4gCj4gPiAg
-IGRybS9leHlub3M6IGZpbWQ6IE1ha2UgcGl4ZWwgYmxlbmQgbW9kZSBjb25maWd1cmFibGUgKDIw
-MTgtMTItMTQgMTU6NDY6MTUgKzA5MDApCj4gPiAKPiA+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiA+IEFkZCBjb25maWd1
-cmFibGUgcGxhbmUgYWxwaGEgYW5kIHBpeGVsIGJsZW5kIG1vZGUgc3VwcG9ydAo+ID4gLSBUaGlz
-IHBhdGNoIHNlcmllcyBhZGRzIGNvbmZpZ3VyYWJsZSBwbGFuZSBhbHBoYSBhbmQgcGl4ZWwgYmxl
-bmQgbW9kZQo+ID4gICBzdXBwb3J0IGZvciBGSU1EIGRldmljZSBkcml2ZXIuCj4gPiAKPiA+IC0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0KPiA+IENocmlzdG9waCBNYW5zemV3c2tpICgyKToKPiA+ICAgICAgIGRybS9leHlub3M6
-IGZpbWQ6IE1ha2UgcGxhbmUgYWxwaGEgY29uZmlndXJhYmxlCj4gPiAgICAgICBkcm0vZXh5bm9z
-OiBmaW1kOiBNYWtlIHBpeGVsIGJsZW5kIG1vZGUgY29uZmlndXJhYmxlCj4gPiAKPiA+ICBkcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jIHwgMTIzICsrKysrKysrKysrKysr
-KysrKysrKysrKystLS0tLS0KPiA+ICBpbmNsdWRlL3ZpZGVvL3NhbXN1bmdfZmltZC5oICAgICAg
-ICAgICAgIHwgIDEwICsrKwo+ID4gIDIgZmlsZXMgY2hhbmdlZCwgMTEwIGluc2VydGlvbnMoKyks
-IDIzIGRlbGV0aW9ucygtKQo+ID4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KPiA+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPiA+IGRyaS1kZXZlbEBsaXN0
-cy5mcmVlZGVza3RvcC5vcmcKPiA+IGh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
-YW4vbGlzdGluZm8vZHJpLWRldmVsCj4gCj4gLS0gCj4gRGFuaWVsIFZldHRlcgo+IFNvZnR3YXJl
-IEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgo+IGh0dHA6Ly9ibG9nLmZmd2xsLmNoCgotLSAK
-RGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29ycG9yYXRpb24KaHR0cDov
-L2Jsb2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
-dmVsCg==
+On Thu, Dec 6, 2018 at 4:54 AM Rob Herring <robh@kernel.org> wrote:
+>
+> Convert string compares of DT node names to use of_node_name_eq helper
+> instead. This removes direct access to the node name pointer.
+>
+> For instances using of_node_cmp, this has the side effect of now using
+> case sensitive comparisons. This should not matter for any FDT based
+> system which all of these are.
+>
+> Cc: Chanwoo Choi <cw00.choi@samsung.com>
+> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
+> Cc: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+
+Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+
+> ---
+>  drivers/devfreq/devfreq-event.c     | 2 +-
+>  drivers/devfreq/event/exynos-ppmu.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
