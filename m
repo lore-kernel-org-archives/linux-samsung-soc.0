@@ -1,79 +1,60 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [RFC/RFT 09/10] i2c: s3c2410: use core helper to mark adapter
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [RFC/RFT 08/10] i2c: exynos5: use core helper to mark adapter
  suspended
-Date: Tue, 18 Dec 2018 12:24:56 +0100
-Message-ID: <2b73c71b-2b73-7132-3629-cf700b251fdb@samsung.com>
+Date: Tue, 18 Dec 2018 20:52:56 +0100
+Message-ID: <20181218195256.hvmgl5wt3jeebz5k@ninjato>
 References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
-        <CGME20181210210451epcas5p2f186c09d2e89f30cdb7106272e5e4709@epcas5p2.samsung.com>
-        <20181210210310.12677-10-wsa+renesas@sang-engineering.com>
+ <CGME20181210210429epcas5p2b545f32165b5025e7cec0b5f5b98f783@epcas5p2.samsung.com>
+ <20181210210310.12677-9-wsa+renesas@sang-engineering.com>
+ <87b6a87b-92d3-a1eb-b77b-f91651c72270@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="lmgdxylq2cyzuy6g"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181210210310.12677-10-wsa+renesas@sang-engineering.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <87b6a87b-92d3-a1eb-b77b-f91651c72270@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
 
-On 2018-12-10 22:03, Wolfram Sang wrote:
-> Rejecting transfers should be handled by the core. Also, this will
-> ensure proper locking which was forgotten in this open coded version.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+--lmgdxylq2cyzuy6g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Works fine on Odroid U3.
 
-> ---
->  drivers/i2c/busses/i2c-s3c2410.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-> index 2f2e28d60ef5..7c76edb25514 100644
-> --- a/drivers/i2c/busses/i2c-s3c2410.c
-> +++ b/drivers/i2c/busses/i2c-s3c2410.c
-> @@ -104,7 +104,6 @@ enum s3c24xx_i2c_state {
->  struct s3c24xx_i2c {
->  	wait_queue_head_t	wait;
->  	kernel_ulong_t		quirks;
-> -	unsigned int		suspended:1;
->  
->  	struct i2c_msg		*msg;
->  	unsigned int		msg_num;
-> @@ -703,9 +702,6 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i2c,
->  	unsigned long timeout;
->  	int ret;
->  
-> -	if (i2c->suspended)
-> -		return -EIO;
-> -
->  	ret = s3c24xx_i2c_set_master(i2c);
->  	if (ret != 0) {
->  		dev_err(i2c->dev, "cannot get bus (error %d)\n", ret);
-> @@ -1246,7 +1242,7 @@ static int s3c24xx_i2c_suspend_noirq(struct device *dev)
->  {
->  	struct s3c24xx_i2c *i2c = dev_get_drvdata(dev);
->  
-> -	i2c->suspended = 1;
-> +	i2c_mark_adapter_suspended(&i2c->adap, true);
->  
->  	if (!IS_ERR(i2c->sysreg))
->  		regmap_read(i2c->sysreg, EXYNOS5_SYS_I2C_CFG, &i2c->sys_i2c_cfg);
-> @@ -1267,7 +1263,7 @@ static int s3c24xx_i2c_resume_noirq(struct device *dev)
->  		return ret;
->  	s3c24xx_i2c_init(i2c);
->  	clk_disable(i2c->clk);
-> -	i2c->suspended = 0;
-> +	i2c_mark_adapter_suspended(&i2c->adap, false);
->  
->  	return 0;
->  }
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Thanks for testing!
+
+> Similar warning was already there ('HS-I2C is not initialized' message,
+> without backtrace) during system suspend/resume. It looks that cpu freq
+> is resumed too early, before any device drivers, but this is not an
+> issue for this patchset.
+
+Yes, this is actually a desired outcome :) Raise awareness if the
+suspend/resume ordering has issues.
+
+
+--lmgdxylq2cyzuy6g
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwZUBQACgkQFA3kzBSg
+KbaehxAAm4Uf0X43KMdWHwO/Iyha2jVgfyVJCnEMNu0j2wFzirDaaKvmPNyDqFyS
+BRhqzCjVsl00sECsaLGQLn0WB1geFHvyj7IPjVy51zaunuPVosslaZsjaS6+TLui
+x8IY3u5GxRT4MW6siGMqa8iyjZQ3F0Yk8ZmIhoFvaDC14J/7XGAkkKaNxEkA8KZD
+kRCTbdXYnHiwegDOZ8sorv4XNCXynvNyJ7SIuy0aaaipJG/iqIlrED3Bc2+PFz/A
+LZuVHv5/mPLSdXddNJ4hIi7cEfJN6n48Ey/XaMBOzHlFBcxpMFeOOpzO7YsNnqfa
+SYRqYR315lD3oKP3VCQMGKqmM3AVXMy1rAbC8LnV2Q1GEH6+PWrUPC02IAgOtce9
+n2EL+rxgPwepc3ttBspZWldmXX7rbjL7jI9fSKqT71jVugMNGhYz7avM8UkzpjWR
+AVAKRS/+E0TW1triR0/vkl4i6UDw3yr47/vyOacrnGpnyU6MYgtJ3kqRICf51Yos
+xCltgDSelxBMHPrARsQvuv1sHw9EyEFAIDXbA2Y2h/uMY17saFA+XFhghSsbw4HA
+MyGwOHVeQp0dMsWG7llpvGdZBRkodI+5lEpdbC1Uxz51DKJnCiEEHRdE/vpDsDOf
+0oK6W91eX5/cWTCvbZUpcW8dY7XAFS7XK2Mi7Lis8hGxoLJOHc4=
+=ZoGD
+-----END PGP SIGNATURE-----
+
+--lmgdxylq2cyzuy6g--
