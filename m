@@ -1,36 +1,66 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 3/3] ARM: dts: s5pv210: Add node for exynos-rotator
-Date: Wed, 19 Dec 2018 17:24:45 +0100
-Message-ID: <CAJKOXPdFSqsKswPHUFCRZ436yWX9evFzyAo75DNkU=fznppCAQ@mail.gmail.com>
-References: <20181219155704.15264-1-pawel.mikolaj.chmiel@gmail.com>
- <20181219155704.15264-4-pawel.mikolaj.chmiel@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20181219155704.15264-4-pawel.mikolaj.chmiel@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, airlied@linux.ie, Seung Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, kyungmin.park@samsung.com, kgene@kernel.org, linux-arm-kernel@lists.infradead.org
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 00/10] i2c: move handling of suspended adapters to the core
+Date: Wed, 19 Dec 2018 17:48:16 +0100
+Message-ID: <20181219164827.20985-1-wsa+renesas@sang-engineering.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gV2VkLCAxOSBEZWMgMjAxOCBhdCAxNzowNCwgUGF3ZcWCIENobWllbAo8cGF3ZWwubWlrb2xh
-ai5jaG1pZWxAZ21haWwuY29tPiB3cm90ZToKPgo+IFRoaXMgY29tbWl0IGFkZHMgbm9kZSBmb3Ig
-RXh5bm9zIFJvcmF0b3IgZGV2aWNlLAo+IHNvIGl0IGNhbiBiZSB1c2VkIG9uIGFsbCBzNXB2MjEw
-IGJhc2VkIGRldmljZXMuCj4KPiBTaWduZWQtb2ZmLWJ5OiBQYXdlxYIgQ2htaWVsIDxwYXdlbC5t
-aWtvbGFqLmNobWllbEBnbWFpbC5jb20+Cj4gLS0tCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL3M1cHYy
-MTAuZHRzaSB8IDkgKysrKysrKysrCj4gIDEgZmlsZSBjaGFuZ2VkLCA5IGluc2VydGlvbnMoKykK
-ClBhdGNoIGxvb2tzIGdvb2QgYnV0IGl0IGlzIHRvbyBjbG9zZSB0byBtZXJnZSB3aW5kb3cgc28g
-SSB3b24ndCBiZQphYmxlIHRvIHNlbmQgaXQgZnVydGhlci4gSSdsbCBwaWNrIGl0IHVwIGZvciBu
-ZXh0IGN5Y2xlLCBhZnRlciB0aGlzCm1lcmdlIHdpbmRvdy4KCkJlc3QgcmVnYXJkcywKS3J6eXN6
-dG9mCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
-ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczov
-L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Finally, here is the implementation Hans and I agreed on. Plus, all potential
+users I could spot already converted. Renesas R-Car driver was added on top.
+This series was tested on a Renesas Lager board (R-Car H2). I had to hack some
+error cases into the code to verify the workings. Thanks for all the tests so
+far. Of course, more testing never hurts ;)
+
+Please comment, review, test... a branch can be found here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/core-pm-helpers
+
+Thanks,
+
+   Wolfram
+
+Changes since RFC:
+
+* don't use bitfields anymore but an unsigned long flags variable which is only
+  meant for flags to be changed when the adapter lock is held
+
+* split the genereic accessor into _mark_suspended() and _mark_resumed()
+
+* added kerneldoc and noted that using these helpers is optional
+
+* documented -ESHUTDOWN as the error code when trying to transfer using an
+  already suspended adapter
+
+* added acks from last series. Changes were minor enough to keep them. Please let
+  me know if you disagree.
+
+
+Wolfram Sang (10):
+  i2c: add suspended flag and accessors for i2c adapters
+  i2c: reject new transfers when adapters are suspended
+  i2c: synquacer: remove unused is_suspended flag
+  i2c: brcmstb: use core helper to mark adapter suspended
+  i2c: zx2967: use core helper to mark adapter suspended
+  i2c: sprd: don't use pdev as variable name for struct device *
+  i2c: sprd: use core helper to mark adapter suspended
+  i2c: exynos5: use core helper to mark adapter suspended
+  i2c: s3c2410: use core helper to mark adapter suspended
+  i2c: rcar: add suspend/resume support
+
+ Documentation/i2c/fault-codes      |  4 ++++
+ drivers/i2c/busses/i2c-brcmstb.c   | 13 ++-----------
+ drivers/i2c/busses/i2c-exynos5.c   | 11 ++---------
+ drivers/i2c/busses/i2c-rcar.c      | 25 +++++++++++++++++++++++++
+ drivers/i2c/busses/i2c-s3c2410.c   |  8 ++------
+ drivers/i2c/busses/i2c-sprd.c      | 34 ++++++++++++----------------------
+ drivers/i2c/busses/i2c-synquacer.c |  5 -----
+ drivers/i2c/busses/i2c-zx2967.c    |  8 ++------
+ drivers/i2c/i2c-core-base.c        |  3 +++
+ include/linux/i2c.h                | 34 ++++++++++++++++++++++++++++++++++
+ 10 files changed, 86 insertions(+), 59 deletions(-)
+
+-- 
+2.11.0
