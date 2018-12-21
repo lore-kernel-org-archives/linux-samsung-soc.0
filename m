@@ -1,37 +1,65 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 1/2] ARM: dts: exynos: Second round for v4.21
-Date: Thu, 20 Dec 2018 17:05:30 +0100
-Message-ID: <CAK8P3a1DAGStWYN7_BS6t7ud9_at4nJLWjPtoyDphYXKAjnKXg@mail.gmail.com>
-References: <20181218201003.12806-1-krzk@kernel.org>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: RE: Re: [PATCH v3 4/5] drivers: power: suspend: call devfreq
+ suspend/resume
+Date: Fri, 21 Dec 2018 09:33:05 +0900
+Message-ID: <20181221003305epcms1p756d76191d5f233c6e3238400d233b3c6@epcms1p7>
+References: <ce1d415d-2a00-ef0e-6b58-23d16cffee4a@partner.samsung.com>
+        <1544007956-28889-1-git-send-email-l.luba@partner.samsung.com>
+        <1544007956-28889-5-git-send-email-l.luba@partner.samsung.com>
+        <CGME20181205110623eucas1p120f9d8b38822bf856a5b7d427d00e49f@epcms1p7>
+Reply-To: myungjoo.ham@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181218201003.12806-1-krzk@kernel.org>
+In-Reply-To: <ce1d415d-2a00-ef0e-6b58-23d16cffee4a@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Olof Johansson <olof@lixom.net>, arm-soc <arm@kernel.org>, Kukjin Kim <kgene@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Lukasz Luba <l.luba@partner.samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc: "tjakobi@math.uni-bielefeld.de" <tjakobi@math.uni-bielefeld.de>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "len.brown@intel.com" <len.brown@intel.com>, "pavel@ucw.cz" <pavel@ucw.cz>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "keescook@chromium.org" <keescook@chromium.org>, "anton@enomsg.org" <anton@enomsg.org>, "ccross@android.com" <ccross@android.com>, "tony.luck@intel.com" <tony.luck@intel.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "kgene@kernel.org" <kgene@kernel.org>, "krzk@kernel.org" <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 9:10 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> The following changes since commit 57b13b8b34002ce8f1d822ea05f0a84e5bc3a64a:
->
->   ARM: dts: exynos: remove display-port node from Arndale (2018-12-06 19:47:15 +0100)
->
-> are available in the Git repository at:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-4.21-2
->
-> for you to fetch changes up to 8ac686d7dfed721102860ff2571e6b9f529ae81a:
->
->   ARM: dts: exynos: Specify I2S assigned clocks in proper node (2018-12-13 21:56:07 +0100)
->
-> ----------------------------------------------------------------
-> Samsung DTS ARM changes for v4.21, part 2
->
-> 1. Add missing CPUs in cooling maps for Odroid X2 (missed in previous
->    round of fixups).
-> 2. Fix clock configuration in audio subsystem on Odroid XU3/XU4.
+>On 2018-12-05 12:05, Lukasz Luba wrote:
+>> Devfreq framework supports suspend of its devices.
+>> Call the the devfreq interface and allow devfreq devices preserve/restore
+>> their states during suspend/resume.
+>>
+>> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+>> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 
-Pulled into next/dt, thanks!
+This looks all good to me.
 
-       Arnd
+Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+
+>> ---
+>>  drivers/base/power/main.c | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+>> index a690fd4..0992e67 100644
+>> --- a/drivers/base/power/main.c
+>> +++ b/drivers/base/power/main.c
+>> @@ -32,6 +32,7 @@
+>>  #include <trace/events/power.h>
+>>  #include <linux/cpufreq.h>
+>>  #include <linux/cpuidle.h>
+>> +#include <linux/devfreq.h>
+>>  #include <linux/timer.h>
+>>  
+>>  #include "../base.h"
+>> @@ -1078,6 +1079,7 @@ void dpm_resume(pm_message_t state)
+>>  	dpm_show_time(starttime, state, 0, NULL);
+>>  
+>>  	cpufreq_resume();
+>> +	devfreq_resume();
+>>  	trace_suspend_resume(TPS("dpm_resume"), state.event, false);
+>>  }
+>>  
+>> @@ -1852,6 +1854,7 @@ int dpm_suspend(pm_message_t state)
+>>  	trace_suspend_resume(TPS("dpm_suspend"), state.event, true);
+>>  	might_sleep();
+>>  
+>> +	devfreq_suspend();
+>>  	cpufreq_suspend();
+>>  
+>>  	mutex_lock(&dpm_list_mtx);
