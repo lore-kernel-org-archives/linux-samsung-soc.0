@@ -1,50 +1,66 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 1/4] mfd: exynos-lpass: Enable UART module support
-Date: Fri, 21 Dec 2018 14:56:08 +0000
-Message-ID: <20181221145608.GU13248@dell>
-References: <20181221103907.GK13248@dell>
- <CGME20181221143250eucas1p120b2d4dbcb990c5893e0fa4c6a7dd861@eucas1p1.samsung.com>
- <20181221143228.934-1-m.szyprowski@samsung.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 8/9] i2c: exynos5: don't open code to reject transfers when suspended
+Date: Sat, 22 Dec 2018 21:26:22 +0100
+Message-ID: <20181222202623.4521-9-wsa+renesas@sang-engineering.com>
+References: <20181222202623.4521-1-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20181221143228.934-1-m.szyprowski@samsung.com>
+In-Reply-To: <20181222202623.4521-1-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Beomho Seo <beomho.seo@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, 21 Dec 2018, Marek Szyprowski wrote:
+This is handled by the I2C core meanwhile.
 
-> From: Beomho Seo <beomho.seo@samsung.com>
-> 
-> This patch enables proper interrupts routing between UART module
-> in Exynos Audio SubSystem and the rest of the SoC. This routing is
-> completely transparent for UART device and CPU/GIC. UART driver requests
-> interrupts from the respective controller and enables/masks/handles it
-> by itself via standard methods.
-> 
-> There are boards (for example TM2), which use UART module in Exynos Audio
-> SubStem for communication with BlueTooth chip.
-> 
-> Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
-> [mszyprow: rephrased commit message, added UART reset]
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
-> Changelog
-> v2:
-> - rephrased and extended commit message
-> ---
->  drivers/mfd/exynos-lpass.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/i2c/busses/i2c-exynos5.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-Applied, thanks.
-
+diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+index c1ce2299a76e..81b9c3cf4e75 100644
+--- a/drivers/i2c/busses/i2c-exynos5.c
++++ b/drivers/i2c/busses/i2c-exynos5.c
+@@ -183,7 +183,6 @@ enum i2c_type_exynos {
+ 
+ struct exynos5_i2c {
+ 	struct i2c_adapter	adap;
+-	unsigned int		suspended:1;
+ 
+ 	struct i2c_msg		*msg;
+ 	struct completion	msg_complete;
+@@ -715,11 +714,6 @@ static int exynos5_i2c_xfer(struct i2c_adapter *adap,
+ 	struct exynos5_i2c *i2c = adap->algo_data;
+ 	int i, ret;
+ 
+-	if (i2c->suspended) {
+-		dev_err(i2c->dev, "HS-I2C is not initialized.\n");
+-		return -EIO;
+-	}
+-
+ 	ret = clk_enable(i2c->clk);
+ 	if (ret)
+ 		return ret;
+@@ -847,10 +841,7 @@ static int exynos5_i2c_suspend_noirq(struct device *dev)
+ {
+ 	struct exynos5_i2c *i2c = dev_get_drvdata(dev);
+ 
+-	i2c->suspended = 1;
+-
+ 	clk_unprepare(i2c->clk);
+-
+ 	return 0;
+ }
+ 
+@@ -871,7 +862,6 @@ static int exynos5_i2c_resume_noirq(struct device *dev)
+ 
+ 	exynos5_i2c_init(i2c);
+ 	clk_disable(i2c->clk);
+-	i2c->suspended = 0;
+ 
+ 	return 0;
+ }
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.19.1
