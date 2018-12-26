@@ -1,40 +1,33 @@
-From: Kangjie Lu <kjlu@umn.edu>
-Subject: [PATCH] pci: dwc: add a check for resetting gpio
-Date: Tue, 25 Dec 2018 20:22:36 -0600
-Message-ID: <20181226022236.71682-1-kjlu@umn.edu>
+From: Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] clk: samsung: exynos4: fix refcount leak in exynos4_get_xom()
+Date: Wed, 26 Dec 2018 08:32:15 -0500
+Message-ID: <20181226133215.4939-1-tiny.windzz@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: kjlu@umn.edu
-Cc: pakki001@umn.edu, Jingoo Han <jingoohan1@gmail.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Bjorn Helgaas <bhelgaas@google.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, cw00.choi@samsung.com, mturquette@baylibre.com, sboyd@kernel.org, kgene@kernel.org, krzk@kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-devm_gpio_request_one() could fail. The fix checks its status and issues
-an error if it fails.
+The of_find_compatible_node() returns a node pointer with refcount
+incremented, but there is the lack of use of the of_node_put() when
+done. Add the missing of_node_put() to release the refcount.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/pci/controller/dwc/pci-exynos.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/clk/samsung/clk-exynos4.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
-index cee5f2f590e2..e3a045e215d2 100644
---- a/drivers/pci/controller/dwc/pci-exynos.c
-+++ b/drivers/pci/controller/dwc/pci-exynos.c
-@@ -226,9 +226,12 @@ static void exynos_pcie_assert_reset(struct exynos_pcie *ep)
- 	struct dw_pcie *pci = ep->pci;
- 	struct device *dev = pci->dev;
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 59d4d46667ce..54066e6508d3 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -1028,6 +1028,7 @@ static unsigned long __init exynos4_get_xom(void)
+ 			xom = readl(chipid_base + 8);
  
--	if (ep->reset_gpio >= 0)
--		devm_gpio_request_one(dev, ep->reset_gpio,
--				GPIOF_OUT_INIT_HIGH, "RESET");
-+	if (ep->reset_gpio >= 0) {
-+		if (devm_gpio_request_one(dev, ep->reset_gpio,
-+				GPIOF_OUT_INIT_HIGH, "RESET"))
-+			dev_err(dev, "Failed requesting reset gpio %d\n",
-+					ep->reset_gpio);
-+	}
- }
+ 		iounmap(chipid_base);
++		of_node_put(np);
+ 	}
  
- static int exynos_pcie_establish_link(struct exynos_pcie *ep)
+ 	return xom;
 -- 
-2.17.2 (Apple Git-113)
+2.17.0
