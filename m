@@ -1,33 +1,15 @@
-From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] clk: samsung: exynos4: fix refcount leak in exynos4_get_xom()
-Date: Wed, 26 Dec 2018 08:32:15 -0500
-Message-ID: <20181226133215.4939-1-tiny.windzz@gmail.com>
+From: Frank Lee <tiny.windzz@gmail.com>
+Subject: Re: [PATCH v3] media: exynos4-is: convert to DEFINE_SHOW_ATTRIBUTE
+Date: Thu, 27 Dec 2018 00:13:46 +0800
+Message-ID: <CAEExFWu4Q5V5KFeD_UV6YyZpzuR1SJEOgv_tZTw4=r1B0yS0mQ@mail.gmail.com>
+References: <20181212162014.23409-1-tiny.windzz@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181212162014.23409-1-tiny.windzz@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: s.nawrocki@samsung.com, tomasz.figa@gmail.com, cw00.choi@samsung.com, mturquette@baylibre.com, sboyd@kernel.org, kgene@kernel.org, krzk@kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+To: Kyungmin Park <kyungmin.park@samsung.com>, s.nawrocki@samsung.com, mchehab@kernel.org, kgene@kernel.org, krzk@kernel.org
+Cc: linux-media@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The of_find_compatible_node() returns a node pointer with refcount
-incremented, but there is the lack of use of the of_node_put() when
-done. Add the missing of_node_put() to release the refcount.
-
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/clk/samsung/clk-exynos4.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 59d4d46667ce..54066e6508d3 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -1028,6 +1028,7 @@ static unsigned long __init exynos4_get_xom(void)
- 			xom = readl(chipid_base + 8);
- 
- 		iounmap(chipid_base);
-+		of_node_put(np);
- 	}
- 
- 	return xom;
--- 
-2.17.0
+ping...
