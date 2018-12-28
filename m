@@ -1,45 +1,47 @@
 From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH v2 3/3] ARM: dts: s5pv210: Add node for exynos-rotator
-Date: Fri, 28 Dec 2018 16:19:04 +0100
-Message-ID: <20181228151904.12079-4-pawel.mikolaj.chmiel@gmail.com>
-References: <20181228151904.12079-1-pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH 0/6] ARM: dts: s5pv210: aries: Enable more drivers present on Samsung Aries based devices
+Date: Fri, 28 Dec 2018 17:18:13 +0100
+Message-ID: <20181228161819.18931-1-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181228151904.12079-1-pawel.mikolaj.chmiel@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: inki.dae@samsung.com, krzk@kernel.org, airlied@linux.ie
-Cc: jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, kgene@kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+To: krzk@kernel.org
+Cc: kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, pawel.mikolaj.chmiel@gmail.com, xc-racer2@live.ca, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This commit adds node for Exynos Rorator device,
-so it can be used on all s5pv210 based devices.
+This patchset enables more drivers for devices present on
+ Samsung Aries based devices.
 
-Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
----
- arch/arm/boot/dts/s5pv210.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+First patch switches fimd to correct variant, which wasn't
+ present at moment of adding aries dts.
 
-diff --git a/arch/arm/boot/dts/s5pv210.dtsi b/arch/arm/boot/dts/s5pv210.dtsi
-index 75f454a210d6..a5463003c7f6 100644
---- a/arch/arm/boot/dts/s5pv210.dtsi
-+++ b/arch/arm/boot/dts/s5pv210.dtsi
-@@ -542,6 +542,15 @@
- 			#dma-requests = <1>;
- 		};
- 
-+		rotator: rotator@fa300000 {
-+			compatible = "samsung,s5pv210-rotator";
-+			reg = <0xfa300000 0x1000>;
-+			interrupt-parent = <&vic2>;
-+			interrupts = <4>;
-+			clocks = <&clocks CLK_ROTATOR>;
-+			clock-names = "rotator";
-+		};
-+
- 		i2c1: i2c@fab00000 {
- 			compatible = "samsung,s3c2440-i2c";
- 			reg = <0xfab00000 0x1000>;
+Next two patches removes hardcoded bootargs from dts files
+ for galaxys and fascinate4g, because now we have working bootloader
+ which can pass those values.
+
+One of the patches also reserves memory for Samsung S5P MFC
+ video codec, so it's possible to use it.
+
+Last two patches adds and enables more drivers.
+
+Jonathan Bakker (1):
+  ARM: dts: s5pv210: aries: Support for more devices present on Aries
+
+Paweł Chmiel (5):
+  ARM: dts: s5pv210: Use correct fimd variant
+  ARM: dts: s5pv210: galaxys: Remove hardcoded bootargs
+  ARM: dts: s5pv210: fascinate4g: Remove hardcoded bootargs
+  ARM: dts: s5pv210: aries: Add reserved memory for mfc
+  ARM: defconfig: s5pv210: Enable more drivers present on Samsung Aries
+
+ arch/arm/boot/dts/s5pv210-aries.dtsi      | 90 +++++++++++++++++++++++
+ arch/arm/boot/dts/s5pv210-fascinate4g.dts |  7 --
+ arch/arm/boot/dts/s5pv210-galaxys.dts     |  7 --
+ arch/arm/boot/dts/s5pv210.dtsi            |  2 +-
+ arch/arm/configs/s5pv210_defconfig        | 41 ++++++++---
+ 5 files changed, 121 insertions(+), 26 deletions(-)
+
 -- 
 2.17.1
