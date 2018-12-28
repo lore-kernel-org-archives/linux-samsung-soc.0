@@ -1,7 +1,7 @@
 From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH 2/6] ARM: dts: s5pv210: galaxys: Remove hardcoded bootargs
-Date: Fri, 28 Dec 2018 17:18:15 +0100
-Message-ID: <20181228161819.18931-3-pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH 3/6] ARM: dts: s5pv210: fascinate4g: Remove hardcoded bootargs
+Date: Fri, 28 Dec 2018 17:18:16 +0100
+Message-ID: <20181228161819.18931-4-pawel.mikolaj.chmiel@gmail.com>
 References: <20181228161819.18931-1-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -18,13 +18,13 @@ it's not needed anymore to hardcode bootargs.
 
 Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 ---
- arch/arm/boot/dts/s5pv210-galaxys.dts | 7 -------
+ arch/arm/boot/dts/s5pv210-fascinate4g.dts | 7 -------
  1 file changed, 7 deletions(-)
 
-diff --git a/arch/arm/boot/dts/s5pv210-galaxys.dts b/arch/arm/boot/dts/s5pv210-galaxys.dts
-index 842276749717..cf161bbfbacf 100644
---- a/arch/arm/boot/dts/s5pv210-galaxys.dts
-+++ b/arch/arm/boot/dts/s5pv210-galaxys.dts
+diff --git a/arch/arm/boot/dts/s5pv210-fascinate4g.dts b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
+index ccf761b1babf..07a8d9bbe5b8 100644
+--- a/arch/arm/boot/dts/s5pv210-fascinate4g.dts
++++ b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
 @@ -11,13 +11,6 @@
  
  	chosen {
@@ -35,9 +35,9 @@ index 842276749717..cf161bbfbacf 100644
 -		 * Let's hardocde bootargs for now, till u-boot port is finished,
 -		 * with which it should be easier.
 -		 */
--		bootargs = "root=/dev/mmcblk2p1 rw rootwait ignore_loglevel earlyprintk";
+-		bootargs = "root=/dev/mmcblk1p1 rw rootwait ignore_loglevel earlyprintk";
  	};
  
- 	nand_pwrseq: nand-pwrseq {
+ 	gpio-keys {
 -- 
 2.17.1
