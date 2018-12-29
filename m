@@ -1,39 +1,82 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 2/3] dt-bindings: gpu: samsung-rotator: Document
- s5pv210 support
-Date: Fri, 28 Dec 2018 23:50:01 +0100
-Message-ID: <CAJKOXPcdKG4rkRh=AQ+zQPYRDbQo=eaOAMe5A6hvGDta796mTA@mail.gmail.com>
-References: <20181228151904.12079-1-pawel.mikolaj.chmiel@gmail.com>
- <20181228151904.12079-3-pawel.mikolaj.chmiel@gmail.com>
+From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH] media: s5p-jpeg: Check for fmt_ver_flag when doing fmt enumeration
+Date: Sat, 29 Dec 2018 16:46:01 +0100
+Message-ID: <20181229154602.25693-1-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20181228151904.12079-3-pawel.mikolaj.chmiel@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, airlied@linux.ie, Seung Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, kyungmin.park@samsung.com, kgene@kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: andrzej.p@samsung.com
+Cc: jacek.anaszewski@gmail.com, mchehab@kernel.org, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gRnJpLCAyOCBEZWMgMjAxOCBhdCAxNjoxOSwgUGF3ZcWCIENobWllbAo8cGF3ZWwubWlrb2xh
-ai5jaG1pZWxAZ21haWwuY29tPiB3cm90ZToKPgo+IFRoaXMgY29tbWl0IGRvY3VtZW50cyBuZXcg
-Y29tcGF0aWJsZSBmb3IgczVwdjIxMCBzb2MsCj4gd2hpY2ggd2lsbCBiZSBhbHNvIHN1cHBvcnRl
-ZCBieSB0aGlzIGRyaXZlci4KPgo+IFNpZ25lZC1vZmYtYnk6IFBhd2XFgiBDaG1pZWwgPHBhd2Vs
-Lm1pa29sYWouY2htaWVsQGdtYWlsLmNvbT4KPiAtLS0KPiBDaGFuZ2VzIGZyb20gdjE6Cj4gICAt
-IFJlbW92ZWQgbGlzdCBlbnVtZXJhdGlvbgo+ICAgLSBQbGFjZWQgczVwdjIxMCBhdCBiZWdpbm5p
-bmcgb2YgbGlzdCAoaXQncyB0aGUgb2xkZXN0IGNoaXBzZXQpCj4gLS0tCj4gIERvY3VtZW50YXRp
-b24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncHUvc2Ftc3VuZy1yb3RhdG9yLnR4dCB8IDcgKysrKy0t
-LQo+ICAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQoKQWNr
-ZWQtYnk6IEtyenlzenRvZiBLb3psb3dza2kgPGtyemtAa2VybmVsLm9yZz4KCkJlc3QgcmVnYXJk
-cywKS3J6eXN6dG9mCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
-ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
-bAo=
+Previously when doing format enumeration, it was returning all
+ formats supported by driver, even if they're not supported by hw.
+Add missing check for fmt_ver_flag, so it'll be fixed and only those
+ supported by hw will be returned. Similar thing is already done
+ in s5p_jpeg_find_format.
+
+It was found by using v4l2-compliance tool and checking result
+ of VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS test
+and using v4l2-ctl to get list of all supported formats.
+
+Tested on s5pv210-galaxys (Samsung i9000 phone).
+
+Fixes: bb677f3ac434 ("[media] Exynos4 JPEG codec v4l2 driver")
+Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+---
+ drivers/media/platform/s5p-jpeg/jpeg-core.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/s5p-jpeg/jpeg-core.c
+index 3f9000b70385..232b75cf209f 100644
+--- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
++++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
+@@ -1293,13 +1293,16 @@ static int s5p_jpeg_querycap(struct file *file, void *priv,
+ 	return 0;
+ }
+ 
+-static int enum_fmt(struct s5p_jpeg_fmt *sjpeg_formats, int n,
++static int enum_fmt(struct s5p_jpeg_ctx *ctx,
++		    struct s5p_jpeg_fmt *sjpeg_formats, int n,
+ 		    struct v4l2_fmtdesc *f, u32 type)
+ {
+ 	int i, num = 0;
++	unsigned int fmt_ver_flag = ctx->jpeg->variant->fmt_ver_flag;
+ 
+ 	for (i = 0; i < n; ++i) {
+-		if (sjpeg_formats[i].flags & type) {
++		if (sjpeg_formats[i].flags & type &&
++			sjpeg_formats[i].flags & fmt_ver_flag) {
+ 			/* index-th format of type type found ? */
+ 			if (num == f->index)
+ 				break;
+@@ -1326,10 +1329,10 @@ static int s5p_jpeg_enum_fmt_vid_cap(struct file *file, void *priv,
+ 	struct s5p_jpeg_ctx *ctx = fh_to_ctx(priv);
+ 
+ 	if (ctx->mode == S5P_JPEG_ENCODE)
+-		return enum_fmt(sjpeg_formats, SJPEG_NUM_FORMATS, f,
++		return enum_fmt(ctx, sjpeg_formats, SJPEG_NUM_FORMATS, f,
+ 				SJPEG_FMT_FLAG_ENC_CAPTURE);
+ 
+-	return enum_fmt(sjpeg_formats, SJPEG_NUM_FORMATS, f,
++	return enum_fmt(ctx, sjpeg_formats, SJPEG_NUM_FORMATS, f,
+ 					SJPEG_FMT_FLAG_DEC_CAPTURE);
+ }
+ 
+@@ -1339,10 +1342,10 @@ static int s5p_jpeg_enum_fmt_vid_out(struct file *file, void *priv,
+ 	struct s5p_jpeg_ctx *ctx = fh_to_ctx(priv);
+ 
+ 	if (ctx->mode == S5P_JPEG_ENCODE)
+-		return enum_fmt(sjpeg_formats, SJPEG_NUM_FORMATS, f,
++		return enum_fmt(ctx, sjpeg_formats, SJPEG_NUM_FORMATS, f,
+ 				SJPEG_FMT_FLAG_ENC_OUTPUT);
+ 
+-	return enum_fmt(sjpeg_formats, SJPEG_NUM_FORMATS, f,
++	return enum_fmt(ctx, sjpeg_formats, SJPEG_NUM_FORMATS, f,
+ 					SJPEG_FMT_FLAG_DEC_OUTPUT);
+ }
+ 
+-- 
+2.17.1
