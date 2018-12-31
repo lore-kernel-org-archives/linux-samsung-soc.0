@@ -1,64 +1,47 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH] pci: dwc: add a check for resetting gpio
-Date: Mon, 31 Dec 2018 14:40:48 -0600
-Message-ID: <20181231204048.GG159477@google.com>
-References: <20181226022236.71682-1-kjlu@umn.edu>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 1/2] ARM: dts: exynos: Second round for v4.21
+Date: Mon, 31 Dec 2018 13:10:50 -0800
+Message-ID: <20181231211050.wlcmsppq44tbhf7n@localhost>
+References: <20181218201003.12806-1-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20181226022236.71682-1-kjlu@umn.edu>
+In-Reply-To: <20181218201003.12806-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kangjie Lu <kjlu@umn.edu>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Jingoo Han <jingoohan1@gmail.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, pakki001@umn.edu, linux-arm-kernel@lists.infradead.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Kangjie,
-
-Thanks for the patch.
-
-On Tue, Dec 25, 2018 at 08:22:36PM -0600, Kangjie Lu wrote:
-> devm_gpio_request_one() could fail. The fix checks its status and issues
-> an error if it fails.
+On Tue, Dec 18, 2018 at 09:10:02PM +0100, Krzysztof Kozlowski wrote:
+> Hi,
 > 
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-> ---
->  drivers/pci/controller/dwc/pci-exynos.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
+> On top of previous pull request.
 > 
-> diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
-> index cee5f2f590e2..e3a045e215d2 100644
-> --- a/drivers/pci/controller/dwc/pci-exynos.c
-> +++ b/drivers/pci/controller/dwc/pci-exynos.c
-> @@ -226,9 +226,12 @@ static void exynos_pcie_assert_reset(struct exynos_pcie *ep)
->  	struct dw_pcie *pci = ep->pci;
->  	struct device *dev = pci->dev;
->  
-> -	if (ep->reset_gpio >= 0)
-> -		devm_gpio_request_one(dev, ep->reset_gpio,
-> -				GPIOF_OUT_INIT_HIGH, "RESET");
-> +	if (ep->reset_gpio >= 0) {
-> +		if (devm_gpio_request_one(dev, ep->reset_gpio,
-> +				GPIOF_OUT_INIT_HIGH, "RESET"))
-> +			dev_err(dev, "Failed requesting reset gpio %d\n",
-> +					ep->reset_gpio);
-> +	}
+> Best regards,
+> Krzysztof
+> 
+> 
+> The following changes since commit 57b13b8b34002ce8f1d822ea05f0a84e5bc3a64a:
+> 
+>   ARM: dts: exynos: remove display-port node from Arndale (2018-12-06 19:47:15 +0100)
+> 
+> are available in the Git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-4.21-2
+> 
+> for you to fetch changes up to 8ac686d7dfed721102860ff2571e6b9f529ae81a:
+> 
+>   ARM: dts: exynos: Specify I2S assigned clocks in proper node (2018-12-13 21:56:07 +0100)
+> 
+> ----------------------------------------------------------------
+> Samsung DTS ARM changes for v4.21, part 2
+> 
+> 1. Add missing CPUs in cooling maps for Odroid X2 (missed in previous
+>    round of fixups).
+> 2. Fix clock configuration in audio subsystem on Odroid XU3/XU4.
 
-Even before your patch, this code doesn't make sense to me.
+Merged into next/late. Will try to merge this window, best-effort.
 
-devm_gpio_request_one() is a setup function and should be called in
-the probe path.  The "assert_reset" path should do something like
-gpio_set_value().  See other callers, e.g.,
 
-  imx6_pcie_probe()
-  histb_pcie_probe()
-  mvebu_pcie_parse_port()
-
-I'm skeptical that exynos_pcie_assert_reset() ever worked as intended,
-so let's straighten that out before worrying about checking the return
-code from devm_gpio_request_one().
-
-The result should be two patches: (1) fix the devm_gpio_request_one()
-usage, and (2) check the devm_gpio_request_one() return value.
-
->  }
+-Olof
