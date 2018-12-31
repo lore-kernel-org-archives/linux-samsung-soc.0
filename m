@@ -1,94 +1,64 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 5/6] ARM: dts: s5pv210: aries: Support for more devices
- present on Aries
-Date: Mon, 31 Dec 2018 14:35:55 +0100
-Message-ID: <CAJKOXPf3Z9=mjq_UWyD1oVEapvnNR71cDfyJP1Y_VLkXkFcyew@mail.gmail.com>
-References: <20181228161819.18931-1-pawel.mikolaj.chmiel@gmail.com>
- <20181228161819.18931-6-pawel.mikolaj.chmiel@gmail.com>
+From: Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: [PATCH] pci: dwc: add a check for resetting gpio
+Date: Mon, 31 Dec 2018 14:40:48 -0600
+Message-ID: <20181231204048.GG159477@google.com>
+References: <20181226022236.71682-1-kjlu@umn.edu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20181228161819.18931-6-pawel.mikolaj.chmiel@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, xc-racer2@live.ca, linux@armlinux.org.uk, robh+dt@kernel.org, linux-kernel@vger.kernel.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20181226022236.71682-1-kjlu@umn.edu>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kangjie Lu <kjlu@umn.edu>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Jingoo Han <jingoohan1@gmail.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, pakki001@umn.edu, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gRnJpLCAyOCBEZWMgMjAxOCBhdCAxNzoxOCwgUGF3ZcWCIENobWllbAo8cGF3ZWwubWlrb2xh
-ai5jaG1pZWxAZ21haWwuY29tPiB3cm90ZToKPgo+IEZyb206IEpvbmF0aGFuIEJha2tlciA8eGMt
-cmFjZXIyQGxpdmUuY2E+Cj4KPiBUaGlzIGNvbW1pdCBlbmFibGVzIGZvbGxvd2luZyBkZXZpY2Vz
-IHByZXNlbnQgb24gQXJpZXMgYmFzZWQgcGhvbmVzOgo+IC0gcHdtLXZpYnJhdG9yIGF0dGFjaGVk
-IHRvIFBXTSAxCj4gLSBwb3dlcm9mZiBzdXBwb3J0Cj4gLSBBdG1lbCBtYVhUb3VjaCB0b3VjaHNj
-cmVlbi4gSXQncyBjb25uZWN0ZWQgdG8gaTJjMgo+IC0gQnJvYWRjb20gQkNNNDMyOSBibHVldG9v
-dGggb3ZlciB1YXJ0MAo+Cj4gU2lnbmVkLW9mZi1ieTogSm9uYXRoYW4gQmFra2VyIDx4Yy1yYWNl
-cjJAbGl2ZS5jYT4KPiBTaWduZWQtb2ZmLWJ5OiBQYXdlxYIgQ2htaWVsIDxwYXdlbC5taWtvbGFq
-LmNobWllbEBnbWFpbC5jb20+Cj4gLS0tCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL3M1cHYyMTAtYXJp
-ZXMuZHRzaSB8IDY4ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysKPiAgMSBmaWxlIGNoYW5n
-ZWQsIDY4IGluc2VydGlvbnMoKykKPgo+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9z
-NXB2MjEwLWFyaWVzLmR0c2kgYi9hcmNoL2FybS9ib290L2R0cy9zNXB2MjEwLWFyaWVzLmR0c2kK
-PiBpbmRleCAzNWJhMDA5YTFhMzMuLmI3MjQ2Zjg3OTY0OCAxMDA2NDQKPiAtLS0gYS9hcmNoL2Fy
-bS9ib290L2R0cy9zNXB2MjEwLWFyaWVzLmR0c2kKPiArKysgYi9hcmNoL2FybS9ib290L2R0cy9z
-NXB2MjEwLWFyaWVzLmR0c2kKPiBAQCAtNDEsNiArNDEsMTMgQEAKPiAgICAgICAgICAgICAgICAg
-fTsKPiAgICAgICAgIH07Cj4KPiArICAgICAgIHZpYnJhdG9yX3B3cjogcmVndWxhdG9yLWZpeGVk
-LTAgewo+ICsgICAgICAgICAgICAgICBjb21wYXRpYmxlID0gInJlZ3VsYXRvci1maXhlZCI7Cj4g
-KyAgICAgICAgICAgICAgIHJlZ3VsYXRvci1uYW1lID0gInZpYnJhdG9yLWVuIjsKPiArICAgICAg
-ICAgICAgICAgZW5hYmxlLWFjdGl2ZS1oaWdoOwo+ICsgICAgICAgICAgICAgICBncGlvID0gPCZn
-cGoxIDEgR1BJT19BQ1RJVkVfSElHSD47Cj4gKyAgICAgICB9Owo+ICsKPiAgICAgICAgIHdpZmlf
-cHdyc2VxOiB3aWZpLXB3cnNlcSB7Cj4gICAgICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAibW1j
-LXB3cnNlcS1zaW1wbGUiOwo+ICAgICAgICAgICAgICAgICByZXNldC1ncGlvcyA9IDwmZ3BnMSAy
-IEdQSU9fQUNUSVZFX0xPVz47Cj4gQEAgLTMxNCw2ICszMjEsMjIgQEAKPiAgICAgICAgICAgICAg
-ICAgICAgICAgICByZWcgPSA8MHgzNj47Cj4gICAgICAgICAgICAgICAgIH07Cj4gICAgICAgICB9
-Owo+ICsKPiArICAgICAgIHZpYnJhdG9yOiBwd20tdmlicmF0b3Igewo+ICsgICAgICAgICAgICAg
-ICBjb21wYXRpYmxlID0gInB3bS12aWJyYXRvciI7Cj4gKyAgICAgICAgICAgICAgIHB3bXMgPSA8
-JnB3bSAxIDQ0NjQyIDA+Owo+ICsgICAgICAgICAgICAgICBwd20tbmFtZXMgPSAiZW5hYmxlIjsK
-PiArICAgICAgICAgICAgICAgdmNjLXN1cHBseSA9IDwmdmlicmF0b3JfcHdyPjsKPiArICAgICAg
-ICAgICAgICAgcGluY3RybC1uYW1lcyA9ICJkZWZhdWx0IjsKPiArICAgICAgICAgICAgICAgcGlu
-Y3RybC0wID0gPCZwd20xX291dD47Cj4gKyAgICAgICB9Owo+ICsKPiArICAgICAgIHBvd2Vyb2Zm
-OiBzeXNjb24tcG93ZXJvZmYgewo+ICsgICAgICAgICAgICAgICBjb21wYXRpYmxlID0gInN5c2Nv
-bi1wb3dlcm9mZiI7Cj4gKyAgICAgICAgICAgICAgIHJlZ21hcCA9IDwmcG11X3N5c2Nvbj47Cj4g
-KyAgICAgICAgICAgICAgIG9mZnNldCA9IDwweDY4MWM+OyAvKiBQU19IT0xEX0NPTlRST0wgKi8K
-PiArICAgICAgICAgICAgICAgdmFsdWUgPSA8MHg1MjAwPjsKPiArICAgICAgIH07Cj4gIH07Cj4K
-PiAgJmZpbWQgewo+IEBAIC0zNDcsNiArMzcwLDIzIEBACj4gICAgICAgICBzdGF0dXMgPSAib2th
-eSI7Cj4gIH07Cj4KPiArJmkyYzIgewo+ICsgICAgICAgc2Ftc3VuZyxpMmMtc2RhLWRlbGF5ID0g
-PDEwMD47Cj4gKyAgICAgICBzYW1zdW5nLGkyYy1tYXgtYnVzLWZyZXEgPSA8NDAwMDAwPjsKPiAr
-ICAgICAgIHNhbXN1bmcsaTJjLXNsYXZlLWFkZHIgPSA8MHgxMD47Cj4gKyAgICAgICBzdGF0dXMg
-PSAib2theSI7Cj4gKwo+ICsgICAgICAgdG91Y2hzY3JlZW5ANGEgewo+ICsgICAgICAgICAgICAg
-ICBjb21wYXRpYmxlID0gImF0bWVsLG1heHRvdWNoIjsKPiArICAgICAgICAgICAgICAgcmVnID0g
-PDB4NGE+Owo+ICsgICAgICAgICAgICAgICBpbnRlcnJ1cHQtcGFyZW50ID0gPCZncGowPjsKPiAr
-ICAgICAgICAgICAgICAgaW50ZXJydXB0cyA9IDw1IElSUV9UWVBFX0xFVkVMX0xPVz47Cj4gKyAg
-ICAgICAgICAgICAgIHBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7Cj4gKyAgICAgICAgICAgICAg
-IHBpbmN0cmwtMCA9IDwmdHNfaXJxPjsKPiArICAgICAgICAgICAgICAgcmVzZXQtZ3Bpb3MgPSA8
-JmdwajEgMyBHUElPX0FDVElWRV9ISUdIPjsKPiArICAgICAgIH07Cj4gK307Cj4gKwo+ICAmbWZj
-IHsKPiAgICAgICAgIG1lbW9yeS1yZWdpb24gPSA8Jm1mY19sZWZ0PiwgPCZtZmNfcmlnaHQ+Owo+
-ICB9Owo+IEBAIC0zNzIsNiArNDEyLDEzIEBACj4gICAgICAgICAgICAgICAgIHNhbXN1bmcscGlu
-LWRydiA9IDxFWFlOT1M0X1BJTl9EUlZfTFYxPjsKPiAgICAgICAgIH07Cj4KPiArICAgICAgIGJ0
-X2hvc3Rfd2FrZTogYnQtaG9zdC13YWtlIHsKPiArICAgICAgICAgICAgICAgc2Ftc3VuZyxwaW5z
-ID0gImdwaDItNSI7Cj4gKyAgICAgICAgICAgICAgIHNhbXN1bmcscGluLWZ1bmN0aW9uID0gPEVY
-WU5PU19QSU5fRlVOQ19JTlBVVD47Cj4gKyAgICAgICAgICAgICAgIHNhbXN1bmcscGluLXB1ZCA9
-IDxTM0M2NFhYX1BJTl9QVUxMX0RPV04+Owo+ICsgICAgICAgICAgICAgICBzYW1zdW5nLHBpbi1k
-cnYgPSA8RVhZTk9TNF9QSU5fRFJWX0xWMT47Cj4gKyAgICAgICB9Owo+ICsKPiAgICAgICAgIHRm
-X2RldGVjdDogdGYtZGV0ZWN0IHsKPiAgICAgICAgICAgICAgICAgc2Ftc3VuZyxwaW5zID0gImdw
-aDMtNCI7Cj4gICAgICAgICAgICAgICAgIHNhbXN1bmcscGluLWZ1bmN0aW9uID0gPEVYWU5PU19Q
-SU5fRlVOQ19JTlBVVD47Cj4gQEAgLTM4NCw2ICs0MzEsMTcgQEAKPiAgICAgICAgICAgICAgICAg
-c2Ftc3VuZyxwaW4tZnVuY3Rpb24gPSA8RVhZTk9TX1BJTl9GVU5DX09VVFBVVD47Cj4gICAgICAg
-ICAgICAgICAgIHNhbXN1bmcscGluLXB1ZCA9IDxTM0M2NFhYX1BJTl9QVUxMX05PTkU+Owo+ICAg
-ICAgICAgfTsKPiArCj4gKyAgICAgICB0c19pcnE6IHRzLWlycSB7Cj4gKyAgICAgICAgICAgICAg
-IHNhbXN1bmcscGlucyA9ICJncGowLTUiOwo+ICsgICAgICAgICAgICAgICBzYW1zdW5nLHBpbi1m
-dW5jdGlvbiA9IDxFWFlOT1NfUElOX0ZVTkNfSU5QVVQ+Owo+ICsgICAgICAgICAgICAgICBzYW1z
-dW5nLHBpbi1wdWQgPSA8UzNDNjRYWF9QSU5fUFVMTF9VUD47CgpJdCBzZWVtcyB0aGVyZSBpcyBh
-IGRpZmZlcmVuY2UgaGVyZSBiZXR3ZWVuIEFyaWVzIGFuZCBGYXNjaW5hdGUuIEF0CmxlYXN0IGlu
-IHZlbmRvciBrZXJuZWwuIE9uZSBkaXNhYmxlcyBwdWxsIGFuZCBzZWNvbmQgcHVsbHMgZG93bi4K
-QW55d2F5IG5laXRoZXIgb2YgdGhlbSBwdWxscyBpdCB1cC4KCkJlc3QgcmVnYXJkcywKS3J6eXN6
-dG9mCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51
-eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVh
-ZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1h
-cm0ta2VybmVsCg==
+Hi Kangjie,
+
+Thanks for the patch.
+
+On Tue, Dec 25, 2018 at 08:22:36PM -0600, Kangjie Lu wrote:
+> devm_gpio_request_one() could fail. The fix checks its status and issues
+> an error if it fails.
+> 
+> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+> ---
+>  drivers/pci/controller/dwc/pci-exynos.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
+> index cee5f2f590e2..e3a045e215d2 100644
+> --- a/drivers/pci/controller/dwc/pci-exynos.c
+> +++ b/drivers/pci/controller/dwc/pci-exynos.c
+> @@ -226,9 +226,12 @@ static void exynos_pcie_assert_reset(struct exynos_pcie *ep)
+>  	struct dw_pcie *pci = ep->pci;
+>  	struct device *dev = pci->dev;
+>  
+> -	if (ep->reset_gpio >= 0)
+> -		devm_gpio_request_one(dev, ep->reset_gpio,
+> -				GPIOF_OUT_INIT_HIGH, "RESET");
+> +	if (ep->reset_gpio >= 0) {
+> +		if (devm_gpio_request_one(dev, ep->reset_gpio,
+> +				GPIOF_OUT_INIT_HIGH, "RESET"))
+> +			dev_err(dev, "Failed requesting reset gpio %d\n",
+> +					ep->reset_gpio);
+> +	}
+
+Even before your patch, this code doesn't make sense to me.
+
+devm_gpio_request_one() is a setup function and should be called in
+the probe path.  The "assert_reset" path should do something like
+gpio_set_value().  See other callers, e.g.,
+
+  imx6_pcie_probe()
+  histb_pcie_probe()
+  mvebu_pcie_parse_port()
+
+I'm skeptical that exynos_pcie_assert_reset() ever worked as intended,
+so let's straighten that out before worrying about checking the return
+code from devm_gpio_request_one().
+
+The result should be two patches: (1) fix the devm_gpio_request_one()
+usage, and (2) check the devm_gpio_request_one() return value.
+
+>  }
