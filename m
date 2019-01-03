@@ -1,30 +1,53 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v3 4/5] drivers: power: suspend: call devfreq suspend/resume
-Date: Thu, 3 Jan 2019 11:08:22 +0100
-Message-ID: <CAJZ5v0jAkCP62Vj_G_Eq3wG=ZfdO_NtM1vdAO-HQNovnLSMTMQ@mail.gmail.com>
-References: <ce1d415d-2a00-ef0e-6b58-23d16cffee4a@partner.samsung.com>
- <1544007956-28889-1-git-send-email-l.luba@partner.samsung.com>
- <1544007956-28889-5-git-send-email-l.luba@partner.samsung.com>
- <CGME20181205110623eucas1p120f9d8b38822bf856a5b7d427d00e49f@epcms1p7>
- <20181221003305epcms1p756d76191d5f233c6e3238400d233b3c6@epcms1p7> <eda2b1f2-ed6f-b75f-f582-761c2a48c0cd@partner.samsung.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] ARM: mach-s3c24xx: Fix boolean expressions in
+ osiris_dvs_notify
+Date: Thu, 3 Jan 2019 14:14:08 -0600
+Message-ID: <20190103201408.GA27754@embeddedor>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <eda2b1f2-ed6f-b75f-f582-761c2a48c0cd@partner.samsung.com>
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lukasz Luba <l.luba@partner.samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, Myungjoo Ham <myungjoo.ham@samsung.com>, "tjakobi@math.uni-bielefeld.de" <tjakobi@math.uni-bielefeld.de>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, "len.brown@intel.com" <len.brown@intel.com>, "pavel@ucw.cz" <pavel@ucw.cz>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "keescook@chromium.org" <keescook@chromium.org>, "anton@enomsg.org" <anton>
+To: Ben Dooks <ben@simtec.co.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Russell King <linux@armlinux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jan 2, 2019 at 4:08 PM Lukasz Luba <l.luba@partner.samsung.com> wrote:
->
-> Hi Rafael,
->
-> Gentle ping...
-> Please take this patch, it got ACK.
-> The other patches have been taken through MyungJoo's
-> tree, but this one is actually enabling the feature.
+Fix boolean expressions by using logical AND operator '&&'
+instead of bitwise operator '&'.
 
-Applied now and sorry for missing it.
+This issue was detected with the help of Coccinelle.
 
-Thanks!
+Fixes: 4fa084af28ca ("ARM: OSIRIS: DVS (Dynamic Voltage Scaling) supoort.")
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ arch/arm/mach-s3c24xx/mach-osiris-dvs.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/mach-s3c24xx/mach-osiris-dvs.c b/arch/arm/mach-s3c24xx/mach-osiris-dvs.c
+index 058ce73137e8..ccbd7b7965ca 100644
+--- a/arch/arm/mach-s3c24xx/mach-osiris-dvs.c
++++ b/arch/arm/mach-s3c24xx/mach-osiris-dvs.c
+@@ -65,16 +65,16 @@ static int osiris_dvs_notify(struct notifier_block *nb,
+ 
+ 	switch (val) {
+ 	case CPUFREQ_PRECHANGE:
+-		if (old_dvs & !new_dvs ||
+-		    cur_dvs & !new_dvs) {
++		if (old_dvs && !new_dvs ||
++		    cur_dvs && !new_dvs) {
+ 			pr_debug("%s: exiting dvs\n", __func__);
+ 			cur_dvs = false;
+ 			gpio_set_value(OSIRIS_GPIO_DVS, 1);
+ 		}
+ 		break;
+ 	case CPUFREQ_POSTCHANGE:
+-		if (!old_dvs & new_dvs ||
+-		    !cur_dvs & new_dvs) {
++		if (!old_dvs && new_dvs ||
++		    !cur_dvs && new_dvs) {
+ 			pr_debug("entering dvs\n");
+ 			cur_dvs = true;
+ 			gpio_set_value(OSIRIS_GPIO_DVS, 0);
+-- 
+2.20.1
