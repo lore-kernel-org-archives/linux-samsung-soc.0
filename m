@@ -1,30 +1,33 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 3/6] ARM: dts: s5pv210: fascinate4g: Remove hardcoded
- bootargs
-Date: Mon, 7 Jan 2019 20:20:42 +0100
-Message-ID: <20190107192042.GB3313@kozik-lap>
-References: <20181228161819.18931-1-pawel.mikolaj.chmiel@gmail.com>
- <20181228161819.18931-4-pawel.mikolaj.chmiel@gmail.com>
+Subject: Re: [PATCH] ARM: mach-s3c24xx: Fix boolean expressions in
+ osiris_dvs_notify
+Date: Mon, 7 Jan 2019 20:43:24 +0100
+Message-ID: <20190107194324.GC3313@kozik-lap>
+References: <20190103201408.GA27754@embeddedor>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20181228161819.18931-4-pawel.mikolaj.chmiel@gmail.com>
+In-Reply-To: <20190103201408.GA27754@embeddedor>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Cc: kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, xc-racer2@live.ca, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Ben Dooks <ben@simtec.co.uk>, Kukjin Kim <kgene@kernel.org>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Dec 28, 2018 at 05:18:16PM +0100, Paweł Chmiel wrote:
-> Since we have uboot (flashed in place of stock kernel),
-> it's not needed anymore to hardcode bootargs.
+On Thu, Jan 03, 2019 at 02:14:08PM -0600, Gustavo A. R. Silva wrote:
+> Fix boolean expressions by using logical AND operator '&&'
+> instead of bitwise operator '&'.
 > 
-> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> This issue was detected with the help of Coccinelle.
+> 
+> Fixes: 4fa084af28ca ("ARM: OSIRIS: DVS (Dynamic Voltage Scaling) supoort.")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 > ---
->  arch/arm/boot/dts/s5pv210-fascinate4g.dts | 7 -------
+>  arch/arm/mach-s3c24xx/mach-osiris-dvs.c | 8 ++++----
 
-Thanks, applied (squashed with previous one).
+Thanks, applied with fixing up -Wparentheses warning. I think you should
+update your GCC.
 
 Best regards,
 Krzysztof
