@@ -1,108 +1,49 @@
 From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH v2 4/4] ARM: defconfig: s5pv210: Enable more drivers present on Samsung Aries
-Date: Tue,  8 Jan 2019 17:56:01 +0100
-Message-ID: <20190108165601.25708-5-pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH v2 1/4] ARM: dts: s5pv210: aries: Add reserved memory for mfc
+Date: Tue,  8 Jan 2019 17:55:58 +0100
+Message-ID: <20190108165601.25708-2-pawel.mikolaj.chmiel@gmail.com>
 References: <20190108165601.25708-1-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <20190108165601.25708-1-pawel.mikolaj.chmiel@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: krzk@kernel.org
-Cc: kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, pawel.mikolaj.chmiel@gmail.com, xc-racer2@live.ca, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, xc-racer2@live.ca, linux@armlinux.org.uk, robh+dt@kernel.org, linux-kernel@vger.kernel.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, pawel.mikolaj.chmiel@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This commit enables following drivers:
-- i2c support (using s3c2410 driver)
-- s5p-jpeg
-- s5p-mfc
-- exynos drm rotator
-- pwm support
-- pwm vibrator
-- fixed regulator
-- syscon poweroff
-- Atmel maXTouch touchscreen
-- Broadcom BCM4329 bluetooth over uart0
-- dma devices (so we can use pl330 dma driver)
-
-Disable DEBUG_LL. It's currently set to uart1, but if we want to use it
-on Aries, we would need to switch it to uart2, to get any logs.
-
-Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
----
- arch/arm/configs/s5pv210_defconfig | 25 ++++++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm/configs/s5pv210_defconfig b/arch/arm/configs/s5pv210_defconfig
-index 0159636d4c0d..951196bdf008 100644
---- a/arch/arm/configs/s5pv210_defconfig
-+++ b/arch/arm/configs/s5pv210_defconfig
-@@ -27,6 +27,11 @@ CONFIG_IP_PNP=y
- CONFIG_IP_PNP_DHCP=y
- CONFIG_IP_PNP_BOOTP=y
- CONFIG_IP_PNP_RARP=y
-+CONFIG_BT=m
-+CONFIG_BT_RFCOMM=y
-+CONFIG_BT_BNEP=y
-+CONFIG_BT_HCIUART=m
-+CONFIG_BT_HCIUART_BCM=y
- CONFIG_CFG80211=m
- CONFIG_MAC80211=m
- CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
-@@ -44,21 +49,35 @@ CONFIG_INPUT_EVDEV=y
- CONFIG_KEYBOARD_GPIO=y
- # CONFIG_INPUT_MOUSE is not set
- CONFIG_INPUT_TOUCHSCREEN=y
-+CONFIG_TOUCHSCREEN_ATMEL_MXT=m
-+CONFIG_INPUT_MISC=y
-+CONFIG_INPUT_PWM_VIBRA=m
- CONFIG_SERIAL_8250=y
- CONFIG_SERIAL_SAMSUNG=y
- CONFIG_SERIAL_SAMSUNG_CONSOLE=y
-+CONFIG_SERIAL_DEV_BUS=y
- CONFIG_HW_RANDOM=y
- CONFIG_I2C_GPIO=y
-+CONFIG_I2C_S3C2410=y
-+CONFIG_POWER_RESET=y
-+CONFIG_POWER_RESET_SYSCON_POWEROFF=y
- CONFIG_POWER_SUPPLY=y
- CONFIG_BATTERY_MAX17040=y
- # CONFIG_HWMON is not set
- CONFIG_MFD_MAX8998=y
- CONFIG_REGULATOR=y
-+CONFIG_REGULATOR_FIXED_VOLTAGE=y
- CONFIG_REGULATOR_MAX8998=y
-+CONFIG_MEDIA_SUPPORT=m
-+CONFIG_MEDIA_CAMERA_SUPPORT=y
-+CONFIG_V4L_MEM2MEM_DRIVERS=y
-+CONFIG_VIDEO_SAMSUNG_S5P_JPEG=m
-+CONFIG_VIDEO_SAMSUNG_S5P_MFC=m
- CONFIG_DRM=y
- CONFIG_DRM_EXYNOS=y
- CONFIG_DRM_EXYNOS_FIMD=y
- CONFIG_DRM_EXYNOS_DPI=y
-+CONFIG_DRM_EXYNOS_ROTATOR=y
- CONFIG_USB=y
- CONFIG_USB_OTG=y
- CONFIG_USB_EHCI_HCD=y
-@@ -72,6 +91,9 @@ CONFIG_MMC_SDHCI_S3C=y
- CONFIG_MMC_SDHCI_S3C_DMA=y
- CONFIG_RTC_CLASS=y
- CONFIG_RTC_DRV_MAX8998=m
-+CONFIG_DMADEVICES=y
-+CONFIG_PWM=y
-+CONFIG_PWM_SAMSUNG=y
- CONFIG_PHY_SAMSUNG_USB2=m
- CONFIG_PHY_S5PV210_USB2=y
- CONFIG_EXT2_FS=y
-@@ -97,6 +119,3 @@ CONFIG_DEBUG_SPINLOCK=y
- CONFIG_DEBUG_MUTEXES=y
- CONFIG_DEBUG_ATOMIC_SLEEP=y
- CONFIG_DEBUG_USER=y
--CONFIG_DEBUG_LL=y
--CONFIG_DEBUG_S3C_UART1=y
--CONFIG_EARLY_PRINTK=y
--- 
-2.17.1
+VEhpcyBjb21taXQgYWRkcyBtZW1vcnkgcmVzZXJ2YXRpb24gcmVxdWlyZWQgYnkgTUZDIHRvIHJ1
+bi4KT24gUzVQVjIxMCBib3RoIHJlZ2lvbnMgbmVlZHMgdG8gYmUgb24gc2VwYXJhdGUgbWVtb3J5
+IGJhbmtzLgpTaXplIG9mIGJvdGggcmVnaW9ucyBpcyB0YWtlbiBmcm9tIHN0b2NrIHNvdXJjZXMu
+CgpTaWduZWQtb2ZmLWJ5OiBQYXdlxYIgQ2htaWVsIDxwYXdlbC5taWtvbGFqLmNobWllbEBnbWFp
+bC5jb20+Ci0tLQpDaGFuZ2VzIGZyb20gdjE6CiAgIC0gRml4ZWQgbmFtZSBvZiBub2RlcyB0byBi
+ZSBtb3JlIGdlbmVyaWMKLS0tCiBhcmNoL2FybS9ib290L2R0cy9zNXB2MjEwLWFyaWVzLmR0c2kg
+fCAyMiArKysrKysrKysrKysrKysrKysrKysrCiAxIGZpbGUgY2hhbmdlZCwgMjIgaW5zZXJ0aW9u
+cygrKQoKZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL3M1cHYyMTAtYXJpZXMuZHRzaSBi
+L2FyY2gvYXJtL2Jvb3QvZHRzL3M1cHYyMTAtYXJpZXMuZHRzaQppbmRleCA1NzUwOTRlYTcwMjQu
+Ljg5NTI1ZTU2Y2M3YyAxMDA2NDQKLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvczVwdjIxMC1hcmll
+cy5kdHNpCisrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL3M1cHYyMTAtYXJpZXMuZHRzaQpAQCAtMjMs
+NiArMjMsMjQgQEAKIAkJCTB4NTAwMDAwMDAgMHgwODAwMDAwMD47CiAJfTsKIAorCXJlc2VydmVk
+LW1lbW9yeSB7CisJCSNhZGRyZXNzLWNlbGxzID0gPDE+OworCQkjc2l6ZS1jZWxscyA9IDwxPjsK
+KwkJcmFuZ2VzOworCisJCW1mY19sZWZ0OiByZWdpb25ANDMwMDAwMDAgeworCQkJY29tcGF0aWJs
+ZSA9ICJzaGFyZWQtZG1hLXBvb2wiOworCQkJbm8tbWFwOworCQkJcmVnID0gPDB4NDMwMDAwMDAg
+MHgyMDAwMDAwPjsKKwkJfTsKKworCQltZmNfcmlnaHQ6IHJlZ2lvbkA1MTAwMDAwMCB7CisJCQlj
+b21wYXRpYmxlID0gInNoYXJlZC1kbWEtcG9vbCI7CisJCQluby1tYXA7CisJCQlyZWcgPSA8MHg1
+MTAwMDAwMCAweDIwMDAwMDA+OworCQl9OworCX07CisKIAl3aWZpX3B3cnNlcTogd2lmaS1wd3Jz
+ZXEgewogCQljb21wYXRpYmxlID0gIm1tYy1wd3JzZXEtc2ltcGxlIjsKIAkJcmVzZXQtZ3Bpb3Mg
+PSA8JmdwZzEgMiBHUElPX0FDVElWRV9MT1c+OwpAQCAtMzI5LDYgKzM0NywxMCBAQAogCXN0YXR1
+cyA9ICJva2F5IjsKIH07CiAKKyZtZmMgeworCW1lbW9yeS1yZWdpb24gPSA8Jm1mY19sZWZ0Piwg
+PCZtZmNfcmlnaHQ+OworfTsKKwogJnBpbmN0cmwwIHsKIAl3bGFuX2J0X2VuOiB3bGFuLWJ0LWVu
+IHsKIAkJc2Ftc3VuZyxwaW5zID0gImdwYi01IjsKLS0gCjIuMTcuMQoKCl9fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGlu
+ZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMu
+aW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
