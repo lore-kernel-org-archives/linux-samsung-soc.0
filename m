@@ -1,36 +1,45 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 2/4] cpufreq: s5pv210: Don't flood kernel log after
- cpufreq change
-Date: Wed, 9 Jan 2019 11:27:08 +0100
-Message-ID: <CAJKOXPcqcyimyUBD5ka60FZCeehqkE=GNH8YYYkgQpJ4=yQ3nw@mail.gmail.com>
-References: <20190108200509.30494-1-pawel.mikolaj.chmiel@gmail.com>
- <20190108200509.30494-3-pawel.mikolaj.chmiel@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190108200509.30494-3-pawel.mikolaj.chmiel@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-pm@vger.kernel.org, viresh.kumar@linaro.org, rjw@rjwysocki.net, linux@armlinux.org.uk, robh+dt@kernel.org, linux-kernel@vger.kernel.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] ARM: dts: s5pv210: Fix onenand's unit address format warning
+Date: Wed,  9 Jan 2019 14:43:03 +0100
+Message-ID: <1547041383-16924-1-git-send-email-krzk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gVHVlLCA4IEphbiAyMDE5IGF0IDIxOjA1LCBQYXdlxYIgQ2htaWVsCjxwYXdlbC5taWtvbGFq
-LmNobWllbEBnbWFpbC5jb20+IHdyb3RlOgo+Cj4gVGhpcyBjb21taXQgcmVwbGFjZXMgcHJpbnRr
-IHdpdGggcHJfZGVidWcsIHNvIHdlIGRvbid0IGZsb29kIGtlcm5lbCBsb2cuCj4KPiBTaWduZWQt
-b2ZmLWJ5OiBQYXdlxYIgQ2htaWVsIDxwYXdlbC5taWtvbGFqLmNobWllbEBnbWFpbC5jb20+Cj4g
-LS0tCj4gIGRyaXZlcnMvY3B1ZnJlcS9zNXB2MjEwLWNwdWZyZXEuYyB8IDIgKy0KPiAgMSBmaWxl
-IGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCgpBY2tlZC1ieTogS3J6eXN6
-dG9mIEtvemxvd3NraSA8a3J6a0BrZXJuZWwub3JnPgoKQmVzdCByZWdhcmRzLApLcnp5c3p0b2YK
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFy
-bS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9y
-ZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1r
-ZXJuZWwK
+According to Devicetree specification, the unit-address must match the
+first address specified in the reg property of the node.  Fix the DTC
+warning onenand node:
+
+    arch/arm/boot/dts/s5pv210.dtsi:81.29-93.5:
+        Warning (simple_bus_reg): /soc/onenand@b0000000: simple-bus unit address format error, expected "b0600000"
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+---
+
+The remaining warning is wrong clock-controller subnode of fimc camera.
+    arch/arm/boot/dts/s5pv210.dtsi:578.32-580.6: Warning (simple_bus_reg): /soc/camera/clock-controller: missing or empty reg/ranges property
+The subnode in my understanding does not follow bindings and the driver.
+The driver with current s5pv210.dtsi will not register a clock provider... but
+I do not have a device to confirm this.
+---
+ arch/arm/boot/dts/s5pv210.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/s5pv210.dtsi b/arch/arm/boot/dts/s5pv210.dtsi
+index cc22c9db80d2..26ea5c66d8ce 100644
+--- a/arch/arm/boot/dts/s5pv210.dtsi
++++ b/arch/arm/boot/dts/s5pv210.dtsi
+@@ -78,7 +78,7 @@
+ 			};
+ 		};
+ 
+-		onenand: onenand@b0000000 {
++		onenand: onenand@b0600000 {
+ 			compatible = "samsung,s5pv210-onenand";
+ 			reg = <0xb0600000 0x2000>,
+ 				<0xb0000000 0x20000>,
+-- 
+2.7.4
