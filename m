@@ -1,73 +1,50 @@
-From: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] arm64: dts: Remove inconsistent use of 'arm,armv8'
- compatible string
-Date: Thu, 10 Jan 2019 08:48:29 +0100
-Message-ID: <CAJKOXPdWJH8OiF4T9n6cNj5Af5OuTq9zi9n=+Ldztt1TDeoMxA@mail.gmail.com>
-References: <20190109202934.29304-1-robh@kernel.org>
+From: =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Subject: Re: [PATCH 4/4] ARM: defconfig: s5pv210: Add cpufreq support
+Date: Thu, 10 Jan 2019 08:55:31 +0100
+Message-ID: <CAKpie0TvS4bzdv82m8T24GaH_DrGsjdznCSQcugtt9DqKss_sg@mail.gmail.com>
+References: <20190108200509.30494-1-pawel.mikolaj.chmiel@gmail.com>
+ <20190108200509.30494-5-pawel.mikolaj.chmiel@gmail.com>
+ <20190110070208.lvnrcd2nld3zthmk@vireshk-i7>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20190109202934.29304-1-robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Manivannan Sadhasivam <manivannan.sadhasivam-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Gregory Clement <gregory.clement-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Ku
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190110070208.lvnrcd2nld3zthmk@vireshk-i7>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, DTML <devicetree@vger.kernel.org>, "moderated list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, linux-pm@vger.kernel.org, rjw@rjwysocki.net, linux@armlinux.org.uk, Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, 9 Jan 2019 at 21:29, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
->
-> The 'arm,armv8' compatible string is only for software models. It adds
-> little value otherwise and is inconsistently used as a fallback on some
-> platforms. Remove it from those platforms.
->
-> This fixes warnings generated by the DT schema.
->
-> Reported-by: Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
-> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-> Cc: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-> Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> ---
-> armsoc folks, Please apply directly.
->
-> Note that there's still a case left in msm8998 that needs a new
-> compatible string.
->
-> Rob
->
->  arch/arm64/boot/dts/actions/s700.dtsi         |   8 +-
->  arch/arm64/boot/dts/actions/s900.dtsi         |   8 +-
->  arch/arm64/boot/dts/al/alpine-v2.dtsi         |   8 +-
->  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |   8 +-
->  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi  |   8 +-
->  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  |   8 +-
->  .../boot/dts/altera/socfpga_stratix10.dtsi    |   8 +-
->  arch/arm64/boot/dts/amlogic/meson-axg.dtsi    |   8 +-
->  arch/arm64/boot/dts/amlogic/meson-g12a.dtsi   |   8 +-
->  arch/arm64/boot/dts/amlogic/meson-gx.dtsi     |   8 +-
->  arch/arm64/boot/dts/amlogic/meson-gxm.dtsi    |   8 +-
->  arch/arm64/boot/dts/apm/apm-shadowcat.dtsi    |  16 +--
->  arch/arm64/boot/dts/apm/apm-storm.dtsi        |  16 +--
->  arch/arm64/boot/dts/arm/juno-r1.dts           |  12 +-
->  arch/arm64/boot/dts/arm/juno-r2.dts           |  12 +-
->  arch/arm64/boot/dts/arm/juno.dts              |  12 +-
->  .../boot/dts/arm/vexpress-v2f-1xv7-ca53x2.dts |   4 +-
->  .../boot/dts/broadcom/northstar2/ns2.dtsi     |   8 +-
->  .../boot/dts/broadcom/stingray/stingray.dtsi  |  16 +--
->  arch/arm64/boot/dts/cavium/thunder-88xx.dtsi  |  96 ++++++-------
->  arch/arm64/boot/dts/cavium/thunder2-99xx.dtsi |   8 +-
->  arch/arm64/boot/dts/exynos/exynos5433.dtsi    |  16 +--
->  arch/arm64/boot/dts/exynos/exynos7.dtsi       |   8 +-
-
-For Exynos:
-Acked-by: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-
-Best regards,
-Krzysztof
+Y3p3LiwgMTAgc3R5IDIwMTkgbyAwODowMiBWaXJlc2ggS3VtYXIgPHZpcmVzaC5rdW1hckBsaW5h
+cm8ub3JnPiBuYXBpc2HFgihhKToKPgo+IE9uIDA4LTAxLTE5LCAyMTowNSwgUGF3ZcWCIENobWll
+bCB3cm90ZToKPiA+IFRoaXMgY29tbWl0IGVuYWJsZXMgY3B1ZnJlcSBzdXBwb3J0IGZvciBhbGwg
+czVwdjIxMCBkZXZpY2VzLgo+ID4KPiA+IFNpZ25lZC1vZmYtYnk6IFBhd2XFgiBDaG1pZWwgPHBh
+d2VsLm1pa29sYWouY2htaWVsQGdtYWlsLmNvbT4KPiA+IC0tLQo+ID4gIGFyY2gvYXJtL2NvbmZp
+Z3MvczVwdjIxMF9kZWZjb25maWcgfCA2ICsrKysrKwo+ID4gIDEgZmlsZSBjaGFuZ2VkLCA2IGlu
+c2VydGlvbnMoKykKPiA+Cj4gPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vY29uZmlncy9zNXB2MjEw
+X2RlZmNvbmZpZyBiL2FyY2gvYXJtL2NvbmZpZ3MvczVwdjIxMF9kZWZjb25maWcKPiA+IGluZGV4
+IDk1MTE5NmJkZjAwOC4uZmQ0ZjI4YWFiZGE2IDEwMDY0NAo+ID4gLS0tIGEvYXJjaC9hcm0vY29u
+Zmlncy9zNXB2MjEwX2RlZmNvbmZpZwo+ID4gKysrIGIvYXJjaC9hcm0vY29uZmlncy9zNXB2MjEw
+X2RlZmNvbmZpZwo+ID4gQEAgLTExLDYgKzExLDEyIEBAIENPTkZJR19BUkNIX1M1UFYyMTA9eQo+
+ID4gIENPTkZJR19WTVNQTElUXzJHPXkKPiA+ICBDT05GSUdfQVJNX0FQUEVOREVEX0RUQj15Cj4g
+PiAgQ09ORklHX0NNRExJTkU9InJvb3Q9L2Rldi9yYW0wIHJ3IHJhbWRpc2s9ODE5MiBpbml0cmQ9
+MHgyMDgwMDAwMCw4TSBjb25zb2xlPXR0eVNBQzEsMTE1MjAwIGluaXQ9L2xpbnV4cmMiCj4gPiAr
+Q09ORklHX0NQVV9GUkVRPXkKPiA+ICtDT05GSUdfQ1BVX0ZSRVFfU1RBVD15Cj4gPiArQ09ORklH
+X0NQVV9GUkVRX0RFRkFVTFRfR09WX09OREVNQU5EPXkKPiA+ICtDT05GSUdfQ1BVX0ZSRVFfR09W
+X1BPV0VSU0FWRT1tCj4gPiArQ09ORklHX0NQVV9GUkVRX0dPVl9VU0VSU1BBQ0U9bQo+ID4gK0NP
+TkZJR19DUFVfRlJFUV9HT1ZfQ09OU0VSVkFUSVZFPW0KPgo+IFlvdSBkb24ndCB3YW50IHRvIHVz
+ZSBzY2hlZHV0aWwgPyBUaGF0IGlzIHRoZSBkZWZhdWx0IGdvdmVybm9yIGZvcgo+IGV2ZXJ5b25l
+IG5vdyBhIGRheXMuCnNjaGVkdXRpbCBkZXBlbmRzIG9uIFNNUCwgd2hpY2ggaXMgbm90IGVuYWJs
+ZWQgb24gczVwdjIxMCAoaXQgaGFzIG9ubHkKb25lIGNwdSBjb3JlKS4KPgo+IC0tCj4gdmlyZXNo
+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1h
+cm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5v
+cmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0t
+a2VybmVsCg==
