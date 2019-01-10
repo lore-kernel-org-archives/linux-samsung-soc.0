@@ -1,16 +1,15 @@
-From: Tero Kristo <t-kristo-l0cyMroinI0@public.gmane.org>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Subject: Re: [PATCH] arm64: dts: Remove inconsistent use of 'arm,armv8'
  compatible string
-Date: Thu, 10 Jan 2019 14:02:12 +0200
-Message-ID: <4c934f57-5e99-1224-ae25-8384f8d5eb27@ti.com>
+Date: Thu, 10 Jan 2019 08:16:24 -0600
+Message-ID: <CAL_JsqLkWAFpQckQO9RTKYcA1tQE7WTPuydqm78PU8pAoi7gpw@mail.gmail.com>
 References: <20190109202934.29304-1-robh@kernel.org>
  <20190110022709.kh5vlave65jn7m4g@kahuna>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 In-Reply-To: <20190110022709.kh5vlave65jn7m4g@kahuna>
-Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
  <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
@@ -20,88 +19,40 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
  <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
 Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Manivannan Sadhasivam <manivannan.sadhasivam-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Gregory Clement <gregory.clement-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Baolin Wang <baolin.wang@lina>
+To: Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, linux-arm-msm <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Manivannan Sadhasivam <manivannan.sadhasivam-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "open list:MEDIA DRIVERS FOR RENESAS - FCP" <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, ARM-SoC Maintainers <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Gregory Clement <gregory.clement-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-sam
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 10/01/2019 04:27, Nishanth Menon wrote:
+On Wed, Jan 9, 2019 at 8:27 PM Nishanth Menon <nm-l0cyMroinI0@public.gmane.org> wrote:
+>
 > On 14:29-20190109, Rob Herring wrote:
->> The 'arm,armv8' compatible string is only for software models. It adds
->> little value otherwise and is inconsistently used as a fallback on some
->> platforms. Remove it from those platforms.
->>
->> This fixes warnings generated by the DT schema.
->>
->> Reported-by: Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
->> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
->> Cc: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
->> Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
->> ---
+> > The 'arm,armv8' compatible string is only for software models. It adds
+> > little value otherwise and is inconsistently used as a fallback on some
+> > platforms. Remove it from those platforms.
+> >
+> > This fixes warnings generated by the DT schema.
+> >
+> > Reported-by: Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+> > Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+> > Cc: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+> > Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> > ---
 > [...]
-> 
+>
 > ARM SoC maintainers, At least on a quick look (I could be wrong), I
 > think we don't have any explicit processor bindings documentation.
-> 
+
+bindings/arm/cpus.yaml
+
 > However, most of SoC folks seem to key off matches else where I
 > guess..
-> 
+>
 > Not sure, while at this, you if you are planning on fixing up
 > Documentation/devicetree/bindings/arm/arm-boards:
 > compatible = "arm,cortex-a53","arm,armv8";
 > Documentation/devicetree/bindings/arm/cpu-capacity.txt:
 > compatible = "arm,cortex-a53","arm,armv8";
-> 
-> Anyways, for TI SoC:
-> 
->>   arch/arm64/boot/dts/ti/k3-am654.dtsi          |   8 +-
->> diff --git a/arch/arm64/boot/dts/ti/k3-am654.dtsi b/arch/arm64/boot/dts/ti/k3-am654.dtsi
->> index 2affa6f6617e..b221abf43ac2 100644
->> --- a/arch/arm64/boot/dts/ti/k3-am654.dtsi
->> +++ b/arch/arm64/boot/dts/ti/k3-am654.dtsi
->> @@ -34,7 +34,7 @@
->>   		};
->>   
->>   		cpu0: cpu@0 {
->> -			compatible = "arm,cortex-a53", "arm,armv8";
->> +			compatible = "arm,cortex-a53";
->>   			reg = <0x000>;
->>   			device_type = "cpu";
->>   			enable-method = "psci";
->> @@ -48,7 +48,7 @@
->>   		};
->>   
->>   		cpu1: cpu@1 {
->> -			compatible = "arm,cortex-a53", "arm,armv8";
->> +			compatible = "arm,cortex-a53";
->>   			reg = <0x001>;
->>   			device_type = "cpu";
->>   			enable-method = "psci";
->> @@ -62,7 +62,7 @@
->>   		};
->>   
->>   		cpu2: cpu@100 {
->> -			compatible = "arm,cortex-a53", "arm,armv8";
->> +			compatible = "arm,cortex-a53";
->>   			reg = <0x100>;
->>   			device_type = "cpu";
->>   			enable-method = "psci";
->> @@ -76,7 +76,7 @@
->>   		};
->>   
->>   		cpu3: cpu@101 {
->> -			compatible = "arm,cortex-a53", "arm,armv8";
->> +			compatible = "arm,cortex-a53";
->>   			reg = <0x101>;
->>   			device_type = "cpu";
->>   			enable-method = "psci";
-> 
-> Acked-by: Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>
-> 
 
-TI portion looks fine to me also, so:
+I'll handle documentation separately.
 
-Acked-by: Tero Kristo <t-kristo-l0cyMroinI0@public.gmane.org>
-
--Tero
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Rob
