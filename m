@@ -1,76 +1,115 @@
-From: <yamada.masahiro@socionext.com>
-Subject: RE: [PATCH] arm64: dts: Remove inconsistent use of 'arm,armv8'
- compatible string
-Date: Thu, 10 Jan 2019 08:01:52 +0000
-Message-ID: <8e2a312104924025ad4d37afa40d147d@SOC-EX01V.e01.socionext.com>
-References: <20190109202934.29304-1-robh@kernel.org>
+From: =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Subject: Re: [PATCH 3/4] cpufreq: s5pv210: Defer probe if getting regulators fail
+Date: Thu, 10 Jan 2019 09:03:34 +0100
+Message-ID: <CAKpie0RE=F04JB+_G2K4P4d-5OLB8mvK8P0Q-+DKjwxj7aeA_w@mail.gmail.com>
+References: <20190108200509.30494-1-pawel.mikolaj.chmiel@gmail.com>
+ <20190108200509.30494-4-pawel.mikolaj.chmiel@gmail.com> <20190110070127.ymukpnbabjr5n5fe@vireshk-i7>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190109202934.29304-1-robh@kernel.org>
-Content-Language: ja-JP
+In-Reply-To: <20190110070127.ymukpnbabjr5n5fe@vireshk-i7>
 Sender: linux-kernel-owner@vger.kernel.org
-To: robh@kernel.org, arm@kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, afaerber@suse.de, manivannan.sadhasivam@linaro.org, tsahee@annapurnalabs.com, antoine.tenart@bootlin.com, maxime.ripard@bootlin.com, wens@csie.org, dinguyen@kernel.org, khilman@baylibre.com, dhdang@apm.com, liviu.dudau@arm.com, sudeep.holla@arm.com, lorenzo.pieralisi@arm.com, rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, rrichter@cavium.com, jnair@caviumnetworks.com, kgene@kernel.org, krzk@kernel.org, xuwei5@hisilicon.com, chanho.min@lge.com, jason@lakedaemon.net, andrew@lunn.ch, gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com, matthias.bgg@gmail.com, thierry.reding@gmail.com, jonathanh@nvidia.com, andy.gross@linaro.o
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux@armlinux.org.uk, rjw@rjwysocki.net, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "moderated list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, DTML <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUm9iIEhlcnJpbmcgW21h
-aWx0bzpyb2JoQGtlcm5lbC5vcmddDQo+IFNlbnQ6IFRodXJzZGF5LCBKYW51YXJ5IDEwLCAyMDE5
-IDU6MzAgQU0NCj4gVG86IGFybUBrZXJuZWwub3JnDQo+IENjOiBkZXZpY2V0cmVlQHZnZXIua2Vy
-bmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgQW5kcmVhcw0KPiBGw6RyYmVy
-IDxhZmFlcmJlckBzdXNlLmRlPjsgTWFuaXZhbm5hbiBTYWRoYXNpdmFtDQo+IDxtYW5pdmFubmFu
-LnNhZGhhc2l2YW1AbGluYXJvLm9yZz47IFRzYWhlZSBaaWRlbmJlcmcNCj4gPHRzYWhlZUBhbm5h
-cHVybmFsYWJzLmNvbT47IEFudG9pbmUgVGVuYXJ0IDxhbnRvaW5lLnRlbmFydEBib290bGluLmNv
-bT47DQo+IE1heGltZSBSaXBhcmQgPG1heGltZS5yaXBhcmRAYm9vdGxpbi5jb20+OyBDaGVuLVl1
-IFRzYWkgPHdlbnNAY3NpZS5vcmc+Ow0KPiBEaW5oIE5ndXllbiA8ZGluZ3V5ZW5Aa2VybmVsLm9y
-Zz47IEtldmluIEhpbG1hbiA8a2hpbG1hbkBiYXlsaWJyZS5jb20+Ow0KPiBEdWMgRGFuZyA8ZGhk
-YW5nQGFwbS5jb20+OyBMaXZpdSBEdWRhdSA8bGl2aXUuZHVkYXVAYXJtLmNvbT47IFN1ZGVlcCBI
-b2xsYQ0KPiA8c3VkZWVwLmhvbGxhQGFybS5jb20+OyBMb3JlbnpvIFBpZXJhbGlzaSA8bG9yZW56
-by5waWVyYWxpc2lAYXJtLmNvbT47DQo+IFJheSBKdWkgPHJqdWlAYnJvYWRjb20uY29tPjsgU2Nv
-dHQgQnJhbmRlbiA8c2JyYW5kZW5AYnJvYWRjb20uY29tPjsNCj4gYmNtLWtlcm5lbC1mZWVkYmFj
-ay1saXN0QGJyb2FkY29tLmNvbTsgUm9iZXJ0IFJpY2h0ZXINCj4gPHJyaWNodGVyQGNhdml1bS5j
-b20+OyBKYXlhY2hhbmRyYW4gQyA8am5haXJAY2F2aXVtbmV0d29ya3MuY29tPjsgS3VramluDQo+
-IEtpbSA8a2dlbmVAa2VybmVsLm9yZz47IEtyenlzenRvZiBLb3psb3dza2kgPGtyemtAa2VybmVs
-Lm9yZz47IFdlaSBYdQ0KPiA8eHV3ZWk1QGhpc2lsaWNvbi5jb20+OyBDaGFuaG8gTWluIDxjaGFu
-aG8ubWluQGxnZS5jb20+OyBKYXNvbiBDb29wZXINCj4gPGphc29uQGxha2VkYWVtb24ubmV0Pjsg
-QW5kcmV3IEx1bm4gPGFuZHJld0BsdW5uLmNoPjsgR3JlZ29yeSBDbGVtZW50DQo+IDxncmVnb3J5
-LmNsZW1lbnRAYm9vdGxpbi5jb20+OyBTZWJhc3RpYW4gSGVzc2VsYmFydGgNCj4gPHNlYmFzdGlh
-bi5oZXNzZWxiYXJ0aEBnbWFpbC5jb20+OyBNYXR0aGlhcyBCcnVnZ2VyDQo+IDxtYXR0aGlhcy5i
-Z2dAZ21haWwuY29tPjsgVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbT47
-DQo+IEpvbmF0aGFuIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+OyBBbmR5IEdyb3NzDQo+
-IDxhbmR5Lmdyb3NzQGxpbmFyby5vcmc+OyBEYXZpZCBCcm93biA8ZGF2aWQuYnJvd25AbGluYXJv
-Lm9yZz47IFNpbW9uDQo+IEhvcm1hbiA8aG9ybXNAdmVyZ2UubmV0LmF1PjsgTWFnbnVzIERhbW0g
-PG1hZ251cy5kYW1tQGdtYWlsLmNvbT47IEhlaWtvDQo+IFN0dWVibmVyIDxoZWlrb0BzbnRlY2gu
-ZGU+OyBZYW1hZGEsIE1hc2FoaXJvL+WxseeUsCDnnJ/lvJgNCj4gPHlhbWFkYS5tYXNhaGlyb0Bz
-b2Npb25leHQuY29tPjsgT3Jzb24gWmhhaSA8b3Jzb256aGFpQGdtYWlsLmNvbT47DQo+IEJhb2xp
-biBXYW5nIDxiYW9saW4ud2FuZ0BsaW5hcm8ub3JnPjsgQ2h1bnlhbiBaaGFuZw0KPiA8emhhbmcu
-bHlyYUBnbWFpbC5jb20+OyBKaXNoZW5nIFpoYW5nIDxKaXNoZW5nLlpoYW5nQHN5bmFwdGljcy5j
-b20+Ow0KPiBUZXJvIEtyaXN0byA8dC1rcmlzdG9AdGkuY29tPjsgTmlzaGFudGggTWVub24gPG5t
-QHRpLmNvbT47IEp1biBOaWUNCj4gPGp1bi5uaWVAbGluYXJvLm9yZz47IFNoYXduIEd1byA8c2hh
-d25ndW9Aa2VybmVsLm9yZz47DQo+IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9y
-ZzsNCj4gbGludXgtYW1sb2dpY0BsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1zYW1zdW5nLXNv
-Y0B2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4LW1lZGlhdGVrQGxpc3RzLmluZnJhZGVhZC5vcmc7
-IGxpbnV4LXRlZ3JhQHZnZXIua2VybmVsLm9yZzsNCj4gbGludXgtYXJtLW1zbUB2Z2VyLmtlcm5l
-bC5vcmc7IGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZzsNCj4gbGludXgtcm9ja2No
-aXBAbGlzdHMuaW5mcmFkZWFkLm9yZzsgTWFyayBSdXRsYW5kIDxtYXJrLnJ1dGxhbmRAYXJtLmNv
-bT47DQo+IFdpbGwgRGVhY29uIDx3aWxsLmRlYWNvbkBhcm0uY29tPjsgTWljaGFsIFNpbWVrIDxt
-aWNoYWwuc2ltZWtAeGlsaW54LmNvbT4NCj4gU3ViamVjdDogW1BBVENIXSBhcm02NDogZHRzOiBS
-ZW1vdmUgaW5jb25zaXN0ZW50IHVzZSBvZiAnYXJtLGFybXY4Jw0KPiBjb21wYXRpYmxlIHN0cmlu
-Zw0KPiANCj4gVGhlICdhcm0sYXJtdjgnIGNvbXBhdGlibGUgc3RyaW5nIGlzIG9ubHkgZm9yIHNv
-ZnR3YXJlIG1vZGVscy4gSXQgYWRkcw0KPiBsaXR0bGUgdmFsdWUgb3RoZXJ3aXNlIGFuZCBpcyBp
-bmNvbnNpc3RlbnRseSB1c2VkIGFzIGEgZmFsbGJhY2sgb24gc29tZQ0KPiBwbGF0Zm9ybXMuIFJl
-bW92ZSBpdCBmcm9tIHRob3NlIHBsYXRmb3Jtcy4NCj4gDQo+IFRoaXMgZml4ZXMgd2FybmluZ3Mg
-Z2VuZXJhdGVkIGJ5IHRoZSBEVCBzY2hlbWEuDQo+IA0KPiBSZXBvcnRlZC1ieTogTWljaGFsIFNp
-bWVrIDxtaWNoYWwuc2ltZWtAeGlsaW54LmNvbT4NCj4gQ2M6IE1hcmsgUnV0bGFuZCA8bWFyay5y
-dXRsYW5kQGFybS5jb20+DQo+IENjOiBXaWxsIERlYWNvbiA8d2lsbC5kZWFjb25AYXJtLmNvbT4N
-Cj4gU2lnbmVkLW9mZi1ieTogUm9iIEhlcnJpbmcgPHJvYmhAa2VybmVsLm9yZz4NCj4gLS0tDQo+
-IGFybXNvYyBmb2xrcywgUGxlYXNlIGFwcGx5IGRpcmVjdGx5Lg0KPiANCj4gTm90ZSB0aGF0IHRo
-ZXJlJ3Mgc3RpbGwgYSBjYXNlIGxlZnQgaW4gbXNtODk5OCB0aGF0IG5lZWRzIGEgbmV3DQo+IGNv
-bXBhdGlibGUgc3RyaW5nLg0KPiANCj4gUm9iDQoNCls+IF0gDQoNCj4gIC4uLi9ib290L2R0cy9z
-b2Npb25leHQvdW5pcGhpZXItbGQxMS5kdHNpICAgICB8ICAgNCArLQ0KPiAgLi4uL2Jvb3QvZHRz
-L3NvY2lvbmV4dC91bmlwaGllci1sZDIwLmR0c2kgICAgIHwgICA4ICstDQo+ICAuLi4vYm9vdC9k
-dHMvc29jaW9uZXh0L3VuaXBoaWVyLXB4czMuZHRzaSAgICAgfCAgIDggKy0NCg0KDQpGb3IgdW5p
-cGhpZXIsDQoNCkFja2VkLWJ5OiBNYXNhaGlybyBZYW1hZGEgPHlhbWFkYS5tYXNhaGlyb0Bzb2Np
-b25leHQuY29tPg0KDQoNCkJUVywgZG8geW91IGhhdmUgYSBwbGFuIHRvIGZpeCBmaWxlcyB1bmRl
-cg0KRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzLyA/DQoNCg==
+czw., 10 sty 2019 o 08:01 Viresh Kumar <viresh.kumar@linaro.org> napisa=C5=
+=82(a):
+>
+> On 08-01-19, 21:05, Pawe=C5=82 Chmiel wrote:
+> > There is possibility, that when probing driver, regulators are not yet
+> > initialized. In this case we should return EPROBE_DEFER and wait till
+> > they're initialized, since they're required currently for cpufreq drive=
+r
+> > to work. Also move regulator initialization code at beginning of probe,
+> > so we can defer as fast as posibble.
+> >
+> > Signed-off-by: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> > ---
+> >  drivers/cpufreq/s5pv210-cpufreq.c | 33 +++++++++++++++++++------------
+> >  1 file changed, 20 insertions(+), 13 deletions(-)
+> >
+> > diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv21=
+0-cpufreq.c
+> > index f51697f1e0b3..2d0e4dc7ede7 100644
+> > --- a/drivers/cpufreq/s5pv210-cpufreq.c
+> > +++ b/drivers/cpufreq/s5pv210-cpufreq.c
+> > @@ -594,6 +594,26 @@ static int s5pv210_cpufreq_probe(struct platform_d=
+evice *pdev)
+> >        * this whole driver as soon as S5PV210 gets migrated to use
+> >        * cpufreq-dt driver.
+> >        */
+> > +     arm_regulator =3D regulator_get(NULL, "vddarm");
+> > +     if (PTR_ERR(arm_regulator) =3D=3D -EPROBE_DEFER) {
+> > +             pr_dbg("vddarm regulator not ready, defer\n");
+> > +             return -EPROBE_DEFER;
+> > +     } else if (IS_ERR(arm_regulator)) {
+> > +             pr_err("failed to get regulator vddarm\n");
+> > +             return PTR_ERR(arm_regulator);
+> > +     }
+>
+> The only difference between the two cases is pr_dbg vs pr_err, its
+> ugly that we have to add special code for that :(
+>
+> Maybe write it as:
+>
+>         if (IS_ERR(arm_regulator)) {
+>                 if (PTR_ERR(arm_regulator) =3D=3D -EPROBE_DEFER)
+>                         pr_dbg...
+>                 else
+>                         pr_err
+>                 return PTR_ERR(arm_regulator);
+>         }
+>
+> > +
+> > +     int_regulator =3D regulator_get(NULL, "vddint");
+> > +     if (PTR_ERR(int_regulator =3D=3D -EPROBE_DEFER) {
+>
+> Does this even compile ?
+Looks like i broke it after testing (where it was working fine - was
+able to change freq and gov),
+and didn't catch this before sending patch for review :/.
+Sorry, this (and first issue) will be fixed in v2.
+
+Thanks for review
+>
+> > +             regulator_put(arm_regulator);
+> > +             pr_dbg("vddint regulator not ready, defer\n");
+> > +             return -EPROBE_DEFER;
+> > +     } else if (IS_ERR(int_regulator)) {
+> > +             regulator_put(arm_regulator);
+> > +             pr_err("failed to get regulator vddint\n");
+> > +             return PTR_ERR(int_regulator);
+> > +     }
+> > +
+> >       np =3D of_find_compatible_node(NULL, NULL, "samsung,s5pv210-clock=
+");
+> >       if (!np) {
+> >               pr_err("%s: failed to find clock controller DT node\n",
+> > @@ -633,19 +653,6 @@ static int s5pv210_cpufreq_probe(struct platform_d=
+evice *pdev)
+> >               }
+> >       }
+> >
+> > -     arm_regulator =3D regulator_get(NULL, "vddarm");
+> > -     if (IS_ERR(arm_regulator)) {
+> > -             pr_err("failed to get regulator vddarm\n");
+> > -             return PTR_ERR(arm_regulator);
+> > -     }
+> > -
+> > -     int_regulator =3D regulator_get(NULL, "vddint");
+> > -     if (IS_ERR(int_regulator)) {
+> > -             pr_err("failed to get regulator vddint\n");
+> > -             regulator_put(arm_regulator);
+> > -             return PTR_ERR(int_regulator);
+> > -     }
+> > -
+> >       register_reboot_notifier(&s5pv210_cpufreq_reboot_notifier);
+> >
+> >       return cpufreq_register_driver(&s5pv210_driver);
+> > --
+> > 2.17.1
+>
+> --
+> viresh
