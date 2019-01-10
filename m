@@ -1,82 +1,35 @@
-From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH v2 3/4] cpufreq: s5pv210: Defer probe if getting regulators fail
-Date: Thu, 10 Jan 2019 21:52:14 +0100
-Message-ID: <20190110205215.22030-4-pawel.mikolaj.chmiel@gmail.com>
-References: <20190110205215.22030-1-pawel.mikolaj.chmiel@gmail.com>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 2/9] ARM: qcom: remove unnecessary boot_lock
+Date: Thu, 10 Jan 2019 14:05:27 -0800
+Message-ID: <154715792793.19284.6256735661009793613@swboyd.mtv.corp.google.com>
+References: <20181213175952.GC26090@n2100.armlinux.org.uk>
+ <E1gXVHy-00088e-JK@rmk-PC.armlinux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190110205215.22030-1-pawel.mikolaj.chmiel@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: kgene@kernel.org
-Cc: krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, viresh.kumar@linaro.org, rjw@rjwysocki.net, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <E1gXVHy-00088e-JK@rmk-PC.armlinux.org.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Russell King <rmk+kernel@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org, linux-oxnas@groups.io, linux-samsung-soc@vger.kernel.org, linux-soc@vger.kernel.org
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-There is possibility, that when probing driver, regulators are not yet
-initialized. In this case we should return EPROBE_DEFER and wait till
-they're initialized, since they're required currently for cpufreq driver
-to work. Also move regulator initialization code at beginning of probe,
-so we can defer as fast as posibble.
+Quoting Russell King (2018-12-13 10:00:46)
+> The boot_lock is something that was required for ARM development
+> platforms to ensure that the delay calibration worked properly.  This
+> is not necessary for modern platforms that have better bus bandwidth
+> and do not need to calibrate the delay loop for secondary cores.
+> Remove the boot_lock entirely.
+> 
+> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+> ---
 
-Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
----
-Changes from v1:
-  - Fix compilation error
-  - Reorganize code so it's smaller
----
- drivers/cpufreq/s5pv210-cpufreq.c | 32 ++++++++++++++++++-------------
- 1 file changed, 19 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
-index f51697f1e0b3..6df95941ba96 100644
---- a/drivers/cpufreq/s5pv210-cpufreq.c
-+++ b/drivers/cpufreq/s5pv210-cpufreq.c
-@@ -594,6 +594,25 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
- 	 * this whole driver as soon as S5PV210 gets migrated to use
- 	 * cpufreq-dt driver.
- 	 */
-+	arm_regulator = regulator_get(NULL, "vddarm");
-+	if (IS_ERR(arm_regulator)) {
-+		if (PTR_ERR(arm_regulator) == -EPROBE_DEFER)
-+			pr_debug("vddarm regulator not ready, defer\n");
-+		else
-+			pr_err("failed to get regulator vddarm\n");
-+		return PTR_ERR(arm_regulator);
-+	}
-+
-+	int_regulator = regulator_get(NULL, "vddint");
-+	if (IS_ERR(int_regulator)) {
-+		if (PTR_ERR(int_regulator) == -EPROBE_DEFER)
-+			pr_debug("vddint regulator not ready, defer\n");
-+		else
-+			pr_err("failed to get regulator vddint\n");
-+		regulator_put(arm_regulator);
-+		return PTR_ERR(int_regulator);
-+	}
-+
- 	np = of_find_compatible_node(NULL, NULL, "samsung,s5pv210-clock");
- 	if (!np) {
- 		pr_err("%s: failed to find clock controller DT node\n",
-@@ -633,19 +652,6 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	arm_regulator = regulator_get(NULL, "vddarm");
--	if (IS_ERR(arm_regulator)) {
--		pr_err("failed to get regulator vddarm\n");
--		return PTR_ERR(arm_regulator);
--	}
--
--	int_regulator = regulator_get(NULL, "vddint");
--	if (IS_ERR(int_regulator)) {
--		pr_err("failed to get regulator vddint\n");
--		regulator_put(arm_regulator);
--		return PTR_ERR(int_regulator);
--	}
--
- 	register_reboot_notifier(&s5pv210_cpufreq_reboot_notifier);
- 
- 	return cpufreq_register_driver(&s5pv210_driver);
--- 
-2.17.1
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
