@@ -1,48 +1,155 @@
-From: Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH] arm64: dts: Remove inconsistent use of 'arm,armv8'
- compatible string
-Date: Fri, 11 Jan 2019 16:50:05 +0000
-Message-ID: <20190111165005.GI20661@e110455-lin.cambridge.arm.com>
-References: <20190109202934.29304-1-robh@kernel.org>
+From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH v3] cpufreq: s5pv210: Defer probe if getting regulators fail
+Date: Fri, 11 Jan 2019 20:42:44 +0100
+Message-ID: <20190111194244.2439-1-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20190109202934.29304-1-robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Manivannan Sadhasivam <manivannan.sadhasivam-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Gregory Clement <gregory.clement-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, bcm-
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: kgene@kernel.org
+Cc: krzk@kernel.org, viresh.kumar@linaro.org, rjw@rjwysocki.net, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gV2VkLCBKYW4gMDksIDIwMTkgYXQgMDI6Mjk6MzRQTSAtMDYwMCwgUm9iIEhlcnJpbmcgd3Jv
-dGU6Cj4gVGhlICdhcm0sYXJtdjgnIGNvbXBhdGlibGUgc3RyaW5nIGlzIG9ubHkgZm9yIHNvZnR3
-YXJlIG1vZGVscy4gSXQgYWRkcwo+IGxpdHRsZSB2YWx1ZSBvdGhlcndpc2UgYW5kIGlzIGluY29u
-c2lzdGVudGx5IHVzZWQgYXMgYSBmYWxsYmFjayBvbiBzb21lCj4gcGxhdGZvcm1zLiBSZW1vdmUg
-aXQgZnJvbSB0aG9zZSBwbGF0Zm9ybXMuCj4gCj4gVGhpcyBmaXhlcyB3YXJuaW5ncyBnZW5lcmF0
-ZWQgYnkgdGhlIERUIHNjaGVtYS4KPiAKPiBSZXBvcnRlZC1ieTogTWljaGFsIFNpbWVrIDxtaWNo
-YWwuc2ltZWtAeGlsaW54LmNvbT4KPiBDYzogTWFyayBSdXRsYW5kIDxtYXJrLnJ1dGxhbmRAYXJt
-LmNvbT4KPiBDYzogV2lsbCBEZWFjb24gPHdpbGwuZGVhY29uQGFybS5jb20+Cj4gU2lnbmVkLW9m
-Zi1ieTogUm9iIEhlcnJpbmcgPHJvYmhAa2VybmVsLm9yZz4KPiAtLS0KPiBhcm1zb2MgZm9sa3Ms
-IFBsZWFzZSBhcHBseSBkaXJlY3RseS4KPiAKPiBOb3RlIHRoYXQgdGhlcmUncyBzdGlsbCBhIGNh
-c2UgbGVmdCBpbiBtc204OTk4IHRoYXQgbmVlZHMgYSBuZXcgCj4gY29tcGF0aWJsZSBzdHJpbmcu
-Cj4gCj4gUm9iCj4gCj4gIGFyY2gvYXJtNjQvYm9vdC9kdHMvYXJtL2p1bm8tcjEuZHRzICAgICAg
-ICAgICB8ICAxMiArLQo+ICBhcmNoL2FybTY0L2Jvb3QvZHRzL2FybS9qdW5vLXIyLmR0cyAgICAg
-ICAgICAgfCAgMTIgKy0KPiAgYXJjaC9hcm02NC9ib290L2R0cy9hcm0vanVuby5kdHMgICAgICAg
-ICAgICAgIHwgIDEyICstCj4gIC4uLi9ib290L2R0cy9hcm0vdmV4cHJlc3MtdjJmLTF4djctY2E1
-M3gyLmR0cyB8ICAgNCArLQoKRm9yIHRoZSBBcm0gTHRkIGJvYXJkczoKCkFja2VkLWJ5OiBMaXZp
-dSBEdWRhdSA8bGl2aXUuZHVkYXVAYXJtLmNvbT4KClRoYW5rcywKTGl2aXUKCi0tIAo9PT09PT09
-PT09PT09PT09PT09PQp8IEkgd291bGQgbGlrZSB0byB8CnwgZml4IHRoZSB3b3JsZCwgIHwKfCBi
-dXQgdGhleSdyZSBub3QgfAp8IGdpdmluZyBtZSB0aGUgICB8CiBcIHNvdXJjZSBjb2RlISAgLwog
-IC0tLS0tLS0tLS0tLS0tLQogICAgwq9cXyjjg4QpXy/CrwoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtcm9ja2NoaXAgbWFpbGluZyBsaXN0Ckxp
-bnV4LXJvY2tjaGlwQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1yb2NrY2hpcAo=
+There is possibility, that when probing driver, regulators are not yet
+initialized. In this case we should return EPROBE_DEFER and wait till
+they're initialized, since they're required currently for cpufreq driver
+to work. Also move regulator initialization code at beginning of probe,
+so we can defer as fast as posibble.
+
+Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+---
+Changes from v2:
+  - Handle all error paths in probe
+
+Changes from v1:
+  - Fix compilation error
+  - Reorganize code so it's smaller
+---
+ drivers/cpufreq/s5pv210-cpufreq.c | 68 ++++++++++++++++++++++---------
+ 1 file changed, 49 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
+index f51697f1e0b3..627b132e3e61 100644
+--- a/drivers/cpufreq/s5pv210-cpufreq.c
++++ b/drivers/cpufreq/s5pv210-cpufreq.c
+@@ -584,7 +584,7 @@ static struct notifier_block s5pv210_cpufreq_reboot_notifier = {
+ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np;
+-	int id;
++	int id, result = 0;
+ 
+ 	/*
+ 	 * HACK: This is a temporary workaround to get access to clock
+@@ -594,18 +594,40 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
+ 	 * this whole driver as soon as S5PV210 gets migrated to use
+ 	 * cpufreq-dt driver.
+ 	 */
++	arm_regulator = regulator_get(NULL, "vddarm");
++	if (IS_ERR(arm_regulator)) {
++		if (PTR_ERR(arm_regulator) == -EPROBE_DEFER)
++			pr_debug("vddarm regulator not ready, defer\n");
++		else
++			pr_err("failed to get regulator vddarm\n");
++		result = PTR_ERR(arm_regulator);
++		goto err_arm_regulator;
++	}
++
++	int_regulator = regulator_get(NULL, "vddint");
++	if (IS_ERR(int_regulator)) {
++		if (PTR_ERR(int_regulator) == -EPROBE_DEFER)
++			pr_debug("vddint regulator not ready, defer\n");
++		else
++			pr_err("failed to get regulator vddint\n");
++		result = PTR_ERR(int_regulator);
++		goto err_int_regulator;
++	}
++
+ 	np = of_find_compatible_node(NULL, NULL, "samsung,s5pv210-clock");
+ 	if (!np) {
+ 		pr_err("%s: failed to find clock controller DT node\n",
+ 			__func__);
+-		return -ENODEV;
++		result = -ENODEV;
++		goto err_clock;
+ 	}
+ 
+ 	clk_base = of_iomap(np, 0);
+ 	of_node_put(np);
+ 	if (!clk_base) {
+ 		pr_err("%s: failed to map clock registers\n", __func__);
+-		return -EFAULT;
++		result = -EFAULT;
++		goto err_clock;
+ 	}
+ 
+ 	for_each_compatible_node(np, NULL, "samsung,s5pv210-dmc") {
+@@ -614,7 +636,8 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
+ 			pr_err("%s: failed to get alias of dmc node '%pOFn'\n",
+ 				__func__, np);
+ 			of_node_put(np);
+-			return id;
++			result = id;
++			goto err_clk_base;
+ 		}
+ 
+ 		dmc_base[id] = of_iomap(np, 0);
+@@ -622,33 +645,40 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
+ 			pr_err("%s: failed to map dmc%d registers\n",
+ 				__func__, id);
+ 			of_node_put(np);
+-			return -EFAULT;
++			result = -EFAULT;
++			goto err_dmc;
+ 		}
+ 	}
+ 
+ 	for (id = 0; id < ARRAY_SIZE(dmc_base); ++id) {
+ 		if (!dmc_base[id]) {
+ 			pr_err("%s: failed to find dmc%d node\n", __func__, id);
+-			return -ENODEV;
++			result = -ENODEV;
++			goto err_dmc;
+ 		}
+ 	}
+ 
+-	arm_regulator = regulator_get(NULL, "vddarm");
+-	if (IS_ERR(arm_regulator)) {
+-		pr_err("failed to get regulator vddarm\n");
+-		return PTR_ERR(arm_regulator);
+-	}
+-
+-	int_regulator = regulator_get(NULL, "vddint");
+-	if (IS_ERR(int_regulator)) {
+-		pr_err("failed to get regulator vddint\n");
+-		regulator_put(arm_regulator);
+-		return PTR_ERR(int_regulator);
+-	}
+-
+ 	register_reboot_notifier(&s5pv210_cpufreq_reboot_notifier);
+ 
+ 	return cpufreq_register_driver(&s5pv210_driver);
++
++err_dmc:
++	for (id = 0; id < ARRAY_SIZE(dmc_base); ++id)
++		if (dmc_base[id])
++			iounmap(dmc_base[id]);
++
++err_clk_base:
++	iounmap(clk_base);
++
++err_clock:
++	regulator_put(int_regulator);
++
++err_int_regulator:
++	regulator_put(arm_regulator);
++
++err_arm_regulator:
++
++	return result;
+ }
+ 
+ static struct platform_driver s5pv210_cpufreq_platdrv = {
+-- 
+2.17.1
