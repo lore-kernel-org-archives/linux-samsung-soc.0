@@ -1,83 +1,52 @@
-From: =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: Re: [PATCH v2 3/4] cpufreq: s5pv210: Defer probe if getting
- regulators fail
-Date: Fri, 11 Jan 2019 10:53:44 +0100
-Message-ID: <CAKpie0S3ce1gYqf2-ncz9jQdxG-e58bzn2GkCOkT468sL_EapA@mail.gmail.com>
-References: <20190110205215.22030-1-pawel.mikolaj.chmiel@gmail.com>
- <20190110205215.22030-4-pawel.mikolaj.chmiel@gmail.com> <CAJKOXPdz-LfQ1-jPXB5Y7pVVVBDdH0Q=5xZJxvabjhZ-Ush+dg@mail.gmail.com>
+From: =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+Subject: [PATCH v5.1 RESEND] dt-bindings: hwrng: Add Samsung Exynos 5250+
+ True RNG bindings
+Date: Fri, 11 Jan 2019 14:21:39 +0100
+Message-ID: <20190111132139.12333-1-l.stelmach@samsung.com>
+References: <CGME20190111132222eucas1p1d80caf8ba30422bc5fe1a1fac4cf48e8@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPdz-LfQ1-jPXB5Y7pVVVBDdH0Q=5xZJxvabjhZ-Ush+dg@mail.gmail.com>
+In-Reply-To: <CAL_JsqKt-ujsB-t9A=4dEAjqrvcquUG+qF3tFg1YCqmup_5wcw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux@armlinux.org.uk, Viresh Kumar <viresh.kumar@linaro.org>, rjw@rjwysocki.net, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DTML <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>
+Cc: =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>, Joe Perches <joe@perches.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Otto Sabart <ottosabart@seberm.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-pt., 11 sty 2019 o 10:46 Krzysztof Kozlowski <krzk@kernel.org> napisa=C5=82=
-(a):
->
-> On Thu, 10 Jan 2019 at 21:53, Pawe=C5=82 Chmiel
-> <pawel.mikolaj.chmiel@gmail.com> wrote:
-> >
-> > There is possibility, that when probing driver, regulators are not yet
-> > initialized. In this case we should return EPROBE_DEFER and wait till
-> > they're initialized, since they're required currently for cpufreq drive=
-r
-> > to work. Also move regulator initialization code at beginning of probe,
-> > so we can defer as fast as posibble.
-> >
-> > Signed-off-by: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> > ---
-> > Changes from v1:
-> >   - Fix compilation error
-> >   - Reorganize code so it's smaller
-> > ---
-> >  drivers/cpufreq/s5pv210-cpufreq.c | 32 ++++++++++++++++++-------------
-> >  1 file changed, 19 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv21=
-0-cpufreq.c
-> > index f51697f1e0b3..6df95941ba96 100644
-> > --- a/drivers/cpufreq/s5pv210-cpufreq.c
-> > +++ b/drivers/cpufreq/s5pv210-cpufreq.c
-> > @@ -594,6 +594,25 @@ static int s5pv210_cpufreq_probe(struct platform_d=
-evice *pdev)
-> >          * this whole driver as soon as S5PV210 gets migrated to use
-> >          * cpufreq-dt driver.
-> >          */
-> > +       arm_regulator =3D regulator_get(NULL, "vddarm");
-> > +       if (IS_ERR(arm_regulator)) {
-> > +               if (PTR_ERR(arm_regulator) =3D=3D -EPROBE_DEFER)
-> > +                       pr_debug("vddarm regulator not ready, defer\n")=
-;
-> > +               else
-> > +                       pr_err("failed to get regulator vddarm\n");
-> > +               return PTR_ERR(arm_regulator);
-> > +       }
-> > +
-> > +       int_regulator =3D regulator_get(NULL, "vddint");
-> > +       if (IS_ERR(int_regulator)) {
-> > +               if (PTR_ERR(int_regulator) =3D=3D -EPROBE_DEFER)
-> > +                       pr_debug("vddint regulator not ready, defer\n")=
-;
-> > +               else
-> > +                       pr_err("failed to get regulator vddint\n");
-> > +               regulator_put(arm_regulator);
-> > +               return PTR_ERR(int_regulator);
-> > +       }
-> > +
->
-> Error paths are now not correct. You should put the regulators when
-> returning later. The previous code had these error paths wrong as well
-> - not iounmapping - but if you move things around, maybe let's fix
-> things.
-Ok, will fix this in new version and will resend it (only this one
-patch, since all other looks ok/applied).
-Also will add missing iounmapping/etc to fix all other error paths.
+Add binding documentation for the True Random Number Generator
+found on Samsung Exynos 5250+ SoCs.
 
-Thanks
->
-> Best regards,
-> Krzysztof
+Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
+---
+ .../bindings/rng/samsung,exynos5250-trng.txt    | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt
+
+diff --git a/Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt b/Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt
+new file mode 100644
+index 000000000000..5a613a4ec780
+--- /dev/null
++++ b/Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt
+@@ -0,0 +1,17 @@
++Exynos True Random Number Generator
++
++Required properties:
++
++- compatible  : Should be "samsung,exynos5250-trng".
++- reg         : Specifies base physical address and size of the registers map.
++- clocks      : Phandle to clock-controller plus clock-specifier pair.
++- clock-names : "secss" as a clock name.
++
++Example:
++
++	rng@10830600 {
++		compatible = "samsung,exynos5250-trng";
++		reg = <0x10830600 0x100>;
++		clocks = <&clock CLK_SSS>;
++		clock-names = "secss";
++	};
+-- 
+2.20.1
