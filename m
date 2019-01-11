@@ -1,35 +1,31 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 2/9] ARM: qcom: remove unnecessary boot_lock
-Date: Thu, 10 Jan 2019 14:05:27 -0800
-Message-ID: <154715792793.19284.6256735661009793613@swboyd.mtv.corp.google.com>
-References: <20181213175952.GC26090@n2100.armlinux.org.uk>
- <E1gXVHy-00088e-JK@rmk-PC.armlinux.org.uk>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 1/4] ARM: dts: s5pv210: Add dmc nodes
+Date: Fri, 11 Jan 2019 09:32:41 +0100
+Message-ID: <CAJKOXPcWOtTh5nDpZuX=NfrcOcQDPUXoFJLc8JtLs6UEY9LL6w@mail.gmail.com>
+References: <20190110205215.22030-1-pawel.mikolaj.chmiel@gmail.com> <20190110205215.22030-2-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <E1gXVHy-00088e-JK@rmk-PC.armlinux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King <rmk+kernel@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org, linux-oxnas@groups.io, linux-samsung-soc@vger.kernel.org, linux-soc@vger.kernel.org
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190110205215.22030-2-pawel.mikolaj.chmiel@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Cc: kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, viresh.kumar@linaro.org, rjw@rjwysocki.net, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Quoting Russell King (2018-12-13 10:00:46)
-> The boot_lock is something that was required for ARM development
-> platforms to ensure that the delay calibration worked properly.  This
-> is not necessary for modern platforms that have better bus bandwidth
-> and do not need to calibrate the delay loop for secondary cores.
-> Remove the boot_lock entirely.
-> 
-> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+On Thu, 10 Jan 2019 at 21:53, Pawe=C5=82 Chmiel
+<pawel.mikolaj.chmiel@gmail.com> wrote:
+>
+> This commit adds dmc nodes, which are needed by s5pv210 cpufreq driver
+> to work.
+>
+> Signed-off-by: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
 > ---
+>  arch/arm/boot/dts/s5pv210.dtsi | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Thanks, applied (actually I applied v1 - I hope there were no changes).
+
+Best regards,
+Krzysztof
