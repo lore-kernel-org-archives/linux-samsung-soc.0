@@ -1,110 +1,179 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3] cpufreq: s5pv210: Defer probe if getting regulators
- fail
-Date: Sun, 13 Jan 2019 14:16:24 +0100
-Message-ID: <20190113131624.GA2672@kozik-lap>
-References: <20190111194244.2439-1-pawel.mikolaj.chmiel@gmail.com>
+From: =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Subject: Re: [PATCH v3] cpufreq: s5pv210: Defer probe if getting regulators fail
+Date: Sun, 13 Jan 2019 20:54:08 +0100
+Message-ID: <2003903.RuZpVZK7nJ@acerlaptop>
+References: <20190111194244.2439-1-pawel.mikolaj.chmiel@gmail.com> <20190113131624.GA2672@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20190111194244.2439-1-pawel.mikolaj.chmiel@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, viresh.kumar@linaro.org, rjw@rjwysocki.net, linux-kernel@vger.kernel.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190113131624.GA2672@kozik-lap>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: kgene@kernel.org, viresh.kumar@linaro.org, rjw@rjwysocki.net, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gRnJpLCBKYW4gMTEsIDIwMTkgYXQgMDg6NDI6NDRQTSArMDEwMCwgUGF3ZcWCIENobWllbCB3
-cm90ZToKPiBUaGVyZSBpcyBwb3NzaWJpbGl0eSwgdGhhdCB3aGVuIHByb2JpbmcgZHJpdmVyLCBy
-ZWd1bGF0b3JzIGFyZSBub3QgeWV0Cj4gaW5pdGlhbGl6ZWQuIEluIHRoaXMgY2FzZSB3ZSBzaG91
-bGQgcmV0dXJuIEVQUk9CRV9ERUZFUiBhbmQgd2FpdCB0aWxsCj4gdGhleSdyZSBpbml0aWFsaXpl
-ZCwgc2luY2UgdGhleSdyZSByZXF1aXJlZCBjdXJyZW50bHkgZm9yIGNwdWZyZXEgZHJpdmVyCj4g
-dG8gd29yay4gQWxzbyBtb3ZlIHJlZ3VsYXRvciBpbml0aWFsaXphdGlvbiBjb2RlIGF0IGJlZ2lu
-bmluZyBvZiBwcm9iZSwKPiBzbyB3ZSBjYW4gZGVmZXIgYXMgZmFzdCBhcyBwb3NpYmJsZS4KPiAK
-PiBTaWduZWQtb2ZmLWJ5OiBQYXdlxYIgQ2htaWVsIDxwYXdlbC5taWtvbGFqLmNobWllbEBnbWFp
-bC5jb20+Cj4gLS0tCj4gQ2hhbmdlcyBmcm9tIHYyOgo+ICAgLSBIYW5kbGUgYWxsIGVycm9yIHBh
-dGhzIGluIHByb2JlCj4gCj4gQ2hhbmdlcyBmcm9tIHYxOgo+ICAgLSBGaXggY29tcGlsYXRpb24g
-ZXJyb3IKPiAgIC0gUmVvcmdhbml6ZSBjb2RlIHNvIGl0J3Mgc21hbGxlcgo+IC0tLQo+ICBkcml2
-ZXJzL2NwdWZyZXEvczVwdjIxMC1jcHVmcmVxLmMgfCA2OCArKysrKysrKysrKysrKysrKysrKysr
-LS0tLS0tLS0tCj4gIDEgZmlsZSBjaGFuZ2VkLCA0OSBpbnNlcnRpb25zKCspLCAxOSBkZWxldGlv
-bnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jcHVmcmVxL3M1cHYyMTAtY3B1ZnJlcS5j
-IGIvZHJpdmVycy9jcHVmcmVxL3M1cHYyMTAtY3B1ZnJlcS5jCj4gaW5kZXggZjUxNjk3ZjFlMGIz
-Li42MjdiMTMyZTNlNjEgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9jcHVmcmVxL3M1cHYyMTAtY3B1
-ZnJlcS5jCj4gKysrIGIvZHJpdmVycy9jcHVmcmVxL3M1cHYyMTAtY3B1ZnJlcS5jCj4gQEAgLTU4
-NCw3ICs1ODQsNyBAQCBzdGF0aWMgc3RydWN0IG5vdGlmaWVyX2Jsb2NrIHM1cHYyMTBfY3B1ZnJl
-cV9yZWJvb3Rfbm90aWZpZXIgPSB7Cj4gIHN0YXRpYyBpbnQgczVwdjIxMF9jcHVmcmVxX3Byb2Jl
-KHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gIHsKPiAgCXN0cnVjdCBkZXZpY2Vfbm9k
-ZSAqbnA7Cj4gLQlpbnQgaWQ7Cj4gKwlpbnQgaWQsIHJlc3VsdCA9IDA7Cj4gIAo+ICAJLyoKPiAg
-CSAqIEhBQ0s6IFRoaXMgaXMgYSB0ZW1wb3Jhcnkgd29ya2Fyb3VuZCB0byBnZXQgYWNjZXNzIHRv
-IGNsb2NrCj4gQEAgLTU5NCwxOCArNTk0LDQwIEBAIHN0YXRpYyBpbnQgczVwdjIxMF9jcHVmcmVx
-X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gIAkgKiB0aGlzIHdob2xlIGRy
-aXZlciBhcyBzb29uIGFzIFM1UFYyMTAgZ2V0cyBtaWdyYXRlZCB0byB1c2UKPiAgCSAqIGNwdWZy
-ZXEtZHQgZHJpdmVyLgo+ICAJICovCj4gKwlhcm1fcmVndWxhdG9yID0gcmVndWxhdG9yX2dldChO
-VUxMLCAidmRkYXJtIik7Cj4gKwlpZiAoSVNfRVJSKGFybV9yZWd1bGF0b3IpKSB7Cj4gKwkJaWYg
-KFBUUl9FUlIoYXJtX3JlZ3VsYXRvcikgPT0gLUVQUk9CRV9ERUZFUikKPiArCQkJcHJfZGVidWco
-InZkZGFybSByZWd1bGF0b3Igbm90IHJlYWR5LCBkZWZlclxuIik7Cj4gKwkJZWxzZQo+ICsJCQlw
-cl9lcnIoImZhaWxlZCB0byBnZXQgcmVndWxhdG9yIHZkZGFybVxuIik7Cj4gKwkJcmVzdWx0ID0g
-UFRSX0VSUihhcm1fcmVndWxhdG9yKTsKPiArCQlnb3RvIGVycl9hcm1fcmVndWxhdG9yOwoKSnVz
-dCByZXR1cm4gaGVyZS4KCj4gKwl9Cj4gKwo+ICsJaW50X3JlZ3VsYXRvciA9IHJlZ3VsYXRvcl9n
-ZXQoTlVMTCwgInZkZGludCIpOwo+ICsJaWYgKElTX0VSUihpbnRfcmVndWxhdG9yKSkgewo+ICsJ
-CWlmIChQVFJfRVJSKGludF9yZWd1bGF0b3IpID09IC1FUFJPQkVfREVGRVIpCj4gKwkJCXByX2Rl
-YnVnKCJ2ZGRpbnQgcmVndWxhdG9yIG5vdCByZWFkeSwgZGVmZXJcbiIpOwo+ICsJCWVsc2UKPiAr
-CQkJcHJfZXJyKCJmYWlsZWQgdG8gZ2V0IHJlZ3VsYXRvciB2ZGRpbnRcbiIpOwo+ICsJCXJlc3Vs
-dCA9IFBUUl9FUlIoaW50X3JlZ3VsYXRvcik7Cj4gKwkJZ290byBlcnJfaW50X3JlZ3VsYXRvcjsK
-PiArCX0KPiArCj4gIAlucCA9IG9mX2ZpbmRfY29tcGF0aWJsZV9ub2RlKE5VTEwsIE5VTEwsICJz
-YW1zdW5nLHM1cHYyMTAtY2xvY2siKTsKPiAgCWlmICghbnApIHsKPiAgCQlwcl9lcnIoIiVzOiBm
-YWlsZWQgdG8gZmluZCBjbG9jayBjb250cm9sbGVyIERUIG5vZGVcbiIsCj4gIAkJCV9fZnVuY19f
-KTsKPiAtCQlyZXR1cm4gLUVOT0RFVjsKPiArCQlyZXN1bHQgPSAtRU5PREVWOwo+ICsJCWdvdG8g
-ZXJyX2Nsb2NrOwo+ICAJfQo+ICAKPiAgCWNsa19iYXNlID0gb2ZfaW9tYXAobnAsIDApOwo+ICAJ
-b2Zfbm9kZV9wdXQobnApOwo+ICAJaWYgKCFjbGtfYmFzZSkgewo+ICAJCXByX2VycigiJXM6IGZh
-aWxlZCB0byBtYXAgY2xvY2sgcmVnaXN0ZXJzXG4iLCBfX2Z1bmNfXyk7Cj4gLQkJcmV0dXJuIC1F
-RkFVTFQ7Cj4gKwkJcmVzdWx0ID0gLUVGQVVMVDsKPiArCQlnb3RvIGVycl9jbG9jazsKPiAgCX0K
-PiAgCj4gIAlmb3JfZWFjaF9jb21wYXRpYmxlX25vZGUobnAsIE5VTEwsICJzYW1zdW5nLHM1cHYy
-MTAtZG1jIikgewo+IEBAIC02MTQsNyArNjM2LDggQEAgc3RhdGljIGludCBzNXB2MjEwX2NwdWZy
-ZXFfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPiAgCQkJcHJfZXJyKCIlczog
-ZmFpbGVkIHRvIGdldCBhbGlhcyBvZiBkbWMgbm9kZSAnJXBPRm4nXG4iLAo+ICAJCQkJX19mdW5j
-X18sIG5wKTsKPiAgCQkJb2Zfbm9kZV9wdXQobnApOwo+IC0JCQlyZXR1cm4gaWQ7Cj4gKwkJCXJl
-c3VsdCA9IGlkOwo+ICsJCQlnb3RvIGVycl9jbGtfYmFzZTsKPiAgCQl9Cj4gIAo+ICAJCWRtY19i
-YXNlW2lkXSA9IG9mX2lvbWFwKG5wLCAwKTsKPiBAQCAtNjIyLDMzICs2NDUsNDAgQEAgc3RhdGlj
-IGludCBzNXB2MjEwX2NwdWZyZXFfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikK
-PiAgCQkJcHJfZXJyKCIlczogZmFpbGVkIHRvIG1hcCBkbWMlZCByZWdpc3RlcnNcbiIsCj4gIAkJ
-CQlfX2Z1bmNfXywgaWQpOwo+ICAJCQlvZl9ub2RlX3B1dChucCk7Cj4gLQkJCXJldHVybiAtRUZB
-VUxUOwo+ICsJCQlyZXN1bHQgPSAtRUZBVUxUOwo+ICsJCQlnb3RvIGVycl9kbWM7Cj4gIAkJfQo+
-ICAJfQo+ICAKPiAgCWZvciAoaWQgPSAwOyBpZCA8IEFSUkFZX1NJWkUoZG1jX2Jhc2UpOyArK2lk
-KSB7Cj4gIAkJaWYgKCFkbWNfYmFzZVtpZF0pIHsKPiAgCQkJcHJfZXJyKCIlczogZmFpbGVkIHRv
-IGZpbmQgZG1jJWQgbm9kZVxuIiwgX19mdW5jX18sIGlkKTsKPiAtCQkJcmV0dXJuIC1FTk9ERVY7
-Cj4gKwkJCXJlc3VsdCA9IC1FTk9ERVY7Cj4gKwkJCWdvdG8gZXJyX2RtYzsKPiAgCQl9Cj4gIAl9
-Cj4gIAo+IC0JYXJtX3JlZ3VsYXRvciA9IHJlZ3VsYXRvcl9nZXQoTlVMTCwgInZkZGFybSIpOwo+
-IC0JaWYgKElTX0VSUihhcm1fcmVndWxhdG9yKSkgewo+IC0JCXByX2VycigiZmFpbGVkIHRvIGdl
-dCByZWd1bGF0b3IgdmRkYXJtXG4iKTsKPiAtCQlyZXR1cm4gUFRSX0VSUihhcm1fcmVndWxhdG9y
-KTsKPiAtCX0KPiAtCj4gLQlpbnRfcmVndWxhdG9yID0gcmVndWxhdG9yX2dldChOVUxMLCAidmRk
-aW50Iik7Cj4gLQlpZiAoSVNfRVJSKGludF9yZWd1bGF0b3IpKSB7Cj4gLQkJcHJfZXJyKCJmYWls
-ZWQgdG8gZ2V0IHJlZ3VsYXRvciB2ZGRpbnRcbiIpOwo+IC0JCXJlZ3VsYXRvcl9wdXQoYXJtX3Jl
-Z3VsYXRvcik7Cj4gLQkJcmV0dXJuIFBUUl9FUlIoaW50X3JlZ3VsYXRvcik7Cj4gLQl9Cj4gLQo+
-ICAJcmVnaXN0ZXJfcmVib290X25vdGlmaWVyKCZzNXB2MjEwX2NwdWZyZXFfcmVib290X25vdGlm
-aWVyKTsKPiAgCj4gIAlyZXR1cm4gY3B1ZnJlcV9yZWdpc3Rlcl9kcml2ZXIoJnM1cHYyMTBfZHJp
-dmVyKTsKPiArCj4gK2Vycl9kbWM6Cj4gKwlmb3IgKGlkID0gMDsgaWQgPCBBUlJBWV9TSVpFKGRt
-Y19iYXNlKTsgKytpZCkKPiArCQlpZiAoZG1jX2Jhc2VbaWRdKQo+ICsJCQlpb3VubWFwKGRtY19i
-YXNlW2lkXSk7CgpZb3Ugd2lsbCBpb3VubWFwIHRoZSBzYW1lIHBvaW50ZXIgdHdpY2UsIGlmIGZp
-cnN0IGRldmljZSBiaW5kIGZhaWxlZAp3aGlsZSBmb2xsb3dpbmcgdGhpcyBlcnJvciBwYXRoIGFu
-ZCBzb21lb25lIHRyaWVzIHRvIGJpbmQgc2Vjb25kIHRpbWUKKGFnYWluIHdpdGggZXJyb3IgbGVh
-ZGluZyB0byB0aGlzIGVycm9yIHBhdGgpLiBZb3UgemVybyB0aGUgcG9pbnRlcgplaXRoZXIgYXQg
-YmVnaW5uaW5nIG9mIHByb2JlIG9yIGFmdGVyIGlvdW5tYXBwaW5nLgoKQmVzdCByZWdhcmRzLApL
-cnp5c3p0b2YKCgo+ICsKPiArZXJyX2Nsa19iYXNlOgo+ICsJaW91bm1hcChjbGtfYmFzZSk7Cj4g
-Kwo+ICtlcnJfY2xvY2s6Cj4gKwlyZWd1bGF0b3JfcHV0KGludF9yZWd1bGF0b3IpOwo+ICsKPiAr
-ZXJyX2ludF9yZWd1bGF0b3I6Cj4gKwlyZWd1bGF0b3JfcHV0KGFybV9yZWd1bGF0b3IpOwo+ICsK
-PiArZXJyX2FybV9yZWd1bGF0b3I6Cj4gKwo+ICsJcmV0dXJuIHJlc3VsdDsKPiAgfQo+ICAKPiAg
-c3RhdGljIHN0cnVjdCBwbGF0Zm9ybV9kcml2ZXIgczVwdjIxMF9jcHVmcmVxX3BsYXRkcnYgPSB7
-Cj4gLS0gCj4gMi4xNy4xCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVs
-QGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9s
-aXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+On niedziela, 13 stycznia 2019 14:16:24 CET Krzysztof Kozlowski wrote:
+> On Fri, Jan 11, 2019 at 08:42:44PM +0100, Pawe=C5=82 Chmiel wrote:
+> > There is possibility, that when probing driver, regulators are not yet
+> > initialized. In this case we should return EPROBE_DEFER and wait till
+> > they're initialized, since they're required currently for cpufreq driver
+> > to work. Also move regulator initialization code at beginning of probe,
+> > so we can defer as fast as posibble.
+> >=20
+> > Signed-off-by: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> > ---
+> > Changes from v2:
+> >   - Handle all error paths in probe
+> >=20
+> > Changes from v1:
+> >   - Fix compilation error
+> >   - Reorganize code so it's smaller
+> > ---
+> >  drivers/cpufreq/s5pv210-cpufreq.c | 68 ++++++++++++++++++++++---------
+> >  1 file changed, 49 insertions(+), 19 deletions(-)
+> >=20
+> > diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv21=
+0-cpufreq.c
+> > index f51697f1e0b3..627b132e3e61 100644
+> > --- a/drivers/cpufreq/s5pv210-cpufreq.c
+> > +++ b/drivers/cpufreq/s5pv210-cpufreq.c
+> > @@ -584,7 +584,7 @@ static struct notifier_block s5pv210_cpufreq_reboot=
+_notifier =3D {
+> >  static int s5pv210_cpufreq_probe(struct platform_device *pdev)
+> >  {
+> >  	struct device_node *np;
+> > -	int id;
+> > +	int id, result =3D 0;
+> > =20
+> >  	/*
+> >  	 * HACK: This is a temporary workaround to get access to clock
+> > @@ -594,18 +594,40 @@ static int s5pv210_cpufreq_probe(struct platform_=
+device *pdev)
+> >  	 * this whole driver as soon as S5PV210 gets migrated to use
+> >  	 * cpufreq-dt driver.
+> >  	 */
+> > +	arm_regulator =3D regulator_get(NULL, "vddarm");
+> > +	if (IS_ERR(arm_regulator)) {
+> > +		if (PTR_ERR(arm_regulator) =3D=3D -EPROBE_DEFER)
+> > +			pr_debug("vddarm regulator not ready, defer\n");
+> > +		else
+> > +			pr_err("failed to get regulator vddarm\n");
+> > +		result =3D PTR_ERR(arm_regulator);
+> > +		goto err_arm_regulator;
+>=20
+> Just return here.
+=46ixed.
+>=20
+> > +	}
+> > +
+> > +	int_regulator =3D regulator_get(NULL, "vddint");
+> > +	if (IS_ERR(int_regulator)) {
+> > +		if (PTR_ERR(int_regulator) =3D=3D -EPROBE_DEFER)
+> > +			pr_debug("vddint regulator not ready, defer\n");
+> > +		else
+> > +			pr_err("failed to get regulator vddint\n");
+> > +		result =3D PTR_ERR(int_regulator);
+> > +		goto err_int_regulator;
+> > +	}
+> > +
+> >  	np =3D of_find_compatible_node(NULL, NULL, "samsung,s5pv210-clock");
+> >  	if (!np) {
+> >  		pr_err("%s: failed to find clock controller DT node\n",
+> >  			__func__);
+> > -		return -ENODEV;
+> > +		result =3D -ENODEV;
+> > +		goto err_clock;
+> >  	}
+> > =20
+> >  	clk_base =3D of_iomap(np, 0);
+> >  	of_node_put(np);
+> >  	if (!clk_base) {
+> >  		pr_err("%s: failed to map clock registers\n", __func__);
+> > -		return -EFAULT;
+> > +		result =3D -EFAULT;
+> > +		goto err_clock;
+> >  	}
+> > =20
+> >  	for_each_compatible_node(np, NULL, "samsung,s5pv210-dmc") {
+> > @@ -614,7 +636,8 @@ static int s5pv210_cpufreq_probe(struct platform_de=
+vice *pdev)
+> >  			pr_err("%s: failed to get alias of dmc node '%pOFn'\n",
+> >  				__func__, np);
+> >  			of_node_put(np);
+> > -			return id;
+> > +			result =3D id;
+> > +			goto err_clk_base;
+> >  		}
+> > =20
+> >  		dmc_base[id] =3D of_iomap(np, 0);
+> > @@ -622,33 +645,40 @@ static int s5pv210_cpufreq_probe(struct platform_=
+device *pdev)
+> >  			pr_err("%s: failed to map dmc%d registers\n",
+> >  				__func__, id);
+> >  			of_node_put(np);
+> > -			return -EFAULT;
+> > +			result =3D -EFAULT;
+> > +			goto err_dmc;
+> >  		}
+> >  	}
+> > =20
+> >  	for (id =3D 0; id < ARRAY_SIZE(dmc_base); ++id) {
+> >  		if (!dmc_base[id]) {
+> >  			pr_err("%s: failed to find dmc%d node\n", __func__, id);
+> > -			return -ENODEV;
+> > +			result =3D -ENODEV;
+> > +			goto err_dmc;
+> >  		}
+> >  	}
+> > =20
+> > -	arm_regulator =3D regulator_get(NULL, "vddarm");
+> > -	if (IS_ERR(arm_regulator)) {
+> > -		pr_err("failed to get regulator vddarm\n");
+> > -		return PTR_ERR(arm_regulator);
+> > -	}
+> > -
+> > -	int_regulator =3D regulator_get(NULL, "vddint");
+> > -	if (IS_ERR(int_regulator)) {
+> > -		pr_err("failed to get regulator vddint\n");
+> > -		regulator_put(arm_regulator);
+> > -		return PTR_ERR(int_regulator);
+> > -	}
+> > -
+> >  	register_reboot_notifier(&s5pv210_cpufreq_reboot_notifier);
+> > =20
+> >  	return cpufreq_register_driver(&s5pv210_driver);
+> > +
+> > +err_dmc:
+> > +	for (id =3D 0; id < ARRAY_SIZE(dmc_base); ++id)
+> > +		if (dmc_base[id])
+> > +			iounmap(dmc_base[id]);
+>=20
+> You will iounmap the same pointer twice, if first device bind failed
+> while following this error path and someone tries to bind second time
+> (again with error leading to this error path). You zero the pointer
+> either at beginning of probe or after iounmapping.
+Good catch, also fixed in v4.
+Thanks
+>=20
+> Best regards,
+> Krzysztof
+>=20
+>=20
+> > +
+> > +err_clk_base:
+> > +	iounmap(clk_base);
+> > +
+> > +err_clock:
+> > +	regulator_put(int_regulator);
+> > +
+> > +err_int_regulator:
+> > +	regulator_put(arm_regulator);
+> > +
+> > +err_arm_regulator:
+> > +
+> > +	return result;
+> >  }
+> > =20
+> >  static struct platform_driver s5pv210_cpufreq_platdrv =3D {
+>=20
