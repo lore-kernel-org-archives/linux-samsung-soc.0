@@ -1,14 +1,18 @@
-From: Chunyan Zhang <zhang.lyra-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: "Richter, Robert" <Robert.Richter-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH] arm64: dts: Remove inconsistent use of 'arm,armv8'
  compatible string
-Date: Tue, 15 Jan 2019 10:00:18 +0800
-Message-ID: <CAAfSe-vLbU8Z4nfsRc+SEdQeC=DmRqUZTBbQAOfefdL6aY=h9g@mail.gmail.com>
+Date: Tue, 15 Jan 2019 08:45:53 +0000
+Message-ID: <20190115084537.3hedrtkowg3elzca@rric.localdomain>
 References: <20190109202934.29304-1-robh@kernel.org>
+ <20190110144537.p5setcurwu6bwrtl@rric.localdomain>
+ <CAL_JsqKMYY5RsCjzp4eMnW0YrohcqwmhVj0hfUEVrbGJEFx05w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20190109202934.29304-1-robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+In-Reply-To: <CAL_JsqKMYY5RsCjzp4eMnW0YrohcqwmhVj0hfUEVrbGJEFx05w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
+Content-ID: <A7717CEB01A5B3418666A183E6A72D3A-Tk6F3M/euE6cE4WynfumptQqCkab/8FMAL8bYrjMMd8@public.gmane.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
  <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
@@ -19,94 +23,54 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
 Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Manivannan Sadhasivam <manivannan.sadhasivam-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Gregory Clement <gregory.clement-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgen>
+Cc: Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, "linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Manivannan Sadhasivam <manivannan.sadhasivam-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Nair,
+ Jayachandran" <Jayachandran.Nair-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, "linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Gregory Clement <gregory.clement-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <krzk@kerne>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, 10 Jan 2019 at 04:29, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
->
-> The 'arm,armv8' compatible string is only for software models. It adds
-> little value otherwise and is inconsistently used as a fallback on some
-> platforms. Remove it from those platforms.
->
-> This fixes warnings generated by the DT schema.
->
-> Reported-by: Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
-> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-> Cc: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-> Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> ---
-> armsoc folks, Please apply directly.
->
-> Note that there's still a case left in msm8998 that needs a new
-> compatible string.
->
-> Rob
->
->  arch/arm64/boot/dts/actions/s700.dtsi         |   8 +-
->  arch/arm64/boot/dts/actions/s900.dtsi         |   8 +-
->  arch/arm64/boot/dts/al/alpine-v2.dtsi         |   8 +-
->  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |   8 +-
->  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi  |   8 +-
->  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  |   8 +-
->  .../boot/dts/altera/socfpga_stratix10.dtsi    |   8 +-
->  arch/arm64/boot/dts/amlogic/meson-axg.dtsi    |   8 +-
->  arch/arm64/boot/dts/amlogic/meson-g12a.dtsi   |   8 +-
->  arch/arm64/boot/dts/amlogic/meson-gx.dtsi     |   8 +-
->  arch/arm64/boot/dts/amlogic/meson-gxm.dtsi    |   8 +-
->  arch/arm64/boot/dts/apm/apm-shadowcat.dtsi    |  16 +--
->  arch/arm64/boot/dts/apm/apm-storm.dtsi        |  16 +--
->  arch/arm64/boot/dts/arm/juno-r1.dts           |  12 +-
->  arch/arm64/boot/dts/arm/juno-r2.dts           |  12 +-
->  arch/arm64/boot/dts/arm/juno.dts              |  12 +-
->  .../boot/dts/arm/vexpress-v2f-1xv7-ca53x2.dts |   4 +-
->  .../boot/dts/broadcom/northstar2/ns2.dtsi     |   8 +-
->  .../boot/dts/broadcom/stingray/stingray.dtsi  |  16 +--
->  arch/arm64/boot/dts/cavium/thunder-88xx.dtsi  |  96 ++++++-------
->  arch/arm64/boot/dts/cavium/thunder2-99xx.dtsi |   8 +-
->  arch/arm64/boot/dts/exynos/exynos5433.dtsi    |  16 +--
->  arch/arm64/boot/dts/exynos/exynos7.dtsi       |   8 +-
->  arch/arm64/boot/dts/hisilicon/hi3660.dtsi     |  16 +--
->  arch/arm64/boot/dts/hisilicon/hi3670.dtsi     |  16 +--
->  arch/arm64/boot/dts/hisilicon/hi6220.dtsi     |  16 +--
->  arch/arm64/boot/dts/hisilicon/hip05.dtsi      |  32 ++---
->  arch/arm64/boot/dts/hisilicon/hip06.dtsi      |  32 ++---
->  arch/arm64/boot/dts/hisilicon/hip07.dtsi      | 128 +++++++++---------
->  arch/arm64/boot/dts/lg/lg1312.dtsi            |   8 +-
->  arch/arm64/boot/dts/lg/lg1313.dtsi            |   8 +-
->  arch/arm64/boot/dts/marvell/armada-372x.dtsi  |   2 +-
->  arch/arm64/boot/dts/marvell/armada-37xx.dtsi  |   2 +-
->  .../boot/dts/marvell/armada-ap806-dual.dtsi   |   4 +-
->  .../boot/dts/marvell/armada-ap806-quad.dtsi   |   8 +-
->  .../marvell/armada-ap810-ap0-octa-core.dtsi   |  16 +--
->  arch/arm64/boot/dts/mediatek/mt7622.dtsi      |   4 +-
->  arch/arm64/boot/dts/nvidia/tegra132.dtsi      |   4 +-
->  arch/arm64/boot/dts/nvidia/tegra186.dtsi      |  12 +-
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  16 +--
->  arch/arm64/boot/dts/qcom/ipq8074.dtsi         |   8 +-
->  arch/arm64/boot/dts/qcom/msm8916.dtsi         |   8 +-
->  arch/arm64/boot/dts/qcom/msm8992.dtsi         |   2 +-
->  arch/arm64/boot/dts/qcom/msm8994.dtsi         |   2 +-
->  arch/arm64/boot/dts/realtek/rtd1295.dtsi      |   8 +-
->  arch/arm64/boot/dts/renesas/r8a774a1.dtsi     |  12 +-
->  arch/arm64/boot/dts/renesas/r8a7795.dtsi      |  16 +--
->  arch/arm64/boot/dts/renesas/r8a7796.dtsi      |  12 +-
->  arch/arm64/boot/dts/renesas/r8a77965.dtsi     |   4 +-
->  arch/arm64/boot/dts/renesas/r8a77970.dtsi     |   4 +-
->  arch/arm64/boot/dts/renesas/r8a77980.dtsi     |   8 +-
->  arch/arm64/boot/dts/renesas/r8a77990.dtsi     |   4 +-
->  arch/arm64/boot/dts/renesas/r8a77995.dtsi     |   2 +-
->  arch/arm64/boot/dts/rockchip/px30.dtsi        |   8 +-
->  arch/arm64/boot/dts/rockchip/rk3328.dtsi      |   8 +-
->  arch/arm64/boot/dts/rockchip/rk3368.dtsi      |  16 +--
->  arch/arm64/boot/dts/rockchip/rk3399.dtsi      |  12 +-
->  .../boot/dts/socionext/uniphier-ld11.dtsi     |   4 +-
->  .../boot/dts/socionext/uniphier-ld20.dtsi     |   8 +-
->  .../boot/dts/socionext/uniphier-pxs3.dtsi     |   8 +-
->  arch/arm64/boot/dts/sprd/sc9836.dtsi          |   8 +-
->  arch/arm64/boot/dts/sprd/sc9860.dtsi          |  16 +--
+On 11.01.19 07:57:12, Rob Herring wrote:
+> On Thu, Jan 10, 2019 at 8:18 PM Richter, Robert
+> <Robert.Richter-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org> wrote:
+> >
+> > Rob,
+> >
+> > On 09.01.19 14:29:34, Rob Herring wrote:
+> > > The 'arm,armv8' compatible string is only for software models. It adds
+> > > little value otherwise and is inconsistently used as a fallback on some
+> > > platforms. Remove it from those platforms.
+> > >
+> > > This fixes warnings generated by the DT schema.
+> > >
+> > > Reported-by: Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+> > > Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+> > > Cc: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+> > > Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> > > ---
+> > > armsoc folks, Please apply directly.
+> >
+> > > diff --git a/arch/arm64/boot/dts/cavium/thunder2-99xx.dtsi b/arch/arm64/boot/dts/cavium/thunder2-99xx.dtsi
+> > > index ff5c4c47b22b..c616132f7d6d 100644
+> > > --- a/arch/arm64/boot/dts/cavium/thunder2-99xx.dtsi
+> > > +++ b/arch/arm64/boot/dts/cavium/thunder2-99xx.dtsi
+> > > @@ -27,28 +27,28 @@
+> > >
+> > >                 cpu@0 {
+> > >                         device_type = "cpu";
+> > > -                       compatible = "cavium,thunder2", "brcm,vulcan", "arm,armv8";
+> > > +                       compatible = "cavium,thunder2";
+> >
+> > We are just checking if removing the "brcm,vulcan" string has any
+> > impact on early silicon revisions we want to support (see also
+> > BRCM_CPU_PART_VULCAN).
+> >
+> > Maybe you make this a separate change?
+> 
+> Dropping brcm,vulcan was unintentional (regex fail). Though keeping it
+> means we need a schema change as it was not documented to be a
+> fallback.
 
-For sprd soc:
-Acked-by: Chunyan Zhang <zhang.lyra-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+We have checked this and brcm,vulcan can be dropped too. Sending an
+ack in a separate mail.
 
 Thanks,
-Chunyan
+
+-Robert
