@@ -1,73 +1,136 @@
-From: Alex Deucher <alexdeucher-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] drm: Split out drm_probe_helper.h
-Date: Tue, 15 Jan 2019 22:30:11 -0500
-Message-ID: <CADnq5_Oa0dj1+eOcAF6QxVxy0XRXNggZT+4K=Cm_=G80V-ejGQ@mail.gmail.com>
-References: <20190115104137.25695-1-daniel.vetter@ffwll.ch>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [BUG bisect] kernel BUG at block/bio.c:1833 and fail to mount disk
+Date: Wed, 16 Jan 2019 09:52:54 +0100
+Message-ID: <CAJKOXPdQaxKH3z3yMBggP3dAFJ3ecgCcHk=bGaVHZ-Q+V2Riug@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <20190115104137.25695-1-daniel.vetter-/w4YWyX8dFk@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/freedreno>
-List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>
-Cc: nouveau <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "open list:VIRTIO CORE,
- NET..." <virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, linux-stm32-XDFAJ8BFU24N7RejjzZ/Li2xQDfSxrLKVpNB7YpNyf8@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amd-gfx list <amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, spice-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-arm-msm <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Intel Graphics Development <intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, etnaviv-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jani Nikula <jani.nikula-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rodrigo Vivi <rodrigo.vivi-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel@li
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gVHVlLCBKYW4gMTUsIDIwMTkgYXQgNTo0MSBBTSBEYW5pZWwgVmV0dGVyIDxkYW5pZWwudmV0
-dGVyQGZmd2xsLmNoPiB3cm90ZToKPgo+IEhhdmluZyB0aGUgcHJvYmUgaGVscGVyIHN0dWZmICh3
-aGljaCBwcmV0dHkgbXVjaCBldmVyeW9uZSBuZWVkcykgaW4KPiB0aGUgZHJtX2NydGNfaGVscGVy
-LmggZmlsZSAod2hpY2ggYXRvbWljIGRyaXZlcnMgc2hvdWxkIG5ldmVyIG5lZWQpIGlzCj4gY29u
-ZnVzaW5nLiBTcGxpdCB0aGVtIG91dC4KPgo+IFRvIG1ha2Ugc3VyZSBJIGFjdHVhbGx5IGFjaGll
-dmVkIHRoZSBnb2FsIGhlcmUgSSB3ZW50IHRocm91Z2ggYWxsCj4gZHJpdmVycy4gQW5kIGluZGVl
-ZCwgYWxsIGF0b21pYyBkcml2ZXJzIGFyZSBub3cgZnJlZSBvZgo+IGRybV9jcnRjX2hlbHBlci5o
-IGluY2x1ZGVzLgo+Cj4gdjI6IE1ha2UgaXQgY29tcGlsZS4gVGhlcmUgd2FzIHNvIG11Y2ggY29t
-cGlsZSBmYWlsIG9uIGFybSBkcml2ZXJzCj4gdGhhdCBJIGZpZ3VyZWQgSSdsbCBiZXR0ZXIgbm90
-IGluY2x1ZGUgYW55IG9mIHRoZSBhY2tzIG9uIHYxLgo+Cj4gdjM6IE1hc3NpdmUgcmViYXNlIGJl
-Y2F1c2UgaTkxNSBoYXMgbG9zdCBhIGxvdCBvZiBkcm1QLmggaW5jbHVkZXMsIGJ1dAo+IG5vdCBh
-bGw6IFRocm91Z2ggZHJtX2NydGNfaGVscGVyLmggPiBkcm1fbW9kZXNldF9oZWxwZXIuaCAtPiBk
-cm1QLmgKPiB0aGVyZSB3YXMgc3RpbGwgb25lLCB3aGljaCB0aGlzIHBhdGNoIGxhcmdlbHkgcmVt
-b3Zlcy4gV2hpY2ggbWVhbnMKPiByb2xsaW5nIG91dCBsb3RzIG1vcmUgaW5jbHVkZXMgYWxsIG92
-ZXIuCj4KPiBUaGlzIHdpbGwgYWxzbyBjb25mbGljdCB3aXRoIG9uZ29pbmcgZHJtUC5oIGNsZWFu
-dXAgYnkgb3RoZXJzIEkKPiBleHBlY3QuCj4KPiB2MzogUmViYXNlIG9uIHRvcCBvZiBhdG9taWMg
-Ym9jaHMuCj4KPiBDYzogU2FtIFJhdm5ib3JnIDxzYW1AcmF2bmJvcmcub3JnPgo+IENjOiBKYW5p
-IE5pa3VsYSA8amFuaS5uaWt1bGFAbGludXguaW50ZWwuY29tPgo+IENjOiBMYXVyZW50IFBpbmNo
-YXJ0IDxsYXVyZW50LnBpbmNoYXJ0QGlkZWFzb25ib2FyZC5jb20+Cj4gQWNrZWQtYnk6IFJvZHJp
-Z28gVml2aSA8cm9kcmlnby52aXZpQGludGVsLmNvbT4gKHYyKQo+IEFja2VkLWJ5OiBCZW5qYW1p
-biBHYWlnbmFyZCA8YmVuamFtaW4uZ2FpZ25hcmRAbGluYXJvLm9yZz4gKHYyKQo+IFNpZ25lZC1v
-ZmYtYnk6IERhbmllbCBWZXR0ZXIgPGRhbmllbC52ZXR0ZXJAaW50ZWwuY29tPgo+IENjOiBsaW51
-eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKPiBDYzogdmlydHVhbGl6YXRpb25AbGlz
-dHMubGludXgtZm91bmRhdGlvbi5vcmcKPiBDYzogZXRuYXZpdkBsaXN0cy5mcmVlZGVza3RvcC5v
-cmcKPiBDYzogbGludXgtc2Ftc3VuZy1zb2NAdmdlci5rZXJuZWwub3JnCj4gQ2M6IGludGVsLWdm
-eEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBDYzogbGludXgtbWVkaWF0ZWtAbGlzdHMuaW5mcmFk
-ZWFkLm9yZwo+IENjOiBsaW51eC1hbWxvZ2ljQGxpc3RzLmluZnJhZGVhZC5vcmcKPiBDYzogbGlu
-dXgtYXJtLW1zbUB2Z2VyLmtlcm5lbC5vcmcKPiBDYzogZnJlZWRyZW5vQGxpc3RzLmZyZWVkZXNr
-dG9wLm9yZwo+IENjOiBub3V2ZWF1QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+IENjOiBzcGljZS1k
-ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBDYzogYW1kLWdmeEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcKPiBDYzogbGludXgtcmVuZXNhcy1zb2NAdmdlci5rZXJuZWwub3JnCj4gQ2M6IGxpbnV4
-LXJvY2tjaGlwQGxpc3RzLmluZnJhZGVhZC5vcmcKPiBDYzogbGludXgtc3RtMzJAc3QtbWQtbWFp
-bG1hbi5zdG9ybXJlcGx5LmNvbQo+IENjOiBsaW51eC10ZWdyYUB2Z2VyLmtlcm5lbC5vcmcKPiBD
-YzogeGVuLWRldmVsQGxpc3RzLnhlbi5vcmcKPiAtLS0KPiBNZXJnaW5nIHRoaXMgaXMgZ29pbmcg
-dG8gYmUgYSBiaXQgYSBtZXNzIGR1ZSB0byBhbGwgdGhlIG9uZ29pbmcgZHJtUC5oCj4gY2xlYW51
-cHMuIEkgdGhpbmsgdGhlIGZvbGxvd2luZyBzaG91bGQgd29yazoKPiAtIEFwcGx5IFNhbSdzIHBy
-ZXAgcGF0Y2hlcyBmb3IgcmVtb3ZpbmcgZHJtUC5oIGZyb20KPiAgIGRybV9tb2Rlc2V0X2hlbHBl
-ci5oCj4gLSBHZXQgdGhlIGk5MTUgZHJtUC5oIGNsZWFudXAgYmFja21lcmdlZCBpbnRvIGRybS1t
-aXNjLW5leHQKPiAtIEFwcGx5IHRoaXMgcGF0Y2guCj4gLSBBcHBseSBTYW0ncyBwYXRjaCB0byBy
-ZW1vdmUgZHJtUC5oIGZyb20gZHJtX21vZGVzZXRfaGVscGVyLmgKPiAtIEFsbCB0aHJvdWdoIGRy
-bS1taXNjLW5leHQsIHdoaWNoIGhhcyBzb21lIHBvdGVudGlhbCBmb3IgdHJpdmlhbAo+ICAgY29u
-ZmxpY3RzIGFyb3VuZCAjaW5jbHVkZXMgd2l0aCBvdGhlciBkcml2ZXJzIHVuZm9ydHVuYXRlbHku
-Cj4KPiBJIGhvcGUgdGhlcmUncyBubyBvdGhlciBkcml2ZXIgd2hvJ2xsIGJsb3cgdXAgYWNjaWRl
-bnRhbGx5IGJlY2F1c2UKPiBzb21lb25lIGVsc2UgaXMgZG9pbmcgYSBkcm1QLmggY2xlYW51cC4g
-TGF1cmVudCBtYXliZT8KPgo+IEphbmksIGFjayBvbiB0aGlzPwo+IC1EYW5pZWwKCmFtZGdwdSBh
-bmQgcmFkZW9uOgpBY2tlZC1ieTogQWxleCBEZXVjaGVyIDxhbGV4YW5kZXIuZGV1Y2hlckBhbWQu
-Y29tPgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpGcmVl
-ZHJlbm8gbWFpbGluZyBsaXN0CkZyZWVkcmVub0BsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
-Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9mcmVlZHJlbm8K
+Hi,
+
+On today's next-20190116 I see a bug during boot:
+[ 6.843308] kernel BUG at ../block/bio.c:1833!
+[ 6.847723] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
+...
+[ 7.543824] [<c044c144>] (bio_split) from [<00000000>] ( (null))
+[ 7.549881] Code: 13833b01 11c630bc e1a00006 e8bd8070 (e7f001f2)
+
+(not much in the calltrace)
+On all my boards. Also QEMU-arm fails.
+
+Ultimately the target fails to mount /home from SD card (although root
+is from NFSv4):
+    Timed out waiting for device dev-disk-by\x2dlabel-home.device.
+
+Full console logs:
+https://krzk.eu/#/builders/25/builds/1079/steps/12/logs/serial0
+https://krzk.eu/#/builders/1/builds/3031/steps/12/logs/serial0
+
+1. Arch ARM Linux
+2. exynos_defconfig
+  - All my Odroid boards (ARMv7, Exynos)
+  - Odroid HC1, U3, XU3, XU
+  - Systemd
+3. All boards boot from TFTP with NFS root (NFSv4)
+
+The QEMU arm fails with more information:
+
+[ 0.596078] loop: module loaded
+[ 0.601633] virtio_blk virtio0: [vda] 10240 512-byte logical blocks
+(5.24 MB/5.00 MiB)
+[ 0.603320] Internal error: Oops - undefined instruction: 0 [#1] ARM
+[ 0.603504] Modules linked in:
+[ 0.603784] CPU: 0 PID: 1 Comm: swapper Tainted: G W
+5.0.0-rc2-next-20190116-gcbeb3db #1
+[ 0.603905] Hardware name: ARM-Versatile Express
+[ 0.604329] PC is at bio_split+0x5c/0x64
+[ 0.604461] LR is at blk_queue_split+0x47c/0x5f4
+[ 0.604553] pc : [<8036e2c4>] lr : [<80376134>] psr: 60000013
+[ 0.604652] sp : 8681f878 ip : 00000000 fp : 8699df00
+[ 0.604750] r10: 8681f914 r9 : 00000000 r8 : 0000007e
+[ 0.604838] r7 : 00000000 r6 : 8547ac28 r5 : 00000000 r4 : 00000000
+[ 0.604937] r3 : 8547b068 r2 : 00600000 r1 : 00000000 r0 : 8699df00
+[ 0.605070] Flags: nZCv IRQs on FIQs on Mode SVC_32 ISA ARM Segment none
+[ 0.605185] Control: 10c5387d Table: 60004059 DAC: 00000051
+[ 0.605338] Process swapper (pid: 1, stack limit = 0x(ptrval))
+...
+[ 0.619332] [<8036e2c4>] (bio_split) from [<80376134>]
+(blk_queue_split+0x47c/0x5f4)
+[ 0.619480] [<80376134>] (blk_queue_split) from [<8037bee8>]
+(blk_mq_make_request+0x80/0x3bc)
+[ 0.619608] [<8037bee8>] (blk_mq_make_request) from [<80371840>]
+(generic_make_request+0x1b0/0x364)
+[ 0.619733] [<80371840>] (generic_make_request) from [<80371a8c>]
+(submit_bio+0x98/0x194)
+[ 0.619850] [<80371a8c>] (submit_bio) from [<8020e1b8>]
+(submit_bh_wbc.constprop.21+0x154/0x17c)
+[ 0.619980] [<8020e1b8>] (submit_bh_wbc.constprop.21) from
+[<80210634>] (block_read_full_page+0x3b0/0x3d0)
+[ 0.620109] [<80210634>] (block_read_full_page) from [<8019139c>]
+(do_read_cache_page+0x180/0x33c)
+[ 0.620237] [<8019139c>] (do_read_cache_page) from [<8019156c>]
+(read_cache_page+0x14/0x1c)
+[ 0.620388] [<8019156c>] (read_cache_page) from [<80383be4>]
+(read_dev_sector+0x2c/0xbc)
+[ 0.620508] [<80383be4>] (read_dev_sector) from [<80386e7c>]
+(read_lba+0x134/0x1b4)
+[ 0.620623] [<80386e7c>] (read_lba) from [<80387234>] (efi_partition+0xbc/0x8e8)
+[ 0.620741] [<80387234>] (efi_partition) from [<80386114>]
+(check_partition+0x11c/0x1e8)
+[ 0.620856] [<80386114>] (check_partition) from [<80384298>]
+(rescan_partitions+0x94/0x45c)
+[ 0.620971] [<80384298>] (rescan_partitions) from [<80213230>]
+(__blkdev_get+0x260/0x404)
+[ 0.621087] [<80213230>] (__blkdev_get) from [<802134d8>]
+(blkdev_get+0x104/0x2f4)
+[ 0.621206] [<802134d8>] (blkdev_get) from [<80382f9c>]
+(__device_add_disk+0x498/0x4fc)
+[ 0.621325] [<80382f9c>] (__device_add_disk) from [<804317f0>]
+(virtblk_probe+0x444/0x744)
+[ 0.621444] [<804317f0>] (virtblk_probe) from [<803d3df0>]
+(virtio_dev_probe+0x258/0x330)
+[ 0.621561] [<803d3df0>] (virtio_dev_probe) from [<80415864>]
+(really_probe+0xf4/0x2c8)
+[ 0.621675] [<80415864>] (really_probe) from [<80415b9c>]
+(driver_probe_device+0x60/0x16c)
+[ 0.621788] [<80415b9c>] (driver_probe_device) from [<80415d84>]
+(__driver_attach+0xdc/0xe0)
+[ 0.621911] [<80415d84>] (__driver_attach) from [<80413d3c>]
+(bus_for_each_dev+0x68/0xb4)
+[ 0.622024] [<80413d3c>] (bus_for_each_dev) from [<80414e04>]
+(bus_add_driver+0x100/0x20c)
+[ 0.622137] [<80414e04>] (bus_add_driver) from [<804166b0>]
+(driver_register+0x78/0x10c)
+[ 0.622253] [<804166b0>] (driver_register) from [<8091b5e4>] (init+0x70/0x9c)
+[ 0.622403] [<8091b5e4>] (init) from [<801025ec>] (do_one_initcall+0x54/0x194)
+[ 0.622525] [<801025ec>] (do_one_initcall) from [<80900e14>]
+(kernel_init_freeable+0x12c/0x1c8)
+[ 0.622658] [<80900e14>] (kernel_init_freeable) from [<80628c08>]
+(kernel_init+0x8/0x110)
+[ 0.622776] [<80628c08>] (kernel_init) from [<801010e8>]
+(ret_from_fork+0x14/0x2c)
+[ 0.622887] Exception stack(0x8681ffb0 to 0x8681fff8)
+[ 0.623021] ffa0: 00000000 00000000 00000000 00000000
+[ 0.623242] ffc0: 00000000 00000000 00000000 00000000 00000000
+00000000 00000000 00000000
+[ 0.623438] ffe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[ 0.623747] Code: 13833b01 11c630bc e1a00006 e8bd8070 (e7f001f2)
+[ 0.624241] ---[ end trace 925652e8270d42ae ]---
+[ 0.624904] Kernel panic - not syncing: Attempted to kill init!
+exitcode=0x0000000b
+
+https://pastebin.com/tKqNv033
+QEMU setup:
+1. Yocto Linux
+2. Custom VF50 defconfig
+3. Machine: Vexpress A9
+4. DTB: vexpress-v2p-ca9
+5. Memory: 128 MB
+
+Let me know if you need any more data.
+
+Best regards,
+Krzysztof
