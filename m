@@ -1,79 +1,58 @@
-From: Nathan Chancellor <natechancellor@gmail.com>
-Subject: Re: [BUG bisect] kernel BUG at block/bio.c:1833 and fail to mount
- disk
-Date: Thu, 17 Jan 2019 08:41:04 -0700
-Message-ID: <20190117154104.GA24272@flashbox>
-References: <CAJKOXPdQaxKH3z3yMBggP3dAFJ3ecgCcHk=bGaVHZ-Q+V2Riug@mail.gmail.com>
- <CAJKOXPd2WiMC8uc1YuyR+_vEScSewMzQe1Y7UGHgxvkCD+tQ7A@mail.gmail.com>
- <20190117102657.GB20220@ming.t460p>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: [PATCH] drm: Split out drm_probe_helper.h
+Date: Thu, 17 Jan 2019 17:45:41 +0100
+Message-ID: <20190117164541.GE3271@phenom.ffwll.local>
+References: <20190116163442.12622-1-daniel.vetter@ffwll.ch>
+ <20190116181018.GA27364@ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20190117102657.GB20220@ming.t460p>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Omar Sandoval <osandov@fb.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+In-Reply-To: <20190116181018.GA27364-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/freedreno>
+List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
+Cc: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-stm32-XDFAJ8BFU24N7RejjzZ/Li2xQDfSxrLKVpNB7YpNyf8@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Oleksandr Andrushchenko <oleksandr_andrushchenko-uRwfk40T5oI@public.gmane.org>, amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, CK Hu <ck.hu-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, spice-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jani Nikula <jani.nikula-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, etnaviv-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jani Nikula <jani.nikula-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rodrigo Vivi <rod>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 06:26:58PM +0800, Ming Lei wrote:
-> On Wed, Jan 16, 2019 at 09:54:05AM +0100, Krzysztof Kozlowski wrote:
-> > On Wed, 16 Jan 2019 at 09:52, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > >
-> > > Hi,
-> > >
-> > > On today's next-20190116 I see a bug during boot:
-> > > [ 6.843308] kernel BUG at ../block/bio.c:1833!
-> > > [ 6.847723] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
-> > > ...
-> > > [ 7.543824] [<c044c144>] (bio_split) from [<00000000>] ( (null))
-> > > [ 7.549881] Code: 13833b01 11c630bc e1a00006 e8bd8070 (e7f001f2)
-> > >
-> > > (not much in the calltrace)
-> > > On all my boards. Also QEMU-arm fails.
-> > >
-> > 
-> > I forgot the bisect commit:
-> > 
-> > 258cfdfaf7bd729e759a0a91fd00ac9794796ad3 is the first bad commit
-> > commit 258cfdfaf7bd729e759a0a91fd00ac9794796ad3
-> > Author: Ming Lei <ming.lei@redhat.com>
-> > Date:   Fri Jan 11 19:01:15 2019 +0800
-> > 
-> >     block: use bio_for_each_bvec() to compute multi-page bvec count
-> > 
-> > :040000 040000 d79b2e71d308650df4764ff644f29d3a24dbab96
-> > 0a5d624843b805ee0c9fd9a7e2d5163f5b15b167 M block
-> 
-> It should be one 32-bit arch specific issue, I guess.
-> 
-> The following patch should fix this issue:
-> 
-> diff --git a/block/blk-merge.c b/block/blk-merge.c
-> index dc4877eaf9f9..4dd7183de849 100644
-> --- a/block/blk-merge.c
-> +++ b/block/blk-merge.c
-> @@ -166,6 +166,9 @@ static unsigned get_max_segment_size(struct request_queue *q,
->  {
->  	unsigned long mask = queue_segment_boundary(q);
->  
-> +	if (mask == BLK_SEG_BOUNDARY_MASK)
-> +		return queue_max_segment_size(q);
-> +
->  	return min_t(unsigned long, mask - (mask & offset) + 1,
->  		     queue_max_segment_size(q));
->  }
-> 
-> Thanks,
-> Ming
-
-Hi Ming,
-
-We saw this issue on our CI as well: https://travis-ci.com/ClangBuiltLinux/continuous-integration/jobs/170724607
-
-I added your patch and tested locally, it boots fine now.
-
-Tested-by: Nathan Chancellor <natechancellor@gmail.com>
-
-Thanks,
-Nathan
+T24gV2VkLCBKYW4gMTYsIDIwMTkgYXQgMDc6MTA6MThQTSArMDEwMCwgU2FtIFJhdm5ib3JnIHdy
+b3RlOgo+IEhpIERhbmllbC4KPiAKPiA+IHY1OiBBY3R1YWxseSB0cnkgdG8gc29ydCB0aGVtLCBh
+bmQgd2hpbGUgYXQgaXQsIHNvcnQgYWxsIHRoZSBvbmVzIEkKPiA+IHRvdWNoLgo+IAo+IEFwcGxp
+ZWQgdGhpcyB2YXJpYW50IG9uIHRvcCBvZiBkcm0tbWlzYyBhbmQgZGlkIGEgYnVpbGQgdGVzdC4K
+PiBMb29rZWQgZ29vZCBmb3IgaWE2NCwgeDg2IGFuZCBhbHBoYS4KPiAKPiBUb29rIGEgY2xvc2Vy
+IGxvb2sgYXQgdGhlIGNoYW5nZXMgdG8gYXRtZWxfaGxjZCAtIGFuZCB0aGV5IGxvb2tlZCBPSy4K
+PiAKPiBCdXQgSSBub3RpY2VkIHRoYXQgYXRtZWxfaGxjZGMgdXNlcyBvbmx5IGRybV9rbXNfaGVs
+cGVyX3BvbGxfaW5pdCgpIGFuZAo+IGRybV9rbXNfaGVscGVyX3BvbGxfZmluaSgpLgo+IEJ1dCB0
+aGVyZSBhcmUgbm8gaGl0cyBvbiBEUk1fQ09OTkVDVE9SX1BPTEwgLSBzbyBJIHRoaW5rIHdlIG1h
+eWJlCj4gaGF2ZSBhIGRyaXZlciBoZXJlIHdoZXJlIHdlIGhhdmUgcGx1Z2dlZCB0aGUgZHJtX3Bv
+bGwgaW5mcmFzdHJ1Y3R1cmUsCj4gYnV0IGl0IGlzIG5vdCBpbiB1c2UuCj4gCj4gPiAgaW5jbHVk
+ZS9kcm0vZHJtX2NydGNfaGVscGVyLmggICAgICAgICAgICAgICAgIHwgMTYgLS0tLS0tLS0tLS0K
+PiAKPiBUaGUgbGlzdCBvZiBpbmNsdWRlIGZpbGVzIGluIHRoaXMgZmlsZSBjb3VsZCBiZSBkcm9w
+cGVkIGFuZCByZXBsYWNlZCBieToKPiBzdHJ1Y3QgZHJtX2Nvbm5lY3RvcjsKPiBzdHJ1Y3QgZHJt
+X2RldmljZTsKPiBzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZTsKPiBzdHJ1Y3QgZHJtX2VuY29kZXI7
+Cj4gc3RydWN0IGRybV9mcmFtZWJ1ZmZlcjsKPiBzdHJ1Y3QgZHJtX21vZGVfc2V0Owo+IHN0cnVj
+dCBkcm1fbW9kZXNldF9hY3F1aXJlX2N0eDsKPiAKPiBJIHRyaWVkIHRvIGRvIHNvIG9uIHRvcCBv
+ZiB5b3VyIHBhdGNoLgo+IEJ1dCB0aGVyZSB3ZXJlIHRvbyBtYW55IGJ1aWxkIGVycnJvcyBhbmQg
+SSBzb21laG93IGxvc3QgdGhlIG1vdGl2YXRpb24uCgpZZWFoIHRoZSBkcm1fY3J0Y19oZWxwZXIu
+aCBoZWFkZXIgaXMgYSBiaXQgdGhlIG1pbmlhdHVyZSBkcm1QLmggZm9yIGxlZ2FjeQprbXMgZHJp
+dmVycy4gSnVzdCByZW1vdmluZyBpdCBmcm9tIGFsbCB0aGUgYXRvbWljIGRyaXZlcnMgY2F1c2Vk
+IGxvdHMgb2YKZmFsbG91dCwgSSBleHBlY3QgZXZlbiBtb3JlIGlmIHlvdSBlbnRpcmVseSByZW1v
+dmUgdGhlIGluY2x1ZGVzIGl0IGhhcy4KTWF5YmUgYSB0b2RvLCBjYXJlIHRvIHBscyBjcmVhdGUg
+dGhhdCBwYXRjaCBzaW5jZSBpdCdzIHlvdXIgaWRlYT8KLURhbmllbAoKPiAKPiAKPiA+ICBpbmNs
+dWRlL2RybS9kcm1fcHJvYmVfaGVscGVyLmggICAgICAgICAgICAgICAgfCAyNyArKysrKysrKysr
+KysrKysrKysrCj4gVGhpcyBvbiB0aGUgb3RoZXIgaGFuZCBpcyBmaW5lIC0gYXMgZXhwZWN0ZWQg
+YXMgdGhpcyBpcyBhIG5ldyBmaWxlLgo+IAo+IEJ1dCB0aGUgYWJvdmUgaXMganVzdCBzb21lIHJh
+bmRvbSBjb21tZW50cyBzbzoKPiAKPiBBY2tlZC1ieTogU2FtIFJhdm5ib3JnIDxzYW1AcmF2bmJv
+cmcub3JnPgoKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIsIEludGVsIENvcnBv
+cmF0aW9uCmh0dHA6Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fCkZyZWVkcmVubyBtYWlsaW5nIGxpc3QKRnJlZWRyZW5vQGxpc3Rz
+LmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
+c3RpbmZvL2ZyZWVkcmVubwo=
