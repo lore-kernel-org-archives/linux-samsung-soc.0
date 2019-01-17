@@ -1,48 +1,51 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: [PATCH] drm: Split out drm_probe_helper.h
-Date: Wed, 16 Jan 2019 19:10:18 +0100
-Message-ID: <20190116181018.GA27364@ravnborg.org>
-References: <20190116163442.12622-1-daniel.vetter@ffwll.ch>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 1/6] include/drm: color_mgmt: Add enum labels
+Date: Thu, 17 Jan 2019 18:32:06 +0900
+Message-ID: <f51289f2-e94f-40f4-2a61-054d87914030@samsung.com>
+References: <1544789421-5265-1-git-send-email-c.manszewski@samsung.com>
+        <CGME20181214121032eucas1p24af580721ebd6f86a4f9ddf701957ab6@eucas1p2.samsung.com>
+        <1544789421-5265-2-git-send-email-c.manszewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20190116163442.12622-1-daniel.vetter@ffwll.ch>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, nouveau@lists.freedesktop.org, Liviu Dudau <liviu.dudau@arm.com>, DRI Development <dri-devel@lists.freedesktop.org>, virtualization@lists.linux-foundation.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Daniel Vetter <daniel.vetter@intel.com>, linux-stm32@st-md-mailman.stormreply.com, linux-samsung-soc@vger.kernel.org, Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>, amd-gfx@lists.freedesktop.org, linux-rockchip@lists.infradead.org, spice-devel@lists.freedesktop.org, Jani Nikula <jani.nikula@intel.com>, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, etnaviv@lists.freedesktop.org, linux-mediatek@lists.infradead.org, Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, xen-devel@lists.xen.org, linux-renesa
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1544789421-5265-2-git-send-email-c.manszewski@samsung.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Christoph Manszewski <c.manszewski@samsung.com>, dri-devel@lists.freedesktop.org
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Sean Paul <sean@poorly.run>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgRGFuaWVsLgoKPiB2NTogQWN0dWFsbHkgdHJ5IHRvIHNvcnQgdGhlbSwgYW5kIHdoaWxlIGF0
-IGl0LCBzb3J0IGFsbCB0aGUgb25lcyBJCj4gdG91Y2guCgpBcHBsaWVkIHRoaXMgdmFyaWFudCBv
-biB0b3Agb2YgZHJtLW1pc2MgYW5kIGRpZCBhIGJ1aWxkIHRlc3QuCkxvb2tlZCBnb29kIGZvciBp
-YTY0LCB4ODYgYW5kIGFscGhhLgoKVG9vayBhIGNsb3NlciBsb29rIGF0IHRoZSBjaGFuZ2VzIHRv
-IGF0bWVsX2hsY2QgLSBhbmQgdGhleSBsb29rZWQgT0suCgpCdXQgSSBub3RpY2VkIHRoYXQgYXRt
-ZWxfaGxjZGMgdXNlcyBvbmx5IGRybV9rbXNfaGVscGVyX3BvbGxfaW5pdCgpIGFuZApkcm1fa21z
-X2hlbHBlcl9wb2xsX2ZpbmkoKS4KQnV0IHRoZXJlIGFyZSBubyBoaXRzIG9uIERSTV9DT05ORUNU
-T1JfUE9MTCAtIHNvIEkgdGhpbmsgd2UgbWF5YmUKaGF2ZSBhIGRyaXZlciBoZXJlIHdoZXJlIHdl
-IGhhdmUgcGx1Z2dlZCB0aGUgZHJtX3BvbGwgaW5mcmFzdHJ1Y3R1cmUsCmJ1dCBpdCBpcyBub3Qg
-aW4gdXNlLgoKPiAgaW5jbHVkZS9kcm0vZHJtX2NydGNfaGVscGVyLmggICAgICAgICAgICAgICAg
-IHwgMTYgLS0tLS0tLS0tLS0KClRoZSBsaXN0IG9mIGluY2x1ZGUgZmlsZXMgaW4gdGhpcyBmaWxl
-IGNvdWxkIGJlIGRyb3BwZWQgYW5kIHJlcGxhY2VkIGJ5OgpzdHJ1Y3QgZHJtX2Nvbm5lY3RvcjsK
-c3RydWN0IGRybV9kZXZpY2U7CnN0cnVjdCBkcm1fZGlzcGxheV9tb2RlOwpzdHJ1Y3QgZHJtX2Vu
-Y29kZXI7CnN0cnVjdCBkcm1fZnJhbWVidWZmZXI7CnN0cnVjdCBkcm1fbW9kZV9zZXQ7CnN0cnVj
-dCBkcm1fbW9kZXNldF9hY3F1aXJlX2N0eDsKCkkgdHJpZWQgdG8gZG8gc28gb24gdG9wIG9mIHlv
-dXIgcGF0Y2guCkJ1dCB0aGVyZSB3ZXJlIHRvbyBtYW55IGJ1aWxkIGVycnJvcyBhbmQgSSBzb21l
-aG93IGxvc3QgdGhlIG1vdGl2YXRpb24uCgoKPiAgaW5jbHVkZS9kcm0vZHJtX3Byb2JlX2hlbHBl
-ci5oICAgICAgICAgICAgICAgIHwgMjcgKysrKysrKysrKysrKysrKysrKwpUaGlzIG9uIHRoZSBv
-dGhlciBoYW5kIGlzIGZpbmUgLSBhcyBleHBlY3RlZCBhcyB0aGlzIGlzIGEgbmV3IGZpbGUuCgpC
-dXQgdGhlIGFib3ZlIGlzIGp1c3Qgc29tZSByYW5kb20gY29tbWVudHMgc286CgpBY2tlZC1ieTog
-U2FtIFJhdm5ib3JnIDxzYW1AcmF2bmJvcmcub3JnPgpfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBs
-aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
-bi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi,
+
+18. 12. 14. 오후 9:10에 Christoph Manszewski 이(가) 쓴 글:
+> Range setting makes sense for YCbCr and RGB buffers. Current
+> drm_color_range enum labels suggest use with YCbCr buffers.
+> Create enum labels without colorspace specification.
+> 
+> Signed-off-by: Christoph Manszewski <c.manszewski@samsung.com>
+> ---
+>  include/drm/drm_color_mgmt.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/include/drm/drm_color_mgmt.h b/include/drm/drm_color_mgmt.h
+> index 90ef9996d9a4..52f6d5221a0d 100644
+> --- a/include/drm/drm_color_mgmt.h
+> +++ b/include/drm/drm_color_mgmt.h
+> @@ -62,6 +62,8 @@ enum drm_color_range {
+>  	DRM_COLOR_YCBCR_LIMITED_RANGE,
+>  	DRM_COLOR_YCBCR_FULL_RANGE,
+>  	DRM_COLOR_RANGE_MAX,
+> +	DRM_COLOR_LIMITED_RANGE = DRM_COLOR_YCBCR_LIMITED_RANGE,
+> +	DRM_COLOR_FULL_RANGE = DRM_COLOR_YCBCR_FULL_RANGE,
+
+I don't see why above two types are needed. Is there any case that the range checking behavior should be different according to the color space?
+And even if there is that case, I think you have to put DRM_COLOR_RANG_MAX under DRM_COLOR_FULL_RANGE.
+
+Thanks,
+Inki Dae
+
+>  };
+>  
+>  int drm_plane_create_color_properties(struct drm_plane *plane,
+> 
