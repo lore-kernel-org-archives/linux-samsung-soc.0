@@ -1,71 +1,62 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: [PATCH] drm: Split out drm_probe_helper.h
-Date: Thu, 17 Jan 2019 18:45:31 +0100
-Message-ID: <20190117174531.GA14041@ravnborg.org>
-References: <20190116163442.12622-1-daniel.vetter@ffwll.ch>
- <20190116181018.GA27364@ravnborg.org>
- <20190117164541.GE3271@phenom.ffwll.local>
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Subject: Re: [PATCH 1/6] include/drm: color_mgmt: Add enum labels
+Date: Thu, 17 Jan 2019 21:47:22 +0200
+Message-ID: <20190117194722.GJ20097@intel.com>
+References: <1544789421-5265-1-git-send-email-c.manszewski@samsung.com>
+ <CGME20181214121032eucas1p24af580721ebd6f86a4f9ddf701957ab6@eucas1p2.samsung.com>
+ <1544789421-5265-2-git-send-email-c.manszewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190117164541.GE3271@phenom.ffwll.local>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Liviu Dudau <liviu.dudau@arm.com>, DRI Development <dri-devel@lists.freedesktop.org>, virtualization@lists.linux-foundation.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Daniel Vetter <daniel.vetter@intel.com>, linux-stm32@st-md-mailman.stormreply.com, linux-samsung-soc@vger.kernel.org, Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>, amd-gfx@lists.freedesktop.org, linux-rockchip@lists.infradead.org, nouveau@lists.freedesktop.org, spice-devel@lists.freedesktop.org, Jani Nikula <jani.nikula@intel.com>, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, etnaviv@lists.freedesktop.org, linux-mediatek@lists.infradead.org, Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.or
+In-Reply-To: <1544789421-5265-2-git-send-email-c.manszewski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Christoph Manszewski <c.manszewski@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <maxime.ripard@bootlin.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, David Airlie <airlied@linux.ie>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sean Paul <sean@poorly.run>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gVGh1LCBKYW4gMTcsIDIwMTkgYXQgMDU6NDU6NDFQTSArMDEwMCwgRGFuaWVsIFZldHRlciB3
-cm90ZToKPiBPbiBXZWQsIEphbiAxNiwgMjAxOSBhdCAwNzoxMDoxOFBNICswMTAwLCBTYW0gUmF2
-bmJvcmcgd3JvdGU6Cj4gPiBIaSBEYW5pZWwuCj4gPiAKPiA+ID4gdjU6IEFjdHVhbGx5IHRyeSB0
-byBzb3J0IHRoZW0sIGFuZCB3aGlsZSBhdCBpdCwgc29ydCBhbGwgdGhlIG9uZXMgSQo+ID4gPiB0
-b3VjaC4KPiA+IAo+ID4gQXBwbGllZCB0aGlzIHZhcmlhbnQgb24gdG9wIG9mIGRybS1taXNjIGFu
-ZCBkaWQgYSBidWlsZCB0ZXN0Lgo+ID4gTG9va2VkIGdvb2QgZm9yIGlhNjQsIHg4NiBhbmQgYWxw
-aGEuCj4gPiAKPiA+IFRvb2sgYSBjbG9zZXIgbG9vayBhdCB0aGUgY2hhbmdlcyB0byBhdG1lbF9o
-bGNkIC0gYW5kIHRoZXkgbG9va2VkIE9LLgo+ID4gCj4gPiBCdXQgSSBub3RpY2VkIHRoYXQgYXRt
-ZWxfaGxjZGMgdXNlcyBvbmx5IGRybV9rbXNfaGVscGVyX3BvbGxfaW5pdCgpIGFuZAo+ID4gZHJt
-X2ttc19oZWxwZXJfcG9sbF9maW5pKCkuCj4gPiBCdXQgdGhlcmUgYXJlIG5vIGhpdHMgb24gRFJN
-X0NPTk5FQ1RPUl9QT0xMIC0gc28gSSB0aGluayB3ZSBtYXliZQo+ID4gaGF2ZSBhIGRyaXZlciBo
-ZXJlIHdoZXJlIHdlIGhhdmUgcGx1Z2dlZCB0aGUgZHJtX3BvbGwgaW5mcmFzdHJ1Y3R1cmUsCj4g
-PiBidXQgaXQgaXMgbm90IGluIHVzZS4KPiA+IAo+ID4gPiAgaW5jbHVkZS9kcm0vZHJtX2NydGNf
-aGVscGVyLmggICAgICAgICAgICAgICAgIHwgMTYgLS0tLS0tLS0tLS0KPiA+IAo+ID4gVGhlIGxp
-c3Qgb2YgaW5jbHVkZSBmaWxlcyBpbiB0aGlzIGZpbGUgY291bGQgYmUgZHJvcHBlZCBhbmQgcmVw
-bGFjZWQgYnk6Cj4gPiBzdHJ1Y3QgZHJtX2Nvbm5lY3RvcjsKPiA+IHN0cnVjdCBkcm1fZGV2aWNl
-Owo+ID4gc3RydWN0IGRybV9kaXNwbGF5X21vZGU7Cj4gPiBzdHJ1Y3QgZHJtX2VuY29kZXI7Cj4g
-PiBzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyOwo+ID4gc3RydWN0IGRybV9tb2RlX3NldDsKPiA+IHN0
-cnVjdCBkcm1fbW9kZXNldF9hY3F1aXJlX2N0eDsKPiA+IAo+ID4gSSB0cmllZCB0byBkbyBzbyBv
-biB0b3Agb2YgeW91ciBwYXRjaC4KPiA+IEJ1dCB0aGVyZSB3ZXJlIHRvbyBtYW55IGJ1aWxkIGVy
-cnJvcyBhbmQgSSBzb21laG93IGxvc3QgdGhlIG1vdGl2YXRpb24uCj4gCj4gWWVhaCB0aGUgZHJt
-X2NydGNfaGVscGVyLmggaGVhZGVyIGlzIGEgYml0IHRoZSBtaW5pYXR1cmUgZHJtUC5oIGZvciBs
-ZWdhY3kKPiBrbXMgZHJpdmVycy4gSnVzdCByZW1vdmluZyBpdCBmcm9tIGFsbCB0aGUgYXRvbWlj
-IGRyaXZlcnMgY2F1c2VkIGxvdHMgb2YKPiBmYWxsb3V0LCBJIGV4cGVjdCBldmVuIG1vcmUgaWYg
-eW91IGVudGlyZWx5IHJlbW92ZSB0aGUgaW5jbHVkZXMgaXQgaGFzLgo+IE1heWJlIGEgdG9kbywg
-Y2FyZSB0byBwbHMgY3JlYXRlIHRoYXQgcGF0Y2ggc2luY2UgaXQncyB5b3VyIGlkZWE/CgpUaGUg
-bWFpbiByZWFzb24gSSBiYWlsZWQgb3V0IGluaXRpYWxseSB3YXMgdGhhdCB0aGlzIHdvdWxkIGNy
-ZWF0ZQpzbWFsbCBjaGFuZ2VzIHRvIHNldmVyYWwgb3RoZXJ3aXNlIHNlbGRvbWx5IHRvdWNoZWQg
-ZmlsZXMuCkFuZCB0aGVuIHdlIHdvdWxkIGxhdGVyIGNvbWUgYW5kIHJlbW92ZSBkcm1QLmggLSBz
-byBsb3RzIG9mCnNtYWxsIGJ1dCBpbmNyZW1lbnRhbCBjaGFuZ2VzIHRvIHRoZSBzYW1lIG90aGVy
-d2lzZSBzZWxkb21seQplZGl0ZWQgZmlsZXMuCkFuZCB0aGUgam9iIHdhcyBvbmx5IHBhcnRpYWxs
-eSBkb25lLgoKSSB3aWxsIHRyeSB0byBleHBlcmltZW50IHdpdGggYW4gYXBwcm9hY2ggd2hlcmUg
-SSBjbGVhbiB1cCB0aGUKaW5jbHVkZS9kcm0vKi5oIGZpbGVzIGEgbGl0dGxlIChsaWtlIHN1Z2dl
-c3RlZCBhYm92ZSwgK2RlbGV0ZSBkcm1QLmgKYW5kIG1heWJlIGEgYml0IG1vcmUpLgoKVGhlbiB0
-byB0cnkgb24gYSBkcml2ZXIgYnkgZHJpdmVyIGJhc2lzIHRvIG1ha2UgaXQgYnVpbGQgd2l0aCBh
-CmNsZWFuZWQgc2V0IG9mIGluY2x1ZGUgZmlsZXMuCkkgaG9wZSB0aGF0IHRoZSBjbGVhbmVkIHVw
-IGRyaXZlciBjYW4gc3RpbGwgYnVpbGQgd2l0aG91dCB0aGUKY2xlYW5lZCBoZWFkZXIgZmlsZXMg
-c28gdGhlIGNoYW5nZXMgY2FuIGJlIHN1Ym1pdHRlZCBwaWVjZW1hbC4KCldpbGwgZG8gc28gd2l0
-aCBhbiBleWUgb24gdGhlIGxlc3NlciBtYWludGFpbmVkIGRyaXZlcnMgdG8gdHJ5IGl0Cm91dCB0
-byBhdm9pZCBjcmVhdGluZyB0b28gbXVjaCBjaHJ1bmNoIGZvciBvdGhlcnMuCgpBbmQgaWYgaXQg
-d29ya3Mgb3V0IEkgZXhwZWN0IHRoZSBhY3RpdmUgZHJpdmVycyB0byBmb2xsb3cgdGhlCmV4YW1w
-bGUuCgp0b2RvLnJzdCBpdGVtIHdpbGwgd2FpdCB1bnRpbCBJIHJ1biBvdXQgb2YgZW5lcmd5LgoK
-CVNhbQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
-LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBz
-Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Fri, Dec 14, 2018 at 01:10:16PM +0100, Christoph Manszewski wrote:
+> Range setting makes sense for YCbCr and RGB buffers. Current
+> drm_color_range enum labels suggest use with YCbCr buffers.
+> Create enum labels without colorspace specification.
+> 
+> Signed-off-by: Christoph Manszewski <c.manszewski@samsung.com>
+> ---
+>  include/drm/drm_color_mgmt.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/include/drm/drm_color_mgmt.h b/include/drm/drm_color_mgmt.h
+> index 90ef9996d9a4..52f6d5221a0d 100644
+> --- a/include/drm/drm_color_mgmt.h
+> +++ b/include/drm/drm_color_mgmt.h
+> @@ -62,6 +62,8 @@ enum drm_color_range {
+>  	DRM_COLOR_YCBCR_LIMITED_RANGE,
+>  	DRM_COLOR_YCBCR_FULL_RANGE,
+>  	DRM_COLOR_RANGE_MAX,
+> +	DRM_COLOR_LIMITED_RANGE = DRM_COLOR_YCBCR_LIMITED_RANGE,
+> +	DRM_COLOR_FULL_RANGE = DRM_COLOR_YCBCR_FULL_RANGE,
+
+These enum values don't mean anything really. The strings are what
+matter for the uapi.
+
+The default for YCbCr needs to be limited range, the default for RGB
+needs to be full range. So I think this would really require a separate
+prop for each.
+
+But is there an actual usecase for this stuff?
+
+>  };
+>  
+>  int drm_plane_create_color_properties(struct drm_plane *plane,
+> -- 
+> 2.7.4
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+-- 
+Ville Syrjälä
+Intel
