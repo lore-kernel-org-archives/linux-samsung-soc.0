@@ -1,51 +1,66 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 1/6] include/drm: color_mgmt: Add enum labels
-Date: Thu, 17 Jan 2019 18:32:06 +0900
-Message-ID: <f51289f2-e94f-40f4-2a61-054d87914030@samsung.com>
-References: <1544789421-5265-1-git-send-email-c.manszewski@samsung.com>
-        <CGME20181214121032eucas1p24af580721ebd6f86a4f9ddf701957ab6@eucas1p2.samsung.com>
-        <1544789421-5265-2-git-send-email-c.manszewski@samsung.com>
+From: Ming Lei <ming.lei@redhat.com>
+Subject: Re: [BUG bisect] kernel BUG at block/bio.c:1833 and fail to mount
+ disk
+Date: Thu, 17 Jan 2019 18:26:58 +0800
+Message-ID: <20190117102657.GB20220@ming.t460p>
+References: <CAJKOXPdQaxKH3z3yMBggP3dAFJ3ecgCcHk=bGaVHZ-Q+V2Riug@mail.gmail.com>
+ <CAJKOXPd2WiMC8uc1YuyR+_vEScSewMzQe1Y7UGHgxvkCD+tQ7A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1544789421-5265-2-git-send-email-c.manszewski@samsung.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <CAJKOXPd2WiMC8uc1YuyR+_vEScSewMzQe1Y7UGHgxvkCD+tQ7A@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christoph Manszewski <c.manszewski@samsung.com>, dri-devel@lists.freedesktop.org
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Sean Paul <sean@poorly.run>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Omar Sandoval <osandov@fb.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-18. 12. 14. 오후 9:10에 Christoph Manszewski 이(가) 쓴 글:
-> Range setting makes sense for YCbCr and RGB buffers. Current
-> drm_color_range enum labels suggest use with YCbCr buffers.
-> Create enum labels without colorspace specification.
+On Wed, Jan 16, 2019 at 09:54:05AM +0100, Krzysztof Kozlowski wrote:
+> On Wed, 16 Jan 2019 at 09:52, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >
+> > Hi,
+> >
+> > On today's next-20190116 I see a bug during boot:
+> > [ 6.843308] kernel BUG at ../block/bio.c:1833!
+> > [ 6.847723] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
+> > ...
+> > [ 7.543824] [<c044c144>] (bio_split) from [<00000000>] ( (null))
+> > [ 7.549881] Code: 13833b01 11c630bc e1a00006 e8bd8070 (e7f001f2)
+> >
+> > (not much in the calltrace)
+> > On all my boards. Also QEMU-arm fails.
+> >
 > 
-> Signed-off-by: Christoph Manszewski <c.manszewski@samsung.com>
-> ---
->  include/drm/drm_color_mgmt.h | 2 ++
->  1 file changed, 2 insertions(+)
+> I forgot the bisect commit:
 > 
-> diff --git a/include/drm/drm_color_mgmt.h b/include/drm/drm_color_mgmt.h
-> index 90ef9996d9a4..52f6d5221a0d 100644
-> --- a/include/drm/drm_color_mgmt.h
-> +++ b/include/drm/drm_color_mgmt.h
-> @@ -62,6 +62,8 @@ enum drm_color_range {
->  	DRM_COLOR_YCBCR_LIMITED_RANGE,
->  	DRM_COLOR_YCBCR_FULL_RANGE,
->  	DRM_COLOR_RANGE_MAX,
-> +	DRM_COLOR_LIMITED_RANGE = DRM_COLOR_YCBCR_LIMITED_RANGE,
-> +	DRM_COLOR_FULL_RANGE = DRM_COLOR_YCBCR_FULL_RANGE,
+> 258cfdfaf7bd729e759a0a91fd00ac9794796ad3 is the first bad commit
+> commit 258cfdfaf7bd729e759a0a91fd00ac9794796ad3
+> Author: Ming Lei <ming.lei@redhat.com>
+> Date:   Fri Jan 11 19:01:15 2019 +0800
+> 
+>     block: use bio_for_each_bvec() to compute multi-page bvec count
+> 
+> :040000 040000 d79b2e71d308650df4764ff644f29d3a24dbab96
+> 0a5d624843b805ee0c9fd9a7e2d5163f5b15b167 M block
 
-I don't see why above two types are needed. Is there any case that the range checking behavior should be different according to the color space?
-And even if there is that case, I think you have to put DRM_COLOR_RANG_MAX under DRM_COLOR_FULL_RANGE.
+It should be one 32-bit arch specific issue, I guess.
+
+The following patch should fix this issue:
+
+diff --git a/block/blk-merge.c b/block/blk-merge.c
+index dc4877eaf9f9..4dd7183de849 100644
+--- a/block/blk-merge.c
++++ b/block/blk-merge.c
+@@ -166,6 +166,9 @@ static unsigned get_max_segment_size(struct request_queue *q,
+ {
+ 	unsigned long mask = queue_segment_boundary(q);
+ 
++	if (mask == BLK_SEG_BOUNDARY_MASK)
++		return queue_max_segment_size(q);
++
+ 	return min_t(unsigned long, mask - (mask & offset) + 1,
+ 		     queue_max_segment_size(q));
+ }
 
 Thanks,
-Inki Dae
-
->  };
->  
->  int drm_plane_create_color_properties(struct drm_plane *plane,
-> 
+Ming
