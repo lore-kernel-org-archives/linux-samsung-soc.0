@@ -1,65 +1,71 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
 Subject: Re: [PATCH 1/6] include/drm: color_mgmt: Add enum labels
-Date: Fri, 18 Jan 2019 15:34:18 +0100
-Message-ID: <b9cfbae1-b24e-96bf-f3b0-ff6d25cd16bb@samsung.com>
+Date: Fri, 18 Jan 2019 16:44:24 +0200
+Message-ID: <20190118144424.GL20097@intel.com>
 References: <1544789421-5265-1-git-send-email-c.manszewski@samsung.com>
  <CGME20181214121032eucas1p24af580721ebd6f86a4f9ddf701957ab6@eucas1p2.samsung.com>
  <1544789421-5265-2-git-send-email-c.manszewski@samsung.com>
  <20190117194722.GJ20097@intel.com>
+ <b9cfbae1-b24e-96bf-f3b0-ff6d25cd16bb@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190117194722.GJ20097@intel.com>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, Christoph Manszewski <c.manszewski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, 'Hans Verkuil' <hans.verkuil@cisco.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sean Paul <sean@poorly.run>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <b9cfbae1-b24e-96bf-f3b0-ff6d25cd16bb@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Christoph Manszewski <c.manszewski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sean Paul <sean@poorly.run>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>, 'Hans Verkuil' <hans.verkuil@cisco.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-K0NDOiBIYW5zCgpPbiAxNy4wMS4yMDE5IDIwOjQ3LCBWaWxsZSBTeXJqw6Rsw6Qgd3JvdGU6Cj4g
-T24gRnJpLCBEZWMgMTQsIDIwMTggYXQgMDE6MTA6MTZQTSArMDEwMCwgQ2hyaXN0b3BoIE1hbnN6
-ZXdza2kgd3JvdGU6Cj4+IFJhbmdlIHNldHRpbmcgbWFrZXMgc2Vuc2UgZm9yIFlDYkNyIGFuZCBS
-R0IgYnVmZmVycy4gQ3VycmVudAo+PiBkcm1fY29sb3JfcmFuZ2UgZW51bSBsYWJlbHMgc3VnZ2Vz
-dCB1c2Ugd2l0aCBZQ2JDciBidWZmZXJzLgo+PiBDcmVhdGUgZW51bSBsYWJlbHMgd2l0aG91dCBj
-b2xvcnNwYWNlIHNwZWNpZmljYXRpb24uCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IENocmlzdG9waCBN
-YW5zemV3c2tpIDxjLm1hbnN6ZXdza2lAc2Ftc3VuZy5jb20+Cj4+IC0tLQo+PiAgaW5jbHVkZS9k
-cm0vZHJtX2NvbG9yX21nbXQuaCB8IDIgKysKPj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlv
-bnMoKykKPj4KPj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvZHJtL2RybV9jb2xvcl9tZ210LmggYi9p
-bmNsdWRlL2RybS9kcm1fY29sb3JfbWdtdC5oCj4+IGluZGV4IDkwZWY5OTk2ZDlhNC4uNTJmNmQ1
-MjIxYTBkIDEwMDY0NAo+PiAtLS0gYS9pbmNsdWRlL2RybS9kcm1fY29sb3JfbWdtdC5oCj4+ICsr
-KyBiL2luY2x1ZGUvZHJtL2RybV9jb2xvcl9tZ210LmgKPj4gQEAgLTYyLDYgKzYyLDggQEAgZW51
-bSBkcm1fY29sb3JfcmFuZ2Ugewo+PiAgCURSTV9DT0xPUl9ZQ0JDUl9MSU1JVEVEX1JBTkdFLAo+
-PiAgCURSTV9DT0xPUl9ZQ0JDUl9GVUxMX1JBTkdFLAo+PiAgCURSTV9DT0xPUl9SQU5HRV9NQVgs
-Cj4+ICsJRFJNX0NPTE9SX0xJTUlURURfUkFOR0UgPSBEUk1fQ09MT1JfWUNCQ1JfTElNSVRFRF9S
-QU5HRSwKPj4gKwlEUk1fQ09MT1JfRlVMTF9SQU5HRSA9IERSTV9DT0xPUl9ZQ0JDUl9GVUxMX1JB
-TkdFLAo+IFRoZXNlIGVudW0gdmFsdWVzIGRvbid0IG1lYW4gYW55dGhpbmcgcmVhbGx5LiBUaGUg
-c3RyaW5ncyBhcmUgd2hhdAo+IG1hdHRlciBmb3IgdGhlIHVhcGkuCj4KPiBUaGUgZGVmYXVsdCBm
-b3IgWUNiQ3IgbmVlZHMgdG8gYmUgbGltaXRlZCByYW5nZSwgdGhlIGRlZmF1bHQgZm9yIFJHQgo+
-IG5lZWRzIHRvIGJlIGZ1bGwgcmFuZ2UuIFNvIEkgdGhpbmsgdGhpcyB3b3VsZCByZWFsbHkgcmVx
-dWlyZSBhIHNlcGFyYXRlCj4gcHJvcCBmb3IgZWFjaC4KPgo+IEJ1dCBpcyB0aGVyZSBhbiBhY3R1
-YWwgdXNlY2FzZSBmb3IgdGhpcyBzdHVmZj8KCgpZZXMsIGZvciBleGFtcGxlIEhETUkgcGF0aCAo
-RGlzcGxheSBDb250cm9sbGVyIGFuZCBIRE1JIGVuY29kZXIpIGluCkV4eW5vczU0MzMgd29ya3Mg
-b24gUkdCIGJ1ZmZlcnMgYW5kIGRvIG5vdCBwZXJmb3JtIGFueSBjb252ZXJzaW9uIGlmIHRoZQpv
-dXRwdXQgaXMgYWxzbyBSR0IsIG9uIHRoZSBvdGhlciBzaWRlIENFQTg2MSBzcGVjcyBzYXlzIHRo
-YXQgaW4gY2FzZSBvZgpDRUEgbW9kZXMgb3V0cHV0IFJHQiBzaG91bGQgYmUgaW4gbGltaXRlZCBy
-YW5nZSwgaW4gY2FzZSBvZiBub24gQ0VBCm1vZGVzIGl0IHNob3VsZCBiZSBmdWxsIHJhbmdlLgoK
-VGhlIGlkZWEgd2FzIHRvIGFsbG93IHVzZXJzcGFjZSB0byBjaGVjayAoYXRvbWljX2NoZWNrKSB3
-aGljaCByYW5nZXMgYXJlCmFjY2VwdGFibGUgaW4gZ2l2ZW4gbW9kZSBhbmQgdG8gc2V0IGRlc2ly
-ZWQgb25lIGlmIHBvc3NpYmxlLgoKQW55IGJldHRlciBzb2x1dGlvbiBpcyB3ZWxjb21lPwoKClJl
-Z2FyZHMKCkFuZHJ6ZWoKCgoKPgo+PiAgfTsKPj4gIAo+PiAgaW50IGRybV9wbGFuZV9jcmVhdGVf
-Y29sb3JfcHJvcGVydGllcyhzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwKPj4gLS0gCj4+IDIuNy40
-Cj4+Cj4+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4+
-IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPj4gZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
-Zwo+PiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
-ZXZlbAoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRy
-aS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
-czovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Fri, Jan 18, 2019 at 03:34:18PM +0100, Andrzej Hajda wrote:
+> +CC: Hans
+> 
+> On 17.01.2019 20:47, Ville Syrjälä wrote:
+> > On Fri, Dec 14, 2018 at 01:10:16PM +0100, Christoph Manszewski wrote:
+> >> Range setting makes sense for YCbCr and RGB buffers. Current
+> >> drm_color_range enum labels suggest use with YCbCr buffers.
+> >> Create enum labels without colorspace specification.
+> >>
+> >> Signed-off-by: Christoph Manszewski <c.manszewski@samsung.com>
+> >> ---
+> >>  include/drm/drm_color_mgmt.h | 2 ++
+> >>  1 file changed, 2 insertions(+)
+> >>
+> >> diff --git a/include/drm/drm_color_mgmt.h b/include/drm/drm_color_mgmt.h
+> >> index 90ef9996d9a4..52f6d5221a0d 100644
+> >> --- a/include/drm/drm_color_mgmt.h
+> >> +++ b/include/drm/drm_color_mgmt.h
+> >> @@ -62,6 +62,8 @@ enum drm_color_range {
+> >>  	DRM_COLOR_YCBCR_LIMITED_RANGE,
+> >>  	DRM_COLOR_YCBCR_FULL_RANGE,
+> >>  	DRM_COLOR_RANGE_MAX,
+> >> +	DRM_COLOR_LIMITED_RANGE = DRM_COLOR_YCBCR_LIMITED_RANGE,
+> >> +	DRM_COLOR_FULL_RANGE = DRM_COLOR_YCBCR_FULL_RANGE,
+> > These enum values don't mean anything really. The strings are what
+> > matter for the uapi.
+> >
+> > The default for YCbCr needs to be limited range, the default for RGB
+> > needs to be full range. So I think this would really require a separate
+> > prop for each.
+> >
+> > But is there an actual usecase for this stuff?
+> 
+> 
+> Yes, for example HDMI path (Display Controller and HDMI encoder) in
+> Exynos5433 works on RGB buffers and do not perform any conversion if the
+> output is also RGB, on the other side CEA861 specs says that in case of
+> CEA modes output RGB should be in limited range, in case of non CEA
+> modes it should be full range.
+> 
+> The idea was to allow userspace to check (atomic_check) which ranges are
+> acceptable in given mode and to set desired one if possible.
+> 
+> Any better solution is welcome?
+
+i915 has the "Broadcast RGB" property for the CEA-861 stuff.
+You don't have a way to implement that?
+
+-- 
+Ville Syrjälä
+Intel
