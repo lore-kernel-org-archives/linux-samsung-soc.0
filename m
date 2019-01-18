@@ -1,48 +1,43 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v4] cpufreq: s5pv210: Defer probe if getting regulators
- fail
-Date: Fri, 18 Jan 2019 10:40:10 +0530
-Message-ID: <20190118051010.4ed2ntv2mxfeaoot@vireshk-i7>
-References: <20190113195754.30525-1-pawel.mikolaj.chmiel@gmail.com>
- <CAJKOXPfvR6vATPiWbef_JiSJX78PkJxRXjF2xK7EYr5B3e8HbA@mail.gmail.com>
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Subject: [PATCH v4 1/5] clk: samsung: exynos5433: fix typo in imem divider
+Date: Fri, 18 Jan 2019 14:16:35 +0100
+Message-ID: <20190118131639.17578-2-k.konieczny@partner.samsung.com>
+References: <20190118131639.17578-1-k.konieczny@partner.samsung.com>
+        <CGME20190118131711eucas1p190e9b63ac047566ba84fb4f8749aceee@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPfvR6vATPiWbef_JiSJX78PkJxRXjF2xK7EYr5B3e8HbA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>, kgene@kernel.org, rjw@rjwysocki.net, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190118131639.17578-1-k.konieczny@partner.samsung.com>
+Sender: stable-owner@vger.kernel.org
+To: k.konieczny@partner.samsung.com, linux-samsung-soc@vger.kernel.org
+Cc: linux-clk@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 14-01-19, 08:51, Krzysztof Kozlowski wrote:
-> On Sun, 13 Jan 2019 at 20:58, Paweł Chmiel
-> <pawel.mikolaj.chmiel@gmail.com> wrote:
-> >
-> > There is possibility, that when probing driver, regulators are not yet
-> > initialized. In this case we should return EPROBE_DEFER and wait till
-> > they're initialized, since they're required currently for cpufreq driver
-> > to work. Also move regulator initialization code at beginning of probe,
-> > so we can defer as fast as posibble.
-> >
-> > Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> > ---
-> > Changes from v3:
-> >   - Zero dmc_base pointers after unmapping them
-> >   - If getting vddarm regulator fails just return, no need to do goto
-> >     jump which would do the same
-> >
-> > Changes from v2:
-> >   - Handle all error paths in probe
-> >
-> > Changes from v1:
-> >   - Fix compilation error
-> >   - Reorganize code so it's smaller
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Fix typo in imem clock divider 200 switched with 266.
 
-Applied, thanks.
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5433.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index 751e2c4fb65b..ea47f49abc7f 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -568,10 +568,10 @@ static const struct samsung_gate_clock top_gate_clks[] __initconst = {
+ 	GATE(CLK_ACLK_BUS1_400, "aclk_bus1_400", "div_aclk_bus1_400",
+ 			ENABLE_ACLK_TOP, 25,
+ 			CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
+-	GATE(CLK_ACLK_IMEM_200, "aclk_imem_200", "div_aclk_imem_266",
++	GATE(CLK_ACLK_IMEM_200, "aclk_imem_200", "div_aclk_imem_200",
+ 			ENABLE_ACLK_TOP, 24,
+ 			CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
+-	GATE(CLK_ACLK_IMEM_266, "aclk_imem_266", "div_aclk_imem_200",
++	GATE(CLK_ACLK_IMEM_266, "aclk_imem_266", "div_aclk_imem_266",
+ 			ENABLE_ACLK_TOP, 23,
+ 			CLK_IGNORE_UNUSED | CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_ACLK_PERIC_66, "aclk_peric_66", "div_aclk_peric_66_b",
 -- 
-viresh
+2.20.0
