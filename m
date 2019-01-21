@@ -1,75 +1,55 @@
-From: Chanwoo Choi <cwchoi00@gmail.com>
-Subject: Re: [PATCH v4 5/5] clk: samsung: exynos5433: add imem clocks
-Date: Sat, 19 Jan 2019 21:41:17 +0900
-Message-ID: <CAGTfZH2sKvJ+Tq=YD2Xb1ZDV9QD0C3gEVRvxzMvRj54pU+2vHA@mail.gmail.com>
-References: <CGME20190118131713eucas1p11f52d9e6a11dbd2b66f289ca3c56d92c@eucas1p1.samsung.com>
- <20190118131639.17578-1-k.konieczny@partner.samsung.com>
- <20190118131639.17578-6-k.konieczny@partner.samsung.com>
-Reply-To: cwchoi00@gmail.com
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] usb: dwc3: exynos: Fix error handling of
+ clk_prepare_enable
+Date: Mon, 21 Jan 2019 10:56:46 +0100
+Message-ID: <abc0f943-1d34-cc44-dc65-0428d6188354@samsung.com>
+References: <CGME20190118211823epcas1p32d11bff9f7822eb48c0387c85a94da70@epcas1p3.samsung.com>
+        <1547846257-19970-1-git-send-email-khoroshilov@ispras.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190118131639.17578-6-k.konieczny@partner.samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1547846257-19970-1-git-send-email-khoroshilov@ispras.ru>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexey Khoroshilov <khoroshilov@ispras.ru>, Felipe Balbi <balbi@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgS2FtaWwsCgoyMDE564WEIDHsm5QgMTjsnbwgKOq4iCkg7Jik7ZuEIDEwOjE4LCBLYW1pbCBL
-b25pZWN6bnkKPGsua29uaWVjem55QHBhcnRuZXIuc2Ftc3VuZy5jb20+64uY7J20IOyekeyEsToK
-Pgo+IEFkZCBpbWVtIGNsb2NrcyBmb3IgZXh5bm9zNTQzMy4gVGhpcyB3aWxsIGVuYWJsZSB0byB1
-c2UgY3J5cHRvIFNsaW0KPiBTZWN1cml0eSBTdWJTeXN0ZW0gKGluIHNob3J0IFNsaW1TU1MpIElQ
-IGJsb2NrLgo+Cj4gU2lnbmVkLW9mZi1ieTogS2FtaWwgS29uaWVjem55IDxrLmtvbmllY3pueUBw
-YXJ0bmVyLnNhbXN1bmcuY29tPgo+IC0tLQo+ICBkcml2ZXJzL2Nsay9zYW1zdW5nL2Nsay1leHlu
-b3M1NDMzLmMgfCAzMiArKysrKysrKysrKysrKysrKysrKysrKysrKysrCj4gIDEgZmlsZSBjaGFu
-Z2VkLCAzMiBpbnNlcnRpb25zKCspCj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvc2Ftc3Vu
-Zy9jbGstZXh5bm9zNTQzMy5jIGIvZHJpdmVycy9jbGsvc2Ftc3VuZy9jbGstZXh5bm9zNTQzMy5j
-Cj4gaW5kZXggMjRjMzM2MGRiNjViLi5kYWUxYzk2ZGU5MzMgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVy
-cy9jbGsvc2Ftc3VuZy9jbGstZXh5bm9zNTQzMy5jCj4gKysrIGIvZHJpdmVycy9jbGsvc2Ftc3Vu
-Zy9jbGstZXh5bm9zNTQzMy5jCj4gQEAgLTU0NjcsNiArNTQ2NywzNSBAQCBzdGF0aWMgY29uc3Qg
-c3RydWN0IHNhbXN1bmdfY211X2luZm8gY2FtMV9jbXVfaW5mbyBfX2luaXRjb25zdCA9IHsKPiAg
-ICAgICAgIC5jbGtfbmFtZSAgICAgICAgICAgICAgID0gImFjbGtfY2FtMV80MDAiLAo+ICB9Owo+
-Cj4gKy8qCj4gKyAqIFJlZ2lzdGVyIG9mZnNldCBkZWZpbml0aW9ucyBmb3IgQ01VX0lNRU0KPiAr
-ICovCj4gKyNkZWZpbmUgRU5BQkxFX0FDTEtfSU1FTV9TTElNU1NTICAgICAgICAgICAgICAgMHgw
-ODBjCj4gKyNkZWZpbmUgRU5BQkxFX1BDTEtfSU1FTV9TTElNU1NTICAgICAgICAgICAgICAgMHgw
-OTA4Cj4gKwo+ICtzdGF0aWMgY29uc3QgdW5zaWduZWQgbG9uZyBpbWVtX2Nsa19yZWdzW10gX19p
-bml0Y29uc3QgPSB7Cj4gKyAgICAgICBFTkFCTEVfQUNMS19JTUVNX1NMSU1TU1MsCj4gKyAgICAg
-ICBFTkFCTEVfUENMS19JTUVNX1NMSU1TU1MsCj4gK307Cj4gKwo+ICtzdGF0aWMgY29uc3Qgc3Ry
-dWN0IHNhbXN1bmdfZ2F0ZV9jbG9jayBpbWVtX2dhdGVfY2xrc1tdIF9faW5pdGNvbnN0ID0gewo+
-ICsgICAgICAgLyogRU5BQkxFX0FDTEtfSU1FTV9TTElNU1NTICovCj4gKyAgICAgICBHQVRFKENM
-S19BQ0xLX1NMSU1TU1MsICJhY2xrX3NsaW1zc3MiLCAiYWNsa19pbWVtX3Nzc3hfMjY2IiwKPiAr
-ICAgICAgICAgICAgICAgICAgICAgICBFTkFCTEVfQUNMS19JTUVNX1NMSU1TU1MsIDAsIENMS19J
-R05PUkVfVU5VU0VELCAwKSwKPiArCj4gKyAgICAgICAvKiBFTkFCTEVfUENMS19JTUVNX1NMSU1T
-U1MgKi8KPiArICAgICAgIEdBVEUoQ0xLX1BDTEtfU0xJTVNTUywgInBjbGtfc2xpbXNzcyIsICJh
-Y2xrX2ltZW1fMjAwIiwKPiArICAgICAgICAgICAgICAgICAgICAgICBFTkFCTEVfUENMS19JTUVN
-X1NMSU1TU1MsIDAsIENMS19JR05PUkVfVU5VU0VELCAwKSwKPiArfTsKPiArCj4gK3N0YXRpYyBj
-b25zdCBzdHJ1Y3Qgc2Ftc3VuZ19jbXVfaW5mbyBpbWVtX2NtdV9pbmZvIF9faW5pdGNvbnN0ID0g
-ewo+ICsgICAgICAgLmdhdGVfY2xrcyAgICAgICAgICAgICAgPSBpbWVtX2dhdGVfY2xrcywKPiAr
-ICAgICAgIC5ucl9nYXRlX2Nsa3MgICAgICAgICAgID0gQVJSQVlfU0laRShpbWVtX2dhdGVfY2xr
-cyksCj4gKyAgICAgICAubnJfY2xrX2lkcyAgICAgICAgICAgICA9IElNRU1fTlJfQ0xLLAo+ICsg
-ICAgICAgLmNsa19yZWdzICAgICAgICAgICAgICAgPSBpbWVtX2Nsa19yZWdzLAo+ICsgICAgICAg
-Lm5yX2Nsa19yZWdzICAgICAgICAgICAgPSBBUlJBWV9TSVpFKGltZW1fY2xrX3JlZ3MpLAo+ICsg
-ICAgICAgLmNsa19uYW1lICAgICAgICAgICAgICAgPSAiYWNsa19pbWVtXzIwMCIsCj4gK307Cj4K
-PiAgc3RydWN0IGV4eW5vczU0MzNfY211X2RhdGEgewo+ICAgICAgICAgc3RydWN0IHNhbXN1bmdf
-Y2xrX3JlZ19kdW1wICpjbGtfc2F2ZTsKPiBAQCAtNTY1NCw2ICs1NjgzLDkgQEAgc3RhdGljIGNv
-bnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgZXh5bm9zNTQzM19jbXVfb2ZfbWF0Y2hbXSA9IHsKPiAg
-ICAgICAgIH0sIHsKPiAgICAgICAgICAgICAgICAgLmNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlu
-b3M1NDMzLWNtdS1tc2NsIiwKPiAgICAgICAgICAgICAgICAgLmRhdGEgPSAmbXNjbF9jbXVfaW5m
-bywKPiArICAgICAgIH0sIHsKPiArICAgICAgICAgICAgICAgLmNvbXBhdGlibGUgPSAic2Ftc3Vu
-ZyxleHlub3M1NDMzLWNtdS1pbWVtIiwKPiArICAgICAgICAgICAgICAgLmRhdGEgPSAmaW1lbV9j
-bXVfaW5mbywKPiAgICAgICAgIH0sIHsKPiAgICAgICAgIH0sCj4gIH07Cj4gLS0KPiAyLjIwLjAK
-PgoKTG9va3MgZ29vZCB0byBtZS4KQWNrZWQtYnk6IENoYW53b28gQ2hvaSA8Y3cwMC5jaG9pQHNh
-bXN1bmcuY29tPgoKLS0gCkJlc3QgUmVnYXJkcywKQ2hhbndvbyBDaG9pClNhbXN1bmcgRWxlY3Ry
-b25pY3MKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxp
-bnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFk
-ZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4
-LWFybS1rZXJuZWwK
+Hi Alexey,
+
+On 2019-01-18 22:17, Alexey Khoroshilov wrote:
+> If clk_prepare_enable() fails in dwc3_exynos_probe(),
+> exynos->clks[0] is left undisabled because of usage
+> preincrement in while condition.
+>
+> Found by Linux Driver Verification project (linuxtesting.org).
+>
+> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+> Fixes: 9f2168367a0a ("usb: dwc3: exynos: Rework clock handling and prepare for new variants")
+
+My fault. There is also a similar issue dwc3_exynos_resume(), so please
+fix it too if possible.
+
+> ---
+>  drivers/usb/dwc3/dwc3-exynos.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
+> index cb7fcd7c0ad8..e7f6cff27b9a 100644
+> --- a/drivers/usb/dwc3/dwc3-exynos.c
+> +++ b/drivers/usb/dwc3/dwc3-exynos.c
+> @@ -78,7 +78,7 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
+>  	for (i = 0; i < exynos->num_clks; i++) {
+>  		ret = clk_prepare_enable(exynos->clks[i]);
+>  		if (ret) {
+> -			while (--i > 0)
+> +			while (i-- > 0)
+>  				clk_disable_unprepare(exynos->clks[i]);
+>  			return ret;
+>  		}
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
