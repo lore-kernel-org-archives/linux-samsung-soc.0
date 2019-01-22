@@ -1,34 +1,30 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [PATCH v5 1/5] clk: samsung: exynos5433: fix typo in imem divider
-Date: Tue, 22 Jan 2019 10:33:13 +0100
-Message-ID: <20190122093313.GA21774@kroah.com>
-References: <20190122090232.29194-1-k.konieczny@partner.samsung.com>
- <CGME20190122090249eucas1p161cfc1364fb8ee76d2d04383935e8f3b@eucas1p1.samsung.com>
- <20190122090232.29194-2-k.konieczny@partner.samsung.com>
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Subject: [PATCH v1 0/3] add AES support for Exynos5433
+Date: Tue, 22 Jan 2019 16:25:50 +0100
+Message-ID: <20190122152553.1537-1-k.konieczny@partner.samsung.com>
+References: <CGME20190122152607eucas1p2c58a7814bb9ab72cc46d5a84eb1962a4@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190122090232.29194-2-k.konieczny@partner.samsung.com>
-Sender: stable-owner@vger.kernel.org
-To: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: k.konieczny@partner.samsung.com
+Cc: "David S. Miller" <davem@davemloft.net>, devicetree@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 10:02:28AM +0100, Kamil Konieczny wrote:
-> Fix typo in imem clock divider 200 switched with 266.
-> 
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5433.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+Add slimSSS node to DT and crypto AES support for Exynos5433. Tested on
+Exynos5433 board with crypto run-time self tests and with tcrypt with
+command insmod tcrypt.ko mode=500 sec=1
 
-<formletter>
+Kamil Konieczny (3):
+  arm64: dts: exynos: add SlimSSS for Exynos5433
+  dt-bindings: crypto: document Exynos5433 SlimSSS
+  crypto: s5p: add AES support for Exynos5433
 
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read:
-    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-for how to do this properly.
+ .../bindings/crypto/samsung-sss.txt           | 13 +++--
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi    |  9 ++++
+ drivers/crypto/s5p-sss.c                      | 50 +++++++++++++++++--
+ 3 files changed, 65 insertions(+), 7 deletions(-)
 
-</formletter>
+-- 
+2.20.0
