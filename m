@@ -1,77 +1,34 @@
-From: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Subject: [PATCH v5 5/5] clk: samsung: exynos5433: add imem clocks
-Date: Tue, 22 Jan 2019 10:02:32 +0100
-Message-ID: <20190122090232.29194-6-k.konieczny@partner.samsung.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [PATCH v5 1/5] clk: samsung: exynos5433: fix typo in imem divider
+Date: Tue, 22 Jan 2019 10:33:13 +0100
+Message-ID: <20190122093313.GA21774@kroah.com>
 References: <20190122090232.29194-1-k.konieczny@partner.samsung.com>
-        <CGME20190122090252eucas1p2dee91ee12355eca7f79f29f945f0346d@eucas1p2.samsung.com>
+ <CGME20190122090249eucas1p161cfc1364fb8ee76d2d04383935e8f3b@eucas1p1.samsung.com>
+ <20190122090232.29194-2-k.konieczny@partner.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190122090232.29194-1-k.konieczny@partner.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: k.konieczny@partner.samsung.com, linux-samsung-soc@vger.kernel.org
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190122090232.29194-2-k.konieczny@partner.samsung.com>
+Sender: stable-owner@vger.kernel.org
+To: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add imem clocks for exynos5433. This will enable to use crypto Slim
-Security SubSystem (in short SlimSSS) IP block.
+On Tue, Jan 22, 2019 at 10:02:28AM +0100, Kamil Konieczny wrote:
+> Fix typo in imem clock divider 200 switched with 266.
+> 
+> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5433.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
----
- drivers/clk/samsung/clk-exynos5433.c | 32 ++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+<formletter>
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 24c3360db65b..dae1c96de933 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -5467,6 +5467,35 @@ static const struct samsung_cmu_info cam1_cmu_info __initconst = {
- 	.clk_name		= "aclk_cam1_400",
- };
- 
-+/*
-+ * Register offset definitions for CMU_IMEM
-+ */
-+#define ENABLE_ACLK_IMEM_SLIMSSS		0x080c
-+#define ENABLE_PCLK_IMEM_SLIMSSS		0x0908
-+
-+static const unsigned long imem_clk_regs[] __initconst = {
-+	ENABLE_ACLK_IMEM_SLIMSSS,
-+	ENABLE_PCLK_IMEM_SLIMSSS,
-+};
-+
-+static const struct samsung_gate_clock imem_gate_clks[] __initconst = {
-+	/* ENABLE_ACLK_IMEM_SLIMSSS */
-+	GATE(CLK_ACLK_SLIMSSS, "aclk_slimsss", "aclk_imem_sssx_266",
-+			ENABLE_ACLK_IMEM_SLIMSSS, 0, CLK_IGNORE_UNUSED, 0),
-+
-+	/* ENABLE_PCLK_IMEM_SLIMSSS */
-+	GATE(CLK_PCLK_SLIMSSS, "pclk_slimsss", "aclk_imem_200",
-+			ENABLE_PCLK_IMEM_SLIMSSS, 0, CLK_IGNORE_UNUSED, 0),
-+};
-+
-+static const struct samsung_cmu_info imem_cmu_info __initconst = {
-+	.gate_clks		= imem_gate_clks,
-+	.nr_gate_clks		= ARRAY_SIZE(imem_gate_clks),
-+	.nr_clk_ids		= IMEM_NR_CLK,
-+	.clk_regs		= imem_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(imem_clk_regs),
-+	.clk_name		= "aclk_imem_200",
-+};
- 
- struct exynos5433_cmu_data {
- 	struct samsung_clk_reg_dump *clk_save;
-@@ -5654,6 +5683,9 @@ static const struct of_device_id exynos5433_cmu_of_match[] = {
- 	}, {
- 		.compatible = "samsung,exynos5433-cmu-mscl",
- 		.data = &mscl_cmu_info,
-+	}, {
-+		.compatible = "samsung,exynos5433-cmu-imem",
-+		.data = &imem_cmu_info,
- 	}, {
- 	},
- };
--- 
-2.20.0
+This is not the correct way to submit patches for inclusion in the
+stable kernel tree.  Please read:
+    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+for how to do this properly.
+
+</formletter>
