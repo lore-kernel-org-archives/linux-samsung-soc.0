@@ -1,59 +1,35 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] devfreq: Suspend all devices on system shutdown
-Date: Fri, 25 Jan 2019 14:54:03 +0100
-Message-ID: <20190125135403.10228-1-m.szyprowski@samsung.com>
-References: <CGME20190125135414eucas1p2ffc71c63f1a27f67d076dec889954b40@eucas1p2.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Luba <l.luba@partner.samsung.com>, Markus Reichl <m.reichl@fivetechno.de>
+From: Emil Velikov <emil.l.velikov@gmail.com>
+Subject: Re: [PATCH 26/26] drm/<drivers>: Don't set
+ FBINFO_(FLAG_)DEFAULT
+Date: Fri, 25 Jan 2019 15:02:46 +0000
+Message-ID: <CACvgo52YJ0kSBVJryELvZn70--4rbPr7R=TJdRgbVr1fEVr2yw@mail.gmail.com>
+References: <20190124165831.16427-1-daniel.vetter@ffwll.ch>
+ <20190124165831.16427-27-daniel.vetter@ffwll.ch>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <20190124165831.16427-27-daniel.vetter@ffwll.ch>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, ML nouveau <nouveau@lists.freedesktop.org>, Intel Graphics Development <intel-gfx@lists.freedesktop.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Sandy Huang <hjc@rock-chips.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Inki Dae <inki.dae@samsung.com>, linux-rockchip <linux-rockchip@lists.infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, DRI Development <dri-devel@lists.freedesktop.org>, Alexander Kapshuk <alexander.kapshuk@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-tegra@vger.kernel.org, Daniel Vetter <daniel.vetter@intel.com>, Ben Skeggs <bskeggs@redhat.com>, LAKML <linux-arm-kernel@lists.in>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This way devfreq core ensures that all its devices will be set to safe
-operation points before reboot operation. There are board on which some
-aggressive power saving operation points are behind the capabilities of
-the bootloader to properly reset the hardware and boot the board. This
-way one can avoid board crash early after reboot.
-
-Similar pattern is used in CPUfreq subsystem.
-
-Reported-by: Markus Reichl <m.reichl@fivetechno.de>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/devfreq/devfreq.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index 0ae3de76833b..f6aba8344c56 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -23,6 +23,7 @@
- #include <linux/devfreq.h>
- #include <linux/workqueue.h>
- #include <linux/platform_device.h>
-+#include <linux/syscore_ops.h>
- #include <linux/list.h>
- #include <linux/printk.h>
- #include <linux/hrtimer.h>
-@@ -1422,6 +1423,10 @@ static struct attribute *devfreq_attrs[] = {
- };
- ATTRIBUTE_GROUPS(devfreq);
- 
-+static struct syscore_ops devfreq_syscore_ops = {
-+	.shutdown = devfreq_suspend,
-+};
-+
- static int __init devfreq_init(void)
- {
- 	devfreq_class = class_create(THIS_MODULE, "devfreq");
-@@ -1438,6 +1443,8 @@ static int __init devfreq_init(void)
- 	}
- 	devfreq_class->dev_groups = devfreq_groups;
- 
-+	register_syscore_ops(&devfreq_syscore_ops);
-+
- 	return 0;
- }
- subsys_initcall(devfreq_init);
--- 
-2.17.1
+T24gVGh1LCAyNCBKYW4gMjAxOSBhdCAxNzowMCwgRGFuaWVsIFZldHRlciA8ZGFuaWVsLnZldHRl
+ckBmZndsbC5jaD4gd3JvdGU6Cj4KPiBJdCdzIDAuCj4KSSdkIGFkZCBhIGJpdCBtb3JlIGluZm9y
+bWF0aW9uIGhlcmUuIEZlZWwgZnJlZSB0byByZXVzZSBhcyBtdWNoL2xpdHRsZQpvZiB0aGUgZm9s
+bG93aW5nOgoKQm90aCBtYWNyb3MgZXZhbHVhdGUgdG8gMC4gQXQgdGhlIHNhbWUgdGltZSBmbGFn
+IGlzIGFscmVhZHkgc2V0IHRvCnplcm8gc2luY2UgdGhlIHN0cnVjdCBpcyBremFsbG9jJ2QgaW4g
+ZnJhbWVidWZmZXJfYWxsb2MoKS4KQXMgY2FsbGVkIGJ5IGRybV9mYl9oZWxwZXJfYWxsb2NfZmJp
+KCkgaW4gdGhlIERSTSBkcml2ZXJzLgoKCi1FbWlsCl9fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fCkludGVsLWdmeCBtYWlsaW5nIGxpc3QKSW50ZWwtZ2Z4QGxp
+c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2ludGVsLWdmeAo=
