@@ -1,75 +1,118 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] devfreq: Suspend all devices on system shutdown
-Date: Mon, 28 Jan 2019 10:17:17 +0900
-Message-ID: <9fbfc35c-9448-f1ae-6e47-7d5f6bba22de@samsung.com>
-References: <CGME20190125135414eucas1p2ffc71c63f1a27f67d076dec889954b40@eucas1p2.samsung.com>
-        <20190125135403.10228-1-m.szyprowski@samsung.com>
+From: Jisheng Zhang <Jisheng.Zhang-Gq53QDLGkWKakBO8gow8eQ@public.gmane.org>
+Subject: Re: [PATCH] arm64: dts: Remove inconsistent use of 'arm,armv8'
+ compatible string
+Date: Mon, 28 Jan 2019 02:41:11 +0000
+Message-ID: <20190128103443.2b765f30@xhacker.debian>
+References: <20190109202934.29304-1-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190125135403.10228-1-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <20190109202934.29304-1-robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Luba <l.luba@partner.samsung.com>, Markus Reichl <m.reichl@fivetechno.de>
+Content-ID: <351B42FC5B54A246AEE6DF57AF45078A-nA3rOoH6FIycE4WynfumptQqCkab/8FMAL8bYrjMMd8@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, "linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Manivannan Sadhasivam <manivannan.sadhasivam-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Gregory Clement <gregory.clement-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+On Wed, 9 Jan 2019 14:29:34 -0600
+Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
 
-On 19. 1. 25. 오후 10:54, Marek Szyprowski wrote:
-> This way devfreq core ensures that all its devices will be set to safe
-> operation points before reboot operation. There are board on which some
-> aggressive power saving operation points are behind the capabilities of
-> the bootloader to properly reset the hardware and boot the board. This
-> way one can avoid board crash early after reboot.
+> The 'arm,armv8' compatible string is only for software models. It adds
+> little value otherwise and is inconsistently used as a fallback on some
+> platforms. Remove it from those platforms.
 > 
-> Similar pattern is used in CPUfreq subsystem.
+> This fixes warnings generated by the DT schema.
 > 
-> Reported-by: Markus Reichl <m.reichl@fivetechno.de>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reported-by: Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+> Cc: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+> Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 > ---
->  drivers/devfreq/devfreq.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+> armsoc folks, Please apply directly.
 > 
-> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> index 0ae3de76833b..f6aba8344c56 100644
-> --- a/drivers/devfreq/devfreq.c
-> +++ b/drivers/devfreq/devfreq.c
-> @@ -23,6 +23,7 @@
->  #include <linux/devfreq.h>
->  #include <linux/workqueue.h>
->  #include <linux/platform_device.h>
-> +#include <linux/syscore_ops.h>
->  #include <linux/list.h>
->  #include <linux/printk.h>
->  #include <linux/hrtimer.h>
-> @@ -1422,6 +1423,10 @@ static struct attribute *devfreq_attrs[] = {
->  };
->  ATTRIBUTE_GROUPS(devfreq);
->  
-> +static struct syscore_ops devfreq_syscore_ops = {
-> +	.shutdown = devfreq_suspend,
-> +};
-> +
->  static int __init devfreq_init(void)
->  {
->  	devfreq_class = class_create(THIS_MODULE, "devfreq");
-> @@ -1438,6 +1443,8 @@ static int __init devfreq_init(void)
->  	}
->  	devfreq_class->dev_groups = devfreq_groups;
->  
-> +	register_syscore_ops(&devfreq_syscore_ops);
-> +
->  	return 0;
->  }
->  subsys_initcall(devfreq_init);
+> Note that there's still a case left in msm8998 that needs a new 
+> compatible string.
 > 
+> Rob
+> 
+>  arch/arm64/boot/dts/actions/s700.dtsi         |   8 +-
+>  arch/arm64/boot/dts/actions/s900.dtsi         |   8 +-
+>  arch/arm64/boot/dts/al/alpine-v2.dtsi         |   8 +-
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |   8 +-
+>  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi  |   8 +-
+>  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  |   8 +-
+>  .../boot/dts/altera/socfpga_stratix10.dtsi    |   8 +-
+>  arch/arm64/boot/dts/amlogic/meson-axg.dtsi    |   8 +-
+>  arch/arm64/boot/dts/amlogic/meson-g12a.dtsi   |   8 +-
+>  arch/arm64/boot/dts/amlogic/meson-gx.dtsi     |   8 +-
+>  arch/arm64/boot/dts/amlogic/meson-gxm.dtsi    |   8 +-
+>  arch/arm64/boot/dts/apm/apm-shadowcat.dtsi    |  16 +--
+>  arch/arm64/boot/dts/apm/apm-storm.dtsi        |  16 +--
+>  arch/arm64/boot/dts/arm/juno-r1.dts           |  12 +-
+>  arch/arm64/boot/dts/arm/juno-r2.dts           |  12 +-
+>  arch/arm64/boot/dts/arm/juno.dts              |  12 +-
+>  .../boot/dts/arm/vexpress-v2f-1xv7-ca53x2.dts |   4 +-
+>  .../boot/dts/broadcom/northstar2/ns2.dtsi     |   8 +-
+>  .../boot/dts/broadcom/stingray/stingray.dtsi  |  16 +--
+>  arch/arm64/boot/dts/cavium/thunder-88xx.dtsi  |  96 ++++++-------
+>  arch/arm64/boot/dts/cavium/thunder2-99xx.dtsi |   8 +-
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi    |  16 +--
+>  arch/arm64/boot/dts/exynos/exynos7.dtsi       |   8 +-
+>  arch/arm64/boot/dts/hisilicon/hi3660.dtsi     |  16 +--
+>  arch/arm64/boot/dts/hisilicon/hi3670.dtsi     |  16 +--
+>  arch/arm64/boot/dts/hisilicon/hi6220.dtsi     |  16 +--
+>  arch/arm64/boot/dts/hisilicon/hip05.dtsi      |  32 ++---
+>  arch/arm64/boot/dts/hisilicon/hip06.dtsi      |  32 ++---
+>  arch/arm64/boot/dts/hisilicon/hip07.dtsi      | 128 +++++++++---------
+>  arch/arm64/boot/dts/lg/lg1312.dtsi            |   8 +-
+>  arch/arm64/boot/dts/lg/lg1313.dtsi            |   8 +-
+>  arch/arm64/boot/dts/marvell/armada-372x.dtsi  |   2 +-
+>  arch/arm64/boot/dts/marvell/armada-37xx.dtsi  |   2 +-
+>  .../boot/dts/marvell/armada-ap806-dual.dtsi   |   4 +-
+>  .../boot/dts/marvell/armada-ap806-quad.dtsi   |   8 +-
+>  .../marvell/armada-ap810-ap0-octa-core.dtsi   |  16 +--
+>  arch/arm64/boot/dts/mediatek/mt7622.dtsi      |   4 +-
+>  arch/arm64/boot/dts/nvidia/tegra132.dtsi      |   4 +-
+>  arch/arm64/boot/dts/nvidia/tegra186.dtsi      |  12 +-
+>  arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  16 +--
+>  arch/arm64/boot/dts/qcom/ipq8074.dtsi         |   8 +-
+>  arch/arm64/boot/dts/qcom/msm8916.dtsi         |   8 +-
+>  arch/arm64/boot/dts/qcom/msm8992.dtsi         |   2 +-
+>  arch/arm64/boot/dts/qcom/msm8994.dtsi         |   2 +-
+>  arch/arm64/boot/dts/realtek/rtd1295.dtsi      |   8 +-
+>  arch/arm64/boot/dts/renesas/r8a774a1.dtsi     |  12 +-
+>  arch/arm64/boot/dts/renesas/r8a7795.dtsi      |  16 +--
+>  arch/arm64/boot/dts/renesas/r8a7796.dtsi      |  12 +-
+>  arch/arm64/boot/dts/renesas/r8a77965.dtsi     |   4 +-
+>  arch/arm64/boot/dts/renesas/r8a77970.dtsi     |   4 +-
+>  arch/arm64/boot/dts/renesas/r8a77980.dtsi     |   8 +-
+>  arch/arm64/boot/dts/renesas/r8a77990.dtsi     |   4 +-
+>  arch/arm64/boot/dts/renesas/r8a77995.dtsi     |   2 +-
+>  arch/arm64/boot/dts/rockchip/px30.dtsi        |   8 +-
+>  arch/arm64/boot/dts/rockchip/rk3328.dtsi      |   8 +-
+>  arch/arm64/boot/dts/rockchip/rk3368.dtsi      |  16 +--
+>  arch/arm64/boot/dts/rockchip/rk3399.dtsi      |  12 +-
+>  .../boot/dts/socionext/uniphier-ld11.dtsi     |   4 +-
+>  .../boot/dts/socionext/uniphier-ld20.dtsi     |   8 +-
+>  .../boot/dts/socionext/uniphier-pxs3.dtsi     |   8 +-
+>  arch/arm64/boot/dts/sprd/sc9836.dtsi          |   8 +-
+>  arch/arm64/boot/dts/sprd/sc9860.dtsi          |  16 +--
+>  arch/arm64/boot/dts/synaptics/as370.dtsi      |   8 +-
+>  arch/arm64/boot/dts/synaptics/berlin4ct.dtsi  |   8 +-
 
-Looks good to me.
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+For Synaptics SoC,
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Acked-by: Jisheng Zhang <Jisheng.Zhang-Gq53QDLGkWKakBO8gow8eQ@public.gmane.org>
+
+Sorry for being late,
+Jisheng
