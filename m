@@ -1,77 +1,55 @@
-From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH v2 3/8] clk: samsung: add BPLL rate table for Exynos 5422 SoC
-Date: Tue, 29 Jan 2019 18:55:09 +0100
-Message-ID: <1548784514-26649-4-git-send-email-l.luba@partner.samsung.com>
-References: <1548784514-26649-1-git-send-email-l.luba@partner.samsung.com>
- <CGME20190129175524eucas1p1ead98a852f002461984b9b99c5b5b7e4@eucas1p1.samsung.com>
+From: Dinh Nguyen <dinguyen-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] arm64: dts: Remove inconsistent use of 'arm,armv8'
+ compatible string
+Date: Tue, 29 Jan 2019 17:17:50 -0600
+Message-ID: <2053cd60-479a-4219-2415-ebb6a860a8e7@kernel.org>
+References: <20190109202934.29304-1-robh@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1548784514-26649-1-git-send-email-l.luba@partner.samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: b.zolnierkie@samsung.com, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, krzk@kernel.org, Lukasz Luba <l.luba@partner.samsung.com>, cw00.choi@samsung.com, kyungmin.park@samsung.com, kgene@kernel.org, myungjoo.ham@samsung.com, s.nawrocki@samsung.com, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <20190109202934.29304-1-robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Manivannan Sadhasivam <manivannan.sadhasivam-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Gregory Clement <gregory.clement-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, bcm-kernel-feedback-l
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add new table rate for BPLL for Exynos5422 SoC supporting Dynamic Memory
-Controller frequencies for driver's DRAM timings.
 
-CC: Sylwester Nawrocki <s.nawrocki@samsung.com>
-CC: Chanwoo Choi <cw00.choi@samsung.com>
-CC: Michael Turquette <mturquette@baylibre.com>
-CC: Stephen Boyd <sboyd@kernel.org>
-CC: Kukjin Kim <kgene@kernel.org>
-CC: Krzysztof Kozlowski <krzk@kernel.org>
-CC: linux-samsung-soc@vger.kernel.org
-CC: linux-clk@vger.kernel.org
-CC: linux-arm-kernel@lists.infradead.org
-CC: linux-kernel@vger.kernel.org
-Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
----
- drivers/clk/samsung/clk-exynos5420.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 3e87421..8bf9579 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -1325,6 +1325,19 @@ static const struct samsung_pll_rate_table exynos5420_pll2550x_24mhz_tbl[] __ini
- 	PLL_35XX_RATE(24 * MHZ, 200000000,  200, 3, 3),
- };
- 
-+static const struct samsung_pll_rate_table exynos5422_bpll_rate_table[] = {
-+	PLL_35XX_RATE(24 * MHZ, 933000000, 311, 4, 1),
-+	PLL_35XX_RATE(24 * MHZ, 825000000, 275, 4, 1),
-+	PLL_35XX_RATE(24 * MHZ, 728000000, 182, 3, 1),
-+	PLL_35XX_RATE(24 * MHZ, 633000000, 211, 4, 1),
-+	PLL_35XX_RATE(24 * MHZ, 543000000, 181, 2, 2),
-+	PLL_35XX_RATE(24 * MHZ, 413000000, 413, 6, 2),
-+	PLL_35XX_RATE(24 * MHZ, 275000000, 275, 3, 3),
-+	PLL_35XX_RATE(24 * MHZ, 206000000, 206, 3, 3),
-+	PLL_35XX_RATE(24 * MHZ, 165000000, 110, 2, 3),
-+	PLL_35XX_RATE(24 * MHZ, 138000000, 184, 2, 4),
-+};
-+
- static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
- 	PLL_36XX_RATE(24 * MHZ, 600000000U, 100, 2, 1, 0),
- 	PLL_36XX_RATE(24 * MHZ, 400000000U, 200, 3, 2, 0),
-@@ -1467,7 +1480,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
- 		exynos5x_plls[apll].rate_table = exynos5420_pll2550x_24mhz_tbl;
- 		exynos5x_plls[epll].rate_table = exynos5420_epll_24mhz_tbl;
- 		exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
--		exynos5x_plls[bpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
-+		exynos5x_plls[bpll].rate_table = exynos5422_bpll_rate_table;
- 	}
- 
- 	samsung_clk_register_pll(ctx, exynos5x_plls, ARRAY_SIZE(exynos5x_plls),
--- 
-2.7.4
+On 1/9/19 2:29 PM, Rob Herring wrote:
+> The 'arm,armv8' compatible string is only for software models. It adds
+> little value otherwise and is inconsistently used as a fallback on some
+> platforms. Remove it from those platforms.
+> 
+> This fixes warnings generated by the DT schema.
+> 
+> Reported-by: Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+> Cc: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+> Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> ---
+> armsoc folks, Please apply directly.
+> 
+> Note that there's still a case left in msm8998 that needs a new 
+> compatible string.
+> 
+> Rob
+> 
+
+>  .../boot/dts/altera/socfpga_stratix10.dtsi    |   8 +-
+
+For Stratix10:
+
+Acked-by: Dinh Nguyen <dinguyen-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+
+Thanks,
+Dinh
