@@ -1,65 +1,106 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3] pinctrl: samsung: Remove legacy API for handling external wakeup interrupts mask
-Date: Tue,  5 Feb 2019 20:59:09 +0100
-Message-ID: <20190205195909.3565-1-krzk@kernel.org>
+Subject: [BUG BISECT] NULL pointer after commit "ASoC: dapm: Only power up
+ active channels from a DAI"
+Date: Tue, 5 Feb 2019 22:16:22 +0100
+Message-ID: <20190205211622.GA5891@kozik-lap>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Sylwester Nawrocki <snawrocki@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Remove the legacy, ugly API of exposing the static value of external
-wakeup interrupts mask, because all arch-machine users where converted
-to use generic implementation from pinctrl driver.
+Hi,
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Sylwester Nawrocki <snawrocki@kernel.org>
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+Bisect pointed to commit:
+    commit 078a85f2806f0ffd11289009462a6a390f9adb5c
+    Author: Charles Keepax <ckeepax@opensource.cirrus.com>
+    Date:   Thu Jan 31 13:30:18 2019 +0000
+        ASoC: dapm: Only power up active channels from a DAI
 
----
+as a bad commit for NULL pointer on my Odroid XU3 and Odroid U3 board when
+doing "aplay /usr/share/sounds/alsa/Front_Right.wav".
 
-Dear Linus,
+1. Arch ARM Linux
+2. exynos_defconfig
+3. Odroid U3, XU3, Exynos SoC, ARMv7
 
-Could you apply this directly? It is an old cleanup patch, waiting for
-dependencies to get into mainline (v5.0-rc1).
+Last address is in calltrace:
+c079552c
+dapm_update_dai_unlocked
+sound/soc/soc-dapm.c:2586
 
-Changes since v3:
-1. Rebased on latest linux-next.
----
- drivers/pinctrl/samsung/pinctrl-exynos.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
+Full log:
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index f49ea3d92aa1..ebc27b06718c 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -325,13 +325,6 @@ int exynos_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
- 	return ret;
- }
- 
--static u32 exynos_eint_wake_mask = 0xffffffff;
--
--u32 exynos_get_eint_wake_mask(void)
--{
--	return exynos_eint_wake_mask;
--}
--
- static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
- {
- 	struct irq_chip *chip = irq_data_get_irq_chip(irqd);
-@@ -342,10 +335,9 @@ static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
- 	pr_info("wake %s for irq %d\n", on ? "enabled" : "disabled", irqd->irq);
- 
- 	if (!on)
--		exynos_eint_wake_mask |= bit;
-+		our_chip->eint_wake_mask_value |= bit;
- 	else
--		exynos_eint_wake_mask &= ~bit;
--	our_chip->eint_wake_mask_value = exynos_eint_wake_mask;
-+		our_chip->eint_wake_mask_value &= ~bit;
- 
- 	return 0;
- }
--- 
-2.17.1
+Unable to handle kernel NULL pointer dereference at virtual address 0000007c
+pgd = d5b32ef7
+[0000007c] *pgd=00000000
+Internal error: Oops: 5 [#1] PREEMPT SMP ARM
+Modules linked in: s5p_mfc s5p_jpeg exynos_gsc v4l2_mem2mem v4l2_common videobuf2_dma_contig videobuf2_memops videobuf2_v4l2 videobuf2_common videodev media s5p_cec
+CPU: 7 PID: 359 Comm: aplay Not tainted 5.0.0-rc4-00177-g078a85f2806f #32
+Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+PC is at dapm_update_dai_unlocked+0x38/0x138
+LR is at snd_soc_dapm_update_dai+0x34/0x4c
+pc : [<c079552c>]    lr : [<c0795660>]    psr: 60010013
+sp : eb9d9be8  ip : eabc8b64  fp : ecce0e10
+r10: c100b448  r9 : ecce0e0c  r8 : 00000000
+r7 : 00000000  r6 : 00000000  r5 : 00000002  r4 : ecce0800
+r3 : 00000000  r2 : eccaa080  r1 : ecdab000  r0 : 00000000
+Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+Control: 10c5387d  Table: 6c09806a  DAC: 00000051
+Process aplay (pid: 359, stack limit = 0x4ae0a814)
+Stack: (0xeb9d9be8 to 0xeb9da000)
+9be0:                   ecce0e0c c100b448 ecce0e10 ecce0800 ecd64400 ecdab000
+9c00: eccaa080 c0795660 ee3c480c ecd64400 ecce0800 ecdab000 00000000 c079d760
+9c20: eccaa080 ecce080c 00000000 00000001 00000000 00000000 00000000 00000000
+9c40: 00000000 00000000 00000000 00000004 00000000 00000000 00000000 00000000
+9c60: 00000000 00000000 00000000 00000001 00000000 00000000 00000000 00000000
+9c80: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+9ca0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+9cc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+9ce0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+9d00: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+9d20: 00000000 00000000 00000000 00000010 00000010 00000004 00000020 00000020
+9d40: 00000004 00000002 00000002 00000004 0000bb80 0000bb80 00000004 0001e848
+9d60: 0001e848 00000004 00001770 00001770 00000004 00005dc0 00005dc0 00000004
+9d80: 00000004 00000004 00000004 0007a120 0007a120 00000004 00005dc0 00005dc0
+9da0: 00000004 00017700 00017700 00000004 00000000 00000000 00000004 00000000
+9dc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+9de0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+9e00: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+9e20: 00000000 00000000 00000000 000fff07 00200103 00000010 0000bb80 00000001
+9e40: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+9e60: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+9e80: 00000000 8c6972bb ecdab000 ecd64400 ecdab000 00000000 c0b97b1c ebfe8000
+9ea0: 00000000 bea4eea0 b6effb88 c07825e4 c100b448 ecdab000 ecd64400 00000000
+9ec0: ecfdd180 ec1bde40 bea4eea0 c07836e0 eb9d9f78 00000000 00000000 00000001
+9ee0: 61746164 c0294d70 00000001 8c6972bb c100b448 bea4eea0 ecfdd180 c02a9bac
+9f00: bea4eea0 eb9d8000 ed4aafa8 c02a9244 eb9cbb80 c100b448 00000000 00000000
+9f20: 00000000 00000000 00000000 8c6972bb eb9d9fb0 ec6f11c0 eb9cbb80 00000002
+9f40: eb9cbb88 00000001 b6e85b6f 00000001 61746164 c0295028 00000000 00000000
+9f60: c100b448 8c6972bb 00000000 ecfdd180 ecfdd180 00000004 c25c4111 bea4eea0
+9f80: eb9d8000 00000036 b6effb88 c02a9bac 004cf1b8 bea4eea0 004cf208 00000036
+9fa0: c01011c4 c0101000 004cf1b8 bea4eea0 00000004 c25c4111 bea4eea0 00020001
+9fc0: 004cf1b8 bea4eea0 004cf208 00000036 bea4ee10 00000000 b6fb5900 b6effb88
+9fe0: b6f6c82c bea4edf4 b6efbfc4 b6e0bbdc 200d0010 00000004 00000000 00000000
+[<c079552c>] (dapm_update_dai_unlocked) from [<c0795660>] (snd_soc_dapm_update_dai+0x34/0x4c)
+[<c0795660>] (snd_soc_dapm_update_dai) from [<c079d760>] (soc_pcm_hw_params+0x22c/0x624)
+[<c079d760>] (soc_pcm_hw_params) from [<c07825e4>] (snd_pcm_hw_params+0x128/0x378)
+[<c07825e4>] (snd_pcm_hw_params) from [<c07836e0>] (snd_pcm_ioctl+0x26c/0x1258)
+[<c07836e0>] (snd_pcm_ioctl) from [<c02a9244>] (do_vfs_ioctl+0xb0/0x9e4)
+[<c02a9244>] (do_vfs_ioctl) from [<c02a9bac>] (ksys_ioctl+0x34/0x58)
+[<c02a9bac>] (ksys_ioctl) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
+Exception stack(0xeb9d9fa8 to 0xeb9d9ff0)
+9fa0:                   004cf1b8 bea4eea0 00000004 c25c4111 bea4eea0 00020001
+9fc0: 004cf1b8 bea4eea0 004cf208 00000036 bea4ee10 00000000 b6fb5900 b6effb88
+9fe0: b6f6c82c bea4edf4 b6efbfc4 b6e0bbdc
+Code: e3530000 e5926020 1a00003a e1a07006 (e5b7407c) 
+---[ end trace 8561600efcd2b2f1 ]---
+
+Let me know if you need any other data.
+
+
+Best regards,
+Krzysztof
