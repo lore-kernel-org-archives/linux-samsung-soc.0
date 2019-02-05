@@ -1,58 +1,65 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 1/3] arm64: dts: exynos: add SlimSSS for Exynos5433
-Date: Tue, 5 Feb 2019 12:23:30 +0100
-Message-ID: <CAJKOXPfm1L2FvcyhbfYEgv-04RQpVnARc0zXt6j_41nCzfE53Q@mail.gmail.com>
-References: <CGME20190124154538eucas1p2cdc2ce1eab4446e3ac139fd07d622ca7@eucas1p2.samsung.com>
- <20190124154521.13589-1-k.konieczny@partner.samsung.com> <20190124154521.13589-2-k.konieczny@partner.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH v3] pinctrl: samsung: Remove legacy API for handling external wakeup interrupts mask
+Date: Tue,  5 Feb 2019 20:59:09 +0100
+Message-ID: <20190205195909.3565-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190124154521.13589-2-k.konieczny@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Sylwester Nawrocki <snawrocki@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, 24 Jan 2019 at 16:45, Kamil Konieczny
-<k.konieczny@partner.samsung.com> wrote:
->
-> Add DT node for SlimSSS (aka Slim SecuritySubSystem) in Exynos5433 SoC.
-> The users can use compatibility "samsung,exynos5433-slim-sss".
->
-> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-> ---
->  arch/arm64/boot/dts/exynos/exynos5433.dtsi | 9 +++++++++
->  1 file changed, 9 insertions(+)
+Remove the legacy, ugly API of exposing the static value of external
+wakeup interrupts mask, because all arch-machine users where converted
+to use generic implementation from pinctrl driver.
 
-Before picking this up, bindings have to be accepted and I see
-discussion is still ongoing (no Ack from Rob yet). Anyway this depends
-on header file with clock ID, so it will have to wait for next cycle.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Sylwester Nawrocki <snawrocki@kernel.org>
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-I will pick it up for v5.2, after v5.1 merge window.
+---
 
-Best regards,
-Krzysztof
->
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> index e7cd3b67d818..9e5fcb6c7776 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> @@ -559,6 +559,15 @@
->                                 <&cmu_top CLK_DIV_ACLK_IMEM_200>;
->                 };
->
-> +               slim_sss: slim-sss@11140000 {
-> +                       compatible = "samsung,exynos5433-slim-sss";
-> +                       reg = <0x11140000 0x1000>;
-> +                       interrupts = <GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clock-names = "aclk", "pclk";
-> +                       clocks = <&cmu_imem CLK_ACLK_SLIMSSS>,
-> +                                <&cmu_imem CLK_PCLK_SLIMSSS>;
-> +               };
-> +
->                 pd_gscl: power-domain@105c4000 {
->                         compatible = "samsung,exynos5433-pd";
->                         reg = <0x105c4000 0x20>;
-> --
-> 2.20.0
->
+Dear Linus,
+
+Could you apply this directly? It is an old cleanup patch, waiting for
+dependencies to get into mainline (v5.0-rc1).
+
+Changes since v3:
+1. Rebased on latest linux-next.
+---
+ drivers/pinctrl/samsung/pinctrl-exynos.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+index f49ea3d92aa1..ebc27b06718c 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -325,13 +325,6 @@ int exynos_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
+ 	return ret;
+ }
+ 
+-static u32 exynos_eint_wake_mask = 0xffffffff;
+-
+-u32 exynos_get_eint_wake_mask(void)
+-{
+-	return exynos_eint_wake_mask;
+-}
+-
+ static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
+ {
+ 	struct irq_chip *chip = irq_data_get_irq_chip(irqd);
+@@ -342,10 +335,9 @@ static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
+ 	pr_info("wake %s for irq %d\n", on ? "enabled" : "disabled", irqd->irq);
+ 
+ 	if (!on)
+-		exynos_eint_wake_mask |= bit;
++		our_chip->eint_wake_mask_value |= bit;
+ 	else
+-		exynos_eint_wake_mask &= ~bit;
+-	our_chip->eint_wake_mask_value = exynos_eint_wake_mask;
++		our_chip->eint_wake_mask_value &= ~bit;
+ 
+ 	return 0;
+ }
+-- 
+2.17.1
