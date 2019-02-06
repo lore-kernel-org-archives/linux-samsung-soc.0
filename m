@@ -1,221 +1,101 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ASoC: dapm: Check for NULL widget in dapm_update_dai_unlocked
-Date: Wed, 6 Feb 2019 11:22:33 +0100
-Message-ID: <CAJKOXPejBO_9iBHg1R8M2=tcuTck72DjxTYEUyQOp8cPV-0xTg@mail.gmail.com>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+Subject: Re: [PATCH] ASoC: dapm: Check for NULL widget in
+ dapm_update_dai_unlocked
+Date: Wed, 6 Feb 2019 10:59:55 +0000
+Message-ID: <20190206105955.GP3837@imbe.wolfsonmicro.main>
 References: <CGME20190205211638epcas3p409823d4acac8073473153d745151ea5f@epcas3p4.samsung.com>
- <20190205211622.GA5891@kozik-lap> <844c3f34-f7db-6b26-169a-994922367c78@samsung.com>
+ <20190205211622.GA5891@kozik-lap>
+ <844c3f34-f7db-6b26-169a-994922367c78@samsung.com>
  <20190206100549.GO3837@imbe.wolfsonmicro.main>
+ <CAJKOXPejBO_9iBHg1R8M2=tcuTck72DjxTYEUyQOp8cPV-0xTg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190206100549.GO3837@imbe.wolfsonmicro.main>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+Content-Disposition: inline
+In-Reply-To: <CAJKOXPejBO_9iBHg1R8M2=tcuTck72DjxTYEUyQOp8cPV-0xTg@mail.gmail.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: alsa-devel@alsa-project.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, 6 Feb 2019 at 11:05, Charles Keepax
-<ckeepax@opensource.cirrus.com> wrote:
->
-> DAIs linked to the dummy will not have an associated playback/capture
-> widget, so we need to skip the update in that case.
->
-> Fixes: 078a85f2806f ("ASoC: dapm: Only power up active channels from a DAI")
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> ---
->
-> Ok so that all makes sense, this patch is probably the best fix?
->
-> Thanks,
-> Charles
+On Wed, Feb 06, 2019 at 11:22:33AM +0100, Krzysztof Kozlowski wrote:
+> On Wed, 6 Feb 2019 at 11:05, Charles Keepax
+> <ckeepax@opensource.cirrus.com> wrote:
+> >
+> > DAIs linked to the dummy will not have an associated playback/capture
+> > widget, so we need to skip the update in that case.
+> >
+> > Fixes: 078a85f2806f ("ASoC: dapm: Only power up active channels from a DAI")
+> > Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> > ---
+> >
+> > Ok so that all makes sense, this patch is probably the best fix?
+> >
+> > Thanks,
+> > Charles
+> 
+> For this particular issue (NULL-pointer):
+> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> However now I see bug sleeping in atomic context:
+> 
+> [   64.000828] BUG: sleeping function called from invalid context at
+> ../kernel/locking/mutex.c:908
 
-For this particular issue (NULL-pointer):
-Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
-Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
+Does this probably definitely get fixed by reverting my patch?
+It's just a bit odd as this seems to be complaining about a clock
+operation in i2s_trigger and I don't think my patch should have
+any affect on the trigger callback. It should get run from either
+the dai_link DAPM event or hw_params, neither of which should
+happen in an atomic context.
 
-However now I see bug sleeping in atomic context:
+> [   64.307534] the existing dependency chain (in reverse order) is:
+> [   64.314985]
+> [   64.314985] -> #1 (&(&pri_dai->spinlock)->rlock){....}:
+> [   64.321667]        clk_mux_set_parent+0x34/0xb8
+> [   64.326162]        clk_core_set_parent_nolock+0x21c/0x54c
+> [   64.331535]        clk_set_parent+0x38/0x6c
+> [   64.335696]        of_clk_set_defaults+0x11c/0x384
+> [   64.340460]        of_clk_add_provider+0x8c/0xc8
+> [   64.345054]        samsung_i2s_probe+0x484/0x64c
+> [   64.349651]        platform_drv_probe+0x6c/0xa4
+> [   64.354153]        really_probe+0x280/0x414
+> [   64.358311]        driver_probe_device+0x78/0x1c4
+> [   64.362991]        bus_for_each_drv+0x74/0xb8
+> [   64.367323]        __device_attach+0xd4/0x16c
+> [   64.371655]        bus_probe_device+0x88/0x90
+> [   64.375988]        deferred_probe_work_func+0x4c/0xd0
+> [   64.381017]        process_one_work+0x228/0x810
+> [   64.385520]        worker_thread+0x30/0x570
+> [   64.389681]        kthread+0x134/0x164
+> [   64.393405]        ret_from_fork+0x14/0x20
+> [   64.397477]          (null)
+> [   64.400249]
+> [   64.400249] -> #0 (prepare_lock){+.+.}:
+> [   64.405539]        __mutex_lock+0x7c/0xa98
+> [   64.409610]        mutex_lock_nested+0x1c/0x24
+> [   64.414029]        clk_prepare_lock+0x50/0xf8
+> [   64.418362]        clk_core_get_rate+0xc/0x60
+> [   64.422695]        i2s_trigger+0x444/0x6c8
+> [   64.426768]        soc_pcm_trigger+0x100/0x140
+> [   64.431188]        snd_pcm_action_single+0x38/0x80
+> [   64.435953]        snd_pcm_action+0x54/0x5c
+> [   64.440112]        snd_pcm_action_lock_irq+0x28/0x3c
+> [   64.445052]        snd_pcm_ioctl+0x920/0x123c
+> [   64.449386]        do_vfs_ioctl+0xb0/0x9f8
+> [   64.453457]        ksys_ioctl+0x34/0x5c
+> [   64.457269]        ret_fast_syscall+0x0/0x28
+> [   64.461516]        0xbe8db8ec
 
-[   64.000828] BUG: sleeping function called from invalid context at
-../kernel/locking/mutex.c:908
-[   64.008483] in_atomic(): 1, irqs_disabled(): 128, pid: 353, name: aplay
-[   64.014978] 2 locks held by aplay/353:
-[   64.018671]  #0: 1fb9b63d (&(&group->lock)->rlock){....}, at:
-snd_pcm_action_lock_irq+0x18/0x3c
-[   64.027337]  #1: 8b42bfe8 (&(&pri_dai->spinlock)->rlock){....}, at:
-i2s_trigger+0x130/0x6c8
-[   64.035654] irq event stamp: 8754
-[   64.038925] hardirqs last  enabled at (8753): [<c0a78758>]
-_raw_spin_unlock_irq+0x24/0x5c
-[   64.047094] hardirqs last disabled at (8754): [<c0a785a0>]
-_raw_spin_lock_irq+0x18/0x50
-[   64.055068] softirqs last  enabled at (8096): [<c0102698>]
-__do_softirq+0x4f0/0x5e4
-[   64.062680] softirqs last disabled at (8083): [<c012ee94>]
-irq_exit+0x160/0x16c
-[   64.069953] Preemption disabled at:
-[   64.069956] [<00000000>]   (null)
-[   64.076700] CPU: 6 PID: 353 Comm: aplay Not tainted
-5.0.0-rc5-next-20190206-00001-g101ffa564f78 #348
-[   64.085822] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-[   64.091882] [<c0112318>] (unwind_backtrace) from [<c010df2c>]
-(show_stack+0x10/0x14)
-[   64.099601] [<c010df2c>] (show_stack) from [<c0a5626c>]
-(dump_stack+0x98/0xc4)
-[   64.106788] [<c0a5626c>] (dump_stack) from [<c0156ac8>]
-(___might_sleep+0x264/0x2cc)
-[   64.114501] [<c0156ac8>] (___might_sleep) from [<c0a732b4>]
-(__mutex_lock+0x40/0xa98)
-[   64.122300] [<c0a732b4>] (__mutex_lock) from [<c0a73d28>]
-(mutex_lock_nested+0x1c/0x24)
-[   64.130275] [<c0a73d28>] (mutex_lock_nested) from [<c04c2838>]
-(clk_prepare_lock+0x50/0xf8)
-[   64.138596] [<c04c2838>] (clk_prepare_lock) from [<c04c5f48>]
-(clk_core_get_rate+0xc/0x60)
-[   64.146824] [<c04c5f48>] (clk_core_get_rate) from [<c07b419c>]
-(i2s_trigger+0x444/0x6c8)
-[   64.154883] [<c07b419c>] (i2s_trigger) from [<c079cba0>]
-(soc_pcm_trigger+0x100/0x140)
-[   64.162768] [<c079cba0>] (soc_pcm_trigger) from [<c07839c0>]
-(snd_pcm_action_single+0x38/0x80)
-[   64.171349] [<c07839c0>] (snd_pcm_action_single) from [<c0783a5c>]
-(snd_pcm_action+0x54/0x5c)
-[   64.179841] [<c0783a5c>] (snd_pcm_action) from [<c0783bd4>]
-(snd_pcm_action_lock_irq+0x28/0x3c)
-[   64.188508] [<c0783bd4>] (snd_pcm_action_lock_irq) from
-[<c07860b0>] (snd_pcm_ioctl+0x920/0x123c)
-[   64.197350] [<c07860b0>] (snd_pcm_ioctl) from [<c02aa6d4>]
-(do_vfs_ioctl+0xb0/0x9f8)
-[   64.205054] [<c02aa6d4>] (do_vfs_ioctl) from [<c02ab050>]
-(ksys_ioctl+0x34/0x5c)
-[   64.212418] [<c02ab050>] (ksys_ioctl) from [<c0101000>]
-(ret_fast_syscall+0x0/0x28)
-[   64.220045] Exception stack(0xe69dffa8 to 0xe69dfff0)
-[   64.225058] ffa0:                   004391b8 00001770 00000004
-00004142 00439340 00439340
-[   64.233218] ffc0: 004391b8 00001770 00001770 00000036 00001770
-00000000 00000000 be8db940
-[   64.241361] ffe0: b6fa382c be8db8ec b6f32a3c b6e42bdc
-[   64.246386]
-[   64.247823] ======================================================
-[   64.253979] WARNING: possible circular locking dependency detected
-[   64.260133] 5.0.0-rc5-next-20190206-00001-g101ffa564f78 #348
-Tainted: G        W
-[   64.268193] ------------------------------------------------------
-[   64.274342] aplay/353 is trying to acquire lock:
-[   64.278937] 51044846 (prepare_lock){+.+.}, at: clk_prepare_lock+0x50/0xf8
-[   64.285694]
-[   64.285694] but task is already holding lock:
-[   64.291500] 8b42bfe8 (&(&pri_dai->spinlock)->rlock){....}, at:
-i2s_trigger+0x130/0x6c8
-[   64.299387]
-[   64.299387] which lock already depends on the new lock.
-[   64.299387]
-[   64.307534]
-[   64.307534] the existing dependency chain (in reverse order) is:
-[   64.314985]
-[   64.314985] -> #1 (&(&pri_dai->spinlock)->rlock){....}:
-[   64.321667]        clk_mux_set_parent+0x34/0xb8
-[   64.326162]        clk_core_set_parent_nolock+0x21c/0x54c
-[   64.331535]        clk_set_parent+0x38/0x6c
-[   64.335696]        of_clk_set_defaults+0x11c/0x384
-[   64.340460]        of_clk_add_provider+0x8c/0xc8
-[   64.345054]        samsung_i2s_probe+0x484/0x64c
-[   64.349651]        platform_drv_probe+0x6c/0xa4
-[   64.354153]        really_probe+0x280/0x414
-[   64.358311]        driver_probe_device+0x78/0x1c4
-[   64.362991]        bus_for_each_drv+0x74/0xb8
-[   64.367323]        __device_attach+0xd4/0x16c
-[   64.371655]        bus_probe_device+0x88/0x90
-[   64.375988]        deferred_probe_work_func+0x4c/0xd0
-[   64.381017]        process_one_work+0x228/0x810
-[   64.385520]        worker_thread+0x30/0x570
-[   64.389681]        kthread+0x134/0x164
-[   64.393405]        ret_from_fork+0x14/0x20
-[   64.397477]          (null)
-[   64.400249]
-[   64.400249] -> #0 (prepare_lock){+.+.}:
-[   64.405539]        __mutex_lock+0x7c/0xa98
-[   64.409610]        mutex_lock_nested+0x1c/0x24
-[   64.414029]        clk_prepare_lock+0x50/0xf8
-[   64.418362]        clk_core_get_rate+0xc/0x60
-[   64.422695]        i2s_trigger+0x444/0x6c8
-[   64.426768]        soc_pcm_trigger+0x100/0x140
-[   64.431188]        snd_pcm_action_single+0x38/0x80
-[   64.435953]        snd_pcm_action+0x54/0x5c
-[   64.440112]        snd_pcm_action_lock_irq+0x28/0x3c
-[   64.445052]        snd_pcm_ioctl+0x920/0x123c
-[   64.449386]        do_vfs_ioctl+0xb0/0x9f8
-[   64.453457]        ksys_ioctl+0x34/0x5c
-[   64.457269]        ret_fast_syscall+0x0/0x28
-[   64.461516]        0xbe8db8ec
-[   64.464460]
-[   64.464460] other info that might help us debug this:
-[   64.464460]
-[   64.472438]  Possible unsafe locking scenario:
-[   64.472438]
-[   64.478327]        CPU0                    CPU1
-[   64.482831]        ----                    ----
-[   64.487336]   lock(&(&pri_dai->spinlock)->rlock);
-[   64.492017]                                lock(prepare_lock);
-[   64.497823]
-lock(&(&pri_dai->spinlock)->rlock);
-[   64.505017]   lock(prepare_lock);
-[   64.508306]
-[   64.508306]  *** DEADLOCK ***
-[   64.508306]
-[   64.514203] 2 locks held by aplay/353:
-[   64.517935]  #0: 1fb9b63d (&(&group->lock)->rlock){....}, at:
-snd_pcm_action_lock_irq+0x18/0x3c
-[   64.526596]  #1: 8b42bfe8 (&(&pri_dai->spinlock)->rlock){....}, at:
-i2s_trigger+0x130/0x6c8
-[   64.534915]
-[   64.534915] stack backtrace:
-[   64.539246] CPU: 6 PID: 353 Comm: aplay Tainted: G        W
-5.0.0-rc5-next-20190206-00001-g101ffa564f78 #348
-[   64.549734] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-[   64.555802] [<c0112318>] (unwind_backtrace) from [<c010df2c>]
-(show_stack+0x10/0x14)
-[   64.563515] [<c010df2c>] (show_stack) from [<c0a5626c>]
-(dump_stack+0x98/0xc4)
-[   64.570708] [<c0a5626c>] (dump_stack) from [<c01846b0>]
-(print_circular_bug+0x210/0x334)
-[   64.578765] [<c01846b0>] (print_circular_bug) from [<c01874ec>]
-(__lock_acquire+0x12cc/0x1a5c)
-[   64.587344] [<c01874ec>] (__lock_acquire) from [<c01886d8>]
-(lock_acquire+0xe0/0x268)
-[   64.595142] [<c01886d8>] (lock_acquire) from [<c0a732f0>]
-(__mutex_lock+0x7c/0xa98)
-[   64.602768] [<c0a732f0>] (__mutex_lock) from [<c0a73d28>]
-(mutex_lock_nested+0x1c/0x24)
-[   64.610740] [<c0a73d28>] (mutex_lock_nested) from [<c04c2838>]
-(clk_prepare_lock+0x50/0xf8)
-[   64.619059] [<c04c2838>] (clk_prepare_lock) from [<c04c5f48>]
-(clk_core_get_rate+0xc/0x60)
-[   64.627291] [<c04c5f48>] (clk_core_get_rate) from [<c07b419c>]
-(i2s_trigger+0x444/0x6c8)
-[   64.635349] [<c07b419c>] (i2s_trigger) from [<c079cba0>]
-(soc_pcm_trigger+0x100/0x140)
-[   64.643235] [<c079cba0>] (soc_pcm_trigger) from [<c07839c0>]
-(snd_pcm_action_single+0x38/0x80)
-[   64.651815] [<c07839c0>] (snd_pcm_action_single) from [<c0783a5c>]
-(snd_pcm_action+0x54/0x5c)
-[   64.660306] [<c0783a5c>] (snd_pcm_action) from [<c0783bd4>]
-(snd_pcm_action_lock_irq+0x28/0x3c)
-[   64.668972] [<c0783bd4>] (snd_pcm_action_lock_irq) from
-[<c07860b0>] (snd_pcm_ioctl+0x920/0x123c)
-[   64.677811] [<c07860b0>] (snd_pcm_ioctl) from [<c02aa6d4>]
-(do_vfs_ioctl+0xb0/0x9f8)
-[   64.685522] [<c02aa6d4>] (do_vfs_ioctl) from [<c02ab050>]
-(ksys_ioctl+0x34/0x5c)
-[   64.692887] [<c02ab050>] (ksys_ioctl) from [<c0101000>]
-(ret_fast_syscall+0x0/0x28)
-[   64.700510] Exception stack(0xe69dffa8 to 0xe69dfff0)
-[   64.705536] ffa0:                   004391b8 00001770 00000004
-00004142 00439340 00439340
-[   64.713684] ffc0: 004391b8 00001770 00001770 00000036 00001770
-00000000 00000000 be8db940
-[   64.721828] ffe0: b6fa382c be8db8ec b6f32a3c b6e42bdc
-
-
-Best regards,
-Krzysztof
+Thanks,
+Charles
