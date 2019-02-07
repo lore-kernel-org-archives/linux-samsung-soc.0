@@ -1,54 +1,117 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [GIT PULL] exynos-drm-next
-Date: Thu, 7 Feb 2019 20:31:37 +0900
-Message-ID: <079a9586-9d85-7d38-2658-ce312b6d71e8@samsung.com>
-References: <CGME20190207113137epcas1p44bf0105c4de7200eacb9e069ae28f1fd@epcas1p4.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: David Airlie <airlied@linux.ie>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 0/2] cpufreq/opp: rework regulator initialization
+Date: Thu, 07 Feb 2019 13:22:25 +0100
+Message-ID: <20190207122227.19873-1-m.szyprowski@samsung.com>
+References: <CGME20190207122255eucas1p1cdebed838c799eca46cce6a654a26187@eucas1p1.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Dave Gerlach <d-gerlach@ti.com>, Wolfram Sang <wsa@the-dreams.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgRGF2ZSwKCiAgIEp1c3QgYWRkaW5nIHM1cHYyMTAgU29DIHN1cHBvcnQgb2Ygcm90YXRvciBt
-b2R1bGUgYW5kIGNoYW5naW5nCiAgIGVtYWlsIGFkZHJlc3Mgb2Ygc2NhbGVyIG1vZHVsZSBhdXRo
-b3IuCgogICBQbGVhc2Uga2luZGx5IGxldCBtZSBrbm93IGlmIHRoZXJlIGlzIGFueSBwcm9ibGVt
-LgoKVGhhbmtzLApJbmtpIERhZQoKVGhlIGZvbGxvd2luZyBjaGFuZ2VzIHNpbmNlIGNvbW1pdCAy
-Y2MzYjgxZGZhN2Y3ZGUwZDY0N2U3ZjE0NzNkZTgxMWVlZjhiMGRlOgoKICBNZXJnZSB0YWcgJ2Ry
-bS1pbnRlbC1uZXh0LTIwMTktMDItMDInIG9mIGdpdDovL2Fub25naXQuZnJlZWRlc2t0b3Aub3Jn
-L2RybS9kcm0taW50ZWwgaW50byBkcm0tbmV4dCAoMjAxOS0wMi0wNCAxNTozNzo1OCArMTAwMCkK
-CmFyZSBhdmFpbGFibGUgaW4gdGhlIGdpdCByZXBvc2l0b3J5IGF0OgoKICBnaXQ6Ly9naXQua2Vy
-bmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvZGFlaW5raS9kcm0tZXh5bm9zIHRhZ3Mv
-ZXh5bm9zLWRybS1uZXh0LWZvci12NS4xCgpmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8g
-OWMwYzQ5OTdiOGE4MGVjNGJhNzdjNGViZTNlNzRlYzBkYjJkNTQ3ZDoKCiAgZHJtL2V4eW5vczog
-Q2hhbmdlIEFuZHJ6ZWogUGlldHJhc2lld2ljeidzIGUtbWFpbCBhZGRyZXNzICgyMDE5LTAyLTA3
-IDE5OjU5OjQ0ICswOTAwKQoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQotIEFkZCByb3RhdG9yIHN1cHBvcnQgZm9yIHM1cHYy
-MTAKICAuIFdpdGggdGhpcyBwYXRjaCBzZXJpZXMsIHM1cHYyMTAgU29DIGNhbiB1c2Ugcm90YXRv
-ciBtb2R1bGUgYnV0CiAgICBvbmx5IE5WMTIgYW5kIFhSR0I4ODg4IGZvcm1hdHMgYXJlIHN1cHBv
-cnRlZC4KLSBNb2RpZnkgZS1tYWlsIGFkZHJlc3MKICAuIEl0IGNoYW5nZXMgZW1haWwgYWRkcmVz
-cyBvZiBzY2FsZXIgbW9kdWxlIGF1dGhvci4KCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQW5kcnplaiBQaWV0cmFzaWV3aWN6
-ICgxKToKICAgICAgZHJtL2V4eW5vczogQ2hhbmdlIEFuZHJ6ZWogUGlldHJhc2lld2ljeidzIGUt
-bWFpbCBhZGRyZXNzCgpQYXdlxYIgQ2htaWVsICgyKToKICAgICAgZHJtL2V4eW5vczogcm90YXRv
-cjogQWRkIHN1cHBvcnQgZm9yIHM1cHYyMTAKICAgICAgZHQtYmluZGluZ3M6IGdwdTogc2Ftc3Vu
-Zy1yb3RhdG9yOiBEb2N1bWVudCBzNXB2MjEwIHN1cHBvcnQKCiAuLi4vZGV2aWNldHJlZS9iaW5k
-aW5ncy9ncHUvc2Ftc3VuZy1yb3RhdG9yLnR4dCAgICB8ICA3ICsrKystLS0KIGRyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RybV9yb3RhdG9yLmMgICAgICAgIHwgMjMgKysrKysrKysrKysr
-KysrKysrKysrKwogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3NjYWxlci5jICAg
-ICAgICAgfCAgMiArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLXNjYWxlci5oICAgICAg
-ICAgICAgICAgfCAgMiArLQogNCBmaWxlcyBjaGFuZ2VkLCAyOSBpbnNlcnRpb25zKCspLCA1IGRl
-bGV0aW9ucygtKQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
-aHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Dear All,
+
+Recent commit 9ac6cb5fbb17 ("i2c: add suspended flag and accessors for
+i2c adapters") added a visible warning for an attempt to do i2c transfer
+over a suspended i2c bus. This revealed a long standing issue in the
+cpufreq-dt driver, which gives a following warning during system
+suspend/resume cycle:
+
+--->8---
+Enabling non-boot CPUs ...
+CPU1 is up
+CPU2 is up
+CPU3 is up
+------------[ cut here ]------------
+WARNING: CPU: 4 PID: 29 at drivers/i2c/i2c-core-base.c:1869 __i2c_transfer+0x6f8/0xa50
+Modules linked in:
+CPU: 4 PID: 29 Comm: cpuhp/4 Tainted: G        W         5.0.0-rc4-next-20190131-00024-g54b06b29cc65 #5324
+Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[<c01110e8>] (unwind_backtrace) from [<c010d11c>] (show_stack+0x10/0x14)
+[<c010d11c>] (show_stack) from [<c09a2584>] (dump_stack+0x90/0xc8)
+[<c09a2584>] (dump_stack) from [<c0120bd0>] (__warn+0xf8/0x124)
+[<c0120bd0>] (__warn) from [<c0120c3c>] (warn_slowpath_null+0x40/0x48)
+[<c0120c3c>] (warn_slowpath_null) from [<c065cda0>] (__i2c_transfer+0x6f8/0xa50)
+[<c065cda0>] (__i2c_transfer) from [<c065d168>] (i2c_transfer+0x70/0xe4)
+[<c065d168>] (i2c_transfer) from [<c053ce4c>] (regmap_i2c_read+0x48/0x64)
+[<c053ce4c>] (regmap_i2c_read) from [<c0536f1c>] (_regmap_raw_read+0xf8/0x450)
+[<c0536f1c>] (_regmap_raw_read) from [<c053772c>] (_regmap_bus_read+0x38/0x68)
+[<c053772c>] (_regmap_bus_read) from [<c05365a0>] (_regmap_read+0x60/0x250)
+[<c05365a0>] (_regmap_read) from [<c05367cc>] (regmap_read+0x3c/0x5c)
+[<c05367cc>] (regmap_read) from [<c047cfc0>] (regulator_is_enabled_regmap+0x20/0x90)
+[<c047cfc0>] (regulator_is_enabled_regmap) from [<c0477660>] (_regulator_is_enabled+0x34/0x40)
+[<c0477660>] (_regulator_is_enabled) from [<c0478674>] (create_regulator+0x1a4/0x25c)
+[<c0478674>] (create_regulator) from [<c047c818>] (_regulator_get+0xe4/0x278)
+[<c047c818>] (_regulator_get) from [<c068f1dc>] (dev_pm_opp_set_regulators+0xa0/0x1c0)
+[<c068f1dc>] (dev_pm_opp_set_regulators) from [<c0698cc8>] (cpufreq_init+0x98/0x2d0)
+[<c0698cc8>] (cpufreq_init) from [<c06959e4>] (cpufreq_online+0xc8/0x71c)
+[<c06959e4>] (cpufreq_online) from [<c06960fc>] (cpuhp_cpufreq_online+0x8/0x10)
+[<c06960fc>] (cpuhp_cpufreq_online) from [<c01213d4>] (cpuhp_invoke_callback+0xf4/0xebc)
+[<c01213d4>] (cpuhp_invoke_callback) from [<c0122e4c>] (cpuhp_thread_fun+0x1d8/0x320)
+[<c0122e4c>] (cpuhp_thread_fun) from [<c0149858>] (smpboot_thread_fn+0x194/0x340)
+[<c0149858>] (smpboot_thread_fn) from [<c014573c>] (kthread+0x124/0x160)
+[<c014573c>] (kthread) from [<c01010b4>] (ret_from_fork+0x14/0x20)
+Exception stack(0xe897dfb0 to 0xe897dff8)
+dfa0:                                     00000000 00000000 00000000 00000000
+dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
+irq event stamp: 3865
+hardirqs last  enabled at (3873): [<c0186dec>] vprintk_emit+0x228/0x2a4
+hardirqs last disabled at (3880): [<c0186cf0>] vprintk_emit+0x12c/0x2a4
+softirqs last  enabled at (3052): [<c0102564>] __do_softirq+0x3a4/0x66c
+softirqs last disabled at (3043): [<c0128464>] irq_exit+0x140/0x168
+---[ end trace db48b455d924fec2 ]---
+CPU4 is up
+CPU5 is up
+CPU6 is up
+CPU7 is up
+--->8---
+
+This is a scenario that triggers the above issue:
+
+1. system disables non-boot cpu's at the end of system suspend procedure,
+2. this in turn deinitializes cpufreq drivers for the disabled cpus,
+3. early in the system resume procedure all cpus are got back to online
+   state,
+4. this in turn causes cpufreq to be initialized for the newly onlined
+   cpus,
+5. cpufreq-dt acquires all its resources (clocks, regulators) during
+   ->init() callback,
+6. getting regulator require to check its state, what in turn requires
+   i2c transfer,
+7. during system early resume stage this is not really possible.
+
+The issue is caused by cpufreq-dt driver not keeping its resources for
+the whole driver lifetime and relying that they can be always acquired
+at any system context. This problem has been observed on Samsung
+Exynos based Odroid XU3/XU4 boards, but it happens on all boards, which
+have separate regulators for different CPU clusters.
+
+To fix this issue I've rewritten resources (clock and regulators)
+handling in cpufreq-dt driver. Now the driver gathers them in its
+->probe() and keeps using them until the ->remove() happens. This
+required also some rework in common opp regulators handling code.
+Namely, regulators are no longer assigned by name, instead the caller
+has to pass proper regulator object. The side-effect of this work
+is also a removal of the FIXME item and correct handling of deferred
+probe caused by lack of non-CPU0 regulator.
+
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+
+
+Patch summary:
+
+Marek Szyprowski (2):
+  cpufreq: dt/ti/opp: move regulators initialization to the drivers
+  cpufreq: dt: rework resources initialization
+
+ drivers/cpufreq/cpufreq-dt.c | 127 +++++++++++++++--------------------
+ drivers/cpufreq/ti-cpufreq.c |  42 ++++++++++--
+ drivers/opp/core.c           |  40 ++---------
+ include/linux/pm_opp.h       |   2 +-
+ 4 files changed, 96 insertions(+), 115 deletions(-)
+
+-- 
+2.17.1
