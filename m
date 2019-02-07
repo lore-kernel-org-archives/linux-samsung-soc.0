@@ -1,63 +1,54 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] ASoC: dapm: Check for NULL widget in
- dapm_update_dai_unlocked
-Date: Wed, 06 Feb 2019 16:47:22 +0100
-Message-ID: <b61f2293-6f48-45f3-ad0b-42bc2a214a76@samsung.com>
-References: <CGME20190205211638epcas3p409823d4acac8073473153d745151ea5f@epcas3p4.samsung.com>
-        <20190205211622.GA5891@kozik-lap>
-        <844c3f34-f7db-6b26-169a-994922367c78@samsung.com>
-        <20190206100549.GO3837@imbe.wolfsonmicro.main>
-        <CAJKOXPejBO_9iBHg1R8M2=tcuTck72DjxTYEUyQOp8cPV-0xTg@mail.gmail.com>
-        <20190206105955.GP3837@imbe.wolfsonmicro.main>
-        <CAJKOXPcQfsNnuns1BprEPy4=ggW7fU+_-O_VksrWuT4GPPgAwg@mail.gmail.com>
-        <20190206114545.GR3837@imbe.wolfsonmicro.main>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [GIT PULL] exynos-drm-next
+Date: Thu, 7 Feb 2019 20:31:37 +0900
+Message-ID: <079a9586-9d85-7d38-2658-ce312b6d71e8@samsung.com>
+References: <CGME20190207113137epcas1p44bf0105c4de7200eacb9e069ae28f1fd@epcas1p4.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20190206114545.GR3837@imbe.wolfsonmicro.main>
-Content-language: en-GB
-Sender: linux-kernel-owner@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.cirrus.com>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: David Airlie <airlied@linux.ie>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2/6/19 12:45, Charles Keepax wrote:
-> Looking through I think this is an unrelated issue. Assuming the
-> driver in question is (sound/soc/samsung/i2s.c). Inside
-> i2s_trigger, there is a call to config_setup(i2s), which in turn
-> will call clk_get_rate if i2s->quirks contains the flag
-> QUIRK_NO_MUXPSR.
-> 
-> The trigger callback can be made from an atomic context and
-> clk_get_rate will take the prepare lock of the clock. The clock
-> prepare lock is always a mutex which shouldn't be locked from an
-> atomic context. So it seems like this will fail whenever that
-> QUIRK_NO_MUXPSR flag is set, no idea what causes that to be set.
-> 
-> It looks like this bug was introduced by this change:
-> 
-> 647d04f8e07a ("ASoC: samsung: i2s: Ensure the RCLK rate is properly determined")
-
-Thanks or having a look at this. I somehow overlooked it before, there 
-are multiple issues with that clk_get_rate() call.  Apart of the problem 
-described above config_setup() is already called with the i2s->lock 
-spinlock held, exactly same spinlock that is passed to the clock API 
-when registering a clock of which we try to get rate. :/ Presumably 
-it works due to clk rate caching.
-
-Whether QUIRK_NO_MUXPSR flag is set or not depends on the HW type, 
-it is not set for modern SoCs so most of the time we will hit the
-problem in I2S master configurations.
-
-As we are not using set_sysclk() of the CPU DAI I'm thinking about 
-moving the clk_get_rate() call to the CPU DAI's hw_params() callback. 
-The clock rate may be changed in hw_params() of an ASoC machine driver, 
-and the CPU DAI needs to adjust to those changes.
-
-It feels like locking in that driver might need revisiting, there is
-quite a lot happening while holding a spinlock.
-
--- 
-Thanks,
-Sylwester
+SGkgRGF2ZSwKCiAgIEp1c3QgYWRkaW5nIHM1cHYyMTAgU29DIHN1cHBvcnQgb2Ygcm90YXRvciBt
+b2R1bGUgYW5kIGNoYW5naW5nCiAgIGVtYWlsIGFkZHJlc3Mgb2Ygc2NhbGVyIG1vZHVsZSBhdXRo
+b3IuCgogICBQbGVhc2Uga2luZGx5IGxldCBtZSBrbm93IGlmIHRoZXJlIGlzIGFueSBwcm9ibGVt
+LgoKVGhhbmtzLApJbmtpIERhZQoKVGhlIGZvbGxvd2luZyBjaGFuZ2VzIHNpbmNlIGNvbW1pdCAy
+Y2MzYjgxZGZhN2Y3ZGUwZDY0N2U3ZjE0NzNkZTgxMWVlZjhiMGRlOgoKICBNZXJnZSB0YWcgJ2Ry
+bS1pbnRlbC1uZXh0LTIwMTktMDItMDInIG9mIGdpdDovL2Fub25naXQuZnJlZWRlc2t0b3Aub3Jn
+L2RybS9kcm0taW50ZWwgaW50byBkcm0tbmV4dCAoMjAxOS0wMi0wNCAxNTozNzo1OCArMTAwMCkK
+CmFyZSBhdmFpbGFibGUgaW4gdGhlIGdpdCByZXBvc2l0b3J5IGF0OgoKICBnaXQ6Ly9naXQua2Vy
+bmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvZGFlaW5raS9kcm0tZXh5bm9zIHRhZ3Mv
+ZXh5bm9zLWRybS1uZXh0LWZvci12NS4xCgpmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8g
+OWMwYzQ5OTdiOGE4MGVjNGJhNzdjNGViZTNlNzRlYzBkYjJkNTQ3ZDoKCiAgZHJtL2V4eW5vczog
+Q2hhbmdlIEFuZHJ6ZWogUGlldHJhc2lld2ljeidzIGUtbWFpbCBhZGRyZXNzICgyMDE5LTAyLTA3
+IDE5OjU5OjQ0ICswOTAwKQoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQotIEFkZCByb3RhdG9yIHN1cHBvcnQgZm9yIHM1cHYy
+MTAKICAuIFdpdGggdGhpcyBwYXRjaCBzZXJpZXMsIHM1cHYyMTAgU29DIGNhbiB1c2Ugcm90YXRv
+ciBtb2R1bGUgYnV0CiAgICBvbmx5IE5WMTIgYW5kIFhSR0I4ODg4IGZvcm1hdHMgYXJlIHN1cHBv
+cnRlZC4KLSBNb2RpZnkgZS1tYWlsIGFkZHJlc3MKICAuIEl0IGNoYW5nZXMgZW1haWwgYWRkcmVz
+cyBvZiBzY2FsZXIgbW9kdWxlIGF1dGhvci4KCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQW5kcnplaiBQaWV0cmFzaWV3aWN6
+ICgxKToKICAgICAgZHJtL2V4eW5vczogQ2hhbmdlIEFuZHJ6ZWogUGlldHJhc2lld2ljeidzIGUt
+bWFpbCBhZGRyZXNzCgpQYXdlxYIgQ2htaWVsICgyKToKICAgICAgZHJtL2V4eW5vczogcm90YXRv
+cjogQWRkIHN1cHBvcnQgZm9yIHM1cHYyMTAKICAgICAgZHQtYmluZGluZ3M6IGdwdTogc2Ftc3Vu
+Zy1yb3RhdG9yOiBEb2N1bWVudCBzNXB2MjEwIHN1cHBvcnQKCiAuLi4vZGV2aWNldHJlZS9iaW5k
+aW5ncy9ncHUvc2Ftc3VuZy1yb3RhdG9yLnR4dCAgICB8ICA3ICsrKystLS0KIGRyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV9yb3RhdG9yLmMgICAgICAgIHwgMjMgKysrKysrKysrKysr
+KysrKysrKysrKwogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3NjYWxlci5jICAg
+ICAgICAgfCAgMiArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9yZWdzLXNjYWxlci5oICAgICAg
+ICAgICAgICAgfCAgMiArLQogNCBmaWxlcyBjaGFuZ2VkLCAyOSBpbnNlcnRpb25zKCspLCA1IGRl
+bGV0aW9ucygtKQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
+aHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
