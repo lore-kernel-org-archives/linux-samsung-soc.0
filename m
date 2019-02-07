@@ -1,10 +1,10 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 15/22] ASoC: samsung: i2s: Move quirks data to common driver
- data structure
-Date: Thu, 07 Feb 2019 18:00:23 +0100
-Message-ID: <20190207170028.720-16-s.nawrocki@samsung.com>
+Subject: [PATCH 17/22] ASoC: samsung: odroid: Add support for secondary CPU
+ DAI
+Date: Thu, 07 Feb 2019 18:00:25 +0100
+Message-ID: <20190207170028.720-18-s.nawrocki@samsung.com>
 References: <20190207170028.720-1-s.nawrocki@samsung.com>
-        <CGME20190207170138epcas2p31134b2beee877922d27fab5c79fdc7b1@epcas2p3.samsung.com>
+        <CGME20190207170145epcas1p465da0715aa629b525c17d263c1b49a68@epcas1p4.samsung.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
@@ -14,170 +14,232 @@ To: broonie@kernel.org
 Cc: lgirdwood@gmail.com, krzk@kernel.org, sbkim73@samsung.com, m.szyprowski@samsung.com, b.zolnierkie@samsung.com, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The quirk flags are common for the primary and the secondary DAI
-so move respective field from struct i2s_dai to common driver data
-structure.
+This patch adds DPCM links in order to support the secondary I2S interface.
+For the secondary PCM interface to be actually available one more entry
+should be added to the sound-dai property in sound/cpu node in DT.
+The changes in driver are done in a way so we are backwards compatible with
+existing DTS/DTB, i.e. if the cpu sound-dai property contains only one entry
+only one PCM will be registered.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- sound/soc/samsung/i2s.c | 36 ++++++++++++++----------------------
- 1 file changed, 14 insertions(+), 22 deletions(-)
+ sound/soc/samsung/odroid.c | 132 +++++++++++++++++++++++++++----------
+ 1 file changed, 96 insertions(+), 36 deletions(-)
 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 6ea0f0050fc8..e11d678e9c1f 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -84,7 +84,6 @@ struct i2s_dai {
- 	struct snd_dmaengine_dai_dma_data dma_capture;
- 	struct snd_dmaengine_dai_dma_data idma_playback;
- 	dma_filter_fn filter;
--	u32	quirks;
+diff --git a/sound/soc/samsung/odroid.c b/sound/soc/samsung/odroid.c
+index e7b371b07230..bab61e8278a0 100644
+--- a/sound/soc/samsung/odroid.c
++++ b/sound/soc/samsung/odroid.c
+@@ -7,6 +7,7 @@
+  */
  
- 	struct samsung_i2s_priv *priv;
- };
-@@ -122,19 +121,13 @@ struct samsung_i2s_priv {
- 	u32 suspend_i2spsr;
+ #include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+ #include <linux/module.h>
+@@ -17,21 +18,24 @@
  
- 	const struct samsung_i2s_variant_regs *variant_regs;
-+	u32 quirks;
- 
- 	/* The clock provider's data */
- 	struct clk *clk_table[3];
- 	struct clk_onecell_data clk_data;
- };
- 
--struct i2s_dai *samsung_i2s_get_pri_dai(struct device *dev)
--{
--	struct samsung_i2s_priv *priv = dev_get_drvdata(dev);
+ struct odroid_priv {
+ 	struct snd_soc_card card;
+-	struct snd_soc_dai_link dai_link;
 -
--	return &priv->dai[SAMSUNG_I2S_ID_PRIMARY - 1];
--}
--
- /* Returns true if this is the 'overlay' stereo DAI */
- static inline bool is_secondary(struct i2s_dai *i2s)
+ 	struct clk *clk_i2s_bus;
+ 	struct clk *sclk_i2s;
+ };
+ 
+-static int odroid_card_startup(struct snd_pcm_substream *substream)
++static int odroid_card_fe_startup(struct snd_pcm_substream *substream)
  {
-@@ -343,7 +336,7 @@ static inline void set_bfs(struct i2s_dai *i2s, unsigned bfs)
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+ 
+ 	snd_pcm_hw_constraint_single(runtime, SNDRV_PCM_HW_PARAM_CHANNELS, 2);
++
+ 	return 0;
+ }
+ 
+-static int odroid_card_hw_params(struct snd_pcm_substream *substream,
++static const struct snd_soc_ops odroid_card_fe_ops = {
++	.startup = odroid_card_fe_startup,
++};
++
++static int odroid_card_be_hw_params(struct snd_pcm_substream *substream,
+ 				      struct snd_pcm_hw_params *params)
  {
- 	struct samsung_i2s_priv *priv = i2s->priv;
- 	u32 mod = readl(priv->addr + I2SMOD);
--	int tdm = i2s->quirks & QUIRK_SUPPORTS_TDM;
-+	int tdm = priv->quirks & QUIRK_SUPPORTS_TDM;
- 	int bfs_shift = priv->variant_regs->bfs_off;
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+@@ -86,19 +90,56 @@ static int odroid_card_hw_params(struct snd_pcm_substream *substream,
+ 	return 0;
+ }
  
- 	/* Non-TDM I2S controllers do not support BCLK > 48 * FS */
-@@ -563,7 +556,7 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai, int clk_id, unsigned int rfs,
- 	case SAMSUNG_I2S_RCLKSRC_1: /* clock corrsponding to IISMOD[10] := 1 */
- 		mask = 1 << i2s_regs->rclksrc_off;
+-static const struct snd_soc_ops odroid_card_ops = {
+-	.startup = odroid_card_startup,
+-	.hw_params = odroid_card_hw_params,
++static const struct snd_soc_ops odroid_card_be_ops = {
++	.hw_params = odroid_card_be_hw_params,
++};
++
++static struct snd_soc_dai_link odroid_card_dais[] = {
++	{
++		/* Primary FE <-> BE link */
++		.codec_name = "snd-soc-dummy",
++		.codec_dai_name = "snd-soc-dummy-dai",
++		.ops = &odroid_card_fe_ops,
++		.name = "Primary",
++		.stream_name = "Primary",
++		.platform_name = "3830000.i2s",
++		.dynamic = 1,
++		.dpcm_playback = 1,
++	}, {
++		/* BE <-> CODECs link */
++		.name = "I2S Mixer",
++		.cpu_name = "snd-soc-dummy",
++		.cpu_dai_name = "snd-soc-dummy-dai",
++		.platform_name = "snd-soc-dummy",
++		.ops = &odroid_card_be_ops,
++		.no_pcm = 1,
++		.dpcm_playback = 1,
++		.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
++				SND_SOC_DAIFMT_CBS_CFS,
++	}, {
++		/* Secondary FE <-> BE link */
++		.playback_only = 1,
++		.codec_name = "snd-soc-dummy",
++		.codec_dai_name = "snd-soc-dummy-dai",
++		.ops = &odroid_card_fe_ops,
++		.name = "Secondary",
++		.stream_name = "Secondary",
++		.platform_name = "samsung-i2s-sec",
++		.dynamic = 1,
++		.dpcm_playback = 1,
++	}
+ };
  
--		if ((i2s->quirks & QUIRK_NO_MUXPSR)
-+		if ((priv->quirks & QUIRK_NO_MUXPSR)
- 				|| (clk_id == SAMSUNG_I2S_RCLKSRC_0))
- 			clk_id = 0;
- 		else
-@@ -830,8 +823,9 @@ static int i2s_hw_params(struct snd_pcm_substream *substream,
- 
- /* We set constraints on the substream acc to the version of I2S */
- static int i2s_startup(struct snd_pcm_substream *substream,
--	  struct snd_soc_dai *dai)
-+	struct snd_soc_dai *dai)
++
+ static int odroid_audio_probe(struct platform_device *pdev)
  {
-+	struct samsung_i2s_priv *priv = snd_soc_dai_get_drvdata(dai);
- 	struct i2s_dai *i2s = to_info(dai);
- 	struct i2s_dai *other = get_other_dai(i2s);
- 	unsigned long flags;
-@@ -847,7 +841,7 @@ static int i2s_startup(struct snd_pcm_substream *substream,
- 	else
- 		i2s->mode |= DAI_MANAGER;
+ 	struct device *dev = &pdev->dev;
+-	struct device_node *cpu, *codec;
++	struct device_node *cpu, *cpu_dai, *codec;
+ 	struct odroid_priv *priv;
+-	struct snd_soc_dai_link *link;
+ 	struct snd_soc_card *card;
+-	int ret;
++	struct snd_soc_dai_link *link, *codec_link;
++	int num_pcms, ret, i;
++	struct of_phandle_args args = {};
  
--	if (!any_active(i2s) && (i2s->quirks & QUIRK_NEED_RSTCLR))
-+	if (!any_active(i2s) && (priv->quirks & QUIRK_NEED_RSTCLR))
- 		writel(CON_RSTCLR, i2s->priv->addr + I2SCON);
- 
- 	spin_unlock_irqrestore(&lock, flags);
-@@ -929,7 +923,7 @@ static int config_setup(struct i2s_dai *i2s)
- 	if (is_slave(i2s))
- 		return 0;
- 
--	if (!(i2s->quirks & QUIRK_NO_MUXPSR)) {
-+	if (!(priv->quirks & QUIRK_NO_MUXPSR)) {
- 		psr = priv->rclk_srcrate / i2s->frmclk / rfs;
- 		writel(((psr - 1) << 8) | PSR_PSREN, priv->addr + I2SPSR);
- 		dev_dbg(&i2s->pdev->dev,
-@@ -1068,10 +1062,10 @@ static int samsung_i2s_dai_probe(struct snd_soc_dai *dai)
- 		snd_soc_dai_init_dma_data(dai, &i2s->dma_playback,
- 					   &i2s->dma_capture);
- 
--		if (i2s->quirks & QUIRK_NEED_RSTCLR)
-+		if (priv->quirks & QUIRK_NEED_RSTCLR)
- 			writel(CON_RSTCLR, priv->addr + I2SCON);
- 
--		if (i2s->quirks & QUIRK_SUPPORTS_IDMA)
-+		if (priv->quirks & QUIRK_SUPPORTS_IDMA)
- 			idma_reg_addr_init(priv->addr,
- 					i2s->sec_dai->idma_playback.addr);
- 	}
-@@ -1099,13 +1093,14 @@ static int samsung_i2s_dai_probe(struct snd_soc_dai *dai)
- 
- static int samsung_i2s_dai_remove(struct snd_soc_dai *dai)
- {
-+	struct samsung_i2s_priv *priv = snd_soc_dai_get_drvdata(dai);
- 	struct i2s_dai *i2s = to_info(dai);
- 	unsigned long flags;
- 
- 	pm_runtime_get_sync(dai->dev);
- 
- 	if (!is_secondary(i2s)) {
--		if (i2s->quirks & QUIRK_NEED_RSTCLR) {
-+		if (priv->quirks & QUIRK_NEED_RSTCLR) {
- 			spin_lock_irqsave(&priv->lock, flags);
- 			writel(0, i2s->priv->addr + I2SCON);
- 			spin_unlock_irqrestore(&priv->lock, flags);
-@@ -1279,7 +1274,6 @@ static int i2s_register_clock_provider(struct samsung_i2s_priv *priv)
- 	const char *clk_name[2] = { "i2s_opclk0", "i2s_opclk1" };
- 	const char *p_names[2] = { NULL };
- 	struct device *dev = &priv->pdev->dev;
--	struct i2s_dai *i2s = samsung_i2s_get_pri_dai(dev);
- 	const struct samsung_i2s_variant_regs *reg_info = priv->variant_regs;
- 	const char *i2s_clk_name[ARRAY_SIZE(i2s_clk_desc)];
- 	struct clk *rclksrc;
-@@ -1305,7 +1299,7 @@ static int i2s_register_clock_provider(struct samsung_i2s_priv *priv)
- 			return -ENOMEM;
- 	}
- 
--	if (!(i2s->quirks & QUIRK_NO_MUXPSR)) {
-+	if (!(priv->quirks & QUIRK_NO_MUXPSR)) {
- 		/* Activate the prescaler */
- 		u32 val = readl(priv->addr + I2SPSR);
- 		writel(val | PSR_PSREN, priv->addr + I2SPSR);
-@@ -1399,11 +1393,11 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
  	if (!priv)
- 		return -ENOMEM;
+@@ -130,45 +171,67 @@ static int odroid_audio_probe(struct platform_device *pdev)
+ 			return ret;
+ 	}
  
--	priv->variant_regs = i2s_dai_data->i2s_variant_regs;
+-	link = &priv->dai_link;
 -
- 	quirks = np ? i2s_dai_data->quirks : i2s_pdata->type.quirks;
- 	num_dais = (quirks & QUIRK_SEC_DAI) ? 2 : 1;
- 	priv->pdev = pdev;
-+	priv->variant_regs = i2s_dai_data->i2s_variant_regs;
-+	priv->quirks = quirks;
+-	link->ops = &odroid_card_ops;
+-	link->dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
+-			SND_SOC_DAIFMT_CBS_CFS;
+-
+-	card->dai_link = &priv->dai_link;
+-	card->num_links = 1;
++	card->dai_link = odroid_card_dais;
++	card->num_links = ARRAY_SIZE(odroid_card_dais);
  
- 	ret = i2s_alloc_dais(priv, i2s_dai_data, num_dais);
+ 	cpu = of_get_child_by_name(dev->of_node, "cpu");
+ 	codec = of_get_child_by_name(dev->of_node, "codec");
++	link = card->dai_link;
++	codec_link = &card->dai_link[1];
+ 
+-	link->cpu_of_node = of_parse_phandle(cpu, "sound-dai", 0);
+-	if (!link->cpu_of_node) {
+-		dev_err(dev, "Failed parsing cpu/sound-dai property\n");
+-		return -EINVAL;
++	/*
++	 * For backwards compatibility create the secondary CPU DAI link only
++	 * if there are 2 CPU DAI entries in the cpu sound-dai property in DT.
++	 */
++	num_pcms = of_count_phandle_with_args(cpu, "sound-dai",
++					      "#sound-dai-cells");
++	if (num_pcms == 1)
++		card->num_links--;
++
++	for (i = 0; i < num_pcms; i++, link += 2) {
++		ret = of_parse_phandle_with_args(cpu, "sound-dai",
++						 "#sound-dai-cells", i, &args);
++		if (ret < 0)
++			return ret;
++
++		if (!args.np) {
++			dev_err(dev, "sound-dai property parse error: %d\n", ret);
++			return -EINVAL;
++		}
++
++		ret = snd_soc_get_dai_name(&args, &link->cpu_dai_name);
++		of_node_put(args.np);
++
++		if (ret < 0)
++			return ret;
+ 	}
+ 
+-	ret = snd_soc_of_get_dai_link_codecs(dev, codec, link);
++	cpu_dai = of_parse_phandle(cpu, "sound-dai", 0);
++	of_node_put(cpu);
++	of_node_put(codec);
++
++	ret = snd_soc_of_get_dai_link_codecs(dev, codec, codec_link);
  	if (ret < 0)
-@@ -1458,7 +1452,6 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 	pri_dai->dma_capture.chan_name = "rx";
- 	pri_dai->dma_playback.addr_width = 4;
- 	pri_dai->dma_capture.addr_width = 4;
--	pri_dai->quirks = quirks;
- 	pri_dai->priv = priv;
+ 		goto err_put_codec_n;
  
- 	if (quirks & QUIRK_PRI_6CHAN)
-@@ -1481,7 +1474,6 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 		}
+-	link->platform_of_node = link->cpu_of_node;
+-
+-	link->name = "Primary";
+-	link->stream_name = link->name;
+-
++	/* Set capture capability only for boards with the MAX98090 CODEC */
++	if (codec_link->num_codecs > 1) {
++		card->dai_link[0].dpcm_capture = 1;
++		card->dai_link[1].dpcm_capture = 1;
++	}
  
- 		sec_dai->dma_playback.addr_width = 4;
--		sec_dai->quirks = quirks;
- 		sec_dai->idma_playback.addr = idma_addr;
- 		sec_dai->pri_dai = pri_dai;
- 		sec_dai->priv = priv;
+-	priv->sclk_i2s = of_clk_get_by_name(link->cpu_of_node, "i2s_opclk1");
++	priv->sclk_i2s = of_clk_get_by_name(cpu_dai, "i2s_opclk1");
+ 	if (IS_ERR(priv->sclk_i2s)) {
+ 		ret = PTR_ERR(priv->sclk_i2s);
+-		goto err_put_i2s_n;
++		goto err_put_codec_n;
+ 	}
+ 
+-	priv->clk_i2s_bus = of_clk_get_by_name(link->cpu_of_node, "iis");
++	priv->clk_i2s_bus = of_clk_get_by_name(cpu_dai, "iis");
+ 	if (IS_ERR(priv->clk_i2s_bus)) {
+ 		ret = PTR_ERR(priv->clk_i2s_bus);
+ 		goto err_put_sclk;
+ 	}
++	of_node_put(cpu_dai);
+ 
+ 	ret = devm_snd_soc_register_card(dev, card);
+ 	if (ret < 0) {
+@@ -182,10 +245,8 @@ static int odroid_audio_probe(struct platform_device *pdev)
+ 	clk_put(priv->clk_i2s_bus);
+ err_put_sclk:
+ 	clk_put(priv->sclk_i2s);
+-err_put_i2s_n:
+-	of_node_put(link->cpu_of_node);
+ err_put_codec_n:
+-	snd_soc_of_put_dai_link_codecs(link);
++	snd_soc_of_put_dai_link_codecs(codec_link);
+ 	return ret;
+ }
+ 
+@@ -193,8 +254,7 @@ static int odroid_audio_remove(struct platform_device *pdev)
+ {
+ 	struct odroid_priv *priv = platform_get_drvdata(pdev);
+ 
+-	of_node_put(priv->dai_link.cpu_of_node);
+-	snd_soc_of_put_dai_link_codecs(&priv->dai_link);
++	snd_soc_of_put_dai_link_codecs(&priv->card.dai_link[1]);
+ 	clk_put(priv->sclk_i2s);
+ 	clk_put(priv->clk_i2s_bus);
+ 
 -- 
 2.20.1
