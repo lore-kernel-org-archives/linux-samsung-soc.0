@@ -1,16 +1,13 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: samsung: Prevent clk_get_rate()
- calls in atomic context
-Date: Thu, 7 Feb 2019 14:54:06 +0000
-Message-ID: <20190207145406.GD6190@sirena.org.uk>
-References: <CGME20190207142052epcas1p22f1dc03c371674434ff40150cf376b6a@epcas1p2.samsung.com>
- <20190207142041.19394-1-s.nawrocki@samsung.com>
- <20190207143214.GC6190@sirena.org.uk>
- <21b8ccd7-e379-b4aa-3257-c9644ce3664c@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH 00/22] ASoC: dmaengine updates,
+ secondary CPU DAI for Odroid boards
+Date: Thu, 07 Feb 2019 18:00:08 +0100
+Message-ID: <20190207170028.720-1-s.nawrocki@samsung.com>
+References: <CGME20190207170044epcas2p3d00762663b971845bc86db84af7d3b23@epcas2p3.samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============8249281812048385322=="
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <21b8ccd7-e379-b4aa-3257-c9644ce3664c@samsung.com>
 List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -20,56 +17,80 @@ List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
 Errors-To: alsa-devel-bounces@alsa-project.org
 Sender: alsa-devel-bounces@alsa-project.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, lgirdwood@gmail.com, krzk@kernel.org, linux-kernel@vger.kernel.org, m.szyprowski@samsung.com
+To: broonie@kernel.org
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, lgirdwood@gmail.com, krzk@kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
+This series restores support for the secondary CPU DAI in samsung/i2s.c
+driver and adds support for secondary CPU DAI on Odroid boards.
 
---===============8249281812048385322==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="F8dlzb82+Fcn6AgP"
-Content-Disposition: inline
+First two patches introduce changes in ASoC generic dmaengine driver
+so as to use custom DMA config as introduced in commit
+194c7dea00c6 "ASoC: dmaengine: add custom DMA config to snd_dmaengine_pcm_config"
+for handling custom DMA channel names on all Samsung platforms.
 
+Patches 7/22...16/22 are mostly clean up, following conversion to single
+component with multiple DAIs in patch 5/22, allowing to reference both
+primary/secondary DAI in DT.
 
---F8dlzb82+Fcn6AgP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I tried to avoid registering new platform device in probe() as it doesn't
+play well with deferred probing but couldn't find a way to avoid that new
+device, unique devices are needed to register "PCM" components for each
+CPU DAI.
 
-On Thu, Feb 07, 2019 at 03:47:14PM +0100, Sylwester Nawrocki wrote:
-> On 2/7/19 15:32, Mark Brown wrote:
+I am not entirely sure we should be removing the
+SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME flag like this, it might all
+be a bit more explicit with the flag.
 
-> > Please think hard before including complete backtraces in upstream
-> > reports, they are very large and contain almost no useful information
-> > relative to their size so often obscure the relevant content in your
-> > message. If part of the backtrace is usefully illustrative then it's
-> > usually better to pull out the relevant sections.
+The patch set has been tested on Odroid U3, XU3, XU4 and Mini2440
+(s3c2440 non-DT) boards.
 
-> OK, let me trim the backtrace some more and resend.
+This series depends on patch
+"ASoC: samsung: Prevent clk_get_rate() calls in atomic context"
 
-It's fine, I already applied.
+Sylwester Nawrocki (22):
+  ASoC: dmaengine: Improve of_node test in
+    dmaengine_pcm_request_chan_of()
+  ASoC: dmaengine: Extend use of chan_names provided in custom DMA
+    config
+  ASoC: samsung: dmaengine: Allow to specify custom DMA device
+  ASoC: samsung: i2s: Fix prescaler setting for the secondary DAI
+  ASoC: samsung: i2s: Convert to single component with multiple DAIs
+  ASoC: samsung: i2s: Restore support for the secondary PCM
+  ASoC: samsung: i2s: Move clk supplier data to common driver data
+    structure
+  ASoC: samsung: i2s: Add widgets and routes for DPCM support
+  ASoC: samsung: i2s: Move core clk to the driver common data structure
+  ASoC: samsung: i2s: Move opclk data to common driver data structure
+  ASoC: samsung: i2s: Move registers cache to common driver data
+    structure
+  ASoC: samsung: i2s: Move SFR pointer to common driver data structure
+  ASoC: samsung: i2s: Drop spinlock pointer from i2s_dai data structure
+  ASoC: samsung: i2s: Move IP variant data to common driver data
+    structure
+  ASoC: samsung: i2s: Move quirks data to common driver data structure
+  ASoC: samsung: i2s: Get rid of a static spinlock
+  ASoC: samsung: odroid: Add support for secondary CPU DAI
+  ASoC: samsung: Specify DMA channel names through custom DMA config
+  ASoC: samsung: Drop DAI DMA data chan_name assignments
+  ASoC: dmaengine: Remove unused
+    SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME flag
+  ARM: dts: exynos5422-odroidxu3: Add support for secondary DAI
+  ARM: dts: exynos5422-odroidxu4: Add support for secondary DAI
 
---F8dlzb82+Fcn6AgP
-Content-Type: application/pgp-signature; name="signature.asc"
+ .../boot/dts/exynos5422-odroidxu3-audio.dtsi  |   6 +-
+ arch/arm/boot/dts/exynos5422-odroidxu4.dts    |   4 +-
+ include/sound/dmaengine_pcm.h                 |   6 -
+ sound/soc/samsung/dma.h                       |   3 +-
+ sound/soc/samsung/dmaengine.c                 |  16 +-
+ sound/soc/samsung/i2s.c                       | 630 ++++++++++--------
+ sound/soc/samsung/odroid.c                    | 132 +++-
+ sound/soc/samsung/pcm.c                       |   2 +-
+ sound/soc/samsung/s3c2412-i2s.c               |   4 +-
+ sound/soc/samsung/s3c24xx-i2s.c               |   4 +-
+ sound/soc/samsung/spdif.c                     |   2 +-
+ sound/soc/soc-generic-dmaengine-pcm.c         |  13 +-
+ 12 files changed, 489 insertions(+), 333 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxcRo0ACgkQJNaLcl1U
-h9BwYgf8C1wS4SbsPYJfIJffKguSMIG2PsJNdhD6sjPzrZy8INW/8DEB/oJWpFbo
-U4YTznjK0tz/aLPGm7XS4qliocS6x1QcK4dq+E1DhtUGg5WUoehyS0pxJJnc6Mn/
-lX62rgFrCbHz3g9CGh/IxsNdLtkRTeh2jS64tmK/Mp/gLJ/I1Xv6AtsPtjWnZXIe
-6b6Wo047tPUHcOto0Ud4yZcf9rUeVYNDSU8dU1/EJVMQdRc7Qs54OCa0mo4KpTW7
-07dmJNqCaj3RBt1T8WBpy2uMfoYkghpow9N6XnnpDMwlovAbS52oxDzlmNALZ9wJ
-5+fLAdrwdirSHTp2Sg9+4dnutCl53Q==
-=9x5Y
------END PGP SIGNATURE-----
-
---F8dlzb82+Fcn6AgP--
-
---===============8249281812048385322==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============8249281812048385322==--
+--
+2.20.1
