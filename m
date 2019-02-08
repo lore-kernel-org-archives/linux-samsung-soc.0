@@ -1,30 +1,50 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3] pinctrl: samsung: Remove legacy API for handling
- external wakeup interrupts mask
-Date: Fri, 8 Feb 2019 14:53:06 +0100
-Message-ID: <CACRpkdbXZnYP0=BXqoSyr9=y4+WWWax+KYQ8MvcAUVyMVL652w@mail.gmail.com>
-References: <20190205195909.3565-1-krzk@kernel.org>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH 0/2] cpufreq/opp: rework regulator initialization
+Date: Fri, 8 Feb 2019 14:28:12 +0000
+Message-ID: <20190208142812.GA22401@e107155-lin>
+References: <CGME20190207122255eucas1p1cdebed838c799eca46cce6a654a26187@eucas1p1.samsung.com>
+ <20190207122227.19873-1-m.szyprowski@samsung.com>
+ <20190208064957.zhyue42kpgaoslwm@vireshk-i7>
+ <CAJZ5v0iU1+YdAqHai+r_ubC1FarC2JWBuc98MG58n+y9=1WB=A@mail.gmail.com>
+ <20190208103133.ysvaroyniuc3k4i5@vireshk-i7>
+ <CAJZ5v0ghQ6bTV8atd6dtq8=ZBDUpDRVsCiAhwQVtfoMH-JhH9A@mail.gmail.com>
+ <20190208113904.GB7913@e107155-lin>
+ <CAJZ5v0gbh2LDq+6P_CQ+GWOxEdQrRUqQnx7v59hvs2_wwx9=kw@mail.gmail.com>
+ <20190208120949.GB13043@e107155-lin>
+ <CAJZ5v0jkpMyXrg9HwFizXLBEu0tggBmMbhZZZxzt_+a10cmuYA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190205195909.3565-1-krzk@kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0jkpMyXrg9HwFizXLBEu0tggBmMbhZZZxzt_+a10cmuYA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sylwester Nawrocki <snawrocki@kernel.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Dave Gerlach <d-gerlach@ti.com>, Wolfram Sang <wsa@the-dreams.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Feb 5, 2019 at 8:59 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Fri, Feb 08, 2019 at 01:23:37PM +0100, Rafael J. Wysocki wrote:
+> On Fri, Feb 8, 2019 at 1:09 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
+> >
 
-> Remove the legacy, ugly API of exposing the static value of external
-> wakeup interrupts mask, because all arch-machine users where converted
-> to use generic implementation from pinctrl driver.
+[...]
+
+> > Yes, in that case additional logic in the driver also needed. I am fine
+> > if we enforce driver to deal with this issue, but was thinking if we can
+> > make it generic. Also I was just trying to avoid adding _suspend/resume
+> > to driver just to avoid this issue.
 >
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Sylwester Nawrocki <snawrocki@kernel.org>
-> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+> I was wondering if cpufreq_offline()/online() could be invoked from
+> cpufreq_suspend()/resume() for the nonboot CPUs - if the driver needs
+> it (there could be a driver flag to indicate that).
+>
+> If they are made exit immediately when cpufreq_suspended is set (and
+> the requisite driver flag is set too), that might work AFAICS.
 
-Patch applied for v5.1.
+Yes that sounds feasible. It should be fine to assume it's safe to call
+cpufreq_online on a CPU even for CPU that might have failed to come
+online or didn't reached a state in CPUHP from where CPUFreq callback
+is executed or am I missing something ?
 
-Yours,
-Linus Walleij
+--
+Regards,
+Sudeep
