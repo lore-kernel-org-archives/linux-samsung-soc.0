@@ -1,54 +1,50 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] ARM: dts: exynos: Enable ADC on Odroid HC1
-Date: Sat,  9 Feb 2019 00:05:57 +0100
-Message-ID: <20190208230557.9292-1-krzk@kernel.org>
+Subject: [PATCH]  iio: adc: exynos-adc: Fix NULL pointer exception on unbind
+Date: Sat,  9 Feb 2019 00:39:27 +0100
+Message-ID: <20190208233927.5392-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Bakker <xc-racer2@live.ca>, =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>, linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Odroid HC1 uses the exynos5422-odroid-core.dtsi file as a base.  All
-other Exynos5422 Odroids use the "common".  The ADC node was defined
-only in the latter.
+Fix NULL pointer exception on device unbind when device tree does not
+contain "has-touchscreen" property.  In such case the input device is
+not registered so it should not be unregistered.
 
+    $ echo "12d10000.adc" > /sys/bus/platform/drivers/exynos-adc/unbind
+
+    Unable to handle kernel NULL pointer dereference at virtual address 00000474
+    ...
+    (input_unregister_device) from [<c0772060>] (exynos_adc_remove+0x20/0x80)
+    (exynos_adc_remove) from [<c0587d5c>] (platform_drv_remove+0x20/0x40)
+    (platform_drv_remove) from [<c05860f0>] (device_release_driver_internal+0xdc/0x1ac)
+    (device_release_driver_internal) from [<c0583ecc>] (unbind_store+0x60/0xd4)
+    (unbind_store) from [<c031b89c>] (kernfs_fop_write+0x100/0x1e0)
+    (kernfs_fop_write) from [<c029709c>] (__vfs_write+0x2c/0x17c)
+    (__vfs_write) from [<c0297374>] (vfs_write+0xa4/0x184)
+    (vfs_write) from [<c0297594>] (ksys_write+0x4c/0xac)
+    (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
+
+Fixes: 2bb8ad9b44c5 ("iio: exynos-adc: add experimental touchscreen support")
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/exynos5422-odroid-core.dtsi      | 5 +++++
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 5 -----
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/iio/adc/exynos_adc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-index bf09eab90f8a..9b0bccb77be5 100644
---- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-@@ -36,6 +36,11 @@
- 	};
- };
+diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
+index fa2d2b5767f3..41da522fc673 100644
+--- a/drivers/iio/adc/exynos_adc.c
++++ b/drivers/iio/adc/exynos_adc.c
+@@ -929,7 +929,7 @@ static int exynos_adc_remove(struct platform_device *pdev)
+ 	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
+ 	struct exynos_adc *info = iio_priv(indio_dev);
  
-+&adc {
-+	vdd-supply = <&ldo4_reg>;
-+	status = "okay";
-+};
-+
- &bus_wcore {
- 	devfreq-events = <&nocp_mem0_0>, <&nocp_mem0_1>,
- 			<&nocp_mem1_0>, <&nocp_mem1_1>;
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index b299e541cac0..5f195ad7e467 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -362,11 +362,6 @@
- 	};
- };
- 
--&adc {
--	vdd-supply = <&ldo4_reg>;
--	status = "okay";
--};
--
- &hdmi {
- 	status = "okay";
- 	ddc = <&i2c_2>;
+-	if (IS_REACHABLE(CONFIG_INPUT)) {
++	if (IS_REACHABLE(CONFIG_INPUT) && info->input) {
+ 		free_irq(info->tsirq, info);
+ 		input_unregister_device(info->input);
+ 	}
 -- 
 2.17.1
