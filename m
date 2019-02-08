@@ -1,23 +1,24 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
+From: Sudeep Holla <sudeep.holla@arm.com>
 Subject: Re: [PATCH 0/2] cpufreq/opp: rework regulator initialization
-Date: Fri, 8 Feb 2019 13:11:35 +0100
-Message-ID: <CAJZ5v0h5BqdKoLoSjMLHjwzCtEgtxkJ=UOQG7VQ3zyTHAsUTbQ@mail.gmail.com>
+Date: Fri, 8 Feb 2019 12:16:53 +0000
+Message-ID: <20190208121653.GC13043@e107155-lin>
 References: <CGME20190207122255eucas1p1cdebed838c799eca46cce6a654a26187@eucas1p1.samsung.com>
- <20190207122227.19873-1-m.szyprowski@samsung.com> <20190208110053.GA7913@e107155-lin>
- <87302853-74cc-8eeb-6bd4-6338746e0738@samsung.com> <20190208115122.GA13043@e107155-lin>
+ <20190207122227.19873-1-m.szyprowski@samsung.com>
+ <20190208110053.GA7913@e107155-lin>
+ <87302853-74cc-8eeb-6bd4-6338746e0738@samsung.com>
+ <20190208115122.GA13043@e107155-lin>
  <66b33c07-4970-b60a-d924-d4baba79c836@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
 In-Reply-To: <66b33c07-4970-b60a-d924-d4baba79c836@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Dave Gerlach <d-gerlach@ti.com>, Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Dave Gerlach <d-gerlach@ti.com>, Wolfram Sang <wsa@the-dreams.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Feb 8, 2019 at 1:04 PM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
->
+On Fri, Feb 08, 2019 at 01:04:18PM +0100, Marek Szyprowski wrote:
 > Hi Sudeep,
 >
 > On 2019-02-08 12:51, Sudeep Holla wrote:
@@ -51,11 +52,20 @@ On Fri, Feb 8, 2019 at 1:04 PM Marek Szyprowski
 >
 > Frankly, I don't feel I know enough to touch this driver and I don't
 > think that this can even be fixed in a generic way in the cpufreq core.
+
+Why not ? IIUC it's only to get/set the frequency you would need to talk
+to remote processor or external chip over I2C which can be deferred until
+resume. Rafael has valid concerns on messed up init implementations, still
+wondering if there's any chance to solve this in the core.
+
 > Maybe a comment somewhere is needed that ->init() might be called during
 > early system resume with irqs off and driver is responsible for handling
 > such case until the proper resume?
+>
 
-Well, adding a comment to that effect certainly won't hurt as that's
-how things work now.
+I agree and +1 for comment, but every driver needs to deal with that,
+which is fine. Just trying to see if we can avoid it.
 
-However, it looks like something needs to be done in addition to that.
+--
+Regards,
+Sudeep
