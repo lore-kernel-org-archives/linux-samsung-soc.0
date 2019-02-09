@@ -1,66 +1,48 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH]  iio: adc: exynos-adc: Fix NULL pointer exception on
- unbind
-Date: Sat, 9 Feb 2019 16:47:02 +0000
-Message-ID: <20190209164702.697de406@archlinux>
-References: <20190208233927.5392-1-krzk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] regulator: s2mps11: Fix steps for buck7, buck8 and LDO35
+Date: Sat,  9 Feb 2019 18:14:14 +0100
+Message-ID: <20190209171414.28125-1-krzk@kernel.org>
 Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190208233927.5392-1-krzk@kernel.org>
 Sender: stable-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Kukjin Kim <kgene@kernel.org>, Jonathan Bakker <xc-racer2@live.ca>, =?UTF-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>, linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sat,  9 Feb 2019 00:39:27 +0100
-Krzysztof Kozlowski <krzk@kernel.org> wrote:
+LDO35 uses 25 mV step, not 50 mV.  Bucks 7 and 8 use 12.5 mV step
+instead of 6.25 mV.  Wrong step caused over-voltage (LDO35) or
+under-voltage (buck7 and 8) if regulators were used (e.g. on Exynos5420
+Arndale Octa board).
 
-> Fix NULL pointer exception on device unbind when device tree does not
-> contain "has-touchscreen" property.  In such case the input device is
-> not registered so it should not be unregistered.
-> 
->     $ echo "12d10000.adc" > /sys/bus/platform/drivers/exynos-adc/unbind
-> 
->     Unable to handle kernel NULL pointer dereference at virtual address 00000474
->     ...
->     (input_unregister_device) from [<c0772060>] (exynos_adc_remove+0x20/0x80)
->     (exynos_adc_remove) from [<c0587d5c>] (platform_drv_remove+0x20/0x40)
->     (platform_drv_remove) from [<c05860f0>] (device_release_driver_internal+0xdc/0x1ac)
->     (device_release_driver_internal) from [<c0583ecc>] (unbind_store+0x60/0xd4)
->     (unbind_store) from [<c031b89c>] (kernfs_fop_write+0x100/0x1e0)
->     (kernfs_fop_write) from [<c029709c>] (__vfs_write+0x2c/0x17c)
->     (__vfs_write) from [<c0297374>] (vfs_write+0xa4/0x184)
->     (vfs_write) from [<c0297594>] (ksys_write+0x4c/0xac)
->     (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
-> 
-> Fixes: 2bb8ad9b44c5 ("iio: exynos-adc: add experimental touchscreen support")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Given we have had this one for a little while and are late in the
-cycle I'm going to queue it up for the coming merge window.
+Cc: <stable@vger.kernel.org>
+Fixes: cb74685ecb39 ("regulator: s2mps11: Add samsung s2mps11 regulator driver")
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/regulator/s2mps11.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders to play with it.
-
-Thanks,
-
-Jonathan
-> ---
->  drivers/iio/adc/exynos_adc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-> index fa2d2b5767f3..41da522fc673 100644
-> --- a/drivers/iio/adc/exynos_adc.c
-> +++ b/drivers/iio/adc/exynos_adc.c
-> @@ -929,7 +929,7 @@ static int exynos_adc_remove(struct platform_device *pdev)
->  	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
->  	struct exynos_adc *info = iio_priv(indio_dev);
->  
-> -	if (IS_REACHABLE(CONFIG_INPUT)) {
-> +	if (IS_REACHABLE(CONFIG_INPUT) && info->input) {
->  		free_irq(info->tsirq, info);
->  		input_unregister_device(info->input);
->  	}
+diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+index ee4a23ab0663..134c62db36c5 100644
+--- a/drivers/regulator/s2mps11.c
++++ b/drivers/regulator/s2mps11.c
+@@ -362,7 +362,7 @@ static const struct regulator_desc s2mps11_regulators[] = {
+ 	regulator_desc_s2mps11_ldo(32, STEP_50_MV),
+ 	regulator_desc_s2mps11_ldo(33, STEP_50_MV),
+ 	regulator_desc_s2mps11_ldo(34, STEP_50_MV),
+-	regulator_desc_s2mps11_ldo(35, STEP_50_MV),
++	regulator_desc_s2mps11_ldo(35, STEP_25_MV),
+ 	regulator_desc_s2mps11_ldo(36, STEP_50_MV),
+ 	regulator_desc_s2mps11_ldo(37, STEP_50_MV),
+ 	regulator_desc_s2mps11_ldo(38, STEP_50_MV),
+@@ -372,8 +372,8 @@ static const struct regulator_desc s2mps11_regulators[] = {
+ 	regulator_desc_s2mps11_buck1_4(4),
+ 	regulator_desc_s2mps11_buck5,
+ 	regulator_desc_s2mps11_buck67810(6, MIN_600_MV, STEP_6_25_MV),
+-	regulator_desc_s2mps11_buck67810(7, MIN_600_MV, STEP_6_25_MV),
+-	regulator_desc_s2mps11_buck67810(8, MIN_600_MV, STEP_6_25_MV),
++	regulator_desc_s2mps11_buck67810(7, MIN_600_MV, STEP_12_5_MV),
++	regulator_desc_s2mps11_buck67810(8, MIN_600_MV, STEP_12_5_MV),
+ 	regulator_desc_s2mps11_buck9,
+ 	regulator_desc_s2mps11_buck67810(10, MIN_750_MV, STEP_12_5_MV),
+ };
+-- 
+2.17.1
