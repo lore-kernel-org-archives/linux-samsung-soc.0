@@ -1,7 +1,7 @@
 From: Stuart Menefy <stuart.menefy@mathembedded.com>
-Subject: [PATCH 1/2] clocksource: exynos_mct: Move one-shot check from tick clear to ISR
-Date: Sun, 10 Feb 2019 22:51:13 +0000
-Message-ID: <20190210225114.20110-2-stuart.menefy@mathembedded.com>
+Subject: [PATCH 2/2] clocksource: exynos_mct: Clear timer interrupt when shutdown
+Date: Sun, 10 Feb 2019 22:51:14 +0000
+Message-ID: <20190210225114.20110-3-stuart.menefy@mathembedded.com>
 References: <20190210225114.20110-1-stuart.menefy@mathembedded.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190210225114.20110-1-stuart.menefy@mathembedded.com>
@@ -10,65 +10,28 @@ To: linux-samsung-soc@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org
 Cc: Stuart Menefy <stuart.menefy@mathembedded.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-When a timer tick occurs and the clock is in one-shot mode, the timer
-needs to be stopped to prevent it triggering subsequent interrupts.
-Currently this code is in exynos4_mct_tick_clear(), but as it is
-only needed when an ISR occurs move it into exynos4_mct_tick_isr(),
-leaving exynos4_mct_tick_clear() just doing what its name suggests it
-should.
+When shutting down the timer, ensure that after we have stopped the
+timer any pending interrupts are cleared. This fixes a problem when
+suspending, as interrupts are disabled before the timer is stopped,
+so the timer interrupt may still be asserted, preventing the system
+entering a low power state when the wfi is executed.
 
 Signed-off-by: Stuart Menefy <stuart.menefy@mathembedded.com>
 ---
- drivers/clocksource/exynos_mct.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ drivers/clocksource/exynos_mct.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 7a244b681876..1e325f89d408 100644
+index 1e325f89d408..d55c30f6981d 100644
 --- a/drivers/clocksource/exynos_mct.c
 +++ b/drivers/clocksource/exynos_mct.c
-@@ -388,6 +388,13 @@ static void exynos4_mct_tick_start(unsigned long cycles,
- 	exynos4_mct_write(tmp, mevt->base + MCT_L_TCON_OFFSET);
- }
+@@ -411,6 +411,7 @@ static int set_state_shutdown(struct clock_event_device *evt)
  
-+static void exynos4_mct_tick_clear(struct mct_clock_event_device *mevt)
-+{
-+	/* Clear the MCT tick interrupt */
-+	if (readl_relaxed(reg_base + mevt->base + MCT_L_INT_CSTAT_OFFSET) & 1)
-+		exynos4_mct_write(0x1, mevt->base + MCT_L_INT_CSTAT_OFFSET);
-+}
-+
- static int exynos4_tick_set_next_event(unsigned long cycles,
- 				       struct clock_event_device *evt)
- {
-@@ -420,8 +427,11 @@ static int set_state_periodic(struct clock_event_device *evt)
+ 	mevt = container_of(evt, struct mct_clock_event_device, evt);
+ 	exynos4_mct_tick_stop(mevt);
++	exynos4_mct_tick_clear(mevt);
  	return 0;
  }
  
--static void exynos4_mct_tick_clear(struct mct_clock_event_device *mevt)
-+static irqreturn_t exynos4_mct_tick_isr(int irq, void *dev_id)
- {
-+	struct mct_clock_event_device *mevt = dev_id;
-+	struct clock_event_device *evt = &mevt->evt;
-+
- 	/*
- 	 * This is for supporting oneshot mode.
- 	 * Mct would generate interrupt periodically
-@@ -430,16 +440,6 @@ static void exynos4_mct_tick_clear(struct mct_clock_event_device *mevt)
- 	if (!clockevent_state_periodic(&mevt->evt))
- 		exynos4_mct_tick_stop(mevt);
- 
--	/* Clear the MCT tick interrupt */
--	if (readl_relaxed(reg_base + mevt->base + MCT_L_INT_CSTAT_OFFSET) & 1)
--		exynos4_mct_write(0x1, mevt->base + MCT_L_INT_CSTAT_OFFSET);
--}
--
--static irqreturn_t exynos4_mct_tick_isr(int irq, void *dev_id)
--{
--	struct mct_clock_event_device *mevt = dev_id;
--	struct clock_event_device *evt = &mevt->evt;
--
- 	exynos4_mct_tick_clear(mevt);
- 
- 	evt->event_handler(evt);
 -- 
 2.13.6
