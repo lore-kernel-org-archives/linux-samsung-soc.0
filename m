@@ -1,48 +1,49 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] regulator: s2mps11: Fix steps for buck7, buck8 and LDO35
-Date: Sat,  9 Feb 2019 18:14:14 +0100
-Message-ID: <20190209171414.28125-1-krzk@kernel.org>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: stable@vger.kernel.org
+From: Stuart Menefy <stuart.menefy@mathembedded.com>
+Subject: [PATCH 0/2] Subject: [PATCH 0/2] clocksource: exynos_mct: Clear timer
+ interrupt when shutting down
+Date: Sun, 10 Feb 2019 22:51:12 +0000
+Message-ID: <20190210225114.20110-1-stuart.menefy@mathembedded.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-LDO35 uses 25 mV step, not 50 mV.  Bucks 7 and 8 use 12.5 mV step
-instead of 6.25 mV.  Wrong step caused over-voltage (LDO35) or
-under-voltage (buck7 and 8) if regulators were used (e.g. on Exynos5420
-Arndale Octa board).
+When debugging suspend problems on Exynos 5260, I had a large number
+of debugging prints going to the serial port after interrupts
+had been disabled but before the timer interrupt was shutdown. This
+was long enough for a timer tick to occur, but as interrupts were
+disabled the ISR didn't run, and so the interrupt wasn't cleared.
+Later when the timer was shutdown the interrupt was left asserted and
+so the wfi at the heart of the suspend code didn't wait, causing
+the suspend to fail.
 
-Cc: <stable@vger.kernel.org>
-Fixes: cb74685ecb39 ("regulator: s2mps11: Add samsung s2mps11 regulator driver")
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/regulator/s2mps11.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Currently the code which stops the timer when it is on one-shot mode
+and the interrupt occurs is in exynos4_mct_tick_clear(), meaning if we
+called this from the shutdown code exynos4_mct_tick_stop() could be
+called twice. So first restructure the existing code, so the check for
+one-shot mode and stopping the timer is moved to the ISR, leaving
+exynos4_mct_tick_clear() just clearing the interrupt flag.
 
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index ee4a23ab0663..134c62db36c5 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -362,7 +362,7 @@ static const struct regulator_desc s2mps11_regulators[] = {
- 	regulator_desc_s2mps11_ldo(32, STEP_50_MV),
- 	regulator_desc_s2mps11_ldo(33, STEP_50_MV),
- 	regulator_desc_s2mps11_ldo(34, STEP_50_MV),
--	regulator_desc_s2mps11_ldo(35, STEP_50_MV),
-+	regulator_desc_s2mps11_ldo(35, STEP_25_MV),
- 	regulator_desc_s2mps11_ldo(36, STEP_50_MV),
- 	regulator_desc_s2mps11_ldo(37, STEP_50_MV),
- 	regulator_desc_s2mps11_ldo(38, STEP_50_MV),
-@@ -372,8 +372,8 @@ static const struct regulator_desc s2mps11_regulators[] = {
- 	regulator_desc_s2mps11_buck1_4(4),
- 	regulator_desc_s2mps11_buck5,
- 	regulator_desc_s2mps11_buck67810(6, MIN_600_MV, STEP_6_25_MV),
--	regulator_desc_s2mps11_buck67810(7, MIN_600_MV, STEP_6_25_MV),
--	regulator_desc_s2mps11_buck67810(8, MIN_600_MV, STEP_6_25_MV),
-+	regulator_desc_s2mps11_buck67810(7, MIN_600_MV, STEP_12_5_MV),
-+	regulator_desc_s2mps11_buck67810(8, MIN_600_MV, STEP_12_5_MV),
- 	regulator_desc_s2mps11_buck9,
- 	regulator_desc_s2mps11_buck67810(10, MIN_750_MV, STEP_12_5_MV),
- };
+Once this has been done simply call exynos4_mct_tick_clear() from
+set_state_shutdown().
+
+Stuart Menefy (2):
+  clocksource: exynos_mct: Move one-shot check from tick clear to ISR
+  clocksource: exynos_mct: Clear timer interrupt when shutdown
+
+ drivers/clocksource/exynos_mct.c | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
+
 -- 
-2.17.1
+2.13.6
