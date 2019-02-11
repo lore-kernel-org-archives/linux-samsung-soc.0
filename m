@@ -1,43 +1,95 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 0/2] Subject: [PATCH 0/2] clocksource: exynos_mct: Clear
- timer interrupt when shutting down
-Date: Mon, 11 Feb 2019 09:45:30 +0100
-Message-ID: <CAJKOXPe+G_gPNLQcaE5kvXFLFzhXo538w8-34k3gcK7yNL8txA@mail.gmail.com>
-References: <20190210225114.20110-1-stuart.menefy@mathembedded.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH 0/2] cpufreq/opp: rework regulator initialization
+Date: Mon, 11 Feb 2019 14:17:14 +0530
+Message-ID: <20190211084714.nq3wqxk66dbrfqvy@vireshk-i7>
+References: <CGME20190207122255eucas1p1cdebed838c799eca46cce6a654a26187@eucas1p1.samsung.com>
+ <20190207122227.19873-1-m.szyprowski@samsung.com>
+ <20190208110053.GA7913@e107155-lin>
+ <87302853-74cc-8eeb-6bd4-6338746e0738@samsung.com>
+ <20190208115122.GA13043@e107155-lin>
+ <66b33c07-4970-b60a-d924-d4baba79c836@samsung.com>
+ <20190208174131.GB22401@e107155-lin>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190210225114.20110-1-stuart.menefy@mathembedded.com>
+Content-Disposition: inline
+In-Reply-To: <20190208174131.GB22401@e107155-lin>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stuart Menefy <stuart.menefy@mathembedded.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Dave Gerlach <d-gerlach@ti.com>, Wolfram Sang <wsa@the-dreams.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sun, 10 Feb 2019 at 23:51, Stuart Menefy
-<stuart.menefy@mathembedded.com> wrote:
->
-> When debugging suspend problems on Exynos 5260, I had a large number
-> of debugging prints going to the serial port after interrupts
-> had been disabled but before the timer interrupt was shutdown. This
-> was long enough for a timer tick to occur, but as interrupts were
-> disabled the ISR didn't run, and so the interrupt wasn't cleared.
-> Later when the timer was shutdown the interrupt was left asserted and
-> so the wfi at the heart of the suspend code didn't wait, causing
-> the suspend to fail.
->
-> Currently the code which stops the timer when it is on one-shot mode
-> and the interrupt occurs is in exynos4_mct_tick_clear(), meaning if we
-> called this from the shutdown code exynos4_mct_tick_stop() could be
-> called twice. So first restructure the existing code, so the check for
-> one-shot mode and stopping the timer is moved to the ISR, leaving
-> exynos4_mct_tick_clear() just clearing the interrupt flag.
->
-> Once this has been done simply call exynos4_mct_tick_clear() from
-> set_state_shutdown().
+On 08-02-19, 17:41, Sudeep Holla wrote:
+> Based on Rafael's suggestion, I cooked up something. See if this helps ?
+> The policy to cpu dance can be removed and we can just run through the
+> online cpumask I think.
+> 
+> Regards,
+> Sudeep
+> 
+> -->8
+> 
+> diff --git i/drivers/cpufreq/cpufreq.c w/drivers/cpufreq/cpufreq.c
+> index e35a886e00bc..03d65a02a542 100644
+> --- i/drivers/cpufreq/cpufreq.c
+> +++ w/drivers/cpufreq/cpufreq.c
+> @@ -1640,6 +1640,7 @@ EXPORT_SYMBOL(cpufreq_generic_suspend);
+>  void cpufreq_suspend(void)
+>  {
+>  	struct cpufreq_policy *policy;
+> +	int cpu;
+>  
+>  	if (!cpufreq_driver)
+>  		return;
+> @@ -1662,6 +1663,11 @@ void cpufreq_suspend(void)
+>  	}
+>  
+>  suspend:
+> +	if (cpufreq_driver->flags & CPUFREQ_DEFER_INIT_DURING_RESUME)
+> +		for_each_active_policy(policy)
+> +			for_each_cpu(cpu, policy->cpus)
+> +				cpufreq_offline(cpu);
 
-For sending the corrected version. This is second revision of the
-patchset so please remember to add v2 to the title and changelog in
-cover letter. v2 can be easily added with format-patch (-v2).
+You will offline boot-cpu as well :)
 
-Best regards,
-Krzysztof
+> +
+>  	cpufreq_suspended = true;
+>  }
+>  
+> @@ -1674,7 +1680,7 @@ void cpufreq_suspend(void)
+>  void cpufreq_resume(void)
+>  {
+>  	struct cpufreq_policy *policy;
+> -	int ret;
+> +	int ret, cpu;
+>  
+>  	if (!cpufreq_driver)
+>  		return;
+> @@ -1682,6 +1688,11 @@ void cpufreq_resume(void)
+>  	if (unlikely(!cpufreq_suspended))
+>  		return;
+>  
+> +	if (cpufreq_driver->flags & CPUFREQ_DEFER_INIT_DURING_RESUME)
+> +		for_each_active_policy(policy)
+> +			for_each_cpu(cpu, policy->cpus)
+> +				cpufreq_online(cpu);
+> +
+>  	cpufreq_suspended = false;
+>  
+>  	if (!has_target() && !cpufreq_driver->resume)
+> @@ -2444,14 +2455,16 @@ static enum cpuhp_state hp_online;
+>  
+>  static int cpuhp_cpufreq_online(unsigned int cpu)
+>  {
+> -	cpufreq_online(cpu);
+> +	if (!(cpufreq_driver->flags & CPUFREQ_DEFER_INIT_DURING_RESUME))
+> +		cpufreq_online(cpu);
+
+This isn't correct as we can offline the CPUs without suspend as well
+and cpufreq_online/offline should always be called in such cases.
+
+Anyways, I have cc'd you on another series which may end up fixing
+this problem as well.
+
+-- 
+viresh
