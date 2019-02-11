@@ -1,45 +1,56 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 04/22] ASoC: samsung: i2s: Fix prescaler
- setting for the secondary DAI
-Date: Mon, 11 Feb 2019 15:32:12 +0100
-Message-ID: <62ea88ed-6916-f7a5-6806-6b9c5ba08f13@samsung.com>
-References: <CGME20190207170058epcas1p4e2fadf4aae2ece3c47c0750a094a4fbb@epcas1p4.samsung.com>
- <20190207170028.720-1-s.nawrocki@samsung.com>
- <20190207170028.720-5-s.nawrocki@samsung.com>
- <CAJKOXPdar1q8oz4KHEVoQ6_NbD+hUYfFE3u97VLGUV7azEnZwA@mail.gmail.com>
+From: Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Subject: Re: [PATCH] ARM: MCPM: Add provision for platform specific wfi
+ alternative
+Date: Mon, 11 Feb 2019 14:12:41 +0000
+Message-ID: <20190211141241.vcz64as6wqdhfrmb@shell.armlinux.org.uk>
+References: <20190210231212.20470-1-stuart.menefy@mathembedded.com>
+ <CAPoDyq6vzXuR+Z=t9eyJytuOGZknyY1nOY7v_ir86VTZM3DH5g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-reply-to: <CAJKOXPdar1q8oz4KHEVoQ6_NbD+hUYfFE3u97VLGUV7azEnZwA@mail.gmail.com>
-Content-language: en-GB
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: alsa-devel@alsa-project.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie@samsung.com>, sbkim73@samsung.com, lgirdwood@gmail.com, linux-kernel@vger.kernel.org, broonie@kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <CAPoDyq6vzXuR+Z=t9eyJytuOGZknyY1nOY7v_ir86VTZM3DH5g@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stuart Menefy <stuart.menefy@mathembedded.com>
+Cc: linux-samsung-soc@vger.kernel.org, Will Deacon <will.deacon@arm.com>, linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, Nicolas Pitre <nico@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2/11/19 14:37, Krzysztof Kozlowski wrote:
->> @@ -784,6 +787,9 @@ static int i2s_hw_params(struct snd_pcm_substream *substream,
->>         i2s->frmclk = params_rate(params);
->>
->>         rclksrc = i2s->clk_table[CLK_I2S_RCLK_SRC];
->> +       if (!rclksrc || IS_ERR(rclksrc))
+On Mon, Feb 11, 2019 at 01:53:14PM +0000, Stuart Menefy wrote:
+> Folks
+> 
+> On Sun, 10 Feb 2019 at 23:12, Stuart Menefy
+> <stuart.menefy@mathembedded.com> wrote:
+> >
+> > On some platforms (in particular the Exynos5260) the wfi is not
+> > executed directly by the operating system but by trapping into the
+> > secure monitor. This allows us to replicate the behaviour of the
+> > vendor supplied kernel using the MCPM framework.
+> >
+> > Signed-off-by: Stuart Menefy <stuart.menefy@mathembedded.com>
+> 
+> I forgot to add, this is a part of a series of patches which updates
+> the Exynos 5260
+> support, allowing use of the kernel on secure parts and adding suspend
+> functionality,
+> Version 1 of the patches has been posted to the samsung-soc mailing list:
+> https://www.spinics.net/lists/linux-samsung-soc/#65035
+> and I'm just about to post version 2. However as this is the only patch which
+> touches generic ARM files I though I'd better check the approach is acceptable
+> to a wider audience.
 
-> IS_ERR_OR_NULL
-
-Thanks for your review! That line will be removed by subsequent patch
-(7/22) so I'd say such a change wouldn't make a difference anyway.
-Besides not using IS_ERR_OR_NULL() was intentional.
-
+Please don't limit patches to just the SoC specific mailing list - copy
+linux-arm-kernel and linux-kernel as well.  Thanks.
 
 -- 
-Thanks,
-Sylwester
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
