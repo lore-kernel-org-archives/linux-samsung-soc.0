@@ -1,48 +1,135 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH 0/2] cpufreq/opp: rework regulator initialization
-Date: Mon, 11 Feb 2019 15:25:27 +0530
-Message-ID: <20190211095527.5brreiqppn7kk3yt@vireshk-i7>
-References: <CGME20190207122255eucas1p1cdebed838c799eca46cce6a654a26187@eucas1p1.samsung.com>
- <20190207122227.19873-1-m.szyprowski@samsung.com>
- <20190211084413.b53qyx6sgkxsjhdv@vireshk-i7>
- <9b4a6c9a-93f9-474f-b8c0-4353a531e128@samsung.com>
+From: Lukasz Luba <l.luba@partner.samsung.com>
+Subject: Re: [PATCH v3 3/8] clk: samsung: add BPLL rate table for Exynos
+ 5422 SoC
+Date: Mon, 11 Feb 2019 11:21:16 +0100
+Message-ID: <59a5e9bc-a5de-9f98-5710-4cd48cb5b239@partner.samsung.com>
+References: <1548924594-19084-1-git-send-email-l.luba@partner.samsung.com>
+        <CGME20190131085007eucas1p2f16107042b8ce5638811840618bcf017@eucas1p2.samsung.com>
+        <1548924594-19084-4-git-send-email-l.luba@partner.samsung.com>
+        <d5b8d165-564e-b776-77de-31a069118067@samsung.com>
+        <0ca15b4c-ddaa-1be5-35be-e76b008b28a8@partner.samsung.com>
+        <CAGTfZH05zn_FiNt3zSHZJfspvo4RXWPrAtWLUq5xsqKoB3qxBA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <9b4a6c9a-93f9-474f-b8c0-4353a531e128@samsung.com>
+In-Reply-To: <CAGTfZH05zn_FiNt3zSHZJfspvo4RXWPrAtWLUq5xsqKoB3qxBA@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Dave Gerlach <d-gerlach@ti.com>, Wolfram Sang <wsa@the-dreams.de>, Sudeep.Holla@arm.com
+To: cwchoi00@gmail.com
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 11-02-19, 10:52, Marek Szyprowski wrote:
-> Hi Viresh,
-> 
-> On 2019-02-11 09:44, Viresh Kumar wrote:
-> > On 07-02-19, 13:22, Marek Szyprowski wrote:
-> >> Dear All,
-> >>
-> >> Recent commit 9ac6cb5fbb17 ("i2c: add suspended flag and accessors for
-> >> i2c adapters") added a visible warning for an attempt to do i2c transfer
-> >> over a suspended i2c bus. This revealed a long standing issue in the
-> >> cpufreq-dt driver, which gives a following warning during system
-> >> suspend/resume cycle:
-> > Marek,
-> >
-> > I have sent a patchset which is not directly related to the problem
-> > you are facing, but it may solve your problem as a side effect. Can
-> > you please see if that works to solve this issue as well ?
-> >
-> > https://lore.kernel.org/lkml/cover.1549874368.git.viresh.kumar@linaro.org/T/#u
-> 
-> Thanks for the patch. It indeed solves the problem of the i2c transfer
-> in cpu hotplug procedure during system resume, although my resources
-> management rewrite is still valid as a way to fix remaining 'todos' in
-> the cpufreq-dt driver.
+Hi Chanwoo,
 
-Which remaining todos are you talking about ? Sorry I am not able to
-recall :(
+On 2/3/19 8:54 AM, Chanwoo Choi wrote:
+> Hi Lukasz,
+> 
+> 2019년 2월 1일 (금) 오후 11:22, Lukasz Luba <l.luba@partner.samsung.com>님이 작성:
+> 
+>>
+>> Hi Chanwoo,
+>>
+>> On 2/1/19 9:44 AM, Chanwoo Choi wrote:
+>>> Hi,
+>>>
+>>> On 19. 1. 31. 오후 5:49, Lukasz Luba wrote:
+>>>> Add new table rate for BPLL for Exynos5422 SoC supporting Dynamic Memory
+>>>> Controller frequencies for driver's DRAM timings.
+>>>>
+>>>> CC: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>>>> CC: Chanwoo Choi <cw00.choi@samsung.com>
+>>>> CC: Michael Turquette <mturquette@baylibre.com>
+>>>> CC: Stephen Boyd <sboyd@kernel.org>
+>>>> CC: Kukjin Kim <kgene@kernel.org>
+>>>> CC: Krzysztof Kozlowski <krzk@kernel.org>
+>>>> CC: linux-samsung-soc@vger.kernel.org
+>>>> CC: linux-clk@vger.kernel.org
+>>>> CC: linux-arm-kernel@lists.infradead.org
+>>>> CC: linux-kernel@vger.kernel.org
+>>>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+>>>> ---
+>>>>    drivers/clk/samsung/clk-exynos5420.c | 15 ++++++++++++++-
+>>>>    1 file changed, 14 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+>>>> index 3e87421..8bf9579 100644
+>>>> --- a/drivers/clk/samsung/clk-exynos5420.c
+>>>> +++ b/drivers/clk/samsung/clk-exynos5420.c
+>>>> @@ -1325,6 +1325,19 @@ static const struct samsung_pll_rate_table exynos5420_pll2550x_24mhz_tbl[] __ini
+>>>>       PLL_35XX_RATE(24 * MHZ, 200000000,  200, 3, 3),
+>>>>    };
+>>>>
+>>>> +static const struct samsung_pll_rate_table exynos5422_bpll_rate_table[] = {
+>>>> +    PLL_35XX_RATE(24 * MHZ, 933000000, 311, 4, 1),
+>>>> +    PLL_35XX_RATE(24 * MHZ, 825000000, 275, 4, 1),
+>>>> +    PLL_35XX_RATE(24 * MHZ, 728000000, 182, 3, 1),
+>>>> +    PLL_35XX_RATE(24 * MHZ, 633000000, 211, 4, 1),
+>>>> +    PLL_35XX_RATE(24 * MHZ, 543000000, 181, 2, 2),
+>>>> +    PLL_35XX_RATE(24 * MHZ, 413000000, 413, 6, 2),
+>>>> +    PLL_35XX_RATE(24 * MHZ, 275000000, 275, 3, 3),
+>>>> +    PLL_35XX_RATE(24 * MHZ, 206000000, 206, 3, 3),
+>>>> +    PLL_35XX_RATE(24 * MHZ, 165000000, 110, 2, 3),
+>>>> +    PLL_35XX_RATE(24 * MHZ, 138000000, 184, 2, 4),
+>>>
+>>> Except for 825Mhz, I can't find the target frequency
+>>> on Exynos5422 TRM document. Usually, Exynos TRM specified
+>>> the supported stable clocks. It means that undefined clocks
+>>> are not stable as I knew. Where do you find them?
+>>>
+>>> When I calculated the PLL frequency with PMS value, it is correct.
+>>> But, just we need to check the reference of undefined clocks on TRM
+>>> in order to guarantee the stable operation.
+>> They values live in vendor code for Android.
+>> I have tested the DMC & DDR with these ratios in stress scenarios
+>> for a few days and it was stable.
+> 
+> If possible, please share the url of original vendor code.
+Here is the vendor code for the BPLL values:
+https://github.com/hardkernel/linux/blob/odroidxu3-3.10.y-android/drivers/clk/samsung/clk-exynos5422.c#L2026
 
--- 
-viresh
+Regards,
+Lukasz
+> 
+>>
+>>>
+>>> Remove 933/138Mhz because exynos5433-dmc.c doesn't use 933Mhz and 138Mhz
+>>> and also Exynos5422 TRM doesn't define 933/138Mhz on pll table.
+>> OK, I will remove them.
+>>>
+>>>> +};
+>>>> +
+>>>>    static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
+>>>>       PLL_36XX_RATE(24 * MHZ, 600000000U, 100, 2, 1, 0),
+>>>>       PLL_36XX_RATE(24 * MHZ, 400000000U, 200, 3, 2, 0),
+>>>> @@ -1467,7 +1480,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
+>>>>               exynos5x_plls[apll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+>>>>               exynos5x_plls[epll].rate_table = exynos5420_epll_24mhz_tbl;
+>>>>               exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+>>>> -            exynos5x_plls[bpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+>>>> +            exynos5x_plls[bpll].rate_table = exynos5422_bpll_rate_table;
+>>>
+>>> Exynos5422 used the same PLL table for apll, kpll, bpll and so on.
+>>> You don't need to make the separate pll table. Just add new entries
+>>> to exynos5420_pll2550x_24mhz_tbl table.
+>> OK, I will extend the exynos5420_pll2550x_24mhz_tbl table.
+>>
+>> In v4 patch set, it will be fixed.
+>>
+>> Regards,
+>> Lukasz
+>>>
+>>>>       }
+>>>>
+>>>>       samsung_clk_register_pll(ctx, exynos5x_plls, ARRAY_SIZE(exynos5x_plls),
+>>>>
+>>>
+> 
+> 
+> 
+> --
+> Best Regards,
+> Chanwoo Choi
+> Samsung Electronics
+> 
+> 
