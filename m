@@ -1,53 +1,65 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 0/2] cpufreq/opp: rework regulator initialization
-Date: Mon, 11 Feb 2019 13:22:24 +0100
-Message-ID: <f9f54181-f7bc-6add-2c06-2ed3d6410d01@samsung.com>
-References: <CGME20190207122255eucas1p1cdebed838c799eca46cce6a654a26187@eucas1p1.samsung.com>
-        <20190207122227.19873-1-m.szyprowski@samsung.com>
-        <20190211084413.b53qyx6sgkxsjhdv@vireshk-i7>
-        <9b4a6c9a-93f9-474f-b8c0-4353a531e128@samsung.com>
-        <20190211095527.5brreiqppn7kk3yt@vireshk-i7>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 1/2] mfd: sec-core: Cleanup formatting to a consistent style
+Date: Mon, 11 Feb 2019 14:14:32 +0100
+Message-ID: <CAJKOXPc_aXh4r7h41dMZLe-zzpxbf3LQr4AixFSQZUxpjhVASw@mail.gmail.com>
+References: <1548761153-28114-1-git-send-email-krzk@kernel.org> <20190201092114.GE783@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190211095527.5brreiqppn7kk3yt@vireshk-i7>
-Content-Language: en-US
+In-Reply-To: <20190201092114.GE783@dell>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Dave Gerlach <d-gerlach@ti.com>, Wolfram Sang <wsa@the-dreams.de>, Sudeep.Holla@arm.com
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Viresh,
+On Fri, 1 Feb 2019 at 10:21, Lee Jones <lee.jones@linaro.org> wrote:
+>
+> On Tue, 29 Jan 2019, Krzysztof Kozlowski wrote:
+>
+> > Cleanup the formatting to have consistent style across the file (only
+> > white-space issues).  No expected difference in code.
+> >
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > ---
+> >  drivers/mfd/sec-core.c | 17 ++++++++++-------
+> >  1 file changed, 10 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+> > index e0835c9df7a1..c3bb53f79e63 100644
+> > --- a/drivers/mfd/sec-core.c
+> > +++ b/drivers/mfd/sec-core.c
+> > @@ -70,9 +70,11 @@ static const struct mfd_cell s2mps11_devs[] = {
+> >  };
+> >
+> >  static const struct mfd_cell s2mps13_devs[] = {
+> > -     { .name = "s2mps13-regulator", },
+> > -     { .name = "s2mps13-rtc", },
+>
+> I prefer one liners to remain on one line.
 
-On 2019-02-11 10:55, Viresh Kumar wrote:
-> On 11-02-19, 10:52, Marek Szyprowski wrote:
->> On 2019-02-11 09:44, Viresh Kumar wrote:
->>> On 07-02-19, 13:22, Marek Szyprowski wrote:
->>>> Dear All,
->>>>
->>>> Recent commit 9ac6cb5fbb17 ("i2c: add suspended flag and accessors for
->>>> i2c adapters") added a visible warning for an attempt to do i2c transfer
->>>> over a suspended i2c bus. This revealed a long standing issue in the
->>>> cpufreq-dt driver, which gives a following warning during system
->>>> suspend/resume cycle:
->>> Marek,
->>>
->>> I have sent a patchset which is not directly related to the problem
->>> you are facing, but it may solve your problem as a side effect. Can
->>> you please see if that works to solve this issue as well ?
->>>
->>> https://lore.kernel.org/lkml/cover.1549874368.git.viresh.kumar@linaro.org/T/#u
->> Thanks for the patch. It indeed solves the problem of the i2c transfer
->> in cpu hotplug procedure during system resume, although my resources
->> management rewrite is still valid as a way to fix remaining 'todos' in
->> the cpufreq-dt driver.
-> Which remaining todos are you talking about ? Sorry I am not able to
-> recall :(
+OK
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/cpufreq/cpufreq-dt.c#n347
+>
+> >       {
+> > +             .name = "s2mps13-regulator",
+> > +     }, {
+> > +             .name = "s2mps13-rtc",
+> > +     }, {
+> >               .name = "s2mps13-clk",
+> >               .of_compatible = "samsung,s2mps13-clk",
+> >       },
+> > @@ -114,7 +116,8 @@ static const struct mfd_cell s2mpu02_devs[] = {
+> >
+> >  #ifdef CONFIG_OF
+> >  static const struct of_device_id sec_dt_match[] = {
+> > -     {       .compatible = "samsung,s5m8767-pmic",
+> > +     {
+> > +             .compatible = "samsung,s5m8767-pmic",
+> >               .data = (void *)S5M8767X,
+>
+> All of the other changes are fine.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+OK, let me send v2.
+
+Best regards,
+Krzysztof
