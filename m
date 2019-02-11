@@ -1,47 +1,57 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 04/22] ASoC: samsung: i2s: Fix prescaler
- setting for the secondary DAI
-Date: Mon, 11 Feb 2019 16:03:21 +0100
-Message-ID: <CAJKOXPfYxbAKCBOXTmsGnprksSGrZGyHGrtn75rO46QMLZDzrw@mail.gmail.com>
-References: <CGME20190207170058epcas1p4e2fadf4aae2ece3c47c0750a094a4fbb@epcas1p4.samsung.com>
- <20190207170028.720-1-s.nawrocki@samsung.com>
- <20190207170028.720-5-s.nawrocki@samsung.com>
- <CAJKOXPdar1q8oz4KHEVoQ6_NbD+hUYfFE3u97VLGUV7azEnZwA@mail.gmail.com>
- <62ea88ed-6916-f7a5-6806-6b9c5ba08f13@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 17/22] ASoC: samsung: odroid: Add support for secondary
+ CPU DAI
+Date: Mon, 11 Feb 2019 16:19:11 +0100
+Message-ID: <c60fb7b9-8847-7e68-2ef4-4dbbfb48e71a@samsung.com>
+References: <CGME20190207170145epcas1p465da0715aa629b525c17d263c1b49a68@epcas1p4.samsung.com>
+        <20190207170028.720-1-s.nawrocki@samsung.com>
+        <20190207170028.720-18-s.nawrocki@samsung.com>
+        <CAJKOXPehfWHW+Mj=xZ_N+LA7nLUnOvHAwqEmBECquzVSx1ppPQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <62ea88ed-6916-f7a5-6806-6b9c5ba08f13@samsung.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: alsa-devel@alsa-project.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, sbkim73@samsung.com, lgirdwood@gmail.com, linux-kernel@vger.kernel.org, broonie@kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <CAJKOXPehfWHW+Mj=xZ_N+LA7nLUnOvHAwqEmBECquzVSx1ppPQ@mail.gmail.com>
+Content-language: en-GB
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: broonie@kernel.org, lgirdwood@gmail.com, sbkim73@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie@samsung.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 11 Feb 2019 at 15:32, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
->
-> On 2/11/19 14:37, Krzysztof Kozlowski wrote:
-> >> @@ -784,6 +787,9 @@ static int i2s_hw_params(struct snd_pcm_substream *substream,
-> >>         i2s->frmclk = params_rate(params);
-> >>
-> >>         rclksrc = i2s->clk_table[CLK_I2S_RCLK_SRC];
-> >> +       if (!rclksrc || IS_ERR(rclksrc))
->
-> > IS_ERR_OR_NULL
->
-> Thanks for your review! That line will be removed by subsequent patch
-> (7/22) so I'd say such a change wouldn't make a difference anyway.
+On 2/11/19 14:57, Krzysztof Kozlowski wrote:
+>> static struct snd_soc_dai_link odroid_card_dais[] = {
+>> +       {
+>> +               /* Primary FE <-> BE link */
+>> +               .codec_name = "snd-soc-dummy",
+>> +               .codec_dai_name = "snd-soc-dummy-dai",
+>> +               .ops = &odroid_card_fe_ops,
+>> +               .name = "Primary",
+>> +               .stream_name = "Primary",
+>> +               .platform_name = "3830000.i2s",
 
-Then let's skip it:
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Why exposing address as platform_name? I think it is not used so how
+> about some friendlier name?
+ 
+This entry is for selecting "PCM" (DMA) component for the link. 
+For proper matching we need to use names of devices for which
+the dmaengine based PCM component is registered (with a call to
+samsung_asoc_dma_platform_register()).
 
-Best regards,
-Krzysztof
+We can't use platform_of_node because 2 PCM components ("3830000.i2s", 
+"samsung-i2s-sec") are now associated with same DT node.
+
+
+>> +       }, {
+>> +               /* BE <-> CODECs link */
+>> +       }, {
+>> +               /* Secondary FE <-> BE link */
+
+>> +               .platform_name = "samsung-i2s-sec",
+
+>> +       }
+>>  };
+
+
+--
+Thanks, 
+Sylwester
