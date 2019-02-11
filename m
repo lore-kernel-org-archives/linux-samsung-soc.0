@@ -1,60 +1,32 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2] mfd: sec-core: Cleanup formatting to a consistent style
-Date: Mon, 11 Feb 2019 14:20:23 +0100
-Message-ID: <1549891223-14269-1-git-send-email-krzk@kernel.org>
+Subject: Re: [PATCH 01/22] ASoC: dmaengine: Improve of_node test in dmaengine_pcm_request_chan_of()
+Date: Mon, 11 Feb 2019 14:29:49 +0100
+Message-ID: <CAJKOXPe5wbmKQ6bKSWL9Mxjfk_PBzQ34J-TtBGKgJe-dJ6dwEg@mail.gmail.com>
+References: <CGME20190207170047epcas1p42d7ec4acfd976871c676efa5aecb33bc@epcas1p4.samsung.com>
+ <20190207170028.720-1-s.nawrocki@samsung.com> <20190207170028.720-2-s.nawrocki@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190207170028.720-2-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: broonie@kernel.org, lgirdwood@gmail.com, sbkim73@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Cleanup the formatting to have consistent style across the file (only
-white-space issues).  No expected difference in code.
+On Thu, 7 Feb 2019 at 18:00, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
+>
+> Currently when of_node of the "PCM" device is null
+> dmaengine_pcm_request_chan_of() function will bail out, including cases
+> when custom DMA device is intended to be used.  To have the channels
+> properly requested when custom DMA device is provided extend the of_node
+> test to also consider dma_dev->of_node.
+>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  sound/soc/soc-generic-dmaengine-pcm.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
----
-
-Changes since v1:
-1. Leave one-liners as is.
----
- drivers/mfd/sec-core.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
-index 00321011de0a..521319086c81 100644
---- a/drivers/mfd/sec-core.c
-+++ b/drivers/mfd/sec-core.c
-@@ -114,7 +114,8 @@ static const struct mfd_cell s2mpu02_devs[] = {
- 
- #ifdef CONFIG_OF
- static const struct of_device_id sec_dt_match[] = {
--	{	.compatible = "samsung,s5m8767-pmic",
-+	{
-+		.compatible = "samsung,s5m8767-pmic",
- 		.data = (void *)S5M8767X,
- 	}, {
- 		.compatible = "samsung,s2mps11-pmic",
-@@ -309,8 +310,8 @@ static void sec_pmic_configure(struct sec_pmic_dev *sec_pmic)
-  * the sub-modules need not instantiate another instance while parsing their
-  * platform data.
-  */
--static struct sec_platform_data *sec_pmic_i2c_parse_dt_pdata(
--					struct device *dev)
-+static struct sec_platform_data *
-+sec_pmic_i2c_parse_dt_pdata(struct device *dev)
- {
- 	struct sec_platform_data *pd;
- 
-@@ -331,8 +332,8 @@ static struct sec_platform_data *sec_pmic_i2c_parse_dt_pdata(
- 	return pd;
- }
- #else
--static struct sec_platform_data *sec_pmic_i2c_parse_dt_pdata(
--					struct device *dev)
-+static struct sec_platform_data *
-+sec_pmic_i2c_parse_dt_pdata(struct device *dev)
- {
- 	return NULL;
- }
--- 
-2.7.4
+Best regards,
+Krzysztof
