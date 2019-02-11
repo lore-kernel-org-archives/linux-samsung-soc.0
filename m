@@ -1,15 +1,12 @@
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-Subject: Re: [PATCH] ARM: MCPM: Add provision for platform specific wfi
- alternative
-Date: Mon, 11 Feb 2019 10:57:38 -0500 (EST)
-Message-ID: <nycvar.YSQ.7.76.1902111056070.2213@knanqh.ubzr>
-References: <20190210231212.20470-1-stuart.menefy@mathembedded.com>
- <CAPoDyq6vzXuR+Z=t9eyJytuOGZknyY1nOY7v_ir86VTZM3DH5g@mail.gmail.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] clk: samsung: s3c2443: Mark expected switch fall-through
+Date: Mon, 11 Feb 2019 12:15:31 -0600
+Message-ID: <20190211181531.GA3238@embeddedor>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAPoDyq6vzXuR+Z=t9eyJytuOGZknyY1nOY7v_ir86VTZM3DH5g@mail.gmail.com>
+Content-Disposition: inline
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,37 +16,40 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stuart Menefy <stuart.menefy@mathembedded.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, Kees Cook <keescook@chromium.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 11 Feb 2019, Stuart Menefy wrote:
-
-> Folks
-> 
-> On Sun, 10 Feb 2019 at 23:12, Stuart Menefy
-> <stuart.menefy@mathembedded.com> wrote:
-> >
-> > On some platforms (in particular the Exynos5260) the wfi is not
-> > executed directly by the operating system but by trapping into the
-> > secure monitor. This allows us to replicate the behaviour of the
-> > vendor supplied kernel using the MCPM framework.
-> >
-> > Signed-off-by: Stuart Menefy <stuart.menefy@mathembedded.com>
-> 
-> I forgot to add, this is a part of a series of patches which updates
-> the Exynos 5260
-> support, allowing use of the kernel on secure parts and adding suspend
-> functionality,
-> Version 1 of the patches has been posted to the samsung-soc mailing list:
-> https://www.spinics.net/lists/linux-samsung-soc/#65035
-> and I'm just about to post version 2. However as this is the only patch which
-> touches generic ARM files I though I'd better check the approach is acceptable
-> to a wider audience.
-
-I was about to ask that you also post those patches making use of this 
-change.  It is not possible to evaluate if the approach makes sense 
-without seeing how it is used.
-
-
-Nicolas
+SW4gcHJlcGFyYXRpb24gdG8gZW5hYmxpbmcgLVdpbXBsaWNpdC1mYWxsdGhyb3VnaCwgbWFyayBz
+d2l0Y2gKY2FzZXMgd2hlcmUgd2UgYXJlIGV4cGVjdGluZyB0byBmYWxsIHRocm91Z2guCgpUaGlz
+IHBhdGNoIGZpeGVzIHRoZSBmb2xsb3dpbmcgd2FybmluZ3M6Cgpkcml2ZXJzL2Nsay9zYW1zdW5n
+L2Nsay1zM2MyNDQzLmM6IEluIGZ1bmN0aW9uIOKAmHMzYzI0NDNfY29tbW9uX2Nsa19pbml04oCZ
+Ogpkcml2ZXJzL2Nsay9zYW1zdW5nL2Nsay1zM2MyNDQzLmM6MzkwOjM6IHdhcm5pbmc6IHRoaXMg
+c3RhdGVtZW50IG1heSBmYWxsIHRocm91Z2ggWy1XaW1wbGljaXQtZmFsbHRocm91Z2g9XQogICBz
+YW1zdW5nX2Nsa19yZWdpc3Rlcl9hbGlhcyhjdHgsIHMzYzI0NTBfYWxpYXNlcywKICAgXn5+fn5+
+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+CiAgICAgQVJSQVlfU0la
+RShzM2MyNDUwX2FsaWFzZXMpKTsKICAgICB+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+CmRy
+aXZlcnMvY2xrL3NhbXN1bmcvY2xrLXMzYzI0NDMuYzozOTM6Mjogbm90ZTogaGVyZQogIGNhc2Ug
+UzNDMjQxNjoKICBefn5+CgpXYXJuaW5nIGxldmVsIDMgd2FzIHVzZWQ6IC1XaW1wbGljaXQtZmFs
+bHRocm91Z2g9MwoKTm90aWNlIHRoYXQsIGluIHRoaXMgcGFydGljdWxhciBjYXNlLCAgdGhlIGNv
+ZGUgY29tbWVudCBpcyBtb2RpZmllZAppbiBhY2NvcmRhbmNlIHdpdGggd2hhdCBHQ0MgaXMgZXhw
+ZWN0aW5nIHRvIGZpbmQuCgpUaGlzIHBhdGNoIGlzIHBhcnQgb2YgdGhlIG9uZ29pbmcgZWZmb3J0
+cyB0byBlbmFibGUKLVdpbXBsaWNpdC1mYWxsdGhyb3VnaC4KClNpZ25lZC1vZmYtYnk6IEd1c3Rh
+dm8gQS4gUi4gU2lsdmEgPGd1c3Rhdm9AZW1iZWRkZWRvci5jb20+Ci0tLQogZHJpdmVycy9jbGsv
+c2Ftc3VuZy9jbGstczNjMjQ0My5jIHwgMiArLQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9u
+KCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvc2Ftc3VuZy9jbGst
+czNjMjQ0My5jIGIvZHJpdmVycy9jbGsvc2Ftc3VuZy9jbGstczNjMjQ0My5jCmluZGV4IDg4NDA2
+N2U0ZjFhMS4uZjM4ZjBlMjRlM2I2IDEwMDY0NAotLS0gYS9kcml2ZXJzL2Nsay9zYW1zdW5nL2Ns
+ay1zM2MyNDQzLmMKKysrIGIvZHJpdmVycy9jbGsvc2Ftc3VuZy9jbGstczNjMjQ0My5jCkBAIC0z
+ODksNyArMzg5LDcgQEAgdm9pZCBfX2luaXQgczNjMjQ0M19jb21tb25fY2xrX2luaXQoc3RydWN0
+IGRldmljZV9ub2RlICpucCwgdW5zaWduZWQgbG9uZyB4dGlfZiwKIAkJCQlBUlJBWV9TSVpFKHMz
+YzI0NTBfZ2F0ZXMpKTsKIAkJc2Ftc3VuZ19jbGtfcmVnaXN0ZXJfYWxpYXMoY3R4LCBzM2MyNDUw
+X2FsaWFzZXMsCiAJCQkJQVJSQVlfU0laRShzM2MyNDUwX2FsaWFzZXMpKTsKLQkJLyogZmFsbCB0
+aHJvdWdoLCBhcyBzM2MyNDUwIGV4dGVuZHMgdGhlIHMzYzI0MTYgY2xvY2tzICovCisJCS8qIGZh
+bGwgdGhyb3VnaCAtIGFzIHMzYzI0NTAgZXh0ZW5kcyB0aGUgczNjMjQxNiBjbG9ja3MgKi8KIAlj
+YXNlIFMzQzI0MTY6CiAJCXNhbXN1bmdfY2xrX3JlZ2lzdGVyX2RpdihjdHgsIHMzYzI0MTZfZGl2
+aWRlcnMsCiAJCQkJQVJSQVlfU0laRShzM2MyNDE2X2RpdmlkZXJzKSk7Ci0tIAoyLjIwLjEKCgpf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0t
+a2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcK
+aHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2Vy
+bmVsCg==
