@@ -1,30 +1,46 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 16/22] ASoC: samsung: i2s: Get rid of a static spinlock
-Date: Mon, 11 Feb 2019 14:51:43 +0100
-Message-ID: <CAJKOXPfPO_4=8p_EQ7zf-x6Ty3CkibysVW1HoqzcjxAmfQv_WA@mail.gmail.com>
-References: <CGME20190207170141epcas1p29a038bfd0df69df10e916ea8a695a85b@epcas1p2.samsung.com>
- <20190207170028.720-1-s.nawrocki@samsung.com> <20190207170028.720-17-s.nawrocki@samsung.com>
+From: Stuart Menefy <stuart.menefy@mathembedded.com>
+Subject: Re: [PATCH] ARM: MCPM: Add provision for platform specific wfi
+ alternative
+Date: Mon, 11 Feb 2019 13:53:14 +0000
+Message-ID: <CAPoDyq6vzXuR+Z=t9eyJytuOGZknyY1nOY7v_ir86VTZM3DH5g@mail.gmail.com>
+References: <20190210231212.20470-1-stuart.menefy@mathembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190207170028.720-17-s.nawrocki@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: broonie@kernel.org, lgirdwood@gmail.com, sbkim73@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190210231212.20470-1-stuart.menefy@mathembedded.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Will Deacon <will.deacon@arm.com>, Nicolas Pitre <nico@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, 7 Feb 2019 at 18:01, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
->
-> This patch makes the spinlock serializing access to the primary/secondary
-> PCM a per I2S controller lock, rather than a global one. There is no need
-> to have a global lock across multiple I2S controllers in the SoC.
->
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  sound/soc/samsung/i2s.c | 16 +++++++++-------
->  1 file changed, 9 insertions(+), 7 deletions(-)
+Folks
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+On Sun, 10 Feb 2019 at 23:12, Stuart Menefy
+<stuart.menefy@mathembedded.com> wrote:
+>
+> On some platforms (in particular the Exynos5260) the wfi is not
+> executed directly by the operating system but by trapping into the
+> secure monitor. This allows us to replicate the behaviour of the
+> vendor supplied kernel using the MCPM framework.
+>
+> Signed-off-by: Stuart Menefy <stuart.menefy@mathembedded.com>
 
-Best regards,
-Krzysztof
+I forgot to add, this is a part of a series of patches which updates
+the Exynos 5260
+support, allowing use of the kernel on secure parts and adding suspend
+functionality,
+Version 1 of the patches has been posted to the samsung-soc mailing list:
+https://www.spinics.net/lists/linux-samsung-soc/#65035
+and I'm just about to post version 2. However as this is the only patch which
+touches generic ARM files I though I'd better check the approach is acceptable
+to a wider audience.
+
+Stuart
