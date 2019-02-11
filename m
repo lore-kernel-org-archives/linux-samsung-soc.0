@@ -1,56 +1,53 @@
-From: Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Subject: Re: [PATCH] ARM: MCPM: Add provision for platform specific wfi
- alternative
-Date: Mon, 11 Feb 2019 14:12:41 +0000
-Message-ID: <20190211141241.vcz64as6wqdhfrmb@shell.armlinux.org.uk>
-References: <20190210231212.20470-1-stuart.menefy@mathembedded.com>
- <CAPoDyq6vzXuR+Z=t9eyJytuOGZknyY1nOY7v_ir86VTZM3DH5g@mail.gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 06/22] ASoC: samsung: i2s: Restore support
+ for the secondary PCM
+Date: Mon, 11 Feb 2019 15:50:33 +0100
+Message-ID: <0d5c9877-ab82-9d80-5336-6324e111c32c@samsung.com>
+References: <CGME20190207170105epcas1p3d4a1da9ae268f8e95b32fb499e5a1dad@epcas1p3.samsung.com>
+ <20190207170028.720-1-s.nawrocki@samsung.com>
+ <20190207170028.720-7-s.nawrocki@samsung.com>
+ <CAJKOXPfTZ1EGUpL_Zg20iWYJFkoCvEhoQSM=f92N-NJwo1LsNg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <CAPoDyq6vzXuR+Z=t9eyJytuOGZknyY1nOY7v_ir86VTZM3DH5g@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stuart Menefy <stuart.menefy@mathembedded.com>
-Cc: linux-samsung-soc@vger.kernel.org, Will Deacon <will.deacon@arm.com>, linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, Nicolas Pitre <nico@linaro.org>
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-reply-to: <CAJKOXPfTZ1EGUpL_Zg20iWYJFkoCvEhoQSM=f92N-NJwo1LsNg@mail.gmail.com>
+Content-language: en-GB
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: alsa-devel@alsa-project.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie@samsung.com>, sbkim73@samsung.com, lgirdwood@gmail.com, linux-kernel@vger.kernel.org, broonie@kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 01:53:14PM +0000, Stuart Menefy wrote:
-> Folks
-> 
-> On Sun, 10 Feb 2019 at 23:12, Stuart Menefy
-> <stuart.menefy@mathembedded.com> wrote:
-> >
-> > On some platforms (in particular the Exynos5260) the wfi is not
-> > executed directly by the operating system but by trapping into the
-> > secure monitor. This allows us to replicate the behaviour of the
-> > vendor supplied kernel using the MCPM framework.
-> >
-> > Signed-off-by: Stuart Menefy <stuart.menefy@mathembedded.com>
-> 
-> I forgot to add, this is a part of a series of patches which updates
-> the Exynos 5260
-> support, allowing use of the kernel on secure parts and adding suspend
-> functionality,
-> Version 1 of the patches has been posted to the samsung-soc mailing list:
-> https://www.spinics.net/lists/linux-samsung-soc/#65035
-> and I'm just about to post version 2. However as this is the only patch which
-> touches generic ARM files I though I'd better check the approach is acceptable
-> to a wider audience.
+On 2/11/19 14:41, Krzysztof Kozlowski wrote:
+>> @@ -1469,12 +1506,16 @@ static int samsung_i2s_remove(struct platform_device *pdev)
+>>         struct samsung_i2s_priv *priv = dev_get_drvdata(&pdev->dev);
+>>         struct i2s_dai *pri_dai = samsung_i2s_get_pri_dai(&pdev->dev);
+>>
+>> +       if (!priv)
 
-Please don't limit patches to just the SoC specific mailing list - copy
-linux-arm-kernel and linux-kernel as well.  Thanks.
+> This is not obvious. Maybe comment that it is secondary device remove()?
+
+Sure, I will a comment here, I was considering it earlier but somehow it got missed.
+
+>> @@ -1573,6 +1614,9 @@ static const struct platform_device_id samsung_i2s_driver_ids[] = {
+>>                 .name           = "samsung-i2s",
+>>                 .driver_data    = (kernel_ulong_t)&i2sv3_dai_type,
+>>         },
+>> +       {
+
+> Nit - squash with previous line.
+
+Will change it.
+
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+Thanks,
+Sylwester
