@@ -1,32 +1,46 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 2/2] clocksource: exynos_mct: Clear timer interrupt when shutdown
-Date: Mon, 11 Feb 2019 09:47:53 +0100
-Message-ID: <CAJKOXPeHMTZn0h8aVU4btg736XyHxpYHBFy1Up7jZgmQa17gtg@mail.gmail.com>
-References: <20190210225114.20110-1-stuart.menefy@mathembedded.com> <20190210225114.20110-3-stuart.menefy@mathembedded.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 0/2] cpufreq/opp: rework regulator initialization
+Date: Mon, 11 Feb 2019 10:52:50 +0100
+Message-ID: <9b4a6c9a-93f9-474f-b8c0-4353a531e128@samsung.com>
+References: <CGME20190207122255eucas1p1cdebed838c799eca46cce6a654a26187@eucas1p1.samsung.com>
+        <20190207122227.19873-1-m.szyprowski@samsung.com>
+        <20190211084413.b53qyx6sgkxsjhdv@vireshk-i7>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190210225114.20110-3-stuart.menefy@mathembedded.com>
+In-Reply-To: <20190211084413.b53qyx6sgkxsjhdv@vireshk-i7>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stuart Menefy <stuart.menefy@mathembedded.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Dave Gerlach <d-gerlach@ti.com>, Wolfram Sang <wsa@the-dreams.de>, Sudeep.Holla@arm.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sun, 10 Feb 2019 at 23:51, Stuart Menefy
-<stuart.menefy@mathembedded.com> wrote:
->
-> When shutting down the timer, ensure that after we have stopped the
-> timer any pending interrupts are cleared. This fixes a problem when
-> suspending, as interrupts are disabled before the timer is stopped,
-> so the timer interrupt may still be asserted, preventing the system
-> entering a low power state when the wfi is executed.
->
-> Signed-off-by: Stuart Menefy <stuart.menefy@mathembedded.com>
-> ---
->  drivers/clocksource/exynos_mct.c | 1 +
->  1 file changed, 1 insertion(+)
+Hi Viresh,
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+On 2019-02-11 09:44, Viresh Kumar wrote:
+> On 07-02-19, 13:22, Marek Szyprowski wrote:
+>> Dear All,
+>>
+>> Recent commit 9ac6cb5fbb17 ("i2c: add suspended flag and accessors for
+>> i2c adapters") added a visible warning for an attempt to do i2c transfer
+>> over a suspended i2c bus. This revealed a long standing issue in the
+>> cpufreq-dt driver, which gives a following warning during system
+>> suspend/resume cycle:
+> Marek,
+>
+> I have sent a patchset which is not directly related to the problem
+> you are facing, but it may solve your problem as a side effect. Can
+> you please see if that works to solve this issue as well ?
+>
+> https://lore.kernel.org/lkml/cover.1549874368.git.viresh.kumar@linaro.org/T/#u
 
-Best regards,
-Krzysztof
+Thanks for the patch. It indeed solves the problem of the i2c transfer
+in cpu hotplug procedure during system resume, although my resources
+management rewrite is still valid as a way to fix remaining 'todos' in
+the cpufreq-dt driver.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
