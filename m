@@ -1,9 +1,10 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 18/21] ASoC: samsung: i2s: Comments clean up
-Date: Tue, 12 Feb 2019 19:03:39 +0100
-Message-ID: <20190212180342.32040-19-s.nawrocki@samsung.com>
+Subject: [PATCH v2 20/21] ARM: dts: exynos5422-odroidxu3: Add support for
+ secondary DAI
+Date: Tue, 12 Feb 2019 19:03:41 +0100
+Message-ID: <20190212180342.32040-21-s.nawrocki@samsung.com>
 References: <20190212180342.32040-1-s.nawrocki@samsung.com>
-        <CGME20190212180542epcas2p2f7252babc9b4dc97eaaa214658afe5d0@epcas2p2.samsung.com>
+        <CGME20190212180549epcas1p20b5cc51ba13fb934056196d1b89d67ab@epcas1p2.samsung.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
@@ -13,121 +14,37 @@ To: broonie@kernel.org
 Cc: lgirdwood@gmail.com, krzk@kernel.org, sbkim73@samsung.com, m.szyprowski@samsung.com, b.zolnierkie@samsung.com, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Spelling error fixes, upper/lower case letter changes.
+This patch extends DAPM routing and adds secondary CPU DAI entry
+to support the secondary audio PCM interface on Odroid XU3.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- sound/soc/samsung/i2s.c | 29 +++++++++++++++--------------
- 1 file changed, 15 insertions(+), 14 deletions(-)
+ arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index debeaf51cc7e..77c0f70beab1 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -1,5 +1,4 @@
--/* sound/soc/samsung/i2s.c
-- *
-+/*
-  * ALSA SoC Audio Layer - Samsung I2S Controller driver
-  *
-  * Copyright (c) 2010 Samsung Electronics Co. Ltd.
-@@ -61,10 +60,10 @@ struct i2s_dai {
- 	/* Platform device for this DAI */
- 	struct platform_device *pdev;
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
+index e84544b220b9..51a843bd65ed 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
+@@ -24,7 +24,9 @@
+ 			"Headphone Jack", "MICBIAS",
+ 			"IN1", "Headphone Jack",
+ 			"Speakers", "SPKL",
+-			"Speakers", "SPKR";
++			"Speakers", "SPKR",
++			"I2S Playback", "Mixer DAI TX",
++			"HiFi Playback", "Mixer DAI TX";
  
--	/* Frame Clock */
-+	/* Frame clock */
- 	unsigned frmclk;
- 	/*
--	 * Specifically requested RCLK,BCLK by MACHINE Driver.
-+	 * Specifically requested RCLK, BCLK by machine driver.
- 	 * 0 indicates CPU driver is free to choose any value.
- 	 */
- 	unsigned rfs, bfs;
-@@ -72,8 +71,9 @@ struct i2s_dai {
- 	struct i2s_dai *pri_dai;
- 	/* Pointer to the Secondary_Fifo if it has one, NULL otherwise */
- 	struct i2s_dai *sec_dai;
--#define DAI_OPENED	(1 << 0) /* Dai is opened */
--#define DAI_MANAGER	(1 << 1) /* Dai is the manager */
-+
-+#define DAI_OPENED	(1 << 0) /* DAI is opened */
-+#define DAI_MANAGER	(1 << 1) /* DAI is the manager */
- 	unsigned mode;
+ 		assigned-clocks = <&clock CLK_MOUT_EPLL>,
+ 				<&clock CLK_MOUT_MAU_EPLL>,
+@@ -51,7 +53,7 @@
+ 				<196608000>;
  
- 	/* Driver for this DAI */
-@@ -98,7 +98,7 @@ struct samsung_i2s_priv {
- 	/* Spinlock protecting access to the device's registers */
- 	spinlock_t lock;
- 
--	/* Lock for cross i/f checks */
-+	/* Lock for cross interface checks */
- 	spinlock_t pcm_lock;
- 
- 	/* CPU DAIs and their corresponding drivers */
-@@ -309,7 +309,7 @@ static inline void set_rfs(struct i2s_dai *i2s, unsigned rfs)
- 	writel(mod, priv->addr + I2SMOD);
- }
- 
--/* Read Bit-Clock of I2S (in multiples of LRCLK) */
-+/* Read bit-clock of I2S (in multiples of LRCLK) */
- static inline unsigned get_bfs(struct i2s_dai *i2s)
- {
- 	struct samsung_i2s_priv *priv = i2s->priv;
-@@ -331,7 +331,7 @@ static inline unsigned get_bfs(struct i2s_dai *i2s)
- 	}
- }
- 
--/* Write Bit-Clock of I2S (in multiples of LRCLK) */
-+/* Write bit-clock of I2S (in multiples of LRCLK) */
- static inline void set_bfs(struct i2s_dai *i2s, unsigned bfs)
- {
- 	struct samsung_i2s_priv *priv = i2s->priv;
-@@ -383,7 +383,7 @@ static inline void set_bfs(struct i2s_dai *i2s, unsigned bfs)
- 	writel(mod, priv->addr + I2SMOD);
- }
- 
--/* Sample-Size */
-+/* Sample size */
- static inline int get_blc(struct i2s_dai *i2s)
- {
- 	int blc = readl(i2s->priv->addr + I2SMOD);
-@@ -397,7 +397,7 @@ static inline int get_blc(struct i2s_dai *i2s)
- 	}
- }
- 
--/* TX Channel Control */
-+/* TX channel control */
- static void i2s_txctrl(struct i2s_dai *i2s, int on)
- {
- 	struct samsung_i2s_priv *priv = i2s->priv;
-@@ -742,7 +742,7 @@ static int i2s_hw_params(struct snd_pcm_substream *substream,
- 	switch (params_channels(params)) {
- 	case 6:
- 		val |= MOD_DC2_EN;
--		/* fall through */
-+		/* Fall through */
- 	case 4:
- 		val |= MOD_DC1_EN;
- 		break;
-@@ -821,7 +821,7 @@ static int i2s_hw_params(struct snd_pcm_substream *substream,
- 	return 0;
- }
- 
--/* We set constraints on the substream acc to the version of I2S */
-+/* We set constraints on the substream according to the version of I2S */
- static int i2s_startup(struct snd_pcm_substream *substream,
- 	  struct snd_soc_dai *dai)
- {
-@@ -1056,7 +1056,8 @@ static int samsung_i2s_dai_probe(struct snd_soc_dai *dai)
- 
- 	pm_runtime_get_sync(dai->dev);
- 
--	if (is_secondary(i2s)) { /* If this is probe on the secondary DAI */
-+	if (is_secondary(i2s)) {
-+		/* If this is probe on the secondary DAI */
- 		snd_soc_dai_init_dma_data(dai, &i2s->dma_playback, NULL);
- 	} else {
- 		snd_soc_dai_init_dma_data(dai, &i2s->dma_playback,
+ 		cpu {
+-			sound-dai = <&i2s0 0>;
++			sound-dai = <&i2s0 0>, <&i2s0 1>;
+ 		};
+ 		codec {
+ 			sound-dai = <&hdmi>, <&max98090>;
 -- 
 2.20.1
