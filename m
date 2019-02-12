@@ -1,57 +1,60 @@
-From: Stuart Menefy <stuart.menefy@mathembedded.com>
-Subject: [PATCH v2] regulator: s2mpa01: Fix step values for some LDOs
-Date: Tue, 12 Feb 2019 21:51:18 +0000
-Message-ID: <20190212215118.9779-1-stuart.menefy@mathembedded.com>
+From: Wen Yang <wen.yang99@zte.com.cn>
+Subject: [PATCH v2 3/4] media: s5p-cec: fix possible object reference leak
+Date: Wed, 13 Feb 2019 07:47:59 +0800
+Message-ID: <1550015279-42723-1-git-send-email-wen.yang99@zte.com.cn>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Stuart Menefy <stuart.menefy@mathembedded.com>
+To: m.szyprowski@samsung.com
+Cc: mchehab@kernel.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>, "Hans Verkuil (hansverk)" <hansverk@cisco.com>, Hans Verkuil <hans.verkuil@cisco.com>, Wen Yang <yellowriver2010@hotmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The step values for some of the LDOs appears to be incorrect, resulting
-in incorrect voltages (or at least, ones which are different from the
-Samsung 3.4 vendor kernel).
+The call to of_parse_phandle() returns a node pointer with refcount
+incremented thus it must be explicitly decremented here after the last
+usage.
+The of_find_device_by_node() takes a reference to the underlying device
+structure, we also should release that reference.
+This patch fixes those two issues.
 
-Signed-off-by: Stuart Menefy <stuart.menefy@mathembedded.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Hans Verkuil says:
+The cec driver should never take a reference of the hdmi device.
+It never accesses the HDMI device, it only needs the HDMI device pointer as
+a key in the notifier list.
+The real problem is that several CEC drivers take a reference of the HDMI
+device and never release it. So those drivers need to be fixed.
+
+Fixes: a93d429b51fb ("[media] s5p-cec: add cec-notifier support, move out of staging")
+Suggested-by: Hans Verkuil (hansverk) <hansverk@cisco.com>
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: Hans Verkuil (hansverk) <hansverk@cisco.com>
+Cc: Hans Verkuil <hans.verkuil@cisco.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Wen Yang <yellowriver2010@hotmail.com>
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-media@vger.kernel.org
 ---
- drivers/regulator/s2mpa01.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+v2->v1: 
+- move of_node_put() to just after the 'hdmi_dev = of_find_device_by_node(np)'.
+- put_device() can be done before the cec = devm_kzalloc line.
 
-diff --git a/drivers/regulator/s2mpa01.c b/drivers/regulator/s2mpa01.c
-index 095d25f3d2ea..58a1fe583a6c 100644
---- a/drivers/regulator/s2mpa01.c
-+++ b/drivers/regulator/s2mpa01.c
-@@ -298,13 +298,13 @@ static const struct regulator_desc regulators[] = {
- 	regulator_desc_ldo(2, STEP_50_MV),
- 	regulator_desc_ldo(3, STEP_50_MV),
- 	regulator_desc_ldo(4, STEP_50_MV),
--	regulator_desc_ldo(5, STEP_50_MV),
-+	regulator_desc_ldo(5, STEP_25_MV),
- 	regulator_desc_ldo(6, STEP_25_MV),
- 	regulator_desc_ldo(7, STEP_50_MV),
- 	regulator_desc_ldo(8, STEP_50_MV),
- 	regulator_desc_ldo(9, STEP_50_MV),
- 	regulator_desc_ldo(10, STEP_50_MV),
--	regulator_desc_ldo(11, STEP_25_MV),
-+	regulator_desc_ldo(11, STEP_50_MV),
- 	regulator_desc_ldo(12, STEP_50_MV),
- 	regulator_desc_ldo(13, STEP_50_MV),
- 	regulator_desc_ldo(14, STEP_50_MV),
-@@ -315,11 +315,11 @@ static const struct regulator_desc regulators[] = {
- 	regulator_desc_ldo(19, STEP_50_MV),
- 	regulator_desc_ldo(20, STEP_50_MV),
- 	regulator_desc_ldo(21, STEP_50_MV),
--	regulator_desc_ldo(22, STEP_25_MV),
--	regulator_desc_ldo(23, STEP_25_MV),
-+	regulator_desc_ldo(22, STEP_50_MV),
-+	regulator_desc_ldo(23, STEP_50_MV),
- 	regulator_desc_ldo(24, STEP_50_MV),
- 	regulator_desc_ldo(25, STEP_50_MV),
--	regulator_desc_ldo(26, STEP_50_MV),
-+	regulator_desc_ldo(26, STEP_25_MV),
- 	regulator_desc_buck1_4(1),
- 	regulator_desc_buck1_4(2),
- 	regulator_desc_buck1_4(3),
+ drivers/media/platform/s5p-cec/s5p_cec.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/media/platform/s5p-cec/s5p_cec.c b/drivers/media/platform/s5p-cec/s5p_cec.c
+index 8837e26..1f5c355 100644
+--- a/drivers/media/platform/s5p-cec/s5p_cec.c
++++ b/drivers/media/platform/s5p-cec/s5p_cec.c
+@@ -192,9 +192,11 @@ static int s5p_cec_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 	hdmi_dev = of_find_device_by_node(np);
++	of_node_put(np);
+ 	if (hdmi_dev == NULL)
+ 		return -EPROBE_DEFER;
+ 
++	put_device(&hdmi_dev->dev);
+ 	cec = devm_kzalloc(&pdev->dev, sizeof(*cec), GFP_KERNEL);
+ 	if (!cec)
+ 		return -ENOMEM;
 -- 
-2.13.6
+2.9.5
