@@ -1,77 +1,80 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] clk: samsung: s3c2443: Mark expected switch
- fall-through
-Date: Tue, 12 Feb 2019 09:37:49 +0900
-Message-ID: <effba950-8fcf-2d96-827d-25d20ae60f1d@samsung.com>
-References: <CGME20190211181544epcas4p1d899221776a647a5bdf21372304bf0d7@epcas4p1.samsung.com>
-        <20190211181531.GA3238@embeddedor>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH 0/2] cpufreq/opp: rework regulator initialization
+Date: Tue, 12 Feb 2019 10:38:54 +0530
+Message-ID: <20190212050854.p6av2y2iich24wnv@vireshk-i7>
+References: <CGME20190207122255eucas1p1cdebed838c799eca46cce6a654a26187@eucas1p1.samsung.com>
+ <20190207122227.19873-1-m.szyprowski@samsung.com>
+ <20190211084413.b53qyx6sgkxsjhdv@vireshk-i7>
+ <9b4a6c9a-93f9-474f-b8c0-4353a531e128@samsung.com>
+ <20190211095527.5brreiqppn7kk3yt@vireshk-i7>
+ <f9f54181-f7bc-6add-2c06-2ed3d6410d01@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190211181531.GA3238@embeddedor>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <f9f54181-f7bc-6add-2c06-2ed3d6410d01@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Dave Gerlach <d-gerlach@ti.com>, Wolfram Sang <wsa@the-dreams.de>, Sudeep.Holla@arm.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Gustavo,
+On 11-02-19, 13:22, Marek Szyprowski wrote:
+> Hi Viresh,
+> 
+> On 2019-02-11 10:55, Viresh Kumar wrote:
+> > On 11-02-19, 10:52, Marek Szyprowski wrote:
+> >> On 2019-02-11 09:44, Viresh Kumar wrote:
+> >>> On 07-02-19, 13:22, Marek Szyprowski wrote:
+> >>>> Dear All,
+> >>>>
+> >>>> Recent commit 9ac6cb5fbb17 ("i2c: add suspended flag and accessors for
+> >>>> i2c adapters") added a visible warning for an attempt to do i2c transfer
+> >>>> over a suspended i2c bus. This revealed a long standing issue in the
+> >>>> cpufreq-dt driver, which gives a following warning during system
+> >>>> suspend/resume cycle:
+> >>> Marek,
+> >>>
+> >>> I have sent a patchset which is not directly related to the problem
+> >>> you are facing, but it may solve your problem as a side effect. Can
+> >>> you please see if that works to solve this issue as well ?
+> >>>
+> >>> https://lore.kernel.org/lkml/cover.1549874368.git.viresh.kumar@linaro.org/T/#u
+> >> Thanks for the patch. It indeed solves the problem of the i2c transfer
+> >> in cpu hotplug procedure during system resume, although my resources
+> >> management rewrite is still valid as a way to fix remaining 'todos' in
+> >> the cpufreq-dt driver.
+> > Which remaining todos are you talking about ? Sorry I am not able to
+> > recall :(
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/cpufreq/cpufreq-dt.c#n347
 
-On 19. 2. 12. 오전 3:15, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch
-> cases where we are expecting to fall through.
-> 
-> This patch fixes the following warnings:
-> 
-> drivers/clk/samsung/clk-s3c2443.c: In function ‘s3c2443_common_clk_init’:
-> drivers/clk/samsung/clk-s3c2443.c:390:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    samsung_clk_register_alias(ctx, s3c2450_aliases,
->    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->      ARRAY_SIZE(s3c2450_aliases));
->      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/clk/samsung/clk-s3c2443.c:393:2: note: here
->   case S3C2416:
->   ^~~~
-> 
-> Warning level 3 was used: -Wimplicit-fallthrough=3
-> 
-> Notice that, in this particular case,  the code comment is modified
-> in accordance with what GCC is expecting to find.
-> 
-> This patch is part of the ongoing efforts to enable
-> -Wimplicit-fallthrough.
+Ah, okay. Thanks for the pointer.
 
-Except for level 5 of -Wimplicit-fallthrough,
-level 4 is more strict to show the warnings.
-Why don't you support level 4 for -Wimplicit-fallthrough?
-I think that you want to fix for -Wimplicit-fallthrough warning,
-you better to support level 4. What do you think?
+Ideally we shouldn't be doing anything in probe, like
+resources_available(), but we are forced to do it as
+subsys_interface_register() doesn't return the errors returned from
+cpufreq_add_dev() currently. I tried to fix it once but there were
+some complications I believe and then left it.
 
+The main problem is that if cpufreq_online() doesn't find the required
+resources and returns -EPROBE_DEFER, it never comes back to the
+probe() routine which registers the cpufreq driver. And so we have to
+add the duplicate checks in probe() itself before it registers the
+cpufreq driver.
 
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/clk/samsung/clk-s3c2443.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
-> index 884067e4f1a1..f38f0e24e3b6 100644
-> --- a/drivers/clk/samsung/clk-s3c2443.c
-> +++ b/drivers/clk/samsung/clk-s3c2443.c
-> @@ -389,7 +389,7 @@ void __init s3c2443_common_clk_init(struct device_node *np, unsigned long xti_f,
->  				ARRAY_SIZE(s3c2450_gates));
->  		samsung_clk_register_alias(ctx, s3c2450_aliases,
->  				ARRAY_SIZE(s3c2450_aliases));
-> -		/* fall through, as s3c2450 extends the s3c2416 clocks */
-> +		/* fall through - as s3c2450 extends the s3c2416 clocks */
->  	case S3C2416:
->  		samsung_clk_register_div(ctx, s3c2416_dividers,
->  				ARRAY_SIZE(s3c2416_dividers));
-> 
+Now all we need to do there is to guarantee that the resources are
+available when the cpufreq driver registers and so we do it only for
+CPU0 currently. Logically speaking, if the resources are available for
+CPU0, it will normally be available for any other CPU as well and so
+there never was a requirement to test it for other CPUs. And so I left
+a FIXME there, so that we know what's going on there in case a
+platform comes up for which it doesn't work.
 
+I won't fix it with something like what this patch series tried to do,
+rather I would try to make sure that EPROBE_DEFER gets returned from
+cpufreq_driver_register() instead.
+
+Thanks.
 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+viresh
