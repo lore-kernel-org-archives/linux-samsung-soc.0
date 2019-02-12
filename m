@@ -1,10 +1,10 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 17/21] ASoC: samsung: i2s: Change indentation in
- SAMSUNG_I2S_FMTS definition
-Date: Tue, 12 Feb 2019 19:03:38 +0100
-Message-ID: <20190212180342.32040-18-s.nawrocki@samsung.com>
+Subject: [PATCH v2 16/21] ASoC: samsung: i2s: Simplify pri_dai, sec_dai
+ pointers usage
+Date: Tue, 12 Feb 2019 19:03:37 +0100
+Message-ID: <20190212180342.32040-17-s.nawrocki@samsung.com>
 References: <20190212180342.32040-1-s.nawrocki@samsung.com>
-        <CGME20190212180539epcas1p457a5c91f2c2cef0d1b92ff8bf804beee@epcas1p4.samsung.com>
+        <CGME20190212180535epcas2p3aaa1c3d8fd9fcfb5a30bc6d132aba70a@epcas2p3.samsung.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
@@ -14,29 +14,42 @@ To: broonie@kernel.org
 Cc: lgirdwood@gmail.com, krzk@kernel.org, sbkim73@samsung.com, m.szyprowski@samsung.com, b.zolnierkie@samsung.com, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Change indentation so this macro definition spans 2 rows and looks
-more consistent with surrounding code.
+If the probe call is on the primary DAI we can use 'other' in place of
+i2s->sec_dai, if the probe call is on the secondary DAI we can use 'i2s'
+in place of other->sec_dai.
+
+While at it fix one whitespace issue.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- sound/soc/samsung/i2s.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ sound/soc/samsung/i2s.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 097c641fc1b9..debeaf51cc7e 100644
+index f438558c4d21..097c641fc1b9 100644
 --- a/sound/soc/samsung/i2s.c
 +++ b/sound/soc/samsung/i2s.c
-@@ -1150,9 +1150,8 @@ static const struct snd_soc_component_driver samsung_i2s_component = {
- 	.num_dapm_routes = ARRAY_SIZE(samsung_i2s_dapm_routes),
- };
-
--#define SAMSUNG_I2S_FMTS	(SNDRV_PCM_FMTBIT_S8 | \
--					SNDRV_PCM_FMTBIT_S16_LE | \
--					SNDRV_PCM_FMTBIT_S24_LE)
-+#define SAMSUNG_I2S_FMTS (SNDRV_PCM_FMTBIT_S8 | SNDRV_PCM_FMTBIT_S16_LE | \
-+			  SNDRV_PCM_FMTBIT_S24_LE)
-
- static int i2s_alloc_dais(struct samsung_i2s_priv *priv,
- 			  const struct samsung_i2s_dai_data *i2s_dai_data,
---
+@@ -1057,18 +1057,17 @@ static int samsung_i2s_dai_probe(struct snd_soc_dai *dai)
+ 	pm_runtime_get_sync(dai->dev);
+ 
+ 	if (is_secondary(i2s)) { /* If this is probe on the secondary DAI */
+-		snd_soc_dai_init_dma_data(dai, &other->sec_dai->dma_playback,
+-					   NULL);
++		snd_soc_dai_init_dma_data(dai, &i2s->dma_playback, NULL);
+ 	} else {
+ 		snd_soc_dai_init_dma_data(dai, &i2s->dma_playback,
+-					   &i2s->dma_capture);
++					  &i2s->dma_capture);
+ 
+ 		if (priv->quirks & QUIRK_NEED_RSTCLR)
+ 			writel(CON_RSTCLR, priv->addr + I2SCON);
+ 
+ 		if (priv->quirks & QUIRK_SUPPORTS_IDMA)
+ 			idma_reg_addr_init(priv->addr,
+-					i2s->sec_dai->idma_playback.addr);
++					   other->idma_playback.addr);
+ 	}
+ 
+ 	/* Reset any constraint on RFS and BFS */
+-- 
 2.20.1
