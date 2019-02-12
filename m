@@ -1,97 +1,29 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: samsung: i2s: Fix prescaler setting for the secondary DAI" to the asoc tree
-Date: Tue, 12 Feb 2019 16:58:57 +0000 (GMT)
-Message-ID: <20190212165857.B56751128113@debutante.sirena.org.uk>
-References: <20190207170028.720-5-s.nawrocki@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 0/2] ARM/dts/iio: exynos-adc: Use proper number of channels for Exynos4x12
+Date: Tue, 12 Feb 2019 18:45:48 +0100
+Message-ID: <20190212174550.4383-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190207170028.720-5-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>broonie@kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, lgirdwood@gmail.comkrzk@kernel.org, linux-kernel@vger.kernel.org, m.szyprowski@samsung.comalsa-devel@alsa-project.org
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch
+Hi,
 
-   ASoC: samsung: i2s: Fix prescaler setting for the secondary DAI
+The DTS patch depends on iio change.  I will take it through samsung-soc
+for consecutive release, once iio/adc gets accepted.
 
-has been applied to the asoc tree at
+Best regards,
+Krzysztof
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Krzysztof Kozlowski (2):
+  iio: adc: exynos-adc: Use proper number of channels for Exynos4x12
+  ARM: dts: exynos: Use ADC for Exynos4x12 on Exyno4412
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+ .../bindings/iio/adc/samsung,exynos-adc.txt     |  4 +++-
+ arch/arm/boot/dts/exynos4412.dtsi               |  2 +-
+ drivers/iio/adc/exynos_adc.c                    | 17 +++++++++++++++++
+ 3 files changed, 21 insertions(+), 2 deletions(-)
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 323fb7b947b265753de34703dbbf8acc8ea3a4de Mon Sep 17 00:00:00 2001
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Thu, 7 Feb 2019 18:00:12 +0100
-Subject: [PATCH] ASoC: samsung: i2s: Fix prescaler setting for the secondary
- DAI
-
-Make sure i2s->rclk_srcrate is properly initialized also during
-playback through the secondary DAI.
-
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/samsung/i2s.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index ce00fe2f6aae..d4bde4834ce5 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -604,6 +604,7 @@ static int i2s_set_fmt(struct snd_soc_dai *dai,
- 	unsigned int fmt)
- {
- 	struct i2s_dai *i2s = to_info(dai);
-+	struct i2s_dai *other = get_other_dai(i2s);
- 	int lrp_shift, sdf_shift, sdf_mask, lrp_rlow, mod_slave;
- 	u32 mod, tmp = 0;
- 	unsigned long flags;
-@@ -661,7 +662,8 @@ static int i2s_set_fmt(struct snd_soc_dai *dai,
- 		 * CLK_I2S_RCLK_SRC clock is not exposed so we ensure any
- 		 * clock configuration assigned in DT is not overwritten.
- 		 */
--		if (i2s->rclk_srcrate == 0 && i2s->clk_data.clks == NULL)
-+		if (i2s->rclk_srcrate == 0 && i2s->clk_data.clks == NULL &&
-+		    other->clk_data.clks == NULL)
- 			i2s_set_sysclk(dai, SAMSUNG_I2S_RCLKSRC_0,
- 							0, SND_SOC_CLOCK_IN);
- 		break;
-@@ -699,6 +701,7 @@ static int i2s_hw_params(struct snd_pcm_substream *substream,
- 	struct snd_pcm_hw_params *params, struct snd_soc_dai *dai)
- {
- 	struct i2s_dai *i2s = to_info(dai);
-+	struct i2s_dai *other = get_other_dai(i2s);
- 	u32 mod, mask = 0, val = 0;
- 	struct clk *rclksrc;
- 	unsigned long flags;
-@@ -784,6 +787,9 @@ static int i2s_hw_params(struct snd_pcm_substream *substream,
- 	i2s->frmclk = params_rate(params);
- 
- 	rclksrc = i2s->clk_table[CLK_I2S_RCLK_SRC];
-+	if (!rclksrc || IS_ERR(rclksrc))
-+		rclksrc = other->clk_table[CLK_I2S_RCLK_SRC];
-+
- 	if (rclksrc && !IS_ERR(rclksrc))
- 		i2s->rclk_srcrate = clk_get_rate(rclksrc);
- 
 -- 
-2.20.1
+2.17.1
