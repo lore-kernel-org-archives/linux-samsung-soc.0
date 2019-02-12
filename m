@@ -1,39 +1,77 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] ARM: samsung: mach/soc for v5.1
-Date: Mon, 11 Feb 2019 20:54:48 +0100
-Message-ID: <20190211195448.19983-1-krzk@kernel.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH] clk: samsung: s3c2443: Mark expected switch
+ fall-through
+Date: Tue, 12 Feb 2019 09:37:49 +0900
+Message-ID: <effba950-8fcf-2d96-827d-25d20ae60f1d@samsung.com>
+References: <CGME20190211181544epcas4p1d899221776a647a5bdf21372304bf0d7@epcas4p1.samsung.com>
+        <20190211181531.GA3238@embeddedor>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190211181531.GA3238@embeddedor>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi Gustavo,
 
-The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
+On 19. 2. 12. 오전 3:15, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch
+> cases where we are expecting to fall through.
+> 
+> This patch fixes the following warnings:
+> 
+> drivers/clk/samsung/clk-s3c2443.c: In function ‘s3c2443_common_clk_init’:
+> drivers/clk/samsung/clk-s3c2443.c:390:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>    samsung_clk_register_alias(ctx, s3c2450_aliases,
+>    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>      ARRAY_SIZE(s3c2450_aliases));
+>      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/clk/samsung/clk-s3c2443.c:393:2: note: here
+>   case S3C2416:
+>   ^~~~
+> 
+> Warning level 3 was used: -Wimplicit-fallthrough=3
+> 
+> Notice that, in this particular case,  the code comment is modified
+> in accordance with what GCC is expecting to find.
+> 
+> This patch is part of the ongoing efforts to enable
+> -Wimplicit-fallthrough.
 
-  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+Except for level 5 of -Wimplicit-fallthrough,
+level 4 is more strict to show the warnings.
+Why don't you support level 4 for -Wimplicit-fallthrough?
+I think that you want to fix for -Wimplicit-fallthrough warning,
+you better to support level 4. What do you think?
 
-are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-5.1
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/clk/samsung/clk-s3c2443.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
+> index 884067e4f1a1..f38f0e24e3b6 100644
+> --- a/drivers/clk/samsung/clk-s3c2443.c
+> +++ b/drivers/clk/samsung/clk-s3c2443.c
+> @@ -389,7 +389,7 @@ void __init s3c2443_common_clk_init(struct device_node *np, unsigned long xti_f,
+>  				ARRAY_SIZE(s3c2450_gates));
+>  		samsung_clk_register_alias(ctx, s3c2450_aliases,
+>  				ARRAY_SIZE(s3c2450_aliases));
+> -		/* fall through, as s3c2450 extends the s3c2416 clocks */
+> +		/* fall through - as s3c2450 extends the s3c2416 clocks */
+>  	case S3C2416:
+>  		samsung_clk_register_div(ctx, s3c2416_dividers,
+>  				ARRAY_SIZE(s3c2416_dividers));
+> 
 
-for you to fetch changes up to 4bdf2f3f20a9de9b07f97907820c42f3a49ba63d:
 
-  ARM: exynos: Fix timeout when booting secondary CPUs (2019-02-01 20:07:47 +0100)
-
-----------------------------------------------------------------
-Samsung mach/soc changes for v5.1
-
-Two fixes: one for handling timeout while booting secondary CPU of
-Exynos and second for S3C24xx DVS notifier.
-
-----------------------------------------------------------------
-Gustavo A. R. Silva (1):
-      ARM: s3c24xx: Fix boolean expressions in osiris_dvs_notify
-
-Stuart Menefy (1):
-      ARM: exynos: Fix timeout when booting secondary CPUs
-
- arch/arm/mach-exynos/platsmp.c          | 4 ++--
- arch/arm/mach-s3c24xx/mach-osiris-dvs.c | 8 ++++----
- 2 files changed, 6 insertions(+), 6 deletions(-)
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
