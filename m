@@ -1,54 +1,51 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] clk: samsung: s3c2443: Mark expected switch fall-through
-Date: Tue, 12 Feb 2019 08:40:45 +0100
-Message-ID: <CAJKOXPeHp7sKkZ+jXmTXk5GEF_7G5ujfm3Lw==G3T4thfD+F7Q@mail.gmail.com>
-References: <20190211181531.GA3238@embeddedor>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 00/22] ASoC: dmaengine updates, secondary CPU DAI for
+ Odroid boards
+Date: Tue, 12 Feb 2019 16:40:32 +0000
+Message-ID: <20190212164032.GH20635@sirena.org.uk>
+References: <CGME20190207170044epcas2p3d00762663b971845bc86db84af7d3b23@epcas2p3.samsung.com>
+ <20190207170028.720-1-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="6cMF9JLEeZkfJjkP"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190211181531.GA3238@embeddedor>
+Content-Disposition: inline
+In-Reply-To: <20190207170028.720-1-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: lgirdwood@gmail.com, krzk@kernel.org, sbkim73@samsung.com, m.szyprowski@samsung.com, b.zolnierkie@samsung.com, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 11 Feb 2019 at 19:40, Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
->
-> In preparation to enabling -Wimplicit-fallthrough, mark switch
-> cases where we are expecting to fall through.
->
-> This patch fixes the following warnings:
->
-> drivers/clk/samsung/clk-s3c2443.c: In function =E2=80=98s3c2443_common_cl=
-k_init=E2=80=99:
-> drivers/clk/samsung/clk-s3c2443.c:390:3: warning: this statement may fall=
- through [-Wimplicit-fallthrough=3D]
->    samsung_clk_register_alias(ctx, s3c2450_aliases,
->    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->      ARRAY_SIZE(s3c2450_aliases));
->      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/clk/samsung/clk-s3c2443.c:393:2: note: here
->   case S3C2416:
->   ^~~~
->
-> Warning level 3 was used: -Wimplicit-fallthrough=3D3
->
-> Notice that, in this particular case,  the code comment is modified
-> in accordance with what GCC is expecting to find.
->
-> This patch is part of the ongoing efforts to enable
-> -Wimplicit-fallthrough.
 
-I saw this in multiple places already and I think fix is wrong. The
-point is that the code is correct - the fall through is marked
-properly.
+--6cMF9JLEeZkfJjkP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-It is just the GCC which has to be fixed not the code. You want to
-adjust the code for specific version of GCC and what if GCC changes
-its warning? For example GCC might require "fall through: "... or any
-other syntax. Another point - what about clang's syntax?
+On Thu, Feb 07, 2019 at 06:00:08PM +0100, Sylwester Nawrocki wrote:
 
-Best regards,
-Krzysztof
+> I am not entirely sure we should be removing the
+> SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME flag like this, it might all
+> be a bit more explicit with the flag.
+
+I'm fairly happy with what you're doing here and the Samsung driver is
+the only user so the view of people working on that is pretty important
+here.  I've gone ahead and applied the first few patches so they don't
+need rereviewing, the rest looked fine modulo the comments from
+Krzysztof.
+
+--6cMF9JLEeZkfJjkP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxi9wAACgkQJNaLcl1U
+h9BbpAf/S411sGXBqmjs6Jtx2jz3XpgIIjk+NWpojHOspH+IxcPXg80qre60i4+l
+LSgxhHK0Z6gHVKYr/xDJVF8+BMwZhbb1s/3G4Sv82JeQan4cCrFcXsy2jf3ePJjm
+PSGzEi0eEBFqsIbFrsD7rC7UANZ3mKlLWkwfDhdH9V9m4Xq5WCfRvy531WJP+73I
+rl4LKj0lnYnBd9AeVSAmqaAXwLvOFoeHBxAi1OCDufakDNbjA0r153fFLQ3aCSG9
+otz6eVRta8xiV9/sEtKLC136fuKhy/FKjkGPkprFAAGOOCrbYjaXP33qMFzH3i/1
+7L5eVQCACbaIl+LnzVOiqUn+Vd+ofA==
+=i+P6
+-----END PGP SIGNATURE-----
+
+--6cMF9JLEeZkfJjkP--
