@@ -1,10 +1,10 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: dmaengine: Improve of_node test in dmaengine_pcm_request_chan_of()" to the asoc tree
-Date: Tue, 12 Feb 2019 16:58:55 +0000 (GMT)
-Message-ID: <20190212165855.957C61128113@debutante.sirena.org.uk>
-References: <20190207170028.720-2-s.nawrocki@samsung.com>
+Subject: Applied "ASoC: dmaengine: Extend use of chan_names provided in custom DMA config" to the asoc tree
+Date: Tue, 12 Feb 2019 16:58:53 +0000 (GMT)
+Message-ID: <20190212165853.799BD1128113@debutante.sirena.org.uk>
+References: <20190207170028.720-3-s.nawrocki@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190207170028.720-2-s.nawrocki@samsung.com>
+In-Reply-To: <20190207170028.720-3-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc: Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>broonie@kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, lgirdwood@gmail.comkrzk@kernel.org, linux-kernel@vger.kernel.org, m.szyprowski@samsung.comalsa-devel@alsa-project.org
@@ -12,7 +12,7 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 The patch
 
-   ASoC: dmaengine: Improve of_node test in dmaengine_pcm_request_chan_of()
+   ASoC: dmaengine: Extend use of chan_names provided in custom DMA config
 
 has been applied to the asoc tree at
 
@@ -37,38 +37,52 @@ to this mail.
 Thanks,
 Mark
 
->From 51256d348c9af1bf544a4432abc1d5f2fd3ef34b Mon Sep 17 00:00:00 2001
+>From 10cbf3507bcb9baa82bf3445502e8ccafaa09fc8 Mon Sep 17 00:00:00 2001
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Thu, 7 Feb 2019 18:00:09 +0100
-Subject: [PATCH] ASoC: dmaengine: Improve of_node test in
- dmaengine_pcm_request_chan_of()
+Date: Thu, 7 Feb 2019 18:00:10 +0100
+Subject: [PATCH] ASoC: dmaengine: Extend use of chan_names provided in custom
+ DMA config
 
-Currently when of_node of the "PCM" device is null
-dmaengine_pcm_request_chan_of() function will bail out, including cases
-when custom DMA device is intended to be used.  To have the channels
-properly requested when custom DMA device is provided extend the of_node
-test to also consider dma_dev->of_node.
+There are currently two ways to specify custom DMA channel names:
+ - through the SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME flag and
+   snd_dmaengine_dai_dma_data data structure,
+ - through chan_names field of struct snd_dmaengine_pcm_config.
+
+In order to replace the DAI DMA data method with the custom DMA config
+one on non-DT platforms the dmaengine_pcm_new() function is extended
+to also consider channel names specified in the custom DMA config.
+If both config->chan_names and dma_data->chan_name are provided
+the former will be used.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/soc-generic-dmaengine-pcm.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/soc/soc-generic-dmaengine-pcm.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
 diff --git a/sound/soc/soc-generic-dmaengine-pcm.c b/sound/soc/soc-generic-dmaengine-pcm.c
-index 30e791a53352..6d7638c1233d 100644
+index 6d7638c1233d..1b44e363c50c 100644
 --- a/sound/soc/soc-generic-dmaengine-pcm.c
 +++ b/sound/soc/soc-generic-dmaengine-pcm.c
-@@ -415,7 +415,8 @@ static int dmaengine_pcm_request_chan_of(struct dmaengine_pcm *pcm,
+@@ -288,9 +288,16 @@ static int dmaengine_pcm_new(struct snd_soc_pcm_runtime *rtd)
+ 		dma_data = snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
  
- 	if ((pcm->flags & (SND_DMAENGINE_PCM_FLAG_NO_DT |
- 			   SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME)) ||
--	    !dev->of_node)
-+	     (!dev->of_node && !(config && config->dma_dev &&
-+				config->dma_dev->of_node)))
- 		return 0;
+ 		if (!pcm->chan[i] &&
+-		    (pcm->flags & SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME))
++		    ((pcm->flags & SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME) ||
++		     (config && config->chan_names[i]))) {
++			const char *chan_name = dma_data->chan_name;
++
++			if (config && config->chan_names[i])
++				chan_name = config->chan_names[i];
++
+ 			pcm->chan[i] = dma_request_slave_channel(dev,
+-				dma_data->chan_name);
++				chan_name);
++		}
  
- 	if (config && config->dma_dev) {
+ 		if (!pcm->chan[i] && (pcm->flags & SND_DMAENGINE_PCM_FLAG_COMPAT)) {
+ 			pcm->chan[i] = dmaengine_pcm_compat_request_channel(rtd,
 -- 
 2.20.1
