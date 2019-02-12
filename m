@@ -1,48 +1,57 @@
 From: Stuart Menefy <stuart.menefy@mathembedded.com>
-Subject: [PATCH v2] mfd: sec: Add support for the RTC on S2MPA01
-Date: Tue, 12 Feb 2019 21:46:39 +0000
-Message-ID: <20190212214639.9613-1-stuart.menefy@mathembedded.com>
+Subject: [PATCH v2] regulator: s2mpa01: Fix step values for some LDOs
+Date: Tue, 12 Feb 2019 21:51:18 +0000
+Message-ID: <20190212215118.9779-1-stuart.menefy@mathembedded.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Stuart Menefy <stuart.menefy@mathembedded.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The RTC portion of the S2MPA01 appears to have the same
-register layout as the S2MPS14.
+The step values for some of the LDOs appears to be incorrect, resulting
+in incorrect voltages (or at least, ones which are different from the
+Samsung 3.4 vendor kernel).
 
 Signed-off-by: Stuart Menefy <stuart.menefy@mathembedded.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/mfd/sec-core.c | 2 ++
- drivers/mfd/sec-irq.c  | 3 +++
- 2 files changed, 5 insertions(+)
+ drivers/regulator/s2mpa01.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
-index e0835c9df7a1..08621ef5d822 100644
---- a/drivers/mfd/sec-core.c
-+++ b/drivers/mfd/sec-core.c
-@@ -103,6 +103,8 @@ static const struct mfd_cell s2mps15_devs[] = {
- static const struct mfd_cell s2mpa01_devs[] = {
- 	{
- 		.name = "s2mpa01-pmic",
-+	}, {
-+		.name = "s2mps14-rtc",
- 	},
- };
- 
-diff --git a/drivers/mfd/sec-irq.c b/drivers/mfd/sec-irq.c
-index ad0099077e7e..a98c5d165039 100644
---- a/drivers/mfd/sec-irq.c
-+++ b/drivers/mfd/sec-irq.c
-@@ -455,6 +455,9 @@ int sec_irq_init(struct sec_pmic_dev *sec_pmic)
- 	case S5M8767X:
- 		sec_irq_chip = &s5m8767_irq_chip;
- 		break;
-+	case S2MPA01:
-+		sec_irq_chip = &s2mps14_irq_chip;
-+		break;
- 	case S2MPS11X:
- 		sec_irq_chip = &s2mps11_irq_chip;
- 		break;
+diff --git a/drivers/regulator/s2mpa01.c b/drivers/regulator/s2mpa01.c
+index 095d25f3d2ea..58a1fe583a6c 100644
+--- a/drivers/regulator/s2mpa01.c
++++ b/drivers/regulator/s2mpa01.c
+@@ -298,13 +298,13 @@ static const struct regulator_desc regulators[] = {
+ 	regulator_desc_ldo(2, STEP_50_MV),
+ 	regulator_desc_ldo(3, STEP_50_MV),
+ 	regulator_desc_ldo(4, STEP_50_MV),
+-	regulator_desc_ldo(5, STEP_50_MV),
++	regulator_desc_ldo(5, STEP_25_MV),
+ 	regulator_desc_ldo(6, STEP_25_MV),
+ 	regulator_desc_ldo(7, STEP_50_MV),
+ 	regulator_desc_ldo(8, STEP_50_MV),
+ 	regulator_desc_ldo(9, STEP_50_MV),
+ 	regulator_desc_ldo(10, STEP_50_MV),
+-	regulator_desc_ldo(11, STEP_25_MV),
++	regulator_desc_ldo(11, STEP_50_MV),
+ 	regulator_desc_ldo(12, STEP_50_MV),
+ 	regulator_desc_ldo(13, STEP_50_MV),
+ 	regulator_desc_ldo(14, STEP_50_MV),
+@@ -315,11 +315,11 @@ static const struct regulator_desc regulators[] = {
+ 	regulator_desc_ldo(19, STEP_50_MV),
+ 	regulator_desc_ldo(20, STEP_50_MV),
+ 	regulator_desc_ldo(21, STEP_50_MV),
+-	regulator_desc_ldo(22, STEP_25_MV),
+-	regulator_desc_ldo(23, STEP_25_MV),
++	regulator_desc_ldo(22, STEP_50_MV),
++	regulator_desc_ldo(23, STEP_50_MV),
+ 	regulator_desc_ldo(24, STEP_50_MV),
+ 	regulator_desc_ldo(25, STEP_50_MV),
+-	regulator_desc_ldo(26, STEP_50_MV),
++	regulator_desc_ldo(26, STEP_25_MV),
+ 	regulator_desc_buck1_4(1),
+ 	regulator_desc_buck1_4(2),
+ 	regulator_desc_buck1_4(3),
 -- 
 2.13.6
