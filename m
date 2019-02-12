@@ -1,105 +1,114 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH 1/2] iio: adc: exynos-adc: Use proper number of channels
- for Exynos4x12
-Date: Tue, 12 Feb 2019 20:57:01 +0000
-Message-ID: <20190212205701.4cf66d68@archlinux>
-References: <20190212174550.4383-1-krzk@kernel.org>
-        <20190212174550.4383-2-krzk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Stuart Menefy <stuart.menefy@mathembedded.com>
+Subject: [PATCH] tty: serial: samsung: Enable baud clock during initialisation
+Date: Tue, 12 Feb 2019 21:40:22 +0000
+Message-ID: <20190212214022.9446-1-stuart.menefy@mathembedded.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190212174550.4383-2-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, 12 Feb 2019 18:45:49 +0100
-Krzysztof Kozlowski <krzk@kernel.org> wrote:
+The Exynos 5260, like the 5433, appears to require baud clock as
+well as pclk to be running before accessing any of the registers,
+otherwise an external abort is raised.
 
-> Exynos4212 and Exynos4412 have only four ADC channels so using
-> "samsung,exynos-adc-v1" compatible (for eight channels ADCv1) on them is
-> wrong.  Add a new compatible for Exynos4x12.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-I'll sneak this in as my last patch for this cycle (lucky timing ;).
-It could have done with a fixes tag. I'll mark it for stable as sounds
-and looks safe and simple.
+The serial driver already enables baud clock when required, but only
+if it knows which clock is baud clock. On older SoCs baud clock may be
+selected from a number of possible clocks so to support this the driver
+only selects which clock to use for baud clock when a port is opened,
+at which point the desired baud rate is known and the best clock can be
+selected.
 
-Looks like it goes all the way back so I'll leave it without one.
+The result is that there are a number of circumstances in which
+registers are accessed without first explicitly enabling baud clock:
+ - while the driver is being initialised
+ - the initial parts of opening a port for the first time
+ - when resuming if the port hasn't been already opened
 
-Applied to the togreg branch of iio.git. This will be queued for the
-next merge window given how late we are in the cycle.
+The 5433 overcomes this currently by marking the baud clock as
+CLK_IGNORE_UNUSED, so the clock is always enabled, however
+for the 5260 I've been trying to avoid this.
 
-Thanks,
+This change adds code to pick the first available clock to use
+as baud clock and enables it while initialising the driver.
 
-Jonathan
+This code wouldn't be sufficient on a SoC which supports
+multiple possible baud clock sources _and_ requires the
+correct baud clock to be enabled before accessing any of the
+serial port registers (in particular the register which selects
+which clock to use as the baud clock).  As far as I know
+such hardware doesn't exist.
 
+Signed-off-by: Stuart Menefy <stuart.menefy@mathembedded.com>
+---
+ drivers/tty/serial/samsung.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-> ---
->  .../bindings/iio/adc/samsung,exynos-adc.txt     |  4 +++-
->  drivers/iio/adc/exynos_adc.c                    | 17 +++++++++++++++++
->  2 files changed, 20 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.txt b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.txt
-> index a10c1f89037d..e1fe02f3e3e9 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.txt
-> +++ b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.txt
-> @@ -11,11 +11,13 @@ New driver handles the following
->  
->  Required properties:
->  - compatible:		Must be "samsung,exynos-adc-v1"
-> -				for exynos4412/5250 controllers.
-> +				for Exynos5250 controllers.
->  			Must be "samsung,exynos-adc-v2" for
->  				future controllers.
->  			Must be "samsung,exynos3250-adc" for
->  				controllers compatible with ADC of Exynos3250.
-> +			Must be "samsung,exynos4212-adc" for
-> +				controllers compatible with ADC of Exynos4212 and Exynos4412.
->  			Must be "samsung,exynos7-adc" for
->  				the ADC in Exynos7 and compatibles
->  			Must be "samsung,s3c2410-adc" for
-> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-> index fa2d2b5767f3..01f7c2570a1e 100644
-> --- a/drivers/iio/adc/exynos_adc.c
-> +++ b/drivers/iio/adc/exynos_adc.c
-> @@ -115,6 +115,7 @@
->  #define MAX_ADC_V2_CHANNELS		10
->  #define MAX_ADC_V1_CHANNELS		8
->  #define MAX_EXYNOS3250_ADC_CHANNELS	2
-> +#define MAX_EXYNOS4212_ADC_CHANNELS	4
->  #define MAX_S5PV210_ADC_CHANNELS	10
->  
->  /* Bit definitions common for ADC_V1 and ADC_V2 */
-> @@ -271,6 +272,19 @@ static void exynos_adc_v1_start_conv(struct exynos_adc *info,
->  	writel(con1 | ADC_CON_EN_START, ADC_V1_CON(info->regs));
->  }
->  
-> +/* Exynos4212 and 4412 is like ADCv1 but with four channels only */
-> +static const struct exynos_adc_data exynos4212_adc_data = {
-> +	.num_channels	= MAX_EXYNOS4212_ADC_CHANNELS,
-> +	.mask		= ADC_DATX_MASK,	/* 12 bit ADC resolution */
-> +	.needs_adc_phy	= true,
-> +	.phy_offset	= EXYNOS_ADCV1_PHY_OFFSET,
-> +
-> +	.init_hw	= exynos_adc_v1_init_hw,
-> +	.exit_hw	= exynos_adc_v1_exit_hw,
-> +	.clear_irq	= exynos_adc_v1_clear_irq,
-> +	.start_conv	= exynos_adc_v1_start_conv,
-> +};
-> +
->  static const struct exynos_adc_data exynos_adc_v1_data = {
->  	.num_channels	= MAX_ADC_V1_CHANNELS,
->  	.mask		= ADC_DATX_MASK,	/* 12 bit ADC resolution */
-> @@ -492,6 +506,9 @@ static const struct of_device_id exynos_adc_match[] = {
->  	}, {
->  		.compatible = "samsung,s5pv210-adc",
->  		.data = &exynos_adc_s5pv210_data,
-> +	}, {
-> +		.compatible = "samsung,exynos4212-adc",
-> +		.data = &exynos4212_adc_data,
->  	}, {
->  		.compatible = "samsung,exynos-adc-v1",
->  		.data = &exynos_adc_v1_data,
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index 9fc3559f80d9..83fd51607741 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -1694,6 +1694,42 @@ s3c24xx_serial_cpufreq_deregister(struct s3c24xx_uart_port *port)
+ }
+ #endif
+ 
++static int s3c24xx_serial_enable_baudclk(struct s3c24xx_uart_port *ourport)
++{
++	struct device *dev = ourport->port.dev;
++	struct s3c24xx_uart_info *info = ourport->info;
++	char clk_name[MAX_CLK_NAME_LENGTH];
++	unsigned int clk_sel;
++	struct clk *clk;
++	int clk_num;
++	int ret;
++
++	clk_sel = ourport->cfg->clk_sel ? : info->def_clk_sel;
++	for (clk_num = 0; clk_num < info->num_clks; clk_num++) {
++		if (!(clk_sel & (1 << clk_num)))
++			continue;
++
++		sprintf(clk_name, "clk_uart_baud%d", clk_num);
++		clk = clk_get(dev, clk_name);
++		if (IS_ERR(clk))
++			continue;
++
++		ret = clk_prepare_enable(clk);
++		if (ret) {
++			clk_put(clk);
++			continue;
++		}
++
++		ourport->baudclk = clk;
++		ourport->baudclk_rate = clk_get_rate(clk);
++		s3c24xx_serial_setsource(&ourport->port, clk_num);
++
++		return 0;
++	}
++
++	return -EINVAL;
++}
++
+ /* s3c24xx_serial_init_port
+  *
+  * initialise a single serial port from the platform device given
+@@ -1788,6 +1824,10 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
+ 		goto err;
+ 	}
+ 
++	ret = s3c24xx_serial_enable_baudclk(ourport);
++	if (ret)
++		pr_warn("uart: failed to enable baudclk\n");
++
+ 	/* Keep all interrupts masked and cleared */
+ 	if (s3c24xx_serial_has_interrupt_mask(port)) {
+ 		wr_regl(port, S3C64XX_UINTM, 0xf);
+@@ -1901,6 +1941,8 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
+ 	 * and keeps the clock enabled in this case.
+ 	 */
+ 	clk_disable_unprepare(ourport->clk);
++	if (!IS_ERR(ourport->baudclk))
++		clk_disable_unprepare(ourport->baudclk);
+ 
+ 	ret = s3c24xx_serial_cpufreq_register(ourport);
+ 	if (ret < 0)
+-- 
+2.13.6
