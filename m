@@ -1,10 +1,10 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: dmaengine: Extend use of chan_names provided in custom DMA config" to the asoc tree
-Date: Tue, 12 Feb 2019 16:58:53 +0000 (GMT)
-Message-ID: <20190212165853.799BD1128113@debutante.sirena.org.uk>
-References: <20190207170028.720-3-s.nawrocki@samsung.com>
+Subject: Applied "ASoC: samsung: i2s: Fix prescaler setting for the secondary DAI" to the asoc tree
+Date: Tue, 12 Feb 2019 16:58:57 +0000 (GMT)
+Message-ID: <20190212165857.B56751128113@debutante.sirena.org.uk>
+References: <20190207170028.720-5-s.nawrocki@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190207170028.720-3-s.nawrocki@samsung.com>
+In-Reply-To: <20190207170028.720-5-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc: Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>broonie@kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, lgirdwood@gmail.comkrzk@kernel.org, linux-kernel@vger.kernel.org, m.szyprowski@samsung.comalsa-devel@alsa-project.org
@@ -12,7 +12,7 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 The patch
 
-   ASoC: dmaengine: Extend use of chan_names provided in custom DMA config
+   ASoC: samsung: i2s: Fix prescaler setting for the secondary DAI
 
 has been applied to the asoc tree at
 
@@ -37,52 +37,61 @@ to this mail.
 Thanks,
 Mark
 
->From 10cbf3507bcb9baa82bf3445502e8ccafaa09fc8 Mon Sep 17 00:00:00 2001
+>From 323fb7b947b265753de34703dbbf8acc8ea3a4de Mon Sep 17 00:00:00 2001
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Thu, 7 Feb 2019 18:00:10 +0100
-Subject: [PATCH] ASoC: dmaengine: Extend use of chan_names provided in custom
- DMA config
+Date: Thu, 7 Feb 2019 18:00:12 +0100
+Subject: [PATCH] ASoC: samsung: i2s: Fix prescaler setting for the secondary
+ DAI
 
-There are currently two ways to specify custom DMA channel names:
- - through the SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME flag and
-   snd_dmaengine_dai_dma_data data structure,
- - through chan_names field of struct snd_dmaengine_pcm_config.
-
-In order to replace the DAI DMA data method with the custom DMA config
-one on non-DT platforms the dmaengine_pcm_new() function is extended
-to also consider channel names specified in the custom DMA config.
-If both config->chan_names and dma_data->chan_name are provided
-the former will be used.
+Make sure i2s->rclk_srcrate is properly initialized also during
+playback through the secondary DAI.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/soc-generic-dmaengine-pcm.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ sound/soc/samsung/i2s.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/soc-generic-dmaengine-pcm.c b/sound/soc/soc-generic-dmaengine-pcm.c
-index 6d7638c1233d..1b44e363c50c 100644
---- a/sound/soc/soc-generic-dmaengine-pcm.c
-+++ b/sound/soc/soc-generic-dmaengine-pcm.c
-@@ -288,9 +288,16 @@ static int dmaengine_pcm_new(struct snd_soc_pcm_runtime *rtd)
- 		dma_data = snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index ce00fe2f6aae..d4bde4834ce5 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -604,6 +604,7 @@ static int i2s_set_fmt(struct snd_soc_dai *dai,
+ 	unsigned int fmt)
+ {
+ 	struct i2s_dai *i2s = to_info(dai);
++	struct i2s_dai *other = get_other_dai(i2s);
+ 	int lrp_shift, sdf_shift, sdf_mask, lrp_rlow, mod_slave;
+ 	u32 mod, tmp = 0;
+ 	unsigned long flags;
+@@ -661,7 +662,8 @@ static int i2s_set_fmt(struct snd_soc_dai *dai,
+ 		 * CLK_I2S_RCLK_SRC clock is not exposed so we ensure any
+ 		 * clock configuration assigned in DT is not overwritten.
+ 		 */
+-		if (i2s->rclk_srcrate == 0 && i2s->clk_data.clks == NULL)
++		if (i2s->rclk_srcrate == 0 && i2s->clk_data.clks == NULL &&
++		    other->clk_data.clks == NULL)
+ 			i2s_set_sysclk(dai, SAMSUNG_I2S_RCLKSRC_0,
+ 							0, SND_SOC_CLOCK_IN);
+ 		break;
+@@ -699,6 +701,7 @@ static int i2s_hw_params(struct snd_pcm_substream *substream,
+ 	struct snd_pcm_hw_params *params, struct snd_soc_dai *dai)
+ {
+ 	struct i2s_dai *i2s = to_info(dai);
++	struct i2s_dai *other = get_other_dai(i2s);
+ 	u32 mod, mask = 0, val = 0;
+ 	struct clk *rclksrc;
+ 	unsigned long flags;
+@@ -784,6 +787,9 @@ static int i2s_hw_params(struct snd_pcm_substream *substream,
+ 	i2s->frmclk = params_rate(params);
  
- 		if (!pcm->chan[i] &&
--		    (pcm->flags & SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME))
-+		    ((pcm->flags & SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME) ||
-+		     (config && config->chan_names[i]))) {
-+			const char *chan_name = dma_data->chan_name;
+ 	rclksrc = i2s->clk_table[CLK_I2S_RCLK_SRC];
++	if (!rclksrc || IS_ERR(rclksrc))
++		rclksrc = other->clk_table[CLK_I2S_RCLK_SRC];
 +
-+			if (config && config->chan_names[i])
-+				chan_name = config->chan_names[i];
-+
- 			pcm->chan[i] = dma_request_slave_channel(dev,
--				dma_data->chan_name);
-+				chan_name);
-+		}
+ 	if (rclksrc && !IS_ERR(rclksrc))
+ 		i2s->rclk_srcrate = clk_get_rate(rclksrc);
  
- 		if (!pcm->chan[i] && (pcm->flags & SND_DMAENGINE_PCM_FLAG_COMPAT)) {
- 			pcm->chan[i] = dmaengine_pcm_compat_request_channel(rtd,
 -- 
 2.20.1
