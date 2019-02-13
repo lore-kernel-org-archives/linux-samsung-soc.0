@@ -1,44 +1,69 @@
-From: Colin King <colin.king@canonical.com>
-Subject: [PATCH] media: exynos4-is: remove redundant check on type
-Date: Wed, 13 Feb 2019 13:25:59 +0000
-Message-ID: <20190213132559.30900-1-colin.king@canonical.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH] devfreq: Use of_node_name_eq for node name comparisons
+Date: Wed, 13 Feb 2019 10:09:53 -0600
+Message-ID: <CAL_Jsq+xpRPvj=UcSo+jQKX1pB=9B3SV9jB5ZVhaVsKvOqtoOg@mail.gmail.com>
+References: <20181205195050.4759-6-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20181205195050.4759-6-robh@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "open list:THERMAL" <linux-pm@vger.kernel.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, Dec 5, 2018 at 1:50 PM Rob Herring <robh@kernel.org> wrote:
+>
+> Convert string compares of DT node names to use of_node_name_eq helper
+> instead. This removes direct access to the node name pointer.
+>
+> For instances using of_node_cmp, this has the side effect of now using
+> case sensitive comparisons. This should not matter for any FDT based
+> system which all of these are.
+>
+> Cc: Chanwoo Choi <cw00.choi@samsung.com>
+> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
+> Cc: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  drivers/devfreq/devfreq-event.c     | 2 +-
+>  drivers/devfreq/event/exynos-ppmu.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 
-The check to see if type is V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE is redundant
-as this has been already checked at the start of the function and if
-it's not that value then -ENOSYS is returned. Hence the sprintf can be
-replaced by a simpler string copy.
+Can someone apply this please.
 
-Detected by CoverityScan, CID#1309450 ("Logically dead code")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/platform/exynos4-is/fimc-isp-video.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/media/platform/exynos4-is/fimc-isp-video.c b/drivers/media/platform/exynos4-is/fimc-isp-video.c
-index de6bd28f7e31..bb35a2017f21 100644
---- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
-+++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
-@@ -606,9 +606,7 @@ int fimc_isp_video_device_register(struct fimc_isp *isp,
- 
- 	vdev = &iv->ve.vdev;
- 	memset(vdev, 0, sizeof(*vdev));
--	snprintf(vdev->name, sizeof(vdev->name), "fimc-is-isp.%s",
--			type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE ?
--			"capture" : "output");
-+	strscpy(vdev->name, "fimc-is-isp.capture", sizeof(vdev->name));
- 	vdev->queue = q;
- 	vdev->fops = &isp_video_fops;
- 	vdev->ioctl_ops = &isp_video_ioctl_ops;
--- 
-2.20.1
+>
+> diff --git a/drivers/devfreq/devfreq-event.c b/drivers/devfreq/devfreq-event.c
+> index d67242d87744..87e93406d7cd 100644
+> --- a/drivers/devfreq/devfreq-event.c
+> +++ b/drivers/devfreq/devfreq-event.c
+> @@ -240,7 +240,7 @@ struct devfreq_event_dev *devfreq_event_get_edev_by_phandle(struct device *dev,
+>         }
+>
+>         list_for_each_entry(edev, &devfreq_event_list, node) {
+> -               if (!strcmp(edev->desc->name, node->name))
+> +               if (of_node_name_eq(node, edev->desc->name))
+>                         goto out;
+>         }
+>         edev = NULL;
+> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
+> index c61de0bdf053..c2ea94957501 100644
+> --- a/drivers/devfreq/event/exynos-ppmu.c
+> +++ b/drivers/devfreq/event/exynos-ppmu.c
+> @@ -529,7 +529,7 @@ static int of_get_devfreq_events(struct device_node *np,
+>                         if (!ppmu_events[i].name)
+>                                 continue;
+>
+> -                       if (!of_node_cmp(node->name, ppmu_events[i].name))
+> +                       if (of_node_name_eq(node, ppmu_events[i].name))
+>                                 break;
+>                 }
+>
+> --
+> 2.19.1
+>
