@@ -1,10 +1,10 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v3 09/13] ASoC: dmaengine: Remove unused
- SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME flag
-Date: Wed, 13 Feb 2019 19:42:08 +0100
-Message-ID: <20190213184212.5473-10-s.nawrocki@samsung.com>
+Subject: [PATCH v3 11/13] ASoC: samsung: i2s: Change
+ indentation in SAMSUNG_I2S_FMTS definition
+Date: Wed, 13 Feb 2019 19:42:10 +0100
+Message-ID: <20190213184212.5473-12-s.nawrocki@samsung.com>
 References: <20190213184212.5473-1-s.nawrocki@samsung.com>
- <CGME20190213184324epcas1p4d5d9d8896938f7a5230372381627340e@epcas1p4.samsung.com>
+ <CGME20190213184331epcas1p1651b43c8fe68d537a4f39ddfa91a38b1@epcas1p1.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -23,93 +23,29 @@ To: broonie@kernel.org
 Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, lgirdwood@gmail.com, krzk@kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-There is now no users of this flag so remove it together with related
-data structure field.
+Change indentation so this macro definition spans 2 rows, it looks
+more consistent with surrounding code.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- include/sound/dmaengine_pcm.h         |  6 ------
- sound/soc/soc-generic-dmaengine-pcm.c | 21 ++++-----------------
- 2 files changed, 4 insertions(+), 23 deletions(-)
+ sound/soc/samsung/i2s.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/include/sound/dmaengine_pcm.h b/include/sound/dmaengine_pcm.h
-index 2c4cfaa135a6..764c787928a4 100644
---- a/include/sound/dmaengine_pcm.h
-+++ b/include/sound/dmaengine_pcm.h
-@@ -63,7 +63,6 @@ struct dma_chan *snd_dmaengine_pcm_get_chan(struct snd_pcm_substream *substream)
-  * @slave_id: Slave requester id for the DMA channel.
-  * @filter_data: Custom DMA channel filter data, this will usually be used when
-  * requesting the DMA channel.
-- * @chan_name: Custom channel name to use when requesting DMA channel.
-  * @fifo_size: FIFO size of the DAI controller in bytes
-  * @flags: PCM_DAI flags, only SND_DMAENGINE_PCM_DAI_FLAG_PACK for now
-  */
-@@ -73,7 +72,6 @@ struct snd_dmaengine_dai_dma_data {
- 	u32 maxburst;
- 	unsigned int slave_id;
- 	void *filter_data;
--	const char *chan_name;
- 	unsigned int fifo_size;
- 	unsigned int flags;
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 4f15b6af8268..e0c151843f9e 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -1150,9 +1150,8 @@ static const struct snd_soc_component_driver samsung_i2s_component = {
+ 	.num_dapm_routes = ARRAY_SIZE(samsung_i2s_dapm_routes),
  };
-@@ -99,10 +97,6 @@ void snd_dmaengine_pcm_set_config_from_dai_data(
-  * playback.
-  */
- #define SND_DMAENGINE_PCM_FLAG_HALF_DUPLEX BIT(3)
--/*
-- * The PCM streams have custom channel names specified.
-- */
--#define SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME BIT(4)
  
- /**
-  * struct snd_dmaengine_pcm_config - Configuration data for dmaengine based PCM
-diff --git a/sound/soc/soc-generic-dmaengine-pcm.c b/sound/soc/soc-generic-dmaengine-pcm.c
-index 1b44e363c50c..f1ab6285a085 100644
---- a/sound/soc/soc-generic-dmaengine-pcm.c
-+++ b/sound/soc/soc-generic-dmaengine-pcm.c
-@@ -265,7 +265,6 @@ static int dmaengine_pcm_new(struct snd_soc_pcm_runtime *rtd)
- 	struct dmaengine_pcm *pcm = soc_component_to_pcm(component);
- 	const struct snd_dmaengine_pcm_config *config = pcm->config;
- 	struct device *dev = component->dev;
--	struct snd_dmaengine_dai_dma_data *dma_data;
- 	struct snd_pcm_substream *substream;
- 	size_t prealloc_buffer_size;
- 	size_t max_buffer_size;
-@@ -285,19 +284,9 @@ static int dmaengine_pcm_new(struct snd_soc_pcm_runtime *rtd)
- 		if (!substream)
- 			continue;
+-#define SAMSUNG_I2S_FMTS	(SNDRV_PCM_FMTBIT_S8 | \
+-					SNDRV_PCM_FMTBIT_S16_LE | \
+-					SNDRV_PCM_FMTBIT_S24_LE)
++#define SAMSUNG_I2S_FMTS (SNDRV_PCM_FMTBIT_S8 | SNDRV_PCM_FMTBIT_S16_LE | \
++			  SNDRV_PCM_FMTBIT_S24_LE)
  
--		dma_data = snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
--
--		if (!pcm->chan[i] &&
--		    ((pcm->flags & SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME) ||
--		     (config && config->chan_names[i]))) {
--			const char *chan_name = dma_data->chan_name;
--
--			if (config && config->chan_names[i])
--				chan_name = config->chan_names[i];
--
-+		if (!pcm->chan[i] && config && config->chan_names[i])
- 			pcm->chan[i] = dma_request_slave_channel(dev,
--				chan_name);
--		}
-+				config->chan_names[i]);
- 
- 		if (!pcm->chan[i] && (pcm->flags & SND_DMAENGINE_PCM_FLAG_COMPAT)) {
- 			pcm->chan[i] = dmaengine_pcm_compat_request_channel(rtd,
-@@ -420,10 +409,8 @@ static int dmaengine_pcm_request_chan_of(struct dmaengine_pcm *pcm,
- 	const char *name;
- 	struct dma_chan *chan;
- 
--	if ((pcm->flags & (SND_DMAENGINE_PCM_FLAG_NO_DT |
--			   SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME)) ||
--	     (!dev->of_node && !(config && config->dma_dev &&
--				config->dma_dev->of_node)))
-+	if ((pcm->flags & SND_DMAENGINE_PCM_FLAG_NO_DT) || (!dev->of_node &&
-+	    !(config && config->dma_dev && config->dma_dev->of_node)))
- 		return 0;
- 
- 	if (config && config->dma_dev) {
+ static int i2s_alloc_dais(struct samsung_i2s_priv *priv,
+ 			  const struct samsung_i2s_dai_data *i2s_dai_data,
 -- 
 2.17.1
