@@ -1,280 +1,174 @@
 From: Anand Moon <linux.amoon@gmail.com>
-Subject: [RFC 1/2] ARM: dts: exynos: Add proper regulator states for
- suspend-to-mem for odroid-u3
-Date: Wed, 13 Feb 2019 21:40:51 +0000
-Message-ID: <20190213214052.2427-2-linux.amoon@gmail.com>
+Subject: [RFC 2/2] soc: samsung: pmu: Add the PMU data of exynos4412 to support low-power state
+Date: Wed, 13 Feb 2019 21:40:52 +0000
+Message-ID: <20190213214052.2427-3-linux.amoon@gmail.com>
 References: <20190213214052.2427-1-linux.amoon@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190213214052.2427-1-linux.amoon@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add suspend-to-mem node to regulator core to be enabled or disabled
-during system suspend and also support changing the regulator operating
-mode during runtime and when the system enter sleep mode.
+This patch adds configration for PMU (Power Management Unit) state
+tuning for exynos4412 SoC in order to enter low-power mode during
+suspend power modes and help resume from suspend state.
 
+Fixes: bfce552d0b1 ("drivers: soc: Add support for Exynos PMU driver")
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>
 Cc: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 ---
 
-Changes from previos patch
-[0] https://patchwork.kernel.org/patch/10712549/
+Changes from previous patch.
+New patch to this series to support suspend and resume state
 
-Set all the WAKEUP source regulator in suspend-on state.
-LD04, LD012, LD015, LD020, LD022
-Set all the non used regulator in suspend-odd state
-LD02, LD03, LD05, LD06, LD07, LD011, LD013, LDO14, LD016
-
-BUCK5, BUCK6, BUCK7 and not confirable as per driver max77686-regulator
-
-Tested on microSD card and it resumes correcly after suspend.
-eMMC is not able to resume after entering into suspend state,
-which need to be investigated and how to debug more.
+Changes have been tested on microSD card but fails to resume on cMMC.
+It need to be investigated and more debuging
 ---
- .../boot/dts/exynos4412-odroid-common.dtsi    | 63 +++++++++++++++++++
- arch/arm/boot/dts/exynos4412-odroidu3.dts     |  3 +
- 2 files changed, 66 insertions(+)
+ drivers/soc/samsung/exynos4-pmu.c           | 83 +++++++++++++++++++++
+ include/linux/soc/samsung/exynos-regs-pmu.h | 21 ++++++
+ 2 files changed, 104 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index 08d3a0a7b4eb..e984461c37d9 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -288,6 +288,9 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo3_reg: LDO3 {
-@@ -295,6 +298,9 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo4_reg: LDO4 {
-@@ -302,6 +308,9 @@
- 				regulator-min-microvolt = <2800000>;
- 				regulator-max-microvolt = <2800000>;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
- 
- 			ldo5_reg: LDO5 {
-@@ -310,6 +319,9 @@
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo6_reg: LDO6 {
-@@ -317,6 +329,9 @@
- 				regulator-min-microvolt = <1000000>;
- 				regulator-max-microvolt = <1000000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo7_reg: LDO7 {
-@@ -324,18 +339,27 @@
- 				regulator-min-microvolt = <1000000>;
- 				regulator-max-microvolt = <1000000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo8_reg: LDO8 {
- 				regulator-name = "VDD10_HDMI_1.0V";
- 				regulator-min-microvolt = <1000000>;
- 				regulator-max-microvolt = <1000000>;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
- 
- 			ldo10_reg: LDO10 {
- 				regulator-name = "VDDQ_MIPIHSI_1.8V";
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
- 
- 			ldo11_reg: LDO11 {
-@@ -343,6 +367,9 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo12_reg: LDO12 {
-@@ -351,6 +378,9 @@
- 				regulator-max-microvolt = <3300000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo13_reg: LDO13 {
-@@ -359,6 +389,9 @@
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo14_reg: LDO14 {
-@@ -367,6 +400,9 @@
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo15_reg: LDO15 {
-@@ -375,6 +411,9 @@
- 				regulator-max-microvolt = <1000000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo16_reg: LDO16 {
-@@ -383,6 +422,9 @@
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo20_reg: LDO20 {
-@@ -396,6 +438,9 @@
- 				regulator-min-microvolt = <2800000>;
- 				regulator-max-microvolt = <2800000>;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
- 
- 			ldo22_reg: LDO22 {
-@@ -405,6 +450,9 @@
- 				 */
- 				regulator-name = "LDO22";
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
- 
- 			ldo25_reg: LDO25 {
-@@ -413,6 +461,9 @@
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			buck1_reg: BUCK1 {
-@@ -421,6 +472,9 @@
- 				regulator-max-microvolt = <1100000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			buck2_reg: BUCK2 {
-@@ -429,6 +483,9 @@
- 				regulator-max-microvolt = <1350000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
- 
- 			buck3_reg: BUCK3 {
-@@ -437,6 +494,9 @@
- 				regulator-max-microvolt = <1050000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			buck4_reg: BUCK4 {
-@@ -444,6 +504,9 @@
- 				regulator-min-microvolt = <900000>;
- 				regulator-max-microvolt = <1100000>;
- 				regulator-microvolt-offset = <50000>;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			buck5_reg: BUCK5 {
-diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-index 2bdf899df436..4ebde09fc51d 100644
---- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-@@ -82,6 +82,9 @@
- 	regulator-name = "LDO22_VDDQ_MMC4_2.8V";
- 	regulator-min-microvolt = <2800000>;
- 	regulator-max-microvolt = <2800000>;
-+	regulator-state-mem {
-+		regulator-on-in-suspend;
-+	};
+diff --git a/drivers/soc/samsung/exynos4-pmu.c b/drivers/soc/samsung/exynos4-pmu.c
+index a7cdbf1aac0c..d261a0d2371e 100644
+--- a/drivers/soc/samsung/exynos4-pmu.c
++++ b/drivers/soc/samsung/exynos4-pmu.c
+@@ -200,10 +200,93 @@ static const struct exynos_pmu_conf exynos4412_pmu_config[] = {
+ 	{ PMU_TABLE_END,},
  };
  
- &mshc_0 {
++static unsigned int const exynos4412_list_feed[] = {
++	EXYNOS4_ARM_CORE0_OPTION,
++	EXYNOS4_ARM_CORE1_OPTION,
++	EXYNOS4_ARM_CORE2_OPTION,
++	EXYNOS4_ARM_CORE3_OPTION,
++	EXYNOS4_ARM_COMMON_OPTION,
++	EXYNOS4_CAM_OPTION,
++	EXYNOS4_TV_OPTION,
++	EXYNOS4_MFC_OPTION,
++	EXYNOS4_G3D_OPTION,
++	EXYNOS4_LCD0_OPTION,
++	EXYNOS4_ISP_OPTION,
++	EXYNOS4_MAUDIO_OPTION,
++	EXYNOS4_GPS_OPTION,
++	EXYNOS4_GPS_ALIVE_OPTION,
++};
++
++static void exynos4412_pmu_central_seq(bool enable)
++{
++	unsigned int value;
++
++	value = pmu_raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
++	if (enable)
++		value &= ~S5P_CENTRAL_LOWPWR_CFG;
++	else
++		value |= S5P_CENTRAL_LOWPWR_CFG;
++	pmu_raw_writel(value, S5P_CENTRAL_SEQ_CONFIGURATION);
++
++	value = pmu_raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION_COREBLK);
++	if (enable)
++		value &= ~S5P_CENTRAL_LOWPWR_CFG;
++	else
++		value |= S5P_CENTRAL_LOWPWR_CFG;
++	pmu_raw_writel(value, S5P_CENTRAL_SEQ_CONFIGURATION_COREBLK);
++}
++
++static void exynos4412_pmu_init(void)
++{
++	unsigned int value;
++	int i;
++
++	/* Enable USE_STANDBY_WFI for all CORE */
++	pmu_raw_writel(S5P_USE_STANDBY_WFI_ALL, S5P_CENTRAL_SEQ_OPTION);
++
++	/* Decides whether to use retention capability */
++	value  = pmu_raw_readl(S5P_ARM_L2_0_OPTION);
++	value &= ~EXYNOS_L2_USE_RETENTION;
++	pmu_raw_writel(value, S5P_ARM_L2_0_OPTION);
++
++	value = pmu_raw_readl(S5P_ARM_L2_1_OPTION);
++	value &= ~EXYNOS_L2_USE_RETENTION;
++	pmu_raw_writel(value, S5P_ARM_L2_1_OPTION);
++
++	/* Set PSHOLD port for output high */
++	value = pmu_raw_readl(S5P_PS_HOLD_CONTROL);
++	value |= S5P_PS_HOLD_OUTPUT_HIGH;
++	pmu_raw_writel(value, S5P_PS_HOLD_CONTROL);
++
++	/* Enable signal for PSHOLD port */
++	value = pmu_raw_readl(S5P_PS_HOLD_CONTROL);
++	value |= S5P_PS_HOLD_EN;
++	pmu_raw_writel(value, S5P_PS_HOLD_CONTROL);
++
++	/* Enable only SC_FEEDBACK */
++	for (i = 0; i < ARRAY_SIZE(exynos4412_list_feed); i++) {
++		value =  pmu_raw_readl(exynos4412_list_feed[i]);
++		value &= ~(EXYNOS_USE_SC_COUNTER);
++		value |= EXYNOS_USE_SC_FEEDBACK;
++		pmu_raw_writel(value, exynos4412_list_feed[i]);
++	}
++
++	exynos4412_pmu_central_seq(false);
++
++	pr_info("EXYNOS4x12 PMU Initialize\n");
++}
++
++static void exynos4412_powerdown_conf(enum sys_powerdown mode)
++{
++	exynos4412_pmu_central_seq(true);
++}
++
+ const struct exynos_pmu_data exynos4210_pmu_data = {
+ 	.pmu_config	= exynos4210_pmu_config,
+ };
+ 
+ const struct exynos_pmu_data exynos4412_pmu_data = {
+ 	.pmu_config		= exynos4412_pmu_config,
++	.pmu_init		= exynos4412_pmu_init,
++	.powerdown_conf		= exynos4412_powerdown_conf,
+ };
+diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
+index 5addaf5ccbce..6beed3e669d2 100644
+--- a/include/linux/soc/samsung/exynos-regs-pmu.h
++++ b/include/linux/soc/samsung/exynos-regs-pmu.h
+@@ -16,6 +16,8 @@
+ 
+ #define S5P_CENTRAL_SEQ_CONFIGURATION		0x0200
+ 
++#define S5P_CENTRAL_SEQ_CONFIGURATION_COREBLK   0x0240
++
+ #define S5P_CENTRAL_LOWPWR_CFG			(1 << 16)
+ 
+ #define S5P_CENTRAL_SEQ_OPTION			0x0208
+@@ -347,6 +349,25 @@
+ #define EXYNOS3_OPTION_USE_SC_FEEDBACK			(1 << 1)
+ #define EXYNOS3_OPTION_SKIP_DEACTIVATE_ACEACP_IN_PWDN	(1 << 7)
+ 
++/* EXYNOS4 */
++#define EXYNOS_USE_SC_FEEDBACK					BIT(1)
++#define EXYNOS_USE_SC_COUNTER					BIT(0)
++
++#define EXYNOS4_ARM_CORE0_OPTION				0x2008
++#define EXYNOS4_ARM_CORE1_OPTION				0x2088
++#define EXYNOS4_ARM_CORE2_OPTION				0x2108
++#define EXYNOS4_ARM_CORE3_OPTION				0x2188
++#define EXYNOS4_ARM_COMMON_OPTION				0x2408
++#define EXYNOS4_CAM_OPTION					0x3C08
++#define EXYNOS4_TV_OPTION					0x3C28
++#define EXYNOS4_MFC_OPTION					0x3C48
++#define EXYNOS4_G3D_OPTION					0x3C68
++#define EXYNOS4_LCD0_OPTION					0x3C88
++#define EXYNOS4_ISP_OPTION					0x3CA8
++#define EXYNOS4_MAUDIO_OPTION					0x3CC8
++#define EXYNOS4_GPS_OPTION					0x3CE8
++#define EXYNOS4_GPS_ALIVE_OPTION				0x3D08
++
+ /* For EXYNOS5 */
+ 
+ #define EXYNOS5_AUTO_WDTRESET_DISABLE				0x0408
 -- 
 2.20.1
