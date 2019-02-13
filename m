@@ -1,69 +1,79 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] devfreq: Use of_node_name_eq for node name comparisons
-Date: Wed, 13 Feb 2019 10:09:53 -0600
-Message-ID: <CAL_Jsq+xpRPvj=UcSo+jQKX1pB=9B3SV9jB5ZVhaVsKvOqtoOg@mail.gmail.com>
-References: <20181205195050.4759-6-robh@kernel.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v3 00/13] ASoC: dmaengine updates,
+ secondary CPU DAI for Odroid boards
+Date: Wed, 13 Feb 2019 19:41:59 +0100
+Message-ID: <20190213184212.5473-1-s.nawrocki@samsung.com>
+References: <CGME20190213184252epcas1p131e1023b7f6ec280e880b160a4a96345@epcas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20181205195050.4759-6-robh@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "open list:THERMAL" <linux-pm@vger.kernel.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: broonie@kernel.org
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, lgirdwood@gmail.com, krzk@kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Dec 5, 2018 at 1:50 PM Rob Herring <robh@kernel.org> wrote:
->
-> Convert string compares of DT node names to use of_node_name_eq helper
-> instead. This removes direct access to the node name pointer.
->
-> For instances using of_node_cmp, this has the side effect of now using
-> case sensitive comparisons. This should not matter for any FDT based
-> system which all of these are.
->
-> Cc: Chanwoo Choi <cw00.choi@samsung.com>
-> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-> Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: linux-pm@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/devfreq/devfreq-event.c     | 2 +-
->  drivers/devfreq/event/exynos-ppmu.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+This is a rebased version with the build break fixed and added Krzysztof's 
+Acks. My apologies, I double checked there is no build errors between patches 
+this time.
 
-Can someone apply this please.
+Below is cover letter text from v2.
 
->
-> diff --git a/drivers/devfreq/devfreq-event.c b/drivers/devfreq/devfreq-event.c
-> index d67242d87744..87e93406d7cd 100644
-> --- a/drivers/devfreq/devfreq-event.c
-> +++ b/drivers/devfreq/devfreq-event.c
-> @@ -240,7 +240,7 @@ struct devfreq_event_dev *devfreq_event_get_edev_by_phandle(struct device *dev,
->         }
->
->         list_for_each_entry(edev, &devfreq_event_list, node) {
-> -               if (!strcmp(edev->desc->name, node->name))
-> +               if (of_node_name_eq(node, edev->desc->name))
->                         goto out;
->         }
->         edev = NULL;
-> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
-> index c61de0bdf053..c2ea94957501 100644
-> --- a/drivers/devfreq/event/exynos-ppmu.c
-> +++ b/drivers/devfreq/event/exynos-ppmu.c
-> @@ -529,7 +529,7 @@ static int of_get_devfreq_events(struct device_node *np,
->                         if (!ppmu_events[i].name)
->                                 continue;
->
-> -                       if (!of_node_cmp(node->name, ppmu_events[i].name))
-> +                       if (of_node_name_eq(node, ppmu_events[i].name))
->                                 break;
->                 }
->
-> --
-> 2.19.1
->
+This series restores support for the secondary CPU DAI in samsung/i2s.c
+driver and adds support for secondary CPU DAI on Odroid boards.
+
+I have added 4 more clean up patches comparing to first version of the
+patch set (16/22...19/22).
+
+The first patch adds new platform device for the secondary PCM, I tried to
+avoid registering new platform device in probe() as it doesn't play well
+with deferred probing but couldn't find a way to avoid that new device,
+unique devices are needed to register "PCM" components for each CPU DAI.
+
+Patches 2/21...11/21 are mostly a clean up, following conversion to single
+component with multiple DAIs, allowing to reference both primary/secondary
+DAI in DT.
+
+The patch set has been tested on Odroid U3, XU3, XU4 and Mini2440
+(s3c2440 non-DT) boards.
+
+Changes since v1 ((addressing Krzysztof's review comments):
+ - added a comment, whitespace change in patch 1/21
+ - dropped unnecessary new line addition from patch 1/21
+
+Sylwester Nawrocki (13):
+  ASoC: samsung: i2s: Move SFR pointer to common driver data structure
+  ASoC: samsung: i2s: Drop spinlock pointer from i2s_dai data structure
+  ASoC: samsung: i2s: Move IP variant data to common driver data
+    structure
+  ASoC: samsung: i2s: Move quirks data to common driver data structure
+  ASoC: samsung: i2s: Get rid of a static spinlock
+  ASoC: samsung: odroid: Add support for secondary CPU DAI
+  ASoC: samsung: Specify DMA channel names through custom DMA config
+  ASoC: samsung: Drop DAI DMA data chan_name assignments
+  ASoC: dmaengine: Remove unused
+    SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME flag
+  ASoC: samsung: i2s: Simplify pri_dai, sec_dai pointers usage
+  ASoC: samsung: i2s: Change indentation in SAMSUNG_I2S_FMTS definition
+  ASoC: samsung: i2s: Comments clean up
+  ASoC: samsung: i2s: Convert to SPDX License Indentifier
+
+ include/sound/dmaengine_pcm.h         |   6 -
+ sound/soc/samsung/dmaengine.c         |  12 +-
+ sound/soc/samsung/i2s.c               | 297 +++++++++++++-------------
+ sound/soc/samsung/odroid.c            | 131 ++++++++----
+ sound/soc/samsung/s3c2412-i2s.c       |   4 +-
+ sound/soc/samsung/s3c24xx-i2s.c       |   4 +-
+ sound/soc/soc-generic-dmaengine-pcm.c |  21 +-
+ 7 files changed, 250 insertions(+), 225 deletions(-)
+
+-- 
+2.17.1
