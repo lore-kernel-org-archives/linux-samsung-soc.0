@@ -1,10 +1,10 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v3 04/13] ASoC: samsung: i2s: Move quirks data
- to common driver data structure
-Date: Wed, 13 Feb 2019 19:42:03 +0100
-Message-ID: <20190213184212.5473-5-s.nawrocki@samsung.com>
+Subject: [PATCH v3 05/13] ASoC: samsung: i2s: Get rid of a
+	static spinlock
+Date: Wed, 13 Feb 2019 19:42:04 +0100
+Message-ID: <20190213184212.5473-6-s.nawrocki@samsung.com>
 References: <20190213184212.5473-1-s.nawrocki@samsung.com>
- <CGME20190213184306epcas1p4ff854f370c8ea8371430e26c3bfeac19@epcas1p4.samsung.com>
+ <CGME20190213184310epcas2p239500afce801a9828da360fef41bb886@epcas2p2.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -23,161 +23,88 @@ To: broonie@kernel.org
 Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, lgirdwood@gmail.com, krzk@kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The quirk flags are common for the primary and the secondary DAI
-so move respective field from struct i2s_dai to common driver data
-structure.
+This patch makes the spinlock serializing access to the primary/secondary
+PCM a per I2S controller lock, rather than a global one. There is no need
+to have a global lock across multiple I2S controllers in the SoC.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- sound/soc/samsung/i2s.c | 33 ++++++++++++---------------------
- 1 file changed, 12 insertions(+), 21 deletions(-)
+ sound/soc/samsung/i2s.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
 diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 0c4c4de8c7e9..8f0af4b0f25a 100644
+index 8f0af4b0f25a..692a752b194c 100644
 --- a/sound/soc/samsung/i2s.c
 +++ b/sound/soc/samsung/i2s.c
-@@ -84,7 +84,6 @@ struct i2s_dai {
- 	struct snd_dmaengine_dai_dma_data dma_capture;
- 	struct snd_dmaengine_dai_dma_data idma_playback;
- 	dma_filter_fn filter;
--	u32	quirks;
- 
+@@ -88,9 +88,6 @@ struct i2s_dai {
  	struct samsung_i2s_priv *priv;
  };
-@@ -122,19 +121,13 @@ struct samsung_i2s_priv {
- 	u32 suspend_i2spsr;
  
- 	const struct samsung_i2s_variant_regs *variant_regs;
-+	u32 quirks;
- 
- 	/* The clock provider's data */
- 	struct clk *clk_table[3];
- 	struct clk_onecell_data clk_data;
- };
- 
--struct i2s_dai *samsung_i2s_get_pri_dai(struct device *dev)
--{
--	struct samsung_i2s_priv *priv = dev_get_drvdata(dev);
+-/* Lock for cross i/f checks */
+-static DEFINE_SPINLOCK(lock);
 -
--	return &priv->dai[SAMSUNG_I2S_ID_PRIMARY - 1];
--}
--
- /* Returns true if this is the 'overlay' stereo DAI */
- static inline bool is_secondary(struct i2s_dai *i2s)
- {
-@@ -343,7 +336,7 @@ static inline void set_bfs(struct i2s_dai *i2s, unsigned bfs)
- {
- 	struct samsung_i2s_priv *priv = i2s->priv;
- 	u32 mod = readl(priv->addr + I2SMOD);
--	int tdm = i2s->quirks & QUIRK_SUPPORTS_TDM;
-+	int tdm = priv->quirks & QUIRK_SUPPORTS_TDM;
- 	int bfs_shift = priv->variant_regs->bfs_off;
+ struct samsung_i2s_priv {
+ 	struct platform_device *pdev;
+ 	struct platform_device *pdev_sec;
+@@ -101,6 +98,9 @@ struct samsung_i2s_priv {
+ 	/* Spinlock protecting access to the device's registers */
+ 	spinlock_t lock;
  
- 	/* Non-TDM I2S controllers do not support BCLK > 48 * FS */
-@@ -563,7 +556,7 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai, int clk_id, unsigned int rfs,
- 	case SAMSUNG_I2S_RCLKSRC_1: /* clock corrsponding to IISMOD[10] := 1 */
- 		mask = 1 << i2s_regs->rclksrc_off;
++	/* Lock for cross i/f checks */
++	spinlock_t pcm_lock;
++
+ 	/* CPU DAIs and their corresponding drivers */
+ 	struct i2s_dai *dai;
+ 	struct snd_soc_dai_driver *dai_drv;
+@@ -832,7 +832,7 @@ static int i2s_startup(struct snd_pcm_substream *substream,
  
--		if ((i2s->quirks & QUIRK_NO_MUXPSR)
-+		if ((priv->quirks & QUIRK_NO_MUXPSR)
- 				|| (clk_id == SAMSUNG_I2S_RCLKSRC_0))
- 			clk_id = 0;
- 		else
-@@ -832,6 +825,7 @@ static int i2s_hw_params(struct snd_pcm_substream *substream,
- static int i2s_startup(struct snd_pcm_substream *substream,
- 	  struct snd_soc_dai *dai)
+ 	pm_runtime_get_sync(dai->dev);
+ 
+-	spin_lock_irqsave(&lock, flags);
++	spin_lock_irqsave(&priv->pcm_lock, flags);
+ 
+ 	i2s->mode |= DAI_OPENED;
+ 
+@@ -844,7 +844,7 @@ static int i2s_startup(struct snd_pcm_substream *substream,
+ 	if (!any_active(i2s) && (priv->quirks & QUIRK_NEED_RSTCLR))
+ 		writel(CON_RSTCLR, i2s->priv->addr + I2SCON);
+ 
+-	spin_unlock_irqrestore(&lock, flags);
++	spin_unlock_irqrestore(&priv->pcm_lock, flags);
+ 
+ 	return 0;
+ }
+@@ -852,11 +852,12 @@ static int i2s_startup(struct snd_pcm_substream *substream,
+ static void i2s_shutdown(struct snd_pcm_substream *substream,
+ 	struct snd_soc_dai *dai)
  {
 +	struct samsung_i2s_priv *priv = snd_soc_dai_get_drvdata(dai);
  	struct i2s_dai *i2s = to_info(dai);
  	struct i2s_dai *other = get_other_dai(i2s);
  	unsigned long flags;
-@@ -847,7 +841,7 @@ static int i2s_startup(struct snd_pcm_substream *substream,
- 	else
- 		i2s->mode |= DAI_MANAGER;
  
--	if (!any_active(i2s) && (i2s->quirks & QUIRK_NEED_RSTCLR))
-+	if (!any_active(i2s) && (priv->quirks & QUIRK_NEED_RSTCLR))
- 		writel(CON_RSTCLR, i2s->priv->addr + I2SCON);
+-	spin_lock_irqsave(&lock, flags);
++	spin_lock_irqsave(&priv->pcm_lock, flags);
  
- 	spin_unlock_irqrestore(&lock, flags);
-@@ -929,7 +923,7 @@ static int config_setup(struct i2s_dai *i2s)
- 	if (is_slave(i2s))
- 		return 0;
+ 	i2s->mode &= ~DAI_OPENED;
+ 	i2s->mode &= ~DAI_MANAGER;
+@@ -868,7 +869,7 @@ static void i2s_shutdown(struct snd_pcm_substream *substream,
+ 	i2s->rfs = 0;
+ 	i2s->bfs = 0;
  
--	if (!(i2s->quirks & QUIRK_NO_MUXPSR)) {
-+	if (!(priv->quirks & QUIRK_NO_MUXPSR)) {
- 		psr = priv->rclk_srcrate / i2s->frmclk / rfs;
- 		writel(((psr - 1) << 8) | PSR_PSREN, priv->addr + I2SPSR);
- 		dev_dbg(&i2s->pdev->dev,
-@@ -1068,10 +1062,10 @@ static int samsung_i2s_dai_probe(struct snd_soc_dai *dai)
- 		snd_soc_dai_init_dma_data(dai, &i2s->dma_playback,
- 					   &i2s->dma_capture);
+-	spin_unlock_irqrestore(&lock, flags);
++	spin_unlock_irqrestore(&priv->pcm_lock, flags);
  
--		if (i2s->quirks & QUIRK_NEED_RSTCLR)
-+		if (priv->quirks & QUIRK_NEED_RSTCLR)
- 			writel(CON_RSTCLR, priv->addr + I2SCON);
+ 	pm_runtime_put(dai->dev);
+ }
+@@ -1406,6 +1407,7 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 	pri_dai = &priv->dai[SAMSUNG_I2S_ID_PRIMARY - 1];
  
--		if (i2s->quirks & QUIRK_SUPPORTS_IDMA)
-+		if (priv->quirks & QUIRK_SUPPORTS_IDMA)
- 			idma_reg_addr_init(priv->addr,
- 					i2s->sec_dai->idma_playback.addr);
- 	}
-@@ -1106,7 +1100,7 @@ static int samsung_i2s_dai_remove(struct snd_soc_dai *dai)
- 	pm_runtime_get_sync(dai->dev);
+ 	spin_lock_init(&priv->lock);
++	spin_lock_init(&priv->pcm_lock);
  
- 	if (!is_secondary(i2s)) {
--		if (i2s->quirks & QUIRK_NEED_RSTCLR) {
-+		if (priv->quirks & QUIRK_NEED_RSTCLR) {
- 			spin_lock_irqsave(&priv->lock, flags);
- 			writel(0, priv->addr + I2SCON);
- 			spin_unlock_irqrestore(&priv->lock, flags);
-@@ -1280,7 +1274,6 @@ static int i2s_register_clock_provider(struct samsung_i2s_priv *priv)
- 	const char *clk_name[2] = { "i2s_opclk0", "i2s_opclk1" };
- 	const char *p_names[2] = { NULL };
- 	struct device *dev = &priv->pdev->dev;
--	struct i2s_dai *i2s = samsung_i2s_get_pri_dai(dev);
- 	const struct samsung_i2s_variant_regs *reg_info = priv->variant_regs;
- 	const char *i2s_clk_name[ARRAY_SIZE(i2s_clk_desc)];
- 	struct clk *rclksrc;
-@@ -1306,7 +1299,7 @@ static int i2s_register_clock_provider(struct samsung_i2s_priv *priv)
- 			return -ENOMEM;
- 	}
- 
--	if (!(i2s->quirks & QUIRK_NO_MUXPSR)) {
-+	if (!(priv->quirks & QUIRK_NO_MUXPSR)) {
- 		/* Activate the prescaler */
- 		u32 val = readl(priv->addr + I2SPSR);
- 		writel(val | PSR_PSREN, priv->addr + I2SPSR);
-@@ -1400,11 +1393,11 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 	if (!priv)
- 		return -ENOMEM;
- 
--	priv->variant_regs = i2s_dai_data->i2s_variant_regs;
--
- 	quirks = np ? i2s_dai_data->quirks : i2s_pdata->type.quirks;
- 	num_dais = (quirks & QUIRK_SEC_DAI) ? 2 : 1;
- 	priv->pdev = pdev;
-+	priv->variant_regs = i2s_dai_data->i2s_variant_regs;
-+	priv->quirks = quirks;
- 
- 	ret = i2s_alloc_dais(priv, i2s_dai_data, num_dais);
- 	if (ret < 0)
-@@ -1459,7 +1452,6 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 	pri_dai->dma_capture.chan_name = "rx";
- 	pri_dai->dma_playback.addr_width = 4;
- 	pri_dai->dma_capture.addr_width = 4;
--	pri_dai->quirks = quirks;
- 	pri_dai->priv = priv;
- 
- 	if (quirks & QUIRK_PRI_6CHAN)
-@@ -1482,7 +1474,6 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 		}
- 
- 		sec_dai->dma_playback.addr_width = 4;
--		sec_dai->quirks = quirks;
- 		sec_dai->idma_playback.addr = idma_addr;
- 		sec_dai->pri_dai = pri_dai;
- 		sec_dai->priv = priv;
+ 	if (!np) {
+ 		if (i2s_pdata == NULL) {
 -- 
 2.17.1
