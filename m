@@ -1,60 +1,55 @@
-From: Wen Yang <wen.yang99@zte.com.cn>
-Subject: [PATCH v2 3/4] media: s5p-cec: fix possible object reference leak
-Date: Wed, 13 Feb 2019 07:47:59 +0800
-Message-ID: <1550015279-42723-1-git-send-email-wen.yang99@zte.com.cn>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 1/4] dt-bindings: clock: exynos: Put CLK_UART3 in order
+Date: Wed, 13 Feb 2019 16:04:15 +0900
+Message-ID: <5f504ab8-33ca-4033-3d17-e2ba59bfd4ae@samsung.com>
+References: <20190212175052.6310-1-krzk@kernel.org>
+        <CGME20190212175224epcas5p2f8735fb888b2fae241eb1d6c153a1d88@epcas5p2.samsung.com>
+        <20190212175052.6310-2-krzk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190212175052.6310-2-krzk@kernel.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: m.szyprowski@samsung.com
-Cc: mchehab@kernel.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>, "Hans Verkuil (hansverk)" <hansverk@cisco.com>, Hans Verkuil <hans.verkuil@cisco.com>, Wen Yang <yellowriver2010@hotmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The call to of_parse_phandle() returns a node pointer with refcount
-incremented thus it must be explicitly decremented here after the last
-usage.
-The of_find_device_by_node() takes a reference to the underlying device
-structure, we also should release that reference.
-This patch fixes those two issues.
+Hi,
 
-Hans Verkuil says:
-The cec driver should never take a reference of the hdmi device.
-It never accesses the HDMI device, it only needs the HDMI device pointer as
-a key in the notifier list.
-The real problem is that several CEC drivers take a reference of the HDMI
-device and never release it. So those drivers need to be fixed.
+On 19. 2. 13. 오전 2:50, Krzysztof Kozlowski wrote:
+> Order the CLK_UART3 by ID.  No change in functionality.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  include/dt-bindings/clock/exynos5410.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
+> index f179eabbcdb7..5b911ede0534 100644
+> --- a/include/dt-bindings/clock/exynos5410.h
+> +++ b/include/dt-bindings/clock/exynos5410.h
+> @@ -36,6 +36,7 @@
+>  #define CLK_UART0		257
+>  #define CLK_UART1		258
+>  #define CLK_UART2		259
+> +#define CLK_UART3		260
+>  #define CLK_I2C0		261
+>  #define CLK_I2C1		262
+>  #define CLK_I2C2		263
+> @@ -44,7 +45,6 @@
+>  #define CLK_USI1		266
+>  #define CLK_USI2		267
+>  #define CLK_USI3		268
+> -#define CLK_UART3		260
+>  #define CLK_PWM			279
+>  #define CLK_MCT			315
+>  #define CLK_WDT			316
+> 
 
-Fixes: a93d429b51fb ("[media] s5p-cec: add cec-notifier support, move out of staging")
-Suggested-by: Hans Verkuil (hansverk) <hansverk@cisco.com>
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Hans Verkuil (hansverk) <hansverk@cisco.com>
-Cc: Hans Verkuil <hans.verkuil@cisco.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Wen Yang <yellowriver2010@hotmail.com>
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-media@vger.kernel.org
----
-v2->v1: 
-- move of_node_put() to just after the 'hdmi_dev = of_find_device_by_node(np)'.
-- put_device() can be done before the cec = devm_kzalloc line.
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
- drivers/media/platform/s5p-cec/s5p_cec.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/media/platform/s5p-cec/s5p_cec.c b/drivers/media/platform/s5p-cec/s5p_cec.c
-index 8837e26..1f5c355 100644
---- a/drivers/media/platform/s5p-cec/s5p_cec.c
-+++ b/drivers/media/platform/s5p-cec/s5p_cec.c
-@@ -192,9 +192,11 @@ static int s5p_cec_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 	hdmi_dev = of_find_device_by_node(np);
-+	of_node_put(np);
- 	if (hdmi_dev == NULL)
- 		return -EPROBE_DEFER;
- 
-+	put_device(&hdmi_dev->dev);
- 	cec = devm_kzalloc(&pdev->dev, sizeof(*cec), GFP_KERNEL);
- 	if (!cec)
- 		return -ENOMEM;
 -- 
-2.9.5
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
