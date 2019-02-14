@@ -1,116 +1,333 @@
-From: Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Subject: Re: [PATCH] ARM: pm: fix HYP/SVC mode mismatch when MCPM is used
-Date: Thu, 14 Feb 2019 16:58:07 +0000
-Message-ID: <20190214165807.eq34njmunqhrdvxx@shell.armlinux.org.uk>
-References: <CGME20190214143126eucas1p126506139ef72c1685654c8dac8957b3d@eucas1p1.samsung.com>
- <20190214143114.24356-1-m.szyprowski@samsung.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [RFC 1/2] ARM: dts: exynos: Add proper regulator states for
+ suspend-to-mem for odroid-u3
+Date: Fri, 15 Feb 2019 00:04:54 +0530
+Message-ID: <CANAwSgQB-=iwX1L0m6N=dbe6jbfUMYyjgna_QMmJyggj6rxzwQ@mail.gmail.com>
+References: <20190213214052.2427-1-linux.amoon@gmail.com> <20190213214052.2427-2-linux.amoon@gmail.com>
+ <CAJKOXPeyFmKUGwqS1sgf_k2WSx9i0AETjpOLXtsmLFupTpgqnw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190214143114.24356-1-m.szyprowski@samsung.com>
+In-Reply-To: <CAJKOXPeyFmKUGwqS1sgf_k2WSx9i0AETjpOLXtsmLFupTpgqnw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Nicolas Pitre <nicolas.pitre@linaro.org>, Kevin Hilman <khilman@baylibre.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marian Mihailescu <mihailescu2m@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 03:31:14PM +0100, Marek Szyprowski wrote:
-> MCPM does a soft reset of the CPUs and uses common cpu_resume() routine to
-> perform low-level platform initialization. This results in a try to install
-> HYP stubs for the second time for each CPU and results in false HYP/SVC
-> mode mismatch detection. The HYP stubs are already installed at the
-> beginning of the kernel initialization on the boot CPU (head.S) or in the
-> secondary_startup() for other CPUs. To fix this issue MCPM code should use
-> a cpu_resume() routine without HYP stubs installation.
-> 
-> This change fixes HYP/SVC mode mismatch on Samsung Exynos5422-based Odroid
-> XU3/XU4/HC1 boards.
-> 
-> Fixes: 3721924c8154 ("ARM: 8081/1: MCPM: provide infrastructure to allow for MCPM loopback")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  arch/arm/common/mcpm_entry.c   |  2 +-
->  arch/arm/include/asm/suspend.h |  1 +
->  arch/arm/kernel/sleep.S        | 11 +++++++++++
->  3 files changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/common/mcpm_entry.c b/arch/arm/common/mcpm_entry.c
-> index ad574d20415c..1b1b82b37ce0 100644
-> --- a/arch/arm/common/mcpm_entry.c
-> +++ b/arch/arm/common/mcpm_entry.c
-> @@ -381,7 +381,7 @@ static int __init nocache_trampoline(unsigned long _arg)
->  	unsigned int cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
->  	phys_reset_t phys_reset;
->  
-> -	mcpm_set_entry_vector(cpu, cluster, cpu_resume);
-> +	mcpm_set_entry_vector(cpu, cluster, cpu_resume_no_hyp);
->  	setup_mm_for_reboot();
->  
->  	__mcpm_cpu_going_down(cpu, cluster);
-> diff --git a/arch/arm/include/asm/suspend.h b/arch/arm/include/asm/suspend.h
-> index 452bbdcbcc83..506314265c6f 100644
-> --- a/arch/arm/include/asm/suspend.h
-> +++ b/arch/arm/include/asm/suspend.h
-> @@ -10,6 +10,7 @@ struct sleep_save_sp {
->  };
->  
->  extern void cpu_resume(void);
-> +extern void cpu_resume_no_hyp(void);
->  extern void cpu_resume_arm(void);
->  extern int cpu_suspend(unsigned long, int (*)(unsigned long));
->  
-> diff --git a/arch/arm/kernel/sleep.S b/arch/arm/kernel/sleep.S
-> index a8257fc9cf2a..b856d183691e 100644
-> --- a/arch/arm/kernel/sleep.S
-> +++ b/arch/arm/kernel/sleep.S
-> @@ -122,6 +122,11 @@ ENDPROC(cpu_resume_after_mmu)
->  
->  #ifdef CONFIG_MMU
->  	.arm
-> +#ifdef CONFIG_MCPM
-> +ENTRY(cpu_resume_no_hyp)
-> +ARM_BE8(setend be)			@ ensure we are in BE mode
-> +	b	0f
+hi Krzysztof,
 
-What if the kernel is built for Thumb?  You'll be branching to thumb
-code at the '0' label - don't you need to do the same that
-cpu_resume_arm does below?
+Thanks fro your review comments.
 
-> +#endif
->  ENTRY(cpu_resume_arm)
->   THUMB(	badr	r9, 1f		)	@ Kernel is entered in ARM.
->   THUMB(	bx	r9		)	@ If this is a Thumb-2 kernel,
-> @@ -135,6 +140,9 @@ ARM_BE8(setend be)			@ ensure we are in BE mode
->  	bl	__hyp_stub_install_secondary
->  #endif
->  	safe_svcmode_maskall r1
-> +#ifdef CONFIG_MCPM
-> +0:
-> +#endif
+On Thu, 14 Feb 2019 at 18:11, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> Hi Anand,
+>
+> Thanks for the patch. See comments below.
+>
+> On Wed, 13 Feb 2019 at 22:41, Anand Moon <linux.amoon@gmail.com> wrote:
+> >
+> > Add suspend-to-mem node to regulator core to be enabled or disabled
+> > during system suspend and also support changing the regulator operating
+> > mode during runtime and when the system enter sleep mode.
+> >
+> > Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> > Cc: Chanwoo Choi <cw00.choi@samsung.com>
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > ---
+> >
+> > Changes from previos patch
+> > [0] https://patchwork.kernel.org/patch/10712549/
+> >
+> > Set all the WAKEUP source regulator in suspend-on state.
+> > LD04, LD012, LD015, LD020, LD022
+> > Set all the non used regulator in suspend-odd state
+> > LD02, LD03, LD05, LD06, LD07, LD011, LD013, LDO14, LD016
+> >
+> > BUCK5, BUCK6, BUCK7 and not confirable as per driver max77686-regulator
+> >
+> > Tested on microSD card and it resumes correcly after suspend.
+> > eMMC is not able to resume after entering into suspend state,
+> > which need to be investigated and how to debug more.
+> > ---
+> >  .../boot/dts/exynos4412-odroid-common.dtsi    | 63 +++++++++++++++++++
+> >  arch/arm/boot/dts/exynos4412-odroidu3.dts     |  3 +
+> >  2 files changed, 66 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> > index 08d3a0a7b4eb..e984461c37d9 100644
+> > --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> > +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> > @@ -288,6 +288,9 @@
+> >                                 regulator-min-microvolt = <1800000>;
+> >                                 regulator-max-microvolt = <1800000>;
+> >                                 regulator-always-on;
+> > +                               regulator-state-mem {
+> > +                                       regulator-off-in-suspend;
+> > +                               };
+>
+> I see my comment from previous patch was not addressed.
 
-You don't need to conditionalise this.  I'd also use a symbol rather
-than a numeric label given that safe_svcmode_maskall is a macro that
-also uses numeric labels.
+I left this unchanged since this regulator is not active linked and used.
+Ok I will change this to regulator-on-in-suspend,
 
->  	mov	r1, #0
->  	ALT_SMP(mrc p15, 0, r0, c0, c0, 5)
->  	ALT_UP_B(1f)
-> @@ -163,6 +171,9 @@ ENDPROC(cpu_resume)
->  
->  #ifdef CONFIG_MMU
->  ENDPROC(cpu_resume_arm)
-> +#endif
-> +#ifdef CONFIG_MCPM
-> +ENDPROC(cpu_resume_no_hyp)
->  #endif
->  
->  	.align 2
-> -- 
-> 2.17.1
-> 
-> 
+>From documentation device tree binding regulator.txt
+"- regulator-always-on: boolean, regulator should never be disabled"
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+But some regulator switches to a low power mode under light current loads
+and the device automatically switches back to a fast response mode as the
+output load increases.
+
+>
+> >                         };
+> >
+> >                         ldo3_reg: LDO3 {
+> > @@ -295,6 +298,9 @@
+> >                                 regulator-min-microvolt = <1800000>;
+> >                                 regulator-max-microvolt = <1800000>;
+> >                                 regulator-always-on;
+> > +                               regulator-state-mem {
+> > +                                       regulator-off-in-suspend;
+> > +                               };
+>
+> The same...
+
+Ok I will change this to regulator-on-in-suspend,
+
+>
+> >                         };
+> >
+> >                         ldo4_reg: LDO4 {
+> > @@ -302,6 +308,9 @@
+> >                                 regulator-min-microvolt = <2800000>;
+> >                                 regulator-max-microvolt = <2800000>;
+> >                                 regulator-boot-on;
+> > +                               regulator-state-mem {
+> > +                                       regulator-on-in-suspend;
+> > +                               };
+> >                         };
+> >
+> >                         ldo5_reg: LDO5 {
+> > @@ -310,6 +319,9 @@
+> >                                 regulator-max-microvolt = <1800000>;
+> >                                 regulator-always-on;
+> >                                 regulator-boot-on;
+> > +                               regulator-state-mem {
+> > +                                       regulator-off-in-suspend;
+> > +                               };
+> >                         };
+> >
+> >                         ldo6_reg: LDO6 {
+> > @@ -317,6 +329,9 @@
+> >                                 regulator-min-microvolt = <1000000>;
+> >                                 regulator-max-microvolt = <1000000>;
+> >                                 regulator-always-on;
+> > +                               regulator-state-mem {
+> > +                                       regulator-off-in-suspend;
+> > +                               };
+> >                         };
+> >
+> >                         ldo7_reg: LDO7 {
+> > @@ -324,18 +339,27 @@
+> >                                 regulator-min-microvolt = <1000000>;
+> >                                 regulator-max-microvolt = <1000000>;
+> >                                 regulator-always-on;
+> > +                               regulator-state-mem {
+> > +                                       regulator-off-in-suspend;
+> > +                               };
+> >                         };
+> >
+> >                         ldo8_reg: LDO8 {
+> >                                 regulator-name = "VDD10_HDMI_1.0V";
+> >                                 regulator-min-microvolt = <1000000>;
+> >                                 regulator-max-microvolt = <1000000>;
+> > +                               regulator-state-mem {
+> > +                                       regulator-on-in-suspend;
+> > +                               };
+> >                         };
+> >
+> >                         ldo10_reg: LDO10 {
+> >                                 regulator-name = "VDDQ_MIPIHSI_1.8V";
+> >                                 regulator-min-microvolt = <1800000>;
+> >                                 regulator-max-microvolt = <1800000>;
+> > +                               regulator-state-mem {
+> > +                                       regulator-on-in-suspend;
+> > +                               };
+> >                         };
+> >
+> >                         ldo11_reg: LDO11 {
+> > @@ -343,6 +367,9 @@
+> >                                 regulator-min-microvolt = <1800000>;
+> >                                 regulator-max-microvolt = <1800000>;
+> >                                 regulator-always-on;
+> > +                               regulator-state-mem {
+> > +                                       regulator-off-in-suspend;
+> > +                               };
+> >                         };
+> >
+> >                         ldo12_reg: LDO12 {
+> > @@ -351,6 +378,9 @@
+> >                                 regulator-max-microvolt = <3300000>;
+> >                                 regulator-always-on;
+> >                                 regulator-boot-on;
+> > +                               regulator-state-mem {
+> > +                                       regulator-off-in-suspend;
+> > +                               };
+> >                         };
+> >
+> >                         ldo13_reg: LDO13 {
+> > @@ -359,6 +389,9 @@
+> >                                 regulator-max-microvolt = <1800000>;
+> >                                 regulator-always-on;
+> >                                 regulator-boot-on;
+> > +                               regulator-state-mem {
+> > +                                       regulator-off-in-suspend;
+> > +                               };
+> >                         };
+> >
+> >                         ldo14_reg: LDO14 {
+> > @@ -367,6 +400,9 @@
+> >                                 regulator-max-microvolt = <1800000>;
+> >                                 regulator-always-on;
+> >                                 regulator-boot-on;
+> > +                               regulator-state-mem {
+> > +                                       regulator-off-in-suspend;
+> > +                               };
+> >                         };
+> >
+> >                         ldo15_reg: LDO15 {
+> > @@ -375,6 +411,9 @@
+> >                                 regulator-max-microvolt = <1000000>;
+> >                                 regulator-always-on;
+> >                                 regulator-boot-on;
+> > +                               regulator-state-mem {
+> > +                                       regulator-off-in-suspend;
+> > +                               };
+> >                         };
+> >
+> >                         ldo16_reg: LDO16 {
+> > @@ -383,6 +422,9 @@
+> >                                 regulator-max-microvolt = <1800000>;
+> >                                 regulator-always-on;
+> >                                 regulator-boot-on;
+> > +                               regulator-state-mem {
+> > +                                       regulator-off-in-suspend;
+> > +                               };
+> >                         };
+> >
+> >                         ldo20_reg: LDO20 {
+> > @@ -396,6 +438,9 @@
+> >                                 regulator-min-microvolt = <2800000>;
+> >                                 regulator-max-microvolt = <2800000>;
+> >                                 regulator-boot-on;
+> > +                               regulator-state-mem {
+> > +                                       regulator-on-in-suspend;
+> > +                               };
+>
+>
+> The same... any comments?
+
+I left this on for mshc_0 (emmc) regulator,
+since I could not get suspend resume working on eMMc
+
+>
+> >                         };
+> >
+> >                         ldo22_reg: LDO22 {
+> > @@ -405,6 +450,9 @@
+> >                                  */
+> >                                 regulator-name = "LDO22";
+> >                                 regulator-boot-on;
+> > +                               regulator-state-mem {
+> > +                                       regulator-on-in-suspend;
+> > +                               };
+> >                         };
+> >
+> >                         ldo25_reg: LDO25 {
+> > @@ -413,6 +461,9 @@
+> >                                 regulator-max-microvolt = <1800000>;
+> >                                 regulator-always-on;
+> >                                 regulator-boot-on;
+> > +                               regulator-state-mem {
+> > +                                       regulator-off-in-suspend;
+> > +                               };
+> >                         };
+> >
+> >                         buck1_reg: BUCK1 {
+> > @@ -421,6 +472,9 @@
+> >                                 regulator-max-microvolt = <1100000>;
+> >                                 regulator-always-on;
+> >                                 regulator-boot-on;
+> > +                               regulator-state-mem {
+> > +                                       regulator-off-in-suspend;
+>
+> Again, you did not address my comments.
+>
+
+Buck1 support entering into LPM setting,
+But I will set this to regulator-on-in-suspend; in next patch.
+
+> > +                               };
+> >                         };
+> >
+> >                         buck2_reg: BUCK2 {
+> > @@ -429,6 +483,9 @@
+> >                                 regulator-max-microvolt = <1350000>;
+> >                                 regulator-always-on;
+> >                                 regulator-boot-on;
+> > +                               regulator-state-mem {
+> > +                                       regulator-on-in-suspend;
+> > +                               };
+> >                         };
+> >
+> >                         buck3_reg: BUCK3 {
+> > @@ -437,6 +494,9 @@
+> >                                 regulator-max-microvolt = <1050000>;
+> >                                 regulator-always-on;
+> >                                 regulator-boot-on;
+> > +                               regulator-state-mem {
+> > +                                       regulator-off-in-suspend;
+> > +                               };
+>
+> The same...
+
+Buck3 support entering into LPM setting,
+But I will set this to regulator-on-in-suspend; in next patch.
+
+>
+> >                         };
+> >
+> >                         buck4_reg: BUCK4 {
+> > @@ -444,6 +504,9 @@
+> >                                 regulator-min-microvolt = <900000>;
+> >                                 regulator-max-microvolt = <1100000>;
+> >                                 regulator-microvolt-offset = <50000>;
+> > +                               regulator-state-mem {
+> > +                                       regulator-off-in-suspend;
+> > +                               };
+> >                         };
+> >
+> >                         buck5_reg: BUCK5 {
+> > diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
+> > index 2bdf899df436..4ebde09fc51d 100644
+> > --- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
+> > +++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
+> > @@ -82,6 +82,9 @@
+> >         regulator-name = "LDO22_VDDQ_MMC4_2.8V";
+> >         regulator-min-microvolt = <2800000>;
+> >         regulator-max-microvolt = <2800000>;
+> > +       regulator-state-mem {
+> > +               regulator-on-in-suspend;
+>
+> Why?
+>
+
+I chose not to disable mshc_0 (emmc) regulator,
+since I could not get suspend resume working on eMMC.
+
+> Best regards,
+> Krzysztof
+
+Best Regards
+
+-Anand
