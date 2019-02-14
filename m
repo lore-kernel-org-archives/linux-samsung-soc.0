@@ -1,19 +1,20 @@
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
+From: Russell King - ARM Linux admin <linux@armlinux.org.uk>
 Subject: Re: [PATCH] ARM: pm: fix HYP/SVC mode mismatch when MCPM is used
-Date: Thu, 14 Feb 2019 11:05:20 -0500 (EST)
-Message-ID: <nycvar.YSQ.7.76.1902141104030.1594@knanqh.ubzr>
-References: <CGME20190214143126eucas1p126506139ef72c1685654c8dac8957b3d@eucas1p1.samsung.com> <20190214143114.24356-1-m.szyprowski@samsung.com>
+Date: Thu, 14 Feb 2019 16:58:07 +0000
+Message-ID: <20190214165807.eq34njmunqhrdvxx@shell.armlinux.org.uk>
+References: <CGME20190214143126eucas1p126506139ef72c1685654c8dac8957b3d@eucas1p1.samsung.com>
+ <20190214143114.24356-1-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
 In-Reply-To: <20190214143114.24356-1-m.szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Russell King <rmk+kernel@armlinux.org.uk>, Kevin Hilman <khilman@baylibre.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marian Mihailescu <mihailescu2m@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Nicolas Pitre <nicolas.pitre@linaro.org>, Kevin Hilman <khilman@baylibre.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marian Mihailescu <mihailescu2m@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, 14 Feb 2019, Marek Szyprowski wrote:
-
+On Thu, Feb 14, 2019 at 03:31:14PM +0100, Marek Szyprowski wrote:
 > MCPM does a soft reset of the CPUs and uses common cpu_resume() routine to
 > perform low-level platform initialization. This results in a try to install
 > HYP stubs for the second time for each CPU and results in false HYP/SVC
@@ -27,10 +28,6 @@ On Thu, 14 Feb 2019, Marek Szyprowski wrote:
 > 
 > Fixes: 3721924c8154 ("ARM: 8081/1: MCPM: provide infrastructure to allow for MCPM loopback")
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-Acked-by: Nicolas Pitre <nico@linaro.org>
-
-
 > ---
 >  arch/arm/common/mcpm_entry.c   |  2 +-
 >  arch/arm/include/asm/suspend.h |  1 +
@@ -74,6 +71,11 @@ Acked-by: Nicolas Pitre <nico@linaro.org>
 > +ENTRY(cpu_resume_no_hyp)
 > +ARM_BE8(setend be)			@ ensure we are in BE mode
 > +	b	0f
+
+What if the kernel is built for Thumb?  You'll be branching to thumb
+code at the '0' label - don't you need to do the same that
+cpu_resume_arm does below?
+
 > +#endif
 >  ENTRY(cpu_resume_arm)
 >   THUMB(	badr	r9, 1f		)	@ Kernel is entered in ARM.
@@ -85,6 +87,11 @@ Acked-by: Nicolas Pitre <nico@linaro.org>
 > +#ifdef CONFIG_MCPM
 > +0:
 > +#endif
+
+You don't need to conditionalise this.  I'd also use a symbol rather
+than a numeric label given that safe_svcmode_maskall is a macro that
+also uses numeric labels.
+
 >  	mov	r1, #0
 >  	ALT_SMP(mrc p15, 0, r0, c0, c0, 5)
 >  	ALT_UP_B(1f)
@@ -102,3 +109,8 @@ Acked-by: Nicolas Pitre <nico@linaro.org>
 > 2.17.1
 > 
 > 
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
