@@ -1,56 +1,93 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] devfreq: Use of_node_name_eq for node name comparisons
-Date: Thu, 14 Feb 2019 08:24:07 -0600
-Message-ID: <CAL_Jsq+hoRE5UG3+Z9OKDc3xmkJbGgQpUF+M4pzXJ_BSjj0kfg@mail.gmail.com>
-References: <20181205195050.4759-6-robh@kernel.org> <CGME20190213161024epcas3p3acc5c074714ad1d44fb90ab3f21cfcff@epcas3p3.samsung.com>
- <CAL_Jsq+xpRPvj=UcSo+jQKX1pB=9B3SV9jB5ZVhaVsKvOqtoOg@mail.gmail.com> <5cc4b5a3-c4ad-46a9-2856-3ed67c6755d3@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] ARM: pm: fix HYP/SVC mode mismatch when MCPM is used
+Date: Thu, 14 Feb 2019 15:31:14 +0100
+Message-ID: <20190214143114.24356-1-m.szyprowski@samsung.com>
+References: <CGME20190214143126eucas1p126506139ef72c1685654c8dac8957b3d@eucas1p1.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5cc4b5a3-c4ad-46a9-2856-3ed67c6755d3@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "open list:THERMAL" <linux-pm@vger.kernel.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Russell King <rmk+kernel@armlinux.org.uk>, Nicolas Pitre <nicolas.pitre@linaro.org>, Kevin Hilman <khilman@baylibre.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marian Mihailescu <mihailescu2m@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 9:49 PM Chanwoo Choi <cw00.choi@samsung.com> wrote:
->
-> Hi Rob,
->
-> On 19. 2. 14. =EC=98=A4=EC=A0=84 1:09, Rob Herring wrote:
-> > On Wed, Dec 5, 2018 at 1:50 PM Rob Herring <robh@kernel.org> wrote:
-> >>
-> >> Convert string compares of DT node names to use of_node_name_eq helper
-> >> instead. This removes direct access to the node name pointer.
-> >>
-> >> For instances using of_node_cmp, this has the side effect of now using
-> >> case sensitive comparisons. This should not matter for any FDT based
-> >> system which all of these are.
-> >>
-> >> Cc: Chanwoo Choi <cw00.choi@samsung.com>
-> >> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-> >> Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> >> Cc: Kukjin Kim <kgene@kernel.org>
-> >> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> >> Cc: linux-pm@vger.kernel.org
-> >> Cc: linux-arm-kernel@lists.infradead.org
-> >> Cc: linux-samsung-soc@vger.kernel.org
-> >> Signed-off-by: Rob Herring <robh@kernel.org>
-> >> ---
-> >>  drivers/devfreq/devfreq-event.c     | 2 +-
-> >>  drivers/devfreq/event/exynos-ppmu.c | 2 +-
-> >>  2 files changed, 2 insertions(+), 2 deletions(-)
-> >
-> > Can someone apply this please.
->
-> Myungjoo picked up this patch[1] on devfreq.git
-> but has not yet sent the pull request.
+MCPM does a soft reset of the CPUs and uses common cpu_resume() routine to
+perform low-level platform initialization. This results in a try to install
+HYP stubs for the second time for each CPU and results in false HYP/SVC
+mode mismatch detection. The HYP stubs are already installed at the
+beginning of the kernel initialization on the boot CPU (head.S) or in the
+secondary_startup() for other CPUs. To fix this issue MCPM code should use
+a cpu_resume() routine without HYP stubs installation.
 
-Okay, thanks.
+This change fixes HYP/SVC mode mismatch on Samsung Exynos5422-based Odroid
+XU3/XU4/HC1 boards.
 
-Please add that tree to linux-next or reply to patches when they've
-been applied, so submitters have some way to know when their patch is
-accepted.
+Fixes: 3721924c8154 ("ARM: 8081/1: MCPM: provide infrastructure to allow for MCPM loopback")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/common/mcpm_entry.c   |  2 +-
+ arch/arm/include/asm/suspend.h |  1 +
+ arch/arm/kernel/sleep.S        | 11 +++++++++++
+ 3 files changed, 13 insertions(+), 1 deletion(-)
 
-Rob
+diff --git a/arch/arm/common/mcpm_entry.c b/arch/arm/common/mcpm_entry.c
+index ad574d20415c..1b1b82b37ce0 100644
+--- a/arch/arm/common/mcpm_entry.c
++++ b/arch/arm/common/mcpm_entry.c
+@@ -381,7 +381,7 @@ static int __init nocache_trampoline(unsigned long _arg)
+ 	unsigned int cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
+ 	phys_reset_t phys_reset;
+ 
+-	mcpm_set_entry_vector(cpu, cluster, cpu_resume);
++	mcpm_set_entry_vector(cpu, cluster, cpu_resume_no_hyp);
+ 	setup_mm_for_reboot();
+ 
+ 	__mcpm_cpu_going_down(cpu, cluster);
+diff --git a/arch/arm/include/asm/suspend.h b/arch/arm/include/asm/suspend.h
+index 452bbdcbcc83..506314265c6f 100644
+--- a/arch/arm/include/asm/suspend.h
++++ b/arch/arm/include/asm/suspend.h
+@@ -10,6 +10,7 @@ struct sleep_save_sp {
+ };
+ 
+ extern void cpu_resume(void);
++extern void cpu_resume_no_hyp(void);
+ extern void cpu_resume_arm(void);
+ extern int cpu_suspend(unsigned long, int (*)(unsigned long));
+ 
+diff --git a/arch/arm/kernel/sleep.S b/arch/arm/kernel/sleep.S
+index a8257fc9cf2a..b856d183691e 100644
+--- a/arch/arm/kernel/sleep.S
++++ b/arch/arm/kernel/sleep.S
+@@ -122,6 +122,11 @@ ENDPROC(cpu_resume_after_mmu)
+ 
+ #ifdef CONFIG_MMU
+ 	.arm
++#ifdef CONFIG_MCPM
++ENTRY(cpu_resume_no_hyp)
++ARM_BE8(setend be)			@ ensure we are in BE mode
++	b	0f
++#endif
+ ENTRY(cpu_resume_arm)
+  THUMB(	badr	r9, 1f		)	@ Kernel is entered in ARM.
+  THUMB(	bx	r9		)	@ If this is a Thumb-2 kernel,
+@@ -135,6 +140,9 @@ ARM_BE8(setend be)			@ ensure we are in BE mode
+ 	bl	__hyp_stub_install_secondary
+ #endif
+ 	safe_svcmode_maskall r1
++#ifdef CONFIG_MCPM
++0:
++#endif
+ 	mov	r1, #0
+ 	ALT_SMP(mrc p15, 0, r0, c0, c0, 5)
+ 	ALT_UP_B(1f)
+@@ -163,6 +171,9 @@ ENDPROC(cpu_resume)
+ 
+ #ifdef CONFIG_MMU
+ ENDPROC(cpu_resume_arm)
++#endif
++#ifdef CONFIG_MCPM
++ENDPROC(cpu_resume_no_hyp)
+ #endif
+ 
+ 	.align 2
+-- 
+2.17.1
