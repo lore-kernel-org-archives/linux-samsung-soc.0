@@ -1,63 +1,24 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH 0/5] Exynos SoCs: enable support for ARM Architected Timers
-Date: Fri, 15 Feb 2019 17:36:54 +0100
-Message-ID: <ca4d33bf-aad8-5a6a-7ff5-0d6d1633045d@linaro.org>
-References: <CGME20190215125238eucas1p2f56fe48600aedcec048bc378ed184419@eucas1p2.samsung.com>
- <20190215125229.30180-1-m.szyprowski@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL] ARM: samsung: mach/soc for v5.1
+Date: Fri, 15 Feb 2019 17:44:03 +0100
+Message-ID: <CAK8P3a1U19+EjyuZCESj0zj4CRTUpGKyMP6_rk9QV--FdBGdcQ@mail.gmail.com>
+References: <20190211195448.19983-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190215125229.30180-1-m.szyprowski@samsung.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190211195448.19983-1-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Olof Johansson <olof@lixom.net>, arm-soc <arm@kernel.org>, Kukjin Kim <kgene@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-CkhpIE1hcmVrLAoKSSB3aWxsIHBpY2sgcGF0Y2ggMSBhbmQgMiBmb3IgNS4xCgpUaGFua3MKCiAg
-LS0gRGFuaWVsCgoKT24gMTUvMDIvMjAxOSAxMzo1MiwgTWFyZWsgU3p5cHJvd3NraSB3cm90ZToK
-PiBEZWFyIEFsbCwKPiAKPiBBUk0gQXJjaGl0ZWN0ZWQgVGltZXJzIGFyZSBwcmVzZW50IGluIGFs
-bCBDb3J0ZXhBNy9BMTUgYmFzZWQgU2Ftc3VuZwo+IEV4eW5vcyBTb0NzLiBTbyBmYXIgdGhleSB3
-ZXJlIG5vdCBlbmFibGVkLCBiZWNhdXNlIHRoZXJlIHdlcmUgc29tZSBpc3N1ZXMKPiByZWxhdGVk
-IHRvIHRoZWlyIGluaXRpYWxpemF0aW9uLiBTYW1zdW5nIEV4eW5vcyBTb0NzIHVzZWQgY3VzdG9t
-IHRpbWVyCj4gaGFyZHdhcmUgLSBFeHlub3MgTXVsdGlDb3JlIFRpbWVyLiBJdCB0dXJuZWQgb3V0
-IHRoYXQgZW5hYmxpbmcgTUNUIGl0IGlzCj4gYWxzbyBuZWVkZWQgdG8gZ2V0IEFSTSBBcmNoaXRl
-Y3RlZCBUaW1lcnMgd29ya2luZywgYmVjYXVzZSB0aGV5IGJvdGgKPiBzaGFyZSBzb21lIGNvbW1v
-biBoYXJkd2FyZSBibG9ja3MgKGdsb2JhbCBzeXN0ZW0gY291bnRlcikuCj4gCj4gVGhpcyBwYXRj
-aHNldCBlbmFibGVzIHN1cHBvcnQgZm9yIEFSTSBBcmNoaXRlY3RlZCBUaW1lciBkcml2ZXIgdG9n
-ZXRoZXIKPiB3aXRoIGEgc3RhbmRhcmQgRXh5bm9zIE11bHRpQ29yZSBUaW1lciBkcml2ZXIsIHdo
-aWNoIGlzIGtlcHQgYXMgYSBkZWZhdWx0Cj4gdGltZXIgc291cmNlIG9uIEFSTSAzMmJpdCBwbGF0
-Zm9ybXMuIFN1cHBvcnQgZm9yIEFSTSBhcmNoaXRlY3RlZCB0aW1lcnMKPiBpcyBlc3NlbnRpYWwg
-Zm9yIGVuYWJsaW5nIHByb3BlciBLVk0gc3VwcG9ydCBvbiB0aG9zZSBwbGF0Zm9ybXMuCj4gCj4g
-U29tZSBvZiB0aGUgTUNUIGNsZWFudXAgcGF0Y2hlcyB3ZXJlIGVhcmxpZXIgYSBwYXJ0IG9mIHRo
-ZSBzaW1pbGFyCj4gcGF0Y2hzZXQgZm9yIEFSTTY0LWJhc2VkIEV4eW5vczU0MzMgU29DLgo+IAo+
-IEJlc3QgcmVnYXJkcwo+IE1hcmVrIFN6eXByb3dza2kKPiBTYW1zdW5nIFImRCBJbnN0aXR1dGUg
-UG9sYW5kCj4gCj4gTWFyZWsgU3p5cHJvd3NraSAoNSk6Cj4gICBjbG9ja3NvdXJjZTogZXh5bm9z
-X21jdDogUmVtb3ZlIGRlYWQgY29kZQo+ICAgY2xvY2tzb3VyY2U6IGV4eW5vc19tY3Q6IEZpeCBl
-cnJvciBwYXRoIGluIHRpbWVyIHJlc291cmNlcwo+ICAgICBpbml0aWFsaXphdGlvbgo+ICAgY2xv
-Y2tzb3VyY2U6IGV4eW5vc19tY3Q6IEluY3JlYXNlIHByaW9yaXR5IG92ZXIgQVJNIGFyY2ggdGlt
-ZXIKPiAgIEFSTTogZHRzOiBleHlub3M6IEFkZCBzdXBwb3J0IEFSTSBhcmNoaXRlY3RlZCB0aW1l
-cnMKPiAgIEFSTTogZXh5bm9zOiBFbmFibGUgc3VwcG9ydCBmb3IgQVJNIGFyY2hpdGVjdGVkIHRp
-bWVycwo+IAo+ICBhcmNoL2FybS9ib290L2R0cy9leHlub3MzMjUwLmR0c2kgfCAxMCArKysrKysr
-KysrCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAuZHRzaSB8ICAxICsKPiAgYXJjaC9h
-cm0vYm9vdC9kdHMvZXh5bm9zNTR4eC5kdHNpIHwgMTAgKysrKysrKysrKwo+ICBhcmNoL2FybS9t
-YWNoLWV4eW5vcy9LY29uZmlnICAgICAgfCAgMSArCj4gIGRyaXZlcnMvY2xvY2tzb3VyY2UvZXh5
-bm9zX21jdC5jICB8IDI3ICsrKysrKysrKysrKysrKysrLS0tLS0tLS0tLQo+ICBpbmNsdWRlL2xp
-bnV4L2NwdWhvdHBsdWcuaCAgICAgICAgfCAgMiArLQo+ICA2IGZpbGVzIGNoYW5nZWQsIDQwIGlu
-c2VydGlvbnMoKyksIDExIGRlbGV0aW9ucygtKQo+IAoKCi0tIAogPGh0dHA6Ly93d3cubGluYXJv
-Lm9yZy8+IExpbmFyby5vcmcg4pSCIE9wZW4gc291cmNlIHNvZnR3YXJlIGZvciBBUk0gU29DcwoK
-Rm9sbG93IExpbmFybzogIDxodHRwOi8vd3d3LmZhY2Vib29rLmNvbS9wYWdlcy9MaW5hcm8+IEZh
-Y2Vib29rIHwKPGh0dHA6Ly90d2l0dGVyLmNvbS8jIS9saW5hcm9vcmc+IFR3aXR0ZXIgfAo8aHR0
-cDovL3d3dy5saW5hcm8ub3JnL2xpbmFyby1ibG9nLz4gQmxvZwoKCl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBs
-aXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5m
-cmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+On Mon, Feb 11, 2019 at 8:54 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> Samsung mach/soc changes for v5.1
+>
+> Two fixes: one for handling timeout while booting secondary CPU of
+> Exynos and second for S3C24xx DVS notifier.
+
+
+Pulled into arm/soc, thanks!
+
+    Arnd
