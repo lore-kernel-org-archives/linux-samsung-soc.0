@@ -1,10 +1,9 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v4 2/6] clocksource: exynos_mct: Fix error path in timer
- resources initialization
-Date: Fri, 15 Feb 2019 13:52:26 +0100
-Message-ID: <20190215125229.30180-3-m.szyprowski@samsung.com>
+Subject: [PATCH 5/5] ARM: exynos: Enable support for ARM architected timers
+Date: Fri, 15 Feb 2019 13:52:29 +0100
+Message-ID: <20190215125229.30180-6-m.szyprowski@samsung.com>
 References: <20190215125229.30180-1-m.szyprowski@samsung.com>
- <CGME20190215125239eucas1p2da364c36dca63e0653362e1b4549027d@eucas1p2.samsung.com>
+ <CGME20190215125240eucas1p219154e5bd27bd09dac0b8419c3e4e259@eucas1p2.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -23,43 +22,26 @@ To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-While freeing interrupt handlers in error path, don't assume that all
-requested interrupts are per-processor interrupts and properly release
-standard interrupts too.
+ARM architected timer can be used together with Exynos MultiCore Timer
+driver, so enable support for it. Support for ARM architected timers is
+essential for enabling proper KVM support.
 
-Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
-Fixes: 56a94f13919c ("clocksource: exynos_mct: Avoid blocking calls in the cpu hotplug notifier")
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- drivers/clocksource/exynos_mct.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ arch/arm/mach-exynos/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index ef18bbf8d20c..49413900b24c 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -561,7 +561,19 @@ static int __init exynos4_timer_resources(struct device_node *np, void __iomem *
- 	return 0;
- 
- out_irq:
--	free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
-+	if (mct_int_type == MCT_INT_PPI) {
-+		free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
-+	} else {
-+		for_each_possible_cpu(cpu) {
-+			struct mct_clock_event_device *pcpu_mevt =
-+				per_cpu_ptr(&percpu_mct_tick, cpu);
-+
-+			if (pcpu_mevt->evt.irq != -1) {
-+				free_irq(pcpu_mevt->evt.irq, pcpu_mevt);
-+				pcpu_mevt->evt.irq = -1;
-+			}
-+		}
-+	}
- 	return err;
- }
- 
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index b40963cf91c7..b5ec21c027a1 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -18,6 +18,7 @@ menuconfig ARCH_EXYNOS
+ 	select EXYNOS_SROM
+ 	select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
+ 	select GPIOLIB
++	select HAVE_ARM_ARCH_TIMER
+ 	select HAVE_ARM_SCU if SMP
+ 	select HAVE_S3C2410_I2C if I2C
+ 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
 -- 
 2.17.1
