@@ -1,9 +1,10 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 1/5] clocksource: exynos_mct: Remove dead code
-Date: Fri, 15 Feb 2019 13:52:25 +0100
-Message-ID: <20190215125229.30180-2-m.szyprowski@samsung.com>
+Subject: [PATCH 3/5] clocksource: exynos_mct: Increase priority over ARM
+ arch timer
+Date: Fri, 15 Feb 2019 13:52:27 +0100
+Message-ID: <20190215125229.30180-4-m.szyprowski@samsung.com>
 References: <20190215125229.30180-1-m.szyprowski@samsung.com>
- <CGME20190215125238eucas1p28bd5cebc6d61da7b25e4cca396b6e35e@eucas1p2.samsung.com>
+ <CGME20190215125239eucas1p2d9167af42f2d04e462c56a070c3371c2@eucas1p2.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -22,50 +23,55 @@ To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Exynos Multi-Core Timer driver is used only on device-tree based
-systems, so remove non-dt related code. In case of !CONFIG_OF
-the code is anyway equal because of_irq_count() has a stub
-returning 0. Device node pointer is always provided when driver
-has been probed from device tree.
+Exynos Multi-Core Timer driver (exynos_mct) must be started before ARM
+Architected Timers (arch_timer), because they both share some common
+hardware blocks (global system counter) and turning on MCT is needed
+to get ARM Architected Timer working properly. Increase MCT timer rating
+and hotplug priority over ARM Archictected timer driver to achieve that.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- drivers/clocksource/exynos_mct.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/clocksource/exynos_mct.c | 4 ++--
+ include/linux/cpuhotplug.h       | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 7a244b681876..ef18bbf8d20c 100644
+index 49413900b24c..58090f57ada3 100644
 --- a/drivers/clocksource/exynos_mct.c
 +++ b/drivers/clocksource/exynos_mct.c
-@@ -507,13 +507,12 @@ static int __init exynos4_timer_resources(struct device_node *np, void __iomem *
- 	int err, cpu;
- 	struct clk *mct_clk, *tick_clk;
+@@ -211,7 +211,7 @@ static void exynos4_frc_resume(struct clocksource *cs)
  
--	tick_clk = np ? of_clk_get_by_name(np, "fin_pll") :
--				clk_get(NULL, "fin_pll");
-+	tick_clk = of_clk_get_by_name(np, "fin_pll");
- 	if (IS_ERR(tick_clk))
- 		panic("%s: unable to determine tick clock rate\n", __func__);
- 	clk_rate = clk_get_rate(tick_clk);
+ static struct clocksource mct_frc = {
+ 	.name		= "mct-frc",
+-	.rating		= 400,
++	.rating		= 450,
+ 	.read		= exynos4_frc_read,
+ 	.mask		= CLOCKSOURCE_MASK(32),
+ 	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
+@@ -465,7 +465,7 @@ static int exynos4_mct_starting_cpu(unsigned int cpu)
+ 	evt->set_state_oneshot_stopped = set_state_shutdown;
+ 	evt->tick_resume = set_state_shutdown;
+ 	evt->features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT;
+-	evt->rating = 450;
++	evt->rating = 500;
  
--	mct_clk = np ? of_clk_get_by_name(np, "mct") : clk_get(NULL, "mct");
-+	mct_clk = of_clk_get_by_name(np, "mct");
- 	if (IS_ERR(mct_clk))
- 		panic("%s: unable to retrieve mct clock instance\n", __func__);
- 	clk_prepare_enable(mct_clk);
-@@ -581,11 +580,7 @@ static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
- 	 * timer irqs are specified after the four global timer
- 	 * irqs are specified.
- 	 */
--#ifdef CONFIG_OF
- 	nr_irqs = of_irq_count(np);
--#else
--	nr_irqs = 0;
--#endif
- 	for (i = MCT_L0_IRQ; i < nr_irqs; i++)
- 		mct_irqs[i] = irq_of_parse_and_map(np, i);
+ 	exynos4_mct_write(TICK_BASE_CNT, mevt->base + MCT_L_TCNTB_OFFSET);
  
+diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+index fd586d0301e7..bdd544f21102 100644
+--- a/include/linux/cpuhotplug.h
++++ b/include/linux/cpuhotplug.h
+@@ -115,10 +115,10 @@ enum cpuhp_state {
+ 	CPUHP_AP_PERF_ARM_ACPI_STARTING,
+ 	CPUHP_AP_PERF_ARM_STARTING,
+ 	CPUHP_AP_ARM_L2X0_STARTING,
++	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
+ 	CPUHP_AP_ARM_ARCH_TIMER_STARTING,
+ 	CPUHP_AP_ARM_GLOBAL_TIMER_STARTING,
+ 	CPUHP_AP_JCORE_TIMER_STARTING,
+-	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
+ 	CPUHP_AP_ARM_TWD_STARTING,
+ 	CPUHP_AP_QCOM_TIMER_STARTING,
+ 	CPUHP_AP_ARMADA_TIMER_STARTING,
 -- 
 2.17.1
