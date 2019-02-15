@@ -1,37 +1,74 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 1/2] ARM: defconfig: Samsung for v5.1
-Date: Fri, 15 Feb 2019 16:59:40 +0100
-Message-ID: <CAK8P3a3rr+==e5iZm_9hscE6ar18rCnmC69NWrV1ZEjxu9H=ew@mail.gmail.com>
-References: <20190201191720.20464-1-krzk@kernel.org>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH 3/5] clocksource: exynos_mct: Increase priority over ARM
+ arch timer
+Date: Fri, 15 Feb 2019 17:35:21 +0100
+Message-ID: <01569ba7-2e3e-5811-81e1-ca51cacbcb95@linaro.org>
+References: <20190215125229.30180-1-m.szyprowski@samsung.com>
+ <CGME20190215125239eucas1p2d9167af42f2d04e462c56a070c3371c2@eucas1p2.samsung.com>
+ <20190215125229.30180-4-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190201191720.20464-1-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Olof Johansson <olof@lixom.net>, arm-soc <arm@kernel.org>, Kukjin Kim <kgene@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190215125229.30180-4-m.szyprowski@samsung.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Feb 1, 2019 at 8:17 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
->
->   Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
->
-> are available in the Git repository at:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-5.1
->
-> for you to fetch changes up to 25c390ec22167f896dbf5fb61b869ad05ce273ff:
->
->   ARM: s5pv210_defconfig: Enable cpufreq (2019-01-13 10:31:17 +0100)
->
-> ----------------------------------------------------------------
-> Samsung defconfig changes for v5.1
->
-> Enable more drivers in s5pv210 defconfig for Aries family of mobile
-> devices (e.g. Samsung Galaxy S).
-
-Pulled into arm/defconfig, thanks!
-
-     Arnd
+T24gMTUvMDIvMjAxOSAxMzo1MiwgTWFyZWsgU3p5cHJvd3NraSB3cm90ZToKPiBFeHlub3MgTXVs
+dGktQ29yZSBUaW1lciBkcml2ZXIgKGV4eW5vc19tY3QpIG11c3QgYmUgc3RhcnRlZCBiZWZvcmUg
+QVJNCj4gQXJjaGl0ZWN0ZWQgVGltZXJzIChhcmNoX3RpbWVyKSwgYmVjYXVzZSB0aGV5IGJvdGgg
+c2hhcmUgc29tZSBjb21tb24KPiBoYXJkd2FyZSBibG9ja3MgKGdsb2JhbCBzeXN0ZW0gY291bnRl
+cikgYW5kIHR1cm5pbmcgb24gTUNUIGlzIG5lZWRlZAo+IHRvIGdldCBBUk0gQXJjaGl0ZWN0ZWQg
+VGltZXIgd29ya2luZyBwcm9wZXJseS4gSW5jcmVhc2UgTUNUIHRpbWVyIHJhdGluZwo+IGFuZCBo
+b3RwbHVnIHByaW9yaXR5IG92ZXIgQVJNIEFyY2hpY3RlY3RlZCB0aW1lciBkcml2ZXIgdG8gYWNo
+aWV2ZSB0aGF0LgoKVGhpcyBpcyBhIGhhY2suCgpUaGVyZSBhcmUgbWVjaGFuaXNtcyB0byBoYW5k
+bGUgdGhpcyBraW5kIG9mIGRlcGVuZGVuY3kuCgplZy4gaHR0cHM6Ly93d3cua2VybmVsLm9yZy9k
+b2MvaHRtbC92NC4xNS9kcml2ZXItYXBpL2RldmljZV9saW5rLmh0bWwKCgo+IFNpZ25lZC1vZmYt
+Ynk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KPiAtLS0KPiAg
+ZHJpdmVycy9jbG9ja3NvdXJjZS9leHlub3NfbWN0LmMgfCA0ICsrLS0KPiAgaW5jbHVkZS9saW51
+eC9jcHVob3RwbHVnLmggICAgICAgfCAyICstCj4gIDIgZmlsZXMgY2hhbmdlZCwgMyBpbnNlcnRp
+b25zKCspLCAzIGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsb2Nrc291
+cmNlL2V4eW5vc19tY3QuYyBiL2RyaXZlcnMvY2xvY2tzb3VyY2UvZXh5bm9zX21jdC5jCj4gaW5k
+ZXggNDk0MTM5MDBiMjRjLi41ODA5MGY1N2FkYTMgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9jbG9j
+a3NvdXJjZS9leHlub3NfbWN0LmMKPiArKysgYi9kcml2ZXJzL2Nsb2Nrc291cmNlL2V4eW5vc19t
+Y3QuYwo+IEBAIC0yMTEsNyArMjExLDcgQEAgc3RhdGljIHZvaWQgZXh5bm9zNF9mcmNfcmVzdW1l
+KHN0cnVjdCBjbG9ja3NvdXJjZSAqY3MpCj4gIAo+ICBzdGF0aWMgc3RydWN0IGNsb2Nrc291cmNl
+IG1jdF9mcmMgPSB7Cj4gIAkubmFtZQkJPSAibWN0LWZyYyIsCj4gLQkucmF0aW5nCQk9IDQwMCwK
+PiArCS5yYXRpbmcJCT0gNDUwLAo+ICAJLnJlYWQJCT0gZXh5bm9zNF9mcmNfcmVhZCwKPiAgCS5t
+YXNrCQk9IENMT0NLU09VUkNFX01BU0soMzIpLAo+ICAJLmZsYWdzCQk9IENMT0NLX1NPVVJDRV9J
+U19DT05USU5VT1VTLAo+IEBAIC00NjUsNyArNDY1LDcgQEAgc3RhdGljIGludCBleHlub3M0X21j
+dF9zdGFydGluZ19jcHUodW5zaWduZWQgaW50IGNwdSkKPiAgCWV2dC0+c2V0X3N0YXRlX29uZXNo
+b3Rfc3RvcHBlZCA9IHNldF9zdGF0ZV9zaHV0ZG93bjsKPiAgCWV2dC0+dGlja19yZXN1bWUgPSBz
+ZXRfc3RhdGVfc2h1dGRvd247Cj4gIAlldnQtPmZlYXR1cmVzID0gQ0xPQ0tfRVZUX0ZFQVRfUEVS
+SU9ESUMgfCBDTE9DS19FVlRfRkVBVF9PTkVTSE9UOwo+IC0JZXZ0LT5yYXRpbmcgPSA0NTA7Cj4g
+KwlldnQtPnJhdGluZyA9IDUwMDsKPiAgCj4gIAlleHlub3M0X21jdF93cml0ZShUSUNLX0JBU0Vf
+Q05ULCBtZXZ0LT5iYXNlICsgTUNUX0xfVENOVEJfT0ZGU0VUKTsKPiAgCj4gZGlmZiAtLWdpdCBh
+L2luY2x1ZGUvbGludXgvY3B1aG90cGx1Zy5oIGIvaW5jbHVkZS9saW51eC9jcHVob3RwbHVnLmgK
+PiBpbmRleCBmZDU4NmQwMzAxZTcuLmJkZDU0NGYyMTEwMiAxMDA2NDQKPiAtLS0gYS9pbmNsdWRl
+L2xpbnV4L2NwdWhvdHBsdWcuaAo+ICsrKyBiL2luY2x1ZGUvbGludXgvY3B1aG90cGx1Zy5oCj4g
+QEAgLTExNSwxMCArMTE1LDEwIEBAIGVudW0gY3B1aHBfc3RhdGUgewo+ICAJQ1BVSFBfQVBfUEVS
+Rl9BUk1fQUNQSV9TVEFSVElORywKPiAgCUNQVUhQX0FQX1BFUkZfQVJNX1NUQVJUSU5HLAo+ICAJ
+Q1BVSFBfQVBfQVJNX0wyWDBfU1RBUlRJTkcsCj4gKwlDUFVIUF9BUF9FWFlOT1M0X01DVF9USU1F
+Ul9TVEFSVElORywKPiAgCUNQVUhQX0FQX0FSTV9BUkNIX1RJTUVSX1NUQVJUSU5HLAo+ICAJQ1BV
+SFBfQVBfQVJNX0dMT0JBTF9USU1FUl9TVEFSVElORywKPiAgCUNQVUhQX0FQX0pDT1JFX1RJTUVS
+X1NUQVJUSU5HLAo+IC0JQ1BVSFBfQVBfRVhZTk9TNF9NQ1RfVElNRVJfU1RBUlRJTkcsCj4gIAlD
+UFVIUF9BUF9BUk1fVFdEX1NUQVJUSU5HLAo+ICAJQ1BVSFBfQVBfUUNPTV9USU1FUl9TVEFSVElO
+RywKPiAgCUNQVUhQX0FQX0FSTUFEQV9USU1FUl9TVEFSVElORywKPiAKCgotLSAKIDxodHRwOi8v
+d3d3LmxpbmFyby5vcmcvPiBMaW5hcm8ub3JnIOKUgiBPcGVuIHNvdXJjZSBzb2Z0d2FyZSBmb3Ig
+QVJNIFNvQ3MKCkZvbGxvdyBMaW5hcm86ICA8aHR0cDovL3d3dy5mYWNlYm9vay5jb20vcGFnZXMv
+TGluYXJvPiBGYWNlYm9vayB8CjxodHRwOi8vdHdpdHRlci5jb20vIyEvbGluYXJvb3JnPiBUd2l0
+dGVyIHwKPGh0dHA6Ly93d3cubGluYXJvLm9yZy9saW5hcm8tYmxvZy8+IEJsb2cKCgpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVs
+IG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDov
+L2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
