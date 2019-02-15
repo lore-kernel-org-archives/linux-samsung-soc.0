@@ -1,10 +1,9 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 3/5] clocksource: exynos_mct: Increase priority over ARM
- arch timer
-Date: Fri, 15 Feb 2019 13:52:27 +0100
-Message-ID: <20190215125229.30180-4-m.szyprowski@samsung.com>
+Subject: [PATCH 4/5] ARM: dts: exynos: Add support ARM architected timers
+Date: Fri, 15 Feb 2019 13:52:28 +0100
+Message-ID: <20190215125229.30180-5-m.szyprowski@samsung.com>
 References: <20190215125229.30180-1-m.szyprowski@samsung.com>
- <CGME20190215125239eucas1p2d9167af42f2d04e462c56a070c3371c2@eucas1p2.samsung.com>
+ <CGME20190215125240eucas1p277671ab6d0eb4d1102d3cddd6c61c255@eucas1p2.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -23,55 +22,73 @@ To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Exynos Multi-Core Timer driver (exynos_mct) must be started before ARM
-Architected Timers (arch_timer), because they both share some common
-hardware blocks (global system counter) and turning on MCT is needed
-to get ARM Architected Timer working properly. Increase MCT timer rating
-and hotplug priority over ARM Archictected timer driver to achieve that.
+All CortexA7/A15 based Exynos SoCs have ARM architected timers, so enable
+support for them directly in the base dtsi for Exynos3250, Exynos5250
+and Exynos54xx SoCs. None of the known firmware properly configures arch
+timer registers, so mark them as not-fw-configured and set frequency
+to 24MHz, which is the only configuration supported by the remaining
+drivers (clocks) so far.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/clocksource/exynos_mct.c | 4 ++--
- include/linux/cpuhotplug.h       | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/exynos3250.dtsi | 10 ++++++++++
+ arch/arm/boot/dts/exynos5250.dtsi |  1 +
+ arch/arm/boot/dts/exynos54xx.dtsi | 10 ++++++++++
+ 3 files changed, 21 insertions(+)
 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 49413900b24c..58090f57ada3 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -211,7 +211,7 @@ static void exynos4_frc_resume(struct clocksource *cs)
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 608d17454179..3966e7960964 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -134,6 +134,16 @@
+ 			};
+ 		};
  
- static struct clocksource mct_frc = {
- 	.name		= "mct-frc",
--	.rating		= 400,
-+	.rating		= 450,
- 	.read		= exynos4_frc_read,
- 	.mask		= CLOCKSOURCE_MASK(32),
- 	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
-@@ -465,7 +465,7 @@ static int exynos4_mct_starting_cpu(unsigned int cpu)
- 	evt->set_state_oneshot_stopped = set_state_shutdown;
- 	evt->tick_resume = set_state_shutdown;
- 	evt->features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT;
--	evt->rating = 450;
-+	evt->rating = 500;
++		timer {
++			compatible = "arm,armv7-timer";
++			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
++			clock-frequency = <24000000>;
++			arm,cpu-registers-not-fw-configured;
++		};
++
+ 		sysram@2020000 {
+ 			compatible = "mmio-sram";
+ 			reg = <0x02020000 0x40000>;
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 80986b97dfe5..95af4050f69d 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -239,6 +239,7 @@
+ 			 * so we need the value from DT.
+ 			 */
+ 			clock-frequency = <24000000>;
++			arm,cpu-registers-not-fw-configured;
+ 		};
  
- 	exynos4_mct_write(TICK_BASE_CNT, mevt->base + MCT_L_TCNTB_OFFSET);
+ 		mct@101c0000 {
+diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
+index de26e5ee0d2d..45e06717ee51 100644
+--- a/arch/arm/boot/dts/exynos54xx.dtsi
++++ b/arch/arm/boot/dts/exynos54xx.dtsi
+@@ -46,6 +46,16 @@
+ 			status = "disabled";
+ 		};
  
-diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-index fd586d0301e7..bdd544f21102 100644
---- a/include/linux/cpuhotplug.h
-+++ b/include/linux/cpuhotplug.h
-@@ -115,10 +115,10 @@ enum cpuhp_state {
- 	CPUHP_AP_PERF_ARM_ACPI_STARTING,
- 	CPUHP_AP_PERF_ARM_STARTING,
- 	CPUHP_AP_ARM_L2X0_STARTING,
-+	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
- 	CPUHP_AP_ARM_ARCH_TIMER_STARTING,
- 	CPUHP_AP_ARM_GLOBAL_TIMER_STARTING,
- 	CPUHP_AP_JCORE_TIMER_STARTING,
--	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
- 	CPUHP_AP_ARM_TWD_STARTING,
- 	CPUHP_AP_QCOM_TIMER_STARTING,
- 	CPUHP_AP_ARMADA_TIMER_STARTING,
++		timer {
++			compatible = "arm,armv7-timer";
++			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
++			arm,cpu-registers-not-fw-configured;
++			clock-frequency = <24000000>;
++		};
++
+ 		sysram@2020000 {
+ 			compatible = "mmio-sram";
+ 			reg = <0x02020000 0x54000>;
 -- 
 2.17.1
