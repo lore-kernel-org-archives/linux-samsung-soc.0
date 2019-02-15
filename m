@@ -1,98 +1,61 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2] ARM: pm: fix HYP/SVC mode mismatch when MCPM is used
-Date: Fri, 15 Feb 2019 11:56:38 +0100
-Message-ID: <20190215105638.17476-1-m.szyprowski@samsung.com>
-References: <CGME20190215105644eucas1p19d0bdab386354cff0a9a354b5e33f0fe@eucas1p1.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Russell King <rmk+kernel@armlinux.org.uk>, Nicolas Pitre <nicolas.pitre@linaro.org>, Kevin Hilman <khilman@baylibre.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marian Mihailescu <mihailescu2m@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
+Subject: [PATCH 0/5] Exynos SoCs: enable support for ARM Architected Timers
+Date: Fri, 15 Feb 2019 13:52:24 +0100
+Message-ID: <20190215125229.30180-1-m.szyprowski@samsung.com>
+References: <CGME20190215125238eucas1p2f56fe48600aedcec048bc378ed184419@eucas1p2.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-MCPM does a soft reset of the CPUs and uses common cpu_resume() routine to
-perform low-level platform initialization. This results in a try to install
-HYP stubs for the second time for each CPU and results in false HYP/SVC
-mode mismatch detection. The HYP stubs are already installed at the
-beginning of the kernel initialization on the boot CPU (head.S) or in the
-secondary_startup() for other CPUs. To fix this issue MCPM code should use
-a cpu_resume() routine without HYP stubs installation.
+Dear All,
 
-This change fixes HYP/SVC mode mismatch on Samsung Exynos5422-based Odroid
-XU3/XU4/HC1 boards.
+ARM Architected Timers are present in all CortexA7/A15 based Samsung
+Exynos SoCs. So far they were not enabled, because there were some issues
+related to their initialization. Samsung Exynos SoCs used custom timer
+hardware - Exynos MultiCore Timer. It turned out that enabling MCT it is
+also needed to get ARM Architected Timers working, because they both
+share some common hardware blocks (global system counter).
 
-Fixes: 3721924c8154 ("ARM: 8081/1: MCPM: provide infrastructure to allow for MCPM loopback")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Acked-by: Nicolas Pitre <nico@linaro.org>
----
-v2:
-- fixed support for Thumb-mode kernel
----
- arch/arm/common/mcpm_entry.c   |  2 +-
- arch/arm/include/asm/suspend.h |  1 +
- arch/arm/kernel/sleep.S        | 12 ++++++++++++
- 3 files changed, 14 insertions(+), 1 deletion(-)
+This patchset enables support for ARM Architected Timer driver together
+with a standard Exynos MultiCore Timer driver, which is kept as a default
+timer source on ARM 32bit platforms. Support for ARM architected timers
+is essential for enabling proper KVM support on those platforms.
 
-diff --git a/arch/arm/common/mcpm_entry.c b/arch/arm/common/mcpm_entry.c
-index ad574d20415c..1b1b82b37ce0 100644
---- a/arch/arm/common/mcpm_entry.c
-+++ b/arch/arm/common/mcpm_entry.c
-@@ -381,7 +381,7 @@ static int __init nocache_trampoline(unsigned long _arg)
- 	unsigned int cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
- 	phys_reset_t phys_reset;
- 
--	mcpm_set_entry_vector(cpu, cluster, cpu_resume);
-+	mcpm_set_entry_vector(cpu, cluster, cpu_resume_no_hyp);
- 	setup_mm_for_reboot();
- 
- 	__mcpm_cpu_going_down(cpu, cluster);
-diff --git a/arch/arm/include/asm/suspend.h b/arch/arm/include/asm/suspend.h
-index 452bbdcbcc83..506314265c6f 100644
---- a/arch/arm/include/asm/suspend.h
-+++ b/arch/arm/include/asm/suspend.h
-@@ -10,6 +10,7 @@ struct sleep_save_sp {
- };
- 
- extern void cpu_resume(void);
-+extern void cpu_resume_no_hyp(void);
- extern void cpu_resume_arm(void);
- extern int cpu_suspend(unsigned long, int (*)(unsigned long));
- 
-diff --git a/arch/arm/kernel/sleep.S b/arch/arm/kernel/sleep.S
-index a8257fc9cf2a..5dc8b80bb693 100644
---- a/arch/arm/kernel/sleep.S
-+++ b/arch/arm/kernel/sleep.S
-@@ -120,6 +120,14 @@ ENDPROC(cpu_resume_after_mmu)
- 	.text
- 	.align
- 
-+#ifdef CONFIG_MCPM
-+	.arm
-+THUMB(	.thumb			)
-+ENTRY(cpu_resume_no_hyp)
-+ARM_BE8(setend be)			@ ensure we are in BE mode
-+	b	no_hyp
-+#endif
-+
- #ifdef CONFIG_MMU
- 	.arm
- ENTRY(cpu_resume_arm)
-@@ -135,6 +143,7 @@ ARM_BE8(setend be)			@ ensure we are in BE mode
- 	bl	__hyp_stub_install_secondary
- #endif
- 	safe_svcmode_maskall r1
-+no_hyp:
- 	mov	r1, #0
- 	ALT_SMP(mrc p15, 0, r0, c0, c0, 5)
- 	ALT_UP_B(1f)
-@@ -163,6 +172,9 @@ ENDPROC(cpu_resume)
- 
- #ifdef CONFIG_MMU
- ENDPROC(cpu_resume_arm)
-+#endif
-+#ifdef CONFIG_MCPM
-+ENDPROC(cpu_resume_no_hyp)
- #endif
- 
- 	.align 2
+Some of the MCT cleanup patches were earlier a part of the similar
+patchset for ARM64-based Exynos5433 SoC.
+
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+
+Marek Szyprowski (5):
+  clocksource: exynos_mct: Remove dead code
+  clocksource: exynos_mct: Fix error path in timer resources
+    initialization
+  clocksource: exynos_mct: Increase priority over ARM arch timer
+  ARM: dts: exynos: Add support ARM architected timers
+  ARM: exynos: Enable support for ARM architected timers
+
+ arch/arm/boot/dts/exynos3250.dtsi | 10 ++++++++++
+ arch/arm/boot/dts/exynos5250.dtsi |  1 +
+ arch/arm/boot/dts/exynos54xx.dtsi | 10 ++++++++++
+ arch/arm/mach-exynos/Kconfig      |  1 +
+ drivers/clocksource/exynos_mct.c  | 27 +++++++++++++++++----------
+ include/linux/cpuhotplug.h        |  2 +-
+ 6 files changed, 40 insertions(+), 11 deletions(-)
+
 -- 
 2.17.1
