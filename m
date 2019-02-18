@@ -1,177 +1,113 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFC 2/4] driver: platform: Provide helper for safer
-	setting of driver_override
-Date: Mon, 18 Feb 2019 11:15:58 +0100
-Message-ID: <1550484960-2392-3-git-send-email-krzk@kernel.org>
-References: <1550484960-2392-1-git-send-email-krzk@kernel.org>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH 3/5] clocksource: exynos_mct: Increase priority over ARM
+ arch timer
+Date: Mon, 18 Feb 2019 11:21:38 +0100
+Message-ID: <23cb02e1-7728-823c-462a-4a597f1607f9@linaro.org>
+References: <20190215125229.30180-1-m.szyprowski@samsung.com>
+ <CGME20190215125239eucas1p2d9167af42f2d04e462c56a070c3371c2@eucas1p2.samsung.com>
+ <20190215125229.30180-4-m.szyprowski@samsung.com>
+ <01569ba7-2e3e-5811-81e1-ca51cacbcb95@linaro.org>
+ <7b994b86-9a84-39a7-e88d-203c64b30de8@samsung.com>
+ <4b054e7d-5dd5-5796-6c08-22f15060f940@linaro.org>
+ <fd3aac7b-029e-5873-f472-a0c83dda4da5@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1550484960-2392-1-git-send-email-krzk@kernel.org>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <fd3aac7b-029e-5873-f472-a0c83dda4da5@samsung.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The core platform driver expects that driver_override is an dynamically
-allocated memory so later it can kfree() it.
-
-However such assumption is not documented and there are already users
-setting it to a const memory.  This leads to kfree() of const memory
-during device release (e.g. in error paths or during unbind):
-
-    kernel BUG at ../mm/slub.c:3960!
-    Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
-    ...
-    (kfree) from [<c058da50>] (platform_device_release+0x88/0xb4)
-    (platform_device_release) from [<c0585be0>] (device_release+0x2c/0x90)
-    (device_release) from [<c0a69050>] (kobject_put+0xec/0x20c)
-    (kobject_put) from [<c0f2f120>] (exynos5_clk_probe+0x154/0x18c)
-    (exynos5_clk_probe) from [<c058de70>] (platform_drv_probe+0x6c/0xa4)
-    (platform_drv_probe) from [<c058b7ac>] (really_probe+0x280/0x414)
-    (really_probe) from [<c058baf4>] (driver_probe_device+0x78/0x1c4)
-    (driver_probe_device) from [<c0589854>] (bus_for_each_drv+0x74/0xb8)
-    (bus_for_each_drv) from [<c058b48c>] (__device_attach+0xd4/0x16c)
-    (__device_attach) from [<c058a638>] (bus_probe_device+0x88/0x90)
-    (bus_probe_device) from [<c05871fc>] (device_add+0x3dc/0x62c)
-    (device_add) from [<c075ff10>] (of_platform_device_create_pdata+0x94/0xbc)
-    (of_platform_device_create_pdata) from [<c07600ec>] (of_platform_bus_create+0x1a8/0x4fc)
-    (of_platform_bus_create) from [<c0760150>] (of_platform_bus_create+0x20c/0x4fc)
-    (of_platform_bus_create) from [<c07605f0>] (of_platform_populate+0x84/0x118)
-    (of_platform_populate) from [<c0f3c964>] (of_platform_default_populate_init+0xa0/0xb8)
-    (of_platform_default_populate_init) from [<c01031f8>] (do_one_initcall+0x8c/0x404)
-    (do_one_initcall) from [<c0f012c0>] (kernel_init_freeable+0x3d0/0x4d8)
-    (kernel_init_freeable) from [<c0a7def0>] (kernel_init+0x8/0x114)
-    (kernel_init) from [<c01010b4>] (ret_from_fork+0x14/0x20)
-
-Provide a helper which clearly documents the usage of driver_override.
-
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/base/platform.c         | 63 ++++++++++++++++++++++++++++-------------
- include/linux/platform_device.h |  9 +++++-
- 2 files changed, 51 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index 0d3611cd1b3b..1458903a33c8 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -730,6 +730,45 @@ int __init_or_module __platform_driver_probe(struct platform_driver *drv,
- }
- EXPORT_SYMBOL_GPL(__platform_driver_probe);
- 
-+/*
-+ * platform_set_driver_override() - Helper to set or clear driver override.
-+ * @pdev: platform device
-+ * @override: Driver name to force a match, pass empty string to clear it
-+ *
-+ * Returns: 0 on success or a negative error code on failure.
-+ */
-+int platform_set_driver_override(struct platform_device *pdev,
-+				 const char *override)
-+{
-+	struct device *dev = &pdev->dev;
-+	char *driver_override, *old, *cp;
-+
-+	if (!pdev || !override)
-+		return -EINVAL;
-+
-+	driver_override = kstrndup(override, strlen(override), GFP_KERNEL);
-+	if (!driver_override)
-+		return -ENOMEM;
-+
-+	cp = strchr(driver_override, '\n');
-+	if (cp)
-+		*cp = '\0';
-+
-+	device_lock(dev);
-+	old = pdev->driver_override;
-+	if (strlen(driver_override)) {
-+		pdev->driver_override = driver_override;
-+	} else {
-+		kfree(driver_override);
-+		pdev->driver_override = NULL;
-+	}
-+	device_unlock(dev);
-+
-+	kfree(old);
-+
-+	return 0;
-+}
-+
- /**
-  * __platform_create_bundle - register driver and create corresponding device
-  * @driver: platform driver structure
-@@ -879,31 +918,15 @@ static ssize_t driver_override_store(struct device *dev,
- 				     const char *buf, size_t count)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
--	char *driver_override, *old, *cp;
-+	int ret;
- 
- 	/* We need to keep extra room for a newline */
- 	if (count >= (PAGE_SIZE - 1))
- 		return -EINVAL;
- 
--	driver_override = kstrndup(buf, count, GFP_KERNEL);
--	if (!driver_override)
--		return -ENOMEM;
--
--	cp = strchr(driver_override, '\n');
--	if (cp)
--		*cp = '\0';
--
--	device_lock(dev);
--	old = pdev->driver_override;
--	if (strlen(driver_override)) {
--		pdev->driver_override = driver_override;
--	} else {
--		kfree(driver_override);
--		pdev->driver_override = NULL;
--	}
--	device_unlock(dev);
--
--	kfree(old);
-+	ret = platform_set_driver_override(pdev, buf);
-+	if (ret)
-+		return ret;
- 
- 	return count;
- }
-diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
-index c7c081dc6034..1dd06fed3306 100644
---- a/include/linux/platform_device.h
-+++ b/include/linux/platform_device.h
-@@ -29,7 +29,11 @@ struct platform_device {
- 	struct resource	*resource;
- 
- 	const struct platform_device_id	*id_entry;
--	char *driver_override; /* Driver name to force a match */
-+	/*
-+	 * Driver name to force a match, use
-+	 * platform_set_driver_override() to set or clear it.
-+	 */
-+	char *driver_override;
- 
- 	/* MFD cell pointer */
- 	struct mfd_cell *mfd_cell;
-@@ -220,6 +224,9 @@ static inline void platform_set_drvdata(struct platform_device *pdev,
- 	dev_set_drvdata(&pdev->dev, data);
- }
- 
-+int platform_set_driver_override(struct platform_device *pdev,
-+				 const char *override);
-+
- /* module_platform_driver() - Helper macro for drivers that don't do
-  * anything special in module init/exit.  This eliminates a lot of
-  * boilerplate.  Each module may only use this macro once, and
--- 
-2.7.4
+T24gMTgvMDIvMjAxOSAxMDo0OSwgTWFyZWsgU3p5cHJvd3NraSB3cm90ZToKPiBIaSBEYW5pZWws
+Cj4gCj4gT24gMjAxOS0wMi0xOCAxMDoyNCwgRGFuaWVsIExlemNhbm8gd3JvdGU6Cj4+IE9uIDE4
+LzAyLzIwMTkgMDg6NDEsIE1hcmVrIFN6eXByb3dza2kgd3JvdGU6Cj4+PiBPbiAyMDE5LTAyLTE1
+IDE3OjM1LCBEYW5pZWwgTGV6Y2FubyB3cm90ZToKPj4+PiBPbiAxNS8wMi8yMDE5IDEzOjUyLCBN
+YXJlayBTenlwcm93c2tpIHdyb3RlOgo+Pj4+PiBFeHlub3MgTXVsdGktQ29yZSBUaW1lciBkcml2
+ZXIgKGV4eW5vc19tY3QpIG11c3QgYmUgc3RhcnRlZCBiZWZvcmUgQVJNCj4+Pj4+IEFyY2hpdGVj
+dGVkIFRpbWVycyAoYXJjaF90aW1lciksIGJlY2F1c2UgdGhleSBib3RoIHNoYXJlIHNvbWUgY29t
+bW9uCj4+Pj4+IGhhcmR3YXJlIGJsb2NrcyAoZ2xvYmFsIHN5c3RlbSBjb3VudGVyKSBhbmQgdHVy
+bmluZyBvbiBNQ1QgaXMgbmVlZGVkCj4+Pj4+IHRvIGdldCBBUk0gQXJjaGl0ZWN0ZWQgVGltZXIg
+d29ya2luZyBwcm9wZXJseS4gSW5jcmVhc2UgTUNUIHRpbWVyIHJhdGluZwo+Pj4+PiBhbmQgaG90
+cGx1ZyBwcmlvcml0eSBvdmVyIEFSTSBBcmNoaWN0ZWN0ZWQgdGltZXIgZHJpdmVyIHRvIGFjaGll
+dmUgdGhhdC4KPj4+PiBUaGlzIGlzIGEgaGFjay4KPj4+Pgo+Pj4+IFRoZXJlIGFyZSBtZWNoYW5p
+c21zIHRvIGhhbmRsZSB0aGlzIGtpbmQgb2YgZGVwZW5kZW5jeS4KPj4+Pgo+Pj4+IGVnLiBodHRw
+czovL3d3dy5rZXJuZWwub3JnL2RvYy9odG1sL3Y0LjE1L2RyaXZlci1hcGkvZGV2aWNlX2xpbmsu
+aHRtbAo+Pj4gU29ycnksIGJ1dCB0aGlzIGlzIG5vdCBhIGhhY2ssIGJ1dCBwcm9wZXIgd2F5IHRv
+IGhhbmRsZSB0aGlzIGluCj4+PiBjbG9ja3NvdXJjZS90aW1lcnMgZnJhbWV3b3JrLiBUaGUgcmF0
+aW5ncyBhc3NpZ25lZCB0byBlYWNoIGRyaXZlciBhbmQKPj4+IGNwdSBob3RwbHVnIHByaW9yaXR5
+IGxpc3QgYXJlIGV4YWN0bHkgZm9yIG1hbmFnaW5nIHRoZSByZXF1ZXN0ZWQgb3JkZXIKPj4+IG9m
+IG9wZXJhdGlvbnMgaWYgbW9yZSB0aGFuIG9uZSBkcml2ZXIgaGFzIGJlZW4gcmVnaXN0ZXJlZC4K
+Pj4gQWN0dWFsbHksIEknbSByZWx1Y3RhbnQgd2l0aCB0aGlzIGNoYW5nZSAoZXZlbiBpZiBpdCBp
+cyBjb3JyZWN0KSBiZWNhdXNlCj4+IGl0IGludHJvZHVjZXMgYW4gaW1wbGljaXQgZGVwZW5kZW5j
+eSBpbiB0aGUgY3B1IGhvdHBsdWcgZW51bWVyYXRpb24gZm9yCj4+IHRoZSB0aW1lciBzdWJzeXN0
+ZW0gd2hpbGUgaXQgbWF5IGJlIG1vcmUgY29ycmVjdCB0byBoYXZlIGl0IGV4cGxpY2l0bHkKPj4g
+d2l0aCB0aGUgaGFyZHdhcmUgZGVzY3JpcHRpb24gKG9yIHdoYXRldmVyKS4KPiAKPiBNYXliZSBh
+ZGRpdGlvbmFsIGNvbW1lbnQgaW4gdGhlIGNwdSBob3RwbHVnIGxpc3Qgd2lsbCBjb252aW5jZSB5
+b3U/IEZvcgo+IHRoZSBjdXJyZW50IGNvZGUgY2hhbmdpbmcgdGhlIG9yZGVyIG9mIGVudW1zIGl0
+IGlzIG1vcmUgdGhhbiBlbm91Z2guCj4gVGhlcmUgYXJlIG5vIGR5bmFtaWMgQ1BVIGhvdHBsdWcg
+cHJpb3JpdGllcywgc28gTUNUIGRyaXZlciBjYW5ub3QgY2hhbmdlCj4gaXRzIGJlaGF2aW9yIGRl
+cGVuZGluZyBvbiBhbnkgZHQtcHJvcGVydHkgb3Igc28uIEluY3JlYXNpbmcgTUNUIHByaW9yaXR5
+Cj4gaGFzIG5vIHNpZGUtZWZmZWN0cyBpbiByZWxhdGlvbiB0byBvdGhlciBkcml2ZXJzIChhcyB0
+aGV5IGNhbm5vdAo+IGV4aXN0aW5nIG9uIHRoZSBzYW1lIGJvYXJkKS4KCkl0IGlzIFRob21hcydz
+IGNhbGwsIEkgd2lsbCBsZXQgaGltIGRlY2lkZSBpZiBpdCBpcyBvayAuCgoKCj4+IEhvd2V2ZXIg
+SSBkb24ndCBzZWUgYSBwcm9wZXIgd2F5IHRvIGRlc2NyaWJlIHRoaXMgZGVwZW5kZW5jeSB3aXRo
+b3V0Cj4+IHRvdWNoaW5nIHRoZSBEVCBhbmQgYWRkIGEgcGhhbmRsZSB0byB0aGUgYXJjaCB0aW1l
+ciBpbiB0aGUgZXh5bm9zX21jdAo+PiB0aW1lciBkZXNjcmlwdGlvbi4KPj4KPj4+IERldmljZSBs
+aW5rcyBvcGVyYXRlcyBvbiB0aGUgJ2tlcm5lbCBkZXZpY2UnIG9iamVjdHMsIHdoaWNoIGFyZSBj
+cmVhdGVkCj4+PiBhbmQgbWFuYWdlZCBtdWNoIGxhdGVyIHRoYW4gY2xvY2tzb3VyY2UvdGltZXJz
+IGFyZSBpbml0aWFsaXplZC4gSSBzZWUgbm8KPj4+IHVzZSBvZiBkZXZpY2UgbGlua3MgaW4gdGhp
+cyBjb250ZXh0Lgo+PiBZZXMsIHRoYXQgd2FzIGp1c3QgYW4gZXhhbXBsZSB0byBzaG93IHRoZXJl
+IGFyZSBtZWNoYW5pc21zIHRvIGFsbG93Cj4+IHByb3BlciBvcmRlcmluZy4gQXMgc2FpZCBiZWZv
+cmUsIG5vdCB0aGUgYmVzdCBleGFtcGxlIGZvciB0aGlzIHNpdHVhdGlvbi4KPj4KPj4+Pj4gU2ln
+bmVkLW9mZi1ieTogTWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgo+
+Pj4+PiAtLS0KPj4+Pj4gIGRyaXZlcnMvY2xvY2tzb3VyY2UvZXh5bm9zX21jdC5jIHwgNCArKy0t
+Cj4+Pj4+ICBpbmNsdWRlL2xpbnV4L2NwdWhvdHBsdWcuaCAgICAgICB8IDIgKy0KPj4+Pj4gIDIg
+ZmlsZXMgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQo+Pj4+Pgo+Pj4+
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbG9ja3NvdXJjZS9leHlub3NfbWN0LmMgYi9kcml2ZXJz
+L2Nsb2Nrc291cmNlL2V4eW5vc19tY3QuYwo+Pj4+PiBpbmRleCA0OTQxMzkwMGIyNGMuLjU4MDkw
+ZjU3YWRhMyAxMDA2NDQKPj4+Pj4gLS0tIGEvZHJpdmVycy9jbG9ja3NvdXJjZS9leHlub3NfbWN0
+LmMKPj4+Pj4gKysrIGIvZHJpdmVycy9jbG9ja3NvdXJjZS9leHlub3NfbWN0LmMKPj4+Pj4gQEAg
+LTIxMSw3ICsyMTEsNyBAQCBzdGF0aWMgdm9pZCBleHlub3M0X2ZyY19yZXN1bWUoc3RydWN0IGNs
+b2Nrc291cmNlICpjcykKPj4+Pj4gIAo+Pj4+PiAgc3RhdGljIHN0cnVjdCBjbG9ja3NvdXJjZSBt
+Y3RfZnJjID0gewo+Pj4+PiAgCS5uYW1lCQk9ICJtY3QtZnJjIiwKPj4+Pj4gLQkucmF0aW5nCQk9
+IDQwMCwKPj4+Pj4gKwkucmF0aW5nCQk9IDQ1MCwKPj4+Pj4gIAkucmVhZAkJPSBleHlub3M0X2Zy
+Y19yZWFkLAo+Pj4+PiAgCS5tYXNrCQk9IENMT0NLU09VUkNFX01BU0soMzIpLAo+Pj4+PiAgCS5m
+bGFncwkJPSBDTE9DS19TT1VSQ0VfSVNfQ09OVElOVU9VUywKPj4+Pj4gQEAgLTQ2NSw3ICs0NjUs
+NyBAQCBzdGF0aWMgaW50IGV4eW5vczRfbWN0X3N0YXJ0aW5nX2NwdSh1bnNpZ25lZCBpbnQgY3B1
+KQo+Pj4+PiAgCWV2dC0+c2V0X3N0YXRlX29uZXNob3Rfc3RvcHBlZCA9IHNldF9zdGF0ZV9zaHV0
+ZG93bjsKPj4+Pj4gIAlldnQtPnRpY2tfcmVzdW1lID0gc2V0X3N0YXRlX3NodXRkb3duOwo+Pj4+
+PiAgCWV2dC0+ZmVhdHVyZXMgPSBDTE9DS19FVlRfRkVBVF9QRVJJT0RJQyB8IENMT0NLX0VWVF9G
+RUFUX09ORVNIT1Q7Cj4+Pj4+IC0JZXZ0LT5yYXRpbmcgPSA0NTA7Cj4+Pj4+ICsJZXZ0LT5yYXRp
+bmcgPSA1MDA7Cj4+Pj4+ICAKPj4+Pj4gIAlleHlub3M0X21jdF93cml0ZShUSUNLX0JBU0VfQ05U
+LCBtZXZ0LT5iYXNlICsgTUNUX0xfVENOVEJfT0ZGU0VUKTsKPj4+Pj4gIAo+Pj4+PiBkaWZmIC0t
+Z2l0IGEvaW5jbHVkZS9saW51eC9jcHVob3RwbHVnLmggYi9pbmNsdWRlL2xpbnV4L2NwdWhvdHBs
+dWcuaAo+Pj4+PiBpbmRleCBmZDU4NmQwMzAxZTcuLmJkZDU0NGYyMTEwMiAxMDA2NDQKPj4+Pj4g
+LS0tIGEvaW5jbHVkZS9saW51eC9jcHVob3RwbHVnLmgKPj4+Pj4gKysrIGIvaW5jbHVkZS9saW51
+eC9jcHVob3RwbHVnLmgKPj4+Pj4gQEAgLTExNSwxMCArMTE1LDEwIEBAIGVudW0gY3B1aHBfc3Rh
+dGUgewo+Pj4+PiAgCUNQVUhQX0FQX1BFUkZfQVJNX0FDUElfU1RBUlRJTkcsCj4+Pj4+ICAJQ1BV
+SFBfQVBfUEVSRl9BUk1fU1RBUlRJTkcsCj4+Pj4+ICAJQ1BVSFBfQVBfQVJNX0wyWDBfU1RBUlRJ
+TkcsCj4+Pj4+ICsJQ1BVSFBfQVBfRVhZTk9TNF9NQ1RfVElNRVJfU1RBUlRJTkcsCj4+Pj4+ICAJ
+Q1BVSFBfQVBfQVJNX0FSQ0hfVElNRVJfU1RBUlRJTkcsCj4+Pj4+ICAJQ1BVSFBfQVBfQVJNX0dM
+T0JBTF9USU1FUl9TVEFSVElORywKPj4+Pj4gIAlDUFVIUF9BUF9KQ09SRV9USU1FUl9TVEFSVElO
+RywKPj4+Pj4gLQlDUFVIUF9BUF9FWFlOT1M0X01DVF9USU1FUl9TVEFSVElORywKPj4+Pj4gIAlD
+UFVIUF9BUF9BUk1fVFdEX1NUQVJUSU5HLAo+Pj4+PiAgCUNQVUhQX0FQX1FDT01fVElNRVJfU1RB
+UlRJTkcsCj4+Pj4+ICAJQ1BVSFBfQVBfQVJNQURBX1RJTUVSX1NUQVJUSU5HLAo+Pj4+Pgo+IEJl
+c3QgcmVnYXJkcwo+IAoKCi0tIAogPGh0dHA6Ly93d3cubGluYXJvLm9yZy8+IExpbmFyby5vcmcg
+4pSCIE9wZW4gc291cmNlIHNvZnR3YXJlIGZvciBBUk0gU29DcwoKRm9sbG93IExpbmFybzogIDxo
+dHRwOi8vd3d3LmZhY2Vib29rLmNvbS9wYWdlcy9MaW5hcm8+IEZhY2Vib29rIHwKPGh0dHA6Ly90
+d2l0dGVyLmNvbS8jIS9saW5hcm9vcmc+IFR3aXR0ZXIgfAo8aHR0cDovL3d3dy5saW5hcm8ub3Jn
+L2xpbmFyby1ibG9nLz4gQmxvZwoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJu
+ZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
