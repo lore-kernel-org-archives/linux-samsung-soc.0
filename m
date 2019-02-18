@@ -1,51 +1,35 @@
-From: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Subject: [PATCH] crypto: s5p: update iv after AES op end
-Date: Mon, 18 Feb 2019 17:00:46 +0100
-Message-ID: <20190218160046.6387-1-k.konieczny@partner.samsung.com>
-References: <CGME20190218160113eucas1p2183a3620f8322ee33273d3bfe5f06486@eucas1p2.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 1/3] ARM: dts: exynos: Use stdout path property on Arndale Octa board
+Date: Mon, 18 Feb 2019 18:32:56 +0100
+Message-ID: <20190218173258.7071-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: k.konieczny@partner.samsung.com
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Eric Biggers <ebiggers@kernel.org>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Markus Reichl <reichl@t-online.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Fix bug "s5p-sss crypto driver doesn't set next AES-CBC IV". This should
-also fix AES-CTR mode. Tested on Odroid U3 with Eric Biggers branch
-"iv-out-testing".
+Replacing bootargs with stdout-path property in chosen node allows using
+early console by adding just 'earlycon' parameter to kernel command
+line.
 
-Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/crypto/s5p-sss.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-index 0064be0e3941..3ea058addad3 100644
---- a/drivers/crypto/s5p-sss.c
-+++ b/drivers/crypto/s5p-sss.c
-@@ -463,6 +463,9 @@ static void s5p_sg_copy_buf(void *buf, struct scatterlist *sg,
+diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+index 3447160e1fbf..832757999e4f 100644
+--- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
++++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+@@ -24,7 +24,7 @@
+ 	};
  
- static void s5p_sg_done(struct s5p_aes_dev *dev)
- {
-+	struct ablkcipher_request *req = dev->req;
-+	struct s5p_aes_reqctx *reqctx = ablkcipher_request_ctx(req);
-+
- 	if (dev->sg_dst_cpy) {
- 		dev_dbg(dev->dev,
- 			"Copying %d bytes of output data back to original place\n",
-@@ -472,6 +475,11 @@ static void s5p_sg_done(struct s5p_aes_dev *dev)
- 	}
- 	s5p_free_sg_cpy(dev, &dev->sg_src_cpy);
- 	s5p_free_sg_cpy(dev, &dev->sg_dst_cpy);
-+	if (reqctx->mode & FLAGS_AES_CBC)
-+		memcpy_fromio(req->info, dev->aes_ioaddr + SSS_REG_AES_IV_DATA(0), 0x10);
-+
-+	if (reqctx->mode & FLAGS_AES_CTR)
-+		memcpy_fromio(req->info, dev->aes_ioaddr + SSS_REG_AES_CNT_DATA(0), 0x10);
- }
+ 	chosen {
+-		bootargs = "console=ttySAC3,115200";
++		stdout-path = "serial3:115200n8";
+ 	};
  
- /* Calls the completion. Cannot be called with dev->lock hold. */
+ 	firmware@2073000 {
 -- 
-2.20.1
+2.17.1
