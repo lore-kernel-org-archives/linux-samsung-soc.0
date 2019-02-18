@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 2/3] ARM: dts: exynos: Add unused PMIC regulators on Arndale Octa board
-Date: Mon, 18 Feb 2019 18:32:57 +0100
-Message-ID: <20190218173258.7071-2-krzk@kernel.org>
+Subject: [PATCH 3/3] ARM: dts: exynos: Raise maximum buck regulator voltages on Arndale Octa
+Date: Mon, 18 Feb 2019 18:32:58 +0100
+Message-ID: <20190218173258.7071-3-krzk@kernel.org>
 References: <20190218173258.7071-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190218173258.7071-1-krzk@kernel.org>
@@ -10,121 +10,80 @@ To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, device
 Cc: Markus Reichl <reichl@t-online.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Define the LDO14, LDO17, LDO22, LDO25, LDO30, LDO34, LDO36 and LDO37
-unused regulators to describe the hardware.
+Raise the buck 1-7 regulators voltages to allow cpufreq choosing them
+and to fix warnings during boot:
+
+    core: _opp_supported_by_regulators: OPP minuV: 1250000 maxuV: 1250000, not supported by regulator
+    cpu cpu0: _opp_add: OPP not supported by regulators (1800000000)
+
+The maximum value is now in sync with other Exynos5420 boards with
+S2MPS11 PMIC (SMDK5420, Odroid XU3 family).  This also matches the
+values used in old patches done by Linaro Samsung team.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/exynos5420-arndale-octa.dts | 56 +++++++++++++++++++
- 1 file changed, 56 insertions(+)
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-index 832757999e4f..308c74ebeacd 100644
+index 308c74ebeacd..c7d9604a119e 100644
 --- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
 +++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-@@ -180,6 +180,13 @@
- 				regulator-max-microvolt = <2800000>;
+@@ -342,48 +342,48 @@
+ 			buck1_reg: BUCK1 {
+ 				regulator-name = "PVDD_MIF_1V1";
+ 				regulator-min-microvolt = <800000>;
+-				regulator-max-microvolt = <1100000>;
++				regulator-max-microvolt = <1300000>;
+ 				regulator-always-on;
  			};
  
-+			ldo14_reg: LDO14 {
-+				/* Unused */
-+				regulator-name = "PVDD_LDO14";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
-+
- 			ldo15_reg: LDO15 {
- 				regulator-name = "PVDD_PERI_2V8";
- 				regulator-min-microvolt = <3300000>;
-@@ -192,6 +199,13 @@
- 				regulator-max-microvolt = <2200000>;
+ 			buck2_reg: BUCK2 {
+ 				regulator-name = "vdd_arm";
+ 				regulator-min-microvolt = <800000>;
+-				regulator-max-microvolt = <1000000>;
++				regulator-max-microvolt = <1500000>;
+ 				regulator-always-on;
  			};
  
-+			ldo17_reg: LDO17 {
-+				/* Unused */
-+				regulator-name = "PVDD_LDO17";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
-+
- 			ldo18_reg: LDO18 {
- 				regulator-name = "PVDD_EMMC_1V8";
- 				regulator-min-microvolt = <1800000>;
-@@ -216,6 +230,13 @@
- 				regulator-max-microvolt = <1800000>;
+ 			buck3_reg: BUCK3 {
+ 				regulator-name = "PVDD_INT_1V0";
+ 				regulator-min-microvolt = <800000>;
+-				regulator-max-microvolt = <1000000>;
++				regulator-max-microvolt = <1400000>;
+ 				regulator-always-on;
  			};
  
-+			ldo22_reg: LDO22 {
-+				/* Unused */
-+				regulator-name = "PVDD_LDO22";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <2375000>;
-+			};
-+
- 			ldo23_reg: LDO23 {
- 				regulator-name = "PVDD_MIFS_1V1";
- 				regulator-min-microvolt = <1200000>;
-@@ -229,6 +250,13 @@
- 				regulator-max-microvolt = <2800000>;
+ 			buck4_reg: BUCK4 {
+ 				regulator-name = "PVDD_G3D_1V0";
+ 				regulator-min-microvolt = <800000>;
+-				regulator-max-microvolt = <1000000>;
++				regulator-max-microvolt = <1400000>;
  			};
  
-+			ldo25_reg: LDO25 {
-+				/* Unused */
-+				regulator-name = "PVDD_LDO25";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
-+
- 			ldo26_reg: LDO26 {
- 				regulator-name = "PVDD_CAM0_AF_2V8";
- 				regulator-min-microvolt = <3000000>;
-@@ -253,6 +281,13 @@
- 				regulator-max-microvolt = <1800000>;
+ 			buck5_reg: BUCK5 {
+ 				regulator-name = "PVDD_LPDDR3_1V2";
+ 				regulator-min-microvolt = <800000>;
+-				regulator-max-microvolt = <1200000>;
++				regulator-max-microvolt = <1400000>;
+ 				regulator-always-on;
  			};
  
-+			ldo30_reg: LDO30 {
-+				/* Unused */
-+				regulator-name = "PVDD_LDO30";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
-+
- 			ldo31_reg: LDO31 {
- 				regulator-name = "PVDD_PERI_1V8";
- 				regulator-min-microvolt = <1800000>;
-@@ -271,12 +306,33 @@
- 				regulator-max-microvolt = <1800000>;
+ 			buck6_reg: BUCK6 {
+ 				regulator-name = "PVDD_KFC_1V0";
+ 				regulator-min-microvolt = <800000>;
+-				regulator-max-microvolt = <1000000>;
++				regulator-max-microvolt = <1500000>;
+ 				regulator-always-on;
  			};
  
-+			ldo34_reg: LDO34 {
-+				/* Unused */
-+				regulator-name = "PVDD_LDO34";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
-+
- 			ldo35_reg: LDO35 {
- 				regulator-name = "PVDD_CAM0_DVDD_1V2";
- 				regulator-min-microvolt = <1200000>;
- 				regulator-max-microvolt = <1200000>;
+ 			buck7_reg: BUCK7 {
+ 				regulator-name = "VIN_LLDO_1V4";
+ 				regulator-min-microvolt = <800000>;
+-				regulator-max-microvolt = <1400000>;
++				regulator-max-microvolt = <1500000>;
+ 				regulator-always-on;
  			};
  
-+			ldo36_reg: LDO36 {
-+				/* Unused */
-+				regulator-name = "PVDD_LDO36";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
-+
-+			ldo37_reg: LDO37 {
-+				/* Unused */
-+				regulator-name = "PVDD_LDO37";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3950000>;
-+			};
-+
- 			ldo38_reg: LDO38 {
- 				regulator-name = "PVDD_CAM0_AVDD_2V8";
- 				regulator-min-microvolt = <2800000>;
 -- 
 2.17.1
