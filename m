@@ -1,57 +1,99 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [RFC 0/4] clk/driver: platform: Fix kfree() of const memory on
- setting driver_override
-Date: Mon, 18 Feb 2019 12:14:29 +0100
-Message-ID: <CAJKOXPe1CW4k4ivbh4QhKEbuVc3RRNmzUwQcL0BsrAn=hCdjZg@mail.gmail.com>
-References: <1550484960-2392-1-git-send-email-krzk@kernel.org> <CAMuHMdWXy_0zL8FZWapPj4+cXRd0wHy9buLhf0D0txpAHPkK7Q@mail.gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 4/5] ARM: dts: exynos: Add support ARM architected timers
+Date: Mon, 18 Feb 2019 20:58:12 +0900
+Message-ID: <c73ca3d2-ccd1-e2d0-f81c-5b62a4313a5d@samsung.com>
+References: <20190215125229.30180-1-m.szyprowski@samsung.com>
+ <CGME20190215125240eucas1p277671ab6d0eb4d1102d3cddd6c61c255@eucas1p2.samsung.com>
+ <20190215125229.30180-5-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdWXy_0zL8FZWapPj4+cXRd0wHy9buLhf0D0txpAHPkK7Q@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-spi <linux-spi@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, Linux ARM <linux-arm-kernel@list>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190215125229.30180-5-m.szyprowski@samsung.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 18 Feb 2019 at 11:40, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Krzysztof,
->
-> On Mon, Feb 18, 2019 at 11:27 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > The problem
-> > ===========
-> > Several device types (platform, amba, spi etc.) provide a driver_override
-> > field.  On sysfs store or during device removal, they kfree() the
-> > existing value.
-> >
-> > However the users are unaware of this and set the driver_override like:
-> >
-> >         pdev->driver_override = "exynos5-subcmu";
-> >
-> > which obviously leads to error.
->
-> IMHO driver_override is not meant to be set by a driver, only from userspace,
-> for binding the device to vfio (is there another use case?).
->
-> >   clk: samsung: exynos5: Fix kfree() of const memory on setting
-> >     driver_override
-> >   slimbus: ngd: Fix kfree() of const memory on setting driver_override
->
-> I see all users set override immediately after allocating a platform device.
-> Can't they just allocate a platform device using the override name instead?
-> What am I missing?
-
-For the clk-exynos5-subcmu.c case, driver registers several
-sub-devices. Each sub-devices is a clock controller associated with
-power domain. I guess the author wanted to have meaningful names of
-these sub-devices (DISP, CAM etc. like names of power domains),
-instead of just exynos5-subcmu.1, exynos5-subcmu.2 ...
-
-If driver_override should not be used for such case, then I could
-replace it with what you said.
-
-For the other uses of driver_override (drivers/rpmsg/rpmsg_internal.h
-and drivers/slimbus/qcom-ngd-ctrl.c) I don't know.
-
-Best regards,
-Krzysztof
+SGkgTWFyZWssCgpPbiAxOS4gMi4gMTUuIOyYpO2bhCA5OjUyLCBNYXJlayBTenlwcm93c2tpIHdy
+b3RlOgo+IEFsbCBDb3J0ZXhBNy9BMTUgYmFzZWQgRXh5bm9zIFNvQ3MgaGF2ZSBBUk0gYXJjaGl0
+ZWN0ZWQgdGltZXJzLCBzbyBlbmFibGUKPiBzdXBwb3J0IGZvciB0aGVtIGRpcmVjdGx5IGluIHRo
+ZSBiYXNlIGR0c2kgZm9yIEV4eW5vczMyNTAsIEV4eW5vczUyNTAKPiBhbmQgRXh5bm9zNTR4eCBT
+b0NzLiBOb25lIG9mIHRoZSBrbm93biBmaXJtd2FyZSBwcm9wZXJseSBjb25maWd1cmVzIGFyY2gK
+PiB0aW1lciByZWdpc3RlcnMsIHNvIG1hcmsgdGhlbSBhcyBub3QtZnctY29uZmlndXJlZCBhbmQg
+c2V0IGZyZXF1ZW5jeQo+IHRvIDI0TUh6LCB3aGljaCBpcyB0aGUgb25seSBjb25maWd1cmF0aW9u
+IHN1cHBvcnRlZCBieSB0aGUgcmVtYWluaW5nCj4gZHJpdmVycyAoY2xvY2tzKSBzbyBmYXIuCj4g
+Cj4gU2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcu
+Y29tPgo+IC0tLQo+ICBhcmNoL2FybS9ib290L2R0cy9leHlub3MzMjUwLmR0c2kgfCAxMCArKysr
+KysrKysrCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAuZHRzaSB8ICAxICsKPiAgYXJj
+aC9hcm0vYm9vdC9kdHMvZXh5bm9zNTR4eC5kdHNpIHwgMTAgKysrKysrKysrKwo+ICAzIGZpbGVz
+IGNoYW5nZWQsIDIxIGluc2VydGlvbnMoKykKPiAKPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9v
+dC9kdHMvZXh5bm9zMzI1MC5kdHNpIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zMzI1MC5kdHNp
+Cj4gaW5kZXggNjA4ZDE3NDU0MTc5Li4zOTY2ZTc5NjA5NjQgMTAwNjQ0Cj4gLS0tIGEvYXJjaC9h
+cm0vYm9vdC9kdHMvZXh5bm9zMzI1MC5kdHNpCj4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5
+bm9zMzI1MC5kdHNpCj4gQEAgLTEzNCw2ICsxMzQsMTYgQEAKPiAgCQkJfTsKPiAgCQl9Owo+ICAK
+PiArCQl0aW1lciB7Cj4gKwkJCWNvbXBhdGlibGUgPSAiYXJtLGFybXY3LXRpbWVyIjsKPiArCQkJ
+aW50ZXJydXB0cyA9IDxHSUNfUFBJIDEzIChHSUNfQ1BVX01BU0tfU0lNUExFKDQpIHwgSVJRX1RZ
+UEVfTEVWRUxfTE9XKT4sCj4gKwkJCQkgICAgIDxHSUNfUFBJIDE0IChHSUNfQ1BVX01BU0tfU0lN
+UExFKDQpIHwgSVJRX1RZUEVfTEVWRUxfTE9XKT4sCj4gKwkJCQkgICAgIDxHSUNfUFBJIDExIChH
+SUNfQ1BVX01BU0tfU0lNUExFKDQpIHwgSVJRX1RZUEVfTEVWRUxfTE9XKT4sCj4gKwkJCQkgICAg
+IDxHSUNfUFBJIDEwIChHSUNfQ1BVX01BU0tfU0lNUExFKDQpIHwgSVJRX1RZUEVfTEVWRUxfTE9X
+KT47Cj4gKwkJCWNsb2NrLWZyZXF1ZW5jeSA9IDwyNDAwMDAwMD47Cj4gKwkJCWFybSxjcHUtcmVn
+aXN0ZXJzLW5vdC1mdy1jb25maWd1cmVkOwo+ICsJCX07Cj4gKwo+ICAJCXN5c3JhbUAyMDIwMDAw
+IHsKPiAgCQkJY29tcGF0aWJsZSA9ICJtbWlvLXNyYW0iOwo+ICAJCQlyZWcgPSA8MHgwMjAyMDAw
+MCAweDQwMDAwPjsKPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC5k
+dHNpIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC5kdHNpCj4gaW5kZXggODA5ODZiOTdk
+ZmU1Li45NWFmNDA1MGY2OWQgMTAwNjQ0Cj4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9z
+NTI1MC5kdHNpCj4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC5kdHNpCj4gQEAg
+LTIzOSw2ICsyMzksNyBAQAo+ICAJCQkgKiBzbyB3ZSBuZWVkIHRoZSB2YWx1ZSBmcm9tIERULgo+
+ICAJCQkgKi8KPiAgCQkJY2xvY2stZnJlcXVlbmN5ID0gPDI0MDAwMDAwPjsKPiArCQkJYXJtLGNw
+dS1yZWdpc3RlcnMtbm90LWZ3LWNvbmZpZ3VyZWQ7Cj4gIAkJfTsKPiAgCj4gIAkJbWN0QDEwMWMw
+MDAwIHsKPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTR4eC5kdHNpIGIv
+YXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTR4eC5kdHNpCj4gaW5kZXggZGUyNmU1ZWUwZDJkLi40
+NWUwNjcxN2VlNTEgMTAwNjQ0Cj4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTR4eC5k
+dHNpCj4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTR4eC5kdHNpCj4gQEAgLTQ2LDYg
+KzQ2LDE2IEBACj4gIAkJCXN0YXR1cyA9ICJkaXNhYmxlZCI7Cj4gIAkJfTsKPiAgCj4gKwkJdGlt
+ZXIgewo+ICsJCQljb21wYXRpYmxlID0gImFybSxhcm12Ny10aW1lciI7Cj4gKwkJCWludGVycnVw
+dHMgPSA8R0lDX1BQSSAxMyAoR0lDX0NQVV9NQVNLX1NJTVBMRSg0KSB8IElSUV9UWVBFX0xFVkVM
+X0xPVyk+LAo+ICsJCQkJICAgICA8R0lDX1BQSSAxNCAoR0lDX0NQVV9NQVNLX1NJTVBMRSg0KSB8
+IElSUV9UWVBFX0xFVkVMX0xPVyk+LAo+ICsJCQkJICAgICA8R0lDX1BQSSAxMSAoR0lDX0NQVV9N
+QVNLX1NJTVBMRSg0KSB8IElSUV9UWVBFX0xFVkVMX0xPVyk+LAo+ICsJCQkJICAgICA8R0lDX1BQ
+SSAxMCAoR0lDX0NQVV9NQVNLX1NJTVBMRSg0KSB8IElSUV9UWVBFX0xFVkVMX0xPVyk+Owo+ICsJ
+CQlhcm0sY3B1LXJlZ2lzdGVycy1ub3QtZnctY29uZmlndXJlZDsKPiArCQkJY2xvY2stZnJlcXVl
+bmN5ID0gPDI0MDAwMDAwPjsKPiArCQl9Owo+ICsKPiAgCQlzeXNyYW1AMjAyMDAwMCB7Cj4gIAkJ
+CWNvbXBhdGlibGUgPSAibW1pby1zcmFtIjsKPiAgCQkJcmVnID0gPDB4MDIwMjAwMDAgMHg1NDAw
+MD47Cj4gCgpUaGUgZXh5bm9zNTR4eC5kdHNpIGFmZmVjdHMgdGhlIGV4eW5vczU0MTAgU29DLgpX
+aGVuIEkgY2hlY2tlZCB0aGUgUFBJIHBvcnQgbnVtYmVyIG9uIEV4eW5vczU0MTAvRXh5bm9zNTQy
+MiBUUk0sCnRoZXkgaGF2ZSB0aGUgZGlmZmVyZW50IFBQSSBwb3J0IG51bWJlciBhcyBmb2xsb3dp
+bmc6CgoJCQkJfEV4eW5vczU0MTAJfEV4eW5vczU0MjIJfAotLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tCkFSQ0hfVElNRVJfUEhZU19TRUNVUkVfUFBJCXwxIG5DTlRQU0lSUQl8MTMgbkNO
+VFBTSVJRCXxTZWN1cmUgcGh5c2ljYWwgdGltZXIKQVJDSF9USU1FUl9QSFlTX05PTlNFQ1VSRV9Q
+UEkJfDIgbkNOVFBOU0lSUQl8MTQgbkNOVFBOU0lSUQl8Tm9uLXNlY3VyZSBwaHlzaWNhbCB0aW1l
+cgpBUkNIX1RJTUVSX1ZJUlRfUFBJCQl8NCBuQ05UVklSUQl8MTEgbkNOVFZJUlEJfFZpcnR1YWwg
+dGltZXIKQVJDSF9USU1FUl9IWVBfUFBJCQl8NSBuQ05USFBJUlEJfDEwIG5DTlRIUElSUQl8SHlw
+ZXJ2aXNvciB0aW1lcgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCgoKRXh5bm9zNTQx
+MCBhbmQgRXh5bm9zNTQyMiBoYXZlIHRoZSBkaWZmZXJlbnQgdXNhZ2Ugb2YgYml0ZmllbGQKb2Yg
+IG5DTlRQU0lSUS9uQ05UUE5TSVJRL25DTlRWSVJRL25DTlRIUElSUSBhcyBmb2xsb3dpbmc6CgoJ
+CQkJfEV4eW5vczU0MTAJfEV4eW5vczU0MjIKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCm5DTlRQU0lSUVszOjBdCQkJfCBLRkMJCXwg
+RUFHTEUKbkNOVFBOU0lSUVszOjBdCQkJfCBLRkMJCXwgRUFHTEUKbkNOVFZJUlFbMzowXQkJCXwg
+S0ZDCQl8IEVBR0xFCm5DTlRIUElSUVszOjBdCQkJfCBLRkMJCXwgRUFHTEUKLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCm5DTlRQU0lS
+UVs3OjRdCQkJfCBFQUdMRQkJfCBLRkMKbkNOVFBOU0lSUVs3OjRdCQkJfCBFQUdMRQkJfCBLRkMK
+bkNOVFZJUlFbNzo0XQkJCXwgRUFHTEUJCXwgS0ZDCm5DTlRIUElSUVs3OjRdCQkJfCBFQUdMRQkJ
+fCBLRkMKCgotLSAKQmVzdCBSZWdhcmRzLApDaGFud29vIENob2kKU2Ftc3VuZyBFbGVjdHJvbmlj
+cwoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgt
+YXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQu
+b3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJt
+LWtlcm5lbAo=
