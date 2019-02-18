@@ -1,118 +1,102 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH v2] ARM: pm: fix HYP/SVC mode mismatch when MCPM is used
-Date: Mon, 18 Feb 2019 09:44:18 +0530
-Message-ID: <CANAwSgRHhX8t7hDzfy2y6hggUiORRcLZ1VyM_UsDyiRTJ9L12w@mail.gmail.com>
-References: <CGME20190215105644eucas1p19d0bdab386354cff0a9a354b5e33f0fe@eucas1p1.samsung.com>
- <20190215105638.17476-1-m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 3/5] clocksource: exynos_mct: Increase priority over ARM
+ arch timer
+Date: Mon, 18 Feb 2019 08:41:30 +0100
+Message-ID: <7b994b86-9a84-39a7-e88d-203c64b30de8@samsung.com>
+References: <20190215125229.30180-1-m.szyprowski@samsung.com>
+ <CGME20190215125239eucas1p2d9167af42f2d04e462c56a070c3371c2@eucas1p2.samsung.com>
+ <20190215125229.30180-4-m.szyprowski@samsung.com>
+ <01569ba7-2e3e-5811-81e1-ca51cacbcb95@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190215105638.17476-1-m.szyprowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Russell King <rmk+kernel@armlinux.org.uk>, Nicolas Pitre <nicolas.pitre@linaro.org>, Kevin Hilman <khilman@baylibre.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marian Mihailescu <mihailescu2m@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <01569ba7-2e3e-5811-81e1-ca51cacbcb95@linaro.org>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+Hi Daniel,
 
-On Fri, 15 Feb 2019 at 21:40, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+On 2019-02-15 17:35, Daniel Lezcano wrote:
+> On 15/02/2019 13:52, Marek Szyprowski wrote:
+>> Exynos Multi-Core Timer driver (exynos_mct) must be started before ARM
+>> Architected Timers (arch_timer), because they both share some common
+>> hardware blocks (global system counter) and turning on MCT is needed
+>> to get ARM Architected Timer working properly. Increase MCT timer rating
+>> and hotplug priority over ARM Archictected timer driver to achieve that.
+> This is a hack.
 >
-> MCPM does a soft reset of the CPUs and uses common cpu_resume() routine to
-> perform low-level platform initialization. This results in a try to install
-> HYP stubs for the second time for each CPU and results in false HYP/SVC
-> mode mismatch detection. The HYP stubs are already installed at the
-> beginning of the kernel initialization on the boot CPU (head.S) or in the
-> secondary_startup() for other CPUs. To fix this issue MCPM code should use
-> a cpu_resume() routine without HYP stubs installation.
+> There are mechanisms to handle this kind of dependency.
 >
-> This change fixes HYP/SVC mode mismatch on Samsung Exynos5422-based Odroid
-> XU3/XU4/HC1 boards.
->
-> Fixes: 3721924c8154 ("ARM: 8081/1: MCPM: provide infrastructure to allow for MCPM loopback")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Acked-by: Nicolas Pitre <nico@linaro.org>
-> ---
+> eg. https://www.kernel.org/doc/html/v4.15/driver-api/device_link.html
 
-Please add my.
+Sorry, but this is not a hack, but proper way to handle this in
+clocksource/timers framework. The ratings assigned to each driver and
+cpu hotplug priority list are exactly for managing the requested order
+of operations if more than one driver has been registered.
 
-Tested-by: Anand Moon <linux.amoon@gmail.com>
+Device links operates on the 'kernel device' objects, which are created
+and managed much later than clocksource/timers are initialized. I see no
+use of device links in this context.
 
-[    0.701094] smp: Brought up 1 node, 8 CPUs
-[    0.701212] SMP: Total of 8 processors activated (384.00 BogoMIPS).
-[    0.701329] CPU: All CPU(s) started in HYP mode.
-[    0.701421] CPU: Virtualization extensions available.
-
-
-> v2:
-> - fixed support for Thumb-mode kernel
-> ---
->  arch/arm/common/mcpm_entry.c   |  2 +-
->  arch/arm/include/asm/suspend.h |  1 +
->  arch/arm/kernel/sleep.S        | 12 ++++++++++++
->  3 files changed, 14 insertions(+), 1 deletion(-)
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>  drivers/clocksource/exynos_mct.c | 4 ++--
+>>  include/linux/cpuhotplug.h       | 2 +-
+>>  2 files changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+>> index 49413900b24c..58090f57ada3 100644
+>> --- a/drivers/clocksource/exynos_mct.c
+>> +++ b/drivers/clocksource/exynos_mct.c
+>> @@ -211,7 +211,7 @@ static void exynos4_frc_resume(struct clocksource *cs)
+>>  
+>>  static struct clocksource mct_frc = {
+>>  	.name		= "mct-frc",
+>> -	.rating		= 400,
+>> +	.rating		= 450,
+>>  	.read		= exynos4_frc_read,
+>>  	.mask		= CLOCKSOURCE_MASK(32),
+>>  	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
+>> @@ -465,7 +465,7 @@ static int exynos4_mct_starting_cpu(unsigned int cpu)
+>>  	evt->set_state_oneshot_stopped = set_state_shutdown;
+>>  	evt->tick_resume = set_state_shutdown;
+>>  	evt->features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT;
+>> -	evt->rating = 450;
+>> +	evt->rating = 500;
+>>  
+>>  	exynos4_mct_write(TICK_BASE_CNT, mevt->base + MCT_L_TCNTB_OFFSET);
+>>  
+>> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+>> index fd586d0301e7..bdd544f21102 100644
+>> --- a/include/linux/cpuhotplug.h
+>> +++ b/include/linux/cpuhotplug.h
+>> @@ -115,10 +115,10 @@ enum cpuhp_state {
+>>  	CPUHP_AP_PERF_ARM_ACPI_STARTING,
+>>  	CPUHP_AP_PERF_ARM_STARTING,
+>>  	CPUHP_AP_ARM_L2X0_STARTING,
+>> +	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
+>>  	CPUHP_AP_ARM_ARCH_TIMER_STARTING,
+>>  	CPUHP_AP_ARM_GLOBAL_TIMER_STARTING,
+>>  	CPUHP_AP_JCORE_TIMER_STARTING,
+>> -	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
+>>  	CPUHP_AP_ARM_TWD_STARTING,
+>>  	CPUHP_AP_QCOM_TIMER_STARTING,
+>>  	CPUHP_AP_ARMADA_TIMER_STARTING,
+>>
 >
-> diff --git a/arch/arm/common/mcpm_entry.c b/arch/arm/common/mcpm_entry.c
-> index ad574d20415c..1b1b82b37ce0 100644
-> --- a/arch/arm/common/mcpm_entry.c
-> +++ b/arch/arm/common/mcpm_entry.c
-> @@ -381,7 +381,7 @@ static int __init nocache_trampoline(unsigned long _arg)
->         unsigned int cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
->         phys_reset_t phys_reset;
->
-> -       mcpm_set_entry_vector(cpu, cluster, cpu_resume);
-> +       mcpm_set_entry_vector(cpu, cluster, cpu_resume_no_hyp);
->         setup_mm_for_reboot();
->
->         __mcpm_cpu_going_down(cpu, cluster);
-> diff --git a/arch/arm/include/asm/suspend.h b/arch/arm/include/asm/suspend.h
-> index 452bbdcbcc83..506314265c6f 100644
-> --- a/arch/arm/include/asm/suspend.h
-> +++ b/arch/arm/include/asm/suspend.h
-> @@ -10,6 +10,7 @@ struct sleep_save_sp {
->  };
->
->  extern void cpu_resume(void);
-> +extern void cpu_resume_no_hyp(void);
->  extern void cpu_resume_arm(void);
->  extern int cpu_suspend(unsigned long, int (*)(unsigned long));
->
-> diff --git a/arch/arm/kernel/sleep.S b/arch/arm/kernel/sleep.S
-> index a8257fc9cf2a..5dc8b80bb693 100644
-> --- a/arch/arm/kernel/sleep.S
-> +++ b/arch/arm/kernel/sleep.S
-> @@ -120,6 +120,14 @@ ENDPROC(cpu_resume_after_mmu)
->         .text
->         .align
->
-> +#ifdef CONFIG_MCPM
-> +       .arm
-> +THUMB( .thumb                  )
-> +ENTRY(cpu_resume_no_hyp)
-> +ARM_BE8(setend be)                     @ ensure we are in BE mode
-> +       b       no_hyp
-> +#endif
-> +
->  #ifdef CONFIG_MMU
->         .arm
->  ENTRY(cpu_resume_arm)
-> @@ -135,6 +143,7 @@ ARM_BE8(setend be)                  @ ensure we are in BE mode
->         bl      __hyp_stub_install_secondary
->  #endif
->         safe_svcmode_maskall r1
-> +no_hyp:
->         mov     r1, #0
->         ALT_SMP(mrc p15, 0, r0, c0, c0, 5)
->         ALT_UP_B(1f)
-> @@ -163,6 +172,9 @@ ENDPROC(cpu_resume)
->
->  #ifdef CONFIG_MMU
->  ENDPROC(cpu_resume_arm)
-> +#endif
-> +#ifdef CONFIG_MCPM
-> +ENDPROC(cpu_resume_no_hyp)
->  #endif
->
->         .align 2
-> --
-> 2.17.1
->
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
