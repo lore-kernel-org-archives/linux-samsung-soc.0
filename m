@@ -1,61 +1,118 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [Bug] s5p-sss crypto driver doesn't set next AES-CBC IV
-Date: Sat, 16 Feb 2019 10:52:49 +0100
-Message-ID: <CAJKOXPfU5JVU1Z9hBf-9cfDvaq3825su12jYv=Qf3K4nCQox=w@mail.gmail.com>
-References: <20190215185058.GB12909@gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH v2] ARM: pm: fix HYP/SVC mode mismatch when MCPM is used
+Date: Mon, 18 Feb 2019 09:44:18 +0530
+Message-ID: <CANAwSgRHhX8t7hDzfy2y6hggUiORRcLZ1VyM_UsDyiRTJ9L12w@mail.gmail.com>
+References: <CGME20190215105644eucas1p19d0bdab386354cff0a9a354b5e33f0fe@eucas1p1.samsung.com>
+ <20190215105638.17476-1-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190215185058.GB12909@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Christoph Manszewski <c.manszewski@samsung.com>, Vladimir Zapolskiy <vz@mleia.com>, linux-crypto@vger.kernel.org, Kamil Konieczny <k.konieczny@partner.samsung.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190215105638.17476-1-m.szyprowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Russell King <rmk+kernel@armlinux.org.uk>, Nicolas Pitre <nicolas.pitre@linaro.org>, Kevin Hilman <khilman@baylibre.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marian Mihailescu <mihailescu2m@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, 15 Feb 2019 at 19:51, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> Hello,
->
-> The AES-CBC implementation in the s5p-sss crypto driver is failing the improved
-> crypto self-tests I currently have out for review.  The improved tests check
-> that all CBC implementations update the IV buffer to be the last ciphertext
-> block.  This has always been required so that requests can be chained, but
-> unfortunately it wasn't tested for by the self-tests until now.
->
-> See the boot logs for Exynos platforms from the KernelCI job here:
-> https://kernelci.org/boot/all/job/ardb/branch/for-kernelci/kernel/v5.0-rc1-149-g64c945c018af/
->
-> alg: skcipher: cbc-aes-s5p encryption test failed (wrong output IV) on test vector 0, cfg=\"in-place\"
-> 00000000: 3d af ba 42 9d 9e b4 30 b4 22 da 80 2c 9f ac 41
->
-> You can reproduce by pulling from
-> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git
-> branch "iv-out-testing", unsetting CONFIG_CRYPTO_MANAGER_DISABLE_TESTS,
-> setting CONFIG_CRYPTO_MANAGER_EXTRA_TESTS=y, rebooting and checking dmesg.
->
-> (CRYPTO_MANAGER_EXTRA_TESTS is probably unneeded for this, but you might as well
-> use it.  Also you can optionally revert the last patch, which makes crypto
-> self-test failures cause a kernel panic for testing purposes.  It's possible
-> that ctr-aes-s5p is failing too but it was just never gotten to...)
->
-> The patch series is also available on the linux-crypto mailing list:
-> https://patchwork.kernel.org/cover/10811951/
->
-> Note that I don't have this hardware myself, so if it turns out that no one is
-> interested in fixing this anytime soon I'll instead have to propose disabling
-> these algorithm(s) until they can be fixed.
+Hi Marek,
 
-Thanks for the report. I'll take a look. I have the HW so I think I
-will be able to reproduce it easily.
+On Fri, 15 Feb 2019 at 21:40, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>
+> MCPM does a soft reset of the CPUs and uses common cpu_resume() routine to
+> perform low-level platform initialization. This results in a try to install
+> HYP stubs for the second time for each CPU and results in false HYP/SVC
+> mode mismatch detection. The HYP stubs are already installed at the
+> beginning of the kernel initialization on the boot CPU (head.S) or in the
+> secondary_startup() for other CPUs. To fix this issue MCPM code should use
+> a cpu_resume() routine without HYP stubs installation.
+>
+> This change fixes HYP/SVC mode mismatch on Samsung Exynos5422-based Odroid
+> XU3/XU4/HC1 boards.
+>
+> Fixes: 3721924c8154 ("ARM: 8081/1: MCPM: provide infrastructure to allow for MCPM loopback")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Acked-by: Nicolas Pitre <nico@linaro.org>
+> ---
 
-Best regards,
-Krzysztof
+Please add my.
+
+Tested-by: Anand Moon <linux.amoon@gmail.com>
+
+[    0.701094] smp: Brought up 1 node, 8 CPUs
+[    0.701212] SMP: Total of 8 processors activated (384.00 BogoMIPS).
+[    0.701329] CPU: All CPU(s) started in HYP mode.
+[    0.701421] CPU: Virtualization extensions available.
+
+
+> v2:
+> - fixed support for Thumb-mode kernel
+> ---
+>  arch/arm/common/mcpm_entry.c   |  2 +-
+>  arch/arm/include/asm/suspend.h |  1 +
+>  arch/arm/kernel/sleep.S        | 12 ++++++++++++
+>  3 files changed, 14 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/common/mcpm_entry.c b/arch/arm/common/mcpm_entry.c
+> index ad574d20415c..1b1b82b37ce0 100644
+> --- a/arch/arm/common/mcpm_entry.c
+> +++ b/arch/arm/common/mcpm_entry.c
+> @@ -381,7 +381,7 @@ static int __init nocache_trampoline(unsigned long _arg)
+>         unsigned int cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
+>         phys_reset_t phys_reset;
+>
+> -       mcpm_set_entry_vector(cpu, cluster, cpu_resume);
+> +       mcpm_set_entry_vector(cpu, cluster, cpu_resume_no_hyp);
+>         setup_mm_for_reboot();
+>
+>         __mcpm_cpu_going_down(cpu, cluster);
+> diff --git a/arch/arm/include/asm/suspend.h b/arch/arm/include/asm/suspend.h
+> index 452bbdcbcc83..506314265c6f 100644
+> --- a/arch/arm/include/asm/suspend.h
+> +++ b/arch/arm/include/asm/suspend.h
+> @@ -10,6 +10,7 @@ struct sleep_save_sp {
+>  };
+>
+>  extern void cpu_resume(void);
+> +extern void cpu_resume_no_hyp(void);
+>  extern void cpu_resume_arm(void);
+>  extern int cpu_suspend(unsigned long, int (*)(unsigned long));
+>
+> diff --git a/arch/arm/kernel/sleep.S b/arch/arm/kernel/sleep.S
+> index a8257fc9cf2a..5dc8b80bb693 100644
+> --- a/arch/arm/kernel/sleep.S
+> +++ b/arch/arm/kernel/sleep.S
+> @@ -120,6 +120,14 @@ ENDPROC(cpu_resume_after_mmu)
+>         .text
+>         .align
+>
+> +#ifdef CONFIG_MCPM
+> +       .arm
+> +THUMB( .thumb                  )
+> +ENTRY(cpu_resume_no_hyp)
+> +ARM_BE8(setend be)                     @ ensure we are in BE mode
+> +       b       no_hyp
+> +#endif
+> +
+>  #ifdef CONFIG_MMU
+>         .arm
+>  ENTRY(cpu_resume_arm)
+> @@ -135,6 +143,7 @@ ARM_BE8(setend be)                  @ ensure we are in BE mode
+>         bl      __hyp_stub_install_secondary
+>  #endif
+>         safe_svcmode_maskall r1
+> +no_hyp:
+>         mov     r1, #0
+>         ALT_SMP(mrc p15, 0, r0, c0, c0, 5)
+>         ALT_UP_B(1f)
+> @@ -163,6 +172,9 @@ ENDPROC(cpu_resume)
+>
+>  #ifdef CONFIG_MMU
+>  ENDPROC(cpu_resume_arm)
+> +#endif
+> +#ifdef CONFIG_MCPM
+> +ENDPROC(cpu_resume_no_hyp)
+>  #endif
+>
+>         .align 2
+> --
+> 2.17.1
+>
