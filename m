@@ -1,110 +1,51 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 4/5] ARM: dts: exynos: Add support ARM architected timers
-Date: Mon, 18 Feb 2019 13:24:48 +0100
-Message-ID: <4c0a5561-b1f0-6938-3e89-eae5014aafa1@samsung.com>
-References: <20190215125229.30180-1-m.szyprowski@samsung.com>
- <CGME20190215125240eucas1p277671ab6d0eb4d1102d3cddd6c61c255@eucas1p2.samsung.com>
- <20190215125229.30180-5-m.szyprowski@samsung.com>
- <c73ca3d2-ccd1-e2d0-f81c-5b62a4313a5d@samsung.com>
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Subject: [PATCH] crypto: s5p: update iv after AES op end
+Date: Mon, 18 Feb 2019 17:00:46 +0100
+Message-ID: <20190218160046.6387-1-k.konieczny@partner.samsung.com>
+References: <CGME20190218160113eucas1p2183a3620f8322ee33273d3bfe5f06486@eucas1p2.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <c73ca3d2-ccd1-e2d0-f81c-5b62a4313a5d@samsung.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: k.konieczny@partner.samsung.com
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Eric Biggers <ebiggers@kernel.org>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgQ2hhbndvbywKCk9uIDIwMTktMDItMTggMTI6NTgsIENoYW53b28gQ2hvaSB3cm90ZToKPiBP
-biAxOS4gMi4gMTUuIOyYpO2bhCA5OjUyLCBNYXJlayBTenlwcm93c2tpIHdyb3RlOgo+PiBBbGwg
-Q29ydGV4QTcvQTE1IGJhc2VkIEV4eW5vcyBTb0NzIGhhdmUgQVJNIGFyY2hpdGVjdGVkIHRpbWVy
-cywgc28gZW5hYmxlCj4+IHN1cHBvcnQgZm9yIHRoZW0gZGlyZWN0bHkgaW4gdGhlIGJhc2UgZHRz
-aSBmb3IgRXh5bm9zMzI1MCwgRXh5bm9zNTI1MAo+PiBhbmQgRXh5bm9zNTR4eCBTb0NzLiBOb25l
-IG9mIHRoZSBrbm93biBmaXJtd2FyZSBwcm9wZXJseSBjb25maWd1cmVzIGFyY2gKPj4gdGltZXIg
-cmVnaXN0ZXJzLCBzbyBtYXJrIHRoZW0gYXMgbm90LWZ3LWNvbmZpZ3VyZWQgYW5kIHNldCBmcmVx
-dWVuY3kKPj4gdG8gMjRNSHosIHdoaWNoIGlzIHRoZSBvbmx5IGNvbmZpZ3VyYXRpb24gc3VwcG9y
-dGVkIGJ5IHRoZSByZW1haW5pbmcKPj4gZHJpdmVycyAoY2xvY2tzKSBzbyBmYXIuCj4+Cj4+IFNp
-Z25lZC1vZmYtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4K
-Pj4gLS0tCj4+ICBhcmNoL2FybS9ib290L2R0cy9leHlub3MzMjUwLmR0c2kgfCAxMCArKysrKysr
-KysrCj4+ICBhcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLmR0c2kgfCAgMSArCj4+ICBhcmNo
-L2FybS9ib290L2R0cy9leHlub3M1NHh4LmR0c2kgfCAxMCArKysrKysrKysrCj4+ICAzIGZpbGVz
-IGNoYW5nZWQsIDIxIGluc2VydGlvbnMoKykKPj4KPj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jv
-b3QvZHRzL2V4eW5vczMyNTAuZHRzaSBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczMyNTAuZHRz
-aQo+PiBpbmRleCA2MDhkMTc0NTQxNzkuLjM5NjZlNzk2MDk2NCAxMDA2NDQKPj4gLS0tIGEvYXJj
-aC9hcm0vYm9vdC9kdHMvZXh5bm9zMzI1MC5kdHNpCj4+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRz
-L2V4eW5vczMyNTAuZHRzaQo+PiBAQCAtMTM0LDYgKzEzNCwxNiBAQAo+PiAgCQkJfTsKPj4gIAkJ
-fTsKPj4gIAo+PiArCQl0aW1lciB7Cj4+ICsJCQljb21wYXRpYmxlID0gImFybSxhcm12Ny10aW1l
-ciI7Cj4+ICsJCQlpbnRlcnJ1cHRzID0gPEdJQ19QUEkgMTMgKEdJQ19DUFVfTUFTS19TSU1QTEUo
-NCkgfCBJUlFfVFlQRV9MRVZFTF9MT1cpPiwKPj4gKwkJCQkgICAgIDxHSUNfUFBJIDE0IChHSUNf
-Q1BVX01BU0tfU0lNUExFKDQpIHwgSVJRX1RZUEVfTEVWRUxfTE9XKT4sCj4+ICsJCQkJICAgICA8
-R0lDX1BQSSAxMSAoR0lDX0NQVV9NQVNLX1NJTVBMRSg0KSB8IElSUV9UWVBFX0xFVkVMX0xPVyk+
-LAo+PiArCQkJCSAgICAgPEdJQ19QUEkgMTAgKEdJQ19DUFVfTUFTS19TSU1QTEUoNCkgfCBJUlFf
-VFlQRV9MRVZFTF9MT1cpPjsKPj4gKwkJCWNsb2NrLWZyZXF1ZW5jeSA9IDwyNDAwMDAwMD47Cj4+
-ICsJCQlhcm0sY3B1LXJlZ2lzdGVycy1ub3QtZnctY29uZmlndXJlZDsKPj4gKwkJfTsKPj4gKwo+
-PiAgCQlzeXNyYW1AMjAyMDAwMCB7Cj4+ICAJCQljb21wYXRpYmxlID0gIm1taW8tc3JhbSI7Cj4+
-ICAJCQlyZWcgPSA8MHgwMjAyMDAwMCAweDQwMDAwPjsKPj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJt
-L2Jvb3QvZHRzL2V4eW5vczUyNTAuZHRzaSBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAu
-ZHRzaQo+PiBpbmRleCA4MDk4NmI5N2RmZTUuLjk1YWY0MDUwZjY5ZCAxMDA2NDQKPj4gLS0tIGEv
-YXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC5kdHNpCj4+ICsrKyBiL2FyY2gvYXJtL2Jvb3Qv
-ZHRzL2V4eW5vczUyNTAuZHRzaQo+PiBAQCAtMjM5LDYgKzIzOSw3IEBACj4+ICAJCQkgKiBzbyB3
-ZSBuZWVkIHRoZSB2YWx1ZSBmcm9tIERULgo+PiAgCQkJICovCj4+ICAJCQljbG9jay1mcmVxdWVu
-Y3kgPSA8MjQwMDAwMDA+Owo+PiArCQkJYXJtLGNwdS1yZWdpc3RlcnMtbm90LWZ3LWNvbmZpZ3Vy
-ZWQ7Cj4+ICAJCX07Cj4+ICAKPj4gIAkJbWN0QDEwMWMwMDAwIHsKPj4gZGlmZiAtLWdpdCBhL2Fy
-Y2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0eHguZHRzaSBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5v
-czU0eHguZHRzaQo+PiBpbmRleCBkZTI2ZTVlZTBkMmQuLjQ1ZTA2NzE3ZWU1MSAxMDA2NDQKPj4g
-LS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTR4eC5kdHNpCj4+ICsrKyBiL2FyY2gvYXJt
-L2Jvb3QvZHRzL2V4eW5vczU0eHguZHRzaQo+PiBAQCAtNDYsNiArNDYsMTYgQEAKPj4gIAkJCXN0
-YXR1cyA9ICJkaXNhYmxlZCI7Cj4+ICAJCX07Cj4+ICAKPj4gKwkJdGltZXIgewo+PiArCQkJY29t
-cGF0aWJsZSA9ICJhcm0sYXJtdjctdGltZXIiOwo+PiArCQkJaW50ZXJydXB0cyA9IDxHSUNfUFBJ
-IDEzIChHSUNfQ1BVX01BU0tfU0lNUExFKDQpIHwgSVJRX1RZUEVfTEVWRUxfTE9XKT4sCj4+ICsJ
-CQkJICAgICA8R0lDX1BQSSAxNCAoR0lDX0NQVV9NQVNLX1NJTVBMRSg0KSB8IElSUV9UWVBFX0xF
-VkVMX0xPVyk+LAo+PiArCQkJCSAgICAgPEdJQ19QUEkgMTEgKEdJQ19DUFVfTUFTS19TSU1QTEUo
-NCkgfCBJUlFfVFlQRV9MRVZFTF9MT1cpPiwKPj4gKwkJCQkgICAgIDxHSUNfUFBJIDEwIChHSUNf
-Q1BVX01BU0tfU0lNUExFKDQpIHwgSVJRX1RZUEVfTEVWRUxfTE9XKT47Cj4+ICsJCQlhcm0sY3B1
-LXJlZ2lzdGVycy1ub3QtZnctY29uZmlndXJlZDsKPj4gKwkJCWNsb2NrLWZyZXF1ZW5jeSA9IDwy
-NDAwMDAwMD47Cj4+ICsJCX07Cj4+ICsKPj4gIAkJc3lzcmFtQDIwMjAwMDAgewo+PiAgCQkJY29t
-cGF0aWJsZSA9ICJtbWlvLXNyYW0iOwo+PiAgCQkJcmVnID0gPDB4MDIwMjAwMDAgMHg1NDAwMD47
-Cj4+Cj4gVGhlIGV4eW5vczU0eHguZHRzaSBhZmZlY3RzIHRoZSBleHlub3M1NDEwIFNvQy4KPiBX
-aGVuIEkgY2hlY2tlZCB0aGUgUFBJIHBvcnQgbnVtYmVyIG9uIEV4eW5vczU0MTAvRXh5bm9zNTQy
-MiBUUk0sCj4gdGhleSBoYXZlIHRoZSBkaWZmZXJlbnQgUFBJIHBvcnQgbnVtYmVyIGFzIGZvbGxv
-d2luZzoKPgo+IAkJCQl8RXh5bm9zNTQxMAl8RXh5bm9zNTQyMgl8Cj4gLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLQo+IEFSQ0hfVElNRVJfUEhZU19TRUNVUkVfUFBJCXwxIG5DTlRQU0lS
-UQl8MTMgbkNOVFBTSVJRCXxTZWN1cmUgcGh5c2ljYWwgdGltZXIKPiBBUkNIX1RJTUVSX1BIWVNf
-Tk9OU0VDVVJFX1BQSQl8MiBuQ05UUE5TSVJRCXwxNCBuQ05UUE5TSVJRCXxOb24tc2VjdXJlIHBo
-eXNpY2FsIHRpbWVyCj4gQVJDSF9USU1FUl9WSVJUX1BQSQkJfDQgbkNOVFZJUlEJfDExIG5DTlRW
-SVJRCXxWaXJ0dWFsIHRpbWVyCj4gQVJDSF9USU1FUl9IWVBfUFBJCQl8NSBuQ05USFBJUlEJfDEw
-IG5DTlRIUElSUQl8SHlwZXJ2aXNvciB0aW1lcgo+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0KClNhZGx5LCBFeHlub3M1NDEwIFRSTSBzZWVtcyB0byBiZSB3cm9uZy4gQWxsIG90aGVy
-IEV4eW5vczUgVFJNcyAoNTI1MCwKNTI2MCwgNTQyMCwgNTQyMikgZGVmaW5lcyAxMywxNCwxMSwx
-MCBQUEkgZm9yIGFyY2ggdGltZXIuIEkndmUgY2hlY2tlZApvbiB0aGUgcmVhbCBoYXJkd2FyZSAo
-RXh5bm9zNTQxMC1iYXNlZCBPZHJvaWQgWFUgYm9hcmQpIGFuZCB0aGUgdmFsdWVzCnRha2VuIGZy
-b20gRXh5bm9zNTQyMiBUUk0gd29ya3MgZmluZSwgd2hpbGUgdGhlIG9uZXMgZnJvbSA1NDEwIFRS
-TSBkb24ndC4KCj4gRXh5bm9zNTQxMCBhbmQgRXh5bm9zNTQyMiBoYXZlIHRoZSBkaWZmZXJlbnQg
-dXNhZ2Ugb2YgYml0ZmllbGQKPiBvZiAgbkNOVFBTSVJRL25DTlRQTlNJUlEvbkNOVFZJUlEvbkNO
-VEhQSVJRIGFzIGZvbGxvd2luZzoKPgo+IAkJCQl8RXh5bm9zNTQxMAl8RXh5bm9zNTQyMgo+IC0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LQo+IG5DTlRQU0lSUVszOjBdCQkJfCBLRkMJCXwgRUFHTEUKPiBuQ05UUE5TSVJRWzM6MF0JCQl8
-IEtGQwkJfCBFQUdMRQo+IG5DTlRWSVJRWzM6MF0JCQl8IEtGQwkJfCBFQUdMRQo+IG5DTlRIUElS
-UVszOjBdCQkJfCBLRkMJCXwgRUFHTEUKPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiBuQ05UUFNJUlFbNzo0XQkJCXwgRUFHTEUJ
-CXwgS0ZDCj4gbkNOVFBOU0lSUVs3OjRdCQkJfCBFQUdMRQkJfCBLRkMKPiBuQ05UVklSUVs3OjRd
-CQkJfCBFQUdMRQkJfCBLRkMKPiBuQ05USFBJUlFbNzo0XQkJCXwgRUFHTEUJCXwgS0ZDCgpUaGlz
-IGlzIG5vdCBhbiBpc3N1ZSwgdGhpcyBpcyBhIHJlc3VsdCBvZiBkaWZmZXJlbnQgb3JkZXIgb2Yg
-Yml0L0xJVFRMRQpjb3Jlcy4gU2FtZSBmb3IgRXh5bm9zNTQyMC4KCkJlc3QgcmVnYXJkcwotLSAK
-TWFyZWsgU3p5cHJvd3NraSwgUGhEClNhbXN1bmcgUiZEIEluc3RpdHV0ZSBQb2xhbmQKCgpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2Vy
-bmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0
-cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVs
-Cg==
+Fix bug "s5p-sss crypto driver doesn't set next AES-CBC IV". This should
+also fix AES-CTR mode. Tested on Odroid U3 with Eric Biggers branch
+"iv-out-testing".
+
+Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+---
+ drivers/crypto/s5p-sss.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+index 0064be0e3941..3ea058addad3 100644
+--- a/drivers/crypto/s5p-sss.c
++++ b/drivers/crypto/s5p-sss.c
+@@ -463,6 +463,9 @@ static void s5p_sg_copy_buf(void *buf, struct scatterlist *sg,
+ 
+ static void s5p_sg_done(struct s5p_aes_dev *dev)
+ {
++	struct ablkcipher_request *req = dev->req;
++	struct s5p_aes_reqctx *reqctx = ablkcipher_request_ctx(req);
++
+ 	if (dev->sg_dst_cpy) {
+ 		dev_dbg(dev->dev,
+ 			"Copying %d bytes of output data back to original place\n",
+@@ -472,6 +475,11 @@ static void s5p_sg_done(struct s5p_aes_dev *dev)
+ 	}
+ 	s5p_free_sg_cpy(dev, &dev->sg_src_cpy);
+ 	s5p_free_sg_cpy(dev, &dev->sg_dst_cpy);
++	if (reqctx->mode & FLAGS_AES_CBC)
++		memcpy_fromio(req->info, dev->aes_ioaddr + SSS_REG_AES_IV_DATA(0), 0x10);
++
++	if (reqctx->mode & FLAGS_AES_CTR)
++		memcpy_fromio(req->info, dev->aes_ioaddr + SSS_REG_AES_CNT_DATA(0), 0x10);
+ }
+ 
+ /* Calls the completion. Cannot be called with dev->lock hold. */
+-- 
+2.20.1
