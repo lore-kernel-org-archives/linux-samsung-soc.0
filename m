@@ -1,18 +1,19 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 Subject: Re: [PATCH 3/5] clocksource: exynos_mct: Increase priority over ARM
  arch timer
-Date: Mon, 18 Feb 2019 10:24:48 +0100
-Message-ID: <4b054e7d-5dd5-5796-6c08-22f15060f940@linaro.org>
+Date: Mon, 18 Feb 2019 10:49:41 +0100
+Message-ID: <fd3aac7b-029e-5873-f472-a0c83dda4da5@samsung.com>
 References: <20190215125229.30180-1-m.szyprowski@samsung.com>
  <CGME20190215125239eucas1p2d9167af42f2d04e462c56a070c3371c2@eucas1p2.samsung.com>
  <20190215125229.30180-4-m.szyprowski@samsung.com>
  <01569ba7-2e3e-5811-81e1-ca51cacbcb95@linaro.org>
  <7b994b86-9a84-39a7-e88d-203c64b30de8@samsung.com>
+ <4b054e7d-5dd5-5796-6c08-22f15060f940@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <7b994b86-9a84-39a7-e88d-203c64b30de8@samsung.com>
+In-Reply-To: <4b054e7d-5dd5-5796-6c08-22f15060f940@linaro.org>
 Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -23,77 +24,98 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: Chanwoo Choi <cw00.choi@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMTgvMDIvMjAxOSAwODo0MSwgTWFyZWsgU3p5cHJvd3NraSB3cm90ZToKPiBIaSBEYW5pZWws
-Cj4gCj4gT24gMjAxOS0wMi0xNSAxNzozNSwgRGFuaWVsIExlemNhbm8gd3JvdGU6Cj4+IE9uIDE1
-LzAyLzIwMTkgMTM6NTIsIE1hcmVrIFN6eXByb3dza2kgd3JvdGU6Cj4+PiBFeHlub3MgTXVsdGkt
-Q29yZSBUaW1lciBkcml2ZXIgKGV4eW5vc19tY3QpIG11c3QgYmUgc3RhcnRlZCBiZWZvcmUgQVJN
-Cj4+PiBBcmNoaXRlY3RlZCBUaW1lcnMgKGFyY2hfdGltZXIpLCBiZWNhdXNlIHRoZXkgYm90aCBz
-aGFyZSBzb21lIGNvbW1vbgo+Pj4gaGFyZHdhcmUgYmxvY2tzIChnbG9iYWwgc3lzdGVtIGNvdW50
-ZXIpIGFuZCB0dXJuaW5nIG9uIE1DVCBpcyBuZWVkZWQKPj4+IHRvIGdldCBBUk0gQXJjaGl0ZWN0
-ZWQgVGltZXIgd29ya2luZyBwcm9wZXJseS4gSW5jcmVhc2UgTUNUIHRpbWVyIHJhdGluZwo+Pj4g
-YW5kIGhvdHBsdWcgcHJpb3JpdHkgb3ZlciBBUk0gQXJjaGljdGVjdGVkIHRpbWVyIGRyaXZlciB0
-byBhY2hpZXZlIHRoYXQuCj4+IFRoaXMgaXMgYSBoYWNrLgo+Pgo+PiBUaGVyZSBhcmUgbWVjaGFu
-aXNtcyB0byBoYW5kbGUgdGhpcyBraW5kIG9mIGRlcGVuZGVuY3kuCj4+Cj4+IGVnLiBodHRwczov
-L3d3dy5rZXJuZWwub3JnL2RvYy9odG1sL3Y0LjE1L2RyaXZlci1hcGkvZGV2aWNlX2xpbmsuaHRt
-bAo+IAo+IFNvcnJ5LCBidXQgdGhpcyBpcyBub3QgYSBoYWNrLCBidXQgcHJvcGVyIHdheSB0byBo
-YW5kbGUgdGhpcyBpbgo+IGNsb2Nrc291cmNlL3RpbWVycyBmcmFtZXdvcmsuIFRoZSByYXRpbmdz
-IGFzc2lnbmVkIHRvIGVhY2ggZHJpdmVyIGFuZAo+IGNwdSBob3RwbHVnIHByaW9yaXR5IGxpc3Qg
-YXJlIGV4YWN0bHkgZm9yIG1hbmFnaW5nIHRoZSByZXF1ZXN0ZWQgb3JkZXIKPiBvZiBvcGVyYXRp
-b25zIGlmIG1vcmUgdGhhbiBvbmUgZHJpdmVyIGhhcyBiZWVuIHJlZ2lzdGVyZWQuCgpBY3R1YWxs
-eSwgSSdtIHJlbHVjdGFudCB3aXRoIHRoaXMgY2hhbmdlIChldmVuIGlmIGl0IGlzIGNvcnJlY3Qp
-IGJlY2F1c2UKaXQgaW50cm9kdWNlcyBhbiBpbXBsaWNpdCBkZXBlbmRlbmN5IGluIHRoZSBjcHUg
-aG90cGx1ZyBlbnVtZXJhdGlvbiBmb3IKdGhlIHRpbWVyIHN1YnN5c3RlbSB3aGlsZSBpdCBtYXkg
-YmUgbW9yZSBjb3JyZWN0IHRvIGhhdmUgaXQgZXhwbGljaXRseQp3aXRoIHRoZSBoYXJkd2FyZSBk
-ZXNjcmlwdGlvbiAob3Igd2hhdGV2ZXIpLgoKSG93ZXZlciBJIGRvbid0IHNlZSBhIHByb3BlciB3
-YXkgdG8gZGVzY3JpYmUgdGhpcyBkZXBlbmRlbmN5IHdpdGhvdXQKdG91Y2hpbmcgdGhlIERUIGFu
-ZCBhZGQgYSBwaGFuZGxlIHRvIHRoZSBhcmNoIHRpbWVyIGluIHRoZSBleHlub3NfbWN0CnRpbWVy
-IGRlc2NyaXB0aW9uLgoKPiBEZXZpY2UgbGlua3Mgb3BlcmF0ZXMgb24gdGhlICdrZXJuZWwgZGV2
-aWNlJyBvYmplY3RzLCB3aGljaCBhcmUgY3JlYXRlZAo+IGFuZCBtYW5hZ2VkIG11Y2ggbGF0ZXIg
-dGhhbiBjbG9ja3NvdXJjZS90aW1lcnMgYXJlIGluaXRpYWxpemVkLiBJIHNlZSBubwo+IHVzZSBv
-ZiBkZXZpY2UgbGlua3MgaW4gdGhpcyBjb250ZXh0LgoKWWVzLCB0aGF0IHdhcyBqdXN0IGFuIGV4
-YW1wbGUgdG8gc2hvdyB0aGVyZSBhcmUgbWVjaGFuaXNtcyB0byBhbGxvdwpwcm9wZXIgb3JkZXJp
-bmcuIEFzIHNhaWQgYmVmb3JlLCBub3QgdGhlIGJlc3QgZXhhbXBsZSBmb3IgdGhpcyBzaXR1YXRp
-b24uCgo+Pj4gU2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNh
-bXN1bmcuY29tPgo+Pj4gLS0tCj4+PiAgZHJpdmVycy9jbG9ja3NvdXJjZS9leHlub3NfbWN0LmMg
-fCA0ICsrLS0KPj4+ICBpbmNsdWRlL2xpbnV4L2NwdWhvdHBsdWcuaCAgICAgICB8IDIgKy0KPj4+
-ICAyIGZpbGVzIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkKPj4+Cj4+
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbG9ja3NvdXJjZS9leHlub3NfbWN0LmMgYi9kcml2ZXJz
-L2Nsb2Nrc291cmNlL2V4eW5vc19tY3QuYwo+Pj4gaW5kZXggNDk0MTM5MDBiMjRjLi41ODA5MGY1
-N2FkYTMgMTAwNjQ0Cj4+PiAtLS0gYS9kcml2ZXJzL2Nsb2Nrc291cmNlL2V4eW5vc19tY3QuYwo+
-Pj4gKysrIGIvZHJpdmVycy9jbG9ja3NvdXJjZS9leHlub3NfbWN0LmMKPj4+IEBAIC0yMTEsNyAr
-MjExLDcgQEAgc3RhdGljIHZvaWQgZXh5bm9zNF9mcmNfcmVzdW1lKHN0cnVjdCBjbG9ja3NvdXJj
-ZSAqY3MpCj4+PiAgCj4+PiAgc3RhdGljIHN0cnVjdCBjbG9ja3NvdXJjZSBtY3RfZnJjID0gewo+
-Pj4gIAkubmFtZQkJPSAibWN0LWZyYyIsCj4+PiAtCS5yYXRpbmcJCT0gNDAwLAo+Pj4gKwkucmF0
-aW5nCQk9IDQ1MCwKPj4+ICAJLnJlYWQJCT0gZXh5bm9zNF9mcmNfcmVhZCwKPj4+ICAJLm1hc2sJ
-CT0gQ0xPQ0tTT1VSQ0VfTUFTSygzMiksCj4+PiAgCS5mbGFncwkJPSBDTE9DS19TT1VSQ0VfSVNf
-Q09OVElOVU9VUywKPj4+IEBAIC00NjUsNyArNDY1LDcgQEAgc3RhdGljIGludCBleHlub3M0X21j
-dF9zdGFydGluZ19jcHUodW5zaWduZWQgaW50IGNwdSkKPj4+ICAJZXZ0LT5zZXRfc3RhdGVfb25l
-c2hvdF9zdG9wcGVkID0gc2V0X3N0YXRlX3NodXRkb3duOwo+Pj4gIAlldnQtPnRpY2tfcmVzdW1l
-ID0gc2V0X3N0YXRlX3NodXRkb3duOwo+Pj4gIAlldnQtPmZlYXR1cmVzID0gQ0xPQ0tfRVZUX0ZF
-QVRfUEVSSU9ESUMgfCBDTE9DS19FVlRfRkVBVF9PTkVTSE9UOwo+Pj4gLQlldnQtPnJhdGluZyA9
-IDQ1MDsKPj4+ICsJZXZ0LT5yYXRpbmcgPSA1MDA7Cj4+PiAgCj4+PiAgCWV4eW5vczRfbWN0X3dy
-aXRlKFRJQ0tfQkFTRV9DTlQsIG1ldnQtPmJhc2UgKyBNQ1RfTF9UQ05UQl9PRkZTRVQpOwo+Pj4g
-IAo+Pj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvY3B1aG90cGx1Zy5oIGIvaW5jbHVkZS9s
-aW51eC9jcHVob3RwbHVnLmgKPj4+IGluZGV4IGZkNTg2ZDAzMDFlNy4uYmRkNTQ0ZjIxMTAyIDEw
-MDY0NAo+Pj4gLS0tIGEvaW5jbHVkZS9saW51eC9jcHVob3RwbHVnLmgKPj4+ICsrKyBiL2luY2x1
-ZGUvbGludXgvY3B1aG90cGx1Zy5oCj4+PiBAQCAtMTE1LDEwICsxMTUsMTAgQEAgZW51bSBjcHVo
-cF9zdGF0ZSB7Cj4+PiAgCUNQVUhQX0FQX1BFUkZfQVJNX0FDUElfU1RBUlRJTkcsCj4+PiAgCUNQ
-VUhQX0FQX1BFUkZfQVJNX1NUQVJUSU5HLAo+Pj4gIAlDUFVIUF9BUF9BUk1fTDJYMF9TVEFSVElO
-RywKPj4+ICsJQ1BVSFBfQVBfRVhZTk9TNF9NQ1RfVElNRVJfU1RBUlRJTkcsCj4+PiAgCUNQVUhQ
-X0FQX0FSTV9BUkNIX1RJTUVSX1NUQVJUSU5HLAo+Pj4gIAlDUFVIUF9BUF9BUk1fR0xPQkFMX1RJ
-TUVSX1NUQVJUSU5HLAo+Pj4gIAlDUFVIUF9BUF9KQ09SRV9USU1FUl9TVEFSVElORywKPj4+IC0J
-Q1BVSFBfQVBfRVhZTk9TNF9NQ1RfVElNRVJfU1RBUlRJTkcsCj4+PiAgCUNQVUhQX0FQX0FSTV9U
-V0RfU1RBUlRJTkcsCj4+PiAgCUNQVUhQX0FQX1FDT01fVElNRVJfU1RBUlRJTkcsCj4+PiAgCUNQ
-VUhQX0FQX0FSTUFEQV9USU1FUl9TVEFSVElORywKPj4+Cj4+Cj4gQmVzdCByZWdhcmRzCj4gCgoK
-LS0gCiA8aHR0cDovL3d3dy5saW5hcm8ub3JnLz4gTGluYXJvLm9yZyDilIIgT3BlbiBzb3VyY2Ug
-c29mdHdhcmUgZm9yIEFSTSBTb0NzCgpGb2xsb3cgTGluYXJvOiAgPGh0dHA6Ly93d3cuZmFjZWJv
-b2suY29tL3BhZ2VzL0xpbmFybz4gRmFjZWJvb2sgfAo8aHR0cDovL3R3aXR0ZXIuY29tLyMhL2xp
-bmFyb29yZz4gVHdpdHRlciB8CjxodHRwOi8vd3d3LmxpbmFyby5vcmcvbGluYXJvLWJsb2cvPiBC
-bG9nCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGlu
-dXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRl
-YWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgt
-YXJtLWtlcm5lbAo=
+Hi Daniel,
+
+On 2019-02-18 10:24, Daniel Lezcano wrote:
+> On 18/02/2019 08:41, Marek Szyprowski wrote:
+>> On 2019-02-15 17:35, Daniel Lezcano wrote:
+>>> On 15/02/2019 13:52, Marek Szyprowski wrote:
+>>>> Exynos Multi-Core Timer driver (exynos_mct) must be started before ARM
+>>>> Architected Timers (arch_timer), because they both share some common
+>>>> hardware blocks (global system counter) and turning on MCT is needed
+>>>> to get ARM Architected Timer working properly. Increase MCT timer rating
+>>>> and hotplug priority over ARM Archictected timer driver to achieve that.
+>>> This is a hack.
+>>>
+>>> There are mechanisms to handle this kind of dependency.
+>>>
+>>> eg. https://www.kernel.org/doc/html/v4.15/driver-api/device_link.html
+>> Sorry, but this is not a hack, but proper way to handle this in
+>> clocksource/timers framework. The ratings assigned to each driver and
+>> cpu hotplug priority list are exactly for managing the requested order
+>> of operations if more than one driver has been registered.
+> Actually, I'm reluctant with this change (even if it is correct) because
+> it introduces an implicit dependency in the cpu hotplug enumeration for
+> the timer subsystem while it may be more correct to have it explicitly
+> with the hardware description (or whatever).
+
+Maybe additional comment in the cpu hotplug list will convince you? For
+the current code changing the order of enums it is more than enough.
+There are no dynamic CPU hotplug priorities, so MCT driver cannot change
+its behavior depending on any dt-property or so. Increasing MCT priority
+has no side-effects in relation to other drivers (as they cannot
+existing on the same board).
+
+> However I don't see a proper way to describe this dependency without
+> touching the DT and add a phandle to the arch timer in the exynos_mct
+> timer description.
+>
+>> Device links operates on the 'kernel device' objects, which are created
+>> and managed much later than clocksource/timers are initialized. I see no
+>> use of device links in this context.
+> Yes, that was just an example to show there are mechanisms to allow
+> proper ordering. As said before, not the best example for this situation.
+>
+>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>>> ---
+>>>>  drivers/clocksource/exynos_mct.c | 4 ++--
+>>>>  include/linux/cpuhotplug.h       | 2 +-
+>>>>  2 files changed, 3 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+>>>> index 49413900b24c..58090f57ada3 100644
+>>>> --- a/drivers/clocksource/exynos_mct.c
+>>>> +++ b/drivers/clocksource/exynos_mct.c
+>>>> @@ -211,7 +211,7 @@ static void exynos4_frc_resume(struct clocksource *cs)
+>>>>  
+>>>>  static struct clocksource mct_frc = {
+>>>>  	.name		= "mct-frc",
+>>>> -	.rating		= 400,
+>>>> +	.rating		= 450,
+>>>>  	.read		= exynos4_frc_read,
+>>>>  	.mask		= CLOCKSOURCE_MASK(32),
+>>>>  	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
+>>>> @@ -465,7 +465,7 @@ static int exynos4_mct_starting_cpu(unsigned int cpu)
+>>>>  	evt->set_state_oneshot_stopped = set_state_shutdown;
+>>>>  	evt->tick_resume = set_state_shutdown;
+>>>>  	evt->features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT;
+>>>> -	evt->rating = 450;
+>>>> +	evt->rating = 500;
+>>>>  
+>>>>  	exynos4_mct_write(TICK_BASE_CNT, mevt->base + MCT_L_TCNTB_OFFSET);
+>>>>  
+>>>> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+>>>> index fd586d0301e7..bdd544f21102 100644
+>>>> --- a/include/linux/cpuhotplug.h
+>>>> +++ b/include/linux/cpuhotplug.h
+>>>> @@ -115,10 +115,10 @@ enum cpuhp_state {
+>>>>  	CPUHP_AP_PERF_ARM_ACPI_STARTING,
+>>>>  	CPUHP_AP_PERF_ARM_STARTING,
+>>>>  	CPUHP_AP_ARM_L2X0_STARTING,
+>>>> +	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
+>>>>  	CPUHP_AP_ARM_ARCH_TIMER_STARTING,
+>>>>  	CPUHP_AP_ARM_GLOBAL_TIMER_STARTING,
+>>>>  	CPUHP_AP_JCORE_TIMER_STARTING,
+>>>> -	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
+>>>>  	CPUHP_AP_ARM_TWD_STARTING,
+>>>>  	CPUHP_AP_QCOM_TIMER_STARTING,
+>>>>  	CPUHP_AP_ARMADA_TIMER_STARTING,
+>>>>
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
