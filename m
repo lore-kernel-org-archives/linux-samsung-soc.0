@@ -1,113 +1,53 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH 3/5] clocksource: exynos_mct: Increase priority over ARM
- arch timer
-Date: Mon, 18 Feb 2019 11:21:38 +0100
-Message-ID: <23cb02e1-7728-823c-462a-4a597f1607f9@linaro.org>
-References: <20190215125229.30180-1-m.szyprowski@samsung.com>
- <CGME20190215125239eucas1p2d9167af42f2d04e462c56a070c3371c2@eucas1p2.samsung.com>
- <20190215125229.30180-4-m.szyprowski@samsung.com>
- <01569ba7-2e3e-5811-81e1-ca51cacbcb95@linaro.org>
- <7b994b86-9a84-39a7-e88d-203c64b30de8@samsung.com>
- <4b054e7d-5dd5-5796-6c08-22f15060f940@linaro.org>
- <fd3aac7b-029e-5873-f472-a0c83dda4da5@samsung.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [RFC 0/4] clk/driver: platform: Fix kfree() of const memory on
+ setting driver_override
+Date: Mon, 18 Feb 2019 11:40:12 +0100
+Message-ID: <CAMuHMdWXy_0zL8FZWapPj4+cXRd0wHy9buLhf0D0txpAHPkK7Q@mail.gmail.com>
+References: <1550484960-2392-1-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <fd3aac7b-029e-5873-f472-a0c83dda4da5@samsung.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1550484960-2392-1-git-send-email-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-spi <linux-spi@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-arm-msm@vger.ke
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMTgvMDIvMjAxOSAxMDo0OSwgTWFyZWsgU3p5cHJvd3NraSB3cm90ZToKPiBIaSBEYW5pZWws
-Cj4gCj4gT24gMjAxOS0wMi0xOCAxMDoyNCwgRGFuaWVsIExlemNhbm8gd3JvdGU6Cj4+IE9uIDE4
-LzAyLzIwMTkgMDg6NDEsIE1hcmVrIFN6eXByb3dza2kgd3JvdGU6Cj4+PiBPbiAyMDE5LTAyLTE1
-IDE3OjM1LCBEYW5pZWwgTGV6Y2FubyB3cm90ZToKPj4+PiBPbiAxNS8wMi8yMDE5IDEzOjUyLCBN
-YXJlayBTenlwcm93c2tpIHdyb3RlOgo+Pj4+PiBFeHlub3MgTXVsdGktQ29yZSBUaW1lciBkcml2
-ZXIgKGV4eW5vc19tY3QpIG11c3QgYmUgc3RhcnRlZCBiZWZvcmUgQVJNCj4+Pj4+IEFyY2hpdGVj
-dGVkIFRpbWVycyAoYXJjaF90aW1lciksIGJlY2F1c2UgdGhleSBib3RoIHNoYXJlIHNvbWUgY29t
-bW9uCj4+Pj4+IGhhcmR3YXJlIGJsb2NrcyAoZ2xvYmFsIHN5c3RlbSBjb3VudGVyKSBhbmQgdHVy
-bmluZyBvbiBNQ1QgaXMgbmVlZGVkCj4+Pj4+IHRvIGdldCBBUk0gQXJjaGl0ZWN0ZWQgVGltZXIg
-d29ya2luZyBwcm9wZXJseS4gSW5jcmVhc2UgTUNUIHRpbWVyIHJhdGluZwo+Pj4+PiBhbmQgaG90
-cGx1ZyBwcmlvcml0eSBvdmVyIEFSTSBBcmNoaWN0ZWN0ZWQgdGltZXIgZHJpdmVyIHRvIGFjaGll
-dmUgdGhhdC4KPj4+PiBUaGlzIGlzIGEgaGFjay4KPj4+Pgo+Pj4+IFRoZXJlIGFyZSBtZWNoYW5p
-c21zIHRvIGhhbmRsZSB0aGlzIGtpbmQgb2YgZGVwZW5kZW5jeS4KPj4+Pgo+Pj4+IGVnLiBodHRw
-czovL3d3dy5rZXJuZWwub3JnL2RvYy9odG1sL3Y0LjE1L2RyaXZlci1hcGkvZGV2aWNlX2xpbmsu
-aHRtbAo+Pj4gU29ycnksIGJ1dCB0aGlzIGlzIG5vdCBhIGhhY2ssIGJ1dCBwcm9wZXIgd2F5IHRv
-IGhhbmRsZSB0aGlzIGluCj4+PiBjbG9ja3NvdXJjZS90aW1lcnMgZnJhbWV3b3JrLiBUaGUgcmF0
-aW5ncyBhc3NpZ25lZCB0byBlYWNoIGRyaXZlciBhbmQKPj4+IGNwdSBob3RwbHVnIHByaW9yaXR5
-IGxpc3QgYXJlIGV4YWN0bHkgZm9yIG1hbmFnaW5nIHRoZSByZXF1ZXN0ZWQgb3JkZXIKPj4+IG9m
-IG9wZXJhdGlvbnMgaWYgbW9yZSB0aGFuIG9uZSBkcml2ZXIgaGFzIGJlZW4gcmVnaXN0ZXJlZC4K
-Pj4gQWN0dWFsbHksIEknbSByZWx1Y3RhbnQgd2l0aCB0aGlzIGNoYW5nZSAoZXZlbiBpZiBpdCBp
-cyBjb3JyZWN0KSBiZWNhdXNlCj4+IGl0IGludHJvZHVjZXMgYW4gaW1wbGljaXQgZGVwZW5kZW5j
-eSBpbiB0aGUgY3B1IGhvdHBsdWcgZW51bWVyYXRpb24gZm9yCj4+IHRoZSB0aW1lciBzdWJzeXN0
-ZW0gd2hpbGUgaXQgbWF5IGJlIG1vcmUgY29ycmVjdCB0byBoYXZlIGl0IGV4cGxpY2l0bHkKPj4g
-d2l0aCB0aGUgaGFyZHdhcmUgZGVzY3JpcHRpb24gKG9yIHdoYXRldmVyKS4KPiAKPiBNYXliZSBh
-ZGRpdGlvbmFsIGNvbW1lbnQgaW4gdGhlIGNwdSBob3RwbHVnIGxpc3Qgd2lsbCBjb252aW5jZSB5
-b3U/IEZvcgo+IHRoZSBjdXJyZW50IGNvZGUgY2hhbmdpbmcgdGhlIG9yZGVyIG9mIGVudW1zIGl0
-IGlzIG1vcmUgdGhhbiBlbm91Z2guCj4gVGhlcmUgYXJlIG5vIGR5bmFtaWMgQ1BVIGhvdHBsdWcg
-cHJpb3JpdGllcywgc28gTUNUIGRyaXZlciBjYW5ub3QgY2hhbmdlCj4gaXRzIGJlaGF2aW9yIGRl
-cGVuZGluZyBvbiBhbnkgZHQtcHJvcGVydHkgb3Igc28uIEluY3JlYXNpbmcgTUNUIHByaW9yaXR5
-Cj4gaGFzIG5vIHNpZGUtZWZmZWN0cyBpbiByZWxhdGlvbiB0byBvdGhlciBkcml2ZXJzIChhcyB0
-aGV5IGNhbm5vdAo+IGV4aXN0aW5nIG9uIHRoZSBzYW1lIGJvYXJkKS4KCkl0IGlzIFRob21hcydz
-IGNhbGwsIEkgd2lsbCBsZXQgaGltIGRlY2lkZSBpZiBpdCBpcyBvayAuCgoKCj4+IEhvd2V2ZXIg
-SSBkb24ndCBzZWUgYSBwcm9wZXIgd2F5IHRvIGRlc2NyaWJlIHRoaXMgZGVwZW5kZW5jeSB3aXRo
-b3V0Cj4+IHRvdWNoaW5nIHRoZSBEVCBhbmQgYWRkIGEgcGhhbmRsZSB0byB0aGUgYXJjaCB0aW1l
-ciBpbiB0aGUgZXh5bm9zX21jdAo+PiB0aW1lciBkZXNjcmlwdGlvbi4KPj4KPj4+IERldmljZSBs
-aW5rcyBvcGVyYXRlcyBvbiB0aGUgJ2tlcm5lbCBkZXZpY2UnIG9iamVjdHMsIHdoaWNoIGFyZSBj
-cmVhdGVkCj4+PiBhbmQgbWFuYWdlZCBtdWNoIGxhdGVyIHRoYW4gY2xvY2tzb3VyY2UvdGltZXJz
-IGFyZSBpbml0aWFsaXplZC4gSSBzZWUgbm8KPj4+IHVzZSBvZiBkZXZpY2UgbGlua3MgaW4gdGhp
-cyBjb250ZXh0Lgo+PiBZZXMsIHRoYXQgd2FzIGp1c3QgYW4gZXhhbXBsZSB0byBzaG93IHRoZXJl
-IGFyZSBtZWNoYW5pc21zIHRvIGFsbG93Cj4+IHByb3BlciBvcmRlcmluZy4gQXMgc2FpZCBiZWZv
-cmUsIG5vdCB0aGUgYmVzdCBleGFtcGxlIGZvciB0aGlzIHNpdHVhdGlvbi4KPj4KPj4+Pj4gU2ln
-bmVkLW9mZi1ieTogTWFyZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPgo+
-Pj4+PiAtLS0KPj4+Pj4gIGRyaXZlcnMvY2xvY2tzb3VyY2UvZXh5bm9zX21jdC5jIHwgNCArKy0t
-Cj4+Pj4+ICBpbmNsdWRlL2xpbnV4L2NwdWhvdHBsdWcuaCAgICAgICB8IDIgKy0KPj4+Pj4gIDIg
-ZmlsZXMgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQo+Pj4+Pgo+Pj4+
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbG9ja3NvdXJjZS9leHlub3NfbWN0LmMgYi9kcml2ZXJz
-L2Nsb2Nrc291cmNlL2V4eW5vc19tY3QuYwo+Pj4+PiBpbmRleCA0OTQxMzkwMGIyNGMuLjU4MDkw
-ZjU3YWRhMyAxMDA2NDQKPj4+Pj4gLS0tIGEvZHJpdmVycy9jbG9ja3NvdXJjZS9leHlub3NfbWN0
-LmMKPj4+Pj4gKysrIGIvZHJpdmVycy9jbG9ja3NvdXJjZS9leHlub3NfbWN0LmMKPj4+Pj4gQEAg
-LTIxMSw3ICsyMTEsNyBAQCBzdGF0aWMgdm9pZCBleHlub3M0X2ZyY19yZXN1bWUoc3RydWN0IGNs
-b2Nrc291cmNlICpjcykKPj4+Pj4gIAo+Pj4+PiAgc3RhdGljIHN0cnVjdCBjbG9ja3NvdXJjZSBt
-Y3RfZnJjID0gewo+Pj4+PiAgCS5uYW1lCQk9ICJtY3QtZnJjIiwKPj4+Pj4gLQkucmF0aW5nCQk9
-IDQwMCwKPj4+Pj4gKwkucmF0aW5nCQk9IDQ1MCwKPj4+Pj4gIAkucmVhZAkJPSBleHlub3M0X2Zy
-Y19yZWFkLAo+Pj4+PiAgCS5tYXNrCQk9IENMT0NLU09VUkNFX01BU0soMzIpLAo+Pj4+PiAgCS5m
-bGFncwkJPSBDTE9DS19TT1VSQ0VfSVNfQ09OVElOVU9VUywKPj4+Pj4gQEAgLTQ2NSw3ICs0NjUs
-NyBAQCBzdGF0aWMgaW50IGV4eW5vczRfbWN0X3N0YXJ0aW5nX2NwdSh1bnNpZ25lZCBpbnQgY3B1
-KQo+Pj4+PiAgCWV2dC0+c2V0X3N0YXRlX29uZXNob3Rfc3RvcHBlZCA9IHNldF9zdGF0ZV9zaHV0
-ZG93bjsKPj4+Pj4gIAlldnQtPnRpY2tfcmVzdW1lID0gc2V0X3N0YXRlX3NodXRkb3duOwo+Pj4+
-PiAgCWV2dC0+ZmVhdHVyZXMgPSBDTE9DS19FVlRfRkVBVF9QRVJJT0RJQyB8IENMT0NLX0VWVF9G
-RUFUX09ORVNIT1Q7Cj4+Pj4+IC0JZXZ0LT5yYXRpbmcgPSA0NTA7Cj4+Pj4+ICsJZXZ0LT5yYXRp
-bmcgPSA1MDA7Cj4+Pj4+ICAKPj4+Pj4gIAlleHlub3M0X21jdF93cml0ZShUSUNLX0JBU0VfQ05U
-LCBtZXZ0LT5iYXNlICsgTUNUX0xfVENOVEJfT0ZGU0VUKTsKPj4+Pj4gIAo+Pj4+PiBkaWZmIC0t
-Z2l0IGEvaW5jbHVkZS9saW51eC9jcHVob3RwbHVnLmggYi9pbmNsdWRlL2xpbnV4L2NwdWhvdHBs
-dWcuaAo+Pj4+PiBpbmRleCBmZDU4NmQwMzAxZTcuLmJkZDU0NGYyMTEwMiAxMDA2NDQKPj4+Pj4g
-LS0tIGEvaW5jbHVkZS9saW51eC9jcHVob3RwbHVnLmgKPj4+Pj4gKysrIGIvaW5jbHVkZS9saW51
-eC9jcHVob3RwbHVnLmgKPj4+Pj4gQEAgLTExNSwxMCArMTE1LDEwIEBAIGVudW0gY3B1aHBfc3Rh
-dGUgewo+Pj4+PiAgCUNQVUhQX0FQX1BFUkZfQVJNX0FDUElfU1RBUlRJTkcsCj4+Pj4+ICAJQ1BV
-SFBfQVBfUEVSRl9BUk1fU1RBUlRJTkcsCj4+Pj4+ICAJQ1BVSFBfQVBfQVJNX0wyWDBfU1RBUlRJ
-TkcsCj4+Pj4+ICsJQ1BVSFBfQVBfRVhZTk9TNF9NQ1RfVElNRVJfU1RBUlRJTkcsCj4+Pj4+ICAJ
-Q1BVSFBfQVBfQVJNX0FSQ0hfVElNRVJfU1RBUlRJTkcsCj4+Pj4+ICAJQ1BVSFBfQVBfQVJNX0dM
-T0JBTF9USU1FUl9TVEFSVElORywKPj4+Pj4gIAlDUFVIUF9BUF9KQ09SRV9USU1FUl9TVEFSVElO
-RywKPj4+Pj4gLQlDUFVIUF9BUF9FWFlOT1M0X01DVF9USU1FUl9TVEFSVElORywKPj4+Pj4gIAlD
-UFVIUF9BUF9BUk1fVFdEX1NUQVJUSU5HLAo+Pj4+PiAgCUNQVUhQX0FQX1FDT01fVElNRVJfU1RB
-UlRJTkcsCj4+Pj4+ICAJQ1BVSFBfQVBfQVJNQURBX1RJTUVSX1NUQVJUSU5HLAo+Pj4+Pgo+IEJl
-c3QgcmVnYXJkcwo+IAoKCi0tIAogPGh0dHA6Ly93d3cubGluYXJvLm9yZy8+IExpbmFyby5vcmcg
-4pSCIE9wZW4gc291cmNlIHNvZnR3YXJlIGZvciBBUk0gU29DcwoKRm9sbG93IExpbmFybzogIDxo
-dHRwOi8vd3d3LmZhY2Vib29rLmNvbS9wYWdlcy9MaW5hcm8+IEZhY2Vib29rIHwKPGh0dHA6Ly90
-d2l0dGVyLmNvbS8jIS9saW5hcm9vcmc+IFR3aXR0ZXIgfAo8aHR0cDovL3d3dy5saW5hcm8ub3Jn
-L2xpbmFyby1ibG9nLz4gQmxvZwoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJu
-ZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+Hi Krzysztof,
+
+On Mon, Feb 18, 2019 at 11:27 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> The problem
+> ===========
+> Several device types (platform, amba, spi etc.) provide a driver_override
+> field.  On sysfs store or during device removal, they kfree() the
+> existing value.
+>
+> However the users are unaware of this and set the driver_override like:
+>
+>         pdev->driver_override = "exynos5-subcmu";
+>
+> which obviously leads to error.
+
+IMHO driver_override is not meant to be set by a driver, only from userspace,
+for binding the device to vfio (is there another use case?).
+
+>   clk: samsung: exynos5: Fix kfree() of const memory on setting
+>     driver_override
+>   slimbus: ngd: Fix kfree() of const memory on setting driver_override
+
+I see all users set override immediately after allocating a platform device.
+Can't they just allocate a platform device using the override name instead?
+What am I missing?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
