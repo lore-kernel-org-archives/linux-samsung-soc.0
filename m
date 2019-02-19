@@ -1,57 +1,43 @@
-From: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Subject: [PATCH v2] crypto: s5p: update iv after AES-CBC op end
-Date: Tue, 19 Feb 2019 17:02:32 +0100
-Message-ID: <20190219160232.22084-1-k.konieczny@partner.samsung.com>
-References: <CGME20190219160249eucas1p17f521e74a9acab6a330e72a3c682adce@eucas1p1.samsung.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Subject: Re: [PATCH 12/14] media: include: fix several typos
+Date: Tue, 19 Feb 2019 16:28:36 +0000
+Message-ID: <CA+V-a8vCQ3grhE9xeen0vfs9O4LFR2t9fK+OcjkyOet9x=5FsA@mail.gmail.com>
+References: <f235ba60b2b7e5fba09d3c6b0d5dbbd8a86ea9b9.1550518128.git.mchehab+samsung@kernel.org>
+ <8ad3211c5c6c6835997237af02df71eeb2c78c17.1550518128.git.mchehab+samsung@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: k.konieczny@partner.samsung.com
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Eric Biggers <ebiggers@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <8ad3211c5c6c6835997237af02df71eeb2c78c17.1550518128.git.mchehab+samsung@kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Pawel Osciak <pawel@osciak.com>, Krzysztof Kozlowski <krzk@kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Hans Verkuil <hverkuil@xs4all.nl>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, LAK <linux-arm-kernel@lists.infradead.org>, Linux Media Mailing List <linux-media@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Fix bug "s5p-sss crypto driver doesn't set next AES-CBC IV". While at this,
-fix also AES-CTR mode. Tested on Odroid U3 with Eric Biggers branch
-"iv-out-testing".
+Hi Mauro,
 
-Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Reported-by: Eric Biggers <ebiggers@kernel.org>
----
-Changes since v1:
- - reworded Subject and commit message
- - changed code according to comments by Krzysztof Kozlowski
- - added Reported-by line
----
- drivers/crypto/s5p-sss.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+On Mon, Feb 18, 2019 at 7:29 PM Mauro Carvalho Chehab
+<mchehab+samsung@kernel.org> wrote:
+>
+> Use codespell to fix lots of typos over frontends.
+>
+> Manually verified to avoid false-positives.
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> ---
+>  include/media/davinci/dm355_ccdc.h         | 4 ++--
+>  include/media/davinci/dm644x_ccdc.h        | 2 +-
+For the above,
 
-diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-index 0064be0e3941..30b4f1015d8f 100644
---- a/drivers/crypto/s5p-sss.c
-+++ b/drivers/crypto/s5p-sss.c
-@@ -463,6 +463,9 @@ static void s5p_sg_copy_buf(void *buf, struct scatterlist *sg,
- 
- static void s5p_sg_done(struct s5p_aes_dev *dev)
- {
-+	struct ablkcipher_request *req = dev->req;
-+	struct s5p_aes_reqctx *reqctx = ablkcipher_request_ctx(req);
-+
- 	if (dev->sg_dst_cpy) {
- 		dev_dbg(dev->dev,
- 			"Copying %d bytes of output data back to original place\n",
-@@ -472,6 +475,11 @@ static void s5p_sg_done(struct s5p_aes_dev *dev)
- 	}
- 	s5p_free_sg_cpy(dev, &dev->sg_src_cpy);
- 	s5p_free_sg_cpy(dev, &dev->sg_dst_cpy);
-+	if (reqctx->mode & FLAGS_AES_CBC)
-+		memcpy_fromio(req->info, dev->aes_ioaddr + SSS_REG_AES_IV_DATA(0), AES_BLOCK_SIZE);
-+
-+	else if (reqctx->mode & FLAGS_AES_CTR)
-+		memcpy_fromio(req->info, dev->aes_ioaddr + SSS_REG_AES_CNT_DATA(0), AES_BLOCK_SIZE);
- }
- 
- /* Calls the completion. Cannot be called with dev->lock hold. */
--- 
-2.20.1
+Reviewed-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
+
+Regards,
+Prabhakar
