@@ -1,7 +1,7 @@
 From: Stuart Menefy <stuart.menefy@mathembedded.com>
-Subject: [PATCH v2 3/4] ARM: dts: exynos: Add interrupts for dedicated EINTs on Exynos5260
-Date: Tue, 19 Feb 2019 13:03:36 +0000
-Message-ID: <20190219130337.21353-4-stuart@menefy.org>
+Subject: [PATCH v2 1/4] ARM: dts: exynos: Use bustop PLL as the source for MMC clocks on Exynos5260
+Date: Tue, 19 Feb 2019 13:03:34 +0000
+Message-ID: <20190219130337.21353-2-stuart@menefy.org>
 References: <20190219130337.21353-1-stuart@menefy.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190219130337.21353-1-stuart@menefy.org>
@@ -11,47 +11,65 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Stuart Menefy <stuart.menefy@mathembedded.com>
 
-Add the missing interrupt information for the GPIO lines with
-dedicated EINT interrupts.
+By default the MMC clock will be derived from mediatop PLL, which
+usually runs at 666MHz. However as most SD and MMC clocks are multiples
+or fractions of 100MHz, it makes more sense to use the bustop PLL
+which runs at 800MHz. This matches the behaviour of the Samsung vendor
+supplied 3.4 kernel.
 
 Signed-off-by: Stuart Menefy <stuart.menefy@mathembedded.com>
 ---
- arch/arm/boot/dts/exynos5260-pinctrl.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/arm/boot/dts/exynos5260.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5260-pinctrl.dtsi b/arch/arm/boot/dts/exynos5260-pinctrl.dtsi
-index b1edb20b789e..17e2f3e0d71e 100644
---- a/arch/arm/boot/dts/exynos5260-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5260-pinctrl.dtsi
-@@ -153,6 +153,14 @@
- 		#gpio-cells = <2>;
- 
- 		interrupt-controller;
-+		interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
- 		#interrupt-cells = <2>;
- 	};
- 
-@@ -161,6 +169,14 @@
- 		#gpio-cells = <2>;
- 
- 		interrupt-controller;
-+		interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
- 		#interrupt-cells = <2>;
- 	};
- 
+diff --git a/arch/arm/boot/dts/exynos5260.dtsi b/arch/arm/boot/dts/exynos5260.dtsi
+index 55167850619c..14b423de9137 100644
+--- a/arch/arm/boot/dts/exynos5260.dtsi
++++ b/arch/arm/boot/dts/exynos5260.dtsi
+@@ -288,6 +288,14 @@
+ 			#size-cells = <0>;
+ 			clocks = <&clock_fsys FSYS_CLK_MMC0>, <&clock_top TOP_SCLK_MMC0>;
+ 			clock-names = "biu", "ciu";
++			assigned-clocks =
++				<&clock_top TOP_MOUT_SCLK_FSYS_MMC0_SDCLKIN_A>,
++				<&clock_top TOP_MOUT_SCLK_FSYS_MMC0_SDCLKIN_B>,
++				<&clock_top TOP_SCLK_MMC0>;
++			assigned-clock-parents =
++				<&clock_top TOP_MOUT_BUSTOP_PLL_USER>,
++				<&clock_top TOP_MOUT_SCLK_FSYS_MMC0_SDCLKIN_A>;
++			assigned-clock-rates = <0>, <0>, <800000000>;
+ 			fifo-depth = <64>;
+ 			status = "disabled";
+ 		};
+@@ -300,6 +308,14 @@
+ 			#size-cells = <0>;
+ 			clocks = <&clock_fsys FSYS_CLK_MMC1>, <&clock_top TOP_SCLK_MMC1>;
+ 			clock-names = "biu", "ciu";
++			assigned-clocks =
++				<&clock_top TOP_MOUT_SCLK_FSYS_MMC1_SDCLKIN_A>,
++				<&clock_top TOP_MOUT_SCLK_FSYS_MMC1_SDCLKIN_B>,
++				<&clock_top TOP_SCLK_MMC1>;
++			assigned-clock-parents =
++				<&clock_top TOP_MOUT_BUSTOP_PLL_USER>,
++				<&clock_top TOP_MOUT_SCLK_FSYS_MMC1_SDCLKIN_A>;
++			assigned-clock-rates = <0>, <0>, <800000000>;
+ 			fifo-depth = <64>;
+ 			status = "disabled";
+ 		};
+@@ -312,6 +328,14 @@
+ 			#size-cells = <0>;
+ 			clocks = <&clock_fsys FSYS_CLK_MMC2>, <&clock_top TOP_SCLK_MMC2>;
+ 			clock-names = "biu", "ciu";
++			assigned-clocks =
++				<&clock_top TOP_MOUT_SCLK_FSYS_MMC2_SDCLKIN_A>,
++				<&clock_top TOP_MOUT_SCLK_FSYS_MMC2_SDCLKIN_B>,
++				<&clock_top TOP_SCLK_MMC2>;
++			assigned-clock-parents =
++				<&clock_top TOP_MOUT_BUSTOP_PLL_USER>,
++				<&clock_top TOP_MOUT_SCLK_FSYS_MMC2_SDCLKIN_A>;
++			assigned-clock-rates = <0>, <0>, <800000000>;
+ 			fifo-depth = <64>;
+ 			status = "disabled";
+ 		};
 -- 
 2.13.6
