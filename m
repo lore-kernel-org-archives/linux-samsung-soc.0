@@ -1,30 +1,103 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 21/21] ARM: dts: exynos5422-odroidxu4: Add support for
- secondary DAI
-Date: Mon, 18 Feb 2019 21:22:37 +0100
-Message-ID: <20190218202237.GB24814@kozik-lap>
-References: <20190212180342.32040-1-s.nawrocki@samsung.com>
- <CGME20190212180553epcas2p10fb4f2f465392de8609c127ed3f33ab4@epcas2p1.samsung.com>
- <20190212180342.32040-22-s.nawrocki@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 4/5] ARM: dts: exynos: Add support ARM architected timers
+Date: Tue, 19 Feb 2019 09:03:18 +0900
+Message-ID: <584ac777-445c-81de-d1c1-645306ed88d9@samsung.com>
+References: <20190215125229.30180-1-m.szyprowski@samsung.com>
+ <CGME20190215125240eucas1p277671ab6d0eb4d1102d3cddd6c61c255@eucas1p2.samsung.com>
+ <20190215125229.30180-5-m.szyprowski@samsung.com>
+ <c73ca3d2-ccd1-e2d0-f81c-5b62a4313a5d@samsung.com>
+ <4c0a5561-b1f0-6938-3e89-eae5014aafa1@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190212180342.32040-22-s.nawrocki@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: broonie@kernel.org, lgirdwood@gmail.com, sbkim73@samsung.com, m.szyprowski@samsung.com, b.zolnierkie@samsung.com, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <4c0a5561-b1f0-6938-3e89-eae5014aafa1@samsung.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 07:03:42PM +0100, Sylwester Nawrocki wrote:
-> This patch extends DAPM routing and adds secondary CPU DAI entry
-> to support the secondary audio PCM interface on Odroid XU4.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5422-odroidxu4.dts | 4 +++-
-
-Thanks, applied.
-
-Best regards,
-Krzysztof
+SGkgTWFyZWssCgpPbiAxOS4gMi4gMTguIOyYpO2bhCA5OjI0LCBNYXJlayBTenlwcm93c2tpIHdy
+b3RlOgo+IEhpIENoYW53b28sCj4gCj4gT24gMjAxOS0wMi0xOCAxMjo1OCwgQ2hhbndvbyBDaG9p
+IHdyb3RlOgo+PiBPbiAxOS4gMi4gMTUuIOyYpO2bhCA5OjUyLCBNYXJlayBTenlwcm93c2tpIHdy
+b3RlOgo+Pj4gQWxsIENvcnRleEE3L0ExNSBiYXNlZCBFeHlub3MgU29DcyBoYXZlIEFSTSBhcmNo
+aXRlY3RlZCB0aW1lcnMsIHNvIGVuYWJsZQo+Pj4gc3VwcG9ydCBmb3IgdGhlbSBkaXJlY3RseSBp
+biB0aGUgYmFzZSBkdHNpIGZvciBFeHlub3MzMjUwLCBFeHlub3M1MjUwCj4+PiBhbmQgRXh5bm9z
+NTR4eCBTb0NzLiBOb25lIG9mIHRoZSBrbm93biBmaXJtd2FyZSBwcm9wZXJseSBjb25maWd1cmVz
+IGFyY2gKPj4+IHRpbWVyIHJlZ2lzdGVycywgc28gbWFyayB0aGVtIGFzIG5vdC1mdy1jb25maWd1
+cmVkIGFuZCBzZXQgZnJlcXVlbmN5Cj4+PiB0byAyNE1Ieiwgd2hpY2ggaXMgdGhlIG9ubHkgY29u
+ZmlndXJhdGlvbiBzdXBwb3J0ZWQgYnkgdGhlIHJlbWFpbmluZwo+Pj4gZHJpdmVycyAoY2xvY2tz
+KSBzbyBmYXIuCj4+Pgo+Pj4gU2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJvd3NraSA8bS5zenlw
+cm93c2tpQHNhbXN1bmcuY29tPgo+Pj4gLS0tCj4+PiAgYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9z
+MzI1MC5kdHNpIHwgMTAgKysrKysrKysrKwo+Pj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUy
+NTAuZHRzaSB8ICAxICsKPj4+ICBhcmNoL2FybS9ib290L2R0cy9leHlub3M1NHh4LmR0c2kgfCAx
+MCArKysrKysrKysrCj4+PiAgMyBmaWxlcyBjaGFuZ2VkLCAyMSBpbnNlcnRpb25zKCspCj4+Pgo+
+Pj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczMyNTAuZHRzaSBiL2FyY2gv
+YXJtL2Jvb3QvZHRzL2V4eW5vczMyNTAuZHRzaQo+Pj4gaW5kZXggNjA4ZDE3NDU0MTc5Li4zOTY2
+ZTc5NjA5NjQgMTAwNjQ0Cj4+PiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3MzMjUwLmR0
+c2kKPj4+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczMyNTAuZHRzaQo+Pj4gQEAgLTEz
+NCw2ICsxMzQsMTYgQEAKPj4+ICAJCQl9Owo+Pj4gIAkJfTsKPj4+ICAKPj4+ICsJCXRpbWVyIHsK
+Pj4+ICsJCQljb21wYXRpYmxlID0gImFybSxhcm12Ny10aW1lciI7Cj4+PiArCQkJaW50ZXJydXB0
+cyA9IDxHSUNfUFBJIDEzIChHSUNfQ1BVX01BU0tfU0lNUExFKDQpIHwgSVJRX1RZUEVfTEVWRUxf
+TE9XKT4sCj4+PiArCQkJCSAgICAgPEdJQ19QUEkgMTQgKEdJQ19DUFVfTUFTS19TSU1QTEUoNCkg
+fCBJUlFfVFlQRV9MRVZFTF9MT1cpPiwKPj4+ICsJCQkJICAgICA8R0lDX1BQSSAxMSAoR0lDX0NQ
+VV9NQVNLX1NJTVBMRSg0KSB8IElSUV9UWVBFX0xFVkVMX0xPVyk+LAo+Pj4gKwkJCQkgICAgIDxH
+SUNfUFBJIDEwIChHSUNfQ1BVX01BU0tfU0lNUExFKDQpIHwgSVJRX1RZUEVfTEVWRUxfTE9XKT47
+Cj4+PiArCQkJY2xvY2stZnJlcXVlbmN5ID0gPDI0MDAwMDAwPjsKPj4+ICsJCQlhcm0sY3B1LXJl
+Z2lzdGVycy1ub3QtZnctY29uZmlndXJlZDsKPj4+ICsJCX07Cj4+PiArCj4+PiAgCQlzeXNyYW1A
+MjAyMDAwMCB7Cj4+PiAgCQkJY29tcGF0aWJsZSA9ICJtbWlvLXNyYW0iOwo+Pj4gIAkJCXJlZyA9
+IDwweDAyMDIwMDAwIDB4NDAwMDA+Owo+Pj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRz
+L2V4eW5vczUyNTAuZHRzaSBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAuZHRzaQo+Pj4g
+aW5kZXggODA5ODZiOTdkZmU1Li45NWFmNDA1MGY2OWQgMTAwNjQ0Cj4+PiAtLS0gYS9hcmNoL2Fy
+bS9ib290L2R0cy9leHlub3M1MjUwLmR0c2kKPj4+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4
+eW5vczUyNTAuZHRzaQo+Pj4gQEAgLTIzOSw2ICsyMzksNyBAQAo+Pj4gIAkJCSAqIHNvIHdlIG5l
+ZWQgdGhlIHZhbHVlIGZyb20gRFQuCj4+PiAgCQkJICovCj4+PiAgCQkJY2xvY2stZnJlcXVlbmN5
+ID0gPDI0MDAwMDAwPjsKPj4+ICsJCQlhcm0sY3B1LXJlZ2lzdGVycy1ub3QtZnctY29uZmlndXJl
+ZDsKPj4+ICAJCX07Cj4+PiAgCj4+PiAgCQltY3RAMTAxYzAwMDAgewo+Pj4gZGlmZiAtLWdpdCBh
+L2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0eHguZHRzaSBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4
+eW5vczU0eHguZHRzaQo+Pj4gaW5kZXggZGUyNmU1ZWUwZDJkLi40NWUwNjcxN2VlNTEgMTAwNjQ0
+Cj4+PiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1NHh4LmR0c2kKPj4+ICsrKyBiL2Fy
+Y2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0eHguZHRzaQo+Pj4gQEAgLTQ2LDYgKzQ2LDE2IEBACj4+
+PiAgCQkJc3RhdHVzID0gImRpc2FibGVkIjsKPj4+ICAJCX07Cj4+PiAgCj4+PiArCQl0aW1lciB7
+Cj4+PiArCQkJY29tcGF0aWJsZSA9ICJhcm0sYXJtdjctdGltZXIiOwo+Pj4gKwkJCWludGVycnVw
+dHMgPSA8R0lDX1BQSSAxMyAoR0lDX0NQVV9NQVNLX1NJTVBMRSg0KSB8IElSUV9UWVBFX0xFVkVM
+X0xPVyk+LAo+Pj4gKwkJCQkgICAgIDxHSUNfUFBJIDE0IChHSUNfQ1BVX01BU0tfU0lNUExFKDQp
+IHwgSVJRX1RZUEVfTEVWRUxfTE9XKT4sCj4+PiArCQkJCSAgICAgPEdJQ19QUEkgMTEgKEdJQ19D
+UFVfTUFTS19TSU1QTEUoNCkgfCBJUlFfVFlQRV9MRVZFTF9MT1cpPiwKPj4+ICsJCQkJICAgICA8
+R0lDX1BQSSAxMCAoR0lDX0NQVV9NQVNLX1NJTVBMRSg0KSB8IElSUV9UWVBFX0xFVkVMX0xPVyk+
+Owo+Pj4gKwkJCWFybSxjcHUtcmVnaXN0ZXJzLW5vdC1mdy1jb25maWd1cmVkOwo+Pj4gKwkJCWNs
+b2NrLWZyZXF1ZW5jeSA9IDwyNDAwMDAwMD47Cj4+PiArCQl9Owo+Pj4gKwo+Pj4gIAkJc3lzcmFt
+QDIwMjAwMDAgewo+Pj4gIAkJCWNvbXBhdGlibGUgPSAibW1pby1zcmFtIjsKPj4+ICAJCQlyZWcg
+PSA8MHgwMjAyMDAwMCAweDU0MDAwPjsKPj4+Cj4+IFRoZSBleHlub3M1NHh4LmR0c2kgYWZmZWN0
+cyB0aGUgZXh5bm9zNTQxMCBTb0MuCj4+IFdoZW4gSSBjaGVja2VkIHRoZSBQUEkgcG9ydCBudW1i
+ZXIgb24gRXh5bm9zNTQxMC9FeHlub3M1NDIyIFRSTSwKPj4gdGhleSBoYXZlIHRoZSBkaWZmZXJl
+bnQgUFBJIHBvcnQgbnVtYmVyIGFzIGZvbGxvd2luZzoKPj4KPj4gCQkJCXxFeHlub3M1NDEwCXxF
+eHlub3M1NDIyCXwKPj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+PiBBUkNIX1RJ
+TUVSX1BIWVNfU0VDVVJFX1BQSQl8MSBuQ05UUFNJUlEJfDEzIG5DTlRQU0lSUQl8U2VjdXJlIHBo
+eXNpY2FsIHRpbWVyCj4+IEFSQ0hfVElNRVJfUEhZU19OT05TRUNVUkVfUFBJCXwyIG5DTlRQTlNJ
+UlEJfDE0IG5DTlRQTlNJUlEJfE5vbi1zZWN1cmUgcGh5c2ljYWwgdGltZXIKPj4gQVJDSF9USU1F
+Ul9WSVJUX1BQSQkJfDQgbkNOVFZJUlEJfDExIG5DTlRWSVJRCXxWaXJ0dWFsIHRpbWVyCj4+IEFS
+Q0hfVElNRVJfSFlQX1BQSQkJfDUgbkNOVEhQSVJRCXwxMCBuQ05USFBJUlEJfEh5cGVydmlzb3Ig
+dGltZXIKPj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+IAo+IFNhZGx5LCBFeHlu
+b3M1NDEwIFRSTSBzZWVtcyB0byBiZSB3cm9uZy4gQWxsIG90aGVyIEV4eW5vczUgVFJNcyAoNTI1
+MCwKPiA1MjYwLCA1NDIwLCA1NDIyKSBkZWZpbmVzIDEzLDE0LDExLDEwIFBQSSBmb3IgYXJjaCB0
+aW1lci4gSSd2ZSBjaGVja2VkCj4gb24gdGhlIHJlYWwgaGFyZHdhcmUgKEV4eW5vczU0MTAtYmFz
+ZWQgT2Ryb2lkIFhVIGJvYXJkKSBhbmQgdGhlIHZhbHVlcwo+IHRha2VuIGZyb20gRXh5bm9zNTQy
+MiBUUk0gd29ya3MgZmluZSwgd2hpbGUgdGhlIG9uZXMgZnJvbSA1NDEwIFRSTSBkb24ndC4KClRo
+YW5rcyBmb3Igc2hhcmluZyB0aGUgdGVzdGVkIHJlc3VsdC4KClJldmVpd2VkLWJ5OiBDaGFud29v
+IENob2kgPGN3MDAuY2hvaUBzYW1zdW5nLmNvbT4KCi0tIApCZXN0IFJlZ2FyZHMsCkNoYW53b28g
+Q2hvaQpTYW1zdW5nIEVsZWN0cm9uaWNzCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0t
+a2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
