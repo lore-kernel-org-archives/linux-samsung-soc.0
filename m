@@ -1,15 +1,14 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 5/5] ARM: exynos: Enable support for ARM architected timers
-Date: Tue, 19 Feb 2019 09:06:26 +0900
-Message-ID: <724bfe6c-477d-63b2-cd79-15b2acd60811@samsung.com>
-References: <20190215125229.30180-1-m.szyprowski@samsung.com>
- <CGME20190215125240eucas1p219154e5bd27bd09dac0b8419c3e4e259@eucas1p2.samsung.com>
- <20190215125229.30180-6-m.szyprowski@samsung.com>
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Subject: Re: [Bug] s5p-sss crypto driver doesn't set next AES-CBC IV
+Date: Tue, 19 Feb 2019 10:58:45 +0100
+Message-ID: <a78f8033-954f-8b59-b361-557acef3acdd@partner.samsung.com>
+References: <CGME20190215185148epcas3p23960bfe37c629ebb2103e673509949f4@epcas3p2.samsung.com>
+ <20190215185058.GB12909@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190215125229.30180-6-m.szyprowski@samsung.com>
+In-Reply-To: <20190215185058.GB12909@gmail.com>
 Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -20,28 +19,41 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Eric Biggers <ebiggers@kernel.org>, Christoph Manszewski <c.manszewski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, linux-samsung-soc@vger.kernel.org
+Cc: linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgTWFyZWssCgpPbiAxOS4gMi4gMTUuIOyYpO2bhCA5OjUyLCBNYXJlayBTenlwcm93c2tpIHdy
-b3RlOgo+IEFSTSBhcmNoaXRlY3RlZCB0aW1lciBjYW4gYmUgdXNlZCB0b2dldGhlciB3aXRoIEV4
-eW5vcyBNdWx0aUNvcmUgVGltZXIKPiBkcml2ZXIsIHNvIGVuYWJsZSBzdXBwb3J0IGZvciBpdC4g
-U3VwcG9ydCBmb3IgQVJNIGFyY2hpdGVjdGVkIHRpbWVycyBpcwo+IGVzc2VudGlhbCBmb3IgZW5h
-YmxpbmcgcHJvcGVyIEtWTSBzdXBwb3J0Lgo+IAo+IFNpZ25lZC1vZmYtYnk6IE1hcmVrIFN6eXBy
-b3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KPiAtLS0KPiAgYXJjaC9hcm0vbWFjaC1l
-eHlub3MvS2NvbmZpZyB8IDEgKwo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykKPiAK
-PiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC1leHlub3MvS2NvbmZpZyBiL2FyY2gvYXJtL21h
-Y2gtZXh5bm9zL0tjb25maWcKPiBpbmRleCBiNDA5NjNjZjkxYzcuLmI1ZWMyMWMwMjdhMSAxMDA2
-NDQKPiAtLS0gYS9hcmNoL2FybS9tYWNoLWV4eW5vcy9LY29uZmlnCj4gKysrIGIvYXJjaC9hcm0v
-bWFjaC1leHlub3MvS2NvbmZpZwo+IEBAIC0xOCw2ICsxOCw3IEBAIG1lbnVjb25maWcgQVJDSF9F
-WFlOT1MKPiAgCXNlbGVjdCBFWFlOT1NfU1JPTQo+ICAJc2VsZWN0IEVYWU5PU19QTV9ET01BSU5T
-IGlmIFBNX0dFTkVSSUNfRE9NQUlOUwo+ICAJc2VsZWN0IEdQSU9MSUIKPiArCXNlbGVjdCBIQVZF
-X0FSTV9BUkNIX1RJTUVSCj4gIAlzZWxlY3QgSEFWRV9BUk1fU0NVIGlmIFNNUAo+ICAJc2VsZWN0
-IEhBVkVfUzNDMjQxMF9JMkMgaWYgSTJDCj4gIAlzZWxlY3QgSEFWRV9TM0MyNDEwX1dBVENIRE9H
-IGlmIFdBVENIRE9HCj4gCgpSZXZlaXdlZC1ieTogQ2hhbndvbyBDaG9pIDxjdzAwLmNob2lAc2Ft
-c3VuZy5jb20+CgoKLS0gCkJlc3QgUmVnYXJkcywKQ2hhbndvbyBDaG9pClNhbXN1bmcgRWxlY3Ry
-b25pY3MKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxp
-bnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFk
-ZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4
-LWFybS1rZXJuZWwK
+Hi,
+
+On 15.02.2019 19:51, Eric Biggers wrote:
+> Hello,
+> 
+> The AES-CBC implementation in the s5p-sss crypto driver is failing the improved
+> crypto self-tests I currently have out for review.  The improved tests check
+> that all CBC implementations update the IV buffer to be the last ciphertext
+> block.  This has always been required so that requests can be chained, but
+> unfortunately it wasn't tested for by the self-tests until now.
+> 
+> See the boot logs for Exynos platforms from the KernelCI job here:
+> https://kernelci.org/boot/all/job/ardb/branch/for-kernelci/kernel/v5.0-rc1-149-g64c945c018af/
+> 
+> alg: skcipher: cbc-aes-s5p encryption test failed (wrong output IV) on test vector 0, cfg=\"in-place\"
+> 00000000: 3d af ba 42 9d 9e b4 30 b4 22 da 80 2c 9f ac 41
+> [...]
+
+I checked dmesg logs after my patch with:
+
+root@target:~# dmesg |grep alg: |grep aes                                       
+[    4.087168] crypto: alg: self-tests for aes-generic (aes) passed             
+[    6.305202] crypto: alg: self-tests for ecb-aes-s5p (ecb(aes)) passed        
+[    6.405489] crypto: alg: self-tests for cbc-aes-s5p (cbc(aes)) passed        
+[    6.505000] crypto: alg: self-tests for ctr-aes-s5p (ctr(aes)) passed
+
+and I noticed there are no cbc-aes-generic nor ctr-aes-generic
+
+Did you test them in separate tree ? Why they are not registered in /proc/crypto ?
+
+-- 
+Best regards,
+Kamil Konieczny
+Samsung R&D Institute Poland
