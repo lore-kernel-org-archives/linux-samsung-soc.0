@@ -1,66 +1,58 @@
-From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [RFC 0/4] clk/driver: platform: Fix kfree() of const memory on setting driver_override
-Date: Wed, 20 Feb 2019 14:01:42 -0800
-Message-ID: <155070010208.77512.17397936280518534534@swboyd.mtv.corp.google.com>
-References: <1550484960-2392-1-git-send-email-krzk@kernel.org> <CAMuHMdWXy_0zL8FZWapPj4+cXRd0wHy9buLhf0D0txpAHPkK7Q@mail.gmail.com> <CAJKOXPe1CW4k4ivbh4QhKEbuVc3RRNmzUwQcL0BsrAn=hCdjZg@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] clk: samsung: s3c2443: Mark expected switch fall-through
+Date: Wed, 20 Feb 2019 14:26:06 -0800
+Message-ID: <CAGXu5jJPfoYy20WrR5ghaSo88bsA75s-OyA4qt_3Vz0cJST_MQ@mail.gmail.com>
+References: <20190211181531.GA3238@embeddedor> <CAJKOXPeHp7sKkZ+jXmTXk5GEF_7G5ujfm3Lw==G3T4thfD+F7Q@mail.gmail.com>
+ <CAGXu5jLMWrb4Dszv5YSyoGt5Lb3S1oE8EnKsTou7=7Nq1rEEVQ@mail.gmail.com> <155027728836.115909.11546859472583324712@swboyd.mtv.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPe1CW4k4ivbh4QhKEbuVc3RRNmzUwQcL0BsrAn=hCdjZg@mail.gmail.com>
+In-Reply-To: <155027728836.115909.11546859472583324712@swboyd.mtv.corp.google.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-spi <linux-spi@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene@kernel.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>linux-a
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2019-02-18 03:14:29)
-> On Mon, 18 Feb 2019 at 11:40, Geert Uytterhoeven <geert@linux-m68k.org> w=
-rote:
-> >
-> > Hi Krzysztof,
-> >
-> > On Mon, Feb 18, 2019 at 11:27 AM Krzysztof Kozlowski <krzk@kernel.org> =
-wrote:
-> > > The problem
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > Several device types (platform, amba, spi etc.) provide a driver_over=
-ride
-> > > field.  On sysfs store or during device removal, they kfree() the
-> > > existing value.
+On Fri, Feb 15, 2019 at 4:34 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Kees Cook (2019-02-12 10:57:05)
+> > On Mon, Feb 11, 2019 at 11:41 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
 > > >
-> > > However the users are unaware of this and set the driver_override lik=
-e:
-> > >
-> > >         pdev->driver_override =3D "exynos5-subcmu";
-> > >
-> > > which obviously leads to error.
+> > > It is just the GCC which has to be fixed not the code. You want to
+> > > adjust the code for specific version of GCC and what if GCC changes
+> > > its warning? For example GCC might require "fall through: "... or any
+> > > other syntax. Another point - what about clang's syntax?
 > >
-> > IMHO driver_override is not meant to be set by a driver, only from user=
-space,
-> > for binding the device to vfio (is there another use case?).
+> > -Wimplicit-fallthrough=3 is stricter and maps to -Wextra, hence its
+> > choice. GCC's levels were chosen based on the existing linters, static
+> > analyzers, etc. The patterns are unlikely to change (see the gcc
+> > man-page).
 > >
-> > >   clk: samsung: exynos5: Fix kfree() of const memory on setting
-> > >     driver_override
-> > >   slimbus: ngd: Fix kfree() of const memory on setting driver_override
+> > Clang doesn't recognize anything in C mode (hopefully this will be
+> > fixed in the future[1]).
 > >
-> > I see all users set override immediately after allocating a platform de=
-vice.
-> > Can't they just allocate a platform device using the override name inst=
-ead?
-> > What am I missing?
->=20
-> For the clk-exynos5-subcmu.c case, driver registers several
-> sub-devices. Each sub-devices is a clock controller associated with
-> power domain. I guess the author wanted to have meaningful names of
-> these sub-devices (DISP, CAM etc. like names of power domains),
-> instead of just exynos5-subcmu.1, exynos5-subcmu.2 ...
->=20
-> If driver_override should not be used for such case, then I could
-> replace it with what you said.
+> > As long as one of the compilers is able to check this, we'll avoid the
+> > bugs associated with this mis-pattern. Gustavo's efforts here have
+> > found kind of a lot of bugs, so I think it's worth a little churn to
+> > add these (and make minor adjustments to existing comments).
+>
+> Just curious, what compilation phase does this check run in? Could we
+> gain a macro like FALLTHRU or even lowercase 'fallthru' that expanded to
+> whatever the compiler wants to see and then there would only be "one
+> way" to do this?  It would alleviate the above concerns, but maybe I'm
+> rehashing something that's already been proposed and rejected.
 
-Looking at the introduction of the code into the platform bus makes it
-sound like it was all for vfio devices. If the clk driver doesn't need
-it for that purpose and can get by with more generic names then it seems
-best to avoid using it entirely. So can you do that and resend the first
-patch in this series too? Effectively splitting the clk parts from the
-larger issue of kfree()ing of const memory.
+When this got discussed a while back, the thinking was that since
+we're also dealing with static analyzers (e.g. Coverity) and IDEs that
+literally parse comments in the code, it was most sensible (at least
+for now, prior to there being a formal C "fall through" statement --
+there is for C++ but not yet for C), we'd stick to explicit comments.
+In theory, we will be able to do a tree-wide change to add the C
+statement once it exists.
+
+> Of course, I'm happy to merge any of these patches that tweak things so
+> no worries either way.
+
+Thanks! :)
+
+-- 
+Kees Cook
