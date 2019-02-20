@@ -1,83 +1,43 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] ASoC: samsung: odroid: Fix of_node refcount unbalance
-Date: Wed, 20 Feb 2019 12:06:07 +0100
-Message-ID: <20190220110607.13293-1-s.nawrocki@samsung.com>
-References: <CGME20190220110620epcas2p27841bf821d10beab780362bdd59d9020@epcas2p2.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 0/4] Devicetree updates for Exynos 5260
+Date: Wed, 20 Feb 2019 14:59:34 +0100
+Message-ID: <CAJKOXPediHZqN3MRMYUaQT_jKyvb_20fxZm8paV1AVysWHScsQ@mail.gmail.com>
+References: <20190219130337.21353-1-stuart@menefy.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190219130337.21353-1-stuart@menefy.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: broonie@kernel.org, lgirdwood@gmail.com
-Cc: tiwai@suse.de, sbkim73@samsung.com, krzk@kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Stuart Menefy <stuart.menefy@mathembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-In odroid_audio_probe() some OF nodes are left without reference count
-decrease after use. Fix it by ensuring required of_node_calls() are done
-before exiting probe.
+On Tue, 19 Feb 2019 at 14:03, Stuart Menefy
+<stuart.menefy@mathembedded.com> wrote:
+>
+> These four patches are stand alone updates for the Exynos 5260 device
+> tree, which do not depend on any other code changes. They either
+> fix issues or add functionality which is already available
+> on other Exynos devices. They were previously posted as version 1
+> of the larger patch series "Resuscitate Exynos 5260 support"
+> https://www.spinics.net/lists/linux-samsung-soc/#65035
+> which was only posted to the samsung-soc mailing list.
+>
+> Changes since v1:
+> - Removed from larger patch set for easier review
+> - Applied reviewer comments to patch 2/4 "Add high speed I2C ports
+>   for exynos5260"
+> - Expanded patch comments
+>
+> Stuart Menefy (4):
+>   ARM: dts: exynos: Use bustop PLL as the source for MMC clocks on
+>     Exynos5260
+>   ARM: dts: exynos: Add high speed I2C ports for exynos5260
+>   ARM: dts: exynos: Add interrupts for dedicated EINTs on Exynos5260
+>   ARM: dts: exynos: Fix interrupt for shared EINTs on Exynos5260
 
-Reported-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- sound/soc/samsung/odroid.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+Thanks for the changes. All look fine to me but it is too late to pick
+them up in this cycle. I will take them after merge window.
 
-diff --git a/sound/soc/samsung/odroid.c b/sound/soc/samsung/odroid.c
-index bd2c5163dc7f..c3b0f6c612cb 100644
---- a/sound/soc/samsung/odroid.c
-+++ b/sound/soc/samsung/odroid.c
-@@ -257,27 +257,31 @@ static int odroid_audio_probe(struct platform_device *pdev)
- 		ret = of_parse_phandle_with_args(cpu, "sound-dai",
- 						 "#sound-dai-cells", i, &args);
- 		if (ret < 0)
--			return ret;
-+			break;
- 
- 		if (!args.np) {
- 			dev_err(dev, "sound-dai property parse error: %d\n", ret);
--			return -EINVAL;
-+			ret = -EINVAL;
-+			break;
- 		}
- 
- 		ret = snd_soc_get_dai_name(&args, &link->cpu_dai_name);
- 		of_node_put(args.np);
- 
- 		if (ret < 0)
--			return ret;
-+			break;
- 	}
-+	if (ret == 0)
-+		cpu_dai = of_parse_phandle(cpu, "sound-dai", 0);
- 
--	cpu_dai = of_parse_phandle(cpu, "sound-dai", 0);
- 	of_node_put(cpu);
- 	of_node_put(codec);
-+	if (ret < 0)
-+		return ret;
- 
- 	ret = snd_soc_of_get_dai_link_codecs(dev, codec, codec_link);
- 	if (ret < 0)
--		goto err_put_codec_n;
-+		goto err_put_cpu_dai;
- 
- 	/* Set capture capability only for boards with the MAX98090 CODEC */
- 	if (codec_link->num_codecs > 1) {
-@@ -288,7 +292,7 @@ static int odroid_audio_probe(struct platform_device *pdev)
- 	priv->sclk_i2s = of_clk_get_by_name(cpu_dai, "i2s_opclk1");
- 	if (IS_ERR(priv->sclk_i2s)) {
- 		ret = PTR_ERR(priv->sclk_i2s);
--		goto err_put_codec_n;
-+		goto err_put_cpu_dai;
- 	}
- 
- 	priv->clk_i2s_bus = of_clk_get_by_name(cpu_dai, "iis");
-@@ -310,7 +314,8 @@ static int odroid_audio_probe(struct platform_device *pdev)
- 	clk_put(priv->clk_i2s_bus);
- err_put_sclk:
- 	clk_put(priv->sclk_i2s);
--err_put_codec_n:
-+err_put_cpu_dai:
-+	of_node_put(cpu_dai);
- 	snd_soc_of_put_dai_link_codecs(codec_link);
- 	return ret;
- }
--- 
-2.17.1
+Best regards,
+Krzysztof
