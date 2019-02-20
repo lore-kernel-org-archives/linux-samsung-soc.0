@@ -1,90 +1,83 @@
-From: Yong <yong.deng@magewell.com>
-Subject: Re: [PATCH 06/14] media: platform: fix several typos
-Date: Wed, 20 Feb 2019 09:15:14 +0800
-Message-ID: <20190220091514.04cc6347ef24647f6a009d49@magewell.com>
-References: <f235ba60b2b7e5fba09d3c6b0d5dbbd8a86ea9b9.1550518128.git.mchehab+samsung@kernel.org>
- <362e90167292e8d0c03a8d0753cc26b89549d854.1550518128.git.mchehab+samsung@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <362e90167292e8d0c03a8d0753cc26b89549d854.1550518128.git.mchehab+samsung@kernel.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Minghsiu Tsai <minghsiu.tsai@mediatek.com>, Heiko Stuebner <heiko@sntech.de>, Maxime Ripard <maxime.ripard@bootlin.com>, Stanimir Varbanov <stanimir.varbanov@linaro.org>, Patrice Chotard <patrice.chotard@st.com>, Andrzej Hajda <a.hajda@samsung.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michal Simek <michal.simek@xilinx.com>, Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>, linux-samsung-soc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Chen-Yu Tsai <wens@csie.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-stm32@st-md-mailman.stormreply.com, linux-rockchip@lists.infradead.org, Ludovic Desroches <ludovic.desroches@microchip.com>, Kukjin Kim <kgene@kernel.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] ASoC: samsung: odroid: Fix of_node refcount unbalance
+Date: Wed, 20 Feb 2019 12:06:07 +0100
+Message-ID: <20190220110607.13293-1-s.nawrocki@samsung.com>
+References: <CGME20190220110620epcas2p27841bf821d10beab780362bdd59d9020@epcas2p2.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: broonie@kernel.org, lgirdwood@gmail.com
+Cc: tiwai@suse.de, sbkim73@samsung.com, krzk@kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Mauro,
+In odroid_audio_probe() some OF nodes are left without reference count
+decrease after use. Fix it by ensuring required of_node_calls() are done
+before exiting probe.
 
-On Mon, 18 Feb 2019 14:29:00 -0500
-Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
+Reported-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ sound/soc/samsung/odroid.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-> Use codespell to fix lots of typos over frontends.
-> 
-> Manually verified to avoid false-positives.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> ---
->  drivers/media/platform/Kconfig                     |  2 +-
->  drivers/media/platform/atmel/atmel-isi.c           |  4 ++--
->  drivers/media/platform/coda/coda-jpeg.c            |  2 +-
->  drivers/media/platform/davinci/isif.c              |  4 ++--
->  drivers/media/platform/davinci/vpbe.c              |  2 +-
->  drivers/media/platform/davinci/vpif.c              |  2 +-
->  drivers/media/platform/davinci/vpif_display.c      |  4 ++--
->  .../media/platform/exynos4-is/fimc-is-command.h    |  2 +-
->  drivers/media/platform/exynos4-is/fimc-is-param.h  |  2 +-
->  drivers/media/platform/exynos4-is/media-dev.h      |  2 +-
->  drivers/media/platform/exynos4-is/mipi-csis.c      |  4 ++--
->  drivers/media/platform/marvell-ccic/mmp-driver.c   |  4 ++--
->  drivers/media/platform/mtk-mdp/mtk_mdp_core.h      |  6 +++---
->  drivers/media/platform/mtk-vcodec/mtk_vcodec_dec.c |  2 +-
->  drivers/media/platform/mtk-vcodec/mtk_vcodec_drv.h |  4 ++--
->  drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c |  2 +-
->  .../media/platform/mtk-vcodec/vdec/vdec_h264_if.c  |  4 ++--
->  .../media/platform/mtk-vcodec/vdec/vdec_vp8_if.c   |  2 +-
->  drivers/media/platform/mtk-vcodec/vdec_drv_if.h    |  2 +-
->  drivers/media/platform/mtk-vcodec/vdec_vpu_if.h    |  2 +-
->  drivers/media/platform/omap/omap_vout.c            |  4 ++--
->  drivers/media/platform/omap/omap_voutdef.h         |  4 ++--
->  drivers/media/platform/omap3isp/isp.c              |  2 +-
->  drivers/media/platform/omap3isp/ispccdc.c          |  4 ++--
->  drivers/media/platform/omap3isp/ispcsi2.c          |  2 +-
->  drivers/media/platform/pxa_camera.c                |  2 +-
->  drivers/media/platform/qcom/venus/core.h           |  2 +-
->  drivers/media/platform/rcar-vin/rcar-dma.c         |  2 +-
->  drivers/media/platform/rcar-vin/rcar-v4l2.c        |  4 ++--
->  drivers/media/platform/rockchip/rga/rga-hw.c       |  6 +++---
->  drivers/media/platform/s3c-camif/camif-core.h      |  2 +-
->  drivers/media/platform/s5p-jpeg/jpeg-core.h        |  4 ++--
->  drivers/media/platform/s5p-mfc/s5p_mfc_common.h    |  2 +-
->  drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c      |  2 +-
->  drivers/media/platform/s5p-mfc/s5p_mfc_dec.c       |  2 +-
->  drivers/media/platform/s5p-mfc/s5p_mfc_opr_v5.c    |  2 +-
->  drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c    |  4 ++--
->  .../media/platform/sti/c8sectpfe/c8sectpfe-core.h  |  2 +-
->  drivers/media/platform/sti/delta/delta.h           |  2 +-
->  drivers/media/platform/sti/hva/hva-h264.c          |  2 +-
->  drivers/media/platform/stm32/stm32-dcmi.c          |  2 +-
->  drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.h |  2 +-
->  drivers/media/platform/ti-vpe/vpdma.c              | 14 +++++++-------
->  drivers/media/platform/ti-vpe/vpe.c                |  2 +-
->  drivers/media/platform/vsp1/vsp1_brx.c             |  4 ++--
->  drivers/media/platform/xilinx/xilinx-vip.c         |  2 +-
->  46 files changed, 70 insertions(+), 70 deletions(-)
-
-For drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.h
-
-Reviewed-by: Yong Deng <yong.deng@magewell.com>
-
-
-Thanks,
-Yong
+diff --git a/sound/soc/samsung/odroid.c b/sound/soc/samsung/odroid.c
+index bd2c5163dc7f..c3b0f6c612cb 100644
+--- a/sound/soc/samsung/odroid.c
++++ b/sound/soc/samsung/odroid.c
+@@ -257,27 +257,31 @@ static int odroid_audio_probe(struct platform_device *pdev)
+ 		ret = of_parse_phandle_with_args(cpu, "sound-dai",
+ 						 "#sound-dai-cells", i, &args);
+ 		if (ret < 0)
+-			return ret;
++			break;
+ 
+ 		if (!args.np) {
+ 			dev_err(dev, "sound-dai property parse error: %d\n", ret);
+-			return -EINVAL;
++			ret = -EINVAL;
++			break;
+ 		}
+ 
+ 		ret = snd_soc_get_dai_name(&args, &link->cpu_dai_name);
+ 		of_node_put(args.np);
+ 
+ 		if (ret < 0)
+-			return ret;
++			break;
+ 	}
++	if (ret == 0)
++		cpu_dai = of_parse_phandle(cpu, "sound-dai", 0);
+ 
+-	cpu_dai = of_parse_phandle(cpu, "sound-dai", 0);
+ 	of_node_put(cpu);
+ 	of_node_put(codec);
++	if (ret < 0)
++		return ret;
+ 
+ 	ret = snd_soc_of_get_dai_link_codecs(dev, codec, codec_link);
+ 	if (ret < 0)
+-		goto err_put_codec_n;
++		goto err_put_cpu_dai;
+ 
+ 	/* Set capture capability only for boards with the MAX98090 CODEC */
+ 	if (codec_link->num_codecs > 1) {
+@@ -288,7 +292,7 @@ static int odroid_audio_probe(struct platform_device *pdev)
+ 	priv->sclk_i2s = of_clk_get_by_name(cpu_dai, "i2s_opclk1");
+ 	if (IS_ERR(priv->sclk_i2s)) {
+ 		ret = PTR_ERR(priv->sclk_i2s);
+-		goto err_put_codec_n;
++		goto err_put_cpu_dai;
+ 	}
+ 
+ 	priv->clk_i2s_bus = of_clk_get_by_name(cpu_dai, "iis");
+@@ -310,7 +314,8 @@ static int odroid_audio_probe(struct platform_device *pdev)
+ 	clk_put(priv->clk_i2s_bus);
+ err_put_sclk:
+ 	clk_put(priv->sclk_i2s);
+-err_put_codec_n:
++err_put_cpu_dai:
++	of_node_put(cpu_dai);
+ 	snd_soc_of_put_dai_link_codecs(codec_link);
+ 	return ret;
+ }
+-- 
+2.17.1
