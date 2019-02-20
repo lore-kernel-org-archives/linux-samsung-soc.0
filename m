@@ -1,33 +1,90 @@
-From: houlong wei <houlong.wei-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+From: Yong <yong.deng@magewell.com>
 Subject: Re: [PATCH 06/14] media: platform: fix several typos
-Date: Wed, 20 Feb 2019 08:46:20 +0800
-Message-ID: <1550623580.16735.3.camel@mhfsdcap03>
+Date: Wed, 20 Feb 2019 09:15:14 +0800
+Message-ID: <20190220091514.04cc6347ef24647f6a009d49@magewell.com>
 References: <f235ba60b2b7e5fba09d3c6b0d5dbbd8a86ea9b9.1550518128.git.mchehab+samsung@kernel.org>
  <362e90167292e8d0c03a8d0753cc26b89549d854.1550518128.git.mchehab+samsung@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <362e90167292e8d0c03a8d0753cc26b89549d854.1550518128.git.mchehab+samsung-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Mauro Carvalho Chehab <mchehab+samsung-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Andrew-CT Chen =?UTF-8?Q?=28=E9=99=B3=E6=99=BA=E8=BF=AA=29?= <Andrew-CT.Chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Alexandre Belloni <alexandre.belloni-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Minghsiu Tsai =?UTF-8?Q?=28=E8=94=A1=E6=98=8E=E4=BF=AE=29?= <Minghsiu.Tsai-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Stanimir Varbanov <stanimir.varbanov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "Lad, Prabhakar" <prabhakar.csengg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Andrzej Pietrasiewicz <andrzejtp2010-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-stm32-XDFAJ8BFU24N7RejjzZ/LmGXanvQGlWp@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <362e90167292e8d0c03a8d0753cc26b89549d854.1550518128.git.mchehab+samsung@kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Minghsiu Tsai <minghsiu.tsai@mediatek.com>, Heiko Stuebner <heiko@sntech.de>, Maxime Ripard <maxime.ripard@bootlin.com>, Stanimir Varbanov <stanimir.varbanov@linaro.org>, Patrice Chotard <patrice.chotard@st.com>, Andrzej Hajda <a.hajda@samsung.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Michal Simek <michal.simek@xilinx.com>, Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>, linux-samsung-soc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Chen-Yu Tsai <wens@csie.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-stm32@st-md-mailman.stormreply.com, linux-rockchip@lists.infradead.org, Ludovic Desroches <ludovic.desroches@microchip.com>, Kukjin Kim <kgene@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi Mauro,
 
-On Tue, 2019-02-19 at 03:29 +0800, Mauro Carvalho Chehab wrote:
-> drivers/media/platform/mtk-mdp/mtk_mdp_core.h      |  6 +++---
+On Mon, 18 Feb 2019 14:29:00 -0500
+Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
 
-For drivers/media/platform/mtk-mdp/*
-Reviewed-by: Houlong Wei <houlong.wei-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+> Use codespell to fix lots of typos over frontends.
+> 
+> Manually verified to avoid false-positives.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> ---
+>  drivers/media/platform/Kconfig                     |  2 +-
+>  drivers/media/platform/atmel/atmel-isi.c           |  4 ++--
+>  drivers/media/platform/coda/coda-jpeg.c            |  2 +-
+>  drivers/media/platform/davinci/isif.c              |  4 ++--
+>  drivers/media/platform/davinci/vpbe.c              |  2 +-
+>  drivers/media/platform/davinci/vpif.c              |  2 +-
+>  drivers/media/platform/davinci/vpif_display.c      |  4 ++--
+>  .../media/platform/exynos4-is/fimc-is-command.h    |  2 +-
+>  drivers/media/platform/exynos4-is/fimc-is-param.h  |  2 +-
+>  drivers/media/platform/exynos4-is/media-dev.h      |  2 +-
+>  drivers/media/platform/exynos4-is/mipi-csis.c      |  4 ++--
+>  drivers/media/platform/marvell-ccic/mmp-driver.c   |  4 ++--
+>  drivers/media/platform/mtk-mdp/mtk_mdp_core.h      |  6 +++---
+>  drivers/media/platform/mtk-vcodec/mtk_vcodec_dec.c |  2 +-
+>  drivers/media/platform/mtk-vcodec/mtk_vcodec_drv.h |  4 ++--
+>  drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c |  2 +-
+>  .../media/platform/mtk-vcodec/vdec/vdec_h264_if.c  |  4 ++--
+>  .../media/platform/mtk-vcodec/vdec/vdec_vp8_if.c   |  2 +-
+>  drivers/media/platform/mtk-vcodec/vdec_drv_if.h    |  2 +-
+>  drivers/media/platform/mtk-vcodec/vdec_vpu_if.h    |  2 +-
+>  drivers/media/platform/omap/omap_vout.c            |  4 ++--
+>  drivers/media/platform/omap/omap_voutdef.h         |  4 ++--
+>  drivers/media/platform/omap3isp/isp.c              |  2 +-
+>  drivers/media/platform/omap3isp/ispccdc.c          |  4 ++--
+>  drivers/media/platform/omap3isp/ispcsi2.c          |  2 +-
+>  drivers/media/platform/pxa_camera.c                |  2 +-
+>  drivers/media/platform/qcom/venus/core.h           |  2 +-
+>  drivers/media/platform/rcar-vin/rcar-dma.c         |  2 +-
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c        |  4 ++--
+>  drivers/media/platform/rockchip/rga/rga-hw.c       |  6 +++---
+>  drivers/media/platform/s3c-camif/camif-core.h      |  2 +-
+>  drivers/media/platform/s5p-jpeg/jpeg-core.h        |  4 ++--
+>  drivers/media/platform/s5p-mfc/s5p_mfc_common.h    |  2 +-
+>  drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c      |  2 +-
+>  drivers/media/platform/s5p-mfc/s5p_mfc_dec.c       |  2 +-
+>  drivers/media/platform/s5p-mfc/s5p_mfc_opr_v5.c    |  2 +-
+>  drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c    |  4 ++--
+>  .../media/platform/sti/c8sectpfe/c8sectpfe-core.h  |  2 +-
+>  drivers/media/platform/sti/delta/delta.h           |  2 +-
+>  drivers/media/platform/sti/hva/hva-h264.c          |  2 +-
+>  drivers/media/platform/stm32/stm32-dcmi.c          |  2 +-
+>  drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.h |  2 +-
+>  drivers/media/platform/ti-vpe/vpdma.c              | 14 +++++++-------
+>  drivers/media/platform/ti-vpe/vpe.c                |  2 +-
+>  drivers/media/platform/vsp1/vsp1_brx.c             |  4 ++--
+>  drivers/media/platform/xilinx/xilinx-vip.c         |  2 +-
+>  46 files changed, 70 insertions(+), 70 deletions(-)
 
-Thanks a lot.
+For drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.h
+
+Reviewed-by: Yong Deng <yong.deng@magewell.com>
+
+
+Thanks,
+Yong
