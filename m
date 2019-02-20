@@ -1,117 +1,66 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: samsung: odroid: Fix of_node refcount unbalance" to the asoc tree
-Date: Wed, 20 Feb 2019 17:52:46 +0000 (GMT)
-Message-ID: <20190220175246.AB72A112882C@debutante.sirena.org.uk>
-References: <20190220110607.13293-1-s.nawrocki@samsung.com>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [RFC 0/4] clk/driver: platform: Fix kfree() of const memory on setting driver_override
+Date: Wed, 20 Feb 2019 14:01:42 -0800
+Message-ID: <155070010208.77512.17397936280518534534@swboyd.mtv.corp.google.com>
+References: <1550484960-2392-1-git-send-email-krzk@kernel.org> <CAMuHMdWXy_0zL8FZWapPj4+cXRd0wHy9buLhf0D0txpAHPkK7Q@mail.gmail.com> <CAJKOXPe1CW4k4ivbh4QhKEbuVc3RRNmzUwQcL0BsrAn=hCdjZg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190220110607.13293-1-s.nawrocki@samsung.com>
+In-Reply-To: <CAJKOXPe1CW4k4ivbh4QhKEbuVc3RRNmzUwQcL0BsrAn=hCdjZg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@kernel.org>broonie@kernel.org, lgirdwood@gmail.com, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.comtiwai@suse.de, linux-kernel@vger.kernel.org, krzk@kernel.org, sbkim73@samsung.com, m.szyprowski@samsung.comalsa-devel@alsa-project.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-spi <linux-spi@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene@kernel.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>linux-a
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch
+Quoting Krzysztof Kozlowski (2019-02-18 03:14:29)
+> On Mon, 18 Feb 2019 at 11:40, Geert Uytterhoeven <geert@linux-m68k.org> w=
+rote:
+> >
+> > Hi Krzysztof,
+> >
+> > On Mon, Feb 18, 2019 at 11:27 AM Krzysztof Kozlowski <krzk@kernel.org> =
+wrote:
+> > > The problem
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > Several device types (platform, amba, spi etc.) provide a driver_over=
+ride
+> > > field.  On sysfs store or during device removal, they kfree() the
+> > > existing value.
+> > >
+> > > However the users are unaware of this and set the driver_override lik=
+e:
+> > >
+> > >         pdev->driver_override =3D "exynos5-subcmu";
+> > >
+> > > which obviously leads to error.
+> >
+> > IMHO driver_override is not meant to be set by a driver, only from user=
+space,
+> > for binding the device to vfio (is there another use case?).
+> >
+> > >   clk: samsung: exynos5: Fix kfree() of const memory on setting
+> > >     driver_override
+> > >   slimbus: ngd: Fix kfree() of const memory on setting driver_override
+> >
+> > I see all users set override immediately after allocating a platform de=
+vice.
+> > Can't they just allocate a platform device using the override name inst=
+ead?
+> > What am I missing?
+>=20
+> For the clk-exynos5-subcmu.c case, driver registers several
+> sub-devices. Each sub-devices is a clock controller associated with
+> power domain. I guess the author wanted to have meaningful names of
+> these sub-devices (DISP, CAM etc. like names of power domains),
+> instead of just exynos5-subcmu.1, exynos5-subcmu.2 ...
+>=20
+> If driver_override should not be used for such case, then I could
+> replace it with what you said.
 
-   ASoC: samsung: odroid: Fix of_node refcount unbalance
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From d832d2b246c516eacb2d0ba53ec17ed59c3cd62b Mon Sep 17 00:00:00 2001
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Wed, 20 Feb 2019 12:06:07 +0100
-Subject: [PATCH] ASoC: samsung: odroid: Fix of_node refcount unbalance
-
-In odroid_audio_probe() some OF nodes are left without reference count
-decrease after use. Fix it by ensuring required of_node_calls() are done
-before exiting probe.
-
-Reported-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/samsung/odroid.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
-
-diff --git a/sound/soc/samsung/odroid.c b/sound/soc/samsung/odroid.c
-index bd2c5163dc7f..c3b0f6c612cb 100644
---- a/sound/soc/samsung/odroid.c
-+++ b/sound/soc/samsung/odroid.c
-@@ -257,27 +257,31 @@ static int odroid_audio_probe(struct platform_device *pdev)
- 		ret = of_parse_phandle_with_args(cpu, "sound-dai",
- 						 "#sound-dai-cells", i, &args);
- 		if (ret < 0)
--			return ret;
-+			break;
- 
- 		if (!args.np) {
- 			dev_err(dev, "sound-dai property parse error: %d\n", ret);
--			return -EINVAL;
-+			ret = -EINVAL;
-+			break;
- 		}
- 
- 		ret = snd_soc_get_dai_name(&args, &link->cpu_dai_name);
- 		of_node_put(args.np);
- 
- 		if (ret < 0)
--			return ret;
-+			break;
- 	}
-+	if (ret == 0)
-+		cpu_dai = of_parse_phandle(cpu, "sound-dai", 0);
- 
--	cpu_dai = of_parse_phandle(cpu, "sound-dai", 0);
- 	of_node_put(cpu);
- 	of_node_put(codec);
-+	if (ret < 0)
-+		return ret;
- 
- 	ret = snd_soc_of_get_dai_link_codecs(dev, codec, codec_link);
- 	if (ret < 0)
--		goto err_put_codec_n;
-+		goto err_put_cpu_dai;
- 
- 	/* Set capture capability only for boards with the MAX98090 CODEC */
- 	if (codec_link->num_codecs > 1) {
-@@ -288,7 +292,7 @@ static int odroid_audio_probe(struct platform_device *pdev)
- 	priv->sclk_i2s = of_clk_get_by_name(cpu_dai, "i2s_opclk1");
- 	if (IS_ERR(priv->sclk_i2s)) {
- 		ret = PTR_ERR(priv->sclk_i2s);
--		goto err_put_codec_n;
-+		goto err_put_cpu_dai;
- 	}
- 
- 	priv->clk_i2s_bus = of_clk_get_by_name(cpu_dai, "iis");
-@@ -310,7 +314,8 @@ static int odroid_audio_probe(struct platform_device *pdev)
- 	clk_put(priv->clk_i2s_bus);
- err_put_sclk:
- 	clk_put(priv->sclk_i2s);
--err_put_codec_n:
-+err_put_cpu_dai:
-+	of_node_put(cpu_dai);
- 	snd_soc_of_put_dai_link_codecs(codec_link);
- 	return ret;
- }
--- 
-2.20.1
+Looking at the introduction of the code into the platform bus makes it
+sound like it was all for vfio devices. If the clk driver doesn't need
+it for that purpose and can get by with more generic names then it seems
+best to avoid using it entirely. So can you do that and resend the first
+patch in this series too? Effectively splitting the clk parts from the
+larger issue of kfree()ing of const memory.
