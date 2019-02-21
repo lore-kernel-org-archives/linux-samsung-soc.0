@@ -1,30 +1,62 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 0/2] clk: samsung: Fix kfree() of const memory on setting driver_override
-Date: Thu, 21 Feb 2019 12:45:50 +0100
-Message-ID: <1550749552-8133-1-git-send-email-krzk@kernel.org>
+Subject: [PATCH v2 2/2] clk: samsung: exynos5: Fix kfree() of const memory on setting driver_override
+Date: Thu, 21 Feb 2019 12:45:52 +0100
+Message-ID: <1550749552-8133-3-git-send-email-krzk@kernel.org>
+References: <1550749552-8133-1-git-send-email-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1550749552-8133-1-git-send-email-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Platform driver driver_override field should not be initialized from
+const memory because the core later kfree() it.  If driver_override is
+manually set later through sysfs, kfree() of old value leads to:
 
-Changes since v1:
-1. Split clock-related fixes out of bigger platform patchset.
-2. Remove usage of driver_override.
+    $ echo "new_value" > /sys/bus/platform/drivers/.../driver_override
 
-Best regards,
-Krzysztof
+    kernel BUG at ../mm/slub.c:3960!
+    Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
+    ...
+    (kfree) from [<c058e8c0>] (platform_set_driver_override+0x84/0xac)
+    (platform_set_driver_override) from [<c058e908>] (driver_override_store+0x20/0x34)
+    (driver_override_store) from [<c031f778>] (kernfs_fop_write+0x100/0x1dc)
+    (kernfs_fop_write) from [<c0296de8>] (__vfs_write+0x2c/0x17c)
+    (__vfs_write) from [<c02970c4>] (vfs_write+0xa4/0x188)
+    (vfs_write) from [<c02972e8>] (ksys_write+0x4c/0xac)
+    (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
 
+The clk-exynos5-subcmu driver uses override only for the purpose of
+creating meaningful names for children devices (matching names of power
+domains, e.g. DISP, MFC).  The driver_override was not developed for
+this purpose so just switch to default names of devices to fix the
+issue.
 
-Krzysztof Kozlowski (2):
-  clk: samsung: exynos5: Fix possible NULL pointer exception on
-    platform_device_alloc() failure
-  clk: samsung: exynos5: Fix kfree() of const memory on setting
-    driver_override
+Fixes: b06a532bf1fa ("clk: samsung: Add Exynos5 sub-CMU clock driver")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/clk/samsung/clk-exynos5-subcmu.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
- drivers/clk/samsung/clk-exynos5-subcmu.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
-
+diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsung/clk-exynos5-subcmu.c
+index d07ef26bd052..8ae44b5db4c2 100644
+--- a/drivers/clk/samsung/clk-exynos5-subcmu.c
++++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
+@@ -138,12 +138,11 @@ static int __init exynos5_clk_register_subcmu(struct device *parent,
+ 	struct platform_device *pdev;
+ 	int ret;
+ 
+-	pdev = platform_device_alloc(info->pd_name, -1);
++	pdev = platform_device_alloc("exynos5-subcmu", PLATFORM_DEVID_AUTO);
+ 	if (!pdev)
+ 		return -ENOMEM;
+ 
+ 	pdev->dev.parent = parent;
+-	pdev->driver_override = "exynos5-subcmu";
+ 	platform_set_drvdata(pdev, (void *)info);
+ 	of_genpd_add_device(&genpdspec, &pdev->dev);
+ 	ret = platform_device_add(pdev);
 -- 
 2.7.4
