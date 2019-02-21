@@ -1,55 +1,28 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2 2/2] clk: samsung: exynos5: Fix kfree() of const memory
- on setting driver_override
-Date: Thu, 21 Feb 2019 16:44:22 +0100
-Message-ID: <CAMuHMdUFvrW5RuhJxCoZdjzbYobJydcdTttkZTaRtL3=7Ao_Fg@mail.gmail.com>
-References: <1550749552-8133-1-git-send-email-krzk@kernel.org> <1550749552-8133-3-git-send-email-krzk@kernel.org>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v2 1/2] clk: samsung: exynos5: Fix possible NULL pointer exception on platform_device_alloc() failure
+Date: Thu, 21 Feb 2019 13:33:08 -0800
+Message-ID: <155078478830.77512.13175629638067796591@swboyd.mtv.corp.google.com>
+References: <1550749552-8133-1-git-send-email-krzk@kernel.org> <1550749552-8133-2-git-send-email-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1550749552-8133-3-git-send-email-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <1550749552-8133-2-git-send-email-krzk@kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 12:46 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> Platform driver driver_override field should not be initialized from
-> const memory because the core later kfree() it.  If driver_override is
-> manually set later through sysfs, kfree() of old value leads to:
->
->     $ echo "new_value" > /sys/bus/platform/drivers/.../driver_override
->
->     kernel BUG at ../mm/slub.c:3960!
->     Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
->     ...
->     (kfree) from [<c058e8c0>] (platform_set_driver_override+0x84/0xac)
->     (platform_set_driver_override) from [<c058e908>] (driver_override_store+0x20/0x34)
->     (driver_override_store) from [<c031f778>] (kernfs_fop_write+0x100/0x1dc)
->     (kernfs_fop_write) from [<c0296de8>] (__vfs_write+0x2c/0x17c)
->     (__vfs_write) from [<c02970c4>] (vfs_write+0xa4/0x188)
->     (vfs_write) from [<c02972e8>] (ksys_write+0x4c/0xac)
->     (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
->
-> The clk-exynos5-subcmu driver uses override only for the purpose of
-> creating meaningful names for children devices (matching names of power
-> domains, e.g. DISP, MFC).  The driver_override was not developed for
-> this purpose so just switch to default names of devices to fix the
-> issue.
->
+Quoting Krzysztof Kozlowski (2019-02-21 03:45:51)
+> During initialization of subdevices if platform_device_alloc() failed,
+> returned NULL pointer will be later dereferenced.  Add proper error
+> paths to exynos5_clk_register_subcmu().  The return value of this
+> function is still ignored because at this stage of init there is nothing
+> we can do.
+>=20
 > Fixes: b06a532bf1fa ("clk: samsung: Add Exynos5 sub-CMU clock driver")
 > Cc: <stable@vger.kernel.org>
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Applied to clk-next
