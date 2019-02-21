@@ -1,145 +1,90 @@
-From: Ming Lei <ming.lei@redhat.com>
-Subject: Re: [PATCH V15 14/18] block: enable multipage bvecs
-Date: Thu, 21 Feb 2019 18:38:57 +0800
-Message-ID: <20190221103856.GC12448@ming.t460p>
-References: <20190215111324.30129-1-ming.lei@redhat.com>
- <20190215111324.30129-15-ming.lei@redhat.com>
- <CGME20190221084301eucas1p11e8841a62b4b1da3cccca661b6f4c29d@eucas1p1.samsung.com>
- <6c9ae4de-c56f-a2b3-2542-da7d8b95601d@samsung.com>
- <20190221095733.GA12448@ming.t460p>
- <ba39138d-d65b-335d-d709-b95dbde1fd5c@samsung.com>
- <20190221101618.GB12448@ming.t460p>
- <9269fbbf-b5dd-6be1-682f-e791847ea00d@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: samsung: odroid: Prevent uninitialized variable use" to the asoc tree
+Date: Thu, 21 Feb 2019 11:42:04 +0000 (GMT)
+Message-ID: <20190221114204.61F641122744@debutante.sirena.org.uk>
+References: <20190221094228.3778-1-s.nawrocki@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <9269fbbf-b5dd-6be1-682f-e791847ea00d@samsung.com>
+In-Reply-To: <20190221094228.3778-1-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>, Sagi Grimberg <sagi@grimberg.me>, Dave Chinner <dchinner@redhat.com>, Kent Overstreet <kent.overstreet@gmail.com>, Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, "Darrick J . Wong" <darrick.wong@oracle.com>, linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>, Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>, Bob
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Mark Brown <broonie@kernel.org>broonie@kernel.org, lgirdwood@gmail.com, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, sbkim73@samsung.com, linux-kernel@vger.kernel.org, krzk@kernel.orgalsa-devel@alsa-project.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 11:22:39AM +0100, Marek Szyprowski wrote:
-> Hi Ming,
-> 
-> On 2019-02-21 11:16, Ming Lei wrote:
-> > On Thu, Feb 21, 2019 at 11:08:19AM +0100, Marek Szyprowski wrote:
-> >> On 2019-02-21 10:57, Ming Lei wrote:
-> >>> On Thu, Feb 21, 2019 at 09:42:59AM +0100, Marek Szyprowski wrote:
-> >>>> On 2019-02-15 12:13, Ming Lei wrote:
-> >>>>> This patch pulls the trigger for multi-page bvecs.
-> >>>>>
-> >>>>> Reviewed-by: Omar Sandoval <osandov@fb.com>
-> >>>>> Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> >>>> Since Linux next-20190218 I've observed problems with block layer on one
-> >>>> of my test devices (Odroid U3 with EXT4 rootfs on SD card). Bisecting
-> >>>> this issue led me to this change. This is also the first linux-next
-> >>>> release with this change merged. The issue is fully reproducible and can
-> >>>> be observed in the following kernel log:
-> >>>>
-> >>>> sdhci: Secure Digital Host Controller Interface driver
-> >>>> sdhci: Copyright(c) Pierre Ossman
-> >>>> s3c-sdhci 12530000.sdhci: clock source 2: mmc_busclk.2 (100000000 Hz)
-> >>>> s3c-sdhci 12530000.sdhci: Got CD GPIO
-> >>>> mmc0: SDHCI controller on samsung-hsmmc [12530000.sdhci] using ADMA
-> >>>> mmc0: new high speed SDHC card at address aaaa
-> >>>> mmcblk0: mmc0:aaaa SL16G 14.8 GiB
-> >>>>
-> >>>> ...
-> >>>>
-> >>>> EXT4-fs (mmcblk0p2): INFO: recovery required on readonly filesystem
-> >>>> EXT4-fs (mmcblk0p2): write access will be enabled during recovery
-> >>>> EXT4-fs (mmcblk0p2): recovery complete
-> >>>> EXT4-fs (mmcblk0p2): mounted filesystem with ordered data mode. Opts: (null)
-> >>>> VFS: Mounted root (ext4 filesystem) readonly on device 179:2.
-> >>>> devtmpfs: mounted
-> >>>> Freeing unused kernel memory: 1024K
-> >>>> hub 1-3:1.0: USB hub found
-> >>>> Run /sbin/init as init process
-> >>>> hub 1-3:1.0: 3 ports detected
-> >>>> *** stack smashing detected ***: <unknown> terminated
-> >>>> Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000004
-> >>>> CPU: 1 PID: 1 Comm: init Not tainted 5.0.0-rc6-next-20190218 #1546
-> >>>> Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-> >>>> [<c01118d0>] (unwind_backtrace) from [<c010d794>] (show_stack+0x10/0x14)
-> >>>> [<c010d794>] (show_stack) from [<c09ff8a4>] (dump_stack+0x90/0xc8)
-> >>>> [<c09ff8a4>] (dump_stack) from [<c0125944>] (panic+0xfc/0x304)
-> >>>> [<c0125944>] (panic) from [<c012bc98>] (do_exit+0xabc/0xc6c)
-> >>>> [<c012bc98>] (do_exit) from [<c012c100>] (do_group_exit+0x3c/0xbc)
-> >>>> [<c012c100>] (do_group_exit) from [<c0138908>] (get_signal+0x130/0xbf4)
-> >>>> [<c0138908>] (get_signal) from [<c010c7a0>] (do_work_pending+0x130/0x618)
-> >>>> [<c010c7a0>] (do_work_pending) from [<c0101034>]
-> >>>> (slow_work_pending+0xc/0x20)
-> >>>> Exception stack(0xe88c3fb0 to 0xe88c3ff8)
-> >>>> 3fa0:                                     00000000 bea7787c 00000005
-> >>>> b6e8d0b8
-> >>>> 3fc0: bea77a18 b6f92010 b6e8d0b8 00000001 b6e8d0c8 00000001 b6e8c000
-> >>>> bea77b60
-> >>>> 3fe0: 00000020 bea77998 ffffffff b6d52368 60000050 ffffffff
-> >>>> CPU3: stopping
-> >>>>
-> >>>> I would like to help debugging and fixing this issue, but I don't really
-> >>>> have idea where to start. Here are some more detailed information about
-> >>>> my test system:
-> >>>>
-> >>>> 1. Board: ARM 32bit Samsung Exynos4412-based Odroid U3 (device tree
-> >>>> source: arch/arm/boot/dts/exynos4412-odroidu3.dts)
-> >>>>
-> >>>> 2. Block device: MMC/SDHCI/SDHCI-S3C with SD card
-> >>>> (drivers/mmc/host/sdhci-s3c.c driver, sdhci_2 device node in the device
-> >>>> tree)
-> >>>>
-> >>>> 3. Rootfs: Ext4
-> >>>>
-> >>>> 4. Kernel config: arch/arm/configs/exynos_defconfig
-> >>>>
-> >>>> I can gather more logs if needed, just let me which kernel option to
-> >>>> enable. Reverting this commit on top of next-20190218 as well as current
-> >>>> linux-next (tested with next-20190221) fixes this issue and makes the
-> >>>> system bootable again.
-> >>> Could you test the patch in following link and see if it can make a difference?
-> >>>
-> >>> https://marc.info/?l=linux-aio&m=155070355614541&w=2
-> >> I've tested that patch, but it doesn't make any difference on the test
-> >> system. In the log I see no warning added by it.
-> > I guess it might be related with memory corruption, could you enable the
-> > following debug options and post the dmesg log?
-> >
-> > CONFIG_DEBUG_STACKOVERFLOW=y
-> > CONFIG_KASAN=y
-> 
-> It won't be that easy as none of the above options is available on ARM
-> 32bit. I will try to apply some ARM KASAN patches floating on the net
-> and let you know the result.
+The patch
 
-Hi Marek,
+   ASoC: samsung: odroid: Prevent uninitialized variable use
 
-Could you test the following patch?
+has been applied to the asoc tree at
 
-diff --git a/block/bounce.c b/block/bounce.c
-index add085e28b1d..0c618c0b3cf8 100644
---- a/block/bounce.c
-+++ b/block/bounce.c
-@@ -295,7 +295,6 @@ static void __blk_queue_bounce(struct request_queue *q, struct bio **bio_orig,
- 	bool bounce = false;
- 	int sectors = 0;
- 	bool passthrough = bio_is_passthrough(*bio_orig);
--	struct bvec_iter_all iter_all;
- 
- 	bio_for_each_segment(from, *bio_orig, iter) {
- 		if (i++ < BIO_MAX_PAGES)
-@@ -315,7 +314,8 @@ static void __blk_queue_bounce(struct request_queue *q, struct bio **bio_orig,
- 	bio = bounce_clone_bio(*bio_orig, GFP_NOIO, passthrough ? NULL :
- 			&bounce_bio_set);
- 
--	bio_for_each_segment_all(to, bio, i, iter_all) {
-+	/* bio won't be multi-page bvec, so operate its bvec table directly */
-+	for (i = 0, to = bio->bi_io_vec; i < bio->bi_vcnt; to++, i++) {
- 		struct page *page = to->bv_page;
- 
- 		if (page_to_pfn(page) <= q->limits.bounce_pfn)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
-Ming
+Mark
+
+>From 3af8160028bfac4116d80edcb7eb04095323d112 Mon Sep 17 00:00:00 2001
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date: Thu, 21 Feb 2019 10:42:28 +0100
+Subject: [PATCH] ASoC: samsung: odroid: Prevent uninitialized variable use
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This addresses an issue pointed out by compiler warning:
+
+sound/soc/samsung/odroid.c: In function â€˜odroid_audio_probeâ€™:
+sound/soc/samsung/odroid.c:298:22: warning: â€˜cpu_daiâ€™ may be used
+uninitialized in this function [-Wmaybe-uninitialized]
+  priv->clk_i2s_bus = of_clk_get_by_name(cpu_dai, "iis");
+                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/samsung/odroid.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/samsung/odroid.c b/sound/soc/samsung/odroid.c
+index c3b0f6c612cb..694512f980fd 100644
+--- a/sound/soc/samsung/odroid.c
++++ b/sound/soc/samsung/odroid.c
+@@ -194,7 +194,8 @@ static struct snd_soc_dai_link odroid_card_dais[] = {
+ static int odroid_audio_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	struct device_node *cpu, *cpu_dai, *codec;
++	struct device_node *cpu_dai = NULL;
++	struct device_node *cpu, *codec;
+ 	struct odroid_priv *priv;
+ 	struct snd_soc_card *card;
+ 	struct snd_soc_dai_link *link, *codec_link;
+@@ -271,8 +272,11 @@ static int odroid_audio_probe(struct platform_device *pdev)
+ 		if (ret < 0)
+ 			break;
+ 	}
+-	if (ret == 0)
++	if (ret == 0) {
+ 		cpu_dai = of_parse_phandle(cpu, "sound-dai", 0);
++		if (!cpu_dai)
++			ret = -EINVAL;
++	}
+ 
+ 	of_node_put(cpu);
+ 	of_node_put(codec);
+-- 
+2.20.1
