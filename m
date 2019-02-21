@@ -1,47 +1,57 @@
 From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2 2/2] clk: samsung: exynos5: Fix kfree() of const memory on setting driver_override
-Date: Thu, 21 Feb 2019 13:33:12 -0800
-Message-ID: <155078479299.77512.7336673875297969172@swboyd.mtv.corp.google.com>
-References: <1550749552-8133-1-git-send-email-krzk@kernel.org> <1550749552-8133-3-git-send-email-krzk@kernel.org>
+Subject: Re: [PATCH] clk: samsung: s3c2443: Mark expected switch fall-through
+Date: Thu, 21 Feb 2019 13:43:32 -0800
+Message-ID: <155078541292.77512.12594007340364187685@swboyd.mtv.corp.google.com>
+References: <20190211181531.GA3238@embeddedor> <CAJKOXPeHp7sKkZ+jXmTXk5GEF_7G5ujfm3Lw==G3T4thfD+F7Q@mail.gmail.com> <CAGXu5jLMWrb4Dszv5YSyoGt5Lb3S1oE8EnKsTou7=7Nq1rEEVQ@mail.gmail.com> <155027728836.115909.11546859472583324712@swboyd.mtv.corp.google.com> <CAGXu5jJPfoYy20WrR5ghaSo88bsA75s-OyA4qt_3Vz0cJST_MQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <1550749552-8133-3-git-send-email-krzk@kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: stable@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAGXu5jJPfoYy20WrR5ghaSo88bsA75s-OyA4qt_3Vz0cJST_MQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kees Cook <keescook@chromium.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2019-02-21 03:45:52)
-> Platform driver driver_override field should not be initialized from
-> const memory because the core later kfree() it.  If driver_override is
-> manually set later through sysfs, kfree() of old value leads to:
+Quoting Kees Cook (2019-02-20 14:26:06)
+> On Fri, Feb 15, 2019 at 4:34 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > Quoting Kees Cook (2019-02-12 10:57:05)
+> > > On Mon, Feb 11, 2019 at 11:41 PM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
+> > > >
+> > > > It is just the GCC which has to be fixed not the code. You want to
+> > > > adjust the code for specific version of GCC and what if GCC changes
+> > > > its warning? For example GCC might require "fall through: "... or a=
+ny
+> > > > other syntax. Another point - what about clang's syntax?
+> > >
+> > > -Wimplicit-fallthrough=3D3 is stricter and maps to -Wextra, hence its
+> > > choice. GCC's levels were chosen based on the existing linters, static
+> > > analyzers, etc. The patterns are unlikely to change (see the gcc
+> > > man-page).
+> > >
+> > > Clang doesn't recognize anything in C mode (hopefully this will be
+> > > fixed in the future[1]).
+> > >
+> > > As long as one of the compilers is able to check this, we'll avoid the
+> > > bugs associated with this mis-pattern. Gustavo's efforts here have
+> > > found kind of a lot of bugs, so I think it's worth a little churn to
+> > > add these (and make minor adjustments to existing comments).
+> >
+> > Just curious, what compilation phase does this check run in? Could we
+> > gain a macro like FALLTHRU or even lowercase 'fallthru' that expanded to
+> > whatever the compiler wants to see and then there would only be "one
+> > way" to do this?  It would alleviate the above concerns, but maybe I'm
+> > rehashing something that's already been proposed and rejected.
 >=20
->     $ echo "new_value" > /sys/bus/platform/drivers/.../driver_override
->=20
->     kernel BUG at ../mm/slub.c:3960!
->     Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
->     ...
->     (kfree) from [<c058e8c0>] (platform_set_driver_override+0x84/0xac)
->     (platform_set_driver_override) from [<c058e908>] (driver_override_sto=
-re+0x20/0x34)
->     (driver_override_store) from [<c031f778>] (kernfs_fop_write+0x100/0x1=
-dc)
->     (kernfs_fop_write) from [<c0296de8>] (__vfs_write+0x2c/0x17c)
->     (__vfs_write) from [<c02970c4>] (vfs_write+0xa4/0x188)
->     (vfs_write) from [<c02972e8>] (ksys_write+0x4c/0xac)
->     (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
->=20
-> The clk-exynos5-subcmu driver uses override only for the purpose of
-> creating meaningful names for children devices (matching names of power
-> domains, e.g. DISP, MFC).  The driver_override was not developed for
-> this purpose so just switch to default names of devices to fix the
-> issue.
->=20
-> Fixes: b06a532bf1fa ("clk: samsung: Add Exynos5 sub-CMU clock driver")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
+> When this got discussed a while back, the thinking was that since
+> we're also dealing with static analyzers (e.g. Coverity) and IDEs that
+> literally parse comments in the code, it was most sensible (at least
+> for now, prior to there being a formal C "fall through" statement --
+> there is for C++ but not yet for C), we'd stick to explicit comments.
+> In theory, we will be able to do a tree-wide change to add the C
+> statement once it exists.
 
-Applied to clk-next
+Ok, thanks for the background. Looks like the perf tool already
+introduced the #define __fallthrough that they use for this purpose.
+Maybe they're hoping that it will be formalized.
