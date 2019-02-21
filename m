@@ -1,126 +1,68 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH V15 14/18] block: enable multipage bvecs
-Date: Thu, 21 Feb 2019 12:42:22 +0100
-Message-ID: <104e10f8-7aea-54ce-4fea-951768fa81c8@samsung.com>
-References: <20190215111324.30129-1-ming.lei@redhat.com>
-        <20190215111324.30129-15-ming.lei@redhat.com>
-        <CGME20190221084301eucas1p11e8841a62b4b1da3cccca661b6f4c29d@eucas1p1.samsung.com>
-        <6c9ae4de-c56f-a2b3-2542-da7d8b95601d@samsung.com>
-        <20190221095733.GA12448@ming.t460p>
-        <ba39138d-d65b-335d-d709-b95dbde1fd5c@samsung.com>
-        <20190221101618.GB12448@ming.t460p>
-        <9269fbbf-b5dd-6be1-682f-e791847ea00d@samsung.com>
-        <20190221103856.GC12448@ming.t460p>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [RFC 0/4] clk/driver: platform: Fix kfree() of const memory on
+ setting driver_override
+Date: Thu, 21 Feb 2019 12:43:29 +0100
+Message-ID: <CAJKOXPc=mKrNuw65qf=vPtRD7b7=5FZWdNcncvwhpDN+tqp0Bw@mail.gmail.com>
+References: <1550484960-2392-1-git-send-email-krzk@kernel.org>
+ <CAMuHMdWXy_0zL8FZWapPj4+cXRd0wHy9buLhf0D0txpAHPkK7Q@mail.gmail.com>
+ <CAJKOXPe1CW4k4ivbh4QhKEbuVc3RRNmzUwQcL0BsrAn=hCdjZg@mail.gmail.com> <155070010208.77512.17397936280518534534@swboyd.mtv.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190221103856.GC12448@ming.t460p>
-Content-Language: en-US
+In-Reply-To: <155070010208.77512.17397936280518534534@swboyd.mtv.corp.google.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>, Sagi Grimberg <sagi@grimberg.me>, Dave Chinner <dchinner@redhat.com>, Kent Overstreet <kent.overstreet@gmail.com>, Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, "Darrick J . Wong" <darrick.wong@oracle.com>, linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>, Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>, Bob
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Russell King <linux@armlinux.org.uk>, Mark Brown <broonie@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-spi <linux-spi@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Kukjin Kim <kgene@kernel.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>Linux ARM <lin>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Ming,
-
-On 2019-02-21 11:38, Ming Lei wrote:
-> On Thu, Feb 21, 2019 at 11:22:39AM +0100, Marek Szyprowski wrote:
->> On 2019-02-21 11:16, Ming Lei wrote:
->>> On Thu, Feb 21, 2019 at 11:08:19AM +0100, Marek Szyprowski wrote:
->>>> On 2019-02-21 10:57, Ming Lei wrote:
->>>>> On Thu, Feb 21, 2019 at 09:42:59AM +0100, Marek Szyprowski wrote:
->>>>>> On 2019-02-15 12:13, Ming Lei wrote:
->>>>>>> This patch pulls the trigger for multi-page bvecs.
->>>>>>>
->>>>>>> Reviewed-by: Omar Sandoval <osandov@fb.com>
->>>>>>> Signed-off-by: Ming Lei <ming.lei@redhat.com>
->>>>>> Since Linux next-20190218 I've observed problems with block layer on one
->>>>>> of my test devices (Odroid U3 with EXT4 rootfs on SD card). Bisecting
->>>>>> this issue led me to this change. This is also the first linux-next
->>>>>> release with this change merged. The issue is fully reproducible and can
->>>>>> be observed in the following kernel log:
->>>>>>
->>>>>> sdhci: Secure Digital Host Controller Interface driver
->>>>>> sdhci: Copyright(c) Pierre Ossman
->>>>>> s3c-sdhci 12530000.sdhci: clock source 2: mmc_busclk.2 (100000000 Hz)
->>>>>> s3c-sdhci 12530000.sdhci: Got CD GPIO
->>>>>> mmc0: SDHCI controller on samsung-hsmmc [12530000.sdhci] using ADMA
->>>>>> mmc0: new high speed SDHC card at address aaaa
->>>>>> mmcblk0: mmc0:aaaa SL16G 14.8 GiB
->>>>>>
->>>>>> ...
->>>>>>
->>>>>> EXT4-fs (mmcblk0p2): INFO: recovery required on readonly filesystem
->>>>>> EXT4-fs (mmcblk0p2): write access will be enabled during recovery
->>>>>> EXT4-fs (mmcblk0p2): recovery complete
->>>>>> EXT4-fs (mmcblk0p2): mounted filesystem with ordered data mode. Opts: (null)
->>>>>> VFS: Mounted root (ext4 filesystem) readonly on device 179:2.
->>>>>> devtmpfs: mounted
->>>>>> Freeing unused kernel memory: 1024K
->>>>>> hub 1-3:1.0: USB hub found
->>>>>> Run /sbin/init as init process
->>>>>> hub 1-3:1.0: 3 ports detected
->>>>>> *** stack smashing detected ***: <unknown> terminated
->>>>>> Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000004
->>>>>> CPU: 1 PID: 1 Comm: init Not tainted 5.0.0-rc6-next-20190218 #1546
->>>>>> Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
->>>>>> [<c01118d0>] (unwind_backtrace) from [<c010d794>] (show_stack+0x10/0x14)
->>>>>> [<c010d794>] (show_stack) from [<c09ff8a4>] (dump_stack+0x90/0xc8)
->>>>>> [<c09ff8a4>] (dump_stack) from [<c0125944>] (panic+0xfc/0x304)
->>>>>> [<c0125944>] (panic) from [<c012bc98>] (do_exit+0xabc/0xc6c)
->>>>>> [<c012bc98>] (do_exit) from [<c012c100>] (do_group_exit+0x3c/0xbc)
->>>>>> [<c012c100>] (do_group_exit) from [<c0138908>] (get_signal+0x130/0xbf4)
->>>>>> [<c0138908>] (get_signal) from [<c010c7a0>] (do_work_pending+0x130/0x618)
->>>>>> [<c010c7a0>] (do_work_pending) from [<c0101034>]
->>>>>> (slow_work_pending+0xc/0x20)
->>>>>> Exception stack(0xe88c3fb0 to 0xe88c3ff8)
->>>>>> 3fa0:                                     00000000 bea7787c 00000005
->>>>>> b6e8d0b8
->>>>>> 3fc0: bea77a18 b6f92010 b6e8d0b8 00000001 b6e8d0c8 00000001 b6e8c000
->>>>>> bea77b60
->>>>>> 3fe0: 00000020 bea77998 ffffffff b6d52368 60000050 ffffffff
->>>>>> CPU3: stopping
->>>>>>
->>>>>> I would like to help debugging and fixing this issue, but I don't really
->>>>>> have idea where to start. Here are some more detailed information about
->>>>>> my test system:
->>>>>>
->>>>>> 1. Board: ARM 32bit Samsung Exynos4412-based Odroid U3 (device tree
->>>>>> source: arch/arm/boot/dts/exynos4412-odroidu3.dts)
->>>>>>
->>>>>> 2. Block device: MMC/SDHCI/SDHCI-S3C with SD card
->>>>>> (drivers/mmc/host/sdhci-s3c.c driver, sdhci_2 device node in the device
->>>>>> tree)
->>>>>>
->>>>>> 3. Rootfs: Ext4
->>>>>>
->>>>>> 4. Kernel config: arch/arm/configs/exynos_defconfig
->>>>>>
->>>>>> I can gather more logs if needed, just let me which kernel option to
->>>>>> enable. Reverting this commit on top of next-20190218 as well as current
->>>>>> linux-next (tested with next-20190221) fixes this issue and makes the
->>>>>> system bootable again.
->>>>> Could you test the patch in following link and see if it can make a difference?
->>>>>
->>>>> https://marc.info/?l=linux-aio&m=155070355614541&w=2
->>>> I've tested that patch, but it doesn't make any difference on the test
->>>> system. In the log I see no warning added by it.
->>> I guess it might be related with memory corruption, could you enable the
->>> following debug options and post the dmesg log?
->>>
->>> CONFIG_DEBUG_STACKOVERFLOW=y
->>> CONFIG_KASAN=y
->> It won't be that easy as none of the above options is available on ARM
->> 32bit. I will try to apply some ARM KASAN patches floating on the net
->> and let you know the result.
-> Hi Marek,
+On Wed, 20 Feb 2019 at 23:01, Stephen Boyd <sboyd@kernel.org> wrote:
 >
-> Could you test the following patch?
+> Quoting Krzysztof Kozlowski (2019-02-18 03:14:29)
+> > On Mon, 18 Feb 2019 at 11:40, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > >
+> > > Hi Krzysztof,
+> > >
+> > > On Mon, Feb 18, 2019 at 11:27 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > > > The problem
+> > > > ===========
+> > > > Several device types (platform, amba, spi etc.) provide a driver_override
+> > > > field.  On sysfs store or during device removal, they kfree() the
+> > > > existing value.
+> > > >
+> > > > However the users are unaware of this and set the driver_override like:
+> > > >
+> > > >         pdev->driver_override = "exynos5-subcmu";
+> > > >
+> > > > which obviously leads to error.
+> > >
+> > > IMHO driver_override is not meant to be set by a driver, only from userspace,
+> > > for binding the device to vfio (is there another use case?).
+> > >
+> > > >   clk: samsung: exynos5: Fix kfree() of const memory on setting
+> > > >     driver_override
+> > > >   slimbus: ngd: Fix kfree() of const memory on setting driver_override
+> > >
+> > > I see all users set override immediately after allocating a platform device.
+> > > Can't they just allocate a platform device using the override name instead?
+> > > What am I missing?
+> >
+> > For the clk-exynos5-subcmu.c case, driver registers several
+> > sub-devices. Each sub-devices is a clock controller associated with
+> > power domain. I guess the author wanted to have meaningful names of
+> > these sub-devices (DISP, CAM etc. like names of power domains),
+> > instead of just exynos5-subcmu.1, exynos5-subcmu.2 ...
+> >
+> > If driver_override should not be used for such case, then I could
+> > replace it with what you said.
+>
+> Looking at the introduction of the code into the platform bus makes it
+> sound like it was all for vfio devices. If the clk driver doesn't need
+> it for that purpose and can get by with more generic names then it seems
+> best to avoid using it entirely. So can you do that and resend the first
+> patch in this series too? Effectively splitting the clk parts from the
+> larger issue of kfree()ing of const memory.
 
-Yes. Sadly, no change observed.
+Sure, let me send just the clk parts.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+BR,
+Krzysztof
