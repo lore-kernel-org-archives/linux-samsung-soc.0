@@ -1,38 +1,52 @@
-From: Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] clk: samsung: s3c2443: Mark expected switch fall-through
-Date: Thu, 21 Feb 2019 14:23:18 -0800
-Message-ID: <CAGXu5j+_bm+usH+hK9Pz1hAS9qhmndhmt9Ue3T3Kdta3kk1LHg@mail.gmail.com>
-References: <20190211181531.GA3238@embeddedor> <CAJKOXPeHp7sKkZ+jXmTXk5GEF_7G5ujfm3Lw==G3T4thfD+F7Q@mail.gmail.com>
- <CAGXu5jLMWrb4Dszv5YSyoGt5Lb3S1oE8EnKsTou7=7Nq1rEEVQ@mail.gmail.com>
- <155027728836.115909.11546859472583324712@swboyd.mtv.corp.google.com>
- <CAGXu5jJPfoYy20WrR5ghaSo88bsA75s-OyA4qt_3Vz0cJST_MQ@mail.gmail.com> <155078541292.77512.12594007340364187685@swboyd.mtv.corp.google.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCH] ARM: dts: exynos: Add pin configuration for read strobe for Odroid XU3/XU4 eMMC
+Date: Fri, 22 Feb 2019 10:19:48 +0000
+Message-ID: <20190222101948.848-1-linux.amoon@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <155078541292.77512.12594007340364187685@swboyd.mtv.corp.google.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Feb 21, 2019 at 1:43 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> Ok, thanks for the background. Looks like the perf tool already
-> introduced the #define __fallthrough that they use for this purpose.
-> Maybe they're hoping that it will be formalized.
+Add Read Strobe RDQS pin configuration for eMMC to support higher data rate read/write.
 
-Yeah, GCC has an extension for it (but it's not yet part of the C
-standard -- though there are open bugs against Clang to support it).
-Our adoption of the markings, thanks to Gustavo's work, has rapidly
-increased lately too (we started with something like 2400 instances
-and we were gaining about as many each cycle as we removed). 5.1,
-though, is closing in on _0_ instances. My thinking is that once we're
-to the point where we can globally enable -Wimplicit-fallthrough, then
-we can depend on the compiler to enforce this (instead continuing to
-depend on external tracking in Coverity and the like). It was a bit of
-a chicken-and-egg and I was afraid we were going to be left with this
-"partial adoption" for a long time. But we're nearly to the point
-where I would be happy doing a tree-wide replacement to __fallthrough
-(which should be mechanically easy).
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+ arch/arm/boot/dts/exynos5420-pinctrl.dtsi          | 6 ++++++
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 2 +-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
+diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+index b82af7c89654..4fb3865e082a 100644
+--- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+@@ -206,6 +206,12 @@
+ 		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV4>;
+ 	};
+ 
++	sd0_rdqs: sd0-rdqs {
++		samsung,pins = "gpc0-7";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
++	};
++
+ 	sd1_clk: sd1-clk {
+ 		samsung,pins = "gpc1-0";
+ 		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+index b299e541cac0..d41397748ed2 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+@@ -411,7 +411,7 @@
+ 	samsung,dw-mshc-hs400-timing = <0 2>;
+ 	samsung,read-strobe-delay = <90>;
+ 	pinctrl-names = "default";
+-	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd &sd0_rclk>;
++	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_rdqs &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd &sd0_rclk>;
+ 	bus-width = <8>;
+ 	cap-mmc-highspeed;
+ 	mmc-hs200-1_8v;
 -- 
-Kees Cook
+2.20.1
