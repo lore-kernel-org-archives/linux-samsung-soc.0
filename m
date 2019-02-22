@@ -1,77 +1,46 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH] ARM: dts: exynos: Add pin configuration for read strobe
- for Odroid XU3/XU4 eMMC
-Date: Fri, 22 Feb 2019 16:03:26 +0530
-Message-ID: <CANAwSgSnunUbZJeT72B7HjAuBgsLQFA6_y_ijadHUKEAOoM-gA@mail.gmail.com>
-References: <CGME20190222102034epcas3p373245ed6e3e83e297bcaff48aec37992@epcas3p3.samsung.com>
- <20190222101948.848-1-linux.amoon@gmail.com> <d4f36ce1-ddef-5756-05dc-74e8dd08417c@samsung.com>
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Subject: [PATCH v4 1/3] arm64: dts: exynos: add SlimSSS for Exynos5433
+Date: Fri, 22 Feb 2019 13:21:42 +0100
+Message-ID: <20190222122144.19024-2-k.konieczny@partner.samsung.com>
+References: <20190222122144.19024-1-k.konieczny@partner.samsung.com>
+        <CGME20190222122203eucas1p19a77c1cb72526ce36e99542926fd5a17@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <d4f36ce1-ddef-5756-05dc-74e8dd08417c@samsung.com>
+In-Reply-To: <20190222122144.19024-1-k.konieczny@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: k.konieczny@partner.samsung.com
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+Add DT node for SlimSSS (aka Slim SecuritySubSystem) in Exynos5433 SoC.
+The users can use compatibility "samsung,exynos5433-slim-sss".
 
-On Fri, 22 Feb 2019 at 15:59, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->
-> Hi Anand,
->
-> On 2019-02-22 11:19, Anand Moon wrote:
-> > Add Read Strobe RDQS pin configuration for eMMC to support higher data rate read/write.
-> >
-> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > ---
-> >  arch/arm/boot/dts/exynos5420-pinctrl.dtsi          | 6 ++++++
-> >  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 2 +-
-> >  2 files changed, 7 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-> > index b82af7c89654..4fb3865e082a 100644
-> > --- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-> > +++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-> > @@ -206,6 +206,12 @@
-> >               samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV4>;
-> >       };
-> >
-> > +     sd0_rdqs: sd0-rdqs {
-> > +             samsung,pins = "gpc0-7";
-> > +             samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-> > +             samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
-> > +     };
-> > +
->
-> The above lines are not needed. There is already a sd0_rclk node with
-> exactly the same configuration just above your change.
->
+Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+---
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Sorry once again, I failed to look closely., sorry for the noise.
-
-Best Regards
--Anand
-
-> >       sd1_clk: sd1-clk {
-> >               samsung,pins = "gpc1-0";
-> >               samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-> > diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> > index b299e541cac0..d41397748ed2 100644
-> > --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> > +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> > @@ -411,7 +411,7 @@
-> >       samsung,dw-mshc-hs400-timing = <0 2>;
-> >       samsung,read-strobe-delay = <90>;
-> >       pinctrl-names = "default";
-> > -     pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd &sd0_rclk>;
-> > +     pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_rdqs &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd &sd0_rclk>;
-> >       bus-width = <8>;
-> >       cap-mmc-highspeed;
-> >       mmc-hs200-1_8v;
->
-> Best regards
-> --
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
->
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+index e7cd3b67d818..9e5fcb6c7776 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+@@ -559,6 +559,15 @@
+ 				<&cmu_top CLK_DIV_ACLK_IMEM_200>;
+ 		};
+ 
++		slim_sss: slim-sss@11140000 {
++			compatible = "samsung,exynos5433-slim-sss";
++			reg = <0x11140000 0x1000>;
++			interrupts = <GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "aclk", "pclk";
++			clocks = <&cmu_imem CLK_ACLK_SLIMSSS>,
++				 <&cmu_imem CLK_PCLK_SLIMSSS>;
++		};
++
+ 		pd_gscl: power-domain@105c4000 {
+ 			compatible = "samsung,exynos5433-pd";
+ 			reg = <0x105c4000 0x20>;
+-- 
+2.20.1
