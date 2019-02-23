@@ -1,44 +1,46 @@
-From: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Subject: [PATCH v4 0/3] add AES support for Exynos5433
-Date: Fri, 22 Feb 2019 13:21:41 +0100
-Message-ID: <20190222122144.19024-1-k.konieczny@partner.samsung.com>
-References: <CGME20190222122203eucas1p1e87a8066d4348be4beb3ff035ea55828@eucas1p1.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [PATCH 04/18] clocksource/drivers/exynos_mct: Clear timer interrupt when shutdown
+Date: Sat, 23 Feb 2019 14:06:52 +0100
+Message-ID: <20190223130707.16704-4-daniel.lezcano@linaro.org>
+References: <b5d75b05-b78c-535c-2b35-9a1f5a3a853f@linaro.org>
+ <20190223130707.16704-1-daniel.lezcano@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190223130707.16704-1-daniel.lezcano@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: k.konieczny@partner.samsung.com
-Cc: "David S. Miller" <davem@davemloft.net>, devicetree@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org, Stuart Menefy <stuart.menefy@mathembedded.com>, stable@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "moderated list:ARM/SAMSUNG EXYNOS
+        ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNOS
+        ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add slimSSS node to DT and crypto AES support for Exynos5433. Tested on
-Exynos5433 board with crypto run-time self tests and with tcrypt with
-command insmod tcrypt.ko mode=500 sec=1
+From: Stuart Menefy <stuart.menefy@mathembedded.com>
 
-Changes since v3:
-- moved bindings documentation out from samsung-sss.txt into separate file
-  samsung-slimsss.txt
+When shutting down the timer, ensure that after we have stopped the
+timer any pending interrupts are cleared. This fixes a problem when
+suspending, as interrupts are disabled before the timer is stopped,
+so the timer interrupt may still be asserted, preventing the system
+entering a low power state when the wfi is executed.
 
-Changes since v2:
-- address Corentine Labbe note: add "const" to char* in declaration of
-  struct samsung_aes_variant
+Signed-off-by: Stuart Menefy <stuart.menefy@mathembedded.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: <stable@vger.kernel.org> # v4.3+
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ drivers/clocksource/exynos_mct.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Changes since v1:
-- address Krzysztof Kozlowski review: add missing comma in struct
-  definition, add goto for error code path, correct indentation,
-  in documentation add that Exynos5433 has both slimSSS and SSS IPs.
-
-Kamil Konieczny (3):
-  arm64: dts: exynos: add SlimSSS for Exynos5433
-  dt-bindings: crypto: document Exynos5433 SlimSSS
-  crypto: s5p: add AES support for Exynos5433
-
- .../bindings/crypto/samsung-slimsss.txt       | 19 +++++++
- arch/arm64/boot/dts/exynos/exynos5433.dtsi    |  9 ++++
- drivers/crypto/s5p-sss.c                      | 50 +++++++++++++++++--
- 3 files changed, 74 insertions(+), 4 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/crypto/samsung-slimsss.txt
-
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index 1e325f89d408..d55c30f6981d 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -411,6 +411,7 @@ static int set_state_shutdown(struct clock_event_device *evt)
+ 
+ 	mevt = container_of(evt, struct mct_clock_event_device, evt);
+ 	exynos4_mct_tick_stop(mevt);
++	exynos4_mct_tick_clear(mevt);
+ 	return 0;
+ }
+ 
 -- 
-2.20.1
+2.17.1
