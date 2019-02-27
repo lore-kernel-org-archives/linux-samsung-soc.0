@@ -1,194 +1,55 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 4/8] dt-bindings: devfreq: add DMC device description
-Date: Mon, 25 Feb 2019 07:49:13 -0600
-Message-ID: <20190225134913.GA32033@bogus>
-References: <CGME20190128192153eucas1p2d7a796cb89e68c1789069562e91296be@eucas1p2.samsung.com>
- <1548703299-15806-1-git-send-email-l.luba@partner.samsung.com>
- <1548703299-15806-5-git-send-email-l.luba@partner.samsung.com>
- <CAJKOXPd2g6rtZpK20emJ0tqHhq0D01=BWbU_9MP30313XHvPHg@mail.gmail.com>
- <79cd56c4-2415-7db1-be6f-73c03c0902bc@partner.samsung.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH V15 14/18] block: enable multipage bvecs
+Date: Wed, 27 Feb 2019 20:47:09 +0000
+Message-ID: <0dbbee64-5c6b-0374-4360-6dc218c70d58@nvidia.com>
+References: <20190215111324.30129-1-ming.lei@redhat.com>
+ <20190215111324.30129-15-ming.lei@redhat.com>
+ <CGME20190221084301eucas1p11e8841a62b4b1da3cccca661b6f4c29d@eucas1p1.samsung.com>
+ <6c9ae4de-c56f-a2b3-2542-da7d8b95601d@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <79cd56c4-2415-7db1-be6f-73c03c0902bc@partner.samsung.com>
+In-Reply-To: <6c9ae4de-c56f-a2b3-2542-da7d8b95601d@samsung.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lukasz Luba <l.luba@partner.samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>, myungjoo.ham@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>, Sagi Grimberg <sagi@grimberg.me>, Dave Chinner <dchinner@redhat.com>, Kent Overstreet <kent.overstreet@gmail.com>, Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, "Darrick J . Wong" <darrick.wong@oracle.com>, linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>, Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>, Bob Peterson <rpeter>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 05:02:49PM +0100, Lukasz Luba wrote:
-> Hi Krzysztof,
+
+On 21/02/2019 08:42, Marek Szyprowski wrote:
+> Dear All,
 > 
-> On 1/29/19 3:47 PM, Krzysztof Kozlowski wrote:
-> > On Mon, 28 Jan 2019 at 20:21, Lukasz Luba <l.luba@partner.samsung.com> wrote:
-> >>
-> >> The patch adds description for DT binding for a new Exynos5 Dynamic Memory
-> >> Controller device.
-> >> It also contains needed MAINTAINERS file updates.
-> >>
-> >> CC: MyungJoo Ham <myungjoo.ham@samsung.com>
-> >> CC: Kyungmin Park <kyungmin.park@samsung.com>
-> >> CC: Chanwoo Choi <cw00.choi@samsung.com>
-> >> CC: Rob Herring <robh+dt@kernel.org>
-> >> CC: Mark Rutland <mark.rutland@arm.com>
-> >> CC: Kukjin Kim <kgene@kernel.org>
-> >> CC: Krzysztof Kozlowski <krzk@kernel.org>
-> >> CC: linux-pm@vger.kernel.org
-> >> CC: linux-samsung-soc@vger.kernel.org
-> >> CC: devicetree@vger.kernel.org
-> >> CC: linux-arm-kernel@lists.infradead.org
-> >> CC: linux-kernel@vger.kernel.org
-> >> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
-> >> ---
-> >>   .../devicetree/bindings/devfreq/exynos5-dmc.txt    | 108 +++++++++++++++++++++
-> >>   MAINTAINERS                                        |   7 ++
-> >>   2 files changed, 115 insertions(+)
-> >>   create mode 100644 Documentation/devicetree/bindings/devfreq/exynos5-dmc.txt
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/devfreq/exynos5-dmc.txt b/Documentation/devicetree/bindings/devfreq/exynos5-dmc.txt
-> >> new file mode 100644
-> >> index 0000000..914bd85
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/devfreq/exynos5-dmc.txt
-> >> @@ -0,0 +1,108 @@
-> >> +* Exynos5 frequency and voltage scaling for Dynamic Memory Controller device
-> >> +
-> >> +The Samsung Exynos5 SoC has DMC (Dynamic Memory Controller) to which the DRAM
-> >> +memory chips are connected. The driver is to monitor the controller in runtime
-> >> +and switch frequency and voltage. To monitor the usage of the controller in
-> >> +runtime, the driver uses the PPMU (Platform Performance Monitoring Unit), which
-> >> +is able to measure the current load of the memory.
-> >> +When 'userspace' governor is used for the driver, an application is able to
-> >> +switch the DMC frequency.
-> >> +
-> >> +Required properties for DMC device for Exynos5422:
-> >> +- compatible: Should be "samsung,exynos5422-bus".
-> >> +- clock-names : the name of clock used by the bus, "bus".
-> >> +- clocks : phandles for clock specified in "clock-names" property.
-> >> +- devfreq-events : phandles for PPMU devices connected to this DMC.
-> >> +
-> >> +The example definition of a DMC and PPMU devices declared in DT is shown below:
-> >> +
-> >> +       ppmu_dmc0_0: ppmu_dmc0_0@10d00000 {
-> >> +               compatible = "samsung,exynos-ppmu";
-> >> +               reg = <0x10d00000 0x2000>;
-> >> +               clocks = <&clock CLK_PCLK_PPMU_DREX0_0>;
-> >> +               clock-names = "ppmu";
-> >> +               status = "okay";
-> >> +               events {
-> >> +                       ppmu_event_dmc0_0: ppmu-event3-dmc0_0 {
-> >> +                               event-name = "ppmu-event3-dmc0_0";
-> >> +                       };
-> >> +               };
-> >> +       };
-> >> +
-> >> +
-> >> +       ppmu_dmc0_1: ppmu_dmc0_1@10d10000 {
-> >> +               compatible = "samsung,exynos-ppmu";
-> >> +               reg = <0x10d10000 0x2000>;
-> >> +               clocks = <&clock CLK_PCLK_PPMU_DREX0_1>;
-> >> +               clock-names = "ppmu";
-> >> +               status = "okay";
-> >> +               events {
-> >> +                       ppmu_event_dmc0_1: ppmu-event3-dmc0_1 {
-> >> +                               event-name = "ppmu-event3-dmc0_1";
-> >> +                       };
-> >> +               };
-> >> +       };
-> >> +
-> >> +       ppmu_dmc1_0: ppmu_dmc1_0@10d10000 {
-> >> +               compatible = "samsung,exynos-ppmu";
-> >> +               reg = <0x10d60000 0x2000>;
-> >> +               clocks = <&clock CLK_PCLK_PPMU_DREX1_0>;
-> >> +               clock-names = "ppmu";
-> >> +               status = "okay";
-> >> +               events {
-> >> +                       ppmu_event_dmc1_0: ppmu-event3-dmc1_0 {
-> >> +                               event-name = "ppmu-event3-dmc1_0";
-> >> +                       };
-> >> +               };
-> >> +       };
-> >> +
-> >> +       ppmu_dmc1_1: ppmu_dmc1_1@10d70000 {
-> >> +               compatible = "samsung,exynos-ppmu";
-> >> +               reg = <0x10d70000 0x2000>;
-> >> +               clocks = <&clock CLK_PCLK_PPMU_DREX1_1>;
-> >> +               clock-names = "ppmu";
-> >> +               status = "okay";
-> >> +               events {
-> >> +                       ppmu_event_dmc1_1: ppmu-event3-dmc1_1 {
-> >> +                               event-name = "ppmu-event3-dmc1_1";
-> >> +                       };
-> >> +               };
-> >> +       };
-> >> +
-> >> +       dmc: dmc@10c20000 {
-> >> +               compatible = "samsung,exynos5422-dmc";
-> >> +               reg = <0x10c20000 0x10000>, <0x10c30000 0x10000>,
-> >> +                       <0x10030000 0x1000>, <0x10000000 0x1000>;
-> >> +               clocks =        <&clock CLK_FOUT_SPLL>,
-> >> +                               <&clock CLK_MOUT_SCLK_SPLL>,
-> >> +                               <&clock CLK_FF_DOUT_SPLL2>,
-> >> +                               <&clock CLK_FOUT_BPLL>,
-> >> +                               <&clock CLK_MOUT_BPLL>,
-> >> +                               <&clock CLK_SCLK_BPLL>,
-> >> +                               <&clock CLK_MOUT_MX_MSPLL_CCORE>,
-> >> +                               <&clock CLK_MOUT_MX_MSPLL_CCORE_PHY>,
-> >> +                               <&clock CLK_MOUT_MCLK_CDREX>,
-> >> +                               <&clock CLK_DOUT_CLK2X_PHY0>,
-> >> +                               <&clock CLK_CLKM_PHY0>,
-> >> +                               <&clock CLK_CLKM_PHY1>
-> >> +                       ;
-> > 
-> > Join with previous line.
-> > 
-> >> +               clock-names =   "fout_spll",
-> >> +                               "mout_sclk_spll",
-> >> +                               "ff_dout_spll2",
-> >> +                               "fout_bpll",
-> >> +                               "mout_bpll",
-> >> +                               "sclk_bpll",
-> >> +                               "mout_mx_mspll_ccore",
-> >> +                               "mout_mx_mspll_ccore_phy",
-> >> +                               "mout_mclk_cdrex",
-> >> +                               "dout_clk2x_phy0",
-> >> +                               "clkm_phy0",
-> >> +                               "clkm_phy1"
-> >> +                               ;
-> > 
-> > Ditto.
-> OK, I will fix it.
-> > 
-> >> +
-> >> +               status = "okay";
-> >> +               devfreq-events = <&ppmu_dmc0_0>, <&ppmu_dmc0_1>,
-> >> +                               <&ppmu_dmc1_0>, <&ppmu_dmc1_1>;
-> >> +       };
-> >> +
-> >> +
-> >> diff --git a/MAINTAINERS b/MAINTAINERS
-> >> index 9f64f8d..3581807 100644
-> >> --- a/MAINTAINERS
-> >> +++ b/MAINTAINERS
-> >> @@ -3310,6 +3310,13 @@ S:       Maintained
-> >>   F:     drivers/devfreq/exynos-bus.c
-> >>   F:     Documentation/devicetree/bindings/devfreq/exynos-bus.txt
-> >>
-> >> +DMC FREQUENCY DRIVER FOR SAMSUNG EXYNOS5
-> >> +M:     Lukasz Luba <l.luba@partner.samsung.com>
-> >> +L:     linux-pm@vger.kernel.org
-> >> +L:     linux-samsung-soc@vger.kernel.org
-> >> +S:     Maintained
-> >> +F:     Documentation/devicetree/bindings/devfreq/exynos5-dmc.txt
-> > 
-> > Maintainers change should go with the next change, I think. It looks
-> > unusual to add an entry for driver... without the driver.
-> Thank you for the review. I will move the dt-bindings in the patch set
-> after the dmc driver file. Then the MAINTAINERS file will be updated
-> only by one entry.
+> On 2019-02-15 12:13, Ming Lei wrote:
+>> This patch pulls the trigger for multi-page bvecs.
+>>
+>> Reviewed-by: Omar Sandoval <osandov@fb.com>
+>> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> 
+> Since Linux next-20190218 I've observed problems with block layer on one
+> of my test devices (Odroid U3 with EXT4 rootfs on SD card). Bisecting
+> this issue led me to this change. This is also the first linux-next
+> release with this change merged. The issue is fully reproducible and can
+> be observed in the following kernel log:
+> 
+> sdhci: Secure Digital Host Controller Interface driver
+> sdhci: Copyright(c) Pierre Ossman
+> s3c-sdhci 12530000.sdhci: clock source 2: mmc_busclk.2 (100000000 Hz)
+> s3c-sdhci 12530000.sdhci: Got CD GPIO
+> mmc0: SDHCI controller on samsung-hsmmc [12530000.sdhci] using ADMA
+> mmc0: new high speed SDHC card at address aaaa
+> mmcblk0: mmc0:aaaa SL16G 14.8 GiB
+I have also noticed some failures when writing to an eMMC device on one
+of our Tegra boards. We have a simple eMMC write/read test and it is
+currently failing because the data written does not match the source.
 
-No, bindings should come first. Just move this hunk to the driver patch 
-including the line here for the binding.
+I did not seem the same crash as reported here, however, in our case the
+rootfs is NFS mounted and so probably would not. However, the bisect
+points to this commit and reverting on top of -next fixes the issues.
 
-Rob
+Cheers
+Jon
+
+-- 
+nvpublic
