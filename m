@@ -1,100 +1,35 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 23/23] drm/exynos/gscaler: fix handling YVU420 pixel format
-Date: Fri, 01 Mar 2019 13:20:55 +0100
-Message-ID: <20190301122055.7135-24-a.hajda@samsung.com>
-References: <20190301122055.7135-1-a.hajda@samsung.com>
- <CGME20190301122114eucas1p2c257303e00546f399ee3e5f97962c28c@eucas1p2.samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 11/15] ARM: versatile: fix a leaked reference by
+ addingmissing of_node_put
+Date: Fri, 1 Mar 2019 14:30:07 +0100
+Message-ID: <CACRpkdbRfagzAr6zRBtEJ0Z2fvLhiMsy8CPsuiFswf0NjzvCRw@mail.gmail.com>
+References: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn> <1551430616-42014-11-git-send-email-wen.yang99@zte.com.cn>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20190301122055.7135-1-a.hajda@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1551430616-42014-11-git-send-email-wen.yang99@zte.com.cn>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wen Yang <wen.yang99@zte.com.cn>
+Cc: Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Russell King <linux@armlinux.org.uk>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Dinh Nguyen <dinguyen@kernel.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-WVZVNDIwIHJlcXVpcmVzIHN3YXBwaW5nIGFkZHJlc3NlcyBvZiBVIGFuZCBWIHBsYW5lcy4KClNp
-Z25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Ci0tLQogZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dzYy5jIHwgNTIgKysrKysrKysrKysrKysr
-KysrLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDM3IGluc2VydGlvbnMoKyksIDE1IGRlbGV0aW9u
-cygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nc2Mu
-YyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nc2MuYwppbmRleCBjN2E5N2Qw
-NTNhYjEuLmY3NTczOWU4YmM1NSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2dzYy5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9n
-c2MuYwpAQCAtNTM1LDEwICs1MzUsOCBAQCBzdGF0aWMgdm9pZCBnc2Nfc3JjX3NldF9mbXQoc3Ry
-dWN0IGdzY19jb250ZXh0ICpjdHgsIHUzMiBmbXQsIGJvb2wgdGlsZWQpCiAJCWNmZyB8PSBHU0Nf
-SU5fWVVWNDIyXzNQOwogCQlicmVhazsKIAljYXNlIERSTV9GT1JNQVRfWVVWNDIwOgotCQljZmcg
-fD0gKEdTQ19JTl9DSFJPTUFfT1JERVJfQ0JDUiB8IEdTQ19JTl9ZVVY0MjBfM1ApOwotCQlicmVh
-azsKIAljYXNlIERSTV9GT1JNQVRfWVZVNDIwOgotCQljZmcgfD0gKEdTQ19JTl9DSFJPTUFfT1JE
-RVJfQ1JDQiB8IEdTQ19JTl9ZVVY0MjBfM1ApOworCQljZmcgfD0gKEdTQ19JTl9DSFJPTUFfT1JE
-RVJfQ0JDUiB8IEdTQ19JTl9ZVVY0MjBfM1ApOwogCQlicmVhazsKIAljYXNlIERSTV9GT1JNQVRf
-TlYxMjoKIAkJY2ZnIHw9IChHU0NfSU5fQ0hST01BX09SREVSX0NCQ1IgfCBHU0NfSU5fWVVWNDIw
-XzJQKTsKQEAgLTY1OCwxMyArNjU2LDMyIEBAIHN0YXRpYyB2b2lkIGdzY19zcmNfc2V0X2J1Zl9z
-ZXEoc3RydWN0IGdzY19jb250ZXh0ICpjdHgsIHUzMiBidWZfaWQsCiAJZ3NjX3dyaXRlKGNmZywg
-R1NDX0lOX0JBU0VfQUREUl9DUl9NQVNLKTsKIH0KIAorLyogcmV0dXJucyBIVyBwbGFuZSBpbmRl
-eCBiYXNlZCBvbiBwaXhlbCBmb3JtYXQgKi8KK3N0YXRpYyBpbnQgZ3NjX2h3X3BsYW5lX2luZGV4
-KGludCBpbmRleCwgdTMyIGZvcm1hdCkKK3sKKwlzd2l0Y2ggKGZvcm1hdCkgeworCWNhc2UgRFJN
-X0ZPUk1BVF9ZVlU0MjA6CisJCXN3aXRjaCAoaW5kZXgpIHsKKwkJY2FzZSAwOiByZXR1cm4gMDsK
-KwkJY2FzZSAxOiByZXR1cm4gMjsKKwkJY2FzZSAyOiByZXR1cm4gMTsKKwkJfQorCWRlZmF1bHQ6
-CisJCXJldHVybiBpbmRleDsKKwl9Cit9CisKIHN0YXRpYyB2b2lkIGdzY19zcmNfc2V0X2FkZHIo
-c3RydWN0IGdzY19jb250ZXh0ICpjdHgsIHUzMiBidWZfaWQsCiAJCQkgICAgc3RydWN0IGV4eW5v
-c19kcm1faXBwX2J1ZmZlciAqYnVmKQogeworCWludCBpZHg7CisKIAkvKiBhZGRyZXNzIHJlZ2lz
-dGVyIHNldCAqLwogCWdzY193cml0ZShidWYtPmRtYV9hZGRyWzBdLCBHU0NfSU5fQkFTRV9BRERS
-X1koYnVmX2lkKSk7Ci0JZ3NjX3dyaXRlKGJ1Zi0+ZG1hX2FkZHJbMV0sIEdTQ19JTl9CQVNFX0FE
-RFJfQ0IoYnVmX2lkKSk7Ci0JZ3NjX3dyaXRlKGJ1Zi0+ZG1hX2FkZHJbMl0sIEdTQ19JTl9CQVNF
-X0FERFJfQ1IoYnVmX2lkKSk7CisJaWR4ID0gZ3NjX2h3X3BsYW5lX2luZGV4KDEsIGJ1Zi0+Zm9y
-bWF0LT5mb3JtYXQpOworCWdzY193cml0ZShidWYtPmRtYV9hZGRyW2lkeF0sIEdTQ19JTl9CQVNF
-X0FERFJfQ0IoYnVmX2lkKSk7CisJaWR4ID0gZ3NjX2h3X3BsYW5lX2luZGV4KDIsIGJ1Zi0+Zm9y
-bWF0LT5mb3JtYXQpOworCWdzY193cml0ZShidWYtPmRtYV9hZGRyW2lkeF0sIEdTQ19JTl9CQVNF
-X0FERFJfQ1IoYnVmX2lkKSk7CiAKIAlnc2Nfc3JjX3NldF9idWZfc2VxKGN0eCwgYnVmX2lkLCB0
-cnVlKTsKIH0KQEAgLTcyMiwxMCArNzM5LDggQEAgc3RhdGljIHZvaWQgZ3NjX2RzdF9zZXRfZm10
-KHN0cnVjdCBnc2NfY29udGV4dCAqY3R4LCB1MzIgZm10LCBib29sIHRpbGVkKQogCQljZmcgfD0g
-R1NDX09VVF9ZVVY0MjJfM1A7CiAJCWJyZWFrOwogCWNhc2UgRFJNX0ZPUk1BVF9ZVVY0MjA6Ci0J
-CWNmZyB8PSAoR1NDX09VVF9DSFJPTUFfT1JERVJfQ0JDUiB8IEdTQ19PVVRfWVVWNDIwXzNQKTsK
-LQkJYnJlYWs7CiAJY2FzZSBEUk1fRk9STUFUX1lWVTQyMDoKLQkJY2ZnIHw9IChHU0NfT1VUX0NI
-Uk9NQV9PUkRFUl9DUkNCIHwgR1NDX09VVF9ZVVY0MjBfM1ApOworCQljZmcgfD0gKEdTQ19PVVRf
-Q0hST01BX09SREVSX0NCQ1IgfCBHU0NfT1VUX1lVVjQyMF8zUCk7CiAJCWJyZWFrOwogCWNhc2Ug
-RFJNX0ZPUk1BVF9OVjEyOgogCQljZmcgfD0gKEdTQ19PVVRfQ0hST01BX09SREVSX0NCQ1IgfCBH
-U0NfT1VUX1lVVjQyMF8yUCk7CkBAIC05ODUsMTAgKzEwMDAsMTMgQEAgc3RhdGljIHZvaWQgZ3Nj
-X2RzdF9zZXRfYnVmX3NlcShzdHJ1Y3QgZ3NjX2NvbnRleHQgKmN0eCwgdTMyIGJ1Zl9pZCwKIHN0
-YXRpYyB2b2lkIGdzY19kc3Rfc2V0X2FkZHIoc3RydWN0IGdzY19jb250ZXh0ICpjdHgsCiAJCQkg
-ICAgIHUzMiBidWZfaWQsIHN0cnVjdCBleHlub3NfZHJtX2lwcF9idWZmZXIgKmJ1ZikKIHsKLQkv
-KiBhZGRyZXNzIHJlZ2lzdGVyIHNldCAqLworCWludCBpOworCiAJZ3NjX3dyaXRlKGJ1Zi0+ZG1h
-X2FkZHJbMF0sIEdTQ19PVVRfQkFTRV9BRERSX1koYnVmX2lkKSk7Ci0JZ3NjX3dyaXRlKGJ1Zi0+
-ZG1hX2FkZHJbMV0sIEdTQ19PVVRfQkFTRV9BRERSX0NCKGJ1Zl9pZCkpOwotCWdzY193cml0ZShi
-dWYtPmRtYV9hZGRyWzJdLCBHU0NfT1VUX0JBU0VfQUREUl9DUihidWZfaWQpKTsKKwlpID0gZ3Nj
-X2h3X3BsYW5lX2luZGV4KDEsIGJ1Zi0+Zm9ybWF0LT5mb3JtYXQpOworCWdzY193cml0ZShidWYt
-PmRtYV9hZGRyW2ldLCBHU0NfT1VUX0JBU0VfQUREUl9DQihidWZfaWQpKTsKKwlpID0gZ3NjX2h3
-X3BsYW5lX2luZGV4KDIsIGJ1Zi0+Zm9ybWF0LT5mb3JtYXQpOworCWdzY193cml0ZShidWYtPmRt
-YV9hZGRyW2ldLCBHU0NfT1VUX0JBU0VfQUREUl9DUihidWZfaWQpKTsKIAogCWdzY19kc3Rfc2V0
-X2J1Zl9zZXEoY3R4LCBidWZfaWQsIHRydWUpOwogfQpAQCAtMTIzOCwxMCArMTI1NiwxNCBAQCBz
-dGF0aWMgdm9pZCBnc2NfdXBkYXRlX3BsYW5lKHN0cnVjdCBleHlub3NfZHJtX3BsYW5lICpwbGFu
-ZSkKIAlnc2Nfd3JpdGUoQklUKDE2KSAqIGNyb3BwZWRfdyAvIHNjYWxlZF93LCBHU0NfTUFJTl9I
-X1JBVElPKTsKIAlnc2Nfd3JpdGUoQklUKDE2KSAqIGNyb3BwZWRfaCAvIHNjYWxlZF9oLCBHU0Nf
-TUFJTl9WX1JBVElPKTsKIAlnc2Nfd3JpdGUoZXh5bm9zX2RybV9mYl9kbWFfYWRkcihmYiwgMCks
-IEdTQ19JTl9CQVNFX0FERFJfWSgwKSk7Ci0JaWYgKGZiLT5mb3JtYXQtPm51bV9wbGFuZXMgPiAx
-KQotCSAgICAgICAgZ3NjX3dyaXRlKGV4eW5vc19kcm1fZmJfZG1hX2FkZHIoZmIsIDEpLCBHU0Nf
-SU5fQkFTRV9BRERSX0NCKDApKTsKLQlpZiAoZmItPmZvcm1hdC0+bnVtX3BsYW5lcyA+IDIpCi0J
-ICAgICAgICBnc2Nfd3JpdGUoZXh5bm9zX2RybV9mYl9kbWFfYWRkcihmYiwgMiksIEdTQ19JTl9C
-QVNFX0FERFJfQ1IoMCkpOworCWlmIChmYi0+Zm9ybWF0LT5udW1fcGxhbmVzID4gMSkgeworCQlp
-ID0gZ3NjX2h3X3BsYW5lX2luZGV4KDEsIGZiLT5mb3JtYXQtPmZvcm1hdCk7CisJCWdzY193cml0
-ZShleHlub3NfZHJtX2ZiX2RtYV9hZGRyKGZiLCBpKSwgR1NDX0lOX0JBU0VfQUREUl9DQigwKSk7
-CisJfQorCWlmIChmYi0+Zm9ybWF0LT5udW1fcGxhbmVzID4gMikgeworCQlpID0gZ3NjX2h3X3Bs
-YW5lX2luZGV4KDIsIGZiLT5mb3JtYXQtPmZvcm1hdCk7CisJCWdzY193cml0ZShleHlub3NfZHJt
-X2ZiX2RtYV9hZGRyKGZiLCBpKSwgR1NDX0lOX0JBU0VfQUREUl9DUigwKSk7CisJfQogCWdzY19z
-cmNfc2V0X2ZtdChjdHgsIGZiLT5mb3JtYXQtPmZvcm1hdCwgZmItPm1vZGlmaWVyKTsKIAlnc2Nf
-d3JpdGUoc2NhbGVkX3cgKiBzY2FsZWRfaCwgR1NDX1NNQVJUX0lGX1BJWEVMX05VTSk7CiAJZ3Nj
-X3dyaXRlKEdTQ19FTkFCTEVfU0ZSX1VQREFURSB8IEdTQ19FTkFCTEVfT04sIEdTQ19FTkFCTEUp
-OwotLSAKMi4xNy4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
-cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
-ZWw=
+On Fri, Mar 1, 2019 at 9:57 AM Wen Yang <wen.yang99@zte.com.cn> wrote:
+
+> The call to of_get_next_child returns a node pointer with refcount
+> incremented thus it must be explicitly decremented after the last
+> usage.
+>
+> Detected by coccinelle with the following warnings:
+> ./arch/arm/mach-versatile/versatile_dt.c:315:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 302, but without a corresponding object release within this function.
+> ./arch/arm/mach-versatile/versatile_dt.c:320:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 302, but without a corresponding object release within this function.
+>
+> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+
+Patch applied. Will send upstream next kernel cycle or so.
+
+Yours,
+Linus Walleij
