@@ -1,45 +1,106 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] crypto: s5p-sss - fix AES support for Exynos5433
-Date: Fri, 1 Mar 2019 15:18:11 +0100
-Message-ID: <CAJKOXPc_=Y=FNZXuDnVh72Wxt_+MS+jonVW7pb+vXiJ-ctGCvw@mail.gmail.com>
-References: <CGME20190301140321eucas1p2bf17a6e35d29e8d5f582a2d99fbf4c83@eucas1p2.samsung.com>
- <20190301140254.19341-1-k.konieczny@partner.samsung.com>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH 01/15] ARM: actions: fix a leaked reference by
+ addingmissing of_node_put
+Date: Fri, 1 Mar 2019 21:25:23 +0530
+Message-ID: <20190301155523.GA1915@Mani-XPS-13-9360>
+References: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190301140254.19341-1-k.konieczny@partner.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Vladimir Zapolskiy <vz@mleia.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-crypto@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Wen Yang <wen.yang99@zte.com.cn>, linus.walleij@linaro.org, afaerber@suse.de
+Cc: heiko@sntech.de, maxime.ripard@bootlin.com, catalin.marinas@arm.com, liviu.dudau@arm.com, michal.simek@xilinx.com, xuwei5@hisilicon.com, tmaimon77@gmail.com, lorenzo.pieralisi@arm.com, yuenn@google.com, will.deacon@arm.com, openbmc@lists.ozlabs.org, magnus.damm@gmail.com, linux@armlinux.org.uk, krzk@kernel.org, linux-samsung-soc@vger.kernel.org, wens@csie.org, kgene@kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-imx@nxp.com, linux-rockchip@lists.infradead.org, brendanhiggins@google.com, wang.yi59@zte.com.cn, rjui@broadcom.com, s.hauer@pengutronix.de, f.fainelli@gmail.com, linux-arm-kernel@lists.infradead.org, sbranden@broadcom.com, avifishman70@gmail.com, venture@google.com, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, dinguyen@kernel.org, horms@verge.net.au, kernel@pengutronix.de, sudeep.holla@arm.com, fabio.estevam@nxp.com, shawnguo@kernel
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, 1 Mar 2019 at 15:03, Kamil Konieczny
-<k.konieczny@partner.samsung.com> wrote:
->
-> Commit 0918f18c7179 ("crypto: s5p - add AES support for Exynos5433")
-> introduced bug in dereferencing clk_names[1] on platforms different from
-> Exynos5433. On Exynos board XU3 call trace is:
->
-> "Unable to handle kernel paging request at virtual address 00004000"
-> (strcmp) from [<c0774014>] (of_property_match_string+0x58/0xd0)
-> ...
-> (devm_clk_get) from [<c075c248>] (s5p_aes_probe+0xd4/0x4a0)
-> (s5p_aes_probe) from [<c059dbc4>] (platform_drv_probe+0x6c/0xa4)
->
-> Fix this by setting array clk_names size to 2.
->
-> Fixes: 0918f18c7179 ("crypto: s5p - add AES support for Exynos5433")
-> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Hi Wen,
+
+On Fri, Mar 01, 2019 at 04:56:42PM +0800, Wen Yang wrote:
+> The call to of_get_next_child returns a node pointer with refcount
+> incremented thus it must be explicitly decremented after the last
+> usage.
+> =
+
+> Detected by coccinelle with the following warnings:
+> ./arch/arm/mach-actions/platsmp.c:112:2-8: ERROR: missing of_node_put; ac=
+quired a node pointer with refcount incremented on line 103, but without a =
+corresponding object release within this function.
+> ./arch/arm/mach-actions/platsmp.c:124:2-8: ERROR: missing of_node_put; ac=
+quired a node pointer with refcount incremented on line 115, but without a =
+corresponding object release within this function.
+> ./arch/arm/mach-actions/platsmp.c:137:3-9: ERROR: missing of_node_put; ac=
+quired a node pointer with refcount incremented on line 128, but without a =
+corresponding object release within this function.
+> =
+
+
+We have a floating patch for this:
+https://www.spinics.net/lists/arm-kernel/msg694544.html
+
+Andreas: Can you please take a second look at the patchset submitted by Lin=
+us
+Walleij and Russel for simplifying the Actions startup code?
+
+Thanks,
+Mani
+
+> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+> Cc: "Andreas F=E4rber" <afaerber@suse.de>
+> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
 > ---
->  drivers/crypto/s5p-sss.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  arch/arm/mach-actions/platsmp.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> =
 
-Thanks for fast fix!
+> diff --git a/arch/arm/mach-actions/platsmp.c b/arch/arm/mach-actions/plat=
+smp.c
+> index 4fd479c..1a8e078 100644
+> --- a/arch/arm/mach-actions/platsmp.c
+> +++ b/arch/arm/mach-actions/platsmp.c
+> @@ -107,6 +107,7 @@ static void __init s500_smp_prepare_cpus(unsigned int=
+ max_cpus)
+>  	}
+>  =
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Tested on Exynos5422 Odroid HC1:
-Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
+>  	timer_base_addr =3D of_iomap(node, 0);
+> +	of_node_put(node);
+>  	if (!timer_base_addr) {
+>  		pr_err("%s: could not map timer registers\n", __func__);
+>  		return;
+> @@ -119,6 +120,7 @@ static void __init s500_smp_prepare_cpus(unsigned int=
+ max_cpus)
+>  	}
+>  =
 
-Best regards,
-Krzysztof
+>  	sps_base_addr =3D of_iomap(node, 0);
+> +	of_node_put(node);
+>  	if (!sps_base_addr) {
+>  		pr_err("%s: could not map sps registers\n", __func__);
+>  		return;
+> @@ -132,6 +134,7 @@ static void __init s500_smp_prepare_cpus(unsigned int=
+ max_cpus)
+>  		}
+>  =
+
+>  		scu_base_addr =3D of_iomap(node, 0);
+> +		of_node_put(node);
+>  		if (!scu_base_addr) {
+>  			pr_err("%s: could not map scu registers\n", __func__);
+>  			return;
+> -- =
+
+> 2.9.5
+> =
