@@ -1,166 +1,94 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v4 3/3] crypto: s5p: add AES support for Exynos5433
-Date: Fri, 1 Mar 2019 11:12:18 +0100
-Message-ID: <CAJKOXPfzsPS1VT08SDR013a5Xz+m9sjVvEMNb-Q64Zr_nKG8kg@mail.gmail.com>
-References: <CGME20190222122204eucas1p1ee66c9d937bdf328588ececb1f005526@eucas1p1.samsung.com>
- <20190222122144.19024-1-k.konieczny@partner.samsung.com> <20190222122144.19024-4-k.konieczny@partner.samsung.com>
- <CAJKOXPdgcQPriU7nT3K_DyB+NniLDf6b8993qu9zwW_dEuYogw@mail.gmail.com> <CAKv+Gu8EhppjBbBa3KDheb_YGFVZ0JBxe=mf8Fpq68PWazcyrQ@mail.gmail.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH 00/23] drm/exynos: add support for GSCALER planes on Exynos5433
+Date: Fri, 01 Mar 2019 13:20:32 +0100
+Message-ID: <20190301122055.7135-1-a.hajda@samsung.com>
+References: <CGME20190301122106eucas1p2dc9cbc6d822965bfa3cd2de83f3a7812@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAKv+Gu8EhppjBbBa3KDheb_YGFVZ0JBxe=mf8Fpq68PWazcyrQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Kamil Konieczny <k.konieczny@partner.samsung.com>, Vladimir Zapolskiy <vz@mleia.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" <linux-crypto@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, 1 Mar 2019 at 11:07, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
->
-> On Fri, 1 Mar 2019 at 10:56, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >
-> > On Fri, 22 Feb 2019 at 13:22, Kamil Konieczny
-> > <k.konieczny@partner.samsung.com> wrote:
-> > >
-> > > Add AES crypto HW acceleration for Exynos5433, with the help of SlimSSS IP.
-> > >
-> > > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > > Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-> > > ---
-> > >  drivers/crypto/s5p-sss.c | 50 ++++++++++++++++++++++++++++++++++++----
-> > >  1 file changed, 46 insertions(+), 4 deletions(-)
-> > > diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-> > > index 0064be0e3941..3f45cc5cb94a 100644
-> > > --- a/drivers/crypto/s5p-sss.c
-> > > +++ b/drivers/crypto/s5p-sss.c
-> > > @@ -232,6 +232,7 @@
-> > >   * struct samsung_aes_variant - platform specific SSS driver data
-> > >   * @aes_offset: AES register offset from SSS module's base.
-> > >   * @hash_offset: HASH register offset from SSS module's base.
-> > > + * @clk_names: names of clocks needed to run SSS IP
-> > >   *
-> > >   * Specifies platform specific configuration of SSS module.
-> > >   * Note: A structure for driver specific platform data is used for future
-> > > @@ -240,6 +241,7 @@
-> > >  struct samsung_aes_variant {
-> > >         unsigned int                    aes_offset;
-> > >         unsigned int                    hash_offset;
-> > > +       const char                      *clk_names[];
-> > >  };
-> > >
-> > >  struct s5p_aes_reqctx {
-> > > @@ -296,6 +298,7 @@ struct s5p_aes_ctx {
-> > >  struct s5p_aes_dev {
-> > >         struct device                   *dev;
-> > >         struct clk                      *clk;
-> > > +       struct clk                      *pclk;
-> > >         void __iomem                    *ioaddr;
-> > >         void __iomem                    *aes_ioaddr;
-> > >         int                             irq_fc;
-> > > @@ -384,11 +387,19 @@ struct s5p_hash_ctx {
-> > >  static const struct samsung_aes_variant s5p_aes_data = {
-> > >         .aes_offset     = 0x4000,
-> > >         .hash_offset    = 0x6000,
-> > > +       .clk_names      = { "secss", },
-> > >  };
-> > >
-> > >  static const struct samsung_aes_variant exynos_aes_data = {
-> > >         .aes_offset     = 0x200,
-> > >         .hash_offset    = 0x400,
-> > > +       .clk_names      = { "secss", },
-> > > +};
-> > > +
-> > > +static const struct samsung_aes_variant exynos5433_slim_aes_data = {
-> > > +       .aes_offset     = 0x400,
-> > > +       .hash_offset    = 0x800,
-> > > +       .clk_names      = { "pclk", "aclk", },
-> > >  };
-> > >
-> > >  static const struct of_device_id s5p_sss_dt_match[] = {
-> > > @@ -400,6 +411,10 @@ static const struct of_device_id s5p_sss_dt_match[] = {
-> > >                 .compatible = "samsung,exynos4210-secss",
-> > >                 .data = &exynos_aes_data,
-> > >         },
-> > > +       {
-> > > +               .compatible = "samsung,exynos5433-slim-sss",
-> > > +               .data = &exynos5433_slim_aes_data,
-> > > +       },
-> > >         { },
-> > >  };
-> > >  MODULE_DEVICE_TABLE(of, s5p_sss_dt_match);
-> > > @@ -2208,18 +2223,39 @@ static int s5p_aes_probe(struct platform_device *pdev)
-> > >                         return PTR_ERR(pdata->ioaddr);
-> > >         }
-> > >
-> > > -       pdata->clk = devm_clk_get(dev, "secss");
-> > > +       pdata->clk = devm_clk_get(dev, variant->clk_names[0]);
-> > >         if (IS_ERR(pdata->clk)) {
-> > > -               dev_err(dev, "failed to find secss clock source\n");
-> > > +               dev_err(dev, "failed to find secss clock %s\n",
-> > > +                       variant->clk_names[0]);
-> > >                 return -ENOENT;
-> > >         }
-> > >
-> > >         err = clk_prepare_enable(pdata->clk);
-> > >         if (err < 0) {
-> > > -               dev_err(dev, "Enabling SSS clk failed, err %d\n", err);
-> > > +               dev_err(dev, "Enabling clock %s failed, err %d\n",
-> > > +                       variant->clk_names[0], err);
-> > >                 return err;
-> > >         }
-> > >
-> > > +       if (variant->clk_names[1]) {
-> > > +               pdata->pclk = devm_clk_get(dev, variant->clk_names[1]);
-> >
-> > I see on today's linux next:
-> > [ 6.391256] Unable to handle kernel paging request at virtual address 00004000
-> > on all my Exynos boards (U3, XU, XU3, HC1).
-> > I did not do a bisect yet but it might be connected with this commit.
-> >
-> > The call trace is:
-> > (strcmp) from [<c0774014>] (of_property_match_string+0x58/0xd0)
-> > (of_property_match_string) from [<c04d3d2c>] (__of_clk_get_by_name+0x5c/0x130)
-> > (__of_clk_get_by_name) from [<c04d3fa0>] (clk_get+0x34/0x70)
-> > (clk_get) from [<c04d3680>] (devm_clk_get+0x38/0x74)
-> > (devm_clk_get) from [<c075c248>] (s5p_aes_probe+0xd4/0x4a0)
-> > (s5p_aes_probe) from [<c059dbc4>] (platform_drv_probe+0x6c/0xa4)
-> > (platform_drv_probe) from [<c059b4c8>] (really_probe+0x280/0x414)
-> > (really_probe) from [<c059b810>] (driver_probe_device+0x78/0x1c0)
-> > (driver_probe_device) from [<c059bbb8>] (device_driver_attach+0x58/0x60)
-> > (device_driver_attach) from [<c059bcbc>] (__driver_attach+0xfc/0x160)
-> > (__driver_attach) from [<c059928c>] (bus_for_each_dev+0x68/0xb4)
-> > (bus_for_each_dev) from [<c059a5c4>] (bus_add_driver+0x158/0x214)
-> > (bus_add_driver) from [<c059cb94>] (driver_register+0x78/0x110)
-> > (driver_register) from [<c01031f8>] (do_one_initcall+0x8c/0x404)
-> >
-> > Full log:
-> > https://krzk.eu/#/builders/21/builds/1153/steps/12/logs/serial0
-> >
-> > The s5p_aes_probe address points here.
-> >
->
-> It seems that dereferencing clk_names[1] of struct samsung_aes_variant
-> exynos_aes_data
->
-> > > +       .clk_names      = { "secss", },
->
-> returns the first member of
->
-> > >  static const struct samsung_aes_variant s5p_aes_data = {
-> > >         .aes_offset     = 0x4000,
->
-> since the array has only one entry in this case, and so the second,
-> non-existing entry overlaps with the next data item in the object
-> file.
->
-> So the fix would be to use
->
-> .clk_names      = { "secss", NULL },
->
-> instead (or define the array to have 2 members)
-
-Ah yes, the size of the array is not fixed during definition. Probably
-having explicit size would be less error-prone in the future (if
-someone adds third clock).
-
-Best regards,
-Krzysztof
+SGkgSW5raSwKCkdTQ0FMRVJzIGluIEV4eW5vcyBTb0NzIHN1cHBvcnQgY29udmVyc2lvbiBiZXR3
+ZWVuIHdpZGUgcmFuZ2Ugb2YgaW1hZ2UgZm9ybWF0cywKcGx1cyBzY2FsaW5nIGFuZCByb3RhdGlv
+bi4KRHJpdmVyIGFscmVhZHkgc3VwcG9ydHMgbWVtMm1lbSBtb2RlIC0gdmlhIEV4eW5vc0RSTSBJ
+UFAgZnJhbWV3b3JrLgpUaGlzIHBhdGNoc2V0IGFkZHMgc3VwcG9ydCBmb3IgbWVtIHRvIGRpc3Bs
+YXkgbW9kZSAtIGZyYW1lYnVmZmVycyBjYW4KYmUgY29udmVydGVkLCBzY2FsZWQgYW5kIHNlbmQg
+ZGlyZWN0bHkgdG8gRGlzcGxheSBDb250cm9sbGVyLiBGcm9tIERSTQpmcmFtZXdvcmsncyBwb2lu
+dCBvZiB2aWV3IGV2ZXJ5IEdTQ0FMRVIgZXhwb3NlcyBkcm1fcGxhbmUgd2hpY2ggY2FuIGJlIGNv
+bm5lY3RlZAp0byBkaXNwbGF5IGNvbnRyb2xsZXIgKGRpc3BsYXkgcGFuZWwgb3IgVFYpLgpUaGUg
+ZmVhdHVyZSBpcyBub3Qgd2VsbCBkb2N1bWVudGVkIHNvIHRoZSBkZXZlbG9wbWVudCB3YXMgcXVp
+dGUgZGlmZmljdWx0IC0KYSBwcm9jZXNzIG9mIHRyaWFsIGFuZCBlcnJvciwgdmVuZG9yIGNvZGUg
+YW5hbHlzaXMsIGd1ZXNzaW5nIGZyb20gZGF0YXNoZWV0cy4KSG9wZWZ1bGx5IG1vc3Qgb2YgdGhl
+IGlzc3VlcyB3ZXJlIHNvbHZlZC4gSSBoYXZlIGRldmVsb3BlZCBhbmQgdGVzdGVkIGl0IG9uClRN
+MiBkZXZpY2Ugd2l0aCBwYW5lbCBhbmQgVFYgcGF0aHMuCgpUaGUgcGF0Y2hzZXQgY29udGFpbnMg
+dGhyZWUgcGFydHM6CjEuIFByZXBhcmF0b3J5IHBhdGNoZXMgLSBtb3N0bHkgY2xlYW51cCBhbmQg
+cmVmYWN0b3Jpbmcgb2YgZHJtX2NydGMgYW5kIGRybV9wbGFuZQogICByZWxhdGVkIHN0cnVjdHVy
+ZXMsIHRvIGFsbG93IHVzYWdlIG9mIHBsYW5lcyB3aGljaCBhcmUgbm90IHBoeXNpY2FsbHkgYm91
+bmQKICAgdG8gY3J0Y3MgKDAxLTEzKS4KMi4gQWRkaW5nIGxvY2FsIHBhdGggc3VwcG9ydCB0byBH
+U0NBTEVSIGFuZCBERUNPTiAoMTQtMjApLgozLiBGZXcgZml4ZXMgb2YgYnVncyBleGlzdGluZyBh
+bHJlYWR5IGluIHRoZSBjb2RlIGJ1dCBkaXNjb3ZlcmVkIGR1ZSB0byBhZGRlZAogICBsb2NhbCBw
+YXRoIHN1cHBvcnQgKDIxLTIzKS4KClRoZSBwYXRjaHNldCBpcyBiYXNlZCBvbiBleHlub3NfZHJt
+X25leHQgcGx1cyBteSBwYXRjaHNldCBhZGRpbmcgenBvcyB0byBERUNPTgphbmQgRklNRCAtICdk
+cm0vZXh5bm9zOiBhZGQgc3VwcG9ydCBmb3IgZHluYW1pYyB6cG9zIGluIERFQ09OIGFuZCBGSU1E
+JyAtIGl0IGlzCnJlcXVpcmVkIHRvIGFsbG93IHNldCB6LXBvcyBwb3NpdGlvbiBvZiBHU0NBTEVS
+IHBsYW5lcy4KVG8gc2ltcGxpZnkgdGVzdHMgSSBoYXZlIGFsc28gY3JlYXRlZCBicmFuY2ggY29u
+dGFpbmluZyBhbGwgcmVxdWlyZWQgcGF0Y2hlczoKUmVwbzogaHR0cHM6Ly9naXQudGl6ZW4ub3Jn
+L2NnaXQvcGxhdGZvcm0va2VybmVsL2xpbnV4LWV4eW5vcwpCcmFuY2g6IHNhbmRib3gvYWhhamRh
+L2Rldi9leHlub3MtZHJtLWxvY2FsLXBhdGgKClJlZ2FyZHMKQW5kcnplagoKCkFuZHJ6ZWogSGFq
+ZGEgKDIzKToKICBkcm0vZXh5bm9zOiByZW1vdmUgZXh5bm9zX2RybV9wbGFuZS5oIGhlYWRlcgog
+IGRybS9leHlub3M6IHJlbW92ZSBzcGFyZSBtYWNybwogIGRybS9leHlub3M6IGRyb3AgZXh5bm9z
+X2RybV9wbGFuZV9jb25maWcgc3RydWN0dXJlCiAgZHJtL2V4eW5vczogYWRkIGV4eW5vc19kcm1f
+Y3J0Y19pbml0IGZ1bmN0aW9uCiAgZHJtL2V4eW5vcy9kZWNvbjU0MzM6IGVtYmVkIGV4eW5vc19k
+cm1fY3J0YyBkaXJlY3RseSBpbnRvIGNvbnRleHQKICBkcm0vZXh5bm9zL2RlY29uNzogZW1iZWQg
+ZXh5bm9zX2RybV9jcnRjIGRpcmVjdGx5IGludG8gY29udGV4dAogIGRybS9leHlub3MvZmltZDog
+ZW1iZWQgZXh5bm9zX2RybV9jcnRjIGRpcmVjdGx5IGludG8gY29udGV4dAogIGRybS9leHlub3Mv
+bWl4ZXI6IGVtYmVkIGV4eW5vc19kcm1fY3J0YyBkaXJlY3RseSBpbnRvIGNvbnRleHQKICBkcm0v
+ZXh5bm9zL3ZpZGk6IGVtYmVkIGV4eW5vc19kcm1fY3J0YyBkaXJlY3RseSBpbnRvIGNvbnRleHQK
+ICBkcm0vZXh5bm9zOiByZW1vdmUgc3RhbmRhbG9uZSBleHlub3NfZHJtX2NydGMgbGVmdG92ZXJz
+CiAgZHJtL2V4eW5vcy92aWRpOiByZW1vdmUgZW5jb2Rlcl90b192aWRpIGhlbHBlcgogIGRybS9l
+eHlub3M6IHVuaWZ5IHBsYW5lIHR5cGUgYXNzaWdubWVudAogIGRybS9leHlub3M6IHNldCBwcmlt
+YXJ5IGFuZCBjdXJzb3IgcGxhbmVzIGluIGV4eW5vc19kcm1fY3J0Y19pbml0CiAgZHJtL2V4eW5v
+czogYWRkIHBsYW5lIHVwZGF0ZS9kaXNhYmxlIGNhbGxiYWNrcyBmb3IgcGxhbmVzCiAgZHJtL2V4
+eW5vczogYWRkIEdTQ0FMRVIgcGxhbmUgY2FwYWJpbGl0eQogIGRybS9leHlub3MvZ3NjYWxlcjog
+Zml4IGlkIGFzc2lnbmVtZW50CiAgYXJtNjQ6IGR0czogZXh5bm9zOiBjb25maWd1cmUgR1NDQUxF
+UiByZWxhdGVkIGNsb2NrcwogIGFybTY0OiBkdHM6IGV4eW5vczogYWRkIERTRC9HU0QgY2xvY2tz
+IHRvIERFQ09OcyBhbmQgR1NDQUxFUnMKICBkcm0vZXh5bm9zL2dzY2FsZXI6IGFkZCBsb2NhbCBw
+YXRoIHN1cHBvcnQKICBkcm0vZXh5bm9zL2RlY29uNTQzMzogYWRkIGxvY2FsIHBhdGggc3VwcG9y
+dAogIGRybS9leHlub3MvZGVjb241NDMzOiB3YWl0IGZvciBmaW5pc2ggcHJldmlvdXMgdXBkYXRl
+CiAgZHJtL2V4eW5vcy9nc2NhbGVyOiBjaGFuZ2Ugc3VwcG9ydGVkIGNvbG9yIGZvcm1hdCBCR1JY
+ODg4OCB0byBYQkdSODg4OAogIGRybS9leHlub3MvZ3NjYWxlcjogZml4IGhhbmRsaW5nIFlWVTQy
+MCBwaXhlbCBmb3JtYXQKCiAuLi4vZHRzL2V4eW5vcy9leHlub3M1NDMzLXRtMi1jb21tb24uZHRz
+aSAgICAgfCAgIDYgKwogYXJjaC9hcm02NC9ib290L2R0cy9leHlub3MvZXh5bm9zNTQzMy10bTIu
+ZHRzIHwgICA2ICstCiBhcmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLmR0c2kg
+ICAgfCAgMjUgKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19kcm1fZGVjb24u
+YyB8IDE2MiArKysrKysrKy0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJt
+X2RlY29uLmMgICAgfCAgNjYgKysrLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9jcnRjLmMgICAgICB8ICA0NiArKy0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fY3J0Yy5oICAgICAgfCAgIDcgKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9kcnYuYyAgICAgICB8ICAgMSAtCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+ZHJ2LmggICAgICAgfCAgNTAgKystLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2ZpbWQuYyAgICAgIHwgIDg1ICsrKy0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9nc2MuYyAgICAgICB8IDIyOSArKysrKysrKysrKysrKy0tLS0KIGRyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jICAgICB8ICA4NCArKysrLS0tCiBkcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuaCAgICAgfCAgMTQgLS0KIGRyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMgICAgICB8ICA0OCArKy0tCiBkcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jICAgICAgICAgfCAgOTUgKysrLS0tLS0KIGRyaXZl
+cnMvZ3B1L2RybS9leHlub3MvcmVncy1kZWNvbjU0MzMuaCAgICAgICB8ICAgNiArCiBkcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL3JlZ3MtZ3NjLmggICAgICAgICAgICAgfCAgIDYgKwogMTcgZmlsZXMg
+Y2hhbmdlZCwgNTI5IGluc2VydGlvbnMoKyksIDQwNyBkZWxldGlvbnMoLSkKIGRlbGV0ZSBtb2Rl
+IDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuaAoKLS0gCjIu
+MTcuMQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
+LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBz
+Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
