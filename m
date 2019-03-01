@@ -1,7 +1,7 @@
 From: Wen Yang <wen.yang99@zte.com.cn>
-Subject: [PATCH 12/15] ARM: vexpress: fix a leaked reference by addingmissing of_node_put
-Date: Fri, 1 Mar 2019 16:56:53 +0800
-Message-ID: <1551430616-42014-12-git-send-email-wen.yang99@zte.com.cn>
+Subject: [PATCH 14/15] arm64: cpu_ops: fix a leaked reference by addingmissing of_node_put
+Date: Fri, 1 Mar 2019 16:56:55 +0800
+Message-ID: <1551430616-42014-14-git-send-email-wen.yang99@zte.com.cn>
 References: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn>
@@ -15,32 +15,28 @@ incremented thus it must be explicitly decremented after the last
 usage.
 
 Detected by coccinelle with the following warnings:
-./arch/arm/mach-vexpress/dcscb.c:150:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 145, but without a corresponding object release within this function.
-./arch/arm/mach-vexpress/dcscb.c:160:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 145, but without a corresponding object release within this function.
-./arch/arm/mach-vexpress/dcscb.c:171:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 145, but without a corresponding object release within this function.
+./arch/arm64/kernel/cpu_ops.c:102:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 69, but without a corresponding object release within this function.
 
 Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Liviu Dudau <liviu.dudau@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Russell King <linux@armlinux.org.uk>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org
 ---
- arch/arm/mach-vexpress/dcscb.c | 1 +
+ arch/arm64/kernel/cpu_ops.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-vexpress/dcscb.c b/arch/arm/mach-vexpress/dcscb.c
-index ee2a0fa..aaade91 100644
---- a/arch/arm/mach-vexpress/dcscb.c
-+++ b/arch/arm/mach-vexpress/dcscb.c
-@@ -146,6 +146,7 @@ static int __init dcscb_init(void)
- 	if (!node)
- 		return -ENODEV;
- 	dcscb_base = of_iomap(node, 0);
-+	of_node_put(node);
- 	if (!dcscb_base)
- 		return -EADDRNOTAVAIL;
- 	cfg = readl_relaxed(dcscb_base + DCS_CFG_R);
+diff --git a/arch/arm64/kernel/cpu_ops.c b/arch/arm64/kernel/cpu_ops.c
+index ea00124..00f8b86 100644
+--- a/arch/arm64/kernel/cpu_ops.c
++++ b/arch/arm64/kernel/cpu_ops.c
+@@ -85,6 +85,7 @@ static const char *__init cpu_read_enable_method(int cpu)
+ 				pr_err("%pOF: missing enable-method property\n",
+ 					dn);
+ 		}
++		of_node_put(dn);
+ 	} else {
+ 		enable_method = acpi_get_enable_method(cpu);
+ 		if (!enable_method) {
 -- 
 2.9.5
