@@ -1,35 +1,48 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 11/15] ARM: versatile: fix a leaked reference by
- addingmissing of_node_put
-Date: Fri, 1 Mar 2019 14:30:07 +0100
-Message-ID: <CACRpkdbRfagzAr6zRBtEJ0Z2fvLhiMsy8CPsuiFswf0NjzvCRw@mail.gmail.com>
-References: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn> <1551430616-42014-11-git-send-email-wen.yang99@zte.com.cn>
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Subject: [PATCH] crypto: s5p-sss - fix AES support for Exynos5433
+Date: Fri,  1 Mar 2019 15:02:54 +0100
+Message-ID: <20190301140254.19341-1-k.konieczny@partner.samsung.com>
+References: <CGME20190301140321eucas1p2bf17a6e35d29e8d5f582a2d99fbf4c83@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1551430616-42014-11-git-send-email-wen.yang99@zte.com.cn>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Russell King <linux@armlinux.org.uk>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Dinh Nguyen <dinguyen@kernel.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>
+To: k.konieczny@partner.samsung.com
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Mar 1, 2019 at 9:57 AM Wen Yang <wen.yang99@zte.com.cn> wrote:
+Commit 0918f18c7179 ("crypto: s5p - add AES support for Exynos5433")
+introduced bug in dereferencing clk_names[1] on platforms different from
+Exynos5433. On Exynos board XU3 call trace is:
 
-> The call to of_get_next_child returns a node pointer with refcount
-> incremented thus it must be explicitly decremented after the last
-> usage.
->
-> Detected by coccinelle with the following warnings:
-> ./arch/arm/mach-versatile/versatile_dt.c:315:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 302, but without a corresponding object release within this function.
-> ./arch/arm/mach-versatile/versatile_dt.c:320:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 302, but without a corresponding object release within this function.
->
-> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
+"Unable to handle kernel paging request at virtual address 00004000"
+(strcmp) from [<c0774014>] (of_property_match_string+0x58/0xd0)
+...
+(devm_clk_get) from [<c075c248>] (s5p_aes_probe+0xd4/0x4a0)
+(s5p_aes_probe) from [<c059dbc4>] (platform_drv_probe+0x6c/0xa4)
 
-Patch applied. Will send upstream next kernel cycle or so.
+Fix this by setting array clk_names size to 2.
 
-Yours,
-Linus Walleij
+Fixes: 0918f18c7179 ("crypto: s5p - add AES support for Exynos5433")
+Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+---
+ drivers/crypto/s5p-sss.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+index 3f45cc5cb94a..2fb4ae459c45 100644
+--- a/drivers/crypto/s5p-sss.c
++++ b/drivers/crypto/s5p-sss.c
+@@ -241,7 +241,7 @@
+ struct samsung_aes_variant {
+ 	unsigned int			aes_offset;
+ 	unsigned int			hash_offset;
+-	const char			*clk_names[];
++	const char			*clk_names[2];
+ };
+ 
+ struct s5p_aes_reqctx {
+-- 
+2.21.0
