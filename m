@@ -1,7 +1,7 @@
 From: Wen Yang <wen.yang99@zte.com.cn>
-Subject: [PATCH 13/15] ARM: zynq: fix a leaked reference by addingmissing of_node_put
-Date: Fri, 1 Mar 2019 16:56:54 +0800
-Message-ID: <1551430616-42014-13-git-send-email-wen.yang99@zte.com.cn>
+Subject: [PATCH 10/15] ARM: sunxi: fix a leaked reference by addingmissing of_node_put
+Date: Fri, 1 Mar 2019 16:56:51 +0800
+Message-ID: <1551430616-42014-10-git-send-email-wen.yang99@zte.com.cn>
 References: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn>
@@ -15,29 +15,38 @@ incremented thus it must be explicitly decremented after the last
 usage.
 
 Detected by coccinelle with the following warnings:
-./arch/arm/mach-zynq/common.c:89:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 80, but without a corresponding object release within this function.
-./arch/arm/mach-zynq/common.c:98:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 80, but without a corresponding object release within this function.
+./arch/arm/mach-sunxi/platsmp.c:55:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 46, but without a corresponding object release within this function.
+./arch/arm/mach-sunxi/platsmp.c:138:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 129, but without a corresponding object release within this function.
 
 Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Chen-Yu Tsai <wens@csie.org>
 Cc: Russell King <linux@armlinux.org.uk>
-Cc: Michal Simek <michal.simek@xilinx.com>
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org
 ---
- arch/arm/mach-zynq/common.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mach-sunxi/platsmp.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/mach-zynq/common.c b/arch/arm/mach-zynq/common.c
-index 6aba9eb..a8b1b9c 100644
---- a/arch/arm/mach-zynq/common.c
-+++ b/arch/arm/mach-zynq/common.c
-@@ -84,6 +84,7 @@ static int __init zynq_get_revision(void)
+diff --git a/arch/arm/mach-sunxi/platsmp.c b/arch/arm/mach-sunxi/platsmp.c
+index 8fb5088..c842209 100644
+--- a/arch/arm/mach-sunxi/platsmp.c
++++ b/arch/arm/mach-sunxi/platsmp.c
+@@ -50,6 +50,7 @@ static void __init sun6i_smp_prepare_cpus(unsigned int max_cpus)
  	}
  
- 	zynq_devcfg_base = of_iomap(np, 0);
-+	of_node_put(np);
- 	if (!zynq_devcfg_base) {
- 		pr_err("%s: Unable to map I/O memory\n", __func__);
- 		return -1;
+ 	prcm_membase = of_iomap(node, 0);
++	of_node_put(node);
+ 	if (!prcm_membase) {
+ 		pr_err("Couldn't map A31 PRCM registers\n");
+ 		return;
+@@ -63,6 +64,7 @@ static void __init sun6i_smp_prepare_cpus(unsigned int max_cpus)
+ 	}
+ 
+ 	cpucfg_membase = of_iomap(node, 0);
++	of_node_put(node);
+ 	if (!cpucfg_membase)
+ 		pr_err("Couldn't map A31 CPU config registers\n");
+ 
 -- 
 2.9.5
