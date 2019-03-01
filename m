@@ -1,7 +1,7 @@
 From: Wen Yang <wen.yang99@zte.com.cn>
-Subject: [PATCH 05/15] ARM: imx51: fix a leaked reference by addingmissing of_node_put
-Date: Fri, 1 Mar 2019 16:56:46 +0800
-Message-ID: <1551430616-42014-5-git-send-email-wen.yang99@zte.com.cn>
+Subject: [PATCH 06/15] arm: npcm: fix a leaked reference by addingmissing of_node_put
+Date: Fri, 1 Mar 2019 16:56:47 +0800
+Message-ID: <1551430616-42014-6-git-send-email-wen.yang99@zte.com.cn>
 References: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn>
@@ -15,33 +15,42 @@ incremented thus it must be explicitly decremented after the last
 usage.
 
 Detected by coccinelle with the following warnings:
-./arch/arm/mach-imx/mach-imx51.c:64:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 57, but without a corresponding object release within this function.
+./arch/arm/mach-npcm/platsmp.c:52:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 31, but without a corresponding object release within this function.
+./arch/arm/mach-npcm/platsmp.c:68:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 60, but without a corresponding object release within this function.
 
 Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: Avi Fishman <avifishman70@gmail.com>
+Cc: Tomer Maimon <tmaimon77@gmail.com>
+Cc: Patrick Venture <venture@google.com>
+Cc: Nancy Yuen <yuenn@google.com>
+Cc: Brendan Higgins <brendanhiggins@google.com>
 Cc: Russell King <linux@armlinux.org.uk>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: NXP Linux Team <linux-imx@nxp.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
 Cc: linux-arm-kernel@lists.infradead.org
+Cc: openbmc@lists.ozlabs.org
 Cc: linux-kernel@vger.kernel.org
 ---
- arch/arm/mach-imx/mach-imx51.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mach-npcm/platsmp.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/mach-imx/mach-imx51.c b/arch/arm/mach-imx/mach-imx51.c
-index c7169c2..08c7892 100644
---- a/arch/arm/mach-imx/mach-imx51.c
-+++ b/arch/arm/mach-imx/mach-imx51.c
-@@ -59,6 +59,7 @@ static void __init imx51_m4if_setup(void)
+diff --git a/arch/arm/mach-npcm/platsmp.c b/arch/arm/mach-npcm/platsmp.c
+index 21633c7..fe63edc 100644
+--- a/arch/arm/mach-npcm/platsmp.c
++++ b/arch/arm/mach-npcm/platsmp.c
+@@ -35,6 +35,7 @@ static int npcm7xx_smp_boot_secondary(unsigned int cpu,
+ 		goto out;
+ 	}
+ 	gcr_base = of_iomap(gcr_np, 0);
++	of_node_put(gcr_np);
+ 	if (!gcr_base) {
+ 		pr_err("could not iomap gcr");
+ 		ret = -ENOMEM;
+@@ -63,6 +64,7 @@ static void __init npcm7xx_smp_prepare_cpus(unsigned int max_cpus)
  		return;
- 
- 	m4if_base = of_iomap(np, 0);
-+	of_node_put(np);
- 	if (!m4if_base) {
- 		pr_err("Unable to map M4IF registers\n");
+ 	}
+ 	scu_base = of_iomap(scu_np, 0);
++	of_node_put(scu_np);
+ 	if (!scu_base) {
+ 		pr_err("could not iomap scu");
  		return;
 -- 
 2.9.5
