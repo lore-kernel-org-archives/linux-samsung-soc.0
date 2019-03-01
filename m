@@ -1,7 +1,7 @@
 From: Wen Yang <wen.yang99@zte.com.cn>
-Subject: [PATCH 03/15] ARM: exynos: fix a leaked reference by addingmissing of_node_put
-Date: Fri, 1 Mar 2019 16:56:44 +0800
-Message-ID: <1551430616-42014-3-git-send-email-wen.yang99@zte.com.cn>
+Subject: [PATCH 02/15] ARM: bcm: fix a leaked reference by addingmissing of_node_put
+Date: Fri, 1 Mar 2019 16:56:43 +0800
+Message-ID: <1551430616-42014-2-git-send-email-wen.yang99@zte.com.cn>
 References: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn>
@@ -15,48 +15,31 @@ incremented thus it must be explicitly decremented after the last
 usage.
 
 Detected by coccinelle with the following warnings:
-./arch/arm/mach-exynos/firmware.c:201:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 193, but without a corresponding object release within this function.
-./arch/arm/mach-exynos/firmware.c:204:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 193, but without a corresponding object release within this function.
-./arch/arm/mach-exynos/suspend.c:642:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 634, but without a corresponding object release within this function.
+./arch/arm/mach-bcm/board_bcm281xx.c:43:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 35, but without a corresponding object release within this function.
 
 Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Ray Jui <rjui@broadcom.com>
+Cc: Scott Branden <sbranden@broadcom.com>
+Cc: bcm-kernel-feedback-list@broadcom.com
 Cc: Russell King <linux@armlinux.org.uk>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- arch/arm/mach-exynos/firmware.c | 1 +
- arch/arm/mach-exynos/suspend.c  | 2 ++
- 2 files changed, 3 insertions(+)
+ arch/arm/mach-bcm/board_bcm281xx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
-index d602e3b..2eaf2db 100644
---- a/arch/arm/mach-exynos/firmware.c
-+++ b/arch/arm/mach-exynos/firmware.c
-@@ -196,6 +196,7 @@ bool __init exynos_secure_firmware_available(void)
- 		return false;
- 
- 	addr = of_get_address(nd, 0, NULL, NULL);
-+	of_node_put(nd);
- 	if (!addr) {
- 		pr_err("%s: No address specified.\n", __func__);
- 		return false;
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index 0850505..9afb0c6 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -639,8 +639,10 @@ void __init exynos_pm_init(void)
- 
- 	if (WARN_ON(!of_find_property(np, "interrupt-controller", NULL))) {
- 		pr_warn("Outdated DT detected, suspend/resume will NOT work\n");
-+		of_node_put(np);
+diff --git a/arch/arm/mach-bcm/board_bcm281xx.c b/arch/arm/mach-bcm/board_bcm281xx.c
+index b81bb38..1238ac8 100644
+--- a/arch/arm/mach-bcm/board_bcm281xx.c
++++ b/arch/arm/mach-bcm/board_bcm281xx.c
+@@ -38,6 +38,7 @@ static void bcm281xx_restart(enum reboot_mode mode, const char *cmd)
  		return;
  	}
-+	of_node_put(np);
- 
- 	pm_data = (const struct exynos_pm_data *) match->data;
- 
+ 	base = of_iomap(np_wdog, 0);
++	of_node_put(np_wdog);
+ 	if (!base) {
+ 		pr_emerg("Couldn't map brcm,kona-wdt\n");
+ 		return;
 -- 
 2.9.5
