@@ -1,45 +1,39 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 01/15] ARM: actions: fix a leaked reference by
+From: Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH 12/15] ARM: vexpress: fix a leaked reference by
  addingmissing of_node_put
-Date: Mon, 4 Mar 2019 13:29:33 +0100
-Message-ID: <CACRpkdb=E9_rm4_7DQV3dS5uOs1gozxEwN9MtWr0tTwmjcYe=A@mail.gmail.com>
-References: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn> <20190301155523.GA1915@Mani-XPS-13-9360>
+Date: Mon, 4 Mar 2019 14:46:06 +0000
+Message-ID: <20190304144606.GA7466@e107155-lin>
+References: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn>
+ <1551430616-42014-12-git-send-email-wen.yang99@zte.com.cn>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190301155523.GA1915@Mani-XPS-13-9360>
+Content-Disposition: inline
+In-Reply-To: <1551430616-42014-12-git-send-email-wen.yang99@zte.com.cn>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Wen Yang <wen.yang99@zte.com.cn>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Russell King <linux@armlinux.org.uk>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Michal Simek <michal.simek@xilinx.com>, Dinh Nguyen <dinguyen@kernel.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott
+To: Wen Yang <wen.yang99@zte.com.cn>
+Cc: liviu.dudau@arm.com, lorenzo.pieralisi@arm.com, linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kgene@kernel.org, krzk@kernel.org, linux-samsung-soc@vger.kernel.org, michal.simek@xilinx.com, afaerber@suse.de, manivannan.sadhasivam@linaro.org, dinguyen@kernel.org, heiko@sntech.de, linux-rockchip@lists.infradead.org, f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, linus.walleij@linaro.org, avifishman70@gmail.com, tmaimon77@gmail.com, venture@google.com, yuenn@google.com, brendanhiggins@google.com, openbmc@lists.ozlabs.org, xuwei5@hisilicon.com, maxime.ripard@bootlin.com, wens@csie.org, catalin.marinas@arm.com, will.deacon@arm.com, horms@verge.net.au, magnus.damm@gmail.comlinux-
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Mar 1, 2019 at 4:55 PM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
-> Hi Wen,
->
-> On Fri, Mar 01, 2019 at 04:56:42PM +0800, Wen Yang wrote:
-> > The call to of_get_next_child returns a node pointer with refcount
-> > incremented thus it must be explicitly decremented after the last
-> > usage.
-> >
-> > Detected by coccinelle with the following warnings:
-> > ./arch/arm/mach-actions/platsmp.c:112:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 103, but without a corresponding object release within this function.
-> > ./arch/arm/mach-actions/platsmp.c:124:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 115, but without a corresponding object release within this function.
-> > ./arch/arm/mach-actions/platsmp.c:137:3-9: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 128, but without a corresponding object release within this function.
-> >
->
-> We have a floating patch for this:
-> https://www.spinics.net/lists/arm-kernel/msg694544.html
->
-> Andreas: Can you please take a second look at the patchset submitted by Linus
-> Walleij and Russel for simplifying the Actions startup code?
+On Fri, Mar 01, 2019 at 04:56:53PM +0800, Wen Yang wrote:
+> The call to of_get_next_child returns a node pointer with refcount
+> incremented thus it must be explicitly decremented after the last
+> usage.
+> 
+> Detected by coccinelle with the following warnings:
+> ./arch/arm/mach-vexpress/dcscb.c:150:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 145, but without a corresponding object release within this function.
+> ./arch/arm/mach-vexpress/dcscb.c:160:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 145, but without a corresponding object release within this function.
+> ./arch/arm/mach-vexpress/dcscb.c:171:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 145, but without a corresponding object release within this function.
+> 
+> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+> Cc: Liviu Dudau <liviu.dudau@arm.com>
+> Cc: Sudeep Holla <sudeep.holla@arm.com>
 
-Andreas wrote a version of simplifying secondary startup in the
-same spirit as Russell's patches, and it's merged and all
-is fine I think.
+Looks good, assuming you want to take this as a series. Please shout if
+you want us to take this.
 
-If this patch applied on top of the current upstream code I'd say
-just forget about my patch and merge Wen's patch instead.
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
 
-Yours,
-Linus Walleij
+--
+Regards,
+Sudeep
