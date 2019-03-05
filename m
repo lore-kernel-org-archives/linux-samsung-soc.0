@@ -1,99 +1,83 @@
-From: Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Subject: Re: [PATCH 01/15] ARM: actions: fix a leaked reference by
- addingmissing of_node_put
-Date: Tue, 5 Mar 2019 09:55:05 +0000
-Message-ID: <20190305095505.znposuv6avjtbfwf@shell.armlinux.org.uk>
-References: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn>
- <20190301155523.GA1915@Mani-XPS-13-9360>
- <CACRpkdb=E9_rm4_7DQV3dS5uOs1gozxEwN9MtWr0tTwmjcYe=A@mail.gmail.com>
- <20190304144829.GA5265@Mani-XPS-13-9360>
- <CACRpkda+8QZnaT-YoeccQGjg78y9-E-JoWBr3LJs62T03H4wQw@mail.gmail.com>
- <CAOZjjhnDYHkWCd-zDqkFpg5FPoj-UxxNwVxfbg6QEahiASm10w@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Lukasz Luba <l.luba@partner.samsung.com>
+Subject: [PATCH v5 0/8] Exynos5 Dynamic Memory Controller driver
+Date: Tue,  5 Mar 2019 11:19:03 +0100
+Message-ID: <1551781151-5562-1-git-send-email-l.luba@partner.samsung.com>
+References: <CGME20190305101924eucas1p24a058fcc034cc95bc33888087412ab48@eucas1p2.samsung.com>
+Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAOZjjhnDYHkWCd-zDqkFpg5FPoj-UxxNwVxfbg6QEahiASm10w@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Wen Yang <wen.yang99@zte.com.cn>, Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Michal Simek <michal.simek@xilinx.com>, Dinh Nguyen <dinguyen@kernel.org>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott
+To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, Lukasz Luba <l.luba@partner.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Mar 05, 2019 at 07:21:19AM +0530, Manivannan Sadhasivam wrote:
-> On Tue, 5 Mar, 2019, 4:08 AM Linus Walleij <linus.walleij@linaro.org wrote:
-> 
-> > On Mon, Mar 4, 2019 at 3:48 PM Manivannan Sadhasivam
-> > <manivannan.sadhasivam@linaro.org> wrote:
-> > > On Mon, Mar 04, 2019 at 01:29:33PM +0100, Linus Walleij wrote:
-> > > > On Fri, Mar 1, 2019 at 4:55 PM Manivannan Sadhasivam
-> > > > <manivannan.sadhasivam@linaro.org> wrote:
-> > > > > Hi Wen,
-> > > > >
-> > > > > On Fri, Mar 01, 2019 at 04:56:42PM +0800, Wen Yang wrote:
-> > > > > > The call to of_get_next_child returns a node pointer with refcount
-> > > > > > incremented thus it must be explicitly decremented after the last
-> > > > > > usage.
-> > > > > >
-> > > > > > Detected by coccinelle with the following warnings:
-> > > > > > ./arch/arm/mach-actions/platsmp.c:112:2-8: ERROR: missing
-> > of_node_put; acquired a node pointer with refcount incremented on line 103,
-> > but without a corresponding object release within this function.
-> > > > > > ./arch/arm/mach-actions/platsmp.c:124:2-8: ERROR: missing
-> > of_node_put; acquired a node pointer with refcount incremented on line 115,
-> > but without a corresponding object release within this function.
-> > > > > > ./arch/arm/mach-actions/platsmp.c:137:3-9: ERROR: missing
-> > of_node_put; acquired a node pointer with refcount incremented on line 128,
-> > but without a corresponding object release within this function.
-> > > > > >
-> > > > >
-> > > > > We have a floating patch for this:
-> > > > > https://www.spinics.net/lists/arm-kernel/msg694544.html
-> > > > >
-> > > > > Andreas: Can you please take a second look at the patchset submitted
-> > by Linus
-> > > > > Walleij and Russel for simplifying the Actions startup code?
-> > > >
-> > > > Andreas wrote a version of simplifying secondary startup in the
-> > > > same spirit as Russell's patches, and it's merged and all
-> > > > is fine I think.
-> > > >
-> > >
-> > > Oops. I think I missed that! Can you please point me to that patch? And
-> > how it
-> > > got merged? I did the PR for actions stuff this time and haven't
-> > included any
-> > > mach-actions patches.
-> >
-> > I just did git log arch/arm/mach-actions but I think it came in quite some
-> > time
-> > ago, not last merge window:
-> >
-> > But you see:
-> > commit 6c2eb3e76fb84e2eb46d484f71fab469c0d9532c
-> > "ARM: owl: smp: Drop owl_secondary_boot()"
-> > commit bad29933fef76fb6ee577f4a0b6d145c1f52f663
-> > "ARM: owl: smp: Use __pa_symbol()"
-> > commit 18cfd9429d8a82c49add8f3ca9d366599bfcac45
-> > "ARM: owl: smp: Drop bogus holding pen"
-> >
-> > platsmp.c looks just fine these days. Except for what Wei's patch is
-> > fixing,
-> > of_node_put().
-> >
-> 
-> Nope. platsmp.c still requires some cleanup like removing the redundant
-> bootlock and pen_release flag as pointed out by Russel. Andreas just
-> replied to your cleanup patches but there was no follow up since that. So,
-> I guess we can just apply Russell's patches and this patch once Andreas is
-> fine with it (it looks good to me though).
+Hi all,
 
-No.  My patches are in my tree queued for this merge window.  They
-are part of a series that can not be broken up and merged separately
-because all the per-platform patches need to be merged before the final
-patch "ARM: smp: remove arch-provided "pen_release"" otherwise the
-platforms break.  I thought that was already explained.
+This is v5 of the patch set which adds support of Dynamic Memory Controller
+for Exynos5422 SoC.
+The driver supports Dynamic Voltage and Frequency Scalling
+for the DMC and DRAM. It also provides needed timings for different
+speed operations of the DRAM memory.
+
+changes:
+v5:
+- removed unneeded wrapper functions i.e. for regulator_set_voltage
+- removed unused defines
+- removed direct access to clock register base and used CCF for
+  pause and timing set usage
+- switched to OPP coming from DT according to Chanowoo's comments
+- switched to timings coming from DT, added parsing function
+- extended dt-binding with description of OPPs and timings
+- according to Rob Herring comment, moved dt-binding file before driver code
+  in the patch set.
+- re-based on top of v5.0
+v4:
+- removed unneeded DPLL and G3D clocks IDs
+- changed names of parent clocks for mout_mx_mspll_ccore_phy_p
+  and added one more parent: mout_sclk_epll
+- removed 933Mhz and 138MHz from the BPLL ratio table
+v3:
+- in DTS align to proper indent the clocks and clock-names entries
+v2:
+- changed file name exynos5-dmc.c -> exynos5422-dmc.c
+  and related entries in other files
+- changed dt-binding file name
+- changed config entry to CONFIG_ARM_EXYNOS5422_DMC_DEVFREQ
+- removed sysfs and print info messages (print only one line)
+- removed function exynos5_read_chip_info and compact code
+- changed dt-binding patch and move it up in the patch set
+- new entries in MAINTAINERS are added with the driver c code
+- clean-up in DTS file: renamed nodes to 'ppmu' and 'memory-controller',
+  entries moved to suggested location (before nocp nodes or after),
+  moved according to alfabetical order, compacted clocks names with right indent.
+
+Regards,
+Lukasz Luba
+
+
+Lukasz Luba (8):
+  clk: samsung: add needed IDs for DMC clocks in Exynos5420
+  clk: samsung: add new clocks for DMC for Exynos5422 SoC
+  clk: samsung: add BPLL rate table for Exynos 5422 SoC
+  dt-bindings: devfreq: add Exynos5422 DMC device description
+  drivers: devfreq: add DMC driver for Exynos5422
+  DT: arm: exynos: add DMC device for exynos5422
+  drivers: devfreq: events: add Exynos PPMU new events
+  ARM: exynos_defconfig: enable DMC driver
+
+ .../devicetree/bindings/devfreq/exynos5422-dmc.txt |  177 +++
+ MAINTAINERS                                        |    8 +
+ arch/arm/boot/dts/exynos5420.dtsi                  |   83 ++
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi      |   87 ++
+ arch/arm/configs/exynos_defconfig                  |    1 +
+ drivers/clk/samsung/clk-exynos5420.c               |   67 +-
+ drivers/devfreq/Kconfig                            |   13 +
+ drivers/devfreq/Makefile                           |    1 +
+ drivers/devfreq/event/exynos-ppmu.c                |    6 +
+ drivers/devfreq/exynos5422-dmc.c                   | 1154 ++++++++++++++++++++
+ include/dt-bindings/clock/exynos5420.h             |   18 +-
+ 11 files changed, 1609 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/devfreq/exynos5422-dmc.txt
+ create mode 100644 drivers/devfreq/exynos5422-dmc.c
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+2.7.4
