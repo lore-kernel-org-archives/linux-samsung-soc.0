@@ -1,66 +1,126 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 01/15] ARM: actions: fix a leaked reference by
- addingmissing of_node_put
-Date: Mon, 4 Mar 2019 23:37:48 +0100
-Message-ID: <CACRpkda+8QZnaT-YoeccQGjg78y9-E-JoWBr3LJs62T03H4wQw@mail.gmail.com>
-References: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn>
- <20190301155523.GA1915@Mani-XPS-13-9360> <CACRpkdb=E9_rm4_7DQV3dS5uOs1gozxEwN9MtWr0tTwmjcYe=A@mail.gmail.com>
- <20190304144829.GA5265@Mani-XPS-13-9360>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 18/23] arm64: dts: exynos: add DSD/GSD clocks to DECONs
+ and GSCALERs
+Date: Tue, 5 Mar 2019 10:28:08 +0100
+Message-ID: <CAJKOXPdjJ1Mu41Vn51dF3zr5i-MaswWhz92ZVkToYw+a9q_Y9w@mail.gmail.com>
+References: <CGME20190301122112eucas1p2d389c3d94c691507d5ac2c3d224e2e32@eucas1p2.samsung.com>
+ <20190301122055.7135-1-a.hajda@samsung.com>
+ <20190301122055.7135-19-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190304144829.GA5265@Mani-XPS-13-9360>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Wen Yang <wen.yang99@zte.com.cn>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Russell King <linux@armlinux.org.uk>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Michal Simek <michal.simek@xilinx.com>, Dinh Nguyen <dinguyen@kernel.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20190301122055.7135-19-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Mar 4, 2019 at 3:48 PM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
-> On Mon, Mar 04, 2019 at 01:29:33PM +0100, Linus Walleij wrote:
-> > On Fri, Mar 1, 2019 at 4:55 PM Manivannan Sadhasivam
-> > <manivannan.sadhasivam@linaro.org> wrote:
-> > > Hi Wen,
-> > >
-> > > On Fri, Mar 01, 2019 at 04:56:42PM +0800, Wen Yang wrote:
-> > > > The call to of_get_next_child returns a node pointer with refcount
-> > > > incremented thus it must be explicitly decremented after the last
-> > > > usage.
-> > > >
-> > > > Detected by coccinelle with the following warnings:
-> > > > ./arch/arm/mach-actions/platsmp.c:112:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 103, but without a corresponding object release within this function.
-> > > > ./arch/arm/mach-actions/platsmp.c:124:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 115, but without a corresponding object release within this function.
-> > > > ./arch/arm/mach-actions/platsmp.c:137:3-9: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 128, but without a corresponding object release within this function.
-> > > >
-> > >
-> > > We have a floating patch for this:
-> > > https://www.spinics.net/lists/arm-kernel/msg694544.html
-> > >
-> > > Andreas: Can you please take a second look at the patchset submitted by Linus
-> > > Walleij and Russel for simplifying the Actions startup code?
-> >
-> > Andreas wrote a version of simplifying secondary startup in the
-> > same spirit as Russell's patches, and it's merged and all
-> > is fine I think.
-> >
->
-> Oops. I think I missed that! Can you please point me to that patch? And how it
-> got merged? I did the PR for actions stuff this time and haven't included any
-> mach-actions patches.
-
-I just did git log arch/arm/mach-actions but I think it came in quite some time
-ago, not last merge window:
-
-But you see:
-commit 6c2eb3e76fb84e2eb46d484f71fab469c0d9532c
-"ARM: owl: smp: Drop owl_secondary_boot()"
-commit bad29933fef76fb6ee577f4a0b6d145c1f52f663
-"ARM: owl: smp: Use __pa_symbol()"
-commit 18cfd9429d8a82c49add8f3ca9d366599bfcac45
-"ARM: owl: smp: Drop bogus holding pen"
-
-platsmp.c looks just fine these days. Except for what Wei's patch is fixing,
-of_node_put().
-
-Yours,
-Linus Walleij
+T24gRnJpLCAxIE1hciAyMDE5IGF0IDEzOjI0LCBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1
+bmcuY29tPiB3cm90ZToKPgo+IFRvIHN1cHBvcnQgbG9jYWwgcGF0aHMgYm90aCBERUNPTiBhbmQg
+R1NDQUxFUiBzaG91bGQgZW5hYmxlIHJlc3BlY3RpdmUKPiBTbWFydCBEZWNrIGNsb2NrcyBEU0Qg
+YW5kIEdTRC4KPgo+IFNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3Vu
+Zy5jb20+Cj4gLS0tCj4gIGFyY2gvYXJtNjQvYm9vdC9kdHMvZXh5bm9zL2V4eW5vczU0MzMuZHRz
+aSB8IDI1ICsrKysrKysrKysrKystLS0tLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDE1IGluc2Vy
+dGlvbnMoKyksIDEwIGRlbGV0aW9ucygtKQoKSGkgQW5kcnplaiwKCllvdSBkaWQgbm90IENDIG1l
+IG9uIERUUyBwYXRjaGVzLiBUaGUgRFRTIHNob3VsZCBnbyB0aHJvdWdoIGFybS1zb2MgRFQKYnJh
+bmNoLCBub3QgdGhyb3VnaCBkcml2ZXJzL3N1YnN5c3RlbS4KCkFueSBkZXBlbmRlbmNpZXMgaGVy
+ZSBhbmQgaW4gbmV4dCBwYXRjaD8KCkJlc3QgcmVnYXJkcywKS3J6eXN6dG9mCgo+Cj4gZGlmZiAt
+LWdpdCBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvZXh5bm9zL2V4eW5vczU0MzMuZHRzaSBiL2FyY2gv
+YXJtNjQvYm9vdC9kdHMvZXh5bm9zL2V4eW5vczU0MzMuZHRzaQo+IGluZGV4IGU3Y2QzYjY3ZDgx
+OC4uZTZkMzJiMmZiM2MwIDEwMDY0NAo+IC0tLSBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvZXh5bm9z
+L2V4eW5vczU0MzMuZHRzaQo+ICsrKyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvZXh5bm9zL2V4eW5v
+czU0MzMuZHRzaQo+IEBAIC04NDgsMTIgKzg0OCwxMyBAQAo+ICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgPCZjbXVfZGlzcCBDTEtfQUNMS19YSVVfREVDT04xWD4sCj4gICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICA8JmNtdV9kaXNwIENMS19QQ0xLX1NNTVVfREVDT04xWD4s
+Cj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8JmNtdV9kaXNwIENMS19TQ0xLX0RF
+Q09OX1ZDTEs+LAo+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPCZjbXVfZGlzcCBD
+TEtfU0NMS19ERUNPTl9FQ0xLPjsKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwm
+Y211X2Rpc3AgQ0xLX1NDTEtfREVDT05fRUNMSz4sCj4gKyAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICA8JmNtdV9kaXNwIENMS19TQ0xLX0RTRD47Cj4gICAgICAgICAgICAgICAgICAgICAg
+ICAgY2xvY2stbmFtZXMgPSAicGNsayIsICJhY2xrX2RlY29uIiwgImFjbGtfc21tdV9kZWNvbjB4
+IiwKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICJhY2xrX3hpdV9kZWNvbjB4Iiwg
+InBjbGtfc21tdV9kZWNvbjB4IiwKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICJh
+Y2xrX3NtbXVfZGVjb24xeCIsICJhY2xrX3hpdV9kZWNvbjF4IiwKPiAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICJwY2xrX3NtbXVfZGVjb24xeCIsICJzY2xrX2RlY29uX3ZjbGsiLAo+
+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgInNjbGtfZGVjb25fZWNsayI7Cj4gKyAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAic2Nsa19kZWNvbl9lY2xrIiwgImRzZCI7Cj4g
+ICAgICAgICAgICAgICAgICAgICAgICAgcG93ZXItZG9tYWlucyA9IDwmcGRfZGlzcD47Cj4gICAg
+ICAgICAgICAgICAgICAgICAgICAgaW50ZXJydXB0LW5hbWVzID0gImZpZm8iLCAidnN5bmMiLCAi
+bGNkX3N5cyI7Cj4gICAgICAgICAgICAgICAgICAgICAgICAgaW50ZXJydXB0cyA9IDxHSUNfU1BJ
+IDIwMSBJUlFfVFlQRV9MRVZFTF9ISUdIPiwKPiBAQCAtODkwLDEyICs4OTEsMTMgQEAKPiAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8JmNtdV9kaXNwIENMS19BQ0xLX1hJVV9UVjFY
+PiwKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8JmNtdV9kaXNwIENMS19QQ0xL
+X1NNTVVfVFYxWD4sCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPCZjbXVfZGlz
+cCBDTEtfU0NMS19ERUNPTl9UVl9WQ0xLPiwKPiAtICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICA8JmNtdV9kaXNwIENMS19TQ0xLX0RFQ09OX1RWX0VDTEs+Owo+ICsgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIDwmY211X2Rpc3AgQ0xLX1NDTEtfREVDT05fVFZfRUNMSz4sCj4g
+KyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPCZjbXVfZGlzcCBDTEtfU0NMS19EU0Q+
+Owo+ICAgICAgICAgICAgICAgICAgICAgICAgIGNsb2NrLW5hbWVzID0gInBjbGsiLCAiYWNsa19k
+ZWNvbiIsICJhY2xrX3NtbXVfZGVjb24weCIsCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAiYWNsa194aXVfZGVjb24weCIsICJwY2xrX3NtbXVfZGVjb24weCIsCj4gICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiYWNsa19zbW11X2RlY29uMXgiLCAi
+YWNsa194aXVfZGVjb24xeCIsCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAicGNsa19zbW11X2RlY29uMXgiLCAic2Nsa19kZWNvbl92Y2xrIiwKPiAtICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICJzY2xrX2RlY29uX2VjbGsiOwo+ICsgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgInNjbGtfZGVjb25fZWNsayIsICJkc2QiOwo+ICAg
+ICAgICAgICAgICAgICAgICAgICAgIHNhbXN1bmcsZGlzcC1zeXNyZWcgPSA8JnN5c2Nvbl9kaXNw
+PjsKPiAgICAgICAgICAgICAgICAgICAgICAgICBwb3dlci1kb21haW5zID0gPCZwZF9kaXNwPjsK
+PiAgICAgICAgICAgICAgICAgICAgICAgICBpbnRlcnJ1cHQtbmFtZXMgPSAiZmlmbyIsICJ2c3lu
+YyIsICJsY2Rfc3lzIjsKPiBAQCAtMTAyMiwxMSArMTAyNCwxMiBAQAo+ICAgICAgICAgICAgICAg
+ICAgICAgICAgIHJlZyA9IDwweDEzYzAwMDAwIDB4MTAwMD47Cj4gICAgICAgICAgICAgICAgICAg
+ICAgICAgaW50ZXJydXB0cyA9IDxHSUNfU1BJIDI5NyBJUlFfVFlQRV9MRVZFTF9ISUdIPjsKPiAg
+ICAgICAgICAgICAgICAgICAgICAgICBjbG9jay1uYW1lcyA9ICJwY2xrIiwgImFjbGsiLCAiYWNs
+a194aXUiLAo+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgImFjbGtfZ3Nj
+bGJlbmQiOwo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgImFjbGtfZ3Nj
+bGJlbmQiLCAiZ3NkIjsKPiAgICAgICAgICAgICAgICAgICAgICAgICBjbG9ja3MgPSA8JmNtdV9n
+c2NsIENMS19QQ0xLX0dTQ0wwPiwKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8
+JmNtdV9nc2NsIENMS19BQ0xLX0dTQ0wwPiwKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICA8JmNtdV9nc2NsIENMS19BQ0xLX1hJVV9HU0NMWD4sCj4gLSAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgPCZjbXVfZ3NjbCBDTEtfQUNMS19HU0NMQkVORF8zMzM+Owo+ICsgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwmY211X2dzY2wgQ0xLX0FDTEtfR1NDTEJFTkRf
+MzMzPiwKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8JmNtdV9nc2NsIENMS19B
+Q0xLX0dTRD47Cj4gICAgICAgICAgICAgICAgICAgICAgICAgaW9tbXVzID0gPCZzeXNtbXVfZ3Nj
+bDA+Owo+ICAgICAgICAgICAgICAgICAgICAgICAgIHBvd2VyLWRvbWFpbnMgPSA8JnBkX2dzY2w+
+Owo+ICAgICAgICAgICAgICAgICB9Owo+IEBAIC0xMDM2LDExICsxMDM5LDEyIEBACj4gICAgICAg
+ICAgICAgICAgICAgICAgICAgcmVnID0gPDB4MTNjMTAwMDAgMHgxMDAwPjsKPiAgICAgICAgICAg
+ICAgICAgICAgICAgICBpbnRlcnJ1cHRzID0gPEdJQ19TUEkgMjk4IElSUV9UWVBFX0xFVkVMX0hJ
+R0g+Owo+ICAgICAgICAgICAgICAgICAgICAgICAgIGNsb2NrLW5hbWVzID0gInBjbGsiLCAiYWNs
+ayIsICJhY2xrX3hpdSIsCj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAi
+YWNsa19nc2NsYmVuZCI7Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAi
+YWNsa19nc2NsYmVuZCIsICJnc2QiOwo+ICAgICAgICAgICAgICAgICAgICAgICAgIGNsb2NrcyA9
+IDwmY211X2dzY2wgQ0xLX1BDTEtfR1NDTDE+LAo+ICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIDwmY211X2dzY2wgQ0xLX0FDTEtfR1NDTDE+LAo+ICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIDwmY211X2dzY2wgQ0xLX0FDTEtfWElVX0dTQ0xYPiwKPiAtICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICA8JmNtdV9nc2NsIENMS19BQ0xLX0dTQ0xCRU5EXzMzMz47
+Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPCZjbXVfZ3NjbCBDTEtfQUNMS19H
+U0NMQkVORF8zMzM+LAo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwmY211X2dz
+Y2wgQ0xLX0FDTEtfR1NEPjsKPiAgICAgICAgICAgICAgICAgICAgICAgICBpb21tdXMgPSA8JnN5
+c21tdV9nc2NsMT47Cj4gICAgICAgICAgICAgICAgICAgICAgICAgcG93ZXItZG9tYWlucyA9IDwm
+cGRfZ3NjbD47Cj4gICAgICAgICAgICAgICAgIH07Cj4gQEAgLTEwNTAsMTEgKzEwNTQsMTIgQEAK
+PiAgICAgICAgICAgICAgICAgICAgICAgICByZWcgPSA8MHgxM2MyMDAwMCAweDEwMDA+Owo+ICAg
+ICAgICAgICAgICAgICAgICAgICAgIGludGVycnVwdHMgPSA8R0lDX1NQSSAyOTkgSVJRX1RZUEVf
+TEVWRUxfSElHSD47Cj4gICAgICAgICAgICAgICAgICAgICAgICAgY2xvY2stbmFtZXMgPSAicGNs
+ayIsICJhY2xrIiwgImFjbGtfeGl1IiwKPiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICJhY2xrX2dzY2xiZW5kIjsKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICJhY2xrX2dzY2xiZW5kIiwgImdzZCI7Cj4gICAgICAgICAgICAgICAgICAgICAgICAg
+Y2xvY2tzID0gPCZjbXVfZ3NjbCBDTEtfUENMS19HU0NMMj4sCj4gICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgPCZjbXVfZ3NjbCBDTEtfQUNMS19HU0NMMj4sCj4gICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgPCZjbXVfZ3NjbCBDTEtfQUNMS19YSVVfR1NDTFg+LAo+IC0g
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwmY211X2dzY2wgQ0xLX0FDTEtfR1NDTEJF
+TkRfMzMzPjsKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8JmNtdV9nc2NsIENM
+S19BQ0xLX0dTQ0xCRU5EXzMzMz4sCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+PCZjbXVfZ3NjbCBDTEtfQUNMS19HU0Q+Owo+ICAgICAgICAgICAgICAgICAgICAgICAgIGlvbW11
+cyA9IDwmc3lzbW11X2dzY2wyPjsKPiAgICAgICAgICAgICAgICAgICAgICAgICBwb3dlci1kb21h
+aW5zID0gPCZwZF9nc2NsPjsKPiAgICAgICAgICAgICAgICAgfTsKPiAtLQo+IDIuMTcuMQo+Cl9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
+YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3Rz
+LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbA==
