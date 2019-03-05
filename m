@@ -1,216 +1,191 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v5 6/8] DT: arm: exynos: add DMC device for exynos5422
-Date: Tue, 5 Mar 2019 12:36:59 +0100
-Message-ID: <CAJKOXPdXQuGotKONE4GR8AZr1gMZHM3dgAu-TSKSDqVeYw5zWw@mail.gmail.com>
-References: <CGME20190305101927eucas1p250bbcbccb43590edd2b9ccf06cce2023@eucas1p2.samsung.com>
- <1551781151-5562-1-git-send-email-l.luba@partner.samsung.com> <1551781151-5562-7-git-send-email-l.luba@partner.samsung.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v4 3/3] crypto: s5p: add AES support for Exynos5433
+Date: Tue, 5 Mar 2019 09:13:03 -0800
+Message-ID: <20190305171303.GA29802@roeck-us.net>
+References: <20190222122144.19024-1-k.konieczny@partner.samsung.com>
+ <CGME20190222122204eucas1p1ee66c9d937bdf328588ececb1f005526@eucas1p1.samsung.com>
+ <20190222122144.19024-4-k.konieczny@partner.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1551781151-5562-7-git-send-email-l.luba@partner.samsung.com>
+Content-Disposition: inline
+In-Reply-To: <20190222122144.19024-4-k.konieczny@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lukasz Luba <l.luba@partner.samsung.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, kgene@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>, s.nawrocki@samsung.com, myungjoo.ham@samsung.com
+To: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, 5 Mar 2019 at 11:19, Lukasz Luba <l.luba@partner.samsung.com>
-wrote:>> Add description of Dynamic Memory Controller and PPMU
-counters.> They are used by exynos5422-dmc driver.>> Signed-off-by:
-Lukasz Luba <l.luba@partner.samsung.com>In previous email I asked to
-fix the subject prefix in case of resend. Please fix it.
-
+On Fri, Feb 22, 2019 at 01:21:44PM +0100, Kamil Konieczny wrote:
+> Add AES crypto HW acceleration for Exynos5433, with the help of SlimSSS IP.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
 > ---
->  arch/arm/boot/dts/exynos5420.dtsi             | 83 +++++++++++++++++++++++++
->  arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 87 +++++++++++++++++++++++++++
->  2 files changed, 170 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index aaff158..fc00fda 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -235,6 +235,41 @@
->                         status = "disabled";
->                 };
->
-> +               dmc: memory-controller@10c20000 {
-> +                       compatible = "samsung,exynos5422-dmc";
-> +                       reg = <0x10c20000 0x10000>, <0x10c30000 0x10000>,
-> +                               <0x10000000 0x1000>;
-> +                       clocks = <&clock CLK_FOUT_SPLL>,
-> +                                <&clock CLK_MOUT_SCLK_SPLL>,
-> +                                <&clock CLK_FF_DOUT_SPLL2>,
-> +                                <&clock CLK_FOUT_BPLL>,
-> +                                <&clock CLK_MOUT_BPLL>,
-> +                                <&clock CLK_SCLK_BPLL>,
-> +                                <&clock CLK_MOUT_MX_MSPLL_CCORE>,
-> +                                <&clock CLK_MOUT_MX_MSPLL_CCORE_PHY>,
-> +                                <&clock CLK_MOUT_MCLK_CDREX>,
-> +                                <&clock CLK_DOUT_CLK2X_PHY0>,
-> +                                <&clock CLK_CLKM_PHY0>,
-> +                                <&clock CLK_CLKM_PHY1>,
-> +                                <&clock CLK_CDREX_PAUSE>,
-> +                                <&clock CLK_CDREX_TIMING_SET>;
-> +                       clock-names = "fout_spll",
-> +                                     "mout_sclk_spll",
-> +                                     "ff_dout_spll2",
-> +                                     "fout_bpll",
-> +                                     "mout_bpll",
-> +                                     "sclk_bpll",
-> +                                     "mout_mx_mspll_ccore",
-> +                                     "mout_mx_mspll_ccore_phy",
-> +                                     "mout_mclk_cdrex",
-> +                                     "dout_clk2x_phy0",
-> +                                     "clkm_phy0",
-> +                                     "clkm_phy1",
-> +                                     "clk_cdrex_pause",
-> +                                     "clk_cdrex_timing_set";
-> +                       status = "disabled";
-> +               };
-> +
->                 nocp_mem0_0: nocp@10ca1000 {
->                         compatible = "samsung,exynos5420-nocp";
->                         reg = <0x10CA1000 0x200>;
-> @@ -271,6 +306,54 @@
->                         status = "disabled";
->                 };
->
-> +               ppmu_dmc0_0: ppmu@10d00000 {
-> +                       compatible = "samsung,exynos-ppmu";
-> +                       reg = <0x10d00000 0x2000>;
-> +                       clocks = <&clock CLK_PCLK_PPMU_DREX0_0>;
-> +                       clock-names = "ppmu";
-> +                       events {
-> +                               ppmu_event_dmc0_0: ppmu-event3-dmc0_0 {
-> +                                       event-name = "ppmu-event3-dmc0_0";
-> +                               };
-> +                       };
-> +               };
-> +
-> +               ppmu_dmc0_1: ppmu@10d10000 {
-> +                       compatible = "samsung,exynos-ppmu";
-> +                       reg = <0x10d10000 0x2000>;
-> +                       clocks = <&clock CLK_PCLK_PPMU_DREX0_1>;
-> +                       clock-names = "ppmu";
-> +                       events {
-> +                               ppmu_event_dmc0_1: ppmu-event3-dmc0_1 {
-> +                                       event-name = "ppmu-event3-dmc0_1";
-> +                               };
-> +                       };
-> +               };
-> +
-> +               ppmu_dmc1_0: ppmu@10d10000 {
-> +                       compatible = "samsung,exynos-ppmu";
-> +                       reg = <0x10d60000 0x2000>;
-> +                       clocks = <&clock CLK_PCLK_PPMU_DREX1_0>;
-> +                       clock-names = "ppmu";
-> +                       events {
-> +                               ppmu_event_dmc1_0: ppmu-event3-dmc1_0 {
-> +                                       event-name = "ppmu-event3-dmc1_0";
-> +                               };
-> +                       };
-> +               };
-> +
-> +               ppmu_dmc1_1: ppmu@10d70000 {
-> +                       compatible = "samsung,exynos-ppmu";
-> +                       reg = <0x10d70000 0x2000>;
-> +                       clocks = <&clock CLK_PCLK_PPMU_DREX1_1>;
-> +                       clock-names = "ppmu";
-> +                       events {
-> +                               ppmu_event_dmc1_1: ppmu-event3-dmc1_1 {
-> +                                       event-name = "ppmu-event3-dmc1_1";
-> +                               };
-> +                       };
-> +               };
-> +
->                 gsc_pd: power-domain@10044000 {
->                         compatible = "samsung,exynos4210-pd";
->                         reg = <0x10044000 0x20>;
-> diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-> index bf09eab..6b28fb3 100644
-> --- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-> +++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-> @@ -34,6 +34,69 @@
->                         clock-frequency = <24000000>;
->                 };
->         };
-> +
-> +       dmc_opp_table: opp_table2 {
-> +               compatible = "operating-points-v2";
-> +
-> +               opp00 {
-> +                       opp-hz = /bits/ 64 <165000000>;
-> +                       opp-microvolt = <875000>;
-> +               };
-> +               opp01 {
-> +                       opp-hz = /bits/ 64 <206000000>;
-> +                       opp-microvolt = <875000>;
-> +               };
-> +               opp02 {
-> +                       opp-hz = /bits/ 64 <275000000>;
-> +                       opp-microvolt = <875000>;
-> +               };
-> +               opp03 {
-> +                       opp-hz = /bits/ 64 <413000000>;
-> +                       opp-microvolt = <887500>;
-> +               };
-> +               opp04 {
-> +                       opp-hz = /bits/ 64 <543000000>;
-> +                       opp-microvolt = <937500>;
-> +               };
-> +               opp05 {
-> +                       opp-hz = /bits/ 64 <633000000>;
-> +                       opp-microvolt = <1012500>;
-> +               };
-> +               opp06 {
-> +                       opp-hz = /bits/ 64 <728000000>;
-> +                       opp-microvolt = <1037500>;
-> +               };
-> +               opp07 {
-> +                       opp-hz = /bits/ 64 <825000000>;
-> +                       opp-microvolt = <1050000>;
-> +               };
-> +       };
-> +
-> +       dmc_bypass_mode: bypass_mode {
-> +               compatible = "samsung,dmc-bypass-mode";
-> +
-> +               freq-hz = <400000000>;
-> +               volt-uv = <887500>;
-> +               dram-timing-row = <0x365a9713>;
-> +               dram-timing-data = <0x4740085e>;
-> +               dram-timing-power = <0x543a0446>;
-> +       };
-> +
-> +       dram_timing: timing {
-> +               compatible = "samsung,dram-timing";
-> +
-> +               dram-timing-names = "165MHz", "206MHz", "275MHz", "413MHz",
-> +                                   "543MHz", "633MHz", "728MHz", "825MHz";
-> +               dram-timing-row = <0x11223185>, <0x112331C6>, <0x12244287>,
-> +                                 <0x1B35538A>, <0x244764CD>, <0x2A48758F>,
-> +                                 <0x30598651>, <0x365A9713>;
-> +               dram-timing-data = <0x2720085E>, <0x2720085E>, <0x2720085E>,
-> +                                  <0x2720085E>, <0x3730085E>, <0x3730085E>,
-> +                                  <0x3730085E>, <0x4740085E>;
-> +               dram-timing-power = <0x140C0225>, <0x180F0225>, <0x1C140225>,
-> +                                   <0x2C1D0225>, <0x38270335>, <0x402D0335>,
-> +                                   <0x4C330336>, <0x543A0446>;
-> +       };
->  };
->
->  &bus_wcore {
-> @@ -127,6 +190,14 @@
->         cpu-supply = <&buck2_reg>;
->  };
->
-> +&dmc {
-> +       devfreq-events = <&ppmu_dmc0_0>, <&ppmu_dmc0_1>,
-> +                       <&ppmu_dmc1_0>, <&ppmu_dmc1_1>;
-> +
-> +       operating-points-v2 = <&dmc_opp_table>;
+>  drivers/crypto/s5p-sss.c | 50 ++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 46 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+> index 0064be0e3941..3f45cc5cb94a 100644
+> --- a/drivers/crypto/s5p-sss.c
+> +++ b/drivers/crypto/s5p-sss.c
+> @@ -232,6 +232,7 @@
+>   * struct samsung_aes_variant - platform specific SSS driver data
+>   * @aes_offset: AES register offset from SSS module's base.
+>   * @hash_offset: HASH register offset from SSS module's base.
+> + * @clk_names: names of clocks needed to run SSS IP
+>   *
+>   * Specifies platform specific configuration of SSS module.
+>   * Note: A structure for driver specific platform data is used for future
+> @@ -240,6 +241,7 @@
+>  struct samsung_aes_variant {
+>  	unsigned int			aes_offset;
+>  	unsigned int			hash_offset;
+> +	const char			*clk_names[];
 
-The opp-tables have voltage entry but I do not see the regulator
-supply. How do you change the voltage?
+This array does not have a fixed size.
 
-Best regards,
-Krzysztof
+>  };
+>  
+>  struct s5p_aes_reqctx {
+> @@ -296,6 +298,7 @@ struct s5p_aes_ctx {
+>  struct s5p_aes_dev {
+>  	struct device			*dev;
+>  	struct clk			*clk;
+> +	struct clk			*pclk;
+>  	void __iomem			*ioaddr;
+>  	void __iomem			*aes_ioaddr;
+>  	int				irq_fc;
+> @@ -384,11 +387,19 @@ struct s5p_hash_ctx {
+>  static const struct samsung_aes_variant s5p_aes_data = {
+>  	.aes_offset	= 0x4000,
+>  	.hash_offset	= 0x6000,
+> +	.clk_names	= { "secss", },
+
+In this instantiation, there is no [1] element.
+
+>  };
+>  
+>  static const struct samsung_aes_variant exynos_aes_data = {
+>  	.aes_offset	= 0x200,
+>  	.hash_offset	= 0x400,
+> +	.clk_names	= { "secss", },
+
+and neither is here.
+
+> +};
+> +
+> +static const struct samsung_aes_variant exynos5433_slim_aes_data = {
+> +	.aes_offset	= 0x400,
+> +	.hash_offset	= 0x800,
+> +	.clk_names	= { "pclk", "aclk", },
+>  };
+>  
+>  static const struct of_device_id s5p_sss_dt_match[] = {
+> @@ -400,6 +411,10 @@ static const struct of_device_id s5p_sss_dt_match[] = {
+>  		.compatible = "samsung,exynos4210-secss",
+>  		.data = &exynos_aes_data,
+>  	},
+> +	{
+> +		.compatible = "samsung,exynos5433-slim-sss",
+> +		.data = &exynos5433_slim_aes_data,
+> +	},
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(of, s5p_sss_dt_match);
+> @@ -2208,18 +2223,39 @@ static int s5p_aes_probe(struct platform_device *pdev)
+>  			return PTR_ERR(pdata->ioaddr);
+>  	}
+>  
+> -	pdata->clk = devm_clk_get(dev, "secss");
+> +	pdata->clk = devm_clk_get(dev, variant->clk_names[0]);
+>  	if (IS_ERR(pdata->clk)) {
+> -		dev_err(dev, "failed to find secss clock source\n");
+> +		dev_err(dev, "failed to find secss clock %s\n",
+> +			variant->clk_names[0]);
+>  		return -ENOENT;
+>  	}
+>  
+>  	err = clk_prepare_enable(pdata->clk);
+>  	if (err < 0) {
+> -		dev_err(dev, "Enabling SSS clk failed, err %d\n", err);
+> +		dev_err(dev, "Enabling clock %s failed, err %d\n",
+> +			variant->clk_names[0], err);
+>  		return err;
+>  	}
+>  
+> +	if (variant->clk_names[1]) {
+
+This results in
+
+[   31.721963] Unhandled fault: page domain fault (0x01b) at 0x00004000
+[   31.722417] pgd = (ptrval)
+[   31.722611] [00004000] *pgd=00000000
+[   31.723519] Internal error: : 1b [#1] PREEMPT SMP ARM
+...
+[   31.753264] [<c0be9978>] (strcmp) from [<c08cad50>] (of_property_match_string+0x58/0xd0)
+[   31.754012] [<c08cad50>] (of_property_match_string) from [<c061eaac>] (of_clk_get_hw+0x5c/0x114)
+[   31.754731] [<c061eaac>] (of_clk_get_hw) from [<c061656c>] (clk_get+0x34/0x74)
+[   31.755397] [<c061656c>] (clk_get) from [<c0615dd8>] (devm_clk_get+0x3c/0x6c)
+[   31.756018] [<c0615dd8>] (devm_clk_get) from [<c08b3298>] (s5p_aes_probe+0xcc/0x508)
+[   31.756892] [<c08b3298>] (s5p_aes_probe) from [<c06e6740>] (platform_drv_probe+0x48/0x98)
+[   31.757571] [<c06e6740>] (platform_drv_probe) from [<c06e40a4>] (really_probe+0x2bc/0x408)
+[   31.758245] [<c06e40a4>] (really_probe) from [<c06e43a4>] (driver_probe_device+0x78/0x1cc)
+[   31.758913] [<c06e43a4>] (driver_probe_device) from [<c06e4764>] (device_driver_attach+0x58/0x60)
+[   31.759578] [<c06e4764>] (device_driver_attach) from [<c06e483c>] (__driver_attach+0xd0/0x168)
+[   31.760010] [<c06e483c>] (__driver_attach) from [<c06e1e38>] (bus_for_each_dev+0x74/0xb4)
+[   31.760354] [<c06e1e38>] (bus_for_each_dev) from [<c06e3174>] (bus_add_driver+0x174/0x210)
+[   31.760697] [<c06e3174>] (bus_add_driver) from [<c06e572c>] (driver_register+0x74/0x108)
+[   31.761039] [<c06e572c>] (driver_register) from [<c010325c>] (do_one_initcall+0x90/0x428)
+[   31.761390] [<c010325c>] (do_one_initcall) from [<c1001318>] (kernel_init_freeable+0x42c/0x4cc)
+[   31.761752] [<c1001318>] (kernel_init_freeable) from [<c0bf3ae8>] (kernel_init+0x8/0x118)
+[   31.762093] [<c0bf3ae8>] (kernel_init) from [<c01010b4>] (ret_from_fork+0x14/0x20)
+
+when booting one of the "old" platforms where variant->clk_names[1]
+points beyond the end of the array.
+
+Guenter
+
+> +		pdata->pclk = devm_clk_get(dev, variant->clk_names[1]);
+> +		if (IS_ERR(pdata->pclk)) {
+> +			dev_err(dev, "failed to find clock %s\n",
+> +				variant->clk_names[1]);
+> +			err = -ENOENT;
+> +			goto err_clk;
+> +		}
+> +
+> +		err = clk_prepare_enable(pdata->pclk);
+> +		if (err < 0) {
+> +			dev_err(dev, "Enabling clock %s failed, err %d\n",
+> +				variant->clk_names[0], err);
+> +			goto err_clk;
+> +		}
+> +	} else {
+> +		pdata->pclk = NULL;
+> +	}
+> +
+>  	spin_lock_init(&pdata->lock);
+>  	spin_lock_init(&pdata->hash_lock);
+>  
+> @@ -2295,8 +2331,11 @@ static int s5p_aes_probe(struct platform_device *pdev)
+>  	tasklet_kill(&pdata->tasklet);
+>  
+>  err_irq:
+> -	clk_disable_unprepare(pdata->clk);
+> +	if (pdata->pclk)
+> +		clk_disable_unprepare(pdata->pclk);
+>  
+> +err_clk:
+> +	clk_disable_unprepare(pdata->clk);
+>  	s5p_dev = NULL;
+>  
+>  	return err;
+> @@ -2323,6 +2362,9 @@ static int s5p_aes_remove(struct platform_device *pdev)
+>  		pdata->use_hash = false;
+>  	}
+>  
+> +	if (pdata->pclk)
+> +		clk_disable_unprepare(pdata->pclk);
+> +
+>  	clk_disable_unprepare(pdata->clk);
+>  	s5p_dev = NULL;
+>  
