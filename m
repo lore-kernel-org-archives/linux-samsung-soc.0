@@ -1,52 +1,80 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v4 3/3] crypto: s5p: add AES support for Exynos5433
-Date: Tue, 5 Mar 2019 20:51:41 +0100
-Message-ID: <CAJKOXPdqf6b6LSxyhFJwoP+Jk+KCDvTtN1yM-LSP3n3kVt_nLQ@mail.gmail.com>
-References: <20190222122144.19024-1-k.konieczny@partner.samsung.com>
- <CGME20190222122204eucas1p1ee66c9d937bdf328588ececb1f005526@eucas1p1.samsung.com>
- <20190222122144.19024-4-k.konieczny@partner.samsung.com> <20190305171303.GA29802@roeck-us.net>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v5 3/8] clk: samsung: add BPLL rate table for Exynos
+ 5422 SoC
+Date: Wed, 6 Mar 2019 10:31:20 +0900
+Message-ID: <a35136da-79b1-17fe-3c97-8eb06da39cd6@samsung.com>
+References: <1551781151-5562-1-git-send-email-l.luba@partner.samsung.com>
+        <CGME20190305101926eucas1p158d6241bd6851b3d98ed9aae6cba502c@eucas1p1.samsung.com>
+        <1551781151-5562-4-git-send-email-l.luba@partner.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190305171303.GA29802@roeck-us.net>
+In-Reply-To: <1551781151-5562-4-git-send-email-l.luba@partner.samsung.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Kamil Konieczny <k.konieczny@partner.samsung.com>, Vladimir Zapolskiy <vz@mleia.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Lukasz Luba <l.luba@partner.samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, 5 Mar 2019 at 18:13, Guenter Roeck <linux@roeck-us.net> wrote:
->
-> On Fri, Feb 22, 2019 at 01:21:44PM +0100, Kamil Konieczny wrote:
-> > Add AES crypto HW acceleration for Exynos5433, with the help of SlimSSS IP.
-> >
-> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-> > ---
-> >  drivers/crypto/s5p-sss.c | 50 ++++++++++++++++++++++++++++++++++++----
-> >  1 file changed, 46 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-> > index 0064be0e3941..3f45cc5cb94a 100644
-> > --- a/drivers/crypto/s5p-sss.c
-> > +++ b/drivers/crypto/s5p-sss.c
-> > @@ -232,6 +232,7 @@
-> >   * struct samsung_aes_variant - platform specific SSS driver data
-> >   * @aes_offset: AES register offset from SSS module's base.
-> >   * @hash_offset: HASH register offset from SSS module's base.
-> > + * @clk_names: names of clocks needed to run SSS IP
-> >   *
-> >   * Specifies platform specific configuration of SSS module.
-> >   * Note: A structure for driver specific platform data is used for future
-> > @@ -240,6 +241,7 @@
-> >  struct samsung_aes_variant {
-> >       unsigned int                    aes_offset;
-> >       unsigned int                    hash_offset;
-> > +     const char                      *clk_names[];
->
-> This array does not have a fixed size.
+Hi Lukasz,
 
-Yes, correct. Kamil already sent a fix:
-https://patchwork.kernel.org/patch/10835389/
+I'm talking about it repeatedly. How many times already, I mentioned
+that you have to resend the patch after completed the discussion.
 
-Best regards,
-Krzysztof
+
+I replied this v3 patch[2]. But, you didn't reply or answer anything
+and then just send the same patch without any consent.
+
+- Re: [PATCH v3 3/8] clk: samsung: add BPLL rate table for Exynos 5422 SoC
+[2] https://lkml.org/lkml/2019/2/11/198
+
+
+
+On 19. 3. 5. 오후 7:19, Lukasz Luba wrote:
+> Add new table rate for BPLL for Exynos5422 SoC supporting Dynamic Memory
+> Controller frequencies for driver's DRAM timings.
+> 
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5420.c | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index 6da5875..6f5db70 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -1331,6 +1331,17 @@ static const struct samsung_pll_rate_table exynos5420_pll2550x_24mhz_tbl[] __ini
+>  	PLL_35XX_RATE(24 * MHZ, 200000000,  200, 3, 3),
+>  };
+>  
+> +static const struct samsung_pll_rate_table exynos5422_bpll_rate_table[] = {
+> +	PLL_35XX_RATE(24 * MHZ, 825000000, 275, 4, 1),
+> +	PLL_35XX_RATE(24 * MHZ, 728000000, 182, 3, 1),
+> +	PLL_35XX_RATE(24 * MHZ, 633000000, 211, 4, 1),
+> +	PLL_35XX_RATE(24 * MHZ, 543000000, 181, 2, 2),
+> +	PLL_35XX_RATE(24 * MHZ, 413000000, 413, 6, 2),
+> +	PLL_35XX_RATE(24 * MHZ, 275000000, 275, 3, 3),
+> +	PLL_35XX_RATE(24 * MHZ, 206000000, 206, 3, 3),
+> +	PLL_35XX_RATE(24 * MHZ, 165000000, 110, 2, 3),
+> +};
+> +
+>  static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
+>  	PLL_36XX_RATE(24 * MHZ, 600000000U, 100, 2, 1, 0),
+>  	PLL_36XX_RATE(24 * MHZ, 400000000U, 200, 3, 2, 0),
+> @@ -1473,7 +1484,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
+>  		exynos5x_plls[apll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+>  		exynos5x_plls[epll].rate_table = exynos5420_epll_24mhz_tbl;
+>  		exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+> -		exynos5x_plls[bpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+> +		exynos5x_plls[bpll].rate_table = exynos5422_bpll_rate_table;
+>  	}
+>  
+>  	samsung_clk_register_pll(ctx, exynos5x_plls, ARRAY_SIZE(exynos5x_plls),
+> 
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
