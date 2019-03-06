@@ -1,155 +1,59 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH] drm/exynos/mixer: fix MIXER shadow registry synchronisation
- code
-Date: Wed, 06 Mar 2019 16:05:59 +0100
-Message-ID: <20190306150559.20987-1-a.hajda@samsung.com>
-References: <CGME20190306150605eucas1p2fada42624ed864bfe1b7fff69afdceb9@eucas1p2.samsung.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v4 3/3] crypto: s5p: add AES support for Exynos5433
+Date: Wed, 6 Mar 2019 09:31:58 -0800
+Message-ID: <873d345a-4893-412d-78d7-58c3e8cd61c2@roeck-us.net>
+References: <20190222122144.19024-1-k.konieczny@partner.samsung.com>
+ <CGME20190222122204eucas1p1ee66c9d937bdf328588ececb1f005526@eucas1p1.samsung.com>
+ <20190222122144.19024-4-k.konieczny@partner.samsung.com>
+ <20190305171303.GA29802@roeck-us.net>
+ <CAJKOXPdqf6b6LSxyhFJwoP+Jk+KCDvTtN1yM-LSP3n3kVt_nLQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, dri-devel@lists.freedesktop.org, Marian Mihailescu <mihailescu2m@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAJKOXPdqf6b6LSxyhFJwoP+Jk+KCDvTtN1yM-LSP3n3kVt_nLQ@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kamil Konieczny <k.konieczny@partner.samsung.com>, Vladimir Zapolskiy <vz@mleia.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-TUlYRVIgb24gRXh5bm9zNSBTb0NzIHVzZXMgZGlmZmVyZW50IHN5bmNocm9uaXNhdGlvbiBtZXRo
-b2QgdGhhbiBFeHlub3M0CnRvIHVwZGF0ZSBpbnRlcm5hbCBzdGF0ZSAoc2hhZG93IHJlZ2lzdGVy
-cykuCkFwcGFyZW50bHkgdGhlIGRyaXZlciBpbXBsZW1lbnRzIGl0IGluY29ycmVjdGx5LiBUaGUg
-cnVsZSBzaG91bGQgYmUKYXMgZm9sbG93czoKLSBkbyBub3QgcmVxdWVzdCB1cGRhdGluZyByZWdp
-c3RlcnMgdW50aWwgcHJldmlvdXMgcmVxdWVzdCB3YXMgZmluaXNoZWQsCiAgaWUuIE1YUl9DRkdf
-TEFZRVJfVVBEQVRFX0NPVU5UIG11c3QgYmUgMC4KLSBiZWZvcmUgc2V0dGluZyByZWdpc3RlcnMg
-c3luY2hyb25pc2F0aW9uIG9uIFZTWU5DIHNob3VsZCBiZSB0dXJuZWQgb2ZmLAogIGllLiBNWFJf
-U1RBVFVTX1NZTkNfRU5BQkxFIHNob3VsZCBiZSByZXNldCwKLSBhZnRlciBmaW5pc2hpbmcgTVhS
-X1NUQVRVU19TWU5DX0VOQUJMRSBzaG91bGQgYmUgc2V0IGFnYWluLgpUaGUgcGF0Y2ggaG9wZWZ1
-bGx5IGltcGxlbWVudHMgaXQgY29ycmVjdGx5LgpCZWxvdyBzYW1wbGUga2VybmVsIGxvZyBmcm9t
-IHBhZ2UgZmF1bHQgY2F1c2VkIGJ5IHRoZSBidWc6CgpbICAgMjUuNjcwMDM4XSBleHlub3Mtc3lz
-bW11IDE0NjUwMDAwLnN5c21tdTogMTQ0NTAwMDAubWl4ZXI6IFBBR0UgRkFVTFQgb2NjdXJyZWQg
-YXQgMHgyMjQ3YjgwMApbICAgMjUuNjc3ODg4XSAtLS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0t
-LS0tLS0tLS0KWyAgIDI1LjY4MjE2NF0ga2VybmVsIEJVRyBhdCAuLi9kcml2ZXJzL2lvbW11L2V4
-eW5vcy1pb21tdS5jOjQ1MCEKWyAgIDI1LjY4Nzk3MV0gSW50ZXJuYWwgZXJyb3I6IE9vcHMgLSBC
-VUc6IDAgWyMxXSBQUkVFTVBUIFNNUCBBUk0KWyAgIDI1LjY5Mzc3OF0gTW9kdWxlcyBsaW5rZWQg
-aW46ClsgICAyNS42OTY4MTZdIENQVTogNSBQSUQ6IDE1NTMgQ29tbTogZmItcmVsZWFzZV90ZXN0
-IE5vdCB0YWludGVkIDUuMC4wLXJjNy0wMTE1Ny1nNWY4NmIxNTY2YmRkICMxMzYKWyAgIDI1Ljcw
-NTY0Nl0gSGFyZHdhcmUgbmFtZTogU0FNU1VORyBFWFlOT1MgKEZsYXR0ZW5lZCBEZXZpY2UgVHJl
-ZSkKWyAgIDI1LjcxMTcxMF0gUEMgaXMgYXQgZXh5bm9zX3N5c21tdV9pcnErMHgxYzAvMHgyNjQK
-WyAgIDI1LjcxNjQ3MF0gTFIgaXMgYXQgbG9ja19pc19oZWxkX3R5cGUrMHg0NC8weDY0CgpSZXBv
-cnRlZC1ieTogTWFyaWFuIE1paGFpbGVzY3UgPG1paGFpbGVzY3UybUBnbWFpbC5jb20+ClNpZ25l
-ZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Ci0tLQogZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyB8IDEwNyArKysrKysrKysrKysrKystLS0t
-LS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDYzIGluc2VydGlvbnMoKyksIDQ0IGRlbGV0aW9ucygt
-KQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgYi9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCmluZGV4IDA1NzNlYWIwZTE5MC4u
-NDJjZTAxYzIyNmVmIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19t
-aXhlci5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKQEAgLTIw
-LDYgKzIwLDcgQEAKICNpbmNsdWRlICJyZWdzLXZwLmgiCiAKICNpbmNsdWRlIDxsaW51eC9rZXJu
-ZWwuaD4KKyNpbmNsdWRlIDxsaW51eC9rdGltZS5oPgogI2luY2x1ZGUgPGxpbnV4L3NwaW5sb2Nr
-Lmg+CiAjaW5jbHVkZSA8bGludXgvd2FpdC5oPgogI2luY2x1ZGUgPGxpbnV4L2kyYy5oPgpAQCAt
-MzUyLDE1ICszNTMsNTkgQEAgc3RhdGljIHZvaWQgbWl4ZXJfY2ZnX3ZwX2JsZW5kKHN0cnVjdCBt
-aXhlcl9jb250ZXh0ICpjdHgsIHVuc2lnbmVkIGludCBhbHBoYSkKIAltaXhlcl9yZWdfd3JpdGUo
-Y3R4LCBNWFJfVklERU9fQ0ZHLCB2YWwpOwogfQogCi1zdGF0aWMgdm9pZCBtaXhlcl92c3luY19z
-ZXRfdXBkYXRlKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsIGJvb2wgZW5hYmxlKQorc3RhdGlj
-IGJvb2wgbWl4ZXJfaXNfc3luY2VkKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgpCiB7Ci0JLyog
-YmxvY2sgdXBkYXRlIG9uIHZzeW5jICovCi0JbWl4ZXJfcmVnX3dyaXRlbWFzayhjdHgsIE1YUl9T
-VEFUVVMsIGVuYWJsZSA/Ci0JCQlNWFJfU1RBVFVTX1NZTkNfRU5BQkxFIDogMCwgTVhSX1NUQVRV
-U19TWU5DX0VOQUJMRSk7CisJdTMyIGJhc2UsIHNoYWRvdzsKIAorCWlmIChjdHgtPm14cl92ZXIg
-PT0gTVhSX1ZFUl8xNl8wXzMzXzAgfHwKKwkgICAgY3R4LT5teHJfdmVyID09IE1YUl9WRVJfMTI4
-XzBfMF8xODQpCisJCXJldHVybiAhKG1peGVyX3JlZ19yZWFkKGN0eCwgTVhSX0NGRykgJgorCQkJ
-IE1YUl9DRkdfTEFZRVJfVVBEQVRFX0NPVU5UX01BU0spOworCisJaWYgKHRlc3RfYml0KE1YUl9C
-SVRfVlBfRU5BQkxFRCwgJmN0eC0+ZmxhZ3MpICYmCisJICAgIHZwX3JlZ19yZWFkKGN0eCwgVlBf
-U0hBRE9XX1VQREFURSkpCisJCXJldHVybiBmYWxzZTsKKworCWJhc2UgPSBtaXhlcl9yZWdfcmVh
-ZChjdHgsIE1YUl9DRkcpOworCXNoYWRvdyA9IG1peGVyX3JlZ19yZWFkKGN0eCwgTVhSX0NGR19T
-KTsKKwlpZiAoYmFzZSAhPSBzaGFkb3cpCisJCXJldHVybiBmYWxzZTsKKworCWJhc2UgPSBtaXhl
-cl9yZWdfcmVhZChjdHgsIE1YUl9HUkFQSElDX0JBU0UoMCkpOworCXNoYWRvdyA9IG1peGVyX3Jl
-Z19yZWFkKGN0eCwgTVhSX0dSQVBISUNfQkFTRV9TKDApKTsKKwlpZiAoYmFzZSAhPSBzaGFkb3cp
-CisJCXJldHVybiBmYWxzZTsKKworCWJhc2UgPSBtaXhlcl9yZWdfcmVhZChjdHgsIE1YUl9HUkFQ
-SElDX0JBU0UoMSkpOworCXNoYWRvdyA9IG1peGVyX3JlZ19yZWFkKGN0eCwgTVhSX0dSQVBISUNf
-QkFTRV9TKDEpKTsKKwlpZiAoYmFzZSAhPSBzaGFkb3cpCisJCXJldHVybiBmYWxzZTsKKworCXJl
-dHVybiB0cnVlOworfQorCitzdGF0aWMgaW50IG1peGVyX3dhaXRfZm9yX3N5bmMoc3RydWN0IG1p
-eGVyX2NvbnRleHQgKmN0eCkKK3sKKwlrdGltZV90IHRpbWVvdXQgPSBrdGltZV9hZGRfdXMoa3Rp
-bWVfZ2V0KCksIDEwMDAwMCk7CisKKwl3aGlsZSAoIW1peGVyX2lzX3N5bmNlZChjdHgpKSB7CisJ
-CXVzbGVlcF9yYW5nZSgxMDAwLCAyMDAwKTsKKwkJaWYgKGt0aW1lX2NvbXBhcmUoa3RpbWVfZ2V0
-KCksIHRpbWVvdXQpID4gMCkKKwkJCXJldHVybiAtRVRJTUVET1VUOworCX0KKwlyZXR1cm4gMDsK
-K30KKworc3RhdGljIHZvaWQgbWl4ZXJfZGlzYWJsZV9zeW5jKHN0cnVjdCBtaXhlcl9jb250ZXh0
-ICpjdHgpCit7CisJbWl4ZXJfcmVnX3dyaXRlbWFzayhjdHgsIE1YUl9TVEFUVVMsIDAsIE1YUl9T
-VEFUVVNfU1lOQ19FTkFCTEUpOworfQorCitzdGF0aWMgdm9pZCBtaXhlcl9lbmFibGVfc3luYyhz
-dHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4KQoreworCW1peGVyX3JlZ193cml0ZW1hc2soY3R4LCBN
-WFJfU1RBVFVTLCB+MCwgTVhSX1NUQVRVU19TWU5DX0VOQUJMRSk7CiAJaWYgKHRlc3RfYml0KE1Y
-Ul9CSVRfVlBfRU5BQkxFRCwgJmN0eC0+ZmxhZ3MpKQotCQl2cF9yZWdfd3JpdGUoY3R4LCBWUF9T
-SEFET1dfVVBEQVRFLCBlbmFibGUgPwotCQkJVlBfU0hBRE9XX1VQREFURV9FTkFCTEUgOiAwKTsK
-KwkJdnBfcmVnX3dyaXRlKGN0eCwgVlBfU0hBRE9XX1VQREFURSwgVlBfU0hBRE9XX1VQREFURV9F
-TkFCTEUpOwogfQogCiBzdGF0aWMgdm9pZCBtaXhlcl9jZmdfc2NhbihzdHJ1Y3QgbWl4ZXJfY29u
-dGV4dCAqY3R4LCBpbnQgd2lkdGgsIGludCBoZWlnaHQpCkBAIC00OTgsNyArNTQzLDYgQEAgc3Rh
-dGljIHZvaWQgdnBfdmlkZW9fYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsCiAKIAlz
-cGluX2xvY2tfaXJxc2F2ZSgmY3R4LT5yZWdfc2xvY2ssIGZsYWdzKTsKIAotCXZwX3JlZ193cml0
-ZShjdHgsIFZQX1NIQURPV19VUERBVEUsIDEpOwogCS8qIGludGVybGFjZSBvciBwcm9ncmVzc2l2
-ZSBzY2FuIG1vZGUgKi8KIAl2YWwgPSAodGVzdF9iaXQoTVhSX0JJVF9JTlRFUkxBQ0UsICZjdHgt
-PmZsYWdzKSA/IH4wIDogMCk7CiAJdnBfcmVnX3dyaXRlbWFzayhjdHgsIFZQX01PREUsIHZhbCwg
-VlBfTU9ERV9MSU5FX1NLSVApOwpAQCAtNTUzLDExICs1OTcsNiBAQCBzdGF0aWMgdm9pZCB2cF92
-aWRlb19idWZmZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwKIAl2cF9yZWdzX2R1bXAoY3R4
-KTsKIH0KIAotc3RhdGljIHZvaWQgbWl4ZXJfbGF5ZXJfdXBkYXRlKHN0cnVjdCBtaXhlcl9jb250
-ZXh0ICpjdHgpCi17Ci0JbWl4ZXJfcmVnX3dyaXRlbWFzayhjdHgsIE1YUl9DRkcsIH4wLCBNWFJf
-Q0ZHX0xBWUVSX1VQREFURSk7Ci19Ci0KIHN0YXRpYyB2b2lkIG1peGVyX2dyYXBoX2J1ZmZlcihz
-dHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LAogCQkJICAgICAgIHN0cnVjdCBleHlub3NfZHJtX3Bs
-YW5lICpwbGFuZSkKIHsKQEAgLTY0MCwxMSArNjc5LDYgQEAgc3RhdGljIHZvaWQgbWl4ZXJfZ3Jh
-cGhfYnVmZmVyKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgsCiAJbWl4ZXJfY2ZnX2xheWVyKGN0
-eCwgd2luLCBwcmlvcml0eSwgdHJ1ZSk7CiAJbWl4ZXJfY2ZnX2dmeF9ibGVuZChjdHgsIHdpbiwg
-cGl4ZWxfYWxwaGEsIHN0YXRlLT5iYXNlLmFscGhhKTsKIAotCS8qIGxheWVyIHVwZGF0ZSBtYW5k
-YXRvcnkgZm9yIG1peGVyIDE2LjAuMzMuMCAqLwotCWlmIChjdHgtPm14cl92ZXIgPT0gTVhSX1ZF
-Ul8xNl8wXzMzXzAgfHwKLQkJY3R4LT5teHJfdmVyID09IE1YUl9WRVJfMTI4XzBfMF8xODQpCi0J
-CW1peGVyX2xheWVyX3VwZGF0ZShjdHgpOwotCiAJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmY3R4
-LT5yZWdfc2xvY2ssIGZsYWdzKTsKIAogCW1peGVyX3JlZ3NfZHVtcChjdHgpOwpAQCAtNzA5LDcg
-Kzc0Myw3IEBAIHN0YXRpYyB2b2lkIG1peGVyX3dpbl9yZXNldChzdHJ1Y3QgbWl4ZXJfY29udGV4
-dCAqY3R4KQogc3RhdGljIGlycXJldHVybl90IG1peGVyX2lycV9oYW5kbGVyKGludCBpcnEsIHZv
-aWQgKmFyZykKIHsKIAlzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4ID0gYXJnOwotCXUzMiB2YWws
-IGJhc2UsIHNoYWRvdzsKKwl1MzIgdmFsOwogCiAJc3Bpbl9sb2NrKCZjdHgtPnJlZ19zbG9jayk7
-CiAKQEAgLTcyMywyNiArNzU3LDkgQEAgc3RhdGljIGlycXJldHVybl90IG1peGVyX2lycV9oYW5k
-bGVyKGludCBpcnEsIHZvaWQgKmFyZykKIAkJdmFsICY9IH5NWFJfSU5UX1NUQVRVU19WU1lOQzsK
-IAogCQkvKiBpbnRlcmxhY2Ugc2NhbiBuZWVkIHRvIGNoZWNrIHNoYWRvdyByZWdpc3RlciAqLwot
-CQlpZiAodGVzdF9iaXQoTVhSX0JJVF9JTlRFUkxBQ0UsICZjdHgtPmZsYWdzKSkgewotCQkJaWYg
-KHRlc3RfYml0KE1YUl9CSVRfVlBfRU5BQkxFRCwgJmN0eC0+ZmxhZ3MpICYmCi0JCQkgICAgdnBf
-cmVnX3JlYWQoY3R4LCBWUF9TSEFET1dfVVBEQVRFKSkKLQkJCQlnb3RvIG91dDsKLQotCQkJYmFz
-ZSA9IG1peGVyX3JlZ19yZWFkKGN0eCwgTVhSX0NGRyk7Ci0JCQlzaGFkb3cgPSBtaXhlcl9yZWdf
-cmVhZChjdHgsIE1YUl9DRkdfUyk7Ci0JCQlpZiAoYmFzZSAhPSBzaGFkb3cpCi0JCQkJZ290byBv
-dXQ7Ci0KLQkJCWJhc2UgPSBtaXhlcl9yZWdfcmVhZChjdHgsIE1YUl9HUkFQSElDX0JBU0UoMCkp
-OwotCQkJc2hhZG93ID0gbWl4ZXJfcmVnX3JlYWQoY3R4LCBNWFJfR1JBUEhJQ19CQVNFX1MoMCkp
-OwotCQkJaWYgKGJhc2UgIT0gc2hhZG93KQotCQkJCWdvdG8gb3V0OwotCi0JCQliYXNlID0gbWl4
-ZXJfcmVnX3JlYWQoY3R4LCBNWFJfR1JBUEhJQ19CQVNFKDEpKTsKLQkJCXNoYWRvdyA9IG1peGVy
-X3JlZ19yZWFkKGN0eCwgTVhSX0dSQVBISUNfQkFTRV9TKDEpKTsKLQkJCWlmIChiYXNlICE9IHNo
-YWRvdykKLQkJCQlnb3RvIG91dDsKLQkJfQorCQlpZiAodGVzdF9iaXQoTVhSX0JJVF9JTlRFUkxB
-Q0UsICZjdHgtPmZsYWdzKQorCQkgICAgJiYgIW1peGVyX2lzX3N5bmNlZChjdHgpKQorCQkJZ290
-byBvdXQ7CiAKIAkJZHJtX2NydGNfaGFuZGxlX3ZibGFuaygmY3R4LT5jcnRjLT5iYXNlKTsKIAl9
-CkBAIC05MTcsMTIgKzkzNCwxNCBAQCBzdGF0aWMgdm9pZCBtaXhlcl9kaXNhYmxlX3ZibGFuayhz
-dHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQogCiBzdGF0aWMgdm9pZCBtaXhlcl9hdG9taWNf
-YmVnaW4oc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YykKIHsKLQlzdHJ1Y3QgbWl4ZXJfY29u
-dGV4dCAqbWl4ZXJfY3R4ID0gY3J0Yy0+Y3R4OworCXN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgg
-PSBjcnRjLT5jdHg7CiAKLQlpZiAoIXRlc3RfYml0KE1YUl9CSVRfUE9XRVJFRCwgJm1peGVyX2N0
-eC0+ZmxhZ3MpKQorCWlmICghdGVzdF9iaXQoTVhSX0JJVF9QT1dFUkVELCAmY3R4LT5mbGFncykp
-CiAJCXJldHVybjsKIAotCW1peGVyX3ZzeW5jX3NldF91cGRhdGUobWl4ZXJfY3R4LCBmYWxzZSk7
-CisJaWYgKG1peGVyX3dhaXRfZm9yX3N5bmMoY3R4KSkKKwkJZGV2X2VycihjdHgtPmRldiwgInRp
-bWVvdXQgd2FpdGluZyBmb3IgVlNZTkNcbiIpOworCW1peGVyX2Rpc2FibGVfc3luYyhjdHgpOwog
-fQogCiBzdGF0aWMgdm9pZCBtaXhlcl91cGRhdGVfcGxhbmUoc3RydWN0IGV4eW5vc19kcm1fY3J0
-YyAqY3J0YywKQEAgLTk2NCw3ICs5ODMsNyBAQCBzdGF0aWMgdm9pZCBtaXhlcl9hdG9taWNfZmx1
-c2goc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YykKIAlpZiAoIXRlc3RfYml0KE1YUl9CSVRf
-UE9XRVJFRCwgJm1peGVyX2N0eC0+ZmxhZ3MpKQogCQlyZXR1cm47CiAKLQltaXhlcl92c3luY19z
-ZXRfdXBkYXRlKG1peGVyX2N0eCwgdHJ1ZSk7CisJbWl4ZXJfZW5hYmxlX3N5bmMobWl4ZXJfY3R4
-KTsKIAlleHlub3NfY3J0Y19oYW5kbGVfZXZlbnQoY3J0Yyk7CiB9CiAKQEAgLTk3OSw3ICs5OTgs
-NyBAQCBzdGF0aWMgdm9pZCBtaXhlcl9lbmFibGUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0
-YykKIAogCWV4eW5vc19kcm1fcGlwZV9jbGtfZW5hYmxlKGNydGMsIHRydWUpOwogCi0JbWl4ZXJf
-dnN5bmNfc2V0X3VwZGF0ZShjdHgsIGZhbHNlKTsKKwltaXhlcl9kaXNhYmxlX3N5bmMoY3R4KTsK
-IAogCW1peGVyX3JlZ193cml0ZW1hc2soY3R4LCBNWFJfU1RBVFVTLCB+MCwgTVhSX1NUQVRVU19T
-T0ZUX1JFU0VUKTsKIApAQCAtOTkyLDcgKzEwMTEsNyBAQCBzdGF0aWMgdm9pZCBtaXhlcl9lbmFi
-bGUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YykKIAogCW1peGVyX2NvbW1pdChjdHgpOwog
-Ci0JbWl4ZXJfdnN5bmNfc2V0X3VwZGF0ZShjdHgsIHRydWUpOworCW1peGVyX2VuYWJsZV9zeW5j
-KGN0eCk7CiAKIAlzZXRfYml0KE1YUl9CSVRfUE9XRVJFRCwgJmN0eC0+ZmxhZ3MpOwogfQotLSAK
-Mi4xNy4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
-cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
-cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
+On 3/5/19 11:51 AM, Krzysztof Kozlowski wrote:
+> On Tue, 5 Mar 2019 at 18:13, Guenter Roeck <linux@roeck-us.net> wrote:
+>>
+>> On Fri, Feb 22, 2019 at 01:21:44PM +0100, Kamil Konieczny wrote:
+>>> Add AES crypto HW acceleration for Exynos5433, with the help of SlimSSS IP.
+>>>
+>>> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+>>> ---
+>>>   drivers/crypto/s5p-sss.c | 50 ++++++++++++++++++++++++++++++++++++----
+>>>   1 file changed, 46 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+>>> index 0064be0e3941..3f45cc5cb94a 100644
+>>> --- a/drivers/crypto/s5p-sss.c
+>>> +++ b/drivers/crypto/s5p-sss.c
+>>> @@ -232,6 +232,7 @@
+>>>    * struct samsung_aes_variant - platform specific SSS driver data
+>>>    * @aes_offset: AES register offset from SSS module's base.
+>>>    * @hash_offset: HASH register offset from SSS module's base.
+>>> + * @clk_names: names of clocks needed to run SSS IP
+>>>    *
+>>>    * Specifies platform specific configuration of SSS module.
+>>>    * Note: A structure for driver specific platform data is used for future
+>>> @@ -240,6 +241,7 @@
+>>>   struct samsung_aes_variant {
+>>>        unsigned int                    aes_offset;
+>>>        unsigned int                    hash_offset;
+>>> +     const char                      *clk_names[];
+>>
+>> This array does not have a fixed size.
+> 
+> Yes, correct. Kamil already sent a fix:
+> https://patchwork.kernel.org/patch/10835389/
+> 
+
+Excellent. Note that the offending patch is now in mainline.
+
+Guenter
