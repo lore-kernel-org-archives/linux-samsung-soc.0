@@ -1,59 +1,74 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH 08/15] ARM: shmobile: fix a leaked reference by
- addingmissing of_node_put
-Date: Wed, 6 Mar 2019 14:00:29 +0100
-Message-ID: <20190306130029.nysvl7fmcjcmhqnw@verge.net.au>
-References: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn>
- <1551430616-42014-8-git-send-email-wen.yang99@zte.com.cn>
- <CAMuHMdWrY0UNhCA7a8oHVfdVNXaB=15qFuWqvuU9OZpf7-ecmg@mail.gmail.com>
- <20190304102423.bipib6frc6ma2ltv@verge.net.au>
- <TY1PR01MB17701D48CA7E650507C2E010C0710@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v4 4/8] drivers: devfreq: add DMC driver for Exynos5422
+Date: Wed, 06 Mar 2019 14:44:28 +0100
+Message-ID: <94e169cf-4dc2-82ec-1385-852bc7853931@samsung.com>
+References: <CGME20190201164720eucas1p13aac6550399d240b261a2cbe489d3dfc@eucas1p1.samsung.com>
+        <1549039612-28905-1-git-send-email-l.luba@partner.samsung.com>
+        <1549039612-28905-5-git-send-email-l.luba@partner.samsung.com>
+        <CAGTfZH0o6dHQj00vHwZBn05AT-Z_oAWHfBX0eATQ12NPmfw4fg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <TY1PR01MB17701D48CA7E650507C2E010C0710@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Maxime Ripard <maxime.ripard@bootlin.com>, Catalin Marinas <catalin.marinas@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Liviu Dudau <liviu.dudau@arm.com>, Russell King <linux@armlinux.org.uk>, Wei Xu <xuwei5@hisilicon.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Wen Yang <wen.yang99@zte.com.cn>, "tmaimon77@gmail.com" <tmaimon77@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Will Deacon <will.deacon@arm.com>, "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>, Magnus Damm <magnus.damm@gmail.com>, Michal Simek <michal.simek@xilinx.com>, Krzysztof Kozlowski <krzk@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, bcm-kernel-feedback-list@br
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <CAGTfZH0o6dHQj00vHwZBn05AT-Z_oAWHfBX0eATQ12NPmfw4fg@mail.gmail.com>
+Content-language: en-GB
+Sender: linux-kernel-owner@vger.kernel.org
+To: cwchoi00@gmail.com, Lukasz Luba <l.luba@partner.samsung.com>
+Cc: devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Mar 04, 2019 at 10:55:27AM +0000, Fabrizio Castro wrote:
-> Hello Simon,
-> 
-> > From: linux-renesas-soc-owner@vger.kernel.org <linux-renesas-soc-owner@vger.kernel.org> On Behalf Of Simon Horman
-> > Sent: 04 March 2019 10:24
-> > Subject: Re: [PATCH 08/15] ARM: shmobile: fix a leaked reference by addingmissing of_node_put
-> > 
-> > On Fri, Mar 01, 2019 at 10:51:27AM +0100, Geert Uytterhoeven wrote:
-> > > On Fri, Mar 1, 2019 at 9:57 AM Wen Yang <wen.yang99@zte.com.cn> wrote:
-> > > > The call to of_get_next_child returns a node pointer with refcount
-> > > > incremented thus it must be explicitly decremented after the last
-> > > > usage.
-> > > >
-> > > > Detected by coccinelle with the following warnings:
-> > > > ./arch/arm/mach-shmobile/pm-rcar-gen2.c:77:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount
-> > incremented on line 66, but without a corresponding object release within this function.
-> > > > ./arch/arm/mach-shmobile/pm-rcar-gen2.c:85:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount
-> > incremented on line 66, but without a corresponding object release within this function.
-> > > > ./arch/arm/mach-shmobile/pm-rcar-gen2.c:90:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount
-> > incremented on line 66, but without a corresponding object release within this function.
-> > > >
-> > > > Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-> > >
-> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > 
-> > Thanks, applied for v5.2.
-> 
-> I am sorry for commenting on this just a moment after you took the patch, I guess there is a space missing in the title s/addingmissing/adding missing/ ? Is that still fixable?
+Hi,
 
-Thanks for noticing, fixed.
+On 2/3/19 13:23, Chanwoo Choi wrote:
+
+> 2019년 2월 2일 (토) 오전 2:42, Lukasz Luba <l.luba@partner.samsung.com>님이 작성:
+
+>> +/**
+>> + * exynos5_dmc_pause_on_switching() - Controls a pause feature in DMC
+>> + * @dmc:       device which is used for changing this feature
+>> + * @set:       a boolean state passing enable/disable request
+>> + *
+>> + * There is a need of pausing DREX DMC when divider or MUX in clock tree
+>> + * changes its configuration. In such situation access to the memory is blocked
+>> + * in DMC automatically. This feature is used when clock frequency change
+>> + * request appears and touches clock tree.
+>> + */
+>> +static int exynos5_dmc_pause_on_switching(struct exynos5_dmc *dmc, bool set)
+> 
+> Don't need to make it as the separate function. It is only used on
+> probe() function.
+
+It seems fine to me to have this functionality in a separate function, 
+it's self-contained and it's now pretty well documented.
+
+>> +{
+>> +       unsigned int val;
+>> +
+>> +       val = readl(dmc->base_clk + DMC_PAUSE_CTRL);
+>> +       if (set)
+>> +               val |= DMC_PAUSE_ENABLE;
+>> +       else
+>> +               val &= ~DMC_PAUSE_ENABLE;
+>> +       writel(val, dmc->base_clk + DMC_PAUSE_CTRL);
+> 
+> The dt-binding file doesn't explain the 'reg' property for 'base_clk'.
+> You are missing.
+> When I tried to find what are the base address, it is the register map
+> of clock-controller.
+> This driver accesed the register of clock controller without any
+> functions of CCF
+> (common clock framework). It is wrong.
+> 
+> If you need to get the some information of clock, must have to use the CCF.
+We talked a little about this issue with Lukasz in person and it looks
+like there are some DMC related registers in the clock controller register 
+region, I'd say those registers are better handled by the DMC driver rather
+than the clocks controller driver. Moreover, we should avoid abusing clk API
+for not strictly clocks related functionality as it appears to be above.
+It might be more appropriate to add in the dmc DT node a phandle to a regmap
+exposed by the clock-controller node. It seems there will be even no single
+register that would be shared between the DMC and the clock controller.
+
+-- 
+Regards,
+Sylwester
