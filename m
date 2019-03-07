@@ -1,7 +1,7 @@
 From: "kernelci.org bot" <bot@kernelci.org>
-Subject: mainline/master boot bisection: v5.0-4854-g8dcd175bc3d5 on odroid-xu3
-Date: Wed, 06 Mar 2019 23:13:31 -0800 (PST)
-Message-ID: <5c80c49b.1c69fb81.605bf.26ea@mx.google.com>
+Subject: mainline/master boot bisection: v5.0-5022-g542d0e583b7b on odroid-xu3
+Date: Wed, 06 Mar 2019 23:17:01 -0800 (PST)
+Message-ID: <5c80c56d.1c69fb81.e3d9f.d73a@mx.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
@@ -19,16 +19,17 @@ List-Id: linux-samsung-soc@vger.kernel.org
 * Hope this helps!                                              *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-mainline/master boot bisection: v5.0-4854-g8dcd175bc3d5 on odroid-xu3
+mainline/master boot bisection: v5.0-5022-g542d0e583b7b on odroid-xu3
 
 Summary:
-  Start:      8dcd175bc3d5 Merge branch 'akpm' (patches from Andrew)
-  Details:    https://kernelci.org/boot/id/5c8052c159b5146b7bfe6018
-  Plain log:  https://storage.kernelci.org//mainline/master/v5.0-4854-g8dcd=
-175bc3d5/arm/exynos_defconfig/gcc-7/lab-collabora/boot-exynos5422-odroidxu3=
+  Start:      542d0e583b7b Merge tag 'devprop-5.1-rc1' of git://git.kernel.=
+org/pub/scm/linux/kernel/git/rafael/linux-pm
+  Details:    https://kernelci.org/boot/id/5c806c1d59b5148945fe6019
+  Plain log:  https://storage.kernelci.org//mainline/master/v5.0-5022-g542d=
+0e583b7b/arm/exynos_defconfig/gcc-7/lab-collabora/boot-exynos5422-odroidxu3=
 .txt
-  HTML log:   https://storage.kernelci.org//mainline/master/v5.0-4854-g8dcd=
-175bc3d5/arm/exynos_defconfig/gcc-7/lab-collabora/boot-exynos5422-odroidxu3=
+  HTML log:   https://storage.kernelci.org//mainline/master/v5.0-5022-g542d=
+0e583b7b/arm/exynos_defconfig/gcc-7/lab-collabora/boot-exynos5422-odroidxu3=
 .html
   Result:     0918f18c7179 crypto: s5p - add AES support for Exynos5433
 
@@ -218,42 +219,45 @@ git bisect start
 # good: [a215ce8f0e00c2d707080236f1aafec337371043] Merge tag 'iommu-fix-v5.=
 0-rc8' of git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu
 git bisect good a215ce8f0e00c2d707080236f1aafec337371043
-# bad: [8dcd175bc3d50b78413c56d5b17d4bddd77412ef] Merge branch 'akpm' (patc=
-hes from Andrew)
-git bisect bad 8dcd175bc3d50b78413c56d5b17d4bddd77412ef
-# good: [096461de96a94c856190ba892ebf62dfba5a38f1] net/sched: avoid unused-=
-label warning
-git bisect good 096461de96a94c856190ba892ebf62dfba5a38f1
-# bad: [3478588b5136966c80c571cf0006f08e9e5b8f04] Merge branch 'locking-cor=
-e-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-git bisect bad 3478588b5136966c80c571cf0006f08e9e5b8f04
-# good: [6456300356433873309a1cae6aa05e77d6b59153] Merge git://git.kernel.o=
-rg/pub/scm/linux/kernel/git/davem/net-next
-git bisect good 6456300356433873309a1cae6aa05e77d6b59153
-# bad: [8feed3efa8022107bcb3432ac3ec9917e078ae70] Merge branch 'parisc-5.1-=
-1' of git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux
-git bisect bad 8feed3efa8022107bcb3432ac3ec9917e078ae70
-# good: [cf64e495fe221479866c1ea7c6f5cd9698d8a3af] crypto: caam - weak key =
-checking for cbc des, 3des
-git bisect good cf64e495fe221479866c1ea7c6f5cd9698d8a3af
-# good: [fcc082f35c6d565d351b5b89bb03a82333e9ffe8] Revert "s390/cpum_cf: Ad=
-d kernel message exaplanations"
-git bisect good fcc082f35c6d565d351b5b89bb03a82333e9ffe8
-# good: [d3ff9f851b7ad892df8dc168f0d589308fb42ac3] dt-bindings: crypto: doc=
-ument Exynos5433 SlimSSS
-git bisect good d3ff9f851b7ad892df8dc168f0d589308fb42ac3
-# good: [d578bf28cfc40375b4fc9f7571a3faf17bd2373c] parisc: Add constant for=
- PDC_PAT_COMPLEX firmware call
-git bisect good d578bf28cfc40375b4fc9f7571a3faf17bd2373c
-# good: [bf6341664ad16070bed675bec659aa54b161ed82] m68k/apollo: Fix comment=
- in Makefile
-git bisect good bf6341664ad16070bed675bec659aa54b161ed82
-# bad: [eac616557050737a8d6ef6fe0322d0980ff0ffde] x86: Deprecate a.out supp=
-ort
-git bisect bad eac616557050737a8d6ef6fe0322d0980ff0ffde
+# bad: [542d0e583b7b366527175b2b5fc0aad262fa33b0] Merge tag 'devprop-5.1-rc=
+1' of git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
+git bisect bad 542d0e583b7b366527175b2b5fc0aad262fa33b0
+# good: [18a4d8bf250a33c015955f0dec27259780ef6448] Merge git://git.kernel.o=
+rg/pub/scm/linux/kernel/git/davem/net
+git bisect good 18a4d8bf250a33c015955f0dec27259780ef6448
+# bad: [203b6609e0ede49eb0b97008b1150c69e9d2ffd3] Merge branch 'perf-core-f=
+or-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+git bisect bad 203b6609e0ede49eb0b97008b1150c69e9d2ffd3
 # bad: [63bdf4284c38a48af21745ceb148a087b190cd21] Merge branch 'linus' of g=
 it://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6
 git bisect bad 63bdf4284c38a48af21745ceb148a087b190cd21
+# good: [32c0ac3af49d0cfa05c5d9d77db94e240502b5ef] Merge tag 'regulator-v5.=
+1' of git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator
+git bisect good 32c0ac3af49d0cfa05c5d9d77db94e240502b5ef
+# good: [7629bac64204ff256d3b2415767a7acb1401047b] Merge tag 'hwmon-for-v5.=
+1' of git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging
+git bisect good 7629bac64204ff256d3b2415767a7acb1401047b
+# good: [48ef0908b81cc6b92ec8b157bb78ce2c4eddd7c7] crypto: axis - support v=
+ariable AEAD tag length
+git bisect good 48ef0908b81cc6b92ec8b157bb78ce2c4eddd7c7
+# good: [cf64e495fe221479866c1ea7c6f5cd9698d8a3af] crypto: caam - weak key =
+checking for cbc des, 3des
+git bisect good cf64e495fe221479866c1ea7c6f5cd9698d8a3af
+# good: [7df5218d66750ff5f84413ea307391bf9bbace1e] crypto: ccp - Update dri=
+ver messages to remove some confusion
+git bisect good 7df5218d66750ff5f84413ea307391bf9bbace1e
+# good: [91e14842f8ea8dc35669bad3c3dcd72d4614e4d1] crypto: af_alg - use str=
+uct_size() in sock_kfree_s()
+git bisect good 91e14842f8ea8dc35669bad3c3dcd72d4614e4d1
+# good: [5ddb0869bfc1bca6cfc592c74c64a026f936638c] leds: lp55xx: fix null d=
+eref on firmware load failure
+git bisect good 5ddb0869bfc1bca6cfc592c74c64a026f936638c
+# good: [d3ff9f851b7ad892df8dc168f0d589308fb42ac3] dt-bindings: crypto: doc=
+ument Exynos5433 SlimSSS
+git bisect good d3ff9f851b7ad892df8dc168f0d589308fb42ac3
+# good: [6456300356433873309a1cae6aa05e77d6b59153] Merge git://git.kernel.o=
+rg/pub/scm/linux/kernel/git/davem/net-next
+git bisect good 6456300356433873309a1cae6aa05e77d6b59153
 # bad: [0918f18c7179e8cdf718d01531a81b28130b4217] crypto: s5p - add AES sup=
 port for Exynos5433
 git bisect bad 0918f18c7179e8cdf718d01531a81b28130b4217
