@@ -1,41 +1,39 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH] crypto: s5p-sss - fix AES support for Exynos5433
-Date: Thu, 7 Mar 2019 16:25:50 +0800
-Message-ID: <20190307082550.4ijrmlrupyvwdyl5@gondor.apana.org.au>
-References: <CGME20190301140321eucas1p2bf17a6e35d29e8d5f582a2d99fbf4c83@eucas1p2.samsung.com>
- <20190301140254.19341-1-k.konieczny@partner.samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v4 4/8] drivers: devfreq: add DMC driver for Exynos5422
+Date: Thu, 07 Mar 2019 09:41:00 +0100
+Message-ID: <84c06add-8375-55a6-01d6-ebbc6af011a9@samsung.com>
+References: <CGME20190201164720eucas1p13aac6550399d240b261a2cbe489d3dfc@eucas1p1.samsung.com>
+        <1549039612-28905-1-git-send-email-l.luba@partner.samsung.com>
+        <1549039612-28905-5-git-send-email-l.luba@partner.samsung.com>
+        <CAGTfZH0o6dHQj00vHwZBn05AT-Z_oAWHfBX0eATQ12NPmfw4fg@mail.gmail.com>
+        <94e169cf-4dc2-82ec-1385-852bc7853931@samsung.com>
+        <4bbc0f61-952e-bcdb-4645-2644a122ac99@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190301140254.19341-1-k.konieczny@partner.samsung.com>
+In-reply-to: <4bbc0f61-952e-bcdb-4645-2644a122ac99@samsung.com>
+Content-language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: cwchoi00@gmail.com, Lukasz Luba <l.luba@partner.samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Mar 01, 2019 at 03:02:54PM +0100, Kamil Konieczny wrote:
-> Commit 0918f18c7179 ("crypto: s5p - add AES support for Exynos5433")
-> introduced bug in dereferencing clk_names[1] on platforms different from
-> Exynos5433. On Exynos board XU3 call trace is:
-> 
-> "Unable to handle kernel paging request at virtual address 00004000"
-> (strcmp) from [<c0774014>] (of_property_match_string+0x58/0xd0)
-> ...
-> (devm_clk_get) from [<c075c248>] (s5p_aes_probe+0xd4/0x4a0)
-> (s5p_aes_probe) from [<c059dbc4>] (platform_drv_probe+0x6c/0xa4)
-> 
-> Fix this by setting array clk_names size to 2.
-> 
-> Fixes: 0918f18c7179 ("crypto: s5p - add AES support for Exynos5433")
-> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-> ---
->  drivers/crypto/s5p-sss.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Chanwoo,
 
-Patch applied.  Thanks.
+On 3/7/19 02:10, Chanwoo Choi wrote:
+> This patch has the another quetion about the clocks in
+> exynos5_dmc_init_clks(). This functions used 'clk_set_parent'
+> to make the hierarchy between clocks. I think it is possible to make
+> the relation of clocks in DT by using the 'assigned-clocks'.
+
+I'm fine either way, AFAICS it is a matter of setting parent of just
+one clock - "mout_mx_mspll_ccore".  The driver needs to get that clock
+anyway to enable/disable it as required.  So we will not gain much from
+using assigned-clocks I'd say. I don't really have a strong opinion here
+as I don't know detailed requirements of the DMC clock configuration
+sequence. I'm inclined to keep it in driver as it would be more flexible.
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Regards,
+Sylwester
