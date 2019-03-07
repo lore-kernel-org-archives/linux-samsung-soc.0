@@ -1,43 +1,41 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: mainline/master boot bisection: v5.0-4854-g8dcd175bc3d5 on odroid-xu3
-Date: Thu, 7 Mar 2019 08:30:27 +0100
-Message-ID: <CAJKOXPfVxb+aQnqCePgF4EedH5vPtA3BWhqbTTNAa7pAOOYB_Q@mail.gmail.com>
-References: <5c80c49b.1c69fb81.605bf.26ea@mx.google.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH] crypto: s5p-sss - fix AES support for Exynos5433
+Date: Thu, 7 Mar 2019 16:25:50 +0800
+Message-ID: <20190307082550.4ijrmlrupyvwdyl5@gondor.apana.org.au>
+References: <CGME20190301140321eucas1p2bf17a6e35d29e8d5f582a2d99fbf4c83@eucas1p2.samsung.com>
+ <20190301140254.19341-1-k.konieczny@partner.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5c80c49b.1c69fb81.605bf.26ea@mx.google.com>
+Content-Disposition: inline
+In-Reply-To: <20190301140254.19341-1-k.konieczny@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "kernelci.org bot" <bot@kernelci.org>
-Cc: tomeu.vizoso@collabora.com, guillaume.tucker@collabora.com, broonie@kernel.org, matthew.hart@linaro.org, Herbert Xu <herbert@gondor.apana.org.au>, khilman@baylibre.com, enric.balletbo@collabora.com, Kamil Konieczny <k.konieczny@partner.samsung.com>, linux-crypto@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+To: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, 7 Mar 2019 at 08:13, kernelci.org bot <bot@kernelci.org> wrote:
->
-> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-> * This automated bisection report was sent to you on the basis  *
-> * that you may be involved with the breaking commit it has      *
-> * found.  No manual investigation has been done to verify it,   *
-> * and the root cause of the problem may be somewhere else.      *
-> * Hope this helps!                                              *
-> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
->
-> mainline/master boot bisection: v5.0-4854-g8dcd175bc3d5 on odroid-xu3
->
-> Summary:
->   Start:      8dcd175bc3d5 Merge branch 'akpm' (patches from Andrew)
->   Details:    https://kernelci.org/boot/id/5c8052c159b5146b7bfe6018
->   Plain log:  https://storage.kernelci.org//mainline/master/v5.0-4854-g8dcd175bc3d5/arm/exynos_defconfig/gcc-7/lab-collabora/boot-exynos5422-odroidxu3.txt
->   HTML log:   https://storage.kernelci.org//mainline/master/v5.0-4854-g8dcd175bc3d5/arm/exynos_defconfig/gcc-7/lab-collabora/boot-exynos5422-odroidxu3.html
->   Result:     0918f18c7179 crypto: s5p - add AES support for Exynos5433
->
-> Checks:
->   revert:     PASS
->   verify:     PASS
+On Fri, Mar 01, 2019 at 03:02:54PM +0100, Kamil Konieczny wrote:
+> Commit 0918f18c7179 ("crypto: s5p - add AES support for Exynos5433")
+> introduced bug in dereferencing clk_names[1] on platforms different from
+> Exynos5433. On Exynos board XU3 call trace is:
+> 
+> "Unable to handle kernel paging request at virtual address 00004000"
+> (strcmp) from [<c0774014>] (of_property_match_string+0x58/0xd0)
+> ...
+> (devm_clk_get) from [<c075c248>] (s5p_aes_probe+0xd4/0x4a0)
+> (s5p_aes_probe) from [<c059dbc4>] (platform_drv_probe+0x6c/0xa4)
+> 
+> Fix this by setting array clk_names size to 2.
+> 
+> Fixes: 0918f18c7179 ("crypto: s5p - add AES support for Exynos5433")
+> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+> ---
+>  drivers/crypto/s5p-sss.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks bot!
-It is already known and patch is waiting to be applied:
-https://patchwork.kernel.org/patch/10835389/
-
-Best regards,
-Krzysztof
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
