@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 2/3] ARM: dts: exynos: Add support for UHS-I SD cards on Arndale Octa
-Date: Sat,  9 Mar 2019 16:00:38 +0100
-Message-ID: <20190309150039.8705-2-krzk@kernel.org>
+Subject: [PATCH 3/3] ARM: dts: exynos: Extend the eMMC node on Arndale Octa
+Date: Sat,  9 Mar 2019 16:00:39 +0100
+Message-ID: <20190309150039.8705-3-krzk@kernel.org>
 References: <20190309150039.8705-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190309150039.8705-1-krzk@kernel.org>
@@ -10,50 +10,57 @@ To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, device
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The Exynos5420's Mobile Storage Host supports SD cards in UHS-I standard
-(SD specification v3.0), with 1.8 V signaling in SD UHS DDR50.  Adjust
-the regulator and add necessary capability properties.  Change the SDR
-and DDR timings to match values in Insignal v3.4 Android kernel.
-
-Tested with SD UHS-I card in SD UHS DDR50 mode.
+Describe properly the MMC0 node (with attached embedded MMC memory) on
+Arndale Node by:
+1. Adding the regulator for host interface (although it still has to be
+   "always-on" so the board with Linaro U-Boot will boot;
+2. Using "non-removable" instead of "broken-cd" property, because eMMC
+   is embedded into the board;
+3. Adding support for HS200 v1.8 to indicate support in host controller
+   although this has no practical effect (embedded memory does not
+   support it).
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/exynos5420-arndale-octa.dts | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-index 751e772b5710..96a0eb73a99b 100644
+index 96a0eb73a99b..56a42c68bc39 100644
 --- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
 +++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-@@ -441,7 +441,7 @@
- 
- 			ldo13_reg: LDO13 {
- 				regulator-name = "PVDD_APIO_MMCOFF_2V8";
--				regulator-min-microvolt = <2800000>;
-+				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <2800000>;
+@@ -378,6 +378,12 @@
+ 				regulator-name = "PVDD_APIO_MMCON_1V8";
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <1800000>;
++				/*
++				 * Must be always on, even though there is
++				 * a consumer (mmc_0).  Otherwise the board
++				 * does not reboot with vendor U-Boot
++				 * (Linaro for Arndale Octa, v2012.07).
++				 */
+ 				regulator-always-on;
  			};
  
-@@ -701,14 +701,17 @@
+@@ -685,7 +691,7 @@
+ 
+ &mmc_0 {
  	status = "okay";
+-	broken-cd;
++	non-removable;
  	card-detect-delay = <200>;
  	samsung,dw-mshc-ciu-div = <3>;
--	samsung,dw-mshc-sdr-timing = <2 3>;
--	samsung,dw-mshc-ddr-timing = <1 2>;
-+	samsung,dw-mshc-sdr-timing = <0 4>;
-+	samsung,dw-mshc-ddr-timing = <0 2>;
+ 	samsung,dw-mshc-sdr-timing = <0 4>;
+@@ -693,8 +699,10 @@
  	pinctrl-names = "default";
- 	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
- 	vmmc-supply = <&ldo19_reg>;
- 	vqmmc-supply = <&ldo13_reg>;
- 	bus-width = <4>;
- 	cap-sd-highspeed;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
-+	sd-uhs-ddr50;
+ 	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8>;
+ 	vmmc-supply = <&ldo10_reg>;
++	vqmmc-supply = <&ldo3_reg>;
+ 	bus-width = <8>;
+ 	cap-mmc-highspeed;
++	mmc-hs200-1_8v;
  };
  
- &pinctrl_0 {
+ &mmc_2 {
 -- 
 2.17.1
