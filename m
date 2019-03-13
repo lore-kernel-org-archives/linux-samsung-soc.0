@@ -1,14 +1,47 @@
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: samsung: odroid: Fix clock configuration for 44100 sample rate" to the asoc tree
+Date: Wed, 13 Mar 2019 15:38:31 +0000 (GMT)
+Message-ID: <20190313153831.2A84B1128B97@debutante.sirena.org.uk>
+References: <20190312174006.32174-1-s.nawrocki@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190312174006.32174-1-s.nawrocki@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: JaeChul Lee <jcsing.lee@samsung.com>, Mark Brown <broonie@kernel.org>broonie@kernel.org, lgirdwood@gmail.com, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.comjcsing.lee@samsung.com, linux-kernel@vger.kernel.org, krzk@kernel.org, m.szyprowski@samsung.comalsa-devel@alsa-project.org
+List-Id: linux-samsung-soc@vger.kernel.org
+
+The patch
+
+   ASoC: samsung: odroid: Fix clock configuration for 44100 sample rate
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 2b13bee3884926cba22061efa75bd315e871de24 Mon Sep 17 00:00:00 2001
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date: Tue, 12 Mar 2019 18:40:06 +0100
 Subject: [PATCH] ASoC: samsung: odroid: Fix clock configuration for 44100
  sample rate
-Date: Tue, 12 Mar 2019 18:40:06 +0100
-Message-ID: <20190312174006.32174-1-s.nawrocki@samsung.com>
-References: <CGME20190312174023epcas1p32bc468e295974dadc7c6e510e467e665@epcas1p3.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: broonie@kernel.org, lgirdwood@gmail.com
-Cc: sbkim73@samsung.com, krzk@kernel.org, jcsing.lee@samsung.com, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
 After commit fbeec965b8d1c ("ASoC: samsung: odroid: Fix 32000 sample rate
 handling") the audio root clock frequency is configured improperly for
@@ -23,6 +56,7 @@ into account inaccuracy of the EPLL frequency properly.
 Fixes: fbeec965b8d1c ("ASoC: samsung: odroid: Fix 32000 sample rate handling")
 Reported-by: JaeChul Lee <jcsing.lee@samsung.com>
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
  sound/soc/samsung/odroid.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
@@ -46,4 +80,4 @@ index 694512f980fd..1dc54c4206f0 100644
  	ret = clk_set_rate(priv->sclk_i2s, rclk_freq);
  	if (ret < 0)
 -- 
-2.17.1
+2.20.1
