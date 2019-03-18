@@ -1,108 +1,27 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: Odroid U3 - Upgrade to latest u-boot kernel load fails.
-Date: Mon, 18 Mar 2019 19:03:22 +0100
-Message-ID: <CAJKOXPfm49g6quuX5jxoZ8-d=-5vBVRkTwO-_jhB-w7Ki8Jo1w@mail.gmail.com>
-References: <CANAwSgR8SNYT4JmGu_U-wGGJcEtkEmBnWaSMae1MEPYh07vbXg@mail.gmail.com>
- <CAJKOXPcg9QkW3cwY2BQ1CoNCqtS1mSfK88=iA5iCF57PoxiR9g@mail.gmail.com>
- <CANAwSgTpQQNsPTpU-CXoKrZrgYxq2F+J9MWhcGY0NNCB5x_p2w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ARM: dts: exynos: Use ADC for Exynos4x12 on Exyno4412
+Date: Mon, 18 Mar 2019 19:38:19 +0100
+Message-ID: <20190318183819.GA4730@kozik-lap>
+References: <20190212174550.4383-1-krzk@kernel.org>
+ <20190212174550.4383-3-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CANAwSgTpQQNsPTpU-CXoKrZrgYxq2F+J9MWhcGY0NNCB5x_p2w@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: U-Boot Mailing List <u-boot@lists.denx.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190212174550.4383-3-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 18 Mar 2019 at 18:49, Anand Moon <linux.amoon@gmail.com> wrote:
->
-> Hi Krzysztof,
->
-> On Mon, 18 Mar 2019 at 18:20, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >
-> > On Mon, 18 Mar 2019 at 13:32, Anand Moon <linux.amoon@gmail.com> wrote:
-> > >
-> > > Hi Krzysztof / Marek,
-> > >
-> > > After I update the latest u-boot on my Odroud U3+ it fails to load the
-> > > kernel it hangs.
-> > > I am using Archlinux on Odroid U3.
-> > >
-> > > U-Boot 2019.04-rc3-00131-g8303467e80d-dirty (Mar 18 2019 - 12:12:23 +0000)
-> > >
-> > > CPU:   Exynos4412 @ 1 GHz
-> > > Model: Odroid based on Exynos4412
-> > > Type:  u3
-> > > DRAM:  2 GiB
-> > > LDO20@VDDQ_EMMC_1.8V: set 1800000 uV; enabling
-> > > LDO22@VDDQ_EMMC_2.8V: set 2800000 uV; enabling
-> > > LDO21@TFLASH_2.8V: set 2800000 uV; enabling
-> > > MMC:   SAMSUNG SDHCI: 1, EXYNOS DWMMC: 0
-> > > Loading Environment from MMC... Card did not respond to voltage select!
-> > > *** Warning - No block device, using default environment
-> > >
-> > > Net:   No ethernet found.
-> > > Hit any key to stop autoboot:  0
-> > > switch to partitions #0, OK
-> > > mmc1 is current device
-> > > Scanning mmc 1:1...
-> > > Found U-Boot script /boot/boot.scr
-> > > 769 bytes read in 6 ms (125 KiB/s)
-> > > ## Executing script at 42000000
-> > > 6901856 bytes read in 253 ms (26 MiB/s)
-> > > 53078 bytes read in 19 ms (2.7 MiB/s)
-> > > 6590950 bytes read in 240 ms (26.2 MiB/s)
-> > > Kernel image @ 0x41000000 [ 0x000000 - 0x695060 ]
-> > > ## Flattened Device Tree blob at 40800000
-> > >    Booting using the fdt blob at 0x40800000
-> > >    Loading Ramdisk to 4f9b6000, end 4ffff1e6 ... OK
-> > >    Loading Device Tree to 4f9a6000, end 4f9b5f55 ... OK
-> > >
-> > > Starting kernel ...
-> >
-> > Can you attach your boot.init file (the source of boot.scr)?
-> >
-> > By the size of DTB you can see that different DTB is loaded. I assume
-> > you tried to boot the same kernel, then it could mean that boardname
-> > was used instead of board_name to choose DTB. Suspicious is that
-> > kernel size also differs... so maybe you booted something else? As
-> > usual debugging practice, reduce number of unknown factors. Do not
-> > change kernel and U-Boot at the same time.
-> >
-> > Also, you can try reverting commit e6b1467081d3 ("arm: exynos: Remove
-> > duplicated "boardname" env setting") and see if it helps. Or just try
-> > to bisect around changes coming from u-boot samsung tree. Try booting
-> > v2019.01 and paste the results as well.
-> >
-> > Best regards,
-> > Krzysztof
-> >
->
-> I have tested with pre-compiled image and the cross compiled kernel image
-> both failed to load the kernel.
->
-> No revert of the commit e6b1467081d3 did not help.
->
-> Yes it seem strange that that load address is changes some how in the u-boot env
->
-> printenv setting of the latest u-boot     U-Boot
-> 2019.04-rc3-00131-g8303467e80d-dirty
-> [0] https://pastebin.com/1Hgc5xxC      (newu-boot.txt)
->
-> printenv setting for the old u-boot.      U-Boot 2018.01-1
-> [1] https://pastebin.com/wD6zK6eG    (oldu-boot.txt)
->
-> Attach is the boot.txt (boot.scr), also the u-boot env old and u-boot-env new
+On Tue, Feb 12, 2019 at 06:45:50PM +0100, Krzysztof Kozlowski wrote:
+> Exynos4412 should use "samsung,exynos4212-adc" compatible to report
+> proper number of (four) channels.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  arch/arm/boot/dts/exynos4412.dtsi | 2 +-
 
-And does 2019.01 work?
+Applied.
 
+Best regards,
 Krzysztof
