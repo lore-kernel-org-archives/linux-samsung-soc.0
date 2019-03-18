@@ -1,138 +1,341 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Anand Moon <linux.amoon@gmail.com>
 Subject: Re: Odroid U3 - Upgrade to latest u-boot kernel load fails.
-Date: Mon, 18 Mar 2019 13:50:02 +0100
-Message-ID: <CAJKOXPcg9QkW3cwY2BQ1CoNCqtS1mSfK88=iA5iCF57PoxiR9g@mail.gmail.com>
+Date: Mon, 18 Mar 2019 23:19:15 +0530
+Message-ID: <CANAwSgTpQQNsPTpU-CXoKrZrgYxq2F+J9MWhcGY0NNCB5x_p2w@mail.gmail.com>
 References: <CANAwSgR8SNYT4JmGu_U-wGGJcEtkEmBnWaSMae1MEPYh07vbXg@mail.gmail.com>
+ <CAJKOXPcg9QkW3cwY2BQ1CoNCqtS1mSfK88=iA5iCF57PoxiR9g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CANAwSgR8SNYT4JmGu_U-wGGJcEtkEmBnWaSMae1MEPYh07vbXg@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Anand Moon <linux.amoon@gmail.com>
+Content-Type: multipart/mixed; boundary="00000000000084e2b4058462028c"
+Return-path: <u-boot-bounces@lists.denx.de>
+In-Reply-To: <CAJKOXPcg9QkW3cwY2BQ1CoNCqtS1mSfK88=iA5iCF57PoxiR9g@mail.gmail.com>
+List-Unsubscribe: <https://lists.denx.de/options/u-boot>,
+ <mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
+List-Archive: <http://lists.denx.de/pipermail/u-boot/>
+List-Post: <mailto:u-boot@lists.denx.de>
+List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
+List-Subscribe: <https://lists.denx.de/listinfo/u-boot>,
+ <mailto:u-boot-request@lists.denx.de?subject=subscribe>
+Errors-To: u-boot-bounces@lists.denx.de
+Sender: "U-Boot" <u-boot-bounces@lists.denx.de>
+To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: U-Boot Mailing List <u-boot@lists.denx.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 18 Mar 2019 at 13:32, Anand Moon <linux.amoon@gmail.com> wrote:
->
-> Hi Krzysztof / Marek,
->
-> After I update the latest u-boot on my Odroud U3+ it fails to load the
-> kernel it hangs.
-> I am using Archlinux on Odroid U3.
->
-> U-Boot 2019.04-rc3-00131-g8303467e80d-dirty (Mar 18 2019 - 12:12:23 +0000)
->
-> CPU:   Exynos4412 @ 1 GHz
-> Model: Odroid based on Exynos4412
-> Type:  u3
-> DRAM:  2 GiB
-> LDO20@VDDQ_EMMC_1.8V: set 1800000 uV; enabling
-> LDO22@VDDQ_EMMC_2.8V: set 2800000 uV; enabling
-> LDO21@TFLASH_2.8V: set 2800000 uV; enabling
-> MMC:   SAMSUNG SDHCI: 1, EXYNOS DWMMC: 0
-> Loading Environment from MMC... Card did not respond to voltage select!
-> *** Warning - No block device, using default environment
->
-> Net:   No ethernet found.
-> Hit any key to stop autoboot:  0
-> switch to partitions #0, OK
-> mmc1 is current device
-> Scanning mmc 1:1...
-> Found U-Boot script /boot/boot.scr
-> 769 bytes read in 6 ms (125 KiB/s)
-> ## Executing script at 42000000
-> 6901856 bytes read in 253 ms (26 MiB/s)
-> 53078 bytes read in 19 ms (2.7 MiB/s)
-> 6590950 bytes read in 240 ms (26.2 MiB/s)
-> Kernel image @ 0x41000000 [ 0x000000 - 0x695060 ]
-> ## Flattened Device Tree blob at 40800000
->    Booting using the fdt blob at 0x40800000
->    Loading Ramdisk to 4f9b6000, end 4ffff1e6 ... OK
->    Loading Device Tree to 4f9a6000, end 4f9b5f55 ... OK
->
-> Starting kernel ...
+--00000000000084e2b4058462028c
+Content-Type: text/plain; charset="UTF-8"
 
-Can you attach your boot.init file (the source of boot.scr)?
+Hi Krzysztof,
 
-By the size of DTB you can see that different DTB is loaded. I assume
-you tried to boot the same kernel, then it could mean that boardname
-was used instead of board_name to choose DTB. Suspicious is that
-kernel size also differs... so maybe you booted something else? As
-usual debugging practice, reduce number of unknown factors. Do not
-change kernel and U-Boot at the same time.
+On Mon, 18 Mar 2019 at 18:20, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On Mon, 18 Mar 2019 at 13:32, Anand Moon <linux.amoon@gmail.com> wrote:
+> >
+> > Hi Krzysztof / Marek,
+> >
+> > After I update the latest u-boot on my Odroud U3+ it fails to load the
+> > kernel it hangs.
+> > I am using Archlinux on Odroid U3.
+> >
+> > U-Boot 2019.04-rc3-00131-g8303467e80d-dirty (Mar 18 2019 - 12:12:23 +0000)
+> >
+> > CPU:   Exynos4412 @ 1 GHz
+> > Model: Odroid based on Exynos4412
+> > Type:  u3
+> > DRAM:  2 GiB
+> > LDO20@VDDQ_EMMC_1.8V: set 1800000 uV; enabling
+> > LDO22@VDDQ_EMMC_2.8V: set 2800000 uV; enabling
+> > LDO21@TFLASH_2.8V: set 2800000 uV; enabling
+> > MMC:   SAMSUNG SDHCI: 1, EXYNOS DWMMC: 0
+> > Loading Environment from MMC... Card did not respond to voltage select!
+> > *** Warning - No block device, using default environment
+> >
+> > Net:   No ethernet found.
+> > Hit any key to stop autoboot:  0
+> > switch to partitions #0, OK
+> > mmc1 is current device
+> > Scanning mmc 1:1...
+> > Found U-Boot script /boot/boot.scr
+> > 769 bytes read in 6 ms (125 KiB/s)
+> > ## Executing script at 42000000
+> > 6901856 bytes read in 253 ms (26 MiB/s)
+> > 53078 bytes read in 19 ms (2.7 MiB/s)
+> > 6590950 bytes read in 240 ms (26.2 MiB/s)
+> > Kernel image @ 0x41000000 [ 0x000000 - 0x695060 ]
+> > ## Flattened Device Tree blob at 40800000
+> >    Booting using the fdt blob at 0x40800000
+> >    Loading Ramdisk to 4f9b6000, end 4ffff1e6 ... OK
+> >    Loading Device Tree to 4f9a6000, end 4f9b5f55 ... OK
+> >
+> > Starting kernel ...
+>
+> Can you attach your boot.init file (the source of boot.scr)?
+>
+> By the size of DTB you can see that different DTB is loaded. I assume
+> you tried to boot the same kernel, then it could mean that boardname
+> was used instead of board_name to choose DTB. Suspicious is that
+> kernel size also differs... so maybe you booted something else? As
+> usual debugging practice, reduce number of unknown factors. Do not
+> change kernel and U-Boot at the same time.
+>
+> Also, you can try reverting commit e6b1467081d3 ("arm: exynos: Remove
+> duplicated "boardname" env setting") and see if it helps. Or just try
+> to bisect around changes coming from u-boot samsung tree. Try booting
+> v2019.01 and paste the results as well.
+>
+> Best regards,
+> Krzysztof
+>
 
-Also, you can try reverting commit e6b1467081d3 ("arm: exynos: Remove
-duplicated "boardname" env setting") and see if it helps. Or just try
-to bisect around changes coming from u-boot samsung tree. Try booting
-v2019.01 and paste the results as well.
+I have tested with pre-compiled image and the cross compiled kernel image
+both failed to load the kernel.
 
-Best regards,
-Krzysztof
+No revert of the commit e6b1467081d3 did not help.
 
->
-> Old u-boot boots fine see the logs below.
-> --------------------------------------------------------------------------------------------------
-> U-Boot 2018.01-1 (Feb 13 2018 - 02:19:55 +0000) Arch Linux ARM
->
-> CPU:   Exynos4412 @ 1 GHz
-> Model: Odroid based on Exynos4412
-> Board: Odroid based on Exynos4412
-> Type:  u3
-> DRAM:  2 GiB
-> LDO20@VDDQ_EMMC_1.8V: set 1800000 uV; enabling
-> LDO22@VDDQ_EMMC_2.8V: set 2800000 uV; enabling
-> LDO21@TFLASH_2.8V: set 2800000 uV; enabling
-> MMC:   sdhci@12530000 - probe failed: -19
->
-> *** Warning - bad CRC, using default environment
->
-> Net:   No ethernet found.
-> Hit any key to stop autoboot:  0
-> no mmc device at slot 1
-> switch to partitions #0, OK
-> mmc0(part 0) is current device
-> Scanning mmc 0:1...
-> Found U-Boot script /boot/boot.scr
-> 770 bytes read in 31 ms (23.4 KiB/s)
-> ## Executing script at 50000000
-> 6625416 bytes read in 267 ms (23.7 MiB/s)
-> 72531 bytes read in 483 ms (146.5 KiB/s)
-> 6590888 bytes read in 256 ms (24.6 MiB/s)
-> Kernel image @ 0x42000000 [ 0x000000 - 0x651888 ]
-> ## Flattened Device Tree blob at 43000000
->    Booting using the fdt blob at 0x43000000
->    Loading Ramdisk to 4f9b6000, end 4ffff1a8 ... OK
->    Loading Device Tree to 4f9a1000, end 4f9b5b52 ... OK
->
-> Starting kernel ...
->
-> [    0.000000] Booting Linux on physical CPU 0xa00
-> [    0.000000] Linux version 5.0.1-1-ARCH (builduser@leming) (gcc
-> version 8.2.1 20181127 (GCC)) #1 SMP PREEMPT Tue Mar 12 04:09:35 UTC
-> 2019
-> [    0.000000] CPU: ARMv7 Processor [413fc090] revision 0 (ARMv7), cr=10c5387d
-> [    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing
-> instruction cache
-> [    0.000000] OF: fdt: Machine model: Hardkernel ODROID-U3 board
-> based on Exynos4412
-> [    0.000000] Memory policy: Data cache writealloc
-> [    0.000000] Reserved memory: created DMA memory pool at 0xbf700000,
-> size 8 MiB
-> [    0.000000] OF: reserved mem: initialized node region_mfc_right,
-> compatible id shared-dma-pool
-> [    0.000000] Reserved memory: created DMA memory pool at 0xbd300000,
-> size 36 MiB
->
-> Please could you share the details on how to debug this issue or how to resolve.
->
-> Best Regards
-> -Anand
+Yes it seem strange that that load address is changes some how in the u-boot env
+
+printenv setting of the latest u-boot     U-Boot
+2019.04-rc3-00131-g8303467e80d-dirty
+[0] https://pastebin.com/1Hgc5xxC      (newu-boot.txt)
+
+printenv setting for the old u-boot.      U-Boot 2018.01-1
+[1] https://pastebin.com/wD6zK6eG    (oldu-boot.txt)
+
+Attach is the boot.txt (boot.scr), also the u-boot env old and u-boot-env new
+
+Best Regards
+-Anand
+
+--00000000000084e2b4058462028c
+Content-Type: text/plain; charset="US-ASCII"; name="boot.txt"
+Content-Disposition: attachment; filename="boot.txt"
+Content-Transfer-Encoding: base64
+Content-ID: <f_jtemn0vx0>
+X-Attachment-Id: f_jtemn0vx0
+
+IyBBZnRlciBtb2RpZnlpbmcsIHJ1biAuL21rc2NyCgojIE1BQyBhZGRyZXNzIGNvbmZpZ3VyYXRp
+b24KIyBzZXRlbnYgbWFjYWRkciAiMDA6MWU6ZWU6NjE6N2E6MzkiCnNldGVudiBtYWNhZGRyICIz
+QTowMjpERDo2NzpCNjowMSIKCnBhcnQgdXVpZCAke2RldnR5cGV9ICR7ZGV2bnVtfToke2Jvb3Rw
+YXJ0fSB1dWlkCnNldGVudiBib290YXJncyAiY29uc29sZT10dHkxIGNvbnNvbGU9JHtjb25zb2xl
+fSByb290PVBBUlRVVUlEPSR7dXVpZH0gcncgcm9vdHdhaXQgc21zYzk1eHgubWFjYWRkcj0ke21h
+Y2FkZHJ9IgoKaWYgbG9hZCAke2RldnR5cGV9ICR7ZGV2bnVtfToke2Jvb3RwYXJ0fSAke2tlcm5l
+bF9hZGRyX3J9IC9ib290L3pJbWFnZTsgdGhlbgogIGlmIGxvYWQgJHtkZXZ0eXBlfSAke2Rldm51
+bX06JHtib290cGFydH0gJHtmZHRfYWRkcl9yfSAvYm9vdC9kdGJzLyR7ZmR0ZmlsZX07IHRoZW4K
+ICAgIGlmIGxvYWQgJHtkZXZ0eXBlfSAke2Rldm51bX06JHtib290cGFydH0gJHtyYW1kaXNrX2Fk
+ZHJfcn0gL2Jvb3QvaW5pdHJhbWZzLWxpbnV4LmltZzsgdGhlbgogICAgICBib290eiAke2tlcm5l
+bF9hZGRyX3J9ICR7cmFtZGlza19hZGRyX3J9OiR7ZmlsZXNpemV9ICR7ZmR0X2FkZHJfcn07CiAg
+ICBlbHNlCiAgICAgIGJvb3R6ICR7a2VybmVsX2FkZHJfcn0gLSAke2ZkdF9hZGRyX3J9OwogICAg
+Zmk7CiAgZmk7CmZpCg==
+--00000000000084e2b4058462028c
+Content-Type: text/plain; charset="US-ASCII"; name="newu-boot.txt"
+Content-Disposition: attachment; filename="newu-boot.txt"
+Content-Transfer-Encoding: base64
+Content-ID: <f_jten3prc1>
+X-Attachment-Id: f_jten3prc1
+
+VS1Cb290IDIwMTkuMDQtcmMzLTAwMTMxLWc4MzAzNDY3ZTgwZC1kaXJ0eSAoTWFyIDE4IDIwMTkg
+LSAxNjoyNzo0MCArMDAwMCkKCkNQVTogICBFeHlub3M0NDEyIEAgMSBHSHoKTW9kZWw6IE9kcm9p
+ZCBiYXNlZCBvbiBFeHlub3M0NDEyClR5cGU6ICB1MwpEUkFNOiAgMiBHaUIKTERPMjBAVkREUV9F
+TU1DXzEuOFY6IHNldCAxODAwMDAwIHVWOyBlbmFibGluZwpMRE8yMkBWRERRX0VNTUNfMi44Vjog
+c2V0IDI4MDAwMDAgdVY7IGVuYWJsaW5nCkxETzIxQFRGTEFTSF8yLjhWOiBzZXQgMjgwMDAwMCB1
+VjsgZW5hYmxpbmcKTU1DOiAgIFNBTVNVTkcgU0RIQ0k6IDEsIEVYWU5PUyBEV01NQzogMApMb2Fk
+aW5nIEVudmlyb25tZW50IGZyb20gTU1DLi4uIENhcmQgZGlkIG5vdCByZXNwb25kIHRvIHZvbHRh
+Z2Ugc2VsZWN0IQoqKiogV2FybmluZyAtIE5vIGJsb2NrIGRldmljZSwgdXNpbmcgZGVmYXVsdCBl
+bnZpcm9ubWVudAoKTmV0OiAgIE5vIGV0aGVybmV0IGZvdW5kLgpIaXQgYW55IGtleSB0byBzdG9w
+IGF1dG9ib290OiAgMApPZHJvaWQgIwpPZHJvaWQgIwpPZHJvaWQgIwpPZHJvaWQgIwpPZHJvaWQg
+IyBwcmludCBlbnYKIyMgRXJyb3I6ICJlbnYiIG5vdCBkZWZpbmVkCk9kcm9pZCAjIHByaW50ZW52
+CmFyY2g9YXJtCmF1dG9ib290PWlmIHRlc3QgLWUgbW1jIDAgYm9vdC5zY3I7IHRoZW47IHJ1biBi
+b290X3NjcmlwdDsgZWxpZiB0ZXN0IC1lIG1tYyAwIEltYWdlLml0YjsgdGhlbjsgcnVuIGJvb3Rf
+Zml0O2VsaWYgdGVzdCAtZSBtbWMgMCB6SW1hZ2U7IHRoZW47IHJ1biBib290X3ppbWc7ZWxpZiB0
+ZXN0IC1lIG1tYyAwIHVJbWFnZTsgdGhlbjsgcnVuIGJvb3RfdWltZztmaTsKYmF1ZHJhdGU9MTE1
+MjAwCmJvYXJkPW9kcm9pZApib2FyZF9uYW1lPW9kcm9pZApib2FyZG5hbWU9b2Ryb2lkdTMKYm9v
+dF9hX3NjcmlwdD1sb2FkICR7ZGV2dHlwZX0gJHtkZXZudW19OiR7ZGlzdHJvX2Jvb3RwYXJ0fSAk
+e3NjcmlwdGFkZHJ9ICR7cHJlZml4fSR7c2NyaXB0fTsgc291cmNlICR7c2NyaXB0YWRkcn0KYm9v
+dF9lZmlfYmluYXJ5PWlmIGZkdCBhZGRyICR7ZmR0X2FkZHJfcn07IHRoZW4gYm9vdGVmaSBib290
+bWdyICR7ZmR0X2FkZHJfcn07ZWxzZSBib290ZWZpIGJvb3RtZ3IgJHtmZHRjb250cm9sYWRkcn07
+Zmk7bG9hZCAke2RldnR5cGV9ICR7ZGV2bnVtfToke2Rpc3Ryb19ib290cGFydH0gJHtrZXJuZWxf
+YWRkcl9yfSBlZmkvYm9vdC9ib290YXJtLmVmaTsgaWYgZmR0IGFkZHIgJHtmZHRfYWRkcl9yfTsg
+dGhlbiBib290ZWZpICR7a2VybmVsX2FkZHJfcn0gJHtmZHRfYWRkcl9yfTtlbHNlIGJvb3RlZmkg
+JHtrZXJuZWxfYWRkcl9yfSAke2ZkdGNvbnRyb2xhZGRyfTtmaQpib290X2V4dGxpbnV4PXN5c2Jv
+b3QgJHtkZXZ0eXBlfSAke2Rldm51bX06JHtkaXN0cm9fYm9vdHBhcnR9IGFueSAke3NjcmlwdGFk
+ZHJ9ICR7cHJlZml4fSR7Ym9vdF9zeXNsaW51eF9jb25mfQpib290X2ZpdD1zZXRlbnYga2VybmVs
+bmFtZSBJbWFnZS5pdGI7cnVuIGxvYWRrZXJuZWw7cnVuIGtlcm5lbF9hcmdzO2Jvb3RtICR7a2Vy
+bmVsX2FkZHJfcn0jJHtib2FyZG5hbWV9CmJvb3RfbmV0X3VzYl9zdGFydD11c2Igc3RhcnQKYm9v
+dF9wcmVmaXhlcz0vIC9ib290Lwpib290X3NjcmlwdD1ydW4gbG9hZGJvb3RzY3JpcHQ7c291cmNl
+ICR7c2NyaXB0YWRkcn0KYm9vdF9zY3JpcHRfZGhjcD1ib290LnNjci51aW1nCmJvb3Rfc2NyaXB0
+cz1ib290LnNjci51aW1nIGJvb3Quc2NyCmJvb3Rfc3lzbGludXhfY29uZj1leHRsaW51eC9leHRs
+aW51eC5jb25mCmJvb3RfdGFyZ2V0cz1tbWMxIG1tYzAKYm9vdF91aW1nPXNldGVudiBrZXJuZWxu
+YW1lIHVJbWFnZTtydW4gY2hlY2tfZHRiO3J1biBjaGVja19yYW1kaXNrO3J1biBsb2Fka2VybmVs
+O3J1biBrZXJuZWxfYXJncztib290bSAke2tlcm5lbF9hZGRyX3J9ICR7aW5pdHJkX2FkZHJ9ICR7
+ZmR0X2FkZHJ9Owpib290X3ppbWc9c2V0ZW52IGtlcm5lbG5hbWUgekltYWdlO3J1biBjaGVja19k
+dGI7cnVuIGNoZWNrX3JhbWRpc2s7cnVuIGxvYWRrZXJuZWw7cnVuIGtlcm5lbF9hcmdzO2Jvb3R6
+ICR7a2VybmVsX2FkZHJfcn0gJHtpbml0cmRfYWRkcn0gJHtmZHRfYWRkcn07CmJvb3RhcmdzPVBs
+ZWFzZSB1c2UgZGVmaW5lZCBib290CmJvb3RjbWQ9cnVuIGRpc3Ryb19ib290Y21kIDsgcnVuIGF1
+dG9ib290CmJvb3RjbWRfbW1jMD1kZXZudW09MDsgcnVuIG1tY19ib290CmJvb3RjbWRfbW1jMT1k
+ZXZudW09MTsgcnVuIG1tY19ib290CmJvb3RkZWxheT0yCmNoZWNrX2R0Yj1pZiBydW4gbG9hZGR0
+YjsgdGhlbiBzZXRlbnYgZmR0X2FkZHIgJHtmZHRfYWRkcl9yfTtlbHNlIHNldGVudiBmZHRfYWRk
+cjtmaTsKY2hlY2tfcmFtZGlzaz1pZiBydW4gbG9hZGluaXRyZDsgdGhlbiBzZXRlbnYgaW5pdHJk
+X2FkZHIgJHtyYW1kaXNrX2FkZHJfcn07ZWxzZSBzZXRlbnYgaW5pdHJkX2FkZHIgLTtmaTsKY29u
+c29sZT1jb25zb2xlPXR0eVNBQzEsMTE1MjAwbjgKY29uc29sZW9mZj1zZXQgY29uc29sZSBjb25z
+b2xlPXJhbTsgc2F2ZTsgcmVzZXQKY29uc29sZW9uPXNldCBjb25zb2xlIGNvbnNvbGU9dHR5U0FD
+MSwxMTUyMDBuODsgc2F2ZTsgcmVzZXQKY3B1PWFybXY3CmRmdV9hbHRfaW5mbz1QbGVhc2UgcmVz
+ZXQgdGhlIGJvYXJkCmRmdV9hbHRfc3lzdGVtPXVJbWFnZSBmYXQgMCAxO3pJbWFnZSBmYXQgMCAx
+O0ltYWdlLml0YiBmYXQgMCAxO3VJbml0cmQgZmF0IDAgMTtleHlub3M0NDEyLW9kcm9pZHUzLmR0
+YiBmYXQgMCAxO2V4eW5vczQ0MTItb2Ryb2lkeDIuZHRiIGZhdCAwIDE7Ym9vdCBwYXJ0IDAgMTtw
+bGF0Zm9ybSBwYXJ0IDAgMgpkaXN0cm9fYm9vdGNtZD1mb3IgdGFyZ2V0IGluICR7Ym9vdF90YXJn
+ZXRzfTsgZG8gcnVuIGJvb3RjbWRfJHt0YXJnZXR9OyBkb25lCmVmaV9kdGJfcHJlZml4ZXM9LyAv
+ZHRiLyAvZHRiL2N1cnJlbnQvCmZkdF9hZGRyX3I9MHg0MDgwMDAwMApmZHRjb250cm9sYWRkcj1i
+YWU3MWYwOApmZHRmaWxlPWV4eW5vczQ0MTItb2Ryb2lkdTMuZHRiCmluaXRyZG5hbWU9dUluaXRy
+ZAprZXJuZWxfYWRkcl9yPTB4NDEwMDAwMDAKa2VybmVsX2FyZ3M9c2V0ZW52IGJvb3RhcmdzIHJv
+b3Q9L2Rldi9tbWNibGske21tY3Jvb3RkZXZ9cCR7bW1jcm9vdHBhcnR9IHJvb3R3YWl0ICR7Y29u
+c29sZX0gJHtvcHRzfQpsb2FkX2VmaV9kdGI9bG9hZCAke2RldnR5cGV9ICR7ZGV2bnVtfToke2Rp
+c3Ryb19ib290cGFydH0gJHtmZHRfYWRkcl9yfSAke3ByZWZpeH0ke2VmaV9mZHRmaWxlfQpsb2Fk
+Ym9vdHNjcmlwdD1sb2FkIG1tYyAke21tY2Jvb3RkZXZ9OiR7bW1jYm9vdHBhcnR9ICR7c2NyaXB0
+YWRkcn0gYm9vdC5zY3IKbG9hZGR0Yj1sb2FkIG1tYyAke21tY2Jvb3RkZXZ9OiR7bW1jYm9vdHBh
+cnR9ICR7ZmR0X2FkZHJfcn0gJHtmZHRmaWxlfQpsb2FkaW5pdHJkPWxvYWQgbW1jICR7bW1jYm9v
+dGRldn06JHttbWNib290cGFydH0gJHtyYW1kaXNrX2FkZHJfcn0gJHtpbml0cmRuYW1lfQpsb2Fk
+a2VybmVsPWxvYWQgbW1jICR7bW1jYm9vdGRldn06JHttbWNib290cGFydH0gJHtrZXJuZWxfYWRk
+cl9yfSAke2tlcm5lbG5hbWV9Cm1tY19ib290PWlmIG1tYyBkZXYgJHtkZXZudW19OyB0aGVuIGRl
+dnR5cGU9bW1jOyBydW4gc2Nhbl9kZXZfZm9yX2Jvb3RfcGFydDsgZmkKbW1jYm9vdGRldj0wCm1t
+Y2Jvb3RwYXJ0PTEKbW1jcm9vdGRldj0wCm1tY3Jvb3RwYXJ0PTIKcmFtZGlza19hZGRyX3I9MHg0
+MjAwMDAwMApzY2FuX2Rldl9mb3JfYm9vdD1lY2hvIFNjYW5uaW5nICR7ZGV2dHlwZX0gJHtkZXZu
+dW19OiR7ZGlzdHJvX2Jvb3RwYXJ0fS4uLjsgZm9yIHByZWZpeCBpbiAke2Jvb3RfcHJlZml4ZXN9
+OyBkbyBydW4gc2Nhbl9kZXZfZm9yX2V4dGxpbnV4OyBydW4gc2Nhbl9kZXZfZm9yX3NjcmlwdHM7
+IGRvbmU7cnVuIHNjYW5fZGV2X2Zvcl9lZmk7CnNjYW5fZGV2X2Zvcl9ib290X3BhcnQ9cGFydCBs
+aXN0ICR7ZGV2dHlwZX0gJHtkZXZudW19IC1ib290YWJsZSBkZXZwbGlzdDsgZW52IGV4aXN0cyBk
+ZXZwbGlzdCB8fCBzZXRlbnYgZGV2cGxpc3QgMTsgZm9yIGRpc3Ryb19ib290cGFydCBpbiAke2Rl
+dnBsaXN0fTsgZG8gaWYgZnN0eXBlICR7ZGV2dHlwZX0gJHtkZXZudW19OiR7ZGlzdHJvX2Jvb3Rw
+YXJ0fSBib290ZnN0eXBlOyB0aGVuIHJ1biBzY2FuX2Rldl9mb3JfYm9vdDsgZmk7IGRvbmU7IHNl
+dGVudiBkZXZwbGlzdApzY2FuX2Rldl9mb3JfZWZpPXNldGVudiBlZmlfZmR0ZmlsZSAke2ZkdGZp
+bGV9OyBpZiB0ZXN0IC16ICIke2ZkdGZpbGV9IiAtYSAtbiAiJHtzb2N9IjsgdGhlbiBzZXRlbnYg
+ZWZpX2ZkdGZpbGUgJHtzb2N9LSR7Ym9hcmR9JHtib2FyZHZlcn0uZHRiOyBmaTsgZm9yIHByZWZp
+eCBpbiAke2VmaV9kdGJfcHJlZml4ZXN9OyBkbyBpZiB0ZXN0IC1lICR7ZGV2dHlwZX0gJHtkZXZu
+dW19OiR7ZGlzdHJvX2Jvb3RwYXJ0fSAke3ByZWZpeH0ke2VmaV9mZHRmaWxlfTsgdGhlbiBydW4g
+bG9hZF9lZmlfZHRiOyBmaTtkb25lO2lmIHRlc3QgLWUgJHtkZXZ0eXBlfSAke2Rldm51bX06JHtk
+aXN0cm9fYm9vdHBhcnR9IGVmaS9ib290L2Jvb3Rhcm0uZWZpOyB0aGVuIGVjaG8gRm91bmQgRUZJ
+IHJlbW92YWJsZSBtZWRpYSBiaW5hcnkgZWZpL2Jvb3QvYm9vdGFybS5lZmk7IHJ1biBib290X2Vm
+aV9iaW5hcnk7IGVjaG8gRUZJIExPQUQgRkFJTEVEOiBjb250aW51aW5nLi4uOyBmaTsgc2V0ZW52
+IGVmaV9mZHRmaWxlCnNjYW5fZGV2X2Zvcl9leHRsaW51eD1pZiB0ZXN0IC1lICR7ZGV2dHlwZX0g
+JHtkZXZudW19OiR7ZGlzdHJvX2Jvb3RwYXJ0fSAke3ByZWZpeH0ke2Jvb3Rfc3lzbGludXhfY29u
+Zn07IHRoZW4gZWNobyBGb3VuZCAke3ByZWZpeH0ke2Jvb3Rfc3lzbGludXhfY29uZn07IHJ1biBi
+b290X2V4dGxpbnV4OyBlY2hvIFNDUklQVCBGQUlMRUQ6IGNvbnRpbnVpbmcuLi47IGZpCnNjYW5f
+ZGV2X2Zvcl9zY3JpcHRzPWZvciBzY3JpcHQgaW4gJHtib290X3NjcmlwdHN9OyBkbyBpZiB0ZXN0
+IC1lICR7ZGV2dHlwZX0gJHtkZXZudW19OiR7ZGlzdHJvX2Jvb3RwYXJ0fSAke3ByZWZpeH0ke3Nj
+cmlwdH07IHRoZW4gZWNobyBGb3VuZCBVLUJvb3Qgc2NyaXB0ICR7cHJlZml4fSR7c2NyaXB0fTsg
+cnVuIGJvb3RfYV9zY3JpcHQ7IGVjaG8gU0NSSVBUIEZBSUxFRDogY29udGludWluZy4uLjsgZmk7
+IGRvbmUKc2NyaXB0YWRkcj0weDQyMDAwMDAwCnNvYz1leHlub3MKc29jX2lkPTQ0MTIKc29jX3Jl
+dj0yLjAKdXNiX2Jvb3Q9dXNiIHN0YXJ0OyBpZiB1c2IgZGV2ICR7ZGV2bnVtfTsgdGhlbiBkZXZ0
+eXBlPXVzYjsgcnVuIHNjYW5fZGV2X2Zvcl9ib290X3BhcnQ7IGZpCnZlbmRvcj1zYW1zdW5nCgpF
+bnZpcm9ubWVudCBzaXplOiA0NjczLzE2MzgwIGJ5dGVzCgo=
+--00000000000084e2b4058462028c
+Content-Type: text/plain; charset="US-ASCII"; name="oldu-boot.txt"
+Content-Disposition: attachment; filename="oldu-boot.txt"
+Content-Transfer-Encoding: base64
+Content-ID: <f_jten53vl2>
+X-Attachment-Id: f_jten53vl2
+
+VS1Cb290IDIwMTguMDEtMSAoRmViIDEzIDIwMTggLSAwMjoxOTo1NSArMDAwMCkgQXJjaCBMaW51
+eCBBUk0KCkNQVTogICBFeHlub3M0NDEyIEAgMSBHSHoKTW9kZWw6IE9kcm9pZCBiYXNlZCBvbiBF
+eHlub3M0NDEyCkJvYXJkOiBPZHJvaWQgYmFzZWQgb24gRXh5bm9zNDQxMgpUeXBlOiAgdTMKRFJB
+TTogIDIgR2lCCkxETzIwQFZERFFfRU1NQ18xLjhWOiBzZXQgMTgwMDAwMCB1VjsgZW5hYmxpbmcK
+TERPMjJAVkREUV9FTU1DXzIuOFY6IHNldCAyODAwMDAwIHVWOyBlbmFibGluZwpMRE8yMUBURkxB
+U0hfMi44Vjogc2V0IDI4MDAwMDAgdVY7IGVuYWJsaW5nCk1NQzogICBTQU1TVU5HIFNESENJOiAx
+LCBFWFlOT1MgRFdNTUM6IDAKQ2FyZCBkaWQgbm90IHJlc3BvbmQgdG8gdm9sdGFnZSBzZWxlY3Qh
+Cm1tY19pbml0OiAtOTUsIHRpbWUgMTAKKioqIFdhcm5pbmcgLSBObyBibG9jayBkZXZpY2UsIHVz
+aW5nIGRlZmF1bHQgZW52aXJvbm1lbnQKCk5ldDogICBObyBldGhlcm5ldCBmb3VuZC4KSGl0IGFu
+eSBrZXkgdG8gc3RvcCBhdXRvYm9vdDogIDAKT2Ryb2lkICMKT2Ryb2lkICMKT2Ryb2lkICMKT2Ry
+b2lkICMgcHJpbnRlbnYKYXJjaD1hcm0KYXV0b2Jvb3Q9aWYgdGVzdCAtZSBtbWMgMCBib290LnNj
+cjsgdGhlbjsgcnVuIGJvb3Rfc2NyaXB0OyBlbGlmIHRlc3QgLWUgbW1jIDAgSW1hZ2UuaXRiOyB0
+aGVuOyBydW4gYm9vdF9maXQ7ZWxpZiB0ZXN0IC1lIG1tYyAwIHpJbWFnZTsgdGhlbjsgcnVuIGJv
+b3RfemltZztlbGlmIHRlc3QgLWUgbW1jIDAgdUltYWdlOyB0aGVuOyBydW4gYm9vdF91aW1nO2Zp
+OwpiYXVkcmF0ZT0xMTUyMDAKYm9hcmQ9b2Ryb2lkCmJvYXJkX25hbWU9b2Ryb2lkCmJvYXJkbmFt
+ZT1vZHJvaWR1Mwpib290X2Ffc2NyaXB0PWxvYWQgJHtkZXZ0eXBlfSAke2Rldm51bX06JHtkaXN0
+cm9fYm9vdHBhcnR9ICR7c2NyaXB0YWRkcn0gJHtwcmVmaXh9JHtzY3JpcHR9OyBzb3VyY2UgJHtz
+Y3JpcHRhZGRyfQpib290X2VmaV9iaW5hcnk9aWYgZmR0IGFkZHIgJHtmZHRfYWRkcl9yfTsgdGhl
+biBib290ZWZpIGJvb3RtZ3IgJHtmZHRfYWRkcl9yfTtlbHNlIGJvb3RlZmkgYm9vdG1nciAke2Zk
+dGNvbnRyb2xhZGRyfTtmaTtsb2FkICR7ZGV2dHlwZX0gJHtkZXZudW19OiR7ZGlzdHJvX2Jvb3Rw
+YXJ0fSAke2tlcm5lbF9hZGRyX3J9IGVmaS9ib290L2Jvb3Rhcm0uZWZpOyBpZiBmZHQgYWRkciAk
+e2ZkdF9hZGRyX3J9OyB0aGVuIGJvb3RlZmkgJHtrZXJuZWxfYWRkcl9yfSAke2ZkdF9hZGRyX3J9
+O2Vsc2UgYm9vdGVmaSAke2tlcm5lbF9hZGRyX3J9ICR7ZmR0Y29udHJvbGFkZHJ9O2ZpCmJvb3Rf
+ZXh0bGludXg9c3lzYm9vdCAke2RldnR5cGV9ICR7ZGV2bnVtfToke2Rpc3Ryb19ib290cGFydH0g
+YW55ICR7c2NyaXB0YWRkcn0gJHtwcmVmaXh9ZXh0bGludXgvZXh0bGludXguY29uZgpib290X2Zp
+dD1zZXRlbnYga2VybmVsYWRkciAweDQyMDAwMDAwO3NldGVudiBrZXJuZWxuYW1lIEltYWdlLml0
+YjtydW4gbG9hZGtlcm5lbDtydW4ga2VybmVsX2FyZ3M7Ym9vdG0gJHtrZXJuZWxhZGRyfSMke2Jv
+YXJkbmFtZX0KYm9vdF9uZXRfdXNiX3N0YXJ0PXVzYiBzdGFydApib290X3ByZWZpeGVzPS8gL2Jv
+b3QvCmJvb3Rfc2NyaXB0PXJ1biBsb2FkYm9vdHNjcmlwdDtzb3VyY2UgJHtzY3JpcHRhZGRyfQpi
+b290X3NjcmlwdF9kaGNwPWJvb3Quc2NyLnVpbWcKeApib290X3NjcmlwdHM9Ym9vdC5zY3IudWlt
+ZyBib290LnNjcgpib290X3RhcmdldHM9bW1jMSBtbWMwCmJvb3RfdWltZz1zZXRlbnYga2VybmVs
+YWRkciAweDQwMDA3RkMwO3NldGVudiBrZXJuZWxuYW1lIHVJbWFnZTtydW4gY2hlY2tfZHRiO3J1
+biBjaGVja19yYW1kaXNrO3J1biBsb2Fka2VybmVsO3J1biBrZXJuZWxfYXJncztib290bSAke2tl
+cm5lbGFkZHJ9ICR7aW5pdHJkX2FkZHJ9ICR7ZmR0X2FkZHJ9Owpib290X3ppbWc9c2V0ZW52IGtl
+cm5lbGFkZHIgMHg0MDAwN0ZDMDtzZXRlbnYga2VybmVsbmFtZSB6SW1hZ2U7cnVuIGNoZWNrX2R0
+YjtydW4gY2hlY2tfcmFtZGlzaztydW4gbG9hZGtlcm5lbDtydW4ga2VybmVsX2FyZ3M7Ym9vdHog
+JHtrZXJuZWxhZGRyfSAke2luaXRyZF9hZGRyfSAke2ZkdF9hZGRyfTsKYm9vdGFyZ3M9UGxlYXNl
+IHVzZSBkZWZpbmVkIGJvb3QKYm9vdGNtZD1ydW4gZGlzdHJvX2Jvb3RjbWQKYm9vdGNtZF9tbWMw
+PXNldGVudiBkZXZudW0gMDsgcnVuIG1tY19ib290CmJvb3RjbWRfbW1jMT1zZXRlbnYgZGV2bnVt
+IDE7IHJ1biBtbWNfYm9vdApib290ZGVsYXk9Mgpib290bV9zaXplPTB4MTAwMDAwMDAKY2hlY2tf
+ZHRiPWlmIHJ1biBsb2FkZHRiOyB0aGVuIHNldGVudiBmZHRfYWRkciAke2ZkdGFkZHJ9O2Vsc2Ug
+c2V0ZW52IGZkdF9hZGRyO2ZpOwpjaGVja19yYW1kaXNrPWlmIHJ1biBsb2FkaW5pdHJkOyB0aGVu
+IHNldGVudiBpbml0cmRfYWRkciAke2luaXRyZGFkZHJ9O2Vsc2Ugc2V0ZW52IGluaXRyZF9hZGRy
+IC07Zmk7CmNvbnNvbGU9dHR5U0FDMSwxMTUyMDBuOApjb25zb2xlb2ZmPXNldCBjb25zb2xlIGNv
+bnNvbGU9cmFtOyBzYXZlOyByZXNldApjb25zb2xlb249c2V0IGNvbnNvbGUgY29uc29sZT10dHlT
+QUMxLDExNTIwMG44OyBzYXZlOyByZXNldApjcHU9YXJtdjcKZGZ1X2FsdF9pbmZvPVBsZWFzZSBy
+ZXNldCB0aGUgYm9hcmQKZGZ1X2FsdF9zeXN0ZW09dUltYWdlIGZhdCAwIDE7ekltYWdlIGZhdCAw
+IDE7SW1hZ2UuaXRiIGZhdCAwIDE7dUluaXRyZCBmYXQgMCAxO2V4eW5vczQ0MTItb2Ryb2lkdTMu
+ZHRiIGZhdCAwIDE7ZXh5bm9zNDQxMi1vZHJvaWR4Mi5kdGIgZmF0IDAgMTtib290IHBhcnQgMCAx
+O3BsYXRmb3JtIHBhcnQgMCAyCmRpc3Ryb19ib290Y21kPWZvciB0YXJnZXQgaW4gJHtib290X3Rh
+cmdldHN9OyBkbyBydW4gYm9vdGNtZF8ke3RhcmdldH07IGRvbmUKZWZpX2R0Yl9wcmVmaXhlcz0v
+IC9kdGIvIC9kdGIvY3VycmVudC8KZmR0X2FkZHJfcj0weDQzMDAwMDAwCmZkdGFkZHI9NDA4MDAw
+MDAKeApmZHRjb250cm9sYWRkcj1iYWUzZGVmMApmZHRmaWxlPWV4eW5vczQ0MTItb2Ryb2lkdTMu
+ZHRiCmluaXRyZGFkZHI9NDIwMDAwMDAKaW5pdHJkbmFtZT11SW5pdHJkCmtlcm5lbF9hZGRyX3I9
+MHg0MjAwMDAwMAprZXJuZWxfYXJncz1zZXRlbnYgYm9vdGFyZ3Mgcm9vdD0vZGV2L21tY2JsayR7
+bW1jcm9vdGRldn1wJHttbWNyb290cGFydH0gcm9vdHdhaXQgJHtjb25zb2xlfSAke29wdHN9Cmxv
+YWRfZWZpX2R0Yj1sb2FkICR7ZGV2dHlwZX0gJHtkZXZudW19OiR7ZGlzdHJvX2Jvb3RwYXJ0fSAk
+e2ZkdF9hZGRyX3J9ICR7cHJlZml4fSR7ZWZpX2ZkdGZpbGV9CmxvYWRib290c2NyaXB0PWxvYWQg
+bW1jICR7bW1jYm9vdGRldn06JHttbWNib290cGFydH0gJHtzY3JpcHRhZGRyfSBib290LnNjcgps
+b2FkZHRiPWxvYWQgbW1jICR7bW1jYm9vdGRldn06JHttbWNib290cGFydH0gJHtmZHRhZGRyfSAk
+e2ZkdGZpbGV9CmxvYWRpbml0cmQ9bG9hZCBtbWMgJHttbWNib290ZGV2fToke21tY2Jvb3RwYXJ0
+fSAke2luaXRyZGFkZHJ9ICR7aW5pdHJkbmFtZX0KbG9hZGtlcm5lbD1sb2FkIG1tYyAke21tY2Jv
+b3RkZXZ9OiR7bW1jYm9vdHBhcnR9ICR7a2VybmVsYWRkcn0gJHtrZXJuZWxuYW1lfQptbWNfYm9v
+dD1pZiBtbWMgZGV2ICR7ZGV2bnVtfTsgdGhlbiBzZXRlbnYgZGV2dHlwZSBtbWM7IHJ1biBzY2Fu
+X2Rldl9mb3JfYm9vdF9wYXJ0OyBmaQptbWNib290ZGV2PTAKbW1jYm9vdHBhcnQ9MQptbWNyb290
+ZGV2PTAKbW1jcm9vdHBhcnQ9MgpweGVmaWxlX2FkZHJfcj0weDUxMDAwMDAwCnJhbWRpc2tfYWRk
+cl9yPTB4NDMzMDAwMDAKc2Nhbl9kZXZfZm9yX2Jvb3Q9ZWNobyBTY2FubmluZyAke2RldnR5cGV9
+ICR7ZGV2bnVtfToke2Rpc3Ryb19ib290cGFydH0uLi47IGZvciBwcmVmaXggaW4gJHtib290X3By
+ZWZpeGVzfTsgZG8gcnVuIHNjYW5fZGV2X2Zvcl9leHRsaW51eDsgcnVuIHNjYW5fZGV2X2Zvcl9z
+Y3JpcHRzOyBkb25lO3J1biBzY2FuX2Rldl9mb3JfZWZpOwpzY2FuX2Rldl9mb3JfYm9vdF9wYXJ0
+PXBhcnQgbGlzdCAke2RldnR5cGV9ICR7ZGV2bnVtfSAtYm9vdGFibGUgZGV2cGxpc3Q7IGVudiBl
+eGlzdHMgZGV2cGxpc3QgfHwgc2V0ZW52IGRldnBsaXN0IDE7IGZvciBkaXN0cm9fYm9vdHBhcnQg
+aW4gJHtkZXZwbGlzdH07IGRvIGlmIGZzdHlwZSAke2RldnR5cGV9ICR7ZGV2bnVtfToke2Rpc3Ry
+b19ib290cGFydH0gYm9vdGZzdHlwZTsgdGhlbiBydW4gc2Nhbl9kZXZfZm9yX2Jvb3Q7IGZpOyBk
+b25lCnNjYW5fZGV2X2Zvcl9lZmk9c2V0ZW52IGVmaV9mZHRmaWxlICR7ZmR0ZmlsZX07IGlmIHRl
+c3QgLXogIiR7ZmR0ZmlsZX0iIC1hIC1uICIke3NvY30iOyB0aGVuIHNldGVudiBlZmlfZmR0Zmls
+ZSAke3NvY30tJHtib2FyZH0ke2JvYXJkdmVyfS5kdGI7IGZpOyBmb3IgcHJlZml4IGluICR7ZWZp
+X2R0Yl9wcmVmaXhlc307IGRvIGlmIHRlc3QgLWUgJHtkZXZ0eXBlfSAke2Rldm51bX06JHtkaXN0
+cm9fYm9vdHBhcnR9ICR7cHJlZml4fSR7ZWZpX2ZkdGZpbGV9OyB0aGVuIHJ1biBsb2FkX2VmaV9k
+dGI7IGZpO2RvbmU7aWYgdGVzdCAtZSAke2RldnR5cGV9ICR7ZGV2bnVtfToke2Rpc3Ryb19ib290
+cGFydH0gZWZpL2Jvb3QvYm9vdGFybS5lZmk7IHRoZW4gZWNobyBGb3VuZCBFRkkgcmVtb3ZhYmxl
+IG1lZGlhIGJpbmFyeSBlZmkvYm9vdC9ib290YXJtLmVmaTsgcnVuIGJvb3RfZWZpX2JpbmFyeTsg
+ZWNobyBFRkkgTE9BRCBGQUlMRUQ6IGNvbnRpbnVpbmcuLi47IGZpOyBzZXRlbnYgZWZpX2ZkdGZp
+bGUKc2Nhbl9kZXZfZm9yX2V4dGxpbnV4PWlmIHRlc3QgLWUgJHtkZXZ0eXBlfSAke2Rldm51bX06
+JHtkaXN0cm9fYm9vdHBhcnR9ICR7cHJlZml4fWV4dGxpbnV4L2V4dGxpbnV4LmNvbmY7IHRoZW4g
+ZWNobyBGb3VuZCAke3ByZWZpeH1leHRsaW51eC9leHRsaW51eC5jb25mOyBydW4gYm9vdF9leHRs
+aW51eDsgZWNobyBTQ1JJUFQgRkFJTEVEOiBjb250aW51aW5nLi4uOyBmaQpzY2FuX2Rldl9mb3Jf
+c2NyaXB0cz1mb3Igc2NyaXB0IGluICR7Ym9vdF9zY3JpcHRzfTsgZG8gaWYgdGVzdCAtZSAke2Rl
+dnR5cGV9ICR7ZGV2bnVtfToke2Rpc3Ryb19ib290cGFydH0gJHtwcmVmaXh9JHtzY3JpcHR9OyB0
+aGVuIGVjaG8gRm91bmQgVS1Cb290IHNjcmlwdCAke3ByZWZpeH0ke3NjcmlwdH07IHJ1biBib290
+X2Ffc2NyaXB0OyBlY2hvIFNDUklQVCBGQUlMRUQ6IGNvbnRpbnVpbmcuLi47IGZpOyBkb25lCnNj
+cmlwdGFkZHI9MHg1MDAwMDAwMApzb2M9ZXh5bm9zCnNvY19pZD00NDEyCnNvY19yZXY9Mi4wCnVz
+Yl9ib290PXVzYiBzdGFydDsgaWYgdXNiIGRldiAke2Rldm51bX07IHRoZW4gc2V0ZW52IGRldnR5
+cGUgdXNiOyBydW4gc2Nhbl9kZXZfZm9yX2Jvb3RfcGFydDsgZmkKdmVuZG9yPXNhbXN1bmcKCkVu
+dmlyb25tZW50IHNpemU6IDQ4OTgvODE4OCBieXRlcwpPZHJvaWQgIwoK
+--00000000000084e2b4058462028c
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KVS1Cb290IG1h
+aWxpbmcgbGlzdApVLUJvb3RAbGlzdHMuZGVueC5kZQpodHRwczovL2xpc3RzLmRlbnguZGUvbGlz
+dGluZm8vdS1ib290Cg==
+
+--00000000000084e2b4058462028c--
