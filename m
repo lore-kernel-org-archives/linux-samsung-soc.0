@@ -1,201 +1,116 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos/mixer: fix MIXER shadow registry
- synchronisation code
-Date: Mon, 18 Mar 2019 16:05:11 +0900
-Message-ID: <23e3ae49-aaed-9573-2e6e-866eac410fad@samsung.com>
-References: <CGME20190306150605eucas1p2fada42624ed864bfe1b7fff69afdceb9@eucas1p2.samsung.com>
- <20190306150559.20987-1-a.hajda@samsung.com>
- <CAM3PiRxZD4Vh8vHi_QgkOa8duRTqkHU1+-frCX2dcViLjqmNiQ@mail.gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Odroid U3 - Upgrade to latest u-boot kernel load fails.
+Date: Mon, 18 Mar 2019 18:02:26 +0530
+Message-ID: <CANAwSgR8SNYT4JmGu_U-wGGJcEtkEmBnWaSMae1MEPYh07vbXg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAM3PiRxZD4Vh8vHi_QgkOa8duRTqkHU1+-frCX2dcViLjqmNiQ@mail.gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Marian Mihailescu <mihailescu2m@gmail.com>, Andrzej Hajda <a.hajda@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: U-Boot Mailing List <u-boot@lists.denx.de>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-CgoxOS4gMy4gOC4g7Jik7KCEIDk6MTLsl5AgTWFyaWFuIE1paGFpbGVzY3Ug7J20KOqwgCkg7JO0
-IOq4gDoKPiBUZXN0ZWQgb24gbXkgRXh5bm9zNTQyMiBPZHJvaWQgWFU0LCB2c3luYyBzZWVtcyB0
-byBub3QgaGFwcGVuIGF0IGFsbCw+IHNjcmVlbiByZW1haW5zIGJsYWNrIHNpbmNlIGtlcm5lbCBs
-b2Fkcy4KCkkgZmFjZWQgd2l0aCBzYW1lIGlzc3VlLgoKQW5kcnplaiwKRGlkIHlvdSB0ZXN0IHRo
-aXMgcGF0Y2ggYW5kIHdvcmtlZCBjb3JyZWN0bHk/CgpJIGhhZCB0ZXN0ZWQgdGhpcyBwYXRjaCBv
-biBtYWlubGluZSBrZXJuZWwgLSBsaW51eC01LjEuMC1yYzEgLSBhbmQgZXZlbiBvbiBUaXplbiBr
-ZXJuZWwgKHRpemVuLW5leHQgYnJhbmNoKSBidXQgc2NyZWVuIHJlbWFpbmVkIGJsYW5rIGFmdGVy
-IHJ1bm5pbmcgbW9kZXRlc3QgYXBwLgpXaXRob3V0IHRoaXMgcGF0Y2gsIG1vZGV0ZXN0IGFwcCB3
-b3JrZWQgd2VsbCBvbiBib3RoIGtlcm5lbHMuCgpUaGFua3MsCklua2kgRGFlCgo+IAo+IC0tCj4g
-RWl0aGVyIEkndmUgYmVlbiBtaXNzaW5nIHNvbWV0aGluZyBvciBub3RoaW5nIGhhcyBiZWVuIGdv
-aW5nIG9uLiAoSy4gRS4gR29yZG9uKQo+IAo+IE9uIFRodSwgTWFyIDcsIDIwMTkgYXQgMTozNiBB
-TSBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPiB3cm90ZToKPj4KPj4gTUlYRVIg
-b24gRXh5bm9zNSBTb0NzIHVzZXMgZGlmZmVyZW50IHN5bmNocm9uaXNhdGlvbiBtZXRob2QgdGhh
-biBFeHlub3M0Cj4+IHRvIHVwZGF0ZSBpbnRlcm5hbCBzdGF0ZSAoc2hhZG93IHJlZ2lzdGVycyku
-Cj4+IEFwcGFyZW50bHkgdGhlIGRyaXZlciBpbXBsZW1lbnRzIGl0IGluY29ycmVjdGx5LiBUaGUg
-cnVsZSBzaG91bGQgYmUKPj4gYXMgZm9sbG93czoKPj4gLSBkbyBub3QgcmVxdWVzdCB1cGRhdGlu
-ZyByZWdpc3RlcnMgdW50aWwgcHJldmlvdXMgcmVxdWVzdCB3YXMgZmluaXNoZWQsCj4+ICAgaWUu
-IE1YUl9DRkdfTEFZRVJfVVBEQVRFX0NPVU5UIG11c3QgYmUgMC4KPj4gLSBiZWZvcmUgc2V0dGlu
-ZyByZWdpc3RlcnMgc3luY2hyb25pc2F0aW9uIG9uIFZTWU5DIHNob3VsZCBiZSB0dXJuZWQgb2Zm
-LAo+PiAgIGllLiBNWFJfU1RBVFVTX1NZTkNfRU5BQkxFIHNob3VsZCBiZSByZXNldCwKPj4gLSBh
-ZnRlciBmaW5pc2hpbmcgTVhSX1NUQVRVU19TWU5DX0VOQUJMRSBzaG91bGQgYmUgc2V0IGFnYWlu
-Lgo+PiBUaGUgcGF0Y2ggaG9wZWZ1bGx5IGltcGxlbWVudHMgaXQgY29ycmVjdGx5Lgo+PiBCZWxv
-dyBzYW1wbGUga2VybmVsIGxvZyBmcm9tIHBhZ2UgZmF1bHQgY2F1c2VkIGJ5IHRoZSBidWc6Cj4+
-Cj4+IFsgICAyNS42NzAwMzhdIGV4eW5vcy1zeXNtbXUgMTQ2NTAwMDAuc3lzbW11OiAxNDQ1MDAw
-MC5taXhlcjogUEFHRSBGQVVMVCBvY2N1cnJlZCBhdCAweDIyNDdiODAwCj4+IFsgICAyNS42Nzc4
-ODhdIC0tLS0tLS0tLS0tLVsgY3V0IGhlcmUgXS0tLS0tLS0tLS0tLQo+PiBbICAgMjUuNjgyMTY0
-XSBrZXJuZWwgQlVHIGF0IC4uL2RyaXZlcnMvaW9tbXUvZXh5bm9zLWlvbW11LmM6NDUwIQo+PiBb
-ICAgMjUuNjg3OTcxXSBJbnRlcm5hbCBlcnJvcjogT29wcyAtIEJVRzogMCBbIzFdIFBSRUVNUFQg
-U01QIEFSTQo+PiBbICAgMjUuNjkzNzc4XSBNb2R1bGVzIGxpbmtlZCBpbjoKPj4gWyAgIDI1LjY5
-NjgxNl0gQ1BVOiA1IFBJRDogMTU1MyBDb21tOiBmYi1yZWxlYXNlX3Rlc3QgTm90IHRhaW50ZWQg
-NS4wLjAtcmM3LTAxMTU3LWc1Zjg2YjE1NjZiZGQgIzEzNgo+PiBbICAgMjUuNzA1NjQ2XSBIYXJk
-d2FyZSBuYW1lOiBTQU1TVU5HIEVYWU5PUyAoRmxhdHRlbmVkIERldmljZSBUcmVlKQo+PiBbICAg
-MjUuNzExNzEwXSBQQyBpcyBhdCBleHlub3Nfc3lzbW11X2lycSsweDFjMC8weDI2NAo+PiBbICAg
-MjUuNzE2NDcwXSBMUiBpcyBhdCBsb2NrX2lzX2hlbGRfdHlwZSsweDQ0LzB4NjQKPj4KPj4gUmVw
-b3J0ZWQtYnk6IE1hcmlhbiBNaWhhaWxlc2N1IDxtaWhhaWxlc2N1Mm1AZ21haWwuY29tPgo+PiBT
-aWduZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgo+PiAtLS0K
-Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgfCAxMDcgKysrKysrKysr
-KysrKysrLS0tLS0tLS0tLS0KPj4gIDEgZmlsZSBjaGFuZ2VkLCA2MyBpbnNlcnRpb25zKCspLCA0
-NCBkZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX21peGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4+
-IGluZGV4IDA1NzNlYWIwZTE5MC4uNDJjZTAxYzIyNmVmIDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX21peGVyLmMKPj4gQEAgLTIwLDYgKzIwLDcgQEAKPj4gICNpbmNsdWRlICJy
-ZWdzLXZwLmgiCj4+Cj4+ICAjaW5jbHVkZSA8bGludXgva2VybmVsLmg+Cj4+ICsjaW5jbHVkZSA8
-bGludXgva3RpbWUuaD4KPj4gICNpbmNsdWRlIDxsaW51eC9zcGlubG9jay5oPgo+PiAgI2luY2x1
-ZGUgPGxpbnV4L3dhaXQuaD4KPj4gICNpbmNsdWRlIDxsaW51eC9pMmMuaD4KPj4gQEAgLTM1Miwx
-NSArMzUzLDU5IEBAIHN0YXRpYyB2b2lkIG1peGVyX2NmZ192cF9ibGVuZChzdHJ1Y3QgbWl4ZXJf
-Y29udGV4dCAqY3R4LCB1bnNpZ25lZCBpbnQgYWxwaGEpCj4+ICAgICAgICAgbWl4ZXJfcmVnX3dy
-aXRlKGN0eCwgTVhSX1ZJREVPX0NGRywgdmFsKTsKPj4gIH0KPj4KPj4gLXN0YXRpYyB2b2lkIG1p
-eGVyX3ZzeW5jX3NldF91cGRhdGUoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwgYm9vbCBlbmFi
-bGUpCj4+ICtzdGF0aWMgYm9vbCBtaXhlcl9pc19zeW5jZWQoc3RydWN0IG1peGVyX2NvbnRleHQg
-KmN0eCkKPj4gIHsKPj4gLSAgICAgICAvKiBibG9jayB1cGRhdGUgb24gdnN5bmMgKi8KPj4gLSAg
-ICAgICBtaXhlcl9yZWdfd3JpdGVtYXNrKGN0eCwgTVhSX1NUQVRVUywgZW5hYmxlID8KPj4gLSAg
-ICAgICAgICAgICAgICAgICAgICAgTVhSX1NUQVRVU19TWU5DX0VOQUJMRSA6IDAsIE1YUl9TVEFU
-VVNfU1lOQ19FTkFCTEUpOwo+PiArICAgICAgIHUzMiBiYXNlLCBzaGFkb3c7Cj4+Cj4+ICsgICAg
-ICAgaWYgKGN0eC0+bXhyX3ZlciA9PSBNWFJfVkVSXzE2XzBfMzNfMCB8fAo+PiArICAgICAgICAg
-ICBjdHgtPm14cl92ZXIgPT0gTVhSX1ZFUl8xMjhfMF8wXzE4NCkKPj4gKyAgICAgICAgICAgICAg
-IHJldHVybiAhKG1peGVyX3JlZ19yZWFkKGN0eCwgTVhSX0NGRykgJgo+PiArICAgICAgICAgICAg
-ICAgICAgICAgICAgTVhSX0NGR19MQVlFUl9VUERBVEVfQ09VTlRfTUFTSyk7Cj4+ICsKPj4gKyAg
-ICAgICBpZiAodGVzdF9iaXQoTVhSX0JJVF9WUF9FTkFCTEVELCAmY3R4LT5mbGFncykgJiYKPj4g
-KyAgICAgICAgICAgdnBfcmVnX3JlYWQoY3R4LCBWUF9TSEFET1dfVVBEQVRFKSkKPj4gKyAgICAg
-ICAgICAgICAgIHJldHVybiBmYWxzZTsKPj4gKwo+PiArICAgICAgIGJhc2UgPSBtaXhlcl9yZWdf
-cmVhZChjdHgsIE1YUl9DRkcpOwo+PiArICAgICAgIHNoYWRvdyA9IG1peGVyX3JlZ19yZWFkKGN0
-eCwgTVhSX0NGR19TKTsKPj4gKyAgICAgICBpZiAoYmFzZSAhPSBzaGFkb3cpCj4+ICsgICAgICAg
-ICAgICAgICByZXR1cm4gZmFsc2U7Cj4+ICsKPj4gKyAgICAgICBiYXNlID0gbWl4ZXJfcmVnX3Jl
-YWQoY3R4LCBNWFJfR1JBUEhJQ19CQVNFKDApKTsKPj4gKyAgICAgICBzaGFkb3cgPSBtaXhlcl9y
-ZWdfcmVhZChjdHgsIE1YUl9HUkFQSElDX0JBU0VfUygwKSk7Cj4+ICsgICAgICAgaWYgKGJhc2Ug
-IT0gc2hhZG93KQo+PiArICAgICAgICAgICAgICAgcmV0dXJuIGZhbHNlOwo+PiArCj4+ICsgICAg
-ICAgYmFzZSA9IG1peGVyX3JlZ19yZWFkKGN0eCwgTVhSX0dSQVBISUNfQkFTRSgxKSk7Cj4+ICsg
-ICAgICAgc2hhZG93ID0gbWl4ZXJfcmVnX3JlYWQoY3R4LCBNWFJfR1JBUEhJQ19CQVNFX1MoMSkp
-Owo+PiArICAgICAgIGlmIChiYXNlICE9IHNoYWRvdykKPj4gKyAgICAgICAgICAgICAgIHJldHVy
-biBmYWxzZTsKPj4gKwo+PiArICAgICAgIHJldHVybiB0cnVlOwo+PiArfQo+PiArCj4+ICtzdGF0
-aWMgaW50IG1peGVyX3dhaXRfZm9yX3N5bmMoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCkKPj4g
-K3sKPj4gKyAgICAgICBrdGltZV90IHRpbWVvdXQgPSBrdGltZV9hZGRfdXMoa3RpbWVfZ2V0KCks
-IDEwMDAwMCk7Cj4+ICsKPj4gKyAgICAgICB3aGlsZSAoIW1peGVyX2lzX3N5bmNlZChjdHgpKSB7
-Cj4+ICsgICAgICAgICAgICAgICB1c2xlZXBfcmFuZ2UoMTAwMCwgMjAwMCk7Cj4+ICsgICAgICAg
-ICAgICAgICBpZiAoa3RpbWVfY29tcGFyZShrdGltZV9nZXQoKSwgdGltZW91dCkgPiAwKQo+PiAr
-ICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gLUVUSU1FRE9VVDsKPj4gKyAgICAgICB9Cj4+
-ICsgICAgICAgcmV0dXJuIDA7Cj4+ICt9Cj4+ICsKPj4gK3N0YXRpYyB2b2lkIG1peGVyX2Rpc2Fi
-bGVfc3luYyhzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4KQo+PiArewo+PiArICAgICAgIG1peGVy
-X3JlZ193cml0ZW1hc2soY3R4LCBNWFJfU1RBVFVTLCAwLCBNWFJfU1RBVFVTX1NZTkNfRU5BQkxF
-KTsKPj4gK30KPj4gKwo+PiArc3RhdGljIHZvaWQgbWl4ZXJfZW5hYmxlX3N5bmMoc3RydWN0IG1p
-eGVyX2NvbnRleHQgKmN0eCkKPj4gK3sKPj4gKyAgICAgICBtaXhlcl9yZWdfd3JpdGVtYXNrKGN0
-eCwgTVhSX1NUQVRVUywgfjAsIE1YUl9TVEFUVVNfU1lOQ19FTkFCTEUpOwo+PiAgICAgICAgIGlm
-ICh0ZXN0X2JpdChNWFJfQklUX1ZQX0VOQUJMRUQsICZjdHgtPmZsYWdzKSkKPj4gLSAgICAgICAg
-ICAgICAgIHZwX3JlZ193cml0ZShjdHgsIFZQX1NIQURPV19VUERBVEUsIGVuYWJsZSA/Cj4+IC0g
-ICAgICAgICAgICAgICAgICAgICAgIFZQX1NIQURPV19VUERBVEVfRU5BQkxFIDogMCk7Cj4+ICsg
-ICAgICAgICAgICAgICB2cF9yZWdfd3JpdGUoY3R4LCBWUF9TSEFET1dfVVBEQVRFLCBWUF9TSEFE
-T1dfVVBEQVRFX0VOQUJMRSk7Cj4+ICB9Cj4+Cj4+ICBzdGF0aWMgdm9pZCBtaXhlcl9jZmdfc2Nh
-bihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LCBpbnQgd2lkdGgsIGludCBoZWlnaHQpCj4+IEBA
-IC00OTgsNyArNTQzLDYgQEAgc3RhdGljIHZvaWQgdnBfdmlkZW9fYnVmZmVyKHN0cnVjdCBtaXhl
-cl9jb250ZXh0ICpjdHgsCj4+Cj4+ICAgICAgICAgc3Bpbl9sb2NrX2lycXNhdmUoJmN0eC0+cmVn
-X3Nsb2NrLCBmbGFncyk7Cj4+Cj4+IC0gICAgICAgdnBfcmVnX3dyaXRlKGN0eCwgVlBfU0hBRE9X
-X1VQREFURSwgMSk7Cj4+ICAgICAgICAgLyogaW50ZXJsYWNlIG9yIHByb2dyZXNzaXZlIHNjYW4g
-bW9kZSAqLwo+PiAgICAgICAgIHZhbCA9ICh0ZXN0X2JpdChNWFJfQklUX0lOVEVSTEFDRSwgJmN0
-eC0+ZmxhZ3MpID8gfjAgOiAwKTsKPj4gICAgICAgICB2cF9yZWdfd3JpdGVtYXNrKGN0eCwgVlBf
-TU9ERSwgdmFsLCBWUF9NT0RFX0xJTkVfU0tJUCk7Cj4+IEBAIC01NTMsMTEgKzU5Nyw2IEBAIHN0
-YXRpYyB2b2lkIHZwX3ZpZGVvX2J1ZmZlcihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LAo+PiAg
-ICAgICAgIHZwX3JlZ3NfZHVtcChjdHgpOwo+PiAgfQo+Pgo+PiAtc3RhdGljIHZvaWQgbWl4ZXJf
-bGF5ZXJfdXBkYXRlKHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHgpCj4+IC17Cj4+IC0gICAgICAg
-bWl4ZXJfcmVnX3dyaXRlbWFzayhjdHgsIE1YUl9DRkcsIH4wLCBNWFJfQ0ZHX0xBWUVSX1VQREFU
-RSk7Cj4+IC19Cj4+IC0KPj4gIHN0YXRpYyB2b2lkIG1peGVyX2dyYXBoX2J1ZmZlcihzdHJ1Y3Qg
-bWl4ZXJfY29udGV4dCAqY3R4LAo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3Ry
-dWN0IGV4eW5vc19kcm1fcGxhbmUgKnBsYW5lKQo+PiAgewo+PiBAQCAtNjQwLDExICs2NzksNiBA
-QCBzdGF0aWMgdm9pZCBtaXhlcl9ncmFwaF9idWZmZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0
-eCwKPj4gICAgICAgICBtaXhlcl9jZmdfbGF5ZXIoY3R4LCB3aW4sIHByaW9yaXR5LCB0cnVlKTsK
-Pj4gICAgICAgICBtaXhlcl9jZmdfZ2Z4X2JsZW5kKGN0eCwgd2luLCBwaXhlbF9hbHBoYSwgc3Rh
-dGUtPmJhc2UuYWxwaGEpOwo+Pgo+PiAtICAgICAgIC8qIGxheWVyIHVwZGF0ZSBtYW5kYXRvcnkg
-Zm9yIG1peGVyIDE2LjAuMzMuMCAqLwo+PiAtICAgICAgIGlmIChjdHgtPm14cl92ZXIgPT0gTVhS
-X1ZFUl8xNl8wXzMzXzAgfHwKPj4gLSAgICAgICAgICAgICAgIGN0eC0+bXhyX3ZlciA9PSBNWFJf
-VkVSXzEyOF8wXzBfMTg0KQo+PiAtICAgICAgICAgICAgICAgbWl4ZXJfbGF5ZXJfdXBkYXRlKGN0
-eCk7Cj4+IC0KPj4gICAgICAgICBzcGluX3VubG9ja19pcnFyZXN0b3JlKCZjdHgtPnJlZ19zbG9j
-aywgZmxhZ3MpOwo+Pgo+PiAgICAgICAgIG1peGVyX3JlZ3NfZHVtcChjdHgpOwo+PiBAQCAtNzA5
-LDcgKzc0Myw3IEBAIHN0YXRpYyB2b2lkIG1peGVyX3dpbl9yZXNldChzdHJ1Y3QgbWl4ZXJfY29u
-dGV4dCAqY3R4KQo+PiAgc3RhdGljIGlycXJldHVybl90IG1peGVyX2lycV9oYW5kbGVyKGludCBp
-cnEsIHZvaWQgKmFyZykKPj4gIHsKPj4gICAgICAgICBzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4
-ID0gYXJnOwo+PiAtICAgICAgIHUzMiB2YWwsIGJhc2UsIHNoYWRvdzsKPj4gKyAgICAgICB1MzIg
-dmFsOwo+Pgo+PiAgICAgICAgIHNwaW5fbG9jaygmY3R4LT5yZWdfc2xvY2spOwo+Pgo+PiBAQCAt
-NzIzLDI2ICs3NTcsOSBAQCBzdGF0aWMgaXJxcmV0dXJuX3QgbWl4ZXJfaXJxX2hhbmRsZXIoaW50
-IGlycSwgdm9pZCAqYXJnKQo+PiAgICAgICAgICAgICAgICAgdmFsICY9IH5NWFJfSU5UX1NUQVRV
-U19WU1lOQzsKPj4KPj4gICAgICAgICAgICAgICAgIC8qIGludGVybGFjZSBzY2FuIG5lZWQgdG8g
-Y2hlY2sgc2hhZG93IHJlZ2lzdGVyICovCj4+IC0gICAgICAgICAgICAgICBpZiAodGVzdF9iaXQo
-TVhSX0JJVF9JTlRFUkxBQ0UsICZjdHgtPmZsYWdzKSkgewo+PiAtICAgICAgICAgICAgICAgICAg
-ICAgICBpZiAodGVzdF9iaXQoTVhSX0JJVF9WUF9FTkFCTEVELCAmY3R4LT5mbGFncykgJiYKPj4g
-LSAgICAgICAgICAgICAgICAgICAgICAgICAgIHZwX3JlZ19yZWFkKGN0eCwgVlBfU0hBRE9XX1VQ
-REFURSkpCj4+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZ290byBvdXQ7Cj4+IC0K
-Pj4gLSAgICAgICAgICAgICAgICAgICAgICAgYmFzZSA9IG1peGVyX3JlZ19yZWFkKGN0eCwgTVhS
-X0NGRyk7Cj4+IC0gICAgICAgICAgICAgICAgICAgICAgIHNoYWRvdyA9IG1peGVyX3JlZ19yZWFk
-KGN0eCwgTVhSX0NGR19TKTsKPj4gLSAgICAgICAgICAgICAgICAgICAgICAgaWYgKGJhc2UgIT0g
-c2hhZG93KQo+PiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGdvdG8gb3V0Owo+PiAt
-Cj4+IC0gICAgICAgICAgICAgICAgICAgICAgIGJhc2UgPSBtaXhlcl9yZWdfcmVhZChjdHgsIE1Y
-Ul9HUkFQSElDX0JBU0UoMCkpOwo+PiAtICAgICAgICAgICAgICAgICAgICAgICBzaGFkb3cgPSBt
-aXhlcl9yZWdfcmVhZChjdHgsIE1YUl9HUkFQSElDX0JBU0VfUygwKSk7Cj4+IC0gICAgICAgICAg
-ICAgICAgICAgICAgIGlmIChiYXNlICE9IHNoYWRvdykKPj4gLSAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICBnb3RvIG91dDsKPj4gLQo+PiAtICAgICAgICAgICAgICAgICAgICAgICBiYXNl
-ID0gbWl4ZXJfcmVnX3JlYWQoY3R4LCBNWFJfR1JBUEhJQ19CQVNFKDEpKTsKPj4gLSAgICAgICAg
-ICAgICAgICAgICAgICAgc2hhZG93ID0gbWl4ZXJfcmVnX3JlYWQoY3R4LCBNWFJfR1JBUEhJQ19C
-QVNFX1MoMSkpOwo+PiAtICAgICAgICAgICAgICAgICAgICAgICBpZiAoYmFzZSAhPSBzaGFkb3cp
-Cj4+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZ290byBvdXQ7Cj4+IC0gICAgICAg
-ICAgICAgICB9Cj4+ICsgICAgICAgICAgICAgICBpZiAodGVzdF9iaXQoTVhSX0JJVF9JTlRFUkxB
-Q0UsICZjdHgtPmZsYWdzKQo+PiArICAgICAgICAgICAgICAgICAgICYmICFtaXhlcl9pc19zeW5j
-ZWQoY3R4KSkKPj4gKyAgICAgICAgICAgICAgICAgICAgICAgZ290byBvdXQ7Cj4+Cj4+ICAgICAg
-ICAgICAgICAgICBkcm1fY3J0Y19oYW5kbGVfdmJsYW5rKCZjdHgtPmNydGMtPmJhc2UpOwo+PiAg
-ICAgICAgIH0KPj4gQEAgLTkxNywxMiArOTM0LDE0IEBAIHN0YXRpYyB2b2lkIG1peGVyX2Rpc2Fi
-bGVfdmJsYW5rKHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmNydGMpCj4+Cj4+ICBzdGF0aWMgdm9p
-ZCBtaXhlcl9hdG9taWNfYmVnaW4oc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YykKPj4gIHsK
-Pj4gLSAgICAgICBzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqbWl4ZXJfY3R4ID0gY3J0Yy0+Y3R4Owo+
-PiArICAgICAgIHN0cnVjdCBtaXhlcl9jb250ZXh0ICpjdHggPSBjcnRjLT5jdHg7Cj4+Cj4+IC0g
-ICAgICAgaWYgKCF0ZXN0X2JpdChNWFJfQklUX1BPV0VSRUQsICZtaXhlcl9jdHgtPmZsYWdzKSkK
-Pj4gKyAgICAgICBpZiAoIXRlc3RfYml0KE1YUl9CSVRfUE9XRVJFRCwgJmN0eC0+ZmxhZ3MpKQo+
-PiAgICAgICAgICAgICAgICAgcmV0dXJuOwo+Pgo+PiAtICAgICAgIG1peGVyX3ZzeW5jX3NldF91
-cGRhdGUobWl4ZXJfY3R4LCBmYWxzZSk7Cj4+ICsgICAgICAgaWYgKG1peGVyX3dhaXRfZm9yX3N5
-bmMoY3R4KSkKPj4gKyAgICAgICAgICAgICAgIGRldl9lcnIoY3R4LT5kZXYsICJ0aW1lb3V0IHdh
-aXRpbmcgZm9yIFZTWU5DXG4iKTsKPj4gKyAgICAgICBtaXhlcl9kaXNhYmxlX3N5bmMoY3R4KTsK
-Pj4gIH0KPj4KPj4gIHN0YXRpYyB2b2lkIG1peGVyX3VwZGF0ZV9wbGFuZShzdHJ1Y3QgZXh5bm9z
-X2RybV9jcnRjICpjcnRjLAo+PiBAQCAtOTY0LDcgKzk4Myw3IEBAIHN0YXRpYyB2b2lkIG1peGVy
-X2F0b21pY19mbHVzaChzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpjcnRjKQo+PiAgICAgICAgIGlm
-ICghdGVzdF9iaXQoTVhSX0JJVF9QT1dFUkVELCAmbWl4ZXJfY3R4LT5mbGFncykpCj4+ICAgICAg
-ICAgICAgICAgICByZXR1cm47Cj4+Cj4+IC0gICAgICAgbWl4ZXJfdnN5bmNfc2V0X3VwZGF0ZSht
-aXhlcl9jdHgsIHRydWUpOwo+PiArICAgICAgIG1peGVyX2VuYWJsZV9zeW5jKG1peGVyX2N0eCk7
-Cj4+ICAgICAgICAgZXh5bm9zX2NydGNfaGFuZGxlX2V2ZW50KGNydGMpOwo+PiAgfQo+Pgo+PiBA
-QCAtOTc5LDcgKzk5OCw3IEBAIHN0YXRpYyB2b2lkIG1peGVyX2VuYWJsZShzdHJ1Y3QgZXh5bm9z
-X2RybV9jcnRjICpjcnRjKQo+Pgo+PiAgICAgICAgIGV4eW5vc19kcm1fcGlwZV9jbGtfZW5hYmxl
-KGNydGMsIHRydWUpOwo+Pgo+PiAtICAgICAgIG1peGVyX3ZzeW5jX3NldF91cGRhdGUoY3R4LCBm
-YWxzZSk7Cj4+ICsgICAgICAgbWl4ZXJfZGlzYWJsZV9zeW5jKGN0eCk7Cj4+Cj4+ICAgICAgICAg
-bWl4ZXJfcmVnX3dyaXRlbWFzayhjdHgsIE1YUl9TVEFUVVMsIH4wLCBNWFJfU1RBVFVTX1NPRlRf
-UkVTRVQpOwo+Pgo+PiBAQCAtOTkyLDcgKzEwMTEsNyBAQCBzdGF0aWMgdm9pZCBtaXhlcl9lbmFi
-bGUoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqY3J0YykKPj4KPj4gICAgICAgICBtaXhlcl9jb21t
-aXQoY3R4KTsKPj4KPj4gLSAgICAgICBtaXhlcl92c3luY19zZXRfdXBkYXRlKGN0eCwgdHJ1ZSk7
-Cj4+ICsgICAgICAgbWl4ZXJfZW5hYmxlX3N5bmMoY3R4KTsKPj4KPj4gICAgICAgICBzZXRfYml0
-KE1YUl9CSVRfUE9XRVJFRCwgJmN0eC0+ZmxhZ3MpOwo+PiAgfQo+PiAtLQo+PiAyLjE3LjEKPj4K
-PiAKPiAKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
-LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBz
-Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+Hi Krzysztof / Marek,
+
+After I update the latest u-boot on my Odroud U3+ it fails to load the
+kernel it hangs.
+I am using Archlinux on Odroid U3.
+
+U-Boot 2019.04-rc3-00131-g8303467e80d-dirty (Mar 18 2019 - 12:12:23 +0000)
+
+CPU:   Exynos4412 @ 1 GHz
+Model: Odroid based on Exynos4412
+Type:  u3
+DRAM:  2 GiB
+LDO20@VDDQ_EMMC_1.8V: set 1800000 uV; enabling
+LDO22@VDDQ_EMMC_2.8V: set 2800000 uV; enabling
+LDO21@TFLASH_2.8V: set 2800000 uV; enabling
+MMC:   SAMSUNG SDHCI: 1, EXYNOS DWMMC: 0
+Loading Environment from MMC... Card did not respond to voltage select!
+*** Warning - No block device, using default environment
+
+Net:   No ethernet found.
+Hit any key to stop autoboot:  0
+switch to partitions #0, OK
+mmc1 is current device
+Scanning mmc 1:1...
+Found U-Boot script /boot/boot.scr
+769 bytes read in 6 ms (125 KiB/s)
+## Executing script at 42000000
+6901856 bytes read in 253 ms (26 MiB/s)
+53078 bytes read in 19 ms (2.7 MiB/s)
+6590950 bytes read in 240 ms (26.2 MiB/s)
+Kernel image @ 0x41000000 [ 0x000000 - 0x695060 ]
+## Flattened Device Tree blob at 40800000
+   Booting using the fdt blob at 0x40800000
+   Loading Ramdisk to 4f9b6000, end 4ffff1e6 ... OK
+   Loading Device Tree to 4f9a6000, end 4f9b5f55 ... OK
+
+Starting kernel ...
+
+Old u-boot boots fine see the logs below.
+--------------------------------------------------------------------------------------------------
+U-Boot 2018.01-1 (Feb 13 2018 - 02:19:55 +0000) Arch Linux ARM
+
+CPU:   Exynos4412 @ 1 GHz
+Model: Odroid based on Exynos4412
+Board: Odroid based on Exynos4412
+Type:  u3
+DRAM:  2 GiB
+LDO20@VDDQ_EMMC_1.8V: set 1800000 uV; enabling
+LDO22@VDDQ_EMMC_2.8V: set 2800000 uV; enabling
+LDO21@TFLASH_2.8V: set 2800000 uV; enabling
+MMC:   sdhci@12530000 - probe failed: -19
+
+*** Warning - bad CRC, using default environment
+
+Net:   No ethernet found.
+Hit any key to stop autoboot:  0
+no mmc device at slot 1
+switch to partitions #0, OK
+mmc0(part 0) is current device
+Scanning mmc 0:1...
+Found U-Boot script /boot/boot.scr
+770 bytes read in 31 ms (23.4 KiB/s)
+## Executing script at 50000000
+6625416 bytes read in 267 ms (23.7 MiB/s)
+72531 bytes read in 483 ms (146.5 KiB/s)
+6590888 bytes read in 256 ms (24.6 MiB/s)
+Kernel image @ 0x42000000 [ 0x000000 - 0x651888 ]
+## Flattened Device Tree blob at 43000000
+   Booting using the fdt blob at 0x43000000
+   Loading Ramdisk to 4f9b6000, end 4ffff1a8 ... OK
+   Loading Device Tree to 4f9a1000, end 4f9b5b52 ... OK
+
+Starting kernel ...
+
+[    0.000000] Booting Linux on physical CPU 0xa00
+[    0.000000] Linux version 5.0.1-1-ARCH (builduser@leming) (gcc
+version 8.2.1 20181127 (GCC)) #1 SMP PREEMPT Tue Mar 12 04:09:35 UTC
+2019
+[    0.000000] CPU: ARMv7 Processor [413fc090] revision 0 (ARMv7), cr=10c5387d
+[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing
+instruction cache
+[    0.000000] OF: fdt: Machine model: Hardkernel ODROID-U3 board
+based on Exynos4412
+[    0.000000] Memory policy: Data cache writealloc
+[    0.000000] Reserved memory: created DMA memory pool at 0xbf700000,
+size 8 MiB
+[    0.000000] OF: reserved mem: initialized node region_mfc_right,
+compatible id shared-dma-pool
+[    0.000000] Reserved memory: created DMA memory pool at 0xbd300000,
+size 36 MiB
+
+Please could you share the details on how to debug this issue or how to resolve.
+
+Best Regards
+-Anand
