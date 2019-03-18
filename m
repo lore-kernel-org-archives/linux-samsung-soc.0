@@ -1,124 +1,95 @@
 From: Anand Moon <linux.amoon@gmail.com>
 Subject: Re: Odroid U3 - Upgrade to latest u-boot kernel load fails.
-Date: Tue, 19 Mar 2019 00:47:27 +0530
-Message-ID: <CANAwSgRrbdckGcb4Rv-i3nizs_8crqO5dKK+wv2C0iNOsjNDqQ@mail.gmail.com>
+Date: Tue, 19 Mar 2019 01:54:58 +0530
+Message-ID: <CANAwSgTpzXzfs6EBC9ydpyWJxLtMyefYNnCaSkMHs-=ppYwNeQ@mail.gmail.com>
 References: <CANAwSgR8SNYT4JmGu_U-wGGJcEtkEmBnWaSMae1MEPYh07vbXg@mail.gmail.com>
  <CAJKOXPcg9QkW3cwY2BQ1CoNCqtS1mSfK88=iA5iCF57PoxiR9g@mail.gmail.com>
  <CANAwSgTpQQNsPTpU-CXoKrZrgYxq2F+J9MWhcGY0NNCB5x_p2w@mail.gmail.com>
  <CAJKOXPfm49g6quuX5jxoZ8-d=-5vBVRkTwO-_jhB-w7Ki8Jo1w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <u-boot-bounces@lists.denx.de>
 In-Reply-To: <CAJKOXPfm49g6quuX5jxoZ8-d=-5vBVRkTwO-_jhB-w7Ki8Jo1w@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+List-Unsubscribe: <https://lists.denx.de/options/u-boot>,
+ <mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
+List-Archive: <http://lists.denx.de/pipermail/u-boot/>
+List-Post: <mailto:u-boot@lists.denx.de>
+List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
+List-Subscribe: <https://lists.denx.de/listinfo/u-boot>,
+ <mailto:u-boot-request@lists.denx.de?subject=subscribe>
+Errors-To: u-boot-bounces@lists.denx.de
+Sender: "U-Boot" <u-boot-bounces@lists.denx.de>
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: U-Boot Mailing List <u-boot@lists.denx.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
-
-On Mon, 18 Mar 2019 at 23:33, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On Mon, 18 Mar 2019 at 18:49, Anand Moon <linux.amoon@gmail.com> wrote:
-> >
-> > Hi Krzysztof,
-> >
-> > On Mon, 18 Mar 2019 at 18:20, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > >
-> > > On Mon, 18 Mar 2019 at 13:32, Anand Moon <linux.amoon@gmail.com> wrote:
-> > > >
-> > > > Hi Krzysztof / Marek,
-> > > >
-> > > > After I update the latest u-boot on my Odroud U3+ it fails to load the
-> > > > kernel it hangs.
-> > > > I am using Archlinux on Odroid U3.
-> > > >
-> > > > U-Boot 2019.04-rc3-00131-g8303467e80d-dirty (Mar 18 2019 - 12:12:23 +0000)
-> > > >
-> > > > CPU:   Exynos4412 @ 1 GHz
-> > > > Model: Odroid based on Exynos4412
-> > > > Type:  u3
-> > > > DRAM:  2 GiB
-> > > > LDO20@VDDQ_EMMC_1.8V: set 1800000 uV; enabling
-> > > > LDO22@VDDQ_EMMC_2.8V: set 2800000 uV; enabling
-> > > > LDO21@TFLASH_2.8V: set 2800000 uV; enabling
-> > > > MMC:   SAMSUNG SDHCI: 1, EXYNOS DWMMC: 0
-> > > > Loading Environment from MMC... Card did not respond to voltage select!
-> > > > *** Warning - No block device, using default environment
-> > > >
-> > > > Net:   No ethernet found.
-> > > > Hit any key to stop autoboot:  0
-> > > > switch to partitions #0, OK
-> > > > mmc1 is current device
-> > > > Scanning mmc 1:1...
-> > > > Found U-Boot script /boot/boot.scr
-> > > > 769 bytes read in 6 ms (125 KiB/s)
-> > > > ## Executing script at 42000000
-> > > > 6901856 bytes read in 253 ms (26 MiB/s)
-> > > > 53078 bytes read in 19 ms (2.7 MiB/s)
-> > > > 6590950 bytes read in 240 ms (26.2 MiB/s)
-> > > > Kernel image @ 0x41000000 [ 0x000000 - 0x695060 ]
-> > > > ## Flattened Device Tree blob at 40800000
-> > > >    Booting using the fdt blob at 0x40800000
-> > > >    Loading Ramdisk to 4f9b6000, end 4ffff1e6 ... OK
-> > > >    Loading Device Tree to 4f9a6000, end 4f9b5f55 ... OK
-> > > >
-> > > > Starting kernel ...
-> > >
-> > > Can you attach your boot.init file (the source of boot.scr)?
-> > >
-> > > By the size of DTB you can see that different DTB is loaded. I assume
-> > > you tried to boot the same kernel, then it could mean that boardname
-> > > was used instead of board_name to choose DTB. Suspicious is that
-> > > kernel size also differs... so maybe you booted something else? As
-> > > usual debugging practice, reduce number of unknown factors. Do not
-> > > change kernel and U-Boot at the same time.
-> > >
-> > > Also, you can try reverting commit e6b1467081d3 ("arm: exynos: Remove
-> > > duplicated "boardname" env setting") and see if it helps. Or just try
-> > > to bisect around changes coming from u-boot samsung tree. Try booting
-> > > v2019.01 and paste the results as well.
-> > >
-> > > Best regards,
-> > > Krzysztof
-> > >
-> >
-> > I have tested with pre-compiled image and the cross compiled kernel image
-> > both failed to load the kernel.
-> >
-> > No revert of the commit e6b1467081d3 did not help.
-> >
-> > Yes it seem strange that that load address is changes some how in the u-boot env
-> >
-> > printenv setting of the latest u-boot     U-Boot
-> > 2019.04-rc3-00131-g8303467e80d-dirty
-> > [0] https://pastebin.com/1Hgc5xxC      (newu-boot.txt)
-> >
-> > printenv setting for the old u-boot.      U-Boot 2018.01-1
-> > [1] https://pastebin.com/wD6zK6eG    (oldu-boot.txt)
-> >
-> > Attach is the boot.txt (boot.scr), also the u-boot env old and u-boot-env new
->
-> And does 2019.01 work?
-
-I have not tied this version.
-
->
-> Krzysztof
-
-I have flashed the latest Archlinux Image for Odroid U3 on the sdcard.
-did full update on the kernel image and then tried to update the latest u-boot
-it failed to boot. It looks like the some u-boot environment settings
-are incorrect.
-
-Best Regards
--Anand
+SGkgS3J6eXN6dG9mLAoKT24gTW9uLCAxOCBNYXIgMjAxOSBhdCAyMzozMywgS3J6eXN6dG9mIEtv
+emxvd3NraSA8a3J6a0BrZXJuZWwub3JnPiB3cm90ZToKPgo+IE9uIE1vbiwgMTggTWFyIDIwMTkg
+YXQgMTg6NDksIEFuYW5kIE1vb24gPGxpbnV4LmFtb29uQGdtYWlsLmNvbT4gd3JvdGU6Cj4gPgo+
+ID4gSGkgS3J6eXN6dG9mLAo+ID4KPiA+IE9uIE1vbiwgMTggTWFyIDIwMTkgYXQgMTg6MjAsIEty
+enlzenRvZiBLb3psb3dza2kgPGtyemtAa2VybmVsLm9yZz4Kd3JvdGU6Cj4gPiA+Cj4gPiA+IE9u
+IE1vbiwgMTggTWFyIDIwMTkgYXQgMTM6MzIsIEFuYW5kIE1vb24gPGxpbnV4LmFtb29uQGdtYWls
+LmNvbT4Kd3JvdGU6Cj4gPiA+ID4KPiA+ID4gPiBIaSBLcnp5c3p0b2YgLyBNYXJlaywKPiA+ID4g
+Pgo+ID4gPiA+IEFmdGVyIEkgdXBkYXRlIHRoZSBsYXRlc3QgdS1ib290IG9uIG15IE9kcm91ZCBV
+MysgaXQgZmFpbHMgdG8gbG9hZAp0aGUKPiA+ID4gPiBrZXJuZWwgaXQgaGFuZ3MuCj4gPiA+ID4g
+SSBhbSB1c2luZyBBcmNobGludXggb24gT2Ryb2lkIFUzLgo+ID4gPiA+Cj4gPiA+ID4gVS1Cb290
+IDIwMTkuMDQtcmMzLTAwMTMxLWc4MzAzNDY3ZTgwZC1kaXJ0eSAoTWFyIDE4IDIwMTkgLSAxMjox
+MjoyMworMDAwMCkKPiA+ID4gPgo+ID4gPiA+IENQVTogICBFeHlub3M0NDEyIEAgMSBHSHoKPiA+
+ID4gPiBNb2RlbDogT2Ryb2lkIGJhc2VkIG9uIEV4eW5vczQ0MTIKPiA+ID4gPiBUeXBlOiAgdTMK
+PiA+ID4gPiBEUkFNOiAgMiBHaUIKPiA+ID4gPiBMRE8yMEBWRERRX0VNTUNfMS44Vjogc2V0IDE4
+MDAwMDAgdVY7IGVuYWJsaW5nCj4gPiA+ID4gTERPMjJAVkREUV9FTU1DXzIuOFY6IHNldCAyODAw
+MDAwIHVWOyBlbmFibGluZwo+ID4gPiA+IExETzIxQFRGTEFTSF8yLjhWOiBzZXQgMjgwMDAwMCB1
+VjsgZW5hYmxpbmcKPiA+ID4gPiBNTUM6ICAgU0FNU1VORyBTREhDSTogMSwgRVhZTk9TIERXTU1D
+OiAwCj4gPiA+ID4gTG9hZGluZyBFbnZpcm9ubWVudCBmcm9tIE1NQy4uLiBDYXJkIGRpZCBub3Qg
+cmVzcG9uZCB0byB2b2x0YWdlCnNlbGVjdCEKPiA+ID4gPiAqKiogV2FybmluZyAtIE5vIGJsb2Nr
+IGRldmljZSwgdXNpbmcgZGVmYXVsdCBlbnZpcm9ubWVudAo+ID4gPiA+Cj4gPiA+ID4gTmV0OiAg
+IE5vIGV0aGVybmV0IGZvdW5kLgo+ID4gPiA+IEhpdCBhbnkga2V5IHRvIHN0b3AgYXV0b2Jvb3Q6
+ICAwCj4gPiA+ID4gc3dpdGNoIHRvIHBhcnRpdGlvbnMgIzAsIE9LCj4gPiA+ID4gbW1jMSBpcyBj
+dXJyZW50IGRldmljZQo+ID4gPiA+IFNjYW5uaW5nIG1tYyAxOjEuLi4KPiA+ID4gPiBGb3VuZCBV
+LUJvb3Qgc2NyaXB0IC9ib290L2Jvb3Quc2NyCj4gPiA+ID4gNzY5IGJ5dGVzIHJlYWQgaW4gNiBt
+cyAoMTI1IEtpQi9zKQo+ID4gPiA+ICMjIEV4ZWN1dGluZyBzY3JpcHQgYXQgNDIwMDAwMDAKPiA+
+ID4gPiA2OTAxODU2IGJ5dGVzIHJlYWQgaW4gMjUzIG1zICgyNiBNaUIvcykKPiA+ID4gPiA1MzA3
+OCBieXRlcyByZWFkIGluIDE5IG1zICgyLjcgTWlCL3MpCj4gPiA+ID4gNjU5MDk1MCBieXRlcyBy
+ZWFkIGluIDI0MCBtcyAoMjYuMiBNaUIvcykKPiA+ID4gPiBLZXJuZWwgaW1hZ2UgQCAweDQxMDAw
+MDAwIFsgMHgwMDAwMDAgLSAweDY5NTA2MCBdCj4gPiA+ID4gIyMgRmxhdHRlbmVkIERldmljZSBU
+cmVlIGJsb2IgYXQgNDA4MDAwMDAKPiA+ID4gPiAgICBCb290aW5nIHVzaW5nIHRoZSBmZHQgYmxv
+YiBhdCAweDQwODAwMDAwCj4gPiA+ID4gICAgTG9hZGluZyBSYW1kaXNrIHRvIDRmOWI2MDAwLCBl
+bmQgNGZmZmYxZTYgLi4uIE9LCj4gPiA+ID4gICAgTG9hZGluZyBEZXZpY2UgVHJlZSB0byA0Zjlh
+NjAwMCwgZW5kIDRmOWI1ZjU1IC4uLiBPSwo+ID4gPiA+Cj4gPiA+ID4gU3RhcnRpbmcga2VybmVs
+IC4uLgo+ID4gPgo+ID4gPiBDYW4geW91IGF0dGFjaCB5b3VyIGJvb3QuaW5pdCBmaWxlICh0aGUg
+c291cmNlIG9mIGJvb3Quc2NyKT8KPiA+ID4KPiA+ID4gQnkgdGhlIHNpemUgb2YgRFRCIHlvdSBj
+YW4gc2VlIHRoYXQgZGlmZmVyZW50IERUQiBpcyBsb2FkZWQuIEkgYXNzdW1lCj4gPiA+IHlvdSB0
+cmllZCB0byBib290IHRoZSBzYW1lIGtlcm5lbCwgdGhlbiBpdCBjb3VsZCBtZWFuIHRoYXQgYm9h
+cmRuYW1lCj4gPiA+IHdhcyB1c2VkIGluc3RlYWQgb2YgYm9hcmRfbmFtZSB0byBjaG9vc2UgRFRC
+LiBTdXNwaWNpb3VzIGlzIHRoYXQKPiA+ID4ga2VybmVsIHNpemUgYWxzbyBkaWZmZXJzLi4uIHNv
+IG1heWJlIHlvdSBib290ZWQgc29tZXRoaW5nIGVsc2U/IEFzCj4gPiA+IHVzdWFsIGRlYnVnZ2lu
+ZyBwcmFjdGljZSwgcmVkdWNlIG51bWJlciBvZiB1bmtub3duIGZhY3RvcnMuIERvIG5vdAo+ID4g
+PiBjaGFuZ2Uga2VybmVsIGFuZCBVLUJvb3QgYXQgdGhlIHNhbWUgdGltZS4KPiA+ID4KPiA+ID4g
+QWxzbywgeW91IGNhbiB0cnkgcmV2ZXJ0aW5nIGNvbW1pdCBlNmIxNDY3MDgxZDMgKCJhcm06IGV4
+eW5vczogUmVtb3ZlCj4gPiA+IGR1cGxpY2F0ZWQgImJvYXJkbmFtZSIgZW52IHNldHRpbmciKSBh
+bmQgc2VlIGlmIGl0IGhlbHBzLiBPciBqdXN0IHRyeQo+ID4gPiB0byBiaXNlY3QgYXJvdW5kIGNo
+YW5nZXMgY29taW5nIGZyb20gdS1ib290IHNhbXN1bmcgdHJlZS4gVHJ5IGJvb3RpbmcKPiA+ID4g
+djIwMTkuMDEgYW5kIHBhc3RlIHRoZSByZXN1bHRzIGFzIHdlbGwuCj4gPiA+Cj4gPiA+IEJlc3Qg
+cmVnYXJkcywKPiA+ID4gS3J6eXN6dG9mCj4gPiA+Cj4gPgo+ID4gSSBoYXZlIHRlc3RlZCB3aXRo
+IHByZS1jb21waWxlZCBpbWFnZSBhbmQgdGhlIGNyb3NzIGNvbXBpbGVkIGtlcm5lbAppbWFnZQo+
+ID4gYm90aCBmYWlsZWQgdG8gbG9hZCB0aGUga2VybmVsLgo+ID4KPiA+IE5vIHJldmVydCBvZiB0
+aGUgY29tbWl0IGU2YjE0NjcwODFkMyBkaWQgbm90IGhlbHAuCj4gPgo+ID4gWWVzIGl0IHNlZW0g
+c3RyYW5nZSB0aGF0IHRoYXQgbG9hZCBhZGRyZXNzIGlzIGNoYW5nZXMgc29tZSBob3cgaW4gdGhl
+CnUtYm9vdCBlbnYKPiA+Cj4gPiBwcmludGVudiBzZXR0aW5nIG9mIHRoZSBsYXRlc3QgdS1ib290
+ICAgICBVLUJvb3QKPiA+IDIwMTkuMDQtcmMzLTAwMTMxLWc4MzAzNDY3ZTgwZC1kaXJ0eQo+ID4g
+WzBdIGh0dHBzOi8vcGFzdGViaW4uY29tLzFIZ2M1eHhDICAgICAgKG5ld3UtYm9vdC50eHQpCj4g
+Pgo+ID4gcHJpbnRlbnYgc2V0dGluZyBmb3IgdGhlIG9sZCB1LWJvb3QuICAgICAgVS1Cb290IDIw
+MTguMDEtMQo+ID4gWzFdIGh0dHBzOi8vcGFzdGViaW4uY29tL3dENnpLNmVHICAgIChvbGR1LWJv
+b3QudHh0KQo+ID4KPiA+IEF0dGFjaCBpcyB0aGUgYm9vdC50eHQgKGJvb3Quc2NyKSwgYWxzbyB0
+aGUgdS1ib290IGVudiBvbGQgYW5kCnUtYm9vdC1lbnYgbmV3Cj4KPiBBbmQgZG9lcyAyMDE5LjAx
+IHdvcms/Cj4KPiBLcnp5c3p0b2YKCkl0IGxvb2tzIGxpa2UgQXJjaGxpbnV4IHVib290IGZvciBP
+ZHJvaWQgVTMgc2V0IHNvbWUgZXh0cmEgZW52aXJvbm1lbnQKdmFyaWFibGUgdG8gbWFrZSB0aGlz
+IHdvcmsuCgpbMF0KaHR0cHM6Ly9naXRodWIuY29tL2FyY2hsaW51eGFybS9QS0dCVUlMRHMvYmxv
+Yi9tYXN0ZXIvYWxhcm0vdWJvb3Qtb2Ryb2lkLzAwMDEtQ29udmVydC1vZHJvaWQtdG8tdXNlLWRp
+c3Ryb19ib290Y21kLnBhdGNoClsxXQpodHRwczovL2dpdGh1Yi5jb20vYXJjaGxpbnV4YXJtL1BL
+R0JVSUxEcy9ibG9iL21hc3Rlci9hbGFybS91Ym9vdC1vZHJvaWQvMDAwMi1vZHJvaWQteC1zdXBw
+b3J0LnBhdGNoCgpJIGdhdmUgdGhlc2UgcGF0Y2hlcyBhIHRyeSBidXQgbm8gc3VjY2VzcyDwn6SU
+CgpCZXN0IFJlZ2FyZHMKLUFuYW5kCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fClUtQm9vdCBtYWlsaW5nIGxpc3QKVS1Cb290QGxpc3RzLmRlbnguZGUKaHR0
+cHM6Ly9saXN0cy5kZW54LmRlL2xpc3RpbmZvL3UtYm9vdAo=
