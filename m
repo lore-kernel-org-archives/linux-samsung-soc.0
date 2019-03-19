@@ -1,111 +1,88 @@
-From: Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH v2] mmc: dw_mmc: Fix to avoid potential NULL pointer
- dereference
-Date: Tue, 19 Mar 2019 11:09:48 +0000
-Message-ID: <f3363524-f764-6652-9b16-3a8b0d30e6df@arm.com>
-References: <20190319014551.16559-1-pakki001@umn.edu>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] ASoC: samsung: i2s: Don't use register read to determine
+ slave/master mode
+Date: Tue, 19 Mar 2019 13:11:02 +0100
+Message-ID: <20190319121102.28069-1-s.nawrocki@samsung.com>
+References: <CGME20190319121116epcas2p24125f5163744c01c0c2b6b25ca4878b8@epcas2p2.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190319014551.16559-1-pakki001@umn.edu>
-Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Aditya Pakki <pakki001@umn.edu>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-samsung-soc@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, linux-mmc@vger.kernel.org, kjlu@umn.edu, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Jun Nie <jun.nie@linaro.org>, Shawn Guo <shawnguo@kernel.org>, linux-arm-kernel@lists.infradead.org
+To: broonie@kernel.org, lgirdwood@gmail.com
+Cc: sbkim73@samsung.com, krzk@kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 19/03/2019 01:45, Aditya Pakki wrote:
-> of_match_node can fail and return NULL in case no matching structure.
-> The patches checks for such a scenario and returns -ENXIO.
+We can simplify the code by caching the CPU DAI master/slave
+information rather than reading previously set register bit.
 
-FWIW, it looks like most of these instances could be cleaned up even 
-more with of_device_get_match_data().
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ sound/soc/samsung/i2s.c | 27 +++++++++++----------------
+ 1 file changed, 11 insertions(+), 16 deletions(-)
 
-In general, do bear in mind that adding these NULL checks *everywhere* 
-will in many cases just amount to useless dead code - a pure DT-based 
-driver can usually freely assume of_match_node() returns non-NULL for 
-its own device and match table in its probe routine, because that probe 
-routine only ever gets called if of_driver_match_device() has already 
-made the same match in the first place.
-
-Robin.
-
-> ---
-> V1: Added files dw_mmc-zx.c and dw_mmc-rockchip.c
-> 
-> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
-> ---
->   drivers/mmc/host/dw_mmc-exynos.c   | 2 ++
->   drivers/mmc/host/dw_mmc-k3.c       | 2 ++
->   drivers/mmc/host/dw_mmc-pltfm.c    | 2 ++
->   drivers/mmc/host/dw_mmc-rockchip.c | 2 ++
->   drivers/mmc/host/dw_mmc-zx.c       | 2 ++
->   5 files changed, 10 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
-> index d46c3439b508..8a75d7314606 100644
-> --- a/drivers/mmc/host/dw_mmc-exynos.c
-> +++ b/drivers/mmc/host/dw_mmc-exynos.c
-> @@ -554,6 +554,8 @@ static int dw_mci_exynos_probe(struct platform_device *pdev)
->   	int ret;
->   
->   	match = of_match_node(dw_mci_exynos_match, pdev->dev.of_node);
-> +	if (!match)
-> +		return -ENXIO;
->   	drv_data = match->data;
->   
->   	pm_runtime_get_noresume(&pdev->dev);
-> diff --git a/drivers/mmc/host/dw_mmc-k3.c b/drivers/mmc/host/dw_mmc-k3.c
-> index 89cdb3d533bb..cc50b7546a20 100644
-> --- a/drivers/mmc/host/dw_mmc-k3.c
-> +++ b/drivers/mmc/host/dw_mmc-k3.c
-> @@ -459,6 +459,8 @@ static int dw_mci_k3_probe(struct platform_device *pdev)
->   	const struct of_device_id *match;
->   
->   	match = of_match_node(dw_mci_k3_match, pdev->dev.of_node);
-> +	if (!match)
-> +		return -ENXIO;
->   	drv_data = match->data;
->   
->   	return dw_mci_pltfm_register(pdev, drv_data);
-> diff --git a/drivers/mmc/host/dw_mmc-pltfm.c b/drivers/mmc/host/dw_mmc-pltfm.c
-> index 58c13e21bd5a..b1948989f617 100644
-> --- a/drivers/mmc/host/dw_mmc-pltfm.c
-> +++ b/drivers/mmc/host/dw_mmc-pltfm.c
-> @@ -82,6 +82,8 @@ static int dw_mci_pltfm_probe(struct platform_device *pdev)
->   
->   	if (pdev->dev.of_node) {
->   		match = of_match_node(dw_mci_pltfm_match, pdev->dev.of_node);
-> +		if (!match)
-> +			return -ENXIO;
->   		drv_data = match->data;
->   	}
->   
-> diff --git a/drivers/mmc/host/dw_mmc-rockchip.c b/drivers/mmc/host/dw_mmc-rockchip.c
-> index 8c86a800a8fd..20e3471260ea 100644
-> --- a/drivers/mmc/host/dw_mmc-rockchip.c
-> +++ b/drivers/mmc/host/dw_mmc-rockchip.c
-> @@ -344,6 +344,8 @@ static int dw_mci_rockchip_probe(struct platform_device *pdev)
->   		return -ENODEV;
->   
->   	match = of_match_node(dw_mci_rockchip_match, pdev->dev.of_node);
-> +	if (!match)
-> +		return -ENXIO;
->   	drv_data = match->data;
->   
->   	pm_runtime_get_noresume(&pdev->dev);
-> diff --git a/drivers/mmc/host/dw_mmc-zx.c b/drivers/mmc/host/dw_mmc-zx.c
-> index c06b5393312f..abea35431045 100644
-> --- a/drivers/mmc/host/dw_mmc-zx.c
-> +++ b/drivers/mmc/host/dw_mmc-zx.c
-> @@ -213,6 +213,8 @@ static int dw_mci_zx_probe(struct platform_device *pdev)
->   	const struct of_device_id *match;
->   
->   	match = of_match_node(dw_mci_zx_match, pdev->dev.of_node);
-> +	if (!match)
-> +		return -ENXIO;
->   	drv_data = match->data;
->   
->   	return dw_mci_pltfm_register(pdev, drv_data);
-> 
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index ab471d550d17..9722940da6a4 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -88,12 +88,6 @@ struct samsung_i2s_priv {
+ 	struct platform_device *pdev;
+ 	struct platform_device *pdev_sec;
+ 
+-	/* Memory mapped SFR region */
+-	void __iomem *addr;
+-
+-	/* Spinlock protecting access to the device's registers */
+-	spinlock_t lock;
+-
+ 	/* Lock for cross interface checks */
+ 	spinlock_t pcm_lock;
+ 
+@@ -122,6 +116,15 @@ struct samsung_i2s_priv {
+ 	/* The clock provider's data */
+ 	struct clk *clk_table[3];
+ 	struct clk_onecell_data clk_data;
++
++	/* Spinlock protecting member fields below */
++	spinlock_t lock;
++
++	/* Memory mapped SFR region */
++	void __iomem *addr;
++
++	/* A flag indicating the I2S slave mode operation */
++	bool slave_mode;
+ };
+ 
+ /* Returns true if this is the 'overlay' stereo DAI */
+@@ -130,15 +133,6 @@ static inline bool is_secondary(struct i2s_dai *i2s)
+ 	return i2s->drv->id == SAMSUNG_I2S_ID_SECONDARY;
+ }
+ 
+-/* If operating in SoC-Slave mode */
+-static inline bool is_slave(struct i2s_dai *i2s)
+-{
+-	struct samsung_i2s_priv *priv = i2s->priv;
+-
+-	u32 mod = readl(priv->addr + I2SMOD);
+-	return (mod & (1 << priv->variant_regs->mss_off)) ? true : false;
+-}
+-
+ /* If this interface of the controller is transmitting data */
+ static inline bool tx_active(struct i2s_dai *i2s)
+ {
+@@ -715,6 +709,7 @@ static int i2s_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ 	mod &= ~(sdf_mask | lrp_rlow | mod_slave);
+ 	mod |= tmp;
+ 	writel(mod, priv->addr + I2SMOD);
++	priv->slave_mode = (mod & mod_slave);
+ 	spin_unlock_irqrestore(&priv->lock, flags);
+ 	pm_runtime_put(dai->dev);
+ 
+@@ -917,7 +912,7 @@ static int config_setup(struct i2s_dai *i2s)
+ 	set_rfs(i2s, rfs);
+ 
+ 	/* Don't bother with PSR in Slave mode */
+-	if (is_slave(i2s))
++	if (priv->slave_mode)
+ 		return 0;
+ 
+ 	if (!(priv->quirks & QUIRK_NO_MUXPSR)) {
+-- 
+2.17.1
