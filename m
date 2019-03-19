@@ -1,57 +1,42 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] ARM: dts: exynos: Increase minimal ACLK400_DISP1 frequency
- on Exynos542x
-Date: Tue, 19 Mar 2019 14:26:01 +0100
-Message-ID: <20190319132601.3589-1-m.szyprowski@samsung.com>
-References: <CGME20190319132608eucas1p2aad43f53df1cadf3a4c5ab48752644be@eucas1p2.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 03/15] ARM: exynos: fix a leaked reference by adding
+ missing of_node_put
+Date: Tue, 19 Mar 2019 21:39:46 +0100
+Message-ID: <20190319203946.GB16150@kozik-lap>
+References: <1551785646-46173-1-git-send-email-wen.yang99@zte.com.cn>
+ <1551785646-46173-3-git-send-email-wen.yang99@zte.com.cn>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Marian Mihailescu <mihailescu2m@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1551785646-46173-3-git-send-email-wen.yang99@zte.com.cn>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wen Yang <wen.yang99@zte.com.cn>
+Cc: linux-kernel@vger.kernel.org, wang.yi59@zte.com.cn, Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-QUNMSzQwMF9ESVNQMSBidXMgZmVlZHMgc29tZSBpbnRlcm5hbCBidXNlcyBvZiB0aGUgZGlzcGxh
-eSBzdWJzeXN0ZW0sIHNvbWUKb2Ygd2hpY2ggYXJlIGFsc28gcmVsYXRlZCB0byBUVi9NaXhlciBo
-YXJkd2FyZSBtb2R1bGVzLiBXaGVuIHRoYXQgYnVzCmlzIHNldCB0byAxMjBNSHosIEV4eW5vcyBN
-aXhlciBpcyBub3QgYWJsZSB0byBwcm9wZXJseSBoYW5kbGUgdHdvIFhSR0IKZGlzcGxheSBwbGFu
-ZXMgYXQgRnVsbEhELTYwTUh6LiBETUEgdW5kZXJydW4gaGFwcGVucywgd2hpY2ggaW4gdHVybiBt
-aWdodApyZXN1bHQgaW4gcmVhZGluZyBkYXRhIG91dCBvZiB0aGUgY29uZmlndXJlZCBidWZmZXIs
-IHdoYXQgY2F1c2VzIElPTU1VCnBhZ2UgZmF1bHQgYW5kIGtlcm5lbCBwYW5pYy4KClRoaXMgY2hh
-bmdlIGZpeGVzIHRoZSBmb2xsb3dpbmcgSU9NTVUgZmF1bHQsIG9ic2VydmVkLCB3aGVuIDIgTWl4
-ZXIgcGxhbmVzCndlcmUgZW5hYmxlZDoKCmV4eW5vcy1zeXNtbXUgMTQ2NTAwMDAuc3lzbW11OiAx
-NDQ1MDAwMC5taXhlcjogUEFHRSBGQVVMVCBvY2N1cnJlZCBhdCAweDIwZmU5MDAwCi0tLS0tLS0t
-LS0tLVsgY3V0IGhlcmUgXS0tLS0tLS0tLS0tLQprZXJuZWwgQlVHIGF0IC4uL2RyaXZlcnMvaW9t
-bXUvZXh5bm9zLWlvbW11LmM6NDUwIQpJbnRlcm5hbCBlcnJvcjogT29wcyAtIEJVRzogMCBbIzFd
-IFBSRUVNUFQgU01QIEFSTQpNb2R1bGVzIGxpbmtlZCBpbjoKQ1BVOiA1IFBJRDogMCBDb21tOiBz
-d2FwcGVyLzUgTm90IHRhaW50ZWQgNS4wLjAtMDAwMDMtZzFiMDMwODgxNjhlYSAjMTQ5CkhhcmR3
-YXJlIG5hbWU6IFNBTVNVTkcgRVhZTk9TIChGbGF0dGVuZWQgRGV2aWNlIFRyZWUpClBDIGlzIGF0
-IGV4eW5vc19zeXNtbXVfaXJxKzB4MWMwLzB4MjY0CkxSIGlzIGF0IGxvY2tfaXNfaGVsZF90eXBl
-KzB4NDQvMHg2NAouLi4KClJlcG9ydGVkLWJ5OiBNYXJpYW4gTWloYWlsZXNjdSA8bWloYWlsZXNj
-dTJtQGdtYWlsLmNvbT4KRml4ZXM6IDVkOTljYzU5YTNjNiAoIkFSTTogZHRzOiBleHlub3M6IE1v
-dmUgRXh5bm9zNTI1MCBhbmQgRXh5bm9zNTQyMCBub2RlcyB1bmRlciBzb2MiKQpGaXhlczogYjA0
-YTYyZDNhZGUzICgiQVJNOiBkdHM6IGV4eW5vczogQWRkIGJ1cyBub2RlcyB1c2luZyBWRERfSU5U
-IGZvciBFeHlub3M1NDJ4IFNvQyIpClNpZ25lZC1vZmYtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0u
-c3p5cHJvd3NraUBzYW1zdW5nLmNvbT4KLS0tCiBhcmNoL2FybS9ib290L2R0cy9leHlub3M1NDIw
-LmR0c2kgfCAyICstCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24o
-LSkKCmRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1NDIwLmR0c2kgYi9hcmNo
-L2FybS9ib290L2R0cy9leHlub3M1NDIwLmR0c2kKaW5kZXggYWFmZjE1ODgwNzYxLi4yNTBmNGQ3
-MTgyZTAgMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0MjAuZHRzaQorKysg
-Yi9hcmNoL2FybS9ib290L2R0cy9leHlub3M1NDIwLmR0c2kKQEAgLTEyOTQsNyArMTI5NCw3IEBA
-CiAJCQljb21wYXRpYmxlID0gIm9wZXJhdGluZy1wb2ludHMtdjIiOwogCiAJCQlvcHAwMCB7Ci0J
-CQkJb3BwLWh6ID0gL2JpdHMvIDY0IDwxMjAwMDAwMDA+OworCQkJCW9wcC1oeiA9IC9iaXRzLyA2
-NCA8MTUwMDAwMDAwPjsKIAkJCX07CiAJCQlvcHAwMSB7CiAJCQkJb3BwLWh6ID0gL2JpdHMvIDY0
-IDwyMDAwMDAwMDA+OwotLSAKMi4xNy4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9kcmktZGV2ZWw=
+On Tue, Mar 05, 2019 at 07:33:54PM +0800, Wen Yang wrote:
+> The call to of_get_next_child returns a node pointer with refcount
+> incremented thus it must be explicitly decremented after the last
+> usage.
+> 
+> Detected by coccinelle with the following warnings:
+> ./arch/arm/mach-exynos/firmware.c:201:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 193, but without a corresponding object release within this function.
+> ./arch/arm/mach-exynos/firmware.c:204:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 193, but without a corresponding object release within this function.
+> ./arch/arm/mach-exynos/suspend.c:642:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 634, but without a corresponding object release within this function.
+> 
+> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+> Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+
+Thanks, applied, with adjustments in commit msg and removal of Florian's
+reviewed-by tag (I cannot find his email with review).
+
+Best regards,
+Krzysztof
