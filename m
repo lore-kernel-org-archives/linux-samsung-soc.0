@@ -1,152 +1,111 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: Odroid U3 - Upgrade to latest u-boot kernel load fails.
-Date: Tue, 19 Mar 2019 15:12:49 +0530
-Message-ID: <CANAwSgQo7=hHZpR8p6c9yZaMDap8eGEUG52y+Qva=JfiNDN0vg@mail.gmail.com>
-References: <CANAwSgR8SNYT4JmGu_U-wGGJcEtkEmBnWaSMae1MEPYh07vbXg@mail.gmail.com>
- <CAJKOXPcg9QkW3cwY2BQ1CoNCqtS1mSfK88=iA5iCF57PoxiR9g@mail.gmail.com>
- <CANAwSgTpQQNsPTpU-CXoKrZrgYxq2F+J9MWhcGY0NNCB5x_p2w@mail.gmail.com>
- <CAJKOXPfm49g6quuX5jxoZ8-d=-5vBVRkTwO-_jhB-w7Ki8Jo1w@mail.gmail.com>
- <CANAwSgTpzXzfs6EBC9ydpyWJxLtMyefYNnCaSkMHs-=ppYwNeQ@mail.gmail.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH v2] mmc: dw_mmc: Fix to avoid potential NULL pointer
+ dereference
+Date: Tue, 19 Mar 2019 11:09:48 +0000
+Message-ID: <f3363524-f764-6652-9b16-3a8b0d30e6df@arm.com>
+References: <20190319014551.16559-1-pakki001@umn.edu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CANAwSgTpzXzfs6EBC9ydpyWJxLtMyefYNnCaSkMHs-=ppYwNeQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: U-Boot Mailing List <u-boot@lists.denx.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190319014551.16559-1-pakki001@umn.edu>
+Content-Language: en-GB
+Sender: linux-kernel-owner@vger.kernel.org
+To: Aditya Pakki <pakki001@umn.edu>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-samsung-soc@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, linux-mmc@vger.kernel.org, kjlu@umn.edu, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Jun Nie <jun.nie@linaro.org>, Shawn Guo <shawnguo@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+On 19/03/2019 01:45, Aditya Pakki wrote:
+> of_match_node can fail and return NULL in case no matching structure.
+> The patches checks for such a scenario and returns -ENXIO.
 
+FWIW, it looks like most of these instances could be cleaned up even 
+more with of_device_get_match_data().
 
-On Tue, 19 Mar 2019 at 01:54, Anand Moon <linux.amoon@gmail.com> wrote:
->
-> Hi Krzysztof,
->
-> On Mon, 18 Mar 2019 at 23:33, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >
-> > On Mon, 18 Mar 2019 at 18:49, Anand Moon <linux.amoon@gmail.com> wrote:
-> > >
-> > > Hi Krzysztof,
-> > >
-> > > On Mon, 18 Mar 2019 at 18:20, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > > >
-> > > > On Mon, 18 Mar 2019 at 13:32, Anand Moon <linux.amoon@gmail.com> wrote:
-> > > > >
-> > > > > Hi Krzysztof / Marek,
-> > > > >
-> > > > > After I update the latest u-boot on my Odroud U3+ it fails to load the
-> > > > > kernel it hangs.
-> > > > > I am using Archlinux on Odroid U3.
-> > > > >
-> > > > > U-Boot 2019.04-rc3-00131-g8303467e80d-dirty (Mar 18 2019 - 12:12:23 +0000)
-> > > > >
-> > > > > CPU:   Exynos4412 @ 1 GHz
-> > > > > Model: Odroid based on Exynos4412
-> > > > > Type:  u3
-> > > > > DRAM:  2 GiB
-> > > > > LDO20@VDDQ_EMMC_1.8V: set 1800000 uV; enabling
-> > > > > LDO22@VDDQ_EMMC_2.8V: set 2800000 uV; enabling
-> > > > > LDO21@TFLASH_2.8V: set 2800000 uV; enabling
-> > > > > MMC:   SAMSUNG SDHCI: 1, EXYNOS DWMMC: 0
-> > > > > Loading Environment from MMC... Card did not respond to voltage select!
-> > > > > *** Warning - No block device, using default environment
-> > > > >
-> > > > > Net:   No ethernet found.
-> > > > > Hit any key to stop autoboot:  0
-> > > > > switch to partitions #0, OK
-> > > > > mmc1 is current device
-> > > > > Scanning mmc 1:1...
-> > > > > Found U-Boot script /boot/boot.scr
-> > > > > 769 bytes read in 6 ms (125 KiB/s)
-> > > > > ## Executing script at 42000000
-> > > > > 6901856 bytes read in 253 ms (26 MiB/s)
-> > > > > 53078 bytes read in 19 ms (2.7 MiB/s)
-> > > > > 6590950 bytes read in 240 ms (26.2 MiB/s)
-> > > > > Kernel image @ 0x41000000 [ 0x000000 - 0x695060 ]
-> > > > > ## Flattened Device Tree blob at 40800000
-> > > > >    Booting using the fdt blob at 0x40800000
-> > > > >    Loading Ramdisk to 4f9b6000, end 4ffff1e6 ... OK
-> > > > >    Loading Device Tree to 4f9a6000, end 4f9b5f55 ... OK
-> > > > >
-> > > > > Starting kernel ...
-> > > >
-> > > > Can you attach your boot.init file (the source of boot.scr)?
-> > > >
-> > > > By the size of DTB you can see that different DTB is loaded. I assume
-> > > > you tried to boot the same kernel, then it could mean that boardname
-> > > > was used instead of board_name to choose DTB. Suspicious is that
-> > > > kernel size also differs... so maybe you booted something else? As
-> > > > usual debugging practice, reduce number of unknown factors. Do not
-> > > > change kernel and U-Boot at the same time.
-> > > >
-> > > > Also, you can try reverting commit e6b1467081d3 ("arm: exynos: Remove
-> > > > duplicated "boardname" env setting") and see if it helps. Or just try
-> > > > to bisect around changes coming from u-boot samsung tree. Try booting
-> > > > v2019.01 and paste the results as well.
-> > > >
-> > > > Best regards,
-> > > > Krzysztof
-> > > >
-> > >
-> > > I have tested with pre-compiled image and the cross compiled kernel image
-> > > both failed to load the kernel.
-> > >
-> > > No revert of the commit e6b1467081d3 did not help.
-> > >
-> > > Yes it seem strange that that load address is changes some how in the u-boot env
-> > >
-> > > printenv setting of the latest u-boot     U-Boot
-> > > 2019.04-rc3-00131-g8303467e80d-dirty
-> > > [0] https://pastebin.com/1Hgc5xxC      (newu-boot.txt)
-> > >
-> > > printenv setting for the old u-boot.      U-Boot 2018.01-1
-> > > [1] https://pastebin.com/wD6zK6eG    (oldu-boot.txt)
-> > >
-> > > Attach is the boot.txt (boot.scr), also the u-boot env old and u-boot-env new
-> >
-> > And does 2019.01 work?
-> >
-> > Krzysztof
->
-> It looks like Archlinux uboot for Odroid U3 set some extra environment variable to make this work.
->
-> [0] https://github.com/archlinuxarm/PKGBUILDs/blob/master/alarm/uboot-odroid/0001-Convert-odroid-to-use-distro_bootcmd.patch
-> [1] https://github.com/archlinuxarm/PKGBUILDs/blob/master/alarm/uboot-odroid/0002-odroid-x-support.patch
->
-> I gave these patches a try but no success
->
-> Best Regards
-> -Anand
+In general, do bear in mind that adding these NULL checks *everywhere* 
+will in many cases just amount to useless dead code - a pure DT-based 
+driver can usually freely assume of_match_node() returns non-NULL for 
+its own device and match table in its probe routine, because that probe 
+routine only ever gets called if of_driver_match_device() has already 
+made the same match in the first place.
 
-If found out the commit that break the boot on Odroid U3
-Revert of below commit breaks the booting of the kernel.
+Robin.
 
-From: Seung-Woo Kim <sw0312.kim@samsung.com>
-Date: Tue, 20 Nov 2018 14:54:39 +0900
-Subject: [PATCH] Revert "arm: config: fix default console only to specify the
- device"
-
-This reverts commit 232ed3ca534708527a9515c7c41bc3542949525c.
-
-In exynos boards, ${console} is used to set bootargs but it sets
-without "console=", so CONFIG_DEFAULT_CONSOLE for these boards is
-designated with "console=" but it is removed. So revert the commit.
-
-References for using ${console} in
-   board/samsung/common/bootscripts/autoboot.cmd
-   board/samsung/common/bootscripts/bootzimg.cmd
-
-Please let me know it how to resolve this issue.
-
-Best Regards
--Anand
+> ---
+> V1: Added files dw_mmc-zx.c and dw_mmc-rockchip.c
+> 
+> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+> ---
+>   drivers/mmc/host/dw_mmc-exynos.c   | 2 ++
+>   drivers/mmc/host/dw_mmc-k3.c       | 2 ++
+>   drivers/mmc/host/dw_mmc-pltfm.c    | 2 ++
+>   drivers/mmc/host/dw_mmc-rockchip.c | 2 ++
+>   drivers/mmc/host/dw_mmc-zx.c       | 2 ++
+>   5 files changed, 10 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+> index d46c3439b508..8a75d7314606 100644
+> --- a/drivers/mmc/host/dw_mmc-exynos.c
+> +++ b/drivers/mmc/host/dw_mmc-exynos.c
+> @@ -554,6 +554,8 @@ static int dw_mci_exynos_probe(struct platform_device *pdev)
+>   	int ret;
+>   
+>   	match = of_match_node(dw_mci_exynos_match, pdev->dev.of_node);
+> +	if (!match)
+> +		return -ENXIO;
+>   	drv_data = match->data;
+>   
+>   	pm_runtime_get_noresume(&pdev->dev);
+> diff --git a/drivers/mmc/host/dw_mmc-k3.c b/drivers/mmc/host/dw_mmc-k3.c
+> index 89cdb3d533bb..cc50b7546a20 100644
+> --- a/drivers/mmc/host/dw_mmc-k3.c
+> +++ b/drivers/mmc/host/dw_mmc-k3.c
+> @@ -459,6 +459,8 @@ static int dw_mci_k3_probe(struct platform_device *pdev)
+>   	const struct of_device_id *match;
+>   
+>   	match = of_match_node(dw_mci_k3_match, pdev->dev.of_node);
+> +	if (!match)
+> +		return -ENXIO;
+>   	drv_data = match->data;
+>   
+>   	return dw_mci_pltfm_register(pdev, drv_data);
+> diff --git a/drivers/mmc/host/dw_mmc-pltfm.c b/drivers/mmc/host/dw_mmc-pltfm.c
+> index 58c13e21bd5a..b1948989f617 100644
+> --- a/drivers/mmc/host/dw_mmc-pltfm.c
+> +++ b/drivers/mmc/host/dw_mmc-pltfm.c
+> @@ -82,6 +82,8 @@ static int dw_mci_pltfm_probe(struct platform_device *pdev)
+>   
+>   	if (pdev->dev.of_node) {
+>   		match = of_match_node(dw_mci_pltfm_match, pdev->dev.of_node);
+> +		if (!match)
+> +			return -ENXIO;
+>   		drv_data = match->data;
+>   	}
+>   
+> diff --git a/drivers/mmc/host/dw_mmc-rockchip.c b/drivers/mmc/host/dw_mmc-rockchip.c
+> index 8c86a800a8fd..20e3471260ea 100644
+> --- a/drivers/mmc/host/dw_mmc-rockchip.c
+> +++ b/drivers/mmc/host/dw_mmc-rockchip.c
+> @@ -344,6 +344,8 @@ static int dw_mci_rockchip_probe(struct platform_device *pdev)
+>   		return -ENODEV;
+>   
+>   	match = of_match_node(dw_mci_rockchip_match, pdev->dev.of_node);
+> +	if (!match)
+> +		return -ENXIO;
+>   	drv_data = match->data;
+>   
+>   	pm_runtime_get_noresume(&pdev->dev);
+> diff --git a/drivers/mmc/host/dw_mmc-zx.c b/drivers/mmc/host/dw_mmc-zx.c
+> index c06b5393312f..abea35431045 100644
+> --- a/drivers/mmc/host/dw_mmc-zx.c
+> +++ b/drivers/mmc/host/dw_mmc-zx.c
+> @@ -213,6 +213,8 @@ static int dw_mci_zx_probe(struct platform_device *pdev)
+>   	const struct of_device_id *match;
+>   
+>   	match = of_match_node(dw_mci_zx_match, pdev->dev.of_node);
+> +	if (!match)
+> +		return -ENXIO;
+>   	drv_data = match->data;
+>   
+>   	return dw_mci_pltfm_register(pdev, drv_data);
+> 
