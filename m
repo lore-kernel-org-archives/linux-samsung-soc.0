@@ -1,77 +1,87 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2 3/4] media: s5p-cec: fix possible object reference
- leak
-Date: Thu, 21 Mar 2019 12:51:48 +0100
-Message-ID: <376c5ed6-7c2d-62a1-9ed0-48a329965d06@samsung.com>
-References: <CGME20190212234951epcas3p3c5dff046aab328e983ecdcecb916148c@epcas3p3.samsung.com>
-        <1550015279-42723-1-git-send-email-wen.yang99@zte.com.cn>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v2] clocksource: exynos_mct: Increase priority over ARM
+ arch timer
+Date: Thu, 21 Mar 2019 21:30:08 +0900
+Message-ID: <af0dfbcb-4a9c-7d41-b08d-994d3a57604e@samsung.com>
+References: <CGME20190321082621eucas1p16d48ef152cd76edb7d46e8c773fa000e@eucas1p1.samsung.com>
+        <20190321082608.21366-1-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1550015279-42723-1-git-send-email-wen.yang99@zte.com.cn>
+In-Reply-To: <20190321082608.21366-1-m.szyprowski@samsung.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wen Yang <wen.yang99@zte.com.cn>
-Cc: mchehab@kernel.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn, "Hans Verkuil (hansverk)" <hansverk@cisco.com>, Hans Verkuil <hans.verkuil@cisco.com>, Wen Yang <yellowriver2010@hotmail.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi
+Hi Marek,
 
-On 2019-02-13 00:47, Wen Yang wrote:
-> The call to of_parse_phandle() returns a node pointer with refcount
-> incremented thus it must be explicitly decremented here after the last
-> usage.
-> The of_find_device_by_node() takes a reference to the underlying device
-> structure, we also should release that reference.
-> This patch fixes those two issues.
->
-> Hans Verkuil says:
-> The cec driver should never take a reference of the hdmi device.
-> It never accesses the HDMI device, it only needs the HDMI device pointer as
-> a key in the notifier list.
-> The real problem is that several CEC drivers take a reference of the HDMI
-> device and never release it. So those drivers need to be fixed.
->
-> Fixes: a93d429b51fb ("[media] s5p-cec: add cec-notifier support, move out of staging")
-> Suggested-by: Hans Verkuil (hansverk) <hansverk@cisco.com>
-> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-> Cc: Hans Verkuil (hansverk) <hansverk@cisco.com>
-> Cc: Hans Verkuil <hans.verkuil@cisco.com>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: Wen Yang <yellowriver2010@hotmail.com>
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-media@vger.kernel.org
-
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
+On 19. 3. 21. 오후 5:26, Marek Szyprowski wrote:
+> Exynos Multi-Core Timer driver (exynos_mct) must be started before ARM
+> Architected Timers (arch_timer), because they both share some common
+> hardware blocks (global system counter) and turning on MCT is needed
+> to get ARM Architected Timer working properly. Increase MCT timer rating
+> and hotplug priority over ARM Archictected timer driver to achieve that.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
-> v2->v1:
-> - move of_node_put() to just after the 'hdmi_dev = of_find_device_by_node(np)'.
-> - put_device() can be done before the cec = devm_kzalloc line.
->
->   drivers/media/platform/s5p-cec/s5p_cec.c | 2 ++
->   1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/media/platform/s5p-cec/s5p_cec.c b/drivers/media/platform/s5p-cec/s5p_cec.c
-> index 8837e26..1f5c355 100644
-> --- a/drivers/media/platform/s5p-cec/s5p_cec.c
-> +++ b/drivers/media/platform/s5p-cec/s5p_cec.c
-> @@ -192,9 +192,11 @@ static int s5p_cec_probe(struct platform_device *pdev)
->   		return -ENODEV;
->   	}
->   	hdmi_dev = of_find_device_by_node(np);
-> +	of_node_put(np);
->   	if (hdmi_dev == NULL)
->   		return -EPROBE_DEFER;
->   
-> +	put_device(&hdmi_dev->dev);
->   	cec = devm_kzalloc(&pdev->dev, sizeof(*cec), GFP_KERNEL);
->   	if (!cec)
->   		return -ENOMEM;
+> v2: added comments about the relation to ARM arch timer
+>     rebased onto v5.1-rc1
+> v1: https://patchwork.kernel.org/patch/10814921/
+> ---
+>  drivers/clocksource/exynos_mct.c | 4 ++--
+>  include/linux/cpuhotplug.h       | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+> index 34bd250d46c6..6aa10cbc1d59 100644
+> --- a/drivers/clocksource/exynos_mct.c
+> +++ b/drivers/clocksource/exynos_mct.c
+> @@ -209,7 +209,7 @@ static void exynos4_frc_resume(struct clocksource *cs)
+>  
+>  static struct clocksource mct_frc = {
+>  	.name		= "mct-frc",
+> -	.rating		= 400,
+> +	.rating		= 450,	/* use value higher than ARM arch timer */
+>  	.read		= exynos4_frc_read,
+>  	.mask		= CLOCKSOURCE_MASK(32),
+>  	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
+> @@ -464,7 +464,7 @@ static int exynos4_mct_starting_cpu(unsigned int cpu)
+>  	evt->set_state_oneshot_stopped = set_state_shutdown;
+>  	evt->tick_resume = set_state_shutdown;
+>  	evt->features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT;
+> -	evt->rating = 450;
+> +	evt->rating = 500;	/* use value higher than ARM arch timer */
+>  
+>  	exynos4_mct_write(TICK_BASE_CNT, mevt->base + MCT_L_TCNTB_OFFSET);
+>  
+> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+> index e78281d07b70..53fb48de9589 100644
+> --- a/include/linux/cpuhotplug.h
+> +++ b/include/linux/cpuhotplug.h
+> @@ -115,10 +115,10 @@ enum cpuhp_state {
+>  	CPUHP_AP_PERF_ARM_ACPI_STARTING,
+>  	CPUHP_AP_PERF_ARM_STARTING,
+>  	CPUHP_AP_ARM_L2X0_STARTING,
+> +	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
+>  	CPUHP_AP_ARM_ARCH_TIMER_STARTING,
+>  	CPUHP_AP_ARM_GLOBAL_TIMER_STARTING,
+>  	CPUHP_AP_JCORE_TIMER_STARTING,
+> -	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
+>  	CPUHP_AP_ARM_TWD_STARTING,
+>  	CPUHP_AP_QCOM_TIMER_STARTING,
+>  	CPUHP_AP_TEGRA_TIMER_STARTING,
+> 
 
-Best regards
+As the cover-letter, the arch-timer of Exynos SoC
+used the h/w block of MCT. I agree.
+
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
