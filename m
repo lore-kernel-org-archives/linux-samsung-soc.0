@@ -1,45 +1,77 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [GIT PULL] exynos-drm-fixes
-Date: Thu, 21 Mar 2019 18:57:03 +0900
-Message-ID: <1553162223-10090-1-git-send-email-inki.dae@samsung.com>
-References: <CGME20190321095657epcas1p45a32777dd62b9e11664a7547e6cd18ae@epcas1p4.samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2 3/4] media: s5p-cec: fix possible object reference
+ leak
+Date: Thu, 21 Mar 2019 12:51:48 +0100
+Message-ID: <376c5ed6-7c2d-62a1-9ed0-48a329965d06@samsung.com>
+References: <CGME20190212234951epcas3p3c5dff046aab328e983ecdcecb916148c@epcas3p3.samsung.com>
+        <1550015279-42723-1-git-send-email-wen.yang99@zte.com.cn>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: airlied@linux.ie
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1550015279-42723-1-git-send-email-wen.yang99@zte.com.cn>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wen Yang <wen.yang99@zte.com.cn>
+Cc: mchehab@kernel.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn, "Hans Verkuil (hansverk)" <hansverk@cisco.com>, Hans Verkuil <hans.verkuil@cisco.com>, Wen Yang <yellowriver2010@hotmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgRGF2ZSwKCiAgIEp1c3Qgb25lIGZpeHVwIHRvIHJlc29sdmUgcGFnZSBmYXVsdCBpc3N1ZSBh
-dCBNaXhlciBkZXZpY2UuCgogICBQbGVhc2Uga2luZGx5IGxldCBtZSBrbm93IGlmIHRoZXJlIGlz
-IGFueSBwcm9ibGVtLgoKVGhhbmtzLApJbmtpIERhZQoKVGhlIGZvbGxvd2luZyBjaGFuZ2VzIHNp
-bmNlIGNvbW1pdCA5ZTk4YzY3OGMyZDZhZTNhMTdjYjJkZTU1ZDE3ZjY5ZGRkYWEyMzFiOgoKICBM
-aW51eCA1LjEtcmMxICgyMDE5LTAzLTE3IDE0OjIyOjI2IC0wNzAwKQoKYXJlIGF2YWlsYWJsZSBp
-biB0aGUgZ2l0IHJlcG9zaXRvcnkgYXQ6CgogIGdpdDovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20v
-bGludXgva2VybmVsL2dpdC9kYWVpbmtpL2RybS1leHlub3MgdGFncy9leHlub3MtZHJtLWZpeGVz
-LWZvci01LjEtcmMyCgpmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8gNmEzYjQ1YWRhOTYw
-YWM0NzVlYzJiNDEwM2Q0M2U1Nzk0M2IyYjhkMzoKCiAgZHJtL2V4eW5vcy9taXhlcjogZml4IE1J
-WEVSIHNoYWRvdyByZWdpc3RyeSBzeW5jaHJvbmlzYXRpb24gY29kZSAoMjAxOS0wMy0yMSAwOTo0
-NzoyOSArMDkwMCkKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0KLSBGaXggcGFnZSBmYXVsdCBpc3N1ZSBhdCBNaXhlciBkZXZp
-Y2UKICAuIFRoaXMgcGF0Y2ggZml4ZXMgdGhlIHBhZ2UgZmF1bHQgaXNzdWUgYnkgY29ycmVjdGlu
-ZyBzeWNocm9uaXphdGlvbgogICAgbWV0aG9kIGZvciB1cGRhdGluZyBzaGFkb3cgcmVnaXN0ZXJz
-IGZvciBNaXhlciBkZXZpY2UuCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkFuZHJ6ZWogSGFqZGEgKDEpOgogICAgICBkcm0v
-ZXh5bm9zL21peGVyOiBmaXggTUlYRVIgc2hhZG93IHJlZ2lzdHJ5IHN5bmNocm9uaXNhdGlvbiBj
-b2RlCgogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyB8IDExMCArKysrKysr
-KysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgNjYgaW5zZXJ0aW9u
-cygrKSwgNDQgZGVsZXRpb25zKC0pCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
-ZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
-L2RyaS1kZXZlbA==
+Hi
+
+On 2019-02-13 00:47, Wen Yang wrote:
+> The call to of_parse_phandle() returns a node pointer with refcount
+> incremented thus it must be explicitly decremented here after the last
+> usage.
+> The of_find_device_by_node() takes a reference to the underlying device
+> structure, we also should release that reference.
+> This patch fixes those two issues.
+>
+> Hans Verkuil says:
+> The cec driver should never take a reference of the hdmi device.
+> It never accesses the HDMI device, it only needs the HDMI device pointer as
+> a key in the notifier list.
+> The real problem is that several CEC drivers take a reference of the HDMI
+> device and never release it. So those drivers need to be fixed.
+>
+> Fixes: a93d429b51fb ("[media] s5p-cec: add cec-notifier support, move out of staging")
+> Suggested-by: Hans Verkuil (hansverk) <hansverk@cisco.com>
+> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+> Cc: Hans Verkuil (hansverk) <hansverk@cisco.com>
+> Cc: Hans Verkuil <hans.verkuil@cisco.com>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: Wen Yang <yellowriver2010@hotmail.com>
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-media@vger.kernel.org
+
+Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+> ---
+> v2->v1:
+> - move of_node_put() to just after the 'hdmi_dev = of_find_device_by_node(np)'.
+> - put_device() can be done before the cec = devm_kzalloc line.
+>
+>   drivers/media/platform/s5p-cec/s5p_cec.c | 2 ++
+>   1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/media/platform/s5p-cec/s5p_cec.c b/drivers/media/platform/s5p-cec/s5p_cec.c
+> index 8837e26..1f5c355 100644
+> --- a/drivers/media/platform/s5p-cec/s5p_cec.c
+> +++ b/drivers/media/platform/s5p-cec/s5p_cec.c
+> @@ -192,9 +192,11 @@ static int s5p_cec_probe(struct platform_device *pdev)
+>   		return -ENODEV;
+>   	}
+>   	hdmi_dev = of_find_device_by_node(np);
+> +	of_node_put(np);
+>   	if (hdmi_dev == NULL)
+>   		return -EPROBE_DEFER;
+>   
+> +	put_device(&hdmi_dev->dev);
+>   	cec = devm_kzalloc(&pdev->dev, sizeof(*cec), GFP_KERNEL);
+>   	if (!cec)
+>   		return -ENOMEM;
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
