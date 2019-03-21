@@ -1,69 +1,72 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2] clocksource: exynos_mct: Increase priority over ARM arch
- timer
-Date: Thu, 21 Mar 2019 09:26:08 +0100
-Message-ID: <20190321082608.21366-1-m.szyprowski@samsung.com>
-References: <CGME20190321082621eucas1p16d48ef152cd76edb7d46e8c773fa000e@eucas1p1.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v2] drm/exynos/mixer: fix MIXER shadow registry
+ synchronisation code
+Date: Thu, 21 Mar 2019 09:32:22 +0100
+Message-ID: <fef40cf7-19f2-a182-1dcc-cda119f49057@samsung.com>
+References: <CGME20190319130518eucas1p138ba1c2026a1d83959c2bdeaf6575ab5@eucas1p1.samsung.com>
+ <20190319130511.20729-1-a.hajda@samsung.com>
+ <0fc8310d-0a08-8873-01b1-e000c8b495d5@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <0fc8310d-0a08-8873-01b1-e000c8b495d5@samsung.com>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Marian Mihailescu <mihailescu2m@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Exynos Multi-Core Timer driver (exynos_mct) must be started before ARM
-Architected Timers (arch_timer), because they both share some common
-hardware blocks (global system counter) and turning on MCT is needed
-to get ARM Architected Timer working properly. Increase MCT timer rating
-and hotplug priority over ARM Archictected timer driver to achieve that.
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
----
-v2: added comments about the relation to ARM arch timer
-    rebased onto v5.1-rc1
-v1: https://patchwork.kernel.org/patch/10814921/
----
- drivers/clocksource/exynos_mct.c | 4 ++--
- include/linux/cpuhotplug.h       | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 34bd250d46c6..6aa10cbc1d59 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -209,7 +209,7 @@ static void exynos4_frc_resume(struct clocksource *cs)
- 
- static struct clocksource mct_frc = {
- 	.name		= "mct-frc",
--	.rating		= 400,
-+	.rating		= 450,	/* use value higher than ARM arch timer */
- 	.read		= exynos4_frc_read,
- 	.mask		= CLOCKSOURCE_MASK(32),
- 	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
-@@ -464,7 +464,7 @@ static int exynos4_mct_starting_cpu(unsigned int cpu)
- 	evt->set_state_oneshot_stopped = set_state_shutdown;
- 	evt->tick_resume = set_state_shutdown;
- 	evt->features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT;
--	evt->rating = 450;
-+	evt->rating = 500;	/* use value higher than ARM arch timer */
- 
- 	exynos4_mct_write(TICK_BASE_CNT, mevt->base + MCT_L_TCNTB_OFFSET);
- 
-diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-index e78281d07b70..53fb48de9589 100644
---- a/include/linux/cpuhotplug.h
-+++ b/include/linux/cpuhotplug.h
-@@ -115,10 +115,10 @@ enum cpuhp_state {
- 	CPUHP_AP_PERF_ARM_ACPI_STARTING,
- 	CPUHP_AP_PERF_ARM_STARTING,
- 	CPUHP_AP_ARM_L2X0_STARTING,
-+	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
- 	CPUHP_AP_ARM_ARCH_TIMER_STARTING,
- 	CPUHP_AP_ARM_GLOBAL_TIMER_STARTING,
- 	CPUHP_AP_JCORE_TIMER_STARTING,
--	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
- 	CPUHP_AP_ARM_TWD_STARTING,
- 	CPUHP_AP_QCOM_TIMER_STARTING,
- 	CPUHP_AP_TEGRA_TIMER_STARTING,
--- 
-2.17.1
+SGkgSW5raSwKCk9uIDIwMTktMDMtMjEgMDk6MjAsIElua2kgRGFlIHdyb3RlOgo+IDE5LiAzLiAx
+OS4g7Jik7ZuEIDEwOjA17JeQIEFuZHJ6ZWogSGFqZGEg7J20KOqwgCkg7JO0IOq4gDoKPj4gTUlY
+RVIgb24gRXh5bm9zNSBTb0NzIHVzZXMgZGlmZmVyZW50IHN5bmNocm9uaXNhdGlvbiBtZXRob2Qg
+dGhhbiBFeHlub3M0Cj4+IHRvIHVwZGF0ZSBpbnRlcm5hbCBzdGF0ZSAoc2hhZG93IHJlZ2lzdGVy
+cykuCj4+IEFwcGFyZW50bHkgdGhlIGRyaXZlciBpbXBsZW1lbnRzIGl0IGluY29ycmVjdGx5LiBU
+aGUgcnVsZSBzaG91bGQgYmUKPj4gYXMgZm9sbG93czoKPj4gLSBkbyBub3QgcmVxdWVzdCB1cGRh
+dGluZyByZWdpc3RlcnMgdW50aWwgcHJldmlvdXMgcmVxdWVzdCB3YXMgZmluaXNoZWQsCj4+ICAg
+IGllLiBNWFJfQ0ZHX0xBWUVSX1VQREFURV9DT1VOVCBtdXN0IGJlIDAuCj4+IC0gYmVmb3JlIHNl
+dHRpbmcgcmVnaXN0ZXJzIHN5bmNocm9uaXNhdGlvbiBvbiBWU1lOQyBzaG91bGQgYmUgdHVybmVk
+IG9mZiwKPj4gICAgaWUuIE1YUl9TVEFUVVNfU1lOQ19FTkFCTEUgc2hvdWxkIGJlIHJlc2V0LAo+
+PiAtIGFmdGVyIGZpbmlzaGluZyBNWFJfU1RBVFVTX1NZTkNfRU5BQkxFIHNob3VsZCBiZSBzZXQg
+YWdhaW4uCj4+IFRoZSBwYXRjaCBob3BlZnVsbHkgaW1wbGVtZW50cyBpdCBjb3JyZWN0bHkuCj4+
+IEJlbG93IHNhbXBsZSBrZXJuZWwgbG9nIGZyb20gcGFnZSBmYXVsdCBjYXVzZWQgYnkgdGhlIGJ1
+ZzoKPj4KPj4gWyAgIDI1LjY3MDAzOF0gZXh5bm9zLXN5c21tdSAxNDY1MDAwMC5zeXNtbXU6IDE0
+NDUwMDAwLm1peGVyOiBQQUdFIEZBVUxUIG9jY3VycmVkIGF0IDB4MjI0N2I4MDAKPj4gWyAgIDI1
+LjY3Nzg4OF0gLS0tLS0tLS0tLS0tWyBjdXQgaGVyZSBdLS0tLS0tLS0tLS0tCj4+IFsgICAyNS42
+ODIxNjRdIGtlcm5lbCBCVUcgYXQgLi4vZHJpdmVycy9pb21tdS9leHlub3MtaW9tbXUuYzo0NTAh
+Cj4+IFsgICAyNS42ODc5NzFdIEludGVybmFsIGVycm9yOiBPb3BzIC0gQlVHOiAwIFsjMV0gUFJF
+RU1QVCBTTVAgQVJNCj4+IFsgICAyNS42OTM3NzhdIE1vZHVsZXMgbGlua2VkIGluOgo+PiBbICAg
+MjUuNjk2ODE2XSBDUFU6IDUgUElEOiAxNTUzIENvbW06IGZiLXJlbGVhc2VfdGVzdCBOb3QgdGFp
+bnRlZCA1LjAuMC1yYzctMDExNTctZzVmODZiMTU2NmJkZCAjMTM2Cj4+IFsgICAyNS43MDU2NDZd
+IEhhcmR3YXJlIG5hbWU6IFNBTVNVTkcgRVhZTk9TIChGbGF0dGVuZWQgRGV2aWNlIFRyZWUpCj4+
+IFsgICAyNS43MTE3MTBdIFBDIGlzIGF0IGV4eW5vc19zeXNtbXVfaXJxKzB4MWMwLzB4MjY0Cj4+
+IFsgICAyNS43MTY0NzBdIExSIGlzIGF0IGxvY2tfaXNfaGVsZF90eXBlKzB4NDQvMHg2NAo+Pgo+
+PiB2MjogYWRkZWQgbWlzc2luZyBNWFJfQ0ZHX0xBWUVSX1VQREFURSBiaXQgc2V0dGluZyBpbiBt
+aXhlcl9lbmFibGVfc3luYwo+Pgo+PiBSZXBvcnRlZC1ieTogTWFyaWFuIE1paGFpbGVzY3UgPG1p
+aGFpbGVzY3UybUBnbWFpbC5jb20+Cj4+IFNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEu
+aGFqZGFAc2Ftc3VuZy5jb20+Cj4+IC0tLQo+PiBIaSBJbmtpIGFuZCBNYXJpYW4sCj4+Cj4+IFRo
+aXMgaXMgZml4ZWQgdmVyc2lvbiBvZiBteSBwcmV2aW91cyBwYXRjaC4gVGhlIG9ubHkgZGlmZmVy
+ZW5jZSBpcwo+PiBhZGRlZCBtaXNzaW5nIE1YUl9DRkdfTEFZRVJfVVBEQVRFIHNldHRpbmcgaW4g
+bWl4ZXJfZW5hYmxlX3N5bmMuCj4+IEkgaG9wZSB0aGlzIHRpbWUgaXQgaXMgY29ycmVjdC4gSXQg
+c2hvdWxkIHNvbHZlIG9uZSBwYWdlIGZhdWx0IGlzc3VlCj4+IGluIE1JWEVSLCBNYXJlayBpcyBw
+cmVwYXJpbmcgZml4IGZvciBhbm90aGVyIGlzc3VlICh0byBsb3cgY2xvY2sgc2V0IGJ5Cj4+IGRl
+dmZyZXEpLiBJIGhvcGUgd2l0aCBib3RoIHBhdGNoZXMgcGFnZSBmYXVsdHMgd2lsbCBub3QgaGFw
+cGVuIGFueW1vcmUgOykKPiBXaXRoIHRoaXMgcGF0Y2ggbW9kZXRlc3Qgd29ya2VkIHdlbGwuCj4g
+QlRXLCB0aGlzIGNoYW5nZSBtYXkgYWZmZWN0IEV4eW5vczQgc2VyaWVzIC0gd2hpY2ggaGF2ZSBk
+aWZmZXJlbnQgc3luY2hyb25pemF0aW9uIHdheSB0byB1cGRhdGUgc2hhZG93IHJlZ2lzdGVycyAt
+IHNvIGNvdWxkIHlvdSBvciBzb21lb25lIGVsc2Ugd2hvIGhhcyBFeHlub3M0eHh4IGJhc2VkIGJv
+YXJkIGNoZWNrIGl0IG9uIE9kcm9pZC11MyBib2FyZD8gSSBoYXZlIG5vIGJvYXJkLiA6KAoKQW5k
+cnplaidzIHBhdGNoIGhhcyBiZWVuIHRlc3RlZCBvbiBFeHlub3M0NDEyIHRvby4gSERNSSBkaXNw
+bGF5IHdvcmtzIApmaW5lIG9uIE9kcm9pZCBVMy4KCi4uLgoKQmVzdCByZWdhcmRzCi0tIApNYXJl
+ayBTenlwcm93c2tpLCBQaEQKU2Ftc3VuZyBSJkQgSW5zdGl0dXRlIFBvbGFuZAoKX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
+bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
