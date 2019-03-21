@@ -1,79 +1,75 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] PM / devfreq: exynos-bus: Suspend all devices on system
- shutdown
-Date: Thu, 21 Mar 2019 10:29:19 +0100
-Message-ID: <f41be303-0159-0730-501b-f465a1418861@samsung.com>
-References: <CGME20190321090120eucas1p1d5122777e84f4e3c965946a8c5aead8b@eucas1p1.samsung.com>
-        <20190321090110.26506-1-m.szyprowski@samsung.com>
-        <c2b39c36-a2f4-282e-1145-c61cfa18c6ce@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v2] drm/exynos/mixer: fix MIXER shadow registry
+ synchronisation code
+Date: Thu, 21 Mar 2019 18:41:56 +0900
+Message-ID: <7fb155f6-b789-e1e7-5a0b-af957b98fd85@samsung.com>
+References: <CGME20190319130518eucas1p138ba1c2026a1d83959c2bdeaf6575ab5@eucas1p1.samsung.com>
+ <20190319130511.20729-1-a.hajda@samsung.com>
+ <0fc8310d-0a08-8873-01b1-e000c8b495d5@samsung.com>
+ <fef40cf7-19f2-a182-1dcc-cda119f49057@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c2b39c36-a2f4-282e-1145-c61cfa18c6ce@samsung.com>
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <fef40cf7-19f2-a182-1dcc-cda119f49057@samsung.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Luba <l.luba@partner.samsung.com>, Markus Reichl <m.reichl@fivetechno.de>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Marian Mihailescu <mihailescu2m@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Chanwoo,
-
-On 2019-03-21 10:19, Chanwoo Choi wrote:
-> On 19. 3. 21. 오후 6:01, Marek Szyprowski wrote:
->> Force all Exynos buses to safe operation points before doing the system
->> reboot operation. There are board on which some aggressive power saving
->> operation points are behind the capabilities of the bootloader to properly
->> reset the hardware and boot the board. This way one can avoid board crash
->> early after reboot.
->>
->> This fixes reboot issue on OdroidU3 board both with eMMC and SD boot.
->>
->> Reported-by: Markus Reichl <m.reichl@fivetechno.de>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->> This is an alternative to https://patchwork.kernel.org/patch/10781433/
->> limited only to Exynos-bus driver.
->> ---
->>   drivers/devfreq/exynos-bus.c | 8 ++++++++
->>   1 file changed, 8 insertions(+)
->>
->> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
->> index c25658b26598..486cc5b422f1 100644
->> --- a/drivers/devfreq/exynos-bus.c
->> +++ b/drivers/devfreq/exynos-bus.c
->> @@ -514,6 +514,13 @@ static int exynos_bus_probe(struct platform_device *pdev)
->>   	return ret;
->>   }
->>   
->> +static void exynos_bus_shutdown(struct platform_device *pdev)
->> +{
->> +	struct exynos_bus *bus = dev_get_drvdata(&pdev->dev);
->> +
->> +	devfreq_suspend_device(bus->devfreq);
->> +}
->> +
->>   #ifdef CONFIG_PM_SLEEP
->>   static int exynos_bus_resume(struct device *dev)
->>   {
->> @@ -556,6 +563,7 @@ MODULE_DEVICE_TABLE(of, exynos_bus_of_match);
->>   
->>   static struct platform_driver exynos_bus_platdrv = {
->>   	.probe		= exynos_bus_probe,
->> +	.shutdown	= exynos_bus_shutdown,
->>   	.driver = {
->>   		.name	= "exynos-bus",
->>   		.pm	= &exynos_bus_pm,
->>
-> Actually, I already agreed the previous patch.
-> Also, it looks good to me.
-
-Yes, I know, but MyungJoo had some objections, that's why I prepared 
-alternative version.
-
-> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
->
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+SGkgTWFyZWssCgoxOS4gMy4gMjEuIOyYpO2bhCA1OjMy7JeQIE1hcmVrIFN6eXByb3dza2kg7J20
+KOqwgCkg7JO0IOq4gDoKPiBIaSBJbmtpLAo+IAo+IE9uIDIwMTktMDMtMjEgMDk6MjAsIElua2kg
+RGFlIHdyb3RlOgo+PiAxOS4gMy4gMTkuIOyYpO2bhCAxMDowNeyXkCBBbmRyemVqIEhhamRhIOyd
+tCjqsIApIOyTtCDquIA6Cj4+PiBNSVhFUiBvbiBFeHlub3M1IFNvQ3MgdXNlcyBkaWZmZXJlbnQg
+c3luY2hyb25pc2F0aW9uIG1ldGhvZCB0aGFuIEV4eW5vczQKPj4+IHRvIHVwZGF0ZSBpbnRlcm5h
+bCBzdGF0ZSAoc2hhZG93IHJlZ2lzdGVycykuCj4+PiBBcHBhcmVudGx5IHRoZSBkcml2ZXIgaW1w
+bGVtZW50cyBpdCBpbmNvcnJlY3RseS4gVGhlIHJ1bGUgc2hvdWxkIGJlCj4+PiBhcyBmb2xsb3dz
+Ogo+Pj4gLSBkbyBub3QgcmVxdWVzdCB1cGRhdGluZyByZWdpc3RlcnMgdW50aWwgcHJldmlvdXMg
+cmVxdWVzdCB3YXMgZmluaXNoZWQsCj4+PiAgICBpZS4gTVhSX0NGR19MQVlFUl9VUERBVEVfQ09V
+TlQgbXVzdCBiZSAwLgo+Pj4gLSBiZWZvcmUgc2V0dGluZyByZWdpc3RlcnMgc3luY2hyb25pc2F0
+aW9uIG9uIFZTWU5DIHNob3VsZCBiZSB0dXJuZWQgb2ZmLAo+Pj4gICAgaWUuIE1YUl9TVEFUVVNf
+U1lOQ19FTkFCTEUgc2hvdWxkIGJlIHJlc2V0LAo+Pj4gLSBhZnRlciBmaW5pc2hpbmcgTVhSX1NU
+QVRVU19TWU5DX0VOQUJMRSBzaG91bGQgYmUgc2V0IGFnYWluLgo+Pj4gVGhlIHBhdGNoIGhvcGVm
+dWxseSBpbXBsZW1lbnRzIGl0IGNvcnJlY3RseS4KPj4+IEJlbG93IHNhbXBsZSBrZXJuZWwgbG9n
+IGZyb20gcGFnZSBmYXVsdCBjYXVzZWQgYnkgdGhlIGJ1ZzoKPj4+Cj4+PiBbICAgMjUuNjcwMDM4
+XSBleHlub3Mtc3lzbW11IDE0NjUwMDAwLnN5c21tdTogMTQ0NTAwMDAubWl4ZXI6IFBBR0UgRkFV
+TFQgb2NjdXJyZWQgYXQgMHgyMjQ3YjgwMAo+Pj4gWyAgIDI1LjY3Nzg4OF0gLS0tLS0tLS0tLS0t
+WyBjdXQgaGVyZSBdLS0tLS0tLS0tLS0tCj4+PiBbICAgMjUuNjgyMTY0XSBrZXJuZWwgQlVHIGF0
+IC4uL2RyaXZlcnMvaW9tbXUvZXh5bm9zLWlvbW11LmM6NDUwIQo+Pj4gWyAgIDI1LjY4Nzk3MV0g
+SW50ZXJuYWwgZXJyb3I6IE9vcHMgLSBCVUc6IDAgWyMxXSBQUkVFTVBUIFNNUCBBUk0KPj4+IFsg
+ICAyNS42OTM3NzhdIE1vZHVsZXMgbGlua2VkIGluOgo+Pj4gWyAgIDI1LjY5NjgxNl0gQ1BVOiA1
+IFBJRDogMTU1MyBDb21tOiBmYi1yZWxlYXNlX3Rlc3QgTm90IHRhaW50ZWQgNS4wLjAtcmM3LTAx
+MTU3LWc1Zjg2YjE1NjZiZGQgIzEzNgo+Pj4gWyAgIDI1LjcwNTY0Nl0gSGFyZHdhcmUgbmFtZTog
+U0FNU1VORyBFWFlOT1MgKEZsYXR0ZW5lZCBEZXZpY2UgVHJlZSkKPj4+IFsgICAyNS43MTE3MTBd
+IFBDIGlzIGF0IGV4eW5vc19zeXNtbXVfaXJxKzB4MWMwLzB4MjY0Cj4+PiBbICAgMjUuNzE2NDcw
+XSBMUiBpcyBhdCBsb2NrX2lzX2hlbGRfdHlwZSsweDQ0LzB4NjQKPj4+Cj4+PiB2MjogYWRkZWQg
+bWlzc2luZyBNWFJfQ0ZHX0xBWUVSX1VQREFURSBiaXQgc2V0dGluZyBpbiBtaXhlcl9lbmFibGVf
+c3luYwo+Pj4KPj4+IFJlcG9ydGVkLWJ5OiBNYXJpYW4gTWloYWlsZXNjdSA8bWloYWlsZXNjdTJt
+QGdtYWlsLmNvbT4KPj4+IFNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ft
+c3VuZy5jb20+Cj4+PiAtLS0KPj4+IEhpIElua2kgYW5kIE1hcmlhbiwKPj4+Cj4+PiBUaGlzIGlz
+IGZpeGVkIHZlcnNpb24gb2YgbXkgcHJldmlvdXMgcGF0Y2guIFRoZSBvbmx5IGRpZmZlcmVuY2Ug
+aXMKPj4+IGFkZGVkIG1pc3NpbmcgTVhSX0NGR19MQVlFUl9VUERBVEUgc2V0dGluZyBpbiBtaXhl
+cl9lbmFibGVfc3luYy4KPj4+IEkgaG9wZSB0aGlzIHRpbWUgaXQgaXMgY29ycmVjdC4gSXQgc2hv
+dWxkIHNvbHZlIG9uZSBwYWdlIGZhdWx0IGlzc3VlCj4+PiBpbiBNSVhFUiwgTWFyZWsgaXMgcHJl
+cGFyaW5nIGZpeCBmb3IgYW5vdGhlciBpc3N1ZSAodG8gbG93IGNsb2NrIHNldCBieQo+Pj4gZGV2
+ZnJlcSkuIEkgaG9wZSB3aXRoIGJvdGggcGF0Y2hlcyBwYWdlIGZhdWx0cyB3aWxsIG5vdCBoYXBw
+ZW4gYW55bW9yZSA7KQo+PiBXaXRoIHRoaXMgcGF0Y2ggbW9kZXRlc3Qgd29ya2VkIHdlbGwuCj4+
+IEJUVywgdGhpcyBjaGFuZ2UgbWF5IGFmZmVjdCBFeHlub3M0IHNlcmllcyAtIHdoaWNoIGhhdmUg
+ZGlmZmVyZW50IHN5bmNocm9uaXphdGlvbiB3YXkgdG8gdXBkYXRlIHNoYWRvdyByZWdpc3RlcnMg
+LSBzbyBjb3VsZCB5b3Ugb3Igc29tZW9uZSBlbHNlIHdobyBoYXMgRXh5bm9zNHh4eCBiYXNlZCBi
+b2FyZCBjaGVjayBpdCBvbiBPZHJvaWQtdTMgYm9hcmQ/IEkgaGF2ZSBubyBib2FyZC4gOigKPiAK
+PiBBbmRyemVqJ3MgcGF0Y2ggaGFzIGJlZW4gdGVzdGVkIG9uIEV4eW5vczQ0MTIgdG9vLiBIRE1J
+IGRpc3BsYXkgd29ya3MgCj4gZmluZSBvbiBPZHJvaWQgVTMuCgpBcHBsaWVkLgoKVGhhbmtzLApJ
+bmtpIERhZQoKPiAKPiAuLi4KPiAKPiBCZXN0IHJlZ2FyZHMKPiAKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
+ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
