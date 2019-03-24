@@ -1,87 +1,189 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v2] clocksource: exynos_mct: Increase priority over ARM
- arch timer
-Date: Thu, 21 Mar 2019 21:30:08 +0900
-Message-ID: <af0dfbcb-4a9c-7d41-b08d-994d3a57604e@samsung.com>
-References: <CGME20190321082621eucas1p16d48ef152cd76edb7d46e8c773fa000e@eucas1p1.samsung.com>
-        <20190321082608.21366-1-m.szyprowski@samsung.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCH v1] ARM: dts: exynos: Add proper regulator states for suspend-to-mem for odroid-u3
+Date: Sun, 24 Mar 2019 14:02:56 +0530
+Message-ID: <20190324083256.1047-1-linux.amoon@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190321082608.21366-1-m.szyprowski@samsung.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+Add suspend-to-mem node to regulator core to be enabled or disabled
+during system suspend and also support changing the regulator operating
+mode during runtime and when the system enter sleep mode (stand by mode).
 
-On 19. 3. 21. 오후 5:26, Marek Szyprowski wrote:
-> Exynos Multi-Core Timer driver (exynos_mct) must be started before ARM
-> Architected Timers (arch_timer), because they both share some common
-> hardware blocks (global system counter) and turning on MCT is needed
-> to get ARM Architected Timer working properly. Increase MCT timer rating
-> and hotplug priority over ARM Archictected timer driver to achieve that.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
-> v2: added comments about the relation to ARM arch timer
->     rebased onto v5.1-rc1
-> v1: https://patchwork.kernel.org/patch/10814921/
-> ---
->  drivers/clocksource/exynos_mct.c | 4 ++--
->  include/linux/cpuhotplug.h       | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-> index 34bd250d46c6..6aa10cbc1d59 100644
-> --- a/drivers/clocksource/exynos_mct.c
-> +++ b/drivers/clocksource/exynos_mct.c
-> @@ -209,7 +209,7 @@ static void exynos4_frc_resume(struct clocksource *cs)
->  
->  static struct clocksource mct_frc = {
->  	.name		= "mct-frc",
-> -	.rating		= 400,
-> +	.rating		= 450,	/* use value higher than ARM arch timer */
->  	.read		= exynos4_frc_read,
->  	.mask		= CLOCKSOURCE_MASK(32),
->  	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
-> @@ -464,7 +464,7 @@ static int exynos4_mct_starting_cpu(unsigned int cpu)
->  	evt->set_state_oneshot_stopped = set_state_shutdown;
->  	evt->tick_resume = set_state_shutdown;
->  	evt->features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT;
-> -	evt->rating = 450;
-> +	evt->rating = 500;	/* use value higher than ARM arch timer */
->  
->  	exynos4_mct_write(TICK_BASE_CNT, mevt->base + MCT_L_TCNTB_OFFSET);
->  
-> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-> index e78281d07b70..53fb48de9589 100644
-> --- a/include/linux/cpuhotplug.h
-> +++ b/include/linux/cpuhotplug.h
-> @@ -115,10 +115,10 @@ enum cpuhp_state {
->  	CPUHP_AP_PERF_ARM_ACPI_STARTING,
->  	CPUHP_AP_PERF_ARM_STARTING,
->  	CPUHP_AP_ARM_L2X0_STARTING,
-> +	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
->  	CPUHP_AP_ARM_ARCH_TIMER_STARTING,
->  	CPUHP_AP_ARM_GLOBAL_TIMER_STARTING,
->  	CPUHP_AP_JCORE_TIMER_STARTING,
-> -	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
->  	CPUHP_AP_ARM_TWD_STARTING,
->  	CPUHP_AP_QCOM_TIMER_STARTING,
->  	CPUHP_AP_TEGRA_TIMER_STARTING,
-> 
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+Current patch:
 
-As the cover-letter, the arch-timer of Exynos SoC
-used the h/w block of MCT. I agree.
+Note: Both microSD and eMMC suspend resume works this changes at my end.
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+regulator-off-in-suspend:
+set the regulator node into suspend state i.e. standby mode during suspend
+operation.
 
+Current changes are based on
+[0] https://www.kernel.org/doc/Documentation/devicetree/bindings/regulator/max77686.txt
+
+  Regulators which can be turned off during system suspend:
+	-LDOn	:	2, 6-8, 10-12, 14-16,
+	-BUCKn	:	1-4.
+  Use standard regulator bindings for it ('regulator-off-in-suspend').
+
+drop the suspend off binding which are not supported by the driver.
+
+RFC version
+[1] https://patchwork.kernel.org/patch/10810909/
+These changes had some problem with eMMC not entering into suspend mode.
+with some miss configuration in regulator-off-in-suspend mode.
+
+Changes from previos patch.
+[2] https://patchwork.kernel.org/patch/10712549/
+
+Set all the non used regulator in suspend-odd state
+LD02, LD03, LD05, LD06, LD07, LD011, LD013, LDO14, LD016
+
+BUCK5, BUCK6, BUCK7 and not confirable as per driver max77686-regulator
+---
+ .../boot/dts/exynos4412-odroid-common.dtsi    | 39 +++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+index 08d3a0a7b4eb..375156ad5454 100644
+--- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
++++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+@@ -288,6 +288,9 @@
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <1800000>;
+ 				regulator-always-on;
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
+ 			};
+ 
+ 			ldo3_reg: LDO3 {
+@@ -317,6 +320,9 @@
+ 				regulator-min-microvolt = <1000000>;
+ 				regulator-max-microvolt = <1000000>;
+ 				regulator-always-on;
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
+ 			};
+ 
+ 			ldo7_reg: LDO7 {
+@@ -324,18 +330,27 @@
+ 				regulator-min-microvolt = <1000000>;
+ 				regulator-max-microvolt = <1000000>;
+ 				regulator-always-on;
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
+ 			};
+ 
+ 			ldo8_reg: LDO8 {
+ 				regulator-name = "VDD10_HDMI_1.0V";
+ 				regulator-min-microvolt = <1000000>;
+ 				regulator-max-microvolt = <1000000>;
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
+ 			};
+ 
+ 			ldo10_reg: LDO10 {
+ 				regulator-name = "VDDQ_MIPIHSI_1.8V";
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <1800000>;
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
+ 			};
+ 
+ 			ldo11_reg: LDO11 {
+@@ -343,6 +358,9 @@
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <1800000>;
+ 				regulator-always-on;
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
+ 			};
+ 
+ 			ldo12_reg: LDO12 {
+@@ -351,6 +369,9 @@
+ 				regulator-max-microvolt = <3300000>;
+ 				regulator-always-on;
+ 				regulator-boot-on;
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
+ 			};
+ 
+ 			ldo13_reg: LDO13 {
+@@ -367,6 +388,9 @@
+ 				regulator-max-microvolt = <1800000>;
+ 				regulator-always-on;
+ 				regulator-boot-on;
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
+ 			};
+ 
+ 			ldo15_reg: LDO15 {
+@@ -375,6 +399,9 @@
+ 				regulator-max-microvolt = <1000000>;
+ 				regulator-always-on;
+ 				regulator-boot-on;
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
+ 			};
+ 
+ 			ldo16_reg: LDO16 {
+@@ -383,6 +410,9 @@
+ 				regulator-max-microvolt = <1800000>;
+ 				regulator-always-on;
+ 				regulator-boot-on;
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
+ 			};
+ 
+ 			ldo20_reg: LDO20 {
+@@ -421,6 +451,9 @@
+ 				regulator-max-microvolt = <1100000>;
+ 				regulator-always-on;
+ 				regulator-boot-on;
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
+ 			};
+ 
+ 			buck2_reg: BUCK2 {
+@@ -437,6 +470,9 @@
+ 				regulator-max-microvolt = <1050000>;
+ 				regulator-always-on;
+ 				regulator-boot-on;
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
+ 			};
+ 
+ 			buck4_reg: BUCK4 {
+@@ -444,6 +480,9 @@
+ 				regulator-min-microvolt = <900000>;
+ 				regulator-max-microvolt = <1100000>;
+ 				regulator-microvolt-offset = <50000>;
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
+ 			};
+ 
+ 			buck5_reg: BUCK5 {
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.21.0
