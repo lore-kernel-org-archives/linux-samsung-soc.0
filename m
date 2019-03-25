@@ -1,111 +1,63 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2 RESEND 00/24] drm/exynos: add support for GSCALER
- planes on Exynos5433
-Date: Mon, 25 Mar 2019 12:12:50 +0900
-Message-ID: <328194c1-d382-f9b1-90fe-bc12f34ebc25@samsung.com>
-References: <CGME20190320130711eucas1p2b9f18d009647652b4bb912fdd40c9f74@eucas1p2.samsung.com>
- <20190320130707.25161-1-a.hajda@samsung.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: RE: Re: [PATCH] PM / devfreq: exynos-bus: Suspend all devices on
+ system shutdown
+Date: Mon, 25 Mar 2019 13:38:50 +0900
+Message-ID: <20190325043850epcms1p7c55d5c6767779f4dc044118975cff560@epcms1p7>
+References: <f41be303-0159-0730-501b-f465a1418861@samsung.com>
+        <20190321090110.26506-1-m.szyprowski@samsung.com>
+        <c2b39c36-a2f4-282e-1145-c61cfa18c6ce@samsung.com>
+        <CGME20190321090120eucas1p1d5122777e84f4e3c965946a8c5aead8b@epcms1p7>
+Reply-To: myungjoo.ham@samsung.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190320130707.25161-1-a.hajda@samsung.com>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <f41be303-0159-0730-501b-f465a1418861@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Luba <l.luba@partner.samsung.com>, Markus Reichl <m.reichl@fivetechno.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgQW5kcnplaiwKCk1lcmdlIGNvbmZsaWN0LiBDb3VsZCB5b3UgcmViYXNlIHRoaXMgcGF0Y2gg
-c2VyaWVzIG9uIHRvcCBvZiBleHlub3MtZHJtLW5leHQ/CgpUaGFua3MsCklua2kgRGFlCgoxOS4g
-My4gMjAuIOyYpO2bhCAxMDowNuyXkCBBbmRyemVqIEhhamRhIOydtCjqsIApIOyTtCDquIA6Cj4g
-SGkgSW5raSwKPiAKPiBHU0NBTEVScyBpbiBFeHlub3MgU29DcyBzdXBwb3J0IGNvbnZlcnNpb24g
-YmV0d2VlbiB3aWRlIHJhbmdlIG9mIGltYWdlIGZvcm1hdHMsCj4gcGx1cyBzY2FsaW5nIGFuZCBy
-b3RhdGlvbi4KPiBEcml2ZXIgYWxyZWFkeSBzdXBwb3J0cyBtZW0ybWVtIG1vZGUgLSB2aWEgRXh5
-bm9zRFJNIElQUCBmcmFtZXdvcmsuCj4gVGhpcyBwYXRjaHNldCBhZGRzIHN1cHBvcnQgZm9yIG1l
-bSB0byBkaXNwbGF5IG1vZGUgLSBmcmFtZWJ1ZmZlcnMgY2FuCj4gYmUgY29udmVydGVkLCBzY2Fs
-ZWQgYW5kIHNlbmQgZGlyZWN0bHkgdG8gRGlzcGxheSBDb250cm9sbGVyLiBGcm9tIERSTQo+IGZy
-YW1ld29yaydzIHBvaW50IG9mIHZpZXcgZXZlcnkgR1NDQUxFUiBleHBvc2VzIGRybV9wbGFuZSB3
-aGljaCBjYW4gYmUgY29ubmVjdGVkCj4gdG8gZGlzcGxheSBjb250cm9sbGVyIChkaXNwbGF5IHBh
-bmVsIG9yIFRWKS4KPiBUaGUgZmVhdHVyZSBpcyBub3Qgd2VsbCBkb2N1bWVudGVkIHNvIHRoZSBk
-ZXZlbG9wbWVudCB3YXMgcXVpdGUgZGlmZmljdWx0IC0KPiBhIHByb2Nlc3Mgb2YgdHJpYWwgYW5k
-IGVycm9yLCB2ZW5kb3IgY29kZSBhbmFseXNpcywgZ3Vlc3NpbmcgZnJvbSBkYXRhc2hlZXRzLgo+
-IEhvcGVmdWxseSBtb3N0IG9mIHRoZSBpc3N1ZXMgd2VyZSBzb2x2ZWQuIEkgaGF2ZSBkZXZlbG9w
-ZWQgYW5kIHRlc3RlZCBpdCBvbgo+IFRNMiBkZXZpY2Ugd2l0aCBwYW5lbCBhbmQgVFYgcGF0aHMu
-Cj4gCj4gVGhlIHBhdGNoc2V0IGNvbnRhaW5zIHRocmVlIHBhcnRzOgo+IDEuIFByZXBhcmF0b3J5
-IHBhdGNoZXMgLSBtb3N0bHkgY2xlYW51cCBhbmQgcmVmYWN0b3Jpbmcgb2YgZHJtX2NydGMgYW5k
-IGRybV9wbGFuZQo+ICAgIHJlbGF0ZWQgc3RydWN0dXJlcywgdG8gYWxsb3cgdXNhZ2Ugb2YgcGxh
-bmVzIHdoaWNoIGFyZSBub3QgcGh5c2ljYWxseSBib3VuZAo+ICAgIHRvIGNydGNzICgwMS0xMyku
-Cj4gMi4gQWRkaW5nIGxvY2FsIHBhdGggc3VwcG9ydCB0byBHU0NBTEVSIGFuZCBERUNPTiAoMTQt
-MjApLgo+IDMuIEZldyBmaXhlcyBvZiBidWdzIGV4aXN0aW5nIGFscmVhZHkgaW4gdGhlIGNvZGUg
-YnV0IGRpc2NvdmVyZWQgZHVlIHRvIGFkZGVkCj4gICAgbG9jYWwgcGF0aCBzdXBwb3J0ICgyMS0y
-MykuCj4gCj4gVGhlIHBhdGNoc2V0IGlzIGJhc2VkIG9uIGV4eW5vc19kcm1fbmV4dCBwbHVzIG15
-IHBhdGNoc2V0IGFkZGluZyB6cG9zIHRvIERFQ09OCj4gYW5kIEZJTUQgLSAnZHJtL2V4eW5vczog
-YWRkIHN1cHBvcnQgZm9yIGR5bmFtaWMgenBvcyBpbiBERUNPTiBhbmQgRklNRCcgLSBpdCBpcwo+
-IHJlcXVpcmVkIHRvIGFsbG93IHNldCB6LXBvcyBwb3NpdGlvbiBvZiBHU0NBTEVSIHBsYW5lcy4K
-PiBUbyBzaW1wbGlmeSB0ZXN0cyBJIGhhdmUgYWxzbyBjcmVhdGVkIGJyYW5jaCBjb250YWluaW5n
-IGFsbCByZXF1aXJlZCBwYXRjaGVzOgo+IFJlcG86IGh0dHBzOi8vZ2l0LnRpemVuLm9yZy9jZ2l0
-L3BsYXRmb3JtL2tlcm5lbC9saW51eC1leHlub3MKPiBCcmFuY2g6IHNhbmRib3gvYWhhamRhL2Rl
-di9leHlub3MtZHJtLWxvY2FsLXBhdGgKPiAKPiBUaGlzIGlzIHYyIHZlcnNpb24gb2YgdGhlIHBh
-dGNoc2V0LiBJbiB0aGlzIHZlcnNpb24gSSBoYXZlIG1vdmVkIGNvZGUgc2V0dGluZwo+IGN1cnNv
-ciBwbGFuZSBpbiBjcnRjIHRvIHNlcGFyYXRlIHBhdGNoIHRvZ2V0aGVyIHdpdGggY29kZSBkaXNh
-YmxpbmcgZmFzdCBjdXJzb3IKPiB1cGRhdGVzIC0gaGFyZHdhcmUgZG9lcyBub3Qgc3VwcG9ydCBp
-dC4gVG8ga2VlcCBiaXNlY3RhYmlsaXR5IERUUyBwYXRjaGVzIHNob3VsZAo+IGJlIGFwcGxpZWQg
-YmVmb3JlIHN1YnNlcXVlbnQgb25lcy4KPiAKPiBSZWdhcmRzCj4gQW5kcnplago+IAo+IAo+IEFu
-ZHJ6ZWogSGFqZGEgKDI0KToKPiAgIGRybS9leHlub3M6IHJlbW92ZSBleHlub3NfZHJtX3BsYW5l
-LmggaGVhZGVyCj4gICBkcm0vZXh5bm9zOiByZW1vdmUgc3BhcmUgbWFjcm8KPiAgIGRybS9leHlu
-b3M6IGRyb3AgZXh5bm9zX2RybV9wbGFuZV9jb25maWcgc3RydWN0dXJlCj4gICBkcm0vZXh5bm9z
-OiBhZGQgZXh5bm9zX2RybV9jcnRjX2luaXQgZnVuY3Rpb24KPiAgIGRybS9leHlub3MvZGVjb241
-NDMzOiBlbWJlZCBleHlub3NfZHJtX2NydGMgZGlyZWN0bHkgaW50byBjb250ZXh0Cj4gICBkcm0v
-ZXh5bm9zL2RlY29uNzogZW1iZWQgZXh5bm9zX2RybV9jcnRjIGRpcmVjdGx5IGludG8gY29udGV4
-dAo+ICAgZHJtL2V4eW5vcy9maW1kOiBlbWJlZCBleHlub3NfZHJtX2NydGMgZGlyZWN0bHkgaW50
-byBjb250ZXh0Cj4gICBkcm0vZXh5bm9zL21peGVyOiBlbWJlZCBleHlub3NfZHJtX2NydGMgZGly
-ZWN0bHkgaW50byBjb250ZXh0Cj4gICBkcm0vZXh5bm9zL3ZpZGk6IGVtYmVkIGV4eW5vc19kcm1f
-Y3J0YyBkaXJlY3RseSBpbnRvIGNvbnRleHQKPiAgIGRybS9leHlub3M6IHJlbW92ZSBzdGFuZGFs
-b25lIGV4eW5vc19kcm1fY3J0YyBsZWZ0b3ZlcnMKPiAgIGRybS9leHlub3MvdmlkaTogcmVtb3Zl
-IGVuY29kZXJfdG9fdmlkaSBoZWxwZXIKPiAgIGRybS9leHlub3M6IHVuaWZ5IHBsYW5lIHR5cGUg
-YXNzaWdubWVudAo+ICAgZHJtL2V4eW5vczogc2V0IHByaW1hcnkgcGxhbmUgaW4gZXh5bm9zX2Ry
-bV9jcnRjX2luaXQKPiAgIGRybS9leHlub3M6IHNldCBjdXJzb3IgcGxhbmUgaW4gZXh5bm9zX2Ry
-bV9jcnRjX2luaXQKPiAgIGRybS9leHlub3M6IGFkZCBwbGFuZSB1cGRhdGUvZGlzYWJsZSBjYWxs
-YmFja3MgZm9yIHBsYW5lcwo+ICAgZHJtL2V4eW5vczogYWRkIEdTQ0FMRVIgcGxhbmUgY2FwYWJp
-bGl0eQo+ICAgZHJtL2V4eW5vcy9nc2NhbGVyOiBmaXggaWQgYXNzaWduZW1lbnQKPiAgIGFybTY0
-OiBkdHM6IGV4eW5vczogY29uZmlndXJlIEdTQ0FMRVIgcmVsYXRlZCBjbG9ja3MKPiAgIGFybTY0
-OiBkdHM6IGV4eW5vczogYWRkIERTRC9HU0QgY2xvY2tzIHRvIERFQ09OcyBhbmQgR1NDQUxFUnMK
-PiAgIGRybS9leHlub3MvZ3NjYWxlcjogYWRkIGxvY2FsIHBhdGggc3VwcG9ydAo+ICAgZHJtL2V4
-eW5vcy9kZWNvbjU0MzM6IGFkZCBsb2NhbCBwYXRoIHN1cHBvcnQKPiAgIGRybS9leHlub3MvZGVj
-b241NDMzOiB3YWl0IGZvciBmaW5pc2ggcHJldmlvdXMgdXBkYXRlCj4gICBkcm0vZXh5bm9zL2dz
-Y2FsZXI6IGNoYW5nZSBzdXBwb3J0ZWQgY29sb3IgZm9ybWF0IEJHUlg4ODg4IHRvIFhCR1I4ODg4
-Cj4gICBkcm0vZXh5bm9zL2dzY2FsZXI6IGZpeCBoYW5kbGluZyBZVlU0MjAgcGl4ZWwgZm9ybWF0
-Cj4gCj4gIC4uLi9kdHMvZXh5bm9zL2V4eW5vczU0MzMtdG0yLWNvbW1vbi5kdHNpICAgICB8ICAg
-NiArCj4gIGFyY2gvYXJtNjQvYm9vdC9kdHMvZXh5bm9zL2V4eW5vczU0MzMtdG0yLmR0cyB8ICAg
-NiArLQo+ICBhcmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLmR0c2kgICAgfCAg
-MjUgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jIHwg
-MTYyICsrKysrKysrLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9k
-ZWNvbi5jICAgIHwgIDY2ICsrKy0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9jcnRjLmMgICAgICB8ICA0NiArKy0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9jcnRjLmggICAgICB8ICAgNyArLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fZHJ2LmMgICAgICAgfCAgIDEgLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fZHJ2LmggICAgICAgfCAgNTAgKystLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fZmIuYyAgICAgICAgfCAgMTAgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2ZpbWQuYyAgICAgIHwgIDg1ICsrKy0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2dzYy5jICAgICAgIHwgMjI5ICsrKysrKysrKysrKysrLS0tLQo+ICBk
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYyAgICAgfCAgODQgKysrKy0t
-LQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuaCAgICAgfCAgMTQg
-LS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYyAgICAgIHwgIDQ4
-ICsrLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyAgICAgICAgIHwg
-IDk1ICsrKy0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1kZWNvbjU0MzMuaCAg
-ICAgICB8ICAgNiArCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1nc2MuaCAgICAgICAg
-ICAgICB8ICAgNiArCj4gIDE4IGZpbGVzIGNoYW5nZWQsIDUzOCBpbnNlcnRpb25zKCspLCA0MDgg
-ZGVsZXRpb25zKC0pCj4gIGRlbGV0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19kcm1fcGxhbmUuaAo+IApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
-ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9kcmktZGV2ZWw=
+>Hi Chanwoo,
+>
+>On 2019-03-21 10:19, Chanwoo Choi wrote:
+>> On 19. 3. 21. =EC=98=A4=ED=9B=84=206:01,=20Marek=20Szyprowski=20wrote:=
+=0D=0A>>>=20Force=20all=20Exynos=20buses=20to=20safe=20operation=20points=
+=20before=20doing=20the=20system=0D=0A>>>=20reboot=20operation.=20There=20a=
+re=20board=20on=20which=20some=20aggressive=20power=20saving=0D=0A>>>=20ope=
+ration=20points=20are=20behind=20the=20capabilities=20of=20the=20bootloader=
+=20to=20properly=0D=0A>>>=20reset=20the=20hardware=20and=20boot=20the=20boa=
+rd.=20This=20way=20one=20can=20avoid=20board=20crash=0D=0A>>>=20early=20aft=
+er=20reboot.=0D=0A>>>=0D=0A>>>=20This=20fixes=20reboot=20issue=20on=20Odroi=
+dU3=20board=20both=20with=20eMMC=20and=20SD=20boot.=0D=0A>>>=0D=0A>>>=20Rep=
+orted-by:=20Markus=20Reichl=20<m.reichl=40fivetechno.de>=0D=0A>>>=20Signed-=
+off-by:=20Marek=20Szyprowski=20<m.szyprowski=40samsung.com>=0D=0A>>>=20---=
+=0D=0A>>>=20This=20is=20an=20alternative=20to=20https://patchwork.kernel.or=
+g/patch/10781433/=0D=0A>>>=20limited=20only=20to=20Exynos-bus=20driver.=0D=
+=0A>>>=20---=0D=0A>>>=20=20=20drivers/devfreq/exynos-bus.c=20=7C=208=20++++=
+++++=0D=0A>>>=20=20=201=20file=20changed,=208=20insertions(+)=0D=0A>>>=0D=
+=0A>>>=20diff=20--git=20a/drivers/devfreq/exynos-bus.c=20b/drivers/devfreq/=
+exynos-bus.c=0D=0A>>>=20index=20c25658b26598..486cc5b422f1=20100644=0D=0A>>=
+>=20---=20a/drivers/devfreq/exynos-bus.c=0D=0A>>>=20+++=20b/drivers/devfreq=
+/exynos-bus.c=0D=0A>>>=20=40=40=20-514,6=20+514,13=20=40=40=20static=20int=
+=20exynos_bus_probe(struct=20platform_device=20*pdev)=0D=0A>>>=20=20=20=09r=
+eturn=20ret;=0D=0A>>>=20=20=20=7D=0D=0A>>>=20=20=20=0D=0A>>>=20+static=20vo=
+id=20exynos_bus_shutdown(struct=20platform_device=20*pdev)=0D=0A>>>=20+=7B=
+=0D=0A>>>=20+=09struct=20exynos_bus=20*bus=20=3D=20dev_get_drvdata(&pdev->d=
+ev);=0D=0A>>>=20+=0D=0A>>>=20+=09devfreq_suspend_device(bus->devfreq);=0D=
+=0A>>>=20+=7D=0D=0A>>>=20+=0D=0A>>>=20=20=20=23ifdef=20CONFIG_PM_SLEEP=0D=
+=0A>>>=20=20=20static=20int=20exynos_bus_resume(struct=20device=20*dev)=0D=
+=0A>>>=20=20=20=7B=0D=0A>>>=20=40=40=20-556,6=20+563,7=20=40=40=20MODULE_DE=
+VICE_TABLE(of,=20exynos_bus_of_match);=0D=0A>>>=20=20=20=0D=0A>>>=20=20=20s=
+tatic=20struct=20platform_driver=20exynos_bus_platdrv=20=3D=20=7B=0D=0A>>>=
+=20=20=20=09.probe=09=09=3D=20exynos_bus_probe,=0D=0A>>>=20+=09.shutdown=09=
+=3D=20exynos_bus_shutdown,=0D=0A>>>=20=20=20=09.driver=20=3D=20=7B=0D=0A>>>=
+=20=20=20=09=09.name=09=3D=20=22exynos-bus=22,=0D=0A>>>=20=20=20=09=09.pm=
+=09=3D=20&exynos_bus_pm,=0D=0A>>>=0D=0A>>=20Actually,=20I=20already=20agree=
+d=20the=20previous=20patch.=0D=0A>>=20Also,=20it=20looks=20good=20to=20me.=
+=0D=0A>=0D=0A>Yes,=20I=20know,=20but=20MyungJoo=20had=20some=20objections,=
+=20that's=20why=20I=20prepared=20=0D=0A>alternative=20version.=0D=0A>=0D=0A=
+>>=20Acked-by:=20Chanwoo=20Choi=20<cw00.choi=40samsung.com>=0D=0A>>=0D=0A=
+=0D=0AThis=20has=20become=20looking=20good=20now=20:)=0D=0A=0D=0A=0D=0AAcke=
+d-by:=20MyungJoo=20Ham=20<myungjoo.ham=40samsung.com>=0D=0A=0D=0A=0D=0AChee=
+rs,=0D=0AMyungJoo=0D=0A
