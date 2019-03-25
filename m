@@ -1,224 +1,64 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v1] ARM: dts: exynos: Add proper regulator states for
- suspend-to-mem for odroid-u3
-Date: Mon, 25 Mar 2019 13:56:29 +0100
-Message-ID: <CAJKOXPfUSqTRVa-KsGQ72QbHFf0-69uyAcVbx_SMd6EpePGf4w@mail.gmail.com>
-References: <20190324083256.1047-1-linux.amoon@gmail.com> <CAJKOXPfLyLRwJKWcMCtDg10em2pfWZJzXr8FkFTf1vtavRdoTw@mail.gmail.com>
+From: Joe Perches <joe@perches.com>
+Subject: Bad file pattern in MAINTAINERS section 'SAMSUNG EXYNOS TRUE RANDOM NUMBER GENERATOR (TRNG) DRIVER'
+Date: Mon, 25 Mar 2019 14:27:51 -0700
+Message-ID: <20190325212751.27532-1-joe@perches.com>
+References: <7cd8d12f59bcacd18a78f599b46dac555f7f16c0.camel@perches.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPfLyLRwJKWcMCtDg10em2pfWZJzXr8FkFTf1vtavRdoTw@mail.gmail.com>
+In-Reply-To: <7cd8d12f59bcacd18a78f599b46dac555f7f16c0.camel@perches.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+To: linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Philippe Ombredanne <pombredanne@nexb.com>, Herbert Xu <herbert@gondor.apana.org.au>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 25 Mar 2019 at 13:46, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On Sun, 24 Mar 2019 at 09:33, Anand Moon <linux.amoon@gmail.com> wrote:
-> >
-> > Add suspend-to-mem node to regulator core to be enabled or disabled
-> > during system suspend and also support changing the regulator operating
-> > mode during runtime and when the system enter sleep mode (stand by mode).
-> >
-> > Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> > Cc: Chanwoo Choi <cw00.choi@samsung.com>
-> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > ---
-> > Current patch:
-> >
-> > Note: Both microSD and eMMC suspend resume works this changes at my end.
-> >
-> > regulator-off-in-suspend:
-> > set the regulator node into suspend state i.e. standby mode during suspend
-> > operation.
-> >
-> > Current changes are based on
-> > [0] https://www.kernel.org/doc/Documentation/devicetree/bindings/regulator/max77686.txt
-> >
-> >   Regulators which can be turned off during system suspend:
-> >         -LDOn   :       2, 6-8, 10-12, 14-16,
-> >         -BUCKn  :       1-4.
-> >   Use standard regulator bindings for it ('regulator-off-in-suspend').
-> >
-> > drop the suspend off binding which are not supported by the driver.
-> >
-> > RFC version
-> > [1] https://patchwork.kernel.org/patch/10810909/
-> > These changes had some problem with eMMC not entering into suspend mode.
-> > with some miss configuration in regulator-off-in-suspend mode.
-> >
-> > Changes from previos patch.
-> > [2] https://patchwork.kernel.org/patch/10712549/
-> >
-> > Set all the non used regulator in suspend-odd state
-> > LD02, LD03, LD05, LD06, LD07, LD011, LD013, LDO14, LD016
-> >
-> > BUCK5, BUCK6, BUCK7 and not confirable as per driver max77686-regulator
-> > ---
-> >  .../boot/dts/exynos4412-odroid-common.dtsi    | 39 +++++++++++++++++++
-> >  1 file changed, 39 insertions(+)
-> >
-> > diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> > index 08d3a0a7b4eb..375156ad5454 100644
-> > --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> > +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> > @@ -288,6 +288,9 @@
-> >                                 regulator-min-microvolt = <1800000>;
-> >                                 regulator-max-microvolt = <1800000>;
-> >                                 regulator-always-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
->
-> Please maintain proper versioning of patches.
-> First patch sent to lists should be either RFC or v1. Second
-> release/submission is then always v2. Third v3.
->
-> This is third or fourth submission but you marked it as v1. This makes
-> it very difficult to discuss and reference previous versions.
->
-> The commit message did not change since beginning (first version). I
-> asked twice that you need to explain exactly why you put the the
-> regulator to off or on state in suspend. Why?
-> Because:
-> 1. This change looks without justification - once you put on, then you
-> put off, now again on,
-> 2. Anyone reading the code later must know the rationale why this was done,
-> 3. I am not quite sure whether this is good setting so I would be
-> happy to be convinced.
->
-> How to provide such explanation? The best in commit message. Sometimes
-> in the comment in the code, depends.
-> How such explanation could look like? For example like this:
-> f8f3b7fc21b1 ("ARM: dts: exynos: Fix regulators configuration on Peach
-> Pi/Pit Chromebooks")
-> Marek clearly explained why he put the regulators "always-on", even
-> tough we do not know everything about this. More over, he mentions
-> that this fixes specific issue.
->
-> Summarizing, please answer:
-> 1. Why this is made off-in-suspend?
-> 2. Why this can be made off-in-suspend?
->
-> > +                               };
-> >                         };
-> >
-> >                         ldo3_reg: LDO3 {
-> > @@ -317,6 +320,9 @@
-> >                                 regulator-min-microvolt = <1000000>;
-> >                                 regulator-max-microvolt = <1000000>;
-> >                                 regulator-always-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo7_reg: LDO7 {
-> > @@ -324,18 +330,27 @@
-> >                                 regulator-min-microvolt = <1000000>;
-> >                                 regulator-max-microvolt = <1000000>;
-> >                                 regulator-always-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo8_reg: LDO8 {
-> >                                 regulator-name = "VDD10_HDMI_1.0V";
-> >                                 regulator-min-microvolt = <1000000>;
-> >                                 regulator-max-microvolt = <1000000>;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo10_reg: LDO10 {
-> >                                 regulator-name = "VDDQ_MIPIHSI_1.8V";
-> >                                 regulator-min-microvolt = <1800000>;
-> >                                 regulator-max-microvolt = <1800000>;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo11_reg: LDO11 {
-> > @@ -343,6 +358,9 @@
-> >                                 regulator-min-microvolt = <1800000>;
-> >                                 regulator-max-microvolt = <1800000>;
-> >                                 regulator-always-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo12_reg: LDO12 {
-> > @@ -351,6 +369,9 @@
-> >                                 regulator-max-microvolt = <3300000>;
-> >                                 regulator-always-on;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo13_reg: LDO13 {
-> > @@ -367,6 +388,9 @@
-> >                                 regulator-max-microvolt = <1800000>;
-> >                                 regulator-always-on;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo15_reg: LDO15 {
-> > @@ -375,6 +399,9 @@
-> >                                 regulator-max-microvolt = <1000000>;
-> >                                 regulator-always-on;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo16_reg: LDO16 {
-> > @@ -383,6 +410,9 @@
-> >                                 regulator-max-microvolt = <1800000>;
-> >                                 regulator-always-on;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo20_reg: LDO20 {
-> > @@ -421,6 +451,9 @@
-> >                                 regulator-max-microvolt = <1100000>;
-> >                                 regulator-always-on;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
->
-> I questioned this change two times. You did not answer to my
-> question... If you turn memory bus regulator off, how the memory will
-> work in Suspend-to-Memory mode? I might be missing here something but
-> it just looks suspicious. Maybe the regulator does not supply the
-> memory itself (so refresh works even when it is down), just the
-> interface? I don't know, it just looks suspicious. I need to see
-> proper explanation.
->
-> I am sorry but I will not check other hunks in this patch. Please
-> provide the answers for all my questions here first.
+A file pattern line in this section of the MAINTAINERS file in linux-next
+does not have a match in the linux source files.
 
-I started digging around this and datasheet describes the regulator
-values in sleep mode. The MIF can be off if C2C is not used. It seems
-that the memory refresh is provided by CKEM regulators (which you
-wanted to turn off in first version of the patch). I am not happy that
-I ask about such information and cannot get it. It is the job of
-submitter to provide rationale.
+This could occur because a matching filename was never added, was deleted
+or renamed in some other commit.
 
-Best regards,
-Krzysztof
+The commits that added and if found renamed or removed the file pattern
+are shown below.
+
+Please fix this defect appropriately.
+
+1: ---------------------------------------------------------------------------
+
+linux-next MAINTAINERS section:
+
+	13589	SAMSUNG EXYNOS TRUE RANDOM NUMBER GENERATOR (TRNG) DRIVER
+	13590	M:	Łukasz Stelmach <l.stelmach@samsung.com>
+	13591	L:	linux-samsung-soc@vger.kernel.org
+	13592	S:	Maintained
+	13593	F:	drivers/char/hw_random/exynos-trng.c
+-->	13594	F:	Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt
+
+2: ---------------------------------------------------------------------------
+
+The most recent commit that added or modified file pattern 'Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt':
+
+commit 6cd225cc5d8a6526b2bea41955882be55d4f109e
+Author: Łukasz Stelmach <l.stelmach@samsung.com>
+Date:   Fri Dec 22 17:48:35 2017 +0100
+
+    hwrng: exynos - add Samsung Exynos True RNG driver
+    
+    Add support for True Random Number Generator found in Samsung Exynos
+    5250+ SoCs.
+    
+    Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
+    Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+    Acked-by: Philippe Ombredanne <pombredanne@nexb.com>
+    Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+
+ MAINTAINERS                          |   7 ++
+ drivers/char/hw_random/Kconfig       |  12 ++
+ drivers/char/hw_random/Makefile      |   1 +
+ drivers/char/hw_random/exynos-trng.c | 237 +++++++++++++++++++++++++++++++++++
+ 4 files changed, 257 insertions(+)
+
+3: ---------------------------------------------------------------------------
+
+No commit with file pattern 'Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt' was found
