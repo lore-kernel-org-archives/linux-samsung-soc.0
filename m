@@ -1,63 +1,62 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: RE: Re: [PATCH] PM / devfreq: exynos-bus: Suspend all devices on
- system shutdown
-Date: Mon, 25 Mar 2019 13:38:50 +0900
-Message-ID: <20190325043850epcms1p7c55d5c6767779f4dc044118975cff560@epcms1p7>
-References: <f41be303-0159-0730-501b-f465a1418861@samsung.com>
-        <20190321090110.26506-1-m.szyprowski@samsung.com>
-        <c2b39c36-a2f4-282e-1145-c61cfa18c6ce@samsung.com>
-        <CGME20190321090120eucas1p1d5122777e84f4e3c965946a8c5aead8b@epcms1p7>
-Reply-To: myungjoo.ham@samsung.com
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH v3 RESEND 06/24] drm/exynos: add exynos_drm_crtc_init function
+Date: Mon, 25 Mar 2019 08:13:31 +0100
+Message-ID: <20190325071349.22600-7-a.hajda@samsung.com>
+References: <20190325071349.22600-1-a.hajda@samsung.com>
+ <CGME20190325071355eucas1p1cbb56752b2560cb6384d79df9c4124a3@eucas1p1.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f41be303-0159-0730-501b-f465a1418861@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Luba <l.luba@partner.samsung.com>, Markus Reichl <m.reichl@fivetechno.de>
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20190325071349.22600-1-a.hajda@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
->Hi Chanwoo,
->
->On 2019-03-21 10:19, Chanwoo Choi wrote:
->> On 19. 3. 21. =EC=98=A4=ED=9B=84=206:01,=20Marek=20Szyprowski=20wrote:=
-=0D=0A>>>=20Force=20all=20Exynos=20buses=20to=20safe=20operation=20points=
-=20before=20doing=20the=20system=0D=0A>>>=20reboot=20operation.=20There=20a=
-re=20board=20on=20which=20some=20aggressive=20power=20saving=0D=0A>>>=20ope=
-ration=20points=20are=20behind=20the=20capabilities=20of=20the=20bootloader=
-=20to=20properly=0D=0A>>>=20reset=20the=20hardware=20and=20boot=20the=20boa=
-rd.=20This=20way=20one=20can=20avoid=20board=20crash=0D=0A>>>=20early=20aft=
-er=20reboot.=0D=0A>>>=0D=0A>>>=20This=20fixes=20reboot=20issue=20on=20Odroi=
-dU3=20board=20both=20with=20eMMC=20and=20SD=20boot.=0D=0A>>>=0D=0A>>>=20Rep=
-orted-by:=20Markus=20Reichl=20<m.reichl=40fivetechno.de>=0D=0A>>>=20Signed-=
-off-by:=20Marek=20Szyprowski=20<m.szyprowski=40samsung.com>=0D=0A>>>=20---=
-=0D=0A>>>=20This=20is=20an=20alternative=20to=20https://patchwork.kernel.or=
-g/patch/10781433/=0D=0A>>>=20limited=20only=20to=20Exynos-bus=20driver.=0D=
-=0A>>>=20---=0D=0A>>>=20=20=20drivers/devfreq/exynos-bus.c=20=7C=208=20++++=
-++++=0D=0A>>>=20=20=201=20file=20changed,=208=20insertions(+)=0D=0A>>>=0D=
-=0A>>>=20diff=20--git=20a/drivers/devfreq/exynos-bus.c=20b/drivers/devfreq/=
-exynos-bus.c=0D=0A>>>=20index=20c25658b26598..486cc5b422f1=20100644=0D=0A>>=
->=20---=20a/drivers/devfreq/exynos-bus.c=0D=0A>>>=20+++=20b/drivers/devfreq=
-/exynos-bus.c=0D=0A>>>=20=40=40=20-514,6=20+514,13=20=40=40=20static=20int=
-=20exynos_bus_probe(struct=20platform_device=20*pdev)=0D=0A>>>=20=20=20=09r=
-eturn=20ret;=0D=0A>>>=20=20=20=7D=0D=0A>>>=20=20=20=0D=0A>>>=20+static=20vo=
-id=20exynos_bus_shutdown(struct=20platform_device=20*pdev)=0D=0A>>>=20+=7B=
-=0D=0A>>>=20+=09struct=20exynos_bus=20*bus=20=3D=20dev_get_drvdata(&pdev->d=
-ev);=0D=0A>>>=20+=0D=0A>>>=20+=09devfreq_suspend_device(bus->devfreq);=0D=
-=0A>>>=20+=7D=0D=0A>>>=20+=0D=0A>>>=20=20=20=23ifdef=20CONFIG_PM_SLEEP=0D=
-=0A>>>=20=20=20static=20int=20exynos_bus_resume(struct=20device=20*dev)=0D=
-=0A>>>=20=20=20=7B=0D=0A>>>=20=40=40=20-556,6=20+563,7=20=40=40=20MODULE_DE=
-VICE_TABLE(of,=20exynos_bus_of_match);=0D=0A>>>=20=20=20=0D=0A>>>=20=20=20s=
-tatic=20struct=20platform_driver=20exynos_bus_platdrv=20=3D=20=7B=0D=0A>>>=
-=20=20=20=09.probe=09=09=3D=20exynos_bus_probe,=0D=0A>>>=20+=09.shutdown=09=
-=3D=20exynos_bus_shutdown,=0D=0A>>>=20=20=20=09.driver=20=3D=20=7B=0D=0A>>>=
-=20=20=20=09=09.name=09=3D=20=22exynos-bus=22,=0D=0A>>>=20=20=20=09=09.pm=
-=09=3D=20&exynos_bus_pm,=0D=0A>>>=0D=0A>>=20Actually,=20I=20already=20agree=
-d=20the=20previous=20patch.=0D=0A>>=20Also,=20it=20looks=20good=20to=20me.=
-=0D=0A>=0D=0A>Yes,=20I=20know,=20but=20MyungJoo=20had=20some=20objections,=
-=20that's=20why=20I=20prepared=20=0D=0A>alternative=20version.=0D=0A>=0D=0A=
->>=20Acked-by:=20Chanwoo=20Choi=20<cw00.choi=40samsung.com>=0D=0A>>=0D=0A=
-=0D=0AThis=20has=20become=20looking=20good=20now=20:)=0D=0A=0D=0A=0D=0AAcke=
-d-by:=20MyungJoo=20Ham=20<myungjoo.ham=40samsung.com>=0D=0A=0D=0A=0D=0AChee=
-rs,=0D=0AMyungJoo=0D=0A
+U2luY2UgZXh5bm9zX2RybV9jcnRjIGlzIGEgc3RydWN0IHdoaWNoIG1hcHMgMToxIHRvIHVuZGVy
+bHlpbmcgZGV2aWNlIGl0CmlzIGJldHRlciB0byBwdXQgaXQgZGlyZWN0bHkgaW50byBkZXZpY2Un
+cyBjb250ZXh0IGluc3RlYWQgb2YgYWxsb2NhdGluZwppdCBzZXBhcmF0ZWx5LiBBbm90aGVyIGJl
+bmVmaXQgaXMgcG9zc2liaWxpdHkgb2YgaW5pdGlhbGlzYXRpb24gb2YKaXRzIGZpZWxkcyBkaXJl
+Y3RseSwgd2l0aG91dCBleHBhbmRpbmcgZXh5bm9zX2RybV9jcnRjX2NyZWF0ZSB3aGljaCBpcwph
+bHJlYWR5IG92ZXJsb2FkZWQgd2l0aCBudW1iZXIgb2YgYXJndW1lbnRzLgpBcyBhIGZpcnN0IHN0
+ZXAgb2YgdGhlIHRyYW5zaXRpb24gaW5pdGlhbGlzYXRpb24gZnVuY3Rpb24gc2hvdWxkIGJlCmNy
+ZWF0ZWQuCgpTaWduZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29t
+PgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgfCAxMCArKysr
+KysrKysrCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5oIHwgIDIgKysK
+IDIgZmlsZXMgY2hhbmdlZCwgMTIgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fY3J0Yy5jCmluZGV4IDFlZWJmYTNmYThkYS4uNGZmMWUwZmYyMjU1IDEwMDY0
+NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCisrKyBiL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMKQEAgLTE3Miw2ICsxNzIsMTYg
+QEAgc3RhdGljIGNvbnN0IHN0cnVjdCBkcm1fY3J0Y19mdW5jcyBleHlub3NfY3J0Y19mdW5jcyA9
+IHsKIAkuZGlzYWJsZV92YmxhbmsgPSBleHlub3NfZHJtX2NydGNfZGlzYWJsZV92YmxhbmssCiB9
+OwogCitpbnQgZXh5bm9zX2RybV9jcnRjX2luaXQoc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5
+bm9zX2NydGMsCisJCQkgc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYpCit7CisJc3RydWN0IGRy
+bV9jcnRjICpjcnRjID0gJmV4eW5vc19jcnRjLT5iYXNlOworCisJZHJtX2NydGNfaGVscGVyX2Fk
+ZChjcnRjLCAmZXh5bm9zX2NydGNfaGVscGVyX2Z1bmNzKTsKKwlyZXR1cm4gZHJtX2NydGNfaW5p
+dF93aXRoX3BsYW5lcyhkcm1fZGV2LCBjcnRjLCBOVUxMLCBOVUxMLAorCQkJCQkgJmV4eW5vc19j
+cnRjX2Z1bmNzLCBOVUxMKTsKK30KKwogc3RydWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2Ry
+bV9jcnRjX2NyZWF0ZShzdHJ1Y3QgZHJtX2RldmljZSAqZHJtX2RldiwKIAkJCQkJc3RydWN0IGRy
+bV9wbGFuZSAqcGxhbmUsCiAJCQkJCWVudW0gZXh5bm9zX2RybV9vdXRwdXRfdHlwZSB0eXBlLApk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuaCBiL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmgKaW5kZXggZGVjNDQ2MTA5ZTZj
+Li45ZTM1YTllMDIzMzIgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9jcnRjLmgKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMu
+aApAQCAtMTgsNiArMTgsOCBAQAogCiAjaW5jbHVkZSAiZXh5bm9zX2RybV9kcnYuaCIKIAoraW50
+IGV4eW5vc19kcm1fY3J0Y19pbml0KHN0cnVjdCBleHlub3NfZHJtX2NydGMgKmV4eW5vc19jcnRj
+LAorCQkJIHN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2KTsKIHN0cnVjdCBleHlub3NfZHJtX2Ny
+dGMgKmV4eW5vc19kcm1fY3J0Y19jcmVhdGUoc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYsCiAJ
+CQkJCXN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLAogCQkJCQllbnVtIGV4eW5vc19kcm1fb3V0cHV0
+X3R5cGUgb3V0X3R5cGUsCi0tIAoyLjE3LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3Rz
+LmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
+c3RpbmZvL2RyaS1kZXZlbA==
