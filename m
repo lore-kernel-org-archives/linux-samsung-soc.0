@@ -1,36 +1,24 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v5.1 RESEND] dt-bindings: hwrng: Add Samsung Exynos 5250+
- True RNG bindings
-Date: Tue, 26 Mar 2019 12:42:08 +0100
-Message-ID: <CAJKOXPfM+EUzBBBhrtSFw5-e7hiimsFT8okcd8J9gGyFdzd2+w@mail.gmail.com>
-References: <CGME20190111132222eucas1p1d80caf8ba30422bc5fe1a1fac4cf48e8@eucas1p1.samsung.com>
- <CAL_JsqKt-ujsB-t9A=4dEAjqrvcquUG+qF3tFg1YCqmup_5wcw@mail.gmail.com> <20190111132139.12333-1-l.stelmach@samsung.com>
+Subject: Re: Bad file pattern in MAINTAINERS section 'SAMSUNG EXYNOS TRUE
+ RANDOM NUMBER GENERATOR (TRNG) DRIVER'
+Date: Tue, 26 Mar 2019 12:42:56 +0100
+Message-ID: <CAJKOXPcyOVLboJHZyEcUx_9HNh+iVq=7OFQN4=qnfL+O4Ld_4g@mail.gmail.com>
+References: <7cd8d12f59bcacd18a78f599b46dac555f7f16c0.camel@perches.com> <20190325212751.27532-1-joe@perches.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190111132139.12333-1-l.stelmach@samsung.com>
+In-Reply-To: <20190325212751.27532-1-joe@perches.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>
-Cc: =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>, Joe Perches <joe@perches.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Otto Sabart <ottosabart@seberm.com>, Rob Herring <robh@kernel.org>
+To: Joe Perches <joe@perches.com>
+Cc: linux-kernel@vger.kernel.org, =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Philippe Ombredanne <pombredanne@nexb.com>, Herbert Xu <herbert@gondor.apana.org.au>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, 11 Jan 2019 at 14:22, =C5=81ukasz Stelmach <l.stelmach@samsung.com>=
- wrote:
+On Mon, 25 Mar 2019 at 22:29, Joe Perches <joe@perches.com> wrote:
 >
-> Add binding documentation for the True Random Number Generator
-> found on Samsung Exynos 5250+ SoCs.
->
-> Acked-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Signed-off-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
-> ---
+> A file pattern line in this section of the MAINTAINERS file in linux-next
+> does not have a match in the linux source files.
 
-Rob,
-Could you apply this directly? You acked this some time ago but it
-never went through drivers tree. Lukasz resent this patch and it is
-waiting since then.
-The driver implementing compatible is already in mainline.
+Thanks for reminder, the patch adding file is pending.
 
 Best regards,
 Krzysztof
