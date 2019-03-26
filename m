@@ -1,64 +1,126 @@
-From: Joe Perches <joe@perches.com>
-Subject: Bad file pattern in MAINTAINERS section 'SAMSUNG EXYNOS TRUE RANDOM NUMBER GENERATOR (TRNG) DRIVER'
-Date: Mon, 25 Mar 2019 14:27:51 -0700
-Message-ID: <20190325212751.27532-1-joe@perches.com>
-References: <7cd8d12f59bcacd18a78f599b46dac555f7f16c0.camel@perches.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v3 RESEND 00/24] drm/exynos: add support for GSCALER
+ planes on Exynos5433
+Date: Tue, 26 Mar 2019 17:45:48 +0900
+Message-ID: <291c3675-1aab-bc8b-ae48-d0e936ac784e@samsung.com>
+References: <CGME20190325071353eucas1p185d973e14dac923aab381083b2b67445@eucas1p1.samsung.com>
+ <20190325071349.22600-1-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <7cd8d12f59bcacd18a78f599b46dac555f7f16c0.camel@perches.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Philippe Ombredanne <pombredanne@nexb.com>, Herbert Xu <herbert@gondor.apana.org.au>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20190325071349.22600-1-a.hajda@samsung.com>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-A file pattern line in this section of the MAINTAINERS file in linux-next
-does not have a match in the linux source files.
-
-This could occur because a matching filename was never added, was deleted
-or renamed in some other commit.
-
-The commits that added and if found renamed or removed the file pattern
-are shown below.
-
-Please fix this defect appropriately.
-
-1: ---------------------------------------------------------------------------
-
-linux-next MAINTAINERS section:
-
-	13589	SAMSUNG EXYNOS TRUE RANDOM NUMBER GENERATOR (TRNG) DRIVER
-	13590	M:	Łukasz Stelmach <l.stelmach@samsung.com>
-	13591	L:	linux-samsung-soc@vger.kernel.org
-	13592	S:	Maintained
-	13593	F:	drivers/char/hw_random/exynos-trng.c
--->	13594	F:	Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt
-
-2: ---------------------------------------------------------------------------
-
-The most recent commit that added or modified file pattern 'Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt':
-
-commit 6cd225cc5d8a6526b2bea41955882be55d4f109e
-Author: Łukasz Stelmach <l.stelmach@samsung.com>
-Date:   Fri Dec 22 17:48:35 2017 +0100
-
-    hwrng: exynos - add Samsung Exynos True RNG driver
-    
-    Add support for True Random Number Generator found in Samsung Exynos
-    5250+ SoCs.
-    
-    Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
-    Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-    Acked-by: Philippe Ombredanne <pombredanne@nexb.com>
-    Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-
- MAINTAINERS                          |   7 ++
- drivers/char/hw_random/Kconfig       |  12 ++
- drivers/char/hw_random/Makefile      |   1 +
- drivers/char/hw_random/exynos-trng.c | 237 +++++++++++++++++++++++++++++++++++
- 4 files changed, 257 insertions(+)
-
-3: ---------------------------------------------------------------------------
-
-No commit with file pattern 'Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt' was found
+SGkgQW5kcnplaiwKCjE5LiAzLiAyNS4g7Jik7ZuEIDQ6MTPsl5AgQW5kcnplaiBIYWpkYSDsnbQo
+6rCAKSDsk7Qg6riAOgo+IEhpIElua2ksCj4gCj4gR1NDQUxFUnMgaW4gRXh5bm9zIFNvQ3Mgc3Vw
+cG9ydCBjb252ZXJzaW9uIGJldHdlZW4gd2lkZSByYW5nZSBvZiBpbWFnZSBmb3JtYXRzLAo+IHBs
+dXMgc2NhbGluZyBhbmQgcm90YXRpb24uCj4gRHJpdmVyIGFscmVhZHkgc3VwcG9ydHMgbWVtMm1l
+bSBtb2RlIC0gdmlhIEV4eW5vc0RSTSBJUFAgZnJhbWV3b3JrLgo+IFRoaXMgcGF0Y2hzZXQgYWRk
+cyBzdXBwb3J0IGZvciBtZW0gdG8gZGlzcGxheSBtb2RlIC0gZnJhbWVidWZmZXJzIGNhbgo+IGJl
+IGNvbnZlcnRlZCwgc2NhbGVkIGFuZCBzZW5kIGRpcmVjdGx5IHRvIERpc3BsYXkgQ29udHJvbGxl
+ci4gRnJvbSBEUk0KPiBmcmFtZXdvcmsncyBwb2ludCBvZiB2aWV3IGV2ZXJ5IEdTQ0FMRVIgZXhw
+b3NlcyBkcm1fcGxhbmUgd2hpY2ggY2FuIGJlIGNvbm5lY3RlZAo+IHRvIGRpc3BsYXkgY29udHJv
+bGxlciAoZGlzcGxheSBwYW5lbCBvciBUVikuCj4gVGhlIGZlYXR1cmUgaXMgbm90IHdlbGwgZG9j
+dW1lbnRlZCBzbyB0aGUgZGV2ZWxvcG1lbnQgd2FzIHF1aXRlIGRpZmZpY3VsdCAtCj4gYSBwcm9j
+ZXNzIG9mIHRyaWFsIGFuZCBlcnJvciwgdmVuZG9yIGNvZGUgYW5hbHlzaXMsIGd1ZXNzaW5nIGZy
+b20gZGF0YXNoZWV0cy4KPiBIb3BlZnVsbHkgbW9zdCBvZiB0aGUgaXNzdWVzIHdlcmUgc29sdmVk
+LiBJIGhhdmUgZGV2ZWxvcGVkIGFuZCB0ZXN0ZWQgaXQgb24KPiBUTTIgZGV2aWNlIHdpdGggcGFu
+ZWwgYW5kIFRWIHBhdGhzLgo+IAo+IFRoZSBwYXRjaHNldCBjb250YWlucyB0aHJlZSBwYXJ0czoK
+PiAxLiBQcmVwYXJhdG9yeSBwYXRjaGVzIC0gbW9zdGx5IGNsZWFudXAgYW5kIHJlZmFjdG9yaW5n
+IG9mIGRybV9jcnRjIGFuZCBkcm1fcGxhbmUKPiAgICByZWxhdGVkIHN0cnVjdHVyZXMsIHRvIGFs
+bG93IHVzYWdlIG9mIHBsYW5lcyB3aGljaCBhcmUgbm90IHBoeXNpY2FsbHkgYm91bmQKPiAgICB0
+byBjcnRjcyAoMDEtMTMpLgo+IDIuIEFkZGluZyBsb2NhbCBwYXRoIHN1cHBvcnQgdG8gR1NDQUxF
+UiBhbmQgREVDT04gKDE0LTIwKS4KPiAzLiBGZXcgZml4ZXMgb2YgYnVncyBleGlzdGluZyBhbHJl
+YWR5IGluIHRoZSBjb2RlIGJ1dCBkaXNjb3ZlcmVkIGR1ZSB0byBhZGRlZAo+ICAgIGxvY2FsIHBh
+dGggc3VwcG9ydCAoMjEtMjMpLgo+IAo+IFRoZSBwYXRjaHNldCBpcyBiYXNlZCBvbiBleHlub3Nf
+ZHJtX25leHQgcGx1cyBteSBwYXRjaHNldCBhZGRpbmcgenBvcyB0byBERUNPTgo+IGFuZCBGSU1E
+IC0gJ2RybS9leHlub3M6IGFkZCBzdXBwb3J0IGZvciBkeW5hbWljIHpwb3MgaW4gREVDT04gYW5k
+IEZJTUQnIC0gaXQgaXMKPiByZXF1aXJlZCB0byBhbGxvdyBzZXQgei1wb3MgcG9zaXRpb24gb2Yg
+R1NDQUxFUiBwbGFuZXMuCgpBcyBmb3IgdGhpcywgd2UgaGFkIGEgZGlzY3Vzc2lvbiBiZWZvcmUs
+Cmh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvY292ZXIvMTA3MTU1MjEvCgpBbmQgdGhlIGxh
+c3QgY29tbWVudCBJIGxlZnQgd2FzLAoiSSBrbm93LiBZb3VyIHBhdGNoIHdpbGwgc2hvdyB0aGF0
+IHBsYW5lIG9yZGVyIGlzIGNoYW5nZWQgYnkgY2hhbmdpbmcgbWFwcGluZyBvZiBwbGFuZSBmcm9t
+IG9uZSB3aW5kb3cgdG8gYW5vdGhlciB3aW5kb3cgcmVnYXJkbGVzcyBvZiBvdmVybGF5IHByaW9y
+aXR5IGNoYW5nZSBzdXBwb3J0LiAKSSdtIG5vdCBjbGVhciBidXQgc2VlbXMgbWF5YmUgd2UgY291
+bGQgZG8gbW9yZSBzb21ldGhpbmcgd2l0aCB5b3VyIHBhdGNoIGV2ZW4gdGhvdWdoIERFQ09OL0ZJ
+TUQgaGF2ZSBsaW1pdC4gU28gSSB3aWxsIGVucXVldWUgeW91ciBwYXRjaCB1bnRpbCByZWFsIHVz
+ZXIgaXMgZml4ZWQuIgoKRGlkIHlvdSBmaXggVERNIG1vZHVsZSBvZiBUaXplbiB3aGljaCBpcyBh
+IHJlYWwgdXNlcj8gV2l0aG91dCBhbnkgbW9kaWZpY2F0aW9uIG9mIHRoZSBURE0gbW9kdWxlLCB0
+aGUgdXNlciBkb2Vzbid0IHdvcmsuCgo+IFRvIHNpbXBsaWZ5IHRlc3RzIEkgaGF2ZSBhbHNvIGNy
+ZWF0ZWQgYnJhbmNoIGNvbnRhaW5pbmcgYWxsIHJlcXVpcmVkIHBhdGNoZXM6Cj4gUmVwbzogaHR0
+cHM6Ly9naXQudGl6ZW4ub3JnL2NnaXQvcGxhdGZvcm0va2VybmVsL2xpbnV4LWV4eW5vcwo+IEJy
+YW5jaDogc2FuZGJveC9haGFqZGEvZGV2L2V4eW5vcy1kcm0tbG9jYWwtcGF0aAo+IAo+IFRoaXMg
+aXMgdjIgdmVyc2lvbiBvZiB0aGUgcGF0Y2hzZXQuIEluIHRoaXMgdmVyc2lvbiBJIGhhdmUgbW92
+ZWQgY29kZSBzZXR0aW5nCj4gY3Vyc29yIHBsYW5lIGluIGNydGMgdG8gc2VwYXJhdGUgcGF0Y2gg
+dG9nZXRoZXIgd2l0aCBjb2RlIGRpc2FibGluZyBmYXN0IGN1cnNvcgo+IHVwZGF0ZXMgLSBoYXJk
+d2FyZSBkb2VzIG5vdCBzdXBwb3J0IGl0LiBUbyBrZWVwIGJpc2VjdGFiaWxpdHkgRFRTIHBhdGNo
+ZXMgc2hvdWxkCj4gYmUgYXBwbGllZCBiZWZvcmUgc3Vic2VxdWVudCBvbmVzLiBJdCBpcyByZWJh
+c2VkIG9uIHRvZGF5J3MgZXh5bm9zLWRybS1uZXh0Lgo+IAo+IFBsZWFzZSBiZSBhd2FyZSB0aGF0
+IERUUyBwYXRjaGVzIGhhcyBiZWVuIGFscmVhZHkgYXBwbGllZCB0byBzYW1zdW5nLXNvYyB0cmVl
+LAo+IEkgbGVmdCB0aGVtIGhlcmUgdG8gc2ltcGxpZnkgdGVzdGluZyBvbiBleHlub3MtZHJtLW5l
+eHQsIHdoaWNoIGlzIG5vdCBpbiBzeW5jIHdpdGgKPiBzYW1zdW5nLXNvYywgZm9yIHRoaXMgcmVh
+c29uIEkgaGF2ZSBtb3ZlZCB0aGVtIG9uIHRoZSBiZWdpbm5pbmcgb2YgdGhlIHBhdGNoc2V0LgoK
+R290IGl0LiBJIGNhbiB0ZXN0IGl0IGJ5IGRvaW5nIGNoZXJyeS1waWNrIHRoZXNlIHR3byBwYXRj
+aGVzLgoKVGhhbmtzLApJbmtpIERhZQoKPiAKPiBSZWdhcmRzCj4gQW5kcnplago+IAo+IAo+IEFu
+ZHJ6ZWogSGFqZGEgKDI0KToKPiAgIGFybTY0OiBkdHM6IGV4eW5vczogY29uZmlndXJlIEdTQ0FM
+RVIgcmVsYXRlZCBjbG9ja3MKPiAgIGFybTY0OiBkdHM6IGV4eW5vczogYWRkIERTRC9HU0QgY2xv
+Y2tzIHRvIERFQ09OcyBhbmQgR1NDQUxFUnMKPiAgIGRybS9leHlub3M6IHJlbW92ZSBleHlub3Nf
+ZHJtX3BsYW5lLmggaGVhZGVyCj4gICBkcm0vZXh5bm9zOiByZW1vdmUgc3BhcmUgbWFjcm8KPiAg
+IGRybS9leHlub3M6IGRyb3AgZXh5bm9zX2RybV9wbGFuZV9jb25maWcgc3RydWN0dXJlCj4gICBk
+cm0vZXh5bm9zOiBhZGQgZXh5bm9zX2RybV9jcnRjX2luaXQgZnVuY3Rpb24KPiAgIGRybS9leHlu
+b3MvZGVjb241NDMzOiBlbWJlZCBleHlub3NfZHJtX2NydGMgZGlyZWN0bHkgaW50byBjb250ZXh0
+Cj4gICBkcm0vZXh5bm9zL2RlY29uNzogZW1iZWQgZXh5bm9zX2RybV9jcnRjIGRpcmVjdGx5IGlu
+dG8gY29udGV4dAo+ICAgZHJtL2V4eW5vcy9maW1kOiBlbWJlZCBleHlub3NfZHJtX2NydGMgZGly
+ZWN0bHkgaW50byBjb250ZXh0Cj4gICBkcm0vZXh5bm9zL21peGVyOiBlbWJlZCBleHlub3NfZHJt
+X2NydGMgZGlyZWN0bHkgaW50byBjb250ZXh0Cj4gICBkcm0vZXh5bm9zL3ZpZGk6IGVtYmVkIGV4
+eW5vc19kcm1fY3J0YyBkaXJlY3RseSBpbnRvIGNvbnRleHQKPiAgIGRybS9leHlub3M6IHJlbW92
+ZSBzdGFuZGFsb25lIGV4eW5vc19kcm1fY3J0YyBsZWZ0b3ZlcnMKPiAgIGRybS9leHlub3Mvdmlk
+aTogcmVtb3ZlIGVuY29kZXJfdG9fdmlkaSBoZWxwZXIKPiAgIGRybS9leHlub3M6IHVuaWZ5IHBs
+YW5lIHR5cGUgYXNzaWdubWVudAo+ICAgZHJtL2V4eW5vczogc2V0IHByaW1hcnkgcGxhbmUgaW4g
+ZXh5bm9zX2RybV9jcnRjX2luaXQKPiAgIGRybS9leHlub3M6IHNldCBjdXJzb3IgcGxhbmUgaW4g
+ZXh5bm9zX2RybV9jcnRjX2luaXQKPiAgIGRybS9leHlub3M6IGFkZCBwbGFuZSB1cGRhdGUvZGlz
+YWJsZSBjYWxsYmFja3MgZm9yIHBsYW5lcwo+ICAgZHJtL2V4eW5vczogYWRkIEdTQ0FMRVIgcGxh
+bmUgY2FwYWJpbGl0eQo+ICAgZHJtL2V4eW5vcy9nc2NhbGVyOiBmaXggaWQgYXNzaWduZW1lbnQK
+PiAgIGRybS9leHlub3MvZ3NjYWxlcjogYWRkIGxvY2FsIHBhdGggc3VwcG9ydAo+ICAgZHJtL2V4
+eW5vcy9kZWNvbjU0MzM6IGFkZCBsb2NhbCBwYXRoIHN1cHBvcnQKPiAgIGRybS9leHlub3MvZGVj
+b241NDMzOiB3YWl0IGZvciBmaW5pc2ggcHJldmlvdXMgdXBkYXRlCj4gICBkcm0vZXh5bm9zL2dz
+Y2FsZXI6IGNoYW5nZSBzdXBwb3J0ZWQgY29sb3IgZm9ybWF0IEJHUlg4ODg4IHRvIFhCR1I4ODg4
+Cj4gICBkcm0vZXh5bm9zL2dzY2FsZXI6IGZpeCBoYW5kbGluZyBZVlU0MjAgcGl4ZWwgZm9ybWF0
+Cj4gCj4gIC4uLi9kdHMvZXh5bm9zL2V4eW5vczU0MzMtdG0yLWNvbW1vbi5kdHNpICAgICB8ICAg
+NiArCj4gIGFyY2gvYXJtNjQvYm9vdC9kdHMvZXh5bm9zL2V4eW5vczU0MzMtdG0yLmR0cyB8ICAg
+NiArLQo+ICBhcmNoL2FybTY0L2Jvb3QvZHRzL2V4eW5vcy9leHlub3M1NDMzLmR0c2kgICAgfCAg
+MjUgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jIHwg
+MTYyICsrKysrKysrLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M3X2RybV9k
+ZWNvbi5jICAgIHwgIDY2ICsrKy0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9jcnRjLmMgICAgICB8ICA0NiArKy0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9jcnRjLmggICAgICB8ICAgNyArLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fZHJ2LmMgICAgICAgfCAgIDEgLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fZHJ2LmggICAgICAgfCAgNTAgKystLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fZmIuYyAgICAgICAgfCAgMTAgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2ZpbWQuYyAgICAgIHwgIDg1ICsrKy0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2dzYy5jICAgICAgIHwgMjI5ICsrKysrKysrKysrKysrLS0tLQo+ICBk
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYyAgICAgfCAgODQgKysrKy0t
+LQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuaCAgICAgfCAgMTQg
+LS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYyAgICAgIHwgIDQ4
+ICsrLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyAgICAgICAgIHwg
+IDk1ICsrKy0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1kZWNvbjU0MzMuaCAg
+ICAgICB8ICAgNiArCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvcmVncy1nc2MuaCAgICAgICAg
+ICAgICB8ICAgNiArCj4gIDE4IGZpbGVzIGNoYW5nZWQsIDUzOCBpbnNlcnRpb25zKCspLCA0MDgg
+ZGVsZXRpb25zKC0pCj4gIGRlbGV0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fcGxhbmUuaAo+IApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
+ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9kcmktZGV2ZWw=
