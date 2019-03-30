@@ -1,53 +1,51 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 08/21] drm/exynos: Use drm_fb_helper_fill_info
-Date: Thu, 28 Mar 2019 07:57:54 +0900
-Message-ID: <901dcf5b-4549-8cf9-4dd0-569cb4642cfa@samsung.com>
-References: <20190326132008.11781-1-daniel.vetter@ffwll.ch>
- <CGME20190326132028epcas5p1b29ce1824f06a686d8b4182ed1b170ed@epcas5p1.samsung.com>
- <20190326132008.11781-8-daniel.vetter@ffwll.ch>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.0 21/67] thermal: samsung: Fix incorrect check after code merge
+Date: Fri, 29 Mar 2019 20:50:01 -0400
+Message-ID: <20190330005047.25998-21-sashal@kernel.org>
+References: <20190330005047.25998-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190326132008.11781-8-daniel.vetter@ffwll.ch>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, DRI Development <dri-devel@lists.freedesktop.org>
-Cc: linux-samsung-soc@vger.kernel.org, Intel Graphics Development <intel-gfx@lists.freedesktop.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Daniel Vetter <daniel.vetter@intel.com>, linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190330005047.25998-1-sashal@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-CgoxOS4gMy4gMjYuIOyYpO2bhCAxMDoxOeyXkCBEYW5pZWwgVmV0dGVyIOydtCjqsIApIOyTtCDq
-uIA6Cj4gVGhpcyB3aWxsIGdpdmUgdGhlIGV4eW5vcyBmYmRldiBhIG5hbWUhCj4gCj4gdjI6IFJl
-YmFzZQo+IAo+IFNpZ25lZC1vZmYtYnk6IERhbmllbCBWZXR0ZXIgPGRhbmllbC52ZXR0ZXJAaW50
-ZWwuY29tPgoKQWNrZWQtYnk6IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KClRoYW5r
-cywKSW5raSBEYWUKCj4gQ2M6IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KPiBDYzog
-Sm9vbnlvdW5nIFNoaW0gPGp5MDkyMi5zaGltQHNhbXN1bmcuY29tPgo+IENjOiBTZXVuZy1Xb28g
-S2ltIDxzdzAzMTIua2ltQHNhbXN1bmcuY29tPgo+IENjOiBLeXVuZ21pbiBQYXJrIDxreXVuZ21p
-bi5wYXJrQHNhbXN1bmcuY29tPgo+IENjOiBLdWtqaW4gS2ltIDxrZ2VuZUBrZXJuZWwub3JnPgo+
-IENjOiBLcnp5c3p0b2YgS296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+Cj4gQ2M6IGxpbnV4LWFy
-bS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwo+IENjOiBsaW51eC1zYW1zdW5nLXNvY0B2Z2Vy
-Lmtlcm5lbC5vcmcKPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Zi
-ZGV2LmMgfCA0ICstLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAzIGRlbGV0
-aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fZmJkZXYuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYmRldi5jCj4g
-aW5kZXggYzMwZGQ4OGNkYjI1Li41ODFhNmEyMDc5OTUgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiZGV2LmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19kcm1fZmJkZXYuYwo+IEBAIC04NywxMSArODcsOSBAQCBzdGF0aWMgaW50
-IGV4eW5vc19kcm1fZmJkZXZfdXBkYXRlKHN0cnVjdCBkcm1fZmJfaGVscGVyICpoZWxwZXIsCj4g
-IAkJcmV0dXJuIFBUUl9FUlIoZmJpKTsKPiAgCX0KPiAgCj4gLQlmYmktPnBhciA9IGhlbHBlcjsK
-PiAgCWZiaS0+ZmJvcHMgPSAmZXh5bm9zX2RybV9mYl9vcHM7Cj4gIAo+IC0JZHJtX2ZiX2hlbHBl
-cl9maWxsX2ZpeChmYmksIGZiLT5waXRjaGVzWzBdLCBmYi0+Zm9ybWF0LT5kZXB0aCk7Cj4gLQlk
-cm1fZmJfaGVscGVyX2ZpbGxfdmFyKGZiaSwgaGVscGVyLCBzaXplcy0+ZmJfd2lkdGgsIHNpemVz
-LT5mYl9oZWlnaHQpOwo+ICsJZHJtX2ZiX2hlbHBlcl9maWxsX2luZm8oZmJpLCBoZWxwZXIsIHNp
-emVzKTsKPiAgCj4gIAlucl9wYWdlcyA9IGV4eW5vc19nZW0tPnNpemUgPj4gUEFHRV9TSElGVDsK
-PiAgCj4gCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRy
-aS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
-czovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbA==
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+
+[ Upstream commit 3b5236cc5d086dd3ddd01113ee9255421aab9fab ]
+
+Merge commit 19785cf93b6c ("Merge branch 'linus' of
+git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal")
+broke the code introduced by commit ffe6e16f14fa ("thermal: exynos: Reduce
+severity of too early temperature read"). Restore the original code from
+the mentioned commit to finally fix the warning message during boot:
+
+thermal thermal_zone0: failed to read out thermal zone (-22)
+
+Reported-by: Marian Mihailescu <mihailescu2m@gmail.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Fixes: 19785cf93b6c ("Merge branch 'linus' of git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal")
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/thermal/samsung/exynos_tmu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+index 48eef552cba4..fc9399d9c082 100644
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -666,7 +666,7 @@ static int exynos_get_temp(void *p, int *temp)
+ 	struct exynos_tmu_data *data = p;
+ 	int value, ret = 0;
+ 
+-	if (!data || !data->tmu_read || !data->enabled)
++	if (!data || !data->tmu_read)
+ 		return -EINVAL;
+ 	else if (!data->enabled)
+ 		/*
+-- 
+2.19.1
