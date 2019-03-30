@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.0 21/67] thermal: samsung: Fix incorrect check after code merge
-Date: Fri, 29 Mar 2019 20:50:01 -0400
-Message-ID: <20190330005047.25998-21-sashal@kernel.org>
-References: <20190330005047.25998-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 18/52] thermal: samsung: Fix incorrect check after code merge
+Date: Fri, 29 Mar 2019 20:52:25 -0400
+Message-ID: <20190330005301.26868-18-sashal@kernel.org>
+References: <20190330005301.26868-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190330005047.25998-1-sashal@kernel.org>
+In-Reply-To: <20190330005301.26868-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
