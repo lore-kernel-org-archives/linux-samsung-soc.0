@@ -1,9 +1,10 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH RFC 2/8] soc: samsung: Exynos chipid driver update
-Date: Thu, 04 Apr 2019 19:17:29 +0200
-Message-ID: <20190404171735.12815-3-s.nawrocki@samsung.com>
+Subject: [PATCH RFC 3/8] dt-bindings: exynos: Add ASV tables binding
+ documentation
+Date: Thu, 04 Apr 2019 19:17:30 +0200
+Message-ID: <20190404171735.12815-4-s.nawrocki@samsung.com>
 References: <20190404171735.12815-1-s.nawrocki@samsung.com>
-        <CGME20190404172229epcas2p25a819e37035b26ccf53613e880bdcacf@epcas2p2.samsung.com>
+        <CGME20190404172234epcas1p37667ec0996000aff9297f13639908dfc@epcas1p3.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <20190404171735.12815-1-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -11,121 +12,96 @@ To: krzk@kernel.org
 Cc: kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, cw00.choi@samsung.com, myungjoo.ham@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, pankaj.dubey@samsung.com, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds definition of selected CHIP ID register offsets
-and register bit field definitions for Exynos5422 SoC.
-
-exynos_chipid_read() helper function is added to allow reading
-the CHIP ID block registers.
+This patch adds documentation of the Exynos ASV (Adaptive Voltage Supply)
+tables DT binding.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- drivers/soc/samsung/exynos-chipid.c | 16 +++++-----
- drivers/soc/samsung/exynos-chipid.h | 48 +++++++++++++++++++++++++++++
- 2 files changed, 57 insertions(+), 7 deletions(-)
- create mode 100644 drivers/soc/samsung/exynos-chipid.h
+ .../devicetree/bindings/arm/samsung/asv.txt   | 76 +++++++++++++++++++
+ 1 file changed, 76 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/samsung/asv.txt
 
-diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
-index 5cb018807817..4920f0ef2c55 100644
---- a/drivers/soc/samsung/exynos-chipid.c
-+++ b/drivers/soc/samsung/exynos-chipid.c
-@@ -16,10 +16,7 @@
- #include <linux/slab.h>
- #include <linux/sys_soc.h>
- 
--#define EXYNOS_SUBREV_MASK	(0xF << 4)
--#define EXYNOS_MAINREV_MASK	(0xF << 0)
--#define EXYNOS_REV_MASK		(EXYNOS_SUBREV_MASK | EXYNOS_MAINREV_MASK)
--#define EXYNOS_MASK		0xFFFFF000
-+#include "exynos-chipid.h"
- 
- static const struct exynos_soc_id {
- 	const char *name;
-@@ -40,6 +37,13 @@ static const struct exynos_soc_id {
- 	{ "EXYNOS5433", 0xE5433000 },
- };
- 
-+static void __iomem *exynos_chipid_base;
-+
-+unsigned int exynos_chipid_read(unsigned int offset)
-+{
-+	return readl_relaxed(exynos_chipid_base + offset);
-+}
-+
- static const char * __init product_id_to_soc_id(unsigned int product_id)
- {
- 	int i;
-@@ -53,7 +57,6 @@ static const char * __init product_id_to_soc_id(unsigned int product_id)
- int __init exynos_chipid_early_init(void)
- {
- 	struct soc_device_attribute *soc_dev_attr;
--	void __iomem *exynos_chipid_base;
- 	struct soc_device *soc_dev;
- 	struct device_node *root;
- 	struct device_node *np;
-@@ -73,9 +76,8 @@ int __init exynos_chipid_early_init(void)
- 		return -ENXIO;
- 	}
- 
--	product_id = readl_relaxed(exynos_chipid_base);
-+	product_id = exynos_chipid_read(EXYNOS_CHIPID_REG_PRO_ID);
- 	revision = product_id & EXYNOS_REV_MASK;
--	iounmap(exynos_chipid_base);
- 
- 	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
- 	if (!soc_dev_attr)
-diff --git a/drivers/soc/samsung/exynos-chipid.h b/drivers/soc/samsung/exynos-chipid.h
+diff --git a/Documentation/devicetree/bindings/arm/samsung/asv.txt b/Documentation/devicetree/bindings/arm/samsung/asv.txt
 new file mode 100644
-index 000000000000..826a12c25fa2
+index 000000000000..0db907263a91
 --- /dev/null
-+++ b/drivers/soc/samsung/exynos-chipid.h
-@@ -0,0 +1,48 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018 Samsung Electronics Co., Ltd.
-+ *	      http://www.samsung.com/
-+ *
-+ * EXYNOS - CHIP ID support
-+ */
++++ b/Documentation/devicetree/bindings/arm/samsung/asv.txt
+@@ -0,0 +1,76 @@
++Exynos Adaptive Supply Voltage (ASV) tables
++-------------------------------------------
 +
-+#define EXYNOS_CHIPID_REG_PRO_ID	0x00
-+ #define EXYNOS_SUBREV_MASK		(0xf << 4)
-+ #define EXYNOS_MAINREV_MASK		(0xf << 0)
-+ #define EXYNOS_REV_MASK		(EXYNOS_SUBREV_MASK | \
-+					 EXYNOS_MAINREV_MASK)
-+ #define EXYNOS_MASK			0xfffff000
++The Adaptive Supply Voltage (ASV) on Exynos SoCs is a technique of adjusting
++operating points, i.e. the power supply voltage for given clock frequency,
++in order to better match actual capabilities of the hardware and optimize power
++consumption.  This applies to subsystem of the SoC like: CPU clusters, GPU,
++the memory controller or camera ISP.  During production process the SoC chip
++is assigned to one of several bins (ASV groups) and the group information
++is encoded in the SoC CHIPID block registers and/or OTP memory. This information
++is then used by the OS to select more finely matching operating points for
++devices.
 +
-+#define EXYNOS_CHIPID_REG_PKG_ID	0x04
-+ #define EXYNOS5422_IDS_OFFSET		24
-+ #define EXYNOS5422_IDS_MASK		0xff
-+ #define EXYNOS5422_USESG_OFFSET	3
-+ #define EXYNOS5422_USESG_MASK		0x01
-+ #define EXYNOS5422_SG_OFFSET		0
-+ #define EXYNOS5422_SG_MASK		0x07
-+ #define EXYNOS5422_TABLE_OFFSET	8
-+ #define EXYNOS5422_TABLE_MASK		0x03
-+ #define EXYNOS5422_SG_A_OFFSET		17
-+ #define EXYNOS5422_SG_A_MASK		0x0f
-+ #define EXYNOS5422_SG_B_OFFSET		21
-+ #define EXYNOS5422_SG_B_MASK		0x03
-+ #define EXYNOS5422_SG_BSIGN_OFFSET	23
-+ #define EXYNOS5422_SG_BSIGN_MASK	0x01
-+ #define EXYNOS5422_BIN2_OFFSET		12
-+ #define EXYNOS5422_BIN2_MASK		0x01
++This binding describes data used to create actual operating points for the
++subsystems.  The data is in form of two-dimensional arrays of M x N cells,
++where the first column contains frequency values and subsequent columns
++associated with ASV groups contain corresponding voltage values.
 +
-+#define EXYNOS_CHIPID_REG_LOT_ID	0x14
++    frequency group0 group1 ...  group(N-1)
++       0        1      2    ...  N-1
++0    <f0      V00    V01    ...  V0n>,
++1    <f1      V10    V11    ...  V1n>,
++...  <        ...                 >,
++M-1  <fm      Vm0    Vm1    ...  Vmn>,
 +
-+#define EXYNOS_CHIPID_AUX_INFO		0x1c
-+ #define EXYNOS5422_TMCB_OFFSET		0
-+ #define EXYNOS5422_TMCB_MASK		0x7f
-+ #define EXYNOS5422_ARM_UP_OFFSET	8
-+ #define EXYNOS5422_ARM_UP_MASK		0x03
-+ #define EXYNOS5422_ARM_DN_OFFSET	10
-+ #define EXYNOS5422_ARM_DN_MASK		0x03
-+ #define EXYNOS5422_KFC_UP_OFFSET	12
-+ #define EXYNOS5422_KFC_UP_MASK		0x03
-+ #define EXYNOS5422_KFC_DN_OFFSET	14
-+ #define EXYNOS5422_KFC_DN_MASK		0x03
++In simplest form the actual operating points set may be created by selecting
++whole column for the voltage values, however also parts of multiple columns may
++be combined by the OS to create series of voltage values corresponding to
++frequencies in column 0.
 +
-+unsigned int exynos_chipid_read(unsigned int offset);
++The ASV tables are defined as sub-nodes of parent node containing all tables.
++
++* Main node
++
++Required properties:
++ - compatible : should at least contain "samsung,exynos-asv-v1".
++
++* Table node
++
++Required properties:
++ - samsung,asv-table-size : specifies dimension of the table, the first cell is
++   total number of rows (M), the second cell is total number of columns (N),
++ - samsung,asv-table-id : ID of the table, lower 8-bits is an index (revision)
++   of the table, remaining bits (31...8) specify a subsystem the table applies
++   to:  0 - ARM/Eagle (big) CPU cluster, 1 - KFC (little) CPU cluster,
++ - samsung,asv-data : the ASV table data as described earlier in this document.
++   First cell is frequency value, then N-1 voltage values. Such sequence
++   is repeated M times.
++
++Optional properties:
++ - samsung,asv-common-data : a list of frequency, voltage pairs used to describe
++   operating points where voltage is same for all N-1 ASV groups. This allows
++   to avoid data duplication is the "samsung,asv-data" property.
++
++Example:
++
++&chipid {
++	asv {
++		compatible = "samsung,exynos-asv-v1";
++		asv-table-0 {
++			samsung,asv-table-size = <8 6>;
++			samsung,asv-table-id = <0x0>;
++			samsung,asv-data =
++				/*     ASV0    ASV1    ASV2    ASV3    ASV4  */
++				<1700 1187500 1175000 1162500 1150000 1137500 >,
++				<1500 1125000 1112500 1100000 1087500 1075000 >,
++				<1300 1075000 1062500 1050000 1037500 1025000 >,
++				<1000  987500  975000  962500  950000  937500 >,
++				< 900  950000  937500  925000  925000  925000 >,
++				< 700  925000  912500  912500  912500  912500 >;
++						     /* ASV0...15 */
++			samsung,asv-common-data = <600 900000>,
++						  <500 900000>;
++		};
++	};
++};
 -- 
 2.17.1
