@@ -1,69 +1,152 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH RFC 1/8] soc: samsung: Add exynos chipid driver support
-Date: Fri, 5 Apr 2019 10:49:46 +0200
-Message-ID: <3a381f69-da67-384a-dfe2-22e38c5570f7@samsung.com>
-References: <CGME20190404172224epcas2p21b449c0ae8e36f7e800ae67c18db35a2@epcas2p2.samsung.com>
-        <20190404171735.12815-1-s.nawrocki@samsung.com>
-        <20190404171735.12815-2-s.nawrocki@samsung.com>
-        <CAJKOXPdtdvQg69PLO4+aGAWjth-NzGToJUUPN0Jw6=zTCz9Bbw@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH RFC 2/8] soc: samsung: Exynos chipid driver update
+Date: Fri, 5 Apr 2019 11:22:51 +0200
+Message-ID: <CAJKOXPcJrctz5E8GX2ke804FBifpfYm5D_=H4MguTg_Cq2CPng@mail.gmail.com>
+References: <CGME20190404172229epcas2p25a819e37035b26ccf53613e880bdcacf@epcas2p2.samsung.com>
+ <20190404171735.12815-1-s.nawrocki@samsung.com> <20190404171735.12815-3-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPdtdvQg69PLO4+aGAWjth-NzGToJUUPN0Jw6=zTCz9Bbw@mail.gmail.com>
-Content-Language: en-GB
+In-Reply-To: <20190404171735.12815-3-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, Chanwoo Choi <cw00.choi@samsung.com>, myungjoo.ham@samsung.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, pankaj.dubey@samsung.com, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, Chanwoo Choi <cw00.choi@samsung.com>, myungjoo.ham@samsung.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, pankaj.dubey@samsung.com, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 4/5/19 08:53, Krzysztof Kozlowski wrote:
-> On Thu, 4 Apr 2019 at 19:22, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
->> From: Pankaj Dubey <pankaj.dubey@samsung.com>
->>
->> Exynos SoCs have Chipid, for identification of product IDs and SoC
->> revisions. This patch intends to provide initialization code for all
->> these functionalities, at the same time it provides some sysfs entries
->> for accessing these information to user-space.
+On Thu, 4 Apr 2019 at 19:22, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
+>
+> This patch adds definition of selected CHIP ID register offsets
+> and register bit field definitions for Exynos5422 SoC.
+>
+> exynos_chipid_read() helper function is added to allow reading
+> the CHIP ID block registers.
+>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  drivers/soc/samsung/exynos-chipid.c | 16 +++++-----
+>  drivers/soc/samsung/exynos-chipid.h | 48 +++++++++++++++++++++++++++++
+>  2 files changed, 57 insertions(+), 7 deletions(-)
+>  create mode 100644 drivers/soc/samsung/exynos-chipid.h
+>
+> diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+> index 5cb018807817..4920f0ef2c55 100644
+> --- a/drivers/soc/samsung/exynos-chipid.c
+> +++ b/drivers/soc/samsung/exynos-chipid.c
+> @@ -16,10 +16,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/sys_soc.h>
+>
+> -#define EXYNOS_SUBREV_MASK     (0xF << 4)
+> -#define EXYNOS_MAINREV_MASK    (0xF << 0)
+> -#define EXYNOS_REV_MASK                (EXYNOS_SUBREV_MASK | EXYNOS_MAINREV_MASK)
+> -#define EXYNOS_MASK            0xFFFFF000
 
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> [m.szyprowski: for suggestion and code snippet of product_id_to_soc_id]
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> 
-> Toy need to add your SoB here.
+Create hex-addresses in first commit in lower case.
 
-Will correct that in next iteration.
+> +#include "exynos-chipid.h"
+>
+>  static const struct exynos_soc_id {
+>         const char *name;
+> @@ -40,6 +37,13 @@ static const struct exynos_soc_id {
+>         { "EXYNOS5433", 0xE5433000 },
+>  };
+>
+> +static void __iomem *exynos_chipid_base;
 
->> diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
->> new file mode 100644
->> index 000000000000..5cb018807817
->> --- /dev/null
->> +++ b/drivers/soc/samsung/exynos-chipid.c
->> @@ -0,0 +1,111 @@
+No, this was removed in Pankaj's version v6 -> v7 and I do not want it
+to be file-scope. Having it file-scope is error prone and prevents
+having multiple instances (I do not expect having more than one but
+still code should be rather nicely generic).
 
->> +#include <linux/io.h>
->> +#include <linux/of.h>
->> +#include <linux/of_address.h>
->> +#include <linux/of_platform.h>
->> +#include <linux/platform_device.h>
-> 
-> I commented Bartlomiej's patch which you included here. I did not
-> receive any further feedback from him so I do not know whether he
-> agrees with my comments or not... but if you send the same patch again
-> without addressing these comments, I feel like ignored.
-> 
-> I stopped on first ignored comment.
-> 
-> Therefore please address be sure that you addressed my comments from
-> Bartlomiej's patchset. If you do not agree with them, please let me
-> know. The comments are here:
-> https://patchwork.kernel.org/project/linux-samsung-soc/list/?series=43565&state=*
+> +
+> +unsigned int exynos_chipid_read(unsigned int offset)
+> +{
+> +       return readl_relaxed(exynos_chipid_base + offset);
+> +}
+> +
+>  static const char * __init product_id_to_soc_id(unsigned int product_id)
+>  {
+>         int i;
+> @@ -53,7 +57,6 @@ static const char * __init product_id_to_soc_id(unsigned int product_id)
+>  int __init exynos_chipid_early_init(void)
+>  {
+>         struct soc_device_attribute *soc_dev_attr;
+> -       void __iomem *exynos_chipid_base;
+>         struct soc_device *soc_dev;
+>         struct device_node *root;
+>         struct device_node *np;
+> @@ -73,9 +76,8 @@ int __init exynos_chipid_early_init(void)
+>                 return -ENXIO;
+>         }
+>
+> -       product_id = readl_relaxed(exynos_chipid_base);
+> +       product_id = exynos_chipid_read(EXYNOS_CHIPID_REG_PRO_ID);
+>         revision = product_id & EXYNOS_REV_MASK;
+> -       iounmap(exynos_chipid_base);
+>
+>         soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
+>         if (!soc_dev_attr)
+> diff --git a/drivers/soc/samsung/exynos-chipid.h b/drivers/soc/samsung/exynos-chipid.h
+> new file mode 100644
+> index 000000000000..826a12c25fa2
+> --- /dev/null
+> +++ b/drivers/soc/samsung/exynos-chipid.h
+> @@ -0,0 +1,48 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018 Samsung Electronics Co., Ltd.
+> + *           http://www.samsung.com/
+> + *
+> + * EXYNOS - CHIP ID support
+> + */
+> +
+> +#define EXYNOS_CHIPID_REG_PRO_ID       0x00
+> + #define EXYNOS_SUBREV_MASK            (0xf << 4)
+> + #define EXYNOS_MAINREV_MASK           (0xf << 0)
+> + #define EXYNOS_REV_MASK               (EXYNOS_SUBREV_MASK | \
+> +                                        EXYNOS_MAINREV_MASK)
+> + #define EXYNOS_MASK                   0xfffff000
+> +
+> +#define EXYNOS_CHIPID_REG_PKG_ID       0x04
 
-I will drop that unneeded header inclusion in next iteration.  It was 
-just my oversight, I somehow missed your previous comments.  And of
-course your reviews are appreciated. 
+Can you comment that these are fields from this register?
+The same in second one.
 
--- 
-Regards,
-Sylwester
+Best regards,
+Krzysztof
+
+> + #define EXYNOS5422_IDS_OFFSET         24
+> + #define EXYNOS5422_IDS_MASK           0xff
+> + #define EXYNOS5422_USESG_OFFSET       3
+> + #define EXYNOS5422_USESG_MASK         0x01
+> + #define EXYNOS5422_SG_OFFSET          0
+> + #define EXYNOS5422_SG_MASK            0x07
+> + #define EXYNOS5422_TABLE_OFFSET       8
+> + #define EXYNOS5422_TABLE_MASK         0x03
+> + #define EXYNOS5422_SG_A_OFFSET                17
+> + #define EXYNOS5422_SG_A_MASK          0x0f
+> + #define EXYNOS5422_SG_B_OFFSET                21
+> + #define EXYNOS5422_SG_B_MASK          0x03
+> + #define EXYNOS5422_SG_BSIGN_OFFSET    23
+> + #define EXYNOS5422_SG_BSIGN_MASK      0x01
+> + #define EXYNOS5422_BIN2_OFFSET                12
+> + #define EXYNOS5422_BIN2_MASK          0x01
+> +
+> +#define EXYNOS_CHIPID_REG_LOT_ID       0x14
+> +
+> +#define EXYNOS_CHIPID_AUX_INFO         0x1c
+> + #define EXYNOS5422_TMCB_OFFSET                0
+> + #define EXYNOS5422_TMCB_MASK          0x7f
+> + #define EXYNOS5422_ARM_UP_OFFSET      8
+> + #define EXYNOS5422_ARM_UP_MASK                0x03
+> + #define EXYNOS5422_ARM_DN_OFFSET      10
+> + #define EXYNOS5422_ARM_DN_MASK                0x03
+> + #define EXYNOS5422_KFC_UP_OFFSET      12
+> + #define EXYNOS5422_KFC_UP_MASK                0x03
+> + #define EXYNOS5422_KFC_DN_OFFSET      14
+> + #define EXYNOS5422_KFC_DN_MASK                0x03
+> +
+> +unsigned int exynos_chipid_read(unsigned int offset);
+> --
+> 2.17.1
+>
