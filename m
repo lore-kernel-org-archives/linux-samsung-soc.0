@@ -1,135 +1,285 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH RFC 4/8] soc: samsung: Add Exynos Adaptive Supply
- Voltage driver
-Date: Tue, 9 Apr 2019 19:40:24 +0200
-Message-ID: <b64a8475-a31c-ea25-2d8e-4840daa8a54c@samsung.com>
-References: <CGME20190404172238epcas2p21ef28f46b728127dcd6e8ee72752a1b8@epcas2p2.samsung.com>
-        <20190404171735.12815-1-s.nawrocki@samsung.com>
-        <20190404171735.12815-5-s.nawrocki@samsung.com>
-        <CAJKOXPevELAn6ZQGKwpTOVdvyevzMmPnsO52VvF-MCk=X3Myhg@mail.gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH RFC 8/8] ARM: dts: exynos: Add ASV tables for exynos5422/5800
+Date: Thu, 11 Apr 2019 13:09:04 +0530
+Message-ID: <CANAwSgTPeSZS_Tcy2ucO5OUQjoY1ta5+7TpAer1CHV2tQTOcrw@mail.gmail.com>
+References: <CGME20190404172257epcas1p20d789242a2353dc8e9ffd7f435dc5eee@epcas1p2.samsung.com>
+ <20190404171735.12815-1-s.nawrocki@samsung.com> <20190404171735.12815-9-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPevELAn6ZQGKwpTOVdvyevzMmPnsO52VvF-MCk=X3Myhg@mail.gmail.com>
-Content-Language: en-GB
+In-Reply-To: <20190404171735.12815-9-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, Chanwoo Choi <cw00.choi@samsung.com>, myungjoo.ham@samsung.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, pankaj.dubey@samsung.com, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Chanwoo Choi <cw00.choi@samsung.com>, myungjoo.ham@samsung.com, linux-samsung-soc@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 4/5/19 12:24, Krzysztof Kozlowski wrote:
-> I have a lot of minor nits all around and few more architecture-like comments.
-> 
-> I think this should be a driver. You initialize it quite late and it
-> is required by other drivers (cpufreq, devfreq), not by core.
+Hi Sylwester,
 
-Thanks for your comments, it helped me to finally get around and convert
-this code to proper driver.  The advantage is that it can be more 
-reliably ensured that the ASV driver updates OPPs properly after they
-have been parsed from DT by cpufreq-dt or other drivers.  And if we 
-add support for the Body Bias through regulator API it would be easier
-to acquire the regulator resource, i.e. deferred probing could ensure 
-proper driver probe ordering.
- 
-> I would also prefer it to be slightly more generic. I mean, now you
-> get the tables from "samsung,exynos-asv-v1" node and then, depending
-> on many different compatibles, you do this or that. If it is
-> samsung,exynos5800, you call 542x code. If it is hardkernel, you
-> assume it is bin2. This will be not easily portable to other Exynos
-> chips and other boards (e.g. you need to update the driver for new
-> board which is forced to be in bin2).
+As per my knowledge HK soc introduce this table to support
+overclocking of cpufreq for Odroid XU3 XU4 family for boards.
 
-The bin2 part for Odroid XU3 Lite is really a hack and I wish it was 
-not there. It seems there is not enough data fused in the SoC to 
-properly detect chips used on XU3 Lite. 
+ARM Cortex-A15 Quad CPU (Eagle) 1800 to 2000
+ARM Cortex-A7 Quard CPU (Kingfisher) 1400 to 1500
 
-> Instead all this information should come from chipid and/or DT. I
+For Exynos5422  below table
+asv-table-[0-3]  AVS range from 200 to 2100
+asv-table-[100-103] AVS range from 200 to 1500.
 
-Perhaps we could try to be more generic but I'm afraid in practice 
-we will need to have some logic coded in the driver per each SoC type 
-anyway. We could probably add DT property in chipid node to provide 
-missing data that is normally read from CHIPID registers. The BIN2
-flag is really about forcing specific ASV table. The "special group"
-quirk means different thing for each SoC type, in case of exynos5422
-it's selecting different method of the ASV group decoding.
-It's a bit hard to try to put anything in DT with sparse or missing
-documentation of such quirks.
+Are these setting stable for this board to cover clock the cpu now.
 
-> could imagine that the device binds to ASV node and parses its
-> properties. Optionally it could bind to chipid... but then you would
+Can you also enable support for this clk-exynos5420.c
+For example exynos5800_eglclk_d and exynos5420_kfcclk_d table.
 
-The ASV node on older SoCs doesn't correspond to real hardware so
-we shouldn't try to bind drivers to it I'd say. The chipid node 
-seems a better alternative to me.
-I'm thinking about dropping 'asv' node completely. But then the 
-table sub-nodes would need to be put into chipid node.
+Also can you update exynos5420.dtsi  following opp table
+For example cluster_a15_opp_table and cluster_a7_opp_table opt binding.
 
-> have two devices on same node. Then depending on the of_device_id
-> match, you have all necessary static configuration data (the same as
-> PMU driver or all other typical drivers). Dynamic data you read from
-> chip id.
+To make this work synchronously with AVS.
 
-I will post next version of the patch series and we could continue
-discussion from there, I have switched to of_device_id matching but
-left per SoC init function.
+Best Regards
+-Anand
 
-> On Thu, 4 Apr 2019 at 19:22, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
->>
->> The Adaptive Supply Voltage (ASV) on Exynos SoCs is a technique of adjusting
->> operating points of devices in order to better match actual capabilities
->> of the hardware and optimize power consumption.
->>
->> This patch adds common code for parsing the ASV tables from devicetree
->> and updating CPU OPPs.
->>
->> Also support for Exynos5422/5800 SoC is added, the Exynos5422 specific part
->> of the patch is partially based on code from
->> https://github.com/hardkernel/linux repository, branch odroidxu4-4.14.y,
->> files: arch/arm/mach-exynos/exynos5422-asv.[ch].
->>
->> Tested on Odroid XU3, XU4, XU3 Lite.
->>
->> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> ---
-
->> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
->> index 2905f5262197..4d121984f71a 100644
->> --- a/drivers/soc/samsung/Kconfig
->> +++ b/drivers/soc/samsung/Kconfig
->> @@ -7,6 +7,17 @@ menuconfig SOC_SAMSUNG
->>
->>  if SOC_SAMSUNG
->>
->> +config EXYNOS_ASV
->> +       bool "Exynos Adaptive Supply Voltage support" if COMPILE_TEST
->> +       depends on ARCH_EXYNOS || ((ARM || ARM64) && COMPILE_TEST)
-> 
-> Why it cannot be compile tested outside of ARM? The PMU driver has
-> this constraint because of asm/cputype.h but you probably do not need
-> it.
-
-Yes, it's not needed, I will drop the (ARM || ARM64) part in next iteration. 
-
->> diff --git a/drivers/soc/samsung/exynos-asv.c b/drivers/soc/samsung/exynos-asv.c
->> new file mode 100644
->> index 000000000000..60532c7eb3aa
->> --- /dev/null
->> +++ b/drivers/soc/samsung/exynos-asv.c
->> @@ -0,0 +1,279 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (c) 2018 - 2019 Samsung Electronics Co., Ltd.
-> 
-> Since it is first publish date, copyright should be only 2019....
-> unless this was copied from hardkernel repo but then original
-> copyright should be included as well.
-
-I will change it to 2019. I have written code in this file from 
-scratch by myself. Some reused code is in exynos5422-asv.c, I will 
-copy the original copyright notice there, however it is same 
-Samsung's copyright notice, only with 2012 date.
-
--- 
-Regards,
-Sylwester
+On Thu, 4 Apr 2019 at 22:55, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
+>
+> This patch ASV (Adaptive Supply Voltage) table entries for
+> Exynos5422/5800 SoC.
+>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5.dtsi    |   2 +-
+>  arch/arm/boot/dts/exynos5800.dtsi | 207 ++++++++++++++++++++++++++++++
+>  2 files changed, 208 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
+> index 67f9b4504a42..22eb951c614c 100644
+> --- a/arch/arm/boot/dts/exynos5.dtsi
+> +++ b/arch/arm/boot/dts/exynos5.dtsi
+> @@ -35,7 +35,7 @@
+>                 #size-cells = <1>;
+>                 ranges;
+>
+> -               chipid@10000000 {
+> +               chipid: chipid@10000000 {
+>                         compatible = "samsung,exynos4210-chipid";
+>                         reg = <0x10000000 0x100>;
+>                 };
+> diff --git a/arch/arm/boot/dts/exynos5800.dtsi b/arch/arm/boot/dts/exynos5800.dtsi
+> index 57d3b319fd65..5358865f5c0b 100644
+> --- a/arch/arm/boot/dts/exynos5800.dtsi
+> +++ b/arch/arm/boot/dts/exynos5800.dtsi
+> @@ -16,6 +16,213 @@
+>         compatible = "samsung,exynos5800", "samsung,exynos5";
+>  };
+>
+> +&chipid {
+> +       asv {
+> +               compatible = "samsung,exynos-asv-v1";
+> +               asv-table-0 {
+> +                       /* ARM 0, 1 */
+> +                       samsung,asv-table-size = <20 15>;
+> +                       samsung,asv-table-id = <0x0>;
+> +                       samsung,asv-data =
+> +                                     /* ASV0  ASV1    ASV2    ASV3    ASV4    ASV5    ASV6    ASV7    ASV8    ASV9    ASV10   ASV11   ASV12   ASV13 */
+> +                               <2100 1362500 1362500 1350000 1337500 1325000 1312500 1300000 1275000 1262500 1250000 1237500 1225000 1212500 1200000>,
+> +                               <2000 1312500 1312500 1300000 1287500 1275000 1262500 1250000 1237500 1225000 1237500 1225000 1212500 1200000 1187500>,
+> +                               <1900 1250000 1237500 1225000 1212500 1200000 1187500 1175000 1162500 1150000 1162500 1150000 1137500 1125000 1112500>,
+> +                               <1800 1200000 1187500 1175000 1162500 1150000 1137500 1125000 1112500 1100000 1112500 1100000 1087500 1075000 1062500>,
+> +                               <1700 1162500 1150000 1137500 1125000 1112500 1100000 1087500 1075000 1062500 1075000 1062500 1050000 1037500 1025000>,
+> +                               <1600 1125000 1112500 1100000 1087500 1075000 1062500 1050000 1037500 1025000 1037500 1025000 1012500 1000000  987500>,
+> +                               <1500 1087500 1075000 1062500 1050000 1037500 1025000 1012500 1000000  987500 1000000  987500  975000  962500  950000>,
+> +                               <1400 1062500 1050000 1037500 1025000 1012500 1000000  987500  975000  962500  975000  962500  950000  937500  925000>,
+> +                               <1300 1050000 1037500 1025000 1012500 1000000  987500  975000  962500  950000  962500  950000  937500  925000  912500>,
+> +                               <1200 1025000 1012500 1000000  987500  975000  962500  950000  937500  925000  937500  925000  912500  900000  900000>,
+> +                               <1100 1000000  987500  975000  962500  950000  937500  925000  912500  900000  900000  900000  900000  900000  900000>,
+> +                               <1000  975000  962500  950000  937500  925000  912500  900000  900000  900000  900000  900000  900000  900000  900000>,
+> +                               < 900  950000  937500  925000  912500  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000>,
+> +                               < 800  925000  912500  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000>;
+> +                                                    /* ASV0...13 */
+> +                       samsung,asv-common-data = <700 900000>,
+> +                                                 <600 900000>,
+> +                                                 <500 900000>,
+> +                                                 <400 900000>,
+> +                                                 <300 900000>,
+> +                                                 <200 900000>;
+> +               };
+> +               asv-table-2 {
+> +                       /* ARM 2 */
+> +                       samsung,asv-table-size = <20 15>;
+> +                       samsung,asv-table-id = <0x2>;
+> +                       samsung,asv-data =
+> +                                     /* ASV0  ASV1    ASV2    ASV3    ASV4    ASV5    ASV6    ASV7    ASV8    ASV9    ASV10   ASV11   ASV12  ASV13 */
+> +                               <2100 1362500 1362500 1350000 1337500 1325000 1312500 1300000 1275000 1262500 1250000 1237500 1225000 1212500 1200000>,
+> +                               <2000 1312500 1312500 1312500 1300000 1275000 1262500 1250000 1237500 1225000 1237500 1225000 1212500 1200000 1187500>,
+> +                               <1900 1262500 1250000 1250000 1237500 1212500 1200000 1187500 1175000 1162500 1175000 1162500 1150000 1137500 1125000>,
+> +                               <1800 1212500 1200000 1187500 1175000 1162500 1150000 1137500 1125000 1112500 1125000 1112500 1100000 1087500 1075000>,
+> +                               <1700 1175000 1162500 1150000 1137500 1125000 1112500 1100000 1087500 1075000 1087500 1075000 1062500 1050000 1037500>,
+> +                               <1600 1137500 1125000 1112500 1100000 1087500 1075000 1062500 1050000 1037500 1050000 1037500 1025000 1012500 1000000>,
+> +                               <1500 1100000 1087500 1075000 1062500 1050000 1037500 1025000 1012500 1000000 1012500 1000000  987500  975000  962500>,
+> +                               <1400 1075000 1062500 1050000 1037500 1025000 1012500 1000000  987500  975000  987500  975000  962500  950000  937500>,
+> +                               <1300 1050000 1037500 1025000 1012500 1000000  987500  975000  962500  950000  962500  950000  937500  925000  912500>,
+> +                               <1200 1025000 1012500 1000000  987500  975000  962500  950000  937500  925000  937500  925000  912500  900000  900000>,
+> +                               <1100 1000000  987500  975000  962500  950000  937500  925000  912500  900000  900000  900000  900000  900000  900000>,
+> +                               <1000  975000  962500  950000  937500  925000  912500  900000  900000  900000  900000  900000  900000  900000  900000>,
+> +                               < 900  950000  937500  925000  912500  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000>,
+> +                               < 800  925000  912500  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000>;
+> +                                                    /* ASV0...13 */
+> +                       samsung,asv-common-data = <700 900000>,
+> +                                                 <600 900000>,
+> +                                                 <500 900000>,
+> +                                                 <400 900000>,
+> +                                                 <300 900000>,
+> +                                                 <200 900000>;
+> +               };
+> +               asv-table-3 {
+> +                       /* ARM 3 */
+> +                       samsung,asv-table-size = <20 15>;
+> +                       samsung,asv-table-id = <0x3>;
+> +                       samsung,asv-data =
+> +                                     /* ASV0  ASV1    ASV2    ASV3    ASV4    ASV5    ASV6    ASV7    ASV8    ASV9    ASV10   ASV11   ASV12  ASV13 */
+> +                               <2100 1362500 1362500 1350000 1337500 1325000 1312500 1300000 1275000 1262500 1250000 1237500 1225000 1212500 1200000>,
+> +                               <2000 1312500 1312500 1300000 1287500 1275000 1262500 1250000 1237500 1225000 1237500 1225000 1212500 1200000 1187500>,
+> +                               <1900 1262500 1250000 1237500 1225000 1212500 1200000 1187500 1175000 1162500 1175000 1162500 1150000 1137500 1125000>,
+> +                               <1800 1212500 1200000 1187500 1175000 1162500 1150000 1137500 1125000 1112500 1125000 1112500 1100000 1087500 1075000>,
+> +                               <1700 1175000 1162500 1150000 1137500 1125000 1112500 1100000 1087500 1075000 1087500 1075000 1062500 1050000 1037500>,
+> +                               <1600 1137500 1125000 1112500 1100000 1087500 1075000 1062500 1050000 1037500 1050000 1037500 1025000 1012500 1000000>,
+> +                               <1500 1100000 1087500 1075000 1062500 1050000 1037500 1025000 1012500 1000000 1012500 1000000  987500  975000  962500>,
+> +                               <1400 1075000 1062500 1050000 1037500 1025000 1012500 1000000  987500  975000  987500  975000  962500  950000  937500>,
+> +                               <1300 1050000 1037500 1025000 1012500 1000000  987500  975000  962500  950000  962500  950000  937500  925000  912500>,
+> +                               <1200 1025000 1012500 1000000  987500  975000  962500  950000  937500  925000  937500  925000  912500  900000  900000>,
+> +                               <1100 1000000  987500  975000  962500  950000  937500  925000  912500  900000  900000  900000  900000  900000  900000>,
+> +                               <1000  975000  962500  950000  937500  925000  912500  900000  900000  900000  900000  900000  900000  900000  900000>,
+> +                               < 900  950000  937500  925000  912500  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000>,
+> +                               < 800  925000  912500  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000>;
+> +                                                    /* ASV0...13 */
+> +                       samsung,asv-common-data = <700 900000>,
+> +                                                 <600 900000>,
+> +                                                 <500 900000>,
+> +                                                 <400 900000>,
+> +                                                 <300 900000>,
+> +                                                 <200 900000>;
+> +               };
+> +
+> +               asv-table-4 {
+> +                       /* ARM BIN2 */
+> +                       samsung,asv-table-size = <17 15>;
+> +                       samsung,asv-table-id = <0x4>;
+> +                       samsung,asv-data =
+> +                                     /* ASV0  ASV1    ASV2    ASV3    ASV4    ASV5    ASV6    ASV7    ASV8    ASV9    ASV10   ASV11   ASV12  ASV13 */
+> +                               <1800 1237500 1225000 1212500 1200000 1187500 1175000 1162500 1150000 1137500 1150000 1137500 1125000 1112500 1100000>,
+> +                               <1700 1200000 1187500 1175000 1162500 1150000 1137500 1125000 1112500 1100000 1112500 1100000 1087500 1075000 1062500>,
+> +                               <1600 1162500 1150000 1137500 1125000 1112500 1100000 1087500 1075000 1062500 1075000 1062500 1050000 1037500 1025000>,
+> +                               <1500 1125000 1112500 1100000 1087500 1075000 1062500 1050000 1037500 1025000 1037500 1025000 1012500 1000000 987500>,
+> +                               <1400 1100000 1087500 1075000 1062500 1050000 1037500 1025000 1012500 1000000 1012500 1000000 987500  975000  962500>,
+> +                               <1300 1087500 1075000 1062500 1050000 1037500 1025000 1012500 1000000 987500  1000000 987500  975000  962500  950000>,
+> +                               <1200 1062500 1050000 1037500 1025000 1012500 1000000 987500  975000  962500  975000  962500  950000  937500  925000>,
+> +                               <1100 1037500 1025000 1012500 1000000 987500  975000  962500  950000  937500  950000  937500  925000  912500  900000>,
+> +                               <1000 1012500 1000000  987500  975000 962500  950000  937500  925000  912500  925000  912500  900000  900000  900000>,
+> +                               < 900  987500  975000  962500  950000 937500  925000  912500  900000  900000  900000  900000  900000  900000  900000>,
+> +                               < 800  962500  950000  937500  925000 912500  900000  900000  900000  900000  900000  900000  900000  900000  900000>,
+> +                               < 700  937500  925000  912500  900000 900000  900000  900000  900000  900000  900000  900000  900000  900000  900000>;
+> +                                                      /* ASV0...13 */
+> +                       samsung,asv-common-data = <600 900000>,
+> +                                                 <500 900000>,
+> +                                                 <400 900000>,
+> +                                                 <300 900000>,
+> +                                                 <200 900000>;
+> +               };
+> +
+> +
+> +               asv-table-100 {
+> +                       /* KFC 0, 1 */
+> +                       samsung,asv-table-size = <14 15>;
+> +                       samsung,asv-table-id = <0x100>;
+> +                       samsung,asv-data =
+> +                                     /* ASV0  ASV1    ASV2    ASV3    ASV4    ASV5    ASV6    ASV7    ASV8    ASV9    ASV10   ASV11   ASV12  ASV13 */
+> +                               <1500 1300000 1300000 1300000 1287500 1287500 1287500 1275000 1262500 1250000 1237500 1225000 1212500 1200000 1187500>,
+> +                               <1400 1275000 1262500 1250000 1237500 1225000 1212500 1200000 1187500 1175000 1162500 1150000 1137500 1125000 1112500>,
+> +                               <1300 1225000 1212500 1200000 1187500 1175000 1162500 1150000 1137500 1125000 1112500 1100000 1087500 1075000 1062500>,
+> +                               <1200 1175000 1162500 1150000 1137500 1125000 1112500 1100000 1087500 1075000 1062500 1050000 1037500 1025000 1012500>,
+> +                               <1100 1137500 1125000 1112500 1100000 1087500 1075000 1062500 1050000 1037500 1025000 1012500 1000000  987500  975000>,
+> +                               <1000 1100000 1087500 1075000 1062500 1050000 1037500 1025000 1012500 1000000  987500  975000  962500  950000  937500>,
+> +                               < 900 1062500 1050000 1037500 1025000 1012500 1000000  987500  975000  962500  950000  937500  925000  912500  900000>,
+> +                               < 800 1025000 1012500 1000000  987500  975000  962500  950000  937500  925000  912500  900000  900000  900000  900000>,
+> +                               < 700  987500  975000  962500  950000  937500  925000  912500  900000  900000  900000  900000  900000  900000  900000>,
+> +                               < 600  950000  937500  925000  912500  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000>,
+> +                               < 500  912500  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000>;
+> +                                                     /* ASV0...13 */
+> +                       samsung,asv-common-data = <400 900000>,
+> +                                                 <300 900000>,
+> +                                                 <200 900000>;
+> +               };
+> +
+> +               asv-table-102 {
+> +                       /* KFC 2 */
+> +                       samsung,asv-table-size = <14 15>;
+> +                       samsung,asv-table-id = <0x102>;
+> +                       samsung,asv-data =
+> +                                     /* ASV0  ASV1    ASV2    ASV3    ASV4    ASV5    ASV6    ASV7    ASV8    ASV9    ASV10   ASV11   ASV12  ASV13 */
+> +                               <1500 1300000 1300000 1300000 1287500 1287500 1287500 1275000 1262500 1250000 1237500 1225000 1212500 1200000 1187500>,
+> +                               <1400 1275000 1262500 1250000 1237500 1225000 1212500 1200000 1187500 1175000 1162500 1150000 1137500 1125000 1112500>,
+> +                               <1300 1225000 1212500 1200000 1187500 1175000 1162500 1150000 1137500 1125000 1112500 1100000 1087500 1075000 1062500>,
+> +                               <1200 1175000 1162500 1150000 1137500 1125000 1112500 1100000 1087500 1075000 1062500 1050000 1037500 1025000 1012500>,
+> +                               <1100 1137500 1125000 1112500 1100000 1087500 1075000 1062500 1050000 1037500 1025000 1012500 1000000  987500  975000>,
+> +                               <1000 1100000 1087500 1075000 1062500 1050000 1037500 1025000 1012500 1000000  987500  975000  962500  950000  937500>,
+> +                               < 900 1062500 1050000 1037500 1025000 1012500 1000000  987500  975000  962500  950000  937500  925000  912500  900000>,
+> +                               < 800 1025000 1012500 1000000  987500  975000  962500  950000  937500  925000  912500  900000  900000  900000  900000>,
+> +                               < 700  987500  975000  962500  950000  937500  925000  912500  900000  900000  900000  900000  900000  900000  900000>,
+> +                               < 600  950000  937500  925000  912500  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000>,
+> +                               < 500  912500  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000>;
+> +                                                     /* ASV0...13 */
+> +                       samsung,asv-common-data = <400 900000>,
+> +                                                 <300 900000>,
+> +                                                 <200 900000>;
+> +               };
+> +
+> +               asv-table-103 {
+> +                       /* KFC 3 */
+> +                       samsung,asv-table-size = <14 15>;
+> +                       samsung,asv-table-id = <0x103>;
+> +                       samsung,asv-data =
+> +                                     /* ASV0  ASV1    ASV2    ASV3    ASV4    ASV5    ASV6    ASV7    ASV8    ASV9    ASV10   ASV11   ASV12  ASV13 */
+> +                               <1500 1300000 1300000 1300000 1287500 1287500 1287500 1275000 1262500 1250000 1237500 1225000 1212500 1200000 1187500>,
+> +                               <1400 1275000 1262500 1250000 1237500 1225000 1212500 1200000 1187500 1175000 1162500 1150000 1137500 1125000 1112500>,
+> +                               <1300 1225000 1212500 1200000 1187500 1175000 1162500 1150000 1137500 1125000 1112500 1100000 1087500 1075000 1062500>,
+> +                               <1200 1175000 1162500 1150000 1137500 1125000 1112500 1100000 1087500 1075000 1062500 1050000 1037500 1025000 1012500>,
+> +                               <1100 1137500 1125000 1112500 1100000 1087500 1075000 1062500 1050000 1037500 1025000 1012500 1000000  987500  975000>,
+> +                               <1000 1100000 1087500 1075000 1062500 1050000 1037500 1025000 1012500 1000000  987500  975000  962500  950000  937500>,
+> +                               < 900 1062500 1050000 1037500 1025000 1012500 1000000  987500  975000  962500  950000  937500  925000  912500  900000>,
+> +                               < 800 1025000 1012500 1000000  987500  975000  962500  950000  937500  925000  912500  900000  900000  900000  900000>,
+> +                               < 700  987500  975000  962500  950000  937500  925000  912500  900000  900000  900000  900000  900000  900000  900000>,
+> +                               < 600  950000  937500  925000  912500  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000>,
+> +                               < 500  912500  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000>;
+> +                                                     /* ASV0...13 */
+> +                       samsung,asv-common-data = <400 900000>,
+> +                                                 <300 900000>,
+> +                                                 <200 900000>;
+> +               };
+> +
+> +               asv-table-104 {
+> +                       /* KFC BIN2 */
+> +                       samsung,asv-table-size = <12 15>;
+> +                       samsung,asv-table-id = <0x104>;
+> +                       samsung,asv-data =
+> +                                     /* ASV0  ASV1    ASV2    ASV3    ASV4    ASV5    ASV6    ASV7    ASV8    ASV9    ASV10   ASV11   ASV12  ASV13 */
+> +                               <1300 1250000 1237500 1225000 1212500 1200000 1187500 1175000 1162500 1150000 1137500 1125000 1112500 1100000 1087500>,
+> +                               <1200 1200000 1187500 1175000 1162500 1150000 1137500 1125000 1112500 1100000 1087500 1075000 1062500 1050000 1037500>,
+> +                               <1100 1162500 1150000 1137500 1125000 1112500 1100000 1087500 1075000 1062500 1050000 1037500 1025000 1012500 1000000>,
+> +                               <1000 1125000 1112500 1100000 1087500 1075000 1062500 1050000 1037500 1025000 1012500 1000000  987500  975000  962500>,
+> +                               < 900 1087500 1075000 1062500 1050000 1037500 1025000 1012500 1000000  987500  975000  962500  950000  937500  925000>,
+> +                               < 800 1050000 1037500 1025000 1012500 1000000  987500  975000  962500  950000  937500  925000  912500  900000  900000>,
+> +                               < 700 1012500 1000000  987500  975000  962500  950000  937500  925000  912500  900000  900000  900000  900000  900000>,
+> +                               < 600  975000  962500  950000  937500  925000  912500  900000  900000  900000  900000  900000  900000  900000  900000>,
+> +                               < 500  937500  925000  912500  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000>,
+> +                               < 400  925000  912500  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000  900000>;
+> +                                                     /* ASV0...13 */
+> +                       samsung,asv-common-data = <300 900000>,
+> +                                                 <200 900000>;
+> +               };
+> +       };
+> +};
+> +
+>  &clock {
+>         compatible = "samsung,exynos5800-clock";
+>  };
+> --
+> 2.17.1
+>
