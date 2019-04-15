@@ -1,75 +1,45 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFT] ARM: dts: s5pv210: Fix camera clock provider for Goni board
-Date: Mon, 15 Apr 2019 21:02:22 +0200
-Message-ID: <20190415190222.9665-1-krzk@kernel.org>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 0/7 v2] drm/exynos: clean up logs
+Date: Tue, 16 Apr 2019 08:36:45 +0900
+Message-ID: <eef50cdd-2c7c-3c77-bd49-845b6b379485@samsung.com>
+References: <CGME20190415085353epcas1p35a79e8b62b9a9c871faefbf4e68aeceb@epcas1p3.samsung.com>
+ <1555318456-23397-1-git-send-email-inki.dae@samsung.com>
+ <20190415091353.GA15781@ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Jonathan Bakker <xc-racer2@live.ca>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20190415091353.GA15781@ravnborg.org>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The camera driver (according also to bindings) registers a clock
-provider if clock-output-names property is present and later the sensors
-use registered clocks.
-
-The DTS for S5Pv210 Goni board was incorrectly adding a child node with
-clock output cells but without clock-output-names property.  Although
-the DTS was compiling (with "/soc/camera/clock-controller: missing or
-empty reg/ranges property" warning), the clock provider was not
-registered.
-
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-
----
-
-Not tested.
----
- arch/arm/boot/dts/s5pv210-goni.dts | 2 +-
- arch/arm/boot/dts/s5pv210.dtsi     | 6 ++----
- 2 files changed, 3 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm/boot/dts/s5pv210-goni.dts b/arch/arm/boot/dts/s5pv210-goni.dts
-index eb6d1926c0d6..fbbd93707404 100644
---- a/arch/arm/boot/dts/s5pv210-goni.dts
-+++ b/arch/arm/boot/dts/s5pv210-goni.dts
-@@ -376,7 +376,7 @@
- 		vdd_core-supply = <&ldo14_reg>;
- 
- 		clock-frequency = <16000000>;
--		clocks = <&clock_cam 0>;
-+		clocks = <&camera 0>;
- 		clock-names = "mclk";
- 		nreset-gpios = <&gpb 2 0>;
- 		nstby-gpios = <&gpb 0 0>;
-diff --git a/arch/arm/boot/dts/s5pv210.dtsi b/arch/arm/boot/dts/s5pv210.dtsi
-index a44d5eb56bed..2ad642f51fd9 100644
---- a/arch/arm/boot/dts/s5pv210.dtsi
-+++ b/arch/arm/boot/dts/s5pv210.dtsi
-@@ -585,12 +585,10 @@
- 			clock-names = "sclk_cam0", "sclk_cam1";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
-+			#clock-cells = <1>;
-+			clock-output-names = "cam_a_clkout", "cam_b_clkout";
- 			ranges;
- 
--			clock_cam: clock-controller {
--				#clock-cells = <1>;
--			};
--
- 			csis0: csis@fa600000 {
- 				compatible = "samsung,s5pv210-csis";
- 				reg = <0xfa600000 0x4000>;
--- 
-2.17.1
+SGkgU2FtLAoKMTkuIDQuIDE1LiDsmKTtm4QgNjoxM+yXkCBTYW0gUmF2bmJvcmcg7J20KOqwgCkg
+7JO0IOq4gDoKPiBIaSBJbmtpCj4gCj4gIAo+PiBJbmtpIERhZSAoNik6Cj4+ICAgZHJtL2ZpbWQ6
+IHVzZSBEUk1fRVJST1IgaW5zdGVhZCBvZiBEUk1fSU5GTyBpbiBlcnJvciBjYXNlCj4+ICAgZHJt
+L2V4eW5vczogcmVtb3ZlIHVubmVjZXNzYXJ5IG1lc3NhZ2VzCj4+ICAgZHJtL2V4eW5vczogdXNl
+IERSTV9ERVZfRVJST1IgdG8gcHJpbnQgb3V0IGVycm9yIG1lc3NhZ2UKPj4gICBkcm0vZXh5bm9z
+OiB1c2UgRFJNX0RFVl9ERUJVRyogaW5zdGVhZCBvZiBEUk1fREVCVUcgbWFjcm8KPj4gICBkcm0v
+dmlkaTogcmVwbGFjZSBwbGF0Zm9ybV9kZXZpY2UgcG9pbnRlciB3aXRoIGRldmljZSBvbmUKPj4g
+ICBkcm0vaXBwOiBjbGVhbiB1cCBkZWJ1ZyBtZXNzYWdlcwo+IAo+IEluIGdlbmVyZWwgcGxlc2Ug
+cHJlZml4IGFsbCBwYXRjaGVzIHdpdGggImRybS9leHlub3M6ICIgYXMgdGhpcwo+IGlzIHRoZSBk
+cml2ZXIgdGhhdCBpcyB1cGRhdGVkLgoKT29wcywgc29ycnkuIEl0J3MgbXkgbWlzdGFrZS4gSSBk
+aWRuJ3QgY2hlY2sgYW5kIHBvc3RlZCB0aGVtIGluIGEgaHVycnkuCgo+IElmIGEgcGF0Y2ggaXMg
+c3BlY2lmaWMgdG8gYSBzdWItbW9kdWxlIGluIHRoZSBkcml2ZXIgbWVudGlvbgo+IHRoaXMgaW4g
+dGhlIHN1YmplY3QuCj4gRXhhbXBsZXM6Cj4gZHJtL2V4eW5vczogZml4IGxvZyBsZXZlbCBpbiBm
+aW1kCj4gZHJtL2V4eW5vczogdXNlIGRldmljZSBwb2ludGVyIGluIHZpZGk+IGRybS9leHlub3M6
+IGRyb3AgaXJyZWxldmFudCBsb2dnaW5nIGluIGlwcAoKSSB3aWxsIHNlbmQgdGhlbSBhZ2Fpbi4K
+ClRoYW5rcywKSW5raSBEYWUKCj4gCj4gCVNhbQo+IAo+IApfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZl
+bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
