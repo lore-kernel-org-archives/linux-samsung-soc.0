@@ -1,74 +1,30 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFT 4/4] ARM: dts: exynos: Properly override node to use MDMA0 on Universal C210
-Date: Mon, 15 Apr 2019 20:05:10 +0200
-Message-ID: <20190415180510.6044-4-krzk@kernel.org>
-References: <20190415180510.6044-1-krzk@kernel.org>
+From: Tom Murphy <tmurphy@arista.com>
+Subject: Re: [PATCH 9/9] iommu/amd: Add allocated domain to global list earlier
+Date: Mon, 15 Apr 2019 19:06:36 +0100
+Message-ID: <CAPL0++4cvqD1gg=mDASrLRBv69ei75v-g3BWWW+Poz3_TUOkbQ@mail.gmail.com>
+References: <20190411184741.27540-1-tmurphy@arista.com> <20190411184741.27540-10-tmurphy@arista.com>
+ <20190415062316.GC18154@infradead.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190415180510.6044-1-krzk@kernel.org>
+In-Reply-To: <20190415062316.GC18154@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Christoph Hellwig <hch@infradead.org>
+Cc: iommu@lists.linux-foundation.org, Heiko Stuebner <heiko@sntech.de>, Will Deacon <will.deacon@arm.com>, David Brown <david.brown@linaro.org>, linux-samsung-soc@vger.kernel.org, Dmitry Safonov <dima@arista.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Andy Gross <andy.gross@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Tom Murphy <murphyt7@tcd.ie>, Robin Murphy <robin.murphy@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The Universal C210 (Exynos4210) uses the secure interface of MDMA0,
-instead of regular one - non-secure MDMA1.  DTS was overriding MDMA1
-node address which caused DTC W=1 warning:
+>This seems like a fix to the existing code and should probably go out first.
 
-    arch/arm/boot/dts/exynos4.dtsi:707.25-716.6:
-        Warning (simple_bus_reg): /soc/amba/mdma@12850000: simple-bus unit address format error, expected "12840000"
+I'll send this patch out on it's own now.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/boot/dts/exynos4.dtsi                  |  2 +-
- arch/arm/boot/dts/exynos4210-universal_c210.dts | 17 ++++++++++++++++-
- 2 files changed, 17 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 1c21627e3c3c..36ccf227434d 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -675,7 +675,7 @@
- 			status = "disabled";
- 		};
- 
--		amba {
-+		amba: amba {
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			compatible = "simple-bus";
-diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-index 07d64a8f82e3..bf092e97e14f 100644
---- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-+++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-@@ -177,6 +177,20 @@
- 	};
- };
- 
-+&amba {
-+	mdma0: mdma@12840000 {
-+		compatible = "arm,pl330", "arm,primecell";
-+		reg = <0x12840000 0x1000>;
-+		interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&clock CLK_MDMA>;
-+		clock-names = "apb_pclk";
-+		#dma-cells = <1>;
-+		#dma-channels = <8>;
-+		#dma-requests = <1>;
-+		power-domains = <&pd_lcd0>;
-+	};
-+};
-+
- &camera {
- 	status = "okay";
- 
-@@ -491,7 +505,8 @@
- };
- 
- &mdma1 {
--	reg = <0x12840000 0x1000>;
-+	/* Use the secure mdma0 */
-+	status = "disabled";
- };
- 
- &mixer {
--- 
-2.17.1
+On Mon, Apr 15, 2019 at 7:23 AM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Thu, Apr 11, 2019 at 07:47:38PM +0100, Tom Murphy via iommu wrote:
+> > dma_ops_domain_free() expects domain to be in a global list.
+> > Arguably, could be called before protection_domain_init().
+> >
+> > Signed-off-by: Dmitry Safonov <dima@arista.com>
+> > Signed-off-by: Tom Murphy <tmurphy@arista.com>
+>
+> This seems like a fix to the existing code and should probably go
+> out first.
