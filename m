@@ -1,32 +1,91 @@
-From: Tom Murphy <tmurphy@arista.com>
-Subject: Re: [PATCH 5/9] iommu/amd: Implement .flush_np_cache
-Date: Mon, 15 Apr 2019 19:18:21 +0100
-Message-ID: <CAPL0++49xZk=bfkBu4e0cS_NA3gs7_z0tiifZBL+Jp8d_6S1rg@mail.gmail.com>
-References: <20190411184741.27540-1-tmurphy@arista.com> <20190411184741.27540-6-tmurphy@arista.com>
- <20190415063351.GD1377@infradead.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 2/2] arm64: dts: exynos: Move fixed-clocks out of soc
+Date: Mon, 15 Apr 2019 20:34:40 +0200
+Message-ID: <20190415183440.19697-2-krzk@kernel.org>
+References: <20190415183440.19697-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190415063351.GD1377@infradead.org>
+In-Reply-To: <20190415183440.19697-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christoph Hellwig <hch@infradead.org>, joerg.roedel@amd.com
-Cc: iommu@lists.linux-foundation.org, Heiko Stuebner <heiko@sntech.de>, Will Deacon <will.deacon@arm.com>, David Brown <david.brown@linaro.org>, linux-samsung-soc@vger.kernel.org, Dmitry Safonov <dima@arista.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Andy Gross <andy.gross@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Tom Murphy <murphyt7@tcd.ie>, Robin Murphy <robin.murphy@arm.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Sylwester Nawrocki <snawrocki@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This is a cut and paste from the current amd_iommu driver. I really
-have no idea if it's a good idea or not. It looks like
-joerg.roedel@amd.com might be the person to ask.
+The XXTI fixed-clock is the input to the SoC therefore it should not be
+inside the soc node.  This also fixes DTC W=1 warning:
 
-@Joerg Roedel should we keep this?
+    arch/arm64/boot/dts/exynos/exynos7.dtsi:90.17-94.5:
+        Warning (simple_bus_reg): /soc/xxti: missing or empty reg/ranges property
 
-On Mon, Apr 15, 2019 at 7:33 AM Christoph Hellwig <hch@infradead.org> wrote:
->
-> > +static void amd_iommu_flush_np_cache(struct iommu_domain *domain,
-> > +             unsigned long iova, size_t size)
-> > +{
-> > +     struct protection_domain *dom = to_pdomain(domain);
-> > +
-> > +     if (unlikely(amd_iommu_np_cache)) {
->
-> Is this case really so unlikely that it needs a static branch prediction
-> hint?
+While moving, change the name of the xxti node to match the generic type
+of device (following DeviceTree specification).
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 13 +++++++------
+ arch/arm64/boot/dts/exynos/exynos7.dtsi    | 13 +++++++------
+ 2 files changed, 14 insertions(+), 12 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+index 62cedf9855cf..d29d13f4694f 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+@@ -41,6 +41,13 @@
+ 		interrupt-affinity = <&cpu4>, <&cpu5>, <&cpu6>, <&cpu7>;
+ 	};
+ 
++	xxti: clock {
++		/* XXTI */
++		compatible = "fixed-clock";
++		clock-output-names = "oscclk";
++		#clock-cells = <0>;
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -260,12 +267,6 @@
+ 			reg = <0x10000000 0x100>;
+ 		};
+ 
+-		xxti: xxti {
+-			compatible = "fixed-clock";
+-			clock-output-names = "oscclk";
+-			#clock-cells = <0>;
+-		};
+-
+ 		cmu_top: clock-controller@10030000 {
+ 			compatible = "samsung,exynos5433-cmu-top";
+ 			reg = <0x10030000 0x1000>;
+diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+index f83ad4c491f2..077d23478901 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+@@ -38,6 +38,13 @@
+ 				     <&cpu_atlas2>, <&cpu_atlas3>;
+ 	};
+ 
++	fin_pll: clock {
++		/* XXTI */
++		compatible = "fixed-clock";
++		clock-output-names = "fin_pll";
++		#clock-cells = <0>;
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -87,12 +94,6 @@
+ 			reg = <0x10000000 0x100>;
+ 		};
+ 
+-		fin_pll: xxti {
+-			compatible = "fixed-clock";
+-			clock-output-names = "fin_pll";
+-			#clock-cells = <0>;
+-		};
+-
+ 		gic: interrupt-controller@11001000 {
+ 			compatible = "arm,gic-400";
+ 			#interrupt-cells = <3>;
+-- 
+2.17.1
