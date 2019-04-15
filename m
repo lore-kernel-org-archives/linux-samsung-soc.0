@@ -1,34 +1,66 @@
-From: Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Subject: Re: [PATCH 5/9] iommu/amd: Implement .flush_np_cache
-Date: Sun, 14 Apr 2019 23:33:51 -0700
-Message-ID: <20190415063351.GD1377@infradead.org>
-References: <20190411184741.27540-1-tmurphy@arista.com>
- <20190411184741.27540-6-tmurphy@arista.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [PATCH 0/7 v2] drm/exynos: clean up logs
+Date: Mon, 15 Apr 2019 17:54:09 +0900
+Message-ID: <1555318456-23397-1-git-send-email-inki.dae@samsung.com>
+References: <CGME20190415085353epcas1p35a79e8b62b9a9c871faefbf4e68aeceb@epcas1p3.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20190411184741.27540-6-tmurphy-nzgTgzXrdUbQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Tom Murphy <tmurphy-nzgTgzXrdUbQT0dZR+AlfA@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, dima-nzgTgzXrdUbQT0dZR+AlfA@public.gmane.org, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, murphyt7-/Zw1syy4LHg@public.gmane.org, Andy Gross <andy.gross-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-> +static void amd_iommu_flush_np_cache(struct iommu_domain *domain,
-> +		unsigned long iova, size_t size)
-> +{
-> +	struct protection_domain *dom = to_pdomain(domain);
-> +
-> +	if (unlikely(amd_iommu_np_cache)) {
-
-Is this case really so unlikely that it needs a static branch prediction
-hint?
+SnVzdCBjbGVhbiB1cCBsb2dzIG9mIEV4eW5vcyBEUk0gZHJpdmVyLgoKV2hhdCB0aGlzIHBhdGNo
+IHNlcmllcyBkb2VzIGlzIHRvIHJlcGxhY2UgdGhlIHVzZSBvZiBleGlzdGluZyBEUk1fREVCVUcv
+RVJST1IKbWFjcm9zIHdpdGggRFJNX0RFVl9ERUJVRyovRVJST1IqIG1hY3JvcyBpbmNsdWRpbmcg
+cmVsZXZhbnQgY29kZSBjbGVhbnVwLgoKQ2hhbmdlbG9nIHYyOgouIENsZWFuIHVwIGRlYnVnL2Vy
+cm9yIG1lc3NhZ2VzIG9mIGFsbCBFeHlub3MgRFJNIEtNUyBhbmQgRE1BIGRyaXZlcnMuCi4gQ2xl
+YW4gdXAgdmlkaSBkcml2ZXIgYnkgYWRkaW5nIGRldmljZSBwb2ludGVyIHRvIHZpZGlfY29udGV4
+dC4KLiBDbGVhbiB1cCBpcHAgZHJpdmVyIGJ5IHVzaW5nIGRldmljZSBwb2ludGVyIGluc3RlYWQg
+b2YgZHJtX2RldmljZSBvbmUsCiAgd2hpY2ggbWFrZXMgaXBwIGRyaXZlciB0byBwcmludCBvdXQg
+dGhlIGRlYnVnIG1lc3NhZ2VzIHdpdGggY29ycmVjdAogIGRldmljZSBuYW1lLgoKSW5raSBEYWUg
+KDYpOgogIGRybS9maW1kOiB1c2UgRFJNX0VSUk9SIGluc3RlYWQgb2YgRFJNX0lORk8gaW4gZXJy
+b3IgY2FzZQogIGRybS9leHlub3M6IHJlbW92ZSB1bm5lY2Vzc2FyeSBtZXNzYWdlcwogIGRybS9l
+eHlub3M6IHVzZSBEUk1fREVWX0VSUk9SIHRvIHByaW50IG91dCBlcnJvciBtZXNzYWdlCiAgZHJt
+L2V4eW5vczogdXNlIERSTV9ERVZfREVCVUcqIGluc3RlYWQgb2YgRFJNX0RFQlVHIG1hY3JvCiAg
+ZHJtL3ZpZGk6IHJlcGxhY2UgcGxhdGZvcm1fZGV2aWNlIHBvaW50ZXIgd2l0aCBkZXZpY2Ugb25l
+CiAgZHJtL2lwcDogY2xlYW4gdXAgZGVidWcgbWVzc2FnZXMKClNldW5nLVdvbyBLaW0gKDEpOgog
+IGRybS9leHlub3M6IGcyZDogcmVtb3ZlIHN0eWxlIGVycm9yCgogZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jIHwgIDYgKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zN19kcm1fZGVjb24uYyAgICB8IDI2ICsrKy0tLS0KIGRyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RwLmMgICAgICAgICAgICB8ICA5ICsrLQogZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2RtYS5jICAgICAgIHwgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9kcGkuYyAgICAgICB8ICA5ICsrLQogZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2RzaS5jICAgICAgIHwgIDcgKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2RybV9mYi5jICAgICAgICB8ICA5ICsrLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2ZiZGV2LmMgICAgIHwgMjYgKysrKy0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2ZpbWMuYyAgICAgIHwgOTcgKysrKysrKysrKysrKystLS0tLS0tLS0tLS0t
+CiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jICAgICAgfCA0OCArKysr
+KysrLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZzJkLmMgICAgICAg
+fCA1MSArKysrKysrLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dl
+bS5jICAgICAgIHwgMzUgKysrKystLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHJtX2dzYy5jICAgICAgIHwgNzIgKysrKysrKysrKy0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9pcHAuYyAgICAgICB8IDcxICsrKysrKysrKysrKy0tLS0tLS0t
+CiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1faXBwLmggICAgICAgfCAgOSArLS0K
+IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9taWMuYyAgICAgICB8IDI5ICsrKyst
+LS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYyAgICAgfCAxNSAr
+KystLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3JvdGF0b3IuYyAgIHwgIDUg
+Ky0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9zY2FsZXIuYyAgICB8ICA1ICst
+CiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlkaS5jICAgICAgfCA0OSArKysr
+KysrKy0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jICAgICAgICAg
+IHwgNzUgKysrKysrKysrKysrLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19taXhlci5jICAgICAgICAgfCA0MyArKysrKysrLS0tLS0KIDIyIGZpbGVzIGNoYW5nZWQsIDQw
+MCBpbnNlcnRpb25zKCspLCAyOTggZGVsZXRpb25zKC0pCgotLSAKMi43LjQKCl9fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxp
+c3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNr
+dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbA==
