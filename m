@@ -1,67 +1,31 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 3/3] ARM: samsung: Changes for v5.2
-Date: Sun, 14 Apr 2019 17:48:05 +0200
-Message-ID: <20190414154805.10188-3-krzk@kernel.org>
-References: <20190414154805.10188-1-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190414154805.10188-1-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [PATCH 0/2] drm/exynos: clean up logs
+Date: Mon, 15 Apr 2019 09:47:18 +0900
+Message-ID: <1555289240-7735-1-git-send-email-inki.dae@samsung.com>
+References: <CGME20190415004657epcas1p1e17d8c29c3488b8c86cac7d22cdc715b@epcas1p1.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
-The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
-
-  Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-5.2
-
-for you to fetch changes up to 7676e667c841375b41d9438b559756141aa93d0e:
-
-  ARM: s3c64xx: Tidy up handling of regulator GPIO lookups (2019-04-14 12:53:03 +0200)
-
-----------------------------------------------------------------
-Samsung mach/soc changes for v5.2
-
-1. Cleanup in mach code.
-2. Add necessary fixes for Suspend to RAM on Exynos5422 boards (tested
-   with Odroid XU3/XU4/HC1 family).  Finally this brings a working S2R
-   on these Odroid boards (still other drivers might have some issues
-   but mach code seems to be finished).
-3. Require MCPM for Exynos542x boards because otherwise not all of cores
-   will come online.
-4. GPIO regulator cleanup on S3C6410 Craig.
-
-----------------------------------------------------------------
-Charles Keepax (1):
-      ARM: s3c64xx: Tidy up handling of regulator GPIO lookups
-
-Joonyoung Shim (1):
-      ARM: exynos: Add CPU state management for Exynos542x under secure firmware
-
-Marek Szyprowski (5):
-      ARM: exynos: Move Exynos542x CPU state reset to pm_prepare()
-      ARM: exynos: Add Exynos SMC values for secure memory write
-      ARM: exynos: Fix undefined instruction during Exynos5422 resume
-      ARM: exynos: Fix infinite loops on CPU powerup failure
-      ARM: exynos: Set MCPM as mandatory for Exynos542x/5800 SoCs
-
-Wen Yang (1):
-      ARM: exynos: Fix a leaked reference by adding missing of_node_put
-
- arch/arm/configs/exynos_defconfig            |  1 -
- arch/arm/configs/multi_v7_defconfig          |  1 -
- arch/arm/mach-exynos/Kconfig                 | 12 ++-----
- arch/arm/mach-exynos/Makefile                |  2 +-
- arch/arm/mach-exynos/common.h                |  1 +
- arch/arm/mach-exynos/exynos.c                |  3 ++
- arch/arm/mach-exynos/firmware.c              |  1 +
- arch/arm/mach-exynos/mcpm-exynos.c           | 13 +++++++-
- arch/arm/mach-exynos/platsmp.c               |  9 ++++-
- arch/arm/mach-exynos/smc.h                   |  7 ++++
- arch/arm/mach-exynos/suspend.c               | 49 ++++++++++++++++++++++++----
- arch/arm/mach-s3c64xx/mach-crag6410-module.c | 14 ++++++--
- 12 files changed, 89 insertions(+), 24 deletions(-)
+SnVzdCBjbGVhbiB1cCBsb2dzIGZyb20gZXh5bm9zIGRybSBkcml2ZXIuCgpJbmtpIERhZSAoMik6
+CiAgZHJtL2ZpbWQ6IHVzZSBEUk1fRVJST1IgaW5zdGVhZCBvZiBEUk1fSU5GTyBpbiBlcnJvciBj
+YXNlCiAgZHJtL2V4eW5vczogcmVtb3ZlIHVubmVjZXNzYXJ5IG1lc3NhZ2VzCgogZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jIHwgMiAtLQogZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYyAgICAgIHwgOCArKystLS0tLQogMiBmaWxlcyBj
+aGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDcgZGVsZXRpb25zKC0pCgotLSAKMi43LjQKCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
+aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbA==
