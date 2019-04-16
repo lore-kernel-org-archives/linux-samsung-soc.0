@@ -1,39 +1,26 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: dts: exynos: add CCI-400 PMU nodes support to
- Exynos542x SoCs
-Date: Tue, 16 Apr 2019 12:19:15 +0200
-Message-ID: <CAJKOXPeUYw2DNEzRfKGzTmNAtg5mHJObVFHygKJ2eUdDpAFmOQ@mail.gmail.com>
-References: <20190412172545.fkxnpnymhcw7xncc@macpro-scc.lancs.ac.uk> <CANAwSgSX6q4M2EcWvEA3B6zQuY0DBrh-0_r3v__R--p7dzjs7w@mail.gmail.com>
+From: Tom Murphy <tmurphy@arista.com>
+Subject: Re: [PATCH 3/9] iommu/dma-iommu: Add iommu_dma_copy_reserved_iova,
+ iommu_dma_apply_resv_region to the dma-iommu api
+Date: Tue, 16 Apr 2019 14:22:38 +0100
+Message-ID: <CAPL0++7Z=EMpYOvUn8yvcRqRT5iwJMD8zLhmFr4uFbH7W3WqXQ@mail.gmail.com>
+References: <20190411184741.27540-1-tmurphy@arista.com> <20190411184741.27540-4-tmurphy@arista.com>
+ <20190415063134.GB1377@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CANAwSgSX6q4M2EcWvEA3B6zQuY0DBrh-0_r3v__R--p7dzjs7w@mail.gmail.com>
+In-Reply-To: <20190415063134.GB1377@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Willy Wolff <willy.mh.wolff.ml@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: iommu@lists.linux-foundation.org, Heiko Stuebner <heiko@sntech.de>, Will Deacon <will.deacon@arm.com>, David Brown <david.brown@linaro.org>, linux-samsung-soc@vger.kernel.org, Dmitry Safonov <dima@arista.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Andy Gross <andy.gross@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Tom Murphy <murphyt7@tcd.ie>, Robin Murphy <robin.murphy@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 15 Apr 2019 at 14:24, Anand Moon <linux.amoon@gmail.com> wrote:
-> Cache Coherent Interface (CCI) among Cortex-A15 and Cortex-A7, G2D, G3D and SSS
->
-> Level 0 > CPU blocks such as Cortex-A15 (CA15), Cortex-A7 (CA7) are
-> joined as the member of Level 0 CCI bus
->
-> Level 1 > Display engine block (DISP) and 2D graphic engines (G2D) are
-> directly connected to Level 1.
->   DISP, MDMA, SSS.
->
-> Level 2 > While all the other IP is connected to Level 1 bus via Level 2 bus
->    G3D, MSCL, MFC, ISP, JPEG/Rotator/DMA/PERI, NAND/SD/EMMC.
->
-> So my question is the mapped with the cci ip block correct.
-> Level 0 (cci_control0)
-> Level 1 (cci_control1)
-> Level 2 (cci_control1)
+I hoped this could be an exception, it's easier to grok without the
+line break and isn't crazy long. Because you mentioned it I'll fix it.
 
-Hi Anand,
-
-I do not understand the question - what is mapped with correctly or not?
-
-Best regards,
-Krzysztof
+On Mon, Apr 15, 2019 at 7:31 AM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Thu, Apr 11, 2019 at 07:47:32PM +0100, Tom Murphy via iommu wrote:
+> > +
+> > +     WARN_ON_ONCE(iommu_dma_reserve_iova(domain, region->start, end) == NULL);
+>
+> Overly long line..
