@@ -1,58 +1,69 @@
-From: Anand Moon <linux.amoon@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Subject: Re: [PATCH] ARM: dts: exynos: add CCI-400 PMU nodes support to
  Exynos542x SoCs
-Date: Wed, 17 Apr 2019 09:56:27 +0530
-Message-ID: <CANAwSgR7a_gNGUSCkp1MH=t+V0iUfBEByn0UpO7=5xJXDHv7FA@mail.gmail.com>
+Date: Wed, 17 Apr 2019 09:44:47 +0200
+Message-ID: <CAJKOXPf-CLMh1kLux0ev4FkT4x8CB+5O1wSNFmkjhFtVatX8jQ@mail.gmail.com>
 References: <20190412172545.fkxnpnymhcw7xncc@macpro-scc.lancs.ac.uk>
- <CANAwSgSX6q4M2EcWvEA3B6zQuY0DBrh-0_r3v__R--p7dzjs7w@mail.gmail.com> <CAJKOXPeUYw2DNEzRfKGzTmNAtg5mHJObVFHygKJ2eUdDpAFmOQ@mail.gmail.com>
+ <CANAwSgSX6q4M2EcWvEA3B6zQuY0DBrh-0_r3v__R--p7dzjs7w@mail.gmail.com>
+ <CAJKOXPeUYw2DNEzRfKGzTmNAtg5mHJObVFHygKJ2eUdDpAFmOQ@mail.gmail.com> <CANAwSgR7a_gNGUSCkp1MH=t+V0iUfBEByn0UpO7=5xJXDHv7FA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPeUYw2DNEzRfKGzTmNAtg5mHJObVFHygKJ2eUdDpAFmOQ@mail.gmail.com>
+In-Reply-To: <CANAwSgR7a_gNGUSCkp1MH=t+V0iUfBEByn0UpO7=5xJXDHv7FA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
+To: Anand Moon <linux.amoon@gmail.com>
 Cc: Willy Wolff <willy.mh.wolff.ml@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
-
-On Tue, 16 Apr 2019 at 15:49, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Wed, 17 Apr 2019 at 06:26, Anand Moon <linux.amoon@gmail.com> wrote:
 >
-> On Mon, 15 Apr 2019 at 14:24, Anand Moon <linux.amoon@gmail.com> wrote:
-> > Cache Coherent Interface (CCI) among Cortex-A15 and Cortex-A7, G2D, G3D and SSS
-> >
-> > Level 0 > CPU blocks such as Cortex-A15 (CA15), Cortex-A7 (CA7) are
-> > joined as the member of Level 0 CCI bus
-> >
-> > Level 1 > Display engine block (DISP) and 2D graphic engines (G2D) are
-> > directly connected to Level 1.
-> >   DISP, MDMA, SSS.
-> >
-> > Level 2 > While all the other IP is connected to Level 1 bus via Level 2 bus
-> >    G3D, MSCL, MFC, ISP, JPEG/Rotator/DMA/PERI, NAND/SD/EMMC.
-> >
-> > So my question is the mapped with the cci ip block correct.
-> > Level 0 (cci_control0)
-> > Level 1 (cci_control1)
-> > Level 2 (cci_control1)
+> Hi Krzysztof,
 >
-> Hi Anand,
+> On Tue, 16 Apr 2019 at 15:49, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >
+> > On Mon, 15 Apr 2019 at 14:24, Anand Moon <linux.amoon@gmail.com> wrote:
+> > > Cache Coherent Interface (CCI) among Cortex-A15 and Cortex-A7, G2D, G3D and SSS
+> > >
+> > > Level 0 > CPU blocks such as Cortex-A15 (CA15), Cortex-A7 (CA7) are
+> > > joined as the member of Level 0 CCI bus
+> > >
+> > > Level 1 > Display engine block (DISP) and 2D graphic engines (G2D) are
+> > > directly connected to Level 1.
+> > >   DISP, MDMA, SSS.
+> > >
+> > > Level 2 > While all the other IP is connected to Level 1 bus via Level 2 bus
+> > >    G3D, MSCL, MFC, ISP, JPEG/Rotator/DMA/PERI, NAND/SD/EMMC.
+> > >
+> > > So my question is the mapped with the cci ip block correct.
+> > > Level 0 (cci_control0)
+> > > Level 1 (cci_control1)
+> > > Level 2 (cci_control1)
+> >
+> > Hi Anand,
+> >
+> > I do not understand the question - what is mapped with correctly or not?
+> >
+> > Best regards,
+> > Krzysztof
 >
-> I do not understand the question - what is mapped with correctly or not?
+> Following the https://www.kernel.org/doc/Documentation/devicetree/bindings/arm/cci.txt
+> CCI node linked to CPU and DMA nodes for example.
 >
-> Best regards,
-> Krzysztof
+> On this line below diagram from Exynos 5422 UM show various IP block
+> linked to CCI level.
+> Below image just elaborate overall architecture of Exynos 5422 CCI.
+>
+> [0] https://imgur.com/gallery/0xJSwGQ
+>
+> So we should map the various IP block to corresponding CCI level.
 
-Following the https://www.kernel.org/doc/Documentation/devicetree/bindings/arm/cci.txt
-CCI node linked to CPU and DMA nodes for example.
+Willy's patch did not touch cci_control{0,1} nor any other CCI levels
+so I do not get what are you commenting. As for other CCI ports - we
+do not define them and I do not see any users of device CCI API
+(cci_enable_port_by_device() and cci_disable_port_by_device()). But
+feel free to propose patches changing this. In general - it is easier
+to discuss if you show the code/patch, not talk about some theoretical
+change.
 
-On this line below diagram from Exynos 5422 UM show various IP block
-linked to CCI level.
-Below image just elaborate overall architecture of Exynos 5422 CCI.
-
-[0] https://imgur.com/gallery/0xJSwGQ
-
-So we should map the various IP block to corresponding CCI level.
-
-Best Regards
--Anand
+Best regards,
+Krzysztof
