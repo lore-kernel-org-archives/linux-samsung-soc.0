@@ -1,69 +1,41 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: dts: exynos: add CCI-400 PMU nodes support to
- Exynos542x SoCs
-Date: Wed, 17 Apr 2019 09:44:47 +0200
-Message-ID: <CAJKOXPf-CLMh1kLux0ev4FkT4x8CB+5O1wSNFmkjhFtVatX8jQ@mail.gmail.com>
-References: <20190412172545.fkxnpnymhcw7xncc@macpro-scc.lancs.ac.uk>
- <CANAwSgSX6q4M2EcWvEA3B6zQuY0DBrh-0_r3v__R--p7dzjs7w@mail.gmail.com>
- <CAJKOXPeUYw2DNEzRfKGzTmNAtg5mHJObVFHygKJ2eUdDpAFmOQ@mail.gmail.com> <CANAwSgR7a_gNGUSCkp1MH=t+V0iUfBEByn0UpO7=5xJXDHv7FA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Lukasz Luba <l.luba@partner.samsung.com>
+Subject: [PATCH 0/3] Exynos Performance Monitoring Counters enhancements
+Date: Wed, 17 Apr 2019 09:48:05 +0200
+Message-ID: <1555487288-4777-1-git-send-email-l.luba@partner.samsung.com>
+References: <CGME20190417074829eucas1p234e664f9bf295eca8d2fad6ba953f37c@eucas1p2.samsung.com>
+Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CANAwSgR7a_gNGUSCkp1MH=t+V0iUfBEByn0UpO7=5xJXDHv7FA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Willy Wolff <willy.mh.wolff.ml@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: b.zolnierkie@samsung.com, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, cw00.choi@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, kgene@kernel.org, l.luba@partner.samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, 17 Apr 2019 at 06:26, Anand Moon <linux.amoon@gmail.com> wrote:
->
-> Hi Krzysztof,
->
-> On Tue, 16 Apr 2019 at 15:49, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >
-> > On Mon, 15 Apr 2019 at 14:24, Anand Moon <linux.amoon@gmail.com> wrote:
-> > > Cache Coherent Interface (CCI) among Cortex-A15 and Cortex-A7, G2D, G3D and SSS
-> > >
-> > > Level 0 > CPU blocks such as Cortex-A15 (CA15), Cortex-A7 (CA7) are
-> > > joined as the member of Level 0 CCI bus
-> > >
-> > > Level 1 > Display engine block (DISP) and 2D graphic engines (G2D) are
-> > > directly connected to Level 1.
-> > >   DISP, MDMA, SSS.
-> > >
-> > > Level 2 > While all the other IP is connected to Level 1 bus via Level 2 bus
-> > >    G3D, MSCL, MFC, ISP, JPEG/Rotator/DMA/PERI, NAND/SD/EMMC.
-> > >
-> > > So my question is the mapped with the cci ip block correct.
-> > > Level 0 (cci_control0)
-> > > Level 1 (cci_control1)
-> > > Level 2 (cci_control1)
-> >
-> > Hi Anand,
-> >
-> > I do not understand the question - what is mapped with correctly or not?
-> >
-> > Best regards,
-> > Krzysztof
->
-> Following the https://www.kernel.org/doc/Documentation/devicetree/bindings/arm/cci.txt
-> CCI node linked to CPU and DMA nodes for example.
->
-> On this line below diagram from Exynos 5422 UM show various IP block
-> linked to CCI level.
-> Below image just elaborate overall architecture of Exynos 5422 CCI.
->
-> [0] https://imgur.com/gallery/0xJSwGQ
->
-> So we should map the various IP block to corresponding CCI level.
+Hi all,
 
-Willy's patch did not touch cci_control{0,1} nor any other CCI levels
-so I do not get what are you commenting. As for other CCI ports - we
-do not define them and I do not see any users of device CCI API
-(cci_enable_port_by_device() and cci_disable_port_by_device()). But
-feel free to propose patches changing this. In general - it is easier
-to discuss if you show the code/patch, not talk about some theoretical
-change.
+This patch set extends PPMU on Samsung Exynos by choosing type of data
+which shell be counter in the PPMU registers.
+It is possible to count e.g. read or write requests, read or write data.
+A new field has been added in the DT 'event' node called 'event-data-type'.
+It is them used during the setup of the counter. In the prevoius
+implementation there was always one option used: count read+write data.
+Sometimes we need more precised information and this patch set tries to
+address it.
 
-Best regards,
-Krzysztof
+Regards,
+Lukasz Luba
+
+Lukasz Luba (3):
+  include: dt-bindings: add Performance Monitoring Unit for Exynos
+  drivers: devfreq: events: extend events by type of counted data
+  Documentation: devicetree: add PPMU events description
+
+ .../bindings/devfreq/event/exynos-ppmu.txt         | 18 ++++++++++
+ MAINTAINERS                                        |  5 +++
+ drivers/devfreq/event/exynos-ppmu.c                | 38 +++++++++++++++-------
+ include/dt-bindings/pmu/exynos_ppmu.h              | 24 ++++++++++++++
+ include/linux/devfreq-event.h                      |  6 ++++
+ 5 files changed, 79 insertions(+), 12 deletions(-)
+ create mode 100644 include/dt-bindings/pmu/exynos_ppmu.h
+
+-- 
+2.7.4
