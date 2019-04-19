@@ -1,10 +1,10 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 19/27] ASoC: samsung: smartq_wm8987: Convert to
+Subject: [PATCH 20/27] ASoC: samsung: smdk_spdif: Convert to
  SPDX License Identifier
-Date: Fri, 19 Apr 2019 12:21:54 +0200
-Message-ID: <20190419102202.4384-20-s.nawrocki@samsung.com>
+Date: Fri, 19 Apr 2019 12:21:55 +0200
+Message-ID: <20190419102202.4384-21-s.nawrocki@samsung.com>
 References: <20190419102202.4384-1-s.nawrocki@samsung.com>
- <CGME20190419102320epcas2p2a6b422dcb191f2b04a003b4e03073ed1@epcas2p2.samsung.com>
+ <CGME20190419102324epcas1p425e4612e7fb7f62b09cece5af88cb6c2@epcas1p4.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -27,37 +27,32 @@ Replace GPL v2.0+ license statements with SPDX license identifier.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- sound/soc/samsung/smartq_wm8987.c | 21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
+ sound/soc/samsung/smdk_spdif.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
-diff --git a/sound/soc/samsung/smartq_wm8987.c b/sound/soc/samsung/smartq_wm8987.c
-index cf0f54e652c1..b9e887ea60b2 100644
---- a/sound/soc/samsung/smartq_wm8987.c
-+++ b/sound/soc/samsung/smartq_wm8987.c
-@@ -1,17 +1,10 @@
--/* sound/soc/samsung/smartq_wm8987.c
+diff --git a/sound/soc/samsung/smdk_spdif.c b/sound/soc/samsung/smdk_spdif.c
+index 7fc7cc6d1530..87a70d872c00 100644
+--- a/sound/soc/samsung/smdk_spdif.c
++++ b/sound/soc/samsung/smdk_spdif.c
+@@ -1,14 +1,8 @@
+-/*
+- * smdk_spdif.c  --  S/PDIF audio for SMDK
 - *
-- * Copyright 2010 Maurus Cuelenaere <mcuelenaere@gmail.com>
+- * Copyright 2010 Samsung Electronics Co. Ltd.
 - *
-- * Based on smdk6410_wm8987.c
-- *     Copyright 2007 Wolfson Microelectronics PLC. - linux@wolfsonmicro.com
-- *     Graeme Gregory - graeme.gregory@wolfsonmicro.com
-- *
-- *  This program is free software; you can redistribute  it and/or modify it
-- *  under  the terms of  the GNU General  Public License as published by the
-- *  Free Software Foundation;  either version 2 of the  License, or (at your
-- *  option) any later version.
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License as
+- * published by the Free Software Foundation; either version 2 of the
+- * License, or (at your option) any later version.
 - *
 - */
 +// SPDX-License-Identifier: GPL-2.0+
 +//
-+// Copyright 2010 Maurus Cuelenaere <mcuelenaere@gmail.com>
++// smdk_spdif.c - S/PDIF audio for SMDK
 +//
-+// Based on smdk6410_wm8987.c
-+//     Copyright 2007 Wolfson Microelectronics PLC. - linux@wolfsonmicro.com
-+//     Graeme Gregory - graeme.gregory@wolfsonmicro.com
++// Copyright (C) 2010 Samsung Electronics Co., Ltd.
  
- #include <linux/gpio/consumer.h>
+ #include <linux/clk.h>
  #include <linux/module.h>
 -- 
 2.17.1
