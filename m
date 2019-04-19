@@ -1,91 +1,71 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: samsung: arndale: Convert to SPDX
-	License Identifier" to the asoc tree
-Date: Fri, 19 Apr 2019 17:14:23 +0100 (BST)
-Message-ID: <20190419161423.5BA9B441D3F@finisterre.ee.mobilebroadband>
-References: <20190419102202.4384-2-s.nawrocki@samsung.com>
+From: Willy Wolff <willy.mh.wolff.ml@gmail.com>
+Subject: Re: [PATCH] ARM: dts: exynos: add CCI-400 PMU nodes support to
+ Exynos542x SoCs
+Date: Fri, 19 Apr 2019 18:53:44 +0100
+Message-ID: <CACfOrNdEpC2vNgCOBXtrW-HjGHNG_6iLAFUCtVoZstGASPtcsA@mail.gmail.com>
+References: <20190412172545.fkxnpnymhcw7xncc@macpro-scc.lancs.ac.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20190419102202.4384-2-s.nawrocki@samsung.com>
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, lgirdwood@gmail.com, krzk@kernel.org, Mark Brown <broonie@kernel.org>, m.szyprowski@samsung.com
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190412172545.fkxnpnymhcw7xncc@macpro-scc.lancs.ac.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch
+Hi,
 
-   ASoC: samsung: arndale: Convert to SPDX License Identifier
+This patch can be dropped, as it needs more work.
 
-has been applied to the asoc tree at
+In fact, the interrupts seems to be wrong. The interrupts suggested by
+Anand Moon gave the same following results.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.2
+export CCI_DEV=CCI_400
+export OMP_NUM_THREADS=2
+sudo --preserve-env ./perf stat -a \
+  -e armv7_cortex_a7/config=0x11,name=a7_cycles/ \
+  -e armv7_cortex_a15/config=0x11,name=a15_cycles/ \
+  -e armv7_cortex_a7/config=0x19,name=a7_bus/ \
+  -e armv7_cortex_a15/config=0x19,name=a15_bus/ \
+  -e ${CCI_DEV}/config=0xff,name=cci400_cycles/ \
+  -e ${CCI_DEV}/config=0x0,name=cci400_si_rrq_hs_any/ \
+  -e ${CCI_DEV}/config=0xc,name=cci400_si_wrq_hs_any/ \
+  taskset -c 0,7 /home/user/cg.x.A 1
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+[..]
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+ Performance counter stats for 'system wide':
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+     9,362,850,550      a7_cycles
+     1,682,125,760      a15_cycles
+        68,920,347      a7_bus
+        61,484,352      a15_bus
+     3,789,936,935      cci400_cycles
+                 0      cci400_si_rrq_hs_any
+                 0      cci400_si_wrq_hs_any
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+       9.541340558 seconds time elapsed
 
-Thanks,
-Mark
+cg.x.A comes from NAS benchmark suite, compiled with fopenmp support, setup
+to run 2 threads and taskmapped to ran on both a7 and a15 clusters.
+a7_bus and a15_bus report main memory accesses.
 
->From 4c61608402f5408855d54c91e32e61780644dd1d Mon Sep 17 00:00:00 2001
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Fri, 19 Apr 2019 12:21:36 +0200
-Subject: [PATCH] ASoC: samsung: arndale: Convert to SPDX License Identifier
+Only cci400_cycles seems to be correct. However, all pmcs from the master
+interface are reported as unsupported and all pmcs from the slave interface
+return 0, which is probably not correct.
+http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0470f/CJHICFBF.html
 
-Replace GPL v2.0 license statements with SPDX license identifier.
+Would it be possible that someone from Samsung provide the right
+interrupts values?
+Many thanks.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/samsung/arndale_rt5631.c | 17 +++++------------
- 1 file changed, 5 insertions(+), 12 deletions(-)
-
-diff --git a/sound/soc/samsung/arndale_rt5631.c b/sound/soc/samsung/arndale_rt5631.c
-index ee1fda92f2f4..cc334e1866f6 100644
---- a/sound/soc/samsung/arndale_rt5631.c
-+++ b/sound/soc/samsung/arndale_rt5631.c
-@@ -1,15 +1,8 @@
--/*
-- *  arndale_rt5631.c
-- *
-- *  Copyright (c) 2014, Insignal Co., Ltd.
-- *
-- *  Author: Claude <claude@insginal.co.kr>
-- *
-- *  This program is free software; you can redistribute  it and/or modify it
-- *  under  the terms of  the GNU General  Public License as published by the
-- *  Free Software Foundation;  either version 2 of the  License, or (at your
-- *  option) any later version.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// Copyright (c) 2014, Insignal Co., Ltd.
-+//
-+//  Author: Claude <claude@insginal.co.kr>
- 
- #include <linux/module.h>
- #include <linux/platform_device.h>
--- 
-2.20.1
+Regards,
+Willy
