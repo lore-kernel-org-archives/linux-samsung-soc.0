@@ -1,14 +1,14 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: samsung: littlemill: Convert to SPDX
-	License Identifier" to the asoc tree
-Date: Fri, 19 Apr 2019 17:14:18 +0100 (BST)
-Message-ID: <20190419161418.556C9441D3C@finisterre.ee.mobilebroadband>
-References: <20190419102202.4384-9-s.nawrocki@samsung.com>
+Subject: Applied "ASoC: samsung: bells: Convert to SPDX License
+	Identifier" to the asoc tree
+Date: Fri, 19 Apr 2019 17:14:22 +0100 (BST)
+Message-ID: <20190419161422.BC291441D3D@finisterre.ee.mobilebroadband>
+References: <20190419102202.4384-3-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20190419102202.4384-9-s.nawrocki@samsung.com>
+In-Reply-To: <20190419102202.4384-3-s.nawrocki@samsung.com>
 List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -24,7 +24,7 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 The patch
 
-   ASoC: samsung: littlemill: Convert to SPDX License Identifier
+   ASoC: samsung: bells: Convert to SPDX License Identifier
 
 has been applied to the asoc tree at
 
@@ -49,28 +49,28 @@ to this mail.
 Thanks,
 Mark
 
->From 1643b9fb8c77e1cf31918beea3856754e1d5f834 Mon Sep 17 00:00:00 2001
+>From 41ce2ac0417c207b4b908108de1f0c72661cc558 Mon Sep 17 00:00:00 2001
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Fri, 19 Apr 2019 12:21:43 +0200
-Subject: [PATCH] ASoC: samsung: littlemill: Convert to SPDX License Identifier
+Date: Fri, 19 Apr 2019 12:21:37 +0200
+Subject: [PATCH] ASoC: samsung: bells: Convert to SPDX License Identifier
 
-Replace GPL v2.0+ license statements with SPDX license identifier.
+Replace GPL v2.0 license statements with SPDX license identifier.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/samsung/littlemill.c | 15 +++++----------
+ sound/soc/samsung/bells.c | 15 +++++----------
  1 file changed, 5 insertions(+), 10 deletions(-)
 
-diff --git a/sound/soc/samsung/littlemill.c b/sound/soc/samsung/littlemill.c
-index 087f8d738dfb..cd70b06cc99d 100644
---- a/sound/soc/samsung/littlemill.c
-+++ b/sound/soc/samsung/littlemill.c
+diff --git a/sound/soc/samsung/bells.c b/sound/soc/samsung/bells.c
+index 0e66cd8ef2f9..770845e2507a 100644
+--- a/sound/soc/samsung/bells.c
++++ b/sound/soc/samsung/bells.c
 @@ -1,13 +1,8 @@
 -/*
-- * Littlemill audio support
+- * Bells audio support
 - *
-- * Copyright 2011 Wolfson Microelectronics
+- * Copyright 2012 Wolfson Microelectronics
 - *
 - * This program is free software; you can redistribute  it and/or modify it
 - * under  the terms of  the GNU General  Public License as published by the
@@ -79,9 +79,9 @@ index 087f8d738dfb..cd70b06cc99d 100644
 - */
 +// SPDX-License-Identifier: GPL-2.0+
 +//
-+// Littlemill audio support
++// Bells audio support
 +//
-+// Copyright 2011 Wolfson Microelectronics
++// Copyright 2012 Wolfson Microelectronics
  
  #include <sound/soc.h>
  #include <sound/soc-dapm.h>
