@@ -1,14 +1,14 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: samsung: smartq_wm8987: Convert to SPDX
-	License Identifier" to the asoc tree
-Date: Fri, 19 Apr 2019 17:14:11 +0100 (BST)
-Message-ID: <20190419161411.C9A8E441D3E@finisterre.ee.mobilebroadband>
-References: <20190419102202.4384-20-s.nawrocki@samsung.com>
+Subject: Applied "ASoC: samsung: s3c24xx_uda134x: Convert to
+	SPDX License Identifier" to the asoc tree
+Date: Fri, 19 Apr 2019 17:14:12 +0100 (BST)
+Message-ID: <20190419161412.6040A441D3C@finisterre.ee.mobilebroadband>
+References: <20190419102202.4384-19-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20190419102202.4384-20-s.nawrocki@samsung.com>
+In-Reply-To: <20190419102202.4384-19-s.nawrocki@samsung.com>
 List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -24,7 +24,7 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 The patch
 
-   ASoC: samsung: smartq_wm8987: Convert to SPDX License Identifier
+   ASoC: samsung: s3c24xx_uda134x: Convert to SPDX License Identifier
 
 has been applied to the asoc tree at
 
@@ -49,48 +49,47 @@ to this mail.
 Thanks,
 Mark
 
->From 8aa0ef201cdc43ea91bfc78f88c313b32c4b1ad3 Mon Sep 17 00:00:00 2001
+>From 4d19f2cf5f2d292b72e848f8ac6ffa019a5e9c75 Mon Sep 17 00:00:00 2001
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Fri, 19 Apr 2019 12:21:54 +0200
-Subject: [PATCH] ASoC: samsung: smartq_wm8987: Convert to SPDX License
+Date: Fri, 19 Apr 2019 12:21:53 +0200
+Subject: [PATCH] ASoC: samsung: s3c24xx_uda134x: Convert to SPDX License
  Identifier
 
-Replace GPL v2.0+ license statements with SPDX license identifier.
+Replace GPL v2.0 license statements with SPDX license identifier.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/samsung/smartq_wm8987.c | 21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
+ sound/soc/samsung/s3c24xx_uda134x.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
-diff --git a/sound/soc/samsung/smartq_wm8987.c b/sound/soc/samsung/smartq_wm8987.c
-index cf0f54e652c1..b9e887ea60b2 100644
---- a/sound/soc/samsung/smartq_wm8987.c
-+++ b/sound/soc/samsung/smartq_wm8987.c
-@@ -1,17 +1,10 @@
--/* sound/soc/samsung/smartq_wm8987.c
+diff --git a/sound/soc/samsung/s3c24xx_uda134x.c b/sound/soc/samsung/s3c24xx_uda134x.c
+index 5fb3bab6bbfe..9d68f8ca1fcc 100644
+--- a/sound/soc/samsung/s3c24xx_uda134x.c
++++ b/sound/soc/samsung/s3c24xx_uda134x.c
+@@ -1,15 +1,11 @@
+-/*
+- * Modifications by Christian Pellegrin <chripell@evolware.org>
 - *
-- * Copyright 2010 Maurus Cuelenaere <mcuelenaere@gmail.com>
+- * s3c24xx_uda134x.c  --  S3C24XX_UDA134X ALSA SoC Audio board driver
 - *
-- * Based on smdk6410_wm8987.c
-- *     Copyright 2007 Wolfson Microelectronics PLC. - linux@wolfsonmicro.com
-- *     Graeme Gregory - graeme.gregory@wolfsonmicro.com
+- * Copyright 2007 Dension Audio Systems Ltd.
+- * Author: Zoltan Devai
 - *
-- *  This program is free software; you can redistribute  it and/or modify it
-- *  under  the terms of  the GNU General  Public License as published by the
-- *  Free Software Foundation;  either version 2 of the  License, or (at your
-- *  option) any later version.
-- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
 - */
-+// SPDX-License-Identifier: GPL-2.0+
++// SPDX-License-Identifier: GPL-2.0
 +//
-+// Copyright 2010 Maurus Cuelenaere <mcuelenaere@gmail.com>
++// Modifications by Christian Pellegrin <chripell@evolware.org>
 +//
-+// Based on smdk6410_wm8987.c
-+//     Copyright 2007 Wolfson Microelectronics PLC. - linux@wolfsonmicro.com
-+//     Graeme Gregory - graeme.gregory@wolfsonmicro.com
++// s3c24xx_uda134x.c - S3C24XX_UDA134X ALSA SoC Audio board driver
++//
++// Copyright 2007 Dension Audio Systems Ltd.
++// Author: Zoltan Devai
  
- #include <linux/gpio/consumer.h>
- #include <linux/module.h>
+ #include <linux/clk.h>
+ #include <linux/gpio.h>
 -- 
 2.20.1
