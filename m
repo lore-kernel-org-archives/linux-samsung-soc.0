@@ -1,14 +1,14 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: samsung: spdif: Convert to SPDX License
-	Identifier" to the asoc tree
-Date: Fri, 19 Apr 2019 17:14:08 +0100 (BST)
-Message-ID: <20190419161408.CD333441D56@finisterre.ee.mobilebroadband>
-References: <20190419102202.4384-25-s.nawrocki@samsung.com>
+Subject: Applied "ASoC: samsung: smdk_wm8994*: Convert to SPDX
+	License Identifier" to the asoc tree
+Date: Fri, 19 Apr 2019 17:14:09 +0100 (BST)
+Message-ID: <20190419161410.0EFD2441D3C@finisterre.ee.mobilebroadband>
+References: <20190419102202.4384-23-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20190419102202.4384-25-s.nawrocki@samsung.com>
+In-Reply-To: <20190419102202.4384-23-s.nawrocki@samsung.com>
 List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -24,7 +24,7 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 The patch
 
-   ASoC: samsung: spdif: Convert to SPDX License Identifier
+   ASoC: samsung: smdk_wm8994*: Convert to SPDX License Identifier
 
 has been applied to the asoc tree at
 
@@ -49,64 +49,61 @@ to this mail.
 Thanks,
 Mark
 
->From dbf0344a4b6ad38732fa246c1b8ea93435af58e0 Mon Sep 17 00:00:00 2001
+>From f9ff38071cdc2c1c2bbc0e2b81b025476c152982 Mon Sep 17 00:00:00 2001
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Fri, 19 Apr 2019 12:21:59 +0200
-Subject: [PATCH] ASoC: samsung: spdif: Convert to SPDX License Identifier
+Date: Fri, 19 Apr 2019 12:21:57 +0200
+Subject: [PATCH] ASoC: samsung: smdk_wm8994*: Convert to SPDX License
+ Identifier
 
-Replace GPL v2.0 license statements with SPDX license identifier.
+Replace GPL v2.0+ license statements with SPDX license identifier.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/samsung/spdif.c | 17 ++++++-----------
- sound/soc/samsung/spdif.h |  8 ++------
- 2 files changed, 8 insertions(+), 17 deletions(-)
+ sound/soc/samsung/smdk_wm8994.c    |  9 +--------
+ sound/soc/samsung/smdk_wm8994pcm.c | 16 +++++-----------
+ 2 files changed, 6 insertions(+), 19 deletions(-)
 
-diff --git a/sound/soc/samsung/spdif.c b/sound/soc/samsung/spdif.c
-index 5e4afb330416..805c57986e0b 100644
---- a/sound/soc/samsung/spdif.c
-+++ b/sound/soc/samsung/spdif.c
-@@ -1,14 +1,9 @@
--/* sound/soc/samsung/spdif.c
+diff --git a/sound/soc/samsung/smdk_wm8994.c b/sound/soc/samsung/smdk_wm8994.c
+index ff57b192d37d..135d8c2745be 100644
+--- a/sound/soc/samsung/smdk_wm8994.c
++++ b/sound/soc/samsung/smdk_wm8994.c
+@@ -1,11 +1,4 @@
+-/*
+- *  smdk_wm8994.c
 - *
-- * ALSA SoC Audio Layer - Samsung S/PDIF Controller driver
-- *
-- * Copyright (c) 2010 Samsung Electronics Co. Ltd
-- *		http://www.samsung.com/
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
+- *  This program is free software; you can redistribute  it and/or modify it
+- *  under  the terms of  the GNU General  Public License as published by the
+- *  Free Software Foundation;  either version 2 of the  License, or (at your
+- *  option) any later version.
 - */
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// ALSA SoC Audio Layer - Samsung S/PDIF Controller driver
-+//
-+// Copyright (c) 2010 Samsung Electronics Co. Ltd
-+//		http://www.samsung.com/
++// SPDX-License-Identifier: GPL-2.0+
  
- #include <linux/clk.h>
- #include <linux/io.h>
-diff --git a/sound/soc/samsung/spdif.h b/sound/soc/samsung/spdif.h
-index 4f72cb446dbf..461da60ab040 100644
---- a/sound/soc/samsung/spdif.h
-+++ b/sound/soc/samsung/spdif.h
-@@ -1,13 +1,9 @@
--/* sound/soc/samsung/spdif.h
+ #include "../codecs/wm8994.h"
+ #include <sound/pcm_params.h>
+diff --git a/sound/soc/samsung/smdk_wm8994pcm.c b/sound/soc/samsung/smdk_wm8994pcm.c
+index 2e621496be8b..43171d6457fa 100644
+--- a/sound/soc/samsung/smdk_wm8994pcm.c
++++ b/sound/soc/samsung/smdk_wm8994pcm.c
+@@ -1,14 +1,8 @@
+-/*
+- *  sound/soc/samsung/smdk_wm8994pcm.c
 - *
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-  * ALSA SoC Audio Layer - Samsung S/PDIF Controller driver
-  *
-  * Copyright (c) 2010 Samsung Electronics Co. Ltd
-  *		http://www.samsung.com/
+- *  Copyright (c) 2011 Samsung Electronics Co., Ltd
+- *		http://www.samsung.com
 - *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- 
- #ifndef __SND_SOC_SAMSUNG_SPDIF_H
+- *  This program is free software; you can redistribute  it and/or  modify it
+- *  under  the terms of  the GNU General  Public License as published by the
+- *  Free Software Foundation;  either version 2 of the  License, or (at your
+- *  option) any later version.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Copyright (c) 2011 Samsung Electronics Co., Ltd
++//		http://www.samsung.com
++
+ #include <linux/module.h>
+ #include <sound/soc.h>
+ #include <sound/pcm.h>
 -- 
 2.20.1
