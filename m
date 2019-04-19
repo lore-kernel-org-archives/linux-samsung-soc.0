@@ -1,10 +1,10 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 02/27] ASoC: samsung: bells: Convert to SPDX
- License Identifier
-Date: Fri, 19 Apr 2019 12:21:37 +0200
-Message-ID: <20190419102202.4384-3-s.nawrocki@samsung.com>
+Subject: [PATCH 03/27] ASoC: samsung: dmaengine: Convert to
+ SPDX License Indentifier
+Date: Fri, 19 Apr 2019 12:21:38 +0200
+Message-ID: <20190419102202.4384-4-s.nawrocki@samsung.com>
 References: <20190419102202.4384-1-s.nawrocki@samsung.com>
- <CGME20190419102224epcas1p45354ee18d52dbc4f1c950984b7c872ce@epcas1p4.samsung.com>
+ <CGME20190419102228epcas2p301926e6472470a95e566bfff378dae97@epcas2p3.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -27,31 +27,56 @@ Replace GPL v2.0 license statements with SPDX license identifier.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- sound/soc/samsung/bells.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+ sound/soc/samsung/dma.h       |  8 ++------
+ sound/soc/samsung/dmaengine.c | 22 ++++++----------------
+ 2 files changed, 8 insertions(+), 22 deletions(-)
 
-diff --git a/sound/soc/samsung/bells.c b/sound/soc/samsung/bells.c
-index 0e66cd8ef2f9..770845e2507a 100644
---- a/sound/soc/samsung/bells.c
-+++ b/sound/soc/samsung/bells.c
-@@ -1,13 +1,8 @@
--/*
-- * Bells audio support
+diff --git a/sound/soc/samsung/dma.h b/sound/soc/samsung/dma.h
+index 0ae15d01a3f6..7b5d4556e0fd 100644
+--- a/sound/soc/samsung/dma.h
++++ b/sound/soc/samsung/dma.h
+@@ -1,10 +1,6 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
+ /*
+- *  This program is free software; you can redistribute  it and/or modify it
+- *  under  the terms of  the GNU General  Public License as published by the
+- *  Free Software Foundation;  either version 2 of the  License, or (at your
+- *  option) any later version.
 - *
-- * Copyright 2012 Wolfson Microelectronics
-- *
-- * This program is free software; you can redistribute  it and/or modify it
-- * under  the terms of  the GNU General  Public License as published by the
-- * Free Software Foundation;  either version 2 of the  License, or (at your
-- * option) any later version.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// Bells audio support
-+//
-+// Copyright 2012 Wolfson Microelectronics
+- *  ALSA PCM interface for the Samsung SoC
++ * ALSA PCM interface for the Samsung SoC
+  */
  
- #include <sound/soc.h>
- #include <sound/soc-dapm.h>
+ #ifndef _SAMSUNG_DMA_H
+diff --git a/sound/soc/samsung/dmaengine.c b/sound/soc/samsung/dmaengine.c
+index 302871974cb3..2802789a323e 100644
+--- a/sound/soc/samsung/dmaengine.c
++++ b/sound/soc/samsung/dmaengine.c
+@@ -1,19 +1,9 @@
+-/*
+- * dmaengine.c - Samsung dmaengine wrapper
+- *
+- * Author: Mark Brown <broonie@linaro.org>
+- * Copyright 2013 Linaro
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful, but
+- * WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * General Public License for more details.
+- *
+- */
++// SPDX-License-Identifier: GPL-2.0
++//
++// dmaengine.c - Samsung dmaengine wrapper
++//
++// Author: Mark Brown <broonie@linaro.org>
++// Copyright 2013 Linaro
+ 
+ #include <linux/module.h>
+ #include <sound/core.h>
 -- 
 2.17.1
