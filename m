@@ -1,10 +1,10 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 25/27] ASoC: samsung: speyside: Convert to SPDX
- License Identifier
-Date: Fri, 19 Apr 2019 12:22:00 +0200
-Message-ID: <20190419102202.4384-26-s.nawrocki@samsung.com>
+Subject: [PATCH 26/27] ASoC: samsung: tm2_wm5110: Convert to
+ SPDX License Identifier
+Date: Fri, 19 Apr 2019 12:22:01 +0200
+Message-ID: <20190419102202.4384-27-s.nawrocki@samsung.com>
 References: <20190419102202.4384-1-s.nawrocki@samsung.com>
- <CGME20190419102340epcas2p10c88390f4140697e478c5504ece37521@epcas2p1.samsung.com>
+ <CGME20190419102343epcas2p3a5d7f409408fbb991d0e5881c424a595@epcas2p3.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -27,18 +27,19 @@ Replace GPL v2.0+ license statements with SPDX license identifier.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- sound/soc/samsung/speyside.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+ sound/soc/samsung/tm2_wm5110.c | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
 
-diff --git a/sound/soc/samsung/speyside.c b/sound/soc/samsung/speyside.c
-index 4b4147d07804..15465c84daa3 100644
---- a/sound/soc/samsung/speyside.c
-+++ b/sound/soc/samsung/speyside.c
-@@ -1,13 +1,8 @@
+diff --git a/sound/soc/samsung/tm2_wm5110.c b/sound/soc/samsung/tm2_wm5110.c
+index dc93941e01c3..31f4256c6c65 100644
+--- a/sound/soc/samsung/tm2_wm5110.c
++++ b/sound/soc/samsung/tm2_wm5110.c
+@@ -1,14 +1,9 @@
 -/*
-- * Speyside audio support
+- * Copyright (C) 2015 - 2016 Samsung Electronics Co., Ltd.
 - *
-- * Copyright 2011 Wolfson Microelectronics
+- * Authors: Inha Song <ideal.song@samsung.com>
+- *          Sylwester Nawrocki <s.nawrocki@samsung.com>
 - *
 - * This program is free software; you can redistribute  it and/or modify it
 - * under  the terms of  the GNU General  Public License as published by the
@@ -47,11 +48,12 @@ index 4b4147d07804..15465c84daa3 100644
 - */
 +// SPDX-License-Identifier: GPL-2.0+
 +//
-+// Speyside audio support
++// Copyright (C) 2015 - 2016 Samsung Electronics Co., Ltd.
 +//
-+// Copyright 2011 Wolfson Microelectronics
++// Authors: Inha Song <ideal.song@samsung.com>
++//          Sylwester Nawrocki <s.nawrocki@samsung.com>
  
- #include <sound/soc.h>
- #include <sound/soc-dapm.h>
+ #include <linux/clk.h>
+ #include <linux/gpio.h>
 -- 
 2.17.1
