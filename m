@@ -1,14 +1,14 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: samsung: s3c-i2s-v2: Convert to SPDX
-	License Identifier" to the asoc tree
+Subject: Applied "ASoC: samsung: pcm: Convert to SPDX License
+	Identifier" to the asoc tree
 Date: Fri, 19 Apr 2019 17:14:15 +0100 (BST)
-Message-ID: <20190419161415.561F3441D3B@finisterre.ee.mobilebroadband>
-References: <20190419102202.4384-14-s.nawrocki@samsung.com>
+Message-ID: <20190419161415.E83CE441D3C@finisterre.ee.mobilebroadband>
+References: <20190419102202.4384-13-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20190419102202.4384-14-s.nawrocki@samsung.com>
+In-Reply-To: <20190419102202.4384-13-s.nawrocki@samsung.com>
 List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -24,7 +24,7 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 The patch
 
-   ASoC: samsung: s3c-i2s-v2: Convert to SPDX License Identifier
+   ASoC: samsung: pcm: Convert to SPDX License Identifier
 
 has been applied to the asoc tree at
 
@@ -49,100 +49,62 @@ to this mail.
 Thanks,
 Mark
 
->From 08ac76d01beaf32e8ea4e20c20ccea42206ddc90 Mon Sep 17 00:00:00 2001
+>From 65511dc7488eee1d5597e427726297ea49a59998 Mon Sep 17 00:00:00 2001
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Fri, 19 Apr 2019 12:21:48 +0200
-Subject: [PATCH] ASoC: samsung: s3c-i2s-v2: Convert to SPDX License Identifier
+Date: Fri, 19 Apr 2019 12:21:47 +0200
+Subject: [PATCH] ASoC: samsung: pcm: Convert to SPDX License Identifier
 
 Replace GPL v2.0 license statements with SPDX license identifier.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/samsung/regs-i2s-v2.h | 10 +++-------
- sound/soc/samsung/s3c-i2s-v2.c  | 26 +++++++++++---------------
- sound/soc/samsung/s3c-i2s-v2.h  | 11 +++--------
- 3 files changed, 17 insertions(+), 30 deletions(-)
+ sound/soc/samsung/pcm.c | 19 +++++++------------
+ sound/soc/samsung/pcm.h |  8 +-------
+ 2 files changed, 8 insertions(+), 19 deletions(-)
 
-diff --git a/sound/soc/samsung/regs-i2s-v2.h b/sound/soc/samsung/regs-i2s-v2.h
-index 5e5e5680580b..867984e75709 100644
---- a/sound/soc/samsung/regs-i2s-v2.h
-+++ b/sound/soc/samsung/regs-i2s-v2.h
-@@ -1,14 +1,10 @@
--/* linux/include/asm-arm/plat-s3c24xx/regs-s3c2412-iis.h
+diff --git a/sound/soc/samsung/pcm.c b/sound/soc/samsung/pcm.c
+index 3c7baa561084..f6e67d0e7882 100644
+--- a/sound/soc/samsung/pcm.c
++++ b/sound/soc/samsung/pcm.c
+@@ -1,15 +1,10 @@
+-/* sound/soc/samsung/pcm.c
 - *
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-  * Copyright 2007 Simtec Electronics <linux@simtec.co.uk>
-  *	http://armlinux.simtec.co.uk/
-  *
+- * ALSA SoC Audio Layer - S3C PCM-Controller driver
+- *
+- * Copyright (c) 2009 Samsung Electronics Co. Ltd
+- * Author: Jaswinder Singh <jassisinghbrar@gmail.com>
+- * based upon I2S drivers by Ben Dooks.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
++// SPDX-License-Identifier: GPL-2.0
++//
++// ALSA SoC Audio Layer - S3C PCM-Controller driver
++//
++// Copyright (c) 2009 Samsung Electronics Co. Ltd
++// Author: Jaswinder Singh <jassisinghbrar@gmail.com>
++// based upon I2S drivers by Ben Dooks.
+ 
+ #include <linux/clk.h>
+ #include <linux/io.h>
+diff --git a/sound/soc/samsung/pcm.h b/sound/soc/samsung/pcm.h
+index 726baf814613..208d8da27de1 100644
+--- a/sound/soc/samsung/pcm.h
++++ b/sound/soc/samsung/pcm.h
+@@ -1,10 +1,4 @@
+-/*  sound/soc/samsung/pcm.h
+- *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License version 2 as
 - * published by the Free Software Foundation.
 - *
-  * S3C2412 IIS register definition
--*/
-+ */
- 
- #ifndef __ASM_ARCH_REGS_S3C2412_IIS_H
- #define __ASM_ARCH_REGS_S3C2412_IIS_H
-diff --git a/sound/soc/samsung/s3c-i2s-v2.c b/sound/soc/samsung/s3c-i2s-v2.c
-index 58c3e9bfc6b7..7e196b599be1 100644
---- a/sound/soc/samsung/s3c-i2s-v2.c
-+++ b/sound/soc/samsung/s3c-i2s-v2.c
-@@ -1,18 +1,14 @@
--/* ALSA Soc Audio Layer - I2S core for newer Samsung SoCs.
-- *
-- * Copyright (c) 2006 Wolfson Microelectronics PLC.
-- *	Graeme Gregory graeme.gregory@wolfsonmicro.com
-- *	linux@wolfsonmicro.com
-- *
-- * Copyright (c) 2008, 2007, 2004-2005 Simtec Electronics
-- *	http://armlinux.simtec.co.uk/
-- *	Ben Dooks <ben@simtec.co.uk>
-- *
-- * This program is free software; you can redistribute  it and/or modify it
-- * under  the terms of  the GNU General  Public License as published by the
-- * Free Software Foundation;  either version 2 of the  License, or (at your
-- * option) any later version.
 - */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// ALSA Soc Audio Layer - I2S core for newer Samsung SoCs.
-+//
-+// Copyright (c) 2006 Wolfson Microelectronics PLC.
-+//	Graeme Gregory graeme.gregory@wolfsonmicro.com
-+//	linux@wolfsonmicro.com
-+//
-+// Copyright (c) 2008, 2007, 2004-2005 Simtec Electronics
-+//	http://armlinux.simtec.co.uk/
-+//	Ben Dooks <ben@simtec.co.uk>
++/* SPDX-License-Identifier: GPL-2.0 */
  
- #include <linux/module.h>
- #include <linux/delay.h>
-diff --git a/sound/soc/samsung/s3c-i2s-v2.h b/sound/soc/samsung/s3c-i2s-v2.h
-index 3fca20f7a853..fe42b77999fd 100644
---- a/sound/soc/samsung/s3c-i2s-v2.h
-+++ b/sound/soc/samsung/s3c-i2s-v2.h
-@@ -1,16 +1,11 @@
--/* sound/soc/samsung/s3c-i2s-v2.h
-- *
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-  * ALSA Soc Audio Layer - S3C_I2SV2 I2S driver
-  *
-  * Copyright (c) 2007 Simtec Electronics
-  *	http://armlinux.simtec.co.uk/
-  *	Ben Dooks <ben@simtec.co.uk>
-- *
-- *  This program is free software; you can redistribute  it and/or modify it
-- *  under  the terms of  the GNU General  Public License as published by the
-- *  Free Software Foundation;  either version 2 of the  License, or (at your
-- *  option) any later version.
--*/
-+ */
- 
- /* This code is the core support for the I2S block found in a number of
-  * Samsung SoC devices which is unofficially named I2S-V2. Currently the
+ #ifndef __S3C_PCM_H
+ #define __S3C_PCM_H __FILE__
 -- 
 2.20.1
