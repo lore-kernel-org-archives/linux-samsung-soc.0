@@ -1,10 +1,10 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 09/27] ASoC: samsung: lowland: Convert to SPDX
- License Identifier
-Date: Fri, 19 Apr 2019 12:21:44 +0200
-Message-ID: <20190419102202.4384-10-s.nawrocki@samsung.com>
+Subject: [PATCH 10/27] ASoC: samsung: neo1973_wm8753: Convert
+ to SPDX License Identifier
+Date: Fri, 19 Apr 2019 12:21:45 +0200
+Message-ID: <20190419102202.4384-11-s.nawrocki@samsung.com>
 References: <20190419102202.4384-1-s.nawrocki@samsung.com>
- <CGME20190419102247epcas1p247aee40179e2b79a419b136a9a72a891@epcas1p2.samsung.com>
+ <CGME20190419102251epcas2p45dfd6bb3da2d1be76d4abaf4d8edc57f@epcas2p4.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -27,31 +27,41 @@ Replace GPL v2.0+ license statements with SPDX license identifier.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- sound/soc/samsung/lowland.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+ sound/soc/samsung/neo1973_wm8753.c | 25 ++++++++++---------------
+ 1 file changed, 10 insertions(+), 15 deletions(-)
 
-diff --git a/sound/soc/samsung/lowland.c b/sound/soc/samsung/lowland.c
-index c9081f42f373..2fdab2ac8e8c 100644
---- a/sound/soc/samsung/lowland.c
-+++ b/sound/soc/samsung/lowland.c
-@@ -1,13 +1,8 @@
+diff --git a/sound/soc/samsung/neo1973_wm8753.c b/sound/soc/samsung/neo1973_wm8753.c
+index 65602b935377..7e625066ddcd 100644
+--- a/sound/soc/samsung/neo1973_wm8753.c
++++ b/sound/soc/samsung/neo1973_wm8753.c
+@@ -1,18 +1,13 @@
 -/*
-- * Lowland audio support
+- * neo1973_wm8753.c  --  SoC audio for Openmoko Neo1973 and Freerunner devices
 - *
-- * Copyright 2011 Wolfson Microelectronics
+- * Copyright 2007 Openmoko Inc
+- * Author: Graeme Gregory <graeme@openmoko.org>
+- * Copyright 2007 Wolfson Microelectronics PLC.
+- * Author: Graeme Gregory
+- *         graeme.gregory@wolfsonmicro.com or linux@wolfsonmicro.com
+- * Copyright 2009 Wolfson Microelectronics
 - *
-- * This program is free software; you can redistribute  it and/or modify it
-- * under  the terms of  the GNU General  Public License as published by the
-- * Free Software Foundation;  either version 2 of the  License, or (at your
-- * option) any later version.
+- *  This program is free software; you can redistribute  it and/or modify it
+- *  under  the terms of  the GNU General  Public License as published by the
+- *  Free Software Foundation;  either version 2 of the  License, or (at your
+- *  option) any later version.
 - */
 +// SPDX-License-Identifier: GPL-2.0+
 +//
-+// Lowland audio support
++// neo1973_wm8753.c - SoC audio for Openmoko Neo1973 and Freerunner devices
 +//
-+// Copyright 2011 Wolfson Microelectronics
++// Copyright 2007 Openmoko Inc
++// Author: Graeme Gregory <graeme@openmoko.org>
++// Copyright 2007 Wolfson Microelectronics PLC.
++// Author: Graeme Gregory
++//         graeme.gregory@wolfsonmicro.com or linux@wolfsonmicro.com
++// Copyright 2009 Wolfson Microelectronics
  
- #include <sound/soc.h>
- #include <sound/soc-dapm.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
 -- 
 2.17.1
