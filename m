@@ -1,10 +1,10 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 23/27] ASoC: samsung: snow: Convert to SPDX
+Subject: [PATCH 24/27] ASoC: samsung: spdif: Convert to SPDX
  License Identifier
-Date: Fri, 19 Apr 2019 12:21:58 +0200
-Message-ID: <20190419102202.4384-24-s.nawrocki@samsung.com>
+Date: Fri, 19 Apr 2019 12:21:59 +0200
+Message-ID: <20190419102202.4384-25-s.nawrocki@samsung.com>
 References: <20190419102202.4384-1-s.nawrocki@samsung.com>
- <CGME20190419102333epcas2p46dfc1560af6194a954d0f7fe40d90538@epcas2p4.samsung.com>
+ <CGME20190419102337epcas2p45ca1781cda7e24cfed289b358723476c@epcas2p4.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -27,31 +27,54 @@ Replace GPL v2.0 license statements with SPDX license identifier.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- sound/soc/samsung/snow.c | 15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
+ sound/soc/samsung/spdif.c | 17 ++++++-----------
+ sound/soc/samsung/spdif.h |  8 ++------
+ 2 files changed, 8 insertions(+), 17 deletions(-)
 
-diff --git a/sound/soc/samsung/snow.c b/sound/soc/samsung/snow.c
-index 5d8efc2d5c38..57ce90fe5004 100644
---- a/sound/soc/samsung/snow.c
-+++ b/sound/soc/samsung/snow.c
-@@ -1,15 +1,6 @@
--/*
-- * ASoC machine driver for Snow boards
+diff --git a/sound/soc/samsung/spdif.c b/sound/soc/samsung/spdif.c
+index 5e4afb330416..805c57986e0b 100644
+--- a/sound/soc/samsung/spdif.c
++++ b/sound/soc/samsung/spdif.c
+@@ -1,14 +1,9 @@
+-/* sound/soc/samsung/spdif.c
 - *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * version 2 as published by the Free Software Foundation.
+- * ALSA SoC Audio Layer - Samsung S/PDIF Controller driver
 - *
-- * This program is distributed in the hope that it will be useful, but
-- * WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-- * General Public License for more details.
+- * Copyright (c) 2010 Samsung Electronics Co. Ltd
+- *		http://www.samsung.com/
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
 - */
 +// SPDX-License-Identifier: GPL-2.0
 +//
-+// ASoC machine driver for Snow boards
++// ALSA SoC Audio Layer - Samsung S/PDIF Controller driver
++//
++// Copyright (c) 2010 Samsung Electronics Co. Ltd
++//		http://www.samsung.com/
  
  #include <linux/clk.h>
- #include <linux/module.h>
+ #include <linux/io.h>
+diff --git a/sound/soc/samsung/spdif.h b/sound/soc/samsung/spdif.h
+index 4f72cb446dbf..461da60ab040 100644
+--- a/sound/soc/samsung/spdif.h
++++ b/sound/soc/samsung/spdif.h
+@@ -1,13 +1,9 @@
+-/* sound/soc/samsung/spdif.h
+- *
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
+  * ALSA SoC Audio Layer - Samsung S/PDIF Controller driver
+  *
+  * Copyright (c) 2010 Samsung Electronics Co. Ltd
+  *		http://www.samsung.com/
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ 
+ #ifndef __SND_SOC_SAMSUNG_SPDIF_H
 -- 
 2.17.1
