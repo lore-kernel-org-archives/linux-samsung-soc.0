@@ -1,14 +1,14 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: samsung: dmaengine: Convert to SPDX
-	License Indentifier" to the asoc tree
-Date: Fri, 19 Apr 2019 17:14:22 +0100 (BST)
-Message-ID: <20190419161422.1D8BA441D3E@finisterre.ee.mobilebroadband>
-References: <20190419102202.4384-4-s.nawrocki@samsung.com>
+Subject: Applied "ASoC: samsung: arndale: Convert to SPDX
+	License Identifier" to the asoc tree
+Date: Fri, 19 Apr 2019 17:14:23 +0100 (BST)
+Message-ID: <20190419161423.5BA9B441D3F@finisterre.ee.mobilebroadband>
+References: <20190419102202.4384-2-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20190419102202.4384-4-s.nawrocki@samsung.com>
+In-Reply-To: <20190419102202.4384-2-s.nawrocki@samsung.com>
 List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -24,7 +24,7 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 The patch
 
-   ASoC: samsung: dmaengine: Convert to SPDX License Indentifier
+   ASoC: samsung: arndale: Convert to SPDX License Identifier
 
 has been applied to the asoc tree at
 
@@ -49,66 +49,43 @@ to this mail.
 Thanks,
 Mark
 
->From df504eda6a7242d3ed5e5d2c9fbc8c718ca140c4 Mon Sep 17 00:00:00 2001
+>From 4c61608402f5408855d54c91e32e61780644dd1d Mon Sep 17 00:00:00 2001
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Fri, 19 Apr 2019 12:21:38 +0200
-Subject: [PATCH] ASoC: samsung: dmaengine: Convert to SPDX License Indentifier
+Date: Fri, 19 Apr 2019 12:21:36 +0200
+Subject: [PATCH] ASoC: samsung: arndale: Convert to SPDX License Identifier
 
 Replace GPL v2.0 license statements with SPDX license identifier.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/samsung/dma.h       |  8 ++------
- sound/soc/samsung/dmaengine.c | 22 ++++++----------------
- 2 files changed, 8 insertions(+), 22 deletions(-)
+ sound/soc/samsung/arndale_rt5631.c | 17 +++++------------
+ 1 file changed, 5 insertions(+), 12 deletions(-)
 
-diff --git a/sound/soc/samsung/dma.h b/sound/soc/samsung/dma.h
-index 0ae15d01a3f6..7b5d4556e0fd 100644
---- a/sound/soc/samsung/dma.h
-+++ b/sound/soc/samsung/dma.h
-@@ -1,10 +1,6 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
+diff --git a/sound/soc/samsung/arndale_rt5631.c b/sound/soc/samsung/arndale_rt5631.c
+index ee1fda92f2f4..cc334e1866f6 100644
+--- a/sound/soc/samsung/arndale_rt5631.c
++++ b/sound/soc/samsung/arndale_rt5631.c
+@@ -1,15 +1,8 @@
+-/*
+- *  arndale_rt5631.c
+- *
+- *  Copyright (c) 2014, Insignal Co., Ltd.
+- *
+- *  Author: Claude <claude@insginal.co.kr>
+- *
 - *  This program is free software; you can redistribute  it and/or modify it
 - *  under  the terms of  the GNU General  Public License as published by the
 - *  Free Software Foundation;  either version 2 of the  License, or (at your
 - *  option) any later version.
-- *
-- *  ALSA PCM interface for the Samsung SoC
-+ * ALSA PCM interface for the Samsung SoC
-  */
- 
- #ifndef _SAMSUNG_DMA_H
-diff --git a/sound/soc/samsung/dmaengine.c b/sound/soc/samsung/dmaengine.c
-index 302871974cb3..2802789a323e 100644
---- a/sound/soc/samsung/dmaengine.c
-+++ b/sound/soc/samsung/dmaengine.c
-@@ -1,19 +1,9 @@
--/*
-- * dmaengine.c - Samsung dmaengine wrapper
-- *
-- * Author: Mark Brown <broonie@linaro.org>
-- * Copyright 2013 Linaro
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * version 2 as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but
-- * WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-- * General Public License for more details.
-- *
 - */
-+// SPDX-License-Identifier: GPL-2.0
++// SPDX-License-Identifier: GPL-2.0+
 +//
-+// dmaengine.c - Samsung dmaengine wrapper
++// Copyright (c) 2014, Insignal Co., Ltd.
 +//
-+// Author: Mark Brown <broonie@linaro.org>
-+// Copyright 2013 Linaro
++//  Author: Claude <claude@insginal.co.kr>
  
  #include <linux/module.h>
- #include <sound/core.h>
+ #include <linux/platform_device.h>
 -- 
 2.20.1
