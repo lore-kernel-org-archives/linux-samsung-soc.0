@@ -1,14 +1,14 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: samsung: odroid: Convert to SPDX
-	License Identifier" to the asoc tree
+Subject: Applied "ASoC: samsung: neo1973_wm8753: Convert to
+	SPDX License Identifier" to the asoc tree
 Date: Fri, 19 Apr 2019 17:14:16 +0100 (BST)
-Message-ID: <20190419161416.77AD8441D3D@finisterre.ee.mobilebroadband>
-References: <20190419102202.4384-12-s.nawrocki@samsung.com>
+Message-ID: <20190419161417.0913F441D3E@finisterre.ee.mobilebroadband>
+References: <20190419102202.4384-11-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20190419102202.4384-12-s.nawrocki@samsung.com>
+In-Reply-To: <20190419102202.4384-11-s.nawrocki@samsung.com>
 List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -24,7 +24,7 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 The patch
 
-   ASoC: samsung: odroid: Convert to SPDX License Identifier
+   ASoC: samsung: neo1973_wm8753: Convert to SPDX License Identifier
 
 has been applied to the asoc tree at
 
@@ -49,36 +49,52 @@ to this mail.
 Thanks,
 Mark
 
->From 1896b485d3ec849585d60db2dc861a744ba73f1a Mon Sep 17 00:00:00 2001
+>From 7cab920a891ee635c26d85b04d10c04591333047 Mon Sep 17 00:00:00 2001
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Fri, 19 Apr 2019 12:21:46 +0200
-Subject: [PATCH] ASoC: samsung: odroid: Convert to SPDX License Identifier
+Date: Fri, 19 Apr 2019 12:21:45 +0200
+Subject: [PATCH] ASoC: samsung: neo1973_wm8753: Convert to SPDX License
+ Identifier
 
-Replace GPL v2.0 license statements with SPDX license identifier.
+Replace GPL v2.0+ license statements with SPDX license identifier.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/samsung/odroid.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ sound/soc/samsung/neo1973_wm8753.c | 25 ++++++++++---------------
+ 1 file changed, 10 insertions(+), 15 deletions(-)
 
-diff --git a/sound/soc/samsung/odroid.c b/sound/soc/samsung/odroid.c
-index 1dc54c4206f0..e688169ff12a 100644
---- a/sound/soc/samsung/odroid.c
-+++ b/sound/soc/samsung/odroid.c
-@@ -1,10 +1,6 @@
+diff --git a/sound/soc/samsung/neo1973_wm8753.c b/sound/soc/samsung/neo1973_wm8753.c
+index 65602b935377..7e625066ddcd 100644
+--- a/sound/soc/samsung/neo1973_wm8753.c
++++ b/sound/soc/samsung/neo1973_wm8753.c
+@@ -1,18 +1,13 @@
 -/*
-- * Copyright (C) 2017 Samsung Electronics Co., Ltd.
+- * neo1973_wm8753.c  --  SoC audio for Openmoko Neo1973 and Freerunner devices
 - *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
+- * Copyright 2007 Openmoko Inc
+- * Author: Graeme Gregory <graeme@openmoko.org>
+- * Copyright 2007 Wolfson Microelectronics PLC.
+- * Author: Graeme Gregory
+- *         graeme.gregory@wolfsonmicro.com or linux@wolfsonmicro.com
+- * Copyright 2009 Wolfson Microelectronics
+- *
+- *  This program is free software; you can redistribute  it and/or modify it
+- *  under  the terms of  the GNU General  Public License as published by the
+- *  Free Software Foundation;  either version 2 of the  License, or (at your
+- *  option) any later version.
 - */
-+// SPDX-License-Identifier: GPL-2.0
++// SPDX-License-Identifier: GPL-2.0+
 +//
-+// Copyright (C) 2017 Samsung Electronics Co., Ltd.
++// neo1973_wm8753.c - SoC audio for Openmoko Neo1973 and Freerunner devices
++//
++// Copyright 2007 Openmoko Inc
++// Author: Graeme Gregory <graeme@openmoko.org>
++// Copyright 2007 Wolfson Microelectronics PLC.
++// Author: Graeme Gregory
++//         graeme.gregory@wolfsonmicro.com or linux@wolfsonmicro.com
++// Copyright 2009 Wolfson Microelectronics
  
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
 -- 
 2.20.1
