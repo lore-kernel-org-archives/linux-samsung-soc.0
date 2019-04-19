@@ -1,14 +1,14 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: samsung: jive_wm8750: Convert to SPDX
-	License Identifier" to the asoc tree
+Subject: Applied "ASoC: samsung: idma: Convert to SPDX License
+	Identifier" to the asoc tree
 Date: Fri, 19 Apr 2019 17:14:19 +0100 (BST)
-Message-ID: <20190419161419.1CA61441D3D@finisterre.ee.mobilebroadband>
-References: <20190419102202.4384-8-s.nawrocki@samsung.com>
+Message-ID: <20190419161419.C3C90441D3F@finisterre.ee.mobilebroadband>
+References: <20190419102202.4384-7-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20190419102202.4384-8-s.nawrocki@samsung.com>
+In-Reply-To: <20190419102202.4384-7-s.nawrocki@samsung.com>
 List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -24,7 +24,7 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 The patch
 
-   ASoC: samsung: jive_wm8750: Convert to SPDX License Identifier
+   ASoC: samsung: idma: Convert to SPDX License Identifier
 
 has been applied to the asoc tree at
 
@@ -49,46 +49,67 @@ to this mail.
 Thanks,
 Mark
 
->From 9c8df4cd99643759b69e1b8dca7f2065ccf63ed2 Mon Sep 17 00:00:00 2001
+>From 1d3279c4ab5738631fa6f775991fcc65803dccff Mon Sep 17 00:00:00 2001
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Fri, 19 Apr 2019 12:21:42 +0200
-Subject: [PATCH] ASoC: samsung: jive_wm8750: Convert to SPDX License
- Identifier
+Date: Fri, 19 Apr 2019 12:21:41 +0200
+Subject: [PATCH] ASoC: samsung: idma: Convert to SPDX License Identifier
 
-Replace GPL v2.0 license statements with SPDX license identifier.
+Replace GPL v2.0+ license statements with SPDX license identifier.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/samsung/jive_wm8750.c | 19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
+ sound/soc/samsung/idma.c | 20 +++++++-------------
+ sound/soc/samsung/idma.h |  9 +--------
+ 2 files changed, 8 insertions(+), 21 deletions(-)
 
-diff --git a/sound/soc/samsung/jive_wm8750.c b/sound/soc/samsung/jive_wm8750.c
-index 529b10dc532b..f05f9e03f07d 100644
---- a/sound/soc/samsung/jive_wm8750.c
-+++ b/sound/soc/samsung/jive_wm8750.c
-@@ -1,15 +1,10 @@
--/* sound/soc/samsung/jive_wm8750.c
+diff --git a/sound/soc/samsung/idma.c b/sound/soc/samsung/idma.c
+index b1f09b942410..65497cd477a5 100644
+--- a/sound/soc/samsung/idma.c
++++ b/sound/soc/samsung/idma.c
+@@ -1,16 +1,10 @@
+-/*
+- * sound/soc/samsung/idma.c
 - *
-- * Copyright 2007,2008 Simtec Electronics
+- * Copyright (c) 2011 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com
 - *
-- * Based on sound/soc/pxa/spitz.c
-- *	Copyright 2005 Wolfson Microelectronics PLC.
-- *	Copyright 2005 Openedhand Ltd.
+- * I2S0's Internal DMA driver
 - *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
-+// SPDX-License-Identifier: GPL-2.0
+- * This program is free software; you can redistribute  it and/or modify it
+- * under  the terms of  the GNU General  Public License as published by the
+- * Free Software Foundation;  either version 2 of the  License, or (at your
+- * option) any later version.
+- */
++// SPDX-License-Identifier: GPL-2.0+
 +//
-+// Copyright 2007,2008 Simtec Electronics
++// idma.c - I2S0 internal DMA driver
 +//
-+// Based on sound/soc/pxa/spitz.c
-+//	Copyright 2005 Wolfson Microelectronics PLC.
-+//	Copyright 2005 Openedhand Ltd.
++// Copyright (c) 2011 Samsung Electronics Co., Ltd.
++//		http://www.samsung.com
++
+ #include <linux/interrupt.h>
+ #include <linux/platform_device.h>
+ #include <linux/dma-mapping.h>
+diff --git a/sound/soc/samsung/idma.h b/sound/soc/samsung/idma.h
+index 8644946973e5..8a46a918ed2a 100644
+--- a/sound/soc/samsung/idma.h
++++ b/sound/soc/samsung/idma.h
+@@ -1,14 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+- * sound/soc/samsung/idma.h
+- *
+  * Copyright (c) 2011 Samsung Electronics Co., Ltd
+  *		http://www.samsung.com
+- *
+- *  This program is free software; you can redistribute  it and/or modify it
+- *  under  the terms of  the GNU General  Public License as published by the
+- *  Free Software Foundation;  either version 2 of the  License, or (at your
+- *  option) any later version.
+- *
+  */
  
- #include <linux/module.h>
- #include <sound/soc.h>
+ #ifndef __SND_SOC_SAMSUNG_IDMA_H_
 -- 
 2.20.1
