@@ -1,14 +1,14 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: samsung: rx1950_uda1380: Convert to
-	SPDX License Identifier" to the asoc tree
-Date: Fri, 19 Apr 2019 17:14:14 +0100 (BST)
-Message-ID: <20190419161414.2BA19441D3C@finisterre.ee.mobilebroadband>
-References: <20190419102202.4384-16-s.nawrocki@samsung.com>
+Subject: Applied "ASoC: samsung: s3c2412-i2s: Convert to SPDX
+	License Identifier" to the asoc tree
+Date: Fri, 19 Apr 2019 17:14:13 +0100 (BST)
+Message-ID: <20190419161413.97916441D3D@finisterre.ee.mobilebroadband>
+References: <20190419102202.4384-17-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20190419102202.4384-16-s.nawrocki@samsung.com>
+In-Reply-To: <20190419102202.4384-17-s.nawrocki@samsung.com>
 List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -24,7 +24,7 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 The patch
 
-   ASoC: samsung: rx1950_uda1380: Convert to SPDX License Identifier
+   ASoC: samsung: s3c2412-i2s: Convert to SPDX License Identifier
 
 has been applied to the asoc tree at
 
@@ -49,10 +49,10 @@ to this mail.
 Thanks,
 Mark
 
->From 2dab7021aa52fb9b31c2ecd93d9b0399808c740b Mon Sep 17 00:00:00 2001
+>From 25bc05fbc464457a2187cb240b26a6dbd609399a Mon Sep 17 00:00:00 2001
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Fri, 19 Apr 2019 12:21:50 +0200
-Subject: [PATCH] ASoC: samsung: rx1950_uda1380: Convert to SPDX License
+Date: Fri, 19 Apr 2019 12:21:51 +0200
+Subject: [PATCH] ASoC: samsung: s3c2412-i2s: Convert to SPDX License
  Identifier
 
 Replace GPL v2.0+ license statements with SPDX license identifier.
@@ -60,46 +60,69 @@ Replace GPL v2.0+ license statements with SPDX license identifier.
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/samsung/rx1950_uda1380.c | 30 ++++++++++++------------------
- 1 file changed, 12 insertions(+), 18 deletions(-)
+ sound/soc/samsung/s3c2412-i2s.c | 28 +++++++++++-----------------
+ sound/soc/samsung/s3c2412-i2s.h | 11 +++--------
+ 2 files changed, 14 insertions(+), 25 deletions(-)
 
-diff --git a/sound/soc/samsung/rx1950_uda1380.c b/sound/soc/samsung/rx1950_uda1380.c
-index a064ca7d78c3..1dcc1b252ad1 100644
---- a/sound/soc/samsung/rx1950_uda1380.c
-+++ b/sound/soc/samsung/rx1950_uda1380.c
-@@ -1,21 +1,15 @@
--/*
-- * rx1950.c  --  ALSA Soc Audio Layer
+diff --git a/sound/soc/samsung/s3c2412-i2s.c b/sound/soc/samsung/s3c2412-i2s.c
+index c08638b0e458..787a3f6e9f24 100644
+--- a/sound/soc/samsung/s3c2412-i2s.c
++++ b/sound/soc/samsung/s3c2412-i2s.c
+@@ -1,20 +1,14 @@
+-/* sound/soc/samsung/s3c2412-i2s.c
 - *
-- * Copyright (c) 2010 Vasily Khoruzhick <anarsoul@gmail.com>
+- * ALSA Soc Audio Layer - S3C2412 I2S driver
 - *
-- * Based on smdk2440.c and magician.c
+- * Copyright (c) 2006 Wolfson Microelectronics PLC.
+- *	Graeme Gregory graeme.gregory@wolfsonmicro.com
+- *	linux@wolfsonmicro.com
 - *
-- * Authors: Graeme Gregory graeme.gregory@wolfsonmicro.com
-- *          Philipp Zabel <philipp.zabel@gmail.com>
-- *          Denis Grigoriev <dgreenday@gmail.com>
-- *          Vasily Khoruzhick <anarsoul@gmail.com>
+- * Copyright (c) 2007, 2004-2005 Simtec Electronics
+- *	http://armlinux.simtec.co.uk/
+- *	Ben Dooks <ben@simtec.co.uk>
+- *
+- * This program is free software; you can redistribute  it and/or modify it
+- * under  the terms of  the GNU General  Public License as published by the
+- * Free Software Foundation;  either version 2 of the  License, or (at your
+- * option) any later version.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// ALSA Soc Audio Layer - S3C2412 I2S driver
++//
++// Copyright (c) 2006 Wolfson Microelectronics PLC.
++//	Graeme Gregory graeme.gregory@wolfsonmicro.com
++//	linux@wolfsonmicro.com
++//
++// Copyright (c) 2007, 2004-2005 Simtec Electronics
++//	http://armlinux.simtec.co.uk/
++//	Ben Dooks <ben@simtec.co.uk>
+ 
+ #include <linux/delay.h>
+ #include <linux/gpio.h>
+diff --git a/sound/soc/samsung/s3c2412-i2s.h b/sound/soc/samsung/s3c2412-i2s.h
+index 02ad5794c0a9..bff2a797cb08 100644
+--- a/sound/soc/samsung/s3c2412-i2s.h
++++ b/sound/soc/samsung/s3c2412-i2s.h
+@@ -1,16 +1,11 @@
+-/* sound/soc/samsung/s3c2412-i2s.c
+- *
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
+  * ALSA Soc Audio Layer - S3C2412 I2S driver
+  *
+  * Copyright (c) 2007 Simtec Electronics
+  *	http://armlinux.simtec.co.uk/
+  *	Ben Dooks <ben@simtec.co.uk>
 - *
 - *  This program is free software; you can redistribute  it and/or modify it
 - *  under  the terms of  the GNU General  Public License as published by the
 - *  Free Software Foundation;  either version 2 of the  License, or (at your
 - *  option) any later version.
-- *
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// rx1950.c - ALSA SoC Audio Layer
-+//
-+// Copyright (c) 2010 Vasily Khoruzhick <anarsoul@gmail.com>
-+//
-+// Based on smdk2440.c and magician.c
-+//
-+// Authors: Graeme Gregory graeme.gregory@wolfsonmicro.com
-+//          Philipp Zabel <philipp.zabel@gmail.com>
-+//          Denis Grigoriev <dgreenday@gmail.com>
-+//          Vasily Khoruzhick <anarsoul@gmail.com>
+-*/
++ */
  
- #include <linux/types.h>
- #include <linux/gpio.h>
+ #ifndef __SND_SOC_S3C24XX_S3C2412_I2S_H
+ #define __SND_SOC_S3C24XX_S3C2412_I2S_H __FILE__
 -- 
 2.20.1
