@@ -1,84 +1,89 @@
-From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH v3 4/4] DT: arm: exynos4412: add event data type which is
- monitored
-Date: Fri, 19 Apr 2019 15:48:08 +0200
-Message-ID: <1555681688-19643-5-git-send-email-l.luba@partner.samsung.com>
-References: <1555681688-19643-1-git-send-email-l.luba@partner.samsung.com>
- <CGME20190419134823eucas1p1ff852194b1db655ed2dbce72b5f7f3a6@eucas1p1.samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: samsung: tobermory: Convert to SPDX
+	License Identifier" to the asoc tree
+Date: Fri, 19 Apr 2019 17:14:07 +0100 (BST)
+Message-ID: <20190419161407.1457C441D3E@finisterre.ee.mobilebroadband>
+References: <20190419102202.4384-28-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1555681688-19643-1-git-send-email-l.luba@partner.samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: mark.rutland@arm.com, willy.mh.wolff.ml@gmail.com, kgene@kernel.org, b.zolnierkie@samsung.com, krzk@kernel.org, l.luba@partner.samsung.com, cw00.choi@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, myungjoo.ham@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20190419102202.4384-28-s.nawrocki@samsung.com>
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, lgirdwood@gmail.com, krzk@kernel.org, Mark Brown <broonie@kernel.org>, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch adds new field in the PPMU event which shows explicitly
-what kind of data the event is monitoring. It is possible to change it
-using defined values in exynos_ppmu.h file.
+The patch
 
-Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+   ASoC: samsung: tobermory: Convert to SPDX License Identifier
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.2
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From d18360e07fb73c61b5bd850daa9744d986e44d50 Mon Sep 17 00:00:00 2001
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date: Fri, 19 Apr 2019 12:22:02 +0200
+Subject: [PATCH] ASoC: samsung: tobermory: Convert to SPDX License Identifier
+
+Replace GPL v2.0+ license statements with SPDX license identifier.
+
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/boot/dts/exynos4412-ppmu-common.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ sound/soc/samsung/tobermory.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4412-ppmu-common.dtsi b/arch/arm/boot/dts/exynos4412-ppmu-common.dtsi
-index 3a3b2fa..549faba 100644
---- a/arch/arm/boot/dts/exynos4412-ppmu-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-ppmu-common.dtsi
-@@ -6,12 +6,16 @@
-  * Author: Chanwoo Choi <cw00.choi@samsung.com>
-  */
+diff --git a/sound/soc/samsung/tobermory.c b/sound/soc/samsung/tobermory.c
+index 998727cb4c31..14b11acb12a4 100644
+--- a/sound/soc/samsung/tobermory.c
++++ b/sound/soc/samsung/tobermory.c
+@@ -1,13 +1,8 @@
+-/*
+- * Tobermory audio support
+- *
+- * Copyright 2011 Wolfson Microelectronics
+- *
+- * This program is free software; you can redistribute  it and/or modify it
+- * under  the terms of  the GNU General  Public License as published by the
+- * Free Software Foundation;  either version 2 of the  License, or (at your
+- * option) any later version.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Tobermory audio support
++//
++// Copyright 2011 Wolfson Microelectronics
  
-+#include <dt-bindings/pmu/exynos_ppmu.h>
-+
- &ppmu_dmc0 {
-        status = "okay";
- 
-        events {
- 	       ppmu_dmc0_3: ppmu-event3-dmc0 {
- 		       event-name = "ppmu-event3-dmc0";
-+		       event-data-type = <(PPMU_RO_DATA_CNT |
-+					   PPMU_WO_DATA_CNT)>;
- 	       };
-        };
- };
-@@ -22,6 +26,8 @@
-        events {
- 	       ppmu_dmc1_3: ppmu-event3-dmc1 {
- 		       event-name = "ppmu-event3-dmc1";
-+		       event-data-type = <(PPMU_RO_DATA_CNT |
-+					   PPMU_WO_DATA_CNT)>;
- 	       };
-        };
- };
-@@ -32,6 +38,8 @@
-        events {
- 	       ppmu_leftbus_3: ppmu-event3-leftbus {
- 		       event-name = "ppmu-event3-leftbus";
-+		       event-data-type = <(PPMU_RO_DATA_CNT |
-+					   PPMU_WO_DATA_CNT)>;
- 	       };
-        };
- };
-@@ -42,6 +50,8 @@
-        events {
- 	       ppmu_rightbus_3: ppmu-event3-rightbus {
- 		       event-name = "ppmu-event3-rightbus";
-+		       event-data-type = <(PPMU_RO_DATA_CNT |
-+					   PPMU_WO_DATA_CNT)>;
- 	       };
-        };
- };
+ #include <sound/soc.h>
+ #include <sound/soc-dapm.h>
 -- 
-2.7.4
+2.20.1
