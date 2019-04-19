@@ -1,10 +1,10 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 07/27] ASoC: samsung: jive_wm8750: Convert to
+Subject: [PATCH 08/27] ASoC: samsung: littlemill: Convert to
  SPDX License Identifier
-Date: Fri, 19 Apr 2019 12:21:42 +0200
-Message-ID: <20190419102202.4384-8-s.nawrocki@samsung.com>
+Date: Fri, 19 Apr 2019 12:21:43 +0200
+Message-ID: <20190419102202.4384-9-s.nawrocki@samsung.com>
 References: <20190419102202.4384-1-s.nawrocki@samsung.com>
- <CGME20190419102241epcas1p114e54ca76473a74aed6a1d186cb7629e@epcas1p1.samsung.com>
+ <CGME20190419102244epcas2p4367b00e24b364f03150e8a0fef99437d@epcas2p4.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -23,39 +23,35 @@ To: broonie@kernel.org
 Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, lgirdwood@gmail.com, krzk@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Replace GPL v2.0 license statements with SPDX license identifier.
+Replace GPL v2.0+ license statements with SPDX license identifier.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- sound/soc/samsung/jive_wm8750.c | 19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
+ sound/soc/samsung/littlemill.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
-diff --git a/sound/soc/samsung/jive_wm8750.c b/sound/soc/samsung/jive_wm8750.c
-index 529b10dc532b..f05f9e03f07d 100644
---- a/sound/soc/samsung/jive_wm8750.c
-+++ b/sound/soc/samsung/jive_wm8750.c
-@@ -1,15 +1,10 @@
--/* sound/soc/samsung/jive_wm8750.c
+diff --git a/sound/soc/samsung/littlemill.c b/sound/soc/samsung/littlemill.c
+index 087f8d738dfb..cd70b06cc99d 100644
+--- a/sound/soc/samsung/littlemill.c
++++ b/sound/soc/samsung/littlemill.c
+@@ -1,13 +1,8 @@
+-/*
+- * Littlemill audio support
 - *
-- * Copyright 2007,2008 Simtec Electronics
+- * Copyright 2011 Wolfson Microelectronics
 - *
-- * Based on sound/soc/pxa/spitz.c
-- *	Copyright 2005 Wolfson Microelectronics PLC.
-- *	Copyright 2005 Openedhand Ltd.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
-+// SPDX-License-Identifier: GPL-2.0
+- * This program is free software; you can redistribute  it and/or modify it
+- * under  the terms of  the GNU General  Public License as published by the
+- * Free Software Foundation;  either version 2 of the  License, or (at your
+- * option) any later version.
+- */
++// SPDX-License-Identifier: GPL-2.0+
 +//
-+// Copyright 2007,2008 Simtec Electronics
++// Littlemill audio support
 +//
-+// Based on sound/soc/pxa/spitz.c
-+//	Copyright 2005 Wolfson Microelectronics PLC.
-+//	Copyright 2005 Openedhand Ltd.
++// Copyright 2011 Wolfson Microelectronics
  
- #include <linux/module.h>
  #include <sound/soc.h>
+ #include <sound/soc-dapm.h>
 -- 
 2.17.1
