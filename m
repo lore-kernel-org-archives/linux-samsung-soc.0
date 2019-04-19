@@ -1,14 +1,14 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: samsung: s3c24xx_simtec*: Convert to
+Subject: Applied "ASoC: samsung: rx1950_uda1380: Convert to
 	SPDX License Identifier" to the asoc tree
-Date: Fri, 19 Apr 2019 17:14:12 +0100 (BST)
-Message-ID: <20190419161413.0CE13441D3B@finisterre.ee.mobilebroadband>
-References: <20190419102202.4384-18-s.nawrocki@samsung.com>
+Date: Fri, 19 Apr 2019 17:14:14 +0100 (BST)
+Message-ID: <20190419161414.2BA19441D3C@finisterre.ee.mobilebroadband>
+References: <20190419102202.4384-16-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20190419102202.4384-18-s.nawrocki@samsung.com>
+In-Reply-To: <20190419102202.4384-16-s.nawrocki@samsung.com>
 List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -24,7 +24,7 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 The patch
 
-   ASoC: samsung: s3c24xx_simtec*: Convert to SPDX License Identifier
+   ASoC: samsung: rx1950_uda1380: Convert to SPDX License Identifier
 
 has been applied to the asoc tree at
 
@@ -49,98 +49,57 @@ to this mail.
 Thanks,
 Mark
 
->From ac64529df8dfc127f3e212d51ff16f3ceb092da4 Mon Sep 17 00:00:00 2001
+>From 2dab7021aa52fb9b31c2ecd93d9b0399808c740b Mon Sep 17 00:00:00 2001
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Fri, 19 Apr 2019 12:21:52 +0200
-Subject: [PATCH] ASoC: samsung: s3c24xx_simtec*: Convert to SPDX License
+Date: Fri, 19 Apr 2019 12:21:50 +0200
+Subject: [PATCH] ASoC: samsung: rx1950_uda1380: Convert to SPDX License
  Identifier
 
-Replace GPL v2.0 license statements with SPDX license identifier.
+Replace GPL v2.0+ license statements with SPDX license identifier.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/samsung/s3c24xx_simtec.c             | 11 +++--------
- sound/soc/samsung/s3c24xx_simtec.h             | 10 +++-------
- sound/soc/samsung/s3c24xx_simtec_hermes.c      | 11 +++--------
- sound/soc/samsung/s3c24xx_simtec_tlv320aic23.c | 11 +++--------
- 4 files changed, 12 insertions(+), 31 deletions(-)
+ sound/soc/samsung/rx1950_uda1380.c | 30 ++++++++++++------------------
+ 1 file changed, 12 insertions(+), 18 deletions(-)
 
-diff --git a/sound/soc/samsung/s3c24xx_simtec.c b/sound/soc/samsung/s3c24xx_simtec.c
-index 6de63f3e37d5..4543705b8d87 100644
---- a/sound/soc/samsung/s3c24xx_simtec.c
-+++ b/sound/soc/samsung/s3c24xx_simtec.c
-@@ -1,11 +1,6 @@
--/* sound/soc/samsung/s3c24xx_simtec.c
+diff --git a/sound/soc/samsung/rx1950_uda1380.c b/sound/soc/samsung/rx1950_uda1380.c
+index a064ca7d78c3..1dcc1b252ad1 100644
+--- a/sound/soc/samsung/rx1950_uda1380.c
++++ b/sound/soc/samsung/rx1950_uda1380.c
+@@ -1,21 +1,15 @@
+-/*
+- * rx1950.c  --  ALSA Soc Audio Layer
 - *
-- * Copyright 2009 Simtec Electronics
+- * Copyright (c) 2010 Vasily Khoruzhick <anarsoul@gmail.com>
 - *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
-+// SPDX-License-Identifier: GPL-2.0
+- * Based on smdk2440.c and magician.c
+- *
+- * Authors: Graeme Gregory graeme.gregory@wolfsonmicro.com
+- *          Philipp Zabel <philipp.zabel@gmail.com>
+- *          Denis Grigoriev <dgreenday@gmail.com>
+- *          Vasily Khoruzhick <anarsoul@gmail.com>
+- *
+- *  This program is free software; you can redistribute  it and/or modify it
+- *  under  the terms of  the GNU General  Public License as published by the
+- *  Free Software Foundation;  either version 2 of the  License, or (at your
+- *  option) any later version.
+- *
+- */
++// SPDX-License-Identifier: GPL-2.0+
 +//
-+// Copyright 2009 Simtec Electronics
++// rx1950.c - ALSA SoC Audio Layer
++//
++// Copyright (c) 2010 Vasily Khoruzhick <anarsoul@gmail.com>
++//
++// Based on smdk2440.c and magician.c
++//
++// Authors: Graeme Gregory graeme.gregory@wolfsonmicro.com
++//          Philipp Zabel <philipp.zabel@gmail.com>
++//          Denis Grigoriev <dgreenday@gmail.com>
++//          Vasily Khoruzhick <anarsoul@gmail.com>
  
+ #include <linux/types.h>
  #include <linux/gpio.h>
- #include <linux/clk.h>
-diff --git a/sound/soc/samsung/s3c24xx_simtec.h b/sound/soc/samsung/s3c24xx_simtec.h
-index 8270748a2c41..38d8384755cd 100644
---- a/sound/soc/samsung/s3c24xx_simtec.h
-+++ b/sound/soc/samsung/s3c24xx_simtec.h
-@@ -1,11 +1,7 @@
--/* sound/soc/samsung/s3c24xx_simtec.h
-- *
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-  * Copyright 2009 Simtec Electronics
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
-+ */
- 
- extern void simtec_audio_init(struct snd_soc_pcm_runtime *rtd);
- 
-diff --git a/sound/soc/samsung/s3c24xx_simtec_hermes.c b/sound/soc/samsung/s3c24xx_simtec_hermes.c
-index 7ac924c595bf..e3528e74a338 100644
---- a/sound/soc/samsung/s3c24xx_simtec_hermes.c
-+++ b/sound/soc/samsung/s3c24xx_simtec_hermes.c
-@@ -1,11 +1,6 @@
--/* sound/soc/samsung/s3c24xx_simtec_hermes.c
-- *
-- * Copyright 2009 Simtec Electronics
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright 2009 Simtec Electronics
- 
- #include <linux/module.h>
- #include <sound/soc.h>
-diff --git a/sound/soc/samsung/s3c24xx_simtec_tlv320aic23.c b/sound/soc/samsung/s3c24xx_simtec_tlv320aic23.c
-index b4ed2fc1a65c..1360b881400d 100644
---- a/sound/soc/samsung/s3c24xx_simtec_tlv320aic23.c
-+++ b/sound/soc/samsung/s3c24xx_simtec_tlv320aic23.c
-@@ -1,11 +1,6 @@
--/* sound/soc/samsung/s3c24xx_simtec_tlv320aic23.c
-- *
-- * Copyright 2009 Simtec Electronics
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright 2009 Simtec Electronics
- 
- #include <linux/module.h>
- #include <sound/soc.h>
 -- 
 2.20.1
