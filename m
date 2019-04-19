@@ -1,10 +1,10 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 08/27] ASoC: samsung: littlemill: Convert to
- SPDX License Identifier
-Date: Fri, 19 Apr 2019 12:21:43 +0200
-Message-ID: <20190419102202.4384-9-s.nawrocki@samsung.com>
+Subject: [PATCH 09/27] ASoC: samsung: lowland: Convert to SPDX
+ License Identifier
+Date: Fri, 19 Apr 2019 12:21:44 +0200
+Message-ID: <20190419102202.4384-10-s.nawrocki@samsung.com>
 References: <20190419102202.4384-1-s.nawrocki@samsung.com>
- <CGME20190419102244epcas2p4367b00e24b364f03150e8a0fef99437d@epcas2p4.samsung.com>
+ <CGME20190419102247epcas1p247aee40179e2b79a419b136a9a72a891@epcas1p2.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -27,16 +27,16 @@ Replace GPL v2.0+ license statements with SPDX license identifier.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- sound/soc/samsung/littlemill.c | 15 +++++----------
+ sound/soc/samsung/lowland.c | 15 +++++----------
  1 file changed, 5 insertions(+), 10 deletions(-)
 
-diff --git a/sound/soc/samsung/littlemill.c b/sound/soc/samsung/littlemill.c
-index 087f8d738dfb..cd70b06cc99d 100644
---- a/sound/soc/samsung/littlemill.c
-+++ b/sound/soc/samsung/littlemill.c
+diff --git a/sound/soc/samsung/lowland.c b/sound/soc/samsung/lowland.c
+index c9081f42f373..2fdab2ac8e8c 100644
+--- a/sound/soc/samsung/lowland.c
++++ b/sound/soc/samsung/lowland.c
 @@ -1,13 +1,8 @@
 -/*
-- * Littlemill audio support
+- * Lowland audio support
 - *
 - * Copyright 2011 Wolfson Microelectronics
 - *
@@ -47,7 +47,7 @@ index 087f8d738dfb..cd70b06cc99d 100644
 - */
 +// SPDX-License-Identifier: GPL-2.0+
 +//
-+// Littlemill audio support
++// Lowland audio support
 +//
 +// Copyright 2011 Wolfson Microelectronics
  
