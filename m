@@ -1,14 +1,14 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: samsung: speyside: Convert to SPDX
-	License Identifier" to the asoc tree
+Subject: Applied "ASoC: samsung: spdif: Convert to SPDX License
+	Identifier" to the asoc tree
 Date: Fri, 19 Apr 2019 17:14:08 +0100 (BST)
-Message-ID: <20190419161408.3852B441D41@finisterre.ee.mobilebroadband>
-References: <20190419102202.4384-26-s.nawrocki@samsung.com>
+Message-ID: <20190419161408.CD333441D56@finisterre.ee.mobilebroadband>
+References: <20190419102202.4384-25-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20190419102202.4384-26-s.nawrocki@samsung.com>
+In-Reply-To: <20190419102202.4384-25-s.nawrocki@samsung.com>
 List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -24,7 +24,7 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 The patch
 
-   ASoC: samsung: speyside: Convert to SPDX License Identifier
+   ASoC: samsung: spdif: Convert to SPDX License Identifier
 
 has been applied to the asoc tree at
 
@@ -49,41 +49,64 @@ to this mail.
 Thanks,
 Mark
 
->From 3f8b21fd7960371bfd9f40955e5eb6be8db80bf9 Mon Sep 17 00:00:00 2001
+>From dbf0344a4b6ad38732fa246c1b8ea93435af58e0 Mon Sep 17 00:00:00 2001
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Fri, 19 Apr 2019 12:22:00 +0200
-Subject: [PATCH] ASoC: samsung: speyside: Convert to SPDX License Identifier
+Date: Fri, 19 Apr 2019 12:21:59 +0200
+Subject: [PATCH] ASoC: samsung: spdif: Convert to SPDX License Identifier
 
-Replace GPL v2.0+ license statements with SPDX license identifier.
+Replace GPL v2.0 license statements with SPDX license identifier.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/samsung/speyside.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+ sound/soc/samsung/spdif.c | 17 ++++++-----------
+ sound/soc/samsung/spdif.h |  8 ++------
+ 2 files changed, 8 insertions(+), 17 deletions(-)
 
-diff --git a/sound/soc/samsung/speyside.c b/sound/soc/samsung/speyside.c
-index 4b4147d07804..15465c84daa3 100644
---- a/sound/soc/samsung/speyside.c
-+++ b/sound/soc/samsung/speyside.c
-@@ -1,13 +1,8 @@
--/*
-- * Speyside audio support
+diff --git a/sound/soc/samsung/spdif.c b/sound/soc/samsung/spdif.c
+index 5e4afb330416..805c57986e0b 100644
+--- a/sound/soc/samsung/spdif.c
++++ b/sound/soc/samsung/spdif.c
+@@ -1,14 +1,9 @@
+-/* sound/soc/samsung/spdif.c
 - *
-- * Copyright 2011 Wolfson Microelectronics
+- * ALSA SoC Audio Layer - Samsung S/PDIF Controller driver
 - *
-- * This program is free software; you can redistribute  it and/or modify it
-- * under  the terms of  the GNU General  Public License as published by the
-- * Free Software Foundation;  either version 2 of the  License, or (at your
-- * option) any later version.
+- * Copyright (c) 2010 Samsung Electronics Co. Ltd
+- *		http://www.samsung.com/
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
 - */
-+// SPDX-License-Identifier: GPL-2.0+
++// SPDX-License-Identifier: GPL-2.0
 +//
-+// Speyside audio support
++// ALSA SoC Audio Layer - Samsung S/PDIF Controller driver
 +//
-+// Copyright 2011 Wolfson Microelectronics
++// Copyright (c) 2010 Samsung Electronics Co. Ltd
++//		http://www.samsung.com/
  
- #include <sound/soc.h>
- #include <sound/soc-dapm.h>
+ #include <linux/clk.h>
+ #include <linux/io.h>
+diff --git a/sound/soc/samsung/spdif.h b/sound/soc/samsung/spdif.h
+index 4f72cb446dbf..461da60ab040 100644
+--- a/sound/soc/samsung/spdif.h
++++ b/sound/soc/samsung/spdif.h
+@@ -1,13 +1,9 @@
+-/* sound/soc/samsung/spdif.h
+- *
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
+  * ALSA SoC Audio Layer - Samsung S/PDIF Controller driver
+  *
+  * Copyright (c) 2010 Samsung Electronics Co. Ltd
+  *		http://www.samsung.com/
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ 
+ #ifndef __SND_SOC_SAMSUNG_SPDIF_H
 -- 
 2.20.1
