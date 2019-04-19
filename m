@@ -1,105 +1,91 @@
-From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH v6 06/10] dt-bindings: memory-controllers: add Exynos5422
- DMC device description
-Date: Fri, 19 Apr 2019 16:19:24 +0200
-Message-ID: <1555683568-20882-7-git-send-email-l.luba@partner.samsung.com>
-References: <1555683568-20882-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20190419141947eucas1p13a27605e04169ab528ef5bfb385eddbc@eucas1p1.samsung.com>
-Content-Type: text/plain; charset="utf-8"
+From: Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH] ARM: dts: exynos: add CCI-400 PMU nodes support to
+ Exynos542x SoCs
+Date: Fri, 19 Apr 2019 22:18:02 +0100
+Message-ID: <38dee054-19ce-a545-fb62-dea4d0036c94@arm.com>
+References: <20190412172545.fkxnpnymhcw7xncc@macpro-scc.lancs.ac.uk>
+ <CACfOrNdEpC2vNgCOBXtrW-HjGHNG_6iLAFUCtVoZstGASPtcsA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1555683568-20882-1-git-send-email-l.luba@partner.samsung.com>
+In-Reply-To: <CACfOrNdEpC2vNgCOBXtrW-HjGHNG_6iLAFUCtVoZstGASPtcsA@mail.gmail.com>
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, willy.mh.wolff.ml@gmail.com, Lukasz Luba <l.luba@partner.samsung.com>
+To: Willy Wolff <willy.mh.wolff.ml@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch adds description for DT binding for a new Exynos5422 Dynamic
-Memory Controller device.
+On 2019-04-19 6:53 pm, Willy Wolff wrote:
+> Hi,
+> 
+> This patch can be dropped, as it needs more work.
+> 
+> In fact, the interrupts seems to be wrong. The interrupts suggested by
+> Anand Moon gave the same following results.
+> 
+> export CCI_DEV=CCI_400
+> export OMP_NUM_THREADS=2
+> sudo --preserve-env ./perf stat -a \
+>    -e armv7_cortex_a7/config=0x11,name=a7_cycles/ \
+>    -e armv7_cortex_a15/config=0x11,name=a15_cycles/ \
+>    -e armv7_cortex_a7/config=0x19,name=a7_bus/ \
+>    -e armv7_cortex_a15/config=0x19,name=a15_bus/ \
+>    -e ${CCI_DEV}/config=0xff,name=cci400_cycles/ \
+>    -e ${CCI_DEV}/config=0x0,name=cci400_si_rrq_hs_any/ \
+>    -e ${CCI_DEV}/config=0xc,name=cci400_si_wrq_hs_any/ \
 
-Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
----
- .../bindings/memory-controllers/exynos5422-dmc.txt | 73 ++++++++++++++++++++++
- 1 file changed, 73 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt
+ From the look of those configs, you'll be counting events on slave 
+interface 0, which may not even have anything connected anyway. The CPU 
+clusters on a CCI-400 will be on slave interfaces 3 and 4, so try 
+something like '-e CCI_400/cci400_si_rrq_hs_any,source=4/'.
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt b/Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt
-new file mode 100644
-index 0000000..133b3cc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt
-@@ -0,0 +1,73 @@
-+* Exynos5422 frequency and voltage scaling for Dynamic Memory Controller device
-+
-+The Samsung Exynos5422 SoC has DMC (Dynamic Memory Controller) to which the DRAM
-+memory chips are connected. The driver is to monitor the controller in runtime
-+and switch frequency and voltage. To monitor the usage of the controller in
-+runtime, the driver uses the PPMU (Platform Performance Monitoring Unit), which
-+is able to measure the current load of the memory.
-+When 'userspace' governor is used for the driver, an application is able to
-+switch the DMC and memory frequency.
-+
-+Required properties for DMC device for Exynos5422:
-+- compatible: Should be "samsung,exynos5422-bus".
-+- clock-names : the name of clock used by the bus, "bus".
-+- clocks : phandles for clock specified in "clock-names" property.
-+- devfreq-events : phandles for PPMU devices connected to this DMC.
-+- vdd-supply : phandle for voltage regulator which is connected.
-+- reg : registers of two CDREX controllers, chip information, clocks subsystem.
-+- operating-points-v2 : phandle for OPPs described in v2 definition.
-+- device-handle : phandle of the connected DRAM memory device. For more
-+	information please refer to Documentation
-+- devfreq-events : phandles of the PPMU events used by the controller.
-+
-+Example:
-+
-+	ppmu_dmc0_0: ppmu@10d00000 {
-+		compatible = "samsung,exynos-ppmu";
-+		reg = <0x10d00000 0x2000>;
-+		clocks = <&clock CLK_PCLK_PPMU_DREX0_0>;
-+		clock-names = "ppmu";
-+		status = "okay";
-+		events {
-+			ppmu_event_dmc0_0: ppmu-event3-dmc0_0 {
-+				event-name = "ppmu-event3-dmc0_0";
-+			};
-+		};
-+	};
-+
-+	dmc: memory-controller@10c20000 {
-+		compatible = "samsung,exynos5422-dmc";
-+		reg = <0x10c20000 0x10000>, <0x10c30000 0x10000>,
-+			<0x10000000 0x1000>, <0x10030000 0x1000>;
-+		clocks = 	<&clock CLK_FOUT_SPLL>,
-+				<&clock CLK_MOUT_SCLK_SPLL>,
-+				<&clock CLK_FF_DOUT_SPLL2>,
-+				<&clock CLK_FOUT_BPLL>,
-+				<&clock CLK_MOUT_BPLL>,
-+				<&clock CLK_SCLK_BPLL>,
-+				<&clock CLK_MOUT_MX_MSPLL_CCORE>,
-+				<&clock CLK_MOUT_MX_MSPLL_CCORE_PHY>,
-+				<&clock CLK_MOUT_MCLK_CDREX>,
-+				<&clock CLK_DOUT_CLK2X_PHY0>,
-+				<&clock CLK_CLKM_PHY0>,
-+				<&clock CLK_CLKM_PHY1>;
-+		clock-names =	"fout_spll",
-+				"mout_sclk_spll",
-+				"ff_dout_spll2",
-+				"fout_bpll",
-+				"mout_bpll",
-+				"sclk_bpll",
-+				"mout_mx_mspll_ccore",
-+				"mout_mx_mspll_ccore_phy",
-+				"mout_mclk_cdrex",
-+				"dout_clk2x_phy0",
-+				"clkm_phy0",
-+			        "clkm_phy1";
-+		status = "okay";
-+		operating-points-v2 = <&dmc_opp_table>;
-+		devfreq-events = <&ppmu_event3_dmc0_0>,	<&ppmu_event3_dmc0_1>,
-+				<&ppmu_event3_dmc1_0>, <&ppmu_event3_dmc1_1>;
-+		operating-points-v2 = <&dmc_opp_table>;
-+		device-handle = <&samsung_K3QF2F20DB>;
-+		vdd-supply = <&buck1_reg>;
-+	};
--- 
-2.7.4
+The interrupts only matter for counter overflow, so confirming those 
+could be done by picking a sufficiently frequent event, counting for 
+long enough to capture slightly more than 2^32 of those, then seeing 
+whether the overflow accumulates correctly or the count appears to go 
+backwards (and/or checking what fired in /proc/interrupts). I believe 
+the cycle counter is also 32-bit on CCI, so that should be relatively 
+easy; for the other counters beyond the first one it should be feasible 
+to schedule additional dummy events before the event of interest in 
+order to trick pmu_get_event_idx() into allocating the desired counter 
+for it.
+
+Robin.
+
+>    taskset -c 0,7 /home/user/cg.x.A 1
+> 
+> [..]
+> 
+>   Performance counter stats for 'system wide':
+> 
+>       9,362,850,550      a7_cycles
+>       1,682,125,760      a15_cycles
+>          68,920,347      a7_bus
+>          61,484,352      a15_bus
+>       3,789,936,935      cci400_cycles
+>                   0      cci400_si_rrq_hs_any
+>                   0      cci400_si_wrq_hs_any
+> 
+>         9.541340558 seconds time elapsed
+> 
+> cg.x.A comes from NAS benchmark suite, compiled with fopenmp support, setup
+> to run 2 threads and taskmapped to ran on both a7 and a15 clusters.
+> a7_bus and a15_bus report main memory accesses.
+> 
+> Only cci400_cycles seems to be correct. However, all pmcs from the master
+> interface are reported as unsupported and all pmcs from the slave interface
+> return 0, which is probably not correct.
+> http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0470f/CJHICFBF.html
+> 
+> Would it be possible that someone from Samsung provide the right
+> interrupts values?
+> Many thanks.
+> 
+> Regards,
+> Willy
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
