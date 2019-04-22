@@ -1,97 +1,76 @@
-From: Willy Wolff <willy.mh.wolff.ml@gmail.com>
-Subject: Re: [PATCH] ARM: dts: exynos: add CCI-400 PMU nodes support to
- Exynos542x SoCs
-Date: Sat, 20 Apr 2019 07:50:42 +0100
-Message-ID: <20190420065041.eyynz7ol2uhv3w5g@macpro-scc.lancs.ac.uk>
-References: <20190412172545.fkxnpnymhcw7xncc@macpro-scc.lancs.ac.uk>
- <CACfOrNdEpC2vNgCOBXtrW-HjGHNG_6iLAFUCtVoZstGASPtcsA@mail.gmail.com>
- <38dee054-19ce-a545-fb62-dea4d0036c94@arm.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [GIT PULL] exynos-drm-next
+Date: Mon, 22 Apr 2019 18:51:10 +0900
+Message-ID: <1555926670-7397-1-git-send-email-inki.dae@samsung.com>
+References: <CGME20190422095042epcas1p27726a67f8283fdc4beff8561d0254957@epcas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <38dee054-19ce-a545-fb62-dea4d0036c94@arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Indeed, many thanks Robin.
-
-Using this, values sound better.
-export OMP_NUM_THREADS=2
-sudo --preserve-env ./perf stat -a \
-  -e armv7_cortex_a7/config=0x11,name=a7_cycles/ \
-  -e armv7_cortex_a15/config=0x11,name=a15_cycles/ \
-  -e armv7_cortex_a7/config=0x19,name=a7_bus/ \
-  -e armv7_cortex_a15/config=0x19,name=a15_bus/ \
-  -e CCI_400/config=0xff,name=cci400_cycles/ \
-  -e CCI_400/config=0x0,source=4,name=cci400_si_rrq_hs_any_s4/ \
-  -e CCI_400/config=0xc,source=4,name=cci400_si_wrq_hs_any_s4/ \
-  -e CCI_400/config=0x0,source=3,name=cci400_si_rrq_hs_any_s3/ \
-  -e CCI_400/config=0xc,source=3,name=cci400_si_wrq_hs_any_s3/ \
-  taskset -c 0,4 /home/user/EnergyManager/temperature_bench_install/bin/cg.x.A 1
-
-[..]
- Performance counter stats for 'system wide':
-
-     6,201,513,834      a7_cycles
-     2,781,009,706      a15_cycles
-        64,200,721      a7_bus
-        60,237,019      a15_bus
-     1,158,303,323      cci400_cycles
-        11,390,649      cci400_si_rrq_hs_any_s4
-         1,253,383      cci400_si_wrq_hs_any_s4
-        13,379,256      cci400_si_rrq_hs_any_s3
-        13,200,717      cci400_si_wrq_hs_any_s3
-
-       3.685087167 seconds time elapsed
-
-
-Do you think that I should write a v2 with a better cover letter that shows
-how to access this? By the way, I see that you contribute to that driver. I
-haven't seen anything about this source=, do you think that it should be
-documented somewhere?
-
-Also, 0 and 4 on the interrupts represent GIC_SPI and IRQ_TYPE_LEVEL_HIGH,
-I will do a v2 for this. Don't you think that the doc at
-Documentation/devicetree/bindings/arm/cci.txt should use this too?
-
-Willy
-
-On Fri, Apr 19, 2019 at 10:18:02PM +0100, Robin Murphy wrote:
-> On 2019-04-19 6:53 pm, Willy Wolff wrote:
-> > Hi,
-> > 
-> > This patch can be dropped, as it needs more work.
-> > 
-> > In fact, the interrupts seems to be wrong. The interrupts suggested by
-> > Anand Moon gave the same following results.
-> > 
-> > export CCI_DEV=CCI_400
-> > export OMP_NUM_THREADS=2
-> > sudo --preserve-env ./perf stat -a \
-> >    -e armv7_cortex_a7/config=0x11,name=a7_cycles/ \
-> >    -e armv7_cortex_a15/config=0x11,name=a15_cycles/ \
-> >    -e armv7_cortex_a7/config=0x19,name=a7_bus/ \
-> >    -e armv7_cortex_a15/config=0x19,name=a15_bus/ \
-> >    -e ${CCI_DEV}/config=0xff,name=cci400_cycles/ \
-> >    -e ${CCI_DEV}/config=0x0,name=cci400_si_rrq_hs_any/ \
-> >    -e ${CCI_DEV}/config=0xc,name=cci400_si_wrq_hs_any/ \
-> 
-> From the look of those configs, you'll be counting events on slave interface
-> 0, which may not even have anything connected anyway. The CPU clusters on a
-> CCI-400 will be on slave interfaces 3 and 4, so try something like '-e
-> CCI_400/cci400_si_rrq_hs_any,source=4/'.
-> 
-> The interrupts only matter for counter overflow, so confirming those could
-> be done by picking a sufficiently frequent event, counting for long enough
-> to capture slightly more than 2^32 of those, then seeing whether the
-> overflow accumulates correctly or the count appears to go backwards (and/or
-> checking what fired in /proc/interrupts). I believe the cycle counter is
-> also 32-bit on CCI, so that should be relatively easy; for the other
-> counters beyond the first one it should be feasible to schedule additional
-> dummy events before the event of interest in order to trick
-> pmu_get_event_idx() into allocating the desired counter for it.
-> 
-> Robin.
+SGkgRGF2ZSwKCiAgIEp1c3QgbG9nIGNsZWFudXAgcGF0Y2hlcyBvZiBFeHlub3MgS01TIGFuZCBE
+TUEgZHJpdmVycwogICBpbmNsdWRpbmcgb25lIHRyaXZpYWwgc3R5bGUgZml4dXAuCgogICBQbGVh
+c2Uga2lua2RseSBsZXQgbWUga25vdyBpZiB0aGVyZSBpcyBhbnkgcHJvYmxlbS4KCgpUaGFua3Ms
+Cklua2kgRGFlCgoKVGhlIGZvbGxvd2luZyBjaGFuZ2VzIHNpbmNlIGNvbW1pdCBkYmI5MjQ3MTY3
+NGE0ODg5MmY1ZTUwNzc5NDI1ZTAzMzg4MDczYWI5OgoKICBSZXZlcnQgImRybTogYWxsb3cgcmVu
+ZGVyIGNhcGFibGUgbWFzdGVyIHdpdGggRFJNX0FVVEggaW9jdGxzIiAoMjAxOS0wNC0xOCAwNjo0
+NjozMyArMTAwMCkKCmFyZSBhdmFpbGFibGUgaW4gdGhlIGdpdCByZXBvc2l0b3J5IGF0OgoKICBn
+aXQ6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvZGFlaW5raS9kcm0t
+ZXh5bm9zIHRhZ3MvZXh5bm9zLWRybS1uZXh0LWZvci12NS4yCgpmb3IgeW91IHRvIGZldGNoIGNo
+YW5nZXMgdXAgdG8gMzUzMTk4MDQ4NTFmYWQ2MmRmYTYyODRmNGU2MzhhN2UyYTYyMGZlODoKCiAg
+ZHJtL2lwcDogY2xlYW4gdXAgZGVidWcgbWVzc2FnZXMgKDIwMTktMDQtMjIgMTI6MTM6NDQgKzA5
+MDApCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tCkxvZyBjbGVhbnVwcwotIENvcnJlY3QgdGhlIHVzZSBvZiBsb2cgbWFjcm8g
+aW4gZXJyb3IgY2FzZS4KLSBEcm9wIHVubmVjZXNzYXJ5IG1lc3NhZ2VzLgotIFJlcGxhY2UgRFJN
+X0VSUk9SL0RFQlVHIHdpdGggRFJNX0RFVl9FUlJPUi9ERUJVRy4KLSBQcmludCBvdXQgZGVidWcg
+bWVzc2FnZXMgd2l0aCBjb3JyZWN0IGRldmljZSBuYW1lIGluIHZpZGkgYW5kIGlwcCBkcml2ZXJz
+LgoKT25lIHRyaXZpYWwgY2xlYW51cAotIEp1c3QgZml4IGNoZWNrcGF0Y2ggZXJyb3IsICJmb28q
+IGJhciIgdG8gImZvbyAqYmFyIiBpbiBnMmQgZHJpdmVyLgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpJbmtpIERhZSAoNik6
+CiAgICAgIGRybS9maW1kOiB1c2UgRFJNX0VSUk9SIGluc3RlYWQgb2YgRFJNX0lORk8gaW4gZXJy
+b3IgY2FzZQogICAgICBkcm0vZXh5bm9zOiByZW1vdmUgdW5uZWNlc3NhcnkgbWVzc2FnZXMKICAg
+ICAgZHJtL2V4eW5vczogdXNlIERSTV9ERVZfRVJST1IgdG8gcHJpbnQgb3V0IGVycm9yIG1lc3Nh
+Z2UKICAgICAgZHJtL2V4eW5vczogdXNlIERSTV9ERVZfREVCVUcqIGluc3RlYWQgb2YgRFJNX0RF
+QlVHIG1hY3JvCiAgICAgIGRybS92aWRpOiByZXBsYWNlIHBsYXRmb3JtX2RldmljZSBwb2ludGVy
+IHdpdGggZGV2aWNlIG9uZQogICAgICBkcm0vaXBwOiBjbGVhbiB1cCBkZWJ1ZyBtZXNzYWdlcwoK
+U2V1bmctV29vIEtpbSAoMSk6CiAgICAgIGRybS9leHlub3M6IGcyZDogcmVtb3ZlIHN0eWxlIGVy
+cm9yCgogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5jIHwgIDYg
+Ky0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYyAgICB8IDI2ICsr
+Ky0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwLmMgICAgICAgICAgICB8ICA5
+ICsrLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RtYS5jICAgICAgIHwgIDIg
+Ky0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcGkuYyAgICAgICB8ICA5ICsr
+LQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jICAgICAgIHwgIDcgKy0K
+IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jICAgICAgICB8ICA5ICsrLQog
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiZGV2LmMgICAgIHwgMjYgKysrKy0t
+LQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWMuYyAgICAgIHwgOTcgKysr
+KysrKysrKysrKystLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZmltZC5jICAgICAgfCA0OCArKysrKysrLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fZzJkLmMgICAgICAgfCA1MSArKysrKysrLS0tLS0tLQogZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX2dlbS5jICAgICAgIHwgMzUgKysrKystLS0tLQogZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dzYy5jICAgICAgIHwgNzIgKysrKysrKysrKy0t
+LS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9pcHAuYyAgICAgICB8
+IDcxICsrKysrKysrKysrKy0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1faXBwLmggICAgICAgfCAgOSArLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9taWMuYyAgICAgICB8IDI5ICsrKystLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fcGxhbmUuYyAgICAgfCAxNSArKystLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX3JvdGF0b3IuYyAgIHwgIDUgKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9zY2FsZXIuYyAgICB8ICA1ICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fdmlkaS5jICAgICAgfCA0OSArKysrKysrKy0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfaGRtaS5jICAgICAgICAgIHwgNzUgKysrKysrKysrKysrLS0tLS0tLS0tCiBkcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jICAgICAgICAgfCA0MyArKysrKysrLS0t
+LS0KIDIyIGZpbGVzIGNoYW5nZWQsIDQwMCBpbnNlcnRpb25zKCspLCAyOTggZGVsZXRpb25zKC0p
+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
+bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbA==
