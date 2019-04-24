@@ -1,79 +1,38 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [GIT PULL RESEND] exynos-drm-next
-Date: Wed, 24 Apr 2019 11:35:13 +0900
-Message-ID: <1556073313-9923-1-git-send-email-inki.dae@samsung.com>
-References: <CGME20190424023444epcas1p471aac777fc1674c27838c90b341a60a2@epcas1p4.samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH RFC 4/8] soc: samsung: Add Exynos Adaptive Supply
+ Voltage driver
+Date: Wed, 24 Apr 2019 10:11:07 +0200
+Message-ID: <1d2238be-1758-2413-42f1-d571706de766@samsung.com>
+References: <CGME20190404172238epcas2p21ef28f46b728127dcd6e8ee72752a1b8@epcas2p2.samsung.com>
+        <20190404171735.12815-1-s.nawrocki@samsung.com>
+        <20190404171735.12815-5-s.nawrocki@samsung.com>
+        <CAJKOXPc9v8bcQs9HmiDWECCkfQCh-Ktzk9Vqq01ccUm7UG54uQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: airlied@linux.ie
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAJKOXPc9v8bcQs9HmiDWECCkfQCh-Ktzk9Vqq01ccUm7UG54uQ@mail.gmail.com>
+Content-Language: en-GB
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, Chanwoo Choi <cw00.choi@samsung.com>, myungjoo.ham@samsung.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, pankaj.dubey@samsung.com, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgRGF2ZSwKCiAgIEp1c3QgbG9nIGNsZWFudXBzIHBhdGNoZXMgb2YgRXh5bm9zIEtNUyBhbmQg
-RE1BIGRyaXZlcnMKICAgaW5jbHVkaW5nIG9uZSB0cml2aWFsIHN0eWxlIGZpeHVwLgoKICBQbGVh
-c2Uga2luZGx5IGxldCBtZSBrbm93IGlmIHRoZXJlIGlzIGFueSBwcm9ibGVtLgoKUmVzZW5kIGNo
-YW5nZWxvZzoKLSBGaXhlZCB0d28gYnVpbGQgd2FybmluZ3MgYnkgcmVtb3ZpbmcgdW51c2VkIHZh
-cmlhYmxlcywKICBhbmQgY29uZmlybWVkIG5vIGJ1aWxkIHdhcm5pbmcgbWVzc2FnZXMuCi0gUmVi
-YXNlZCBvbiB0b3Agb2YgZHJtLW5leHQgYWdhaW4uCgpUaGFua3MsCklua2kgRGFlCgpUaGUgZm9s
-bG93aW5nIGNoYW5nZXMgc2luY2UgY29tbWl0IDcwYjVmMDllNDM4OWM3ODkyNjNjNmQ3OWM1Mzli
-ODM3OGUzYWYzYmM6CgogIE1lcmdlIHRhZyAnZHJtLW1zbS1uZXh0LTIwMTktMDQtMjEnIG9mIGh0
-dHBzOi8vZ2l0bGFiLmZyZWVkZXNrdG9wLm9yZy9kcm0vbXNtIGludG8gZHJtLW5leHQgKDIwMTkt
-MDQtMjQgMTE6NTY6MzIgKzEwMDApCgphcmUgYXZhaWxhYmxlIGluIHRoZSBnaXQgcmVwb3NpdG9y
-eSBhdDoKCiAgZ2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2Rh
-ZWlua2kvZHJtLWV4eW5vcyB0YWdzL2V4eW5vcy1kcm0tbmV4dC1mb3ItdjUuMgoKZm9yIHlvdSB0
-byBmZXRjaCBjaGFuZ2VzIHVwIHRvIDhiOTU1MDM0NGQzOTE0Y2Y2MDZmMzY1YjZmYTQyNzlmYjNj
-ZDQ2ODQ6CgogIGRybS9pcHA6IGNsZWFuIHVwIGRlYnVnIG1lc3NhZ2VzICgyMDE5LTA0LTI0IDEx
-OjIzOjIwICswOTAwKQoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpMb2cgY2xlYW51cHMKLSBDb3JyZWN0IHRoZSB1c2Ugb2Yg
-bG9nIG1hY3JvIGluIGVycm9yIGNhc2UuCi0gRHJvcCB1bm5lY2Vzc2FyeSBtZXNzYWdlcy4KLSBS
-ZXBsYWNlIERSTV9FUlJPUi9ERUJVRyB3aXRoIERSTV9ERVZfRVJST1IvREVCVUcuCi0gUHJpbnQg
-b3V0IGRlYnVnIG1lc3NhZ2VzIHdpdGggY29ycmVjdCBkZXZpY2UgbmFtZSBpbiB2aWRpIGFuZCBp
-cHAgZHJpdmVycy4KCk9uZSB0cml2aWFsIGNsZWFudXAKLSBKdXN0IGZpeCBjaGVja3BhdGNoIGVy
-cm9yLCAiZm9vKiBiYXIiIHRvICJmb28gKmJhciIgaW4gZzJkIGRyaXZlci4KCi0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KSW5r
-aSBEYWUgKDYpOgogICAgICBkcm0vZmltZDogdXNlIERSTV9FUlJPUiBpbnN0ZWFkIG9mIERSTV9J
-TkZPIGluIGVycm9yIGNhc2UKICAgICAgZHJtL2V4eW5vczogcmVtb3ZlIHVubmVjZXNzYXJ5IG1l
-c3NhZ2VzCiAgICAgIGRybS9leHlub3M6IHVzZSBEUk1fREVWX0VSUk9SIHRvIHByaW50IG91dCBl
-cnJvciBtZXNzYWdlCiAgICAgIGRybS9leHlub3M6IHVzZSBEUk1fREVWX0RFQlVHKiBpbnN0ZWFk
-IG9mIERSTV9ERUJVRyBtYWNybwogICAgICBkcm0vdmlkaTogcmVwbGFjZSBwbGF0Zm9ybV9kZXZp
-Y2UgcG9pbnRlciB3aXRoIGRldmljZSBvbmUKICAgICAgZHJtL2lwcDogY2xlYW4gdXAgZGVidWcg
-bWVzc2FnZXMKClNldW5nLVdvbyBLaW0gKDEpOgogICAgICBkcm0vZXh5bm9zOiBnMmQ6IHJlbW92
-ZSBzdHlsZSBlcnJvcgoKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zNTQzM19kcm1fZGVj
-b24uYyB8ICA2ICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vczdfZHJtX2RlY29uLmMg
-ICAgfCAyNiArKystLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcC5jICAgICAg
-ICAgICAgfCAgOSArKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kbWEuYyAg
-ICAgICB8ICAyICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHBpLmMgICAg
-ICAgfCAgOSArKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYyAgICAg
-ICB8ICA3ICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYyAgICAgICAg
-fCAgOSArKy0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYmRldi5jICAgICB8
-IDI2ICsrKystLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1jLmMgICAg
-ICB8IDk3ICsrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2ZpbWQuYyAgICAgIHwgNDggKysrKysrKy0tLS0tLQogZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jICAgICAgIHwgNTEgKysrKysrKy0tLS0tLS0KIGRy
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nZW0uYyAgICAgICB8IDM1ICsrKysrLS0t
-LS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nc2MuYyAgICAgICB8IDcyICsr
-KysrKysrKystLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1faXBw
-LmMgICAgICAgfCA3MSArKysrKysrKysrKystLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2lwcC5oICAgICAgIHwgIDkgKy0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19kcm1fbWljLmMgICAgICAgfCAyOSArKysrLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgICAgIHwgMTUgKysrLS0KIGRyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9yb3RhdG9yLmMgICB8ICA2ICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcm1fc2NhbGVyLmMgICAgfCAgNiArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX3ZpZGkuYyAgICAgIHwgNDkgKysrKysrKystLS0tLS0KIGRyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyAgICAgICAgICB8IDc1ICsrKysrKysrKysrKy0tLS0t
-LS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyAgICAgICAgIHwgNDMg
-KysrKysrKy0tLS0tCiAyMiBmaWxlcyBjaGFuZ2VkLCA0MDAgaW5zZXJ0aW9ucygrKSwgMzAwIGRl
-bGV0aW9ucygtKQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
-aHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
+On 4/23/19 12:50, Krzysztof Kozlowski wrote:
+>> +static int exynos5422_asv_get_table(void)
+>> +{
+>> +       unsigned int reg = exynos_chipid_read(EXYNOS_CHIPID_REG_PKG_ID);
+>
+> One more thought: you read this register multiple times in the same
+> function. I think it is not needed - just read once, store the value
+> and use the helpers to parse it.
+
+Yes, I have noticed that as well. I'm not sure though if it is worth 
+to additionally cache registers manually like this when we use the 
+regmap.  I have already converted that code to use the regmap API for 
+v2.  And these are barely few registers reads at the driver 
+initialization time, not any hot path.
+
+-- 
+Thanks,
+Sylwester
