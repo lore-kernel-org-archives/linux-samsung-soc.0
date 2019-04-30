@@ -1,228 +1,136 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v3 2/4] drivers: devfreq: events: extend events by type
- of counted data
-Date: Tue, 30 Apr 2019 16:34:30 +0900
-Message-ID: <3557d507-0463-89de-4025-fbeaaef78bed@samsung.com>
-References: <1555681688-19643-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20190419134821eucas1p2461a27e28387ff2b87c149f09582d2a0@eucas1p2.samsung.com>
-        <1555681688-19643-3-git-send-email-l.luba@partner.samsung.com>
+From: Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Subject: Re: [PATCH v2 3/4] iommu/dma-iommu: Use the dev->coherent_dma_mask
+Date: Tue, 30 Apr 2019 04:12:22 -0700
+Message-ID: <20190430111222.GA3191@infradead.org>
+References: <20190430002952.18909-1-tmurphy@arista.com>
+ <20190430002952.18909-4-tmurphy@arista.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1555681688-19643-3-git-send-email-l.luba@partner.samsung.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lukasz Luba <l.luba@partner.samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: b.zolnierkie@samsung.com, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, kgene@kernel.org, willy.mh.wolff.ml@gmail.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20190430002952.18909-4-tmurphy-nzgTgzXrdUbQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Tom Murphy <tmurphy-nzgTgzXrdUbQT0dZR+AlfA@public.gmane.org>
+Cc: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-s390-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Gerald Schaefer <gerald.schaefer-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org>, Andy Gross <andy.gross-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, murphyt7-/Zw1syy4LHg@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Lukasz,
+>  static dma_addr_t __iommu_dma_map(struct device *dev, phys_addr_t phys,
+> -		size_t size, int prot, struct iommu_domain *domain)
+> +		size_t size, int prot, struct iommu_domain *domain,
+> +		dma_addr_t dma_limit)
 
-On 19. 4. 19. 오후 10:48, Lukasz Luba wrote:
-> This patch adds posibility to choose what type of data should be counted
-> by the PPMU counter. Now the type comes from DT where the event has been
-> defined. When there is no 'event-data-type' the default value is used,
-> which is 'read data in bytes'.
-> It is needed when you want to know not only read+write data bytes but
-> i.e. only write data in byte, or number of read requests, etc.
-> 
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
-> ---
->  drivers/devfreq/event/exynos-ppmu.c | 61 +++++++++++++++++++++++++------------
->  include/linux/devfreq-event.h       |  6 ++++
->  2 files changed, 48 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
-> index c61de0b..073bf2c 100644
-> --- a/drivers/devfreq/event/exynos-ppmu.c
-> +++ b/drivers/devfreq/event/exynos-ppmu.c
-> @@ -154,9 +154,9 @@ static int exynos_ppmu_set_event(struct devfreq_event_dev *edev)
->  	if (ret < 0)
->  		return ret;
+Can we just call this dma_mask?
+
+>  static void iommu_dma_unmap_resource(struct device *dev, dma_addr_t handle,
+> @@ -1250,7 +1251,8 @@ static struct iommu_dma_msi_page *iommu_dma_get_msi_page(struct device *dev,
+>  	if (!msi_page)
+>  		return NULL;
 >  
-> -	/* Set the event of Read/Write data count  */
-> +	/* Set the event of proper data type monitoring */
->  	ret = regmap_write(info->regmap, PPMU_BEVTxSEL(id),
-> -				PPMU_RO_DATA_CNT | PPMU_WO_DATA_CNT);
-> +			   edev->desc->data_type);
->  	if (ret < 0)
->  		return ret;
->  
-> @@ -368,23 +368,11 @@ static int exynos_ppmu_v2_set_event(struct devfreq_event_dev *edev)
->  	if (ret < 0)
->  		return ret;
->  
-> -	/* Set the event of Read/Write data count  */
-> -	switch (id) {
-> -	case PPMU_PMNCNT0:
-> -	case PPMU_PMNCNT1:
-> -	case PPMU_PMNCNT2:
-> -		ret = regmap_write(info->regmap, PPMU_V2_CH_EVx_TYPE(id),
-> -				PPMU_V2_RO_DATA_CNT | PPMU_V2_WO_DATA_CNT);
-> -		if (ret < 0)
-> -			return ret;
-> -		break;
-> -	case PPMU_PMNCNT3:
-> -		ret = regmap_write(info->regmap, PPMU_V2_CH_EVx_TYPE(id),
-> -				PPMU_V2_EVT3_RW_DATA_CNT);
-> -		if (ret < 0)
-> -			return ret;
-> -		break;
-> -	}
-> +	/* Set the event of proper data type monitoring */
-> +	ret = regmap_write(info->regmap, PPMU_V2_CH_EVx_TYPE(id),
-> +			   edev->desc->data_type);
-> +	if (ret < 0)
-> +		return ret;
->  
->  	/* Reset cycle counter/performance counter and enable PPMU */
->  	ret = regmap_read(info->regmap, PPMU_V2_PMNC, &pmnc);
-> @@ -508,6 +496,7 @@ static int of_get_devfreq_events(struct device_node *np,
->  	struct device *dev = info->dev;
->  	struct device_node *events_np, *node;
->  	int i, j, count;
-> +	int ret;
->  
->  	events_np = of_get_child_by_name(np, "events");
->  	if (!events_np) {
-> @@ -544,6 +533,40 @@ static int of_get_devfreq_events(struct device_node *np,
->  		desc[j].driver_data = info;
->  
->  		of_property_read_string(node, "event-name", &desc[j].name);
-> +		ret = of_property_read_u32(node, "event-data-type",
-> +					   &desc[j].data_type);
-> +		if (ret) {
-> +			/* Set the event of proper data type counting.
-> +			 * Check if the data type has been defined in DT,
-> +			 * use default if not.
-> +			 */
-> +			if (of_device_is_compatible(np,
-> +					"samsung,exynos-ppmu-v2")) {
+> -	iova = __iommu_dma_map(dev, msi_addr, size, prot, domain);
+> +	iova = __iommu_dma_map(dev, msi_addr, size, prot, domain,
+> +			dma_get_mask(dev));
 
-It is not proper to compare the compatible string again
-in the device driver. Instead, you can define the ppmu device type
-as following and then use 'struct of_device_id' in order to
-identify the device type.
+Hmm, I don't think we need the DMA mask for the MSI mapping, this
+should probably always use a 64-bit mask.  Or we could just untangle
+it from the DMA mapping fast path entire, something like:
 
-	enum exynos_ppmu_type {
-		EXYNOS_TYPE_PPMU,
-		EXYNOS_TYPE_PPMU_V2,
-	};
+---
+>From 0debafc85174ca830f2e371ff8e8f7465bde3ad8 Mon Sep 17 00:00:00 2001
+From: Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>
+Date: Tue, 30 Apr 2019 07:06:23 -0400
+Subject: iommu/dma: opencode __iommu_dma_map in iommu_dma_get_msi_page
 
- static const struct of_device_id exynos_ppmu_id_match[] = {
-        {
-                .compatible = "samsung,exynos-ppmu",
--               .data = (void *)&exynos_ppmu_ops,
-+               .data = (void *)EXYNOS_TYPE_PPMU,
-        }, {
-                .compatible = "samsung,exynos-ppmu-v2",
--               .data = (void *)&exynos_ppmu_v2_ops,
-+               .data = (void *)EXYNOS_TYPE_PPMU_V2,
-        },
+The MSI page mapping really is a little different from the normal DMA
+mappings and doesn't need to look at the DMA mask.  Just open code
+it instead of trying to squeeze the behavior into the DMA path helpers.
 
+Signed-off-by: Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>
+---
+ drivers/iommu/dma-iommu.c | 27 +++++++--------------------
+ 1 file changed, 7 insertions(+), 20 deletions(-)
 
-The many device drivers in the mainline uses this code
-in order to get the device type. You can refer the example
-in the drivers/mfd/max14577.c.
-
-(snip)
-
-
-Example, I add the example. but it is not tested. 
-
---- a/drivers/devfreq/event/exynos-ppmu.c
-+++ b/drivers/devfreq/event/exynos-ppmu.c
-@@ -16,6 +16,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/of_address.h>
-+#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/suspend.h>
-@@ -23,6 +24,11 @@
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index 58c35bab7626..2ac0df0879d7 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -358,11 +358,6 @@ static dma_addr_t iommu_dma_alloc_iova(struct iommu_domain *domain,
+ 	struct iova_domain *iovad = &cookie->iovad;
+ 	unsigned long shift, iova_len, iova = 0;
  
- #include "exynos-ppmu.h"
- 
-+enum exynos_ppmu_type {
-+       EXYNOS_TYPE_PPMU,
-+       EXYNOS_TYPE_PPMU_V2,
-+};
-+
- struct exynos_ppmu_data {
-        struct clk *clk;
- };
-@@ -36,6 +42,7 @@ struct exynos_ppmu {
-        struct regmap *regmap;
- 
-        struct exynos_ppmu_data ppmu;
-+       enum exynos_ppmu_type ppmu_type;
- };
- 
- #define PPMU_EVENT(name)                       \
- 
-        /* Reset cycle counter/performance counter and enable PPMU */
-        ret = regmap_read(info->regmap, PPMU_V2_PMNC, &pmnc);
-@@ -483,31 +476,23 @@ static const struct devfreq_event_ops exynos_ppmu_v2_ops = {
- static const struct of_device_id exynos_ppmu_id_match[] = {
-        {
-                .compatible = "samsung,exynos-ppmu",
--               .data = (void *)&exynos_ppmu_ops,
-+               .data = (void *)EXYNOS_TYPE_PPMU,
-        }, {
-                .compatible = "samsung,exynos-ppmu-v2",
--               .data = (void *)&exynos_ppmu_v2_ops,
-+               .data = (void *)EXYNOS_TYPE_PPMU_V2,
-        },
-        { /* sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, exynos_ppmu_id_match);
- 
--static struct devfreq_event_ops *exynos_bus_get_ops(struct device_node *np)
--{
--       const struct of_device_id *match;
+-	if (cookie->type == IOMMU_DMA_MSI_COOKIE) {
+-		cookie->msi_iova += size;
+-		return cookie->msi_iova - size;
+-	}
 -
--       match = of_match_node(exynos_ppmu_id_match, np);
--       return (struct devfreq_event_ops *)match->data;
--}
--
- static int of_get_devfreq_events(struct device_node *np,
-                                 struct exynos_ppmu *info)
+ 	shift = iova_shift(iovad);
+ 	iova_len = size >> shift;
+ 	/*
+@@ -397,10 +392,7 @@ static void iommu_dma_free_iova(struct iommu_dma_cookie *cookie,
  {
-        struct devfreq_event_desc *desc;
--       struct devfreq_event_ops *event_ops;
-        struct device *dev = info->dev;
-        struct device_node *events_np, *node;
-        int i, j, count;
+ 	struct iova_domain *iovad = &cookie->iovad;
  
-        events_np = of_get_child_by_name(np, "events");
-        if (!events_np) {
-@@ -515,7 +500,6 @@ static int of_get_devfreq_events(struct device_node *np,
-                        "failed to get child node of devfreq-event devices\n");
-                return -EINVAL;
-        }
--       event_ops = exynos_bus_get_ops(np);
+-	/* The MSI case is only ever cleaning up its most recent allocation */
+-	if (cookie->type == IOMMU_DMA_MSI_COOKIE)
+-		cookie->msi_iova -= size;
+-	else if (cookie->fq_domain)	/* non-strict mode */
++	if (cookie->fq_domain)	/* non-strict mode */
+ 		queue_iova(iovad, iova_pfn(iovad, iova),
+ 				size >> iova_shift(iovad), 0);
+ 	else
+@@ -430,14 +422,10 @@ static dma_addr_t __iommu_dma_map(struct device *dev, phys_addr_t phys,
+ {
+ 	struct iommu_domain *domain = iommu_get_dma_domain(dev);
+ 	struct iommu_dma_cookie *cookie = domain->iova_cookie;
+-	size_t iova_off = 0;
++	size_t iova_off = iova_offset(&cookie->iovad, phys);
+ 	dma_addr_t iova;
  
-        count = of_get_child_count(events_np);
-        desc = devm_kcalloc(dev, count, sizeof(*desc), GFP_KERNEL);
-@@ -540,11 +524,38 @@ static int of_get_devfreq_events(struct device_node *np,
-                        continue;
-                }
+-	if (cookie->type == IOMMU_DMA_IOVA_COOKIE) {
+-		iova_off = iova_offset(&cookie->iovad, phys);
+-		size = iova_align(&cookie->iovad, size + iova_off);
+-	}
+-
++	size = iova_align(&cookie->iovad, size + iova_off);
+ 	iova = iommu_dma_alloc_iova(domain, size, dma_get_mask(dev), dev);
+ 	if (!iova)
+ 		return DMA_MAPPING_ERROR;
+@@ -1121,7 +1109,6 @@ static struct iommu_dma_msi_page *iommu_dma_get_msi_page(struct device *dev,
+ {
+ 	struct iommu_dma_cookie *cookie = domain->iova_cookie;
+ 	struct iommu_dma_msi_page *msi_page;
+-	dma_addr_t iova;
+ 	int prot = IOMMU_WRITE | IOMMU_NOEXEC | IOMMU_MMIO;
+ 	size_t size = cookie_msi_granule(cookie);
  
--               desc[j].ops = event_ops;
-+               switch (info->ppmu_type) {
-+               case EXYNOS_TYPE_PPMU:
-+                       desc[j].ops = &exynos_ppmu_ops;
-+                       break;
-+               case EXYNOS_TYPE_PPMU_V2:
-+                       desc[j].ops = &exynos_ppmu_v2_ops;
-+                       break;
-+               }
-+
-
-
+@@ -1134,16 +1121,16 @@ static struct iommu_dma_msi_page *iommu_dma_get_msi_page(struct device *dev,
+ 	if (!msi_page)
+ 		return NULL;
+ 
+-	iova = __iommu_dma_map(dev, msi_addr, size, prot);
+-	if (iova == DMA_MAPPING_ERROR)
++	if (iommu_map(domain, cookie->msi_iova, msi_addr, size, prot))
+ 		goto out_free_page;
+ 
+ 	INIT_LIST_HEAD(&msi_page->list);
+ 	msi_page->phys = msi_addr;
+-	msi_page->iova = iova;
++	msi_page->iova = cookie->msi_iova;
+ 	list_add(&msi_page->list, &cookie->msi_page_list);
+-	return msi_page;
+ 
++	cookie->msi_iova += size;
++	return msi_page;
+ out_free_page:
+ 	kfree(msi_page);
+ 	return NULL;
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.20.1
