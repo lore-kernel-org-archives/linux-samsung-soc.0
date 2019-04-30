@@ -1,200 +1,122 @@
-From: Tom Murphy <tmurphy@arista.com>
-Subject: Re: [PATCH v2 2/4] iommu/dma-iommu: Handle deferred devices
-Date: Tue, 30 Apr 2019 15:04:55 +0100
-Message-ID: <CAPL0++4UeWczgmSa+X0L2_27Xr5tsXTU4k_B1JB33Tm=vQAa8Q@mail.gmail.com>
-References: <20190430002952.18909-1-tmurphy@arista.com> <20190430002952.18909-3-tmurphy@arista.com>
- <2750fa37-a59c-3074-6545-b19046ce3699@arm.com>
+From: Lukasz Luba <l.luba@partner.samsung.com>
+Subject: Re: [PATCH v6 04/10] Documentation: dt: device tree bindings for
+ LPDDR3 memories
+Date: Tue, 30 Apr 2019 22:04:31 +0200
+Message-ID: <cb929f1d-409c-ad06-e9b2-83ce104664fd@partner.samsung.com>
+References: <1555683568-20882-1-git-send-email-l.luba@partner.samsung.com>
+        <CGME20190419141945eucas1p1c95d65f261f82da5c856c0f2fcf1ce87@eucas1p1.samsung.com>
+        <1555683568-20882-5-git-send-email-l.luba@partner.samsung.com>
+        <20190425195156.GA31128@bogus>
+        <86715dda-c1b0-5354-17d2-419f8137cb91@partner.samsung.com>
+        <CAL_JsqJUNw_aDKjWf4TkJWQFhhLCrGYWbTtWpz5jkyeONRcpQw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2750fa37-a59c-3074-6545-b19046ce3699@arm.com>
+In-Reply-To: <CAL_JsqJUNw_aDKjWf4TkJWQFhhLCrGYWbTtWpz5jkyeONRcpQw@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: iommu@lists.linux-foundation.org, Tom Murphy <murphyt7@tcd.ie>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infrade
+To: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:THERMAL" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kees Cook <keescook@chromium.org>, Tony Lindgren <tony@atomide.com>, Joerg Roedel <jroedel@suse.de>, Thierry Reding <treding@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, willy.mh.wolff.ml@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 2:42 PM Robin Murphy <robin.murphy@arm.com> wrote:
->
-> On 30/04/2019 01:29, Tom Murphy wrote:
-> > Handle devices which defer their attach to the iommu in the dma-iommu api
->
-> I've just spent a while trying to understand what this is about...
->
-> AFAICS it's a kdump thing where the regular default domain attachment
-> may lead to ongoing DMA traffic from the crashed kernel raising a fault
-> storm, so we put off the "real" attach of a given device until we know
-> it's been reset and brought into a sane state, but the only way to
-> reliably detect that is to wait until the kdump kernel driver starts
-> making new DMA mappings. Is that about right?
+Hi Rob,
 
-That's the impression I got too. The many iterations of the patch
-series which contributed this code makes it hard to figure out exactly
-why it's doing what it's doing but AFAIK it works how you described
-it.
+On 4/29/19 6:36 PM, Rob Herring wrote:
+> On Mon, Apr 29, 2019 at 7:05 AM Lukasz Luba <l.luba@partner.samsung.com> wrote:
+>>
+>> Hi Rob,
+>>
+>> On 4/25/19 9:51 PM, Rob Herring wrote:
+>>> On Fri, Apr 19, 2019 at 04:19:22PM +0200, Lukasz Luba wrote:
+>>>> The device tree bindings for LPDDR3 SDRAM memories.
+>>>>
+>>>> For specifying the AC timing parameters of the memory device
+>>>> the 'lpddr3' binding uses binding 'lpddr2-timings'.
+>>>>
+>>>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+>>>> ---
+>>>>    .../devicetree/bindings/lpddr3/lpddr3-timings.txt  | 57 +++++++++++++
+>>>>    .../devicetree/bindings/lpddr3/lpddr3.txt          | 93 ++++++++++++++++++++++
+>>>
+>>> Please rename the lpddr2 directory to 'ddr' and add these to it.
+>> OK, I will rename it in the nex patch set.
+>>>
+>>> Maybe whatever properties are common should be put in a common doc.
+>> There are maybe a few common properties, but I would not dare to merge
+>> lpddr2 and lpddr3 before consulting it with TI engineers who made
+>> LPDDR2 support.
+> 
+> Why not. You aren't changing anything. Just rearranging.
+True.
+> 
+>> Could we work on a common file after the patch set got merged?
+> 
+> Yes, but please still move everything to a common directory.
+OK, I am currently working on it and moving these lpddr* files into
+Documentation/devicetree/bindings/ddr/
+Then after acceptance I will find the common stuff and do the merge.
+> 
+>>>
+>>>>    2 files changed, 150 insertions(+)
+>>>>    create mode 100644 Documentation/devicetree/bindings/lpddr3/lpddr3-timings.txt
+>>>>    create mode 100644 Documentation/devicetree/bindings/lpddr3/lpddr3.txt
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/lpddr3/lpddr3-timings.txt b/Documentation/devicetree/bindings/lpddr3/lpddr3-timings.txt
+>>>> new file mode 100644
+>>>> index 0000000..ebf3e00
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/lpddr3/lpddr3-timings.txt
+>>>> @@ -0,0 +1,57 @@
+>>>> +* AC timing parameters of LPDDR3 memories for a given speed-bin.
+>>>> +* The structures are based on LPDDR2 and extended where needed.
+>>>> +
+>>>> +Required properties:
+>>>> +- compatible : Should be "jedec,lpddr3-timings"
+>>>> +- min-freq : minimum DDR clock frequency for the speed-bin. Type is <u32>
+>>>> +- max-freq : maximum DDR clock frequency for the speed-bin. Type is <u32>
+>>>> +
+>>>> +Optional properties:
+>>>> +
+>>>> +The following properties represent AC timing parameters from the memory
+>>>> +data-sheet of the device for a given speed-bin. All these properties are
+>>>> +of type <u32> and the default unit is ps (pico seconds).
+>>>> +- tRFC
+>>>> +- tRRD
+>>>> +- tRPab
+>>>> +- tRPpb
+>>>> +- tRCD
+>>>> +- tRC
+>>>> +- tRAS
+>>>> +- tWTR
+>>>> +- tWR
+>>>> +- tRTP
+>>>> +- tW2W-C2C
+>>>> +- tR2R-C2C
+>>>> +- tFAW
+>>>> +- tXSR
+>>>> +- tXP
+>>>> +- tCKE
+>>>> +- tCKESR
+>>>> +- tMRD
+>>>> +
+>>>> +Example:
+>>>> +
+>>>> +timings_samsung_K3QF2F20DB_800mhz: lpddr3-timings@0 {
+>>>
+>>> Since the lpddr2 version was written, we've gotten stricter about
+>>> allowing unit-address without reg property. Perhaps 'reg' should be the
+>>> max-freq instead.
+>> OK, so I will rename 'max-freq' to 'reg' and add a comment with:
+>> '/* workaround: it shows max-freq */
+>> Does it make sense?
+> 
+> Sure.
+OK. Thank you.
 
->
-> (I note that for SMMUv3 we now handle that situation with the slightly
-> more heavy-handed approach of just turning off reporting and letting the
-> 'rogue' devices fault silently, but I appreciate that not all IOMMUs may
-> have that option)
->
-> > Signed-off-by: Tom Murphy <tmurphy@arista.com>
-> > ---
-> >   drivers/iommu/dma-iommu.c | 30 ++++++++++++++++++++++++++++++
-> >   1 file changed, 30 insertions(+)
-> >
-> > diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> > index 7a96c2c8f56b..c18f74ad1e8b 100644
-> > --- a/drivers/iommu/dma-iommu.c
-> > +++ b/drivers/iommu/dma-iommu.c
-> > @@ -322,6 +322,17 @@ static int iommu_dma_init_domain(struct iommu_domain *domain, dma_addr_t base,
-> >       return iova_reserve_iommu_regions(dev, domain);
-> >   }
-> >
-> > +static int handle_deferred_device(struct device *dev)
-> > +{
-> > +     struct iommu_domain *domain = iommu_get_domain_for_dev(dev);
->
-> We don't want iommu_get_domain_for_dev() in fast-paths, as the
-> contention on the group refcount has proven to have a surprisingly high
-> overhead on some large systems. That's what iommu_get_dma_domain()
-> solves, but ideally, can this be wrapped in is_kdump_kernel() such as to
-> have no impact at all on the general case?
-
-will do.
-
->
-> > +     const struct iommu_ops *ops = domain->ops;
-> > +
-> > +     if (ops->is_attach_deferred && ops->is_attach_deferred(domain, dev))
-> > +             return iommu_attach_device(domain, dev);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> >   /**
-> >    * dma_info_to_prot - Translate DMA API directions and attributes to IOMMU API
-> >    *                    page flags.
-> > @@ -835,6 +846,8 @@ static dma_addr_t iommu_dma_map_page(struct device *dev, struct page *page,
-> >       bool coherent = dev_is_dma_coherent(dev);
-> >       dma_addr_t dma_handle;
-> >
-> > +     handle_deferred_device(dev);
-> > +
-> >       dma_handle =__iommu_dma_map(dev, phys, size,
-> >                       dma_info_to_prot(dir, coherent, attrs),
-> >                       iommu_get_dma_domain(dev));
-> > @@ -849,6 +862,8 @@ static void iommu_dma_unmap_page(struct device *dev, dma_addr_t dma_handle,
-> >   {
-> >       struct iommu_domain *domain = iommu_get_dma_domain(dev);
-> >
-> > +     handle_deferred_device(dev);
->
-> You don't need this - it's completely bogus to make an unmap call
-> without having already called the corresponding map function, so we can
-> assume it's already been dealt with.
->
-> > +
-> >       if (!dev_is_dma_coherent(dev) && !(attrs & DMA_ATTR_SKIP_CPU_SYNC)) {
-> >               phys_addr_t phys = iommu_iova_to_phys(domain, dma_handle);
-> >
-> > @@ -873,6 +888,8 @@ static int __finalise_sg(struct device *dev, struct scatterlist *sg, int nents,
-> >       unsigned int cur_len = 0, max_len = dma_get_max_seg_size(dev);
-> >       int i, count = 0;
-> >
-> > +     handle_deferred_device(dev);
->
-> Hmm, this should be in iommu_dma_map_sg() - that's the guy that needs a
-> valid domain, and it's impossible to get to __finalise_sg() without
-> having been through there anyway.
->
-> > +
-> >       for_each_sg(sg, s, nents, i) {
-> >               /* Restore this segment's original unaligned fields first */
-> >               unsigned int s_iova_off = sg_dma_address(s);
-> > @@ -1022,6 +1039,8 @@ static void iommu_dma_unmap_sg(struct device *dev, struct scatterlist *sg,
-> >       struct scatterlist *tmp;
-> >       int i;
-> >
-> > +     handle_deferred_device(dev);
->
-> Again, not necessary.
->
-> > +
-> >       if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC) == 0)
-> >               iommu_dma_sync_sg_for_cpu(dev, sg, nents, dir);
-> >
-> > @@ -1042,6 +1061,8 @@ static void iommu_dma_unmap_sg(struct device *dev, struct scatterlist *sg,
-> >   static dma_addr_t iommu_dma_map_resource(struct device *dev, phys_addr_t phys,
-> >               size_t size, enum dma_data_direction dir, unsigned long attrs)
-> >   {
-> > +     handle_deferred_device(dev);
->
-> Ditto.
->
-> > +
-> >       return __iommu_dma_map(dev, phys, size,
-> >                       dma_info_to_prot(dir, false, attrs) | IOMMU_MMIO,
-> >                       iommu_get_dma_domain(dev));
-> > @@ -1050,12 +1071,15 @@ static dma_addr_t iommu_dma_map_resource(struct device *dev, phys_addr_t phys,
-> >   static void iommu_dma_unmap_resource(struct device *dev, dma_addr_t handle,
-> >               size_t size, enum dma_data_direction dir, unsigned long attrs)
-> >   {
-> > +     handle_deferred_device(dev);
->
-> Ditto.
->
-> > +
-> >       __iommu_dma_unmap(iommu_get_dma_domain(dev), handle, size);
-> >   }
-> >
-> >   static void *iommu_dma_alloc(struct device *dev, size_t size,
-> >               dma_addr_t *dma_handle, gfp_t gfp, unsigned long attrs)
-> >   {
-> > +     handle_deferred_device(dev);
-> >       gfp |= __GFP_ZERO;
-> >
-> >   #ifdef CONFIG_DMA_DIRECT_REMAP
-> > @@ -1076,6 +1100,8 @@ static void iommu_dma_free(struct device *dev, size_t size, void *cpu_addr,
-> >   {
-> >       struct page *page;
-> >
-> > +     handle_deferred_device(dev);
->
-> Similarly, you can't free anything that hasn't already come from a
-> successful call to iommu_dma_alloc()...
->
-> > +
-> >       /*
-> >        * cpu_addr can be one of 4 things depending on how it was allocated:
-> >        *
-> > @@ -1115,6 +1141,8 @@ static int iommu_dma_mmap(struct device *dev, struct vm_area_struct *vma,
-> >       unsigned long pfn;
-> >       int ret;
-> >
-> > +     handle_deferred_device(dev);
->
-> ...nor can you mmap() it...
->
-> > +
-> >       vma->vm_page_prot = arch_dma_mmap_pgprot(dev, vma->vm_page_prot, attrs);
-> >
-> >       if (dma_mmap_from_dev_coherent(dev, vma, cpu_addr, size, &ret))
-> > @@ -1143,6 +1171,8 @@ static int iommu_dma_get_sgtable(struct device *dev, struct sg_table *sgt,
-> >       struct page *page;
-> >       int ret;
-> >
-> > +     handle_deferred_device(dev);
->
-> ...nor attempt to export it.
-
-That all makes sense. Will fix.
-
->
-> Robin.
->
-> > +
-> >   #ifdef CONFIG_DMA_DIRECT_REMAP
-> >       if (is_vmalloc_addr(cpu_addr)) {
-> >               if (!(attrs & DMA_ATTR_FORCE_CONTIGUOUS))
-> >
+Regards,
+Lukasz
+> 
+> Rob
+> 
+> 
