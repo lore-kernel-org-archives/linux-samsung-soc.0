@@ -1,162 +1,52 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 2/2] ARM: exynos_defconfig: Trim and reorganize with savedefconfig
-Date: Mon, 29 Apr 2019 19:36:20 +0200
-Message-ID: <20190429173620.5078-2-krzk@kernel.org>
-References: <20190429173620.5078-1-krzk@kernel.org>
+From: Tom Murphy <tmurphy@arista.com>
+Subject: [PATCH v2 0/4] iommu/amd: Convert the AMD iommu driver to the dma-iommu api
+Date: Tue, 30 Apr 2019 01:29:47 +0100
+Message-ID: <20190430002952.18909-1-tmurphy@arista.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190429173620.5078-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: iommu@lists.linux-foundation.org
+Cc: murphyt7@tcd.ie, Tom Murphy <tmurphy@arista.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Trim and reorganize the defconfig with savedefconfig on latest
-linux-next.  The ARCH_EXYNOS3 is removed because it become the default.
+Convert the AMD iommu driver to the dma-iommu api. Remove the iova
+handling and reserve region code from the AMD iommu driver.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/configs/exynos_defconfig | 62 ++++++++++++++-----------------
- 1 file changed, 27 insertions(+), 35 deletions(-)
+Change-log:
+v2:
+-Rebase on top of this series:
+ http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/dma-iommu-ops.3
+-Add a gfp_t parameter to the iommu_ops::map function.
+-Made use of the reserve region code inside the dma-iommu api
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index c95c54284da2..8d08eed99aa1 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -1,21 +1,15 @@
- CONFIG_SYSVIPC=y
- CONFIG_NO_HZ=y
- CONFIG_HIGH_RES_TIMERS=y
-+CONFIG_PREEMPT=y
- CONFIG_CGROUPS=y
- CONFIG_BLK_DEV_INITRD=y
- CONFIG_PERF_EVENTS=y
--CONFIG_MODULES=y
--CONFIG_MODULE_UNLOAD=y
--CONFIG_PARTITION_ADVANCED=y
- CONFIG_ARCH_EXYNOS=y
--CONFIG_ARCH_EXYNOS3=y
- CONFIG_SMP=y
- CONFIG_BIG_LITTLE=y
- CONFIG_NR_CPUS=8
--CONFIG_PREEMPT=y
--CONFIG_AEABI=y
- CONFIG_HIGHMEM=y
--CONFIG_CMA=y
- CONFIG_SECCOMP=y
- CONFIG_ZBOOT_ROM_TEXT=0x0
- CONFIG_ZBOOT_ROM_BSS=0x0
-@@ -37,6 +31,16 @@ CONFIG_NEON=y
- CONFIG_KERNEL_MODE_NEON=y
- CONFIG_PM_DEBUG=y
- CONFIG_PM_ADVANCED_DEBUG=y
-+CONFIG_ARM_CRYPTO=y
-+CONFIG_CRYPTO_SHA1_ARM_NEON=m
-+CONFIG_CRYPTO_SHA256_ARM=m
-+CONFIG_CRYPTO_SHA512_ARM=m
-+CONFIG_CRYPTO_AES_ARM_BS=m
-+CONFIG_CRYPTO_CHACHA20_NEON=m
-+CONFIG_MODULES=y
-+CONFIG_MODULE_UNLOAD=y
-+CONFIG_PARTITION_ADVANCED=y
-+CONFIG_CMA=y
- CONFIG_NET=y
- CONFIG_PACKET=y
- CONFIG_UNIX=y
-@@ -60,10 +64,7 @@ CONFIG_BT_HCIBTSDIO=m
- CONFIG_BT_HCIUART=m
- CONFIG_BT_HCIUART_BCSP=y
- CONFIG_BT_HCIUART_ATH3K=y
--CONFIG_BT_HCIUART_3WIRE=y
- CONFIG_BT_HCIUART_INTEL=y
--CONFIG_BT_HCIUART_BCM=y
--CONFIG_BT_HCIUART_QCA=y
- CONFIG_BT_HCIUART_AG6XX=y
- CONFIG_BT_HCIUART_MRVL=y
- CONFIG_BT_HCIBCM203X=m
-@@ -86,8 +87,6 @@ CONFIG_NFC_SHDLC=y
- CONFIG_NFC_S3FWRN5_I2C=y
- CONFIG_DEVTMPFS=y
- CONFIG_DEVTMPFS_MOUNT=y
--CONFIG_DMA_CMA=y
--CONFIG_CMA_SIZE_MBYTES=96
- CONFIG_BLK_DEV_LOOP=y
- CONFIG_BLK_DEV_CRYPTOLOOP=y
- CONFIG_BLK_DEV_RAM=y
-@@ -155,8 +154,6 @@ CONFIG_THERMAL_EMULATION=y
- CONFIG_WATCHDOG=y
- CONFIG_S3C2410_WATCHDOG=y
- CONFIG_MFD_CROS_EC=y
--CONFIG_CROS_EC_I2C=y
--CONFIG_CROS_EC_SPI=y
- CONFIG_MFD_MAX14577=y
- CONFIG_MFD_MAX77686=y
- CONFIG_MFD_MAX77693=y
-@@ -282,16 +279,17 @@ CONFIG_RTC_DRV_S5M=y
- CONFIG_RTC_DRV_S3C=y
- CONFIG_DMADEVICES=y
- CONFIG_PL330_DMA=y
--CONFIG_CROS_EC_CHARDEV=y
-+CONFIG_CROS_EC_I2C=y
-+CONFIG_CROS_EC_SPI=y
- CONFIG_COMMON_CLK_MAX77686=y
- CONFIG_COMMON_CLK_S2MPS11=y
-+CONFIG_EXYNOS_IOMMU=y
- CONFIG_PM_DEVFREQ=y
- CONFIG_DEVFREQ_GOV_PERFORMANCE=y
- CONFIG_DEVFREQ_GOV_POWERSAVE=y
- CONFIG_DEVFREQ_GOV_USERSPACE=y
- CONFIG_ARM_EXYNOS_BUS_DEVFREQ=y
- CONFIG_DEVFREQ_EVENT_EXYNOS_NOCP=y
--CONFIG_EXYNOS_IOMMU=y
- CONFIG_EXTCON=y
- CONFIG_EXTCON_MAX14577=y
- CONFIG_EXTCON_MAX77693=y
-@@ -319,21 +317,9 @@ CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ASCII=y
- CONFIG_NLS_ISO8859_1=y
- CONFIG_NLS_UTF8=y
--CONFIG_PRINTK_TIME=y
--CONFIG_DYNAMIC_DEBUG=y
--CONFIG_DEBUG_INFO=y
--CONFIG_DEBUG_FS=y
--CONFIG_MAGIC_SYSRQ=y
--CONFIG_DEBUG_KERNEL=y
--CONFIG_SOFTLOCKUP_DETECTOR=y
--# CONFIG_DETECT_HUNG_TASK is not set
--CONFIG_PROVE_LOCKING=y
--CONFIG_DEBUG_ATOMIC_SLEEP=y
--CONFIG_DEBUG_USER=y
--CONFIG_CRYPTO_RSA=m
--CONFIG_CRYPTO_DH=m
- CONFIG_CRYPTO_USER=m
- CONFIG_CRYPTO_TEST=m
-+CONFIG_CRYPTO_DH=m
- CONFIG_CRYPTO_LRW=m
- CONFIG_CRYPTO_XTS=m
- CONFIG_CRYPTO_MD5=m
-@@ -348,12 +334,18 @@ CONFIG_CRYPTO_USER_API_RNG=m
- CONFIG_CRYPTO_USER_API_AEAD=m
- CONFIG_CRYPTO_DEV_EXYNOS_RNG=y
- CONFIG_CRYPTO_DEV_S5P=y
--CONFIG_ARM_CRYPTO=y
--CONFIG_CRYPTO_SHA1_ARM_NEON=m
--CONFIG_CRYPTO_SHA256_ARM=m
--CONFIG_CRYPTO_SHA512_ARM=m
--CONFIG_CRYPTO_AES_ARM_BS=m
--CONFIG_CRYPTO_CHACHA20_NEON=m
- CONFIG_CRC_CCITT=y
-+CONFIG_DMA_CMA=y
-+CONFIG_CMA_SIZE_MBYTES=96
- CONFIG_FONTS=y
- CONFIG_FONT_7x14=y
-+CONFIG_PRINTK_TIME=y
-+CONFIG_DYNAMIC_DEBUG=y
-+CONFIG_DEBUG_INFO=y
-+CONFIG_MAGIC_SYSRQ=y
-+CONFIG_DEBUG_KERNEL=y
-+CONFIG_SOFTLOCKUP_DETECTOR=y
-+# CONFIG_DETECT_HUNG_TASK is not set
-+CONFIG_PROVE_LOCKING=y
-+CONFIG_DEBUG_ATOMIC_SLEEP=y
-+CONFIG_DEBUG_USER=y
+Tom Murphy (4):
+  iommu: Add gfp parameter to iommu_ops::map
+  iommu/dma-iommu: Handle deferred devices
+  iommu/dma-iommu: Use the dev->coherent_dma_mask
+  iommu/amd: Convert the AMD iommu driver to the dma-iommu api
+
+ drivers/iommu/Kconfig          |   1 +
+ drivers/iommu/amd_iommu.c      | 694 ++++-----------------------------
+ drivers/iommu/arm-smmu-v3.c    |   2 +-
+ drivers/iommu/arm-smmu.c       |   2 +-
+ drivers/iommu/dma-iommu.c      |  52 ++-
+ drivers/iommu/exynos-iommu.c   |   2 +-
+ drivers/iommu/intel-iommu.c    |   2 +-
+ drivers/iommu/iommu.c          |  43 +-
+ drivers/iommu/ipmmu-vmsa.c     |   2 +-
+ drivers/iommu/msm_iommu.c      |   2 +-
+ drivers/iommu/mtk_iommu.c      |   2 +-
+ drivers/iommu/mtk_iommu_v1.c   |   2 +-
+ drivers/iommu/omap-iommu.c     |   2 +-
+ drivers/iommu/qcom_iommu.c     |   2 +-
+ drivers/iommu/rockchip-iommu.c |   2 +-
+ drivers/iommu/s390-iommu.c     |   2 +-
+ drivers/iommu/tegra-gart.c     |   2 +-
+ drivers/iommu/tegra-smmu.c     |   2 +-
+ include/linux/iommu.h          |  21 +-
+ 19 files changed, 187 insertions(+), 652 deletions(-)
+
 -- 
 2.17.1
