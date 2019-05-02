@@ -1,129 +1,45 @@
 From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: Re: [PATCH v3 2/4] drivers: devfreq: events: extend events by type
- of counted data
-Date: Thu, 2 May 2019 11:07:43 +0200
-Message-ID: <4cd7b7a3-7458-2166-a784-1a94830f5507@partner.samsung.com>
+Subject: Re: [PATCH v3 1/4] include: dt-bindings: add Performance Monitoring
+ Unit for Exynos
+Date: Thu, 2 May 2019 11:16:24 +0200
+Message-ID: <e29648bb-9e94-1b02-5c6e-03b099ad807e@partner.samsung.com>
 References: <1555681688-19643-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20190419134821eucas1p2461a27e28387ff2b87c149f09582d2a0@eucas1p2.samsung.com>
-        <1555681688-19643-3-git-send-email-l.luba@partner.samsung.com>
-        <3557d507-0463-89de-4025-fbeaaef78bed@samsung.com>
-        <adb6e86a-880e-f9b7-76b2-777a531895d2@partner.samsung.com>
-        <be9dfa71-b6fd-ebe3-e8be-a7ea28765225@samsung.com>
+        <CGME20190419134820eucas1p154e839769af0e1b8bae17ce3efa0ba93@eucas1p1.samsung.com>
+        <1555681688-19643-2-git-send-email-l.luba@partner.samsung.com>
+        <20190430223358.GA22052@bogus>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <be9dfa71-b6fd-ebe3-e8be-a7ea28765225@samsung.com>
+In-Reply-To: <20190430223358.GA22052@bogus>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: b.zolnierkie@samsung.com, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, kgene@kernel.org, willy.mh.wolff.ml@gmail.com
+To: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, cw00.choi@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, kgene@kernel.org, willy.mh.wolff.ml@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
 
-On 5/2/19 3:25 AM, Chanwoo Choi wrote:
-> Hi Lukasz,
-> 
-> On 19. 5. 1. 오전 6:19, Lukasz Luba wrote:
->> Hi Chanwoo,
+On 5/1/19 12:33 AM, Rob Herring wrote:
+> On Fri, 19 Apr 2019 15:48:05 +0200, Lukasz Luba wrote:
+>> This patch add support of a new feature which can be used in DT:
+>> Performance Monitoring Unit with defined event data type.
+>> In this patch the event data types are defined for Exynos PPMU.
+>> The patch also updates the MAINTAINERS file accordingly and
+>> adds the header file to devfreq event subsystem.
 >>
->> On 4/30/19 9:34 AM, Chanwoo Choi wrote:
->>> Hi Lukasz,
->>>
->>> On 19. 4. 19. 오후 10:48, Lukasz Luba wrote:
->>>> This patch adds posibility to choose what type of data should be counted
->>>> by the PPMU counter. Now the type comes from DT where the event has been
->>>> defined. When there is no 'event-data-type' the default value is used,
->>>> which is 'read data in bytes'.
->>>> It is needed when you want to know not only read+write data bytes but
->>>> i.e. only write data in byte, or number of read requests, etc.
->>>>
->>>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
->>>> ---
->>>>    drivers/devfreq/event/exynos-ppmu.c | 61 +++++++++++++++++++++++++------------
->>>>    include/linux/devfreq-event.h       |  6 ++++
->>>>    2 files changed, 48 insertions(+), 19 deletions(-)
->>>>
->>>> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
->>>> index c61de0b..073bf2c 100644
->>>> --- a/drivers/devfreq/event/exynos-ppmu.c
->>>> +++ b/drivers/devfreq/event/exynos-ppmu.c
->>>> @@ -154,9 +154,9 @@ static int exynos_ppmu_set_event(struct devfreq_event_dev *edev)
->>>>    	if (ret < 0)
->>>>    		return ret;
->>>>    
->>>> -	/* Set the event of Read/Write data count  */
->>>> +	/* Set the event of proper data type monitoring */
->>>>    	ret = regmap_write(info->regmap, PPMU_BEVTxSEL(id),
->>>> -				PPMU_RO_DATA_CNT | PPMU_WO_DATA_CNT);
->>>> +			   edev->desc->data_type);
->>>>    	if (ret < 0)
->>>>    		return ret;
->>>>    
->>>> @@ -368,23 +368,11 @@ static int exynos_ppmu_v2_set_event(struct devfreq_event_dev *edev)
->>>>    	if (ret < 0)
->>>>    		return ret;
->>>>    
->>>> -	/* Set the event of Read/Write data count  */
->>>> -	switch (id) {
->>>> -	case PPMU_PMNCNT0:
->>>> -	case PPMU_PMNCNT1:
->>>> -	case PPMU_PMNCNT2:
->>>> -		ret = regmap_write(info->regmap, PPMU_V2_CH_EVx_TYPE(id),
->>>> -				PPMU_V2_RO_DATA_CNT | PPMU_V2_WO_DATA_CNT);
->>>> -		if (ret < 0)
->>>> -			return ret;
->>>> -		break;
->>>> -	case PPMU_PMNCNT3:
->>>> -		ret = regmap_write(info->regmap, PPMU_V2_CH_EVx_TYPE(id),
->>>> -				PPMU_V2_EVT3_RW_DATA_CNT);
->>>> -		if (ret < 0)
->>>> -			return ret;
->>>> -		break;
->>>> -	}
->>>> +	/* Set the event of proper data type monitoring */
->>>> +	ret = regmap_write(info->regmap, PPMU_V2_CH_EVx_TYPE(id),
->>>> +			   edev->desc->data_type);
->>>> +	if (ret < 0)
->>>> +		return ret;
->>>>    
->>>>    	/* Reset cycle counter/performance counter and enable PPMU */
->>>>    	ret = regmap_read(info->regmap, PPMU_V2_PMNC, &pmnc);
->>>> @@ -508,6 +496,7 @@ static int of_get_devfreq_events(struct device_node *np,
->>>>    	struct device *dev = info->dev;
->>>>    	struct device_node *events_np, *node;
->>>>    	int i, j, count;
->>>> +	int ret;
->>>>    
->>>>    	events_np = of_get_child_by_name(np, "events");
->>>>    	if (!events_np) {
->>>> @@ -544,6 +533,40 @@ static int of_get_devfreq_events(struct device_node *np,
->>>>    		desc[j].driver_data = info;
->>>>    
->>>>    		of_property_read_string(node, "event-name", &desc[j].name);
->>>> +		ret = of_property_read_u32(node, "event-data-type",
->>>> +					   &desc[j].data_type);
->>>> +		if (ret) {
->>>> +			/* Set the event of proper data type counting.
->>>> +			 * Check if the data type has been defined in DT,
->>>> +			 * use default if not.
->>>> +			 */
->>>> +			if (of_device_is_compatible(np,
->>>> +					"samsung,exynos-ppmu-v2")) {
->>>
->>> It is not proper to compare the compatible string again
->>> in the device driver. Instead, you can define the ppmu device type
->>> as following and then use 'struct of_device_id' in order to
->>> identify the device type.
->> I have been thinking about modifying the code in similar fashion as you
->> did. Good to see similar approach. I'll take your changes with a small
->> additional code, which sets the 'info->ppmu_type' before the for
->> loop, as an additional patch. Would it be OK if I add you as an author
->> and add Sign-off-by: Chanwoo Choi <cw00.choi@samsung.com>?
+>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+>> ---
+>>   MAINTAINERS                           |  1 +
+>>   include/dt-bindings/pmu/exynos_ppmu.h | 26 ++++++++++++++++++++++++++
+>>   2 files changed, 27 insertions(+)
+>>   create mode 100644 include/dt-bindings/pmu/exynos_ppmu.h
+>>
 > 
-> If you agree, just add the my signed-off-by on second line.
-OK
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> 
+> 
+Thank you, added to the commit message for the next patch set version.
 
 Regards,
 Lukasz
