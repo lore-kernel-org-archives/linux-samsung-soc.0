@@ -1,49 +1,53 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [BUG BISECT] USB on Exynos4412 fails after usb: dwc2: gadget:
- Replace phyif with phy_utmi_width
-Date: Fri, 3 May 2019 22:49:58 +0200
-Message-ID: <20190503204958.GA12532@kozik-lap>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+From: Tom Murphy <tmurphy@arista.com>
+Subject: [RFC 0/7] Convert the Intel iommu driver to the dma-ops api
+Date: Sat,  4 May 2019 14:23:16 +0100
+Message-ID: <20190504132327.27041-1-tmurphy@arista.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jules Maselbas <jmaselbas@kalray.eu>
-Cc: Minas Harutyunyan <hminas@synopsys.com>, Felipe Balbi <felipe.balbi@linux.intel.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+To: iommu@lists.linux-foundation.org
+Cc: murphyt7@tcd.ie, Tom Murphy <tmurphy@arista.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Alex Williamson <alex.williamson@redhat.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>li
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Convert the intel iommu driver to the dma-ops api so that we can remove a bunch of repeated code.
 
-Bisect pointed commit 707d80f0a3c5 ("usb: dwc2: gadget: Replace phyif
-with phy_utmi_width") as reason for failures of USB on Exynos4412,
-Odroid U3 board (ARMv7, exynos_defconfig, TFTP boot with nfsroot from
-NFSv4):
+This patchset depends on the "iommu/vt-d: Delegate DMA domain to generic iommu" and
+"iommu/amd: Convert the AMD iommu driver to the dma-iommu api" patch sets which haven't
+yet merged so this is just a RFC to get some feedback before I do more testing.
 
-[    4.333996] usb 1-2: new high-speed USB device number 3 using exynos-ehci
-[    4.503942] usb 1-2: device descriptor read/64, error -71
-[    4.793970] usb 1-2: device descriptor read/64, error -71
-[    4.914748] usb usb1-port2: attempt power cycle
-[    6.224267] usb 1-3: new high-speed USB device number 5 using exynos-ehci
-[    6.393983] usb 1-3: device descriptor read/64, error -71
-[    6.684243] usb 1-3: device descriptor read/64, error -71
-[    6.954259] usb 1-3: new high-speed USB device number 6 using exynos-ehci
-[    7.123980] usb 1-3: device descriptor read/64, error -71
-[    7.413969] usb 1-3: device descriptor read/64, error -71
-[    7.534778] usb usb1-port3: attempt power cycle
+Tom Murphy (7):
+  iommu/vt-d: Set the dma_ops per device so we can remove the
+    iommu_no_mapping code
+  iommu/vt-d: Remove iova handling code from non-dma ops path
+  iommu: improve iommu iotlb flushing
+  iommu/dma-iommu: Handle freelists in the dma-iommu api path
+  iommu/dma-iommu: add wrapper for iommu_dma_free_cpu_cached_iovas
+  iommu/vt-d: convert the intel iommu driver to the dma-iommu ops api
+  iommu/vt-d: Always set DMA_PTE_READ if the iommu doens't support zero
+    length reads
 
-The boot failure is effect of lack of network adapter (USB, smsc95xx).
-Expected:
-[    4.285831] usb 1-3: New USB device found, idVendor=0424, idProduct=3503, bcdDevice=a1.a0
-[    4.288986] usb 1-3: New USB device strings: Mfr=0, Product=0, SerialNumber=0
-[    4.299596] hub 1-3:1.0: USB hub found
-[    4.300027] hub 1-3:1.0: 3 ports detected
-[    5.895541] smsc95xx 1-2:1.0 eth0: link up, 100Mbps, full-duplex, lpa 0xCDE1
+ drivers/iommu/Kconfig           |   1 +
+ drivers/iommu/amd_iommu.c       |  14 +-
+ drivers/iommu/arm-smmu-v3.c     |   3 +-
+ drivers/iommu/arm-smmu.c        |   2 +-
+ drivers/iommu/dma-iommu.c       |  48 ++-
+ drivers/iommu/exynos-iommu.c    |   3 +-
+ drivers/iommu/intel-iommu.c     | 605 +++++---------------------------
+ drivers/iommu/iommu.c           |  21 +-
+ drivers/iommu/ipmmu-vmsa.c      |   2 +-
+ drivers/iommu/msm_iommu.c       |   2 +-
+ drivers/iommu/mtk_iommu.c       |   3 +-
+ drivers/iommu/mtk_iommu_v1.c    |   3 +-
+ drivers/iommu/omap-iommu.c      |   2 +-
+ drivers/iommu/qcom_iommu.c      |   2 +-
+ drivers/iommu/rockchip-iommu.c  |   2 +-
+ drivers/iommu/s390-iommu.c      |   3 +-
+ drivers/iommu/tegra-gart.c      |   2 +-
+ drivers/iommu/tegra-smmu.c      |   2 +-
+ drivers/vfio/vfio_iommu_type1.c |   3 +-
+ include/linux/dma-iommu.h       |   3 +
+ include/linux/intel-iommu.h     |   1 -
+ include/linux/iommu.h           |  24 +-
+ 22 files changed, 175 insertions(+), 576 deletions(-)
 
-Full kernel log is here:
-https://krzk.eu/#/builders/25/builds/1330/steps/14/logs/serial0
-https://krzk.eu/#/builders/25/builds/1330
-
-Let me know if you need any more details.
-
-Best regards,
-Krzysztof
+-- 
+2.17.1
