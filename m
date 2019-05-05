@@ -1,90 +1,57 @@
-From: Lu Baolu <baolu.lu@linux.intel.com>
-Subject: Re: [RFC 6/7] iommu/vt-d: convert the intel iommu driver to the
- dma-iommu ops api
-Date: Sun, 5 May 2019 10:37:32 +0800
-Message-ID: <602b77a2-9c68-ad14-b64f-904a7ff27a15@linux.intel.com>
-References: <20190504132327.27041-1-tmurphy@arista.com>
- <20190504132327.27041-7-tmurphy@arista.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] [media] exynos4-is: Add missing of_node_put to fix reference leaks
+Date: Sun,  5 May 2019 17:11:09 +0200
+Message-ID: <20190505151109.4361-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190504132327.27041-7-tmurphy@arista.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tom Murphy <tmurphy@arista.com>, iommu@lists.linux-foundation.org
-Cc: baolu.lu@linux.intel.com, murphyt7@tcd.ie, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Alex Williamson <alex.williamson@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, linux-ker
+To: Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Drop the reference to "parallel-ports" and remote endpoint's parent
+nodes obtained previously with of_get_child_by_name() and
+of_get_parent() respectively.
 
-On 5/4/19 9:23 PM, Tom Murphy wrote:
-> static int intel_iommu_add_device(struct device *dev)
->   {
-> +	struct dmar_domain *dmar_domain;
-> +	struct iommu_domain *domain;
->   	struct intel_iommu *iommu;
->   	struct iommu_group *group;
-> -	struct iommu_domain *domain;
-> +	dma_addr_t base;
->   	u8 bus, devfn;
->   
->   	iommu = device_to_iommu(dev, &bus, &devfn);
-> @@ -4871,9 +4514,12 @@ static int intel_iommu_add_device(struct device *dev)
->   	if (IS_ERR(group))
->   		return PTR_ERR(group);
->   
-> +	base = IOVA_START_PFN << VTD_PAGE_SHIFT;
->   	domain = iommu_get_domain_for_dev(dev);
-> +	dmar_domain = to_dmar_domain(domain);
->   	if (domain->type == IOMMU_DOMAIN_DMA)
-> -		dev->dma_ops = &intel_dma_ops;
-> +		iommu_setup_dma_ops(dev, base,
-> +				__DOMAIN_MAX_ADDR(dmar_domain->gaw) - base);
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/media/platform/exynos4-is/media-dev.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-I didn't find the implementation of iommu_setup_dma_ops() in this
-series. Will the iova resource be initialized in this function?
-
-If so, will this block iommu_group_create_direct_mappings() which
-reserves and maps the reserved iova ranges.
-
->   
->   	iommu_group_put(group);
->   	return 0;
-> @@ -5002,19 +4648,6 @@ int intel_iommu_enable_pasid(struct intel_iommu *iommu, struct intel_svm_dev *sd
->   	return ret;
->   }
->   
-> -static void intel_iommu_apply_resv_region(struct device *dev,
-> -					  struct iommu_domain *domain,
-> -					  struct iommu_resv_region *region)
-> -{
-> -	struct dmar_domain *dmar_domain = to_dmar_domain(domain);
-> -	unsigned long start, end;
-> -
-> -	start = IOVA_PFN(region->start);
-> -	end   = IOVA_PFN(region->start + region->length - 1);
-> -
-> -	WARN_ON_ONCE(!reserve_iova(&dmar_domain->iovad, start, end));
-> -}
-> -
->   struct intel_iommu *intel_svm_device_to_iommu(struct device *dev)
->   {
->   	struct intel_iommu *iommu;
-> @@ -5050,13 +4683,13 @@ const struct iommu_ops intel_iommu_ops = {
->   	.detach_dev		= intel_iommu_detach_device,
->   	.map			= intel_iommu_map,
->   	.unmap			= intel_iommu_unmap,
-> +	.flush_iotlb_all	= iommu_flush_iova,
->   	.flush_iotlb_range	= intel_iommu_flush_iotlb_range,
->   	.iova_to_phys		= intel_iommu_iova_to_phys,
->   	.add_device		= intel_iommu_add_device,
->   	.remove_device		= intel_iommu_remove_device,
->   	.get_resv_regions	= intel_iommu_get_resv_regions,
->   	.put_resv_regions	= intel_iommu_put_resv_regions,
-> -	.apply_resv_region	= intel_iommu_apply_resv_region,
-
-With this removed, how will iommu_group_create_direct_mappings() work?
-
-Best regards,
-Lu Baolu
+diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
+index 463f2d84553e..d1d5041cdae5 100644
+--- a/drivers/media/platform/exynos4-is/media-dev.c
++++ b/drivers/media/platform/exynos4-is/media-dev.c
+@@ -449,6 +449,7 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
+ 		pd->fimc_bus_type = FIMC_BUS_TYPE_ISP_WRITEBACK;
+ 	else
+ 		pd->fimc_bus_type = pd->sensor_bus_type;
++	of_node_put(np);
+ 
+ 	if (WARN_ON(index >= ARRAY_SIZE(fmd->sensor))) {
+ 		of_node_put(rem);
+@@ -474,7 +475,8 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
+ static int fimc_md_register_sensor_entities(struct fimc_md *fmd)
+ {
+ 	struct device_node *parent = fmd->pdev->dev.of_node;
+-	struct device_node *node, *ports;
++	struct device_node *ports = NULL;
++	struct device_node *node;
+ 	int index = 0;
+ 	int ret;
+ 
+@@ -523,12 +525,14 @@ static int fimc_md_register_sensor_entities(struct fimc_md *fmd)
+ 		}
+ 		index++;
+ 	}
++	of_node_put(ports);
+ 
+ rpm_put:
+ 	pm_runtime_put(fmd->pmf);
+ 	return 0;
+ 
+ cleanup:
++	of_node_put(ports);
+ 	v4l2_async_notifier_cleanup(&fmd->subdev_notifier);
+ 	pm_runtime_put(fmd->pmf);
+ 	return ret;
+-- 
+2.17.1
