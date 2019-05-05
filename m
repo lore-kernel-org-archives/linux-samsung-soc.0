@@ -1,53 +1,52 @@
-From: Tom Murphy <tmurphy@arista.com>
-Subject: [RFC 7/7] iommu/vt-d: Always set DMA_PTE_READ if the iommu doens't support zero length reads
-Date: Sat,  4 May 2019 14:23:23 +0100
-Message-ID: <20190504132327.27041-8-tmurphy@arista.com>
+From: Lu Baolu <baolu.lu@linux.intel.com>
+Subject: Re: [RFC 2/7] iommu/vt-d: Remove iova handling code from non-dma ops
+ path
+Date: Sun, 5 May 2019 09:19:51 +0800
+Message-ID: <bf35694d-3ff4-0df7-0802-b0e87a9a0d47@linux.intel.com>
 References: <20190504132327.27041-1-tmurphy@arista.com>
+ <20190504132327.27041-3-tmurphy@arista.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190504132327.27041-1-tmurphy@arista.com>
+In-Reply-To: <20190504132327.27041-3-tmurphy@arista.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: iommu@lists.linux-foundation.org
-Cc: murphyt7@tcd.ie, Tom Murphy <tmurphy@arista.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Alex Williamson <alex.williamson@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>li
+To: Tom Murphy <tmurphy@arista.com>, iommu@lists.linux-foundation.org
+Cc: baolu.lu@linux.intel.com, Heiko Stuebner <heiko@sntech.de>, kvm@vger.kernel.org, Will Deacon <will.deacon@arm.com>, David Brown <david.brown@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Andy Gross <andy.gross@linaro.org>, linux-tegra@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, linux-arm-msm@vger.kernel.org, Alex Williamson <alex.williamson@redhat.com>, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lis
 List-Id: linux-samsung-soc@vger.kernel.org
 
-To match the dma-ops api path the DMA_PTE_READ should be set if ZLR
-isn't supported in the iommu
+Hi,
 
-Signed-off-by: Tom Murphy <tmurphy@arista.com>
----
- drivers/iommu/intel-iommu.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+On 5/4/19 9:23 PM, Tom Murphy via iommu wrote:
+> @@ -4181,58 +4168,37 @@ static int intel_iommu_memory_notifier(struct notifier_block *nb,
+>   				       unsigned long val, void *v)
+>   {
+>   	struct memory_notify *mhp = v;
+> -	unsigned long long start, end;
+> -	unsigned long start_vpfn, last_vpfn;
+> +	unsigned long start_vpfn = mm_to_dma_pfn(mhp->start_pfn);
+> +	unsigned long last_vpfn = mm_to_dma_pfn(mhp->start_pfn +
+> +			mhp->nr_pages - 1);
+>   
+>   	switch (val) {
+>   	case MEM_GOING_ONLINE:
+> -		start = mhp->start_pfn << PAGE_SHIFT;
+> -		end = ((mhp->start_pfn + mhp->nr_pages) << PAGE_SHIFT) - 1;
+> -		if (iommu_domain_identity_map(si_domain, start, end)) {
+> -			pr_warn("Failed to build identity map for [%llx-%llx]\n",
+> -				start, end);
+> +		if (iommu_domain_identity_map(si_domain, start_vpfn,
+> +					last_vpfn)) {
+> +			pr_warn("Failed to build identity map for [%lx-%lx]\n",
+> +				start_vpfn, last_vpfn);
+>   			return NOTIFY_BAD;
+>   		}
+>   		break;
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 980fc4816d72..e78b0000056d 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -4378,6 +4378,17 @@ static void intel_iommu_detach_device(struct iommu_domain *domain,
- 	dmar_remove_one_dev_info(dev);
- }
- 
-+static bool supports_zlr(struct dmar_domain *domain)
-+{
-+	int i;
-+
-+	for_each_domain_iommu(i, domain) {
-+		if (cap_zlr(g_iommus[i]->cap))
-+			return true;
-+	}
-+	return false;
-+}
-+
- static int intel_iommu_map(struct iommu_domain *domain,
- 			   unsigned long iova, phys_addr_t hpa,
- 			   size_t size, int iommu_prot)
-@@ -4391,7 +4402,7 @@ static int intel_iommu_map(struct iommu_domain *domain,
- 	if (dmar_domain == si_domain && hw_pass_through)
- 		return 0;
- 
--	if (iommu_prot & IOMMU_READ)
-+	if (iommu_prot & IOMMU_READ || !supports_zlr(dmar_domain))
- 		prot |= DMA_PTE_READ;
- 	if (iommu_prot & IOMMU_WRITE)
- 		prot |= DMA_PTE_WRITE;
--- 
-2.17.1
+Actually we don't need to update the si_domain if iommu hardware
+supports pass-through mode. This should be made in a separated patch
+anyway.
+
+Best regards,
+Lu Baolu
