@@ -1,100 +1,47 @@
 From: Tom Murphy <tmurphy@arista.com>
-Subject: Re: [RFC 1/7] iommu/vt-d: Set the dma_ops per device so we can remove
- the iommu_no_mapping code
-Date: Mon, 6 May 2019 16:27:09 +0100
-Message-ID: <CAPL0++4_Qa+dxzQ2k6BJi_o+VSSrHEtomYgVmRqjtjsOfHbGew@mail.gmail.com>
-References: <20190504132327.27041-1-tmurphy@arista.com> <20190504132327.27041-2-tmurphy@arista.com>
- <8fef18f5-773c-e1c9-2537-c9dff5bfd35e@linux.intel.com>
+Subject: Re: [PATCH v2 3/4] iommu/dma-iommu: Use the dev->coherent_dma_mask
+Date: Mon, 6 May 2019 18:56:13 +0100
+Message-ID: <CAPL0++61WytVhs63tvt+hdpZKXGinrkYx=4nDtNx1UoNTRWWjw@mail.gmail.com>
+References: <20190430002952.18909-1-tmurphy@arista.com> <20190430002952.18909-4-tmurphy@arista.com>
+ <20190430111222.GA3191@infradead.org> <da835ce2-f73e-3035-e1d7-d3028cc1a838@arm.com>
+ <20190430113253.GA23210@infradead.org> <96ebb6fc-a889-fa94-09ba-65d505b85724@arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <8fef18f5-773c-e1c9-2537-c9dff5bfd35e@linux.intel.com>
+In-Reply-To: <96ebb6fc-a889-fa94-09ba-65d505b85724@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: iommu@lists.linux-foundation.org, Tom Murphy <murphyt7@tcd.ie>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Alex Williamson <alex.williamson@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.co>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Christoph Hellwig <hch@infradead.org>, iommu@lists.linux-foundation.org, Heiko Stuebner <heiko@sntech.de>, Will Deacon <will.deacon@arm.com>, David Brown <david.brown@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Andy Gross <andy.gross@linaro.org>, linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Tom Murphy <murphyt7@tcd.ie>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, May 6, 2019 at 2:48 AM Lu Baolu <baolu.lu@linux.intel.com> wrote:
->
-> Hi,
->
-> On 5/4/19 9:23 PM, Tom Murphy wrote:
-> > Set the dma_ops per device so we can remove the iommu_no_mapping code.
-> >
-> > Signed-off-by: Tom Murphy<tmurphy@arista.com>
-> > ---
-> >   drivers/iommu/intel-iommu.c | 85 +++----------------------------------
-> >   1 file changed, 6 insertions(+), 79 deletions(-)
-> >
-> > diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> > index eace915602f0..2db1dc47e7e4 100644
-> > --- a/drivers/iommu/intel-iommu.c
-> > +++ b/drivers/iommu/intel-iommu.c
-> > @@ -2622,17 +2622,6 @@ static int __init si_domain_init(int hw)
-> >       return 0;
-> >   }
-> >
-> > -static int identity_mapping(struct device *dev)
-> > -{
-> > -     struct device_domain_info *info;
-> > -
-> > -     info = dev->archdata.iommu;
-> > -     if (info && info != DUMMY_DEVICE_DOMAIN_INFO)
-> > -             return (info->domain == si_domain);
-> > -
-> > -     return 0;
-> > -}
-> > -
-> >   static int domain_add_dev_info(struct dmar_domain *domain, struct device *dev)
-> >   {
-> >       struct dmar_domain *ndomain;
-> > @@ -3270,43 +3259,6 @@ static unsigned long intel_alloc_iova(struct device *dev,
-> >       return iova_pfn;
-> >   }
-> >
-> > -/* Check if the dev needs to go through non-identity map and unmap process.*/
-> > -static int iommu_no_mapping(struct device *dev)
-> > -{
-> > -     int found;
-> > -
-> > -     if (iommu_dummy(dev))
-> > -             return 1;
-> > -
-> > -     found = identity_mapping(dev);
-> > -     if (found) {
-> > -             /*
-> > -              * If the device's dma_mask is less than the system's memory
-> > -              * size then this is not a candidate for identity mapping.
-> > -              */
-> > -             u64 dma_mask = *dev->dma_mask;
-> > -
-> > -             if (dev->coherent_dma_mask &&
-> > -                 dev->coherent_dma_mask < dma_mask)
-> > -                     dma_mask = dev->coherent_dma_mask;
-> > -
-> > -             if (dma_mask < dma_get_required_mask(dev)) {
-> > -                     /*
-> > -                      * 32 bit DMA is removed from si_domain and fall back
-> > -                      * to non-identity mapping.
-> > -                      */
-> > -                     dmar_remove_one_dev_info(dev);
-> > -                     dev_warn(dev, "32bit DMA uses non-identity mapping\n");
-> > -
-> > -                     return 0;
-> > -             }
->
-> The iommu_no_mapping() also checks whether any 32bit DMA device uses
-> identity mapping. The device might not work if the system memory space
-> is bigger than 4G.
+Just to make this clear, I won't apply Christoph's patch (the one in
+this email thread) and instead the only change I will make is to
+rename dma_limit to dma_mask.
 
-It looks like their is actually a bug in the v3 of the "iommu/vt-d:
-Delegate DMA domain to generic iommu" patch set. I will leave a
-message in that email thread. Fixing that bug should also fix this
-issue.
-
-
+On Tue, Apr 30, 2019 at 1:05 PM Robin Murphy <robin.murphy@arm.com> wrote:
 >
-> Will you add this to other place, or it's unnecessary?
+> On 30/04/2019 12:32, Christoph Hellwig wrote:
+> > On Tue, Apr 30, 2019 at 12:27:02PM +0100, Robin Murphy wrote:
+> >>> Hmm, I don't think we need the DMA mask for the MSI mapping, this
+> >>> should probably always use a 64-bit mask.
+> >>
+> >> If that were true then we wouldn't need DMA masks for regular mappings
+> >> either. If we have to map the MSI doorbell at all, then we certainly have to
+> >> place it at an IOVA that the relevant device is actually capable of
+> >> addressing.
+> >
+> > Well, as shown by the patch below we don't even look at the DMA mask
+> > for the MSI page - we just allocate from bottom to top.
 >
-> Best regards,
-> Lu Baolu
+> In the trivial cookie for unmanaged domains, yes, but in that case the
+> responsibility is on VFIO to provide a suitable (i.e. sub-32-bit)
+> address range for that cookie in the first place. In the managed case,
+> allocation uses the streaming mask via iommu_dma_get_msi_page() calling
+> __iommu_dma_map(). Admittedly the mask can then get overlooked when
+> reusing an existing mapping, which strictly could pose a problem if you
+> have multiple devices with incompatible masks in the same group (and
+> such that the PCI stuff doesn't already mitigate it), but that's such an
+> obscure corner case that I'm reticent to introduce the complication to
+> handle it until it's actually proven necessary.
+>
+> Robin.
