@@ -1,93 +1,63 @@
-From: Lu Baolu <baolu.lu@linux.intel.com>
-Subject: Re: [RFC 1/7] iommu/vt-d: Set the dma_ops per device so we can remove
- the iommu_no_mapping code
-Date: Mon, 6 May 2019 09:42:15 +0800
-Message-ID: <8fef18f5-773c-e1c9-2537-c9dff5bfd35e@linux.intel.com>
-References: <20190504132327.27041-1-tmurphy@arista.com>
- <20190504132327.27041-2-tmurphy@arista.com>
+From: Lukasz Luba <l.luba@partner.samsung.com>
+Subject: Re: [PATCH v3 3/4] Documentation: devicetree: add PPMU events
+ description
+Date: Mon, 6 May 2019 12:29:38 +0200
+Message-ID: <97277857-666d-7720-9d85-19120c977682@partner.samsung.com>
+References: <1555681688-19643-1-git-send-email-l.luba@partner.samsung.com>
+        <CGME20190419134822eucas1p29c6eff0f500311749b33c4f556123cf0@eucas1p2.samsung.com>
+        <1555681688-19643-4-git-send-email-l.luba@partner.samsung.com>
+        <20190430223629.GA22317@bogus>
+        <1fd44623-4a59-f014-1ae9-a7cc605ad30f@partner.samsung.com>
+        <CAL_JsqJcm9Z6vYFHGyAZ+h3-kmSv6e=3NtO-fjJn3-QT0JoX+w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190504132327.27041-2-tmurphy@arista.com>
+In-Reply-To: <CAL_JsqJcm9Z6vYFHGyAZ+h3-kmSv6e=3NtO-fjJn3-QT0JoX+w@mail.gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tom Murphy <tmurphy@arista.com>, iommu@lists.linux-foundation.org
-Cc: baolu.lu@linux.intel.com, murphyt7@tcd.ie, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Alex Williamson <alex.williamson@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, linux-ker
+To: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:THERMAL" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kukjin Kim <kgene@kernel.org>, willy.mh.wolff.ml@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Hi Rob,
 
-On 5/4/19 9:23 PM, Tom Murphy wrote:
-> Set the dma_ops per device so we can remove the iommu_no_mapping code.
+On 5/2/19 10:24 PM, Rob Herring wrote:
+> On Thu, May 2, 2019 at 3:52 AM Lukasz Luba <l.luba@partner.samsung.com> wrote:
+>>
+>> Hi Rob,
+>>
+>> On 5/1/19 12:36 AM, Rob Herring wrote:
+>>> On Fri, Apr 19, 2019 at 03:48:07PM +0200, Lukasz Luba wrote:
+>>>> Extend the documenation by events description with new 'event-data-type'
+>>>> field. Add example how the event might be defined in DT.
+>>>
+>>> Why do we need event types in DT? We don't do this for other h/w such as
+>>> ARM PMU.
+>> In ARM PMU all the events are hard-coded into the driver code i.e. in v7
+>> arch/arm/kernel/perf_event_v7.c
+>> and are seen from perf. They are different type and for different
+>> purpose. The Ecynos PPMU events are not seen in perf, they are
+>> for internal monitoring and must not be reset by other actors like perf.
+>> They are used by the 'bus drivers' to made some heuristics and tune the
+>> internal settings, like frequency.
+>>
+>> Chanwoo has written PPMU driver which relies on DT definition.
+>> The DT events are used by other DT devices by phandle.
 > 
-> Signed-off-by: Tom Murphy<tmurphy@arista.com>
-> ---
->   drivers/iommu/intel-iommu.c | 85 +++----------------------------------
->   1 file changed, 6 insertions(+), 79 deletions(-)
+> How is that done? I don't see anything in the binding for that.
+Here are the DT devices and how they are pinned together:
+- declared devfreq events:
+https://elixir.bootlin.com/linux/latest/source/arch/arm/boot/dts/exynos4412-ppmu-common.dtsi
+- devfreq events pinned to the bus device:
+https://elixir.bootlin.com/linux/latest/source/arch/arm/boot/dts/exynos4412-odroid-common.dtsi#L107
+- the bus device itself:
+https://elixir.bootlin.com/linux/latest/source/arch/arm/boot/dts/exynos4412.dtsi#L457
+
+Regards,
+Lukasz
+
 > 
-> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> index eace915602f0..2db1dc47e7e4 100644
-> --- a/drivers/iommu/intel-iommu.c
-> +++ b/drivers/iommu/intel-iommu.c
-> @@ -2622,17 +2622,6 @@ static int __init si_domain_init(int hw)
->   	return 0;
->   }
->   
-> -static int identity_mapping(struct device *dev)
-> -{
-> -	struct device_domain_info *info;
-> -
-> -	info = dev->archdata.iommu;
-> -	if (info && info != DUMMY_DEVICE_DOMAIN_INFO)
-> -		return (info->domain == si_domain);
-> -
-> -	return 0;
-> -}
-> -
->   static int domain_add_dev_info(struct dmar_domain *domain, struct device *dev)
->   {
->   	struct dmar_domain *ndomain;
-> @@ -3270,43 +3259,6 @@ static unsigned long intel_alloc_iova(struct device *dev,
->   	return iova_pfn;
->   }
->   
-> -/* Check if the dev needs to go through non-identity map and unmap process.*/
-> -static int iommu_no_mapping(struct device *dev)
-> -{
-> -	int found;
-> -
-> -	if (iommu_dummy(dev))
-> -		return 1;
-> -
-> -	found = identity_mapping(dev);
-> -	if (found) {
-> -		/*
-> -		 * If the device's dma_mask is less than the system's memory
-> -		 * size then this is not a candidate for identity mapping.
-> -		 */
-> -		u64 dma_mask = *dev->dma_mask;
-> -
-> -		if (dev->coherent_dma_mask &&
-> -		    dev->coherent_dma_mask < dma_mask)
-> -			dma_mask = dev->coherent_dma_mask;
-> -
-> -		if (dma_mask < dma_get_required_mask(dev)) {
-> -			/*
-> -			 * 32 bit DMA is removed from si_domain and fall back
-> -			 * to non-identity mapping.
-> -			 */
-> -			dmar_remove_one_dev_info(dev);
-> -			dev_warn(dev, "32bit DMA uses non-identity mapping\n");
-> -
-> -			return 0;
-> -		}
-
-The iommu_no_mapping() also checks whether any 32bit DMA device uses
-identity mapping. The device might not work if the system memory space
-is bigger than 4G.
-
-Will you add this to other place, or it's unnecessary?
-
-Best regards,
-Lu Baolu
+> Rob
+> 
+> 
