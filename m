@@ -1,80 +1,108 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [BUG BISECT] USB on Exynos4412 fails after usb: dwc2: gadget:
- Replace phyif with phy_utmi_width
-Date: Tue, 7 May 2019 08:43:05 +0200
-Message-ID: <bf605524-705a-8dc1-e54c-413564efc29b@samsung.com>
-References: <20190503204958.GA12532@kozik-lap>
-        <CGME20190507062136epcas1p3729d57b9d22f834ccd2de0a081ddfbde@epcas1p3.samsung.com>
-        <d198f061-3ed6-11d9-4e92-0e0fb2705238@synopsys.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v7 01/13] clk: samsung: add needed IDs for DMC clocks in
+ Exynos5420
+Date: Tue, 7 May 2019 16:33:41 +0900
+Message-ID: <8b063f30-1a4d-3292-2e57-6e33e94d57ae@samsung.com>
+References: <1557155521-30949-1-git-send-email-l.luba@partner.samsung.com>
+        <CGME20190506151210eucas1p13c2a4b86a6f987ff34fbe1e2d705fbbf@eucas1p1.samsung.com>
+        <1557155521-30949-2-git-send-email-l.luba@partner.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <d198f061-3ed6-11d9-4e92-0e0fb2705238@synopsys.com>
+In-Reply-To: <1557155521-30949-2-git-send-email-l.luba@partner.samsung.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jules Maselbas <jmaselbas@kalray.eu>
-Cc: Felipe Balbi <felipe.balbi@linux.intel.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Lukasz Luba <l.luba@partner.samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, willy.mh.wolff.ml@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Minas,
+Hi Lukasz,
 
-On 2019-05-07 08:21, Minas Harutyunyan wrote:
-> Hi Krzysztof,
->
-> On 5/4/2019 12:50 AM, Krzysztof Kozlowski wrote:
->> Hi,
->>
->> Bisect pointed commit 707d80f0a3c5 ("usb: dwc2: gadget: Replace phyif
->> with phy_utmi_width") as reason for failures of USB on Exynos4412,
->> Odroid U3 board (ARMv7, exynos_defconfig, TFTP boot with nfsroot from
->> NFSv4):
->>
->> [    4.333996] usb 1-2: new high-speed USB device number 3 using 
->> exynos-ehci
->> [    4.503942] usb 1-2: device descriptor read/64, error -71
->> [    4.793970] usb 1-2: device descriptor read/64, error -71
->> [    4.914748] usb usb1-port2: attempt power cycle
->> [    6.224267] usb 1-3: new high-speed USB device number 5 using 
->> exynos-ehci
->> [    6.393983] usb 1-3: device descriptor read/64, error -71
->> [    6.684243] usb 1-3: device descriptor read/64, error -71
->> [    6.954259] usb 1-3: new high-speed USB device number 6 using 
->> exynos-ehci
->> [    7.123980] usb 1-3: device descriptor read/64, error -71
->> [    7.413969] usb 1-3: device descriptor read/64, error -71
->> [    7.534778] usb usb1-port3: attempt power cycle
->>
->> The boot failure is effect of lack of network adapter (USB, smsc95xx).
->> Expected:
->> [    4.285831] usb 1-3: New USB device found, idVendor=0424, 
->> idProduct=3503, bcdDevice=a1.a0
->> [    4.288986] usb 1-3: New USB device strings: Mfr=0, Product=0, 
->> SerialNumber=0
->> [    4.299596] hub 1-3:1.0: USB hub found
->> [    4.300027] hub 1-3:1.0: 3 ports detected
->> [    5.895541] smsc95xx 1-2:1.0 eth0: link up, 100Mbps, full-duplex, 
->> lpa 0xCDE1
->>
->> Full kernel log is here:
->> https://urldefense.proofpoint.com/v2/url?u=https-3A__krzk.eu_-23_builders_25_builds_1330_steps_14_logs_serial0&d=DwIBaQ&c=DPL6_X_6JkXFx7AXWqB0tg&r=6z9Al9FrHR_ZqbbtSAsD16pvOL2S3XHxQnSzq8kusyI&m=OiD-VOiMNPgl24seQpn5JKZq7f85A4LNzaz8zX0YrKs&s=WBsxDt_1PXo9t9AxxJkUTTLE6zx_UDc7ac_U3EydCzI&e= 
->>
->> https://urldefense.proofpoint.com/v2/url?u=https-3A__krzk.eu_-23_builders_25_builds_1330&d=DwIBaQ&c=DPL6_X_6JkXFx7AXWqB0tg&r=6z9Al9FrHR_ZqbbtSAsD16pvOL2S3XHxQnSzq8kusyI&m=OiD-VOiMNPgl24seQpn5JKZq7f85A4LNzaz8zX0YrKs&s=Lxk4ZiitEFaod88HTY0hthrdRy_TtktU53P6UDtaCoE&e= 
->>
->>
->> Let me know if you need any more details.
->>
->> Best regards,
->> Krzysztof
->>
->>
->
-> But fail seen on ehci driver not dwc2.
+On 19. 5. 7. 오전 12:11, Lukasz Luba wrote:
+> Define new IDs for clocks used by Dynamic Memory Controller in
+> Exynos5422 SoC.
+> 
+> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  include/dt-bindings/clock/exynos5420.h | 28 ++++++++++++++++++++++------
+>  1 file changed, 22 insertions(+), 6 deletions(-)
+> 
+> diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
+> index 355f469..bf50d8a 100644
+> --- a/include/dt-bindings/clock/exynos5420.h
+> +++ b/include/dt-bindings/clock/exynos5420.h
+> @@ -60,6 +60,7 @@
+>  #define CLK_MAU_EPLL		159
+>  #define CLK_SCLK_HSIC_12M	160
+>  #define CLK_SCLK_MPHY_IXTAL24	161
+> +#define CLK_SCLK_BPLL		162
+>  
+>  /* gate clocks */
+>  #define CLK_UART0		257
+> @@ -195,6 +196,16 @@
+>  #define CLK_ACLK432_CAM		518
+>  #define CLK_ACLK_FL1550_CAM	519
+>  #define CLK_ACLK550_CAM		520
+> +#define CLK_CLKM_PHY0		521
+> +#define CLK_CLKM_PHY1		522
+> +#define CLK_ACLK_PPMU_DREX0_0	523
+> +#define CLK_ACLK_PPMU_DREX0_1	524
+> +#define CLK_ACLK_PPMU_DREX1_0	525
+> +#define CLK_ACLK_PPMU_DREX1_1	526
+> +#define CLK_PCLK_PPMU_DREX0_0	527
+> +#define CLK_PCLK_PPMU_DREX0_1	528
+> +#define CLK_PCLK_PPMU_DREX1_0	529
+> +#define CLK_PCLK_PPMU_DREX1_1	530
+>  
+>  /* mux clocks */
+>  #define CLK_MOUT_HDMI		640
+> @@ -217,6 +228,8 @@
+>  #define CLK_MOUT_EPLL		657
+>  #define CLK_MOUT_MAU_EPLL	658
+>  #define CLK_MOUT_USER_MAU_EPLL	659
+> +#define CLK_MOUT_SCLK_SPLL	660
+> +#define CLK_MOUT_MX_MSPLL_CCORE_PHY	661
+>  
+>  /* divider clocks */
+>  #define CLK_DOUT_PIXEL		768
+> @@ -243,13 +256,16 @@
+>  #define CLK_DOUT_ACLK300_GSCL	789
+>  #define CLK_DOUT_ACLK400_DISP1	790
+>  #define CLK_DOUT_PCLK_CDREX	791
+> -#define CLK_DOUT_SCLK_CDREX	792
+> -#define CLK_DOUT_ACLK_CDREX1	793
+> -#define CLK_DOUT_CCLK_DREX0	794
+> -#define CLK_DOUT_CLK2X_PHY0	795
+> -#define CLK_DOUT_PCLK_CORE_MEM	796
 
-Right, but dwc2 and ehci share common USB2 PHY on Exynos4 SoCs, although 
-they use different ports of it.
+The your previous patch didn't change the id number
+of already exiting clocks. It cause the fault.
+In order to keep the compatibility, you keep
+the original id number without modification.
 
-Best regards
+Please don't change the id number of the existing clocks
+and then just add the new clocks.
+
+
+> +#define CLK_DOUT_PCLK_DREX0	792
+> +#define CLK_DOUT_PCLK_DREX1	793
+> +#define CLK_DOUT_SCLK_CDREX	794
+> +#define CLK_DOUT_ACLK_CDREX1	795
+> +#define CLK_DOUT_CCLK_DREX0	796
+> +#define CLK_DOUT_CLK2X_PHY0	797
+> +#define CLK_DOUT_PCLK_CORE_MEM	798
+> +#define CLK_FF_DOUT_SPLL2	799
+>  
+>  /* must be greater than maximal clock id */
+> -#define CLK_NR_CLKS		797
+> +#define CLK_NR_CLKS		800
+>  
+>  #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5420_H */
+> 
+
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
