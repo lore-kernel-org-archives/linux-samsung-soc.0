@@ -1,48 +1,80 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v3 2/4] iommu/dma-iommu: Handle deferred devices
-Date: Mon, 6 May 2019 23:40:00 -0700
-Message-ID: <20190507064000.GB5173@infradead.org>
-References: <20190506185207.31069-1-tmurphy@arista.com>
- <20190506185207.31069-3-tmurphy@arista.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [BUG BISECT] USB on Exynos4412 fails after usb: dwc2: gadget:
+ Replace phyif with phy_utmi_width
+Date: Tue, 7 May 2019 08:43:05 +0200
+Message-ID: <bf605524-705a-8dc1-e54c-413564efc29b@samsung.com>
+References: <20190503204958.GA12532@kozik-lap>
+        <CGME20190507062136epcas1p3729d57b9d22f834ccd2de0a081ddfbde@epcas1p3.samsung.com>
+        <d198f061-3ed6-11d9-4e92-0e0fb2705238@synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20190506185207.31069-3-tmurphy@arista.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tom Murphy <tmurphy@arista.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Will Deacon <will.deacon@arm.com>, David Brown <david.brown@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Andy Gross <andy.gross@linaro.org>, linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org, Robin Murphy <robin.murphy@arm.com>, linux-kernel@vger.kernel.org, murphyt7@tcd.ie, Rob Clark <robdclark@gmail.com>, David Woodhouse <dwmw2@infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <d198f061-3ed6-11d9-4e92-0e0fb2705238@synopsys.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jules Maselbas <jmaselbas@kalray.eu>
+Cc: Felipe Balbi <felipe.balbi@linux.intel.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, May 06, 2019 at 07:52:04PM +0100, Tom Murphy wrote:
-> +static int handle_deferred_device(struct device *dev)
-> +{
-> +	struct iommu_domain *domain;
-> +	const struct iommu_ops *ops;
-> +
-> +	if (!is_kdump_kernel())
-> +		return 0;
-> +
-> +	domain = iommu_get_domain_for_dev(dev);
+Hi Minas,
 
-> -	dma_handle =__iommu_dma_map(dev, phys, size,
-> +	if (unlikely(handle_deferred_device(dev)))
-> +		return DMA_MAPPING_ERROR;
-> +
-> +	dma_handle = __iommu_dma_map(dev, phys, size,
+On 2019-05-07 08:21, Minas Harutyunyan wrote:
+> Hi Krzysztof,
+>
+> On 5/4/2019 12:50 AM, Krzysztof Kozlowski wrote:
+>> Hi,
+>>
+>> Bisect pointed commit 707d80f0a3c5 ("usb: dwc2: gadget: Replace phyif
+>> with phy_utmi_width") as reason for failures of USB on Exynos4412,
+>> Odroid U3 board (ARMv7, exynos_defconfig, TFTP boot with nfsroot from
+>> NFSv4):
+>>
+>> [    4.333996] usb 1-2: new high-speed USB device number 3 using 
+>> exynos-ehci
+>> [    4.503942] usb 1-2: device descriptor read/64, error -71
+>> [    4.793970] usb 1-2: device descriptor read/64, error -71
+>> [    4.914748] usb usb1-port2: attempt power cycle
+>> [    6.224267] usb 1-3: new high-speed USB device number 5 using 
+>> exynos-ehci
+>> [    6.393983] usb 1-3: device descriptor read/64, error -71
+>> [    6.684243] usb 1-3: device descriptor read/64, error -71
+>> [    6.954259] usb 1-3: new high-speed USB device number 6 using 
+>> exynos-ehci
+>> [    7.123980] usb 1-3: device descriptor read/64, error -71
+>> [    7.413969] usb 1-3: device descriptor read/64, error -71
+>> [    7.534778] usb usb1-port3: attempt power cycle
+>>
+>> The boot failure is effect of lack of network adapter (USB, smsc95xx).
+>> Expected:
+>> [    4.285831] usb 1-3: New USB device found, idVendor=0424, 
+>> idProduct=3503, bcdDevice=a1.a0
+>> [    4.288986] usb 1-3: New USB device strings: Mfr=0, Product=0, 
+>> SerialNumber=0
+>> [    4.299596] hub 1-3:1.0: USB hub found
+>> [    4.300027] hub 1-3:1.0: 3 ports detected
+>> [    5.895541] smsc95xx 1-2:1.0 eth0: link up, 100Mbps, full-duplex, 
+>> lpa 0xCDE1
+>>
+>> Full kernel log is here:
+>> https://urldefense.proofpoint.com/v2/url?u=https-3A__krzk.eu_-23_builders_25_builds_1330_steps_14_logs_serial0&d=DwIBaQ&c=DPL6_X_6JkXFx7AXWqB0tg&r=6z9Al9FrHR_ZqbbtSAsD16pvOL2S3XHxQnSzq8kusyI&m=OiD-VOiMNPgl24seQpn5JKZq7f85A4LNzaz8zX0YrKs&s=WBsxDt_1PXo9t9AxxJkUTTLE6zx_UDc7ac_U3EydCzI&e= 
+>>
+>> https://urldefense.proofpoint.com/v2/url?u=https-3A__krzk.eu_-23_builders_25_builds_1330&d=DwIBaQ&c=DPL6_X_6JkXFx7AXWqB0tg&r=6z9Al9FrHR_ZqbbtSAsD16pvOL2S3XHxQnSzq8kusyI&m=OiD-VOiMNPgl24seQpn5JKZq7f85A4LNzaz8zX0YrKs&s=Lxk4ZiitEFaod88HTY0hthrdRy_TtktU53P6UDtaCoE&e= 
+>>
+>>
+>> Let me know if you need any more details.
+>>
+>> Best regards,
+>> Krzysztof
+>>
+>>
+>
+> But fail seen on ehci driver not dwc2.
 
-__iommu_dma_map already looks up the domain, and as far as I can
-tell all callers need the handle_deferred_device call.  Should we
-just move it to there and pass the domain from the caller?
+Right, but dwc2 and ehci share common USB2 PHY on Exynos4 SoCs, although 
+they use different ports of it.
 
-Also shouldn't the iommu_attach_device call inside
-handle_deferred_device also get an unlikely marker?
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
