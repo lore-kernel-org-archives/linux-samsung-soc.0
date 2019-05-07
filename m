@@ -1,127 +1,78 @@
-From: Markus Reichl <m.reichl@fivetechno.de>
-Subject: Re: [PATCH] usb: dwc2: Force 8bit UTMI width for Samsung Exynos SoCs
-Date: Tue, 7 May 2019 10:12:17 +0200
-Message-ID: <39c7b687-449e-5e89-4c70-527d4e779fd9@fivetechno.de>
-References: <20190503204958.GA12532@kozik-lap>
- <CGME20190506130052eucas1p25afd4e15648e9efc6fd011e46081fbea@eucas1p2.samsung.com>
- <20190506130046.20898-1-m.szyprowski@samsung.com>
+From: Lukasz Luba <l.luba@partner.samsung.com>
+Subject: Re: [PATCH v7 03/13] clk: samsung: add BPLL rate table for Exynos
+ 5422 SoC
+Date: Tue, 7 May 2019 11:02:08 +0200
+Message-ID: <6346e0e4-adaa-4eed-d0ae-f62b853c151e@partner.samsung.com>
+References: <1557155521-30949-1-git-send-email-l.luba@partner.samsung.com>
+        <CGME20190506151212eucas1p24110f75fa6ed945f9ae7614fbb8aa13d@eucas1p2.samsung.com>
+        <1557155521-30949-4-git-send-email-l.luba@partner.samsung.com>
+        <1db8ffb8-1038-edbc-81b5-689f8a4c3c6b@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="jaQbzrRu5YUNCCshYysHQXwri4Q0c42fX"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190506130046.20898-1-m.szyprowski@samsung.com>
+In-Reply-To: <1db8ffb8-1038-edbc-81b5-689f8a4c3c6b@samsung.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Minas Harutyunyan <hminas@synopsys.com>, Felipe Balbi <felipe.balbi@linux.intel.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jules Maselbas <jmaselbas@kalray.eu>, Krzysztof Kozlowski <krzk@kernel.org>
+To: Chanwoo Choi <cw00.choi@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, willy.mh.wolff.ml@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---jaQbzrRu5YUNCCshYysHQXwri4Q0c42fX
-Content-Type: multipart/mixed; boundary="SeKTbUyioFhKb6yGXBGhLlzIZWi9Rm3iK";
- protected-headers="v1"
-From: Markus Reichl <m.reichl@fivetechno.de>
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-usb@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Minas Harutyunyan <hminas@synopsys.com>,
- Felipe Balbi <felipe.balbi@linux.intel.com>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Jules Maselbas <jmaselbas@kalray.eu>, Krzysztof Kozlowski <krzk@kernel.org>
-Message-ID: <39c7b687-449e-5e89-4c70-527d4e779fd9@fivetechno.de>
-Subject: Re: [PATCH] usb: dwc2: Force 8bit UTMI width for Samsung Exynos SoCs
-References: <20190503204958.GA12532@kozik-lap>
- <CGME20190506130052eucas1p25afd4e15648e9efc6fd011e46081fbea@eucas1p2.samsung.com>
- <20190506130046.20898-1-m.szyprowski@samsung.com>
-In-Reply-To: <20190506130046.20898-1-m.szyprowski@samsung.com>
-
---SeKTbUyioFhKb6yGXBGhLlzIZWi9Rm3iK
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: quoted-printable
-
-Hi Marek,
-
-your patch did not help on stable v5.1
-
-[    3.255963] samsung-usb2-phy 125b0000.exynos-usbphy: 125b0000.exynos-u=
-sbphy supply vbus not found, using dummy regulator
-[    4.044547] usbcore: registered new interface driver smsc95xx
-[    4.112261] usb usb1: New USB device found, idVendor=3D1d6b, idProduct=
-=3D0002, bcdDevice=3D 5.01
-[    4.120363] usb usb1: New USB device strings: Mfr=3D3, Product=3D2, Se=
-rialNumber=3D1
-[    4.127560] usb usb1: Product: EHCI Host Controller
-[    4.132415] usb usb1: Manufacturer: Linux 5.1.0-00005-geb4efae48eb5 eh=
-ci_hcd
-[    4.139446] usb usb1: SerialNumber: 12580000.ehci
-[    4.183056] usb3503 0-0008: switched to HUB mode
-[    4.183121] usb3503 0-0008: usb3503_probe: probed in hub mode
-[    4.488344] usb 1-2: new high-speed USB device number 2 using exynos-e=
-hci
-[    4.675605] usb 1-2: New USB device found, idVendor=3D0424, idProduct=3D=
-3503, bcdDevice=3Da1.a0
-[    4.678166] usb 1-2: New USB device strings: Mfr=3D0, Product=3D0, Ser=
-ialNumber=3D0
-[    4.686140] usb 1-2: skipping disabled interface 0
-
-root@odroid-x2:~# lsusb
-Bus 001 Device 002: ID 0424:3503 Standard Microsystems Corp.
-Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
 
 
+On 5/7/19 9:36 AM, Chanwoo Choi wrote:
+> Hi Lukasz,
+> 
+> On 19. 5. 7. 오전 12:11, Lukasz Luba wrote:
+>> Add new table rate for BPLL for Exynos5422 SoC supporting Dynamic Memory
+>> Controller frequencies for driver's DRAM timings.
+>>
+>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+>> ---
+>>   drivers/clk/samsung/clk-exynos5420.c | 17 ++++++++++++++++-
+>>   1 file changed, 16 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+>> index af62b6d..23c60a5 100644
+>> --- a/drivers/clk/samsung/clk-exynos5420.c
+>> +++ b/drivers/clk/samsung/clk-exynos5420.c
+>> @@ -1335,6 +1335,17 @@ static const struct samsung_pll_rate_table exynos5420_pll2550x_24mhz_tbl[] __ini
+>>   	PLL_35XX_RATE(24 * MHZ, 200000000,  200, 3, 3),
+>>   };
+>>   
+>> +static const struct samsung_pll_rate_table exynos5422_bpll_rate_table[] = {
+>> +	PLL_35XX_RATE(24 * MHZ, 825000000, 275, 4, 1),
+>> +	PLL_35XX_RATE(24 * MHZ, 728000000, 182, 3, 1),
+>> +	PLL_35XX_RATE(24 * MHZ, 633000000, 211, 4, 1),
+>> +	PLL_35XX_RATE(24 * MHZ, 543000000, 181, 2, 2),
+>> +	PLL_35XX_RATE(24 * MHZ, 413000000, 413, 6, 2),
+>> +	PLL_35XX_RATE(24 * MHZ, 275000000, 275, 3, 3),
+>> +	PLL_35XX_RATE(24 * MHZ, 206000000, 206, 3, 3),
+>> +	PLL_35XX_RATE(24 * MHZ, 165000000, 110, 2, 3),
+>> +};
+>> +
+>>   static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
+>>   	PLL_36XX_RATE(24 * MHZ, 600000000U, 100, 2, 1, 0),
+>>   	PLL_36XX_RATE(24 * MHZ, 400000000U, 200, 3, 2, 0),
+>> @@ -1477,9 +1488,13 @@ static void __init exynos5x_clk_init(struct device_node *np,
+>>   		exynos5x_plls[apll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+>>   		exynos5x_plls[epll].rate_table = exynos5420_epll_24mhz_tbl;
+>>   		exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+>> -		exynos5x_plls[bpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+>>   	}
+>>   
+>> +	if (soc == EXYNOS5420)
+>> +		exynos5x_plls[bpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+>> +	else
+>> +		exynos5x_plls[bpll].rate_table = exynos5422_bpll_rate_table;
+>> +
+>>   	samsung_clk_register_pll(ctx, exynos5x_plls, ARRAY_SIZE(exynos5x_plls),
+>>   					reg_base);
+>>   	samsung_clk_register_fixed_rate(ctx, exynos5x_fixed_rate_clks,
+>>
+> 
+> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Thank you, added to the patch.
 
-Am 06.05.19 um 15:00 schrieb Marek Szyprowski:
-> Samsung Exynos SoCs require to force UTMI width to 8bit, otherwise the
-> host side of the shared USB2 PHY doesn't work.
->=20
-> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Fixes: 707d80f0a3c5 ("usb: dwc2: gadget: Replace phyif with phy_utmi_wi=
-dth")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/usb/dwc2/params.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/usb/dwc2/params.c b/drivers/usb/dwc2/params.c
-> index 6900eea57526..9ece4affb9d4 100644
-> --- a/drivers/usb/dwc2/params.c
-> +++ b/drivers/usb/dwc2/params.c
-> @@ -76,6 +76,7 @@ static void dwc2_set_s3c6400_params(struct dwc2_hsotg=
- *hsotg)
->  	struct dwc2_core_params *p =3D &hsotg->params;
-> =20
->  	p->power_down =3D 0;
-> +	p->phy_utmi_width =3D 8;
->  }
-> =20
->  static void dwc2_set_rk_params(struct dwc2_hsotg *hsotg)
->=20
-
-Gru=C3=9F,
---=20
-Markus Reichl
-
-
---SeKTbUyioFhKb6yGXBGhLlzIZWi9Rm3iK--
-
---jaQbzrRu5YUNCCshYysHQXwri4Q0c42fX
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQGzBAEBCAAdFiEEVKeIeBh0ZWJOldzLOiXeDmsa/bIFAlzRPeYACgkQOiXeDmsa
-/bJ4BAv/aFOkWeqjyJQlgtAY665B6v4yvYO7Xds4CECjPByYCSv1+0zc5MamdQGt
-RcPsPqaGZ+HQ1E+3GIAsD2PtyKRst38iYr8JkYo3u/PEQXW+ZRMCQS9VNOQjcs2A
-RnwEISl9BVmu/FcSRqL/7SrrTXZPF4+UwTziFu1PsCbx7pCaaLxfZF6zenTxaI3c
-Lt4SofevaxV9ExdRLgvMhw/hk9FtzfAkQqWvAAYF5xreKTOlYi+xKvebIdJ66YUj
-Otir2ZAEqfVxCLs1AFxvlNNLJ0IHqBNkiwJlPhP9oP9jyMymlTViGgC/Ar5LFA+O
-a7BXnr+Cg7xJSHJuW13dyObnau9SDLrpk2OG+LWVXSPcfsuUpu0PwAhrSLvIjkgb
-6rryONAA/JlDd463j1TkqSOG4LFk2slw6a/SM2dY9qW5CoYT4QFWtMzvRHKuy+BT
-KFA9rg2mmKxP98DXi/9+/FEDL0ywrs1p1GDjH9/nsxGWB1r/P1BJIsdg/gMlbEaF
-T+BPl3zG
-=3jNv
------END PGP SIGNATURE-----
-
---jaQbzrRu5YUNCCshYysHQXwri4Q0c42fX--
+Regards,
+Lukasz
