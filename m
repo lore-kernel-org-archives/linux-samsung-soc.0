@@ -1,77 +1,86 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] usb: core: verify devicetree nodes for disabled
- interfaces
-Date: Wed, 8 May 2019 12:14:20 +0200
-Message-ID: <106fc58c-1a4f-6605-41d7-b6031c5751a3@samsung.com>
-References: <CGME20190507125630eucas1p1c5fd171a8dc2a6b8eb9dd317fe245f0c@eucas1p1.samsung.com>
-        <20190507125615.9381-1-m.szyprowski@samsung.com>
-        <yw1xy33iv1lq.fsf@mansr.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v7 11/13] ARM: dts: exynos: add syscon to clock compatible
+Date: Wed, 8 May 2019 12:17:02 +0200
+Message-ID: <CAJKOXPf3tZGp-UQagGKNs0xFBGz2NwBdA2R=Y25C5jTK_ZcMXg@mail.gmail.com>
+References: <CGME20190506151219eucas1p2feab00f7b7c1c5fdd5614423fb38eae2@eucas1p2.samsung.com>
+ <1557155521-30949-1-git-send-email-l.luba@partner.samsung.com>
+ <1557155521-30949-12-git-send-email-l.luba@partner.samsung.com>
+ <CAJKOXPd6GKVPixMiG37SoHiswaih-3S+o7QJn=WbuqdZzu-s_w@mail.gmail.com> <8d02ef2c-c5dd-6a72-9638-d858df3ea16d@partner.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <yw1xy33iv1lq.fsf@mansr.com>
-Content-Language: en-US
+In-Reply-To: <8d02ef2c-c5dd-6a72-9638-d858df3ea16d@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?TcOlbnMgUnVsbGfDpXJk?= <mans@mansr.com>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Markus Reichl <m.reichl@fivetechno.de>, Krzysztof Kozlowski <krzk@kernel.org>
+To: Lukasz Luba <l.luba@partner.samsung.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, kgene@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, willy.mh.wolff.ml@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi
+On Wed, 8 May 2019 at 11:50, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+>
+>
+> On 5/8/19 9:22 AM, Krzysztof Kozlowski wrote:
+> > On Mon, 6 May 2019 at 17:12, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+> >>
+> >> In order get the clock by phandle and use it with regmap it needs to be
+> >> compatible with syscon. The DMC driver uses two registers from clock
+> >> register set and needs the regmap of them.
+> >>
+> >> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> >> ---
+> >>   arch/arm/boot/dts/exynos5800.dtsi | 2 +-
+> >>   1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/arch/arm/boot/dts/exynos5800.dtsi b/arch/arm/boot/dts/exynos5800.dtsi
+> >> index 57d3b31..0a2b328 100644
+> >> --- a/arch/arm/boot/dts/exynos5800.dtsi
+> >> +++ b/arch/arm/boot/dts/exynos5800.dtsi
+> >> @@ -17,7 +17,7 @@
+> >>   };
+> >>
+> >>   &clock {
+> >> -       compatible = "samsung,exynos5800-clock";
+> >> +       compatible = "samsung,exynos5800-clock", "syscon";
+> >
+> > What about Exynos5420 DTSI?
+> OK, I will also add it to 5420 dtsi.
+> --------------------------8<------------------------------------------
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi
+> b/arch/arm/boot/dts/exynos5420.dtsi
+> index aaff158..d9203f0 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -173,7 +173,7 @@
+>                  };
+>
+>                  clock: clock-controller@10010000 {
+> -                       compatible = "samsung,exynos5420-clock";
+> +                       compatible = "samsung,exynos5420-clock", "syscon";
+>                          reg = <0x10010000 0x30000>;
+>                          #clock-cells = <1>;
+>                  };
+> diff --git a/arch/arm/boot/dts/exynos5800.dtsi
+> b/arch/arm/boot/dts/exynos5800.dtsi
+> index 57d3b31..0a2b328 100644
+> --- a/arch/arm/boot/dts/exynos5800.dtsi
+> +++ b/arch/arm/boot/dts/exynos5800.dtsi
+> @@ -17,7 +17,7 @@
+>   };
+>
+>   &clock {
+> -       compatible = "samsung,exynos5800-clock";
+> +       compatible = "samsung,exynos5800-clock", "syscon";
+>   };
+> ----------------------------->8-----------------------------------
+>
+> Can I add your ack after that?
 
-On 2019-05-07 15:24, Måns Rullgård wrote:
-> Marek Szyprowski <m.szyprowski@samsung.com> writes:
->> Commit 01fdf179f4b0 ("usb: core: skip interfaces disabled in devicetree")
->> add support for disabling given USB device interface by adding nodes to
->> the USB host controller device. The mentioned commit however identifies
->> the given USB interface node only by the 'reg' property in the host
->> controller children nodes and then checks for their the 'status'. The USB
->> device interface nodes however also has to have a 'compatible' property as
->> described in Documentation/devicetree/bindings/usb/usb-device.txt. This is
->> important, because USB host controller might have child-nodes for other
->> purposes. For example, Exynos EHCI and OHCI drivers already define
->> child-nodes for each physical root hub port and assigns respective PHY
->> controller and parameters for them. This conflicts with the proposed
->> approach and verifying for the presence of the compatible property fixes
->> this issue without changing the devicetree bindings and the way the PHY
->> controllers are handled by Exynos EHCI/OHCI drivers.
->>
->> Reported-by: Markus Reichl <m.reichl@fivetechno.de>
->> Fixes: 01fdf179f4b0 ("usb: core: skip interfaces disabled in devicetree")
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>   drivers/usb/core/message.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/usb/core/message.c b/drivers/usb/core/message.c
->> index 82239f27c4cc..cd455c4add25 100644
->> --- a/drivers/usb/core/message.c
->> +++ b/drivers/usb/core/message.c
->> @@ -2007,6 +2007,7 @@ int usb_set_configuration(struct usb_device *dev, int configuration)
->>   		struct usb_interface *intf = cp->interface[i];
->>
->>   		if (intf->dev.of_node &&
->> +		    of_device_is_compatible(intf->dev.of_node, NULL) &&
->>   		    !of_device_is_available(intf->dev.of_node)) {
->>   			dev_info(&dev->dev, "skipping disabled interface %d\n",
->>   				 intf->cur_altsetting->desc.bInterfaceNumber);
->> -- 
-> This doesn't look right.  of_device_is_compatible() with a NULL compat
-> argument always returns zero.
+No need for ack. The DTS have to go through arm-soc so I will pick it
+up when dependencies get in and bindings are accepted (acked or
+applied). We have now merge window so I guess this will go to v5.4-rc1
+at earliest.
 
-Right, my fault. I missed that. of_find_property(intf->dev.of_node, 
-"compatible", NULL) is the correct check.
+If you want to speed up things in future, be sure that dependencies
+(headers) are applied as early as possible.
 
-
-> There also seems to be a broader incompatibility between the generic USB
-> bindings and the use of child nodes in the Exynos bindings.
-
-True, but frankly I have no idea how to fix this in a better way.
-
-Exynos EHCI/OHCI bindings predates the generic USB device bindings and 
-now we can only mitigate the damage caused by this conflict.
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Best regards,
+Krzysztof
