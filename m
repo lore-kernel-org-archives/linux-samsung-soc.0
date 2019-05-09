@@ -1,23 +1,30 @@
-From: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 Subject: Re: [PATCH v3] usb: core: verify devicetree nodes for USB devices
-Date: Thu, 09 May 2019 19:55:06 +0100
-Message-ID: <yw1xlfzfv4ol.fsf@mansr.com>
+Date: Thu, 9 May 2019 21:04:19 +0200
+Message-ID: <bb437e5d-65b4-80b3-8112-76799c4dfbab@math.uni-bielefeld.de>
 References: <yw1xpnotufti.fsf@mansr.com>
-        <CGME20190509084827eucas1p294962744fe70745c50b69a5349b5de68@eucas1p2.samsung.com>
-        <20190509084726.5405-1-m.szyprowski@samsung.com>
+ <CGME20190509084827eucas1p294962744fe70745c50b69a5349b5de68@eucas1p2.samsung.com>
+ <20190509084726.5405-1-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190509084726.5405-1-m.szyprowski@samsung.com> (Marek
-        Szyprowski's message of "Thu, 09 May 2019 10:47:26 +0200")
+In-Reply-To: <20190509084726.5405-1-m.szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Markus Reichl <m.reichl@fivetechno.de>, Krzysztof Kozlowski <krzk@kernel.org>, Peter Chen <peter.chen@nxp.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mans Rullgard <mans@mansr.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Markus Reichl <m.reichl@fivetechno.de>, Krzysztof Kozlowski <krzk@kernel.org>, Peter Chen <peter.chen@nxp.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Marek Szyprowski <m.szyprowski@samsung.com> writes:
+Hello Marek,
 
+I can confirm that this restores USB operation on my X2, so you can my Tested-by
+if you want.
+
+With best wishes,
+Tobias
+
+
+Marek Szyprowski wrote:
 > Commit 69bec7259853 ("USB: core: let USB device know device node")
 > added support for attaching devicetree node for USB devices. The mentioned
 > commit however identifies the given USB device node only by the 'reg'
@@ -26,20 +33,20 @@ Marek Szyprowski <m.szyprowski@samsung.com> writes:
 > Documentation/devicetree/bindings/usb/usb-device.txt. Lack for the
 > 'compatible' property check might result in assigning a devicetree node,
 > which is not intended to be the proper node for the given USB device.
->
+> 
 > This is important especially when USB host controller has child-nodes for
 > other purposes. For example, Exynos EHCI and OHCI drivers already define
 > child-nodes for each physical root hub port and assigns respective PHY
 > controller and parameters for them. Those binding predates support for
 > USB devicetree nodes.
->
+> 
 > Checking for the proper compatibility string allows to mitigate the
 > conflict between USB device devicetree nodes and the bindings for USB
 > controllers with child nodes. It also fixes the side-effect of the other
 > commits, like 01fdf179f4b0 ("usb: core: skip interfaces disabled in
 > devicetree"), which incorrectly disables some devices on Exynos based
 > boards.
->
+> 
 > Reported-by: Markus Reichl <m.reichl@fivetechno.de>
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
@@ -53,7 +60,7 @@ Marek Szyprowski <m.szyprowski@samsung.com> writes:
 >  drivers/usb/core/of.c  | 31 +++++++++++++++++++++++++++++++
 >  include/linux/usb/of.h |  2 ++
 >  3 files changed, 36 insertions(+)
->
+> 
 > diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
 > index 2f94568ba385..6f2438522d09 100644
 > --- a/drivers/usb/core/hub.c
@@ -69,12 +76,12 @@ Marek Szyprowski <m.szyprowski@samsung.com> writes:
 > @@ -5023,6 +5024,8 @@ static void hub_port_connect(struct usb_hub *hub, int port1, u16 portstatus,
 >  		if (status < 0)
 >  			goto loop;
->
+>  
 > +		usb_of_validate_device_node(udev);
 > +
 >  		if (udev->quirks & USB_QUIRK_DELAY_INIT)
 >  			msleep(2000);
->
+>  
 > diff --git a/drivers/usb/core/of.c b/drivers/usb/core/of.c
 > index 651708d8c908..2b6f16753edc 100644
 > --- a/drivers/usb/core/of.c
@@ -87,23 +94,15 @@ Marek Szyprowski <m.szyprowski@samsung.com> writes:
 > +		 * idVendor and idProduct are not yet known, so check only
 > +		 * a presence of the compatible property.
 > +		 */
-
-This function could be called from anywhere, so that comment seems a bit
-misplaced.
-
 > +		if (!of_find_property(node, "compatible", NULL))
 > +			continue;
-
-What if there is a node with a "compatible" property for some entirely
-different purpose?  Since that won't be caught, why bother with this
-test at all?
-
+>  
 >  		if (reg == port1)
 >  			return node;
 > @@ -39,6 +45,31 @@ struct device_node *usb_of_get_device_node(struct usb_device *hub, int port1)
 >  }
 >  EXPORT_SYMBOL_GPL(usb_of_get_device_node);
->
+>  
 > +/**
 > + * usb_of_validate_device_node() - validate dt node of the probed USB device
 > + * @udev: USB device
@@ -150,11 +149,6 @@ test at all?
 >  }
 > +static inline void usb_of_validate_device_node(struct usb_device *udev) { }
 >  #endif
->
+>  
 >  #if IS_ENABLED(CONFIG_OF) && IS_ENABLED(CONFIG_USB_SUPPORT)
-> -- 
-> 2.17.1
->
-
--- 
-Måns Rullgård
+> 
