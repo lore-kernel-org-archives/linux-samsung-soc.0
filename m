@@ -1,57 +1,141 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v7 07/13] dt-bindings: memory-controllers: add Exynos5422
- DMC device description
-Date: Wed, 8 May 2019 15:35:15 -0500
-Message-ID: <CAL_JsqJSbi5jNZSRhiE-h74DdbsgM7O+tqP9HOf037pyN7TbFA@mail.gmail.com>
-References: <1557155521-30949-1-git-send-email-l.luba@partner.samsung.com>
- <CGME20190506151215eucas1p2c57147edac5671c5ec9a223efb6b4adc@eucas1p2.samsung.com>
- <1557155521-30949-8-git-send-email-l.luba@partner.samsung.com>
- <20190507170422.GA25179@bogus> <CAJKOXPdacKBrKeCyCaE7VS8-NOR4Oo27XY7rx20P2ORY2vBBSg@mail.gmail.com>
- <ab489925-040c-815c-2aef-50ed0ee6cd6c@partner.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v3] usb: core: verify devicetree nodes for USB devices
+Date: Thu, 09 May 2019 10:47:26 +0200
+Message-ID: <20190509084726.5405-1-m.szyprowski@samsung.com>
+References: <yw1xpnotufti.fsf@mansr.com>
+        <CGME20190509084827eucas1p294962744fe70745c50b69a5349b5de68@eucas1p2.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <ab489925-040c-815c-2aef-50ed0ee6cd6c@partner.samsung.com>
+In-reply-to: <yw1xpnotufti.fsf@mansr.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lukasz Luba <l.luba@partner.samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:THERMAL" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kees Cook <keescook@chromium.org>, Tony Lindgren <tony@atomide.com>, Joerg Roedel <jroedel@suse.de>, Thierry Reding <treding@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, willy.mh.wolff.ml
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mans Rullgard <mans@mansr.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Markus Reichl <m.reichl@fivetechno.de>, Krzysztof Kozlowski <krzk@kernel.org>, Peter Chen <peter.chen@nxp.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, May 8, 2019 at 4:45 AM Lukasz Luba <l.luba@partner.samsung.com> wrote:
->
->
-> On 5/8/19 9:19 AM, Krzysztof Kozlowski wrote:
-> > On Tue, 7 May 2019 at 19:04, Rob Herring <robh@kernel.org> wrote:
-> >>> +- devfreq-events : phandles of the PPMU events used by the controller.
-> >>> +- samsung,syscon-chipid : phandle of the ChipID used by the controller.
-> >>> +- samsung,syscon-clk : phandle of the clock register set used by the controller.
-> >>
-> >> Looks like a hack. Can't you get this from the clocks property? What is
-> >> this for?
-> >
-> > Hi Rob,
-> >
-> > Lukasz uses these two syscon regmaps to read certain registers. For
-> > chipid he reads it to check the size of attached memory (only 2 GB
-> > version is supported). This indeed looks like a hack. However the
-> > second regmap (clk) is needed to get the timing data from registers
-> > from DMC clock driver address space. These are registers with memory
-> > timing so their data is not exposed anyway in common clk framework.
+Commit 69bec7259853 ("USB: core: let USB device know device node")
+added support for attaching devicetree node for USB devices. The mentioned
+commit however identifies the given USB device node only by the 'reg'
+property in the host controller children nodes. The USB device node
+however also has to have a 'compatible' property as described in
+Documentation/devicetree/bindings/usb/usb-device.txt. Lack for the
+'compatible' property check might result in assigning a devicetree node,
+which is not intended to be the proper node for the given USB device.
 
-Okay, please just explain what your accessing. Consider adding the
-offset as a cell in case stuff moves around on another chip.
+This is important especially when USB host controller has child-nodes for
+other purposes. For example, Exynos EHCI and OHCI drivers already define
+child-nodes for each physical root hub port and assigns respective PHY
+controller and parameters for them. Those binding predates support for
+USB devicetree nodes.
 
-> >
-> > Best regards,
-> > Krzysztof
->
-> Thank you Krzysztof for a fast response. I have also responded to Rob.
-> I wouldn't call accessing chipid registers as a hack, though. The DMC
-> registers do not contain information about the memory chip since it is
-> in phase of production the board not the chip. Thus, chipid regs (which
-> loads from e-fuses) are best place to put information about memory
-> type/size.
+Checking for the proper compatibility string allows to mitigate the
+conflict between USB device devicetree nodes and the bindings for USB
+controllers with child nodes. It also fixes the side-effect of the other
+commits, like 01fdf179f4b0 ("usb: core: skip interfaces disabled in
+devicetree"), which incorrectly disables some devices on Exynos based
+boards.
 
-For efuses, we have a binding (nvmem). Maybe you should use it.
+Reported-by: Markus Reichl <m.reichl@fivetechno.de>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+v3:
+- replaced ad hoc checks by proper test for proper value of the
+  compatible string in drivers/usb/core/of.c
+v2: https://lkml.org/lkml/2019/5/8/321
+v1: https://lkml.org/lkml/2019/5/7/715
+---
+ drivers/usb/core/hub.c |  3 +++
+ drivers/usb/core/of.c  | 31 +++++++++++++++++++++++++++++++
+ include/linux/usb/of.h |  2 ++
+ 3 files changed, 36 insertions(+)
 
-Rob
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index 2f94568ba385..6f2438522d09 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -22,6 +22,7 @@
+ #include <linux/usb.h>
+ #include <linux/usbdevice_fs.h>
+ #include <linux/usb/hcd.h>
++#include <linux/usb/of.h>
+ #include <linux/usb/otg.h>
+ #include <linux/usb/quirks.h>
+ #include <linux/workqueue.h>
+@@ -5023,6 +5024,8 @@ static void hub_port_connect(struct usb_hub *hub, int port1, u16 portstatus,
+ 		if (status < 0)
+ 			goto loop;
+ 
++		usb_of_validate_device_node(udev);
++
+ 		if (udev->quirks & USB_QUIRK_DELAY_INIT)
+ 			msleep(2000);
+ 
+diff --git a/drivers/usb/core/of.c b/drivers/usb/core/of.c
+index 651708d8c908..2b6f16753edc 100644
+--- a/drivers/usb/core/of.c
++++ b/drivers/usb/core/of.c
+@@ -30,6 +30,12 @@ struct device_node *usb_of_get_device_node(struct usb_device *hub, int port1)
+ 	for_each_child_of_node(hub->dev.of_node, node) {
+ 		if (of_property_read_u32(node, "reg", &reg))
+ 			continue;
++		/*
++		 * idVendor and idProduct are not yet known, so check only
++		 * a presence of the compatible property.
++		 */
++		if (!of_find_property(node, "compatible", NULL))
++			continue;
+ 
+ 		if (reg == port1)
+ 			return node;
+@@ -39,6 +45,31 @@ struct device_node *usb_of_get_device_node(struct usb_device *hub, int port1)
+ }
+ EXPORT_SYMBOL_GPL(usb_of_get_device_node);
+ 
++/**
++ * usb_of_validate_device_node() - validate dt node of the probed USB device
++ * @udev: USB device
++ *
++ * Validate devicetree node for the USB device. Compatible string must match
++ * device's idVendor and idProduct, otherwise the of_node will be put and set
++ * to NULL.
++ */
++void usb_of_validate_device_node(struct usb_device *udev)
++{
++	char compatible[13];
++
++	if (!udev->dev.of_node)
++		return;
++
++	snprintf(compatible, sizeof(compatible), "usb%x,%x",
++		 le16_to_cpu(udev->descriptor.idVendor),
++		 le16_to_cpu(udev->descriptor.idProduct));
++
++	if (of_device_is_compatible(udev->dev.of_node, compatible) == 0) {
++		of_node_put(udev->dev.of_node);
++		udev->dev.of_node = NULL;
++	}
++}
++
+ /**
+  * usb_of_has_combined_node() - determine whether a device has a combined node
+  * @udev: USB device
+diff --git a/include/linux/usb/of.h b/include/linux/usb/of.h
+index dba55ccb9b53..9969efda03ad 100644
+--- a/include/linux/usb/of.h
++++ b/include/linux/usb/of.h
+@@ -24,6 +24,7 @@ bool usb_of_has_combined_node(struct usb_device *udev);
+ struct device_node *usb_of_get_interface_node(struct usb_device *udev,
+ 		u8 config, u8 ifnum);
+ struct device *usb_of_get_companion_dev(struct device *dev);
++void usb_of_validate_device_node(struct usb_device *udev);
+ #else
+ static inline enum usb_dr_mode
+ of_usb_get_dr_mode_by_phy(struct device_node *np, int arg0)
+@@ -57,6 +58,7 @@ static inline struct device *usb_of_get_companion_dev(struct device *dev)
+ {
+ 	return NULL;
+ }
++static inline void usb_of_validate_device_node(struct usb_device *udev) { }
+ #endif
+ 
+ #if IS_ENABLED(CONFIG_OF) && IS_ENABLED(CONFIG_USB_SUPPORT)
+-- 
+2.17.1
