@@ -1,67 +1,61 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v3] usb: core: verify devicetree nodes for USB devices
-Date: Mon, 13 May 2019 11:07:56 +0200
-Message-ID: <3544eb61-2bd8-338d-8d62-d95a775528ef@samsung.com>
+From: Peter Chen <peter.chen@nxp.com>
+Subject: RE: [PATCH v3] usb: core: verify devicetree nodes for USB devices
+Date: Mon, 13 May 2019 09:23:24 +0000
+Message-ID: <VI1PR04MB5327FAC12E4A3D403E8D92128B0F0@VI1PR04MB5327.eurprd04.prod.outlook.com>
 References: <yw1xpnotufti.fsf@mansr.com>
         <CGME20190509084827eucas1p294962744fe70745c50b69a5349b5de68@eucas1p2.samsung.com>
-        <20190509084726.5405-1-m.szyprowski@samsung.com>
-        <yw1xlfzfv4ol.fsf@mansr.com>
+        <20190509084726.5405-1-m.szyprowski@samsung.com>        <yw1xlfzfv4ol.fsf@mansr.com>
         <VI1PR04MB5327AD56CA772284DFE663D08B0C0@VI1PR04MB5327.eurprd04.prod.outlook.com>
         <7c5579d2-634a-d705-a451-563939957d57@samsung.com>
         <VI1PR04MB5327B425756FA394C51525208B0F0@VI1PR04MB5327.eurprd04.prod.outlook.com>
+ <3544eb61-2bd8-338d-8d62-d95a775528ef@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <VI1PR04MB5327B425756FA394C51525208B0F0@VI1PR04MB5327.eurprd04.prod.outlook.com>
+In-Reply-To: <3544eb61-2bd8-338d-8d62-d95a775528ef@samsung.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Chen <peter.chen@nxp.com>, =?UTF-8?B?TcOlbnMgUnVsbGfDpXJk?= <mans@mansr.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, =?utf-8?B?TcOlbnMgUnVsbGfDpXJk?= <mans@mansr.com>
 Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Markus Reichl <m.reichl@fivetechno.de>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Peter,
-
-On 2019-05-13 11:00, Peter Chen wrote:
->> On 2019-05-10 05:10, Peter Chen wrote:
->>>> Marek Szyprowski <m.szyprowski@samsung.com> writes:
->>>>> Commit 69bec7259853 ("USB: core: let USB device know device node")
->>>>> added support for attaching devicetree node for USB devices. The
->>>>> mentioned commit however identifies the given USB device node only by the
->> 'reg'
->>>>> property in the host controller children nodes. The USB device node
->>>>> however also has to have a 'compatible' property as described in
->>>>> Documentation/devicetree/bindings/usb/usb-device.txt. Lack for the
->>>>> 'compatible' property check might result in assigning a devicetree
->>>>> node, which is not intended to be the proper node for the given USB device.
->>>>>
->>>>> This is important especially when USB host controller has
->>>>> child-nodes for other purposes. For example, Exynos EHCI and OHCI
->>>>> drivers already define child-nodes for each physical root hub port
->>>>> and assigns respective PHY controller and parameters for them. Those
->>>>> binding predates support for USB devicetree nodes.
->>>>>
->>>>> Checking for the proper compatibility string allows to mitigate the
->>>>> conflict between USB device devicetree nodes and the bindings for
->>>>> USB controllers with child nodes. It also fixes the side-effect of
->>>>> the other commits, like 01fdf179f4b0 ("usb: core: skip interfaces
->>>>> disabled in devicetree"), which incorrectly disables some devices on
->>>>> Exynos based boards.
->>> Hi Marek,
->>>
->>> The purpose of your patch is do not set of_node for device under USB controller,
->> right?
->>
->> Right.
->>
-> Do you mind doing it at function exynos_ehci_get_phy of ehci-exynos.c?
-
-I don't mind fixing it in ehci-exynos, but frankly so far I have no idea 
-how to do it. The problem is that newly created USB devices get of-node 
-pointer pointing to a node which if not intended for them. How this can 
-be fixed in ehci-exynos?
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+IA0KPiBPbiAyMDE5LTA1LTEzIDExOjAwLCBQZXRlciBDaGVuIHdyb3RlOg0KPiA+PiBPbiAyMDE5
+LTA1LTEwIDA1OjEwLCBQZXRlciBDaGVuIHdyb3RlOg0KPiA+Pj4+IE1hcmVrIFN6eXByb3dza2kg
+PG0uc3p5cHJvd3NraUBzYW1zdW5nLmNvbT4gd3JpdGVzOg0KPiA+Pj4+PiBDb21taXQgNjliZWM3
+MjU5ODUzICgiVVNCOiBjb3JlOiBsZXQgVVNCIGRldmljZSBrbm93IGRldmljZSBub2RlIikNCj4g
+Pj4+Pj4gYWRkZWQgc3VwcG9ydCBmb3IgYXR0YWNoaW5nIGRldmljZXRyZWUgbm9kZSBmb3IgVVNC
+IGRldmljZXMuIFRoZQ0KPiA+Pj4+PiBtZW50aW9uZWQgY29tbWl0IGhvd2V2ZXIgaWRlbnRpZmll
+cyB0aGUgZ2l2ZW4gVVNCIGRldmljZSBub2RlIG9ubHkNCj4gPj4+Pj4gYnkgdGhlDQo+ID4+ICdy
+ZWcnDQo+ID4+Pj4+IHByb3BlcnR5IGluIHRoZSBob3N0IGNvbnRyb2xsZXIgY2hpbGRyZW4gbm9k
+ZXMuIFRoZSBVU0IgZGV2aWNlDQo+ID4+Pj4+IG5vZGUgaG93ZXZlciBhbHNvIGhhcyB0byBoYXZl
+IGEgJ2NvbXBhdGlibGUnIHByb3BlcnR5IGFzIGRlc2NyaWJlZA0KPiA+Pj4+PiBpbiBEb2N1bWVu
+dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdXNiL3VzYi1kZXZpY2UudHh0LiBMYWNrIGZvcg0K
+PiA+Pj4+PiB0aGUgJ2NvbXBhdGlibGUnIHByb3BlcnR5IGNoZWNrIG1pZ2h0IHJlc3VsdCBpbiBh
+c3NpZ25pbmcgYQ0KPiA+Pj4+PiBkZXZpY2V0cmVlIG5vZGUsIHdoaWNoIGlzIG5vdCBpbnRlbmRl
+ZCB0byBiZSB0aGUgcHJvcGVyIG5vZGUgZm9yIHRoZSBnaXZlbg0KPiBVU0IgZGV2aWNlLg0KPiA+
+Pj4+Pg0KPiA+Pj4+PiBUaGlzIGlzIGltcG9ydGFudCBlc3BlY2lhbGx5IHdoZW4gVVNCIGhvc3Qg
+Y29udHJvbGxlciBoYXMNCj4gPj4+Pj4gY2hpbGQtbm9kZXMgZm9yIG90aGVyIHB1cnBvc2VzLiBG
+b3IgZXhhbXBsZSwgRXh5bm9zIEVIQ0kgYW5kIE9IQ0kNCj4gPj4+Pj4gZHJpdmVycyBhbHJlYWR5
+IGRlZmluZSBjaGlsZC1ub2RlcyBmb3IgZWFjaCBwaHlzaWNhbCByb290IGh1YiBwb3J0DQo+ID4+
+Pj4+IGFuZCBhc3NpZ25zIHJlc3BlY3RpdmUgUEhZIGNvbnRyb2xsZXIgYW5kIHBhcmFtZXRlcnMg
+Zm9yIHRoZW0uDQo+ID4+Pj4+IFRob3NlIGJpbmRpbmcgcHJlZGF0ZXMgc3VwcG9ydCBmb3IgVVNC
+IGRldmljZXRyZWUgbm9kZXMuDQo+ID4+Pj4+DQo+ID4+Pj4+IENoZWNraW5nIGZvciB0aGUgcHJv
+cGVyIGNvbXBhdGliaWxpdHkgc3RyaW5nIGFsbG93cyB0byBtaXRpZ2F0ZQ0KPiA+Pj4+PiB0aGUg
+Y29uZmxpY3QgYmV0d2VlbiBVU0IgZGV2aWNlIGRldmljZXRyZWUgbm9kZXMgYW5kIHRoZSBiaW5k
+aW5ncw0KPiA+Pj4+PiBmb3IgVVNCIGNvbnRyb2xsZXJzIHdpdGggY2hpbGQgbm9kZXMuIEl0IGFs
+c28gZml4ZXMgdGhlDQo+ID4+Pj4+IHNpZGUtZWZmZWN0IG9mIHRoZSBvdGhlciBjb21taXRzLCBs
+aWtlIDAxZmRmMTc5ZjRiMCAoInVzYjogY29yZToNCj4gPj4+Pj4gc2tpcCBpbnRlcmZhY2VzIGRp
+c2FibGVkIGluIGRldmljZXRyZWUiKSwgd2hpY2ggaW5jb3JyZWN0bHkNCj4gPj4+Pj4gZGlzYWJs
+ZXMgc29tZSBkZXZpY2VzIG9uIEV4eW5vcyBiYXNlZCBib2FyZHMuDQo+ID4+PiBIaSBNYXJlaywN
+Cj4gPj4+DQo+ID4+PiBUaGUgcHVycG9zZSBvZiB5b3VyIHBhdGNoIGlzIGRvIG5vdCBzZXQgb2Zf
+bm9kZSBmb3IgZGV2aWNlIHVuZGVyIFVTQg0KPiA+Pj4gY29udHJvbGxlciwNCj4gPj4gcmlnaHQ/
+DQo+ID4+DQo+ID4+IFJpZ2h0Lg0KPiA+Pg0KPiA+IERvIHlvdSBtaW5kIGRvaW5nIGl0IGF0IGZ1
+bmN0aW9uIGV4eW5vc19laGNpX2dldF9waHkgb2YgZWhjaS1leHlub3MuYz8NCj4gDQo+IEkgZG9u
+J3QgbWluZCBmaXhpbmcgaXQgaW4gZWhjaS1leHlub3MsIGJ1dCBmcmFua2x5IHNvIGZhciBJIGhh
+dmUgbm8gaWRlYSBob3cgdG8gZG8gaXQuDQo+IFRoZSBwcm9ibGVtIGlzIHRoYXQgbmV3bHkgY3Jl
+YXRlZCBVU0IgZGV2aWNlcyBnZXQgb2Ytbm9kZSBwb2ludGVyIHBvaW50aW5nIHRvIGENCj4gbm9k
+ZSB3aGljaCBpZiBub3QgaW50ZW5kZWQgZm9yIHRoZW0uIEhvdyB0aGlzIGNhbiBiZSBmaXhlZCBp
+biBlaGNpLWV4eW5vcz8NCj4gDQogDQpDYW4ndCBiZSB3b3JrYXJvdW5kIGJ5IHNldHRpbmcgb2Zf
+bm9kZSBhcyBOVUxMIGZvciBFSENJIGNvbnRyb2xsZXIgb3IgZm9yIFBIWSBub2RlIGF0DQpleHlu
+b3NfZWhjaV9nZXRfcGh5Pw0KDQpQZXRlcg0KDQo=
