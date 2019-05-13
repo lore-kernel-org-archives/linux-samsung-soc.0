@@ -1,74 +1,50 @@
-From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: Re: [PATCH v7 07/13] dt-bindings: memory-controllers: add
- Exynos5422 DMC device description
-Date: Fri, 10 May 2019 15:12:52 +0200
-Message-ID: <c9b4759e-e15b-9c5d-63d0-9db06a4c361a@partner.samsung.com>
-References: <1557155521-30949-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20190506151215eucas1p2c57147edac5671c5ec9a223efb6b4adc@eucas1p2.samsung.com>
-        <1557155521-30949-8-git-send-email-l.luba@partner.samsung.com>
-        <20190507170422.GA25179@bogus>
-        <CAJKOXPdacKBrKeCyCaE7VS8-NOR4Oo27XY7rx20P2ORY2vBBSg@mail.gmail.com>
-        <ab489925-040c-815c-2aef-50ed0ee6cd6c@partner.samsung.com>
-        <CAL_JsqJSbi5jNZSRhiE-h74DdbsgM7O+tqP9HOf037pyN7TbFA@mail.gmail.com>
+From: Peter Chen <peter.chen@nxp.com>
+Subject: RE: [PATCH v3] usb: core: verify devicetree nodes for USB devices
+Date: Mon, 13 May 2019 09:00:41 +0000
+Message-ID: <VI1PR04MB5327B425756FA394C51525208B0F0@VI1PR04MB5327.eurprd04.prod.outlook.com>
+References: <yw1xpnotufti.fsf@mansr.com>
+        <CGME20190509084827eucas1p294962744fe70745c50b69a5349b5de68@eucas1p2.samsung.com>
+        <20190509084726.5405-1-m.szyprowski@samsung.com>        <yw1xlfzfv4ol.fsf@mansr.com>
+        <VI1PR04MB5327AD56CA772284DFE663D08B0C0@VI1PR04MB5327.eurprd04.prod.outlook.com>
+ <7c5579d2-634a-d705-a451-563939957d57@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAL_JsqJSbi5jNZSRhiE-h74DdbsgM7O+tqP9HOf037pyN7TbFA@mail.gmail.com>
+In-Reply-To: <7c5579d2-634a-d705-a451-563939957d57@samsung.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:THERMAL" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie@samsung.com>, Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kees Cook <keescook@chromium.org>, Tony Lindgren <tony@atomide.com>, Joerg Roedel <jroedel@suse.de>, Thierry Reding <treding@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, willy.mh.wolff.ml
+To: Marek Szyprowski <m.szyprowski@samsung.com>, =?utf-8?B?TcOlbnMgUnVsbGfDpXJk?= <mans@mansr.com>
+Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Markus Reichl <m.reichl@fivetechno.de>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Rob,
-
-On 5/8/19 10:35 PM, Rob Herring wrote:
-> On Wed, May 8, 2019 at 4:45 AM Lukasz Luba <l.luba@partner.samsung.com> wrote:
->>
->>
->> On 5/8/19 9:19 AM, Krzysztof Kozlowski wrote:
->>> On Tue, 7 May 2019 at 19:04, Rob Herring <robh@kernel.org> wrote:
->>>>> +- devfreq-events : phandles of the PPMU events used by the controller.
->>>>> +- samsung,syscon-chipid : phandle of the ChipID used by the controller.
->>>>> +- samsung,syscon-clk : phandle of the clock register set used by the controller.
->>>>
->>>> Looks like a hack. Can't you get this from the clocks property? What is
->>>> this for?
->>>
->>> Hi Rob,
->>>
->>> Lukasz uses these two syscon regmaps to read certain registers. For
->>> chipid he reads it to check the size of attached memory (only 2 GB
->>> version is supported). This indeed looks like a hack. However the
->>> second regmap (clk) is needed to get the timing data from registers
->>> from DMC clock driver address space. These are registers with memory
->>> timing so their data is not exposed anyway in common clk framework.
-> 
-> Okay, please just explain what your accessing. Consider adding the
-> offset as a cell in case stuff moves around on another chip.
-Good point. I will also have to regmap the registers and not take from
-'clock' device.
-> 
->>>
->>> Best regards,
->>> Krzysztof
->>
->> Thank you Krzysztof for a fast response. I have also responded to Rob.
->> I wouldn't call accessing chipid registers as a hack, though. The DMC
->> registers do not contain information about the memory chip since it is
->> in phase of production the board not the chip. Thus, chipid regs (which
->> loads from e-fuses) are best place to put information about memory
->> type/size.
-> 
-> For efuses, we have a binding (nvmem). Maybe you should use it.
-I don't know about the design of a planned 'chipid' driver, which going
-to be sent to LKML in near future. Thank you for this information,
-I will talk with Bartek.
-
-Regards,
-Lukasz
-> 
-> Rob
-> 
-> 
+IA0KPiANCj4gT24gMjAxOS0wNS0xMCAwNToxMCwgUGV0ZXIgQ2hlbiB3cm90ZToNCj4gPg0KPiA+
+PiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lAc2Ftc3VuZy5jb20+IHdyaXRlczoNCj4g
+Pj4+IENvbW1pdCA2OWJlYzcyNTk4NTMgKCJVU0I6IGNvcmU6IGxldCBVU0IgZGV2aWNlIGtub3cg
+ZGV2aWNlIG5vZGUiKQ0KPiA+Pj4gYWRkZWQgc3VwcG9ydCBmb3IgYXR0YWNoaW5nIGRldmljZXRy
+ZWUgbm9kZSBmb3IgVVNCIGRldmljZXMuIFRoZQ0KPiA+Pj4gbWVudGlvbmVkIGNvbW1pdCBob3dl
+dmVyIGlkZW50aWZpZXMgdGhlIGdpdmVuIFVTQiBkZXZpY2Ugbm9kZSBvbmx5IGJ5IHRoZQ0KPiAn
+cmVnJw0KPiA+Pj4gcHJvcGVydHkgaW4gdGhlIGhvc3QgY29udHJvbGxlciBjaGlsZHJlbiBub2Rl
+cy4gVGhlIFVTQiBkZXZpY2Ugbm9kZQ0KPiA+Pj4gaG93ZXZlciBhbHNvIGhhcyB0byBoYXZlIGEg
+J2NvbXBhdGlibGUnIHByb3BlcnR5IGFzIGRlc2NyaWJlZCBpbg0KPiA+Pj4gRG9jdW1lbnRhdGlv
+bi9kZXZpY2V0cmVlL2JpbmRpbmdzL3VzYi91c2ItZGV2aWNlLnR4dC4gTGFjayBmb3IgdGhlDQo+
+ID4+PiAnY29tcGF0aWJsZScgcHJvcGVydHkgY2hlY2sgbWlnaHQgcmVzdWx0IGluIGFzc2lnbmlu
+ZyBhIGRldmljZXRyZWUNCj4gPj4+IG5vZGUsIHdoaWNoIGlzIG5vdCBpbnRlbmRlZCB0byBiZSB0
+aGUgcHJvcGVyIG5vZGUgZm9yIHRoZSBnaXZlbiBVU0IgZGV2aWNlLg0KPiA+Pj4NCj4gPj4+IFRo
+aXMgaXMgaW1wb3J0YW50IGVzcGVjaWFsbHkgd2hlbiBVU0IgaG9zdCBjb250cm9sbGVyIGhhcw0K
+PiA+Pj4gY2hpbGQtbm9kZXMgZm9yIG90aGVyIHB1cnBvc2VzLiBGb3IgZXhhbXBsZSwgRXh5bm9z
+IEVIQ0kgYW5kIE9IQ0kNCj4gPj4+IGRyaXZlcnMgYWxyZWFkeSBkZWZpbmUgY2hpbGQtbm9kZXMg
+Zm9yIGVhY2ggcGh5c2ljYWwgcm9vdCBodWIgcG9ydA0KPiA+Pj4gYW5kIGFzc2lnbnMgcmVzcGVj
+dGl2ZSBQSFkgY29udHJvbGxlciBhbmQgcGFyYW1ldGVycyBmb3IgdGhlbS4gVGhvc2UNCj4gPj4+
+IGJpbmRpbmcgcHJlZGF0ZXMgc3VwcG9ydCBmb3IgVVNCIGRldmljZXRyZWUgbm9kZXMuDQo+ID4+
+Pg0KPiA+Pj4gQ2hlY2tpbmcgZm9yIHRoZSBwcm9wZXIgY29tcGF0aWJpbGl0eSBzdHJpbmcgYWxs
+b3dzIHRvIG1pdGlnYXRlIHRoZQ0KPiA+Pj4gY29uZmxpY3QgYmV0d2VlbiBVU0IgZGV2aWNlIGRl
+dmljZXRyZWUgbm9kZXMgYW5kIHRoZSBiaW5kaW5ncyBmb3INCj4gPj4+IFVTQiBjb250cm9sbGVy
+cyB3aXRoIGNoaWxkIG5vZGVzLiBJdCBhbHNvIGZpeGVzIHRoZSBzaWRlLWVmZmVjdCBvZg0KPiA+
+Pj4gdGhlIG90aGVyIGNvbW1pdHMsIGxpa2UgMDFmZGYxNzlmNGIwICgidXNiOiBjb3JlOiBza2lw
+IGludGVyZmFjZXMNCj4gPj4+IGRpc2FibGVkIGluIGRldmljZXRyZWUiKSwgd2hpY2ggaW5jb3Jy
+ZWN0bHkgZGlzYWJsZXMgc29tZSBkZXZpY2VzIG9uDQo+ID4+PiBFeHlub3MgYmFzZWQgYm9hcmRz
+Lg0KPiA+IEhpIE1hcmVrLA0KPiA+DQo+ID4gVGhlIHB1cnBvc2Ugb2YgeW91ciBwYXRjaCBpcyBk
+byBub3Qgc2V0IG9mX25vZGUgZm9yIGRldmljZSB1bmRlciBVU0IgY29udHJvbGxlciwNCj4gcmln
+aHQ/DQo+IA0KPiBSaWdodC4NCj4gDQoNCkRvIHlvdSBtaW5kIGRvaW5nIGl0IGF0IGZ1bmN0aW9u
+IGV4eW5vc19laGNpX2dldF9waHkgb2YgZWhjaS1leHlub3MuYz8NCg0KUGV0ZXINCg==
