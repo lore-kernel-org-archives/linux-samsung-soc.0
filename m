@@ -1,168 +1,137 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH/RFC] ARM: Add workaround for I-Cache line size mismatch
- between CPU cores
-Date: Wed, 15 May 2019 14:33:56 +0200
-Message-ID: <20190515123356.31924-1-m.szyprowski@samsung.com>
-References: <CGME20190515123455eucas1p2901074694b5835e16ca0b2916d2e4139@eucas1p2.samsung.com>
+From: Tom Murphy <tmurphy@arista.com>
+Subject: Re: [PATCH v3 2/4] iommu/dma-iommu: Handle deferred devices
+Date: Wed, 15 May 2019 13:46:43 +0100
+Message-ID: <CAPL0++5AUyVHexpsE86PfXxmQgDHfxjSSoAAGXM5c7Mdix=OZQ@mail.gmail.com>
+References: <20190506185207.31069-1-tmurphy@arista.com> <20190506185207.31069-3-tmurphy@arista.com>
+ <20190507064000.GB5173@infradead.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190507064000.GB5173@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Russell King <rmk+kernel@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>, Andre Przywara <andre.przywara@arm.com>, Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: iommu@lists.linux-foundation.org, Tom Murphy <murphyt7@tcd.ie>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.ker
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Some big.LITTLE systems have mismatch of I-Cache line size between
-LITTLE and big cores. This patch adds workaround for proper I-Cache
-support on such systems. Without it, some kind of userspace code
-(typically self-modifying) might suffer from random SIGILL failures.
+like this?
 
-Similar workaround exists for ARM64 architecture, added by commit
-116c81f427ff ("arm64: Work around systems with mismatched cache line
-sizes").
+In that case we need to add a call to iommu_dma_alloc_remap.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>From 862aeebb601008cf863e3aff4ff8ed7cefebeefa Mon Sep 17 00:00:00 2001
+From: Tom Murphy <tmurphy@tmurphy-419tom-0.sjc.aristanetworks.com>
+Date: Wed, 15 May 2019 05:43:25 -0700
+Subject: [PATCH] iommu/dma-iommu: Handle deferred devices
+
+Handle devices which defer their attach to the iommu in the dma-iommu api
+
+Signed-off-by: Tom Murphy <tmurphy@arista.com>
 ---
-This workaround is needed on all supported Exynos big.LITTLE SoCs: 5420,
-5422 and 5800.
----
- arch/arm/configs/exynos_defconfig |  1 +
- arch/arm/include/asm/cacheflush.h |  7 +++++++
- arch/arm/kernel/smp.c             |  1 +
- arch/arm/mm/Kconfig               |  8 ++++++++
- arch/arm/mm/cache-v7.S            | 13 +++++++++++++
- arch/arm/mm/init.c                | 16 ++++++++++++++++
- arch/arm/mm/mm.h                  |  2 ++
- 7 files changed, 48 insertions(+)
+ drivers/iommu/dma-iommu.c | 27 ++++++++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index c95c54284da2..9b959afaaa12 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -9,6 +9,7 @@ CONFIG_MODULE_UNLOAD=y
- CONFIG_PARTITION_ADVANCED=y
- CONFIG_ARCH_EXYNOS=y
- CONFIG_ARCH_EXYNOS3=y
-+CONFIG_CPU_ICACHE_MISMATCH_WORKAROUND=y
- CONFIG_SMP=y
- CONFIG_BIG_LITTLE=y
- CONFIG_NR_CPUS=8
-diff --git a/arch/arm/include/asm/cacheflush.h b/arch/arm/include/asm/cacheflush.h
-index ec1a5fd0d294..ec4fd2e2dd60 100644
---- a/arch/arm/include/asm/cacheflush.h
-+++ b/arch/arm/include/asm/cacheflush.h
-@@ -479,4 +479,11 @@ static inline void __sync_cache_range_r(volatile void *p, size_t size)
- void flush_uprobe_xol_access(struct page *page, unsigned long uaddr,
- 			     void *kaddr, unsigned long len);
- 
-+
-+#ifdef CONFIG_CPU_ICACHE_MISMATCH_WORKAROUND
-+void check_cpu_icache_size(int cpuid);
-+#else
-+static inline void check_cpu_icache_size(int cpuid) { }
-+#endif
-+
- #endif
-diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
-index 8687d619260f..261be0e5bc03 100644
---- a/arch/arm/kernel/smp.c
-+++ b/arch/arm/kernel/smp.c
-@@ -373,6 +373,7 @@ static void smp_store_cpu_info(unsigned int cpuid)
- 	cpu_info->cpuid = read_cpuid_id();
- 
- 	store_cpu_topology(cpuid);
-+	check_cpu_icache_size(cpuid);
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index 7f313cfa9..a48ae906d 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -22,6 +22,7 @@
+ #include <linux/pci.h>
+ #include <linux/scatterlist.h>
+ #include <linux/vmalloc.h>
++#include <linux/crash_dump.h>
+
+ struct iommu_dma_msi_page {
+     struct list_head    list;
+@@ -323,6 +324,21 @@ static int iommu_dma_init_domain(struct
+iommu_domain *domain, dma_addr_t base,
+     return iova_reserve_iommu_regions(dev, domain);
  }
- 
- /*
-diff --git a/arch/arm/mm/Kconfig b/arch/arm/mm/Kconfig
-index b169e580bf82..d4733e086f2b 100644
---- a/arch/arm/mm/Kconfig
-+++ b/arch/arm/mm/Kconfig
-@@ -780,6 +780,14 @@ config CPU_ICACHE_DISABLE
- 	  Say Y here to disable the processor instruction cache. Unless
- 	  you have a reason not to or are unsure, say N.
- 
-+config CPU_ICACHE_MISMATCH_WORKAROUND
-+	bool "Workaround for I-Cache line size mismatch between CPU cores"
-+	depends on SMP && CPU_V7
-+	help
-+	  Some big.LITTLE systems have mismatch of I-Cache line size between
-+	  LITTLE and big cores.  Say Y here to enable workaround for proper
-+	  I-Cache support on such systems.  If unsure, say N.
-+
- config CPU_DCACHE_DISABLE
- 	bool "Disable D-Cache (C-bit)"
- 	depends on (CPU_CP15 && !SMP) || CPU_V7M
-diff --git a/arch/arm/mm/cache-v7.S b/arch/arm/mm/cache-v7.S
-index 2149b47a0c5a..db3986708c8a 100644
---- a/arch/arm/mm/cache-v7.S
-+++ b/arch/arm/mm/cache-v7.S
-@@ -19,6 +19,14 @@
- 
- #include "proc-macros.S"
- 
-+#ifdef CONFIG_CPU_ICACHE_MISMATCH_WORKAROUND
-+.globl icache_size
-+	.data
-+	.align	2
-+icache_size:
-+	.long	64
-+	.text
-+#endif
- /*
-  * The secondary kernel init calls v7_flush_dcache_all before it enables
-  * the L1; however, the L1 comes out of reset in an undefined state, so
-@@ -284,7 +292,12 @@ ENTRY(v7_coherent_user_range)
- 	cmp	r12, r1
- 	blo	1b
- 	dsb	ishst
-+#ifdef CONFIG_CPU_ICACHE_MISMATCH_WORKAROUND
-+	ldr	r3, =icache_size
-+	ldr	r2, [r3, #0]
-+#else
- 	icache_line_size r2, r3
-+#endif
- 	sub	r3, r2, #1
- 	bic	r12, r0, r3
- 2:
-diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
-index be0b42937888..1a66af5bd259 100644
---- a/arch/arm/mm/init.c
-+++ b/arch/arm/mm/init.c
-@@ -242,6 +242,22 @@ static void __init arm_initrd_init(void)
- #endif
- }
- 
-+#ifdef CONFIG_CPU_ICACHE_MISMATCH_WORKAROUND
-+void check_cpu_icache_size(int cpuid)
+
++static int handle_deferred_device(struct device *dev,
++        struct iommu_domain *domain)
 +{
-+	u32 size, ctr;
++    const struct iommu_ops *ops = domain->ops;
 +
-+	asm("mrc p15, 0, %0, c0, c0, 1" : "=r" (ctr));
++    if (!is_kdump_kernel())
++        return 0;
 +
-+	size = 1 << ((ctr & 0xf) + 2);
-+	if (cpuid != 0 && icache_size != size)
-+		pr_info("CPU%u: detected I-Cache line size mismatch, workaround enabled\n",
-+			cpuid);
-+	if (icache_size > size)
-+		icache_size = size;
++    if (unlikely(ops->is_attach_deferred &&
++            ops->is_attach_deferred(domain, dev)))
++        return iommu_attach_device(domain, dev);
++
++    return 0;
 +}
-+#endif
 +
- void __init arm_memblock_init(const struct machine_desc *mdesc)
- {
- 	/* Register the kernel text, kernel data and initrd with memblock. */
-diff --git a/arch/arm/mm/mm.h b/arch/arm/mm/mm.h
-index 6b045c6653ea..941356d95a67 100644
---- a/arch/arm/mm/mm.h
-+++ b/arch/arm/mm/mm.h
-@@ -8,6 +8,8 @@
- /* the upper-most page table pointer */
- extern pmd_t *top_pmd;
- 
-+extern int icache_size;
+ /**
+  * dma_info_to_prot - Translate DMA API directions and attributes to IOMMU API
+  *                    page flags.
+@@ -432,6 +448,9 @@ static dma_addr_t __iommu_dma_map(struct device
+*dev, phys_addr_t phys,
+     size_t iova_off = 0;
+     dma_addr_t iova;
+
++    if (unlikely(handle_deferred_device(dev, domain)))
++        return DMA_MAPPING_ERROR;
 +
- /*
-  * 0xffff8000 to 0xffffffff is reserved for any ARM architecture
-  * specific hacks for copying pages efficiently, while 0xffff4000
+     if (cookie->type == IOMMU_DMA_IOVA_COOKIE) {
+         iova_off = iova_offset(&cookie->iovad, phys);
+         size = iova_align(&cookie->iovad, size + iova_off);
+@@ -609,6 +628,9 @@ static void *iommu_dma_alloc_remap(struct device
+*dev, size_t size,
+     dma_addr_t iova;
+     void *vaddr;
+
++    if (unlikely(handle_deferred_device(dev, domain)))
++        return DMA_MAPPING_ERROR;
++
+     *dma_handle = DMA_MAPPING_ERROR;
+
+     min_size = alloc_sizes & -alloc_sizes;
+@@ -836,7 +858,7 @@ static dma_addr_t iommu_dma_map_page(struct device
+*dev, struct page *page,
+     bool coherent = dev_is_dma_coherent(dev);
+     dma_addr_t dma_handle;
+
+-    dma_handle =__iommu_dma_map(dev, phys, size,
++    dma_handle = __iommu_dma_map(dev, phys, size,
+             dma_info_to_prot(dir, coherent, attrs),
+             iommu_get_dma_domain(dev));
+     if (!coherent && !(attrs & DMA_ATTR_SKIP_CPU_SYNC) &&
+@@ -954,6 +976,9 @@ static int iommu_dma_map_sg(struct device *dev,
+struct scatterlist *sg,
+     unsigned long mask = dma_get_seg_boundary(dev);
+     int i;
+
++    if (unlikely(handle_deferred_device(dev, domain)))
++        return 0;
++
+     if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
+         iommu_dma_sync_sg_for_device(dev, sg, nents, dir);
+
 -- 
-2.17.1
+2.20.0
+
+On Tue, May 7, 2019 at 7:40 AM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Mon, May 06, 2019 at 07:52:04PM +0100, Tom Murphy wrote:
+> > +static int handle_deferred_device(struct device *dev)
+> > +{
+> > +     struct iommu_domain *domain;
+> > +     const struct iommu_ops *ops;
+> > +
+> > +     if (!is_kdump_kernel())
+> > +             return 0;
+> > +
+> > +     domain = iommu_get_domain_for_dev(dev);
+>
+> > -     dma_handle =__iommu_dma_map(dev, phys, size,
+> > +     if (unlikely(handle_deferred_device(dev)))
+> > +             return DMA_MAPPING_ERROR;
+> > +
+> > +     dma_handle = __iommu_dma_map(dev, phys, size,
+>
+> __iommu_dma_map already looks up the domain, and as far as I can
+> tell all callers need the handle_deferred_device call.  Should we
+> just move it to there and pass the domain from the caller?
+>
+> Also shouldn't the iommu_attach_device call inside
+> handle_deferred_device also get an unlikely marker?
