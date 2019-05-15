@@ -1,86 +1,168 @@
-From: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
-Subject: Re: [PATCH v3] usb: core: verify devicetree nodes for USB devices
-Date: Mon, 13 May 2019 11:06:39 +0100
-Message-ID: <yw1xzhnqu0r4.fsf@mansr.com>
-References: <yw1xpnotufti.fsf@mansr.com>
-        <CGME20190509084827eucas1p294962744fe70745c50b69a5349b5de68@eucas1p2.samsung.com>
-        <20190509084726.5405-1-m.szyprowski@samsung.com>
-        <yw1xlfzfv4ol.fsf@mansr.com>
-        <VI1PR04MB5327AD56CA772284DFE663D08B0C0@VI1PR04MB5327.eurprd04.prod.outlook.com>
-        <7c5579d2-634a-d705-a451-563939957d57@samsung.com>
-        <VI1PR04MB5327B425756FA394C51525208B0F0@VI1PR04MB5327.eurprd04.prod.outlook.com>
-        <3544eb61-2bd8-338d-8d62-d95a775528ef@samsung.com>
-        <VI1PR04MB5327FAC12E4A3D403E8D92128B0F0@VI1PR04MB5327.eurprd04.prod.outlook.com>
-        <5d0abe9c-613c-d39b-6746-78e5e5c2bbc5@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8BIT
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH/RFC] ARM: Add workaround for I-Cache line size mismatch
+ between CPU cores
+Date: Wed, 15 May 2019 14:33:56 +0200
+Message-ID: <20190515123356.31924-1-m.szyprowski@samsung.com>
+References: <CGME20190515123455eucas1p2901074694b5835e16ca0b2916d2e4139@eucas1p2.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5d0abe9c-613c-d39b-6746-78e5e5c2bbc5@samsung.com> (Marek
-        Szyprowski's message of "Mon, 13 May 2019 12:03:18 +0200")
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Peter Chen <peter.chen@nxp.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Markus Reichl <m.reichl@fivetechno.de>, Krzysztof Kozlowski <krzk@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Russell King <rmk+kernel@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>, Andre Przywara <andre.przywara@arm.com>, Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Marek Szyprowski <m.szyprowski@samsung.com> writes:
+Some big.LITTLE systems have mismatch of I-Cache line size between
+LITTLE and big cores. This patch adds workaround for proper I-Cache
+support on such systems. Without it, some kind of userspace code
+(typically self-modifying) might suffer from random SIGILL failures.
 
-> Hi Peter,
->
-> On 2019-05-13 11:23, Peter Chen wrote:
->>> On 2019-05-13 11:00, Peter Chen wrote:
->>>>> On 2019-05-10 05:10, Peter Chen wrote:
->>>>>>> Marek Szyprowski <m.szyprowski@samsung.com> writes:
->>>>>>>> Commit 69bec7259853 ("USB: core: let USB device know device node")
->>>>>>>> added support for attaching devicetree node for USB devices. The
->>>>>>>> mentioned commit however identifies the given USB device node only
->>>>>>>> by the
->>>>> 'reg'
->>>>>>>> property in the host controller children nodes. The USB device
->>>>>>>> node however also has to have a 'compatible' property as described
->>>>>>>> in Documentation/devicetree/bindings/usb/usb-device.txt. Lack for
->>>>>>>> the 'compatible' property check might result in assigning a
->>>>>>>> devicetree node, which is not intended to be the proper node for the given
->>> USB device.
->>>>>>>> This is important especially when USB host controller has
->>>>>>>> child-nodes for other purposes. For example, Exynos EHCI and OHCI
->>>>>>>> drivers already define child-nodes for each physical root hub port
->>>>>>>> and assigns respective PHY controller and parameters for them.
->>>>>>>> Those binding predates support for USB devicetree nodes.
->>>>>>>>
->>>>>>>> Checking for the proper compatibility string allows to mitigate
->>>>>>>> the conflict between USB device devicetree nodes and the bindings
->>>>>>>> for USB controllers with child nodes. It also fixes the
->>>>>>>> side-effect of the other commits, like 01fdf179f4b0 ("usb: core:
->>>>>>>> skip interfaces disabled in devicetree"), which incorrectly
->>>>>>>> disables some devices on Exynos based boards.
->>>>>> Hi Marek,
->>>>>>
->>>>>> The purpose of your patch is do not set of_node for device under USB
->>>>>> controller,
->>>>> right?
->>>>>
->>>>> Right.
->>>>>
->>>> Do you mind doing it at function exynos_ehci_get_phy of ehci-exynos.c?
->>> I don't mind fixing it in ehci-exynos, but frankly so far I have no
->>> idea how to do it.  The problem is that newly created USB devices
->>> get of-node pointer pointing to a node which if not intended for
->>> them. How this can be fixed in ehci-exynos?
->>>
->>   
->> Can't be workaround by setting of_node as NULL for EHCI controller or
->> for PHY node at exynos_ehci_get_phy?
->
-> Ah, such workaround? I will check, but this will need to be done with 
-> care, because have a side effect for other subsystems like regulators or 
-> clocks.
->
-> BTW, What's wrong with proper, full verification of USB device nodes?
+Similar workaround exists for ARM64 architecture, added by commit
+116c81f427ff ("arm64: Work around systems with mismatched cache line
+sizes").
 
-Your approach so far doesn't address the actual problem of a conflict
-between the generic USB DT bindings and those for the Exynos host
-controller.  If you fix that, the validation issue goes away.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+This workaround is needed on all supported Exynos big.LITTLE SoCs: 5420,
+5422 and 5800.
+---
+ arch/arm/configs/exynos_defconfig |  1 +
+ arch/arm/include/asm/cacheflush.h |  7 +++++++
+ arch/arm/kernel/smp.c             |  1 +
+ arch/arm/mm/Kconfig               |  8 ++++++++
+ arch/arm/mm/cache-v7.S            | 13 +++++++++++++
+ arch/arm/mm/init.c                | 16 ++++++++++++++++
+ arch/arm/mm/mm.h                  |  2 ++
+ 7 files changed, 48 insertions(+)
 
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index c95c54284da2..9b959afaaa12 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -9,6 +9,7 @@ CONFIG_MODULE_UNLOAD=y
+ CONFIG_PARTITION_ADVANCED=y
+ CONFIG_ARCH_EXYNOS=y
+ CONFIG_ARCH_EXYNOS3=y
++CONFIG_CPU_ICACHE_MISMATCH_WORKAROUND=y
+ CONFIG_SMP=y
+ CONFIG_BIG_LITTLE=y
+ CONFIG_NR_CPUS=8
+diff --git a/arch/arm/include/asm/cacheflush.h b/arch/arm/include/asm/cacheflush.h
+index ec1a5fd0d294..ec4fd2e2dd60 100644
+--- a/arch/arm/include/asm/cacheflush.h
++++ b/arch/arm/include/asm/cacheflush.h
+@@ -479,4 +479,11 @@ static inline void __sync_cache_range_r(volatile void *p, size_t size)
+ void flush_uprobe_xol_access(struct page *page, unsigned long uaddr,
+ 			     void *kaddr, unsigned long len);
+ 
++
++#ifdef CONFIG_CPU_ICACHE_MISMATCH_WORKAROUND
++void check_cpu_icache_size(int cpuid);
++#else
++static inline void check_cpu_icache_size(int cpuid) { }
++#endif
++
+ #endif
+diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
+index 8687d619260f..261be0e5bc03 100644
+--- a/arch/arm/kernel/smp.c
++++ b/arch/arm/kernel/smp.c
+@@ -373,6 +373,7 @@ static void smp_store_cpu_info(unsigned int cpuid)
+ 	cpu_info->cpuid = read_cpuid_id();
+ 
+ 	store_cpu_topology(cpuid);
++	check_cpu_icache_size(cpuid);
+ }
+ 
+ /*
+diff --git a/arch/arm/mm/Kconfig b/arch/arm/mm/Kconfig
+index b169e580bf82..d4733e086f2b 100644
+--- a/arch/arm/mm/Kconfig
++++ b/arch/arm/mm/Kconfig
+@@ -780,6 +780,14 @@ config CPU_ICACHE_DISABLE
+ 	  Say Y here to disable the processor instruction cache. Unless
+ 	  you have a reason not to or are unsure, say N.
+ 
++config CPU_ICACHE_MISMATCH_WORKAROUND
++	bool "Workaround for I-Cache line size mismatch between CPU cores"
++	depends on SMP && CPU_V7
++	help
++	  Some big.LITTLE systems have mismatch of I-Cache line size between
++	  LITTLE and big cores.  Say Y here to enable workaround for proper
++	  I-Cache support on such systems.  If unsure, say N.
++
+ config CPU_DCACHE_DISABLE
+ 	bool "Disable D-Cache (C-bit)"
+ 	depends on (CPU_CP15 && !SMP) || CPU_V7M
+diff --git a/arch/arm/mm/cache-v7.S b/arch/arm/mm/cache-v7.S
+index 2149b47a0c5a..db3986708c8a 100644
+--- a/arch/arm/mm/cache-v7.S
++++ b/arch/arm/mm/cache-v7.S
+@@ -19,6 +19,14 @@
+ 
+ #include "proc-macros.S"
+ 
++#ifdef CONFIG_CPU_ICACHE_MISMATCH_WORKAROUND
++.globl icache_size
++	.data
++	.align	2
++icache_size:
++	.long	64
++	.text
++#endif
+ /*
+  * The secondary kernel init calls v7_flush_dcache_all before it enables
+  * the L1; however, the L1 comes out of reset in an undefined state, so
+@@ -284,7 +292,12 @@ ENTRY(v7_coherent_user_range)
+ 	cmp	r12, r1
+ 	blo	1b
+ 	dsb	ishst
++#ifdef CONFIG_CPU_ICACHE_MISMATCH_WORKAROUND
++	ldr	r3, =icache_size
++	ldr	r2, [r3, #0]
++#else
+ 	icache_line_size r2, r3
++#endif
+ 	sub	r3, r2, #1
+ 	bic	r12, r0, r3
+ 2:
+diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+index be0b42937888..1a66af5bd259 100644
+--- a/arch/arm/mm/init.c
++++ b/arch/arm/mm/init.c
+@@ -242,6 +242,22 @@ static void __init arm_initrd_init(void)
+ #endif
+ }
+ 
++#ifdef CONFIG_CPU_ICACHE_MISMATCH_WORKAROUND
++void check_cpu_icache_size(int cpuid)
++{
++	u32 size, ctr;
++
++	asm("mrc p15, 0, %0, c0, c0, 1" : "=r" (ctr));
++
++	size = 1 << ((ctr & 0xf) + 2);
++	if (cpuid != 0 && icache_size != size)
++		pr_info("CPU%u: detected I-Cache line size mismatch, workaround enabled\n",
++			cpuid);
++	if (icache_size > size)
++		icache_size = size;
++}
++#endif
++
+ void __init arm_memblock_init(const struct machine_desc *mdesc)
+ {
+ 	/* Register the kernel text, kernel data and initrd with memblock. */
+diff --git a/arch/arm/mm/mm.h b/arch/arm/mm/mm.h
+index 6b045c6653ea..941356d95a67 100644
+--- a/arch/arm/mm/mm.h
++++ b/arch/arm/mm/mm.h
+@@ -8,6 +8,8 @@
+ /* the upper-most page table pointer */
+ extern pmd_t *top_pmd;
+ 
++extern int icache_size;
++
+ /*
+  * 0xffff8000 to 0xffffffff is reserved for any ARM architecture
+  * specific hacks for copying pages efficiently, while 0xffff4000
 -- 
-Måns Rullgård
+2.17.1
