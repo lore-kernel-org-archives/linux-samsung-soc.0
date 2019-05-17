@@ -1,119 +1,98 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v4] usb: exynos: add workaround for the USB device bindings
- conflict
-Date: Fri, 17 May 2019 12:57:02 +0200
-Message-ID: <20190517105702.4522-1-m.szyprowski@samsung.com>
-References: <CGME20190517105716eucas1p108609f1a119877c866f8afd194fdaa34@eucas1p1.samsung.com>
+Subject: Re: [PATCH v3] usb: core: verify devicetree nodes for USB devices
+Date: Fri, 17 May 2019 13:15:24 +0200
+Message-ID: <ccde81df-95e1-7496-52a2-aaf7a303c1fe@samsung.com>
+References: <yw1xpnotufti.fsf@mansr.com>
+        <CGME20190509084827eucas1p294962744fe70745c50b69a5349b5de68@eucas1p2.samsung.com>
+        <20190509084726.5405-1-m.szyprowski@samsung.com>
+        <yw1xlfzfv4ol.fsf@mansr.com>
+        <VI1PR04MB5327AD56CA772284DFE663D08B0C0@VI1PR04MB5327.eurprd04.prod.outlook.com>
+        <7c5579d2-634a-d705-a451-563939957d57@samsung.com>
+        <VI1PR04MB5327B425756FA394C51525208B0F0@VI1PR04MB5327.eurprd04.prod.outlook.com>
+        <3544eb61-2bd8-338d-8d62-d95a775528ef@samsung.com>
+        <VI1PR04MB5327FAC12E4A3D403E8D92128B0F0@VI1PR04MB5327.eurprd04.prod.outlook.com>
+        <5d0abe9c-613c-d39b-6746-78e5e5c2bbc5@samsung.com>
+        <yw1xzhnqu0r4.fsf@mansr.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <yw1xzhnqu0r4.fsf@mansr.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Markus Reichl <m.reichl@fivetechno.de>, =?UTF-8?q?M=C3=A5ns=20Rullg=C3=A5rd?= <mans@mansr.com>, Krzysztof Kozlowski <krzk@kernel.org>, Peter Chen <peter.chen@nxp.com>
+To: =?UTF-8?B?TcOlbnMgUnVsbGfDpXJk?= <mans@mansr.com>
+Cc: Peter Chen <peter.chen@nxp.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Markus Reichl <m.reichl@fivetechno.de>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Commit 69bec7259853 ("USB: core: let USB device know device node") added
-support for attaching devicetree node for USB devices. Those nodes are
-children of their USB host controller. However Exynos EHCI and OHCI
-driver bindings already define child-nodes for each physical root hub
-port and assigns respective PHY controller and parameters to them. Those
-bindings predates support for USB device tree nodes.
+Hi Måns
 
-To mitigate the side-effects of the conflict between those bindings,
-lets reset Exynos host controller of_node pointer before registering it
-to USB subsystem. This fixes the issue raised by the commit 01fdf179f4b0
-("usb: core: skip interfaces disabled in devicetree"), which incorrectly
-disabled some devices on Exynos based boards.
+On 2019-05-13 12:06, Måns Rullgård wrote:
+> Marek Szyprowski <m.szyprowski@samsung.com> writes:
+>
+>> Hi Peter,
+>>
+>> On 2019-05-13 11:23, Peter Chen wrote:
+>>>> On 2019-05-13 11:00, Peter Chen wrote:
+>>>>>> On 2019-05-10 05:10, Peter Chen wrote:
+>>>>>>>> Marek Szyprowski <m.szyprowski@samsung.com> writes:
+>>>>>>>>> Commit 69bec7259853 ("USB: core: let USB device know device node")
+>>>>>>>>> added support for attaching devicetree node for USB devices. The
+>>>>>>>>> mentioned commit however identifies the given USB device node only
+>>>>>>>>> by the
+>>>>>> 'reg'
+>>>>>>>>> property in the host controller children nodes. The USB device
+>>>>>>>>> node however also has to have a 'compatible' property as described
+>>>>>>>>> in Documentation/devicetree/bindings/usb/usb-device.txt. Lack for
+>>>>>>>>> the 'compatible' property check might result in assigning a
+>>>>>>>>> devicetree node, which is not intended to be the proper node for the given
+>>>> USB device.
+>>>>>>>>> This is important especially when USB host controller has
+>>>>>>>>> child-nodes for other purposes. For example, Exynos EHCI and OHCI
+>>>>>>>>> drivers already define child-nodes for each physical root hub port
+>>>>>>>>> and assigns respective PHY controller and parameters for them.
+>>>>>>>>> Those binding predates support for USB devicetree nodes.
+>>>>>>>>>
+>>>>>>>>> Checking for the proper compatibility string allows to mitigate
+>>>>>>>>> the conflict between USB device devicetree nodes and the bindings
+>>>>>>>>> for USB controllers with child nodes. It also fixes the
+>>>>>>>>> side-effect of the other commits, like 01fdf179f4b0 ("usb: core:
+>>>>>>>>> skip interfaces disabled in devicetree"), which incorrectly
+>>>>>>>>> disables some devices on Exynos based boards.
+>>>>>>> Hi Marek,
+>>>>>>>
+>>>>>>> The purpose of your patch is do not set of_node for device under USB
+>>>>>>> controller,
+>>>>>> right?
+>>>>>>
+>>>>>> Right.
+>>>>>>
+>>>>> Do you mind doing it at function exynos_ehci_get_phy of ehci-exynos.c?
+>>>> I don't mind fixing it in ehci-exynos, but frankly so far I have no
+>>>> idea how to do it.  The problem is that newly created USB devices
+>>>> get of-node pointer pointing to a node which if not intended for
+>>>> them. How this can be fixed in ehci-exynos?
+>>>>
+>>>    
+>>> Can't be workaround by setting of_node as NULL for EHCI controller or
+>>> for PHY node at exynos_ehci_get_phy?
+>> Ah, such workaround? I will check, but this will need to be done with
+>> care, because have a side effect for other subsystems like regulators or
+>> clocks.
+>>
+>> BTW, What's wrong with proper, full verification of USB device nodes?
+> Your approach so far doesn't address the actual problem of a conflict
+> between the generic USB DT bindings and those for the Exynos host
+> controller.  If you fix that, the validation issue goes away.
 
-Reported-by: Markus Reichl <m.reichl@fivetechno.de>
-Suggested-by: Måns Rullgård <mans@mansr.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-v4:
-- moved workaround to Exynos OHCI/EHCI drivers as suggested by Måns
+Well, the issue caused by the Exynos binding conflict will go away, but 
+there still will be a chance that wrong node might be assigned to the 
+USB device, especially if partially incorrect data will be stored in the 
+device tree. For example, it may happen that on some boards the 
+different USB chip is mounted, which require different parameters. The 
+code only relies on the reg property and device number, while the 
+bindings define compatible string with proper exact vendor/product ids.
 
-v3: https://lkml.org/lkml/2019/5/9/119
-- replaced ad hoc checks by proper test for proper value of the
-  compatible string in drivers/usb/core/of.c
-
-v2: https://lkml.org/lkml/2019/5/8/321
-
-v1: https://lkml.org/lkml/2019/5/7/715
----
- drivers/usb/host/ehci-exynos.c | 10 ++++++++++
- drivers/usb/host/ohci-exynos.c | 10 ++++++++++
- 2 files changed, 20 insertions(+)
-
-diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
-index 8e3bab1e0c1f..b127642332ee 100644
---- a/drivers/usb/host/ehci-exynos.c
-+++ b/drivers/usb/host/ehci-exynos.c
-@@ -39,6 +39,7 @@ static struct hc_driver __read_mostly exynos_ehci_hc_driver;
- 
- struct exynos_ehci_hcd {
- 	struct clk *clk;
-+	struct device_node *of_node;
- 	struct phy *phy[PHY_NUMBER];
- };
- 
-@@ -203,6 +204,13 @@ static int exynos_ehci_probe(struct platform_device *pdev)
- 	ehci = hcd_to_ehci(hcd);
- 	ehci->caps = hcd->regs;
- 
-+	/*
-+	 * Workaround: reset of_node pointer to avoid conflict between Exynos
-+	 * EHCI port subnodes and generic USB device bindings
-+	 */
-+	exynos_ehci->of_node = pdev->dev.of_node;
-+	pdev->dev.of_node = NULL;
-+
- 	/* DMA burst Enable */
- 	writel(EHCI_INSNREG00_ENABLE_DMA_BURST, EHCI_INSNREG00(hcd->regs));
- 
-@@ -231,6 +239,8 @@ static int exynos_ehci_remove(struct platform_device *pdev)
- 	struct usb_hcd *hcd = platform_get_drvdata(pdev);
- 	struct exynos_ehci_hcd *exynos_ehci = to_exynos_ehci(hcd);
- 
-+	pdev->dev.of_node = exynos_ehci->of_node;
-+
- 	usb_remove_hcd(hcd);
- 
- 	exynos_ehci_phy_disable(&pdev->dev);
-diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-index c0c4dcca6f3c..29f65963af3b 100644
---- a/drivers/usb/host/ohci-exynos.c
-+++ b/drivers/usb/host/ohci-exynos.c
-@@ -30,6 +30,7 @@ static struct hc_driver __read_mostly exynos_ohci_hc_driver;
- 
- struct exynos_ohci_hcd {
- 	struct clk *clk;
-+	struct device_node *of_node;
- 	struct phy *phy[PHY_NUMBER];
- };
- 
-@@ -170,6 +171,13 @@ static int exynos_ohci_probe(struct platform_device *pdev)
- 		goto fail_io;
- 	}
- 
-+	/*
-+	 * Workaround: reset of_node pointer to avoid conflict between Exynos
-+	 * OHCI port subnodes and generic USB device bindings
-+	 */
-+	exynos_ohci->of_node = pdev->dev.of_node;
-+	pdev->dev.of_node = NULL;
-+
- 	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
- 	if (err) {
- 		dev_err(&pdev->dev, "Failed to add USB HCD\n");
-@@ -192,6 +200,8 @@ static int exynos_ohci_remove(struct platform_device *pdev)
- 	struct usb_hcd *hcd = platform_get_drvdata(pdev);
- 	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
- 
-+	pdev->dev.of_node = exynos_ohci->of_node;
-+
- 	usb_remove_hcd(hcd);
- 
- 	exynos_ohci_phy_disable(&pdev->dev);
+Best regards
 -- 
-2.17.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
