@@ -1,137 +1,119 @@
-From: Tom Murphy <tmurphy@arista.com>
-Subject: Re: [PATCH v3 2/4] iommu/dma-iommu: Handle deferred devices
-Date: Wed, 15 May 2019 13:46:43 +0100
-Message-ID: <CAPL0++5AUyVHexpsE86PfXxmQgDHfxjSSoAAGXM5c7Mdix=OZQ@mail.gmail.com>
-References: <20190506185207.31069-1-tmurphy@arista.com> <20190506185207.31069-3-tmurphy@arista.com>
- <20190507064000.GB5173@infradead.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v4] usb: exynos: add workaround for the USB device bindings
+ conflict
+Date: Fri, 17 May 2019 12:57:02 +0200
+Message-ID: <20190517105702.4522-1-m.szyprowski@samsung.com>
+References: <CGME20190517105716eucas1p108609f1a119877c866f8afd194fdaa34@eucas1p1.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190507064000.GB5173@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christoph Hellwig <hch@infradead.org>
-Cc: iommu@lists.linux-foundation.org, Tom Murphy <murphyt7@tcd.ie>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.ker
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Markus Reichl <m.reichl@fivetechno.de>, =?UTF-8?q?M=C3=A5ns=20Rullg=C3=A5rd?= <mans@mansr.com>, Krzysztof Kozlowski <krzk@kernel.org>, Peter Chen <peter.chen@nxp.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-like this?
+Commit 69bec7259853 ("USB: core: let USB device know device node") added
+support for attaching devicetree node for USB devices. Those nodes are
+children of their USB host controller. However Exynos EHCI and OHCI
+driver bindings already define child-nodes for each physical root hub
+port and assigns respective PHY controller and parameters to them. Those
+bindings predates support for USB device tree nodes.
 
-In that case we need to add a call to iommu_dma_alloc_remap.
+To mitigate the side-effects of the conflict between those bindings,
+lets reset Exynos host controller of_node pointer before registering it
+to USB subsystem. This fixes the issue raised by the commit 01fdf179f4b0
+("usb: core: skip interfaces disabled in devicetree"), which incorrectly
+disabled some devices on Exynos based boards.
 
->From 862aeebb601008cf863e3aff4ff8ed7cefebeefa Mon Sep 17 00:00:00 2001
-From: Tom Murphy <tmurphy@tmurphy-419tom-0.sjc.aristanetworks.com>
-Date: Wed, 15 May 2019 05:43:25 -0700
-Subject: [PATCH] iommu/dma-iommu: Handle deferred devices
-
-Handle devices which defer their attach to the iommu in the dma-iommu api
-
-Signed-off-by: Tom Murphy <tmurphy@arista.com>
+Reported-by: Markus Reichl <m.reichl@fivetechno.de>
+Suggested-by: Måns Rullgård <mans@mansr.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/iommu/dma-iommu.c | 27 ++++++++++++++++++++++++++-
- 1 file changed, 26 insertions(+), 1 deletion(-)
+v4:
+- moved workaround to Exynos OHCI/EHCI drivers as suggested by Måns
 
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index 7f313cfa9..a48ae906d 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -22,6 +22,7 @@
- #include <linux/pci.h>
- #include <linux/scatterlist.h>
- #include <linux/vmalloc.h>
-+#include <linux/crash_dump.h>
+v3: https://lkml.org/lkml/2019/5/9/119
+- replaced ad hoc checks by proper test for proper value of the
+  compatible string in drivers/usb/core/of.c
 
- struct iommu_dma_msi_page {
-     struct list_head    list;
-@@ -323,6 +324,21 @@ static int iommu_dma_init_domain(struct
-iommu_domain *domain, dma_addr_t base,
-     return iova_reserve_iommu_regions(dev, domain);
- }
+v2: https://lkml.org/lkml/2019/5/8/321
 
-+static int handle_deferred_device(struct device *dev,
-+        struct iommu_domain *domain)
-+{
-+    const struct iommu_ops *ops = domain->ops;
+v1: https://lkml.org/lkml/2019/5/7/715
+---
+ drivers/usb/host/ehci-exynos.c | 10 ++++++++++
+ drivers/usb/host/ohci-exynos.c | 10 ++++++++++
+ 2 files changed, 20 insertions(+)
+
+diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+index 8e3bab1e0c1f..b127642332ee 100644
+--- a/drivers/usb/host/ehci-exynos.c
++++ b/drivers/usb/host/ehci-exynos.c
+@@ -39,6 +39,7 @@ static struct hc_driver __read_mostly exynos_ehci_hc_driver;
+ 
+ struct exynos_ehci_hcd {
+ 	struct clk *clk;
++	struct device_node *of_node;
+ 	struct phy *phy[PHY_NUMBER];
+ };
+ 
+@@ -203,6 +204,13 @@ static int exynos_ehci_probe(struct platform_device *pdev)
+ 	ehci = hcd_to_ehci(hcd);
+ 	ehci->caps = hcd->regs;
+ 
++	/*
++	 * Workaround: reset of_node pointer to avoid conflict between Exynos
++	 * EHCI port subnodes and generic USB device bindings
++	 */
++	exynos_ehci->of_node = pdev->dev.of_node;
++	pdev->dev.of_node = NULL;
 +
-+    if (!is_kdump_kernel())
-+        return 0;
+ 	/* DMA burst Enable */
+ 	writel(EHCI_INSNREG00_ENABLE_DMA_BURST, EHCI_INSNREG00(hcd->regs));
+ 
+@@ -231,6 +239,8 @@ static int exynos_ehci_remove(struct platform_device *pdev)
+ 	struct usb_hcd *hcd = platform_get_drvdata(pdev);
+ 	struct exynos_ehci_hcd *exynos_ehci = to_exynos_ehci(hcd);
+ 
++	pdev->dev.of_node = exynos_ehci->of_node;
 +
-+    if (unlikely(ops->is_attach_deferred &&
-+            ops->is_attach_deferred(domain, dev)))
-+        return iommu_attach_device(domain, dev);
+ 	usb_remove_hcd(hcd);
+ 
+ 	exynos_ehci_phy_disable(&pdev->dev);
+diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+index c0c4dcca6f3c..29f65963af3b 100644
+--- a/drivers/usb/host/ohci-exynos.c
++++ b/drivers/usb/host/ohci-exynos.c
+@@ -30,6 +30,7 @@ static struct hc_driver __read_mostly exynos_ohci_hc_driver;
+ 
+ struct exynos_ohci_hcd {
+ 	struct clk *clk;
++	struct device_node *of_node;
+ 	struct phy *phy[PHY_NUMBER];
+ };
+ 
+@@ -170,6 +171,13 @@ static int exynos_ohci_probe(struct platform_device *pdev)
+ 		goto fail_io;
+ 	}
+ 
++	/*
++	 * Workaround: reset of_node pointer to avoid conflict between Exynos
++	 * OHCI port subnodes and generic USB device bindings
++	 */
++	exynos_ohci->of_node = pdev->dev.of_node;
++	pdev->dev.of_node = NULL;
 +
-+    return 0;
-+}
+ 	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "Failed to add USB HCD\n");
+@@ -192,6 +200,8 @@ static int exynos_ohci_remove(struct platform_device *pdev)
+ 	struct usb_hcd *hcd = platform_get_drvdata(pdev);
+ 	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
+ 
++	pdev->dev.of_node = exynos_ohci->of_node;
 +
- /**
-  * dma_info_to_prot - Translate DMA API directions and attributes to IOMMU API
-  *                    page flags.
-@@ -432,6 +448,9 @@ static dma_addr_t __iommu_dma_map(struct device
-*dev, phys_addr_t phys,
-     size_t iova_off = 0;
-     dma_addr_t iova;
-
-+    if (unlikely(handle_deferred_device(dev, domain)))
-+        return DMA_MAPPING_ERROR;
-+
-     if (cookie->type == IOMMU_DMA_IOVA_COOKIE) {
-         iova_off = iova_offset(&cookie->iovad, phys);
-         size = iova_align(&cookie->iovad, size + iova_off);
-@@ -609,6 +628,9 @@ static void *iommu_dma_alloc_remap(struct device
-*dev, size_t size,
-     dma_addr_t iova;
-     void *vaddr;
-
-+    if (unlikely(handle_deferred_device(dev, domain)))
-+        return DMA_MAPPING_ERROR;
-+
-     *dma_handle = DMA_MAPPING_ERROR;
-
-     min_size = alloc_sizes & -alloc_sizes;
-@@ -836,7 +858,7 @@ static dma_addr_t iommu_dma_map_page(struct device
-*dev, struct page *page,
-     bool coherent = dev_is_dma_coherent(dev);
-     dma_addr_t dma_handle;
-
--    dma_handle =__iommu_dma_map(dev, phys, size,
-+    dma_handle = __iommu_dma_map(dev, phys, size,
-             dma_info_to_prot(dir, coherent, attrs),
-             iommu_get_dma_domain(dev));
-     if (!coherent && !(attrs & DMA_ATTR_SKIP_CPU_SYNC) &&
-@@ -954,6 +976,9 @@ static int iommu_dma_map_sg(struct device *dev,
-struct scatterlist *sg,
-     unsigned long mask = dma_get_seg_boundary(dev);
-     int i;
-
-+    if (unlikely(handle_deferred_device(dev, domain)))
-+        return 0;
-+
-     if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
-         iommu_dma_sync_sg_for_device(dev, sg, nents, dir);
-
+ 	usb_remove_hcd(hcd);
+ 
+ 	exynos_ohci_phy_disable(&pdev->dev);
 -- 
-2.20.0
-
-On Tue, May 7, 2019 at 7:40 AM Christoph Hellwig <hch@infradead.org> wrote:
->
-> On Mon, May 06, 2019 at 07:52:04PM +0100, Tom Murphy wrote:
-> > +static int handle_deferred_device(struct device *dev)
-> > +{
-> > +     struct iommu_domain *domain;
-> > +     const struct iommu_ops *ops;
-> > +
-> > +     if (!is_kdump_kernel())
-> > +             return 0;
-> > +
-> > +     domain = iommu_get_domain_for_dev(dev);
->
-> > -     dma_handle =__iommu_dma_map(dev, phys, size,
-> > +     if (unlikely(handle_deferred_device(dev)))
-> > +             return DMA_MAPPING_ERROR;
-> > +
-> > +     dma_handle = __iommu_dma_map(dev, phys, size,
->
-> __iommu_dma_map already looks up the domain, and as far as I can
-> tell all callers need the handle_deferred_device call.  Should we
-> just move it to there and pass the domain from the caller?
->
-> Also shouldn't the iommu_attach_device call inside
-> handle_deferred_device also get an unlikely marker?
+2.17.1
