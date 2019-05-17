@@ -1,23 +1,19 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
 Subject: Re: [PATCH v3] usb: core: verify devicetree nodes for USB devices
-Date: Fri, 17 May 2019 13:15:24 +0200
-Message-ID: <ccde81df-95e1-7496-52a2-aaf7a303c1fe@samsung.com>
+Date: Fri, 17 May 2019 13:18:59 +0200
+Message-ID: <515ee8df-d186-45ec-698c-f2e68097159d@samsung.com>
 References: <yw1xpnotufti.fsf@mansr.com>
         <CGME20190509084827eucas1p294962744fe70745c50b69a5349b5de68@eucas1p2.samsung.com>
         <20190509084726.5405-1-m.szyprowski@samsung.com>
         <yw1xlfzfv4ol.fsf@mansr.com>
         <VI1PR04MB5327AD56CA772284DFE663D08B0C0@VI1PR04MB5327.eurprd04.prod.outlook.com>
         <7c5579d2-634a-d705-a451-563939957d57@samsung.com>
-        <VI1PR04MB5327B425756FA394C51525208B0F0@VI1PR04MB5327.eurprd04.prod.outlook.com>
-        <3544eb61-2bd8-338d-8d62-d95a775528ef@samsung.com>
-        <VI1PR04MB5327FAC12E4A3D403E8D92128B0F0@VI1PR04MB5327.eurprd04.prod.outlook.com>
-        <5d0abe9c-613c-d39b-6746-78e5e5c2bbc5@samsung.com>
-        <yw1xzhnqu0r4.fsf@mansr.com>
+        <yw1x4l5yvfg1.fsf@mansr.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <yw1xzhnqu0r4.fsf@mansr.com>
+In-Reply-To: <yw1x4l5yvfg1.fsf@mansr.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: =?UTF-8?B?TcOlbnMgUnVsbGfDpXJk?= <mans@mansr.com>
@@ -26,71 +22,74 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi Måns
 
-On 2019-05-13 12:06, Måns Rullgård wrote:
+On 2019-05-13 12:03, Måns Rullgård wrote:
 > Marek Szyprowski <m.szyprowski@samsung.com> writes:
->
 >> Hi Peter,
 >>
->> On 2019-05-13 11:23, Peter Chen wrote:
->>>> On 2019-05-13 11:00, Peter Chen wrote:
->>>>>> On 2019-05-10 05:10, Peter Chen wrote:
->>>>>>>> Marek Szyprowski <m.szyprowski@samsung.com> writes:
->>>>>>>>> Commit 69bec7259853 ("USB: core: let USB device know device node")
->>>>>>>>> added support for attaching devicetree node for USB devices. The
->>>>>>>>> mentioned commit however identifies the given USB device node only
->>>>>>>>> by the
->>>>>> 'reg'
->>>>>>>>> property in the host controller children nodes. The USB device
->>>>>>>>> node however also has to have a 'compatible' property as described
->>>>>>>>> in Documentation/devicetree/bindings/usb/usb-device.txt. Lack for
->>>>>>>>> the 'compatible' property check might result in assigning a
->>>>>>>>> devicetree node, which is not intended to be the proper node for the given
->>>> USB device.
->>>>>>>>> This is important especially when USB host controller has
->>>>>>>>> child-nodes for other purposes. For example, Exynos EHCI and OHCI
->>>>>>>>> drivers already define child-nodes for each physical root hub port
->>>>>>>>> and assigns respective PHY controller and parameters for them.
->>>>>>>>> Those binding predates support for USB devicetree nodes.
->>>>>>>>>
->>>>>>>>> Checking for the proper compatibility string allows to mitigate
->>>>>>>>> the conflict between USB device devicetree nodes and the bindings
->>>>>>>>> for USB controllers with child nodes. It also fixes the
->>>>>>>>> side-effect of the other commits, like 01fdf179f4b0 ("usb: core:
->>>>>>>>> skip interfaces disabled in devicetree"), which incorrectly
->>>>>>>>> disables some devices on Exynos based boards.
->>>>>>> Hi Marek,
->>>>>>>
->>>>>>> The purpose of your patch is do not set of_node for device under USB
->>>>>>> controller,
->>>>>> right?
->>>>>>
->>>>>> Right.
->>>>>>
->>>>> Do you mind doing it at function exynos_ehci_get_phy of ehci-exynos.c?
->>>> I don't mind fixing it in ehci-exynos, but frankly so far I have no
->>>> idea how to do it.  The problem is that newly created USB devices
->>>> get of-node pointer pointing to a node which if not intended for
->>>> them. How this can be fixed in ehci-exynos?
->>>>
->>>    
->>> Can't be workaround by setting of_node as NULL for EHCI controller or
->>> for PHY node at exynos_ehci_get_phy?
->> Ah, such workaround? I will check, but this will need to be done with
->> care, because have a side effect for other subsystems like regulators or
->> clocks.
+>> On 2019-05-10 05:10, Peter Chen wrote:
+>>>
+>>>> Marek Szyprowski <m.szyprowski@samsung.com> writes:
+>>>>> Commit 69bec7259853 ("USB: core: let USB device know device node")
+>>>>> added support for attaching devicetree node for USB devices. The
+>>>>> mentioned commit however identifies the given USB device node only by the 'reg'
+>>>>> property in the host controller children nodes. The USB device node
+>>>>> however also has to have a 'compatible' property as described in
+>>>>> Documentation/devicetree/bindings/usb/usb-device.txt. Lack for the
+>>>>> 'compatible' property check might result in assigning a devicetree
+>>>>> node, which is not intended to be the proper node for the given USB device.
+>>>>>
+>>>>> This is important especially when USB host controller has child-nodes
+>>>>> for other purposes. For example, Exynos EHCI and OHCI drivers already
+>>>>> define child-nodes for each physical root hub port and assigns
+>>>>> respective PHY controller and parameters for them. Those binding
+>>>>> predates support for USB devicetree nodes.
+>>>>>
+>>>>> Checking for the proper compatibility string allows to mitigate the
+>>>>> conflict between USB device devicetree nodes and the bindings for USB
+>>>>> controllers with child nodes. It also fixes the side-effect of the
+>>>>> other commits, like 01fdf179f4b0 ("usb: core: skip interfaces disabled
+>>>>> in devicetree"), which incorrectly disables some devices on Exynos
+>>>>> based boards.
+>>> Hi Marek,
+>>>
+>>> The purpose of your patch is do not set of_node for device under USB
+>>> controller, right?
+>> Right.
 >>
->> BTW, What's wrong with proper, full verification of USB device nodes?
-> Your approach so far doesn't address the actual problem of a conflict
-> between the generic USB DT bindings and those for the Exynos host
-> controller.  If you fix that, the validation issue goes away.
+>>> I do not understand how 01fdf179f4b0 affect your boards, some nodes
+>>> under the USB controller with status is not "okay", but still want to
+>>> be enumerated?
+>> Please look at the ehci node in arch/arm/boot/dts/exynos4.dtsi and then
+>> at the changes to that node in arch/arm/boot/dts/exynos4412-odroidx.dts.
+>> Exynos EHCI controller has 3 subnodes, which matches to the physical
+>> ports of it and allows the driver to enable given PHY ports depending on
+>> which physical port is used on the particular board. All ports cannot
+>> not be enabled by default, because PHY controller has limited resources
+>> and shares them between USB host and USB device ports.
+> It seems like what's happening is that the Exynos port/phy nodes are
+> mistaken for standard USB device nodes attached to the root hub.  The
+> problem is that hub port numbering starts at 1 while the Exynos nodes
+> start from 0.  This causes attached devices to be associated with the
+> wrong DT node.
+>
+> Ignoring backwards compatibility, I can see a few ways of fixing this:
+>
+> - Add another child node, along side the port@N nodes, of the host
+>    controller to represent the root hub.  Nodes for attached devices
+>    would then be descendants of this new node.
+>
+> - Change the Exynos HCD binding to use a more standard "phys" property
+>    and get rid of the child nodes for this purpose.
+>
+> - Move the port@N nodes below a new dedicated child node of the HCD.
+>
+> The first is probably the easiest to implement since it doesn't require
+> any nasty hacks to avoid breaking existing device trees.
 
-Well, the issue caused by the Exynos binding conflict will go away, but 
-there still will be a chance that wrong node might be assigned to the 
-USB device, especially if partially incorrect data will be stored in the 
-device tree. For example, it may happen that on some boards the 
-different USB chip is mounted, which require different parameters. The 
-code only relies on the reg property and device number, while the 
-bindings define compatible string with proper exact vendor/product ids.
+I've posted a patch, which disables creating USB device nodes for Exynos 
+HCD devices (by zeroing their of_node pointer). Then I will try to apply 
+the second approach from the above list, but merging it to mainline will 
+require a few more steps and some time.
 
 Best regards
 -- 
