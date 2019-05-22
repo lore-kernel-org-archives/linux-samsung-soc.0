@@ -1,96 +1,55 @@
-From: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
-Subject: Re: [PATCH 0/5] Exynos EHCI/OHCI: resolve conflict with the generic USB device bindings
-Date: Wed, 22 May 2019 11:54:38 +0100
-Message-ID: <yw1x7eaiu5ch.fsf@mansr.com>
-References: <CGME20190521120015eucas1p1da2f3f32d6b8af8cb550463686fd4e12@eucas1p1.samsung.com>
-        <20190521115849.9882-1-m.szyprowski@samsung.com>
-        <yw1xk1ekszo9.fsf@mansr.com>
-        <ff3f4b25-cbc0-4195-79b2-c00633f0c79c@samsung.com>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 056/167] pinctrl: samsung: fix leaked of_node references
+Date: Wed, 22 May 2019 15:26:51 -0400
+Message-ID: <20190522192842.25858-56-sashal@kernel.org>
+References: <20190522192842.25858-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <ff3f4b25-cbc0-4195-79b2-c00633f0c79c@samsung.com> (Marek
-        Szyprowski's message of "Wed, 22 May 2019 08:01:28 +0200")
+In-Reply-To: <20190522192842.25858-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Markus Reichl <m.reichl@fivetechno.de>, Krzysztof Kozlowski <krzk@kernel.org>, Peter Chen <peter.chen@nxp.com>, Alan Stern <stern@rowland.harvard.edu>, Rob Herring <robh+dt@kernel.org>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Wen Yang <wen.yang99@zte.com.cn>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Sasha Levin <sashal@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Marek Szyprowski <m.szyprowski@samsung.com> writes:
+From: Wen Yang <wen.yang99@zte.com.cn>
 
-> Hi Måns
->
-> On 2019-05-21 15:30, Måns Rullgård wrote:
->> Marek Szyprowski <m.szyprowski@samsung.com> writes:
->>> Dear All,
->>>
->>> Commit 69bec7259853 ("USB: core: let USB device know device node") added
->>> support for attaching devicetree node for USB devices. Those nodes are
->>> children of their USB host controller. However Exynos EHCI and OHCI
->>> driver bindings already define child-nodes for each physical root hub
->>> port and assigns respective PHY controller and parameters to them. This
->>> leads to the conflict. A workaround for it has been merged as commit
->>> 01d4071486fe ("usb: exynos: add workaround for the USB device bindings
->>> conflict"), but it disabled support for USB device binding for Exynos
->>> EHCI/OHCI controllers.
->>>
->>> This patchset tries to resolve this binding conflict by changing Exynos
->>> EHCI/OHCI bindings: PHYs are moved from the sub-nodes to a standard array
->>> under the 'phys' property. Such solution has been suggested by Måns
->>> Rullgård in the following thread: https://lkml.org/lkml/2019/5/13/228
->>>
->>> To keep everything working during the transitional time, the changes has
->>> been split into 2 steps. First step (patches 1-3) need to be merged before
->>> the second one (patches 4-5). Patches from each step can be merged to
->>> respective trees without any dependencies - the only requirement is that
->>> second step has to be merged after merging all patches from the first one.
->>>
->>> This patchset has been tested on various Exynos4 boards with different
->>> USB host controller configurations (Odroids family: X2, U3, XU3).
->>>
->>> Best regards
->>> Marek Szyprowski
->>> Samsung R&D Institute Poland
->>>
->>> Marek Szyprowski (5):
->>>    dt-bindings: switch Exynos EHCI/OHCI bindings to use array of generic
->>>      PHYs
->>>    ARM: dts: exynos: Add array of generic PHYs to EHCI/OHCI devices
->>>    usb: exynos: add support for getting PHYs from the standard dt array
->>>    ARM: dts: exynos: Remove obsolete port sub-nodes from EHCI/OHCI
->>>      devices
->>>    usb: exynos: Remove support for legacy PHY bindings
->> You could retain compatibility with old devicetrees (which may be
->> useful) by using the "phys" property if it exists and falling back
->> on the old method if it doesn't.  Then you would get this sequence
->> of changes:
->>
->> 1. Update binding definition.
->> 2. Support new binding in driver, with fallback to old.
->> 3. Switch dts files to new binding.
->
-> This is exactly what I did in this patchset. Until Patch #5 is applied, 
-> Exynos EHCI/OHCI drivers supports both ways of getting PHYs and is fully 
-> compatible with existing DTBs. This last patch should be applied at 
-> least one release later that the first 3 patches to keep everything 
-> working during the -rcX time.
+[ Upstream commit 44b9f86cd41db6c522effa5aec251d664a52fbc0 ]
 
-I'm suggesting you keep the fallback in the driver.  It does no harm,
-and it's contained in one place.
+The call to of_find_compatible_node returns a node pointer with refcount
+incremented thus it must be explicitly decremented after the last
+usage.
 
-On the dts side, you're adding the new phys property without removing
-the old-style nodes at first.  If you put the driver change first, the
-dts could be switched to the new style in one patch without a confusing
-hybrid ever existing.
+Detected by coccinelle with the following warnings:
+./drivers/pinctrl/samsung/pinctrl-exynos-arm.c:76:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 66, but without a corresponding object release within this function.
+./drivers/pinctrl/samsung/pinctrl-exynos-arm.c:82:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 66, but without a corresponding object release within this function.
 
-> Compatibility with so called old DTBs is not so important, because there 
-> are no boards with Exynos4 and Exynos5 SoCs, which would not update DTB 
-> together with the kernel zImage. There have been already some 
-> significant compatibility breaks related to those SoCs during last years.
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/pinctrl/samsung/pinctrl-exynos-arm.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-You can't possibly know what's out there.  Besides, isn't the general
-policy to not break compatibility without a very good reason?
-
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
+index afeb4876ffb2c..07eb4f071fa87 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
+@@ -76,6 +76,7 @@ s5pv210_retention_init(struct samsung_pinctrl_drv_data *drvdata,
+ 	}
+ 
+ 	clk_base = of_iomap(np, 0);
++	of_node_put(np);
+ 	if (!clk_base) {
+ 		pr_err("%s: failed to map clock registers\n", __func__);
+ 		return ERR_PTR(-EINVAL);
 -- 
-Måns Rullgård
+2.20.1
