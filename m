@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 082/244] pinctrl: samsung: fix leaked of_node references
-Date: Wed, 22 May 2019 15:23:48 -0400
-Message-ID: <20190522192630.24917-82-sashal@kernel.org>
-References: <20190522192630.24917-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.0 102/317] pinctrl: samsung: fix leaked of_node references
+Date: Wed, 22 May 2019 15:20:03 -0400
+Message-ID: <20190522192338.23715-102-sashal@kernel.org>
+References: <20190522192338.23715-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190522192630.24917-1-sashal@kernel.org>
+In-Reply-To: <20190522192338.23715-1-sashal@kernel.org>
 Sender: stable-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Wen Yang <wen.yang99@zte.com.cn>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Sasha Levin <sashal@kernel.org>
