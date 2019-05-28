@@ -1,171 +1,48 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] ARM: Add workaround for I-Cache line size mismatch between
- CPU cores
-Date: Tue, 28 May 2019 10:28:46 +0200
-Message-ID: <20190528082846.21625-1-m.szyprowski@samsung.com>
-References: <CGME20190528082903eucas1p1ef54fa6aee420bffa11be61d5efb4c46@eucas1p1.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Russell King <rmk+kernel@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>, Andre Przywara <andre.przywara@arm.com>, Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH] clk: samsung: exynos5433: Use of_clk_get_parent_count()
+Date: Tue, 28 May 2019 13:10:55 +0200
+Message-ID: <2a0147a3-2371-7f78-b756-09923b5f6cb2@samsung.com>
+References: <CGME20190525114732epcas1p3ac5c2205bf004893dc002fe05c3adf7b@epcas1p3.samsung.com>
+ <20190525115542.107929-1-wangkefeng.wang@huawei.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190525115542.107929-1-wangkefeng.wang@huawei.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kefeng Wang <wangkefeng.wang@huawei.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Some big.LITTLE systems have I-Cache line size mismatch between
-LITTLE and big cores. This patch adds a workaround for proper I-Cache
-support on such systems. Without it, some class of the userspace code
-(typically self-modifying) might suffer from random SIGILL failures.
-
-Similar workaround already exists for ARM64 architecture. I has been
-added by commit 116c81f427ff ("arm64: Work around systems with mismatched
-cache line sizes").
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-This workaround is needed on all supported Exynos big.LITTLE SoCs: 5420,
-5422 and 5800.
-
-Resend reason: removed RFC tag as there are no comments, I will upload
-this patch to the patch tracking system
----
- arch/arm/configs/exynos_defconfig |  1 +
- arch/arm/include/asm/cacheflush.h |  7 +++++++
- arch/arm/kernel/smp.c             |  1 +
- arch/arm/mm/Kconfig               |  8 ++++++++
- arch/arm/mm/cache-v7.S            | 13 +++++++++++++
- arch/arm/mm/init.c                | 16 ++++++++++++++++
- arch/arm/mm/mm.h                  |  2 ++
- 7 files changed, 48 insertions(+)
-
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index c95c54284da2..9b959afaaa12 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -9,6 +9,7 @@ CONFIG_MODULE_UNLOAD=y
- CONFIG_PARTITION_ADVANCED=y
- CONFIG_ARCH_EXYNOS=y
- CONFIG_ARCH_EXYNOS3=y
-+CONFIG_CPU_ICACHE_MISMATCH_WORKAROUND=y
- CONFIG_SMP=y
- CONFIG_BIG_LITTLE=y
- CONFIG_NR_CPUS=8
-diff --git a/arch/arm/include/asm/cacheflush.h b/arch/arm/include/asm/cacheflush.h
-index ec1a5fd0d294..ec4fd2e2dd60 100644
---- a/arch/arm/include/asm/cacheflush.h
-+++ b/arch/arm/include/asm/cacheflush.h
-@@ -479,4 +479,11 @@ static inline void __sync_cache_range_r(volatile void *p, size_t size)
- void flush_uprobe_xol_access(struct page *page, unsigned long uaddr,
- 			     void *kaddr, unsigned long len);
- 
-+
-+#ifdef CONFIG_CPU_ICACHE_MISMATCH_WORKAROUND
-+void check_cpu_icache_size(int cpuid);
-+#else
-+static inline void check_cpu_icache_size(int cpuid) { }
-+#endif
-+
- #endif
-diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
-index 8687d619260f..261be0e5bc03 100644
---- a/arch/arm/kernel/smp.c
-+++ b/arch/arm/kernel/smp.c
-@@ -373,6 +373,7 @@ static void smp_store_cpu_info(unsigned int cpuid)
- 	cpu_info->cpuid = read_cpuid_id();
- 
- 	store_cpu_topology(cpuid);
-+	check_cpu_icache_size(cpuid);
- }
- 
- /*
-diff --git a/arch/arm/mm/Kconfig b/arch/arm/mm/Kconfig
-index b169e580bf82..d4733e086f2b 100644
---- a/arch/arm/mm/Kconfig
-+++ b/arch/arm/mm/Kconfig
-@@ -780,6 +780,14 @@ config CPU_ICACHE_DISABLE
- 	  Say Y here to disable the processor instruction cache. Unless
- 	  you have a reason not to or are unsure, say N.
- 
-+config CPU_ICACHE_MISMATCH_WORKAROUND
-+	bool "Workaround for I-Cache line size mismatch between CPU cores"
-+	depends on SMP && CPU_V7
-+	help
-+	  Some big.LITTLE systems have I-Cache line size mismatch between
-+	  LITTLE and big cores.  Say Y here to enable a workaround for
-+	  proper I-Cache support on such systems.  If unsure, say N.
-+
- config CPU_DCACHE_DISABLE
- 	bool "Disable D-Cache (C-bit)"
- 	depends on (CPU_CP15 && !SMP) || CPU_V7M
-diff --git a/arch/arm/mm/cache-v7.S b/arch/arm/mm/cache-v7.S
-index 2149b47a0c5a..db3986708c8a 100644
---- a/arch/arm/mm/cache-v7.S
-+++ b/arch/arm/mm/cache-v7.S
-@@ -19,6 +19,14 @@
- 
- #include "proc-macros.S"
- 
-+#ifdef CONFIG_CPU_ICACHE_MISMATCH_WORKAROUND
-+.globl icache_size
-+	.data
-+	.align	2
-+icache_size:
-+	.long	64
-+	.text
-+#endif
- /*
-  * The secondary kernel init calls v7_flush_dcache_all before it enables
-  * the L1; however, the L1 comes out of reset in an undefined state, so
-@@ -284,7 +292,12 @@ ENTRY(v7_coherent_user_range)
- 	cmp	r12, r1
- 	blo	1b
- 	dsb	ishst
-+#ifdef CONFIG_CPU_ICACHE_MISMATCH_WORKAROUND
-+	ldr	r3, =icache_size
-+	ldr	r2, [r3, #0]
-+#else
- 	icache_line_size r2, r3
-+#endif
- 	sub	r3, r2, #1
- 	bic	r12, r0, r3
- 2:
-diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
-index be0b42937888..1a66af5bd259 100644
---- a/arch/arm/mm/init.c
-+++ b/arch/arm/mm/init.c
-@@ -242,6 +242,22 @@ static void __init arm_initrd_init(void)
- #endif
- }
- 
-+#ifdef CONFIG_CPU_ICACHE_MISMATCH_WORKAROUND
-+void check_cpu_icache_size(int cpuid)
-+{
-+	u32 size, ctr;
-+
-+	asm("mrc p15, 0, %0, c0, c0, 1" : "=r" (ctr));
-+
-+	size = 1 << ((ctr & 0xf) + 2);
-+	if (cpuid != 0 && icache_size != size)
-+		pr_info("CPU%u: detected I-Cache line size mismatch, workaround enabled\n",
-+			cpuid);
-+	if (icache_size > size)
-+		icache_size = size;
-+}
-+#endif
-+
- void __init arm_memblock_init(const struct machine_desc *mdesc)
- {
- 	/* Register the kernel text, kernel data and initrd with memblock. */
-diff --git a/arch/arm/mm/mm.h b/arch/arm/mm/mm.h
-index 6b045c6653ea..941356d95a67 100644
---- a/arch/arm/mm/mm.h
-+++ b/arch/arm/mm/mm.h
-@@ -8,6 +8,8 @@
- /* the upper-most page table pointer */
- extern pmd_t *top_pmd;
- 
-+extern int icache_size;
-+
- /*
-  * 0xffff8000 to 0xffffffff is reserved for any ARM architecture
-  * specific hacks for copying pages efficiently, while 0xffff4000
--- 
-2.17.1
+T24gMjUuMDUuMjAxOSAxMzo1NSwgS2VmZW5nIFdhbmcgd3JvdGU6Cj4gVXNlIG9mX2Nsa19nZXRf
+cGFyZW50X2NvdW50KCkgaW5zdGVhZCBvZiBvcGVuIGNvZGluZy4KPgo+IFNpZ25lZC1vZmYtYnk6
+IEtlZmVuZyBXYW5nIDx3YW5na2VmZW5nLndhbmdAaHVhd2VpLmNvbT4KPiAtLS0KPiAgZHJpdmVy
+cy9jbGsvc2Ftc3VuZy9jbGstZXh5bm9zNTQzMy5jIHwgNCArKy0tCj4gIDEgZmlsZSBjaGFuZ2Vk
+LCAyIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9jbGsvc2Ftc3VuZy9jbGstZXh5bm9zNTQzMy5jIGIvZHJpdmVycy9jbGsvc2Ftc3VuZy9jbGst
+ZXh5bm9zNTQzMy5jCj4gaW5kZXggZGFlMWM5NmRlOTMzLi4xNGUyNTM5MTVjYTQgMTAwNjQ0Cj4g
+LS0tIGEvZHJpdmVycy9jbGsvc2Ftc3VuZy9jbGstZXh5bm9zNTQzMy5jCj4gKysrIGIvZHJpdmVy
+cy9jbGsvc2Ftc3VuZy9jbGstZXh5bm9zNTQzMy5jCj4gQEAgLTU1OTAsOCArNTU5MCw4IEBAIHN0
+YXRpYyBpbnQgX19pbml0IGV4eW5vczU0MzNfY211X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZp
+Y2UgKnBkZXYpCj4gIAlkYXRhLT5ucl9jbGtfc2F2ZSA9IGluZm8tPm5yX2Nsa19yZWdzOwo+ICAJ
+ZGF0YS0+Y2xrX3N1c3BlbmQgPSBpbmZvLT5zdXNwZW5kX3JlZ3M7Cj4gIAlkYXRhLT5ucl9jbGtf
+c3VzcGVuZCA9IGluZm8tPm5yX3N1c3BlbmRfcmVnczsKPiAtCWRhdGEtPm5yX3BjbGtzID0gb2Zf
+Y291bnRfcGhhbmRsZV93aXRoX2FyZ3MoZGV2LT5vZl9ub2RlLCAiY2xvY2tzIiwKPiAtCQkJCQkJ
+ICAgICIjY2xvY2stY2VsbHMiKTsKPiArCWRhdGEtPm5yX3BjbGtzID0gb2ZfY2xrX2dldF9wYXJl
+bnRfY291bnQoZGV2LT5vZl9ub2RlKTsKPiArCj4gIAlpZiAoZGF0YS0+bnJfcGNsa3MgPiAwKSB7
+Cj4gIAkJZGF0YS0+cGNsa3MgPSBkZXZtX2tjYWxsb2MoZGV2LCBzaXplb2Yoc3RydWN0IGNsayAq
+KSwKPiAgCQkJCQkgICBkYXRhLT5ucl9wY2xrcywgR0ZQX0tFUk5FTCk7CgpSZXZpZXdlZC1ieTog
+QW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KCsKgLS0KUmVnYXJkcwpBbmRyemVq
+CgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgt
+YXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQu
+b3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJt
+LWtlcm5lbAo=
