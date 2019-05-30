@@ -1,13 +1,13 @@
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 4.19 117/276] pinctrl: samsung: fix leaked of_node references
-Date: Wed, 29 May 2019 20:04:35 -0700
-Message-ID: <20190530030533.228413356@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+Subject: [PATCH 5.0 134/346] pinctrl: samsung: fix leaked of_node references
+Date: Wed, 29 May 2019 20:03:27 -0700
+Message-ID: <20190530030547.903130825@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Sasha Levin <sashal@kernel.org>
