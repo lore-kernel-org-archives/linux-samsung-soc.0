@@ -1,54 +1,86 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 5.0 134/346] pinctrl: samsung: fix leaked of_node references
-Date: Wed, 29 May 2019 20:03:27 -0700
-Message-ID: <20190530030547.903130825@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v3] clocksource: exynos_mct: Increase priority over ARM arch
+ timer
+Date: Thu, 30 May 2019 12:50:43 +0200
+Message-ID: <20190530105043.29965-1-m.szyprowski@samsung.com>
+References: <CGME20190530105059eucas1p1d9c911a5ba2ae412166cd8866deb725e@eucas1p1.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-[ Upstream commit 44b9f86cd41db6c522effa5aec251d664a52fbc0 ]
+Exynos SoCs based on CA7/CA15 have 2 timer interfaces: custom Exynos MCT
+(Multi Core Timer) and standard ARM Architected Timers.
 
-The call to of_find_compatible_node returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
+There are use cases, where both timer interfaces are used simultanously.
+One of such examples is using Exynos MCT for the main system timer and
+ARM Architected Timers for the KVM and virtualized guests (KVM requires
+arch timers).
 
-Detected by coccinelle with the following warnings:
-./drivers/pinctrl/samsung/pinctrl-exynos-arm.c:76:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 66, but without a corresponding object release within this function.
-./drivers/pinctrl/samsung/pinctrl-exynos-arm.c:82:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 66, but without a corresponding object release within this function.
+Exynos Multi-Core Timer driver (exynos_mct) must be however started
+before ARM Architected Timers (arch_timer), because they both share some
+common hardware blocks (global system counter) and turning on MCT is
+needed to get ARM Architected Timer working properly.
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To ensure selecting Exynos MCT as the main system timer, increase MCT
+timer rating. To ensure proper starting order of both timers during
+suspend/resume cycle, increase MCT hotplug priority over ARM Archictected
+Timers.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- drivers/pinctrl/samsung/pinctrl-exynos-arm.c | 1 +
- 1 file changed, 1 insertion(+)
+v3: rephrased commit message, rebased onto v5.2-rc1
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-index 44c6b753f692a..85ddf49a51885 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-@@ -71,6 +71,7 @@ s5pv210_retention_init(struct samsung_pinctrl_drv_data *drvdata,
- 	}
+v2: https://patchwork.kernel.org/patch/10863101/
+   added comments about the relation to ARM architected timer
+    rebased onto v5.1-rc1
+
+v1: https://patchwork.kernel.org/patch/10814921/
+---
+ drivers/clocksource/exynos_mct.c | 4 ++--
+ include/linux/cpuhotplug.h       | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index 34bd250d46c6..6aa10cbc1d59 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -209,7 +209,7 @@ static void exynos4_frc_resume(struct clocksource *cs)
  
- 	clk_base = of_iomap(np, 0);
-+	of_node_put(np);
- 	if (!clk_base) {
- 		pr_err("%s: failed to map clock registers\n", __func__);
- 		return ERR_PTR(-EINVAL);
+ static struct clocksource mct_frc = {
+ 	.name		= "mct-frc",
+-	.rating		= 400,
++	.rating		= 450,	/* use value higher than ARM arch timer */
+ 	.read		= exynos4_frc_read,
+ 	.mask		= CLOCKSOURCE_MASK(32),
+ 	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
+@@ -464,7 +464,7 @@ static int exynos4_mct_starting_cpu(unsigned int cpu)
+ 	evt->set_state_oneshot_stopped = set_state_shutdown;
+ 	evt->tick_resume = set_state_shutdown;
+ 	evt->features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT;
+-	evt->rating = 450;
++	evt->rating = 500;	/* use value higher than ARM arch timer */
+ 
+ 	exynos4_mct_write(TICK_BASE_CNT, mevt->base + MCT_L_TCNTB_OFFSET);
+ 
+diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+index e78281d07b70..53fb48de9589 100644
+--- a/include/linux/cpuhotplug.h
++++ b/include/linux/cpuhotplug.h
+@@ -115,10 +115,10 @@ enum cpuhp_state {
+ 	CPUHP_AP_PERF_ARM_ACPI_STARTING,
+ 	CPUHP_AP_PERF_ARM_STARTING,
+ 	CPUHP_AP_ARM_L2X0_STARTING,
++	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
+ 	CPUHP_AP_ARM_ARCH_TIMER_STARTING,
+ 	CPUHP_AP_ARM_GLOBAL_TIMER_STARTING,
+ 	CPUHP_AP_JCORE_TIMER_STARTING,
+-	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
+ 	CPUHP_AP_ARM_TWD_STARTING,
+ 	CPUHP_AP_QCOM_TIMER_STARTING,
+ 	CPUHP_AP_TEGRA_TIMER_STARTING,
 -- 
-2.20.1
+2.17.1
