@@ -1,60 +1,38 @@
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
-Subject: Re: [PATCH] clk: samsung: exynos5433: Use of_clk_get_parent_count()
-Date: Thu, 30 May 2019 20:24:46 +0800
-Message-ID: <3673777a-60dc-3eec-ccb8-9ffa1a3e5cf4@huawei.com>
-References: <CGME20190525114732epcas3p1fdc42650975c9f7b1a39a87561e65a29@epcas3p1.samsung.com>
- <20190525115542.107929-1-wangkefeng.wang@huawei.com>
- <b57d66da-9b18-7b1d-ffa6-3b4600f9dc5a@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [BISECT] No audio after "ASoC: core: use component driver name as
+ component name"
+Date: Fri, 31 May 2019 11:27:42 +0200
+Message-ID: <CAJKOXPfREyt3P2H8bL9=6+EQ1S3Ja7Urkhy1x7sCHaaubMqV1Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <b57d66da-9b18-7b1d-ffa6-3b4600f9dc5a@samsung.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-clk <linux-clk@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Tzung-Bi Shih <tzungbi@google.com>
+Cc: Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi,
 
-On 2019/5/30 19:13, Sylwester Nawrocki wrote:
-> On 5/25/19 13:55, Kefeng Wang wrote:
->> Use of_clk_get_parent_count() instead of open coding.
->>
->> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-> Patch applied, thank you.
->
-> In future please make sure to also Cc linux-clk@vger.kernel.org mailing list 
-> and the clk maintainers (Stephen, Michael) when sending clk patches.
+Bisect points to commit b19671d6caf1ac393681864d5d85dda9fa99a448
+Author: Tzung-Bi Shih <tzungbi@google.com>
+Date:   Wed May 29 14:22:14 2019 +0800
+    ASoC: core: use component driver name as component name
 
-OK, thanks for the tip.
+as a reason of failure of missing Audio card on Odroid XU3 board
+(ARMv7, Exynos5422,
+max98090 codec). Full kernel log:
+https://krzk.eu/#/builders/1/builds/3349/steps/14/logs/serial0
 
->
->> ---
->>  drivers/clk/samsung/clk-exynos5433.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
->> index dae1c96de933..14e253915ca4 100644
->> --- a/drivers/clk/samsung/clk-exynos5433.c
->> +++ b/drivers/clk/samsung/clk-exynos5433.c
->> @@ -5590,8 +5590,8 @@ static int __init exynos5433_cmu_probe(struct platform_device *pdev)
->>  	data->nr_clk_save = info->nr_clk_regs;
->>  	data->clk_suspend = info->suspend_regs;
->>  	data->nr_clk_suspend = info->nr_suspend_regs;
->> -	data->nr_pclks = of_count_phandle_with_args(dev->of_node, "clocks",
->> -						    "#clock-cells");
->> +	data->nr_pclks = of_clk_get_parent_count(dev->of_node);
->> +
->>  	if (data->nr_pclks > 0) {
->>  		data->pclks = devm_kcalloc(dev, sizeof(struct clk *),
->>  					   data->nr_pclks, GFP_KERNEL);
->>
+The problem might be in component name. The driver->name and
+fmt_single_name(dev, &component->id) are:
+snd_dmaengine_pcm != 3830000.i2s
+snd_dmaengine_pcm != 3830000.i2s-sec
+samsung-i2s != 3830000.i2s
+
+This commit should not go in without fixing the users of old
+behavior... I could adjust the platform names for primary and
+secondary links... but now it looks like two components will have the
+same name.
+
+Best regards,
+Krzysztof
