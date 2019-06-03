@@ -1,49 +1,47 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Dexuan-Linux Cui <dexuan.linux@gmail.com>
 Subject: Re: [BUG BISECT] bug mm/vmalloc.c:470 (mm/vmalloc.c: get rid of one
  single unlink_va() when merge)
-Date: Mon, 3 Jun 2019 20:31:10 +0200
-Message-ID: <CAJKOXPf3LZuQ5o5sERL_b6+4SfERWyQR0jUaVUJs12m7WdD3gQ@mail.gmail.com>
+Date: Mon, 3 Jun 2019 12:19:25 -0700
+Message-ID: <CAA42JLZa4OgiEYk7d+gM9pu-gvVbOfQj3-VfEb8kvx538-atew@mail.gmail.com>
 References: <CAJKOXPcTVpLtSSs=Q0G3fQgXYoVa=kHxWcWXyvS13ie73ByZBw@mail.gmail.com>
  <20190603135939.e2mb7vkxp64qairr@pc636> <CAJKOXPdczUnsaBeXTuutZXCQ70ejDT68xnVm-e+SSdLZi-vyCA@mail.gmail.com>
  <20190604003153.76f33dd2@canb.auug.org.au> <CAJKOXPed=npnfk0H2WUDityHg5cPLH_zwShyRd+B2RS8h6C7SQ@mail.gmail.com>
- <20190604011125.266222a8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190604011125.266222a8@canb.auug.org.au>
+In-Reply-To: <CAJKOXPed=npnfk0H2WUDityHg5cPLH_zwShyRd+B2RS8h6C7SQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Uladzislau Rezki <urezki@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, Hillf Danton <hdanton@sina.com>, Thomas Gleixner <tglx@linutronix.de>, Tejun Heo <tj@kernel.org>, Andrei Vagin <avagin@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Uladzislau Rezki <urezki@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hillf Danton <hdanton@sina.com>, Thomas Gleixner <tglx@linutronix.de>, Tejun Heo <tj@kernel.org>, Andrei Vagin <avagin@gmail.com>, Dexuan Cui <decui@microsoft.com>, v-lide@microsoft.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 3 Jun 2019 at 17:11, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Mon, Jun 3, 2019 at 7:37 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
-> Hi Krzysztof,
->
-> On Mon, 3 Jun 2019 16:35:22 +0200 Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On Mon, 3 Jun 2019 at 16:32, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > >
-> > On Mon, 3 Jun 2019 at 16:32, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > >
-> > > On Mon, 3 Jun 2019 16:10:40 +0200 Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > > >
-> > > > Indeed it looks like effect of merge conflict resolution or applying.
-> > > > When I look at MMOTS, it is the same as yours:
-> > > > http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/commit/?id=b77b8cce67f246109f9d87417a32cd38f0398f2f
-> > > >
-> > > > However in linux-next it is different.
-> > > >
-> > > > Stephen, any thoughts?
-> > >
-> > > Have you had a look at today's linux-next?  It looks correct in
-> > > there.  Andrew updated his patch series over the weekend.
+> > Hi Krzysztof,
 > >
-> > Yes, I am looking at today's next. Both the source code and the commit
-> > 728e0fbf263e3ed359c10cb13623390564102881 have wrong "if (merged)" (put
-> > in wrong hunk).
+> > On Mon, 3 Jun 2019 16:10:40 +0200 Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > >
+> > > Indeed it looks like effect of merge conflict resolution or applying.
+> > > When I look at MMOTS, it is the same as yours:
+> > > http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/commit/?id=b77b8cce67f246109f9d87417a32cd38f0398f2f
+> > >
+> > > However in linux-next it is different.
+> > >
+> > > Stephen, any thoughts?
+> >
+> > Have you had a look at today's linux-next?  It looks correct in
+> > there.  Andrew updated his patch series over the weekend.
 >
-> OK, I have replaced that commit with this:
+> Yes, I am looking at today's next. Both the source code and the commit
+> 728e0fbf263e3ed359c10cb13623390564102881 have wrong "if (merged)" (put
+> in wrong hunk).
+>
+> Best regards,
+> Krzysztof
 
-Thank you!
+FYI, we also see the issue in our x86 VM running on Hyper-V.
 
-Best regards,
-Krzysztof
+Thanks,
+Dexuan
