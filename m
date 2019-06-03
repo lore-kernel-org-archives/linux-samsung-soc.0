@@ -1,8 +1,8 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Sudeep Holla <sudeep.holla@arm.com>
 Subject: Re: [BUG BISECT] bug mm/vmalloc.c:470 (mm/vmalloc.c: get rid of one
  single unlink_va() when merge)
-Date: Mon, 3 Jun 2019 16:10:40 +0200
-Message-ID: <CAJKOXPdczUnsaBeXTuutZXCQ70ejDT68xnVm-e+SSdLZi-vyCA@mail.gmail.com>
+Date: Mon, 3 Jun 2019 15:12:55 +0100
+Message-ID: <CAPKp9uauCeYi-ArurSHytpBR4_XXJX6jfG2RqoMo0dpNGyTb5w@mail.gmail.com>
 References: <CAJKOXPcTVpLtSSs=Q0G3fQgXYoVa=kHxWcWXyvS13ie73ByZBw@mail.gmail.com>
  <20190603135939.e2mb7vkxp64qairr@pc636>
 Mime-Version: 1.0
@@ -10,11 +10,13 @@ Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190603135939.e2mb7vkxp64qairr@pc636>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Uladzislau Rezki <urezki@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, Hillf Danton <hdanton@sina.com>, Thomas Gleixner <tglx@linutronix.de>, Tejun Heo <tj@kernel.org>, Andrei Vagin <avagin@gmail.com>
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Hillf Danton <hdanton@sina.com>, Thomas Gleixner <tglx@linutronix.de>, Tejun Heo <tj@kernel.org>, Andrei Vagin <avagin@gmail.com>, Sudeep Holla <sudeep.holla@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 3 Jun 2019 at 15:59, Uladzislau Rezki <urezki@gmail.com> wrote:
+Hi,
+
+On Mon, Jun 3, 2019 at 3:02 PM Uladzislau Rezki <urezki@gmail.com> wrote:
 >
 > Hello, Krzysztof.
 >
@@ -24,20 +26,11 @@ On Mon, 3 Jun 2019 at 15:59, Uladzislau Rezki <urezki@gmail.com> wrote:
 > > On recent next I see bugs during boot (after bringing up user-space or
 > > during reboot):
 > > kernel BUG at ../mm/vmalloc.c:470!
+
+I was about to report the same and saw this thread.
+
 > > On all my boards. On QEMU I see something similar, although the
 > > message is "Internal error: Oops - undefined instruction: 0 [#1] ARM",
-
-Indeed it looks like effect of merge conflict resolution or applying.
-When I look at MMOTS, it is the same as yours:
-http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/commit/?id=b77b8cce67f246109f9d87417a32cd38f0398f2f
-
-However in linux-next it is different.
-
-Stephen, any thoughts?
-
-Best regards,
-Krzysztof
-
 > >
 > > The calltrace is:
 > > [   34.565126] [<c0275c9c>] (__free_vmap_area) from [<c0276044>]
@@ -78,44 +71,9 @@ Krzysztof
 >
 > See below the clean patch for remotes/linux-next/master:
 >
-> <snip>
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index 650c89f38c1e..0ed95b864e31 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -719,9 +719,6 @@ merge_or_add_vmap_area(struct vmap_area *va,
->                         /* Check and update the tree if needed. */
->                         augment_tree_propagate_from(sibling);
->
-> -                       /* Remove this VA, it has been merged. */
-> -                       unlink_va(va, root);
-> -
->                         /* Free vmap_area object. */
->                         kmem_cache_free(vmap_area_cachep, va);
->
-> @@ -746,12 +743,11 @@ merge_or_add_vmap_area(struct vmap_area *va,
->                         /* Check and update the tree if needed. */
->                         augment_tree_propagate_from(sibling);
->
-> -                       /* Remove this VA, it has been merged. */
-> -                       unlink_va(va, root);
-> +                       if (merged)
-> +                               unlink_va(va, root);
->
->                         /* Free vmap_area object. */
->                         kmem_cache_free(vmap_area_cachep, va);
-> -
->                         return;
->                 }
->         }
-> --
-> 2.11.0
-> <snip>
->
-> Andrew, i am not sure how to proceed with that. Should i send an updated series
-> based on linux-next tip or you can fix directly that patch?
->
-> Thank you!
->
-> --
-> Vlad Rezki
+
+This patch fixes the issue and resumes booting on my platform.
+
+--
+Regards,
+Sudeep
