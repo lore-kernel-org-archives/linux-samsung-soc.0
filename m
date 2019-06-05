@@ -1,9 +1,10 @@
 From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH v8 05/13] dt-bindings: ddr: add LPDDR3 memories
-Date: Wed,  5 Jun 2019 18:54:02 +0200
-Message-ID: <20190605165410.14606-6-l.luba@partner.samsung.com>
+Subject: [PATCH v8 02/13] clk: samsung: add new clocks for DMC for
+ Exynos5422 SoC
+Date: Wed,  5 Jun 2019 18:53:59 +0200
+Message-ID: <20190605165410.14606-3-l.luba@partner.samsung.com>
 References: <20190605165410.14606-1-l.luba@partner.samsung.com>
-        <CGME20190605165431eucas1p12810093a1f81f5609782959d878782a0@eucas1p1.samsung.com>
+        <CGME20190605165428eucas1p11849754e0d0aa8f8d445ceb0cd6c2f61@eucas1p1.samsung.com>
 Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190605165410.14606-1-l.luba@partner.samsung.com>
@@ -12,183 +13,137 @@ To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kern
 Cc: b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, willy.mh.wolff.ml@gmail.com, Lukasz Luba <l.luba@partner.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Specifies the AC timing parameters of the LPDDR3 memory device.
+This patch provides support for clocks needed for Dynamic Memory Controller
+in Exynos5422 SoC. It adds CDREX base register addresses, new DIV, MUX and
+GATE entries.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 ---
- .../bindings/ddr/lpddr3-timings.txt           | 58 +++++++++++
- .../devicetree/bindings/ddr/lpddr3.txt        | 97 +++++++++++++++++++
- 2 files changed, 155 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/ddr/lpddr3-timings.txt
- create mode 100644 Documentation/devicetree/bindings/ddr/lpddr3.txt
+ drivers/clk/samsung/clk-exynos5420.c | 57 ++++++++++++++++++++++++++--
+ 1 file changed, 53 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/ddr/lpddr3-timings.txt b/Documentation/devicetree/bindings/ddr/lpddr3-timings.txt
-new file mode 100644
-index 000000000000..84705e50a3fd
---- /dev/null
-+++ b/Documentation/devicetree/bindings/ddr/lpddr3-timings.txt
-@@ -0,0 +1,58 @@
-+* AC timing parameters of LPDDR3 memories for a given speed-bin.
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 34cce3c5898f..eecbfcc6b3cf 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -134,6 +134,8 @@
+ #define SRC_CDREX		0x20200
+ #define DIV_CDREX0		0x20500
+ #define DIV_CDREX1		0x20504
++#define GATE_BUS_CDREX0		0x20700
++#define GATE_BUS_CDREX1		0x20704
+ #define KPLL_LOCK		0x28000
+ #define KPLL_CON0		0x28100
+ #define SRC_KFC			0x28200
+@@ -248,6 +250,8 @@ static const unsigned long exynos5x_clk_regs[] __initconst = {
+ 	DIV_CDREX1,
+ 	SRC_KFC,
+ 	DIV_KFC0,
++	GATE_BUS_CDREX0,
++	GATE_BUS_CDREX1,
+ };
+ 
+ static const unsigned long exynos5800_clk_regs[] __initconst = {
+@@ -425,6 +429,9 @@ PNAME(mout_group13_5800_p)	= { "dout_osc_div", "mout_sw_aclkfl1_550_cam" };
+ PNAME(mout_group14_5800_p)	= { "dout_aclk550_cam", "dout_sclk_sw" };
+ PNAME(mout_group15_5800_p)	= { "dout_osc_div", "mout_sw_aclk550_cam" };
+ PNAME(mout_group16_5800_p)	= { "dout_osc_div", "mout_mau_epll_clk" };
++PNAME(mout_mx_mspll_ccore_phy_p) = { "sclk_bpll", "mout_sclk_dpll",
++					"mout_sclk_mpll", "ff_dout_spll2",
++					"mout_sclk_spll", "mout_sclk_epll"};
+ 
+ /* fixed rate clocks generated outside the soc */
+ static struct samsung_fixed_rate_clock
+@@ -450,7 +457,7 @@ static const struct samsung_fixed_factor_clock
+ static const struct samsung_fixed_factor_clock
+ 		exynos5800_fixed_factor_clks[] __initconst = {
+ 	FFACTOR(0, "ff_dout_epll2", "mout_sclk_epll", 1, 2, 0),
+-	FFACTOR(0, "ff_dout_spll2", "mout_sclk_spll", 1, 2, 0),
++	FFACTOR(CLK_FF_DOUT_SPLL2, "ff_dout_spll2", "mout_sclk_spll", 1, 2, 0),
+ };
+ 
+ static const struct samsung_mux_clock exynos5800_mux_clks[] __initconst = {
+@@ -472,11 +479,14 @@ static const struct samsung_mux_clock exynos5800_mux_clks[] __initconst = {
+ 	MUX(0, "mout_aclk300_disp1", mout_group5_5800_p, SRC_TOP2, 24, 2),
+ 	MUX(0, "mout_aclk300_gscl", mout_group5_5800_p, SRC_TOP2, 28, 2),
+ 
++	MUX(CLK_MOUT_MX_MSPLL_CCORE_PHY, "mout_mx_mspll_ccore_phy",
++		mout_mx_mspll_ccore_phy_p, SRC_TOP7, 0, 3),
 +
-+The structures are based on LPDDR2 and extended where needed.
+ 	MUX(CLK_MOUT_MX_MSPLL_CCORE, "mout_mx_mspll_ccore",
+-			mout_mx_mspll_ccore_p, SRC_TOP7, 16, 2),
++			mout_mx_mspll_ccore_p, SRC_TOP7, 16, 3),
+ 	MUX_F(CLK_MOUT_MAU_EPLL, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p,
+ 			SRC_TOP7, 20, 2, CLK_SET_RATE_PARENT, 0),
+-	MUX(0, "sclk_bpll", mout_bpll_p, SRC_TOP7, 24, 1),
++	MUX(CLK_SCLK_BPLL, "sclk_bpll", mout_bpll_p, SRC_TOP7, 24, 1),
+ 	MUX(0, "mout_epll2", mout_epll2_5800_p, SRC_TOP7, 28, 1),
+ 
+ 	MUX(0, "mout_aclk550_cam", mout_group3_5800_p, SRC_TOP8, 16, 3),
+@@ -648,7 +658,7 @@ static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
+ 
+ 	MUX(0, "mout_sclk_mpll", mout_mpll_p, SRC_TOP6, 0, 1),
+ 	MUX(CLK_MOUT_VPLL, "mout_sclk_vpll", mout_vpll_p, SRC_TOP6, 4, 1),
+-	MUX(0, "mout_sclk_spll", mout_spll_p, SRC_TOP6, 8, 1),
++	MUX(CLK_MOUT_SCLK_SPLL, "mout_sclk_spll", mout_spll_p, SRC_TOP6, 8, 1),
+ 	MUX(0, "mout_sclk_ipll", mout_ipll_p, SRC_TOP6, 12, 1),
+ 	MUX(0, "mout_sclk_rpll", mout_rpll_p, SRC_TOP6, 16, 1),
+ 	MUX_F(CLK_MOUT_EPLL, "mout_sclk_epll", mout_epll_p, SRC_TOP6, 20, 1,
+@@ -806,8 +816,21 @@ static const struct samsung_div_clock exynos5x_div_clks[] __initconst = {
+ 			"mout_aclk400_disp1", DIV_TOP2, 4, 3),
+ 
+ 	/* CDREX Block */
++	/*
++	 * The three clocks below are controlled using the same register and
++	 * bits. They are put into one because there is a need of
++	 * synchronization between the BUS and DREXs (two external memory
++	 * interfaces).
++	 * They are put here to show this HW assumption and for clock
++	 * information summary completeness.
++	 */
+ 	DIV(CLK_DOUT_PCLK_CDREX, "dout_pclk_cdrex", "dout_aclk_cdrex1",
+ 			DIV_CDREX0, 28, 3),
++	DIV(CLK_DOUT_PCLK_DREX0, "dout_pclk_drex0", "dout_cclk_drex0",
++			DIV_CDREX0, 28, 3),
++	DIV(CLK_DOUT_PCLK_DREX1, "dout_pclk_drex1", "dout_cclk_drex0",
++			DIV_CDREX0, 28, 3),
 +
-+Required properties:
-+- compatible : Should be "jedec,lpddr3-timings"
-+- min-freq : minimum DDR clock frequency for the speed-bin. Type is <u32>
-+- reg : maximum DDR clock frequency for the speed-bin. Type is <u32>
+ 	DIV_F(CLK_DOUT_SCLK_CDREX, "dout_sclk_cdrex", "mout_mclk_cdrex",
+ 			DIV_CDREX0, 24, 3, CLK_SET_RATE_PARENT, 0),
+ 	DIV(CLK_DOUT_ACLK_CDREX1, "dout_aclk_cdrex1", "dout_clk2x_phy0",
+@@ -1170,6 +1193,32 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
+ 			GATE_TOP_SCLK_ISP, 12, CLK_SET_RATE_PARENT, 0),
+ 
+ 	GATE(CLK_G3D, "g3d", "mout_user_aclk_g3d", GATE_IP_G3D, 9, 0, 0),
 +
-+Optional properties:
++	/* CDREX */
++	GATE(CLK_CLKM_PHY0, "clkm_phy0", "dout_sclk_cdrex",
++			GATE_BUS_CDREX0, 0, 0, 0),
++	GATE(CLK_CLKM_PHY1, "clkm_phy1", "dout_sclk_cdrex",
++			GATE_BUS_CDREX0, 1, 0, 0),
++	GATE(0, "mx_mspll_ccore_phy", "mout_mx_mspll_ccore_phy",
++			SRC_MASK_TOP7, 0, CLK_IGNORE_UNUSED, 0),
 +
-+The following properties represent AC timing parameters from the memory
-+data-sheet of the device for a given speed-bin. All these properties are
-+of type <u32> and the default unit is ps (pico seconds).
-+- tRFC
-+- tRRD
-+- tRPab
-+- tRPpb
-+- tRCD
-+- tRC
-+- tRAS
-+- tWTR
-+- tWR
-+- tRTP
-+- tW2W-C2C
-+- tR2R-C2C
-+- tFAW
-+- tXSR
-+- tXP
-+- tCKE
-+- tCKESR
-+- tMRD
++	GATE(CLK_ACLK_PPMU_DREX1_1, "aclk_ppmu_drex1_1", "dout_aclk_cdrex1",
++			GATE_BUS_CDREX1, 12, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_PPMU_DREX1_0, "aclk_ppmu_drex1_0", "dout_aclk_cdrex1",
++			GATE_BUS_CDREX1, 13, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_PPMU_DREX0_1, "aclk_ppmu_drex0_1", "dout_aclk_cdrex1",
++			GATE_BUS_CDREX1, 14, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_PPMU_DREX0_0, "aclk_ppmu_drex0_0", "dout_aclk_cdrex1",
++			GATE_BUS_CDREX1, 15, CLK_IGNORE_UNUSED, 0),
 +
-+Example:
-+
-+timings_samsung_K3QF2F20DB_800mhz: lpddr3-timings@800000000 {
-+	compatible	= "jedec,lpddr3-timings";
-+	reg		= <800000000>; /* workaround: it shows max-freq */
-+	min-freq	= <100000000>;
-+	tRFC		= <65000>;
-+	tRRD		= <6000>;
-+	tRPab		= <12000>;
-+	tRPpb		= <12000>;
-+	tRCD		= <10000>;
-+	tRC		= <33750>;
-+	tRAS		= <23000>;
-+	tWTR		= <3750>;
-+	tWR		= <7500>;
-+	tRTP		= <3750>;
-+	tW2W-C2C	= <0>;
-+	tR2R-C2C	= <0>;
-+	tFAW		= <25000>;
-+	tXSR		= <70000>;
-+	tXP		= <3750>;
-+	tCKE		= <3750>;
-+	tCKESR		= <3750>;
-+	tMRD		= <7000>;
-+};
-diff --git a/Documentation/devicetree/bindings/ddr/lpddr3.txt b/Documentation/devicetree/bindings/ddr/lpddr3.txt
-new file mode 100644
-index 000000000000..3b2485b84b3f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/ddr/lpddr3.txt
-@@ -0,0 +1,97 @@
-+* LPDDR3 SDRAM memories compliant to JEDEC JESD209-3C
-+
-+Required properties:
-+- compatible : Should be  - "jedec,lpddr3"
-+- density  : <u32> representing density in Mb (Mega bits)
-+- io-width : <u32> representing bus width. Possible values are 8, 16, 32, 64
-+- #address-cells: Must be set to 1
-+- #size-cells: Must be set to 0
-+
-+Optional properties:
-+
-+The following optional properties represent the minimum value of some AC
-+timing parameters of the DDR device in terms of number of clock cycles.
-+These values shall be obtained from the device data-sheet.
-+- tRFC-min-tck
-+- tRRD-min-tck
-+- tRPab-min-tck
-+- tRPpb-min-tck
-+- tRCD-min-tck
-+- tRC-min-tck
-+- tRAS-min-tck
-+- tWTR-min-tck
-+- tWR-min-tck
-+- tRTP-min-tck
-+- tW2W-C2C-min-tck
-+- tR2R-C2C-min-tck
-+- tWL-min-tck
-+- tDQSCK-min-tck
-+- tRL-min-tck
-+- tFAW-min-tck
-+- tXSR-min-tck
-+- tXP-min-tck
-+- tCKE-min-tck
-+- tCKESR-min-tck
-+- tMRD-min-tck
-+
-+Child nodes:
-+- The lpddr3 node may have one or more child nodes of type "lpddr3-timings".
-+  "lpddr3-timings" provides AC timing parameters of the device for
-+  a given speed-bin. Please see Documentation/devicetree/
-+  bindings/ddr/lpddr3-timings.txt for more information on "lpddr3-timings"
-+
-+Example:
-+
-+samsung_K3QF2F20DB: lpddr3 {
-+	compatible	= "Samsung,K3QF2F20DB", "jedec,lpddr3";
-+	density		= <16384>;
-+	io-width	= <32>;
-+	#address-cells	= <1>;
-+	#size-cells	= <0>;
-+
-+	tRFC-min-tck		= <17>;
-+	tRRD-min-tck		= <2>;
-+	tRPab-min-tck		= <2>;
-+	tRPpb-min-tck		= <2>;
-+	tRCD-min-tck		= <3>;
-+	tRC-min-tck		= <6>;
-+	tRAS-min-tck		= <5>;
-+	tWTR-min-tck		= <2>;
-+	tWR-min-tck		= <7>;
-+	tRTP-min-tck		= <2>;
-+	tW2W-C2C-min-tck	= <0>;
-+	tR2R-C2C-min-tck	= <0>;
-+	tWL-min-tck		= <8>;
-+	tDQSCK-min-tck		= <5>;
-+	tRL-min-tck		= <14>;
-+	tFAW-min-tck		= <5>;
-+	tXSR-min-tck		= <12>;
-+	tXP-min-tck		= <2>;
-+	tCKE-min-tck		= <2>;
-+	tCKESR-min-tck		= <2>;
-+	tMRD-min-tck		= <5>;
-+
-+	timings_samsung_K3QF2F20DB_800mhz: lpddr3-timings@800000000 {
-+		compatible	= "jedec,lpddr3-timings";
-+		reg		= <800000000>; /* workaround: it shows max-freq */
-+		min-freq	= <100000000>;
-+		tRFC		= <65000>;
-+		tRRD		= <6000>;
-+		tRPab		= <12000>;
-+		tRPpb		= <12000>;
-+		tRCD		= <10000>;
-+		tRC		= <33750>;
-+		tRAS		= <23000>;
-+		tWTR		= <3750>;
-+		tWR		= <7500>;
-+		tRTP		= <3750>;
-+		tW2W-C2C	= <0>;
-+		tR2R-C2C	= <0>;
-+		tFAW		= <25000>;
-+		tXSR		= <70000>;
-+		tXP		= <3750>;
-+		tCKE		= <3750>;
-+		tCKESR		= <3750>;
-+		tMRD		= <7000>;
-+	};
-+}
++	GATE(CLK_PCLK_PPMU_DREX1_1, "pclk_ppmu_drex1_1", "dout_pclk_cdrex",
++			GATE_BUS_CDREX1, 26, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_PPMU_DREX1_0, "pclk_ppmu_drex1_0", "dout_pclk_cdrex",
++			GATE_BUS_CDREX1, 27, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_PPMU_DREX0_1, "pclk_ppmu_drex0_1", "dout_pclk_cdrex",
++			GATE_BUS_CDREX1, 28, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_PPMU_DREX0_0, "pclk_ppmu_drex0_0", "dout_pclk_cdrex",
++			GATE_BUS_CDREX1, 29, CLK_IGNORE_UNUSED, 0),
+ };
+ 
+ static const struct samsung_div_clock exynos5x_disp_div_clks[] __initconst = {
 -- 
 2.17.1
