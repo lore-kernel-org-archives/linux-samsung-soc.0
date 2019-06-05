@@ -1,9 +1,9 @@
 From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH v8 11/13] ARM: dts: exynos: add syscon to clock compatible
-Date: Wed,  5 Jun 2019 18:54:08 +0200
-Message-ID: <20190605165410.14606-12-l.luba@partner.samsung.com>
+Subject: [PATCH v8 13/13] ARM: exynos_defconfig: enable DMC driver
+Date: Wed,  5 Jun 2019 18:54:10 +0200
+Message-ID: <20190605165410.14606-14-l.luba@partner.samsung.com>
 References: <20190605165410.14606-1-l.luba@partner.samsung.com>
-        <CGME20190605165439eucas1p12d9b7aa025fd826d4f880fd7862add62@eucas1p1.samsung.com>
+        <CGME20190605165441eucas1p1cf771211156e8aca384ed11c6498c263@eucas1p1.samsung.com>
 Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190605165410.14606-1-l.luba@partner.samsung.com>
@@ -12,41 +12,25 @@ To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kern
 Cc: b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, willy.mh.wolff.ml@gmail.com, Lukasz Luba <l.luba@partner.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-In order to get the clock by phandle and use it with regmap it needs to be
-compatible with syscon. The DMC driver uses two registers from clock
-register set and needs the regmap of them.
+Enable driver for Exynos5422 Dynamic Memory Controller supporting
+dynamic frequency and voltage scaling in Exynos5422 SoCs.
 
 Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 ---
- arch/arm/boot/dts/exynos5420.dtsi | 2 +-
- arch/arm/boot/dts/exynos5800.dtsi | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/configs/exynos_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 5fb2326875dc..d153617ff1a3 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -173,7 +173,7 @@
- 		};
- 
- 		clock: clock-controller@10010000 {
--			compatible = "samsung,exynos5420-clock";
-+			compatible = "samsung,exynos5420-clock", "syscon";
- 			reg = <0x10010000 0x30000>;
- 			#clock-cells = <1>;
- 		};
-diff --git a/arch/arm/boot/dts/exynos5800.dtsi b/arch/arm/boot/dts/exynos5800.dtsi
-index 57d3b319fd65..0a2b3287ed92 100644
---- a/arch/arm/boot/dts/exynos5800.dtsi
-+++ b/arch/arm/boot/dts/exynos5800.dtsi
-@@ -17,7 +17,7 @@
- };
- 
- &clock {
--	compatible = "samsung,exynos5800-clock";
-+	compatible = "samsung,exynos5800-clock", "syscon";
- };
- 
- &cluster_a15_opp_table {
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index c95c54284da2..0cd16c924941 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -290,6 +290,7 @@ CONFIG_DEVFREQ_GOV_PERFORMANCE=y
+ CONFIG_DEVFREQ_GOV_POWERSAVE=y
+ CONFIG_DEVFREQ_GOV_USERSPACE=y
+ CONFIG_ARM_EXYNOS_BUS_DEVFREQ=y
++CONFIG_ARM_EXYNOS5422_DMC=y
+ CONFIG_DEVFREQ_EVENT_EXYNOS_NOCP=y
+ CONFIG_EXYNOS_IOMMU=y
+ CONFIG_EXTCON=y
 -- 
 2.17.1
