@@ -1,53 +1,79 @@
 From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: Re: [PATCH v8 00/13] Exynos5 Dynamic Memory Controller driver
-Date: Thu, 6 Jun 2019 17:03:18 +0200
-Message-ID: <e976f842-a2f6-e75b-25c8-0d1fa21cf05a@partner.samsung.com>
-References: <CGME20190605165426eucas1p20524669a299f740b5502db24977b098f@eucas1p2.samsung.com>
-        <20190605165410.14606-1-l.luba@partner.samsung.com>
-        <b1024bed-a8d9-12d9-9e20-5e5624a1b189@samsung.com>
-Mime-Version: 1.0
+Subject: [PATCH v9 01/13] clk: samsung: add needed IDs for DMC clocks in
+ Exynos5420
+Date: Fri,  7 Jun 2019 16:34:55 +0200
+Message-ID: <20190607143507.30286-2-l.luba@partner.samsung.com>
+References: <20190607143507.30286-1-l.luba@partner.samsung.com>
+        <CGME20190607143524eucas1p22e6310f1a5f6e4bab771ebbbcc40f88c@eucas1p2.samsung.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b1024bed-a8d9-12d9-9e20-5e5624a1b189@samsung.com>
-Content-Language: en-US
+In-Reply-To: <20190607143507.30286-1-l.luba@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, willy.mh.wolff.ml@gmail.com, linux-clk <linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>
+To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com, sboyd@kernel.org, b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org, willy.mh.wolff.ml@gmail.com, Lukasz Luba <l.luba@partner.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Sylwester,
+Define new IDs for clocks used by Dynamic Memory Controller in
+Exynos5422 SoC.
 
-On 6/6/19 3:57 PM, Sylwester Nawrocki wrote:
-> On 6/5/19 18:53, Lukasz Luba wrote:
->> Lukasz Luba (13):
->>    clk: samsung: add needed IDs for DMC clocks in Exynos5420
->>    clk: samsung: add new clocks for DMC for Exynos5422 SoC
->>    clk: samsung: add BPLL rate table for Exynos 5422 SoC
->>    dt-bindings: ddr: rename lpddr2 directory
->>    dt-bindings: ddr: add LPDDR3 memories
->>    drivers: memory: extend of_memory by LPDDR3 support
->>    dt-bindings: memory-controllers: add Exynos5422 DMC device description
->>    drivers: memory: add DMC driver for Exynos5422
->>    drivers: devfreq: events: add Exynos PPMU new events
->>    ARM: dts: exynos: add chipid label and syscon compatible
->>    ARM: dts: exynos: add syscon to clock compatible
->>    ARM: dts: exynos: add DMC device for exynos5422
->>    ARM: exynos_defconfig: enable DMC driver
-> 
-> 
-> I have applied first 3 patches from this series to clk/samsung tree.
-Thank you
-> 
-> But can you please also send this series to linux-clk@vger.kernel.org
-> ML, adding the clk maintainers (Stephen, Michael) at Cc?
-I will. There are some minor clean-ups in patch 8/13 pointed by
-Krzysztof, I am going to sent v9, so I will add them on CC.
-> 
-> Please make sure if future any clk patches are also sent to
-> linux-clk@vger.kernel.org mailing list.
-OK
-> 
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+---
+ include/dt-bindings/clock/exynos5420.h | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
 
-Regards,
-Lukasz
+diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
+index 355f469943f1..02d5ac469a3d 100644
+--- a/include/dt-bindings/clock/exynos5420.h
++++ b/include/dt-bindings/clock/exynos5420.h
+@@ -60,6 +60,7 @@
+ #define CLK_MAU_EPLL		159
+ #define CLK_SCLK_HSIC_12M	160
+ #define CLK_SCLK_MPHY_IXTAL24	161
++#define CLK_SCLK_BPLL		162
+ 
+ /* gate clocks */
+ #define CLK_UART0		257
+@@ -195,6 +196,16 @@
+ #define CLK_ACLK432_CAM		518
+ #define CLK_ACLK_FL1550_CAM	519
+ #define CLK_ACLK550_CAM		520
++#define CLK_CLKM_PHY0		521
++#define CLK_CLKM_PHY1		522
++#define CLK_ACLK_PPMU_DREX0_0	523
++#define CLK_ACLK_PPMU_DREX0_1	524
++#define CLK_ACLK_PPMU_DREX1_0	525
++#define CLK_ACLK_PPMU_DREX1_1	526
++#define CLK_PCLK_PPMU_DREX0_0	527
++#define CLK_PCLK_PPMU_DREX0_1	528
++#define CLK_PCLK_PPMU_DREX1_0	529
++#define CLK_PCLK_PPMU_DREX1_1	530
+ 
+ /* mux clocks */
+ #define CLK_MOUT_HDMI		640
+@@ -217,6 +228,8 @@
+ #define CLK_MOUT_EPLL		657
+ #define CLK_MOUT_MAU_EPLL	658
+ #define CLK_MOUT_USER_MAU_EPLL	659
++#define CLK_MOUT_SCLK_SPLL	660
++#define CLK_MOUT_MX_MSPLL_CCORE_PHY	661
+ 
+ /* divider clocks */
+ #define CLK_DOUT_PIXEL		768
+@@ -248,8 +261,11 @@
+ #define CLK_DOUT_CCLK_DREX0	794
+ #define CLK_DOUT_CLK2X_PHY0	795
+ #define CLK_DOUT_PCLK_CORE_MEM	796
++#define CLK_FF_DOUT_SPLL2	797
++#define CLK_DOUT_PCLK_DREX0	798
++#define CLK_DOUT_PCLK_DREX1	799
+ 
+ /* must be greater than maximal clock id */
+-#define CLK_NR_CLKS		797
++#define CLK_NR_CLKS		800
+ 
+ #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5420_H */
+-- 
+2.17.1
