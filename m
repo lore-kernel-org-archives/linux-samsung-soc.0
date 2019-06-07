@@ -1,10 +1,10 @@
 From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH v9 02/13] clk: samsung: add new clocks for DMC for
- Exynos5422 SoC
-Date: Fri,  7 Jun 2019 16:34:56 +0200
-Message-ID: <20190607143507.30286-3-l.luba@partner.samsung.com>
+Subject: [PATCH v9 06/13] drivers: memory: extend of_memory by LPDDR3
+ support
+Date: Fri,  7 Jun 2019 16:35:00 +0200
+Message-ID: <20190607143507.30286-7-l.luba@partner.samsung.com>
 References: <20190607143507.30286-1-l.luba@partner.samsung.com>
-        <CGME20190607143525eucas1p15a57ab0f8b9e6ce2e77702f04ebf0c22@eucas1p1.samsung.com>
+        <CGME20190607143529eucas1p2ed19649f0a5404a9a2a3b45cb07d0103@eucas1p2.samsung.com>
 Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190607143507.30286-1-l.luba@partner.samsung.com>
@@ -13,140 +13,301 @@ To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kern
 Cc: mturquette@baylibre.com, sboyd@kernel.org, b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org, willy.mh.wolff.ml@gmail.com, Lukasz Luba <l.luba@partner.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch provides support for clocks needed for Dynamic Memory Controller
-in Exynos5422 SoC. It adds CDREX base register addresses, new DIV, MUX and
-GATE entries.
+The patch adds AC timings information needed to support LPDDR3 and memory
+controllers. The structure is used in of_memory and currently in Exynos
+5422 DMC. Add parsing data needed for LPDDR3 support.
+It is currently used in Exynos5422 Dynamic Memory Controller.
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 ---
- drivers/clk/samsung/clk-exynos5420.c | 61 +++++++++++++++++++++++++---
- 1 file changed, 55 insertions(+), 6 deletions(-)
+ drivers/memory/of_memory.c | 154 +++++++++++++++++++++++++++++++++++++
+ drivers/memory/of_memory.h |  18 +++++
+ include/memory/jedec_ddr.h |  62 +++++++++++++++
+ 3 files changed, 234 insertions(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 34cce3c5898f..514e16310227 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -134,6 +134,8 @@
- #define SRC_CDREX		0x20200
- #define DIV_CDREX0		0x20500
- #define DIV_CDREX1		0x20504
-+#define GATE_BUS_CDREX0		0x20700
-+#define GATE_BUS_CDREX1		0x20704
- #define KPLL_LOCK		0x28000
- #define KPLL_CON0		0x28100
- #define SRC_KFC			0x28200
-@@ -248,6 +250,8 @@ static const unsigned long exynos5x_clk_regs[] __initconst = {
- 	DIV_CDREX1,
- 	SRC_KFC,
- 	DIV_KFC0,
-+	GATE_BUS_CDREX0,
-+	GATE_BUS_CDREX1,
- };
+diff --git a/drivers/memory/of_memory.c b/drivers/memory/of_memory.c
+index 12a61f558644..30f3a3e75063 100644
+--- a/drivers/memory/of_memory.c
++++ b/drivers/memory/of_memory.c
+@@ -3,6 +3,12 @@
+  * OpenFirmware helpers for memory drivers
+  *
+  * Copyright (C) 2012 Texas Instruments, Inc.
++ * Copyright (C) 2019 Samsung Electronics Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
+  */
  
- static const unsigned long exynos5800_clk_regs[] __initconst = {
-@@ -425,6 +429,9 @@ PNAME(mout_group13_5800_p)	= { "dout_osc_div", "mout_sw_aclkfl1_550_cam" };
- PNAME(mout_group14_5800_p)	= { "dout_aclk550_cam", "dout_sclk_sw" };
- PNAME(mout_group15_5800_p)	= { "dout_osc_div", "mout_sw_aclk550_cam" };
- PNAME(mout_group16_5800_p)	= { "dout_osc_div", "mout_mau_epll_clk" };
-+PNAME(mout_mx_mspll_ccore_phy_p) = { "sclk_bpll", "mout_sclk_dpll",
-+					"mout_sclk_mpll", "ff_dout_spll2",
-+					"mout_sclk_spll", "mout_sclk_epll"};
- 
- /* fixed rate clocks generated outside the soc */
- static struct samsung_fixed_rate_clock
-@@ -450,7 +457,7 @@ static const struct samsung_fixed_factor_clock
- static const struct samsung_fixed_factor_clock
- 		exynos5800_fixed_factor_clks[] __initconst = {
- 	FFACTOR(0, "ff_dout_epll2", "mout_sclk_epll", 1, 2, 0),
--	FFACTOR(0, "ff_dout_spll2", "mout_sclk_spll", 1, 2, 0),
-+	FFACTOR(CLK_FF_DOUT_SPLL2, "ff_dout_spll2", "mout_sclk_spll", 1, 2, 0),
- };
- 
- static const struct samsung_mux_clock exynos5800_mux_clks[] __initconst = {
-@@ -472,11 +479,14 @@ static const struct samsung_mux_clock exynos5800_mux_clks[] __initconst = {
- 	MUX(0, "mout_aclk300_disp1", mout_group5_5800_p, SRC_TOP2, 24, 2),
- 	MUX(0, "mout_aclk300_gscl", mout_group5_5800_p, SRC_TOP2, 28, 2),
- 
-+	MUX(CLK_MOUT_MX_MSPLL_CCORE_PHY, "mout_mx_mspll_ccore_phy",
-+		mout_mx_mspll_ccore_phy_p, SRC_TOP7, 0, 3),
+ #include <linux/device.h>
+@@ -148,3 +154,151 @@ const struct lpddr2_timings *of_get_ddr_timings(struct device_node *np_ddr,
+ 	return lpddr2_jedec_timings;
+ }
+ EXPORT_SYMBOL(of_get_ddr_timings);
 +
- 	MUX(CLK_MOUT_MX_MSPLL_CCORE, "mout_mx_mspll_ccore",
--			mout_mx_mspll_ccore_p, SRC_TOP7, 16, 2),
-+			mout_mx_mspll_ccore_p, SRC_TOP7, 16, 3),
- 	MUX_F(CLK_MOUT_MAU_EPLL, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p,
- 			SRC_TOP7, 20, 2, CLK_SET_RATE_PARENT, 0),
--	MUX(0, "sclk_bpll", mout_bpll_p, SRC_TOP7, 24, 1),
-+	MUX(CLK_SCLK_BPLL, "sclk_bpll", mout_bpll_p, SRC_TOP7, 24, 1),
- 	MUX(0, "mout_epll2", mout_epll2_5800_p, SRC_TOP7, 28, 1),
- 
- 	MUX(0, "mout_aclk550_cam", mout_group3_5800_p, SRC_TOP8, 16, 3),
-@@ -648,7 +658,7 @@ static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
- 
- 	MUX(0, "mout_sclk_mpll", mout_mpll_p, SRC_TOP6, 0, 1),
- 	MUX(CLK_MOUT_VPLL, "mout_sclk_vpll", mout_vpll_p, SRC_TOP6, 4, 1),
--	MUX(0, "mout_sclk_spll", mout_spll_p, SRC_TOP6, 8, 1),
-+	MUX(CLK_MOUT_SCLK_SPLL, "mout_sclk_spll", mout_spll_p, SRC_TOP6, 8, 1),
- 	MUX(0, "mout_sclk_ipll", mout_ipll_p, SRC_TOP6, 12, 1),
- 	MUX(0, "mout_sclk_rpll", mout_rpll_p, SRC_TOP6, 16, 1),
- 	MUX_F(CLK_MOUT_EPLL, "mout_sclk_epll", mout_epll_p, SRC_TOP6, 20, 1,
-@@ -806,8 +816,21 @@ static const struct samsung_div_clock exynos5x_div_clks[] __initconst = {
- 			"mout_aclk400_disp1", DIV_TOP2, 4, 3),
- 
- 	/* CDREX Block */
--	DIV(CLK_DOUT_PCLK_CDREX, "dout_pclk_cdrex", "dout_aclk_cdrex1",
--			DIV_CDREX0, 28, 3),
-+	/*
-+	 * The three clocks below are controlled using the same register and
-+	 * bits. They are put into one because there is a need of
-+	 * synchronization between the BUS and DREXs (two external memory
-+	 * interfaces).
-+	 * They are put here to show this HW assumption and for clock
-+	 * information summary completeness.
-+	 */
-+	DIV_F(CLK_DOUT_PCLK_CDREX, "dout_pclk_cdrex", "dout_aclk_cdrex1",
-+			DIV_CDREX0, 28, 3, CLK_GET_RATE_NOCACHE, 0),
-+	DIV_F(CLK_DOUT_PCLK_DREX0, "dout_pclk_drex0", "dout_cclk_drex0",
-+			DIV_CDREX0, 28, 3, CLK_GET_RATE_NOCACHE, 0),
-+	DIV_F(CLK_DOUT_PCLK_DREX1, "dout_pclk_drex1", "dout_cclk_drex0",
-+			DIV_CDREX0, 28, 3, CLK_GET_RATE_NOCACHE, 0),
++/**
++ * of_lpddr3_get_min_tck() - extract min timing values for lpddr3
++ * @np: pointer to ddr device tree node
++ * @device: device requesting for min timing values
++ *
++ * Populates the lpddr3_min_tck structure by extracting data
++ * from device tree node. Returns a pointer to the populated
++ * structure. If any error in populating the structure, returns NULL.
++ */
++const struct lpddr3_min_tck *of_lpddr3_get_min_tck(struct device_node *np,
++						   struct device *dev)
++{
++	int			ret = 0;
++	struct lpddr3_min_tck	*min;
 +
- 	DIV_F(CLK_DOUT_SCLK_CDREX, "dout_sclk_cdrex", "mout_mclk_cdrex",
- 			DIV_CDREX0, 24, 3, CLK_SET_RATE_PARENT, 0),
- 	DIV(CLK_DOUT_ACLK_CDREX1, "dout_aclk_cdrex1", "dout_clk2x_phy0",
-@@ -1170,6 +1193,32 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
- 			GATE_TOP_SCLK_ISP, 12, CLK_SET_RATE_PARENT, 0),
++	min = devm_kzalloc(dev, sizeof(*min), GFP_KERNEL);
++	if (!min)
++		goto default_min_tck;
++
++	ret |= of_property_read_u32(np, "tRFC-min-tck", &min->tRFC);
++	ret |= of_property_read_u32(np, "tRRD-min-tck", &min->tRRD);
++	ret |= of_property_read_u32(np, "tRPab-min-tck", &min->tRPab);
++	ret |= of_property_read_u32(np, "tRPpb-min-tck", &min->tRPpb);
++	ret |= of_property_read_u32(np, "tRCD-min-tck", &min->tRCD);
++	ret |= of_property_read_u32(np, "tRC-min-tck", &min->tRC);
++	ret |= of_property_read_u32(np, "tRAS-min-tck", &min->tRAS);
++	ret |= of_property_read_u32(np, "tWTR-min-tck", &min->tWTR);
++	ret |= of_property_read_u32(np, "tWR-min-tck", &min->tWR);
++	ret |= of_property_read_u32(np, "tRTP-min-tck", &min->tRTP);
++	ret |= of_property_read_u32(np, "tW2W-C2C-min-tck", &min->tW2W_C2C);
++	ret |= of_property_read_u32(np, "tR2R-C2C-min-tck", &min->tR2R_C2C);
++	ret |= of_property_read_u32(np, "tWL-min-tck", &min->tWL);
++	ret |= of_property_read_u32(np, "tDQSCK-min-tck", &min->tDQSCK);
++	ret |= of_property_read_u32(np, "tRL-min-tck", &min->tRL);
++	ret |= of_property_read_u32(np, "tFAW-min-tck", &min->tFAW);
++	ret |= of_property_read_u32(np, "tXSR-min-tck", &min->tXSR);
++	ret |= of_property_read_u32(np, "tXP-min-tck", &min->tXP);
++	ret |= of_property_read_u32(np, "tCKE-min-tck", &min->tCKE);
++	ret |= of_property_read_u32(np, "tCKESR-min-tck", &min->tCKESR);
++	ret |= of_property_read_u32(np, "tMRD-min-tck", &min->tMRD);
++
++	if (ret) {
++		dev_warn(dev, "%s: errors while parsing min-tck values\n",
++			 __func__);
++		devm_kfree(dev, min);
++		goto default_min_tck;
++	}
++
++	return min;
++
++default_min_tck:
++	dev_warn(dev, "%s: using default min-tck values\n", __func__);
++	return NULL;
++}
++EXPORT_SYMBOL(of_lpddr3_get_min_tck);
++
++static int of_lpddr3_do_get_timings(struct device_node *np,
++				    struct lpddr3_timings *tim)
++{
++	int ret;
++
++	/* The 'reg' param required since DT has changed, used as 'max-freq' */
++	ret = of_property_read_u32(np, "reg", &tim->max_freq);
++	ret |= of_property_read_u32(np, "min-freq", &tim->min_freq);
++	ret |= of_property_read_u32(np, "tRFC", &tim->tRFC);
++	ret |= of_property_read_u32(np, "tRRD", &tim->tRRD);
++	ret |= of_property_read_u32(np, "tRPab", &tim->tRPab);
++	ret |= of_property_read_u32(np, "tRPpb", &tim->tRPpb);
++	ret |= of_property_read_u32(np, "tRCD", &tim->tRCD);
++	ret |= of_property_read_u32(np, "tRC", &tim->tRC);
++	ret |= of_property_read_u32(np, "tRAS", &tim->tRAS);
++	ret |= of_property_read_u32(np, "tWTR", &tim->tWTR);
++	ret |= of_property_read_u32(np, "tWR", &tim->tWR);
++	ret |= of_property_read_u32(np, "tRTP", &tim->tRTP);
++	ret |= of_property_read_u32(np, "tW2W-C2C", &tim->tW2W_C2C);
++	ret |= of_property_read_u32(np, "tR2R-C2C", &tim->tR2R_C2C);
++	ret |= of_property_read_u32(np, "tFAW", &tim->tFAW);
++	ret |= of_property_read_u32(np, "tXSR", &tim->tXSR);
++	ret |= of_property_read_u32(np, "tXP", &tim->tXP);
++	ret |= of_property_read_u32(np, "tCKE", &tim->tCKE);
++	ret |= of_property_read_u32(np, "tCKESR", &tim->tCKESR);
++	ret |= of_property_read_u32(np, "tMRD", &tim->tMRD);
++
++	return ret;
++}
++
++/**
++ * of_lpddr3_get_ddr_timings() - extracts the lpddr3 timings and updates no of
++ * frequencies available.
++ * @np_ddr: Pointer to ddr device tree node
++ * @dev: Device requesting for ddr timings
++ * @device_type: Type of ddr
++ * @nr_frequencies: No of frequencies available for ddr
++ * (updated by this function)
++ *
++ * Populates lpddr3_timings structure by extracting data from device
++ * tree node. Returns pointer to populated structure. If any error
++ * while populating, returns NULL.
++ */
++const struct lpddr3_timings
++*of_lpddr3_get_ddr_timings(struct device_node *np_ddr, struct device *dev,
++			   u32 device_type, u32 *nr_frequencies)
++{
++	struct lpddr3_timings	*timings = NULL;
++	u32			arr_sz = 0, i = 0;
++	struct device_node	*np_tim;
++	char			*tim_compat = NULL;
++
++	switch (device_type) {
++	case DDR_TYPE_LPDDR3:
++		tim_compat = "jedec,lpddr3-timings";
++		break;
++	default:
++		dev_warn(dev, "%s: un-supported memory type\n", __func__);
++	}
++
++	for_each_child_of_node(np_ddr, np_tim)
++		if (of_device_is_compatible(np_tim, tim_compat))
++			arr_sz++;
++
++	if (arr_sz)
++		timings = devm_kcalloc(dev, arr_sz, sizeof(*timings),
++				       GFP_KERNEL);
++
++	if (!timings)
++		goto default_timings;
++
++	for_each_child_of_node(np_ddr, np_tim) {
++		if (of_device_is_compatible(np_tim, tim_compat)) {
++			if (of_lpddr3_do_get_timings(np_tim, &timings[i])) {
++				devm_kfree(dev, timings);
++				goto default_timings;
++			}
++			i++;
++		}
++	}
++
++	*nr_frequencies = arr_sz;
++
++	return timings;
++
++default_timings:
++	dev_warn(dev, "%s: using default timings\n", __func__);
++	*nr_frequencies = 0;
++	return NULL;
++}
++EXPORT_SYMBOL(of_lpddr3_get_ddr_timings);
+diff --git a/drivers/memory/of_memory.h b/drivers/memory/of_memory.h
+index b077cc836b0b..e39ecc4c733d 100644
+--- a/drivers/memory/of_memory.h
++++ b/drivers/memory/of_memory.h
+@@ -14,6 +14,11 @@ extern const struct lpddr2_min_tck *of_get_min_tck(struct device_node *np,
+ extern const struct lpddr2_timings
+ 	*of_get_ddr_timings(struct device_node *np_ddr, struct device *dev,
+ 	u32 device_type, u32 *nr_frequencies);
++extern const struct lpddr3_min_tck
++	*of_lpddr3_get_min_tck(struct device_node *np, struct device *dev);
++extern const struct lpddr3_timings
++	*of_lpddr3_get_ddr_timings(struct device_node *np_ddr,
++	struct device *dev, u32 device_type, u32 *nr_frequencies);
+ #else
+ static inline const struct lpddr2_min_tck
+ 	*of_get_min_tck(struct device_node *np, struct device *dev)
+@@ -27,6 +32,19 @@ static inline const struct lpddr2_timings
+ {
+ 	return NULL;
+ }
++
++static inline const struct lpddr3_min_tck
++	*of_lpddr3_get_min_tck(struct device_node *np, struct device *dev)
++{
++	return NULL;
++}
++
++static inline const struct lpddr3_timings
++	*of_lpddr3_get_ddr_timings(struct device_node *np_ddr,
++	struct device *dev, u32 device_type, u32 *nr_frequencies)
++{
++	return NULL;
++}
+ #endif /* CONFIG_OF && CONFIG_DDR */
  
- 	GATE(CLK_G3D, "g3d", "mout_user_aclk_g3d", GATE_IP_G3D, 9, 0, 0),
-+
-+	/* CDREX */
-+	GATE(CLK_CLKM_PHY0, "clkm_phy0", "dout_sclk_cdrex",
-+			GATE_BUS_CDREX0, 0, 0, 0),
-+	GATE(CLK_CLKM_PHY1, "clkm_phy1", "dout_sclk_cdrex",
-+			GATE_BUS_CDREX0, 1, 0, 0),
-+	GATE(0, "mx_mspll_ccore_phy", "mout_mx_mspll_ccore_phy",
-+			SRC_MASK_TOP7, 0, CLK_IGNORE_UNUSED, 0),
-+
-+	GATE(CLK_ACLK_PPMU_DREX1_1, "aclk_ppmu_drex1_1", "dout_aclk_cdrex1",
-+			GATE_BUS_CDREX1, 12, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_PPMU_DREX1_0, "aclk_ppmu_drex1_0", "dout_aclk_cdrex1",
-+			GATE_BUS_CDREX1, 13, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_PPMU_DREX0_1, "aclk_ppmu_drex0_1", "dout_aclk_cdrex1",
-+			GATE_BUS_CDREX1, 14, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_PPMU_DREX0_0, "aclk_ppmu_drex0_0", "dout_aclk_cdrex1",
-+			GATE_BUS_CDREX1, 15, CLK_IGNORE_UNUSED, 0),
-+
-+	GATE(CLK_PCLK_PPMU_DREX1_1, "pclk_ppmu_drex1_1", "dout_pclk_cdrex",
-+			GATE_BUS_CDREX1, 26, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_PPMU_DREX1_0, "pclk_ppmu_drex1_0", "dout_pclk_cdrex",
-+			GATE_BUS_CDREX1, 27, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_PPMU_DREX0_1, "pclk_ppmu_drex0_1", "dout_pclk_cdrex",
-+			GATE_BUS_CDREX1, 28, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_PPMU_DREX0_0, "pclk_ppmu_drex0_0", "dout_pclk_cdrex",
-+			GATE_BUS_CDREX1, 29, CLK_IGNORE_UNUSED, 0),
- };
+ #endif /* __LINUX_MEMORY_OF_REG_ */
+diff --git a/include/memory/jedec_ddr.h b/include/memory/jedec_ddr.h
+index ddad0f870e5d..3601825f807d 100644
+--- a/include/memory/jedec_ddr.h
++++ b/include/memory/jedec_ddr.h
+@@ -32,6 +32,7 @@
+ #define DDR_TYPE_LPDDR2_S4	3
+ #define DDR_TYPE_LPDDR2_S2	4
+ #define DDR_TYPE_LPDDR2_NVM	5
++#define DDR_TYPE_LPDDR3		6
  
- static const struct samsung_div_clock exynos5x_disp_div_clks[] __initconst = {
+ /* DDR IO width */
+ #define DDR_IO_WIDTH_4		1
+@@ -172,4 +173,65 @@ extern const struct lpddr2_timings
+ 	lpddr2_jedec_timings[NUM_DDR_TIMING_TABLE_ENTRIES];
+ extern const struct lpddr2_min_tck lpddr2_jedec_min_tck;
+ 
++
++/*
++ * Structure for timings for LPDDR3 based on LPDDR2 plus additional fields.
++ * All parameters are in pico seconds(ps) unless explicitly indicated
++ * with a suffix like tRAS_max_ns below
++ */
++struct lpddr3_timings {
++	u32 max_freq;
++	u32 min_freq;
++	u32 tRFC;
++	u32 tRRD;
++	u32 tRPab;
++	u32 tRPpb;
++	u32 tRCD;
++	u32 tRC;
++	u32 tRAS;
++	u32 tWTR;
++	u32 tWR;
++	u32 tRTP;
++	u32 tW2W_C2C;
++	u32 tR2R_C2C;
++	u32 tWL;
++	u32 tDQSCK;
++	u32 tRL;
++	u32 tFAW;
++	u32 tXSR;
++	u32 tXP;
++	u32 tCKE;
++	u32 tCKESR;
++	u32 tMRD;
++};
++
++/*
++ * Min value for some parameters in terms of number of tCK cycles(nCK)
++ * Please set to zero parameters that are not valid for a given memory
++ * type
++ */
++struct lpddr3_min_tck {
++	u32 tRFC;
++	u32 tRRD;
++	u32 tRPab;
++	u32 tRPpb;
++	u32 tRCD;
++	u32 tRC;
++	u32 tRAS;
++	u32 tWTR;
++	u32 tWR;
++	u32 tRTP;
++	u32 tW2W_C2C;
++	u32 tR2R_C2C;
++	u32 tWL;
++	u32 tDQSCK;
++	u32 tRL;
++	u32 tFAW;
++	u32 tXSR;
++	u32 tXP;
++	u32 tCKE;
++	u32 tCKESR;
++	u32 tMRD;
++};
++
+ #endif /* __LINUX_JEDEC_DDR_H */
 -- 
 2.17.1
