@@ -1,192 +1,226 @@
-From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH v9 00/13] Exynos5 Dynamic Memory Controller driver
-Date: Fri,  7 Jun 2019 16:34:54 +0200
-Message-ID: <20190607143507.30286-1-l.luba@partner.samsung.com>
-References: <CGME20190607143523eucas1p1015a614a64ed22f4c65ace8b795dd6d0@eucas1p1.samsung.com>
-Content-Type: text/plain; charset="utf-8"
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v9 08/13] drivers: memory: add DMC driver for Exynos5422
+Date: Tue, 11 Jun 2019 08:18:53 +0200
+Message-ID: <CAJKOXPdKGG25T46d+SmES7wyQ=kAMj2jdT3GCYa+z87wpYKNEQ@mail.gmail.com>
+References: <CGME20190607143531eucas1p11f6b3a63068d529dae8be16abaa60ed0@eucas1p1.samsung.com>
+ <20190607143507.30286-1-l.luba@partner.samsung.com> <20190607143507.30286-9-l.luba@partner.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190607143507.30286-9-l.luba@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com, sboyd@kernel.org, b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org, willy.mh.wolff.ml@gmail.com, Lukasz Luba <l.luba@partner.samsung.com>
+To: Lukasz Luba <l.luba@partner.samsung.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, kgene@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org, willy.mh.wolff.ml@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi all,
+On Fri, 7 Jun 2019 at 16:35, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+>
+> This patch adds driver for Exynos5422 Dynamic Memory Controller.
+> The driver provides support for dynamic frequency and voltage scaling for
+> DMC and DRAM. It supports changing timings of DRAM running with different
+> frequency. There is also an algorithm to calculate timigns based on
+> memory description provided in DT.
+> The patch also contains needed MAINTAINERS file update.
+>
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  MAINTAINERS                             |    8 +
+>  drivers/memory/samsung/Kconfig          |   17 +
+>  drivers/memory/samsung/Makefile         |    1 +
+>  drivers/memory/samsung/exynos5422-dmc.c | 1261 +++++++++++++++++++++++
+>  4 files changed, 1287 insertions(+)
+>  create mode 100644 drivers/memory/samsung/exynos5422-dmc.c
 
-This is v9 which introduces minor changes. The patch set adds support of
-Dynamic Memory Controller for Exynos5422 SoC.
-The driver supports Dynamic Voltage and Frequency Scaling
-for the DMC and DRAM. It also provides needed timings for different
-speed operations of the DRAM memory.
-There is also new generic code in of_memory and headers which allows to parse
-LPDDR3 memories defined in device-tree.
+(...)
 
-The patch set has been cut to land mainline quickly and the dependency
-on PPMU patches are removed (which was in v7). It implies that the debugging
-code which was presenting details about traffic on the AXI slots has been
-removed. It will be added when this driver got mainline and the PPMU code
-got mainline. Also DT dependency of PPMU header has been removed.
+> +
+> +/**
+> + * exynos5_performance_counters_init() - Initializes performance DMC's counters
+> + * @dmc:       DMC for which it does the setup
+> + *
+> + * Initialization of performance counters in DMC for estimating usage.
+> + * The counter's values are used for calculation of a memory bandwidth and based
+> + * on that the governor changes the frequency.
+> + * The counters are not used when the governor is GOVERNOR_USERSPACE.
+> + */
+> +static int exynos5_performance_counters_init(struct exynos5_dmc *dmc)
+> +{
+> +       int counters_size;
+> +       int ret, i;
+> +
+> +       dmc->num_counters = devfreq_event_get_edev_count(dmc->dev);
+> +       if (dmc->num_counters < 0) {
+> +               dev_err(dmc->dev, "could not get devfreq-event counters\n");
+> +               return dmc->num_counters;
+> +       }
+> +
+> +       counters_size = sizeof(struct devfreq_event_dev) * dmc->num_counters;
+> +       dmc->counter = devm_kzalloc(dmc->dev, counters_size, GFP_KERNEL);
+> +       if (!dmc->counter)
+> +               return -ENOMEM;
+> +
+> +       for (i = 0; i < dmc->num_counters; i++) {
+> +               dmc->counter[i] =
+> +                       devfreq_event_get_edev_by_phandle(dmc->dev, i);
+> +               if (IS_ERR_OR_NULL(dmc->counter[i]))
+> +                       return -EPROBE_DEFER;
+> +       }
+> +
+> +       ret = exynos5_counters_enable_edev(dmc);
+> +       if (ret < 0) {
+> +               dev_err(dmc->dev, "could not enable event counter\n");
+> +               return ret;
+> +       }
+> +
+> +       ret = exynos5_counters_set_event(dmc);
+> +       if (ret < 0) {
+> +               dev_err(dmc->dev, "counld not set event counter\n");
 
-changes:
-v9:
-- disable bpll instead of spll clocks in the remove path
-- safely disable 'bypass' clocks when error was captured
-- removed unused clocks and related code
-- changed code to make 'if' statement clean as Krzysztof sugested
-- removed cloks from dt-binding and DT
-- minor fix for clocks to read the state for DIV with NOCACHE
-- removed spaces in #define and put tabs
-- removed duplicated entry for OPPs phandle in dt-binding
-- collected ACKs
-- based on v5.2-rc3 tag
-v8 [3]:
-- removed chipID dependency, as Krzysztof suggested and drop the whole checking
-  code in the driver (which also Marek suggested offline) (it might be needed
-  in future when other configuration would be supported). It also avoids
-  a misunderstandings and simplifies the documentation.
-- reordered clock IDs in 1st patch to keep the old IDs and add the new clocks
-  at the end as Chanwoo suggested (added also his ACK there)
-- in patch 6 (dt-bindings) added explicit clocks and names in the right order
-  needed for the driver
-- added proper address for the memory node in the documentation and in the DT
-  (lpddr3-timings@0 -> @80000000)
-- fixed wrong reg offset for pause feature
-- removed debug code which shows AXI slots traffic and removed DT ppmu events
-- in the driver code usage of 'dev', 'pdev->dev' has been aligned
-- manipulating clocks has been aligned as Krzysztof suggested, now it enables
-  only two clocks (and disables) and enables/disables the 'bypass' clocks
-  on demand
-- added comments in the documentation why there is a need of clock registers
-  to be accessed via syscon regmap
-- added proper link to Documentation/devicetree/bindings/ddr/lpddr3.txt
-  in dt-bindings for memory controller doc
-- removed unneeded prints when there was a deferred probe or during remove
-- added 'syscon' also to exynos5420-clock node as Krzysztof suggested
-- from 2nd patch removed blank line and added Acked-by: Chanwoo Choi
-- collecting ACKs, which makes the clock related 3 patches
-  ready to be merged (4 ACKs),
-- patches 4,5 got 'Reviewed-by' from Rob
-- it is now based on v5.2-rc3 tag
-v7 [2]:
-- added using regmap in chipid registers and clock registers
-- in DT added "syscon" to compatible field in clock and chipid
-- added two addition clocks in clocks definition file which were there
-  in first implementation but now are grouped and commented properly
-  (CLK_DOUT_PCLK_DREX0, CLK_DOUT_PCLK_DREX1)
-- the BPLL ratio table now is set for Exynos 5422 and 5800 and not for 5420
-- in DMC driver, changed code macro which generates functions for setup events
-  into normal three functions as Krzysztof suggested
-- moved 'clock_prepare_enable()' calls into the same function where 'disable'
-  were called
-- changed 'timing_reg' static variables into static const
-- in DMC driver: the proper device_node *np_ddr is now put correctly
-- in DMC driver: removed code related to counters_enabled
-- mapped only 0x100 from DREX registers
-- in DT memory node there is now 'reg' as Rob suggested instead of 'max-freq'
-- in Documentation/devicetree/bindings/lpddr2 renamed into 'ddr' and the lpdd3*
-  files landed there.
-- cleaned the commit subject and message as Rob suggested for the patch 4/10 in v6
-- added doxygen comments to exported functions in of_memory file
-- cleaned minor issues like: missing space, 2 empty lines, in the doc JESD209-2 ->
-  JESD209-3C, removed 'status = "okay"' from the doc file, etc
-- based on v5.1 (+ PPMU patches from [1])
-v6:
-- driver code has been converted to use generic code which parses DT memory
-  definition in drivers/memory/of_memory.c
-- extended of_memory by LPDDR3 support (there was LPDDR2 made by TI)
-- extended jedec_lpddr.h by the needed structures for LPDDR3 (AC timings)
-- driver file moved to proper directory, where other memory controllers
-  live, which is in this case drivers/memory/samsung/
-- driver code now uses regmap_{read|write} to access registers for pausing
-  and changing timings set, as suggested by Chanwoo
-- DT contains simple definition of memory device, similar to LPDDR2 made by TI
-- driver code generates the needed timings for registered OPPs, based on
-  memory description in DT
-- patch 1 contains Rob's ACK,
-- simplified memory bandwidth calculation
-- added debug information files with timings, raw counters and statistics
-- updated dt-bindings files accordingly
-- based on v5.1-rc5 (+ PPMU patches from [1])
-v5:
-- removed unneeded wrapper functions i.e. for regulator_set_voltage
-- removed unused defines
-- removed direct access to clock register base and used CCF for
-  pause and timing set usage
-- switched to OPP comming from DT according to Chanowoo's comments
-- switched to timings comming from DT, added parsing function
-- extended dt-binding with description of OPPs and timings
-- according to Rob Herring comment, moved dt-binding file before driver code
-  in the patch set.
-- rebased on top of v5.0
-v4:
-- removed unneeded DPLL and G3D clocks IDs
-- changed names of parent clocks for mout_mx_mspll_ccore_phy_p
-  and added one more parent: mout_sclk_epll
-- removed 933Mhz and 138MHz from the BPLL ratio table
-v3:
-- in DTS align to proper indent the clocks and clock-names entries
-v2:
-- changed file name exynos5-dmc.c -> exynos5422-dmc.c
-  and related entries in other files
-- changed dt-binding file name
-- changed config entry to CONFIG_ARM_EXYNOS5422_DMC_DEVFREQ
-- removed sysfs and print info messages (print only one line)
-- removed function exynos5_read_chip_info and compact code
-- changed dt-binding patch and move it up in the patch set
-- new entries in MAINTAINERS are added with the driver c code
-- clean-up in DTS file: renamed nodes to 'ppmu' and 'memory-controller',
-  entries moved to suggested location (before nocp nodes or after),
-  moved according to alfabetical order, compacted clocks names with right indent.
+Missing cleanup - edev counters disable.
 
-Regards,
-Lukasz Luba
+> +               return ret;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +/**
+> + * exynos5_dmc_set_pause_on_switching() - Controls a pause feature in DMC
+> + * @dmc:       device which is used for changing this feature
+> + * @set:       a boolean state passing enable/disable request
+> + *
+> + * There is a need of pausing DREX DMC when divider or MUX in clock tree
+> + * changes its configuration. In such situation access to the memory is blocked
+> + * in DMC automatically. This feature is used when clock frequency change
+> + * request appears and touches clock tree.
+> + */
+> +static inline int exynos5_dmc_set_pause_on_switching(struct exynos5_dmc *dmc)
+> +{
+> +       unsigned int val;
+> +       int ret;
+> +
+> +       ret = regmap_read(dmc->clk_regmap, CDREX_PAUSE, &val);
+> +       if (ret)
+> +               return ret;
+> +
+> +       val |= 1UL;
+> +       regmap_write(dmc->clk_regmap, CDREX_PAUSE, val);
+> +
+> +       return 0;
+> +}
+> +
+> +/**
+> + * exynos5_dmc_probe() - Probe function for the DMC driver
+> + * @pdev:      platform device for which the driver is going to be initialized
+> + *
+> + * Initialize basic components: clocks, regulators, performance counters, etc.
+> + * Read out product version and based on the information setup
+> + * internal structures for the controller (frequency and voltage) and for DRAM
+> + * memory parameters: timings for each operating frequency.
+> + * Register new devfreq device for controlling DVFS of the DMC.
+> + */
+> +static int exynos5_dmc_probe(struct platform_device *pdev)
+> +{
+> +       int ret = 0;
+> +       struct device *dev = &pdev->dev;
+> +       struct device_node *np = dev->of_node;
+> +       struct exynos5_dmc *dmc;
+> +       struct resource *res;
+> +
+> +       dmc = devm_kzalloc(dev, sizeof(*dmc), GFP_KERNEL);
+> +       if (!dmc)
+> +               return -ENOMEM;
+> +
+> +       mutex_init(&dmc->lock);
+> +
+> +       dmc->dev = dev;
+> +       platform_set_drvdata(pdev, dmc);
+> +
+> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +       dmc->base_drexi0 = devm_ioremap_resource(dev, res);
+> +       if (IS_ERR(dmc->base_drexi0))
+> +               return PTR_ERR(dmc->base_drexi0);
+> +
+> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> +       dmc->base_drexi1 = devm_ioremap_resource(dev, res);
+> +       if (IS_ERR(dmc->base_drexi1))
+> +               return PTR_ERR(dmc->base_drexi1);
+> +
+> +       dmc->clk_regmap = syscon_regmap_lookup_by_phandle(np,
+> +                               "samsung,syscon-clk");
+> +       if (IS_ERR(dmc->clk_regmap))
+> +               return PTR_ERR(dmc->clk_regmap);
+> +
+> +       ret = exynos5_init_freq_table(dmc, &exynos5_dmc_df_profile);
+> +       if (ret) {
+> +               dev_warn(dev, "couldn't initialize frequency settings\n");
+> +               return ret;
+> +       }
+> +
+> +       dmc->vdd_mif = devm_regulator_get(dev, "vdd");
+> +       if (IS_ERR(dmc->vdd_mif)) {
+> +               ret = PTR_ERR(dmc->vdd_mif);
+> +               return ret;
+> +       }
+> +
+> +       ret = exynos5_dmc_init_clks(dmc);
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret = of_get_dram_timings(dmc);
+> +       if (ret) {
+> +               dev_warn(dev, "couldn't initialize timings settings\n");
 
-[1] https://lkml.org/lkml/2019/4/19/158
-[2] https://lkml.org/lkml/2019/5/6/829
-[3] https://lkml.org/lkml/2019/6/5/687
+goto remove_clocks;
 
+> +               return ret;
+> +       }
+> +
+> +       ret = exynos5_performance_counters_init(dmc);
+> +       if (ret) {
+> +               dev_warn(dev, "couldn't probe performance counters\n");
+> +               goto remove_clocks;
+> +       }
+> +
+> +       ret = exynos5_dmc_set_pause_on_switching(dmc);
+> +       if (ret) {
+> +               dev_warn(dev, "couldn't get access to PAUSE register\n");
+> +               goto remove_clocks;
 
-Lukasz Luba (13):
-  clk: samsung: add needed IDs for DMC clocks in Exynos5420
-  clk: samsung: add new clocks for DMC for Exynos5422 SoC
-  clk: samsung: add BPLL rate table for Exynos 5422 SoC
-  dt-bindings: ddr: rename lpddr2 directory
-  dt-bindings: ddr: add LPDDR3 memories
-  drivers: memory: extend of_memory by LPDDR3 support
-  dt-bindings: memory-controllers: add Exynos5422 DMC device description
-  drivers: memory: add DMC driver for Exynos5422
-  drivers: devfreq: events: add Exynos PPMU new events
-  ARM: dts: exynos: add chipid label and syscon compatible
-  ARM: dts: exynos: add syscon to clock compatible
-  ARM: dts: exynos: add DMC device for exynos5422
-  ARM: exynos_defconfig: enable DMC driver
+goto err_devfreq_add;
 
- .../{lpddr2 => ddr}/lpddr2-timings.txt        |    0
- .../bindings/{lpddr2 => ddr}/lpddr2.txt       |    2 +-
- .../bindings/ddr/lpddr3-timings.txt           |   58 +
- .../devicetree/bindings/ddr/lpddr3.txt        |   97 ++
- .../memory-controllers/exynos5422-dmc.txt     |   75 +
- MAINTAINERS                                   |    8 +
- arch/arm/boot/dts/exynos5.dtsi                |    4 +-
- arch/arm/boot/dts/exynos5420.dtsi             |   75 +-
- arch/arm/boot/dts/exynos5422-odroid-core.dtsi |  116 ++
- arch/arm/boot/dts/exynos5800.dtsi             |    2 +-
- arch/arm/configs/exynos_defconfig             |    1 +
- drivers/clk/samsung/clk-exynos5420.c          |   78 +-
- drivers/devfreq/event/exynos-ppmu.c           |    6 +
- drivers/memory/of_memory.c                    |  154 ++
- drivers/memory/of_memory.h                    |   18 +
- drivers/memory/samsung/Kconfig                |   17 +
- drivers/memory/samsung/Makefile               |    1 +
- drivers/memory/samsung/exynos5422-dmc.c       | 1261 +++++++++++++++++
- include/dt-bindings/clock/exynos5420.h        |   18 +-
- include/memory/jedec_ddr.h                    |   62 +
- 20 files changed, 2040 insertions(+), 13 deletions(-)
- rename Documentation/devicetree/bindings/{lpddr2 => ddr}/lpddr2-timings.txt (100%)
- rename Documentation/devicetree/bindings/{lpddr2 => ddr}/lpddr2.txt (96%)
- create mode 100644 Documentation/devicetree/bindings/ddr/lpddr3-timings.txt
- create mode 100644 Documentation/devicetree/bindings/ddr/lpddr3.txt
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt
- create mode 100644 drivers/memory/samsung/exynos5422-dmc.c
+Best regards,
+Krzysztof
 
--- 
-2.17.1
+> +       }
+> +
+> +       /*
+> +        * Setup default thresholds for the devfreq governor.
+> +        * The values are chosen based on experiments.
+> +        */
+> +       dmc->gov_data.upthreshold = 30;
+> +       dmc->gov_data.downdifferential = 5;
+> +
+> +       dmc->df = devm_devfreq_add_device(dev, &exynos5_dmc_df_profile,
+> +                                         DEVFREQ_GOV_USERSPACE,
+> +                                         &dmc->gov_data);
+> +
+> +       if (IS_ERR(dmc->df)) {
+> +               ret = PTR_ERR(dmc->df);
+> +               goto err_devfreq_add;
+> +       }
+> +
+> +       dev_info(dev, "DMC initialized\n");
+> +
+> +       return 0;
+> +
+> +err_devfreq_add:
+> +       exynos5_counters_disable_edev(dmc);
+> +remove_clocks:
+> +       clk_disable_unprepare(dmc->mout_bpll);
+> +       clk_disable_unprepare(dmc->fout_bpll);
+> +
+> +       return ret;
+> +}
+> +
+>
