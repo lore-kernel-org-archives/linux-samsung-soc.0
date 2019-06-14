@@ -1,10 +1,9 @@
 From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH v10 01/13] clk: samsung: add needed IDs for DMC clocks in
- Exynos5420
-Date: Fri, 14 Jun 2019 11:52:57 +0200
-Message-ID: <20190614095309.24100-2-l.luba@partner.samsung.com>
+Subject: [PATCH v10 04/13] dt-bindings: ddr: rename lpddr2 directory
+Date: Fri, 14 Jun 2019 11:53:00 +0200
+Message-ID: <20190614095309.24100-5-l.luba@partner.samsung.com>
 References: <20190614095309.24100-1-l.luba@partner.samsung.com>
-        <CGME20190614095320eucas1p2919a6169c997bb81c80416e8a0ede538@eucas1p2.samsung.com>
+        <CGME20190614095324eucas1p2eab4def0ed8c912303e4bb3e422bb255@eucas1p2.samsung.com>
 Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190614095309.24100-1-l.luba@partner.samsung.com>
@@ -13,67 +12,36 @@ To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kern
 Cc: mturquette@baylibre.com, sboyd@kernel.org, b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org, willy.mh.wolff.ml@gmail.com, Lukasz Luba <l.luba@partner.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Define new IDs for clocks used by Dynamic Memory Controller in
-Exynos5422 SoC.
+Change directory name to be ready for new types of memories.
 
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 ---
- include/dt-bindings/clock/exynos5420.h | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/{lpddr2 => ddr}/lpddr2-timings.txt      | 0
+ Documentation/devicetree/bindings/{lpddr2 => ddr}/lpddr2.txt    | 2 +-
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+ rename Documentation/devicetree/bindings/{lpddr2 => ddr}/lpddr2-timings.txt (100%)
+ rename Documentation/devicetree/bindings/{lpddr2 => ddr}/lpddr2.txt (96%)
 
-diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
-index 355f469943f1..02d5ac469a3d 100644
---- a/include/dt-bindings/clock/exynos5420.h
-+++ b/include/dt-bindings/clock/exynos5420.h
-@@ -60,6 +60,7 @@
- #define CLK_MAU_EPLL		159
- #define CLK_SCLK_HSIC_12M	160
- #define CLK_SCLK_MPHY_IXTAL24	161
-+#define CLK_SCLK_BPLL		162
+diff --git a/Documentation/devicetree/bindings/lpddr2/lpddr2-timings.txt b/Documentation/devicetree/bindings/ddr/lpddr2-timings.txt
+similarity index 100%
+rename from Documentation/devicetree/bindings/lpddr2/lpddr2-timings.txt
+rename to Documentation/devicetree/bindings/ddr/lpddr2-timings.txt
+diff --git a/Documentation/devicetree/bindings/lpddr2/lpddr2.txt b/Documentation/devicetree/bindings/ddr/lpddr2.txt
+similarity index 96%
+rename from Documentation/devicetree/bindings/lpddr2/lpddr2.txt
+rename to Documentation/devicetree/bindings/ddr/lpddr2.txt
+index 58354a075e13..ddd40121e6f6 100644
+--- a/Documentation/devicetree/bindings/lpddr2/lpddr2.txt
++++ b/Documentation/devicetree/bindings/ddr/lpddr2.txt
+@@ -36,7 +36,7 @@ Child nodes:
+   "lpddr2-timings" provides AC timing parameters of the device for
+   a given speed-bin. The user may provide the timings for as many
+   speed-bins as is required. Please see Documentation/devicetree/
+-  bindings/lpddr2/lpddr2-timings.txt for more information on "lpddr2-timings"
++  bindings/ddr/lpddr2-timings.txt for more information on "lpddr2-timings"
  
- /* gate clocks */
- #define CLK_UART0		257
-@@ -195,6 +196,16 @@
- #define CLK_ACLK432_CAM		518
- #define CLK_ACLK_FL1550_CAM	519
- #define CLK_ACLK550_CAM		520
-+#define CLK_CLKM_PHY0		521
-+#define CLK_CLKM_PHY1		522
-+#define CLK_ACLK_PPMU_DREX0_0	523
-+#define CLK_ACLK_PPMU_DREX0_1	524
-+#define CLK_ACLK_PPMU_DREX1_0	525
-+#define CLK_ACLK_PPMU_DREX1_1	526
-+#define CLK_PCLK_PPMU_DREX0_0	527
-+#define CLK_PCLK_PPMU_DREX0_1	528
-+#define CLK_PCLK_PPMU_DREX1_0	529
-+#define CLK_PCLK_PPMU_DREX1_1	530
+ Example:
  
- /* mux clocks */
- #define CLK_MOUT_HDMI		640
-@@ -217,6 +228,8 @@
- #define CLK_MOUT_EPLL		657
- #define CLK_MOUT_MAU_EPLL	658
- #define CLK_MOUT_USER_MAU_EPLL	659
-+#define CLK_MOUT_SCLK_SPLL	660
-+#define CLK_MOUT_MX_MSPLL_CCORE_PHY	661
- 
- /* divider clocks */
- #define CLK_DOUT_PIXEL		768
-@@ -248,8 +261,11 @@
- #define CLK_DOUT_CCLK_DREX0	794
- #define CLK_DOUT_CLK2X_PHY0	795
- #define CLK_DOUT_PCLK_CORE_MEM	796
-+#define CLK_FF_DOUT_SPLL2	797
-+#define CLK_DOUT_PCLK_DREX0	798
-+#define CLK_DOUT_PCLK_DREX1	799
- 
- /* must be greater than maximal clock id */
--#define CLK_NR_CLKS		797
-+#define CLK_NR_CLKS		800
- 
- #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5420_H */
 -- 
 2.17.1
