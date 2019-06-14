@@ -1,41 +1,40 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v10 01/13] clk: samsung: add needed IDs for DMC clocks in Exynos5420
-Date: Fri, 14 Jun 2019 14:04:27 +0200
-Message-ID: <CAJKOXPeeVhHS62jiUgwySf5EYzW2Rkvu=HxyA7NjpGZFp=fWYQ@mail.gmail.com>
-References: <CGME20190614095320eucas1p2919a6169c997bb81c80416e8a0ede538@eucas1p2.samsung.com>
- <20190614095309.24100-1-l.luba@partner.samsung.com> <20190614095309.24100-2-l.luba@partner.samsung.com>
+Subject: Re: [PATCH v10 08/13] drivers: memory: add DMC driver for Exynos5422
+Date: Fri, 14 Jun 2019 14:09:47 +0200
+Message-ID: <CAJKOXPf=N28g850Q67z2sA5-KtkmqTuYLDcR0E_q1gSa17wWWw@mail.gmail.com>
+References: <CGME20190614095327eucas1p19b6e522efa15c8fd21c51f3900e376e9@eucas1p1.samsung.com>
+ <20190614095309.24100-1-l.luba@partner.samsung.com> <20190614095309.24100-9-l.luba@partner.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190614095309.24100-2-l.luba@partner.samsung.com>
+In-Reply-To: <20190614095309.24100-9-l.luba@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lukasz Luba <l.luba@partner.samsung.com>, linux-clk@vger.kernel.org, s.nawrocki@samsung.com
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, mturquette@baylibre.com, sboyd@kernel.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, kgene@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org, willy.mh.wolff.ml@gmail.com
+To: Lukasz Luba <l.luba@partner.samsung.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, kgene@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org, willy.mh.wolff.ml@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
 On Fri, 14 Jun 2019 at 11:53, Lukasz Luba <l.luba@partner.samsung.com> wrote:
 >
-> Define new IDs for clocks used by Dynamic Memory Controller in
-> Exynos5422 SoC.
+> This patch adds driver for Exynos5422 Dynamic Memory Controller.
+> The driver provides support for dynamic frequency and voltage scaling for
+> DMC and DRAM. It supports changing timings of DRAM running with different
+> frequency. There is also an algorithm to calculate timigns based on
+> memory description provided in DT.
+> The patch also contains needed MAINTAINERS file update.
 >
-> Acked-by: Rob Herring <robh@kernel.org>
-> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 > Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 > ---
->  include/dt-bindings/clock/exynos5420.h | 18 +++++++++++++++++-
->  1 file changed, 17 insertions(+), 1 deletion(-)
+>  MAINTAINERS                             |    8 +
+>  drivers/memory/samsung/Kconfig          |   17 +
+>  drivers/memory/samsung/Makefile         |    1 +
+>  drivers/memory/samsung/exynos5422-dmc.c | 1262 +++++++++++++++++++++++
+>  4 files changed, 1288 insertions(+)
+>  create mode 100644 drivers/memory/samsung/exynos5422-dmc.c
 
-I do not quite understand why this patch is still being resent instead
-of have been applied some time ago. Are there any issues here? Or are
-there any issues with the entire patchset (except some review comments
-to be resolved)? If not, then this is a dependency which should go
-regardless of other patches. There is no point to keep it pending...
-All other changes, e.g. DTS will have to wait for more cycles till
-this gets in.
-
-Therefore either please apply this or please comment what is stopping
-dependencies from being applied.
+Looks good to me. I think there is no dedicated maintainer for
+drivers/memory subsystem so I can take it through samsung-soc tree
+(just like in case of drivers/memory/samsung/exynos-srom.c). Are
+everyone OK with it?
 
 Best regards,
 Krzysztof
