@@ -1,11 +1,13 @@
-From: Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
-Subject: [PATCH] ARM: dts: exynos: add flash support to galaxy-s3 boards
-Date: Fri, 14 Jun 2019 17:54:19 +0200
-Message-ID: <20190614155419.14260-1-GNUtoo@cyberdimension.org>
+From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: Re: [PATCH] ARM: dts: exynos: add flash support to galaxy-s3 boards
+Date: Fri, 14 Jun 2019 18:03:12 +0200
+Message-ID: <8e9ed72e3bfae4118f8577ad9fbe137770a12326.camel@bootlin.com>
+References: <20190614155419.14260-1-GNUtoo@cyberdimension.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190614155419.14260-1-GNUtoo@cyberdimension.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -15,70 +17,46 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc: Simon Shields <simon@lineageos.org>, linux-samsung-soc@vger.kernel.org, Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>, linux-arm-kernel@lists.infradead.org
+To: Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Simon Shields <simon@lineageos.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Simon Shields <simon@lineageos.org>
-
-The galaxy s3 boards use an aat1290 to control the flash LED.
-This patch adds the relevant device tree configuration to use it.
-
-Signed-off-by: Simon Shields <simon@lineageos.org>
-Signed-off-by: Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org> [rebase]
----
- arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi | 32 +++++++++++++++++++++
- 1 file changed, 32 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
-index 30eee5942eff..375aeca09882 100644
---- a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
-@@ -15,6 +15,24 @@
- 		i2c10 = &i2c_cm36651;
- 	};
- 
-+	aat1290 {
-+		compatible = "skyworks,aat1290";
-+		flen-gpios = <&gpj1 1 GPIO_ACTIVE_HIGH>;
-+		enset-gpios = <&gpj1 2 GPIO_ACTIVE_HIGH>;
-+
-+		pinctrl-names = "default", "host", "isp";
-+		pinctrl-0 = <&camera_flash_host>;
-+		pinctrl-1 = <&camera_flash_host>;
-+		pinctrl-2 = <&camera_flash_isp>;
-+
-+		flash-led {
-+			label = "flash";
-+			led-max-microamp = <520833>;
-+			flash-max-microamp = <1012500>;
-+			flash-max-timeout-us = <1940000>;
-+		};
-+	};
-+
- 	lcd_vdd3_reg: voltage-regulator-6 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "LCD_VDD_2.2V";
-@@ -131,6 +149,20 @@
- 	regulator-max-microvolt = <2800000>;
- };
- 
-+&pinctrl_0 {
-+	camera_flash_host: camera-flash-host {
-+		samsung,pins = "gpj1-0";
-+		samsung,pin-function = <1>;
-+		samsung,pin-val = <0>;
-+	};
-+
-+	camera_flash_isp: camera-flash-isp {
-+		samsung,pins = "gpj1-0";
-+		samsung,pin-function = <1>;
-+		samsung,pin-val = <1>;
-+	};
-+};
-+
- &s5c73m3 {
- 	standby-gpios = <&gpm0 1 GPIO_ACTIVE_LOW>;   /* ISP_STANDBY */
- 	vdda-supply = <&ldo17_reg>;
--- 
-2.21.0
+SGksCgpMZSB2ZW5kcmVkaSAxNCBqdWluIDIwMTkgw6AgMTc6NTQgKzAyMDAsIERlbmlzICdHTlV0
+b28nIENhcmlrbGkgYQrDqWNyaXQgOgo+IEZyb206IFNpbW9uIFNoaWVsZHMgPHNpbW9uQGxpbmVh
+Z2Vvcy5vcmc+Cj4gCj4gVGhlIGdhbGF4eSBzMyBib2FyZHMgdXNlIGFuIGFhdDEyOTAgdG8gY29u
+dHJvbCB0aGUgZmxhc2ggTEVELgo+IFRoaXMgcGF0Y2ggYWRkcyB0aGUgcmVsZXZhbnQgZGV2aWNl
+IHRyZWUgY29uZmlndXJhdGlvbiB0byB1c2UgaXQuCgpMb29rcyBnb29kIHRvIG1lOgpSZXZpZXdl
+ZC1ieTogUGF1bCBLb2NpYWxrb3dza2kgPHBhdWwua29jaWFsa293c2tpQGJvb3RsaW4uY29tPgoK
+Q2hlZXJzLAoKUGF1bAoKPiBTaWduZWQtb2ZmLWJ5OiBTaW1vbiBTaGllbGRzIDxzaW1vbkBsaW5l
+YWdlb3Mub3JnPgo+IFNpZ25lZC1vZmYtYnk6IERlbmlzICdHTlV0b28nIENhcmlrbGkgPEdOVXRv
+b0BjeWJlcmRpbWVuc2lvbi5vcmc+IFtyZWJhc2VdCj4gLS0tCj4gIGFyY2gvYXJtL2Jvb3QvZHRz
+L2V4eW5vczQ0MTItZ2FsYXh5LXMzLmR0c2kgfCAzMiArKysrKysrKysrKysrKysrKysrKysKPiAg
+MSBmaWxlIGNoYW5nZWQsIDMyIGluc2VydGlvbnMoKykKPiAKPiBkaWZmIC0tZ2l0IGEvYXJjaC9h
+cm0vYm9vdC9kdHMvZXh5bm9zNDQxMi1nYWxheHktczMuZHRzaSBiL2FyY2gvYXJtL2Jvb3QvZHRz
+L2V4eW5vczQ0MTItZ2FsYXh5LXMzLmR0c2kKPiBpbmRleCAzMGVlZTU5NDJlZmYuLjM3NWFlY2Ew
+OTg4MiAxMDA2NDQKPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M0NDEyLWdhbGF4eS1z
+My5kdHNpCj4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNDQxMi1nYWxheHktczMuZHRz
+aQo+IEBAIC0xNSw2ICsxNSwyNCBAQAo+ICAJCWkyYzEwID0gJmkyY19jbTM2NjUxOwo+ICAJfTsK
+PiAgCj4gKwlhYXQxMjkwIHsKPiArCQljb21wYXRpYmxlID0gInNreXdvcmtzLGFhdDEyOTAiOwo+
+ICsJCWZsZW4tZ3Bpb3MgPSA8JmdwajEgMSBHUElPX0FDVElWRV9ISUdIPjsKPiArCQllbnNldC1n
+cGlvcyA9IDwmZ3BqMSAyIEdQSU9fQUNUSVZFX0hJR0g+Owo+ICsKPiArCQlwaW5jdHJsLW5hbWVz
+ID0gImRlZmF1bHQiLCAiaG9zdCIsICJpc3AiOwo+ICsJCXBpbmN0cmwtMCA9IDwmY2FtZXJhX2Zs
+YXNoX2hvc3Q+Owo+ICsJCXBpbmN0cmwtMSA9IDwmY2FtZXJhX2ZsYXNoX2hvc3Q+Owo+ICsJCXBp
+bmN0cmwtMiA9IDwmY2FtZXJhX2ZsYXNoX2lzcD47Cj4gKwo+ICsJCWZsYXNoLWxlZCB7Cj4gKwkJ
+CWxhYmVsID0gImZsYXNoIjsKPiArCQkJbGVkLW1heC1taWNyb2FtcCA9IDw1MjA4MzM+Owo+ICsJ
+CQlmbGFzaC1tYXgtbWljcm9hbXAgPSA8MTAxMjUwMD47Cj4gKwkJCWZsYXNoLW1heC10aW1lb3V0
+LXVzID0gPDE5NDAwMDA+Owo+ICsJCX07Cj4gKwl9Owo+ICsKPiAgCWxjZF92ZGQzX3JlZzogdm9s
+dGFnZS1yZWd1bGF0b3ItNiB7Cj4gIAkJY29tcGF0aWJsZSA9ICJyZWd1bGF0b3ItZml4ZWQiOwo+
+ICAJCXJlZ3VsYXRvci1uYW1lID0gIkxDRF9WRERfMi4yViI7Cj4gQEAgLTEzMSw2ICsxNDksMjAg
+QEAKPiAgCXJlZ3VsYXRvci1tYXgtbWljcm92b2x0ID0gPDI4MDAwMDA+Owo+ICB9Owo+ICAKPiAr
+JnBpbmN0cmxfMCB7Cj4gKwljYW1lcmFfZmxhc2hfaG9zdDogY2FtZXJhLWZsYXNoLWhvc3Qgewo+
+ICsJCXNhbXN1bmcscGlucyA9ICJncGoxLTAiOwo+ICsJCXNhbXN1bmcscGluLWZ1bmN0aW9uID0g
+PDE+Owo+ICsJCXNhbXN1bmcscGluLXZhbCA9IDwwPjsKPiArCX07Cj4gKwo+ICsJY2FtZXJhX2Zs
+YXNoX2lzcDogY2FtZXJhLWZsYXNoLWlzcCB7Cj4gKwkJc2Ftc3VuZyxwaW5zID0gImdwajEtMCI7
+Cj4gKwkJc2Ftc3VuZyxwaW4tZnVuY3Rpb24gPSA8MT47Cj4gKwkJc2Ftc3VuZyxwaW4tdmFsID0g
+PDE+Owo+ICsJfTsKPiArfTsKPiArCj4gICZzNWM3M20zIHsKPiAgCXN0YW5kYnktZ3Bpb3MgPSA8
+JmdwbTAgMSBHUElPX0FDVElWRV9MT1c+OyAgIC8qIElTUF9TVEFOREJZICovCj4gIAl2ZGRhLXN1
+cHBseSA9IDwmbGRvMTdfcmVnPjsKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2Vy
+bmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1h
+bi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
