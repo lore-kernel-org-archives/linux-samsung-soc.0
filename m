@@ -1,28 +1,41 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 01/10] iommu/exynos: convert to SPDX license tags
-Date: Fri, 14 Jun 2019 08:28:42 +0200
-Message-ID: <CAJKOXPfU+nB-_K3ZP9XBFp5bfk-ZvbfSEW96LD4MbtkyWfQZHg@mail.gmail.com>
-References: <20190613162703.986-1-tiny.windzz@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v2] usb: dwc2: Force 8bit UTMI width for Samsung Exynos SoCs
+Date: Fri, 14 Jun 2019 08:52:53 +0200
+Message-ID: <20190614065253.9622-1-m.szyprowski@samsung.com>
+References: <CGME20190614065304eucas1p1ad98abc5c0f5e5e94fa43bed7e7d0e4f@eucas1p1.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190613162703.986-1-tiny.windzz@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Yangtao Li <tiny.windzz@gmail.com>
-Cc: joro@8bytes.org, Marek Szyprowski <m.szyprowski@samsung.com>, kgene@kernel.org, will.deacon@arm.com, robin.murphy@arm.com, agross@kernel.org, david.brown@linaro.org, robdclark@gmail.com, heiko@sntech.de, thierry.reding@gmail.com, jonathanh@nvidia.com, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Minas Harutyunyan <hminas@synopsys.com>, Felipe Balbi <felipe.balbi@linux.intel.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jules Maselbas <jmaselbas@kalray.eu>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, 13 Jun 2019 at 18:27, Yangtao Li <tiny.windzz@gmail.com> wrote:
->
-> Updates license to use SPDX-License-Identifier.
->
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
->  drivers/iommu/exynos-iommu.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
+Samsung Exynos SoCs require to force UTMI width to 8bit, otherwise the
+host side of the shared USB2 PHY doesn't work.
 
-Splitting this per driver is too much... it is not necessary. Such
-changes should be done in one patch per subsystem.
+Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
+Fixes: 707d80f0a3c5 ("usb: dwc2: gadget: Replace phyif with phy_utmi_width")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Acked-by: Minas Harutyunyan <hminas@synopsys.com>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+v2:
+- added collected tags
+---
+ drivers/usb/dwc2/params.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/usb/dwc2/params.c b/drivers/usb/dwc2/params.c
+index 6900eea57526..9ece4affb9d4 100644
+--- a/drivers/usb/dwc2/params.c
++++ b/drivers/usb/dwc2/params.c
+@@ -76,6 +76,7 @@ static void dwc2_set_s3c6400_params(struct dwc2_hsotg *hsotg)
+ 	struct dwc2_core_params *p = &hsotg->params;
+ 
+ 	p->power_down = 0;
++	p->phy_utmi_width = 8;
+ }
+ 
+ static void dwc2_set_rk_params(struct dwc2_hsotg *hsotg)
+-- 
+2.17.1
