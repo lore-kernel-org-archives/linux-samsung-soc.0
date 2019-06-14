@@ -1,27 +1,243 @@
-From: Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Subject: Re: [PATCH 01/10] iommu/exynos: convert to SPDX license tags
-Date: Fri, 14 Jun 2019 00:12:46 -0700
-Message-ID: <20190614071245.GA2950@infradead.org>
-References: <20190613162703.986-1-tiny.windzz@gmail.com>
+From: Lukasz Luba <l.luba@partner.samsung.com>
+Subject: Re: [PATCH v9 08/13] drivers: memory: add DMC driver for Exynos5422
+Date: Fri, 14 Jun 2019 10:50:18 +0200
+Message-ID: <4a88b188-eee9-2a16-82cf-ead94a3c24da@partner.samsung.com>
+References: <CGME20190607143531eucas1p11f6b3a63068d529dae8be16abaa60ed0@eucas1p1.samsung.com>
+        <20190607143507.30286-1-l.luba@partner.samsung.com>
+        <20190607143507.30286-9-l.luba@partner.samsung.com>
+        <CAJKOXPdKGG25T46d+SmES7wyQ=kAMj2jdT3GCYa+z87wpYKNEQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20190613162703.986-1-tiny.windzz-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Yangtao Li <tiny.windzz-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, agross-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robin.murphy-5wv7dgnIgG8@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAJKOXPdKGG25T46d+SmES7wyQ=kAMj2jdT3GCYa+z87wpYKNEQ@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie@samsung.com>, kgene@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org, willy.mh.wolff.ml@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Thomas Gleixner is doing automated SPDX conversion that directly
-got to Linux at the moment.  I'd avoid doing more manual ones for
-now as it will just create conflicts.
+Hi Krzysztof,
+
+On 6/11/19 8:18 AM, Krzysztof Kozlowski wrote:
+> On Fri, 7 Jun 2019 at 16:35, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+>>
+>> This patch adds driver for Exynos5422 Dynamic Memory Controller.
+>> The driver provides support for dynamic frequency and voltage scaling for
+>> DMC and DRAM. It supports changing timings of DRAM running with different
+>> frequency. There is also an algorithm to calculate timigns based on
+>> memory description provided in DT.
+>> The patch also contains needed MAINTAINERS file update.
+>>
+>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+>> ---
+>>   MAINTAINERS                             |    8 +
+>>   drivers/memory/samsung/Kconfig          |   17 +
+>>   drivers/memory/samsung/Makefile         |    1 +
+>>   drivers/memory/samsung/exynos5422-dmc.c | 1261 +++++++++++++++++++++++
+>>   4 files changed, 1287 insertions(+)
+>>   create mode 100644 drivers/memory/samsung/exynos5422-dmc.c
+> 
+> (...)
+> 
+>> +
+>> +/**
+>> + * exynos5_performance_counters_init() - Initializes performance DMC's counters
+>> + * @dmc:       DMC for which it does the setup
+>> + *
+>> + * Initialization of performance counters in DMC for estimating usage.
+>> + * The counter's values are used for calculation of a memory bandwidth and based
+>> + * on that the governor changes the frequency.
+>> + * The counters are not used when the governor is GOVERNOR_USERSPACE.
+>> + */
+>> +static int exynos5_performance_counters_init(struct exynos5_dmc *dmc)
+>> +{
+>> +       int counters_size;
+>> +       int ret, i;
+>> +
+>> +       dmc->num_counters = devfreq_event_get_edev_count(dmc->dev);
+>> +       if (dmc->num_counters < 0) {
+>> +               dev_err(dmc->dev, "could not get devfreq-event counters\n");
+>> +               return dmc->num_counters;
+>> +       }
+>> +
+>> +       counters_size = sizeof(struct devfreq_event_dev) * dmc->num_counters;
+>> +       dmc->counter = devm_kzalloc(dmc->dev, counters_size, GFP_KERNEL);
+>> +       if (!dmc->counter)
+>> +               return -ENOMEM;
+>> +
+>> +       for (i = 0; i < dmc->num_counters; i++) {
+>> +               dmc->counter[i] =
+>> +                       devfreq_event_get_edev_by_phandle(dmc->dev, i);
+>> +               if (IS_ERR_OR_NULL(dmc->counter[i]))
+>> +                       return -EPROBE_DEFER;
+>> +       }
+>> +
+>> +       ret = exynos5_counters_enable_edev(dmc);
+>> +       if (ret < 0) {
+>> +               dev_err(dmc->dev, "could not enable event counter\n");
+>> +               return ret;
+>> +       }
+>> +
+>> +       ret = exynos5_counters_set_event(dmc);
+>> +       if (ret < 0) {
+>> +               dev_err(dmc->dev, "counld not set event counter\n");
+> 
+> Missing cleanup - edev counters disable.
+right
+> 
+>> +               return ret;
+>> +       }
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +/**
+>> + * exynos5_dmc_set_pause_on_switching() - Controls a pause feature in DMC
+>> + * @dmc:       device which is used for changing this feature
+>> + * @set:       a boolean state passing enable/disable request
+>> + *
+>> + * There is a need of pausing DREX DMC when divider or MUX in clock tree
+>> + * changes its configuration. In such situation access to the memory is blocked
+>> + * in DMC automatically. This feature is used when clock frequency change
+>> + * request appears and touches clock tree.
+>> + */
+>> +static inline int exynos5_dmc_set_pause_on_switching(struct exynos5_dmc *dmc)
+>> +{
+>> +       unsigned int val;
+>> +       int ret;
+>> +
+>> +       ret = regmap_read(dmc->clk_regmap, CDREX_PAUSE, &val);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       val |= 1UL;
+>> +       regmap_write(dmc->clk_regmap, CDREX_PAUSE, val);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +/**
+>> + * exynos5_dmc_probe() - Probe function for the DMC driver
+>> + * @pdev:      platform device for which the driver is going to be initialized
+>> + *
+>> + * Initialize basic components: clocks, regulators, performance counters, etc.
+>> + * Read out product version and based on the information setup
+>> + * internal structures for the controller (frequency and voltage) and for DRAM
+>> + * memory parameters: timings for each operating frequency.
+>> + * Register new devfreq device for controlling DVFS of the DMC.
+>> + */
+>> +static int exynos5_dmc_probe(struct platform_device *pdev)
+>> +{
+>> +       int ret = 0;
+>> +       struct device *dev = &pdev->dev;
+>> +       struct device_node *np = dev->of_node;
+>> +       struct exynos5_dmc *dmc;
+>> +       struct resource *res;
+>> +
+>> +       dmc = devm_kzalloc(dev, sizeof(*dmc), GFP_KERNEL);
+>> +       if (!dmc)
+>> +               return -ENOMEM;
+>> +
+>> +       mutex_init(&dmc->lock);
+>> +
+>> +       dmc->dev = dev;
+>> +       platform_set_drvdata(pdev, dmc);
+>> +
+>> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +       dmc->base_drexi0 = devm_ioremap_resource(dev, res);
+>> +       if (IS_ERR(dmc->base_drexi0))
+>> +               return PTR_ERR(dmc->base_drexi0);
+>> +
+>> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+>> +       dmc->base_drexi1 = devm_ioremap_resource(dev, res);
+>> +       if (IS_ERR(dmc->base_drexi1))
+>> +               return PTR_ERR(dmc->base_drexi1);
+>> +
+>> +       dmc->clk_regmap = syscon_regmap_lookup_by_phandle(np,
+>> +                               "samsung,syscon-clk");
+>> +       if (IS_ERR(dmc->clk_regmap))
+>> +               return PTR_ERR(dmc->clk_regmap);
+>> +
+>> +       ret = exynos5_init_freq_table(dmc, &exynos5_dmc_df_profile);
+>> +       if (ret) {
+>> +               dev_warn(dev, "couldn't initialize frequency settings\n");
+>> +               return ret;
+>> +       }
+>> +
+>> +       dmc->vdd_mif = devm_regulator_get(dev, "vdd");
+>> +       if (IS_ERR(dmc->vdd_mif)) {
+>> +               ret = PTR_ERR(dmc->vdd_mif);
+>> +               return ret;
+>> +       }
+>> +
+>> +       ret = exynos5_dmc_init_clks(dmc);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       ret = of_get_dram_timings(dmc);
+>> +       if (ret) {
+>> +               dev_warn(dev, "couldn't initialize timings settings\n");
+> 
+> goto remove_clocks;
+OK
+> 
+>> +               return ret;
+>> +       }
+>> +
+>> +       ret = exynos5_performance_counters_init(dmc);
+>> +       if (ret) {
+>> +               dev_warn(dev, "couldn't probe performance counters\n");
+>> +               goto remove_clocks;
+>> +       }
+>> +
+>> +       ret = exynos5_dmc_set_pause_on_switching(dmc);
+>> +       if (ret) {
+>> +               dev_warn(dev, "couldn't get access to PAUSE register\n");
+>> +               goto remove_clocks;
+> 
+> goto err_devfreq_add;
+Agree.
+
+Thank you for the review.
+
+Regards,
+Lukasz
+
+> Best regards,
+> Krzysztof
+> 
+>> +       }
+>> +
+>> +       /*
+>> +        * Setup default thresholds for the devfreq governor.
+>> +        * The values are chosen based on experiments.
+>> +        */
+>> +       dmc->gov_data.upthreshold = 30;
+>> +       dmc->gov_data.downdifferential = 5;
+>> +
+>> +       dmc->df = devm_devfreq_add_device(dev, &exynos5_dmc_df_profile,
+>> +                                         DEVFREQ_GOV_USERSPACE,
+>> +                                         &dmc->gov_data);
+>> +
+>> +       if (IS_ERR(dmc->df)) {
+>> +               ret = PTR_ERR(dmc->df);
+>> +               goto err_devfreq_add;
+>> +       }
+>> +
+>> +       dev_info(dev, "DMC initialized\n");
+>> +
+>> +       return 0;
+>> +
+>> +err_devfreq_add:
+>> +       exynos5_counters_disable_edev(dmc);
+>> +remove_clocks:
+>> +       clk_disable_unprepare(dmc->mout_bpll);
+>> +       clk_disable_unprepare(dmc->fout_bpll);
+>> +
+>> +       return ret;
+>> +}
+>> +
+>>
+> 
+> 
