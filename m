@@ -1,69 +1,84 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] ARM: dts: exynos: Add PMU interrupt affinity to Exynos4 boards
-Date: Fri, 14 Jun 2019 16:26:40 +0200
-Message-ID: <1560522400-31086-1-git-send-email-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, notify@kernel.org
+From: Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
+Subject: [PATCH] ARM: dts: exynos: add flash support to galaxy-s3 boards
+Date: Fri, 14 Jun 2019 17:54:19 +0200
+Message-ID: <20190614155419.14260-1-GNUtoo@cyberdimension.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc: Simon Shields <simon@lineageos.org>, linux-samsung-soc@vger.kernel.org, Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Move SoC-specific PMU properties from exynos4.dtsi to respective SoC
-(4210 or 4412) so common DTSI would have only common properties.
+From: Simon Shields <simon@lineageos.org>
 
-Define there also interrupt affinity to remove the boot warning message:
+The galaxy s3 boards use an aat1290 to control the flash LED.
+This patch adds the relevant device tree configuration to use it.
 
-    hw perfevents: no interrupt-affinity property for /pmu, guessing.
-
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Simon Shields <simon@lineageos.org>
+Signed-off-by: Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org> [rebase]
 ---
- arch/arm/boot/dts/exynos4.dtsi    | 2 +-
- arch/arm/boot/dts/exynos4210.dtsi | 6 ++++++
- arch/arm/boot/dts/exynos4412.dtsi | 2 ++
- 3 files changed, 9 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi | 32 +++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 36ccf227434d..dde27451faa8 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -54,7 +54,7 @@
- 	pmu: pmu {
- 		compatible = "arm,cortex-a9-pmu";
- 		interrupt-parent = <&combiner>;
--		interrupts = <2 2>, <3 2>;
-+		status = "disabled";
+diff --git a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
+index 30eee5942eff..375aeca09882 100644
+--- a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
++++ b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
+@@ -15,6 +15,24 @@
+ 		i2c10 = &i2c_cm36651;
  	};
  
- 	soc: soc {
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index b491c345b2e8..ce29e026e226 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -461,6 +461,12 @@
- 		 <&clock CLK_MOUT_MIXER>, <&clock CLK_SCLK_MIXER>;
++	aat1290 {
++		compatible = "skyworks,aat1290";
++		flen-gpios = <&gpj1 1 GPIO_ACTIVE_HIGH>;
++		enset-gpios = <&gpj1 2 GPIO_ACTIVE_HIGH>;
++
++		pinctrl-names = "default", "host", "isp";
++		pinctrl-0 = <&camera_flash_host>;
++		pinctrl-1 = <&camera_flash_host>;
++		pinctrl-2 = <&camera_flash_isp>;
++
++		flash-led {
++			label = "flash";
++			led-max-microamp = <520833>;
++			flash-max-microamp = <1012500>;
++			flash-max-timeout-us = <1940000>;
++		};
++	};
++
+ 	lcd_vdd3_reg: voltage-regulator-6 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "LCD_VDD_2.2V";
+@@ -131,6 +149,20 @@
+ 	regulator-max-microvolt = <2800000>;
  };
  
-+&pmu {
-+	interrupts = <2 2>, <3 2>;
-+	interrupt-affinity = <&cpu0>, <&cpu1>;
-+	status = "okay";
++&pinctrl_0 {
++	camera_flash_host: camera-flash-host {
++		samsung,pins = "gpj1-0";
++		samsung,pin-function = <1>;
++		samsung,pin-val = <0>;
++	};
++
++	camera_flash_isp: camera-flash-isp {
++		samsung,pins = "gpj1-0";
++		samsung,pin-function = <1>;
++		samsung,pin-val = <1>;
++	};
 +};
 +
- &pmu_system_controller {
- 	clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
- 			"clkout4", "clkout8", "clkout9";
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index e5c041ec0756..4a58b70df125 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -737,6 +737,8 @@
- 
- &pmu {
- 	interrupts = <2 2>, <3 2>, <18 2>, <19 2>;
-+	interrupt-affinity = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>;
-+	status = "okay";
- };
- 
- &pmu_system_controller {
+ &s5c73m3 {
+ 	standby-gpios = <&gpm0 1 GPIO_ACTIVE_LOW>;   /* ISP_STANDBY */
+ 	vdda-supply = <&ldo17_reg>;
 -- 
-2.7.4
+2.21.0
