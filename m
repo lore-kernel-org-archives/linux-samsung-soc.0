@@ -1,62 +1,45 @@
-From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: Re: [PATCH] ARM: dts: exynos: add flash support to galaxy-s3 boards
-Date: Fri, 14 Jun 2019 18:03:12 +0200
-Message-ID: <8e9ed72e3bfae4118f8577ad9fbe137770a12326.camel@bootlin.com>
-References: <20190614155419.14260-1-GNUtoo@cyberdimension.org>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 1/5] dt-bindings: switch Exynos EHCI/OHCI bindings to use
+ array of generic PHYs
+Date: Fri, 14 Jun 2019 10:30:39 -0600
+Message-ID: <20190614163039.GA24384@bogus>
+References: <20190521115849.9882-1-m.szyprowski@samsung.com>
+ <CGME20190521120107eucas1p1a56efaa0e7f2117063e70683276edc10@eucas1p1.samsung.com>
+ <20190521115849.9882-2-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190614155419.14260-1-GNUtoo@cyberdimension.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Simon Shields <simon@lineageos.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190521115849.9882-2-m.szyprowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Markus Reichl <m.reichl@fivetechno.de>, =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>, Krzysztof Kozlowski <krzk@kernel.org>, Peter Chen <peter.chen@nxp.com>, Alan Stern <stern@rowland.harvard.edu>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGksCgpMZSB2ZW5kcmVkaSAxNCBqdWluIDIwMTkgw6AgMTc6NTQgKzAyMDAsIERlbmlzICdHTlV0
-b28nIENhcmlrbGkgYQrDqWNyaXQgOgo+IEZyb206IFNpbW9uIFNoaWVsZHMgPHNpbW9uQGxpbmVh
-Z2Vvcy5vcmc+Cj4gCj4gVGhlIGdhbGF4eSBzMyBib2FyZHMgdXNlIGFuIGFhdDEyOTAgdG8gY29u
-dHJvbCB0aGUgZmxhc2ggTEVELgo+IFRoaXMgcGF0Y2ggYWRkcyB0aGUgcmVsZXZhbnQgZGV2aWNl
-IHRyZWUgY29uZmlndXJhdGlvbiB0byB1c2UgaXQuCgpMb29rcyBnb29kIHRvIG1lOgpSZXZpZXdl
-ZC1ieTogUGF1bCBLb2NpYWxrb3dza2kgPHBhdWwua29jaWFsa293c2tpQGJvb3RsaW4uY29tPgoK
-Q2hlZXJzLAoKUGF1bAoKPiBTaWduZWQtb2ZmLWJ5OiBTaW1vbiBTaGllbGRzIDxzaW1vbkBsaW5l
-YWdlb3Mub3JnPgo+IFNpZ25lZC1vZmYtYnk6IERlbmlzICdHTlV0b28nIENhcmlrbGkgPEdOVXRv
-b0BjeWJlcmRpbWVuc2lvbi5vcmc+IFtyZWJhc2VdCj4gLS0tCj4gIGFyY2gvYXJtL2Jvb3QvZHRz
-L2V4eW5vczQ0MTItZ2FsYXh5LXMzLmR0c2kgfCAzMiArKysrKysrKysrKysrKysrKysrKysKPiAg
-MSBmaWxlIGNoYW5nZWQsIDMyIGluc2VydGlvbnMoKykKPiAKPiBkaWZmIC0tZ2l0IGEvYXJjaC9h
-cm0vYm9vdC9kdHMvZXh5bm9zNDQxMi1nYWxheHktczMuZHRzaSBiL2FyY2gvYXJtL2Jvb3QvZHRz
-L2V4eW5vczQ0MTItZ2FsYXh5LXMzLmR0c2kKPiBpbmRleCAzMGVlZTU5NDJlZmYuLjM3NWFlY2Ew
-OTg4MiAxMDA2NDQKPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M0NDEyLWdhbGF4eS1z
-My5kdHNpCj4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNDQxMi1nYWxheHktczMuZHRz
-aQo+IEBAIC0xNSw2ICsxNSwyNCBAQAo+ICAJCWkyYzEwID0gJmkyY19jbTM2NjUxOwo+ICAJfTsK
-PiAgCj4gKwlhYXQxMjkwIHsKPiArCQljb21wYXRpYmxlID0gInNreXdvcmtzLGFhdDEyOTAiOwo+
-ICsJCWZsZW4tZ3Bpb3MgPSA8JmdwajEgMSBHUElPX0FDVElWRV9ISUdIPjsKPiArCQllbnNldC1n
-cGlvcyA9IDwmZ3BqMSAyIEdQSU9fQUNUSVZFX0hJR0g+Owo+ICsKPiArCQlwaW5jdHJsLW5hbWVz
-ID0gImRlZmF1bHQiLCAiaG9zdCIsICJpc3AiOwo+ICsJCXBpbmN0cmwtMCA9IDwmY2FtZXJhX2Zs
-YXNoX2hvc3Q+Owo+ICsJCXBpbmN0cmwtMSA9IDwmY2FtZXJhX2ZsYXNoX2hvc3Q+Owo+ICsJCXBp
-bmN0cmwtMiA9IDwmY2FtZXJhX2ZsYXNoX2lzcD47Cj4gKwo+ICsJCWZsYXNoLWxlZCB7Cj4gKwkJ
-CWxhYmVsID0gImZsYXNoIjsKPiArCQkJbGVkLW1heC1taWNyb2FtcCA9IDw1MjA4MzM+Owo+ICsJ
-CQlmbGFzaC1tYXgtbWljcm9hbXAgPSA8MTAxMjUwMD47Cj4gKwkJCWZsYXNoLW1heC10aW1lb3V0
-LXVzID0gPDE5NDAwMDA+Owo+ICsJCX07Cj4gKwl9Owo+ICsKPiAgCWxjZF92ZGQzX3JlZzogdm9s
-dGFnZS1yZWd1bGF0b3ItNiB7Cj4gIAkJY29tcGF0aWJsZSA9ICJyZWd1bGF0b3ItZml4ZWQiOwo+
-ICAJCXJlZ3VsYXRvci1uYW1lID0gIkxDRF9WRERfMi4yViI7Cj4gQEAgLTEzMSw2ICsxNDksMjAg
-QEAKPiAgCXJlZ3VsYXRvci1tYXgtbWljcm92b2x0ID0gPDI4MDAwMDA+Owo+ICB9Owo+ICAKPiAr
-JnBpbmN0cmxfMCB7Cj4gKwljYW1lcmFfZmxhc2hfaG9zdDogY2FtZXJhLWZsYXNoLWhvc3Qgewo+
-ICsJCXNhbXN1bmcscGlucyA9ICJncGoxLTAiOwo+ICsJCXNhbXN1bmcscGluLWZ1bmN0aW9uID0g
-PDE+Owo+ICsJCXNhbXN1bmcscGluLXZhbCA9IDwwPjsKPiArCX07Cj4gKwo+ICsJY2FtZXJhX2Zs
-YXNoX2lzcDogY2FtZXJhLWZsYXNoLWlzcCB7Cj4gKwkJc2Ftc3VuZyxwaW5zID0gImdwajEtMCI7
-Cj4gKwkJc2Ftc3VuZyxwaW4tZnVuY3Rpb24gPSA8MT47Cj4gKwkJc2Ftc3VuZyxwaW4tdmFsID0g
-PDE+Owo+ICsJfTsKPiArfTsKPiArCj4gICZzNWM3M20zIHsKPiAgCXN0YW5kYnktZ3Bpb3MgPSA8
-JmdwbTAgMSBHUElPX0FDVElWRV9MT1c+OyAgIC8qIElTUF9TVEFOREJZICovCj4gIAl2ZGRhLXN1
-cHBseSA9IDwmbGRvMTdfcmVnPjsKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2Vy
-bmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1h
-bi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+On Tue, May 21, 2019 at 01:58:45PM +0200, Marek Szyprowski wrote:
+> Commit 69bec7259853 ("USB: core: let USB device know device node") added
+> support for attaching devicetree node for USB devices. Those nodes are
+> children of their USB host controller. However Exynos EHCI and OHCI
+> driver bindings already define child-nodes for each physical root hub
+> port and assigns respective PHY controller and parameters to them. This
+> leads to the conflict. A workaround for it has been merged as commit
+> 01d4071486fe ("usb: exynos: add workaround for the USB device bindings
+> conflict"), but it disabled support for USB device binding for Exynos
+> EHCI/OHCI controllers.
+> 
+> To resolve it properly, lets move PHYs from the sub-nodes to a standard
+> array under the 'phys' property.
+> 
+> Suggested-by: Måns Rullgård <mans@mansr.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  .../devicetree/bindings/usb/exynos-usb.txt    | 41 +++++++------------
+>  1 file changed, 14 insertions(+), 27 deletions(-)
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+
+The old way would also conflict with the usb-connector binding as that 
+uses the graph binding.
+
+Rob
