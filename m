@@ -1,69 +1,40 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 2/2] arm: dts: add ARM Mali GPU node for Odroid XU3
-Date: Sun, 16 Jun 2019 10:59:28 +0200
-Message-ID: <20190616085928.GB3826@kozik-lap>
-References: <20190614203144.3850-2-joseph.kogut@gmail.com>
- <20190614235719.8134-1-joseph.kogut@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20190614235719.8134-1-joseph.kogut@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Joseph Kogut <joseph.kogut@gmail.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, airlied@linux.ie, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL] ARM: dts: exynos: Pull for v5.3
+Date: Sun, 16 Jun 2019 19:55:13 +0200
+Message-ID: <20190616175513.3681-1-krzk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gRnJpLCBKdW4gMTQsIDIwMTkgYXQgMDQ6NTc6MTlQTSAtMDcwMCwgSm9zZXBoIEtvZ3V0IHdy
-b3RlOgo+IEFkZCBkZXZpY2UgdHJlZSBub2RlIGZvciBtYWxpIGdwdSBvbiBPZHJvaWQgWFUzIFNv
-Q3MuCj4gCj4gU2lnbmVkLW9mZi1ieTogSm9zZXBoIEtvZ3V0IDxqb3NlcGgua29ndXRAZ21haWwu
-Y29tPgo+IC0tLQo+IAo+IENoYW5nZXMgdjEgLT4gdjI6Cj4gLSBVc2UgaW50ZXJydXB0IG5hbWUg
-b3JkZXJpbmcgZnJvbSBiaW5kaW5nIGRvYwo+IC0gU3BlY2lmeSBhIHNpbmdsZSBjbG9jayBmb3Ig
-R1BVIG5vZGUKPiAtIEFkZCBncHUgb3BwIHRhYmxlCj4gLSBGaXggd2FybmluZ3MgZnJvbSBJUlFf
-VFlQRV9OT05FCj4gCj4gIC4uLi9ib290L2R0cy9leHlub3M1NDIyLW9kcm9pZHh1My1jb21tb24u
-ZHRzaSB8IDI2ICsrKysrKysrKysrKysrKysrKysKClRoaXMgc2hvdWxkIGdvIHRvIGV4eW5vczU0
-MjItb2Ryb2lkLWNvcmUuZHRzaSBpbnN0ZWFkLCBiZWNhdXNlIGl0IGlzCmNvbW1vbiB0byBlbnRp
-cmUgT2Ryb2lkIEV4eW5vczU0MjIgZmFtaWx5IChub3Qgb25seSBYVTMgZmFtaWx5KS4KCj4gIDEg
-ZmlsZSBjaGFuZ2VkLCAyNiBpbnNlcnRpb25zKCspCj4gCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJt
-L2Jvb3QvZHRzL2V4eW5vczU0MjItb2Ryb2lkeHUzLWNvbW1vbi5kdHNpIGIvYXJjaC9hcm0vYm9v
-dC9kdHMvZXh5bm9zNTQyMi1vZHJvaWR4dTMtY29tbW9uLmR0c2kKPiBpbmRleCA5M2E0OGYyZGRh
-NDkuLmI4YTQyNDZlM2IzNyAxMDA2NDQKPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1
-NDIyLW9kcm9pZHh1My1jb21tb24uZHRzaQo+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5v
-czU0MjItb2Ryb2lkeHUzLWNvbW1vbi5kdHNpCj4gQEAgLTQ4LDYgKzQ4LDMyIEBACj4gIAkJY29v
-bGluZy1sZXZlbHMgPSA8MCAxMzAgMTcwIDIzMD47Cj4gIAl9Owo+IAo+ICsJZ3B1OiBncHVAMTE4
-MDAwMDAgewo+ICsJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3MtbWFsaSIsICJhcm0sbWFs
-aS10NjI4IjsKClRoaXMgaXMgY29tbW9uIHRvIGFsbCBFeHlub3M1NDJ4IGNoaXBzIHNvIGl0IHNo
-b3VsZCBnbyB0bwpleHlub3M1NDIwLmR0c2kuIEhlcmUgeW91IHdvdWxkIG5lZWQgdG8gb25seSBl
-bmFibGUgaXQgYW5kIHByb3ZpZGUKcmVndWxhdG9yLgoKUHJvYmFibHkgdGhpcyBzaG91bGQgYmUg
-YWxzbyBhc3NvY2lhdGVkIHdpdGggdG11X2dwdSBhcyBhIGNvb2xpbmcgZGV2aWNlCihpZiBNYWxp
-IHJlZ2lzdGVycyBhIGNvb2xpbmcgZGV2aWNlLi4uKS4gT3RoZXJ3aXNlIHRoZSB0bXVfZ3B1IGlz
-IG5vdApyZWFsbHkgdXNlZCBmb3IgaXQuCgo+ICsJCXJlZyA9IDwweDExODAwMDAwIDB4NTAwMD47
-Cj4gKwkJaW50ZXJydXB0cyA9IDxHSUNfU1BJIDIxOSBJUlFfVFlQRV9MRVZFTF9ISUdIPiwKPiAr
-CQkJICAgICA8R0lDX1NQSSA3NCAgSVJRX1RZUEVfTEVWRUxfSElHSD4sCj4gKwkJCSAgICAgPEdJ
-Q19TUEkgMTE3IElSUV9UWVBFX0xFVkVMX0hJR0g+Owo+ICsJCWludGVycnVwdC1uYW1lcyA9ICJq
-b2IiLCAibW11IiwgImdwdSI7Cj4gKwkJY2xvY2tzID0gPCZjbG9jayBDTEtfRzNEPjsKPiArCQlt
-YWxpLXN1cHBseSA9IDwmYnVjazRfcmVnPjsKClBsZWFzZSBjaGVjayBpZiBhbHdheXMtb24gcHJv
-cGVydHkgY291bGQgYmUgcmVtb3ZlZCBmcm9tIGJ1Y2s0LiBBbHNvLAp3aGF0IGFib3V0IExETzI3
-PyBJdCBzaG91bGQgYmUgdXNlZCBhcyB3ZWxsIChtYXliZSB0aHJvdWdoCnZlbmRvci1zcGVjaWZp
-YyBwcm9wZXJ0aWVzIHdoaWNoIHdvdWxkIGp1c3RpZnkgdGhlIG5lZWQgb2YgbmV3IHZlbmRvcgpj
-b21wYXRpYmxlKS4KCgpCZXN0IHJlZ2FyZHMsCktyenlzenRvZgoKPiArCQlvcGVyYXRpbmctcG9p
-bnRzLXYyID0gPCZncHVfb3BwX3RhYmxlPjsKPiArCX07Cj4gKwo+ICsJZ3B1X29wcF90YWJsZTog
-Z3B1LW9wcC10YWJsZSB7Cj4gKwkJY29tcGF0aWJsZSA9ICJvcGVyYXRpbmctcG9pbnRzLXYyIjsK
-PiArCj4gKwkJb3BwLTE3NzAwMDAwMCB7Cj4gKwkJCW9wcC1oeiA9IC9iaXRzLyA2NCA8MTE3MDAw
-MDAwPjsKPiArCQkJb3BwLW1pY3Jvdm9sdCA9IDw4MTI1MDA+Owo+ICsJCX07Cj4gKwo+ICsJCW9w
-cC02MDAwMDAwMDAgewo+ICsJCQlvcHAtaHogPSAvYml0cy8gNjQgPDYwMDAwMDAwMD47Cj4gKwkJ
-CW9wcC1taWNyb3ZvbHQgPSA8MTE1MDAwMD47Cj4gKwkJfTsKPiArCX07Cj4gKwo+ICAJdGhlcm1h
-bC16b25lcyB7Cj4gIAkJY3B1MF90aGVybWFsOiBjcHUwLXRoZXJtYWwgewo+ICAJCQl0aGVybWFs
-LXNlbnNvcnMgPSA8JnRtdV9jcHUwIDA+Owo+IC0tCj4gMi4yMi4wCj4gCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
-ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9w
-Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbA==
+The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+
+  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-5.3
+
+for you to fetch changes up to d2cac68e0d9b038da7207c0b63e1399c4f9f60c4:
+
+  ARM: dts: exynos: Add ADC node to Exynos5410 and Odroid XU (2019-06-11 20:37:21 +0200)
+
+----------------------------------------------------------------
+Samsung DTS ARM changes for v5.3
+
+1. Fixes for minor warnings.
+2. Enable ADC on Exynos5410 Odroid XU board.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (3):
+      ARM: dts: exynos: Move CPU OPP tables out of SoC node on Exynos5420
+      ARM: dts: exynos: Raise maximum buck regulator voltages on Arndale Octa
+      ARM: dts: exynos: Add ADC node to Exynos5410 and Odroid XU
+
+ arch/arm/boot/dts/exynos5410-odroidxu.dts     |   5 +
+ arch/arm/boot/dts/exynos5410.dtsi             |   6 +
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts |  14 +-
+ arch/arm/boot/dts/exynos5420.dtsi             | 234 +++++++++++++-------------
+ arch/arm/boot/dts/exynos54xx.dtsi             |   9 +
+ 5 files changed, 142 insertions(+), 126 deletions(-)
