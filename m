@@ -1,35 +1,67 @@
-From: Emil Velikov <emil.l.velikov@gmail.com>
-Subject: Re: [PATCH 06/59] drm/prime: Actually remove DRIVER_PRIME everywhere
-Date: Mon, 17 Jun 2019 18:56:06 +0100
-Message-ID: <20190617175606.GE26766@arch-x1c3>
-References: <20190614203615.12639-1-daniel.vetter@ffwll.ch>
-	<20190614203615.12639-7-daniel.vetter@ffwll.ch>
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v2 2/2] arm: dts: add ARM Mali GPU node for Odroid XU3
+Date: Mon, 17 Jun 2019 13:16:31 -0600
+Message-ID: <CAL_JsqKasi4m7xU2AF1YQk-Tp0Z6=qh51LgTpb=xiZ9g6A3HvA@mail.gmail.com>
+References: <20190614203144.3850-2-joseph.kogut@gmail.com>
+ <20190614235719.8134-1-joseph.kogut@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <virtualization-bounces@lists.linux-foundation.org>
-Content-Disposition: inline
-In-Reply-To: <20190614203615.12639-7-daniel.vetter@ffwll.ch>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
-	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
-List-Post: <mailto:virtualization@lists.linux-foundation.org>
-List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
-	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
-Sender: virtualization-bounces@lists.linux-foundation.org
-Errors-To: virtualization-bounces@lists.linux-foundation.org
-To: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: linux-aspeed@lists.ozlabs.org, nouveau@lists.freedesktop.org, DRI Development <dri-devel@lists.freedesktop.org>, virtualization@lists.linux-foundation.org, Daniel Vetter <daniel.vetter@intel.com>, linux-stm32@st-md-mailman.stormreply.com, linux-samsung-soc@vger.kernel.org, lima@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, linux-rockchip@lists.infradead.org, VMware Graphics <linux-graphics-maintainer@vmware.com>, NXP Linux Team <linux-imx@nxp.com>, spice-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, Intel Graphics Development <intel-gfx@lists.freedesktop.org>, etnaviv@lists.freedesktop.org, xen-devel@lists.xenproject.org, linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, freedreno@lists.freedesktop.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20190614235719.8134-1-joseph.kogut@gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Joseph Kogut <joseph.kogut@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2019/06/14, Daniel Vetter wrote:
-> Split out to make the functional changes stick out more.
-> 
-Since this patch flew-by, as standalone one (intentionally or not) I'd
-add, anything vaguely like:
-
-"Core users of DRIVER_PRIME were removed from core with prior patches."
-
-HTH
-Emil
+T24gRnJpLCBKdW4gMTQsIDIwMTkgYXQgNTo1NyBQTSBKb3NlcGggS29ndXQgPGpvc2VwaC5rb2d1
+dEBnbWFpbC5jb20+IHdyb3RlOgo+Cj4gQWRkIGRldmljZSB0cmVlIG5vZGUgZm9yIG1hbGkgZ3B1
+IG9uIE9kcm9pZCBYVTMgU29Dcy4KPgo+IFNpZ25lZC1vZmYtYnk6IEpvc2VwaCBLb2d1dCA8am9z
+ZXBoLmtvZ3V0QGdtYWlsLmNvbT4KPiAtLS0KPgo+IENoYW5nZXMgdjEgLT4gdjI6Cj4gLSBVc2Ug
+aW50ZXJydXB0IG5hbWUgb3JkZXJpbmcgZnJvbSBiaW5kaW5nIGRvYwo+IC0gU3BlY2lmeSBhIHNp
+bmdsZSBjbG9jayBmb3IgR1BVIG5vZGUKPiAtIEFkZCBncHUgb3BwIHRhYmxlCj4gLSBGaXggd2Fy
+bmluZ3MgZnJvbSBJUlFfVFlQRV9OT05FCj4KPiAgLi4uL2Jvb3QvZHRzL2V4eW5vczU0MjItb2Ry
+b2lkeHUzLWNvbW1vbi5kdHNpIHwgMjYgKysrKysrKysrKysrKysrKysrKwo+ICAxIGZpbGUgY2hh
+bmdlZCwgMjYgaW5zZXJ0aW9ucygrKQo+Cj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRz
+L2V4eW5vczU0MjItb2Ryb2lkeHUzLWNvbW1vbi5kdHNpIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5
+bm9zNTQyMi1vZHJvaWR4dTMtY29tbW9uLmR0c2kKPiBpbmRleCA5M2E0OGYyZGRhNDkuLmI4YTQy
+NDZlM2IzNyAxMDA2NDQKPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1NDIyLW9kcm9p
+ZHh1My1jb21tb24uZHRzaQo+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0MjItb2Ry
+b2lkeHUzLWNvbW1vbi5kdHNpCj4gQEAgLTQ4LDYgKzQ4LDMyIEBACj4gICAgICAgICAgICAgICAg
+IGNvb2xpbmctbGV2ZWxzID0gPDAgMTMwIDE3MCAyMzA+Owo+ICAgICAgICAgfTsKPgo+ICsgICAg
+ICAgZ3B1OiBncHVAMTE4MDAwMDAgewo+ICsgICAgICAgICAgICAgICBjb21wYXRpYmxlID0gInNh
+bXN1bmcsZXh5bm9zLW1hbGkiLCAiYXJtLG1hbGktdDYyOCI7Cj4gKyAgICAgICAgICAgICAgIHJl
+ZyA9IDwweDExODAwMDAwIDB4NTAwMD47Cj4gKyAgICAgICAgICAgICAgIGludGVycnVwdHMgPSA8
+R0lDX1NQSSAyMTkgSVJRX1RZUEVfTEVWRUxfSElHSD4sCj4gKyAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICA8R0lDX1NQSSA3NCAgSVJRX1RZUEVfTEVWRUxfSElHSD4sCj4gKyAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICA8R0lDX1NQSSAxMTcgSVJRX1RZUEVfTEVWRUxfSElHSD47Cj4gKyAg
+ICAgICAgICAgICAgIGludGVycnVwdC1uYW1lcyA9ICJqb2IiLCAibW11IiwgImdwdSI7Cj4gKyAg
+ICAgICAgICAgICAgIGNsb2NrcyA9IDwmY2xvY2sgQ0xLX0czRD47Cj4gKyAgICAgICAgICAgICAg
+IG1hbGktc3VwcGx5ID0gPCZidWNrNF9yZWc+Owo+ICsgICAgICAgICAgICAgICBvcGVyYXRpbmct
+cG9pbnRzLXYyID0gPCZncHVfb3BwX3RhYmxlPjsKPiArICAgICAgIH07Cj4gKwo+ICsgICAgICAg
+Z3B1X29wcF90YWJsZTogZ3B1LW9wcC10YWJsZSB7CgpOb3QgcmVhbGx5IGEgbmV3IHByb2JsZW0g
+aW4gdGhpcyBmaWxlLCBidXQgeW91IGFyZSBtaXhpbmcgbm9kZXMgd2l0aAphbmQgd2l0aG91dCBh
+biBhZGRyZXNzIGFuZCByZWFsbHkgdGhlIGdwdSBub2RlIHNob3VsZCBiZSB1bmRlciBhCnNpbXBs
+ZS1idXMgbm9kZS4KCklmIHRoZSBPUFAgaXMgb25seSBmb3IgdGhlIEdQVSwgSSdkIG1ha2UgaXQg
+YSBjaGlsZCBvZiB0aGUgZ3B1IG5vZGUgaW5zdGVhZC4KCj4gKyAgICAgICAgICAgICAgIGNvbXBh
+dGlibGUgPSAib3BlcmF0aW5nLXBvaW50cy12MiI7Cj4gKwo+ICsgICAgICAgICAgICAgICBvcHAt
+MTc3MDAwMDAwIHsKPiArICAgICAgICAgICAgICAgICAgICAgICBvcHAtaHogPSAvYml0cy8gNjQg
+PDExNzAwMDAwMD47Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgb3BwLW1pY3Jvdm9sdCA9IDw4
+MTI1MDA+Owo+ICsgICAgICAgICAgICAgICB9Owo+ICsKPiArICAgICAgICAgICAgICAgb3BwLTYw
+MDAwMDAwMCB7Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgb3BwLWh6ID0gL2JpdHMvIDY0IDw2
+MDAwMDAwMDA+Owo+ICsgICAgICAgICAgICAgICAgICAgICAgIG9wcC1taWNyb3ZvbHQgPSA8MTE1
+MDAwMD47Cj4gKyAgICAgICAgICAgICAgIH07Cj4gKyAgICAgICB9Owo+ICsKPiAgICAgICAgIHRo
+ZXJtYWwtem9uZXMgewo+ICAgICAgICAgICAgICAgICBjcHUwX3RoZXJtYWw6IGNwdTAtdGhlcm1h
+bCB7Cj4gICAgICAgICAgICAgICAgICAgICAgICAgdGhlcm1hbC1zZW5zb3JzID0gPCZ0bXVfY3B1
+MCAwPjsKPiAtLQo+IDIuMjIuMAo+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
+ZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L2RyaS1kZXZlbA==
