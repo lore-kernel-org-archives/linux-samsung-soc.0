@@ -1,104 +1,99 @@
-From: Joseph Kogut <joseph.kogut@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Subject: Re: [PATCH v2 2/2] arm: dts: add ARM Mali GPU node for Odroid XU3
-Date: Mon, 17 Jun 2019 09:15:23 -0700
-Message-ID: <CAMWSM7j8dtsS4d-hOc3Sk6OJHs+SiGC9tEaZBEmO0VKmtJguKw@mail.gmail.com>
+Date: Mon, 17 Jun 2019 18:36:34 +0200
+Message-ID: <20190617163634.GA16941@kozik-lap>
 References: <20190614203144.3850-2-joseph.kogut@gmail.com>
  <20190614235719.8134-1-joseph.kogut@gmail.com>
  <20190616085928.GB3826@kozik-lap>
+ <CAMWSM7j8dtsS4d-hOc3Sk6OJHs+SiGC9tEaZBEmO0VKmtJguKw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190616085928.GB3826@kozik-lap>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, airlied@linux.ie, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, kgene@kernel.org, Daniel Vetter <daniel@ffwll.ch>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <CAMWSM7j8dtsS4d-hOc3Sk6OJHs+SiGC9tEaZBEmO0VKmtJguKw@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Joseph Kogut <joseph.kogut@gmail.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, airlied@linux.ie, dri-devel@lists.freedesktop.org, robh+dt@kernel.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
-
-Thanks for the review.
-
-On Sun, Jun 16, 2019 at 1:59 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On Fri, Jun 14, 2019 at 04:57:19PM -0700, Joseph Kogut wrote:
-> > Add device tree node for mali gpu on Odroid XU3 SoCs.
-> >
-> > Signed-off-by: Joseph Kogut <joseph.kogut@gmail.com>
-> > ---
-> >
-> > Changes v1 -> v2:
-> > - Use interrupt name ordering from binding doc
-> > - Specify a single clock for GPU node
-> > - Add gpu opp table
-> > - Fix warnings from IRQ_TYPE_NONE
-> >
-> >  .../boot/dts/exynos5422-odroidxu3-common.dtsi | 26 +++++++++++++++++++
->
-> This should go to exynos5422-odroid-core.dtsi instead, because it is
-> common to entire Odroid Exynos5422 family (not only XU3 family).
->
-> >  1 file changed, 26 insertions(+)
-> >
-> > diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> > index 93a48f2dda49..b8a4246e3b37 100644
-> > --- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> > +++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-> > @@ -48,6 +48,32 @@
-> >               cooling-levels = <0 130 170 230>;
-> >       };
-> >
-> > +     gpu: gpu@11800000 {
-> > +             compatible = "samsung,exynos-mali", "arm,mali-t628";
->
-> This is common to all Exynos542x chips so it should go to
-> exynos5420.dtsi. Here you would need to only enable it and provide
-> regulator.
->
-
-To clarify, which pieces are specific to the Odroid Exynos 5422
-family, and which are common to the entire Exynos 542x family? I'm
-thinking the gpu node is common to the 542x family, including the
-interrupts and clock, and the regulator and opp table are specific to
-the Odroid 5422?
-
-> Probably this should be also associated with tmu_gpu as a cooling device
-> (if Mali registers a cooling device...). Otherwise the tmu_gpu is not
-> really used for it.
->
-
-We have two operating performance points for the GPU, but I'm not sure
-at what temperature we should trip the lower opp. Looking at the trip
-temperatures for the CPU, we have four alerts, and one critical trip.
-The highest alert is 85 C, would it be reasonable to trigger the lower
-GPU opp at this temperature? Should it trigger sooner?
-
-> > +             reg = <0x11800000 0x5000>;
-> > +             interrupts = <GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH>,
-> > +                          <GIC_SPI 74  IRQ_TYPE_LEVEL_HIGH>,
-> > +                          <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>;
-> > +             interrupt-names = "job", "mmu", "gpu";
-> > +             clocks = <&clock CLK_G3D>;
-> > +             mali-supply = <&buck4_reg>;
->
-> Please check if always-on property could be removed from buck4.
-
-I've checked, and this property can be removed safely.
-
-> Also, what about LDO27? It should be used as well (maybe through
-> vendor-specific properties which would justify the need of new vendor
-> compatible).
->
-
-I'm unsure how LDO27 is used, can you elaborate?
-
-Best,
-Joseph
+T24gTW9uLCBKdW4gMTcsIDIwMTkgYXQgMDk6MTU6MjNBTSAtMDcwMCwgSm9zZXBoIEtvZ3V0IHdy
+b3RlOgo+IEhpIEtyenlzenRvZiwKPiAKPiBUaGFua3MgZm9yIHRoZSByZXZpZXcuCj4gCj4gT24g
+U3VuLCBKdW4gMTYsIDIwMTkgYXQgMTo1OSBBTSBLcnp5c3p0b2YgS296bG93c2tpIDxrcnprQGtl
+cm5lbC5vcmc+IHdyb3RlOgo+ID4KPiA+IE9uIEZyaSwgSnVuIDE0LCAyMDE5IGF0IDA0OjU3OjE5
+UE0gLTA3MDAsIEpvc2VwaCBLb2d1dCB3cm90ZToKPiA+ID4gQWRkIGRldmljZSB0cmVlIG5vZGUg
+Zm9yIG1hbGkgZ3B1IG9uIE9kcm9pZCBYVTMgU29Dcy4KPiA+ID4KPiA+ID4gU2lnbmVkLW9mZi1i
+eTogSm9zZXBoIEtvZ3V0IDxqb3NlcGgua29ndXRAZ21haWwuY29tPgo+ID4gPiAtLS0KPiA+ID4K
+PiA+ID4gQ2hhbmdlcyB2MSAtPiB2MjoKPiA+ID4gLSBVc2UgaW50ZXJydXB0IG5hbWUgb3JkZXJp
+bmcgZnJvbSBiaW5kaW5nIGRvYwo+ID4gPiAtIFNwZWNpZnkgYSBzaW5nbGUgY2xvY2sgZm9yIEdQ
+VSBub2RlCj4gPiA+IC0gQWRkIGdwdSBvcHAgdGFibGUKPiA+ID4gLSBGaXggd2FybmluZ3MgZnJv
+bSBJUlFfVFlQRV9OT05FCj4gPiA+Cj4gPiA+ICAuLi4vYm9vdC9kdHMvZXh5bm9zNTQyMi1vZHJv
+aWR4dTMtY29tbW9uLmR0c2kgfCAyNiArKysrKysrKysrKysrKysrKysrCj4gPgo+ID4gVGhpcyBz
+aG91bGQgZ28gdG8gZXh5bm9zNTQyMi1vZHJvaWQtY29yZS5kdHNpIGluc3RlYWQsIGJlY2F1c2Ug
+aXQgaXMKPiA+IGNvbW1vbiB0byBlbnRpcmUgT2Ryb2lkIEV4eW5vczU0MjIgZmFtaWx5IChub3Qg
+b25seSBYVTMgZmFtaWx5KS4KPiA+Cj4gPiA+ICAxIGZpbGUgY2hhbmdlZCwgMjYgaW5zZXJ0aW9u
+cygrKQo+ID4gPgo+ID4gPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTQy
+Mi1vZHJvaWR4dTMtY29tbW9uLmR0c2kgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M1NDIyLW9k
+cm9pZHh1My1jb21tb24uZHRzaQo+ID4gPiBpbmRleCA5M2E0OGYyZGRhNDkuLmI4YTQyNDZlM2Iz
+NyAxMDA2NDQKPiA+ID4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTQyMi1vZHJvaWR4
+dTMtY29tbW9uLmR0c2kKPiA+ID4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTQyMi1v
+ZHJvaWR4dTMtY29tbW9uLmR0c2kKPiA+ID4gQEAgLTQ4LDYgKzQ4LDMyIEBACj4gPiA+ICAgICAg
+ICAgICAgICAgY29vbGluZy1sZXZlbHMgPSA8MCAxMzAgMTcwIDIzMD47Cj4gPiA+ICAgICAgIH07
+Cj4gPiA+Cj4gPiA+ICsgICAgIGdwdTogZ3B1QDExODAwMDAwIHsKPiA+ID4gKyAgICAgICAgICAg
+ICBjb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9zLW1hbGkiLCAiYXJtLG1hbGktdDYyOCI7Cj4g
+Pgo+ID4gVGhpcyBpcyBjb21tb24gdG8gYWxsIEV4eW5vczU0MnggY2hpcHMgc28gaXQgc2hvdWxk
+IGdvIHRvCj4gPiBleHlub3M1NDIwLmR0c2kuIEhlcmUgeW91IHdvdWxkIG5lZWQgdG8gb25seSBl
+bmFibGUgaXQgYW5kIHByb3ZpZGUKPiA+IHJlZ3VsYXRvci4KPiA+Cj4gCj4gVG8gY2xhcmlmeSwg
+d2hpY2ggcGllY2VzIGFyZSBzcGVjaWZpYyB0byB0aGUgT2Ryb2lkIEV4eW5vcyA1NDIyCj4gZmFt
+aWx5LCBhbmQgd2hpY2ggYXJlIGNvbW1vbiB0byB0aGUgZW50aXJlIEV4eW5vcyA1NDJ4IGZhbWls
+eT8gSSdtCj4gdGhpbmtpbmcgdGhlIGdwdSBub2RlIGlzIGNvbW1vbiB0byB0aGUgNTQyeCBmYW1p
+bHksIGluY2x1ZGluZyB0aGUKPiBpbnRlcnJ1cHRzIGFuZCBjbG9jaywgYW5kIHRoZSByZWd1bGF0
+b3IgYW5kIG9wcCB0YWJsZSBhcmUgc3BlY2lmaWMgdG8KPiB0aGUgT2Ryb2lkIDU0MjI/CgpPcHAg
+dGFibGUgZGVwZW5kcyAtIGl0IG1pZ2h0IGNvbW1vbiB0byBFeHlub3M1NDJ4IChhcyBhbGwgdXNl
+IHRoZSBzYW1lCk1hbGkpIG9yIHNwZWNpZmljIHRvIGJvYXJkcyAoYmVjYXVzZSB0aGVyZSBpcyBP
+ZHJvaWQgWFUzIExpdGUgd2l0aApFeHlub3M1NDIyIHdvcmtpbmcgb24gbG93ZXIgZnJlcXVlbmNp
+ZXMpLgoKU28gZmFyIHRoZSBDUFUgYW5kIGFsbCBidXMgT1BQIHRhYmxlcyB3ZXJlIHB1dCBpbiBl
+eHlub3M1NDIwLmR0c2kgc28gSQpndWVzcyB0aGlzIGNhbiBnbyB0aGVyZSBhcyB3ZWxsLgoKRm9y
+IHRoZSByZXN0IG9mIHByb3BlcnRpZXMgeW91IHdlcmUgY29ycmVjdC4KCj4gCj4gPiBQcm9iYWJs
+eSB0aGlzIHNob3VsZCBiZSBhbHNvIGFzc29jaWF0ZWQgd2l0aCB0bXVfZ3B1IGFzIGEgY29vbGlu
+ZyBkZXZpY2UKPiA+IChpZiBNYWxpIHJlZ2lzdGVycyBhIGNvb2xpbmcgZGV2aWNlLi4uKS4gT3Ro
+ZXJ3aXNlIHRoZSB0bXVfZ3B1IGlzIG5vdAo+ID4gcmVhbGx5IHVzZWQgZm9yIGl0Lgo+ID4KPiAK
+PiBXZSBoYXZlIHR3byBvcGVyYXRpbmcgcGVyZm9ybWFuY2UgcG9pbnRzIGZvciB0aGUgR1BVLCBi
+dXQgSSdtIG5vdCBzdXJlCj4gYXQgd2hhdCB0ZW1wZXJhdHVyZSB3ZSBzaG91bGQgdHJpcCB0aGUg
+bG93ZXIgb3BwLiBMb29raW5nIGF0IHRoZSB0cmlwCj4gdGVtcGVyYXR1cmVzIGZvciB0aGUgQ1BV
+LCB3ZSBoYXZlIGZvdXIgYWxlcnRzLCBhbmQgb25lIGNyaXRpY2FsIHRyaXAuCj4gVGhlIGhpZ2hl
+c3QgYWxlcnQgaXMgODUgQywgd291bGQgaXQgYmUgcmVhc29uYWJsZSB0byB0cmlnZ2VyIHRoZSBs
+b3dlcgo+IEdQVSBvcHAgYXQgdGhpcyB0ZW1wZXJhdHVyZT8gU2hvdWxkIGl0IHRyaWdnZXIgc29v
+bmVyPwoKVGhlIGhpZ2hlc3QgdHJpcCBwb2ludCBpcyAxMjAgQyBhbmQgaXQgaXMgY3JpdGljYWwu
+IEluIGdlbmVyYWwgSSB3b3VsZApmb2xsb3cgdGhlIENQVSB0cmlwIHBvaW50cyAoc28gZmFuIHNo
+b3VsZCBzdGFydCB3b3JraW5nIGF0IDUwIGRlZ3JlZXMpLgpVbmxlc3MgeW91IGhhdmUgc29tZSBv
+dGhlciBkYXRhIGFib3V0IHJlY29tbWVuZGVkIHRyaXAgcG9pbnRzLiBVc2VmdWwgaXMKdmVuZG9y
+IGtlcm5lbCAoZnJvbSBTYW1zdW5nLCBmcm9tIEhhcmQgS2VybmVsKS4KCj4gCj4gPiA+ICsgICAg
+ICAgICAgICAgcmVnID0gPDB4MTE4MDAwMDAgMHg1MDAwPjsKPiA+ID4gKyAgICAgICAgICAgICBp
+bnRlcnJ1cHRzID0gPEdJQ19TUEkgMjE5IElSUV9UWVBFX0xFVkVMX0hJR0g+LAo+ID4gPiArICAg
+ICAgICAgICAgICAgICAgICAgICAgICA8R0lDX1NQSSA3NCAgSVJRX1RZUEVfTEVWRUxfSElHSD4s
+Cj4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgIDxHSUNfU1BJIDExNyBJUlFfVFlQRV9M
+RVZFTF9ISUdIPjsKPiA+ID4gKyAgICAgICAgICAgICBpbnRlcnJ1cHQtbmFtZXMgPSAiam9iIiwg
+Im1tdSIsICJncHUiOwo+ID4gPiArICAgICAgICAgICAgIGNsb2NrcyA9IDwmY2xvY2sgQ0xLX0cz
+RD47Cj4gPiA+ICsgICAgICAgICAgICAgbWFsaS1zdXBwbHkgPSA8JmJ1Y2s0X3JlZz47Cj4gPgo+
+ID4gUGxlYXNlIGNoZWNrIGlmIGFsd2F5cy1vbiBwcm9wZXJ0eSBjb3VsZCBiZSByZW1vdmVkIGZy
+b20gYnVjazQuCj4gCj4gSSd2ZSBjaGVja2VkLCBhbmQgdGhpcyBwcm9wZXJ0eSBjYW4gYmUgcmVt
+b3ZlZCBzYWZlbHkuCj4gCj4gPiBBbHNvLCB3aGF0IGFib3V0IExETzI3PyBJdCBzaG91bGQgYmUg
+dXNlZCBhcyB3ZWxsIChtYXliZSB0aHJvdWdoCj4gPiB2ZW5kb3Itc3BlY2lmaWMgcHJvcGVydGll
+cyB3aGljaCB3b3VsZCBqdXN0aWZ5IHRoZSBuZWVkIG9mIG5ldyB2ZW5kb3IKPiA+IGNvbXBhdGli
+bGUpLgo+ID4KPiAKPiBJJ20gdW5zdXJlIGhvdyBMRE8yNyBpcyB1c2VkLCBjYW4geW91IGVsYWJv
+cmF0ZT8KCkl0IGlzIHN1cHBseWluZyB0aGUgVkREX0czRFMgKHdpdGggYSBub3RlICJTUkFNIHBv
+d2VyIikuIEkgZG8gbm90IGhhdmUKYW55IG1vcmUgZGF0YSBvbiBpdC4gSG93ZXZlciBJIGRpZCBu
+b3QgY2hlY2sgaW4gdmVuZG9yIGtlcm5lbCBmb3IgaXQuCgpCZXN0IHJlZ2FyZHMsCktyenlzenRv
+ZgoKCj4gCj4gQmVzdCwKPiBKb3NlcGgKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
+Zm8vZHJpLWRldmVs
