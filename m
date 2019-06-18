@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFT 08/10] ARM: multi_v7_defconfig: Enable Panfrost and LIMA drivers
-Date: Tue, 18 Jun 2019 21:05:32 +0200
-Message-ID: <20190618190534.4951-9-krzk@kernel.org>
+Subject: [RFT 09/10] ARM: exynos_defconfig: Enable Panfrost and LIMA drivers
+Date: Tue, 18 Jun 2019 21:05:33 +0200
+Message-ID: <20190618190534.4951-10-krzk@kernel.org>
 References: <20190618190534.4951-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190618190534.4951-1-krzk@kernel.org>
@@ -15,34 +15,31 @@ Exynos chipsets come with Mali GPUs:
 1. Mali 400 (Exynos3250, Exynos4210, Exynos4412),
 2. Mali T7xx (Exynos542x).
 
-As Mali GPU is quite popular among ARM vendors, other platforms will
-benefit as well.
-
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/configs/multi_v7_defconfig | 3 ++-
+ arch/arm/configs/exynos_defconfig | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 6b748f214eae..268161911fc9 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -656,6 +656,8 @@ CONFIG_DRM_VC4=m
- CONFIG_DRM_ETNAVIV=m
- CONFIG_DRM_MXSFB=m
- CONFIG_DRM_PL111=m
-+CONFIG_DRM_LIMA=m
-+CONFIG_DRM_PANFROST=m
- CONFIG_FB_EFI=y
- CONFIG_FB_WM8505=y
- CONFIG_FB_SH_MOBILE_LCDC=y
-@@ -940,7 +942,6 @@ CONFIG_ARCH_TEGRA_2x_SOC=y
- CONFIG_ARCH_TEGRA_3x_SOC=y
- CONFIG_ARCH_TEGRA_114_SOC=y
- CONFIG_ARCH_TEGRA_124_SOC=y
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 8d08eed99aa1..f140532ddca7 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -212,6 +212,8 @@ CONFIG_DRM_NXP_PTN3460=y
+ CONFIG_DRM_PARADE_PS8622=y
+ CONFIG_DRM_SII9234=y
+ CONFIG_DRM_TOSHIBA_TC358764=y
++CONFIG_DRM_LIMA=y
++CONFIG_DRM_PANFROST=y
+ CONFIG_LCD_CLASS_DEVICE=y
+ CONFIG_LCD_PLATFORM=y
+ CONFIG_BACKLIGHT_PWM=y
+@@ -284,7 +286,6 @@ CONFIG_CROS_EC_SPI=y
+ CONFIG_COMMON_CLK_MAX77686=y
+ CONFIG_COMMON_CLK_S2MPS11=y
+ CONFIG_EXYNOS_IOMMU=y
 -CONFIG_PM_DEVFREQ=y
- CONFIG_ARM_TEGRA_DEVFREQ=m
- CONFIG_TI_AEMIF=y
- CONFIG_IIO=y
+ CONFIG_DEVFREQ_GOV_PERFORMANCE=y
+ CONFIG_DEVFREQ_GOV_POWERSAVE=y
+ CONFIG_DEVFREQ_GOV_USERSPACE=y
 -- 
 2.17.1
