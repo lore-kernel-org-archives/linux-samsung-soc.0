@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFT 02/10] clk: samsung: Add bus clock for GPU/G3D on Exynos4412
-Date: Tue, 18 Jun 2019 21:05:26 +0200
-Message-ID: <20190618190534.4951-3-krzk@kernel.org>
+Subject: [RFT 03/10] ARM: dts: exynos: Fix language typo and indentation
+Date: Tue, 18 Jun 2019 21:05:27 +0200
+Message-ID: <20190618190534.4951-4-krzk@kernel.org>
 References: <20190618190534.4951-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190618190534.4951-1-krzk@kernel.org>
@@ -10,37 +10,42 @@ To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Rob Herrin
 Cc: Joseph Kogut <joseph.kogut@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add ID and gate for bus clock for GPU (Mali 400) on Exynos4412.
+Correct language typo and wrong indentation.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/clk/samsung/clk-exynos4.c   | 1 +
- include/dt-bindings/clock/exynos4.h | 1 +
- 2 files changed, 2 insertions(+)
+ arch/arm/boot/dts/exynos4210.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index d2a68a792a21..ed4af7da9c4f 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -961,6 +961,7 @@ static const struct samsung_gate_clock exynos4210_gate_clks[] __initconst = {
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index b491c345b2e8..ea0e043cd2b4 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -8,7 +8,7 @@
+  *		www.linaro.org
+  *
+  * Samsung's Exynos4210 SoC device nodes are listed in this file. Exynos4210
+- * based board files can include this file and provide values for board specfic
++ * based board files can include this file and provide values for board specific
+  * bindings.
+  *
+  * Note: This file does not include device nodes for all the controllers in
+@@ -381,13 +381,13 @@
  
- /* list of gate clocks supported in exynos4x12 soc */
- static const struct samsung_gate_clock exynos4x12_gate_clks[] __initconst = {
-+	GATE(CLK_ASYNC_G3D, "async_g3d", "aclk200", GATE_IP_LEFTBUS, 6, 0, 0),
- 	GATE(CLK_AUDSS, "audss", "sclk_epll", E4X12_GATE_IP_MAUDIO, 0, 0, 0),
- 	GATE(CLK_MDNIE0, "mdnie0", "aclk160", GATE_IP_LCD0, 2, 0, 0),
- 	GATE(CLK_ROTATOR, "rotator", "aclk200", E4X12_GATE_IP_IMAGE, 1, 0, 0),
-diff --git a/include/dt-bindings/clock/exynos4.h b/include/dt-bindings/clock/exynos4.h
-index a0439ce8e8d3..88ec3968b90a 100644
---- a/include/dt-bindings/clock/exynos4.h
-+++ b/include/dt-bindings/clock/exynos4.h
-@@ -187,6 +187,7 @@
- #define CLK_MIPI_HSI		349 /* Exynos4210 only */
- #define CLK_PIXELASYNCM0	351
- #define CLK_PIXELASYNCM1	352
-+#define CLK_ASYNC_G3D		353 /* Exynos4x12 only */
- #define CLK_PWM_ISP_SCLK	379 /* Exynos4x12 only */
- #define CLK_SPI0_ISP_SCLK	380 /* Exynos4x12 only */
- #define CLK_SPI1_ISP_SCLK	381 /* Exynos4x12 only */
+ 			trips {
+ 				cpu_alert0: cpu-alert-0 {
+-				temperature = <85000>; /* millicelsius */
++					temperature = <85000>; /* millicelsius */
+ 				};
+ 				cpu_alert1: cpu-alert-1 {
+-				temperature = <100000>; /* millicelsius */
++					temperature = <100000>; /* millicelsius */
+ 				};
+ 				cpu_alert2: cpu-alert-2 {
+-				temperature = <110000>; /* millicelsius */
++					temperature = <110000>; /* millicelsius */
+ 				};
+ 			};
+ 		};
 -- 
 2.17.1
