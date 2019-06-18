@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFT 07/10] arm64: dts: exynos: Add GPU/Mali T760 node to Exynos7
-Date: Tue, 18 Jun 2019 21:05:31 +0200
-Message-ID: <20190618190534.4951-8-krzk@kernel.org>
+Subject: [RFT 08/10] ARM: multi_v7_defconfig: Enable Panfrost and LIMA drivers
+Date: Tue, 18 Jun 2019 21:05:32 +0200
+Message-ID: <20190618190534.4951-9-krzk@kernel.org>
 References: <20190618190534.4951-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190618190534.4951-1-krzk@kernel.org>
@@ -10,54 +10,39 @@ To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Rob Herrin
 Cc: Joseph Kogut <joseph.kogut@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add nodes for GPU (Mali T760) to Exynos7.  Current support for Exynos7
-misses a lot, including proper clocks, power domains, frequency and
-voltage scaling and cooling.  However this still can provide basic GPU
-description.  Not tested on HW.
+Enable support for Mali GPU with Panfrost and LIMA drivers.  Most of
+Exynos chipsets come with Mali GPUs:
+1. Mali 400 (Exynos3250, Exynos4210, Exynos4412),
+2. Mali T7xx (Exynos542x).
+
+As Mali GPU is quite popular among ARM vendors, other platforms will
+benefit as well.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm64/boot/dts/exynos/exynos7-espresso.dts |  5 +++++
- arch/arm64/boot/dts/exynos/exynos7.dtsi         | 11 +++++++++++
- 2 files changed, 16 insertions(+)
+ arch/arm/configs/multi_v7_defconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-index 00dd89b92b42..080e0f56e108 100644
---- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-@@ -59,6 +59,11 @@
- 	clock-frequency = <24000000>;
- };
- 
-+&gpu {
-+	mali-supply = <&buck6_reg>;
-+	status = "okay";
-+};
-+
- &serial_2 {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-index 077d23478901..bcb9d8cee267 100644
---- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-@@ -78,6 +78,17 @@
- 		};
- 	};
- 
-+	gpu: gpu@14ac0000 {
-+		compatible = "samsung,exynos5433-mali", "arm,mali-t760";
-+		reg = <0x14ac0000 0x5000>;
-+		interrupts = <GIC_SPI 241 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 242 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "job", "mmu", "gpu";
-+		status = "disabled";
-+		/* TODO: operating points for DVFS, cooling device */
-+	};
-+
- 	psci {
- 		compatible = "arm,psci-0.2";
- 		method = "smc";
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 6b748f214eae..268161911fc9 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -656,6 +656,8 @@ CONFIG_DRM_VC4=m
+ CONFIG_DRM_ETNAVIV=m
+ CONFIG_DRM_MXSFB=m
+ CONFIG_DRM_PL111=m
++CONFIG_DRM_LIMA=m
++CONFIG_DRM_PANFROST=m
+ CONFIG_FB_EFI=y
+ CONFIG_FB_WM8505=y
+ CONFIG_FB_SH_MOBILE_LCDC=y
+@@ -940,7 +942,6 @@ CONFIG_ARCH_TEGRA_2x_SOC=y
+ CONFIG_ARCH_TEGRA_3x_SOC=y
+ CONFIG_ARCH_TEGRA_114_SOC=y
+ CONFIG_ARCH_TEGRA_124_SOC=y
+-CONFIG_PM_DEVFREQ=y
+ CONFIG_ARM_TEGRA_DEVFREQ=m
+ CONFIG_TI_AEMIF=y
+ CONFIG_IIO=y
 -- 
 2.17.1
