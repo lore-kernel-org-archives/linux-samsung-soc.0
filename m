@@ -1,68 +1,54 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFT 00/10] ARM/arm64: dts: exynos: Add support for Mali
-Date: Tue, 18 Jun 2019 21:05:24 +0200
-Message-ID: <20190618190534.4951-1-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [RFT 01/10] dt-bindings: gpu: mali: Add Samsung compatibles for
+ Midgard and Utgard
+Date: Tue, 18 Jun 2019 21:05:25 +0200
+Message-ID: <20190618190534.4951-2-krzk@kernel.org>
+References: <20190618190534.4951-1-krzk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20190618190534.4951-1-krzk@kernel.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Olof Johansson <olof@lixom.net>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Joseph Kogut <joseph.kogut@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Joseph Kogut <joseph.kogut@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-Inspired by patch from Joseph Kogut [1], let's add support for Mali GPUs
-to most of other boards.  However it was tested only on Odroid U3
-(Exynos4412) and not fully because requirement of special Mesa drivers
-with Lima support.
-
-Even without tests it brings full description of hardware and replaces
-some out-of-tree downstream code (e.g. in Tizen).
-
-Comments and tests are welcomed.
-
-[1] https://patchwork.kernel.org/patch/10996887/
-
-Best regards,
-Krzysztof
-
-
-Krzysztof Kozlowski (10):
-  dt-bindings: gpu: mali: Add Samsung compatibles for Midgard and Utgard
-  clk: samsung: Add bus clock for GPU/G3D on Exynos4412
-  ARM: dts: exynos: Fix language typo and indentation
-  ARM: dts: exynos: Add GPU/Mali 400 node to Exynos3250
-  ARM: dts: exynos: Add GPU/Mali 400 node to Exynos4
-  arm64: dts: exynos: Add GPU/Mali T760 node to Exynos5433
-  arm64: dts: exynos: Add GPU/Mali T760 node to Exynos7
-  ARM: multi_v7_defconfig: Enable Panfrost and LIMA drivers
-  ARM: exynos_defconfig: Enable Panfrost and LIMA drivers
-  arm64: defconfig: Enable Panfrost driver
-
- .../bindings/gpu/arm,mali-midgard.txt         |  1 +
- .../bindings/gpu/arm,mali-utgard.txt          |  1 +
- arch/arm/boot/dts/exynos3250-artik5.dtsi      |  5 ++
- arch/arm/boot/dts/exynos3250-monk.dts         |  5 ++
- arch/arm/boot/dts/exynos3250-rinato.dts       |  5 ++
- arch/arm/boot/dts/exynos3250.dtsi             | 33 ++++++++++++
- arch/arm/boot/dts/exynos4.dtsi                | 29 +++++++++++
- arch/arm/boot/dts/exynos4210-origen.dts       |  5 ++
- arch/arm/boot/dts/exynos4210-trats.dts        |  4 ++
- .../boot/dts/exynos4210-universal_c210.dts    |  5 ++
- arch/arm/boot/dts/exynos4210.dtsi             | 36 +++++++++++--
- .../boot/dts/exynos4412-itop-scp-core.dtsi    |  5 ++
- arch/arm/boot/dts/exynos4412-midas.dtsi       |  5 ++
- .../boot/dts/exynos4412-odroid-common.dtsi    |  5 ++
- arch/arm/boot/dts/exynos4412.dtsi             | 32 ++++++++++++
- arch/arm/configs/exynos_defconfig             |  3 +-
- arch/arm/configs/multi_v7_defconfig           |  3 +-
- .../dts/exynos/exynos5433-tm2-common.dtsi     |  5 ++
- arch/arm64/boot/dts/exynos/exynos5433.dtsi    | 51 +++++++++++++++++++
- .../boot/dts/exynos/exynos7-espresso.dts      |  5 ++
- arch/arm64/boot/dts/exynos/exynos7.dtsi       | 11 ++++
- arch/arm64/configs/defconfig                  |  2 +-
- drivers/clk/samsung/clk-exynos4.c             |  1 +
- include/dt-bindings/clock/exynos4.h           |  1 +
- 24 files changed, 251 insertions(+), 7 deletions(-)
-
--- 
-2.17.1
+QWRkIHZlbmRvciBjb21wYXRpYmxlcyBmb3Igc3BlY2lmaWMgaW1wbGVtZW50YXRpb24gb2YgTWFs
+aSBVdGdhcmQKKEV4eW5vczMyNTAsIEV4eW5vczQtZmFtaWx5KSBhbmQgTWlkZ2FyZCAoRXh5bm9z
+NTQzMywgRXh5bm9zNykuCgpTaWduZWQtb2ZmLWJ5OiBLcnp5c3p0b2YgS296bG93c2tpIDxrcnpr
+QGtlcm5lbC5vcmc+Ci0tLQogRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwdS9h
+cm0sbWFsaS1taWRnYXJkLnR4dCB8IDEgKwogRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
+bmdzL2dwdS9hcm0sbWFsaS11dGdhcmQudHh0ICB8IDEgKwogMiBmaWxlcyBjaGFuZ2VkLCAyIGlu
+c2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
+Z3MvZ3B1L2FybSxtYWxpLW1pZGdhcmQudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
+bmRpbmdzL2dwdS9hcm0sbWFsaS1taWRnYXJkLnR4dAppbmRleCBlNWFkM2IyYWZlMTcuLjliMjk4
+ZWRlYzViMiAxMDA2NDQKLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dw
+dS9hcm0sbWFsaS1taWRnYXJkLnR4dAorKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
+ZGluZ3MvZ3B1L2FybSxtYWxpLW1pZGdhcmQudHh0CkBAIC0xNyw2ICsxNyw3IEBAIFJlcXVpcmVk
+IHByb3BlcnRpZXM6CiAgICogd2hpY2ggbXVzdCBiZSBwcmVjZWRlZCBieSBvbmUgb2YgdGhlIGZv
+bGxvd2luZyB2ZW5kb3Igc3BlY2lmaWNzOgogICAgICsgImFsbHdpbm5lcixzdW41MGktaDYtbWFs
+aSIKICAgICArICJhbWxvZ2ljLG1lc29uLWd4bS1tYWxpIgorICAgICsgInNhbXN1bmcsZXh5bm9z
+NTQzMy1tYWxpIgogICAgICsgInJvY2tjaGlwLHJrMzI4OC1tYWxpIgogICAgICsgInJvY2tjaGlw
+LHJrMzM5OS1tYWxpIgogCmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
+ZGluZ3MvZ3B1L2FybSxtYWxpLXV0Z2FyZC50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
+YmluZGluZ3MvZ3B1L2FybSxtYWxpLXV0Z2FyZC50eHQKaW5kZXggYWU2M2YwOWZkYTdkLi41MTkw
+MThjYjg2MGIgMTAwNjQ0Ci0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9n
+cHUvYXJtLG1hbGktdXRnYXJkLnR4dAorKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
+ZGluZ3MvZ3B1L2FybSxtYWxpLXV0Z2FyZC50eHQKQEAgLTE3LDYgKzE3LDcgQEAgUmVxdWlyZWQg
+cHJvcGVydGllczoKICAgICAgICsgYW1sb2dpYyxtZXNvbjhiLW1hbGkKICAgICAgICsgYW1sb2dp
+YyxtZXNvbi1neGJiLW1hbGkKICAgICAgICsgYW1sb2dpYyxtZXNvbi1neGwtbWFsaQorICAgICAg
+KyBzYW1zdW5nLGV4eW5vczMyNTAtbWFsaQogICAgICAgKyByb2NrY2hpcCxyazMwMzYtbWFsaQog
+ICAgICAgKyByb2NrY2hpcCxyazMwNjYtbWFsaQogICAgICAgKyByb2NrY2hpcCxyazMxODgtbWFs
+aQotLSAKMi4xNy4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWw=
