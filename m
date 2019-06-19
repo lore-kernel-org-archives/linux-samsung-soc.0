@@ -1,47 +1,118 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] regulator: s2mps11: Fix ERR_PTR dereference on GPIO lookup failure
-Date: Wed, 19 Jun 2019 14:42:39 +0200
-Message-ID: <1560948159-21926-1-git-send-email-krzk@kernel.org>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Georg Waibel <georg.waibel@sensor-technik.de>, Marek Szyprowski <m.szyprowski@samsung.com>, stable@vger.kernel.org
+Subject: Re: [PATCH] gpio: Fix return value mismatch of function gpiod_get_from_of_node()
+Date: Wed, 19 Jun 2019 14:45:32 +0200
+Message-ID: <CAJKOXPej57MJKe6ShinG+VJdG+XM4qhpeD3rQ2ZHzRTmO43+GA@mail.gmail.com>
+References: <1560938081892.33415@sensor-technik.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1560938081892.33415@sensor-technik.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Waibel Georg <Georg.Waibel@sensor-technik.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Support Opensource <support.opensource@diasemi.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-If devm_gpiod_get_from_of_node() call returns ERR_PTR, it is assigned
-into an array of GPIO descriptors and used later because such error is
-not treated as critical thus it is not propagated back to the probe
-function.
+On Wed, 19 Jun 2019 at 11:56, Waibel Georg
+<Georg.Waibel@sensor-technik.de> wrote:
+>
+> In case the requested gpio property is not found in the device tree, some
+> callers of gpiod_get_from_of_node() expect a return value of NULL, others
+> expect -ENOENT.
+> In particular devm_fwnode_get_index_gpiod_from_child() expects -ENOENT.
+> Currently it gets a NULL, which breaks the loop that tries all
+> gpio_suffixes. The result is that a gpio property is not found, even
+> though it is there.
+>
+> This patch changes gpiod_get_from_of_node() to return -ENOENT instead
+> of NULL when the requested gpio property is not found in the device
+> tree. Additionally it modifies all calling functions to properly
+> evaluate the return value.
+>
+> Another approach would be to leave the return value of
+> gpiod_get_from_of_node() as is and fix the bug in
+> devm_fwnode_get_index_gpiod_from_child(). Other callers would still need
+> to be reworked. The effort would be the same as with the chosen solution.
+>
+> Signed-off-by: Georg Waibel <georg.waibel@sensor-technik.de>
+> ---
+>  drivers/gpio/gpiolib.c                 | 6 +-----
+>  drivers/regulator/da9211-regulator.c   | 2 ++
+>  drivers/regulator/s2mps11.c            | 4 +++-
+>  drivers/regulator/s5m8767.c            | 4 +++-
+>  drivers/regulator/tps65090-regulator.c | 7 ++++---
+>  5 files changed, 13 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index e013d417a936..be1d1d2f8aaa 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -4244,8 +4244,7 @@ EXPORT_SYMBOL_GPL(gpiod_get_index);
+>   *
+>   * Returns:
+>   * On successful request the GPIO pin is configured in accordance with
+> - * provided @dflags. If the node does not have the requested GPIO
+> - * property, NULL is returned.
+> + * provided @dflags.
+>   *
+>   * In case of error an ERR_PTR() is returned.
+>   */
+> @@ -4267,9 +4266,6 @@ struct gpio_desc *gpiod_get_from_of_node(struct device_node *node,
+>                                         index, &flags);
+>
+>         if (!desc || IS_ERR(desc)) {
+> -               /* If it is not there, just return NULL */
+> -               if (PTR_ERR(desc) == -ENOENT)
+> -                       return NULL;
+>                 return desc;
+>         }
+>
+> diff --git a/drivers/regulator/da9211-regulator.c b/drivers/regulator/da9211-regulator.c
+> index da37b4ccd834..0309823d2c72 100644
+> --- a/drivers/regulator/da9211-regulator.c
+> +++ b/drivers/regulator/da9211-regulator.c
+> @@ -289,6 +289,8 @@ static struct da9211_pdata *da9211_parse_regulators_dt(
+>                                   0,
+>                                   GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
+>                                   "da9211-enable");
+> +               if (IS_ERR(pdata->gpiod_ren[n]))
+> +                       pdata->gpiod_ren[n] = NULL;
+>                 n++;
+>         }
+>
+> diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+> index 134c62db36c5..b518a81f75a3 100644
+> --- a/drivers/regulator/s2mps11.c
+> +++ b/drivers/regulator/s2mps11.c
+> @@ -821,7 +821,9 @@ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
+>                                 0,
+>                                 GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
+>                                 "s2mps11-regulator");
+> -               if (IS_ERR(gpio[reg])) {
+> +               if (PTR_ERR(gpio[reg]) == -ENOENT)
+> +                       gpio[reg] = NULL;
+> +               else if (IS_ERR(gpio[reg])) {
+>                         dev_err(&pdev->dev, "Failed to get control GPIO for %d/%s\n",
+>                                 reg, rdata[reg].name);
+>                         continue;
+> diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
+> index bb9d1a083299..6ca27e9d5ef7 100644
+> --- a/drivers/regulator/s5m8767.c
+> +++ b/drivers/regulator/s5m8767.c
+> @@ -574,7 +574,9 @@ static int s5m8767_pmic_dt_parse_pdata(struct platform_device *pdev,
+>                         0,
+>                         GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
+>                         "s5m8767");
+> -               if (IS_ERR(rdata->ext_control_gpiod))
+> +               if (PTR_ERR(rdata->ext_control_gpiod) == -ENOENT)
+> +                       rdata->ext_control_gpiod = NULL;
+> +               else if (IS_ERR(rdata->ext_control_gpiod))
+>                         return PTR_ERR(rdata->ext_control_gpiod);
+>
 
-All code later expects that such GPIO descriptor is either a NULL or
-proper value.  This later might lead to dereference of ERR_PTR.
+For s2mps11 and s5m8767 bits:
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Only devices with S2MPS14 flavor are affected (other do not control
-regulators with GPIOs).
+The s2mps11 code brought a bug to my attention so you might rebase on top of it.
 
-Fixes: 1c984942f0a4 ("regulator: s2mps11: Pass descriptor instead of GPIO number")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-
----
-
-The exact error condition was not tested because I do not have board
-with S2MPS14.
----
- drivers/regulator/s2mps11.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 134c62db36c5..af9bf10b4c33 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -824,6 +824,7 @@ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
- 		if (IS_ERR(gpio[reg])) {
- 			dev_err(&pdev->dev, "Failed to get control GPIO for %d/%s\n",
- 				reg, rdata[reg].name);
-+			gpio[reg] = NULL;
- 			continue;
- 		}
- 		if (gpio[reg])
--- 
-2.7.4
+Best regards,
+Krzysztof
