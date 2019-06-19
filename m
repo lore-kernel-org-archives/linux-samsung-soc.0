@@ -1,44 +1,42 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] ARM: dts: exynos: Pull for v5.3
-Date: Wed, 19 Jun 2019 06:27:50 -0700
-Message-ID: <20190619132750.crkv5cvdt2w5jt3h@localhost>
-References: <20190616175513.3681-1-krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH][v2] ARM: dts: exynos: add flash support to galaxy-s3
+ boards
+Date: Wed, 19 Jun 2019 19:19:18 +0200
+Message-ID: <20190619171918.GA24076@kozik-lap>
+References: <20190615170428.GA3447@kozik-lap>
+ <20190618001742.2828-1-GNUtoo@cyberdimension.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <20190616175513.3681-1-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20190618001742.2828-1-GNUtoo@cyberdimension.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
+Cc: Paul Kocialkowski <paul.kocialkowski@bootlin.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Simon Shields <simon@lineageos.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sun, Jun 16, 2019 at 07:55:13PM +0200, Krzysztof Kozlowski wrote:
-> The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+On Tue, Jun 18, 2019 at 02:17:42AM +0200, Denis 'GNUtoo' Carikli wrote:
+> From: Simon Shields <simon@lineageos.org>
 > 
->   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+> The galaxy s3 boards use an aat1290 to control the flash LED.
+> This patch adds the relevant device tree configuration to use it.
 > 
-> are available in the Git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-5.3
-> 
-> for you to fetch changes up to d2cac68e0d9b038da7207c0b63e1399c4f9f60c4:
-> 
->   ARM: dts: exynos: Add ADC node to Exynos5410 and Odroid XU (2019-06-11 20:37:21 +0200)
-> 
-> ----------------------------------------------------------------
-> Samsung DTS ARM changes for v5.3
-> 
-> 1. Fixes for minor warnings.
-> 2. Enable ADC on Exynos5410 Odroid XU board.
-> 
-> ----------------------------------------------------------------
-> Krzysztof Kozlowski (3):
->       ARM: dts: exynos: Move CPU OPP tables out of SoC node on Exynos5420
->       ARM: dts: exynos: Raise maximum buck regulator voltages on Arndale Octa
->       ARM: dts: exynos: Add ADC node to Exynos5410 and Odroid XU
+> Signed-off-by: Simon Shields <simon@lineageos.org>
+> Signed-off-by: Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org> [rebase]
+> ---
+>  arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi | 32 +++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
 
-Merged, thanks!
+Thanks, applied.
 
-
--Olof
+Best regards,
+Krzysztof
