@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 4/6] ARM: dts: exynos: Disable unused buck10 regulator on Odroid HC1 board
-Date: Thu, 20 Jun 2019 20:35:28 +0200
-Message-ID: <20190620183530.5386-4-krzk@kernel.org>
+Subject: [PATCH 5/6] ARM: dts: exynos: Add regulator suspend configuration to Arndale Octa board
+Date: Thu, 20 Jun 2019 20:35:29 +0200
+Message-ID: <20190620183530.5386-5-krzk@kernel.org>
 References: <20190620183530.5386-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190620183530.5386-1-krzk@kernel.org>
@@ -10,47 +10,151 @@ To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sangbe
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, notify@kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The eMMC memory on Odroid XU3/XU4 boards is supplied by two regulators
-LDO18 and buck10 (and LDO13 for the host interface).
+Add the PMIC regulator suspend configuration to Arndale Octa board to
+reduce power usage during suspend and keep necessary regulators on.  The
+configuration is based on vendor (Insignal) reference kernel.
 
-However the Odroid HC1 board does not have eMMC connector so this
-regulator does not have to be always on.
+This is purely for hardware description because board does not support
+Suspend to RAM and the S2MPS11 driver does not support
+"regulator-on-in-suspend" property.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/exynos5422-odroid-core.dtsi      | 2 --
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 6 ++++++
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts | 48 +++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-index 25d95de15c9b..0f967259ad29 100644
---- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-@@ -490,8 +490,6 @@
- 				regulator-name = "vdd_vmem";
- 				regulator-min-microvolt = <2850000>;
- 				regulator-max-microvolt = <2850000>;
--				regulator-always-on;
--				regulator-boot-on;
- 			};
- 		};
- 	};
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index 93a48f2dda49..838872037493 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -360,6 +360,12 @@
- 	};
- };
- 
-+&buck10_reg {
-+	/* Supplies vmmc-supply of mmc_0 */
-+	regulator-always-on;
-+	regulator-boot-on;
-+};
+diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+index dc9162a17475..4463af8fa79d 100644
+--- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
++++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+@@ -451,6 +451,10 @@
+ 				regulator-name = "PVDD_APIO_MMCOFF_2V8";
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <2800000>;
 +
- &hdmi {
- 	status = "okay";
- 	ddc = <&i2c_2>;
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
+ 			};
+ 
+ 			ldo14_reg: LDO14 {
+@@ -464,12 +468,20 @@
+ 				regulator-name = "PVDD_PERI_2V8";
+ 				regulator-min-microvolt = <3300000>;
+ 				regulator-max-microvolt = <3300000>;
++
++				regulator-state-mem {
++					regulator-on-in-suspend;
++				};
+ 			};
+ 
+ 			ldo16_reg: LDO16 {
+ 				regulator-name = "PVDD_PERI_3V3";
+ 				regulator-min-microvolt = <2200000>;
+ 				regulator-max-microvolt = <2200000>;
++
++				regulator-state-mem {
++					regulator-on-in-suspend;
++				};
+ 			};
+ 
+ 			ldo17_reg: LDO17 {
+@@ -489,6 +501,10 @@
+ 				regulator-name = "PVDD_TFLASH_2V8";
+ 				regulator-min-microvolt = <2800000>;
+ 				regulator-max-microvolt = <2800000>;
++
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
+ 			};
+ 
+ 			ldo20_reg: LDO20 {
+@@ -515,12 +531,20 @@
+ 				regulator-min-microvolt = <800000>;
+ 				regulator-max-microvolt = <1100000>;
+ 				regulator-always-on;
++
++				regulator-state-mem {
++					regulator-on-in-suspend;
++				};
+ 			};
+ 
+ 			ldo24_reg: LDO24 {
+ 				regulator-name = "PVDD_CAM1_AVDD_2V8";
+ 				regulator-min-microvolt = <2800000>;
+ 				regulator-max-microvolt = <2800000>;
++
++				regulator-state-mem {
++					regulator-on-in-suspend;
++				};
+ 			};
+ 
+ 			ldo25_reg: LDO25 {
+@@ -540,6 +564,10 @@
+ 				regulator-name = "PVDD_G3DS_1V0";
+ 				regulator-min-microvolt = <800000>;
+ 				regulator-max-microvolt = <1100000>;
++
++				regulator-state-mem {
++					regulator-on-in-suspend;
++				};
+ 			};
+ 
+ 			ldo28_reg: LDO28 {
+@@ -617,6 +645,10 @@
+ 				regulator-min-microvolt = <800000>;
+ 				regulator-max-microvolt = <1300000>;
+ 				regulator-always-on;
++
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
+ 			};
+ 
+ 			buck2_reg: BUCK2 {
+@@ -624,6 +656,10 @@
+ 				regulator-min-microvolt = <800000>;
+ 				regulator-max-microvolt = <1500000>;
+ 				regulator-always-on;
++
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
+ 			};
+ 
+ 			buck3_reg: BUCK3 {
+@@ -631,12 +667,20 @@
+ 				regulator-min-microvolt = <800000>;
+ 				regulator-max-microvolt = <1400000>;
+ 				regulator-always-on;
++
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
+ 			};
+ 
+ 			buck4_reg: BUCK4 {
+ 				regulator-name = "PVDD_G3D_1V0";
+ 				regulator-min-microvolt = <800000>;
+ 				regulator-max-microvolt = <1400000>;
++
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
+ 			};
+ 
+ 			buck5_reg: BUCK5 {
+@@ -651,6 +695,10 @@
+ 				regulator-min-microvolt = <800000>;
+ 				regulator-max-microvolt = <1500000>;
+ 				regulator-always-on;
++
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
+ 			};
+ 
+ 			buck7_reg: BUCK7 {
 -- 
 2.17.1
