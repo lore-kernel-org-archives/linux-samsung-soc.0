@@ -1,82 +1,49 @@
-From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH v4 2/2] dt-bindings: mfd: max8998: Add charger subnode binding
-Date: Fri, 21 Jun 2019 13:56:02 +0200
-Message-ID: <20190621115602.17559-3-pawel.mikolaj.chmiel@gmail.com>
-References: <20190621115602.17559-1-pawel.mikolaj.chmiel@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] gpio: Fix return value mismatch of function
+ gpiod_get_from_of_node()
+Date: Fri, 21 Jun 2019 13:06:10 +0100
+Message-ID: <20190621120610.GG5316@sirena.org.uk>
+References: <1560938081892.33415@sensor-technik.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="3d1h++6StbrqEHAg"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190621115602.17559-1-pawel.mikolaj.chmiel@gmail.com>
+Content-Disposition: inline
+In-Reply-To: <1560938081892.33415@sensor-technik.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: sre@kernel.org
-Cc: lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+To: Waibel Georg <Georg.Waibel@sensor-technik.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Support Opensource <support.opensource@diasemi.com>, Liam Girdwood <lgirdwood@gmail.com>, Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds devicetree bindings documentation for
-battery charging controller as the subnode of MAX8998 PMIC.
 
-Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
----
-Changes from v3:
-  - Property prefix should be maxim, not max8998
-  - Describe what End of Charge in percent means
+--3d1h++6StbrqEHAg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Changes from v2:
-  - Make charge-restart-level-microvolt optional.
-  - Make charge-timeout-hours optional.
+On Wed, Jun 19, 2019 at 09:54:48AM +0000, Waibel Georg wrote:
+> In case the requested gpio property is not found in the device tree, some
+> callers of gpiod_get_from_of_node() expect a return value of NULL, others
+> expect -ENOENT.
+> In particular devm_fwnode_get_index_gpiod_from_child() expects -ENOENT.
+> Currently it gets a NULL, which breaks the loop that tries all
+> gpio_suffixes. The result is that a gpio property is not found, even
+> though it is there.
 
-Changes from v1:
-  - Removed unneeded Fixes tag
-  - Correct description of all charger values
-  - Added missing property unit
----
- .../devicetree/bindings/mfd/max8998.txt       | 26 +++++++++++++++++++
- 1 file changed, 26 insertions(+)
+Acked-by: Mark Brown <broonie@kernel.org>
 
-diff --git a/Documentation/devicetree/bindings/mfd/max8998.txt b/Documentation/devicetree/bindings/mfd/max8998.txt
-index 5f2f07c09c90..368f787d6079 100644
---- a/Documentation/devicetree/bindings/mfd/max8998.txt
-+++ b/Documentation/devicetree/bindings/mfd/max8998.txt
-@@ -48,6 +48,25 @@ Additional properties required if max8998,pmic-buck2-dvs-gpio is defined:
- - max8998,pmic-buck2-dvs-voltage: An array of 2 voltage values in microvolts
-   for buck2 regulator that can be selected using dvs gpio.
- 
-+Charger: Configuration for battery charging controller should be added
-+inside a child node named 'charger'.
-+  Required properties:
-+  - maxim,end-of-charge-percentage: End of Charge in percent.
-+    When the charge current in constant-voltage phase drops below
-+    end-of-charge-percentage of it's start value, charging is terminated.
-+    If value equals 0, leave it unchanged. Otherwise it should be value
-+    from 10 to 45 by 5 step.
-+
-+  Optional properties:
-+  - maxim,charge-restart-threshold: Charge restart threshold in millivolts.
-+    If property is not present, this will be disabled.
-+    Valid values are: 0, 100, 150, 200. If the value equals 0, leave it
-+    unchanged.
-+
-+  - maxim,charge-timeout: Charge timeout in hours. If property is not
-+    present, this will be disabled. Valid values are: 0, 5, 6, 7.
-+    If the value equals 0, leave it unchanged.
-+
- Regulators: All the regulators of MAX8998 to be instantiated shall be
- listed in a child node named 'regulators'. Each regulator is represented
- by a child node of the 'regulators' node.
-@@ -97,6 +116,13 @@ Example:
- 		max8998,pmic-buck2-dvs-gpio = <&gpx0 0 3 0 0>; /* SET3 */
- 		max8998,pmic-buck2-dvs-voltage = <1350000>, <1300000>;
- 
-+		/* Charger configuration */
-+		charger {
-+			maxim,end-of-charge-percentage = <20>;
-+			maxim,charge-restart-threshold = <100>;
-+			maxim,charge-timeout = <7>;
-+		};
-+
- 		/* Regulators to instantiate */
- 		regulators {
- 			ldo2_reg: LDO2 {
--- 
-2.17.1
+--3d1h++6StbrqEHAg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0MyDIACgkQJNaLcl1U
+h9Ce/gf/YPxi8n+w5bYAPtpy4hSIHZ/x4vLS/FxaCkM3TdPBix4ZZyClGg1pQMb3
+/VzCXGrjhUGQ7SRmqEAPKnzhZZsPU7QwbMOWwdM6s0tNeTL3qR6s1ZupYXSo3M8P
+X62jCDKfmUFr7ilslBjtgljbsw95j5b5qKBt3rCnsvQP7zYR4go8NLxYD0hrPK2Z
+hnZherbhbmIZo1Dn5n0rpdK7Ci3mXR3E7Mt/qHVHgCR43xHk1QPIChvzzoC/G05Z
+Sz34TnSTJo2qukyYhzL7ThMpaVxgkUKSTGZJsT/p79oO8OHpRrW3QVvoRp9dj2cY
+bYGkcmlParaEOWVxkdXg2j3i4NNbLw==
+=cGhj
+-----END PGP SIGNATURE-----
+
+--3d1h++6StbrqEHAg--
