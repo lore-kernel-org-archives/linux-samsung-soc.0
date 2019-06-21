@@ -1,7 +1,7 @@
 From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH v4 1/2] power: supply: max8998-charger: Parse device tree for required data.
-Date: Fri, 21 Jun 2019 13:56:01 +0200
-Message-ID: <20190621115602.17559-2-pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH v4 2/2] dt-bindings: mfd: max8998: Add charger subnode binding
+Date: Fri, 21 Jun 2019 13:56:02 +0200
+Message-ID: <20190621115602.17559-3-pawel.mikolaj.chmiel@gmail.com>
 References: <20190621115602.17559-1-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -13,110 +13,70 @@ To: sre@kernel.org
 Cc: lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds missing code for reading charger configuration
-from devicetree.
+This patch adds devicetree bindings documentation for
+battery charging controller as the subnode of MAX8998 PMIC.
 
 Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 ---
 Changes from v3:
   - Property prefix should be maxim, not max8998
-  - Changed property name to more meaning full
+  - Describe what End of Charge in percent means
 
 Changes from v2:
-  - Make restart level and charge timeout properties optional.
-    If they're not present in devicetree, assume they're disabled.
+  - Make charge-restart-level-microvolt optional.
+  - Make charge-timeout-hours optional.
 
 Changes from v1:
   - Removed unneeded Fixes tag
-  - Use new property names
+  - Correct description of all charger values
+  - Added missing property unit
 ---
- drivers/power/supply/max8998_charger.c | 60 ++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+ .../devicetree/bindings/mfd/max8998.txt       | 26 +++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/drivers/power/supply/max8998_charger.c b/drivers/power/supply/max8998_charger.c
-index 9a926c7c0f22..dfd473ed4c5b 100644
---- a/drivers/power/supply/max8998_charger.c
-+++ b/drivers/power/supply/max8998_charger.c
-@@ -8,6 +8,7 @@
- #include <linux/err.h>
- #include <linux/module.h>
- #include <linux/mod_devicetable.h>
-+#include <linux/of.h>
- #include <linux/slab.h>
- #include <linux/platform_device.h>
- #include <linux/power_supply.h>
-@@ -69,6 +70,59 @@ static const struct power_supply_desc max8998_battery_desc = {
- 	.num_properties	= ARRAY_SIZE(max8998_battery_props),
- };
+diff --git a/Documentation/devicetree/bindings/mfd/max8998.txt b/Documentation/devicetree/bindings/mfd/max8998.txt
+index 5f2f07c09c90..368f787d6079 100644
+--- a/Documentation/devicetree/bindings/mfd/max8998.txt
++++ b/Documentation/devicetree/bindings/mfd/max8998.txt
+@@ -48,6 +48,25 @@ Additional properties required if max8998,pmic-buck2-dvs-gpio is defined:
+ - max8998,pmic-buck2-dvs-voltage: An array of 2 voltage values in microvolts
+   for buck2 regulator that can be selected using dvs gpio.
  
-+static int max8998_pmic_dt_parse_pdata(struct max8998_dev *iodev,
-+					struct max8998_platform_data *pdata)
-+{
-+	struct device_node *pmic_np = iodev->dev->of_node;
-+	struct device_node *charger_np;
-+	int ret;
++Charger: Configuration for battery charging controller should be added
++inside a child node named 'charger'.
++  Required properties:
++  - maxim,end-of-charge-percentage: End of Charge in percent.
++    When the charge current in constant-voltage phase drops below
++    end-of-charge-percentage of it's start value, charging is terminated.
++    If value equals 0, leave it unchanged. Otherwise it should be value
++    from 10 to 45 by 5 step.
 +
-+	charger_np = of_get_child_by_name(pmic_np, "charger");
-+	if (!charger_np) {
-+		dev_err(iodev->dev, "could not find charger sub-node\n");
-+		return -EINVAL;
-+	}
++  Optional properties:
++  - maxim,charge-restart-threshold: Charge restart threshold in millivolts.
++    If property is not present, this will be disabled.
++    Valid values are: 0, 100, 150, 200. If the value equals 0, leave it
++    unchanged.
 +
-+	ret = of_property_read_u32(charger_np,
-+					"maxim,end-of-charge-percentage",
-+					&pdata->eoc);
-+	if (ret < 0) {
-+		dev_err(iodev->dev,
-+			"Could not find maxim,end-of-charge-percentage in devicetree\n");
-+		return ret;
-+	}
++  - maxim,charge-timeout: Charge timeout in hours. If property is not
++    present, this will be disabled. Valid values are: 0, 5, 6, 7.
++    If the value equals 0, leave it unchanged.
 +
-+	ret = of_property_read_u32(charger_np,
-+					"maxim,charge-restart-threshold",
-+					&pdata->restart);
-+	if (ret < 0) {
-+		if (ret != -EINVAL) {
-+			dev_err(iodev->dev,
-+				"Failed to read maxim,charge-restart-threshold\n");
-+			return ret;
-+		}
-+
-+		pdata->restart = -1;
-+		dev_dbg(iodev->dev, "Charge Restart Threshold disabled\n");
-+	}
-+
-+	ret = of_property_read_u32(charger_np,
-+					"maxim,charge-timeout",
-+					&pdata->timeout);
-+	if (ret < 0) {
-+		if (ret != -EINVAL) {
-+			dev_err(iodev->dev,
-+				"Failed to read maxim,charge-timeout\n");
-+			return ret;
-+		}
-+
-+		pdata->timeout = -1;
-+		dev_dbg(iodev->dev, "Charge Full Timeout disabled\n");
-+	}
-+
-+	return 0;
-+}
-+
- static int max8998_battery_probe(struct platform_device *pdev)
- {
- 	struct max8998_dev *iodev = dev_get_drvdata(pdev->dev.parent);
-@@ -83,6 +137,12 @@ static int max8998_battery_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
+ Regulators: All the regulators of MAX8998 to be instantiated shall be
+ listed in a child node named 'regulators'. Each regulator is represented
+ by a child node of the 'regulators' node.
+@@ -97,6 +116,13 @@ Example:
+ 		max8998,pmic-buck2-dvs-gpio = <&gpx0 0 3 0 0>; /* SET3 */
+ 		max8998,pmic-buck2-dvs-voltage = <1350000>, <1300000>;
  
-+	if (IS_ENABLED(CONFIG_OF) && iodev->dev->of_node) {
-+		ret = max8998_pmic_dt_parse_pdata(iodev, pdata);
-+		if (ret)
-+			return ret;
-+	}
++		/* Charger configuration */
++		charger {
++			maxim,end-of-charge-percentage = <20>;
++			maxim,charge-restart-threshold = <100>;
++			maxim,charge-timeout = <7>;
++		};
 +
- 	max8998 = devm_kzalloc(&pdev->dev, sizeof(struct max8998_battery_data),
- 				GFP_KERNEL);
- 	if (!max8998)
+ 		/* Regulators to instantiate */
+ 		regulators {
+ 			ldo2_reg: LDO2 {
 -- 
 2.17.1
