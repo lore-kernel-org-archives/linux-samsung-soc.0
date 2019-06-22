@@ -1,46 +1,59 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 7/7] arm64: defconfig: Enable Panfrost driver
-Date: Sat, 22 Jun 2019 10:39:07 +0200
-Message-ID: <CAJKOXPdk2MmBHjiDU4M6PA6O4ifVe_sDifejUPJiGPCQ7MR1sQ@mail.gmail.com>
-References: <20190621180208.25361-1-krzk@kernel.org> <20190621180208.25361-7-krzk@kernel.org>
- <CA+E=qVe45NVCfpSHRF6=0aYRpURZA4DVz8W-XkSaNDB=1mX2kA@mail.gmail.com>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Subject: Re: [PATCH v10 09/13] drivers: devfreq: events: add Exynos PPMU new events
+Date: Sat, 22 Jun 2019 22:10:08 +0900
+Message-ID: <CAGTfZH35X0zE2LhGWJJp2xZNNk1ew7zNMoMqL+eZ5rcBFcPvew@mail.gmail.com>
+References: <CGME20190614095328eucas1p24009b3a07322fd12e49eabb7a08baf50@eucas1p2.samsung.com>
+ <20190614095309.24100-1-l.luba@partner.samsung.com> <20190614095309.24100-10-l.luba@partner.samsung.com>
+Reply-To: cwchoi00@gmail.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+E=qVe45NVCfpSHRF6=0aYRpURZA4DVz8W-XkSaNDB=1mX2kA@mail.gmail.com>
+In-Reply-To: <20190614095309.24100-10-l.luba@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vasily Khoruzhick <anarsoul@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, devicetree <devicetree@vger.kernel.org>, arm-linux <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Joseph Kogut <joseph.kogut@gmail.com>, Inki Dae <inki.dae@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Lukasz Luba <l.luba@partner.samsung.com>
+Cc: devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, keescook@chromium.org, Tony Lindgren <tony@atomide.com>, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, Greg KH <gregkh@linuxfou>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, 21 Jun 2019 at 22:15, Vasily Khoruzhick <anarsoul@gmail.com> wrote:
+Hi,
+
+2019=EB=85=84 6=EC=9B=94 14=EC=9D=BC (=EA=B8=88) =EC=98=A4=ED=9B=84 6:54, L=
+ukasz Luba <l.luba@partner.samsung.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=
+=B1:
 >
-> On Fri, Jun 21, 2019 at 11:04 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >
-> > Enable support for Mali GPU with Panfrost driver, e.g. for Exynos5433
-> > and Exynos7 (having Mali T760).
-> >
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > ---
-> >  arch/arm64/configs/defconfig | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> > index 6b4f5cf23324..972b17239f13 100644
-> > --- a/arch/arm64/configs/defconfig
-> > +++ b/arch/arm64/configs/defconfig
-> > @@ -517,6 +517,7 @@ CONFIG_DRM_HISI_HIBMC=m
-> >  CONFIG_DRM_HISI_KIRIN=m
-> >  CONFIG_DRM_MESON=m
-> >  CONFIG_DRM_PL111=m
-> > +CONFIG_DRM_PANFROST=m
+> Define new performance events supported by Exynos5422 SoC counters.
+> The counters are built-in in Dynamic Memory Controller and provide
+> information regarding memory utilization.
 >
-> It makes sense to enable lima for arm64 defconfig as well since it's
-> used on number of 64-bit Allwinner SoCs.
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  drivers/devfreq/event/exynos-ppmu.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/=
+exynos-ppmu.c
+> index c2ea94957501..ce658c262c27 100644
+> --- a/drivers/devfreq/event/exynos-ppmu.c
+> +++ b/drivers/devfreq/event/exynos-ppmu.c
+> @@ -89,6 +89,12 @@ static struct __exynos_ppmu_events {
+>         PPMU_EVENT(d1-cpu),
+>         PPMU_EVENT(d1-general),
+>         PPMU_EVENT(d1-rt),
+> +
+> +       /* For Exynos5422 SoC */
+> +       PPMU_EVENT(dmc0_0),
+> +       PPMU_EVENT(dmc0_1),
+> +       PPMU_EVENT(dmc1_0),
+> +       PPMU_EVENT(dmc1_1),
+>  };
+>
+>  static int exynos_ppmu_find_ppmu_id(struct devfreq_event_dev *edev)
+> --
+> 2.17.1
+>
 
-I wasn't aware that some of ARMv8 SoCs still use Utgard. In such case
-it makes sense indeed, I will send a follow up.
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Thanks for feedback!
-
-Krzysztof
+--=20
+Best Regards,
+Chanwoo Choi
