@@ -1,69 +1,67 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
 Subject: Re: [PATCH v3] arm64: defconfig: Enable Panfrost and Lima drivers
-Date: Sun, 23 Jun 2019 21:16:40 +0200
-Message-ID: <CAJKOXPcFFY08R1H-DrrzX2BC3L8x4NPJTP7nDn9yixAvmaiF9Q@mail.gmail.com>
-References: <20190621180208.25361-7-krzk@kernel.org> <20190622191838.29850-1-krzk@kernel.org>
+Date: Mon, 24 Jun 2019 08:39:09 +0900
+Message-ID: <6edbe882-314c-85e1-4109-7c3b324dc7ab@samsung.com>
+References: <20190621180208.25361-7-krzk@kernel.org>
+ <20190622191838.29850-1-krzk@kernel.org>
  <CAGTfZH2g6E2pCEtqjfCd+PjEzjwc2AB75LXJfCeO+PcYLiLTUw@mail.gmail.com>
+ <CGME20190623192007epcas4p2a3995bb00091b436562828fceb6ff790@epcas4p2.samsung.com>
+ <CAJKOXPcFFY08R1H-DrrzX2BC3L8x4NPJTP7nDn9yixAvmaiF9Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAGTfZH2g6E2pCEtqjfCd+PjEzjwc2AB75LXJfCeO+PcYLiLTUw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: cwchoi00@gmail.com
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>, Olof Johansson <olof@lixom.net>, Jagan Teki <jagan@amarulasolutions.com>, Simon Horman <horms+renesas@verge.net.au>, Leonard Crestez <leonard.crestez@nxp.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Dinh Nguyen <dinguyen@kernel.org>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, Vasily Khoruzhick <anarsoul@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAJKOXPcFFY08R1H-DrrzX2BC3L8x4NPJTP7nDn9yixAvmaiF9Q@mail.gmail.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, cwchoi00@gmail.com
+Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>, Catalin Marinas <catalin.marinas@arm.com>, linux-kernel <linux-kernel@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Dinh Nguyen <dinguyen@kernel.org>, Jagan Teki <jagan@amarulasolutions.com>, Simon Horman <horms+renesas@verge.net.au>, Olof Johansson <olof@lixom.net>, Shawn Guo <shawnguo@kernel.org>, Leonard Crestez <leonard.crestez@nxp.com>, Will Deacon <will@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sun, 23 Jun 2019 at 06:31, Chanwoo Choi <cwchoi00@gmail.com> wrote:
->
-> Hi Krzysztof,
->
-> 2019=EB=85=84 6=EC=9B=94 23=EC=9D=BC (=EC=9D=BC) =EC=98=A4=EC=A0=84 4:20,=
- Krzysztof Kozlowski <krzk@kernel.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1=
-:
-> >
-> > Enable support for Mali GPU with Panfrost and Lima drivers for:
-> > 1. Samsung Exynos5433 and Exynos7 (having Mali T760),
-> > 2. Allwiner A64 and H5 (Mali 400/450).
-> >
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> >
-> > ---
-> >
-> > Changes since v1:
-> > 1. Enable Lima driver
-> > ---
-> >  arch/arm64/configs/defconfig | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfi=
-g
-> > index fbbc065415d4..3d31611368af 100644
-> > --- a/arch/arm64/configs/defconfig
-> > +++ b/arch/arm64/configs/defconfig
-> > @@ -518,6 +518,8 @@ CONFIG_DRM_HISI_HIBMC=3Dm
-> >  CONFIG_DRM_HISI_KIRIN=3Dm
-> >  CONFIG_DRM_MESON=3Dm
-> >  CONFIG_DRM_PL111=3Dm
-> > +CONFIG_DRM_LIMA=3Dm
-> > +CONFIG_DRM_PANFROST=3Dm
-> >  CONFIG_FB=3Dy
-> >  CONFIG_FB_MODE_HELPERS=3Dy
-> >  CONFIG_BACKLIGHT_GENERIC=3Dm
-> > @@ -718,7 +720,6 @@ CONFIG_ARCH_TEGRA_194_SOC=3Dy
-> >  CONFIG_ARCH_K3_AM6_SOC=3Dy
-> >  CONFIG_SOC_TI=3Dy
-> >  CONFIG_TI_SCI_PM_DOMAINS=3Dy
-> > -CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND=3Dy
->
-> Exynos5433-tm2 board support the exynos-bus device which
-> used the simple_ondmenad governor of devfreq.
-> Why do you remove this configuration from the defconfig?
-
-It is selected by default by DRM_PANFROST. The difference is that
-PANFROST selects it as module. The 'y' is chosen because of:
-  SCSI_UFSHCD [=3Dy] && SCSI_LOWLEVEL [=3Dy] && SCSI [=3Dy] && SCSI_DMA [=
-=3Dy]
-
-Best regards,
-Krzysztof
+T24gMTkuIDYuIDI0LiDsmKTsoIQgNDoxNiwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToKPiBP
+biBTdW4sIDIzIEp1biAyMDE5IGF0IDA2OjMxLCBDaGFud29vIENob2kgPGN3Y2hvaTAwQGdtYWls
+LmNvbT4gd3JvdGU6Cj4+Cj4+IEhpIEtyenlzenRvZiwKPj4KPj4gMjAxOeuFhCA27JuUIDIz7J28
+ICjsnbwpIOyYpOyghCA0OjIwLCBLcnp5c3p0b2YgS296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+
+64uY7J20IOyekeyEsToKPj4+Cj4+PiBFbmFibGUgc3VwcG9ydCBmb3IgTWFsaSBHUFUgd2l0aCBQ
+YW5mcm9zdCBhbmQgTGltYSBkcml2ZXJzIGZvcjoKPj4+IDEuIFNhbXN1bmcgRXh5bm9zNTQzMyBh
+bmQgRXh5bm9zNyAoaGF2aW5nIE1hbGkgVDc2MCksCj4+PiAyLiBBbGx3aW5lciBBNjQgYW5kIEg1
+IChNYWxpIDQwMC80NTApLgo+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IEtyenlzenRvZiBLb3psb3dz
+a2kgPGtyemtAa2VybmVsLm9yZz4KPj4+Cj4+PiAtLS0KPj4+Cj4+PiBDaGFuZ2VzIHNpbmNlIHYx
+Ogo+Pj4gMS4gRW5hYmxlIExpbWEgZHJpdmVyCj4+PiAtLS0KPj4+ICBhcmNoL2FybTY0L2NvbmZp
+Z3MvZGVmY29uZmlnIHwgMyArKy0KPj4+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCsp
+LCAxIGRlbGV0aW9uKC0pCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtNjQvY29uZmlncy9k
+ZWZjb25maWcgYi9hcmNoL2FybTY0L2NvbmZpZ3MvZGVmY29uZmlnCj4+PiBpbmRleCBmYmJjMDY1
+NDE1ZDQuLjNkMzE2MTEzNjhhZiAxMDA2NDQKPj4+IC0tLSBhL2FyY2gvYXJtNjQvY29uZmlncy9k
+ZWZjb25maWcKPj4+ICsrKyBiL2FyY2gvYXJtNjQvY29uZmlncy9kZWZjb25maWcKPj4+IEBAIC01
+MTgsNiArNTE4LDggQEAgQ09ORklHX0RSTV9ISVNJX0hJQk1DPW0KPj4+ICBDT05GSUdfRFJNX0hJ
+U0lfS0lSSU49bQo+Pj4gIENPTkZJR19EUk1fTUVTT049bQo+Pj4gIENPTkZJR19EUk1fUEwxMTE9
+bQo+Pj4gK0NPTkZJR19EUk1fTElNQT1tCj4+PiArQ09ORklHX0RSTV9QQU5GUk9TVD1tCj4+PiAg
+Q09ORklHX0ZCPXkKPj4+ICBDT05GSUdfRkJfTU9ERV9IRUxQRVJTPXkKPj4+ICBDT05GSUdfQkFD
+S0xJR0hUX0dFTkVSSUM9bQo+Pj4gQEAgLTcxOCw3ICs3MjAsNiBAQCBDT05GSUdfQVJDSF9URUdS
+QV8xOTRfU09DPXkKPj4+ICBDT05GSUdfQVJDSF9LM19BTTZfU09DPXkKPj4+ICBDT05GSUdfU09D
+X1RJPXkKPj4+ICBDT05GSUdfVElfU0NJX1BNX0RPTUFJTlM9eQo+Pj4gLUNPTkZJR19ERVZGUkVR
+X0dPVl9TSU1QTEVfT05ERU1BTkQ9eQo+Pgo+PiBFeHlub3M1NDMzLXRtMiBib2FyZCBzdXBwb3J0
+IHRoZSBleHlub3MtYnVzIGRldmljZSB3aGljaAo+PiB1c2VkIHRoZSBzaW1wbGVfb25kbWVuYWQg
+Z292ZXJub3Igb2YgZGV2ZnJlcS4KPj4gV2h5IGRvIHlvdSByZW1vdmUgdGhpcyBjb25maWd1cmF0
+aW9uIGZyb20gdGhlIGRlZmNvbmZpZz8KPiAKPiBJdCBpcyBzZWxlY3RlZCBieSBkZWZhdWx0IGJ5
+IERSTV9QQU5GUk9TVC4gVGhlIGRpZmZlcmVuY2UgaXMgdGhhdAo+IFBBTkZST1NUIHNlbGVjdHMg
+aXQgYXMgbW9kdWxlLiBUaGUgJ3knIGlzIGNob3NlbiBiZWNhdXNlIG9mOgo+ICAgU0NTSV9VRlNI
+Q0QgWz15XSAmJiBTQ1NJX0xPV0xFVkVMIFs9eV0gJiYgU0NTSSBbPXldICYmIFNDU0lfRE1BIFs9
+eV0KCldoZW4gSSB0cmllZCB0byBmaW5kIHRoZSBoaXN0b3J5IG9mIENPTkZJR19ERVZGUkVRX0dP
+Vl9TSU1QTEVfT05ERU1BTkQgCmZvciBkZWZjb25maWcsIHRoZSBmb2xsb3dpbmcgcGF0Y2hbMV0g
+YWRkZWQgdGhpcyBjb25maWd1cmF0aW9uLgpbMV0gYjk3MmZmNzVmMjkzOGMzOWUyMjA1YzIzZWEw
+ZTUzMWQzNmIyN2Y4NgotICJhcm02NDogZGVmY29uZmlnOiBFbmFibGUgVUZTIG9uIG1zbTg5OTYi
+CgpJIHRoaW5rIHRoYXQgdGhpcyBwYXRjaCB3aWxsIGFmZmVjdCB0aGUgb3ByYXRpb24gb2YgJ1VT
+RiBvbiBtc204OTk4Jy4KCi0tIApCZXN0IFJlZ2FyZHMsCkNoYW53b28gQ2hvaQpTYW1zdW5nIEVs
+ZWN0cm9uaWNzCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+XwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmlu
+ZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9s
+aW51eC1hcm0ta2VybmVsCg==
