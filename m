@@ -1,29 +1,56 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 01/15] arm: perf: cleanup cppcheck shifting error
-Date: Mon, 24 Jun 2019 09:11:21 +0200
-Message-ID: <20190624071121.GN3436@hirez.programming.kicks-ass.net>
-References: <20190623151313.970-1-tranmanphong@gmail.com>
- <20190623151313.970-2-tranmanphong@gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2 3/4] ARM: dts: exynos: Add regulator suspend
+ configuration to Odroid XU3/XU4/HC1 family
+Date: Mon, 24 Jun 2019 09:20:38 +0200
+Message-ID: <d94a2f99-fb99-c238-7011-9bbb4c0cd90f@samsung.com>
+References: <20190621155845.7079-1-krzk@kernel.org>
+        <20190621155845.7079-3-krzk@kernel.org>
+        <CGME20190623160226epcas2p3449814deb1faf7bf939481e6d4da2b86@epcas2p3.samsung.com>
+        <CANAwSgTFQo8wL5s-djwPXFFOLtTHvRQif6234kFC=23PwMhuEQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190623151313.970-2-tranmanphong@gmail.com>
+In-Reply-To: <CANAwSgTFQo8wL5s-djwPXFFOLtTHvRQif6234kFC=23PwMhuEQ@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Phong Tran <tranmanphong@gmail.com>
-Cc: mark.rutland@arm.com, kstewart@linuxfoundation.org, songliubraving@fb.com, andrew@lunn.ch, nsekhar@ti.com, ast@kernel.org, jolsa@redhat.com, netdev@vger.kernel.org, gerg@uclinux.org, lorenzo.pieralisi@arm.com, will@kernel.org, linux-samsung-soc@vger.kernel.org, daniel@iogearbox.net, festevam@gmail.com, gregory.clement@bootlin.com, allison@lohutok.net, linux@armlinux.org.uk, krzk@kernel.org, haojian.zhuang@gmail.com, bgolaszewski@baylibre.com, tony@atomide.com, mingo@redhat.com, linux-imx@nxp.com, yhs@fb.com, sebastian.hesselbarth@gmail.com, illusionist.neo@gmail.com, jason@lakedaemon.net, liviu.dudau@arm.com, s.hauer@pengutronix.de, acme@kernel.org, lkundrak@v3.sk, robert.jarzmik@free.fr, dmg@turingmachine.org, swinslow@gmail.com, namhyung@kernel.org, tglx@linutronix.de, linux-omap
+To: Anand Moon <linux.amoon@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sun, Jun 23, 2019 at 10:12:59PM +0700, Phong Tran wrote:
-> fix "Shifting signed 32-bit value by 31 bits is undefined behaviour
-> errors"
-> 
-> [arch/arm/kernel/perf_event_v7.c:1080]: (error) Shifting signed 32-bit
-> value by 31 bits is undefined behaviour
-> [arch/arm/kernel/perf_event_v7.c:1436]: (error) Shifting signed 32-bit
-> value by 31 bits is undefined behaviour
-> [arch/arm/kernel/perf_event_v7.c:1783]: (error) Shifting signed 32-bit
-> value by 31 bits is undefined behaviour
+Hi Anand,
 
-I don't think that is true; the kernel uses -fno-strict-overflow (which
-implies -fwrapv) and that takes away all the signed UB.
+On 2019-06-23 18:02, Anand Moon wrote:
+> Thanks for this patch. Please add my
+>
+> Tested-by: Anand Moon <linux.amoon@gmail.com>
+>
+> [snip]
+>
+> Could you integrate below small changes into this patch.
+> with these below changes suspend and resume work correctly at my end.
+>
+> [1] XU4_suspendresume.patch
+>
+> As per S2MPS11B PMIC 1.2.1 Regulator (Features)
+> Fix the min max value for *Buck7* and *Buck8*
+>
+> -- Buck7 (VDD_1.0V_LDO) 1.5 A (1.2 V to 1.5 V, 12.5 mV step, default on 1.35 V)
+> -- Buck8 (VDD_1.8V_LDO) 2.5 A (1.8 V to 2.1 V, 12.5 mV step, default on 2.0 V)
+
+Could you elaborate why such change for Buck7 and Buck8 is needed?
+
+> Also add suspend-off for *Buck9*
+> Buck9 internally controls the power of USB hub.
+> Adding suspend the this node help proper reset of USB hub on Odroid
+> XU4 / HC1/ XU3
+> during suspend and resume. Below it the logs from my testing.
+
+Disabling Buck9 in suspend indeed reduces the power consumed by the 
+board during suspend-to-ram from about 80mA to as little as 7-10mA, what 
+matches the results of OdroidXU3. Thanks for the hint!
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
