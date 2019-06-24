@@ -1,23 +1,33 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH 06/15] ARM: imx: cleanup cppcheck shifting errors
-Date: Mon, 24 Jun 2019 11:16:52 +0800
-Message-ID: <20190624031651.GA16146@dragon>
-References: <20190623151313.970-1-tranmanphong@gmail.com>
- <20190623151313.970-7-tranmanphong@gmail.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [RESEND,v2] cpufreq: s5pv210: Don't flood kernel log after
+ cpufreq change
+Date: Mon, 24 Jun 2019 10:27:25 +0530
+Message-ID: <20190624045725.mckcpb5kvkug33p6@vireshk-i7>
+References: <20190621101043.10549-1-pawel.mikolaj.chmiel@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190623151313.970-7-tranmanphong@gmail.com>
+In-Reply-To: <20190621101043.10549-1-pawel.mikolaj.chmiel@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Phong Tran <tranmanphong@gmail.com>
-Cc: mark.rutland@arm.com, kstewart@linuxfoundation.org, songliubraving@fb.com, andrew@lunn.ch, peterz@infradead.org, nsekhar@ti.com, ast@kernel.org, jolsa@redhat.com, netdev@vger.kernel.org, gerg@uclinux.org, lorenzo.pieralisi@arm.com, will@kernel.org, linux-samsung-soc@vger.kernel.org, daniel@iogearbox.net, festevam@gmail.com, gregory.clement@bootlin.com, allison@lohutok.net, linux@armlinux.org.uk, krzk@kernel.org, haojian.zhuang@gmail.com, bgolaszewski@baylibre.com, tony@atomide.com, mingo@redhat.com, linux-imx@nxp.com, yhs@fb.com, sebastian.hesselbarth@gmail.com, illusionist.neo@gmail.com, jason@lakedaemon.net, liviu.dudau@arm.com, s.hauer@pengutronix.de, acme@kernel.org, lkundrak@v3.sk, robert.jarzmik@free.fr, dmg@turingmachine.org, swinslow@gmail.com, namhyung@kernel.org
+To: =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Cc: kgene@kernel.org, krzk@kernel.org, rjw@rjwysocki.net, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sun, Jun 23, 2019 at 10:13:04PM +0700, Phong Tran wrote:
-> [arch/arm/mach-imx/iomux-mx3.h:93]: (error) Shifting signed 32-bit value
-> by 31 bits is undefined behaviour
+On 21-06-19, 12:10, Paweł Chmiel wrote:
+> This commit replaces printk with pr_debug, so we don't flood kernel log.
 > 
-> Signed-off-by: Phong Tran <tranmanphong@gmail.com>
+> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+> Changes from v1:
+>   - Added Acked-by
+> ---
+>  drivers/cpufreq/s5pv210-cpufreq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks.
+Applied. Thanks.
+
+-- 
+viresh
