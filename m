@@ -1,90 +1,82 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2 3/4] ARM: dts: exynos: Add regulator suspend
- configuration to Odroid XU3/XU4/HC1 family
-Date: Mon, 24 Jun 2019 11:01:25 +0200
-Message-ID: <2f58b63e-adf1-7935-8849-f311dc991b84@samsung.com>
-References: <20190621155845.7079-1-krzk@kernel.org>
-        <20190621155845.7079-3-krzk@kernel.org>
-        <CGME20190623160226epcas2p3449814deb1faf7bf939481e6d4da2b86@epcas2p3.samsung.com>
-        <CANAwSgTFQo8wL5s-djwPXFFOLtTHvRQif6234kFC=23PwMhuEQ@mail.gmail.com>
-        <d94a2f99-fb99-c238-7011-9bbb4c0cd90f@samsung.com>
-        <CAJKOXPeXELUjsuW9eyGuRj56067qnL-J2Lt4U42mYiyx=X+F_Q@mail.gmail.com>
+Subject: Re: [PATCH resend 25/47] ASoC: samsung: snow: don't
+ select unnecessary Platform
+Date: Mon, 24 Jun 2019 15:19:04 +0200
+Message-ID: <9cfc8505-2903-033f-f68b-8ccc1c70132b@samsung.com>
+References: <877e9iwf9f.wl-kuninori.morimoto.gx@renesas.com>
+ <874l4mv0h8.wl-kuninori.morimoto.gx@renesas.com>
+ <CGME20190624131905eucas1p2cf4335b4d1483b7e62d0c9e7b5223a3c@eucas1p2.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPeXELUjsuW9eyGuRj56067qnL-J2Lt4U42mYiyx=X+F_Q@mail.gmail.com>
+Content-Transfer-Encoding: base64
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <874l4mv0h8.wl-kuninori.morimoto.gx@renesas.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Anand Moon <linux.amoon@gmail.com>, Kukjin Kim <kgene@kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Mark Brown <broonie@kernel.org>
+Cc: Linux-ALSA <alsa-devel@alsa-project.org>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
-
-On 2019-06-24 09:41, Krzysztof Kozlowski wrote:
-> On Mon, 24 Jun 2019 at 09:20, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->> On 2019-06-23 18:02, Anand Moon wrote:
->>> Thanks for this patch. Please add my
->>>
->>> Tested-by: Anand Moon <linux.amoon@gmail.com>
->>>
->>> [snip]
->>>
->>> Could you integrate below small changes into this patch.
->>> with these below changes suspend and resume work correctly at my end.
->>>
->>> [1] XU4_suspendresume.patch
->>>
->>> As per S2MPS11B PMIC 1.2.1 Regulator (Features)
->>> Fix the min max value for *Buck7* and *Buck8*
->>>
->>> -- Buck7 (VDD_1.0V_LDO) 1.5 A (1.2 V to 1.5 V, 12.5 mV step, default on 1.35 V)
->>> -- Buck8 (VDD_1.8V_LDO) 2.5 A (1.8 V to 2.1 V, 12.5 mV step, default on 2.0 V)
->> Could you elaborate why such change for Buck7 and Buck8 is needed?
-> Anand has here valid point - the constraints in DTS do not match
-> hardware manual. This leads to question whether voltage table in
-> driver is proper... Another point is the voltage itself. The
-> schematics describes them as at specific voltage (1.35 V and 2.0 V)
-> but after boot they are 1.2 V and 1.85 V. Maybe this shift comes from
-> the problem above.
->
->>> Also add suspend-off for *Buck9*
->>> Buck9 internally controls the power of USB hub.
->>> Adding suspend the this node help proper reset of USB hub on Odroid
->>> XU4 / HC1/ XU3
->>> during suspend and resume. Below it the logs from my testing.
->> Disabling Buck9 in suspend indeed reduces the power consumed by the
->> board during suspend-to-ram from about 80mA to as little as 7-10mA, what
->> matches the results of OdroidXU3. Thanks for the hint!
-> Although I did not get what is the difference in the logs (Anand
-> pasted two logs but they look the same) but the power consumption is
-> reason is good enough. I would be happy to put in the changelog entire
-> consumption  difference. I can measure it on XU3-Lite but can you give
-> me the XU4 (before and after)?\
-
-
-HC1:
-
-next-20190620: 120mA (@5V)
-this patchset: 72mA (@5V)
-this patchset + fixup from Anand: 7-10mA (@5V)
-
-XU4 (SDcard):
-
-next-20190620: 88mA (@5V)
-this patchset: 74mA (@5V), sometimes 42mA (@5V)
-this patchset + fixup from Anand: 6-9mA (@5V)
-
-
-XU4 (eMMC):
-
-next-20190620: 100mA (@5V)
-this patchset: 72mA (@5V), sometimes 41mA (@5V)
-this patchset + fixup from Anand: 6-9mA (@5V)
-
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+SGkKCk9uIDIwMTktMDYtMTkgMDM6MTgsIEt1bmlub3JpIE1vcmltb3RvIHdyb3RlOgo+IEZyb206
+IEt1bmlub3JpIE1vcmltb3RvIDxrdW5pbm9yaS5tb3JpbW90by5neEByZW5lc2FzLmNvbT4KPgo+
+IEFMU0EgU29DIGlzIG5vdyBzdXBwb3J0aW5nICJubyBQbGF0Zm9ybSIuIFNvdW5kIGNhcmQgZG9l
+c24ndCBuZWVkIHRvCj4gc2VsZWN0ICJDUFUgY29tcG9uZW50IiBhcyAiUGxhdGZvcm0iIGFueW1v
+cmUgaWYgaXQgZG9lc24ndCBuZWVkCj4gc3BlY2lhbCBQbGF0Zm9ybS4KPiBUaGlzIHBhdGNoIHJl
+bW92ZXMgc3VjaCBzZXR0aW5ncy4KPgo+IFNpZ25lZC1vZmYtYnk6IEt1bmlub3JpIE1vcmltb3Rv
+IDxrdW5pbm9yaS5tb3JpbW90by5neEByZW5lc2FzLmNvbT4KClRoaXMgcGF0Y2ggY2F1c2VzIHJl
+Z3Jlc3Npb24gb24gU2Ftc3VuZyBFeHlub3MtYmFzZWQgYm9hcmRzOiBTbm93LCAKUGVhY2gtUGkg
+YW5kIFBlYWNoLVBpdCAoYWxsIHRoYXQgdXNlIHNub3cgbWFjaGluZSBkcml2ZXIpIHNpbmNlIGxp
+bnV4IApuZXh0LTIwMTkwNjIwLiBBU29DIGRldmljZSBpcyBwcm9wZXJseSByZWdpc3RlcmVkLCBi
+dXQgaXQgaXMgbm90IHVzYWJsZToKClvCoMKgwqAgMy4yMDMwMDZdIHNhbXN1bmctaTJzIDM4MzAw
+MDAuaTJzLXNlYzogRE1BIGNoYW5uZWxzIHNvdXJjZWQgZnJvbSAKZGV2aWNlIDM4MzAwMDAuaTJz
+ClvCoMKgwqAgMy4yMTM0NDBdIHNub3ctYXVkaW8gc291bmQ6IEZhaWxlZCBwYXJzaW5nIGNvZGVj
+IG5vZGUKW8KgwqDCoCAzLjQyMzI0MV0gc25vdy1hdWRpbyBzb3VuZDogbXVsdGljb2RlYyA8LT4g
+c2Ftc3VuZy1pMnMgbWFwcGluZyBvawpbwqDCoMKgIDMuNDI5Nzc2XSBtYXg5ODA5NSA3LTAwMTE6
+IEFTb0M6IG11eCBFeHRlcm5hbCBNSUMgaGFzIG5vIHBhdGhzClvCoMKgwqAgMy40MzQ1MTNdIG1h
+eDk4MDk1IDctMDAxMTogQVNvQzogbXV4IExpbmVpbiBNdXggaGFzIG5vIHBhdGhzClvCoMKgwqAg
+NC4wNDM0ODhdIEFMU0EgZGV2aWNlIGxpc3Q6ClvCoMKgwqAgNC4wNDcxNzFdwqDCoCAjMDogU25v
+dy1JMlMtTUFYOTgwOTUKCiMgc3BlYWtlci10ZXN0IC1sMQoKc3BlYWtlci10ZXN0IDEuMS4zCgpQ
+bGF5YmFjayBkZXZpY2UgaXMgZGVmYXVsdApTdHJlYW0gcGFyYW1ldGVycyBhcmUgNDgwMDBIeiwg
+UzE2X0xFLCAxIGNoYW5uZWxzClVzaW5nIDE2IG9jdGF2ZXMgb2YgcGluayBub2lzZQpQbGF5YmFj
+ayBvcGVuIGVycm9yOiAtMjIsSW52YWxpZCBhcmd1bWVudAoKIwoKVGhlIGtlcm5lbCBsb2dzIGFy
+ZSBleGFjdGx5IHRoZSBzYW1lIHdoZW0gaXQgd29ya2VkIGZpbmUgKGkuZS4gCm5leHQtMjAxOTA2
+MTksIHNvIHRoZSBtZXNzYWdlIGFib3V0IGNvZGVjIG5vZGUgY2FuIGJlIGlnbm9yZWQpLgoKU2lt
+aWxhciBpc3N1ZSBhcHBlYXJzIGFsc28gb24gSGFyZGtlcm5lbCdzIE9kcm9pZFhVIGJvYXJkIAoo
+RXh5bm9zNTQxMC1iYXNlZCwgdXNlcyBzb3VuZC1jYXJkLXNpbXBsZSBBU29DIGRyaXZlcikgYW5k
+IFNhbXN1bmcgVE0yIApib2FyZCAoRXh5bm9zNTQzMywgdXNlcyB0bTJfd201MTEwIGRyaXZlciku
+IEknbSBvcGVuIHRvIHRlc3QgYW55IHBhdGNoIApvciBwcm92aWRlIG1vcmUgbG9ncyBpZiBuZWVk
+ZWQuCgo+IC0tLQo+ICAgc291bmQvc29jL3NhbXN1bmcvc25vdy5jIHwgMTAgKysrLS0tLS0tLQo+
+ICAgMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMoLSkKPgo+IGRp
+ZmYgLS1naXQgYS9zb3VuZC9zb2Mvc2Ftc3VuZy9zbm93LmMgYi9zb3VuZC9zb2Mvc2Ftc3VuZy9z
+bm93LmMKPiBpbmRleCA4ZWE3Nzk5Li43ZDY2OWM0IDEwMDY0NAo+IC0tLSBhL3NvdW5kL3NvYy9z
+YW1zdW5nL3Nub3cuYwo+ICsrKyBiL3NvdW5kL3NvYy9zYW1zdW5nL3Nub3cuYwo+IEBAIC0xNCw5
+ICsxNCw5IEBACj4gICAKPiAgICNkZWZpbmUgRklOX1BMTF9SQVRFCQkyNDAwMDAwMAo+ICAgCj4g
+LVNORF9TT0NfREFJTElOS19ERUZTKGxpbmtzLAo+IC0JREFJTElOS19DT01QX0FSUkFZKENPTVBf
+RU1QVFkoKSksCj4gLQlEQUlMSU5LX0NPTVBfQVJSQVkoQ09NUF9FTVBUWSgpKSwKPiArU05EX1NP
+Q19EQUlMSU5LX0RFRihsaW5rc19jcHVzLAo+ICsJREFJTElOS19DT01QX0FSUkFZKENPTVBfRU1Q
+VFkoKSkpOwo+ICtTTkRfU09DX0RBSUxJTktfREVGKGxpbmtzX2NvZGVjcywKPiAgIAlEQUlMSU5L
+X0NPTVBfQVJSQVkoQ09NUF9FTVBUWSgpKSk7Cj4gICAKPiAgIHN0cnVjdCBzbm93X3ByaXYgewo+
+IEBAIC0xNTAsOCArMTUwLDYgQEAgc3RhdGljIGludCBzbm93X3Byb2JlKHN0cnVjdCBwbGF0Zm9y
+bV9kZXZpY2UgKnBkZXYpCj4gICAJbGluay0+bnVtX2NwdXMgPSBBUlJBWV9TSVpFKGxpbmtzX2Nw
+dXMpOwo+ICAgCWxpbmstPmNvZGVjcyA9IGxpbmtzX2NvZGVjczsKPiAgIAlsaW5rLT5udW1fY29k
+ZWNzID0gQVJSQVlfU0laRShsaW5rc19jb2RlY3MpOwo+IC0JbGluay0+cGxhdGZvcm1zID0gbGlu
+a3NfcGxhdGZvcm1zOwo+IC0JbGluay0+bnVtX3BsYXRmb3JtcyA9IEFSUkFZX1NJWkUobGlua3Nf
+cGxhdGZvcm1zKTsKPiAgIAo+ICAgCWNhcmQtPmRhaV9saW5rID0gbGluazsKPiAgIAljYXJkLT5u
+dW1fbGlua3MgPSAxOwo+IEBAIC0yMDcsOCArMjA1LDYgQEAgc3RhdGljIGludCBzbm93X3Byb2Jl
+KHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gICAJCX0KPiAgIAl9Cj4gICAKPiAtCWxp
+bmstPnBsYXRmb3Jtcy0+b2Zfbm9kZSA9IGxpbmstPmNwdXMtPm9mX25vZGU7Cj4gLQo+ICAgCS8q
+IFVwZGF0ZSBjYXJkLW5hbWUgaWYgcHJvdmlkZWQgdGhyb3VnaCBEVCwgZWxzZSB1c2UgZGVmYXVs
+dCBuYW1lICovCj4gICAJc25kX3NvY19vZl9wYXJzZV9jYXJkX25hbWUoY2FyZCwgInNhbXN1bmcs
+bW9kZWwiKTsKPiAgIAoKQmVzdCByZWdhcmRzCi0tIApNYXJlayBTenlwcm93c2tpLCBQaEQKU2Ft
+c3VuZyBSJkQgSW5zdGl0dXRlIFBvbGFuZAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KQWxzYS1kZXZlbCBtYWlsaW5nIGxpc3QKQWxzYS1kZXZlbEBhbHNh
+LXByb2plY3Qub3JnCmh0dHBzOi8vbWFpbG1hbi5hbHNhLXByb2plY3Qub3JnL21haWxtYW4vbGlz
+dGluZm8vYWxzYS1kZXZlbAo=
