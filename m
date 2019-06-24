@@ -1,202 +1,67 @@
-From: Lubomir Rintel <lkundrak@v3.sk>
-Subject: Re: [PATCH 08/15] ARM: mmp: cleanup cppcheck shifting errors
-Date: Mon, 24 Jun 2019 09:35:35 +0200
-Message-ID: <8aabdf0675f0ee74c21c18d819710a0929c61e2c.camel@v3.sk>
-References: <20190623151313.970-1-tranmanphong@gmail.com>
-         <20190623151313.970-9-tranmanphong@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 3/4] ARM: dts: exynos: Add regulator suspend
+ configuration to Odroid XU3/XU4/HC1 family
+Date: Mon, 24 Jun 2019 09:41:27 +0200
+Message-ID: <CAJKOXPeXELUjsuW9eyGuRj56067qnL-J2Lt4U42mYiyx=X+F_Q@mail.gmail.com>
+References: <20190621155845.7079-1-krzk@kernel.org> <20190621155845.7079-3-krzk@kernel.org>
+ <CGME20190623160226epcas2p3449814deb1faf7bf939481e6d4da2b86@epcas2p3.samsung.com>
+ <CANAwSgTFQo8wL5s-djwPXFFOLtTHvRQif6234kFC=23PwMhuEQ@mail.gmail.com> <d94a2f99-fb99-c238-7011-9bbb4c0cd90f@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190623151313.970-9-tranmanphong@gmail.com>
+In-Reply-To: <d94a2f99-fb99-c238-7011-9bbb4c0cd90f@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Phong Tran <tranmanphong@gmail.com>, mark.rutland@arm.com, kstewart@linuxfoundation.org, songliubraving@fb.com, andrew@lunn.ch, peterz@infradead.org, nsekhar@ti.com, ast@kernel.org, jolsa@redhat.com, netdev@vger.kernel.org, gerg@uclinux.org, lorenzo.pieralisi@arm.com, will@kernel.org, linux-samsung-soc@vger.kernel.org, daniel@iogearbox.net, festevam@gmail.com, gregory.clement@bootlin.com, allison@lohutok.net, linux@armlinux.org.uk, krzk@kernel.org, haojian.zhuang@gmail.com, bgolaszewski@baylibre.com, tony@atomide.com, mingo@redhat.com, linux-imx@nxp.com, yhs@fb.com, sebastian.hesselbarth@gmail.com, illusionist.neo@gmail.com, jason@lakedaemon.net, liviu.dudau@arm.com, s.hauer@pengutronix.de, acme@kernel.org, robert.jarzmik@free.fr, dmg@turingmachine.org, swinslow@gmail.com, namhyung
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Anand Moon <linux.amoon@gmail.com>, Kukjin Kim <kgene@kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sun, 2019-06-23 at 22:13 +0700, Phong Tran wrote:
-> [arch/arm/mach-mmp/pm-mmp2.c:121]: (error) Shifting signed 32-bit value
-> by 31 bits is undefined behaviour
-> [arch/arm/mach-mmp/pm-mmp2.c:136]: (error) Shifting signed 32-bit value
-> by 31 bits is undefined behaviour
-> [arch/arm/mach-mmp/pm-mmp2.c:244]: (error) Shifting signed 32-bit value
-> by 31 bits is undefined behaviour
-> [arch/arm/mach-mmp/pm-pxa910.c:141]: (error) Shifting signed 32-bit
-> value by 31 bits is undefined behaviour
-> [arch/arm/mach-mmp/pm-pxa910.c:159]: (error) Shifting signed 32-bit
-> value by 31 bits is undefined behaviour
-> 
-> Signed-off-by: Phong Tran <tranmanphong@gmail.com>
+On Mon, 24 Jun 2019 at 09:20, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>
+> Hi Anand,
+>
+> On 2019-06-23 18:02, Anand Moon wrote:
+> > Thanks for this patch. Please add my
+> >
+> > Tested-by: Anand Moon <linux.amoon@gmail.com>
+> >
+> > [snip]
+> >
+> > Could you integrate below small changes into this patch.
+> > with these below changes suspend and resume work correctly at my end.
+> >
+> > [1] XU4_suspendresume.patch
+> >
+> > As per S2MPS11B PMIC 1.2.1 Regulator (Features)
+> > Fix the min max value for *Buck7* and *Buck8*
+> >
+> > -- Buck7 (VDD_1.0V_LDO) 1.5 A (1.2 V to 1.5 V, 12.5 mV step, default on 1.35 V)
+> > -- Buck8 (VDD_1.8V_LDO) 2.5 A (1.8 V to 2.1 V, 12.5 mV step, default on 2.0 V)
+>
+> Could you elaborate why such change for Buck7 and Buck8 is needed?
 
-Like others already pointed out, you may want to send out a v2 that
-would use the BIT() macro. Either way works for me:
+Anand has here valid point - the constraints in DTS do not match
+hardware manual. This leads to question whether voltage table in
+driver is proper... Another point is the voltage itself. The
+schematics describes them as at specific voltage (1.35 V and 2.0 V)
+but after boot they are 1.2 V and 1.85 V. Maybe this shift comes from
+the problem above.
 
-Acked-by: Lubomir Rintel <lkundrak@v3.sk> [mmp]
+>
+> > Also add suspend-off for *Buck9*
+> > Buck9 internally controls the power of USB hub.
+> > Adding suspend the this node help proper reset of USB hub on Odroid
+> > XU4 / HC1/ XU3
+> > during suspend and resume. Below it the logs from my testing.
+>
+> Disabling Buck9 in suspend indeed reduces the power consumed by the
+> board during suspend-to-ram from about 80mA to as little as 7-10mA, what
+> matches the results of OdroidXU3. Thanks for the hint!
 
-Thank you
-Lubo
+Although I did not get what is the difference in the logs (Anand
+pasted two logs but they look the same) but the power consumption is
+reason is good enough. I would be happy to put in the changelog entire
+consumption  difference. I can measure it on XU3-Lite but can you give
+me the XU4 (before and after)?
 
-
-> ---
->  arch/arm/mach-mmp/pm-mmp2.h   | 40 +++++++++++------------
->  arch/arm/mach-mmp/pm-pxa910.h | 76 +++++++++++++++++++++----------------------
->  2 files changed, 58 insertions(+), 58 deletions(-)
-> 
-> diff --git a/arch/arm/mach-mmp/pm-mmp2.h b/arch/arm/mach-mmp/pm-mmp2.h
-> index 70299a9450d3..87fd1c81547d 100644
-> --- a/arch/arm/mach-mmp/pm-mmp2.h
-> +++ b/arch/arm/mach-mmp/pm-mmp2.h
-> @@ -12,37 +12,37 @@
->  #include "addr-map.h"
->  
->  #define APMU_PJ_IDLE_CFG			APMU_REG(0x018)
-> -#define APMU_PJ_IDLE_CFG_PJ_IDLE		(1 << 1)
-> -#define APMU_PJ_IDLE_CFG_PJ_PWRDWN		(1 << 5)
-> +#define APMU_PJ_IDLE_CFG_PJ_IDLE		(1U << 1)
-> +#define APMU_PJ_IDLE_CFG_PJ_PWRDWN		(1U << 5)
->  #define APMU_PJ_IDLE_CFG_PWR_SW(x)		((x) << 16)
-> -#define APMU_PJ_IDLE_CFG_L2_PWR_SW		(1 << 19)
-> +#define APMU_PJ_IDLE_CFG_L2_PWR_SW		(1U << 19)
->  #define APMU_PJ_IDLE_CFG_ISO_MODE_CNTRL_MASK	(3 << 28)
->  
->  #define APMU_SRAM_PWR_DWN			APMU_REG(0x08c)
->  
->  #define MPMU_SCCR				MPMU_REG(0x038)
->  #define MPMU_PCR_PJ				MPMU_REG(0x1000)
-> -#define MPMU_PCR_PJ_AXISD			(1 << 31)
-> -#define MPMU_PCR_PJ_SLPEN			(1 << 29)
-> -#define MPMU_PCR_PJ_SPSD			(1 << 28)
-> -#define MPMU_PCR_PJ_DDRCORSD			(1 << 27)
-> -#define MPMU_PCR_PJ_APBSD			(1 << 26)
-> -#define MPMU_PCR_PJ_INTCLR			(1 << 24)
-> -#define MPMU_PCR_PJ_SLPWP0			(1 << 23)
-> -#define MPMU_PCR_PJ_SLPWP1			(1 << 22)
-> -#define MPMU_PCR_PJ_SLPWP2			(1 << 21)
-> -#define MPMU_PCR_PJ_SLPWP3			(1 << 20)
-> -#define MPMU_PCR_PJ_VCTCXOSD			(1 << 19)
-> -#define MPMU_PCR_PJ_SLPWP4			(1 << 18)
-> -#define MPMU_PCR_PJ_SLPWP5			(1 << 17)
-> -#define MPMU_PCR_PJ_SLPWP6			(1 << 16)
-> -#define MPMU_PCR_PJ_SLPWP7			(1 << 15)
-> +#define MPMU_PCR_PJ_AXISD			(1U << 31)
-> +#define MPMU_PCR_PJ_SLPEN			(1U << 29)
-> +#define MPMU_PCR_PJ_SPSD			(1U << 28)
-> +#define MPMU_PCR_PJ_DDRCORSD			(1U << 27)
-> +#define MPMU_PCR_PJ_APBSD			(1U << 26)
-> +#define MPMU_PCR_PJ_INTCLR			(1U << 24)
-> +#define MPMU_PCR_PJ_SLPWP0			(1U << 23)
-> +#define MPMU_PCR_PJ_SLPWP1			(1U << 22)
-> +#define MPMU_PCR_PJ_SLPWP2			(1U << 21)
-> +#define MPMU_PCR_PJ_SLPWP3			(1U << 20)
-> +#define MPMU_PCR_PJ_VCTCXOSD			(1U << 19)
-> +#define MPMU_PCR_PJ_SLPWP4			(1U << 18)
-> +#define MPMU_PCR_PJ_SLPWP5			(1U << 17)
-> +#define MPMU_PCR_PJ_SLPWP6			(1U << 16)
-> +#define MPMU_PCR_PJ_SLPWP7			(1U << 15)
->  
->  #define MPMU_PLL2_CTRL1				MPMU_REG(0x0414)
->  #define MPMU_CGR_PJ				MPMU_REG(0x1024)
->  #define MPMU_WUCRM_PJ				MPMU_REG(0x104c)
-> -#define MPMU_WUCRM_PJ_WAKEUP(x)			(1 << (x))
-> -#define MPMU_WUCRM_PJ_RTC_ALARM			(1 << 17)
-> +#define MPMU_WUCRM_PJ_WAKEUP(x)			(1U << (x))
-> +#define MPMU_WUCRM_PJ_RTC_ALARM			(1U << 17)
->  
->  enum {
->  	POWER_MODE_ACTIVE = 0,
-> diff --git a/arch/arm/mach-mmp/pm-pxa910.h b/arch/arm/mach-mmp/pm-pxa910.h
-> index 8e6344adaf51..0958cde1ca6e 100644
-> --- a/arch/arm/mach-mmp/pm-pxa910.h
-> +++ b/arch/arm/mach-mmp/pm-pxa910.h
-> @@ -10,54 +10,54 @@
->  #define __PXA910_PM_H__
->  
->  #define APMU_MOH_IDLE_CFG			APMU_REG(0x0018)
-> -#define APMU_MOH_IDLE_CFG_MOH_IDLE		(1 << 1)
-> -#define APMU_MOH_IDLE_CFG_MOH_PWRDWN		(1 << 5)
-> -#define APMU_MOH_IDLE_CFG_MOH_SRAM_PWRDWN	(1 << 6)
-> +#define APMU_MOH_IDLE_CFG_MOH_IDLE		(1U << 1)
-> +#define APMU_MOH_IDLE_CFG_MOH_PWRDWN		(1U << 5)
-> +#define APMU_MOH_IDLE_CFG_MOH_SRAM_PWRDWN	(1U << 6)
->  #define APMU_MOH_IDLE_CFG_MOH_PWR_SW(x)		(((x) & 0x3) << 16)
->  #define APMU_MOH_IDLE_CFG_MOH_L2_PWR_SW(x)	(((x) & 0x3) << 18)
-> -#define APMU_MOH_IDLE_CFG_MOH_DIS_MC_SW_REQ	(1 << 21)
-> -#define APMU_MOH_IDLE_CFG_MOH_MC_WAKE_EN	(1 << 20)
-> +#define APMU_MOH_IDLE_CFG_MOH_DIS_MC_SW_REQ	(1U << 21)
-> +#define APMU_MOH_IDLE_CFG_MOH_MC_WAKE_EN	(1U << 20)
->  
->  #define APMU_SQU_CLK_GATE_CTRL			APMU_REG(0x001c)
->  #define APMU_MC_HW_SLP_TYPE			APMU_REG(0x00b0)
->  
->  #define MPMU_FCCR				MPMU_REG(0x0008)
->  #define MPMU_APCR				MPMU_REG(0x1000)
-> -#define MPMU_APCR_AXISD				(1 << 31)
-> -#define MPMU_APCR_DSPSD				(1 << 30)
-> -#define MPMU_APCR_SLPEN				(1 << 29)
-> -#define MPMU_APCR_DTCMSD			(1 << 28)
-> -#define MPMU_APCR_DDRCORSD			(1 << 27)
-> -#define MPMU_APCR_APBSD				(1 << 26)
-> -#define MPMU_APCR_BBSD				(1 << 25)
-> -#define MPMU_APCR_SLPWP0			(1 << 23)
-> -#define MPMU_APCR_SLPWP1			(1 << 22)
-> -#define MPMU_APCR_SLPWP2			(1 << 21)
-> -#define MPMU_APCR_SLPWP3			(1 << 20)
-> -#define MPMU_APCR_VCTCXOSD			(1 << 19)
-> -#define MPMU_APCR_SLPWP4			(1 << 18)
-> -#define MPMU_APCR_SLPWP5			(1 << 17)
-> -#define MPMU_APCR_SLPWP6			(1 << 16)
-> -#define MPMU_APCR_SLPWP7			(1 << 15)
-> -#define MPMU_APCR_MSASLPEN			(1 << 14)
-> -#define MPMU_APCR_STBYEN			(1 << 13)
-> +#define MPMU_APCR_AXISD				(1U << 31)
-> +#define MPMU_APCR_DSPSD				(1U << 30)
-> +#define MPMU_APCR_SLPEN				(1U << 29)
-> +#define MPMU_APCR_DTCMSD			(1U << 28)
-> +#define MPMU_APCR_DDRCORSD			(1U << 27)
-> +#define MPMU_APCR_APBSD				(1U << 26)
-> +#define MPMU_APCR_BBSD				(1U << 25)
-> +#define MPMU_APCR_SLPWP0			(1U << 23)
-> +#define MPMU_APCR_SLPWP1			(1U << 22)
-> +#define MPMU_APCR_SLPWP2			(1U << 21)
-> +#define MPMU_APCR_SLPWP3			(1U << 20)
-> +#define MPMU_APCR_VCTCXOSD			(1U << 19)
-> +#define MPMU_APCR_SLPWP4			(1U << 18)
-> +#define MPMU_APCR_SLPWP5			(1U << 17)
-> +#define MPMU_APCR_SLPWP6			(1U << 16)
-> +#define MPMU_APCR_SLPWP7			(1U << 15)
-> +#define MPMU_APCR_MSASLPEN			(1U << 14)
-> +#define MPMU_APCR_STBYEN			(1U << 13)
->  
->  #define MPMU_AWUCRM				MPMU_REG(0x104c)
-> -#define MPMU_AWUCRM_AP_ASYNC_INT		(1 << 25)
-> -#define MPMU_AWUCRM_AP_FULL_IDLE		(1 << 24)
-> -#define MPMU_AWUCRM_SDH1			(1 << 23)
-> -#define MPMU_AWUCRM_SDH2			(1 << 22)
-> -#define MPMU_AWUCRM_KEYPRESS			(1 << 21)
-> -#define MPMU_AWUCRM_TRACKBALL			(1 << 20)
-> -#define MPMU_AWUCRM_NEWROTARY			(1 << 19)
-> -#define MPMU_AWUCRM_RTC_ALARM			(1 << 17)
-> -#define MPMU_AWUCRM_AP2_TIMER_3			(1 << 13)
-> -#define MPMU_AWUCRM_AP2_TIMER_2			(1 << 12)
-> -#define MPMU_AWUCRM_AP2_TIMER_1			(1 << 11)
-> -#define MPMU_AWUCRM_AP1_TIMER_3			(1 << 10)
-> -#define MPMU_AWUCRM_AP1_TIMER_2			(1 << 9)
-> -#define MPMU_AWUCRM_AP1_TIMER_1			(1 << 8)
-> -#define MPMU_AWUCRM_WAKEUP(x)			(1 << ((x) & 0x7))
-> +#define MPMU_AWUCRM_AP_ASYNC_INT		(1U << 25)
-> +#define MPMU_AWUCRM_AP_FULL_IDLE		(1U << 24)
-> +#define MPMU_AWUCRM_SDH1			(1U << 23)
-> +#define MPMU_AWUCRM_SDH2			(1U << 22)
-> +#define MPMU_AWUCRM_KEYPRESS			(1U << 21)
-> +#define MPMU_AWUCRM_TRACKBALL			(1U << 20)
-> +#define MPMU_AWUCRM_NEWROTARY			(1U << 19)
-> +#define MPMU_AWUCRM_RTC_ALARM			(1U << 17)
-> +#define MPMU_AWUCRM_AP2_TIMER_3			(1U << 13)
-> +#define MPMU_AWUCRM_AP2_TIMER_2			(1U << 12)
-> +#define MPMU_AWUCRM_AP2_TIMER_1			(1U << 11)
-> +#define MPMU_AWUCRM_AP1_TIMER_3			(1U << 10)
-> +#define MPMU_AWUCRM_AP1_TIMER_2			(1U << 9)
-> +#define MPMU_AWUCRM_AP1_TIMER_1			(1U << 8)
-> +#define MPMU_AWUCRM_WAKEUP(x)			(1U << ((x) & 0x7))
->  
->  enum {
->  	POWER_MODE_ACTIVE = 0,
+Best regards,
+Krzysztof
