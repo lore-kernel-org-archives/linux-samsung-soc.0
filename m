@@ -1,56 +1,72 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2 3/4] ARM: dts: exynos: Add regulator suspend
- configuration to Odroid XU3/XU4/HC1 family
-Date: Mon, 24 Jun 2019 09:20:38 +0200
-Message-ID: <d94a2f99-fb99-c238-7011-9bbb4c0cd90f@samsung.com>
-References: <20190621155845.7079-1-krzk@kernel.org>
-        <20190621155845.7079-3-krzk@kernel.org>
-        <CGME20190623160226epcas2p3449814deb1faf7bf939481e6d4da2b86@epcas2p3.samsung.com>
-        <CANAwSgTFQo8wL5s-djwPXFFOLtTHvRQif6234kFC=23PwMhuEQ@mail.gmail.com>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+Subject: Re: [PATCH 10/15] ARM: orion5x: cleanup cppcheck shifting errors
+Date: Mon, 24 Jun 2019 09:31:37 +0200
+Message-ID: <871rzjmobq.fsf@FE-laptop>
+References: <20190623151313.970-1-tranmanphong@gmail.com> <20190623151313.970-11-tranmanphong@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CANAwSgTFQo8wL5s-djwPXFFOLtTHvRQif6234kFC=23PwMhuEQ@mail.gmail.com>
-Content-Language: en-US
+In-Reply-To: <20190623151313.970-11-tranmanphong@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Phong Tran <tranmanphong@gmail.com>, mark.rutland@arm.com, kstewart@linuxfoundation.org, songliubraving@fb.com, andrew@lunn.ch, peterz@infradead.org, nsekhar@ti.com, ast@kernel.org, jolsa@redhat.com, netdev@vger.kernel.org, gerg@uclinux.org, lorenzo.pieralisi@arm.com, will@kernel.org, linux-samsung-soc@vger.kernel.org, daniel@iogearbox.nettranmanphong@gmail.com, festevam@gmail.com, allison@lohutok.net, linux@armlinux.org.uk, krzk@kernel.org, haojian.zhuang@gmail.com, bgolaszewski@baylibre.com, tony@atomide.com, mingo@redhat.com, linux-imx@nxp.com, yhs@fb.com, sebastian.hesselbarth@gmail.com, illusionist.neo@gmail.com, jason@lakedaemon.net, liviu.dudau@arm.com, s.hauer@pengutronix.de, acme@kernel.org, lkundrak@v3.sk, robert.jarzmik@free.fr, dmg@turingmachine.org, swinslow@gmail.co
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Anand,
+Hi Phong,
 
-On 2019-06-23 18:02, Anand Moon wrote:
-> Thanks for this patch. Please add my
+> [arch/arm/mach-orion5x/pci.c:281]: (error) Shifting signed 32-bit value
+> by 31 bits is undefined behaviour
+> [arch/arm/mach-orion5x/pci.c:305]: (error) Shifting signed 32-bit value
+> by 31 bits is undefined behaviour
 >
-> Tested-by: Anand Moon <linux.amoon@gmail.com>
->
-> [snip]
->
-> Could you integrate below small changes into this patch.
-> with these below changes suspend and resume work correctly at my end.
->
-> [1] XU4_suspendresume.patch
->
-> As per S2MPS11B PMIC 1.2.1 Regulator (Features)
-> Fix the min max value for *Buck7* and *Buck8*
->
-> -- Buck7 (VDD_1.0V_LDO) 1.5 A (1.2 V to 1.5 V, 12.5 mV step, default on 1.35 V)
-> -- Buck8 (VDD_1.8V_LDO) 2.5 A (1.8 V to 2.1 V, 12.5 mV step, default on 2.0 V)
 
-Could you elaborate why such change for Buck7 and Buck8 is needed?
+While Andrew was Ok with this version, I will wait for your v2 using
+BIT() marcro.
 
-> Also add suspend-off for *Buck9*
-> Buck9 internally controls the power of USB hub.
-> Adding suspend the this node help proper reset of USB hub on Odroid
-> XU4 / HC1/ XU3
-> during suspend and resume. Below it the logs from my testing.
+Thanks,
 
-Disabling Buck9 in suspend indeed reduces the power consumed by the 
-board during suspend-to-ram from about 80mA to as little as 7-10mA, what 
-matches the results of OdroidXU3. Thanks for the hint!
+Gregory
 
-Best regards
+
+> Signed-off-by: Phong Tran <tranmanphong@gmail.com>
+> ---
+>  arch/arm/mach-orion5x/pci.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/arm/mach-orion5x/pci.c b/arch/arm/mach-orion5x/pci.c
+> index 76951bfbacf5..1b2c077ee7b8 100644
+> --- a/arch/arm/mach-orion5x/pci.c
+> +++ b/arch/arm/mach-orion5x/pci.c
+> @@ -200,13 +200,13 @@ static int __init pcie_setup(struct pci_sys_data *sys)
+>  /*
+>   * PCI_MODE bits
+>   */
+> -#define PCI_MODE_64BIT			(1 << 2)
+> -#define PCI_MODE_PCIX			((1 << 4) | (1 << 5))
+> +#define PCI_MODE_64BIT			(1U << 2)
+> +#define PCI_MODE_PCIX			((1U << 4) | (1U << 5))
+>  
+>  /*
+>   * PCI_CMD bits
+>   */
+> -#define PCI_CMD_HOST_REORDER		(1 << 29)
+> +#define PCI_CMD_HOST_REORDER		(1U << 29)
+>  
+>  /*
+>   * PCI_P2P_CONF bits
+> @@ -223,7 +223,7 @@ static int __init pcie_setup(struct pci_sys_data *sys)
+>  #define PCI_CONF_FUNC(func)		(((func) & 0x3) << 8)
+>  #define PCI_CONF_DEV(dev)		(((dev) & 0x1f) << 11)
+>  #define PCI_CONF_BUS(bus)		(((bus) & 0xff) << 16)
+> -#define PCI_CONF_ADDR_EN		(1 << 31)
+> +#define PCI_CONF_ADDR_EN		(1U << 31)
+>  
+>  /*
+>   * Internal configuration space
+> -- 
+> 2.11.0
+>
+
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Gregory Clement, Bootlin
+Embedded Linux and Kernel engineering
+http://bootlin.com
