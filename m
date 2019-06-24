@@ -1,315 +1,199 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3] ARM: dts: exynos: Add regulator suspend configuration to Odroid XU3/XU4/HC1 family
-Date: Mon, 24 Jun 2019 18:54:19 +0200
-Message-ID: <20190624165419.4704-1-krzk@kernel.org>
+From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Subject: Re: [PATCH V2 03/15] ARM: ep93xx: cleanup cppcheck shifting errors
+Date: Mon, 24 Jun 2019 21:16:47 +0200
+Message-ID: <9d21b4dc-4855-b203-bc31-903591d3bb0d@gmail.com>
+References: <20190623151313.970-1-tranmanphong@gmail.com>
+ <20190624135105.15579-1-tranmanphong@gmail.com>
+ <20190624135105.15579-4-tranmanphong@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190624135105.15579-4-tranmanphong@gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Anand Moon <linux.amoon@gmail.com>
+To: Phong Tran <tranmanphong@gmail.com>
+Cc: acme@kernel.org, alexander.shishkin@linux.intel.com, allison@lohutok.net, andrew@lunn.ch, ast@kernel.org, bgolaszewski@baylibre.com, bpf@vger.kernel.org, daniel@iogearbox.net, daniel@zonque.org, dmg@turingmachine.org, festevam@gmail.com, gerg@uclinux.org, gregkh@linuxfoundation.org, gregory.clement@bootlin.com, haojian.zhuang@gmail.com, hsweeten@visionengravers.com, illusionist.neo@gmail.com, info@metux.net, jason@lakedaemon.net, jolsa@redhat.com, kafai@fb.com, kernel@pengutronix.de, kgene@kernel.org, krzk@kernel.org, kstewart@linuxfoundation.org, linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux@armlinux.org.uk, liviu.dudau@arm.com, lkundrak@v3.sk, lorenzo.pieralisi@arm.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add the PMIC regulator suspend configuration to entire Odroid
-XU3/XU4/HC1 family of boards to reduce power usage during suspend.  The
-configuration is based on vendor (Hardkernel) reference kernel with
-additional buck9 suspend configuration (for USB hub suspend and proper
-reset).
+Hi!
 
-Energy consumption measurements from Marek Szyprowski during suspend to
-RAM:
- - all at 5 V power supply,
- - before: next-20190620,
- - after: next-20190620 + this patch + suspend configuration for s2mps11
-          regulator driver,
+On 24/06/2019 15:50, Phong Tran wrote:
+> [arch/arm/mach-ep93xx/clock.c:102]: (error) Shifting signed 32-bit value
+> by 31 bits is undefined behaviour
+> [arch/arm/mach-ep93xx/clock.c:132]: (error) Shifting signed 32-bit value
+> by 31 bits is undefined behaviour
+> [arch/arm/mach-ep93xx/clock.c:140]: (error) Shifting signed 32-bit value
+> by 31 bits is undefined behaviour
+> [arch/arm/mach-ep93xx/core.c:1001]: (error) Shifting signed 32-bit value
+> by 31 bits is undefined behaviour
+> [arch/arm/mach-ep93xx/core.c:1002]: (error) Shifting signed 32-bit value
+> by 31 bits is undefined behaviour
 
-Board              | before [mA] | after [mA] |
-Odroid HC1         |         120 |       7-10 |
-Odroid XU4, sdcard |          88 |        6-9 |
-Odroid XU4, eMMC   |         100 |        6-9 |
+Acked-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Tested-by: Anand Moon <linux.amoon@gmail.com>
-
----
-
-Tested on XU3 and HC1 with SD card.
-
----
-
-Changes since v2:
-1. Suspend also buck9, as suggested by Anand.
-2. Add Anand's tag.
-
-Changes since v1:
-1. Add Marek's tag.
----
- arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 96 +++++++++++++++++++
- 1 file changed, 96 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-index 0f967259ad29..9843d21d6924 100644
---- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-@@ -177,6 +177,10 @@
- 				regulator-name = "vdd_adc";
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo5_reg: LDO5 {
-@@ -184,6 +188,10 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo6_reg: LDO6 {
-@@ -191,6 +199,10 @@
- 				regulator-min-microvolt = <1000000>;
- 				regulator-max-microvolt = <1000000>;
- 				regulator-always-on;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo7_reg: LDO7 {
-@@ -198,6 +210,10 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo8_reg: LDO8 {
-@@ -205,6 +221,10 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo9_reg: LDO9 {
-@@ -212,6 +232,10 @@
- 				regulator-min-microvolt = <3000000>;
- 				regulator-max-microvolt = <3000000>;
- 				regulator-always-on;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo10_reg: LDO10 {
-@@ -219,6 +243,10 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo11_reg: LDO11 {
-@@ -226,6 +254,10 @@
- 				regulator-min-microvolt = <1000000>;
- 				regulator-max-microvolt = <1000000>;
- 				regulator-always-on;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo12_reg: LDO12 {
-@@ -239,6 +271,10 @@
- 				regulator-name = "vddq_mmc2";
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <2800000>;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo14_reg: LDO14 {
-@@ -253,6 +289,10 @@
- 				regulator-min-microvolt = <3300000>;
- 				regulator-max-microvolt = <3300000>;
- 				regulator-always-on;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo16_reg: LDO16 {
-@@ -267,18 +307,30 @@
- 				regulator-min-microvolt = <3300000>;
- 				regulator-max-microvolt = <3300000>;
- 				regulator-always-on;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo18_reg: LDO18 {
- 				regulator-name = "vdd_emmc_1V8";
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo19_reg: LDO19 {
- 				regulator-name = "vdd_sd";
- 				regulator-min-microvolt = <2800000>;
- 				regulator-max-microvolt = <2800000>;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo20_reg: LDO20 {
-@@ -307,6 +359,10 @@
- 				regulator-min-microvolt = <1100000>;
- 				regulator-max-microvolt = <1100000>;
- 				regulator-always-on;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo24_reg: LDO24 {
-@@ -328,6 +384,10 @@
- 				regulator-name = "vdd_ldo26";
- 				regulator-min-microvolt = <800000>;
- 				regulator-max-microvolt = <3950000>;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo27_reg: LDO27 {
-@@ -335,6 +395,10 @@
- 				regulator-min-microvolt = <1000000>;
- 				regulator-max-microvolt = <1000000>;
- 				regulator-always-on;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo28_reg: LDO28 {
-@@ -342,6 +406,10 @@
- 				regulator-name = "vdd_ldo28";
- 				regulator-min-microvolt = <800000>;
- 				regulator-max-microvolt = <3950000>;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo29_reg: LDO29 {
-@@ -420,6 +488,10 @@
- 				regulator-max-microvolt = <1300000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			buck2_reg: BUCK2 {
-@@ -428,6 +500,10 @@
- 				regulator-max-microvolt = <1500000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			buck3_reg: BUCK3 {
-@@ -436,6 +512,10 @@
- 				regulator-max-microvolt = <1400000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			buck4_reg: BUCK4 {
-@@ -444,6 +524,10 @@
- 				regulator-max-microvolt = <1400000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			buck5_reg: BUCK5 {
-@@ -460,6 +544,10 @@
- 				regulator-max-microvolt = <1500000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			buck7_reg: BUCK7 {
-@@ -484,12 +572,20 @@
- 				regulator-max-microvolt = <3750000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			buck10_reg: BUCK10 {
- 				regulator-name = "vdd_vmem";
- 				regulator-min-microvolt = <2850000>;
- 				regulator-max-microvolt = <2850000>;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 		};
- 	};
--- 
-2.17.1
+> Signed-off-by: Phong Tran <tranmanphong@gmail.com>
+> ---
+>  arch/arm/mach-ep93xx/soc.h | 132 ++++++++++++++++++++++-----------------------
+>  1 file changed, 66 insertions(+), 66 deletions(-)
+> 
+> diff --git a/arch/arm/mach-ep93xx/soc.h b/arch/arm/mach-ep93xx/soc.h
+> index f2dace1c9154..250c82f8b0a1 100644
+> --- a/arch/arm/mach-ep93xx/soc.h
+> +++ b/arch/arm/mach-ep93xx/soc.h
+> @@ -109,89 +109,89 @@
+>  #define EP93XX_SYSCON_REG(x)		(EP93XX_SYSCON_BASE + (x))
+>  #define EP93XX_SYSCON_POWER_STATE	EP93XX_SYSCON_REG(0x00)
+>  #define EP93XX_SYSCON_PWRCNT		EP93XX_SYSCON_REG(0x04)
+> -#define EP93XX_SYSCON_PWRCNT_FIR_EN	(1<<31)
+> -#define EP93XX_SYSCON_PWRCNT_UARTBAUD	(1<<29)
+> -#define EP93XX_SYSCON_PWRCNT_USH_EN	(1<<28)
+> -#define EP93XX_SYSCON_PWRCNT_DMA_M2M1	(1<<27)
+> -#define EP93XX_SYSCON_PWRCNT_DMA_M2M0	(1<<26)
+> -#define EP93XX_SYSCON_PWRCNT_DMA_M2P8	(1<<25)
+> -#define EP93XX_SYSCON_PWRCNT_DMA_M2P9	(1<<24)
+> -#define EP93XX_SYSCON_PWRCNT_DMA_M2P6	(1<<23)
+> -#define EP93XX_SYSCON_PWRCNT_DMA_M2P7	(1<<22)
+> -#define EP93XX_SYSCON_PWRCNT_DMA_M2P4	(1<<21)
+> -#define EP93XX_SYSCON_PWRCNT_DMA_M2P5	(1<<20)
+> -#define EP93XX_SYSCON_PWRCNT_DMA_M2P2	(1<<19)
+> -#define EP93XX_SYSCON_PWRCNT_DMA_M2P3	(1<<18)
+> -#define EP93XX_SYSCON_PWRCNT_DMA_M2P0	(1<<17)
+> -#define EP93XX_SYSCON_PWRCNT_DMA_M2P1	(1<<16)
+> +#define EP93XX_SYSCON_PWRCNT_FIR_EN	BIT(31)
+> +#define EP93XX_SYSCON_PWRCNT_UARTBAUD	BIT(29)
+> +#define EP93XX_SYSCON_PWRCNT_USH_EN	BIT(28)
+> +#define EP93XX_SYSCON_PWRCNT_DMA_M2M1	BIT(27)
+> +#define EP93XX_SYSCON_PWRCNT_DMA_M2M0	BIT(26)
+> +#define EP93XX_SYSCON_PWRCNT_DMA_M2P8	BIT(25)
+> +#define EP93XX_SYSCON_PWRCNT_DMA_M2P9	BIT(24)
+> +#define EP93XX_SYSCON_PWRCNT_DMA_M2P6	BIT(23)
+> +#define EP93XX_SYSCON_PWRCNT_DMA_M2P7	BIT(22)
+> +#define EP93XX_SYSCON_PWRCNT_DMA_M2P4	BIT(21)
+> +#define EP93XX_SYSCON_PWRCNT_DMA_M2P5	BIT(20)
+> +#define EP93XX_SYSCON_PWRCNT_DMA_M2P2	BIT(19)
+> +#define EP93XX_SYSCON_PWRCNT_DMA_M2P3	BIT(18)
+> +#define EP93XX_SYSCON_PWRCNT_DMA_M2P0	BIT(17)
+> +#define EP93XX_SYSCON_PWRCNT_DMA_M2P1	BIT(16)
+>  #define EP93XX_SYSCON_HALT		EP93XX_SYSCON_REG(0x08)
+>  #define EP93XX_SYSCON_STANDBY		EP93XX_SYSCON_REG(0x0c)
+>  #define EP93XX_SYSCON_CLKSET1		EP93XX_SYSCON_REG(0x20)
+> -#define EP93XX_SYSCON_CLKSET1_NBYP1	(1<<23)
+> +#define EP93XX_SYSCON_CLKSET1_NBYP1	BIT(23)
+>  #define EP93XX_SYSCON_CLKSET2		EP93XX_SYSCON_REG(0x24)
+> -#define EP93XX_SYSCON_CLKSET2_NBYP2	(1<<19)
+> -#define EP93XX_SYSCON_CLKSET2_PLL2_EN	(1<<18)
+> +#define EP93XX_SYSCON_CLKSET2_NBYP2	BIT(19)
+> +#define EP93XX_SYSCON_CLKSET2_PLL2_EN	BIT(18)
+>  #define EP93XX_SYSCON_DEVCFG		EP93XX_SYSCON_REG(0x80)
+> -#define EP93XX_SYSCON_DEVCFG_SWRST	(1<<31)
+> -#define EP93XX_SYSCON_DEVCFG_D1ONG	(1<<30)
+> -#define EP93XX_SYSCON_DEVCFG_D0ONG	(1<<29)
+> -#define EP93XX_SYSCON_DEVCFG_IONU2	(1<<28)
+> -#define EP93XX_SYSCON_DEVCFG_GONK	(1<<27)
+> -#define EP93XX_SYSCON_DEVCFG_TONG	(1<<26)
+> -#define EP93XX_SYSCON_DEVCFG_MONG	(1<<25)
+> -#define EP93XX_SYSCON_DEVCFG_U3EN	(1<<24)
+> -#define EP93XX_SYSCON_DEVCFG_CPENA	(1<<23)
+> -#define EP93XX_SYSCON_DEVCFG_A2ONG	(1<<22)
+> -#define EP93XX_SYSCON_DEVCFG_A1ONG	(1<<21)
+> -#define EP93XX_SYSCON_DEVCFG_U2EN	(1<<20)
+> -#define EP93XX_SYSCON_DEVCFG_EXVC	(1<<19)
+> -#define EP93XX_SYSCON_DEVCFG_U1EN	(1<<18)
+> -#define EP93XX_SYSCON_DEVCFG_TIN	(1<<17)
+> -#define EP93XX_SYSCON_DEVCFG_HC3IN	(1<<15)
+> -#define EP93XX_SYSCON_DEVCFG_HC3EN	(1<<14)
+> -#define EP93XX_SYSCON_DEVCFG_HC1IN	(1<<13)
+> -#define EP93XX_SYSCON_DEVCFG_HC1EN	(1<<12)
+> -#define EP93XX_SYSCON_DEVCFG_HONIDE	(1<<11)
+> -#define EP93XX_SYSCON_DEVCFG_GONIDE	(1<<10)
+> -#define EP93XX_SYSCON_DEVCFG_PONG	(1<<9)
+> -#define EP93XX_SYSCON_DEVCFG_EONIDE	(1<<8)
+> -#define EP93XX_SYSCON_DEVCFG_I2SONSSP	(1<<7)
+> -#define EP93XX_SYSCON_DEVCFG_I2SONAC97	(1<<6)
+> -#define EP93XX_SYSCON_DEVCFG_RASONP3	(1<<4)
+> -#define EP93XX_SYSCON_DEVCFG_RAS	(1<<3)
+> -#define EP93XX_SYSCON_DEVCFG_ADCPD	(1<<2)
+> -#define EP93XX_SYSCON_DEVCFG_KEYS	(1<<1)
+> -#define EP93XX_SYSCON_DEVCFG_SHENA	(1<<0)
+> +#define EP93XX_SYSCON_DEVCFG_SWRST	BIT(31)
+> +#define EP93XX_SYSCON_DEVCFG_D1ONG	BIT(30)
+> +#define EP93XX_SYSCON_DEVCFG_D0ONG	BIT(29)
+> +#define EP93XX_SYSCON_DEVCFG_IONU2	BIT(28)
+> +#define EP93XX_SYSCON_DEVCFG_GONK	BIT(27)
+> +#define EP93XX_SYSCON_DEVCFG_TONG	BIT(26)
+> +#define EP93XX_SYSCON_DEVCFG_MONG	BIT(25)
+> +#define EP93XX_SYSCON_DEVCFG_U3EN	BIT(24)
+> +#define EP93XX_SYSCON_DEVCFG_CPENA	BIT(23)
+> +#define EP93XX_SYSCON_DEVCFG_A2ONG	BIT(22)
+> +#define EP93XX_SYSCON_DEVCFG_A1ONG	BIT(21)
+> +#define EP93XX_SYSCON_DEVCFG_U2EN	BIT(20)
+> +#define EP93XX_SYSCON_DEVCFG_EXVC	BIT(19)
+> +#define EP93XX_SYSCON_DEVCFG_U1EN	BIT(18)
+> +#define EP93XX_SYSCON_DEVCFG_TIN	BIT(17)
+> +#define EP93XX_SYSCON_DEVCFG_HC3IN	BIT(15)
+> +#define EP93XX_SYSCON_DEVCFG_HC3EN	BIT(14)
+> +#define EP93XX_SYSCON_DEVCFG_HC1IN	BIT(13)
+> +#define EP93XX_SYSCON_DEVCFG_HC1EN	BIT(12)
+> +#define EP93XX_SYSCON_DEVCFG_HONIDE	BIT(11)
+> +#define EP93XX_SYSCON_DEVCFG_GONIDE	BIT(10)
+> +#define EP93XX_SYSCON_DEVCFG_PONG	BIT(9)
+> +#define EP93XX_SYSCON_DEVCFG_EONIDE	BIT(8)
+> +#define EP93XX_SYSCON_DEVCFG_I2SONSSP	BIT(7)
+> +#define EP93XX_SYSCON_DEVCFG_I2SONAC97	BIT(6)
+> +#define EP93XX_SYSCON_DEVCFG_RASONP3	BIT(4)
+> +#define EP93XX_SYSCON_DEVCFG_RAS	BIT(3)
+> +#define EP93XX_SYSCON_DEVCFG_ADCPD	BIT(2)
+> +#define EP93XX_SYSCON_DEVCFG_KEYS	BIT(1)
+> +#define EP93XX_SYSCON_DEVCFG_SHENA	BIT(0)
+>  #define EP93XX_SYSCON_VIDCLKDIV		EP93XX_SYSCON_REG(0x84)
+> -#define EP93XX_SYSCON_CLKDIV_ENABLE	(1<<15)
+> -#define EP93XX_SYSCON_CLKDIV_ESEL	(1<<14)
+> -#define EP93XX_SYSCON_CLKDIV_PSEL	(1<<13)
+> +#define EP93XX_SYSCON_CLKDIV_ENABLE	BIT(15)
+> +#define EP93XX_SYSCON_CLKDIV_ESEL	BIT(14)
+> +#define EP93XX_SYSCON_CLKDIV_PSEL	BIT(13)
+>  #define EP93XX_SYSCON_CLKDIV_PDIV_SHIFT	8
+>  #define EP93XX_SYSCON_I2SCLKDIV		EP93XX_SYSCON_REG(0x8c)
+> -#define EP93XX_SYSCON_I2SCLKDIV_SENA	(1<<31)
+> -#define EP93XX_SYSCON_I2SCLKDIV_ORIDE   (1<<29)
+> -#define EP93XX_SYSCON_I2SCLKDIV_SPOL	(1<<19)
+> +#define EP93XX_SYSCON_I2SCLKDIV_SENA	BIT(31)
+> +#define EP93XX_SYSCON_I2SCLKDIV_ORIDE   BIT(29)
+> +#define EP93XX_SYSCON_I2SCLKDIV_SPOL	BIT(19)
+>  #define EP93XX_I2SCLKDIV_SDIV		(1 << 16)
+>  #define EP93XX_I2SCLKDIV_LRDIV32	(0 << 17)
+>  #define EP93XX_I2SCLKDIV_LRDIV64	(1 << 17)
+>  #define EP93XX_I2SCLKDIV_LRDIV128	(2 << 17)
+>  #define EP93XX_I2SCLKDIV_LRDIV_MASK	(3 << 17)
+>  #define EP93XX_SYSCON_KEYTCHCLKDIV	EP93XX_SYSCON_REG(0x90)
+> -#define EP93XX_SYSCON_KEYTCHCLKDIV_TSEN	(1<<31)
+> -#define EP93XX_SYSCON_KEYTCHCLKDIV_ADIV	(1<<16)
+> -#define EP93XX_SYSCON_KEYTCHCLKDIV_KEN	(1<<15)
+> -#define EP93XX_SYSCON_KEYTCHCLKDIV_KDIV	(1<<0)
+> +#define EP93XX_SYSCON_KEYTCHCLKDIV_TSEN	BIT(31)
+> +#define EP93XX_SYSCON_KEYTCHCLKDIV_ADIV	BIT(16)
+> +#define EP93XX_SYSCON_KEYTCHCLKDIV_KEN	BIT(15)
+> +#define EP93XX_SYSCON_KEYTCHCLKDIV_KDIV	BIT(0)
+>  #define EP93XX_SYSCON_SYSCFG		EP93XX_SYSCON_REG(0x9c)
+>  #define EP93XX_SYSCON_SYSCFG_REV_MASK	(0xf0000000)
+>  #define EP93XX_SYSCON_SYSCFG_REV_SHIFT	(28)
+> -#define EP93XX_SYSCON_SYSCFG_SBOOT	(1<<8)
+> -#define EP93XX_SYSCON_SYSCFG_LCSN7	(1<<7)
+> -#define EP93XX_SYSCON_SYSCFG_LCSN6	(1<<6)
+> -#define EP93XX_SYSCON_SYSCFG_LASDO	(1<<5)
+> -#define EP93XX_SYSCON_SYSCFG_LEEDA	(1<<4)
+> -#define EP93XX_SYSCON_SYSCFG_LEECLK	(1<<3)
+> -#define EP93XX_SYSCON_SYSCFG_LCSN2	(1<<1)
+> -#define EP93XX_SYSCON_SYSCFG_LCSN1	(1<<0)
+> +#define EP93XX_SYSCON_SYSCFG_SBOOT	BIT(8)
+> +#define EP93XX_SYSCON_SYSCFG_LCSN7	BIT(7)
+> +#define EP93XX_SYSCON_SYSCFG_LCSN6	BIT(6)
+> +#define EP93XX_SYSCON_SYSCFG_LASDO	BIT(5)
+> +#define EP93XX_SYSCON_SYSCFG_LEEDA	BIT(4)
+> +#define EP93XX_SYSCON_SYSCFG_LEECLK	BIT(3)
+> +#define EP93XX_SYSCON_SYSCFG_LCSN2	BIT(1)
+> +#define EP93XX_SYSCON_SYSCFG_LCSN1	BIT(0)
+>  #define EP93XX_SYSCON_SWLOCK		EP93XX_SYSCON_REG(0xc0)
+>  
+>  /* EP93xx System Controller software locked register write */
