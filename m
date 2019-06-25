@@ -1,67 +1,32 @@
-From: Daniel Vetter <daniel@ffwll.ch>
+From: Russell King - ARM Linux admin <linux@armlinux.org.uk>
 Subject: Re: [PATCH 0/2] Associate ddc adapters with connectors
-Date: Tue, 25 Jun 2019 16:07:55 +0200
-Message-ID: <20190625140755.GT12905@phenom.ffwll.local>
+Date: Tue, 25 Jun 2019 15:10:32 +0100
+Message-ID: <20190625141032.5jiy2oekb3olaejd@shell.armlinux.org.uk>
 References: <cover.1561452052.git.andrzej.p@collabora.com>
  <20190625100351.52ddptvb2gizaepi@shell.armlinux.org.uk>
  <817ccfba-754c-6a28-8d75-63f70605fd43@collabora.com>
  <20190625133639.GA16031@arch-x1c3>
+ <20190625140755.GT12905@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190625133639.GA16031@arch-x1c3>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Emil Velikov <emil.velikov@collabora.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Russell King - ARM Linux admin <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>, Andrzej Pietrasiewicz <andrzej.p@collabora.com>, David Airlie <airlied@linux.ie>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org, kernel@collabora.com, Sean Paul <sean@poorly.run>, linux-kernel@vger.kernel.org, m.szyprowski@samsung.com
+In-Reply-To: <20190625140755.GT12905@phenom.ffwll.local>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Emil Velikov <emil.velikov@collabora.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Andrzej Pietrasiewicz <andrzej.p@collabora.com>, Inki Dae <inki.dae@samsung.com>, David Airlie <airlied@linux.ie>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org, kernel@collabora.com, Sean Paul <sean@poorly.run>, linux-kernel@vger.kernel.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gVHVlLCBKdW4gMjUsIDIwMTkgYXQgMDI6MzY6MzlQTSArMDEwMCwgRW1pbCBWZWxpa292IHdy
-b3RlOgo+IE9uIDIwMTkvMDYvMjUsIEFuZHJ6ZWogUGlldHJhc2lld2ljeiB3cm90ZToKPiA+IEhp
-IFJ1c3NlbGwsCj4gPiAKPiA+IFcgZG5pdSAyNS4wNi4yMDE5IG/CoDEyOjAzLCBSdXNzZWxsIEtp
-bmcgLSBBUk0gTGludXggYWRtaW4gcGlzemU6Cj4gPiA+IE9uIFR1ZSwgSnVuIDI1LCAyMDE5IGF0
-IDExOjQ2OjM0QU0gKzAyMDAsIEFuZHJ6ZWogUGlldHJhc2lld2ljeiB3cm90ZToKPiA+ID4gPiBJ
-dCBpcyBkaWZmaWN1bHQgZm9yIGEgdXNlciB0byBrbm93IHdoaWNoIG9mIHRoZSBpMmMgYWRhcHRl
-cnMgaXMgZm9yIHdoaWNoCj4gPiA+ID4gZHJtIGNvbm5lY3Rvci4gVGhpcyBzZXJpZXMgYWRkcmVz
-c2VzIHRoaXMgcHJvYmxlbS4KPiA+ID4gPiAKPiA+ID4gPiBUaGUgaWRlYSBpcyB0byBoYXZlIGEg
-c3ltYm9saWMgbGluayBpbiBjb25uZWN0b3IncyBzeXNmcyBkaXJlY3RvcnksIGUuZy46Cj4gPiA+
-ID4gCj4gPiA+ID4gbHMgLWwgL3N5cy9jbGFzcy9kcm0vY2FyZDAtSERNSS1BLTEvaTJjLTIKPiA+
-ID4gPiBscnd4cnd4cnd4IDEgcm9vdCByb290IDAgSnVuIDI0IDEwOjQyIC9zeXMvY2xhc3MvZHJt
-L2NhcmQwLUhETUktQS0xL2kyYy0yIFwKPiA+ID4gPiAJLT4gLi4vLi4vLi4vLi4vc29jLzEzODgw
-MDAwLmkyYy9pMmMtMgo+ID4gPiAKPiA+ID4gRG9uJ3QgeW91IHdhbnQgdGhlIHN5bWxpbmsgbmFt
-ZSB0byBiZSAiaTJjIiBvciBzb21ldGhpbmcgZml4ZWQsIHJhdGhlcgo+ID4gPiB0aGFuIHRoZSBu
-YW1lIG9mIHRoZSBpMmMgYWRhcHRlcj8gIE90aGVyd2lzZSwgeW91IHNlZW0gdG8gYmUgZW5jdW1i
-ZXJpbmcKPiA+ID4gdXNlcnNwYWNlIHdpdGggc2VhcmNoaW5nIHRoZSBkaXJlY3RvcnkgdG8gdHJ5
-IGFuZCBmaW5kIHRoZSBzeW1saW5rLgo+ID4gPiAKPiA+IAo+ID4gVGhhbmsgeW91IGZvciB5b3Vy
-IGNvbW1lbnQuIFNvIHlvdSBpbWFnaW5lIHNvbWV0aGluZyBvbiB0aGUgbGluZXMgb2Y6Cj4gPiAK
-PiA+IGxyd3hyd3hyd3ggMSByb290IHJvb3QgMCBKdW4gMjQgMTA6NDIgL3N5cy9jbGFzcy9kcm0v
-Y2FyZDAtSERNSS1BLTEvZGRjIFwKPiA+ICAJLT4gLi4vLi4vLi4vLi4vc29jLzEzODgwMDAwLmky
-Yy9pMmMtMgo+ID4gCj4gPiA/Cj4gPiAKPiBGd2l3IG15IEludGVsIG1hY2hpbmUgbGlzdHMgYSBu
-dW1iZXIgb2YgaTJjIGRldmljZXM6Cj4gL3N5cy9jbGFzcy9kcm0vY2FyZDAtRFAtMS9pMmMtNgo+
-IC9zeXMvY2xhc3MvZHJtL2NhcmQwLURQLTIvaTJjLTcKPiAvc3lzL2NsYXNzL2RybS9jYXJkMC1l
-RFAtMS9pMmMtNQo+IAo+IE5vdGU6IEkgaGF2ZW4ndCBsb29rZWQgX2lmXyB0aGV5IHJlbGF0ZSB0
-byBvbmVzIHlvdSdyZSBwcm9wb3NpbmcgaGVyZS4KPiAKPiBPbmUgdGhpbmcgd29ydGggbWVudGlv
-bmluZyBpcywgdGhlIG9uZXMgSSd2ZSBzZWVuIGFyZSBub3Qgc3ltbGlua3MgdG8KPiBhbm90aGVy
-IHN5c2ZzIGVudHJpZXMuIEFuZCB0aGVyZSBhcmVuJ3QgYW55IGkyYyBub2RlcyBpbiAvZGV2IC4u
-Lgo+IAo+IEp1c3QgYSByYW5kb20gZm9vZCBmb3IgdGhvdWdodCA6LSkKClRob3NlIGFyZSB0aGUg
-aTJjLW92ZXItZHAtYXV4IGNvbnRyb2xsZXJzLiBJIHRoaW5rIHdlIHdhbnQgdG8gbGlzdCB0aGVz
-ZQp0b28uCgpCdHcgdG8gbWFrZSB0aGlzIG1vcmUgdXNlZnVsIG1heWJlIHNvbWUgZGVmYXVsdCBp
-bXBsZW1lbnRhdGlvbnMgZm9yCmdldF9tb2RlcyB3aGljaCBhdXRvbWF0aWNhbGx5IGR0cnQsIGFz
-IGEgaGVscGVyPyBQcm9iYWJseSBjb3VsZCB1c2UgdGhhdAp0byBzcXVhc2ggcXVpdGUgYSBiaXQg
-b2YgYm9pbGVycGxhdGUuCgpPdGhlcndpc2UgSSBsaWtlIHRoaXMuIEJpZ2dlc3QgcHJvYmxlbSBJ
-J20gc2VlaW5nIGhlcmUgaXMgcm9sbGluZyB0aGlzIG91dApldmVyeXdoZXJlLCB0aGlzIGlzIGEg
-bG90IG9mIHdvcmsuIEFuZCB3aXRob3V0IHdpZGVzcHJlYWQgYWRvcHRpb25zIGl0J3MKbm90IHRl
-cnJpYmx5IHVzZWZ1bCBmb3IgdXNlcnNwYWNlLgotRGFuaWVsCi0tIApEYW5pZWwgVmV0dGVyClNv
-ZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8vYmxvZy5mZndsbC5jaApf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
-bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
+On Tue, Jun 25, 2019 at 04:07:55PM +0200, Daniel Vetter wrote:
+> Otherwise I like this. Biggest problem I'm seeing here is rolling this out
+> everywhere, this is a lot of work. And without widespread adoptions it's
+> not terribly useful for userspace.
+
+There will be cases where it's not possible, because the I2C bus is
+hidden behind a chip that doesn't give you direct access to the DDC
+bus.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
