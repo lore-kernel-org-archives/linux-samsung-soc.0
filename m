@@ -1,235 +1,58 @@
-From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: Re: [PATCH v10 08/13] drivers: memory: add DMC driver for
- Exynos5422
-Date: Tue, 25 Jun 2019 13:26:23 +0200
-Message-ID: <c12891f3-2b52-a059-cd74-afe6e41271f4@partner.samsung.com>
-References: <CGME20190614095327eucas1p19b6e522efa15c8fd21c51f3900e376e9@eucas1p1.samsung.com>
-        <20190614095309.24100-1-l.luba@partner.samsung.com>
-        <20190614095309.24100-9-l.luba@partner.samsung.com>
-        <CAJKOXPdjXhfcNRL-XMS6K1jrUQoqoNHXGirjXoeoL4GyXzarpg@mail.gmail.com>
+From: Emil Velikov <emil.velikov@collabora.com>
+Subject: Re: [PATCH 0/2] Associate ddc adapters with connectors
+Date: Tue, 25 Jun 2019 14:36:39 +0100
+Message-ID: <20190625133639.GA16031@arch-x1c3>
+References: <cover.1561452052.git.andrzej.p@collabora.com>
+ <20190625100351.52ddptvb2gizaepi@shell.armlinux.org.uk>
+ <817ccfba-754c-6a28-8d75-63f70605fd43@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPdjXhfcNRL-XMS6K1jrUQoqoNHXGirjXoeoL4GyXzarpg@mail.gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <817ccfba-754c-6a28-8d75-63f70605fd43@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie@samsung.com>, kgene@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org, willy.mh.wolff.ml@gmail.com
+To: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Cc: Russell King - ARM Linux admin <linux@armlinux.org.uk>, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Inki Dae <inki.dae@samsung.com>, David Airlie <airlied@linux.ie>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>, kernel@collabora.com, Sean Paul <sean@poorly.run>, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+On 2019/06/25, Andrzej Pietrasiewicz wrote:
+> Hi Russell,
+> 
+> W dniu 25.06.2019 o 12:03, Russell King - ARM Linux admin pisze:
+> > On Tue, Jun 25, 2019 at 11:46:34AM +0200, Andrzej Pietrasiewicz wrote:
+> > > It is difficult for a user to know which of the i2c adapters is for which
+> > > drm connector. This series addresses this problem.
+> > > 
+> > > The idea is to have a symbolic link in connector's sysfs directory, e.g.:
+> > > 
+> > > ls -l /sys/class/drm/card0-HDMI-A-1/i2c-2
+> > > lrwxrwxrwx 1 root root 0 Jun 24 10:42 /sys/class/drm/card0-HDMI-A-1/i2c-2 \
+> > > 	-> ../../../../soc/13880000.i2c/i2c-2
+> > 
+> > Don't you want the symlink name to be "i2c" or something fixed, rather
+> > than the name of the i2c adapter?  Otherwise, you seem to be encumbering
+> > userspace with searching the directory to try and find the symlink.
+> > 
+> 
+> Thank you for your comment. So you imagine something on the lines of:
+> 
+> lrwxrwxrwx 1 root root 0 Jun 24 10:42 /sys/class/drm/card0-HDMI-A-1/ddc \
+>  	-> ../../../../soc/13880000.i2c/i2c-2
+> 
+> ?
+> 
+Fwiw my Intel machine lists a number of i2c devices:
+/sys/class/drm/card0-DP-1/i2c-6
+/sys/class/drm/card0-DP-2/i2c-7
+/sys/class/drm/card0-eDP-1/i2c-5
 
-On 6/14/19 3:47 PM, Krzysztof Kozlowski wrote:
-> On Fri, 14 Jun 2019 at 11:53, Lukasz Luba <l.luba@partner.samsung.com> wrote:
->>
->> This patch adds driver for Exynos5422 Dynamic Memory Controller.
->> The driver provides support for dynamic frequency and voltage scaling for
->> DMC and DRAM. It supports changing timings of DRAM running with different
->> frequency. There is also an algorithm to calculate timigns based on
->> memory description provided in DT.
->> The patch also contains needed MAINTAINERS file update.
->>
->> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
->> ---
->>   MAINTAINERS                             |    8 +
->>   drivers/memory/samsung/Kconfig          |   17 +
->>   drivers/memory/samsung/Makefile         |    1 +
->>   drivers/memory/samsung/exynos5422-dmc.c | 1262 +++++++++++++++++++++++
->>   4 files changed, 1288 insertions(+)
->>   create mode 100644 drivers/memory/samsung/exynos5422-dmc.c
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 57f496cff999..6ffccfd95351 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -3470,6 +3470,14 @@ S:       Maintained
->>   F:     drivers/devfreq/exynos-bus.c
->>   F:     Documentation/devicetree/bindings/devfreq/exynos-bus.txt
->>
->> +DMC FREQUENCY DRIVER FOR SAMSUNG EXYNOS5422
->> +M:     Lukasz Luba <l.luba@partner.samsung.com>
->> +L:     linux-pm@vger.kernel.org
->> +L:     linux-samsung-soc@vger.kernel.org
->> +S:     Maintained
->> +F:     drivers/memory/samsung/exynos5422-dmc.c
->> +F:     Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt
->> +
->>   BUSLOGIC SCSI DRIVER
->>   M:     Khalid Aziz <khalid@gonehiking.org>
->>   L:     linux-scsi@vger.kernel.org
->> diff --git a/drivers/memory/samsung/Kconfig b/drivers/memory/samsung/Kconfig
->> index 79ce7ea58903..c93baa029654 100644
->> --- a/drivers/memory/samsung/Kconfig
->> +++ b/drivers/memory/samsung/Kconfig
->> @@ -5,6 +5,23 @@ config SAMSUNG_MC
->>            Support for the Memory Controller (MC) devices found on
->>            Samsung Exynos SoCs.
->>
->> +config ARM_EXYNOS5422_DMC
->> +       tristate "ARM EXYNOS5422 Dynamic Memory Controller driver"
->> +       depends on ARCH_EXYNOS
->> +       select DDR
->> +       select PM_DEVFREQ
->> +       select DEVFREQ_GOV_SIMPLE_ONDEMAND
->> +       select DEVFREQ_GOV_USERSPACE
->> +       select PM_DEVFREQ_EVENT
->> +       select PM_OPP
->> +       help
->> +         This adds driver for Exynos5422 DMC (Dynamic Memory Controller).
->> +         The driver provides support for Dynamic Voltage and Frequency Scaling in
->> +         DMC and DRAM. It also supports changing timings of DRAM running with
->> +         different frequency. The timings are calculated based on DT memory
->> +         information.
->> +
->> +
->>   if SAMSUNG_MC
->>
->>   config EXYNOS_SROM
->> diff --git a/drivers/memory/samsung/Makefile b/drivers/memory/samsung/Makefile
->> index 00587be66211..4f6e4383bab7 100644
->> --- a/drivers/memory/samsung/Makefile
->> +++ b/drivers/memory/samsung/Makefile
->> @@ -1,2 +1,3 @@
->>   # SPDX-License-Identifier: GPL-2.0
->> +obj-$(CONFIG_ARM_EXYNOS5422_DMC)       += exynos5422-dmc.o
->>   obj-$(CONFIG_EXYNOS_SROM)      += exynos-srom.o
->> diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
->> new file mode 100644
->> index 000000000000..b397efe0da57
->> --- /dev/null
->> +++ b/drivers/memory/samsung/exynos5422-dmc.c
->> @@ -0,0 +1,1262 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (c) 2019 Samsung Electronics Co., Ltd.
->> + * Author: Lukasz Luba <l.luba@partner.samsung.com>
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/devfreq.h>
->> +#include <linux/devfreq-event.h>
->> +#include <linux/device.h>
->> +#include <linux/io.h>
->> +#include <linux/mfd/syscon.h>
->> +#include <linux/module.h>
->> +#include <linux/of_device.h>
->> +#include <linux/pm_opp.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/regmap.h>
->> +#include <linux/regulator/consumer.h>
->> +#include <linux/slab.h>
->> +#include <memory/jedec_ddr.h>
->> +#include "../of_memory.h"
->> +
->> +#define EXYNOS5_DREXI_TIMINGAREF               (0x0030)
->> +#define EXYNOS5_DREXI_TIMINGROW0               (0x0034)
->> +#define EXYNOS5_DREXI_TIMINGDATA0              (0x0038)
->> +#define EXYNOS5_DREXI_TIMINGPOWER0             (0x003C)
->> +#define EXYNOS5_DREXI_TIMINGROW1               (0x00E4)
->> +#define EXYNOS5_DREXI_TIMINGDATA1              (0x00E8)
->> +#define EXYNOS5_DREXI_TIMINGPOWER1             (0x00EC)
->> +#define CDREX_PAUSE                            (0x2091c)
->> +#define CDREX_LPDDR3PHY_CON3                   (0x20a20)
->> +#define EXYNOS5_TIMING_SET_SWI                 (1UL << 28)
->> +#define USE_MX_MSPLL_TIMINGS                   (1)
->> +#define USE_BPLL_TIMINGS                       (0)
->> +#define EXYNOS5_AREF_NORMAL                    (0x2e)
->> +
->> +/**
->> + * struct dmc_opp_table - Operating level desciption
->> + *
->> + * Covers frequency and voltage settings of the DMC operating mode.
->> + */
->> +struct dmc_opp_table {
->> +       u32 freq_hz;
->> +       u32 volt_uv;
->> +};
->> +
->> +/**
->> + * struct exynos5_dmc - main structure describing DMC device
->> + *
->> + * The main structure for the Dynamic Memory Controller which covers clocks,
->> + * memory regions, HW information, parameters and current operating mode.
->> + */
->> +struct exynos5_dmc {
->> +       struct device *dev;
->> +       struct devfreq *df;
->> +       struct devfreq_simple_ondemand_data gov_data;
->> +       void __iomem *base_drexi0;
->> +       void __iomem *base_drexi1;
->> +       struct regmap *clk_regmap;
->> +       struct mutex lock;
->> +       unsigned long curr_rate;
->> +       unsigned long curr_volt;
->> +       unsigned long bypass_rate;
->> +       struct dmc_opp_table *opp;
->> +       struct dmc_opp_table opp_bypass;
->> +       int opp_count;
->> +       u32 timings_arr_size;
->> +       u32 *timing_row;
->> +       u32 *timing_data;
->> +       u32 *timing_power;
->> +       const struct lpddr3_timings *timings;
->> +       const struct lpddr3_min_tck *min_tck;
->> +       u32 bypass_timing_row;
->> +       u32 bypass_timing_data;
->> +       u32 bypass_timing_power;
->> +       struct regulator *vdd_mif;
->> +       struct clk *fout_spll;
->> +       struct clk *fout_bpll;
->> +       struct clk *mout_spll;
->> +       struct clk *mout_bpll;
->> +       struct clk *mout_mclk_cdrex;
->> +       struct clk *mout_mx_mspll_ccore;
->> +       struct clk *mx_mspll_ccore_phy;
->> +       struct clk *mout_mx_mspll_ccore_phy;
->> +       struct devfreq_event_dev **counter;
->> +       int num_counters;
->> +};
->> +
->> +#define TIMING_FIELD(t_name, t_bit_beg, t_bit_end) \
->> +       { .name = t_name, .bit_beg = t_bit_beg, .bit_end = t_bit_end }
->> +
->> +#define TIMING_VAL(timing_array, id, t_val)                    \
->> +({                                                             \
->> +               u32 __val;                              \
->> +               __val = t_val << timing_array[id].bit_beg;      \
->> +               __val;                                          \
->> +})
->> +
->> +#define TIMING_VAL2REG(timing, t_val)                  \
->> +({                                                             \
->> +               u32 __val;                              \
->> +               __val = t_val << timing->bit_beg;       \
->> +               __val;                                          \
->> +})
->> +
->> +#define TIMING_REG2VAL(reg, timing)                    \
-> 
-> It seems that only some of these defines are used. Please clean them up.
-Indeed, they were used in previous version which had more features and
-debug options. So TIMING_REG2VAL and TIMING_VAL will be cleaned
-> You have also a lot of checkpatch --strict suggestions:
->      CHECK: Macro argument 'reg' may be better as '(reg)' to avoid
-> precedence issues
-> which seems to be valid.
-Will not be valid since it is in TIMING_REG2VAL macro which was used
-for debugfs information only.
-> 
-> While at it please also fix few other --strict errors:
-> CHECK: Please don't use multiple blank lines
-> CHECK: Alignment should match open parenthesis
-> CHECK: Prefer using the BIT macro
-> CHECK: struct mutex definition without comment
-I wouldn't call them 'errors' but will do a cleanup.
+Note: I haven't looked _if_ they relate to ones you're proposing here.
 
-Thank you for the review.
+One thing worth mentioning is, the ones I've seen are not symlinks to
+another sysfs entries. And there aren't any i2c nodes in /dev ...
 
-Regards,
-Lukasz
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
+Just a random food for thought :-)
+
+HTH
+Emil
