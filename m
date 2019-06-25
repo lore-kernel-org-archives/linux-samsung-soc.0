@@ -1,66 +1,63 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH resend 25/47] ASoC: samsung: snow: don't
- select unnecessary Platform
-Date: Tue, 25 Jun 2019 07:36:37 +0200
-Message-ID: <80c5c575-6f28-c6a6-91b2-d701bb9fbce8@samsung.com>
-References: <877e9iwf9f.wl-kuninori.morimoto.gx@renesas.com>
- <874l4mv0h8.wl-kuninori.morimoto.gx@renesas.com>
- <CGME20190624131905eucas1p2cf4335b4d1483b7e62d0c9e7b5223a3c@eucas1p2.samsung.com>
- <9cfc8505-2903-033f-f68b-8ccc1c70132b@samsung.com>
- <87d0j232wg.wl-kuninori.morimoto.gx@renesas.com>
+From: Lukasz Luba <l.luba@partner.samsung.com>
+Subject: Re: [PATCH v10 09/13] drivers: devfreq: events: add Exynos PPMU new
+ events
+Date: Tue, 25 Jun 2019 09:31:46 +0200
+Message-ID: <2e1be1d3-b6ae-e40d-48cd-6b6adb26860d@partner.samsung.com>
+References: <CGME20190614095328eucas1p24009b3a07322fd12e49eabb7a08baf50@eucas1p2.samsung.com>
+        <20190614095309.24100-1-l.luba@partner.samsung.com>
+        <20190614095309.24100-10-l.luba@partner.samsung.com>
+        <CAGTfZH35X0zE2LhGWJJp2xZNNk1ew7zNMoMqL+eZ5rcBFcPvew@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <87d0j232wg.wl-kuninori.morimoto.gx@renesas.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAGTfZH35X0zE2LhGWJJp2xZNNk1ew7zNMoMqL+eZ5rcBFcPvew@mail.gmail.com>
 Content-Language: en-US
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, Linux-ALSA <alsa-devel@alsa-project.org>, Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: cwchoi00@gmail.com
+Cc: devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, keescook@chromium.org, Tony Lindgren <tony@atomide.com>, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, Greg KH <gregkh@linuxfou>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgS3VuaW5vcgoKT24gMjAxOS0wNi0yNSAwMjo1MSwgS3VuaW5vcmkgTW9yaW1vdG8gd3JvdGU6
-Cj4gSGkgTWFyZWsKPgo+IFRoYW5rIHlvdSBmb3IgeW91ciByZXBvcnQuCj4KPj4+IEFMU0EgU29D
-IGlzIG5vdyBzdXBwb3J0aW5nICJubyBQbGF0Zm9ybSIuIFNvdW5kIGNhcmQgZG9lc24ndCBuZWVk
-IHRvCj4+PiBzZWxlY3QgIkNQVSBjb21wb25lbnQiIGFzICJQbGF0Zm9ybSIgYW55bW9yZSBpZiBp
-dCBkb2Vzbid0IG5lZWQKPj4+IHNwZWNpYWwgUGxhdGZvcm0uCj4+PiBUaGlzIHBhdGNoIHJlbW92
-ZXMgc3VjaCBzZXR0aW5ncy4KPj4+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBLdW5pbm9yaSBNb3JpbW90
-byA8a3VuaW5vcmkubW9yaW1vdG8uZ3hAcmVuZXNhcy5jb20+Cj4+IFRoaXMgcGF0Y2ggY2F1c2Vz
-IHJlZ3Jlc3Npb24gb24gU2Ftc3VuZyBFeHlub3MtYmFzZWQgYm9hcmRzOiBTbm93LAo+PiBQZWFj
-aC1QaSBhbmQgUGVhY2gtUGl0IChhbGwgdGhhdCB1c2Ugc25vdyBtYWNoaW5lIGRyaXZlcikgc2lu
-Y2UgbGludXgKPj4gbmV4dC0yMDE5MDYyMC4gQVNvQyBkZXZpY2UgaXMgcHJvcGVybHkgcmVnaXN0
-ZXJlZCwgYnV0IGl0IGlzIG5vdCB1c2FibGU6Cj4+Cj4+IFvCoMKgwqAgMy4yMDMwMDZdIHNhbXN1
-bmctaTJzIDM4MzAwMDAuaTJzLXNlYzogRE1BIGNoYW5uZWxzIHNvdXJjZWQgZnJvbQo+PiBkZXZp
-Y2UgMzgzMDAwMC5pMnMKPj4gW8KgwqDCoCAzLjIxMzQ0MF0gc25vdy1hdWRpbyBzb3VuZDogRmFp
-bGVkIHBhcnNpbmcgY29kZWMgbm9kZQo+PiBbwqDCoMKgIDMuNDIzMjQxXSBzbm93LWF1ZGlvIHNv
-dW5kOiBtdWx0aWNvZGVjIDwtPiBzYW1zdW5nLWkycyBtYXBwaW5nIG9rCj4+IFvCoMKgwqAgMy40
-Mjk3NzZdIG1heDk4MDk1IDctMDAxMTogQVNvQzogbXV4IEV4dGVybmFsIE1JQyBoYXMgbm8gcGF0
-aHMKPj4gW8KgwqDCoCAzLjQzNDUxM10gbWF4OTgwOTUgNy0wMDExOiBBU29DOiBtdXggTGluZWlu
-IE11eCBoYXMgbm8gcGF0aHMKPj4gW8KgwqDCoCA0LjA0MzQ4OF0gQUxTQSBkZXZpY2UgbGlzdDoK
-Pj4gW8KgwqDCoCA0LjA0NzE3MV3CoMKgICMwOiBTbm93LUkyUy1NQVg5ODA5NQo+Pgo+PiAjIHNw
-ZWFrZXItdGVzdCAtbDEKPj4KPj4gc3BlYWtlci10ZXN0IDEuMS4zCj4+Cj4+IFBsYXliYWNrIGRl
-dmljZSBpcyBkZWZhdWx0Cj4+IFN0cmVhbSBwYXJhbWV0ZXJzIGFyZSA0ODAwMEh6LCBTMTZfTEUs
-IDEgY2hhbm5lbHMKPj4gVXNpbmcgMTYgb2N0YXZlcyBvZiBwaW5rIG5vaXNlCj4+IFBsYXliYWNr
-IG9wZW4gZXJyb3I6IC0yMixJbnZhbGlkIGFyZ3VtZW50Cj4gSG1tLi4gc3RyYW5nZS4uLgo+IENh
-biB5b3UgdGVzdCBub3JtYWwgYXBsYXkgaGVyZSA/IEknbSBub3QgZmFtaWxpYXIgd2l0aCBzcGVh
-a2VyLXRlc3QuCgpUaGUgc2FtZSBpc3N1ZToKCiMgYXBsYXkgL3Vzci9zaGFyZS9zb3VuZHMvYWxz
-YS9Gcm9udF9DZW50ZXIud2F2CmFwbGF5OiBtYWluOjc4ODogYXVkaW8gb3BlbiBlcnJvcjogSW52
-YWxpZCBhcmd1bWVudAojCgoKPiBJIGhhdmUgbm8gaWRlYSBzbyBmYXIsIGJ1dCBvbmUgY2FwYWJp
-bGl0eSBpcyB0aGF0IGlmIHlvdXIgc3lzdGVtCj4gdXNlZCAvIGJhc2VkIGR1bW15IHBsYXRmb3Jt
-LCBhbmQgaWYgeW91ciBDUFUgZHJpdmVyIGRpZG4ndCB1c2UvaGF2ZQo+IHNuZF9zb2Nfc2V0X3J1
-bnRpbWVfaHdwYXJhbXMoKSAvIHNuZF9wY21fbGliX2lvY3RsLAo+IGl0IG1pZ2h0IGJlIGhhcHBl
-biwgYnV0IHRoaXMgcGF0Y2ggc2VlbXMgbm90IHJlbGF0ZWQgdG8gaXQuLi4KClJldmVydGluZyB0
-aGlzIHBhdGNoIGZpeGVzIHRoZSBpc3N1ZSwgc28gaXQgaXMgZGVmaW5pdGVseSByZWxhdGVkIHNv
-bWVob3cuCgoKQmVzdCByZWdhcmRzCi0tIApNYXJlayBTenlwcm93c2tpLCBQaEQKU2Ftc3VuZyBS
-JkQgSW5zdGl0dXRlIFBvbGFuZAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KQWxzYS1kZXZlbCBtYWlsaW5nIGxpc3QKQWxzYS1kZXZlbEBhbHNhLXByb2pl
-Y3Qub3JnCmh0dHBzOi8vbWFpbG1hbi5hbHNhLXByb2plY3Qub3JnL21haWxtYW4vbGlzdGluZm8v
-YWxzYS1kZXZlbAo=
+
+
+On 6/22/19 3:10 PM, Chanwoo Choi wrote:
+> Hi,
+> 
+> 2019년 6월 14일 (금) 오후 6:54, Lukasz Luba <l.luba@partner.samsung.com>님이 작성:
+>>
+>> Define new performance events supported by Exynos5422 SoC counters.
+>> The counters are built-in in Dynamic Memory Controller and provide
+>> information regarding memory utilization.
+>>
+>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+>> ---
+>>   drivers/devfreq/event/exynos-ppmu.c | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
+>> index c2ea94957501..ce658c262c27 100644
+>> --- a/drivers/devfreq/event/exynos-ppmu.c
+>> +++ b/drivers/devfreq/event/exynos-ppmu.c
+>> @@ -89,6 +89,12 @@ static struct __exynos_ppmu_events {
+>>          PPMU_EVENT(d1-cpu),
+>>          PPMU_EVENT(d1-general),
+>>          PPMU_EVENT(d1-rt),
+>> +
+>> +       /* For Exynos5422 SoC */
+>> +       PPMU_EVENT(dmc0_0),
+>> +       PPMU_EVENT(dmc0_1),
+>> +       PPMU_EVENT(dmc1_0),
+>> +       PPMU_EVENT(dmc1_1),
+>>   };
+>>
+>>   static int exynos_ppmu_find_ppmu_id(struct devfreq_event_dev *edev)
+>> --
+>> 2.17.1
+>>
+> 
+> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+> 
+Thank you Chanwoo.
+
+Regards,
+Lukasz
