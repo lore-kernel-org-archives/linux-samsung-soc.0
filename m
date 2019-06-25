@@ -1,8 +1,10 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 1/4] ARM: defconfig: Samsung/Exynos for v5.3
-Date: Tue, 25 Jun 2019 21:34:48 +0200
-Message-ID: <20190625193451.7696-1-krzk@kernel.org>
+Subject: [GIT PULL 4/4] ARM: exynos: Mach for v5.3
+Date: Tue, 25 Jun 2019 21:34:51 +0200
+Message-ID: <20190625193451.7696-4-krzk@kernel.org>
+References: <20190625193451.7696-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190625193451.7696-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org
 Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
@@ -14,28 +16,28 @@ The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-5.3
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-5.3
 
-for you to fetch changes up to dd50a69b5697532666023766688c6ea642e5a443:
+for you to fetch changes up to a55e040c6f21f55f81c53c56e1d8095df35e1d02:
 
-  ARM: exynos_defconfig: Enable Panfrost and Lima drivers (2019-06-19 19:23:35 +0200)
-
-----------------------------------------------------------------
-Samsung defconfig changes for v5.3
-
-1. Trim several configs with savedefconfig.
-2. Enable Lima and Panfrost drivers for Mali GPU.
+  ARM: exynos: Cleanup cppcheck shifting warning (2019-06-25 20:45:09 +0200)
 
 ----------------------------------------------------------------
-Krzysztof Kozlowski (4):
-      ARM: exynos_defconfig: Trim and reorganize with savedefconfig
-      ARM: defconfig: samsung: Cleanup with savedefconfig
-      ARM: multi_v7_defconfig: Enable Panfrost and Lima drivers
-      ARM: exynos_defconfig: Enable Panfrost and Lima drivers
+Samsung mach/soc changes for v5.3
 
- arch/arm/configs/exynos_defconfig   | 65 +++++++++++++++++--------------------
- arch/arm/configs/mini2440_defconfig | 43 ++++++++++--------------
- arch/arm/configs/multi_v7_defconfig |  3 +-
- arch/arm/configs/s3c2410_defconfig  | 24 +++++---------
- arch/arm/configs/s3c6400_defconfig  | 11 +++----
- 5 files changed, 62 insertions(+), 84 deletions(-)
+Only cleanups and minor fixes.
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      ARM: exynos: Only build MCPM support if used
+
+Krzysztof Kozlowski (1):
+      ARM: exynos: Make ARCH_EXYNOS3 a default option
+
+Phong Tran (1):
+      ARM: exynos: Cleanup cppcheck shifting warning
+
+ arch/arm/mach-exynos/Kconfig   | 7 ++++++-
+ arch/arm/mach-exynos/Makefile  | 2 +-
+ arch/arm/mach-exynos/suspend.c | 8 ++++----
+ 3 files changed, 11 insertions(+), 6 deletions(-)
