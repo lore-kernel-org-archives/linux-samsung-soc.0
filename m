@@ -1,33 +1,41 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH V3 04/15] ARM: exynos: cleanup cppcheck shifting error
-Date: Tue, 25 Jun 2019 20:49:51 +0200
-Message-ID: <20190625184951.GA10025@kozik-lap>
-References: <20190624135105.15579-1-tranmanphong@gmail.com>
- <20190625040356.27473-1-tranmanphong@gmail.com>
- <20190625040356.27473-5-tranmanphong@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Subject: [GIT PULL 1/4] ARM: defconfig: Samsung/Exynos for v5.3
+Date: Tue, 25 Jun 2019 21:34:48 +0200
+Message-ID: <20190625193451.7696-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190625040356.27473-5-tranmanphong@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Phong Tran <tranmanphong@gmail.com>
-Cc: acme@kernel.org, alexander.shishkin@linux.intel.com, alexander.sverdlin@gmail.com, allison@lohutok.net, andrew@lunn.ch, ast@kernel.org, bgolaszewski@baylibre.com, bpf@vger.kernel.org, daniel@iogearbox.net, daniel@zonque.org, dmg@turingmachine.org, festevam@gmail.com, gerg@uclinux.org, gregkh@linuxfoundation.org, gregory.clement@bootlin.com, haojian.zhuang@gmail.com, hsweeten@visionengravers.com, illusionist.neo@gmail.com, info@metux.net, jason@lakedaemon.net, jolsa@redhat.com, kafai@fb.com, kernel@pengutronix.de, kgene@kernel.org, kstewart@linuxfoundation.org, linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux@armlinux.org.uk, liviu.dudau@arm.com, lkundrak@v3.sk, lorenzo.pierali
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 11:03:45AM +0700, Phong Tran wrote:
-> There is error from cppcheck tool
-> "Shifting signed 32-bit value by 31 bits is undefined behaviour errors"
-> change to use BIT() marco for improvement.
-> 
-> Signed-off-by: Phong Tran <tranmanphong@gmail.com>
-> ---
->  arch/arm/mach-exynos/suspend.c | 2 +-
+The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
 
-Thanks, applied with slightly different commit message. As Peter
-pointed, there is no error because of GCC.  Usually we expect a reply to
-comments on LKML...  and also you could take his hints and use them to
-improve the commit msg to properly describe what is the problem.
+  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
 
-Best regards,
-Krzysztof
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-5.3
+
+for you to fetch changes up to dd50a69b5697532666023766688c6ea642e5a443:
+
+  ARM: exynos_defconfig: Enable Panfrost and Lima drivers (2019-06-19 19:23:35 +0200)
+
+----------------------------------------------------------------
+Samsung defconfig changes for v5.3
+
+1. Trim several configs with savedefconfig.
+2. Enable Lima and Panfrost drivers for Mali GPU.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (4):
+      ARM: exynos_defconfig: Trim and reorganize with savedefconfig
+      ARM: defconfig: samsung: Cleanup with savedefconfig
+      ARM: multi_v7_defconfig: Enable Panfrost and Lima drivers
+      ARM: exynos_defconfig: Enable Panfrost and Lima drivers
+
+ arch/arm/configs/exynos_defconfig   | 65 +++++++++++++++++--------------------
+ arch/arm/configs/mini2440_defconfig | 43 ++++++++++--------------
+ arch/arm/configs/multi_v7_defconfig |  3 +-
+ arch/arm/configs/s3c2410_defconfig  | 24 +++++---------
+ arch/arm/configs/s3c6400_defconfig  | 11 +++----
+ 5 files changed, 62 insertions(+), 84 deletions(-)
