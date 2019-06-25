@@ -1,67 +1,42 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH resend 25/47] ASoC: samsung: snow: don't
- select unnecessary Platform
-Date: Tue, 25 Jun 2019 10:37:35 +0200
-Message-ID: <c4bb4599-e5d5-926b-75d5-d5c349ed8076@samsung.com>
-References: <877e9iwf9f.wl-kuninori.morimoto.gx@renesas.com>
- <874l4mv0h8.wl-kuninori.morimoto.gx@renesas.com>
- <CGME20190624131905eucas1p2cf4335b4d1483b7e62d0c9e7b5223a3c@eucas1p2.samsung.com>
- <9cfc8505-2903-033f-f68b-8ccc1c70132b@samsung.com>
- <87d0j232wg.wl-kuninori.morimoto.gx@renesas.com>
- <80c5c575-6f28-c6a6-91b2-d701bb9fbce8@samsung.com>
- <877e9a2hvn.wl-kuninori.morimoto.gx@renesas.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <877e9a2hvn.wl-kuninori.morimoto.gx@renesas.com>
-Content-Language: en-US
-List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, Linux-ALSA <alsa-devel@alsa-project.org>, Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+From: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Subject: [PATCH 0/2] Associate ddc adapters with connectors
+Date: Tue, 25 Jun 2019 11:46:34 +0200
+Message-ID: <cover.1561452052.git.andrzej.p@collabora.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: kernel@collabora.com, m.szyprowski@samsung.com, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgS3VuaW5vcmksCgpPbiAyMDE5LTA2LTI1IDEwOjI1LCBLdW5pbm9yaSBNb3JpbW90byB3cm90
-ZToKPj4+IEkgaGF2ZSBubyBpZGVhIHNvIGZhciwgYnV0IG9uZSBjYXBhYmlsaXR5IGlzIHRoYXQg
-aWYgeW91ciBzeXN0ZW0KPj4+IHVzZWQgLyBiYXNlZCBkdW1teSBwbGF0Zm9ybSwgYW5kIGlmIHlv
-dXIgQ1BVIGRyaXZlciBkaWRuJ3QgdXNlL2hhdmUKPj4+IHNuZF9zb2Nfc2V0X3J1bnRpbWVfaHdw
-YXJhbXMoKSAvIHNuZF9wY21fbGliX2lvY3RsLAo+Pj4gaXQgbWlnaHQgYmUgaGFwcGVuLCBidXQg
-dGhpcyBwYXRjaCBzZWVtcyBub3QgcmVsYXRlZCB0byBpdC4uLgo+PiBSZXZlcnRpbmcgdGhpcyBw
-YXRjaCBmaXhlcyB0aGUgaXNzdWUsIHNvIGl0IGlzIGRlZmluaXRlbHkgcmVsYXRlZCBzb21laG93
-Lgo+IEFoaC4uLiBPSyBub3cgSSB0aGluayBJIGNvdWxkIHVuZGVyc3RhbmQgeW91ciBpc3N1ZS4K
-PiBZb3VyIENQVSBpcyB1c2luZyBkZXZtX3NuZF9kbWFlbmdpbmVfcGNtX3JlZ2lzdGVyKCkgd2l0
-aCBzYW1lICpkZXYuCj4gSW4gc3VjaCBjYXNlLCBpbmRlZWQgdGhpcyBwYXRjaCBicmVha3Mgc291
-bmQgY2FyZC4KPgo+IENhbiBJIGNvbmZpcm0gaXQgPwo+IEluIGxvY2FsIGVtYWlsLCBJIGFza2Vk
-IHByaW50aW5nIGNvbXBvbmVudCBuYW1lIGxpc3QuCj4gQ2FuIHlvdSBwbGVhc2UgcmVwbGFjZSBp
-dCB0byBiZWxvdyA/Cj4gSSB0aGluayBkaXNhcHBlYXIgY29tcG9uZW50IGlzICJzbmRfZG1hZW5n
-aW5lX3BjbSIuCj4gSWYgc28sIGFib3ZlIG15IHBhdGNoIGlzIHRoZSBidWcuCj4KPiAtLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0KPiBkaWZmIC0tZ2l0IGEvc291bmQvc29jL3NvYy1jb3JlLmMg
-Yi9zb3VuZC9zb2Mvc29jLWNvcmUuYwo+IGluZGV4IDRjZDc3Y2QuLjRiMWY4YWUgMTAwNjQ0Cj4g
-LS0tIGEvc291bmQvc29jL3NvYy1jb3JlLmMKPiArKysgYi9zb3VuZC9zb2Mvc29jLWNvcmUuYwo+
-IEBAIC0zMTMsNiArMzEzLDcgQEAgc3RhdGljIGludCBzbmRfc29jX3J0ZGNvbV9hZGQoc3RydWN0
-IHNuZF9zb2NfcGNtX3J1bnRpbWUgKnJ0ZCwKPiAgIAluZXdfcnRkY29tLT5jb21wb25lbnQgPSBj
-b21wb25lbnQ7Cj4gICAJSU5JVF9MSVNUX0hFQUQoJm5ld19ydGRjb20tPmxpc3QpOwo+ICAgCj4g
-KwlwcmludGsoIi0tLS0tJXMgOiAlc1xuIiwgY29tcG9uZW50LT5uYW1lLCBjb21wb25lbnQtPmRy
-aXZlci0+bmFtZSk7Cj4gICAJbGlzdF9hZGRfdGFpbCgmbmV3X3J0ZGNvbS0+bGlzdCwgJnJ0ZC0+
-Y29tcG9uZW50X2xpc3QpOwo+ICAgCj4gICAJcmV0dXJuIDA7Cj4gLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tCj4KPiBUaGFuayB5b3UgZm9yIHlvdXIgaGVscCAhIQoKcHVyZSBuZXh0LTIwMTkw
-NjI0OgoKW8KgwqDCoCAzLjU0OTcxMl0gLS0tLS0zODMwMDAwLmkycyA6IHNhbXN1bmctaTJzClvC
-oMKgwqAgMy43Njc3MzJdIC0tLS0tbWF4OTgwOTUuNy0wMDExIDogKG51bGwpClvCoMKgwqAgMy45
-ODYzNzBdIC0tLS0taGRtaS1hdWRpby1jb2RlYy4zLmF1dG8gOiAobnVsbCkKCm5leHQtMjAxOTA2
-MjQgKyBSZXZlcnQgIkFTb0M6IHNhbXN1bmc6IHNub3c6IGRvbid0IHNlbGVjdCB1bm5lY2Vzc2Fy
-eSAKUGxhdGZvcm0iOgoKW8KgwqDCoCAzLjUwODM5MV0gLS0tLS0zODMwMDAwLmkycyA6IHNhbXN1
-bmctaTJzClvCoMKgwqAgMy43MjYzMzJdIC0tLS0tbWF4OTgwOTUuNy0wMDExIDogKG51bGwpClvC
-oMKgwqAgMy45NDQ5MDZdIC0tLS0taGRtaS1hdWRpby1jb2RlYy4zLmF1dG8gOiAobnVsbCkKW8Kg
-wqDCoCA0LjM3NjYzOV0gLS0tLS0zODMwMDAwLmkycyA6IHNuZF9kbWFlbmdpbmVfcGNtCgoKQmVz
-dCByZWdhcmRzCi0tIApNYXJlayBTenlwcm93c2tpLCBQaEQKU2Ftc3VuZyBSJkQgSW5zdGl0dXRl
-IFBvbGFuZAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-QWxzYS1kZXZlbCBtYWlsaW5nIGxpc3QKQWxzYS1kZXZlbEBhbHNhLXByb2plY3Qub3JnCmh0dHBz
-Oi8vbWFpbG1hbi5hbHNhLXByb2plY3Qub3JnL21haWxtYW4vbGlzdGluZm8vYWxzYS1kZXZlbAo=
+It is difficult for a user to know which of the i2c adapters is for which
+drm connector. This series addresses this problem.
+
+The idea is to have a symbolic link in connector's sysfs directory, e.g.:
+
+ls -l /sys/class/drm/card0-HDMI-A-1/i2c-2
+lrwxrwxrwx 1 root root 0 Jun 24 10:42 /sys/class/drm/card0-HDMI-A-1/i2c-2 \
+	-> ../../../../soc/13880000.i2c/i2c-2
+
+The user then knows that their card0-HDMI-A-1 uses i2c-2 and can e.g. run
+ddcutil:
+
+ddcutil -b 2 getvcp 0x10
+VCP code 0x10 (Brightness                    ): current value =    90, max value =   100
+
+The first patch in the series adds struct i2c_adapter pointer to struct
+drm_connector. If the field is used by a particular driver, then an
+appropriate symbolic link is created by the generic code, which is also added
+by this patch.
+
+The second patch is an example of how to convert a driver to this new scheme.
+
+Andrzej Pietrasiewicz (2):
+  drm: Include ddc adapter pointer in struct drm_connector
+  drm/exynos: Provide ddc symlink in connector's sysfs
+
+ drivers/gpu/drm/drm_sysfs.c          |  9 +++++++++
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 11 +++++------
+ include/drm/drm_connector.h          | 11 +++++++++++
+ 3 files changed, 25 insertions(+), 6 deletions(-)
+
+-- 
+2.17.1
