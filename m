@@ -1,43 +1,66 @@
-From: Phong Tran <tranmanphong@gmail.com>
-Subject: [PATCH V3 15/15] ARM: vfp: cleanup cppcheck shifting errors
-Date: Tue, 25 Jun 2019 11:03:56 +0700
-Message-ID: <20190625040356.27473-16-tranmanphong@gmail.com>
-References: <20190624135105.15579-1-tranmanphong@gmail.com>
- <20190625040356.27473-1-tranmanphong@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190625040356.27473-1-tranmanphong@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: tranmanphong@gmail.com
-Cc: acme@kernel.org, alexander.shishkin@linux.intel.com, alexander.sverdlin@gmail.com, allison@lohutok.net, andrew@lunn.ch, ast@kernel.org, bgolaszewski@baylibre.com, bpf@vger.kernel.org, daniel@iogearbox.net, daniel@zonque.org, dmg@turingmachine.org, festevam@gmail.com, gerg@uclinux.org, gregkh@linuxfoundation.org, gregory.clement@bootlin.com, haojian.zhuang@gmail.com, hsweeten@visionengravers.com, illusionist.neo@gmail.com, info@metux.net, jason@lakedaemon.net, jolsa@redhat.com, kafai@fb.com, kernel@pengutronix.de, kgene@kernel.org, krzk@kernel.org, kstewart@linuxfoundation.org, linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux@armlinux.org.uk, liviu.dudau@arm.com, lkundrak@v3.sk
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH resend 25/47] ASoC: samsung: snow: don't
+ select unnecessary Platform
+Date: Tue, 25 Jun 2019 07:36:37 +0200
+Message-ID: <80c5c575-6f28-c6a6-91b2-d701bb9fbce8@samsung.com>
+References: <877e9iwf9f.wl-kuninori.morimoto.gx@renesas.com>
+ <874l4mv0h8.wl-kuninori.morimoto.gx@renesas.com>
+ <CGME20190624131905eucas1p2cf4335b4d1483b7e62d0c9e7b5223a3c@eucas1p2.samsung.com>
+ <9cfc8505-2903-033f-f68b-8ccc1c70132b@samsung.com>
+ <87d0j232wg.wl-kuninori.morimoto.gx@renesas.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <87d0j232wg.wl-kuninori.morimoto.gx@renesas.com>
+Content-Language: en-US
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, Linux-ALSA <alsa-devel@alsa-project.org>, Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-There is error from cppcheck tool
-"Shifting signed 32-bit value by 31 bits is undefined behaviour errors"
-change to use BIT() marco for improvement.
-
-Signed-off-by: Phong Tran <tranmanphong@gmail.com>
----
- arch/arm/vfp/vfpinstr.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm/vfp/vfpinstr.h b/arch/arm/vfp/vfpinstr.h
-index 38dc154e39ff..8951637c58ff 100644
---- a/arch/arm/vfp/vfpinstr.h
-+++ b/arch/arm/vfp/vfpinstr.h
-@@ -57,10 +57,10 @@
- 
- #define vfp_single(inst)	(((inst) & 0x0000f00) == 0xa00)
- 
--#define FPSCR_N	(1 << 31)
--#define FPSCR_Z	(1 << 30)
--#define FPSCR_C (1 << 29)
--#define FPSCR_V	(1 << 28)
-+#define FPSCR_N	BIT(31)
-+#define FPSCR_Z	BIT(30)
-+#define FPSCR_C BIT(29)
-+#define FPSCR_V	BIT(28)
- 
- /*
-  * Since we aren't building with -mfpu=vfp, we need to code
--- 
-2.11.0
+SGkgS3VuaW5vcgoKT24gMjAxOS0wNi0yNSAwMjo1MSwgS3VuaW5vcmkgTW9yaW1vdG8gd3JvdGU6
+Cj4gSGkgTWFyZWsKPgo+IFRoYW5rIHlvdSBmb3IgeW91ciByZXBvcnQuCj4KPj4+IEFMU0EgU29D
+IGlzIG5vdyBzdXBwb3J0aW5nICJubyBQbGF0Zm9ybSIuIFNvdW5kIGNhcmQgZG9lc24ndCBuZWVk
+IHRvCj4+PiBzZWxlY3QgIkNQVSBjb21wb25lbnQiIGFzICJQbGF0Zm9ybSIgYW55bW9yZSBpZiBp
+dCBkb2Vzbid0IG5lZWQKPj4+IHNwZWNpYWwgUGxhdGZvcm0uCj4+PiBUaGlzIHBhdGNoIHJlbW92
+ZXMgc3VjaCBzZXR0aW5ncy4KPj4+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBLdW5pbm9yaSBNb3JpbW90
+byA8a3VuaW5vcmkubW9yaW1vdG8uZ3hAcmVuZXNhcy5jb20+Cj4+IFRoaXMgcGF0Y2ggY2F1c2Vz
+IHJlZ3Jlc3Npb24gb24gU2Ftc3VuZyBFeHlub3MtYmFzZWQgYm9hcmRzOiBTbm93LAo+PiBQZWFj
+aC1QaSBhbmQgUGVhY2gtUGl0IChhbGwgdGhhdCB1c2Ugc25vdyBtYWNoaW5lIGRyaXZlcikgc2lu
+Y2UgbGludXgKPj4gbmV4dC0yMDE5MDYyMC4gQVNvQyBkZXZpY2UgaXMgcHJvcGVybHkgcmVnaXN0
+ZXJlZCwgYnV0IGl0IGlzIG5vdCB1c2FibGU6Cj4+Cj4+IFvCoMKgwqAgMy4yMDMwMDZdIHNhbXN1
+bmctaTJzIDM4MzAwMDAuaTJzLXNlYzogRE1BIGNoYW5uZWxzIHNvdXJjZWQgZnJvbQo+PiBkZXZp
+Y2UgMzgzMDAwMC5pMnMKPj4gW8KgwqDCoCAzLjIxMzQ0MF0gc25vdy1hdWRpbyBzb3VuZDogRmFp
+bGVkIHBhcnNpbmcgY29kZWMgbm9kZQo+PiBbwqDCoMKgIDMuNDIzMjQxXSBzbm93LWF1ZGlvIHNv
+dW5kOiBtdWx0aWNvZGVjIDwtPiBzYW1zdW5nLWkycyBtYXBwaW5nIG9rCj4+IFvCoMKgwqAgMy40
+Mjk3NzZdIG1heDk4MDk1IDctMDAxMTogQVNvQzogbXV4IEV4dGVybmFsIE1JQyBoYXMgbm8gcGF0
+aHMKPj4gW8KgwqDCoCAzLjQzNDUxM10gbWF4OTgwOTUgNy0wMDExOiBBU29DOiBtdXggTGluZWlu
+IE11eCBoYXMgbm8gcGF0aHMKPj4gW8KgwqDCoCA0LjA0MzQ4OF0gQUxTQSBkZXZpY2UgbGlzdDoK
+Pj4gW8KgwqDCoCA0LjA0NzE3MV3CoMKgICMwOiBTbm93LUkyUy1NQVg5ODA5NQo+Pgo+PiAjIHNw
+ZWFrZXItdGVzdCAtbDEKPj4KPj4gc3BlYWtlci10ZXN0IDEuMS4zCj4+Cj4+IFBsYXliYWNrIGRl
+dmljZSBpcyBkZWZhdWx0Cj4+IFN0cmVhbSBwYXJhbWV0ZXJzIGFyZSA0ODAwMEh6LCBTMTZfTEUs
+IDEgY2hhbm5lbHMKPj4gVXNpbmcgMTYgb2N0YXZlcyBvZiBwaW5rIG5vaXNlCj4+IFBsYXliYWNr
+IG9wZW4gZXJyb3I6IC0yMixJbnZhbGlkIGFyZ3VtZW50Cj4gSG1tLi4gc3RyYW5nZS4uLgo+IENh
+biB5b3UgdGVzdCBub3JtYWwgYXBsYXkgaGVyZSA/IEknbSBub3QgZmFtaWxpYXIgd2l0aCBzcGVh
+a2VyLXRlc3QuCgpUaGUgc2FtZSBpc3N1ZToKCiMgYXBsYXkgL3Vzci9zaGFyZS9zb3VuZHMvYWxz
+YS9Gcm9udF9DZW50ZXIud2F2CmFwbGF5OiBtYWluOjc4ODogYXVkaW8gb3BlbiBlcnJvcjogSW52
+YWxpZCBhcmd1bWVudAojCgoKPiBJIGhhdmUgbm8gaWRlYSBzbyBmYXIsIGJ1dCBvbmUgY2FwYWJp
+bGl0eSBpcyB0aGF0IGlmIHlvdXIgc3lzdGVtCj4gdXNlZCAvIGJhc2VkIGR1bW15IHBsYXRmb3Jt
+LCBhbmQgaWYgeW91ciBDUFUgZHJpdmVyIGRpZG4ndCB1c2UvaGF2ZQo+IHNuZF9zb2Nfc2V0X3J1
+bnRpbWVfaHdwYXJhbXMoKSAvIHNuZF9wY21fbGliX2lvY3RsLAo+IGl0IG1pZ2h0IGJlIGhhcHBl
+biwgYnV0IHRoaXMgcGF0Y2ggc2VlbXMgbm90IHJlbGF0ZWQgdG8gaXQuLi4KClJldmVydGluZyB0
+aGlzIHBhdGNoIGZpeGVzIHRoZSBpc3N1ZSwgc28gaXQgaXMgZGVmaW5pdGVseSByZWxhdGVkIHNv
+bWVob3cuCgoKQmVzdCByZWdhcmRzCi0tIApNYXJlayBTenlwcm93c2tpLCBQaEQKU2Ftc3VuZyBS
+JkQgSW5zdGl0dXRlIFBvbGFuZAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KQWxzYS1kZXZlbCBtYWlsaW5nIGxpc3QKQWxzYS1kZXZlbEBhbHNhLXByb2pl
+Y3Qub3JnCmh0dHBzOi8vbWFpbG1hbi5hbHNhLXByb2plY3Qub3JnL21haWxtYW4vbGlzdGluZm8v
+YWxzYS1kZXZlbAo=
