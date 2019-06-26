@@ -1,12 +1,12 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [GIT PULL 1/4] ARM: defconfig: Samsung/Exynos for v5.3
-Date: Wed, 26 Jun 2019 11:14:04 +0200
-Message-ID: <CAJKOXPeCQZPsF1kGKmhSWgxsWSsb4cre6mhS=n=kJbH63LjmUQ@mail.gmail.com>
-References: <20190625193451.7696-1-krzk@kernel.org>
+Subject: Re: [GIT PULL 4/4] ARM: exynos: Mach for v5.3
+Date: Wed, 26 Jun 2019 11:15:18 +0200
+Message-ID: <CAJKOXPejHBKp1fnhqaKwx2vby1_XmP916TyA9Nw8usU5QNadbA@mail.gmail.com>
+References: <20190625193451.7696-1-krzk@kernel.org> <20190625193451.7696-4-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190625193451.7696-1-krzk@kernel.org>
+In-Reply-To: <20190625193451.7696-4-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org
 Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
@@ -20,63 +20,40 @@ On Tue, 25 Jun 2019 at 21:35, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
 > are available in the Git repository at:
 >
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-5.3
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-5.3
 >
-> for you to fetch changes up to dd50a69b5697532666023766688c6ea642e5a443:
+> for you to fetch changes up to a55e040c6f21f55f81c53c56e1d8095df35e1d02:
 >
->   ARM: exynos_defconfig: Enable Panfrost and Lima drivers (2019-06-19 19:23:35 +0200)
+>   ARM: exynos: Cleanup cppcheck shifting warning (2019-06-25 20:45:09 +0200)
 >
 > ----------------------------------------------------------------
-> Samsung defconfig changes for v5.3
+> Samsung mach/soc changes for v5.3
 >
-> 1. Trim several configs with savedefconfig.
-> 2. Enable Lima and Panfrost drivers for Mali GPU.
+> Only cleanups and minor fixes.
+>
+> ----------------------------------------------------------------
+> Arnd Bergmann (1):
+>       ARM: exynos: Only build MCPM support if used
 
 Hi,
 
-I forgot to mention possible merge conflicts (although Stephen Cc-ed
+I forgot to mention possible merge conflict (although Stephen Cc-ed
 you on mails). Resolution is to accept both sides:
 
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@@ -4,12 -5,7 +5,8 @@@ CONFIG_PREEMPT=
-  CONFIG_CGROUPS=y
-  CONFIG_BLK_DEV_INITRD=y
-  CONFIG_PERF_EVENTS=y
-- CONFIG_MODULES=y
-- CONFIG_MODULE_UNLOAD=y
-- CONFIG_PARTITION_ADVANCED=y
-  CONFIG_ARCH_EXYNOS=y
-- CONFIG_ARCH_EXYNOS3=y
- +CONFIG_CPU_ICACHE_MISMATCH_WORKAROUND=y
+diff --cc arch/arm/mach-exynos/Makefile
+index 5ccf9d7e58d4,5abf3db23912..0fd3fcf8bfb0
+--- a/arch/arm/mach-exynos/Makefile
++++ b/arch/arm/mach-exynos/Makefile
+@@@ -14,5 -14,9 +14,5 @@@ obj-$(CONFIG_PM_SLEEP)                += suspend.
 
---- a/arch/arm/configs/s3c2410_defconfig
-+++ b/arch/arm/configs/s3c2410_defconfig
-@@@ -181,10 -178,11 +178,10 @@@ CONFIG_CFG80211=
-  CONFIG_MAC80211=m
-  CONFIG_MAC80211_MESH=y
-  CONFIG_MAC80211_LEDS=y
- -CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
-  CONFIG_MTD=y
-+ CONFIG_MTD_CMDLINE_PARTS=y
-  CONFIG_MTD_REDBOOT_PARTS=y
-  CONFIG_MTD_REDBOOT_PARTS_UNALLOCATED=y
-- CONFIG_MTD_CMDLINE_PARTS=y
+  obj-$(CONFIG_SMP)             += platsmp.o headsmp.o
 
---- a/arch/arm/configs/s3c6400_defconfig
-+++ b/arch/arm/configs/s3c6400_defconfig
-@@@ -18,9 -15,12 +15,11 @@@ CONFIG_MACH_HMT=
-  CONFIG_MACH_SMARTQ5=y
-  CONFIG_MACH_SMARTQ7=y
-  CONFIG_MACH_WLF_CRAGG_6410=y
-- CONFIG_AEABI=y
-  CONFIG_CMDLINE="console=ttySAC0,115200 root=/dev/ram init=/linuxrc
-initrd=0x51000000,6M ramdisk_size=6144"
-  CONFIG_VFP=y
- -CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
-+ CONFIG_MODULES=y
-+ CONFIG_MODULE_UNLOAD=y
-+ # CONFIG_BLK_DEV_BSG is not set
+- obj-$(CONFIG_MCPM)            += mcpm-exynos.o
+ -plus_sec := $(call as-instr,.arch_extension sec,+sec)
+ -AFLAGS_exynos-smc.o           :=-Wa,-march=armv7-a$(plus_sec)
+ -AFLAGS_sleep.o                        :=-Wa,-march=armv7-a$(plus_sec)
+ -
++ obj-$(CONFIG_EXYNOS_MCPM)     += mcpm-exynos.o
 
 Best regards,
 Krzysztof
