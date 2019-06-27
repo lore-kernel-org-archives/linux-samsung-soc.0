@@ -1,48 +1,53 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 1/4] ARM: defconfig: Samsung/Exynos for v5.3
-Date: Wed, 26 Jun 2019 19:28:42 -0700
-Message-ID: <20190627022842.k4gccn6enqd75ufs@localhost>
+Subject: Re: [GIT PULL 2/4] ARM: dts: exynos: Second pull for v5.3
+Date: Wed, 26 Jun 2019 19:23:29 -0700
+Message-ID: <20190627022329.cr3iungll7n3r2sp@localhost>
 References: <20190625193451.7696-1-krzk@kernel.org>
- <CAJKOXPeCQZPsF1kGKmhSWgxsWSsb4cre6mhS=n=kJbH63LjmUQ@mail.gmail.com>
+ <20190625193451.7696-2-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAJKOXPeCQZPsF1kGKmhSWgxsWSsb4cre6mhS=n=kJbH63LjmUQ@mail.gmail.com>
+In-Reply-To: <20190625193451.7696-2-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jun 26, 2019 at 11:14:04AM +0200, Krzysztof Kozlowski wrote:
-> On Tue, 25 Jun 2019 at 21:35, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >
-> > The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
-> >
-> >   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
-> >
-> > are available in the Git repository at:
-> >
-> >   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-5.3
-> >
-> > for you to fetch changes up to dd50a69b5697532666023766688c6ea642e5a443:
-> >
-> >   ARM: exynos_defconfig: Enable Panfrost and Lima drivers (2019-06-19 19:23:35 +0200)
-> >
-> > ----------------------------------------------------------------
-> > Samsung defconfig changes for v5.3
-> >
-> > 1. Trim several configs with savedefconfig.
-> > 2. Enable Lima and Panfrost drivers for Mali GPU.
-> 
+On Tue, Jun 25, 2019 at 09:34:49PM +0200, Krzysztof Kozlowski wrote:
 > Hi,
 > 
-> I forgot to mention possible merge conflicts (although Stephen Cc-ed
-> you on mails). Resolution is to accept both sides:
+> On top of previous pull request.
 > 
+> Best regards,
+> Krzysztof
+> 
+> 
+> The following changes since commit d2cac68e0d9b038da7207c0b63e1399c4f9f60c4:
+> 
+>   ARM: dts: exynos: Add ADC node to Exynos5410 and Odroid XU (2019-06-11 20:37:21 +0200)
+> 
+> are available in the Git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-5.3-2
+> 
+> for you to fetch changes up to 13efd80acaa4cdb61fde52732178ff9eb4141104:
+> 
+>   ARM: dts: exynos: Add GPU/Mali 400 node to Exynos4 (2019-06-24 20:03:42 +0200)
+> 
+> ----------------------------------------------------------------
+> Samsung DTS ARM changes for v5.3, second round
+> 
+> 1. Add camera flash to Galaxy S3 boards,
+> 2. Fix PMU affinity interrupt warning on Exynos4,
+> 3. Improve regulator configuration on Odroid XU3/XU4/HC1 family and
+>    Arndale Octa by disabling unneeded regulators and adding suspend
+>    configuration.  The suspend configuration brings significant reduce of
+>    energy usage in Suspend to RAM (e.g. 120 -> ~7 mA on Odroid HC1).
+> 4. Add Mali nodes to Exynos3 and Exynos4.
 
-Some of this could have been avoided by basing your branch on our fixes, but
-not a big deal in this case. Thanks for the heads up!
+
+Merged, thanks!
 
 
 -Olof
