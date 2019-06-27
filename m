@@ -1,84 +1,88 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH 04/25] clocksource/drivers/exynos_mct: Increase priority over ARM arch timer
-Date: Wed, 26 Jun 2019 16:46:30 +0200
-Message-ID: <20190626144651.16742-4-daniel.lezcano@linaro.org>
-References: <adba7d03-e9bd-9542-60bc-0f2d4874a40e@linaro.org>
- <20190626144651.16742-1-daniel.lezcano@linaro.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v4 4/5] Documentation: devicetree: add PPMU events
+ description
+Date: Thu, 27 Jun 2019 10:11:43 +0900
+Message-ID: <99a47066-3713-77fa-4afb-6f2f17a2721a@samsung.com>
+References: <CGME20190605091304eucas1p21e0717cafa17a14de569f1773cc7abe5@eucas1p2.samsung.com>
+        <20190605091236.24263-1-l.luba@partner.samsung.com>
+        <20190605091236.24263-5-l.luba@partner.samsung.com>
+        <CAGTfZH2kTNWtx=Jp1UJaLN50Qxbq+Q9ThV4vhQ240QbOy1TRMQ@mail.gmail.com>
+        <7498059d-95f7-e154-cf49-bcbc8ee6fdb9@partner.samsung.com>
+        <CAJKOXPc6304D=HNQnrvhBH6qKxhkf=VQ2Gg6Q2FMP2hYOTYSDQ@mail.gmail.com>
+        <776f58c2-a05c-8fa8-c7f5-458dc17926f6@partner.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190626144651.16742-1-daniel.lezcano@linaro.org>
+In-Reply-To: <776f58c2-a05c-8fa8-c7f5-458dc17926f6@partner.samsung.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Will Deacon <will.deacon@arm.com>, Palmer Dabbelt <palmer@dabbelt.com>, Borislav Petkov <bp@suse.de>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Lucas Stach <l.stach@pengutronix.de>, "Kulkarni, Ganapatrao" <Ganapatrao.Kulkarni@cavium.com>, Peter Zijlstra <peterz@infradead.org>, Guo Ren <ren_guo@c-sky.com>, Joseph Lo <josephl@nvidia.com>, Anju T Sudhakar <anju@linux.vnet.ibm.com>, Hoan Tran <Hoan@os.amperecomputing.com>, "moderated list:ARM/SAMSUNG EXYNOS
-        ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNOS
-        ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>
+To: Lukasz Luba <l.luba@partner.samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: cwchoi00@gmail.com, devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie@samsung.com>, robh+dt@kernel.org, mark.rutland@arm.com, kyungmin.park@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, kgene@kernel.org, willy.mh.wolff.ml@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+Hi Lukasz,
 
-Exynos SoCs based on CA7/CA15 have 2 timer interfaces: custom Exynos MCT
-(Multi Core Timer) and standard ARM Architected Timers.
+On 19. 6. 26. 오후 11:17, Lukasz Luba wrote:
+> Hi Krzysztof,
+> 
+> On 6/26/19 4:03 PM, Krzysztof Kozlowski wrote:
+>> On Wed, 26 Jun 2019 at 15:58, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+>>>
+>>> Hi Chanwoo,
+>>>
+>>> On 6/26/19 10:23 AM, Chanwoo Choi wrote:
+>>>> Hi Lukasz,
+>>>>
+>>>> 2019년 6월 5일 (수) 18:14, Lukasz Luba <l.luba@partner.samsung.com
+>>>> <mailto:l.luba@partner.samsung.com>>님이 작성:
+>>>>
+>>>>      Extend the documenation by events description with new 'event-data-type'
+>>>>      field. Add example how the event might be defined in DT.
+>>>>
+>>>>      Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com
+>>>>      <mailto:l.luba@partner.samsung.com>>
+>>>>      Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com
+>>>>      <mailto:cw00.choi@samsung.com>>
+>>>>      ---
+>>>>        .../bindings/devfreq/event/exynos-ppmu.txt    | 26 +++++++++++++++++--
+>>>>        1 file changed, 24 insertions(+), 2 deletions(-)
+>>>>
+>>>>
+>>>>
+>>>> Acked-by: Chanwoo Choi <cw00.choi@samsung.com
+>>>
+>>> Thank you for the ACKs for this a 2/5 patch.
+>>> Do you think the v4 could be merged now?
+>>
+>> I think you have all necessary acks. I can take the DTS patch (5/5)
+>> although probably for next merge window as I just sent one.
+> There was one patch 3/5
+> https://protect2.fireeye.com/url?k=82dd0d0cbe2abd04.82dc8643-d13ecd7e5f989b8d&u=https://lkml.org/lkml/2019/6/5/215
+> which was waiting ACK or I missed the email somehow.
 
-There are use cases, where both timer interfaces are used simultanously.
-One of such examples is using Exynos MCT for the main system timer and
-ARM Architected Timers for the KVM and virtualized guests (KVM requires
-arch timers).
+When I was in vacation, your patches are removed on my email account
+because of the email expiration. So, I replied with my Ack through
+gmail account on mobile phone. But, there are some problem. My reply
+didn't arrive the mailing list.
 
-Exynos Multi-Core Timer driver (exynos_mct) must be however started
-before ARM Architected Timers (arch_timer), because they both share some
-common hardware blocks (global system counter) and turning on MCT is
-needed to get ARM Architected Timer working properly.
+I have no any way to reply about this at company. After leaving one's
+office, I'll reply with Ack again at home.
 
-To ensure selecting Exynos MCT as the main system timer, increase MCT
-timer rating. To ensure proper starting order of both timers during
-suspend/resume cycle, increase MCT hotplug priority over ARM Archictected
-Timers.
+> 
+> Regards,
+> Lukasz
+> 
+>>
+>> Best regards,
+>> Krzysztof
+>>
+>>
+> 
+> 
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/clocksource/exynos_mct.c | 4 ++--
- include/linux/cpuhotplug.h       | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 34bd250d46c6..6aa10cbc1d59 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -209,7 +209,7 @@ static void exynos4_frc_resume(struct clocksource *cs)
- 
- static struct clocksource mct_frc = {
- 	.name		= "mct-frc",
--	.rating		= 400,
-+	.rating		= 450,	/* use value higher than ARM arch timer */
- 	.read		= exynos4_frc_read,
- 	.mask		= CLOCKSOURCE_MASK(32),
- 	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
-@@ -464,7 +464,7 @@ static int exynos4_mct_starting_cpu(unsigned int cpu)
- 	evt->set_state_oneshot_stopped = set_state_shutdown;
- 	evt->tick_resume = set_state_shutdown;
- 	evt->features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT;
--	evt->rating = 450;
-+	evt->rating = 500;	/* use value higher than ARM arch timer */
- 
- 	exynos4_mct_write(TICK_BASE_CNT, mevt->base + MCT_L_TCNTB_OFFSET);
- 
-diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-index 5c6062206760..87c211adf49e 100644
---- a/include/linux/cpuhotplug.h
-+++ b/include/linux/cpuhotplug.h
-@@ -116,10 +116,10 @@ enum cpuhp_state {
- 	CPUHP_AP_PERF_ARM_ACPI_STARTING,
- 	CPUHP_AP_PERF_ARM_STARTING,
- 	CPUHP_AP_ARM_L2X0_STARTING,
-+	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
- 	CPUHP_AP_ARM_ARCH_TIMER_STARTING,
- 	CPUHP_AP_ARM_GLOBAL_TIMER_STARTING,
- 	CPUHP_AP_JCORE_TIMER_STARTING,
--	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
- 	CPUHP_AP_ARM_TWD_STARTING,
- 	CPUHP_AP_QCOM_TIMER_STARTING,
- 	CPUHP_AP_TEGRA_TIMER_STARTING,
 -- 
-2.17.1
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
