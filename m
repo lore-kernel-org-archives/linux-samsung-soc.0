@@ -1,76 +1,33 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [GIT PULL] exynos-drm-next
-Date: Thu, 27 Jun 2019 23:28:11 +0900
-Message-ID: <CAAQKjZMdBdD8oEa0cNv78FjrpOqu20ozTTvuPEm_XnVo2gRhCQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-samsung-soc@vger.kernel.org, DRI mailing list <dri-devel@lists.freedesktop.org>
+From: Fuqian Huang <huangfq.daxian@gmail.com>
+Subject: [PATCH 31/87] media: exynos4-is: remove memset after dma_alloc_coherent in fimc-is.c
+Date: Fri, 28 Jun 2019 01:38:31 +0800
+Message-ID: <20190627173831.3467-1-huangfq.daxian@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: Fuqian Huang <huangfq.daxian@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgRGF2ZSwKCiAgIEp1c3QgdHdvIGNsZWFudXBzIC0gb25lIGlzIHRvIGRyb3AgZHJtUC5oIGhl
-YWRlciwgYW5kIG90aGVyIGlzIHRvIGFkZAogICBDT01QSUxFX1RFU1QgZmxhZyBmb3IgaW5jcmVh
-c2luZyBidWlsZCB0ZXN0IGNvdmVyYWdlLgoKICAgUGxlYXNlIGtpbmRseSBsZXQgbWUga25vdyBp
-ZiB0aGVyZSBpcyBhbnkgcHJvYmxlbS4KClRoYW5rcywKSW5raSBEYWUKClRoZSBmb2xsb3dpbmcg
-Y2hhbmdlcyBzaW5jZSBjb21taXQgMTQ4MDhhMTJiZGJkYzIxMTQzZWJhNzBlYTA3ODMwMTk3YjNh
-MDRmZjoKCiAgTWVyZ2UgdGFnICdkcm0tbmV4dC01LjMtMjAxOS0wNi0yNScgb2YKZ2l0Oi8vcGVv
-cGxlLmZyZWVkZXNrdG9wLm9yZy9+YWdkNWYvbGludXggaW50byBkcm0tbmV4dCAoMjAxOS0wNi0y
-NwoxMjozMzo1NyArMTAwMCkKCmFyZSBhdmFpbGFibGUgaW4gdGhlIEdpdCByZXBvc2l0b3J5IGF0
-OgoKICBnaXQ6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvZGFlaW5r
-aS9kcm0tZXh5bm9zCnRhZ3MvZXh5bm9zLWRybS1uZXh0LWZvci12NS4zCgpmb3IgeW91IHRvIGZl
-dGNoIGNoYW5nZXMgdXAgdG8gMTU2YmRhYzk5MDYxYjQwMTNjOGU0Nzc5OWM2ZTU3NGY3Zjg0ZTlm
-NDoKCiAgZHJtL2V4eW5vczogdHJpZ2dlciBidWlsZCBvZiBhbGwgbW9kdWxlcyAoMjAxOS0wNi0y
-NyAyMjozMDo1NiArMDkwMCkKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KLSBEcm9wIHRoZSB1c2Ugb2YgZHJtUC5oIGhlYWRl
-ciBmaWxlCiAgIGRybVAuaCBoZWFkZXIgZmlsZSBoYXMgYmVlbiBkZXByZWNhdGVkIHNvIHRoaXMg
-cGF0Y2ggZHJvcHMgdGhlIHVzZSBvZgogICB0aGlzIGhlYWRlciwgYW5kIGluc3RlYWQgaW5jbHVk
-ZXMgYXBwcm9wcmlhdGUgaGVhZGVyIGZpbGVzIHJlcXVpcmVkLgogLSBBZGQgQ09NUElMRV9URVNU
-IGZsYWcKICAgVGhpcyBwYXRjaCBhZGRzIENPTVBJTEVfVEVTVCBkZXBlbmRlbmN5IHRvIGV4eW5v
-cyBkcm0gZHJpdmVyIHRvCiAgIGluY3JlYXNlIGJ1aWxkIHRlc3QgY292ZXJhZ2UuIEFuZCBhbHNv
-LCBpdCBpbmNsdWRlcyB2bWFsbG9jLmgKICAgaGVhZGVyIGZpbGUgdG8gZml4IG9uZSBidWlsZCB3
-YXJuaW5nIHdoaWNoIGlzIGludHJvZHVjZWQgd2hlbgogICBidWlsZGluZyB0aGUgTGludXgga2Vy
-bmVsIHVzaW5nIHNoLgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpTYW0gUmF2bmJvcmcgKDIpOgogICAgICBkcm0vZXh5bm9z
-OiBkcm9wIGRybVAuaCB1c2FnZQogICAgICBkcm0vZXh5bm9zOiB0cmlnZ2VyIGJ1aWxkIG9mIGFs
-bCBtb2R1bGVzCgogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9LY29uZmlnICAgICAgICAgICAgICAg
-IHwgIDYgKystLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3M1NDMzX2RybV9kZWNvbi5j
-IHwgIDcgKysrLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zN19kcm1fZGVjb24uYyAg
-ICB8ICA4ICsrKystLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHAuYyAgICAgICAg
-ICAgIHwgMTMgKysrKy0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0
-Yy5jICAgICAgfCAgMiArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RtYS5j
-ICAgICAgIHwgIDYgKystLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RwaS5j
-ICAgICAgIHwgIDggKysrLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2
-LmMgICAgICAgfCAxMiArKysrLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X2Rydi5oICAgICAgIHwgIDggKysrKystCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fZHNpLmMgICAgICAgfCAyMSArKysrKysrLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2ZiLmMgICAgICAgIHwgIDYgKystLQogZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2ZiZGV2LmMgICAgIHwgIDggKysrKy0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcm1fZmltYy5jICAgICAgfCAxNSArKysrKy0tLS0tCiBkcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jICAgICAgfCAxNCArKysrKy0tLS0KIGRyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQuYyAgICAgICB8IDExICsrKystLS0KIGRyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nZW0uYyAgICAgICB8ICA3ICsrKy0tCiBkcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ3NjLmMgICAgICAgfCAxMyArKysrKy0tLS0K
-IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9pcHAuYyAgICAgICB8ICAzICstCiBk
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fbWljLmMgICAgICAgfCAyMiArKysrKysr
-LS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgICAgIHwg
-IDQgKy0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcm90YXRvci5jICAgfCAx
-MCArKystLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fc2NhbGVyLmMgICAg
-fCAxMiArKysrLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYyAg
-ICAgIHwgIDkgKysrLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMgICAg
-ICAgICAgfCA0MSArKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX21peGVyLmMgICAgICAgICB8IDMxICsrKysrKysrKystLS0tLS0tLS0tCiAy
-NSBmaWxlcyBjaGFuZ2VkLCAxNTggaW5zZXJ0aW9ucygrKSwgMTM5IGRlbGV0aW9ucygtKQpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
-bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
+In commit af7ddd8a627c
+("Merge tag 'dma-mapping-4.21' of git://git.infradead.org/users/hch/dma-mapping"),
+dma_alloc_coherent has already zeroed the memory.
+So memset is not needed.
+
+Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
+---
+ drivers/media/platform/exynos4-is/fimc-is.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
+index e043d55133a3..77633e356305 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is.c
++++ b/drivers/media/platform/exynos4-is/fimc-is.c
+@@ -341,7 +341,6 @@ static int fimc_is_alloc_cpu_memory(struct fimc_is *is)
+ 		return -ENOMEM;
+ 
+ 	is->memory.size = FIMC_IS_CPU_MEM_SIZE;
+-	memset(is->memory.vaddr, 0, is->memory.size);
+ 
+ 	dev_info(dev, "FIMC-IS CPU memory base: %#x\n", (u32)is->memory.paddr);
+ 
+-- 
+2.11.0
