@@ -1,203 +1,235 @@
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 01/39] docs: thermal: add it to the driver API
-Date: Fri, 28 Jun 2019 09:29:54 -0300
-Message-ID: <c9c7d7e0567aed7e36c4eb9c09ddfb6274913e9c.1561724493.git.mchehab+samsung@kernel.org>
-References: <cover.1561724493.git.mchehab+samsung@kernel.org>
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH 0/3] Fix USB3.0 DRD PHY calibration issues (DWC3/XHCI) on
+ Exynos542x SoCs
+Date: Fri, 28 Jun 2019 21:02:28 +0530
+Message-ID: <CANAwSgS2fQ_TvABeFzZ23GaeweKDEcAoKWJDMZ=p8vTd7BSp_A@mail.gmail.com>
+References: <CGME20190627071741eucas1p1af1430c91f636c5766a76f7ef93019da@eucas1p1.samsung.com>
+ <20190627071726.30467-1-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1561724493.git.mchehab+samsung@kernel.org>
+In-Reply-To: <20190627071726.30467-1-m.szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Amit Daniel Kachhap <amit.kachhap@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>, Javi Merino <javi.merino@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Linux USB Mailing List <linux-usb@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Felipe Balbi <balbi@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jochen Sprickerhof <jochen@sprickerhof.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The file contents mostly describes driver internals.
+Hi Marek,
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
----
- Documentation/driver-api/index.rst                   |  1 +
- .../{ => driver-api}/thermal/cpu-cooling-api.rst     |  0
- .../{ => driver-api}/thermal/exynos_thermal.rst      |  0
- .../thermal/exynos_thermal_emulation.rst             |  0
- Documentation/{ => driver-api}/thermal/index.rst     |  2 --
- .../{ => driver-api}/thermal/intel_powerclamp.rst    |  0
- .../{ => driver-api}/thermal/nouveau_thermal.rst     |  0
- .../{ => driver-api}/thermal/power_allocator.rst     |  0
- Documentation/{ => driver-api}/thermal/sysfs-api.rst | 12 ++++++------
- .../thermal/x86_pkg_temperature_thermal.rst          |  2 +-
- MAINTAINERS                                          |  2 +-
- include/linux/thermal.h                              |  4 ++--
- 12 files changed, 11 insertions(+), 12 deletions(-)
- rename Documentation/{ => driver-api}/thermal/cpu-cooling-api.rst (100%)
- rename Documentation/{ => driver-api}/thermal/exynos_thermal.rst (100%)
- rename Documentation/{ => driver-api}/thermal/exynos_thermal_emulation.rst (100%)
- rename Documentation/{ => driver-api}/thermal/index.rst (95%)
- rename Documentation/{ => driver-api}/thermal/intel_powerclamp.rst (100%)
- rename Documentation/{ => driver-api}/thermal/nouveau_thermal.rst (100%)
- rename Documentation/{ => driver-api}/thermal/power_allocator.rst (100%)
- rename Documentation/{ => driver-api}/thermal/sysfs-api.rst (98%)
- rename Documentation/{ => driver-api}/thermal/x86_pkg_temperature_thermal.rst (94%)
+On Thu, 27 Jun 2019 at 12:47, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>
+> Dear All,
+>
+> Commit d8c80bb3b55b ("phy: exynos5-usbdrd: Calibrate LOS levels for
+> exynos5420/5800") added support for Exynos5 USB3.0 DRD PHY calibration,
+> what enabled proper Super-Speed enumeration of USB3.0 devices connected
+> to various Exynos5 SoCs. After some time it turned out that the mentioned
+> patch worked a bit by pure luck and covered only one use case (fresh
+> boot with all drivers compiled into the kernel).
+>
+> If drivers were compiled as modules, due to timing issue, it worked only
+> if XHCI-plat driver was loaded before the DWC3 driver:
+> https://patchwork.kernel.org/patch/10773947/
+>
+> Also during the system suspend/resume cycle the calibration was not
+> performed at the proper time and resulted in switching USB 3.0 devices to
+> USB 2.0 high-speed compatibility mode.
+>
+> This patch addresses all those issues. Exynos5 USB3.0 DRD PHY calibration
+> is moved to the Exynos5 specific variant of the XHCI-plat driver, which
+> takes care of proper PHY calibration after XHCI core reset. This fixes
+> all known use cases (XHCI driver compiled as module and loaded on demand
+> as well as during system suspend/resume cycle).
+>
+> Here are the logs taken on Exynos5422-based Odroid HC1 board (with USB3.0
+> RTL8153 LAN and USB3.0 JMicron SATA-USB bridge):
+>
 
-diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
-index 0dbaa987aa11..4e503e360860 100644
---- a/Documentation/driver-api/index.rst
-+++ b/Documentation/driver-api/index.rst
-@@ -56,6 +56,7 @@ available subsections can be seen below.
-    dmaengine/index
-    slimbus
-    soundwire/index
-+   thermal/index
-    fpga/index
-    acpi/index
-    generic-counter
-diff --git a/Documentation/thermal/cpu-cooling-api.rst b/Documentation/driver-api/thermal/cpu-cooling-api.rst
-similarity index 100%
-rename from Documentation/thermal/cpu-cooling-api.rst
-rename to Documentation/driver-api/thermal/cpu-cooling-api.rst
-diff --git a/Documentation/thermal/exynos_thermal.rst b/Documentation/driver-api/thermal/exynos_thermal.rst
-similarity index 100%
-rename from Documentation/thermal/exynos_thermal.rst
-rename to Documentation/driver-api/thermal/exynos_thermal.rst
-diff --git a/Documentation/thermal/exynos_thermal_emulation.rst b/Documentation/driver-api/thermal/exynos_thermal_emulation.rst
-similarity index 100%
-rename from Documentation/thermal/exynos_thermal_emulation.rst
-rename to Documentation/driver-api/thermal/exynos_thermal_emulation.rst
-diff --git a/Documentation/thermal/index.rst b/Documentation/driver-api/thermal/index.rst
-similarity index 95%
-rename from Documentation/thermal/index.rst
-rename to Documentation/driver-api/thermal/index.rst
-index 8c1c00146cad..68ceb6886561 100644
---- a/Documentation/thermal/index.rst
-+++ b/Documentation/driver-api/thermal/index.rst
-@@ -1,5 +1,3 @@
--:orphan:
--
- =======
- Thermal
- =======
-diff --git a/Documentation/thermal/intel_powerclamp.rst b/Documentation/driver-api/thermal/intel_powerclamp.rst
-similarity index 100%
-rename from Documentation/thermal/intel_powerclamp.rst
-rename to Documentation/driver-api/thermal/intel_powerclamp.rst
-diff --git a/Documentation/thermal/nouveau_thermal.rst b/Documentation/driver-api/thermal/nouveau_thermal.rst
-similarity index 100%
-rename from Documentation/thermal/nouveau_thermal.rst
-rename to Documentation/driver-api/thermal/nouveau_thermal.rst
-diff --git a/Documentation/thermal/power_allocator.rst b/Documentation/driver-api/thermal/power_allocator.rst
-similarity index 100%
-rename from Documentation/thermal/power_allocator.rst
-rename to Documentation/driver-api/thermal/power_allocator.rst
-diff --git a/Documentation/thermal/sysfs-api.rst b/Documentation/driver-api/thermal/sysfs-api.rst
-similarity index 98%
-rename from Documentation/thermal/sysfs-api.rst
-rename to Documentation/driver-api/thermal/sysfs-api.rst
-index e4930761d3e5..fab2c9b36d08 100644
---- a/Documentation/thermal/sysfs-api.rst
-+++ b/Documentation/driver-api/thermal/sysfs-api.rst
-@@ -552,7 +552,7 @@ emul_temp
- sustainable_power
- 	An estimate of the sustained power that can be dissipated by
- 	the thermal zone. Used by the power allocator governor. For
--	more information see Documentation/thermal/power_allocator.rst
-+	more information see Documentation/driver-api/thermal/power_allocator.rst
- 
- 	Unit: milliwatts
- 
-@@ -563,7 +563,7 @@ k_po
- 	controller during temperature overshoot. Temperature overshoot
- 	is when the current temperature is above the "desired
- 	temperature" trip point. For more information see
--	Documentation/thermal/power_allocator.rst
-+	Documentation/driver-api/thermal/power_allocator.rst
- 
- 	RW, Optional
- 
-@@ -572,7 +572,7 @@ k_pu
- 	controller during temperature undershoot. Temperature undershoot
- 	is when the current temperature is below the "desired
- 	temperature" trip point. For more information see
--	Documentation/thermal/power_allocator.rst
-+	Documentation/driver-api/thermal/power_allocator.rst
- 
- 	RW, Optional
- 
-@@ -580,14 +580,14 @@ k_i
- 	The integral term of the power allocator governor's PID
- 	controller. This term allows the PID controller to compensate
- 	for long term drift. For more information see
--	Documentation/thermal/power_allocator.rst
-+	Documentation/driver-api/thermal/power_allocator.rst
- 
- 	RW, Optional
- 
- k_d
- 	The derivative term of the power allocator governor's PID
- 	controller. For more information see
--	Documentation/thermal/power_allocator.rst
-+	Documentation/driver-api/thermal/power_allocator.rst
- 
- 	RW, Optional
- 
-@@ -598,7 +598,7 @@ integral_cutoff
- 	example, if integral_cutoff is 0, then the integral term only
- 	accumulates error when temperature is above the desired
- 	temperature trip point. For more information see
--	Documentation/thermal/power_allocator.rst
-+	Documentation/driver-api/thermal/power_allocator.rst
- 
- 	Unit: millidegree Celsius
- 
-diff --git a/Documentation/thermal/x86_pkg_temperature_thermal.rst b/Documentation/driver-api/thermal/x86_pkg_temperature_thermal.rst
-similarity index 94%
-rename from Documentation/thermal/x86_pkg_temperature_thermal.rst
-rename to Documentation/driver-api/thermal/x86_pkg_temperature_thermal.rst
-index f134dbd3f5a9..2ac42ccd236f 100644
---- a/Documentation/thermal/x86_pkg_temperature_thermal.rst
-+++ b/Documentation/driver-api/thermal/x86_pkg_temperature_thermal.rst
-@@ -40,7 +40,7 @@ This contains two trip points:
- - trip_point_1_temp
- 
- User can set any temperature between 0 to TJ-Max temperature. Temperature units
--are in milli-degree Celsius. Refer to "Documentation/thermal/sysfs-api.rst" for
-+are in milli-degree Celsius. Refer to "Documentation/driver-api/thermal/sysfs-api.rst" for
- thermal sys-fs details.
- 
- Any value other than 0 in these trip points, can trigger thermal notifications.
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7ba6d174f49f..9d3a408f5ce1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15762,7 +15762,7 @@ M:	Viresh Kumar <viresh.kumar@linaro.org>
- M:	Javi Merino <javi.merino@kernel.org>
- L:	linux-pm@vger.kernel.org
- S:	Supported
--F:	Documentation/thermal/cpu-cooling-api.rst
-+F:	Documentation/driver-api/thermal/cpu-cooling-api.rst
- F:	drivers/thermal/cpu_cooling.c
- F:	include/linux/cpu_cooling.h
- 
-diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-index 681047f8cc05..e45659c75920 100644
---- a/include/linux/thermal.h
-+++ b/include/linux/thermal.h
-@@ -251,7 +251,7 @@ struct thermal_bind_params {
- 	 * platform characterization. This value is relative to the
- 	 * rest of the weights so a cooling device whose weight is
- 	 * double that of another cooling device is twice as
--	 * effective. See Documentation/thermal/sysfs-api.rst for more
-+	 * effective. See Documentation/driver-api/thermal/sysfs-api.rst for more
- 	 * information.
- 	 */
- 	int weight;
-@@ -259,7 +259,7 @@ struct thermal_bind_params {
- 	/*
- 	 * This is a bit mask that gives the binding relation between this
- 	 * thermal zone and cdev, for a particular trip point.
--	 * See Documentation/thermal/sysfs-api.rst for more information.
-+	 * See Documentation/driver-api/thermal/sysfs-api.rst for more information.
- 	 */
- 	int trip_mask;
- 
--- 
-2.21.0
+Thanks for these patch. I have tested on linux-next-20190626
+
+*But hotpluging of usb device is not working on usb ports.*
+
+
+These patches fix the suspend/resume for XU4.
+But their is two issue.
+1> On warm boot fails to reset the usb hub
+------------------------------------------------------------------
+[    7.019896] usb 4-1.1: new SuperSpeed Gen 1 USB device number 3
+using xhci-hcd
+[    7.063032] usb 4-1.1: New USB device found, idVendor=152d,
+idProduct=0578, bcdDevice=63.01
+[    7.070484] usb 4-1.1: New USB device strings: Mfr=1, Product=2,
+SerialNumber=3
+[    7.077438] usb 4-1.1: Product: JMS567
+[    7.081749] usb 4-1.1: Manufacturer: JMicron
+[    7.086028] usb 4-1.1: SerialNumber: DB12345678A3
+[    7.151572] scsi host0: uas
+[    7.162765] scsi 0:0:0:0: Direct-Access     KINGSTON  SA400S37120G
+  6301 PQ: 0 ANSI: 6
+[    7.176231] sd 0:0:0:0: [sda] 234441648 512-byte logical blocks:
+(120 GB/112 GiB)
+[    7.177550] sd 0:0:0:0: Attached scsi generic sg0 type 0
+[    7.183547] sd 0:0:0:0: [sda] 4096-byte physical blocks
+[    7.201150] sd 0:0:0:0: [sda] Write Protect is off
+[    7.204977] sd 0:0:0:0: [sda] Disabling FUA
+[    7.209476] sd 0:0:0:0: [sda] Write cache: enabled, read cache:
+enabled, doesn't support DPO or FUA
+[    7.219411] sd 0:0:0:0: [sda] Optimal transfer size 33553920 bytes
+not a multiple of physical block size (4096 bytes)
+[    7.713603]  sda: sda1
+[    7.736338] sd 0:0:0:0: [sda] Attached SCSI disk
+[   11.372630] xhci-hcd exynos5-dwc3-xhci.5.auto: Timeout while
+waiting for setup device command
+[   16.650624] xhci-hcd exynos5-dwc3-xhci.5.auto: Timeout while
+waiting for setup device command
+[   16.870255] usb 6-1: device not accepting address 2, error -62
+[   22.171093] xhci-hcd exynos5-dwc3-xhci.5.auto: Timeout while
+waiting for setup device command
+[   27.451021] xhci-hcd exynos5-dwc3-xhci.5.auto: Timeout while
+waiting for setup device command
+[   27.669956] usb 6-1: device not accepting address 3, error -62
+[   27.711656] usb usb6-port1: attempt power cycle
+
+some how 12500000.phy do not de-register when we perform reboot.
+
+[  120.260813] shutdown[1]: All loop devices detached.
+[  120.308592] sd 0:0:0:0: [sda] Synchronizing SCSI cache
+[  120.425890] usb 4-1.1: reset SuperSpeed Gen 1 USB device number 3
+using xhci-hcd
+[  120.500085] wake enabled for irq 155
+[  120.592335] reboot: Restartin
+
+Attach are the reboot logs.
+[0] https://pastebin.com/a3d712q4
+
+Second issue is the unbind on usb dwc3 fails.
+
+[root@archl-xu4m ~]# cd /sys/bus/platform/drivers/exynos5_usb3drd_phy/
+[root@archl-xu4m exynos5_usb3drd_phy]# ls -la
+total 0
+drwxr-xr-x   2 root root    0 Jun 28 14:08 .
+drwxr-xr-x 131 root root    0 Jun 28 14:08 ..
+lrwxrwxrwx   1 root root    0 Jun 28 14:11 12100000.phy ->
+../../../../devices/platform/soc/12100000.phy
+lrwxrwxrwx   1 root root    0 Jun 28 14:11 12500000.phy ->
+../../../../devices/platform/soc/12500000.phy
+--w-------   1 root root 4096 Jun 28 14:11 bind
+--w-------   1 root root 4096 Jun 28 14:08 uevent
+--w-------   1 root root 4096 Jun 28 14:11 unbind
+[root@archl-xu4m exynos5_usb3drd_phy]#
+[root@archl-xu4m exynos5_usb3drd_phy]#
+[root@archl-xu4m exynos5_usb3drd_phy]# echo 12500000.phy > unbind
+[  194.138492] ------------[ cut here ]------------
+[  194.142104] WARNING: CPU: 6 PID: 292 at
+drivers/regulator/core.c:2036 _regulator_put.part.4+0x110/0x118
+[  194.156913] Modules linked in: s5p_mfc s5p_jpeg exynos_gsc
+v4l2_mem2mem v4l2_common videobuf2_dma_contig videobuf2_memops
+videobuf2_v4l2 videobuf2_common videodev mc s5p_cec
+[  194.171542] CPU: 6 PID: 292 Comm: bash Not tainted
+5.2.0-rc6-next-20190626-xu4ml #21
+[  194.178963] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[  194.184983] [<c0112794>] (unwind_backtrace) from [<c010dfec>]
+(show_stack+0x10/0x14)
+[  194.192732] [<c010dfec>] (show_stack) from [<c0ab30c0>]
+(dump_stack+0x98/0xc4)
+[  194.199887] [<c0ab30c0>] (dump_stack) from [<c0127b78>]
+(__warn.part.3+0xbc/0xec)
+[  194.207332] [<c0127b78>] (__warn.part.3) from [<c0127d10>]
+(warn_slowpath_null+0x44/0x4c)
+[  194.215491] [<c0127d10>] (warn_slowpath_null) from [<c04f8f3c>]
+(_regulator_put.part.4+0x110/0x118)
+[  194.224518] [<c04f8f3c>] (_regulator_put.part.4) from [<c04f8f70>]
+(regulator_put+0x2c/0x3c)
+[  194.232916] [<c04f8f70>] (regulator_put) from [<c05b8eb8>]
+(release_nodes+0x1c0/0x204)
+[  194.240791] [<c05b8eb8>] (release_nodes) from [<c05b4f20>]
+(device_release_driver_internal+0xec/0x1ac)
+[  194.250086] [<c05b4f20>] (device_release_driver_internal) from
+[<c05b2d38>] (unbind_store+0x60/0xd4)
+[  194.259189] [<c05b2d38>] (unbind_store) from [<c03332dc>]
+(kernfs_fop_write+0x100/0x1e0)
+[  194.267232] [<c03332dc>] (kernfs_fop_write) from [<c02a2f60>]
+(__vfs_write+0x30/0x1c4)
+[  194.275110] [<c02a2f60>] (__vfs_write) from [<c02a5a74>]
+(vfs_write+0xa4/0x184)
+[  194.282376] [<c02a5a74>] (vfs_write) from [<c02a5ccc>] (ksys_write+0x5c/0xd4)
+[  194.289472] [<c02a5ccc>] (ksys_write) from [<c0101000>]
+(ret_fast_syscall+0x0/0x28)
+[  194.297103] Exception stack(0xe50fbfa8 to 0xe50fbff0)
+[  194.302074] bfa0:                   0000000d 0054a958 00000001
+0054a958 0000000d 00000000
+[  194.310284] bfc0: 0000000d 0054a958 b6e7ebc8 00000004 0054a958
+0000000d 00000000 00000000
+[  194.318424] bfe0: 00000070 be9e1868 b6da3c80 b6dff784
+[  194.323614] irq event stamp: 20491
+[  194.326920] hardirqs last  enabled at (20515): [<c0199aac>]
+console_unlock+0x440/0x64c
+[  194.334720] hardirqs last disabled at (20522): [<c0199714>]
+console_unlock+0xa8/0x64c
+[  194.342690] softirqs last  enabled at (20540): [<c0102544>]
+__do_softirq+0x35c/0x654
+[  194.350403] softirqs last disabled at (20553): [<c012fd80>]
+irq_exit+0x158/0x16c
+[  194.357782] ---[ end trace 5ea20768939447c5 ]---
+[  194.363628] ------------[ cut here ]------------
+[  194.367095] WARNING: CPU: 6 PID: 292 at
+drivers/regulator/core.c:2036 _regulator_put.part.4+0x110/0x118
+[  194.376360] Modules linked in: s5p_mfc s5p_jpeg exynos_gsc
+v4l2_mem2mem v4l2_common videobuf2_dma_contig videobuf2_memops
+videobuf2_v4l2 videobuf2_common videodev mc s5p_cec
+[  194.392067] CPU: 6 PID: 292 Comm: bash Tainted: G        W
+5.2.0-rc6-next-20190626-xu4ml #21
+[  194.400882] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[  194.406902] [<c0112794>] (unwind_backtrace) from [<c010dfec>]
+(show_stack+0x10/0x14)
+[  194.414647] [<c010dfec>] (show_stack) from [<c0ab30c0>]
+(dump_stack+0x98/0xc4)
+[  194.421825] [<c0ab30c0>] (dump_stack) from [<c0127b78>]
+(__warn.part.3+0xbc/0xec)
+[  194.429284] [<c0127b78>] (__warn.part.3) from [<c0127d10>]
+(warn_slowpath_null+0x44/0x4c)
+[  194.437441] [<c0127d10>] (warn_slowpath_null) from [<c04f8f3c>]
+(_regulator_put.part.4+0x110/0x118)
+[  194.446469] [<c04f8f3c>] (_regulator_put.part.4) from [<c04f8f70>]
+(regulator_put+0x2c/0x3c)
+[  194.454868] [<c04f8f70>] (regulator_put) from [<c05b8eb8>]
+(release_nodes+0x1c0/0x204)
+[  194.462743] [<c05b8eb8>] (release_nodes) from [<c05b4f20>]
+(device_release_driver_internal+0xec/0x1ac)
+[  194.472038] [<c05b4f20>] (device_release_driver_internal) from
+[<c05b2d38>] (unbind_store+0x60/0xd4)
+[  194.481135] [<c05b2d38>] (unbind_store) from [<c03332dc>]
+(kernfs_fop_write+0x100/0x1e0)
+[  194.489175] [<c03332dc>] (kernfs_fop_write) from [<c02a2f60>]
+(__vfs_write+0x30/0x1c4)
+[  194.497056] [<c02a2f60>] (__vfs_write) from [<c02a5a74>]
+(vfs_write+0xa4/0x184)
+[  194.504323] [<c02a5a74>] (vfs_write) from [<c02a5ccc>] (ksys_write+0x5c/0xd4)
+[  194.511417] [<c02a5ccc>] (ksys_write) from [<c0101000>]
+(ret_fast_syscall+0x0/0x28)
+[  194.519050] Exception stack(0xe50fbfa8 to 0xe50fbff0)
+[  194.524020] bfa0:                   0000000d 0054a958 00000001
+0054a958 0000000d 00000000
+[  194.532231] bfc0: 0000000d 0054a958 b6e7ebc8 00000004 0054a958
+0000000d 00000000 00000000
+[  194.540372] bfe0: 00000070 be9e1868 b6da3c80 b6dff784
+[  194.545640] irq event stamp: 20765
+[  194.548824] hardirqs last  enabled at (20785): [<c0199aac>]
+console_unlock+0x440/0x64c
+[  194.556794] hardirqs last disabled at (20802): [<c0199714>]
+console_unlock+0xa8/0x64c
+[  194.564468] softirqs last  enabled at (20800): [<c0102544>]
+__do_softirq+0x35c/0x654
+[  194.572329] softirqs last disabled at (20819): [<c012fd80>]
+irq_exit+0x158/0x16c
+[  194.579679] ---[ end trace 5ea20768939447c6 ]---
+[root@archl-xu4m exynos5_usb3drd_phy]#
+
+I saw the peripherals get on/off during suspend resume but on no
+regulator disable/enable calls.
+
+Attach are the logs
+[2] https://pastebin.com/uQT2EYgX
+
+Best Regards
+-Anand
