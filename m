@@ -1,266 +1,203 @@
 From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 36/39] docs: add SPDX tags to new index files
-Date: Fri, 28 Jun 2019 09:30:29 -0300
-Message-ID: <d3cd5d1309647bd16b3590419e7a2387eaf24bad.1561724493.git.mchehab+samsung@kernel.org>
+Subject: [PATCH 01/39] docs: thermal: add it to the driver API
+Date: Fri, 28 Jun 2019 09:29:54 -0300
+Message-ID: <c9c7d7e0567aed7e36c4eb9c09ddfb6274913e9c.1561724493.git.mchehab+samsung@kernel.org>
 References: <cover.1561724493.git.mchehab+samsung@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <cover.1561724493.git.mchehab+samsung@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Philipp Reisner <philipp.reisner@linbit.com>, Lars Ellenberg <lars.ellenberg@linbit.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, drbd-dev@lists.linbit.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Amit Daniel Kachhap <amit.kachhap@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>, Javi Merino <javi.merino@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-All those new files I added are under GPL v2.0 license.
-
-Add the corresponding SPDX headers to them.
+The file contents mostly describes driver internals.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/admin-guide/blockdev/drbd/figures.rst | 2 ++
- Documentation/admin-guide/blockdev/index.rst        | 2 ++
- Documentation/admin-guide/laptops/index.rst         | 1 +
- Documentation/admin-guide/namespaces/index.rst      | 2 ++
- Documentation/admin-guide/perf/index.rst            | 2 ++
- Documentation/arm/index.rst                         | 2 ++
- Documentation/arm/nwfpe/index.rst                   | 2 ++
- Documentation/arm/omap/index.rst                    | 2 ++
- Documentation/arm/sa1100/index.rst                  | 2 ++
- Documentation/arm/samsung-s3c24xx/index.rst         | 2 ++
- Documentation/arm/samsung/index.rst                 | 2 ++
- Documentation/driver-api/early-userspace/index.rst  | 2 ++
- Documentation/driver-api/md/index.rst               | 2 ++
- Documentation/driver-api/memory-devices/index.rst   | 2 ++
- Documentation/driver-api/mmc/index.rst              | 2 ++
- Documentation/driver-api/mtd/index.rst              | 2 ++
- Documentation/driver-api/nfc/index.rst              | 2 ++
- Documentation/driver-api/nvdimm/index.rst           | 2 ++
- Documentation/driver-api/phy/index.rst              | 2 ++
- Documentation/driver-api/rapidio/index.rst          | 2 ++
- Documentation/driver-api/thermal/index.rst          | 2 ++
- Documentation/ia64/index.rst                        | 2 ++
- 22 files changed, 43 insertions(+)
+ Documentation/driver-api/index.rst                   |  1 +
+ .../{ => driver-api}/thermal/cpu-cooling-api.rst     |  0
+ .../{ => driver-api}/thermal/exynos_thermal.rst      |  0
+ .../thermal/exynos_thermal_emulation.rst             |  0
+ Documentation/{ => driver-api}/thermal/index.rst     |  2 --
+ .../{ => driver-api}/thermal/intel_powerclamp.rst    |  0
+ .../{ => driver-api}/thermal/nouveau_thermal.rst     |  0
+ .../{ => driver-api}/thermal/power_allocator.rst     |  0
+ Documentation/{ => driver-api}/thermal/sysfs-api.rst | 12 ++++++------
+ .../thermal/x86_pkg_temperature_thermal.rst          |  2 +-
+ MAINTAINERS                                          |  2 +-
+ include/linux/thermal.h                              |  4 ++--
+ 12 files changed, 11 insertions(+), 12 deletions(-)
+ rename Documentation/{ => driver-api}/thermal/cpu-cooling-api.rst (100%)
+ rename Documentation/{ => driver-api}/thermal/exynos_thermal.rst (100%)
+ rename Documentation/{ => driver-api}/thermal/exynos_thermal_emulation.rst (100%)
+ rename Documentation/{ => driver-api}/thermal/index.rst (95%)
+ rename Documentation/{ => driver-api}/thermal/intel_powerclamp.rst (100%)
+ rename Documentation/{ => driver-api}/thermal/nouveau_thermal.rst (100%)
+ rename Documentation/{ => driver-api}/thermal/power_allocator.rst (100%)
+ rename Documentation/{ => driver-api}/thermal/sysfs-api.rst (98%)
+ rename Documentation/{ => driver-api}/thermal/x86_pkg_temperature_thermal.rst (94%)
 
-diff --git a/Documentation/admin-guide/blockdev/drbd/figures.rst b/Documentation/admin-guide/blockdev/drbd/figures.rst
-index 3e3fd4b8a478..bd9a4901fe46 100644
---- a/Documentation/admin-guide/blockdev/drbd/figures.rst
-+++ b/Documentation/admin-guide/blockdev/drbd/figures.rst
-@@ -1,3 +1,5 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
- .. The here included files are intended to help understand the implementation
- 
- Data flows that Relate some functions, and write packets
-diff --git a/Documentation/admin-guide/blockdev/index.rst b/Documentation/admin-guide/blockdev/index.rst
-index 20a738d9d047..b903cf152091 100644
---- a/Documentation/admin-guide/blockdev/index.rst
-+++ b/Documentation/admin-guide/blockdev/index.rst
-@@ -1,3 +1,5 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
- ===========================
- The Linux RapidIO Subsystem
- ===========================
-diff --git a/Documentation/admin-guide/laptops/index.rst b/Documentation/admin-guide/laptops/index.rst
-index 6b554e39863b..cd9a1c2695fd 100644
---- a/Documentation/admin-guide/laptops/index.rst
-+++ b/Documentation/admin-guide/laptops/index.rst
-@@ -1,3 +1,4 @@
-+.. SPDX-License-Identifier: GPL-2.0
- 
- ==============
- Laptop Drivers
-diff --git a/Documentation/admin-guide/namespaces/index.rst b/Documentation/admin-guide/namespaces/index.rst
-index 713ec4949fa7..384f2e0f33d2 100644
---- a/Documentation/admin-guide/namespaces/index.rst
-+++ b/Documentation/admin-guide/namespaces/index.rst
-@@ -1,3 +1,5 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
- ==========
- Namespaces
- ==========
-diff --git a/Documentation/admin-guide/perf/index.rst b/Documentation/admin-guide/perf/index.rst
-index 9d445451ea18..ee4bfd2a740f 100644
---- a/Documentation/admin-guide/perf/index.rst
-+++ b/Documentation/admin-guide/perf/index.rst
-@@ -1,3 +1,5 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
- ===========================
- Performance monitor support
- ===========================
-diff --git a/Documentation/arm/index.rst b/Documentation/arm/index.rst
-index 9c2f781f4685..5fc072dd0c5e 100644
---- a/Documentation/arm/index.rst
-+++ b/Documentation/arm/index.rst
-@@ -1,3 +1,5 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
- ================
- ARM Architecture
- ================
-diff --git a/Documentation/arm/nwfpe/index.rst b/Documentation/arm/nwfpe/index.rst
-index 21fa8ce192ae..3c4d2f9aa10e 100644
---- a/Documentation/arm/nwfpe/index.rst
-+++ b/Documentation/arm/nwfpe/index.rst
-@@ -1,3 +1,5 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
- ===================================
- NetWinder's floating point emulator
- ===================================
-diff --git a/Documentation/arm/omap/index.rst b/Documentation/arm/omap/index.rst
-index f1e9c11d9f9b..8b365b212e49 100644
---- a/Documentation/arm/omap/index.rst
-+++ b/Documentation/arm/omap/index.rst
-@@ -1,3 +1,5 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
- =======
- TI OMAP
- =======
-diff --git a/Documentation/arm/sa1100/index.rst b/Documentation/arm/sa1100/index.rst
-index fb2385b3accf..68c2a280a745 100644
---- a/Documentation/arm/sa1100/index.rst
-+++ b/Documentation/arm/sa1100/index.rst
-@@ -1,3 +1,5 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
- ====================
- Intel StrongARM 1100
- ====================
-diff --git a/Documentation/arm/samsung-s3c24xx/index.rst b/Documentation/arm/samsung-s3c24xx/index.rst
-index 6c7b241cbf37..5b8a7f9398d8 100644
---- a/Documentation/arm/samsung-s3c24xx/index.rst
-+++ b/Documentation/arm/samsung-s3c24xx/index.rst
-@@ -1,3 +1,5 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
- ﻿==========================
- Samsung S3C24XX SoC Family
- ==========================
-diff --git a/Documentation/arm/samsung/index.rst b/Documentation/arm/samsung/index.rst
-index f54d95734362..8142cce3d23e 100644
---- a/Documentation/arm/samsung/index.rst
-+++ b/Documentation/arm/samsung/index.rst
-@@ -1,3 +1,5 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
- ===========
- Samsung SoC
- ===========
-diff --git a/Documentation/driver-api/early-userspace/index.rst b/Documentation/driver-api/early-userspace/index.rst
-index 6f20c3c560d8..149c1822f06d 100644
---- a/Documentation/driver-api/early-userspace/index.rst
-+++ b/Documentation/driver-api/early-userspace/index.rst
-@@ -1,3 +1,5 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
- ===============
- Early Userspace
- ===============
-diff --git a/Documentation/driver-api/md/index.rst b/Documentation/driver-api/md/index.rst
-index 205080891a1a..18f54a7d7d6e 100644
---- a/Documentation/driver-api/md/index.rst
-+++ b/Documentation/driver-api/md/index.rst
-@@ -1,3 +1,5 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
- ====
- RAID
- ====
-diff --git a/Documentation/driver-api/memory-devices/index.rst b/Documentation/driver-api/memory-devices/index.rst
-index 87549828f6ab..28101458cda5 100644
---- a/Documentation/driver-api/memory-devices/index.rst
-+++ b/Documentation/driver-api/memory-devices/index.rst
-@@ -1,3 +1,5 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
- =========================
- Memory Controller drivers
- =========================
-diff --git a/Documentation/driver-api/mmc/index.rst b/Documentation/driver-api/mmc/index.rst
-index 9aaf64951a8c..7339736ac774 100644
---- a/Documentation/driver-api/mmc/index.rst
-+++ b/Documentation/driver-api/mmc/index.rst
-@@ -1,3 +1,5 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
- ========================
- MMC/SD/SDIO card support
- ========================
-diff --git a/Documentation/driver-api/mtd/index.rst b/Documentation/driver-api/mtd/index.rst
-index 2e0e7cc4055e..436ba5a851d7 100644
---- a/Documentation/driver-api/mtd/index.rst
-+++ b/Documentation/driver-api/mtd/index.rst
-@@ -1,3 +1,5 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
- ==============================
- Memory Technology Device (MTD)
- ==============================
-diff --git a/Documentation/driver-api/nfc/index.rst b/Documentation/driver-api/nfc/index.rst
-index 3afb2c0c2e3c..b6e9eedbff29 100644
---- a/Documentation/driver-api/nfc/index.rst
-+++ b/Documentation/driver-api/nfc/index.rst
-@@ -1,3 +1,5 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
- ========================
- Near Field Communication
- ========================
-diff --git a/Documentation/driver-api/nvdimm/index.rst b/Documentation/driver-api/nvdimm/index.rst
-index 19dc8ee371dc..a4f8f98aeb94 100644
---- a/Documentation/driver-api/nvdimm/index.rst
-+++ b/Documentation/driver-api/nvdimm/index.rst
-@@ -1,3 +1,5 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
- ===================================
- Non-Volatile Memory Device (NVDIMM)
- ===================================
-diff --git a/Documentation/driver-api/phy/index.rst b/Documentation/driver-api/phy/index.rst
-index fce9ffae2812..69ba1216de72 100644
---- a/Documentation/driver-api/phy/index.rst
-+++ b/Documentation/driver-api/phy/index.rst
-@@ -1,3 +1,5 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
- =====================
- Generic PHY Framework
- =====================
-diff --git a/Documentation/driver-api/rapidio/index.rst b/Documentation/driver-api/rapidio/index.rst
-index 4c5e51a05134..a41b4242d16f 100644
---- a/Documentation/driver-api/rapidio/index.rst
-+++ b/Documentation/driver-api/rapidio/index.rst
-@@ -1,3 +1,5 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
- ===========================
- The Linux RapidIO Subsystem
- ===========================
-diff --git a/Documentation/driver-api/thermal/index.rst b/Documentation/driver-api/thermal/index.rst
-index 68ceb6886561..5ba61d19c6ae 100644
---- a/Documentation/driver-api/thermal/index.rst
+diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
+index 0dbaa987aa11..4e503e360860 100644
+--- a/Documentation/driver-api/index.rst
++++ b/Documentation/driver-api/index.rst
+@@ -56,6 +56,7 @@ available subsections can be seen below.
+    dmaengine/index
+    slimbus
+    soundwire/index
++   thermal/index
+    fpga/index
+    acpi/index
+    generic-counter
+diff --git a/Documentation/thermal/cpu-cooling-api.rst b/Documentation/driver-api/thermal/cpu-cooling-api.rst
+similarity index 100%
+rename from Documentation/thermal/cpu-cooling-api.rst
+rename to Documentation/driver-api/thermal/cpu-cooling-api.rst
+diff --git a/Documentation/thermal/exynos_thermal.rst b/Documentation/driver-api/thermal/exynos_thermal.rst
+similarity index 100%
+rename from Documentation/thermal/exynos_thermal.rst
+rename to Documentation/driver-api/thermal/exynos_thermal.rst
+diff --git a/Documentation/thermal/exynos_thermal_emulation.rst b/Documentation/driver-api/thermal/exynos_thermal_emulation.rst
+similarity index 100%
+rename from Documentation/thermal/exynos_thermal_emulation.rst
+rename to Documentation/driver-api/thermal/exynos_thermal_emulation.rst
+diff --git a/Documentation/thermal/index.rst b/Documentation/driver-api/thermal/index.rst
+similarity index 95%
+rename from Documentation/thermal/index.rst
+rename to Documentation/driver-api/thermal/index.rst
+index 8c1c00146cad..68ceb6886561 100644
+--- a/Documentation/thermal/index.rst
 +++ b/Documentation/driver-api/thermal/index.rst
-@@ -1,3 +1,5 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
+@@ -1,5 +1,3 @@
+-:orphan:
+-
  =======
  Thermal
  =======
-diff --git a/Documentation/ia64/index.rst b/Documentation/ia64/index.rst
-index ef99475f672b..0436e1034115 100644
---- a/Documentation/ia64/index.rst
-+++ b/Documentation/ia64/index.rst
-@@ -1,3 +1,5 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
- ==================
- IA-64 Architecture
- ==================
+diff --git a/Documentation/thermal/intel_powerclamp.rst b/Documentation/driver-api/thermal/intel_powerclamp.rst
+similarity index 100%
+rename from Documentation/thermal/intel_powerclamp.rst
+rename to Documentation/driver-api/thermal/intel_powerclamp.rst
+diff --git a/Documentation/thermal/nouveau_thermal.rst b/Documentation/driver-api/thermal/nouveau_thermal.rst
+similarity index 100%
+rename from Documentation/thermal/nouveau_thermal.rst
+rename to Documentation/driver-api/thermal/nouveau_thermal.rst
+diff --git a/Documentation/thermal/power_allocator.rst b/Documentation/driver-api/thermal/power_allocator.rst
+similarity index 100%
+rename from Documentation/thermal/power_allocator.rst
+rename to Documentation/driver-api/thermal/power_allocator.rst
+diff --git a/Documentation/thermal/sysfs-api.rst b/Documentation/driver-api/thermal/sysfs-api.rst
+similarity index 98%
+rename from Documentation/thermal/sysfs-api.rst
+rename to Documentation/driver-api/thermal/sysfs-api.rst
+index e4930761d3e5..fab2c9b36d08 100644
+--- a/Documentation/thermal/sysfs-api.rst
++++ b/Documentation/driver-api/thermal/sysfs-api.rst
+@@ -552,7 +552,7 @@ emul_temp
+ sustainable_power
+ 	An estimate of the sustained power that can be dissipated by
+ 	the thermal zone. Used by the power allocator governor. For
+-	more information see Documentation/thermal/power_allocator.rst
++	more information see Documentation/driver-api/thermal/power_allocator.rst
+ 
+ 	Unit: milliwatts
+ 
+@@ -563,7 +563,7 @@ k_po
+ 	controller during temperature overshoot. Temperature overshoot
+ 	is when the current temperature is above the "desired
+ 	temperature" trip point. For more information see
+-	Documentation/thermal/power_allocator.rst
++	Documentation/driver-api/thermal/power_allocator.rst
+ 
+ 	RW, Optional
+ 
+@@ -572,7 +572,7 @@ k_pu
+ 	controller during temperature undershoot. Temperature undershoot
+ 	is when the current temperature is below the "desired
+ 	temperature" trip point. For more information see
+-	Documentation/thermal/power_allocator.rst
++	Documentation/driver-api/thermal/power_allocator.rst
+ 
+ 	RW, Optional
+ 
+@@ -580,14 +580,14 @@ k_i
+ 	The integral term of the power allocator governor's PID
+ 	controller. This term allows the PID controller to compensate
+ 	for long term drift. For more information see
+-	Documentation/thermal/power_allocator.rst
++	Documentation/driver-api/thermal/power_allocator.rst
+ 
+ 	RW, Optional
+ 
+ k_d
+ 	The derivative term of the power allocator governor's PID
+ 	controller. For more information see
+-	Documentation/thermal/power_allocator.rst
++	Documentation/driver-api/thermal/power_allocator.rst
+ 
+ 	RW, Optional
+ 
+@@ -598,7 +598,7 @@ integral_cutoff
+ 	example, if integral_cutoff is 0, then the integral term only
+ 	accumulates error when temperature is above the desired
+ 	temperature trip point. For more information see
+-	Documentation/thermal/power_allocator.rst
++	Documentation/driver-api/thermal/power_allocator.rst
+ 
+ 	Unit: millidegree Celsius
+ 
+diff --git a/Documentation/thermal/x86_pkg_temperature_thermal.rst b/Documentation/driver-api/thermal/x86_pkg_temperature_thermal.rst
+similarity index 94%
+rename from Documentation/thermal/x86_pkg_temperature_thermal.rst
+rename to Documentation/driver-api/thermal/x86_pkg_temperature_thermal.rst
+index f134dbd3f5a9..2ac42ccd236f 100644
+--- a/Documentation/thermal/x86_pkg_temperature_thermal.rst
++++ b/Documentation/driver-api/thermal/x86_pkg_temperature_thermal.rst
+@@ -40,7 +40,7 @@ This contains two trip points:
+ - trip_point_1_temp
+ 
+ User can set any temperature between 0 to TJ-Max temperature. Temperature units
+-are in milli-degree Celsius. Refer to "Documentation/thermal/sysfs-api.rst" for
++are in milli-degree Celsius. Refer to "Documentation/driver-api/thermal/sysfs-api.rst" for
+ thermal sys-fs details.
+ 
+ Any value other than 0 in these trip points, can trigger thermal notifications.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7ba6d174f49f..9d3a408f5ce1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15762,7 +15762,7 @@ M:	Viresh Kumar <viresh.kumar@linaro.org>
+ M:	Javi Merino <javi.merino@kernel.org>
+ L:	linux-pm@vger.kernel.org
+ S:	Supported
+-F:	Documentation/thermal/cpu-cooling-api.rst
++F:	Documentation/driver-api/thermal/cpu-cooling-api.rst
+ F:	drivers/thermal/cpu_cooling.c
+ F:	include/linux/cpu_cooling.h
+ 
+diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+index 681047f8cc05..e45659c75920 100644
+--- a/include/linux/thermal.h
++++ b/include/linux/thermal.h
+@@ -251,7 +251,7 @@ struct thermal_bind_params {
+ 	 * platform characterization. This value is relative to the
+ 	 * rest of the weights so a cooling device whose weight is
+ 	 * double that of another cooling device is twice as
+-	 * effective. See Documentation/thermal/sysfs-api.rst for more
++	 * effective. See Documentation/driver-api/thermal/sysfs-api.rst for more
+ 	 * information.
+ 	 */
+ 	int weight;
+@@ -259,7 +259,7 @@ struct thermal_bind_params {
+ 	/*
+ 	 * This is a bit mask that gives the binding relation between this
+ 	 * thermal zone and cdev, for a particular trip point.
+-	 * See Documentation/thermal/sysfs-api.rst for more information.
++	 * See Documentation/driver-api/thermal/sysfs-api.rst for more information.
+ 	 */
+ 	int trip_mask;
+ 
 -- 
 2.21.0
