@@ -1,128 +1,56 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 2/2] regulator: s2mps11: Adjust supported buck voltages to real values
-Date: Sat, 29 Jun 2019 13:44:46 +0200
-Message-ID: <20190629114446.11381-2-krzk@kernel.org>
-References: <20190629114446.11381-1-krzk@kernel.org>
+Subject: [PATCH 1/2] ARM: dts: exynos: Adjust buck[78] regulators to supported values on Odroid XU3 family
+Date: Sat, 29 Jun 2019 13:47:38 +0200
+Message-ID: <20190629114739.11702-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190629114446.11381-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Anand Moon <linux.amoon@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The driver was registering buck regulators with unsupported range of
-voltages for S2MPS11 devices.  Basically it assumed that all 256 values
-are possible for a single 8-bit I2C register controlling buck's voltage.
-This is not true, as datasheet describes subset of these which can be
-used.
+The datasheet of S2MPS11 PMIC is slightly non-consistent in buck[78]
+voltage regulators values.
 
-For example for buck[12346] the minimum voltage is 650 mV which
-corresponds to register value of 0x8.  The driver was however
-registering regulator starting at 600 mV, so for a step of 6.25 mV this
-gave the same result.  However this allowed to try to configure
-regulators to unsupported values.
+1. The voltage tables for configuring their registers mention range of
+   voltages: 0.750 V to 3.55 V,
+2. The constrains in electrical specifications say output voltage range
+   to be different (buck7: 1.2 V to 1.5 V, buck8: 1.8 V to 2.1 V).
 
+Adjust the ranges to match the electrical specifications to stay on the
+safe side.  Also change the name of regulators to match reality.  Anyway
+these regulators stay at default value so this should not have effect.
+
+Reported-by: Anand Moon <linux.amoon@gmail.com>
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/regulator/s2mps11.c         | 27 +++++++++++++++++----------
- include/linux/mfd/samsung/core.h    |  1 +
- include/linux/mfd/samsung/s2mps11.h |  4 +++-
- 3 files changed, 21 insertions(+), 11 deletions(-)
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 8f3c8730dc0d..054baaadfdfd 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -376,9 +376,10 @@ static const struct regulator_ops s2mps11_buck_ops = {
- 	.ops		= &s2mps11_buck_ops,			\
- 	.type		= REGULATOR_VOLTAGE,			\
- 	.owner		= THIS_MODULE,				\
--	.min_uV		= MIN_600_MV,				\
-+	.min_uV		= MIN_650_MV,				\
- 	.uV_step	= STEP_6_25_MV,				\
--	.n_voltages	= S2MPS11_BUCK_N_VOLTAGES,		\
-+	.linear_min_sel	= 8,					\
-+	.n_voltages	= S2MPS11_BUCK12346_N_VOLTAGES,		\
- 	.ramp_delay	= S2MPS11_RAMP_DELAY,			\
- 	.vsel_reg	= S2MPS11_REG_B1CTRL2 + (num - 1) * 2,	\
- 	.vsel_mask	= S2MPS11_BUCK_VSEL_MASK,		\
-@@ -392,9 +393,10 @@ static const struct regulator_ops s2mps11_buck_ops = {
- 	.ops		= &s2mps11_buck_ops,			\
- 	.type		= REGULATOR_VOLTAGE,			\
- 	.owner		= THIS_MODULE,				\
--	.min_uV		= MIN_600_MV,				\
-+	.min_uV		= MIN_650_MV,				\
- 	.uV_step	= STEP_6_25_MV,				\
--	.n_voltages	= S2MPS11_BUCK_N_VOLTAGES,		\
-+	.linear_min_sel	= 8,					\
-+	.n_voltages	= S2MPS11_BUCK5_N_VOLTAGES,		\
- 	.ramp_delay	= S2MPS11_RAMP_DELAY,			\
- 	.vsel_reg	= S2MPS11_REG_B5CTRL2,			\
- 	.vsel_mask	= S2MPS11_BUCK_VSEL_MASK,		\
-@@ -402,7 +404,7 @@ static const struct regulator_ops s2mps11_buck_ops = {
- 	.enable_mask	= S2MPS11_ENABLE_MASK			\
- }
+diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+index 9843d21d6924..829147e320e0 100644
+--- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+@@ -551,17 +551,17 @@
+ 			};
  
--#define regulator_desc_s2mps11_buck67810(num, min, step) {	\
-+#define regulator_desc_s2mps11_buck67810(num, min, step, min_sel, voltages) {	\
- 	.name		= "BUCK"#num,				\
- 	.id		= S2MPS11_BUCK##num,			\
- 	.ops		= &s2mps11_buck_ops,			\
-@@ -410,7 +412,8 @@ static const struct regulator_ops s2mps11_buck_ops = {
- 	.owner		= THIS_MODULE,				\
- 	.min_uV		= min,					\
- 	.uV_step	= step,					\
--	.n_voltages	= S2MPS11_BUCK_N_VOLTAGES,		\
-+	.linear_min_sel	= min_sel,				\
-+	.n_voltages	= voltages,				\
- 	.ramp_delay	= S2MPS11_RAMP_DELAY,			\
- 	.vsel_reg	= S2MPS11_REG_B6CTRL2 + (num - 6) * 2,	\
- 	.vsel_mask	= S2MPS11_BUCK_VSEL_MASK,		\
-@@ -478,11 +481,15 @@ static const struct regulator_desc s2mps11_regulators[] = {
- 	regulator_desc_s2mps11_buck1_4(3),
- 	regulator_desc_s2mps11_buck1_4(4),
- 	regulator_desc_s2mps11_buck5,
--	regulator_desc_s2mps11_buck67810(6, MIN_600_MV, STEP_6_25_MV),
--	regulator_desc_s2mps11_buck67810(7, MIN_750_MV, STEP_12_5_MV),
--	regulator_desc_s2mps11_buck67810(8, MIN_750_MV, STEP_12_5_MV),
-+	regulator_desc_s2mps11_buck67810(6, MIN_650_MV, STEP_6_25_MV, 8,
-+					 S2MPS11_BUCK12346_N_VOLTAGES),
-+	regulator_desc_s2mps11_buck67810(7, MIN_750_MV, STEP_12_5_MV, 0,
-+					 S2MPS11_BUCK7810_N_VOLTAGES),
-+	regulator_desc_s2mps11_buck67810(8, MIN_750_MV, STEP_12_5_MV, 0,
-+					 S2MPS11_BUCK7810_N_VOLTAGES),
- 	regulator_desc_s2mps11_buck9,
--	regulator_desc_s2mps11_buck67810(10, MIN_750_MV, STEP_12_5_MV),
-+	regulator_desc_s2mps11_buck67810(10, MIN_750_MV, STEP_12_5_MV, 0,
-+					 S2MPS11_BUCK7810_N_VOLTAGES),
- };
+ 			buck7_reg: BUCK7 {
+-				regulator-name = "vdd_1.0v_ldo";
+-				regulator-min-microvolt = <800000>;
++				regulator-name = "vdd_1.35v_ldo";
++				regulator-min-microvolt = <1200000>;
+ 				regulator-max-microvolt = <1500000>;
+ 				regulator-always-on;
+ 				regulator-boot-on;
+ 			};
  
- static const struct regulator_ops s2mps14_reg_ops;
-diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
-index 3ca17eb89aa2..f1631a39acfc 100644
---- a/include/linux/mfd/samsung/core.h
-+++ b/include/linux/mfd/samsung/core.h
-@@ -20,6 +20,7 @@
- #define MIN_850_MV		850000
- #define MIN_800_MV		800000
- #define MIN_750_MV		750000
-+#define MIN_650_MV		650000
- #define MIN_600_MV		600000
- #define MIN_500_MV		500000
- 
-diff --git a/include/linux/mfd/samsung/s2mps11.h b/include/linux/mfd/samsung/s2mps11.h
-index f6c035eb87be..4805c90609c4 100644
---- a/include/linux/mfd/samsung/s2mps11.h
-+++ b/include/linux/mfd/samsung/s2mps11.h
-@@ -170,7 +170,9 @@ enum s2mps11_regulators {
- #define S2MPS11_ENABLE_MASK	(0x03 << S2MPS11_ENABLE_SHIFT)
- #define S2MPS11_ENABLE_SHIFT	0x06
- #define S2MPS11_LDO_N_VOLTAGES	(S2MPS11_LDO_VSEL_MASK + 1)
--#define S2MPS11_BUCK_N_VOLTAGES (S2MPS11_BUCK_VSEL_MASK + 1)
-+#define S2MPS11_BUCK12346_N_VOLTAGES	153
-+#define S2MPS11_BUCK5_N_VOLTAGES	216
-+#define S2MPS11_BUCK7810_N_VOLTAGES	225
- #define S2MPS11_BUCK9_N_VOLTAGES (S2MPS11_BUCK9_VSEL_MASK + 1)
- #define S2MPS11_RAMP_DELAY	25000		/* uV/us */
- 
+ 			buck8_reg: BUCK8 {
+-				regulator-name = "vdd_1.8v_ldo";
+-				regulator-min-microvolt = <800000>;
+-				regulator-max-microvolt = <2000000>;
++				regulator-name = "vdd_2.0v_ldo";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <2100000>;
+ 				regulator-always-on;
+ 				regulator-boot-on;
+ 			};
 -- 
 2.17.1
