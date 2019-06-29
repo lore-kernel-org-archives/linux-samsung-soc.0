@@ -1,109 +1,44 @@
-From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Subject: Re: [PATCH v3 00/22] Associate ddc adapters with connectors
-Date: Fri, 28 Jun 2019 18:45:14 +0200
-Message-ID: <20190628164514.GS12905@phenom.ffwll.local>
-References: <3fb19371-db7d-f9dc-31a7-1ccd126f6784@collabora.com>
- <cover.1561735433.git.andrzej.p@collabora.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <cover.1561735433.git.andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/amd-gfx>,
- <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/amd-gfx>
-List-Post: <mailto:amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/amd-gfx>,
- <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "amd-gfx" <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: "Y.C. Chen" <yc_chen-SAlXDmAnmOAqDJ6do+/SaQ@public.gmane.org>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Douglas Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, kernel-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, Fabio Estevam <festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>, Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 1/2] regulator: s2mps11: Fix buck7 and buck8 wrong voltages
+Date: Sat, 29 Jun 2019 13:44:45 +0200
+Message-ID: <20190629114446.11381-1-krzk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gRnJpLCBKdW4gMjgsIDIwMTkgYXQgMDY6MDE6MTRQTSArMDIwMCwgQW5kcnplaiBQaWV0cmFz
-aWV3aWN6IHdyb3RlOgo+IEl0IGlzIGRpZmZpY3VsdCBmb3IgYSB1c2VyIHRvIGtub3cgd2hpY2gg
-b2YgdGhlIGkyYyBhZGFwdGVycyBpcyBmb3Igd2hpY2gKPiBkcm0gY29ubmVjdG9yLiBUaGlzIHNl
-cmllcyBhZGRyZXNzZXMgdGhpcyBwcm9ibGVtLgo+IAo+IFRoZSBpZGVhIGlzIHRvIGhhdmUgYSBz
-eW1ib2xpYyBsaW5rIGluIGNvbm5lY3RvcidzIHN5c2ZzIGRpcmVjdG9yeSwgZS5nLjoKPiAKPiBs
-cyAtbCAvc3lzL2NsYXNzL2RybS9jYXJkMC1IRE1JLUEtMS9kZGMKPiBscnd4cnd4cnd4IDEgcm9v
-dCByb290IDAgSnVuIDI0IDEwOjQyIC9zeXMvY2xhc3MvZHJtL2NhcmQwLUhETUktQS0xL2RkYyBc
-Cj4gCS0+IC4uLy4uLy4uLy4uL3NvYy8xMzg4MDAwMC5pMmMvaTJjLTIKPiAKPiBUaGUgdXNlciB0
-aGVuIGtub3dzIHRoYXQgdGhlaXIgY2FyZDAtSERNSS1BLTEgdXNlcyBpMmMtMiBhbmQgY2FuIGUu
-Zy4gcnVuCj4gZGRjdXRpbDoKPiAKPiBkZGN1dGlsIC1iIDIgZ2V0dmNwIDB4MTAKPiBWQ1AgY29k
-ZSAweDEwIChCcmlnaHRuZXNzICAgICAgICAgICAgICAgICAgICApOiBjdXJyZW50IHZhbHVlID0g
-ICAgOTAsIG1heCB2YWx1ZSA9ICAgMTAwCj4gCj4gVGhlIGZpcnN0IHBhdGNoIGluIHRoZSBzZXJp
-ZXMgYWRkcyBzdHJ1Y3QgaTJjX2FkYXB0ZXIgcG9pbnRlciB0byBzdHJ1Y3QKPiBkcm1fY29ubmVj
-dG9yLiBJZiB0aGUgZmllbGQgaXMgdXNlZCBieSBhIHBhcnRpY3VsYXIgZHJpdmVyLCB0aGVuIGFu
-Cj4gYXBwcm9wcmlhdGUgc3ltYm9saWMgbGluayBpcyBjcmVhdGVkIGJ5IHRoZSBnZW5lcmljIGNv
-ZGUsIHdoaWNoIGlzIGFsc28gYWRkZWQKPiBieSB0aGlzIHBhdGNoLgo+IAo+IFRoZSBzZWNvbmQg
-cGF0Y2ggaXMgYW4gZXhhbXBsZSBvZiBob3cgdG8gY29udmVydCBhIGRyaXZlciB0byB0aGlzIG5l
-dyBzY2hlbWUuCj4gCj4gdjEuLnYyOgo+IAo+IC0gdXNlZCBmaXhlZCBuYW1lICJkZGMiIGZvciB0
-aGUgc3ltYm9saWMgbGluayBpbiBvcmRlciB0byBtYWtlIGl0IGVhc3kgZm9yCj4gdXNlcnNwYWNl
-IHRvIGZpbmQgdGhlIGkyYyBhZGFwdGVyCj4gCj4gdjIuLnYzOgo+IAo+IC0gY29udmVydGVkIGFz
-IG1hbnkgZHJpdmVycyBhcyBwb3NzaWJsZS4KPiAKPiBQQVRDSEVTIDMvMjItMjIvMjIgU0hPVUxE
-IEJFIENPTlNJREVSRUQgUkZDIQoKVGhlcmUncyBhIGxvdCBtb3JlIGRyaXZlcnMgdGhhbiB0aGlz
-IEkgdGhpbmsgKGk5MTUgaXMgYWJzZW50IGFzIGFuCmV4YW1wbGUsIGJ1dCB0aGVyZSBzaG91bGQg
-YmUgdG9ucyBtb3JlKS4gV2h5IGFyZSB0aG9zZSBub3QgcG9zc2libGU/Ci1EYW5pZWwKCj4gCj4g
-QW5kcnplaiBQaWV0cmFzaWV3aWN6ICgyMik6Cj4gICBkcm06IEluY2x1ZGUgZGRjIGFkYXB0ZXIg
-cG9pbnRlciBpbiBzdHJ1Y3QgZHJtX2Nvbm5lY3Rvcgo+ICAgZHJtL2V4eW5vczogUHJvdmlkZSBk
-ZGMgc3ltbGluayBpbiBjb25uZWN0b3IncyBzeXNmcwo+ICAgZHJtOiByb2NrY2hpcDogUHJvdmlk
-ZSBkZGMgc3ltbGluayBpbiByazMwNjZfaGRtaSBzeXNmcyBkaXJlY3RvcnkKPiAgIGRybTogcm9j
-a2NoaXA6IFByb3ZpZGUgZGRjIHN5bWxpbmsgaW4gaW5ub19oZG1pIHN5c2ZzIGRpcmVjdG9yeQo+
-ICAgZHJtL21zbS9oZG1pOiBQcm92aWRlIGRkYyBzeW1saW5rIGluIGhkbWkgY29ubmVjdG9yIHN5
-c2ZzIGRpcmVjdG9yeQo+ICAgZHJtL3N1bjRpOiBoZG1pOiBQcm92aWRlIGRkYyBzeW1saW5rIGlu
-IHN1bjRpIGhkbWkgY29ubmVjdG9yIHN5c2ZzCj4gICAgIGRpcmVjdG9yeQo+ICAgZHJtL21lZGlh
-dGVrOiBQcm92aWRlIGRkYyBzeW1saW5rIGluIGhkbWkgY29ubmVjdG9yIHN5c2ZzIGRpcmVjdG9y
-eQo+ICAgZHJtL3RlZ3JhOiBQcm92aWRlIGRkYyBzeW1saW5rIGluIG91dHB1dCBjb25uZWN0b3Ig
-c3lzZnMgZGlyZWN0b3J5Cj4gICBkcm0vaW14OiBpbXgtbGRiOiBQcm92aWRlIGRkYyBzeW1saW5r
-IGluIGNvbm5lY3RvcidzIHN5c2ZzCj4gICBkcm0vaW14OiBpbXgtdHZlOiBQcm92aWRlIGRkYyBz
-eW1saW5rIGluIGNvbm5lY3RvcidzIHN5c2ZzCj4gICBkcm0vdmM0OiBQcm92aWRlIGRkYyBzeW1s
-aW5rIGluIGNvbm5lY3RvciBzeXNmcyBkaXJlY3RvcnkKPiAgIGRybTogenRlOiBQcm92aWRlIGRk
-YyBzeW1saW5rIGluIGhkbWkgY29ubmVjdG9yIHN5c2ZzIGRpcmVjdG9yeQo+ICAgZHJtOiB6dGU6
-IFByb3ZpZGUgZGRjIHN5bWxpbmsgaW4gdmdhIGNvbm5lY3RvciBzeXNmcyBkaXJlY3RvcnkKPiAg
-IGRybS90aWxjZGM6IFByb3ZpZGUgZGRjIHN5bWxpbmsgaW4gY29ubmVjdG9yIHN5c2ZzIGRpcmVj
-dG9yeQo+ICAgZHJtOiBzdGk6IFByb3ZpZGUgZGRjIHN5bWxpbmsgaW4gaGRtaSBjb25uZWN0b3Ig
-c3lzZnMgZGlyZWN0b3J5Cj4gICBkcm0vbWdhZzIwMDogUHJvdmlkZSBkZGMgc3ltbGluayBpbiBj
-b25uZWN0b3Igc3lzZnMgZGlyZWN0b3J5Cj4gICBkcm0vYXN0OiBQcm92aWRlIGRkYyBzeW1saW5r
-IGluIGNvbm5lY3RvciBzeXNmcyBkaXJlY3RvcnkKPiAgIGRybS9icmlkZ2U6IGR1bWItdmdhLWRh
-YzogUHJvdmlkZSBkZGMgc3ltbGluayBpbiBjb25uZWN0b3Igc3lzZnMKPiAgICAgZGlyZWN0b3J5
-Cj4gICBkcm0vYnJpZGdlOiBkdy1oZG1pOiBQcm92aWRlIGRkYyBzeW1saW5rIGluIGNvbm5lY3Rv
-ciBzeXNmcyBkaXJlY3RvcnkKPiAgIGRybS9icmlkZ2U6IHRpLXRmcDQxMDogUHJvdmlkZSBkZGMg
-c3ltbGluayBpbiBjb25uZWN0b3Igc3lzZnMKPiAgICAgZGlyZWN0b3J5Cj4gICBkcm0vYW1kZ3B1
-OiBQcm92aWRlIGRkYyBzeW1saW5rIGluIGNvbm5lY3RvciBzeXNmcyBkaXJlY3RvcnkKPiAgIGRy
-bS9yYWRlb246IFByb3ZpZGUgZGRjIHN5bWxpbmsgaW4gY29ubmVjdG9yIHN5c2ZzIGRpcmVjdG9y
-eQo+IAo+ICAuLi4vZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9jb25uZWN0b3JzLmMgICAgfCA3
-MCArKysrKysrKysrKy0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9hc3QvYXN0X21vZGUuYyAgICAg
-ICAgICAgICAgICB8ICAxICsKPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9kdW1iLXZnYS1kYWMu
-YyAgICAgICAgIHwgMTkgKystLS0KPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zeW5vcHN5cy9k
-dy1oZG1pLmMgICAgIHwgNDAgKysrKy0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvdGkt
-dGZwNDEwLmMgICAgICAgICAgICB8IDE5ICsrLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fc3lz
-ZnMuYyAgICAgICAgICAgICAgICAgICB8ICA3ICsrCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2hkbWkuYyAgICAgICAgICB8IDExICsrLQo+ICBkcml2ZXJzL2dwdS9kcm0vaW14L2lt
-eC1sZGIuYyAgICAgICAgICAgICAgICAgfCAxMyArKy0KPiAgZHJpdmVycy9ncHUvZHJtL2lteC9p
-bXgtdHZlLmMgICAgICAgICAgICAgICAgIHwgIDggKy0KPiAgZHJpdmVycy9ncHUvZHJtL21lZGlh
-dGVrL210a19oZG1pLmMgICAgICAgICAgIHwgIDkgKy0KPiAgZHJpdmVycy9ncHUvZHJtL21nYWcy
-MDAvbWdhZzIwMF9tb2RlLmMgICAgICAgIHwgIDEgKwo+ICBkcml2ZXJzL2dwdS9kcm0vbXNtL2hk
-bWkvaGRtaV9jb25uZWN0b3IuYyAgICAgfCAgMSArCj4gIGRyaXZlcnMvZ3B1L2RybS9yYWRlb24v
-cmFkZW9uX2Nvbm5lY3RvcnMuYyAgICB8IDgyICsrKysrKysrKysrKysrLS0tLS0KPiAgZHJpdmVy
-cy9ncHUvZHJtL3JvY2tjaGlwL2lubm9faGRtaS5jICAgICAgICAgIHwgMTcgKystLQo+ICBkcml2
-ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcmszMDY2X2hkbWkuYyAgICAgICAgfCAxNyArKy0tCj4gIGRy
-aXZlcnMvZ3B1L2RybS9zdGkvc3RpX2hkbWkuYyAgICAgICAgICAgICAgICB8ICAxICsKPiAgZHJp
-dmVycy9ncHUvZHJtL3N1bjRpL3N1bjRpX2hkbWkuaCAgICAgICAgICAgIHwgIDEgLQo+ICBkcml2
-ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfaGRtaV9lbmMuYyAgICAgICAgfCAxNCArKy0tCj4gIGRy
-aXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uaCAgICAgICAgICAgICAgICAgICB8ICAxIC0KPiAgZHJp
-dmVycy9ncHUvZHJtL3RlZ3JhL291dHB1dC5jICAgICAgICAgICAgICAgIHwgMTIgKy0tCj4gIGRy
-aXZlcnMvZ3B1L2RybS90ZWdyYS9zb3IuYyAgICAgICAgICAgICAgICAgICB8ICA2ICstCj4gIGRy
-aXZlcnMvZ3B1L2RybS90aWxjZGMvdGlsY2RjX3RmcDQxMC5jICAgICAgICB8ICAxICsKPiAgZHJp
-dmVycy9ncHUvZHJtL3ZjNC92YzRfaGRtaS5jICAgICAgICAgICAgICAgIHwgMTYgKystLQo+ICBk
-cml2ZXJzL2dwdS9kcm0venRlL3p4X2hkbWkuYyAgICAgICAgICAgICAgICAgfCAyNSArKy0tLS0K
-PiAgZHJpdmVycy9ncHUvZHJtL3p0ZS96eF92Z2EuYyAgICAgICAgICAgICAgICAgIHwgMjUgKyst
-LS0tCj4gIGluY2x1ZGUvZHJtL2RybV9jb25uZWN0b3IuaCAgICAgICAgICAgICAgICAgICB8IDEx
-ICsrKwo+ICAyNiBmaWxlcyBjaGFuZ2VkLCAyNTIgaW5zZXJ0aW9ucygrKSwgMTc2IGRlbGV0aW9u
-cygtKQo+IAo+IC0tIAo+IDIuMTcuMQo+IAoKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5n
-aW5lZXIsIEludGVsIENvcnBvcmF0aW9uCmh0dHA6Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmFtZC1nZnggbWFpbGluZyBsaXN0
-CmFtZC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnL21haWxtYW4vbGlzdGluZm8vYW1kLWdmeA==
+On S2MPS11 device, the buck7 and buck8 regulator voltages start at 750
+mV, not 600 mV.  Using wrong minimal value caused shifting of these
+regulator values by 150 mV (e.g. buck7 usually configured to v1.35 V was
+reported as 1.2 V).
+
+On most of the boards these regulators are left in default state so this
+was only affecting reported voltage.  However if any driver wanted to
+change them, then effectively it would set voltage 150 mV higher than
+intended.
+
+Cc: <stable@vger.kernel.org>
+Fixes: cb74685ecb39 ("regulator: s2mps11: Add samsung s2mps11 regulator driver")
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/regulator/s2mps11.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+index a215cfe20555..8f3c8730dc0d 100644
+--- a/drivers/regulator/s2mps11.c
++++ b/drivers/regulator/s2mps11.c
+@@ -479,8 +479,8 @@ static const struct regulator_desc s2mps11_regulators[] = {
+ 	regulator_desc_s2mps11_buck1_4(4),
+ 	regulator_desc_s2mps11_buck5,
+ 	regulator_desc_s2mps11_buck67810(6, MIN_600_MV, STEP_6_25_MV),
+-	regulator_desc_s2mps11_buck67810(7, MIN_600_MV, STEP_12_5_MV),
+-	regulator_desc_s2mps11_buck67810(8, MIN_600_MV, STEP_12_5_MV),
++	regulator_desc_s2mps11_buck67810(7, MIN_750_MV, STEP_12_5_MV),
++	regulator_desc_s2mps11_buck67810(8, MIN_750_MV, STEP_12_5_MV),
+ 	regulator_desc_s2mps11_buck9,
+ 	regulator_desc_s2mps11_buck67810(10, MIN_750_MV, STEP_12_5_MV),
+ };
+-- 
+2.17.1
