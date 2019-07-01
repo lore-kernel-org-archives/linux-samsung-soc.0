@@ -1,9 +1,9 @@
 From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH v11 8/9] ARM: dts: exynos: add DMC device for exynos5422
-Date: Mon,  1 Jul 2019 15:11:37 +0200
-Message-ID: <20190701131138.22666-9-l.luba@partner.samsung.com>
+Subject: [PATCH v11 9/9] ARM: exynos_defconfig: enable DMC driver
+Date: Mon,  1 Jul 2019 15:11:38 +0200
+Message-ID: <20190701131138.22666-10-l.luba@partner.samsung.com>
 References: <20190701131138.22666-1-l.luba@partner.samsung.com>
-        <CGME20190701131156eucas1p22e9d3919bd70875cabd410c925c3a52c@eucas1p2.samsung.com>
+        <CGME20190701131158eucas1p2392cc10dfabbd2628c160d0aa3abecb8@eucas1p2.samsung.com>
 Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190701131138.22666-1-l.luba@partner.samsung.com>
@@ -12,247 +12,26 @@ To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kern
 Cc: mturquette@baylibre.com, sboyd@kernel.org, b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org, willy.mh.wolff.ml@gmail.com, Lukasz Luba <l.luba@partner.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add description of Dynamic Memory Controller and PPMU counters.
-They are used by exynos5422-dmc driver.
-There is a definition of the memory chip, which is then used during
-calculation of timings for each OPP.
-The algorithm in the driver needs these two sets to bound the timings.
+Enable driver for Exynos5422 Dynamic Memory Controller supporting
+dynamic frequency and voltage scaling in Exynos5422 SoCs.
 
 Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 ---
- arch/arm/boot/dts/exynos5420.dtsi             |  71 +++++++++++
- arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 116 ++++++++++++++++++
- 2 files changed, 187 insertions(+)
+ arch/arm/configs/exynos_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index d153617ff1a3..9dbfe400cdd2 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -235,6 +235,29 @@
- 			status = "disabled";
- 		};
- 
-+		dmc: memory-controller@10c20000 {
-+			compatible = "samsung,exynos5422-dmc";
-+			reg = <0x10c20000 0x100>, <0x10c30000 0x100>;
-+			clocks = <&clock CLK_FOUT_SPLL>,
-+				 <&clock CLK_MOUT_SCLK_SPLL>,
-+				 <&clock CLK_FF_DOUT_SPLL2>,
-+				 <&clock CLK_FOUT_BPLL>,
-+				 <&clock CLK_MOUT_BPLL>,
-+				 <&clock CLK_SCLK_BPLL>,
-+				 <&clock CLK_MOUT_MX_MSPLL_CCORE>,
-+				 <&clock CLK_MOUT_MCLK_CDREX>;
-+			clock-names = "fout_spll",
-+				      "mout_sclk_spll",
-+				      "ff_dout_spll2",
-+				      "fout_bpll",
-+				      "mout_bpll",
-+				      "sclk_bpll",
-+				      "mout_mx_mspll_ccore",
-+				      "mout_mclk_cdrex";
-+			samsung,syscon-clk = <&clock>;
-+			status = "disabled";
-+		};
-+
- 		nocp_mem0_0: nocp@10ca1000 {
- 			compatible = "samsung,exynos5420-nocp";
- 			reg = <0x10CA1000 0x200>;
-@@ -271,6 +294,54 @@
- 			status = "disabled";
- 		};
- 
-+		ppmu_dmc0_0: ppmu@10d00000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x10d00000 0x2000>;
-+			clocks = <&clock CLK_PCLK_PPMU_DREX0_0>;
-+			clock-names = "ppmu";
-+			events {
-+				ppmu_event3_dmc0_0: ppmu-event3-dmc0_0 {
-+					event-name = "ppmu-event3-dmc0_0";
-+				};
-+			};
-+		};
-+
-+		ppmu_dmc0_1: ppmu@10d10000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x10d10000 0x2000>;
-+			clocks = <&clock CLK_PCLK_PPMU_DREX0_1>;
-+			clock-names = "ppmu";
-+			events {
-+				ppmu_event3_dmc0_1: ppmu-event3-dmc0_1 {
-+					event-name = "ppmu-event3-dmc0_1";
-+				};
-+			};
-+		};
-+
-+		ppmu_dmc1_0: ppmu@10d60000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x10d60000 0x2000>;
-+			clocks = <&clock CLK_PCLK_PPMU_DREX1_0>;
-+			clock-names = "ppmu";
-+			events {
-+				ppmu_event3_dmc1_0: ppmu-event3-dmc1_0 {
-+					event-name = "ppmu-event3-dmc1_0";
-+				};
-+			};
-+		};
-+
-+		ppmu_dmc1_1: ppmu@10d70000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x10d70000 0x2000>;
-+			clocks = <&clock CLK_PCLK_PPMU_DREX1_1>;
-+			clock-names = "ppmu";
-+			events {
-+				ppmu_event3_dmc1_1: ppmu-event3-dmc1_1 {
-+					event-name = "ppmu-event3-dmc1_1";
-+				};
-+			};
-+		};
-+
- 		gsc_pd: power-domain@10044000 {
- 			compatible = "samsung,exynos4210-pd";
- 			reg = <0x10044000 0x20>;
-diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-index 25d95de15c9b..30e569c13ee7 100644
---- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-@@ -34,6 +34,97 @@
- 			clock-frequency = <24000000>;
- 		};
- 	};
-+
-+	dmc_opp_table: opp_table2 {
-+		compatible = "operating-points-v2";
-+
-+		opp00 {
-+			opp-hz = /bits/ 64 <165000000>;
-+			opp-microvolt = <875000>;
-+		};
-+		opp01 {
-+			opp-hz = /bits/ 64 <206000000>;
-+			opp-microvolt = <875000>;
-+		};
-+		opp02 {
-+			opp-hz = /bits/ 64 <275000000>;
-+			opp-microvolt = <875000>;
-+		};
-+		opp03 {
-+			opp-hz = /bits/ 64 <413000000>;
-+			opp-microvolt = <887500>;
-+		};
-+		opp04 {
-+			opp-hz = /bits/ 64 <543000000>;
-+			opp-microvolt = <937500>;
-+		};
-+		opp05 {
-+			opp-hz = /bits/ 64 <633000000>;
-+			opp-microvolt = <1012500>;
-+		};
-+		opp06 {
-+			opp-hz = /bits/ 64 <728000000>;
-+			opp-microvolt = <1037500>;
-+		};
-+		opp07 {
-+			opp-hz = /bits/ 64 <825000000>;
-+			opp-microvolt = <1050000>;
-+		};
-+	};
-+
-+	samsung_K3QF2F20DB: lpddr3 {
-+		compatible	= "samsung,K3QF2F20DB", "jedec,lpddr3";
-+		density		= <16384>;
-+		io-width	= <32>;
-+		#address-cells  = <1>;
-+		#size-cells     = <0>;
-+
-+		tRFC-min-tck		= <17>;
-+		tRRD-min-tck		= <2>;
-+		tRPab-min-tck		= <2>;
-+		tRPpb-min-tck		= <2>;
-+		tRCD-min-tck		= <3>;
-+		tRC-min-tck		= <6>;
-+		tRAS-min-tck		= <5>;
-+		tWTR-min-tck		= <2>;
-+		tWR-min-tck		= <7>;
-+		tRTP-min-tck		= <2>;
-+		tW2W-C2C-min-tck	= <0>;
-+		tR2R-C2C-min-tck	= <0>;
-+		tWL-min-tck		= <8>;
-+		tDQSCK-min-tck		= <5>;
-+		tRL-min-tck		= <14>;
-+		tFAW-min-tck		= <5>;
-+		tXSR-min-tck		= <12>;
-+		tXP-min-tck		= <2>;
-+		tCKE-min-tck		= <2>;
-+		tCKESR-min-tck		= <2>;
-+		tMRD-min-tck		= <5>;
-+
-+		timings_samsung_K3QF2F20DB_800mhz: lpddr3-timings@800000000 {
-+			compatible	= "jedec,lpddr3-timings";
-+			reg		= <800000000>; /* workaround: it shows max-freq */
-+			min-freq	= <100000000>;
-+			tRFC		= <65000>;
-+			tRRD		= <6000>;
-+			tRPab		= <12000>;
-+			tRPpb		= <12000>;
-+			tRCD		= <10000>;
-+			tRC		= <33750>;
-+			tRAS		= <23000>;
-+			tWTR		= <3750>;
-+			tWR		= <7500>;
-+			tRTP		= <3750>;
-+			tW2W-C2C	= <0>;
-+			tR2R-C2C	= <0>;
-+			tFAW		= <25000>;
-+			tXSR		= <70000>;
-+			tXP		= <3750>;
-+			tCKE		= <3750>;
-+			tCKESR		= <3750>;
-+			tMRD		= <7000>;
-+		};
-+	};
- };
- 
- &adc {
-@@ -132,6 +223,15 @@
- 	cpu-supply = <&buck2_reg>;
- };
- 
-+&dmc {
-+	devfreq-events = <&ppmu_event3_dmc0_0>,	<&ppmu_event3_dmc0_1>,
-+			<&ppmu_event3_dmc1_0>, <&ppmu_event3_dmc1_1>;
-+	device-handle = <&samsung_K3QF2F20DB>;
-+	operating-points-v2 = <&dmc_opp_table>;
-+	vdd-supply = <&buck1_reg>;
-+	status = "okay";
-+};
-+
- &hsi2c_4 {
- 	status = "okay";
- 
-@@ -540,6 +640,22 @@
- 	};
- };
- 
-+&ppmu_dmc0_0 {
-+	status = "okay";
-+};
-+
-+&ppmu_dmc0_1 {
-+	status = "okay";
-+};
-+
-+&ppmu_dmc1_0 {
-+	status = "okay";
-+};
-+
-+&ppmu_dmc1_1 {
-+	status = "okay";
-+};
-+
- &tmu_cpu0 {
- 	vtmu-supply = <&ldo7_reg>;
- };
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index c95c54284da2..4e7e52786174 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -290,6 +290,8 @@ CONFIG_DEVFREQ_GOV_PERFORMANCE=y
+ CONFIG_DEVFREQ_GOV_POWERSAVE=y
+ CONFIG_DEVFREQ_GOV_USERSPACE=y
+ CONFIG_ARM_EXYNOS_BUS_DEVFREQ=y
++CONFIG_EXYNOS5422_DMC=y
++CONFIG_DDR=y
+ CONFIG_DEVFREQ_EVENT_EXYNOS_NOCP=y
+ CONFIG_EXYNOS_IOMMU=y
+ CONFIG_EXTCON=y
 -- 
 2.17.1
