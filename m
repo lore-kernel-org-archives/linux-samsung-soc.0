@@ -1,163 +1,214 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: s2mps11: Adjust supported buck voltages to real values" to the regulator tree
-Date: Tue,  2 Jul 2019 14:04:48 +0100 (BST)
-Message-ID: <20190702130448.51BF944004A@finisterre.sirena.org.uk>
-References: <20190629114446.11381-2-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190629114446.11381-2-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>
+From: Alex Deucher <alexdeucher-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v3 21/22] drm/amdgpu: Provide ddc symlink in connector
+ sysfs directory
+Date: Tue, 2 Jul 2019 16:54:25 -0400
+Message-ID: <CADnq5_MrVoScVFgj3TP2Z+Ky8_32k=Cou5jebuMT5gE1+GZ0cA@mail.gmail.com>
+References: <3fb19371-db7d-f9dc-31a7-1ccd126f6784@collabora.com>
+ <cover.1561735433.git.andrzej.p@collabora.com>
+ <5e355b8bec8fb3907566a741db8cc3e356246a32.1561735433.git.andrzej.p@collabora.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <5e355b8bec8fb3907566a741db8cc3e356246a32.1561735433.git.andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/amd-gfx>,
+ <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/amd-gfx>
+List-Post: <mailto:amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/amd-gfx>,
+ <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "amd-gfx" <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Cc: "Y.C. Chen" <yc_chen-SAlXDmAnmOAqDJ6do+/SaQ@public.gmane.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Maxime Ripard <maxime.ripard-LDxbnhwyfcJBDgjK7y7TUQ@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, Maling list - DRI developers <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Sandy Huang <hjc-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, kernel-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, Fabio Estevam <festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <krzk@kernel>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch
-
-   regulator: s2mps11: Adjust supported buck voltages to real values
-
-has been applied to the regulator tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.2
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 9d83dcb3e4553f34ee1c4f09d65173159f9eb7a7 Mon Sep 17 00:00:00 2001
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Sat, 29 Jun 2019 13:44:46 +0200
-Subject: [PATCH] regulator: s2mps11: Adjust supported buck voltages to real
- values
-
-The driver was registering buck regulators with unsupported range of
-voltages for S2MPS11 devices.  Basically it assumed that all 256 values
-are possible for a single 8-bit I2C register controlling buck's voltage.
-This is not true, as datasheet describes subset of these which can be
-used.
-
-For example for buck[12346] the minimum voltage is 650 mV which
-corresponds to register value of 0x8.  The driver was however
-registering regulator starting at 600 mV, so for a step of 6.25 mV this
-gave the same result.  However this allowed to try to configure
-regulators to unsupported values.
-
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/s2mps11.c         | 27 +++++++++++++++++----------
- include/linux/mfd/samsung/core.h    |  1 +
- include/linux/mfd/samsung/s2mps11.h |  4 +++-
- 3 files changed, 21 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 7a89030187a4..5b7ba7c6c4f6 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -269,9 +269,10 @@ static const struct regulator_ops s2mps11_buck_ops = {
- 	.ops		= &s2mps11_buck_ops,			\
- 	.type		= REGULATOR_VOLTAGE,			\
- 	.owner		= THIS_MODULE,				\
--	.min_uV		= MIN_600_MV,				\
-+	.min_uV		= MIN_650_MV,				\
- 	.uV_step	= STEP_6_25_MV,				\
--	.n_voltages	= S2MPS11_BUCK_N_VOLTAGES,		\
-+	.linear_min_sel	= 8,					\
-+	.n_voltages	= S2MPS11_BUCK12346_N_VOLTAGES,		\
- 	.ramp_delay	= S2MPS11_RAMP_DELAY,			\
- 	.vsel_reg	= S2MPS11_REG_B1CTRL2 + (num - 1) * 2,	\
- 	.vsel_mask	= S2MPS11_BUCK_VSEL_MASK,		\
-@@ -285,9 +286,10 @@ static const struct regulator_ops s2mps11_buck_ops = {
- 	.ops		= &s2mps11_buck_ops,			\
- 	.type		= REGULATOR_VOLTAGE,			\
- 	.owner		= THIS_MODULE,				\
--	.min_uV		= MIN_600_MV,				\
-+	.min_uV		= MIN_650_MV,				\
- 	.uV_step	= STEP_6_25_MV,				\
--	.n_voltages	= S2MPS11_BUCK_N_VOLTAGES,		\
-+	.linear_min_sel	= 8,					\
-+	.n_voltages	= S2MPS11_BUCK5_N_VOLTAGES,		\
- 	.ramp_delay	= S2MPS11_RAMP_DELAY,			\
- 	.vsel_reg	= S2MPS11_REG_B5CTRL2,			\
- 	.vsel_mask	= S2MPS11_BUCK_VSEL_MASK,		\
-@@ -295,7 +297,7 @@ static const struct regulator_ops s2mps11_buck_ops = {
- 	.enable_mask	= S2MPS11_ENABLE_MASK			\
- }
- 
--#define regulator_desc_s2mps11_buck67810(num, min, step) {	\
-+#define regulator_desc_s2mps11_buck67810(num, min, step, min_sel, voltages) {	\
- 	.name		= "BUCK"#num,				\
- 	.id		= S2MPS11_BUCK##num,			\
- 	.ops		= &s2mps11_buck_ops,			\
-@@ -303,7 +305,8 @@ static const struct regulator_ops s2mps11_buck_ops = {
- 	.owner		= THIS_MODULE,				\
- 	.min_uV		= min,					\
- 	.uV_step	= step,					\
--	.n_voltages	= S2MPS11_BUCK_N_VOLTAGES,		\
-+	.linear_min_sel	= min_sel,				\
-+	.n_voltages	= voltages,				\
- 	.ramp_delay	= S2MPS11_RAMP_DELAY,			\
- 	.vsel_reg	= S2MPS11_REG_B6CTRL2 + (num - 6) * 2,	\
- 	.vsel_mask	= S2MPS11_BUCK_VSEL_MASK,		\
-@@ -371,11 +374,15 @@ static const struct regulator_desc s2mps11_regulators[] = {
- 	regulator_desc_s2mps11_buck1_4(3),
- 	regulator_desc_s2mps11_buck1_4(4),
- 	regulator_desc_s2mps11_buck5,
--	regulator_desc_s2mps11_buck67810(6, MIN_600_MV, STEP_6_25_MV),
--	regulator_desc_s2mps11_buck67810(7, MIN_750_MV, STEP_12_5_MV),
--	regulator_desc_s2mps11_buck67810(8, MIN_750_MV, STEP_12_5_MV),
-+	regulator_desc_s2mps11_buck67810(6, MIN_650_MV, STEP_6_25_MV, 8,
-+					 S2MPS11_BUCK12346_N_VOLTAGES),
-+	regulator_desc_s2mps11_buck67810(7, MIN_750_MV, STEP_12_5_MV, 0,
-+					 S2MPS11_BUCK7810_N_VOLTAGES),
-+	regulator_desc_s2mps11_buck67810(8, MIN_750_MV, STEP_12_5_MV, 0,
-+					 S2MPS11_BUCK7810_N_VOLTAGES),
- 	regulator_desc_s2mps11_buck9,
--	regulator_desc_s2mps11_buck67810(10, MIN_750_MV, STEP_12_5_MV),
-+	regulator_desc_s2mps11_buck67810(10, MIN_750_MV, STEP_12_5_MV, 0,
-+					 S2MPS11_BUCK7810_N_VOLTAGES),
- };
- 
- static const struct regulator_ops s2mps14_reg_ops;
-diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
-index 3ca17eb89aa2..f1631a39acfc 100644
---- a/include/linux/mfd/samsung/core.h
-+++ b/include/linux/mfd/samsung/core.h
-@@ -20,6 +20,7 @@
- #define MIN_850_MV		850000
- #define MIN_800_MV		800000
- #define MIN_750_MV		750000
-+#define MIN_650_MV		650000
- #define MIN_600_MV		600000
- #define MIN_500_MV		500000
- 
-diff --git a/include/linux/mfd/samsung/s2mps11.h b/include/linux/mfd/samsung/s2mps11.h
-index 6e7668a389a1..fc67c9e75bba 100644
---- a/include/linux/mfd/samsung/s2mps11.h
-+++ b/include/linux/mfd/samsung/s2mps11.h
-@@ -170,7 +170,9 @@ enum s2mps11_regulators {
- #define S2MPS11_ENABLE_MASK	(0x03 << S2MPS11_ENABLE_SHIFT)
- #define S2MPS11_ENABLE_SHIFT	0x06
- #define S2MPS11_LDO_N_VOLTAGES	(S2MPS11_LDO_VSEL_MASK + 1)
--#define S2MPS11_BUCK_N_VOLTAGES (S2MPS11_BUCK_VSEL_MASK + 1)
-+#define S2MPS11_BUCK12346_N_VOLTAGES	153
-+#define S2MPS11_BUCK5_N_VOLTAGES	216
-+#define S2MPS11_BUCK7810_N_VOLTAGES	225
- #define S2MPS11_BUCK9_N_VOLTAGES (S2MPS11_BUCK9_VSEL_MASK + 1)
- #define S2MPS11_RAMP_DELAY	25000		/* uV/us */
- 
--- 
-2.20.1
+T24gRnJpLCBKdW4gMjgsIDIwMTkgYXQgMTI6MzEgUE0gQW5kcnplaiBQaWV0cmFzaWV3aWN6Cjxh
+bmRyemVqLnBAY29sbGFib3JhLmNvbT4gd3JvdGU6Cj4KPiBVc2UgdGhlIGRkYyBwb2ludGVyIHBy
+b3ZpZGVkIGJ5IHRoZSBnZW5lcmljIGNvbm5lY3Rvci4KPgo+IFNpZ25lZC1vZmYtYnk6IEFuZHJ6
+ZWogUGlldHJhc2lld2ljeiA8YW5kcnplai5wQGNvbGxhYm9yYS5jb20+Cj4gLS0tCj4gIC4uLi9n
+cHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X2Nvbm5lY3RvcnMuYyAgICB8IDcwICsrKysrKysrKysr
+KysrLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDUxIGluc2VydGlvbnMoKyksIDE5IGRlbGV0aW9u
+cygtKQo+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9j
+b25uZWN0b3JzLmMgYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfY29ubmVjdG9y
+cy5jCj4gaW5kZXggNzNiMmVkZTc3M2QzLi41ZjhhN2UzODE4YjkgMTAwNjQ0Cj4gLS0tIGEvZHJp
+dmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X2Nvbm5lY3RvcnMuYwo+ICsrKyBiL2RyaXZl
+cnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9jb25uZWN0b3JzLmMKPiBAQCAtMTU3MywxMSAr
+MTU3MywxNSBAQCBhbWRncHVfY29ubmVjdG9yX2FkZChzdHJ1Y3QgYW1kZ3B1X2RldmljZSAqYWRl
+diwKPiAgICAgICAgICAgICAgICAgICAgICAgICBnb3RvIGZhaWxlZDsKPiAgICAgICAgICAgICAg
+ICAgYW1kZ3B1X2Nvbm5lY3Rvci0+Y29uX3ByaXYgPSBhbWRncHVfZGlnX2Nvbm5lY3RvcjsKPiAg
+ICAgICAgICAgICAgICAgaWYgKGkyY19idXMtPnZhbGlkKSB7Cj4gLSAgICAgICAgICAgICAgICAg
+ICAgICAgYW1kZ3B1X2Nvbm5lY3Rvci0+ZGRjX2J1cyA9IGFtZGdwdV9pMmNfbG9va3VwKGFkZXYs
+IGkyY19idXMpOwo+IC0gICAgICAgICAgICAgICAgICAgICAgIGlmIChhbWRncHVfY29ubmVjdG9y
+LT5kZGNfYnVzKQo+ICsgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBhbWRncHVfY29ubmVj
+dG9yICphY24gPSBhbWRncHVfY29ubmVjdG9yOwo+ICsKPiArICAgICAgICAgICAgICAgICAgICAg
+ICBhY24tPmRkY19idXMgPSBhbWRncHVfaTJjX2xvb2t1cChhZGV2LCBpMmNfYnVzKTsKPiArICAg
+ICAgICAgICAgICAgICAgICAgICBpZiAoYWNuLT5kZGNfYnVzKSB7CgpUaGlzIGh1bmsgc2VlbXMg
+cG9pbnRsZXNzIHVubGVzcyBJJ20gbWlzc2luZyBzb21ldGhpbmcuICBDYW4geW91IGRyb3AKdGhp
+cyBodW5rPyAgU2FtZSBjb21tZW50IG9uIGVhY2ggaW5zdGFuY2Ugb2YgdGhpcyBiZWxvdy4gIFRo
+aXMgYWxzbwpvbmx5IGNvdmVycyB0aGUgbGVnYWN5IG1vZGVzZXR0aW5nIGNvZGUgd2hpY2ggaXMg
+bm90IHVzZWQgYnkgZGVmYXVsdApvbiBtb3N0IGNoaXBzLiAgVGhlIERDIGNvZGUgaW4gYW1kL2Rp
+c3BsYXkvIGlzIHByb2JhYmx5IG1vcmUgcmVsZXZhbnQuCgpBbGV4Cgo+ICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgaGFzX2F1eCA9IHRydWU7Cj4gLSAgICAgICAgICAgICAgICAgICAg
+ICAgZWxzZQo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgY29ubmVjdG9yLT5kZGMg
+PSAmYWNuLT5kZGNfYnVzLT5hZGFwdGVyOwo+ICsgICAgICAgICAgICAgICAgICAgICAgIH0gZWxz
+ZSB7Cj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBEUk1fRVJST1IoIkRQOiBGYWls
+ZWQgdG8gYXNzaWduIGRkYyBidXMhIENoZWNrIGRtZXNnIGZvciBpMmMgZXJyb3JzLlxuIik7Cj4g
+KyAgICAgICAgICAgICAgICAgICAgICAgfQo+ICAgICAgICAgICAgICAgICB9Cj4gICAgICAgICAg
+ICAgICAgIHN3aXRjaCAoY29ubmVjdG9yX3R5cGUpIHsKPiAgICAgICAgICAgICAgICAgY2FzZSBE
+Uk1fTU9ERV9DT05ORUNUT1JfVkdBOgo+IEBAIC0xNjYyLDkgKzE2NjYsMTMgQEAgYW1kZ3B1X2Nv
+bm5lY3Rvcl9hZGQoc3RydWN0IGFtZGdwdV9kZXZpY2UgKmFkZXYsCj4gICAgICAgICAgICAgICAg
+ICAgICAgICAgZHJtX2Nvbm5lY3Rvcl9pbml0KGRldiwgJmFtZGdwdV9jb25uZWN0b3ItPmJhc2Us
+ICZhbWRncHVfY29ubmVjdG9yX3ZnYV9mdW5jcywgY29ubmVjdG9yX3R5cGUpOwo+ICAgICAgICAg
+ICAgICAgICAgICAgICAgIGRybV9jb25uZWN0b3JfaGVscGVyX2FkZCgmYW1kZ3B1X2Nvbm5lY3Rv
+ci0+YmFzZSwgJmFtZGdwdV9jb25uZWN0b3JfdmdhX2hlbHBlcl9mdW5jcyk7Cj4gICAgICAgICAg
+ICAgICAgICAgICAgICAgaWYgKGkyY19idXMtPnZhbGlkKSB7Cj4gLSAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICBhbWRncHVfY29ubmVjdG9yLT5kZGNfYnVzID0gYW1kZ3B1X2kyY19sb29r
+dXAoYWRldiwgaTJjX2J1cyk7Cj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpZiAo
+IWFtZGdwdV9jb25uZWN0b3ItPmRkY19idXMpCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICBzdHJ1Y3QgYW1kZ3B1X2Nvbm5lY3RvciAqYWNuID0gYW1kZ3B1X2Nvbm5lY3RvcjsKPiAr
+Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBhY24tPmRkY19idXMgPSBhbWRncHVf
+aTJjX2xvb2t1cChhZGV2LCBpMmNfYnVzKTsKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIGlmICghYWNuLT5kZGNfYnVzKQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICBEUk1fRVJST1IoIlZHQTogRmFpbGVkIHRvIGFzc2lnbiBkZGMgYnVzISBDaGVjayBk
+bWVzZyBmb3IgaTJjIGVycm9ycy5cbiIpOwo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgZWxzZQo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb25uZWN0
+b3ItPmRkYyA9ICZhY24tPmRkY19idXMtPmFkYXB0ZXI7Cj4gICAgICAgICAgICAgICAgICAgICAg
+ICAgfQo+ICAgICAgICAgICAgICAgICAgICAgICAgIGFtZGdwdV9jb25uZWN0b3ItPmRhY19sb2Fk
+X2RldGVjdCA9IHRydWU7Cj4gICAgICAgICAgICAgICAgICAgICAgICAgZHJtX29iamVjdF9hdHRh
+Y2hfcHJvcGVydHkoJmFtZGdwdV9jb25uZWN0b3ItPmJhc2UuYmFzZSwKPiBAQCAtMTY4Miw5ICsx
+NjkwLDEzIEBAIGFtZGdwdV9jb25uZWN0b3JfYWRkKHN0cnVjdCBhbWRncHVfZGV2aWNlICphZGV2
+LAo+ICAgICAgICAgICAgICAgICAgICAgICAgIGRybV9jb25uZWN0b3JfaW5pdChkZXYsICZhbWRn
+cHVfY29ubmVjdG9yLT5iYXNlLCAmYW1kZ3B1X2Nvbm5lY3Rvcl92Z2FfZnVuY3MsIGNvbm5lY3Rv
+cl90eXBlKTsKPiAgICAgICAgICAgICAgICAgICAgICAgICBkcm1fY29ubmVjdG9yX2hlbHBlcl9h
+ZGQoJmFtZGdwdV9jb25uZWN0b3ItPmJhc2UsICZhbWRncHVfY29ubmVjdG9yX3ZnYV9oZWxwZXJf
+ZnVuY3MpOwo+ICAgICAgICAgICAgICAgICAgICAgICAgIGlmIChpMmNfYnVzLT52YWxpZCkgewo+
+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYW1kZ3B1X2Nvbm5lY3Rvci0+ZGRjX2J1
+cyA9IGFtZGdwdV9pMmNfbG9va3VwKGFkZXYsIGkyY19idXMpOwo+IC0gICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgaWYgKCFhbWRncHVfY29ubmVjdG9yLT5kZGNfYnVzKQo+ICsgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IGFtZGdwdV9jb25uZWN0b3IgKmFjbiA9IGFt
+ZGdwdV9jb25uZWN0b3I7Cj4gKwo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYWNu
+LT5kZGNfYnVzID0gYW1kZ3B1X2kyY19sb29rdXAoYWRldiwgaTJjX2J1cyk7Cj4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICBpZiAoIWFjbi0+ZGRjX2J1cykKPiAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgRFJNX0VSUk9SKCJEVklBOiBGYWlsZWQgdG8gYXNz
+aWduIGRkYyBidXMhIENoZWNrIGRtZXNnIGZvciBpMmMgZXJyb3JzLlxuIik7Cj4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICBlbHNlCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIGNvbm5lY3Rvci0+ZGRjID0gJmFjbi0+ZGRjX2J1cy0+YWRhcHRlcjsKPiAg
+ICAgICAgICAgICAgICAgICAgICAgICB9Cj4gICAgICAgICAgICAgICAgICAgICAgICAgYW1kZ3B1
+X2Nvbm5lY3Rvci0+ZGFjX2xvYWRfZGV0ZWN0ID0gdHJ1ZTsKPiAgICAgICAgICAgICAgICAgICAg
+ICAgICBkcm1fb2JqZWN0X2F0dGFjaF9wcm9wZXJ0eSgmYW1kZ3B1X2Nvbm5lY3Rvci0+YmFzZS5i
+YXNlLAo+IEBAIC0xNzA3LDkgKzE3MTksMTMgQEAgYW1kZ3B1X2Nvbm5lY3Rvcl9hZGQoc3RydWN0
+IGFtZGdwdV9kZXZpY2UgKmFkZXYsCj4gICAgICAgICAgICAgICAgICAgICAgICAgZHJtX2Nvbm5l
+Y3Rvcl9pbml0KGRldiwgJmFtZGdwdV9jb25uZWN0b3ItPmJhc2UsICZhbWRncHVfY29ubmVjdG9y
+X2R2aV9mdW5jcywgY29ubmVjdG9yX3R5cGUpOwo+ICAgICAgICAgICAgICAgICAgICAgICAgIGRy
+bV9jb25uZWN0b3JfaGVscGVyX2FkZCgmYW1kZ3B1X2Nvbm5lY3Rvci0+YmFzZSwgJmFtZGdwdV9j
+b25uZWN0b3JfZHZpX2hlbHBlcl9mdW5jcyk7Cj4gICAgICAgICAgICAgICAgICAgICAgICAgaWYg
+KGkyY19idXMtPnZhbGlkKSB7Cj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBhbWRn
+cHVfY29ubmVjdG9yLT5kZGNfYnVzID0gYW1kZ3B1X2kyY19sb29rdXAoYWRldiwgaTJjX2J1cyk7
+Cj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpZiAoIWFtZGdwdV9jb25uZWN0b3It
+PmRkY19idXMpCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgYW1kZ3B1
+X2Nvbm5lY3RvciAqYWNuID0gYW1kZ3B1X2Nvbm5lY3RvcjsKPiArCj4gKyAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICBhY24tPmRkY19idXMgPSBhbWRncHVfaTJjX2xvb2t1cChhZGV2LCBp
+MmNfYnVzKTsKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlmICghYWNuLT5kZGNf
+YnVzKQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBEUk1fRVJST1Io
+IkRWSTogRmFpbGVkIHRvIGFzc2lnbiBkZGMgYnVzISBDaGVjayBkbWVzZyBmb3IgaTJjIGVycm9y
+cy5cbiIpOwo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZWxzZQo+ICsgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb25uZWN0b3ItPmRkYyA9ICZhY24tPmRk
+Y19idXMtPmFkYXB0ZXI7Cj4gICAgICAgICAgICAgICAgICAgICAgICAgfQo+ICAgICAgICAgICAg
+ICAgICAgICAgICAgIHN1YnBpeGVsX29yZGVyID0gU3ViUGl4ZWxIb3Jpem9udGFsUkdCOwo+ICAg
+ICAgICAgICAgICAgICAgICAgICAgIGRybV9vYmplY3RfYXR0YWNoX3Byb3BlcnR5KCZhbWRncHVf
+Y29ubmVjdG9yLT5iYXNlLmJhc2UsCj4gQEAgLTE3NTcsOSArMTc3MywxMyBAQCBhbWRncHVfY29u
+bmVjdG9yX2FkZChzdHJ1Y3QgYW1kZ3B1X2RldmljZSAqYWRldiwKPiAgICAgICAgICAgICAgICAg
+ICAgICAgICBkcm1fY29ubmVjdG9yX2luaXQoZGV2LCAmYW1kZ3B1X2Nvbm5lY3Rvci0+YmFzZSwg
+JmFtZGdwdV9jb25uZWN0b3JfZHZpX2Z1bmNzLCBjb25uZWN0b3JfdHlwZSk7Cj4gICAgICAgICAg
+ICAgICAgICAgICAgICAgZHJtX2Nvbm5lY3Rvcl9oZWxwZXJfYWRkKCZhbWRncHVfY29ubmVjdG9y
+LT5iYXNlLCAmYW1kZ3B1X2Nvbm5lY3Rvcl9kdmlfaGVscGVyX2Z1bmNzKTsKPiAgICAgICAgICAg
+ICAgICAgICAgICAgICBpZiAoaTJjX2J1cy0+dmFsaWQpIHsKPiAtICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIGFtZGdwdV9jb25uZWN0b3ItPmRkY19idXMgPSBhbWRncHVfaTJjX2xvb2t1
+cChhZGV2LCBpMmNfYnVzKTsKPiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlmICgh
+YW1kZ3B1X2Nvbm5lY3Rvci0+ZGRjX2J1cykKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIHN0cnVjdCBhbWRncHVfY29ubmVjdG9yICphY24gPSBhbWRncHVfY29ubmVjdG9yOwo+ICsK
+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGFjbi0+ZGRjX2J1cyA9IGFtZGdwdV9p
+MmNfbG9va3VwKGFkZXYsIGkyY19idXMpOwo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgaWYgKCFhY24tPmRkY19idXMpCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIERSTV9FUlJPUigiSERNSTogRmFpbGVkIHRvIGFzc2lnbiBkZGMgYnVzISBDaGVjayBk
+bWVzZyBmb3IgaTJjIGVycm9ycy5cbiIpOwo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgZWxzZQo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb25uZWN0
+b3ItPmRkYyA9ICZhY24tPmRkY19idXMtPmFkYXB0ZXI7Cj4gICAgICAgICAgICAgICAgICAgICAg
+ICAgfQo+ICAgICAgICAgICAgICAgICAgICAgICAgIGRybV9vYmplY3RfYXR0YWNoX3Byb3BlcnR5
+KCZhbWRncHVfY29ubmVjdG9yLT5iYXNlLmJhc2UsCj4gICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYWRldi0+bW9kZV9pbmZvLmNvaGVyZW50X21v
+ZGVfcHJvcGVydHksCj4gQEAgLTE3OTksMTEgKzE4MTksMTUgQEAgYW1kZ3B1X2Nvbm5lY3Rvcl9h
+ZGQoc3RydWN0IGFtZGdwdV9kZXZpY2UgKmFkZXYsCj4gICAgICAgICAgICAgICAgICAgICAgICAg
+ZHJtX2Nvbm5lY3Rvcl9pbml0KGRldiwgJmFtZGdwdV9jb25uZWN0b3ItPmJhc2UsICZhbWRncHVf
+Y29ubmVjdG9yX2RwX2Z1bmNzLCBjb25uZWN0b3JfdHlwZSk7Cj4gICAgICAgICAgICAgICAgICAg
+ICAgICAgZHJtX2Nvbm5lY3Rvcl9oZWxwZXJfYWRkKCZhbWRncHVfY29ubmVjdG9yLT5iYXNlLCAm
+YW1kZ3B1X2Nvbm5lY3Rvcl9kcF9oZWxwZXJfZnVuY3MpOwo+ICAgICAgICAgICAgICAgICAgICAg
+ICAgIGlmIChpMmNfYnVzLT52YWxpZCkgewo+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgYW1kZ3B1X2Nvbm5lY3Rvci0+ZGRjX2J1cyA9IGFtZGdwdV9pMmNfbG9va3VwKGFkZXYsIGky
+Y19idXMpOwo+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaWYgKGFtZGdwdV9jb25u
+ZWN0b3ItPmRkY19idXMpCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3Qg
+YW1kZ3B1X2Nvbm5lY3RvciAqYWNuID0gYW1kZ3B1X2Nvbm5lY3RvcjsKPiArCj4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICBhY24tPmRkY19idXMgPSBhbWRncHVfaTJjX2xvb2t1cChh
+ZGV2LCBpMmNfYnVzKTsKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlmIChhY24t
+PmRkY19idXMpIHsKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaGFz
+X2F1eCA9IHRydWU7Cj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBlbHNlCj4gKyAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNvbm5lY3Rvci0+ZGRjID0gJmFj
+bi0+ZGRjX2J1cy0+YWRhcHRlcjsKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIH0g
+ZWxzZSB7Cj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIERSTV9FUlJP
+UigiRFA6IEZhaWxlZCB0byBhc3NpZ24gZGRjIGJ1cyEgQ2hlY2sgZG1lc2cgZm9yIGkyYyBlcnJv
+cnMuXG4iKTsKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIH0KPiAgICAgICAgICAg
+ICAgICAgICAgICAgICB9Cj4gICAgICAgICAgICAgICAgICAgICAgICAgc3VicGl4ZWxfb3JkZXIg
+PSBTdWJQaXhlbEhvcml6b250YWxSR0I7Cj4gICAgICAgICAgICAgICAgICAgICAgICAgZHJtX29i
+amVjdF9hdHRhY2hfcHJvcGVydHkoJmFtZGdwdV9jb25uZWN0b3ItPmJhc2UuYmFzZSwKPiBAQCAt
+MTg0MSwxMSArMTg2NSwxNSBAQCBhbWRncHVfY29ubmVjdG9yX2FkZChzdHJ1Y3QgYW1kZ3B1X2Rl
+dmljZSAqYWRldiwKPiAgICAgICAgICAgICAgICAgICAgICAgICBkcm1fY29ubmVjdG9yX2luaXQo
+ZGV2LCAmYW1kZ3B1X2Nvbm5lY3Rvci0+YmFzZSwgJmFtZGdwdV9jb25uZWN0b3JfZWRwX2Z1bmNz
+LCBjb25uZWN0b3JfdHlwZSk7Cj4gICAgICAgICAgICAgICAgICAgICAgICAgZHJtX2Nvbm5lY3Rv
+cl9oZWxwZXJfYWRkKCZhbWRncHVfY29ubmVjdG9yLT5iYXNlLCAmYW1kZ3B1X2Nvbm5lY3Rvcl9k
+cF9oZWxwZXJfZnVuY3MpOwo+ICAgICAgICAgICAgICAgICAgICAgICAgIGlmIChpMmNfYnVzLT52
+YWxpZCkgewo+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYW1kZ3B1X2Nvbm5lY3Rv
+ci0+ZGRjX2J1cyA9IGFtZGdwdV9pMmNfbG9va3VwKGFkZXYsIGkyY19idXMpOwo+IC0gICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgaWYgKGFtZGdwdV9jb25uZWN0b3ItPmRkY19idXMpCj4g
+KyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgYW1kZ3B1X2Nvbm5lY3RvciAq
+YWNuID0gYW1kZ3B1X2Nvbm5lY3RvcjsKPiArCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICBhY24tPmRkY19idXMgPSBhbWRncHVfaTJjX2xvb2t1cChhZGV2LCBpMmNfYnVzKTsKPiAr
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlmIChhY24tPmRkY19idXMpIHsKPiAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaGFzX2F1eCA9IHRydWU7Cj4gLSAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBlbHNlCj4gKyAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIGNvbm5lY3Rvci0+ZGRjID0gJmFjbi0+ZGRjX2J1cy0+YWRhcHRl
+cjsKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIH0gZWxzZSB7Cj4gICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIERSTV9FUlJPUigiRFA6IEZhaWxlZCB0byBh
+c3NpZ24gZGRjIGJ1cyEgQ2hlY2sgZG1lc2cgZm9yIGkyYyBlcnJvcnMuXG4iKTsKPiArICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIH0KPiAgICAgICAgICAgICAgICAgICAgICAgICB9Cj4g
+ICAgICAgICAgICAgICAgICAgICAgICAgZHJtX29iamVjdF9hdHRhY2hfcHJvcGVydHkoJmFtZGdw
+dV9jb25uZWN0b3ItPmJhc2UuYmFzZSwKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICBkZXYtPm1vZGVfY29uZmlnLnNjYWxpbmdfbW9kZV9wcm9w
+ZXJ0eSwKPiBAQCAtMTg2Miw5ICsxODkwLDEzIEBAIGFtZGdwdV9jb25uZWN0b3JfYWRkKHN0cnVj
+dCBhbWRncHVfZGV2aWNlICphZGV2LAo+ICAgICAgICAgICAgICAgICAgICAgICAgIGRybV9jb25u
+ZWN0b3JfaW5pdChkZXYsICZhbWRncHVfY29ubmVjdG9yLT5iYXNlLCAmYW1kZ3B1X2Nvbm5lY3Rv
+cl9sdmRzX2Z1bmNzLCBjb25uZWN0b3JfdHlwZSk7Cj4gICAgICAgICAgICAgICAgICAgICAgICAg
+ZHJtX2Nvbm5lY3Rvcl9oZWxwZXJfYWRkKCZhbWRncHVfY29ubmVjdG9yLT5iYXNlLCAmYW1kZ3B1
+X2Nvbm5lY3Rvcl9sdmRzX2hlbHBlcl9mdW5jcyk7Cj4gICAgICAgICAgICAgICAgICAgICAgICAg
+aWYgKGkyY19idXMtPnZhbGlkKSB7Cj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBh
+bWRncHVfY29ubmVjdG9yLT5kZGNfYnVzID0gYW1kZ3B1X2kyY19sb29rdXAoYWRldiwgaTJjX2J1
+cyk7Cj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpZiAoIWFtZGdwdV9jb25uZWN0
+b3ItPmRkY19idXMpCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgYW1k
+Z3B1X2Nvbm5lY3RvciAqYWNuID0gYW1kZ3B1X2Nvbm5lY3RvcjsKPiArCj4gKyAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICBhY24tPmRkY19idXMgPSBhbWRncHVfaTJjX2xvb2t1cChhZGV2
+LCBpMmNfYnVzKTsKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlmICghYWNuLT5k
+ZGNfYnVzKQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBEUk1fRVJS
+T1IoIkxWRFM6IEZhaWxlZCB0byBhc3NpZ24gZGRjIGJ1cyEgQ2hlY2sgZG1lc2cgZm9yIGkyYyBl
+cnJvcnMuXG4iKTsKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGVsc2UKPiArICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgY29ubmVjdG9yLT5kZGMgPSAmYWNu
+LT5kZGNfYnVzLT5hZGFwdGVyOwo+ICAgICAgICAgICAgICAgICAgICAgICAgIH0KPiAgICAgICAg
+ICAgICAgICAgICAgICAgICBkcm1fb2JqZWN0X2F0dGFjaF9wcm9wZXJ0eSgmYW1kZ3B1X2Nvbm5l
+Y3Rvci0+YmFzZS5iYXNlLAo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgIGRldi0+bW9kZV9jb25maWcuc2NhbGluZ19tb2RlX3Byb3BlcnR5LAo+
+IC0tCj4gMi4xNy4xCj4KPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwo+IGFtZC1nZnggbWFpbGluZyBsaXN0Cj4gYW1kLWdmeEBsaXN0cy5mcmVlZGVza3Rv
+cC5vcmcKPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ft
+ZC1nZngKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KYW1k
+LWdmeCBtYWlsaW5nIGxpc3QKYW1kLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9s
+aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9hbWQtZ2Z4
