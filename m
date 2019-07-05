@@ -1,42 +1,51 @@
-From: Colin King <colin.king@canonical.com>
-Subject: [PATCH][next] drm/exynos: remove redundant assignment to pointer
- 'node'
-Date: Fri,  5 Jul 2019 16:55:49 +0100
-Message-ID: <20190705155549.15836-1-colin.king@canonical.com>
+From: Colin Ian King <colin.king@canonical.com>
+Subject: Re: drm/exynos: scaler: Reset hardware before starting the operation
+ (bug report)
+Date: Fri, 5 Jul 2019 17:09:06 +0100
+Message-ID: <c67b4671-aabc-df13-e9c7-ccbc25337b7c@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4KClRoZSBwb2lu
-dGVyICdub2RlJyBpcyBiZWluZyBhc3NpZ25lZCB3aXRoIGEgdmFsdWUgdGhhdCBpcyBuZXZlcgpy
-ZWFkIGFuZCBpcyByZS1hc3NpZ25lZCBsYXRlci4gVGhlIGFzc2lnbm1lbnQgaXMgcmVkdW5kYW50
-IGFuZApjYW4gYmUgcmVtb3ZlZC4KCkFkZHJlc3Nlcy1Db3Zlcml0eTogKCJVbnVzZWQgdmFsdWUi
-KQpTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmljYWwuY29t
-PgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQuYyB8IDIgKy0KIDEg
-ZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQuYyBiL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9nMmQuYwppbmRleCA1MDkwNGVlZTk2ZjcuLjJhMzM4MmQ0M2Jj
-OSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jCisr
-KyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nMmQuYwpAQCAtMjY3LDcgKzI2
-Nyw3IEBAIHN0YXRpYyBpbmxpbmUgdm9pZCBnMmRfaHdfcmVzZXQoc3RydWN0IGcyZF9kYXRhICpn
-MmQpCiBzdGF0aWMgaW50IGcyZF9pbml0X2NtZGxpc3Qoc3RydWN0IGcyZF9kYXRhICpnMmQpCiB7
-CiAJc3RydWN0IGRldmljZSAqZGV2ID0gZzJkLT5kZXY7Ci0Jc3RydWN0IGcyZF9jbWRsaXN0X25v
-ZGUgKm5vZGUgPSBnMmQtPmNtZGxpc3Rfbm9kZTsKKwlzdHJ1Y3QgZzJkX2NtZGxpc3Rfbm9kZSAq
-bm9kZTsKIAlpbnQgbnI7CiAJaW50IHJldDsKIAlzdHJ1Y3QgZzJkX2J1Zl9pbmZvICpidWZfaW5m
-bzsKLS0gCjIuMjAuMQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
-dmVs
+Hi,
+
+Static analysis on today's linux-next has found a potential error in the
+following commit:
+
+commit 280e54c9f614c88292685383cf2d65057586e9fb
+Author: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Date:   Thu Jun 7 13:06:08 2018 +0200
+
+    drm/exynos: scaler: Reset hardware before starting the operation
+
+In the following code the retry counter does not appear to be
+decremented, so potentially the loop could get stuck forever if the H/W
+does not change state:
+
+static inline int scaler_reset(struct scaler_context *scaler)
+{
+        int retry = SCALER_RESET_WAIT_RETRIES;
+
+        scaler_write(SCALER_CFG_SOFT_RESET, SCALER_CFG);
+        do {
+                cpu_relax();
+        } while (retry > 1 &&
+                 scaler_read(SCALER_CFG) & SCALER_CFG_SOFT_RESET);
+
+        do {
+                cpu_relax();
+                scaler_write(1, SCALER_INT_EN);
+        } while (retry > 0 && scaler_read(SCALER_INT_EN) != 1);
+
+        return retry ? 0 : -EIO;
+}
+
+Maybe I'm missing something here subtle.
+
+Colin
