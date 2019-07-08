@@ -1,59 +1,62 @@
-From: Vladimir Murzin <vladimir.murzin@arm.com>
-Subject: Re: [PATCH] drm/exynos: add CONFIG_MMU dependency
-Date: Mon, 8 Jul 2019 15:09:04 +0100
-Message-ID: <ea185bd7-3ac7-dc38-1c0e-78cb1cffa6a0@arm.com>
-References: <20190708134707.538501-1-arnd@arndb.de>
+From: k.konieczny@partner.samsung.com
+Subject: [PATCH 1/3] opp: core: add regulators enable and disable
+Date: Mon,  8 Jul 2019 16:11:38 +0200
+Message-ID: <20190708141140.24379-2-k.konieczny@partner.samsung.com>
+References: <20190708141140.24379-1-k.konieczny@partner.samsung.com>
+        <CGME20190708141159eucas1p1751506975ff96a436e14940916623722@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190708134707.538501-1-arnd@arndb.de>
-Content-Language: en-US
+In-Reply-To: <20190708141140.24379-1-k.konieczny@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, Jingoo Han <jingoohan1@gmail.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Sam Ravnborg <sam@ravnborg.org>, linux-arm-kernel@lists.infradead.org
+To: k.konieczny@partner.samsung.com
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Mark Rutland <mark.rutland@arm.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 7/8/19 2:46 PM, Arnd Bergmann wrote:
-> Compile-testing this driver on a NOMMU configuration shows a link failure:
-> 
-> drivers/gpu/drm/exynos/exynos_drm_gem.o: In function `exynos_drm_gem_fault':
-> exynos_drm_gem.c:(.text+0x484): undefined reference to `vmf_insert_mixed'
-> 
-> Add a CONFIG_MMU dependency to ensure we only enable this in configurations
-> that build correctly.
-> 
-> Many other drm drivers have the same dependency. It would be nice to
-> make this work in MMU-less configurations, but evidently nobody has
-> ever needed this so far.
-> 
-> Fixes: 156bdac99061 ("drm/exynos: trigger build of all modules")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/gpu/drm/exynos/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
-> index 60ce4a8ad9e1..6f7d3b3b3628 100644
-> --- a/drivers/gpu/drm/exynos/Kconfig
-> +++ b/drivers/gpu/drm/exynos/Kconfig
-> @@ -2,6 +2,7 @@
->  config DRM_EXYNOS
->  	tristate "DRM Support for Samsung SoC EXYNOS Series"
->  	depends on OF && DRM && (ARCH_S3C64XX || ARCH_S5PV210 || ARCH_EXYNOS || ARCH_MULTIPLATFORM || COMPILE_TEST)
-> +	depends on MMU
->  	select DRM_KMS_HELPER
->  	select VIDEOMODE_HELPERS
->  	select SND_SOC_HDMI_CODEC if SND_SOC
-> 
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
 
-I seen
+Add enable regulators to dev_pm_opp_set_regulators() and disable
+regulators to dev_pm_opp_put_regulators(). This prepares for
+converting exynos-bus devfreq driver to use dev_pm_opp_set_rate().
 
-ERROR: "vmf_insert_mixed" [drivers/gpu/drm/exynos/exynosdrm.ko] undefined!
+Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+---
+ drivers/opp/core.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-with older kernels when driver was build as a module, so FWIW
-
-Reviewed-by: Vladimir Murzin <vladimir.murzin@arm.com>
-
-Cheers
-Vladimir
+diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+index 0e7703fe733f..947cac452854 100644
+--- a/drivers/opp/core.c
++++ b/drivers/opp/core.c
+@@ -1580,8 +1580,19 @@ struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
+ 	if (ret)
+ 		goto free_regulators;
+ 
++	for (i = 0; i < opp_table->regulator_count; i++) {
++		ret = regulator_enable(opp_table->regulators[i]);
++		if (ret < 0)
++			goto disable;
++	}
++
+ 	return opp_table;
+ 
++disable:
++	while (i != 0)
++		regulator_disable(opp_table->regulators[--i]);
++
++	i = opp_table->regulator_count;
+ free_regulators:
+ 	while (i != 0)
+ 		regulator_put(opp_table->regulators[--i]);
+@@ -1609,6 +1620,8 @@ void dev_pm_opp_put_regulators(struct opp_table *opp_table)
+ 
+ 	/* Make sure there are no concurrent readers while updating opp_table */
+ 	WARN_ON(!list_empty(&opp_table->opp_list));
++	for (i = opp_table->regulator_count - 1; i >= 0; i--)
++		regulator_disable(opp_table->regulators[i]);
+ 
+ 	for (i = opp_table->regulator_count - 1; i >= 0; i--)
+ 		regulator_put(opp_table->regulators[i]);
+-- 
+2.22.0
