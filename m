@@ -1,93 +1,101 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4 2/2] dt-bindings: mfd: max8998: Add charger subnode
- binding
-Date: Tue, 9 Jul 2019 15:58:10 -0600
-Message-ID: <20190709215810.GB26049@bogus>
-References: <20190621115602.17559-1-pawel.mikolaj.chmiel@gmail.com>
- <20190621115602.17559-3-pawel.mikolaj.chmiel@gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] mmc: dw_mmc: Fix occasional hang after tuning on eMMC
+Date: Tue, 9 Jul 2019 15:02:13 -0700
+Message-ID: <CAD=FV=X=RALazfX+vjQ7E-JmVu6xqDWCad5hPF+gNtHCuvZMTA@mail.gmail.com>
+References: <20190708195613.205729-1-dianders@chromium.org>
+ <CAJKOXPf9OTPaheUdiZtaDGU0sE2vsdRiLx5nptMt_EVKU7GObA@mail.gmail.com> <CAD=FV=WquwqKjUKh5=M6tbTrD3svVTGWLU3iSTzD-uXBX73YWA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190621115602.17559-3-pawel.mikolaj.chmiel@gmail.com>
+In-Reply-To: <CAD=FV=WquwqKjUKh5=M6tbTrD3svVTGWLU3iSTzD-uXBX73YWA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Cc: sre@kernel.org, lee.jones@linaro.org, mark.rutland@arm.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Brian Norris <briannorris@chromium.org>, Matthias Kaehlcke <mka@chromium.org>, Guenter Roeck <groeck@chromium.org>, Sonny Rao <sonnyrao@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Alim Akhtar <alim.akhtar@gmail.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Linux MMC List <linux-mmc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 01:56:02PM +0200, Paweł Chmiel wrote:
-> This patch adds devicetree bindings documentation for
-> battery charging controller as the subnode of MAX8998 PMIC.
-> 
-> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> ---
-> Changes from v3:
->   - Property prefix should be maxim, not max8998
->   - Describe what End of Charge in percent means
-> 
-> Changes from v2:
->   - Make charge-restart-level-microvolt optional.
->   - Make charge-timeout-hours optional.
-> 
-> Changes from v1:
->   - Removed unneeded Fixes tag
->   - Correct description of all charger values
->   - Added missing property unit
-> ---
->  .../devicetree/bindings/mfd/max8998.txt       | 26 +++++++++++++++++++
->  1 file changed, 26 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/max8998.txt b/Documentation/devicetree/bindings/mfd/max8998.txt
-> index 5f2f07c09c90..368f787d6079 100644
-> --- a/Documentation/devicetree/bindings/mfd/max8998.txt
-> +++ b/Documentation/devicetree/bindings/mfd/max8998.txt
-> @@ -48,6 +48,25 @@ Additional properties required if max8998,pmic-buck2-dvs-gpio is defined:
->  - max8998,pmic-buck2-dvs-voltage: An array of 2 voltage values in microvolts
->    for buck2 regulator that can be selected using dvs gpio.
->  
-> +Charger: Configuration for battery charging controller should be added
-> +inside a child node named 'charger'.
-> +  Required properties:
-> +  - maxim,end-of-charge-percentage: End of Charge in percent.
-> +    When the charge current in constant-voltage phase drops below
-> +    end-of-charge-percentage of it's start value, charging is terminated.
-> +    If value equals 0, leave it unchanged. Otherwise it should be value
-> +    from 10 to 45 by 5 step.
-> +
-> +  Optional properties:
-> +  - maxim,charge-restart-threshold: Charge restart threshold in millivolts.
-> +    If property is not present, this will be disabled.
-> +    Valid values are: 0, 100, 150, 200. If the value equals 0, leave it
-> +    unchanged.
+Hi,
 
-Needs a unit suffix as defined in property-units.txt.
+On Tue, Jul 9, 2019 at 9:38 AM Doug Anderson <dianders@chromium.org> wrote:
+>
+> Hi,
+>
+> On Tue, Jul 9, 2019 at 2:07 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >
+> > On Tue, 9 Jul 2019 at 00:48, Douglas Anderson <dianders@chromium.org> wrote:
+> > >
+> > > In commit 46d179525a1f ("mmc: dw_mmc: Wait for data transfer after
+> > > response errors.") we fixed a tuning-induced hang that I saw when
+> > > stress testing tuning on certain SD cards.  I won't re-hash that whole
+> > > commit, but the summary is that as a normal part of tuning you need to
+> > > deal with transfer errors and there were cases where these transfer
+> > > errors was putting my system into a bad state causing all future
+> > > transfers to fail.  That commit fixed handling of the transfer errors
+> > > for me.
+> > >
+> > > In downstream Chrome OS my fix landed and had the same behavior for
+> > > all SD/MMC commands.  However, it looks like when the commit landed
+> > > upstream we limited it to only SD tuning commands.  Presumably this
+> > > was to try to get around problems that Alim Akhtar reported on exynos
+> > > [1].
+> > >
+> > > Unfortunately while stress testing reboots (and suspend/resume) on
+> > > some rk3288-based Chromebooks I found the same problem on the eMMC on
+> > > some of my Chromebooks (the ones with Hynix eMMC).  Since the eMMC
+> > > tuning command is different (MMC_SEND_TUNING_BLOCK_HS200
+> > > vs. MMC_SEND_TUNING_BLOCK) we were basically getting back into the
+> > > same situation.
+> > >
+> > > I'm hoping that whatever problems exynos was having in the past are
+> > > somehow magically fixed now and we can make the behavior the same for
+> > > all commands.
+> > >
+> > > [1] https://lkml.kernel.org/r/CAGOxZ53WfNbaMe0_AM0qBqU47kAfgmPBVZC8K8Y-_J3mDMqW4A@mail.gmail.com
+> > >
+> > > Fixes: 46d179525a1f ("mmc: dw_mmc: Wait for data transfer after response errors.")
+> > > Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> > > Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> > > Cc: Alim Akhtar <alim.akhtar@gmail.com>
+> > > Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> > > ---
+> > > Marek (or anyone else using exynos): is it easy for you to test this
+> > > and check if things are still broken when we land this patch?  If so,
+> > > I guess we could have a quirk to have different behavior for just
+> > > Rockchip SoCs but I'd rather avoid that if possible.
+> > >
+> > > NOTE: I'm not hoping totally in vain here.  It is possible that some
+> > > of the CTO/DTO timers that landed could be the magic that would get
+> > > exynos unstuck.
+> >
+> > I have eMMC module attached to Odroid U3 (Exynos4412,
+> > samsung,exynos4412-dw-mshc). What is the testing procedure? With your
+> > patch it boots fine:
+> > [    3.698637] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot
+> > req 52000000Hz, actual 50000000HZ div = 0)
+> > [    3.703900] mmc1: new DDR MMC card at address 0001
+> > [    3.728458] mmcblk1: mmc1:0001 008G92 7.28 GiB
+>
+> To really test it, it'd be nice to see some HS200 eMMC cards enumerate
+> OK.  Specifically the patch adjusts the error handling and the place
+> where that happens mostly is during tuning.
+>
+> I'll also try to find some time today to check a peach_pit or a
+> peach_pi.  I think I saw one in the pile near my desk so if it isn't
+> in too bad of a shape I can give mainline a shot on it.
 
-> +
-> +  - maxim,charge-timeout: Charge timeout in hours. If property is not
-> +    present, this will be disabled. Valid values are: 0, 5, 6, 7.
-> +    If the value equals 0, leave it unchanged.
+OK, I managed to get an exynos5800-peach-pi up and running.  I put my
+patch in place and am currently at 45 reboots and counting w/ no
+problems.
 
-Needs a unit suffix as defined in property-units.txt.
+NOTE: in my case I actually had to disable "hs400" mode on my peach-pi
+but that's because the board I dug up was an early version of the
+board that didn't have the strobe line connected.  However, Alim's
+earlier reports of problems were with hs200 anyway and hs200 still
+executes the tuning plenty of times.  His reports of problems also
+said that he had problems after just a few boots.
 
-> +
->  Regulators: All the regulators of MAX8998 to be instantiated shall be
->  listed in a child node named 'regulators'. Each regulator is represented
->  by a child node of the 'regulators' node.
-> @@ -97,6 +116,13 @@ Example:
->  		max8998,pmic-buck2-dvs-gpio = <&gpx0 0 3 0 0>; /* SET3 */
->  		max8998,pmic-buck2-dvs-voltage = <1350000>, <1300000>;
->  
-> +		/* Charger configuration */
-> +		charger {
-> +			maxim,end-of-charge-percentage = <20>;
-> +			maxim,charge-restart-threshold = <100>;
-> +			maxim,charge-timeout = <7>;
-> +		};
-> +
->  		/* Regulators to instantiate */
->  		regulators {
->  			ldo2_reg: LDO2 {
-> -- 
-> 2.17.1
-> 
+So I'll assert that whatever problems were present 4 years ago have
+indeed gone away.  I'll leave rebooting happening overnight just in
+case, but otherwise I'll assert that this is fine.
+
+
+-Doug
