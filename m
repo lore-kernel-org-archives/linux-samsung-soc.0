@@ -1,58 +1,69 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH 1/3] opp: core: add regulators enable and disable
-Date: Tue, 9 Jul 2019 11:10:14 +0530
-Message-ID: <20190709054014.o3g4e6gbovrq3vvn@vireshk-i7>
-References: <20190708141140.24379-1-k.konieczny@partner.samsung.com>
- <CGME20190708141159eucas1p1751506975ff96a436e14940916623722@eucas1p1.samsung.com>
- <20190708141140.24379-2-k.konieczny@partner.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] mmc: dw_mmc: Fix occasional hang after tuning on eMMC
+Date: Tue, 9 Jul 2019 11:06:48 +0200
+Message-ID: <CAJKOXPf9OTPaheUdiZtaDGU0sE2vsdRiLx5nptMt_EVKU7GObA@mail.gmail.com>
+References: <20190708195613.205729-1-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20190708141140.24379-2-k.konieczny@partner.samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: k.konieczny@partner.samsung.com
-Cc: Mark Rutland <mark.rutland@arm.com>, Nishanth Menon <nm@ti.com>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stephen Boyd <sboyd@kernel.org>, Viresh Kumar <vireshk@kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, devicetree@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190708195613.205729-1-dianders@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Douglas Anderson <dianders@chromium.org>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-rockchip@lists.infradead.org, briannorris@chromium.org, mka@chromium.org, groeck@chromium.org, sonnyrao@chromium.org, Marek Szyprowski <m.szyprowski@samsung.com>, Alim Akhtar <alim.akhtar@gmail.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 08-07-19, 16:11, k.konieczny@partner.samsung.com wrote:
-> From: Kamil Konieczny <k.konieczny@partner.samsung.com>
-> 
-> Add enable regulators to dev_pm_opp_set_regulators() and disable
-> regulators to dev_pm_opp_put_regulators(). This prepares for
-> converting exynos-bus devfreq driver to use dev_pm_opp_set_rate().
-> 
-> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+On Tue, 9 Jul 2019 at 00:48, Douglas Anderson <dianders@chromium.org> wrote:
+>
+> In commit 46d179525a1f ("mmc: dw_mmc: Wait for data transfer after
+> response errors.") we fixed a tuning-induced hang that I saw when
+> stress testing tuning on certain SD cards.  I won't re-hash that whole
+> commit, but the summary is that as a normal part of tuning you need to
+> deal with transfer errors and there were cases where these transfer
+> errors was putting my system into a bad state causing all future
+> transfers to fail.  That commit fixed handling of the transfer errors
+> for me.
+>
+> In downstream Chrome OS my fix landed and had the same behavior for
+> all SD/MMC commands.  However, it looks like when the commit landed
+> upstream we limited it to only SD tuning commands.  Presumably this
+> was to try to get around problems that Alim Akhtar reported on exynos
+> [1].
+>
+> Unfortunately while stress testing reboots (and suspend/resume) on
+> some rk3288-based Chromebooks I found the same problem on the eMMC on
+> some of my Chromebooks (the ones with Hynix eMMC).  Since the eMMC
+> tuning command is different (MMC_SEND_TUNING_BLOCK_HS200
+> vs. MMC_SEND_TUNING_BLOCK) we were basically getting back into the
+> same situation.
+>
+> I'm hoping that whatever problems exynos was having in the past are
+> somehow magically fixed now and we can make the behavior the same for
+> all commands.
+>
+> [1] https://lkml.kernel.org/r/CAGOxZ53WfNbaMe0_AM0qBqU47kAfgmPBVZC8K8Y-_J3mDMqW4A@mail.gmail.com
+>
+> Fixes: 46d179525a1f ("mmc: dw_mmc: Wait for data transfer after response errors.")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Alim Akhtar <alim.akhtar@gmail.com>
+> Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 > ---
->  drivers/opp/core.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index 0e7703fe733f..947cac452854 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -1580,8 +1580,19 @@ struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
->  	if (ret)
->  		goto free_regulators;
->  
-> +	for (i = 0; i < opp_table->regulator_count; i++) {
-> +		ret = regulator_enable(opp_table->regulators[i]);
-> +		if (ret < 0)
-> +			goto disable;
-> +	}
+> Marek (or anyone else using exynos): is it easy for you to test this
+> and check if things are still broken when we land this patch?  If so,
+> I guess we could have a quirk to have different behavior for just
+> Rockchip SoCs but I'd rather avoid that if possible.
+>
+> NOTE: I'm not hoping totally in vain here.  It is possible that some
+> of the CTO/DTO timers that landed could be the magic that would get
+> exynos unstuck.
 
-I am wondering on why is this really required as this isn't done for
-any other platform, probably because the regulators are enabled by
-bootloader and are always on.
+I have eMMC module attached to Odroid U3 (Exynos4412,
+samsung,exynos4412-dw-mshc). What is the testing procedure? With your
+patch it boots fine:
+[    3.698637] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot
+req 52000000Hz, actual 50000000HZ div = 0)
+[    3.703900] mmc1: new DDR MMC card at address 0001
+[    3.728458] mmcblk1: mmc1:0001 008G92 7.28 GiB
 
--- 
-viresh
+Best regards,
+Krzysztof
