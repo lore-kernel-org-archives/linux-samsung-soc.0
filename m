@@ -1,100 +1,79 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] mmc: dw_mmc: Fix occasional hang after tuning on eMMC
-Date: Wed, 10 Jul 2019 13:21:57 -0700
-Message-ID: <CAD=FV=WL_Hy78REn+0CMOjYgPcuDcN1w-+94QD9HHJraQBNj4g@mail.gmail.com>
-References: <20190708195613.205729-1-dianders@chromium.org>
- <CAJKOXPf9OTPaheUdiZtaDGU0sE2vsdRiLx5nptMt_EVKU7GObA@mail.gmail.com>
- <CAD=FV=WquwqKjUKh5=M6tbTrD3svVTGWLU3iSTzD-uXBX73YWA@mail.gmail.com> <CAD=FV=X=RALazfX+vjQ7E-JmVu6xqDWCad5hPF+gNtHCuvZMTA@mail.gmail.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH 1/3] opp: core: add regulators enable and disable
+Date: Thu, 11 Jul 2019 11:52:26 +0530
+Message-ID: <20190711062226.4i4bvbsyczshdlyr@vireshk-i7>
+References: <20190708141140.24379-1-k.konieczny@partner.samsung.com>
+ <CGME20190708141159eucas1p1751506975ff96a436e14940916623722@eucas1p1.samsung.com>
+ <20190708141140.24379-2-k.konieczny@partner.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAD=FV=X=RALazfX+vjQ7E-JmVu6xqDWCad5hPF+gNtHCuvZMTA@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20190708141140.24379-2-k.konieczny@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Brian Norris <briannorris@chromium.org>, Matthias Kaehlcke <mka@chromium.org>, Guenter Roeck <groeck@chromium.org>, Sonny Rao <sonnyrao@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Alim Akhtar <alim.akhtar@gmail.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, Linux MMC List <linux-mmc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: k.konieczny@partner.samsung.com
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Mark Rutland <mark.rutland@arm.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+On 08-07-19, 16:11, k.konieczny@partner.samsung.com wrote:
+> From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+> 
+> Add enable regulators to dev_pm_opp_set_regulators() and disable
+> regulators to dev_pm_opp_put_regulators(). This prepares for
+> converting exynos-bus devfreq driver to use dev_pm_opp_set_rate().
+> 
+> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+> ---
+>  drivers/opp/core.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index 0e7703fe733f..947cac452854 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -1580,8 +1580,19 @@ struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
+>  	if (ret)
+>  		goto free_regulators;
+>  
+> +	for (i = 0; i < opp_table->regulator_count; i++) {
+> +		ret = regulator_enable(opp_table->regulators[i]);
+> +		if (ret < 0)
+> +			goto disable;
+> +	}
 
-On Tue, Jul 9, 2019 at 3:02 PM Doug Anderson <dianders@chromium.org> wrote:
->
-> Hi,
->
-> On Tue, Jul 9, 2019 at 9:38 AM Doug Anderson <dianders@chromium.org> wrote:
-> >
-> > Hi,
-> >
-> > On Tue, Jul 9, 2019 at 2:07 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > >
-> > > On Tue, 9 Jul 2019 at 00:48, Douglas Anderson <dianders@chromium.org> wrote:
-> > > >
-> > > > In commit 46d179525a1f ("mmc: dw_mmc: Wait for data transfer after
-> > > > response errors.") we fixed a tuning-induced hang that I saw when
-> > > > stress testing tuning on certain SD cards.  I won't re-hash that whole
-> > > > commit, but the summary is that as a normal part of tuning you need to
-> > > > deal with transfer errors and there were cases where these transfer
-> > > > errors was putting my system into a bad state causing all future
-> > > > transfers to fail.  That commit fixed handling of the transfer errors
-> > > > for me.
-> > > >
-> > > > In downstream Chrome OS my fix landed and had the same behavior for
-> > > > all SD/MMC commands.  However, it looks like when the commit landed
-> > > > upstream we limited it to only SD tuning commands.  Presumably this
-> > > > was to try to get around problems that Alim Akhtar reported on exynos
-> > > > [1].
-> > > >
-> > > > Unfortunately while stress testing reboots (and suspend/resume) on
-> > > > some rk3288-based Chromebooks I found the same problem on the eMMC on
-> > > > some of my Chromebooks (the ones with Hynix eMMC).  Since the eMMC
-> > > > tuning command is different (MMC_SEND_TUNING_BLOCK_HS200
-> > > > vs. MMC_SEND_TUNING_BLOCK) we were basically getting back into the
-> > > > same situation.
-> > > >
-> > > > I'm hoping that whatever problems exynos was having in the past are
-> > > > somehow magically fixed now and we can make the behavior the same for
-> > > > all commands.
-> > > >
-> > > > [1] https://lkml.kernel.org/r/CAGOxZ53WfNbaMe0_AM0qBqU47kAfgmPBVZC8K8Y-_J3mDMqW4A@mail.gmail.com
-> > > >
-> > > > Fixes: 46d179525a1f ("mmc: dw_mmc: Wait for data transfer after response errors.")
-> > > > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > > > Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> > > > Cc: Alim Akhtar <alim.akhtar@gmail.com>
-> > > > Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> > > > ---
-> > > > Marek (or anyone else using exynos): is it easy for you to test this
-> > > > and check if things are still broken when we land this patch?  If so,
-> > > > I guess we could have a quirk to have different behavior for just
-> > > > Rockchip SoCs but I'd rather avoid that if possible.
-> > > >
-> > > > NOTE: I'm not hoping totally in vain here.  It is possible that some
-> > > > of the CTO/DTO timers that landed could be the magic that would get
-> > > > exynos unstuck.
-> > >
-> > > I have eMMC module attached to Odroid U3 (Exynos4412,
-> > > samsung,exynos4412-dw-mshc). What is the testing procedure? With your
-> > > patch it boots fine:
-> > > [    3.698637] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot
-> > > req 52000000Hz, actual 50000000HZ div = 0)
-> > > [    3.703900] mmc1: new DDR MMC card at address 0001
-> > > [    3.728458] mmcblk1: mmc1:0001 008G92 7.28 GiB
-> >
-> > To really test it, it'd be nice to see some HS200 eMMC cards enumerate
-> > OK.  Specifically the patch adjusts the error handling and the place
-> > where that happens mostly is during tuning.
-> >
-> > I'll also try to find some time today to check a peach_pit or a
-> > peach_pi.  I think I saw one in the pile near my desk so if it isn't
-> > in too bad of a shape I can give mainline a shot on it.
->
-> OK, I managed to get an exynos5800-peach-pi up and running.  I put my
-> patch in place and am currently at 45 reboots and counting w/ no
-> problems.
+What about doing this in the same loop of regulator_get_optional() ?
 
-In case it helps, I made it through 2379 more reboots on my peach_pi
-w/ no hangs.  I'm putting the device back in mothball now.  :-P  I
-didn't go back and try to reproduce the original problems so I guess I
-can't assert with 100% authority that the original issue is gone, but
-my testing combined with Enric's seems like things are working fine.
+> +
+>  	return opp_table;
+>  
+> +disable:
+> +	while (i != 0)
+> +		regulator_disable(opp_table->regulators[--i]);
+> +
+> +	i = opp_table->regulator_count;
 
--Doug
+You also need to call _free_set_opp_data() here.
+
+>  free_regulators:
+>  	while (i != 0)
+>  		regulator_put(opp_table->regulators[--i]);
+> @@ -1609,6 +1620,8 @@ void dev_pm_opp_put_regulators(struct opp_table *opp_table)
+>  
+>  	/* Make sure there are no concurrent readers while updating opp_table */
+>  	WARN_ON(!list_empty(&opp_table->opp_list));
+
+Preserve the blank line here.
+
+> +	for (i = opp_table->regulator_count - 1; i >= 0; i--)
+> +		regulator_disable(opp_table->regulators[i]);
+>  
+>  	for (i = opp_table->regulator_count - 1; i >= 0; i--)
+>  		regulator_put(opp_table->regulators[i]);
+
+Only single loop should be sufficient for this.
+
+> -- 
+> 2.22.0
+
+-- 
+viresh
