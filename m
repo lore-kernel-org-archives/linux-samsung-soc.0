@@ -1,79 +1,106 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH 1/3] opp: core: add regulators enable and disable
-Date: Thu, 11 Jul 2019 11:52:26 +0530
-Message-ID: <20190711062226.4i4bvbsyczshdlyr@vireshk-i7>
-References: <20190708141140.24379-1-k.konieczny@partner.samsung.com>
- <CGME20190708141159eucas1p1751506975ff96a436e14940916623722@eucas1p1.samsung.com>
- <20190708141140.24379-2-k.konieczny@partner.samsung.com>
+From: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Subject: [PATCH v4 00/23] Associate ddc adapters with connectors
+Date: Thu, 11 Jul 2019 13:26:27 +0200
+Message-ID: <cover.1562843413.git.andrzej.p@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190708141140.24379-2-k.konieczny@partner.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: k.konieczny@partner.samsung.com
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Mark Rutland <mark.rutland@arm.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: "Y.C. Chen" <yc_chen@aspeedtech.com>, =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>, Sam Ravnborg <sam@ravnborg.org>, Neil Armstrong <narmstrong@baylibre.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Douglas Anderson <dianders@chromium.org>, Andrzej Hajda <a.hajda@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, kernel@collabora.com, Fabio Estevam <festevam@gmail.com>, "David (ChunMing) Zhou" <David1.Zhou@amd.com>, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Joonyoung Shim <jy0922.shim@samsung.com>, Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>, Vincent Abriou <vincent.abriou@st.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 08-07-19, 16:11, k.konieczny@partner.samsung.com wrote:
-> From: Kamil Konieczny <k.konieczny@partner.samsung.com>
-> 
-> Add enable regulators to dev_pm_opp_set_regulators() and disable
-> regulators to dev_pm_opp_put_regulators(). This prepares for
-> converting exynos-bus devfreq driver to use dev_pm_opp_set_rate().
-> 
-> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-> ---
->  drivers/opp/core.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index 0e7703fe733f..947cac452854 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -1580,8 +1580,19 @@ struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
->  	if (ret)
->  		goto free_regulators;
->  
-> +	for (i = 0; i < opp_table->regulator_count; i++) {
-> +		ret = regulator_enable(opp_table->regulators[i]);
-> +		if (ret < 0)
-> +			goto disable;
-> +	}
-
-What about doing this in the same loop of regulator_get_optional() ?
-
-> +
->  	return opp_table;
->  
-> +disable:
-> +	while (i != 0)
-> +		regulator_disable(opp_table->regulators[--i]);
-> +
-> +	i = opp_table->regulator_count;
-
-You also need to call _free_set_opp_data() here.
-
->  free_regulators:
->  	while (i != 0)
->  		regulator_put(opp_table->regulators[--i]);
-> @@ -1609,6 +1620,8 @@ void dev_pm_opp_put_regulators(struct opp_table *opp_table)
->  
->  	/* Make sure there are no concurrent readers while updating opp_table */
->  	WARN_ON(!list_empty(&opp_table->opp_list));
-
-Preserve the blank line here.
-
-> +	for (i = opp_table->regulator_count - 1; i >= 0; i--)
-> +		regulator_disable(opp_table->regulators[i]);
->  
->  	for (i = opp_table->regulator_count - 1; i >= 0; i--)
->  		regulator_put(opp_table->regulators[i]);
-
-Only single loop should be sufficient for this.
-
-> -- 
-> 2.22.0
-
--- 
-viresh
+SXQgaXMgZGlmZmljdWx0IGZvciBhIHVzZXIgdG8ga25vdyB3aGljaCBvZiB0aGUgaTJjIGFkYXB0
+ZXJzIGlzIGZvciB3aGljaApkcm0gY29ubmVjdG9yLiBUaGlzIHNlcmllcyBhZGRyZXNzZXMgdGhp
+cyBwcm9ibGVtLgoKVGhlIGlkZWEgaXMgdG8gaGF2ZSBhIHN5bWJvbGljIGxpbmsgaW4gY29ubmVj
+dG9yJ3Mgc3lzZnMgZGlyZWN0b3J5LCBlLmcuOgoKbHMgLWwgL3N5cy9jbGFzcy9kcm0vY2FyZDAt
+SERNSS1BLTEvZGRjCmxyd3hyd3hyd3ggMSByb290IHJvb3QgMCBKdW4gMjQgMTA6NDIgL3N5cy9j
+bGFzcy9kcm0vY2FyZDAtSERNSS1BLTEvZGRjIFwKCS0+IC4uLy4uLy4uLy4uL3NvYy8xMzg4MDAw
+MC5pMmMvaTJjLTIKClRoZSB1c2VyIHRoZW4ga25vd3MgdGhhdCB0aGVpciBjYXJkMC1IRE1JLUEt
+MSB1c2VzIGkyYy0yIGFuZCBjYW4gZS5nLiBydW4KZGRjdXRpbDoKCmRkY3V0aWwgLWIgMiBnZXR2
+Y3AgMHgxMApWQ1AgY29kZSAweDEwIChCcmlnaHRuZXNzICAgICAgICAgICAgICAgICAgICApOiBj
+dXJyZW50IHZhbHVlID0gICAgOTAsIG1heCB2YWx1ZSA9ICAgMTAwCgpUaGUgZmlyc3QgcGF0Y2gg
+aW4gdGhlIHNlcmllcyBhZGRzIHN0cnVjdCBpMmNfYWRhcHRlciBwb2ludGVyIHRvIHN0cnVjdApk
+cm1fY29ubmVjdG9yLiBJZiB0aGUgZmllbGQgaXMgdXNlZCBieSBhIHBhcnRpY3VsYXIgZHJpdmVy
+LCB0aGVuIGFuCmFwcHJvcHJpYXRlIHN5bWJvbGljIGxpbmsgaXMgY3JlYXRlZCBieSB0aGUgZ2Vu
+ZXJpYyBjb2RlLCB3aGljaCBpcyBhbHNvIGFkZGVkCmJ5IHRoaXMgcGF0Y2guCgpUaGUgbmV4dCAy
+MiBwYXRjaGVzIGlzIGFuIGV4YW1wbGUgb2YgaG93IHRvIGNvbnZlcnQgYSBkcml2ZXIgdG8gdGhp
+cyBuZXcgc2NoZW1lLgoKdjEuLnYyOgoKLSB1c2VkIGZpeGVkIG5hbWUgImRkYyIgZm9yIHRoZSBz
+eW1ib2xpYyBsaW5rIGluIG9yZGVyIHRvIG1ha2UgaXQgZWFzeSBmb3IKdXNlcnNwYWNlIHRvIGZp
+bmQgdGhlIGkyYyBhZGFwdGVyCgp2Mi4udjM6CgotIGNvbnZlcnRlZCBhcyBtYW55IGRyaXZlcnMg
+YXMgcG9zc2libGUuCgp2My4udjQ6CgotIGFkZGVkIFJldmlld2VkLWJ5IGZvciBwYXRjaCAwMS8y
+MwotIG1vdmVkICJkZGMiIGZpZWxkIGFzc2lnbm1lbnQgdG8gYmVmb3JlIGRybV9jb25uZWN0b3Jf
+aW5pdCgpIGlzIGNhbGxlZAppbiBtc20sIHZjNCwgc3RpLCBtZ2FnMjAwLCBhc3QsIGFtZGdwdSwg
+cmFkZW9uCi0gc2ltcGxpZmllZCB0aGUgY29kZSBpbiBhbWRncHUgYW5kIHJhZGVvbiBhdCB0aGUg
+ZXhwZW5zZSBvZiBzb21lIGxpbmVzCmV4Y2VlZGluZyA4MCBjaGFyYWN0ZXJzIGFzIHBlciBBbGV4
+IERldWNoZXIncyBzdWdnZXN0aW9uCi0gYWRkZWQgaTkxNQoKVE9ETzogbm91dmVhdSwgZ21hNTAw
+LCBvbWFwZHJtLCBwYW5lbC1zaW1wbGUgLSBpZiBhcHBsaWNhYmxlLgpPdGhlciBkcml2ZXJzIGFy
+ZSBlaXRoZXIgYWxyZWFkeSBjb252ZXJ0ZWQgb3IgZG9uJ3QgbWVudGlvbiBuZWl0aGVyCiJkZGMi
+IG5vciAiaTJjX2FkYXB0ZXIiLgoKQW5kcnplaiBQaWV0cmFzaWV3aWN6ICgyMyk6CiAgZHJtOiBJ
+bmNsdWRlIGRkYyBhZGFwdGVyIHBvaW50ZXIgaW4gc3RydWN0IGRybV9jb25uZWN0b3IKICBkcm0v
+ZXh5bm9zOiBQcm92aWRlIGRkYyBzeW1saW5rIGluIGNvbm5lY3RvcidzIHN5c2ZzCiAgZHJtOiBy
+b2NrY2hpcDogUHJvdmlkZSBkZGMgc3ltbGluayBpbiByazMwNjZfaGRtaSBzeXNmcyBkaXJlY3Rv
+cnkKICBkcm06IHJvY2tjaGlwOiBQcm92aWRlIGRkYyBzeW1saW5rIGluIGlubm9faGRtaSBzeXNm
+cyBkaXJlY3RvcnkKICBkcm0vbXNtL2hkbWk6IFByb3ZpZGUgZGRjIHN5bWxpbmsgaW4gaGRtaSBj
+b25uZWN0b3Igc3lzZnMgZGlyZWN0b3J5CiAgZHJtL3N1bjRpOiBoZG1pOiBQcm92aWRlIGRkYyBz
+eW1saW5rIGluIHN1bjRpIGhkbWkgY29ubmVjdG9yIHN5c2ZzCiAgICBkaXJlY3RvcnkKICBkcm0v
+bWVkaWF0ZWs6IFByb3ZpZGUgZGRjIHN5bWxpbmsgaW4gaGRtaSBjb25uZWN0b3Igc3lzZnMgZGly
+ZWN0b3J5CiAgZHJtL3RlZ3JhOiBQcm92aWRlIGRkYyBzeW1saW5rIGluIG91dHB1dCBjb25uZWN0
+b3Igc3lzZnMgZGlyZWN0b3J5CiAgZHJtL2lteDogaW14LWxkYjogUHJvdmlkZSBkZGMgc3ltbGlu
+ayBpbiBjb25uZWN0b3IncyBzeXNmcwogIGRybS9pbXg6IGlteC10dmU6IFByb3ZpZGUgZGRjIHN5
+bWxpbmsgaW4gY29ubmVjdG9yJ3Mgc3lzZnMKICBkcm0vdmM0OiBQcm92aWRlIGRkYyBzeW1saW5r
+IGluIGNvbm5lY3RvciBzeXNmcyBkaXJlY3RvcnkKICBkcm06IHp0ZTogUHJvdmlkZSBkZGMgc3lt
+bGluayBpbiBoZG1pIGNvbm5lY3RvciBzeXNmcyBkaXJlY3RvcnkKICBkcm06IHp0ZTogUHJvdmlk
+ZSBkZGMgc3ltbGluayBpbiB2Z2EgY29ubmVjdG9yIHN5c2ZzIGRpcmVjdG9yeQogIGRybS90aWxj
+ZGM6IFByb3ZpZGUgZGRjIHN5bWxpbmsgaW4gY29ubmVjdG9yIHN5c2ZzIGRpcmVjdG9yeQogIGRy
+bTogc3RpOiBQcm92aWRlIGRkYyBzeW1saW5rIGluIGhkbWkgY29ubmVjdG9yIHN5c2ZzIGRpcmVj
+dG9yeQogIGRybS9tZ2FnMjAwOiBQcm92aWRlIGRkYyBzeW1saW5rIGluIGNvbm5lY3RvciBzeXNm
+cyBkaXJlY3RvcnkKICBkcm0vYXN0OiBQcm92aWRlIGRkYyBzeW1saW5rIGluIGNvbm5lY3RvciBz
+eXNmcyBkaXJlY3RvcnkKICBkcm0vYnJpZGdlOiBkdW1iLXZnYS1kYWM6IFByb3ZpZGUgZGRjIHN5
+bWxpbmsgaW4gY29ubmVjdG9yIHN5c2ZzCiAgICBkaXJlY3RvcnkKICBkcm0vYnJpZGdlOiBkdy1o
+ZG1pOiBQcm92aWRlIGRkYyBzeW1saW5rIGluIGNvbm5lY3RvciBzeXNmcyBkaXJlY3RvcnkKICBk
+cm0vYnJpZGdlOiB0aS10ZnA0MTA6IFByb3ZpZGUgZGRjIHN5bWxpbmsgaW4gY29ubmVjdG9yIHN5
+c2ZzCiAgICBkaXJlY3RvcnkKICBkcm0vYW1kZ3B1OiBQcm92aWRlIGRkYyBzeW1saW5rIGluIGNv
+bm5lY3RvciBzeXNmcyBkaXJlY3RvcnkKICBkcm0vcmFkZW9uOiBQcm92aWRlIGRkYyBzeW1saW5r
+IGluIGNvbm5lY3RvciBzeXNmcyBkaXJlY3RvcnkKICBkcm0vaTkxNTogUHJvdmlkZSBkZGMgc3lt
+bGluayBpbiBoZG1pIGNvbm5lY3RvciBzeXNmcyBkaXJlY3RvcnkKCiAuLi4vZ3B1L2RybS9hbWQv
+YW1kZ3B1L2FtZGdwdV9jb25uZWN0b3JzLmMgICAgfCA1NiArKysrKysrKy0tLS0tCiBkcml2ZXJz
+L2dwdS9kcm0vYXN0L2FzdF9tb2RlLmMgICAgICAgICAgICAgICAgfCAgOSArKy0KIGRyaXZlcnMv
+Z3B1L2RybS9icmlkZ2UvZHVtYi12Z2EtZGFjLmMgICAgICAgICB8IDE5ICsrKy0tCiBkcml2ZXJz
+L2dwdS9kcm0vYnJpZGdlL3N5bm9wc3lzL2R3LWhkbWkuYyAgICAgfCA0MCArKysrKy0tLS0tCiBk
+cml2ZXJzL2dwdS9kcm0vYnJpZGdlL3RpLXRmcDQxMC5jICAgICAgICAgICAgfCAxOSArKystLQog
+ZHJpdmVycy9ncHUvZHJtL2RybV9zeXNmcy5jICAgICAgICAgICAgICAgICAgIHwgIDcgKysKIGRy
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyAgICAgICAgICB8IDExICsrLQogZHJp
+dmVycy9ncHUvZHJtL2k5MTUvZGlzcGxheS9pbnRlbF9oZG1pLmMgICAgIHwgIDUgKy0KIGRyaXZl
+cnMvZ3B1L2RybS9pbXgvaW14LWxkYi5jICAgICAgICAgICAgICAgICB8IDEzICsrLQogZHJpdmVy
+cy9ncHUvZHJtL2lteC9pbXgtdHZlLmMgICAgICAgICAgICAgICAgIHwgIDggKy0KIGRyaXZlcnMv
+Z3B1L2RybS9tZWRpYXRlay9tdGtfaGRtaS5jICAgICAgICAgICB8ICA5ICstLQogZHJpdmVycy9n
+cHUvZHJtL21nYWcyMDAvbWdhZzIwMF9tb2RlLmMgICAgICAgIHwgIDkgKystCiBkcml2ZXJzL2dw
+dS9kcm0vbXNtL2hkbWkvaGRtaV9jb25uZWN0b3IuYyAgICAgfCAgMSArCiBkcml2ZXJzL2dwdS9k
+cm0vcmFkZW9uL3JhZGVvbl9jb25uZWN0b3JzLmMgICAgfCA4MCArKysrKysrKysrKystLS0tLS0t
+CiBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvaW5ub19oZG1pLmMgICAgICAgICAgfCAxNyArKy0t
+CiBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcmszMDY2X2hkbWkuYyAgICAgICAgfCAxNyArKy0t
+CiBkcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9oZG1pLmMgICAgICAgICAgICAgICAgfCAgMSArCiBk
+cml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfaGRtaS5oICAgICAgICAgICAgfCAgMSAtCiBkcml2
+ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfaGRtaV9lbmMuYyAgICAgICAgfCAxNCArKy0tCiBkcml2
+ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmggICAgICAgICAgICAgICAgICAgfCAgMSAtCiBkcml2ZXJz
+L2dwdS9kcm0vdGVncmEvb3V0cHV0LmMgICAgICAgICAgICAgICAgfCAxMiArLS0KIGRyaXZlcnMv
+Z3B1L2RybS90ZWdyYS9zb3IuYyAgICAgICAgICAgICAgICAgICB8ICA2ICstCiBkcml2ZXJzL2dw
+dS9kcm0vdGlsY2RjL3RpbGNkY190ZnA0MTAuYyAgICAgICAgfCAgMSArCiBkcml2ZXJzL2dwdS9k
+cm0vdmM0L3ZjNF9oZG1pLmMgICAgICAgICAgICAgICAgfCAyMSArKy0tLQogZHJpdmVycy9ncHUv
+ZHJtL3p0ZS96eF9oZG1pLmMgICAgICAgICAgICAgICAgIHwgMjUgKysrLS0tCiBkcml2ZXJzL2dw
+dS9kcm0venRlL3p4X3ZnYS5jICAgICAgICAgICAgICAgICAgfCAyNSArKystLS0KIGluY2x1ZGUv
+ZHJtL2RybV9jb25uZWN0b3IuaCAgICAgICAgICAgICAgICAgICB8IDExICsrKwogMjcgZmlsZXMg
+Y2hhbmdlZCwgMjQwIGluc2VydGlvbnMoKyksIDE5OCBkZWxldGlvbnMoLSkKCi0tIAoyLjE3LjEK
+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkludGVsLWdm
+eCBtYWlsaW5nIGxpc3QKSW50ZWwtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeA==
