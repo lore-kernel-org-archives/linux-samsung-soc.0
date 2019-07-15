@@ -1,13 +1,13 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 179/249] gpio: Fix return value mismatch of function gpiod_get_from_of_node()
-Date: Mon, 15 Jul 2019 09:45:44 -0400
-Message-ID: <20190715134655.4076-179-sashal@kernel.org>
-References: <20190715134655.4076-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.1 158/219] gpio: Fix return value mismatch of function gpiod_get_from_of_node()
+Date: Mon, 15 Jul 2019 10:02:39 -0400
+Message-ID: <20190715140341.6443-158-sashal@kernel.org>
+References: <20190715140341.6443-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190715134655.4076-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190715140341.6443-1-sashal@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Waibel Georg <Georg.Waibel@sensor-technik.de>, Georg Waibel <georg.waibel@sensor-technik.de>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -48,10 +48,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  5 files changed, 13 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index e013d417a936..be1d1d2f8aaa 100644
+index bca3e7740ef6..fd1344056e1d 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -4244,8 +4244,7 @@ EXPORT_SYMBOL_GPL(gpiod_get_index);
+@@ -4232,8 +4232,7 @@ EXPORT_SYMBOL_GPL(gpiod_get_index);
   *
   * Returns:
   * On successful request the GPIO pin is configured in accordance with
@@ -61,7 +61,7 @@ index e013d417a936..be1d1d2f8aaa 100644
   *
   * In case of error an ERR_PTR() is returned.
   */
-@@ -4267,9 +4266,6 @@ struct gpio_desc *gpiod_get_from_of_node(struct device_node *node,
+@@ -4255,9 +4254,6 @@ struct gpio_desc *gpiod_get_from_of_node(struct device_node *node,
  					index, &flags);
  
  	if (!desc || IS_ERR(desc)) {
@@ -72,10 +72,10 @@ index e013d417a936..be1d1d2f8aaa 100644
  	}
  
 diff --git a/drivers/regulator/da9211-regulator.c b/drivers/regulator/da9211-regulator.c
-index da37b4ccd834..0309823d2c72 100644
+index 4d7fe4819c1c..4e95e3d0fcd5 100644
 --- a/drivers/regulator/da9211-regulator.c
 +++ b/drivers/regulator/da9211-regulator.c
-@@ -289,6 +289,8 @@ static struct da9211_pdata *da9211_parse_regulators_dt(
+@@ -299,6 +299,8 @@ static struct da9211_pdata *da9211_parse_regulators_dt(
  				  0,
  				  GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
  				  "da9211-enable");
@@ -115,10 +115,10 @@ index bb9d1a083299..6ca27e9d5ef7 100644
  
  		rdata->id = i;
 diff --git a/drivers/regulator/tps65090-regulator.c b/drivers/regulator/tps65090-regulator.c
-index ca39b3d55123..10ea4b5a0f55 100644
+index 0614551796a1..f6466db57900 100644
 --- a/drivers/regulator/tps65090-regulator.c
 +++ b/drivers/regulator/tps65090-regulator.c
-@@ -371,11 +371,12 @@ static struct tps65090_platform_data *tps65090_parse_dt_reg_data(
+@@ -381,11 +381,12 @@ static struct tps65090_platform_data *tps65090_parse_dt_reg_data(
  								    "dcdc-ext-control-gpios", 0,
  								    gflags,
  								    "tps65090");
