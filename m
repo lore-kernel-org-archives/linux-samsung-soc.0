@@ -1,56 +1,58 @@
 From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH v1 06/50] clk: samsung: add IDs to ACLK266 clocks in Exynos5420
-Date: Mon, 15 Jul 2019 14:43:33 +0200
-Message-ID: <20190715124417.4787-7-l.luba@partner.samsung.com>
+Subject: [PATCH v1 20/50] ARM: dts: exynos: change and rename FSYS OPP table
+ in Exynos5420
+Date: Mon, 15 Jul 2019 14:43:47 +0200
+Message-ID: <20190715124417.4787-21-l.luba@partner.samsung.com>
 References: <20190715124417.4787-1-l.luba@partner.samsung.com>
- <CGME20190715124438eucas1p2ee9d27c451eb7125bd3ec874baf76e14@eucas1p2.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+        <CGME20190715124450eucas1p189043d196375aa6adacf898de81bfa9b@eucas1p1.samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190715124417.4787-1-l.luba@partner.samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: mark.rutland@arm.com, cw00.choi@samsung.com, b.zolnierkie@samsung.com, sboyd@kernel.org, mturquette@baylibre.com, krzk@kernel.org, Lukasz Luba <l.luba@partner.samsung.com>, a.hajda@samsung.com, robh+dt@kernel.org, kyungmin.park@samsung.com, kgene@kernel.org, myungjoo.ham@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com
+Cc: mturquette@baylibre.com, sboyd@kernel.org, b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, a.hajda@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, Lukasz Luba <l.luba@partner.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add IDs to MUXes related to ACLK266 for managing them from DT.
+The FSYS and FSYS2 buses have similar characteristics and both have max
+frequency 240MHz. The old OPP table bus_fsys_apb_opp_table should be used
+only to FSYS APB bus because APB max frequency is 200MHz.
+The new OPPs for FSYS should increase its performance and related devices.
 
 Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 ---
- drivers/clk/samsung/clk-exynos5420.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/exynos5420.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 74276875bc3e..9b4a1d81f708 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -472,7 +472,8 @@ static const struct samsung_mux_clock exynos5800_mux_clks[] __initconst = {
- 	MUX(0, "mout_aclk333_432_gscl", mout_group6_5800_p, SRC_TOP1, 0, 2),
- 	MUX(0, "mout_aclk333_432_isp", mout_group6_5800_p, SRC_TOP1, 4, 2),
- 	MUX(0, "mout_aclk333_432_isp0", mout_group6_5800_p, SRC_TOP1, 12, 2),
--	MUX(0, "mout_aclk266", mout_group5_5800_p, SRC_TOP1, 20, 2),
-+	MUX(CLK_MOUT_ACLK266, "mout_aclk266", mout_group5_5800_p,
-+			SRC_TOP1, 20, 2),
- 	MUX(0, "mout_aclk333", mout_group1_5800_p, SRC_TOP1, 28, 2),
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 941c58bdd809..c7fc4b829b2a 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -995,7 +995,7 @@
+ 			compatible = "samsung,exynos-bus";
+ 			clocks = <&clock CLK_DOUT_ACLK200_FSYS>;
+ 			clock-names = "bus";
+-			operating-points-v2 = <&bus_fsys_apb_opp_table>;
++			operating-points-v2 = <&bus_fsys_opp_table>;
+ 			status = "disabled";
+ 		};
  
- 	MUX(0, "mout_aclk400_disp1", mout_group7_5800_p, SRC_TOP2, 4, 3),
-@@ -561,7 +562,7 @@ static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
- 	MUX(0, "mout_aclk333_432_isp", mout_group4_p,
- 				SRC_TOP1, 4, 2),
- 	MUX(0, "mout_aclk333_432_isp0", mout_group4_p, SRC_TOP1, 12, 2),
--	MUX(0, "mout_aclk266", mout_group1_p, SRC_TOP1, 20, 2),
-+	MUX(CLK_MOUT_ACLK266, "mout_aclk266", mout_group1_p, SRC_TOP1, 20, 2),
- 	MUX(0, "mout_aclk333", mout_group1_p, SRC_TOP1, 28, 2),
+@@ -1003,7 +1003,7 @@
+ 			compatible = "samsung,exynos-bus";
+ 			clocks = <&clock CLK_DOUT_ACLK200_FSYS2>;
+ 			clock-names = "bus";
+-			operating-points-v2 = <&bus_fsys2_opp_table>;
++			operating-points-v2 = <&bus_fsys_opp_table>;
+ 			status = "disabled";
+ 		};
  
- 	MUX(0, "mout_aclk400_disp1", mout_group1_p, SRC_TOP2, 4, 2),
+@@ -1157,7 +1157,7 @@
+ 			};
+ 		};
+ 
+-		bus_fsys2_opp_table: opp_table5 {
++		bus_fsys_opp_table: opp_table5 {
+ 			compatible = "operating-points-v2";
+ 
+ 			opp00 {
 -- 
 2.17.1
