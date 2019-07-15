@@ -1,10 +1,10 @@
 From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH v1 50/50] ARM: dts: exynos: change MMC0 clock parent in
- Exynos5800 Peach Pi
-Date: Mon, 15 Jul 2019 14:44:17 +0200
-Message-ID: <20190715124417.4787-51-l.luba@partner.samsung.com>
+Subject: [PATCH v1 47/50] ARM: dts: exynos: change rate of bus_gscl_scaler
+ in Exynos5422
+Date: Mon, 15 Jul 2019 14:44:14 +0200
+Message-ID: <20190715124417.4787-48-l.luba@partner.samsung.com>
 References: <20190715124417.4787-1-l.luba@partner.samsung.com>
-        <CGME20190715124515eucas1p240a8c61dd62d56cbbd0e4d313be2273e@eucas1p2.samsung.com>
+        <CGME20190715124513eucas1p2c30a951141622994d350df5e61fdaed4@eucas1p2.samsung.com>
 Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190715124417.4787-1-l.luba@partner.samsung.com>
@@ -13,26 +13,26 @@ To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@l
 Cc: mturquette@baylibre.com, sboyd@kernel.org, b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, a.hajda@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, Lukasz Luba <l.luba@partner.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Change MMC0 clock settings and set parent to MOUT_SPLL with proper rate.
+The bus_gscl_scaler OPP table has been aligned to the new parent rate. This
+patch sets the proper frequency before the devfreq governor starts working.
 
 Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 ---
- arch/arm/boot/dts/exynos5800-peach-pi.dts | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index 38edb00c7f1b..c8e02ecc6627 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -891,6 +891,9 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
- 	bus-width = <4>;
-+	assigned-clocks = <&clock CLK_MOUT_MMC0>, <&clock CLK_FOUT_SPLL>;
-+	assigned-clock-parents = <&clock CLK_MOUT_SCLK_SPLL>;
-+	assigned-clock-rates = <0>, <800000000>;
+diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+index fac5659516ad..d278339f259c 100644
+--- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+@@ -158,6 +158,8 @@
+ 
+ &bus_gscl_scaler {
+ 	devfreq = <&bus_wcore>;
++	assigned-clocks = <&clock CLK_DOUT_ACLK300_GSCL>;
++	assigned-clock-rates = <300000000>;
+ 	status = "okay";
  };
  
- &nocp_mem0_0 {
 -- 
 2.17.1
