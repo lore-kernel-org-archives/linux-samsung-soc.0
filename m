@@ -1,54 +1,58 @@
 From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH v1 13/50] clk: samsung: add DPLL rate table in Exynos5420
-Date: Mon, 15 Jul 2019 14:43:40 +0200
-Message-ID: <20190715124417.4787-14-l.luba@partner.samsung.com>
+Subject: [PATCH v1 07/50] clk: samsung: add IDs to ACLK266_G2D clocks in
+ Exynos5420
+Date: Mon, 15 Jul 2019 14:43:34 +0200
+Message-ID: <20190715124417.4787-8-l.luba@partner.samsung.com>
 References: <20190715124417.4787-1-l.luba@partner.samsung.com>
-        <CGME20190715124444eucas1p2683c9896e8be45d6a0cd4afeb681a2ea@eucas1p2.samsung.com>
-Content-Type: text/plain; charset="utf-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+ <CGME20190715124439eucas1p18c4f512d2647717d77666d94dca867a6@eucas1p1.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <20190715124417.4787-1-l.luba@partner.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com, sboyd@kernel.org, b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, a.hajda@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, Lukasz Luba <l.luba@partner.samsung.com>
+Cc: mark.rutland@arm.com, cw00.choi@samsung.com, b.zolnierkie@samsung.com, sboyd@kernel.org, mturquette@baylibre.com, krzk@kernel.org, Lukasz Luba <l.luba@partner.samsung.com>, a.hajda@samsung.com, robh+dt@kernel.org, kyungmin.park@samsung.com, kgene@kernel.org, myungjoo.ham@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The DPLL has fixed frequency left by the bootloader and it is not possible
-to change it. With this patch the DPLL gets rate table the same for the
-whole  PLL family (similar as APLL, KPLL according to RM) so the frequency
-might be changed to one of the values defined there.
-It is needed for further patches which change the DPLL frequency to feed
-the clocks with proper base.
-It also sets CLK_IS_CRITICAL for SCLK_DPLL due to some drivers which could
-disable master clock, which is then populated higher and tries to disable
-PLL, which casues system crash. The flag is needed for this kind of use
-cases.
+Add IDs to MUXes of ACLK266_G2D to manage them from DT.
 
 Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 ---
- drivers/clk/samsung/clk-exynos5420.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/clk/samsung/clk-exynos5420.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 7f8221527633..2395b02ce8c5 100644
+index 9b4a1d81f708..9d54856dbcda 100644
 --- a/drivers/clk/samsung/clk-exynos5420.c
 +++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -694,7 +694,8 @@ static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
- 	MUX(0, "mout_sclk_rpll", mout_rpll_p, SRC_TOP6, 16, 1),
- 	MUX_F(CLK_MOUT_EPLL, "mout_sclk_epll", mout_epll_p, SRC_TOP6, 20, 1,
- 			CLK_SET_RATE_PARENT, 0),
--	MUX(0, "mout_sclk_dpll", mout_dpll_p, SRC_TOP6, 24, 1),
-+	MUX_F(CLK_MOUT_SCLK_DPLL, "mout_sclk_dpll", mout_dpll_p,
-+			SRC_TOP6, 24, 1, CLK_IS_CRITICAL, 0),
- 	MUX(0, "mout_sclk_cpll", mout_cpll_p, SRC_TOP6, 28, 1),
+@@ -478,7 +478,8 @@ static const struct samsung_mux_clock exynos5800_mux_clks[] __initconst = {
  
- 	MUX(CLK_MOUT_SW_ACLK400_ISP, "mout_sw_aclk400_isp",
-@@ -1514,6 +1515,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
+ 	MUX(0, "mout_aclk400_disp1", mout_group7_5800_p, SRC_TOP2, 4, 3),
+ 	MUX(0, "mout_aclk333_g2d", mout_group5_5800_p, SRC_TOP2, 8, 2),
+-	MUX(0, "mout_aclk266_g2d", mout_group5_5800_p, SRC_TOP2, 12, 2),
++	MUX(CLK_MOUT_ACLK266_G2D, "mout_aclk266_g2d", mout_group5_5800_p,
++			SRC_TOP2, 12, 2),
+ 	MUX(0, "mout_aclk300_jpeg", mout_group5_5800_p, SRC_TOP2, 20, 2),
+ 	MUX(0, "mout_aclk300_disp1", mout_group5_5800_p, SRC_TOP2, 24, 2),
+ 	MUX(0, "mout_aclk300_gscl", mout_group5_5800_p, SRC_TOP2, 28, 2),
+@@ -567,7 +568,8 @@ static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
  
- 	if (_get_rate("fin_pll") == 24 * MHZ) {
- 		exynos5x_plls[apll].rate_table = exynos5420_pll2550x_24mhz_tbl;
-+		exynos5x_plls[dpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
- 		exynos5x_plls[epll].rate_table = exynos5420_epll_24mhz_tbl;
- 		exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
- 	}
+ 	MUX(0, "mout_aclk400_disp1", mout_group1_p, SRC_TOP2, 4, 2),
+ 	MUX(0, "mout_aclk333_g2d", mout_group1_p, SRC_TOP2, 8, 2),
+-	MUX(0, "mout_aclk266_g2d", mout_group1_p, SRC_TOP2, 12, 2),
++	MUX(CLK_MOUT_ACLK266_G2D, "mout_aclk266_g2d", mout_group1_p,
++			SRC_TOP2, 12, 2),
+ 	MUX(0, "mout_aclk300_jpeg", mout_group1_p, SRC_TOP2, 20, 2),
+ 	MUX(0, "mout_aclk300_disp1", mout_group1_p, SRC_TOP2, 24, 2),
+ 	MUX(0, "mout_aclk300_gscl", mout_group1_p, SRC_TOP2, 28, 2),
 -- 
 2.17.1
