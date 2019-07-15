@@ -1,9 +1,9 @@
 From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH v1 11/50] clk: samsung: add IDs to UART clocks in Exynos5420
-Date: Mon, 15 Jul 2019 14:43:38 +0200
-Message-ID: <20190715124417.4787-12-l.luba@partner.samsung.com>
+Subject: [PATCH v1 13/50] clk: samsung: add DPLL rate table in Exynos5420
+Date: Mon, 15 Jul 2019 14:43:40 +0200
+Message-ID: <20190715124417.4787-14-l.luba@partner.samsung.com>
 References: <20190715124417.4787-1-l.luba@partner.samsung.com>
-        <CGME20190715124442eucas1p197b23d50f6986477467d23f53b84d187@eucas1p1.samsung.com>
+        <CGME20190715124444eucas1p2683c9896e8be45d6a0cd4afeb681a2ea@eucas1p2.samsung.com>
 Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190715124417.4787-1-l.luba@partner.samsung.com>
@@ -12,31 +12,43 @@ To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@l
 Cc: mturquette@baylibre.com, sboyd@kernel.org, b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, a.hajda@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, Lukasz Luba <l.luba@partner.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add IDs to MUXes for UART to manage them from DT.
+The DPLL has fixed frequency left by the bootloader and it is not possible
+to change it. With this patch the DPLL gets rate table the same for the
+whole  PLL family (similar as APLL, KPLL according to RM) so the frequency
+might be changed to one of the values defined there.
+It is needed for further patches which change the DPLL frequency to feed
+the clocks with proper base.
+It also sets CLK_IS_CRITICAL for SCLK_DPLL due to some drivers which could
+disable master clock, which is then populated higher and tries to disable
+PLL, which casues system crash. The flag is needed for this kind of use
+cases.
 
 Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 ---
- drivers/clk/samsung/clk-exynos5420.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/samsung/clk-exynos5420.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index c13f34d3d9a1..7bf74401c4e7 100644
+index 7f8221527633..2395b02ce8c5 100644
 --- a/drivers/clk/samsung/clk-exynos5420.c
 +++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -768,10 +768,10 @@ static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
- 	MUX(0, "mout_mphy_refclk", mout_group2_p, SRC_FSYS, 28, 3),
+@@ -694,7 +694,8 @@ static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
+ 	MUX(0, "mout_sclk_rpll", mout_rpll_p, SRC_TOP6, 16, 1),
+ 	MUX_F(CLK_MOUT_EPLL, "mout_sclk_epll", mout_epll_p, SRC_TOP6, 20, 1,
+ 			CLK_SET_RATE_PARENT, 0),
+-	MUX(0, "mout_sclk_dpll", mout_dpll_p, SRC_TOP6, 24, 1),
++	MUX_F(CLK_MOUT_SCLK_DPLL, "mout_sclk_dpll", mout_dpll_p,
++			SRC_TOP6, 24, 1, CLK_IS_CRITICAL, 0),
+ 	MUX(0, "mout_sclk_cpll", mout_cpll_p, SRC_TOP6, 28, 1),
  
- 	/* PERIC Block */
--	MUX(0, "mout_uart0", mout_group2_p, SRC_PERIC0, 4, 3),
--	MUX(0, "mout_uart1", mout_group2_p, SRC_PERIC0, 8, 3),
--	MUX(0, "mout_uart2", mout_group2_p, SRC_PERIC0, 12, 3),
--	MUX(0, "mout_uart3", mout_group2_p, SRC_PERIC0, 16, 3),
-+	MUX(CLK_MOUT_UART0, "mout_uart0", mout_group2_p, SRC_PERIC0, 4, 3),
-+	MUX(CLK_MOUT_UART1, "mout_uart1", mout_group2_p, SRC_PERIC0, 8, 3),
-+	MUX(CLK_MOUT_UART2, "mout_uart2", mout_group2_p, SRC_PERIC0, 12, 3),
-+	MUX(CLK_MOUT_UART3, "mout_uart3", mout_group2_p, SRC_PERIC0, 16, 3),
- 	MUX(0, "mout_pwm", mout_group2_p, SRC_PERIC0, 24, 3),
- 	MUX(0, "mout_spdif", mout_spdif_p, SRC_PERIC0, 28, 3),
- 	MUX(0, "mout_audio0", mout_audio0_p, SRC_PERIC1, 8, 3),
+ 	MUX(CLK_MOUT_SW_ACLK400_ISP, "mout_sw_aclk400_isp",
+@@ -1514,6 +1515,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
+ 
+ 	if (_get_rate("fin_pll") == 24 * MHZ) {
+ 		exynos5x_plls[apll].rate_table = exynos5420_pll2550x_24mhz_tbl;
++		exynos5x_plls[dpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+ 		exynos5x_plls[epll].rate_table = exynos5420_epll_24mhz_tbl;
+ 		exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+ 	}
 -- 
 2.17.1
