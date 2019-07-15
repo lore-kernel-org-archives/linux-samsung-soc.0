@@ -1,9 +1,10 @@
 From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH v1 18/50] ARM: dts: exynos: add bus_isp with OPP table
-Date: Mon, 15 Jul 2019 14:43:45 +0200
-Message-ID: <20190715124417.4787-19-l.luba@partner.samsung.com>
+Subject: [PATCH v1 19/50] ARM: dts: exynos: change OPPs values for FSYS2 in
+ Exynos5420
+Date: Mon, 15 Jul 2019 14:43:46 +0200
+Message-ID: <20190715124417.4787-20-l.luba@partner.samsung.com>
 References: <20190715124417.4787-1-l.luba@partner.samsung.com>
-        <CGME20190715124448eucas1p1b3a8d16d6f5e9fd4ed49c3b7fa66e18e@eucas1p1.samsung.com>
+        <CGME20190715124449eucas1p130d853368cb8bf02bef337da2d513fff@eucas1p1.samsung.com>
 Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190715124417.4787-1-l.luba@partner.samsung.com>
@@ -12,57 +13,38 @@ To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@l
 Cc: mturquette@baylibre.com, sboyd@kernel.org, b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, a.hajda@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, Lukasz Luba <l.luba@partner.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add bus_isp which controls ACLK400_ISP clock. The OPPs are aligned to
-parent clock and PLL rate so that the PLL would not need to be
-reprogrammed.
+The OPPs values for FSYS2 does not reflect the real possible frequencies.
+According to the documentation the maximum frequency is 240MHz. This clock
+is important to MMC controller controlling the AXI data bus speed and
+internal buses. The new OPP values are aligned to parent PLL rate so that
+there is no need of reprogramming PLL and the integer values are possible
+to get using only a clock divider.
 
 Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 ---
- arch/arm/boot/dts/exynos5420.dtsi | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ arch/arm/boot/dts/exynos5420.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 5fb2326875dc..1b717c5c3b1a 100644
+index 1b717c5c3b1a..941c58bdd809 100644
 --- a/arch/arm/boot/dts/exynos5420.dtsi
 +++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -1095,6 +1095,14 @@
- 			status = "disabled";
- 		};
- 
-+		bus_isp: bus_isp {
-+			compatible = "samsung,exynos-bus";
-+			clocks = <&clock CLK_DOUT_ACLK400_ISP>;
-+			clock-names = "bus";
-+			operating-points-v2 = <&bus_isp_opp_table>;
-+			status = "disabled";
-+		};
-+
- 		bus_wcore_opp_table: opp_table2 {
+@@ -1161,13 +1161,13 @@
  			compatible = "operating-points-v2";
  
-@@ -1337,6 +1345,23 @@
- 				opp-hz = /bits/ 64 <400000000>;
+ 			opp00 {
+-				opp-hz = /bits/ 64 <75000000>;
++				opp-hz = /bits/ 64 <150000000>;
+ 			};
+ 			opp01 {
+-				opp-hz = /bits/ 64 <100000000>;
++				opp-hz = /bits/ 64 <200000000>;
+ 			};
+ 			opp02 {
+-				opp-hz = /bits/ 64 <150000000>;
++				opp-hz = /bits/ 64 <240000000>;
  			};
  		};
-+
-+		bus_isp_opp_table: opp_table17 {
-+			compatible = "operating-points-v2";
-+
-+			opp00 {
-+				opp-hz = /bits/ 64 <150000000>;
-+			};
-+			opp01 {
-+				opp-hz = /bits/ 64 <200000000>;
-+			};
-+			opp02 {
-+				opp-hz = /bits/ 64 <300000000>;
-+			};
-+			opp03 {
-+				opp-hz = /bits/ 64 <400000000>;
-+			};
-+		};
- 	};
  
- 	thermal-zones {
 -- 
 2.17.1
