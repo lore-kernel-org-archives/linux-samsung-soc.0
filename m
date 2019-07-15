@@ -1,10 +1,9 @@
 From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH v1 19/50] ARM: dts: exynos: change OPPs values for FSYS2 in
- Exynos5420
-Date: Mon, 15 Jul 2019 14:43:46 +0200
-Message-ID: <20190715124417.4787-20-l.luba@partner.samsung.com>
+Subject: [PATCH v1 17/50] clk: samsung: add CLK_MOUT_MMC0 in the Exynos5420
+Date: Mon, 15 Jul 2019 14:43:44 +0200
+Message-ID: <20190715124417.4787-18-l.luba@partner.samsung.com>
 References: <20190715124417.4787-1-l.luba@partner.samsung.com>
-        <CGME20190715124449eucas1p130d853368cb8bf02bef337da2d513fff@eucas1p1.samsung.com>
+        <CGME20190715124447eucas1p143a857f619f48b9b87437ec3b13dfb3f@eucas1p1.samsung.com>
 Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190715124417.4787-1-l.luba@partner.samsung.com>
@@ -13,38 +12,26 @@ To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@l
 Cc: mturquette@baylibre.com, sboyd@kernel.org, b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, a.hajda@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, Lukasz Luba <l.luba@partner.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The OPPs values for FSYS2 does not reflect the real possible frequencies.
-According to the documentation the maximum frequency is 240MHz. This clock
-is important to MMC controller controlling the AXI data bus speed and
-internal buses. The new OPP values are aligned to parent PLL rate so that
-there is no need of reprogramming PLL and the integer values are possible
-to get using only a clock divider.
+Add ID to mout_mmc0 MUX to make possible children connection in
+the DT.
 
 Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 ---
- arch/arm/boot/dts/exynos5420.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/samsung/clk-exynos5420.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 1b717c5c3b1a..941c58bdd809 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -1161,13 +1161,13 @@
- 			compatible = "operating-points-v2";
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index ead569a164cf..8d58801baf2c 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -763,7 +763,7 @@ static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
  
- 			opp00 {
--				opp-hz = /bits/ 64 <75000000>;
-+				opp-hz = /bits/ 64 <150000000>;
- 			};
- 			opp01 {
--				opp-hz = /bits/ 64 <100000000>;
-+				opp-hz = /bits/ 64 <200000000>;
- 			};
- 			opp02 {
--				opp-hz = /bits/ 64 <150000000>;
-+				opp-hz = /bits/ 64 <240000000>;
- 			};
- 		};
- 
+ 	/* FSYS Block */
+ 	MUX(0, "mout_usbd301", mout_group2_p, SRC_FSYS, 4, 3),
+-	MUX(0, "mout_mmc0", mout_group2_p, SRC_FSYS, 8, 3),
++	MUX(CLK_MOUT_MMC0, "mout_mmc0", mout_group2_p, SRC_FSYS, 8, 3),
+ 	MUX(0, "mout_mmc1", mout_group2_p, SRC_FSYS, 12, 3),
+ 	MUX(0, "mout_mmc2", mout_group2_p, SRC_FSYS, 16, 3),
+ 	MUX(0, "mout_usbd300", mout_group2_p, SRC_FSYS, 20, 3),
 -- 
 2.17.1
