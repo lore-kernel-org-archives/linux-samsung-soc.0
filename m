@@ -1,10 +1,10 @@
 From: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Subject: [PATCH v2 3/4] ARM: dts: exynos: add initial data for coupled
- regulators for Exynos5422/5800
-Date: Mon, 15 Jul 2019 14:04:15 +0200
-Message-ID: <20190715120416.3561-4-k.konieczny@partner.samsung.com>
+Subject: [PATCH v2 2/4] devfreq: exynos-bus: convert to use
+ dev_pm_opp_set_rate()
+Date: Mon, 15 Jul 2019 14:04:14 +0200
+Message-ID: <20190715120416.3561-3-k.konieczny@partner.samsung.com>
 References: <20190715120416.3561-1-k.konieczny@partner.samsung.com>
-        <CGME20190715120432eucas1p1b32d72d239420b861bf8596d4e8a053d@eucas1p1.samsung.com>
+        <CGME20190715120431eucas1p215eae81d0ca772d7e2a22a803669068a@eucas1p2.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -15,252 +15,351 @@ To: k.konieczny@partner.samsung.com
 Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Mark Rutland <mark.rutland@arm.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Declare Exynos5422/5800 voltage ranges for opp points for big cpu core and
-bus wcore and couple their voltage supllies as vdd_arm and vdd_int should
-be in 300mV range.
+Reuse opp core code for setting bus clock and voltage. As a side
+effect this allow useage of coupled regulators feature (required
+for boards using Exynos5422/5800 SoCs) because dev_pm_opp_set_rate()
+uses regulator_set_voltage_triplet() for setting regulator voltage
+while the old code used regulator_set_voltage_tol() with fixed
+tolerance. This patch also removes no longer needed parsing of DT
+property "exynos,voltage-tolerance" (no Exynos devfreq DT node uses
+it).
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
 ---
- arch/arm/boot/dts/exynos5420.dtsi             | 34 +++++++++----------
- arch/arm/boot/dts/exynos5422-odroid-core.dtsi |  4 +++
- arch/arm/boot/dts/exynos5800-peach-pi.dts     |  4 +++
- arch/arm/boot/dts/exynos5800.dtsi             | 32 ++++++++---------
- 4 files changed, 41 insertions(+), 33 deletions(-)
+ drivers/devfreq/exynos-bus.c | 172 ++++++++++++++---------------------
+ 1 file changed, 66 insertions(+), 106 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 5fb2326875dc..0cbf74750553 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -48,62 +48,62 @@
- 			opp-shared;
- 			opp-1800000000 {
- 				opp-hz = /bits/ 64 <1800000000>;
--				opp-microvolt = <1250000>;
-+				opp-microvolt = <1250000 1250000 1500000>;
- 				clock-latency-ns = <140000>;
- 			};
- 			opp-1700000000 {
- 				opp-hz = /bits/ 64 <1700000000>;
--				opp-microvolt = <1212500>;
-+				opp-microvolt = <1212500 1212500 1500000>;
- 				clock-latency-ns = <140000>;
- 			};
- 			opp-1600000000 {
- 				opp-hz = /bits/ 64 <1600000000>;
--				opp-microvolt = <1175000>;
-+				opp-microvolt = <1175000 1175000 1500000>;
- 				clock-latency-ns = <140000>;
- 			};
- 			opp-1500000000 {
- 				opp-hz = /bits/ 64 <1500000000>;
--				opp-microvolt = <1137500>;
-+				opp-microvolt = <1137500 1137500 1500000>;
- 				clock-latency-ns = <140000>;
- 			};
- 			opp-1400000000 {
- 				opp-hz = /bits/ 64 <1400000000>;
--				opp-microvolt = <1112500>;
-+				opp-microvolt = <1112500 1112500 1500000>;
- 				clock-latency-ns = <140000>;
- 			};
- 			opp-1300000000 {
- 				opp-hz = /bits/ 64 <1300000000>;
--				opp-microvolt = <1062500>;
-+				opp-microvolt = <1062500 1062500 1500000>;
- 				clock-latency-ns = <140000>;
- 			};
- 			opp-1200000000 {
- 				opp-hz = /bits/ 64 <1200000000>;
--				opp-microvolt = <1037500>;
-+				opp-microvolt = <1037500 1037500 1500000>;
- 				clock-latency-ns = <140000>;
- 			};
- 			opp-1100000000 {
- 				opp-hz = /bits/ 64 <1100000000>;
--				opp-microvolt = <1012500>;
-+				opp-microvolt = <1012500 1012500 1500000>;
- 				clock-latency-ns = <140000>;
- 			};
- 			opp-1000000000 {
- 				opp-hz = /bits/ 64 <1000000000>;
--				opp-microvolt = < 987500>;
-+				opp-microvolt = < 987500 987500 1500000>;
- 				clock-latency-ns = <140000>;
- 			};
- 			opp-900000000 {
- 				opp-hz = /bits/ 64 <900000000>;
--				opp-microvolt = < 962500>;
-+				opp-microvolt = < 962500 962500 1500000>;
- 				clock-latency-ns = <140000>;
- 			};
- 			opp-800000000 {
- 				opp-hz = /bits/ 64 <800000000>;
--				opp-microvolt = < 937500>;
-+				opp-microvolt = < 937500 937500 1500000>;
- 				clock-latency-ns = <140000>;
- 			};
- 			opp-700000000 {
- 				opp-hz = /bits/ 64 <700000000>;
--				opp-microvolt = < 912500>;
-+				opp-microvolt = < 912500 912500 1500000>;
- 				clock-latency-ns = <140000>;
- 			};
- 		};
-@@ -1100,23 +1100,23 @@
+diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+index 486cc5b422f1..7fc4f76bd848 100644
+--- a/drivers/devfreq/exynos-bus.c
++++ b/drivers/devfreq/exynos-bus.c
+@@ -25,7 +25,6 @@
+ #include <linux/slab.h>
  
- 			opp00 {
- 				opp-hz = /bits/ 64 <84000000>;
--				opp-microvolt = <925000>;
-+				opp-microvolt = <925000 925000 1400000>;
- 			};
- 			opp01 {
- 				opp-hz = /bits/ 64 <111000000>;
--				opp-microvolt = <950000>;
-+				opp-microvolt = <950000 950000 1400000>;
- 			};
- 			opp02 {
- 				opp-hz = /bits/ 64 <222000000>;
--				opp-microvolt = <950000>;
-+				opp-microvolt = <950000 950000 1400000>;
- 			};
- 			opp03 {
- 				opp-hz = /bits/ 64 <333000000>;
--				opp-microvolt = <950000>;
-+				opp-microvolt = <950000 950000 1400000>;
- 			};
- 			opp04 {
- 				opp-hz = /bits/ 64 <400000000>;
--				opp-microvolt = <987500>;
-+				opp-microvolt = <987500 987500 1400000>;
- 			};
- 		};
+ #define DEFAULT_SATURATION_RATIO	40
+-#define DEFAULT_VOLTAGE_TOLERANCE	2
  
-diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-index 25d95de15c9b..65d094256b54 100644
---- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-@@ -428,6 +428,8 @@
- 				regulator-max-microvolt = <1500000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-coupled-with = <&buck3_reg>;
-+				regulator-coupled-max-spread = <300000>;
- 			};
+ struct exynos_bus {
+ 	struct device *dev;
+@@ -37,9 +36,9 @@ struct exynos_bus {
  
- 			buck3_reg: BUCK3 {
-@@ -436,6 +438,8 @@
- 				regulator-max-microvolt = <1400000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-coupled-with = <&buck2_reg>;
-+				regulator-coupled-max-spread = <300000>;
- 			};
+ 	unsigned long curr_freq;
  
- 			buck4_reg: BUCK4 {
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index e0f470fe54c8..5c1e965ed7e9 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -257,6 +257,8 @@
- 				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-ramp-delay = <12500>;
-+				regulator-coupled-with = <&buck3_reg>;
-+				regulator-coupled-max-spread = <300000>;
- 				regulator-state-mem {
- 					regulator-off-in-suspend;
- 				};
-@@ -269,6 +271,8 @@
- 				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-ramp-delay = <12500>;
-+				regulator-coupled-with = <&buck2_reg>;
-+				regulator-coupled-max-spread = <300000>;
- 				regulator-state-mem {
- 					regulator-off-in-suspend;
- 				};
-diff --git a/arch/arm/boot/dts/exynos5800.dtsi b/arch/arm/boot/dts/exynos5800.dtsi
-index 57d3b319fd65..2a74735d161c 100644
---- a/arch/arm/boot/dts/exynos5800.dtsi
-+++ b/arch/arm/boot/dts/exynos5800.dtsi
-@@ -22,61 +22,61 @@
- 
- &cluster_a15_opp_table {
- 	opp-1700000000 {
--		opp-microvolt = <1250000>;
-+		opp-microvolt = <1250000 1250000 1500000>;
- 	};
- 	opp-1600000000 {
--		opp-microvolt = <1250000>;
-+		opp-microvolt = <1250000 1250000 1500000>;
- 	};
- 	opp-1500000000 {
--		opp-microvolt = <1100000>;
-+		opp-microvolt = <1100000 1100000 1500000>;
- 	};
- 	opp-1400000000 {
--		opp-microvolt = <1100000>;
-+		opp-microvolt = <1100000 1100000 1500000>;
- 	};
- 	opp-1300000000 {
--		opp-microvolt = <1100000>;
-+		opp-microvolt = <1100000 1100000 1500000>;
- 	};
- 	opp-1200000000 {
--		opp-microvolt = <1000000>;
-+		opp-microvolt = <1000000 1000000 1500000>;
- 	};
- 	opp-1100000000 {
--		opp-microvolt = <1000000>;
-+		opp-microvolt = <1000000 1000000 1500000>;
- 	};
- 	opp-1000000000 {
--		opp-microvolt = <1000000>;
-+		opp-microvolt = <1000000 1000000 1500000>;
- 	};
- 	opp-900000000 {
--		opp-microvolt = <1000000>;
-+		opp-microvolt = <1000000 1000000 1500000>;
- 	};
- 	opp-800000000 {
--		opp-microvolt = <900000>;
-+		opp-microvolt = <900000 900000 1500000>;
- 	};
- 	opp-700000000 {
--		opp-microvolt = <900000>;
-+		opp-microvolt = <900000 900000 1500000>;
- 	};
- 	opp-600000000 {
- 		opp-hz = /bits/ 64 <600000000>;
--		opp-microvolt = <900000>;
-+		opp-microvolt = <900000 900000 1500000>;
- 		clock-latency-ns = <140000>;
- 	};
- 	opp-500000000 {
- 		opp-hz = /bits/ 64 <500000000>;
--		opp-microvolt = <900000>;
-+		opp-microvolt = <900000 900000 1500000>;
- 		clock-latency-ns = <140000>;
- 	};
- 	opp-400000000 {
- 		opp-hz = /bits/ 64 <400000000>;
--		opp-microvolt = <900000>;
-+		opp-microvolt = <900000 900000 1500000>;
- 		clock-latency-ns = <140000>;
- 	};
- 	opp-300000000 {
- 		opp-hz = /bits/ 64 <300000000>;
--		opp-microvolt = <900000>;
-+		opp-microvolt = <900000 900000 1500000>;
- 		clock-latency-ns = <140000>;
- 	};
- 	opp-200000000 {
- 		opp-hz = /bits/ 64 <200000000>;
--		opp-microvolt = <900000>;
-+		opp-microvolt = <900000 900000 1500000>;
- 		clock-latency-ns = <140000>;
- 	};
+-	struct regulator *regulator;
++	struct opp_table *opp_table;
++
+ 	struct clk *clk;
+-	unsigned int voltage_tolerance;
+ 	unsigned int ratio;
  };
+ 
+@@ -99,56 +98,25 @@ static int exynos_bus_target(struct device *dev, unsigned long *freq, u32 flags)
+ {
+ 	struct exynos_bus *bus = dev_get_drvdata(dev);
+ 	struct dev_pm_opp *new_opp;
+-	unsigned long old_freq, new_freq, new_volt, tol;
+ 	int ret = 0;
+-
+-	/* Get new opp-bus instance according to new bus clock */
++	/*
++	 * New frequency for bus may not be exactly matched to opp, adjust
++	 * *freq to correct value.
++	 */
+ 	new_opp = devfreq_recommended_opp(dev, freq, flags);
+ 	if (IS_ERR(new_opp)) {
+ 		dev_err(dev, "failed to get recommended opp instance\n");
+ 		return PTR_ERR(new_opp);
+ 	}
+ 
+-	new_freq = dev_pm_opp_get_freq(new_opp);
+-	new_volt = dev_pm_opp_get_voltage(new_opp);
+ 	dev_pm_opp_put(new_opp);
+ 
+-	old_freq = bus->curr_freq;
+-
+-	if (old_freq == new_freq)
+-		return 0;
+-	tol = new_volt * bus->voltage_tolerance / 100;
+-
+ 	/* Change voltage and frequency according to new OPP level */
+ 	mutex_lock(&bus->lock);
++	ret = dev_pm_opp_set_rate(dev, *freq);
++	if (!ret)
++		bus->curr_freq = *freq;
+ 
+-	if (old_freq < new_freq) {
+-		ret = regulator_set_voltage_tol(bus->regulator, new_volt, tol);
+-		if (ret < 0) {
+-			dev_err(bus->dev, "failed to set voltage\n");
+-			goto out;
+-		}
+-	}
+-
+-	ret = clk_set_rate(bus->clk, new_freq);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to change clock of bus\n");
+-		clk_set_rate(bus->clk, old_freq);
+-		goto out;
+-	}
+-
+-	if (old_freq > new_freq) {
+-		ret = regulator_set_voltage_tol(bus->regulator, new_volt, tol);
+-		if (ret < 0) {
+-			dev_err(bus->dev, "failed to set voltage\n");
+-			goto out;
+-		}
+-	}
+-	bus->curr_freq = new_freq;
+-
+-	dev_dbg(dev, "Set the frequency of bus (%luHz -> %luHz, %luHz)\n",
+-			old_freq, new_freq, clk_get_rate(bus->clk));
+-out:
+ 	mutex_unlock(&bus->lock);
+ 
+ 	return ret;
+@@ -194,10 +162,11 @@ static void exynos_bus_exit(struct device *dev)
+ 	if (ret < 0)
+ 		dev_warn(dev, "failed to disable the devfreq-event devices\n");
+ 
+-	if (bus->regulator)
+-		regulator_disable(bus->regulator);
++	if (bus->opp_table)
++		dev_pm_opp_put_regulators(bus->opp_table);
+ 
+ 	dev_pm_opp_of_remove_table(dev);
++
+ 	clk_disable_unprepare(bus->clk);
+ }
+ 
+@@ -209,39 +178,26 @@ static int exynos_bus_passive_target(struct device *dev, unsigned long *freq,
+ {
+ 	struct exynos_bus *bus = dev_get_drvdata(dev);
+ 	struct dev_pm_opp *new_opp;
+-	unsigned long old_freq, new_freq;
+-	int ret = 0;
++	int ret;
+ 
+-	/* Get new opp-bus instance according to new bus clock */
++	/*
++	 * New frequency for bus may not be exactly matched to opp, adjust
++	 * *freq to correct value.
++	 */
+ 	new_opp = devfreq_recommended_opp(dev, freq, flags);
+ 	if (IS_ERR(new_opp)) {
+ 		dev_err(dev, "failed to get recommended opp instance\n");
+ 		return PTR_ERR(new_opp);
+ 	}
+ 
+-	new_freq = dev_pm_opp_get_freq(new_opp);
+ 	dev_pm_opp_put(new_opp);
+ 
+-	old_freq = bus->curr_freq;
+-
+-	if (old_freq == new_freq)
+-		return 0;
+-
+ 	/* Change the frequency according to new OPP level */
+ 	mutex_lock(&bus->lock);
++	ret = dev_pm_opp_set_rate(dev, *freq);
++	if (!ret)
++		bus->curr_freq = *freq;
+ 
+-	ret = clk_set_rate(bus->clk, new_freq);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to set the clock of bus\n");
+-		goto out;
+-	}
+-
+-	*freq = new_freq;
+-	bus->curr_freq = new_freq;
+-
+-	dev_dbg(dev, "Set the frequency of bus (%luHz -> %luHz, %luHz)\n",
+-			old_freq, new_freq, clk_get_rate(bus->clk));
+-out:
+ 	mutex_unlock(&bus->lock);
+ 
+ 	return ret;
+@@ -259,20 +215,7 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
+ 					struct exynos_bus *bus)
+ {
+ 	struct device *dev = bus->dev;
+-	int i, ret, count, size;
+-
+-	/* Get the regulator to provide each bus with the power */
+-	bus->regulator = devm_regulator_get(dev, "vdd");
+-	if (IS_ERR(bus->regulator)) {
+-		dev_err(dev, "failed to get VDD regulator\n");
+-		return PTR_ERR(bus->regulator);
+-	}
+-
+-	ret = regulator_enable(bus->regulator);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to enable VDD regulator\n");
+-		return ret;
+-	}
++	int i, count, size;
+ 
+ 	/*
+ 	 * Get the devfreq-event devices to get the current utilization of
+@@ -281,24 +224,20 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
+ 	count = devfreq_event_get_edev_count(dev);
+ 	if (count < 0) {
+ 		dev_err(dev, "failed to get the count of devfreq-event dev\n");
+-		ret = count;
+-		goto err_regulator;
++		return count;
+ 	}
++
+ 	bus->edev_count = count;
+ 
+ 	size = sizeof(*bus->edev) * count;
+ 	bus->edev = devm_kzalloc(dev, size, GFP_KERNEL);
+-	if (!bus->edev) {
+-		ret = -ENOMEM;
+-		goto err_regulator;
+-	}
++	if (!bus->edev)
++		return -ENOMEM;
+ 
+ 	for (i = 0; i < count; i++) {
+ 		bus->edev[i] = devfreq_event_get_edev_by_phandle(dev, i);
+-		if (IS_ERR(bus->edev[i])) {
+-			ret = -EPROBE_DEFER;
+-			goto err_regulator;
+-		}
++		if (IS_ERR(bus->edev[i]))
++			return -EPROBE_DEFER;
+ 	}
+ 
+ 	/*
+@@ -314,22 +253,15 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
+ 	if (of_property_read_u32(np, "exynos,saturation-ratio", &bus->ratio))
+ 		bus->ratio = DEFAULT_SATURATION_RATIO;
+ 
+-	if (of_property_read_u32(np, "exynos,voltage-tolerance",
+-					&bus->voltage_tolerance))
+-		bus->voltage_tolerance = DEFAULT_VOLTAGE_TOLERANCE;
+-
+ 	return 0;
+-
+-err_regulator:
+-	regulator_disable(bus->regulator);
+-
+-	return ret;
+ }
+ 
+ static int exynos_bus_parse_of(struct device_node *np,
+-			      struct exynos_bus *bus)
++			      struct exynos_bus *bus, bool passive)
+ {
+ 	struct device *dev = bus->dev;
++	struct opp_table *opp_table;
++	const char *vdd = "vdd";
+ 	struct dev_pm_opp *opp;
+ 	unsigned long rate;
+ 	int ret;
+@@ -347,11 +279,22 @@ static int exynos_bus_parse_of(struct device_node *np,
+ 		return ret;
+ 	}
+ 
++	if (!passive) {
++		opp_table = dev_pm_opp_set_regulators(dev, &vdd, 1);
++		if (IS_ERR(opp_table)) {
++			ret = PTR_ERR(opp_table);
++			dev_err(dev, "failed to set regulators %d\n", ret);
++			goto err_clk;
++		}
++
++		bus->opp_table = opp_table;
++	}
++
+ 	/* Get the freq and voltage from OPP table to scale the bus freq */
+ 	ret = dev_pm_opp_of_add_table(dev);
+ 	if (ret < 0) {
+ 		dev_err(dev, "failed to get OPP table\n");
+-		goto err_clk;
++		goto err_regulator;
+ 	}
+ 
+ 	rate = clk_get_rate(bus->clk);
+@@ -362,6 +305,7 @@ static int exynos_bus_parse_of(struct device_node *np,
+ 		ret = PTR_ERR(opp);
+ 		goto err_opp;
+ 	}
++
+ 	bus->curr_freq = dev_pm_opp_get_freq(opp);
+ 	dev_pm_opp_put(opp);
+ 
+@@ -369,6 +313,13 @@ static int exynos_bus_parse_of(struct device_node *np,
+ 
+ err_opp:
+ 	dev_pm_opp_of_remove_table(dev);
++
++err_regulator:
++	if (bus->opp_table) {
++		dev_pm_opp_put_regulators(bus->opp_table);
++		bus->opp_table = NULL;
++	}
++
+ err_clk:
+ 	clk_disable_unprepare(bus->clk);
+ 
+@@ -386,6 +337,7 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ 	struct exynos_bus *bus;
+ 	int ret, max_state;
+ 	unsigned long min_freq, max_freq;
++	bool passive = false;
+ 
+ 	if (!np) {
+ 		dev_err(dev, "failed to find devicetree node\n");
+@@ -395,12 +347,18 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ 	bus = devm_kzalloc(&pdev->dev, sizeof(*bus), GFP_KERNEL);
+ 	if (!bus)
+ 		return -ENOMEM;
++
+ 	mutex_init(&bus->lock);
+ 	bus->dev = &pdev->dev;
+ 	platform_set_drvdata(pdev, bus);
++	node = of_parse_phandle(dev->of_node, "devfreq", 0);
++	if (node) {
++		of_node_put(node);
++		passive = true;
++	}
+ 
+ 	/* Parse the device-tree to get the resource information */
+-	ret = exynos_bus_parse_of(np, bus);
++	ret = exynos_bus_parse_of(np, bus, passive);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -410,13 +368,10 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ 		goto err;
+ 	}
+ 
+-	node = of_parse_phandle(dev->of_node, "devfreq", 0);
+-	if (node) {
+-		of_node_put(node);
++	if (passive)
+ 		goto passive;
+-	} else {
+-		ret = exynos_bus_parent_parse_of(np, bus);
+-	}
++
++	ret = exynos_bus_parent_parse_of(np, bus);
+ 
+ 	if (ret < 0)
+ 		goto err;
+@@ -509,6 +464,11 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ 
+ err:
+ 	dev_pm_opp_of_remove_table(dev);
++	if (bus->opp_table) {
++		dev_pm_opp_put_regulators(bus->opp_table);
++		bus->opp_table = NULL;
++	}
++
+ 	clk_disable_unprepare(bus->clk);
+ 
+ 	return ret;
 -- 
 2.22.0
