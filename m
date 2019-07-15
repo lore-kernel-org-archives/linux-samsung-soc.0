@@ -1,27 +1,77 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v3 15/24] media: exynos4-is: Remove call to memset after
- dma_alloc_coherent
-Date: Mon, 15 Jul 2019 13:45:30 +0200
-Message-ID: <92ced8c7-22cb-c6a2-6390-2f68f88e6841@samsung.com>
-References: <20190715031851.6890-1-huangfq.daxian@gmail.com>
-        <CGME20190715114533eucas1p2e63b98faa6d3888df025cedde5bc2696@eucas1p2.samsung.com>
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Subject: [PATCH v2 1/4] opp: core: add regulators enable and disable
+Date: Mon, 15 Jul 2019 14:04:13 +0200
+Message-ID: <20190715120416.3561-2-k.konieczny@partner.samsung.com>
+References: <20190715120416.3561-1-k.konieczny@partner.samsung.com>
+        <CGME20190715120430eucas1p19dddcc93756e6a110d3476229f9428b3@eucas1p1.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190715031851.6890-1-huangfq.daxian@gmail.com>
-Content-Language: en-GB
+In-Reply-To: <20190715120416.3561-1-k.konieczny@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Fuqian Huang <huangfq.daxian@gmail.com>, linux-media@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: k.konieczny@partner.samsung.com
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Mark Rutland <mark.rutland@arm.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 7/15/19 05:18, Fuqian Huang wrote:
-> In commit 518a2f1925c3
-> ("dma-mapping: zero memory returned from dma_alloc_*"),
-> dma_alloc_coherent has already zeroed the memory.
-> So memset is not needed
-> 
-> Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
+Add enable regulators to dev_pm_opp_set_regulators() and disable
+regulators to dev_pm_opp_put_regulators(). This prepares for
+converting exynos-bus devfreq driver to use dev_pm_opp_set_rate().
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+--
+Changes in v2:
+
+- move regulator enable and disable into loop
+
+---
+ drivers/opp/core.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+index 0e7703fe733f..069c5cf8827e 100644
+--- a/drivers/opp/core.c
++++ b/drivers/opp/core.c
+@@ -1570,6 +1570,10 @@ struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
+ 			goto free_regulators;
+ 		}
+ 
++		ret = regulator_enable(reg);
++		if (ret < 0)
++			goto disable;
++
+ 		opp_table->regulators[i] = reg;
+ 	}
+ 
+@@ -1582,9 +1586,15 @@ struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
+ 
+ 	return opp_table;
+ 
++disable:
++	regulator_put(reg);
++	--i;
++
+ free_regulators:
+-	while (i != 0)
+-		regulator_put(opp_table->regulators[--i]);
++	for (; i >= 0; --i) {
++		regulator_disable(opp_table->regulators[i]);
++		regulator_put(opp_table->regulators[i]);
++	}
+ 
+ 	kfree(opp_table->regulators);
+ 	opp_table->regulators = NULL;
+@@ -1610,8 +1620,10 @@ void dev_pm_opp_put_regulators(struct opp_table *opp_table)
+ 	/* Make sure there are no concurrent readers while updating opp_table */
+ 	WARN_ON(!list_empty(&opp_table->opp_list));
+ 
+-	for (i = opp_table->regulator_count - 1; i >= 0; i--)
++	for (i = opp_table->regulator_count - 1; i >= 0; i--) {
++		regulator_disable(opp_table->regulators[i]);
+ 		regulator_put(opp_table->regulators[i]);
++	}
+ 
+ 	_free_set_opp_data(opp_table);
+ 
+-- 
+2.22.0
