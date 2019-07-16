@@ -1,106 +1,98 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v1 10/50] clk: samsung: change ACLK100_NOC clocks
- definitions Exynos5x
-Date: Tue, 16 Jul 2019 19:01:13 +0900
-Message-ID: <63cb24f8-5666-3fb4-0c98-ecc54cd4266f@samsung.com>
-References: <20190715124417.4787-1-l.luba@partner.samsung.com>
-        <CGME20190715124441eucas1p29f1205c20e9bea5b33f8f0b5747b1102@eucas1p2.samsung.com>
-        <20190715124417.4787-11-l.luba@partner.samsung.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v2 1/4] opp: core: add regulators enable and disable
+Date: Tue, 16 Jul 2019 15:35:39 +0530
+Message-ID: <20190716100539.4uqelbxqz7bmtmea@vireshk-i7>
+References: <20190715120416.3561-1-k.konieczny@partner.samsung.com>
+ <CGME20190715120430eucas1p19dddcc93756e6a110d3476229f9428b3@eucas1p1.samsung.com>
+ <20190715120416.3561-2-k.konieczny@partner.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190715124417.4787-11-l.luba@partner.samsung.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190715120416.3561-2-k.konieczny@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lukasz Luba <l.luba@partner.samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com, sboyd@kernel.org, b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, kyungmin.park@samsung.com, a.hajda@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com
+To: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Mark Rutland <mark.rutland@arm.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-I checked the range of ratio as following: Looks good to me.
-But, you better to make it to fix the ratio range without adding ID.
-Please merge the code related to adding IDs into one patch.
-- Exynos5422 TRM ACLK_100_NOC_RATIO [23:20]
-- Exynos5420 TRM ACLK_100_NOC_RATIO [22:20]
-
-On 19. 7. 15. 오후 9:43, Lukasz Luba wrote:
-> The ACLK100_NOC has different topology in Exynos5420 and 5422/5800.  In
-> Exynos5420 this clock divider has 3 bits while in 5422/5800 has 4 bits.
-> The patch adds needed dividers in the exynos5800_div_clks, updates
-> exynos5x_div_clks and exynos5420_div_clks properly. It also adds IDs to
-> manage clocks from DT.
+On 15-07-19, 14:04, Kamil Konieczny wrote:
+> Add enable regulators to dev_pm_opp_set_regulators() and disable
+> regulators to dev_pm_opp_put_regulators(). This prepares for
+> converting exynos-bus devfreq driver to use dev_pm_opp_set_rate().
 > 
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+> --
+> Changes in v2:
+> 
+> - move regulator enable and disable into loop
+> 
 > ---
->  drivers/clk/samsung/clk-exynos5420.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
+>  drivers/opp/core.c | 18 +++++++++++++++---
+>  1 file changed, 15 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index 6164d0ca75e0..c13f34d3d9a1 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -471,7 +471,8 @@ static const struct samsung_mux_clock exynos5800_mux_clks[] __initconst = {
->  			SRC_TOP0, 4, 3),
->  	MUX(CLK_MOUT_ACLK400_WCORE, "mout_aclk400_wcore", mout_group2_5800_p,
->  			SRC_TOP0, 16, 3),
-> -	MUX(0, "mout_aclk100_noc", mout_group1_5800_p, SRC_TOP0, 20, 2),
-> +	MUX(CLK_MOUT_ACLK100_NOC, "mout_aclk100_noc", mout_group1_5800_p,
-> +			SRC_TOP0, 20, 2),
-
-Please squash this code to the patch which add the IDs.
-Actually, it is not related to fix the rate range of clock.
-
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index 0e7703fe733f..069c5cf8827e 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -1570,6 +1570,10 @@ struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
+>  			goto free_regulators;
+>  		}
 >  
->  	MUX(0, "mout_aclk333_432_gscl", mout_group6_5800_p, SRC_TOP1, 0, 2),
->  	MUX(0, "mout_aclk333_432_isp", mout_group6_5800_p, SRC_TOP1, 4, 2),
-> @@ -534,6 +535,8 @@ static const struct samsung_mux_clock exynos5800_mux_clks[] __initconst = {
->  static const struct samsung_div_clock exynos5800_div_clks[] __initconst = {
->  	DIV(CLK_DOUT_ACLK400_WCORE, "dout_aclk400_wcore",
->  			"mout_aclk400_wcore", DIV_TOP0, 16, 3),
-> +	DIV(CLK_DOUT_ACLK100_NOC, "dout_aclk100_noc", "mout_aclk100_noc",
-> +				DIV_TOP0, 20, 4),
+> +		ret = regulator_enable(reg);
+> +		if (ret < 0)
+> +			goto disable;
 
->  	DIV(CLK_DOUT_ACLK266_ISP, "dout_aclk266_isp", "mout_aclk266_isp",
->  				DIV_TOP8, 12, 3),
->  	DIV(0, "dout_aclk550_cam", "mout_aclk550_cam",
-> @@ -569,7 +572,8 @@ static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
->  			SRC_TOP0, 4, 2),
->  	MUX(CLK_MOUT_ACLK400_WCORE, "mout_aclk400_wcore", mout_group1_p,
->  			SRC_TOP0, 16, 2),
-> -	MUX(0, "mout_aclk100_noc", mout_group1_p, SRC_TOP0, 20, 2),
-> +	MUX(CLK_MOUT_ACLK100_NOC, "mout_aclk100_noc", mout_group1_p,
-> +			SRC_TOP0, 20, 2),
+The name of this label is logically incorrect because we won't disable
+the regulator from there but put it. Over that, I would rather prefer
+to remove the label and add regulator_put() here itself.
 
-ditto.
-Please squash this code to the patch which add the IDs.
-Actually, it is not related to fix the rate range of clock.
-
+> +
+>  		opp_table->regulators[i] = reg;
+>  	}
 >  
->  	MUX(0, "mout_aclk333_432_gscl", mout_group4_p, SRC_TOP1, 0, 2),
->  	MUX(0, "mout_aclk333_432_isp", mout_group4_p,
-> @@ -600,6 +604,8 @@ static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
->  static const struct samsung_div_clock exynos5420_div_clks[] __initconst = {
->  	DIV(CLK_DOUT_ACLK400_WCORE, "dout_aclk400_wcore",
->  			"mout_aclk400_wcore", DIV_TOP0, 16, 3),
-> +	DIV(CLK_DOUT_ACLK100_NOC, "dout_aclk100_noc", "mout_aclk100_noc",
-> +			DIV_TOP0, 20, 3),
->  };
+> @@ -1582,9 +1586,15 @@ struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
 >  
->  static const struct samsung_gate_clock exynos5420_gate_clks[] __initconst = {
-> @@ -798,8 +804,6 @@ static const struct samsung_div_clock exynos5x_div_clks[] __initconst = {
->  			DIV_TOP0, 8, 3),
->  	DIV(CLK_DOUT_ACLK200_FSYS2, "dout_aclk200_fsys2", "mout_aclk200_fsys2",
->  			DIV_TOP0, 12, 3),
-> -	DIV(CLK_DOUT_ACLK100_NOC, "dout_aclk100_noc", "mout_aclk100_noc",
-> -			DIV_TOP0, 20, 3),
->  	DIV(CLK_DOUT_PCLK200_FSYS, "dout_pclk200_fsys", "mout_pclk200_fsys",
->  			DIV_TOP0, 24, 3),
->  	DIV(CLK_DOUT_ACLK200_FSYS, "dout_aclk200_fsys", "mout_aclk200_fsys",
-> 
+>  	return opp_table;
+>  
+> +disable:
+> +	regulator_put(reg);
+> +	--i;
+> +
+>  free_regulators:
+> -	while (i != 0)
+> -		regulator_put(opp_table->regulators[--i]);
+> +	for (; i >= 0; --i) {
+> +		regulator_disable(opp_table->regulators[i]);
+> +		regulator_put(opp_table->regulators[i]);
+
+This is incorrect as this will now try to put/disable the regulator
+which we failed to acquire. As --i happens only after the loop has run
+once. You can rather do:
+
+	while (i--) {
+		regulator_disable(opp_table->regulators[i]);
+		regulator_put(opp_table->regulators[i]);
+        }
+
+
+> +	}
+>  
+>  	kfree(opp_table->regulators);
+>  	opp_table->regulators = NULL;
+> @@ -1610,8 +1620,10 @@ void dev_pm_opp_put_regulators(struct opp_table *opp_table)
+>  	/* Make sure there are no concurrent readers while updating opp_table */
+>  	WARN_ON(!list_empty(&opp_table->opp_list));
+>  
+> -	for (i = opp_table->regulator_count - 1; i >= 0; i--)
+> +	for (i = opp_table->regulator_count - 1; i >= 0; i--) {
+> +		regulator_disable(opp_table->regulators[i]);
+>  		regulator_put(opp_table->regulators[i]);
+> +	}
+>  
+>  	_free_set_opp_data(opp_table);
+>  
+> -- 
+> 2.22.0
 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+viresh
