@@ -1,30 +1,73 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 3/4] ARM: dts: exynos: add initial data for coupled
- regulators for Exynos5422/5800
-Date: Tue, 16 Jul 2019 11:22:54 +0200
-Message-ID: <CAJKOXPd6a5aLf1CEhx9m7khPQOwruSuA22efkJb41BsaWXjM3A@mail.gmail.com>
-References: <CGME20190715120432eucas1p1b32d72d239420b861bf8596d4e8a053d@eucas1p1.samsung.com>
- <20190715120416.3561-1-k.konieczny@partner.samsung.com> <20190715120416.3561-4-k.konieczny@partner.samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v1 13/50] clk: samsung: add DPLL rate table in
+ Exynos5420
+Date: Tue, 16 Jul 2019 18:31:03 +0900
+Message-ID: <9095a5be-3002-93c6-9d08-92eb84f5c103@samsung.com>
+References: <20190715124417.4787-1-l.luba@partner.samsung.com>
+        <CGME20190715124444eucas1p2683c9896e8be45d6a0cd4afeb681a2ea@eucas1p2.samsung.com>
+        <20190715124417.4787-14-l.luba@partner.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190715120416.3561-4-k.konieczny@partner.samsung.com>
+In-Reply-To: <20190715124417.4787-14-l.luba@partner.samsung.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Mark Rutland <mark.rutland@arm.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Lukasz Luba <l.luba@partner.samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com, sboyd@kernel.org, b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, kyungmin.park@samsung.com, a.hajda@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 15 Jul 2019 at 14:04, Kamil Konieczny
-<k.konieczny@partner.samsung.com> wrote:
->
-> Declare Exynos5422/5800 voltage ranges for opp points for big cpu core and
-> bus wcore and couple their voltage supllies as vdd_arm and vdd_int should
-> be in 300mV range.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Hi,
 
-This one was previously from Marek, now it is from you. Any changes here?
+Also, you better to merge patch13/patch15/patch16 to one patch
+in order to add the PLL table for DPLL/MPLL/SPLL.
 
-Best regards,
-Krzysztof
+And I have a question. Are there any use-case to change
+the PLL frequency for DPLL/MPLL/SPLL?
+
+On 19. 7. 15. 오후 9:43, Lukasz Luba wrote:
+> The DPLL has fixed frequency left by the bootloader and it is not possible
+> to change it. With this patch the DPLL gets rate table the same for the
+> whole  PLL family (similar as APLL, KPLL according to RM) so the frequency
+> might be changed to one of the values defined there.
+> It is needed for further patches which change the DPLL frequency to feed
+> the clocks with proper base.
+> It also sets CLK_IS_CRITICAL for SCLK_DPLL due to some drivers which could
+> disable master clock, which is then populated higher and tries to disable
+> PLL, which casues system crash. The flag is needed for this kind of use
+> cases.
+> 
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5420.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index 7f8221527633..2395b02ce8c5 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -694,7 +694,8 @@ static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
+>  	MUX(0, "mout_sclk_rpll", mout_rpll_p, SRC_TOP6, 16, 1),
+>  	MUX_F(CLK_MOUT_EPLL, "mout_sclk_epll", mout_epll_p, SRC_TOP6, 20, 1,
+>  			CLK_SET_RATE_PARENT, 0),
+> -	MUX(0, "mout_sclk_dpll", mout_dpll_p, SRC_TOP6, 24, 1),
+> +	MUX_F(CLK_MOUT_SCLK_DPLL, "mout_sclk_dpll", mout_dpll_p,
+> +			SRC_TOP6, 24, 1, CLK_IS_CRITICAL, 0),
+>  	MUX(0, "mout_sclk_cpll", mout_cpll_p, SRC_TOP6, 28, 1),
+>  
+>  	MUX(CLK_MOUT_SW_ACLK400_ISP, "mout_sw_aclk400_isp",
+> @@ -1514,6 +1515,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
+>  
+>  	if (_get_rate("fin_pll") == 24 * MHZ) {
+>  		exynos5x_plls[apll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+> +		exynos5x_plls[dpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+>  		exynos5x_plls[epll].rate_table = exynos5420_epll_24mhz_tbl;
+>  		exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+>  	}
+> 
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
