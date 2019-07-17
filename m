@@ -1,128 +1,102 @@
-From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: Re: [PATCH v1 37/50] ARM: dts: exynos: change parent and rate of
- bus_fsys in Exynos5422
-Date: Wed, 17 Jul 2019 14:55:53 +0200
-Message-ID: <7ad899c5-347d-546e-a2e9-d96f0203210c@partner.samsung.com>
-References: <CGME20190715124504eucas1p1afe0da2c6ac3a8b45d85017a77ba9edf@eucas1p1.samsung.com>
-        <20190715124417.4787-1-l.luba@partner.samsung.com>
-        <20190715124417.4787-38-l.luba@partner.samsung.com>
-        <CAJKOXPfrGgAczQ-=1aE453RpJ9BN10ZDmFcrEMPkNyF6GcGtNA@mail.gmail.com>
-        <2fe2e840-f4b2-773b-7d92-4ffb8502d4e6@partner.samsung.com>
-        <CAJKOXPd3gm7no-0TnPmgFg+X3FgdiM6ov5rtzFSM6hKEdEzRCg@mail.gmail.com>
-        <518c26ca-4254-056c-d6d0-ae1b4b63709c@partner.samsung.com>
-        <CAJKOXPfDX06s7eMctbnPabxho2EaWcTM4xAGKCd_+O6jCCDcRQ@mail.gmail.com>
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Subject: Re: [PATCH v2 1/4] opp: core: add regulators enable and disable
+Date: Wed, 17 Jul 2019 16:12:42 +0200
+Message-ID: <297179a4-a542-0836-6192-e06369fdcae5@partner.samsung.com>
+References: <20190715120416.3561-1-k.konieczny@partner.samsung.com>
+        <CGME20190715120430eucas1p19dddcc93756e6a110d3476229f9428b3@eucas1p1.samsung.com>
+        <20190715120416.3561-2-k.konieczny@partner.samsung.com>
+        <9acc7dd0-614b-ccd3-a485-eeca3dab494b@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPfDX06s7eMctbnPabxho2EaWcTM4xAGKCd_+O6jCCDcRQ@mail.gmail.com>
+In-Reply-To: <9acc7dd0-614b-ccd3-a485-eeca3dab494b@samsung.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie@samsung.com>, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, s.nawrocki@samsung.com, myungjoo.ham@samsung.com
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Mark Rutland <mark.rutland@arm.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
-On 7/17/19 1:11 PM, Krzysztof Kozlowski wrote:
-> On Wed, 17 Jul 2019 at 13:06, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+On 16.07.2019 06:03, Chanwoo Choi wrote:
+> Hi Kamil,
+> 
+> On 19. 7. 15. 오후 9:04, Kamil Konieczny wrote:
+>> Add enable regulators to dev_pm_opp_set_regulators() and disable
+>> regulators to dev_pm_opp_put_regulators(). This prepares for
+>> converting exynos-bus devfreq driver to use dev_pm_opp_set_rate().
+> 
+> IMHO, it is not proper to mention the specific driver name.
+> If you explain the reason why enable the regulator before using it,
+> it is enough description.
+> 
 >>
+>> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+>> --
+>> Changes in v2:
 >>
+>> - move regulator enable and disable into loop
 >>
->> On 7/17/19 12:45 PM, Krzysztof Kozlowski wrote:
->>> On Wed, 17 Jul 2019 at 12:39, Lukasz Luba <l.luba@partner.samsung.com> wrote:
->>>>>>
->>>>>>     &bus_fsys {
->>>>>>            devfreq = <&bus_wcore>;
->>>>>> +       assigned-clocks = <&clock CLK_MOUT_ACLK200_FSYS>,
->>>>>> +                         <&clock CLK_DOUT_ACLK200_FSYS>,
->>>>>> +                         <&clock CLK_FOUT_DPLL>;
->>>>>> +       assigned-clock-parents = <&clock CLK_MOUT_SCLK_DPLL>;
->>>>>> +       assigned-clock-rates = <0>, <240000000>,<1200000000>;
->>>>>
->>>>> Here and in all other patches:
->>>>> I am not entirely sure that this should be here. It looks like
->>>>> property of the SoC. Do we expect that buses will be configured to
->>>>> different clock rates between different boards?
-This is the board file for Exynos5420/5422/5800 which enables buses.
-Thus, I have change them here. Patch 49/50 adds these buses to
-Exynos5800 (Peach Pi). In Exynos5420 there is no clock tree for
-bus_isp266. The parents for different devices could be also different.
-It is because i.e. in 5420 there is 2 bit in the WCORE 1st mux while in
-5422 there is 3 bits (6 parents possible).
-That's why I have picked exynos5422-odroid-core.dtsi to reference
-the bus devices and pinned them into proper parent and changed rate.
-When you check patch 49/50 for 5800 not all the parents are the same.
-
-(1) I could create a dedicated files like: exynos5422-bus.dtsi,
-exynos5420-bus.dtsi, exynos5800-bus.dtsi which would include some
-base file with the basic &bus_X and set the right parent, rate.
-Then these files would be included into proper board file like:
-exynos5800-peach-pi.dts.
-Is this something that you would like to see?
-  Since the OPP tables
->>>>> are shared (they are property of the SoC, not board) then I would
->>>>> assume that default frequency is shared as well.
->>>> These clocks they all relay on some bootloader configuration. It depends
->>>> which version of the bootloader you have, then you might get different
->>>> default configuration in the clocks.
->>>
->>> I do not agree here. This configuration is not dependent on
->>> bootloader. Although one bootloader might set the clocks to X and
->>> other to Y, but still you provide here valid configuration setting
->>> them, e.g. to Y (or to Z). What bootloader set before does not matter
->>> because you always override it.
->> This exactly the patch set is aim to do: overwrite any bootloader
->> configuration which could be wrong set after boot.
->> I don't know for how long it is left in such
->> 'bootloader-default-clock-settings' but it is not accurate
->> configuration. The pattern in the DT to change the clock rates is
->> there.
-> 
-> Still it is not the answer to my concerns and questions.
-Please look at my answer above.
-> 
->>>
->>>> The pattern of changing the parent
->>>> or even rate is known in the DT files (or I am missing something).
->>>> When you grep for it, you get 168 hits (38 for exynos*):
->>>> git grep -n "assigned-clock-rates" ./arch/arm/boot/dts/ | wc -l
->>>
->>> Yeah, and if you grep per type you got:
->>> DTSI: 114
->>> DTS: 54
->>> so what do you want to say?
->> Thus, It could be changed in DT.
-> 
-> Of course, why not. But how this relevant to my question?
-Please see above.
-> 
->>> My thinking is that all the boards have buses configured to the same
->>> initial frequency. I am not questioning the use of
->>> assigned-clock-rates at all. Just the place...
->> It is not only 'initial frequency' as you name it. It has three changes:
->> - re-parent to proper PLL
->> - changing this PLL rate
->> - change the OPPs frequency values to integer values derived from PLL
+>> ---
+>>  drivers/opp/core.c | 18 +++++++++++++++---
+>>  1 file changed, 15 insertions(+), 3 deletions(-)
 >>
->> The initial frequencies will be changed by devfreq governor using OPP
->> tables and the load after the whole system boots.
+>> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+>> index 0e7703fe733f..069c5cf8827e 100644
+>> --- a/drivers/opp/core.c
+>> +++ b/drivers/opp/core.c
+>> @@ -1570,6 +1570,10 @@ struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
+>>  			goto free_regulators;
+>>  		}
+>>  
+>> +		ret = regulator_enable(reg);
+>> +		if (ret < 0)
+>> +			goto disable;
+>> +
+>>  		opp_table->regulators[i] = reg;
+>>  	}
+>>  
+>> @@ -1582,9 +1586,15 @@ struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
+>>  
+>>  	return opp_table;
+>>  
+>> +disable:
+>> +	regulator_put(reg);
+>> +	--i;
+>> +
+>>  free_regulators:
+>> -	while (i != 0)
+>> -		regulator_put(opp_table->regulators[--i]);
+>> +	for (; i >= 0; --i) {
+>> +		regulator_disable(opp_table->regulators[i]);
+>> +		regulator_put(opp_table->regulators[i]);
+>> +	}
+>>  
+>>  	kfree(opp_table->regulators);
+>>  	opp_table->regulators = NULL;
+>> @@ -1610,8 +1620,10 @@ void dev_pm_opp_put_regulators(struct opp_table *opp_table)
+>>  	/* Make sure there are no concurrent readers while updating opp_table */
+>>  	WARN_ON(!list_empty(&opp_table->opp_list));
+>>  
+>> -	for (i = opp_table->regulator_count - 1; i >= 0; i--)
+>> +	for (i = opp_table->regulator_count - 1; i >= 0; i--) {
+>> +		regulator_disable(opp_table->regulators[i]);
+>>  		regulator_put(opp_table->regulators[i]);
+>> +	}
+>>  
+>>  	_free_set_opp_data(opp_table);
+>>  
+>>
 > 
-> I simplified with "initial frequency" but it does not matter. Let me
-> try to raise my concerns again, different wording:
-> All this looks like property of the SoC, not the board, because:
-> 1. the OPPs are already properties of the SoC, not the board (XU3 Lite
-> is kind of exception but in fact it uses different flavor of
-> Exynos5422 SoC which we do not model here as separate DTSI),
-Please see above at (1).
-> 2. I expect all boards to have the same properties.
-All boards which have the same SoC, i.e. Exysno5422 <- then I agree.
+> I agree to enable the regulator before using it.
+> The bootloader might not enable the regulators
+> and the kernel need to enable regulator in order to increase
+> the reference count explicitly event if bootloader enables it.
+> 
+> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Thank you for the comments.
+Thank you, I will change commit description and send v3.
 
-Regards,
-Lukasz
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
+-- 
+Best regards,
+Kamil Konieczny
+Samsung R&D Institute Poland
