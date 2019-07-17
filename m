@@ -1,34 +1,27 @@
 From: Kamil Konieczny <k.konieczny@partner.samsung.com>
 Subject: Re: [PATCH v2 1/4] opp: core: add regulators enable and disable
-Date: Wed, 17 Jul 2019 16:12:42 +0200
-Message-ID: <297179a4-a542-0836-6192-e06369fdcae5@partner.samsung.com>
+Date: Wed, 17 Jul 2019 16:14:54 +0200
+Message-ID: <237a3f15-7a44-01ce-5477-be94092295ec@partner.samsung.com>
 References: <20190715120416.3561-1-k.konieczny@partner.samsung.com>
         <CGME20190715120430eucas1p19dddcc93756e6a110d3476229f9428b3@eucas1p1.samsung.com>
         <20190715120416.3561-2-k.konieczny@partner.samsung.com>
-        <9acc7dd0-614b-ccd3-a485-eeca3dab494b@samsung.com>
+        <20190716100539.4uqelbxqz7bmtmea@vireshk-i7>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <9acc7dd0-614b-ccd3-a485-eeca3dab494b@samsung.com>
+In-Reply-To: <20190716100539.4uqelbxqz7bmtmea@vireshk-i7>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Mark Rutland <mark.rutland@arm.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Mark Rutland <mark.rutland@arm.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 16.07.2019 06:03, Chanwoo Choi wrote:
-> Hi Kamil,
-> 
-> On 19. 7. 15. 오후 9:04, Kamil Konieczny wrote:
+On 16.07.2019 12:05, Viresh Kumar wrote:
+> On 15-07-19, 14:04, Kamil Konieczny wrote:
 >> Add enable regulators to dev_pm_opp_set_regulators() and disable
 >> regulators to dev_pm_opp_put_regulators(). This prepares for
 >> converting exynos-bus devfreq driver to use dev_pm_opp_set_rate().
-> 
-> IMHO, it is not proper to mention the specific driver name.
-> If you explain the reason why enable the regulator before using it,
-> it is enough description.
-> 
 >>
 >> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
 >> --
@@ -51,6 +44,13 @@ On 16.07.2019 06:03, Chanwoo Choi wrote:
 >> +		ret = regulator_enable(reg);
 >> +		if (ret < 0)
 >> +			goto disable;
+> 
+> The name of this label is logically incorrect because we won't disable
+> the regulator from there but put it. Over that, I would rather prefer
+> to remove the label and add regulator_put() here itself.
+
+I will change this and following according to your suggestions and will send v3.
+
 >> +
 >>  		opp_table->regulators[i] = reg;
 >>  	}
@@ -69,6 +69,17 @@ On 16.07.2019 06:03, Chanwoo Choi wrote:
 >> +	for (; i >= 0; --i) {
 >> +		regulator_disable(opp_table->regulators[i]);
 >> +		regulator_put(opp_table->regulators[i]);
+> 
+> This is incorrect as this will now try to put/disable the regulator
+> which we failed to acquire. As --i happens only after the loop has run
+> once. You can rather do:
+> 
+> 	while (i--) {
+> 		regulator_disable(opp_table->regulators[i]);
+> 		regulator_put(opp_table->regulators[i]);
+>         }
+> 
+> 
 >> +	}
 >>  
 >>  	kfree(opp_table->regulators);
@@ -85,16 +96,9 @@ On 16.07.2019 06:03, Chanwoo Choi wrote:
 >>  
 >>  	_free_set_opp_data(opp_table);
 >>  
->>
+>> -- 
+>> 2.22.0
 > 
-> I agree to enable the regulator before using it.
-> The bootloader might not enable the regulators
-> and the kernel need to enable regulator in order to increase
-> the reference count explicitly event if bootloader enables it.
-> 
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-Thank you, I will change commit description and send v3.
 
 -- 
 Best regards,
