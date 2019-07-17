@@ -1,62 +1,82 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH 3/3] usb: dwc3: Remove generic PHY calibrate() calls
-Date: Tue, 16 Jul 2019 23:02:54 +0530
-Message-ID: <CANAwSgT+D_WNFuNdXhxRsQg16Hprn+Gb6TaQGvQM0a3bCerO=A@mail.gmail.com>
-References: <CGME20190627071745eucas1p1c171dcafd92fe51c99dc102949de6c99@eucas1p1.samsung.com>
- <20190627071726.30467-1-m.szyprowski@samsung.com> <20190627071726.30467-4-m.szyprowski@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v1 20/50] ARM: dts: exynos: change and rename FSYS OPP
+ table in Exynos5420
+Date: Wed, 17 Jul 2019 10:39:36 +0200
+Message-ID: <CAJKOXPfHgmBo9NX6jO8qSqXjN1pFmnKkQEWbou+q7-BDq2XKQg@mail.gmail.com>
+References: <CGME20190715124450eucas1p189043d196375aa6adacf898de81bfa9b@eucas1p1.samsung.com>
+ <20190715124417.4787-1-l.luba@partner.samsung.com> <20190715124417.4787-21-l.luba@partner.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190627071726.30467-4-m.szyprowski@samsung.com>
+In-Reply-To: <20190715124417.4787-21-l.luba@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Linux USB Mailing List <linux-usb@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Felipe Balbi <balbi@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jochen Sprickerhof <jochen@sprickerhof.de>
+To: Lukasz Luba <l.luba@partner.samsung.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, s.nawrocki@samsung.com, myungjoo.ham@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
-
-On Thu, 27 Jun 2019 at 12:47, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+On Mon, 15 Jul 2019 at 14:44, Lukasz Luba <l.luba@partner.samsung.com> wrote:
 >
-> Calls to USB2 generic PHY calibrate() method were added by commit
-> d8c80bb3b55b ("phy: exynos5-usbdrd: Calibrate LOS levels for
-> exynos5420/5800"), but it turned out that the mentioned patch worked only
-> by the pure luck and fixed only one use case. To fix the issues with PHY
-> calibration it has been moved to XHCI HCD driver, what allows to perform
-> calibration in the proper time window. This patch removes those calls
-> from DWC3 driver, as they are no longer needed there.
+> The FSYS and FSYS2 buses have similar characteristics and both have max
+> frequency 240MHz. The old OPP table bus_fsys_apb_opp_table should be used
+> only to FSYS APB bus because APB max frequency is 200MHz.
+> The new OPPs for FSYS should increase its performance and related devices.
+
+I do not understand the explanation. You say that there are two buses
+- FSYS and FSYS2 - and old OPP table should be used for FSYS APB but
+you remove the old one (by renaming). Or which one is the 'old one'
+here? The reason is speed... wait, what? Usually DTS should describe
+the HW so I imagine that proper opp table should be used for proper
+bus. It surprised me that we switch a bus to different OPP table just
+because of speed concerns. It should be correctness concern.
+
+Please clarify and reword all this.
+
+I am also not sure how this relates with previous patch - whether you
+are fixing independent issues. Maybe because I do not see the issue
+fixed... change the commit title and adjust the messages to focus WHY
+you are doing it. For small fixes WHAT you are doing is rather obvious
+so commit msg (and title) should not focus on it.
+
+Best regards,
+Krzysztof
+
 >
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-Please add my tested on XU4 / XU3 using linux next-20190716
-Tested-by: Anand Moon <linux.amoon@gmail.com>
-
-Best Regards
--Anand
-
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 > ---
->  drivers/usb/dwc3/core.c | 2 --
->  1 file changed, 2 deletions(-)
+>  arch/arm/boot/dts/exynos5420.dtsi | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 >
-> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-> index baa029ceede9..f62e8442c614 100644
-> --- a/drivers/usb/dwc3/core.c
-> +++ b/drivers/usb/dwc3/core.c
-> @@ -168,7 +168,6 @@ static void __dwc3_set_mode(struct work_struct *work)
->                                 otg_set_vbus(dwc->usb2_phy->otg, true);
->                         phy_set_mode(dwc->usb2_generic_phy, PHY_MODE_USB_HOST);
->                         phy_set_mode(dwc->usb3_generic_phy, PHY_MODE_USB_HOST);
-> -                       phy_calibrate(dwc->usb2_generic_phy);
->                 }
->                 break;
->         case DWC3_GCTL_PRTCAP_DEVICE:
-> @@ -1166,7 +1165,6 @@ static int dwc3_core_init_mode(struct dwc3 *dwc)
->                                 dev_err(dev, "failed to initialize host\n");
->                         return ret;
->                 }
-> -               phy_calibrate(dwc->usb2_generic_phy);
->                 break;
->         case USB_DR_MODE_OTG:
->                 INIT_WORK(&dwc->drd_work, __dwc3_set_mode);
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index 941c58bdd809..c7fc4b829b2a 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -995,7 +995,7 @@
+>                         compatible = "samsung,exynos-bus";
+>                         clocks = <&clock CLK_DOUT_ACLK200_FSYS>;
+>                         clock-names = "bus";
+> -                       operating-points-v2 = <&bus_fsys_apb_opp_table>;
+> +                       operating-points-v2 = <&bus_fsys_opp_table>;
+>                         status = "disabled";
+>                 };
+>
+> @@ -1003,7 +1003,7 @@
+>                         compatible = "samsung,exynos-bus";
+>                         clocks = <&clock CLK_DOUT_ACLK200_FSYS2>;
+>                         clock-names = "bus";
+> -                       operating-points-v2 = <&bus_fsys2_opp_table>;
+> +                       operating-points-v2 = <&bus_fsys_opp_table>;
+>                         status = "disabled";
+>                 };
+>
+> @@ -1157,7 +1157,7 @@
+>                         };
+>                 };
+>
+> -               bus_fsys2_opp_table: opp_table5 {
+> +               bus_fsys_opp_table: opp_table5 {
+>                         compatible = "operating-points-v2";
+>
+>                         opp00 {
 > --
 > 2.17.1
 >
