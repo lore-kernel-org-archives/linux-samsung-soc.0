@@ -1,106 +1,113 @@
-From: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Subject: Re: [PATCH v2 1/4] opp: core: add regulators enable and disable
-Date: Wed, 17 Jul 2019 16:14:54 +0200
-Message-ID: <237a3f15-7a44-01ce-5477-be94092295ec@partner.samsung.com>
-References: <20190715120416.3561-1-k.konieczny@partner.samsung.com>
-        <CGME20190715120430eucas1p19dddcc93756e6a110d3476229f9428b3@eucas1p1.samsung.com>
-        <20190715120416.3561-2-k.konieczny@partner.samsung.com>
-        <20190716100539.4uqelbxqz7bmtmea@vireshk-i7>
+From: Lukasz Luba <l.luba@partner.samsung.com>
+Subject: Re: [PATCH v1 27/50] ARM: dts: exynos: align bus_wcore OPPs in
+ Exynos5420
+Date: Wed, 17 Jul 2019 18:58:11 +0200
+Message-ID: <15310bd0-0fd4-8d62-82a9-7a9df6a8ced3@partner.samsung.com>
+References: <CGME20190715124456eucas1p2acf15d00e3fa7b77fe3a2b10ce1ab74f@eucas1p2.samsung.com>
+        <20190715124417.4787-1-l.luba@partner.samsung.com>
+        <20190715124417.4787-28-l.luba@partner.samsung.com>
+        <CAJKOXPfFZL8q9hM1vPsLq+Qxe-gMz4c8j0jgFKfdf5qs68MTmA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190716100539.4uqelbxqz7bmtmea@vireshk-i7>
+In-Reply-To: <CAJKOXPfFZL8q9hM1vPsLq+Qxe-gMz4c8j0jgFKfdf5qs68MTmA@mail.gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Mark Rutland <mark.rutland@arm.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie@samsung.com>, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, s.nawrocki@samsung.com, myungjoo.ham@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 16.07.2019 12:05, Viresh Kumar wrote:
-> On 15-07-19, 14:04, Kamil Konieczny wrote:
->> Add enable regulators to dev_pm_opp_set_regulators() and disable
->> regulators to dev_pm_opp_put_regulators(). This prepares for
->> converting exynos-bus devfreq driver to use dev_pm_opp_set_rate().
+Hi Krzysztof,
+
+On 7/17/19 12:15 PM, Krzysztof Kozlowski wrote:
+> On Mon, 15 Jul 2019 at 14:44, Lukasz Luba <l.luba@partner.samsung.com> wrote:
 >>
->> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
->> --
->> Changes in v2:
+>> This is the most important bus in the Exynos5x SoC. The whole communication
+>> inside SoC does through that bus (apart from direct requests from CCI to
+>> DRAM controller). It is also modeled as a master bus in devfreq framework.
+>> It is also the only one OPP table throughout other buses which has voltage
+>> values. The devfreq software controls the speed of that bus and other
+>> buses. The other buses follows the rate of the master. There is only one
+>> regulator. The old lowest OPP had pair 925mV, 84MHz which is enough for
+> 
+> s/lowest/slowest/
+please see below
+> 
+>> this frequency. However, due to the fact that the other buses follows the
+>> WCORE bus by taking the OPP from their table with the same id, e.g. opp02,
+>> the children frequency should be stable with the set voltage.
+>> It could cause random faults very hard to debug.
+>> Thus, the patch removes the lowest OPP to make other buses' lowest OPPs
+> 
+> s/lowest/slowest/
+Actually, I have double checked that, because we always used this 
+terminology: low OPP, high OPP, lower OPPs, higher OPPs. I can change
+it here for you, but I think this is not something that people are used
+to. Please check EAS pdf documentation or this file:
+https://www.kernel.org/doc/Documentation/scheduler/sched-energy.txt
+i.e. "running at a lower OPP" or "high OPPs", "lowest OPPs".
+
+Regards,
+Lukasz
+> 
+>> working. The new lowest OPP has voltage high enough for buses working up
+>> to 333MHz. It also changes the frequencies of the OPPs to align them to
+>> PLL value such that it is possible to set them using only a divider without
+>> reprogramming OPP.
+> 
+> Reprogramming OPP? What is it?
+> 
+>> Reprogramming the PLL was not set, so the real frequency
+> 
+> I understood from the previous that reprogramming the OPP (PLL?) was
+> happening... Please rephrase entire sentence.
+> 
+> BR,
+> Krzysztof
+> 
+>> values were not the one from the OPP table, which could confuse the
+>> governor algorithms which relay on OPP speed values making the system to
+>> behave weird.
 >>
->> - move regulator enable and disable into loop
->>
+>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 >> ---
->>  drivers/opp/core.c | 18 +++++++++++++++---
->>  1 file changed, 15 insertions(+), 3 deletions(-)
+>>   arch/arm/boot/dts/exynos5420.dtsi | 12 ++++--------
+>>   1 file changed, 4 insertions(+), 8 deletions(-)
 >>
->> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
->> index 0e7703fe733f..069c5cf8827e 100644
->> --- a/drivers/opp/core.c
->> +++ b/drivers/opp/core.c
->> @@ -1570,6 +1570,10 @@ struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
->>  			goto free_regulators;
->>  		}
->>  
->> +		ret = regulator_enable(reg);
->> +		if (ret < 0)
->> +			goto disable;
-> 
-> The name of this label is logically incorrect because we won't disable
-> the regulator from there but put it. Over that, I would rather prefer
-> to remove the label and add regulator_put() here itself.
-
-I will change this and following according to your suggestions and will send v3.
-
->> +
->>  		opp_table->regulators[i] = reg;
->>  	}
->>  
->> @@ -1582,9 +1586,15 @@ struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
->>  
->>  	return opp_table;
->>  
->> +disable:
->> +	regulator_put(reg);
->> +	--i;
->> +
->>  free_regulators:
->> -	while (i != 0)
->> -		regulator_put(opp_table->regulators[--i]);
->> +	for (; i >= 0; --i) {
->> +		regulator_disable(opp_table->regulators[i]);
->> +		regulator_put(opp_table->regulators[i]);
-> 
-> This is incorrect as this will now try to put/disable the regulator
-> which we failed to acquire. As --i happens only after the loop has run
-> once. You can rather do:
-> 
-> 	while (i--) {
-> 		regulator_disable(opp_table->regulators[i]);
-> 		regulator_put(opp_table->regulators[i]);
->         }
+>> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+>> index f8c36ff0d4c3..a355c76af5a5 100644
+>> --- a/arch/arm/boot/dts/exynos5420.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+>> @@ -1107,22 +1107,18 @@
+>>                          compatible = "operating-points-v2";
+>>
+>>                          opp00 {
+>> -                               opp-hz = /bits/ 64 <84000000>;
+>> -                               opp-microvolt = <925000>;
+>> +                               opp-hz = /bits/ 64 <150000000>;
+>> +                               opp-microvolt = <950000>;
+>>                          };
+>>                          opp01 {
+>> -                               opp-hz = /bits/ 64 <111000000>;
+>> +                               opp-hz = /bits/ 64 <200000000>;
+>>                                  opp-microvolt = <950000>;
+>>                          };
+>>                          opp02 {
+>> -                               opp-hz = /bits/ 64 <222000000>;
+>> +                               opp-hz = /bits/ 64 <300000000>;
+>>                                  opp-microvolt = <950000>;
+>>                          };
+>>                          opp03 {
+>> -                               opp-hz = /bits/ 64 <333000000>;
+>> -                               opp-microvolt = <950000>;
+>> -                       };
+>> -                       opp04 {
+>>                                  opp-hz = /bits/ 64 <400000000>;
+>>                                  opp-microvolt = <987500>;
+>>                          };
+>> --
+>> 2.17.1
+>>
 > 
 > 
->> +	}
->>  
->>  	kfree(opp_table->regulators);
->>  	opp_table->regulators = NULL;
->> @@ -1610,8 +1620,10 @@ void dev_pm_opp_put_regulators(struct opp_table *opp_table)
->>  	/* Make sure there are no concurrent readers while updating opp_table */
->>  	WARN_ON(!list_empty(&opp_table->opp_list));
->>  
->> -	for (i = opp_table->regulator_count - 1; i >= 0; i--)
->> +	for (i = opp_table->regulator_count - 1; i >= 0; i--) {
->> +		regulator_disable(opp_table->regulators[i]);
->>  		regulator_put(opp_table->regulators[i]);
->> +	}
->>  
->>  	_free_set_opp_data(opp_table);
->>  
->> -- 
->> 2.22.0
-> 
-
--- 
-Best regards,
-Kamil Konieczny
-Samsung R&D Institute Poland
