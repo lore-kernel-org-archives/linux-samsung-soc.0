@@ -1,17 +1,17 @@
 From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: Re: [PATCH v1 26/50] ARM: dts: exynos: align NOC100 bus OPPs in
+Subject: Re: [PATCH v1 27/50] ARM: dts: exynos: align bus_wcore OPPs in
  Exynos5420
-Date: Wed, 17 Jul 2019 12:27:38 +0200
-Message-ID: <8ed83c77-57f7-78a4-e437-714cfc7b5c58@partner.samsung.com>
-References: <CGME20190715124455eucas1p13bfc0c1d113225db9607e4c0dbac353c@eucas1p1.samsung.com>
+Date: Wed, 17 Jul 2019 12:29:48 +0200
+Message-ID: <701cbb66-17cb-9f32-1da4-4129a787fc7f@partner.samsung.com>
+References: <CGME20190715124456eucas1p2acf15d00e3fa7b77fe3a2b10ce1ab74f@eucas1p2.samsung.com>
         <20190715124417.4787-1-l.luba@partner.samsung.com>
-        <20190715124417.4787-27-l.luba@partner.samsung.com>
-        <CAJKOXPc3qsM5Xe5JViDZXYfes+_veb-KX3fnZjpkUCrphBcu-Q@mail.gmail.com>
+        <20190715124417.4787-28-l.luba@partner.samsung.com>
+        <CAJKOXPfFZL8q9hM1vPsLq+Qxe-gMz4c8j0jgFKfdf5qs68MTmA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPc3qsM5Xe5JViDZXYfes+_veb-KX3fnZjpkUCrphBcu-Q@mail.gmail.com>
+In-Reply-To: <CAJKOXPfFZL8q9hM1vPsLq+Qxe-gMz4c8j0jgFKfdf5qs68MTmA@mail.gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
@@ -19,24 +19,91 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@l
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
-On 7/17/19 12:10 PM, Krzysztof Kozlowski wrote:
+On 7/17/19 12:15 PM, Krzysztof Kozlowski wrote:
 > On Mon, 15 Jul 2019 at 14:44, Lukasz Luba <l.luba@partner.samsung.com> wrote:
 >>
->> The NOC100 has a parent which clock rate is set tot 400MHz. The OPPs which
->> are not possible to set are removed and new one is added.
+>> This is the most important bus in the Exynos5x SoC. The whole communication
+>> inside SoC does through that bus (apart from direct requests from CCI to
+>> DRAM controller). It is also modeled as a master bus in devfreq framework.
+>> It is also the only one OPP table throughout other buses which has voltage
+>> values. The devfreq software controls the speed of that bus and other
+>> buses. The other buses follows the rate of the master. There is only one
+>> regulator. The old lowest OPP had pair 925mV, 84MHz which is enough for
 > 
-> I think it is just NOC bus... or are there more of such and this is 100 MHz one?
-Yes, there is a bus NOC100 with a dedicated clock tree in the HW (with
-3 muxes and one divider), which makes possible to take different PLL as
-a source then WCORE have, divide the rate from it and even switch for a
-while to alternative stable PLL (on the 2nd mux to SPLL (after a
-divider)) to wait for main PLL rate change stability delay. Max rate is
-limited to 100MHz for this NOC100 bus.
+> s/lowest/slowest/
+OK
+> 
+>> this frequency. However, due to the fact that the other buses follows the
+>> WCORE bus by taking the OPP from their table with the same id, e.g. opp02,
+>> the children frequency should be stable with the set voltage.
+>> It could cause random faults very hard to debug.
+>> Thus, the patch removes the lowest OPP to make other buses' lowest OPPs
+> 
+> s/lowest/slowest/
+OK
+> 
+>> working. The new lowest OPP has voltage high enough for buses working up
+>> to 333MHz. It also changes the frequencies of the OPPs to align them to
+>> PLL value such that it is possible to set them using only a divider without
+>> reprogramming OPP.
+> 
+> Reprogramming OPP? What is it?
+Mistake, should be PLL. Thanks for that.
+> 
+>> Reprogramming the PLL was not set, so the real frequency
+> 
+> I understood from the previous that reprogramming the OPP (PLL?) was
+> happening... Please rephrase entire sentence.
+Yes, I will rewrite it when I will combine these patches into one.
 
 Regards,
 Lukasz
 > 
-> Best regards,
+> BR,
 > Krzysztof
+> 
+>> values were not the one from the OPP table, which could confuse the
+>> governor algorithms which relay on OPP speed values making the system to
+>> behave weird.
+>>
+>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+>> ---
+>>   arch/arm/boot/dts/exynos5420.dtsi | 12 ++++--------
+>>   1 file changed, 4 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+>> index f8c36ff0d4c3..a355c76af5a5 100644
+>> --- a/arch/arm/boot/dts/exynos5420.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+>> @@ -1107,22 +1107,18 @@
+>>                          compatible = "operating-points-v2";
+>>
+>>                          opp00 {
+>> -                               opp-hz = /bits/ 64 <84000000>;
+>> -                               opp-microvolt = <925000>;
+>> +                               opp-hz = /bits/ 64 <150000000>;
+>> +                               opp-microvolt = <950000>;
+>>                          };
+>>                          opp01 {
+>> -                               opp-hz = /bits/ 64 <111000000>;
+>> +                               opp-hz = /bits/ 64 <200000000>;
+>>                                  opp-microvolt = <950000>;
+>>                          };
+>>                          opp02 {
+>> -                               opp-hz = /bits/ 64 <222000000>;
+>> +                               opp-hz = /bits/ 64 <300000000>;
+>>                                  opp-microvolt = <950000>;
+>>                          };
+>>                          opp03 {
+>> -                               opp-hz = /bits/ 64 <333000000>;
+>> -                               opp-microvolt = <950000>;
+>> -                       };
+>> -                       opp04 {
+>>                                  opp-hz = /bits/ 64 <400000000>;
+>>                                  opp-microvolt = <987500>;
+>>                          };
+>> --
+>> 2.17.1
+>>
 > 
 > 
