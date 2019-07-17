@@ -1,93 +1,56 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v1 27/50] ARM: dts: exynos: align bus_wcore OPPs in Exynos5420
-Date: Wed, 17 Jul 2019 12:15:37 +0200
-Message-ID: <CAJKOXPfFZL8q9hM1vPsLq+Qxe-gMz4c8j0jgFKfdf5qs68MTmA@mail.gmail.com>
-References: <CGME20190715124456eucas1p2acf15d00e3fa7b77fe3a2b10ce1ab74f@eucas1p2.samsung.com>
- <20190715124417.4787-1-l.luba@partner.samsung.com> <20190715124417.4787-28-l.luba@partner.samsung.com>
+Subject: Re: [PATCH v1 37/50] ARM: dts: exynos: change parent and rate of
+ bus_fsys in Exynos5422
+Date: Wed, 17 Jul 2019 12:25:48 +0200
+Message-ID: <CAJKOXPfrGgAczQ-=1aE453RpJ9BN10ZDmFcrEMPkNyF6GcGtNA@mail.gmail.com>
+References: <CGME20190715124504eucas1p1afe0da2c6ac3a8b45d85017a77ba9edf@eucas1p1.samsung.com>
+ <20190715124417.4787-1-l.luba@partner.samsung.com> <20190715124417.4787-38-l.luba@partner.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190715124417.4787-28-l.luba@partner.samsung.com>
+In-Reply-To: <20190715124417.4787-38-l.luba@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Lukasz Luba <l.luba@partner.samsung.com>
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, s.nawrocki@samsung.com, myungjoo.ham@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 15 Jul 2019 at 14:44, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+On Mon, 15 Jul 2019 at 14:45, Lukasz Luba <l.luba@partner.samsung.com> wrote:
 >
-> This is the most important bus in the Exynos5x SoC. The whole communication
-> inside SoC does through that bus (apart from direct requests from CCI to
-> DRAM controller). It is also modeled as a master bus in devfreq framework.
-> It is also the only one OPP table throughout other buses which has voltage
-> values. The devfreq software controls the speed of that bus and other
-> buses. The other buses follows the rate of the master. There is only one
-> regulator. The old lowest OPP had pair 925mV, 84MHz which is enough for
+> The FSYS bus OPP table has been aligned to the new parent rate. This patch
+> sets the proper parent and picks the init frequency before the devfreq
+> governor starts working. It sets also parent rate (DPLL to 1200MHz).
 
-s/lowest/slowest/
+1. I see what the patch is doing, but please write why you are doing
+this. What problem are you solving here?
+2. Commit title is wrong - it is not Exynos 5422 but Odroid XU3/XU4
+family of boards.
 
-> this frequency. However, due to the fact that the other buses follows the
-> WCORE bus by taking the OPP from their table with the same id, e.g. opp02,
-> the children frequency should be stable with the set voltage.
-> It could cause random faults very hard to debug.
-> Thus, the patch removes the lowest OPP to make other buses' lowest OPPs
-
-s/lowest/slowest/
-
-> working. The new lowest OPP has voltage high enough for buses working up
-> to 333MHz. It also changes the frequencies of the OPPs to align them to
-> PLL value such that it is possible to set them using only a divider without
-> reprogramming OPP.
-
-Reprogramming OPP? What is it?
-
-> Reprogramming the PLL was not set, so the real frequency
-
-I understood from the previous that reprogramming the OPP (PLL?) was
-happening... Please rephrase entire sentence.
-
-BR,
-Krzysztof
-
-> values were not the one from the OPP table, which could confuse the
-> governor algorithms which relay on OPP speed values making the system to
-> behave weird.
 >
 > Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 > ---
->  arch/arm/boot/dts/exynos5420.dtsi | 12 ++++--------
->  1 file changed, 4 insertions(+), 8 deletions(-)
+>  arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 5 +++++
+>  1 file changed, 5 insertions(+)
 >
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index f8c36ff0d4c3..a355c76af5a5 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -1107,22 +1107,18 @@
->                         compatible = "operating-points-v2";
+> diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+> index d460041f716c..6a82dd175b8a 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+> +++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+> @@ -72,6 +72,11 @@
 >
->                         opp00 {
-> -                               opp-hz = /bits/ 64 <84000000>;
-> -                               opp-microvolt = <925000>;
-> +                               opp-hz = /bits/ 64 <150000000>;
-> +                               opp-microvolt = <950000>;
->                         };
->                         opp01 {
-> -                               opp-hz = /bits/ 64 <111000000>;
-> +                               opp-hz = /bits/ 64 <200000000>;
->                                 opp-microvolt = <950000>;
->                         };
->                         opp02 {
-> -                               opp-hz = /bits/ 64 <222000000>;
-> +                               opp-hz = /bits/ 64 <300000000>;
->                                 opp-microvolt = <950000>;
->                         };
->                         opp03 {
-> -                               opp-hz = /bits/ 64 <333000000>;
-> -                               opp-microvolt = <950000>;
-> -                       };
-> -                       opp04 {
->                                 opp-hz = /bits/ 64 <400000000>;
->                                 opp-microvolt = <987500>;
->                         };
-> --
-> 2.17.1
->
+>  &bus_fsys {
+>         devfreq = <&bus_wcore>;
+> +       assigned-clocks = <&clock CLK_MOUT_ACLK200_FSYS>,
+> +                         <&clock CLK_DOUT_ACLK200_FSYS>,
+> +                         <&clock CLK_FOUT_DPLL>;
+> +       assigned-clock-parents = <&clock CLK_MOUT_SCLK_DPLL>;
+> +       assigned-clock-rates = <0>, <240000000>,<1200000000>;
+
+Here and in all other patches:
+I am not entirely sure that this should be here. It looks like
+property of the SoC. Do we expect that buses will be configured to
+different clock rates between different boards? Since the OPP tables
+are shared (they are property of the SoC, not board) then I would
+assume that default frequency is shared as well.
+
+Best regards,
+Krzysztof
