@@ -1,117 +1,452 @@
-From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: Re: [PATCH v1 08/50] clk: samsung: change aclk266_isp clocks
- definitions Exynos5420
-Date: Thu, 18 Jul 2019 08:05:00 +0200
-Message-ID: <f42696bc-4bc7-3ad8-9507-e12952159fff@partner.samsung.com>
-References: <20190715124417.4787-1-l.luba@partner.samsung.com>
- <CGME20190715124440eucas1p10bb25e412f32f0da95761f96831893e6@eucas1p1.samsung.com>
- <20190715124417.4787-9-l.luba@partner.samsung.com>
- <5ac878fa-21c8-afcd-9afe-13ed3cd36afb@samsung.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH V3] cpufreq: Make cpufreq_generic_init() return void
+Date: Thu, 18 Jul 2019 10:47:37 +0200
+Message-ID: <2600442.BuetrrJ8M2@kreacher>
+References: <770b46d99e2fa88bc8cdfd95388374284c8b3cf8.1563249700.git.viresh.kumar@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <5ac878fa-21c8-afcd-9afe-13ed3cd36afb@samsung.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: mark.rutland@arm.com, b.zolnierkie@samsung.com, sboyd@kernel.org, mturquette@baylibre.com, krzk@kernel.org, a.hajda@samsung.com, robh+dt@kernel.org, kyungmin.park@samsung.com, kgene@kernel.org, myungjoo.ham@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <770b46d99e2fa88bc8cdfd95388374284c8b3cf8.1563249700.git.viresh.kumar@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Markus Mayer <mmayer@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Keguang Zhang <keguang.zhang@gmail.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, Kevin Hilman <khilman@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, linux-kerne
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgQ2hhbndvbywKCk9uIDcvMTYvMTkgMTI6MjIgUE0sIENoYW53b28gQ2hvaSB3cm90ZToKPiBI
-aSwKPiAKPiBPbiAxOS4gNy4gMTUuIOyYpO2bhCA5OjQzLCBMdWthc3ogTHViYSB3cm90ZToKPj4g
-VGhlIEFDTEsyNjZfSVNQIGhhcyBkaWZmZXJlbnQgdG9wb2xvZ3kgaW4gRXh5bm9zNTQyMCBhbmQg
-NTQyMi81ODAwLiAgSW4KPj4gRXh5bm9zNTQyMCB0aGlzIGNsb2NrIGRvZXMgbm90IGhhdmUgZGVk
-aWNhdGVkIE1VWCB3aGljaCBjaG9vc2VzIFBMTCBpbnN0ZWFkCj4+IGl0IHRha2VzIHRoZSBjbG9j
-ayBmcm9tIDItbGV2ZWwgbXV4IGZyb20gQUNMSzI2Ni4gIEluIEV4eW5vczU0MjIgdGhlcmUgaXMg
-YQo+PiBkZWRpY2F0ZWQgY2xvY2sgdHJlZSBhbmQgdGhlIFBMTCBjYW4gYmUgY2hvc2VuLiAgVGhl
-IHBhdGNoIGFkZHMgbmVlZGVkCj4+IE1VWGVzIGluIHRoZSBleHlub3M1ODAwX211eF9jbG9rcywg
-dXBkYXRlcyBleHlub3M1eF9tdXhfY2xrcyBhbmQKPj4gZXh5bm9zNTQyMF9tdXhfY2xrcyBwcm9w
-ZXJseS4gSXQgYWxzbyBhZGRzIElEcyB0byBtYW5nZSB0aGVzZSBjbG9ja3MgZnJvbQo+PiBEVC4K
-Pj4KPj4gU2lnbmVkLW9mZi1ieTogTHVrYXN6IEx1YmEgPGwubHViYUBwYXJ0bmVyLnNhbXN1bmcu
-Y29tPgo+PiAtLS0KPj4gICBkcml2ZXJzL2Nsay9zYW1zdW5nL2Nsay1leHlub3M1NDIwLmMgfCAx
-NyArKysrKysrKysrKysrKystLQo+PiAgIDEgZmlsZSBjaGFuZ2VkLCAxNSBpbnNlcnRpb25zKCsp
-LCAyIGRlbGV0aW9ucygtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvc2Ftc3VuZy9j
-bGstZXh5bm9zNTQyMC5jIGIvZHJpdmVycy9jbGsvc2Ftc3VuZy9jbGstZXh5bm9zNTQyMC5jCj4+
-IGluZGV4IDlkNTQ4NTZkYmNkYS4uNWYyNTEyNzliNGM4IDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJz
-L2Nsay9zYW1zdW5nL2Nsay1leHlub3M1NDIwLmMKPj4gKysrIGIvZHJpdmVycy9jbGsvc2Ftc3Vu
-Zy9jbGstZXh5bm9zNTQyMC5jCj4+IEBAIC00MzIsNiArNDMyLDEwIEBAIFBOQU1FKG1vdXRfZ3Jv
-dXAxNl81ODAwX3ApCT0geyAiZG91dF9vc2NfZGl2IiwgIm1vdXRfbWF1X2VwbGxfY2xrIiB9Owo+
-PiAgIFBOQU1FKG1vdXRfbXhfbXNwbGxfY2NvcmVfcGh5X3ApID0geyAic2Nsa19icGxsIiwgIm1v
-dXRfc2Nsa19kcGxsIiwKPj4gICAJCQkJCSJtb3V0X3NjbGtfbXBsbCIsICJmZl9kb3V0X3NwbGwy
-IiwKPj4gICAJCQkJCSJtb3V0X3NjbGtfc3BsbCIsICJtb3V0X3NjbGtfZXBsbCJ9Owo+PiArUE5B
-TUUobW91dF9ncm91cDE3XzU4MDBfcCkJPSB7ICJkb3V0X2FjbGsyNjZfaXNwIiwgImRvdXRfc2Ns
-a19zdyIgfTsKPj4gK1BOQU1FKG1vdXRfZ3JvdXAxOF81ODAwX3ApCT0geyAiZG91dF9vc2NfZGl2
-IiwgIm1vdXRfc3dfYWNsazI2Nl9pc3AiIH07Cj4+ICtQTkFNRShtb3V0X2dyb3VwMTlfNTgwMF9w
-KQk9IHsgIm1vdXRfc2Nsa19jcGxsIiwgIm1vdXRfc2Nsa19kcGxsIiwKPj4gKwkJCQkJIm1vdXRf
-c2Nsa19tcGxsIiwgIm1vdXRfc2Nsa19pcGxsIn07Cj4+ICAgCj4+ICAgLyogZml4ZWQgcmF0ZSBj
-bG9ja3MgZ2VuZXJhdGVkIG91dHNpZGUgdGhlIHNvYyAqLwo+PiAgIHN0YXRpYyBzdHJ1Y3Qgc2Ft
-c3VuZ19maXhlZF9yYXRlX2Nsb2NrCj4+IEBAIC00OTQsNiArNDk4LDggQEAgc3RhdGljIGNvbnN0
-IHN0cnVjdCBzYW1zdW5nX211eF9jbG9jayBleHlub3M1ODAwX211eF9jbGtzW10gX19pbml0Y29u
-c3QgPSB7Cj4+ICAgCU1VWChDTEtfU0NMS19CUExMLCAic2Nsa19icGxsIiwgbW91dF9icGxsX3As
-IFNSQ19UT1A3LCAyNCwgMSksCj4+ICAgCU1VWCgwLCAibW91dF9lcGxsMiIsIG1vdXRfZXBsbDJf
-NTgwMF9wLCBTUkNfVE9QNywgMjgsIDEpLAo+PiAgIAo+PiArCU1VWChDTEtfTU9VVF9BQ0xLMjY2
-X0lTUCwgIm1vdXRfYWNsazI2Nl9pc3AiLCBtb3V0X2dyb3VwMTlfNTgwMF9wLAo+PiArCQkJU1JD
-X1RPUDgsIDEyLCAyKSwKPj4gICAJTVVYKDAsICJtb3V0X2FjbGs1NTBfY2FtIiwgbW91dF9ncm91
-cDNfNTgwMF9wLCBTUkNfVE9QOCwgMTYsIDMpLAo+PiAgIAlNVVgoMCwgIm1vdXRfYWNsa2ZsMV81
-NTBfY2FtIiwgbW91dF9ncm91cDNfNTgwMF9wLCBTUkNfVE9QOCwgMjAsIDMpLAo+PiAgIAlNVVgo
-MCwgIm1vdXRfYWNsazQzMl9jYW0iLCBtb3V0X2dyb3VwNl81ODAwX3AsIFNSQ19UT1A4LCAyNCwg
-MiksCj4+IEBAIC01MDEsNiArNTA3LDggQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBzYW1zdW5nX211
-eF9jbG9jayBleHlub3M1ODAwX211eF9jbGtzW10gX19pbml0Y29uc3QgPSB7Cj4+ICAgCj4+ICAg
-CU1VWF9GKENMS19NT1VUX1VTRVJfTUFVX0VQTEwsICJtb3V0X3VzZXJfbWF1X2VwbGwiLCBtb3V0
-X2dyb3VwMTZfNTgwMF9wLAo+PiAgIAkJCVNSQ19UT1A5LCA4LCAxLCBDTEtfU0VUX1JBVEVfUEFS
-RU5ULCAwKSwKPj4gKwlNVVgoQ0xLX01PVVRfVVNFUl9BQ0xLMjY2X0lTUCwgIm1vdXRfdXNlcl9h
-Y2xrMjY2X2lzcCIsCj4+ICsJCQltb3V0X2dyb3VwMThfNTgwMF9wLCBTUkNfVE9QOSwgMTIsIDEp
-LAo+PiAgIAlNVVgoMCwgIm1vdXRfdXNlcl9hY2xrNTUwX2NhbSIsIG1vdXRfZ3JvdXAxNV81ODAw
-X3AsCj4+ICAgCQkJCQkJCVNSQ19UT1A5LCAxNiwgMSksCj4+ICAgCU1VWCgwLCAibW91dF91c2Vy
-X2FjbGtmbDFfNTUwX2NhbSIsIG1vdXRfZ3JvdXAxM181ODAwX3AsCj4+IEBAIC01MTAsNiArNTE4
-LDggQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBzYW1zdW5nX211eF9jbG9jayBleHlub3M1ODAwX211
-eF9jbGtzW10gX19pbml0Y29uc3QgPSB7Cj4+ICAgCU1VWCgwLCAibW91dF91c2VyX2FjbGs0MzJf
-c2NhbGVyIiwgbW91dF9ncm91cDlfNTgwMF9wLAo+PiAgIAkJCQkJCQlTUkNfVE9QOSwgMjgsIDEp
-LAo+PiAgIAo+PiArCU1VWChDTEtfTU9VVF9TV19BQ0xLMjY2X0lTUCwgIm1vdXRfc3dfYWNsazI2
-Nl9pc3AiLCBtb3V0X2dyb3VwMTdfNTgwMF9wLAo+PiArCQkJU1JDX1RPUDEzLCAxMiwgMSksCj4+
-ICAgCU1VWCgwLCAibW91dF9zd19hY2xrNTUwX2NhbSIsIG1vdXRfZ3JvdXAxNF81ODAwX3AsIFNS
-Q19UT1AxMywgMTYsIDEpLAo+PiAgIAlNVVgoMCwgIm1vdXRfc3dfYWNsa2ZsMV81NTBfY2FtIiwg
-bW91dF9ncm91cDEyXzU4MDBfcCwKPj4gICAJCQkJCQkJU1JDX1RPUDEzLCAyMCwgMSksCj4+IEBA
-IC01MjQsNiArNTM0LDggQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBzYW1zdW5nX211eF9jbG9jayBl
-eHlub3M1ODAwX211eF9jbGtzW10gX19pbml0Y29uc3QgPSB7Cj4+ICAgc3RhdGljIGNvbnN0IHN0
-cnVjdCBzYW1zdW5nX2Rpdl9jbG9jayBleHlub3M1ODAwX2Rpdl9jbGtzW10gX19pbml0Y29uc3Qg
-PSB7Cj4+ICAgCURJVihDTEtfRE9VVF9BQ0xLNDAwX1dDT1JFLCAiZG91dF9hY2xrNDAwX3djb3Jl
-IiwKPj4gICAJCQkibW91dF9hY2xrNDAwX3djb3JlIiwgRElWX1RPUDAsIDE2LCAzKSwKPj4gKwlE
-SVYoQ0xLX0RPVVRfQUNMSzI2Nl9JU1AsICJkb3V0X2FjbGsyNjZfaXNwIiwgIm1vdXRfYWNsazI2
-Nl9pc3AiLAo+PiArCQkJCURJVl9UT1A4LCAxMiwgMyksCj4+ICAgCURJVigwLCAiZG91dF9hY2xr
-NTUwX2NhbSIsICJtb3V0X2FjbGs1NTBfY2FtIiwKPj4gICAJCQkJRElWX1RPUDgsIDE2LCAzKSwK
-Pj4gICAJRElWKDAsICJkb3V0X2FjbGtmbDFfNTUwX2NhbSIsICJtb3V0X2FjbGtmbDFfNTUwX2Nh
-bSIsCj4+IEBAIC01NzQsNiArNTg2LDkgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBzYW1zdW5nX211
-eF9jbG9jayBleHlub3M1NDIwX211eF9jbGtzW10gX19pbml0Y29uc3QgPSB7Cj4+ICAgCU1VWCgw
-LCAibW91dF9hY2xrMzAwX2Rpc3AxIiwgbW91dF9ncm91cDFfcCwgU1JDX1RPUDIsIDI0LCAyKSwK
-Pj4gICAJTVVYKDAsICJtb3V0X2FjbGszMDBfZ3NjbCIsIG1vdXRfZ3JvdXAxX3AsIFNSQ19UT1Ay
-LCAyOCwgMiksCj4+ICAgCj4+ICsJTVVYKENMS19NT1VUX1VTRVJfQUNMSzI2Nl9JU1AsICJtb3V0
-X3VzZXJfYWNsazI2Nl9pc3AiLAo+PiArCQkJbW91dF91c2VyX2FjbGsyNjZfaXNwX3AsIFNSQ19U
-T1A0LCAxNiwgMSksCj4+ICsKPj4gICAJTVVYKENMS19NT1VUX01YX01TUExMX0NDT1JFLCAibW91
-dF9teF9tc3BsbF9jY29yZSIsCj4+ICAgCQkJbW91dF9ncm91cDVfNTgwMF9wLCBTUkNfVE9QNywg
-MTYsIDIpLAo+PiAgIAlNVVhfRigwLCAibW91dF9tYXVfZXBsbF9jbGsiLCBtb3V0X21hdV9lcGxs
-X2Nsa19wLCBTUkNfVE9QNywgMjAsIDIsCj4+IEBAIC02NDEsOCArNjU2LDYgQEAgc3RhdGljIGNv
-bnN0IHN0cnVjdCBzYW1zdW5nX211eF9jbG9jayBleHlub3M1eF9tdXhfY2xrc1tdIF9faW5pdGNv
-bnN0ID0gewo+PiAgIAkJCVNSQ19UT1A0LCA4LCAxKSwKPj4gICAJTVVYKDAsICJtb3V0X3VzZXJf
-YWNsazMzM180MzJfaXNwMCIsIG1vdXRfdXNlcl9hY2xrMzMzXzQzMl9pc3AwX3AsCj4+ICAgCQkJ
-U1JDX1RPUDQsIDEyLCAxKSwKPj4gLQlNVVgoMCwgIm1vdXRfdXNlcl9hY2xrMjY2X2lzcCIsIG1v
-dXRfdXNlcl9hY2xrMjY2X2lzcF9wLAo+PiAtCQkJU1JDX1RPUDQsIDE2LCAxKSwKPj4gICAJTVVY
-KDAsICJtb3V0X3VzZXJfYWNsazI2NiIsIG1vdXRfdXNlcl9hY2xrMjY2X3AsIFNSQ19UT1A0LCAy
-MCwgMSksCj4+ICAgCU1VWCgwLCAibW91dF91c2VyX2FjbGsxNjYiLCBtb3V0X3VzZXJfYWNsazE2
-Nl9wLCBTUkNfVE9QNCwgMjQsIDEpLAo+PiAgIAlNVVgoQ0xLX01PVVRfVVNFUl9BQ0xLMzMzLCAi
-bW91dF91c2VyX2FjbGszMzMiLCBtb3V0X3VzZXJfYWNsazMzM19wLAo+Pgo+IAo+IEkgY2hlY2tl
-ZCBpdCBvbiBFeHlub3M1NDIwLzU0MjIgVFJNLgo+IAo+IEFja2VkLWJ5OiBDaGFud29vIENob2kg
-PGN3MDAuY2hvaUBzYW1zdW5nLmNvbT4KVGhhbmsgeW91IQoKUmVnYXJkcywKTHVrYXN6Cj4gCgpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0t
-a2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcK
-aHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2Vy
-bmVsCg==
+On Tuesday, July 16, 2019 6:06:08 AM CEST Viresh Kumar wrote:
+> It always returns 0 (success) and its return type should really be void.
+> Over that, many drivers have added error handling code based on its
+> return value, which is not required at all.
+> 
+> change its return type to void and update all the callers.
+> 
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+> V2->V3:
+> - Update bmips cpufreq driver to avoid "warning: 'ret' may be used
+>   uninitialized".
+> - Build bot reported this issue almost after 4 days of posting this
+>   patch, I was expecting this a lot earlier :)
+> 
+>  drivers/cpufreq/bmips-cpufreq.c     | 17 ++++++-----------
+>  drivers/cpufreq/cpufreq.c           |  4 +---
+>  drivers/cpufreq/davinci-cpufreq.c   |  3 ++-
+>  drivers/cpufreq/imx6q-cpufreq.c     |  6 ++----
+>  drivers/cpufreq/kirkwood-cpufreq.c  |  3 ++-
+>  drivers/cpufreq/loongson1-cpufreq.c |  8 +++-----
+>  drivers/cpufreq/loongson2_cpufreq.c |  3 ++-
+>  drivers/cpufreq/maple-cpufreq.c     |  3 ++-
+>  drivers/cpufreq/omap-cpufreq.c      | 15 +++++----------
+>  drivers/cpufreq/pasemi-cpufreq.c    |  3 ++-
+>  drivers/cpufreq/pmac32-cpufreq.c    |  3 ++-
+>  drivers/cpufreq/pmac64-cpufreq.c    |  3 ++-
+>  drivers/cpufreq/s3c2416-cpufreq.c   |  9 ++-------
+>  drivers/cpufreq/s3c64xx-cpufreq.c   | 15 +++------------
+>  drivers/cpufreq/s5pv210-cpufreq.c   |  3 ++-
+>  drivers/cpufreq/sa1100-cpufreq.c    |  3 ++-
+>  drivers/cpufreq/sa1110-cpufreq.c    |  3 ++-
+>  drivers/cpufreq/spear-cpufreq.c     |  3 ++-
+>  drivers/cpufreq/tegra20-cpufreq.c   |  8 +-------
+>  include/linux/cpufreq.h             |  2 +-
+>  20 files changed, 46 insertions(+), 71 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/bmips-cpufreq.c b/drivers/cpufreq/bmips-cpufreq.c
+> index 56a4ebbf00e0..f7c23fa468f0 100644
+> --- a/drivers/cpufreq/bmips-cpufreq.c
+> +++ b/drivers/cpufreq/bmips-cpufreq.c
+> @@ -131,23 +131,18 @@ static int bmips_cpufreq_exit(struct cpufreq_policy *policy)
+>  static int bmips_cpufreq_init(struct cpufreq_policy *policy)
+>  {
+>  	struct cpufreq_frequency_table *freq_table;
+> -	int ret;
+>  
+>  	freq_table = bmips_cpufreq_get_freq_table(policy);
+>  	if (IS_ERR(freq_table)) {
+> -		ret = PTR_ERR(freq_table);
+> -		pr_err("%s: couldn't determine frequency table (%d).\n",
+> -			BMIPS_CPUFREQ_NAME, ret);
+> -		return ret;
+> +		pr_err("%s: couldn't determine frequency table (%ld).\n",
+> +			BMIPS_CPUFREQ_NAME, PTR_ERR(freq_table));
+> +		return PTR_ERR(freq_table);
+>  	}
+>  
+> -	ret = cpufreq_generic_init(policy, freq_table, TRANSITION_LATENCY);
+> -	if (ret)
+> -		bmips_cpufreq_exit(policy);
+> -	else
+> -		pr_info("%s: registered\n", BMIPS_CPUFREQ_NAME);
+> +	cpufreq_generic_init(policy, freq_table, TRANSITION_LATENCY);
+> +	pr_info("%s: registered\n", BMIPS_CPUFREQ_NAME);
+>  
+> -	return ret;
+> +	return 0;
+>  }
+>  
+>  static struct cpufreq_driver bmips_cpufreq_driver = {
+> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> index 4d6043ee7834..8dda62367816 100644
+> --- a/drivers/cpufreq/cpufreq.c
+> +++ b/drivers/cpufreq/cpufreq.c
+> @@ -159,7 +159,7 @@ EXPORT_SYMBOL_GPL(arch_set_freq_scale);
+>   * - set policies transition latency
+>   * - policy->cpus with all possible CPUs
+>   */
+> -int cpufreq_generic_init(struct cpufreq_policy *policy,
+> +void cpufreq_generic_init(struct cpufreq_policy *policy,
+>  		struct cpufreq_frequency_table *table,
+>  		unsigned int transition_latency)
+>  {
+> @@ -171,8 +171,6 @@ int cpufreq_generic_init(struct cpufreq_policy *policy,
+>  	 * share the clock and voltage and clock.
+>  	 */
+>  	cpumask_setall(policy->cpus);
+> -
+> -	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(cpufreq_generic_init);
+>  
+> diff --git a/drivers/cpufreq/davinci-cpufreq.c b/drivers/cpufreq/davinci-cpufreq.c
+> index 3de48ae60c29..297d23cad8b5 100644
+> --- a/drivers/cpufreq/davinci-cpufreq.c
+> +++ b/drivers/cpufreq/davinci-cpufreq.c
+> @@ -90,7 +90,8 @@ static int davinci_cpu_init(struct cpufreq_policy *policy)
+>  	 * Setting the latency to 2000 us to accommodate addition of drivers
+>  	 * to pre/post change notification list.
+>  	 */
+> -	return cpufreq_generic_init(policy, freq_table, 2000 * 1000);
+> +	cpufreq_generic_init(policy, freq_table, 2000 * 1000);
+> +	return 0;
+>  }
+>  
+>  static struct cpufreq_driver davinci_driver = {
+> diff --git a/drivers/cpufreq/imx6q-cpufreq.c b/drivers/cpufreq/imx6q-cpufreq.c
+> index 47ccfa6b17b7..648a09a1778a 100644
+> --- a/drivers/cpufreq/imx6q-cpufreq.c
+> +++ b/drivers/cpufreq/imx6q-cpufreq.c
+> @@ -190,14 +190,12 @@ static int imx6q_set_target(struct cpufreq_policy *policy, unsigned int index)
+>  
+>  static int imx6q_cpufreq_init(struct cpufreq_policy *policy)
+>  {
+> -	int ret;
+> -
+>  	policy->clk = clks[ARM].clk;
+> -	ret = cpufreq_generic_init(policy, freq_table, transition_latency);
+> +	cpufreq_generic_init(policy, freq_table, transition_latency);
+>  	policy->suspend_freq = max_freq;
+>  	dev_pm_opp_of_register_em(policy->cpus);
+>  
+> -	return ret;
+> +	return 0;
+>  }
+>  
+>  static struct cpufreq_driver imx6q_cpufreq_driver = {
+> diff --git a/drivers/cpufreq/kirkwood-cpufreq.c b/drivers/cpufreq/kirkwood-cpufreq.c
+> index 7ab564c1f7ae..cb74bdc5baaa 100644
+> --- a/drivers/cpufreq/kirkwood-cpufreq.c
+> +++ b/drivers/cpufreq/kirkwood-cpufreq.c
+> @@ -85,7 +85,8 @@ static int kirkwood_cpufreq_target(struct cpufreq_policy *policy,
+>  /* Module init and exit code */
+>  static int kirkwood_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>  {
+> -	return cpufreq_generic_init(policy, kirkwood_freq_table, 5000);
+> +	cpufreq_generic_init(policy, kirkwood_freq_table, 5000);
+> +	return 0;
+>  }
+>  
+>  static struct cpufreq_driver kirkwood_cpufreq_driver = {
+> diff --git a/drivers/cpufreq/loongson1-cpufreq.c b/drivers/cpufreq/loongson1-cpufreq.c
+> index 21c9ce8526c0..0ea88778882a 100644
+> --- a/drivers/cpufreq/loongson1-cpufreq.c
+> +++ b/drivers/cpufreq/loongson1-cpufreq.c
+> @@ -81,7 +81,7 @@ static int ls1x_cpufreq_init(struct cpufreq_policy *policy)
+>  	struct device *cpu_dev = get_cpu_device(policy->cpu);
+>  	struct cpufreq_frequency_table *freq_tbl;
+>  	unsigned int pll_freq, freq;
+> -	int steps, i, ret;
+> +	int steps, i;
+>  
+>  	pll_freq = clk_get_rate(cpufreq->pll_clk) / 1000;
+>  
+> @@ -103,11 +103,9 @@ static int ls1x_cpufreq_init(struct cpufreq_policy *policy)
+>  	freq_tbl[i].frequency = CPUFREQ_TABLE_END;
+>  
+>  	policy->clk = cpufreq->clk;
+> -	ret = cpufreq_generic_init(policy, freq_tbl, 0);
+> -	if (ret)
+> -		kfree(freq_tbl);
+> +	cpufreq_generic_init(policy, freq_tbl, 0);
+>  
+> -	return ret;
+> +	return 0;
+>  }
+>  
+>  static int ls1x_cpufreq_exit(struct cpufreq_policy *policy)
+> diff --git a/drivers/cpufreq/loongson2_cpufreq.c b/drivers/cpufreq/loongson2_cpufreq.c
+> index da344696beed..890813e0bb76 100644
+> --- a/drivers/cpufreq/loongson2_cpufreq.c
+> +++ b/drivers/cpufreq/loongson2_cpufreq.c
+> @@ -95,7 +95,8 @@ static int loongson2_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>  	}
+>  
+>  	policy->clk = cpuclk;
+> -	return cpufreq_generic_init(policy, &loongson2_clockmod_table[0], 0);
+> +	cpufreq_generic_init(policy, &loongson2_clockmod_table[0], 0);
+> +	return 0;
+>  }
+>  
+>  static int loongson2_cpufreq_exit(struct cpufreq_policy *policy)
+> diff --git a/drivers/cpufreq/maple-cpufreq.c b/drivers/cpufreq/maple-cpufreq.c
+> index f5220b3d4ec5..28d346062166 100644
+> --- a/drivers/cpufreq/maple-cpufreq.c
+> +++ b/drivers/cpufreq/maple-cpufreq.c
+> @@ -140,7 +140,8 @@ static unsigned int maple_cpufreq_get_speed(unsigned int cpu)
+>  
+>  static int maple_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>  {
+> -	return cpufreq_generic_init(policy, maple_cpu_freqs, 12000);
+> +	cpufreq_generic_init(policy, maple_cpu_freqs, 12000);
+> +	return 0;
+>  }
+>  
+>  static struct cpufreq_driver maple_cpufreq_driver = {
+> diff --git a/drivers/cpufreq/omap-cpufreq.c b/drivers/cpufreq/omap-cpufreq.c
+> index 29643f06a3c3..8d14b42a8c6f 100644
+> --- a/drivers/cpufreq/omap-cpufreq.c
+> +++ b/drivers/cpufreq/omap-cpufreq.c
+> @@ -122,23 +122,18 @@ static int omap_cpu_init(struct cpufreq_policy *policy)
+>  			dev_err(mpu_dev,
+>  				"%s: cpu%d: failed creating freq table[%d]\n",
+>  				__func__, policy->cpu, result);
+> -			goto fail;
+> +			clk_put(policy->clk);
+> +			return result;
+>  		}
+>  	}
+>  
+>  	atomic_inc_return(&freq_table_users);
+>  
+>  	/* FIXME: what's the actual transition time? */
+> -	result = cpufreq_generic_init(policy, freq_table, 300 * 1000);
+> -	if (!result) {
+> -		dev_pm_opp_of_register_em(policy->cpus);
+> -		return 0;
+> -	}
+> +	cpufreq_generic_init(policy, freq_table, 300 * 1000);
+> +	dev_pm_opp_of_register_em(policy->cpus);
+>  
+> -	freq_table_free();
+> -fail:
+> -	clk_put(policy->clk);
+> -	return result;
+> +	return 0;
+>  }
+>  
+>  static int omap_cpu_exit(struct cpufreq_policy *policy)
+> diff --git a/drivers/cpufreq/pasemi-cpufreq.c b/drivers/cpufreq/pasemi-cpufreq.c
+> index 6b1e4abe3248..93f39a1d4c3d 100644
+> --- a/drivers/cpufreq/pasemi-cpufreq.c
+> +++ b/drivers/cpufreq/pasemi-cpufreq.c
+> @@ -196,7 +196,8 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>  	policy->cur = pas_freqs[cur_astate].frequency;
+>  	ppc_proc_freq = policy->cur * 1000ul;
+>  
+> -	return cpufreq_generic_init(policy, pas_freqs, get_gizmo_latency());
+> +	cpufreq_generic_init(policy, pas_freqs, get_gizmo_latency());
+> +	return 0;
+>  
+>  out_unmap_sdcpwr:
+>  	iounmap(sdcpwr_mapbase);
+> diff --git a/drivers/cpufreq/pmac32-cpufreq.c b/drivers/cpufreq/pmac32-cpufreq.c
+> index 650104d729f3..73621bc11976 100644
+> --- a/drivers/cpufreq/pmac32-cpufreq.c
+> +++ b/drivers/cpufreq/pmac32-cpufreq.c
+> @@ -372,7 +372,8 @@ static int pmac_cpufreq_target(	struct cpufreq_policy *policy,
+>  
+>  static int pmac_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>  {
+> -	return cpufreq_generic_init(policy, pmac_cpu_freqs, transition_latency);
+> +	cpufreq_generic_init(policy, pmac_cpu_freqs, transition_latency);
+> +	return 0;
+>  }
+>  
+>  static u32 read_gpio(struct device_node *np)
+> diff --git a/drivers/cpufreq/pmac64-cpufreq.c b/drivers/cpufreq/pmac64-cpufreq.c
+> index 1af3492a000d..d7542a106e6b 100644
+> --- a/drivers/cpufreq/pmac64-cpufreq.c
+> +++ b/drivers/cpufreq/pmac64-cpufreq.c
+> @@ -321,7 +321,8 @@ static unsigned int g5_cpufreq_get_speed(unsigned int cpu)
+>  
+>  static int g5_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>  {
+> -	return cpufreq_generic_init(policy, g5_cpu_freqs, transition_latency);
+> +	cpufreq_generic_init(policy, g5_cpu_freqs, transition_latency);
+> +	return 0;
+>  }
+>  
+>  static struct cpufreq_driver g5_cpufreq_driver = {
+> diff --git a/drivers/cpufreq/s3c2416-cpufreq.c b/drivers/cpufreq/s3c2416-cpufreq.c
+> index f7ff1ed7fef1..106910351c41 100644
+> --- a/drivers/cpufreq/s3c2416-cpufreq.c
+> +++ b/drivers/cpufreq/s3c2416-cpufreq.c
+> @@ -447,21 +447,16 @@ static int s3c2416_cpufreq_driver_init(struct cpufreq_policy *policy)
+>  	/* Datasheet says PLL stabalisation time must be at least 300us,
+>  	 * so but add some fudge. (reference in LOCKCON0 register description)
+>  	 */
+> -	ret = cpufreq_generic_init(policy, s3c_freq->freq_table,
+> +	cpufreq_generic_init(policy, s3c_freq->freq_table,
+>  			(500 * 1000) + s3c_freq->regulator_latency);
+> -	if (ret)
+> -		goto err_freq_table;
+> -
+>  	register_reboot_notifier(&s3c2416_cpufreq_reboot_notifier);
+>  
+>  	return 0;
+>  
+> -err_freq_table:
+>  #ifdef CONFIG_ARM_S3C2416_CPUFREQ_VCORESCALE
+> -	regulator_put(s3c_freq->vddarm);
+>  err_vddarm:
+> -#endif
+>  	clk_put(s3c_freq->armclk);
+> +#endif
+>  err_armclk:
+>  	clk_put(s3c_freq->hclk);
+>  err_hclk:
+> diff --git a/drivers/cpufreq/s3c64xx-cpufreq.c b/drivers/cpufreq/s3c64xx-cpufreq.c
+> index 37df2d892eb0..af0c00dabb22 100644
+> --- a/drivers/cpufreq/s3c64xx-cpufreq.c
+> +++ b/drivers/cpufreq/s3c64xx-cpufreq.c
+> @@ -144,7 +144,6 @@ static void s3c64xx_cpufreq_config_regulator(void)
+>  
+>  static int s3c64xx_cpufreq_driver_init(struct cpufreq_policy *policy)
+>  {
+> -	int ret;
+>  	struct cpufreq_frequency_table *freq;
+>  
+>  	if (policy->cpu != 0)
+> @@ -165,8 +164,7 @@ static int s3c64xx_cpufreq_driver_init(struct cpufreq_policy *policy)
+>  #ifdef CONFIG_REGULATOR
+>  	vddarm = regulator_get(NULL, "vddarm");
+>  	if (IS_ERR(vddarm)) {
+> -		ret = PTR_ERR(vddarm);
+> -		pr_err("Failed to obtain VDDARM: %d\n", ret);
+> +		pr_err("Failed to obtain VDDARM: %ld\n", PTR_ERR(vddarm));
+>  		pr_err("Only frequency scaling available\n");
+>  		vddarm = NULL;
+>  	} else {
+> @@ -196,16 +194,9 @@ static int s3c64xx_cpufreq_driver_init(struct cpufreq_policy *policy)
+>  	 * the PLLs, which we don't currently) is ~300us worst case,
+>  	 * but add some fudge.
+>  	 */
+> -	ret = cpufreq_generic_init(policy, s3c64xx_freq_table,
+> +	cpufreq_generic_init(policy, s3c64xx_freq_table,
+>  			(500 * 1000) + regulator_latency);
+> -	if (ret != 0) {
+> -		pr_err("Failed to configure frequency table: %d\n",
+> -		       ret);
+> -		regulator_put(vddarm);
+> -		clk_put(policy->clk);
+> -	}
+> -
+> -	return ret;
+> +	return 0;
+>  }
+>  
+>  static struct cpufreq_driver s3c64xx_cpufreq_driver = {
+> diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
+> index e5cb17d4be7b..5d10030f2560 100644
+> --- a/drivers/cpufreq/s5pv210-cpufreq.c
+> +++ b/drivers/cpufreq/s5pv210-cpufreq.c
+> @@ -541,7 +541,8 @@ static int s5pv210_cpu_init(struct cpufreq_policy *policy)
+>  	s5pv210_dram_conf[1].freq = clk_get_rate(dmc1_clk);
+>  
+>  	policy->suspend_freq = SLEEP_FREQ;
+> -	return cpufreq_generic_init(policy, s5pv210_freq_table, 40000);
+> +	cpufreq_generic_init(policy, s5pv210_freq_table, 40000);
+> +	return 0;
+>  
+>  out_dmc1:
+>  	clk_put(dmc0_clk);
+> diff --git a/drivers/cpufreq/sa1100-cpufreq.c b/drivers/cpufreq/sa1100-cpufreq.c
+> index ab5cab93e638..5c075ef6adc0 100644
+> --- a/drivers/cpufreq/sa1100-cpufreq.c
+> +++ b/drivers/cpufreq/sa1100-cpufreq.c
+> @@ -181,7 +181,8 @@ static int sa1100_target(struct cpufreq_policy *policy, unsigned int ppcr)
+>  
+>  static int __init sa1100_cpu_init(struct cpufreq_policy *policy)
+>  {
+> -	return cpufreq_generic_init(policy, sa11x0_freq_table, 0);
+> +	cpufreq_generic_init(policy, sa11x0_freq_table, 0);
+> +	return 0;
+>  }
+>  
+>  static struct cpufreq_driver sa1100_driver __refdata = {
+> diff --git a/drivers/cpufreq/sa1110-cpufreq.c b/drivers/cpufreq/sa1110-cpufreq.c
+> index dab54e051c0e..d9d04d935b3a 100644
+> --- a/drivers/cpufreq/sa1110-cpufreq.c
+> +++ b/drivers/cpufreq/sa1110-cpufreq.c
+> @@ -303,7 +303,8 @@ static int sa1110_target(struct cpufreq_policy *policy, unsigned int ppcr)
+>  
+>  static int __init sa1110_cpu_init(struct cpufreq_policy *policy)
+>  {
+> -	return cpufreq_generic_init(policy, sa11x0_freq_table, 0);
+> +	cpufreq_generic_init(policy, sa11x0_freq_table, 0);
+> +	return 0;
+>  }
+>  
+>  /* sa1110_driver needs __refdata because it must remain after init registers
+> diff --git a/drivers/cpufreq/spear-cpufreq.c b/drivers/cpufreq/spear-cpufreq.c
+> index 4074e2615522..73bd8dc47074 100644
+> --- a/drivers/cpufreq/spear-cpufreq.c
+> +++ b/drivers/cpufreq/spear-cpufreq.c
+> @@ -153,8 +153,9 @@ static int spear_cpufreq_target(struct cpufreq_policy *policy,
+>  static int spear_cpufreq_init(struct cpufreq_policy *policy)
+>  {
+>  	policy->clk = spear_cpufreq.clk;
+> -	return cpufreq_generic_init(policy, spear_cpufreq.freq_tbl,
+> +	cpufreq_generic_init(policy, spear_cpufreq.freq_tbl,
+>  			spear_cpufreq.transition_latency);
+> +	return 0;
+>  }
+>  
+>  static struct cpufreq_driver spear_cpufreq_driver = {
+> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
+> index 3c32cc7b0671..f84ecd22f488 100644
+> --- a/drivers/cpufreq/tegra20-cpufreq.c
+> +++ b/drivers/cpufreq/tegra20-cpufreq.c
+> @@ -118,17 +118,11 @@ static int tegra_target(struct cpufreq_policy *policy, unsigned int index)
+>  static int tegra_cpu_init(struct cpufreq_policy *policy)
+>  {
+>  	struct tegra20_cpufreq *cpufreq = cpufreq_get_driver_data();
+> -	int ret;
+>  
+>  	clk_prepare_enable(cpufreq->cpu_clk);
+>  
+>  	/* FIXME: what's the actual transition time? */
+> -	ret = cpufreq_generic_init(policy, freq_table, 300 * 1000);
+> -	if (ret) {
+> -		clk_disable_unprepare(cpufreq->cpu_clk);
+> -		return ret;
+> -	}
+> -
+> +	cpufreq_generic_init(policy, freq_table, 300 * 1000);
+>  	policy->clk = cpufreq->cpu_clk;
+>  	policy->suspend_freq = freq_table[0].frequency;
+>  	return 0;
+> diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+> index d757a56a74dc..536a049d7ecc 100644
+> --- a/include/linux/cpufreq.h
+> +++ b/include/linux/cpufreq.h
+> @@ -992,7 +992,7 @@ extern struct freq_attr *cpufreq_generic_attr[];
+>  int cpufreq_table_validate_and_sort(struct cpufreq_policy *policy);
+>  
+>  unsigned int cpufreq_generic_get(unsigned int cpu);
+> -int cpufreq_generic_init(struct cpufreq_policy *policy,
+> +void cpufreq_generic_init(struct cpufreq_policy *policy,
+>  		struct cpufreq_frequency_table *table,
+>  		unsigned int transition_latency);
+>  #endif /* _LINUX_CPUFREQ_H */
+> 
+
+Applied, thanks!
