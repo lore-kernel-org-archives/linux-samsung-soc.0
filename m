@@ -1,94 +1,100 @@
 From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: Re: [PATCH v1 13/50] clk: samsung: add DPLL rate table in
- Exynos5420
-Date: Thu, 18 Jul 2019 08:01:16 +0200
-Message-ID: <8d361a79-4147-e613-5b05-faf8efcef434@partner.samsung.com>
+Subject: Re: [PATCH v1 01/50] clk: samsung: add new IDs for Exynos5420 clocks
+Date: Thu, 18 Jul 2019 08:02:49 +0200
+Message-ID: <6dfe9e43-48da-a4a6-7af1-d00a817852bb@partner.samsung.com>
 References: <20190715124417.4787-1-l.luba@partner.samsung.com>
-        <CGME20190715124444eucas1p2683c9896e8be45d6a0cd4afeb681a2ea@eucas1p2.samsung.com>
-        <20190715124417.4787-14-l.luba@partner.samsung.com>
-        <9095a5be-3002-93c6-9d08-92eb84f5c103@samsung.com>
+ <CGME20190715124434eucas1p273e2efaad8bc3904c6f76cc1671aeb6c@eucas1p2.samsung.com>
+ <20190715124417.4787-2-l.luba@partner.samsung.com>
+ <f8ff72f9-4a55-40c6-fdb9-bb4cddd00cf9@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <9095a5be-3002-93c6-9d08-92eb84f5c103@samsung.com>
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <f8ff72f9-4a55-40c6-fdb9-bb4cddd00cf9@samsung.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Chanwoo Choi <cw00.choi@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com, sboyd@kernel.org, b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, kyungmin.park@samsung.com, a.hajda@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com
+Cc: mark.rutland@arm.com, b.zolnierkie@samsung.com, sboyd@kernel.org, mturquette@baylibre.com, krzk@kernel.org, a.hajda@samsung.com, robh+dt@kernel.org, kyungmin.park@samsung.com, kgene@kernel.org, myungjoo.ham@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Chanwoo,
-
-On 7/16/19 11:31 AM, Chanwoo Choi wrote:
-> Hi,
-> 
-> Also, you better to merge patch13/patch15/patch16 to one patch
-> in order to add the PLL table for DPLL/MPLL/SPLL.
-OK
-> 
-> And I have a question. Are there any use-case to change
-> the PLL frequency for DPLL/MPLL/SPLL?
-Yes, when you set a PLL frequency i.e. DPLL to 1200MHz (from 600MHz)
-you can attach a child to it which is running with 400, 300, 150 MHz
-and these frequencies are set only on this child clock divider
-(/3, /4, /8 - 3bit div) (and there is no set parent rate and
-reprogramming the master PLL). While 600MHz cannot satisfy 400MHz
-and 300MHz OPPs at the same time.
-If the child cannot change the PLL, because it could affect other
-children of this PLL and cause misalignment in their frequency after
-their dividers, it is better to stick with a rule: pin children to the
-PLL with frequency rate which could be divided without a rest and gives
-all OPPs rates of all children. This PLL rate could be calculated by
-hand, finding least common multiple, keeping in mind clock dividers
-width (i.e. 3bit).
-
-That's why I am changing the PLLs' rates and connect children to them
-also aligning OPPs to the values which are possible after DIV (3bit).
-
-Regards,
-Lukasz
-
-> 
-> On 19. 7. 15. 오후 9:43, Lukasz Luba wrote:
->> The DPLL has fixed frequency left by the bootloader and it is not possible
->> to change it. With this patch the DPLL gets rate table the same for the
->> whole  PLL family (similar as APLL, KPLL according to RM) so the frequency
->> might be changed to one of the values defined there.
->> It is needed for further patches which change the DPLL frequency to feed
->> the clocks with proper base.
->> It also sets CLK_IS_CRITICAL for SCLK_DPLL due to some drivers which could
->> disable master clock, which is then populated higher and tries to disable
->> PLL, which casues system crash. The flag is needed for this kind of use
->> cases.
->>
->> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
->> ---
->>   drivers/clk/samsung/clk-exynos5420.c | 4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
->> index 7f8221527633..2395b02ce8c5 100644
->> --- a/drivers/clk/samsung/clk-exynos5420.c
->> +++ b/drivers/clk/samsung/clk-exynos5420.c
->> @@ -694,7 +694,8 @@ static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
->>   	MUX(0, "mout_sclk_rpll", mout_rpll_p, SRC_TOP6, 16, 1),
->>   	MUX_F(CLK_MOUT_EPLL, "mout_sclk_epll", mout_epll_p, SRC_TOP6, 20, 1,
->>   			CLK_SET_RATE_PARENT, 0),
->> -	MUX(0, "mout_sclk_dpll", mout_dpll_p, SRC_TOP6, 24, 1),
->> +	MUX_F(CLK_MOUT_SCLK_DPLL, "mout_sclk_dpll", mout_dpll_p,
->> +			SRC_TOP6, 24, 1, CLK_IS_CRITICAL, 0),
->>   	MUX(0, "mout_sclk_cpll", mout_cpll_p, SRC_TOP6, 28, 1),
->>   
->>   	MUX(CLK_MOUT_SW_ACLK400_ISP, "mout_sw_aclk400_isp",
->> @@ -1514,6 +1515,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
->>   
->>   	if (_get_rate("fin_pll") == 24 * MHZ) {
->>   		exynos5x_plls[apll].rate_table = exynos5420_pll2550x_24mhz_tbl;
->> +		exynos5x_plls[dpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
->>   		exynos5x_plls[epll].rate_table = exynos5420_epll_24mhz_tbl;
->>   		exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
->>   	}
->>
-> 
-> 
+CgpPbiA3LzE2LzE5IDExOjQ5IEFNLCBDaGFud29vIENob2kgd3JvdGU6Cj4gSGksCj4gCj4gVXN1
+YWxseSwgd2hlbiBkZXZlbG9waW5nIHRoZSBjbG9jayBjb250cm9sbGVyIGRyaXZlciwKPiBkZWZp
+bmUgdGhlIHNhbWUgc2VxdWVuY2UgYmV0d2VlbiB0aGUgZGVmaW5pdGlvbiBzZXF1ZW5jZSBpbiBk
+dC1iaWJpbmcKPiBhbmQgY2xvY2sgZHJpdmVyLiBBcyBJIHJlcGxpZWQsIGlmIHlvdSBzcXVhc2gg
+cGF0Y2hlcywgaXQgaXMgZWFzeS4KT0sKPiAKPiBGb3IgZXhhbXBsZSwKPiBUaGlzIHNlcmllcyBh
+ZGQgY2xvY2sgaWQgYXMgZm9sbG93aW5nLgo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo+ICAgNTY5
+ICAgICAgICAgTVVYKENMS19NT1VUX0FDTEs0MDBfSVNQLCAibW91dF9hY2xrNDAwX2lzcCIsIG1v
+dXRfZ3JvdXAxX3AsCj4gICA1NzAgICAgICAgICAgICAgICAgICAgICAgICAgU1JDX1RPUDAsIDAs
+IDIpLAo+ICAgNTcxICAgICAgICAgTVVYKENMS19NT1VUX0FDTEs0MDBfTVNDTCwgIm1vdXRfYWNs
+azQwMF9tc2NsIiwgbW91dF9ncm91cDFfcCwKPiAgIDU3MiAgICAgICAgICAgICAgICAgICAgICAg
+ICBTUkNfVE9QMCwgNCwgMiksCj4gICA1NzMgICAgICAgICBNVVgoQ0xLX01PVVRfQUNMSzQwMF9X
+Q09SRSwgIm1vdXRfYWNsazQwMF93Y29yZSIsIG1vdXRfZ3JvdXAxX3AsCj4gICA1NzQgICAgICAg
+ICAgICAgICAgICAgICAgICAgU1JDX1RPUDAsIDE2LCAyKSwKPiAgIDU3NSAgICAgICAgIE1VWChD
+TEtfTU9VVF9BQ0xLMTAwX05PQywgIm1vdXRfYWNsazEwMF9ub2MiLCBtb3V0X2dyb3VwMV9wLAo+
+ICAgNTc2ICAgICAgICAgICAgICAgICAgICAgICAgIFNSQ19UT1AwLCAyMCwgMiksCj4gCj4gSW4g
+Y2FzZSBvZiB0aGlzIGNvZGUsIHlvdSBjYW4gZGVmaW5lIHRoZSBJRHMgYXMgZm9sbG93aW5nIHNl
+cXVlbnRpYWxseToKPiAKPiAjZGVmaW5lIENMS19NT1VUX0FDTEs0MDBfSVNQIC4uLgo+ICNkZWZp
+bmUgQ0xLX01PVVRfQUNMSzQwMF9NU0NMIC4uLgo+ICNkZWZpbmUgQ0xLX01PVVRfQUNMSzQwMF9X
+Q09SRSAuLi4KPiAjZGVmaW5lIENMS19NT1VUX0FDTEsxMDBfTk9DIC4uLgo+IApUaGFuayB5b3Ug
+Zm9yIHRoaXMgZXhhbXBsZS4gSSB3aWxsIGFsaWduIHRoZW0uCgpSZWdhcmRzLApMdWthc3oKPiAK
+PiBCdXQsIHRoaXMgc2VyaWVzIGRlZmluZSB0aGUgSUQgYXMgZm9sbG93aW5nOgo+IAkjZGVmaW5l
+IENMS19NT1VUX0FDTEs0MDBfV0NPUkUgICAgICAgICAgNjYyCj4gI2RlZmluZSBDTEtfTU9VVF9T
+Q0xLX0RQTEwgICAgICA2NjMKPiAJI2RlZmluZSBDTEtfTU9VVF9BQ0xLMTAwX05PQyAgICA2NjQK
+PiAjZGVmaW5lIENMS19NT1VUX0FDTEsyMDBfRlNZUzIgIDY2NQo+ICNkZWZpbmUgQ0xLX01PVVRf
+UENMSzIwMF9GU1lTICAgNjY2Cj4gI2RlZmluZSBDTEtfTU9VVF9BQ0xLMjAwX0ZTWVMgICA2NjcK
+PiAJI2RlZmluZSBDTEtfTU9VVF9BQ0xLNDAwX0lTUCAgICA2NjgKPiAJI2RlZmluZSBDTEtfTU9V
+VF9BQ0xLNDAwX01TQ0wgICA2NjkKPiAjZGVmaW5lIENMS19NT1VUX1NDTEtfTVBMTCAgICAgIDcw
+MAo+ICNkZWZpbmUgQ0xLX01PVVRfQUNMSzI2NiAgICAgICAgNzAxCj4gI2RlZmluZSBDTEtfTU9V
+VF9VQVJUMCAgICAgICAgICA3MDIKPiAjZGVmaW5lIENMS19NT1VUX1VBUlQxICAgICAgICAgIDcw
+Mwo+ICNkZWZpbmUgQ0xLX01PVVRfVUFSVDIgICAgICAgICAgNzA0Cj4gI2RlZmluZSBDTEtfTU9V
+VF9VQVJUMyAgICAgICAgICA3Cj4gCj4gT24gMTkuIDcuIDE1LiDsmKTtm4QgOTo0MywgTHVrYXN6
+IEx1YmEgd3JvdGU6Cj4+IFRoZXJlIGlzIGEgbmVlZCBvZiBuZXcgSURzIHdoaWNoIHdpbGwgYmUg
+dXNlZCBmb3IgbW9kZWxpbmcgcHJvcGVyIGhpZXJhcmNoeQo+PiBpbiB0aGUgRXh5bm9zNTR4eCBT
+b0NzLiBQcmV2aW91cyBpbXBsZW1lbnRhdGlvbiByZWx5IG9uIGJvb3Rsb2FkZXIKPj4gc2V0dGlu
+Z3MsIHdoaWNoIGFyZSBub3QgY29uZmlndXJpbmcgcHJvcGVybHkgc29tZSBjbG9ja3MuCj4+IFRo
+ZXNlIElEcyBwcm92aWRlIGludGVyZmFjZSB0byBzZXQgcHJvcGVyIHBhcmVudHMuCj4+Cj4+IFNp
+Z25lZC1vZmYtYnk6IEx1a2FzeiBMdWJhIDxsLmx1YmFAcGFydG5lci5zYW1zdW5nLmNvbT4KPj4g
+LS0tCj4+ICAgaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay9leHlub3M1NDIwLmggfCAyNyArKysr
+KysrKysrKysrKysrKysrKysrKysrLQo+PiAgIDEgZmlsZSBjaGFuZ2VkLCAyNiBpbnNlcnRpb25z
+KCspLCAxIGRlbGV0aW9uKC0pCj4+Cj4+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2R0LWJpbmRpbmdz
+L2Nsb2NrL2V4eW5vczU0MjAuaCBiL2luY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2svZXh5bm9zNTQy
+MC5oCj4+IGluZGV4IDAyZDVhYzQ2OWEzZC4uYzM3YTI4ZWVhZjdlIDEwMDY0NAo+PiAtLS0gYS9p
+bmNsdWRlL2R0LWJpbmRpbmdzL2Nsb2NrL2V4eW5vczU0MjAuaAo+PiArKysgYi9pbmNsdWRlL2R0
+LWJpbmRpbmdzL2Nsb2NrL2V4eW5vczU0MjAuaAo+PiBAQCAtMjMwLDYgKzIzMCwzMCBAQAo+PiAg
+ICNkZWZpbmUgQ0xLX01PVVRfVVNFUl9NQVVfRVBMTAk2NTkKPj4gICAjZGVmaW5lIENMS19NT1VU
+X1NDTEtfU1BMTAk2NjAKPj4gICAjZGVmaW5lIENMS19NT1VUX01YX01TUExMX0NDT1JFX1BIWQk2
+NjEKPj4gKyNkZWZpbmUgQ0xLX01PVVRfQUNMSzQwMF9XQ09SRQkJNjYyCj4+ICsjZGVmaW5lIENM
+S19NT1VUX1NDTEtfRFBMTAk2NjMKPj4gKyNkZWZpbmUgQ0xLX01PVVRfQUNMSzEwMF9OT0MJNjY0
+Cj4+ICsjZGVmaW5lIENMS19NT1VUX0FDTEsyMDBfRlNZUzIJNjY1Cj4+ICsjZGVmaW5lIENMS19N
+T1VUX1BDTEsyMDBfRlNZUwk2NjYKPj4gKyNkZWZpbmUgQ0xLX01PVVRfQUNMSzIwMF9GU1lTCTY2
+Nwo+PiArI2RlZmluZSBDTEtfTU9VVF9BQ0xLNDAwX0lTUAk2NjgKPj4gKyNkZWZpbmUgQ0xLX01P
+VVRfQUNMSzQwMF9NU0NMCTY2OQo+PiArI2RlZmluZSBDTEtfTU9VVF9TQ0xLX01QTEwJNzAwCj4+
+ICsjZGVmaW5lIENMS19NT1VUX0FDTEsyNjYJNzAxCj4+ICsjZGVmaW5lIENMS19NT1VUX1VBUlQw
+CQk3MDIKPj4gKyNkZWZpbmUgQ0xLX01PVVRfVUFSVDEJCTcwMwo+PiArI2RlZmluZSBDTEtfTU9V
+VF9VQVJUMgkJNzA0Cj4+ICsjZGVmaW5lIENMS19NT1VUX1VBUlQzCQk3MDUKPj4gKyNkZWZpbmUg
+Q0xLX01PVVRfU0NMS19DUExMCTcwNgo+PiArI2RlZmluZSBDTEtfTU9VVF9QV00JCTcwNwo+PiAr
+I2RlZmluZSBDTEtfTU9VVF9BQ0xLMjY2X0cyRAkJNzA4Cj4+ICsjZGVmaW5lIENMS19NT1VUX1NX
+X0FDTEs0MDBfV0NPUkUJNzA5Cj4+ICsjZGVmaW5lIENMS19NT1VUX1NXX0FDTEs0MDBfTVNDTAk3
+MTAKPj4gKyNkZWZpbmUgQ0xLX01PVVRfU1dfQUNMSzQwMF9JU1AJCTcxMQo+PiArI2RlZmluZSBD
+TEtfTU9VVF9TV19BQ0xLMjY2X0lTUAkJNzEyCj4+ICsjZGVmaW5lIENMS19NT1VUX1VTRVJfQUNM
+SzI2Nl9JU1AJNzEzCj4+ICsjZGVmaW5lIENMS19NT1VUX0FDTEsyNjZfSVNQCTcxNAo+PiArI2Rl
+ZmluZSBDTEtfTU9VVF9NTUMwCQk3MTUKPj4gICAKPj4gICAvKiBkaXZpZGVyIGNsb2NrcyAqLwo+
+PiAgICNkZWZpbmUgQ0xLX0RPVVRfUElYRUwJCTc2OAo+PiBAQCAtMjY0LDggKzI4OCw5IEBACj4+
+ICAgI2RlZmluZSBDTEtfRkZfRE9VVF9TUExMMgk3OTcKPj4gICAjZGVmaW5lIENMS19ET1VUX1BD
+TEtfRFJFWDAJNzk4Cj4+ICAgI2RlZmluZSBDTEtfRE9VVF9QQ0xLX0RSRVgxCTc5OQo+PiArI2Rl
+ZmluZSBDTEtfRE9VVF9BQ0xLMjY2X0lTUAk4MDAKPj4gICAKPj4gICAvKiBtdXN0IGJlIGdyZWF0
+ZXIgdGhhbiBtYXhpbWFsIGNsb2NrIGlkICovCj4+IC0jZGVmaW5lIENMS19OUl9DTEtTCQk4MDAK
+Pj4gKyNkZWZpbmUgQ0xLX05SX0NMS1MJCTgwMQo+PiAgIAo+PiAgICNlbmRpZiAvKiBfRFRfQklO
+RElOR1NfQ0xPQ0tfRVhZTk9TXzU0MjBfSCAqLwo+Pgo+IAo+IAoKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxp
+c3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZy
+YWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
