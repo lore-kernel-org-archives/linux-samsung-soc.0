@@ -1,48 +1,39 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2 2/2] usb: dwc3: remove generic PHY calibrate() calls
-Date: Fri, 19 Jul 2019 10:13:26 +0200
-Message-ID: <20190719081326.9347-1-m.szyprowski@samsung.com>
-References: <20190719081212.9249-1-m.szyprowski@samsung.com>
-        <CGME20190719081334eucas1p1fd614e56c1ec0dfa654d0bb77f17ba5d@eucas1p1.samsung.com>
+Subject: [PATCH] phy: exynos5-usbdrd: Calibrating makes sense only for
+ USB2.0 PHY
+Date: Fri, 19 Jul 2019 11:27:34 +0200
+Message-ID: <20190719092734.12501-1-m.szyprowski@samsung.com>
+References: <CGME20190719092744eucas1p24f1b497e46cf66ac3ae8c717b626a5d4@eucas1p2.samsung.com>
 Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190719081212.9249-1-m.szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Mathias Nyman <mathias.nyman@intel.com>, Felipe Balbi <balbi@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jochen Sprickerhof <jochen@sprickerhof.de>, Anand Moon <linux.amoon@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Calls to USB2 generic PHY calibrate() method has been moved to HCD core,
-which now successfully handles generic PHYs and their calibration after
-every HCD reset. This fixes all the timing issues related to PHY
-calibration done directly from DWC3 driver: incorrect operation after
-system suspend/resume or USB3.0 detection failure when XHCI-plat driver
-compiled as separate module.
+PHY calibration is needed only for USB2.0 (UTMI) PHY, so skip calling
+calibration code when phy_calibrate() is called for USB3.0 (PIPE3) PHY.
 
+Fixes: d8c80bb3b55b ("phy: exynos5-usbdrd: Calibrate LOS levels for exynos5420/5800")
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/usb/dwc3/core.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/phy/samsung/phy-exynos5-usbdrd.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index c9bb93a2c81e..7dd6d419254d 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -168,7 +168,6 @@ static void __dwc3_set_mode(struct work_struct *work)
- 				otg_set_vbus(dwc->usb2_phy->otg, true);
- 			phy_set_mode(dwc->usb2_generic_phy, PHY_MODE_USB_HOST);
- 			phy_set_mode(dwc->usb3_generic_phy, PHY_MODE_USB_HOST);
--			phy_calibrate(dwc->usb2_generic_phy);
- 		}
- 		break;
- 	case DWC3_GCTL_PRTCAP_DEVICE:
-@@ -1166,7 +1165,6 @@ static int dwc3_core_init_mode(struct dwc3 *dwc)
- 				dev_err(dev, "failed to initialize host\n");
- 			return ret;
- 		}
--		phy_calibrate(dwc->usb2_generic_phy);
- 		break;
- 	case USB_DR_MODE_OTG:
- 		INIT_WORK(&dwc->drd_work, __dwc3_set_mode);
+diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+index 646259bee909..f07edd80d2f3 100644
+--- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
++++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+@@ -714,7 +714,9 @@ static int exynos5_usbdrd_phy_calibrate(struct phy *phy)
+ 	struct phy_usb_instance *inst = phy_get_drvdata(phy);
+ 	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
+ 
+-	return exynos5420_usbdrd_phy_calibrate(phy_drd);
++	if (inst->phy_cfg->id == EXYNOS5_DRDPHY_UTMI)
++		return exynos5420_usbdrd_phy_calibrate(phy_drd);
++	return 0;
+ }
+ 
+ static const struct phy_ops exynos5_usbdrd_phy_ops = {
 -- 
 2.17.1
