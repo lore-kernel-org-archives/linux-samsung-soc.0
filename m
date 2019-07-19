@@ -1,87 +1,48 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] usb: dwc3: remove generic PHYs forwarding for XHCI device
-Date: Fri, 19 Jul 2019 11:30:37 +0200
-Message-ID: <20190719093037.16181-1-m.szyprowski@samsung.com>
-References: <CGME20190719093045eucas1p1a1c6f26ae4103e9ed283fff2396beaef@eucas1p1.samsung.com>
+Subject: [PATCH] phy: core: document calibrate() method
+Date: Fri, 19 Jul 2019 11:52:45 +0200
+Message-ID: <20190719095245.17401-1-m.szyprowski@samsung.com>
+References: <CGME20190719095254eucas1p29c9e6c7aac20cf89b589fd2f2036c485@eucas1p2.samsung.com>
 Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Mathias Nyman <mathias.nyman@intel.com>, Felipe Balbi <balbi@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Commit 08f871a3aca2 ("usb: dwc3: host: convey the PHYs to xhci") added
-forwarding of the generic PHYs from DWC3 core to the instantiated XHCI-plat
-device. However XHCI(-plat) driver never gained support for generic PHYs,
-thus the lookup added by that commit is never used. In meantime the commit
-d64ff406e51e ("usb: dwc3: use bus->sysdev for DMA configuration")
-incorrectly changed the device used for creating lookup, making the lookup
-useless and generic PHYs inaccessible from XHCI device.
-
-However since commit 178a0bce05cb ("usb: core: hcd: integrate the PHY
-wrapper into the HCD core") USB HCD already handles generic PHYs acquired
-from the HCD's 'sysdev', which in this case is DWC3 core device. This means
-that creating any custom lookup entries for XHCI driver is no longer needed
-and can be simply removed.
+Commit 36914111e682 ("drivers: phy: add calibrate method") added support
+for generic phy_calibrate() method, but it didn't explain in detail when
+such method is supposed to be called. Add some more documentation directly
+to the phy.h to make it clean that it is intended to be called after every
+host controller reset.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/usb/dwc3/host.c | 22 ++++------------------
- 1 file changed, 4 insertions(+), 18 deletions(-)
+ include/linux/phy/phy.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/usb/dwc3/host.c b/drivers/usb/dwc3/host.c
-index f55947294f7c..8deea8c91e03 100644
---- a/drivers/usb/dwc3/host.c
-+++ b/drivers/usb/dwc3/host.c
-@@ -85,7 +85,7 @@ int dwc3_host_init(struct dwc3 *dwc)
- 						DWC3_XHCI_RESOURCES_NUM);
- 	if (ret) {
- 		dev_err(dwc->dev, "couldn't add resources to xHCI device\n");
--		goto err1;
-+		goto err;
- 	}
- 
- 	memset(props, 0, sizeof(struct property_entry) * ARRAY_SIZE(props));
-@@ -112,37 +112,23 @@ int dwc3_host_init(struct dwc3 *dwc)
- 		ret = platform_device_add_properties(xhci, props);
- 		if (ret) {
- 			dev_err(dwc->dev, "failed to add properties to xHCI\n");
--			goto err1;
-+			goto err;
- 		}
- 	}
- 
--	phy_create_lookup(dwc->usb2_generic_phy, "usb2-phy",
--			  dev_name(dwc->dev));
--	phy_create_lookup(dwc->usb3_generic_phy, "usb3-phy",
--			  dev_name(dwc->dev));
--
- 	ret = platform_device_add(xhci);
- 	if (ret) {
- 		dev_err(dwc->dev, "failed to register xHCI device\n");
--		goto err2;
-+		goto err;
- 	}
- 
- 	return 0;
--err2:
--	phy_remove_lookup(dwc->usb2_generic_phy, "usb2-phy",
--			  dev_name(dwc->dev));
--	phy_remove_lookup(dwc->usb3_generic_phy, "usb3-phy",
--			  dev_name(dwc->dev));
--err1:
-+err:
- 	platform_device_put(xhci);
- 	return ret;
- }
- 
- void dwc3_host_exit(struct dwc3 *dwc)
- {
--	phy_remove_lookup(dwc->usb2_generic_phy, "usb2-phy",
--			  dev_name(dwc->dev));
--	phy_remove_lookup(dwc->usb3_generic_phy, "usb3-phy",
--			  dev_name(dwc->dev));
- 	platform_device_unregister(dwc->xhci);
- }
+diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+index 15032f145063..46775e8b0ed9 100644
+--- a/include/linux/phy/phy.h
++++ b/include/linux/phy/phy.h
+@@ -101,6 +101,18 @@ struct phy_ops {
+ 	int	(*validate)(struct phy *phy, enum phy_mode mode, int submode,
+ 			    union phy_configure_opts *opts);
+ 	int	(*reset)(struct phy *phy);
++
++	/**
++	 * @calibrate:
++	 *
++	 * Optional.
++	 *
++	 * Used to calibrate phy, typically by adjusting some parameters
++	 * in runtime, which are otherwise lost after host controller
++	 * reset and cannot be set in phy_init() and phy_power_on().
++	 *
++	 * Returns: 0 if successful, an negative error code otherwise
++	 */
+ 	int	(*calibrate)(struct phy *phy);
+ 	void	(*release)(struct phy *phy);
+ 	struct module *owner;
 -- 
 2.17.1
