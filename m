@@ -1,69 +1,66 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH] phy: core: document calibrate() method
-Date: Fri, 19 Jul 2019 17:55:30 +0530
-Message-ID: <6345ff36-9ee3-fe41-e416-a1178087b2c7@ti.com>
-References: <CGME20190719095254eucas1p29c9e6c7aac20cf89b589fd2f2036c485@eucas1p2.samsung.com>
- <20190719095245.17401-1-m.szyprowski@samsung.com>
- <085b8093-d7bc-d960-f0d8-8776818ebab0@ti.com>
- <1865da50-000f-e235-4090-1058d2aa217b@samsung.com>
+From: k.konieczny@partner.samsung.com
+Subject: [PATCH v3 0/5] add coupled regulators for Exynos5422/5800
+Date: Fri, 19 Jul 2019 17:05:30 +0200
+Message-ID: <20190719150535.15501-1-k.konieczny@partner.samsung.com>
+References: <CGME20190719150553eucas1p142b965afae13224712d51f9c28162165@eucas1p1.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1865da50-000f-e235-4090-1058d2aa217b@samsung.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: k.konieczny@partner.samsung.com
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Mark Rutland <mark.rutland@arm.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+Hi,
 
-On 19/07/19 5:51 PM, Marek Szyprowski wrote:
-> Hi Kishon,
-> 
-> On 2019-07-19 12:04, Kishon Vijay Abraham I wrote:
->> Hi Marek,
->>
->> On 19/07/19 3:22 PM, Marek Szyprowski wrote:
->>> Commit 36914111e682 ("drivers: phy: add calibrate method") added support
->>> for generic phy_calibrate() method, but it didn't explain in detail when
->>> such method is supposed to be called. Add some more documentation directly
->>> to the phy.h to make it clean that it is intended to be called after every
->>> host controller reset.
->>>
->>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> ---
->>>   include/linux/phy/phy.h | 12 ++++++++++++
->>>   1 file changed, 12 insertions(+)
->>>
->>> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
->>> index 15032f145063..46775e8b0ed9 100644
->>> --- a/include/linux/phy/phy.h
->>> +++ b/include/linux/phy/phy.h
->>> @@ -101,6 +101,18 @@ struct phy_ops {
->>>   	int	(*validate)(struct phy *phy, enum phy_mode mode, int submode,
->>>   			    union phy_configure_opts *opts);
->>>   	int	(*reset)(struct phy *phy);
->>> +
->>> +	/**
->>> +	 * @calibrate:
->>> +	 *
->>> +	 * Optional.
->>> +	 *
->>> +	 * Used to calibrate phy, typically by adjusting some parameters
->>> +	 * in runtime, which are otherwise lost after host controller
->>> +	 * reset and cannot be set in phy_init() and phy_power_on().
->>> +	 *
->>> +	 * Returns: 0 if successful, an negative error code otherwise
->>> +	 */
->>>   	int	(*calibrate)(struct phy *phy);
->> This should be added in drivers/phy/phy-core.c before phy_calibrate()?
-> 
-> Okay. Do you want to keep it also in phy.h (like for validate and 
-> configure)?
+The main purpose of this patch series is to add coupled regulators for
+Exynos5422/5800 to keep constrain on voltage difference between vdd_arm
+and vdd_int to be at most 300mV. In exynos-bus instead of using
+regulator_set_voltage_tol() with default voltage tolerance it should be
+used regulator_set_voltage_triplet() with volatege range, and this is
+already present in opp/core.c code, so it can be reused. While at this,
+move setting regulators into opp/core.
 
-No. Adding in phy.txt and before phy_calibrate() should suffice IMO.
+This patchset was tested on Odroid XU3.
 
-Thanks
-Kishon
+The DTS coupled regulators patch depends on 2nd and 3rd patches.
+
+Changes:
+v3:
+- added new exynos-bus patch to correct clock and regulator enabling
+  and disabling sequence as suggested by Chanwoo Choi
+- corrected error path in enable and improved commit message in opp/core
+- improve comment in devfreq/exynos-bus.c before devfreq_recommended_opp()
+- change cover letter as there is new patch
+- added note before Signed-off-by in 4th patch
+v2:
+- improve regulators enable/disable code in opp/core as suggested by
+  Viresh Kumar
+- add new patch for remove unused dt-bindings as suggested by Krzysztof
+  Kozlowski
+
+Regards,
+Kamil
+
+Kamil Konieczny (4):
+  devfreq: exynos-bus: correct clock enable sequence
+  opp: core: add regulators enable and disable
+  devfreq: exynos-bus: convert to use dev_pm_opp_set_rate()
+  dt-bindings: devfreq: exynos-bus: remove unused property
+
+Marek Szyprowski (1):
+  ARM: dts: exynos: add initial data for coupled regulators for
+    Exynos5422/5800
+
+ .../bindings/devfreq/exynos-bus.txt           |   2 -
+ arch/arm/boot/dts/exynos5420.dtsi             |  34 ++--
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi |   4 +
+ arch/arm/boot/dts/exynos5800-peach-pi.dts     |   4 +
+ arch/arm/boot/dts/exynos5800.dtsi             |  32 ++--
+ drivers/devfreq/exynos-bus.c                  | 181 ++++++------------
+ drivers/opp/core.c                            |  16 +-
+ 7 files changed, 113 insertions(+), 160 deletions(-)
+
+-- 
+2.22.0
