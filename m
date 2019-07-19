@@ -1,39 +1,87 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] phy: exynos5-usbdrd: Calibrating makes sense only for
- USB2.0 PHY
-Date: Fri, 19 Jul 2019 11:27:34 +0200
-Message-ID: <20190719092734.12501-1-m.szyprowski@samsung.com>
-References: <CGME20190719092744eucas1p24f1b497e46cf66ac3ae8c717b626a5d4@eucas1p2.samsung.com>
+Subject: [PATCH] usb: dwc3: remove generic PHYs forwarding for XHCI device
+Date: Fri, 19 Jul 2019 11:30:37 +0200
+Message-ID: <20190719093037.16181-1-m.szyprowski@samsung.com>
+References: <CGME20190719093045eucas1p1a1c6f26ae4103e9ed283fff2396beaef@eucas1p1.samsung.com>
 Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Mathias Nyman <mathias.nyman@intel.com>, Felipe Balbi <balbi@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-PHY calibration is needed only for USB2.0 (UTMI) PHY, so skip calling
-calibration code when phy_calibrate() is called for USB3.0 (PIPE3) PHY.
+Commit 08f871a3aca2 ("usb: dwc3: host: convey the PHYs to xhci") added
+forwarding of the generic PHYs from DWC3 core to the instantiated XHCI-plat
+device. However XHCI(-plat) driver never gained support for generic PHYs,
+thus the lookup added by that commit is never used. In meantime the commit
+d64ff406e51e ("usb: dwc3: use bus->sysdev for DMA configuration")
+incorrectly changed the device used for creating lookup, making the lookup
+useless and generic PHYs inaccessible from XHCI device.
 
-Fixes: d8c80bb3b55b ("phy: exynos5-usbdrd: Calibrate LOS levels for exynos5420/5800")
+However since commit 178a0bce05cb ("usb: core: hcd: integrate the PHY
+wrapper into the HCD core") USB HCD already handles generic PHYs acquired
+from the HCD's 'sysdev', which in this case is DWC3 core device. This means
+that creating any custom lookup entries for XHCI driver is no longer needed
+and can be simply removed.
+
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/phy/samsung/phy-exynos5-usbdrd.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/usb/dwc3/host.c | 22 ++++------------------
+ 1 file changed, 4 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-index 646259bee909..f07edd80d2f3 100644
---- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-+++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-@@ -714,7 +714,9 @@ static int exynos5_usbdrd_phy_calibrate(struct phy *phy)
- 	struct phy_usb_instance *inst = phy_get_drvdata(phy);
- 	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
+diff --git a/drivers/usb/dwc3/host.c b/drivers/usb/dwc3/host.c
+index f55947294f7c..8deea8c91e03 100644
+--- a/drivers/usb/dwc3/host.c
++++ b/drivers/usb/dwc3/host.c
+@@ -85,7 +85,7 @@ int dwc3_host_init(struct dwc3 *dwc)
+ 						DWC3_XHCI_RESOURCES_NUM);
+ 	if (ret) {
+ 		dev_err(dwc->dev, "couldn't add resources to xHCI device\n");
+-		goto err1;
++		goto err;
+ 	}
  
--	return exynos5420_usbdrd_phy_calibrate(phy_drd);
-+	if (inst->phy_cfg->id == EXYNOS5_DRDPHY_UTMI)
-+		return exynos5420_usbdrd_phy_calibrate(phy_drd);
-+	return 0;
+ 	memset(props, 0, sizeof(struct property_entry) * ARRAY_SIZE(props));
+@@ -112,37 +112,23 @@ int dwc3_host_init(struct dwc3 *dwc)
+ 		ret = platform_device_add_properties(xhci, props);
+ 		if (ret) {
+ 			dev_err(dwc->dev, "failed to add properties to xHCI\n");
+-			goto err1;
++			goto err;
+ 		}
+ 	}
+ 
+-	phy_create_lookup(dwc->usb2_generic_phy, "usb2-phy",
+-			  dev_name(dwc->dev));
+-	phy_create_lookup(dwc->usb3_generic_phy, "usb3-phy",
+-			  dev_name(dwc->dev));
+-
+ 	ret = platform_device_add(xhci);
+ 	if (ret) {
+ 		dev_err(dwc->dev, "failed to register xHCI device\n");
+-		goto err2;
++		goto err;
+ 	}
+ 
+ 	return 0;
+-err2:
+-	phy_remove_lookup(dwc->usb2_generic_phy, "usb2-phy",
+-			  dev_name(dwc->dev));
+-	phy_remove_lookup(dwc->usb3_generic_phy, "usb3-phy",
+-			  dev_name(dwc->dev));
+-err1:
++err:
+ 	platform_device_put(xhci);
+ 	return ret;
  }
  
- static const struct phy_ops exynos5_usbdrd_phy_ops = {
+ void dwc3_host_exit(struct dwc3 *dwc)
+ {
+-	phy_remove_lookup(dwc->usb2_generic_phy, "usb2-phy",
+-			  dev_name(dwc->dev));
+-	phy_remove_lookup(dwc->usb3_generic_phy, "usb3-phy",
+-			  dev_name(dwc->dev));
+ 	platform_device_unregister(dwc->xhci);
+ }
 -- 
 2.17.1
