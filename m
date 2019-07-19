@@ -1,69 +1,103 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] phy: core: document calibrate() method
-Date: Fri, 19 Jul 2019 14:21:00 +0200
-Message-ID: <1865da50-000f-e235-4090-1058d2aa217b@samsung.com>
-References: <CGME20190719095254eucas1p29c9e6c7aac20cf89b589fd2f2036c485@eucas1p2.samsung.com>
-        <20190719095245.17401-1-m.szyprowski@samsung.com>
-        <085b8093-d7bc-d960-f0d8-8776818ebab0@ti.com>
-Mime-Version: 1.0
+Subject: [PATCH] phy: samsung: disable bind/unbind platform driver feature
+Date: Fri, 19 Jul 2019 14:25:32 +0200
+Message-ID: <20190719122532.29591-1-m.szyprowski@samsung.com>
+References: <CGME20190719122541eucas1p2448ec705f84347c0a79732883daeb2b4@eucas1p2.samsung.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <085b8093-d7bc-d960-f0d8-8776818ebab0@ti.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Kishon,
+Samsung PHY drivers control the power to the SoC core components needed by
+their client devices (USB HCDs, SATA, camera ISP bridge, DP encoder) to
+properly operate. Disabling PHYs in runtime usually causes the client
+device to crash with external abort exception or similar issue due to lack
+of API to notify clients about PHY removal. This patch removes the
+possiblity to unbind Samsung Exynos PHY drivers in runtime.
 
-On 2019-07-19 12:04, Kishon Vijay Abraham I wrote:
-> Hi Marek,
->
-> On 19/07/19 3:22 PM, Marek Szyprowski wrote:
->> Commit 36914111e682 ("drivers: phy: add calibrate method") added support
->> for generic phy_calibrate() method, but it didn't explain in detail when
->> such method is supposed to be called. Add some more documentation directly
->> to the phy.h to make it clean that it is intended to be called after every
->> host controller reset.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>   include/linux/phy/phy.h | 12 ++++++++++++
->>   1 file changed, 12 insertions(+)
->>
->> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
->> index 15032f145063..46775e8b0ed9 100644
->> --- a/include/linux/phy/phy.h
->> +++ b/include/linux/phy/phy.h
->> @@ -101,6 +101,18 @@ struct phy_ops {
->>   	int	(*validate)(struct phy *phy, enum phy_mode mode, int submode,
->>   			    union phy_configure_opts *opts);
->>   	int	(*reset)(struct phy *phy);
->> +
->> +	/**
->> +	 * @calibrate:
->> +	 *
->> +	 * Optional.
->> +	 *
->> +	 * Used to calibrate phy, typically by adjusting some parameters
->> +	 * in runtime, which are otherwise lost after host controller
->> +	 * reset and cannot be set in phy_init() and phy_power_on().
->> +	 *
->> +	 * Returns: 0 if successful, an negative error code otherwise
->> +	 */
->>   	int	(*calibrate)(struct phy *phy);
-> This should be added in drivers/phy/phy-core.c before phy_calibrate()?
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/phy/samsung/phy-exynos-dp-video.c   | 1 +
+ drivers/phy/samsung/phy-exynos-mipi-video.c | 1 +
+ drivers/phy/samsung/phy-exynos-pcie.c       | 1 +
+ drivers/phy/samsung/phy-exynos5-usbdrd.c    | 1 +
+ drivers/phy/samsung/phy-exynos5250-sata.c   | 1 +
+ drivers/phy/samsung/phy-samsung-usb2.c      | 1 +
+ 6 files changed, 6 insertions(+)
 
-Okay. Do you want to keep it also in phy.h (like for validate and 
-configure)?
-
-
-> We could
-> add a separate section in Documentation/phy.txt to document these phy_ops.
-
-Best regards
+diff --git a/drivers/phy/samsung/phy-exynos-dp-video.c b/drivers/phy/samsung/phy-exynos-dp-video.c
+index aebd216dcf2f..6c607df1dc9a 100644
+--- a/drivers/phy/samsung/phy-exynos-dp-video.c
++++ b/drivers/phy/samsung/phy-exynos-dp-video.c
+@@ -109,6 +109,7 @@ static struct platform_driver exynos_dp_video_phy_driver = {
+ 	.driver = {
+ 		.name	= "exynos-dp-video-phy",
+ 		.of_match_table	= exynos_dp_video_phy_of_match,
++		.suppress_bind_attrs = true,
+ 	}
+ };
+ module_platform_driver(exynos_dp_video_phy_driver);
+diff --git a/drivers/phy/samsung/phy-exynos-mipi-video.c b/drivers/phy/samsung/phy-exynos-mipi-video.c
+index 3784bf100b95..bb51195f189f 100644
+--- a/drivers/phy/samsung/phy-exynos-mipi-video.c
++++ b/drivers/phy/samsung/phy-exynos-mipi-video.c
+@@ -359,6 +359,7 @@ static struct platform_driver exynos_mipi_video_phy_driver = {
+ 	.driver = {
+ 		.of_match_table	= exynos_mipi_video_phy_of_match,
+ 		.name  = "exynos-mipi-video-phy",
++		.suppress_bind_attrs = true,
+ 	}
+ };
+ module_platform_driver(exynos_mipi_video_phy_driver);
+diff --git a/drivers/phy/samsung/phy-exynos-pcie.c b/drivers/phy/samsung/phy-exynos-pcie.c
+index 1b4ba8bdb43c..659e7ae0a6cf 100644
+--- a/drivers/phy/samsung/phy-exynos-pcie.c
++++ b/drivers/phy/samsung/phy-exynos-pcie.c
+@@ -272,6 +272,7 @@ static struct platform_driver exynos_pcie_phy_driver = {
+ 	.driver = {
+ 		.of_match_table	= exynos_pcie_phy_match,
+ 		.name		= "exynos_pcie_phy",
++		.suppress_bind_attrs = true,
+ 	}
+ };
+ 
+diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+index f07edd80d2f3..7f6279fb4f8f 100644
+--- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
++++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+@@ -955,6 +955,7 @@ static struct platform_driver exynos5_usb3drd_phy = {
+ 	.driver = {
+ 		.of_match_table	= exynos5_usbdrd_phy_of_match,
+ 		.name		= "exynos5_usb3drd_phy",
++		.suppress_bind_attrs = true,
+ 	}
+ };
+ 
+diff --git a/drivers/phy/samsung/phy-exynos5250-sata.c b/drivers/phy/samsung/phy-exynos5250-sata.c
+index 9e5fc126032c..4dd7324d91b2 100644
+--- a/drivers/phy/samsung/phy-exynos5250-sata.c
++++ b/drivers/phy/samsung/phy-exynos5250-sata.c
+@@ -237,6 +237,7 @@ static struct platform_driver exynos_sata_phy_driver = {
+ 	.driver = {
+ 		.of_match_table	= exynos_sata_phy_of_match,
+ 		.name  = "samsung,sata-phy",
++		.suppress_bind_attrs = true,
+ 	}
+ };
+ module_platform_driver(exynos_sata_phy_driver);
+diff --git a/drivers/phy/samsung/phy-samsung-usb2.c b/drivers/phy/samsung/phy-samsung-usb2.c
+index 6c82f4fbe8a2..090aa02e02de 100644
+--- a/drivers/phy/samsung/phy-samsung-usb2.c
++++ b/drivers/phy/samsung/phy-samsung-usb2.c
+@@ -250,6 +250,7 @@ static struct platform_driver samsung_usb2_phy_driver = {
+ 	.driver = {
+ 		.of_match_table	= samsung_usb2_phy_of_match,
+ 		.name		= "samsung-usb2-phy",
++		.suppress_bind_attrs = true,
+ 	}
+ };
+ 
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.17.1
