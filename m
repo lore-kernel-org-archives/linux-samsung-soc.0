@@ -1,50 +1,69 @@
-From: Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH] drm/exynos: Use dev_get_drv_data
-Date: Fri, 19 Jul 2019 18:31:09 +0800
-Message-ID: <20190719103108.19998-1-hslester96@gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] phy: core: document calibrate() method
+Date: Fri, 19 Jul 2019 14:21:00 +0200
+Message-ID: <1865da50-000f-e235-4090-1058d2aa217b@samsung.com>
+References: <CGME20190719095254eucas1p29c9e6c7aac20cf89b589fd2f2036c485@eucas1p2.samsung.com>
+        <20190719095245.17401-1-m.szyprowski@samsung.com>
+        <085b8093-d7bc-d960-f0d8-8776818ebab0@ti.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <085b8093-d7bc-d960-f0d8-8776818ebab0@ti.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
+To: Kishon Vijay Abraham I <kishon@ti.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-dev_get_drvdata is a simpler implementation comparing
-to to_platform_device + platform_get_drvdata.
-This makes the code simpler.
+Hi Kishon,
+
+On 2019-07-19 12:04, Kishon Vijay Abraham I wrote:
+> Hi Marek,
+>
+> On 19/07/19 3:22 PM, Marek Szyprowski wrote:
+>> Commit 36914111e682 ("drivers: phy: add calibrate method") added support
+>> for generic phy_calibrate() method, but it didn't explain in detail when
+>> such method is supposed to be called. Add some more documentation directly
+>> to the phy.h to make it clean that it is intended to be called after every
+>> host controller reset.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>   include/linux/phy/phy.h | 12 ++++++++++++
+>>   1 file changed, 12 insertions(+)
+>>
+>> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+>> index 15032f145063..46775e8b0ed9 100644
+>> --- a/include/linux/phy/phy.h
+>> +++ b/include/linux/phy/phy.h
+>> @@ -101,6 +101,18 @@ struct phy_ops {
+>>   	int	(*validate)(struct phy *phy, enum phy_mode mode, int submode,
+>>   			    union phy_configure_opts *opts);
+>>   	int	(*reset)(struct phy *phy);
+>> +
+>> +	/**
+>> +	 * @calibrate:
+>> +	 *
+>> +	 * Optional.
+>> +	 *
+>> +	 * Used to calibrate phy, typically by adjusting some parameters
+>> +	 * in runtime, which are otherwise lost after host controller
+>> +	 * reset and cannot be set in phy_init() and phy_power_on().
+>> +	 *
+>> +	 * Returns: 0 if successful, an negative error code otherwise
+>> +	 */
+>>   	int	(*calibrate)(struct phy *phy);
+> This should be added in drivers/phy/phy-core.c before phy_calibrate()?
+
+Okay. Do you want to keep it also in phy.h (like for validate and 
+configure)?
 
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
----
- drivers/gpu/drm/exynos/exynos_drm_fimc.c | 2 +-
- drivers/gpu/drm/exynos/exynos_drm_gsc.c  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+> We could
+> add a separate section in Documentation/phy.txt to document these phy_ops.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-index a594ab7be2c0..164d914cbe9a 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-@@ -44,7 +44,7 @@ static unsigned int fimc_mask = 0xc;
- module_param_named(fimc_devs, fimc_mask, uint, 0644);
- MODULE_PARM_DESC(fimc_devs, "Alias mask for assigning FIMC devices to Exynos DRM");
- 
--#define get_fimc_context(dev)	platform_get_drvdata(to_platform_device(dev))
-+#define get_fimc_context(dev)	dev_get_drvdata(dev)
- 
- enum {
- 	FIMC_CLK_LCLK,
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-index 1e4b21c49a06..1c524db9570f 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-@@ -58,7 +58,7 @@
- #define GSC_COEF_DEPTH	3
- #define GSC_AUTOSUSPEND_DELAY		2000
- 
--#define get_gsc_context(dev)	platform_get_drvdata(to_platform_device(dev))
-+#define get_gsc_context(dev)	dev_get_drvdata(dev)
- #define gsc_read(offset)		readl(ctx->regs + (offset))
- #define gsc_write(cfg, offset)	writel(cfg, ctx->regs + (offset))
- 
+Best regards
 -- 
-2.20.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
