@@ -1,69 +1,60 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] phy: core: document calibrate() method
-Date: Mon, 22 Jul 2019 18:50:47 +0200
-Message-ID: <6729fb28-29ef-a808-64b5-3eaaf7ac31e5@samsung.com>
-References: <CGME20190719095254eucas1p29c9e6c7aac20cf89b589fd2f2036c485@eucas1p2.samsung.com>
-        <20190719095245.17401-1-m.szyprowski@samsung.com>
-        <085b8093-d7bc-d960-f0d8-8776818ebab0@ti.com>
-        <1865da50-000f-e235-4090-1058d2aa217b@samsung.com>
-        <6345ff36-9ee3-fe41-e416-a1178087b2c7@ti.com>
+Subject: Re: drm/exynos: scaler: Reset hardware before starting the
+ operation (bug report)
+Date: Mon, 22 Jul 2019 19:05:58 +0200
+Message-ID: <9ceb6d17-6d1b-3d6d-2baa-1a31e57fe21d@samsung.com>
+References: <CGME20190705160911epcas2p2754c2c703cc6086f7f1715e1840deb1b@epcas2p2.samsung.com>
+        <c67b4671-aabc-df13-e9c7-ccbc25337b7c@canonical.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <6345ff36-9ee3-fe41-e416-a1178087b2c7@ti.com>
+In-Reply-To: <c67b4671-aabc-df13-e9c7-ccbc25337b7c@canonical.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Colin Ian King <colin.king@canonical.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Inki Dae <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Kishon,
+Hi,
 
-On 2019-07-19 14:25, Kishon Vijay Abraham I wrote:
-> On 19/07/19 5:51 PM, Marek Szyprowski wrote:
->> On 2019-07-19 12:04, Kishon Vijay Abraham I wrote:
->>> On 19/07/19 3:22 PM, Marek Szyprowski wrote:
->>>> Commit 36914111e682 ("drivers: phy: add calibrate method") added support
->>>> for generic phy_calibrate() method, but it didn't explain in detail when
->>>> such method is supposed to be called. Add some more documentation directly
->>>> to the phy.h to make it clean that it is intended to be called after every
->>>> host controller reset.
->>>>
->>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>>> ---
->>>>    include/linux/phy/phy.h | 12 ++++++++++++
->>>>    1 file changed, 12 insertions(+)
->>>>
->>>> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
->>>> index 15032f145063..46775e8b0ed9 100644
->>>> --- a/include/linux/phy/phy.h
->>>> +++ b/include/linux/phy/phy.h
->>>> @@ -101,6 +101,18 @@ struct phy_ops {
->>>>    	int	(*validate)(struct phy *phy, enum phy_mode mode, int submode,
->>>>    			    union phy_configure_opts *opts);
->>>>    	int	(*reset)(struct phy *phy);
->>>> +
->>>> +	/**
->>>> +	 * @calibrate:
->>>> +	 *
->>>> +	 * Optional.
->>>> +	 *
->>>> +	 * Used to calibrate phy, typically by adjusting some parameters
->>>> +	 * in runtime, which are otherwise lost after host controller
->>>> +	 * reset and cannot be set in phy_init() and phy_power_on().
->>>> +	 *
->>>> +	 * Returns: 0 if successful, an negative error code otherwise
->>>> +	 */
->>>>    	int	(*calibrate)(struct phy *phy);
->>> This should be added in drivers/phy/phy-core.c before phy_calibrate()?
->> Okay. Do you want to keep it also in phy.h (like for validate and
->> configure)?
-> No. Adding in phy.txt and before phy_calibrate() should suffice IMO.
+On 2019-07-05 18:09, Colin Ian King wrote:
+> Static analysis on today's linux-next has found a potential error in the
+> following commit:
+>
+> commit 280e54c9f614c88292685383cf2d65057586e9fb
+> Author: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+> Date:   Thu Jun 7 13:06:08 2018 +0200
+>
+>      drm/exynos: scaler: Reset hardware before starting the operation
+>
+> In the following code the retry counter does not appear to be
+> decremented, so potentially the loop could get stuck forever if the H/W
+> does not change state:
+>
+> static inline int scaler_reset(struct scaler_context *scaler)
+> {
+>          int retry = SCALER_RESET_WAIT_RETRIES;
+>
+>          scaler_write(SCALER_CFG_SOFT_RESET, SCALER_CFG);
+>          do {
+>                  cpu_relax();
+>          } while (retry > 1 &&
+>                   scaler_read(SCALER_CFG) & SCALER_CFG_SOFT_RESET);
+>
+>          do {
+>                  cpu_relax();
+>                  scaler_write(1, SCALER_INT_EN);
+>          } while (retry > 0 && scaler_read(SCALER_INT_EN) != 1);
+>
+>          return retry ? 0 : -EIO;
+> }
+>
+> Maybe I'm missing something here subtle.
 
-OKay, I will move it to phy.c. Generic PHYs documentation is converted 
-to RST (Documentation/driver-api/phy/phy.rst), so it could simply 
-include those comments from .c file. This can be done in separate patch.
+Right. Indeed there is missing decrementation of the 'retry' variable. I 
+suggest to add it to both loops and reset retry value to 
+SCALER_RESET_WAIT_RETRIES between them.
 
 Best regards
 -- 
