@@ -1,42 +1,46 @@
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 0/4] rtc: convert subsystem to i2c_new_dummy_device()
-Date: Mon, 22 Jul 2019 19:26:14 +0200
-Message-ID: <20190722172618.4061-1-wsa+renesas@sang-engineering.com>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v2] phy: core: document phy_calibrate()
+Date: Mon, 22 Jul 2019 19:32:23 +0200
+Message-ID: <20190722173223.19518-1-m.szyprowski@samsung.com>
+References: <CGME20190722173236eucas1p171299dfaa34f3124622df488bfe57a89@eucas1p1.samsung.com>
+Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-i2c@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This series is part of a tree-wide movement to replace the I2C API call
-'i2c_new_dummy' which returns NULL with its new counterpart returning an
-ERRPTR.
+Commit 36914111e682 ("drivers: phy: add calibrate method") added support
+for generic phy_calibrate() method, but it didn't explain in detail when
+such method is supposed to be called. Add some more documentation directly
+to the phy.h to make it clean that it is intended to be called after every
+host controller reset.
 
-The series was generated with coccinelle (audited afterwards, of course) and
-build tested by me and by buildbot. No tests on HW have been performed.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/phy/phy-core.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-The branch is based on v5.3-rc1. A branch (with some more stuff included) can
-be found here:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/new_dummy
-
-Some drivers still need to be manually converted. Patches for those will be
-sent out individually.
-
-
-Wolfram Sang (4):
-  rtc: isl12026: convert to i2c_new_dummy_device
-  rtc: max77686: convert to i2c_new_dummy_device
-  rtc: s35390a: convert to i2c_new_dummy_device
-  rtc: s5m: convert to i2c_new_dummy_device
-
- drivers/rtc/rtc-isl12026.c | 6 +++---
- drivers/rtc/rtc-max77686.c | 6 +++---
- drivers/rtc/rtc-s35390a.c  | 6 +++---
- drivers/rtc/rtc-s5m.c      | 6 +++---
- 4 files changed, 12 insertions(+), 12 deletions(-)
-
+diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+index e3880c4a15f2..b04f4fe85ac2 100644
+--- a/drivers/phy/phy-core.c
++++ b/drivers/phy/phy-core.c
+@@ -394,6 +394,16 @@ int phy_reset(struct phy *phy)
+ }
+ EXPORT_SYMBOL_GPL(phy_reset);
+ 
++/**
++ * phy_calibrate() - Tunes the phy hw parameters for current configuration
++ * @phy: the phy returned by phy_get()
++ *
++ * Used to calibrate phy hardware, typically by adjusting some parameters in
++ * runtime, which are otherwise lost after host controller reset and cannot
++ * be applied in phy_init() or phy_power_on().
++ *
++ * Returns: 0 if successful, an negative error code otherwise
++ */
+ int phy_calibrate(struct phy *phy)
+ {
+ 	int ret;
 -- 
-2.20.1
+2.17.1
