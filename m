@@ -1,9 +1,9 @@
 From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH v12 2/9] dt-bindings: ddr: add LPDDR3 memories
-Date: Mon, 22 Jul 2019 11:46:39 +0200
-Message-ID: <20190722094646.13342-3-l.luba@partner.samsung.com>
+Subject: [PATCH v12 8/9] ARM: dts: exynos: add DMC device for exynos5422
+Date: Mon, 22 Jul 2019 11:46:45 +0200
+Message-ID: <20190722094646.13342-9-l.luba@partner.samsung.com>
 References: <20190722094646.13342-1-l.luba@partner.samsung.com>
-        <CGME20190722094726eucas1p2471055ae10f65df44fa1e640491e528f@eucas1p2.samsung.com>
+        <CGME20190722094732eucas1p1bd2c7e20744637f9f48f40be71db0168@eucas1p1.samsung.com>
 Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190722094646.13342-1-l.luba@partner.samsung.com>
@@ -12,183 +12,247 @@ To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kern
 Cc: mturquette@baylibre.com, sboyd@kernel.org, b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org, willy.mh.wolff.ml@gmail.com, Lukasz Luba <l.luba@partner.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Specifies the AC timing parameters of the LPDDR3 memory device.
+Add description of Dynamic Memory Controller and PPMU counters.
+They are used by exynos5422-dmc driver.
+There is a definition of the memory chip, which is then used during
+calculation of timings for each OPP.
+The algorithm in the driver needs these two sets to bound the timings.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 ---
- .../bindings/ddr/lpddr3-timings.txt           | 58 +++++++++++
- .../devicetree/bindings/ddr/lpddr3.txt        | 97 +++++++++++++++++++
- 2 files changed, 155 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/ddr/lpddr3-timings.txt
- create mode 100644 Documentation/devicetree/bindings/ddr/lpddr3.txt
+ arch/arm/boot/dts/exynos5420.dtsi             |  71 +++++++++++
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 116 ++++++++++++++++++
+ 2 files changed, 187 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/ddr/lpddr3-timings.txt b/Documentation/devicetree/bindings/ddr/lpddr3-timings.txt
-new file mode 100644
-index 000000000000..84705e50a3fd
---- /dev/null
-+++ b/Documentation/devicetree/bindings/ddr/lpddr3-timings.txt
-@@ -0,0 +1,58 @@
-+* AC timing parameters of LPDDR3 memories for a given speed-bin.
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 97dc10915680..ac49373baae7 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -237,6 +237,29 @@
+ 			status = "disabled";
+ 		};
+ 
++		dmc: memory-controller@10c20000 {
++			compatible = "samsung,exynos5422-dmc";
++			reg = <0x10c20000 0x100>, <0x10c30000 0x100>;
++			clocks = <&clock CLK_FOUT_SPLL>,
++				 <&clock CLK_MOUT_SCLK_SPLL>,
++				 <&clock CLK_FF_DOUT_SPLL2>,
++				 <&clock CLK_FOUT_BPLL>,
++				 <&clock CLK_MOUT_BPLL>,
++				 <&clock CLK_SCLK_BPLL>,
++				 <&clock CLK_MOUT_MX_MSPLL_CCORE>,
++				 <&clock CLK_MOUT_MCLK_CDREX>;
++			clock-names = "fout_spll",
++				      "mout_sclk_spll",
++				      "ff_dout_spll2",
++				      "fout_bpll",
++				      "mout_bpll",
++				      "sclk_bpll",
++				      "mout_mx_mspll_ccore",
++				      "mout_mclk_cdrex";
++			samsung,syscon-clk = <&clock>;
++			status = "disabled";
++		};
 +
-+The structures are based on LPDDR2 and extended where needed.
+ 		nocp_mem0_0: nocp@10ca1000 {
+ 			compatible = "samsung,exynos5420-nocp";
+ 			reg = <0x10CA1000 0x200>;
+@@ -273,6 +296,54 @@
+ 			status = "disabled";
+ 		};
+ 
++		ppmu_dmc0_0: ppmu@10d00000 {
++			compatible = "samsung,exynos-ppmu";
++			reg = <0x10d00000 0x2000>;
++			clocks = <&clock CLK_PCLK_PPMU_DREX0_0>;
++			clock-names = "ppmu";
++			events {
++				ppmu_event3_dmc0_0: ppmu-event3-dmc0_0 {
++					event-name = "ppmu-event3-dmc0_0";
++				};
++			};
++		};
 +
-+Required properties:
-+- compatible : Should be "jedec,lpddr3-timings"
-+- min-freq : minimum DDR clock frequency for the speed-bin. Type is <u32>
-+- reg : maximum DDR clock frequency for the speed-bin. Type is <u32>
++		ppmu_dmc0_1: ppmu@10d10000 {
++			compatible = "samsung,exynos-ppmu";
++			reg = <0x10d10000 0x2000>;
++			clocks = <&clock CLK_PCLK_PPMU_DREX0_1>;
++			clock-names = "ppmu";
++			events {
++				ppmu_event3_dmc0_1: ppmu-event3-dmc0_1 {
++					event-name = "ppmu-event3-dmc0_1";
++				};
++			};
++		};
 +
-+Optional properties:
++		ppmu_dmc1_0: ppmu@10d60000 {
++			compatible = "samsung,exynos-ppmu";
++			reg = <0x10d60000 0x2000>;
++			clocks = <&clock CLK_PCLK_PPMU_DREX1_0>;
++			clock-names = "ppmu";
++			events {
++				ppmu_event3_dmc1_0: ppmu-event3-dmc1_0 {
++					event-name = "ppmu-event3-dmc1_0";
++				};
++			};
++		};
 +
-+The following properties represent AC timing parameters from the memory
-+data-sheet of the device for a given speed-bin. All these properties are
-+of type <u32> and the default unit is ps (pico seconds).
-+- tRFC
-+- tRRD
-+- tRPab
-+- tRPpb
-+- tRCD
-+- tRC
-+- tRAS
-+- tWTR
-+- tWR
-+- tRTP
-+- tW2W-C2C
-+- tR2R-C2C
-+- tFAW
-+- tXSR
-+- tXP
-+- tCKE
-+- tCKESR
-+- tMRD
++		ppmu_dmc1_1: ppmu@10d70000 {
++			compatible = "samsung,exynos-ppmu";
++			reg = <0x10d70000 0x2000>;
++			clocks = <&clock CLK_PCLK_PPMU_DREX1_1>;
++			clock-names = "ppmu";
++			events {
++				ppmu_event3_dmc1_1: ppmu-event3-dmc1_1 {
++					event-name = "ppmu-event3-dmc1_1";
++				};
++			};
++		};
 +
-+Example:
+ 		gsc_pd: power-domain@10044000 {
+ 			compatible = "samsung,exynos4210-pd";
+ 			reg = <0x10044000 0x20>;
+diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+index 829147e320e0..fe885ca969af 100644
+--- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+@@ -34,6 +34,97 @@
+ 			clock-frequency = <24000000>;
+ 		};
+ 	};
 +
-+timings_samsung_K3QF2F20DB_800mhz: lpddr3-timings@800000000 {
-+	compatible	= "jedec,lpddr3-timings";
-+	reg		= <800000000>; /* workaround: it shows max-freq */
-+	min-freq	= <100000000>;
-+	tRFC		= <65000>;
-+	tRRD		= <6000>;
-+	tRPab		= <12000>;
-+	tRPpb		= <12000>;
-+	tRCD		= <10000>;
-+	tRC		= <33750>;
-+	tRAS		= <23000>;
-+	tWTR		= <3750>;
-+	tWR		= <7500>;
-+	tRTP		= <3750>;
-+	tW2W-C2C	= <0>;
-+	tR2R-C2C	= <0>;
-+	tFAW		= <25000>;
-+	tXSR		= <70000>;
-+	tXP		= <3750>;
-+	tCKE		= <3750>;
-+	tCKESR		= <3750>;
-+	tMRD		= <7000>;
-+};
-diff --git a/Documentation/devicetree/bindings/ddr/lpddr3.txt b/Documentation/devicetree/bindings/ddr/lpddr3.txt
-new file mode 100644
-index 000000000000..3b2485b84b3f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/ddr/lpddr3.txt
-@@ -0,0 +1,97 @@
-+* LPDDR3 SDRAM memories compliant to JEDEC JESD209-3C
++	dmc_opp_table: opp_table2 {
++		compatible = "operating-points-v2";
 +
-+Required properties:
-+- compatible : Should be  - "jedec,lpddr3"
-+- density  : <u32> representing density in Mb (Mega bits)
-+- io-width : <u32> representing bus width. Possible values are 8, 16, 32, 64
-+- #address-cells: Must be set to 1
-+- #size-cells: Must be set to 0
-+
-+Optional properties:
-+
-+The following optional properties represent the minimum value of some AC
-+timing parameters of the DDR device in terms of number of clock cycles.
-+These values shall be obtained from the device data-sheet.
-+- tRFC-min-tck
-+- tRRD-min-tck
-+- tRPab-min-tck
-+- tRPpb-min-tck
-+- tRCD-min-tck
-+- tRC-min-tck
-+- tRAS-min-tck
-+- tWTR-min-tck
-+- tWR-min-tck
-+- tRTP-min-tck
-+- tW2W-C2C-min-tck
-+- tR2R-C2C-min-tck
-+- tWL-min-tck
-+- tDQSCK-min-tck
-+- tRL-min-tck
-+- tFAW-min-tck
-+- tXSR-min-tck
-+- tXP-min-tck
-+- tCKE-min-tck
-+- tCKESR-min-tck
-+- tMRD-min-tck
-+
-+Child nodes:
-+- The lpddr3 node may have one or more child nodes of type "lpddr3-timings".
-+  "lpddr3-timings" provides AC timing parameters of the device for
-+  a given speed-bin. Please see Documentation/devicetree/
-+  bindings/ddr/lpddr3-timings.txt for more information on "lpddr3-timings"
-+
-+Example:
-+
-+samsung_K3QF2F20DB: lpddr3 {
-+	compatible	= "Samsung,K3QF2F20DB", "jedec,lpddr3";
-+	density		= <16384>;
-+	io-width	= <32>;
-+	#address-cells	= <1>;
-+	#size-cells	= <0>;
-+
-+	tRFC-min-tck		= <17>;
-+	tRRD-min-tck		= <2>;
-+	tRPab-min-tck		= <2>;
-+	tRPpb-min-tck		= <2>;
-+	tRCD-min-tck		= <3>;
-+	tRC-min-tck		= <6>;
-+	tRAS-min-tck		= <5>;
-+	tWTR-min-tck		= <2>;
-+	tWR-min-tck		= <7>;
-+	tRTP-min-tck		= <2>;
-+	tW2W-C2C-min-tck	= <0>;
-+	tR2R-C2C-min-tck	= <0>;
-+	tWL-min-tck		= <8>;
-+	tDQSCK-min-tck		= <5>;
-+	tRL-min-tck		= <14>;
-+	tFAW-min-tck		= <5>;
-+	tXSR-min-tck		= <12>;
-+	tXP-min-tck		= <2>;
-+	tCKE-min-tck		= <2>;
-+	tCKESR-min-tck		= <2>;
-+	tMRD-min-tck		= <5>;
-+
-+	timings_samsung_K3QF2F20DB_800mhz: lpddr3-timings@800000000 {
-+		compatible	= "jedec,lpddr3-timings";
-+		reg		= <800000000>; /* workaround: it shows max-freq */
-+		min-freq	= <100000000>;
-+		tRFC		= <65000>;
-+		tRRD		= <6000>;
-+		tRPab		= <12000>;
-+		tRPpb		= <12000>;
-+		tRCD		= <10000>;
-+		tRC		= <33750>;
-+		tRAS		= <23000>;
-+		tWTR		= <3750>;
-+		tWR		= <7500>;
-+		tRTP		= <3750>;
-+		tW2W-C2C	= <0>;
-+		tR2R-C2C	= <0>;
-+		tFAW		= <25000>;
-+		tXSR		= <70000>;
-+		tXP		= <3750>;
-+		tCKE		= <3750>;
-+		tCKESR		= <3750>;
-+		tMRD		= <7000>;
++		opp00 {
++			opp-hz = /bits/ 64 <165000000>;
++			opp-microvolt = <875000>;
++		};
++		opp01 {
++			opp-hz = /bits/ 64 <206000000>;
++			opp-microvolt = <875000>;
++		};
++		opp02 {
++			opp-hz = /bits/ 64 <275000000>;
++			opp-microvolt = <875000>;
++		};
++		opp03 {
++			opp-hz = /bits/ 64 <413000000>;
++			opp-microvolt = <887500>;
++		};
++		opp04 {
++			opp-hz = /bits/ 64 <543000000>;
++			opp-microvolt = <937500>;
++		};
++		opp05 {
++			opp-hz = /bits/ 64 <633000000>;
++			opp-microvolt = <1012500>;
++		};
++		opp06 {
++			opp-hz = /bits/ 64 <728000000>;
++			opp-microvolt = <1037500>;
++		};
++		opp07 {
++			opp-hz = /bits/ 64 <825000000>;
++			opp-microvolt = <1050000>;
++		};
 +	};
-+}
++
++	samsung_K3QF2F20DB: lpddr3 {
++		compatible	= "samsung,K3QF2F20DB", "jedec,lpddr3";
++		density		= <16384>;
++		io-width	= <32>;
++		#address-cells  = <1>;
++		#size-cells     = <0>;
++
++		tRFC-min-tck		= <17>;
++		tRRD-min-tck		= <2>;
++		tRPab-min-tck		= <2>;
++		tRPpb-min-tck		= <2>;
++		tRCD-min-tck		= <3>;
++		tRC-min-tck		= <6>;
++		tRAS-min-tck		= <5>;
++		tWTR-min-tck		= <2>;
++		tWR-min-tck		= <7>;
++		tRTP-min-tck		= <2>;
++		tW2W-C2C-min-tck	= <0>;
++		tR2R-C2C-min-tck	= <0>;
++		tWL-min-tck		= <8>;
++		tDQSCK-min-tck		= <5>;
++		tRL-min-tck		= <14>;
++		tFAW-min-tck		= <5>;
++		tXSR-min-tck		= <12>;
++		tXP-min-tck		= <2>;
++		tCKE-min-tck		= <2>;
++		tCKESR-min-tck		= <2>;
++		tMRD-min-tck		= <5>;
++
++		timings_samsung_K3QF2F20DB_800mhz: lpddr3-timings@800000000 {
++			compatible	= "jedec,lpddr3-timings";
++			reg		= <800000000>; /* workaround: it shows max-freq */
++			min-freq	= <100000000>;
++			tRFC		= <65000>;
++			tRRD		= <6000>;
++			tRPab		= <12000>;
++			tRPpb		= <12000>;
++			tRCD		= <10000>;
++			tRC		= <33750>;
++			tRAS		= <23000>;
++			tWTR		= <3750>;
++			tWR		= <7500>;
++			tRTP		= <3750>;
++			tW2W-C2C	= <0>;
++			tR2R-C2C	= <0>;
++			tFAW		= <25000>;
++			tXSR		= <70000>;
++			tXP		= <3750>;
++			tCKE		= <3750>;
++			tCKESR		= <3750>;
++			tMRD		= <7000>;
++		};
++	};
+ };
+ 
+ &adc {
+@@ -132,6 +223,15 @@
+ 	cpu-supply = <&buck2_reg>;
+ };
+ 
++&dmc {
++	devfreq-events = <&ppmu_event3_dmc0_0>,	<&ppmu_event3_dmc0_1>,
++			<&ppmu_event3_dmc1_0>, <&ppmu_event3_dmc1_1>;
++	device-handle = <&samsung_K3QF2F20DB>;
++	operating-points-v2 = <&dmc_opp_table>;
++	vdd-supply = <&buck1_reg>;
++	status = "okay";
++};
++
+ &hsi2c_4 {
+ 	status = "okay";
+ 
+@@ -634,6 +734,22 @@
+ 	};
+ };
+ 
++&ppmu_dmc0_0 {
++	status = "okay";
++};
++
++&ppmu_dmc0_1 {
++	status = "okay";
++};
++
++&ppmu_dmc1_0 {
++	status = "okay";
++};
++
++&ppmu_dmc1_1 {
++	status = "okay";
++};
++
+ &tmu_cpu0 {
+ 	vtmu-supply = <&ldo7_reg>;
+ };
 -- 
 2.17.1
