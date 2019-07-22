@@ -1,59 +1,50 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH v2 2/2] usb: dwc3: remove generic PHY calibrate() calls
-Date: Tue, 23 Jul 2019 00:30:48 +0530
-Message-ID: <CANAwSgQSQLVy=E3uzDq_sdmBR7Rcg=S1Tfr24o3DozHSP2wKiw@mail.gmail.com>
-References: <CGME20190719081334eucas1p1fd614e56c1ec0dfa654d0bb77f17ba5d@eucas1p1.samsung.com>
- <20190719081212.9249-1-m.szyprowski@samsung.com> <20190719081326.9347-1-m.szyprowski@samsung.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: Re: [PATCH 0/4] rtc: convert subsystem to i2c_new_dummy_device()
+Date: Mon, 22 Jul 2019 22:50:55 +0200
+Message-ID: <20190722205055.GE24911@piout.net>
+References: <20190722172618.4061-1-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190719081326.9347-1-m.szyprowski@samsung.com>
+Content-Disposition: inline
+In-Reply-To: <20190722172618.4061-1-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Linux USB Mailing List <linux-usb@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Felipe Balbi <balbi@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jochen Sprickerhof <jochen@sprickerhof.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+On 22/07/2019 19:26:14+0200, Wolfram Sang wrote:
+> This series is part of a tree-wide movement to replace the I2C API call
+> 'i2c_new_dummy' which returns NULL with its new counterpart returning an
+> ERRPTR.
+> 
+> The series was generated with coccinelle (audited afterwards, of course) and
+> build tested by me and by buildbot. No tests on HW have been performed.
+> 
+> The branch is based on v5.3-rc1. A branch (with some more stuff included) can
+> be found here:
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/new_dummy
+> 
+> Some drivers still need to be manually converted. Patches for those will be
+> sent out individually.
+> 
+> 
+> Wolfram Sang (4):
+>   rtc: isl12026: convert to i2c_new_dummy_device
+>   rtc: max77686: convert to i2c_new_dummy_device
+>   rtc: s35390a: convert to i2c_new_dummy_device
+>   rtc: s5m: convert to i2c_new_dummy_device
+> 
+>  drivers/rtc/rtc-isl12026.c | 6 +++---
+>  drivers/rtc/rtc-max77686.c | 6 +++---
+>  drivers/rtc/rtc-s35390a.c  | 6 +++---
+>  drivers/rtc/rtc-s5m.c      | 6 +++---
+>  4 files changed, 12 insertions(+), 12 deletions(-)
+> 
+All applied, thanks!
 
-On Fri, 19 Jul 2019 at 13:43, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->
-> Calls to USB2 generic PHY calibrate() method has been moved to HCD core,
-> which now successfully handles generic PHYs and their calibration after
-> every HCD reset. This fixes all the timing issues related to PHY
-> calibration done directly from DWC3 driver: incorrect operation after
-> system suspend/resume or USB3.0 detection failure when XHCI-plat driver
-> compiled as separate module.
->
-
-Tested on my XU3 / XU4 / HC1
-Tested-by: Anand Moon <linux.amoon@gmail.com>
-
-
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/usb/dwc3/core.c | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-> index c9bb93a2c81e..7dd6d419254d 100644
-> --- a/drivers/usb/dwc3/core.c
-> +++ b/drivers/usb/dwc3/core.c
-> @@ -168,7 +168,6 @@ static void __dwc3_set_mode(struct work_struct *work)
->                                 otg_set_vbus(dwc->usb2_phy->otg, true);
->                         phy_set_mode(dwc->usb2_generic_phy, PHY_MODE_USB_HOST);
->                         phy_set_mode(dwc->usb3_generic_phy, PHY_MODE_USB_HOST);
-> -                       phy_calibrate(dwc->usb2_generic_phy);
->                 }
->                 break;
->         case DWC3_GCTL_PRTCAP_DEVICE:
-> @@ -1166,7 +1165,6 @@ static int dwc3_core_init_mode(struct dwc3 *dwc)
->                                 dev_err(dev, "failed to initialize host\n");
->                         return ret;
->                 }
-> -               phy_calibrate(dwc->usb2_generic_phy);
->                 break;
->         case USB_DR_MODE_OTG:
->                 INIT_WORK(&dwc->drd_work, __dwc3_set_mode);
-> --
-> 2.17.1
->
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
