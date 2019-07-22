@@ -1,50 +1,46 @@
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: Re: [PATCH 0/4] rtc: convert subsystem to i2c_new_dummy_device()
-Date: Mon, 22 Jul 2019 22:50:55 +0200
-Message-ID: <20190722205055.GE24911@piout.net>
-References: <20190722172618.4061-1-wsa+renesas@sang-engineering.com>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH] drm/exynos: fix missing decrement of retry counter
+Date: Mon, 22 Jul 2019 23:25:35 +0100
+Message-ID: <20190722222535.19114-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190722172618.4061-1-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 22/07/2019 19:26:14+0200, Wolfram Sang wrote:
-> This series is part of a tree-wide movement to replace the I2C API call
-> 'i2c_new_dummy' which returns NULL with its new counterpart returning an
-> ERRPTR.
-> 
-> The series was generated with coccinelle (audited afterwards, of course) and
-> build tested by me and by buildbot. No tests on HW have been performed.
-> 
-> The branch is based on v5.3-rc1. A branch (with some more stuff included) can
-> be found here:
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/new_dummy
-> 
-> Some drivers still need to be manually converted. Patches for those will be
-> sent out individually.
-> 
-> 
-> Wolfram Sang (4):
->   rtc: isl12026: convert to i2c_new_dummy_device
->   rtc: max77686: convert to i2c_new_dummy_device
->   rtc: s35390a: convert to i2c_new_dummy_device
->   rtc: s5m: convert to i2c_new_dummy_device
-> 
->  drivers/rtc/rtc-isl12026.c | 6 +++---
->  drivers/rtc/rtc-max77686.c | 6 +++---
->  drivers/rtc/rtc-s35390a.c  | 6 +++---
->  drivers/rtc/rtc-s5m.c      | 6 +++---
->  4 files changed, 12 insertions(+), 12 deletions(-)
-> 
-All applied, thanks!
+From: Colin Ian King <colin.king@canonical.com>
 
+Currently the retry counter is not being decremented, leading to a
+potential infinite spin if the scalar_reads don't change state.
+
+Addresses-Coverity: ("Infinite loop")
+Fixes: 280e54c9f614 ("drm/exynos: scaler: Reset hardware before starting the operation")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_scaler.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_scaler.c b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
+index 9af096479e1c..b24ba948b725 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_scaler.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
+@@ -94,12 +94,12 @@ static inline int scaler_reset(struct scaler_context *scaler)
+ 	scaler_write(SCALER_CFG_SOFT_RESET, SCALER_CFG);
+ 	do {
+ 		cpu_relax();
+-	} while (retry > 1 &&
++	} while (--retry > 1 &&
+ 		 scaler_read(SCALER_CFG) & SCALER_CFG_SOFT_RESET);
+ 	do {
+ 		cpu_relax();
+ 		scaler_write(1, SCALER_INT_EN);
+-	} while (retry > 0 && scaler_read(SCALER_INT_EN) != 1);
++	} while (--retry > 0 && scaler_read(SCALER_INT_EN) != 1);
+ 
+ 	return retry ? 0 : -EIO;
+ }
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.20.1
