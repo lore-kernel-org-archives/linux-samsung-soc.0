@@ -1,46 +1,35 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2] phy: core: document phy_calibrate()
-Date: Mon, 22 Jul 2019 19:32:23 +0200
-Message-ID: <20190722173223.19518-1-m.szyprowski@samsung.com>
-References: <CGME20190722173236eucas1p171299dfaa34f3124622df488bfe57a89@eucas1p1.samsung.com>
-Content-Type: text/plain; charset="utf-8"
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: [RFC/RFT 0/5] Exynos USB 3.0 PHY tune setting
+Date: Tue, 23 Jul 2019 00:29:33 +0530
+Message-ID: <20190722185938.9043-1-linux.amoon@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Anand Moon <linux.amoon@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Commit 36914111e682 ("drivers: phy: add calibrate method") added support
-for generic phy_calibrate() method, but it didn't explain in detail when
-such method is supposed to be called. Add some more documentation directly
-to the phy.h to make it clean that it is intended to be called after every
-host controller reset.
+Dear All,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/phy/phy-core.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Here are some patches which help tune USB 3.0 phy.
+changes have been testing on Odroid XU3 / XU4 / HC1.
+with suspend and resume working with usb hdd device connected.
 
-diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-index e3880c4a15f2..b04f4fe85ac2 100644
---- a/drivers/phy/phy-core.c
-+++ b/drivers/phy/phy-core.c
-@@ -394,6 +394,16 @@ int phy_reset(struct phy *phy)
- }
- EXPORT_SYMBOL_GPL(phy_reset);
- 
-+/**
-+ * phy_calibrate() - Tunes the phy hw parameters for current configuration
-+ * @phy: the phy returned by phy_get()
-+ *
-+ * Used to calibrate phy hardware, typically by adjusting some parameters in
-+ * runtime, which are otherwise lost after host controller reset and cannot
-+ * be applied in phy_init() or phy_power_on().
-+ *
-+ * Returns: 0 if successful, an negative error code otherwise
-+ */
- int phy_calibrate(struct phy *phy)
- {
- 	int ret;
+These patches have been build on top on Marek Szyprowski
+Fix USB3.0 DRD PHY calibration issues.
+
+[0] https://patchwork.kernel.org/cover/11049823/
+
+Anand Moon (5):
+  phy: exynos5-usbdrd: read from correct offset of xhci linksystem
+  phy: exynos5-usbdrd: add missing tuning of the phyutmi signal
+  phy: exynos5-usbdrd: UTMI tune signal
+  phy: exynos5-usbdrd: PIPE3 tune signal
+  phy: exynos5-usbdrd: drop duplicate setting PIPE3 tune signal
+
+ drivers/phy/samsung/phy-exynos5-usbdrd.c | 101 ++++++++++++++++++-----
+ 1 file changed, 82 insertions(+), 19 deletions(-)
+
 -- 
-2.17.1
+2.22.0
