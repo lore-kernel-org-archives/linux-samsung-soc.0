@@ -1,62 +1,45 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: drm/exynos: scaler: Reset hardware before starting the
- operation (bug report)
-Date: Mon, 22 Jul 2019 19:05:58 +0200
-Message-ID: <9ceb6d17-6d1b-3d6d-2baa-1a31e57fe21d@samsung.com>
-References: <CGME20190705160911epcas2p2754c2c703cc6086f7f1715e1840deb1b@epcas2p2.samsung.com>
-        <c67b4671-aabc-df13-e9c7-ccbc25337b7c@canonical.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 4/4] rtc: s5m: convert to i2c_new_dummy_device
+Date: Mon, 22 Jul 2019 19:26:18 +0200
+Message-ID: <20190722172618.4061-5-wsa+renesas@sang-engineering.com>
+References: <20190722172618.4061-1-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c67b4671-aabc-df13-e9c7-ccbc25337b7c@canonical.com>
-Content-Language: en-US
+In-Reply-To: <20190722172618.4061-1-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Colin Ian King <colin.king@canonical.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Inki Dae <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: linux-i2c@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Sangbeom Kim <sbkim73@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Move from i2c_new_dummy() to i2c_new_dummy_device(), so we now get an
+ERRPTR which we use in error handling.
 
-On 2019-07-05 18:09, Colin Ian King wrote:
-> Static analysis on today's linux-next has found a potential error in the
-> following commit:
->
-> commit 280e54c9f614c88292685383cf2d65057586e9fb
-> Author: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-> Date:   Thu Jun 7 13:06:08 2018 +0200
->
->      drm/exynos: scaler: Reset hardware before starting the operation
->
-> In the following code the retry counter does not appear to be
-> decremented, so potentially the loop could get stuck forever if the H/W
-> does not change state:
->
-> static inline int scaler_reset(struct scaler_context *scaler)
-> {
->          int retry = SCALER_RESET_WAIT_RETRIES;
->
->          scaler_write(SCALER_CFG_SOFT_RESET, SCALER_CFG);
->          do {
->                  cpu_relax();
->          } while (retry > 1 &&
->                   scaler_read(SCALER_CFG) & SCALER_CFG_SOFT_RESET);
->
->          do {
->                  cpu_relax();
->                  scaler_write(1, SCALER_INT_EN);
->          } while (retry > 0 && scaler_read(SCALER_INT_EN) != 1);
->
->          return retry ? 0 : -EIO;
-> }
->
-> Maybe I'm missing something here subtle.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Right. Indeed there is missing decrementation of the 'retry' variable. I 
-suggest to add it to both loops and reset retry value to 
-SCALER_RESET_WAIT_RETRIES between them.
+Generated with coccinelle. Build tested by me and buildbot. Not tested on HW.
 
-Best regards
+ drivers/rtc/rtc-s5m.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
+index c7f1bf823ea0..eb9dde4095a9 100644
+--- a/drivers/rtc/rtc-s5m.c
++++ b/drivers/rtc/rtc-s5m.c
+@@ -760,10 +760,10 @@ static int s5m_rtc_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
+-	info->i2c = i2c_new_dummy(s5m87xx->i2c->adapter, RTC_I2C_ADDR);
+-	if (!info->i2c) {
++	info->i2c = i2c_new_dummy_device(s5m87xx->i2c->adapter, RTC_I2C_ADDR);
++	if (IS_ERR(info->i2c)) {
+ 		dev_err(&pdev->dev, "Failed to allocate I2C for RTC\n");
+-		return -ENODEV;
++		return PTR_ERR(info->i2c);
+ 	}
+ 
+ 	info->regmap = devm_regmap_init_i2c(info->i2c, regmap_cfg);
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.20.1
