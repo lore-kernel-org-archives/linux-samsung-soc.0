@@ -1,35 +1,37 @@
 From: Anand Moon <linux.amoon@gmail.com>
-Subject: [RFC/RFT 0/5] Exynos USB 3.0 PHY tune setting
-Date: Tue, 23 Jul 2019 00:29:33 +0530
-Message-ID: <20190722185938.9043-1-linux.amoon@gmail.com>
+Subject: [RFC/RFT 1/5] phy: exynos5-usbdrd: read from correct offset of xhci linksystem
+Date: Tue, 23 Jul 2019 00:29:34 +0530
+Message-ID: <20190722185938.9043-2-linux.amoon@gmail.com>
+References: <20190722185938.9043-1-linux.amoon@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190722185938.9043-1-linux.amoon@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: Kishon Vijay Abraham I <kishon@ti.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Anand Moon <linux.amoon@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Dear All,
+Read from linksystem offset to update the xhci version.
 
-Here are some patches which help tune USB 3.0 phy.
-changes have been testing on Odroid XU3 / XU4 / HC1.
-with suspend and resume working with usb hdd device connected.
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+ drivers/phy/samsung/phy-exynos5-usbdrd.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-These patches have been build on top on Marek Szyprowski
-Fix USB3.0 DRD PHY calibration issues.
-
-[0] https://patchwork.kernel.org/cover/11049823/
-
-Anand Moon (5):
-  phy: exynos5-usbdrd: read from correct offset of xhci linksystem
-  phy: exynos5-usbdrd: add missing tuning of the phyutmi signal
-  phy: exynos5-usbdrd: UTMI tune signal
-  phy: exynos5-usbdrd: PIPE3 tune signal
-  phy: exynos5-usbdrd: drop duplicate setting PIPE3 tune signal
-
- drivers/phy/samsung/phy-exynos5-usbdrd.c | 101 ++++++++++++++++++-----
- 1 file changed, 82 insertions(+), 19 deletions(-)
-
+diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+index 646259bee909..3c14bf7718c1 100644
+--- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
++++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+@@ -397,7 +397,8 @@ static int exynos5_usbdrd_phy_init(struct phy *phy)
+ 	 * Setting the Frame length Adj value[6:1] to default 0x20
+ 	 * See xHCI 1.0 spec, 5.2.4
+ 	 */
+-	reg =	LINKSYSTEM_XHCI_VERSION_CONTROL |
++	reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_LINKSYSTEM);
++	reg |=	LINKSYSTEM_XHCI_VERSION_CONTROL |
+ 		LINKSYSTEM_FLADJ(0x20);
+ 	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_LINKSYSTEM);
+ 
 -- 
 2.22.0
