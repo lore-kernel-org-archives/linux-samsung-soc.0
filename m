@@ -1,48 +1,86 @@
-From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: Re: [PATCH v1 21/50] ARM: dts: exynos: add OPP into FSYS APB bus in
- Exynos5420
-Date: Mon, 22 Jul 2019 12:47:00 +0200
-Message-ID: <7b662b86-f442-3de8-e357-88bf9eaffd5a@partner.samsung.com>
-References: <CGME20190715124451eucas1p2904b49f59cca0cbbc22381f168affbb5@eucas1p2.samsung.com>
-        <20190715124417.4787-1-l.luba@partner.samsung.com>
-        <20190715124417.4787-22-l.luba@partner.samsung.com>
-        <CAJKOXPd0kzwZ9_eCK9r04Qj0Rf5SSSnMmwDj11cZozmu0gqsgw@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH] mmc: dw_mmc: Fix occasional hang after tuning on eMMC
+Date: Mon, 22 Jul 2019 15:41:51 +0200
+Message-ID: <CAPDyKFqcbFZWiMc3zLFP7cvkNG0hMB91rfy6T=dbrFks9EWMsQ@mail.gmail.com>
+References: <20190708195613.205729-1-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPd0kzwZ9_eCK9r04Qj0Rf5SSSnMmwDj11cZozmu0gqsgw@mail.gmail.com>
-Content-Language: en-US
+In-Reply-To: <20190708195613.205729-1-dianders@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie@samsung.com>, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, s.nawrocki@samsung.com, myungjoo.ham@samsung.com
+To: Douglas Anderson <dianders@chromium.org>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Brian Norris <briannorris@chromium.org>, Matthias Kaehlcke <mka@chromium.org>, Guenter Roeck <groeck@chromium.org>, Sonny Rao <sonnyrao@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Alim Akhtar <alim.akhtar@gmail.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+On Mon, 8 Jul 2019 at 21:56, Douglas Anderson <dianders@chromium.org> wrote:
+>
+> In commit 46d179525a1f ("mmc: dw_mmc: Wait for data transfer after
+> response errors.") we fixed a tuning-induced hang that I saw when
+> stress testing tuning on certain SD cards.  I won't re-hash that whole
+> commit, but the summary is that as a normal part of tuning you need to
+> deal with transfer errors and there were cases where these transfer
+> errors was putting my system into a bad state causing all future
+> transfers to fail.  That commit fixed handling of the transfer errors
+> for me.
+>
+> In downstream Chrome OS my fix landed and had the same behavior for
+> all SD/MMC commands.  However, it looks like when the commit landed
+> upstream we limited it to only SD tuning commands.  Presumably this
+> was to try to get around problems that Alim Akhtar reported on exynos
+> [1].
+>
+> Unfortunately while stress testing reboots (and suspend/resume) on
+> some rk3288-based Chromebooks I found the same problem on the eMMC on
+> some of my Chromebooks (the ones with Hynix eMMC).  Since the eMMC
+> tuning command is different (MMC_SEND_TUNING_BLOCK_HS200
+> vs. MMC_SEND_TUNING_BLOCK) we were basically getting back into the
+> same situation.
+>
+> I'm hoping that whatever problems exynos was having in the past are
+> somehow magically fixed now and we can make the behavior the same for
+> all commands.
+>
+> [1] https://lkml.kernel.org/r/CAGOxZ53WfNbaMe0_AM0qBqU47kAfgmPBVZC8K8Y-_J3mDMqW4A@mail.gmail.com
+>
+> Fixes: 46d179525a1f ("mmc: dw_mmc: Wait for data transfer after response errors.")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Alim Akhtar <alim.akhtar@gmail.com>
+> Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
-On 7/17/19 10:48 AM, Krzysztof Kozlowski wrote:
-> On Mon, 15 Jul 2019 at 14:44, Lukasz Luba <l.luba@partner.samsung.com> wrote:
->>
->> Add an OPP for FSYS APB which reflects the real possible frequency.
->> The bus will have a new parent clock which speed has 600MHz, thus
->> a new possible frequency provided by the clock divider is 150MHz.
->> According to the documentation max possible frequency for this bus is
->> 200MHz.
-> 
-> Commit msg is good but title could be improved. Focus in the title
-> what problem/issue you are solving - add intermediate step in scaling
-> of FSYS APB?
-The devfreq governor for this bus device follows the set OPP of the
-master device - WCORE bus and sets the OPP with corresponding ID.
-Thus, jumping to max frequency 200MHz when the WCORE bus and other
-devices are operating in the middle of their min-max speed is not
-needed for FSYS APB and this patch adds the intermediate speed step.
+Applied for fixes and by adding a stable tag, thanks!
 
-Regards,
-Lukasz
+Kind regards
+Uffe
 
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
+
+> ---
+> Marek (or anyone else using exynos): is it easy for you to test this
+> and check if things are still broken when we land this patch?  If so,
+> I guess we could have a quirk to have different behavior for just
+> Rockchip SoCs but I'd rather avoid that if possible.
+>
+> NOTE: I'm not hoping totally in vain here.  It is possible that some
+> of the CTO/DTO timers that landed could be the magic that would get
+> exynos unstuck.
+>
+>  drivers/mmc/host/dw_mmc.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> index b53b6b7d4dd4..60c3a06e3469 100644
+> --- a/drivers/mmc/host/dw_mmc.c
+> +++ b/drivers/mmc/host/dw_mmc.c
+> @@ -2034,8 +2034,7 @@ static void dw_mci_tasklet_func(unsigned long priv)
+>                                  * delayed. Allowing the transfer to take place
+>                                  * avoids races and keeps things simple.
+>                                  */
+> -                               if ((err != -ETIMEDOUT) &&
+> -                                   (cmd->opcode == MMC_SEND_TUNING_BLOCK)) {
+> +                               if (err != -ETIMEDOUT) {
+>                                         state = STATE_SENDING_DATA;
+>                                         continue;
+>                                 }
+> --
+> 2.22.0.410.gd8fdbe21b5-goog
+>
