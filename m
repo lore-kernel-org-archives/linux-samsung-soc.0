@@ -1,52 +1,86 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v1 27/50] ARM: dts: exynos: align bus_wcore OPPs in Exynos5420
-Date: Tue, 23 Jul 2019 14:08:14 +0200
-Message-ID: <CAJKOXPdoun-2ankrcNzC70tXZi40iONxM3yPstdaiGBMPDjyRQ@mail.gmail.com>
-References: <CGME20190715124456eucas1p2acf15d00e3fa7b77fe3a2b10ce1ab74f@eucas1p2.samsung.com>
- <20190715124417.4787-1-l.luba@partner.samsung.com> <20190715124417.4787-28-l.luba@partner.samsung.com>
- <CAJKOXPfFZL8q9hM1vPsLq+Qxe-gMz4c8j0jgFKfdf5qs68MTmA@mail.gmail.com> <15310bd0-0fd4-8d62-82a9-7a9df6a8ced3@partner.samsung.com>
+From: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@partner.samsung.com>
+Subject: [RFC PATCH 00/11] Simple QoS for exynos-bus driver using
+ interconnect
+Date: Tue, 23 Jul 2019 14:20:05 +0200
+Message-ID: <20190723122016.30279-1-a.swigon@partner.samsung.com>
+References: <CGME20190723122022eucas1p2f568f74f981f9de9012eb693c3b446d5@eucas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <15310bd0-0fd4-8d62-82a9-7a9df6a8ced3@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lukasz Luba <l.luba@partner.samsung.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, s.nawrocki@samsung.com, myungjoo.ham@samsung.com
+To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: krzk@kernel.org, cw00.choi@samsung.com, myungjoo.ham@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, georgi.djakov@linaro.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, 17 Jul 2019 at 18:58, Lukasz Luba <l.luba@partner.samsung.com> wrote:
->
-> Hi Krzysztof,
->
-> On 7/17/19 12:15 PM, Krzysztof Kozlowski wrote:
-> > On Mon, 15 Jul 2019 at 14:44, Lukasz Luba <l.luba@partner.samsung.com> wrote:
-> >>
-> >> This is the most important bus in the Exynos5x SoC. The whole communication
-> >> inside SoC does through that bus (apart from direct requests from CCI to
-> >> DRAM controller). It is also modeled as a master bus in devfreq framework.
-> >> It is also the only one OPP table throughout other buses which has voltage
-> >> values. The devfreq software controls the speed of that bus and other
-> >> buses. The other buses follows the rate of the master. There is only one
-> >> regulator. The old lowest OPP had pair 925mV, 84MHz which is enough for
-> >
-> > s/lowest/slowest/
-> please see below
-> >
-> >> this frequency. However, due to the fact that the other buses follows the
-> >> WCORE bus by taking the OPP from their table with the same id, e.g. opp02,
-> >> the children frequency should be stable with the set voltage.
-> >> It could cause random faults very hard to debug.
-> >> Thus, the patch removes the lowest OPP to make other buses' lowest OPPs
-> >
-> > s/lowest/slowest/
-> Actually, I have double checked that, because we always used this
-> terminology: low OPP, high OPP, lower OPPs, higher OPPs. I can change
-> it here for you, but I think this is not something that people are used
-> to. Please check EAS pdf documentation or this file:
-> https://www.kernel.org/doc/Documentation/scheduler/sched-energy.txt
-> i.e. "running at a lower OPP" or "high OPPs", "lowest OPPs".
+The following patchset adds interconnect[1][2] framework support to the
+exynos-bus devfreq driver. Extending the devfreq driver with interconnect
+capabilities started as a response to the issue referenced in [3]. The
+patches can be subdivided into four logical groups:
 
-Hmm, indeed, you're right. Don't change it then.
+(a) Refactoring the existing devfreq driver in order to improve readability
+and accommodate for adding new code (patches 01--04/11).
 
-Best regards,
-Krzysztof
+(b) Tweaking the interconnect framework to support the exynos-bus use case
+(patches 05--07/11). Exporting of_icc_get_from_provider() allows us to
+avoid hardcoding every single graph edge in the DT or driver source, and
+relaxing the requirement contained in that function removes the need to
+provide dummy node IDs in the DT. Adjusting the logic in
+apply_constraints() (drivers/interconnect/core.c) accounts for the fact
+that every bus is a separate entity and therefore a separate interconnect
+provider, albeit constituting a part of a larger hierarchy.
+
+(c) Implementing interconnect providers in the exynos-bus devfreq driver
+and adding required DT properties for one selected platform, namely
+Exynos4412 (patches 08--09/11). Due to the fact that this aims to be a
+generic driver for various Exynos SoCs, node IDs are generated dynamically
+rather than hardcoded. This has been determined to be a simpler approach,
+but depends on changes described in (b).
+
+(d) Implementing a sample interconnect consumer for exynos-mixer targeted
+at the issue referenced in [3], again with DT info only for Exynos4412
+(patches 10--11/11).
+
+Integration of devfreq and interconnect functionalities comes down to one
+extra line in the devfreq target() callback, which selects either the
+frequency calculated by the devfreq governor, or the one requested with the
+interconnect API, whichever is higher. All new code works equally well when
+CONFIG_INTERCONNECT is 'n' (as in exynos_defconfig) in which case all
+interconnect API functions are no-ops.
+
+---
+Artur Świgoń
+Samsung R&D Institute Poland
+Samsung Electronics
+
+---
+References:
+[1] Documentation/interconnect/interconnect.rst
+[2] Documentation/devicetree/bindings/interconnect/interconnect.txt
+[3] https://patchwork.kernel.org/patch/10861757
+
+Artur Świgoń (10):
+  devfreq: exynos-bus: Extract exynos_bus_profile_init()
+  devfreq: exynos-bus: Extract exynos_bus_profile_init_passive()
+  devfreq: exynos-bus: Change goto-based logic to if-else logic
+  devfreq: exynos-bus: Clean up code
+  icc: Export of_icc_get_from_provider()
+  icc: Relax requirement in of_icc_get_from_provider()
+  icc: Relax condition in apply_constraints()
+  arm: dts: exynos: Add parents and #interconnect-cells to Exynos4412
+  devfreq: exynos-bus: Add interconnect functionality to exynos-bus
+  arm: dts: exynos: Add interconnects to Exynos4412 mixer
+
+Marek Szyprowski (1):
+  drm: exynos: mixer: Add interconnect support
+
+ .../boot/dts/exynos4412-odroid-common.dtsi    |   1 +
+ arch/arm/boot/dts/exynos4412.dtsi             |  10 +
+ drivers/devfreq/exynos-bus.c                  | 296 ++++++++++++++----
+ drivers/gpu/drm/exynos/exynos_mixer.c         |  68 +++-
+ drivers/interconnect/core.c                   |  12 +-
+ include/linux/interconnect-provider.h         |   6 +
+ 6 files changed, 314 insertions(+), 79 deletions(-)
+
+-- 
+2.17.1
