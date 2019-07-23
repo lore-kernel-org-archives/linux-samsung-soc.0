@@ -1,80 +1,40 @@
 From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v3 2/5] opp: core: add regulators enable and disable
-Date: Tue, 23 Jul 2019 07:18:41 +0530
-Message-ID: <20190723014841.yyttacgagktbkwg2@vireshk-i7>
-References: <20190719150535.15501-1-k.konieczny@partner.samsung.com>
- <CGME20190719150554eucas1p2f4c9e4d2767ab740d419c42d4aeed6d5@eucas1p2.samsung.com>
- <20190719150535.15501-3-k.konieczny@partner.samsung.com>
+Subject: Re: [PATCH v2 0/9] Exynos Adaptive Supply Voltage support
+Date: Tue, 23 Jul 2019 07:34:50 +0530
+Message-ID: <20190723020450.z2pqwetkn2tfhacq@vireshk-i7>
+References: <CGME20190718143117eucas1p1e534b9075d10fbbbe427c66192205eb1@eucas1p1.samsung.com>
+ <20190718143044.25066-1-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190719150535.15501-3-k.konieczny@partner.samsung.com>
+In-Reply-To: <20190718143044.25066-1-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: k.konieczny@partner.samsung.com
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Mark Rutland <mark.rutland@arm.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: krzk@kernel.org, robh+dt@kernel.org, vireshk@kernel.org, devicetree@vger.kernel.org, kgene@kernel.org, pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 19-07-19, 17:05, k.konieczny@partner.samsung.com wrote:
-> Add enable regulators to dev_pm_opp_set_regulators() and disable
-> regulators to dev_pm_opp_put_regulators(). Even if bootloader
-> leaves regulators enabled, they should be enabled in kernel in
-> order to increase the reference count.
+On 18-07-19, 16:30, Sylwester Nawrocki wrote:
+> This is second iteration of patch series adding ASV (Adaptive Supply 
+> Voltage) support for Exynos SoCs. The first one can be found at:
+> https://lore.kernel.org/lkml/20190404171735.12815-1-s.nawrocki@samsung.com
 > 
-> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-> ---
-> Changes in v3:
-> - corrected error path in enable
-> - improved commit message
-> Changes in v2:
-> - move regulator enable and disable into loop
-> ---
->  drivers/opp/core.c | 16 +++++++++++++---
->  1 file changed, 13 insertions(+), 3 deletions(-)
+> The main changes comparing to the first (RFC) version are:
+>  - moving ASV data tables from DT to the driver,
+>  - converting the chipid and the ASV drivers to use regmap,
+>  - converting the ASV driver to proper platform driver.
 > 
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index 0e7703fe733f..a8a480cdabab 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -1570,6 +1570,12 @@ struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
->  			goto free_regulators;
->  		}
->  
-> +		ret = regulator_enable(reg);
-> +		if (ret < 0) {
-> +			regulator_put(reg);
-> +			goto free_regulators;
-> +		}
-> +
->  		opp_table->regulators[i] = reg;
->  	}
->  
-> @@ -1583,8 +1589,10 @@ struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
->  	return opp_table;
->  
->  free_regulators:
-> -	while (i != 0)
-> -		regulator_put(opp_table->regulators[--i]);
-> +	while (i--) {
-> +		regulator_disable(opp_table->regulators[i]);
-> +		regulator_put(opp_table->regulators[i]);
-> +	}
->  
->  	kfree(opp_table->regulators);
->  	opp_table->regulators = NULL;
-> @@ -1610,8 +1618,10 @@ void dev_pm_opp_put_regulators(struct opp_table *opp_table)
->  	/* Make sure there are no concurrent readers while updating opp_table */
->  	WARN_ON(!list_empty(&opp_table->opp_list));
->  
-> -	for (i = opp_table->regulator_count - 1; i >= 0; i--)
-> +	for (i = opp_table->regulator_count - 1; i >= 0; i--) {
-> +		regulator_disable(opp_table->regulators[i]);
->  		regulator_put(opp_table->regulators[i]);
-> +	}
->  
->  	_free_set_opp_data(opp_table);
+> I tried the opp-supported-hw bitmask approach as in the Qualcomm CPUFreq
+> DT bindings but it resulted in too many OPPs and DT nodes, around 200
+> per CPU cluster. So the ASV OPP tables are now in the ASV driver, as in
+> downstream kernels.
 
-Applied. Thanks.
+Hmm. Can you explain why do you have so many OPPs? How many
+frequencies do you actually support per cluster and what all varies
+per frequency based on hw ? How many hw version do u have ?
+
+I am asking as the OPP core can be improved to support your case if
+possible. But I need to understand the problem first.
 
 -- 
 viresh
