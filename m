@@ -1,157 +1,54 @@
-From: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@partner.samsung.com>
-Subject: [RFC PATCH 01/11] devfreq: exynos-bus: Extract
- exynos_bus_profile_init()
-Date: Tue, 23 Jul 2019 14:20:06 +0200
-Message-ID: <20190723122016.30279-2-a.swigon@partner.samsung.com>
-References: <20190723122016.30279-1-a.swigon@partner.samsung.com>
-        <CGME20190723122022eucas1p1266d90873d564894bd852c20140f8474@eucas1p1.samsung.com>
+From: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Subject: Re: [PATCH v4 14/23] drm/tilcdc: Provide ddc symlink in connector
+ sysfs directory
+Date: Tue, 23 Jul 2019 14:44:50 +0200
+Message-ID: <3ad60be5-49cf-4017-4b74-53a2d6272deb@collabora.com>
+References: <cover.1562843413.git.andrzej.p@collabora.com>
+ <d1d415022c598fb7acd033f0f322dd67250adaa9.1562843413.git.andrzej.p@collabora.com>
+ <20190723090532.GA787@ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190723122016.30279-1-a.swigon@partner.samsung.com>
+In-Reply-To: <20190723090532.GA787@ravnborg.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: krzk@kernel.org, cw00.choi@samsung.com, myungjoo.ham@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, georgi.djakov@linaro.org, m.szyprowski@samsung.com
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, Maxime Ripard <maxime.ripard@bootlin.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Shawn Guo <shawnguo@kernel.org>, kernel@collabora.com, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Sean Paul <sean@poorly.run>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Dave Airlie <airlied@redhat.com>, Thomas Zimmermann <tzimmermann@suse.de>, Jonas Karlman <jonas@kwiboo.se>, linux-ar
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds a new static function, exynos_bus_profile_init(), extracted
-from exynos_bus_probe().
+Hi Sam,
 
-Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
----
- drivers/devfreq/exynos-bus.c | 106 ++++++++++++++++++++---------------
- 1 file changed, 60 insertions(+), 46 deletions(-)
+W dniu 23.07.2019 o 11:05, Sam Ravnborg pisze:
+> Hi Andrzej
+> 
+> On Thu, Jul 11, 2019 at 01:26:41PM +0200, Andrzej Pietrasiewicz wrote:
+>> Use the ddc pointer provided by the generic connector.
+>>
+>> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+>> ---
+>>   drivers/gpu/drm/tilcdc/tilcdc_tfp410.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c b/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c
+>> index 62d014c20988..c373edb95666 100644
+>> --- a/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c
+>> +++ b/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c
+>> @@ -219,6 +219,7 @@ static struct drm_connector *tfp410_connector_create(struct drm_device *dev,
+>>   	tfp410_connector->mod = mod;
+>>   
+>>   	connector = &tfp410_connector->base;
+>> +	connector->ddc = mod->i2c;
+>>   
+>>   	drm_connector_init(dev, connector, &tfp410_connector_funcs,
+>>   			DRM_MODE_CONNECTOR_DVID);
+> 
+> When reading this code, it looks strange that we set connector->ddc
+> *before* the call to init the connector.
+> One could risk that drm_connector_init() used memset(..) to clear all
+> fields or so, and it would break this order.
 
-diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-index d9f377912c10..d8f1efaf2d49 100644
---- a/drivers/devfreq/exynos-bus.c
-+++ b/drivers/devfreq/exynos-bus.c
-@@ -372,12 +372,69 @@ static int exynos_bus_parse_of(struct device_node *np,
- 	return ret;
- }
- 
-+static int exynos_bus_profile_init(struct exynos_bus *bus,
-+				   struct devfreq_dev_profile *profile)
-+{
-+	struct device *dev = bus->dev;
-+	struct devfreq_simple_ondemand_data *ondemand_data;
-+	int ret;
-+
-+	/* Initialize the struct profile and governor data for parent device */
-+	profile->polling_ms = 50;
-+	profile->target = exynos_bus_target;
-+	profile->get_dev_status = exynos_bus_get_dev_status;
-+	profile->exit = exynos_bus_exit;
-+
-+	ondemand_data = devm_kzalloc(dev, sizeof(*ondemand_data), GFP_KERNEL);
-+	if (!ondemand_data) {
-+		ret = -ENOMEM;
-+		goto err;
-+	}
-+	ondemand_data->upthreshold = 40;
-+	ondemand_data->downdifferential = 5;
-+
-+	/* Add devfreq device to monitor and handle the exynos bus */
-+	bus->devfreq = devm_devfreq_add_device(dev, profile,
-+						DEVFREQ_GOV_SIMPLE_ONDEMAND,
-+						ondemand_data);
-+	if (IS_ERR(bus->devfreq)) {
-+		dev_err(dev, "failed to add devfreq device\n");
-+		ret = PTR_ERR(bus->devfreq);
-+		goto err;
-+	}
-+
-+	/* Register opp_notifier to catch the change of OPP  */
-+	ret = devm_devfreq_register_opp_notifier(dev, bus->devfreq);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to register opp notifier\n");
-+		goto err;
-+	}
-+
-+	/*
-+	 * Enable devfreq-event to get raw data which is used to determine
-+	 * current bus load.
-+	 */
-+	ret = exynos_bus_enable_edev(bus);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to enable devfreq-event devices\n");
-+		goto err;
-+	}
-+
-+	ret = exynos_bus_set_event(bus);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to set event to devfreq-event devices\n");
-+		goto err;
-+	}
-+
-+err:
-+	return ret;
-+}
-+
- static int exynos_bus_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node, *node;
- 	struct devfreq_dev_profile *profile;
--	struct devfreq_simple_ondemand_data *ondemand_data;
- 	struct devfreq_passive_data *passive_data;
- 	struct devfreq *parent_devfreq;
- 	struct exynos_bus *bus;
-@@ -418,52 +475,9 @@ static int exynos_bus_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto err;
- 
--	/* Initialize the struct profile and governor data for parent device */
--	profile->polling_ms = 50;
--	profile->target = exynos_bus_target;
--	profile->get_dev_status = exynos_bus_get_dev_status;
--	profile->exit = exynos_bus_exit;
--
--	ondemand_data = devm_kzalloc(dev, sizeof(*ondemand_data), GFP_KERNEL);
--	if (!ondemand_data) {
--		ret = -ENOMEM;
-+	ret = exynos_bus_profile_init(bus, profile);
-+	if (ret < 0)
- 		goto err;
--	}
--	ondemand_data->upthreshold = 40;
--	ondemand_data->downdifferential = 5;
--
--	/* Add devfreq device to monitor and handle the exynos bus */
--	bus->devfreq = devm_devfreq_add_device(dev, profile,
--						DEVFREQ_GOV_SIMPLE_ONDEMAND,
--						ondemand_data);
--	if (IS_ERR(bus->devfreq)) {
--		dev_err(dev, "failed to add devfreq device\n");
--		ret = PTR_ERR(bus->devfreq);
--		goto err;
--	}
--
--	/* Register opp_notifier to catch the change of OPP  */
--	ret = devm_devfreq_register_opp_notifier(dev, bus->devfreq);
--	if (ret < 0) {
--		dev_err(dev, "failed to register opp notifier\n");
--		goto err;
--	}
--
--	/*
--	 * Enable devfreq-event to get raw data which is used to determine
--	 * current bus load.
--	 */
--	ret = exynos_bus_enable_edev(bus);
--	if (ret < 0) {
--		dev_err(dev, "failed to enable devfreq-event devices\n");
--		goto err;
--	}
--
--	ret = exynos_bus_set_event(bus);
--	if (ret < 0) {
--		dev_err(dev, "failed to set event to devfreq-event devices\n");
--		goto err;
--	}
- 
- 	goto out;
- passive:
--- 
-2.17.1
+I verified the code of drm_connector_init() and cannot find any memset()
+invocations there. What is your actual concern?
+
+Andrzej
