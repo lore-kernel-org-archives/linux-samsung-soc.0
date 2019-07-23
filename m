@@ -1,86 +1,194 @@
 From: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@partner.samsung.com>
-Subject: [RFC PATCH 00/11] Simple QoS for exynos-bus driver using
- interconnect
-Date: Tue, 23 Jul 2019 14:20:05 +0200
-Message-ID: <20190723122016.30279-1-a.swigon@partner.samsung.com>
-References: <CGME20190723122022eucas1p2f568f74f981f9de9012eb693c3b446d5@eucas1p2.samsung.com>
+Subject: [RFC PATCH 04/11] devfreq: exynos-bus: Clean up code
+Date: Tue, 23 Jul 2019 14:20:09 +0200
+Message-ID: <20190723122016.30279-5-a.swigon@partner.samsung.com>
+References: <20190723122016.30279-1-a.swigon@partner.samsung.com>
+        <CGME20190723122024eucas1p25a480ccddaa69ee1d0f1a07960ca3f22@eucas1p2.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190723122016.30279-1-a.swigon@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
 Cc: krzk@kernel.org, cw00.choi@samsung.com, myungjoo.ham@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, georgi.djakov@linaro.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The following patchset adds interconnect[1][2] framework support to the
-exynos-bus devfreq driver. Extending the devfreq driver with interconnect
-capabilities started as a response to the issue referenced in [3]. The
-patches can be subdivided into four logical groups:
+This patch adds minor improvements to the exynos-bus driver.
 
-(a) Refactoring the existing devfreq driver in order to improve readability
-and accommodate for adding new code (patches 01--04/11).
-
-(b) Tweaking the interconnect framework to support the exynos-bus use case
-(patches 05--07/11). Exporting of_icc_get_from_provider() allows us to
-avoid hardcoding every single graph edge in the DT or driver source, and
-relaxing the requirement contained in that function removes the need to
-provide dummy node IDs in the DT. Adjusting the logic in
-apply_constraints() (drivers/interconnect/core.c) accounts for the fact
-that every bus is a separate entity and therefore a separate interconnect
-provider, albeit constituting a part of a larger hierarchy.
-
-(c) Implementing interconnect providers in the exynos-bus devfreq driver
-and adding required DT properties for one selected platform, namely
-Exynos4412 (patches 08--09/11). Due to the fact that this aims to be a
-generic driver for various Exynos SoCs, node IDs are generated dynamically
-rather than hardcoded. This has been determined to be a simpler approach,
-but depends on changes described in (b).
-
-(d) Implementing a sample interconnect consumer for exynos-mixer targeted
-at the issue referenced in [3], again with DT info only for Exynos4412
-(patches 10--11/11).
-
-Integration of devfreq and interconnect functionalities comes down to one
-extra line in the devfreq target() callback, which selects either the
-frequency calculated by the devfreq governor, or the one requested with the
-interconnect API, whichever is higher. All new code works equally well when
-CONFIG_INTERCONNECT is 'n' (as in exynos_defconfig) in which case all
-interconnect API functions are no-ops.
-
+Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
 ---
-Artur Świgoń
-Samsung R&D Institute Poland
-Samsung Electronics
+ drivers/devfreq/exynos-bus.c | 49 ++++++++++++++++--------------------
+ 1 file changed, 22 insertions(+), 27 deletions(-)
 
----
-References:
-[1] Documentation/interconnect/interconnect.rst
-[2] Documentation/devicetree/bindings/interconnect/interconnect.txt
-[3] https://patchwork.kernel.org/patch/10861757
-
-Artur Świgoń (10):
-  devfreq: exynos-bus: Extract exynos_bus_profile_init()
-  devfreq: exynos-bus: Extract exynos_bus_profile_init_passive()
-  devfreq: exynos-bus: Change goto-based logic to if-else logic
-  devfreq: exynos-bus: Clean up code
-  icc: Export of_icc_get_from_provider()
-  icc: Relax requirement in of_icc_get_from_provider()
-  icc: Relax condition in apply_constraints()
-  arm: dts: exynos: Add parents and #interconnect-cells to Exynos4412
-  devfreq: exynos-bus: Add interconnect functionality to exynos-bus
-  arm: dts: exynos: Add interconnects to Exynos4412 mixer
-
-Marek Szyprowski (1):
-  drm: exynos: mixer: Add interconnect support
-
- .../boot/dts/exynos4412-odroid-common.dtsi    |   1 +
- arch/arm/boot/dts/exynos4412.dtsi             |  10 +
- drivers/devfreq/exynos-bus.c                  | 296 ++++++++++++++----
- drivers/gpu/drm/exynos/exynos_mixer.c         |  68 +++-
- drivers/interconnect/core.c                   |  12 +-
- include/linux/interconnect-provider.h         |   6 +
- 6 files changed, 314 insertions(+), 79 deletions(-)
-
+diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+index 4bb83b945bf7..412511ca7703 100644
+--- a/drivers/devfreq/exynos-bus.c
++++ b/drivers/devfreq/exynos-bus.c
+@@ -15,11 +15,10 @@
+ #include <linux/device.h>
+ #include <linux/export.h>
+ #include <linux/module.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/pm_opp.h>
+ #include <linux/platform_device.h>
+ #include <linux/regulator/consumer.h>
+-#include <linux/slab.h>
+ 
+ #define DEFAULT_SATURATION_RATIO	40
+ #define DEFAULT_VOLTAGE_TOLERANCE	2
+@@ -256,7 +255,7 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
+ 					struct exynos_bus *bus)
+ {
+ 	struct device *dev = bus->dev;
+-	int i, ret, count, size;
++	int i, ret, count;
+ 
+ 	/* Get the regulator to provide each bus with the power */
+ 	bus->regulator = devm_regulator_get(dev, "vdd");
+@@ -283,8 +282,7 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
+ 	}
+ 	bus->edev_count = count;
+ 
+-	size = sizeof(*bus->edev) * count;
+-	bus->edev = devm_kzalloc(dev, size, GFP_KERNEL);
++	bus->edev = devm_kcalloc(dev, count, sizeof(*bus->edev), GFP_KERNEL);
+ 	if (!bus->edev) {
+ 		ret = -ENOMEM;
+ 		goto err_regulator;
+@@ -388,7 +386,7 @@ static int exynos_bus_profile_init(struct exynos_bus *bus,
+ 	ondemand_data = devm_kzalloc(dev, sizeof(*ondemand_data), GFP_KERNEL);
+ 	if (!ondemand_data) {
+ 		ret = -ENOMEM;
+-		goto err;
++		goto out;
+ 	}
+ 	ondemand_data->upthreshold = 40;
+ 	ondemand_data->downdifferential = 5;
+@@ -400,14 +398,14 @@ static int exynos_bus_profile_init(struct exynos_bus *bus,
+ 	if (IS_ERR(bus->devfreq)) {
+ 		dev_err(dev, "failed to add devfreq device\n");
+ 		ret = PTR_ERR(bus->devfreq);
+-		goto err;
++		goto out;
+ 	}
+ 
+ 	/* Register opp_notifier to catch the change of OPP  */
+ 	ret = devm_devfreq_register_opp_notifier(dev, bus->devfreq);
+ 	if (ret < 0) {
+ 		dev_err(dev, "failed to register opp notifier\n");
+-		goto err;
++		goto out;
+ 	}
+ 
+ 	/*
+@@ -417,16 +415,16 @@ static int exynos_bus_profile_init(struct exynos_bus *bus,
+ 	ret = exynos_bus_enable_edev(bus);
+ 	if (ret < 0) {
+ 		dev_err(dev, "failed to enable devfreq-event devices\n");
+-		goto err;
++		goto out;
+ 	}
+ 
+ 	ret = exynos_bus_set_event(bus);
+ 	if (ret < 0) {
+ 		dev_err(dev, "failed to set event to devfreq-event devices\n");
+-		goto err;
++		goto out;
+ 	}
+ 
+-err:
++out:
+ 	return ret;
+ }
+ 
+@@ -446,27 +444,28 @@ static int exynos_bus_profile_init_passive(struct exynos_bus *bus,
+ 	parent_devfreq = devfreq_get_devfreq_by_phandle(dev, 0);
+ 	if (IS_ERR(parent_devfreq)) {
+ 		ret = -EPROBE_DEFER;
+-		goto err;
++		goto out;
+ 	}
+ 
+ 	passive_data = devm_kzalloc(dev, sizeof(*passive_data), GFP_KERNEL);
+ 	if (!passive_data) {
+ 		ret = -ENOMEM;
+-		goto err;
++		goto out;
+ 	}
+ 	passive_data->parent = parent_devfreq;
+ 
+ 	/* Add devfreq device for exynos bus with passive governor */
+-	bus->devfreq = devm_devfreq_add_device(dev, profile, DEVFREQ_GOV_PASSIVE,
++	bus->devfreq = devm_devfreq_add_device(dev, profile,
++						DEVFREQ_GOV_PASSIVE,
+ 						passive_data);
+ 	if (IS_ERR(bus->devfreq)) {
+ 		dev_err(dev,
+ 			"failed to add devfreq dev with passive governor\n");
+ 		ret = PTR_ERR(bus->devfreq);
+-		goto err;
++		goto out;
+ 	}
+ 
+-err:
++out:
+ 	return ret;
+ }
+ 
+@@ -484,11 +483,11 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	bus = devm_kzalloc(&pdev->dev, sizeof(*bus), GFP_KERNEL);
++	bus = devm_kzalloc(dev, sizeof(*bus), GFP_KERNEL);
+ 	if (!bus)
+ 		return -ENOMEM;
+ 	mutex_init(&bus->lock);
+-	bus->dev = &pdev->dev;
++	bus->dev = dev;
+ 	platform_set_drvdata(pdev, bus);
+ 
+ 	/* Parse the device-tree to get the resource information */
+@@ -502,7 +501,7 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ 		goto err;
+ 	}
+ 
+-	node = of_parse_phandle(dev->of_node, "devfreq", 0);
++	node = of_parse_phandle(np, "devfreq", 0);
+ 	if (node) {
+ 		of_node_put(node);
+ 		ret = exynos_bus_profile_init_passive(bus, profile);
+@@ -547,12 +546,10 @@ static int exynos_bus_resume(struct device *dev)
+ 	int ret;
+ 
+ 	ret = exynos_bus_enable_edev(bus);
+-	if (ret < 0) {
++	if (ret < 0)
+ 		dev_err(dev, "failed to enable the devfreq-event devices\n");
+-		return ret;
+-	}
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int exynos_bus_suspend(struct device *dev)
+@@ -561,12 +558,10 @@ static int exynos_bus_suspend(struct device *dev)
+ 	int ret;
+ 
+ 	ret = exynos_bus_disable_edev(bus);
+-	if (ret < 0) {
++	if (ret < 0)
+ 		dev_err(dev, "failed to disable the devfreq-event devices\n");
+-		return ret;
+-	}
+ 
+-	return 0;
++	return ret;
+ }
+ #endif
+ 
 -- 
 2.17.1
