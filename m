@@ -1,83 +1,121 @@
 From: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@partner.samsung.com>
-Subject: [RFC PATCH 02/11] devfreq: exynos-bus: Extract
- exynos_bus_profile_init_passive()
-Date: Tue, 23 Jul 2019 14:20:07 +0200
-Message-ID: <20190723122016.30279-3-a.swigon@partner.samsung.com>
+Subject: [RFC PATCH 08/11] arm: dts: exynos: Add parents and
+ #interconnect-cells to Exynos4412
+Date: Tue, 23 Jul 2019 14:20:13 +0200
+Message-ID: <20190723122016.30279-9-a.swigon@partner.samsung.com>
 References: <20190723122016.30279-1-a.swigon@partner.samsung.com>
- <CGME20190723122023eucas1p2ff56c00b60a676ed85d9fe159a1839f2@eucas1p2.samsung.com>
+        <CGME20190723122027eucas1p24b1d76e3139f7cc52614d7613ff9ba98@eucas1p2.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190723122016.30279-1-a.swigon@partner.samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: sw0312.kim@samsung.com, krzk@kernel.org, inki.dae@samsung.com, cw00.choi@samsung.com, myungjoo.ham@samsung.com, georgi.djakov@linaro.org, m.szyprowski@samsung.com
+Cc: krzk@kernel.org, cw00.choi@samsung.com, myungjoo.ham@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, georgi.djakov@linaro.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VGhpcyBwYXRjaCBhZGRzIGEgbmV3IHN0YXRpYyBmdW5jdGlvbiwgZXh5bm9zX2J1c19wcm9maWxl
-X2luaXRfcGFzc2l2ZSgpLApleHRyYWN0ZWQgZnJvbSBleHlub3NfYnVzX3Byb2JlKCkuCgpTaWdu
-ZWQtb2ZmLWJ5OiBBcnR1ciDFmndpZ2/FhCA8YS5zd2lnb25AcGFydG5lci5zYW1zdW5nLmNvbT4K
-LS0tCiBkcml2ZXJzL2RldmZyZXEvZXh5bm9zLWJ1cy5jIHwgNzAgKysrKysrKysrKysrKysrKysr
-KysrLS0tLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgNDIgaW5zZXJ0aW9ucygrKSwgMjgg
-ZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9kZXZmcmVxL2V4eW5vcy1idXMuYyBi
-L2RyaXZlcnMvZGV2ZnJlcS9leHlub3MtYnVzLmMKaW5kZXggZDhmMWVmYWYyZDQ5Li5jZjZmNmNi
-ZDBmNTUgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZGV2ZnJlcS9leHlub3MtYnVzLmMKKysrIGIvZHJp
-dmVycy9kZXZmcmVxL2V4eW5vcy1idXMuYwpAQCAtNDMwLDEzICs0MzAsNTEgQEAgc3RhdGljIGlu
-dCBleHlub3NfYnVzX3Byb2ZpbGVfaW5pdChzdHJ1Y3QgZXh5bm9zX2J1cyAqYnVzLAogCXJldHVy
-biByZXQ7CiB9CiAKK3N0YXRpYyBpbnQgZXh5bm9zX2J1c19wcm9maWxlX2luaXRfcGFzc2l2ZShz
-dHJ1Y3QgZXh5bm9zX2J1cyAqYnVzLAorCQkJCQkgICBzdHJ1Y3QgZGV2ZnJlcV9kZXZfcHJvZmls
-ZSAqcHJvZmlsZSkKK3sKKwlzdHJ1Y3QgZGV2aWNlICpkZXYgPSBidXMtPmRldjsKKwlzdHJ1Y3Qg
-ZGV2ZnJlcSAqcGFyZW50X2RldmZyZXE7CisJc3RydWN0IGRldmZyZXFfcGFzc2l2ZV9kYXRhICpw
-YXNzaXZlX2RhdGE7CisJaW50IHJldCA9IDA7CisKKwkvKiBJbml0aWFsaXplIHRoZSBzdHJ1Y3Qg
-cHJvZmlsZSBhbmQgZ292ZXJub3IgZGF0YSBmb3IgcGFzc2l2ZSBkZXZpY2UgKi8KKwlwcm9maWxl
-LT50YXJnZXQgPSBleHlub3NfYnVzX3Bhc3NpdmVfdGFyZ2V0OworCXByb2ZpbGUtPmV4aXQgPSBl
-eHlub3NfYnVzX3Bhc3NpdmVfZXhpdDsKKworCS8qIEdldCB0aGUgaW5zdGFuY2Ugb2YgcGFyZW50
-IGRldmZyZXEgZGV2aWNlICovCisJcGFyZW50X2RldmZyZXEgPSBkZXZmcmVxX2dldF9kZXZmcmVx
-X2J5X3BoYW5kbGUoZGV2LCAwKTsKKwlpZiAoSVNfRVJSKHBhcmVudF9kZXZmcmVxKSkgeworCQly
-ZXQgPSAtRVBST0JFX0RFRkVSOworCQlnb3RvIGVycjsKKwl9CisKKwlwYXNzaXZlX2RhdGEgPSBk
-ZXZtX2t6YWxsb2MoZGV2LCBzaXplb2YoKnBhc3NpdmVfZGF0YSksIEdGUF9LRVJORUwpOworCWlm
-ICghcGFzc2l2ZV9kYXRhKSB7CisJCXJldCA9IC1FTk9NRU07CisJCWdvdG8gZXJyOworCX0KKwlw
-YXNzaXZlX2RhdGEtPnBhcmVudCA9IHBhcmVudF9kZXZmcmVxOworCisJLyogQWRkIGRldmZyZXEg
-ZGV2aWNlIGZvciBleHlub3MgYnVzIHdpdGggcGFzc2l2ZSBnb3Zlcm5vciAqLworCWJ1cy0+ZGV2
-ZnJlcSA9IGRldm1fZGV2ZnJlcV9hZGRfZGV2aWNlKGRldiwgcHJvZmlsZSwgREVWRlJFUV9HT1Zf
-UEFTU0lWRSwKKwkJCQkJCXBhc3NpdmVfZGF0YSk7CisJaWYgKElTX0VSUihidXMtPmRldmZyZXEp
-KSB7CisJCWRldl9lcnIoZGV2LAorCQkJImZhaWxlZCB0byBhZGQgZGV2ZnJlcSBkZXYgd2l0aCBw
-YXNzaXZlIGdvdmVybm9yXG4iKTsKKwkJcmV0ID0gUFRSX0VSUihidXMtPmRldmZyZXEpOworCQln
-b3RvIGVycjsKKwl9CisKK2VycjoKKwlyZXR1cm4gcmV0OworfQorCiBzdGF0aWMgaW50IGV4eW5v
-c19idXNfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIHsKIAlzdHJ1Y3QgZGV2
-aWNlICpkZXYgPSAmcGRldi0+ZGV2OwogCXN0cnVjdCBkZXZpY2Vfbm9kZSAqbnAgPSBkZXYtPm9m
-X25vZGUsICpub2RlOwogCXN0cnVjdCBkZXZmcmVxX2Rldl9wcm9maWxlICpwcm9maWxlOwotCXN0
-cnVjdCBkZXZmcmVxX3Bhc3NpdmVfZGF0YSAqcGFzc2l2ZV9kYXRhOwotCXN0cnVjdCBkZXZmcmVx
-ICpwYXJlbnRfZGV2ZnJlcTsKIAlzdHJ1Y3QgZXh5bm9zX2J1cyAqYnVzOwogCWludCByZXQsIG1h
-eF9zdGF0ZTsKIAl1bnNpZ25lZCBsb25nIG1pbl9mcmVxLCBtYXhfZnJlcTsKQEAgLTQ4MSwzMyAr
-NTE5LDkgQEAgc3RhdGljIGludCBleHlub3NfYnVzX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZp
-Y2UgKnBkZXYpCiAKIAlnb3RvIG91dDsKIHBhc3NpdmU6Ci0JLyogSW5pdGlhbGl6ZSB0aGUgc3Ry
-dWN0IHByb2ZpbGUgYW5kIGdvdmVybm9yIGRhdGEgZm9yIHBhc3NpdmUgZGV2aWNlICovCi0JcHJv
-ZmlsZS0+dGFyZ2V0ID0gZXh5bm9zX2J1c19wYXNzaXZlX3RhcmdldDsKLQlwcm9maWxlLT5leGl0
-ID0gZXh5bm9zX2J1c19wYXNzaXZlX2V4aXQ7Ci0KLQkvKiBHZXQgdGhlIGluc3RhbmNlIG9mIHBh
-cmVudCBkZXZmcmVxIGRldmljZSAqLwotCXBhcmVudF9kZXZmcmVxID0gZGV2ZnJlcV9nZXRfZGV2
-ZnJlcV9ieV9waGFuZGxlKGRldiwgMCk7Ci0JaWYgKElTX0VSUihwYXJlbnRfZGV2ZnJlcSkpIHsK
-LQkJcmV0ID0gLUVQUk9CRV9ERUZFUjsKKwlyZXQgPSBleHlub3NfYnVzX3Byb2ZpbGVfaW5pdF9w
-YXNzaXZlKGJ1cywgcHJvZmlsZSk7CisJaWYgKHJldCA8IDApCiAJCWdvdG8gZXJyOwotCX0KLQot
-CXBhc3NpdmVfZGF0YSA9IGRldm1fa3phbGxvYyhkZXYsIHNpemVvZigqcGFzc2l2ZV9kYXRhKSwg
-R0ZQX0tFUk5FTCk7Ci0JaWYgKCFwYXNzaXZlX2RhdGEpIHsKLQkJcmV0ID0gLUVOT01FTTsKLQkJ
-Z290byBlcnI7Ci0JfQotCXBhc3NpdmVfZGF0YS0+cGFyZW50ID0gcGFyZW50X2RldmZyZXE7Ci0K
-LQkvKiBBZGQgZGV2ZnJlcSBkZXZpY2UgZm9yIGV4eW5vcyBidXMgd2l0aCBwYXNzaXZlIGdvdmVy
-bm9yICovCi0JYnVzLT5kZXZmcmVxID0gZGV2bV9kZXZmcmVxX2FkZF9kZXZpY2UoZGV2LCBwcm9m
-aWxlLCBERVZGUkVRX0dPVl9QQVNTSVZFLAotCQkJCQkJcGFzc2l2ZV9kYXRhKTsKLQlpZiAoSVNf
-RVJSKGJ1cy0+ZGV2ZnJlcSkpIHsKLQkJZGV2X2VycihkZXYsCi0JCQkiZmFpbGVkIHRvIGFkZCBk
-ZXZmcmVxIGRldiB3aXRoIHBhc3NpdmUgZ292ZXJub3JcbiIpOwotCQlyZXQgPSBQVFJfRVJSKGJ1
-cy0+ZGV2ZnJlcSk7Ci0JCWdvdG8gZXJyOwotCX0KIAogb3V0OgogCW1heF9zdGF0ZSA9IGJ1cy0+
-ZGV2ZnJlcS0+cHJvZmlsZS0+bWF4X3N0YXRlOwotLSAKMi4xNy4xCgoKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5n
-IGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5p
-bmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+This patch adds two fields tp the Exynos4412 DTS:
+  - parent: to declare connections between nodes that are not in a
+    parent-child relation in devfreq;
+  - #interconnect-cells: required by the interconnect framework.
+
+Please note that #interconnect-cells is always zero and node IDs are not
+hardcoded anywhere.
+
+Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
+---
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 1 +
+ arch/arm/boot/dts/exynos4412.dtsi               | 9 +++++++++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+index ea55f377d17c..bdd61ae86103 100644
+--- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
++++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+@@ -106,6 +106,7 @@
+ &bus_leftbus {
+ 	devfreq-events = <&ppmu_leftbus_3>, <&ppmu_rightbus_3>;
+ 	vdd-supply = <&buck3_reg>;
++	parent = <&bus_dmc>;
+ 	status = "okay";
+ };
+ 
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index d20db2dfe8e2..a70a671acacd 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -390,6 +390,7 @@
+ 			clocks = <&clock CLK_DIV_DMC>;
+ 			clock-names = "bus";
+ 			operating-points-v2 = <&bus_dmc_opp_table>;
++			#interconnect-cells = <0>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -398,6 +399,7 @@
+ 			clocks = <&clock CLK_DIV_ACP>;
+ 			clock-names = "bus";
+ 			operating-points-v2 = <&bus_acp_opp_table>;
++			#interconnect-cells = <0>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -406,6 +408,7 @@
+ 			clocks = <&clock CLK_DIV_C2C>;
+ 			clock-names = "bus";
+ 			operating-points-v2 = <&bus_dmc_opp_table>;
++			#interconnect-cells = <0>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -459,6 +462,7 @@
+ 			clocks = <&clock CLK_DIV_GDL>;
+ 			clock-names = "bus";
+ 			operating-points-v2 = <&bus_leftbus_opp_table>;
++			#interconnect-cells = <0>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -467,6 +471,7 @@
+ 			clocks = <&clock CLK_DIV_GDR>;
+ 			clock-names = "bus";
+ 			operating-points-v2 = <&bus_leftbus_opp_table>;
++			#interconnect-cells = <0>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -475,6 +480,7 @@
+ 			clocks = <&clock CLK_ACLK160>;
+ 			clock-names = "bus";
+ 			operating-points-v2 = <&bus_display_opp_table>;
++			#interconnect-cells = <0>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -483,6 +489,7 @@
+ 			clocks = <&clock CLK_ACLK133>;
+ 			clock-names = "bus";
+ 			operating-points-v2 = <&bus_fsys_opp_table>;
++			#interconnect-cells = <0>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -491,6 +498,7 @@
+ 			clocks = <&clock CLK_ACLK100>;
+ 			clock-names = "bus";
+ 			operating-points-v2 = <&bus_peri_opp_table>;
++			#interconnect-cells = <0>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -499,6 +507,7 @@
+ 			clocks = <&clock CLK_SCLK_MFC>;
+ 			clock-names = "bus";
+ 			operating-points-v2 = <&bus_leftbus_opp_table>;
++			#interconnect-cells = <0>;
+ 			status = "disabled";
+ 		};
+ 
+-- 
+2.17.1
