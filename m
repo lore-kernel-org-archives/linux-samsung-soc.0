@@ -1,181 +1,203 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v4 3/5] drivers: devfreq: events: extend events by type
- of counted data
-Date: Wed, 24 Jul 2019 19:24:53 +0900
-Message-ID: <15375017-2e82-7df8-344c-a9c41d61331c@samsung.com>
-References: <20190605091236.24263-1-l.luba@partner.samsung.com>
-        <CGME20190605091303eucas1p27177d349e0f2bd37bf582dbd7266321a@eucas1p2.samsung.com>
-        <20190605091236.24263-4-l.luba@partner.samsung.com>
-        <37af143f-a585-a28a-a36f-2ed25c5b6d3b@partner.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 1/9] soc: samsung: Add exynos chipid driver support
+Date: Wed, 24 Jul 2019 12:47:16 +0200
+Message-ID: <CAJKOXPf2dsnaV4cRT3JxvY=uFEH1hr8SempEHUXq5GiLwmwEzA@mail.gmail.com>
+References: <CGME20190718143127eucas1p13b1e2c98d270140a87f09562ef46c9a3@eucas1p1.samsung.com>
+ <20190718143044.25066-1-s.nawrocki@samsung.com> <20190718143044.25066-2-s.nawrocki@samsung.com>
+ <CAJKOXPfLBif-=09B9jZ3qN1kWdTAcrBQZGvZ+A-MUifXK4si9Q@mail.gmail.com> <1117f432-8adf-fbe9-f4af-f8acb755326e@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <37af143f-a585-a28a-a36f-2ed25c5b6d3b@partner.samsung.com>
-Content-Language: en-US
+In-Reply-To: <1117f432-8adf-fbe9-f4af-f8acb755326e@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lukasz Luba <l.luba@partner.samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: b.zolnierkie@samsung.com, krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, kgene@kernel.org, willy.mh.wolff.ml@gmail.com
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, robh+dt@kernel.org, vireshk@kernel.org, devicetree@vger.kernel.org, kgene@kernel.org, pankaj.dubey@samsung.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Lukasz,
+On Tue, 23 Jul 2019 at 16:10, Bartlomiej Zolnierkiewicz
+<b.zolnierkie@samsung.com> wrote:
+>
+>
+> Hi Krzysztof,
+>
+> On 7/23/19 2:57 PM, Krzysztof Kozlowski wrote:
+> > On Thu, 18 Jul 2019 at 16:31, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
+> >>
+> >> From: Pankaj Dubey <pankaj.dubey@samsung.com>
+> >>
+> >> Exynos SoCs have Chipid, for identification of product IDs and SoC
+> >> revisions. This patch intends to provide initialization code for all
+> >> these functionalities, at the same time it provides some sysfs entries
+> >> for accessing these information to user-space.
+> >>
+> >> This driver uses existing binding for exynos-chipid.
+> >>
+> >> Changes by Bartlomiej:
+> >> - fixed return values on errors
+> >> - removed bogus kfree_const()
+> >> - added missing Exynos4210 EVT0 id
+> >> - converted code to use EXYNOS_MASK define
+> >> - fixed np use after of_node_put()
+> >> - fixed too early use of dev_info()
+> >> - made driver fail for unknown SoC-s
+> >> - added SPDX tag
+> >> - updated Copyrights
+> >>
+> >> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> >> [m.szyprowski: for suggestion and code snippet of product_id_to_soc_id]
+> >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> >> [s.nawrocki: updated copyright date]
+> >> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> >> ---
+> >>  drivers/soc/samsung/Kconfig         |   5 ++
+> >>  drivers/soc/samsung/Makefile        |   2 +
+> >>  drivers/soc/samsung/exynos-chipid.c | 111 ++++++++++++++++++++++++++++
+> >>  3 files changed, 118 insertions(+)
+> >>  create mode 100644 drivers/soc/samsung/exynos-chipid.c
+> >>
+> >> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+> >> index 2186285fda92..2905f5262197 100644
+> >> --- a/drivers/soc/samsung/Kconfig
+> >> +++ b/drivers/soc/samsung/Kconfig
+> >> @@ -7,6 +7,11 @@ menuconfig SOC_SAMSUNG
+> >>
+> >>  if SOC_SAMSUNG
+> >>
+> >> +config EXYNOS_CHIPID
+> >> +       bool "Exynos Chipid controller driver" if COMPILE_TEST
+> >> +       depends on ARCH_EXYNOS || COMPILE_TEST
+> >> +       select SOC_BUS
+> >> +
+> >>  config EXYNOS_PMU
+> >>         bool "Exynos PMU controller driver" if COMPILE_TEST
+> >>         depends on ARCH_EXYNOS || ((ARM || ARM64) && COMPILE_TEST)
+> >> diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
+> >> index 29f294baac6e..3b6a8797416c 100644
+> >> --- a/drivers/soc/samsung/Makefile
+> >> +++ b/drivers/soc/samsung/Makefile
+> >> @@ -1,4 +1,6 @@
+> >>  # SPDX-License-Identifier: GPL-2.0
+> >> +
+> >> +obj-$(CONFIG_EXYNOS_CHIPID)    += exynos-chipid.o
+> >>  obj-$(CONFIG_EXYNOS_PMU)       += exynos-pmu.o
+> >>
+> >>  obj-$(CONFIG_EXYNOS_PMU_ARM_DRIVERS)   += exynos3250-pmu.o exynos4-pmu.o \
+> >> diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+> >> new file mode 100644
+> >> index 000000000000..78b123ee60c0
+> >> --- /dev/null
+> >> +++ b/drivers/soc/samsung/exynos-chipid.c
+> >> @@ -0,0 +1,111 @@
+> >> +// SPDX-License-Identifier: GPL-2.0
+> >> +/*
+> >> + * Copyright (c) 2019 Samsung Electronics Co., Ltd.
+> >> + *           http://www.samsung.com/
+> >> + *
+> >> + * EXYNOS - CHIP ID support
+> >> + * Author: Pankaj Dubey <pankaj.dubey@samsung.com>
+> >> + * Author: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> >> + */
+> >> +
+> >> +#include <linux/io.h>
+> >> +#include <linux/of.h>
+> >> +#include <linux/of_address.h>
+> >> +#include <linux/of_platform.h>
+> >> +#include <linux/platform_device.h>
+> >
+> > Any changes here from my previous comments?
+> >
+> > I have also one more new thought later.
+> >
+> >> +#include <linux/slab.h>
+> >> +#include <linux/sys_soc.h>
+> >> +
+> >> +#define EXYNOS_SUBREV_MASK     (0xF << 4)
+> >> +#define EXYNOS_MAINREV_MASK    (0xF << 0)
+> >> +#define EXYNOS_REV_MASK                (EXYNOS_SUBREV_MASK | EXYNOS_MAINREV_MASK)
+> >> +#define EXYNOS_MASK            0xFFFFF000
+> >> +
+> >> +static const struct exynos_soc_id {
+> >> +       const char *name;
+> >> +       unsigned int id;
+> >> +} soc_ids[] = {
+> >> +       { "EXYNOS3250", 0xE3472000 },
+> >> +       { "EXYNOS4210", 0x43200000 },   /* EVT0 revision */
+> >> +       { "EXYNOS4210", 0x43210000 },
+> >> +       { "EXYNOS4212", 0x43220000 },
+> >> +       { "EXYNOS4412", 0xE4412000 },
+> >> +       { "EXYNOS5250", 0x43520000 },
+> >> +       { "EXYNOS5260", 0xE5260000 },
+> >> +       { "EXYNOS5410", 0xE5410000 },
+> >> +       { "EXYNOS5420", 0xE5420000 },
+> >> +       { "EXYNOS5440", 0xE5440000 },
+> >> +       { "EXYNOS5800", 0xE5422000 },
+> >> +       { "EXYNOS7420", 0xE7420000 },
+> >> +       { "EXYNOS5433", 0xE5433000 },
+> >> +};
+> >> +
+> >> +static const char * __init product_id_to_soc_id(unsigned int product_id)
+> >> +{
+> >> +       int i;
+> >> +
+> >> +       for (i = 0; i < ARRAY_SIZE(soc_ids); i++)
+> >> +               if ((product_id & EXYNOS_MASK) == soc_ids[i].id)
+> >> +                       return soc_ids[i].name;
+> >> +       return NULL;
+> >> +}
+> >> +
+> >> +int __init exynos_chipid_early_init(void)
+> >> +{
+> >> +       struct soc_device_attribute *soc_dev_attr;
+> >> +       void __iomem *exynos_chipid_base;
+> >> +       struct soc_device *soc_dev;
+> >> +       struct device_node *root;
+> >> +       struct device_node *np;
+> >> +       u32 product_id;
+> >> +       u32 revision;
+> >> +
+> >> +       /* look up for chipid node */
+> >> +       np = of_find_compatible_node(NULL, NULL, "samsung,exynos4210-chipid");
+> >> +       if (!np)
+> >> +               return -ENODEV;
+> >> +
+> >> +       exynos_chipid_base = of_iomap(np, 0);
+> >> +       of_node_put(np);
+> >> +
+> >> +       if (!exynos_chipid_base) {
+> >> +               pr_err("Failed to map SoC chipid\n");
+> >> +               return -ENXIO;
+> >> +       }
+> >> +
+> >> +       product_id = readl_relaxed(exynos_chipid_base);
+> >> +       revision = product_id & EXYNOS_REV_MASK;
+> >> +       iounmap(exynos_chipid_base);
+> >> +
+> >> +       soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
+> >> +       if (!soc_dev_attr)
+> >> +               return -ENOMEM;
+> >> +
+> >> +       soc_dev_attr->family = "Samsung Exynos";
+> >> +
+> >> +       root = of_find_node_by_path("/");
+> >> +       of_property_read_string(root, "model", &soc_dev_attr->machine);
+> >> +       of_node_put(root);
+> >> +
+> >> +       soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%x", revision);
+> >> +       soc_dev_attr->soc_id = product_id_to_soc_id(product_id);
+> >> +       if (!soc_dev_attr->soc_id) {
+> >> +               pr_err("Unknown SoC\n");
+> >
+> > In case of running old kernel on unknown SoC (new revision of existing
+> > one or older design not longer supported like 4415), the device will
+> > not bind. This was added by Bartlomiej. Why? I imagine that soc driver
+> > could be still matched and just report "Unknown". I am not sure if
+> > this changes anything, though.
+>
+> I was thinking that we shouldn't be pretending that we know how to
+> handle unsupported SoCs, i.e. that we know how to correctly read its
+> product_id and revision.
 
-On 19. 7. 24. 오후 7:15, Lukasz Luba wrote:
-> Hi Chanwoo,
-> 
-> Could you have a look a this patch, please?
-> This patch has been rewritten accorifing to your suggestion.
-> Krzysztof tried to apply 5/5 DT patch on his current branch,
-> but it is missing earlier stuff.
-> The other patches have needed ACKs so could go through devfreq tree
-> probably, but this one left.
-
-Sorry for the late reply. It looks good to me.
-
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-> 
-> Regards,
-> Lukasz
-> 
-> On 6/5/19 11:12 AM, Lukasz Luba wrote:
->> This patch adds posibility to choose what type of data should be counted
->> by the PPMU counter. Now the type comes from DT where the event has been
->> defined. When there is no 'event-data-type' the default value is used,
->> which is 'read+write data in bytes'.
->> It is needed when you want to know not only read+write data bytes but
->> i.e. only write data in byte, or number of read requests, etc.
->>
->> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
->> ---
->>   drivers/devfreq/event/exynos-ppmu.c | 60 ++++++++++++++++++++---------
->>   include/linux/devfreq-event.h       |  6 +++
->>   2 files changed, 47 insertions(+), 19 deletions(-)
->>
->> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
->> index 17f3c86a6f00..12f637320e9e 100644
->> --- a/drivers/devfreq/event/exynos-ppmu.c
->> +++ b/drivers/devfreq/event/exynos-ppmu.c
->> @@ -161,9 +161,9 @@ static int exynos_ppmu_set_event(struct devfreq_event_dev *edev)
->>   	if (ret < 0)
->>   		return ret;
->>   
->> -	/* Set the event of Read/Write data count  */
->> +	/* Set the event of proper data type monitoring */
->>   	ret = regmap_write(info->regmap, PPMU_BEVTxSEL(id),
->> -				PPMU_RO_DATA_CNT | PPMU_WO_DATA_CNT);
->> +			   edev->desc->data_type);
->>   	if (ret < 0)
->>   		return ret;
->>   
->> @@ -375,23 +375,11 @@ static int exynos_ppmu_v2_set_event(struct devfreq_event_dev *edev)
->>   	if (ret < 0)
->>   		return ret;
->>   
->> -	/* Set the event of Read/Write data count  */
->> -	switch (id) {
->> -	case PPMU_PMNCNT0:
->> -	case PPMU_PMNCNT1:
->> -	case PPMU_PMNCNT2:
->> -		ret = regmap_write(info->regmap, PPMU_V2_CH_EVx_TYPE(id),
->> -				PPMU_V2_RO_DATA_CNT | PPMU_V2_WO_DATA_CNT);
->> -		if (ret < 0)
->> -			return ret;
->> -		break;
->> -	case PPMU_PMNCNT3:
->> -		ret = regmap_write(info->regmap, PPMU_V2_CH_EVx_TYPE(id),
->> -				PPMU_V2_EVT3_RW_DATA_CNT);
->> -		if (ret < 0)
->> -			return ret;
->> -		break;
->> -	}
->> +	/* Set the event of proper data type monitoring */
->> +	ret = regmap_write(info->regmap, PPMU_V2_CH_EVx_TYPE(id),
->> +			   edev->desc->data_type);
->> +	if (ret < 0)
->> +		return ret;
->>   
->>   	/* Reset cycle counter/performance counter and enable PPMU */
->>   	ret = regmap_read(info->regmap, PPMU_V2_PMNC, &pmnc);
->> @@ -507,6 +495,7 @@ static int of_get_devfreq_events(struct device_node *np,
->>   	struct device_node *events_np, *node;
->>   	int i, j, count;
->>   	const struct of_device_id *of_id;
->> +	int ret;
->>   
->>   	events_np = of_get_child_by_name(np, "events");
->>   	if (!events_np) {
->> @@ -556,6 +545,39 @@ static int of_get_devfreq_events(struct device_node *np,
->>   		desc[j].driver_data = info;
->>   
->>   		of_property_read_string(node, "event-name", &desc[j].name);
->> +		ret = of_property_read_u32(node, "event-data-type",
->> +					   &desc[j].data_type);
->> +		if (ret) {
->> +			/* Set the event of proper data type counting.
->> +			 * Check if the data type has been defined in DT,
->> +			 * use default if not.
->> +			 */
->> +			if (info->ppmu_type == EXYNOS_TYPE_PPMU_V2) {
->> +				struct devfreq_event_dev edev;
->> +				int id;
->> +				/* Not all registers take the same value for
->> +				 * read+write data count.
->> +				 */
->> +				edev.desc = &desc[j];
->> +				id = exynos_ppmu_find_ppmu_id(&edev);
->> +
->> +				switch (id) {
->> +				case PPMU_PMNCNT0:
->> +				case PPMU_PMNCNT1:
->> +				case PPMU_PMNCNT2:
->> +					desc[j].data_type = PPMU_V2_RO_DATA_CNT
->> +						| PPMU_V2_WO_DATA_CNT;
->> +					break;
->> +				case PPMU_PMNCNT3:
->> +					desc[j].data_type =
->> +						PPMU_V2_EVT3_RW_DATA_CNT;
->> +					break;
->> +				}
->> +			} else {
->> +				desc[j].data_type = PPMU_RO_DATA_CNT |
->> +					PPMU_WO_DATA_CNT;
->> +			}
->> +		}
->>   
->>   		j++;
->>   	}
->> diff --git a/include/linux/devfreq-event.h b/include/linux/devfreq-event.h
->> index 4db00b02ca3f..cc160b1274c0 100644
->> --- a/include/linux/devfreq-event.h
->> +++ b/include/linux/devfreq-event.h
->> @@ -81,14 +81,20 @@ struct devfreq_event_ops {
->>    * struct devfreq_event_desc - the descriptor of devfreq-event device
->>    *
->>    * @name	: the name of devfreq-event device.
->> + * @data_type	: the data type which is going to be counted in the register.
->>    * @driver_data	: the private data for devfreq-event driver.
->>    * @ops		: the operation to control devfreq-event device.
->>    *
->>    * Each devfreq-event device is described with a this structure.
->>    * This structure contains the various data for devfreq-event device.
->> + * The data_type describes what is going to be counted in the register.
->> + * It might choose to count e.g. read requests, write data in bytes, etc.
->> + * The full supported list of types is present in specyfic header in:
->> + * include/dt-bindings/pmu/.
->>    */
->>   struct devfreq_event_desc {
->>   	const char *name;
->> +	u32 data_type;
->>   	void *driver_data;
->>   
->>   	const struct devfreq_event_ops *ops;
->>
-> 
-> 
-
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Reasonable, thanks for explanation.
+Best regards,
+Krzysztof
