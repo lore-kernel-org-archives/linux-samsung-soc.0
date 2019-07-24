@@ -1,81 +1,55 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [RFC PATCH 01/11] devfreq: exynos-bus: Extract
- exynos_bus_profile_init()
-Date: Wed, 24 Jul 2019 21:07:41 +0200
-Message-ID: <20190724190741.GD14346@kozik-lap>
+Subject: Re: [RFC PATCH 02/11] devfreq: exynos-bus: Extract
+ exynos_bus_profile_init_passive()
+Date: Wed, 24 Jul 2019 21:08:51 +0200
+Message-ID: <20190724190851.GE14346@kozik-lap>
 References: <20190723122016.30279-1-a.swigon@partner.samsung.com>
- <CGME20190723122022eucas1p1266d90873d564894bd852c20140f8474@eucas1p1.samsung.com>
- <20190723122016.30279-2-a.swigon@partner.samsung.com>
+ <CGME20190723122023eucas1p2ff56c00b60a676ed85d9fe159a1839f2@eucas1p2.samsung.com>
+ <20190723122016.30279-3-a.swigon@partner.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <20190723122016.30279-2-a.swigon@partner.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20190723122016.30279-3-a.swigon@partner.samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Artur =?utf-8?B?xZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org, cw00.choi@samsung.com, myungjoo.ham@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, georgi.djakov@linaro.org, m.szyprowski@samsung.com
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, cw00.choi@samsung.com, myungjoo.ham@samsung.com, georgi.djakov@linaro.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 02:20:06PM +0200, Artur Świgoń wrote:
-> This patch adds a new static function, exynos_bus_profile_init(), extracted
-> from exynos_bus_probe().
-> 
-> Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
-> ---
->  drivers/devfreq/exynos-bus.c | 106 ++++++++++++++++++++---------------
->  1 file changed, 60 insertions(+), 46 deletions(-)
-> 
-> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-> index d9f377912c10..d8f1efaf2d49 100644
-> --- a/drivers/devfreq/exynos-bus.c
-> +++ b/drivers/devfreq/exynos-bus.c
-> @@ -372,12 +372,69 @@ static int exynos_bus_parse_of(struct device_node *np,
->  	return ret;
->  }
->  
-> +static int exynos_bus_profile_init(struct exynos_bus *bus,
-> +				   struct devfreq_dev_profile *profile)
-> +{
-> +	struct device *dev = bus->dev;
-> +	struct devfreq_simple_ondemand_data *ondemand_data;
-> +	int ret;
-> +
-> +	/* Initialize the struct profile and governor data for parent device */
-> +	profile->polling_ms = 50;
-> +	profile->target = exynos_bus_target;
-> +	profile->get_dev_status = exynos_bus_get_dev_status;
-> +	profile->exit = exynos_bus_exit;
-> +
-> +	ondemand_data = devm_kzalloc(dev, sizeof(*ondemand_data), GFP_KERNEL);
-> +	if (!ondemand_data) {
-> +		ret = -ENOMEM;
-> +		goto err;
-
-Just return proper error code. Less lines, obvious code since you do not
-have any cleanup in error path.
-
-> +	}
-> +	ondemand_data->upthreshold = 40;
-> +	ondemand_data->downdifferential = 5;
-> +
-> +	/* Add devfreq device to monitor and handle the exynos bus */
-> +	bus->devfreq = devm_devfreq_add_device(dev, profile,
-> +						DEVFREQ_GOV_SIMPLE_ONDEMAND,
-> +						ondemand_data);
-> +	if (IS_ERR(bus->devfreq)) {
-> +		dev_err(dev, "failed to add devfreq device\n");
-> +		ret = PTR_ERR(bus->devfreq);
-> +		goto err;
-> +	}
-> +
-> +	/* Register opp_notifier to catch the change of OPP  */
-> +	ret = devm_devfreq_register_opp_notifier(dev, bus->devfreq);
-> +	if (ret < 0) {
-> +		dev_err(dev, "failed to register opp notifier\n");
-> +		goto err;
-
-The same - return err.
-
-Best regards,
-Krzysztof
+T24gVHVlLCBKdWwgMjMsIDIwMTkgYXQgMDI6MjA6MDdQTSArMDIwMCwgQXJ0dXIgxZp3aWdvxYQg
+d3JvdGU6Cj4gVGhpcyBwYXRjaCBhZGRzIGEgbmV3IHN0YXRpYyBmdW5jdGlvbiwgZXh5bm9zX2J1
+c19wcm9maWxlX2luaXRfcGFzc2l2ZSgpLAo+IGV4dHJhY3RlZCBmcm9tIGV4eW5vc19idXNfcHJv
+YmUoKS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBBcnR1ciDFmndpZ2/FhCA8YS5zd2lnb25AcGFydG5l
+ci5zYW1zdW5nLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9kZXZmcmVxL2V4eW5vcy1idXMuYyB8IDcw
+ICsrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLQo+ICAxIGZpbGUgY2hhbmdlZCwg
+NDIgaW5zZXJ0aW9ucygrKSwgMjggZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZGV2ZnJlcS9leHlub3MtYnVzLmMgYi9kcml2ZXJzL2RldmZyZXEvZXh5bm9zLWJ1cy5jCj4g
+aW5kZXggZDhmMWVmYWYyZDQ5Li5jZjZmNmNiZDBmNTUgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9k
+ZXZmcmVxL2V4eW5vcy1idXMuYwo+ICsrKyBiL2RyaXZlcnMvZGV2ZnJlcS9leHlub3MtYnVzLmMK
+PiBAQCAtNDMwLDEzICs0MzAsNTEgQEAgc3RhdGljIGludCBleHlub3NfYnVzX3Byb2ZpbGVfaW5p
+dChzdHJ1Y3QgZXh5bm9zX2J1cyAqYnVzLAo+ICAJcmV0dXJuIHJldDsKPiAgfQo+ICAKPiArc3Rh
+dGljIGludCBleHlub3NfYnVzX3Byb2ZpbGVfaW5pdF9wYXNzaXZlKHN0cnVjdCBleHlub3NfYnVz
+ICpidXMsCj4gKwkJCQkJICAgc3RydWN0IGRldmZyZXFfZGV2X3Byb2ZpbGUgKnByb2ZpbGUpCj4g
+K3sKPiArCXN0cnVjdCBkZXZpY2UgKmRldiA9IGJ1cy0+ZGV2Owo+ICsJc3RydWN0IGRldmZyZXEg
+KnBhcmVudF9kZXZmcmVxOwo+ICsJc3RydWN0IGRldmZyZXFfcGFzc2l2ZV9kYXRhICpwYXNzaXZl
+X2RhdGE7Cj4gKwlpbnQgcmV0ID0gMDsKPiArCj4gKwkvKiBJbml0aWFsaXplIHRoZSBzdHJ1Y3Qg
+cHJvZmlsZSBhbmQgZ292ZXJub3IgZGF0YSBmb3IgcGFzc2l2ZSBkZXZpY2UgKi8KPiArCXByb2Zp
+bGUtPnRhcmdldCA9IGV4eW5vc19idXNfcGFzc2l2ZV90YXJnZXQ7Cj4gKwlwcm9maWxlLT5leGl0
+ID0gZXh5bm9zX2J1c19wYXNzaXZlX2V4aXQ7Cj4gKwo+ICsJLyogR2V0IHRoZSBpbnN0YW5jZSBv
+ZiBwYXJlbnQgZGV2ZnJlcSBkZXZpY2UgKi8KPiArCXBhcmVudF9kZXZmcmVxID0gZGV2ZnJlcV9n
+ZXRfZGV2ZnJlcV9ieV9waGFuZGxlKGRldiwgMCk7Cj4gKwlpZiAoSVNfRVJSKHBhcmVudF9kZXZm
+cmVxKSkgewo+ICsJCXJldCA9IC1FUFJPQkVfREVGRVI7Cj4gKwkJZ290byBlcnI7CgpTYW1lIGFz
+IGluIHByZXZpb3VzIHBhdGNoIC0gbm8gbmVlZCBmb3IgZXJyb3IgZ290by4KCkJlc3QgcmVnYXJk
+cywKS3J6eXN6dG9mCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWw=
