@@ -1,30 +1,37 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [RFC PATCH 04/11] devfreq: exynos-bus: Clean up code
-Date: Wed, 24 Jul 2019 21:14:15 +0200
-Message-ID: <20190724191415.GG14346@kozik-lap>
+Subject: Re: [RFC PATCH 05/11] icc: Export of_icc_get_from_provider()
+Date: Wed, 24 Jul 2019 21:15:33 +0200
+Message-ID: <20190724191533.GH14346@kozik-lap>
 References: <20190723122016.30279-1-a.swigon@partner.samsung.com>
- <CGME20190723122024eucas1p25a480ccddaa69ee1d0f1a07960ca3f22@eucas1p2.samsung.com>
- <20190723122016.30279-5-a.swigon@partner.samsung.com>
+ <CGME20190723122025eucas1p251df372451e0b27ad7f2e3c89df60b64@eucas1p2.samsung.com>
+ <20190723122016.30279-6-a.swigon@partner.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <20190723122016.30279-5-a.swigon@partner.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20190723122016.30279-6-a.swigon@partner.samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Artur =?utf-8?B?xZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org, cw00.choi@samsung.com, myungjoo.ham@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, georgi.djakov@linaro.org, m.szyprowski@samsung.com
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, cw00.choi@samsung.com, myungjoo.ham@samsung.com, georgi.djakov@linaro.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 02:20:09PM +0200, Artur Świgoń wrote:
-> This patch adds minor improvements to the exynos-bus driver.
-> 
-> Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
-> ---
->  drivers/devfreq/exynos-bus.c | 49 ++++++++++++++++--------------------
->  1 file changed, 22 insertions(+), 27 deletions(-)
-
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
+T24gVHVlLCBKdWwgMjMsIDIwMTkgYXQgMDI6MjA6MTBQTSArMDIwMCwgQXJ0dXIgxZp3aWdvxYQg
+d3JvdGU6Cj4gVGhpcyBwYXRjaCBtYWtlcyB0aGUgYWJvdmUgZnVuY3Rpb24gcHVibGljIChmb3Ig
+dXNlIGluIGV4eW5vcy1idXMgZGV2ZnJlcQo+IGRyaXZlcikuCj4gCj4gU2lnbmVkLW9mZi1ieTog
+QXJ0dXIgxZp3aWdvxYQgPGEuc3dpZ29uQHBhcnRuZXIuc2Ftc3VuZy5jb20+Cj4gLS0tCj4gIGRy
+aXZlcnMvaW50ZXJjb25uZWN0L2NvcmUuYyAgICAgICAgICAgfCAzICsrLQo+ICBpbmNsdWRlL2xp
+bnV4L2ludGVyY29ubmVjdC1wcm92aWRlci5oIHwgNiArKysrKysKPiAgMiBmaWxlcyBjaGFuZ2Vk
+LCA4IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKClJldmlld2VkLWJ5OiBLcnp5c3p0b2Yg
+S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+CgpCZXN0IHJlZ2FyZHMsCktyenlzenRvZgpfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
+bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
+cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
