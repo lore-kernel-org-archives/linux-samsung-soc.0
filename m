@@ -1,128 +1,53 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v12 3/9] drivers: memory: extend of_memory by LPDDR3 support
-Date: Wed, 24 Jul 2019 13:39:48 +0200
-Message-ID: <CAJKOXPdue75yF=v5vsawOdfvcCMBDP6HGVXdwngBWE264kGJwg@mail.gmail.com>
-References: <CGME20190722094727eucas1p10041ba25819e6e62d639423a97435f2d@eucas1p1.samsung.com>
- <20190722094646.13342-1-l.luba@partner.samsung.com> <20190722094646.13342-4-l.luba@partner.samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2 0/9] Exynos Adaptive Supply Voltage support
+Date: Wed, 24 Jul 2019 15:10:39 +0200
+Message-ID: <5ef302a4-5bbf-483d-dfdf-cf76f6f69cee@samsung.com>
+References: <CGME20190718143117eucas1p1e534b9075d10fbbbe427c66192205eb1@eucas1p1.samsung.com>
+        <20190718143044.25066-1-s.nawrocki@samsung.com>
+        <20190723020450.z2pqwetkn2tfhacq@vireshk-i7>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190722094646.13342-4-l.luba@partner.samsung.com>
+In-Reply-To: <20190723020450.z2pqwetkn2tfhacq@vireshk-i7>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lukasz Luba <l.luba@partner.samsung.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org, willy.mh.wolff.ml@gmail.com
+To: Viresh Kumar <viresh.kumar@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: krzk@kernel.org, robh+dt@kernel.org, vireshk@kernel.org, devicetree@vger.kernel.org, kgene@kernel.org, pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 22 Jul 2019 at 11:47, Lukasz Luba <l.luba@partner.samsung.com> wrote:
->
-> The patch adds AC timings information needed to support LPDDR3 and memory
-> controllers. The structure is used in of_memory and currently in Exynos
-> 5422 DMC. Add parsing data needed for LPDDR3 support.
-> It is currently used in Exynos5422 Dynamic Memory Controller.
->
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
-> ---
->  drivers/memory/jedec_ddr.h |  61 +++++++++++++++
->  drivers/memory/of_memory.c | 154 +++++++++++++++++++++++++++++++++++++
->  drivers/memory/of_memory.h |  18 +++++
->  3 files changed, 233 insertions(+)
->
-> diff --git a/drivers/memory/jedec_ddr.h b/drivers/memory/jedec_ddr.h
-> index 4a21b5044ff8..38e26d461bdb 100644
-> --- a/drivers/memory/jedec_ddr.h
-> +++ b/drivers/memory/jedec_ddr.h
-> @@ -29,6 +29,7 @@
->  #define DDR_TYPE_LPDDR2_S4     3
->  #define DDR_TYPE_LPDDR2_S2     4
->  #define DDR_TYPE_LPDDR2_NVM    5
-> +#define DDR_TYPE_LPDDR3                6
->
->  /* DDR IO width */
->  #define DDR_IO_WIDTH_4         1
-> @@ -169,4 +170,64 @@ extern const struct lpddr2_timings
->         lpddr2_jedec_timings[NUM_DDR_TIMING_TABLE_ENTRIES];
->  extern const struct lpddr2_min_tck lpddr2_jedec_min_tck;
->
-> +/*
-> + * Structure for timings for LPDDR3 based on LPDDR2 plus additional fields.
-> + * All parameters are in pico seconds(ps) unless explicitly indicated
-> + * with a suffix like tRAS_max_ns below
-> + */
-> +struct lpddr3_timings {
-> +       u32 max_freq;
-> +       u32 min_freq;
-> +       u32 tRFC;
-> +       u32 tRRD;
-> +       u32 tRPab;
-> +       u32 tRPpb;
-> +       u32 tRCD;
-> +       u32 tRC;
-> +       u32 tRAS;
-> +       u32 tWTR;
-> +       u32 tWR;
-> +       u32 tRTP;
-> +       u32 tW2W_C2C;
-> +       u32 tR2R_C2C;
-> +       u32 tWL;
-> +       u32 tDQSCK;
-> +       u32 tRL;
-> +       u32 tFAW;
-> +       u32 tXSR;
-> +       u32 tXP;
-> +       u32 tCKE;
-> +       u32 tCKESR;
-> +       u32 tMRD;
-> +};
-> +
-> +/*
-> + * Min value for some parameters in terms of number of tCK cycles(nCK)
-> + * Please set to zero parameters that are not valid for a given memory
-> + * type
-> + */
-> +struct lpddr3_min_tck {
-> +       u32 tRFC;
-> +       u32 tRRD;
-> +       u32 tRPab;
-> +       u32 tRPpb;
-> +       u32 tRCD;
-> +       u32 tRC;
-> +       u32 tRAS;
-> +       u32 tWTR;
-> +       u32 tWR;
-> +       u32 tRTP;
-> +       u32 tW2W_C2C;
-> +       u32 tR2R_C2C;
-> +       u32 tWL;
-> +       u32 tDQSCK;
-> +       u32 tRL;
-> +       u32 tFAW;
-> +       u32 tXSR;
-> +       u32 tXP;
-> +       u32 tCKE;
-> +       u32 tCKESR;
-> +       u32 tMRD;
-> +};
-> +
->  #endif /* __JEDEC_DDR_H */
-> diff --git a/drivers/memory/of_memory.c b/drivers/memory/of_memory.c
-> index 46539b27a3fb..4f5b8c81669f 100644
-> --- a/drivers/memory/of_memory.c
-> +++ b/drivers/memory/of_memory.c
-> @@ -3,6 +3,12 @@
->   * OpenFirmware helpers for memory drivers
->   *
->   * Copyright (C) 2012 Texas Instruments, Inc.
-> + * Copyright (C) 2019 Samsung Electronics Co., Ltd.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
+Hi Viresh,
 
-What's this?
+On 2019-07-23 04:04, Viresh Kumar wrote:
+> On 18-07-19, 16:30, Sylwester Nawrocki wrote:
+>> This is second iteration of patch series adding ASV (Adaptive Supply
+>> Voltage) support for Exynos SoCs. The first one can be found at:
+>> https://lore.kernel.org/lkml/20190404171735.12815-1-s.nawrocki@samsung.com
+>>
+>> The main changes comparing to the first (RFC) version are:
+>>   - moving ASV data tables from DT to the driver,
+>>   - converting the chipid and the ASV drivers to use regmap,
+>>   - converting the ASV driver to proper platform driver.
+>>
+>> I tried the opp-supported-hw bitmask approach as in the Qualcomm CPUFreq
+>> DT bindings but it resulted in too many OPPs and DT nodes, around 200
+>> per CPU cluster. So the ASV OPP tables are now in the ASV driver, as in
+>> downstream kernels.
+> Hmm. Can you explain why do you have so many OPPs? How many
+> frequencies do you actually support per cluster and what all varies
+> per frequency based on hw ? How many hw version do u have ?
 
-Please, get a independent review or ack for this patch.
+For big cores there are 20 frequencies (2100MHz .. 200MHz). Each SoC 
+might belong to one of the 3 production 'sets' and each set contains 14 
+so called 'asv groups', which assign the certain voltage values for each 
+of those 20 frequencies (the lower asv group means lower voltage needed 
+for given frequency).
 
-Best regards,
-Krzysztof
+> I am asking as the OPP core can be improved to support your case if
+> possible. But I need to understand the problem first.
+
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
