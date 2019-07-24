@@ -1,96 +1,169 @@
-From: Guillaume GARDET <guillaume.gardet@free.fr>
-Subject: [PATCH] arm: dts: exynos: Add GPU/Mali T604 node to exynos5250
-Date: Wed, 24 Jul 2019 09:20:08 +0200
-Message-ID: <20190724072008.6272-1-guillaume.gardet@free.fr>
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Subject: Re: [PATCH v4 14/23] drm/tilcdc: Provide ddc symlink in connector
+ sysfs directory
+Date: Wed, 24 Jul 2019 10:01:05 +0200
+Message-ID: <acfd895d-ab59-0190-e25c-1827bd8d214b@suse.de>
+References: <cover.1562843413.git.andrzej.p@collabora.com>
+ <d1d415022c598fb7acd033f0f322dd67250adaa9.1562843413.git.andrzej.p@collabora.com>
+ <20190723090532.GA787@ravnborg.org>
+ <3ad60be5-49cf-4017-4b74-53a2d6272deb@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <krzk@kernel.org>, Guillaume GARDET <guillaume.gardet@arm.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="3hEKoYM3ihXgipFwLohglgI6I6K0PHVBV"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <3ad60be5-49cf-4017-4b74-53a2d6272deb@collabora.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrzej Pietrasiewicz <andrzej.p@collabora.com>, Sam Ravnborg <sam@ravnborg.org>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, Maxime Ripard <maxime.ripard@bootlin.com>, dri-devel@lists.freedesktop.org, Douglas Anderson <dianders@chromium.org>, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, kernel@collabora.com, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, Vincent Abriou <vincent.abriou@st.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Dave Airlie <airlied@redhat.com>, freedreno@lists.freedesktop.org, Pengutronix Kernel Team <kernel@pengutronix.de>, Jonas
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Guillaume GARDET <guillaume.gardet@arm.com>
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--3hEKoYM3ihXgipFwLohglgI6I6K0PHVBV
+Content-Type: multipart/mixed; boundary="KIKXUXCjxjc3xDRil2vLGI4WFDOmJ9a2q";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
+ Sam Ravnborg <sam@ravnborg.org>
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+ Maxime Ripard <maxime.ripard@bootlin.com>, dri-devel@lists.freedesktop.org,
+ Douglas Anderson <dianders@chromium.org>, linux-tegra@vger.kernel.org,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, kernel@collabora.com,
+ linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ Vincent Abriou <vincent.abriou@st.com>, Krzysztof Kozlowski
+ <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>,
+ David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+ Kukjin Kim <kgene@kernel.org>, NXP Linux Team <linux-imx@nxp.com>,
+ Dave Airlie <airlied@redhat.com>, freedreno@lists.freedesktop.org,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Jonas Karlman <jonas@kwiboo.se>, linux-arm-msm@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org, Jyri Sarha <jsarha@ti.com>,
+ Alexios Zavras <alexios.zavras@intel.com>,
+ Mamta Shukla <mamtashukla555@gmail.com>, linux-mediatek@lists.infradead.org,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Sean Paul <sean@poorly.run>,
+ linux-arm-kernel@lists.infradead.org,
+ Jernej Skrabec <jernej.skrabec@siol.net>, amd-gfx@lists.freedesktop.org,
+ Tomi Valkeinen <tomi.valkeinen@ti.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org,
+ Todor Tomov <todor.tomov@linaro.org>,
+ Kyungmin Park <kyungmin.park@samsung.com>, Huang Rui <ray.huang@amd.com>,
+ Alex Deucher <alexander.deucher@amd.com>, Shawn Guo <shawnguo@kernel.org>,
+ =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+ Gerd Hoffmann <kraxel@redhat.com>
+Message-ID: <acfd895d-ab59-0190-e25c-1827bd8d214b@suse.de>
+Subject: Re: [PATCH v4 14/23] drm/tilcdc: Provide ddc symlink in connector
+ sysfs directory
+References: <cover.1562843413.git.andrzej.p@collabora.com>
+ <d1d415022c598fb7acd033f0f322dd67250adaa9.1562843413.git.andrzej.p@collabora.com>
+ <20190723090532.GA787@ravnborg.org>
+ <3ad60be5-49cf-4017-4b74-53a2d6272deb@collabora.com>
+In-Reply-To: <3ad60be5-49cf-4017-4b74-53a2d6272deb@collabora.com>
 
-Add nodes for GPU (Mali T604) to Exynos5250, disabled by default.
-Tested with kmscube on Chromebook snow.
+--KIKXUXCjxjc3xDRil2vLGI4WFDOmJ9a2q
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Guillaume GARDET <guillaume.gardet@arm.com>
+Hi
 
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org
+Am 23.07.19 um 14:44 schrieb Andrzej Pietrasiewicz:
+> Hi Sam,
+>=20
+> W dniu 23.07.2019 o=C2=A011:05, Sam Ravnborg pisze:
+>> Hi Andrzej
+>>
+>> On Thu, Jul 11, 2019 at 01:26:41PM +0200, Andrzej Pietrasiewicz wrote:=
 
----
- arch/arm/boot/dts/exynos5250.dtsi | 47 +++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+>>> Use the ddc pointer provided by the generic connector.
+>>>
+>>> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+>>> ---
+>>> =C2=A0 drivers/gpu/drm/tilcdc/tilcdc_tfp410.c | 1 +
+>>> =C2=A0 1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c
+>>> b/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c
+>>> index 62d014c20988..c373edb95666 100644
+>>> --- a/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c
+>>> +++ b/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c
+>>> @@ -219,6 +219,7 @@ static struct drm_connector
+>>> *tfp410_connector_create(struct drm_device *dev,
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tfp410_connector->mod =3D mod;
+>>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 connector =3D &tfp410_connector=
+->base;
+>>> +=C2=A0=C2=A0=C2=A0 connector->ddc =3D mod->i2c;
+>>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 drm_connector_init(dev, connect=
+or, &tfp410_connector_funcs,
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 DRM_MODE_CONNECTOR_DVID);
+>>
+>> When reading this code, it looks strange that we set connector->ddc
+>> *before* the call to init the connector.
+>> One could risk that drm_connector_init() used memset(..) to clear all
+>> fields or so, and it would break this order.
+>=20
+> I verified the code of drm_connector_init() and cannot find any memset(=
+)
+> invocations there. What is your actual concern?
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index d5e0392b409e..5ce4b2853cf2 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -1097,6 +1097,53 @@
- 		 */
- 		clock-frequency = <24000000>;
- 	};
-+
-+	mali: gpu@0x11800000 {
-+		compatible = "samsung,exynos5250-mali", "arm,mali-t604";
-+		reg = <0x11800000 0x5000>;
-+		interrupts = <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>,
-+		             <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "job", "mmu", "gpu";
-+		clocks = <&clock CLK_G3D>;
-+		clock-names = "g3d";
-+		operating-points-v2 = <&gpu_opp_table>;
-+		power-domains = <&pd_g3d>;
-+		status = "disabled";
-+	};
-+
-+	gpu_opp_table: gpu-opp-table {
-+		compatible = "operating-points-v2";
-+
-+		opp-100000000 {
-+			opp-hz = /bits/ 64 <100000000>;
-+			opp-microvolt = <925000>;
-+		};
-+		opp-160000000 {
-+			opp-hz = /bits/ 64 <160000000>;
-+			opp-microvolt = <925000>;
-+		};
-+		opp-266000000 {
-+			opp-hz = /bits/ 64 <266000000>;
-+			opp-microvolt = <1025000>;
-+		};
-+		opp-350000000 {
-+			opp-hz = /bits/ 64 <350000000>;
-+			opp-microvolt = <1075000>;
-+		};
-+		opp-400000000 {
-+			opp-hz = /bits/ 64 <400000000>;
-+			opp-microvolt = <1125000>;
-+		};
-+		opp-450000000 {
-+			opp-hz = /bits/ 64 <450000000>;
-+			opp-microvolt = <1150000>;
-+		};
-+		opp-533000000 {
-+			opp-hz = /bits/ 64 <533000000>;
-+			opp-microvolt = <1250000>;
-+		};
-+	};
- };
- 
- &dp {
--- 
-2.22.0
+I think this echoes my concern about the implicit order of operation. It
+seems too easy to get this wrong. If you don't want to add an additional
+interface for setting the ddc field, why not add a dedicated initializer
+function that sets the ddc field? Something like this.
+
+int drm_connector_init_with_ddc(connector, funcs, ..., ddc)
+{
+	ret =3D drm_connector_init(connector, funcs, ...);
+	if (ret)
+		return ret;
+
+	if (!ddc)
+		return 0;
+
+	connector->ddc =3D ddc;
+	/* set up sysfs */
+
+	return 0;
+}
+
+Best regards
+Thomas
+
+> Andrzej
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--=20
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Linux GmbH, Maxfeldstrasse 5, 90409 Nuernberg, Germany
+GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah
+HRB 21284 (AG N=C3=BCrnberg)
+
+
+--KIKXUXCjxjc3xDRil2vLGI4WFDOmJ9a2q--
+
+--3hEKoYM3ihXgipFwLohglgI6I6K0PHVBV
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl04EEEACgkQaA3BHVML
+eiNRWAf8CYxCmH/26EWFNpq9GZQjDMvAU5wdcW44Lnp0dMtgf/nqPvbEtkPYWt1D
+lMAlcSy9rrFFtW3E2HFwK5V9QbW9LvxdRaA7gK0ypMrYgmO5QECHQGMCaRxb/DpK
+02ZW59khdYpqNbLfjZ3toTs6BiHuBS2OF5tHq4SbvHwdva4pzOQtwQ90TVrNcOp+
+8kSGLB/0+CcOvKhgjd1uyw1w5lE/cILPT4sfXYlutlSRsHTCA7FwXHwhoqMyfYK4
+xlDAr72YN6/Lt9gLuKqWSFX9O9vvSpMMjp6nnzFwCguc+Nz53L4ra49cJ8qPP6dY
+wBV/ccooRzGp27r8ENmXR8wKLfTP8g==
+=ol/N
+-----END PGP SIGNATURE-----
+
+--3hEKoYM3ihXgipFwLohglgI6I6K0PHVBV--
