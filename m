@@ -1,102 +1,80 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [RFC/RFT 3/5] phy: exynos5-usbdrd: UTMI tune signal
-Date: Wed, 24 Jul 2019 13:10:43 +0200
-Message-ID: <CAJKOXPcc_tvKnMEqmEozcEn64EPBmeC6gGOp4XMQqTTmHcXwUA@mail.gmail.com>
-References: <20190722185938.9043-1-linux.amoon@gmail.com> <20190722185938.9043-4-linux.amoon@gmail.com>
+Subject: Re: [RFC/RFT 4/5] phy: exynos5-usbdrd: PIPE3 tune signal
+Date: Wed, 24 Jul 2019 13:13:21 +0200
+Message-ID: <CAJKOXPeiKP-MfaO4LpQ=iXZn14gM3vwR8U18yLGfhHt6pjvvCA@mail.gmail.com>
+References: <20190722185938.9043-1-linux.amoon@gmail.com>
+ <20190722185938.9043-5-linux.amoon@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190722185938.9043-4-linux.amoon@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190722185938.9043-5-linux.amoon@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Anand Moon <linux.amoon@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Kukjin Kim <kgene@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 On Mon, 22 Jul 2019 at 20:59, Anand Moon <linux.amoon@gmail.com> wrote:
 >
-> Tune USB2.0 (UTMI+) TX signal for high speed data transfer.
-
-What is the visible effect? What does this tuning bring?
-
+> Tune USB3.0 (PIPE3) PHY TX signal for high and supper
+> speed data transfer.
 >
 > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 > ---
->  drivers/phy/samsung/phy-exynos5-usbdrd.c | 42 +++++++++++++++++++++---
->  1 file changed, 37 insertions(+), 5 deletions(-)
+>  drivers/phy/samsung/phy-exynos5-usbdrd.c | 18 +++++++++++++-----
+>  1 file changed, 13 insertions(+), 5 deletions(-)
 >
 > diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> index 135114d51bc1..54a513ca15e4 100644
+> index 54a513ca15e4..4f16c4f82ae5 100644
 > --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
 > +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> @@ -33,6 +33,8 @@
->  #define EXYNOS5_FSEL_24MHZ             0x5
->  #define EXYNOS5_FSEL_50MHZ             0x7
->
-> +#define __set(v, a, b)  (((v) << (b)) & GENMASK(a, b))
-> +
->  /* EXYNOS5: USB 3.0 DRD PHY registers */
->  #define EXYNOS5_DRD_LINKSYSTEM                 0x04
->
-> @@ -108,8 +110,17 @@
->  #define EXYNOS5_DRD_PHYPARAM0                  0x1c
->
->  #define PHYPARAM0_REF_USE_PAD                  BIT(31)
-> -#define PHYPARAM0_REF_LOSLEVEL_MASK            (0x1f << 26)
-> -#define PHYPARAM0_REF_LOSLEVEL                 (0x9 << 26)
-> +#define PHYPARAM0_REF_LOSLEVEL(x)              __set(x, 30, 26)
-> +#define PHYPARAM0_TXVREFTUNE(x)                        __set(x, 25, 22)
-> +#define PHYPARAM0_TXISETUNE(x)                 __set(x, 21, 20)
-> +#define PHYPARAM0_TXRESTUNE(x)                 __set(x, 19, 18)
-> +#define PHYPARAM0_TXPREEMPPULSETUNE            BIT(17)
-> +#define PHYPARAM0_TXPREEMPAMPTUNE(x)           __set(x, 16, 15)
-> +#define PHYPARAM0_TXHSXVTUNE(x)                        __set(x, 14, 13)
-> +#define PHYPARAM0_TXFSLSTUNE(x)                        __set(x, 12, 9)
-> +#define PHYPARAM0_SQRXTUNE(x)                  __set(x, 8, 6)
-> +#define PHYPARAM0_OTGTUNE(x)                   __set(x, 5, 3)
-> +#define PHYPARAM0_COMPDISTUNE(x)               __set(x, 2, 0)
+> @@ -124,8 +124,10 @@
 >
 >  #define EXYNOS5_DRD_PHYPARAM1                  0x20
 >
-> @@ -365,9 +376,30 @@ static void exynos5_usbdrd_utmi_init(struct exynos5_usbdrd_phy *phy_drd)
+> -#define PHYPARAM1_PCS_TXDEEMPH_MASK            (0x1f << 0)
+> -#define PHYPARAM1_PCS_TXDEEMPH                 (0x1c)
+> +#define PHYPARAM1_TX0_TERM_OFFSET(x)           __set(x, 30, 26)
+> +#define PHYPARAM1_TX_SWING_FULL(x)             __set(x, 18, 12)
+> +#define PHYPRAAM1_PCS_TX_DEEMPH_6DB(x)         __set(x, 11, 6)
+> +#define PHYPRAAM1_PCS_TX_DEEMPH_3P5DB(x)       __set(x, 5, 0)
+>
+>  #define EXYNOS5_DRD_PHYTERM                    0x24
+>
+> @@ -360,10 +362,16 @@ static void exynos5_usbdrd_pipe3_init(struct exynos5_usbdrd_phy *phy_drd)
+>  {
 >         u32 reg;
 >
->         reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYPARAM0);
-> -       /* Set Loss-of-Signal Detector sensitivity */
-> -       reg &= ~PHYPARAM0_REF_LOSLEVEL_MASK;
-> -       reg |=  PHYPARAM0_REF_LOSLEVEL;
-> +               /* Set Loss-of-Signal Detector sensitivity */
-> +       reg |= (PHYPARAM0_REF_USE_PAD |
-> +               /* Sets the sensitivity level for the Loss-of-Signal detector */
-> +               PHYPARAM0_REF_LOSLEVEL(0x9) |
-> +               /* Adjusts the high-speed DC level voltage */
-> +               PHYPARAM0_TXVREFTUNE(0x3) |
-> +               /* Adjust the rise/fal timie of the high-speed waveform */
-> +               PHYPARAM0_TXISETUNE(0x1) |
-> +               /* Adjusts the driver source impedance */
-> +               PHYPARAM0_TXRESTUNE(0x1) |
-> +               /* HS Transmitter Pre-Emphasis Duration Control */
-> +               PHYPARAM0_TXPREEMPPULSETUNE |
-> +               /* HS Transmitter Pre-Emphasis Current Control */
-> +               PHYPARAM0_TXPREEMPAMPTUNE(0x0) |
-> +               /* Transmitter High-Speed Crossover Adjustment */
-> +               PHYPARAM0_TXHSXVTUNE(0x3) |
-> +               /* FS/LS Source Impedance Adjustment */
-> +               PHYPARAM0_TXFSLSTUNE(0x3) |
-> +               /* Squelch Threshold Adjustment */
-> +               PHYPARAM0_SQRXTUNE(0x3) |
-> +               /* VBUS Valid Threshold Adjustment */
-> +               PHYPARAM0_OTGTUNE(0x6) |
-> +               /* Disconnect Threshold Adjustment */
-> +               PHYPARAM0_COMPDISTUNE(0x6));
+> -       reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYPARAM1);
+>         /* Set Tx De-Emphasis level */
+> -       reg &= ~PHYPARAM1_PCS_TXDEEMPH_MASK;
+> -       reg |=  PHYPARAM1_PCS_TXDEEMPH;
+> +       reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYPARAM1);
+> +               /* Transmitter Termination Offset */
+> +       reg |=  PHYPARAM1_TX0_TERM_OFFSET(0x5) |
+> +               /* Tx Amplitude (Full Swing mode) */
+> +               PHYPARAM1_TX_SWING_FULL(0x3F) |
+> +               /* Tx De-Emphasis at 6 dB */
+> +               PHYPRAAM1_PCS_TX_DEEMPH_6DB(0x20) |
+> +               /* Tx De-Emphasis at 3.5 dB */
+> +               PHYPRAAM1_PCS_TX_DEEMPH_3P5DB(0x15);
 
-You set a bunch of parameters but I am not sure how did you get the values...
+How did you get the value? Why you are changing existing values to default ones?
 
 Best regards,
 Krzysztof
 
->         writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_PHYPARAM0);
+>         writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_PHYPARAM1);
 >
->         reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYPARAM1);
+>         reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYTEST);
 > --
 > 2.22.0
 >
