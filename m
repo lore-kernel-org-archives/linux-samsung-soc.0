@@ -1,161 +1,184 @@
-From: Guillaume Gardet <Guillaume.Gardet@arm.com>
-Subject: RE: [PATCH V2 1/2] arm: dts: exynos: Add GPU/Mali T604 node to
- exynos5250
-Date: Thu, 25 Jul 2019 12:37:33 +0000
-Message-ID: <DBBPR08MB46788EBBB3BF3BB8C54FAD1283C10@DBBPR08MB4678.eurprd08.prod.outlook.com>
-References: <20190724072008.6272-1-guillaume.gardet@free.fr>
- <20190725083433.6505-1-guillaume.gardet@arm.com>
- <CAJKOXPejSxxH5DJPyEHTt=VEOdVgiXOm1c3MKKir-qRxtDcLLA@mail.gmail.com>
- <DBBPR08MB4678546DF9EE76EE6427DBB783C10@DBBPR08MB4678.eurprd08.prod.outlook.com>
- <CAJKOXPdLd5C0FPwijGwTWW9t46exysdqgeb07txPhp-f_b5DFA@mail.gmail.com>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Subject: Re: [RFC PATCH 01/11] devfreq: exynos-bus: Extract exynos_bus_profile_init()
+Date: Thu, 25 Jul 2019 21:43:31 +0900
+Message-ID: <CAGTfZH0JE0PmiCHaT3vMrDaP0-8eZ3afyHy_zT9aFmMOGNTR8g@mail.gmail.com>
+References: <CGME20190723122022eucas1p1266d90873d564894bd852c20140f8474@eucas1p1.samsung.com>
+ <20190723122016.30279-1-a.swigon@partner.samsung.com> <20190723122016.30279-2-a.swigon@partner.samsung.com>
+Reply-To: cwchoi00@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAJKOXPdLd5C0FPwijGwTWW9t46exysdqgeb07txPhp-f_b5DFA@mail.gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190723122016.30279-2-a.swigon@partner.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>
+Cc: devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, inki.dae@samsung.com, Seung-Woo Kim <sw0312.kim@samsung.com>, georgi.djakov@linaro.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
-
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk@kernel.org>
-> Sent: 25 July 2019 14:27
-> To: Guillaume Gardet <Guillaume.Gardet@arm.com>
-> Cc: linux-samsung-soc@vger.kernel.org; Kukjin Kim <kgene@kernel.org>; linux-
-> arm-kernel@lists.infradead.org
-> Subject: Re: [PATCH V2 1/2] arm: dts: exynos: Add GPU/Mali T604 node to
-> exynos5250
+2019=EB=85=84 7=EC=9B=94 24=EC=9D=BC (=EC=88=98) =EC=98=A4=EC=A0=84 8:09, A=
+rtur =C5=9Awigo=C5=84 <a.swigon@partner.samsung.com>=EB=8B=98=EC=9D=B4 =EC=
+=9E=91=EC=84=B1:
 >
-> On Thu, 25 Jul 2019 at 13:35, Guillaume Gardet <Guillaume.Gardet@arm.com>
-> wrote:
-> >
-> >
-> >
-> > > -----Original Message-----
-> > > From: Krzysztof Kozlowski <krzk@kernel.org>
-> > > Sent: 25 July 2019 13:19
-> > > To: Guillaume Gardet <Guillaume.Gardet@arm.com>
-> > > Cc: linux-samsung-soc@vger.kernel.org; Kukjin Kim
-> > > <kgene@kernel.org>; linux- arm-kernel@lists.infradead.org
-> > > Subject: Re: [PATCH V2 1/2] arm: dts: exynos: Add GPU/Mali T604 node
-> > > to
-> > > exynos5250
-> > >
-> > > On Thu, 25 Jul 2019 at 10:34, Guillaume <guillaume.gardet@arm.com>
-> wrote:
-> > > >
-> > > > From: Guillaume GARDET <guillaume.gardet@arm.com>
-> > > >
-> > > > Add nodes for GPU (Mali T604) to Exynos5250.
-> > > > Tested with kmscube and glmark2-es2-drm on Chromebook snow.
-> > > > Load tested on arndale board.
-> > > >
-> > > > Signed-off-by: Guillaume GARDET <guillaume.gardet@arm.com>
-> > > >
-> > > > Cc: Kukjin Kim <kgene@kernel.org>
-> > > > Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> > > > Cc: linux-arm-kernel@lists.infradead.org
-> > > > ---
-> > > > V2 changes:
-> > > >   * move mali node as /soc sub-node
-> > > >   * move gpu_opp_table as mali sub-node
-> > > >   * minor style updates
-> > > >   * test on arndale board
-> > > >   * enable by default
-> > >
-> > > I was not specific enough. It can stay disabled in the DTSI because
-> > > not all resources are provided. The board DTSes (all or ones which
-> > > are
-> > > tested) will enable it and provide missing resources - mali-supply.
-> >
-> > I think all resources are provided, since no mali-supply property is needed here.
+> This patch adds a new static function, exynos_bus_profile_init(), extract=
+ed
+> from exynos_bus_probe().
 >
-> No, regulator is not provided. On all Exynos boards Mali uses its own dedicated
-> regulator (and sometimes additional one). It worked in your case because the
-> regulator was set as always-on but this is a workaround for lack of consumers.
-> Once there is a consumer, the regulator should not be always-on to save the
-> energy when not used.
-
-I do not have the required info here. Do you have it, or could I skip the mali-supply for now?
-
+> Signed-off-by: Artur =C5=9Awigo=C5=84 <a.swigon@partner.samsung.com>
+> ---
+>  drivers/devfreq/exynos-bus.c | 106 ++++++++++++++++++++---------------
+>  1 file changed, 60 insertions(+), 46 deletions(-)
 >
-> > So, I can either enable it by default for all exynos5250 platforms there, or I can
-> enable it only for Arndale board and Chromebook snow. What do you prefer?
+> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+> index d9f377912c10..d8f1efaf2d49 100644
+> --- a/drivers/devfreq/exynos-bus.c
+> +++ b/drivers/devfreq/exynos-bus.c
+> @@ -372,12 +372,69 @@ static int exynos_bus_parse_of(struct device_node *=
+np,
+>         return ret;
+>  }
 >
-> Then please enable it on tested platforms.
-
-Ok.
-
+> +static int exynos_bus_profile_init(struct exynos_bus *bus,
+> +                                  struct devfreq_dev_profile *profile)
+> +{
+> +       struct device *dev =3D bus->dev;
+> +       struct devfreq_simple_ondemand_data *ondemand_data;
+> +       int ret;
+> +
+> +       /* Initialize the struct profile and governor data for parent dev=
+ice */
+> +       profile->polling_ms =3D 50;
+> +       profile->target =3D exynos_bus_target;
+> +       profile->get_dev_status =3D exynos_bus_get_dev_status;
+> +       profile->exit =3D exynos_bus_exit;
+> +
+> +       ondemand_data =3D devm_kzalloc(dev, sizeof(*ondemand_data), GFP_K=
+ERNEL);
+> +       if (!ondemand_data) {
+> +               ret =3D -ENOMEM;
+> +               goto err;
+> +       }
+> +       ondemand_data->upthreshold =3D 40;
+> +       ondemand_data->downdifferential =3D 5;
+> +
+> +       /* Add devfreq device to monitor and handle the exynos bus */
+> +       bus->devfreq =3D devm_devfreq_add_device(dev, profile,
+> +                                               DEVFREQ_GOV_SIMPLE_ONDEMA=
+ND,
+> +                                               ondemand_data);
+> +       if (IS_ERR(bus->devfreq)) {
+> +               dev_err(dev, "failed to add devfreq device\n");
+> +               ret =3D PTR_ERR(bus->devfreq);
+> +               goto err;
+> +       }
+> +
+> +       /* Register opp_notifier to catch the change of OPP  */
+> +       ret =3D devm_devfreq_register_opp_notifier(dev, bus->devfreq);
+> +       if (ret < 0) {
+> +               dev_err(dev, "failed to register opp notifier\n");
+> +               goto err;
+> +       }
+> +
+> +       /*
+> +        * Enable devfreq-event to get raw data which is used to determin=
+e
+> +        * current bus load.
+> +        */
+> +       ret =3D exynos_bus_enable_edev(bus);
+> +       if (ret < 0) {
+> +               dev_err(dev, "failed to enable devfreq-event devices\n");
+> +               goto err;
+> +       }
+> +
+> +       ret =3D exynos_bus_set_event(bus);
+> +       if (ret < 0) {
+> +               dev_err(dev, "failed to set event to devfreq-event device=
+s\n");
+> +               goto err;
+> +       }
+> +
+> +err:
+> +       return ret;
+> +}
+> +
+>  static int exynos_bus_probe(struct platform_device *pdev)
+>  {
+>         struct device *dev =3D &pdev->dev;
+>         struct device_node *np =3D dev->of_node, *node;
+>         struct devfreq_dev_profile *profile;
+> -       struct devfreq_simple_ondemand_data *ondemand_data;
+>         struct devfreq_passive_data *passive_data;
+>         struct devfreq *parent_devfreq;
+>         struct exynos_bus *bus;
+> @@ -418,52 +475,9 @@ static int exynos_bus_probe(struct platform_device *=
+pdev)
+>         if (ret < 0)
+>                 goto err;
 >
-> >
-> > > Just like:
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/c
-> > > ommit/?id=f
-> > > 0a6208b90bdd44f48f5718c8bb0eb1e763d14c0
-> > >
-> > > >   * add dt bindings, in a separate patch
-> > >
-> > > Put the bindings before DTS change.
-> >
-> > Yes, makes sense.
-> >
-> > >
-> > > >
-> > > >  arch/arm/boot/dts/exynos5250.dtsi | 47
-> > > > +++++++++++++++++++++++++++++++
-> > > >  1 file changed, 47 insertions(+)
-> > > >
-> > > > diff --git a/arch/arm/boot/dts/exynos5250.dtsi
-> > > > b/arch/arm/boot/dts/exynos5250.dtsi
-> > > > index d5e0392b409e..f7f34d469bde 100644
-> > > > --- a/arch/arm/boot/dts/exynos5250.dtsi
-> > > > +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> > > > @@ -328,6 +328,52 @@
-> > > >                         iommus = <&sysmmu_rotator>;
-> > > >                 };
-> > > >
-> > > > +               mali: gpu@11800000 {
-> > > > +                       compatible = "samsung,exynos5250-mali", "arm,mali-t604";
-> > > > +                       reg = <0x11800000 0x5000>;
-> > > > +                       interrupts = <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                    <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>,
-> > > > +                                    <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>;
-> > > > +                       interrupt-names = "job", "mmu", "gpu";
-> > > > +                       clocks = <&clock CLK_G3D>;
-> > > > +                       clock-names = "g3d";
-> > >
-> > > According to bindings this is not proper clock name. I wonder why it
-> > > was working... it seems the driver expects first clock to be always the core
-> clock.
-> >
-> > Yes, it works, because 1st clock is assumed to be the core clock.
-> > Clock names are optional and could be omitted as in
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre
-> > e/arch/arm/boot/dts/rk3288.dtsi?h=v5.3-rc1#n1284
-> > Not sure if it would be better to rename it to 'core', or  just skip it? Any opinion?
+> -       /* Initialize the struct profile and governor data for parent dev=
+ice */
+> -       profile->polling_ms =3D 50;
+> -       profile->target =3D exynos_bus_target;
+> -       profile->get_dev_status =3D exynos_bus_get_dev_status;
+> -       profile->exit =3D exynos_bus_exit;
+> -
+> -       ondemand_data =3D devm_kzalloc(dev, sizeof(*ondemand_data), GFP_K=
+ERNEL);
+> -       if (!ondemand_data) {
+> -               ret =3D -ENOMEM;
+> +       ret =3D exynos_bus_profile_init(bus, profile);
+> +       if (ret < 0)
+>                 goto err;
+> -       }
+> -       ondemand_data->upthreshold =3D 40;
+> -       ondemand_data->downdifferential =3D 5;
+> -
+> -       /* Add devfreq device to monitor and handle the exynos bus */
+> -       bus->devfreq =3D devm_devfreq_add_device(dev, profile,
+> -                                               DEVFREQ_GOV_SIMPLE_ONDEMA=
+ND,
+> -                                               ondemand_data);
+> -       if (IS_ERR(bus->devfreq)) {
+> -               dev_err(dev, "failed to add devfreq device\n");
+> -               ret =3D PTR_ERR(bus->devfreq);
+> -               goto err;
+> -       }
+> -
+> -       /* Register opp_notifier to catch the change of OPP  */
+> -       ret =3D devm_devfreq_register_opp_notifier(dev, bus->devfreq);
+> -       if (ret < 0) {
+> -               dev_err(dev, "failed to register opp notifier\n");
+> -               goto err;
+> -       }
+> -
+> -       /*
+> -        * Enable devfreq-event to get raw data which is used to determin=
+e
+> -        * current bus load.
+> -        */
+> -       ret =3D exynos_bus_enable_edev(bus);
+> -       if (ret < 0) {
+> -               dev_err(dev, "failed to enable devfreq-event devices\n");
+> -               goto err;
+> -       }
+> -
+> -       ret =3D exynos_bus_set_event(bus);
+> -       if (ret < 0) {
+> -               dev_err(dev, "failed to set event to devfreq-event device=
+s\n");
+> -               goto err;
+> -       }
 >
-> The driver can change anytime and it might look for "core" so DTS should follow
-> the bindings. Additionally, Panfrost might behave differently than Arm driver. So
-> "core" please.
-
-Ok.
-
-Thanks,
-Guillaume
-
+>         goto out;
+>  passive:
+> --
+> 2.17.1
 >
-> Best regards,
-> Krzysztof
-IMPORTANT NOTICE: The contents of this email and any attachments are confidential and may also be privileged. If you are not the intended recipient, please notify the sender immediately and do not disclose the contents to any other person, use it for any purpose, or store or copy the information in any medium. Thank you.
+
+NACK.
+
+It has not any benefit and I don't understand reason why it is necessary.
+I don't agree. Please drop it.
+
+--=20
+Best Regards,
+Chanwoo Choi
