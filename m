@@ -1,90 +1,58 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] arm: dts: exynos: Add GPU/Mali T604 node to exynos5250
-Date: Wed, 24 Jul 2019 21:43:13 +0200
-Message-ID: <20190724194313.GA1898@kozik-lap>
-References: <20190724072008.6272-1-guillaume.gardet@free.fr>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v2 0/9] Exynos Adaptive Supply Voltage support
+Date: Thu, 25 Jul 2019 07:53:43 +0530
+Message-ID: <20190725022343.p7lqalrh5svxvtu2@vireshk-i7>
+References: <CGME20190718143117eucas1p1e534b9075d10fbbbe427c66192205eb1@eucas1p1.samsung.com>
+ <20190718143044.25066-1-s.nawrocki@samsung.com>
+ <20190723020450.z2pqwetkn2tfhacq@vireshk-i7>
+ <5ef302a4-5bbf-483d-dfdf-cf76f6f69cee@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190724072008.6272-1-guillaume.gardet@free.fr>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Guillaume GARDET <guillaume.gardet@free.fr>
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Guillaume GARDET <guillaume.gardet@arm.com>
+In-Reply-To: <5ef302a4-5bbf-483d-dfdf-cf76f6f69cee@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, krzk@kernel.org, robh+dt@kernel.org, vireshk@kernel.org, devicetree@vger.kernel.org, kgene@kernel.org, pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-Thanks for the patch.
-
-On Wed, Jul 24, 2019 at 09:20:08AM +0200, Guillaume GARDET wrote:
-> From: Guillaume GARDET <guillaume.gardet@arm.com>
+On 24-07-19, 15:10, Marek Szyprowski wrote:
+> Hi Viresh,
 > 
-> Add nodes for GPU (Mali T604) to Exynos5250, disabled by default.
-
-Why disabled? If tested I would expect it to be enabled at least on
-tested platforms.
-
-> Tested with kmscube on Chromebook snow.
+> On 2019-07-23 04:04, Viresh Kumar wrote:
+> > On 18-07-19, 16:30, Sylwester Nawrocki wrote:
+> >> This is second iteration of patch series adding ASV (Adaptive Supply
+> >> Voltage) support for Exynos SoCs. The first one can be found at:
+> >> https://lore.kernel.org/lkml/20190404171735.12815-1-s.nawrocki@samsung.com
+> >>
+> >> The main changes comparing to the first (RFC) version are:
+> >>   - moving ASV data tables from DT to the driver,
+> >>   - converting the chipid and the ASV drivers to use regmap,
+> >>   - converting the ASV driver to proper platform driver.
+> >>
+> >> I tried the opp-supported-hw bitmask approach as in the Qualcomm CPUFreq
+> >> DT bindings but it resulted in too many OPPs and DT nodes, around 200
+> >> per CPU cluster. So the ASV OPP tables are now in the ASV driver, as in
+> >> downstream kernels.
+> > Hmm. Can you explain why do you have so many OPPs? How many
+> > frequencies do you actually support per cluster and what all varies
+> > per frequency based on hw ? How many hw version do u have ?
 > 
-> Signed-off-by: Guillaume GARDET <guillaume.gardet@arm.com>
-> 
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> 
-> ---
->  arch/arm/boot/dts/exynos5250.dtsi | 47 +++++++++++++++++++++++++++++++
->  1 file changed, 47 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index d5e0392b409e..5ce4b2853cf2 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -1097,6 +1097,53 @@
->  		 */
->  		clock-frequency = <24000000>;
->  	};
-> +
-> +	mali: gpu@0x11800000 {
+> For big cores there are 20 frequencies (2100MHz .. 200MHz). Each SoC 
+> might belong to one of the 3 production 'sets' and each set contains 14 
+> so called 'asv groups', which assign the certain voltage values for each 
+> of those 20 frequencies (the lower asv group means lower voltage needed 
+> for given frequency).
 
-1. Put the node under /soc (as recently pointed out by Marek Szyprowski)
-in an address-sorted mode... if possible (nodes are mixed so find some
-reasonable place based on address_.
-2. Fix errors from:
-make dtbs W=1
+There is another property which might be useful in this case:
+"opp-microvolt-<name>" and then you can use API
+dev_pm_opp_set_prop_name() to choose which voltage value to apply to
+all OPPs.
 
-> +		compatible = "samsung,exynos5250-mali", "arm,mali-t604";
+opp-supported-hw property is more useful for the cases where only a
+subset of frequencies will be supported for different versions of the
+SoC. And what you need is a different voltage value for all
+frequencies based on some h/w version.
 
-You also need to update the bindings.
-
-> +		reg = <0x11800000 0x5000>;
-> +		interrupts = <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>,
-> +		             <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>,
-
-Please run checkpatch and fix the errors.
-
-> +			     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupt-names = "job", "mmu", "gpu";
-> +		clocks = <&clock CLK_G3D>;
-> +		clock-names = "g3d";
-> +		operating-points-v2 = <&gpu_opp_table>;
-> +		power-domains = <&pd_g3d>;
-> +		status = "disabled";
-> +	};
-> +
-> +	gpu_opp_table: gpu-opp-table {
-
-GPU opp table as subnode of Mali node.
-
-Best regards,
-Krzysztof
+-- 
+viresh
