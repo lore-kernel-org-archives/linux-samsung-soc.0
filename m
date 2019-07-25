@@ -1,95 +1,79 @@
 From: Chanwoo Choi <cwchoi00@gmail.com>
 Subject: Re: [RFC PATCH 03/11] devfreq: exynos-bus: Change goto-based logic to
  if-else logic
-Date: Thu, 25 Jul 2019 21:56:48 +0900
-Message-ID: <CAGTfZH09n9UOLMwNrCvcdeRCHYFO4TiB-YG2rMVuxA4bxuLCVw@mail.gmail.com>
+Date: Thu, 25 Jul 2019 22:02:14 +0900
+Message-ID: <CAGTfZH2pPh5VVQuHV1d_8Wj1N3TPAh6w4KUkQtssBhEdPgQiuA@mail.gmail.com>
 References: <CGME20190723122024eucas1p1ff060d072132bfbc8a8a1d10fa1f90f8@eucas1p1.samsung.com>
- <20190723122016.30279-1-a.swigon@partner.samsung.com> <20190723122016.30279-4-a.swigon@partner.samsung.com>
+ <20190723122016.30279-1-a.swigon@partner.samsung.com>
+ <20190723122016.30279-4-a.swigon@partner.samsung.com>
+ <CAGTfZH09n9UOLMwNrCvcdeRCHYFO4TiB-YG2rMVuxA4bxuLCVw@mail.gmail.com>
 Reply-To: cwchoi00@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190723122016.30279-4-a.swigon@partner.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAGTfZH09n9UOLMwNrCvcdeRCHYFO4TiB-YG2rMVuxA4bxuLCVw@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>
-Cc: devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, inki.dae@samsung.com, Seung-Woo Kim <sw0312.kim@samsung.com>, georgi.djakov@linaro.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: devicetree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, inki.dae@samsung.com, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, georgi.djakov@linaro.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-2019=EB=85=84 7=EC=9B=94 24=EC=9D=BC (=EC=88=98) =EC=98=A4=EC=A0=84 8:08, A=
-rtur =C5=9Awigo=C5=84 <a.swigon@partner.samsung.com>=EB=8B=98=EC=9D=B4 =EC=
-=9E=91=EC=84=B1:
->
-> This patch improves code readability by changing the following construct:
->
-> >    if (cond)
-> >        goto passive;
-> >    foo();
-> >    goto out;
-> >passive:
-> >    bar();
-> >out:
->
-> into this:
->
-> >    if (cond)
-> >        bar();
-> >    else
-> >        foo();
->
-> Signed-off-by: Artur =C5=9Awigo=C5=84 <a.swigon@partner.samsung.com>
-> ---
->  drivers/devfreq/exynos-bus.c | 24 +++++++++---------------
->  1 file changed, 9 insertions(+), 15 deletions(-)
->
-> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-> index cf6f6cbd0f55..4bb83b945bf7 100644
-> --- a/drivers/devfreq/exynos-bus.c
-> +++ b/drivers/devfreq/exynos-bus.c
-> @@ -505,25 +505,19 @@ static int exynos_bus_probe(struct platform_device =
-*pdev)
->         node =3D of_parse_phandle(dev->of_node, "devfreq", 0);
->         if (node) {
->                 of_node_put(node);
-> -               goto passive;
-> +               ret =3D exynos_bus_profile_init_passive(bus, profile);
-> +               if (ret < 0)
-> +                       goto err;
->         } else {
->                 ret =3D exynos_bus_parent_parse_of(np, bus);
-> +               if (ret < 0)
-> +                       goto err;
-> +
-> +               ret =3D exynos_bus_profile_init(bus, profile);
-> +               if (ret < 0)
-> +                       goto err;
->         }
->
-> -       if (ret < 0)
-> -               goto err;
-> -
-> -       ret =3D exynos_bus_profile_init(bus, profile);
-> -       if (ret < 0)
-> -               goto err;
-> -
-> -       goto out;
-> -passive:
-> -       ret =3D exynos_bus_profile_init_passive(bus, profile);
-> -       if (ret < 0)
-> -               goto err;
-> -
-> -out:
->         max_state =3D bus->devfreq->profile->max_state;
->         min_freq =3D (bus->devfreq->profile->freq_table[0] / 1000);
->         max_freq =3D (bus->devfreq->profile->freq_table[max_state - 1] / =
-1000);
-> --
-> 2.17.1
->
-
-It seems more simple than before.
-Instead, please merge patch1/2/3 to one patch. and drop the patch4.
-
---=20
-Best Regards,
-Chanwoo Choi
+MjAxOeuFhCA37JuUIDI17J28ICjrqqkpIOyYpO2bhCA5OjU2LCBDaGFud29vIENob2kgPGN3Y2hv
+aTAwQGdtYWlsLmNvbT7ri5jsnbQg7J6R7ISxOgo+Cj4gMjAxOeuFhCA37JuUIDI07J28ICjsiJgp
+IOyYpOyghCA4OjA4LCBBcnR1ciDFmndpZ2/FhCA8YS5zd2lnb25AcGFydG5lci5zYW1zdW5nLmNv
+bT7ri5jsnbQg7J6R7ISxOgo+ID4KPiA+IFRoaXMgcGF0Y2ggaW1wcm92ZXMgY29kZSByZWFkYWJp
+bGl0eSBieSBjaGFuZ2luZyB0aGUgZm9sbG93aW5nIGNvbnN0cnVjdDoKPiA+Cj4gPiA+ICAgIGlm
+IChjb25kKQo+ID4gPiAgICAgICAgZ290byBwYXNzaXZlOwo+ID4gPiAgICBmb28oKTsKPiA+ID4g
+ICAgZ290byBvdXQ7Cj4gPiA+cGFzc2l2ZToKPiA+ID4gICAgYmFyKCk7Cj4gPiA+b3V0Ogo+ID4K
+PiA+IGludG8gdGhpczoKPiA+Cj4gPiA+ICAgIGlmIChjb25kKQo+ID4gPiAgICAgICAgYmFyKCk7
+Cj4gPiA+ICAgIGVsc2UKPiA+ID4gICAgICAgIGZvbygpOwo+ID4KPiA+IFNpZ25lZC1vZmYtYnk6
+IEFydHVyIMWad2lnb8WEIDxhLnN3aWdvbkBwYXJ0bmVyLnNhbXN1bmcuY29tPgo+ID4gLS0tCj4g
+PiAgZHJpdmVycy9kZXZmcmVxL2V4eW5vcy1idXMuYyB8IDI0ICsrKysrKysrKy0tLS0tLS0tLS0t
+LS0tLQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCA5IGluc2VydGlvbnMoKyksIDE1IGRlbGV0aW9ucygt
+KQo+ID4KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2RldmZyZXEvZXh5bm9zLWJ1cy5jIGIvZHJp
+dmVycy9kZXZmcmVxL2V4eW5vcy1idXMuYwo+ID4gaW5kZXggY2Y2ZjZjYmQwZjU1Li40YmI4M2I5
+NDViZjcgMTAwNjQ0Cj4gPiAtLS0gYS9kcml2ZXJzL2RldmZyZXEvZXh5bm9zLWJ1cy5jCj4gPiAr
+KysgYi9kcml2ZXJzL2RldmZyZXEvZXh5bm9zLWJ1cy5jCj4gPiBAQCAtNTA1LDI1ICs1MDUsMTkg
+QEAgc3RhdGljIGludCBleHlub3NfYnVzX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBk
+ZXYpCj4gPiAgICAgICAgIG5vZGUgPSBvZl9wYXJzZV9waGFuZGxlKGRldi0+b2Zfbm9kZSwgImRl
+dmZyZXEiLCAwKTsKPiA+ICAgICAgICAgaWYgKG5vZGUpIHsKPiA+ICAgICAgICAgICAgICAgICBv
+Zl9ub2RlX3B1dChub2RlKTsKPiA+IC0gICAgICAgICAgICAgICBnb3RvIHBhc3NpdmU7Cj4gPiAr
+ICAgICAgICAgICAgICAgcmV0ID0gZXh5bm9zX2J1c19wcm9maWxlX2luaXRfcGFzc2l2ZShidXMs
+IHByb2ZpbGUpOwo+ID4gKyAgICAgICAgICAgICAgIGlmIChyZXQgPCAwKQo+ID4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgZ290byBlcnI7Cj4gPiAgICAgICAgIH0gZWxzZSB7Cj4gPiAgICAgICAg
+ICAgICAgICAgcmV0ID0gZXh5bm9zX2J1c19wYXJlbnRfcGFyc2Vfb2YobnAsIGJ1cyk7Cj4gPiAr
+ICAgICAgICAgICAgICAgaWYgKHJldCA8IDApCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBn
+b3RvIGVycjsKPiA+ICsKPiA+ICsgICAgICAgICAgICAgICByZXQgPSBleHlub3NfYnVzX3Byb2Zp
+bGVfaW5pdChidXMsIHByb2ZpbGUpOwo+ID4gKyAgICAgICAgICAgICAgIGlmIChyZXQgPCAwKQo+
+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgZ290byBlcnI7Cj4gPiAgICAgICAgIH0KPiA+Cj4g
+PiAtICAgICAgIGlmIChyZXQgPCAwKQo+ID4gLSAgICAgICAgICAgICAgIGdvdG8gZXJyOwo+ID4g
+LQo+ID4gLSAgICAgICByZXQgPSBleHlub3NfYnVzX3Byb2ZpbGVfaW5pdChidXMsIHByb2ZpbGUp
+Owo+ID4gLSAgICAgICBpZiAocmV0IDwgMCkKPiA+IC0gICAgICAgICAgICAgICBnb3RvIGVycjsK
+PiA+IC0KPiA+IC0gICAgICAgZ290byBvdXQ7Cj4gPiAtcGFzc2l2ZToKPiA+IC0gICAgICAgcmV0
+ID0gZXh5bm9zX2J1c19wcm9maWxlX2luaXRfcGFzc2l2ZShidXMsIHByb2ZpbGUpOwo+ID4gLSAg
+ICAgICBpZiAocmV0IDwgMCkKPiA+IC0gICAgICAgICAgICAgICBnb3RvIGVycjsKPiA+IC0KPiA+
+IC1vdXQ6Cj4gPiAgICAgICAgIG1heF9zdGF0ZSA9IGJ1cy0+ZGV2ZnJlcS0+cHJvZmlsZS0+bWF4
+X3N0YXRlOwo+ID4gICAgICAgICBtaW5fZnJlcSA9IChidXMtPmRldmZyZXEtPnByb2ZpbGUtPmZy
+ZXFfdGFibGVbMF0gLyAxMDAwKTsKPiA+ICAgICAgICAgbWF4X2ZyZXEgPSAoYnVzLT5kZXZmcmVx
+LT5wcm9maWxlLT5mcmVxX3RhYmxlW21heF9zdGF0ZSAtIDFdIC8gMTAwMCk7Cj4gPiAtLQo+ID4g
+Mi4xNy4xCj4gPgo+Cj4gSXQgc2VlbXMgbW9yZSBzaW1wbGUgdGhhbiBiZWZvcmUuCj4gSW5zdGVh
+ZCwgcGxlYXNlIG1lcmdlIHBhdGNoMS8yLzMgdG8gb25lIHBhdGNoLiBhbmQgZHJvcCB0aGUgcGF0
+Y2g0LgoKQnV0LCBJIHRoaW5rIHRoYXQgeW91IGJldHRlciB0byBkcm9wIHRoZSBjbGVhbnVwIHBh
+dGNoIGZyb20gdGhpcyBzZXJpZXMKYmVjYXVzZSB0aGUgc2VyaWVzWzFdIHRvdWNoIHRoZSBleHlu
+b3MtYnVzLmMgZHJpdmVyIGZvciBjb3VwbGVkIHJlZ3VsYXRvci4KWzFdIGh0dHBzOi8vd3d3LnNw
+aW5pY3MubmV0L2xpc3RzL2FybS1rZXJuZWwvbXNnNzQxOTcxLmh0bWwKCkkgcmVjb21tZW5kIHRo
+YXQgeW91IHNlbmQgdGhlIGNsZWFudXAgcGF0Y2ggd2l0aCBteSBjb21tZW50CmVpdGhlciBhZnRl
+ciByZXZpZXdpbmcgdGhlIEthbWlsJ3MgcGF0Y2hbMV0gb3IgcmViYXNlIHRoaXMgc2VyaWVzIGJh
+c2UKb24gcGF0Y2hbMV0uCgo+Cj4gLS0KPiBCZXN0IFJlZ2FyZHMsCj4gQ2hhbndvbyBDaG9pCgoK
+Ci0tIApCZXN0IFJlZ2FyZHMsCkNoYW53b28gQ2hvaQoKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGlu
+dXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQu
+b3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
