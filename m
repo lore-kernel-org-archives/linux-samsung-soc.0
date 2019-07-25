@@ -1,16 +1,16 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v3 1/5] devfreq: exynos-bus: correct clock enable
- sequence
-Date: Thu, 25 Jul 2019 18:58:43 +0900
-Message-ID: <9c29db92-2452-0ff3-3ffa-d861e4327bc9@samsung.com>
+Subject: Re: [PATCH v3 3/5] devfreq: exynos-bus: convert to use
+ dev_pm_opp_set_rate()
+Date: Thu, 25 Jul 2019 19:17:15 +0900
+Message-ID: <beb2455b-7f9e-35df-d524-01f4f51a1c62@samsung.com>
 References: <20190719150535.15501-1-k.konieczny@partner.samsung.com>
-        <CGME20190719150553eucas1p1665462f3fc0e06fc9c082e258be3a851@eucas1p1.samsung.com>
-        <20190719150535.15501-2-k.konieczny@partner.samsung.com>
+        <CGME20190719150555eucas1p197adc3c58e45c53137fd70cadbfae60e@eucas1p1.samsung.com>
+        <20190719150535.15501-4-k.konieczny@partner.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190719150535.15501-2-k.konieczny@partner.samsung.com>
+In-Reply-To: <20190719150535.15501-4-k.konieczny@partner.samsung.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: k.konieczny@partner.samsung.com
@@ -19,162 +19,301 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi Kamil,
 
+Looks good to me. But, I have some comment. Please check them.
+
+After this patch, exynos_bus_target is perfectly same with
+exynos_bus_passive_target. The exynos_bus_passive_target() could be removed.
+
 On 19. 7. 20. 오전 12:05, k.konieczny@partner.samsung.com wrote:
-> Regulators should be enabled before clocks to avoid h/w hang. This
-> require change in exynos_bus_probe() to move exynos_bus_parse_of()
-> after exynos_bus_parent_parse_of() and change in enabling sequence
-> of regulator and clock in exynos_bus_parse_of(). Similar change is
-> needed in exynos_bus_exit() where clock should be disabled first.
+> Reuse opp core code for setting bus clock and voltage. As a side
+> effect this allow useage of coupled regulators feature (required
+
+s/useage/usage ?
+
+> for boards using Exynos5422/5800 SoCs) because dev_pm_opp_set_rate()
+> uses regulator_set_voltage_triplet() for setting regulator voltage
+> while the old code used regulator_set_voltage_tol() with fixed
+> tolerance. This patch also removes no longer needed parsing of DT
+> property "exynos,voltage-tolerance" (no Exynos devfreq DT node uses
+> it).
 > 
 > Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
 > ---
-> This patch is new to this series.
-> 
-> ---
->  drivers/devfreq/exynos-bus.c | 58 ++++++++++++++++++++----------------
->  1 file changed, 32 insertions(+), 26 deletions(-)
+>  drivers/devfreq/exynos-bus.c | 143 +++++++++--------------------------
+>  1 file changed, 37 insertions(+), 106 deletions(-)
 > 
 > diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-> index 486cc5b422f1..f391044aa39d 100644
+> index f391044aa39d..c2147b0912a0 100644
 > --- a/drivers/devfreq/exynos-bus.c
 > +++ b/drivers/devfreq/exynos-bus.c
-> @@ -194,11 +194,11 @@ static void exynos_bus_exit(struct device *dev)
->  	if (ret < 0)
+> @@ -25,7 +25,6 @@
+>  #include <linux/slab.h>
+>  
+>  #define DEFAULT_SATURATION_RATIO	40
+> -#define DEFAULT_VOLTAGE_TOLERANCE	2
+>  
+>  struct exynos_bus {
+>  	struct device *dev;
+> @@ -37,9 +36,9 @@ struct exynos_bus {
+>  
+>  	unsigned long curr_freq;
+>  
+> -	struct regulator *regulator;
+> +	struct opp_table *opp_table;
+> +
+>  	struct clk *clk;
+> -	unsigned int voltage_tolerance;
+>  	unsigned int ratio;
+>  };
+>  
+> @@ -99,56 +98,23 @@ static int exynos_bus_target(struct device *dev, unsigned long *freq, u32 flags)
+>  {
+>  	struct exynos_bus *bus = dev_get_drvdata(dev);
+>  	struct dev_pm_opp *new_opp;
+> -	unsigned long old_freq, new_freq, new_volt, tol;
+>  	int ret = 0;
+>  
+> -	/* Get new opp-bus instance according to new bus clock */
+> +	/* Get correct frequency for bus. */
+>  	new_opp = devfreq_recommended_opp(dev, freq, flags);
+>  	if (IS_ERR(new_opp)) {
+>  		dev_err(dev, "failed to get recommended opp instance\n");
+>  		return PTR_ERR(new_opp);
+>  	}
+>  
+> -	new_freq = dev_pm_opp_get_freq(new_opp);
+> -	new_volt = dev_pm_opp_get_voltage(new_opp);
+>  	dev_pm_opp_put(new_opp);
+>  
+> -	old_freq = bus->curr_freq;
+> -
+> -	if (old_freq == new_freq)
+> -		return 0;
+> -	tol = new_volt * bus->voltage_tolerance / 100;
+> -
+>  	/* Change voltage and frequency according to new OPP level */
+>  	mutex_lock(&bus->lock);
+> +	ret = dev_pm_opp_set_rate(dev, *freq);
+> +	if (!ret)
+> +		bus->curr_freq = *freq;
+>  
+> -	if (old_freq < new_freq) {
+> -		ret = regulator_set_voltage_tol(bus->regulator, new_volt, tol);
+> -		if (ret < 0) {
+> -			dev_err(bus->dev, "failed to set voltage\n");
+> -			goto out;
+> -		}
+> -	}
+> -
+> -	ret = clk_set_rate(bus->clk, new_freq);
+> -	if (ret < 0) {
+> -		dev_err(dev, "failed to change clock of bus\n");
+> -		clk_set_rate(bus->clk, old_freq);
+> -		goto out;
+> -	}
+> -
+> -	if (old_freq > new_freq) {
+> -		ret = regulator_set_voltage_tol(bus->regulator, new_volt, tol);
+> -		if (ret < 0) {
+> -			dev_err(bus->dev, "failed to set voltage\n");
+> -			goto out;
+> -		}
+> -	}
+> -	bus->curr_freq = new_freq;
+> -
+> -	dev_dbg(dev, "Set the frequency of bus (%luHz -> %luHz, %luHz)\n",
+> -			old_freq, new_freq, clk_get_rate(bus->clk));
+> -out:
+>  	mutex_unlock(&bus->lock);
+>  
+>  	return ret;
+> @@ -195,8 +161,8 @@ static void exynos_bus_exit(struct device *dev)
 >  		dev_warn(dev, "failed to disable the devfreq-event devices\n");
 >  
-> +	clk_disable_unprepare(bus->clk);
->  	if (bus->regulator)
->  		regulator_disable(bus->regulator);
+>  	clk_disable_unprepare(bus->clk);
+> -	if (bus->regulator)
+> -		regulator_disable(bus->regulator);
+> +	if (bus->opp_table)
+> +		dev_pm_opp_put_regulators(bus->opp_table);
 >  
 >  	dev_pm_opp_of_remove_table(dev);
-> -	clk_disable_unprepare(bus->clk);
 >  }
+> @@ -209,39 +175,23 @@ static int exynos_bus_passive_target(struct device *dev, unsigned long *freq,
+>  {
+>  	struct exynos_bus *bus = dev_get_drvdata(dev);
+>  	struct dev_pm_opp *new_opp;
+> -	unsigned long old_freq, new_freq;
+> -	int ret = 0;
+> +	int ret;
 >  
->  /*
-> @@ -326,8 +326,7 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
+> -	/* Get new opp-bus instance according to new bus clock */
+> +	/* Get correct frequency for bus. */
+>  	new_opp = devfreq_recommended_opp(dev, freq, flags);
+>  	if (IS_ERR(new_opp)) {
+>  		dev_err(dev, "failed to get recommended opp instance\n");
+>  		return PTR_ERR(new_opp);
+>  	}
+>  
+> -	new_freq = dev_pm_opp_get_freq(new_opp);
+>  	dev_pm_opp_put(new_opp);
+>  
+> -	old_freq = bus->curr_freq;
+> -
+> -	if (old_freq == new_freq)
+> -		return 0;
+> -
+>  	/* Change the frequency according to new OPP level */
+>  	mutex_lock(&bus->lock);
+> +	ret = dev_pm_opp_set_rate(dev, *freq);
+> +	if (!ret)
+> +		bus->curr_freq = *freq;
+>  
+> -	ret = clk_set_rate(bus->clk, new_freq);
+> -	if (ret < 0) {
+> -		dev_err(dev, "failed to set the clock of bus\n");
+> -		goto out;
+> -	}
+> -
+> -	*freq = new_freq;
+> -	bus->curr_freq = new_freq;
+> -
+> -	dev_dbg(dev, "Set the frequency of bus (%luHz -> %luHz, %luHz)\n",
+> -			old_freq, new_freq, clk_get_rate(bus->clk));
+> -out:
+>  	mutex_unlock(&bus->lock);
+>  
 >  	return ret;
->  }
->  
-> -static int exynos_bus_parse_of(struct device_node *np,
-> -			      struct exynos_bus *bus)
-> +static int exynos_bus_parse_of(struct exynos_bus *bus)
+> @@ -259,20 +209,9 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
+>  					struct exynos_bus *bus)
 >  {
 >  	struct device *dev = bus->dev;
->  	struct dev_pm_opp *opp;
-> @@ -341,36 +340,35 @@ static int exynos_bus_parse_of(struct device_node *np,
->  		return PTR_ERR(bus->clk);
->  	}
->  
-> -	ret = clk_prepare_enable(bus->clk);
-> +	/* Get the freq and voltage from OPP table to scale the bus freq */
-> +	ret = dev_pm_opp_of_add_table(dev);
->  	if (ret < 0) {
-> -		dev_err(dev, "failed to get enable clock\n");
-> +		dev_err(dev, "failed to get OPP table\n");
->  		return ret;
->  	}
->  
-> -	/* Get the freq and voltage from OPP table to scale the bus freq */
-> -	ret = dev_pm_opp_of_add_table(dev);
-> +	ret = clk_prepare_enable(bus->clk);
->  	if (ret < 0) {
-> -		dev_err(dev, "failed to get OPP table\n");
-> +		dev_err(dev, "failed to enable clock\n");
->  		goto err_clk;
->  	}
+> -	int i, ret, count, size;
 > -
->  	rate = clk_get_rate(bus->clk);
->  
->  	opp = devfreq_recommended_opp(dev, &rate, 0);
->  	if (IS_ERR(opp)) {
->  		dev_err(dev, "failed to find dev_pm_opp\n");
->  		ret = PTR_ERR(opp);
-> -		goto err_opp;
-> +		goto err;
->  	}
->  	bus->curr_freq = dev_pm_opp_get_freq(opp);
->  	dev_pm_opp_put(opp);
->  
->  	return 0;
->  
-> -err_opp:
-> -	dev_pm_opp_of_remove_table(dev);
-> -err_clk:
-> +err:
->  	clk_disable_unprepare(bus->clk);
-> +err_clk:
-> +	dev_pm_opp_of_remove_table(dev);
->  
->  	return ret;
->  }
-> @@ -386,6 +384,7 @@ static int exynos_bus_probe(struct platform_device *pdev)
->  	struct exynos_bus *bus;
->  	int ret, max_state;
->  	unsigned long min_freq, max_freq;
-> +	bool passive = false;
->  
->  	if (!np) {
->  		dev_err(dev, "failed to find devicetree node\n");
-> @@ -399,27 +398,31 @@ static int exynos_bus_probe(struct platform_device *pdev)
->  	bus->dev = &pdev->dev;
->  	platform_set_drvdata(pdev, bus);
->  
-> -	/* Parse the device-tree to get the resource information */
-> -	ret = exynos_bus_parse_of(np, bus);
-> -	if (ret < 0)
-> -		return ret;
-> -
->  	profile = devm_kzalloc(dev, sizeof(*profile), GFP_KERNEL);
-> -	if (!profile) {
-> -		ret = -ENOMEM;
-> -		goto err;
+> -	/* Get the regulator to provide each bus with the power */
+> -	bus->regulator = devm_regulator_get(dev, "vdd");
+> -	if (IS_ERR(bus->regulator)) {
+> -		dev_err(dev, "failed to get VDD regulator\n");
+> -		return PTR_ERR(bus->regulator);
 > -	}
-> +	if (!profile)
+> -
+> -	ret = regulator_enable(bus->regulator);
+> -	if (ret < 0) {
+> -		dev_err(dev, "failed to enable VDD regulator\n");
+> -		return ret;
+> -	}
+> +	struct opp_table *opp_table;
+> +	const char *vdd = "vdd";
+> +	int i, count, size;
+>  
+>  	/*
+>  	 * Get the devfreq-event devices to get the current utilization of
+> @@ -281,26 +220,29 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
+>  	count = devfreq_event_get_edev_count(dev);
+>  	if (count < 0) {
+>  		dev_err(dev, "failed to get the count of devfreq-event dev\n");
+> -		ret = count;
+> -		goto err_regulator;
+> +		return count;
+>  	}
+> -	bus->edev_count = count;
+>  
+> +	bus->edev_count = count;
+>  	size = sizeof(*bus->edev) * count;
+>  	bus->edev = devm_kzalloc(dev, size, GFP_KERNEL);
+> -	if (!bus->edev) {
+> -		ret = -ENOMEM;
+> -		goto err_regulator;
+> -	}
+> +	if (!bus->edev)
 > +		return -ENOMEM;
 >  
->  	node = of_parse_phandle(dev->of_node, "devfreq", 0);
->  	if (node) {
->  		of_node_put(node);
-> -		goto passive;
-> +		passive = true;
->  	} else {
->  		ret = exynos_bus_parent_parse_of(np, bus);
-> +		if (ret < 0)
-> +			return ret;
->  	}
->  
-> -	if (ret < 0)
-> -		goto err;
-> +	/* Parse the device-tree to get the resource information */
-> +	ret = exynos_bus_parse_of(bus);
-> +	if (ret < 0) {
-> +		if (!passive)
-> +			regulator_disable(bus->regulator);
-> +
-> +		return ret;
+>  	for (i = 0; i < count; i++) {
+>  		bus->edev[i] = devfreq_event_get_edev_by_phandle(dev, i);
+> -		if (IS_ERR(bus->edev[i])) {
+> -			ret = -EPROBE_DEFER;
+> -			goto err_regulator;
+> -		}
+> +		if (IS_ERR(bus->edev[i]))
+> +			return -EPROBE_DEFER;
 > +	}
 > +
-> +	if (passive)
-> +		goto passive;
+> +	opp_table = dev_pm_opp_set_regulators(dev, &vdd, 1);
+> +	if (IS_ERR(opp_table)) {
+> +		i = PTR_ERR(opp_table);
+> +		dev_err(dev, "failed to set regulators %d\n", i);
+> +		return i;
+
+Maybe, you just used the 'i' defined variable instead of adding
+new variable. But, I think that you better to add new variable
+like 'err' for the readability. Or, jut use the 'PTR_ERR(opp_table)'
+directly without any additional variable.
+
+>  	}
 >  
->  	/* Initialize the struct profile and governor data for parent device */
->  	profile->polling_ms = 50;
-> @@ -508,8 +511,11 @@ static int exynos_bus_probe(struct platform_device *pdev)
+> +	bus->opp_table = opp_table;
+
+Add blank line. 
+
+>  	/*
+>  	 * Optionally, Get the saturation ratio according to Exynos SoC
+>  	 * When measuring the utilization of each AXI bus with devfreq-event
+> @@ -314,16 +256,7 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
+>  	if (of_property_read_u32(np, "exynos,saturation-ratio", &bus->ratio))
+>  		bus->ratio = DEFAULT_SATURATION_RATIO;
+>  
+> -	if (of_property_read_u32(np, "exynos,voltage-tolerance",
+> -					&bus->voltage_tolerance))
+> -		bus->voltage_tolerance = DEFAULT_VOLTAGE_TOLERANCE;
+> -
 >  	return 0;
+> -
+> -err_regulator:
+> -	regulator_disable(bus->regulator);
+> -
+> -	return ret;
+>  }
+>  
+>  static int exynos_bus_parse_of(struct exynos_bus *bus)
+> @@ -414,12 +347,8 @@ static int exynos_bus_probe(struct platform_device *pdev)
+>  
+>  	/* Parse the device-tree to get the resource information */
+>  	ret = exynos_bus_parse_of(bus);
+> -	if (ret < 0) {
+> -		if (!passive)
+> -			regulator_disable(bus->regulator);
+> -
+> -		return ret;
+> -	}
+> +	if (ret < 0)
+> +		goto err_reg;
+>  
+>  	if (passive)
+>  		goto passive;
+> @@ -512,10 +441,12 @@ static int exynos_bus_probe(struct platform_device *pdev)
 >  
 >  err:
-> -	dev_pm_opp_of_remove_table(dev);
 >  	clk_disable_unprepare(bus->clk);
-> +	if (!passive)
-> +		regulator_disable(bus->regulator);
-> +
-> +	dev_pm_opp_of_remove_table(dev);
+> -	if (!passive)
+> -		regulator_disable(bus->regulator);
+> -
+>  	dev_pm_opp_of_remove_table(dev);
+
+This function removes the 'opp_table'. But, the below code
+uses the 'opp_table' variable by dev_pm_opp_put_regulators().
+
+To disable the regulator, you have to call dev_pm_opp_of_remove_table(dev)
+after dev_pm_opp_put_regulators(bus->opp_table).
+
+> +err_reg:
+> +	if (bus->opp_table) {
+> +		dev_pm_opp_put_regulators(bus->opp_table);
+> +		bus->opp_table = NULL;
+> +	}
 >  
 >  	return ret;
 >  }
 > 
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
 -- 
 Best Regards,
