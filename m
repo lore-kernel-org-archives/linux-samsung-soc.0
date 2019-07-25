@@ -1,71 +1,91 @@
 From: k.konieczny@partner.samsung.com
-Subject: [PATCH v4 0/5] add coupled regulators for Exynos5422/5800
-Date: Thu, 25 Jul 2019 16:42:55 +0200
-Message-ID: <20190725144300.25014-1-k.konieczny@partner.samsung.com>
-References: <CGME20190725144324eucas1p211802237e336852ea3d1aa003e4d5d04@eucas1p2.samsung.com>
+Subject: [PATCH v4 5/5] devfreq: exynos-bus: remove
+ exynos_bus_passive_target()
+Date: Thu, 25 Jul 2019 16:43:00 +0200
+Message-ID: <20190725144300.25014-6-k.konieczny@partner.samsung.com>
+References: <20190725144300.25014-1-k.konieczny@partner.samsung.com>
+        <CGME20190725144328eucas1p1e16c826c18c79af8f9c7283a896266a6@eucas1p1.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190725144300.25014-1-k.konieczny@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: k.konieczny@partner.samsung.com
 Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Mark Rutland <mark.rutland@arm.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Both functions exynos_bus_passive_target() and exynos_bus_target()
+have the same code, so remove exynos_bus_passive_target(). In
+exynos_bus_probe() replace it with exynos_bus_target.
 
-The main purpose of this patch series is to add coupled regulators for
-Exynos5422/5800 to keep constrain on voltage difference between vdd_arm
-and vdd_int to be at most 300mV. In exynos-bus instead of using
-regulator_set_voltage_tol() with default voltage tolerance it should be
-used regulator_set_voltage_triplet() with volatege range, and this is
-already present in opp/core.c code, so it can be reused. While at this,
-move setting regulators into opp/core.
+Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+---
+This patch is new to this series.
 
-This patchset was tested on Odroid XU3.
+---
+ drivers/devfreq/exynos-bus.c | 34 ++--------------------------------
+ 1 file changed, 2 insertions(+), 32 deletions(-)
 
-The DTS coupled regulators patch depends on previous patches.
-
-Changes:
-v4:
-- removed "opp: core: add regulators enable and disable" from patchset
-  as it was applied by Viresh Kumar and changed cover letter
-- fix patch "devfreq: exynos-bus: correct clock enable sequence" to
-  correct order of enable/disable
-- removed unrelated changes in "devfreq: exynos-bus: convert to use
-  dev_pm_opp_set_rate()"
-- added new patch "devfreq: exynos-bus: remove exynos_bus_passive_target()"
-  as suggested by Chanwoo Choi
-v3:
-- added new exynos-bus patch to correct clock and regulator enabling
-  and disabling sequence as suggested by Chanwoo Choi
-- corrected error path in enable and improved commit message in opp/core
-- improve comment in devfreq/exynos-bus.c before devfreq_recommended_opp()
-- change cover letter as there is new patch
-- added note before Signed-off-by in 4th patch
-v2:
-- improve regulators enable/disable code in opp/core as suggested by
-  Viresh Kumar
-- add new patch for remove unused dt-bindings as suggested by Krzysztof
-  Kozlowski
-
-Kamil Konieczny (4):
-  devfreq: exynos-bus: correct clock enable sequence
-  devfreq: exynos-bus: convert to use dev_pm_opp_set_rate()
-  dt-bindings: devfreq: exynos-bus: remove unused property
-  devfreq: exynos-bus: remove exynos_bus_passive_target()
-
-Marek Szyprowski (1):
-  ARM: dts: exynos: add initial data for coupled regulators for
-    Exynos5422/5800
-
- .../bindings/devfreq/exynos-bus.txt           |   2 -
- arch/arm/boot/dts/exynos5420.dtsi             |  34 ++--
- arch/arm/boot/dts/exynos5422-odroid-core.dtsi |   4 +
- arch/arm/boot/dts/exynos5800-peach-pi.dts     |   4 +
- arch/arm/boot/dts/exynos5800.dtsi             |  32 ++--
- drivers/devfreq/exynos-bus.c                  | 153 +++++-------------
- 6 files changed, 78 insertions(+), 151 deletions(-)
-
+diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+index ebb8f46312b6..2aeb6cc07960 100644
+--- a/drivers/devfreq/exynos-bus.c
++++ b/drivers/devfreq/exynos-bus.c
+@@ -91,7 +91,7 @@ static int exynos_bus_get_event(struct exynos_bus *bus,
+ }
+ 
+ /*
+- * Must necessary function for devfreq simple-ondemand governor
++ * devfreq function for both simple-ondemand and passive governor
+  */
+ static int exynos_bus_target(struct device *dev, unsigned long *freq, u32 flags)
+ {
+@@ -167,36 +167,6 @@ static void exynos_bus_exit(struct device *dev)
+ 	}
+ }
+ 
+-/*
+- * Must necessary function for devfreq passive governor
+- */
+-static int exynos_bus_passive_target(struct device *dev, unsigned long *freq,
+-					u32 flags)
+-{
+-	struct exynos_bus *bus = dev_get_drvdata(dev);
+-	struct dev_pm_opp *new_opp;
+-	int ret;
+-
+-	/* Get correct frequency for bus. */
+-	new_opp = devfreq_recommended_opp(dev, freq, flags);
+-	if (IS_ERR(new_opp)) {
+-		dev_err(dev, "failed to get recommended opp instance\n");
+-		return PTR_ERR(new_opp);
+-	}
+-
+-	dev_pm_opp_put(new_opp);
+-
+-	/* Change the frequency according to new OPP level */
+-	mutex_lock(&bus->lock);
+-	ret = dev_pm_opp_set_rate(dev, *freq);
+-	if (!ret)
+-		bus->curr_freq = *freq;
+-
+-	mutex_unlock(&bus->lock);
+-
+-	return ret;
+-}
+-
+ static void exynos_bus_passive_exit(struct device *dev)
+ {
+ 	struct exynos_bus *bus = dev_get_drvdata(dev);
+@@ -417,7 +387,7 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ 	goto out;
+ passive:
+ 	/* Initialize the struct profile and governor data for passive device */
+-	profile->target = exynos_bus_passive_target;
++	profile->target = exynos_bus_target;
+ 	profile->exit = exynos_bus_passive_exit;
+ 
+ 	/* Get the instance of parent devfreq device */
 -- 
 2.22.0
