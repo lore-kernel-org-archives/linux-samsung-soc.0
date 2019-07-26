@@ -1,137 +1,240 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [RFC PATCH 01/11] devfreq: exynos-bus: Extract
- exynos_bus_profile_init()
-Date: Fri, 26 Jul 2019 12:42:03 +0200
-Message-ID: <CAJKOXPe4nOjjuA2MXLP1n=dPa7o6egjLZScSBNhyi9agHqqM7A@mail.gmail.com>
-References: <CGME20190723122022eucas1p1266d90873d564894bd852c20140f8474@eucas1p1.samsung.com>
- <20190723122016.30279-1-a.swigon@partner.samsung.com>
- <20190723122016.30279-2-a.swigon@partner.samsung.com>
- <CAGTfZH0JE0PmiCHaT3vMrDaP0-8eZ3afyHy_zT9aFmMOGNTR8g@mail.gmail.com>
+Subject: Re: [RFC PATCH 04/11] devfreq: exynos-bus: Clean up code
+Date: Fri, 26 Jul 2019 12:45:44 +0200
+Message-ID: <CAJKOXPfsD0XFs2hM64Kf0eG2G+xhWef3QZKjk9NU2ECzgQeqsA@mail.gmail.com>
+References: <CGME20190723122024eucas1p25a480ccddaa69ee1d0f1a07960ca3f22@eucas1p2.samsung.com>
+ <20190723122016.30279-1-a.swigon@partner.samsung.com> <20190723122016.30279-5-a.swigon@partner.samsung.com>
+ <CAGTfZH3Z334D3OKpBOGSfS9RoHkOX-s_2M858z1Ye2NoMtVh4g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAGTfZH0JE0PmiCHaT3vMrDaP0-8eZ3afyHy_zT9aFmMOGNTR8g@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAGTfZH3Z334D3OKpBOGSfS9RoHkOX-s_2M858z1Ye2NoMtVh4g@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: cwchoi00@gmail.com
-Cc: =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Chanwoo Choi <cw00.choi@samsung.com>, devicetree <devicetree@vger.kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, georgi.djakov@linaro.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, georgi.djakov@linaro.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gVGh1LCAyNSBKdWwgMjAxOSBhdCAxNDo0NCwgQ2hhbndvbyBDaG9pIDxjd2Nob2kwMEBnbWFp
-bC5jb20+IHdyb3RlOgo+Cj4gMjAxOeuFhCA37JuUIDI07J28ICjsiJgpIOyYpOyghCA4OjA5LCBB
-cnR1ciDFmndpZ2/FhCA8YS5zd2lnb25AcGFydG5lci5zYW1zdW5nLmNvbT7ri5jsnbQg7J6R7ISx
-Ogo+ID4KPiA+IFRoaXMgcGF0Y2ggYWRkcyBhIG5ldyBzdGF0aWMgZnVuY3Rpb24sIGV4eW5vc19i
-dXNfcHJvZmlsZV9pbml0KCksIGV4dHJhY3RlZAo+ID4gZnJvbSBleHlub3NfYnVzX3Byb2JlKCku
-Cj4gPgo+ID4gU2lnbmVkLW9mZi1ieTogQXJ0dXIgxZp3aWdvxYQgPGEuc3dpZ29uQHBhcnRuZXIu
-c2Ftc3VuZy5jb20+Cj4gPiAtLS0KPiA+ICBkcml2ZXJzL2RldmZyZXEvZXh5bm9zLWJ1cy5jIHwg
-MTA2ICsrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tCj4gPiAgMSBmaWxlIGNoYW5n
-ZWQsIDYwIGluc2VydGlvbnMoKyksIDQ2IGRlbGV0aW9ucygtKQo+ID4KPiA+IGRpZmYgLS1naXQg
-YS9kcml2ZXJzL2RldmZyZXEvZXh5bm9zLWJ1cy5jIGIvZHJpdmVycy9kZXZmcmVxL2V4eW5vcy1i
-dXMuYwo+ID4gaW5kZXggZDlmMzc3OTEyYzEwLi5kOGYxZWZhZjJkNDkgMTAwNjQ0Cj4gPiAtLS0g
-YS9kcml2ZXJzL2RldmZyZXEvZXh5bm9zLWJ1cy5jCj4gPiArKysgYi9kcml2ZXJzL2RldmZyZXEv
-ZXh5bm9zLWJ1cy5jCj4gPiBAQCAtMzcyLDEyICszNzIsNjkgQEAgc3RhdGljIGludCBleHlub3Nf
-YnVzX3BhcnNlX29mKHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnAsCj4gPiAgICAgICAgIHJldHVybiBy
-ZXQ7Cj4gPiAgfQo+ID4KPiA+ICtzdGF0aWMgaW50IGV4eW5vc19idXNfcHJvZmlsZV9pbml0KHN0
-cnVjdCBleHlub3NfYnVzICpidXMsCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIHN0cnVjdCBkZXZmcmVxX2Rldl9wcm9maWxlICpwcm9maWxlKQo+ID4gK3sKPiA+ICsgICAg
-ICAgc3RydWN0IGRldmljZSAqZGV2ID0gYnVzLT5kZXY7Cj4gPiArICAgICAgIHN0cnVjdCBkZXZm
-cmVxX3NpbXBsZV9vbmRlbWFuZF9kYXRhICpvbmRlbWFuZF9kYXRhOwo+ID4gKyAgICAgICBpbnQg
-cmV0Owo+ID4gKwo+ID4gKyAgICAgICAvKiBJbml0aWFsaXplIHRoZSBzdHJ1Y3QgcHJvZmlsZSBh
-bmQgZ292ZXJub3IgZGF0YSBmb3IgcGFyZW50IGRldmljZSAqLwo+ID4gKyAgICAgICBwcm9maWxl
-LT5wb2xsaW5nX21zID0gNTA7Cj4gPiArICAgICAgIHByb2ZpbGUtPnRhcmdldCA9IGV4eW5vc19i
-dXNfdGFyZ2V0Owo+ID4gKyAgICAgICBwcm9maWxlLT5nZXRfZGV2X3N0YXR1cyA9IGV4eW5vc19i
-dXNfZ2V0X2Rldl9zdGF0dXM7Cj4gPiArICAgICAgIHByb2ZpbGUtPmV4aXQgPSBleHlub3NfYnVz
-X2V4aXQ7Cj4gPiArCj4gPiArICAgICAgIG9uZGVtYW5kX2RhdGEgPSBkZXZtX2t6YWxsb2MoZGV2
-LCBzaXplb2YoKm9uZGVtYW5kX2RhdGEpLCBHRlBfS0VSTkVMKTsKPiA+ICsgICAgICAgaWYgKCFv
-bmRlbWFuZF9kYXRhKSB7Cj4gPiArICAgICAgICAgICAgICAgcmV0ID0gLUVOT01FTTsKPiA+ICsg
-ICAgICAgICAgICAgICBnb3RvIGVycjsKPiA+ICsgICAgICAgfQo+ID4gKyAgICAgICBvbmRlbWFu
-ZF9kYXRhLT51cHRocmVzaG9sZCA9IDQwOwo+ID4gKyAgICAgICBvbmRlbWFuZF9kYXRhLT5kb3du
-ZGlmZmVyZW50aWFsID0gNTsKPiA+ICsKPiA+ICsgICAgICAgLyogQWRkIGRldmZyZXEgZGV2aWNl
-IHRvIG1vbml0b3IgYW5kIGhhbmRsZSB0aGUgZXh5bm9zIGJ1cyAqLwo+ID4gKyAgICAgICBidXMt
-PmRldmZyZXEgPSBkZXZtX2RldmZyZXFfYWRkX2RldmljZShkZXYsIHByb2ZpbGUsCj4gPiArICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBERVZGUkVRX0dPVl9T
-SU1QTEVfT05ERU1BTkQsCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICBvbmRlbWFuZF9kYXRhKTsKPiA+ICsgICAgICAgaWYgKElTX0VSUihidXMtPmRl
-dmZyZXEpKSB7Cj4gPiArICAgICAgICAgICAgICAgZGV2X2VycihkZXYsICJmYWlsZWQgdG8gYWRk
-IGRldmZyZXEgZGV2aWNlXG4iKTsKPiA+ICsgICAgICAgICAgICAgICByZXQgPSBQVFJfRVJSKGJ1
-cy0+ZGV2ZnJlcSk7Cj4gPiArICAgICAgICAgICAgICAgZ290byBlcnI7Cj4gPiArICAgICAgIH0K
-PiA+ICsKPiA+ICsgICAgICAgLyogUmVnaXN0ZXIgb3BwX25vdGlmaWVyIHRvIGNhdGNoIHRoZSBj
-aGFuZ2Ugb2YgT1BQICAqLwo+ID4gKyAgICAgICByZXQgPSBkZXZtX2RldmZyZXFfcmVnaXN0ZXJf
-b3BwX25vdGlmaWVyKGRldiwgYnVzLT5kZXZmcmVxKTsKPiA+ICsgICAgICAgaWYgKHJldCA8IDAp
-IHsKPiA+ICsgICAgICAgICAgICAgICBkZXZfZXJyKGRldiwgImZhaWxlZCB0byByZWdpc3RlciBv
-cHAgbm90aWZpZXJcbiIpOwo+ID4gKyAgICAgICAgICAgICAgIGdvdG8gZXJyOwo+ID4gKyAgICAg
-ICB9Cj4gPiArCj4gPiArICAgICAgIC8qCj4gPiArICAgICAgICAqIEVuYWJsZSBkZXZmcmVxLWV2
-ZW50IHRvIGdldCByYXcgZGF0YSB3aGljaCBpcyB1c2VkIHRvIGRldGVybWluZQo+ID4gKyAgICAg
-ICAgKiBjdXJyZW50IGJ1cyBsb2FkLgo+ID4gKyAgICAgICAgKi8KPiA+ICsgICAgICAgcmV0ID0g
-ZXh5bm9zX2J1c19lbmFibGVfZWRldihidXMpOwo+ID4gKyAgICAgICBpZiAocmV0IDwgMCkgewo+
-ID4gKyAgICAgICAgICAgICAgIGRldl9lcnIoZGV2LCAiZmFpbGVkIHRvIGVuYWJsZSBkZXZmcmVx
-LWV2ZW50IGRldmljZXNcbiIpOwo+ID4gKyAgICAgICAgICAgICAgIGdvdG8gZXJyOwo+ID4gKyAg
-ICAgICB9Cj4gPiArCj4gPiArICAgICAgIHJldCA9IGV4eW5vc19idXNfc2V0X2V2ZW50KGJ1cyk7
-Cj4gPiArICAgICAgIGlmIChyZXQgPCAwKSB7Cj4gPiArICAgICAgICAgICAgICAgZGV2X2Vycihk
-ZXYsICJmYWlsZWQgdG8gc2V0IGV2ZW50IHRvIGRldmZyZXEtZXZlbnQgZGV2aWNlc1xuIik7Cj4g
-PiArICAgICAgICAgICAgICAgZ290byBlcnI7Cj4gPiArICAgICAgIH0KPiA+ICsKPiA+ICtlcnI6
-Cj4gPiArICAgICAgIHJldHVybiByZXQ7Cj4gPiArfQo+ID4gKwo+ID4gIHN0YXRpYyBpbnQgZXh5
-bm9zX2J1c19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ID4gIHsKPiA+ICAg
-ICAgICAgc3RydWN0IGRldmljZSAqZGV2ID0gJnBkZXYtPmRldjsKPiA+ICAgICAgICAgc3RydWN0
-IGRldmljZV9ub2RlICpucCA9IGRldi0+b2Zfbm9kZSwgKm5vZGU7Cj4gPiAgICAgICAgIHN0cnVj
-dCBkZXZmcmVxX2Rldl9wcm9maWxlICpwcm9maWxlOwo+ID4gLSAgICAgICBzdHJ1Y3QgZGV2ZnJl
-cV9zaW1wbGVfb25kZW1hbmRfZGF0YSAqb25kZW1hbmRfZGF0YTsKPiA+ICAgICAgICAgc3RydWN0
-IGRldmZyZXFfcGFzc2l2ZV9kYXRhICpwYXNzaXZlX2RhdGE7Cj4gPiAgICAgICAgIHN0cnVjdCBk
-ZXZmcmVxICpwYXJlbnRfZGV2ZnJlcTsKPiA+ICAgICAgICAgc3RydWN0IGV4eW5vc19idXMgKmJ1
-czsKPiA+IEBAIC00MTgsNTIgKzQ3NSw5IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2J1c19wcm9iZShz
-dHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ID4gICAgICAgICBpZiAocmV0IDwgMCkKPiA+
-ICAgICAgICAgICAgICAgICBnb3RvIGVycjsKPiA+Cj4gPiAtICAgICAgIC8qIEluaXRpYWxpemUg
-dGhlIHN0cnVjdCBwcm9maWxlIGFuZCBnb3Zlcm5vciBkYXRhIGZvciBwYXJlbnQgZGV2aWNlICov
-Cj4gPiAtICAgICAgIHByb2ZpbGUtPnBvbGxpbmdfbXMgPSA1MDsKPiA+IC0gICAgICAgcHJvZmls
-ZS0+dGFyZ2V0ID0gZXh5bm9zX2J1c190YXJnZXQ7Cj4gPiAtICAgICAgIHByb2ZpbGUtPmdldF9k
-ZXZfc3RhdHVzID0gZXh5bm9zX2J1c19nZXRfZGV2X3N0YXR1czsKPiA+IC0gICAgICAgcHJvZmls
-ZS0+ZXhpdCA9IGV4eW5vc19idXNfZXhpdDsKPiA+IC0KPiA+IC0gICAgICAgb25kZW1hbmRfZGF0
-YSA9IGRldm1fa3phbGxvYyhkZXYsIHNpemVvZigqb25kZW1hbmRfZGF0YSksIEdGUF9LRVJORUwp
-Owo+ID4gLSAgICAgICBpZiAoIW9uZGVtYW5kX2RhdGEpIHsKPiA+IC0gICAgICAgICAgICAgICBy
-ZXQgPSAtRU5PTUVNOwo+ID4gKyAgICAgICByZXQgPSBleHlub3NfYnVzX3Byb2ZpbGVfaW5pdChi
-dXMsIHByb2ZpbGUpOwo+ID4gKyAgICAgICBpZiAocmV0IDwgMCkKPiA+ICAgICAgICAgICAgICAg
-ICBnb3RvIGVycjsKPiA+IC0gICAgICAgfQo+ID4gLSAgICAgICBvbmRlbWFuZF9kYXRhLT51cHRo
-cmVzaG9sZCA9IDQwOwo+ID4gLSAgICAgICBvbmRlbWFuZF9kYXRhLT5kb3duZGlmZmVyZW50aWFs
-ID0gNTsKPiA+IC0KPiA+IC0gICAgICAgLyogQWRkIGRldmZyZXEgZGV2aWNlIHRvIG1vbml0b3Ig
-YW5kIGhhbmRsZSB0aGUgZXh5bm9zIGJ1cyAqLwo+ID4gLSAgICAgICBidXMtPmRldmZyZXEgPSBk
-ZXZtX2RldmZyZXFfYWRkX2RldmljZShkZXYsIHByb2ZpbGUsCj4gPiAtICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBERVZGUkVRX0dPVl9TSU1QTEVfT05ERU1B
-TkQsCj4gPiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBv
-bmRlbWFuZF9kYXRhKTsKPiA+IC0gICAgICAgaWYgKElTX0VSUihidXMtPmRldmZyZXEpKSB7Cj4g
-PiAtICAgICAgICAgICAgICAgZGV2X2VycihkZXYsICJmYWlsZWQgdG8gYWRkIGRldmZyZXEgZGV2
-aWNlXG4iKTsKPiA+IC0gICAgICAgICAgICAgICByZXQgPSBQVFJfRVJSKGJ1cy0+ZGV2ZnJlcSk7
-Cj4gPiAtICAgICAgICAgICAgICAgZ290byBlcnI7Cj4gPiAtICAgICAgIH0KPiA+IC0KPiA+IC0g
-ICAgICAgLyogUmVnaXN0ZXIgb3BwX25vdGlmaWVyIHRvIGNhdGNoIHRoZSBjaGFuZ2Ugb2YgT1BQ
-ICAqLwo+ID4gLSAgICAgICByZXQgPSBkZXZtX2RldmZyZXFfcmVnaXN0ZXJfb3BwX25vdGlmaWVy
-KGRldiwgYnVzLT5kZXZmcmVxKTsKPiA+IC0gICAgICAgaWYgKHJldCA8IDApIHsKPiA+IC0gICAg
-ICAgICAgICAgICBkZXZfZXJyKGRldiwgImZhaWxlZCB0byByZWdpc3RlciBvcHAgbm90aWZpZXJc
-biIpOwo+ID4gLSAgICAgICAgICAgICAgIGdvdG8gZXJyOwo+ID4gLSAgICAgICB9Cj4gPiAtCj4g
-PiAtICAgICAgIC8qCj4gPiAtICAgICAgICAqIEVuYWJsZSBkZXZmcmVxLWV2ZW50IHRvIGdldCBy
-YXcgZGF0YSB3aGljaCBpcyB1c2VkIHRvIGRldGVybWluZQo+ID4gLSAgICAgICAgKiBjdXJyZW50
-IGJ1cyBsb2FkLgo+ID4gLSAgICAgICAgKi8KPiA+IC0gICAgICAgcmV0ID0gZXh5bm9zX2J1c19l
-bmFibGVfZWRldihidXMpOwo+ID4gLSAgICAgICBpZiAocmV0IDwgMCkgewo+ID4gLSAgICAgICAg
-ICAgICAgIGRldl9lcnIoZGV2LCAiZmFpbGVkIHRvIGVuYWJsZSBkZXZmcmVxLWV2ZW50IGRldmlj
-ZXNcbiIpOwo+ID4gLSAgICAgICAgICAgICAgIGdvdG8gZXJyOwo+ID4gLSAgICAgICB9Cj4gPiAt
-Cj4gPiAtICAgICAgIHJldCA9IGV4eW5vc19idXNfc2V0X2V2ZW50KGJ1cyk7Cj4gPiAtICAgICAg
-IGlmIChyZXQgPCAwKSB7Cj4gPiAtICAgICAgICAgICAgICAgZGV2X2VycihkZXYsICJmYWlsZWQg
-dG8gc2V0IGV2ZW50IHRvIGRldmZyZXEtZXZlbnQgZGV2aWNlc1xuIik7Cj4gPiAtICAgICAgICAg
-ICAgICAgZ290byBlcnI7Cj4gPiAtICAgICAgIH0KPiA+Cj4gPiAgICAgICAgIGdvdG8gb3V0Owo+
-ID4gIHBhc3NpdmU6Cj4gPiAtLQo+ID4gMi4xNy4xCj4gPgo+Cj4gTkFDSy4KPgo+IEl0IGhhcyBu
-b3QgYW55IGJlbmVmaXQgYW5kIEkgZG9uJ3QgdW5kZXJzdGFuZCByZWFzb24gd2h5IGl0IGlzIG5l
-Y2Vzc2FyeS4KPiBJIGRvbid0IGFncmVlLiBQbGVhc2UgZHJvcCBpdC4KClRoZSBwcm9iZSBoYXMg
-MTIgbG9jYWwgdmFyaWFibGVzIGFuZCBhcm91bmQgMTQwIGxpbmVzIG9mIGNvZGUgKHNvIG11Y2gK
-bW9yZSB0aGFuIGNvZGluZyBzdHlsZSByZWNvbW1lbmRhdGlvbnMpLiBUaGVyZWZvcmUgc3BsaXR0
-aW5nIHNvbWUKbG9naWNhbCBwYXJ0IG91dCBvZiBwcm9iZSB0byBtYWtlIGNvZGUgYmV0dGVyIG9y
-Z2FuaXplZCBhbmQgbW9yZQpyZWFkYWJsZSBpcyBwcmV0dHkgb2J2aW91cyBiZW5lZml0LgoKQmVz
-dCByZWdhcmRzLApLcnp5c3p0b2YKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
-ZHJpLWRldmVs
+On Thu, 25 Jul 2019 at 14:51, Chanwoo Choi <cwchoi00@gmail.com> wrote:
+>
+> 2019=EB=85=84 7=EC=9B=94 24=EC=9D=BC (=EC=88=98) =EC=98=A4=EC=A0=84 8:07,=
+ Artur =C5=9Awigo=C5=84 <a.swigon@partner.samsung.com>=EB=8B=98=EC=9D=B4 =
+=EC=9E=91=EC=84=B1:
+> >
+> > This patch adds minor improvements to the exynos-bus driver.
+> >
+> > Signed-off-by: Artur =C5=9Awigo=C5=84 <a.swigon@partner.samsung.com>
+> > ---
+> >  drivers/devfreq/exynos-bus.c | 49 ++++++++++++++++--------------------
+> >  1 file changed, 22 insertions(+), 27 deletions(-)
+> >
+> > diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.=
+c
+> > index 4bb83b945bf7..412511ca7703 100644
+> > --- a/drivers/devfreq/exynos-bus.c
+> > +++ b/drivers/devfreq/exynos-bus.c
+> > @@ -15,11 +15,10 @@
+> >  #include <linux/device.h>
+> >  #include <linux/export.h>
+> >  #include <linux/module.h>
+> > -#include <linux/of_device.h>
+> > +#include <linux/of.h>
+> >  #include <linux/pm_opp.h>
+> >  #include <linux/platform_device.h>
+> >  #include <linux/regulator/consumer.h>
+> > -#include <linux/slab.h>
+> >
+> >  #define DEFAULT_SATURATION_RATIO       40
+> >  #define DEFAULT_VOLTAGE_TOLERANCE      2
+> > @@ -256,7 +255,7 @@ static int exynos_bus_parent_parse_of(struct device=
+_node *np,
+> >                                         struct exynos_bus *bus)
+> >  {
+> >         struct device *dev =3D bus->dev;
+> > -       int i, ret, count, size;
+> > +       int i, ret, count;
+> >
+> >         /* Get the regulator to provide each bus with the power */
+> >         bus->regulator =3D devm_regulator_get(dev, "vdd");
+> > @@ -283,8 +282,7 @@ static int exynos_bus_parent_parse_of(struct device=
+_node *np,
+> >         }
+> >         bus->edev_count =3D count;
+> >
+> > -       size =3D sizeof(*bus->edev) * count;
+> > -       bus->edev =3D devm_kzalloc(dev, size, GFP_KERNEL);
+> > +       bus->edev =3D devm_kcalloc(dev, count, sizeof(*bus->edev), GFP_=
+KERNEL);
+> >         if (!bus->edev) {
+> >                 ret =3D -ENOMEM;
+> >                 goto err_regulator;
+> > @@ -388,7 +386,7 @@ static int exynos_bus_profile_init(struct exynos_bu=
+s *bus,
+> >         ondemand_data =3D devm_kzalloc(dev, sizeof(*ondemand_data), GFP=
+_KERNEL);
+> >         if (!ondemand_data) {
+> >                 ret =3D -ENOMEM;
+> > -               goto err;
+> > +               goto out;
+> >         }
+> >         ondemand_data->upthreshold =3D 40;
+> >         ondemand_data->downdifferential =3D 5;
+> > @@ -400,14 +398,14 @@ static int exynos_bus_profile_init(struct exynos_=
+bus *bus,
+> >         if (IS_ERR(bus->devfreq)) {
+> >                 dev_err(dev, "failed to add devfreq device\n");
+> >                 ret =3D PTR_ERR(bus->devfreq);
+> > -               goto err;
+> > +               goto out;
+> >         }
+> >
+> >         /* Register opp_notifier to catch the change of OPP  */
+> >         ret =3D devm_devfreq_register_opp_notifier(dev, bus->devfreq);
+> >         if (ret < 0) {
+> >                 dev_err(dev, "failed to register opp notifier\n");
+> > -               goto err;
+> > +               goto out;
+> >         }
+> >
+> >         /*
+> > @@ -417,16 +415,16 @@ static int exynos_bus_profile_init(struct exynos_=
+bus *bus,
+> >         ret =3D exynos_bus_enable_edev(bus);
+> >         if (ret < 0) {
+> >                 dev_err(dev, "failed to enable devfreq-event devices\n"=
+);
+> > -               goto err;
+> > +               goto out;
+> >         }
+> >
+> >         ret =3D exynos_bus_set_event(bus);
+> >         if (ret < 0) {
+> >                 dev_err(dev, "failed to set event to devfreq-event devi=
+ces\n");
+> > -               goto err;
+> > +               goto out;
+> >         }
+> >
+> > -err:
+> > +out:
+> >         return ret;
+> >  }
+> >
+> > @@ -446,27 +444,28 @@ static int exynos_bus_profile_init_passive(struct=
+ exynos_bus *bus,
+> >         parent_devfreq =3D devfreq_get_devfreq_by_phandle(dev, 0);
+> >         if (IS_ERR(parent_devfreq)) {
+> >                 ret =3D -EPROBE_DEFER;
+> > -               goto err;
+> > +               goto out;
+> >         }
+> >
+> >         passive_data =3D devm_kzalloc(dev, sizeof(*passive_data), GFP_K=
+ERNEL);
+> >         if (!passive_data) {
+> >                 ret =3D -ENOMEM;
+> > -               goto err;
+> > +               goto out;
+> >         }
+> >         passive_data->parent =3D parent_devfreq;
+> >
+> >         /* Add devfreq device for exynos bus with passive governor */
+> > -       bus->devfreq =3D devm_devfreq_add_device(dev, profile, DEVFREQ_=
+GOV_PASSIVE,
+> > +       bus->devfreq =3D devm_devfreq_add_device(dev, profile,
+> > +                                               DEVFREQ_GOV_PASSIVE,
+> >                                                 passive_data);
+> >         if (IS_ERR(bus->devfreq)) {
+> >                 dev_err(dev,
+> >                         "failed to add devfreq dev with passive governo=
+r\n");
+> >                 ret =3D PTR_ERR(bus->devfreq);
+> > -               goto err;
+> > +               goto out;
+> >         }
+> >
+> > -err:
+> > +out:
+> >         return ret;
+> >  }
+> >
+> > @@ -484,11 +483,11 @@ static int exynos_bus_probe(struct platform_devic=
+e *pdev)
+> >                 return -EINVAL;
+> >         }
+> >
+> > -       bus =3D devm_kzalloc(&pdev->dev, sizeof(*bus), GFP_KERNEL);
+> > +       bus =3D devm_kzalloc(dev, sizeof(*bus), GFP_KERNEL);
+> >         if (!bus)
+> >                 return -ENOMEM;
+> >         mutex_init(&bus->lock);
+> > -       bus->dev =3D &pdev->dev;
+> > +       bus->dev =3D dev;
+> >         platform_set_drvdata(pdev, bus);
+> >
+> >         /* Parse the device-tree to get the resource information */
+> > @@ -502,7 +501,7 @@ static int exynos_bus_probe(struct platform_device =
+*pdev)
+> >                 goto err;
+> >         }
+> >
+> > -       node =3D of_parse_phandle(dev->of_node, "devfreq", 0);
+> > +       node =3D of_parse_phandle(np, "devfreq", 0);
+> >         if (node) {
+> >                 of_node_put(node);
+> >                 ret =3D exynos_bus_profile_init_passive(bus, profile);
+> > @@ -547,12 +546,10 @@ static int exynos_bus_resume(struct device *dev)
+> >         int ret;
+> >
+> >         ret =3D exynos_bus_enable_edev(bus);
+> > -       if (ret < 0) {
+> > +       if (ret < 0)
+> >                 dev_err(dev, "failed to enable the devfreq-event device=
+s\n");
+> > -               return ret;
+> > -       }
+> >
+> > -       return 0;
+> > +       return ret;
+> >  }
+> >
+> >  static int exynos_bus_suspend(struct device *dev)
+> > @@ -561,12 +558,10 @@ static int exynos_bus_suspend(struct device *dev)
+> >         int ret;
+> >
+>
+> NACK.
+
+Instead of simple nack you should explain what is wrong with proposed
+approach. The existing code could be improved and this patch clearly
+improves the readability. "err" label is confusing if it is used for
+correct exit path. The last "if() return" block is subjective - but
+then explain exactly why you prefer one over another. No just "nack"
+for peoples contributions.
+
+> >         ret =3D exynos_bus_disable_edev(bus);
+> > -       if (ret < 0) {
+> > +       if (ret < 0)
+> >                 dev_err(dev, "failed to disable the devfreq-event devic=
+es\n");
+> > -               return ret;
+> > -       }
+> >
+> > -       return 0;
+> > +       return ret;
+> >  }
+> >  #endif
+> >
+> > --
+> > 2.17.1
+> >
+>
+> NACK.
+>
+> As I already commented, It has never any benefit.
+> I think that it is not usful. Please drop it.
+
+The benefit for me is clear - makes the code easier to understand.
+
+Best regards,
+Krzysztof
