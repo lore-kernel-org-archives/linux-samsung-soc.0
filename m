@@ -1,240 +1,185 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [RFC PATCH 04/11] devfreq: exynos-bus: Clean up code
-Date: Fri, 26 Jul 2019 12:45:44 +0200
-Message-ID: <CAJKOXPfsD0XFs2hM64Kf0eG2G+xhWef3QZKjk9NU2ECzgQeqsA@mail.gmail.com>
-References: <CGME20190723122024eucas1p25a480ccddaa69ee1d0f1a07960ca3f22@eucas1p2.samsung.com>
- <20190723122016.30279-1-a.swigon@partner.samsung.com> <20190723122016.30279-5-a.swigon@partner.samsung.com>
- <CAGTfZH3Z334D3OKpBOGSfS9RoHkOX-s_2M858z1Ye2NoMtVh4g@mail.gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [RFC PATCH 01/11] devfreq: exynos-bus: Extract
+ exynos_bus_profile_init()
+Date: Fri, 26 Jul 2019 19:52:30 +0900
+Message-ID: <ea48649f-736e-4d76-e1f5-47731fb44a74@samsung.com>
+References: <CGME20190723122022eucas1p1266d90873d564894bd852c20140f8474@eucas1p1.samsung.com>
+        <20190723122016.30279-1-a.swigon@partner.samsung.com>
+        <20190723122016.30279-2-a.swigon@partner.samsung.com>
+        <CAGTfZH0JE0PmiCHaT3vMrDaP0-8eZ3afyHy_zT9aFmMOGNTR8g@mail.gmail.com>
+        <CAJKOXPe4nOjjuA2MXLP1n=dPa7o6egjLZScSBNhyi9agHqqM7A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAGTfZH3Z334D3OKpBOGSfS9RoHkOX-s_2M858z1Ye2NoMtVh4g@mail.gmail.com>
+In-Reply-To: <CAJKOXPe4nOjjuA2MXLP1n=dPa7o6egjLZScSBNhyi9agHqqM7A@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: cwchoi00@gmail.com
-Cc: =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, georgi.djakov@linaro.org, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, cwchoi00@gmail.com
+Cc: =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, georgi.djakov@linaro.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, 25 Jul 2019 at 14:51, Chanwoo Choi <cwchoi00@gmail.com> wrote:
->
-> 2019=EB=85=84 7=EC=9B=94 24=EC=9D=BC (=EC=88=98) =EC=98=A4=EC=A0=84 8:07,=
- Artur =C5=9Awigo=C5=84 <a.swigon@partner.samsung.com>=EB=8B=98=EC=9D=B4 =
-=EC=9E=91=EC=84=B1:
-> >
-> > This patch adds minor improvements to the exynos-bus driver.
-> >
-> > Signed-off-by: Artur =C5=9Awigo=C5=84 <a.swigon@partner.samsung.com>
-> > ---
-> >  drivers/devfreq/exynos-bus.c | 49 ++++++++++++++++--------------------
-> >  1 file changed, 22 insertions(+), 27 deletions(-)
-> >
-> > diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.=
-c
-> > index 4bb83b945bf7..412511ca7703 100644
-> > --- a/drivers/devfreq/exynos-bus.c
-> > +++ b/drivers/devfreq/exynos-bus.c
-> > @@ -15,11 +15,10 @@
-> >  #include <linux/device.h>
-> >  #include <linux/export.h>
-> >  #include <linux/module.h>
-> > -#include <linux/of_device.h>
-> > +#include <linux/of.h>
-> >  #include <linux/pm_opp.h>
-> >  #include <linux/platform_device.h>
-> >  #include <linux/regulator/consumer.h>
-> > -#include <linux/slab.h>
-> >
-> >  #define DEFAULT_SATURATION_RATIO       40
-> >  #define DEFAULT_VOLTAGE_TOLERANCE      2
-> > @@ -256,7 +255,7 @@ static int exynos_bus_parent_parse_of(struct device=
-_node *np,
-> >                                         struct exynos_bus *bus)
-> >  {
-> >         struct device *dev =3D bus->dev;
-> > -       int i, ret, count, size;
-> > +       int i, ret, count;
-> >
-> >         /* Get the regulator to provide each bus with the power */
-> >         bus->regulator =3D devm_regulator_get(dev, "vdd");
-> > @@ -283,8 +282,7 @@ static int exynos_bus_parent_parse_of(struct device=
-_node *np,
-> >         }
-> >         bus->edev_count =3D count;
-> >
-> > -       size =3D sizeof(*bus->edev) * count;
-> > -       bus->edev =3D devm_kzalloc(dev, size, GFP_KERNEL);
-> > +       bus->edev =3D devm_kcalloc(dev, count, sizeof(*bus->edev), GFP_=
-KERNEL);
-> >         if (!bus->edev) {
-> >                 ret =3D -ENOMEM;
-> >                 goto err_regulator;
-> > @@ -388,7 +386,7 @@ static int exynos_bus_profile_init(struct exynos_bu=
-s *bus,
-> >         ondemand_data =3D devm_kzalloc(dev, sizeof(*ondemand_data), GFP=
-_KERNEL);
-> >         if (!ondemand_data) {
-> >                 ret =3D -ENOMEM;
-> > -               goto err;
-> > +               goto out;
-> >         }
-> >         ondemand_data->upthreshold =3D 40;
-> >         ondemand_data->downdifferential =3D 5;
-> > @@ -400,14 +398,14 @@ static int exynos_bus_profile_init(struct exynos_=
-bus *bus,
-> >         if (IS_ERR(bus->devfreq)) {
-> >                 dev_err(dev, "failed to add devfreq device\n");
-> >                 ret =3D PTR_ERR(bus->devfreq);
-> > -               goto err;
-> > +               goto out;
-> >         }
-> >
-> >         /* Register opp_notifier to catch the change of OPP  */
-> >         ret =3D devm_devfreq_register_opp_notifier(dev, bus->devfreq);
-> >         if (ret < 0) {
-> >                 dev_err(dev, "failed to register opp notifier\n");
-> > -               goto err;
-> > +               goto out;
-> >         }
-> >
-> >         /*
-> > @@ -417,16 +415,16 @@ static int exynos_bus_profile_init(struct exynos_=
-bus *bus,
-> >         ret =3D exynos_bus_enable_edev(bus);
-> >         if (ret < 0) {
-> >                 dev_err(dev, "failed to enable devfreq-event devices\n"=
-);
-> > -               goto err;
-> > +               goto out;
-> >         }
-> >
-> >         ret =3D exynos_bus_set_event(bus);
-> >         if (ret < 0) {
-> >                 dev_err(dev, "failed to set event to devfreq-event devi=
-ces\n");
-> > -               goto err;
-> > +               goto out;
-> >         }
-> >
-> > -err:
-> > +out:
-> >         return ret;
-> >  }
-> >
-> > @@ -446,27 +444,28 @@ static int exynos_bus_profile_init_passive(struct=
- exynos_bus *bus,
-> >         parent_devfreq =3D devfreq_get_devfreq_by_phandle(dev, 0);
-> >         if (IS_ERR(parent_devfreq)) {
-> >                 ret =3D -EPROBE_DEFER;
-> > -               goto err;
-> > +               goto out;
-> >         }
-> >
-> >         passive_data =3D devm_kzalloc(dev, sizeof(*passive_data), GFP_K=
-ERNEL);
-> >         if (!passive_data) {
-> >                 ret =3D -ENOMEM;
-> > -               goto err;
-> > +               goto out;
-> >         }
-> >         passive_data->parent =3D parent_devfreq;
-> >
-> >         /* Add devfreq device for exynos bus with passive governor */
-> > -       bus->devfreq =3D devm_devfreq_add_device(dev, profile, DEVFREQ_=
-GOV_PASSIVE,
-> > +       bus->devfreq =3D devm_devfreq_add_device(dev, profile,
-> > +                                               DEVFREQ_GOV_PASSIVE,
-> >                                                 passive_data);
-> >         if (IS_ERR(bus->devfreq)) {
-> >                 dev_err(dev,
-> >                         "failed to add devfreq dev with passive governo=
-r\n");
-> >                 ret =3D PTR_ERR(bus->devfreq);
-> > -               goto err;
-> > +               goto out;
-> >         }
-> >
-> > -err:
-> > +out:
-> >         return ret;
-> >  }
-> >
-> > @@ -484,11 +483,11 @@ static int exynos_bus_probe(struct platform_devic=
-e *pdev)
-> >                 return -EINVAL;
-> >         }
-> >
-> > -       bus =3D devm_kzalloc(&pdev->dev, sizeof(*bus), GFP_KERNEL);
-> > +       bus =3D devm_kzalloc(dev, sizeof(*bus), GFP_KERNEL);
-> >         if (!bus)
-> >                 return -ENOMEM;
-> >         mutex_init(&bus->lock);
-> > -       bus->dev =3D &pdev->dev;
-> > +       bus->dev =3D dev;
-> >         platform_set_drvdata(pdev, bus);
-> >
-> >         /* Parse the device-tree to get the resource information */
-> > @@ -502,7 +501,7 @@ static int exynos_bus_probe(struct platform_device =
-*pdev)
-> >                 goto err;
-> >         }
-> >
-> > -       node =3D of_parse_phandle(dev->of_node, "devfreq", 0);
-> > +       node =3D of_parse_phandle(np, "devfreq", 0);
-> >         if (node) {
-> >                 of_node_put(node);
-> >                 ret =3D exynos_bus_profile_init_passive(bus, profile);
-> > @@ -547,12 +546,10 @@ static int exynos_bus_resume(struct device *dev)
-> >         int ret;
-> >
-> >         ret =3D exynos_bus_enable_edev(bus);
-> > -       if (ret < 0) {
-> > +       if (ret < 0)
-> >                 dev_err(dev, "failed to enable the devfreq-event device=
-s\n");
-> > -               return ret;
-> > -       }
-> >
-> > -       return 0;
-> > +       return ret;
-> >  }
-> >
-> >  static int exynos_bus_suspend(struct device *dev)
-> > @@ -561,12 +558,10 @@ static int exynos_bus_suspend(struct device *dev)
-> >         int ret;
-> >
->
-> NACK.
+On 19. 7. 26. 오후 7:42, Krzysztof Kozlowski wrote:
+> On Thu, 25 Jul 2019 at 14:44, Chanwoo Choi <cwchoi00@gmail.com> wrote:
+>>
+>> 2019년 7월 24일 (수) 오전 8:09, Artur Świgoń <a.swigon@partner.samsung.com>님이 작성:
+>>>
+>>> This patch adds a new static function, exynos_bus_profile_init(), extracted
+>>> from exynos_bus_probe().
+>>>
+>>> Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
+>>> ---
+>>>  drivers/devfreq/exynos-bus.c | 106 ++++++++++++++++++++---------------
+>>>  1 file changed, 60 insertions(+), 46 deletions(-)
+>>>
+>>> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+>>> index d9f377912c10..d8f1efaf2d49 100644
+>>> --- a/drivers/devfreq/exynos-bus.c
+>>> +++ b/drivers/devfreq/exynos-bus.c
+>>> @@ -372,12 +372,69 @@ static int exynos_bus_parse_of(struct device_node *np,
+>>>         return ret;
+>>>  }
+>>>
+>>> +static int exynos_bus_profile_init(struct exynos_bus *bus,
+>>> +                                  struct devfreq_dev_profile *profile)
+>>> +{
+>>> +       struct device *dev = bus->dev;
+>>> +       struct devfreq_simple_ondemand_data *ondemand_data;
+>>> +       int ret;
+>>> +
+>>> +       /* Initialize the struct profile and governor data for parent device */
+>>> +       profile->polling_ms = 50;
+>>> +       profile->target = exynos_bus_target;
+>>> +       profile->get_dev_status = exynos_bus_get_dev_status;
+>>> +       profile->exit = exynos_bus_exit;
+>>> +
+>>> +       ondemand_data = devm_kzalloc(dev, sizeof(*ondemand_data), GFP_KERNEL);
+>>> +       if (!ondemand_data) {
+>>> +               ret = -ENOMEM;
+>>> +               goto err;
+>>> +       }
+>>> +       ondemand_data->upthreshold = 40;
+>>> +       ondemand_data->downdifferential = 5;
+>>> +
+>>> +       /* Add devfreq device to monitor and handle the exynos bus */
+>>> +       bus->devfreq = devm_devfreq_add_device(dev, profile,
+>>> +                                               DEVFREQ_GOV_SIMPLE_ONDEMAND,
+>>> +                                               ondemand_data);
+>>> +       if (IS_ERR(bus->devfreq)) {
+>>> +               dev_err(dev, "failed to add devfreq device\n");
+>>> +               ret = PTR_ERR(bus->devfreq);
+>>> +               goto err;
+>>> +       }
+>>> +
+>>> +       /* Register opp_notifier to catch the change of OPP  */
+>>> +       ret = devm_devfreq_register_opp_notifier(dev, bus->devfreq);
+>>> +       if (ret < 0) {
+>>> +               dev_err(dev, "failed to register opp notifier\n");
+>>> +               goto err;
+>>> +       }
+>>> +
+>>> +       /*
+>>> +        * Enable devfreq-event to get raw data which is used to determine
+>>> +        * current bus load.
+>>> +        */
+>>> +       ret = exynos_bus_enable_edev(bus);
+>>> +       if (ret < 0) {
+>>> +               dev_err(dev, "failed to enable devfreq-event devices\n");
+>>> +               goto err;
+>>> +       }
+>>> +
+>>> +       ret = exynos_bus_set_event(bus);
+>>> +       if (ret < 0) {
+>>> +               dev_err(dev, "failed to set event to devfreq-event devices\n");
+>>> +               goto err;
+>>> +       }
+>>> +
+>>> +err:
+>>> +       return ret;
+>>> +}
+>>> +
+>>>  static int exynos_bus_probe(struct platform_device *pdev)
+>>>  {
+>>>         struct device *dev = &pdev->dev;
+>>>         struct device_node *np = dev->of_node, *node;
+>>>         struct devfreq_dev_profile *profile;
+>>> -       struct devfreq_simple_ondemand_data *ondemand_data;
+>>>         struct devfreq_passive_data *passive_data;
+>>>         struct devfreq *parent_devfreq;
+>>>         struct exynos_bus *bus;
+>>> @@ -418,52 +475,9 @@ static int exynos_bus_probe(struct platform_device *pdev)
+>>>         if (ret < 0)
+>>>                 goto err;
+>>>
+>>> -       /* Initialize the struct profile and governor data for parent device */
+>>> -       profile->polling_ms = 50;
+>>> -       profile->target = exynos_bus_target;
+>>> -       profile->get_dev_status = exynos_bus_get_dev_status;
+>>> -       profile->exit = exynos_bus_exit;
+>>> -
+>>> -       ondemand_data = devm_kzalloc(dev, sizeof(*ondemand_data), GFP_KERNEL);
+>>> -       if (!ondemand_data) {
+>>> -               ret = -ENOMEM;
+>>> +       ret = exynos_bus_profile_init(bus, profile);
+>>> +       if (ret < 0)
+>>>                 goto err;
+>>> -       }
+>>> -       ondemand_data->upthreshold = 40;
+>>> -       ondemand_data->downdifferential = 5;
+>>> -
+>>> -       /* Add devfreq device to monitor and handle the exynos bus */
+>>> -       bus->devfreq = devm_devfreq_add_device(dev, profile,
+>>> -                                               DEVFREQ_GOV_SIMPLE_ONDEMAND,
+>>> -                                               ondemand_data);
+>>> -       if (IS_ERR(bus->devfreq)) {
+>>> -               dev_err(dev, "failed to add devfreq device\n");
+>>> -               ret = PTR_ERR(bus->devfreq);
+>>> -               goto err;
+>>> -       }
+>>> -
+>>> -       /* Register opp_notifier to catch the change of OPP  */
+>>> -       ret = devm_devfreq_register_opp_notifier(dev, bus->devfreq);
+>>> -       if (ret < 0) {
+>>> -               dev_err(dev, "failed to register opp notifier\n");
+>>> -               goto err;
+>>> -       }
+>>> -
+>>> -       /*
+>>> -        * Enable devfreq-event to get raw data which is used to determine
+>>> -        * current bus load.
+>>> -        */
+>>> -       ret = exynos_bus_enable_edev(bus);
+>>> -       if (ret < 0) {
+>>> -               dev_err(dev, "failed to enable devfreq-event devices\n");
+>>> -               goto err;
+>>> -       }
+>>> -
+>>> -       ret = exynos_bus_set_event(bus);
+>>> -       if (ret < 0) {
+>>> -               dev_err(dev, "failed to set event to devfreq-event devices\n");
+>>> -               goto err;
+>>> -       }
+>>>
+>>>         goto out;
+>>>  passive:
+>>> --
+>>> 2.17.1
+>>>
+>>
+>> NACK.
+>>
+>> It has not any benefit and I don't understand reason why it is necessary.
+>> I don't agree. Please drop it.
+> 
+> The probe has 12 local variables and around 140 lines of code (so much
+> more than coding style recommendations). Therefore splitting some
+> logical part out of probe to make code better organized and more
+> readable is pretty obvious benefit.
 
-Instead of simple nack you should explain what is wrong with proposed
-approach. The existing code could be improved and this patch clearly
-improves the readability. "err" label is confusing if it is used for
-correct exit path. The last "if() return" block is subjective - but
-then explain exactly why you prefer one over another. No just "nack"
-for peoples contributions.
+After checked the patch3, I changed my opinion. It seems more simple than before
+and I replied on patch3. But, I think that can merge patch1/2/2 to one patch.
 
-> >         ret =3D exynos_bus_disable_edev(bus);
-> > -       if (ret < 0) {
-> > +       if (ret < 0)
-> >                 dev_err(dev, "failed to disable the devfreq-event devic=
-es\n");
-> > -               return ret;
-> > -       }
-> >
-> > -       return 0;
-> > +       return ret;
-> >  }
-> >  #endif
-> >
-> > --
-> > 2.17.1
-> >
->
-> NACK.
->
-> As I already commented, It has never any benefit.
-> I think that it is not usful. Please drop it.
-
-The benefit for me is clear - makes the code easier to understand.
-
-Best regards,
-Krzysztof
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
