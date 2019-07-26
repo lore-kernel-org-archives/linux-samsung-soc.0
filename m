@@ -1,145 +1,34 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [RFC PATCH 08/11] arm: dts: exynos: Add parents and
- #interconnect-cells to Exynos4412
-Date: Fri, 26 Jul 2019 14:02:34 +0200
-Message-ID: <cc4c48c3-06a5-c58f-20de-0aa18ae8667e@samsung.com>
-References: <CGME20190723122027eucas1p24b1d76e3139f7cc52614d7613ff9ba98@eucas1p2.samsung.com>
-        <20190723122016.30279-1-a.swigon@partner.samsung.com>
-        <20190723122016.30279-9-a.swigon@partner.samsung.com>
-        <CAGTfZH1_Qk+vNa_AJW_8OA8MJbnZa3yCTLLRs2w23bNTm72gyQ@mail.gmail.com>
+From: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Subject: Re: [PATCH v5 01/24] drm: Include ddc adapter pointer in struct
+ drm_connector
+Date: Fri, 26 Jul 2019 14:18:26 +0200
+Message-ID: <489b4283-c346-b2f3-0b20-3905b261049f@collabora.com>
+References: <cover.1563960855.git.andrzej.p@collabora.com>
+ <e82d6aca4f8abc95834c8a36c101d153518bb1ac.1563960855.git.andrzej.p@collabora.com>
+ <20190726063759.GB6443@ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAGTfZH1_Qk+vNa_AJW_8OA8MJbnZa3yCTLLRs2w23bNTm72gyQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20190726063759.GB6443@ravnborg.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: cwchoi00@gmail.com, =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>
-Cc: devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, inki.dae@samsung.com, Seung-Woo Kim <sw0312.kim@samsung.com>, georgi.djakov@linaro.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Shawn Guo <shawnguo@kernel.org>, kernel@collabora.com, linux-samsung-soc@vger.kernel.org, Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>, Sean Paul <sean@poorly.run>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, linux-rockchip@lists.infradead.org, Thomas Zimmermann <tzimmermann@suse.de>, Jonas Karlman <jonas@kwiboo.se>, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedeskto
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi
-
-On 2019-07-25 15:13, Chanwoo Choi wrote:
-> 2019년 7월 24일 (수) 오전 8:07, Artur Świgoń <a.swigon@partner.samsung.com>님이 작성:
->> This patch adds two fields tp the Exynos4412 DTS:
->>    - parent: to declare connections between nodes that are not in a
->>      parent-child relation in devfreq;
->>    - #interconnect-cells: required by the interconnect framework.
->>
->> Please note that #interconnect-cells is always zero and node IDs are not
->> hardcoded anywhere.
->>
->> Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
->> ---
->>   arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 1 +
->>   arch/arm/boot/dts/exynos4412.dtsi               | 9 +++++++++
->>   2 files changed, 10 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->> index ea55f377d17c..bdd61ae86103 100644
->> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->> @@ -106,6 +106,7 @@
->>   &bus_leftbus {
->>          devfreq-events = <&ppmu_leftbus_3>, <&ppmu_rightbus_3>;
->>          vdd-supply = <&buck3_reg>;
->> +       parent = <&bus_dmc>;
-> It is wrong. 'bus_leftbus' has not any h/w dependency of 'bus_dmc'
-> and 'bus_leftbus' is not child of 'bus_dmc'.
->
-> Even it there are some PMQoS requirement between them,
-> it it not proper to tie both 'bus_leftbus' and 'bus_dmc'.
-
-There is strict dependency between them. DMC bus running at frequency 
-lower than left (or right) bus really doesn't make much sense, because 
-it will limit the left bus performance. This dependency should be 
-modeled somehow.
-
->>          status = "okay";
->>   };
->>
->> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
->> index d20db2dfe8e2..a70a671acacd 100644
->> --- a/arch/arm/boot/dts/exynos4412.dtsi
->> +++ b/arch/arm/boot/dts/exynos4412.dtsi
->> @@ -390,6 +390,7 @@
->>                          clocks = <&clock CLK_DIV_DMC>;
->>                          clock-names = "bus";
->>                          operating-points-v2 = <&bus_dmc_opp_table>;
->> +                       #interconnect-cells = <0>;
->>                          status = "disabled";
->>                  };
->>
->> @@ -398,6 +399,7 @@
->>                          clocks = <&clock CLK_DIV_ACP>;
->>                          clock-names = "bus";
->>                          operating-points-v2 = <&bus_acp_opp_table>;
->> +                       #interconnect-cells = <0>;
->>                          status = "disabled";
->>                  };
->>
->> @@ -406,6 +408,7 @@
->>                          clocks = <&clock CLK_DIV_C2C>;
->>                          clock-names = "bus";
->>                          operating-points-v2 = <&bus_dmc_opp_table>;
->> +                       #interconnect-cells = <0>;
->>                          status = "disabled";
->>                  };
->>
->> @@ -459,6 +462,7 @@
->>                          clocks = <&clock CLK_DIV_GDL>;
->>                          clock-names = "bus";
->>                          operating-points-v2 = <&bus_leftbus_opp_table>;
->> +                       #interconnect-cells = <0>;
->>                          status = "disabled";
->>                  };
->>
->> @@ -467,6 +471,7 @@
->>                          clocks = <&clock CLK_DIV_GDR>;
->>                          clock-names = "bus";
->>                          operating-points-v2 = <&bus_leftbus_opp_table>;
->> +                       #interconnect-cells = <0>;
->>                          status = "disabled";
->>                  };
->>
->> @@ -475,6 +480,7 @@
->>                          clocks = <&clock CLK_ACLK160>;
->>                          clock-names = "bus";
->>                          operating-points-v2 = <&bus_display_opp_table>;
->> +                       #interconnect-cells = <0>;
->>                          status = "disabled";
->>                  };
->>
->> @@ -483,6 +489,7 @@
->>                          clocks = <&clock CLK_ACLK133>;
->>                          clock-names = "bus";
->>                          operating-points-v2 = <&bus_fsys_opp_table>;
->> +                       #interconnect-cells = <0>;
->>                          status = "disabled";
->>                  };
->>
->> @@ -491,6 +498,7 @@
->>                          clocks = <&clock CLK_ACLK100>;
->>                          clock-names = "bus";
->>                          operating-points-v2 = <&bus_peri_opp_table>;
->> +                       #interconnect-cells = <0>;
->>                          status = "disabled";
->>                  };
->>
->> @@ -499,6 +507,7 @@
->>                          clocks = <&clock CLK_SCLK_MFC>;
->>                          clock-names = "bus";
->>                          operating-points-v2 = <&bus_leftbus_opp_table>;
->> +                       #interconnect-cells = <0>;
->>                          status = "disabled";
->>                  };
->>
->> --
->> 2.17.1
->>
->
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+SGkgU2FtLAoKVyBkbml1IDI2LjA3LjIwMTkgb8KgMDg6MzcsIFNhbSBSYXZuYm9yZyBwaXN6ZToK
+PiBIaSBBbmRyemVqLgo+IAo+IFBhdGNoIGxvb2tzIGdvb2QsIGJ1dCBvbmUga2VybmVsLWRvYyBk
+ZXRhaWwuCj4gCgpUaGFua3MsIEkgd2lsbCBhZGRyZXNzIGJvdGggaXNzdWVzIHlvdSBmb3VuZCwg
+aW4gdjYuCgpBbmRyemVqCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
+Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
+ZXZlbA==
