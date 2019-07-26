@@ -1,34 +1,211 @@
-From: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Subject: Re: [PATCH v5 01/24] drm: Include ddc adapter pointer in struct
- drm_connector
-Date: Fri, 26 Jul 2019 14:18:26 +0200
-Message-ID: <489b4283-c346-b2f3-0b20-3905b261049f@collabora.com>
-References: <cover.1563960855.git.andrzej.p@collabora.com>
- <e82d6aca4f8abc95834c8a36c101d153518bb1ac.1563960855.git.andrzej.p@collabora.com>
- <20190726063759.GB6443@ravnborg.org>
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH v2 02/26] docs: thermal: add it to the driver API
+Date: Fri, 26 Jul 2019 09:51:12 -0300
+Message-ID: <968a776693ded3027f25144d997eb4187c625906.1564145354.git.mchehab+samsung@kernel.org>
+References: <cover.1564145354.git.mchehab+samsung@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190726063759.GB6443@ravnborg.org>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Shawn Guo <shawnguo@kernel.org>, kernel@collabora.com, linux-samsung-soc@vger.kernel.org, Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>, Sean Paul <sean@poorly.run>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, linux-rockchip@lists.infradead.org, Thomas Zimmermann <tzimmermann@suse.de>, Jonas Karlman <jonas@kwiboo.se>, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedeskto
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <cover.1564145354.git.mchehab+samsung@kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Viresh Kumar <viresh.kumar@linaro.org>, Amit Daniel Kachhap <amit.kachhap@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-doc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, Zhang Rui <rui.zhang@intel.com>, Javi Merino <javi.merino@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgU2FtLAoKVyBkbml1IDI2LjA3LjIwMTkgb8KgMDg6MzcsIFNhbSBSYXZuYm9yZyBwaXN6ZToK
-PiBIaSBBbmRyemVqLgo+IAo+IFBhdGNoIGxvb2tzIGdvb2QsIGJ1dCBvbmUga2VybmVsLWRvYyBk
-ZXRhaWwuCj4gCgpUaGFua3MsIEkgd2lsbCBhZGRyZXNzIGJvdGggaXNzdWVzIHlvdSBmb3VuZCwg
-aW4gdjYuCgpBbmRyemVqCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
-ZXZlbA==
+The file contents mostly describes driver internals.
+
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+---
+ Documentation/driver-api/index.rst                   |  1 +
+ .../{ => driver-api}/thermal/cpu-cooling-api.rst     |  0
+ .../{ => driver-api}/thermal/exynos_thermal.rst      |  0
+ .../thermal/exynos_thermal_emulation.rst             |  0
+ Documentation/{ => driver-api}/thermal/index.rst     |  2 +-
+ .../{ => driver-api}/thermal/intel_powerclamp.rst    |  0
+ .../{ => driver-api}/thermal/nouveau_thermal.rst     |  0
+ .../{ => driver-api}/thermal/power_allocator.rst     |  0
+ Documentation/{ => driver-api}/thermal/sysfs-api.rst | 12 ++++++------
+ .../thermal/x86_pkg_temperature_thermal.rst          |  2 +-
+ MAINTAINERS                                          |  2 +-
+ include/linux/thermal.h                              |  4 ++--
+ 12 files changed, 12 insertions(+), 11 deletions(-)
+ rename Documentation/{ => driver-api}/thermal/cpu-cooling-api.rst (100%)
+ rename Documentation/{ => driver-api}/thermal/exynos_thermal.rst (100%)
+ rename Documentation/{ => driver-api}/thermal/exynos_thermal_emulation.rst (100%)
+ rename Documentation/{ => driver-api}/thermal/index.rst (86%)
+ rename Documentation/{ => driver-api}/thermal/intel_powerclamp.rst (100%)
+ rename Documentation/{ => driver-api}/thermal/nouveau_thermal.rst (100%)
+ rename Documentation/{ => driver-api}/thermal/power_allocator.rst (100%)
+ rename Documentation/{ => driver-api}/thermal/sysfs-api.rst (98%)
+ rename Documentation/{ => driver-api}/thermal/x86_pkg_temperature_thermal.rst (94%)
+
+diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
+index d12a80f386a6..37ac052ded85 100644
+--- a/Documentation/driver-api/index.rst
++++ b/Documentation/driver-api/index.rst
+@@ -65,6 +65,7 @@ available subsections can be seen below.
+    dmaengine/index
+    slimbus
+    soundwire/index
++   thermal/index
+    fpga/index
+    acpi/index
+    backlight/lp855x-driver.rst
+diff --git a/Documentation/thermal/cpu-cooling-api.rst b/Documentation/driver-api/thermal/cpu-cooling-api.rst
+similarity index 100%
+rename from Documentation/thermal/cpu-cooling-api.rst
+rename to Documentation/driver-api/thermal/cpu-cooling-api.rst
+diff --git a/Documentation/thermal/exynos_thermal.rst b/Documentation/driver-api/thermal/exynos_thermal.rst
+similarity index 100%
+rename from Documentation/thermal/exynos_thermal.rst
+rename to Documentation/driver-api/thermal/exynos_thermal.rst
+diff --git a/Documentation/thermal/exynos_thermal_emulation.rst b/Documentation/driver-api/thermal/exynos_thermal_emulation.rst
+similarity index 100%
+rename from Documentation/thermal/exynos_thermal_emulation.rst
+rename to Documentation/driver-api/thermal/exynos_thermal_emulation.rst
+diff --git a/Documentation/thermal/index.rst b/Documentation/driver-api/thermal/index.rst
+similarity index 86%
+rename from Documentation/thermal/index.rst
+rename to Documentation/driver-api/thermal/index.rst
+index 8c1c00146cad..5ba61d19c6ae 100644
+--- a/Documentation/thermal/index.rst
++++ b/Documentation/driver-api/thermal/index.rst
+@@ -1,4 +1,4 @@
+-:orphan:
++.. SPDX-License-Identifier: GPL-2.0
+ 
+ =======
+ Thermal
+diff --git a/Documentation/thermal/intel_powerclamp.rst b/Documentation/driver-api/thermal/intel_powerclamp.rst
+similarity index 100%
+rename from Documentation/thermal/intel_powerclamp.rst
+rename to Documentation/driver-api/thermal/intel_powerclamp.rst
+diff --git a/Documentation/thermal/nouveau_thermal.rst b/Documentation/driver-api/thermal/nouveau_thermal.rst
+similarity index 100%
+rename from Documentation/thermal/nouveau_thermal.rst
+rename to Documentation/driver-api/thermal/nouveau_thermal.rst
+diff --git a/Documentation/thermal/power_allocator.rst b/Documentation/driver-api/thermal/power_allocator.rst
+similarity index 100%
+rename from Documentation/thermal/power_allocator.rst
+rename to Documentation/driver-api/thermal/power_allocator.rst
+diff --git a/Documentation/thermal/sysfs-api.rst b/Documentation/driver-api/thermal/sysfs-api.rst
+similarity index 98%
+rename from Documentation/thermal/sysfs-api.rst
+rename to Documentation/driver-api/thermal/sysfs-api.rst
+index e4930761d3e5..fab2c9b36d08 100644
+--- a/Documentation/thermal/sysfs-api.rst
++++ b/Documentation/driver-api/thermal/sysfs-api.rst
+@@ -552,7 +552,7 @@ emul_temp
+ sustainable_power
+ 	An estimate of the sustained power that can be dissipated by
+ 	the thermal zone. Used by the power allocator governor. For
+-	more information see Documentation/thermal/power_allocator.rst
++	more information see Documentation/driver-api/thermal/power_allocator.rst
+ 
+ 	Unit: milliwatts
+ 
+@@ -563,7 +563,7 @@ k_po
+ 	controller during temperature overshoot. Temperature overshoot
+ 	is when the current temperature is above the "desired
+ 	temperature" trip point. For more information see
+-	Documentation/thermal/power_allocator.rst
++	Documentation/driver-api/thermal/power_allocator.rst
+ 
+ 	RW, Optional
+ 
+@@ -572,7 +572,7 @@ k_pu
+ 	controller during temperature undershoot. Temperature undershoot
+ 	is when the current temperature is below the "desired
+ 	temperature" trip point. For more information see
+-	Documentation/thermal/power_allocator.rst
++	Documentation/driver-api/thermal/power_allocator.rst
+ 
+ 	RW, Optional
+ 
+@@ -580,14 +580,14 @@ k_i
+ 	The integral term of the power allocator governor's PID
+ 	controller. This term allows the PID controller to compensate
+ 	for long term drift. For more information see
+-	Documentation/thermal/power_allocator.rst
++	Documentation/driver-api/thermal/power_allocator.rst
+ 
+ 	RW, Optional
+ 
+ k_d
+ 	The derivative term of the power allocator governor's PID
+ 	controller. For more information see
+-	Documentation/thermal/power_allocator.rst
++	Documentation/driver-api/thermal/power_allocator.rst
+ 
+ 	RW, Optional
+ 
+@@ -598,7 +598,7 @@ integral_cutoff
+ 	example, if integral_cutoff is 0, then the integral term only
+ 	accumulates error when temperature is above the desired
+ 	temperature trip point. For more information see
+-	Documentation/thermal/power_allocator.rst
++	Documentation/driver-api/thermal/power_allocator.rst
+ 
+ 	Unit: millidegree Celsius
+ 
+diff --git a/Documentation/thermal/x86_pkg_temperature_thermal.rst b/Documentation/driver-api/thermal/x86_pkg_temperature_thermal.rst
+similarity index 94%
+rename from Documentation/thermal/x86_pkg_temperature_thermal.rst
+rename to Documentation/driver-api/thermal/x86_pkg_temperature_thermal.rst
+index f134dbd3f5a9..2ac42ccd236f 100644
+--- a/Documentation/thermal/x86_pkg_temperature_thermal.rst
++++ b/Documentation/driver-api/thermal/x86_pkg_temperature_thermal.rst
+@@ -40,7 +40,7 @@ This contains two trip points:
+ - trip_point_1_temp
+ 
+ User can set any temperature between 0 to TJ-Max temperature. Temperature units
+-are in milli-degree Celsius. Refer to "Documentation/thermal/sysfs-api.rst" for
++are in milli-degree Celsius. Refer to "Documentation/driver-api/thermal/sysfs-api.rst" for
+ thermal sys-fs details.
+ 
+ Any value other than 0 in these trip points, can trigger thermal notifications.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4e2a525e22c0..3d6cd6efb264 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15907,7 +15907,7 @@ M:	Viresh Kumar <viresh.kumar@linaro.org>
+ M:	Javi Merino <javi.merino@kernel.org>
+ L:	linux-pm@vger.kernel.org
+ S:	Supported
+-F:	Documentation/thermal/cpu-cooling-api.rst
++F:	Documentation/driver-api/thermal/cpu-cooling-api.rst
+ F:	drivers/thermal/cpu_cooling.c
+ F:	include/linux/cpu_cooling.h
+ 
+diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+index 681047f8cc05..e45659c75920 100644
+--- a/include/linux/thermal.h
++++ b/include/linux/thermal.h
+@@ -251,7 +251,7 @@ struct thermal_bind_params {
+ 	 * platform characterization. This value is relative to the
+ 	 * rest of the weights so a cooling device whose weight is
+ 	 * double that of another cooling device is twice as
+-	 * effective. See Documentation/thermal/sysfs-api.rst for more
++	 * effective. See Documentation/driver-api/thermal/sysfs-api.rst for more
+ 	 * information.
+ 	 */
+ 	int weight;
+@@ -259,7 +259,7 @@ struct thermal_bind_params {
+ 	/*
+ 	 * This is a bit mask that gives the binding relation between this
+ 	 * thermal zone and cdev, for a particular trip point.
+-	 * See Documentation/thermal/sysfs-api.rst for more information.
++	 * See Documentation/driver-api/thermal/sysfs-api.rst for more information.
+ 	 */
+ 	int trip_mask;
+ 
+-- 
+2.21.0
