@@ -1,171 +1,331 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [RFC PATCH 08/11] arm: dts: exynos: Add parents and
- #interconnect-cells to Exynos4412
-Date: Mon, 29 Jul 2019 10:20:44 +0900
-Message-ID: <64416ab4-855e-2bb6-199c-64086663a29f@samsung.com>
-References: <CGME20190723122027eucas1p24b1d76e3139f7cc52614d7613ff9ba98@eucas1p2.samsung.com>
-        <20190723122016.30279-1-a.swigon@partner.samsung.com>
-        <20190723122016.30279-9-a.swigon@partner.samsung.com>
-        <CAGTfZH1_Qk+vNa_AJW_8OA8MJbnZa3yCTLLRs2w23bNTm72gyQ@mail.gmail.com>
-        <cc4c48c3-06a5-c58f-20de-0aa18ae8667e@samsung.com>
+Subject: Re: [RFC PATCH 09/11] devfreq: exynos-bus: Add interconnect
+ functionality to exynos-bus
+Date: Mon, 29 Jul 2019 10:52:28 +0900
+Message-ID: <5a82bf8a-d925-ba54-a26f-98b64bedc6e1@samsung.com>
+References: <20190723122016.30279-1-a.swigon@partner.samsung.com>
+        <CGME20190723122028eucas1p2eb75f35b810e71d6c590370aaff0997b@eucas1p2.samsung.com>
+        <20190723122016.30279-10-a.swigon@partner.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cc4c48c3-06a5-c58f-20de-0aa18ae8667e@samsung.com>
+In-Reply-To: <20190723122016.30279-10-a.swigon@partner.samsung.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, cwchoi00@gmail.com, =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>
-Cc: devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Krzysztof Kozlowski <krzk@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, inki.dae@samsung.com, Seung-Woo Kim <sw0312.kim@samsung.com>, georgi.djakov@linaro.org
+To: =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: krzk@kernel.org, myungjoo.ham@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, georgi.djakov@linaro.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi,
 
-On 19. 7. 26. 오후 9:02, Marek Szyprowski wrote:
-> Hi
+On 19. 7. 23. 오후 9:20, Artur Świgoń wrote:
+> This patch adds interconnect functionality to the exynos-bus devfreq
+> driver.
 > 
-> On 2019-07-25 15:13, Chanwoo Choi wrote:
->> 2019년 7월 24일 (수) 오전 8:07, Artur Świgoń <a.swigon@partner.samsung.com>님이 작성:
->>> This patch adds two fields tp the Exynos4412 DTS:
->>>    - parent: to declare connections between nodes that are not in a
->>>      parent-child relation in devfreq;
->>>    - #interconnect-cells: required by the interconnect framework.
->>>
->>> Please note that #interconnect-cells is always zero and node IDs are not
->>> hardcoded anywhere.
->>>
->>> Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
->>> ---
->>>   arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 1 +
->>>   arch/arm/boot/dts/exynos4412.dtsi               | 9 +++++++++
->>>   2 files changed, 10 insertions(+)
->>>
->>> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->>> index ea55f377d17c..bdd61ae86103 100644
->>> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->>> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->>> @@ -106,6 +106,7 @@
->>>   &bus_leftbus {
->>>          devfreq-events = <&ppmu_leftbus_3>, <&ppmu_rightbus_3>;
->>>          vdd-supply = <&buck3_reg>;
->>> +       parent = <&bus_dmc>;
->> It is wrong. 'bus_leftbus' has not any h/w dependency of 'bus_dmc'
->> and 'bus_leftbus' is not child of 'bus_dmc'.
->>
->> Even it there are some PMQoS requirement between them,
->> it it not proper to tie both 'bus_leftbus' and 'bus_dmc'.
+> The SoC topology is a graph (or, more specifically, a tree) and most of its
+> edges are taken from the devfreq parent-child hierarchy (cf.
+> Documentation/devicetree/bindings/devfreq/exynos-bus.txt). The previous
+> patch adds missing edges to the DT (under the name 'parent'). Due to
+> unspecified relative probing order, -EPROBE_DEFER may be propagated to
+> guarantee that a child is probed before its parent.
 > 
-> There is strict dependency between them. DMC bus running at frequency 
-> lower than left (or right) bus really doesn't make much sense, because 
-> it will limit the left bus performance. This dependency should be 
-> modeled somehow.
+> Each bus is now an interconnect provider and an interconnect node as well
+> (cf. Documentation/interconnect/interconnect.rst), i.e. every bus registers
+> itself as a node. Node IDs are not hardcoded but rather assigned at
+> runtime, in probing order (subject to the above-mentioned exception
+> regarding relative order). This approach allows for using this driver with
+> various Exynos SoCs.
+> 
+> The devfreq target() callback provided by exynos-bus now selects either the
+> frequency calculated by the devfreq governor or the frequency requested via
+> the interconnect API for the given node, whichever is higher.
 
-I misunderstood new 'parent' prototype as the existing 'devfreq' property.
-I didn't understand why use the 'devfreq' property because 'bus_dmc' and
-'bus_leftbus' don't share the power line. Please ignore my previous comment.
+Basically, I agree to support the QoS requirement between devices.
+But, I think that need to consider the multiple cases.
 
-Basically, I agree that it is necessary to support the QoS requirement
-between buses or if possible, between bus and gpu.
 
-To support the interconnect between bus_dmc, bus_leftbus and bus_display,
-it used the either 'devfreq' or 'parent' properties to connect them.
+1. When changing the devfreq governor by user,
+For example of the connection between bus_dmc/leftbus/display on patch8,
+there are possible multiple cases with various devfreq governor
+which is changed on the runtime by user through sysfs interface.
 
-In order to catch the meaning of 'devfreq' and 'parent' properties,
-If possible, it would be separate the usage role of between 'devfreq'
-or 'parent' properties. Because it is possible to connect the 'buses'
-with only using 'parent' property if all buses in the path uses
-the devfreq governors except for 'passive' governor.
+If users changes the devfreq governor as following:
+Before,
+- bus_dmc (simple_ondemand, available frequency 100/200/300/400 MHz)
+--> bus_leftbus(simple_ondemand, available frequency 100/200/300/400 MHz)
+----> bus_display(passive)
 
-- If 'devfreq' property is used between buses,
-  it indicates that there are requirement of shading of power line.
-- If 'parent' property is used between buses,
-  it indicates that there are requirement of interconnect connection.
+After changed governor of bus_dmc,
+if the min_freq by interconnect requirement is 400Mhz,
+- bus_dmc (powersave) : min_freq and max_freq and cur_freq is 100MHz
+--> bus_leftbus(simple_ondemand) : cur_freq is 400Mhz
+----> bus_display(passive)
+
+The final frequency is 400MHz of bus_dmc
+even if the min_freq/max_freq/cur_freq is 100MHz.
+It cannot show the correct min_freq/max_freq through
+devfreq sysfs interface.
+
+
+2. When disabling the some frequency by devfreq-thermal throttling,
+This patch checks the min_freq of interconnect requirement
+in the exynos_bus_target() and exynos_bus_passive_target().
+Also, it cannot show the correct min_freq/max_freq through
+devfreq sysfs interface.
+
+For example of bus_dmc bus,
+- The available frequencies are 100MHz, 200MHz, 300MHz, 400MHz
+- Disable 400MHz by devfreq-thermal throttling 
+- min_freq is 100MHz
+- max_freq is 300MHz
+- min_freq of interconnect is 400MHz
+
+In result, the final frequency is 400MHz by exynos_bus_target()
+There are no problem for working. But, the user cannot know
+reason why cur_freq is 400MHz even if max_freq is 300MHz.
+
+Basically, update_devfreq() considers the all constraints
+of min_freq/max_freq to decide the proper target frequency.
+
+
+3.
+I think that the exynos_bus_passive_target() is used for devfreq device
+using 'passive' governor. The frequency already depends on the parent device.
+
+If already the parent devfreq device like bus_leftbus consider
+the minimum frequency of QoS requirement like interconnect,
+it is not necessary. The next frequency of devfreq device
+with 'passive' governor, it will apply the QoS requirement
+without any additional code.
 
 > 
->>>          status = "okay";
->>>   };
->>>
->>> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
->>> index d20db2dfe8e2..a70a671acacd 100644
->>> --- a/arch/arm/boot/dts/exynos4412.dtsi
->>> +++ b/arch/arm/boot/dts/exynos4412.dtsi
->>> @@ -390,6 +390,7 @@
->>>                          clocks = <&clock CLK_DIV_DMC>;
->>>                          clock-names = "bus";
->>>                          operating-points-v2 = <&bus_dmc_opp_table>;
->>> +                       #interconnect-cells = <0>;
->>>                          status = "disabled";
->>>                  };
->>>
->>> @@ -398,6 +399,7 @@
->>>                          clocks = <&clock CLK_DIV_ACP>;
->>>                          clock-names = "bus";
->>>                          operating-points-v2 = <&bus_acp_opp_table>;
->>> +                       #interconnect-cells = <0>;
->>>                          status = "disabled";
->>>                  };
->>>
->>> @@ -406,6 +408,7 @@
->>>                          clocks = <&clock CLK_DIV_C2C>;
->>>                          clock-names = "bus";
->>>                          operating-points-v2 = <&bus_dmc_opp_table>;
->>> +                       #interconnect-cells = <0>;
->>>                          status = "disabled";
->>>                  };
->>>
->>> @@ -459,6 +462,7 @@
->>>                          clocks = <&clock CLK_DIV_GDL>;
->>>                          clock-names = "bus";
->>>                          operating-points-v2 = <&bus_leftbus_opp_table>;
->>> +                       #interconnect-cells = <0>;
->>>                          status = "disabled";
->>>                  };
->>>
->>> @@ -467,6 +471,7 @@
->>>                          clocks = <&clock CLK_DIV_GDR>;
->>>                          clock-names = "bus";
->>>                          operating-points-v2 = <&bus_leftbus_opp_table>;
->>> +                       #interconnect-cells = <0>;
->>>                          status = "disabled";
->>>                  };
->>>
->>> @@ -475,6 +480,7 @@
->>>                          clocks = <&clock CLK_ACLK160>;
->>>                          clock-names = "bus";
->>>                          operating-points-v2 = <&bus_display_opp_table>;
->>> +                       #interconnect-cells = <0>;
->>>                          status = "disabled";
->>>                  };
->>>
->>> @@ -483,6 +489,7 @@
->>>                          clocks = <&clock CLK_ACLK133>;
->>>                          clock-names = "bus";
->>>                          operating-points-v2 = <&bus_fsys_opp_table>;
->>> +                       #interconnect-cells = <0>;
->>>                          status = "disabled";
->>>                  };
->>>
->>> @@ -491,6 +498,7 @@
->>>                          clocks = <&clock CLK_ACLK100>;
->>>                          clock-names = "bus";
->>>                          operating-points-v2 = <&bus_peri_opp_table>;
->>> +                       #interconnect-cells = <0>;
->>>                          status = "disabled";
->>>                  };
->>>
->>> @@ -499,6 +507,7 @@
->>>                          clocks = <&clock CLK_SCLK_MFC>;
->>>                          clock-names = "bus";
->>>                          operating-points-v2 = <&bus_leftbus_opp_table>;
->>> +                       #interconnect-cells = <0>;
->>>                          status = "disabled";
->>>                  };
->>>
->>> --
->>> 2.17.1
->>>
->>
-> Best regards
+> Please note that it is not an error when CONFIG_INTERCONNECT is 'n', in
+> which case all interconnect API functions are no-op.
+> 
+> Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
+> ---
+>  drivers/devfreq/exynos-bus.c | 145 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 145 insertions(+)
+> 
+> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+> index 412511ca7703..12fb7c84ae50 100644
+> --- a/drivers/devfreq/exynos-bus.c
+> +++ b/drivers/devfreq/exynos-bus.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/devfreq-event.h>
+>  #include <linux/device.h>
+>  #include <linux/export.h>
+> +#include <linux/interconnect-provider.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/pm_opp.h>
+> @@ -23,6 +24,8 @@
+>  #define DEFAULT_SATURATION_RATIO	40
+>  #define DEFAULT_VOLTAGE_TOLERANCE	2
+>  
+> +#define icc_units_to_hz(x) ((x) * 1000UL / 8)
+> +
+>  struct exynos_bus {
+>  	struct device *dev;
+>  
+> @@ -31,12 +34,17 @@ struct exynos_bus {
+>  	unsigned int edev_count;
+>  	struct mutex lock;
+>  
+> +	unsigned long min_freq;
+>  	unsigned long curr_freq;
+>  
+>  	struct regulator *regulator;
+>  	struct clk *clk;
+>  	unsigned int voltage_tolerance;
+>  	unsigned int ratio;
+> +
+> +	/* One provider per bus, one node per provider */
+> +	struct icc_provider provider;
+> +	struct icc_node *node;
+>  };
+>  
+>  /*
+> @@ -61,6 +69,13 @@ exynos_bus_ops_edev(enable_edev);
+>  exynos_bus_ops_edev(disable_edev);
+>  exynos_bus_ops_edev(set_event);
+>  
+> +static int exynos_bus_next_id(void)
+> +{
+> +	static int exynos_bus_node_id;
+> +
+> +	return exynos_bus_node_id++;
+> +}
+> +
+>  static int exynos_bus_get_event(struct exynos_bus *bus,
+>  				struct devfreq_event_data *edata)
+>  {
+> @@ -98,6 +113,8 @@ static int exynos_bus_target(struct device *dev, unsigned long *freq, u32 flags)
+>  	unsigned long old_freq, new_freq, new_volt, tol;
+>  	int ret = 0;
+>  
+> +	*freq = max(*freq, bus->min_freq);
+> +
+>  	/* Get new opp-bus instance according to new bus clock */
+>  	new_opp = devfreq_recommended_opp(dev, freq, flags);
+>  	if (IS_ERR(new_opp)) {
+> @@ -208,6 +225,8 @@ static int exynos_bus_passive_target(struct device *dev, unsigned long *freq,
+>  	unsigned long old_freq, new_freq;
+>  	int ret = 0;
+>  
+> +	*freq = max(*freq, bus->min_freq);
+> +
+>  	/* Get new opp-bus instance according to new bus clock */
+>  	new_opp = devfreq_recommended_opp(dev, freq, flags);
+>  	if (IS_ERR(new_opp)) {
+> @@ -251,6 +270,35 @@ static void exynos_bus_passive_exit(struct device *dev)
+>  	clk_disable_unprepare(bus->clk);
+>  }
+>  
+> +static int exynos_bus_icc_set(struct icc_node *src, struct icc_node *dst)
+> +{
+> +	struct exynos_bus *src_bus = src->data, *dst_bus = dst->data;
+> +
+> +	src_bus->min_freq = icc_units_to_hz(src->peak_bw);
+> +	dst_bus->min_freq = icc_units_to_hz(dst->peak_bw);
+> +
+> +	return 0;
+> +}
+> +
+> +static int exynos_bus_icc_aggregate(struct icc_node *node, u32 avg_bw,
+> +				    u32 peak_bw, u32 *agg_avg, u32 *agg_peak)
+> +{
+> +	*agg_peak = *agg_avg = peak_bw;
+> +
+> +	return 0;
+> +}
+> +
+> +static struct icc_node *exynos_bus_icc_xlate(struct of_phandle_args *spec,
+> +					     void *data)
+> +{
+> +	struct exynos_bus *bus = data;
+> +
+> +	if (spec->np != bus->dev->of_node)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	return bus->node;
+> +}
+> +
+>  static int exynos_bus_parent_parse_of(struct device_node *np,
+>  					struct exynos_bus *bus)
+>  {
+> @@ -469,6 +517,95 @@ static int exynos_bus_profile_init_passive(struct exynos_bus *bus,
+>  	return ret;
+>  }
+>  
+> +static int exynos_bus_icc_connect(struct exynos_bus *bus)
+> +{
+> +	struct device_node *np = bus->dev->of_node;
+> +	struct devfreq *parent_devfreq;
+> +	struct icc_node *parent_node = NULL;
+> +	struct of_phandle_args args;
+> +	int ret = 0;
+> +
+> +	parent_devfreq = devfreq_get_devfreq_by_phandle(bus->dev, 0);
+> +	if (!IS_ERR(parent_devfreq)) {
+> +		struct exynos_bus *parent_bus;
+> +
+> +		parent_bus = dev_get_drvdata(parent_devfreq->dev.parent);
+> +		parent_node = parent_bus->node;
+> +	} else {
+> +		/* Look for parent in DT */
+> +		int num = of_count_phandle_with_args(np, "parent",
+> +						     "#interconnect-cells");
+> +		if (num != 1)
+> +			goto out;
+> +
+> +		ret = of_parse_phandle_with_args(np, "parent",
+> +						 "#interconnect-cells",
+> +						 0, &args);
+> +		if (ret < 0)
+> +			goto out;
+> +
+> +		of_node_put(args.np);
+> +
+> +		parent_node = of_icc_get_from_provider(&args);
+> +		if (IS_ERR(parent_node)) {
+> +			/* May be -EPROBE_DEFER */
+> +			ret = PTR_ERR(parent_node);
+> +			goto out;
+> +		}
+> +	}
+> +
+> +	ret = icc_link_create(bus->node, parent_node->id);
+> +
+> +out:
+> +	return ret;
+> +}
+> +
+> +static int exynos_bus_icc_init(struct exynos_bus *bus)
+> +{
+> +	struct device *dev = bus->dev;
+> +	struct icc_provider *provider = &bus->provider;
+> +	struct icc_node *node;
+> +	int id, ret;
+> +
+> +	/* Initialize the interconnect provider */
+> +	provider->set = exynos_bus_icc_set;
+> +	provider->aggregate = exynos_bus_icc_aggregate;
+> +	provider->xlate = exynos_bus_icc_xlate;
+> +	provider->dev = dev;
+> +	provider->data = bus;
+> +
+> +	ret = icc_provider_add(provider);
+> +	if (ret < 0)
+> +		goto out;
+> +
+> +	id = exynos_bus_next_id();
+> +	node = icc_node_create(id);
+> +	if (IS_ERR(node)) {
+> +		ret = PTR_ERR(node);
+> +		goto err_node;
+> +	}
+> +
+> +	bus->node = node;
+> +	node->name = dev->of_node->name;
+> +	node->data = bus;
+> +	icc_node_add(node, provider);
+> +
+> +	ret = exynos_bus_icc_connect(bus);
+> +	if (ret < 0)
+> +		goto err_connect;
+> +
+> +out:
+> +	return ret;
+> +
+> +err_connect:
+> +	icc_node_del(node);
+> +	icc_node_destroy(id);
+> +err_node:
+> +	icc_provider_del(provider);
+> +
+> +	return ret;
+> +}
+> +
+>  static int exynos_bus_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -517,6 +654,14 @@ static int exynos_bus_probe(struct platform_device *pdev)
+>  			goto err;
+>  	}
+>  
+> +	/*
+> +	 * Initialize interconnect provider. A return value of -ENOTSUPP means
+> +	 * that CONFIG_INTERCONNECT is disabled.
+> +	 */
+> +	ret = exynos_bus_icc_init(bus);
+> +	if (ret < 0 && ret != -ENOTSUPP)
+> +		goto err;
+> +
+>  	max_state = bus->devfreq->profile->max_state;
+>  	min_freq = (bus->devfreq->profile->freq_table[0] / 1000);
+>  	max_freq = (bus->devfreq->profile->freq_table[max_state - 1] / 1000);
 > 
 
 
