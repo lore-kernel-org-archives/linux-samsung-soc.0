@@ -1,270 +1,82 @@
-From: Ludovic Desroches <ludovic.desroches@microchip.com>
-Subject: Re: [PATCH] hwrng: Use device-managed registration API
-Date: Wed, 31 Jul 2019 14:01:21 +0200
-Message-ID: <20190731120121.yarswvuz3avyc6re@M43218.corp.atmel.com>
-References: <20190725080155.19875-1-hslester96@gmail.com>
+From: Artur =?UTF-8?Q?=C5=9Awigo=C5=84?= <a.swigon@partner.samsung.com>
+Subject: Re: [RFC PATCH 01/11] devfreq: exynos-bus: Extract
+ exynos_bus_profile_init()
+Date: Wed, 31 Jul 2019 15:00:38 +0200
+Message-ID: <bda10bcc66aae96355e74c4739229d72bcc95b0d.camel@partner.samsung.com>
+References: <20190723122016.30279-1-a.swigon@partner.samsung.com>
+        <CGME20190723122022eucas1p1266d90873d564894bd852c20140f8474@eucas1p1.samsung.com>
+        <20190723122016.30279-2-a.swigon@partner.samsung.com>
+        <20190724190741.GD14346@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190725080155.19875-1-hslester96@gmail.com>
+In-Reply-To: <20190724190741.GD14346@kozik-lap>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chuhong Yuan <hslester96@gmail.com>
-Cc: Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Deepak Saxena <dsaxena@plexity.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Patrice Chotard <patrice.chotard@st.com>, linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.oz
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org, cw00.choi@samsung.com, myungjoo.ham@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, georgi.djakov@linaro.org, m.szyprowski@samsung.com, =?UTF-8?Q?Bart=C5=82omiej_?= =?UTF-8?Q?=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 04:01:55PM +0800, Chuhong Yuan wrote:
-> External E-Mail
-> 
-> 
-> Use devm_hwrng_register to simplify the implementation.
-> Manual unregistration and some remove functions can be
-> removed now.
-> 
-> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-> ---
->  drivers/char/hw_random/atmel-rng.c     |  3 +--
+Hi,
 
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+On Wed, 2019-07-24 at 21:07 +0200, Krzysztof Kozlowski wrote:
+> On Tue, Jul 23, 2019 at 02:20:06PM +0200, Artur Świgoń wrote:
+> > This patch adds a new static function, exynos_bus_profile_init(), extracted
+> > from exynos_bus_probe().
+> > 
+> > Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
+> > ---
+> >  drivers/devfreq/exynos-bus.c | 106 ++++++++++++++++++++---------------
+> >  1 file changed, 60 insertions(+), 46 deletions(-)
+> > 
+> > diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+> > index d9f377912c10..d8f1efaf2d49 100644
+> > --- a/drivers/devfreq/exynos-bus.c
+> > +++ b/drivers/devfreq/exynos-bus.c
+> > @@ -372,12 +372,69 @@ static int exynos_bus_parse_of(struct device_node *np,
+> >  	return ret;
+> >  }
+> >  
+> > +static int exynos_bus_profile_init(struct exynos_bus *bus,
+> > +				   struct devfreq_dev_profile *profile)
+> > +{
+> > +	struct device *dev = bus->dev;
+> > +	struct devfreq_simple_ondemand_data *ondemand_data;
+> > +	int ret;
+> > +
+> > +	/* Initialize the struct profile and governor data for parent device */
+> > +	profile->polling_ms = 50;
+> > +	profile->target = exynos_bus_target;
+> > +	profile->get_dev_status = exynos_bus_get_dev_status;
+> > +	profile->exit = exynos_bus_exit;
+> > +
+> > +	ondemand_data = devm_kzalloc(dev, sizeof(*ondemand_data), GFP_KERNEL);
+> > +	if (!ondemand_data) {
+> > +		ret = -ENOMEM;
+> > +		goto err;
+> 
+> Just return proper error code. Less lines, obvious code since you do not
+> have any cleanup in error path.
 
-Thanks
+I was advised to avoid modifying code being moved (in one patch). I do make
+changes in these places in patch 04/11, i.e. change the original label 'err' to
+'out'. What's your opinion on making the proposed changes to patches 01 and 02
+(s/goto err/return ret/) in patch 04 instead?
 
->  drivers/char/hw_random/cavium-rng-vf.c | 11 +----------
->  drivers/char/hw_random/exynos-trng.c   |  3 +--
->  drivers/char/hw_random/n2-drv.c        |  4 +---
->  drivers/char/hw_random/nomadik-rng.c   |  3 +--
->  drivers/char/hw_random/omap-rng.c      |  3 +--
->  drivers/char/hw_random/powernv-rng.c   | 10 +---------
->  drivers/char/hw_random/st-rng.c        |  4 +---
->  drivers/char/hw_random/xgene-rng.c     |  4 +---
->  9 files changed, 9 insertions(+), 36 deletions(-)
+> > +
+> > +	/* Register opp_notifier to catch the change of OPP  */
+> > +	ret = devm_devfreq_register_opp_notifier(dev, bus->devfreq);
+> > +	if (ret < 0) {
+> > +		dev_err(dev, "failed to register opp notifier\n");
+> > +		goto err;
 > 
-> diff --git a/drivers/char/hw_random/atmel-rng.c b/drivers/char/hw_random/atmel-rng.c
-> index 433426242b87..e55705745d5e 100644
-> --- a/drivers/char/hw_random/atmel-rng.c
-> +++ b/drivers/char/hw_random/atmel-rng.c
-> @@ -86,7 +86,7 @@ static int atmel_trng_probe(struct platform_device *pdev)
->  	trng->rng.name = pdev->name;
->  	trng->rng.read = atmel_trng_read;
->  
-> -	ret = hwrng_register(&trng->rng);
-> +	ret = devm_hwrng_register(&pdev->dev, &trng->rng);
->  	if (ret)
->  		goto err_register;
->  
-> @@ -103,7 +103,6 @@ static int atmel_trng_remove(struct platform_device *pdev)
->  {
->  	struct atmel_trng *trng = platform_get_drvdata(pdev);
->  
-> -	hwrng_unregister(&trng->rng);
->  
->  	atmel_trng_disable(trng);
->  	clk_disable_unprepare(trng->clk);
-> diff --git a/drivers/char/hw_random/cavium-rng-vf.c b/drivers/char/hw_random/cavium-rng-vf.c
-> index 2d1352b67168..3de4a6a443ef 100644
-> --- a/drivers/char/hw_random/cavium-rng-vf.c
-> +++ b/drivers/char/hw_random/cavium-rng-vf.c
-> @@ -67,7 +67,7 @@ static int cavium_rng_probe_vf(struct	pci_dev		*pdev,
->  
->  	pci_set_drvdata(pdev, rng);
->  
-> -	ret = hwrng_register(&rng->ops);
-> +	ret = devm_hwrng_register(&pdev->dev, &rng->ops);
->  	if (ret) {
->  		dev_err(&pdev->dev, "Error registering device as HWRNG.\n");
->  		return ret;
-> @@ -76,14 +76,6 @@ static int cavium_rng_probe_vf(struct	pci_dev		*pdev,
->  	return 0;
->  }
->  
-> -/* Remove the VF */
-> -static void  cavium_rng_remove_vf(struct pci_dev *pdev)
-> -{
-> -	struct cavium_rng *rng;
-> -
-> -	rng = pci_get_drvdata(pdev);
-> -	hwrng_unregister(&rng->ops);
-> -}
->  
->  static const struct pci_device_id cavium_rng_vf_id_table[] = {
->  	{ PCI_DEVICE(PCI_VENDOR_ID_CAVIUM, 0xa033), 0, 0, 0},
-> @@ -95,7 +87,6 @@ static struct pci_driver cavium_rng_vf_driver = {
->  	.name		= "cavium_rng_vf",
->  	.id_table	= cavium_rng_vf_id_table,
->  	.probe		= cavium_rng_probe_vf,
-> -	.remove		= cavium_rng_remove_vf,
->  };
->  module_pci_driver(cavium_rng_vf_driver);
->  
-> diff --git a/drivers/char/hw_random/exynos-trng.c b/drivers/char/hw_random/exynos-trng.c
-> index 94235761955c..b4b52ab23b6b 100644
-> --- a/drivers/char/hw_random/exynos-trng.c
-> +++ b/drivers/char/hw_random/exynos-trng.c
-> @@ -153,7 +153,7 @@ static int exynos_trng_probe(struct platform_device *pdev)
->  		goto err_clock;
->  	}
->  
-> -	ret = hwrng_register(&trng->rng);
-> +	ret = devm_hwrng_register(&pdev->dev, &trng->rng);
->  	if (ret) {
->  		dev_err(&pdev->dev, "Could not register hwrng device.\n");
->  		goto err_register;
-> @@ -179,7 +179,6 @@ static int exynos_trng_remove(struct platform_device *pdev)
->  {
->  	struct exynos_trng_dev *trng =  platform_get_drvdata(pdev);
->  
-> -	hwrng_unregister(&trng->rng);
->  	clk_disable_unprepare(trng->clk);
->  
->  	pm_runtime_put_sync(&pdev->dev);
-> diff --git a/drivers/char/hw_random/n2-drv.c b/drivers/char/hw_random/n2-drv.c
-> index d4cab105796f..2d256b3470db 100644
-> --- a/drivers/char/hw_random/n2-drv.c
-> +++ b/drivers/char/hw_random/n2-drv.c
-> @@ -768,7 +768,7 @@ static int n2rng_probe(struct platform_device *op)
->  	np->hwrng.data_read = n2rng_data_read;
->  	np->hwrng.priv = (unsigned long) np;
->  
-> -	err = hwrng_register(&np->hwrng);
-> +	err = devm_hwrng_register(&pdev->dev, &np->hwrng);
->  	if (err)
->  		goto out_hvapi_unregister;
->  
-> @@ -793,8 +793,6 @@ static int n2rng_remove(struct platform_device *op)
->  
->  	cancel_delayed_work_sync(&np->work);
->  
-> -	hwrng_unregister(&np->hwrng);
-> -
->  	sun4v_hvapi_unregister(HV_GRP_RNG);
->  
->  	return 0;
-> diff --git a/drivers/char/hw_random/nomadik-rng.c b/drivers/char/hw_random/nomadik-rng.c
-> index fc0f6b0cb80d..74ed29f42e4f 100644
-> --- a/drivers/char/hw_random/nomadik-rng.c
-> +++ b/drivers/char/hw_random/nomadik-rng.c
-> @@ -57,7 +57,7 @@ static int nmk_rng_probe(struct amba_device *dev, const struct amba_id *id)
->  	if (!base)
->  		goto out_release;
->  	nmk_rng.priv = (unsigned long)base;
-> -	ret = hwrng_register(&nmk_rng);
-> +	ret = devm_hwrng_register(&dev->dev, &nmk_rng);
->  	if (ret)
->  		goto out_release;
->  	return 0;
-> @@ -71,7 +71,6 @@ static int nmk_rng_probe(struct amba_device *dev, const struct amba_id *id)
->  
->  static int nmk_rng_remove(struct amba_device *dev)
->  {
-> -	hwrng_unregister(&nmk_rng);
->  	amba_release_regions(dev);
->  	clk_disable(rng_clk);
->  	return 0;
-> diff --git a/drivers/char/hw_random/omap-rng.c b/drivers/char/hw_random/omap-rng.c
-> index e9b6ac61fb7f..b27f39688b5e 100644
-> --- a/drivers/char/hw_random/omap-rng.c
-> +++ b/drivers/char/hw_random/omap-rng.c
-> @@ -500,7 +500,7 @@ static int omap_rng_probe(struct platform_device *pdev)
->  	if (ret)
->  		goto err_register;
->  
-> -	ret = hwrng_register(&priv->rng);
-> +	ret = devm_hwrng_register(&pdev->dev, &priv->rng);
->  	if (ret)
->  		goto err_register;
->  
-> @@ -525,7 +525,6 @@ static int omap_rng_remove(struct platform_device *pdev)
->  {
->  	struct omap_rng_dev *priv = platform_get_drvdata(pdev);
->  
-> -	hwrng_unregister(&priv->rng);
->  
->  	priv->pdata->cleanup(priv);
->  
-> diff --git a/drivers/char/hw_random/powernv-rng.c b/drivers/char/hw_random/powernv-rng.c
-> index f2e8272e276a..8da1d7917bdc 100644
-> --- a/drivers/char/hw_random/powernv-rng.c
-> +++ b/drivers/char/hw_random/powernv-rng.c
-> @@ -33,18 +33,11 @@ static struct hwrng powernv_hwrng = {
->  	.read = powernv_rng_read,
->  };
->  
-> -static int powernv_rng_remove(struct platform_device *pdev)
-> -{
-> -	hwrng_unregister(&powernv_hwrng);
-> -
-> -	return 0;
-> -}
-> -
->  static int powernv_rng_probe(struct platform_device *pdev)
->  {
->  	int rc;
->  
-> -	rc = hwrng_register(&powernv_hwrng);
-> +	rc = devm_hwrng_register(&pdev->dev, &powernv_hwrng);
->  	if (rc) {
->  		/* We only register one device, ignore any others */
->  		if (rc == -EEXIST)
-> @@ -70,7 +63,6 @@ static struct platform_driver powernv_rng_driver = {
->  		.of_match_table = powernv_rng_match,
->  	},
->  	.probe	= powernv_rng_probe,
-> -	.remove = powernv_rng_remove,
->  };
->  module_platform_driver(powernv_rng_driver);
->  
-> diff --git a/drivers/char/hw_random/st-rng.c b/drivers/char/hw_random/st-rng.c
-> index bd6a98b3479b..863448360a7d 100644
-> --- a/drivers/char/hw_random/st-rng.c
-> +++ b/drivers/char/hw_random/st-rng.c
-> @@ -102,7 +102,7 @@ static int st_rng_probe(struct platform_device *pdev)
->  
->  	dev_set_drvdata(&pdev->dev, ddata);
->  
-> -	ret = hwrng_register(&ddata->ops);
-> +	ret = devm_hwrng_register(&pdev->dev, &ddata->ops);
->  	if (ret) {
->  		dev_err(&pdev->dev, "Failed to register HW RNG\n");
->  		clk_disable_unprepare(clk);
-> @@ -118,8 +118,6 @@ static int st_rng_remove(struct platform_device *pdev)
->  {
->  	struct st_rng_data *ddata = dev_get_drvdata(&pdev->dev);
->  
-> -	hwrng_unregister(&ddata->ops);
-> -
->  	clk_disable_unprepare(ddata->clk);
->  
->  	return 0;
-> diff --git a/drivers/char/hw_random/xgene-rng.c b/drivers/char/hw_random/xgene-rng.c
-> index 8c6f9f63da5e..7e568db87ae2 100644
-> --- a/drivers/char/hw_random/xgene-rng.c
-> +++ b/drivers/char/hw_random/xgene-rng.c
-> @@ -361,7 +361,7 @@ static int xgene_rng_probe(struct platform_device *pdev)
->  
->  	xgene_rng_func.priv = (unsigned long) ctx;
->  
-> -	rc = hwrng_register(&xgene_rng_func);
-> +	rc = devm_hwrng_register(&pdev->dev, &xgene_rng_func);
->  	if (rc) {
->  		dev_err(&pdev->dev, "RNG registering failed error %d\n", rc);
->  		if (!IS_ERR(ctx->clk))
-> @@ -375,7 +375,6 @@ static int xgene_rng_probe(struct platform_device *pdev)
->  			rc);
->  		if (!IS_ERR(ctx->clk))
->  			clk_disable_unprepare(ctx->clk);
-> -		hwrng_unregister(&xgene_rng_func);
->  		return rc;
->  	}
->  
-> @@ -392,7 +391,6 @@ static int xgene_rng_remove(struct platform_device *pdev)
->  		dev_err(&pdev->dev, "RNG init wakeup failed error %d\n", rc);
->  	if (!IS_ERR(ctx->clk))
->  		clk_disable_unprepare(ctx->clk);
-> -	hwrng_unregister(&xgene_rng_func);
->  
->  	return rc;
->  }
-> -- 
-> 2.20.1
+> The same - return err.
 > 
-> 
+> Best regards,
+> Krzysztof
+
+Best regards,
+-- 
+Artur Świgoń
+Samsung R&D Institute Poland
+Samsung Electronics
