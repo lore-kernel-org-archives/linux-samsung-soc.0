@@ -1,71 +1,43 @@
-From: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Subject: Re: Review required [Was: Associate ddc adapters with
- connectors]
-Date: Wed, 31 Jul 2019 10:00:14 +0200
-Message-ID: <6560f93c-a48f-2a8c-afeb-d5e8e200480d@baylibre.com>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: Review required [Was: Associate ddc adapters with connectors]
+Date: Wed, 31 Jul 2019 12:40:07 +0200
+Message-ID: <20190731104007.GA23138@ravnborg.org>
 References: <cover.1564161140.git.andrzej.p@collabora.com>
- <20190726183520.GA22572@ravnborg.org> <20190726185538.GD14981@ravnborg.org>
+ <20190726183520.GA22572@ravnborg.org>
+ <20190726185538.GD14981@ravnborg.org>
+ <6560f93c-a48f-2a8c-afeb-d5e8e200480d@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <20190726185538.GD14981-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/freedreno>
-List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, kernel-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sean Paul <sean-p7yTbzM4H96eqtR555YLDQ@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, NXP Linux Team <linux-imx-3arQi8VN3Tc@public.gmane.org>, Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Thomas Zimmermann <tzimmermann-l3A5Bk7waGM@public.gmane.org>, Jonas Karlman <jonas-uIzNG4q0ceqzQB+pC5nmwQ@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jyri Sarha <jsarha-l0cyMroinI0@public.gmane.org>, Mamta Shukla <mamtashukla555-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Max
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <6560f93c-a48f-2a8c-afeb-d5e8e200480d@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Andrzej Pietrasiewicz <andrzej.p@collabora.com>, David Airlie <airlied@linux.ie>, Liviu Dudau <liviu.dudau@arm.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Shawn Guo <shawnguo@kernel.org>, kernel@collabora.com, linux-samsung-soc@vger.kernel.org, Sean Paul <sean@poorly.run>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Dave Airlie <airlied@redhat.com>, Thomas Zimmermann <tzimmermann@suse.de>, Jonas Karlman <jonas@kwiboo.se>, linux-arm
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgU2FtLAoKT24gMjYvMDcvMjAxOSAyMDo1NSwgU2FtIFJhdm5ib3JnIHdyb3RlOgo+IEhpIGFs
-bC4KPiAKPiBBbmRyemVqIGhhdmUgZG9uZSBhIGdvb2Qgam9iIGZvbGxvd2luZyB1cCBvbiBmZWVk
-YmFjayBhbmQgdGhpcyBzZXJpZXMgaXMKPiBub3cgcmVhZHkuCj4gCj4gV2UgbmVlZCBhY2sgb24g
-dGhlIHBhdGNoZXMgdG91Y2hpbmcgdGhlIGluZGl2aWR1YWwgZHJpdmVycyBiZWZvcmUgd2UgY2Fu
-Cj4gcHJvY2VlZC4KPiBQbGVhc2UgY2hlY2sgeW91ciBkcml2ZXJzIGFuZCBnZXQgYmFjay4KCkkg
-Y2FuIGFwcGx5IGFsbCBjb3JlIGFuZCBtYWludGFpbmVyLWFja2VkIHBhdGNoZXMgZm9yIG5vdyA6
-CjEsIDIsIDcsIDEwLCAxMSwgMTYsIDE3LCAxOCwgMTksIDIwLCAyMSwgMjIsIDIzCgphbmQgQW5k
-cnplaiBjYW4gcmVzZW5kIG5vdCBhcHBsaWVkIHBhdGNoZXMgd2l0aCBZb3VycyBhbmQgRW1pbCdz
-IFJldmlld2VkLWJ5LApzbyB3ZSBjYW4gd2FpdCBhIGZldyBtb3JlIGRheXMgdG8gYXBwbHkgdGhl
-bS4KCk5laWwKCj4gCj4gCVNhbQo+IAo+PiBIaSBBbmRlemVqLgo+Pgo+PiBPbiBGcmksIEp1bCAy
-NiwgMjAxOSBhdCAwNzoyMjo1NFBNICswMjAwLCBBbmRyemVqIFBpZXRyYXNpZXdpY3ogd3JvdGU6
-Cj4+PiBJdCBpcyBkaWZmaWN1bHQgZm9yIGEgdXNlciB0byBrbm93IHdoaWNoIG9mIHRoZSBpMmMg
-YWRhcHRlcnMgaXMgZm9yIHdoaWNoCj4+PiBkcm0gY29ubmVjdG9yLiBUaGlzIHNlcmllcyBhZGRy
-ZXNzZXMgdGhpcyBwcm9ibGVtLgo+Pj4KPj4+IFRoZSBpZGVhIGlzIHRvIGhhdmUgYSBzeW1ib2xp
-YyBsaW5rIGluIGNvbm5lY3RvcidzIHN5c2ZzIGRpcmVjdG9yeSwgZS5nLjoKPj4+Cj4+PiBscyAt
-bCAvc3lzL2NsYXNzL2RybS9jYXJkMC1IRE1JLUEtMS9kZGMKPj4+IGxyd3hyd3hyd3ggMSByb290
-IHJvb3QgMCBKdW4gMjQgMTA6NDIgL3N5cy9jbGFzcy9kcm0vY2FyZDAtSERNSS1BLTEvZGRjIFwK
-Pj4+IAktPiAuLi8uLi8uLi8uLi9zb2MvMTM4ODAwMDAuaTJjL2kyYy0yCj4+Pgo+Pj4gVGhlIHVz
-ZXIgdGhlbiBrbm93cyB0aGF0IHRoZWlyIGNhcmQwLUhETUktQS0xIHVzZXMgaTJjLTIgYW5kIGNh
-biBlLmcuIHJ1bgo+Pj4gZGRjdXRpbDoKPj4+Cj4+PiBkZGN1dGlsIC1iIDIgZ2V0dmNwIDB4MTAK
-Pj4+IFZDUCBjb2RlIDB4MTAgKEJyaWdodG5lc3MpOiBjdXJyZW50IHZhbHVlID0gICAgOTAsIG1h
-eCB2YWx1ZSA9ICAgMTAwCj4+Pgo+Pj4gVGhlIGZpcnN0IHBhdGNoIGluIHRoZSBzZXJpZXMgYWRk
-cyBzdHJ1Y3QgaTJjX2FkYXB0ZXIgcG9pbnRlciB0byBzdHJ1Y3QKPj4+IGRybV9jb25uZWN0b3Iu
-IElmIHRoZSBmaWVsZCBpcyB1c2VkIGJ5IGEgcGFydGljdWxhciBkcml2ZXIsIHRoZW4gYW4KPj4+
-IGFwcHJvcHJpYXRlIHN5bWJvbGljIGxpbmsgaXMgY3JlYXRlZCBieSB0aGUgZ2VuZXJpYyBjb2Rl
-LCB3aGljaCBpcyBhbHNvIGFkZGVkCj4+PiBieSB0aGlzIHBhdGNoLgo+Pj4KPj4+IFBhdGNoIDIg
-YWRkcyBhIG5ldyB2YXJpYW50IG9mIGRybV9jb25uZWN0b3JfaW5pdCgpLCBzZWUgdGhlIGNoYW5n
-ZWxvZwo+Pj4gYmVsb3cuCj4+Pgo+Pj4gUGF0Y2hlcyAzLi4yNCBhcmUgZXhhbXBsZXMgb2YgaG93
-IHRvIGNvbnZlcnQgYSBkcml2ZXIgdG8gdGhpcyBuZXcgc2NoZW1lLgo+Pj4KPj4gLi4uCj4+Pgo+
-Pj4gdjUuLnY2Ogo+Pj4KPj4+IC0gaW1wcm92ZWQgc3ViamVjdCBsaW5lIG9mIHBhdGNoIDEKPj4+
-IC0gYWRkZWQga2VybmVsLWRvYyBmb3IgZHJtX2Nvbm5lY3Rvcl9pbml0X3dpdGhfZGRjKCkKPj4+
-IC0gaW1wcm92ZWQga2VybmVsLWRvYyBmb3IgdGhlIGRkYyBmaWVsZCBvZiBzdHJ1Y3QgZHJtX2Nv
-bm5lY3Rvcgo+Pj4gLSBhZGRlZCBSZXZpZXdlZC1ieSBpbiBwYXRjaGVzIDE3IGFuZCAxOAo+Pj4g
-LSBhZGRlZCBBY2tlZC1ieSBpbiBwYXRjaCAyCj4+PiAtIG1hZGUgdGhlIG93bmVyc2hpcCBvZiBk
-ZGMgaTJjX2FkYXB0ZXIgZXhwbGljaXQgaW4gYWxsIHBhdGNoZXMsCj4+PiB0aGlzIG1hZGUgdGhl
-IGFmZmVjdGVkIHBhdGNoZXMgbXVjaCBzaW1wbGVyCj4+Cj4+IExvb2tzIGdvb2Qgbm93Lgo+PiBQ
-YXRjaCAxIGFuZCAyIGFyZToKPj4gUmV2aWV3ZWQtYnk6IFNhbSBSYXZuYm9yZyA8c2FtQHJhdm5i
-b3JnLm9yZz4KPj4KPj4gVGhlIHJlbWFpbmluZyBwYXRjaGVzIGFyZToKPj4gQWNrZWQtYnk6IFNh
-bSBSYXZuYm9yZyA8c2FtQHJhdm5ib3JnLm9yZz4KPj4KPj4gCVNhbQo+PiBfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+PiBkcmktZGV2ZWwgbWFpbGluZyBs
-aXN0Cj4+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPj4gaHR0cHM6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwKCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkZyZWVkcmVubyBtYWlsaW5nIGxpc3QK
-RnJlZWRyZW5vQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9w
-Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ZyZWVkcmVubw==
+Hi Neil.
+
+On Wed, Jul 31, 2019 at 10:00:14AM +0200, Neil Armstrong wrote:
+> Hi Sam,
+> 
+> On 26/07/2019 20:55, Sam Ravnborg wrote:
+> > Hi all.
+> > 
+> > Andrzej have done a good job following up on feedback and this series is
+> > now ready.
+> > 
+> > We need ack on the patches touching the individual drivers before we can
+> > proceed.
+> > Please check your drivers and get back.
+> 
+> I can apply all core and maintainer-acked patches for now :
+> 1, 2, 7, 10, 11, 16, 17, 18, 19, 20, 21, 22, 23
+> 
+> and Andrzej can resend not applied patches with Yours and Emil's Reviewed-by,
+> so we can wait a few more days to apply them.
+
+Sounds like a good plan.
+Thanks for thaking care of this.
+
+	Sam
