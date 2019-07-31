@@ -1,58 +1,89 @@
 From: Artur =?UTF-8?Q?=C5=9Awigo=C5=84?= <a.swigon@partner.samsung.com>
-Subject: Re: [RFC PATCH 08/11] arm: dts: exynos: Add parents and
- #interconnect-cells to Exynos4412
-Date: Wed, 31 Jul 2019 15:00:56 +0200
-Message-ID: <73b8c7078b2378921e841b5bd02bd617cc2143be.camel@partner.samsung.com>
+Subject: Re: [RFC PATCH 09/11] devfreq: exynos-bus: Add interconnect
+ functionality to exynos-bus
+Date: Wed, 31 Jul 2019 15:01:44 +0200
+Message-ID: <a1fc0e2b5ef2d131f4e896c9c0aa7621bf4b79e2.camel@partner.samsung.com>
 References: <20190723122016.30279-1-a.swigon@partner.samsung.com>
-        <CGME20190723122027eucas1p24b1d76e3139f7cc52614d7613ff9ba98@eucas1p2.samsung.com>
-        <20190723122016.30279-9-a.swigon@partner.samsung.com>
-        <20190724192426.GJ14346@kozik-lap>
+        <CGME20190723122028eucas1p2eb75f35b810e71d6c590370aaff0997b@eucas1p2.samsung.com>
+        <20190723122016.30279-10-a.swigon@partner.samsung.com>
+        <20190724183639.GA14346@kozik-lap>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190724192426.GJ14346@kozik-lap>
+In-Reply-To: <20190724183639.GA14346@kozik-lap>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org, cw00.choi@samsung.com, myungjoo.ham@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, georgi.djakov@linaro.org, m.szyprowski@samsung.com, =?UTF-8?Q?Bart=C5=82omiej_?= =?UTF-8?Q?=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, 2019-07-24 at 21:24 +0200, Krzysztof Kozlowski wrote:
-> On Tue, Jul 23, 2019 at 02:20:13PM +0200, Artur Świgoń wrote:
-> > This patch adds two fields tp the Exynos4412 DTS:
+On Wed, 2019-07-24 at 20:36 +0200, Krzysztof Kozlowski wrote:
+> On Tue, Jul 23, 2019 at 02:20:14PM +0200, Artur Świgoń wrote:
+> > This patch adds interconnect functionality to the exynos-bus devfreq
+> > driver.
+> > 
+> > The SoC topology is a graph (or, more specifically, a tree) and most of its
+> > edges are taken from the devfreq parent-child hierarchy (cf.
+> > Documentation/devicetree/bindings/devfreq/exynos-bus.txt). The previous
+> > patch adds missing edges to the DT (under the name 'parent'). Due to
 > 
-> tp->to
+> Do not refer to DT patches. They will come through different tree so
+> "previous" will not be correct anymore. You mentioned dependencies in
+> cover letter so it is sufficient.
 
-Fixed. Thanks for catching the typo :)
-
-> >   - parent: to declare connections between nodes that are not in a
-> >     parent-child relation in devfreq;
+OK.
+ 
+> >  /*
+> > @@ -61,6 +69,13 @@ exynos_bus_ops_edev(enable_edev);
+> >  exynos_bus_ops_edev(disable_edev);
+> >  exynos_bus_ops_edev(set_event);
+> >  
+> > +static int exynos_bus_next_id(void)
+> > +{
+> > +	static int exynos_bus_node_id;
+> > +
+> > +	return exynos_bus_node_id++;
 > 
-> Is it a standard property?
-> The explanation needs some improvement... why are you adding parent to a
-> devices which are not child-parent?
+> This does not look robust. Use IDR for IDs. 
 
-This is not a standard property. I actually wanted to call it 'neighbor' at first. If you take a look at [1] and search for 'Exynos4x12', you will see that there are two power lines, and each has exactly one parent block (the rest are modelled in devfreq as its children). In [2], the parent of each child is indicated using the 'devfreq' property, e.g.,
+OK.
 
-&bus_display {
-	devfreq = <&bus_leftbus>;
-	status = "okay";
-};
+> > +static int exynos_bus_icc_connect(struct exynos_bus *bus)
+> > +{
+> > +	struct device_node *np = bus->dev->of_node;
+> > +	struct devfreq *parent_devfreq;
+> > +	struct icc_node *parent_node = NULL;
+> > +	struct of_phandle_args args;
+> > +	int ret = 0;
+> > +
+> > +	parent_devfreq = devfreq_get_devfreq_by_phandle(bus->dev, 0);
+> > +	if (!IS_ERR(parent_devfreq)) {
+> > +		struct exynos_bus *parent_bus;
+> 
+> What if someone unbinds this parent devfreq? I guess everything in
+> devfreq starts exploding... however it's not the problem of this patch.
+> 
+> Do you also need suspend/resume order (device links)? I guess the other
+> side, e.g.  mixer, should resume before the bus?
 
-The single piece missing to make this topology a connected graph (for
-interconnect QoS purposes) is the 'parent' property I proposed in this patch.
-bus_leftbus is dependent on bus_dmc, therefore using the term 'parent' is
-justified IMHO.
+Actually, I think that the bus (devfreq) should resume before mixer. However,
+suspend/resume order is another issue that applies to this driver regardless of
+using the interconnect framework, although device links could probably also be
+implemented in the interconnect framework itself.
 
-The explanation could be improved by adding what Chanwoo Choi <
-cw00.choi@samsung.com> expressed in a parallel reply to this patch:
-> - If 'devfreq' property is used between buses,
->   it indicates that there are requirement of sharing of power line.
-> - If 'parent' property is used between buses,
->   it indicates that there are requirement of interconnect connection.
+> > +		parent_bus = dev_get_drvdata(parent_devfreq->dev.parent);
+> > +		parent_node = parent_bus->node;
+> > +	} else {
+> > +		/* Look for parent in DT */
+> > +		int num = of_count_phandle_with_args(np, "parent",
+> > +						     "#interconnect-cells");
+> > +		if (num != 1)
+> 
+> You will return here 0 but isn't it an error?
 
-[1] Documentation/devicetree/bindings/devfreq/exynos-bus.txt
-[2] arch/arm/boot/dts/exynos4412-odroid-common.dtsi (subject of this patch)
+It is definitely not an error when 'parent' does not exist in DT (for buses that
+are parents themselves). I can extend the comment in the code to explicitly
+state that.
 
 Best regards,
 -- 
