@@ -1,79 +1,61 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH V2 1/2] arm: dts: exynos: Add GPU/Mali T604 node to
- exynos5250
-Date: Thu, 1 Aug 2019 11:35:24 +0200
-Message-ID: <79a50bdd-17ba-4e2f-5389-4b39ed440685@samsung.com>
-References: <20190724072008.6272-1-guillaume.gardet@free.fr>
- <20190725083433.6505-1-guillaume.gardet@arm.com>
- <CAJKOXPejSxxH5DJPyEHTt=VEOdVgiXOm1c3MKKir-qRxtDcLLA@mail.gmail.com>
- <DBBPR08MB4678546DF9EE76EE6427DBB783C10@DBBPR08MB4678.eurprd08.prod.outlook.com>
- <CAJKOXPdLd5C0FPwijGwTWW9t46exysdqgeb07txPhp-f_b5DFA@mail.gmail.com>
- <DBBPR08MB46788EBBB3BF3BB8C54FAD1283C10@DBBPR08MB4678.eurprd08.prod.outlook.com>
- <CAJKOXPevC8GN=te7ub5Voq=dfn2HgJBbb=niVdD-gtWDUsq3Ow@mail.gmail.com>
- <CGME20190731143753epcas2p1345484f3308512832701ef0ba495810e@epcas2p1.samsung.com>
- <DBBPR08MB4678D2A9A042269A8934E84183DF0@DBBPR08MB4678.eurprd08.prod.outlook.com>
+From: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH 02/13] drm/radeon: Eliminate possible use of an
+ uninitialized variable
+Date: Thu, 1 Aug 2019 14:15:15 +0200
+Message-ID: <7cacac43-737e-1ddb-2951-394fcf9ad0b2@baylibre.com>
+References: <65481afa-1104-4ee9-e53d-f2732a10d4b9@baylibre.com>
+ <cover.1564591626.git.andrzej.p@collabora.com>
+ <cfff357a07bfa572baad058947f281b7095e1794.1564591626.git.andrzej.p@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <DBBPR08MB4678D2A9A042269A8934E84183DF0@DBBPR08MB4678.eurprd08.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <cfff357a07bfa572baad058947f281b7095e1794.1564591626.git.andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Guillaume Gardet <Guillaume.Gardet@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/amd-gfx>,
+ <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/amd-gfx>
+List-Post: <mailto:amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/amd-gfx>,
+ <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "amd-gfx" <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, kernel-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, Anthony Koo <Anthony.Koo-5C7GfCeVMHo@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, David Francis <David.Francis-5C7GfCeVMHo@public.gmane.org>, Mamta Shukla <mamtashukla555-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Allison Randal <allison-wcfNWazeolPR7s880joybQ@public.gmane.org>, Leo Li <sunpeng.li-5C7GfCeVMHo@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jyri Sarha <jsarha-l0cyMroinI0@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rodrigo Vivi <rodrigo.vivi-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Bhawanpreet Lakha <Bhawanpreet.Lakha-5C7GfCeVMHo@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Guillaume,
-
-On 2019-07-31 16:37, Guillaume Gardet wrote:
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzk@kernel.org>
->> Sent: 26 July 2019 12:40
->> To: Guillaume Gardet <Guillaume.Gardet@arm.com>
->> Cc: linux-samsung-soc@vger.kernel.org; Kukjin Kim <kgene@kernel.org>;
->> linux-arm-kernel@lists.infradead.org
->> Subject: Re: [PATCH V2 1/2] arm: dts: exynos: Add GPU/Mali T604 node to
->> exynos5250
->>
->> On Thu, 25 Jul 2019 at 14:37, Guillaume Gardet <Guillaume.Gardet@arm.com>
->> wrote:
->>>> No, regulator is not provided. On all Exynos boards Mali uses its
->>>> own dedicated regulator (and sometimes additional one). It worked in
->>>> your case because the regulator was set as always-on but this is a
->> workaround for lack of consumers.
->>>> Once there is a consumer, the regulator should not be always-on to
->>>> save the energy when not used.
->>> I do not have the required info here. Do you have it, or could I skip the
->> mali-supply for now?
->>
->> You can guess from regulator name :)
->> For the Arndale, the schematics are saying it is buck4.
-> Thanks. This is buck4 as well for snow.
->
-> On Arndale board, buck4 has a fixed voltage of 1V contrary to snow, which leads to the following error:
-> [   21.131930] panfrost 11800000.gpu: Cannot set voltage 925000 uV
->
-> The following change fixes the previous error:
-> -                               regulator-min-microvolt = <1000000>;
-> -                               regulator-max-microvolt = <1000000>;
-> +                               regulator-min-microvolt = <850000>;
-> +                               regulator-max-microvolt = <1300000>;
->
-> Should I remove arndale enablement for now until this is fixed separately, or could I add this fixup in this patch serie, as it is related?
-
-It is okay to add this fixup to the patch, which sets mali regulator on 
-arndale board.
-
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+SGkgQW5kcnplaiwKCkkgaGFkIHRvIHJldmVydCB0aGUgcHJldmlvdXMgcGF0Y2gsIHNvIHlvdSBz
+aG91bGQgcmUtc3BpbiBpdCBlbnRpcmVseSA6Cgo9PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PQpBZnRlciBtZXJnaW5nIHRoZSBkcm0tbWlzYyB0cmVlLCB0b2RheSdzIGxpbnV4LW5leHQg
+YnVpbGQgKHg4Nl82NAphbGxtb2Rjb25maWcpIGZhaWxlZCBsaWtlIHRoaXM6Cgpkcml2ZXJzL2dw
+dS9kcm0vcmFkZW9uL3JhZGVvbl9jb25uZWN0b3JzLmM6IEluIGZ1bmN0aW9uICdyYWRlb25fYWRk
+X2xlZ2FjeV9jb25uZWN0b3InOgpkcml2ZXJzL2dwdS9kcm0vcmFkZW9uL3JhZGVvbl9jb25uZWN0
+b3JzLmM6MjQzMzo1OiBlcnJvcjogJ2RkYycgdW5kZWNsYXJlZCAoZmlyc3QgdXNlIGluIHRoaXMg
+ZnVuY3Rpb24pCiAgICAgZGRjID0gJnJhZGVvbl9jb25uZWN0b3ItPmRkY19idXMtPmFkYXB0ZXI7
+CiAgICAgXn5+CmRyaXZlcnMvZ3B1L2RybS9yYWRlb24vcmFkZW9uX2Nvbm5lY3RvcnMuYzoyNDMz
+OjU6IG5vdGU6IGVhY2ggdW5kZWNsYXJlZCBpZGVudGlmaWVyIGlzIHJlcG9ydGVkIG9ubHkgb25j
+ZSBmb3IgZWFjaCBmdW5jdGlvbiBpdCBhcHBlYXJzIGluCgpDYXVzZWQgYnkgY29tbWl0CgogIGJl
+ZDdhMjE4MmRlNiAoImRybS9yYWRlb246IFByb3ZpZGUgZGRjIHN5bWxpbmsgaW4gY29ubmVjdG9y
+IHN5c2ZzIGRpcmVjdG9yeSIpCgpJIGhhdmUgdXNlZCB0aGUgZHJtLW1pc2MgdHJlZSBmcm9tIG5l
+eHQtMjAxOTA3MzEgZm9yIHRvZGF5Lgo9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+CgpOZWlsCgpPbiAzMS8wNy8yMDE5IDE4OjU4LCBBbmRyemVqIFBpZXRyYXNpZXdpY3ogd3JvdGU6
+Cj4gZGRjIGxvY2FsIHZhcmlhYmxlIGlzIHBhc3NlZCB0byBkcm1fY29ubmVjdG9yX2luaXRfd2l0
+aF9kZGMoKSBhbmQgc2hvdWxkCj4gYmUgTlVMTCBpZiBubyBkZGMgaXMgYXZhaWxhYmxlLgo+IAo+
+IFNpZ25lZC1vZmYtYnk6IEFuZHJ6ZWogUGlldHJhc2lld2ljeiA8YW5kcnplai5wQGNvbGxhYm9y
+YS5jb20+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9yYWRlb24vcmFkZW9uX2Nvbm5lY3RvcnMu
+YyB8IDIgKy0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0p
+Cj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9yYWRlb24vcmFkZW9uX2Nvbm5lY3Rv
+cnMuYyBiL2RyaXZlcnMvZ3B1L2RybS9yYWRlb24vcmFkZW9uX2Nvbm5lY3RvcnMuYwo+IGluZGV4
+IGIzYWQ4ZDg5MDgwMS4uZDExMTMxZDAzZWQ2IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS9yYWRlb24vcmFkZW9uX2Nvbm5lY3RvcnMuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9yYWRl
+b24vcmFkZW9uX2Nvbm5lY3RvcnMuYwo+IEBAIC0xODcwLDcgKzE4NzAsNyBAQCByYWRlb25fYWRk
+X2F0b21fY29ubmVjdG9yKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCj4gIAlzdHJ1Y3QgcmFkZW9u
+X2Nvbm5lY3Rvcl9hdG9tX2RpZyAqcmFkZW9uX2RpZ19jb25uZWN0b3I7Cj4gIAlzdHJ1Y3QgZHJt
+X2VuY29kZXIgKmVuY29kZXI7Cj4gIAlzdHJ1Y3QgcmFkZW9uX2VuY29kZXIgKnJhZGVvbl9lbmNv
+ZGVyOwo+IC0Jc3RydWN0IGkyY19hZGFwdGVyICpkZGM7Cj4gKwlzdHJ1Y3QgaTJjX2FkYXB0ZXIg
+KmRkYyA9IE5VTEw7Cj4gIAl1aW50MzJfdCBzdWJwaXhlbF9vcmRlciA9IFN1YlBpeGVsTm9uZTsK
+PiAgCWJvb2wgc2hhcmVkX2RkYyA9IGZhbHNlOwo+ICAJYm9vbCBpc19kcF9icmlkZ2UgPSBmYWxz
+ZTsKPiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmFt
+ZC1nZnggbWFpbGluZyBsaXN0CmFtZC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8v
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vYW1kLWdmeA==
