@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 04/12] crypto: img-hash - use devm_platform_ioremap_resource() to simplify code
-Date: Fri, 2 Aug 2019 21:28:01 +0800
-Message-ID: <20190802132809.8116-5-yuehaibing@huawei.com>
+Subject: [PATCH -next 07/12] crypto: picoxcell - use devm_platform_ioremap_resource() to simplify code
+Date: Fri, 2 Aug 2019 21:28:04 +0800
+Message-ID: <20190802132809.8116-8-yuehaibing@huawei.com>
 References: <20190802132809.8116-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -18,23 +18,31 @@ This is detected by coccinelle.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/crypto/img-hash.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/crypto/picoxcell_crypto.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/crypto/img-hash.c b/drivers/crypto/img-hash.c
-index d27c812..f5a71fa 100644
---- a/drivers/crypto/img-hash.c
-+++ b/drivers/crypto/img-hash.c
-@@ -958,9 +958,7 @@ static int img_hash_probe(struct platform_device *pdev)
- 	crypto_init_queue(&hdev->queue, IMG_HASH_QUEUE_LENGTH);
+diff --git a/drivers/crypto/picoxcell_crypto.c b/drivers/crypto/picoxcell_crypto.c
+index b985cb85..9a939b4 100644
+--- a/drivers/crypto/picoxcell_crypto.c
++++ b/drivers/crypto/picoxcell_crypto.c
+@@ -1624,7 +1624,7 @@ MODULE_DEVICE_TABLE(of, spacc_of_id_table);
+ static int spacc_probe(struct platform_device *pdev)
+ {
+ 	int i, err, ret;
+-	struct resource *mem, *irq;
++	struct resource *irq;
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct spacc_engine *engine = devm_kzalloc(&pdev->dev, sizeof(*engine),
+ 						   GFP_KERNEL);
+@@ -1653,8 +1653,7 @@ static int spacc_probe(struct platform_device *pdev)
  
- 	/* Register bank */
--	hash_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--
--	hdev->io_base = devm_ioremap_resource(dev, hash_res);
-+	hdev->io_base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(hdev->io_base)) {
- 		err = PTR_ERR(hdev->io_base);
- 		dev_err(dev, "can't ioremap, returned %d\n", err);
+ 	engine->name = dev_name(&pdev->dev);
+ 
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	engine->regs = devm_ioremap_resource(&pdev->dev, mem);
++	engine->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(engine->regs))
+ 		return PTR_ERR(engine->regs);
+ 
 -- 
 2.7.4
