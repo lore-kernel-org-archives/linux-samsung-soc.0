@@ -1,8 +1,8 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 06/12] crypto: mediatek - use
+Subject: [PATCH -next 05/12] crypto: inside-secure - use
  devm_platform_ioremap_resource() to simplify code
-Date: Fri, 2 Aug 2019 21:28:03 +0800
-Message-ID: <20190802132809.8116-7-yuehaibing@huawei.com>
+Date: Fri, 2 Aug 2019 21:28:02 +0800
+Message-ID: <20190802132809.8116-6-yuehaibing@huawei.com>
 References: <20190802132809.8116-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -28,29 +28,30 @@ This is detected by coccinelle.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/crypto/mediatek/mtk-platform.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/crypto/inside-secure/safexcel.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/crypto/mediatek/mtk-platform.c b/drivers/crypto/mediatek/mtk-platform.c
-index 125318a..12462136 100644
---- a/drivers/crypto/mediatek/mtk-platform.c
-+++ b/drivers/crypto/mediatek/mtk-platform.c
-@@ -481,7 +481,6 @@ static int mtk_desc_ring_alloc(struct mtk_cryp *cryp)
- 
- static int mtk_crypto_probe(struct platform_device *pdev)
+diff --git a/drivers/crypto/inside-secure/safexcel.c b/drivers/crypto/inside-secure/safexcel.c
+index d1f60fd..822744d 100644
+--- a/drivers/crypto/inside-secure/safexcel.c
++++ b/drivers/crypto/inside-secure/safexcel.c
+@@ -999,7 +999,6 @@ static void safexcel_init_register_offsets(struct safexcel_crypto_priv *priv)
+ static int safexcel_probe(struct platform_device *pdev)
  {
--	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	struct mtk_cryp *cryp;
- 	int i, err;
+ 	struct device *dev = &pdev->dev;
+-	struct resource *res;
+ 	struct safexcel_crypto_priv *priv;
+ 	int i, ret;
  
-@@ -489,7 +488,7 @@ static int mtk_crypto_probe(struct platform_device *pdev)
- 	if (!cryp)
- 		return -ENOMEM;
+@@ -1015,8 +1014,7 @@ static int safexcel_probe(struct platform_device *pdev)
  
--	cryp->base = devm_ioremap_resource(&pdev->dev, res);
-+	cryp->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(cryp->base))
- 		return PTR_ERR(cryp->base);
+ 	safexcel_init_register_offsets(priv);
  
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	priv->base = devm_ioremap_resource(dev, res);
++	priv->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->base)) {
+ 		dev_err(dev, "failed to get resource\n");
+ 		return PTR_ERR(priv->base);
 -- 
 2.7.4
