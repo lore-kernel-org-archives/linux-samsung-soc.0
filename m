@@ -1,47 +1,57 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH] hwrng: Use device-managed registration API
-Date: Fri, 2 Aug 2019 14:55:37 +1000
-Message-ID: <20190802045537.GG18077@gondor.apana.org.au>
-References: <20190725080155.19875-1-hslester96@gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [GIT PULL] exynos-drm-fixes
+Date: Fri,  2 Aug 2019 17:33:11 +0900
+Message-ID: <1564734791-745-1-git-send-email-inki.dae@samsung.com>
+References: <CGME20190802083122epcas1p298fb8295a77e3adfa839eec619318591@epcas1p2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20190725080155.19875-1-hslester96@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Chuhong Yuan <hslester96@gmail.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Deepak Saxena <dsaxena@plexity.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Patrice Chotard <patrice.chotard@st.com>, linux-samsung-soc@vger.kernel.org, Ludovic Desroches <ludovic.desroches@microchip.com>, Kukjin Kim <kgene@kernel.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Matt Mackall <mpm@selenic.com>, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 04:01:55PM +0800, Chuhong Yuan wrote:
-> Use devm_hwrng_register to simplify the implementation.
-> Manual unregistration and some remove functions can be
-> removed now.
-> 
-> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-> ---
->  drivers/char/hw_random/atmel-rng.c     |  3 +--
->  drivers/char/hw_random/cavium-rng-vf.c | 11 +----------
->  drivers/char/hw_random/exynos-trng.c   |  3 +--
->  drivers/char/hw_random/n2-drv.c        |  4 +---
->  drivers/char/hw_random/nomadik-rng.c   |  3 +--
->  drivers/char/hw_random/omap-rng.c      |  3 +--
->  drivers/char/hw_random/powernv-rng.c   | 10 +---------
->  drivers/char/hw_random/st-rng.c        |  4 +---
->  drivers/char/hw_random/xgene-rng.c     |  4 +---
->  9 files changed, 9 insertions(+), 36 deletions(-)
-
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+SGkgRGF2ZSwKCiAgIEp1c3QgdHdvIGZpeHVwcyB3aGljaCBmaXhlcyB1bmRlZmluZWQgcmVmZXJl
+bmNlIGVycm9yIHdpdGggTk9NTVUKICAgY29uZmlndXJhdGlvbiBhbmQgcG90ZW50aWFsIGluZmlu
+aXRlIGlzc3VlIG9mIHNjYWxlciBtb2R1bGUsCiAgIGFuZCB0d28gdHJpdmlhbCBjbGVhbnVwcy4K
+CiAgIFBsZWFzZSBraW5kbHkgbGV0IG1lIGtub3cgaWYgdGhlcmUgaXMgYW55IHByb2JsZW0uCgpU
+aGFua3MsCklua2kgRGFlCgpUaGUgZm9sbG93aW5nIGNoYW5nZXMgc2luY2UgY29tbWl0IGY4OTgx
+ZTAzMDllOTAwNGM2ZTg2ZDIxODA0OTA0NTcwMGM3OWQ3NDA6CgogIE1lcmdlIHRhZyAnbXNtLWZp
+eGVzLTIwMTlfMDhfMDEnIG9mIGh0dHBzOi8vZ2l0bGFiLmZyZWVkZXNrdG9wLm9yZy9kcm0vbXNt
+IGludG8gZHJtLWZpeGVzICgyMDE5LTA4LTAyIDEwOjE3OjI1ICsxMDAwKQoKYXJlIGF2YWlsYWJs
+ZSBpbiB0aGUgZ2l0IHJlcG9zaXRvcnkgYXQ6CgogIGdpdDovL2dpdC5rZXJuZWwub3JnL3B1Yi9z
+Y20vbGludXgva2VybmVsL2dpdC9kYWVpbmtpL2RybS1leHlub3MgdGFncy9leHlub3MtZHJtLWZp
+eGVzLWZvci12NS4zLXJjMwoKZm9yIHlvdSB0byBmZXRjaCBjaGFuZ2VzIHVwIHRvIDFiYmJhYjA5
+N2EwNTI3NmUzMTJkZDI0NjI3OTFkMzJiMjFjZWIxZWU6CgogIGRybS9leHlub3M6IGZpeCBtaXNz
+aW5nIGRlY3JlbWVudCBvZiByZXRyeSBjb3VudGVyICgyMDE5LTA4LTAyIDE2OjUwOjE4ICswOTAw
+KQoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLQotIFR3byBjbGVhbnVwIHBhdGNoZXMKICAuIHVzZSBkZXZfZ2V0X2RydmRhdGEg
+Zm9yIHJlYWRhYmlsaXR5IGluc3RlYWQgb2YgcGxhdGZvcm1fZ2V0X2RydmRhdGEKICAuIHJlbW92
+ZSByZWR1bmRhbnQgYXNzaWdubWVudCB0byBub2RlLgotIFR3byBmaXh1cCBwYXRjaGVzCiAgLiBm
+aXggdW5kZWZpbmVkIHJlZmVyZW5jZSB0byAndm1mX2luc2VydF9taXhlZCcgd2l0aCBOT01NVSBj
+b25maWd1cmF0aW9uLgogIC4gZml4IHBvdGVudGlhbCBpbmZpbml0ZSBzcGluIGlzc3VlIGJ5IGRl
+Y3JlbWVudGluZyAncmV0cnknIHZhcmlhYmxlIGluCiAgICBzY2FsZXJfcmVzZXQgZnVuY3Rpb24g
+b2YgZXh5bm9zX2RybV9zY2FsZXIuYwoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpBcm5kIEJlcmdtYW5uICgxKToKICAgICAg
+ZHJtL2V4eW5vczogYWRkIENPTkZJR19NTVUgZGVwZW5kZW5jeQoKQ29saW4gSWFuIEtpbmcgKDIp
+OgogICAgICBkcm0vZXh5bm9zOiByZW1vdmUgcmVkdW5kYW50IGFzc2lnbm1lbnQgdG8gcG9pbnRl
+ciAnbm9kZScKICAgICAgZHJtL2V4eW5vczogZml4IG1pc3NpbmcgZGVjcmVtZW50IG9mIHJldHJ5
+IGNvdW50ZXIKCkZ1cWlhbiBIdWFuZyAoMSk6CiAgICAgIGRybS9leHlub3M6IHVzaW5nIGRldl9n
+ZXRfZHJ2ZGF0YSBkaXJlY3RseQoKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvS2NvbmZpZyAgICAg
+ICAgICAgICB8IDEgKwogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWMuYyAg
+IHwgMiArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jICAgIHwgMiAr
+LQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dzYy5jICAgIHwgMiArLQogZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3NjYWxlci5jIHwgNCArKy0tCiA1IGZpbGVz
+IGNoYW5nZWQsIDYgaW5zZXJ0aW9ucygrKSwgNSBkZWxldGlvbnMoLSkKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
+cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
