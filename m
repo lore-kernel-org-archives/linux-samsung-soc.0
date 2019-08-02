@@ -1,57 +1,71 @@
-From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 05/12] crypto: inside-secure - use
- devm_platform_ioremap_resource() to simplify code
-Date: Fri, 2 Aug 2019 21:28:02 +0800
-Message-ID: <20190802132809.8116-6-yuehaibing@huawei.com>
-References: <20190802132809.8116-1-yuehaibing@huawei.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [GIT PULL] exynos-drm-fixes
+Date: Fri, 2 Aug 2019 17:11:24 +0200
+Message-ID: <20190802151124.GR7444@phenom.ffwll.local>
+References: <CGME20190802083122epcas1p298fb8295a77e3adfa839eec619318591@epcas1p2.samsung.com>
+ <1564734791-745-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190802132809.8116-1-yuehaibing@huawei.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: herbert@gondor.apana.org.au, lars.persson@axis.com, jesper.nilsson@axis.com, davem@davemloft.net, thomas.lendacky@amd.com, gary.hook@amd.com, krzk@kernel.org, kgene@kernel.org, antoine.tenart@bootlin.com, matthias.bgg@gmail.com, jamie@jamieiles.com, agross@kernel.org, heiko@sntech.de, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com, clabbe.montjoie@gmail.com, mripard@kernel.org, wens@csie.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@axis.com, linux-rockchip@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-crypto@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <1564734791-745-1-git-send-email-inki.dae@samsung.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify the code a bit.
-This is detected by coccinelle.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/crypto/inside-secure/safexcel.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/crypto/inside-secure/safexcel.c b/drivers/crypto/inside-secure/safexcel.c
-index d1f60fd..822744d 100644
---- a/drivers/crypto/inside-secure/safexcel.c
-+++ b/drivers/crypto/inside-secure/safexcel.c
-@@ -999,7 +999,6 @@ static void safexcel_init_register_offsets(struct safexcel_crypto_priv *priv)
- static int safexcel_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	struct resource *res;
- 	struct safexcel_crypto_priv *priv;
- 	int i, ret;
- 
-@@ -1015,8 +1014,7 @@ static int safexcel_probe(struct platform_device *pdev)
- 
- 	safexcel_init_register_offsets(priv);
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	priv->base = devm_ioremap_resource(dev, res);
-+	priv->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(priv->base)) {
- 		dev_err(dev, "failed to get resource\n");
- 		return PTR_ERR(priv->base);
--- 
-2.7.4
+T24gRnJpLCBBdWcgMDIsIDIwMTkgYXQgMDU6MzM6MTFQTSArMDkwMCwgSW5raSBEYWUgd3JvdGU6
+Cj4gSGkgRGF2ZSwKPiAKPiAgICBKdXN0IHR3byBmaXh1cHMgd2hpY2ggZml4ZXMgdW5kZWZpbmVk
+IHJlZmVyZW5jZSBlcnJvciB3aXRoIE5PTU1VCj4gICAgY29uZmlndXJhdGlvbiBhbmQgcG90ZW50
+aWFsIGluZmluaXRlIGlzc3VlIG9mIHNjYWxlciBtb2R1bGUsCj4gICAgYW5kIHR3byB0cml2aWFs
+IGNsZWFudXBzLgo+IAo+ICAgIFBsZWFzZSBraW5kbHkgbGV0IG1lIGtub3cgaWYgdGhlcmUgaXMg
+YW55IHByb2JsZW0uCgpQbGVhc2UgcHJlcCAtZml4ZXMgcHVsbCByZXF1ZXN0IG9uIFRodSBsYXRl
+c3QsIHNvIHRoaXMgZG9lc24ndCBlYXQgaW50bwp3L2Ugb3IgaW4gY2FzZSB0aGVyZSdzIGFuIGlz
+c3VlIHRoYXQgbmVlZHMgdG8gYmUgZml4ZWQgdGhlcmUncyBqdXN0IG5vCnRpbWUgb3RoZXJ3aXNl
+IHRvIG1ha2UgdGhlIG5leHQgLXJjLgoKPiAKPiBUaGFua3MsCj4gSW5raSBEYWUKPiAKPiBUaGUg
+Zm9sbG93aW5nIGNoYW5nZXMgc2luY2UgY29tbWl0IGY4OTgxZTAzMDllOTAwNGM2ZTg2ZDIxODA0
+OTA0NTcwMGM3OWQ3NDA6Cj4gCj4gICBNZXJnZSB0YWcgJ21zbS1maXhlcy0yMDE5XzA4XzAxJyBv
+ZiBodHRwczovL2dpdGxhYi5mcmVlZGVza3RvcC5vcmcvZHJtL21zbSBpbnRvIGRybS1maXhlcyAo
+MjAxOS0wOC0wMiAxMDoxNzoyNSArMTAwMCkKPiAKPiBhcmUgYXZhaWxhYmxlIGluIHRoZSBnaXQg
+cmVwb3NpdG9yeSBhdDoKPiAKPiAgIGdpdDovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgv
+a2VybmVsL2dpdC9kYWVpbmtpL2RybS1leHlub3MgdGFncy9leHlub3MtZHJtLWZpeGVzLWZvci12
+NS4zLXJjMwoKQXBwbGllZCwgdGhhbmtzLgotRGFuaWVsCgo+IAo+IGZvciB5b3UgdG8gZmV0Y2gg
+Y2hhbmdlcyB1cCB0byAxYmJiYWIwOTdhMDUyNzZlMzEyZGQyNDYyNzkxZDMyYjIxY2ViMWVlOgo+
+IAo+ICAgZHJtL2V4eW5vczogZml4IG1pc3NpbmcgZGVjcmVtZW50IG9mIHJldHJ5IGNvdW50ZXIg
+KDIwMTktMDgtMDIgMTY6NTA6MTggKzA5MDApCj4gCj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+IC0gVHdvIGNsZWFudXAg
+cGF0Y2hlcwo+ICAgLiB1c2UgZGV2X2dldF9kcnZkYXRhIGZvciByZWFkYWJpbGl0eSBpbnN0ZWFk
+IG9mIHBsYXRmb3JtX2dldF9kcnZkYXRhCj4gICAuIHJlbW92ZSByZWR1bmRhbnQgYXNzaWdubWVu
+dCB0byBub2RlLgo+IC0gVHdvIGZpeHVwIHBhdGNoZXMKPiAgIC4gZml4IHVuZGVmaW5lZCByZWZl
+cmVuY2UgdG8gJ3ZtZl9pbnNlcnRfbWl4ZWQnIHdpdGggTk9NTVUgY29uZmlndXJhdGlvbi4KPiAg
+IC4gZml4IHBvdGVudGlhbCBpbmZpbml0ZSBzcGluIGlzc3VlIGJ5IGRlY3JlbWVudGluZyAncmV0
+cnknIHZhcmlhYmxlIGluCj4gICAgIHNjYWxlcl9yZXNldCBmdW5jdGlvbiBvZiBleHlub3NfZHJt
+X3NjYWxlci5jCj4gCj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+IEFybmQgQmVyZ21hbm4gKDEpOgo+ICAgICAgIGRybS9l
+eHlub3M6IGFkZCBDT05GSUdfTU1VIGRlcGVuZGVuY3kKPiAKPiBDb2xpbiBJYW4gS2luZyAoMik6
+Cj4gICAgICAgZHJtL2V4eW5vczogcmVtb3ZlIHJlZHVuZGFudCBhc3NpZ25tZW50IHRvIHBvaW50
+ZXIgJ25vZGUnCj4gICAgICAgZHJtL2V4eW5vczogZml4IG1pc3NpbmcgZGVjcmVtZW50IG9mIHJl
+dHJ5IGNvdW50ZXIKPiAKPiBGdXFpYW4gSHVhbmcgKDEpOgo+ICAgICAgIGRybS9leHlub3M6IHVz
+aW5nIGRldl9nZXRfZHJ2ZGF0YSBkaXJlY3RseQo+IAo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L0tjb25maWcgICAgICAgICAgICAgfCAxICsKPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2ZpbWMuYyAgIHwgMiArLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZzJkLmMgICAgfCAyICstCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9n
+c2MuYyAgICB8IDIgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3NjYWxl
+ci5jIHwgNCArKy0tCj4gIDUgZmlsZXMgY2hhbmdlZCwgNiBpbnNlcnRpb25zKCspLCA1IGRlbGV0
+aW9ucygtKQo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+Cj4gZHJpLWRldmVsIG1haWxpbmcgbGlzdAo+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
+ZXZlbAoKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIsIEludGVsIENvcnBvcmF0
+aW9uCmh0dHA6Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
+ZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2RyaS1kZXZlbA==
