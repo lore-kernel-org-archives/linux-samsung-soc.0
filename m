@@ -1,7 +1,7 @@
 From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 12/12] crypto: qcom-rng - use devm_platform_ioremap_resource() to simplify code
-Date: Fri, 2 Aug 2019 21:28:09 +0800
-Message-ID: <20190802132809.8116-13-yuehaibing@huawei.com>
+Subject: [PATCH -next 09/12] crypto: rockchip - use devm_platform_ioremap_resource() to simplify code
+Date: Fri, 2 Aug 2019 21:28:06 +0800
+Message-ID: <20190802132809.8116-10-yuehaibing@huawei.com>
 References: <20190802132809.8116-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -18,30 +18,30 @@ This is detected by coccinelle.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/crypto/qcom-rng.c | 4 +---
+ drivers/crypto/rockchip/rk3288_crypto.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/crypto/qcom-rng.c b/drivers/crypto/qcom-rng.c
-index e54249c..4730f84 100644
---- a/drivers/crypto/qcom-rng.c
-+++ b/drivers/crypto/qcom-rng.c
-@@ -153,7 +153,6 @@ static struct rng_alg qcom_rng_alg = {
+diff --git a/drivers/crypto/rockchip/rk3288_crypto.c b/drivers/crypto/rockchip/rk3288_crypto.c
+index 8d7e254..e5714ef 100644
+--- a/drivers/crypto/rockchip/rk3288_crypto.c
++++ b/drivers/crypto/rockchip/rk3288_crypto.c
+@@ -311,7 +311,6 @@ MODULE_DEVICE_TABLE(of, crypto_of_id_table);
  
- static int qcom_rng_probe(struct platform_device *pdev)
+ static int rk_crypto_probe(struct platform_device *pdev)
  {
 -	struct resource *res;
- 	struct qcom_rng *rng;
- 	int ret;
+ 	struct device *dev = &pdev->dev;
+ 	struct rk_crypto_info *crypto_info;
+ 	int err = 0;
+@@ -339,8 +338,7 @@ static int rk_crypto_probe(struct platform_device *pdev)
  
-@@ -164,8 +163,7 @@ static int qcom_rng_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, rng);
- 	mutex_init(&rng->lock);
+ 	spin_lock_init(&crypto_info->lock);
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	rng->base = devm_ioremap_resource(&pdev->dev, res);
-+	rng->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(rng->base))
- 		return PTR_ERR(rng->base);
- 
+-	crypto_info->reg = devm_ioremap_resource(&pdev->dev, res);
++	crypto_info->reg = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(crypto_info->reg)) {
+ 		err = PTR_ERR(crypto_info->reg);
+ 		goto err_crypto;
 -- 
 2.7.4
