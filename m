@@ -1,57 +1,55 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [GIT PULL] exynos-drm-fixes
-Date: Fri,  2 Aug 2019 17:33:11 +0900
-Message-ID: <1564734791-745-1-git-send-email-inki.dae@samsung.com>
-References: <CGME20190802083122epcas1p298fb8295a77e3adfa839eec619318591@epcas1p2.samsung.com>
+From: YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next 00/12] crypto: use devm_platform_ioremap_resource() to simplify code
+Date: Fri, 2 Aug 2019 21:27:57 +0800
+Message-ID: <20190802132809.8116-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: airlied@linux.ie
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: herbert@gondor.apana.org.au, lars.persson@axis.com, jesper.nilsson@axis.com, davem@davemloft.net, thomas.lendacky@amd.com, gary.hook@amd.com, krzk@kernel.org, kgene@kernel.org, antoine.tenart@bootlin.com, matthias.bgg@gmail.com, jamie@jamieiles.com, agross@kernel.org, heiko@sntech.de, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com, clabbe.montjoie@gmail.com, mripard@kernel.org, wens@csie.org
+Cc: linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, linux-arm-kernel@axis.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, YueHaibing <yuehaibing@huawei.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgRGF2ZSwKCiAgIEp1c3QgdHdvIGZpeHVwcyB3aGljaCBmaXhlcyB1bmRlZmluZWQgcmVmZXJl
-bmNlIGVycm9yIHdpdGggTk9NTVUKICAgY29uZmlndXJhdGlvbiBhbmQgcG90ZW50aWFsIGluZmlu
-aXRlIGlzc3VlIG9mIHNjYWxlciBtb2R1bGUsCiAgIGFuZCB0d28gdHJpdmlhbCBjbGVhbnVwcy4K
-CiAgIFBsZWFzZSBraW5kbHkgbGV0IG1lIGtub3cgaWYgdGhlcmUgaXMgYW55IHByb2JsZW0uCgpU
-aGFua3MsCklua2kgRGFlCgpUaGUgZm9sbG93aW5nIGNoYW5nZXMgc2luY2UgY29tbWl0IGY4OTgx
-ZTAzMDllOTAwNGM2ZTg2ZDIxODA0OTA0NTcwMGM3OWQ3NDA6CgogIE1lcmdlIHRhZyAnbXNtLWZp
-eGVzLTIwMTlfMDhfMDEnIG9mIGh0dHBzOi8vZ2l0bGFiLmZyZWVkZXNrdG9wLm9yZy9kcm0vbXNt
-IGludG8gZHJtLWZpeGVzICgyMDE5LTA4LTAyIDEwOjE3OjI1ICsxMDAwKQoKYXJlIGF2YWlsYWJs
-ZSBpbiB0aGUgZ2l0IHJlcG9zaXRvcnkgYXQ6CgogIGdpdDovL2dpdC5rZXJuZWwub3JnL3B1Yi9z
-Y20vbGludXgva2VybmVsL2dpdC9kYWVpbmtpL2RybS1leHlub3MgdGFncy9leHlub3MtZHJtLWZp
-eGVzLWZvci12NS4zLXJjMwoKZm9yIHlvdSB0byBmZXRjaCBjaGFuZ2VzIHVwIHRvIDFiYmJhYjA5
-N2EwNTI3NmUzMTJkZDI0NjI3OTFkMzJiMjFjZWIxZWU6CgogIGRybS9leHlub3M6IGZpeCBtaXNz
-aW5nIGRlY3JlbWVudCBvZiByZXRyeSBjb3VudGVyICgyMDE5LTA4LTAyIDE2OjUwOjE4ICswOTAw
-KQoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLQotIFR3byBjbGVhbnVwIHBhdGNoZXMKICAuIHVzZSBkZXZfZ2V0X2RydmRhdGEg
-Zm9yIHJlYWRhYmlsaXR5IGluc3RlYWQgb2YgcGxhdGZvcm1fZ2V0X2RydmRhdGEKICAuIHJlbW92
-ZSByZWR1bmRhbnQgYXNzaWdubWVudCB0byBub2RlLgotIFR3byBmaXh1cCBwYXRjaGVzCiAgLiBm
-aXggdW5kZWZpbmVkIHJlZmVyZW5jZSB0byAndm1mX2luc2VydF9taXhlZCcgd2l0aCBOT01NVSBj
-b25maWd1cmF0aW9uLgogIC4gZml4IHBvdGVudGlhbCBpbmZpbml0ZSBzcGluIGlzc3VlIGJ5IGRl
-Y3JlbWVudGluZyAncmV0cnknIHZhcmlhYmxlIGluCiAgICBzY2FsZXJfcmVzZXQgZnVuY3Rpb24g
-b2YgZXh5bm9zX2RybV9zY2FsZXIuYwoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpBcm5kIEJlcmdtYW5uICgxKToKICAgICAg
-ZHJtL2V4eW5vczogYWRkIENPTkZJR19NTVUgZGVwZW5kZW5jeQoKQ29saW4gSWFuIEtpbmcgKDIp
-OgogICAgICBkcm0vZXh5bm9zOiByZW1vdmUgcmVkdW5kYW50IGFzc2lnbm1lbnQgdG8gcG9pbnRl
-ciAnbm9kZScKICAgICAgZHJtL2V4eW5vczogZml4IG1pc3NpbmcgZGVjcmVtZW50IG9mIHJldHJ5
-IGNvdW50ZXIKCkZ1cWlhbiBIdWFuZyAoMSk6CiAgICAgIGRybS9leHlub3M6IHVzaW5nIGRldl9n
-ZXRfZHJ2ZGF0YSBkaXJlY3RseQoKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvS2NvbmZpZyAgICAg
-ICAgICAgICB8IDEgKwogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWMuYyAg
-IHwgMiArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2cyZC5jICAgIHwgMiAr
-LQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dzYy5jICAgIHwgMiArLQogZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3NjYWxlci5jIHwgNCArKy0tCiA1IGZpbGVz
-IGNoYW5nZWQsIDYgaW5zZXJ0aW9ucygrKSwgNSBkZWxldGlvbnMoLSkKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+devm_platform_ioremap_resource() internally have platform_get_resource()
+and devm_ioremap_resource() in it. So instead of calling them separately
+use devm_platform_ioremap_resource() directly.
+
+YueHaibing (12):
+  crypto: artpec6 - use devm_platform_ioremap_resource() to simplify
+    code
+  crypto: ccp - use devm_platform_ioremap_resource() to simplify code
+  crypto: exynos - use devm_platform_ioremap_resource() to simplify code
+  crypto: img-hash - use devm_platform_ioremap_resource() to simplify
+    code
+  crypto: inside-secure - use devm_platform_ioremap_resource() to
+    simplify code
+  crypto: mediatek - use devm_platform_ioremap_resource() to simplify
+    code
+  crypto: picoxcell - use devm_platform_ioremap_resource() to simplify
+    code
+  crypto: sunxi-ss - use devm_platform_ioremap_resource() to simplify
+    code
+  crypto: rockchip - use devm_platform_ioremap_resource() to simplify
+    code
+  crypto: stm32 - use devm_platform_ioremap_resource() to simplify code
+  crypto: qce - use devm_platform_ioremap_resource() to simplify code
+  crypto: qcom-rng - use devm_platform_ioremap_resource() to simplify
+    code
+
+ drivers/crypto/axis/artpec6_crypto.c    | 4 +---
+ drivers/crypto/ccp/sp-platform.c        | 4 +---
+ drivers/crypto/exynos-rng.c             | 4 +---
+ drivers/crypto/img-hash.c               | 4 +---
+ drivers/crypto/inside-secure/safexcel.c | 4 +---
+ drivers/crypto/mediatek/mtk-platform.c  | 3 +--
+ drivers/crypto/picoxcell_crypto.c       | 5 ++---
+ drivers/crypto/qce/core.c               | 4 +---
+ drivers/crypto/qcom-rng.c               | 4 +---
+ drivers/crypto/rockchip/rk3288_crypto.c | 4 +---
+ drivers/crypto/stm32/stm32-crc32.c      | 4 +---
+ drivers/crypto/stm32/stm32-cryp.c       | 4 +---
+ drivers/crypto/sunxi-ss/sun4i-ss-core.c | 4 +---
+ 13 files changed, 14 insertions(+), 38 deletions(-)
+
+-- 
+2.7.4
