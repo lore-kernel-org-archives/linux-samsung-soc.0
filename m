@@ -1,57 +1,101 @@
-From: Jamie Iles <jamie@jamieiles.com>
-Subject: Re: [PATCH -next 07/12] crypto: picoxcell - use
- devm_platform_ioremap_resource() to simplify code
-Date: Sat, 3 Aug 2019 15:13:00 +0100
-Message-ID: <20190803141300.GA26817@willow>
-References: <20190802132809.8116-1-yuehaibing@huawei.com>
- <20190802132809.8116-8-yuehaibing@huawei.com>
+From: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Subject: Re: [PATCH v6 01/24] drm: Add ddc link in sysfs created by
+ drm_connector
+Date: Sun, 4 Aug 2019 15:04:37 +0300
+Message-ID: <20190804120437.GB4984@pendragon.ideasonboard.com>
+References: <cover.1564161140.git.andrzej.p@collabora.com>
+ <d470def6cd661b777faeee67b5838a4623c4010e.1564161140.git.andrzej.p@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20190802132809.8116-8-yuehaibing@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: herbert@gondor.apana.org.au, lars.persson@axis.com, jesper.nilsson@axis.com, davem@davemloft.net, thomas.lendacky@amd.com, gary.hook@amd.com, krzk@kernel.org, kgene@kernel.org, antoine.tenart@bootlin.com, matthias.bgg@gmail.com, jamie@jamieiles.com, agross@kernel.org, heiko@sntech.de, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com, clabbe.montjoie@gmail.com, mripard@kernel.org, wens@csie.org, linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, linux-arm-kernel@axis.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com
+In-Reply-To: <d470def6cd661b777faeee67b5838a4623c4010e.1564161140.git.andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/amd-gfx>,
+ <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/amd-gfx>
+List-Post: <mailto:amd-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/amd-gfx>,
+ <mailto:amd-gfx-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "amd-gfx" <amd-gfx-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Cc: "Y.C. Chen" <yc_chen-SAlXDmAnmOAqDJ6do+/SaQ@public.gmane.org>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Ramalingam C <ramalingam.c-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Joonas Lahtinen <joonas.lahtinen-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Douglas Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, kernel-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, Fabio Estevam <festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jyri Sarha <jsarha-l0cyMroinI0@public.gmane.org>, Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>, Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Krzyszt
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Aug 02, 2019 at 09:28:04PM +0800, YueHaibing wrote:
-> Use devm_platform_ioremap_resource() to simplify the code a bit.
-> This is detected by coccinelle.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-
-Acked-by: Jamie Iles <jamie@jamieiles.com>
-
-> ---
->  drivers/crypto/picoxcell_crypto.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/crypto/picoxcell_crypto.c b/drivers/crypto/picoxcell_crypto.c
-> index b985cb85..9a939b4 100644
-> --- a/drivers/crypto/picoxcell_crypto.c
-> +++ b/drivers/crypto/picoxcell_crypto.c
-> @@ -1624,7 +1624,7 @@ MODULE_DEVICE_TABLE(of, spacc_of_id_table);
->  static int spacc_probe(struct platform_device *pdev)
->  {
->  	int i, err, ret;
-> -	struct resource *mem, *irq;
-> +	struct resource *irq;
->  	struct device_node *np = pdev->dev.of_node;
->  	struct spacc_engine *engine = devm_kzalloc(&pdev->dev, sizeof(*engine),
->  						   GFP_KERNEL);
-> @@ -1653,8 +1653,7 @@ static int spacc_probe(struct platform_device *pdev)
->  
->  	engine->name = dev_name(&pdev->dev);
->  
-> -	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	engine->regs = devm_ioremap_resource(&pdev->dev, mem);
-> +	engine->regs = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(engine->regs))
->  		return PTR_ERR(engine->regs);
->  
-> -- 
-> 2.7.4
-> 
-> 
+SGkgQW5kcnplaiwKClRoYW5rIHlvdSBmb3IgdGhlIHBhdGNoLCBhbmQgc29ycnkgZm9yIHRoZSBs
+YXRlIHJldmlldyAoSSd2ZSBiZWVuCnRyYXZlbGxpbmcgZm9yIHRoZSBwYXN0IGZldyB3ZWVrcyku
+CgpPbiBGcmksIEp1bCAyNiwgMjAxOSBhdCAwNzoyMjo1NVBNICswMjAwLCBBbmRyemVqIFBpZXRy
+YXNpZXdpY3ogd3JvdGU6Cj4gQWRkIGdlbmVyaWMgY29kZSB3aGljaCBjcmVhdGVzIHN5bWJvbGlj
+IGxpbmtzIGluIHN5c2ZzLCBwb2ludGluZyB0byBkZGMKPiBpbnRlcmZhY2UgdXNlZCBieSBhIHBh
+cnRpY3VsYXIgdmlkZW8gb3V0cHV0LiBGb3IgZXhhbXBsZToKPiAKPiBscyAtbCAvc3lzL2NsYXNz
+L2RybS9jYXJkMC1IRE1JLUEtMS9kZGMKPiBscnd4cnd4cnd4IDEgcm9vdCByb290IDAgSnVuIDI0
+IDEwOjQyIC9zeXMvY2xhc3MvZHJtL2NhcmQwLUhETUktQS0xL2RkYyBcCj4gCS0+IC4uLy4uLy4u
+Ly4uL3NvYy8xMzg4MDAwMC5pMmMvaTJjLTIKPiAKPiBUaGlzIG1ha2VzIGl0IGVhc3kgZm9yIHVz
+ZXIgdG8gYXNzb2NpYXRlIGEgZGlzcGxheSB3aXRoIGl0cyBkZGMgYWRhcHRlcgo+IGFuZCB1c2Ug
+ZS5nLiBkZGN1dGlsIHRvIGNvbnRyb2wgdGhlIGNob3NlbiBtb25pdG9yLgo+IAo+IFRoaXMgcGF0
+Y2ggYWRkcyBhbiBpMmNfYWRhcHRlciBwb2ludGVyIHRvIHN0cnVjdCBkcm1fY29ubmVjdG9yLiBQ
+YXJ0aWN1bGFyCj4gZHJpdmVycyBjYW4gdGhlbiB1c2UgaXQgaW5zdGVhZCBvZiB1c2luZyB0aGVp
+ciBvd24gcHJpdmF0ZSBpbnN0YW5jZS4gSWYgYQo+IGNvbm5lY3RvciBjb250YWlucyBhIGRkYywg
+dGhlbiBjcmVhdGUgYSBzeW1ib2xpYyBsaW5rIGluIHN5c2ZzLgo+IAo+IFNpZ25lZC1vZmYtYnk6
+IEFuZHJ6ZWogUGlldHJhc2lld2ljeiA8YW5kcnplai5wQGNvbGxhYm9yYS5jb20+Cj4gQWNrZWQt
+Ynk6IERhbmllbCBWZXR0ZXIgPGRhbmllbC52ZXR0ZXJAZmZ3bGwuY2g+Cj4gUmV2aWV3ZWQtYnk6
+IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1
+L2RybS9kcm1fc3lzZnMuYyB8ICA4ICsrKysrKysrCj4gIGluY2x1ZGUvZHJtL2RybV9jb25uZWN0
+b3IuaCB8IDExICsrKysrKysrKysrCj4gIDIgZmlsZXMgY2hhbmdlZCwgMTkgaW5zZXJ0aW9ucygr
+KQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZHJtX3N5c2ZzLmMgYi9kcml2ZXJz
+L2dwdS9kcm0vZHJtX3N5c2ZzLmMKPiBpbmRleCBhZDEwODEwYmM5NzIuLmU5NjJhOWQ0NWY3ZSAx
+MDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZHJtX3N5c2ZzLmMKPiArKysgYi9kcml2ZXJz
+L2dwdS9kcm0vZHJtX3N5c2ZzLmMKPiBAQCAtMTQsNiArMTQsNyBAQAo+ICAjaW5jbHVkZSA8bGlu
+dXgvZXJyLmg+Cj4gICNpbmNsdWRlIDxsaW51eC9leHBvcnQuaD4KPiAgI2luY2x1ZGUgPGxpbnV4
+L2dmcC5oPgo+ICsjaW5jbHVkZSA8bGludXgvaTJjLmg+Cj4gICNpbmNsdWRlIDxsaW51eC9rZGV2
+X3QuaD4KPiAgI2luY2x1ZGUgPGxpbnV4L3NsYWIuaD4KPiAgCj4gQEAgLTI5NCw2ICsyOTUsOSBA
+QCBpbnQgZHJtX3N5c2ZzX2Nvbm5lY3Rvcl9hZGQoc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5l
+Y3RvcikKPiAgCS8qIExldCB1c2Vyc3BhY2Uga25vdyB3ZSBoYXZlIGEgbmV3IGNvbm5lY3RvciAq
+Lwo+ICAJZHJtX3N5c2ZzX2hvdHBsdWdfZXZlbnQoZGV2KTsKPiAgCj4gKwlpZiAoY29ubmVjdG9y
+LT5kZGMpCj4gKwkJcmV0dXJuIHN5c2ZzX2NyZWF0ZV9saW5rKCZjb25uZWN0b3ItPmtkZXYtPmtv
+YmosCj4gKwkJCQkgJmNvbm5lY3Rvci0+ZGRjLT5kZXYua29iaiwgImRkYyIpOwo+ICAJcmV0dXJu
+IDA7Cj4gIH0KPiAgCj4gQEAgLTMwMSw2ICszMDUsMTAgQEAgdm9pZCBkcm1fc3lzZnNfY29ubmVj
+dG9yX3JlbW92ZShzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yKQo+ICB7Cj4gIAlpZiAo
+IWNvbm5lY3Rvci0+a2RldikKPiAgCQlyZXR1cm47Cj4gKwo+ICsJaWYgKGNvbm5lY3Rvci0+ZGRj
+KQo+ICsJCXN5c2ZzX3JlbW92ZV9saW5rKCZjb25uZWN0b3ItPmtkZXYtPmtvYmosICJkZGMiKTsK
+PiArCj4gIAlEUk1fREVCVUcoInJlbW92aW5nIFwiJXNcIiBmcm9tIHN5c2ZzXG4iLAo+ICAJCSAg
+Y29ubmVjdG9yLT5uYW1lKTsKPiAgCj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvZHJtL2RybV9jb25u
+ZWN0b3IuaCBiL2luY2x1ZGUvZHJtL2RybV9jb25uZWN0b3IuaAo+IGluZGV4IDRjMzBkNzUxNDg3
+YS4uMzNhNmZmZjg1ZmRiIDEwMDY0NAo+IC0tLSBhL2luY2x1ZGUvZHJtL2RybV9jb25uZWN0b3Iu
+aAo+ICsrKyBiL2luY2x1ZGUvZHJtL2RybV9jb25uZWN0b3IuaAo+IEBAIC00MSw2ICs0MSw3IEBA
+IHN0cnVjdCBkcm1fcHJvcGVydHk7Cj4gIHN0cnVjdCBkcm1fcHJvcGVydHlfYmxvYjsKPiAgc3Ry
+dWN0IGRybV9wcmludGVyOwo+ICBzdHJ1Y3QgZWRpZDsKPiArc3RydWN0IGkyY19hZGFwdGVyOwo+
+ICAKPiAgZW51bSBkcm1fY29ubmVjdG9yX2ZvcmNlIHsKPiAgCURSTV9GT1JDRV9VTlNQRUNJRklF
+RCwKPiBAQCAtMTMxMSw2ICsxMzEyLDE2IEBAIHN0cnVjdCBkcm1fY29ubmVjdG9yIHsKPiAgCSAq
+IFswXTogcHJvZ3Jlc3NpdmUsIFsxXTogaW50ZXJsYWNlZAo+ICAJICovCj4gIAlpbnQgYXVkaW9f
+bGF0ZW5jeVsyXTsKPiArCj4gKwkvKioKPiArCSAqIEBkZGM6IGFzc29jaWF0ZWQgZGRjIGFkYXB0
+ZXIuCj4gKwkgKiBBIGNvbm5lY3RvciB1c3VhbGx5IGhhcyBpdHMgYXNzb2NpYXRlZCBkZGMgYWRh
+cHRlci4gSWYgYSBkcml2ZXIgdXNlcwo+ICsJICogdGhpcyBmaWVsZCwgdGhlbiBhbiBhcHByb3By
+aWF0ZSBzeW1ib2xpYyBsaW5rIGlzIGNyZWF0ZWQgaW4gY29ubmVjdG9yCj4gKwkgKiBzeXNmcyBk
+aXJlY3RvcnkgdG8gbWFrZSBpdCBlYXN5IGZvciB0aGUgdXNlciB0byB0ZWxsIHdoaWNoIGkyYwo+
+ICsJICogYWRhcHRlciBpcyBmb3IgYSBwYXJ0aWN1bGFyIGRpc3BsYXkuCgpUaGUgZmlyc3Qgc2Vu
+dGVuY2UgaXNuJ3QgdmVyeSBjbGVhci4gVGhlIHJlc3QgaXMgbWl4aW5nICJkZGMgYWRhcHRlciIK
+YW5kICJpMmMgYWRhcHRlciIuIEhvdyBhYm91dCB0aGUgZm9sbG93aW5nID8KCiJXaGVuIHRoZSBj
+b25uZWN0b3IgY2FycmllcyBEREMgc2lnbmFscywgdGhpcyBmaWVsZCBwb2ludHMgdG8gdGhlIEky
+QwphZGFwdGVyIGNvbm5lY3RlZCB0byB0aGUgRERDIHNpZ25hbHMsIGlmIGFueS4gV2hlbiB0aGlz
+IGZpZWxkIGlzIG5vdApOVUxMIGEgc3ltYm9saWMgbGluayBpcyBjcmVhdGVkIGluIHRoZSBjb25u
+ZWN0b3IncyBzeXNmcyBkaXJlY3RvcnkgdG8KZXhwb3NlIHRoZSBJMkMgYWRhcHRlciB1c2VkIGJ5
+IHRoZSBjb25uZWN0b3IuIgoKU2hvdWxkIHdlIGFsc28gbWVudGlvbiB0aGF0IHRoZSBmaWVsZCBp
+c24ndCBtZWFudCB0byBiZSBzZXQgZGlyZWN0bHksCmJ1dCBzaGFsbCBiZSBzZXQgd2l0aCBkcm1f
+Y29ubmVjdG9yX2luaXRfd2l0aF9kZGMoKSA/CgoiVGhpcyBmaWVsZCBzaGFsbCBub3QgYmUgc2V0
+IGRpcmVjdGx5IGJ5IGRyaXZlcnMsIHVzZQpkcm1fY29ubmVjdG9yX2luaXRfd2l0aF9kZGMoKSBp
+bnN0ZWFkLiIKCkknbSBhbHNvIHNsaWdodGx5IGNvbmNlcm5lZCBhYm91dCB0aGUgbGlmZXRpbWUg
+b2YgdGhpcyBwb2ludGVyLCBhbmQgd2hhdAp3b3VsZCBoYXBwZW4gaWYgdGhlIEkyQyBhZGFwdGVy
+IGRpc2FwcGVhcnMgd2hpbGUgdGhlIGNvbm5lY3RvciBpcyBzdGlsbApleHBvc2VkIHRvIHVzZXJz
+cGFjZSwgYnV0IEkgc3VwcG9zZSB0aGlzIGlzbid0IGEgbmV3IGlzc3VlLCBleGlzdGluZwpjb2Rl
+IGxpa2VseSBzdWZmZXJzIGZyb20gdGhpcy4KCldpdGggdGhlIHVwZGF0ZWQgZG9jdW1lbnRhdGlv
+biwKClJldmlld2VkLWJ5OiBMYXVyZW50IFBpbmNoYXJ0IDxsYXVyZW50LnBpbmNoYXJ0QGlkZWFz
+b25ib2FyZC5jb20+Cgo+ICsJICovCj4gKwlzdHJ1Y3QgaTJjX2FkYXB0ZXIgKmRkYzsKPiArCj4g
+IAkvKioKPiAgCSAqIEBudWxsX2VkaWRfY291bnRlcjogdHJhY2sgc2lua3MgdGhhdCBnaXZlIHVz
+IGFsbCB6ZXJvcyBmb3IgdGhlIEVESUQuCj4gIAkgKiBOZWVkZWQgdG8gd29ya2Fyb3VuZCBzb21l
+IEhXIGJ1Z3Mgd2hlcmUgd2UgZ2V0IGFsbCAwcwoKLS0gClJlZ2FyZHMsCgpMYXVyZW50IFBpbmNo
+YXJ0Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmFtZC1n
+ZnggbWFpbGluZyBsaXN0CmFtZC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vYW1kLWdmeA==
