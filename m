@@ -1,56 +1,81 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH v1 01/16] drm/bridge: tc358767: fix opencoded use of
- drm_panel_*
-Date: Mon, 05 Aug 2019 11:35:56 +0200
-Message-ID: <1564997756.3056.13.camel@pengutronix.de>
-References: <20190804201637.1240-1-sam@ravnborg.org>
- <20190804201637.1240-2-sam@ravnborg.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [RFC PATCH 01/11] devfreq: exynos-bus: Extract exynos_bus_profile_init()
+Date: Mon, 5 Aug 2019 11:56:12 +0200
+Message-ID: <CAJKOXPdAhyAE96LmzV7TB1YTyNcN7Eh65Xb9caanXA-52Gskvg@mail.gmail.com>
+References: <20190723122016.30279-1-a.swigon@partner.samsung.com>
+ <CGME20190723122022eucas1p1266d90873d564894bd852c20140f8474@eucas1p1.samsung.com>
+ <20190723122016.30279-2-a.swigon@partner.samsung.com> <20190724190741.GD14346@kozik-lap>
+ <bda10bcc66aae96355e74c4739229d72bcc95b0d.camel@partner.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190804201637.1240-2-sam@ravnborg.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Marek Vasut <marex@denx.de>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Vincent Abriou <vincent.abriou@st.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Kukjin Kim <kgene@kernel.org>, Allison Randal <allison@lohutok.net>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Jonas Karlman <jonas@kwiboo.se>, Alison Wang <alison.wang@nxp.com>, Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>, Alexios Zavras <alexios.zavras@intel.com>, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Sean Paul <sean@poorly.run>, linux-arm-kernel@lists.infradead.org, Jernej Skrabec <jerne>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <bda10bcc66aae96355e74c4739229d72bcc95b0d.camel@partner.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org, Chanwoo Choi <cw00.choi@samsung.com>, myungjoo.ham@samsung.com, Inki Dae <inki.dae@samsung.com>, Seung Woo Kim <sw0312.kim@samsung.com>, georgi.djakov@linaro.org, Marek Szyprowski <m.szyprowski@samsung.com>, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gU3VuLCAyMDE5LTA4LTA0IGF0IDIyOjE2ICswMjAwLCBTYW0gUmF2bmJvcmcgd3JvdGU6Cj4g
-UmVwbGFjZSBvcGVuIGNvZGVkIHZlcnNpb24gd2l0aCBjYWxsIHRvIGRybV9wYW5lbF9nZXRfbW9k
-ZXMoKS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBTYW0gUmF2bmJvcmcgPHNhbUByYXZuYm9yZy5vcmc+
-Cj4gQ2M6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Cj4gQ2M6IE5laWwgQXJt
-c3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT4KPiBDYzogTGF1cmVudCBQaW5jaGFydCA8
-TGF1cmVudC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29tPgo+IENjOiBKb25hcyBLYXJsbWFuIDxq
-b25hc0Brd2lib28uc2U+Cj4gQ2M6IEplcm5laiBTa3JhYmVjIDxqZXJuZWouc2tyYWJlY0BzaW9s
-Lm5ldD4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS90YzM1ODc2Ny5jIHwgMTAgKysr
-Ky0tLS0tLQo+ICAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspLCA2IGRlbGV0aW9ucygt
-KQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3RjMzU4NzY3LmMgYi9k
-cml2ZXJzL2dwdS9kcm0vYnJpZGdlL3RjMzU4NzY3LmMKPiBpbmRleCA0MmYwM2E5ODVhYzAuLmNl
-YmM4ZTYyMDgyMCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3RjMzU4NzY3
-LmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3RjMzU4NzY3LmMKPiBAQCAtMTMxMiw3
-ICsxMzEyLDcgQEAgc3RhdGljIGludCB0Y19jb25uZWN0b3JfZ2V0X21vZGVzKHN0cnVjdCBkcm1f
-Y29ubmVjdG9yICpjb25uZWN0b3IpCj4gIHsKPiAgCXN0cnVjdCB0Y19kYXRhICp0YyA9IGNvbm5l
-Y3Rvcl90b190Yyhjb25uZWN0b3IpOwo+ICAJc3RydWN0IGVkaWQgKmVkaWQ7Cj4gLQl1bnNpZ25l
-ZCBpbnQgY291bnQ7Cj4gKwlpbnQgY291bnQ7CgpUaGlzIGxvb2tzIGxpa2UgaXQgYWxzbyBmaXhl
-cyBhIHBvdGVudGlhbCBidWcgLi4uCgo+ICAJaW50IHJldDsKPiAgCj4gIAlyZXQgPSB0Y19nZXRf
-ZGlzcGxheV9wcm9wcyh0Yyk7Cj4gQEAgLTEzMjEsMTEgKzEzMjEsOSBAQCBzdGF0aWMgaW50IHRj
-X2Nvbm5lY3Rvcl9nZXRfbW9kZXMoc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvcikKPiAg
-CQlyZXR1cm4gMDsKPiAgCX0KPiAgCj4gLQlpZiAodGMtPnBhbmVsICYmIHRjLT5wYW5lbC0+ZnVu
-Y3MgJiYgdGMtPnBhbmVsLT5mdW5jcy0+Z2V0X21vZGVzKSB7Cj4gLQkJY291bnQgPSB0Yy0+cGFu
-ZWwtPmZ1bmNzLT5nZXRfbW9kZXModGMtPnBhbmVsKTsKPiAtCQlpZiAoY291bnQgPiAwKQoKLi4u
-IHdoZW4gLmdldF9tb2RlcyByZXR1cm5zIGEgbmVnYXRpdmUgdmFsdWUuCgo+IC0JCQlyZXR1cm4g
-Y291bnQ7Cj4gLQl9Cj4gKwljb3VudCA9IGRybV9wYW5lbF9nZXRfbW9kZXModGMtPnBhbmVsKTsK
-PiArCWlmIChjb3VudCA+IDApCj4gKwkJcmV0dXJuIGNvdW50Owo+ICAKPiAgCWVkaWQgPSBkcm1f
-Z2V0X2VkaWQoY29ubmVjdG9yLCAmdGMtPmF1eC5kZGMpOwoKUmV2aWV3ZWQtYnk6IFBoaWxpcHAg
-WmFiZWwgPHAuemFiZWxAcGVuZ3V0cm9uaXguZGU+CgpyZWdhcmRzClBoaWxpcHAKCgpfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
-ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
-ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWw=
+On Wed, 31 Jul 2019 at 15:00, Artur =C5=9Awigo=C5=84 <a.swigon@partner.sams=
+ung.com> wrote:
+>
+> Hi,
+>
+> On Wed, 2019-07-24 at 21:07 +0200, Krzysztof Kozlowski wrote:
+> > On Tue, Jul 23, 2019 at 02:20:06PM +0200, Artur =C5=9Awigo=C5=84 wrote:
+> > > This patch adds a new static function, exynos_bus_profile_init(), ext=
+racted
+> > > from exynos_bus_probe().
+> > >
+> > > Signed-off-by: Artur =C5=9Awigo=C5=84 <a.swigon@partner.samsung.com>
+> > > ---
+> > >  drivers/devfreq/exynos-bus.c | 106 ++++++++++++++++++++-------------=
+--
+> > >  1 file changed, 60 insertions(+), 46 deletions(-)
+> > >
+> > > diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bu=
+s.c
+> > > index d9f377912c10..d8f1efaf2d49 100644
+> > > --- a/drivers/devfreq/exynos-bus.c
+> > > +++ b/drivers/devfreq/exynos-bus.c
+> > > @@ -372,12 +372,69 @@ static int exynos_bus_parse_of(struct device_no=
+de *np,
+> > >     return ret;
+> > >  }
+> > >
+> > > +static int exynos_bus_profile_init(struct exynos_bus *bus,
+> > > +                              struct devfreq_dev_profile *profile)
+> > > +{
+> > > +   struct device *dev =3D bus->dev;
+> > > +   struct devfreq_simple_ondemand_data *ondemand_data;
+> > > +   int ret;
+> > > +
+> > > +   /* Initialize the struct profile and governor data for parent dev=
+ice */
+> > > +   profile->polling_ms =3D 50;
+> > > +   profile->target =3D exynos_bus_target;
+> > > +   profile->get_dev_status =3D exynos_bus_get_dev_status;
+> > > +   profile->exit =3D exynos_bus_exit;
+> > > +
+> > > +   ondemand_data =3D devm_kzalloc(dev, sizeof(*ondemand_data), GFP_K=
+ERNEL);
+> > > +   if (!ondemand_data) {
+> > > +           ret =3D -ENOMEM;
+> > > +           goto err;
+> >
+> > Just return proper error code. Less lines, obvious code since you do no=
+t
+> > have any cleanup in error path.
+>
+> I was advised to avoid modifying code being moved (in one patch). I do ma=
+ke
+> changes in these places in patch 04/11, i.e. change the original label 'e=
+rr' to
+> 'out'. What's your opinion on making the proposed changes to patches 01 a=
+nd 02
+> (s/goto err/return ret/) in patch 04 instead?
+
+Yes, you're right. I also prefer not to touch moved code.
+
+Best regards,
+Krzysztof
