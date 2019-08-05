@@ -1,46 +1,38 @@
-From: Jaafar Ali <jaafarkhalaf@gmail.com>
-Subject: Odroid-XU$ sound issue after suspend-resume
-Date: Mon, 5 Aug 2019 16:34:19 +0300
-Message-ID: <CAF-0O_6zDyWTFenFX49DVeSyB=p59BFVCc71oPVarOtDPh2LFg@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] pinctrl: samsung: exynos: Add of_node_put() before return
+Date: Mon, 5 Aug 2019 18:21:54 +0200
+Message-ID: <20190805162154.GA24769@kozik-lap>
+References: <20190804160200.5139-1-nishkadg.linux@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20190804160200.5139-1-nishkadg.linux@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Nishka Dasgupta <nishkadg.linux@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linus.walleij@linaro.org, tomasz.figa@gmail.com, linux-gpio@vger.kernel.org, kgene@kernel.org, s.nawrocki@samsung.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Dear All,
-Kernel 5.3-rc1
-OS: ubuntu 18.04
-Hardware: Odroid-XU4
-The sound of Odroid-XU4 after suspend/resume cycle is choppy and slow.
-I have found a workaround, the I2SMOD register value should be set to
-zero after resume to force using internal codec clock (cdclkcon bit =
-0),  also the rclk_srcrate which is obtained from the function
-clk_get_rate(rclksrc) inside hw_params function is not correct and
-must be divided by 2 to obtain proper value, i2s_resume function is
-modified to:
+On Sun, Aug 04, 2019 at 09:32:00PM +0530, Nishka Dasgupta wrote:
+> Each iteration of for_each_child_of_node puts the previous node, but in
+> the case of a return from the middle of the loop, there is no put, thus
+> causing a memory leak. Hence add an of_node_put before the return.
+> Issue found with Coccinelle.
+> 
+> Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
+> ---
+>  drivers/pinctrl/samsung/pinctrl-exynos.c | 4 +++-
 
-static int i2s_resume(struct snd_soc_dai *dai)
-{
-        struct samsung_i2s_priv *priv = dev_get_drvdata(dai->dev);
-        priv->suspend_i2smod = 0;//workaround-1 ,
-        return pm_runtime_force_resume(dai->dev);
+Thanks, applied.
 
-}
-
- inside hw_params function, the rclk_srcrate must be halved to solve
-unknown problem of clock shift, so before return from hw_params we
-must insert:
-if(mod == 0){
-priv->rclk_srcrate = priv->rclk_srcrate / 2; //workaround-2,
-}
-return 0;
-
-With these two workaround sound issue was solved, but I hope we can
-get concrete fix.
-
-Best Regards
-
-
-Jaafar
+Best regards,
+Krzysztof
