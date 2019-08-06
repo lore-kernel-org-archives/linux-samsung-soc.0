@@ -1,36 +1,50 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 10/16] drm/panel: ili9322: move bus_flags to get_modes()
-Date: Tue, 6 Aug 2019 14:56:16 +0200
-Message-ID: <CACRpkdYTaaxqhSSPx8KToVaiRJtzNmNynGCoGTMeJVgDUCsTnQ@mail.gmail.com>
-References: <20190804201637.1240-1-sam@ravnborg.org>
- <20190804201637.1240-11-sam@ravnborg.org>
+From: Leonard Crestez <leonard.crestez@nxp.com>
+Subject: Re: [RFC PATCH 09/11] devfreq: exynos-bus: Add interconnect
+ functionality to exynos-bus
+Date: Tue, 6 Aug 2019 13:41:31 +0000
+Message-ID: <VI1PR04MB5055BED59960B4F4147479AEEED50@VI1PR04MB5055.eurprd04.prod.outlook.com>
+References: <20190723122016.30279-1-a.swigon@partner.samsung.com>
+ <CGME20190723122028eucas1p2eb75f35b810e71d6c590370aaff0997b@eucas1p2.samsung.com>
+ <20190723122016.30279-10-a.swigon@partner.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20190804201637.1240-11-sam@ravnborg.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, David Airlie <airlied@linux.ie>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Marek Vasut <marex@denx.de>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Vincent Abriou <vincent.abriou@st.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Maxime Ripard <maxime.ripard@bootlin.com>, Kukjin Kim <kgene@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Jonas Karlman <jonas@kwiboo.se>, Sascha Hauer <s.hauer@pengutronix.de>, Alison Wang <alison.wang@nxp.com>, Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>, Alexios Zavras <alexios.zavras@intel.com>, linux-samsung-soc <linux-samsu>
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?iso-8859-2?Q?Artur_=A6wigo=F1?= <a.swigon@partner.samsung.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "krzk@kernel.org" <krzk@kernel.org>, "cw00.choi@samsung.com" <cw00.choi@samsung.com>, "myungjoo.ham@samsung.com" <myungjoo.ham@samsung.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, "georgi.djakov@linaro.org" <georgi.djakov@linaro.org>, "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gU3VuLCBBdWcgNCwgMjAxOSBhdCAxMDoxNyBQTSBTYW0gUmF2bmJvcmcgPHNhbUByYXZuYm9y
-Zy5vcmc+IHdyb3RlOgoKPiBUbyBwcmVwYXJlIHRoZSBkcml2ZXIgdG8gcmVjZWl2ZSBkcm1fY29u
-bmVjdG9yIG9ubHkgaW4gdGhlIGdldF9tb2RlcygpCj4gY2FsbGJhY2ssIG1vdmUgYnVzX2ZsYWdz
-IGhhbmRsaW5nIHRvIGlsaTkzMjJfZ2V0X21vZGVzKCkuCj4KPiBTaWduZWQtb2ZmLWJ5OiBTYW0g
-UmF2bmJvcmcgPHNhbUByYXZuYm9yZy5vcmc+Cj4gQ2M6IFRoaWVycnkgUmVkaW5nIDx0aGllcnJ5
-LnJlZGluZ0BnbWFpbC5jb20+Cj4gQ2M6IFNhbSBSYXZuYm9yZyA8c2FtQHJhdm5ib3JnLm9yZz4K
-Ck9LIEkgZG9uJ3Qgc2VlIHdoZXJlIHRoaXMgaXMgZ29pbmcgYnV0IEkgdHJ1c3QgeW91IHNvOgpB
-Y2tlZC1ieTogTGludXMgV2FsbGVpaiA8bGludXMud2FsbGVpakBsaW5hcm8ub3JnPgoKWW91cnMs
-CkxpbnVzIFdhbGxlaWoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
-dmVs
+On 23.07.2019 15:21, Artur =A6wigo=F1 wrote:=0A=
+=0A=
+> +static int exynos_bus_icc_aggregate(struct icc_node *node, u32 avg_bw,=
+=0A=
+> +				    u32 peak_bw, u32 *agg_avg, u32 *agg_peak)=0A=
+> +{=0A=
+> +	*agg_peak =3D *agg_avg =3D peak_bw;=0A=
+> +=0A=
+> +	return 0;=0A=
+> +}=0A=
+=0A=
+The only current provider aggregates "avg" with "sum" and "peak" with =0A=
+"max", any particular reason to do something different? This function =0A=
+doesn't even really do aggregation, if there is a second request for "0" =
+=0A=
+then the first request is lost.=0A=
+=0A=
+I didn't find any docs but my interpretation of avg/peak is that "avg" =0A=
+is for constant traffic like a display or VPU pushing pixels and "peak" =0A=
+is for variable traffic like networking. I assume devices which make =0A=
+"peak" requests are aggregated with max because they're not expected to =0A=
+all max-out together.=0A=
+=0A=
+In PATCH 11 you're making a bandwidth request based on resolution, that =0A=
+traffic is constant and guaranteed to happend while the display is on so =
+=0A=
+it would make sense to request it as an "avg" and aggregate it with "sum".=
+=0A=
+=0A=
+--=0A=
+Regards,=0A=
+Leonard=0A=
