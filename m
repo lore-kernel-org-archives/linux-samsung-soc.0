@@ -1,112 +1,183 @@
-From: Georgi Djakov <georgi.djakov@linaro.org>
-Subject: Re: [RFC PATCH 09/11] devfreq: exynos-bus: Add interconnect
- functionality to exynos-bus
-Date: Wed, 7 Aug 2019 17:21:15 +0300
-Message-ID: <4155482f-8f8f-a659-63ba-25701540b2c5@linaro.org>
-References: <20190723122016.30279-1-a.swigon@partner.samsung.com>
- <CGME20190723122028eucas1p2eb75f35b810e71d6c590370aaff0997b@eucas1p2.samsung.com>
- <20190723122016.30279-10-a.swigon@partner.samsung.com>
- <6e8b2081-2fb3-9ab8-37d1-8b5fe5fd8e11@linaro.org>
- <62557522be4924a01d3822d4734c30f2965c608b.camel@partner.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH 1/2] clk: samsung: Change signature of
+ exynos5_subcmus_init() function
+Date: Wed,  7 Aug 2019 18:24:55 +0200
+Message-ID: <20190807162456.28694-1-s.nawrocki@samsung.com>
+References: <CGME20190807162511eucas1p2eedb33bdee87f80528b59bb4e869daf1@eucas1p2.samsung.com>
+Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <62557522be4924a01d3822d4734c30f2965c608b.camel@partner.samsung.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: krzk@kernel.org, cw00.choi@samsung.com, myungjoo.ham@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, m.szyprowski@samsung.com, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie@samsung.com>
+To: sboyd@kernel.org, mturquette@baylibre.com
+Cc: linux@armlinux.org.uk, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, krzk@kernel.org, cw00.choi@samsung.com, m.szyprowski@samsung.com, b.zolnierkie@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Artur,
+In order to make it easier in subsequent patch to create different subcmu
+lists for exynos5420 and exynos5800 SoCs the code is rewritten so we pass
+an array of pointers to the subcmus initialization function.
 
-On 8/1/19 10:59, Artur Świgoń wrote:
-> Hi Georgi,
-> 
-> On Fri, 2019-07-26 at 11:05 +0300, Georgi Djakov wrote:
->> Hi Artur,
->>
->> On 7/23/19 15:20, Artur Świgoń wrote:
->>> This patch adds interconnect functionality to the exynos-bus devfreq
->>> driver.
->>>
->>> The SoC topology is a graph (or, more specifically, a tree) and most of its
->>> edges are taken from the devfreq parent-child hierarchy (cf.
->>> Documentation/devicetree/bindings/devfreq/exynos-bus.txt). The previous
->>> patch adds missing edges to the DT (under the name 'parent'). Due to
->>> unspecified relative probing order, -EPROBE_DEFER may be propagated to
->>> guarantee that a child is probed before its parent.
->>>
->>> Each bus is now an interconnect provider and an interconnect node as well
->>> (cf. Documentation/interconnect/interconnect.rst), i.e. every bus registers
->>> itself as a node. Node IDs are not hardcoded but rather assigned at
->>> runtime, in probing order (subject to the above-mentioned exception
->>> regarding relative order). This approach allows for using this driver with
->>> various Exynos SoCs.
->>
->> I am not familiar with the Exynos bus topology, but it seems to me that it's not
->> represented correctly. An interconnect provider with just a single node (port)
->> is odd. I would expect that each provider consists of multiple master and slave
->> nodes. This data would be used by a framework to understand what are the links
->> and how the traffic flows between the IP blocks and through which buses.
-> 
-> To summarize the exynos-bus topology[1] used by the devfreq driver: There are
-> many data buses for data transfer in Samsung Exynos SoC. Every bus has its own
-> clock. Buses often share power lines, in which case one of the buses on the
-> power line is referred to as 'parent' (or as 'devfreq' in the DT). In the
-> particular case of Exynos4412[1][2], the topology can be expressed as follows:
-> 
-> bus_dmc
-> -- bus_acp
-> -- bus_c2c
-> 
-> bus_leftbus
-> -- bus_rightbus
-> -- bus_display
-> -- bus_fsys
-> -- bus_peri
-> -- bus_mfc
-> 
-> Where bus_dmc and bus_leftbus probably could be referred to as masters, and the
-> following indented nodes as slaves. Patch 08/11 of this RFC additionally adds
-> the following to the DT:
-> 
-> bus_dmc
-> -- bus_leftbus
-> 
-> Which makes the topology a valid tree.
-> 
-> The exynos-bus concept in devfreq[3] is designed in such a way that every bus is
-> probed separately as a platform device, and is a largely independent entity.
->
-> This RFC proposes an extension to the existing devfreq driver that basically
-> provides a simple QoS to ensure minimum clock frequency for selected buses
-> (possibly overriding devfreq governor calculations) using the interconnect
-> framework.
-> 
-> The hierarchy is modelled in such a way that every bus is an interconnect node.
-> On the other hand, what is considered an interconnect provider here is quite
-> arbitrary, but for the reasons mentioned in the above paragraph, this RFC
-> assumes that every bus is a provider of itself as a node. Using an alternative
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5-subcmu.c | 16 +++----
+ drivers/clk/samsung/clk-exynos5-subcmu.h |  2 +-
+ drivers/clk/samsung/clk-exynos5250.c     |  7 ++-
+ drivers/clk/samsung/clk-exynos5420.c     | 60 ++++++++++++++----------
+ 4 files changed, 49 insertions(+), 36 deletions(-)
 
-IIUC, in case we want to transfer data between the display and the memory
-controller, the path would look like this:
-
-display --> bus_display --> bus_leftbus --> bus_dmc --> memory
-
-But the bus_display for example would have not one, but two nodes (ports),
-right?  One representing the link to the display controller and another one
-representing the link to bus_leftbus? So i think that all the buses should
-have at least two nodes, to represent each end of the wire.
-
-> singleton provider approach was deemed more complicated since the 'dev' field in
-> 'struct icc_provider' has to be set to something meaningful and we are tied to
-> the 'samsung,exynos-bus' compatible string in the driver (and multiple instances
-> of exynos-bus probed in indeterminate relative order).
-> 
-
-Sure, the rest makes sense to me.
-
-Thanks,
-Georgi
+diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsung/clk-exynos5-subcmu.c
+index 91db7894125d..65c82d922b05 100644
+--- a/drivers/clk/samsung/clk-exynos5-subcmu.c
++++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
+@@ -14,7 +14,7 @@
+ #include "clk-exynos5-subcmu.h"
+ 
+ static struct samsung_clk_provider *ctx;
+-static const struct exynos5_subcmu_info *cmu;
++static const struct exynos5_subcmu_info **cmu;
+ static int nr_cmus;
+ 
+ static void exynos5_subcmu_clk_save(void __iomem *base,
+@@ -56,17 +56,17 @@ static void exynos5_subcmu_defer_gate(struct samsung_clk_provider *ctx,
+  * when OF-core populates all device-tree nodes.
+  */
+ void exynos5_subcmus_init(struct samsung_clk_provider *_ctx, int _nr_cmus,
+-			  const struct exynos5_subcmu_info *_cmu)
++			  const struct exynos5_subcmu_info **_cmu)
+ {
+ 	ctx = _ctx;
+ 	cmu = _cmu;
+ 	nr_cmus = _nr_cmus;
+ 
+ 	for (; _nr_cmus--; _cmu++) {
+-		exynos5_subcmu_defer_gate(ctx, _cmu->gate_clks,
+-					  _cmu->nr_gate_clks);
+-		exynos5_subcmu_clk_save(ctx->reg_base, _cmu->suspend_regs,
+-					_cmu->nr_suspend_regs);
++		exynos5_subcmu_defer_gate(ctx, (*_cmu)->gate_clks,
++					  (*_cmu)->nr_gate_clks);
++		exynos5_subcmu_clk_save(ctx->reg_base, (*_cmu)->suspend_regs,
++					(*_cmu)->nr_suspend_regs);
+ 	}
+ }
+ 
+@@ -163,9 +163,9 @@ static int __init exynos5_clk_probe(struct platform_device *pdev)
+ 		if (of_property_read_string(np, "label", &name) < 0)
+ 			continue;
+ 		for (i = 0; i < nr_cmus; i++)
+-			if (strcmp(cmu[i].pd_name, name) == 0)
++			if (strcmp(cmu[i]->pd_name, name) == 0)
+ 				exynos5_clk_register_subcmu(&pdev->dev,
+-							    &cmu[i], np);
++							    cmu[i], np);
+ 	}
+ 	return 0;
+ }
+diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.h b/drivers/clk/samsung/clk-exynos5-subcmu.h
+index 755ee8aaa3de..9ae5356f25aa 100644
+--- a/drivers/clk/samsung/clk-exynos5-subcmu.h
++++ b/drivers/clk/samsung/clk-exynos5-subcmu.h
+@@ -21,6 +21,6 @@ struct exynos5_subcmu_info {
+ };
+ 
+ void exynos5_subcmus_init(struct samsung_clk_provider *ctx, int nr_cmus,
+-			  const struct exynos5_subcmu_info *cmu);
++			  const struct exynos5_subcmu_info **cmu);
+ 
+ #endif
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index f2b896881768..931c70a4da19 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -681,6 +681,10 @@ static const struct exynos5_subcmu_info exynos5250_disp_subcmu = {
+ 	.pd_name	= "DISP1",
+ };
+ 
++static const struct exynos5_subcmu_info *exynos5250_subcmus[] = {
++	&exynos5250_disp_subcmu,
++};
++
+ static const struct samsung_pll_rate_table vpll_24mhz_tbl[] __initconst = {
+ 	/* sorted in descending order */
+ 	/* PLL_36XX_RATE(rate, m, p, s, k) */
+@@ -843,7 +847,8 @@ static void __init exynos5250_clk_init(struct device_node *np)
+ 
+ 	samsung_clk_sleep_init(reg_base, exynos5250_clk_regs,
+ 			       ARRAY_SIZE(exynos5250_clk_regs));
+-	exynos5_subcmus_init(ctx, 1, &exynos5250_disp_subcmu);
++	exynos5_subcmus_init(ctx, ARRAY_SIZE(exynos5250_subcmus),
++			     exynos5250_subcmus);
+ 
+ 	samsung_clk_of_add_provider(np, ctx);
+ 
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 01bca5a498b2..fdb17c799aa5 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -1281,32 +1281,40 @@ static struct exynos5_subcmu_reg_dump exynos5x_mfc_suspend_regs[] = {
+ 	{ DIV4_RATIO, 0, 0x3 },			/* DIV dout_mfc_blk */
+ };
+ 
+-static const struct exynos5_subcmu_info exynos5x_subcmus[] = {
+-	{
+-		.div_clks	= exynos5x_disp_div_clks,
+-		.nr_div_clks	= ARRAY_SIZE(exynos5x_disp_div_clks),
+-		.gate_clks	= exynos5x_disp_gate_clks,
+-		.nr_gate_clks	= ARRAY_SIZE(exynos5x_disp_gate_clks),
+-		.suspend_regs	= exynos5x_disp_suspend_regs,
+-		.nr_suspend_regs = ARRAY_SIZE(exynos5x_disp_suspend_regs),
+-		.pd_name	= "DISP",
+-	}, {
+-		.div_clks	= exynos5x_gsc_div_clks,
+-		.nr_div_clks	= ARRAY_SIZE(exynos5x_gsc_div_clks),
+-		.gate_clks	= exynos5x_gsc_gate_clks,
+-		.nr_gate_clks	= ARRAY_SIZE(exynos5x_gsc_gate_clks),
+-		.suspend_regs	= exynos5x_gsc_suspend_regs,
+-		.nr_suspend_regs = ARRAY_SIZE(exynos5x_gsc_suspend_regs),
+-		.pd_name	= "GSC",
+-	}, {
+-		.div_clks	= exynos5x_mfc_div_clks,
+-		.nr_div_clks	= ARRAY_SIZE(exynos5x_mfc_div_clks),
+-		.gate_clks	= exynos5x_mfc_gate_clks,
+-		.nr_gate_clks	= ARRAY_SIZE(exynos5x_mfc_gate_clks),
+-		.suspend_regs	= exynos5x_mfc_suspend_regs,
+-		.nr_suspend_regs = ARRAY_SIZE(exynos5x_mfc_suspend_regs),
+-		.pd_name	= "MFC",
+-	},
++static const struct exynos5_subcmu_info exynos5x_disp_subcmu = {
++	.div_clks	= exynos5x_disp_div_clks,
++	.nr_div_clks	= ARRAY_SIZE(exynos5x_disp_div_clks),
++	.gate_clks	= exynos5x_disp_gate_clks,
++	.nr_gate_clks	= ARRAY_SIZE(exynos5x_disp_gate_clks),
++	.suspend_regs	= exynos5x_disp_suspend_regs,
++	.nr_suspend_regs = ARRAY_SIZE(exynos5x_disp_suspend_regs),
++	.pd_name	= "DISP",
++};
++
++static const struct exynos5_subcmu_info exynos5x_gsc_subcmu = {
++	.div_clks	= exynos5x_gsc_div_clks,
++	.nr_div_clks	= ARRAY_SIZE(exynos5x_gsc_div_clks),
++	.gate_clks	= exynos5x_gsc_gate_clks,
++	.nr_gate_clks	= ARRAY_SIZE(exynos5x_gsc_gate_clks),
++	.suspend_regs	= exynos5x_gsc_suspend_regs,
++	.nr_suspend_regs = ARRAY_SIZE(exynos5x_gsc_suspend_regs),
++	.pd_name	= "GSC",
++};
++
++static const struct exynos5_subcmu_info exynos5x_mfc_subcmu = {
++	.div_clks	= exynos5x_mfc_div_clks,
++	.nr_div_clks	= ARRAY_SIZE(exynos5x_mfc_div_clks),
++	.gate_clks	= exynos5x_mfc_gate_clks,
++	.nr_gate_clks	= ARRAY_SIZE(exynos5x_mfc_gate_clks),
++	.suspend_regs	= exynos5x_mfc_suspend_regs,
++	.nr_suspend_regs = ARRAY_SIZE(exynos5x_mfc_suspend_regs),
++	.pd_name	= "MFC",
++};
++
++static const struct exynos5_subcmu_info *exynos5x_subcmus[] = {
++	&exynos5x_disp_subcmu,
++	&exynos5x_gsc_subcmu,
++	&exynos5x_mfc_subcmu,
+ };
+ 
+ static const struct samsung_pll_rate_table exynos5420_pll2550x_24mhz_tbl[] __initconst = {
+-- 
+2.17.1
