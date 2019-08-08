@@ -1,74 +1,188 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2 2/9] soc: samsung: Convert exynos-chipid driver to
- use the regmap API
-Date: Thu, 8 Aug 2019 14:07:13 +0200
-Message-ID: <dc34402e-6e94-09e7-414d-10f87beb3e7c@samsung.com>
-References: <CGME20190718143128eucas1p2677ae16d229dddcd9a0db8084f0da5cf@eucas1p2.samsung.com>
+Subject: Re: [PATCH v2 3/9] soc: samsung: Add Exynos Adaptive Supply Voltage
+ driver
+Date: Thu, 8 Aug 2019 14:07:36 +0200
+Message-ID: <a56fe2d8-1f26-b462-1564-f23902f7dbb5@samsung.com>
+References: <CGME20190718143130eucas1p26f2058f47eb2f4020e1ddbf1619d1ac8@eucas1p2.samsung.com>
         <20190718143044.25066-1-s.nawrocki@samsung.com>
-        <20190718143044.25066-3-s.nawrocki@samsung.com>
-        <CAJKOXPfLPjmjgX01UAyu_=7etUO1G7osMQDmyHVBNxF2Sdh=yA@mail.gmail.com>
+        <20190718143044.25066-4-s.nawrocki@samsung.com>
+        <CAJKOXPeOfDHjqSotxVwVuy+6r9X3Q8ZXLit1_=gGd7bOwkHupA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPfLPjmjgX01UAyu_=7etUO1G7osMQDmyHVBNxF2Sdh=yA@mail.gmail.com>
+In-Reply-To: <CAJKOXPeOfDHjqSotxVwVuy+6r9X3Q8ZXLit1_=gGd7bOwkHupA@mail.gmail.com>
 Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: robh+dt@kernel.org, vireshk@kernel.org, devicetree@vger.kernel.org, kgene@kernel.org, pankaj.dubey@samsung.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 7/23/19 15:01, Krzysztof Kozlowski wrote:
+On 7/23/19 15:38, Krzysztof Kozlowski wrote:
 > On Thu, 18 Jul 2019 at 16:31, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
 >>
->> Convert the driver to use regmap API in order to allow other
->> drivers, like ASV, to access the CHIPID registers.
+>> The Adaptive Supply Voltage (ASV) driver adjusts CPU cluster operating
+>> points depending on exact revision of an SoC retrieved from the CHIPID
+>> block or the OTP memory.  This allows for some power saving as for some
+>> CPU clock frequencies we can lower CPU cluster supply voltage comparing
+>> to safe values common to the all chip revisions.
 >>
->> This patch adds definition of selected CHIPID register offsets
->> and register bit fields for Exynos5422 SoC.
+>> This patch adds support for Exynos5422/5800 SoC, it is partially based
+>> on code from https://github.com/hardkernel/linux repository,
+>> branch odroidxu4-4.14.y, files: arch/arm/mach-exynos/exynos5422-asv.[ch].
+>>
+>> Tested on Odroid XU3, XU4, XU3 Lite.
 >>
 >> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-
->> diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
->> index 78b123ee60c0..594b00488013 100644
->> --- a/drivers/soc/samsung/exynos-chipid.c
->> +++ b/drivers/soc/samsung/exynos-chipid.c
->> @@ -9,18 +9,16 @@
->>   */
->> @@ -53,29 +51,24 @@ static const char * __init product_id_to_soc_id(unsigned int product_id)
->>  int __init exynos_chipid_early_init(void)
->>  {
-
->> +       regmap = syscon_regmap_lookup_by_compatible("samsung,exynos4210-chipid");
->> +       if (IS_ERR(regmap)) {
->> +               pr_err("%s: failed to get regmap\n", __func__);
+>> ---
+>> Changes since v1 (RFC):
+>>  - removed code for parsing the ASV OPP tables from DT, the ASV OPP tables
+>>    moved to the driver;
+>>  - converted to use the regmap API;
+>>  - converted to normal platform driver.
+>> ---
+>>  drivers/soc/samsung/Kconfig          |  11 +
+>>  drivers/soc/samsung/Makefile         |   3 +
+>>  drivers/soc/samsung/exynos-asv.c     | 185 ++++++++++
+>>  drivers/soc/samsung/exynos-asv.h     |  82 +++++
+>>  drivers/soc/samsung/exynos5422-asv.c | 499 +++++++++++++++++++++++++++
+>>  drivers/soc/samsung/exynos5422-asv.h |  25 ++
+>>  6 files changed, 805 insertions(+)
+>>  create mode 100644 drivers/soc/samsung/exynos-asv.c
+>>  create mode 100644 drivers/soc/samsung/exynos-asv.h
+>>  create mode 100644 drivers/soc/samsung/exynos5422-asv.c
+>>  create mode 100644 drivers/soc/samsung/exynos5422-asv.h
+>>
+>> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+>> index 2905f5262197..539cd95dd176 100644
+>> --- a/drivers/soc/samsung/Kconfig
+>> +++ b/drivers/soc/samsung/Kconfig
+>> @@ -7,6 +7,17 @@ menuconfig SOC_SAMSUNG
+>>
+>>  if SOC_SAMSUNG
+>>
+>> +config EXYNOS_ASV
+>> +       bool "Exynos Adaptive Supply Voltage support" if COMPILE_TEST
+>> +       depends on ARCH_EXYNOS || COMPILE_TEST
+>> +       depends on EXYNOS_CHIPID
 > 
-> Other places do not use __func__ prefix so make it consistent. Add it
-> in patch #1?
+> (ARCH_EXYNOS && EXYNOS_CHIPID) || COMPILE_TEST
 
-I would rather drop the function name prefix here, there should be 
-no problem in finding those error messages with grep. I'll just make
-the above log a bit more specific.
+OK
+>> +       select EXYNOS_ASV_ARM if ARM && ARCH_EXYNOS
+>> +
+>> +# There is no need to enable these drivers for ARMv8
+>> +config EXYNOS_ASV_ARM
+>> +       bool "Exynos ASV ARMv7-specific driver extensions" if COMPILE_TEST
+>> +       depends on EXYNOS_ASV
 
->> +               return PTR_ERR(regmap);
->>         }
-
->> diff --git a/include/linux/soc/samsung/exynos-chipid.h b/include/linux/soc/samsung/exynos-chipid.h
+>> diff --git a/drivers/soc/samsung/exynos-asv.c b/drivers/soc/samsung/exynos-asv.c
 >> new file mode 100644
->> index 000000000000..25359d70d617
+>> index 000000000000..b1a7e0ba8870
 >> --- /dev/null
->> +++ b/include/linux/soc/samsung/exynos-chipid.h
->> @@ -0,0 +1,48 @@
+>> +++ b/drivers/soc/samsung/exynos-asv.c
+>> @@ -0,0 +1,185 @@
 
->> +#define EXYNOS_CHIPID_REG_PRO_ID       0x00
->> + #define EXYNOS_SUBREV_MASK            (0xf << 4)
+>> +static int exynos_asv_probe(struct platform_device *pdev)
+>> +{
+>> +       int (*probe_func)(struct exynos_asv *asv);
+>> +       struct exynos_asv *asv;
+>> +       struct device *cpu_dev;
+>> +       u32 product_id = 0;
+>> +       int ret, i;
+>> +
+>> +       cpu_dev = get_cpu_device(0);
+>> +       ret = dev_pm_opp_get_opp_count(cpu_dev);
+>> +       if (ret < 0)
+>> +               return -EPROBE_DEFER;
+>> +
+>> +       asv = kcalloc(1, sizeof(*asv), GFP_KERNEL);
+>> +       if (!asv)
+>> +               return -ENOMEM;
+>> +
+>> +       asv->chipid_regmap = syscon_node_to_regmap(pdev->dev.of_node);
+>> +       if (IS_ERR(asv->chipid_regmap)) {
+>> +               dev_err(&pdev->dev, "Could not find syscon regmap\n");
 > 
-> " #define" is unusual syntax. I think not used anywhere else. Stick to
-> regular one.
+> Here and in following error-paths - kfree().
 
-Indeed it's almost not used anywhere, I will drop those leading spaces.
+Thanks, I will fix that.
 
-git grep "^\ #define" *.[ch] | wc -l
+>> +               return PTR_ERR(asv->chipid_regmap);
+>> +       }
+>> +
+>> +       regmap_read(asv->chipid_regmap, EXYNOS_CHIPID_REG_PRO_ID, &product_id);
+
+>> +module_platform_driver(exynos_asv_driver);
+>> diff --git a/drivers/soc/samsung/exynos-asv.h b/drivers/soc/samsung/exynos-asv.h
+>> new file mode 100644
+>> index 000000000000..d0a5d603093d
+>> --- /dev/null
+>> +++ b/drivers/soc/samsung/exynos-asv.h
+>> @@ -0,0 +1,82 @@
+
+>> +#ifndef _EXYNOS_ASV_H
+>> +#define _EXYNOS_ASV_H
+> 
+> Here and in other header use prefix:
+> __LINUX_SOC_
+> (just like the existing exynos-pmu.h)
+
+OK, I will change that.
+
+>> +struct exynos_asv_subsys {
+>> +       struct exynos_asv *asv;
+>> +       char *cpu_dt_compat;
+> 
+> const char *
+
+OK
+>> +       int id;
+
+>> +#endif /* _EXYNOS_ASV_H */
+>> diff --git a/drivers/soc/samsung/exynos5422-asv.c b/drivers/soc/samsung/exynos5422-asv.c
+>> new file mode 100644
+>> index 000000000000..5fd673a6a733
+>> --- /dev/null
+>> +++ b/drivers/soc/samsung/exynos5422-asv.c
+>> @@ -0,0 +1,499 @@
+
+>> +#include <linux/bitrev.h>
+>> +#include <linux/device.h>
+>> +#include <linux/errno.h>
+>> +#include <linux/init.h>
+> 
+> Looks unused.
+
+Indeed, I will drop it.
+
+>> +static unsigned int exynos5422_asv_parse_table(struct exynos_asv *asv,
+>> +                                     unsigned int pkg_id)
+>> +{
+>> +       return (pkg_id >> EXYNOS5422_TABLE_OFFSET) & EXYNOS5422_TABLE_MASK;
+>> +}
+>> +
+>> +static bool exynos5422_asv_parse_bin2(struct exynos_asv *asv,
+>> +                                    unsigned int pkg_id)
+>> +{
+>> +       return (pkg_id >> EXYNOS5422_BIN2_OFFSET) & EXYNOS5422_BIN2_MASK;
+> 
+> return !!() for converting to boolean.
+
+I'm not convinced it is needed, the return type of the function is bool
+and value of the expression will be implicitly converted to that type.
+Is there any compiler warning related to that?
+
+>> +}
+>> +
+>> +static bool exynos5422_asv_parse_sg(struct exynos_asv *asv,
+>> +                                       unsigned int pkg_id)
+>> +{
+>> +       return ((pkg_id >> EXYNOS5422_USESG_OFFSET) & EXYNOS5422_USESG_MASK);
+> 
+> Unneeded () over entire statement.
+
+Will drop it.
 
 -- 
 Regards,
