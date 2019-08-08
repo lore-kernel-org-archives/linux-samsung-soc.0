@@ -1,24 +1,38 @@
 From: Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2 1/2] clk: samsung: Change signature of exynos5_subcmus_init() function
-Date: Thu, 08 Aug 2019 13:23:20 -0700
-Message-ID: <20190808202320.E469D2173C@mail.kernel.org>
-References: <CGME20190808144936eucas1p2e65eddc3d970de35590cb84fe200b438@eucas1p2.samsung.com> <20190808144929.18685-1-s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2 2/2] clk: samsung: exynos5800: Move MAU subsystem clocks to MAU sub-CMU
+Date: Thu, 08 Aug 2019 13:54:30 -0700
+Message-ID: <20190808205431.0A5762173C@mail.kernel.org>
+References: <20190808144929.18685-1-s.nawrocki@samsung.com> <CGME20190808144941eucas1p1b6ba7aadd0c31aedf765a0f90ed6213f@eucas1p1.samsung.com> <20190808144929.18685-2-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190808144929.18685-1-s.nawrocki@samsung.com>
+In-Reply-To: <20190808144929.18685-2-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: mturquette@baylibre.com
 Cc: linux@armlinux.org.uk, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, krzk@kernel.org, cw00.choi@samsung.com, m.szyprowski@samsung.com, b.zolnierkie@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Quoting Sylwester Nawrocki (2019-08-08 07:49:28)
-> In order to make it easier in subsequent patch to create different subcmu
-> lists for exynos5420 and exynos5800 SoCs the code is rewritten so we pass
-> an array of pointers to the subcmus initialization function.
+Quoting Sylwester Nawrocki (2019-08-08 07:49:29)
+> This patch fixes broken sound on Exynos5422/5800 platforms after
+> system/suspend resume cycle in cases where the audio root clock
+> is derived from MAU_EPLL_CLK.
+>=20
+> In order to preserve state of the USER_MUX_MAU_EPLL_CLK clock mux
+> during system suspend/resume cycle for Exynos5800 we group the MAU
+> block input clocks in "MAU" sub-CMU and add the clock mux control
+> bit to .suspend_regs.  This ensures that user configuration of the mux
+> is not lost after the PMU block changes the mux setting to OSC_DIV
+> when switching off the MAU power domain.
+>=20
+> Adding the SRC_TOP9 register to exynos5800_clk_regs[] array is not
+> sufficient as at the time of the syscore_ops suspend call MAU power
+> domain is already turned off and we already save and subsequently
+> restore an incorrect register's value.
 >=20
 > Fixes: b06a532bf1fa ("clk: samsung: Add Exynos5 sub-CMU clock driver")
+> Reported-by: Jaafar Ali <jaafarkhalaf@gmail.com>
+> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > Tested-by: Jaafar Ali <jaafarkhalaf@gmail.com>
 > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
