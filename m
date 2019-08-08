@@ -1,30 +1,71 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2 1/2] clk: samsung: Change signature of
- exynos5_subcmus_init() function
-Date: Thu, 8 Aug 2019 16:57:07 +0200
-Message-ID: <f8358f6b-a9a2-55e8-ab5e-aa64da6a0917@samsung.com>
-References: <CGME20190808144936eucas1p2e65eddc3d970de35590cb84fe200b438@eucas1p2.samsung.com>
-        <20190808144929.18685-1-s.nawrocki@samsung.com>
+From: Leonard Crestez <leonard.crestez@nxp.com>
+Subject: Re: [RFC PATCH 09/11] devfreq: exynos-bus: Add interconnect
+ functionality to exynos-bus
+Date: Thu, 8 Aug 2019 15:00:57 +0000
+Message-ID: <VI1PR04MB7023B5095F706635354C4C50EED70@VI1PR04MB7023.eurprd04.prod.outlook.com>
+References: <20190723122016.30279-1-a.swigon@partner.samsung.com>
+ <CGME20190723122028eucas1p2eb75f35b810e71d6c590370aaff0997b@eucas1p2.samsung.com>
+ <20190723122016.30279-10-a.swigon@partner.samsung.com>
+ <5a82bf8a-d925-ba54-a26f-98b64bedc6e1@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190808144929.18685-1-s.nawrocki@samsung.com>
-Content-Language: en-GB
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: sboyd@kernel.org, mturquette@baylibre.com
-Cc: linux@armlinux.org.uk, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, krzk@kernel.org, cw00.choi@samsung.com, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
+To: Chanwoo Choi <cw00.choi@samsung.com>, =?utf-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>, "georgi.djakov@linaro.org" <georgi.djakov@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "krzk@kernel.org" <krzk@kernel.org>, "myungjoo.ham@samsung.com" <myungjoo.ham@samsung.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Saravana Kannan <saravanak@google.com>, Lukasz Luba <l.luba@partner.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 8/8/19 16:49, Sylwester Nawrocki wrote:
-> In order to make it easier in subsequent patch to create different subcmu
-> lists for exynos5420 and exynos5800 SoCs the code is rewritten so we pass
-> an array of pointers to the subcmus initialization function.
-> 
-> Fixes: b06a532bf1fa ("clk: samsung: Add Exynos5 sub-CMU clock driver")
-> Tested-by: Jaafar Ali <jaafarkhalaf@gmail.com>
-
-I should have also added here
- Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+T24gMjkuMDcuMjAxOSAwNDo0OSwgQ2hhbndvbyBDaG9pIHdyb3RlOgo+IE9uIDE5LiA3LiAyMy4g
+7Jik7ZuEIDk6MjAsIEFydHVyIMWad2lnb8WEIHdyb3RlOgo+PiBUaGlzIHBhdGNoIGFkZHMgaW50
+ZXJjb25uZWN0IGZ1bmN0aW9uYWxpdHkgdG8gdGhlIGV4eW5vcy1idXMgZGV2ZnJlcQo+PiBkcml2
+ZXIuCj4+Cj4+IFRoZSBkZXZmcmVxIHRhcmdldCgpIGNhbGxiYWNrIHByb3ZpZGVkIGJ5IGV4eW5v
+cy1idXMgbm93IHNlbGVjdHMgZWl0aGVyIHRoZQo+PiBmcmVxdWVuY3kgY2FsY3VsYXRlZCBieSB0
+aGUgZGV2ZnJlcSBnb3Zlcm5vciBvciB0aGUgZnJlcXVlbmN5IHJlcXVlc3RlZCB2aWEKPj4gdGhl
+IGludGVyY29ubmVjdCBBUEkgZm9yIHRoZSBnaXZlbiBub2RlLCB3aGljaGV2ZXIgaXMgaGlnaGVy
+Lgo+IAo+IEJhc2ljYWxseSwgSSBhZ3JlZSB0byBzdXBwb3J0IHRoZSBRb1MgcmVxdWlyZW1lbnQg
+YmV0d2VlbiBkZXZpY2VzLgo+IEJ1dCwgSSB0aGluayB0aGF0IG5lZWQgdG8gY29uc2lkZXIgdGhl
+IG11bHRpcGxlIGNhc2VzLgo+IAo+IDEuIFdoZW4gY2hhbmdpbmcgdGhlIGRldmZyZXEgZ292ZXJu
+b3IgYnkgdXNlciwKPiBGb3IgZXhhbXBsZSBvZiB0aGUgY29ubmVjdGlvbiBiZXR3ZWVuIGJ1c19k
+bWMvbGVmdGJ1cy9kaXNwbGF5IG9uIHBhdGNoOCwKPiB0aGVyZSBhcmUgcG9zc2libGUgbXVsdGlw
+bGUgY2FzZXMgd2l0aCB2YXJpb3VzIGRldmZyZXEgZ292ZXJub3IKPiB3aGljaCBpcyBjaGFuZ2Vk
+IG9uIHRoZSBydW50aW1lIGJ5IHVzZXIgdGhyb3VnaCBzeXNmcyBpbnRlcmZhY2UuCj4gCj4gSWYg
+dXNlcnMgY2hhbmdlcyB0aGUgZGV2ZnJlcSBnb3Zlcm5vciBhcyBmb2xsb3dpbmc6Cj4gQmVmb3Jl
+LAo+IC0gYnVzX2RtYyAoc2ltcGxlX29uZGVtYW5kLCBhdmFpbGFibGUgZnJlcXVlbmN5IDEwMC8y
+MDAvMzAwLzQwMCBNSHopCj4gLS0+IGJ1c19sZWZ0YnVzKHNpbXBsZV9vbmRlbWFuZCwgYXZhaWxh
+YmxlIGZyZXF1ZW5jeSAxMDAvMjAwLzMwMC80MDAgTUh6KQo+IC0tLS0+IGJ1c19kaXNwbGF5KHBh
+c3NpdmUpCj4gCj4gQWZ0ZXIgY2hhbmdlZCBnb3Zlcm5vciBvZiBidXNfZG1jLAo+IGlmIHRoZSBt
+aW5fZnJlcSBieSBpbnRlcmNvbm5lY3QgcmVxdWlyZW1lbnQgaXMgNDAwTWh6LAo+IC0gYnVzX2Rt
+YyAocG93ZXJzYXZlKSA6IG1pbl9mcmVxIGFuZCBtYXhfZnJlcSBhbmQgY3VyX2ZyZXEgaXMgMTAw
+TUh6Cj4gLS0+IGJ1c19sZWZ0YnVzKHNpbXBsZV9vbmRlbWFuZCkgOiBjdXJfZnJlcSBpcyA0MDBN
+aHoKPiAtLS0tPiBidXNfZGlzcGxheShwYXNzaXZlKQo+IAo+IFRoZSBmaW5hbCBmcmVxdWVuY3kg
+aXMgNDAwTUh6IG9mIGJ1c19kbWMKPiBldmVuIGlmIHRoZSBtaW5fZnJlcS9tYXhfZnJlcS9jdXJf
+ZnJlcSBpcyAxMDBNSHouCj4gSXQgY2Fubm90IHNob3cgdGhlIGNvcnJlY3QgbWluX2ZyZXEvbWF4
+X2ZyZXEgdGhyb3VnaAo+IGRldmZyZXEgc3lzZnMgaW50ZXJmYWNlLgo+IAo+IAo+IDIuIFdoZW4g
+ZGlzYWJsaW5nIHRoZSBzb21lIGZyZXF1ZW5jeSBieSBkZXZmcmVxLXRoZXJtYWwgdGhyb3R0bGlu
+ZywKPiBUaGlzIHBhdGNoIGNoZWNrcyB0aGUgbWluX2ZyZXEgb2YgaW50ZXJjb25uZWN0IHJlcXVp
+cmVtZW50Cj4gaW4gdGhlIGV4eW5vc19idXNfdGFyZ2V0KCkgYW5kIGV4eW5vc19idXNfcGFzc2l2
+ZV90YXJnZXQoKS4KPiBBbHNvLCBpdCBjYW5ub3Qgc2hvdyB0aGUgY29ycmVjdCBtaW5fZnJlcS9t
+YXhfZnJlcSB0aHJvdWdoCj4gZGV2ZnJlcSBzeXNmcyBpbnRlcmZhY2UuCj4gCj4gRm9yIGV4YW1w
+bGUgb2YgYnVzX2RtYyBidXMsCj4gLSBUaGUgYXZhaWxhYmxlIGZyZXF1ZW5jaWVzIGFyZSAxMDBN
+SHosIDIwME1IeiwgMzAwTUh6LCA0MDBNSHoKPiAtIERpc2FibGUgNDAwTUh6IGJ5IGRldmZyZXEt
+dGhlcm1hbCB0aHJvdHRsaW5nCj4gLSBtaW5fZnJlcSBpcyAxMDBNSHoKPiAtIG1heF9mcmVxIGlz
+IDMwME1Iego+IC0gbWluX2ZyZXEgb2YgaW50ZXJjb25uZWN0IGlzIDQwME1Iego+IAo+IEluIHJl
+c3VsdCwgdGhlIGZpbmFsIGZyZXF1ZW5jeSBpcyA0MDBNSHogYnkgZXh5bm9zX2J1c190YXJnZXQo
+KQo+IFRoZXJlIGFyZSBubyBwcm9ibGVtIGZvciB3b3JraW5nLiBCdXQsIHRoZSB1c2VyIGNhbm5v
+dCBrbm93Cj4gcmVhc29uIHdoeSBjdXJfZnJlcSBpcyA0MDBNSHogZXZlbiBpZiBtYXhfZnJlcSBp
+cyAzMDBNSHouCj4gCj4gQmFzaWNhbGx5LCB1cGRhdGVfZGV2ZnJlcSgpIGNvbnNpZGVycyB0aGUg
+YWxsIGNvbnN0cmFpbnRzCj4gb2YgbWluX2ZyZXEvbWF4X2ZyZXEgdG8gZGVjaWRlIHRoZSBwcm9w
+ZXIgdGFyZ2V0IGZyZXF1ZW5jeS4KCkkgdGhpbmsgdGhhdCBhcHBseWluZyB0aGUgaW50ZXJjb25u
+ZWN0IG1pbl9mcmVxIHZpYSBkZXZfcG1fcW9zIGNhbiBoZWxwIAp3aXRoIG1hbnkgb2YgdGhlc2Ug
+Y29uY2VybnM6IHVwZGF0ZV9kZXZmcmVxIGNvbnRyb2xzIGFsbCB0aGUgbWluL21heCAKaGFuZGxp
+bmcsIHN5c2ZzIGlzIGFjY3VyYXRlIGFuZCBiZXR0ZXIgZGVjaXNpb25zIGNhbiBiZSBtYWRlIHJl
+Z2FyZGluZyAKdGhlcm1hbC4gRW5mb3JjaW5nIGNvbnN0cmFpbnRzIGluIHRoZSBjb3JlIGlzIGRl
+ZmluaXRlbHkgYmV0dGVyLgoKVGhpcyB3b3VsZG4ndCBldmVuIGJlIGEgdmVyeSBiaWcgY2hhbmdl
+LCB5b3UgZG9uJ3QgbmVlZCB0byBhY3R1YWxseSBtb3ZlIAp0aGUgaW50ZXJjb25uZWN0IGNvZGUg
+b3V0c2lkZSBvZiBkZXZmcmVxLiBKdXN0IG1ha2UgZXZlcnkgZGV2ZnJlcS9pY2MgCm5vZGUgcmVn
+aXN0ZXIgYSBkZXZfcG1fcW9zX3JlcXVlc3QgZm9yIGl0c2VsZiBkdXJpbmcgcmVnaXN0cmF0aW9u
+IGFuZCAKY2FsbCBkZXZfcG1fcW9zX3VwZGF0ZV9yZXF1ZXN0IGluc2lkZSBleHlub3NfYnVzX2lj
+Y19zZXQuCgpTZWU6IGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTEwODQyNzkv
+CgotLQpSZWdhcmRzLApMZW9uYXJkCg==
