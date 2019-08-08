@@ -1,62 +1,145 @@
 From: Artur =?UTF-8?Q?=C5=9Awigo=C5=84?= <a.swigon@partner.samsung.com>
 Subject: Re: [RFC PATCH 09/11] devfreq: exynos-bus: Add interconnect
  functionality to exynos-bus
-Date: Thu, 08 Aug 2019 15:19:23 +0200
-Message-ID: <7f4eeef81c2688c2cb18b7aae71d457197c6d018.camel@partner.samsung.com>
+Date: Thu, 08 Aug 2019 15:28:09 +0200
+Message-ID: <b4d52e266a904aca3ecf8e5a4a6dced91dddf539.camel@partner.samsung.com>
 References: <20190723122016.30279-1-a.swigon@partner.samsung.com>
         <CGME20190723122028eucas1p2eb75f35b810e71d6c590370aaff0997b@eucas1p2.samsung.com>
         <20190723122016.30279-10-a.swigon@partner.samsung.com>
-        <VI1PR04MB5055BED59960B4F4147479AEEED50@VI1PR04MB5055.eurprd04.prod.outlook.com>
+        <6e8b2081-2fb3-9ab8-37d1-8b5fe5fd8e11@linaro.org>
+        <62557522be4924a01d3822d4734c30f2965c608b.camel@partner.samsung.com>
+        <4155482f-8f8f-a659-63ba-25701540b2c5@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <VI1PR04MB5055BED59960B4F4147479AEEED50@VI1PR04MB5055.eurprd04.prod.outlook.com>
+In-Reply-To: <4155482f-8f8f-a659-63ba-25701540b2c5@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Leonard Crestez <leonard.crestez@nxp.com>, Georgi Djakov <georgi.djakov@linaro.org>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "krzk@kernel.org" <krzk@kernel.org>, "cw00.choi@samsung.com" <cw00.choi@samsung.com>, "myungjoo.ham@samsung.com" <myungjoo.ham@samsung.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>
+To: Georgi Djakov <georgi.djakov@linaro.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: krzk@kernel.org, cw00.choi@samsung.com, myungjoo.ham@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, m.szyprowski@samsung.com, =?UTF-8?Q?Bart=C5=82omiej_?= =?UTF-8?Q?=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi,
 
-Thank you for your comments.
-
-On Tue, 2019-08-06 at 13:41 +0000, Leonard Crestez wrote:
-> On 23.07.2019 15:21, Artur Świgoń wrote:
+On Wed, 2019-08-07 at 17:21 +0300, Georgi Djakov wrote:
+> Hi Artur,
 > 
-> > +static int exynos_bus_icc_aggregate(struct icc_node *node, u32 avg_bw,
-> > +				    u32 peak_bw, u32 *agg_avg, u32 *agg_peak)
-> > +{
-> > +	*agg_peak = *agg_avg = peak_bw;
-> > +
-> > +	return 0;
-> > +}
+> On 8/1/19 10:59, Artur Świgoń wrote:
+> > Hi Georgi,
+> > 
+> > On Fri, 2019-07-26 at 11:05 +0300, Georgi Djakov wrote:
+> > > Hi Artur,
+> > > 
+> > > On 7/23/19 15:20, Artur Świgoń wrote:
+> > > > This patch adds interconnect functionality to the exynos-bus devfreq
+> > > > driver.
+> > > > 
+> > > > The SoC topology is a graph (or, more specifically, a tree) and most of
+> > > > its
+> > > > edges are taken from the devfreq parent-child hierarchy (cf.
+> > > > Documentation/devicetree/bindings/devfreq/exynos-bus.txt). The previous
+> > > > patch adds missing edges to the DT (under the name 'parent'). Due to
+> > > > unspecified relative probing order, -EPROBE_DEFER may be propagated to
+> > > > guarantee that a child is probed before its parent.
+> > > > 
+> > > > Each bus is now an interconnect provider and an interconnect node as
+> > > > well
+> > > > (cf. Documentation/interconnect/interconnect.rst), i.e. every bus
+> > > > registers
+> > > > itself as a node. Node IDs are not hardcoded but rather assigned at
+> > > > runtime, in probing order (subject to the above-mentioned exception
+> > > > regarding relative order). This approach allows for using this driver
+> > > > with
+> > > > various Exynos SoCs.
+> > > 
+> > > I am not familiar with the Exynos bus topology, but it seems to me that
+> > > it's not
+> > > represented correctly. An interconnect provider with just a single node
+> > > (port)
+> > > is odd. I would expect that each provider consists of multiple master and
+> > > slave
+> > > nodes. This data would be used by a framework to understand what are the
+> > > links
+> > > and how the traffic flows between the IP blocks and through which buses.
+> > 
+> > To summarize the exynos-bus topology[1] used by the devfreq driver: There
+> > are
+> > many data buses for data transfer in Samsung Exynos SoC. Every bus has its
+> > own
+> > clock. Buses often share power lines, in which case one of the buses on the
+> > power line is referred to as 'parent' (or as 'devfreq' in the DT). In the
+> > particular case of Exynos4412[1][2], the topology can be expressed as
+> > follows:
+> > 
+> > bus_dmc
+> > -- bus_acp
+> > -- bus_c2c
+> > 
+> > bus_leftbus
+> > -- bus_rightbus
+> > -- bus_display
+> > -- bus_fsys
+> > -- bus_peri
+> > -- bus_mfc
+> > 
+> > Where bus_dmc and bus_leftbus probably could be referred to as masters, and
+> > the
+> > following indented nodes as slaves. Patch 08/11 of this RFC additionally
+> > adds
+> > the following to the DT:
+> > 
+> > bus_dmc
+> > -- bus_leftbus
+> > 
+> > Which makes the topology a valid tree.
+> > 
+> > The exynos-bus concept in devfreq[3] is designed in such a way that every
+> > bus is
+> > probed separately as a platform device, and is a largely independent entity.
+> > 
+> > This RFC proposes an extension to the existing devfreq driver that basically
+> > provides a simple QoS to ensure minimum clock frequency for selected buses
+> > (possibly overriding devfreq governor calculations) using the interconnect
+> > framework.
+> > 
+> > The hierarchy is modelled in such a way that every bus is an interconnect
+> > node.
+> > On the other hand, what is considered an interconnect provider here is quite
+> > arbitrary, but for the reasons mentioned in the above paragraph, this RFC
+> > assumes that every bus is a provider of itself as a node. Using an
+> > alternative
 > 
-> The only current provider aggregates "avg" with "sum" and "peak" with 
-> "max", any particular reason to do something different? This function 
-> doesn't even really do aggregation, if there is a second request for "0" 
-> then the first request is lost.
-
-Yes, you're right. I adopted an oversimplified solution for the purpose of this
-RFC (please bear in mind that currently only one icc_path is used, so there is
-no aggregation anyway).
-
-> I didn't find any docs but my interpretation of avg/peak is that "avg" 
-> is for constant traffic like a display or VPU pushing pixels and "peak" 
-> is for variable traffic like networking. I assume devices which make 
-> "peak" requests are aggregated with max because they're not expected to 
-> all max-out together.
-
-That's correct (according to my understanding).
-
-> In PATCH 11 you're making a bandwidth request based on resolution, that 
-> traffic is constant and guaranteed to happend while the display is on so 
-> it would make sense to request it as an "avg" and aggregate it with "sum".
+> IIUC, in case we want to transfer data between the display and the memory
+> controller, the path would look like this:
 > 
-> --
-> Regards,
-> Leonard
+> display --> bus_display --> bus_leftbus --> bus_dmc --> memory
 > 
+> But the bus_display for example would have not one, but two nodes (ports),
+> right?  One representing the link to the display controller and another one
+> representing the link to bus_leftbus? So i think that all the buses should
+> have at least two nodes, to represent each end of the wire.
+
+I do not think we really need that for our simple tree hierarchy. Of course, I
+can split every tree node into two nodes/ports (e.g., 'in' for children and
+'out' for parent), but neither 'display' nor 'memory' from your diagram above
+are registered with the interconnect framework (only buses are). The devfreq
+devices used in the driver are virtual anyway.
+
+> > singleton provider approach was deemed more complicated since the 'dev'
+> > field in
+> > 'struct icc_provider' has to be set to something meaningful and we are tied
+> > to
+> > the 'samsung,exynos-bus' compatible string in the driver (and multiple
+> > instances
+> > of exynos-bus probed in indeterminate relative order).
+> > 
+> 
+> Sure, the rest makes sense to me.
+> 
+> Thanks,
+> Georgi
+
+Regards,
 -- 
 Artur Świgoń
 Samsung R&D Institute Poland
