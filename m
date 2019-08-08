@@ -1,10 +1,10 @@
 From: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Subject: [RESEND PATCH v5 1/4] devfreq: exynos-bus: correct clock enable
- sequence
-Date: Thu,  8 Aug 2019 11:02:31 +0200
-Message-ID: <20190808090234.12577-2-k.konieczny@partner.samsung.com>
+Subject: [RESEND PATCH v5 3/4] ARM: dts: exynos: add initial data for
+ coupled regulators for Exynos5422/5800
+Date: Thu,  8 Aug 2019 11:02:33 +0200
+Message-ID: <20190808090234.12577-4-k.konieczny@partner.samsung.com>
 References: <20190808090234.12577-1-k.konieczny@partner.samsung.com>
-        <CGME20190808090250eucas1p11b4cc8ada0e3442dcde604a5d4ef89e4@eucas1p1.samsung.com>
+        <CGME20190808090252eucas1p2afec3e288965bb7e7aa6f96f67686273@eucas1p2.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -12,104 +12,259 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190808090234.12577-1-k.konieczny@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: k.konieczny@partner.samsung.com
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Mark Rutland <mark.rutland@arm.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Mark Rutland <mark.rutland@arm.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Regulators should be enabled before clocks to avoid h/w hang. This
-require change in exynos_bus_probe() to move exynos_bus_parse_of()
-after exynos_bus_parent_parse_of() and change in error handling.
-Similar change is needed in exynos_bus_exit() where clock should be
-disabled before regulators.
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
+Declare Exynos5422/5800 voltage ranges for opp points for big cpu core and
+bus wcore and couple their voltage supllies as vdd_arm and vdd_int should
+be in 300mV range.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+[k.konieczny: add missing patch description]
 Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
-Changes:
-v5:
-- added Acked-by tag
-v4:
-- move regulator disable after clock disable
-- remove unrelated changes
-- add disabling regulators in error path in exynos_bus_probe()
+ arch/arm/boot/dts/exynos5420.dtsi             | 34 +++++++++----------
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi |  4 +++
+ arch/arm/boot/dts/exynos5800-peach-pi.dts     |  4 +++
+ arch/arm/boot/dts/exynos5800.dtsi             | 32 ++++++++---------
+ 4 files changed, 41 insertions(+), 33 deletions(-)
 
----
- drivers/devfreq/exynos-bus.c | 31 +++++++++++++++++--------------
- 1 file changed, 17 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-index 486cc5b422f1..f34fa26f00d0 100644
---- a/drivers/devfreq/exynos-bus.c
-+++ b/drivers/devfreq/exynos-bus.c
-@@ -194,11 +194,10 @@ static void exynos_bus_exit(struct device *dev)
- 	if (ret < 0)
- 		dev_warn(dev, "failed to disable the devfreq-event devices\n");
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 5fb2326875dc..0cbf74750553 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -48,62 +48,62 @@
+ 			opp-shared;
+ 			opp-1800000000 {
+ 				opp-hz = /bits/ 64 <1800000000>;
+-				opp-microvolt = <1250000>;
++				opp-microvolt = <1250000 1250000 1500000>;
+ 				clock-latency-ns = <140000>;
+ 			};
+ 			opp-1700000000 {
+ 				opp-hz = /bits/ 64 <1700000000>;
+-				opp-microvolt = <1212500>;
++				opp-microvolt = <1212500 1212500 1500000>;
+ 				clock-latency-ns = <140000>;
+ 			};
+ 			opp-1600000000 {
+ 				opp-hz = /bits/ 64 <1600000000>;
+-				opp-microvolt = <1175000>;
++				opp-microvolt = <1175000 1175000 1500000>;
+ 				clock-latency-ns = <140000>;
+ 			};
+ 			opp-1500000000 {
+ 				opp-hz = /bits/ 64 <1500000000>;
+-				opp-microvolt = <1137500>;
++				opp-microvolt = <1137500 1137500 1500000>;
+ 				clock-latency-ns = <140000>;
+ 			};
+ 			opp-1400000000 {
+ 				opp-hz = /bits/ 64 <1400000000>;
+-				opp-microvolt = <1112500>;
++				opp-microvolt = <1112500 1112500 1500000>;
+ 				clock-latency-ns = <140000>;
+ 			};
+ 			opp-1300000000 {
+ 				opp-hz = /bits/ 64 <1300000000>;
+-				opp-microvolt = <1062500>;
++				opp-microvolt = <1062500 1062500 1500000>;
+ 				clock-latency-ns = <140000>;
+ 			};
+ 			opp-1200000000 {
+ 				opp-hz = /bits/ 64 <1200000000>;
+-				opp-microvolt = <1037500>;
++				opp-microvolt = <1037500 1037500 1500000>;
+ 				clock-latency-ns = <140000>;
+ 			};
+ 			opp-1100000000 {
+ 				opp-hz = /bits/ 64 <1100000000>;
+-				opp-microvolt = <1012500>;
++				opp-microvolt = <1012500 1012500 1500000>;
+ 				clock-latency-ns = <140000>;
+ 			};
+ 			opp-1000000000 {
+ 				opp-hz = /bits/ 64 <1000000000>;
+-				opp-microvolt = < 987500>;
++				opp-microvolt = < 987500 987500 1500000>;
+ 				clock-latency-ns = <140000>;
+ 			};
+ 			opp-900000000 {
+ 				opp-hz = /bits/ 64 <900000000>;
+-				opp-microvolt = < 962500>;
++				opp-microvolt = < 962500 962500 1500000>;
+ 				clock-latency-ns = <140000>;
+ 			};
+ 			opp-800000000 {
+ 				opp-hz = /bits/ 64 <800000000>;
+-				opp-microvolt = < 937500>;
++				opp-microvolt = < 937500 937500 1500000>;
+ 				clock-latency-ns = <140000>;
+ 			};
+ 			opp-700000000 {
+ 				opp-hz = /bits/ 64 <700000000>;
+-				opp-microvolt = < 912500>;
++				opp-microvolt = < 912500 912500 1500000>;
+ 				clock-latency-ns = <140000>;
+ 			};
+ 		};
+@@ -1100,23 +1100,23 @@
  
--	if (bus->regulator)
--		regulator_disable(bus->regulator);
--
- 	dev_pm_opp_of_remove_table(dev);
- 	clk_disable_unprepare(bus->clk);
-+	if (bus->regulator)
-+		regulator_disable(bus->regulator);
- }
+ 			opp00 {
+ 				opp-hz = /bits/ 64 <84000000>;
+-				opp-microvolt = <925000>;
++				opp-microvolt = <925000 925000 1400000>;
+ 			};
+ 			opp01 {
+ 				opp-hz = /bits/ 64 <111000000>;
+-				opp-microvolt = <950000>;
++				opp-microvolt = <950000 950000 1400000>;
+ 			};
+ 			opp02 {
+ 				opp-hz = /bits/ 64 <222000000>;
+-				opp-microvolt = <950000>;
++				opp-microvolt = <950000 950000 1400000>;
+ 			};
+ 			opp03 {
+ 				opp-hz = /bits/ 64 <333000000>;
+-				opp-microvolt = <950000>;
++				opp-microvolt = <950000 950000 1400000>;
+ 			};
+ 			opp04 {
+ 				opp-hz = /bits/ 64 <400000000>;
+-				opp-microvolt = <987500>;
++				opp-microvolt = <987500 987500 1400000>;
+ 			};
+ 		};
  
- /*
-@@ -386,6 +385,7 @@ static int exynos_bus_probe(struct platform_device *pdev)
- 	struct exynos_bus *bus;
- 	int ret, max_state;
- 	unsigned long min_freq, max_freq;
-+	bool passive = false;
+diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+index 25d95de15c9b..65d094256b54 100644
+--- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+@@ -428,6 +428,8 @@
+ 				regulator-max-microvolt = <1500000>;
+ 				regulator-always-on;
+ 				regulator-boot-on;
++				regulator-coupled-with = <&buck3_reg>;
++				regulator-coupled-max-spread = <300000>;
+ 			};
  
- 	if (!np) {
- 		dev_err(dev, "failed to find devicetree node\n");
-@@ -399,27 +399,27 @@ static int exynos_bus_probe(struct platform_device *pdev)
- 	bus->dev = &pdev->dev;
- 	platform_set_drvdata(pdev, bus);
+ 			buck3_reg: BUCK3 {
+@@ -436,6 +438,8 @@
+ 				regulator-max-microvolt = <1400000>;
+ 				regulator-always-on;
+ 				regulator-boot-on;
++				regulator-coupled-with = <&buck2_reg>;
++				regulator-coupled-max-spread = <300000>;
+ 			};
  
--	/* Parse the device-tree to get the resource information */
--	ret = exynos_bus_parse_of(np, bus);
--	if (ret < 0)
--		return ret;
--
- 	profile = devm_kzalloc(dev, sizeof(*profile), GFP_KERNEL);
--	if (!profile) {
--		ret = -ENOMEM;
--		goto err;
--	}
-+	if (!profile)
-+		return -ENOMEM;
+ 			buck4_reg: BUCK4 {
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index e0f470fe54c8..5c1e965ed7e9 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -257,6 +257,8 @@
+ 				regulator-always-on;
+ 				regulator-boot-on;
+ 				regulator-ramp-delay = <12500>;
++				regulator-coupled-with = <&buck3_reg>;
++				regulator-coupled-max-spread = <300000>;
+ 				regulator-state-mem {
+ 					regulator-off-in-suspend;
+ 				};
+@@ -269,6 +271,8 @@
+ 				regulator-always-on;
+ 				regulator-boot-on;
+ 				regulator-ramp-delay = <12500>;
++				regulator-coupled-with = <&buck2_reg>;
++				regulator-coupled-max-spread = <300000>;
+ 				regulator-state-mem {
+ 					regulator-off-in-suspend;
+ 				};
+diff --git a/arch/arm/boot/dts/exynos5800.dtsi b/arch/arm/boot/dts/exynos5800.dtsi
+index 57d3b319fd65..2a74735d161c 100644
+--- a/arch/arm/boot/dts/exynos5800.dtsi
++++ b/arch/arm/boot/dts/exynos5800.dtsi
+@@ -22,61 +22,61 @@
  
- 	node = of_parse_phandle(dev->of_node, "devfreq", 0);
- 	if (node) {
- 		of_node_put(node);
--		goto passive;
-+		passive = true;
- 	} else {
- 		ret = exynos_bus_parent_parse_of(np, bus);
-+		if (ret < 0)
-+			return ret;
- 	}
- 
-+	/* Parse the device-tree to get the resource information */
-+	ret = exynos_bus_parse_of(np, bus);
- 	if (ret < 0)
--		goto err;
-+		goto err_reg;
-+
-+	if (passive)
-+		goto passive;
- 
- 	/* Initialize the struct profile and governor data for parent device */
- 	profile->polling_ms = 50;
-@@ -510,6 +510,9 @@ static int exynos_bus_probe(struct platform_device *pdev)
- err:
- 	dev_pm_opp_of_remove_table(dev);
- 	clk_disable_unprepare(bus->clk);
-+err_reg:
-+	if (!passive)
-+		regulator_disable(bus->regulator);
- 
- 	return ret;
- }
+ &cluster_a15_opp_table {
+ 	opp-1700000000 {
+-		opp-microvolt = <1250000>;
++		opp-microvolt = <1250000 1250000 1500000>;
+ 	};
+ 	opp-1600000000 {
+-		opp-microvolt = <1250000>;
++		opp-microvolt = <1250000 1250000 1500000>;
+ 	};
+ 	opp-1500000000 {
+-		opp-microvolt = <1100000>;
++		opp-microvolt = <1100000 1100000 1500000>;
+ 	};
+ 	opp-1400000000 {
+-		opp-microvolt = <1100000>;
++		opp-microvolt = <1100000 1100000 1500000>;
+ 	};
+ 	opp-1300000000 {
+-		opp-microvolt = <1100000>;
++		opp-microvolt = <1100000 1100000 1500000>;
+ 	};
+ 	opp-1200000000 {
+-		opp-microvolt = <1000000>;
++		opp-microvolt = <1000000 1000000 1500000>;
+ 	};
+ 	opp-1100000000 {
+-		opp-microvolt = <1000000>;
++		opp-microvolt = <1000000 1000000 1500000>;
+ 	};
+ 	opp-1000000000 {
+-		opp-microvolt = <1000000>;
++		opp-microvolt = <1000000 1000000 1500000>;
+ 	};
+ 	opp-900000000 {
+-		opp-microvolt = <1000000>;
++		opp-microvolt = <1000000 1000000 1500000>;
+ 	};
+ 	opp-800000000 {
+-		opp-microvolt = <900000>;
++		opp-microvolt = <900000 900000 1500000>;
+ 	};
+ 	opp-700000000 {
+-		opp-microvolt = <900000>;
++		opp-microvolt = <900000 900000 1500000>;
+ 	};
+ 	opp-600000000 {
+ 		opp-hz = /bits/ 64 <600000000>;
+-		opp-microvolt = <900000>;
++		opp-microvolt = <900000 900000 1500000>;
+ 		clock-latency-ns = <140000>;
+ 	};
+ 	opp-500000000 {
+ 		opp-hz = /bits/ 64 <500000000>;
+-		opp-microvolt = <900000>;
++		opp-microvolt = <900000 900000 1500000>;
+ 		clock-latency-ns = <140000>;
+ 	};
+ 	opp-400000000 {
+ 		opp-hz = /bits/ 64 <400000000>;
+-		opp-microvolt = <900000>;
++		opp-microvolt = <900000 900000 1500000>;
+ 		clock-latency-ns = <140000>;
+ 	};
+ 	opp-300000000 {
+ 		opp-hz = /bits/ 64 <300000000>;
+-		opp-microvolt = <900000>;
++		opp-microvolt = <900000 900000 1500000>;
+ 		clock-latency-ns = <140000>;
+ 	};
+ 	opp-200000000 {
+ 		opp-hz = /bits/ 64 <200000000>;
+-		opp-microvolt = <900000>;
++		opp-microvolt = <900000 900000 1500000>;
+ 		clock-latency-ns = <140000>;
+ 	};
+ };
 -- 
 2.22.0
