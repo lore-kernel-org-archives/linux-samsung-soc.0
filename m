@@ -1,188 +1,155 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 1/2] clk: samsung: Change signature of
- exynos5_subcmus_init() function
-Date: Thu,  8 Aug 2019 16:49:28 +0200
-Message-ID: <20190808144929.18685-1-s.nawrocki@samsung.com>
-References: <CGME20190808144936eucas1p2e65eddc3d970de35590cb84fe200b438@eucas1p2.samsung.com>
+Subject: [PATCH v2 2/2] clk: samsung: exynos5800: Move MAU subsystem clocks
+ to MAU sub-CMU
+Date: Thu,  8 Aug 2019 16:49:29 +0200
+Message-ID: <20190808144929.18685-2-s.nawrocki@samsung.com>
+References: <20190808144929.18685-1-s.nawrocki@samsung.com>
+        <CGME20190808144941eucas1p1b6ba7aadd0c31aedf765a0f90ed6213f@eucas1p1.samsung.com>
 Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190808144929.18685-1-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: sboyd@kernel.org, mturquette@baylibre.com
 Cc: linux@armlinux.org.uk, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, krzk@kernel.org, cw00.choi@samsung.com, m.szyprowski@samsung.com, b.zolnierkie@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-In order to make it easier in subsequent patch to create different subcmu
-lists for exynos5420 and exynos5800 SoCs the code is rewritten so we pass
-an array of pointers to the subcmus initialization function.
+This patch fixes broken sound on Exynos5422/5800 platforms after
+system/suspend resume cycle in cases where the audio root clock
+is derived from MAU_EPLL_CLK.
+
+In order to preserve state of the USER_MUX_MAU_EPLL_CLK clock mux
+during system suspend/resume cycle for Exynos5800 we group the MAU
+block input clocks in "MAU" sub-CMU and add the clock mux control
+bit to .suspend_regs.  This ensures that user configuration of the mux
+is not lost after the PMU block changes the mux setting to OSC_DIV
+when switching off the MAU power domain.
+
+Adding the SRC_TOP9 register to exynos5800_clk_regs[] array is not
+sufficient as at the time of the syscore_ops suspend call MAU power
+domain is already turned off and we already save and subsequently
+restore an incorrect register's value.
 
 Fixes: b06a532bf1fa ("clk: samsung: Add Exynos5 sub-CMU clock driver")
+Reported-by: Jaafar Ali <jaafarkhalaf@gmail.com>
+Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Tested-by: Jaafar Ali <jaafarkhalaf@gmail.com>
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
 Changes since v1:
- - added "Fixes" tag.
+ - added comment to the exynos5800_mau_suspend_regs[] array entry
 ---
- drivers/clk/samsung/clk-exynos5-subcmu.c | 16 +++----
- drivers/clk/samsung/clk-exynos5-subcmu.h |  2 +-
- drivers/clk/samsung/clk-exynos5250.c     |  7 ++-
- drivers/clk/samsung/clk-exynos5420.c     | 60 ++++++++++++++----------
- 4 files changed, 49 insertions(+), 36 deletions(-)
+ drivers/clk/samsung/clk-exynos5420.c | 54 ++++++++++++++++++++++------
+ 1 file changed, 43 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsung/clk-exynos5-subcmu.c
-index 91db7894125d..65c82d922b05 100644
---- a/drivers/clk/samsung/clk-exynos5-subcmu.c
-+++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
-@@ -14,7 +14,7 @@
- #include "clk-exynos5-subcmu.h"
- 
- static struct samsung_clk_provider *ctx;
--static const struct exynos5_subcmu_info *cmu;
-+static const struct exynos5_subcmu_info **cmu;
- static int nr_cmus;
- 
- static void exynos5_subcmu_clk_save(void __iomem *base,
-@@ -56,17 +56,17 @@ static void exynos5_subcmu_defer_gate(struct samsung_clk_provider *ctx,
-  * when OF-core populates all device-tree nodes.
-  */
- void exynos5_subcmus_init(struct samsung_clk_provider *_ctx, int _nr_cmus,
--			  const struct exynos5_subcmu_info *_cmu)
-+			  const struct exynos5_subcmu_info **_cmu)
- {
- 	ctx = _ctx;
- 	cmu = _cmu;
- 	nr_cmus = _nr_cmus;
- 
- 	for (; _nr_cmus--; _cmu++) {
--		exynos5_subcmu_defer_gate(ctx, _cmu->gate_clks,
--					  _cmu->nr_gate_clks);
--		exynos5_subcmu_clk_save(ctx->reg_base, _cmu->suspend_regs,
--					_cmu->nr_suspend_regs);
-+		exynos5_subcmu_defer_gate(ctx, (*_cmu)->gate_clks,
-+					  (*_cmu)->nr_gate_clks);
-+		exynos5_subcmu_clk_save(ctx->reg_base, (*_cmu)->suspend_regs,
-+					(*_cmu)->nr_suspend_regs);
- 	}
- }
- 
-@@ -163,9 +163,9 @@ static int __init exynos5_clk_probe(struct platform_device *pdev)
- 		if (of_property_read_string(np, "label", &name) < 0)
- 			continue;
- 		for (i = 0; i < nr_cmus; i++)
--			if (strcmp(cmu[i].pd_name, name) == 0)
-+			if (strcmp(cmu[i]->pd_name, name) == 0)
- 				exynos5_clk_register_subcmu(&pdev->dev,
--							    &cmu[i], np);
-+							    cmu[i], np);
- 	}
- 	return 0;
- }
-diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.h b/drivers/clk/samsung/clk-exynos5-subcmu.h
-index 755ee8aaa3de..9ae5356f25aa 100644
---- a/drivers/clk/samsung/clk-exynos5-subcmu.h
-+++ b/drivers/clk/samsung/clk-exynos5-subcmu.h
-@@ -21,6 +21,6 @@ struct exynos5_subcmu_info {
- };
- 
- void exynos5_subcmus_init(struct samsung_clk_provider *ctx, int nr_cmus,
--			  const struct exynos5_subcmu_info *cmu);
-+			  const struct exynos5_subcmu_info **cmu);
- 
- #endif
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index f2b896881768..931c70a4da19 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -681,6 +681,10 @@ static const struct exynos5_subcmu_info exynos5250_disp_subcmu = {
- 	.pd_name	= "DISP1",
- };
- 
-+static const struct exynos5_subcmu_info *exynos5250_subcmus[] = {
-+	&exynos5250_disp_subcmu,
-+};
-+
- static const struct samsung_pll_rate_table vpll_24mhz_tbl[] __initconst = {
- 	/* sorted in descending order */
- 	/* PLL_36XX_RATE(rate, m, p, s, k) */
-@@ -843,7 +847,8 @@ static void __init exynos5250_clk_init(struct device_node *np)
- 
- 	samsung_clk_sleep_init(reg_base, exynos5250_clk_regs,
- 			       ARRAY_SIZE(exynos5250_clk_regs));
--	exynos5_subcmus_init(ctx, 1, &exynos5250_disp_subcmu);
-+	exynos5_subcmus_init(ctx, ARRAY_SIZE(exynos5250_subcmus),
-+			     exynos5250_subcmus);
- 
- 	samsung_clk_of_add_provider(np, ctx);
- 
 diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 01bca5a498b2..fdb17c799aa5 100644
+index fdb17c799aa5..2d18e1ae25d7 100644
 --- a/drivers/clk/samsung/clk-exynos5420.c
 +++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -1281,32 +1281,40 @@ static struct exynos5_subcmu_reg_dump exynos5x_mfc_suspend_regs[] = {
+@@ -534,8 +534,6 @@ static const struct samsung_gate_clock exynos5800_gate_clks[] __initconst = {
+ 				GATE_BUS_TOP, 24, 0, 0),
+ 	GATE(CLK_ACLK432_SCALER, "aclk432_scaler", "mout_user_aclk432_scaler",
+ 				GATE_BUS_TOP, 27, CLK_IS_CRITICAL, 0),
+-	GATE(CLK_MAU_EPLL, "mau_epll", "mout_user_mau_epll",
+-			SRC_MASK_TOP7, 20, CLK_SET_RATE_PARENT, 0),
+ };
+ 
+ static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
+@@ -577,8 +575,13 @@ static const struct samsung_div_clock exynos5420_div_clks[] __initconst = {
+ 
+ static const struct samsung_gate_clock exynos5420_gate_clks[] __initconst = {
+ 	GATE(CLK_SECKEY, "seckey", "aclk66_psgen", GATE_BUS_PERIS1, 1, 0, 0),
++	/* Maudio Block */
+ 	GATE(CLK_MAU_EPLL, "mau_epll", "mout_mau_epll_clk",
+ 			SRC_MASK_TOP7, 20, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_MAUDIO0, "sclk_maudio0", "dout_maudio0",
++		GATE_TOP_SCLK_MAU, 0, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_MAUPCM0, "sclk_maupcm0", "dout_maupcm0",
++		GATE_TOP_SCLK_MAU, 1, CLK_SET_RATE_PARENT, 0),
+ };
+ 
+ static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
+@@ -1017,12 +1020,6 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
+ 	GATE(CLK_SCLK_DP1, "sclk_dp1", "dout_dp1",
+ 			GATE_TOP_SCLK_DISP1, 20, CLK_SET_RATE_PARENT, 0),
+ 
+-	/* Maudio Block */
+-	GATE(CLK_SCLK_MAUDIO0, "sclk_maudio0", "dout_maudio0",
+-		GATE_TOP_SCLK_MAU, 0, CLK_SET_RATE_PARENT, 0),
+-	GATE(CLK_SCLK_MAUPCM0, "sclk_maupcm0", "dout_maupcm0",
+-		GATE_TOP_SCLK_MAU, 1, CLK_SET_RATE_PARENT, 0),
+-
+ 	/* FSYS Block */
+ 	GATE(CLK_TSI, "tsi", "aclk200_fsys", GATE_BUS_FSYS0, 0, 0, 0),
+ 	GATE(CLK_PDMA0, "pdma0", "aclk200_fsys", GATE_BUS_FSYS0, 1, 0, 0),
+@@ -1281,6 +1278,20 @@ static struct exynos5_subcmu_reg_dump exynos5x_mfc_suspend_regs[] = {
  	{ DIV4_RATIO, 0, 0x3 },			/* DIV dout_mfc_blk */
  };
  
--static const struct exynos5_subcmu_info exynos5x_subcmus[] = {
--	{
--		.div_clks	= exynos5x_disp_div_clks,
--		.nr_div_clks	= ARRAY_SIZE(exynos5x_disp_div_clks),
--		.gate_clks	= exynos5x_disp_gate_clks,
--		.nr_gate_clks	= ARRAY_SIZE(exynos5x_disp_gate_clks),
--		.suspend_regs	= exynos5x_disp_suspend_regs,
--		.nr_suspend_regs = ARRAY_SIZE(exynos5x_disp_suspend_regs),
--		.pd_name	= "DISP",
--	}, {
--		.div_clks	= exynos5x_gsc_div_clks,
--		.nr_div_clks	= ARRAY_SIZE(exynos5x_gsc_div_clks),
--		.gate_clks	= exynos5x_gsc_gate_clks,
--		.nr_gate_clks	= ARRAY_SIZE(exynos5x_gsc_gate_clks),
--		.suspend_regs	= exynos5x_gsc_suspend_regs,
--		.nr_suspend_regs = ARRAY_SIZE(exynos5x_gsc_suspend_regs),
--		.pd_name	= "GSC",
--	}, {
--		.div_clks	= exynos5x_mfc_div_clks,
--		.nr_div_clks	= ARRAY_SIZE(exynos5x_mfc_div_clks),
--		.gate_clks	= exynos5x_mfc_gate_clks,
--		.nr_gate_clks	= ARRAY_SIZE(exynos5x_mfc_gate_clks),
--		.suspend_regs	= exynos5x_mfc_suspend_regs,
--		.nr_suspend_regs = ARRAY_SIZE(exynos5x_mfc_suspend_regs),
--		.pd_name	= "MFC",
--	},
-+static const struct exynos5_subcmu_info exynos5x_disp_subcmu = {
-+	.div_clks	= exynos5x_disp_div_clks,
-+	.nr_div_clks	= ARRAY_SIZE(exynos5x_disp_div_clks),
-+	.gate_clks	= exynos5x_disp_gate_clks,
-+	.nr_gate_clks	= ARRAY_SIZE(exynos5x_disp_gate_clks),
-+	.suspend_regs	= exynos5x_disp_suspend_regs,
-+	.nr_suspend_regs = ARRAY_SIZE(exynos5x_disp_suspend_regs),
-+	.pd_name	= "DISP",
++
++static const struct samsung_gate_clock exynos5800_mau_gate_clks[] __initconst = {
++	GATE(CLK_MAU_EPLL, "mau_epll", "mout_user_mau_epll",
++			SRC_MASK_TOP7, 20, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_MAUDIO0, "sclk_maudio0", "dout_maudio0",
++		GATE_TOP_SCLK_MAU, 0, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_MAUPCM0, "sclk_maupcm0", "dout_maupcm0",
++		GATE_TOP_SCLK_MAU, 1, CLK_SET_RATE_PARENT, 0),
 +};
 +
-+static const struct exynos5_subcmu_info exynos5x_gsc_subcmu = {
-+	.div_clks	= exynos5x_gsc_div_clks,
-+	.nr_div_clks	= ARRAY_SIZE(exynos5x_gsc_div_clks),
-+	.gate_clks	= exynos5x_gsc_gate_clks,
-+	.nr_gate_clks	= ARRAY_SIZE(exynos5x_gsc_gate_clks),
-+	.suspend_regs	= exynos5x_gsc_suspend_regs,
-+	.nr_suspend_regs = ARRAY_SIZE(exynos5x_gsc_suspend_regs),
-+	.pd_name	= "GSC",
++static struct exynos5_subcmu_reg_dump exynos5800_mau_suspend_regs[] = {
++	{ SRC_TOP9, 0, BIT(8) },	/* MUX mout_user_mau_epll */
 +};
 +
-+static const struct exynos5_subcmu_info exynos5x_mfc_subcmu = {
-+	.div_clks	= exynos5x_mfc_div_clks,
-+	.nr_div_clks	= ARRAY_SIZE(exynos5x_mfc_div_clks),
-+	.gate_clks	= exynos5x_mfc_gate_clks,
-+	.nr_gate_clks	= ARRAY_SIZE(exynos5x_mfc_gate_clks),
-+	.suspend_regs	= exynos5x_mfc_suspend_regs,
-+	.nr_suspend_regs = ARRAY_SIZE(exynos5x_mfc_suspend_regs),
-+	.pd_name	= "MFC",
+ static const struct exynos5_subcmu_info exynos5x_disp_subcmu = {
+ 	.div_clks	= exynos5x_disp_div_clks,
+ 	.nr_div_clks	= ARRAY_SIZE(exynos5x_disp_div_clks),
+@@ -1311,12 +1322,27 @@ static const struct exynos5_subcmu_info exynos5x_mfc_subcmu = {
+ 	.pd_name	= "MFC",
+ };
+ 
++static const struct exynos5_subcmu_info exynos5800_mau_subcmu = {
++	.gate_clks	= exynos5800_mau_gate_clks,
++	.nr_gate_clks	= ARRAY_SIZE(exynos5800_mau_gate_clks),
++	.suspend_regs	= exynos5800_mau_suspend_regs,
++	.nr_suspend_regs = ARRAY_SIZE(exynos5800_mau_suspend_regs),
++	.pd_name	= "MAU",
 +};
 +
-+static const struct exynos5_subcmu_info *exynos5x_subcmus[] = {
+ static const struct exynos5_subcmu_info *exynos5x_subcmus[] = {
+ 	&exynos5x_disp_subcmu,
+ 	&exynos5x_gsc_subcmu,
+ 	&exynos5x_mfc_subcmu,
+ };
+ 
++static const struct exynos5_subcmu_info *exynos5800_subcmus[] = {
 +	&exynos5x_disp_subcmu,
 +	&exynos5x_gsc_subcmu,
 +	&exynos5x_mfc_subcmu,
- };
- 
++	&exynos5800_mau_subcmu,
++};
++
  static const struct samsung_pll_rate_table exynos5420_pll2550x_24mhz_tbl[] __initconst = {
+ 	PLL_35XX_RATE(24 * MHZ, 2000000000, 250, 3, 0),
+ 	PLL_35XX_RATE(24 * MHZ, 1900000000, 475, 6, 0),
+@@ -1547,11 +1573,17 @@ static void __init exynos5x_clk_init(struct device_node *np,
+ 	samsung_clk_extended_sleep_init(reg_base,
+ 		exynos5x_clk_regs, ARRAY_SIZE(exynos5x_clk_regs),
+ 		exynos5420_set_clksrc, ARRAY_SIZE(exynos5420_set_clksrc));
+-	if (soc == EXYNOS5800)
++
++	if (soc == EXYNOS5800) {
+ 		samsung_clk_sleep_init(reg_base, exynos5800_clk_regs,
+ 				       ARRAY_SIZE(exynos5800_clk_regs));
+-	exynos5_subcmus_init(ctx, ARRAY_SIZE(exynos5x_subcmus),
+-			     exynos5x_subcmus);
++
++		exynos5_subcmus_init(ctx, ARRAY_SIZE(exynos5800_subcmus),
++				     exynos5800_subcmus);
++	} else {
++		exynos5_subcmus_init(ctx, ARRAY_SIZE(exynos5x_subcmus),
++				     exynos5x_subcmus);
++	}
+ 
+ 	samsung_clk_of_add_provider(np, ctx);
+ }
 -- 
 2.17.1
