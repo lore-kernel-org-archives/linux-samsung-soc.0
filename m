@@ -1,73 +1,194 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v3 0/9] Exynos Adaptive Supply Voltage support
-Date: Tue, 13 Aug 2019 17:08:18 +0200
-Message-ID: <20190813150827.31972-1-s.nawrocki@samsung.com>
-References: <CGME20190813150842eucas1p2c248537d9cd593073e12abeac2cacab5@eucas1p2.samsung.com>
-Mime-Version: 1.0
+Subject: [PATCH v3 1/9] soc: samsung: Add exynos chipid driver support
+Date: Tue, 13 Aug 2019 17:08:19 +0200
+Message-ID: <20190813150827.31972-2-s.nawrocki@samsung.com>
+References: <20190813150827.31972-1-s.nawrocki@samsung.com>
+        <CGME20190813150850eucas1p2aff64b5edb49ffb6626433de1c9e58ec@eucas1p2.samsung.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190813150827.31972-1-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: krzk@kernel.org
 Cc: robh+dt@kernel.org, vireshk@kernel.org, devicetree@vger.kernel.org, kgene@kernel.org, pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This is third iteration of my patch series adding ASV (Adaptive Supply 
-Voltage) support for Exynos SoCs. The previous one can be found at:
-https://lore.kernel.org/lkml/20190718143044.25066-1-s.nawrocki@samsung.com
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
 
-There is no major changes in this series comparing to v2, only minor
-corrections addressing review comments.
+Exynos SoCs have Chipid, for identification of product IDs and SoC
+revisions. This patch intends to provide initialization code for all
+these functionalities, at the same time it provides some sysfs entries
+for accessing these information to user-space.
 
-I was not sure it was a good idea to try to extend the OPP binding 
-so as to include the ASV data tables in DT, so the tables are left
-in the driver.
+This driver uses existing binding for exynos-chipid.
 
-This patch set includes Exynos CHIPID driver posted by Pankaj Dubey and
-futher improved by Bartłomiej Żołnierkiewicz [1].
+Changes by Bartlomiej:
+- fixed return values on errors
+- removed bogus kfree_const()
+- added missing Exynos4210 EVT0 id
+- converted code to use EXYNOS_MASK define
+- fixed np use after of_node_put()
+- fixed too early use of dev_info()
+- made driver fail for unknown SoC-s
+- added SPDX tag
+- updated Copyrights
 
-Tested on Odroid XU3, XU3 Lite, XU4.
-
-One of the things on TODO list is support for the Adaptive Body Bias.
-This will require modifications on the cpufreq driver side in order to 
-support multiple voltage regulators and changes in the OPP framework 
-to support adding OPPs with multiple voltages.
-
-[1] https://lkml.org/lkml/2018/11/15/908
-
-Pankaj Dubey (3):
-  soc: samsung: Add exynos chipid driver support
-  ARM: EXYNOS: enable exynos_chipid for ARCH_EXYNOS
-  ARM64: EXYNOS: enable exynos_chipid for ARCH_EXYNOS
-
-Sylwester Nawrocki (6):
-  soc: samsung: Convert exynos-chipid driver to use the regmap API
-  soc: samsung: Add Exynos Adaptive Supply Voltage driver
-  ARM: EXYNOS: Enable exynos-asv driver for ARCH_EXYNOS
-  soc: samsung: Update the CHIP ID DT binding documentation
-  ARM: dts: Add "syscon" compatible string to chipid node
-  ARM: dts: Add samsung,asv-bin property for odroidxu3-lite
-
- .../bindings/arm/samsung/exynos-chipid.txt    |  10 +-
- arch/arm/boot/dts/exynos5.dtsi                |   4 +-
- .../boot/dts/exynos5422-odroidxu3-lite.dts    |   4 +
- arch/arm/mach-exynos/Kconfig                  |   2 +
- arch/arm64/Kconfig.platforms                  |   1 +
- drivers/soc/samsung/Kconfig                   |  15 +
- drivers/soc/samsung/Makefile                  |   5 +
- drivers/soc/samsung/exynos-asv.c              | 184 +++++++
- drivers/soc/samsung/exynos-asv.h              |  82 +++
- drivers/soc/samsung/exynos-chipid.c           | 101 ++++
- drivers/soc/samsung/exynos5422-asv.c          | 498 ++++++++++++++++++
- drivers/soc/samsung/exynos5422-asv.h          |  25 +
- include/linux/soc/samsung/exynos-chipid.h     |  52 ++
- 13 files changed, 979 insertions(+), 4 deletions(-)
- create mode 100644 drivers/soc/samsung/exynos-asv.c
- create mode 100644 drivers/soc/samsung/exynos-asv.h
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+[m.szyprowski: for suggestion and code snippet of product_id_to_soc_id]
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+[s.nawrocki: updated copyright date, removed uneeded headers inclusion]
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+Changes since v2:
+ - removed uneeded headers inclusion.
+---
+ drivers/soc/samsung/Kconfig         |   5 ++
+ drivers/soc/samsung/Makefile        |   2 +
+ drivers/soc/samsung/exynos-chipid.c | 109 ++++++++++++++++++++++++++++
+ 3 files changed, 116 insertions(+)
  create mode 100644 drivers/soc/samsung/exynos-chipid.c
- create mode 100644 drivers/soc/samsung/exynos5422-asv.c
- create mode 100644 drivers/soc/samsung/exynos5422-asv.h
- create mode 100644 include/linux/soc/samsung/exynos-chipid.h
 
+diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+index 2186285fda92..2905f5262197 100644
+--- a/drivers/soc/samsung/Kconfig
++++ b/drivers/soc/samsung/Kconfig
+@@ -7,6 +7,11 @@ menuconfig SOC_SAMSUNG
+ 
+ if SOC_SAMSUNG
+ 
++config EXYNOS_CHIPID
++	bool "Exynos Chipid controller driver" if COMPILE_TEST
++	depends on ARCH_EXYNOS || COMPILE_TEST
++	select SOC_BUS
++
+ config EXYNOS_PMU
+ 	bool "Exynos PMU controller driver" if COMPILE_TEST
+ 	depends on ARCH_EXYNOS || ((ARM || ARM64) && COMPILE_TEST)
+diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
+index 29f294baac6e..3b6a8797416c 100644
+--- a/drivers/soc/samsung/Makefile
++++ b/drivers/soc/samsung/Makefile
+@@ -1,4 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
++
++obj-$(CONFIG_EXYNOS_CHIPID)	+= exynos-chipid.o
+ obj-$(CONFIG_EXYNOS_PMU)	+= exynos-pmu.o
+ 
+ obj-$(CONFIG_EXYNOS_PMU_ARM_DRIVERS)	+= exynos3250-pmu.o exynos4-pmu.o \
+diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+new file mode 100644
+index 000000000000..bcf691f2b650
+--- /dev/null
++++ b/drivers/soc/samsung/exynos-chipid.c
+@@ -0,0 +1,109 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2019 Samsung Electronics Co., Ltd.
++ *	      http://www.samsung.com/
++ *
++ * EXYNOS - CHIP ID support
++ * Author: Pankaj Dubey <pankaj.dubey@samsung.com>
++ * Author: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
++ */
++
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/slab.h>
++#include <linux/sys_soc.h>
++
++#define EXYNOS_SUBREV_MASK	(0xF << 4)
++#define EXYNOS_MAINREV_MASK	(0xF << 0)
++#define EXYNOS_REV_MASK		(EXYNOS_SUBREV_MASK | EXYNOS_MAINREV_MASK)
++#define EXYNOS_MASK		0xFFFFF000
++
++static const struct exynos_soc_id {
++	const char *name;
++	unsigned int id;
++} soc_ids[] = {
++	{ "EXYNOS3250", 0xE3472000 },
++	{ "EXYNOS4210", 0x43200000 },	/* EVT0 revision */
++	{ "EXYNOS4210", 0x43210000 },
++	{ "EXYNOS4212", 0x43220000 },
++	{ "EXYNOS4412", 0xE4412000 },
++	{ "EXYNOS5250", 0x43520000 },
++	{ "EXYNOS5260", 0xE5260000 },
++	{ "EXYNOS5410", 0xE5410000 },
++	{ "EXYNOS5420", 0xE5420000 },
++	{ "EXYNOS5440", 0xE5440000 },
++	{ "EXYNOS5800", 0xE5422000 },
++	{ "EXYNOS7420", 0xE7420000 },
++	{ "EXYNOS5433", 0xE5433000 },
++};
++
++static const char * __init product_id_to_soc_id(unsigned int product_id)
++{
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(soc_ids); i++)
++		if ((product_id & EXYNOS_MASK) == soc_ids[i].id)
++			return soc_ids[i].name;
++	return NULL;
++}
++
++int __init exynos_chipid_early_init(void)
++{
++	struct soc_device_attribute *soc_dev_attr;
++	void __iomem *exynos_chipid_base;
++	struct soc_device *soc_dev;
++	struct device_node *root;
++	struct device_node *np;
++	u32 product_id;
++	u32 revision;
++
++	/* look up for chipid node */
++	np = of_find_compatible_node(NULL, NULL, "samsung,exynos4210-chipid");
++	if (!np)
++		return -ENODEV;
++
++	exynos_chipid_base = of_iomap(np, 0);
++	of_node_put(np);
++
++	if (!exynos_chipid_base) {
++		pr_err("Failed to map SoC chipid\n");
++		return -ENXIO;
++	}
++
++	product_id = readl_relaxed(exynos_chipid_base);
++	revision = product_id & EXYNOS_REV_MASK;
++	iounmap(exynos_chipid_base);
++
++	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
++	if (!soc_dev_attr)
++		return -ENOMEM;
++
++	soc_dev_attr->family = "Samsung Exynos";
++
++	root = of_find_node_by_path("/");
++	of_property_read_string(root, "model", &soc_dev_attr->machine);
++	of_node_put(root);
++
++	soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%x", revision);
++	soc_dev_attr->soc_id = product_id_to_soc_id(product_id);
++	if (!soc_dev_attr->soc_id) {
++		pr_err("Unknown SoC\n");
++		return -ENODEV;
++	}
++
++	/* please note that the actual registration will be deferred */
++	soc_dev = soc_device_register(soc_dev_attr);
++	if (IS_ERR(soc_dev)) {
++		kfree(soc_dev_attr->revision);
++		kfree(soc_dev_attr);
++		return PTR_ERR(soc_dev);
++	}
++
++	/* it is too early to use dev_info() here (soc_dev is NULL) */
++	pr_info("soc soc0: Exynos: CPU[%s] PRO_ID[0x%x] REV[0x%x] Detected\n",
++		soc_dev_attr->soc_id, product_id, revision);
++
++	return 0;
++}
++early_initcall(exynos_chipid_early_init);
 -- 
 2.17.1
