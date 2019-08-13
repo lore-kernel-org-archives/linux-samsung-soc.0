@@ -1,41 +1,64 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] pinctrl: samsung: samsung: Add of_node_put() before return
-Date: Thu, 15 Aug 2019 08:15:42 +0200
-Message-ID: <CAJKOXPfxV9SZrjpQ1=fRcRrkE_4vYRMKPzr3+GJ6cyktZeZtYw@mail.gmail.com>
-References: <20190815060914.3572-1-nishkadg.linux@gmail.com>
+From: Dariusz Marcinkiewicz <darekm@google.com>
+Subject: [PATCH v6 0/8] drm: cec: convert DRM drivers to the new notifier API
+Date: Tue, 13 Aug 2019 13:02:32 +0200
+Message-ID: <20190813110300.83025-1-darekm@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190815060914.3572-1-nishkadg.linux@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Nishka Dasgupta <nishkadg.linux@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linus.walleij@linaro.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, hverkuil-cisco@xs4all.nl
+Cc: Neil Armstrong <narmstrong@baylibre.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Douglas Anderson <dianders@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Sam Ravnborg <sam@ravnborg.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Allison Randal <allison@lohutok.net>, Kees Cook <keescook@chromium.org>, Jonas Karlman <jonas@kwiboo.se>, Jani Nikula <jani.nikula@intel.com>, Russell King <rmk+kernel@armlinux.org.uk>, Rodrigo Vivi <rodrigo.vivi@intel.com>, "open list:DRM DRIVERS FOR NVIDIA TEGRA" <linux-tegra@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, Jernej Skrabec <jernej.skrabec@siol.net>, open list <linux-kernel@vger.kernel.org>, Colin Ian King <colin.king@can>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, 15 Aug 2019 at 08:09, Nishka Dasgupta <nishkadg.linux@gmail.com> wrote:
->
-> Each iteration of for_each_child_of_node puts the previous node, but in
-> the case of a return from the middle of the loop, there is no put, thus
-> causing a memory leak. Hence add an of_node_put before the return in
-> three places.
-> Issue found with Coccinelle.
->
-> Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
-> ---
->  drivers/pinctrl/samsung/pinctrl-samsung.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-
-This is already fixed. You can base your patches on top of linux-next
-to avoid duplicating effort.
-
-Best regards,
-Krzysztof
+VGhpcyBzZXJpZXMgdXBkYXRlcyBEUk0gZHJpdmVycyB0byB1c2UgbmV3IENFQyBub3RpZmllciBB
+UEkuCgpPbmx5IGZpcnN0IHR3byBwYXRjaGVzIHdlcmUgdGVzdGVkIG9uIHRoZSBhY3R1YWwgaGFy
+ZHdhcmUuCgpDaGFuZ2VzIHNpbmNlIHY1OgoJRml4ZWQgYSB3YXJuaW5nIGFib3V0IGEgbWlzc2lu
+ZyBjb21tZW50IGZvciBhIG5ldyBtZW1iZXIgb2YKCWRybV9kcF9hdXhfY2VjIHN0cnVjdC4gU2Vu
+ZGluZyB0byBhIHdpZGVyIGF1ZGllbmNlLCBpbmNsdWRpbmcKCW1haW50YWluZXJzIG9mIHJlc3Bl
+Y3RpdmUgZHJpdmVycy4KQ2hhbmdlcyBzaW5jZSB2NDoKCUFkZHJlc3NpbmcgcmV2aWV3IGNvbW1l
+bnRzLgpDaGFuZ2VzIHNpbmNlIHYzOgogICAgICAgIFVwZGF0ZWQgYWRhcHRlciBmbGFncyBpbiBk
+dy1oZG1pLWNlYy4KQ2hhbmdlcyBzaW5jZSB2MjoKCUluY2x1ZGUgYWxsIERSTSBwYXRjaGVzIGZy
+b20gImNlYzogaW1wcm92ZSBub3RpZmllciBzdXBwb3J0LAoJYWRkIGNvbm5lY3RvciBpbmZvIGNv
+bm5lY3RvciBpbmZvIiBzZXJpZXMuCkNoYW5nZXMgc2luY2UgdjE6CglUaG9zZSBwYXRjaGVzIGRl
+bGF5IGNyZWF0aW9uIG9mIG5vdGlmaWVycyB1bnRpbCByZXNwZWN0aXZlCgljb25uZWN0b3JzIGFy
+ZSBjb25zdHJ1Y3RlZC4gSXQgc2VlbXMgdGhhdCB0aG9zZSBwYXRjaGVzLCBmb3IgYQoJY291cGxl
+IG9mIGRyaXZlcnMsIGJ5IGFkZGluZyB0aGUgZGVsYXksIGludHJvZHVjZSBhIHJhY2UgYmV0d2Vl
+bgoJbm90aWZpZXJzJyBjcmVhdGlvbiBhbmQgdGhlIElSUXMgaGFuZGxpbmcgdGhyZWFkcyAtIGF0
+IGxlYXN0IEkKCWRvbid0IHNlZSBhbnl0aGluZyBvYnZpb3VzIGluIHRoZXJlIHRoYXQgd291bGQg
+ZXhwbGljaXRseSBmb3JiaWQKCXN1Y2ggcmFjZXMgdG8gb2NjdXIuIHYyIGFkZHMgYSB3cml0ZSBi
+YXJyaWVyIHRvIG1ha2Ugc3VyZSBJUlEKCXRocmVhZHMgc2VlIHRoZSBub3RpZmllciBvbmNlIGl0
+IGlzIGNyZWF0ZWQgKHJlcGxhY2luZyB0aGUKCVdSSVRFX09OQ0UgSSBwdXQgaW4gdjEpLiBUaGUg
+YmVzdCB0aGluZyB0byBkbyBoZXJlLCBJIGJlbGlldmUsCgl3b3VsZCBiZSBub3QgdG8gaGF2ZSBh
+bnkgc3luY2hyb25pemF0aW9uIGFuZCBtYWtlIHN1cmUgdGhhdCBhbiBJUlEKCW9ubHkgZ2V0cyBl
+bmFibGVkIGFmdGVyIHRoZSBub3RpZmllciBpcyBjcmVhdGVkLgoKRGFyaXVzeiBNYXJjaW5raWV3
+aWN6ICg4KToKICBkcm0vaTkxNS9pbnRlbF9oZG1pOiB1c2UgY2VjX25vdGlmaWVyX2Nvbm5fKHVu
+KXJlZ2lzdGVyCiAgZHctaGRtaS1jZWM6IHVzZSBjZWNfbm90aWZpZXJfY2VjX2FkYXBfKHVuKXJl
+Z2lzdGVyCiAgdGRhOTk1MDogdXNlIGNlY19ub3RpZmllcl9jZWNfYWRhcF8odW4pcmVnaXN0ZXIK
+ICBkcm06IHRkYTk5OHg6IHVzZSBjZWNfbm90aWZpZXJfY29ubl8odW4pcmVnaXN0ZXIKICBkcm06
+IHN0aTogdXNlIGNlY19ub3RpZmllcl9jb25uXyh1bilyZWdpc3RlcgogIGRybTogdGVncmE6IHVz
+ZSBjZWNfbm90aWZpZXJfY29ubl8odW4pcmVnaXN0ZXIKICBkcm06IGR3LWhkbWk6IHVzZSBjZWNf
+bm90aWZpZXJfY29ubl8odW4pcmVnaXN0ZXIKICBkcm06IGV4eW5vczogZXh5bm9zX2hkbWk6IHVz
+ZSBjZWNfbm90aWZpZXJfY29ubl8odW4pcmVnaXN0ZXIKCiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdl
+L3N5bm9wc3lzL2R3LWhkbWktY2VjLmMgfCAxMyArKysrLS0tCiBkcml2ZXJzL2dwdS9kcm0vYnJp
+ZGdlL3N5bm9wc3lzL2R3LWhkbWkuYyAgICAgfCAzNiArKysrKysrKysrKy0tLS0tLS0tCiBkcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMgICAgICAgICAgfCAzMSArKysrKysrKyst
+LS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vaTJjL3RkYTk5NTAuYyAgICAgICAgICAgICAgICAgfCAx
+MiArKystLS0tCiBkcml2ZXJzL2dwdS9kcm0vaTJjL3RkYTk5OHhfZHJ2LmMgICAgICAgICAgICAg
+fCAzMyArKysrKysrKysrKy0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2k5MTUvZGlzcGxheS9pbnRl
+bF9oZG1pLmMgICAgIHwgMTMgKysrKy0tLQogZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaGRtaS5j
+ICAgICAgICAgICAgICAgIHwgMTkgKysrKysrLS0tLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL291
+dHB1dC5jICAgICAgICAgICAgICAgIHwgMjggKysrKysrKysrKystLS0tCiA4IGZpbGVzIGNoYW5n
+ZWQsIDExNyBpbnNlcnRpb25zKCspLCA2OCBkZWxldGlvbnMoLSkKCi0tIAoyLjIzLjAucmMxLjE1
+My5nZGVlZDgwMzMwZi1nb29nCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
+a3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
+cmktZGV2ZWw=
