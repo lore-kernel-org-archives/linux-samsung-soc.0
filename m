@@ -1,68 +1,127 @@
 From: Dariusz Marcinkiewicz <darekm@google.com>
-Subject: [PATCH v7 0/9] drm: cec: convert DRM drivers to the new notifier API
-Date: Wed, 14 Aug 2019 12:44:58 +0200
-Message-ID: <20190814104520.6001-1-darekm@google.com>
+Subject: [PATCH v7 9/9] drm: exynos: exynos_hdmi: use cec_notifier_conn_(un)register
+Date: Wed, 14 Aug 2019 12:45:07 +0200
+Message-ID: <20190814104520.6001-10-darekm@google.com>
+References: <20190814104520.6001-1-darekm@google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190814104520.6001-1-darekm@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, hverkuil-cisco@xs4all.nl
-Cc: Dariusz Marcinkiewicz <darekm@google.com>, Alex Deucher <alexander.deucher@amd.com>, Allison Randal <allison@lohutok.net>, amd-gfx@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Chris Wilson <chris@chris-wilson.co.uk>, Colin Ian King <colin.king@canonical.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, David Francis <David.Francis@amd.com>, Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>, Douglas Anderson <dianders@chromium.org>, Enrico Weigelt <info@metux.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil@xs4all.nl>, Harry Wentland <harry.wentland@amd.com>, Imre Deak <imre.deak@intel.com>, intel-gfx@lists.freedesktop.org, Jani Nikula <jani.nikula@intel.com>, Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: Dariusz Marcinkiewicz <darekm@google.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This series updates DRM drivers to use new CEC notifier API.
+Use the new cec_notifier_conn_(un)register() functions to
+(un)register the notifier for the HDMI connector, and fill in
+the cec_connector_info.
 
-Changes since v6:
-	Made CEC notifiers' registration and de-registration symmetric
-	in tda998x and dw-hdmi drivers. Also, accidentally dropped one
-	patch in v6 (change to drm_dp_cec), brought it back now.
-Changes since v5:
-        Fixed a warning about a missing comment for a new member of
-	drm_dp_aux_cec struct. Sending to a wider audience,
-	including maintainers of respective drivers.
-Changes since v4:
-	Addressing review comments.
-Changes since v3:
-        Updated adapter flags in dw-hdmi-cec.
 Changes since v2:
-	Include all DRM patches from "cec: improve notifier support,
-	add connector info connector info" series.
-Changes since v1:
-	Those patches delay creation of notifiers until respective
-	connectors are constructed. It seems that those patches, for a
-	couple of drivers, by adding the delay, introduce a race between
-	notifiers' creation and the IRQs handling threads - at least I
-	don't see anything obvious in there that would explicitly forbid
-	such races to occur. v2 adds a write barrier to make sure IRQ
-	threads see the notifier once it is created (replacing the
-	WRITE_ONCE I put in v1). The best thing to do here, I believe,
-	would be not to have any synchronization and make sure that an IRQ
-	only gets enabled after the notifier is created.
-Dariusz Marcinkiewicz (9):
-  drm_dp_cec: add connector info support.
-  drm/i915/intel_hdmi: use cec_notifier_conn_(un)register
-  dw-hdmi-cec: use cec_notifier_cec_adap_(un)register
-  tda9950: use cec_notifier_cec_adap_(un)register
-  drm: tda998x: use cec_notifier_conn_(un)register
-  drm: sti: use cec_notifier_conn_(un)register
-  drm: tegra: use cec_notifier_conn_(un)register
-  drm: dw-hdmi: use cec_notifier_conn_(un)register
-  drm: exynos: exynos_hdmi: use cec_notifier_conn_(un)register
+	- removed unnecessary call to invalidate phys address before
+	deregistering the notifier,
+	- use cec_notifier_phys_addr_invalidate instead of setting
+	invalid address on a notifier.
 
- .../display/amdgpu_dm/amdgpu_dm_mst_types.c   |  2 +-
- drivers/gpu/drm/bridge/synopsys/dw-hdmi-cec.c | 13 +++---
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c     | 46 +++++++++++++------
- drivers/gpu/drm/drm_dp_cec.c                  | 25 ++++++----
- drivers/gpu/drm/exynos/exynos_hdmi.c          | 31 +++++++------
- drivers/gpu/drm/i2c/tda9950.c                 | 12 ++---
- drivers/gpu/drm/i2c/tda998x_drv.c             | 36 ++++++++++-----
- drivers/gpu/drm/i915/display/intel_dp.c       |  4 +-
- drivers/gpu/drm/i915/display/intel_hdmi.c     | 13 ++++--
- drivers/gpu/drm/nouveau/nouveau_connector.c   |  3 +-
- drivers/gpu/drm/sti/sti_hdmi.c                | 19 +++++---
- drivers/gpu/drm/tegra/output.c                | 28 ++++++++---
- include/drm/drm_dp_helper.h                   | 17 ++++---
- 13 files changed, 155 insertions(+), 94 deletions(-)
+Signed-off-by: Dariusz Marcinkiewicz <darekm@google.com>
+Tested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+---
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 31 ++++++++++++++++------------
+ 1 file changed, 18 insertions(+), 13 deletions(-)
 
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index bc1565f1822ab..d532b468d9af5 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -852,6 +852,10 @@ static enum drm_connector_status hdmi_detect(struct drm_connector *connector,
+ 
+ static void hdmi_connector_destroy(struct drm_connector *connector)
+ {
++	struct hdmi_context *hdata = connector_to_hdmi(connector);
++
++	cec_notifier_conn_unregister(hdata->notifier);
++
+ 	drm_connector_unregister(connector);
+ 	drm_connector_cleanup(connector);
+ }
+@@ -935,6 +939,7 @@ static int hdmi_create_connector(struct drm_encoder *encoder)
+ {
+ 	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
+ 	struct drm_connector *connector = &hdata->connector;
++	struct cec_connector_info conn_info;
+ 	int ret;
+ 
+ 	connector->interlace_allowed = true;
+@@ -957,6 +962,15 @@ static int hdmi_create_connector(struct drm_encoder *encoder)
+ 			DRM_DEV_ERROR(hdata->dev, "Failed to attach bridge\n");
+ 	}
+ 
++	cec_fill_conn_info_from_drm(&conn_info, connector);
++
++	hdata->notifier = cec_notifier_conn_register(hdata->dev, NULL,
++						     &conn_info);
++	if (hdata->notifier == NULL) {
++		ret = -ENOMEM;
++		DRM_DEV_ERROR(hdata->dev, "Failed to allocate CEC notifier\n");
++	}
++
+ 	return ret;
+ }
+ 
+@@ -1528,8 +1542,8 @@ static void hdmi_disable(struct drm_encoder *encoder)
+ 		 */
+ 		mutex_unlock(&hdata->mutex);
+ 		cancel_delayed_work(&hdata->hotplug_work);
+-		cec_notifier_set_phys_addr(hdata->notifier,
+-					   CEC_PHYS_ADDR_INVALID);
++		if (hdata->notifier)
++			cec_notifier_phys_addr_invalidate(hdata->notifier);
+ 		return;
+ 	}
+ 
+@@ -2006,12 +2020,6 @@ static int hdmi_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	hdata->notifier = cec_notifier_get(&pdev->dev);
+-	if (hdata->notifier == NULL) {
+-		ret = -ENOMEM;
+-		goto err_hdmiphy;
+-	}
+-
+ 	pm_runtime_enable(dev);
+ 
+ 	audio_infoframe = &hdata->audio.infoframe;
+@@ -2023,7 +2031,7 @@ static int hdmi_probe(struct platform_device *pdev)
+ 
+ 	ret = hdmi_register_audio_device(hdata);
+ 	if (ret)
+-		goto err_notifier_put;
++		goto err_runtime_disable;
+ 
+ 	ret = component_add(&pdev->dev, &hdmi_component_ops);
+ 	if (ret)
+@@ -2034,8 +2042,7 @@ static int hdmi_probe(struct platform_device *pdev)
+ err_unregister_audio:
+ 	platform_device_unregister(hdata->audio.pdev);
+ 
+-err_notifier_put:
+-	cec_notifier_put(hdata->notifier);
++err_runtime_disable:
+ 	pm_runtime_disable(dev);
+ 
+ err_hdmiphy:
+@@ -2054,12 +2061,10 @@ static int hdmi_remove(struct platform_device *pdev)
+ 	struct hdmi_context *hdata = platform_get_drvdata(pdev);
+ 
+ 	cancel_delayed_work_sync(&hdata->hotplug_work);
+-	cec_notifier_set_phys_addr(hdata->notifier, CEC_PHYS_ADDR_INVALID);
+ 
+ 	component_del(&pdev->dev, &hdmi_component_ops);
+ 	platform_device_unregister(hdata->audio.pdev);
+ 
+-	cec_notifier_put(hdata->notifier);
+ 	pm_runtime_disable(&pdev->dev);
+ 
+ 	if (!IS_ERR(hdata->reg_hdmi_en))
 -- 
 2.23.0.rc1.153.gdeed80330f-goog
