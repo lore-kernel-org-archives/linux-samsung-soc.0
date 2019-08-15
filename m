@@ -1,42 +1,30 @@
-From: Tom Murphy <murphyt7@tcd.ie>
-Subject: Re: [PATCH v4 0/5] iommu/amd: Convert the AMD iommu driver to the
- dma-iommu api
-Date: Thu, 15 Aug 2019 12:13:45 +0100
-Message-ID: <CALQxJusdvvnL-7WuCy9qobB6heG2oj7XS4Bs3Z1dMyLXSeZOzg@mail.gmail.com>
-References: <20190613223901.9523-1-murphyt7@tcd.ie> <20190624061945.GA4912@infradead.org>
- <20190810071952.GA25550@infradead.org> <CALQxJuvxBc3MH3_B_fZ3FvURHOM3F3dvvZ6x=GtALUAvyu7Qxw@mail.gmail.com>
- <20190813130711.GA30468@infradead.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 1/9] soc: samsung: Add exynos chipid driver support
+Date: Thu, 15 Aug 2019 20:18:48 +0200
+Message-ID: <20190815181848.GB14360@kozik-lap>
+References: <20190813150827.31972-1-s.nawrocki@samsung.com>
+ <CGME20190813150850eucas1p2aff64b5edb49ffb6626433de1c9e58ec@eucas1p2.samsung.com>
+ <20190813150827.31972-2-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190813130711.GA30468@infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20190813150827.31972-2-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Joerg Roedel <joro@8bytes.org>, Heiko Stuebner <heiko@sntech.de>, Will Deacon <will.deacon@arm.com>, virtualization@lists.linux-foundation.org, David Brown <david.brown@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jean-Philippe Brucker <jean-philippe.brucker@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Andy Gross <agross@kernel.org>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, David Woodhouse <dwmw2@infradead>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: robh+dt@kernel.org, vireshk@kernel.org, devicetree@vger.kernel.org, kgene@kernel.org, pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Done, I just sent it there. I don't have any AMD hardware to test on
-while I'm traveling. However the rebase was very straightforward and
-the code was tested a month ago on the old linux-next.
+On Tue, Aug 13, 2019 at 05:08:19PM +0200, Sylwester Nawrocki wrote:
+> From: Pankaj Dubey <pankaj.dubey@samsung.com>
+> 
+> Exynos SoCs have Chipid, for identification of product IDs and SoC
+> revisions. This patch intends to provide initialization code for all
+> these functionalities, at the same time it provides some sysfs entries
+> for accessing these information to user-space.
+> 
 
-I only have the AMD conversion done. I will work on rebasing the intel
-one when I get a chance.
+Thanks, applied.
 
-On Tue, 13 Aug 2019 at 14:07, Christoph Hellwig <hch@infradead.org> wrote:
->
-> On Tue, Aug 13, 2019 at 08:09:26PM +0800, Tom Murphy wrote:
-> > Hi Christoph,
-> >
-> > I quit my job and am having a great time traveling South East Asia.
->
-> Enjoy!  I just returned from my vacation.
->
-> > I definitely don't want this work to go to waste and I hope to repost it
-> > later this week but I can't guarantee it.
-> >
-> > Let me know if you need this urgently.
->
-> It isn't in any strict sense urgent.  I just have various DMA API plans
-> that I'd rather just implement in dma-direct and dma-iommu rather than
-> also in two additional commonly used iommu drivers.  So on the one had
-> the sooner the better, on the other hand no real urgency.
+Best regards,
+Krzysztof
