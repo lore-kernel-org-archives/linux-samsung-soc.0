@@ -1,37 +1,44 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 5/9] ARM64: EXYNOS: enable exynos_chipid for
- ARCH_EXYNOS
-Date: Thu, 15 Aug 2019 20:29:40 +0200
-Message-ID: <20190815182940.GF14360@kozik-lap>
-References: <20190813150827.31972-1-s.nawrocki@samsung.com>
- <CGME20190813150856eucas1p1a8957cfe50e3b421ccbc3084404de43b@eucas1p1.samsung.com>
- <20190813150827.31972-6-s.nawrocki@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Subject: [GIT PULL 1/3] soc: samsung: Exynos for v5.4
+Date: Fri, 16 Aug 2019 18:30:40 +0200
+Message-ID: <20190816163042.6604-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190813150827.31972-6-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: robh+dt@kernel.org, vireshk@kernel.org, devicetree@vger.kernel.org, kgene@kernel.org, pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 05:08:23PM +0200, Sylwester Nawrocki wrote:
-> From: Pankaj Dubey <pankaj.dubey@samsung.com>
-> 
-> This patch enables exynos_chipid driver for ARCH_EXYNOS
-> based SoC.
-> 
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
-> Changes since v1 (RFC):
->  - none
-> ---
->  arch/arm64/Kconfig.platforms | 1 +
+The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
 
-Thanks, applied.
+  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
 
-Best regards,
-Krzysztof
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-5.4
+
+for you to fetch changes up to 40d8aff614f71ab3cab20785b4f213e3802d4e87:
+
+  soc: samsung: chipid: Convert exynos-chipid driver to use the regmap API (2019-08-15 20:25:25 +0200)
+
+----------------------------------------------------------------
+Samsung soc drivers changes for v5.4
+
+Add Exynos Chipid driver for identification of product IDs and SoC
+revisions.  The driver also exposes chipid regmap, later to be used by
+Exynos Adaptive Supply Voltage driver (adjusting voltages to different
+revisions of same SoC).
+
+----------------------------------------------------------------
+Pankaj Dubey (1):
+      soc: samsung: Add exynos chipid driver support
+
+Sylwester Nawrocki (1):
+      soc: samsung: chipid: Convert exynos-chipid driver to use the regmap API
+
+ drivers/soc/samsung/Kconfig               |   5 ++
+ drivers/soc/samsung/Makefile              |   2 +
+ drivers/soc/samsung/exynos-chipid.c       | 101 ++++++++++++++++++++++++++++++
+ include/linux/soc/samsung/exynos-chipid.h |  52 +++++++++++++++
+ 4 files changed, 160 insertions(+)
+ create mode 100644 drivers/soc/samsung/exynos-chipid.c
+ create mode 100644 include/linux/soc/samsung/exynos-chipid.h
