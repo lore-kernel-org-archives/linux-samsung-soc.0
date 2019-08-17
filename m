@@ -1,66 +1,81 @@
-From: Colin King <colin.king@canonical.com>
-Subject: [PATCH][next] soc: samsung: exynos-chipid: fix memory leak
-Date: Fri, 16 Aug 2019 23:21:51 +0100
-Message-ID: <20190816222151.11098-1-colin.king@canonical.com>
+From: Hillf Danton <hdanton@sina.com>
+Subject: Re: [PATCH V5 3/5] iommu/dma-iommu: Handle deferred devices
+Date: Sat, 17 Aug 2019 11:39:14 +0800
+Message-ID: <20190817033914.4812-1-hdanton@sina.com>
+References: <20190815110944.3579-1-murphyt7@tcd.ie>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <virtualization-bounces@lists.linux-foundation.org>
+In-Reply-To: <20190815110944.3579-1-murphyt7@tcd.ie>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
+List-Post: <mailto:virtualization@lists.linux-foundation.org>
+List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
+Sender: virtualization-bounces@lists.linux-foundation.org
+Errors-To: virtualization-bounces@lists.linux-foundation.org
+To: Tom Murphy <murphyt7@tcd.ie>
+Cc: Heiko Stuebner <heiko@sntech.de>, virtualization@lists.linux-foundation.org, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Will Deacon <will@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>, linux-samsung-soc@vger.kernel.org, Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org, Rob Clark <robdclark@gmail.com>, Kukjin Kim <kgene@kernel.org>Ro
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-Currently when the call to product_id_to_soc_id fails there
-is a memory leak of soc_dev_attr->revision and soc_dev_attr
-on the error return path.  Fix this by adding a common error
-return path that frees there obects and use this for two
-error return paths.
+On Thu, 15 Aug 2019 12:09:41 +0100 Tom Murphy wrote:
+> 
+> Handle devices which defer their attach to the iommu in the dma-iommu api
+> 
+> Signed-off-by: Tom Murphy <murphyt7@tcd.ie>
+> ---
+>  drivers/iommu/dma-iommu.c | 27 ++++++++++++++++++++++++++-
+>  1 file changed, 26 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+> index 2712fbc68b28..906b7fa14d3c 100644
+> --- a/drivers/iommu/dma-iommu.c
+> +++ b/drivers/iommu/dma-iommu.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/pci.h>
+>  #include <linux/scatterlist.h>
+>  #include <linux/vmalloc.h>
+> +#include <linux/crash_dump.h>
+>  
+>  struct iommu_dma_msi_page {
+>  	struct list_head	list;
+> @@ -351,6 +352,21 @@ static int iommu_dma_init_domain(struct iommu_domain *domain, dma_addr_t base,
+>  	return iova_reserve_iommu_regions(dev, domain);
+>  }
+>  
+> +static int handle_deferred_device(struct device *dev,
+> +	struct iommu_domain *domain)
+> +{
+> +	const struct iommu_ops *ops = domain->ops;
+> +
+> +	if (!is_kdump_kernel())
+> +		return 0;
+> +
+> +	if (unlikely(ops->is_attach_deferred &&
+> +		ops->is_attach_deferred(domain, dev)))
+> +		return iommu_attach_device(domain, dev);
+> +
+> +	return 0;
+> +}
+> +
+>  /**
+>   * dma_info_to_prot - Translate DMA API directions and attributes to IOMMU API
+>   *                    page flags.
+> @@ -463,6 +479,9 @@ static dma_addr_t __iommu_dma_map(struct device *dev, phys_addr_t phys,
+>  	size_t iova_off = iova_offset(iovad, phys);
+>  	dma_addr_t iova;
+>  
+> +	if (unlikely(handle_deferred_device(dev, domain)))
+> +		return DMA_MAPPING_ERROR;
+> +
+>  	size = iova_align(iovad, size + iova_off);
+>  
+>  	iova = iommu_dma_alloc_iova(domain, size, dma_get_mask(dev), dev);
 
-Addresses-Coverity: ("Resource leak")
-Fixes: 3253b7b7cd44 ("soc: samsung: Add exynos chipid driver support")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/soc/samsung/exynos-chipid.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
-index 006a95feb618..4e194a97c0fa 100644
---- a/drivers/soc/samsung/exynos-chipid.c
-+++ b/drivers/soc/samsung/exynos-chipid.c
-@@ -81,15 +81,15 @@ int __init exynos_chipid_early_init(void)
- 	soc_dev_attr->soc_id = product_id_to_soc_id(product_id);
- 	if (!soc_dev_attr->soc_id) {
- 		pr_err("Unknown SoC\n");
--		return -ENODEV;
-+		ret = -ENODEV;
-+		goto err;
- 	}
- 
- 	/* please note that the actual registration will be deferred */
- 	soc_dev = soc_device_register(soc_dev_attr);
- 	if (IS_ERR(soc_dev)) {
--		kfree(soc_dev_attr->revision);
--		kfree(soc_dev_attr);
--		return PTR_ERR(soc_dev);
-+		ret = PTR_ERR(soc_dev);
-+		goto err;
- 	}
- 
- 	/* it is too early to use dev_info() here (soc_dev is NULL) */
-@@ -97,5 +97,11 @@ int __init exynos_chipid_early_init(void)
- 		soc_dev_attr->soc_id, product_id, revision);
- 
- 	return 0;
-+
-+err:
-+	kfree(soc_dev_attr->revision);
-+	kfree(soc_dev_attr);
-+	return ret;
- }
-+
- early_initcall(exynos_chipid_early_init);
--- 
-2.20.1
+iommu_map_atomic() is applied to __iommu_dma_map() in 2/5.
+Is it an atomic context currently given the mutex_lock() in
+iommu_attach_device()?
