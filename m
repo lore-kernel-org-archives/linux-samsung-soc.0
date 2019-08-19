@@ -1,70 +1,80 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] MAINTAINERS: Extend patterns for Samsung SoC, Security Subsystem and clock drivers
-Date: Sun, 18 Aug 2019 19:27:50 +0200
-Message-ID: <20190818172750.20921-1-krzk@kernel.org>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v2 0/9] Exynos Adaptive Supply Voltage support
+Date: Mon, 19 Aug 2019 14:39:28 +0530
+Message-ID: <20190819090928.pke6cov52n4exlbp@vireshk-i7>
+References: <CGME20190718143117eucas1p1e534b9075d10fbbbe427c66192205eb1@eucas1p1.samsung.com>
+ <20190718143044.25066-1-s.nawrocki@samsung.com>
+ <20190723020450.z2pqwetkn2tfhacq@vireshk-i7>
+ <5ef302a4-5bbf-483d-dfdf-cf76f6f69cee@samsung.com>
+ <20190725022343.p7lqalrh5svxvtu2@vireshk-i7>
+ <562dd2e7-2b24-8492-d1c1-2dc4973f07be@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <562dd2e7-2b24-8492-d1c1-2dc4973f07be@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, Kamil Konieczny <k.konieczny@partner.samsung.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, linux-clk@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, krzk@kernel.org, robh+dt@kernel.org, vireshk@kernel.org, devicetree@vger.kernel.org, kgene@kernel.org, pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Extend the patterns to cover all related files in respective
-categories:
-1. Samsung Exynos ARM architecture: add soc drivers headers and make
-   directory matches consistent,
-2. Samsung Security SubSystem driver (crypto): add bindings,
-3. Samsung SoC clock drivers: add S3C24xx, S3C64xx and S5Pv210 bindings.
+On 09-08-19, 17:58, Sylwester Nawrocki wrote:
+> Thank you for your suggestions.
+> 
+> For some Exynos SoC variants the algorithm of selecting CPU voltage supply
+> is a bit more complex than just selecting a column in the frequency/voltage 
+> matrix, i.e. selecting a set of voltage values for whole frequency range.
+> 
+> Frequency range could be divided into sub-ranges and to each such a sub-range 
+> part of different column could be assigned, depending on data fused in 
+> the CHIPID block registers.
+> 
+> We could create OPP node for each frequency and specify all needed voltages 
+> as a list of "opp-microvolt-<name>" properties but apart from the fact that 
+> it would have been quite many properties, e.g. 42 (3 tables * 14 columns), 
+> only for some SoC types the dev_pm_opp_set_prop_name() approach could be 
+> used. We would need to be able to set opp-microvolt-* property name 
+> separately for each frequency (OPP).
+> 
+> Probably most future proof would be a DT binding where we could still 
+> re-create those Exynos-specific ASV tables from DT. For example add named 
+> opp-microvolt-* properties or something similar to hold rows of each ASV 
+> table. But that conflicts with "operating-points-v2" binding, where 
+> multiple OPP voltage values are described by just named properties and 
+> multiple entries correspond to min/target/max.
+> 
+> opp_table0 {
+> 	compatible = "...", "operating-points-v2";
+> 	opp-shared;
+> 	opp-2100000000 {
+> 		opp-hz = /bits/ 64 <1800000000>;
+> 		opp-microvolt = <...>;
+> 		opp-microvolt-t1 = <1362500>, <1350000>, ....;
+> 		opp-microvolt-t2 = <1362500>, <1360000>, ....;
+> 		opp-microvolt-t3 = <1362500>, <1340000>, ....;
+> 	};
+> 	...
+> 	opp-200000000 {
+> 		opp-hz = /bits/ 64 <200000000>;
+> 		opp-microvolt = <...>;
+> 		opp-microvolt-t1 = <900000>, <900000>, ....;
+> 		opp-microvolt-t2 = <900000>, <900000>, ....;
+> 		opp-microvolt-t3 = <900000>, <900000>, ....;
+> 	};
+> };
+> 
+> I might be missing some information now on how those Exynos ASV tables 
+> are used on other SoCs that would need to be supported.
+> 
+> There will be even more data to include when adding support for the Body
+> Bias voltage, for each CPU supply voltage we could possibly have 
+> corresponding Body Bias voltage.
 
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Will something like this help ?
 
----
+https://lore.kernel.org/lkml/1442623929-4507-3-git-send-email-sboyd@codeaurora.org/
 
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
----
- MAINTAINERS | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+This never got merged but the idea was AVS only.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 420567d1519a..35a4002ac58b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2199,8 +2199,9 @@ F:	drivers/*/*s3c24*
- F:	drivers/*/*/*s3c24*
- F:	drivers/*/*s3c64xx*
- F:	drivers/*/*s5pv210*
--F:	drivers/memory/samsung/*
--F:	drivers/soc/samsung/*
-+F:	drivers/memory/samsung/
-+F:	drivers/soc/samsung/
-+F:	include/linux/soc/samsung/
- F:	Documentation/arm/samsung/
- F:	Documentation/devicetree/bindings/arm/samsung/
- F:	Documentation/devicetree/bindings/sram/samsung-sram.txt
-@@ -14174,6 +14175,8 @@ M:	Kamil Konieczny <k.konieczny@partner.samsung.com>
- L:	linux-crypto@vger.kernel.org
- L:	linux-samsung-soc@vger.kernel.org
- S:	Maintained
-+F:	Documentation/devicetree/bindings/crypto/samsung-slimsss.txt
-+F:	Documentation/devicetree/bindings/crypto/samsung-sss.txt
- F:	drivers/crypto/s5p-sss.c
- 
- SAMSUNG S5P/EXYNOS4 SOC SERIES CAMERA SUBSYSTEM DRIVERS
-@@ -14194,6 +14197,8 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git
- F:	drivers/clk/samsung/
- F:	include/dt-bindings/clock/exynos*.h
- F:	Documentation/devicetree/bindings/clock/exynos*.txt
-+F:	Documentation/devicetree/bindings/clock/samsung,s3c*
-+F:	Documentation/devicetree/bindings/clock/samsung,s5p*
- 
- SAMSUNG SPI DRIVERS
- M:	Kukjin Kim <kgene@kernel.org>
 -- 
-2.17.1
+viresh
