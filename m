@@ -1,50 +1,72 @@
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Subject: Re: [PATCH v7 0/9] drm: cec: convert DRM drivers to the new notifier
- API
-Date: Mon, 19 Aug 2019 14:00:54 +0200
-Message-ID: <04c7dcb9-d5b1-804f-959e-d953dec9f937@xs4all.nl>
-References: <20190814104520.6001-1-darekm@google.com>
- <42c7ef3c-b7e5-8c63-c7c2-bfc6c56100c6@xs4all.nl>
- <CALFZZQHu1C_8idxkwjBdxpW=y9gKmDnLOeTHZ9iAkNo7YubZHg@mail.gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2 0/9] Exynos Adaptive Supply Voltage support
+Date: Mon, 19 Aug 2019 15:39:54 +0200
+Message-ID: <b7093aaf-ea56-c390-781f-6f9d0780bd8e@samsung.com>
+References: <CGME20190718143117eucas1p1e534b9075d10fbbbe427c66192205eb1@eucas1p1.samsung.com>
+        <20190718143044.25066-1-s.nawrocki@samsung.com>
+        <20190723020450.z2pqwetkn2tfhacq@vireshk-i7>
+        <5ef302a4-5bbf-483d-dfdf-cf76f6f69cee@samsung.com>
+        <20190725022343.p7lqalrh5svxvtu2@vireshk-i7>
+        <562dd2e7-2b24-8492-d1c1-2dc4973f07be@samsung.com>
+        <20190819090928.pke6cov52n4exlbp@vireshk-i7>
+        <b831d7c5-c830-fd65-20cf-02e209889c28@samsung.com>
+        <20190819112533.bvfyinw7fsebkufr@vireshk-i7>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CALFZZQHu1C_8idxkwjBdxpW=y9gKmDnLOeTHZ9iAkNo7YubZHg@mail.gmail.com>
-Content-Language: en-US
+In-Reply-To: <20190819112533.bvfyinw7fsebkufr@vireshk-i7>
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dariusz Marcinkiewicz <darekm@google.com>
-Cc: dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, Kate Stewart <kstewart@linuxfoundation.org>, Neil Armstrong <narmstrong@baylibre.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Hans Verkuil <hverkuil@xs4all.nl>, Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>, Sam Ravnborg <sam@ravnborg.org>, linux-samsung-soc@vger.kernel.org, David Francis <David.Francis@amd.com>, amd-gfx@lists.freedesktop.org, Leo Li <sunpeng.li@amd.com>, "Jerry (Fangzhi) Zuo" <Jerry.Zuo@amd.com>, linux-arm-kernel@lists.infradead.org, nouveau@lists.freedesktop.org, Jonas Karlman <jonas@kwiboo.se>, Jani Nikula <jani.nikula@intel.com>, intel-gfx@lists.freedesktop.org, Russell King <rmk+kernel@armlinux.org.uk>, Sean Paul <seanpaul@chromium.org>, Rodrigo Vivi <rodrigo.v>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, krzk@kernel.org, robh+dt@kernel.org, vireshk@kernel.org, devicetree@vger.kernel.org, kgene@kernel.org, pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 8/19/19 1:28 PM, Dariusz Marcinkiewicz wrote:
-> On Mon, Aug 19, 2019 at 11:38 AM Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
+On 8/19/19 13:25, Viresh Kumar wrote:
+> On 19-08-19, 13:16, Sylwester Nawrocki wrote:
+>> On 8/19/19 11:09, Viresh Kumar wrote:
+>>> Will something like this help ?
+>>>
+>>> https://lore.kernel.org/lkml/1442623929-4507-3-git-send-email-sboyd@codeaurora.org/
+>>>
+>>> This never got merged but the idea was AVS only.
 >>
->> Hi all,
+>> It's quite interesting work, it seems to be for a more advanced use case 
+>> where OPP voltage is being adjusted at runtime.
 >>
-> Hi Hans.
->> The patches in this series can be applied independently from each other.
->>
->> If you maintain one of these drivers and you want to merge it for v5.4
->> yourself, then please do so and let me know. If you prefer I commit it
->> to drm-misc, then please review and (hopefully) Ack the patch.
->>
->> I would really like to get this in for v5.4 so I can get the userspace
->> bits in for v5.4 as well through the media subsystem.
->>
->> Dariusz, can you post a v7.1 for patch 5/9 fixing the typo?
->>
-> Done.
+>> We could use it instead of removing an OPP and then adding with updated 
+>> voltage. On Exynos there is there is just a need to update OPPs once at boot 
+>> time, so it is more "static". However the requirements could presumably 
+>> change in future.
 > 
-> I think it would be good to test v7 changes to dw-hdmi and tda998x on
-> a real hardware. Hans, do you think you would be able to test those?
+> The API is about changing the values after they are parsed once from DT. You can
+> change it once or multiple times depending on the use case.
 > 
-> Thank you.
+>> If that's your preference I could switch to that notifier approach.
 > 
+> You shouldn't be required to use the notifier. Just add the OPP table and update
+> the values right after that. So no one would be using the values at that time.
 
-I'll try to do this for dw-hdmi today, but the tda998x testing will have to wait
-until next week.
+OK, now I see dev_pm_opp_adjust_voltage() actually changes OPP's voltage 
+and the notifier is optional.
 
-Regards,
+> Will this patchset solve the problems for you and make your DT light weight ?
 
-	Hans
+Unfortunately not, the patch set as I see it is another way of updating 
+an OPP after it was parsed from DT.  OPP remove/add could work equally 
+well in our use case.
+ 
+The problem is that we have the information on how to translate the 
+common OPP voltage to a voltage specific to given silicon encoded jointly 
+in the ASV tables and the CHIPID registers (efuse/OTP memory). 
+Additionally, algorithm of selecting ASV data (OPP voltage) based on 
+the "key" data from registers is not generic, it is usually different 
+per each SoC type.
+
+I tried to identify some patterns in those tables in order to simplify 
+possible DT binding, but that was not really successful. I ended up just 
+keeping whole tables.
+
+--
+Regards, 
+Sylwester
