@@ -1,105 +1,87 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [RFC PATCH 09/11] devfreq: exynos-bus: Add interconnect
- functionality to exynos-bus
-Date: Tue, 20 Aug 2019 08:44:05 +0900
-Message-ID: <08bd637a-2038-9f64-a189-682427ce5bfb@samsung.com>
-References: <20190723122016.30279-1-a.swigon@partner.samsung.com>
-        <CGME20190723122028eucas1p2eb75f35b810e71d6c590370aaff0997b@eucas1p2.samsung.com>
-        <20190723122016.30279-10-a.swigon@partner.samsung.com>
-        <5a82bf8a-d925-ba54-a26f-98b64bedc6e1@samsung.com>
-        <VI1PR04MB7023B5095F706635354C4C50EED70@VI1PR04MB7023.eurprd04.prod.outlook.com>
+Subject: Re: [PATCH] MAINTAINERS: Extend patterns for Samsung SoC, Security
+ Subsystem and clock drivers
+Date: Tue, 20 Aug 2019 08:48:07 +0900
+Message-ID: <0bc1c3a5-cdf2-eeab-e547-97598ca1fbd1@samsung.com>
+References: <CGME20190818172803epcas1p32db0707cb391c5ca1795ba2690284a56@epcas1p3.samsung.com>
+        <20190818172750.20921-1-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <VI1PR04MB7023B5095F706635354C4C50EED70@VI1PR04MB7023.eurprd04.prod.outlook.com>
+In-Reply-To: <20190818172750.20921-1-krzk@kernel.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Leonard Crestez <leonard.crestez@nxp.com>, =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>, "georgi.djakov@linaro.org" <georgi.djakov@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "krzk@kernel.org" <krzk@kernel.org>, "myungjoo.ham@samsung.com" <myungjoo.ham@samsung.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Saravana Kannan <saravanak@google.com>, Lukasz Luba <l.luba@partner.samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, Kamil Konieczny <k.konieczny@partner.samsung.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, linux-clk@vger.kernel.org, "cpgs (cpgs@samsung.com)" <cpgs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Artur and Leonard,
+Hi Krzysztof,
 
-On 19. 8. 9. 오전 12:00, Leonard Crestez wrote:
-> On 29.07.2019 04:49, Chanwoo Choi wrote:
->> On 19. 7. 23. 오후 9:20, Artur Świgoń wrote:
->>> This patch adds interconnect functionality to the exynos-bus devfreq
->>> driver.
->>>
->>> The devfreq target() callback provided by exynos-bus now selects either the
->>> frequency calculated by the devfreq governor or the frequency requested via
->>> the interconnect API for the given node, whichever is higher.
->>
->> Basically, I agree to support the QoS requirement between devices.
->> But, I think that need to consider the multiple cases.
->>
->> 1. When changing the devfreq governor by user,
->> For example of the connection between bus_dmc/leftbus/display on patch8,
->> there are possible multiple cases with various devfreq governor
->> which is changed on the runtime by user through sysfs interface.
->>
->> If users changes the devfreq governor as following:
->> Before,
->> - bus_dmc (simple_ondemand, available frequency 100/200/300/400 MHz)
->> --> bus_leftbus(simple_ondemand, available frequency 100/200/300/400 MHz)
->> ----> bus_display(passive)
->>
->> After changed governor of bus_dmc,
->> if the min_freq by interconnect requirement is 400Mhz,
->> - bus_dmc (powersave) : min_freq and max_freq and cur_freq is 100MHz
->> --> bus_leftbus(simple_ondemand) : cur_freq is 400Mhz
->> ----> bus_display(passive)
->>
->> The final frequency is 400MHz of bus_dmc
->> even if the min_freq/max_freq/cur_freq is 100MHz.
->> It cannot show the correct min_freq/max_freq through
->> devfreq sysfs interface.
->>
->>
->> 2. When disabling the some frequency by devfreq-thermal throttling,
->> This patch checks the min_freq of interconnect requirement
->> in the exynos_bus_target() and exynos_bus_passive_target().
->> Also, it cannot show the correct min_freq/max_freq through
->> devfreq sysfs interface.
->>
->> For example of bus_dmc bus,
->> - The available frequencies are 100MHz, 200MHz, 300MHz, 400MHz
->> - Disable 400MHz by devfreq-thermal throttling
->> - min_freq is 100MHz
->> - max_freq is 300MHz
->> - min_freq of interconnect is 400MHz
->>
->> In result, the final frequency is 400MHz by exynos_bus_target()
->> There are no problem for working. But, the user cannot know
->> reason why cur_freq is 400MHz even if max_freq is 300MHz.
->>
->> Basically, update_devfreq() considers the all constraints
->> of min_freq/max_freq to decide the proper target frequency.
+On 19. 8. 19. 오전 2:27, Krzysztof Kozlowski wrote:
+> Extend the patterns to cover all related files in respective
+> categories:
+> 1. Samsung Exynos ARM architecture: add soc drivers headers and make
+>    directory matches consistent,
+> 2. Samsung Security SubSystem driver (crypto): add bindings,
+> 3. Samsung SoC clock drivers: add S3C24xx, S3C64xx and S5Pv210 bindings.
 > 
-> I think that applying the interconnect min_freq via dev_pm_qos can help 
-> with many of these concerns: update_devfreq controls all the min/max 
-> handling, sysfs is accurate and better decisions can be made regarding 
-> thermal. Enforcing constraints in the core is definitely better.
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Vladimir Zapolskiy <vz@mleia.com>
+> Cc: Kamil Konieczny <k.konieczny@partner.samsung.com>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > 
-> This wouldn't even be a very big change, you don't need to actually move 
-> the interconnect code outside of devfreq. Just make every devfreq/icc 
-> node register a dev_pm_qos_request for itself during registration and 
-> call dev_pm_qos_update_request inside exynos_bus_icc_set.
+> ---
 > 
-> See: https://patchwork.kernel.org/patch/11084279/
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-crypto@vger.kernel.org
+> Cc: linux-clk@vger.kernel.org
+> ---
+>  MAINTAINERS | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 420567d1519a..35a4002ac58b 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -2199,8 +2199,9 @@ F:	drivers/*/*s3c24*
+>  F:	drivers/*/*/*s3c24*
+>  F:	drivers/*/*s3c64xx*
+>  F:	drivers/*/*s5pv210*
+> -F:	drivers/memory/samsung/*
+> -F:	drivers/soc/samsung/*
+> +F:	drivers/memory/samsung/
+> +F:	drivers/soc/samsung/
+> +F:	include/linux/soc/samsung/
+>  F:	Documentation/arm/samsung/
+>  F:	Documentation/devicetree/bindings/arm/samsung/
+>  F:	Documentation/devicetree/bindings/sram/samsung-sram.txt
+> @@ -14174,6 +14175,8 @@ M:	Kamil Konieczny <k.konieczny@partner.samsung.com>
+>  L:	linux-crypto@vger.kernel.org
+>  L:	linux-samsung-soc@vger.kernel.org
+>  S:	Maintained
+> +F:	Documentation/devicetree/bindings/crypto/samsung-slimsss.txt
+> +F:	Documentation/devicetree/bindings/crypto/samsung-sss.txt
+>  F:	drivers/crypto/s5p-sss.c
+>  
+>  SAMSUNG S5P/EXYNOS4 SOC SERIES CAMERA SUBSYSTEM DRIVERS
+> @@ -14194,6 +14197,8 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git
+>  F:	drivers/clk/samsung/
+>  F:	include/dt-bindings/clock/exynos*.h
+>  F:	Documentation/devicetree/bindings/clock/exynos*.txt
+> +F:	Documentation/devicetree/bindings/clock/samsung,s3c*
+> +F:	Documentation/devicetree/bindings/clock/samsung,s5p*
+>  
+>  SAMSUNG SPI DRIVERS
+>  M:	Kukjin Kim <kgene@kernel.org>
+> 
 
-I agree this approach of Leonard. If we use the dev_pm_qos[1] feature,
-it resolve the issue of my comment1/2.
+For clock part,
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-In summary, when receive the minimum frequency requirement
-from interconnect path, the each bus uses the dev_pm_qos interface
-in order to inform the minimum frequency from interconnect to devfreq.
-And then the devfreq core will execute the update_devfreq()
-with all frequency requirements as following:
-- the user input (min/max frequency though devfreq sysfs
-- the target frequency provided by devfreq governor
-- the minimum frequency from interconnect path
 
 -- 
 Best Regards,
