@@ -1,89 +1,86 @@
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Subject: Re: [PATCH v7 0/9] drm: cec: convert DRM drivers to the new notifier
- API
-Date: Mon, 19 Aug 2019 11:38:44 +0200
-Message-ID: <42c7ef3c-b7e5-8c63-c7c2-bfc6c56100c6@xs4all.nl>
-References: <20190814104520.6001-1-darekm@google.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v2 0/9] Exynos Adaptive Supply Voltage support
+Date: Mon, 19 Aug 2019 15:36:42 +0530
+Message-ID: <20190819100642.tvnzt6d5rikugycr@vireshk-i7>
+References: <CGME20190718143117eucas1p1e534b9075d10fbbbe427c66192205eb1@eucas1p1.samsung.com>
+ <20190718143044.25066-1-s.nawrocki@samsung.com>
+ <20190723020450.z2pqwetkn2tfhacq@vireshk-i7>
+ <5ef302a4-5bbf-483d-dfdf-cf76f6f69cee@samsung.com>
+ <20190725022343.p7lqalrh5svxvtu2@vireshk-i7>
+ <562dd2e7-2b24-8492-d1c1-2dc4973f07be@samsung.com>
+ <20190819090928.pke6cov52n4exlbp@vireshk-i7>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190814104520.6001-1-darekm@google.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20190819090928.pke6cov52n4exlbp@vireshk-i7>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dariusz Marcinkiewicz <darekm@google.com>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
-Cc: Kate Stewart <kstewart@linuxfoundation.org>, Neil Armstrong <narmstrong@baylibre.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Hans Verkuil <hverkuil@xs4all.nl>, Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>, Sam Ravnborg <sam@ravnborg.org>, linux-samsung-soc@vger.kernel.org, David Francis <David.Francis@amd.com>, amd-gfx@lists.freedesktop.org, Leo Li <sunpeng.li@amd.com>, "Jerry (Fangzhi) Zuo" <Jerry.Zuo@amd.com>, linux-arm-kernel@lists.infradead.org, nouveau@lists.freedesktop.org, Jonas Karlman <jonas@kwiboo.se>, Jani Nikula <jani.nikula@intel.com>, intel-gfx@lists.freedesktop.org, Russell King <rmk+kernel@armlinux.org.uk>, Sean Paul <seanpaul@chromium.org>, Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, krzk@kernel.org, robh+dt@kernel.org, vireshk@kernel.org, devicetree@vger.kernel.org, kgene@kernel.org, pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi all,
-
-The patches in this series can be applied independently from each other.
-
-If you maintain one of these drivers and you want to merge it for v5.4
-yourself, then please do so and let me know. If you prefer I commit it
-to drm-misc, then please review and (hopefully) Ack the patch.
-
-I would really like to get this in for v5.4 so I can get the userspace
-bits in for v5.4 as well through the media subsystem.
-
-Dariusz, can you post a v7.1 for patch 5/9 fixing the typo?
-
-Thanks!
-
-	Hans
-
-On 8/14/19 12:44 PM, Dariusz Marcinkiewicz wrote:
-> This series updates DRM drivers to use new CEC notifier API.
+On 19-08-19, 14:39, Viresh Kumar wrote:
+> On 09-08-19, 17:58, Sylwester Nawrocki wrote:
+> > Thank you for your suggestions.
+> > 
+> > For some Exynos SoC variants the algorithm of selecting CPU voltage supply
+> > is a bit more complex than just selecting a column in the frequency/voltage 
+> > matrix, i.e. selecting a set of voltage values for whole frequency range.
+> > 
+> > Frequency range could be divided into sub-ranges and to each such a sub-range 
+> > part of different column could be assigned, depending on data fused in 
+> > the CHIPID block registers.
+> > 
+> > We could create OPP node for each frequency and specify all needed voltages 
+> > as a list of "opp-microvolt-<name>" properties but apart from the fact that 
+> > it would have been quite many properties, e.g. 42 (3 tables * 14 columns), 
+> > only for some SoC types the dev_pm_opp_set_prop_name() approach could be 
+> > used. We would need to be able to set opp-microvolt-* property name 
+> > separately for each frequency (OPP).
+> > 
+> > Probably most future proof would be a DT binding where we could still 
+> > re-create those Exynos-specific ASV tables from DT. For example add named 
+> > opp-microvolt-* properties or something similar to hold rows of each ASV 
+> > table. But that conflicts with "operating-points-v2" binding, where 
+> > multiple OPP voltage values are described by just named properties and 
+> > multiple entries correspond to min/target/max.
+> > 
+> > opp_table0 {
+> > 	compatible = "...", "operating-points-v2";
+> > 	opp-shared;
+> > 	opp-2100000000 {
+> > 		opp-hz = /bits/ 64 <1800000000>;
+> > 		opp-microvolt = <...>;
+> > 		opp-microvolt-t1 = <1362500>, <1350000>, ....;
+> > 		opp-microvolt-t2 = <1362500>, <1360000>, ....;
+> > 		opp-microvolt-t3 = <1362500>, <1340000>, ....;
+> > 	};
+> > 	...
+> > 	opp-200000000 {
+> > 		opp-hz = /bits/ 64 <200000000>;
+> > 		opp-microvolt = <...>;
+> > 		opp-microvolt-t1 = <900000>, <900000>, ....;
+> > 		opp-microvolt-t2 = <900000>, <900000>, ....;
+> > 		opp-microvolt-t3 = <900000>, <900000>, ....;
+> > 	};
+> > };
+> > 
+> > I might be missing some information now on how those Exynos ASV tables 
+> > are used on other SoCs that would need to be supported.
+> > 
+> > There will be even more data to include when adding support for the Body
+> > Bias voltage, for each CPU supply voltage we could possibly have 
+> > corresponding Body Bias voltage.
 > 
-> Changes since v6:
-> 	Made CEC notifiers' registration and de-registration symmetric
-> 	in tda998x and dw-hdmi drivers. Also, accidentally dropped one
-> 	patch in v6 (change to drm_dp_cec), brought it back now.
-> Changes since v5:
->         Fixed a warning about a missing comment for a new member of
-> 	drm_dp_aux_cec struct. Sending to a wider audience,
-> 	including maintainers of respective drivers.
-> Changes since v4:
-> 	Addressing review comments.
-> Changes since v3:
->         Updated adapter flags in dw-hdmi-cec.
-> Changes since v2:
-> 	Include all DRM patches from "cec: improve notifier support,
-> 	add connector info connector info" series.
-> Changes since v1:
-> 	Those patches delay creation of notifiers until respective
-> 	connectors are constructed. It seems that those patches, for a
-> 	couple of drivers, by adding the delay, introduce a race between
-> 	notifiers' creation and the IRQs handling threads - at least I
-> 	don't see anything obvious in there that would explicitly forbid
-> 	such races to occur. v2 adds a write barrier to make sure IRQ
-> 	threads see the notifier once it is created (replacing the
-> 	WRITE_ONCE I put in v1). The best thing to do here, I believe,
-> 	would be not to have any synchronization and make sure that an IRQ
-> 	only gets enabled after the notifier is created.
-> Dariusz Marcinkiewicz (9):
->   drm_dp_cec: add connector info support.
->   drm/i915/intel_hdmi: use cec_notifier_conn_(un)register
->   dw-hdmi-cec: use cec_notifier_cec_adap_(un)register
->   tda9950: use cec_notifier_cec_adap_(un)register
->   drm: tda998x: use cec_notifier_conn_(un)register
->   drm: sti: use cec_notifier_conn_(un)register
->   drm: tegra: use cec_notifier_conn_(un)register
->   drm: dw-hdmi: use cec_notifier_conn_(un)register
->   drm: exynos: exynos_hdmi: use cec_notifier_conn_(un)register
+> Will something like this help ?
 > 
->  .../display/amdgpu_dm/amdgpu_dm_mst_types.c   |  2 +-
->  drivers/gpu/drm/bridge/synopsys/dw-hdmi-cec.c | 13 +++---
->  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c     | 46 +++++++++++++------
->  drivers/gpu/drm/drm_dp_cec.c                  | 25 ++++++----
->  drivers/gpu/drm/exynos/exynos_hdmi.c          | 31 +++++++------
->  drivers/gpu/drm/i2c/tda9950.c                 | 12 ++---
->  drivers/gpu/drm/i2c/tda998x_drv.c             | 36 ++++++++++-----
->  drivers/gpu/drm/i915/display/intel_dp.c       |  4 +-
->  drivers/gpu/drm/i915/display/intel_hdmi.c     | 13 ++++--
->  drivers/gpu/drm/nouveau/nouveau_connector.c   |  3 +-
->  drivers/gpu/drm/sti/sti_hdmi.c                | 19 +++++---
->  drivers/gpu/drm/tegra/output.c                | 28 ++++++++---
->  include/drm/drm_dp_helper.h                   | 17 ++++---
->  13 files changed, 155 insertions(+), 94 deletions(-)
+> https://lore.kernel.org/lkml/1442623929-4507-3-git-send-email-sboyd@codeaurora.org/
 > 
+> This never got merged but the idea was AVS only.
+
+Here is a recent version under review.
+
+https://lore.kernel.org/lkml/1565703113-31479-1-git-send-email-andrew-sh.cheng@mediatek.com
+
+-- 
+viresh
