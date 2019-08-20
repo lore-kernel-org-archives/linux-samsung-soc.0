@@ -1,63 +1,29 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v2 0/9] Exynos Adaptive Supply Voltage support
-Date: Tue, 20 Aug 2019 14:51:13 +0530
-Message-ID: <20190820092113.gojhe3romdnvm7eu@vireshk-i7>
-References: <20190723020450.z2pqwetkn2tfhacq@vireshk-i7>
- <5ef302a4-5bbf-483d-dfdf-cf76f6f69cee@samsung.com>
- <20190725022343.p7lqalrh5svxvtu2@vireshk-i7>
- <562dd2e7-2b24-8492-d1c1-2dc4973f07be@samsung.com>
- <20190819090928.pke6cov52n4exlbp@vireshk-i7>
- <b831d7c5-c830-fd65-20cf-02e209889c28@samsung.com>
- <20190819112533.bvfyinw7fsebkufr@vireshk-i7>
- <b7093aaf-ea56-c390-781f-6f9d0780bd8e@samsung.com>
- <20190820030114.6flnn2omeys3lih3@vireshk-i7>
- <06ccff05-2152-4bcc-7537-8f24da75f163@samsung.com>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH V5 1/5] iommu/amd: Remove unnecessary locking from AMD
+ iommu driver
+Date: Tue, 20 Aug 2019 02:41:43 -0700
+Message-ID: <20190820094143.GA24154@infradead.org>
+References: <20190815110944.3579-1-murphyt7@tcd.ie>
+ <20190815110944.3579-2-murphyt7@tcd.ie>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <06ccff05-2152-4bcc-7537-8f24da75f163@samsung.com>
+In-Reply-To: <20190815110944.3579-2-murphyt7@tcd.ie>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, krzk@kernel.org, robh+dt@kernel.org, vireshk@kernel.org, devicetree@vger.kernel.org, kgene@kernel.org, pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, b.zolnierkie@samsung.com
+To: Tom Murphy <murphyt7@tcd.ie>
+Cc: iommu@lists.linux-foundation.org, Heiko Stuebner <heiko@sntech.de>, virtualization@lists.linux-foundation.org, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Will Deacon <will@kernel.org>, Jean-Philippe Brucker <jean-philippe@linaro.org>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 20-08-19, 11:03, Sylwester Nawrocki wrote:
-> On 8/20/19 05:01, Viresh Kumar wrote:
-> > Sorry but I am unable to understand the difficulty you are facing now. So what I
-> > suggest is something like this.
-> 
-> The difficulty was about representing data from tables asv_{arm,kfc}_table[][]
-> added in patch 3/9 of the series in devicetree.  If you have no objections
-> about keeping those tables in the driver then I can't see any difficulties. 
+On Thu, Aug 15, 2019 at 12:09:39PM +0100, Tom Murphy wrote:
+> We can remove the mutex lock from amd_iommu_map and amd_iommu_unmap.
+> iommu_map doesn’t lock while mapping and so no two calls should touch
+> the same iova range. The AMD driver already handles the page table page
+> allocations without locks so we can safely remove the locks.
 
-The problem with keeping such tables in kernel is that they contain too much
-magic values which very few people understand. And after some amount of time,
-even they don't remember any of it.
-
-What I was expecting was to remove as much of these tables as possible and do
-the calculations to get them at runtime with some logical code which people can
-understand later on.
-
-> > - Use DT to get a frequency and voltage for each frequency.
-> 
-> Yes, this is what happens now, we have common OPPs in DT that work for each SoC
-> revision. 
-> 
-> > - At runtime, based on SoC, registers, efuses, etc, update the voltage of the
-> >   OPPs.
-> > - This algo can be different for each SoC, no one is stopping you from doing
-> >   that.
-> > 
-> > Am I missing something ?
-> 
-> Not really, this is basically what happens in the $subject patch series. 
-> 
-> Then IIUC what I would need to change is to modify exynos_asv_update_cpu_opps() 
-> function in patch 3/9 to use dev_pm_opp_adjust_voltage() rather than 
-> dev_pm_opp_remove(), dev_pm_opp_add().
-
-That and somehow add code to get those tables if possible.
-
--- 
-viresh
+I've been looking over the code and trying to understand how the
+synchronization works.  I gues we the cmpxchg64 in free_clear_pte
+is the important point here?  I have to admit I don't fully understand
+the concurrency issues here, but neither do I understand what the
+mutex you removed might have helped to start with.
