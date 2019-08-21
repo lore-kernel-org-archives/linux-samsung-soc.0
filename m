@@ -1,34 +1,35 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] soc: samsung: Add missing Kconfig dependencies for
+Subject: [PATCH v2] soc: samsung: Select missing dependency for
  EXYNOS_CHIPID
-Date: Wed, 21 Aug 2019 17:07:11 +0200
-Message-ID: <20190821150711.31398-1-s.nawrocki@samsung.com>
-References: <CGME20190821150719eucas1p26bddabb16499647860805e61a8b63010@eucas1p2.samsung.com>
+Date: Wed, 21 Aug 2019 17:39:26 +0200
+Message-ID: <20190821153926.12297-1-s.nawrocki@samsung.com>
+References: <20190821150711.31398-1-s.nawrocki@samsung.com>
+        <CGME20190821153936eucas1p22cd1a6105806cb5ad7b43252852fec05@eucas1p2.samsung.com>
 Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190821150711.31398-1-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: krzk@kernel.org
-Cc: jonathanh@nvidia.com, kgene@kernel.org, pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: kgene@kernel.org, pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The chipid driver uses the regmap and the MFD syscon API
-but it was not covered properly in Kconfig.
+The chipid driver uses the MFD syscon API but it was not covered
+properly in Kconfig.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- drivers/soc/samsung/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/soc/samsung/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
-index 2905f5262197..a03f83492716 100644
+index 2905f5262197..33ad0de2de3c 100644
 --- a/drivers/soc/samsung/Kconfig
 +++ b/drivers/soc/samsung/Kconfig
-@@ -9,7 +9,7 @@ if SOC_SAMSUNG
- 
+@@ -10,6 +10,7 @@ if SOC_SAMSUNG
  config EXYNOS_CHIPID
  	bool "Exynos Chipid controller driver" if COMPILE_TEST
--	depends on ARCH_EXYNOS || COMPILE_TEST
-+	depends on (ARCH_EXYNOS && REGMAP && MFD_SYSCON) || COMPILE_TEST
+ 	depends on ARCH_EXYNOS || COMPILE_TEST
++	select MFD_SYSCON
  	select SOC_BUS
  
  config EXYNOS_PMU
