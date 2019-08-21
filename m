@@ -1,17 +1,17 @@
 From: Lukasz Luba <l.luba@partner.samsung.com>
 Subject: Re: [PATCH v12 3/9] drivers: memory: extend of_memory by LPDDR3
  support
-Date: Wed, 21 Aug 2019 11:03:28 +0200
-Message-ID: <43c8fb01-c85c-47f7-f5c1-5fc0d0191b26@partner.samsung.com>
+Date: Wed, 21 Aug 2019 11:17:27 +0200
+Message-ID: <21d22ba6-2254-ae5e-7ef4-5dfaa3f54229@partner.samsung.com>
 References: <CGME20190722094727eucas1p10041ba25819e6e62d639423a97435f2d@eucas1p1.samsung.com>
         <20190722094646.13342-1-l.luba@partner.samsung.com>
         <20190722094646.13342-4-l.luba@partner.samsung.com>
-        <CAJKOXPdue75yF=v5vsawOdfvcCMBDP6HGVXdwngBWE264kGJwg@mail.gmail.com>
+        <CAJKOXPd96ExoCR-SiJfRqTbwO+_aQ6LSDVOQcrrt8JQHsoZBEw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPdue75yF=v5vsawOdfvcCMBDP6HGVXdwngBWE264kGJwg@mail.gmail.com>
+In-Reply-To: <CAJKOXPd96ExoCR-SiJfRqTbwO+_aQ6LSDVOQcrrt8JQHsoZBEw@mail.gmail.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
@@ -20,7 +20,7 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi Krzysztof,
 
-On 7/24/19 1:39 PM, Krzysztof Kozlowski wrote:
+On 7/24/19 1:31 PM, Krzysztof Kozlowski wrote:
 > On Mon, 22 Jul 2019 at 11:47, Lukasz Luba <l.luba@partner.samsung.com> wrote:
 >>
 >> The patch adds AC timings information needed to support LPDDR3 and memory
@@ -56,6 +56,12 @@ On 7/24/19 1:39 PM, Krzysztof Kozlowski wrote:
 >> + * Structure for timings for LPDDR3 based on LPDDR2 plus additional fields.
 >> + * All parameters are in pico seconds(ps) unless explicitly indicated
 >> + * with a suffix like tRAS_max_ns below
+> 
+> To which tRAS_max_ns are you referring?
+The comment failed to stand the test of time, not for the first time
+though. I will update it according to the current struct.
+
+> 
 >> + */
 >> +struct lpddr3_timings {
 >> +       u32 max_freq;
@@ -127,16 +133,76 @@ On 7/24/19 1:39 PM, Krzysztof Kozlowski wrote:
 >> + * it under the terms of the GNU General Public License as published by
 >> + * the Free Software Foundation; either version 2 of the License, or
 >> + * (at your option) any later version.
+>>    */
+>>
+>>   #include <linux/device.h>
+>> @@ -149,3 +155,151 @@ const struct lpddr2_timings *of_get_ddr_timings(struct device_node *np_ddr,
+>>          return lpddr2_jedec_timings;
+>>   }
+>>   EXPORT_SYMBOL(of_get_ddr_timings);
+>> +
+>> +/**
+>> + * of_lpddr3_get_min_tck() - extract min timing values for lpddr3
+>> + * @np: pointer to ddr device tree node
+>> + * @device: device requesting for min timing values
+>> + *
+>> + * Populates the lpddr3_min_tck structure by extracting data
+>> + * from device tree node. Returns a pointer to the populated
+>> + * structure. If any error in populating the structure, returns NULL.
+>> + */
+>> +const struct lpddr3_min_tck *of_lpddr3_get_min_tck(struct device_node *np,
+>> +                                                  struct device *dev)
+>> +{
+>> +       int                     ret = 0;
+>> +       struct lpddr3_min_tck   *min;
+>> +
+>> +       min = devm_kzalloc(dev, sizeof(*min), GFP_KERNEL);
+>> +       if (!min)
+>> +               goto default_min_tck;
+>> +
+>> +       ret |= of_property_read_u32(np, "tRFC-min-tck", &min->tRFC);
+>> +       ret |= of_property_read_u32(np, "tRRD-min-tck", &min->tRRD);
+>> +       ret |= of_property_read_u32(np, "tRPab-min-tck", &min->tRPab);
+>> +       ret |= of_property_read_u32(np, "tRPpb-min-tck", &min->tRPpb);
+>> +       ret |= of_property_read_u32(np, "tRCD-min-tck", &min->tRCD);
+>> +       ret |= of_property_read_u32(np, "tRC-min-tck", &min->tRC);
+>> +       ret |= of_property_read_u32(np, "tRAS-min-tck", &min->tRAS);
+>> +       ret |= of_property_read_u32(np, "tWTR-min-tck", &min->tWTR);
+>> +       ret |= of_property_read_u32(np, "tWR-min-tck", &min->tWR);
+>> +       ret |= of_property_read_u32(np, "tRTP-min-tck", &min->tRTP);
+>> +       ret |= of_property_read_u32(np, "tW2W-C2C-min-tck", &min->tW2W_C2C);
+>> +       ret |= of_property_read_u32(np, "tR2R-C2C-min-tck", &min->tR2R_C2C);
+>> +       ret |= of_property_read_u32(np, "tWL-min-tck", &min->tWL);
+>> +       ret |= of_property_read_u32(np, "tDQSCK-min-tck", &min->tDQSCK);
+>> +       ret |= of_property_read_u32(np, "tRL-min-tck", &min->tRL);
+>> +       ret |= of_property_read_u32(np, "tFAW-min-tck", &min->tFAW);
+>> +       ret |= of_property_read_u32(np, "tXSR-min-tck", &min->tXSR);
+>> +       ret |= of_property_read_u32(np, "tXP-min-tck", &min->tXP);
+>> +       ret |= of_property_read_u32(np, "tCKE-min-tck", &min->tCKE);
+>> +       ret |= of_property_read_u32(np, "tCKESR-min-tck", &min->tCKESR);
+>> +       ret |= of_property_read_u32(np, "tMRD-min-tck", &min->tMRD);
+>> +
+>> +       if (ret) {
+>> +               dev_warn(dev, "%s: errors while parsing min-tck values\n",
+>> +                        __func__);
+>> +               devm_kfree(dev, min);
+>> +               goto default_min_tck;
+>> +       }
+>> +
+>> +       return min;
+>> +
+>> +default_min_tck:
+>> +       dev_warn(dev, "%s: using default min-tck values\n", __func__);
 > 
-> What's this?
-My bad, in the meantime Thomas Gleixner has replaced the license header.
-The old part has been automatically taken again during my re-base.
-I will just remove the old license comment.
+> Here and later - you return NULL, not default values. Your driver -
+> consumer - also behaves like with error condition, not like with
+> default values. Print just that you cannot get timings, I guess.
+OK, thank you. I will change the print.
+
+Thank you for the review.
 
 Regards,
 Lukasz
-> 
-> Please, get a independent review or ack for this patch.
 > 
 > Best regards,
 > Krzysztof
