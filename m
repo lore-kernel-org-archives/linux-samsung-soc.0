@@ -1,73 +1,44 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 2/9] soc: samsung: Convert exynos-chipid driver to use
- the regmap API
-Date: Wed, 21 Aug 2019 09:49:36 +0200
-Message-ID: <CAJKOXPcdeb08-2Xsmjpw_CsJCTah03GJaLUjQYw6n7=Xhiwoow@mail.gmail.com>
-References: <20190813150827.31972-1-s.nawrocki@samsung.com>
- <CGME20190813150852eucas1p2be4c0ab5ec2c079e3daf1af24283b27c@eucas1p2.samsung.com>
- <20190813150827.31972-3-s.nawrocki@samsung.com> <b5359603-b337-dcd8-b025-ca7dff5f4a06@nvidia.com>
- <CAJKOXPf597CMx=M2JmSTWe2GzBfcHFefgzSJbJ+njZGp-WfR1A@mail.gmail.com> <1e428c8e-f4b5-0810-77f9-2c899c040fc7@kernel.org>
+Subject: Re: [GIT PULL 1/3] soc: samsung: Exynos for v5.4
+Date: Wed, 21 Aug 2019 09:51:09 +0200
+Message-ID: <CAJKOXPcgZ2_ofZyAeTSxALkALaP-SFNfvNmNPYSPyLzuhpGZ0w@mail.gmail.com>
+References: <20190816163042.6604-1-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1e428c8e-f4b5-0810-77f9-2c899c040fc7@kernel.org>
+In-Reply-To: <20190816163042.6604-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sylwester Nawrocki <snawrocki@kernel.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, robh+dt@kernel.org, vireshk@kernel.org, devicetree@vger.kernel.org, kgene@kernel.org, pankaj.dubey@samsung.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-tegra <linux-tegra@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, 20 Aug 2019 at 23:38, Sylwester Nawrocki <snawrocki@kernel.org> wrote:
+On Fri, 16 Aug 2019 at 18:30, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
-> On 8/20/19 21:37, Krzysztof Kozlowski wrote:
-> >>> diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+> The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
 >
-> >>> @@ -51,29 +48,24 @@ static const char * __init product_id_to_soc_id(unsigned int product_id)
-> >>>   int __init exynos_chipid_early_init(void)
-> >>>   {
-> >>>        struct soc_device_attribute *soc_dev_attr;
-> >>> -     void __iomem *exynos_chipid_base;
-> >>>        struct soc_device *soc_dev;
-> >>>        struct device_node *root;
-> >>> -     struct device_node *np;
-> >>> +     struct regmap *regmap;
-> >>>        u32 product_id;
-> >>>        u32 revision;
-> >>> +     int ret;
-> >>>
-> >>> -     /* look up for chipid node */
-> >>> -     np = of_find_compatible_node(NULL, NULL, "samsung,exynos4210-chipid");
-> >>> -     if (!np)
-> >>> -             return -ENODEV;
-> >>> -
-> >>> -     exynos_chipid_base = of_iomap(np, 0);
-> >>> -     of_node_put(np);
-> >>> -
-> >>> -     if (!exynos_chipid_base) {
-> >>> -             pr_err("Failed to map SoC chipid\n");
-> >>> -             return -ENXIO;
-> >>> +     regmap = syscon_regmap_lookup_by_compatible("samsung,exynos4210-chipid");
-> >>> +     if (IS_ERR(regmap)) {
-> >>> +             pr_err("Failed to get CHIPID regmap\n");
-> >>> +             return PTR_ERR(regmap);
-> >>>        }
-> >> Following this change, I am now seeing the above error on our Tegra
-> >> boards where this driver is enabled. This is triggering a kernel
-> >> warnings test we have to fail. Hence, I don't think that you can remove
-> >> the compatible node test here, unless you have a better way to determine
-> >> if this is a samsung device.
-> >
-> > Right, this is really wrong... I missed that it is not a probe but
-> > early init. And this init will be called on every board... Probably it
-> > should be converted to a regular driver.
+>   Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
 >
-> I'm also inclined to have it converted to a regular driver.  We already
-> have "exynos-asv" driver matching on the chipid node (patch 3/9).
-> The ASV patches will not be merged soon anyway, all this needs some more
-> thought. Krzysztof, can we abandon the chipid patches for now? Your
-> pull request doesn't appear to be merged to arm-soc yet. Sorry about
-> that.
+> are available in the Git repository at:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-5.4
+>
+> for you to fetch changes up to 40d8aff614f71ab3cab20785b4f213e3802d4e87:
+>
+>   soc: samsung: chipid: Convert exynos-chipid driver to use the regmap API (2019-08-15 20:25:25 +0200)
+>
+> ----------------------------------------------------------------
+> Samsung soc drivers changes for v5.4
+>
+> Add Exynos Chipid driver for identification of product IDs and SoC
+> revisions.  The driver also exposes chipid regmap, later to be used by
+> Exynos Adaptive Supply Voltage driver (adjusting voltages to different
+> revisions of same SoC).
 
-Yes, let's abandon the pull request and rework the concept.
+It turns out that it brings troubles (code is executed on every
+platform polluting logs because it is an initcall, not a driver) so
+Sylwester (submitter) asked to skip the submission.
+
+Please ignore the pull request.
 
 Best regards,
 Krzysztof
