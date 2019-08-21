@@ -1,210 +1,64 @@
 From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: Re: [PATCH v12 3/9] drivers: memory: extend of_memory by LPDDR3
- support
-Date: Wed, 21 Aug 2019 11:17:27 +0200
-Message-ID: <21d22ba6-2254-ae5e-7ef4-5dfaa3f54229@partner.samsung.com>
-References: <CGME20190722094727eucas1p10041ba25819e6e62d639423a97435f2d@eucas1p1.samsung.com>
-        <20190722094646.13342-1-l.luba@partner.samsung.com>
-        <20190722094646.13342-4-l.luba@partner.samsung.com>
-        <CAJKOXPd96ExoCR-SiJfRqTbwO+_aQ6LSDVOQcrrt8JQHsoZBEw@mail.gmail.com>
+Subject: Re: [PATCH v12 6/9] ARM: dts: exynos: add chipid label and syscon
+ compatible
+Date: Wed, 21 Aug 2019 11:29:08 +0200
+Message-ID: <8cee8885-142f-d508-472b-334a73d30696@partner.samsung.com>
+References: <20190722094646.13342-1-l.luba@partner.samsung.com>
+        <CGME20190722094730eucas1p2f3f8298c43c8bf0d96135bca9a9e753b@eucas1p2.samsung.com>
+        <20190722094646.13342-7-l.luba@partner.samsung.com>
+        <20190724171049.GA11333@kozik-lap>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPd96ExoCR-SiJfRqTbwO+_aQ6LSDVOQcrrt8JQHsoZBEw@mail.gmail.com>
+In-Reply-To: <20190724171049.GA11333@kozik-lap>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie@samsung.com>, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org, willy.mh.wolff.ml@gmail.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org, b.zolnierkie@samsung.com, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org, willy.mh.wolff.ml@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
 
-On 7/24/19 1:31 PM, Krzysztof Kozlowski wrote:
-> On Mon, 22 Jul 2019 at 11:47, Lukasz Luba <l.luba@partner.samsung.com> wrote:
->>
->> The patch adds AC timings information needed to support LPDDR3 and memory
->> controllers. The structure is used in of_memory and currently in Exynos
->> 5422 DMC. Add parsing data needed for LPDDR3 support.
->> It is currently used in Exynos5422 Dynamic Memory Controller.
->>
->> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
->> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
->> ---
->>   drivers/memory/jedec_ddr.h |  61 +++++++++++++++
->>   drivers/memory/of_memory.c | 154 +++++++++++++++++++++++++++++++++++++
->>   drivers/memory/of_memory.h |  18 +++++
->>   3 files changed, 233 insertions(+)
->>
->> diff --git a/drivers/memory/jedec_ddr.h b/drivers/memory/jedec_ddr.h
->> index 4a21b5044ff8..38e26d461bdb 100644
->> --- a/drivers/memory/jedec_ddr.h
->> +++ b/drivers/memory/jedec_ddr.h
->> @@ -29,6 +29,7 @@
->>   #define DDR_TYPE_LPDDR2_S4     3
->>   #define DDR_TYPE_LPDDR2_S2     4
->>   #define DDR_TYPE_LPDDR2_NVM    5
->> +#define DDR_TYPE_LPDDR3                6
->>
->>   /* DDR IO width */
->>   #define DDR_IO_WIDTH_4         1
->> @@ -169,4 +170,64 @@ extern const struct lpddr2_timings
->>          lpddr2_jedec_timings[NUM_DDR_TIMING_TABLE_ENTRIES];
->>   extern const struct lpddr2_min_tck lpddr2_jedec_min_tck;
->>
->> +/*
->> + * Structure for timings for LPDDR3 based on LPDDR2 plus additional fields.
->> + * All parameters are in pico seconds(ps) unless explicitly indicated
->> + * with a suffix like tRAS_max_ns below
-> 
-> To which tRAS_max_ns are you referring?
-The comment failed to stand the test of time, not for the first time
-though. I will update it according to the current struct.
 
-> 
->> + */
->> +struct lpddr3_timings {
->> +       u32 max_freq;
->> +       u32 min_freq;
->> +       u32 tRFC;
->> +       u32 tRRD;
->> +       u32 tRPab;
->> +       u32 tRPpb;
->> +       u32 tRCD;
->> +       u32 tRC;
->> +       u32 tRAS;
->> +       u32 tWTR;
->> +       u32 tWR;
->> +       u32 tRTP;
->> +       u32 tW2W_C2C;
->> +       u32 tR2R_C2C;
->> +       u32 tWL;
->> +       u32 tDQSCK;
->> +       u32 tRL;
->> +       u32 tFAW;
->> +       u32 tXSR;
->> +       u32 tXP;
->> +       u32 tCKE;
->> +       u32 tCKESR;
->> +       u32 tMRD;
->> +};
->> +
->> +/*
->> + * Min value for some parameters in terms of number of tCK cycles(nCK)
->> + * Please set to zero parameters that are not valid for a given memory
->> + * type
->> + */
->> +struct lpddr3_min_tck {
->> +       u32 tRFC;
->> +       u32 tRRD;
->> +       u32 tRPab;
->> +       u32 tRPpb;
->> +       u32 tRCD;
->> +       u32 tRC;
->> +       u32 tRAS;
->> +       u32 tWTR;
->> +       u32 tWR;
->> +       u32 tRTP;
->> +       u32 tW2W_C2C;
->> +       u32 tR2R_C2C;
->> +       u32 tWL;
->> +       u32 tDQSCK;
->> +       u32 tRL;
->> +       u32 tFAW;
->> +       u32 tXSR;
->> +       u32 tXP;
->> +       u32 tCKE;
->> +       u32 tCKESR;
->> +       u32 tMRD;
->> +};
->> +
->>   #endif /* __JEDEC_DDR_H */
->> diff --git a/drivers/memory/of_memory.c b/drivers/memory/of_memory.c
->> index 46539b27a3fb..4f5b8c81669f 100644
->> --- a/drivers/memory/of_memory.c
->> +++ b/drivers/memory/of_memory.c
->> @@ -3,6 +3,12 @@
->>    * OpenFirmware helpers for memory drivers
->>    *
->>    * Copyright (C) 2012 Texas Instruments, Inc.
->> + * Copyright (C) 2019 Samsung Electronics Co., Ltd.
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License as published by
->> + * the Free Software Foundation; either version 2 of the License, or
->> + * (at your option) any later version.
->>    */
+On 7/24/19 7:10 PM, Krzysztof Kozlowski wrote:
+> On Mon, Jul 22, 2019 at 11:46:43AM +0200, Lukasz Luba wrote:
+>> Add the chipid label which allows to use it in phandle from other device.
+>> Use syscon in compatible to get the regmap of the device register set.
+>> The chipid is used in DMC during initialization to compare compatibility.
 >>
->>   #include <linux/device.h>
->> @@ -149,3 +155,151 @@ const struct lpddr2_timings *of_get_ddr_timings(struct device_node *np_ddr,
->>          return lpddr2_jedec_timings;
->>   }
->>   EXPORT_SYMBOL(of_get_ddr_timings);
->> +
->> +/**
->> + * of_lpddr3_get_min_tck() - extract min timing values for lpddr3
->> + * @np: pointer to ddr device tree node
->> + * @device: device requesting for min timing values
->> + *
->> + * Populates the lpddr3_min_tck structure by extracting data
->> + * from device tree node. Returns a pointer to the populated
->> + * structure. If any error in populating the structure, returns NULL.
->> + */
->> +const struct lpddr3_min_tck *of_lpddr3_get_min_tck(struct device_node *np,
->> +                                                  struct device *dev)
->> +{
->> +       int                     ret = 0;
->> +       struct lpddr3_min_tck   *min;
->> +
->> +       min = devm_kzalloc(dev, sizeof(*min), GFP_KERNEL);
->> +       if (!min)
->> +               goto default_min_tck;
->> +
->> +       ret |= of_property_read_u32(np, "tRFC-min-tck", &min->tRFC);
->> +       ret |= of_property_read_u32(np, "tRRD-min-tck", &min->tRRD);
->> +       ret |= of_property_read_u32(np, "tRPab-min-tck", &min->tRPab);
->> +       ret |= of_property_read_u32(np, "tRPpb-min-tck", &min->tRPpb);
->> +       ret |= of_property_read_u32(np, "tRCD-min-tck", &min->tRCD);
->> +       ret |= of_property_read_u32(np, "tRC-min-tck", &min->tRC);
->> +       ret |= of_property_read_u32(np, "tRAS-min-tck", &min->tRAS);
->> +       ret |= of_property_read_u32(np, "tWTR-min-tck", &min->tWTR);
->> +       ret |= of_property_read_u32(np, "tWR-min-tck", &min->tWR);
->> +       ret |= of_property_read_u32(np, "tRTP-min-tck", &min->tRTP);
->> +       ret |= of_property_read_u32(np, "tW2W-C2C-min-tck", &min->tW2W_C2C);
->> +       ret |= of_property_read_u32(np, "tR2R-C2C-min-tck", &min->tR2R_C2C);
->> +       ret |= of_property_read_u32(np, "tWL-min-tck", &min->tWL);
->> +       ret |= of_property_read_u32(np, "tDQSCK-min-tck", &min->tDQSCK);
->> +       ret |= of_property_read_u32(np, "tRL-min-tck", &min->tRL);
->> +       ret |= of_property_read_u32(np, "tFAW-min-tck", &min->tFAW);
->> +       ret |= of_property_read_u32(np, "tXSR-min-tck", &min->tXSR);
->> +       ret |= of_property_read_u32(np, "tXP-min-tck", &min->tXP);
->> +       ret |= of_property_read_u32(np, "tCKE-min-tck", &min->tCKE);
->> +       ret |= of_property_read_u32(np, "tCKESR-min-tck", &min->tCKESR);
->> +       ret |= of_property_read_u32(np, "tMRD-min-tck", &min->tMRD);
->> +
->> +       if (ret) {
->> +               dev_warn(dev, "%s: errors while parsing min-tck values\n",
->> +                        __func__);
->> +               devm_kfree(dev, min);
->> +               goto default_min_tck;
->> +       }
->> +
->> +       return min;
->> +
->> +default_min_tck:
->> +       dev_warn(dev, "%s: using default min-tck values\n", __func__);
 > 
-> Here and later - you return NULL, not default values. Your driver -
-> consumer - also behaves like with error condition, not like with
-> default values. Print just that you cannot get timings, I guess.
-OK, thank you. I will change the print.
-
-Thank you for the review.
+> I cannot find its usage in DMC driver.
+You are right, it was used in the old versions. I will skip this patch.
 
 Regards,
 Lukasz
 > 
 > Best regards,
 > Krzysztof
+> 
+> 
+>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+>> ---
+>>   arch/arm/boot/dts/exynos5.dtsi | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
+>> index 67f9b4504a42..4801ca759feb 100644
+>> --- a/arch/arm/boot/dts/exynos5.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5.dtsi
+>> @@ -35,8 +35,8 @@
+>>   		#size-cells = <1>;
+>>   		ranges;
+>>   
+>> -		chipid@10000000 {
+>> -			compatible = "samsung,exynos4210-chipid";
+>> +		chipid: chipid@10000000 {
+>> +			compatible = "samsung,exynos4210-chipid", "syscon";
+>>   			reg = <0x10000000 0x100>;
+>>   		};
+>>   
+>> -- 
+>> 2.17.1
+>>
 > 
 > 
