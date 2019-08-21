@@ -1,73 +1,132 @@
-From: Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: Re: [PATCH v3 2/9] soc: samsung: Convert exynos-chipid driver to use
- the regmap API
-Date: Tue, 20 Aug 2019 23:38:02 +0200
-Message-ID: <1e428c8e-f4b5-0810-77f9-2c899c040fc7@kernel.org>
-References: <20190813150827.31972-1-s.nawrocki@samsung.com>
- <CGME20190813150852eucas1p2be4c0ab5ec2c079e3daf1af24283b27c@eucas1p2.samsung.com>
- <20190813150827.31972-3-s.nawrocki@samsung.com>
- <b5359603-b337-dcd8-b025-ca7dff5f4a06@nvidia.com>
- <CAJKOXPf597CMx=M2JmSTWe2GzBfcHFefgzSJbJ+njZGp-WfR1A@mail.gmail.com>
+From: "boojin.kim" <boojin.kim@samsung.com>
+Subject: [PATCH 0/9] Flash Memory Protector Support
+Date: Wed, 21 Aug 2019 15:42:06 +0900
+Message-ID: <003c01d557eb$8ca76790$a5f636b0$@samsung.com>
+References: <CGME20190821064206epcas2p1d1bcaae142416506bcedb3201d9a6658@epcas2p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPf597CMx=M2JmSTWe2GzBfcHFefgzSJbJ+njZGp-WfR1A@mail.gmail.com>
-Content-Language: en-US
+Content-Language: ko
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, robh+dt@kernel.org, vireshk@kernel.org, devicetree@vger.kernel.org, kgene@kernel.org, pankaj.dubey@samsung.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-tegra <linux-tegra@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
+To: 'Herbert Xu' <herbert@gondor.apana.org.au>, "'David S. Miller'" <davem@davemloft.net>, 'Eric Biggers' <ebiggers@kernel.org>, "'Theodore Y. Ts'o'" <tytso@mit.edu>, 'Chao Yu' <chao@kernel.org>, 'Jaegeuk Kim' <jaegeuk@kernel.org>, 'Andreas Dilger' <adilger.kernel@dilger.ca>'Theodore Ts'o' <tytso@mit.edu>, dm-devel@redhat.com, 'Mike Snitzer' <snitzer@redhat.com>, 'Alasdair Kergon' <agk@redhat.com>, 'Jens Axboe' <axboe@kernel.dk>, 'Krzysztof Kozlowski' <krzk@kernel.org>, 'Kukjin Kim' <kgene@kernel.org>, 'Jaehoon Chung' <jh80.chung@samsung.com>, 'Ulf Hansson' <ulf.hansson@linaro.org>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fscrypt@vger.kernel.org, linux-mmc@vger.kernel.org, linux-samsung-soc
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 8/20/19 21:37, Krzysztof Kozlowski wrote:
->>> diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+Exynos has a H/W block called FMP (Flash Memory Protector) to protect data
+stored on storage device.
+FMP interworks with the storage controller to encrypt a data before writing
+to the storage device and decrypt the data after reading from storage
+device.
+FMP is a kind of ICE (inline crypto engines), which is generally known
+as being used for the above role.
 
->>> @@ -51,29 +48,24 @@ static const char * __init product_id_to_soc_id(unsigned int product_id)
->>>   int __init exynos_chipid_early_init(void)
->>>   {
->>>        struct soc_device_attribute *soc_dev_attr;
->>> -     void __iomem *exynos_chipid_base;
->>>        struct soc_device *soc_dev;
->>>        struct device_node *root;
->>> -     struct device_node *np;
->>> +     struct regmap *regmap;
->>>        u32 product_id;
->>>        u32 revision;
->>> +     int ret;
->>>
->>> -     /* look up for chipid node */
->>> -     np = of_find_compatible_node(NULL, NULL, "samsung,exynos4210-chipid");
->>> -     if (!np)
->>> -             return -ENODEV;
->>> -
->>> -     exynos_chipid_base = of_iomap(np, 0);
->>> -     of_node_put(np);
->>> -
->>> -     if (!exynos_chipid_base) {
->>> -             pr_err("Failed to map SoC chipid\n");
->>> -             return -ENXIO;
->>> +     regmap = syscon_regmap_lookup_by_compatible("samsung,exynos4210-chipid");
->>> +     if (IS_ERR(regmap)) {
->>> +             pr_err("Failed to get CHIPID regmap\n");
->>> +             return PTR_ERR(regmap);
->>>        }
->> Following this change, I am now seeing the above error on our Tegra
->> boards where this driver is enabled. This is triggering a kernel
->> warnings test we have to fail. Hence, I don't think that you can remove
->> the compatible node test here, unless you have a better way to determine
->> if this is a samsung device.
->
-> Right, this is really wrong... I missed that it is not a probe but
-> early init. And this init will be called on every board... Probably it
-> should be converted to a regular driver.
+To use FMP, the modification of various layers such as Fscrypt, ext4, f2fs,
+DM-crypt, storage controller driver and block is required.
+FMP solution introduces a new diskcipher similar to the existing skcipher
+in crypo API in order to minimize the modification of these layers and
+to improve the code readability.
 
-I'm also inclined to have it converted to a regular driver.  We already
-have "exynos-asv" driver matching on the chipid node (patch 3/9). 
-The ASV patches will not be merged soon anyway, all this needs some more
-thought. Krzysztof, can we abandon the chipid patches for now? Your
-pull request doesn't appear to be merged to arm-soc yet. Sorry about
-that.
+This patchset includes the following for using FMP:
+- Diskcipher and FMP are added to crypto API.
+- The crypto users such as dm-crypt and fscrypt are modified to support
+  diskcipher.
+- The bio submitters such as f2fs, ext4, dm-crypt are modified to support
+  diskcipher.
+- Block layer is modified to pass diskcipher to storage controller driver.
+- Storage controller driver is modified to support crypto operation.
 
---
-Regards,
-Sylwester
+Exynos FMP solution consists of Diskcipher and FMP driver.
+Diskcipher is a symmetric key cipher of crypto API that supports inline
+crypto engine like FMP.
+FMP driver is a cipher algorithm running on diskcipher.
+FMP driver registers 'cbc(aes)-disk' and 'xts(aes)-disk' algorithms to
+crypto API.
+FMP can be tested with various test vectors in testmgr of crypto API.
+
+When encrypting using FMP, additional control is required to deliver and
+manage encryption information between encryption users (fscrypt, DM-crypt)
+and FMP drivers. Diskcipher provides this control.
+
+The encryption using FMP is made up of 4 steps.
+The first step is to assign a password and set a key.
+Encryption users such as Fscrypt or DM-crypt assign diskcipher, and set key
+to the diskcipher.
+The second step is to deliver diskcipher that has crypto information to
+storage drivers such as UFS and MMC. BIO is used to this delivery.
+The BIO submitters, such as ext4, f2fs and DM-crypt, checks if there is
+diskcipher in crypto configuration before issuing BIO. If there are
+diskcipher, the submitter sets it to BIO.
+In addition, the BIO submitter skips the task of encrypting data before BIO
+and decrypting data after BIO is completed.
+In the third step, the storage driver gets the diskcipher from the BIO and
+requests the FMP to encrypt.
+In the final step, the FMP extracts crypto information from the diskcipher
+and writes it in the descriptor area allocated for FMP H/W.
+The FMP H/W uses the descriptor of the storage controller to contain crypto
+information. So the descriptor of storage controller should be expanded
+for FMP.
+
+Boojin Kim (9):
+  crypt: Add diskcipher
+  crypto: fmp: add Flash Memory Protector driver
+  mmc: dw_mmc: support crypto operation
+  mmc: dw_mmc-exynos: support FMP
+  block: support diskcipher
+  dm crypt: support diskcipher
+  fscrypt: support diskcipher
+  fs: ext4: support diskcipher
+  fs: f2fs: support diskcipher
+
+ block/bio.c                      |   1 +
+ block/blk-merge.c                |  19 +-
+ block/bounce.c                   |   5 +-
+ crypto/Kconfig                   |   9 +
+ crypto/Makefile                  |   1 +
+ crypto/diskcipher.c              | 349 +++++++++++++++++++++++
+ crypto/testmgr.c                 | 157 +++++++++++
+ drivers/crypto/Kconfig           |   2 +
+ drivers/crypto/Makefile          |   1 +
+ drivers/crypto/fmp/Kconfig       |  13 +
+ drivers/crypto/fmp/Makefile      |   1 +
+ drivers/crypto/fmp/fmp.c         | 595
++++++++++++++++++++++++++++++++++++++++
+ drivers/crypto/fmp/fmp_crypt.c   | 243 ++++++++++++++++
+ drivers/crypto/fmp/fmp_test.c    | 310 ++++++++++++++++++++
+ drivers/crypto/fmp/fmp_test.h    |  30 ++
+ drivers/md/dm-crypt.c            | 112 +++++++-
+ drivers/mmc/host/Kconfig         |   8 +
+ drivers/mmc/host/dw_mmc-exynos.c |  62 ++++
+ drivers/mmc/host/dw_mmc.c        |  48 +++-
+ drivers/mmc/host/dw_mmc.h        |   6 +
+ fs/buffer.c                      |   2 +
+ fs/crypto/bio.c                  |  43 ++-
+ fs/crypto/fscrypt_private.h      |  28 +-
+ fs/crypto/keysetup.c             |  60 +++-
+ fs/crypto/keysetup_v1.c          |   2 +-
+ fs/ext4/inode.c                  |  39 ++-
+ fs/ext4/page-io.c                |   8 +-
+ fs/ext4/readpage.c               |   7 +
+ fs/f2fs/data.c                   |  98 ++++++-
+ fs/f2fs/f2fs.h                   |   2 +-
+ include/crypto/diskcipher.h      | 245 ++++++++++++++++
+ include/crypto/fmp.h             | 324 +++++++++++++++++++++
+ include/linux/bio.h              |  10 +
+ include/linux/blk_types.h        |   4 +
+ include/linux/bvec.h             |   3 +
+ include/linux/crypto.h           |   1 +
+ include/linux/fscrypt.h          |  19 ++
+ include/uapi/linux/fscrypt.h     |   2 +
+ tools/include/uapi/linux/fs.h    |   1 +
+ 39 files changed, 2837 insertions(+), 33 deletions(-)
+ create mode 100644 crypto/diskcipher.c
+ create mode 100644 drivers/crypto/fmp/Kconfig
+ create mode 100644 drivers/crypto/fmp/Makefile
+ create mode 100644 drivers/crypto/fmp/fmp.c
+ create mode 100644 drivers/crypto/fmp/fmp_crypt.c
+ create mode 100644 drivers/crypto/fmp/fmp_test.c
+ create mode 100644 drivers/crypto/fmp/fmp_test.h
+ create mode 100644 include/crypto/diskcipher.h
+ create mode 100644 include/crypto/fmp.h
+
+-- 
+2.7.4
