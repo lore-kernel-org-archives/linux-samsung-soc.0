@@ -1,12 +1,12 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [GIT PULL 3/3] ARM: dts: exynos: DT for v5.4
-Date: Wed, 21 Aug 2019 09:51:48 +0200
-Message-ID: <CAJKOXPf6qpGDNxKpUJ+Eby8NS+BhrypA4xy_m1s4GHFA55Q9PQ@mail.gmail.com>
-References: <20190816163042.6604-1-krzk@kernel.org> <20190816163042.6604-2-krzk@kernel.org>
+Subject: Re: [GIT PULL 2/3] ARM: samsung: mach for v5.4
+Date: Wed, 21 Aug 2019 09:52:27 +0200
+Message-ID: <CAJKOXPfdvzvomUfmxhGf0qjEQH3K8TADCneo9SM6m50k4b=Gyw@mail.gmail.com>
+References: <20190816163042.6604-1-krzk@kernel.org> <20190816163042.6604-3-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190816163042.6604-2-krzk@kernel.org>
+In-Reply-To: <20190816163042.6604-3-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org
 Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
@@ -20,20 +20,27 @@ On Fri, 16 Aug 2019 at 18:30, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
 > are available in the Git repository at:
 >
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-5.4
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-5.4
 >
-> for you to fetch changes up to bfb77169306d5d560a8b62eebaf6d69d02e8d152:
+> for you to fetch changes up to 1fa70c7f49132513fb0da4afa7643395eedc7d35:
 >
->   ARM: dts: exynos: Add CAM power domain to Exynos5422/5800 (2019-08-12 19:02:59 +0200)
+>   ARM: exynos: Enable exynos-chipid driver (2019-08-15 20:29:58 +0200)
 >
 > ----------------------------------------------------------------
-> Samsung DTS ARM changes for v5.4
+> Samsung mach/soc changes for v5.4
 >
-> 1. Add AHCI to Exynos5250,
-> 2. Add camera and GPU power domains to Exynos5422,
-> 3. Minor cleanup.
+> 1. Minor fixup in plat code (S3C platforms),
+> 2. Enable exynos-chipid driver to provide SoC related information.
+>
+> ----------------------------------------------------------------
+> Linus Walleij (1):
+>       ARM: samsung: Include GPIO driver header
+>
+> Pankaj Dubey (1):
+>       ARM: exynos: Enable exynos-chipid driver
 
-Just a reminder - this one pull request is good to go. No changes needed.
+This last patch should be dropped so I will rework the pull request
+and send later v2. Please ignore it for now.
 
 Best regards,
 Krzysztof
