@@ -1,37 +1,144 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH 6/9] dm crypt: support diskcipher
-Date: Wed, 21 Aug 2019 18:17:00 +1000
-Message-ID: <20190821081700.GA23138@gondor.apana.org.au>
-References: <CGME20190821075742epcas2p4b9104e8249067c048d4050f2888da0a9@epcas2p4.samsung.com>
-	<001b01d557f6$1c49fd40$54ddf7c0$@samsung.com>
+From: Lukasz Luba <l.luba@partner.samsung.com>
+Subject: Re: [PATCH v12 3/9] drivers: memory: extend of_memory by LPDDR3
+ support
+Date: Wed, 21 Aug 2019 11:03:28 +0200
+Message-ID: <43c8fb01-c85c-47f7-f5c1-5fc0d0191b26@partner.samsung.com>
+References: <CGME20190722094727eucas1p10041ba25819e6e62d639423a97435f2d@eucas1p1.samsung.com>
+        <20190722094646.13342-1-l.luba@partner.samsung.com>
+        <20190722094646.13342-4-l.luba@partner.samsung.com>
+        <CAJKOXPdue75yF=v5vsawOdfvcCMBDP6HGVXdwngBWE264kGJwg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <dm-devel-bounces@redhat.com>
-Content-Disposition: inline
-In-Reply-To: <001b01d557f6$1c49fd40$54ddf7c0$@samsung.com>
-List-Unsubscribe: <https://www.redhat.com/mailman/options/dm-devel>,
-	<mailto:dm-devel-request@redhat.com?subject=unsubscribe>
-List-Archive: <https://www.redhat.com/archives/dm-devel>
-List-Post: <mailto:dm-devel@redhat.com>
-List-Help: <mailto:dm-devel-request@redhat.com?subject=help>
-List-Subscribe: <https://www.redhat.com/mailman/listinfo/dm-devel>,
-	<mailto:dm-devel-request@redhat.com?subject=subscribe>
-Sender: dm-devel-bounces@redhat.com
-Errors-To: dm-devel-bounces@redhat.com
-To: "boojin.kim" <boojin.kim@samsung.com>
-Cc: 'Ulf Hansson' <ulf.hansson@linaro.org>, 'Mike Snitzer' <snitzer@redhat.com>, dm-devel@redhat.com, 'Andreas Dilger' <adilger.kernel@dilger.ca>, 'Alasdair Kergon' <agk@redhat.com>, 'Eric Biggers' <ebiggers@kernel.org>, linux-samsung-soc@vger.kernel.org, 'Krzysztof Kozlowski' <krzk@kernel.org>, 'Jaehoon Chung' <jh80.chung@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>, linux-ext4@vger.kernel.org, 'Chao Yu' <chao@kernel.org>, linux-block@vger.kernel.org, linux-fscrypt@vger.kernel.org, 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-arm-kernel@lists.infradead.org, 'Jens Axboe' <axboe@kernel.dk>, "'Theodore Y. Ts'o'" <tytso@mit.edu>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-crypto@vger.kernel.org, linux-fsdevel@vger.kernel.org, "'David S. Miller'" <davem@davemloft.net>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAJKOXPdue75yF=v5vsawOdfvcCMBDP6HGVXdwngBWE264kGJwg@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie@samsung.com>, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org, willy.mh.wolff.ml@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 04:57:41PM +0900, boojin.kim wrote:
->
-> Can you tell me which patch you mentioned? Is this?
-> https://patches.linaro.org/project/linux-crypto/list/?series=22762
+Hi Krzysztof,
 
-Yes this is the one.
+On 7/24/19 1:39 PM, Krzysztof Kozlowski wrote:
+> On Mon, 22 Jul 2019 at 11:47, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+>>
+>> The patch adds AC timings information needed to support LPDDR3 and memory
+>> controllers. The structure is used in of_memory and currently in Exynos
+>> 5422 DMC. Add parsing data needed for LPDDR3 support.
+>> It is currently used in Exynos5422 Dynamic Memory Controller.
+>>
+>> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+>> ---
+>>   drivers/memory/jedec_ddr.h |  61 +++++++++++++++
+>>   drivers/memory/of_memory.c | 154 +++++++++++++++++++++++++++++++++++++
+>>   drivers/memory/of_memory.h |  18 +++++
+>>   3 files changed, 233 insertions(+)
+>>
+>> diff --git a/drivers/memory/jedec_ddr.h b/drivers/memory/jedec_ddr.h
+>> index 4a21b5044ff8..38e26d461bdb 100644
+>> --- a/drivers/memory/jedec_ddr.h
+>> +++ b/drivers/memory/jedec_ddr.h
+>> @@ -29,6 +29,7 @@
+>>   #define DDR_TYPE_LPDDR2_S4     3
+>>   #define DDR_TYPE_LPDDR2_S2     4
+>>   #define DDR_TYPE_LPDDR2_NVM    5
+>> +#define DDR_TYPE_LPDDR3                6
+>>
+>>   /* DDR IO width */
+>>   #define DDR_IO_WIDTH_4         1
+>> @@ -169,4 +170,64 @@ extern const struct lpddr2_timings
+>>          lpddr2_jedec_timings[NUM_DDR_TIMING_TABLE_ENTRIES];
+>>   extern const struct lpddr2_min_tck lpddr2_jedec_min_tck;
+>>
+>> +/*
+>> + * Structure for timings for LPDDR3 based on LPDDR2 plus additional fields.
+>> + * All parameters are in pico seconds(ps) unless explicitly indicated
+>> + * with a suffix like tRAS_max_ns below
+>> + */
+>> +struct lpddr3_timings {
+>> +       u32 max_freq;
+>> +       u32 min_freq;
+>> +       u32 tRFC;
+>> +       u32 tRRD;
+>> +       u32 tRPab;
+>> +       u32 tRPpb;
+>> +       u32 tRCD;
+>> +       u32 tRC;
+>> +       u32 tRAS;
+>> +       u32 tWTR;
+>> +       u32 tWR;
+>> +       u32 tRTP;
+>> +       u32 tW2W_C2C;
+>> +       u32 tR2R_C2C;
+>> +       u32 tWL;
+>> +       u32 tDQSCK;
+>> +       u32 tRL;
+>> +       u32 tFAW;
+>> +       u32 tXSR;
+>> +       u32 tXP;
+>> +       u32 tCKE;
+>> +       u32 tCKESR;
+>> +       u32 tMRD;
+>> +};
+>> +
+>> +/*
+>> + * Min value for some parameters in terms of number of tCK cycles(nCK)
+>> + * Please set to zero parameters that are not valid for a given memory
+>> + * type
+>> + */
+>> +struct lpddr3_min_tck {
+>> +       u32 tRFC;
+>> +       u32 tRRD;
+>> +       u32 tRPab;
+>> +       u32 tRPpb;
+>> +       u32 tRCD;
+>> +       u32 tRC;
+>> +       u32 tRAS;
+>> +       u32 tWTR;
+>> +       u32 tWR;
+>> +       u32 tRTP;
+>> +       u32 tW2W_C2C;
+>> +       u32 tR2R_C2C;
+>> +       u32 tWL;
+>> +       u32 tDQSCK;
+>> +       u32 tRL;
+>> +       u32 tFAW;
+>> +       u32 tXSR;
+>> +       u32 tXP;
+>> +       u32 tCKE;
+>> +       u32 tCKESR;
+>> +       u32 tMRD;
+>> +};
+>> +
+>>   #endif /* __JEDEC_DDR_H */
+>> diff --git a/drivers/memory/of_memory.c b/drivers/memory/of_memory.c
+>> index 46539b27a3fb..4f5b8c81669f 100644
+>> --- a/drivers/memory/of_memory.c
+>> +++ b/drivers/memory/of_memory.c
+>> @@ -3,6 +3,12 @@
+>>    * OpenFirmware helpers for memory drivers
+>>    *
+>>    * Copyright (C) 2012 Texas Instruments, Inc.
+>> + * Copyright (C) 2019 Samsung Electronics Co., Ltd.
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License as published by
+>> + * the Free Software Foundation; either version 2 of the License, or
+>> + * (at your option) any later version.
+> 
+> What's this?
+My bad, in the meantime Thomas Gleixner has replaced the license header.
+The old part has been automatically taken again during my re-base.
+I will just remove the old license comment.
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Regards,
+Lukasz
+> 
+> Please, get a independent review or ack for this patch.
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
