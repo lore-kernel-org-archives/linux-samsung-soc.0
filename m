@@ -1,187 +1,73 @@
-From: "boojin.kim" <boojin.kim@samsung.com>
-Subject: [PATCH 8/9] fs: ext4: support diskcipher
-Date: Wed, 21 Aug 2019 15:42:41 +0900
-Message-ID: <004401d557eb$a1989480$e4c9bd80$@samsung.com>
-References: <CGME20190821064241epcas2p2bf71ad8055188f8b47870b06480c8368@epcas2p2.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 2/9] soc: samsung: Convert exynos-chipid driver to use
+ the regmap API
+Date: Wed, 21 Aug 2019 09:49:36 +0200
+Message-ID: <CAJKOXPcdeb08-2Xsmjpw_CsJCTah03GJaLUjQYw6n7=Xhiwoow@mail.gmail.com>
+References: <20190813150827.31972-1-s.nawrocki@samsung.com>
+ <CGME20190813150852eucas1p2be4c0ab5ec2c079e3daf1af24283b27c@eucas1p2.samsung.com>
+ <20190813150827.31972-3-s.nawrocki@samsung.com> <b5359603-b337-dcd8-b025-ca7dff5f4a06@nvidia.com>
+ <CAJKOXPf597CMx=M2JmSTWe2GzBfcHFefgzSJbJ+njZGp-WfR1A@mail.gmail.com> <1e428c8e-f4b5-0810-77f9-2c899c040fc7@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Language: ko
+In-Reply-To: <1e428c8e-f4b5-0810-77f9-2c899c040fc7@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc: 'Herbert Xu' <herbert@gondor.apana.org.au>, "'David S. Miller'" <davem@davemloft.net>, 'Eric Biggers' <ebiggers@kernel.org>, "'Theodore Y. Ts'o'" <tytso@mit.edu>, 'Chao Yu' <chao@kernel.org>, 'Jaegeuk Kim' <jaegeuk@kernel.org>, 'Andreas Dilger' <adilger.kernel@dilger.ca>'Theodore Ts'o' <tytso@mit.edu>, dm-devel@redhat.com, 'Mike Snitzer' <snitzer@redhat.com>, 'Alasdair Kergon' <agk@redhat.com>, 'Jens Axboe' <axboe@kernel.dk>, 'Krzysztof Kozlowski' <krzk@kernel.org>, 'Kukjin Kim' <kgene@kernel.org>, 'Jaehoon Chung' <jh80.chung@samsung.com>, 'Ulf Hansson' <ulf.hansson@linaro.org>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fscrypt@vger.kernel.org, linux-mmc@vger.kernel.org, linux-samsung-soc
+To: Sylwester Nawrocki <snawrocki@kernel.org>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, robh+dt@kernel.org, vireshk@kernel.org, devicetree@vger.kernel.org, kgene@kernel.org, pankaj.dubey@samsung.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-tegra <linux-tegra@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Ext4 checks the crypto properties of the inode,
-and if it is a diskcipher, sets it to BIO before submitting the BIO.
-When using diskcipher, Ext4 does not encrypt the data before submitting
-the BIO and decrypt the data on complete of the BIO.
+On Tue, 20 Aug 2019 at 23:38, Sylwester Nawrocki <snawrocki@kernel.org> wrote:
+>
+> On 8/20/19 21:37, Krzysztof Kozlowski wrote:
+> >>> diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+>
+> >>> @@ -51,29 +48,24 @@ static const char * __init product_id_to_soc_id(unsigned int product_id)
+> >>>   int __init exynos_chipid_early_init(void)
+> >>>   {
+> >>>        struct soc_device_attribute *soc_dev_attr;
+> >>> -     void __iomem *exynos_chipid_base;
+> >>>        struct soc_device *soc_dev;
+> >>>        struct device_node *root;
+> >>> -     struct device_node *np;
+> >>> +     struct regmap *regmap;
+> >>>        u32 product_id;
+> >>>        u32 revision;
+> >>> +     int ret;
+> >>>
+> >>> -     /* look up for chipid node */
+> >>> -     np = of_find_compatible_node(NULL, NULL, "samsung,exynos4210-chipid");
+> >>> -     if (!np)
+> >>> -             return -ENODEV;
+> >>> -
+> >>> -     exynos_chipid_base = of_iomap(np, 0);
+> >>> -     of_node_put(np);
+> >>> -
+> >>> -     if (!exynos_chipid_base) {
+> >>> -             pr_err("Failed to map SoC chipid\n");
+> >>> -             return -ENXIO;
+> >>> +     regmap = syscon_regmap_lookup_by_compatible("samsung,exynos4210-chipid");
+> >>> +     if (IS_ERR(regmap)) {
+> >>> +             pr_err("Failed to get CHIPID regmap\n");
+> >>> +             return PTR_ERR(regmap);
+> >>>        }
+> >> Following this change, I am now seeing the above error on our Tegra
+> >> boards where this driver is enabled. This is triggering a kernel
+> >> warnings test we have to fail. Hence, I don't think that you can remove
+> >> the compatible node test here, unless you have a better way to determine
+> >> if this is a samsung device.
+> >
+> > Right, this is really wrong... I missed that it is not a probe but
+> > early init. And this init will be called on every board... Probably it
+> > should be converted to a regular driver.
+>
+> I'm also inclined to have it converted to a regular driver.  We already
+> have "exynos-asv" driver matching on the chipid node (patch 3/9).
+> The ASV patches will not be merged soon anyway, all this needs some more
+> thought. Krzysztof, can we abandon the chipid patches for now? Your
+> pull request doesn't appear to be merged to arm-soc yet. Sorry about
+> that.
 
-Cc: Theodore Ts'o <tytso@mit.edu>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>
-Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
----
- fs/ext4/inode.c    | 39 +++++++++++++++++++++++++++++++++------
- fs/ext4/page-io.c  |  8 +++++++-
- fs/ext4/readpage.c |  7 +++++++
- 3 files changed, 47 insertions(+), 7 deletions(-)
+Yes, let's abandon the pull request and rework the concept.
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 5bcc96f..7f9e1fa 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -1223,7 +1223,14 @@ static int ext4_block_write_begin(struct page *page,
-loff_t pos, unsigned len,
- 		if (!buffer_uptodate(bh) && !buffer_delay(bh) &&
- 		    !buffer_unwritten(bh) &&
- 		    (block_start < from || block_end > to)) {
--			ll_rw_block(REQ_OP_READ, 0, 1, &bh);
-+			if (S_ISREG(inode->i_mode) && IS_ENCRYPTED(inode)
-+					&&
-fscrypt_has_encryption_key(inode)) {
-+				bh->b_private =
-fscrypt_get_diskcipher(inode);
-+				ll_rw_block(REQ_OP_READ,
-+					bh->b_private ? REQ_CRYPT : 0, 1,
-&bh);
-+			} else {
-+				ll_rw_block(REQ_OP_READ, 0, 1, &bh);
-+			}
- 			wait[nr_wait++] = bh;
- 		}
- 	}
-@@ -1237,7 +1244,8 @@ static int ext4_block_write_begin(struct page *page,
-loff_t pos, unsigned len,
- 	}
- 	if (unlikely(err)) {
- 		page_zero_new_buffers(page, from, to);
--	} else if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode)) {
-+	} else if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode) &&
-+			!bh->b_private) {
- 		for (i = 0; i < nr_wait; i++) {
- 			int err2;
- 
-@@ -3670,6 +3678,13 @@ const struct iomap_ops ext4_iomap_ops = {
- 	.iomap_end		= ext4_iomap_end,
- };
- 
-+static void ext4_submit_dio(struct bio *bio, struct inode *inode,
-+							loff_t file_offset)
-+{
-+	fscrypt_set_bio(inode, bio, 0);
-+	submit_bio(bio);
-+}
-+
- static int ext4_end_io_dio(struct kiocb *iocb, loff_t offset,
- 			    ssize_t size, void *private)
- {
-@@ -3801,7 +3816,9 @@ static ssize_t ext4_direct_IO_write(struct kiocb
-*iocb, struct iov_iter *iter)
- 		dio_flags = DIO_LOCKING;
- 	}
- 	ret = __blockdev_direct_IO(iocb, inode, inode->i_sb->s_bdev, iter,
--				   get_block_func, ext4_end_io_dio, NULL,
-+				   get_block_func, ext4_end_io_dio,
-+				   !fscrypt_disk_encrypted(inode) ?
-+				   NULL : ext4_submit_dio,
- 				   dio_flags);
- 
- 	if (ret > 0 && !overwrite && ext4_test_inode_state(inode,
-@@ -3909,7 +3926,8 @@ static ssize_t ext4_direct_IO(struct kiocb *iocb,
-struct iov_iter *iter)
- 	ssize_t ret;
- 
- #ifdef CONFIG_FS_ENCRYPTION
--	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode))
-+	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode)
-+		&& !fscrypt_disk_encrypted(inode))
- 		return 0;
- #endif
- 	if (fsverity_active(inode))
-@@ -4090,7 +4108,15 @@ static int __ext4_block_zero_page_range(handle_t
-*handle,
- 
- 	if (!buffer_uptodate(bh)) {
- 		err = -EIO;
--		ll_rw_block(REQ_OP_READ, 0, 1, &bh);
-+		if (S_ISREG(inode->i_mode) && IS_ENCRYPTED(inode)
-+				&& fscrypt_has_encryption_key(inode)) {
-+			bh->b_private = fscrypt_get_diskcipher(inode);
-+			ll_rw_block(REQ_OP_READ, bh->b_private ? REQ_CRYPT :
-0,
-+					1, &bh);
-+		} else {
-+			ll_rw_block(REQ_OP_READ, 0, 1, &bh);
-+		}
-+
- 		wait_on_buffer(bh);
- 		/* Uhhuh. Read error. Complain and punt. */
- 		if (!buffer_uptodate(bh))
-@@ -4098,7 +4124,8 @@ static int __ext4_block_zero_page_range(handle_t
-*handle,
- 		if (S_ISREG(inode->i_mode) && IS_ENCRYPTED(inode)) {
- 			/* We expect the key to be set. */
- 			BUG_ON(!fscrypt_has_encryption_key(inode));
--			WARN_ON_ONCE(fscrypt_decrypt_pagecache_blocks(
-+			if (!bh->b_private)
-+
-WARN_ON_ONCE(fscrypt_decrypt_pagecache_blocks(
- 					page, blocksize, bh_offset(bh)));
- 		}
- 	}
-diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
-index 12ceadef..3e41788 100644
---- a/fs/ext4/page-io.c
-+++ b/fs/ext4/page-io.c
-@@ -345,6 +345,11 @@ void ext4_io_submit(struct ext4_io_submit *io)
- 				  REQ_SYNC : 0;
- 		io->io_bio->bi_write_hint = io->io_end->inode->i_write_hint;
- 		bio_set_op_attrs(io->io_bio, REQ_OP_WRITE, io_op_flags);
-+#if defined(CONFIG_FS_ENCRYPTION) && defined(CONFIG_CRYPTO_DISKCIPHER)
-+		if (IS_ENCRYPTED(io->io_end->inode) &&
-+				S_ISREG(io->io_end->inode->i_mode))
-+			fscrypt_set_bio(io->io_end->inode, io->io_bio, 0);
-+#endif
- 		submit_bio(io->io_bio);
- 	}
- 	io->io_bio = NULL;
-@@ -474,7 +479,8 @@ int ext4_bio_write_page(struct ext4_io_submit *io,
- 	 * (e.g. holes) to be unnecessarily encrypted, but this is rare and
- 	 * can't happen in the common case of blocksize == PAGE_SIZE.
- 	 */
--	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode) && nr_to_submit) {
-+	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode) && nr_to_submit &&
-+			!fscrypt_disk_encrypted(inode)) {
- 		gfp_t gfp_flags = GFP_NOFS;
- 		unsigned int enc_bytes = round_up(len, i_blocksize(inode));
- 
-diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-index a30b203..aab2cf7c 100644
---- a/fs/ext4/readpage.c
-+++ b/fs/ext4/readpage.c
-@@ -183,6 +183,9 @@ static struct bio_post_read_ctx
-*get_bio_post_read_ctx(struct inode *inode,
- 	unsigned int post_read_steps = 0;
- 	struct bio_post_read_ctx *ctx = NULL;
- 
-+	if (fscrypt_disk_encrypted(inode))
-+		return NULL;
-+
- 	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode))
- 		post_read_steps |= 1 << STEP_DECRYPT;
- 
-@@ -376,6 +379,10 @@ int ext4_mpage_readpages(struct address_space *mapping,
- 			bio->bi_private = ctx;
- 			bio_set_op_attrs(bio, REQ_OP_READ,
- 						is_readahead ? REQ_RAHEAD :
-0);
-+#if defined(CONFIG_FS_ENCRYPTION) && defined(CONFIG_CRYPTO_DISKCIPHER)
-+			if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode))
-+				fscrypt_set_bio(inode, bio, 0);
-+#endif
- 		}
- 
- 		length = first_hole << blkbits;
--- 
-2.7.4
+Best regards,
+Krzysztof
