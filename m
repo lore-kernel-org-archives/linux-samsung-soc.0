@@ -1,42 +1,157 @@
-From: hariprasad@freedesktop.org, Kelam@freedesktop.org,
-	hariprasad.kelam@gmail.com
-Subject: [PATCH] gpu: drm: exynos: Remove set but unused value
-Date: Wed, 21 Aug 2019 23:04:56 +0530
-Message-ID: <1566408896-8212-1-git-send-email-hariprasad.kelam@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 1/9] crypt: Add diskcipher
+Date: Thu, 22 Aug 2019 10:37:26 +0200
+Message-ID: <CAJKOXPdK3ZzQXjzPZLzu5q0HZsL1vohQ4UxYTONcWdtDbEe2ng@mail.gmail.com>
+References: <CGME20190821064211epcas2p43ed73f4fd126bcc5b470c9136db6aabc@epcas2p4.samsung.com>
+ <003d01d557eb$8f6ca210$ae45e630$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-Cc: Hariprasad Kelam <hariprasad.kelam@gmail.com>, linux-samsung-soc@vger.kernel.org, David Airlie <airlied@linux.ie>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <003d01d557eb$8f6ca210$ae45e630$@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "boojin.kim" <boojin.kim@samsung.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>, Chao Yu <chao@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Andreas Dilger <adilger.kernel@dilger.ca>, dm-devel@redhat.com, Mike Snitzer <snitzer@redhat.com>, Alasdair Kergon <agk@redhat.com>, Jens Axboe <axboe@kernel.dk>, Kukjin Kim <kgene@kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-fscrypt@vger.kernel.org, linux-mmc@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-block@vger.kernel.org, linux-ext4@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RnJvbTogSGFyaXByYXNhZCBLZWxhbSA8aGFyaXByYXNhZC5rZWxhbUBnbWFpbC5jb20+CgpmaXgg
-YmVsb3cgZGVmZWN0IHJlcG9ydGVkIGJ5IGNvdmVyaXR5CkluIGV4eW5vc19kc2lfcmVhZF9mcm9t
-X2ZpZm86IEEgdmFsdWUgYXNzaWduZWQgdG8gYSB2YXJpYWJsZSBpcyBuZXZlcgp1c2VkLgpmaXgg
-RGVmZWN0OjE0NTE4MjYKU2lnbmVkLW9mZi1ieTogSGFyaXByYXNhZCBLZWxhbSA8aGFyaXByYXNh
-ZC5rZWxhbUBnbWFpbC5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X2RzaS5jIHwgNSArKy0tLQogMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMyBkZWxl
-dGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
-ZHNpLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMKaW5kZXggNjky
-NmNlZS4uNTMxMDg3OSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX2RzaS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwpA
-QCAtMTA1MSwxMiArMTA1MSwxMSBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHNpX3JlYWRfZnJvbV9m
-aWZvKHN0cnVjdCBleHlub3NfZHNpICpkc2ksCiAJCX0KIAogCQlsZW5ndGggPSAocmVnID4+IDgp
-ICYgMHhmZmZmOwotCQlpZiAobGVuZ3RoID4geGZlci0+cnhfbGVuKSB7CisJCWlmIChsZW5ndGgg
-PiB4ZmVyLT5yeF9sZW4pCiAJCQlkZXZfZXJyKGRldiwKIAkJCQkicmVzcG9uc2UgdG9vIGxvbmcg
-KCV1ID4gJXUgYnl0ZXMpLCBzdHJpcHBpbmdcbiIsCiAJCQkJeGZlci0+cnhfbGVuLCBsZW5ndGgp
-OwotCQkJbGVuZ3RoID0geGZlci0+cnhfbGVuOwotCQl9IGVsc2UgaWYgKGxlbmd0aCA8IHhmZXIt
-PnJ4X2xlbikKKwkJZWxzZSBpZiAobGVuZ3RoIDwgeGZlci0+cnhfbGVuKQogCQkJeGZlci0+cnhf
-bGVuID0gbGVuZ3RoOwogCX0KIAotLSAKMi43LjQKCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
-c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2RyaS1kZXZlbA==
+On Wed, 21 Aug 2019 at 08:42, boojin.kim <boojin.kim@samsung.com> wrote:
+>
+> Diskcipher supports cryptographic operations of inline crypto engines like
+> FMP. Inline crypto engine refers to hardware and solutions implemented
+> to encrypt data stored in storage device.
+>
+> When encrypting using the FMP, Additional control is required
+> to carry and maintain the crypto information between
+> the encryption user(fscrypt, DM-crypt) and FMP driver.
+> Diskcipher provides this control.
+>
+> Diskcipher is a symmetric key cipher in linux crypto API to support FMP.
+> FMP are registered with the cihper algorithm that uses diskcipher.
+>
+> Diskcipher has three major steps.
+> The first step is to assign a cipher and set the key.
+> The second step is to pass the cipher through the BIO to the storage
+> driver.
+> The third step is to get the cipher from BIO and request a crypt
+> to FMP algorithm.
+>
+> In the first step, encryption users such as fscrypt or dm-crypt
+> allocate/release a diskcipher and set key into the diskcipher.
+> Diskcipher provides allocate(), free(), and setkey() that are similar
+> to existing ciphers.
+>
+> In the second step, BIO is used to pass the diskcipher to the storage
+> driver.
+> The BIO submitters such as ext4, f2fs and DM-crypt set diskcipher to BIO.
+> Diskcipher provides the set () API for this.
+>
+> In the third step, the storage driver extracts the diskcipher from the BIO
+> and requests the actual encryption behavior to inline crypto engine driver.
+> Diskcipher provides get() and crypt() APIs for this.
+>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: David S. Miller <davem@davemloft.net>
+> Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+> ---
+>  crypto/Kconfig              |   9 ++
+>  crypto/Makefile             |   1 +
+>  crypto/diskcipher.c         | 349
+> ++++++++++++++++++++++++++++++++++++++++++++
+>  crypto/testmgr.c            | 157 ++++++++++++++++++++
+>  include/crypto/diskcipher.h | 245 +++++++++++++++++++++++++++++++
+>  include/linux/crypto.h      |   1 +
+>  6 files changed, 762 insertions(+)
+>  create mode 100644 crypto/diskcipher.c
+>  create mode 100644 include/crypto/diskcipher.h
+>
+> diff --git a/crypto/Kconfig b/crypto/Kconfig
+> index 455a335..382d43a 100644
+> --- a/crypto/Kconfig
+> +++ b/crypto/Kconfig
+> @@ -1636,6 +1636,15 @@ config CRYPTO_TWOFISH_AVX_X86_64
+>           See also:
+>           <http://www.schneier.com/twofish.html>
+>
+> +config CRYPTO_DISKCIPHER
+> +       bool "Diskcipher support"
+> +       default n
+> +       help
+> +         Disk cipher algorithm
+> +
+> +         This cipher supports the crypt operation of the block host device
+> +         that has inline crypto engine.
+> +
+>  comment "Compression"
+>
+>  config CRYPTO_DEFLATE
+> diff --git a/crypto/Makefile b/crypto/Makefile
+> index 0d2cdd5..71df76a 100644
+> --- a/crypto/Makefile
+> +++ b/crypto/Makefile
+> @@ -165,6 +165,7 @@ obj-$(CONFIG_CRYPTO_USER_API_AEAD) += algif_aead.o
+>  obj-$(CONFIG_CRYPTO_ZSTD) += zstd.o
+>  obj-$(CONFIG_CRYPTO_OFB) += ofb.o
+>  obj-$(CONFIG_CRYPTO_ECC) += ecc.o
+> +obj-$(CONFIG_CRYPTO_DISKCIPHER) += diskcipher.o
+>
+>  ecdh_generic-y += ecdh.o
+>  ecdh_generic-y += ecdh_helper.o
+> diff --git a/crypto/diskcipher.c b/crypto/diskcipher.c
+> new file mode 100644
+> index 0000000..ffe95a5
+> --- /dev/null
+> +++ b/crypto/diskcipher.c
+> @@ -0,0 +1,349 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Copyright (C) 2017 Samsung Electronics Co., Ltd.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/blkdev.h>
+> +#include <linux/errno.h>
+> +#include <linux/module.h>
+> +#include <linux/seq_file.h>
+> +#include <linux/string.h>
+> +#include <linux/crypto.h>
+> +#include <crypto/algapi.h>
+> +#include <crypto/diskcipher.h>
+> +#include <linux/delay.h>
+> +#include <linux/mm_types.h>
+> +#include <linux/fs.h>
+> +#include <linux/fscrypt.h>
+> +
+> +#include "internal.h"
+> +
+> +static int crypto_diskcipher_check(struct bio *bio)
+> +{
+> +       struct crypto_diskcipher *ci = NULL;
+> +       struct inode *inode = NULL;
+> +       struct page *page = NULL;
+> +
+> +       if (!bio) {
+> +               pr_err("%s: doesn't exist bio\n", __func__);
+> +               return 0;
+> +       }
+> +
+> +       /* enc without fscrypt */
+> +       ci = bio->bi_aux_private;
+> +       if (!ci->inode)
+> +               return 0;
+> +       if (ci->algo == 0)
+> +               return 0;
+> +
+> +       page = bio->bi_io_vec[0].bv_page;
+> +       if (!page || PageAnon(page) || !page->mapping ||
+> !page->mapping->host)
+
+Your patch looks corrupted - wrapped by mailer. The easiest way
+usually is to use git format-patch and git send-email - then you do
+not have to worry about formatting etc.
+
+Best regards,
+Krzysztof
