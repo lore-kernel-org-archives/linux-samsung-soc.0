@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFC 4/9] dt-bindings: arm: samsung: Convert Exynos Chipid bindings to json-schema
-Date: Fri, 23 Aug 2019 16:53:51 +0200
-Message-ID: <20190823145356.6341-4-krzk@kernel.org>
+Subject: [RFC 6/9] dt-bindings: arm: samsung: Convert Exynos System Registers bindings to json-schema
+Date: Fri, 23 Aug 2019 16:53:53 +0200
+Message-ID: <20190823145356.6341-6-krzk@kernel.org>
 References: <20190823145356.6341-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190823145356.6341-1-krzk@kernel.org>
@@ -10,48 +10,64 @@ To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Krzys
 Cc: notify@kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Convert Samsung Exynos Chipid bindings to DT schema format using
-json-schema.
+Convert Samsung Exynos System Registers (SYSREG) bindings to DT schema
+format using json-schema.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- .../bindings/arm/samsung/exynos-chipid.txt    | 12 ----------
- .../bindings/arm/samsung/exynos-chipid.yaml   | 24 +++++++++++++++++++
- 2 files changed, 24 insertions(+), 12 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/samsung/exynos-chipid.txt
- create mode 100644 Documentation/devicetree/bindings/arm/samsung/exynos-chipid.yaml
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.txt
+---
+
+Example somehow fails:
+Documentation/devicetree/bindings/arm/samsung/pmu.example.dt.yaml:
+system-controller@10040000: compatible:0: 'samsung,exynos5250-pmu' is
+not one of ['samsung,exynos4-sysreg', 'samsung,exynos5-sysreg']
+
+It seems that PMU schema is applied to sysreq nodes (and vice-versa).
+---
+ .../bindings/arm/samsung/sysreg.txt           | 19 -----------
+ .../bindings/arm/samsung/sysreg.yaml          | 33 +++++++++++++++++++
+ 2 files changed, 33 insertions(+), 19 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/samsung/sysreg.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/samsung/sysreg.yaml
+
+diff --git a/Documentation/devicetree/bindings/arm/samsung/sysreg.txt b/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
 deleted file mode 100644
-index 85c5dfd4a720..000000000000
---- a/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.txt
+index 4fced6e9d5e4..000000000000
+--- a/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
 +++ /dev/null
-@@ -1,12 +0,0 @@
--SAMSUNG Exynos SoCs Chipid driver.
+@@ -1,19 +0,0 @@
+-SAMSUNG S5P/Exynos SoC series System Registers (SYSREG)
 -
--Required properties:
--- compatible : Should at least contain "samsung,exynos4210-chipid".
--
--- reg: offset and length of the register set
+-Properties:
+- - compatible : should contain two values. First value must be one from following list:
+-		- "samsung,exynos4-sysreg" - for Exynos4 based SoCs,
+-		- "samsung,exynos5-sysreg" - for Exynos5 based SoCs.
+-		second value must be always "syscon".
+- - reg : offset and length of the register set.
 -
 -Example:
--	chipid@10000000 {
--		compatible = "samsung,exynos4210-chipid";
--		reg = <0x10000000 0x100>;
+-	syscon@10010000 {
+-		compatible = "samsung,exynos4-sysreg", "syscon";
+-		reg = <0x10010000 0x400>;
 -	};
-diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.yaml b/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.yaml
+-
+-	syscon@10050000 {
+-		compatible = "samsung,exynos5-sysreg", "syscon";
+-		reg = <0x10050000 0x5000>;
+-	};
+diff --git a/Documentation/devicetree/bindings/arm/samsung/sysreg.yaml b/Documentation/devicetree/bindings/arm/samsung/sysreg.yaml
 new file mode 100644
-index 000000000000..d22d5376a11e
+index 000000000000..a3d44646e441
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.yaml
-@@ -0,0 +1,24 @@
++++ b/Documentation/devicetree/bindings/arm/samsung/sysreg.yaml
+@@ -0,0 +1,33 @@
 +# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/arm/samsung/exynos-chipid.yaml#
++$id: http://devicetree.org/schemas/arm/samsung/sysreg.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Samsung Exynos SoC series Chipid driver
++title: Samsung S5P/Exynos SoC series System Registers (SYSREG)
 +
 +maintainers:
 +  - Krzysztof Kozlowski <krzk@kernel.org>
@@ -59,15 +75,24 @@ index 000000000000..d22d5376a11e
 +properties:
 +  compatible:
 +    items:
-+      - const: samsung,exynos4210-chipid
++      - enum:
++          - samsung,exynos4-sysreg
++          - samsung,exynos5-sysreg
++      - const: syscon
++
 +  reg:
 +    maxItems: 1
 +
 +examples:
 +  - |
-+    chipid@10000000 {
-+      compatible = "samsung,exynos4210-chipid";
-+      reg = <0x10000000 0x100>;
++    syscon@10010000 {
++      compatible = "samsung,exynos4-sysreg", "syscon";
++      reg = <0x10010000 0x400>;
++    };
++
++    syscon@10050000 {
++      compatible = "samsung,exynos5-sysreg", "syscon";
++      reg = <0x10050000 0x5000>;
 +    };
 -- 
 2.17.1
