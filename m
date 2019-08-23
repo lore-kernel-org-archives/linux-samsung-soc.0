@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFC 7/9] dt-bindings: rtc: s3c: Convert S3C/Exynos RTC bindings to json-schema
-Date: Fri, 23 Aug 2019 16:53:54 +0200
-Message-ID: <20190823145356.6341-7-krzk@kernel.org>
+Subject: [RFC 8/9] dt-bindings: iio: adc: exynos: Convert Exynos ADC bindings to json-schema
+Date: Fri, 23 Aug 2019 16:53:55 +0200
+Message-ID: <20190823145356.6341-8-krzk@kernel.org>
 References: <20190823145356.6341-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190823145356.6341-1-krzk@kernel.org>
@@ -10,125 +10,219 @@ To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Krzys
 Cc: notify@kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Convert Samsung S3C/Exynos Real Time Clock bindings to DT schema format
-using json-schema.
+Convert Samsung Exynos Analog to Digital Converter bindings to DT schema
+format using json-schema.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- .../devicetree/bindings/rtc/s3c-rtc.txt       | 31 ------
- .../devicetree/bindings/rtc/s3c-rtc.yaml      | 95 +++++++++++++++++++
- 2 files changed, 95 insertions(+), 31 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/rtc/s3c-rtc.txt
- create mode 100644 Documentation/devicetree/bindings/rtc/s3c-rtc.yaml
+ .../bindings/iio/adc/samsung,exynos-adc.txt   | 107 ------------
+ .../bindings/iio/adc/samsung,exynos-adc.yaml  | 159 ++++++++++++++++++
+ 2 files changed, 159 insertions(+), 107 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.txt
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
 
-diff --git a/Documentation/devicetree/bindings/rtc/s3c-rtc.txt b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
+diff --git a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.txt b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.txt
 deleted file mode 100644
-index fdde63a5419c..000000000000
---- a/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
+index e1fe02f3e3e9..000000000000
+--- a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.txt
 +++ /dev/null
-@@ -1,31 +0,0 @@
--* Samsung's S3C Real Time Clock controller
+@@ -1,107 +0,0 @@
+-Samsung Exynos Analog to Digital Converter bindings
+-
+-The devicetree bindings are for the new ADC driver written for
+-Exynos4 and upward SoCs from Samsung.
+-
+-New driver handles the following
+-1. Supports ADC IF found on EXYNOS4412/EXYNOS5250
+-   and future SoCs from Samsung
+-2. Add ADC driver under iio/adc framework
+-3. Also adds the Documentation for device tree bindings
 -
 -Required properties:
--- compatible: should be one of the following.
--    * "samsung,s3c2410-rtc" - for controllers compatible with s3c2410 rtc.
--    * "samsung,s3c2416-rtc" - for controllers compatible with s3c2416 rtc.
--    * "samsung,s3c2443-rtc" - for controllers compatible with s3c2443 rtc.
--    * "samsung,s3c6410-rtc" - for controllers compatible with s3c6410 rtc.
--    * "samsung,exynos3250-rtc" - (deprecated) for controllers compatible with
--                                 exynos3250 rtc (use "samsung,s3c6410-rtc").
--- reg: physical base address of the controller and length of memory mapped
--  region.
--- interrupts: Two interrupt numbers to the cpu should be specified. First
--  interrupt number is the rtc alarm interrupt and second interrupt number
--  is the rtc tick interrupt. The number of cells representing a interrupt
--  depends on the parent interrupt controller.
--- clocks: Must contain a list of phandle and clock specifier for the rtc
--          clock and in the case of a s3c6410 compatible controller, also
--          a source clock.
--- clock-names: Must contain "rtc" and for a s3c6410 compatible controller,
--               a "rtc_src" sorted in the same order as the clocks property.
+-- compatible:		Must be "samsung,exynos-adc-v1"
+-				for Exynos5250 controllers.
+-			Must be "samsung,exynos-adc-v2" for
+-				future controllers.
+-			Must be "samsung,exynos3250-adc" for
+-				controllers compatible with ADC of Exynos3250.
+-			Must be "samsung,exynos4212-adc" for
+-				controllers compatible with ADC of Exynos4212 and Exynos4412.
+-			Must be "samsung,exynos7-adc" for
+-				the ADC in Exynos7 and compatibles
+-			Must be "samsung,s3c2410-adc" for
+-				the ADC in s3c2410 and compatibles
+-			Must be "samsung,s3c2416-adc" for
+-				the ADC in s3c2416 and compatibles
+-			Must be "samsung,s3c2440-adc" for
+-				the ADC in s3c2440 and compatibles
+-			Must be "samsung,s3c2443-adc" for
+-				the ADC in s3c2443 and compatibles
+-			Must be "samsung,s3c6410-adc" for
+-				the ADC in s3c6410 and compatibles
+-			Must be "samsung,s5pv210-adc" for
+-				the ADC in s5pv210 and compatibles
+-- reg:			List of ADC register address range
+-			- The base address and range of ADC register
+-			- The base address and range of ADC_PHY register (every
+-			  SoC except for s3c24xx/s3c64xx ADC)
+-- interrupts: 		Contains the interrupt information for the timer. The
+-			format is being dependent on which interrupt controller
+-			the Samsung device uses.
+-- #io-channel-cells = <1>; As ADC has multiple outputs
+-- clocks		From common clock bindings: handles to clocks specified
+-			in "clock-names" property, in the same order.
+-- clock-names		From common clock bindings: list of clock input names
+-			used by ADC block:
+-			- "adc" : ADC bus clock
+-			- "sclk" : ADC special clock (only for Exynos3250 and
+-				   compatible ADC block)
+-- vdd-supply		VDD input supply.
 -
--Example:
+-- samsung,syscon-phandle Contains the PMU system controller node
+-			(To access the ADC_PHY register on Exynos5250/5420/5800/3250)
+-Optional properties:
+-- has-touchscreen:	If present, indicates that a touchscreen is
+-			connected an usable.
 -
--	rtc@10070000 {
--		compatible = "samsung,s3c6410-rtc";
--		reg = <0x10070000 0x100>;
--		interrupts = <44 0 45 0>;
--		clocks = <&clock CLK_RTC>, <&s2mps11_osc S2MPS11_CLK_AP>;
--		clock-names = "rtc", "rtc_src";
+-Note: child nodes can be added for auto probing from device tree.
+-
+-Example: adding device info in dtsi file
+-
+-adc: adc@12d10000 {
+-	compatible = "samsung,exynos-adc-v1";
+-	reg = <0x12D10000 0x100>;
+-	interrupts = <0 106 0>;
+-	#io-channel-cells = <1>;
+-	io-channel-ranges;
+-
+-	clocks = <&clock 303>;
+-	clock-names = "adc";
+-
+-	vdd-supply = <&buck5_reg>;
+-	samsung,syscon-phandle = <&pmu_system_controller>;
+-};
+-
+-Example: adding device info in dtsi file for Exynos3250 with additional sclk
+-
+-adc: adc@126c0000 {
+-	compatible = "samsung,exynos3250-adc", "samsung,exynos-adc-v2;
+-	reg = <0x126C0000 0x100>;
+-	interrupts = <0 137 0>;
+-	#io-channel-cells = <1>;
+-	io-channel-ranges;
+-
+-	clocks = <&cmu CLK_TSADC>, <&cmu CLK_SCLK_TSADC>;
+-	clock-names = "adc", "sclk";
+-
+-	vdd-supply = <&buck5_reg>;
+-	samsung,syscon-phandle = <&pmu_system_controller>;
+-};
+-
+-Example: Adding child nodes in dts file
+-
+-adc@12d10000 {
+-
+-	/* NTC thermistor is a hwmon device */
+-	ncp15wb473@0 {
+-		compatible = "murata,ncp15wb473";
+-		pullup-uv = <1800000>;
+-		pullup-ohm = <47000>;
+-		pulldown-ohm = <0>;
+-		io-channels = <&adc 4>;
 -	};
-diff --git a/Documentation/devicetree/bindings/rtc/s3c-rtc.yaml b/Documentation/devicetree/bindings/rtc/s3c-rtc.yaml
+-};
+-
+-Note: Does not apply to ADC driver under arch/arm/plat-samsung/
+-Note: The child node can be added under the adc node or separately.
+diff --git a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
 new file mode 100644
-index 000000000000..44b021812a83
+index 000000000000..c989d455b508
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/rtc/s3c-rtc.yaml
-@@ -0,0 +1,95 @@
++++ b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+@@ -0,0 +1,159 @@
 +# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/rtc/s3c-rtc.yaml#
++$id: http://devicetree.org/schemas/iio/adc/samsung,exynos-adc.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Samsung S3C, S5P and Exynos Real Time Clock controller
++title: Samsung Exynos Analog to Digital Converter (ADC)
 +
 +maintainers:
 +  - Krzysztof Kozlowski <krzk@kernel.org>
-+
-+# Select also deprecated compatibles (for finding deprecate usage)
-+select:
-+  properties:
-+    compatible:
-+      items:
-+        - enum:
-+            - samsung,s3c2410-rtc
-+            - samsung,s3c2416-rtc
-+            - samsung,s3c2443-rtc
-+            - samsung,s3c6410-rtc
-+            # Deprecated, use samsung,s3c6410-rtc
-+            - samsung,exynos3250-rtc
-+  required:
-+    - compatible
 +
 +properties:
 +  compatible:
 +    items:
 +      - enum:
-+          - samsung,s3c2410-rtc
-+          - samsung,s3c2416-rtc
-+          - samsung,s3c2443-rtc
-+          - samsung,s3c6410-rtc
++          - samsung,exynos-adc-v1                 # Exynos5250
++          - samsung,exynos-adc-v2
++          - samsung,exynos3250-adc
++          - samsung,exynos4212-adc                # Exynos4212 and Exynos4412
++          - samsung,exynos7-adc
++          - samsung,s3c2410-adc
++          - samsung,s3c2416-adc
++          - samsung,s3c2440-adc
++          - samsung,s3c2443-adc
++          - samsung,s3c6410-adc
++          - samsung,s5pv210-adc
 +  reg:
-+    maxItems: 1
++    oneOf:
++      - items:
++          - description: base registers
++      - items:
++          # For S5P and Exynos
++          - description: base registers
++          - description: phy registers
 +
 +  clocks:
 +    description:
-+      Must contain a list of phandle and clock specifier for the rtc
-+      clock and in the case of a s3c6410 compatible controller, also
-+      a source clock.
++      Phandle to ADC bus clock. For Exynos3250 additional clock is needed.
 +    minItems: 1
 +    maxItems: 2
 +
 +  clock-names:
 +    description:
-+      Must contain "rtc" and for a s3c6410 compatible controller,
-+      a "rtc_src" sorted in the same order as the clocks property.
++      Must contain clock names matching phandles in clocks property.
 +    oneOf:
 +      - items:
-+          - const: rtc
++          - const: adc
 +      - items:
 +          # TODO: This can be in any order matching clocks, how to express it?
-+          - const: rtc
-+          - const: rtc_src
++          - const: adc
++          - const: sclk
 +
 +  interrupts:
++    maxItems: 1
++
++  "#io-channel-cells":
++    const: 1
++
++  vdd-supply:
++    description: VDD input supply
++    maxItems: 1
++
++  samsung,syscon-phandle:
++    $ref: '/schemas/types.yaml#/definitions/phandle'
++    # TODO: reference to PMU schema?
 +    description:
-+      Two interrupt numbers to the cpu should be specified. First
-+      interrupt number is the rtc alarm interrupt and second interrupt number
-+      is the rtc tick interrupt. The number of cells representing a interrupt
-+      depends on the parent interrupt controller.
-+    minItems: 2
-+    maxItems: 2
++      Phandle to the PMU system controller node (to access the ADC_PHY
++      register on Exynos5250/5420/5800/3250)
++    maxItems: 1
++
++  has-touchscreen:
++    description: If present, indicates that a touchscreen is connected an usable
++    type: boolean
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - interrupts
++  - "#io-channel-cells"
++  - samsung,syscon-phandle
++  - vdd-supply
 +
 +allOf:
 +  - if:
@@ -136,9 +230,25 @@ index 000000000000..44b021812a83
 +        compatible:
 +          contains:
 +            enum:
-+              - samsung,s3c6410-rtc
-+              - samsung,exynos3250-rtc
-+
++              - samsung,exynos-adc-v1
++              - samsung,exynos-adc-v2
++              - samsung,exynos3250-adc
++              - samsung,exynos4212-adc
++              - samsung,exynos7-adc
++              - samsung,s5pv210-adc
++    then:
++      properties:
++        reg:
++          items:
++            # For S5P and Exynos
++            - description: base registers
++            - description: phy registers
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - samsung,exynos3250-adc
 +    then:
 +      properties:
 +        clocks:
@@ -146,18 +256,48 @@ index 000000000000..44b021812a83
 +          maxItems: 2
 +        clock-names:
 +          items:
-+          - const: rtc
-+          - const: rtc_src
++          - const: adc
++          - const: sclk
 +
 +examples:
 +  - |
-+    rtc@10070000 {
-+      compatible = "samsung,s3c6410-rtc";
-+      reg = <0x10070000 0x100>;
-+      interrupts = <0 44 4>, <0 45 4>;
-+      clocks = <&clock 0>, // CLK_RTC
-+               <&s2mps11_osc 0>; // S2MPS11_CLK_AP
-+      clock-names = "rtc", "rtc_src";
++    adc: adc@12d10000 {
++      compatible = "samsung,exynos-adc-v1";
++      reg = <0x12d10000 0x100>;
++      interrupts = <0 106 0>;
++      #io-channel-cells = <1>;
++      io-channel-ranges;
++
++      clocks = <&clock 303>;
++      clock-names = "adc";
++
++      vdd-supply = <&buck5_reg>;
++      samsung,syscon-phandle = <&pmu_system_controller>;
++
++      /* NTC thermistor is a hwmon device */
++      ncp15wb473@0 {
++        compatible = "murata,ncp15wb473";
++        pullup-uv = <1800000>;
++        pullup-ohm = <47000>;
++        pulldown-ohm = <0>;
++        io-channels = <&adc 4>;
++      };
++    };
++
++  - |
++    adc@126c0000 {
++      compatible = "samsung,exynos3250-adc";
++      reg = <0x126C0000 0x100>;
++      interrupts = <0 137 0>;
++      #io-channel-cells = <1>;
++      io-channel-ranges;
++
++      clocks = <&cmu 0>, // CLK_TSADC
++               <&cmu 1>; // CLK_SCLK_TSADC
++      clock-names = "adc", "sclk";
++
++      vdd-supply = <&buck5_reg>;
++      samsung,syscon-phandle = <&pmu_system_controller>;
 +    };
 -- 
 2.17.1
