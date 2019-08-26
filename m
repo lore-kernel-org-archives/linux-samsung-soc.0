@@ -1,155 +1,65 @@
-From: Rob Herring <robh+dt@kernel.org>
-Subject: Re: [RFC 7/9] dt-bindings: rtc: s3c: Convert S3C/Exynos RTC bindings
- to json-schema
-Date: Mon, 26 Aug 2019 07:06:02 -0500
-Message-ID: <CAL_JsqKCpKuc=-4UyWFFv_RenKuSJcr9cdSKjbkL8F1ni+VODw@mail.gmail.com>
-References: <20190823145356.6341-1-krzk@kernel.org> <20190823145356.6341-7-krzk@kernel.org>
+From: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: [PATCH RESEND 00/14] Next round of associating ddc
+ adapters with connectors
+Date: Mon, 26 Aug 2019 21:25:42 +0200
+Message-ID: <cover.1566845537.git.andrzej.p@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190823145356.6341-7-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>, devicetree@vger.kernel.org, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>, "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" <linux-rtc@vger.kernel.org>, notify@kernel.orgArnd Bergmann <ar>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/freedreno>
+List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Ramalingam C <ramalingam.c-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Joonas Lahtinen <joonas.lahtinen-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Chris Wilson <chris-Y6uKTt2uX1cEflXRtASbqLVCufUGDwFn@public.gmane.org>, Bhawanpreet Lakha <Bhawanpreet.Lakha-5C7GfCeVMHo@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <Laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, kernel-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, Anthony Koo <Anthony.Koo-5C7GfCeVMHo@public.gmane.org>, =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Emil Velikov <emil.velikov-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, "David (ChunMing) Zhou" <David1.Zhou-5C7GfCeVMHo@public.gmane.org>, Mario Kleiner <mario.kleiner.de-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, David Francis <David.Francis-5C7GfCeVMHo@public.gmane.org>, Rob Clark <robdclark@g>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Aug 23, 2019 at 9:54 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> Convert Samsung S3C/Exynos Real Time Clock bindings to DT schema format
-> using json-schema.
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  .../devicetree/bindings/rtc/s3c-rtc.txt       | 31 ------
->  .../devicetree/bindings/rtc/s3c-rtc.yaml      | 95 +++++++++++++++++++
->  2 files changed, 95 insertions(+), 31 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/rtc/s3c-rtc.txt
->  create mode 100644 Documentation/devicetree/bindings/rtc/s3c-rtc.yaml
-
-
-> diff --git a/Documentation/devicetree/bindings/rtc/s3c-rtc.yaml b/Documentation/devicetree/bindings/rtc/s3c-rtc.yaml
-> new file mode 100644
-> index 000000000000..44b021812a83
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/rtc/s3c-rtc.yaml
-> @@ -0,0 +1,95 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/rtc/s3c-rtc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung S3C, S5P and Exynos Real Time Clock controller
-> +
-> +maintainers:
-> +  - Krzysztof Kozlowski <krzk@kernel.org>
-> +
-> +# Select also deprecated compatibles (for finding deprecate usage)
-> +select:
-> +  properties:
-> +    compatible:
-> +      items:
-> +        - enum:
-> +            - samsung,s3c2410-rtc
-> +            - samsung,s3c2416-rtc
-> +            - samsung,s3c2443-rtc
-> +            - samsung,s3c6410-rtc
-> +            # Deprecated, use samsung,s3c6410-rtc
-> +            - samsung,exynos3250-rtc
-
-We've come up with a better way of doing this that doesn't need a
-custom 'select'. Add a 'oneOf' to compatible and add another entry:
-
-- const: samsung,exynos3250-rtc
-  deprecated: true
-
-It's not implemented yet in the tool, but we'll keep the compatible
-for 'select' and otherwise drop schema marked deprecated.
-
-> +  required:
-> +    - compatible
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-
-You can drop 'items' when there's only 1 entry.
-
-> +          - samsung,s3c2410-rtc
-> +          - samsung,s3c2416-rtc
-> +          - samsung,s3c2443-rtc
-> +          - samsung,s3c6410-rtc
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    description:
-> +      Must contain a list of phandle and clock specifier for the rtc
-> +      clock and in the case of a s3c6410 compatible controller, also
-> +      a source clock.
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    description:
-> +      Must contain "rtc" and for a s3c6410 compatible controller,
-> +      a "rtc_src" sorted in the same order as the clocks property.
-> +    oneOf:
-> +      - items:
-> +          - const: rtc
-> +      - items:
-> +          # TODO: This can be in any order matching clocks, how to express it?
-
-It shouldn't be in any order. Fix the dts files.
-
-> +          - const: rtc
-> +          - const: rtc_src
-
-You should drop all this and add an else clause below.
-
-> +
-> +  interrupts:
-> +    description:
-> +      Two interrupt numbers to the cpu should be specified. First
-> +      interrupt number is the rtc alarm interrupt and second interrupt number
-> +      is the rtc tick interrupt. The number of cells representing a interrupt
-> +      depends on the parent interrupt controller.
-> +    minItems: 2
-> +    maxItems: 2
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - samsung,s3c6410-rtc
-> +              - samsung,exynos3250-rtc
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 2
-> +          maxItems: 2
-> +        clock-names:
-> +          items:
-> +          - const: rtc
-> +          - const: rtc_src
-
-Should be indented 2 more spaces.
-
-> +
-> +examples:
-> +  - |
-> +    rtc@10070000 {
-> +      compatible = "samsung,s3c6410-rtc";
-> +      reg = <0x10070000 0x100>;
-> +      interrupts = <0 44 4>, <0 45 4>;
-> +      clocks = <&clock 0>, // CLK_RTC
-> +               <&s2mps11_osc 0>; // S2MPS11_CLK_AP
-> +      clock-names = "rtc", "rtc_src";
-> +    };
-> --
-> 2.17.1
->
+SSdtIHJlc2VuZGluZyB0aGUgcGF0Y2hlcyB3aGljaCBoYXZlIHNvbWVob3cgZ290IGxvc3Q6IG9u
+ZSBwYXRjaApmcm9tIEdlZXJ0IGFuZCAxMyBwYXRjaGVzIGZyb20gbWUuCgpHZWVydCdzIHBhdGNo
+IHVwZGF0ZXMgdGhlIGVycm9yIG1lc3NhZ2UgdG8gcmVmbGVjdCB0aGUgYWN0dWFsbHkKY2FsbGVk
+IGZ1bmN0aW9uJ3MgbmFtZS4KCk1vc3Qgb2YgcGF0Y2hlcyBmcm9tIG1lIGhhdmUgdGhlaXIgQWNr
+ZWQtYnkgYW5kIFJldmlld2VkLWJ5IHRhZ3MKYW5kIGRlYWwgd2l0aCBwcm92aWRpbmcgYSBkZGMg
+c3ltbGluayBpbiBjb25uZWN0b3IncyBzeXNmcyBkaXJlY3RvcnkuCgpSZWJhc2VkIG9udG8gZHJt
+LW1pc2MtbmV4dCBhcyBvZiAyNnRoIEF1Z3VzdC4KCkFuZHJ6ZWogUGlldHJhc2lld2ljeiAoMTMp
+OgogIGRybS9yYWRlb246IFByb3ZpZGUgZGRjIHN5bWxpbmsgaW4gY29ubmVjdG9yIHN5c2ZzIGRp
+cmVjdG9yeQogIGRybS9hbWRncHU6IFByb3ZpZGUgZGRjIHN5bWxpbmsgaW4gZG0gY29ubmVjdG9y
+J3Mgc3lzZnMgZGlyZWN0b3J5CiAgZHJtL2V4eW5vczogUHJvdmlkZSBkZGMgc3ltbGluayBpbiBj
+b25uZWN0b3IncyBzeXNmcwogIGRybTogcm9ja2NoaXA6IFByb3ZpZGUgZGRjIHN5bWxpbmsgaW4g
+cmszMDY2X2hkbWkgc3lzZnMgZGlyZWN0b3J5CiAgZHJtOiByb2NrY2hpcDogUHJvdmlkZSBkZGMg
+c3ltbGluayBpbiBpbm5vX2hkbWkgc3lzZnMgZGlyZWN0b3J5CiAgZHJtL21zbS9oZG1pOiBQcm92
+aWRlIGRkYyBzeW1saW5rIGluIGhkbWkgY29ubmVjdG9yIHN5c2ZzIGRpcmVjdG9yeQogIGRybS9t
+ZWRpYXRlazogUHJvdmlkZSBkZGMgc3ltbGluayBpbiBoZG1pIGNvbm5lY3RvciBzeXNmcyBkaXJl
+Y3RvcnkKICBkcm0vdGVncmE6IFByb3ZpZGUgZGRjIHN5bWxpbmsgaW4gb3V0cHV0IGNvbm5lY3Rv
+ciBzeXNmcyBkaXJlY3RvcnkKICBkcm0vdmM0OiBQcm92aWRlIGRkYyBzeW1saW5rIGluIGNvbm5l
+Y3RvciBzeXNmcyBkaXJlY3RvcnkKICBkcm06IHp0ZTogUHJvdmlkZSBkZGMgc3ltbGluayBpbiBo
+ZG1pIGNvbm5lY3RvciBzeXNmcyBkaXJlY3RvcnkKICBkcm06IHp0ZTogUHJvdmlkZSBkZGMgc3lt
+bGluayBpbiB2Z2EgY29ubmVjdG9yIHN5c2ZzIGRpcmVjdG9yeQogIGRybS90aWxjZGM6IFByb3Zp
+ZGUgZGRjIHN5bWxpbmsgaW4gY29ubmVjdG9yIHN5c2ZzIGRpcmVjdG9yeQogIGRybS9pOTE1OiBQ
+cm92aWRlIGRkYyBzeW1saW5rIGluIGhkbWkgY29ubmVjdG9yIHN5c2ZzIGRpcmVjdG9yeQoKR2Vl
+cnQgVXl0dGVyaG9ldmVuICgxKToKICBkcm0vYnJpZGdlOiB0aS10ZnA0MTA6IFVwZGF0ZSBkcm1f
+Y29ubmVjdG9yX2luaXRfd2l0aF9kZGMoKSBlcnJvcgogICAgbWVzc2FnZQoKIC4uLi9ncHUvZHJt
+L2FtZC9kaXNwbGF5L2FtZGdwdV9kbS9hbWRncHVfZG0uYyB8ICAgNSArLQogZHJpdmVycy9ncHUv
+ZHJtL2JyaWRnZS90aS10ZnA0MTAuYyAgICAgICAgICAgIHwgICAzICstCiBkcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19oZG1pLmMgICAgICAgICAgfCAgIDYgKy0KIGRyaXZlcnMvZ3B1L2Ry
+bS9pOTE1L2Rpc3BsYXkvaW50ZWxfaGRtaS5jICAgICB8ICAxMiArLQogZHJpdmVycy9ncHUvZHJt
+L21lZGlhdGVrL210a19oZG1pLmMgICAgICAgICAgIHwgICA3ICstCiBkcml2ZXJzL2dwdS9kcm0v
+bXNtL2hkbWkvaGRtaV9jb25uZWN0b3IuYyAgICAgfCAgIDYgKy0KIGRyaXZlcnMvZ3B1L2RybS9y
+YWRlb24vcmFkZW9uX2Nvbm5lY3RvcnMuYyAgICB8IDE0MyArKysrKysrKysrKysrLS0tLS0KIGRy
+aXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9pbm5vX2hkbWkuYyAgICAgICAgICB8ICAgNiArLQogZHJp
+dmVycy9ncHUvZHJtL3JvY2tjaGlwL3JrMzA2Nl9oZG1pLmMgICAgICAgIHwgICA3ICstCiBkcml2
+ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5jICAgICAgICAgICAgICAgICAgfCAgIDcgKy0KIGRyaXZl
+cnMvZ3B1L2RybS90ZWdyYS9zb3IuYyAgICAgICAgICAgICAgICAgICB8ICAgNyArLQogZHJpdmVy
+cy9ncHUvZHJtL3RpbGNkYy90aWxjZGNfdGZwNDEwLmMgICAgICAgIHwgICA2ICstCiBkcml2ZXJz
+L2dwdS9kcm0vdmM0L3ZjNF9oZG1pLmMgICAgICAgICAgICAgICAgfCAgMTIgKy0KIGRyaXZlcnMv
+Z3B1L2RybS96dGUvenhfaGRtaS5jICAgICAgICAgICAgICAgICB8ICAgNiArLQogZHJpdmVycy9n
+cHUvZHJtL3p0ZS96eF92Z2EuYyAgICAgICAgICAgICAgICAgIHwgICA2ICstCiAxNSBmaWxlcyBj
+aGFuZ2VkLCAxNjggaW5zZXJ0aW9ucygrKSwgNzEgZGVsZXRpb25zKC0pCgotLSAKMi4xNy4xCgpf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpGcmVlZHJlbm8g
+bWFpbGluZyBsaXN0CkZyZWVkcmVub0BsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0
+cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9mcmVlZHJlbm8=
