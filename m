@@ -1,116 +1,68 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2 1/2 RESEND] usb: core: phy: add support for PHY
- calibration
-Date: Mon, 26 Aug 2019 10:55:33 +0200
-Message-ID: <a380a635-e036-1a18-bc0f-947931f8735c@samsung.com>
-References: <20190808094128.27213-1-m.szyprowski@samsung.com>
-        <CGME20190808094146eucas1p2a5a88ce5e7a87d47c4bcececab4df9a5@eucas1p2.samsung.com>
-        <20190808094128.27213-2-m.szyprowski@samsung.com>
+Subject: [PATCH v2 0/2] Exynos SoCs: enable support for ARM Architected Timers
+Date: Mon, 26 Aug 2019 12:31:40 +0200
+Message-ID: <20190826103142.3477-2-m.szyprowski@samsung.com>
+References: <20190826103142.3477-1-m.szyprowski@samsung.com>
+ <CGME20190826103202eucas1p123d075e3da50b5aa1574ae46aa6aa946@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190808094128.27213-2-m.szyprowski@samsung.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Mathias Nyman <mathias.nyman@intel.com>, Felipe Balbi <balbi@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jochen Sprickerhof <jochen@sprickerhof.de>, Anand Moon <linux.amoon@gmail.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190826103142.3477-1-m.szyprowski@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Greg
+Dear All,
 
-On 2019-08-08 11:41, Marek Szyprowski wrote:
-> Some PHYs (for example Exynos5 USB3.0 DRD PHY) require calibration to be
-> done after every USB HCD reset. Generic PHY framework has been already
-> extended with phy_calibrate() function in commit 36914111e682 ("drivers:
-> phy: add calibrate method"). This patch adds support for it to generic
-> PHY handling code in USB HCD core.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Tested-by: Anand Moon <linux.amoon@gmail.com>
-> Tested-by: Jochen Sprickerhof <jochen@sprickerhof.de>
+ARM Architected Timers are present in all CortexA7/A15 based Samsung
+Exynos SoCs. So far they were not enabled, because there were some issues
+related to their initialization. Samsung Exynos SoCs used custom timer
+hardware - Exynos MultiCore Timer. It turned out that enabling MCT it is
+also needed to get ARM Architected Timers working, because they both
+share some common hardware blocks (global system counter).
 
-Greg: any chance to give it this a try in -next? If not, maybe You can 
-point someone whose review will help?
-
-
-> ---
->   drivers/usb/core/hcd.c |  7 +++++++
->   drivers/usb/core/phy.c | 21 +++++++++++++++++++++
->   drivers/usb/core/phy.h |  1 +
->   3 files changed, 29 insertions(+)
->
-> diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-> index 88533938ce19..b89936c1df23 100644
-> --- a/drivers/usb/core/hcd.c
-> +++ b/drivers/usb/core/hcd.c
-> @@ -2291,6 +2291,9 @@ int hcd_bus_resume(struct usb_device *rhdev, pm_message_t msg)
->   	hcd->state = HC_STATE_RESUMING;
->   	status = hcd->driver->bus_resume(hcd);
->   	clear_bit(HCD_FLAG_WAKEUP_PENDING, &hcd->flags);
-> +	if (status == 0)
-> +		status = usb_phy_roothub_calibrate(hcd->phy_roothub);
-> +
->   	if (status == 0) {
->   		struct usb_device *udev;
->   		int port1;
-> @@ -2864,6 +2867,10 @@ int usb_add_hcd(struct usb_hcd *hcd,
->   	}
->   	hcd->rh_pollable = 1;
->   
-> +	retval = usb_phy_roothub_calibrate(hcd->phy_roothub);
-> +	if (retval)
-> +		goto err_hcd_driver_setup;
-> +
->   	/* NOTE: root hub and controller capabilities may not be the same */
->   	if (device_can_wakeup(hcd->self.controller)
->   			&& device_can_wakeup(&hcd->self.root_hub->dev))
-> diff --git a/drivers/usb/core/phy.c b/drivers/usb/core/phy.c
-> index 7580493b867a..fb1588e7c282 100644
-> --- a/drivers/usb/core/phy.c
-> +++ b/drivers/usb/core/phy.c
-> @@ -151,6 +151,27 @@ int usb_phy_roothub_set_mode(struct usb_phy_roothub *phy_roothub,
->   }
->   EXPORT_SYMBOL_GPL(usb_phy_roothub_set_mode);
->   
-> +int usb_phy_roothub_calibrate(struct usb_phy_roothub *phy_roothub)
-> +{
-> +	struct usb_phy_roothub *roothub_entry;
-> +	struct list_head *head;
-> +	int err;
-> +
-> +	if (!phy_roothub)
-> +		return 0;
-> +
-> +	head = &phy_roothub->list;
-> +
-> +	list_for_each_entry(roothub_entry, head, list) {
-> +		err = phy_calibrate(roothub_entry->phy);
-> +		if (err)
-> +			return err;
-> +	}
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(usb_phy_roothub_calibrate);
-> +
->   int usb_phy_roothub_power_on(struct usb_phy_roothub *phy_roothub)
->   {
->   	struct usb_phy_roothub *roothub_entry;
-> diff --git a/drivers/usb/core/phy.h b/drivers/usb/core/phy.h
-> index dad564e2d2d4..20a267cd986b 100644
-> --- a/drivers/usb/core/phy.h
-> +++ b/drivers/usb/core/phy.h
-> @@ -18,6 +18,7 @@ int usb_phy_roothub_exit(struct usb_phy_roothub *phy_roothub);
->   
->   int usb_phy_roothub_set_mode(struct usb_phy_roothub *phy_roothub,
->   			     enum phy_mode mode);
-> +int usb_phy_roothub_calibrate(struct usb_phy_roothub *phy_roothub);
->   int usb_phy_roothub_power_on(struct usb_phy_roothub *phy_roothub);
->   void usb_phy_roothub_power_off(struct usb_phy_roothub *phy_roothub);
->   
+This patchset enables support for ARM Architected Timer driver together
+with a standard Exynos MultiCore Timer driver, which is kept as a default
+timer source on ARM 32bit platforms. Support for ARM architected timers
+is essential for enabling proper KVM support on those platforms.
 
 Best regards
--- 
-Marek Szyprowski, PhD
+Marek Szyprowski
 Samsung R&D Institute Poland
+
+
+Changelog:
+
+v2:
+- dropped MCT patches (merged to v5.1)
+- dropped timer priority change patch (merged to v5.3)
+
+v1: https://patchwork.kernel.org/cover/10814913/
+- initial version, covers some MCT patches previously sent as a timer
+  rework for Exynos5433
+
+
+Patch summary:
+
+Marek Szyprowski (2):
+  ARM: dts: exynos: Add support ARM architected timers
+  ARM: exynos: Enable support for ARM architected timers
+
+ arch/arm/boot/dts/exynos3250.dtsi | 10 ++++++++++
+ arch/arm/boot/dts/exynos5250.dtsi |  1 +
+ arch/arm/boot/dts/exynos54xx.dtsi | 10 ++++++++++
+ arch/arm/mach-exynos/Kconfig      |  1 +
+ 4 files changed, 22 insertions(+)
+
+-- 
+2.17.1
