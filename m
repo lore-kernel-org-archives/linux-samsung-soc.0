@@ -1,38 +1,51 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] arm/arm64: defconfig: Update configs to use the new
- CROS_EC options
-Date: Tue, 27 Aug 2019 18:12:28 +0200
-Message-ID: <CAK8P3a2h2gUhxcVgD5JhR1Uo4qUSuG5yp4RCrAxevNmyD4ZRTA@mail.gmail.com>
-References: <20190827154851.10486-1-enric.balletbo@collabora.com> <20190827161045.GC26807@tuxbook-pro>
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+Subject: Re: [PATCH 5/9] block: support diskcipher
+Date: Tue, 27 Aug 2019 12:40:12 -0400
+Message-ID: <20190827164012.GN28066@mit.edu>
+References: <CGME20190827083334epcas2p115d479190b9a72c886f66569add78203@epcas2p1.samsung.com>
+ <03b201d55cb2$1d4d31b0$57e79510$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190827161045.GC26807@tuxbook-pro>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>, SoC Team <soc@kernel.org>, Gwendal Grignou <gwendal@chromium.org>, Benson Leung <bleung@chromium.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Guenter Roeck <groeck@chromium.org>, kernel@collabora.com, Lee Jones <lee.jones@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>, Will Deacon <will@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Leonard Crestez <leonard.crestez@nxp.com>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <03b201d55cb2$1d4d31b0$57e79510$@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: "boojin.kim" <boojin.kim@samsung.com>
+Cc: 'Ulf Hansson' <ulf.hansson@linaro.org>, 'Mike Snitzer' <snitzer@redhat.com>, dm-devel@redhat.com, 'Andreas Dilger' <adilger.kernel@dilger.ca>, 'Alasdair Kergon' <agk@redhat.com>, 'Eric Biggers' <ebiggers@kernel.org>, linux-samsung-soc@vger.kernel.org, 'Herbert Xu' <herbert@gondor.apana.org.au>, 'Krzysztof Kozlowski' <krzk@kernel.org>, 'Satya Tangirala' <satyat@google.com>, 'Jaehoon Chung' <jh80.chung@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>, linux-ext4@vger.kernel.org, 'Chao Yu' <chao@kernel.org>, linux-block@vger.kernel.org, linux-fscrypt@vger.kernel.org, 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-arm-kernel@lists.infradead.org, 'Jens Axboe' <axboe@kernel.dk>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-crypto@vger.kernel.org, linux-fsdevel@vger.kernel.org, "'David S. Miller'" <davem@davemloft.net>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 6:08 PM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
->
-> On Tue 27 Aug 08:48 PDT 2019, Enric Balletbo i Serra wrote:
->
-> > Recently we refactored the CrOS EC drivers moving part of the code from
-> > the MFD subsystem to the platform chrome subsystem. During this change
-> > we needed to rename some config options, so, update the defconfigs
-> > accordingly.
-> >
-> > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> > Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
-> > Tested-by: Gwendal Grignou <gwendal@chromium.org>
->
-> Can we make the entries in the generic arm64 defconfig modules?
+On Tue, Aug 27, 2019 at 05:33:33PM +0900, boojin.kim wrote:
+> 
+> Dear Satya.
+> Keyslot manager is a good solution for ICE. And probably no issue for FMP.
+> But, I think it's complicated for FMP because FMP doesn't need
+> any keyslot control.
 
-Good idea.
+Hi Boojin,
 
-Actually I would prefer to have all of them as modules for consistency,
-if at all possible.
+I think the important thing to realize here is that there are a large
+number of hardware devices for which the keyslot manager *is* needed.
+And from the upstream kernel's perspective, supporting two different
+schemes for supporting the inline encryption feature is more
+complexity than just supporting one which is general enough to support
+a wider variety of hardware devices.
 
-       Arnd
+If you want somethig which is only good for the hardware platform you
+are charged to support, that's fine if it's only going to be in a
+Samsung-specific kernel.  But if your goal is to get something that
+works upstream, especially if it requires changes in core layers of
+the kernel, it's important that it's general enough to support most,
+if not all, if the hardware devices in the industry.
+
+Regards,
+
+					- Ted
