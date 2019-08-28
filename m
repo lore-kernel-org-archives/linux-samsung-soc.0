@@ -1,10 +1,9 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 1/2] ARM: dts: exynos: Add support ARM architected timers
- on Exynos5
-Date: Wed, 28 Aug 2019 14:10:04 +0200
-Message-ID: <20190828121005.29368-2-m.szyprowski@samsung.com>
+Subject: [PATCH v3 2/2] ARM: exynos: Enable support for ARM architected timers
+Date: Wed, 28 Aug 2019 14:10:05 +0200
+Message-ID: <20190828121005.29368-3-m.szyprowski@samsung.com>
 References: <20190828121005.29368-1-m.szyprowski@samsung.com>
- <CGME20190828121012eucas1p10bac7ebb742d968bca251f21dd3aad11@eucas1p1.samsung.com>
+ <CGME20190828121012eucas1p2fb78bfebe16d744dc28194bb224650e2@eucas1p2.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -23,73 +22,26 @@ To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marc Zyngier <maz@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-All CortexA7/A15 based Exynos5 SoCs have ARM architected timers, so enable
-support for them directly in the base dtsi. None of the known firmware
-properly configures CNTFRQ arch timer register, so force clock frequency
-to 24MHz, which is the only configuration supported by the remaining
-clock drivers so far.
-
-Stock firmware for Peach Pit and Pi Chromebooks also doesn't reset
-properly other arch timer registers, so add respective properties
-indicating that. Other Exynos5-based boards behaves correctly in this area,
-what finally allows to enable support for KVM-based virtualization.
+ARM architected timer can be used together with Exynos MultiCore Timer
+driver, so enable support for it. Support for ARM architected timers is
+essential for enabling proper KVM support.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- arch/arm/boot/dts/exynos5420-peach-pit.dts | 4 ++++
- arch/arm/boot/dts/exynos54xx.dtsi          | 9 +++++++++
- arch/arm/boot/dts/exynos5800-peach-pi.dts  | 4 ++++
- 3 files changed, 17 insertions(+)
+ arch/arm/mach-exynos/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index f78db6809cca..77e08a4c7300 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -1064,6 +1064,10 @@
- 	status = "okay";
- };
- 
-+&timer {
-+	arm,cpu-registers-not-fw-configured;
-+};
-+
- &tmu_cpu0 {
- 	vtmu-supply = <&ldo10_reg>;
- };
-diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
-index 9c3b63b7cac6..02d34957cd83 100644
---- a/arch/arm/boot/dts/exynos54xx.dtsi
-+++ b/arch/arm/boot/dts/exynos54xx.dtsi
-@@ -45,6 +45,15 @@
- 		status = "disabled";
- 	};
- 
-+	timer: timer {
-+		compatible = "arm,armv7-timer";
-+		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+		clock-frequency = <24000000>;
-+	};
-+
- 	soc: soc {
- 		sysram@2020000 {
- 			compatible = "mmio-sram";
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index e0f470fe54c8..5e8cec736444 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -1033,6 +1033,10 @@
- 	status = "okay";
- };
- 
-+&timer {
-+	arm,cpu-registers-not-fw-configured;
-+};
-+
- &tmu_cpu0 {
- 	vtmu-supply = <&ldo10_reg>;
- };
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index f83786640f94..9dab1f50a02f 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -19,6 +19,7 @@ menuconfig ARCH_EXYNOS
+ 	select EXYNOS_SROM
+ 	select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
+ 	select GPIOLIB
++	select HAVE_ARM_ARCH_TIMER if ARCH_EXYNOS5 && VIRTUALIZATION
+ 	select HAVE_ARM_SCU if SMP
+ 	select HAVE_S3C2410_I2C if I2C
+ 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
 -- 
 2.17.1
