@@ -1,73 +1,129 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 0/2] Exynos SoCs: enable support for ARM Architected Timers
-Date: Wed, 28 Aug 2019 14:10:03 +0200
-Message-ID: <20190828121005.29368-1-m.szyprowski@samsung.com>
-References: <CGME20190828121011eucas1p1ff9b23536aaa79643e5fca10c02db9a0@eucas1p1.samsung.com>
+From: Dariusz Marcinkiewicz <darekm@google.com>
+Subject: [PATCH v7.1 9/9] drm: exynos: exynos_hdmi: use cec_notifier_conn_(un)register
+Date: Wed, 28 Aug 2019 14:34:15 +0200
+Message-ID: <20190828123415.139441-1-darekm@google.com>
+References: <6bbfb6f8-15c2-9ad2-8857-898f4c6435a3@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marc Zyngier <maz@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <6bbfb6f8-15c2-9ad2-8857-898f4c6435a3@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, s.nawrocki@samsung.com, hverkuil-cisco@xs4all.nl
+Cc: Dariusz Marcinkiewicz <darekm@google.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Dear All,
+Use the new cec_notifier_conn_(un)register() functions to
+(un)register the notifier for the HDMI connector, and fill in
+the cec_connector_info.
 
-ARM Architected Timers are present in all CortexA7/A15 based Samsung
-Exynos SoCs. So far they were not enabled, because there were some issues
-related to their initialization. Samsung Exynos SoCs used custom timer
-hardware - Exynos MultiCore Timer. It turned out that enabling MCT it is
-also needed to get ARM Architected Timers working, because they both
-share some common hardware blocks (global system counter).
+Changes since v7:
+	- err_runtime_disable -> err_rpm_disable
+Changes since v2:
+	- removed unnecessary call to invalidate phys address before
+	deregistering the notifier,
+	- use cec_notifier_phys_addr_invalidate instead of setting
+	invalid address on a notifier.
 
-This patchset enables support for ARM Architected Timer driver together
-with a standard Exynos MultiCore Timer driver, which is kept as a default
-timer source on ARM 32bit platforms. Support for ARM architected timers
-is essential for enabling proper KVM support on those platforms.
+Signed-off-by: Dariusz Marcinkiewicz <darekm@google.com>
+Tested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+---
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 31 ++++++++++++++++------------
+ 1 file changed, 18 insertions(+), 13 deletions(-)
 
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
-
-
-Changelog:
-
-v3:
-- checked the status of arch timer registers on all Exynos5 SoCs,
-  dropped 'not-fw-configured' property on most of them as requested
-  by Marc Zyngier
-- dropped enabling arch timers on Exynos3250, as there is no benefit from
-  that (none of the Exynos3250-based board boots in HYP mode)
-
-v2: https://www.spinics.net/lists/arm-kernel/msg751017.html
-- dropped MCT patches (merged to v5.1)
-- dropped timer priority change patch (merged to v5.3)
-
-v1: https://www.spinics.net/lists/arm-kernel/msg751018.html
-- initial version, covers some MCT patches previously sent as a timer
-  rework for Exynos5433
-
-
-Patch summary:
-
-Marek Szyprowski (2):
-  ARM: dts: exynos: Add support ARM architected timers on Exynos5
-  ARM: exynos: Enable support for ARM architected timers
-
- arch/arm/boot/dts/exynos5420-peach-pit.dts | 4 ++++
- arch/arm/boot/dts/exynos54xx.dtsi          | 9 +++++++++
- arch/arm/boot/dts/exynos5800-peach-pi.dts  | 4 ++++
- arch/arm/mach-exynos/Kconfig               | 1 +
- 4 files changed, 18 insertions(+)
-
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index bc1565f1822ab..799f2db13efe2 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -852,6 +852,10 @@ static enum drm_connector_status hdmi_detect(struct drm_connector *connector,
+ 
+ static void hdmi_connector_destroy(struct drm_connector *connector)
+ {
++	struct hdmi_context *hdata = connector_to_hdmi(connector);
++
++	cec_notifier_conn_unregister(hdata->notifier);
++
+ 	drm_connector_unregister(connector);
+ 	drm_connector_cleanup(connector);
+ }
+@@ -935,6 +939,7 @@ static int hdmi_create_connector(struct drm_encoder *encoder)
+ {
+ 	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
+ 	struct drm_connector *connector = &hdata->connector;
++	struct cec_connector_info conn_info;
+ 	int ret;
+ 
+ 	connector->interlace_allowed = true;
+@@ -957,6 +962,15 @@ static int hdmi_create_connector(struct drm_encoder *encoder)
+ 			DRM_DEV_ERROR(hdata->dev, "Failed to attach bridge\n");
+ 	}
+ 
++	cec_fill_conn_info_from_drm(&conn_info, connector);
++
++	hdata->notifier = cec_notifier_conn_register(hdata->dev, NULL,
++						     &conn_info);
++	if (hdata->notifier == NULL) {
++		ret = -ENOMEM;
++		DRM_DEV_ERROR(hdata->dev, "Failed to allocate CEC notifier\n");
++	}
++
+ 	return ret;
+ }
+ 
+@@ -1528,8 +1542,8 @@ static void hdmi_disable(struct drm_encoder *encoder)
+ 		 */
+ 		mutex_unlock(&hdata->mutex);
+ 		cancel_delayed_work(&hdata->hotplug_work);
+-		cec_notifier_set_phys_addr(hdata->notifier,
+-					   CEC_PHYS_ADDR_INVALID);
++		if (hdata->notifier)
++			cec_notifier_phys_addr_invalidate(hdata->notifier);
+ 		return;
+ 	}
+ 
+@@ -2006,12 +2020,6 @@ static int hdmi_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	hdata->notifier = cec_notifier_get(&pdev->dev);
+-	if (hdata->notifier == NULL) {
+-		ret = -ENOMEM;
+-		goto err_hdmiphy;
+-	}
+-
+ 	pm_runtime_enable(dev);
+ 
+ 	audio_infoframe = &hdata->audio.infoframe;
+@@ -2023,7 +2031,7 @@ static int hdmi_probe(struct platform_device *pdev)
+ 
+ 	ret = hdmi_register_audio_device(hdata);
+ 	if (ret)
+-		goto err_notifier_put;
++		goto err_rpm_disable;
+ 
+ 	ret = component_add(&pdev->dev, &hdmi_component_ops);
+ 	if (ret)
+@@ -2034,8 +2042,7 @@ static int hdmi_probe(struct platform_device *pdev)
+ err_unregister_audio:
+ 	platform_device_unregister(hdata->audio.pdev);
+ 
+-err_notifier_put:
+-	cec_notifier_put(hdata->notifier);
++err_rpm_disable:
+ 	pm_runtime_disable(dev);
+ 
+ err_hdmiphy:
+@@ -2054,12 +2061,10 @@ static int hdmi_remove(struct platform_device *pdev)
+ 	struct hdmi_context *hdata = platform_get_drvdata(pdev);
+ 
+ 	cancel_delayed_work_sync(&hdata->hotplug_work);
+-	cec_notifier_set_phys_addr(hdata->notifier, CEC_PHYS_ADDR_INVALID);
+ 
+ 	component_del(&pdev->dev, &hdmi_component_ops);
+ 	platform_device_unregister(hdata->audio.pdev);
+ 
+-	cec_notifier_put(hdata->notifier);
+ 	pm_runtime_disable(&pdev->dev);
+ 
+ 	if (!IS_ERR(hdata->reg_hdmi_en))
 -- 
-2.17.1
+2.23.0.187.g17f5b7556c-goog
