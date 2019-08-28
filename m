@@ -1,26 +1,44 @@
-From: Dariusz Marcinkiewicz <darekm@google.com>
-Subject: Re: [PATCH v7 9/9] drm: exynos: exynos_hdmi: use cec_notifier_conn_(un)register
-Date: Wed, 28 Aug 2019 14:38:02 +0200
-Message-ID: <CALFZZQHZrVSaKhTSH6suOc0epMQzcgxAHddoJGxvtdhSp1tW0Q@mail.gmail.com>
-References: <20190814104520.6001-1-darekm@google.com> <CGME20190814104630epcas3p44755443f37e78b2613f7dda35d71bb71@epcas3p4.samsung.com>
- <20190814104520.6001-10-darekm@google.com> <6bbfb6f8-15c2-9ad2-8857-898f4c6435a3@samsung.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v2 1/2 RESEND] usb: core: phy: add support for PHY
+ calibration
+Date: Wed, 28 Aug 2019 22:41:46 +0200
+Message-ID: <20190828204146.GA21235@kroah.com>
+References: <20190808094128.27213-1-m.szyprowski@samsung.com>
+ <CGME20190808094146eucas1p2a5a88ce5e7a87d47c4bcececab4df9a5@eucas1p2.samsung.com>
+ <20190808094128.27213-2-m.szyprowski@samsung.com>
+ <a380a635-e036-1a18-bc0f-947931f8735c@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <6bbfb6f8-15c2-9ad2-8857-898f4c6435a3@samsung.com>
+Content-Disposition: inline
+In-Reply-To: <a380a635-e036-1a18-bc0f-947931f8735c@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Mathias Nyman <mathias.nyman@intel.com>, Felipe Balbi <balbi@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jochen Sprickerhof <jochen@sprickerhof.de>, Anand Moon <linux.amoon@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi.
+On Mon, Aug 26, 2019 at 10:55:33AM +0200, Marek Szyprowski wrote:
+> Hi Greg
+> 
+> On 2019-08-08 11:41, Marek Szyprowski wrote:
+> > Some PHYs (for example Exynos5 USB3.0 DRD PHY) require calibration to be
+> > done after every USB HCD reset. Generic PHY framework has been already
+> > extended with phy_calibrate() function in commit 36914111e682 ("drivers:
+> > phy: add calibrate method"). This patch adds support for it to generic
+> > PHY handling code in USB HCD core.
+> >
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Tested-by: Anand Moon <linux.amoon@gmail.com>
+> > Tested-by: Jochen Sprickerhof <jochen@sprickerhof.de>
+> 
+> Greg: any chance to give it this a try in -next? If not, maybe You can 
+> point someone whose review will help?
 
-On Wed, Aug 28, 2019 at 10:39 AM Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
->
-> nit: I think err_rpm_disable or err_pm_runtime_disable could be better
->      label names.
->
-Submitted v7.1 which replaces err_runtime_disable with err_rpm_disable.
+Ah crap, this is me, not the PHY maintainer :(
 
-Thank you.
+Can you resend this and I will be glad to review it.  But it would also
+be good to get Felipe's review as well.
+
+thanks,
+
+greg k-h
