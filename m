@@ -1,14 +1,12 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 2/2] ARM: exynos: Enable support for ARM architected timers
-Date: Wed, 28 Aug 2019 14:10:05 +0200
-Message-ID: <20190828121005.29368-3-m.szyprowski@samsung.com>
-References: <20190828121005.29368-1-m.szyprowski@samsung.com>
- <CGME20190828121012eucas1p2fb78bfebe16d744dc28194bb224650e2@eucas1p2.samsung.com>
+Subject: [PATCH v3 0/2] Exynos SoCs: enable support for ARM Architected Timers
+Date: Wed, 28 Aug 2019 14:10:03 +0200
+Message-ID: <20190828121005.29368-1-m.szyprowski@samsung.com>
+References: <CGME20190828121011eucas1p1ff9b23536aaa79643e5fca10c02db9a0@eucas1p1.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190828121005.29368-1-m.szyprowski@samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -22,26 +20,54 @@ To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marc Zyngier <maz@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-ARM architected timer can be used together with Exynos MultiCore Timer
-driver, so enable support for it. Support for ARM architected timers is
-essential for enabling proper KVM support.
+Dear All,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/mach-exynos/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ARM Architected Timers are present in all CortexA7/A15 based Samsung
+Exynos SoCs. So far they were not enabled, because there were some issues
+related to their initialization. Samsung Exynos SoCs used custom timer
+hardware - Exynos MultiCore Timer. It turned out that enabling MCT it is
+also needed to get ARM Architected Timers working, because they both
+share some common hardware blocks (global system counter).
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index f83786640f94..9dab1f50a02f 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -19,6 +19,7 @@ menuconfig ARCH_EXYNOS
- 	select EXYNOS_SROM
- 	select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
- 	select GPIOLIB
-+	select HAVE_ARM_ARCH_TIMER if ARCH_EXYNOS5 && VIRTUALIZATION
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_S3C2410_I2C if I2C
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+This patchset enables support for ARM Architected Timer driver together
+with a standard Exynos MultiCore Timer driver, which is kept as a default
+timer source on ARM 32bit platforms. Support for ARM architected timers
+is essential for enabling proper KVM support on those platforms.
+
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+
+
+Changelog:
+
+v3:
+- checked the status of arch timer registers on all Exynos5 SoCs,
+  dropped 'not-fw-configured' property on most of them as requested
+  by Marc Zyngier
+- dropped enabling arch timers on Exynos3250, as there is no benefit from
+  that (none of the Exynos3250-based board boots in HYP mode)
+
+v2: https://www.spinics.net/lists/arm-kernel/msg751017.html
+- dropped MCT patches (merged to v5.1)
+- dropped timer priority change patch (merged to v5.3)
+
+v1: https://www.spinics.net/lists/arm-kernel/msg751018.html
+- initial version, covers some MCT patches previously sent as a timer
+  rework for Exynos5433
+
+
+Patch summary:
+
+Marek Szyprowski (2):
+  ARM: dts: exynos: Add support ARM architected timers on Exynos5
+  ARM: exynos: Enable support for ARM architected timers
+
+ arch/arm/boot/dts/exynos5420-peach-pit.dts | 4 ++++
+ arch/arm/boot/dts/exynos54xx.dtsi          | 9 +++++++++
+ arch/arm/boot/dts/exynos5800-peach-pi.dts  | 4 ++++
+ arch/arm/mach-exynos/Kconfig               | 1 +
+ 4 files changed, 18 insertions(+)
+
 -- 
 2.17.1
