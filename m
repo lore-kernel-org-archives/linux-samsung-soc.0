@@ -1,72 +1,63 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v7 9/9] drm: exynos: exynos_hdmi: use
- cec_notifier_conn_(un)register
-Date: Wed, 28 Aug 2019 10:39:51 +0200
-Message-ID: <6bbfb6f8-15c2-9ad2-8857-898f4c6435a3@samsung.com>
-References: <20190814104520.6001-1-darekm@google.com>
-        <CGME20190814104630epcas3p44755443f37e78b2613f7dda35d71bb71@epcas3p4.samsung.com>
-        <20190814104520.6001-10-darekm@google.com>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: Re: [PATCH] arm/arm64: defconfig: Update configs to use the new
+ CROS_EC options
+Date: Wed, 28 Aug 2019 12:09:54 +0200
+Message-ID: <2db6cde1-9e7f-8b1c-f2e4-80bdd2478d28@collabora.com>
+References: <20190827154851.10486-1-enric.balletbo@collabora.com>
+ <20190827161045.GC26807@tuxbook-pro>
+ <CAK8P3a2h2gUhxcVgD5JhR1Uo4qUSuG5yp4RCrAxevNmyD4ZRTA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190814104520.6001-10-darekm@google.com>
+In-Reply-To: <CAK8P3a2h2gUhxcVgD5JhR1Uo4qUSuG5yp4RCrAxevNmyD4ZRTA@mail.gmail.com>
 Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dariusz Marcinkiewicz <darekm@google.com>, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, hverkuil-cisco@xs4all.nl
-Cc: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: SoC Team <soc@kernel.org>, Gwendal Grignou <gwendal@chromium.org>, Benson Leung <bleung@chromium.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Guenter Roeck <groeck@chromium.org>, kernel@collabora.com, Lee Jones <lee.jones@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>, Will Deacon <will@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Leonard Crestez <leonard.crestez@nxp.com>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Chanwoo Choi <cw00.choi>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 8/14/19 12:45, Dariusz Marcinkiewicz wrote:
-> Use the new cec_notifier_conn_(un)register() functions to
-> (un)register the notifier for the HDMI connector, and fill in
-> the cec_connector_info.
+Hi Bjorn, Arnd,
+
+On 27/8/19 18:12, Arnd Bergmann wrote:
+> On Tue, Aug 27, 2019 at 6:08 PM Bjorn Andersson
+> <bjorn.andersson@linaro.org> wrote:
+>>
+>> On Tue 27 Aug 08:48 PDT 2019, Enric Balletbo i Serra wrote:
+>>
+>>> Recently we refactored the CrOS EC drivers moving part of the code from
+>>> the MFD subsystem to the platform chrome subsystem. During this change
+>>> we needed to rename some config options, so, update the defconfigs
+>>> accordingly.
+>>>
+>>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>>> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>> Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+>>> Tested-by: Gwendal Grignou <gwendal@chromium.org>
+>>
+>> Can we make the entries in the generic arm64 defconfig modules?
 > 
-> Changes since v2:
-> 	- removed unnecessary call to invalidate phys address before
-> 	deregistering the notifier,
-> 	- use cec_notifier_phys_addr_invalidate instead of setting
-> 	invalid address on a notifier.
+> Good idea.
 > 
-> Signed-off-by: Dariusz Marcinkiewicz <darekm@google.com>
-> Tested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+> Actually I would prefer to have all of them as modules for consistency,
+> if at all possible.
+> 
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+It is very common boot Chromebooks from an USB device, the EC needs to be
+built-in in order to boot from these devices, otherwise you should use an
+initramfs. I'd like to avoid forcing people to build an initramfs just to boot
+from these devices if possible, in fact, my usual workflow is without initramfs,
+and knowing that with the default defconfig just should boot helps a lot sometimes.
 
-> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> index bc1565f1822ab..d532b468d9af5 100644
-> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+Note that, it's not the case for EC subdevices, these are already build as modules.
 
-> @@ -2006,12 +2020,6 @@ static int hdmi_probe(struct platform_device *pdev)
->  		}
->  	}
->  
-> -	hdata->notifier = cec_notifier_get(&pdev->dev);
-> -	if (hdata->notifier == NULL) {
-> -		ret = -ENOMEM;
-> -		goto err_hdmiphy;
-> -	}
-> -
->  	pm_runtime_enable(dev);
->  
->  	audio_infoframe = &hdata->audio.infoframe;
-> @@ -2023,7 +2031,7 @@ static int hdmi_probe(struct platform_device *pdev)
->  
->  	ret = hdmi_register_audio_device(hdata);
->  	if (ret)
-> -		goto err_notifier_put;
-> +		goto err_runtime_disable;
+BTW, Lee asked if this patch should be squashed with the patches that really
+renames the config options to help bisect ability, I don't have a hard opinion
+as I don't usually run the config option between bisection steps, so please let
+me know what do you prefer and I'll respin the patches ASAP if that's the case.
 
-
-> -err_notifier_put:
-> -	cec_notifier_put(hdata->notifier);
-> +err_runtime_disable:
->  	pm_runtime_disable(dev);
-
-nit: I think err_rpm_disable or err_pm_runtime_disable could be better 
-     label names.
-
--- 
 Thanks,
-Sylwester
+Enric
+
+>        Arnd
+> 
