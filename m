@@ -1,59 +1,91 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v2 1/2 RESEND] usb: core: phy: add support for PHY
- calibration
-Date: Thu, 29 Aug 2019 13:22:01 +0200
-Message-ID: <20190829112201.GA23823@kroah.com>
-References: <20190808094128.27213-1-m.szyprowski@samsung.com>
- <CGME20190808094146eucas1p2a5a88ce5e7a87d47c4bcececab4df9a5@eucas1p2.samsung.com>
- <20190808094128.27213-2-m.szyprowski@samsung.com>
- <a380a635-e036-1a18-bc0f-947931f8735c@samsung.com>
- <20190828204146.GA21235@kroah.com>
- <e801e7a4-f525-baae-4c02-d271db308b5f@samsung.com>
- <20190829102113.GA20823@kroah.com>
- <91b0a341-e561-43f5-3daa-c6aaf33e3287@samsung.com>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: Re: [PATCH] arm/arm64: defconfig: Update configs to use the new
+ CROS_EC options
+Date: Thu, 29 Aug 2019 15:56:49 +0200
+Message-ID: <1fe8c0df-5e2d-6b6f-2a21-025a00b86f01@collabora.com>
+References: <20190827154851.10486-1-enric.balletbo@collabora.com>
+ <20190827161045.GC26807@tuxbook-pro>
+ <CAK8P3a2h2gUhxcVgD5JhR1Uo4qUSuG5yp4RCrAxevNmyD4ZRTA@mail.gmail.com>
+ <2db6cde1-9e7f-8b1c-f2e4-80bdd2478d28@collabora.com>
+ <CAK8P3a3zYpgouGAibyMjDykZmy+ABnx6AD2cYpHnXq9Zsw2V=w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <91b0a341-e561-43f5-3daa-c6aaf33e3287@samsung.com>
+In-Reply-To: <CAK8P3a3zYpgouGAibyMjDykZmy+ABnx6AD2cYpHnXq9Zsw2V=w@mail.gmail.com>
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Mathias Nyman <mathias.nyman@intel.com>, Felipe Balbi <balbi@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jochen Sprickerhof <jochen@sprickerhof.de>, Anand Moon <linux.amoon@gmail.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, SoC Team <soc@kernel.org>, Gwendal Grignou <gwendal@chromium.org>, Benson Leung <bleung@chromium.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Guenter Roeck <groeck@chromium.org>, Collabora kernel ML <kernel@collabora.com>, Lee Jones <lee.jones@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>, Will Deacon <will@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Leonard Crestez <leonard.crestez@nxp.com>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-so>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 12:27:34PM +0200, Marek Szyprowski wrote:
-> Hi Greg,
-> 
-> On 2019-08-29 12:21, Greg Kroah-Hartman wrote:
-> > On Thu, Aug 29, 2019 at 07:26:50AM +0200, Marek Szyprowski wrote:
-> >> Hi Greg,
-> >>
-> >> On 2019-08-28 22:41, Greg Kroah-Hartman wrote:
-> >>> On Mon, Aug 26, 2019 at 10:55:33AM +0200, Marek Szyprowski wrote:
-> >>>> Hi Greg
-> >>>>
-> >>>> On 2019-08-08 11:41, Marek Szyprowski wrote:
-> >>>>> Some PHYs (for example Exynos5 USB3.0 DRD PHY) require calibration to be
-> >>>>> done after every USB HCD reset. Generic PHY framework has been already
-> >>>>> extended with phy_calibrate() function in commit 36914111e682 ("drivers:
-> >>>>> phy: add calibrate method"). This patch adds support for it to generic
-> >>>>> PHY handling code in USB HCD core.
-> >>>>>
-> >>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> >>>>> Tested-by: Anand Moon <linux.amoon@gmail.com>
-> >>>>> Tested-by: Jochen Sprickerhof <jochen@sprickerhof.de>
-> >>>> Greg: any chance to give it this a try in -next? If not, maybe You can
-> >>>> point someone whose review will help?
-> >>> Ah crap, this is me, not the PHY maintainer :(
-> >>>
-> >>> Can you resend this and I will be glad to review it.  But it would also
-> >>> be good to get Felipe's review as well.
-> >> No problem, I will resend it again in a few minutes. Felipe already
-> >> acked it: https://lkml.org/lkml/2019/8/8/460
-> > I don't see the resend, did I miss it?
-> 
-> I looks so: https://lkml.org/lkml/2019/8/29/31
+Hi,
 
-Got it now, thanks.
+On 28/8/19 14:09, Arnd Bergmann wrote:
+> On Wed, Aug 28, 2019 at 12:10 PM Enric Balletbo i Serra
+> <enric.balletbo@collabora.com> wrote:
+>> On 27/8/19 18:12, Arnd Bergmann wrote:
+>>> On Tue, Aug 27, 2019 at 6:08 PM Bjorn Andersson
+>>> <bjorn.andersson@linaro.org> wrote:
+>>>>
+>>>> On Tue 27 Aug 08:48 PDT 2019, Enric Balletbo i Serra wrote:
+>>>>
+>>>>> Recently we refactored the CrOS EC drivers moving part of the code from
+>>>>> the MFD subsystem to the platform chrome subsystem. During this change
+>>>>> we needed to rename some config options, so, update the defconfigs
+>>>>> accordingly.
+>>>>>
+>>>>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>>>>> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>>>> Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+>>>>> Tested-by: Gwendal Grignou <gwendal@chromium.org>
+>>>>
+>>>> Can we make the entries in the generic arm64 defconfig modules?
+>>>
+>>> Good idea.
+>>>
+>>> Actually I would prefer to have all of them as modules for consistency,
+>>> if at all possible.
+>>>
+>>
+>> It is very common boot Chromebooks from an USB device, the EC needs to be
+>> built-in in order to boot from these devices, otherwise you should use an
+>> initramfs. I'd like to avoid forcing people to build an initramfs just to boot
+>> from these devices if possible, in fact, my usual workflow is without initramfs,
+>> and knowing that with the default defconfig just should boot helps a lot sometimes.
+>>
+>> Note that, it's not the case for EC subdevices, these are already build as modules.
+> 
+> Ok, fair enough, let's leave it built-in then.
+> 
+>> BTW, Lee asked if this patch should be squashed with the patches that really
+>> renames the config options to help bisect ability, I don't have a hard opinion
+>> as I don't usually run the config option between bisection steps, so please let
+>> me know what do you prefer and I'll respin the patches ASAP if that's the case.
+> 
+> I'm not usually worried about bisection in defconfig changes, since like you
+> say most commonly one would not run 'make defconfig' betweens the
+> bisection steps.
+> 
+> If we really care about it, we could keep a symbol like this
+> in drivers/platform/chrome/Kconfig for one release:
+> 
+> config CONFIG_MFD_CROS_EC
+>         tristate "Enable ChromeOS Embedded Controller"
+>         select CROS_EC
+>         select CHROME_PLATFORMS
+>         select CONFIG_MFD_CROS_EC_DEV
+>         help
+>            This is a transitional Kconfig option and will be removed
+>            after everyone enables the parts individually.
+> 
 
-greg k-h
+Not sure if really makes sense do this and tbh and don't have a hard opinion, so
+I'll let the final decision to the soc/mfd maintainers. Just let me know and
+I'll respin the patches with that if you really want.
+
+Thanks,
+ Enric
+
+>       Arnd
+> 
