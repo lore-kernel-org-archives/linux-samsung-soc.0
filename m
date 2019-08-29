@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 13/14] clk: s2mps11: Add used attribute to s2mps11_dt_match
-Date: Thu, 29 Aug 2019 06:50:42 -0400
-Message-ID: <20190829105043.2508-13-sashal@kernel.org>
-References: <20190829105043.2508-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 8/8] clk: s2mps11: Add used attribute to s2mps11_dt_match
+Date: Thu, 29 Aug 2019 06:51:00 -0400
+Message-ID: <20190829105100.2649-8-sashal@kernel.org>
+References: <20190829105100.2649-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190829105043.2508-1-sashal@kernel.org>
+In-Reply-To: <20190829105100.2649-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Nathan Chancellor <natechancellor@gmail.com>, Stephen Boyd <sboyd@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
