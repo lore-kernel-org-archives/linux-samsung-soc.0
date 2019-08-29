@@ -1,64 +1,72 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2 1/2 RESEND] usb: core: phy: add support for PHY
- calibration
-Date: Thu, 29 Aug 2019 12:27:34 +0200
-Message-ID: <91b0a341-e561-43f5-3daa-c6aaf33e3287@samsung.com>
-References: <20190808094128.27213-1-m.szyprowski@samsung.com>
-        <CGME20190808094146eucas1p2a5a88ce5e7a87d47c4bcececab4df9a5@eucas1p2.samsung.com>
-        <20190808094128.27213-2-m.szyprowski@samsung.com>
-        <a380a635-e036-1a18-bc0f-947931f8735c@samsung.com>
-        <20190828204146.GA21235@kroah.com>
-        <e801e7a4-f525-baae-4c02-d271db308b5f@samsung.com>
-        <20190829102113.GA20823@kroah.com>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 6/6] clk: s2mps11: Add used attribute to s2mps11_dt_match
+Date: Thu, 29 Aug 2019 06:51:10 -0400
+Message-ID: <20190829105110.2748-6-sashal@kernel.org>
+References: <20190829105110.2748-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190829102113.GA20823@kroah.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Mathias Nyman <mathias.nyman@intel.com>, Felipe Balbi <balbi@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Jochen Sprickerhof <jochen@sprickerhof.de>, Anand Moon <linux.amoon@gmail.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190829105110.2748-1-sashal@kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Nathan Chancellor <natechancellor@gmail.com>, Stephen Boyd <sboyd@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Greg,
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-On 2019-08-29 12:21, Greg Kroah-Hartman wrote:
-> On Thu, Aug 29, 2019 at 07:26:50AM +0200, Marek Szyprowski wrote:
->> Hi Greg,
->>
->> On 2019-08-28 22:41, Greg Kroah-Hartman wrote:
->>> On Mon, Aug 26, 2019 at 10:55:33AM +0200, Marek Szyprowski wrote:
->>>> Hi Greg
->>>>
->>>> On 2019-08-08 11:41, Marek Szyprowski wrote:
->>>>> Some PHYs (for example Exynos5 USB3.0 DRD PHY) require calibration to be
->>>>> done after every USB HCD reset. Generic PHY framework has been already
->>>>> extended with phy_calibrate() function in commit 36914111e682 ("drivers:
->>>>> phy: add calibrate method"). This patch adds support for it to generic
->>>>> PHY handling code in USB HCD core.
->>>>>
->>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>>>> Tested-by: Anand Moon <linux.amoon@gmail.com>
->>>>> Tested-by: Jochen Sprickerhof <jochen@sprickerhof.de>
->>>> Greg: any chance to give it this a try in -next? If not, maybe You can
->>>> point someone whose review will help?
->>> Ah crap, this is me, not the PHY maintainer :(
->>>
->>> Can you resend this and I will be glad to review it.  But it would also
->>> be good to get Felipe's review as well.
->> No problem, I will resend it again in a few minutes. Felipe already
->> acked it: https://lkml.org/lkml/2019/8/8/460
-> I don't see the resend, did I miss it?
+[ Upstream commit 9c940bbe2bb47e03ca5e937d30b6a50bf9c0e671 ]
 
-I looks so: https://lkml.org/lkml/2019/8/29/31
+Clang warns after commit 8985167ecf57 ("clk: s2mps11: Fix matching when
+built as module and DT node contains compatible"):
 
-> And can you add Felipe's ack to it?
+drivers/clk/clk-s2mps11.c:242:34: warning: variable 's2mps11_dt_match'
+is not needed and will not be emitted [-Wunneeded-internal-declaration]
+static const struct of_device_id s2mps11_dt_match[] = {
+                                 ^
+1 warning generated.
 
-Yes, I've already did that.
+This warning happens when a variable is used in some construct that
+doesn't require a reference to that variable to be emitted in the symbol
+table; in this case, it's MODULE_DEVICE_TABLE, which only needs to hold
+the data of the variable, not the variable itself.
 
+$ nm -S drivers/clk/clk-s2mps11.o | rg s2mps11_dt_match
+00000078 000003d4 R __mod_of__s2mps11_dt_match_device_table
 
-Best regards
+Normally, with device ID table variables, it means that the variable
+just needs to be tied to the device declaration at the bottom of the
+file, like s2mps11_clk_id:
+
+$ nm -S drivers/clk/clk-s2mps11.o | rg s2mps11_clk_id
+00000000 00000078 R __mod_platform__s2mps11_clk_id_device_table
+00000000 00000078 r s2mps11_clk_id
+
+However, because the comment above this deliberately doesn't want this
+variable added to .of_match_table, we need to mark s2mps11_dt_match as
+__used to silence this warning. This makes it clear to Clang that the
+variable is used for something, even if a reference to it isn't being
+emitted.
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Fixes: 8985167ecf57 ("clk: s2mps11: Fix matching when built as module and DT node contains compatible")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/clk-s2mps11.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+index 785864893f9a6..14af5c916c9ca 100644
+--- a/drivers/clk/clk-s2mps11.c
++++ b/drivers/clk/clk-s2mps11.c
+@@ -307,7 +307,7 @@ MODULE_DEVICE_TABLE(platform, s2mps11_clk_id);
+  * This requires of_device_id table.  In the same time this will not change the
+  * actual *device* matching so do not add .of_match_table.
+  */
+-static const struct of_device_id s2mps11_dt_match[] = {
++static const struct of_device_id s2mps11_dt_match[] __used = {
+ 	{
+ 		.compatible = "samsung,s2mps11-clk",
+ 		.data = (void *)S2MPS11X,
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.20.1
