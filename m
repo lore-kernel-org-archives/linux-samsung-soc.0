@@ -1,13 +1,13 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 6/6] clk: s2mps11: Add used attribute to s2mps11_dt_match
-Date: Thu, 29 Aug 2019 06:51:10 -0400
-Message-ID: <20190829105110.2748-6-sashal@kernel.org>
-References: <20190829105110.2748-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 13/14] clk: s2mps11: Add used attribute to s2mps11_dt_match
+Date: Thu, 29 Aug 2019 06:50:42 -0400
+Message-ID: <20190829105043.2508-13-sashal@kernel.org>
+References: <20190829105043.2508-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190829105110.2748-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190829105043.2508-1-sashal@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Nathan Chancellor <natechancellor@gmail.com>, Stephen Boyd <sboyd@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -56,10 +56,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-index 785864893f9a6..14af5c916c9ca 100644
+index 14071a57c9262..f5d74e8db4327 100644
 --- a/drivers/clk/clk-s2mps11.c
 +++ b/drivers/clk/clk-s2mps11.c
-@@ -307,7 +307,7 @@ MODULE_DEVICE_TABLE(platform, s2mps11_clk_id);
+@@ -255,7 +255,7 @@ MODULE_DEVICE_TABLE(platform, s2mps11_clk_id);
   * This requires of_device_id table.  In the same time this will not change the
   * actual *device* matching so do not add .of_match_table.
   */
