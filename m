@@ -1,7 +1,8 @@
 From: Guillaume Gardet <guillaume.gardet@arm.com>
-Subject: [PATCH V3 4/5] arm: dts: exynos: arndale: Enable GPU/Mali T604 node
-Date: Fri, 30 Aug 2019 12:45:01 +0200
-Message-ID: <20190830104502.7128-5-guillaume.gardet@arm.com>
+Subject: [PATCH V3 5/5] arm: dts: exynos: arndale: Fix min/max for buck4
+ regulator for gpu
+Date: Fri, 30 Aug 2019 12:45:02 +0200
+Message-ID: <20190830104502.7128-6-guillaume.gardet@arm.com>
 References: <20190725083433.6505-1-guillaume.gardet@arm.com>
  <20190830104502.7128-1-guillaume.gardet@arm.com>
 Mime-Version: 1.0
@@ -22,7 +23,7 @@ To: linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <krzk@kernel.org>, Guillaume Gardet <guillaume.gardet@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Tested with kmscube and some glmark2* tests on arndale board.
+Required to have gpu opp working properly.
 
 Signed-off-by: Guillaume Gardet <guillaume.gardet@arm.com>
 
@@ -34,24 +35,23 @@ Cc: linux-arm-kernel@lists.infradead.org
 V3 changes:
   * new file
 
- arch/arm/boot/dts/exynos5250-arndale.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/exynos5250-arndale.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index dc6fa6fe83f1..cf5a758f1927 100644
+index cf5a758f1927..6fcb78a354fe 100644
 --- a/arch/arm/boot/dts/exynos5250-arndale.dts
 +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -543,6 +543,11 @@
- 	status = "okay";
- };
+@@ -461,8 +461,8 @@
  
-+&mali {
-+	mali-supply = <&buck4_reg>;
-+	status = "okay";
-+};
-+
- &mixer {
- 	status = "okay";
- };
+ 			buck4_reg: BUCK4 {
+ 				regulator-name = "vdd_g3d";
+-				regulator-min-microvolt = <1000000>;
+-				regulator-max-microvolt = <1000000>;
++				regulator-min-microvolt = <850000>;
++				regulator-max-microvolt = <1300000>;
+ 				regulator-always-on;
+ 				regulator-boot-on;
+ 				op_mode = <1>;
 -- 
 2.22.1
