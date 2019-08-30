@@ -1,15 +1,13 @@
-From: Guillaume Gardet <guillaume.gardet@arm.com>
-Subject: [PATCH V3 5/5] arm: dts: exynos: arndale: Fix min/max for buck4
- regulator for gpu
-Date: Fri, 30 Aug 2019 12:45:02 +0200
-Message-ID: <20190830104502.7128-6-guillaume.gardet@arm.com>
-References: <20190725083433.6505-1-guillaume.gardet@arm.com>
- <20190830104502.7128-1-guillaume.gardet@arm.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] ARM: multi_v7_defconfig: Make MAX77802 regulator driver
+ built-in
+Date: Fri, 30 Aug 2019 15:04:16 +0200
+Message-ID: <20190830130416.10420-1-m.szyprowski@samsung.com>
+References: <CGME20190830130425eucas1p1b6806fad77366797271e70ce8ef4d296@eucas1p1.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190830104502.7128-1-guillaume.gardet@arm.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,39 +17,32 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <krzk@kernel.org>, Guillaume Gardet <guillaume.gardet@arm.com>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Required to have gpu opp working properly.
+Maxim 77802 PMIC is a main PMIC for the following Exynos5 based boards:
+Odroid XU, Chromebook Pit and Chromebook Pi. Driver for its voltage
+regulator is needed very early during boot to properly instantiate SD/MMC
+devices and mount rootfs, so change that driver to be compiled-in.
 
-Signed-off-by: Guillaume Gardet <guillaume.gardet@arm.com>
-
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
-V3 changes:
-  * new file
+ arch/arm/configs/multi_v7_defconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- arch/arm/boot/dts/exynos5250-arndale.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index cf5a758f1927..6fcb78a354fe 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -461,8 +461,8 @@
- 
- 			buck4_reg: BUCK4 {
- 				regulator-name = "vdd_g3d";
--				regulator-min-microvolt = <1000000>;
--				regulator-max-microvolt = <1000000>;
-+				regulator-min-microvolt = <850000>;
-+				regulator-max-microvolt = <1300000>;
- 				regulator-always-on;
- 				regulator-boot-on;
- 				op_mode = <1>;
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 64aa1136d43c..3dc636c3c5c7 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -562,7 +562,7 @@ CONFIG_REGULATOR_MAX8997=m
+ CONFIG_REGULATOR_MAX8998=m
+ CONFIG_REGULATOR_MAX77686=y
+ CONFIG_REGULATOR_MAX77693=m
+-CONFIG_REGULATOR_MAX77802=m
++CONFIG_REGULATOR_MAX77802=y
+ CONFIG_REGULATOR_PALMAS=y
+ CONFIG_REGULATOR_PBIAS=y
+ CONFIG_REGULATOR_PWM=y
 -- 
-2.22.1
+2.17.1
