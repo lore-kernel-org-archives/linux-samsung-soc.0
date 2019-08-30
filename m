@@ -1,15 +1,15 @@
-From: Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH 6/7] media: don't do an unsigned int with a 31 bit shift
-Date: Thu, 29 Aug 2019 10:03:09 -0700
-Message-ID: <201908291002.2F67F5ADA@keescook>
-References: <4a411ba155eb062b6575aba0824123c840806c0b.1566502743.git.mchehab+samsung@kernel.org>
- <1a78a757b37d2628312e1d56d7a741ba89d42a91.1566502743.git.mchehab+samsung@kernel.org>
+From: Guillaume Gardet <guillaume.gardet@arm.com>
+Subject: [PATCH V3 1/5] dt-bindings: gpu: mali-midgard: Add samsung exynos5250
+ compatible
+Date: Fri, 30 Aug 2019 12:44:58 +0200
+Message-ID: <20190830104502.7128-2-guillaume.gardet@arm.com>
+References: <20190725083433.6505-1-guillaume.gardet@arm.com>
+ <20190830104502.7128-1-guillaume.gardet@arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1a78a757b37d2628312e1d56d7a741ba89d42a91.1566502743.git.mchehab+samsung@kernel.org>
+In-Reply-To: <20190830104502.7128-1-guillaume.gardet@arm.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,36 +19,38 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>, Kamil Debski <kamil@wypas.org>, Hans Verkuil <hverkuil@xs4all.nl>, Andrzej Hajda <a.hajda@samsung.com>, "Lad,
- Prabhakar" <prabhakar.csengg@gmail.com>, Bluecherry Maintainers <maintainers@bluecherrydvr.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Nathan Chancellor <natechancellor@gmail.com>, Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>, Anton Sviridenko <anton@corp.bluecherry.net>, Ezequiel Garcia <ezequiel@collabora.com>, Andrey Utkin <andrey.utkin@corp.bluecherry.net>, Antti Palosaari <crope@iki.fi>, Steve Longerbeam <slongerbeam@gmail.com>, Ismael Luceno <ismael@iodev.co.uk>, Linux Media Mailing List <linux-media@vger.kernel.org>, linux-arm-msm@vger.kernel.org, Stanimir Varbanov <stanimir.varbanov@linaro.org>, Jeongtae Park <jtp.park@samsung.com>, linux-samsung-soc@vger.kern
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <krzk@kernel.org>, Guillaume Gardet <guillaume.gardet@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 04:39:33PM -0300, Mauro Carvalho Chehab wrote:
-> Doing something like:
-> 
-> 	i32 foo = 1, bar;
-> 
-> 	bar = foo << 31;
-> 
-> has an undefined behavior in C, as warned by cppcheck, as we're
-> shifting a signed integer.
-> 
-> Instead, force the numbers to be unsigned, in order to solve this
-> issue.
+Add "samsung,exynos5250-mali" binding.
 
-I also recommend using the BIT() macro, which does the ULing correctly,
-etc.
+Signed-off-by: Guillaume Gardet <guillaume.gardet@arm.com>
 
-i.e. instead of:
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org
+---
+V3 changes:
+  * add dt-bindings before node in device tree
+V2 changes:
+  * new file
 
--	keyup = (gpio & ir->mask_keyup) ? 1 << 31 : 0;
-+	keyup = (gpio & ir->mask_keyup) ? 1UL << 31 : 0;
+ Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-use:
-
--	keyup = (gpio & ir->mask_keyup) ? 1 << 31 : 0;
-+	keyup = (gpio & ir->mask_keyup) ? BIT(31) : 0;
-
+diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
+index 9b298edec5b2..bdd1396d9cc3 100644
+--- a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
++++ b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
+@@ -17,6 +17,7 @@ Required properties:
+   * which must be preceded by one of the following vendor specifics:
+     + "allwinner,sun50i-h6-mali"
+     + "amlogic,meson-gxm-mali"
++    + "samsung,exynos5250-mali"
+     + "samsung,exynos5433-mali"
+     + "rockchip,rk3288-mali"
+     + "rockchip,rk3399-mali"
 -- 
-Kees Cook
+2.22.1
