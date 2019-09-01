@@ -1,48 +1,47 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] ARM: multi_v7_defconfig: Make MAX77802 regulator driver
- built-in
-Date: Fri, 30 Aug 2019 15:04:16 +0200
-Message-ID: <20190830130416.10420-1-m.szyprowski@samsung.com>
-References: <CGME20190830130425eucas1p1b6806fad77366797271e70ce8ef4d296@eucas1p1.samsung.com>
+From: Inki Dae <daeinki@gmail.com>
+Subject: [GIT PULL] exynos-drm-next
+Date: Sun,  1 Sep 2019 21:06:19 +0900
+Message-ID: <20190901120619.3992-1-daeinki@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Maxim 77802 PMIC is a main PMIC for the following Exynos5 based boards:
-Odroid XU, Chromebook Pit and Chromebook Pi. Driver for its voltage
-regulator is needed very early during boot to properly instantiate SD/MMC
-devices and mount rootfs, so change that driver to be compiled-in.
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/configs/multi_v7_defconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 64aa1136d43c..3dc636c3c5c7 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -562,7 +562,7 @@ CONFIG_REGULATOR_MAX8997=m
- CONFIG_REGULATOR_MAX8998=m
- CONFIG_REGULATOR_MAX77686=y
- CONFIG_REGULATOR_MAX77693=m
--CONFIG_REGULATOR_MAX77802=m
-+CONFIG_REGULATOR_MAX77802=y
- CONFIG_REGULATOR_PALMAS=y
- CONFIG_REGULATOR_PBIAS=y
- CONFIG_REGULATOR_PWM=y
--- 
-2.17.1
+SGkgRGF2ZSwKCiAgIEp1c3Qgb25lIHBhdGNoIHdoaWNoIGRyb3BzIHRoZSB1c2Ugb2YgZHJtUC5o
+IGhlYWRlciBmaWxlLgoKICAgUGxlYXNlIGtpbmRseSBsZXQgbWUga25vdyBpZiB0aGVyZSBpcyBh
+bnkgcHJvYmxlbS4KClRoYW5rcywKSU5raSBEYWUKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5j
+ZSBjb21taXQgNTc4ZDIzNDJlYzcwMmU1ZmI4YTc3OTgzZmFiYjM3NTRhZTNlOTY2MDoKCiAgTWVy
+Z2UgdGFnICdkcm0tbmV4dC01LjQtMjAxOS0wOC0yMycgb2YgZ2l0Oi8vcGVvcGxlLmZyZWVkZXNr
+dG9wLm9yZy9+YWdkNWYvbGludXggaW50byBkcm0tbmV4dCAoMjAxOS0wOC0yNyAxNzoyMjoxNSAr
+MTAwMCkKCmFyZSBhdmFpbGFibGUgaW4gdGhlIEdpdCByZXBvc2l0b3J5IGF0OgoKICBnaXQ6Ly9n
+aXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvZGFlaW5raS9kcm0tZXh5bm9z
+IHRhZ3MvZXh5bm9zLWRybS1uZXh0LWZvci12NS40Cgpmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMg
+dXAgdG8gMjI2MDI0YjE2Njg1NTIyZWY4YTk3ZDg4MWNmZmI5MDUwMGVmMTkwMzoKCiAgZHJtL2V4
+eW5vczogZHJvcCB1c2Ugb2YgZHJtUC5oICgyMDE5LTA5LTAxIDIwOjU1OjEyICswOTAwKQoKLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLQotIEpVc3Qgb25lIGNsZWFudXAgd2hpY2ggZHJvcHMgdGhlIHVzZSBvZiBkcm1QLmggaGVh
+ZGVyIGZpbGUuCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tClNhbSBSYXZuYm9yZyAoMSk6CiAgICAgIGRybS9leHlub3M6IGRy
+b3AgdXNlIG9mIGRybVAuaAoKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYu
+YyAgICAgfCA4ICsrKysrKysrCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmlt
+Yy5jICAgIHwgMiArKwogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dzYy5jICAg
+ICB8IDIgKysKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9pcHAuYyAgICAgfCA1
+ICsrKystCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1faXBwLmggICAgIHwgMiAt
+LQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3JvdGF0b3IuYyB8IDIgKysKIGRy
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9zY2FsZXIuYyAgfCAxICsKIDcgZmlsZXMg
+Y2hhbmdlZCwgMTkgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
+cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
