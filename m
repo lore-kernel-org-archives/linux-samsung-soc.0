@@ -1,47 +1,36 @@
-From: Inki Dae <daeinki@gmail.com>
-Subject: [GIT PULL] exynos-drm-next
-Date: Sun,  1 Sep 2019 21:06:19 +0900
-Message-ID: <20190901120619.3992-1-daeinki@gmail.com>
+From: Jaafar Ali <jaafarkhalaf@gmail.com>
+Subject: cpuidle big_little driver on Odroid-xu4
+Date: Sun, 1 Sep 2019 16:13:03 +0300
+Message-ID: <CAF-0O_5TSO04M=0kdghhGKTs54QVEYn5mBh7e83EusFjS_Hg3Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: airlied@linux.ie
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene@kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, sam@ravnborg.org, linux-clk@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgRGF2ZSwKCiAgIEp1c3Qgb25lIHBhdGNoIHdoaWNoIGRyb3BzIHRoZSB1c2Ugb2YgZHJtUC5o
-IGhlYWRlciBmaWxlLgoKICAgUGxlYXNlIGtpbmRseSBsZXQgbWUga25vdyBpZiB0aGVyZSBpcyBh
-bnkgcHJvYmxlbS4KClRoYW5rcywKSU5raSBEYWUKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5j
-ZSBjb21taXQgNTc4ZDIzNDJlYzcwMmU1ZmI4YTc3OTgzZmFiYjM3NTRhZTNlOTY2MDoKCiAgTWVy
-Z2UgdGFnICdkcm0tbmV4dC01LjQtMjAxOS0wOC0yMycgb2YgZ2l0Oi8vcGVvcGxlLmZyZWVkZXNr
-dG9wLm9yZy9+YWdkNWYvbGludXggaW50byBkcm0tbmV4dCAoMjAxOS0wOC0yNyAxNzoyMjoxNSAr
-MTAwMCkKCmFyZSBhdmFpbGFibGUgaW4gdGhlIEdpdCByZXBvc2l0b3J5IGF0OgoKICBnaXQ6Ly9n
-aXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvZGFlaW5raS9kcm0tZXh5bm9z
-IHRhZ3MvZXh5bm9zLWRybS1uZXh0LWZvci12NS40Cgpmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMg
-dXAgdG8gMjI2MDI0YjE2Njg1NTIyZWY4YTk3ZDg4MWNmZmI5MDUwMGVmMTkwMzoKCiAgZHJtL2V4
-eW5vczogZHJvcCB1c2Ugb2YgZHJtUC5oICgyMDE5LTA5LTAxIDIwOjU1OjEyICswOTAwKQoKLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLQotIEpVc3Qgb25lIGNsZWFudXAgd2hpY2ggZHJvcHMgdGhlIHVzZSBvZiBkcm1QLmggaGVh
-ZGVyIGZpbGUuCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tClNhbSBSYXZuYm9yZyAoMSk6CiAgICAgIGRybS9leHlub3M6IGRy
-b3AgdXNlIG9mIGRybVAuaAoKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYu
-YyAgICAgfCA4ICsrKysrKysrCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmlt
-Yy5jICAgIHwgMiArKwogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dzYy5jICAg
-ICB8IDIgKysKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9pcHAuYyAgICAgfCA1
-ICsrKystCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1faXBwLmggICAgIHwgMiAt
-LQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3JvdGF0b3IuYyB8IDIgKysKIGRy
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9zY2FsZXIuYyAgfCAxICsKIDcgZmlsZXMg
-Y2hhbmdlZCwgMTkgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+Dear Sylwester,
+Kernel 5.3rc1
+Hardware Odroid-XU4
+cpuidle-big_little driver for exynos 5422 of odroid-xu3/4 is not working.
+when I enable it in the defconfig , CONFIG_ARM_BIG_LITTLE_CPUIDLE=y,
+the device will not boot and the heartbeat blue LED stops.
+when the powerdown state[1] is removed form cpuidle-big_little driver
+or the function bl_enter_powerdown is disabled by early return, the
+kernel boots successfully and I can see cpuidle driver inside
+/sys/devices/system/cpu/cpuidle/current_driver
+both cpuidle-big_little power down state (exynos5420) and suspend
+stuff are using mcpm_cpu_suspend() which in turn calls
+mcpm_cpu_power_down() eventually.
+while suspend stuff is working correctly and the cpu can
+suspend/resume without problems, the cpuidle-bl is not working
+the few difference between suspend.c and cpuidle-big_little that I
+found are suspend.c do some more preparations such as storing resume
+entry point "mcpm_entry_point" into S5P_INFORM0, reset
+EXYNOS5420_CPU_STATE and save and restore some other registers.
+Can we repeat the scenario of suspend in cpuidle-big_little
+
+Best Regards
+-- 
+Jaafar Khalaf
