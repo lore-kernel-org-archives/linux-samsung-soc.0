@@ -1,17 +1,16 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH V3 1/5] dt-bindings: gpu: mali-midgard: Add samsung
- exynos5250 compatible
-Date: Mon, 2 Sep 2019 17:31:46 +0200
-Message-ID: <20190902153146.GB9289@kozik-lap>
-References: <20190725083433.6505-1-guillaume.gardet@arm.com>
- <20190830104502.7128-1-guillaume.gardet@arm.com>
- <20190830104502.7128-2-guillaume.gardet@arm.com>
+Subject: Re: [PATCH] ARM: multi_v7_defconfig: Make MAX77802 regulator driver
+ built-in
+Date: Mon, 2 Sep 2019 17:54:23 +0200
+Message-ID: <20190902155423.GC9289@kozik-lap>
+References: <CGME20190830130425eucas1p1b6806fad77366797271e70ce8ef4d296@eucas1p1.samsung.com>
+ <20190830130416.10420-1-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <20190830104502.7128-2-guillaume.gardet@arm.com>
+In-Reply-To: <20190830130416.10420-1-m.szyprowski@samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -21,29 +20,21 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Guillaume Gardet <guillaume.gardet@arm.com>
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 12:44:58PM +0200, Guillaume Gardet wrote:
-> Add "samsung,exynos5250-mali" binding.
+On Fri, Aug 30, 2019 at 03:04:16PM +0200, Marek Szyprowski wrote:
+> Maxim 77802 PMIC is a main PMIC for the following Exynos5 based boards:
+> Odroid XU, Chromebook Pit and Chromebook Pi. Driver for its voltage
+> regulator is needed very early during boot to properly instantiate SD/MMC
+> devices and mount rootfs, so change that driver to be compiled-in.
 > 
-> Signed-off-by: Guillaume Gardet <guillaume.gardet@arm.com>
-> 
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
-> V3 changes:
->   * add dt-bindings before node in device tree
-> V2 changes:
->   * new file
-> 
->  Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt | 1 +
+>  arch/arm/configs/multi_v7_defconfig | 2 +-
 
-Thanks, entire set applied (with re-ordering and minor description
-changes).
+Thanks, applied.
 
 Best regards,
 Krzysztof
