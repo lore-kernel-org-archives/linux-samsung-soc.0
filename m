@@ -1,36 +1,244 @@
-From: Jaafar Ali <jaafarkhalaf@gmail.com>
-Subject: cpuidle big_little driver on Odroid-xu4
-Date: Sun, 1 Sep 2019 16:13:03 +0300
-Message-ID: <CAF-0O_5TSO04M=0kdghhGKTs54QVEYn5mBh7e83EusFjS_Hg3Q@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [RFC 1/9] dt-bindings: arm: samsung: Convert Samsung board/soc
+ bindings to json-schema
+Date: Mon, 2 Sep 2019 09:32:54 +0200
+Message-ID: <CAJKOXPcFCxa5+ut0S5Rc1sGRa==Og+UmKKqr4Ap4rd4qNi=JWg@mail.gmail.com>
+References: <20190823145356.6341-1-krzk@kernel.org>
+ <CAL_Jsq+5MpPSjRtFp-xf8P0rBuArMFbum7yadcHNBQz_N=Ergg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene@kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, sam@ravnborg.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAL_Jsq+5MpPSjRtFp-xf8P0rBuArMFbum7yadcHNBQz_N=Ergg@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Lars-Peter Clausen <lars@metafoo.de>, Arnd Bergmann <arnd@arndb.de>, devicetree@vger.kernel.org, "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Hartmut Knaack <knaack.h@gmx.de>, Olof Johansson <olof@lixom.net>, "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" <linux-rtc@vger.kernel.org>, notify@kernel.org, Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.ch>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Dear Sylwester,
-Kernel 5.3rc1
-Hardware Odroid-XU4
-cpuidle-big_little driver for exynos 5422 of odroid-xu3/4 is not working.
-when I enable it in the defconfig , CONFIG_ARM_BIG_LITTLE_CPUIDLE=y,
-the device will not boot and the heartbeat blue LED stops.
-when the powerdown state[1] is removed form cpuidle-big_little driver
-or the function bl_enter_powerdown is disabled by early return, the
-kernel boots successfully and I can see cpuidle driver inside
-/sys/devices/system/cpu/cpuidle/current_driver
-both cpuidle-big_little power down state (exynos5420) and suspend
-stuff are using mcpm_cpu_suspend() which in turn calls
-mcpm_cpu_power_down() eventually.
-while suspend stuff is working correctly and the cpu can
-suspend/resume without problems, the cpuidle-bl is not working
-the few difference between suspend.c and cpuidle-big_little that I
-found are suspend.c do some more preparations such as storing resume
-entry point "mcpm_entry_point" into S5P_INFORM0, reset
-EXYNOS5420_CPU_STATE and save and restore some other registers.
-Can we repeat the scenario of suspend in cpuidle-big_little
+On Mon, 26 Aug 2019 at 13:38, Rob Herring <robh+dt@kernel.org> wrote:
+>
+> On Fri, Aug 23, 2019 at 9:54 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >
+> > Convert Samsung S5P and Exynos SoC bindings to DT schema format using
+> > json-schema.  This is purely conversion of already documented bindings
+> > so it does not cover all of DTS in the Linux kernel (few S5P/Exynos and
+> > all S3C are missing).
+> >
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> >
+> > ---
+> >
+> > If the schema looks sensible, I will continue on converting other
+> > SoC and driver bindings and later adding missing schemas (S3C
+> > SoCs).
+>
+> Looks pretty good.
+>
+> > ---
+> >  .../bindings/arm/samsung/samsung-boards.txt   |  83 --------
+> >  .../bindings/arm/samsung/samsung-boards.yaml  | 188 ++++++++++++++++++
+> >  2 files changed, 188 insertions(+), 83 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
+> >  create mode 100644 Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+>
+>
+> > diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+> > new file mode 100644
+> > index 000000000000..e963fd70c436
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+> > @@ -0,0 +1,188 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/arm/samsung/samsung-boards.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Samsung Exynos and S5P SoC based boards
+> > +
+> > +maintainers:
+> > +  - Krzysztof Kozlowski <krzk@kernel.org>
+> > +
+> > +properties:
+> > +  $nodename:
+> > +    const: '/'
+> > +  compatible:
+> > +    oneOf:
+> > +      - description: S5PV210 based Aries boards
+> > +        items:
+> > +          - enum:
+> > +              - samsung,fascinate4g             # Samsung Galaxy S Fascinate 4G (SGH-T959P)
+> > +              - samsung,galaxys                 # Samsung Galaxy S (i9000)
+> > +          - const: samsung,aries
+> > +          - const: samsung,s5pv210
+> > +
+> > +      - description: Exynos3250 based boards
+> > +        items:
+> > +          - enum:
+> > +              - samsung,monk                    # Samsung Simband
+> > +              - samsung,rinato                  # Samsung Gear2
+> > +          - const: samsung,exynos3250
+> > +          - const: samsung,exynos3
+> > +
+> > +      - description: Samsung ARTIK5 boards
+> > +        items:
+> > +          - enum:
+> > +              - samsung,artik5-eval             # Samsung ARTIK5 eval board
+> > +          - const: samsung,artik5               # Samsung ARTIK5 module
+> > +          - const: samsung,exynos3250
+> > +          - const: samsung,exynos3
+> > +
+> > +      - description: Exynos4210 based boards
+> > +        items:
+> > +          - enum:
+> > +              - insignal,origen                 # Insignal Origen
+> > +              - samsung,smdkv310                # Samsung SMDKV310 eval
+> > +              - samsung,trats                   # Samsung Tizen Reference
+> > +              - samsung,universal_c210          # Samsung C210
+> > +          - const: samsung,exynos4210
+> > +          - const: samsung,exynos4
+> > +
+> > +      - description: Exynos4412 based boards
+> > +        items:
+> > +          - enum:
+> > +              - friendlyarm,tiny4412            # FriendlyARM TINY4412
+> > +              - hardkernel,odroid-u3            # Hardkernel Odroid U3
+> > +              - hardkernel,odroid-x             # Hardkernel Odroid X
+> > +              - hardkernel,odroid-x2            # Hardkernel Odroid X2
+> > +              - insignal,origen4412             # Insignal Origen
+> > +              - samsung,smdk4412                # Samsung SMDK4412 eval
+> > +              - topeet,itop4412-elite           # TOPEET Elite base
+> > +          - const: samsung,exynos4412
+> > +          - const: samsung,exynos4
+> > +
+> > +      - description: Samsung Midas family boards
+> > +        items:
+> > +          - enum:
+> > +              - samsung,i9300                   # Samsung GT-I9300
+> > +              - samsung,i9305                   # Samsung GT-I9305
+> > +              - samsung,n710x                   # Samsung GT-N7100/GT-N7105
+> > +              - samsung,trats2                  # Samsung Tizen Reference
+> > +          - const: samsung,midas
+> > +          - const: samsung,exynos4412
+> > +          - const: samsung,exynos4
+> > +
+> > +      - description: Exynos5250 based boards
+> > +        items:
+> > +          - enum:
+> > +              - google,snow-rev5                # Google Snow Rev 5+
+> > +              - google,spring                   # Google Spring
+> > +              - insignal,arndale                # Insignal Arndale
+> > +              - samsung,smdk5250                # Samsung SMDK5250 eval
+> > +          - const: samsung,exynos5250
+> > +          - const: samsung,exynos5
+> > +
+> > +      - description: Google Snow Boards (Rev 4+)
+> > +        items:
+> > +          - enum:
+> > +              - google,snow-rev4
+>
+> const here as I wouldn't expect this list to grow.
 
-Best Regards
--- 
-Jaafar Khalaf
+OK
+
+>
+> > +          - const: google,snow
+> > +          - const: samsung,exynos5250
+> > +          - const: samsung,exynos5
+> > +
+> > +      - description: Exynos5260 based boards
+> > +        items:
+> > +          - enum:
+> > +              - samsung,xyref5260               # Samsung Xyref5260 eval
+> > +          - const: samsung,exynos5260
+> > +          - const: samsung,exynos5
+> > +
+> > +      - description: Exynos5410 based boards
+> > +        items:
+> > +          - enum:
+> > +              - hardkernel,odroid-xu            # Hardkernel Odroid XU
+> > +              - samsung,smdk5410                # Samsung SMDK5410 eval
+> > +          - const: samsung,exynos5410
+> > +          - const: samsung,exynos5
+> > +
+> > +      - description: Exynos5420 based boards
+> > +        items:
+> > +          - enum:
+> > +              - insignal,arndale-octa           # Insignal Arndale Octa
+> > +              - samsung,smdk5420                # Samsung SMDK5420 eval
+> > +          - const: samsung,exynos5420
+> > +          - const: samsung,exynos5
+> > +
+> > +      - description: Google Peach Pit Boards (Rev 6+)
+> > +        items:
+> > +          - enum:
+> > +              - google,pit-rev16
+>
+> const
+
+OK
+
+>
+> > +          - const: google,pit-rev15
+> > +          - const: google,pit-rev14
+> > +          - const: google,pit-rev13
+> > +          - const: google,pit-rev12
+> > +          - const: google,pit-rev11
+> > +          - const: google,pit-rev10
+> > +          - const: google,pit-rev9
+> > +          - const: google,pit-rev8
+> > +          - const: google,pit-rev7
+> > +          - const: google,pit-rev6
+> > +          - const: google,pit
+> > +          - const: google,peach
+> > +          - const: samsung,exynos5420
+> > +          - const: samsung,exynos5
+> > +
+> > +      - description: Exynos5800 based boards
+> > +        items:
+> > +          - enum:
+> > +              - hardkernel,odroid-xu3           # Hardkernel Odroid XU3
+> > +              - hardkernel,odroid-xu3-lite      # Hardkernel Odroid XU3 Lite
+> > +              - hardkernel,odroid-xu4           # Hardkernel Odroid XU4
+> > +              - hardkernel,odroid-hc1           # Hardkernel Odroid HC1
+> > +          - const: samsung,exynos5800
+> > +          - const: samsung,exynos5
+> > +
+> > +      - description: Google Peach Pi Boards (Rev 10+)
+> > +        items:
+> > +          - enum:
+> > +              - google,pi-rev16
+> > +          - const: google,pi-rev15
+> > +          - const: google,pi-rev14
+> > +          - const: google,pi-rev13
+> > +          - const: google,pi-rev12
+> > +          - const: google,pi-rev11
+> > +          - const: google,pi-rev10
+> > +          - const: google,pi
+> > +          - const: google,peach
+> > +          - const: samsung,exynos5800
+> > +          - const: samsung,exynos5
+> > +
+> > +      - description: Exynos5433 based boards
+> > +        items:
+> > +          - enum:
+> > +              - samsung,tm2                     # Samsung TM2
+> > +              - samsung,tm2e                    # Samsung TM2E
+> > +          - const: samsung,exynos5433
+> > +
+> > +  firmware:
+>
+> This should be moved to its own file.
+
+Indeed, thanks for the review.
+
+Best regards,
+Krzysztof
