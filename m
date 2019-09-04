@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 3/5] ARM: dts: exynos: Second pull for v5.4
-Date: Wed,  4 Sep 2019 19:50:00 +0200
-Message-ID: <20190904175002.10487-4-krzk@kernel.org>
+Subject: [GIT PULL 2/5] soc: samsung: Second pull for v5.4
+Date: Wed,  4 Sep 2019 19:49:59 +0200
+Message-ID: <20190904175002.10487-3-krzk@kernel.org>
 References: <20190904175002.10487-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190904175002.10487-1-krzk@kernel.org>
@@ -18,42 +18,31 @@ Best regards,
 Krzysztof
 
 
-The following changes since commit bfb77169306d5d560a8b62eebaf6d69d02e8d152:
+The following changes since commit 40d8aff614f71ab3cab20785b4f213e3802d4e87:
 
-  ARM: dts: exynos: Add CAM power domain to Exynos5422/5800 (2019-08-12 19:02:59 +0200)
+  soc: samsung: chipid: Convert exynos-chipid driver to use the regmap API (2019-08-15 20:25:25 +0200)
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-5.4-2
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-5.4-2
 
-for you to fetch changes up to 51c88919e52873c83f8be0c8f5d0ffd654f1ef4a:
+for you to fetch changes up to 28578825ede61834a2c46e7f9a89012c4c7a667f:
 
-  ARM: dts: exynos: Enable GPU/Mali T604 on Arndale board (2019-09-04 19:25:33 +0200)
-
-----------------------------------------------------------------
-Samsung DTS ARM changes for v5.4, part 2
-
-1. Fix Exynos542x Chromebooks boot with multi_v7 defconfig,
-2. Add GPU (Mali) support to Exynos5250 boards,
-3. Minor cleanup for Exynos3250 ADC.
+  soc: samsung: chipid: Select missing dependency for EXYNOS_CHIPID (2019-08-22 20:16:20 +0200)
 
 ----------------------------------------------------------------
-Guillaume Gardet (4):
-      ARM: dts: exynos: Fix min/max buck4 for GPU on Arndale board
-      ARM: dts: exynos: Add GPU/Mali T604 node to Exynos5250
-      ARM: dts: exynos: Enable GPU/Mali T604 on Chromebook Snow
-      ARM: dts: exynos: Enable GPU/Mali T604 on Arndale board
+Samsung soc drivers changes for v5.4, part 2
 
-Krzysztof Kozlowski (1):
-      ARM: dts: exynos: Remove not accurate secondary ADC compatible
+Fixes and cleanups for recently introduced Exynos chipid driver.
 
-Marek Szyprowski (1):
-      ARM: dts: exynos: Mark LDO10 as always-on on Peach Pit/Pi Chromebooks
+----------------------------------------------------------------
+Colin Ian King (1):
+      soc: samsung: chipid: Fix memory leak in error path
 
- arch/arm/boot/dts/exynos3250.dtsi             |  3 +-
- arch/arm/boot/dts/exynos5250-arndale.dts      |  9 +++--
- arch/arm/boot/dts/exynos5250-snow-common.dtsi |  5 +++
- arch/arm/boot/dts/exynos5250.dtsi             | 47 +++++++++++++++++++++++++++
- arch/arm/boot/dts/exynos5420-peach-pit.dts    |  1 +
- arch/arm/boot/dts/exynos5800-peach-pi.dts     |  1 +
- 6 files changed, 62 insertions(+), 4 deletions(-)
+Sylwester Nawrocki (2):
+      soc: samsung: chipid: Remove the regmap lookup error log
+      soc: samsung: chipid: Select missing dependency for EXYNOS_CHIPID
+
+ drivers/soc/samsung/Kconfig         |  1 +
+ drivers/soc/samsung/exynos-chipid.c | 18 +++++++++++-------
+ 2 files changed, 12 insertions(+), 7 deletions(-)
