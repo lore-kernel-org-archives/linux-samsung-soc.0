@@ -1,54 +1,59 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 1/3] soc: samsung: Exynos for v5.4
-Date: Wed, 4 Sep 2019 11:31:53 +0200
-Message-ID: <CAK8P3a35Cm5=QOz3O3hhczRzkT54vyeka3iJBcknFB4cVgN5-A@mail.gmail.com>
-References: <20190816163042.6604-1-krzk@kernel.org> <CAJKOXPcgZ2_ofZyAeTSxALkALaP-SFNfvNmNPYSPyLzuhpGZ0w@mail.gmail.com>
- <20190822183519.GA23735@kozik-lap> <CAK8P3a1_Qw=OB31yOCrpPs8Ys+=9tt4Pnyd=3+2JGzRXJV1KAw@mail.gmail.com>
- <CAJKOXPfRMXkm_pT560Ry5k-zFWpkRDmFHSs2Fb3RL7d4h=ka9g@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v13 0/8] Exynos5 Dynamic Memory Controller driver
+Date: Wed, 4 Sep 2019 12:16:51 +0200
+Message-ID: <CAJKOXPehHNDasNQDgTC+WtVpb_h-s0iTxXiDQY1WT=+zEdB18A@mail.gmail.com>
+References: <CGME20190821104316eucas1p2ecd715f3105921ec83e0acf1291201f8@eucas1p2.samsung.com>
+ <20190821104303.32079-1-l.luba@partner.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPfRMXkm_pT560Ry5k-zFWpkRDmFHSs2Fb3RL7d4h=ka9g@mail.gmail.com>
+In-Reply-To: <20190821104303.32079-1-l.luba@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Olof Johansson <olof@lixom.net>, arm-soc <arm@kernel.org>, SoC Team <soc@kernel.org>, Kukjin Kim <kgene@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Lukasz Luba <l.luba@partner.samsung.com>
+Cc: devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org, willy.mh.wolff.ml@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Sep 4, 2019 at 10:37 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On Tue, 3 Sep 2019 at 19:21, Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Thu, Aug 22, 2019 at 8:35 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > I have drafted a related patch recently, regarding the related
-> > arch/arm/plat-samsung/cpu.c file. This is part of a longer series
-> > I'm working on, see https://pastebin.com/ZqeU3Mth for the
-> > current version of this patch.
+On Wed, 21 Aug 2019 at 12:43, Lukasz Luba <l.luba@partner.samsung.com> wrote:
 >
-> You can then also adjust the include path in arch/arm/mach-exynos/Makefile.
-
-Yes, that is part of the following patch, along with replacing all the
-'depends on PLAT_SAMSUNG' in Kconfig with 'depends on PLAT_SAMSUNG ||
-ARCH_EXYNOS'.
-
-> > The observation is that mach-exynos
-> > is almost completely independent of plat-samsung these days, and my
-> > patch removes the last obstacle from separating the two. I have
-> > another set of patches to do the same for mach-s5pv210 (which shares
-> > half of its pm.c with plat-samsung, but nothing else).
+> Hi all,
 >
-> Great!
+> This is v13 which makes cosmetic changes. It is based on current mainline
+> (v5.3-rc5) with with devfreq/for-next where there is a PPMU patch [1].
+>
+> The patch set adds support of Dynamic Memory Controller for Exynos5422 SoC.
+> The driver supports Dynamic Voltage and Frequency Scaling
+> for the DMC and DRAM. It also provides needed timings for different
+> speed operations of the DRAM memory.
+> There is also new generic code in of_memory and headers which allows to parse
+> LPDDR3 memories defined in device-tree.
+>
+> Here are the last changes suggested by Krzysztof during his review.
+> For the previous changes in older revisions please refer to [2], there is
+> more detailed change log.
+>
+> changes:
+> v13:
+> - skipped patch with chipID changes in DT, since it is not used anymore,
+> - removed license comment in of_memory.c since SPDX has been merged,
+> - aligned comment to the current fields in the structure,
+> - changed printed warning when timings are not found,
+>
+> Regards,
+> Lukasz Luba
+>
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git/commit/?h=for-next&id=b617376df8f01c975dee66802f4da16291f92079
+> [2] https://lkml.org/lkml/2019/7/22/251
+>
 
-FYI, the other parts of the series include:
+Hi Lukasz,
 
-- Changing all s3c24xx drivers to no longer use mach/*.h or plat/*.h header
-  files, as preparation for multiplatform support. This is work in progress,
-  but mostly done, with cpufreq and ASoC as the notable exceptions.
-- Merging mach-s3c24xx, mach-s3c64xx and plat-samsung into a common
-  mach-s3c directory. This seems to work fine and looks nicer than having
-  three tightly connected directories, but the downside is that all path
-  names change and the directory becomes fairly large.
-  I think we can actually do the same thing for all remaining plat-*
-directories.
-- eventually making all ARMv5 platforms link into a single kernel, like we do
-  with ARMv6 and ARMv7 (more to be done there, but s3c24xx and pxa are
-  the harder bits here).
+Thanks for the effort and work on this patchset. The text-based
+bindings are slowly converted to JSON-schema but your patches were
+developed some time ago and have Rob's review. It would be nice if you
+or someone converted it to JSON schema later.
+Anyway, I'll pick up everything today evening either for this merge
+window or eventually postponed till next one. It is quite late in the
+cycle and I want the patches to sit in linux-next for some time.
 
-      Arnd
+Best regards,
+Krzysztof
