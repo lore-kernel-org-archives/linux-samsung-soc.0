@@ -1,38 +1,38 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 5/5] arm64: exynos: Enable exynos-chipid driver
-Date: Wed,  4 Sep 2019 19:50:02 +0200
-Message-ID: <20190904175002.10487-6-krzk@kernel.org>
-References: <20190904175002.10487-1-krzk@kernel.org>
+Subject: Re: [PATCH v13 7/8] ARM: dts: exynos: add DMC device for exynos5422
+Date: Wed, 4 Sep 2019 20:25:02 +0200
+Message-ID: <20190904182502.GA12918@kozik-lap>
+References: <20190821104303.32079-1-l.luba@partner.samsung.com>
+ <CGME20190821104324eucas1p16bdeb27250c8c9fa87591d6bd9743a17@eucas1p1.samsung.com>
+ <20190821104303.32079-8-l.luba@partner.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190904175002.10487-1-krzk@kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190821104303.32079-8-l.luba@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org
-Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Lukasz Luba <l.luba@partner.samsung.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org, b.zolnierkie@samsung.com, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org, willy.mh.wolff.ml@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
+On Wed, Aug 21, 2019 at 12:43:02PM +0200, Lukasz Luba wrote:
+> Add description of Dynamic Memory Controller and PPMU counters.
+> They are used by exynos5422-dmc driver.
+> There is a definition of the memory chip, which is then used during
+> calculation of timings for each OPP.
+> The algorithm in the driver needs these two sets to bound the timings.
+> 
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5420.dtsi             |  71 +++++++++++
+>  arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 116 ++++++++++++++++++
+>  2 files changed, 187 insertions(+)
 
-Enable Exynos Chipid driver for accessing SoC related information.
+Thanks, applied conditionally. Please send a follow up fixing the
+checkpatch error about undocumented binding:
+https://krzk.eu/#/builders/26/builds/392
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm64/Kconfig.platforms | 1 +
- 1 file changed, 1 insertion(+)
+You should not skip such checkpatch warning.
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 4778c775de1b..8a098fb4f04c 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -77,6 +77,7 @@ config ARCH_BRCMSTB
- config ARCH_EXYNOS
- 	bool "ARMv8 based Samsung Exynos SoC family"
- 	select COMMON_CLK_SAMSUNG
-+	select EXYNOS_CHIPID
- 	select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
- 	select EXYNOS_PMU
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
--- 
-2.17.1
+Best regards,
+Krzysztof
