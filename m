@@ -1,70 +1,73 @@
-From: Yuehaibing <yuehaibing@huawei.com>
-Subject: Re: [PATCH -next 25/36] spi: s3c24xx: use
- devm_platform_ioremap_resource() to simplify code
-Date: Wed, 4 Sep 2019 22:42:06 +0800
-Message-ID: <3595bac1-e426-b4f9-4e24-01e104fdfe5d@huawei.com>
-References: <20190904135918.25352-1-yuehaibing@huawei.com>
- <20190904135918.25352-26-yuehaibing@huawei.com>
- <CAJKOXPdq4as1Oe3U+9znkvP0RA=sxUoiWVBCSbzf_wq_um2t=w@mail.gmail.com>
+From: Lukasz Luba <l.luba@partner.samsung.com>
+Subject: Re: [PATCH v13 0/8] Exynos5 Dynamic Memory Controller driver
+Date: Wed, 4 Sep 2019 16:59:59 +0200
+Message-ID: <760cdf64-af1b-2b5f-fb42-a950fdfa8c36@partner.samsung.com>
+References: <CGME20190821104316eucas1p2ecd715f3105921ec83e0acf1291201f8@eucas1p2.samsung.com>
+        <20190821104303.32079-1-l.luba@partner.samsung.com>
+        <CAJKOXPehHNDasNQDgTC+WtVpb_h-s0iTxXiDQY1WT=+zEdB18A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPdq4as1Oe3U+9znkvP0RA=sxUoiWVBCSbzf_wq_um2t=w@mail.gmail.com>
+In-Reply-To: <CAJKOXPehHNDasNQDgTC+WtVpb_h-s0iTxXiDQY1WT=+zEdB18A@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: broonie@kernel.org, f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com, eric@anholt.net, wahrenst@gmx.net, shc_work@mail.ru, agross@kernel.org, khilman@baylibre.com, matthias.bgg@gmail.com, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, venture@google.com, yuenn@google.com, benjaminfair@google.com, kgene@kernel.org, Andi Shyti <andi@etezian.org>, palmer@sifive.com, paul.walmsley@sifive.com, baohua@kernel.org, mripard@kernel.org, wens@csie.org, ldewangan@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, yamada.masahiro@socionext.com, michal.simek@xilinx.com, bcm-k
+Cc: devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie@samsung.com>, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org, willy.mh.wolff.ml@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2019/9/4 22:28, Krzysztof Kozlowski wrote:
-> On Wed, 4 Sep 2019 at 16:00, YueHaibing <yuehaibing@huawei.com> wrote:
+Hi Krzysztof,
+
+On 9/4/19 12:16 PM, Krzysztof Kozlowski wrote:
+> On Wed, 21 Aug 2019 at 12:43, Lukasz Luba <l.luba@partner.samsung.com> wrote:
 >>
->> Use devm_platform_ioremap_resource() to simplify the code a bit.
->> This is detected by coccinelle.
+>> Hi all,
 >>
->> Reported-by: Hulk Robot <hulkci@huawei.com>
+>> This is v13 which makes cosmetic changes. It is based on current mainline
+>> (v5.3-rc5) with with devfreq/for-next where there is a PPMU patch [1].
+>>
+>> The patch set adds support of Dynamic Memory Controller for Exynos5422 SoC.
+>> The driver supports Dynamic Voltage and Frequency Scaling
+>> for the DMC and DRAM. It also provides needed timings for different
+>> speed operations of the DRAM memory.
+>> There is also new generic code in of_memory and headers which allows to parse
+>> LPDDR3 memories defined in device-tree.
+>>
+>> Here are the last changes suggested by Krzysztof during his review.
+>> For the previous changes in older revisions please refer to [2], there is
+>> more detailed change log.
+>>
+>> changes:
+>> v13:
+>> - skipped patch with chipID changes in DT, since it is not used anymore,
+>> - removed license comment in of_memory.c since SPDX has been merged,
+>> - aligned comment to the current fields in the structure,
+>> - changed printed warning when timings are not found,
+>>
+>> Regards,
+>> Lukasz Luba
+>>
+>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git/commit/?h=for-next&id=b617376df8f01c975dee66802f4da16291f92079
+>> [2] https://lkml.org/lkml/2019/7/22/251
+>>
 > 
-> This tag does not look real... First of all where is the report?
+> Hi Lukasz,
+> 
+> Thanks for the effort and work on this patchset. The text-based
+> bindings are slowly converted to JSON-schema but your patches were
+> developed some time ago and have Rob's review. It would be nice if you
+> or someone converted it to JSON schema later.
+> Anyway, I'll pick up everything today evening either for this merge
+> window or eventually postponed till next one. It is quite late in the
+> cycle and I want the patches to sit in linux-next for some time.
+Thank you for taking the patches.
+OK, I will convert the bindings to JSON format later, when the patches
+land into mainline.
 
-It is our internal CI robot, which is unavailable to external temporarily.
-
-> Second, it was reported by coccinelle.
-> Reported-by should be use to give real credits.
+Regards,
+Lukasz Luba
 > 
 > Best regards,
 > Krzysztof
 > 
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> ---
->>  drivers/spi/spi-s3c24xx.c | 4 +---
->>  1 file changed, 1 insertion(+), 3 deletions(-)
->>
->> diff --git a/drivers/spi/spi-s3c24xx.c b/drivers/spi/spi-s3c24xx.c
->> index aea8fd9..2d6e37f 100644
->> --- a/drivers/spi/spi-s3c24xx.c
->> +++ b/drivers/spi/spi-s3c24xx.c
->> @@ -487,7 +487,6 @@ static int s3c24xx_spi_probe(struct platform_device *pdev)
->>         struct s3c2410_spi_info *pdata;
->>         struct s3c24xx_spi *hw;
->>         struct spi_master *master;
->> -       struct resource *res;
->>         int err = 0;
->>
->>         master = spi_alloc_master(&pdev->dev, sizeof(struct s3c24xx_spi));
->> @@ -536,8 +535,7 @@ static int s3c24xx_spi_probe(struct platform_device *pdev)
->>         dev_dbg(hw->dev, "bitbang at %p\n", &hw->bitbang);
->>
->>         /* find and map our resources */
->> -       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> -       hw->regs = devm_ioremap_resource(&pdev->dev, res);
->> +       hw->regs = devm_platform_ioremap_resource(pdev, 0);
->>         if (IS_ERR(hw->regs)) {
->>                 err = PTR_ERR(hw->regs);
->>                 goto err_no_pdata;
->> --
->> 2.7.4
->>
->>
-> 
-> .
 > 
