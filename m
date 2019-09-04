@@ -1,61 +1,38 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 4/5] ARM: samsung: mach for v5.4, second (replacing previous)
-Date: Wed,  4 Sep 2019 19:50:01 +0200
-Message-ID: <20190904175002.10487-5-krzk@kernel.org>
+Subject: [PATCH 5/5] arm64: exynos: Enable exynos-chipid driver
+Date: Wed,  4 Sep 2019 19:50:02 +0200
+Message-ID: <20190904175002.10487-6-krzk@kernel.org>
 References: <20190904175002.10487-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190904175002.10487-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Replaces previous pull (and it includes it).
+Enable Exynos Chipid driver for accessing SoC related information.
 
-Best regards,
-Krzysztof
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm64/Kconfig.platforms | 1 +
+ 1 file changed, 1 insertion(+)
 
-
-The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
-
-  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-5.4-2
-
-for you to fetch changes up to c663d542bfb40eeeb6d393ed155c23a4666d65e1:
-
-  MAINTAINERS: Extend patterns for Samsung SoC, Security Subsystem and clock drivers (2019-08-22 21:04:45 +0200)
-
-----------------------------------------------------------------
-Samsung mach/soc changes for v5.4
-
-1. Minor fixup in plat and mach code (S3C platforms),
-2. Enable exynos-chipid driver to provide SoC related information,
-3. Extend the patterns for Samsung maintainer entries to cover all
-   important files.
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (1):
-      MAINTAINERS: Extend patterns for Samsung SoC, Security Subsystem and clock drivers
-
-Linus Walleij (1):
-      ARM: samsung: Include GPIO driver header
-
-Masahiro Yamada (1):
-      ARM: s3c64xx: squash samsung_usb_phy.h into setup-usb-phy.c
-
-Pankaj Dubey (1):
-      ARM: exynos: Enable exynos-chipid driver
-
- MAINTAINERS                                    |  9 +++++++--
- arch/arm/mach-exynos/Kconfig                   |  1 +
- arch/arm/mach-s3c64xx/setup-usb-phy.c          |  5 +++++
- arch/arm/plat-samsung/include/plat/gpio-core.h |  1 +
- arch/arm/plat-samsung/include/plat/usb-phy.h   |  2 --
- include/linux/usb/samsung_usb_phy.h            | 17 -----------------
- 6 files changed, 14 insertions(+), 21 deletions(-)
- delete mode 100644 include/linux/usb/samsung_usb_phy.h
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 4778c775de1b..8a098fb4f04c 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -77,6 +77,7 @@ config ARCH_BRCMSTB
+ config ARCH_EXYNOS
+ 	bool "ARMv8 based Samsung Exynos SoC family"
+ 	select COMMON_CLK_SAMSUNG
++	select EXYNOS_CHIPID
+ 	select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
+ 	select EXYNOS_PMU
+ 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+-- 
+2.17.1
