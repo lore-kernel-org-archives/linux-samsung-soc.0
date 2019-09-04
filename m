@@ -1,59 +1,58 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v13 0/8] Exynos5 Dynamic Memory Controller driver
-Date: Wed, 4 Sep 2019 12:16:51 +0200
-Message-ID: <CAJKOXPehHNDasNQDgTC+WtVpb_h-s0iTxXiDQY1WT=+zEdB18A@mail.gmail.com>
-References: <CGME20190821104316eucas1p2ecd715f3105921ec83e0acf1291201f8@eucas1p2.samsung.com>
- <20190821104303.32079-1-l.luba@partner.samsung.com>
+From: Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v10 06/13] drivers: memory: extend of_memory by LPDDR3
+ support
+Date: Wed, 4 Sep 2019 13:52:20 +0200
+Message-ID: <20190904115220.GA9370@kroah.com>
+References: <CGME20190614095325eucas1p20083d9290b36eca945ec3f1428bdbd4f@eucas1p2.samsung.com>
+ <20190614095309.24100-1-l.luba@partner.samsung.com>
+ <20190614095309.24100-7-l.luba@partner.samsung.com>
+ <CAJKOXPcDDyYmuX-RpkpxKSBK2JfV=tYakn+g8FM5Lau+rmkm+g@mail.gmail.com>
+ <2e35d4bc-92b9-cba7-bd05-a41a1dcb300e@partner.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190821104303.32079-1-l.luba@partner.samsung.com>
+Content-Disposition: inline
+In-Reply-To: <2e35d4bc-92b9-cba7-bd05-a41a1dcb300e@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Lukasz Luba <l.luba@partner.samsung.com>
-Cc: devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org, willy.mh.wolff.ml@gmail.com
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org, =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>, kgene@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, willy.mh.wolff.ml@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, 21 Aug 2019 at 12:43, Lukasz Luba <l.luba@partner.samsung.com> wrote:
->
-> Hi all,
->
-> This is v13 which makes cosmetic changes. It is based on current mainline
-> (v5.3-rc5) with with devfreq/for-next where there is a PPMU patch [1].
->
-> The patch set adds support of Dynamic Memory Controller for Exynos5422 SoC.
-> The driver supports Dynamic Voltage and Frequency Scaling
-> for the DMC and DRAM. It also provides needed timings for different
-> speed operations of the DRAM memory.
-> There is also new generic code in of_memory and headers which allows to parse
-> LPDDR3 memories defined in device-tree.
->
-> Here are the last changes suggested by Krzysztof during his review.
-> For the previous changes in older revisions please refer to [2], there is
-> more detailed change log.
->
-> changes:
-> v13:
-> - skipped patch with chipID changes in DT, since it is not used anymore,
-> - removed license comment in of_memory.c since SPDX has been merged,
-> - aligned comment to the current fields in the structure,
-> - changed printed warning when timings are not found,
->
-> Regards,
-> Lukasz Luba
->
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git/commit/?h=for-next&id=b617376df8f01c975dee66802f4da16291f92079
-> [2] https://lkml.org/lkml/2019/7/22/251
->
+On Thu, Aug 22, 2019 at 03:34:48PM +0200, Lukasz Luba wrote:
+> 
+> 
+> On 6/14/19 2:43 PM, Krzysztof Kozlowski wrote:
+> > On Fri, 14 Jun 2019 at 11:53, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+> >>
+> >> The patch adds AC timings information needed to support LPDDR3 and memory
+> >> controllers. The structure is used in of_memory and currently in Exynos
+> >> 5422 DMC. Add parsing data needed for LPDDR3 support.
+> >> It is currently used in Exynos5422 Dynamic Memory Controller.
+> >>
+> >> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> >> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> >> ---
+> >>   drivers/memory/of_memory.c | 154 +++++++++++++++++++++++++++++++++++++
+> >>   drivers/memory/of_memory.h |  18 +++++
+> >>   include/memory/jedec_ddr.h |  62 +++++++++++++++
+> >>   3 files changed, 234 insertions(+)
+> > 
+> > Previously this was going through Greg, so if I am going to take it
+> > along with drivers/memory/samsung patches, I need some acks.
+> > 
+> > Greg, Rob,
+> > Are you okay with this patch and with taking it through samsung-soc?
+> 
+> Greg, Rob: gentle ping.
+> 
+> Currently there is a v13, with only minor changes to this patch:
+> https://lkml.org/lkml/2019/8/21/289
+> (you are on cc list of the patch set)
+> 
+> Could you please have a look. Thank you.
 
-Hi Lukasz,
+I don't seem to be able to find this anywhere in my tree.  And I don't
+remember being the maintainer of drivers/memory/ so don't wait for
+anything from me!
 
-Thanks for the effort and work on this patchset. The text-based
-bindings are slowly converted to JSON-schema but your patches were
-developed some time ago and have Rob's review. It would be nice if you
-or someone converted it to JSON schema later.
-Anyway, I'll pick up everything today evening either for this merge
-window or eventually postponed till next one. It is quite late in the
-cycle and I want the patches to sit in linux-next for some time.
-
-Best regards,
-Krzysztof
+greg k-h
