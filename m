@@ -1,58 +1,74 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v10 06/13] drivers: memory: extend of_memory by LPDDR3
- support
-Date: Wed, 4 Sep 2019 13:52:20 +0200
-Message-ID: <20190904115220.GA9370@kroah.com>
-References: <CGME20190614095325eucas1p20083d9290b36eca945ec3f1428bdbd4f@eucas1p2.samsung.com>
- <20190614095309.24100-1-l.luba@partner.samsung.com>
- <20190614095309.24100-7-l.luba@partner.samsung.com>
- <CAJKOXPcDDyYmuX-RpkpxKSBK2JfV=tYakn+g8FM5Lau+rmkm+g@mail.gmail.com>
- <2e35d4bc-92b9-cba7-bd05-a41a1dcb300e@partner.samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2 0/9] Exynos Adaptive Supply Voltage support
+Date: Wed, 4 Sep 2019 14:37:39 +0200
+Message-ID: <4e6379a7-0d4b-8e0d-c225-49976b2587e0@samsung.com>
+References: <20190723020450.z2pqwetkn2tfhacq@vireshk-i7>
+        <5ef302a4-5bbf-483d-dfdf-cf76f6f69cee@samsung.com>
+        <20190725022343.p7lqalrh5svxvtu2@vireshk-i7>
+        <562dd2e7-2b24-8492-d1c1-2dc4973f07be@samsung.com>
+        <20190819090928.pke6cov52n4exlbp@vireshk-i7>
+        <b831d7c5-c830-fd65-20cf-02e209889c28@samsung.com>
+        <20190819112533.bvfyinw7fsebkufr@vireshk-i7>
+        <b7093aaf-ea56-c390-781f-6f9d0780bd8e@samsung.com>
+        <20190820030114.6flnn2omeys3lih3@vireshk-i7>
+        <06ccff05-2152-4bcc-7537-8f24da75f163@samsung.com>
+        <CGME20190820092123epcas2p2170ae19467a5fb19fcfc1acdbecf9381@epcas2p2.samsung.com>
+        <20190820092113.gojhe3romdnvm7eu@vireshk-i7>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <2e35d4bc-92b9-cba7-bd05-a41a1dcb300e@partner.samsung.com>
+In-Reply-To: <20190820092113.gojhe3romdnvm7eu@vireshk-i7>
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lukasz Luba <l.luba@partner.samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org, =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>, kgene@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com, jroedel@suse.de, treding@nvidia.com, digetx@gmail.com, willy.mh.wolff.ml@gmail.com
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, krzk@kernel.org, robh+dt@kernel.org, vireshk@kernel.org, devicetree@vger.kernel.org, kgene@kernel.org, pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 03:34:48PM +0200, Lukasz Luba wrote:
-> 
-> 
-> On 6/14/19 2:43 PM, Krzysztof Kozlowski wrote:
-> > On Fri, 14 Jun 2019 at 11:53, Lukasz Luba <l.luba@partner.samsung.com> wrote:
-> >>
-> >> The patch adds AC timings information needed to support LPDDR3 and memory
-> >> controllers. The structure is used in of_memory and currently in Exynos
-> >> 5422 DMC. Add parsing data needed for LPDDR3 support.
-> >> It is currently used in Exynos5422 Dynamic Memory Controller.
-> >>
-> >> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> >> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
-> >> ---
-> >>   drivers/memory/of_memory.c | 154 +++++++++++++++++++++++++++++++++++++
-> >>   drivers/memory/of_memory.h |  18 +++++
-> >>   include/memory/jedec_ddr.h |  62 +++++++++++++++
-> >>   3 files changed, 234 insertions(+)
-> > 
-> > Previously this was going through Greg, so if I am going to take it
-> > along with drivers/memory/samsung patches, I need some acks.
-> > 
-> > Greg, Rob,
-> > Are you okay with this patch and with taking it through samsung-soc?
-> 
-> Greg, Rob: gentle ping.
-> 
-> Currently there is a v13, with only minor changes to this patch:
-> https://lkml.org/lkml/2019/8/21/289
-> (you are on cc list of the patch set)
-> 
-> Could you please have a look. Thank you.
+Hi,
 
-I don't seem to be able to find this anywhere in my tree.  And I don't
-remember being the maintainer of drivers/memory/ so don't wait for
-anything from me!
+On 8/20/19 11:21, Viresh Kumar wrote:
+> On 20-08-19, 11:03, Sylwester Nawrocki wrote:
+>> On 8/20/19 05:01, Viresh Kumar wrote:
+>>> Sorry but I am unable to understand the difficulty you are facing now. So what I
+>>> suggest is something like this.
+>>
+>> The difficulty was about representing data from tables asv_{arm,kfc}_table[][]
+>> added in patch 3/9 of the series in devicetree.  If you have no objections
+>> about keeping those tables in the driver then I can't see any difficulties. 
+> 
+> The problem with keeping such tables in kernel is that they contain too much
+> magic values which very few people understand. And after some amount of time,
+> even they don't remember any of it.
+>
+> What I was expecting was to remove as much of these tables as possible and do
+> the calculations to get them at runtime with some logical code which people can
+> understand later on.
 
-greg k-h
+It might be indeed far from a good design but this is all what we get from the 
+SoC vendor. AFAIU those tables are generated based on data from the production
+process, likely from some measurements.
+
+I am afraid I will not get more information for that fairly old SoCs in order to 
+replace those tables with some sensible code generating the data programmatically,
+I'm not sure it would be at all possible to do.
+
+I could add some more comments, similar to description as in my previous RFC 
+DT binding (https://patchwork.kernel.org/patch/10886013).
+
+The tables are rather simple, it's mostly all voltage values, only selecting 
+values per each frequency and chip revision might get a bit complex. 
+I'm not sure we could change that now though.
+>> Then IIUC what I would need to change is to modify exynos_asv_update_cpu_opps() 
+>> function in patch 3/9 to use dev_pm_opp_adjust_voltage() rather than 
+>> dev_pm_opp_remove(), dev_pm_opp_add().
+> 
+> That and somehow add code to get those tables if possible.
+
+I have changed the code to use dev_pm_opp_adjust_voltage(). I was wondering 
+though, what did you mean by "triplet" when commenting on this patch
+https://patchwork.kernel.org/patch/11092245 ?
+
+-- 
+Regards,
+Sylwester
