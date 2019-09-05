@@ -1,27 +1,35 @@
-From: Paul Walmsley <paul.walmsley@sifive.com>
-Subject: Re: [PATCH -next 26/36] spi: sifive: use devm_platform_ioremap_resource()
- to simplify code
-Date: Wed, 4 Sep 2019 15:20:53 -0700 (PDT)
-Message-ID: <alpine.DEB.2.21.9999.1909041520130.13502@viisi.sifive.com>
-References: <20190904135918.25352-1-yuehaibing@huawei.com> <20190904135918.25352-27-yuehaibing@huawei.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v2 0/9] Exynos Adaptive Supply Voltage support
+Date: Thu, 5 Sep 2019 10:31:24 +0530
+Message-ID: <20190905050124.kopzxxouuuta37n6@vireshk-i7>
+References: <562dd2e7-2b24-8492-d1c1-2dc4973f07be@samsung.com>
+ <20190819090928.pke6cov52n4exlbp@vireshk-i7>
+ <b831d7c5-c830-fd65-20cf-02e209889c28@samsung.com>
+ <20190819112533.bvfyinw7fsebkufr@vireshk-i7>
+ <b7093aaf-ea56-c390-781f-6f9d0780bd8e@samsung.com>
+ <20190820030114.6flnn2omeys3lih3@vireshk-i7>
+ <06ccff05-2152-4bcc-7537-8f24da75f163@samsung.com>
+ <CGME20190820092123epcas2p2170ae19467a5fb19fcfc1acdbecf9381@epcas2p2.samsung.com>
+ <20190820092113.gojhe3romdnvm7eu@vireshk-i7>
+ <4e6379a7-0d4b-8e0d-c225-49976b2587e0@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190904135918.25352-27-yuehaibing@huawei.com>
+Content-Disposition: inline
+In-Reply-To: <4e6379a7-0d4b-8e0d-c225-49976b2587e0@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: YueHaibing <yuehaibing@huawei.com>
-Cc: broonie@kernel.org, f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com, eric@anholt.net, wahrenst@gmx.net, shc_work@mail.ru, agross@kernel.org, khilman@baylibre.com, matthias.bgg@gmail.com, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, venture@google.com, yuenn@google.com, benjaminfair@google.com, kgene@kernel.org, krzk@kernel.org, andi@etezian.org, palmer@sifive.com, baohua@kernel.org, mripard@kernel.org, wens@csie.org, ldewangan@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, yamada.masahiro@socionext.com, michal.simek@xilinx.com, bcm-kernel-feedback-list@broadcom.com, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.orglinu
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, krzk@kernel.org, robh+dt@kernel.org, vireshk@kernel.org, devicetree@vger.kernel.org, kgene@kernel.org, pankaj.dubey@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, 4 Sep 2019, YueHaibing wrote:
+On 04-09-19, 14:37, Sylwester Nawrocki wrote:
+> I have changed the code to use dev_pm_opp_adjust_voltage(). I was wondering 
+> though, what did you mean by "triplet" when commenting on this patch
+> https://patchwork.kernel.org/patch/11092245 ?
 
-> Use devm_platform_ioremap_resource() to simplify the code a bit.
-> This is detected by coccinelle.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+The voltage value in the OPP core is stored as a triplet,
+min/max/target kind of stuff. You can check DT binding for OPPs and
+see the details. That's called as triplet.
 
-Acked-by: Paul Walmsley <paul.walmsley@sifive.com>
-
-
-- Paul
+-- 
+viresh
