@@ -1,21 +1,27 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH V5 0/5] iommu/amd: Convert the AMD iommu driver to the
- dma-iommu api
-Date: Wed, 4 Sep 2019 23:18:23 -0700
-Message-ID: <20190905061823.GA813@infradead.org>
-References: <20190815110944.3579-1-murphyt7@tcd.ie>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH -next 25/36] spi: s3c24xx: use
+ devm_platform_ioremap_resource() to simplify code
+Date: Thu, 5 Sep 2019 12:08:58 +0200
+Message-ID: <d3803e7b-4d5a-8260-e999-12465744c2a7@samsung.com>
+References: <20190904135918.25352-1-yuehaibing@huawei.com>
+        <20190904135918.25352-26-yuehaibing@huawei.com>
+        <CGME20190905100902eucas1p1ce36a6d769640de92f9ff880728a3d26@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190815110944.3579-1-murphyt7@tcd.ie>
+In-Reply-To: <20190904135918.25352-26-yuehaibing@huawei.com>
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tom Murphy <murphyt7@tcd.ie>
-Cc: iommu@lists.linux-foundation.org, Heiko Stuebner <heiko@sntech.de>, virtualization@lists.linux-foundation.org, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Will Deacon <will@kernel.org>, Jean-Philippe Brucker <jean-philippe@linaro.org>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>
+To: YueHaibing <yuehaibing@huawei.com>, broonie@kernel.org, f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com, eric@anholt.net, wahrenst@gmx.net, shc_work@mail.ru, agross@kernel.org, khilman@baylibre.com, matthias.bgg@gmail.com, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, venture@google.com, yuenn@google.com, benjaminfair@google.com, kgene@kernel.org, krzk@kernel.org, andi@etezian.org, palmer@sifive.com, paul.walmsley@sifive.com, baohua@kernel.org, mripard@kernel.org, wens@csie.org, ldewangan@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, yamada.masahiro@socionext.com, michal.simek@xilinx.com
+Cc: bcm-kernel-feedback-list@broadcom.com, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org, linux-tegra@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Dave, Joerg, Robin:
+On 9/4/19 15:59, YueHaibing wrote:
+> Use devm_platform_ioremap_resource() to simplify the code a bit.
+> This is detected by coccinelle.
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-is there any chance we could at least pick up patches 2 and 4 ASAP
-as they are clearly fixes for current deficits, even without the
-amd conversion?
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
