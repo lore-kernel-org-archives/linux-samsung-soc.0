@@ -1,104 +1,176 @@
-From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: Re: [PATCH 3/3] dt-bindings: ddr: Add bindings for Samsung LPDDR3
- memories
-Date: Fri, 6 Sep 2019 14:14:07 +0200
-Message-ID: <99d2f2be-80f8-258c-2621-a4b5ff5cd177@partner.samsung.com>
-References: <CGME20190906101407eucas1p15eb0df53374b27497b4793eab24becf6@eucas1p1.samsung.com>
-        <20190906101344.3535-1-l.luba@partner.samsung.com>
-        <20190906101344.3535-4-l.luba@partner.samsung.com>
-        <CAJKOXPfoYxTVvt_bMQOs1=BkHzUuW_WvL9zn0jTGS6LLpv=fhQ@mail.gmail.com>
-        <52963d0d-cf48-7085-5581-a94c6e15e0bd@partner.samsung.com>
-        <CAJKOXPfEcURr_bLRaAdjWT3cb7mcuKTk8rmn7OTO=xtvjvJ=jQ@mail.gmail.com>
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [RFC 5/9] dt-bindings: arm: samsung: Convert Exynos PMU bindings
+ to json-schema
+Date: Fri, 6 Sep 2019 16:48:53 +0100
+Message-ID: <CAL_JsqKyj3s-Mn3q_Lna0w38K3DJzvKN5d72WHzqt4CUVf5X4Q@mail.gmail.com>
+References: <20190823145356.6341-1-krzk@kernel.org> <20190823145356.6341-5-krzk@kernel.org>
+ <CAL_JsqJybT41cEqiTriLMywUQj1BtAG_9muJ4=84OkF23y53CA@mail.gmail.com>
+ <CAJKOXPc0SY_8BHMsWLN=1M3VQh41+bdBiH21L4KQPA+iLPYy+A@mail.gmail.com>
+ <CAL_JsqKdsABWK9Og_f38T9zf3SCFFdhU8WOJ4uJjREantoYvYQ@mail.gmail.com> <CAJKOXPfnvu=c5f6AcOSiQ_9E-C2fMf9qbEpy1Tr3QvH8LgAtpQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPfEcURr_bLRaAdjWT3cb7mcuKTk8rmn7OTO=xtvjvJ=jQ@mail.gmail.com>
-Content-Language: en-US
+In-Reply-To: <CAJKOXPfnvu=c5f6AcOSiQ_9E-C2fMf9qbEpy1Tr3QvH8LgAtpQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= <b.zolnierkie@samsung.com>, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, willy.mh.wolff.ml@gmail.com
+Cc: Mark Rutland <mark.rutland@arm.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>, devicetree@vger.kernel.org, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>, "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" <linux-rtc@vger.kernel.org>, notify@kernel.orgArnd Bergmann <ar>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+On Tue, Sep 3, 2019 at 12:03 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On Tue, 3 Sep 2019 at 10:25, Rob Herring <robh+dt@kernel.org> wrote:
+> >
+> > On Tue, Sep 3, 2019 at 8:58 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > >
+> > > On Mon, 26 Aug 2019 at 13:54, Rob Herring <robh+dt@kernel.org> wrote:
+> > > >
+> > > > On Fri, Aug 23, 2019 at 9:54 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > > > >
+> > > > > Convert Samsung Exynos Power Management Unit (PMU) bindings to DT schema
+> > > > > format using json-schema.
+> > > > >
+> > > > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > > > > ---
+> > > > >  .../devicetree/bindings/arm/samsung/pmu.txt   | 72 --------------
+> > > > >  .../devicetree/bindings/arm/samsung/pmu.yaml  | 93 +++++++++++++++++++
+> > > > >  2 files changed, 93 insertions(+), 72 deletions(-)
+> > > > >  delete mode 100644 Documentation/devicetree/bindings/arm/samsung/pmu.txt
+> > > > >  create mode 100644 Documentation/devicetree/bindings/arm/samsung/pmu.yaml
+> > > >
+> > > >
+> > > > > diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.yaml b/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
+> > > > > new file mode 100644
+> > > > > index 000000000000..818c6f3488ef
+> > > > > --- /dev/null
+> > > > > +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
+> > > > > @@ -0,0 +1,93 @@
+> > > > > +# SPDX-License-Identifier: GPL-2.0
+> > > > > +%YAML 1.2
+> > > > > +---
+> > > > > +$id: http://devicetree.org/schemas/arm/samsung/pmu.yaml#
+> > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > > +
+> > > > > +title: Samsung Exynos SoC series Power Management Unit (PMU)
+> > > > > +
+> > > > > +maintainers:
+> > > > > +  - Krzysztof Kozlowski <krzk@kernel.org>
+> > > > > +
+> > > > > +properties:
+> > > > > +  compatible:
+> > > > > +    items:
+> > > > > +      - enum:
+> > > > > +          - samsung,exynos3250-pmu
+> > > > > +          - samsung,exynos4210-pmu
+> > > > > +          - samsung,exynos4412-pmu
+> > > > > +          - samsung,exynos5250-pmu
+> > > > > +          - samsung,exynos5260-pmu
+> > > > > +          - samsung,exynos5410-pmu
+> > > > > +          - samsung,exynos5420-pmu
+> > > > > +          - samsung,exynos5433-pmu
+> > > > > +          - samsung,exynos7-pmu
+> > > > > +      - const: syscon
+> > > > > +
+> > > > > +  reg:
+> > > > > +    maxItems: 1
+> > > > > +
+> > > > > +  '#clock-cells':
+> > > > > +    const: 1
+> > > > > +
+> > > > > +  clock-names:
+> > > > > +    description:
+> > > > > +      list of clock names for particular CLKOUT mux inputs
+> > > > > +    # TODO: what is the maximum number of elements (mux inputs)?
+> > > > > +    minItems: 1
+> > > > > +    maxItems: 32
+> > > > > +    items:
+> > > > > +      - enum:
+> > > >
+> > > > This isn't correct as you are only defining possible names for the
+> > > > first item. Drop the '-' (making items a schema instead of a list) and
+> > > > then it applies to all. However, doing that will cause a meta-schema
+> > > > error which I need to fix to allow. Or if there's a small set of
+> > > > possibilities of number of inputs, you can list them under a 'oneOf'
+> > > > list.
+> > >
+> > > Mhmm, I cannot test it or I have an error in the schema. if I
+> > > understand correctly, this would be:
+> > >
+> > >   clock-names:
+> > >     description:
+> > >       List of clock names for particular CLKOUT mux inputs
+> > >     minItems: 1
+> > >     maxItems: 16
+> > >     items:
+> > >       clkout0
+> > >       clkout1
+> > >       clkout2
+> > >       clkout3
+> > >       clkout4
+> > >       clkout5
+> > >       clkout6
+> > >       clkout7
+> > >       clkout8
+> > >       clkout9
+> > >       clkout10
+> > >       clkout11
+> > >       clkout12
+> > >       clkout13
+> > >       clkout14
+> > >       clkout15
+> > >       clkout16
+> > >
+> > > Now it produces the error "ignoring, error in schema 'items'" but
+> > > maybe it is expected with current meta-schema?
+> >
+> > 'make dt_binding_check' will give more detailed errors.
+> >
+> > Are the inputs always contiguous 0-N? If so, you want:
+> >
+> > items:
+> >   - const: clkout0
+> >   - const: clkout1
+> >   - const: clkout2
+> >   ...
+> >
+> > If you want to express any number and order of strings is valid, then you need:
+> >
+> > items:
+> >   enum:
+> >     - clkout0
+> >     - clkout1
+> >     - clkout2
+> >
+> > Doing that is discouraged for bindings though. Currently, it will
+> > generate an error from the meta-schema, but we could change that.
+>
+> It's the second case. The inputs are not contiguous. Examples:
+>
+> system-controller {
+>     compatible = "samsung,exynos3250-pmu", "syscon";
+>     clock-names = "clkout8";
+>     clocks = <&cmu CLK_FIN_PLL>;
+> }
+>
+> system-controller {
+>     compatible = "samsung,exynos4412-pmu", "syscon";
+>     clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
+>                   "clkout4", "clkout8", "clkout9";
+>     clocks = <&clock CLK_OUT_DMC>, <&clock CLK_OUT_TOP>,
+>              <&clock CLK_OUT_LEFTBUS>, <&clock CLK_OUT_RIGHTBUS>,
+>              <&clock CLK_OUT_CPU>, <&clock CLK_XXTI>, <&clock CLK_XUSBXTI>;
+> }
+>
+> The bindings never required any specific ordering. Also the driver
+> just go through all indices and parses them.
+>
+> Your second syntax fails:
+> Documentation/devicetree/bindings/arm/samsung/pmu.yaml:
+> properties:clock-names:items: {'enum': ['clkout0', 'clkout1',
+> 'clkout2', 'clkout3', 'clkout4', 'clkout5', 'clkout6', 'clkout7',
+> 'clkout8', 'clkout9', 'clkout10', 'clkout11', 'clkout12', 'clkout13',
+> 'clkout14', 'clkout15', 'clkout16']} is not of type 'array'
 
+Update dt-schema and try again. It should be allowed now. You'll also
+need to define minItems and maxItems though.
 
-On 9/6/19 1:50 PM, Krzysztof Kozlowski wrote:
-> On Fri, 6 Sep 2019 at 13:39, Lukasz Luba <l.luba@partner.samsung.com> wrote:
->>
->> Hi Krzysztof,
->>
->> On 9/6/19 12:56 PM, Krzysztof Kozlowski wrote:
->>> On Fri, 6 Sep 2019 at 12:14, Lukasz Luba <l.luba@partner.samsung.com> wrote:
->>>>
->>>> Add description of bindings for Samsung k3qf2f20db LPDDR3 memory.
->>>> Minor fixes in the old documentation.
->>>>
->>>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
->>>> ---
->>>>    .../devicetree/bindings/ddr/lpddr3.txt        | 29 +++++++++++++++++--
->>>>    1 file changed, 27 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/ddr/lpddr3.txt b/Documentation/devicetree/bindings/ddr/lpddr3.txt
->>>> index 3b2485b84b3f..de0905239767 100644
->>>> --- a/Documentation/devicetree/bindings/ddr/lpddr3.txt
->>>> +++ b/Documentation/devicetree/bindings/ddr/lpddr3.txt
->>>> @@ -40,10 +40,34 @@ Child nodes:
->>>>      a given speed-bin. Please see Documentation/devicetree/
->>>>      bindings/ddr/lpddr3-timings.txt for more information on "lpddr3-timings"
->>>>
->>>> +Samsung K3QF2F20DB LPDDR3 memory
->>>> +------------------------------------------------------------
->>>> +
->>>> +This binding uses the LPDDR3 binding (described above)
->>>> +
->>>> +Required properties:
->>>> +- compatible:  Should be:
->>>> +               "samsung,K3QF2F20DB"
->>>> +               followed by "jedec,lpddr3"
->>>> +- density  : <u32> representing density in Mb (Mega bits)
->>>> +- io-width : <u32> representing bus width. Possible value 32
->>>> +- #address-cells: Must be set to 1
->>>> +- #size-cells: Must be set to 0
->>>
->>> If you decided to repeat all properties again, then it deserves its
->>> own bindings file. However I though about simpler solution - just
->>> document compatible. Exactly the same as AT24 or AT25 EEPROM bindings.
->>> There is not much benefit from copying all these properties.
->> OK, I see. I will add only 'compatible' and skip the rest then.
->> So the lpddr3.txt file will get this addition:
->>
->> +Samsung K3QF2F20DB LPDDR3 memory
->> +------------------------------------------------------------
->> +
->> +This binding uses the LPDDR3 binding (described above)
->> +
->> +Required properties:
->> +- compatible:  Should be:
->> +               "samsung,K3QF2F20DB"
->> +               followed by "jedec,lpddr3"
->> +
->> +Optional properties:
->> +
->> +The optional properties are the same as in the LPDDR3 generic bindings and
->> +values should be taken from the data-sheet. Detailed bindings are described
->> +above.
->> +
->> +Child nodes:
->> +
->> +Detailed bindings are described in LPDDR3 generic bindings described above.
->> +
->>
->> Is it OK?
-> 
-> To me it is still a lot of text just for one compatible and I can
-> image more of such entries for other memories... However I do not mind
-> and anyway, YAML will simplify it. If you're in doubt, wait for Rob's
-> reply as this is his part.
-
-You are definitely right, YAML will simplify this.
-I will wait a few days with the v2 series, maybe Rob would like to see
-something different. If not, I will send v2 with the above change.
-Thank you for your comments.
-
-Regards,
-Lukasz
+Rob
