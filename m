@@ -1,80 +1,45 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v3 1/2] ARM: dts: exynos: Add support ARM architected
- timers on Exynos5
-Date: Fri, 6 Sep 2019 10:14:01 +0900
-Message-ID: <4616ea91-1b35-4ac4-4a9e-a5002b54fc1a@samsung.com>
-References: <20190828121005.29368-1-m.szyprowski@samsung.com>
- <CGME20190828121012eucas1p10bac7ebb742d968bca251f21dd3aad11@eucas1p1.samsung.com>
- <20190828121005.29368-2-m.szyprowski@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: cpuidle big_little driver on Odroid-xu4
+Date: Fri, 6 Sep 2019 09:52:33 +0200
+Message-ID: <CAJKOXPdSmCbkUxbhuoEG8+0U_o1=heHrOeWjrddgy7bedN8Rag@mail.gmail.com>
+References: <CAF-0O_5TSO04M=0kdghhGKTs54QVEYn5mBh7e83EusFjS_Hg3Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190828121005.29368-2-m.szyprowski@samsung.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marc Zyngier <maz@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAF-0O_5TSO04M=0kdghhGKTs54QVEYn5mBh7e83EusFjS_Hg3Q@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaafar Ali <jaafarkhalaf@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kgene@kernel.org, sam@ravnborg.org, linux-clk@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RGVhciBNYXJlaywKCk9uIDE5LiA4LiAyOC4g7Jik7ZuEIDk6MTAsIE1hcmVrIFN6eXByb3dza2kg
-d3JvdGU6Cj4gQWxsIENvcnRleEE3L0ExNSBiYXNlZCBFeHlub3M1IFNvQ3MgaGF2ZSBBUk0gYXJj
-aGl0ZWN0ZWQgdGltZXJzLCBzbyBlbmFibGUKPiBzdXBwb3J0IGZvciB0aGVtIGRpcmVjdGx5IGlu
-IHRoZSBiYXNlIGR0c2kuIE5vbmUgb2YgdGhlIGtub3duIGZpcm13YXJlCj4gcHJvcGVybHkgY29u
-ZmlndXJlcyBDTlRGUlEgYXJjaCB0aW1lciByZWdpc3Rlciwgc28gZm9yY2UgY2xvY2sgZnJlcXVl
-bmN5Cj4gdG8gMjRNSHosIHdoaWNoIGlzIHRoZSBvbmx5IGNvbmZpZ3VyYXRpb24gc3VwcG9ydGVk
-IGJ5IHRoZSByZW1haW5pbmcKPiBjbG9jayBkcml2ZXJzIHNvIGZhci4KPiAKPiBTdG9jayBmaXJt
-d2FyZSBmb3IgUGVhY2ggUGl0IGFuZCBQaSBDaHJvbWVib29rcyBhbHNvIGRvZXNuJ3QgcmVzZXQK
-PiBwcm9wZXJseSBvdGhlciBhcmNoIHRpbWVyIHJlZ2lzdGVycywgc28gYWRkIHJlc3BlY3RpdmUg
-cHJvcGVydGllcwo+IGluZGljYXRpbmcgdGhhdC4gT3RoZXIgRXh5bm9zNS1iYXNlZCBib2FyZHMg
-YmVoYXZlcyBjb3JyZWN0bHkgaW4gdGhpcyBhcmVhLAo+IHdoYXQgZmluYWxseSBhbGxvd3MgdG8g
-ZW5hYmxlIHN1cHBvcnQgZm9yIEtWTS1iYXNlZCB2aXJ0dWFsaXphdGlvbi4KPiAKPiBTaWduZWQt
-b2ZmLWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lAc2Ftc3VuZy5jb20+Cj4gLS0t
-Cj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0MjAtcGVhY2gtcGl0LmR0cyB8IDQgKysrKwo+
-ICBhcmNoL2FybS9ib290L2R0cy9leHlub3M1NHh4LmR0c2kgICAgICAgICAgfCA5ICsrKysrKysr
-Kwo+ICBhcmNoL2FybS9ib290L2R0cy9leHlub3M1ODAwLXBlYWNoLXBpLmR0cyAgfCA0ICsrKysK
-PiAgMyBmaWxlcyBjaGFuZ2VkLCAxNyBpbnNlcnRpb25zKCspCj4gCj4gZGlmZiAtLWdpdCBhL2Fy
-Y2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0MjAtcGVhY2gtcGl0LmR0cyBiL2FyY2gvYXJtL2Jvb3Qv
-ZHRzL2V4eW5vczU0MjAtcGVhY2gtcGl0LmR0cwo+IGluZGV4IGY3OGRiNjgwOWNjYS4uNzdlMDhh
-NGM3MzAwIDEwMDY0NAo+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0MjAtcGVhY2gt
-cGl0LmR0cwo+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU0MjAtcGVhY2gtcGl0LmR0
-cwo+IEBAIC0xMDY0LDYgKzEwNjQsMTAgQEAKPiAgCXN0YXR1cyA9ICJva2F5IjsKPiAgfTsKPiAg
-Cj4gKyZ0aW1lciB7Cj4gKwlhcm0sY3B1LXJlZ2lzdGVycy1ub3QtZnctY29uZmlndXJlZDsKPiAr
-fTsKPiArCj4gICZ0bXVfY3B1MCB7Cj4gIAl2dG11LXN1cHBseSA9IDwmbGRvMTBfcmVnPjsKPiAg
-fTsKPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTR4eC5kdHNpIGIvYXJj
-aC9hcm0vYm9vdC9kdHMvZXh5bm9zNTR4eC5kdHNpCj4gaW5kZXggOWMzYjYzYjdjYWM2Li4wMmQz
-NDk1N2NkODMgMTAwNjQ0Cj4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTR4eC5kdHNp
-Cj4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTR4eC5kdHNpCj4gQEAgLTQ1LDYgKzQ1
-LDE1IEBACj4gIAkJc3RhdHVzID0gImRpc2FibGVkIjsKPiAgCX07Cj4gIAo+ICsJdGltZXI6IHRp
-bWVyIHsKPiArCQljb21wYXRpYmxlID0gImFybSxhcm12Ny10aW1lciI7Cj4gKwkJaW50ZXJydXB0
-cyA9IDxHSUNfUFBJIDEzIChHSUNfQ1BVX01BU0tfU0lNUExFKDQpIHwgSVJRX1RZUEVfTEVWRUxf
-TE9XKT4sCj4gKwkJCSAgICAgPEdJQ19QUEkgMTQgKEdJQ19DUFVfTUFTS19TSU1QTEUoNCkgfCBJ
-UlFfVFlQRV9MRVZFTF9MT1cpPiwKPiArCQkJICAgICA8R0lDX1BQSSAxMSAoR0lDX0NQVV9NQVNL
-X1NJTVBMRSg0KSB8IElSUV9UWVBFX0xFVkVMX0xPVyk+LAo+ICsJCQkgICAgIDxHSUNfUFBJIDEw
-IChHSUNfQ1BVX01BU0tfU0lNUExFKDQpIHwgSVJRX1RZUEVfTEVWRUxfTE9XKT47Cj4gKwkJY2xv
-Y2stZnJlcXVlbmN5ID0gPDI0MDAwMDAwPjsKPiArCX07Cj4gKwo+ICAJc29jOiBzb2Mgewo+ICAJ
-CXN5c3JhbUAyMDIwMDAwIHsKPiAgCQkJY29tcGF0aWJsZSA9ICJtbWlvLXNyYW0iOwo+IGRpZmYg
-LS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1ODAwLXBlYWNoLXBpLmR0cyBiL2FyY2gv
-YXJtL2Jvb3QvZHRzL2V4eW5vczU4MDAtcGVhY2gtcGkuZHRzCj4gaW5kZXggZTBmNDcwZmU1NGM4
-Li41ZThjZWM3MzY0NDQgMTAwNjQ0Cj4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTgw
-MC1wZWFjaC1waS5kdHMKPiArKysgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M1ODAwLXBlYWNo
-LXBpLmR0cwo+IEBAIC0xMDMzLDYgKzEwMzMsMTAgQEAKPiAgCXN0YXR1cyA9ICJva2F5IjsKPiAg
-fTsKPiAgCj4gKyZ0aW1lciB7Cj4gKwlhcm0sY3B1LXJlZ2lzdGVycy1ub3QtZnctY29uZmlndXJl
-ZDsKPiArfTsKPiArCj4gICZ0bXVfY3B1MCB7Cj4gIAl2dG11LXN1cHBseSA9IDwmbGRvMTBfcmVn
-PjsKPiAgfTsKPiAKCkkgdGVzdGVkIGl0IG9uIG9kcm9pZC14dTMgdG8gZW5hYmxlIGFyY2gtdGlt
-ZXIgZm9yIEtWTS4KSW4gcmVzdWx0LCBJIGNvdWxkIGp1c3QgaW5pdGlhbGl6ZSBLVk0gb24geHUz
-IHdpdGhvdXQgcHJvYmxlbS4KClRlc3RlZC1ieTogQ2hhbndvbyBDaG9pIDxjdzAwLmNob2lAc2Ft
-c3VuZy5jb20+ClJldmlld2VkLWJ5OiBDaGFud29vIENob2kgPGN3MDAuY2hvaUBzYW1zdW5nLmNv
-bT4KCgotLSAKQmVzdCBSZWdhcmRzLApDaGFud29vIENob2kKU2Ftc3VuZyBFbGVjdHJvbmljcwoK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJt
-LWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3Jn
-Cmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtl
-cm5lbAo=
+On Sun, 1 Sep 2019 at 15:19, Jaafar Ali <jaafarkhalaf@gmail.com> wrote:
+>
+> Dear Sylwester,
+> Kernel 5.3rc1
+> Hardware Odroid-XU4
+> cpuidle-big_little driver for exynos 5422 of odroid-xu3/4 is not working.
+> when I enable it in the defconfig , CONFIG_ARM_BIG_LITTLE_CPUIDLE=y,
+> the device will not boot and the heartbeat blue LED stops.
+> when the powerdown state[1] is removed form cpuidle-big_little driver
+> or the function bl_enter_powerdown is disabled by early return, the
+> kernel boots successfully and I can see cpuidle driver inside
+> /sys/devices/system/cpu/cpuidle/current_driver
+> both cpuidle-big_little power down state (exynos5420) and suspend
+> stuff are using mcpm_cpu_suspend() which in turn calls
+> mcpm_cpu_power_down() eventually.
+> while suspend stuff is working correctly and the cpu can
+> suspend/resume without problems, the cpuidle-bl is not working
+> the few difference between suspend.c and cpuidle-big_little that I
+> found are suspend.c do some more preparations such as storing resume
+> entry point "mcpm_entry_point" into S5P_INFORM0, reset
+> EXYNOS5420_CPU_STATE and save and restore some other registers.
+> Can we repeat the scenario of suspend in cpuidle-big_little
+
+Hi Jaafar,
+
+Thank you for the report. I am not sure whether big-little cpuidle was
+working properly before... (before v5.3-rc1) I added your report to
+https://exynos.wiki.kernel.org/todo_tasks
+
+Best regards,
+Krzysztof
