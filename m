@@ -1,75 +1,55 @@
 From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH 3/3] dt-bindings: ddr: Add bindings for Samsung LPDDR3
- memories
-Date: Fri,  6 Sep 2019 12:13:44 +0200
-Message-ID: <20190906101344.3535-4-l.luba@partner.samsung.com>
+Subject: [PATCH 1/3]  memory: Exynos5422: minor fixes in DMC
+Date: Fri,  6 Sep 2019 12:13:42 +0200
+Message-ID: <20190906101344.3535-2-l.luba@partner.samsung.com>
 References: <20190906101344.3535-1-l.luba@partner.samsung.com>
-        <CGME20190906101407eucas1p15eb0df53374b27497b4793eab24becf6@eucas1p1.samsung.com>
-Content-Type: text/plain; charset="utf-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+ <CGME20190906101405eucas1p2e3da7b461810a3a520e76c636a06e486@eucas1p2.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <20190906101344.3535-1-l.luba@partner.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, willy.mh.wolff.ml@gmail.com, Lukasz Luba <l.luba@partner.samsung.com>
+Cc: mark.rutland@arm.com, willy.mh.wolff.ml@gmail.com, b.zolnierkie@samsung.com, krzk@kernel.org, Lukasz Luba <l.luba@partner.samsung.com>, cw00.choi@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, kgene@kernel.org, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add description of bindings for Samsung k3qf2f20db LPDDR3 memory.
-Minor fixes in the old documentation.
+Small fixes captured by static analyzes.
 
 Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 ---
- .../devicetree/bindings/ddr/lpddr3.txt        | 29 +++++++++++++++++--
- 1 file changed, 27 insertions(+), 2 deletions(-)
+ drivers/memory/samsung/exynos5422-dmc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/ddr/lpddr3.txt b/Documentation/devicetree/bindings/ddr/lpddr3.txt
-index 3b2485b84b3f..de0905239767 100644
---- a/Documentation/devicetree/bindings/ddr/lpddr3.txt
-+++ b/Documentation/devicetree/bindings/ddr/lpddr3.txt
-@@ -40,10 +40,34 @@ Child nodes:
-   a given speed-bin. Please see Documentation/devicetree/
-   bindings/ddr/lpddr3-timings.txt for more information on "lpddr3-timings"
+diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
+index 8c2ec29a7d57..a809fa997c03 100644
+--- a/drivers/memory/samsung/exynos5422-dmc.c
++++ b/drivers/memory/samsung/exynos5422-dmc.c
+@@ -269,7 +269,7 @@ static int exynos5_init_freq_table(struct exynos5_dmc *dmc,
+ 	return 0;
  
-+Samsung K3QF2F20DB LPDDR3 memory
-+------------------------------------------------------------
-+
-+This binding uses the LPDDR3 binding (described above)
-+
-+Required properties:
-+- compatible:	Should be:
-+		"samsung,K3QF2F20DB"
-+		followed by "jedec,lpddr3"
-+- density  : <u32> representing density in Mb (Mega bits)
-+- io-width : <u32> representing bus width. Possible value 32
-+- #address-cells: Must be set to 1
-+- #size-cells: Must be set to 0
-+
-+Optional properties:
-+
-+The optional properties are the same as in the LPDDR3 generic bindings and
-+values should be taken from the data-sheet. Detailed bindings are described
-+above.
-+
-+Child nodes:
-+
-+Detailed bindings are described in LPDDR3 generic bindings described above.
-+
- Example:
+ err_free_tables:
+-	kfree(dmc->opp);
++	devm_kfree(dmc->dev, dmc->opp);
+ err_opp:
+ 	dev_pm_opp_of_remove_table(dmc->dev);
  
- samsung_K3QF2F20DB: lpddr3 {
--	compatible	= "Samsung,K3QF2F20DB", "jedec,lpddr3";
-+	compatible	= "samsung,K3QF2F20DB", "jedec,lpddr3";
- 	density		= <16384>;
- 	io-width	= <32>;
- 	#address-cells	= <1>;
-@@ -73,7 +97,8 @@ samsung_K3QF2F20DB: lpddr3 {
- 
- 	timings_samsung_K3QF2F20DB_800mhz: lpddr3-timings@800000000 {
- 		compatible	= "jedec,lpddr3-timings";
--		reg		= <800000000>; /* workaround: it shows max-freq */
-+		/* workaround: 'reg' shows max-freq */
-+		reg		= <800000000>;
- 		min-freq	= <100000000>;
- 		tRFC		= <65000>;
- 		tRRD		= <6000>;
+@@ -732,7 +732,7 @@ static struct devfreq_dev_profile exynos5_dmc_df_profile = {
+  * statistics engine which supports only registered values. Thus, some alignment
+  * must be made.
+  */
+-unsigned long
++static unsigned long
+ exynos5_dmc_align_init_freq(struct exynos5_dmc *dmc,
+ 			    unsigned long bootloader_init_freq)
+ {
 -- 
 2.17.1
