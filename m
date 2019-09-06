@@ -1,176 +1,110 @@
-From: Rob Herring <robh+dt@kernel.org>
-Subject: Re: [RFC 5/9] dt-bindings: arm: samsung: Convert Exynos PMU bindings
- to json-schema
-Date: Fri, 6 Sep 2019 16:48:53 +0100
-Message-ID: <CAL_JsqKyj3s-Mn3q_Lna0w38K3DJzvKN5d72WHzqt4CUVf5X4Q@mail.gmail.com>
-References: <20190823145356.6341-1-krzk@kernel.org> <20190823145356.6341-5-krzk@kernel.org>
- <CAL_JsqJybT41cEqiTriLMywUQj1BtAG_9muJ4=84OkF23y53CA@mail.gmail.com>
- <CAJKOXPc0SY_8BHMsWLN=1M3VQh41+bdBiH21L4KQPA+iLPYy+A@mail.gmail.com>
- <CAL_JsqKdsABWK9Og_f38T9zf3SCFFdhU8WOJ4uJjREantoYvYQ@mail.gmail.com> <CAJKOXPfnvu=c5f6AcOSiQ_9E-C2fMf9qbEpy1Tr3QvH8LgAtpQ@mail.gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] PCI: dwc: Use PTR_ERR_OR_ZERO() in five functions
+Date: Fri, 6 Sep 2019 20:50:07 +0200
+Message-ID: <95c9dfae-af81-82ad-e989-1fdf5f29808e@web.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPfnvu=c5f6AcOSiQ_9E-C2fMf9qbEpy1Tr3QvH8LgAtpQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>, devicetree@vger.kernel.org, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>, "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" <linux-rtc@vger.kernel.org>, notify@kernel.orgArnd Bergmann <ar>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-amlogic@lists.infradead.org, Binghui Wang <wangbinghui@hisilicon.com>, Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, Kevin Hilman <khilman@baylibre.com>, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Yue Wang <yue.wang@Amlogic.com>, Xiaowei Song <songxiaowei@hisilicon.com>
+Cc: YueHaibing <yuehaibing@huawei.com>, zhong jiang <zhongjiang@huawei.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Sep 3, 2019 at 12:03 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On Tue, 3 Sep 2019 at 10:25, Rob Herring <robh+dt@kernel.org> wrote:
-> >
-> > On Tue, Sep 3, 2019 at 8:58 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > >
-> > > On Mon, 26 Aug 2019 at 13:54, Rob Herring <robh+dt@kernel.org> wrote:
-> > > >
-> > > > On Fri, Aug 23, 2019 at 9:54 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > > > >
-> > > > > Convert Samsung Exynos Power Management Unit (PMU) bindings to DT schema
-> > > > > format using json-schema.
-> > > > >
-> > > > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > > > > ---
-> > > > >  .../devicetree/bindings/arm/samsung/pmu.txt   | 72 --------------
-> > > > >  .../devicetree/bindings/arm/samsung/pmu.yaml  | 93 +++++++++++++++++++
-> > > > >  2 files changed, 93 insertions(+), 72 deletions(-)
-> > > > >  delete mode 100644 Documentation/devicetree/bindings/arm/samsung/pmu.txt
-> > > > >  create mode 100644 Documentation/devicetree/bindings/arm/samsung/pmu.yaml
-> > > >
-> > > >
-> > > > > diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.yaml b/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
-> > > > > new file mode 100644
-> > > > > index 000000000000..818c6f3488ef
-> > > > > --- /dev/null
-> > > > > +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
-> > > > > @@ -0,0 +1,93 @@
-> > > > > +# SPDX-License-Identifier: GPL-2.0
-> > > > > +%YAML 1.2
-> > > > > +---
-> > > > > +$id: http://devicetree.org/schemas/arm/samsung/pmu.yaml#
-> > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > > +
-> > > > > +title: Samsung Exynos SoC series Power Management Unit (PMU)
-> > > > > +
-> > > > > +maintainers:
-> > > > > +  - Krzysztof Kozlowski <krzk@kernel.org>
-> > > > > +
-> > > > > +properties:
-> > > > > +  compatible:
-> > > > > +    items:
-> > > > > +      - enum:
-> > > > > +          - samsung,exynos3250-pmu
-> > > > > +          - samsung,exynos4210-pmu
-> > > > > +          - samsung,exynos4412-pmu
-> > > > > +          - samsung,exynos5250-pmu
-> > > > > +          - samsung,exynos5260-pmu
-> > > > > +          - samsung,exynos5410-pmu
-> > > > > +          - samsung,exynos5420-pmu
-> > > > > +          - samsung,exynos5433-pmu
-> > > > > +          - samsung,exynos7-pmu
-> > > > > +      - const: syscon
-> > > > > +
-> > > > > +  reg:
-> > > > > +    maxItems: 1
-> > > > > +
-> > > > > +  '#clock-cells':
-> > > > > +    const: 1
-> > > > > +
-> > > > > +  clock-names:
-> > > > > +    description:
-> > > > > +      list of clock names for particular CLKOUT mux inputs
-> > > > > +    # TODO: what is the maximum number of elements (mux inputs)?
-> > > > > +    minItems: 1
-> > > > > +    maxItems: 32
-> > > > > +    items:
-> > > > > +      - enum:
-> > > >
-> > > > This isn't correct as you are only defining possible names for the
-> > > > first item. Drop the '-' (making items a schema instead of a list) and
-> > > > then it applies to all. However, doing that will cause a meta-schema
-> > > > error which I need to fix to allow. Or if there's a small set of
-> > > > possibilities of number of inputs, you can list them under a 'oneOf'
-> > > > list.
-> > >
-> > > Mhmm, I cannot test it or I have an error in the schema. if I
-> > > understand correctly, this would be:
-> > >
-> > >   clock-names:
-> > >     description:
-> > >       List of clock names for particular CLKOUT mux inputs
-> > >     minItems: 1
-> > >     maxItems: 16
-> > >     items:
-> > >       clkout0
-> > >       clkout1
-> > >       clkout2
-> > >       clkout3
-> > >       clkout4
-> > >       clkout5
-> > >       clkout6
-> > >       clkout7
-> > >       clkout8
-> > >       clkout9
-> > >       clkout10
-> > >       clkout11
-> > >       clkout12
-> > >       clkout13
-> > >       clkout14
-> > >       clkout15
-> > >       clkout16
-> > >
-> > > Now it produces the error "ignoring, error in schema 'items'" but
-> > > maybe it is expected with current meta-schema?
-> >
-> > 'make dt_binding_check' will give more detailed errors.
-> >
-> > Are the inputs always contiguous 0-N? If so, you want:
-> >
-> > items:
-> >   - const: clkout0
-> >   - const: clkout1
-> >   - const: clkout2
-> >   ...
-> >
-> > If you want to express any number and order of strings is valid, then you need:
-> >
-> > items:
-> >   enum:
-> >     - clkout0
-> >     - clkout1
-> >     - clkout2
-> >
-> > Doing that is discouraged for bindings though. Currently, it will
-> > generate an error from the meta-schema, but we could change that.
->
-> It's the second case. The inputs are not contiguous. Examples:
->
-> system-controller {
->     compatible = "samsung,exynos3250-pmu", "syscon";
->     clock-names = "clkout8";
->     clocks = <&cmu CLK_FIN_PLL>;
-> }
->
-> system-controller {
->     compatible = "samsung,exynos4412-pmu", "syscon";
->     clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
->                   "clkout4", "clkout8", "clkout9";
->     clocks = <&clock CLK_OUT_DMC>, <&clock CLK_OUT_TOP>,
->              <&clock CLK_OUT_LEFTBUS>, <&clock CLK_OUT_RIGHTBUS>,
->              <&clock CLK_OUT_CPU>, <&clock CLK_XXTI>, <&clock CLK_XUSBXTI>;
-> }
->
-> The bindings never required any specific ordering. Also the driver
-> just go through all indices and parses them.
->
-> Your second syntax fails:
-> Documentation/devicetree/bindings/arm/samsung/pmu.yaml:
-> properties:clock-names:items: {'enum': ['clkout0', 'clkout1',
-> 'clkout2', 'clkout3', 'clkout4', 'clkout5', 'clkout6', 'clkout7',
-> 'clkout8', 'clkout9', 'clkout10', 'clkout11', 'clkout12', 'clkout13',
-> 'clkout14', 'clkout15', 'clkout16']} is not of type 'array'
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 6 Sep 2019 20:40:06 +0200
 
-Update dt-schema and try again. It should be allowed now. You'll also
-need to define minItems and maxItems though.
+Simplify these function implementations by using a known function.
 
-Rob
+Generated by: scripts/coccinelle/api/ptr_ret.cocci
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pci/controller/dwc/pci-exynos.c |  5 +----
+ drivers/pci/controller/dwc/pci-meson.c  | 10 ++--------
+ drivers/pci/controller/dwc/pcie-kirin.c | 10 ++--------
+ 3 files changed, 5 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
+index cee5f2f590e2..b6ab1cc5d895 100644
+--- a/drivers/pci/controller/dwc/pci-exynos.c
++++ b/drivers/pci/controller/dwc/pci-exynos.c
+@@ -92,10 +92,7 @@ static int exynos5440_pcie_get_mem_resources(struct platform_device *pdev,
+
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	ep->mem_res->elbi_base = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(ep->mem_res->elbi_base))
+-		return PTR_ERR(ep->mem_res->elbi_base);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(ep->mem_res->elbi_base);
+ }
+
+ static int exynos5440_pcie_get_clk_resources(struct exynos_pcie *ep)
+diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
+index e35e9eaa50ee..713059918002 100644
+--- a/drivers/pci/controller/dwc/pci-meson.c
++++ b/drivers/pci/controller/dwc/pci-meson.c
+@@ -182,10 +182,7 @@ static int meson_pcie_get_mems(struct platform_device *pdev,
+
+ 	/* Meson SoC has two PCI controllers use same phy register*/
+ 	mp->mem_res.phy_base = meson_pcie_get_mem_shared(pdev, mp, "phy");
+-	if (IS_ERR(mp->mem_res.phy_base))
+-		return PTR_ERR(mp->mem_res.phy_base);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(mp->mem_res.phy_base);
+ }
+
+ static void meson_pcie_power_on(struct meson_pcie *mp)
+@@ -259,10 +256,7 @@ static int meson_pcie_probe_clocks(struct meson_pcie *mp)
+ 		return PTR_ERR(res->general_clk);
+
+ 	res->clk = meson_pcie_probe_clock(dev, "pcie", 0);
+-	if (IS_ERR(res->clk))
+-		return PTR_ERR(res->clk);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(res->clk);
+ }
+
+ static inline void meson_elb_writel(struct meson_pcie *mp, u32 val, u32 reg)
+diff --git a/drivers/pci/controller/dwc/pcie-kirin.c b/drivers/pci/controller/dwc/pcie-kirin.c
+index c19617a912bd..75b1f1dde747 100644
+--- a/drivers/pci/controller/dwc/pcie-kirin.c
++++ b/drivers/pci/controller/dwc/pcie-kirin.c
+@@ -138,10 +138,7 @@ static long kirin_pcie_get_clk(struct kirin_pcie *kirin_pcie,
+ 		return PTR_ERR(kirin_pcie->apb_sys_clk);
+
+ 	kirin_pcie->pcie_aclk = devm_clk_get(dev, "pcie_aclk");
+-	if (IS_ERR(kirin_pcie->pcie_aclk))
+-		return PTR_ERR(kirin_pcie->pcie_aclk);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(kirin_pcie->pcie_aclk);
+ }
+
+ static long kirin_pcie_get_resource(struct kirin_pcie *kirin_pcie,
+@@ -174,10 +171,7 @@ static long kirin_pcie_get_resource(struct kirin_pcie *kirin_pcie,
+
+ 	kirin_pcie->sysctrl =
+ 		syscon_regmap_lookup_by_compatible("hisilicon,hi3660-sctrl");
+-	if (IS_ERR(kirin_pcie->sysctrl))
+-		return PTR_ERR(kirin_pcie->sysctrl);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(kirin_pcie->sysctrl);
+ }
+
+ static int kirin_pcie_phy_init(struct kirin_pcie *kirin_pcie)
+--
+2.23.0
