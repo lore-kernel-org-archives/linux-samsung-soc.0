@@ -1,7 +1,7 @@
 From: Yao Lihua <ylhuajnu@outlook.com>
-Subject: [PATCH 1/2] ARM: dts: s3c64xx: factor out external fixed clocks
-Date: Sat, 7 Sep 2019 02:48:08 +0000
-Message-ID: <BY5PR12MB36996A79D9B1EEC5162B00F4C4B50@BY5PR12MB3699.namprd12.prod.outlook.com>
+Subject: [PATCH 2/2] ARM: dts: s3c64xx: specify dependency of clock providers
+Date: Sat, 7 Sep 2019 02:48:12 +0000
+Message-ID: <BY5PR12MB36991E62DD57AA6962C05420C4B50@BY5PR12MB3699.namprd12.prod.outlook.com>
 References: <20190907024719.16974-1-ylhuajnu@outlook.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -24,122 +24,39 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Lihua Yao <ylhuajnu@outlook.com>
 
-As per arch/arm/mach-s3c64xx/common.c, the external oscillators
-of S3C6400 and S3C6410 are identical. Move them to s3c64xx.dtsi
-and place under root node directly.
-
-This introduces side effect of changing the initialization order of
-fin_pll and clock-controller@7e00f000. As of commit 3f6d439f2022
-("clk: reverse default clk provider initialization order in of_clk_init()"),
-clock providers are initialized in the orders they are present in the
-device tree unless the clocks' dependencies are specified explicitly.
-
-without this patch:
-  [    0.000000] S3C6410 clocks: apll = 0, mpll = 0
-  [    0.000000]  epll = 0, arm_clk = 0
-
-with this patch:
-  [    0.000000] S3C6410 clocks: apll = 532000000, mpll = 532000000
-  [    0.000000]  epll = 24000000, arm_clk = 532000000
+fin_pll is the parent of clock-controller@7e00f000, specify
+the dependency to ensure proper initialization order of clock
+providers.
 
 Fixes: 3f6d439f2022 ("clk: reverse default clk provider initialization order in of_clk_init()")
 Signed-off-by: Lihua Yao <ylhuajnu@outlook.com>
 ---
- arch/arm/boot/dts/s3c6410-mini6410.dts | 22 ----------------------
- arch/arm/boot/dts/s3c6410-smdk6410.dts | 22 ----------------------
- arch/arm/boot/dts/s3c64xx.dtsi         | 14 ++++++++++++++
- 3 files changed, 14 insertions(+), 44 deletions(-)
+ arch/arm/boot/dts/s3c6400.dtsi | 1 +
+ arch/arm/boot/dts/s3c6410.dtsi | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/s3c6410-mini6410.dts b/arch/arm/boot/dts/s3c6410-mini6410.dts
-index 5201512054c4..7028507b7076 100644
---- a/arch/arm/boot/dts/s3c6410-mini6410.dts
-+++ b/arch/arm/boot/dts/s3c6410-mini6410.dts
-@@ -28,28 +28,6 @@
- 		bootargs = "console=ttySAC0,115200n8 earlyprintk root=/dev/nfs rw nfsroot=192.168.31.2:/srv/nfs/tiny6410,nfsvers=3 ip=dhcp";
+diff --git a/arch/arm/boot/dts/s3c6400.dtsi b/arch/arm/boot/dts/s3c6400.dtsi
+index 8c28e8a0c824..ef5a8fa3555c 100644
+--- a/arch/arm/boot/dts/s3c6400.dtsi
++++ b/arch/arm/boot/dts/s3c6400.dtsi
+@@ -34,5 +34,6 @@
+ 		compatible = "samsung,s3c6400-clock";
+ 		reg = <0x7e00f000 0x1000>;
+ 		#clock-cells = <1>;
++		clocks = <&fin_pll>;
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/s3c6410.dtsi b/arch/arm/boot/dts/s3c6410.dtsi
+index a766d6de696c..b201b71d45b5 100644
+--- a/arch/arm/boot/dts/s3c6410.dtsi
++++ b/arch/arm/boot/dts/s3c6410.dtsi
+@@ -38,6 +38,7 @@
+ 		compatible = "samsung,s3c6410-clock";
+ 		reg = <0x7e00f000 0x1000>;
+ 		#clock-cells = <1>;
++		clocks = <&fin_pll>;
  	};
  
--	clocks {
--		compatible = "simple-bus";
--		#address-cells = <1>;
--		#size-cells = <0>;
--
--		fin_pll: oscillator@0 {
--			compatible = "fixed-clock";
--			reg = <0>;
--			clock-frequency = <12000000>;
--			clock-output-names = "fin_pll";
--			#clock-cells = <0>;
--		};
--
--		xusbxti: oscillator@1 {
--			compatible = "fixed-clock";
--			reg = <1>;
--			clock-output-names = "xusbxti";
--			clock-frequency = <48000000>;
--			#clock-cells = <0>;
--		};
--	};
--
- 	srom-cs1@18000000 {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/s3c6410-smdk6410.dts b/arch/arm/boot/dts/s3c6410-smdk6410.dts
-index a9a5689dc462..10a854b488a8 100644
---- a/arch/arm/boot/dts/s3c6410-smdk6410.dts
-+++ b/arch/arm/boot/dts/s3c6410-smdk6410.dts
-@@ -28,28 +28,6 @@
- 		bootargs = "console=ttySAC0,115200n8 earlyprintk rootwait root=/dev/mmcblk0p1";
- 	};
- 
--	clocks {
--		compatible = "simple-bus";
--		#address-cells = <1>;
--		#size-cells = <0>;
--
--		fin_pll: oscillator@0 {
--			compatible = "fixed-clock";
--			reg = <0>;
--			clock-frequency = <12000000>;
--			clock-output-names = "fin_pll";
--			#clock-cells = <0>;
--		};
--
--		xusbxti: oscillator@1 {
--			compatible = "fixed-clock";
--			reg = <1>;
--			clock-output-names = "xusbxti";
--			clock-frequency = <48000000>;
--			#clock-cells = <0>;
--		};
--	};
--
- 	srom-cs1@18000000 {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/s3c64xx.dtsi b/arch/arm/boot/dts/s3c64xx.dtsi
-index 2e611df37911..672764133cea 100644
---- a/arch/arm/boot/dts/s3c64xx.dtsi
-+++ b/arch/arm/boot/dts/s3c64xx.dtsi
-@@ -39,6 +39,20 @@
- 		};
- 	};
- 
-+	fin_pll: oscillator-0 {
-+		compatible = "fixed-clock";
-+		clock-frequency = <12000000>;
-+		clock-output-names = "fin_pll";
-+		#clock-cells = <0>;
-+	};
-+
-+	xusbxti: oscillator-1 {
-+		compatible = "fixed-clock";
-+		clock-frequency = <48000000>;
-+		clock-output-names = "xusbxti";
-+		#clock-cells = <0>;
-+	};
-+
- 	soc: soc {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
+ 	i2c1: i2c@7f00f000 {
 -- 
 2.17.1
