@@ -1,249 +1,49 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] dt-bindings: memory-controllers: Convert Samsung Exynos SROM bindings to json-schema
-Date: Sat,  7 Sep 2019 16:44:42 +0200
-Message-ID: <20190907144442.16788-1-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Andi Shyti <andi@etezian.org>
+Subject: Re: [PATCH -next 25/36] spi: s3c24xx: use
+ devm_platform_ioremap_resource() to simplify code
+Date: Sun, 8 Sep 2019 02:38:10 +0300
+Message-ID: <20190907233810.GA15768@jack.zhora.eu>
+References: <20190904135918.25352-1-yuehaibing@huawei.com>
+ <20190904135918.25352-26-yuehaibing@huawei.com>
+ <CAJKOXPdq4as1Oe3U+9znkvP0RA=sxUoiWVBCSbzf_wq_um2t=w@mail.gmail.com>
+ <3595bac1-e426-b4f9-4e24-01e104fdfe5d@huawei.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <3595bac1-e426-b4f9-4e24-01e104fdfe5d@huawei.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-riscv>,
+ <mailto:linux-riscv-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-riscv/>
+List-Post: <mailto:linux-riscv@lists.infradead.org>
+List-Help: <mailto:linux-riscv-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-riscv>,
+ <mailto:linux-riscv-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-riscv" <linux-riscv-bounces@lists.infradead.org>
+Errors-To: linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org
+To: Yuehaibing <yuehaibing@huawei.com>
+Cc: tmaimon77@gmail.com, palmer@sifive.com, tali.perry1@gmail.com, eric@anholt.net, ldewangan@nvidia.com, linux-riscv@lists.infradead.org, festevam@gmail.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, f.fainelli@gmail.com, benjaminfair@google.com, shc_work@mail.ru, khilman@baylibre.com, openbmc@lists.ozlabs.org, michal.simek@xilinx.com, Krzysztof Kozlowski <krzk@kernel.org>, jonathanh@nvidia.com, yuenn@google.com, wens@csie.org, agross@kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-imx@nxp.com, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, Andi Shyti <andi@etezian.org>, rjui@broadcom.com, s.hauer@pengutronix.de, mripard@kernel.org, broonie@kernel.org, linux-mediatek@lists.infradead.org, linux-rpi-kernel@lists.infradead.org, paul.walmsley@sifive.com, matthias.bgg@gmail.com, linux-amlogic@lists.infradead.org, linux-arm-ker
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Convert Samsung Exynos SROM controller bindings to DT schema format
-using json-schema.
+Hi Yuehaibing,
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- .../memory-controllers/exynos-srom.txt        |  79 ----------
- .../memory-controllers/exynos-srom.yaml       | 136 ++++++++++++++++++
- 2 files changed, 136 insertions(+), 79 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
+> >> Use devm_platform_ioremap_resource() to simplify the code a bit.
+> >> This is detected by coccinelle.
+> >>
+> >> Reported-by: Hulk Robot <hulkci@huawei.com>
+> > 
+> > This tag does not look real... First of all where is the report?
+> 
+> It is our internal CI robot, which is unavailable to external temporarily.
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt
-deleted file mode 100644
-index f633b5d0f8ca..000000000000
---- a/Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt
-+++ /dev/null
-@@ -1,79 +0,0 @@
--SAMSUNG Exynos SoCs SROM Controller driver.
--
--Required properties:
--- compatible : Should contain "samsung,exynos4210-srom".
--
--- reg: offset and length of the register set
--
--Optional properties:
--The SROM controller can be used to attach external peripherals. In this case
--extra properties, describing the bus behind it, should be specified as below:
--
--- #address-cells: Must be set to 2 to allow device address translation.
--		  Address is specified as (bank#, offset).
--
--- #size-cells: Must be set to 1 to allow device size passing
--
--- ranges: Must be set up to reflect the memory layout with four integer values
--	  per bank:
--		<bank-number> 0 <parent address of bank> <size>
--
--Sub-nodes:
--The actual device nodes should be added as subnodes to the SROMc node. These
--subnodes, in addition to regular device specification, should contain the following
--properties, describing configuration of the relevant SROM bank:
--
--Required properties:
--- reg: bank number, base address (relative to start of the bank) and size of
--       the memory mapped for the device. Note that base address will be
--       typically 0 as this is the start of the bank.
--
--- samsung,srom-timing : array of 6 integers, specifying bank timings in the
--                        following order: Tacp, Tcah, Tcoh, Tacc, Tcos, Tacs.
--                        Each value is specified in cycles and has the following
--                        meaning and valid range:
--                        Tacp : Page mode access cycle at Page mode (0 - 15)
--                        Tcah : Address holding time after CSn (0 - 15)
--                        Tcoh : Chip selection hold on OEn (0 - 15)
--                        Tacc : Access cycle (0 - 31, the actual time is N + 1)
--                        Tcos : Chip selection set-up before OEn (0 - 15)
--                        Tacs : Address set-up before CSn (0 - 15)
--
--Optional properties:
--- reg-io-width : data width in bytes (1 or 2). If omitted, default of 1 is used.
--
--- samsung,srom-page-mode : if page mode is set, 4 data page mode will be configured,
--			   else normal (1 data) page mode will be set.
--
--Example: basic definition, no banks are configured
--	memory-controller@12570000 {
--		compatible = "samsung,exynos4210-srom";
--		reg = <0x12570000 0x14>;
--	};
--
--Example: SROMc with SMSC911x ethernet chip on bank 3
--	memory-controller@12570000 {
--		#address-cells = <2>;
--		#size-cells = <1>;
--		ranges = <0 0 0x04000000 0x20000   // Bank0
--			  1 0 0x05000000 0x20000   // Bank1
--			  2 0 0x06000000 0x20000   // Bank2
--			  3 0 0x07000000 0x20000>; // Bank3
--
--		compatible = "samsung,exynos4210-srom";
--		reg = <0x12570000 0x14>;
--
--		ethernet@3,0 {
--			compatible = "smsc,lan9115";
--			reg = <3 0 0x10000>;	   // Bank 3, offset = 0
--			phy-mode = "mii";
--			interrupt-parent = <&gpx0>;
--			interrupts = <5 8>;
--			reg-io-width = <2>;
--			smsc,irq-push-pull;
--			smsc,force-internal-phy;
--
--			samsung,srom-page-mode;
--			samsung,srom-timing = <9 12 1 9 1 1>;
--		};
--	};
-diff --git a/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
-new file mode 100644
-index 000000000000..9573bcfd68bf
---- /dev/null
-+++ b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
-@@ -0,0 +1,136 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/memory-controllers/exynos-srom.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung Exynos SoC SROM Controller driver
-+
-+maintainers:
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-+
-+description: |+
-+  The SROM controller can be used to attach external peripherals. In this case
-+  extra properties, describing the bus behind it, should be specified.
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: samsung,exynos4210-srom
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#address-cells":
-+    const: 2
-+
-+  "#size-cells":
-+    const: 1
-+
-+  ranges:
-+    description: |
-+      Reflects the memory layout with four integer values per bank. Format:
-+      <bank-number> 0 <parent address of bank> <size>
-+
-+patternProperties:
-+  "^.*@[0-9]+,[0-9]+$":
-+    type: object
-+    description:
-+      The actual device nodes should be added as subnodes to the SROMc node.
-+      These subnodes, in addition to regular device specification, should
-+      contain the following properties, describing configuration
-+      of the relevant SROM bank.
-+
-+    properties:
-+      reg:
-+        description:
-+          Bank number, base address (relative to start of the bank) and size
-+          of the memory mapped for the device. Note that base address will be
-+          typically 0 as this is the start of the bank.
-+        maxItems: 1
-+
-+      reg-io-width:
-+        allOf:
-+          - $ref: /schemas/types.yaml#/definitions/uint32
-+          - enum: [1, 2]
-+        description:
-+          Data width in bytes (1 or 2). If omitted, default of 1 is used.
-+
-+      samsung,srom-page-mode:
-+        description:
-+          If page mode is set, 4 data page mode will be configured,
-+          else normal (1 data) page mode will be set.
-+        type: boolean
-+
-+      samsung,srom-timing:
-+        allOf:
-+          - $ref: /schemas/types.yaml#/definitions/uint32-array
-+          - items:
-+              minItems: 6
-+              maxItems: 6
-+        description: |
-+          Array of 6 integers, specifying bank timings in the following order:
-+          Tacp, Tcah, Tcoh, Tacc, Tcos, Tacs.
-+          Each value is specified in cycles and has the following meaning
-+          and valid range:
-+          Tacp: Page mode access cycle at Page mode (0 - 15)
-+          Tcah: Address holding time after CSn (0 - 15)
-+          Tcoh: Chip selection hold on OEn (0 - 15)
-+          Tacc: Access cycle (0 - 31, the actual time is N + 1)
-+          Tcos: Chip selection set-up before OEn (0 - 15)
-+          Tacs: Address set-up before CSn (0 - 15)
-+
-+    required:
-+      - reg
-+      - samsung,srom-timing
-+
-+required:
-+  - compatible
-+  - reg
-+
-+allOf:
-+  - if:
-+      anyOf:
-+        - required: [ "#address-cells" ]
-+        - required: [ ranges ]
-+        - required: [ "#size-cells" ]
-+    then:
-+      required:
-+        - "#address-cells"
-+        - ranges
-+        - "#size-cells"
-+
-+examples:
-+  - |
-+    // Example: basic definition, no banks are configured
-+    memory-controller@12560000 {
-+      compatible = "samsung,exynos4210-srom";
-+      reg = <0x12560000 0x14>;
-+    };
-+
-+    // Example: SROMc with SMSC911x ethernet chip on bank 3
-+    memory-controller@12570000 {
-+      #address-cells = <2>;
-+      #size-cells = <1>;
-+      ranges = <0 0 0x04000000 0x20000   // Bank0
-+                1 0 0x05000000 0x20000   // Bank1
-+                2 0 0x06000000 0x20000   // Bank2
-+                3 0 0x07000000 0x20000>; // Bank3
-+
-+      compatible = "samsung,exynos4210-srom";
-+      reg = <0x12570000 0x14>;
-+
-+      ethernet@3,0 {
-+        compatible = "smsc,lan9115";
-+        reg = <3 0 0x10000>;     // Bank 3, offset = 0
-+        phy-mode = "mii";
-+        interrupt-parent = <&gpx0>;
-+        interrupts = <5 8>;
-+        reg-io-width = <2>;
-+        smsc,irq-push-pull;
-+        smsc,force-internal-phy;
-+
-+        samsung,srom-page-mode;
-+        samsung,srom-timing = <9 12 1 9 1 1>;
-+      };
-+    };
--- 
-2.17.1
+Hulk Robot is not a person and not accountable for his report.
+If it is your internal CI, please write a sentence stating that
+the fix has been made using Huawei internal tools.
+
+Credit must be given to tools as well, but not accounts that will
+never answer an e-mail.
+
+Otherwise, the patch would look fine.
+
+Andi
