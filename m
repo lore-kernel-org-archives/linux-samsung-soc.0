@@ -1,151 +1,249 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 2/2] dt-bindings: sram: Convert Samsung Exynos SYSRAM bindings to json-schema
-Date: Sat,  7 Sep 2019 13:35:42 +0200
-Message-ID: <20190907113542.4096-2-krzk@kernel.org>
-References: <20190907113542.4096-1-krzk@kernel.org>
+Subject: [PATCH] dt-bindings: memory-controllers: Convert Samsung Exynos SROM bindings to json-schema
+Date: Sat,  7 Sep 2019 16:44:42 +0200
+Message-ID: <20190907144442.16788-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190907113542.4096-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Convert Samsung Exynos SYSRAM bindings to DT schema format using
-json-schema.
+Convert Samsung Exynos SROM controller bindings to DT schema format
+using json-schema.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-
 ---
+ .../memory-controllers/exynos-srom.txt        |  79 ----------
+ .../memory-controllers/exynos-srom.yaml       | 136 ++++++++++++++++++
+ 2 files changed, 136 insertions(+), 79 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
 
-TODO:
-The node naming should be probably fixed (sysram->sram)
----
- .../devicetree/bindings/sram/samsung-sram.txt | 38 ------------
- .../bindings/sram/samsung-sram.yaml           | 58 +++++++++++++++++++
- MAINTAINERS                                   |  2 +-
- 3 files changed, 59 insertions(+), 39 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/sram/samsung-sram.txt
- create mode 100644 Documentation/devicetree/bindings/sram/samsung-sram.yaml
-
-diff --git a/Documentation/devicetree/bindings/sram/samsung-sram.txt b/Documentation/devicetree/bindings/sram/samsung-sram.txt
+diff --git a/Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt
 deleted file mode 100644
-index 61a9bbed303d..000000000000
---- a/Documentation/devicetree/bindings/sram/samsung-sram.txt
+index f633b5d0f8ca..000000000000
+--- a/Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt
 +++ /dev/null
-@@ -1,38 +0,0 @@
--Samsung Exynos SYSRAM for SMP bringup:
--------------------------------------
+@@ -1,79 +0,0 @@
+-SAMSUNG Exynos SoCs SROM Controller driver.
 -
--Samsung SMP-capable Exynos SoCs use part of the SYSRAM for the bringup
--of the secondary cores. Once the core gets powered up it executes the
--code that is residing at some specific location of the SYSRAM.
+-Required properties:
+-- compatible : Should contain "samsung,exynos4210-srom".
 -
--Therefore reserved section sub-nodes have to be added to the mmio-sram
--declaration. These nodes are of two types depending upon secure or
--non-secure execution environment.
+-- reg: offset and length of the register set
 -
--Required sub-node properties:
--- compatible : depending upon boot mode, should be
--		"samsung,exynos4210-sysram" : for Secure SYSRAM
--		"samsung,exynos4210-sysram-ns" : for Non-secure SYSRAM
+-Optional properties:
+-The SROM controller can be used to attach external peripherals. In this case
+-extra properties, describing the bus behind it, should be specified as below:
 -
--The rest of the properties should follow the generic mmio-sram discription
--found in Documentation/devicetree/bindings/sram/sram.txt
+-- #address-cells: Must be set to 2 to allow device address translation.
+-		  Address is specified as (bank#, offset).
 -
--Example:
+-- #size-cells: Must be set to 1 to allow device size passing
 -
--	sysram@2020000 {
--		compatible = "mmio-sram";
--		reg = <0x02020000 0x54000>;
--		#address-cells = <1>;
+-- ranges: Must be set up to reflect the memory layout with four integer values
+-	  per bank:
+-		<bank-number> 0 <parent address of bank> <size>
+-
+-Sub-nodes:
+-The actual device nodes should be added as subnodes to the SROMc node. These
+-subnodes, in addition to regular device specification, should contain the following
+-properties, describing configuration of the relevant SROM bank:
+-
+-Required properties:
+-- reg: bank number, base address (relative to start of the bank) and size of
+-       the memory mapped for the device. Note that base address will be
+-       typically 0 as this is the start of the bank.
+-
+-- samsung,srom-timing : array of 6 integers, specifying bank timings in the
+-                        following order: Tacp, Tcah, Tcoh, Tacc, Tcos, Tacs.
+-                        Each value is specified in cycles and has the following
+-                        meaning and valid range:
+-                        Tacp : Page mode access cycle at Page mode (0 - 15)
+-                        Tcah : Address holding time after CSn (0 - 15)
+-                        Tcoh : Chip selection hold on OEn (0 - 15)
+-                        Tacc : Access cycle (0 - 31, the actual time is N + 1)
+-                        Tcos : Chip selection set-up before OEn (0 - 15)
+-                        Tacs : Address set-up before CSn (0 - 15)
+-
+-Optional properties:
+-- reg-io-width : data width in bytes (1 or 2). If omitted, default of 1 is used.
+-
+-- samsung,srom-page-mode : if page mode is set, 4 data page mode will be configured,
+-			   else normal (1 data) page mode will be set.
+-
+-Example: basic definition, no banks are configured
+-	memory-controller@12570000 {
+-		compatible = "samsung,exynos4210-srom";
+-		reg = <0x12570000 0x14>;
+-	};
+-
+-Example: SROMc with SMSC911x ethernet chip on bank 3
+-	memory-controller@12570000 {
+-		#address-cells = <2>;
 -		#size-cells = <1>;
--		ranges = <0 0x02020000 0x54000>;
+-		ranges = <0 0 0x04000000 0x20000   // Bank0
+-			  1 0 0x05000000 0x20000   // Bank1
+-			  2 0 0x06000000 0x20000   // Bank2
+-			  3 0 0x07000000 0x20000>; // Bank3
 -
--		smp-sysram@0 {
--			compatible = "samsung,exynos4210-sysram";
--			reg = <0x0 0x1000>;
--		};
+-		compatible = "samsung,exynos4210-srom";
+-		reg = <0x12570000 0x14>;
 -
--		smp-sysram@53000 {
--			compatible = "samsung,exynos4210-sysram-ns";
--			reg = <0x53000 0x1000>;
+-		ethernet@3,0 {
+-			compatible = "smsc,lan9115";
+-			reg = <3 0 0x10000>;	   // Bank 3, offset = 0
+-			phy-mode = "mii";
+-			interrupt-parent = <&gpx0>;
+-			interrupts = <5 8>;
+-			reg-io-width = <2>;
+-			smsc,irq-push-pull;
+-			smsc,force-internal-phy;
+-
+-			samsung,srom-page-mode;
+-			samsung,srom-timing = <9 12 1 9 1 1>;
 -		};
 -	};
-diff --git a/Documentation/devicetree/bindings/sram/samsung-sram.yaml b/Documentation/devicetree/bindings/sram/samsung-sram.yaml
+diff --git a/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
 new file mode 100644
-index 000000000000..501d299a554e
+index 000000000000..9573bcfd68bf
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/sram/samsung-sram.yaml
-@@ -0,0 +1,58 @@
++++ b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
+@@ -0,0 +1,136 @@
 +# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/sram/samsung-sram.yaml#
++$id: http://devicetree.org/schemas/memory-controllers/exynos-srom.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Samsung Exynos SoC SYSRAM for SMP bringup
++title: Samsung Exynos SoC SROM Controller driver
 +
 +maintainers:
 +  - Krzysztof Kozlowski <krzk@kernel.org>
 +
 +description: |+
-+  Samsung SMP-capable Exynos SoCs use part of the SYSRAM for the bringup
-+  of the secondary cores. Once the core gets powered up it executes the
-+  code that is residing at some specific location of the SYSRAM.
-+
-+  Therefore reserved section sub-nodes have to be added to the mmio-sram
-+  declaration. These nodes are of two types depending upon secure or
-+  non-secure execution environment.
-+
-+allOf:
-+  - $ref: "sram.yaml#"
++  The SROM controller can be used to attach external peripherals. In this case
++  extra properties, describing the bus behind it, should be specified.
 +
 +properties:
-+  $nodename:
-+    pattern: "^sysram(@.*)?"
++  compatible:
++    items:
++      - const: samsung,exynos4210-srom
++
++  reg:
++    maxItems: 1
++
++  "#address-cells":
++    const: 2
++
++  "#size-cells":
++    const: 1
++
++  ranges:
++    description: |
++      Reflects the memory layout with four integer values per bank. Format:
++      <bank-number> 0 <parent address of bank> <size>
 +
 +patternProperties:
-+  "^([a-z]*-)?sysram@[a-f0-9]$":
++  "^.*@[0-9]+,[0-9]+$":
 +    type: object
++    description:
++      The actual device nodes should be added as subnodes to the SROMc node.
++      These subnodes, in addition to regular device specification, should
++      contain the following properties, describing configuration
++      of the relevant SROM bank.
 +
 +    properties:
-+      compatible:
++      reg:
 +        description:
-+          Depending upon boot mode
-+        enum:
-+          - samsung,exynos4210-sysram                 # for Secure SYSRAM
-+          - samsung,exynos4210-sysram-ns              # for Non-secure SYSRAM
++          Bank number, base address (relative to start of the bank) and size
++          of the memory mapped for the device. Note that base address will be
++          typically 0 as this is the start of the bank.
++        maxItems: 1
++
++      reg-io-width:
++        allOf:
++          - $ref: /schemas/types.yaml#/definitions/uint32
++          - enum: [1, 2]
++        description:
++          Data width in bytes (1 or 2). If omitted, default of 1 is used.
++
++      samsung,srom-page-mode:
++        description:
++          If page mode is set, 4 data page mode will be configured,
++          else normal (1 data) page mode will be set.
++        type: boolean
++
++      samsung,srom-timing:
++        allOf:
++          - $ref: /schemas/types.yaml#/definitions/uint32-array
++          - items:
++              minItems: 6
++              maxItems: 6
++        description: |
++          Array of 6 integers, specifying bank timings in the following order:
++          Tacp, Tcah, Tcoh, Tacc, Tcos, Tacs.
++          Each value is specified in cycles and has the following meaning
++          and valid range:
++          Tacp: Page mode access cycle at Page mode (0 - 15)
++          Tcah: Address holding time after CSn (0 - 15)
++          Tcoh: Chip selection hold on OEn (0 - 15)
++          Tacc: Access cycle (0 - 31, the actual time is N + 1)
++          Tcos: Chip selection set-up before OEn (0 - 15)
++          Tacs: Address set-up before CSn (0 - 15)
++
++    required:
++      - reg
++      - samsung,srom-timing
++
++required:
++  - compatible
++  - reg
++
++allOf:
++  - if:
++      anyOf:
++        - required: [ "#address-cells" ]
++        - required: [ ranges ]
++        - required: [ "#size-cells" ]
++    then:
++      required:
++        - "#address-cells"
++        - ranges
++        - "#size-cells"
 +
 +examples:
 +  - |
-+    sysram@2020000 {
-+      compatible = "mmio-sram";
-+      reg = <0x02020000 0x54000>;
-+      #address-cells = <1>;
++    // Example: basic definition, no banks are configured
++    memory-controller@12560000 {
++      compatible = "samsung,exynos4210-srom";
++      reg = <0x12560000 0x14>;
++    };
++
++    // Example: SROMc with SMSC911x ethernet chip on bank 3
++    memory-controller@12570000 {
++      #address-cells = <2>;
 +      #size-cells = <1>;
-+      ranges = <0 0x02020000 0x54000>;
++      ranges = <0 0 0x04000000 0x20000   // Bank0
++                1 0 0x05000000 0x20000   // Bank1
++                2 0 0x06000000 0x20000   // Bank2
++                3 0 0x07000000 0x20000>; // Bank3
 +
-+      smp-sysram@0 {
-+        compatible = "samsung,exynos4210-sysram";
-+        reg = <0x0 0x1000>;
-+      };
++      compatible = "samsung,exynos4210-srom";
++      reg = <0x12570000 0x14>;
 +
-+      smp-sysram@53000 {
-+        compatible = "samsung,exynos4210-sysram-ns";
-+        reg = <0x53000 0x1000>;
++      ethernet@3,0 {
++        compatible = "smsc,lan9115";
++        reg = <3 0 0x10000>;     // Bank 3, offset = 0
++        phy-mode = "mii";
++        interrupt-parent = <&gpx0>;
++        interrupts = <5 8>;
++        reg-io-width = <2>;
++        smsc,irq-push-pull;
++        smsc,force-internal-phy;
++
++        samsung,srom-page-mode;
++        samsung,srom-timing = <9 12 1 9 1 1>;
 +      };
 +    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index cdd2f1f3e1f4..36c30f31bdf2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2225,7 +2225,7 @@ F:	drivers/soc/samsung/
- F:	include/linux/soc/samsung/
- F:	Documentation/arm/samsung/
- F:	Documentation/devicetree/bindings/arm/samsung/
--F:	Documentation/devicetree/bindings/sram/samsung-sram.txt
-+F:	Documentation/devicetree/bindings/sram/samsung-sram.yaml
- F:	Documentation/devicetree/bindings/power/pd-samsung.txt
- N:	exynos
- 
 -- 
 2.17.1
