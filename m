@@ -1,13 +1,11 @@
 From: Yao Lihua <ylhuajnu@outlook.com>
-Subject: [PATCH 2/2] ARM: dts: s3c64xx: specify dependency of clock providers
-Date: Sat, 7 Sep 2019 02:48:12 +0000
-Message-ID: <BY5PR12MB36991E62DD57AA6962C05420C4B50@BY5PR12MB3699.namprd12.prod.outlook.com>
-References: <20190907024719.16974-1-ylhuajnu@outlook.com>
+Subject: [PATCH] ARM: SAMSUNG: Fix system restart support on s3c6410
+Date: Sat, 7 Sep 2019 03:30:01 +0000
+Message-ID: <BY5PR12MB3699F7EF4920F878F3096DE7C4B50@BY5PR12MB3699.namprd12.prod.outlook.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190907024719.16974-1-ylhuajnu@outlook.com>
 Content-Language: en-US
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -24,39 +22,25 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Lihua Yao <ylhuajnu@outlook.com>
 
-fin_pll is the parent of clock-controller@7e00f000, specify
-the dependency to ensure proper initialization order of clock
-providers.
+S3C6410 system restart is triggered by watchdog reset.
 
-Fixes: 3f6d439f2022 ("clk: reverse default clk provider initialization order in of_clk_init()")
+Fixes: 9f55342cc2de ("ARM: dts: s3c64xx: Fix infinite interrupt in soft mode")
 Signed-off-by: Lihua Yao <ylhuajnu@outlook.com>
 ---
- arch/arm/boot/dts/s3c6400.dtsi | 1 +
- arch/arm/boot/dts/s3c6410.dtsi | 1 +
- 2 files changed, 2 insertions(+)
+ arch/arm/plat-samsung/watchdog-reset.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/s3c6400.dtsi b/arch/arm/boot/dts/s3c6400.dtsi
-index 8c28e8a0c824..ef5a8fa3555c 100644
---- a/arch/arm/boot/dts/s3c6400.dtsi
-+++ b/arch/arm/boot/dts/s3c6400.dtsi
-@@ -34,5 +34,6 @@
- 		compatible = "samsung,s3c6400-clock";
- 		reg = <0x7e00f000 0x1000>;
- 		#clock-cells = <1>;
-+		clocks = <&fin_pll>;
- 	};
+diff --git a/arch/arm/plat-samsung/watchdog-reset.c b/arch/arm/plat-samsung/watchdog-reset.c
+index ce42cc640a61..71d85ff323f7 100644
+--- a/arch/arm/plat-samsung/watchdog-reset.c
++++ b/arch/arm/plat-samsung/watchdog-reset.c
+@@ -62,6 +62,7 @@ void samsung_wdt_reset(void)
+ #ifdef CONFIG_OF
+ static const struct of_device_id s3c2410_wdt_match[] = {
+ 	{ .compatible = "samsung,s3c2410-wdt" },
++	{ .compatible = "samsung,s3c6410-wdt" },
+ 	{},
  };
-diff --git a/arch/arm/boot/dts/s3c6410.dtsi b/arch/arm/boot/dts/s3c6410.dtsi
-index a766d6de696c..b201b71d45b5 100644
---- a/arch/arm/boot/dts/s3c6410.dtsi
-+++ b/arch/arm/boot/dts/s3c6410.dtsi
-@@ -38,6 +38,7 @@
- 		compatible = "samsung,s3c6410-clock";
- 		reg = <0x7e00f000 0x1000>;
- 		#clock-cells = <1>;
-+		clocks = <&fin_pll>;
- 	};
  
- 	i2c1: i2c@7f00f000 {
 -- 
 2.17.1
