@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 07/11] dt-bindings: arm: samsung: Convert Exynos PMU bindings to json-schema
-Date: Sat,  7 Sep 2019 11:20:03 +0200
-Message-ID: <20190907092007.9946-7-krzk@kernel.org>
+Subject: [PATCH v2 08/11] dt-bindings: arm: samsung: Convert Exynos System Registers bindings to json-schema
+Date: Sat,  7 Sep 2019 11:20:04 +0200
+Message-ID: <20190907092007.9946-8-krzk@kernel.org>
 References: <20190907092007.9946-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190907092007.9946-1-krzk@kernel.org>
@@ -9,121 +9,64 @@ Sender: linux-kernel-owner@vger.kernel.org
 To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Sebastian Reichel <sre@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Convert Samsung Exynos Power Management Unit (PMU) bindings to DT schema
+Convert Samsung Exynos System Registers (SYSREG) bindings to DT schema
 format using json-schema.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 ---
 
-Changes since v1:
-1. Fix clock-names to match all elements against schema (any number of
-   any clkoutN values).
-   This currently fails:
-       properties:clock-names:items: {'enum': ['clkout0', 'clkout1', 'clkout2',
-       'clkout3', 'clkout4', 'clkout5', 'clkout6', 'clkout7', 'clkout8',
-       'clkout9', 'clkout10', 'clkout11', 'clkout12', 'clkout13', 'clkout14',
-       'clkout15', 'clkout16']} is not of type 'array
+Example somehow fails:
+Documentation/devicetree/bindings/arm/samsung/pmu.example.dt.yaml:
+system-controller@10040000: compatible:0: 'samsung,exynos5250-pmu' is
+not one of ['samsung,exynos4-sysreg', 'samsung,exynos5-sysreg']
 
-2. Add syscon reboot and poweroff nodes.
+It seems that PMU schema is applied to sysreq nodes (and vice-versa).
 ---
- .../devicetree/bindings/arm/samsung/pmu.txt   |  72 -----------
- .../devicetree/bindings/arm/samsung/pmu.yaml  | 117 ++++++++++++++++++
- 2 files changed, 117 insertions(+), 72 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/samsung/pmu.txt
- create mode 100644 Documentation/devicetree/bindings/arm/samsung/pmu.yaml
+ .../bindings/arm/samsung/sysreg.txt           | 19 -----------
+ .../bindings/arm/samsung/sysreg.yaml          | 33 +++++++++++++++++++
+ 2 files changed, 33 insertions(+), 19 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/samsung/sysreg.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/samsung/sysreg.yaml
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+diff --git a/Documentation/devicetree/bindings/arm/samsung/sysreg.txt b/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
 deleted file mode 100644
-index 433bfd7593ac..000000000000
---- a/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+index 4fced6e9d5e4..000000000000
+--- a/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
 +++ /dev/null
-@@ -1,72 +0,0 @@
--SAMSUNG Exynos SoC series PMU Registers
+@@ -1,19 +0,0 @@
+-SAMSUNG S5P/Exynos SoC series System Registers (SYSREG)
 -
 -Properties:
 - - compatible : should contain two values. First value must be one from following list:
--		   - "samsung,exynos3250-pmu" - for Exynos3250 SoC,
--		   - "samsung,exynos4210-pmu" - for Exynos4210 SoC,
--		   - "samsung,exynos4412-pmu" - for Exynos4412 SoC,
--		   - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
--		   - "samsung,exynos5260-pmu" - for Exynos5260 SoC.
--		   - "samsung,exynos5410-pmu" - for Exynos5410 SoC,
--		   - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
--		   - "samsung,exynos5433-pmu" - for Exynos5433 SoC.
--		   - "samsung,exynos7-pmu" - for Exynos7 SoC.
+-		- "samsung,exynos4-sysreg" - for Exynos4 based SoCs,
+-		- "samsung,exynos5-sysreg" - for Exynos5 based SoCs.
 -		second value must be always "syscon".
--
 - - reg : offset and length of the register set.
 -
-- - #clock-cells : must be <1>, since PMU requires once cell as clock specifier.
--		The single specifier cell is used as index to list of clocks
--		provided by PMU, which is currently:
--			0 : SoC clock output (CLKOUT pin)
+-Example:
+-	syscon@10010000 {
+-		compatible = "samsung,exynos4-sysreg", "syscon";
+-		reg = <0x10010000 0x400>;
+-	};
 -
-- - clock-names : list of clock names for particular CLKOUT mux inputs in
--		following format:
--			"clkoutN", where N is a decimal number corresponding to
--			CLKOUT mux control bits value for given input, e.g.
--				"clkout0", "clkout7", "clkout15".
--
-- - clocks : list of phandles and specifiers to all input clocks listed in
--		clock-names property.
--
--Optional properties:
--
--Some PMUs are capable of behaving as an interrupt controller (mostly
--to wake up a suspended PMU). In which case, they can have the
--following properties:
--
--- interrupt-controller: indicate that said PMU is an interrupt controller
--
--- #interrupt-cells: must be identical to the that of the parent interrupt
--  controller.
--
--
--Optional nodes:
--
--- nodes defining the restart and poweroff syscon children
--
--
--Example :
--pmu_system_controller: system-controller@10040000 {
--	compatible = "samsung,exynos5250-pmu", "syscon";
--	reg = <0x10040000 0x5000>;
--	interrupt-controller;
--	#interrupt-cells = <3>;
--	interrupt-parent = <&gic>;
--	#clock-cells = <1>;
--	clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
--			"clkout4", "clkout8", "clkout9";
--	clocks = <&clock CLK_OUT_DMC>, <&clock CLK_OUT_TOP>,
--		<&clock CLK_OUT_LEFTBUS>, <&clock CLK_OUT_RIGHTBUS>,
--		<&clock CLK_OUT_CPU>, <&clock CLK_XXTI>,
--		<&clock CLK_XUSBXTI>;
--};
--
--Example of clock consumer :
--
--usb3503: usb3503@8 {
--	/* ... */
--	clock-names = "refclk";
--	clocks = <&pmu_system_controller 0>;
--	/* ... */
--};
-diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.yaml b/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
+-	syscon@10050000 {
+-		compatible = "samsung,exynos5-sysreg", "syscon";
+-		reg = <0x10050000 0x5000>;
+-	};
+diff --git a/Documentation/devicetree/bindings/arm/samsung/sysreg.yaml b/Documentation/devicetree/bindings/arm/samsung/sysreg.yaml
 new file mode 100644
-index 000000000000..a5a02f8237fb
+index 000000000000..a3d44646e441
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
-@@ -0,0 +1,117 @@
++++ b/Documentation/devicetree/bindings/arm/samsung/sysreg.yaml
+@@ -0,0 +1,33 @@
 +# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/arm/samsung/pmu.yaml#
++$id: http://devicetree.org/schemas/arm/samsung/sysreg.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Samsung Exynos SoC series Power Management Unit (PMU)
++title: Samsung S5P/Exynos SoC series System Registers (SYSREG)
 +
 +maintainers:
 +  - Krzysztof Kozlowski <krzk@kernel.org>
@@ -132,107 +75,23 @@ index 000000000000..a5a02f8237fb
 +  compatible:
 +    items:
 +      - enum:
-+          - samsung,exynos3250-pmu
-+          - samsung,exynos4210-pmu
-+          - samsung,exynos4412-pmu
-+          - samsung,exynos5250-pmu
-+          - samsung,exynos5260-pmu
-+          - samsung,exynos5410-pmu
-+          - samsung,exynos5420-pmu
-+          - samsung,exynos5433-pmu
-+          - samsung,exynos7-pmu
++          - samsung,exynos4-sysreg
++          - samsung,exynos5-sysreg
 +      - const: syscon
 +
 +  reg:
 +    maxItems: 1
 +
-+  '#clock-cells':
-+    const: 1
-+
-+  clock-names:
-+    description:
-+      List of clock names for particular CLKOUT mux inputs
-+    minItems: 1
-+    maxItems: 32
-+    items:
-+      enum:
-+        - clkout0
-+        - clkout1
-+        - clkout2
-+        - clkout3
-+        - clkout4
-+        - clkout5
-+        - clkout6
-+        - clkout7
-+        - clkout8
-+        - clkout9
-+        - clkout10
-+        - clkout11
-+        - clkout12
-+        - clkout13
-+        - clkout14
-+        - clkout15
-+        - clkout16
-+        - clkout17
-+        - clkout18
-+        - clkout19
-+        - clkout20
-+        - clkout21
-+        - clkout22
-+        - clkout23
-+        - clkout24
-+        - clkout25
-+        - clkout26
-+        - clkout27
-+        - clkout28
-+        - clkout29
-+        - clkout30
-+        - clkout31
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 32
-+
-+  interrupt-controller:
-+    description:
-+      Some PMUs are capable of behaving as an interrupt controller (mostly
-+      to wake up a suspended PMU).
-+
-+  '#interrupt-cells':
-+    description:
-+      Must be identical to the that of the parent interrupt controller.
-+    const: 3
-+
-+  syscon-poweroff:
-+    $ref: "../../power/reset/syscon-poweroff.yaml#"
-+    type: object
-+    description:
-+      Node for power off method
-+
-+  syscon-reboot:
-+    $ref: "../../power/reset/syscon-reboot.yaml#"
-+    type: object
-+    description:
-+      Node for reboot method
-+
-+required:
-+  - compatible
-+  - reg
-+  - '#clock-cells'
-+  - clock-names
-+  - clocks
-+
 +examples:
 +  - |
-+    pmu_system_controller: system-controller@10040000 {
-+      compatible = "samsung,exynos5250-pmu", "syscon";
-+      reg = <0x10040000 0x5000>;
-+      interrupt-controller;
-+      #interrupt-cells = <3>;
-+      interrupt-parent = <&gic>;
-+      #clock-cells = <1>;
-+      clock-names = "clkout16";
-+      clocks = <&clock 0>; // CLK_FIN_PLL
++    syscon@10010000 {
++      compatible = "samsung,exynos4-sysreg", "syscon";
++      reg = <0x10010000 0x400>;
++    };
++
++    syscon@10050000 {
++      compatible = "samsung,exynos5-sysreg", "syscon";
++      reg = <0x10050000 0x5000>;
 +    };
 -- 
 2.17.1
