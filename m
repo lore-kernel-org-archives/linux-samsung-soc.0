@@ -1,49 +1,334 @@
-From: Andi Shyti <andi@etezian.org>
-Subject: Re: [PATCH -next 25/36] spi: s3c24xx: use
- devm_platform_ioremap_resource() to simplify code
-Date: Sun, 8 Sep 2019 02:38:10 +0300
-Message-ID: <20190907233810.GA15768@jack.zhora.eu>
-References: <20190904135918.25352-1-yuehaibing@huawei.com>
- <20190904135918.25352-26-yuehaibing@huawei.com>
- <CAJKOXPdq4as1Oe3U+9znkvP0RA=sxUoiWVBCSbzf_wq_um2t=w@mail.gmail.com>
- <3595bac1-e426-b4f9-4e24-01e104fdfe5d@huawei.com>
+From: Jonathan Cameron <jic23@kernel.org>
+Subject: Re: [PATCH v2 10/11] dt-bindings: iio: adc: exynos: Convert Exynos
+ ADC bindings to json-schema
+Date: Sun, 8 Sep 2019 13:29:44 +0100
+Message-ID: <20190908132944.029f3a93@archlinux>
+References: <20190907092007.9946-1-krzk@kernel.org>
+        <20190907092007.9946-10-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <3595bac1-e426-b4f9-4e24-01e104fdfe5d@huawei.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-riscv>,
- <mailto:linux-riscv-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-riscv/>
-List-Post: <mailto:linux-riscv@lists.infradead.org>
-List-Help: <mailto:linux-riscv-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-riscv>,
- <mailto:linux-riscv-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-riscv" <linux-riscv-bounces@lists.infradead.org>
-Errors-To: linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org
-To: Yuehaibing <yuehaibing@huawei.com>
-Cc: tmaimon77@gmail.com, palmer@sifive.com, tali.perry1@gmail.com, eric@anholt.net, ldewangan@nvidia.com, linux-riscv@lists.infradead.org, festevam@gmail.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, f.fainelli@gmail.com, benjaminfair@google.com, shc_work@mail.ru, khilman@baylibre.com, openbmc@lists.ozlabs.org, michal.simek@xilinx.com, Krzysztof Kozlowski <krzk@kernel.org>, jonathanh@nvidia.com, yuenn@google.com, wens@csie.org, agross@kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-imx@nxp.com, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, Andi Shyti <andi@etezian.org>, rjui@broadcom.com, s.hauer@pengutronix.de, mripard@kernel.org, broonie@kernel.org, linux-mediatek@lists.infradead.org, linux-rpi-kernel@lists.infradead.org, paul.walmsley@sifive.com, matthias.bgg@gmail.com, linux-amlogic@lists.infradead.org, linux-arm-ker
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190907092007.9946-10-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Sebastian Reichel <sre@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, =?UTF-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Yuehaibing,
+On Sat,  7 Sep 2019 11:20:06 +0200
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-> >> Use devm_platform_ioremap_resource() to simplify the code a bit.
-> >> This is detected by coccinelle.
-> >>
-> >> Reported-by: Hulk Robot <hulkci@huawei.com>
-> > 
-> > This tag does not look real... First of all where is the report?
+> Convert Samsung Exynos Analog to Digital Converter bindings to DT schema
+> format using json-schema.
 > 
-> It is our internal CI robot, which is unavailable to external temporarily.
+> This is a direct conversion of existing bindings so it also copies the
+> existing error in the bindings regarding the requirement of two register
+> address ranges for certain compatibles.  The inconsistency in binding
+> was caused by commit fafb37cfae6d ("iio: exyno-adc: use syscon for PMU
+> register access").
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Hulk Robot is not a person and not accountable for his report.
-If it is your internal CI, please write a sentence stating that
-the fix has been made using Huawei internal tools.
+To my less than experienced eye when it comes to yaml, this looks fine.
+I'll wait on more experienced review before I apply it however!
 
-Credit must be given to tools as well, but not accounts that will
-never answer an e-mail.
+Thanks,
 
-Otherwise, the patch would look fine.
+Jonathan
 
-Andi
+> 
+> ---
+> 
+> Changes since v1:
+> 1. Rework reg, clocks and clock-names matching for specific compatibles,
+> 2. Make samsung,syscon-phandle required only on certain compatibles,
+> 3. Fix indentation.
+> ---
+>  .../bindings/iio/adc/samsung,exynos-adc.txt   | 107 ------------
+>  .../bindings/iio/adc/samsung,exynos-adc.yaml  | 163 ++++++++++++++++++
+>  2 files changed, 163 insertions(+), 107 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.txt
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.txt b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.txt
+> deleted file mode 100644
+> index e1fe02f3e3e9..000000000000
+> --- a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.txt
+> +++ /dev/null
+> @@ -1,107 +0,0 @@
+> -Samsung Exynos Analog to Digital Converter bindings
+> -
+> -The devicetree bindings are for the new ADC driver written for
+> -Exynos4 and upward SoCs from Samsung.
+> -
+> -New driver handles the following
+> -1. Supports ADC IF found on EXYNOS4412/EXYNOS5250
+> -   and future SoCs from Samsung
+> -2. Add ADC driver under iio/adc framework
+> -3. Also adds the Documentation for device tree bindings
+> -
+> -Required properties:
+> -- compatible:		Must be "samsung,exynos-adc-v1"
+> -				for Exynos5250 controllers.
+> -			Must be "samsung,exynos-adc-v2" for
+> -				future controllers.
+> -			Must be "samsung,exynos3250-adc" for
+> -				controllers compatible with ADC of Exynos3250.
+> -			Must be "samsung,exynos4212-adc" for
+> -				controllers compatible with ADC of Exynos4212 and Exynos4412.
+> -			Must be "samsung,exynos7-adc" for
+> -				the ADC in Exynos7 and compatibles
+> -			Must be "samsung,s3c2410-adc" for
+> -				the ADC in s3c2410 and compatibles
+> -			Must be "samsung,s3c2416-adc" for
+> -				the ADC in s3c2416 and compatibles
+> -			Must be "samsung,s3c2440-adc" for
+> -				the ADC in s3c2440 and compatibles
+> -			Must be "samsung,s3c2443-adc" for
+> -				the ADC in s3c2443 and compatibles
+> -			Must be "samsung,s3c6410-adc" for
+> -				the ADC in s3c6410 and compatibles
+> -			Must be "samsung,s5pv210-adc" for
+> -				the ADC in s5pv210 and compatibles
+> -- reg:			List of ADC register address range
+> -			- The base address and range of ADC register
+> -			- The base address and range of ADC_PHY register (every
+> -			  SoC except for s3c24xx/s3c64xx ADC)
+> -- interrupts: 		Contains the interrupt information for the timer. The
+> -			format is being dependent on which interrupt controller
+> -			the Samsung device uses.
+> -- #io-channel-cells = <1>; As ADC has multiple outputs
+> -- clocks		From common clock bindings: handles to clocks specified
+> -			in "clock-names" property, in the same order.
+> -- clock-names		From common clock bindings: list of clock input names
+> -			used by ADC block:
+> -			- "adc" : ADC bus clock
+> -			- "sclk" : ADC special clock (only for Exynos3250 and
+> -				   compatible ADC block)
+> -- vdd-supply		VDD input supply.
+> -
+> -- samsung,syscon-phandle Contains the PMU system controller node
+> -			(To access the ADC_PHY register on Exynos5250/5420/5800/3250)
+> -Optional properties:
+> -- has-touchscreen:	If present, indicates that a touchscreen is
+> -			connected an usable.
+> -
+> -Note: child nodes can be added for auto probing from device tree.
+> -
+> -Example: adding device info in dtsi file
+> -
+> -adc: adc@12d10000 {
+> -	compatible = "samsung,exynos-adc-v1";
+> -	reg = <0x12D10000 0x100>;
+> -	interrupts = <0 106 0>;
+> -	#io-channel-cells = <1>;
+> -	io-channel-ranges;
+> -
+> -	clocks = <&clock 303>;
+> -	clock-names = "adc";
+> -
+> -	vdd-supply = <&buck5_reg>;
+> -	samsung,syscon-phandle = <&pmu_system_controller>;
+> -};
+> -
+> -Example: adding device info in dtsi file for Exynos3250 with additional sclk
+> -
+> -adc: adc@126c0000 {
+> -	compatible = "samsung,exynos3250-adc", "samsung,exynos-adc-v2;
+> -	reg = <0x126C0000 0x100>;
+> -	interrupts = <0 137 0>;
+> -	#io-channel-cells = <1>;
+> -	io-channel-ranges;
+> -
+> -	clocks = <&cmu CLK_TSADC>, <&cmu CLK_SCLK_TSADC>;
+> -	clock-names = "adc", "sclk";
+> -
+> -	vdd-supply = <&buck5_reg>;
+> -	samsung,syscon-phandle = <&pmu_system_controller>;
+> -};
+> -
+> -Example: Adding child nodes in dts file
+> -
+> -adc@12d10000 {
+> -
+> -	/* NTC thermistor is a hwmon device */
+> -	ncp15wb473@0 {
+> -		compatible = "murata,ncp15wb473";
+> -		pullup-uv = <1800000>;
+> -		pullup-ohm = <47000>;
+> -		pulldown-ohm = <0>;
+> -		io-channels = <&adc 4>;
+> -	};
+> -};
+> -
+> -Note: Does not apply to ADC driver under arch/arm/plat-samsung/
+> -Note: The child node can be added under the adc node or separately.
+> diff --git a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+> new file mode 100644
+> index 000000000000..dd58121f25b1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+> @@ -0,0 +1,163 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/samsung,exynos-adc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Samsung Exynos Analog to Digital Converter (ADC)
+> +
+> +maintainers:
+> +  - Krzysztof Kozlowski <krzk@kernel.org>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - samsung,exynos-adc-v1                 # Exynos5250
+> +      - samsung,exynos-adc-v2
+> +      - samsung,exynos3250-adc
+> +      - samsung,exynos4212-adc                # Exynos4212 and Exynos4412
+> +      - samsung,exynos7-adc
+> +      - samsung,s3c2410-adc
+> +      - samsung,s3c2416-adc
+> +      - samsung,s3c2440-adc
+> +      - samsung,s3c2443-adc
+> +      - samsung,s3c6410-adc
+> +      - samsung,s5pv210-adc
+> +
+> +  reg:
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  clocks:
+> +    description:
+> +      Phandle to ADC bus clock. For Exynos3250 additional clock is needed.
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  clock-names:
+> +    description:
+> +      Must contain clock names (adc, sclk) matching phandles in clocks
+> +      property.
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  "#io-channel-cells":
+> +    const: 1
+> +
+> +  vdd-supply:
+> +    description: VDD input supply
+> +    maxItems: 1
+> +
+> +  samsung,syscon-phandle:
+> +    $ref: '/schemas/types.yaml#/definitions/phandle'
+> +    description:
+> +      Phandle to the PMU system controller node (to access the ADC_PHY
+> +      register on Exynos5250/5420/5800/3250).
+> +
+> +  has-touchscreen:
+> +    description:
+> +      If present, indicates that a touchscreen is connected and usable.
+> +    type: boolean
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - interrupts
+> +  - "#io-channel-cells"
+> +  - vdd-supply
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - samsung,exynos-adc-v1
+> +              - samsung,exynos-adc-v2
+> +              - samsung,exynos3250-adc
+> +              - samsung,exynos4212-adc
+> +              - samsung,s5pv210-adc
+> +    then:
+> +      properties:
+> +        reg:
+> +          items:
+> +            # For S5P and Exynos
+> +            - description: base registers
+> +            - description: phy registers
+> +      required:
+> +        - samsung,syscon-phandle
+> +    else:
+> +      properties:
+> +        reg:
+> +          items:
+> +            - description: base registers
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - samsung,exynos3250-adc
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 2
+> +          maxItems: 2
+> +        clock-names:
+> +          items:
+> +            - const: adc
+> +            - const: sclk
+> +    else:
+> +      properties:
+> +        clocks:
+> +          minItems: 1
+> +          maxItems: 1
+> +        clock-names:
+> +          items:
+> +            - const: adc
+> +
+> +examples:
+> +  - |
+> +    adc: adc@12d10000 {
+> +      compatible = "samsung,exynos-adc-v1";
+> +      reg = <0x12d10000 0x100>;
+> +      interrupts = <0 106 0>;
+> +      #io-channel-cells = <1>;
+> +      io-channel-ranges;
+> +
+> +      clocks = <&clock 303>;
+> +      clock-names = "adc";
+> +
+> +      vdd-supply = <&buck5_reg>;
+> +      samsung,syscon-phandle = <&pmu_system_controller>;
+> +
+> +      /* NTC thermistor is a hwmon device */
+> +      ncp15wb473@0 {
+> +        compatible = "murata,ncp15wb473";
+> +        pullup-uv = <1800000>;
+> +        pullup-ohm = <47000>;
+> +        pulldown-ohm = <0>;
+> +        io-channels = <&adc 4>;
+> +      };
+> +    };
+> +
+> +  - |
+> +    adc@126c0000 {
+> +      compatible = "samsung,exynos3250-adc";
+> +      reg = <0x126C0000 0x100>;
+> +      interrupts = <0 137 0>;
+> +      #io-channel-cells = <1>;
+> +      io-channel-ranges;
+> +
+> +      clocks = <&cmu 0>, // CLK_TSADC
+> +               <&cmu 1>; // CLK_SCLK_TSADC
+> +      clock-names = "adc", "sclk";
+> +
+> +      vdd-supply = <&buck5_reg>;
+> +      samsung,syscon-phandle = <&pmu_system_controller>;
+> +    };
