@@ -1,14 +1,17 @@
-From: "krzk@kernel.org" <krzk@kernel.org>
-Subject: Re: [PATCH] ARM: SAMSUNG: Fix system restart support on s3c6410
-Date: Mon, 9 Sep 2019 20:55:47 +0200
-Message-ID: <20190909185547.GC10091@kozik-lap>
-References: <BY5PR12MB3699F7EF4920F878F3096DE7C4B50@BY5PR12MB3699.namprd12.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 2/2] ARM: exynos: Enable support for ARM architected
+ timers
+Date: Mon, 9 Sep 2019 20:58:43 +0200
+Message-ID: <20190909185843.GA9827@kozik-lap>
+References: <20190828121005.29368-1-m.szyprowski@samsung.com>
+ <CGME20190828121012eucas1p2fb78bfebe16d744dc28194bb224650e2@eucas1p2.samsung.com>
+ <20190828121005.29368-3-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <BY5PR12MB3699F7EF4920F878F3096DE7C4B50@BY5PR12MB3699.namprd12.prod.outlook.com>
+In-Reply-To: <20190828121005.29368-3-m.szyprowski@samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -18,21 +21,21 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Yao Lihua <ylhuajnu@outlook.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene@kernel.org" <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc@vger.kernel.org, Marc Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sat, Sep 07, 2019 at 03:30:01AM +0000, Yao Lihua wrote:
-> From: Lihua Yao <ylhuajnu@outlook.com>
+On Wed, Aug 28, 2019 at 02:10:05PM +0200, Marek Szyprowski wrote:
+> ARM architected timer can be used together with Exynos MultiCore Timer
+> driver, so enable support for it. Support for ARM architected timers is
+> essential for enabling proper KVM support.
 > 
-> S3C6410 system restart is triggered by watchdog reset.
-> 
-> Fixes: 9f55342cc2de ("ARM: dts: s3c64xx: Fix infinite interrupt in soft mode")
-> Signed-off-by: Lihua Yao <ylhuajnu@outlook.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->  arch/arm/plat-samsung/watchdog-reset.c | 1 +
+>  arch/arm/mach-exynos/Kconfig | 1 +
 
-Thanks, applied.
+Thanks, applied this one only from the set (I will have send another soc
+pull request before merge window).
 
 Best regards,
 Krzysztof
