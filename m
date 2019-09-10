@@ -1,45 +1,55 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH 4/7] dt-bindings: chosen: Add clocksource and clockevent
- selection
-Date: Tue, 10 Sep 2019 15:32:31 +0100
-Message-ID: <20190910143231.GB14966@e107533-lin.cambridge.arm.com>
-References: <1568123236-767-1-git-send-email-claudiu.beznea@microchip.com>
- <1568123236-767-5-git-send-email-claudiu.beznea@microchip.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 0/2] Fix init order of S3C64xx's clock providers
+Date: Tue, 10 Sep 2019 16:34:35 +0200
+Message-ID: <CAJKOXPdJnXP8t-E4aWcnxRNykkULYfFUyC9173SKepQ8z+ykCQ@mail.gmail.com>
+References: <BY5PR12MB3699A8D741EF6226B8DB65E4C4B50@BY5PR12MB3699.namprd12.prod.outlook.com>
+ <20190909184504.GA10091@kozik-lap>
+ <BY5PR12MB36991B9B4E33B2A3093132BCC4B60@BY5PR12MB3699.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1568123236-767-5-git-send-email-claudiu.beznea@microchip.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-snps-arc>,
- <mailto:linux-snps-arc-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-snps-arc/>
-List-Post: <mailto:linux-snps-arc@lists.infradead.org>
-List-Help: <mailto:linux-snps-arc-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-snps-arc>,
- <mailto:linux-snps-arc-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-snps-arc" <linux-snps-arc-bounces@lists.infradead.org>
-Errors-To: linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org
-To: Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc: tmaimon77@gmail.com, linus.walleij@linaro.org, nsekhar@ti.com, guoren@kernel.org, linux-stm32@st-md-mailman.stormreply.com, heiko@sntech.de, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, khilman@baylibre.com, ludovic.desroches@microchip.com, linux-imx@nxp.com, u.kleine-koenig@pengutronix.de, uclinux-h8-devel@lists.sourceforge.jp, marc.zyngier@arm.com, s.hauer@pengutronix.de, linux-unisoc@lists.infradead.org, khalasa@piap.pl, tglx@linutronix.de, sbranden@broadcom.com, linux-kernel@vger.kernel.org, ralf@linux-mips.org, paul.burton@mips.com, kernel@pengutronix.de, mark.rutland@arm.com, alexandre.belloni@bootlin.com, jhogan@kernel.org, palmer@sifive.com, eric@anholt.net, thierry.reding@gmail.com, manivannan.sadhasivam@linaro.org, ysato@users.sourceforge.jp, zhang.lyra@gmail.com, daniel.lezcano@linaro.org, jonathanh@nvidia.com, bgolaszewski@baylibre.co
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <BY5PR12MB36991B9B4E33B2A3093132BCC4B60@BY5PR12MB3699.namprd12.prod.outlook.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Lihua Yao <ylhuajnu@outlook.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene@kernel.org" <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 04:47:13PM +0300, Claudiu Beznea wrote:
-> From: Alexandre Belloni <alexandre.belloni@bootlin.com>
->
-> Some timer drivers may behave either as clocksource or clockevent
-> or both. Until now, in case of platforms with multiple hardware
-> resources of the same type, the drivers were chosing the first
-> registered hardware resource as clocksource/clockevent and the
-> next one as clockevent/clocksource. Other were using different
-> compatibles (one for each functionality, although its about the
-> same hardware). Add DT bindings to be able to choose the
-> functionality of a timer.
->
-
-Is the piece of hardware not capable of serving as both clocksource
-and clockevent or is it just the platform choice ?
-
---
-Regards,
-Sudeep
+T24gVHVlLCAxMCBTZXAgMjAxOSBhdCAxNDo1NiwgTGlodWEgWWFvIDx5bGh1YWpudUBvdXRsb29r
+LmNvbT4gd3JvdGU6Cj4KPiBIaSAgS3J6eXN6dG9m77yMCj4KPiBPbiAxMC85LzIwMTkgMjo0NSBB
+TSwga3J6a0BrZXJuZWwub3JnIHdyb3RlOgo+Cj4gT24gU2F0LCBTZXAgMDcsIDIwMTkgYXQgMDI6
+NDc6NDhBTSArMDAwMCwgWWFvIExpaHVhIHdyb3RlOgo+Cj4gRnJvbTogTGlodWEgWWFvIDx5bGh1
+YWpudUBvdXRsb29rLmNvbT4KPgo+IEVuc3VyZSBmaW5fcGxsIGlzIGluaXRpYWxpemVkIGJlZm9y
+ZSBjbG9jay1jb250cm9sbGVyQDdlMDBmMDAwIHNvCj4gd2UgaGF2ZSBjb3JyZWN0IGNsb2NrIGZy
+ZXF1ZW5jeSBsaWtlIGJlbG93Ogo+Cj4gWyAgICAwLjAwMDAwMF0gUzNDNjQxMCBjbG9ja3M6IGFw
+bGwgPSA1MzIwMDAwMDAsIG1wbGwgPSA1MzIwMDAwMDAKPiBbICAgIDAuMDAwMDAwXSAgZXBsbCA9
+IDI0MDAwMDAwLCBhcm1fY2xrID0gNTMyMDAwMDAwCj4KPiBIaSwKPgo+IFVuZm9ydHVuYXRlbHkg
+eW91ciBwYXRjaGVzIG1pc3NlZCB0aGUgc2Ftc3VuZy1zb2MgbWFpbGluZyBsaXN0Ogo+IGh0dHBz
+Oi8vd3d3LnNwaW5pY3MubmV0L2xpc3RzL2xpbnV4LXNhbXN1bmctc29jLwo+Cj4gTWF5YmUgeW91
+IG5lZWQgdG8gYmUgc3Vic2NyaWJlZD8KPgo+IEluIGdlbmVyYWwsIGlmIHRoZSBwYXRjaGVzIGFy
+ZSBub3QgdGhlcmUsIEkgZG8gbm90IHNlZSB0aGVtIHVuZGVyCj4gUGF0Y2h3b3JrLiBZb3UgbWlz
+cyBhbHNvIHJldmlldyBmcm9tIFNhbXN1bmcgZm9sa3MuCj4KPiBJIGhhZCB0cmllZCBzdWJzY3Jp
+YmluZyBtYWlsIGxpc3QgYnV0IGdvdCByZWplY3RlZCBieSB2Z2VyLmtlcm5lbC5vcmcuCj4KPiAg
+IG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiAgIHZnZXIua2VybmVsLm9yZwo+ICAgUmVtb3Rl
+IFNlcnZlciByZXR1cm5lZCAnNTUzIDUuNy4xIEhlbGxvIFs0MC45Mi4xMS4zOF0sIGZvciB5b3Vy
+IE1BSUwgRlJPTSBhZGRyZXNzIDx5bGh1YWpudUBvdXRsb29rLmNvbT4gcG9saWN5IGFuYWx5c2lz
+IHJlcG9ydGVkOiAgIFlvdXIgYWRkcmVzcyBpcyBub3QgbGlrZWQgc291cmNlIGZvciBlbWFpbCcK
+Pgo+IEkgaGFkIHVzZWQgbXkgQDE2My5jb20gZW1haWwgdG9vIGJ1dCBnb3Qgbm90aGluZy4gSSBj
+b3VsZG4ndCB1c2UgZ21haWwKPiBhcyBnb29nbGUncyBzZXJ2aWNlcyBhcmUgYmxvY2tlZCBmcm9t
+IGNoaW5hIG1haW5sYW5kLgo+Cj4gV291bGQgeW91IGtpbmRseSByZWNvbW1lbmQgc29tZSBlbWFp
+bCBzZXJ2ZXJzIHRoYXQgdmdlci5rZXJuZWwub3JnIGlzCj4gaGFwcHkgdG8gYWNjZXB0PwoKSW5k
+ZWVkIG91dGxvb2suY29tIHNlZW1zIHRvIGJlIGJsb2NrZWQuIEkgZG8gbm90IGtub3cgd2hhdCBv
+dGhlcgpzZXJ2aWNlcyBhcmUgYWNjZXB0ZWQuIFRoZXJlIGFyZSBtYW55IENoaW5hLWJhc2VkIGRl
+dmVsb3BlcnMgYW5kCnNvbWVob3cgdGhleSBhcmUgYWJsZSB0byBzZW5kIHRvIExLTUwuCgpCZXN0
+IHJlZ2FyZHMsCktyenlzenRvZgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5l
+bEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4v
+bGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
