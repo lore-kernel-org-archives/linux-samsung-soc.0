@@ -1,70 +1,68 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: s2mps11: Consistently use local variable" to the regulator tree
-Date: Tue, 10 Sep 2019 11:07:00 +0100 (BST)
-Message-ID: <20190910100700.2F4B8D02D74@fitzroy.sirena.org.uk>
-References: <20190909155723.24734-1-krzk@kernel.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v4 0/6] Exynos Adaptive Supply Voltage support
+Date: Tue, 10 Sep 2019 14:36:12 +0200
+Message-ID: <20190910123618.27985-1-s.nawrocki@samsung.com>
+References: <CGME20190910123632eucas1p2cf941da5f74b892288dd5a92ff9fa9fb@eucas1p2.samsung.com>
+Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190909155723.24734-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>
+To: krzk@kernel.org, vireshk@kernel.org
+Cc: robh+dt@kernel.org, kgene@kernel.org, devicetree@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch
+This is fourth iteration of my patch series adding ASV (Adaptive Supply 
+Voltage) support for Exynos SoCs. The previous one can be found at:
+https://lkml.org/lkml/2019/8/13/808
 
-   regulator: s2mps11: Consistently use local variable
+Major change since v3 is a conversion to use dev_pm_opp_adjust_voltage(),
+rather than removing and adding an OPP again. Hence the series now 
+depends on patch [1].
 
-has been applied to the regulator tree at
+I have included here a patch to address review comments
+"opp: Handle target/min/max voltage in dev_pm_opp_adjust_voltage()",
+which could be squashed with patch [1].
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.4
+The CHIPID patches are dropped from the series as they have already 
+been merged.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+The patch set is based on for-next branch, 
+git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Tested on Odroid XU3, XU3 Lite, XU4.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+One of the things on TODO list is support for the Adaptive Body Bias.
+This would require modifications on the cpufreq driver side in order 
+to support multiple voltage regulators as well as changes in the OPP 
+framework to support adding OPPs with multiple voltages.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+[1] "[v4, 6/8] PM / OPP: Support adjusting OPP voltages at runtime"
+    https://lore.kernel.org/linux-arm-kernel/1565703113-31479-7-git-send-email-andrew-sh.cheng@mediatek.com
 
-Thanks,
-Mark
+Sylwester Nawrocki (6):
+  opp: Handle target/min/max voltage in dev_pm_opp_adjust_voltage()
+  dt-bindings: samsung: Update the CHIP ID binding documentation
+  soc: samsung: Add Exynos Adaptive Supply Voltage driver
+  ARM: EXYNOS: Enable exynos-asv driver for ARCH_EXYNOS
+  ARM: dts: Add "syscon" compatible string to chipid node
+  ARM: dts: Add samsung,asv-bin property for odroidxu3-lite
 
->From d57d90f4443bd725b3facdc6130a1940af4560c4 Mon Sep 17 00:00:00 2001
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Mon, 9 Sep 2019 17:57:23 +0200
-Subject: [PATCH] regulator: s2mps11: Consistently use local variable
+ .../bindings/arm/samsung/exynos-chipid.txt    |  10 +-
+ arch/arm/boot/dts/exynos5.dtsi                |   4 +-
+ .../boot/dts/exynos5422-odroidxu3-lite.dts    |   4 +
+ arch/arm/mach-exynos/Kconfig                  |   1 +
+ drivers/opp/core.c                            |  10 +-
+ drivers/soc/samsung/Kconfig                   |  10 +
+ drivers/soc/samsung/Makefile                  |   3 +
+ drivers/soc/samsung/exynos-asv.c              | 179 ++++++
+ drivers/soc/samsung/exynos-asv.h              |  82 +++
+ drivers/soc/samsung/exynos5422-asv.c          | 509 ++++++++++++++++++
+ drivers/soc/samsung/exynos5422-asv.h          |  25 +
+ include/linux/pm_opp.h                        |   3 +-
+ 12 files changed, 833 insertions(+), 7 deletions(-)
+ create mode 100644 drivers/soc/samsung/exynos-asv.c
+ create mode 100644 drivers/soc/samsung/exynos-asv.h
+ create mode 100644 drivers/soc/samsung/exynos5422-asv.c
+ create mode 100644 drivers/soc/samsung/exynos5422-asv.h
 
-The value under 's2mps11->ext_control_gpiod[i]' is assigned to local
-variable and used in probe in one place before.  Use it consistently
-later so code will be easier to read.
-
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Link: https://lore.kernel.org/r/20190909155723.24734-1-krzk@kernel.org
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/s2mps11.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 054baaadfdfd..5bc00884cf51 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -1226,7 +1226,7 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 			goto out;
- 		}
- 
--		if (s2mps11->ext_control_gpiod[i]) {
-+		if (config.ena_gpiod) {
- 			ret = s2mps14_pmic_enable_ext_control(s2mps11,
- 					regulator);
- 			if (ret < 0) {
 -- 
-2.20.1
+2.17.1
