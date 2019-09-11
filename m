@@ -1,62 +1,61 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3] dt-bindings: arm: samsung: Convert Samsung Exynos
- IOMMU H/W, System MMU to dt-schema
-Date: Wed, 11 Sep 2019 14:25:49 +0200
-Message-ID: <CAJKOXPdM_A5Enmv_GOJuKLvfBBwi-z3qWiW4WG9L-dmuW9T5Wg@mail.gmail.com>
-References: <CGME20190911110500eucas1p2e1304a19e2e75ee43d80fcdc3b871237@eucas1p2.samsung.com>
- <CAJKOXPeojuk1UrYo9Wakaaq4VJt3Ts22Vi-V5xzwAXoFU5+tcA@mail.gmail.com>
- <20190911110446.32058-1-m.falkowski@samsung.com> <CAJKOXPeZ2usT+bx23n-hXxsLsbZqr-0JEtyagK8sfsLaFiaH5w@mail.gmail.com>
- <d7e938e8-d42e-be22-ce76-561159064180@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Maciej Falkowski <m.falkowski@samsung.com>
+Subject: [PATCH] dt-bindings: arm: samsung: Exynos 3250: iommu: remove
+ obsolete IRQ lines
+Date: Wed, 11 Sep 2019 15:33:10 +0200
+Message-ID: <20190911133310.8365-1-m.falkowski@samsung.com>
+References: <CAJKOXPeojuk1UrYo9Wakaaq4VJt3Ts22Vi-V5xzwAXoFU5+tcA@mail.gmail.com>
+        <CGME20190911133317eucas1p27f0312f5cd3e3c988399f65b07150e42@eucas1p2.samsung.com>
+Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <d7e938e8-d42e-be22-ce76-561159064180@samsung.com>
+In-Reply-To: <CAJKOXPeojuk1UrYo9Wakaaq4VJt3Ts22Vi-V5xzwAXoFU5+tcA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Maciej Falkowski <m.falkowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, robh+dt@kernel.org, mark.rutland@arm.com, Andrzej Hajda <a.hajda@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: krzk@kernel.org, robh+dt@kernel.org, m.falkowski@samsung.com, mark.rutland@arm.com, joro@8bytes.org, m.szyprowski@samsung.com, a.hajda@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, 11 Sep 2019 at 13:57, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->
-> Hi Krzyszotf,
->
-> On 2019-09-11 13:36, Krzysztof Kozlowski wrote:
-> > On Wed, 11 Sep 2019 at 13:05, Maciej Falkowski <m.falkowski@samsung.com> wrote:
-> >> Convert Samsung Exynos IOMMU H/W, System Memory Management Unit
-> >> to newer dt-schema format.
-> >>
-> >> Update clock description.
-> >>
-> >> Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
-> >> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> >> ---
-> >> Hi Krzysztof,
-> >>
-> >> Thank you for feedback.
-> >>
-> >> v3:
-> >>
-> >> - remove obsolete interrupts description and
-> >> set its maxItems to one. There are some incompatible
-> >> files which will be fixed with another patch.
-> > Driver stopped supporting two IRQ lines in commit
-> > 7222e8db2d506197ee183de0f9b76b3ad97e8c18 (iommu/exynos: Fix build
-> > errors). The second IRQ line in Exynos3250 DTS seems to be ignored.
-> >
-> > The patch now looks good to me:
-> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> >
-> > However for some reasons you did not CC the IOMMU maintainers. Please
-> > use scripts/get_maintainer.pl to get the list of folks to CC.
->
-> Frankly I don't see any reason to spam IOMMU ml or maintainer with this
-> discussion about dt-binding conversion. This patch will be merged via dt
-> tree if I got it right.
+In commit 7222e8db2d506197ee183de0f9b76b3ad97e8c18 (iommu/exynos: Fix build
+errors) Exynos3250 iommu driver stopped supporting two IRQ lines.
+The second IRQ line in DTS is ignored and is not needed.
 
-Indeed usually subsystem maintainers are not interested in DT schema
-conversion although they are mentioned as maintainers for this file so
-it is nice to CC them... I would not call spamming when there is
-explicit pattern for CCing.
+Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos3250.dtsi | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 784818490376..190d9160a5d1 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -314,8 +314,7 @@
+ 		sysmmu_jpeg: sysmmu@11a60000 {
+ 			compatible = "samsung,exynos-sysmmu";
+ 			reg = <0x11a60000 0x1000>;
+-			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
+ 			clock-names = "sysmmu", "master";
+ 			clocks = <&cmu CLK_SMMUJPEG>, <&cmu CLK_JPEG>;
+ 			power-domains = <&pd_cam>;
+@@ -355,8 +354,7 @@
+ 		sysmmu_fimd0: sysmmu@11e20000 {
+ 			compatible = "samsung,exynos-sysmmu";
+ 			reg = <0x11e20000 0x1000>;
+-			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+ 			clock-names = "sysmmu", "master";
+ 			clocks = <&cmu CLK_SMMUFIMD0>, <&cmu CLK_FIMD0>;
+ 			power-domains = <&pd_lcd0>;
+@@ -507,8 +505,7 @@
+ 		sysmmu_mfc: sysmmu@13620000 {
+ 			compatible = "samsung,exynos-sysmmu";
+ 			reg = <0x13620000 0x1000>;
+-			interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
+ 			clock-names = "sysmmu", "master";
+ 			clocks = <&cmu CLK_SMMUMFC_L>, <&cmu CLK_MFC>;
+ 			power-domains = <&pd_mfc>;
+-- 
+2.17.1
