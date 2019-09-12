@@ -1,65 +1,112 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [GIT PULL 1/2] arm64: dts: exynos: Pull for v5.4
-Date: Thu, 12 Sep 2019 11:35:52 +0200
-Message-ID: <CAJKOXPcF_NVeyR7cRnq-6obi39MocA0aRGUn_9aExjBy0VXkWw@mail.gmail.com>
-References: <20190911183632.4317-1-krzk@kernel.org> <CAK8P3a2pBV+fh0rHitZ30Zz61QNRLfNSD-nhnzq4ZtxSh66F1Q@mail.gmail.com>
- <CAJKOXPcOSvc2DfoN+7Tca=t5dSm3RcKqmm06AfR0PAVBeY=GvQ@mail.gmail.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH] arm64: dts: exynos: Revert
+ "Remove unneeded address space mapping for soc node"
+Date: Thu, 12 Sep 2019 17:26:55 +0530
+Message-ID: <28550827-0ada-6f7a-dfee-a9aa3f8fd976@samsung.com>
+References: <CGME20190912073608eucas1p1c2da86b1f85244a507b0f2ce96390ad3@eucas1p1.samsung.com>
+        <20190912073602.22829-1-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJKOXPcOSvc2DfoN+7Tca=t5dSm3RcKqmm06AfR0PAVBeY=GvQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Olof Johansson <olof@lixom.net>, arm-soc <arm@kernel.org>, SoC Team <soc@kernel.org>, Kukjin Kim <kgene@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, DTML <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190912073602.22829-1-m.szyprowski@samsung.com>
+Content-Language: en-US
+Sender: stable-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, 12 Sep 2019 at 08:32, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On Wed, 11 Sep 2019 at 23:07, Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > On Wed, Sep 11, 2019 at 8:36 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > >
-> > > Hi,
-> > >
-> > > Unfortunately the patches were applied right after closing the linux-next.
-> >
-> > Hi Krzysztof,
-> >
-> > I took a look at these and am not convinced this is right:
-> >
-> > > 1. Fix boot of Exynos7 due to wrong address/size of memory node,
-> >
-> > The current state is clearly broken and a fix is needed, but
-> > I'm not sure this is the right fix. Why do you have 32-bit physical
-> > addressing on a 64-bit chip? I looked at commit ef72171b3621
-> > that introduced it, and it seems it would be better to just
-> > revert back to 64-bit addresses.
->
-> We discussed with Marek Szyprowski that either we can go back to
-> 64-bit addressing or stick to 32. There are not known boards with more
-> than 4 GB of RAM so from this point of view the choice was irrelevant.
-> At the end of discussion I mentioned to stick with other arm64 boards
-> (although not all), so revert to have 64 bit address... but Marek
-> chosen differently. Since you ask, let's go back with revert.
->
-> >
-> > > 2. Move GPU under /soc node,
-> >
-> > No problem
-> >
-> > > 3. Minor cleanup of #address-cells.
-> >
-> > IIRC, an interrupt-controller is required to have a #address-cells
-> > property, even if that is normally zero. I don't remember the
-> > details, but the gic binding lists it as mandatory, and I think
-> > the PCI interrupt-map relies on it. I would just drop this patch.
->
-> Indeed, binding requires both address and size cells. I'll drop it.
+Hi Marek,
 
-Short update: no, address-cells are not required by bindings. They are
-optional. In case of lack of them, the parent address-cells will be
-used so effectively this patch was changing it from 0 to 1. Anyway
-this was not expressed in commit msg so I'll drop it.
+On 9/12/19 1:06 PM, Marek Szyprowski wrote:
+> Commit ef72171b3621 ("arm64: dts: exynos: Remove unneeded address space
+> mapping for soc node") changed the address and size cells in root node from
+> 2 to 1, but /memory nodes for the affected boards were not updated. This
+> went unnoticed on Exynos5433-based TM2(e) boards, because they use u-boot,
+> which updates /memory node to the correct values. On the other hand, the
+> mentioned commit broke boot on Exynos7-based Espresso board, which
+> bootloader doesn't touch /memory node at all.
+> 
+> This patch reverts commit ef72171b3621, so Exynos5433 and Exynos7 SoCs
+> again matches other ARM64 platforms with 64bit mappings in root node.
+> 
+> Reported-by: Alim Akhtar <alim.akhtar@samsung.com>
+> Fixes: ef72171b3621 ("arm64: dts: exynos: Remove unneeded address space mapping for soc node")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: <stable@vger.kernel.org>
+> Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+> A few more comments:
+> 
+> 1. I've added 'tested-by' tag from Alim, as his original report pointed
+> that reverting the offending commit fixes the boot issue.
+> 
+This is still valid,reverting the offending commit does work.
+Thanks!
 
-Best regards,
-Krzysztof
+> 2. This patch applies down to v4.18.
+> 
+> 3. For v5.3 release, two patches:
+>     - "arm64: dts: exynos: Move GPU under /soc node for  Exynos5433"
+>     - "arm64: dts: exynos: Move GPU under /soc node for Exynos7"
+>     has to be applied first to ensure that GPU node will have correct 'reg'
+>     property (nodes under /soc still use 32bit mappings). I'm not sure if
+>     this can be expressed somehow in stable porting tags.
+> 
+> Best regards
+> Marek Szyprowski
+> Samsung R&D Institute Poland
+> ---
+>   arch/arm64/boot/dts/exynos/exynos5433.dtsi | 6 +++---
+>   arch/arm64/boot/dts/exynos/exynos7.dtsi    | 6 +++---
+>   2 files changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> index 239bf44d174b..f69530730219 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> @@ -18,8 +18,8 @@
+>   
+>   / {
+>   	compatible = "samsung,exynos5433";
+> -	#address-cells = <1>;
+> -	#size-cells = <1>;
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+>   
+>   	interrupt-parent = <&gic>;
+>   
+> @@ -260,7 +260,7 @@
+>   		compatible = "simple-bus";
+>   		#address-cells = <1>;
+>   		#size-cells = <1>;
+> -		ranges;
+> +		ranges = <0x0 0x0 0x0 0x18000000>;
+>   
+>   		chipid@10000000 {
+>   			compatible = "samsung,exynos4210-chipid";
+> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> index f09800f355db..3a00ef0a17ff 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> @@ -12,8 +12,8 @@
+>   / {
+>   	compatible = "samsung,exynos7";
+>   	interrupt-parent = <&gic>;
+> -	#address-cells = <1>;
+> -	#size-cells = <1>;
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+>   
+>   	aliases {
+>   		pinctrl0 = &pinctrl_alive;
+> @@ -87,7 +87,7 @@
+>   		compatible = "simple-bus";
+>   		#address-cells = <1>;
+>   		#size-cells = <1>;
+> -		ranges;
+> +		ranges = <0 0 0 0x18000000>;
+>   
+>   		chipid@10000000 {
+>   			compatible = "samsung,exynos4210-chipid";
+> 
