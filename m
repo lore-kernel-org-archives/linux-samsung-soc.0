@@ -1,112 +1,46 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH] arm64: dts: exynos: Revert
- "Remove unneeded address space mapping for soc node"
-Date: Thu, 12 Sep 2019 17:26:55 +0530
-Message-ID: <28550827-0ada-6f7a-dfee-a9aa3f8fd976@samsung.com>
-References: <CGME20190912073608eucas1p1c2da86b1f85244a507b0f2ce96390ad3@eucas1p1.samsung.com>
-        <20190912073602.22829-1-m.szyprowski@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 4/7] dt-bindings: chosen: Add clocksource and clockevent
+ selection
+Date: Thu, 12 Sep 2019 15:18:49 +0100
+Message-ID: <CACRpkda1T_5D697wphrEGEsbj3zBfTaOOLN0T5zS1xfT949cjA@mail.gmail.com>
+References: <1568123236-767-1-git-send-email-claudiu.beznea@microchip.com>
+ <1568123236-767-5-git-send-email-claudiu.beznea@microchip.com>
+ <20190910143231.GB14966@e107533-lin.cambridge.arm.com>
+ <ab43b209-78fa-0cab-b8ea-acd4c550e689@microchip.com>
+ <20190910150826.GA18308@e107533-lin.cambridge.arm.com>
+ <20190910151055.GX21254@piout.net>
+ <CACRpkda4mmpbPWa2nD93CvD6HWzcTUDzyyLdQxC2gNB7XiJF3w@mail.gmail.com>
+ <a2aca46a-8eb9-d8a8-de42-9850a8a8f44c@microchip.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190912073602.22829-1-m.szyprowski@samsung.com>
-Content-Language: en-US
-Sender: stable-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, stable@vger.kernel.org
+Return-path: <linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org>
+In-Reply-To: <a2aca46a-8eb9-d8a8-de42-9850a8a8f44c@microchip.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-riscv>,
+ <mailto:linux-riscv-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-riscv/>
+List-Post: <mailto:linux-riscv@lists.infradead.org>
+List-Help: <mailto:linux-riscv-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-riscv>,
+ <mailto:linux-riscv-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-riscv" <linux-riscv-bounces@lists.infradead.org>
+Errors-To: linux-riscv-bounces+glpr-linux-riscv=m.gmane.org@lists.infradead.org
+To: Claudiu Beznea <Claudiu.Beznea@microchip.com>
+Cc: Tomer Maimon <tmaimon77@gmail.com>, "Nori, Sekhar" <nsekhar@ti.com>, guoren@kernel.org, linux-stm32@st-md-mailman.stormreply.com, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Kevin Hilman <khilman@baylibre.com>, Ludovic Desroches <Ludovic.Desroches@microchip.com>, NXP Linux Team <linux-imx@nxp.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, "moderated list:H8/300 ARCHITECTURE" <uclinux-h8-devel@lists.sourceforge.jp>, Marc Zyngier <marc.zyngier@arm.com>, Sascha Hauer <s.hauer@pengutronix.de>, linux-unisoc@lists.infradead.org, Krzysztof Halasa <khalasa@piap.pl>, Thomas Gleixner <tglx@linutronix.de>, Scott Branden <sbranden@broadcom.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ralf Baechle <ral>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+On Wed, Sep 11, 2019 at 8:18 AM <Claudiu.Beznea@microchip.com> wrote:
+> [Me]
+> > In that case why not just pick the first one you find as clocksource
+> > and the second one as clock event?
 
-On 9/12/19 1:06 PM, Marek Szyprowski wrote:
-> Commit ef72171b3621 ("arm64: dts: exynos: Remove unneeded address space
-> mapping for soc node") changed the address and size cells in root node from
-> 2 to 1, but /memory nodes for the affected boards were not updated. This
-> went unnoticed on Exynos5433-based TM2(e) boards, because they use u-boot,
-> which updates /memory node to the correct values. On the other hand, the
-> mentioned commit broke boot on Exynos7-based Espresso board, which
-> bootloader doesn't touch /memory node at all.
-> 
-> This patch reverts commit ef72171b3621, so Exynos5433 and Exynos7 SoCs
-> again matches other ARM64 platforms with 64bit mappings in root node.
-> 
-> Reported-by: Alim Akhtar <alim.akhtar@samsung.com>
-> Fixes: ef72171b3621 ("arm64: dts: exynos: Remove unneeded address space mapping for soc node")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: <stable@vger.kernel.org>
-> Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
-> A few more comments:
-> 
-> 1. I've added 'tested-by' tag from Alim, as his original report pointed
-> that reverting the offending commit fixes the boot issue.
-> 
-This is still valid,reverting the offending commit does work.
-Thanks!
+> That was also my proposal for the driver I'm sending this series for (see
+> [1]) but it has been proposed to implement a mechanism similar to this one
+> in this series (see [2] and [3]).
 
-> 2. This patch applies down to v4.18.
-> 
-> 3. For v5.3 release, two patches:
->     - "arm64: dts: exynos: Move GPU under /soc node for  Exynos5433"
->     - "arm64: dts: exynos: Move GPU under /soc node for Exynos7"
->     has to be applied first to ensure that GPU node will have correct 'reg'
->     property (nodes under /soc still use 32bit mappings). I'm not sure if
->     this can be expressed somehow in stable porting tags.
-> 
-> Best regards
-> Marek Szyprowski
-> Samsung R&D Institute Poland
-> ---
->   arch/arm64/boot/dts/exynos/exynos5433.dtsi | 6 +++---
->   arch/arm64/boot/dts/exynos/exynos7.dtsi    | 6 +++---
->   2 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> index 239bf44d174b..f69530730219 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-> @@ -18,8 +18,8 @@
->   
->   / {
->   	compatible = "samsung,exynos5433";
-> -	#address-cells = <1>;
-> -	#size-cells = <1>;
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
->   
->   	interrupt-parent = <&gic>;
->   
-> @@ -260,7 +260,7 @@
->   		compatible = "simple-bus";
->   		#address-cells = <1>;
->   		#size-cells = <1>;
-> -		ranges;
-> +		ranges = <0x0 0x0 0x0 0x18000000>;
->   
->   		chipid@10000000 {
->   			compatible = "samsung,exynos4210-chipid";
-> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> index f09800f355db..3a00ef0a17ff 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> @@ -12,8 +12,8 @@
->   / {
->   	compatible = "samsung,exynos7";
->   	interrupt-parent = <&gic>;
-> -	#address-cells = <1>;
-> -	#size-cells = <1>;
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
->   
->   	aliases {
->   		pinctrl0 = &pinctrl_alive;
-> @@ -87,7 +87,7 @@
->   		compatible = "simple-bus";
->   		#address-cells = <1>;
->   		#size-cells = <1>;
-> -		ranges;
-> +		ranges = <0 0 0 0x18000000>;
->   
->   		chipid@10000000 {
->   			compatible = "samsung,exynos4210-chipid";
-> 
+OK I am not going to challenge the clock source maintainers on this,
+so if that is what they want then that is what they should get.
+It's fine to convert the Integrator driver too!
+
+Yours,
+Linus Walleij
