@@ -1,161 +1,98 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] dt-bindings: timer: Convert Exynos MCT bindings to
- json-schema
-Date: Fri, 13 Sep 2019 15:36:23 +0100
-Message-ID: <5d7ba967.1c69fb81.64b1c.ab06@mx.google.com>
-References: <20190909162537.27635-1-krzk@kernel.org>
+Subject: Re: [PATCH 3/3] dt-bindings: ddr: Add bindings for Samsung LPDDR3
+ memories
+Date: Fri, 13 Sep 2019 15:36:10 +0100
+Message-ID: <5d7ba95a.1c69fb81.bfd81.77ba@mx.google.com>
+References: <CGME20190906101407eucas1p15eb0df53374b27497b4793eab24becf6@eucas1p1.samsung.com>
+ <20190906101344.3535-1-l.luba@partner.samsung.com>
+ <20190906101344.3535-4-l.luba@partner.samsung.com>
+ <CAJKOXPfoYxTVvt_bMQOs1=BkHzUuW_WvL9zn0jTGS6LLpv=fhQ@mail.gmail.com>
+ <52963d0d-cf48-7085-5581-a94c6e15e0bd@partner.samsung.com>
+ <CAJKOXPfEcURr_bLRaAdjWT3cb7mcuKTk8rmn7OTO=xtvjvJ=jQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190909162537.27635-1-krzk@kernel.org>
+In-Reply-To: <CAJKOXPfEcURr_bLRaAdjWT3cb7mcuKTk8rmn7OTO=xtvjvJ=jQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Lukasz Luba <l.luba@partner.samsung.com>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= <b.zolnierkie@samsung.com>, kgene@kernel.org, mark.rutland@arm.com, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, willy.mh.wolff.ml@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Sep 09, 2019 at 06:25:37PM +0200, Krzysztof Kozlowski wrote:
-> Convert Samsung Exynos Soc Multi Core Timer bindings to DT schema format
-> using json-schema.
+On Fri, Sep 06, 2019 at 01:50:26PM +0200, Krzysztof Kozlowski wrote:
+> On Fri, 6 Sep 2019 at 13:39, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+> >
+> > Hi Krzysztof,
+> >
+> > On 9/6/19 12:56 PM, Krzysztof Kozlowski wrote:
+> > > On Fri, 6 Sep 2019 at 12:14, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+> > >>
+> > >> Add description of bindings for Samsung k3qf2f20db LPDDR3 memory.
+> > >> Minor fixes in the old documentation.
+> > >>
+> > >> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> > >> ---
+> > >>   .../devicetree/bindings/ddr/lpddr3.txt        | 29 +++++++++++++++++--
+> > >>   1 file changed, 27 insertions(+), 2 deletions(-)
+> > >>
+> > >> diff --git a/Documentation/devicetree/bindings/ddr/lpddr3.txt b/Documentation/devicetree/bindings/ddr/lpddr3.txt
+> > >> index 3b2485b84b3f..de0905239767 100644
+> > >> --- a/Documentation/devicetree/bindings/ddr/lpddr3.txt
+> > >> +++ b/Documentation/devicetree/bindings/ddr/lpddr3.txt
+> > >> @@ -40,10 +40,34 @@ Child nodes:
+> > >>     a given speed-bin. Please see Documentation/devicetree/
+> > >>     bindings/ddr/lpddr3-timings.txt for more information on "lpddr3-timings"
+> > >>
+> > >> +Samsung K3QF2F20DB LPDDR3 memory
+> > >> +------------------------------------------------------------
+> > >> +
+> > >> +This binding uses the LPDDR3 binding (described above)
+> > >> +
+> > >> +Required properties:
+> > >> +- compatible:  Should be:
+> > >> +               "samsung,K3QF2F20DB"
+> > >> +               followed by "jedec,lpddr3"
+> > >> +- density  : <u32> representing density in Mb (Mega bits)
+> > >> +- io-width : <u32> representing bus width. Possible value 32
+> > >> +- #address-cells: Must be set to 1
+> > >> +- #size-cells: Must be set to 0
+> > >
+> > > If you decided to repeat all properties again, then it deserves its
+> > > own bindings file. However I though about simpler solution - just
+> > > document compatible. Exactly the same as AT24 or AT25 EEPROM bindings.
+> > > There is not much benefit from copying all these properties.
+> > OK, I see. I will add only 'compatible' and skip the rest then.
+> > So the lpddr3.txt file will get this addition:
+> >
+> > +Samsung K3QF2F20DB LPDDR3 memory
+> > +------------------------------------------------------------
+> > +
+> > +This binding uses the LPDDR3 binding (described above)
+> > +
+> > +Required properties:
+> > +- compatible:  Should be:
+> > +               "samsung,K3QF2F20DB"
+> > +               followed by "jedec,lpddr3"
+> > +
+> > +Optional properties:
+> > +
+> > +The optional properties are the same as in the LPDDR3 generic bindings and
+> > +values should be taken from the data-sheet. Detailed bindings are described
+> > +above.
+> > +
+> > +Child nodes:
+> > +
+> > +Detailed bindings are described in LPDDR3 generic bindings described above.
+> > +
+> >
+> > Is it OK?
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  .../bindings/timer/samsung,exynos4210-mct.txt |  88 --------------
->  .../timer/samsung,exynos4210-mct.yaml         | 115 ++++++++++++++++++
->  2 files changed, 115 insertions(+), 88 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
->  create mode 100644 Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+> To me it is still a lot of text just for one compatible and I can
+> image more of such entries for other memories... However I do not mind
+> and anyway, YAML will simplify it. If you're in doubt, wait for Rob's
+> reply as this is his part.
 
+We can't have multiple (top-level) schema in one file, so better to add 
+in where the existing compatible strings are.
 
-> diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-> new file mode 100644
-> index 000000000000..b96d2877955f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-> @@ -0,0 +1,115 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/timer/samsung,exynos4210-mct.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung Exynos SoC Multi Core Timer (MCT)
-> +
-> +maintainers:
-> +  - Krzysztof Kozlowski <krzk@kernel.org>
-> +
-> +description: |+
-> +  The Samsung's Multi Core Timer (MCT) module includes two main blocks, the
-> +  global timer and CPU local timers. The global timer is a 64-bit free running
-> +  up-counter and can generate 4 interrupts when the counter reaches one of the
-> +  four preset counter values. The CPU local timers are 32-bit free running
-> +  down-counters and generate an interrupt when the counter expires. There is
-> +  one CPU local timer instantiated in MCT for every CPU in the system.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - samsung,exynos4210-mct
-> +      - samsung,exynos4412-mct
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    description: |
-> +      Interrupts should be put in specific order. This is, the local timer
-> +      interrupts should be specified after the four global timer interrupts
-> +      have been specified:
-> +      0: Global Timer Interrupt 0
-> +      1: Global Timer Interrupt 1
-> +      2: Global Timer Interrupt 2
-> +      3: Global Timer Interrupt 3
-> +      4: Local Timer Interrupt 0
-> +      5: Local Timer Interrupt 1
-> +      6: ..
-> +      7: ..
-> +      i: Local Timer Interrupt n
-> +      For MCT block that uses a per-processor interrupt for local timers, such
-> +      as ones compatible with "samsung,exynos4412-mct", only one local timer
-> +      interrupt might be specified, meaning that all local timers use the same
-> +      per processor interrupt.
-> +    minItems: 5               # 4 Global + 1 local
-> +    maxItems: 20              # 4 Global + 16 local
-> +
-> +required:
-> +  - compatible
-> +  - interrupts
-> +  - reg
-> +
-> +examples:
-> +  - |
-> +    // In this example, the IP contains two local timers, using separate
-> +    // interrupts, so two local timer interrupts have been specified,
-> +    // in addition to four global timer interrupts.
-> +      mct@10050000 {
-
-Can we clean this up and use 'timer' here.
-
-> +        compatible = "samsung,exynos4210-mct";
-> +        reg = <0x10050000 0x800>;
-> +        interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
-> +                     <0 42 0>, <0 48 0>;
-> +      };
-> +
-> +  - |
-> +    // In this example, the timer interrupts are connected to two separate
-> +    // interrupt controllers. Hence, an interrupt-map is created to map
-> +    // the interrupts to the respective interrupt controllers.
-> +
-> +    mct@101c0000 {
-> +      compatible = "samsung,exynos4210-mct";
-> +      reg = <0x101C0000 0x800>;
-> +      interrupt-parent = <&mct_map>;
-> +      interrupts = <0>, <1>, <2>, <3>, <4>, <5>;
-> +
-> +      mct_map: mct-map {
-
-This needs to be documented.
-
-Note, I don't really see any reason this needs to be a child node.
-
-> +        #interrupt-cells = <1>;
-> +        #address-cells = <0>;
-> +        #size-cells = <0>;
-> +        interrupt-map = <0 &gic 0 57 0>,
-> +                        <1 &gic 0 69 0>,
-> +                        <2 &combiner 12 6>,
-> +                        <3 &combiner 12 7>,
-> +                        <4 &gic 0 42 0>,
-> +                        <5 &gic 0 48 0>;
-> +      };
-> +    };
-> +
-> +  - |
-> +    // In this example, the IP contains four local timers, but using
-> +    // a per-processor interrupt to handle them. Only one first local
-> +    // interrupt is specified.
-> +
-> +    mct@10050000 {
-> +      compatible = "samsung,exynos4412-mct";
-> +      reg = <0x10050000 0x800>;
-> +
-> +      interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
-> +                   <0 42 0>;
-> +    };
-> +
-> +  - |
-> +    // In this example, the IP contains four local timers, but using
-> +    // a per-processor interrupt to handle them. All the local timer
-> +    // interrupts are specified.
-> +
-> +    mct@10050000 {
-> +      compatible = "samsung,exynos4412-mct";
-> +      reg = <0x10050000 0x800>;
-> +
-> +      interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
-> +                   <0 42 0>, <0 42 0>, <0 42 0>, <0 42 0>;
-> +    };
-> -- 
-> 2.17.1
-> 
+Rob
