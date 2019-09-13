@@ -1,121 +1,146 @@
-From: Maciej Falkowski <m.falkowski@samsung.com>
-Subject: [PATCH] dt-bindings: gpu: Convert Samsung Image Scaler to dt-schema
-Date: Fri, 13 Sep 2019 11:41:23 +0200
-Message-ID: <20190913094123.23169-1-m.falkowski@samsung.com>
-References: <CGME20190913094136eucas1p1fd424b5f5a6f0a97b31af54e55fe28c1@eucas1p1.samsung.com>
-Content-Type: text/plain; charset="utf-8"
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH] dt-bindings: memory-controllers: Convert Samsung Exynos
+ SROM bindings to json-schema
+Date: Fri, 13 Sep 2019 15:36:14 +0100
+Message-ID: <5d7ba95e.1c69fb81.bba41.66c2@mx.google.com>
+References: <20190907144442.16788-1-krzk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190907144442.16788-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: airlied@linux.ie, daniel@ffwll.ch, robh+dt@kernel.org, mark.rutland@arm.com, krzk@kernel.org, a.hajda@samsung.com, m.szyprowski@samsung.com, m.falkowski@samsung.com
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Convert Samsung Image Scaler to newer dt-schema format.
+On Sat, Sep 07, 2019 at 04:44:42PM +0200, Krzysztof Kozlowski wrote:
+> Convert Samsung Exynos SROM controller bindings to DT schema format
+> using json-schema.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  .../memory-controllers/exynos-srom.txt        |  79 ----------
+>  .../memory-controllers/exynos-srom.yaml       | 136 ++++++++++++++++++
+>  2 files changed, 136 insertions(+), 79 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
 
-Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- .../bindings/gpu/samsung-scaler.txt           | 27 ---------
- .../bindings/gpu/samsung-scaler.yaml          | 57 +++++++++++++++++++
- 2 files changed, 57 insertions(+), 27 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/gpu/samsung-scaler.txt
- create mode 100644 Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
 
-diff --git a/Documentation/devicetree/bindings/gpu/samsung-scaler.txt b/Documentation/devicetree/bindings/gpu/samsung-scaler.txt
-deleted file mode 100644
-index 9c3d98105dfd..000000000000
---- a/Documentation/devicetree/bindings/gpu/samsung-scaler.txt
-+++ /dev/null
-@@ -1,27 +0,0 @@
--* Samsung Exynos Image Scaler
--
--Required properties:
--  - compatible : value should be one of the following:
--	(a) "samsung,exynos5420-scaler" for Scaler IP in Exynos5420
--	(b) "samsung,exynos5433-scaler" for Scaler IP in Exynos5433
--
--  - reg : Physical base address of the IP registers and length of memory
--	  mapped region.
--
--  - interrupts : Interrupt specifier for scaler interrupt, according to format
--		 specific to interrupt parent.
--
--  - clocks : Clock specifier for scaler clock, according to generic clock
--	     bindings. (See Documentation/devicetree/bindings/clock/exynos*.txt)
--
--  - clock-names : Names of clocks. For exynos scaler, it should be "mscl"
--		  on 5420 and "pclk", "aclk" and "aclk_xiu" on 5433.
--
--Example:
--	scaler@12800000 {
--		compatible = "samsung,exynos5420-scaler";
--		reg = <0x12800000 0x1294>;
--		interrupts = <0 220 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&clock CLK_MSCL0>;
--		clock-names = "mscl";
--	};
-diff --git a/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml b/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
-new file mode 100644
-index 000000000000..ee2caab22977
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
-@@ -0,0 +1,57 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpu/samsung-scaler.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung Exynos SoC Image Scaler
-+
-+maintainers:
-+  - Inki Dae <inki.dae@samsung.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - "samsung,exynos5420-scaler"
-+      - "samsung,exynos5433-scaler"
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 3
-+
-+  clock-names:
-+    oneOf:
-+      - items:
-+          - const: mscl
-+      - items:
-+          - const: pclk
-+          - const: aclk
-+          - const: aclk_xiu
-+    description: |
-+      For exynos scaler it should be:
-+      - "mscl" on Exynos5420
-+      - "pclk", "aclk", "aclk_xiu" on Exynos5433
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+
-+examples:
-+  - |
-+    scaler@12800000 {
-+        compatible = "samsung,exynos5420-scaler";
-+        reg = <0x12800000 0x1294>;
-+        interrupts = <0 220 4>; // IRQ_TYPE_LEVEL_HIGH
-+        clocks = <&clock 0>; // CLK_MSCL0
-+        clock-names = "mscl";
-+    };
-+
--- 
-2.17.1
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
+> new file mode 100644
+> index 000000000000..9573bcfd68bf
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
+> @@ -0,0 +1,136 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/memory-controllers/exynos-srom.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Samsung Exynos SoC SROM Controller driver
+> +
+> +maintainers:
+> +  - Krzysztof Kozlowski <krzk@kernel.org>
+> +
+> +description: |+
+> +  The SROM controller can be used to attach external peripherals. In this case
+> +  extra properties, describing the bus behind it, should be specified.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: samsung,exynos4210-srom
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#address-cells":
+> +    const: 2
+> +
+> +  "#size-cells":
+> +    const: 1
+> +
+> +  ranges:
+> +    description: |
+> +      Reflects the memory layout with four integer values per bank. Format:
+> +      <bank-number> 0 <parent address of bank> <size>
+> +
+> +patternProperties:
+> +  "^.*@[0-9]+,[0-9]+$":
+
+How many chip selects? Can be a single digit?
+
+Also, these should be hex values.
+
+> +    type: object
+> +    description:
+> +      The actual device nodes should be added as subnodes to the SROMc node.
+> +      These subnodes, in addition to regular device specification, should
+> +      contain the following properties, describing configuration
+> +      of the relevant SROM bank.
+> +
+> +    properties:
+> +      reg:
+> +        description:
+> +          Bank number, base address (relative to start of the bank) and size
+> +          of the memory mapped for the device. Note that base address will be
+> +          typically 0 as this is the start of the bank.
+> +        maxItems: 1
+> +
+> +      reg-io-width:
+> +        allOf:
+> +          - $ref: /schemas/types.yaml#/definitions/uint32
+> +          - enum: [1, 2]
+> +        description:
+> +          Data width in bytes (1 or 2). If omitted, default of 1 is used.
+> +
+> +      samsung,srom-page-mode:
+> +        description:
+> +          If page mode is set, 4 data page mode will be configured,
+> +          else normal (1 data) page mode will be set.
+> +        type: boolean
+> +
+> +      samsung,srom-timing:
+> +        allOf:
+> +          - $ref: /schemas/types.yaml#/definitions/uint32-array
+> +          - items:
+> +              minItems: 6
+> +              maxItems: 6
+> +        description: |
+> +          Array of 6 integers, specifying bank timings in the following order:
+> +          Tacp, Tcah, Tcoh, Tacc, Tcos, Tacs.
+> +          Each value is specified in cycles and has the following meaning
+> +          and valid range:
+> +          Tacp: Page mode access cycle at Page mode (0 - 15)
+> +          Tcah: Address holding time after CSn (0 - 15)
+> +          Tcoh: Chip selection hold on OEn (0 - 15)
+> +          Tacc: Access cycle (0 - 31, the actual time is N + 1)
+> +          Tcos: Chip selection set-up before OEn (0 - 15)
+> +          Tacs: Address set-up before CSn (0 - 15)
+> +
+> +    required:
+> +      - reg
+> +      - samsung,srom-timing
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +allOf:
+> +  - if:
+> +      anyOf:
+> +        - required: [ "#address-cells" ]
+> +        - required: [ ranges ]
+> +        - required: [ "#size-cells" ]
+> +    then:
+> +      required:
+> +        - "#address-cells"
+> +        - ranges
+> +        - "#size-cells"
+
+I don't think this is necessary as the core schema should take care of 
+it. This can also be expressed using 'dependencies'. 
+
+Rob
