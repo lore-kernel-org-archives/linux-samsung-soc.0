@@ -1,10 +1,9 @@
 From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH v2 3/3] dt-bindings: ddr: Add bindings for Samsung LPDDR3
- memories
-Date: Mon, 16 Sep 2019 12:07:04 +0200
-Message-ID: <20190916100704.26692-4-l.luba@partner.samsung.com>
+Subject: [PATCH v2 1/3] memory: Exynos5422: minor fixes in DMC
+Date: Mon, 16 Sep 2019 12:07:02 +0200
+Message-ID: <20190916100704.26692-2-l.luba@partner.samsung.com>
 References: <20190916100704.26692-1-l.luba@partner.samsung.com>
-        <CGME20190916100719eucas1p206fe95982b774840b5d6e62ba9c42c79@eucas1p2.samsung.com>
+        <CGME20190916100717eucas1p1b8d24c74c4d0bb385aa3455cf98c76bd@eucas1p1.samsung.com>
 Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190916100704.26692-1-l.luba@partner.samsung.com>
@@ -13,47 +12,42 @@ To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kern
 Cc: b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, willy.mh.wolff.ml@gmail.com, Lukasz Luba <l.luba@partner.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add compatible for Samsung k3qf2f20db LPDDR3 memory bindings.
-Introduce minor fixes in the old documentation.
+Small fixes for issues captured by static analyzes:
+used kfree() insead of devm_kfree() and missing 'static' in the private
+function.
+Checks which show the issues:
+- drivers/memory/samsung/exynos5422-dmc.c:272 exynos5_init_freq_table()
+warn: passing devm_ allocated variable to kfree. 'dmc->opp'
+- drivers/memory/samsung/exynos5422-dmc.c:736:1: warning: symbol
+'exynos5_dmc_align_init_freq' was not declared.
 
+Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 ---
- Documentation/devicetree/bindings/ddr/lpddr3.txt | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/memory/samsung/exynos5422-dmc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/ddr/lpddr3.txt b/Documentation/devicetree/bindings/ddr/lpddr3.txt
-index 3b2485b84b3f..49afe794daaa 100644
---- a/Documentation/devicetree/bindings/ddr/lpddr3.txt
-+++ b/Documentation/devicetree/bindings/ddr/lpddr3.txt
-@@ -1,7 +1,9 @@
- * LPDDR3 SDRAM memories compliant to JEDEC JESD209-3C
+diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
+index 8c2ec29a7d57..a809fa997c03 100644
+--- a/drivers/memory/samsung/exynos5422-dmc.c
++++ b/drivers/memory/samsung/exynos5422-dmc.c
+@@ -269,7 +269,7 @@ static int exynos5_init_freq_table(struct exynos5_dmc *dmc,
+ 	return 0;
  
- Required properties:
--- compatible : Should be  - "jedec,lpddr3"
-+- compatible : should be one of the following:
-+	Generic default - "jedec,lpddr3".
-+	For Samsung 542x SoC - "samsung,K3QF2F20DB", "jedec,lpddr3".
- - density  : <u32> representing density in Mb (Mega bits)
- - io-width : <u32> representing bus width. Possible values are 8, 16, 32, 64
- - #address-cells: Must be set to 1
-@@ -43,7 +45,7 @@ Child nodes:
- Example:
+ err_free_tables:
+-	kfree(dmc->opp);
++	devm_kfree(dmc->dev, dmc->opp);
+ err_opp:
+ 	dev_pm_opp_of_remove_table(dmc->dev);
  
- samsung_K3QF2F20DB: lpddr3 {
--	compatible	= "Samsung,K3QF2F20DB", "jedec,lpddr3";
-+	compatible	= "samsung,K3QF2F20DB", "jedec,lpddr3";
- 	density		= <16384>;
- 	io-width	= <32>;
- 	#address-cells	= <1>;
-@@ -73,7 +75,8 @@ samsung_K3QF2F20DB: lpddr3 {
- 
- 	timings_samsung_K3QF2F20DB_800mhz: lpddr3-timings@800000000 {
- 		compatible	= "jedec,lpddr3-timings";
--		reg		= <800000000>; /* workaround: it shows max-freq */
-+		/* workaround: 'reg' shows max-freq */
-+		reg		= <800000000>;
- 		min-freq	= <100000000>;
- 		tRFC		= <65000>;
- 		tRRD		= <6000>;
+@@ -732,7 +732,7 @@ static struct devfreq_dev_profile exynos5_dmc_df_profile = {
+  * statistics engine which supports only registered values. Thus, some alignment
+  * must be made.
+  */
+-unsigned long
++static unsigned long
+ exynos5_dmc_align_init_freq(struct exynos5_dmc *dmc,
+ 			    unsigned long bootloader_init_freq)
+ {
 -- 
 2.17.1
