@@ -1,33 +1,49 @@
-From: Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v2 2/2] dt-bindings: sound: Convert Samsung SMDK audio complex
-Date: Tue, 17 Sep 2019 09:15:16 -0500
-Message-ID: <CAL_JsqLwkVQ6VFYtUfOErA8vG2qnE+nquo_m5s0zLRqgn+bJLg@mail.gmail.com>
-References: <CGME20190917120634eucas1p20addfc4e369468561714f3c44d3d8bf5@eucas1p2.samsung.com>
- <20190917111413.22711-1-m.falkowski@samsung.com> <20190917120627.28357-1-m.falkowski@samsung.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 2/6] dt-bindings: samsung: Update the CHIP ID binding
+ documentation
+Date: Tue, 17 Sep 2019 13:13:22 -0500
+Message-ID: <20190917181322.GA683@bogus>
+References: <20190910123618.27985-1-s.nawrocki@samsung.com>
+ <CGME20190910123637eucas1p26d2051f9bdd1bdf4510f1908ea98f641@eucas1p2.samsung.com>
+ <20190910123618.27985-3-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190917120627.28357-1-m.falkowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Maciej Falkowski <m.falkowski@samsung.com>
-Cc: Linux-ALSA <alsa-devel@alsa-project.org>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20190910123618.27985-3-s.nawrocki@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, vireshk@kernel.org, b.zolnierkie@samsung.com, linux-kernel@vger.kernel.org, krzk@kernel.org, robh+dt@kernel.org, kgene@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Sep 17, 2019 at 7:06 AM Maciej Falkowski
-<m.falkowski@samsung.com> wrote:
->
-> Convert Samsung SMDK audio complex to newer dt-schema format.
->
-> Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+On Tue, 10 Sep 2019 14:36:14 +0200, Sylwester Nawrocki wrote:
+> This patch adds documentation of a new optional "samsung,asv-bin"
+> property in the chipid device node and documents requirement of
+> "syscon" compatible string.  These additions are needed to support
+> Exynos ASV (Adaptive Supply Voltage) feature.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
-> v2:
-> - Added missing Signed-off-by certificate
+> Changes since v3:
+>  - none
+> 
+> Changes since v2:
+>  - corrected patch summary line prefix, the patch moved in the
+>    sequence
+> 
+> Changes since v1 (RFC):
+>  - new patch
 > ---
->  .../bindings/sound/samsung,smdk-wm8994.txt    | 14 -------
->  .../bindings/sound/samsung,smdk-wm8994.yaml   | 38 +++++++++++++++++++
->  2 files changed, 38 insertions(+), 14 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sound/samsung,smdk-wm8994.txt
->  create mode 100644 Documentation/devicetree/bindings/sound/samsung,smdk-wm8994.yaml
+>  .../devicetree/bindings/arm/samsung/exynos-chipid.txt  | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
