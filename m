@@ -1,119 +1,239 @@
 From: Maciej Falkowski <m.falkowski@samsung.com>
-Subject: [PATCH v3] dt-bindings: gpu: Convert Samsung Image Rotator to
+Subject: [PATCH 1/2] dt-bindings: sound: Convert Samsung I2S controller to
  dt-schema
-Date: Tue, 17 Sep 2019 12:37:27 +0200
-Message-ID: <20190917103727.14997-1-m.falkowski@samsung.com>
-References: <20190913062945.GA10283@pi3>
-        <CGME20190917103758eucas1p10793e499209137630681186a10a4b7bd@eucas1p1.samsung.com>
+Date: Tue, 17 Sep 2019 13:14:12 +0200
+Message-ID: <20190917111413.22711-1-m.falkowski@samsung.com>
+References: <CGME20190917111420eucas1p1f4c9fc370f501b1ec1e2d2fb4299db96@eucas1p1.samsung.com>
 Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190913062945.GA10283@pi3>
 Sender: linux-kernel-owner@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: airlied@linux.ie, daniel@ffwll.ch, robh+dt@kernel.org, mark.rutland@arm.com, krzk@kernel.org, a.hajda@samsung.com, m.szyprowski@samsung.com, m.falkowski@samsung.com
+To: alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: krzk@kernel.org, sbkim73@samsung.com, s.nawrocki@samsung.com, lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, a.hajda@samsung.com, m.szyprowski@samsung.com, m.falkowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Convert Samsung Image Rotator to newer dt-schema format.
+Convert Samsung I2S controller to newer dt-schema format
 
 Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
-v3:
-- remove unneded comments and descriptions
-- remove unneded maxItems field from clock-names property
----
- .../bindings/gpu/samsung-rotator.txt          | 28 -----------
- .../bindings/gpu/samsung-rotator.yaml         | 48 +++++++++++++++++++
- 2 files changed, 48 insertions(+), 28 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/gpu/samsung-rotator.txt
- create mode 100644 Documentation/devicetree/bindings/gpu/samsung-rotator.yaml
+ .../devicetree/bindings/sound/samsung-i2s.txt |  84 -------------
+ .../bindings/sound/samsung-i2s.yaml           | 119 ++++++++++++++++++
+ 2 files changed, 119 insertions(+), 84 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/sound/samsung-i2s.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/samsung-i2s.yaml
 
-diff --git a/Documentation/devicetree/bindings/gpu/samsung-rotator.txt b/Documentation/devicetree/bindings/gpu/samsung-rotator.txt
+diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.txt b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
 deleted file mode 100644
-index 3aca2578da0b..000000000000
---- a/Documentation/devicetree/bindings/gpu/samsung-rotator.txt
+index a88cb00fa096..000000000000
+--- a/Documentation/devicetree/bindings/sound/samsung-i2s.txt
 +++ /dev/null
-@@ -1,28 +0,0 @@
--* Samsung Image Rotator
+@@ -1,84 +0,0 @@
+-* Samsung I2S controller
 -
--Required properties:
--  - compatible : value should be one of the following:
--	* "samsung,s5pv210-rotator" for Rotator IP in S5PV210
--	* "samsung,exynos4210-rotator" for Rotator IP in Exynos4210
--	* "samsung,exynos4212-rotator" for Rotator IP in Exynos4212/4412
--	* "samsung,exynos5250-rotator" for Rotator IP in Exynos5250
+-Required SoC Specific Properties:
 -
--  - reg : Physical base address of the IP registers and length of memory
--	  mapped region.
+-- compatible : should be one of the following.
+-   - samsung,s3c6410-i2s: for 8/16/24bit stereo I2S.
+-   - samsung,s5pv210-i2s: for 8/16/24bit multichannel(5.1) I2S with
+-     secondary fifo, s/w reset control and internal mux for root clk src.
+-   - samsung,exynos5420-i2s: for 8/16/24bit multichannel(5.1) I2S for
+-     playback, stereo channel capture, secondary fifo using internal
+-     or external dma, s/w reset control, internal mux for root clk src
+-     and 7.1 channel TDM support for playback. TDM (Time division multiplexing)
+-     is to allow transfer of multiple channel audio data on single data line.
+-   - samsung,exynos7-i2s: with all the available features of exynos5 i2s,
+-     exynos7 I2S has 7.1 channel TDM support for capture, secondary fifo
+-     with only external dma and more no.of root clk sampling frequencies.
+-   - samsung,exynos7-i2s1: I2S1 on previous samsung platforms supports
+-     stereo channels. exynos7 i2s1 upgraded to 5.1 multichannel with
+-     slightly modified bit offsets.
 -
--  - interrupts : Interrupt specifier for rotator interrupt, according to format
--		 specific to interrupt parent.
+-- reg: physical base address of the controller and length of memory mapped
+-  region.
+-- dmas: list of DMA controller phandle and DMA request line ordered pairs.
+-- dma-names: identifier string for each DMA request line in the dmas property.
+-  These strings correspond 1:1 with the ordered pairs in dmas.
+-- clocks: Handle to iis clock and RCLK source clk.
+-- clock-names:
+-  i2s0 uses some base clocks from CMU and some are from audio subsystem internal
+-  clock controller. The clock names for i2s0 should be "iis", "i2s_opclk0" and
+-  "i2s_opclk1" as shown in the example below.
+-  i2s1 and i2s2 uses clocks from CMU. The clock names for i2s1 and i2s2 should
+-  be "iis" and "i2s_opclk0".
+-  "iis" is the i2s bus clock and i2s_opclk0, i2s_opclk1 are sources of the root
+-  clk. i2s0 has internal mux to select the source of root clk and i2s1 and i2s2
+-  doesn't have any such mux.
+-- #clock-cells: should be 1, this property must be present if the I2S device
+-  is a clock provider in terms of the common clock bindings, described in
+-  ../clock/clock-bindings.txt.
+-- clock-output-names (deprecated): from the common clock bindings, names of
+-  the CDCLK I2S output clocks, suggested values are "i2s_cdclk0", "i2s_cdclk1",
+-  "i2s_cdclk3" for the I2S0, I2S1, I2S2 devices respectively.
 -
--  - clocks : Clock specifier for rotator clock, according to generic clock
--	     bindings. (See Documentation/devicetree/bindings/clock/exynos*.txt)
+-There are following clocks available at the I2S device nodes:
+- CLK_I2S_CDCLK    - the CDCLK (CODECLKO) gate clock,
+- CLK_I2S_RCLK_PSR - the RCLK prescaler divider clock (corresponding to the
+-		    IISPSR register),
+- CLK_I2S_RCLK_SRC - the RCLKSRC mux clock (corresponding to RCLKSRC bit in
+-		    IISMOD register).
 -
--  - clock-names : Names of clocks. For exynos rotator, it should be "rotator".
+-Refer to the SoC datasheet for availability of the above clocks.
+-The CLK_I2S_RCLK_PSR and CLK_I2S_RCLK_SRC clocks are usually only available
+-in the IIS Multi Audio Interface.
+-
+-Note: Old DTs may not have the #clock-cells property and then not use the I2S
+-node as a clock supplier.
+-
+-Optional SoC Specific Properties:
+-
+-- samsung,idma-addr: Internal DMA register base address of the audio
+-  sub system(used in secondary sound source).
+-- pinctrl-0: Should specify pin control groups used for this controller.
+-- pinctrl-names: Should contain only one value - "default".
+-- #sound-dai-cells: should be 1.
+-
 -
 -Example:
--	rotator@12810000 {
--		compatible = "samsung,exynos4210-rotator";
--		reg = <0x12810000 0x1000>;
--		interrupts = <0 83 0>;
--		clocks = <&clock 278>;
--		clock-names = "rotator";
--	};
-diff --git a/Documentation/devicetree/bindings/gpu/samsung-rotator.yaml b/Documentation/devicetree/bindings/gpu/samsung-rotator.yaml
+-
+-i2s0: i2s@3830000 {
+-	compatible = "samsung,s5pv210-i2s";
+-	reg = <0x03830000 0x100>;
+-	dmas = <&pdma0 10
+-		&pdma0 9
+-		&pdma0 8>;
+-	dma-names = "tx", "rx", "tx-sec";
+-	clocks = <&clock_audss EXYNOS_I2S_BUS>,
+-		<&clock_audss EXYNOS_I2S_BUS>,
+-		<&clock_audss EXYNOS_SCLK_I2S>;
+-	clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
+-	#clock-cells = <1>;
+-	samsung,idma-addr = <0x03000000>;
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&i2s0_bus>;
+-	#sound-dai-cells = <1>;
+-};
+diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.yaml b/Documentation/devicetree/bindings/sound/samsung-i2s.yaml
 new file mode 100644
-index 000000000000..45ce562435fa
+index 000000000000..59dc76035cb4
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/gpu/samsung-rotator.yaml
-@@ -0,0 +1,48 @@
++++ b/Documentation/devicetree/bindings/sound/samsung-i2s.yaml
+@@ -0,0 +1,119 @@
 +# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/gpu/samsung-rotator.yaml#
++$id: http://devicetree.org/schemas/sound/samsung-i2s.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Samsung SoC Image Rotator
++title: Samsung SoC I2S controller
 +
 +maintainers:
-+  - Inki Dae <inki.dae@samsung.com>
++  - Krzysztof Kozlowski <krzk@kernel.org>
++  - Sangbeom Kim <sbkim73@samsung.com>
++  - Sylwester Nawrocki <s.nawrocki@samsung.com>
 +
 +properties:
 +  compatible:
++    description: |
++      samsung,s3c6410-i2s: for 8/16/24bit stereo I2S.
++
++      samsung,s5pv210-i2s: for 8/16/24bit multichannel(5.1) I2S with
++      secondary fifo, s/w reset control and internal mux for root clk src.
++
++      samsung,exynos5420-i2s: for 8/16/24bit multichannel(5.1) I2S for
++      playback, stereo channel capture, secondary fifo using internal
++      or external dma, s/w reset control, internal mux for root clk src
++      and 7.1 channel TDM support for playback. TDM (Time division multiplexing)
++      is to allow transfer of multiple channel audio data on single data line.
++
++      samsung,exynos7-i2s: with all the available features of exynos5 i2s.
++
++      exynos7 I2S has 7.1 channel TDM support for capture, secondary fifo
++      with only external dma and more no.of root clk sampling frequencies.
++
++      samsung,exynos7-i2s1: I2S1 on previous samsung platforms supports
++      stereo channels. exynos7 i2s1 upgraded to 5.1 multichannel with
++      slightly modified bit offsets.
 +    enum:
-+      - "samsung,s5pv210-rotator"
-+      - "samsung,exynos4210-rotator"
-+      - "samsung,exynos4212-rotator"
-+      - "samsung,exynos5250-rotator"
++      - "samsung,s3c6410-i2s"
++      - "samsung,s5pv210-i2s"
++      - "samsung,exynos5420-i2s"
++      - "samsung,exynos7-i2s"
++      - "samsung,exynos7-i2s1"
++
 +  reg:
 +    maxItems: 1
 +
-+  interrupts:
-+    maxItems: 1
++  dmas:
++    description: list of DMA controller phandle and DMA request line ordered pairs.
++
++  dma-names:
++    description: |
++      identifier string for each DMA request line in the dmas property.
++      These strings correspond 1:1 with the ordered pairs in dmas.
 +
 +  clocks:
-+    maxItems: 1
++    minItems: 1
++    maxItems: 3
 +
 +  clock-names:
-+    items:
-+    - const: rotator
++    oneOf:
++      - items:
++          - const: iis
++      - items:
++          - const: iis
++          - const: i2s_opclk0
++      - items:
++          - const: iis
++          - const: i2s_opclk0
++          - const: i2s_opclk1
++    description: |
++      "iis" is the i2s bus clock.
++      For i2s1 and i2s2 - "iis", "i2s_opclk0"
++      For i2s0 - "iis", "i2s_opclk0", "i2s_opclk1"
++
++  "#clock-cells":
++    const: 1
++
++  samsung,idma-addr:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: |
++      Internal DMA register base address of the audio
++      sub system(used in secondary sound source).
++
++  pinctrl-0:
++    description: Should specify pin control groups used for this controller.
++
++  pinctrl-names:
++    const: default
++
++  "#sound-dai-cells":
++    const: 1
 +
 +required:
 +  - compatible
 +  - reg
-+  - interrupts
++  - dmas
++  - dma-names
 +  - clocks
 +  - clock-names
 +
 +examples:
 +  - |
-+    rotator@12810000 {
-+        compatible = "samsung,exynos4210-rotator";
-+        reg = <0x12810000 0x1000>;
-+        interrupts = <0 83 0>;
-+        clocks = <&clock 278>;
-+        clock-names = "rotator";
++    i2s0: i2s@3830000 {
++        compatible = "samsung,s5pv210-i2s";
++        reg = <0x03830000 0x100>;
++        dmas = <&pdma0 10
++                &pdma0 9
++                &pdma0 8>;
++        dma-names = "tx", "rx", "tx-sec";
++        clocks = <&clock_audss 0>, // EXYNOS_I2S_BUS
++                <&clock_audss 0>, // EXYNOS_I2S_BUS
++                <&clock_audss 0>; // EXYNOS_SCLK_I2S
++        clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
++        #clock-cells = <1>;
++        samsung,idma-addr = <0x03000000>;
++        pinctrl-names = "default";
++        pinctrl-0 = <&i2s0_bus>;
++        #sound-dai-cells = <1>;
 +    };
 +
 -- 
