@@ -1,188 +1,37 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3] dt-bindings: arm: samsung: Convert Samsung Exynos
- IOMMU H/W, System MMU to dt-schema
-Date: Tue, 17 Sep 2019 14:21:13 -0500
-Message-ID: <20190917192113.GA26604@bogus>
-References: <CAJKOXPeojuk1UrYo9Wakaaq4VJt3Ts22Vi-V5xzwAXoFU5+tcA@mail.gmail.com>
- <CGME20190911110500eucas1p2e1304a19e2e75ee43d80fcdc3b871237@eucas1p2.samsung.com>
- <20190911110446.32058-1-m.falkowski@samsung.com>
+Subject: Re: [PATCH v3] dt-bindings: gpu: Convert Samsung Image Rotator to
+  dt-schema
+Date: Tue, 17 Sep 2019 15:08:16 -0500
+Message-ID: <20190917200816.GA10224@bogus>
+References: <20190913062945.GA10283@pi3>
+ <CGME20190917103758eucas1p10793e499209137630681186a10a4b7bd@eucas1p1.samsung.com>
+ <20190917103727.14997-1-m.falkowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190911110446.32058-1-m.falkowski@samsung.com>
+In-Reply-To: <20190917103727.14997-1-m.falkowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Maciej Falkowski <m.falkowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, krzk@kernel.org, mark.rutland@arm.com, m.szyprowski@samsung.com, a.hajda@samsung.com
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, airlied@linux.ie, daniel@ffwll.ch, robh+dt@kernel.org, mark.rutland@arm.com, krzk@kernel.org, a.hajda@samsung.com, m.szyprowski@samsung.com, m.falkowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Sep 11, 2019 at 01:04:46PM +0200, Maciej Falkowski wrote:
-> Convert Samsung Exynos IOMMU H/W, System Memory Management Unit
-> to newer dt-schema format.
-> 
-> Update clock description.
+On Tue, 17 Sep 2019 12:37:27 +0200, Maciej Falkowski wrote:
+> Convert Samsung Image Rotator to newer dt-schema format.
 > 
 > Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
-> Hi Krzysztof,
-> 
-> Thank you for feedback.
-> 
 > v3:
-> 
-> - remove obsolete interrupts description and
-> set its maxItems to one. There are some incompatible
-> files which will be fixed with another patch.
-> 
-> - clock-names pattern is changed to your more precise 
-> version. I also added option "pclk" + "aclk" as some
-> bindings are also using it.
-> 
-> Best regards,
-> Maciej Falkowski
+> - remove unneded comments and descriptions
+> - remove unneded maxItems field from clock-names property
 > ---
->  .../bindings/iommu/samsung,sysmmu.txt         |  67 -----------
->  .../bindings/iommu/samsung,sysmmu.yaml        | 112 ++++++++++++++++++
->  2 files changed, 112 insertions(+), 67 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/iommu/samsung,sysmmu.txt
->  create mode 100644 Documentation/devicetree/bindings/iommu/samsung,sysmmu.yaml
-
-
-> diff --git a/Documentation/devicetree/bindings/iommu/samsung,sysmmu.yaml b/Documentation/devicetree/bindings/iommu/samsung,sysmmu.yaml
-> new file mode 100644
-> index 000000000000..a8141d6c326a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iommu/samsung,sysmmu.yaml
-> @@ -0,0 +1,112 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iommu/samsung,sysmmu.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung Exynos IOMMU H/W, System MMU (System Memory Management Unit)
-> +
-> +maintainers:
-> +  - Marek Szyprowski <m.szyprowski@samsung.com>
-> +
-> +description: |+
-> +  Samsung's Exynos architecture contains System MMUs that enables scattered
-> +  physical memory chunks visible as a contiguous region to DMA-capable peripheral
-> +  devices like MFC, FIMC, FIMD, GScaler, FIMC-IS and so forth.
-> +
-> +  System MMU is an IOMMU and supports identical translation table format to
-> +  ARMv7 translation tables with minimum set of page properties including access
-> +  permissions, shareability and security protection. In addition, System MMU has
-> +  another capabilities like L2 TLB or block-fetch buffers to minimize translation
-> +  latency.
-> +
-> +  System MMUs are in many to one relation with peripheral devices, i.e. single
-> +  peripheral device might have multiple System MMUs (usually one for each bus
-> +  master), but one System MMU can handle transactions from only one peripheral
-> +  device. The relation between a System MMU and the peripheral device needs to be
-> +  defined in device node of the peripheral device.
-> +
-> +  MFC in all Exynos SoCs and FIMD, M2M Scalers and G2D in Exynos5420 has 2 System
-> +  MMUs.
-> +  * MFC has one System MMU on its left and right bus.
-> +  * FIMD in Exynos5420 has one System MMU for window 0 and 4, the other system MMU
-> +    for window 1, 2 and 3.
-> +  * M2M Scalers and G2D in Exynos5420 has one System MMU on the read channel and
-> +    the other System MMU on the write channel.
-> +
-> +  For information on assigning System MMU controller to its peripheral devices,
-> +  see generic IOMMU bindings.
-> +
-> +properties:
-> +  compatible:
-> +    const: samsung,exynos-sysmmu
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    oneOf:
-> +      - items:
-> +        - const: sysmmu
-> +      - items:
-> +        - const: sysmmu
-> +        - const: master
-> +      - items:
-> +        - const: aclk
-> +        - const: pclk
-> +      - items:
-> +        - const: pclk
-> +        - const: aclk
-
-Sigh. I'd prefer you fix the order in whichever case is less common.
-
-> +    description: |
-> +      Should be "sysmmu" with optional "master"
-> +      or a pair "aclk" with "pclk".
-
-No need to describe what the schema already says.
-
-> +
-> +  "#iommu-cells":
-> +    const: 0
-> +
-> +  power-domains:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-
-No need to define common property types.
-
-Just 'maxItems: 1' is enough.
-
-> +    description: |
-> +      Required if the System MMU is needed to gate its power.
-> +      Please refer to the following document:
-> +      Documentation/devicetree/bindings/power/pd-samsung.txt
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +  - "#iommu-cells"
-> +
-> +examples:
-> +  - |
-> +    gsc_0: gsc@13e00000 {
-> +      compatible = "samsung,exynos5-gsc";
-> +      reg = <0x13e00000 0x1000>;
-> +      interrupts = <0 85 0>;
-> +      power-domains = <&pd_gsc>;
-> +      clocks = <&clock 0>; // CLK_GSCL0
-> +      clock-names = "gscl";
-> +      iommus = <&sysmmu_gsc0>;
-> +    };
-> +
-> +    sysmmu_gsc0: sysmmu@13e80000 {
-
-This should be:
-
-iommu@...
-
-> +      compatible = "samsung,exynos-sysmmu";
-> +      reg = <0x13E80000 0x1000>;
-> +      interrupt-parent = <&combiner>;
-> +      interrupts = <2 0>;
-> +      clock-names = "sysmmu", "master";
-> +      clocks = <&clock 0>, // CLK_SMMU_GSCL0
-> +               <&clock 0>; // CLK_GSCL0
-> +      power-domains = <&pd_gsc>;
-> +      #iommu-cells = <0>;
-> +    };
-> +
-> -- 
-> 2.17.1
+>  .../bindings/gpu/samsung-rotator.txt          | 28 -----------
+>  .../bindings/gpu/samsung-rotator.yaml         | 48 +++++++++++++++++++
+>  2 files changed, 48 insertions(+), 28 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/gpu/samsung-rotator.txt
+>  create mode 100644 Documentation/devicetree/bindings/gpu/samsung-rotator.yaml
 > 
+
+Applied, thanks.
+
+Rob
