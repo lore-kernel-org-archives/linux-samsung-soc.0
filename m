@@ -1,10 +1,9 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v1 6/9] ASoC: dt-bindings: Document "samsung,arndale-wm1811"
- compatible
-Date: Wed, 18 Sep 2019 12:46:31 +0200
-Message-ID: <20190918104634.15216-7-s.nawrocki@samsung.com>
+Subject: [PATCH v1 7/9] ASoC: samsung: arndale: Add support for WM1811 CODEC
+Date: Wed, 18 Sep 2019 12:46:32 +0200
+Message-ID: <20190918104634.15216-8-s.nawrocki@samsung.com>
 References: <20190918104634.15216-1-s.nawrocki@samsung.com>
- <CGME20190918104703eucas1p1a06ecce433753ba42b422317ec7db48c@eucas1p1.samsung.com>
+ <CGME20190918104705eucas1p1c01dc05bff199188677915e2bb8f7472@eucas1p1.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -23,28 +22,172 @@ To: broonie@kernel.org
 Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, ckeepax@opensource.cirrus.com, b.zolnierkie@samsung.com, sbkim73@samsung.com, patches@opensource.cirrus.com, lgirdwood@gmail.com, krzk@kernel.org, robh+dt@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add compatible string for boards with WM1811 CODEC to the list.
+The Arndale boards come with different types of the audio daughter
+board.  In order to support the WM1811 one we add new definition of
+an ASoC card which will be registered when the driver matches on
+"samsung,arndale-wm1811" compatible.  There is no runtime detection of
+the audio daughter board type at the moment, compatible string of the
+audio card needs to be adjusted in DT, e.g. by the bootloader,
+depending on actual audio board (CODEC) used.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- Documentation/devicetree/bindings/sound/arndale.txt | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ sound/soc/samsung/arndale_rt5631.c | 86 +++++++++++++++++++++++++-----
+ 1 file changed, 73 insertions(+), 13 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/arndale.txt b/Documentation/devicetree/bindings/sound/arndale.txt
-index 0e76946385ae..17530120ccfc 100644
---- a/Documentation/devicetree/bindings/sound/arndale.txt
-+++ b/Documentation/devicetree/bindings/sound/arndale.txt
-@@ -1,8 +1,9 @@
- Audio Binding for Arndale boards
+diff --git a/sound/soc/samsung/arndale_rt5631.c b/sound/soc/samsung/arndale_rt5631.c
+index c5c8e3b5772f..3744c47742b8 100644
+--- a/sound/soc/samsung/arndale_rt5631.c
++++ b/sound/soc/samsung/arndale_rt5631.c
+@@ -5,6 +5,7 @@
+ //  Author: Claude <claude@insginal.co.kr>
  
- Required properties:
--- compatible : Can be the following,
--			"samsung,arndale-rt5631"
-+- compatible : Can be one of the following:
-+		"samsung,arndale-rt5631",
-+		"samsung,arndale-wm1811"
+ #include <linux/module.h>
++#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/clk.h>
  
- - samsung,audio-cpu: The phandle of the Samsung I2S controller
- - samsung,audio-codec: The phandle of the audio codec
+@@ -13,10 +14,11 @@
+ #include <sound/pcm.h>
+ #include <sound/pcm_params.h>
+ 
++#include "../codecs/wm8994.h"
+ #include "i2s.h"
+ 
+-static int arndale_hw_params(struct snd_pcm_substream *substream,
+-	struct snd_pcm_hw_params *params)
++static int arndale_rt5631_hw_params(struct snd_pcm_substream *substream,
++				    struct snd_pcm_hw_params *params)
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+ 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+@@ -46,13 +48,45 @@ static int arndale_hw_params(struct snd_pcm_substream *substream,
+ 	return 0;
+ }
+ 
+-static struct snd_soc_ops arndale_ops = {
+-	.hw_params = arndale_hw_params,
++static struct snd_soc_ops arndale_rt5631_ops = {
++	.hw_params = arndale_rt5631_hw_params,
++};
++
++static int arndale_wm1811_hw_params(struct snd_pcm_substream *substream,
++				    struct snd_pcm_hw_params *params)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct snd_soc_dai *codec_dai = rtd->codec_dai;
++	unsigned int rfs, rclk;
++
++	/* Ensure AIF1CLK is >= 3 MHz for optimal performance */
++	if (params_width(params) == 24)
++		rfs = 384;
++	else if (params_rate(params) == 8000 || params_rate(params) == 11025)
++		rfs = 512;
++	else
++		rfs = 256;
++
++	rclk = params_rate(params) * rfs;
++
++	/*
++	 * We add 1 to the frequency value to ensure proper EPLL setting
++	 * for each audio sampling rate (see epll_24mhz_tbl in drivers/clk/
++	 * samsung/clk-exynos5250.c for list of available EPLL rates).
++	 * The CODEC uses clk API and the value will be rounded hence the MCLK1
++	 * clock's frequency will still be exact multiple of the sample rate.
++	 */
++	return snd_soc_dai_set_sysclk(codec_dai, WM8994_SYSCLK_MCLK1,
++					rclk + 1, SND_SOC_CLOCK_IN);
++}
++
++static struct snd_soc_ops arndale_wm1811_ops = {
++	.hw_params = arndale_wm1811_hw_params,
+ };
+ 
+ SND_SOC_DAILINK_DEFS(rt5631_hifi,
+ 	DAILINK_COMP_ARRAY(COMP_EMPTY()),
+-	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "rt5631-hifi")),
++	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "rt5631-aif1")),
+ 	DAILINK_COMP_ARRAY(COMP_EMPTY()));
+ 
+ static struct snd_soc_dai_link arndale_rt5631_dai[] = {
+@@ -62,11 +96,28 @@ static struct snd_soc_dai_link arndale_rt5631_dai[] = {
+ 		.dai_fmt = SND_SOC_DAIFMT_I2S
+ 			| SND_SOC_DAIFMT_NB_NF
+ 			| SND_SOC_DAIFMT_CBS_CFS,
+-		.ops = &arndale_ops,
++		.ops = &arndale_rt5631_ops,
+ 		SND_SOC_DAILINK_REG(rt5631_hifi),
+ 	},
+ };
+ 
++SND_SOC_DAILINK_DEFS(wm1811_hifi,
++	DAILINK_COMP_ARRAY(COMP_EMPTY()),
++	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "wm8994-aif1")),
++	DAILINK_COMP_ARRAY(COMP_EMPTY()));
++
++static struct snd_soc_dai_link arndale_wm1811_dai[] = {
++	{
++		.name = "WM1811 HiFi",
++		.stream_name = "Primary",
++		.dai_fmt = SND_SOC_DAIFMT_I2S
++			| SND_SOC_DAIFMT_NB_NF
++			| SND_SOC_DAIFMT_CBM_CFM,
++		.ops = &arndale_wm1811_ops,
++		SND_SOC_DAILINK_REG(wm1811_hifi),
++	},
++};
++
+ static struct snd_soc_card arndale_rt5631 = {
+ 	.name = "Arndale RT5631",
+ 	.owner = THIS_MODULE,
+@@ -74,13 +125,21 @@ static struct snd_soc_card arndale_rt5631 = {
+ 	.num_links = ARRAY_SIZE(arndale_rt5631_dai),
+ };
+ 
++static struct snd_soc_card arndale_wm1811 = {
++	.name = "Arndale WM1811",
++	.owner = THIS_MODULE,
++	.dai_link = arndale_wm1811_dai,
++	.num_links = ARRAY_SIZE(arndale_wm1811_dai),
++};
++
+ static int arndale_audio_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+-	struct snd_soc_card *card = &arndale_rt5631;
++	struct snd_soc_card *card;
+ 	struct snd_soc_dai_link *dai_link;
+ 	int ret;
+ 
++	card = (struct snd_soc_card *)of_device_get_match_data(&pdev->dev);
+ 	card->dev = &pdev->dev;
+ 	dai_link = card->dai_link;
+ 
+@@ -107,18 +166,19 @@ static int arndale_audio_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static const struct of_device_id samsung_arndale_rt5631_of_match[] __maybe_unused = {
+-	{ .compatible = "samsung,arndale-rt5631", },
+-	{ .compatible = "samsung,arndale-alc5631", },
++static const struct of_device_id arndale_audio_of_match[] __maybe_unused = {
++	{ .compatible = "samsung,arndale-rt5631",  .data = &arndale_rt5631 },
++	{ .compatible = "samsung,arndale-alc5631", .data = &arndale_rt5631 },
++	{ .compatible = "samsung,arndale-wm1811",  .data = &arndale_wm1811 },
+ 	{},
+ };
+-MODULE_DEVICE_TABLE(of, samsung_arndale_rt5631_of_match);
++MODULE_DEVICE_TABLE(of, arndale_of_match);
+ 
+ static struct platform_driver arndale_audio_driver = {
+ 	.driver = {
+-		.name   = "arndale-audio",
++		.name = "arndale-audio",
+ 		.pm = &snd_soc_pm_ops,
+-		.of_match_table = of_match_ptr(samsung_arndale_rt5631_of_match),
++		.of_match_table = arndale_audio_of_match,
+ 	},
+ 	.probe = arndale_audio_probe,
+ };
 -- 
 2.17.1
