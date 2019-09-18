@@ -1,156 +1,112 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] dt-bindings: memory-controllers: Convert Samsung Exynos
- SROM bindings to json-schema
-Date: Wed, 18 Sep 2019 14:25:12 +0200
-Message-ID: <CAJKOXPeCH-hp40gnC4W5Fn8Z0OWqF74H4r1RQOJTCnu72wmrZQ@mail.gmail.com>
-References: <20190907144442.16788-1-krzk@kernel.org> <5d7ba95e.1c69fb81.bba41.66c2@mx.google.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 08/11] dt-bindings: arm: samsung: Convert Exynos
+ System Registers bindings to json-schema
+Date: Wed, 18 Sep 2019 07:36:54 -0500
+Message-ID: <20190918123654.GA318@bogus>
+References: <20190907092007.9946-1-krzk@kernel.org>
+ <20190907092007.9946-8-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5d7ba95e.1c69fb81.bba41.66c2@mx.google.com>
+Content-Disposition: inline
+In-Reply-To: <20190907092007.9946-8-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Sebastian Reichel <sre@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, 13 Sep 2019 at 16:36, Rob Herring <robh@kernel.org> wrote:
->
-> On Sat, Sep 07, 2019 at 04:44:42PM +0200, Krzysztof Kozlowski wrote:
-> > Convert Samsung Exynos SROM controller bindings to DT schema format
-> > using json-schema.
-> >
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > ---
-> >  .../memory-controllers/exynos-srom.txt        |  79 ----------
-> >  .../memory-controllers/exynos-srom.yaml       | 136 ++++++++++++++++++
-> >  2 files changed, 136 insertions(+), 79 deletions(-)
-> >  delete mode 100644 Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt
-> >  create mode 100644 Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
->
->
-> > diff --git a/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
-> > new file mode 100644
-> > index 000000000000..9573bcfd68bf
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
-> > @@ -0,0 +1,136 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/memory-controllers/exynos-srom.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Samsung Exynos SoC SROM Controller driver
-> > +
-> > +maintainers:
-> > +  - Krzysztof Kozlowski <krzk@kernel.org>
-> > +
-> > +description: |+
-> > +  The SROM controller can be used to attach external peripherals. In this case
-> > +  extra properties, describing the bus behind it, should be specified.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    items:
-> > +      - const: samsung,exynos4210-srom
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  "#address-cells":
-> > +    const: 2
-> > +
-> > +  "#size-cells":
-> > +    const: 1
-> > +
-> > +  ranges:
-> > +    description: |
-> > +      Reflects the memory layout with four integer values per bank. Format:
-> > +      <bank-number> 0 <parent address of bank> <size>
-> > +
-> > +patternProperties:
-> > +  "^.*@[0-9]+,[0-9]+$":
->
-> How many chip selects? Can be a single digit?
+On Sat, Sep 07, 2019 at 11:20:04AM +0200, Krzysztof Kozlowski wrote:
+> Convert Samsung Exynos System Registers (SYSREG) bindings to DT schema
+> format using json-schema.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> ---
+> 
+> Example somehow fails:
+> Documentation/devicetree/bindings/arm/samsung/pmu.example.dt.yaml:
+> system-controller@10040000: compatible:0: 'samsung,exynos5250-pmu' is
+> not one of ['samsung,exynos4-sysreg', 'samsung,exynos5-sysreg']
+> 
+> It seems that PMU schema is applied to sysreq nodes (and vice-versa).
+> ---
+>  .../bindings/arm/samsung/sysreg.txt           | 19 -----------
+>  .../bindings/arm/samsung/sysreg.yaml          | 33 +++++++++++++++++++
+>  2 files changed, 33 insertions(+), 19 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/arm/samsung/sysreg.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/samsung/sysreg.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/sysreg.txt b/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
+> deleted file mode 100644
+> index 4fced6e9d5e4..000000000000
+> --- a/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
+> +++ /dev/null
+> @@ -1,19 +0,0 @@
+> -SAMSUNG S5P/Exynos SoC series System Registers (SYSREG)
+> -
+> -Properties:
+> - - compatible : should contain two values. First value must be one from following list:
+> -		- "samsung,exynos4-sysreg" - for Exynos4 based SoCs,
+> -		- "samsung,exynos5-sysreg" - for Exynos5 based SoCs.
+> -		second value must be always "syscon".
+> - - reg : offset and length of the register set.
+> -
+> -Example:
+> -	syscon@10010000 {
+> -		compatible = "samsung,exynos4-sysreg", "syscon";
+> -		reg = <0x10010000 0x400>;
+> -	};
+> -
+> -	syscon@10050000 {
+> -		compatible = "samsung,exynos5-sysreg", "syscon";
+> -		reg = <0x10050000 0x5000>;
+> -	};
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/sysreg.yaml b/Documentation/devicetree/bindings/arm/samsung/sysreg.yaml
+> new file mode 100644
+> index 000000000000..a3d44646e441
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/samsung/sysreg.yaml
+> @@ -0,0 +1,33 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/samsung/sysreg.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Samsung S5P/Exynos SoC series System Registers (SYSREG)
+> +
+> +maintainers:
+> +  - Krzysztof Kozlowski <krzk@kernel.org>
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - samsung,exynos4-sysreg
+> +          - samsung,exynos5-sysreg
+> +      - const: syscon
 
-Currently up to four banks, so I can limit the pattern.
+The problem is this will by default match any node with 'syscon'. You 
+have to add a custom 'select' entry. See the LVDS panel bindings for an 
+example.
 
->
-> Also, these should be hex values.
+I'd like to kill off 'syscon'...
 
-Sure.
-
->
-> > +    type: object
-> > +    description:
-> > +      The actual device nodes should be added as subnodes to the SROMc node.
-> > +      These subnodes, in addition to regular device specification, should
-> > +      contain the following properties, describing configuration
-> > +      of the relevant SROM bank.
-> > +
-> > +    properties:
-> > +      reg:
-> > +        description:
-> > +          Bank number, base address (relative to start of the bank) and size
-> > +          of the memory mapped for the device. Note that base address will be
-> > +          typically 0 as this is the start of the bank.
-> > +        maxItems: 1
-> > +
-> > +      reg-io-width:
-> > +        allOf:
-> > +          - $ref: /schemas/types.yaml#/definitions/uint32
-> > +          - enum: [1, 2]
-> > +        description:
-> > +          Data width in bytes (1 or 2). If omitted, default of 1 is used.
-> > +
-> > +      samsung,srom-page-mode:
-> > +        description:
-> > +          If page mode is set, 4 data page mode will be configured,
-> > +          else normal (1 data) page mode will be set.
-> > +        type: boolean
-> > +
-> > +      samsung,srom-timing:
-> > +        allOf:
-> > +          - $ref: /schemas/types.yaml#/definitions/uint32-array
-> > +          - items:
-> > +              minItems: 6
-> > +              maxItems: 6
-> > +        description: |
-> > +          Array of 6 integers, specifying bank timings in the following order:
-> > +          Tacp, Tcah, Tcoh, Tacc, Tcos, Tacs.
-> > +          Each value is specified in cycles and has the following meaning
-> > +          and valid range:
-> > +          Tacp: Page mode access cycle at Page mode (0 - 15)
-> > +          Tcah: Address holding time after CSn (0 - 15)
-> > +          Tcoh: Chip selection hold on OEn (0 - 15)
-> > +          Tacc: Access cycle (0 - 31, the actual time is N + 1)
-> > +          Tcos: Chip selection set-up before OEn (0 - 15)
-> > +          Tacs: Address set-up before CSn (0 - 15)
-> > +
-> > +    required:
-> > +      - reg
-> > +      - samsung,srom-timing
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +
-> > +allOf:
-> > +  - if:
-> > +      anyOf:
-> > +        - required: [ "#address-cells" ]
-> > +        - required: [ ranges ]
-> > +        - required: [ "#size-cells" ]
-> > +    then:
-> > +      required:
-> > +        - "#address-cells"
-> > +        - ranges
-> > +        - "#size-cells"
->
-> I don't think this is necessary as the core schema should take care of
-> it. This can also be expressed using 'dependencies'.
-
-I'll skip it then.
-
-Best regards,
-Krzysztof
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +examples:
+> +  - |
+> +    syscon@10010000 {
+> +      compatible = "samsung,exynos4-sysreg", "syscon";
+> +      reg = <0x10010000 0x400>;
+> +    };
+> +
+> +    syscon@10050000 {
+> +      compatible = "samsung,exynos5-sysreg", "syscon";
+> +      reg = <0x10050000 0x5000>;
+> +    };
+> -- 
+> 2.17.1
+> 
