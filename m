@@ -1,10 +1,10 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v1 5/9] ASoC: samsung: arndale: Simplify DAI link
- initialization
-Date: Wed, 18 Sep 2019 12:46:30 +0200
-Message-ID: <20190918104634.15216-6-s.nawrocki@samsung.com>
+Subject: [PATCH v1 9/9] ARM: dts: arndale: Add audio support (WM1811 CODEC
+ boards)
+Date: Wed, 18 Sep 2019 12:46:34 +0200
+Message-ID: <20190918104634.15216-10-s.nawrocki@samsung.com>
 References: <20190918104634.15216-1-s.nawrocki@samsung.com>
- <CGME20190918104702eucas1p213070d06c69c4836d15d071b1926e60d@eucas1p2.samsung.com>
+ <CGME20190918104715eucas1p2a051a537a0e86becfbbcb36c172ef705@eucas1p2.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -23,78 +23,85 @@ To: broonie@kernel.org
 Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, ckeepax@opensource.cirrus.com, b.zolnierkie@samsung.com, sbkim73@samsung.com, patches@opensource.cirrus.com, lgirdwood@gmail.com, krzk@kernel.org, robh+dt@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-There is only one DAI link so we can drop an unnecessary loop statement.
-Use card->dai_link in place of direct static arndale_rt5631_dai[] array
-dereference as a prerequisite for adding support for other CODECs.
-Unnecessary assignment of dai_link->codecs->name to NULL is removed.
+Add sound node and the clock configurations for the I2S controller
+for audio support on the Exynos5250 SoC Arndale boards with
+WM1811 based audio daugther board.
+
+We need to increase drive strength of the I2S bus, otherwise
+the audio CODEC doesn't work. Likely the CODEC's master clock
+is the main issue here.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- sound/soc/samsung/arndale_rt5631.c | 42 ++++++++++++------------------
- 1 file changed, 17 insertions(+), 25 deletions(-)
+ arch/arm/boot/dts/exynos5250-arndale.dts | 27 +++++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/samsung/arndale_rt5631.c b/sound/soc/samsung/arndale_rt5631.c
-index c213913eb984..c5c8e3b5772f 100644
---- a/sound/soc/samsung/arndale_rt5631.c
-+++ b/sound/soc/samsung/arndale_rt5631.c
-@@ -76,41 +76,33 @@ static struct snd_soc_card arndale_rt5631 = {
+diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+index dc6fa6fe83f1..62aa6720aa88 100644
+--- a/arch/arm/boot/dts/exynos5250-arndale.dts
++++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+@@ -11,6 +11,7 @@
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/input/input.h>
+ #include <dt-bindings/clock/samsung,s2mps11.h>
++#include <dt-bindings/sound/samsung-i2s.h>
+ #include "exynos5250.dtsi"
  
- static int arndale_audio_probe(struct platform_device *pdev)
- {
--	int n, ret;
- 	struct device_node *np = pdev->dev.of_node;
- 	struct snd_soc_card *card = &arndale_rt5631;
-+	struct snd_soc_dai_link *dai_link;
-+	int ret;
+ / {
+@@ -135,6 +136,12 @@
+ 		};
+ 	};
  
- 	card->dev = &pdev->dev;
-+	dai_link = card->dai_link;
- 
--	for (n = 0; np && n < ARRAY_SIZE(arndale_rt5631_dai); n++) {
--		if (!arndale_rt5631_dai[n].cpus->dai_name) {
--			arndale_rt5631_dai[n].cpus->of_node = of_parse_phandle(np,
--					"samsung,audio-cpu", n);
--
--			if (!arndale_rt5631_dai[n].cpus->of_node) {
--				dev_err(&pdev->dev,
--				"Property 'samsung,audio-cpu' missing or invalid\n");
--				return -EINVAL;
--			}
--		}
--		if (!arndale_rt5631_dai[n].platforms->name)
--			arndale_rt5631_dai[n].platforms->of_node =
--					arndale_rt5631_dai[n].cpus->of_node;
--
--		arndale_rt5631_dai[n].codecs->name = NULL;
--		arndale_rt5631_dai[n].codecs->of_node = of_parse_phandle(np,
--					"samsung,audio-codec", n);
--		if (!arndale_rt5631_dai[0].codecs->of_node) {
--			dev_err(&pdev->dev,
--			"Property 'samsung,audio-codec' missing or invalid\n");
-+	dai_link->cpus->of_node = of_parse_phandle(np, "samsung,audio-cpu", 0);
-+	if (!dai_link->cpus->of_node) {
-+		dev_err(&pdev->dev, "Property 'samsung,audio-cpu' missing or invalid\n");
- 			return -EINVAL;
--		}
- 	}
- 
--	ret = devm_snd_soc_register_card(card->dev, card);
-+	if (!dai_link->platforms->name)
-+		dai_link->platforms->of_node = dai_link->cpus->of_node;
++	sound {
++		compatible = "samsung,arndale-wm1811";
++		samsung,audio-cpu = <&i2s0>;
++		samsung,audio-codec = <&wm1811>;
++	};
 +
-+	dai_link->codecs->of_node = of_parse_phandle(np, "samsung,audio-codec", 0);
-+	if (!dai_link->codecs->of_node) {
-+		dev_err(&pdev->dev,
-+			"Property 'samsung,audio-codec' missing or invalid\n");
-+		return -EINVAL;
-+	}
+ 	fixed-rate-clocks {
+ 		xxti {
+ 			compatible = "samsung,clock-xxti";
+@@ -499,12 +506,24 @@
+ 	};
+ };
  
-+	ret = devm_snd_soc_register_card(card->dev, card);
- 	if (ret)
--		dev_err(&pdev->dev, "snd_soc_register_card() failed:%d\n", ret);
-+		dev_err(&pdev->dev, "snd_soc_register_card() failed: %d\n", ret);
++&clock {
++	assigned-clocks = <&clock CLK_FOUT_EPLL>;
++	assigned-clock-rates = <49152000>;
++};
++
++&clock_audss {
++	assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>;
++	assigned-clock-parents = <&clock CLK_FOUT_EPLL>;
++};
++
+ &i2c_3 {
+ 	status = "okay";
  
- 	return ret;
- }
+-	wm1811a@1a {
++	wm1811: codec@1a {
+ 		compatible = "wlf,wm1811";
+ 		reg = <0x1a>;
++		clocks = <&i2s0 CLK_I2S_CDCLK>;
++		clock-names = "MCLK1";
+ 
+ 		AVDD2-supply = <&main_dc_reg>;
+ 		CPVDD-supply = <&main_dc_reg>;
+@@ -540,9 +559,15 @@
+ };
+ 
+ &i2s0 {
++	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
++	assigned-clock-parents = <&clock_audss EXYNOS_I2S_BUS>;
+ 	status = "okay";
+ };
+ 
++&i2s0_bus {
++	samsung,pin-drv = <EXYNOS4_PIN_DRV_LV2>;
++};
++
+ &mixer {
+ 	status = "okay";
+ };
 -- 
 2.17.1
