@@ -1,52 +1,38 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH v1 2/9] mfd: wm8994: Add support for MCLKn clock control
-Date: Wed, 18 Sep 2019 12:54:35 +0000
-Message-ID: <20190918125435.GF10204@ediswmail.ad.cirrus.com>
-References: <20190918104634.15216-1-s.nawrocki@samsung.com>
- <CGME20190918104656eucas1p1d9cad1394b08d05a99151c4fbc9425ce@eucas1p1.samsung.com>
- <20190918104634.15216-3-s.nawrocki@samsung.com>
- <49ef7282-3765-9149-285d-a4025417eb58@samsung.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 01/11] dt-bindings: power: syscon-reboot: Convert
+ bindings to json-schema
+Date: Wed, 18 Sep 2019 07:55:55 -0500
+Message-ID: <20190918125555.GA28572@bogus>
+References: <20190907092007.9946-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <49ef7282-3765-9149-285d-a4025417eb58@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, patches@opensource.cirrus.com, broonie@kernel.org, lgirdwood@gmail.com, krzk@kernel.org, robh+dt@kernel.org, lee.jones@linaro.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+In-Reply-To: <20190907092007.9946-1-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@bootlin.com>, =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 12:59:28PM +0200, Sylwester Nawrocki wrote:
-> On 9/18/19 12:46, Sylwester Nawrocki wrote:
-> > The WM1811/WM8994/WM8958 audio CODEC DT bindings specify two optional
-> > clocks: "MCLK1", "MCLK2". Add code for getting those clocks in the MFD
-> > part of the wm8994 driver so they can be further handled in the audio
-> > CODEC part.
-> > 
-> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> > ---
-> >  
-> > +	wm8994->mclk[WM8994_MCLK1].id = "MCLK1";
-> > +	wm8994->mclk[WM8994_MCLK2].id = "MCLK2";
-> > +
-> > +	ret = devm_clk_bulk_get_optional(wm8994->dev, ARRAY_SIZE(wm8994->mclk),
-> > +					 wm8994->mclk);
-> > +	if (ret != 0)
-> > +		return ret;
+On Sat,  7 Sep 2019 11:19:57 +0200, Krzysztof Kozlowski wrote:
+> Convert the Syscon reboot bindings to DT schema format using
+> json-schema.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> ---
+> 
+> Changes since v1:
+> 1. Remove unneeded maxItems from uint32 fields,
+> 2. Simplify if-else-then.
+> ---
+>  .../bindings/power/reset/syscon-reboot.txt    | 30 ----------
+>  .../bindings/power/reset/syscon-reboot.yaml   | 60 +++++++++++++++++++
+>  2 files changed, 60 insertions(+), 30 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/power/reset/syscon-reboot.txt
+>  create mode 100644 Documentation/devicetree/bindings/power/reset/syscon-reboot.yaml
+> 
 
-Would be nice to print a message here as well, make it clear what
-failed in the log. Apart from that minor nit:
+Applied, thanks.
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-
-Thanks,
-Charles
+Rob
