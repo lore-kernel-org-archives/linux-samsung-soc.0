@@ -1,9 +1,9 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v1 2/9] mfd: wm8994: Add support for MCLKn clock control
-Date: Wed, 18 Sep 2019 12:46:27 +0200
-Message-ID: <20190918104634.15216-3-s.nawrocki@samsung.com>
+Subject: [PATCH v1 3/9] ASoC: wm8994: Add support for setting MCLKn clock rate
+Date: Wed, 18 Sep 2019 12:46:28 +0200
+Message-ID: <20190918104634.15216-4-s.nawrocki@samsung.com>
 References: <20190918104634.15216-1-s.nawrocki@samsung.com>
- <CGME20190918104656eucas1p1d9cad1394b08d05a99151c4fbc9425ce@eucas1p1.samsung.com>
+ <CGME20190918104658eucas1p2c1f07d3e8b915d8c3a448b80d2af5df0@eucas1p2.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -22,76 +22,74 @@ To: broonie@kernel.org
 Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, ckeepax@opensource.cirrus.com, b.zolnierkie@samsung.com, sbkim73@samsung.com, patches@opensource.cirrus.com, lgirdwood@gmail.com, krzk@kernel.org, robh+dt@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The WM1811/WM8994/WM8958 audio CODEC DT bindings specify two optional
-clocks: "MCLK1", "MCLK2". Add code for getting those clocks in the MFD
-part of the wm8994 driver so they can be further handled in the audio
-CODEC part.
+Extend the set_sysclk() handler so we also set frequency of the MCLK1,
+MCLK2 clocks through clk API when those clocks are specified in DT for
+the device.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- drivers/mfd/wm8994-core.c       | 9 +++++++++
- include/linux/mfd/wm8994/core.h | 9 +++++++++
- 2 files changed, 18 insertions(+)
+ sound/soc/codecs/wm8994.c | 30 +++++++++++++++++++++++++++++-
+ 1 file changed, 29 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/wm8994-core.c b/drivers/mfd/wm8994-core.c
-index 1e9fe7d92597..02c19a0bdeb0 100644
---- a/drivers/mfd/wm8994-core.c
-+++ b/drivers/mfd/wm8994-core.c
-@@ -7,6 +7,7 @@
-  * Author: Mark Brown <broonie@opensource.wolfsonmicro.com>
-  */
+diff --git a/sound/soc/codecs/wm8994.c b/sound/soc/codecs/wm8994.c
+index d5fb7f5dd551..b6b0842ae1fc 100644
+--- a/sound/soc/codecs/wm8994.c
++++ b/sound/soc/codecs/wm8994.c
+@@ -2372,12 +2372,30 @@ static int wm8994_set_fll(struct snd_soc_dai *dai, int id, int src,
+ 	return _wm8994_set_fll(dai->component, id, src, freq_in, freq_out);
+ }
  
-+#include <linux/clk.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/slab.h>
-@@ -333,6 +334,14 @@ static int wm8994_device_init(struct wm8994 *wm8994, int irq)
- 
- 	dev_set_drvdata(wm8994->dev, wm8994);
- 
-+	wm8994->mclk[WM8994_MCLK1].id = "MCLK1";
-+	wm8994->mclk[WM8994_MCLK2].id = "MCLK2";
++static int wm8994_set_mclk_rate(struct wm8994_priv *wm8994, unsigned int id,
++				unsigned int *freq)
++{
++	struct wm8994 *control = wm8994->wm8994;
++	int ret;
 +
-+	ret = devm_clk_bulk_get_optional(wm8994->dev, ARRAY_SIZE(wm8994->mclk),
-+					 wm8994->mclk);
-+	if (ret != 0)
++	if (!control->mclk[id].clk || *freq == wm8994->mclk[id])
++		return 0;
++
++	ret = clk_set_rate(control->mclk[id].clk, *freq);
++	if (ret < 0)
 +		return ret;
 +
- 	/* Add the on-chip regulators first for bootstrapping */
- 	ret = mfd_add_devices(wm8994->dev, 0,
- 			      wm8994_regulator_devs,
-diff --git a/include/linux/mfd/wm8994/core.h b/include/linux/mfd/wm8994/core.h
-index e8b093522ffd..320297a1b70c 100644
---- a/include/linux/mfd/wm8994/core.h
-+++ b/include/linux/mfd/wm8994/core.h
-@@ -10,12 +10,19 @@
- #ifndef __MFD_WM8994_CORE_H__
- #define __MFD_WM8994_CORE_H__
- 
-+#include <linux/clk.h>
- #include <linux/mutex.h>
- #include <linux/interrupt.h>
- #include <linux/regmap.h>
- 
- #include <linux/mfd/wm8994/pdata.h>
- 
-+enum {
-+	WM8994_MCLK1,
-+	WM8994_MCLK2,
-+	WM8994_NUM_MCLK
-+};
++	*freq = clk_get_rate(control->mclk[id].clk);
 +
- enum wm8994_type {
- 	WM8994 = 0,
- 	WM8958 = 1,
-@@ -60,6 +67,8 @@ struct wm8994 {
- 	struct device *dev;
- 	struct regmap *regmap;
- 
-+	struct clk_bulk_data mclk[WM8994_NUM_MCLK];
++	return 0;
++}
 +
- 	bool ldo_ena_always_driven;
+ static int wm8994_set_dai_sysclk(struct snd_soc_dai *dai,
+ 		int clk_id, unsigned int freq, int dir)
+ {
+ 	struct snd_soc_component *component = dai->component;
+ 	struct wm8994_priv *wm8994 = snd_soc_component_get_drvdata(component);
+-	int i;
++	int ret, i;
  
- 	int gpio_base;
+ 	switch (dai->id) {
+ 	case 1:
+@@ -2392,6 +2410,11 @@ static int wm8994_set_dai_sysclk(struct snd_soc_dai *dai,
+ 	switch (clk_id) {
+ 	case WM8994_SYSCLK_MCLK1:
+ 		wm8994->sysclk[dai->id - 1] = WM8994_SYSCLK_MCLK1;
++
++		ret = wm8994_set_mclk_rate(wm8994, dai->id - 1, &freq);
++		if (ret < 0)
++			return ret;
++
+ 		wm8994->mclk[0] = freq;
+ 		dev_dbg(dai->dev, "AIF%d using MCLK1 at %uHz\n",
+ 			dai->id, freq);
+@@ -2400,6 +2423,11 @@ static int wm8994_set_dai_sysclk(struct snd_soc_dai *dai,
+ 	case WM8994_SYSCLK_MCLK2:
+ 		/* TODO: Set GPIO AF */
+ 		wm8994->sysclk[dai->id - 1] = WM8994_SYSCLK_MCLK2;
++
++		ret = wm8994_set_mclk_rate(wm8994, dai->id - 1, &freq);
++		if (ret < 0)
++			return ret;
++
+ 		wm8994->mclk[1] = freq;
+ 		dev_dbg(dai->dev, "AIF%d using MCLK2 at %uHz\n",
+ 			dai->id, freq);
 -- 
 2.17.1
