@@ -1,37 +1,208 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3] dt-bindings: gpu: Convert Samsung Image Rotator to
-  dt-schema
-Date: Tue, 17 Sep 2019 15:08:16 -0500
-Message-ID: <20190917200816.GA10224@bogus>
-References: <20190913062945.GA10283@pi3>
- <CGME20190917103758eucas1p10793e499209137630681186a10a4b7bd@eucas1p1.samsung.com>
- <20190917103727.14997-1-m.falkowski@samsung.com>
+From: Maciej Falkowski <m.falkowski@samsung.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: sound: Convert Samsung I2S
+ controller to dt-schema
+Date: Wed, 18 Sep 2019 12:08:25 +0200
+Message-ID: <40f56f61-a1db-a1a2-262e-1f4c771481e1@samsung.com>
+References: <CGME20190917120517eucas1p1188d244fac2d10d7990363ff25ffb70d@eucas1p1.samsung.com>
+        <20190917111413.22711-1-m.falkowski@samsung.com>
+        <20190917120452.28135-1-m.falkowski@samsung.com>
+        <CAL_JsqJmjUR63i_hKUuZwDu42rebwABHu62bQoxTRRJu5yObEA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190917103727.14997-1-m.falkowski@samsung.com>
+In-Reply-To: <CAL_JsqJmjUR63i_hKUuZwDu42rebwABHu62bQoxTRRJu5yObEA@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, airlied@linux.ie, daniel@ffwll.ch, robh+dt@kernel.org, mark.rutland@arm.com, krzk@kernel.org, a.hajda@samsung.com, m.szyprowski@samsung.com, m.falkowski@samsung.com
+To: Rob Herring <robh+dt@kernel.org>
+Cc: Linux-ALSA <alsa-devel@alsa-project.org>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, 17 Sep 2019 12:37:27 +0200, Maciej Falkowski wrote:
-> Convert Samsung Image Rotator to newer dt-schema format.
-> 
-> Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> v3:
-> - remove unneded comments and descriptions
-> - remove unneded maxItems field from clock-names property
-> ---
->  .../bindings/gpu/samsung-rotator.txt          | 28 -----------
->  .../bindings/gpu/samsung-rotator.yaml         | 48 +++++++++++++++++++
->  2 files changed, 48 insertions(+), 28 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/gpu/samsung-rotator.txt
->  create mode 100644 Documentation/devicetree/bindings/gpu/samsung-rotator.yaml
-> 
 
-Applied, thanks.
+On 9/17/19 3:05 PM, Rob Herring wrote:
 
-Rob
+> On Tue, Sep 17, 2019 at 7:05 AM Maciej Falkowski
+> <m.falkowski@samsung.com> wrote:
+>> Convert Samsung I2S controller to newer dt-schema format.
+>>
+>> Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>> v2:
+>> - Added missing Signed-off-by certificate
+>> ---
+>>   .../devicetree/bindings/sound/samsung-i2s.txt |  84 -------------
+>>   .../bindings/sound/samsung-i2s.yaml           | 119 ++++++++++++++++++
+>>   2 files changed, 119 insertions(+), 84 deletions(-)
+>>   delete mode 100644 Documentation/devicetree/bindings/sound/samsung-i2s.txt
+>>   create mode 100644 Documentation/devicetree/bindings/sound/samsung-i2s.yaml
+>> diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.yaml b/Documentation/devicetree/bindings/sound/samsung-i2s.yaml
+>> new file mode 100644
+>> index 000000000000..59dc76035cb4
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/sound/samsung-i2s.yaml
+>> @@ -0,0 +1,119 @@
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/sound/samsung-i2s.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Samsung SoC I2S controller
+>> +
+>> +maintainers:
+>> +  - Krzysztof Kozlowski <krzk@kernel.org>
+>> +  - Sangbeom Kim <sbkim73@samsung.com>
+>> +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    description: |
+>> +      samsung,s3c6410-i2s: for 8/16/24bit stereo I2S.
+>> +
+>> +      samsung,s5pv210-i2s: for 8/16/24bit multichannel(5.1) I2S with
+>> +      secondary fifo, s/w reset control and internal mux for root clk src.
+>> +
+>> +      samsung,exynos5420-i2s: for 8/16/24bit multichannel(5.1) I2S for
+>> +      playback, stereo channel capture, secondary fifo using internal
+>> +      or external dma, s/w reset control, internal mux for root clk src
+>> +      and 7.1 channel TDM support for playback. TDM (Time division multiplexing)
+>> +      is to allow transfer of multiple channel audio data on single data line.
+>> +
+>> +      samsung,exynos7-i2s: with all the available features of exynos5 i2s.
+>> +
+>> +      exynos7 I2S has 7.1 channel TDM support for capture, secondary fifo
+>> +      with only external dma and more no.of root clk sampling frequencies.
+>> +
+>> +      samsung,exynos7-i2s1: I2S1 on previous samsung platforms supports
+>> +      stereo channels. exynos7 i2s1 upgraded to 5.1 multichannel with
+>> +      slightly modified bit offsets.
+>> +    enum:
+>> +      - "samsung,s3c6410-i2s"
+>> +      - "samsung,s5pv210-i2s"
+>> +      - "samsung,exynos5420-i2s"
+>> +      - "samsung,exynos7-i2s"
+>> +      - "samsung,exynos7-i2s1"
+> No need for quotes here.
+>
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  dmas:
+>> +    description: list of DMA controller phandle and DMA request line ordered pairs.
+> How many?
+
+Hi Rob,
+
+I have one problem with determining size of dmas.
+
+It seems that there are only two options for dmas: tx, rx or tx, rx, tx-sec.
+
+It looks like minItems should be two and maxItems should be three.
+
+However, some of bindings have different definition of dmas.
+
+When there is:
+
+         dmas = <&pdma0 10
+                 &pdma0 9
+                 &pdma0 8>;
+
+the number of Items for dmas is one,
+
+when there is:
+
+         dmas = <&pdma0 10>,
+                      <&pdma0 9>,
+                      <&pdma0 8>;
+
+the number of Items is three.
+
+Both of these are equal from perspective of dtc,
+
+however from schema point of view, they have different size.
+
+
+What is a proper solution to this kind of problem?
+
+Best regards,
+
+Maciej Falkowski
+
+>> +
+>> +  dma-names:
+>> +    description: |
+>> +      identifier string for each DMA request line in the dmas property.
+>> +      These strings correspond 1:1 with the ordered pairs in dmas.
+>> +
+>> +  clocks:
+>> +    minItems: 1
+>> +    maxItems: 3
+>> +
+>> +  clock-names:
+>> +    oneOf:
+>> +      - items:
+>> +          - const: iis
+>> +      - items:
+>> +          - const: iis
+>> +          - const: i2s_opclk0
+>> +      - items:
+>> +          - const: iis
+>> +          - const: i2s_opclk0
+>> +          - const: i2s_opclk1
+>> +    description: |
+>> +      "iis" is the i2s bus clock.
+>> +      For i2s1 and i2s2 - "iis", "i2s_opclk0"
+>> +      For i2s0 - "iis", "i2s_opclk0", "i2s_opclk1"
+>> +
+>> +  "#clock-cells":
+>> +    const: 1
+>> +
+>> +  samsung,idma-addr:
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +    description: |
+>> +      Internal DMA register base address of the audio
+>> +      sub system(used in secondary sound source).
+>> +
+>> +  pinctrl-0:
+>> +    description: Should specify pin control groups used for this controller.
+>> +
+>> +  pinctrl-names:
+>> +    const: default
+>> +
+>> +  "#sound-dai-cells":
+>> +    const: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - dmas
+>> +  - dma-names
+>> +  - clocks
+>> +  - clock-names
+>> +
+>> +examples:
+>> +  - |
+>> +    i2s0: i2s@3830000 {
+>> +        compatible = "samsung,s5pv210-i2s";
+>> +        reg = <0x03830000 0x100>;
+>> +        dmas = <&pdma0 10
+>> +                &pdma0 9
+>> +                &pdma0 8>;
+>> +        dma-names = "tx", "rx", "tx-sec";
+>> +        clocks = <&clock_audss 0>, // EXYNOS_I2S_BUS
+>> +                <&clock_audss 0>, // EXYNOS_I2S_BUS
+>> +                <&clock_audss 0>; // EXYNOS_SCLK_I2S
+>> +        clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
+>> +        #clock-cells = <1>;
+>> +        samsung,idma-addr = <0x03000000>;
+>> +        pinctrl-names = "default";
+>> +        pinctrl-0 = <&i2s0_bus>;
+>> +        #sound-dai-cells = <1>;
+>> +    };
+>> +
+>> --
+>> 2.17.1
+>>
+>
