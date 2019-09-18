@@ -1,42 +1,36 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 3/3] dt-bindings: ddr: Add bindings for Samsung LPDDR3 memories
-Date: Wed, 18 Sep 2019 20:51:55 +0200
-Message-ID: <CAJKOXPcxG-mMKy5u-b0+xj_sOmrq5yq5-LYJx0Ds6_+yo_=JbA@mail.gmail.com>
-References: <CGME20190916100719eucas1p206fe95982b774840b5d6e62ba9c42c79@eucas1p2.samsung.com>
- <20190916100704.26692-1-l.luba@partner.samsung.com> <20190916100704.26692-4-l.luba@partner.samsung.com>
+Subject: Re: [PATCH v2 1/3] memory: Exynos5422: minor fixes in DMC
+Date: Wed, 18 Sep 2019 20:55:37 +0200
+Message-ID: <20190918185537.GA8463@kozik-lap>
+References: <20190916100704.26692-1-l.luba@partner.samsung.com>
+ <CGME20190916100717eucas1p1b8d24c74c4d0bb385aa3455cf98c76bd@eucas1p1.samsung.com>
+ <20190916100704.26692-2-l.luba@partner.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190916100704.26692-4-l.luba@partner.samsung.com>
+Content-Disposition: inline
+In-Reply-To: <20190916100704.26692-2-l.luba@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Lukasz Luba <l.luba@partner.samsung.com>
-Cc: devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= <b.zolnierkie@samsung.com>, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, willy.mh.wolff.ml@gmail.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com, kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, willy.mh.wolff.ml@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 16 Sep 2019 at 12:07, Lukasz Luba <l.luba@partner.samsung.com> wrote:
->
-> Add compatible for Samsung k3qf2f20db LPDDR3 memory bindings.
-> Introduce minor fixes in the old documentation.
->
+On Mon, Sep 16, 2019 at 12:07:02PM +0200, Lukasz Luba wrote:
+> Small fixes for issues captured by static analyzes:
+> used kfree() insead of devm_kfree() and missing 'static' in the private
+> function.
+> Checks which show the issues:
+> - drivers/memory/samsung/exynos5422-dmc.c:272 exynos5_init_freq_table()
+> warn: passing devm_ allocated variable to kfree. 'dmc->opp'
+> - drivers/memory/samsung/exynos5422-dmc.c:736:1: warning: symbol
+> 'exynos5_dmc_align_init_freq' was not declared.
+> 
+> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
 > Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 > ---
->  Documentation/devicetree/bindings/ddr/lpddr3.txt | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/ddr/lpddr3.txt b/Documentation/devicetree/bindings/ddr/lpddr3.txt
-> index 3b2485b84b3f..49afe794daaa 100644
-> --- a/Documentation/devicetree/bindings/ddr/lpddr3.txt
-> +++ b/Documentation/devicetree/bindings/ddr/lpddr3.txt
-> @@ -1,7 +1,9 @@
->  * LPDDR3 SDRAM memories compliant to JEDEC JESD209-3C
->
->  Required properties:
-> -- compatible : Should be  - "jedec,lpddr3"
-> +- compatible : should be one of the following:
-> +       Generic default - "jedec,lpddr3".
+>  drivers/memory/samsung/exynos5422-dmc.c | 4 ++--
 
-The convention is first compatible, then description. I gave you the
-example to base on - at25. Why making it different?
+Thanks, applied.
 
 Best regards,
 Krzysztof
