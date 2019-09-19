@@ -1,148 +1,123 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] arm64: dts: exynos: Exynos5433: swap clock order of sysmmu
-Date: Thu, 19 Sep 2019 15:50:53 +0200
-Message-ID: <20190919135053.11849-1-m.szyprowski@samsung.com>
-References: <20190919131944.11007-1-m.szyprowski@samsung.com>
-        <CGME20190919135115eucas1p2e1c9c090c5a75211e5a137c598721287@eucas1p2.samsung.com>
+From: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>
+Subject: [RFC PATCH v2 02/11] devfreq: exynos-bus: Extract
+ exynos_bus_profile_init_passive()
+Date: Thu, 19 Sep 2019 16:22:27 +0200
+Message-ID: <20190919142236.4071-3-a.swigon@samsung.com>
+References: <20190919142236.4071-1-a.swigon@samsung.com>
+        <CGME20190919142322eucas1p1949ad95468af26698c4c5addc060ce00@eucas1p1.samsung.com>
+Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190919131944.11007-1-m.szyprowski@samsung.com>
+In-Reply-To: <20190919142236.4071-1-a.swigon@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Maciej Falkowski <m.falkowski@samsung.com>, krzk@kernel.org, mark.rutland@arm.com, robh@kernel.org, a.hajda@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>
+To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@partner.samsung.com>, cw00.choi@samsung.com, myungjoo.ham@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, georgi.djakov@linaro.org, leonard.crestez@nxp.com, m.szyprowski@samsung.com, b.zolnierkie@samsung.com, krzk@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Maciej Falkowski <m.falkowski@samsung.com>
+From: Artur Świgoń <a.swigon@partner.samsung.com>
 
-dt-schema supports only order of names "aclk", "pclk".
-Swap some sysmmu definitions to make them compatible with schema.
+This patch adds a new static function, exynos_bus_profile_init_passive(),
+extracted from exynos_bus_probe().
 
-Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
 ---
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 54 +++++++++++-----------
- 1 file changed, 27 insertions(+), 27 deletions(-)
+ drivers/devfreq/exynos-bus.c | 70 +++++++++++++++++++++---------------
+ 1 file changed, 42 insertions(+), 28 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index a76f620f7f35..ba66ea906f60 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -1179,9 +1179,9 @@
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x13a00000 0x1000>;
- 			interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
--			clock-names = "pclk", "aclk";
--			clocks = <&cmu_disp CLK_PCLK_SMMU_DECON0X>,
--				<&cmu_disp CLK_ACLK_SMMU_DECON0X>;
-+			clock-names = "aclk", "pclk";
-+			clocks = <&cmu_disp CLK_ACLK_SMMU_DECON0X>,
-+				<&cmu_disp CLK_PCLK_SMMU_DECON0X>;
- 			power-domains = <&pd_disp>;
- 			#iommu-cells = <0>;
- 		};
-@@ -1190,9 +1190,9 @@
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x13a10000 0x1000>;
- 			interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>;
--			clock-names = "pclk", "aclk";
--			clocks = <&cmu_disp CLK_PCLK_SMMU_DECON1X>,
--				<&cmu_disp CLK_ACLK_SMMU_DECON1X>;
-+			clock-names = "aclk", "pclk";
-+			clocks = <&cmu_disp CLK_ACLK_SMMU_DECON1X>,
-+				<&cmu_disp CLK_PCLK_SMMU_DECON1X>;
- 			#iommu-cells = <0>;
- 			power-domains = <&pd_disp>;
- 		};
-@@ -1201,9 +1201,9 @@
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x13a20000 0x1000>;
- 			interrupts = <GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH>;
--			clock-names = "pclk", "aclk";
--			clocks = <&cmu_disp CLK_PCLK_SMMU_TV0X>,
--				<&cmu_disp CLK_ACLK_SMMU_TV0X>;
-+			clock-names = "aclk", "pclk";
-+			clocks = <&cmu_disp CLK_ACLK_SMMU_TV0X>,
-+				<&cmu_disp CLK_PCLK_SMMU_TV0X>;
- 			#iommu-cells = <0>;
- 			power-domains = <&pd_disp>;
- 		};
-@@ -1212,9 +1212,9 @@
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x13a30000 0x1000>;
- 			interrupts = <GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH>;
--			clock-names = "pclk", "aclk";
--			clocks = <&cmu_disp CLK_PCLK_SMMU_TV1X>,
--				<&cmu_disp CLK_ACLK_SMMU_TV1X>;
-+			clock-names = "aclk", "pclk";
-+			clocks = <&cmu_disp CLK_ACLK_SMMU_TV1X>,
-+				<&cmu_disp CLK_PCLK_SMMU_TV1X>;
- 			#iommu-cells = <0>;
- 			power-domains = <&pd_disp>;
- 		};
-@@ -1256,9 +1256,9 @@
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x15040000 0x1000>;
- 			interrupts = <GIC_SPI 404 IRQ_TYPE_LEVEL_HIGH>;
--			clock-names = "pclk", "aclk";
--			clocks = <&cmu_mscl CLK_PCLK_SMMU_M2MSCALER0>,
--				 <&cmu_mscl CLK_ACLK_SMMU_M2MSCALER0>;
-+			clock-names = "aclk", "pclk";
-+			clocks = <&cmu_mscl CLK_ACLK_SMMU_M2MSCALER0>,
-+				<&cmu_mscl CLK_PCLK_SMMU_M2MSCALER0>;
- 			#iommu-cells = <0>;
- 			power-domains = <&pd_mscl>;
- 		};
-@@ -1267,9 +1267,9 @@
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x15050000 0x1000>;
- 			interrupts = <GIC_SPI 406 IRQ_TYPE_LEVEL_HIGH>;
--			clock-names = "pclk", "aclk";
--			clocks = <&cmu_mscl CLK_PCLK_SMMU_M2MSCALER1>,
--				 <&cmu_mscl CLK_ACLK_SMMU_M2MSCALER1>;
-+			clock-names = "aclk", "pclk";
-+			clocks = <&cmu_mscl CLK_ACLK_SMMU_M2MSCALER1>,
-+				<&cmu_mscl CLK_PCLK_SMMU_M2MSCALER1>;
- 			#iommu-cells = <0>;
- 			power-domains = <&pd_mscl>;
- 		};
-@@ -1278,9 +1278,9 @@
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x15060000 0x1000>;
- 			interrupts = <GIC_SPI 408 IRQ_TYPE_LEVEL_HIGH>;
--			clock-names = "pclk", "aclk";
--			clocks = <&cmu_mscl CLK_PCLK_SMMU_JPEG>,
--				 <&cmu_mscl CLK_ACLK_SMMU_JPEG>;
-+			clock-names = "aclk", "pclk";
-+			clocks = <&cmu_mscl CLK_ACLK_SMMU_JPEG>,
-+				<&cmu_mscl CLK_PCLK_SMMU_JPEG>;
- 			#iommu-cells = <0>;
- 			power-domains = <&pd_mscl>;
- 		};
-@@ -1289,9 +1289,9 @@
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x15200000 0x1000>;
- 			interrupts = <GIC_SPI 352 IRQ_TYPE_LEVEL_HIGH>;
--			clock-names = "pclk", "aclk";
--			clocks = <&cmu_mfc CLK_PCLK_SMMU_MFC_0>,
--				 <&cmu_mfc CLK_ACLK_SMMU_MFC_0>;
-+			clock-names = "aclk", "pclk";
-+			clocks = <&cmu_mfc CLK_ACLK_SMMU_MFC_0>,
-+				<&cmu_mfc CLK_PCLK_SMMU_MFC_0>;
- 			#iommu-cells = <0>;
- 			power-domains = <&pd_mfc>;
- 		};
-@@ -1300,9 +1300,9 @@
- 			compatible = "samsung,exynos-sysmmu";
- 			reg = <0x15210000 0x1000>;
- 			interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
--			clock-names = "pclk", "aclk";
--			clocks = <&cmu_mfc CLK_PCLK_SMMU_MFC_1>,
--				 <&cmu_mfc CLK_ACLK_SMMU_MFC_1>;
-+			clock-names = "aclk", "pclk";
-+			clocks = <&cmu_mfc CLK_ACLK_SMMU_MFC_1>,
-+				<&cmu_mfc CLK_PCLK_SMMU_MFC_1>;
- 			#iommu-cells = <0>;
- 			power-domains = <&pd_mfc>;
- 		};
+diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+index 78f38b7fb596..f85bed241631 100644
+--- a/drivers/devfreq/exynos-bus.c
++++ b/drivers/devfreq/exynos-bus.c
+@@ -338,13 +338,51 @@ static int exynos_bus_profile_init(struct exynos_bus *bus,
+ 	return ret;
+ }
+ 
++static int exynos_bus_profile_init_passive(struct exynos_bus *bus,
++					   struct devfreq_dev_profile *profile)
++{
++	struct device *dev = bus->dev;
++	struct devfreq_passive_data *passive_data;
++	struct devfreq *parent_devfreq;
++	int ret = 0;
++
++	/* Initialize the struct profile and governor data for passive device */
++	profile->target = exynos_bus_target;
++	profile->exit = exynos_bus_passive_exit;
++
++	/* Get the instance of parent devfreq device */
++	parent_devfreq = devfreq_get_devfreq_by_phandle(dev, 0);
++	if (IS_ERR(parent_devfreq)) {
++		ret = -EPROBE_DEFER;
++		goto err;
++	}
++
++	passive_data = devm_kzalloc(dev, sizeof(*passive_data), GFP_KERNEL);
++	if (!passive_data) {
++		ret = -ENOMEM;
++		goto err;
++	}
++	passive_data->parent = parent_devfreq;
++
++	/* Add devfreq device for exynos bus with passive governor */
++	bus->devfreq = devm_devfreq_add_device(dev, profile, DEVFREQ_GOV_PASSIVE,
++						passive_data);
++	if (IS_ERR(bus->devfreq)) {
++		dev_err(dev,
++			"failed to add devfreq dev with passive governor\n");
++		ret = PTR_ERR(bus->devfreq);
++		goto err;
++	}
++
++err:
++	return ret;
++}
++
+ static int exynos_bus_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node, *node;
+ 	struct devfreq_dev_profile *profile;
+-	struct devfreq_passive_data *passive_data;
+-	struct devfreq *parent_devfreq;
+ 	struct exynos_bus *bus;
+ 	int ret, max_state;
+ 	unsigned long min_freq, max_freq;
+@@ -390,33 +428,9 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ 
+ 	goto out;
+ passive:
+-	/* Initialize the struct profile and governor data for passive device */
+-	profile->target = exynos_bus_target;
+-	profile->exit = exynos_bus_passive_exit;
+-
+-	/* Get the instance of parent devfreq device */
+-	parent_devfreq = devfreq_get_devfreq_by_phandle(dev, 0);
+-	if (IS_ERR(parent_devfreq)) {
+-		ret = -EPROBE_DEFER;
++	ret = exynos_bus_profile_init_passive(bus, profile);
++	if (ret < 0)
+ 		goto err;
+-	}
+-
+-	passive_data = devm_kzalloc(dev, sizeof(*passive_data), GFP_KERNEL);
+-	if (!passive_data) {
+-		ret = -ENOMEM;
+-		goto err;
+-	}
+-	passive_data->parent = parent_devfreq;
+-
+-	/* Add devfreq device for exynos bus with passive governor */
+-	bus->devfreq = devm_devfreq_add_device(dev, profile, DEVFREQ_GOV_PASSIVE,
+-						passive_data);
+-	if (IS_ERR(bus->devfreq)) {
+-		dev_err(dev,
+-			"failed to add devfreq dev with passive governor\n");
+-		ret = PTR_ERR(bus->devfreq);
+-		goto err;
+-	}
+ 
+ out:
+ 	max_state = bus->devfreq->profile->max_state;
 -- 
 2.17.1
