@@ -1,93 +1,173 @@
 From: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>
-Subject: [RFC PATCH v2 01/11] devfreq: exynos-bus: Extract
- exynos_bus_profile_init()
-Date: Thu, 19 Sep 2019 16:22:26 +0200
-Message-ID: <20190919142236.4071-2-a.swigon@samsung.com>
+Subject: [RFC PATCH v2 11/11] drm: exynos: mixer: Add interconnect support
+Date: Thu, 19 Sep 2019 16:22:36 +0200
+Message-ID: <20190919142236.4071-12-a.swigon@samsung.com>
 References: <20190919142236.4071-1-a.swigon@samsung.com>
- <CGME20190919142322eucas1p24bc477ee6e1bcd65546c305d55af097d@eucas1p2.samsung.com>
+        <CGME20190919142331eucas1p2107a7cb9ce8b3817ed171c21a8ad5b00@eucas1p2.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190919142236.4071-1-a.swigon@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@partner.samsung.com>, b.zolnierkie@samsung.com, sw0312.kim@samsung.com, krzk@kernel.org, inki.dae@samsung.com, cw00.choi@samsung.com, myungjoo.ham@samsung.com, leonard.crestez@nxp.com, georgi.djakov@linaro.org, m.szyprowski@samsung.com
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, cw00.choi@samsung.com, myungjoo.ham@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, georgi.djakov@linaro.org, leonard.crestez@nxp.com, b.zolnierkie@samsung.com, krzk@kernel.org, =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@partner.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RnJvbTogQXJ0dXIgxZp3aWdvxYQgPGEuc3dpZ29uQHBhcnRuZXIuc2Ftc3VuZy5jb20+CgpUaGlz
-IHBhdGNoIGFkZHMgYSBuZXcgc3RhdGljIGZ1bmN0aW9uLCBleHlub3NfYnVzX3Byb2ZpbGVfaW5p
-dCgpLCBleHRyYWN0ZWQKZnJvbSBleHlub3NfYnVzX3Byb2JlKCkuCgpTaWduZWQtb2ZmLWJ5OiBB
-cnR1ciDFmndpZ2/FhCA8YS5zd2lnb25AcGFydG5lci5zYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJz
-L2RldmZyZXEvZXh5bm9zLWJ1cy5jIHwgOTIgKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0t
-LS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgNTMgaW5zZXJ0aW9ucygrKSwgMzkgZGVsZXRpb25zKC0p
-CgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9kZXZmcmVxL2V4eW5vcy1idXMuYyBiL2RyaXZlcnMvZGV2
-ZnJlcS9leHlub3MtYnVzLmMKaW5kZXggMjlmNDIyNDY5OTYwLi43OGYzOGI3ZmI1OTYgMTAwNjQ0
-Ci0tLSBhL2RyaXZlcnMvZGV2ZnJlcS9leHlub3MtYnVzLmMKKysrIGIvZHJpdmVycy9kZXZmcmVx
-L2V4eW5vcy1idXMuYwpAQCAtMjg3LDEyICsyODcsNjIgQEAgc3RhdGljIGludCBleHlub3NfYnVz
-X3BhcnNlX29mKHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnAsCiAJcmV0dXJuIHJldDsKIH0KIAorc3Rh
-dGljIGludCBleHlub3NfYnVzX3Byb2ZpbGVfaW5pdChzdHJ1Y3QgZXh5bm9zX2J1cyAqYnVzLAor
-CQkJCSAgIHN0cnVjdCBkZXZmcmVxX2Rldl9wcm9maWxlICpwcm9maWxlKQoreworCXN0cnVjdCBk
-ZXZpY2UgKmRldiA9IGJ1cy0+ZGV2OworCXN0cnVjdCBkZXZmcmVxX3NpbXBsZV9vbmRlbWFuZF9k
-YXRhICpvbmRlbWFuZF9kYXRhOworCWludCByZXQ7CisKKwkvKiBJbml0aWFsaXplIHRoZSBzdHJ1
-Y3QgcHJvZmlsZSBhbmQgZ292ZXJub3IgZGF0YSBmb3IgcGFyZW50IGRldmljZSAqLworCXByb2Zp
-bGUtPnBvbGxpbmdfbXMgPSA1MDsKKwlwcm9maWxlLT50YXJnZXQgPSBleHlub3NfYnVzX3Rhcmdl
-dDsKKwlwcm9maWxlLT5nZXRfZGV2X3N0YXR1cyA9IGV4eW5vc19idXNfZ2V0X2Rldl9zdGF0dXM7
-CisJcHJvZmlsZS0+ZXhpdCA9IGV4eW5vc19idXNfZXhpdDsKKworCW9uZGVtYW5kX2RhdGEgPSBk
-ZXZtX2t6YWxsb2MoZGV2LCBzaXplb2YoKm9uZGVtYW5kX2RhdGEpLCBHRlBfS0VSTkVMKTsKKwlp
-ZiAoIW9uZGVtYW5kX2RhdGEpIHsKKwkJcmV0ID0gLUVOT01FTTsKKwkJZ290byBlcnI7CisJfQor
-CW9uZGVtYW5kX2RhdGEtPnVwdGhyZXNob2xkID0gNDA7CisJb25kZW1hbmRfZGF0YS0+ZG93bmRp
-ZmZlcmVudGlhbCA9IDU7CisKKwkvKiBBZGQgZGV2ZnJlcSBkZXZpY2UgdG8gbW9uaXRvciBhbmQg
-aGFuZGxlIHRoZSBleHlub3MgYnVzICovCisJYnVzLT5kZXZmcmVxID0gZGV2bV9kZXZmcmVxX2Fk
-ZF9kZXZpY2UoZGV2LCBwcm9maWxlLAorCQkJCQkJREVWRlJFUV9HT1ZfU0lNUExFX09OREVNQU5E
-LAorCQkJCQkJb25kZW1hbmRfZGF0YSk7CisJaWYgKElTX0VSUihidXMtPmRldmZyZXEpKSB7CisJ
-CWRldl9lcnIoZGV2LCAiZmFpbGVkIHRvIGFkZCBkZXZmcmVxIGRldmljZVxuIik7CisJCXJldCA9
-IFBUUl9FUlIoYnVzLT5kZXZmcmVxKTsKKwkJZ290byBlcnI7CisJfQorCisJLyoKKwkgKiBFbmFi
-bGUgZGV2ZnJlcS1ldmVudCB0byBnZXQgcmF3IGRhdGEgd2hpY2ggaXMgdXNlZCB0byBkZXRlcm1p
-bmUKKwkgKiBjdXJyZW50IGJ1cyBsb2FkLgorCSAqLworCXJldCA9IGV4eW5vc19idXNfZW5hYmxl
-X2VkZXYoYnVzKTsKKwlpZiAocmV0IDwgMCkgeworCQlkZXZfZXJyKGRldiwgImZhaWxlZCB0byBl
-bmFibGUgZGV2ZnJlcS1ldmVudCBkZXZpY2VzXG4iKTsKKwkJZ290byBlcnI7CisJfQorCisJcmV0
-ID0gZXh5bm9zX2J1c19zZXRfZXZlbnQoYnVzKTsKKwlpZiAocmV0IDwgMCkgeworCQlkZXZfZXJy
-KGRldiwgImZhaWxlZCB0byBzZXQgZXZlbnQgdG8gZGV2ZnJlcS1ldmVudCBkZXZpY2VzXG4iKTsK
-KwkJZ290byBlcnI7CisJfQorCitlcnI6CisJcmV0dXJuIHJldDsKK30KKwogc3RhdGljIGludCBl
-eHlub3NfYnVzX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiB7CiAJc3RydWN0
-IGRldmljZSAqZGV2ID0gJnBkZXYtPmRldjsKIAlzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wID0gZGV2
-LT5vZl9ub2RlLCAqbm9kZTsKIAlzdHJ1Y3QgZGV2ZnJlcV9kZXZfcHJvZmlsZSAqcHJvZmlsZTsK
-LQlzdHJ1Y3QgZGV2ZnJlcV9zaW1wbGVfb25kZW1hbmRfZGF0YSAqb25kZW1hbmRfZGF0YTsKIAlz
-dHJ1Y3QgZGV2ZnJlcV9wYXNzaXZlX2RhdGEgKnBhc3NpdmVfZGF0YTsKIAlzdHJ1Y3QgZGV2ZnJl
-cSAqcGFyZW50X2RldmZyZXE7CiAJc3RydWN0IGV4eW5vc19idXMgKmJ1czsKQEAgLTMzNCw0NSAr
-Mzg0LDkgQEAgc3RhdGljIGludCBleHlub3NfYnVzX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZp
-Y2UgKnBkZXYpCiAJaWYgKHBhc3NpdmUpCiAJCWdvdG8gcGFzc2l2ZTsKIAotCS8qIEluaXRpYWxp
-emUgdGhlIHN0cnVjdCBwcm9maWxlIGFuZCBnb3Zlcm5vciBkYXRhIGZvciBwYXJlbnQgZGV2aWNl
-ICovCi0JcHJvZmlsZS0+cG9sbGluZ19tcyA9IDUwOwotCXByb2ZpbGUtPnRhcmdldCA9IGV4eW5v
-c19idXNfdGFyZ2V0OwotCXByb2ZpbGUtPmdldF9kZXZfc3RhdHVzID0gZXh5bm9zX2J1c19nZXRf
-ZGV2X3N0YXR1czsKLQlwcm9maWxlLT5leGl0ID0gZXh5bm9zX2J1c19leGl0OwotCi0Jb25kZW1h
-bmRfZGF0YSA9IGRldm1fa3phbGxvYyhkZXYsIHNpemVvZigqb25kZW1hbmRfZGF0YSksIEdGUF9L
-RVJORUwpOwotCWlmICghb25kZW1hbmRfZGF0YSkgewotCQlyZXQgPSAtRU5PTUVNOworCXJldCA9
-IGV4eW5vc19idXNfcHJvZmlsZV9pbml0KGJ1cywgcHJvZmlsZSk7CisJaWYgKHJldCA8IDApCiAJ
-CWdvdG8gZXJyOwotCX0KLQlvbmRlbWFuZF9kYXRhLT51cHRocmVzaG9sZCA9IDQwOwotCW9uZGVt
-YW5kX2RhdGEtPmRvd25kaWZmZXJlbnRpYWwgPSA1OwotCi0JLyogQWRkIGRldmZyZXEgZGV2aWNl
-IHRvIG1vbml0b3IgYW5kIGhhbmRsZSB0aGUgZXh5bm9zIGJ1cyAqLwotCWJ1cy0+ZGV2ZnJlcSA9
-IGRldm1fZGV2ZnJlcV9hZGRfZGV2aWNlKGRldiwgcHJvZmlsZSwKLQkJCQkJCURFVkZSRVFfR09W
-X1NJTVBMRV9PTkRFTUFORCwKLQkJCQkJCW9uZGVtYW5kX2RhdGEpOwotCWlmIChJU19FUlIoYnVz
-LT5kZXZmcmVxKSkgewotCQlkZXZfZXJyKGRldiwgImZhaWxlZCB0byBhZGQgZGV2ZnJlcSBkZXZp
-Y2VcbiIpOwotCQlyZXQgPSBQVFJfRVJSKGJ1cy0+ZGV2ZnJlcSk7Ci0JCWdvdG8gZXJyOwotCX0K
-LQotCS8qCi0JICogRW5hYmxlIGRldmZyZXEtZXZlbnQgdG8gZ2V0IHJhdyBkYXRhIHdoaWNoIGlz
-IHVzZWQgdG8gZGV0ZXJtaW5lCi0JICogY3VycmVudCBidXMgbG9hZC4KLQkgKi8KLQlyZXQgPSBl
-eHlub3NfYnVzX2VuYWJsZV9lZGV2KGJ1cyk7Ci0JaWYgKHJldCA8IDApIHsKLQkJZGV2X2Vycihk
-ZXYsICJmYWlsZWQgdG8gZW5hYmxlIGRldmZyZXEtZXZlbnQgZGV2aWNlc1xuIik7Ci0JCWdvdG8g
-ZXJyOwotCX0KLQotCXJldCA9IGV4eW5vc19idXNfc2V0X2V2ZW50KGJ1cyk7Ci0JaWYgKHJldCA8
-IDApIHsKLQkJZGV2X2VycihkZXYsICJmYWlsZWQgdG8gc2V0IGV2ZW50IHRvIGRldmZyZXEtZXZl
-bnQgZGV2aWNlc1xuIik7Ci0JCWdvdG8gZXJyOwotCX0KIAogCWdvdG8gb3V0OwogcGFzc2l2ZToK
-LS0gCjIuMTcuMQoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMu
-aW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZv
-L2xpbnV4LWFybS1rZXJuZWwK
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+
+This patch adds interconnect support to exynos-mixer. Please note that the
+mixer works the same as before when CONFIG_INTERCONNECT is 'n'.
+
+Co-developed-by: Artur Świgoń <a.swigon@partner.samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_mixer.c | 71 +++++++++++++++++++++++++--
+ 1 file changed, 66 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index 7b24338fad3c..a44f3284b071 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -13,6 +13,7 @@
+ #include <linux/component.h>
+ #include <linux/delay.h>
+ #include <linux/i2c.h>
++#include <linux/interconnect.h>
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
+ #include <linux/kernel.h>
+@@ -97,6 +98,7 @@ struct mixer_context {
+ 	struct exynos_drm_crtc	*crtc;
+ 	struct exynos_drm_plane	planes[MIXER_WIN_NR];
+ 	unsigned long		flags;
++	struct icc_path		*soc_path;
+ 
+ 	int			irq;
+ 	void __iomem		*mixer_regs;
+@@ -931,6 +933,40 @@ static void mixer_disable_vblank(struct exynos_drm_crtc *crtc)
+ 	mixer_reg_writemask(mixer_ctx, MXR_INT_EN, 0, MXR_INT_EN_VSYNC);
+ }
+ 
++static void mixer_set_memory_bandwidth(struct exynos_drm_crtc *crtc)
++{
++	struct drm_display_mode *mode = &crtc->base.state->adjusted_mode;
++	struct mixer_context *ctx = crtc->ctx;
++	unsigned long bw, bandwidth = 0;
++	int i, j, sub;
++
++	if (!ctx->soc_path)
++		return;
++
++	for (i = 0; i < MIXER_WIN_NR; i++) {
++		struct drm_plane *plane = &ctx->planes[i].base;
++		const struct drm_format_info *format;
++
++		if (plane->state && plane->state->crtc && plane->state->fb) {
++			format = plane->state->fb->format;
++			bw = mode->hdisplay * mode->vdisplay *
++							drm_mode_vrefresh(mode);
++			if (mode->flags & DRM_MODE_FLAG_INTERLACE)
++				bw /= 2;
++			for (j = 0; j < format->num_planes; j++) {
++				sub = j ? (format->vsub * format->hsub) : 1;
++				bandwidth += format->cpp[j] * bw / sub;
++			}
++		}
++	}
++
++	/* add 20% safety margin */
++	bandwidth = bandwidth / 4 * 5;
++
++	dev_dbg(ctx->dev, "exynos-mixer: safe bandwidth %ld Bps\n", bandwidth);
++	icc_set_bw(ctx->soc_path, Bps_to_icc(bandwidth), 0);
++}
++
+ static void mixer_atomic_begin(struct exynos_drm_crtc *crtc)
+ {
+ 	struct mixer_context *ctx = crtc->ctx;
+@@ -982,6 +1018,7 @@ static void mixer_atomic_flush(struct exynos_drm_crtc *crtc)
+ 	if (!test_bit(MXR_BIT_POWERED, &mixer_ctx->flags))
+ 		return;
+ 
++	mixer_set_memory_bandwidth(crtc);
+ 	mixer_enable_sync(mixer_ctx);
+ 	exynos_crtc_handle_event(crtc);
+ }
+@@ -1029,6 +1066,7 @@ static void mixer_disable(struct exynos_drm_crtc *crtc)
+ 	for (i = 0; i < MIXER_WIN_NR; i++)
+ 		mixer_disable_plane(crtc, &ctx->planes[i]);
+ 
++	mixer_set_memory_bandwidth(crtc);
+ 	exynos_drm_pipe_clk_enable(crtc, false);
+ 
+ 	pm_runtime_put(ctx->dev);
+@@ -1220,12 +1258,22 @@ static int mixer_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	const struct mixer_drv_data *drv;
+ 	struct mixer_context *ctx;
++	struct icc_path *path;
+ 	int ret;
+ 
++	/*
++	 * Returns NULL if CONFIG_INTERCONNECT is disabled.
++	 * May return ERR_PTR(-EPROBE_DEFER).
++	 */
++	path = of_icc_get(dev, NULL);
++	if (IS_ERR(path))
++		return PTR_ERR(path);
++
+ 	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_KERNEL);
+ 	if (!ctx) {
+ 		DRM_DEV_ERROR(dev, "failed to alloc mixer context.\n");
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto err;
+ 	}
+ 
+ 	drv = of_device_get_match_data(dev);
+@@ -1233,6 +1281,7 @@ static int mixer_probe(struct platform_device *pdev)
+ 	ctx->pdev = pdev;
+ 	ctx->dev = dev;
+ 	ctx->mxr_ver = drv->version;
++	ctx->soc_path = path;
+ 
+ 	if (drv->is_vp_enabled)
+ 		__set_bit(MXR_BIT_VP_ENABLED, &ctx->flags);
+@@ -1242,17 +1291,29 @@ static int mixer_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, ctx);
+ 
+ 	ret = component_add(&pdev->dev, &mixer_component_ops);
+-	if (!ret)
+-		pm_runtime_enable(dev);
++	if (ret < 0)
++		goto err;
++
++	pm_runtime_enable(dev);
++
++	return 0;
++
++err:
++	icc_put(path);
+ 
+ 	return ret;
+ }
+ 
+ static int mixer_remove(struct platform_device *pdev)
+ {
+-	pm_runtime_disable(&pdev->dev);
++	struct device *dev = &pdev->dev;
++	struct mixer_context *ctx = dev_get_drvdata(dev);
+ 
+-	component_del(&pdev->dev, &mixer_component_ops);
++	pm_runtime_disable(dev);
++
++	component_del(dev, &mixer_component_ops);
++
++	icc_put(ctx->soc_path);
+ 
+ 	return 0;
+ }
+-- 
+2.17.1
