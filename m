@@ -1,207 +1,54 @@
-From: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>
-Subject: [RFC PATCH v2 04/11] devfreq: exynos-bus: Clean up code
-Date: Thu, 19 Sep 2019 16:22:29 +0200
-Message-ID: <20190919142236.4071-5-a.swigon@samsung.com>
-References: <20190919142236.4071-1-a.swigon@samsung.com>
-        <CGME20190919142324eucas1p1638cec2aafbfcaf03cfdfa7d0189143a@eucas1p1.samsung.com>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+Subject: Re: [PATCH v1 2/9] mfd: wm8994: Add support for MCLKn clock control
+Date: Thu, 19 Sep 2019 14:31:16 +0000
+Message-ID: <20190919143116.GL10204@ediswmail.ad.cirrus.com>
+References: <20190918104634.15216-1-s.nawrocki@samsung.com>
+ <CGME20190918104656eucas1p1d9cad1394b08d05a99151c4fbc9425ce@eucas1p1.samsung.com>
+ <20190918104634.15216-3-s.nawrocki@samsung.com>
+ <20190919075924.GB13195@pi3> <20190919125020.GJ3642@sirena.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190919142236.4071-1-a.swigon@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@partner.samsung.com>, cw00.choi@samsung.com, myungjoo.ham@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, georgi.djakov@linaro.org, leonard.crestez@nxp.com, m.szyprowski@samsung.com, b.zolnierkie@samsung.com, krzk@kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20190919125020.GJ3642@sirena.co.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Mark Brown <broonie@kernel.org>
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, patches@opensource.cirrus.com, lgirdwood@gmail.com, Krzysztof Kozlowski <krzk@kernel.org>, robh+dt@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Artur Świgoń <a.swigon@partner.samsung.com>
+On Thu, Sep 19, 2019 at 01:50:20PM +0100, Mark Brown wrote:
+> On Thu, Sep 19, 2019 at 09:59:24AM +0200, Krzysztof Kozlowski wrote:
+> > On Wed, Sep 18, 2019 at 12:46:27PM +0200, Sylwester Nawrocki wrote:
+> > > The WM1811/WM8994/WM8958 audio CODEC DT bindings specify two optional
+> > > clocks: "MCLK1", "MCLK2". Add code for getting those clocks in the MFD
+> > > part of the wm8994 driver so they can be further handled in the audio
+> > > CODEC part.
+> 
+> > I think these are needed only for the codec so how about getting them in
+> > codec's probe?
+> 
+> Yeah.  IIRC when these were added a machine driver was grabbing them.  I
+> don't think that machine driver ever made it's way upstream though.
 
-This patch adds minor improvements to the exynos-bus driver.
+If you mean for the Arizona stuff, the machine driver using that
+was sound/soc/samsung/tm2_wm5110.c. Sylwester upstreamed it along
+with the patches.
 
-Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/devfreq/exynos-bus.c | 66 ++++++++++++++----------------------
- 1 file changed, 25 insertions(+), 41 deletions(-)
+I think on wm8994 the clocks probably are only needed by the
+audio part of the driver, so probably can be moved in there,
+although as a disclaimer I have done a lot less with parts
+of that era. However on Arizona the clocking is needed from
+various parts of the driver so couldn't be moved exclusively
+to the codec driver.
 
-diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-index 60ad4319fd80..8d44810cac69 100644
---- a/drivers/devfreq/exynos-bus.c
-+++ b/drivers/devfreq/exynos-bus.c
-@@ -15,11 +15,10 @@
- #include <linux/device.h>
- #include <linux/export.h>
- #include <linux/module.h>
--#include <linux/of_device.h>
-+#include <linux/of.h>
- #include <linux/pm_opp.h>
- #include <linux/platform_device.h>
- #include <linux/regulator/consumer.h>
--#include <linux/slab.h>
- 
- #define DEFAULT_SATURATION_RATIO	40
- 
-@@ -178,7 +177,7 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
- 	struct device *dev = bus->dev;
- 	struct opp_table *opp_table;
- 	const char *vdd = "vdd";
--	int i, ret, count, size;
-+	int i, ret, count;
- 
- 	opp_table = dev_pm_opp_set_regulators(dev, &vdd, 1);
- 	if (IS_ERR(opp_table)) {
-@@ -201,8 +200,7 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
- 	}
- 	bus->edev_count = count;
- 
--	size = sizeof(*bus->edev) * count;
--	bus->edev = devm_kzalloc(dev, size, GFP_KERNEL);
-+	bus->edev = devm_kcalloc(dev, count, sizeof(*bus->edev), GFP_KERNEL);
- 	if (!bus->edev) {
- 		ret = -ENOMEM;
- 		goto err_regulator;
-@@ -301,10 +299,9 @@ static int exynos_bus_profile_init(struct exynos_bus *bus,
- 	profile->exit = exynos_bus_exit;
- 
- 	ondemand_data = devm_kzalloc(dev, sizeof(*ondemand_data), GFP_KERNEL);
--	if (!ondemand_data) {
--		ret = -ENOMEM;
--		goto err;
--	}
-+	if (!ondemand_data)
-+		return -ENOMEM;
-+
- 	ondemand_data->upthreshold = 40;
- 	ondemand_data->downdifferential = 5;
- 
-@@ -314,8 +311,7 @@ static int exynos_bus_profile_init(struct exynos_bus *bus,
- 						ondemand_data);
- 	if (IS_ERR(bus->devfreq)) {
- 		dev_err(dev, "failed to add devfreq device\n");
--		ret = PTR_ERR(bus->devfreq);
--		goto err;
-+		return PTR_ERR(bus->devfreq);
- 	}
- 
- 	/*
-@@ -325,16 +321,13 @@ static int exynos_bus_profile_init(struct exynos_bus *bus,
- 	ret = exynos_bus_enable_edev(bus);
- 	if (ret < 0) {
- 		dev_err(dev, "failed to enable devfreq-event devices\n");
--		goto err;
-+		return ret;
- 	}
- 
- 	ret = exynos_bus_set_event(bus);
--	if (ret < 0) {
-+	if (ret < 0)
- 		dev_err(dev, "failed to set event to devfreq-event devices\n");
--		goto err;
--	}
- 
--err:
- 	return ret;
- }
- 
-@@ -344,7 +337,6 @@ static int exynos_bus_profile_init_passive(struct exynos_bus *bus,
- 	struct device *dev = bus->dev;
- 	struct devfreq_passive_data *passive_data;
- 	struct devfreq *parent_devfreq;
--	int ret = 0;
- 
- 	/* Initialize the struct profile and governor data for passive device */
- 	profile->target = exynos_bus_target;
-@@ -352,30 +344,26 @@ static int exynos_bus_profile_init_passive(struct exynos_bus *bus,
- 
- 	/* Get the instance of parent devfreq device */
- 	parent_devfreq = devfreq_get_devfreq_by_phandle(dev, 0);
--	if (IS_ERR(parent_devfreq)) {
--		ret = -EPROBE_DEFER;
--		goto err;
--	}
-+	if (IS_ERR(parent_devfreq))
-+		return -EPROBE_DEFER;
- 
- 	passive_data = devm_kzalloc(dev, sizeof(*passive_data), GFP_KERNEL);
--	if (!passive_data) {
--		ret = -ENOMEM;
--		goto err;
--	}
-+	if (!passive_data)
-+		return -ENOMEM;
-+
- 	passive_data->parent = parent_devfreq;
- 
- 	/* Add devfreq device for exynos bus with passive governor */
--	bus->devfreq = devm_devfreq_add_device(dev, profile, DEVFREQ_GOV_PASSIVE,
-+	bus->devfreq = devm_devfreq_add_device(dev, profile,
-+						DEVFREQ_GOV_PASSIVE,
- 						passive_data);
- 	if (IS_ERR(bus->devfreq)) {
- 		dev_err(dev,
- 			"failed to add devfreq dev with passive governor\n");
--		ret = PTR_ERR(bus->devfreq);
--		goto err;
-+		return PTR_ERR(bus->devfreq);
- 	}
- 
--err:
--	return ret;
-+	return 0;
- }
- 
- static int exynos_bus_probe(struct platform_device *pdev)
-@@ -393,18 +381,18 @@ static int exynos_bus_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	bus = devm_kzalloc(&pdev->dev, sizeof(*bus), GFP_KERNEL);
-+	bus = devm_kzalloc(dev, sizeof(*bus), GFP_KERNEL);
- 	if (!bus)
- 		return -ENOMEM;
- 	mutex_init(&bus->lock);
--	bus->dev = &pdev->dev;
-+	bus->dev = dev;
- 	platform_set_drvdata(pdev, bus);
- 
- 	profile = devm_kzalloc(dev, sizeof(*profile), GFP_KERNEL);
- 	if (!profile)
- 		return -ENOMEM;
- 
--	node = of_parse_phandle(dev->of_node, "devfreq", 0);
-+	node = of_parse_phandle(np, "devfreq", 0);
- 	if (node) {
- 		of_node_put(node);
- 		passive = true;
-@@ -461,12 +449,10 @@ static int exynos_bus_resume(struct device *dev)
- 	int ret;
- 
- 	ret = exynos_bus_enable_edev(bus);
--	if (ret < 0) {
-+	if (ret < 0)
- 		dev_err(dev, "failed to enable the devfreq-event devices\n");
--		return ret;
--	}
- 
--	return 0;
-+	return ret;
- }
- 
- static int exynos_bus_suspend(struct device *dev)
-@@ -475,12 +461,10 @@ static int exynos_bus_suspend(struct device *dev)
- 	int ret;
- 
- 	ret = exynos_bus_disable_edev(bus);
--	if (ret < 0) {
-+	if (ret < 0)
- 		dev_err(dev, "failed to disable the devfreq-event devices\n");
--		return ret;
--	}
- 
--	return 0;
-+	return ret;
- }
- #endif
- 
--- 
-2.17.1
+Thanks,
+Charles
