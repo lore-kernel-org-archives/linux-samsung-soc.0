@@ -1,10 +1,10 @@
 From: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>
-Subject: [RFC PATCH v2 06/11] interconnect: Relax requirement in
- of_icc_get_from_provider()
-Date: Thu, 19 Sep 2019 16:22:31 +0200
-Message-ID: <20190919142236.4071-7-a.swigon@samsung.com>
+Subject: [RFC PATCH v2 08/11] arm: dts: exynos: Add parents and
+ #interconnect-cells to Exynos4412
+Date: Thu, 19 Sep 2019 16:22:33 +0200
+Message-ID: <20190919142236.4071-9-a.swigon@samsung.com>
 References: <20190919142236.4071-1-a.swigon@samsung.com>
-        <CGME20190919142326eucas1p204819014fe85716b47e2de4af9102cd5@eucas1p2.samsung.com>
+        <CGME20190919142329eucas1p299762f99dd55a5d625633ceec84219f9@eucas1p2.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -17,28 +17,109 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Artur Świgoń <a.swigon@partner.samsung.com>
 
-This patch relaxes the condition in of_icc_get_from_provider() so that it
-is no longer required to set #interconnect-cells = <1> in the DT. In case
-of the devfreq driver for exynos-bus, #interconnect-cells is always zero.
+This patch adds two fields to the Exynos4412 DTS:
+  - parent: to declare connections between nodes that are not in a
+    parent-child relation in devfreq;
+  - #interconnect-cells: required by the interconnect framework.
+
+Please note that #interconnect-cells is always zero and node IDs are not
+hardcoded anywhere. The above-mentioned parent-child relation in devfreq
+means that there is a shared power line ('devfreq' property). The 'parent'
+property only signifies an interconnect connection.
 
 Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/interconnect/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 1 +
+ arch/arm/boot/dts/exynos4412.dtsi               | 9 +++++++++
+ 2 files changed, 10 insertions(+)
 
-diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-index 95850700e367..f357c3a78858 100644
---- a/drivers/interconnect/core.c
-+++ b/drivers/interconnect/core.c
-@@ -284,7 +284,7 @@ struct icc_node *of_icc_get_from_provider(struct of_phandle_args *spec)
- 	struct icc_node *node = ERR_PTR(-EPROBE_DEFER);
- 	struct icc_provider *provider;
+diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+index ea55f377d17c..bdd61ae86103 100644
+--- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
++++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+@@ -106,6 +106,7 @@
+ &bus_leftbus {
+ 	devfreq-events = <&ppmu_leftbus_3>, <&ppmu_rightbus_3>;
+ 	vdd-supply = <&buck3_reg>;
++	parent = <&bus_dmc>;
+ 	status = "okay";
+ };
  
--	if (!spec || spec->args_count != 1)
-+	if (!spec)
- 		return ERR_PTR(-EINVAL);
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index d20db2dfe8e2..a70a671acacd 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -390,6 +390,7 @@
+ 			clocks = <&clock CLK_DIV_DMC>;
+ 			clock-names = "bus";
+ 			operating-points-v2 = <&bus_dmc_opp_table>;
++			#interconnect-cells = <0>;
+ 			status = "disabled";
+ 		};
  
- 	mutex_lock(&icc_lock);
+@@ -398,6 +399,7 @@
+ 			clocks = <&clock CLK_DIV_ACP>;
+ 			clock-names = "bus";
+ 			operating-points-v2 = <&bus_acp_opp_table>;
++			#interconnect-cells = <0>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -406,6 +408,7 @@
+ 			clocks = <&clock CLK_DIV_C2C>;
+ 			clock-names = "bus";
+ 			operating-points-v2 = <&bus_dmc_opp_table>;
++			#interconnect-cells = <0>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -459,6 +462,7 @@
+ 			clocks = <&clock CLK_DIV_GDL>;
+ 			clock-names = "bus";
+ 			operating-points-v2 = <&bus_leftbus_opp_table>;
++			#interconnect-cells = <0>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -467,6 +471,7 @@
+ 			clocks = <&clock CLK_DIV_GDR>;
+ 			clock-names = "bus";
+ 			operating-points-v2 = <&bus_leftbus_opp_table>;
++			#interconnect-cells = <0>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -475,6 +480,7 @@
+ 			clocks = <&clock CLK_ACLK160>;
+ 			clock-names = "bus";
+ 			operating-points-v2 = <&bus_display_opp_table>;
++			#interconnect-cells = <0>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -483,6 +489,7 @@
+ 			clocks = <&clock CLK_ACLK133>;
+ 			clock-names = "bus";
+ 			operating-points-v2 = <&bus_fsys_opp_table>;
++			#interconnect-cells = <0>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -491,6 +498,7 @@
+ 			clocks = <&clock CLK_ACLK100>;
+ 			clock-names = "bus";
+ 			operating-points-v2 = <&bus_peri_opp_table>;
++			#interconnect-cells = <0>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -499,6 +507,7 @@
+ 			clocks = <&clock CLK_SCLK_MFC>;
+ 			clock-names = "bus";
+ 			operating-points-v2 = <&bus_leftbus_opp_table>;
++			#interconnect-cells = <0>;
+ 			status = "disabled";
+ 		};
+ 
 -- 
 2.17.1
