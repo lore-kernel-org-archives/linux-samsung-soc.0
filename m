@@ -1,10 +1,10 @@
 From: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>
-Subject: [RFC PATCH v2 07/11] interconnect: Relax condition in
- apply_constraints()
-Date: Thu, 19 Sep 2019 16:22:32 +0200
-Message-ID: <20190919142236.4071-8-a.swigon@samsung.com>
+Subject: [RFC PATCH v2 03/11] devfreq: exynos-bus: Change goto-based logic
+ to if-else logic
+Date: Thu, 19 Sep 2019 16:22:28 +0200
+Message-ID: <20190919142236.4071-4-a.swigon@samsung.com>
 References: <20190919142236.4071-1-a.swigon@samsung.com>
-        <CGME20190919142327eucas1p183470eede07b50c1e3acda58f2af1eba@eucas1p1.samsung.com>
+        <CGME20190919142323eucas1p2fc73a765389432f880fa28945fd28975@eucas1p2.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -17,33 +17,54 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Artur Świgoń <a.swigon@partner.samsung.com>
 
-The exynos-bus devfreq driver is extended with interconnect functionality
-by a subsequent patch. This patch removes a check from the interconnect
-framework that prevents interconnect from working on exynos-bus, in which
-every bus is a separate interconnect provider.
+This patch improves code readability by changing the following construct:
+
+>    if (cond)
+>        goto passive;
+>    foo();
+>    goto out;
+>passive:
+>    bar();
+>out:
+
+into this:
+
+>    if (cond)
+>        bar();
+>    else
+>        foo();
 
 Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
 ---
- drivers/interconnect/core.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/devfreq/exynos-bus.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-index f357c3a78858..e8243665d5ba 100644
---- a/drivers/interconnect/core.c
-+++ b/drivers/interconnect/core.c
-@@ -224,11 +224,8 @@ static int apply_constraints(struct icc_path *path)
- 	for (i = 0; i < path->num_nodes; i++) {
- 		next = path->reqs[i].node;
+diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+index f85bed241631..60ad4319fd80 100644
+--- a/drivers/devfreq/exynos-bus.c
++++ b/drivers/devfreq/exynos-bus.c
+@@ -420,19 +420,13 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ 		goto err_reg;
  
--		/*
--		 * Both endpoints should be valid master-slave pairs of the
--		 * same interconnect provider that will be configured.
--		 */
--		if (!prev || next->provider != prev->provider) {
-+		/* both endpoints should be valid master-slave pairs */
-+		if (!prev) {
- 			prev = next;
- 			continue;
- 		}
+ 	if (passive)
+-		goto passive;
++		ret = exynos_bus_profile_init_passive(bus, profile);
++	else
++		ret = exynos_bus_profile_init(bus, profile);
+ 
+-	ret = exynos_bus_profile_init(bus, profile);
+ 	if (ret < 0)
+ 		goto err;
+ 
+-	goto out;
+-passive:
+-	ret = exynos_bus_profile_init_passive(bus, profile);
+-	if (ret < 0)
+-		goto err;
+-
+-out:
+ 	max_state = bus->devfreq->profile->max_state;
+ 	min_freq = (bus->devfreq->profile->freq_table[0] / 1000);
+ 	max_freq = (bus->devfreq->profile->freq_table[max_state - 1] / 1000);
 -- 
 2.17.1
