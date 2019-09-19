@@ -1,17 +1,17 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v1 8/9] ASoC: samsung: arndale: Add missing OF node
- dereferencing
-Date: Thu, 19 Sep 2019 10:22:11 +0200
-Message-ID: <20190919082211.GF13195@pi3>
+Subject: Re: [PATCH v1 9/9] ARM: dts: arndale: Add audio support (WM1811
+ CODEC boards)
+Date: Thu, 19 Sep 2019 10:26:21 +0200
+Message-ID: <20190919082621.GG13195@pi3>
 References: <20190918104634.15216-1-s.nawrocki@samsung.com>
- <CGME20190918104713eucas1p2ccfa8e9dff2cda9e8f88ac42dda2b680@eucas1p2.samsung.com>
- <20190918104634.15216-9-s.nawrocki@samsung.com>
+ <CGME20190918104715eucas1p2a051a537a0e86becfbbcb36c172ef705@eucas1p2.samsung.com>
+ <20190918104634.15216-10-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <20190918104634.15216-9-s.nawrocki@samsung.com>
+In-Reply-To: <20190918104634.15216-10-s.nawrocki@samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -25,84 +25,93 @@ To: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, ckeepax@opensource.cirrus.com, b.zolnierkie@samsung.com, sbkim73@samsung.com, patches@opensource.cirrus.com, lgirdwood@gmail.com, robh+dt@kernel.org, broonie@kernel.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 12:46:33PM +0200, Sylwester Nawrocki wrote:
-> Ensure there is no OF node references kept when the driver is removed/unbound.
+On Wed, Sep 18, 2019 at 12:46:34PM +0200, Sylwester Nawrocki wrote:
+> Add sound node and the clock configurations for the I2S controller
+> for audio support on the Exynos5250 SoC Arndale boards with
+> WM1811 based audio daugther board.
+> 
+> We need to increase drive strength of the I2S bus, otherwise
+> the audio CODEC doesn't work. Likely the CODEC's master clock
+> is the main issue here.
 > 
 > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
->  sound/soc/samsung/arndale_rt5631.c | 31 ++++++++++++++++++++++++++++--
->  1 file changed, 29 insertions(+), 2 deletions(-)
+>  arch/arm/boot/dts/exynos5250-arndale.dts | 27 +++++++++++++++++++++++-
+>  1 file changed, 26 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+> index dc6fa6fe83f1..62aa6720aa88 100644
+> --- a/arch/arm/boot/dts/exynos5250-arndale.dts
+> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+> @@ -11,6 +11,7 @@
+>  #include <dt-bindings/interrupt-controller/irq.h>
+>  #include <dt-bindings/input/input.h>
+>  #include <dt-bindings/clock/samsung,s2mps11.h>
+> +#include <dt-bindings/sound/samsung-i2s.h>
+>  #include "exynos5250.dtsi"
+>  
+>  / {
+> @@ -135,6 +136,12 @@
+>  		};
+>  	};
+>  
+> +	sound {
+> +		compatible = "samsung,arndale-wm1811";
+> +		samsung,audio-cpu = <&i2s0>;
+> +		samsung,audio-codec = <&wm1811>;
+> +	};
+> +
+>  	fixed-rate-clocks {
+>  		xxti {
+>  			compatible = "samsung,clock-xxti";
+> @@ -499,12 +506,24 @@
+>  	};
+>  };
+>  
+> +&clock {
+> +	assigned-clocks = <&clock CLK_FOUT_EPLL>;
+> +	assigned-clock-rates = <49152000>;
+> +};
+> +
+> +&clock_audss {
+> +	assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>;
+> +	assigned-clock-parents = <&clock CLK_FOUT_EPLL>;
+> +};
 
-Wasn't this issue introduced in 5/9? It looks weird to fix it here...
+Put them before "cpu" so alphabetical order is preserved.
 
 Best regards,
 Krzysztof
 
-> 
-> diff --git a/sound/soc/samsung/arndale_rt5631.c b/sound/soc/samsung/arndale_rt5631.c
-> index 3744c47742b8..d8da313e898a 100644
-> --- a/sound/soc/samsung/arndale_rt5631.c
-> +++ b/sound/soc/samsung/arndale_rt5631.c
-> @@ -132,6 +132,17 @@ static struct snd_soc_card arndale_wm1811 = {
->  	.num_links = ARRAY_SIZE(arndale_wm1811_dai),
+> +
+>  &i2c_3 {
+>  	status = "okay";
+>  
+> -	wm1811a@1a {
+> +	wm1811: codec@1a {
+>  		compatible = "wlf,wm1811";
+>  		reg = <0x1a>;
+> +		clocks = <&i2s0 CLK_I2S_CDCLK>;
+> +		clock-names = "MCLK1";
+>  
+>  		AVDD2-supply = <&main_dc_reg>;
+>  		CPVDD-supply = <&main_dc_reg>;
+> @@ -540,9 +559,15 @@
 >  };
 >  
-> +static void arndale_put_of_nodes(struct snd_soc_card *card)
-> +{
-> +	struct snd_soc_dai_link *dai_link;
-> +	int i;
-> +
-> +	for_each_card_prelinks(card, i, dai_link) {
-> +		of_node_put(dai_link->cpus->of_node);
-> +		of_node_put(dai_link->codecs->of_node);
-> +	}
-> +}
-> +
->  static int arndale_audio_probe(struct platform_device *pdev)
->  {
->  	struct device_node *np = pdev->dev.of_node;
-> @@ -156,16 +167,31 @@ static int arndale_audio_probe(struct platform_device *pdev)
->  	if (!dai_link->codecs->of_node) {
->  		dev_err(&pdev->dev,
->  			"Property 'samsung,audio-codec' missing or invalid\n");
-> -		return -EINVAL;
-> +		ret = -EINVAL;
-> +		goto err_put_of_nodes;
->  	}
->  
->  	ret = devm_snd_soc_register_card(card->dev, card);
-> -	if (ret)
-> +	if (ret) {
->  		dev_err(&pdev->dev, "snd_soc_register_card() failed: %d\n", ret);
-> +		goto err_put_of_nodes;
-> +	}
->  
-> +	return 0;
-> +
-> +err_put_of_nodes:
-> +	arndale_put_of_nodes(card);
->  	return ret;
->  }
->  
-> +static int arndale_audio_remove(struct platform_device *pdev)
-> +{
-> +	struct snd_soc_card *card = platform_get_drvdata(pdev);
-> +
-> +	arndale_put_of_nodes(card);
-> +	return 0;
-> +}
-> +
->  static const struct of_device_id arndale_audio_of_match[] __maybe_unused = {
->  	{ .compatible = "samsung,arndale-rt5631",  .data = &arndale_rt5631 },
->  	{ .compatible = "samsung,arndale-alc5631", .data = &arndale_rt5631 },
-> @@ -181,6 +207,7 @@ static struct platform_driver arndale_audio_driver = {
->  		.of_match_table = arndale_audio_of_match,
->  	},
->  	.probe = arndale_audio_probe,
-> +	.remove = arndale_audio_remove,
+>  &i2s0 {
+> +	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
+> +	assigned-clock-parents = <&clock_audss EXYNOS_I2S_BUS>;
+>  	status = "okay";
 >  };
 >  
->  module_platform_driver(arndale_audio_driver);
+> +&i2s0_bus {
+> +	samsung,pin-drv = <EXYNOS4_PIN_DRV_LV2>;
+> +};
+> +
+>  &mixer {
+>  	status = "okay";
+>  };
 > -- 
 > 2.17.1
 > 
