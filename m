@@ -1,254 +1,93 @@
 From: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>
-Subject: [RFC PATCH v2 09/11] devfreq: exynos-bus: Add interconnect
- functionality to exynos-bus
-Date: Thu, 19 Sep 2019 16:22:34 +0200
-Message-ID: <20190919142236.4071-10-a.swigon@samsung.com>
+Subject: [RFC PATCH v2 01/11] devfreq: exynos-bus: Extract
+ exynos_bus_profile_init()
+Date: Thu, 19 Sep 2019 16:22:26 +0200
+Message-ID: <20190919142236.4071-2-a.swigon@samsung.com>
 References: <20190919142236.4071-1-a.swigon@samsung.com>
-        <CGME20190919142329eucas1p2e53992eab9ec6b404f716f955b3c228e@eucas1p2.samsung.com>
+ <CGME20190919142322eucas1p24bc477ee6e1bcd65546c305d55af097d@eucas1p2.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <20190919142236.4071-1-a.swigon@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@partner.samsung.com>, cw00.choi@samsung.com, myungjoo.ham@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, georgi.djakov@linaro.org, leonard.crestez@nxp.com, m.szyprowski@samsung.com, b.zolnierkie@samsung.com, krzk@kernel.org
+Cc: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@partner.samsung.com>, b.zolnierkie@samsung.com, sw0312.kim@samsung.com, krzk@kernel.org, inki.dae@samsung.com, cw00.choi@samsung.com, myungjoo.ham@samsung.com, leonard.crestez@nxp.com, georgi.djakov@linaro.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Artur Świgoń <a.swigon@partner.samsung.com>
-
-This patch adds interconnect functionality to the exynos-bus devfreq
-driver.
-
-The SoC topology is a graph (or, more specifically, a tree) and most of
-its edges are taken from the devfreq parent-child hierarchy (cf.
-Documentation/devicetree/bindings/devfreq/exynos-bus.txt). Due to
-unspecified relative probing order, -EPROBE_DEFER may be propagated to
-guarantee that a child is probed before its parent.
-
-Each bus is now an interconnect provider and an interconnect node as well
-(cf. Documentation/interconnect/interconnect.rst), i.e. every bus registers
-itself as a node. Node IDs are not hardcoded but rather assigned at
-runtime, in probing order (subject to the above-mentioned exception
-regarding relative order). This approach allows for using this driver with
-various Exynos SoCs.
-
-Frequencies requested via the interconnect API for a given node are
-propagated to devfreq using dev_pm_qos_update_request(). Please note that
-it is not an error when CONFIG_INTERCONNECT is 'n', in which case all
-interconnect API functions are no-op.
-
-Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
----
- drivers/devfreq/exynos-bus.c | 153 +++++++++++++++++++++++++++++++++++
- 1 file changed, 153 insertions(+)
-
-diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-index 8d44810cac69..e0232202720d 100644
---- a/drivers/devfreq/exynos-bus.c
-+++ b/drivers/devfreq/exynos-bus.c
-@@ -14,14 +14,19 @@
- #include <linux/devfreq-event.h>
- #include <linux/device.h>
- #include <linux/export.h>
-+#include <linux/idr.h>
-+#include <linux/interconnect-provider.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/pm_opp.h>
-+#include <linux/pm_qos.h>
- #include <linux/platform_device.h>
- #include <linux/regulator/consumer.h>
- 
- #define DEFAULT_SATURATION_RATIO	40
- 
-+#define icc_units_to_khz(x) ((x) / 8)
-+
- struct exynos_bus {
- 	struct device *dev;
- 
-@@ -35,6 +40,12 @@ struct exynos_bus {
- 	struct opp_table *opp_table;
- 	struct clk *clk;
- 	unsigned int ratio;
-+
-+	/* One provider per bus, one node per provider */
-+	struct icc_provider provider;
-+	struct icc_node *node;
-+
-+	struct dev_pm_qos_request qos_req;
- };
- 
- /*
-@@ -59,6 +70,13 @@ exynos_bus_ops_edev(enable_edev);
- exynos_bus_ops_edev(disable_edev);
- exynos_bus_ops_edev(set_event);
- 
-+static int exynos_bus_next_id(void)
-+{
-+	static DEFINE_IDA(exynos_bus_icc_ida);
-+
-+	return ida_alloc(&exynos_bus_icc_ida, GFP_KERNEL);
-+}
-+
- static int exynos_bus_get_event(struct exynos_bus *bus,
- 				struct devfreq_event_data *edata)
- {
-@@ -171,6 +189,38 @@ static void exynos_bus_passive_exit(struct device *dev)
- 	clk_disable_unprepare(bus->clk);
- }
- 
-+static int exynos_bus_icc_set(struct icc_node *src, struct icc_node *dst)
-+{
-+	struct exynos_bus *src_bus = src->data, *dst_bus = dst->data;
-+	s32 src_freq = icc_units_to_khz(src->avg_bw);
-+	s32 dst_freq = icc_units_to_khz(dst->avg_bw);
-+
-+	dev_pm_qos_update_request(&src_bus->qos_req, src_freq);
-+	dev_pm_qos_update_request(&dst_bus->qos_req, dst_freq);
-+
-+	return 0;
-+}
-+
-+static int exynos_bus_icc_aggregate(struct icc_node *node, u32 tag, u32 avg_bw,
-+				    u32 peak_bw, u32 *agg_avg, u32 *agg_peak)
-+{
-+	*agg_avg += avg_bw;
-+	*agg_peak = max(*agg_peak, peak_bw);
-+
-+	return 0;
-+}
-+
-+static struct icc_node *exynos_bus_icc_xlate(struct of_phandle_args *spec,
-+					     void *data)
-+{
-+	struct exynos_bus *bus = data;
-+
-+	if (spec->np != bus->dev->of_node)
-+		return ERR_PTR(-EINVAL);
-+
-+	return bus->node;
-+}
-+
- static int exynos_bus_parent_parse_of(struct device_node *np,
- 					struct exynos_bus *bus)
- {
-@@ -366,6 +416,101 @@ static int exynos_bus_profile_init_passive(struct exynos_bus *bus,
- 	return 0;
- }
- 
-+static int exynos_bus_icc_connect(struct exynos_bus *bus)
-+{
-+	struct device_node *np = bus->dev->of_node;
-+	struct devfreq *parent_devfreq;
-+	struct icc_node *parent_node = NULL;
-+	struct of_phandle_args args;
-+	int ret = 0;
-+
-+	parent_devfreq = devfreq_get_devfreq_by_phandle(bus->dev, 0);
-+	if (!IS_ERR(parent_devfreq)) {
-+		struct exynos_bus *parent_bus;
-+
-+		parent_bus = dev_get_drvdata(parent_devfreq->dev.parent);
-+		parent_node = parent_bus->node;
-+	} else {
-+		/* Look for parent in DT */
-+		int num = of_count_phandle_with_args(np, "parent",
-+						     "#interconnect-cells");
-+		if (num != 1)
-+			goto out; /* 'parent' is optional */
-+
-+		ret = of_parse_phandle_with_args(np, "parent",
-+						 "#interconnect-cells",
-+						 0, &args);
-+		if (ret < 0)
-+			goto out;
-+
-+		of_node_put(args.np);
-+
-+		parent_node = of_icc_get_from_provider(&args);
-+		if (IS_ERR(parent_node)) {
-+			/* May be -EPROBE_DEFER */
-+			ret = PTR_ERR(parent_node);
-+			goto out;
-+		}
-+	}
-+
-+	ret = icc_link_create(bus->node, parent_node->id);
-+
-+out:
-+	return ret;
-+}
-+
-+static int exynos_bus_icc_init(struct exynos_bus *bus)
-+{
-+	struct device *dev = bus->dev;
-+	struct icc_provider *provider = &bus->provider;
-+	struct icc_node *node;
-+	int id, ret;
-+
-+	/* Initialize the interconnect provider */
-+	provider->set = exynos_bus_icc_set;
-+	provider->aggregate = exynos_bus_icc_aggregate;
-+	provider->xlate = exynos_bus_icc_xlate;
-+	provider->dev = dev;
-+	provider->data = bus;
-+
-+	ret = icc_provider_add(provider);
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = id = exynos_bus_next_id();
-+	if (ret < 0)
-+		goto err_node;
-+
-+	node = icc_node_create(id);
-+	if (IS_ERR(node)) {
-+		ret = PTR_ERR(node);
-+		goto err_node;
-+	}
-+
-+	bus->node = node;
-+	node->name = dev->of_node->name;
-+	node->data = bus;
-+	icc_node_add(node, provider);
-+
-+	ret = exynos_bus_icc_connect(bus);
-+	if (ret < 0)
-+		goto err_connect;
-+
-+	ret = dev_pm_qos_add_request(bus->devfreq->dev.parent, &bus->qos_req,
-+				     DEV_PM_QOS_MIN_FREQUENCY, 0);
-+
-+out:
-+	return ret;
-+
-+err_connect:
-+	icc_node_del(node);
-+	icc_node_destroy(id);
-+err_node:
-+	icc_provider_del(provider);
-+
-+	return ret;
-+}
-+
- static int exynos_bus_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -415,6 +560,14 @@ static int exynos_bus_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto err;
- 
-+	/*
-+	 * Initialize interconnect provider. A return value of -ENOTSUPP means
-+	 * that CONFIG_INTERCONNECT is disabled.
-+	 */
-+	ret = exynos_bus_icc_init(bus);
-+	if (ret < 0 && ret != -ENOTSUPP)
-+		goto err;
-+
- 	max_state = bus->devfreq->profile->max_state;
- 	min_freq = (bus->devfreq->profile->freq_table[0] / 1000);
- 	max_freq = (bus->devfreq->profile->freq_table[max_state - 1] / 1000);
--- 
-2.17.1
+RnJvbTogQXJ0dXIgxZp3aWdvxYQgPGEuc3dpZ29uQHBhcnRuZXIuc2Ftc3VuZy5jb20+CgpUaGlz
+IHBhdGNoIGFkZHMgYSBuZXcgc3RhdGljIGZ1bmN0aW9uLCBleHlub3NfYnVzX3Byb2ZpbGVfaW5p
+dCgpLCBleHRyYWN0ZWQKZnJvbSBleHlub3NfYnVzX3Byb2JlKCkuCgpTaWduZWQtb2ZmLWJ5OiBB
+cnR1ciDFmndpZ2/FhCA8YS5zd2lnb25AcGFydG5lci5zYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJz
+L2RldmZyZXEvZXh5bm9zLWJ1cy5jIHwgOTIgKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0t
+LS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgNTMgaW5zZXJ0aW9ucygrKSwgMzkgZGVsZXRpb25zKC0p
+CgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9kZXZmcmVxL2V4eW5vcy1idXMuYyBiL2RyaXZlcnMvZGV2
+ZnJlcS9leHlub3MtYnVzLmMKaW5kZXggMjlmNDIyNDY5OTYwLi43OGYzOGI3ZmI1OTYgMTAwNjQ0
+Ci0tLSBhL2RyaXZlcnMvZGV2ZnJlcS9leHlub3MtYnVzLmMKKysrIGIvZHJpdmVycy9kZXZmcmVx
+L2V4eW5vcy1idXMuYwpAQCAtMjg3LDEyICsyODcsNjIgQEAgc3RhdGljIGludCBleHlub3NfYnVz
+X3BhcnNlX29mKHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnAsCiAJcmV0dXJuIHJldDsKIH0KIAorc3Rh
+dGljIGludCBleHlub3NfYnVzX3Byb2ZpbGVfaW5pdChzdHJ1Y3QgZXh5bm9zX2J1cyAqYnVzLAor
+CQkJCSAgIHN0cnVjdCBkZXZmcmVxX2Rldl9wcm9maWxlICpwcm9maWxlKQoreworCXN0cnVjdCBk
+ZXZpY2UgKmRldiA9IGJ1cy0+ZGV2OworCXN0cnVjdCBkZXZmcmVxX3NpbXBsZV9vbmRlbWFuZF9k
+YXRhICpvbmRlbWFuZF9kYXRhOworCWludCByZXQ7CisKKwkvKiBJbml0aWFsaXplIHRoZSBzdHJ1
+Y3QgcHJvZmlsZSBhbmQgZ292ZXJub3IgZGF0YSBmb3IgcGFyZW50IGRldmljZSAqLworCXByb2Zp
+bGUtPnBvbGxpbmdfbXMgPSA1MDsKKwlwcm9maWxlLT50YXJnZXQgPSBleHlub3NfYnVzX3Rhcmdl
+dDsKKwlwcm9maWxlLT5nZXRfZGV2X3N0YXR1cyA9IGV4eW5vc19idXNfZ2V0X2Rldl9zdGF0dXM7
+CisJcHJvZmlsZS0+ZXhpdCA9IGV4eW5vc19idXNfZXhpdDsKKworCW9uZGVtYW5kX2RhdGEgPSBk
+ZXZtX2t6YWxsb2MoZGV2LCBzaXplb2YoKm9uZGVtYW5kX2RhdGEpLCBHRlBfS0VSTkVMKTsKKwlp
+ZiAoIW9uZGVtYW5kX2RhdGEpIHsKKwkJcmV0ID0gLUVOT01FTTsKKwkJZ290byBlcnI7CisJfQor
+CW9uZGVtYW5kX2RhdGEtPnVwdGhyZXNob2xkID0gNDA7CisJb25kZW1hbmRfZGF0YS0+ZG93bmRp
+ZmZlcmVudGlhbCA9IDU7CisKKwkvKiBBZGQgZGV2ZnJlcSBkZXZpY2UgdG8gbW9uaXRvciBhbmQg
+aGFuZGxlIHRoZSBleHlub3MgYnVzICovCisJYnVzLT5kZXZmcmVxID0gZGV2bV9kZXZmcmVxX2Fk
+ZF9kZXZpY2UoZGV2LCBwcm9maWxlLAorCQkJCQkJREVWRlJFUV9HT1ZfU0lNUExFX09OREVNQU5E
+LAorCQkJCQkJb25kZW1hbmRfZGF0YSk7CisJaWYgKElTX0VSUihidXMtPmRldmZyZXEpKSB7CisJ
+CWRldl9lcnIoZGV2LCAiZmFpbGVkIHRvIGFkZCBkZXZmcmVxIGRldmljZVxuIik7CisJCXJldCA9
+IFBUUl9FUlIoYnVzLT5kZXZmcmVxKTsKKwkJZ290byBlcnI7CisJfQorCisJLyoKKwkgKiBFbmFi
+bGUgZGV2ZnJlcS1ldmVudCB0byBnZXQgcmF3IGRhdGEgd2hpY2ggaXMgdXNlZCB0byBkZXRlcm1p
+bmUKKwkgKiBjdXJyZW50IGJ1cyBsb2FkLgorCSAqLworCXJldCA9IGV4eW5vc19idXNfZW5hYmxl
+X2VkZXYoYnVzKTsKKwlpZiAocmV0IDwgMCkgeworCQlkZXZfZXJyKGRldiwgImZhaWxlZCB0byBl
+bmFibGUgZGV2ZnJlcS1ldmVudCBkZXZpY2VzXG4iKTsKKwkJZ290byBlcnI7CisJfQorCisJcmV0
+ID0gZXh5bm9zX2J1c19zZXRfZXZlbnQoYnVzKTsKKwlpZiAocmV0IDwgMCkgeworCQlkZXZfZXJy
+KGRldiwgImZhaWxlZCB0byBzZXQgZXZlbnQgdG8gZGV2ZnJlcS1ldmVudCBkZXZpY2VzXG4iKTsK
+KwkJZ290byBlcnI7CisJfQorCitlcnI6CisJcmV0dXJuIHJldDsKK30KKwogc3RhdGljIGludCBl
+eHlub3NfYnVzX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiB7CiAJc3RydWN0
+IGRldmljZSAqZGV2ID0gJnBkZXYtPmRldjsKIAlzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wID0gZGV2
+LT5vZl9ub2RlLCAqbm9kZTsKIAlzdHJ1Y3QgZGV2ZnJlcV9kZXZfcHJvZmlsZSAqcHJvZmlsZTsK
+LQlzdHJ1Y3QgZGV2ZnJlcV9zaW1wbGVfb25kZW1hbmRfZGF0YSAqb25kZW1hbmRfZGF0YTsKIAlz
+dHJ1Y3QgZGV2ZnJlcV9wYXNzaXZlX2RhdGEgKnBhc3NpdmVfZGF0YTsKIAlzdHJ1Y3QgZGV2ZnJl
+cSAqcGFyZW50X2RldmZyZXE7CiAJc3RydWN0IGV4eW5vc19idXMgKmJ1czsKQEAgLTMzNCw0NSAr
+Mzg0LDkgQEAgc3RhdGljIGludCBleHlub3NfYnVzX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZp
+Y2UgKnBkZXYpCiAJaWYgKHBhc3NpdmUpCiAJCWdvdG8gcGFzc2l2ZTsKIAotCS8qIEluaXRpYWxp
+emUgdGhlIHN0cnVjdCBwcm9maWxlIGFuZCBnb3Zlcm5vciBkYXRhIGZvciBwYXJlbnQgZGV2aWNl
+ICovCi0JcHJvZmlsZS0+cG9sbGluZ19tcyA9IDUwOwotCXByb2ZpbGUtPnRhcmdldCA9IGV4eW5v
+c19idXNfdGFyZ2V0OwotCXByb2ZpbGUtPmdldF9kZXZfc3RhdHVzID0gZXh5bm9zX2J1c19nZXRf
+ZGV2X3N0YXR1czsKLQlwcm9maWxlLT5leGl0ID0gZXh5bm9zX2J1c19leGl0OwotCi0Jb25kZW1h
+bmRfZGF0YSA9IGRldm1fa3phbGxvYyhkZXYsIHNpemVvZigqb25kZW1hbmRfZGF0YSksIEdGUF9L
+RVJORUwpOwotCWlmICghb25kZW1hbmRfZGF0YSkgewotCQlyZXQgPSAtRU5PTUVNOworCXJldCA9
+IGV4eW5vc19idXNfcHJvZmlsZV9pbml0KGJ1cywgcHJvZmlsZSk7CisJaWYgKHJldCA8IDApCiAJ
+CWdvdG8gZXJyOwotCX0KLQlvbmRlbWFuZF9kYXRhLT51cHRocmVzaG9sZCA9IDQwOwotCW9uZGVt
+YW5kX2RhdGEtPmRvd25kaWZmZXJlbnRpYWwgPSA1OwotCi0JLyogQWRkIGRldmZyZXEgZGV2aWNl
+IHRvIG1vbml0b3IgYW5kIGhhbmRsZSB0aGUgZXh5bm9zIGJ1cyAqLwotCWJ1cy0+ZGV2ZnJlcSA9
+IGRldm1fZGV2ZnJlcV9hZGRfZGV2aWNlKGRldiwgcHJvZmlsZSwKLQkJCQkJCURFVkZSRVFfR09W
+X1NJTVBMRV9PTkRFTUFORCwKLQkJCQkJCW9uZGVtYW5kX2RhdGEpOwotCWlmIChJU19FUlIoYnVz
+LT5kZXZmcmVxKSkgewotCQlkZXZfZXJyKGRldiwgImZhaWxlZCB0byBhZGQgZGV2ZnJlcSBkZXZp
+Y2VcbiIpOwotCQlyZXQgPSBQVFJfRVJSKGJ1cy0+ZGV2ZnJlcSk7Ci0JCWdvdG8gZXJyOwotCX0K
+LQotCS8qCi0JICogRW5hYmxlIGRldmZyZXEtZXZlbnQgdG8gZ2V0IHJhdyBkYXRhIHdoaWNoIGlz
+IHVzZWQgdG8gZGV0ZXJtaW5lCi0JICogY3VycmVudCBidXMgbG9hZC4KLQkgKi8KLQlyZXQgPSBl
+eHlub3NfYnVzX2VuYWJsZV9lZGV2KGJ1cyk7Ci0JaWYgKHJldCA8IDApIHsKLQkJZGV2X2Vycihk
+ZXYsICJmYWlsZWQgdG8gZW5hYmxlIGRldmZyZXEtZXZlbnQgZGV2aWNlc1xuIik7Ci0JCWdvdG8g
+ZXJyOwotCX0KLQotCXJldCA9IGV4eW5vc19idXNfc2V0X2V2ZW50KGJ1cyk7Ci0JaWYgKHJldCA8
+IDApIHsKLQkJZGV2X2VycihkZXYsICJmYWlsZWQgdG8gc2V0IGV2ZW50IHRvIGRldmZyZXEtZXZl
+bnQgZGV2aWNlc1xuIik7Ci0JCWdvdG8gZXJyOwotCX0KIAogCWdvdG8gb3V0OwogcGFzc2l2ZToK
+LS0gCjIuMTcuMQoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMu
+aW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L2xpbnV4LWFybS1rZXJuZWwK
