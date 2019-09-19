@@ -1,10 +1,9 @@
 From: =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>
-Subject: [RFC PATCH v2 03/11] devfreq: exynos-bus: Change goto-based logic
- to if-else logic
-Date: Thu, 19 Sep 2019 16:22:28 +0200
-Message-ID: <20190919142236.4071-4-a.swigon@samsung.com>
+Subject: [RFC PATCH v2 04/11] devfreq: exynos-bus: Clean up code
+Date: Thu, 19 Sep 2019 16:22:29 +0200
+Message-ID: <20190919142236.4071-5-a.swigon@samsung.com>
 References: <20190919142236.4071-1-a.swigon@samsung.com>
-        <CGME20190919142323eucas1p2fc73a765389432f880fa28945fd28975@eucas1p2.samsung.com>
+        <CGME20190919142324eucas1p1638cec2aafbfcaf03cfdfa7d0189143a@eucas1p1.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -17,54 +16,192 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Artur Świgoń <a.swigon@partner.samsung.com>
 
-This patch improves code readability by changing the following construct:
-
->    if (cond)
->        goto passive;
->    foo();
->    goto out;
->passive:
->    bar();
->out:
-
-into this:
-
->    if (cond)
->        bar();
->    else
->        foo();
+This patch adds minor improvements to the exynos-bus driver.
 
 Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/devfreq/exynos-bus.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ drivers/devfreq/exynos-bus.c | 66 ++++++++++++++----------------------
+ 1 file changed, 25 insertions(+), 41 deletions(-)
 
 diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-index f85bed241631..60ad4319fd80 100644
+index 60ad4319fd80..8d44810cac69 100644
 --- a/drivers/devfreq/exynos-bus.c
 +++ b/drivers/devfreq/exynos-bus.c
-@@ -420,19 +420,13 @@ static int exynos_bus_probe(struct platform_device *pdev)
- 		goto err_reg;
+@@ -15,11 +15,10 @@
+ #include <linux/device.h>
+ #include <linux/export.h>
+ #include <linux/module.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/pm_opp.h>
+ #include <linux/platform_device.h>
+ #include <linux/regulator/consumer.h>
+-#include <linux/slab.h>
  
- 	if (passive)
--		goto passive;
-+		ret = exynos_bus_profile_init_passive(bus, profile);
-+	else
-+		ret = exynos_bus_profile_init(bus, profile);
+ #define DEFAULT_SATURATION_RATIO	40
  
--	ret = exynos_bus_profile_init(bus, profile);
- 	if (ret < 0)
- 		goto err;
+@@ -178,7 +177,7 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
+ 	struct device *dev = bus->dev;
+ 	struct opp_table *opp_table;
+ 	const char *vdd = "vdd";
+-	int i, ret, count, size;
++	int i, ret, count;
  
--	goto out;
--passive:
--	ret = exynos_bus_profile_init_passive(bus, profile);
--	if (ret < 0)
+ 	opp_table = dev_pm_opp_set_regulators(dev, &vdd, 1);
+ 	if (IS_ERR(opp_table)) {
+@@ -201,8 +200,7 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
+ 	}
+ 	bus->edev_count = count;
+ 
+-	size = sizeof(*bus->edev) * count;
+-	bus->edev = devm_kzalloc(dev, size, GFP_KERNEL);
++	bus->edev = devm_kcalloc(dev, count, sizeof(*bus->edev), GFP_KERNEL);
+ 	if (!bus->edev) {
+ 		ret = -ENOMEM;
+ 		goto err_regulator;
+@@ -301,10 +299,9 @@ static int exynos_bus_profile_init(struct exynos_bus *bus,
+ 	profile->exit = exynos_bus_exit;
+ 
+ 	ondemand_data = devm_kzalloc(dev, sizeof(*ondemand_data), GFP_KERNEL);
+-	if (!ondemand_data) {
+-		ret = -ENOMEM;
 -		goto err;
--
--out:
- 	max_state = bus->devfreq->profile->max_state;
- 	min_freq = (bus->devfreq->profile->freq_table[0] / 1000);
- 	max_freq = (bus->devfreq->profile->freq_table[max_state - 1] / 1000);
+-	}
++	if (!ondemand_data)
++		return -ENOMEM;
++
+ 	ondemand_data->upthreshold = 40;
+ 	ondemand_data->downdifferential = 5;
+ 
+@@ -314,8 +311,7 @@ static int exynos_bus_profile_init(struct exynos_bus *bus,
+ 						ondemand_data);
+ 	if (IS_ERR(bus->devfreq)) {
+ 		dev_err(dev, "failed to add devfreq device\n");
+-		ret = PTR_ERR(bus->devfreq);
+-		goto err;
++		return PTR_ERR(bus->devfreq);
+ 	}
+ 
+ 	/*
+@@ -325,16 +321,13 @@ static int exynos_bus_profile_init(struct exynos_bus *bus,
+ 	ret = exynos_bus_enable_edev(bus);
+ 	if (ret < 0) {
+ 		dev_err(dev, "failed to enable devfreq-event devices\n");
+-		goto err;
++		return ret;
+ 	}
+ 
+ 	ret = exynos_bus_set_event(bus);
+-	if (ret < 0) {
++	if (ret < 0)
+ 		dev_err(dev, "failed to set event to devfreq-event devices\n");
+-		goto err;
+-	}
+ 
+-err:
+ 	return ret;
+ }
+ 
+@@ -344,7 +337,6 @@ static int exynos_bus_profile_init_passive(struct exynos_bus *bus,
+ 	struct device *dev = bus->dev;
+ 	struct devfreq_passive_data *passive_data;
+ 	struct devfreq *parent_devfreq;
+-	int ret = 0;
+ 
+ 	/* Initialize the struct profile and governor data for passive device */
+ 	profile->target = exynos_bus_target;
+@@ -352,30 +344,26 @@ static int exynos_bus_profile_init_passive(struct exynos_bus *bus,
+ 
+ 	/* Get the instance of parent devfreq device */
+ 	parent_devfreq = devfreq_get_devfreq_by_phandle(dev, 0);
+-	if (IS_ERR(parent_devfreq)) {
+-		ret = -EPROBE_DEFER;
+-		goto err;
+-	}
++	if (IS_ERR(parent_devfreq))
++		return -EPROBE_DEFER;
+ 
+ 	passive_data = devm_kzalloc(dev, sizeof(*passive_data), GFP_KERNEL);
+-	if (!passive_data) {
+-		ret = -ENOMEM;
+-		goto err;
+-	}
++	if (!passive_data)
++		return -ENOMEM;
++
+ 	passive_data->parent = parent_devfreq;
+ 
+ 	/* Add devfreq device for exynos bus with passive governor */
+-	bus->devfreq = devm_devfreq_add_device(dev, profile, DEVFREQ_GOV_PASSIVE,
++	bus->devfreq = devm_devfreq_add_device(dev, profile,
++						DEVFREQ_GOV_PASSIVE,
+ 						passive_data);
+ 	if (IS_ERR(bus->devfreq)) {
+ 		dev_err(dev,
+ 			"failed to add devfreq dev with passive governor\n");
+-		ret = PTR_ERR(bus->devfreq);
+-		goto err;
++		return PTR_ERR(bus->devfreq);
+ 	}
+ 
+-err:
+-	return ret;
++	return 0;
+ }
+ 
+ static int exynos_bus_probe(struct platform_device *pdev)
+@@ -393,18 +381,18 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	bus = devm_kzalloc(&pdev->dev, sizeof(*bus), GFP_KERNEL);
++	bus = devm_kzalloc(dev, sizeof(*bus), GFP_KERNEL);
+ 	if (!bus)
+ 		return -ENOMEM;
+ 	mutex_init(&bus->lock);
+-	bus->dev = &pdev->dev;
++	bus->dev = dev;
+ 	platform_set_drvdata(pdev, bus);
+ 
+ 	profile = devm_kzalloc(dev, sizeof(*profile), GFP_KERNEL);
+ 	if (!profile)
+ 		return -ENOMEM;
+ 
+-	node = of_parse_phandle(dev->of_node, "devfreq", 0);
++	node = of_parse_phandle(np, "devfreq", 0);
+ 	if (node) {
+ 		of_node_put(node);
+ 		passive = true;
+@@ -461,12 +449,10 @@ static int exynos_bus_resume(struct device *dev)
+ 	int ret;
+ 
+ 	ret = exynos_bus_enable_edev(bus);
+-	if (ret < 0) {
++	if (ret < 0)
+ 		dev_err(dev, "failed to enable the devfreq-event devices\n");
+-		return ret;
+-	}
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int exynos_bus_suspend(struct device *dev)
+@@ -475,12 +461,10 @@ static int exynos_bus_suspend(struct device *dev)
+ 	int ret;
+ 
+ 	ret = exynos_bus_disable_edev(bus);
+-	if (ret < 0) {
++	if (ret < 0)
+ 		dev_err(dev, "failed to disable the devfreq-event devices\n");
+-		return ret;
+-	}
+ 
+-	return 0;
++	return ret;
+ }
+ #endif
+ 
 -- 
 2.17.1
