@@ -1,17 +1,15 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v1 7/9] ASoC: samsung: arndale: Add support for WM1811
- CODEC
-Date: Thu, 19 Sep 2019 14:00:16 +0200
-Message-ID: <342d08ce-d14a-02b2-a590-13b28c8c5154@samsung.com>
+Subject: Re: [PATCH v1 2/9] mfd: wm8994: Add support for MCLKn clock control
+Date: Thu, 19 Sep 2019 14:48:56 +0200
+Message-ID: <420d3c8a-a31e-1edf-3112-b9800beace1e@samsung.com>
 References: <20190918104634.15216-1-s.nawrocki@samsung.com>
- <CGME20190918104705eucas1p1c01dc05bff199188677915e2bb8f7472@eucas1p1.samsung.com>
- <20190918104634.15216-8-s.nawrocki@samsung.com>
- <20190918144553.GJ10204@ediswmail.ad.cirrus.com>
+ <CGME20190918104656eucas1p1d9cad1394b08d05a99151c4fbc9425ce@eucas1p1.samsung.com>
+ <20190918104634.15216-3-s.nawrocki@samsung.com> <20190919075924.GB13195@pi3>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190918144553.GJ10204@ediswmail.ad.cirrus.com>
+In-Reply-To: <20190919075924.GB13195@pi3>
 Content-Language: en-GB
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
@@ -22,16 +20,28 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, patches@opensource.cirrus.com, lgirdwood@gmail.com, krzk@kernel.org, robh+dt@kernel.org, broonie@kernel.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, ckeepax@opensource.cirrus.com, b.zolnierkie@samsung.com, sbkim73@samsung.com, patches@opensource.cirrus.com, broonie@kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 9/18/19 16:45, Charles Keepax wrote:
-> If your removing the of_match_ptr below I think the
-> __maybe_unused should be removed as well.
+On 9/19/19 09:59, Krzysztof Kozlowski wrote:
+> On Wed, Sep 18, 2019 at 12:46:27PM +0200, Sylwester Nawrocki wrote:
+>> The WM1811/WM8994/WM8958 audio CODEC DT bindings specify two optional
+>> clocks: "MCLK1", "MCLK2". Add code for getting those clocks in the MFD
+>> part of the wm8994 driver so they can be further handled in the audio
+>> CODEC part.
+>
+> I think these are needed only for the codec so how about getting them in
+> codec's probe?
 
-Good point, I will remove the now unneeded __maybe_unused as well.
+The clocks are specified in the (I2C slave device) DT node which corresponds
+to the device as a whole and to which binds the MFD driver.  AFAICT those
+clocks are only needed by the CODEC sub-driver but in general such clocks
+could be used to provide device's system clock used by other functionalities 
+than audio.  We are doing something similar for other MFD drivers already
+and I would rather stick to one pattern. IMHO it's clearer to see what
+device the clocks belong to that way.
 
---
-Thanks,
+-- 
+Regards,
 Sylwester
