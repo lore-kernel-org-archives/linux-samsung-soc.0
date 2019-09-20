@@ -1,31 +1,103 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 5/8] dt-bindings: watchdog: Convert Samsung SoC
- watchdog bindings to json-schema
-Date: Fri, 20 Sep 2019 18:23:41 +0200
-Message-ID: <CAJKOXPfQFg5wC-JcHUs8btYJRfpC=NW2FOpWTHkTD6zekzHV0A@mail.gmail.com>
-References: <20190918173141.4314-1-krzk@kernel.org> <20190918173141.4314-5-krzk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH 1/2] ARM: dts: exynos: Rename Multi Core Timer node to just timer
+Date: Fri, 20 Sep 2019 18:24:55 +0200
+Message-ID: <20190920162456.7294-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190918173141.4314-5-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thierry Reding <thierry.reding@gmail.com>, Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-mediatek@lists.infradead.org
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, 18 Sep 2019 at 19:32, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> Convert Samsung S3C/S5P/Exynos watchdog bindings to DT schema format
-> using json-schema.
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->
-> ---
->
-> Changes since v1:
-> 1. Indent example with four spaces (more readable),
-> 2. Remove unneeded timeout-sec description.
+The device node name should reflect generic class of a device so rename
+the Multi Core Timer node from "mct" to "timer".  This will be also in
+sync with upcoming DT schema.  No functional change.
 
-Superseded by v3 (although named v2...).
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/boot/dts/exynos3250.dtsi | 2 +-
+ arch/arm/boot/dts/exynos4210.dtsi | 2 +-
+ arch/arm/boot/dts/exynos4412.dtsi | 2 +-
+ arch/arm/boot/dts/exynos5250.dtsi | 2 +-
+ arch/arm/boot/dts/exynos5260.dtsi | 2 +-
+ arch/arm/boot/dts/exynos54xx.dtsi | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 784818490376..d122fb52d3d4 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -265,7 +265,7 @@
+ 					(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+ 		};
+ 
+-		mct@10050000 {
++		timer@10050000 {
+ 			compatible = "samsung,exynos4210-mct";
+ 			reg = <0x10050000 0x800>;
+ 			interrupts = <GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH>,
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index f220716239db..6d3f19562aab 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -106,7 +106,7 @@
+ 			arm,data-latency = <2 2 1>;
+ 		};
+ 
+-		mct: mct@10050000 {
++		mct: timer@10050000 {
+ 			compatible = "samsung,exynos4210-mct";
+ 			reg = <0x10050000 0x800>;
+ 			interrupt-parent = <&mct_map>;
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index d20db2dfe8e2..8b6d5875c75d 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -243,7 +243,7 @@
+ 			clock-names = "aclk200", "aclk400_mcuisp";
+ 		};
+ 
+-		mct@10050000 {
++		timer@10050000 {
+ 			compatible = "samsung,exynos4412-mct";
+ 			reg = <0x10050000 0x800>;
+ 			interrupt-parent = <&mct_map>;
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index fc966c10cf49..7a01349317a3 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -233,7 +233,7 @@
+ 			power-domains = <&pd_mau>;
+ 		};
+ 
+-		mct@101c0000 {
++		timer@101c0000 {
+ 			compatible = "samsung,exynos4210-mct";
+ 			reg = <0x101C0000 0x800>;
+ 			interrupt-controller;
+diff --git a/arch/arm/boot/dts/exynos5260.dtsi b/arch/arm/boot/dts/exynos5260.dtsi
+index 3581b57fbbf7..b0811dbbb362 100644
+--- a/arch/arm/boot/dts/exynos5260.dtsi
++++ b/arch/arm/boot/dts/exynos5260.dtsi
+@@ -180,7 +180,7 @@
+ 			reg = <0x10000000 0x100>;
+ 		};
+ 
+-		mct: mct@100b0000 {
++		mct: timer@100b0000 {
+ 			compatible = "samsung,exynos4210-mct";
+ 			reg = <0x100B0000 0x1000>;
+ 			clocks = <&fin_pll>, <&clock_peri PERI_CLK_MCT>;
+diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
+index 9c3b63b7cac6..247d23872384 100644
+--- a/arch/arm/boot/dts/exynos54xx.dtsi
++++ b/arch/arm/boot/dts/exynos54xx.dtsi
+@@ -64,7 +64,7 @@
+ 			};
+ 		};
+ 
+-		mct: mct@101c0000 {
++		mct: timer@101c0000 {
+ 			compatible = "samsung,exynos4210-mct";
+ 			reg = <0x101c0000 0xb00>;
+ 			interrupt-parent = <&mct_map>;
+-- 
+2.17.1
