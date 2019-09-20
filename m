@@ -1,239 +1,269 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [RFC PATCH v2 04/11] devfreq: exynos-bus: Clean up code
-Date: Fri, 20 Sep 2019 11:22:06 +0900
-Message-ID: <39db18c5-534d-ff72-0a7f-7a838c13fa7a@samsung.com>
-References: <20190919142236.4071-1-a.swigon@samsung.com>
-        <CGME20190919142324eucas1p1638cec2aafbfcaf03cfdfa7d0189143a@eucas1p1.samsung.com>
-        <20190919142236.4071-5-a.swigon@samsung.com>
-Mime-Version: 1.0
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v3] dt-bindings: sound: Convert Samsung I2S controller to
+ dt-schema
+Date: Fri, 20 Sep 2019 13:35:40 +0200
+Message-ID: <20190920113540.30687-1-m.szyprowski@samsung.com>
+References: <CAL_JsqJ=QWk07y=h7dHFiRrKuE7NGoUr50bu3kiOC+YU8qS9jg@mail.gmail.com>
+        <CGME20190920115200eucas1p2253a3eb13373061ef8aa39131c98a319@eucas1p2.samsung.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190919142236.4071-5-a.swigon@samsung.com>
-Content-Language: en-US
+In-Reply-To: <CAL_JsqJ=QWk07y=h7dHFiRrKuE7NGoUr50bu3kiOC+YU8qS9jg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>, myungjoo.ham@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, georgi.djakov@linaro.org, leonard.crestez@nxp.com, m.szyprowski@samsung.com, b.zolnierkie@samsung.com, krzk@kernel.org
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Cc: Maciej Falkowski <m.falkowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Artur,
+From: Maciej Falkowski <m.falkowski@samsung.com>
 
-On 19. 9. 19. 오후 11:22, Artur Świgoń wrote:
-> From: Artur Świgoń <a.swigon@partner.samsung.com>
-> 
-> This patch adds minor improvements to the exynos-bus driver.
-> 
-> Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/devfreq/exynos-bus.c | 66 ++++++++++++++----------------------
->  1 file changed, 25 insertions(+), 41 deletions(-)
-> 
-> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-> index 60ad4319fd80..8d44810cac69 100644
-> --- a/drivers/devfreq/exynos-bus.c
-> +++ b/drivers/devfreq/exynos-bus.c
-> @@ -15,11 +15,10 @@
->  #include <linux/device.h>
->  #include <linux/export.h>
->  #include <linux/module.h>
-> -#include <linux/of_device.h>
-> +#include <linux/of.h>
->  #include <linux/pm_opp.h>
->  #include <linux/platform_device.h>
->  #include <linux/regulator/consumer.h>
-> -#include <linux/slab.h>
->  
->  #define DEFAULT_SATURATION_RATIO	40
->  
-> @@ -178,7 +177,7 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
->  	struct device *dev = bus->dev;
->  	struct opp_table *opp_table;
->  	const char *vdd = "vdd";
-> -	int i, ret, count, size;
-> +	int i, ret, count;
->  
->  	opp_table = dev_pm_opp_set_regulators(dev, &vdd, 1);
->  	if (IS_ERR(opp_table)) {
-> @@ -201,8 +200,7 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
->  	}
->  	bus->edev_count = count;
->  
-> -	size = sizeof(*bus->edev) * count;
-> -	bus->edev = devm_kzalloc(dev, size, GFP_KERNEL);
-> +	bus->edev = devm_kcalloc(dev, count, sizeof(*bus->edev), GFP_KERNEL);
->  	if (!bus->edev) {
->  		ret = -ENOMEM;
->  		goto err_regulator;
-> @@ -301,10 +299,9 @@ static int exynos_bus_profile_init(struct exynos_bus *bus,
->  	profile->exit = exynos_bus_exit;
->  
->  	ondemand_data = devm_kzalloc(dev, sizeof(*ondemand_data), GFP_KERNEL);
-> -	if (!ondemand_data) {
-> -		ret = -ENOMEM;
-> -		goto err;
-> -	}
-> +	if (!ondemand_data)
-> +		return -ENOMEM;
-> +
->  	ondemand_data->upthreshold = 40;
->  	ondemand_data->downdifferential = 5;
->  
-> @@ -314,8 +311,7 @@ static int exynos_bus_profile_init(struct exynos_bus *bus,
->  						ondemand_data);
->  	if (IS_ERR(bus->devfreq)) {
->  		dev_err(dev, "failed to add devfreq device\n");
-> -		ret = PTR_ERR(bus->devfreq);
-> -		goto err;
-> +		return PTR_ERR(bus->devfreq);
->  	}
->  
->  	/*
-> @@ -325,16 +321,13 @@ static int exynos_bus_profile_init(struct exynos_bus *bus,
->  	ret = exynos_bus_enable_edev(bus);
->  	if (ret < 0) {
->  		dev_err(dev, "failed to enable devfreq-event devices\n");
-> -		goto err;
-> +		return ret;
->  	}
->  
->  	ret = exynos_bus_set_event(bus);
-> -	if (ret < 0) {
-> +	if (ret < 0)
->  		dev_err(dev, "failed to set event to devfreq-event devices\n");
-> -		goto err;
+Convert Samsung I2S controller to newer dt-schema format.
 
-Instead of removing 'goto err', just return err as I commented[1] on v1.
-[1] https://lkml.org/lkml/2019/7/26/331
+Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+v3:
+- Removed quotation marks from strings in compatible property
+- Added min/max items to dmas property
+- Removed unneeded description from dma-names property
+- Added specific dma-names
+- Added clock description
+- Added include directive to examples to use clock macros directly
+---
+ .../devicetree/bindings/sound/samsung-i2s.txt |  84 -----------
+ .../bindings/sound/samsung-i2s.yaml           | 135 ++++++++++++++++++
+ 2 files changed, 135 insertions(+), 84 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/sound/samsung-i2s.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/samsung-i2s.yaml
 
-> -	}
->  
-> -err:
->  	return ret;
-
-And you just keep 'return ret' or you can change it as 'return 0'.
-
-
->  }
->  
-> @@ -344,7 +337,6 @@ static int exynos_bus_profile_init_passive(struct exynos_bus *bus,
->  	struct device *dev = bus->dev;
->  	struct devfreq_passive_data *passive_data;
->  	struct devfreq *parent_devfreq;
-> -	int ret = 0;
->  
->  	/* Initialize the struct profile and governor data for passive device */
->  	profile->target = exynos_bus_target;
-> @@ -352,30 +344,26 @@ static int exynos_bus_profile_init_passive(struct exynos_bus *bus,
->  
->  	/* Get the instance of parent devfreq device */
->  	parent_devfreq = devfreq_get_devfreq_by_phandle(dev, 0);
-> -	if (IS_ERR(parent_devfreq)) {
-> -		ret = -EPROBE_DEFER;
-> -		goto err;
-> -	}
-> +	if (IS_ERR(parent_devfreq))
-> +		return -EPROBE_DEFER;
->  
->  	passive_data = devm_kzalloc(dev, sizeof(*passive_data), GFP_KERNEL);
-> -	if (!passive_data) {
-> -		ret = -ENOMEM;
-> -		goto err;
-> -	}
-> +	if (!passive_data)
-> +		return -ENOMEM;
-> +
->  	passive_data->parent = parent_devfreq;
->  
->  	/* Add devfreq device for exynos bus with passive governor */
-> -	bus->devfreq = devm_devfreq_add_device(dev, profile, DEVFREQ_GOV_PASSIVE,
-> +	bus->devfreq = devm_devfreq_add_device(dev, profile,
-> +						DEVFREQ_GOV_PASSIVE,
->  						passive_data);
->  	if (IS_ERR(bus->devfreq)) {
->  		dev_err(dev,
->  			"failed to add devfreq dev with passive governor\n");
-> -		ret = PTR_ERR(bus->devfreq);
-> -		goto err;
-> +		return PTR_ERR(bus->devfreq);
->  	}
->  
-> -err:
-> -	return ret;
-> +	return 0;
->  }
->  
->  static int exynos_bus_probe(struct platform_device *pdev)
-> @@ -393,18 +381,18 @@ static int exynos_bus_probe(struct platform_device *pdev)
->  		return -EINVAL;
->  	}
->  
-> -	bus = devm_kzalloc(&pdev->dev, sizeof(*bus), GFP_KERNEL);
-> +	bus = devm_kzalloc(dev, sizeof(*bus), GFP_KERNEL);
->  	if (!bus)
->  		return -ENOMEM;
->  	mutex_init(&bus->lock);
-> -	bus->dev = &pdev->dev;
-> +	bus->dev = dev;
->  	platform_set_drvdata(pdev, bus);
->  
->  	profile = devm_kzalloc(dev, sizeof(*profile), GFP_KERNEL);
->  	if (!profile)
->  		return -ENOMEM;
->  
-> -	node = of_parse_phandle(dev->of_node, "devfreq", 0);
-> +	node = of_parse_phandle(np, "devfreq", 0);
->  	if (node) {
->  		of_node_put(node);
->  		passive = true;
-> @@ -461,12 +449,10 @@ static int exynos_bus_resume(struct device *dev)
->  	int ret;
->  
->  	ret = exynos_bus_enable_edev(bus);
-> -	if (ret < 0) {
-> +	if (ret < 0)
->  		dev_err(dev, "failed to enable the devfreq-event devices\n");
-> -		return ret;
-
-Keep the 'return ret' if error happen as I commented[1] on v1.
-[1] https://lkml.org/lkml/2019/7/26/331
-
-> -	}
->  
-> -	return 0;
-> +	return ret;
-
-And you just keep 'return 0' or you can change it as 'return ret'.
-
->  }
->  
->  static int exynos_bus_suspend(struct device *dev)
-> @@ -475,12 +461,10 @@ static int exynos_bus_suspend(struct device *dev)
->  	int ret;
->  
->  	ret = exynos_bus_disable_edev(bus);
-> -	if (ret < 0) {
-> +	if (ret < 0)
->  		dev_err(dev, "failed to disable the devfreq-event devices\n");
-> -		return ret;
-
-Keep the 'return ret' if error happen as I commented[1] on v1.
-[1] https://lkml.org/lkml/2019/7/26/331
-
-> -	}
->  
-> -	return 0;
-> +	return ret;
-
-And you just keep 'return 0' or you can change it as 'return ret'.
-
->  }
->  #endif
->  
-> 
-
-
+diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.txt b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
+deleted file mode 100644
+index a88cb00fa096..000000000000
+--- a/Documentation/devicetree/bindings/sound/samsung-i2s.txt
++++ /dev/null
+@@ -1,84 +0,0 @@
+-* Samsung I2S controller
+-
+-Required SoC Specific Properties:
+-
+-- compatible : should be one of the following.
+-   - samsung,s3c6410-i2s: for 8/16/24bit stereo I2S.
+-   - samsung,s5pv210-i2s: for 8/16/24bit multichannel(5.1) I2S with
+-     secondary fifo, s/w reset control and internal mux for root clk src.
+-   - samsung,exynos5420-i2s: for 8/16/24bit multichannel(5.1) I2S for
+-     playback, stereo channel capture, secondary fifo using internal
+-     or external dma, s/w reset control, internal mux for root clk src
+-     and 7.1 channel TDM support for playback. TDM (Time division multiplexing)
+-     is to allow transfer of multiple channel audio data on single data line.
+-   - samsung,exynos7-i2s: with all the available features of exynos5 i2s,
+-     exynos7 I2S has 7.1 channel TDM support for capture, secondary fifo
+-     with only external dma and more no.of root clk sampling frequencies.
+-   - samsung,exynos7-i2s1: I2S1 on previous samsung platforms supports
+-     stereo channels. exynos7 i2s1 upgraded to 5.1 multichannel with
+-     slightly modified bit offsets.
+-
+-- reg: physical base address of the controller and length of memory mapped
+-  region.
+-- dmas: list of DMA controller phandle and DMA request line ordered pairs.
+-- dma-names: identifier string for each DMA request line in the dmas property.
+-  These strings correspond 1:1 with the ordered pairs in dmas.
+-- clocks: Handle to iis clock and RCLK source clk.
+-- clock-names:
+-  i2s0 uses some base clocks from CMU and some are from audio subsystem internal
+-  clock controller. The clock names for i2s0 should be "iis", "i2s_opclk0" and
+-  "i2s_opclk1" as shown in the example below.
+-  i2s1 and i2s2 uses clocks from CMU. The clock names for i2s1 and i2s2 should
+-  be "iis" and "i2s_opclk0".
+-  "iis" is the i2s bus clock and i2s_opclk0, i2s_opclk1 are sources of the root
+-  clk. i2s0 has internal mux to select the source of root clk and i2s1 and i2s2
+-  doesn't have any such mux.
+-- #clock-cells: should be 1, this property must be present if the I2S device
+-  is a clock provider in terms of the common clock bindings, described in
+-  ../clock/clock-bindings.txt.
+-- clock-output-names (deprecated): from the common clock bindings, names of
+-  the CDCLK I2S output clocks, suggested values are "i2s_cdclk0", "i2s_cdclk1",
+-  "i2s_cdclk3" for the I2S0, I2S1, I2S2 devices respectively.
+-
+-There are following clocks available at the I2S device nodes:
+- CLK_I2S_CDCLK    - the CDCLK (CODECLKO) gate clock,
+- CLK_I2S_RCLK_PSR - the RCLK prescaler divider clock (corresponding to the
+-		    IISPSR register),
+- CLK_I2S_RCLK_SRC - the RCLKSRC mux clock (corresponding to RCLKSRC bit in
+-		    IISMOD register).
+-
+-Refer to the SoC datasheet for availability of the above clocks.
+-The CLK_I2S_RCLK_PSR and CLK_I2S_RCLK_SRC clocks are usually only available
+-in the IIS Multi Audio Interface.
+-
+-Note: Old DTs may not have the #clock-cells property and then not use the I2S
+-node as a clock supplier.
+-
+-Optional SoC Specific Properties:
+-
+-- samsung,idma-addr: Internal DMA register base address of the audio
+-  sub system(used in secondary sound source).
+-- pinctrl-0: Should specify pin control groups used for this controller.
+-- pinctrl-names: Should contain only one value - "default".
+-- #sound-dai-cells: should be 1.
+-
+-
+-Example:
+-
+-i2s0: i2s@3830000 {
+-	compatible = "samsung,s5pv210-i2s";
+-	reg = <0x03830000 0x100>;
+-	dmas = <&pdma0 10
+-		&pdma0 9
+-		&pdma0 8>;
+-	dma-names = "tx", "rx", "tx-sec";
+-	clocks = <&clock_audss EXYNOS_I2S_BUS>,
+-		<&clock_audss EXYNOS_I2S_BUS>,
+-		<&clock_audss EXYNOS_SCLK_I2S>;
+-	clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
+-	#clock-cells = <1>;
+-	samsung,idma-addr = <0x03000000>;
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&i2s0_bus>;
+-	#sound-dai-cells = <1>;
+-};
+diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.yaml b/Documentation/devicetree/bindings/sound/samsung-i2s.yaml
+new file mode 100644
+index 000000000000..20ae5da7f798
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/samsung-i2s.yaml
+@@ -0,0 +1,135 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/samsung-i2s.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung SoC I2S controller
++
++maintainers:
++  - Krzysztof Kozlowski <krzk@kernel.org>
++  - Sylwester Nawrocki <s.nawrocki@samsung.com>
++
++properties:
++  compatible:
++    description: |
++      samsung,s3c6410-i2s: for 8/16/24bit stereo I2S.
++
++      samsung,s5pv210-i2s: for 8/16/24bit multichannel(5.1) I2S with
++      secondary fifo, s/w reset control and internal mux for root clk src.
++
++      samsung,exynos5420-i2s: for 8/16/24bit multichannel(5.1) I2S for
++      playback, stereo channel capture, secondary fifo using internal
++      or external dma, s/w reset control, internal mux for root clk src
++      and 7.1 channel TDM support for playback. TDM (Time division multiplexing)
++      is to allow transfer of multiple channel audio data on single data line.
++
++      samsung,exynos7-i2s: with all the available features of exynos5 i2s.
++      exynos7 I2S has 7.1 channel TDM support for capture, secondary fifo
++      with only external dma and more no.of root clk sampling frequencies.
++
++      samsung,exynos7-i2s1: I2S1 on previous samsung platforms supports
++      stereo channels. exynos7 i2s1 upgraded to 5.1 multichannel with
++      slightly modified bit offsets.
++    enum:
++      - samsung,s3c6410-i2s
++      - samsung,s5pv210-i2s
++      - samsung,exynos5420-i2s
++      - samsung,exynos7-i2s
++      - samsung,exynos7-i2s1
++
++  reg:
++    maxItems: 1
++
++  dmas:
++    minItems: 2
++    maxItems: 3
++
++  dma-names:
++    oneOf:
++      - items:
++          - const: tx
++          - const: rx
++      - items:
++          - const: tx
++          - const: rx
++          - const: tx-sec
++
++  clocks:
++    minItems: 1
++    maxItems: 3
++    description: |
++      There are following clocks available at the I2S device nodes:
++      CLK_I2S_CDCLK:
++      the CDCLK (CODECLKO) gate clock.
++
++      CLK_I2S_RCLK_PSR:
++      RCLK prescaler divider clock corresponding to the IISPSR register.
++
++      CLK_I2S_RCLK_SRC:
++      RCLKSRC mux clock corresponding to RCLKSRC bit in IISMOD register.
++
++  clock-names:
++    oneOf:
++      - items:
++          - const: iis
++      - items:
++          - const: iis
++          - const: i2s_opclk0
++      - items:
++          - const: iis
++          - const: i2s_opclk0
++          - const: i2s_opclk1
++    description: |
++      "iis" is the i2s bus clock.
++      For i2s1 and i2s2 - "iis", "i2s_opclk0"
++      For i2s0 - "iis", "i2s_opclk0", "i2s_opclk1"
++
++  "#clock-cells":
++    const: 1
++
++  samsung,idma-addr:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: |
++      Internal DMA register base address of the audio
++      sub system(used in secondary sound source).
++
++  pinctrl-0:
++    description: Should specify pin control groups used for this controller.
++
++  pinctrl-names:
++    const: default
++
++  "#sound-dai-cells":
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - dmas
++  - dma-names
++  - clocks
++  - clock-names
++
++examples:
++  - |
++    #include <dt-bindings/clock/exynos-audss-clk.h>
++
++    i2s0: i2s@3830000 {
++        compatible = "samsung,s5pv210-i2s";
++        reg = <0x03830000 0x100>;
++        dmas = <&pdma0 10>,
++                <&pdma0 9>,
++                <&pdma0 8>;
++        dma-names = "tx", "rx", "tx-sec";
++        clocks = <&clock_audss EXYNOS_I2S_BUS>,
++                <&clock_audss EXYNOS_I2S_BUS>,
++                <&clock_audss EXYNOS_SCLK_I2S>;
++        clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
++        #clock-cells = <1>;
++        samsung,idma-addr = <0x03000000>;
++        pinctrl-names = "default";
++        pinctrl-0 = <&i2s0_bus>;
++        #sound-dai-cells = <1>;
++    };
++
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.17.1
