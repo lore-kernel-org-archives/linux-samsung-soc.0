@@ -1,42 +1,66 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3] dt-bindings: sound: Convert Samsung I2S controller to
- dt-schema
-Date: Fri, 20 Sep 2019 14:43:00 +0200
-Message-ID: <20190920124300.GA26917@pi3>
-References: <CAL_JsqJ=QWk07y=h7dHFiRrKuE7NGoUr50bu3kiOC+YU8qS9jg@mail.gmail.com>
- <CGME20190920115200eucas1p2253a3eb13373061ef8aa39131c98a319@eucas1p2.samsung.com>
- <20190920113540.30687-1-m.szyprowski@samsung.com>
- <20190920122616.GA26862@pi3>
- <68ec938a-29b5-0c07-3a5e-771d6ce587b4@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v2 00/10] Basic sound support for Arndale board / wm8994
+ updates
+Date: Fri, 20 Sep 2019 15:02:09 +0200
+Message-ID: <20190920130218.32690-1-s.nawrocki@samsung.com>
+References: <CGME20190920130238eucas1p147fca337fa84592ac7f83760449e26a1@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <68ec938a-29b5-0c07-3a5e-771d6ce587b4@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, Maciej Falkowski <m.falkowski@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: broonie@kernel.org, krzk@kernel.org
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, ckeepax@opensource.cirrus.com, b.zolnierkie@samsung.com, sbkim73@samsung.com, patches@opensource.cirrus.com, lgirdwood@gmail.com, robh+dt@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 02:33:13PM +0200, Marek Szyprowski wrote:
-> Hi Krzysztof,
-> 
- >> +examples:
-> >> +  - |
-> >> +    #include <dt-bindings/clock/exynos-audss-clk.h>
-> > Does it really work? When I tried, it was failing... If you look up at
-> > resulting DTS example it is wrong.
-> 
-> In which way it was wrong? We checked and it was correctly propagated to 
-> the example dts. It also compiled fine without errors. The only minor 
-> issue was that the include was generated inside the root node, but for 
-> the clock definitions this doesn't matter, but it makes the example 
-> easier to understand.
+This patch series adds basic audio support for Exynos5250 SoC based Arndale 
+board, the Bluetooth receiver source and HDMI output are not covered yet.
 
-Hmmm.... indeed this works. The output DTS is weird as include goes to
-example node (not even root) but it compiles. Somehow my previous tries
-with it were failing, I need to check why. In general I am all in for
-this include.
+There is also one fix for wm8994 driver related to WM1811 CODEC and wm8994
+updates to handle MCLK clocks, similar to patches:
+ ae1ea48c5c59 ("ASoC: arizona: Add gating for source clocks of the FLLs")
+ 7a4413d0dc96 ("ASoC: arizona: Add gating for clock when used for direct MCLK")
 
-Best regards,
-Krzysztof
+The main changes since v1:
+ - Fixed bug in "ASoC: wm8994: Add support for MCLKn clock gating" patch
+   (thanks to Charles),
+ - dropped the MFD part patch and moved getting of clocks to the CODEC driver,
+ - Added missing Kconfig entries to patch "ASoC: samsung: arndale: Add 
+   support for WM1811 CODEC",
+ - Added a patch renaming the driver and a patch for exynos_defconfig.
+
+Sylwester Nawrocki (10):
+  ASoC: wm8994: Do not register inapplicable controls for WM1811
+  ASoC: samsung: arndale: Add missing OF node dereferencing
+  ASoC: wm8994: Add support for setting MCLK clock rate
+  ASoC: wm8994: Add support for MCLKn clock gating
+  ASoC: samsung: arndale: Simplify DAI link initialization
+  ASoC: dt-bindings: Document "samsung,arndale-wm1811" compatible
+  ASoC: samsung: arndale: Add support for WM1811 CODEC
+  ASoC: samsung: Rename Arndale card driver
+  ARM: dts: arndale: Add audio support (WM1811 CODEC boards)
+  ARM: exynos_defconfig: Enable Arndale audio driver
+
+ .../devicetree/bindings/sound/arndale.txt     |   5 +-
+ arch/arm/boot/dts/exynos5250-arndale.dts      |  27 ++-
+ arch/arm/configs/exynos_defconfig             |   1 +
+ sound/soc/codecs/wm8994.c                     | 199 +++++++++++++---
+ sound/soc/codecs/wm8994.h                     |  10 +-
+ sound/soc/samsung/Kconfig                     |  12 +-
+ sound/soc/samsung/Makefile                    |   4 +-
+ sound/soc/samsung/arndale.c                   | 217 ++++++++++++++++++
+ sound/soc/samsung/arndale_rt5631.c            | 138 -----------
+ 9 files changed, 438 insertions(+), 175 deletions(-)
+ create mode 100644 sound/soc/samsung/arndale.c
+ delete mode 100644 sound/soc/samsung/arndale_rt5631.c
+
+-- 
+2.17.1
