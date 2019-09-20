@@ -1,104 +1,239 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [RFC PATCH v2 01/11] devfreq: exynos-bus: Extract
- exynos_bus_profile_init()
-Date: Fri, 20 Sep 2019 11:15:08 +0900
-Message-ID: <2e49bd2c-e074-038b-f8a2-7dd8dea4a9af@samsung.com>
+Subject: Re: [RFC PATCH v2 04/11] devfreq: exynos-bus: Clean up code
+Date: Fri, 20 Sep 2019 11:22:06 +0900
+Message-ID: <39db18c5-534d-ff72-0a7f-7a838c13fa7a@samsung.com>
 References: <20190919142236.4071-1-a.swigon@samsung.com>
- <CGME20190919142322eucas1p24bc477ee6e1bcd65546c305d55af097d@eucas1p2.samsung.com>
- <20190919142236.4071-2-a.swigon@samsung.com>
+        <CGME20190919142324eucas1p1638cec2aafbfcaf03cfdfa7d0189143a@eucas1p1.samsung.com>
+        <20190919142236.4071-5-a.swigon@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190919142236.4071-2-a.swigon@samsung.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190919142236.4071-5-a.swigon@samsung.com>
 Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>, b.zolnierkie@samsung.com, sw0312.kim@samsung.com, krzk@kernel.org, inki.dae@samsung.com, myungjoo.ham@samsung.com, leonard.crestez@nxp.com, georgi.djakov@linaro.org, m.szyprowski@samsung.com
+Cc: =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>, myungjoo.ham@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, georgi.djakov@linaro.org, leonard.crestez@nxp.com, m.szyprowski@samsung.com, b.zolnierkie@samsung.com, krzk@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGksCgpBcyBJIGFscmVhZHkgcmVwbGllZCBvbiB2MSwgcGF0Y2gxLzIvMyBjbGVhbi11cCBjb2Rl
-CmZvciByZWFkYWJpbGl0eSB3aXRob3V0IGFueSBiZWhhdmlvciBjaGFuZ2VzLiAKCkkgdGhpbmsg
-dGhhdCB5b3UgYmV0dGVyIHRvIG1lcmdlIHBhdGNoMS8yLzMgdG8gb25lIHBhdGNoLgoKT24gMTku
-IDkuIDE5LiDsmKTtm4QgMTE6MjIsIEFydHVyIMWad2lnb8WEIHdyb3RlOgo+IEZyb206IEFydHVy
-IMWad2lnb8WEIDxhLnN3aWdvbkBwYXJ0bmVyLnNhbXN1bmcuY29tPgo+IAo+IFRoaXMgcGF0Y2gg
-YWRkcyBhIG5ldyBzdGF0aWMgZnVuY3Rpb24sIGV4eW5vc19idXNfcHJvZmlsZV9pbml0KCksIGV4
-dHJhY3RlZAo+IGZyb20gZXh5bm9zX2J1c19wcm9iZSgpLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEFy
-dHVyIMWad2lnb8WEIDxhLnN3aWdvbkBwYXJ0bmVyLnNhbXN1bmcuY29tPgo+IC0tLQo+ICBkcml2
-ZXJzL2RldmZyZXEvZXh5bm9zLWJ1cy5jIHwgOTIgKysrKysrKysrKysrKysrKysrKysrLS0tLS0t
-LS0tLS0tLS0tCj4gIDEgZmlsZSBjaGFuZ2VkLCA1MyBpbnNlcnRpb25zKCspLCAzOSBkZWxldGlv
-bnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9kZXZmcmVxL2V4eW5vcy1idXMuYyBiL2Ry
-aXZlcnMvZGV2ZnJlcS9leHlub3MtYnVzLmMKPiBpbmRleCAyOWY0MjI0Njk5NjAuLjc4ZjM4Yjdm
-YjU5NiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2RldmZyZXEvZXh5bm9zLWJ1cy5jCj4gKysrIGIv
-ZHJpdmVycy9kZXZmcmVxL2V4eW5vcy1idXMuYwo+IEBAIC0yODcsMTIgKzI4Nyw2MiBAQCBzdGF0
-aWMgaW50IGV4eW5vc19idXNfcGFyc2Vfb2Yoc3RydWN0IGRldmljZV9ub2RlICpucCwKPiAgCXJl
-dHVybiByZXQ7Cj4gIH0KPiAgCj4gK3N0YXRpYyBpbnQgZXh5bm9zX2J1c19wcm9maWxlX2luaXQo
-c3RydWN0IGV4eW5vc19idXMgKmJ1cywKPiArCQkJCSAgIHN0cnVjdCBkZXZmcmVxX2Rldl9wcm9m
-aWxlICpwcm9maWxlKQo+ICt7Cj4gKwlzdHJ1Y3QgZGV2aWNlICpkZXYgPSBidXMtPmRldjsKPiAr
-CXN0cnVjdCBkZXZmcmVxX3NpbXBsZV9vbmRlbWFuZF9kYXRhICpvbmRlbWFuZF9kYXRhOwo+ICsJ
-aW50IHJldDsKPiArCj4gKwkvKiBJbml0aWFsaXplIHRoZSBzdHJ1Y3QgcHJvZmlsZSBhbmQgZ292
-ZXJub3IgZGF0YSBmb3IgcGFyZW50IGRldmljZSAqLwo+ICsJcHJvZmlsZS0+cG9sbGluZ19tcyA9
-IDUwOwo+ICsJcHJvZmlsZS0+dGFyZ2V0ID0gZXh5bm9zX2J1c190YXJnZXQ7Cj4gKwlwcm9maWxl
-LT5nZXRfZGV2X3N0YXR1cyA9IGV4eW5vc19idXNfZ2V0X2Rldl9zdGF0dXM7Cj4gKwlwcm9maWxl
-LT5leGl0ID0gZXh5bm9zX2J1c19leGl0Owo+ICsKPiArCW9uZGVtYW5kX2RhdGEgPSBkZXZtX2t6
-YWxsb2MoZGV2LCBzaXplb2YoKm9uZGVtYW5kX2RhdGEpLCBHRlBfS0VSTkVMKTsKPiArCWlmICgh
-b25kZW1hbmRfZGF0YSkgewo+ICsJCXJldCA9IC1FTk9NRU07Cj4gKwkJZ290byBlcnI7Cj4gKwl9
-Cj4gKwlvbmRlbWFuZF9kYXRhLT51cHRocmVzaG9sZCA9IDQwOwo+ICsJb25kZW1hbmRfZGF0YS0+
-ZG93bmRpZmZlcmVudGlhbCA9IDU7Cj4gKwo+ICsJLyogQWRkIGRldmZyZXEgZGV2aWNlIHRvIG1v
-bml0b3IgYW5kIGhhbmRsZSB0aGUgZXh5bm9zIGJ1cyAqLwo+ICsJYnVzLT5kZXZmcmVxID0gZGV2
-bV9kZXZmcmVxX2FkZF9kZXZpY2UoZGV2LCBwcm9maWxlLAo+ICsJCQkJCQlERVZGUkVRX0dPVl9T
-SU1QTEVfT05ERU1BTkQsCj4gKwkJCQkJCW9uZGVtYW5kX2RhdGEpOwo+ICsJaWYgKElTX0VSUihi
-dXMtPmRldmZyZXEpKSB7Cj4gKwkJZGV2X2VycihkZXYsICJmYWlsZWQgdG8gYWRkIGRldmZyZXEg
-ZGV2aWNlXG4iKTsKPiArCQlyZXQgPSBQVFJfRVJSKGJ1cy0+ZGV2ZnJlcSk7Cj4gKwkJZ290byBl
-cnI7Cj4gKwl9Cj4gKwo+ICsJLyoKPiArCSAqIEVuYWJsZSBkZXZmcmVxLWV2ZW50IHRvIGdldCBy
-YXcgZGF0YSB3aGljaCBpcyB1c2VkIHRvIGRldGVybWluZQo+ICsJICogY3VycmVudCBidXMgbG9h
-ZC4KPiArCSAqLwo+ICsJcmV0ID0gZXh5bm9zX2J1c19lbmFibGVfZWRldihidXMpOwo+ICsJaWYg
-KHJldCA8IDApIHsKPiArCQlkZXZfZXJyKGRldiwgImZhaWxlZCB0byBlbmFibGUgZGV2ZnJlcS1l
-dmVudCBkZXZpY2VzXG4iKTsKPiArCQlnb3RvIGVycjsKPiArCX0KPiArCj4gKwlyZXQgPSBleHlu
-b3NfYnVzX3NldF9ldmVudChidXMpOwo+ICsJaWYgKHJldCA8IDApIHsKPiArCQlkZXZfZXJyKGRl
-diwgImZhaWxlZCB0byBzZXQgZXZlbnQgdG8gZGV2ZnJlcS1ldmVudCBkZXZpY2VzXG4iKTsKPiAr
-CQlnb3RvIGVycjsKPiArCX0KPiArCj4gK2VycjoKPiArCXJldHVybiByZXQ7Cj4gK30KPiArCj4g
-IHN0YXRpYyBpbnQgZXh5bm9zX2J1c19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2
-KQo+ICB7Cj4gIAlzdHJ1Y3QgZGV2aWNlICpkZXYgPSAmcGRldi0+ZGV2Owo+ICAJc3RydWN0IGRl
-dmljZV9ub2RlICpucCA9IGRldi0+b2Zfbm9kZSwgKm5vZGU7Cj4gIAlzdHJ1Y3QgZGV2ZnJlcV9k
-ZXZfcHJvZmlsZSAqcHJvZmlsZTsKPiAtCXN0cnVjdCBkZXZmcmVxX3NpbXBsZV9vbmRlbWFuZF9k
-YXRhICpvbmRlbWFuZF9kYXRhOwo+ICAJc3RydWN0IGRldmZyZXFfcGFzc2l2ZV9kYXRhICpwYXNz
-aXZlX2RhdGE7Cj4gIAlzdHJ1Y3QgZGV2ZnJlcSAqcGFyZW50X2RldmZyZXE7Cj4gIAlzdHJ1Y3Qg
-ZXh5bm9zX2J1cyAqYnVzOwo+IEBAIC0zMzQsNDUgKzM4NCw5IEBAIHN0YXRpYyBpbnQgZXh5bm9z
-X2J1c19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICAJaWYgKHBhc3NpdmUp
-Cj4gIAkJZ290byBwYXNzaXZlOwo+ICAKPiAtCS8qIEluaXRpYWxpemUgdGhlIHN0cnVjdCBwcm9m
-aWxlIGFuZCBnb3Zlcm5vciBkYXRhIGZvciBwYXJlbnQgZGV2aWNlICovCj4gLQlwcm9maWxlLT5w
-b2xsaW5nX21zID0gNTA7Cj4gLQlwcm9maWxlLT50YXJnZXQgPSBleHlub3NfYnVzX3RhcmdldDsK
-PiAtCXByb2ZpbGUtPmdldF9kZXZfc3RhdHVzID0gZXh5bm9zX2J1c19nZXRfZGV2X3N0YXR1czsK
-PiAtCXByb2ZpbGUtPmV4aXQgPSBleHlub3NfYnVzX2V4aXQ7Cj4gLQo+IC0Jb25kZW1hbmRfZGF0
-YSA9IGRldm1fa3phbGxvYyhkZXYsIHNpemVvZigqb25kZW1hbmRfZGF0YSksIEdGUF9LRVJORUwp
-Owo+IC0JaWYgKCFvbmRlbWFuZF9kYXRhKSB7Cj4gLQkJcmV0ID0gLUVOT01FTTsKPiArCXJldCA9
-IGV4eW5vc19idXNfcHJvZmlsZV9pbml0KGJ1cywgcHJvZmlsZSk7Cj4gKwlpZiAocmV0IDwgMCkK
-PiAgCQlnb3RvIGVycjsKPiAtCX0KPiAtCW9uZGVtYW5kX2RhdGEtPnVwdGhyZXNob2xkID0gNDA7
-Cj4gLQlvbmRlbWFuZF9kYXRhLT5kb3duZGlmZmVyZW50aWFsID0gNTsKPiAtCj4gLQkvKiBBZGQg
-ZGV2ZnJlcSBkZXZpY2UgdG8gbW9uaXRvciBhbmQgaGFuZGxlIHRoZSBleHlub3MgYnVzICovCj4g
-LQlidXMtPmRldmZyZXEgPSBkZXZtX2RldmZyZXFfYWRkX2RldmljZShkZXYsIHByb2ZpbGUsCj4g
-LQkJCQkJCURFVkZSRVFfR09WX1NJTVBMRV9PTkRFTUFORCwKPiAtCQkJCQkJb25kZW1hbmRfZGF0
-YSk7Cj4gLQlpZiAoSVNfRVJSKGJ1cy0+ZGV2ZnJlcSkpIHsKPiAtCQlkZXZfZXJyKGRldiwgImZh
-aWxlZCB0byBhZGQgZGV2ZnJlcSBkZXZpY2VcbiIpOwo+IC0JCXJldCA9IFBUUl9FUlIoYnVzLT5k
-ZXZmcmVxKTsKPiAtCQlnb3RvIGVycjsKPiAtCX0KPiAtCj4gLQkvKgo+IC0JICogRW5hYmxlIGRl
-dmZyZXEtZXZlbnQgdG8gZ2V0IHJhdyBkYXRhIHdoaWNoIGlzIHVzZWQgdG8gZGV0ZXJtaW5lCj4g
-LQkgKiBjdXJyZW50IGJ1cyBsb2FkLgo+IC0JICovCj4gLQlyZXQgPSBleHlub3NfYnVzX2VuYWJs
-ZV9lZGV2KGJ1cyk7Cj4gLQlpZiAocmV0IDwgMCkgewo+IC0JCWRldl9lcnIoZGV2LCAiZmFpbGVk
-IHRvIGVuYWJsZSBkZXZmcmVxLWV2ZW50IGRldmljZXNcbiIpOwo+IC0JCWdvdG8gZXJyOwo+IC0J
-fQo+IC0KPiAtCXJldCA9IGV4eW5vc19idXNfc2V0X2V2ZW50KGJ1cyk7Cj4gLQlpZiAocmV0IDwg
-MCkgewo+IC0JCWRldl9lcnIoZGV2LCAiZmFpbGVkIHRvIHNldCBldmVudCB0byBkZXZmcmVxLWV2
-ZW50IGRldmljZXNcbiIpOwo+IC0JCWdvdG8gZXJyOwo+IC0JfQo+ICAKPiAgCWdvdG8gb3V0Owo+
-ICBwYXNzaXZlOgo+IAoKCi0tIApCZXN0IFJlZ2FyZHMsCkNoYW53b28gQ2hvaQpTYW1zdW5nIEVs
-ZWN0cm9uaWNzCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-XwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmlu
-ZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9s
-aW51eC1hcm0ta2VybmVsCg==
+Hi Artur,
+
+On 19. 9. 19. 오후 11:22, Artur Świgoń wrote:
+> From: Artur Świgoń <a.swigon@partner.samsung.com>
+> 
+> This patch adds minor improvements to the exynos-bus driver.
+> 
+> Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/devfreq/exynos-bus.c | 66 ++++++++++++++----------------------
+>  1 file changed, 25 insertions(+), 41 deletions(-)
+> 
+> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+> index 60ad4319fd80..8d44810cac69 100644
+> --- a/drivers/devfreq/exynos-bus.c
+> +++ b/drivers/devfreq/exynos-bus.c
+> @@ -15,11 +15,10 @@
+>  #include <linux/device.h>
+>  #include <linux/export.h>
+>  #include <linux/module.h>
+> -#include <linux/of_device.h>
+> +#include <linux/of.h>
+>  #include <linux/pm_opp.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regulator/consumer.h>
+> -#include <linux/slab.h>
+>  
+>  #define DEFAULT_SATURATION_RATIO	40
+>  
+> @@ -178,7 +177,7 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
+>  	struct device *dev = bus->dev;
+>  	struct opp_table *opp_table;
+>  	const char *vdd = "vdd";
+> -	int i, ret, count, size;
+> +	int i, ret, count;
+>  
+>  	opp_table = dev_pm_opp_set_regulators(dev, &vdd, 1);
+>  	if (IS_ERR(opp_table)) {
+> @@ -201,8 +200,7 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
+>  	}
+>  	bus->edev_count = count;
+>  
+> -	size = sizeof(*bus->edev) * count;
+> -	bus->edev = devm_kzalloc(dev, size, GFP_KERNEL);
+> +	bus->edev = devm_kcalloc(dev, count, sizeof(*bus->edev), GFP_KERNEL);
+>  	if (!bus->edev) {
+>  		ret = -ENOMEM;
+>  		goto err_regulator;
+> @@ -301,10 +299,9 @@ static int exynos_bus_profile_init(struct exynos_bus *bus,
+>  	profile->exit = exynos_bus_exit;
+>  
+>  	ondemand_data = devm_kzalloc(dev, sizeof(*ondemand_data), GFP_KERNEL);
+> -	if (!ondemand_data) {
+> -		ret = -ENOMEM;
+> -		goto err;
+> -	}
+> +	if (!ondemand_data)
+> +		return -ENOMEM;
+> +
+>  	ondemand_data->upthreshold = 40;
+>  	ondemand_data->downdifferential = 5;
+>  
+> @@ -314,8 +311,7 @@ static int exynos_bus_profile_init(struct exynos_bus *bus,
+>  						ondemand_data);
+>  	if (IS_ERR(bus->devfreq)) {
+>  		dev_err(dev, "failed to add devfreq device\n");
+> -		ret = PTR_ERR(bus->devfreq);
+> -		goto err;
+> +		return PTR_ERR(bus->devfreq);
+>  	}
+>  
+>  	/*
+> @@ -325,16 +321,13 @@ static int exynos_bus_profile_init(struct exynos_bus *bus,
+>  	ret = exynos_bus_enable_edev(bus);
+>  	if (ret < 0) {
+>  		dev_err(dev, "failed to enable devfreq-event devices\n");
+> -		goto err;
+> +		return ret;
+>  	}
+>  
+>  	ret = exynos_bus_set_event(bus);
+> -	if (ret < 0) {
+> +	if (ret < 0)
+>  		dev_err(dev, "failed to set event to devfreq-event devices\n");
+> -		goto err;
+
+Instead of removing 'goto err', just return err as I commented[1] on v1.
+[1] https://lkml.org/lkml/2019/7/26/331
+
+> -	}
+>  
+> -err:
+>  	return ret;
+
+And you just keep 'return ret' or you can change it as 'return 0'.
+
+
+>  }
+>  
+> @@ -344,7 +337,6 @@ static int exynos_bus_profile_init_passive(struct exynos_bus *bus,
+>  	struct device *dev = bus->dev;
+>  	struct devfreq_passive_data *passive_data;
+>  	struct devfreq *parent_devfreq;
+> -	int ret = 0;
+>  
+>  	/* Initialize the struct profile and governor data for passive device */
+>  	profile->target = exynos_bus_target;
+> @@ -352,30 +344,26 @@ static int exynos_bus_profile_init_passive(struct exynos_bus *bus,
+>  
+>  	/* Get the instance of parent devfreq device */
+>  	parent_devfreq = devfreq_get_devfreq_by_phandle(dev, 0);
+> -	if (IS_ERR(parent_devfreq)) {
+> -		ret = -EPROBE_DEFER;
+> -		goto err;
+> -	}
+> +	if (IS_ERR(parent_devfreq))
+> +		return -EPROBE_DEFER;
+>  
+>  	passive_data = devm_kzalloc(dev, sizeof(*passive_data), GFP_KERNEL);
+> -	if (!passive_data) {
+> -		ret = -ENOMEM;
+> -		goto err;
+> -	}
+> +	if (!passive_data)
+> +		return -ENOMEM;
+> +
+>  	passive_data->parent = parent_devfreq;
+>  
+>  	/* Add devfreq device for exynos bus with passive governor */
+> -	bus->devfreq = devm_devfreq_add_device(dev, profile, DEVFREQ_GOV_PASSIVE,
+> +	bus->devfreq = devm_devfreq_add_device(dev, profile,
+> +						DEVFREQ_GOV_PASSIVE,
+>  						passive_data);
+>  	if (IS_ERR(bus->devfreq)) {
+>  		dev_err(dev,
+>  			"failed to add devfreq dev with passive governor\n");
+> -		ret = PTR_ERR(bus->devfreq);
+> -		goto err;
+> +		return PTR_ERR(bus->devfreq);
+>  	}
+>  
+> -err:
+> -	return ret;
+> +	return 0;
+>  }
+>  
+>  static int exynos_bus_probe(struct platform_device *pdev)
+> @@ -393,18 +381,18 @@ static int exynos_bus_probe(struct platform_device *pdev)
+>  		return -EINVAL;
+>  	}
+>  
+> -	bus = devm_kzalloc(&pdev->dev, sizeof(*bus), GFP_KERNEL);
+> +	bus = devm_kzalloc(dev, sizeof(*bus), GFP_KERNEL);
+>  	if (!bus)
+>  		return -ENOMEM;
+>  	mutex_init(&bus->lock);
+> -	bus->dev = &pdev->dev;
+> +	bus->dev = dev;
+>  	platform_set_drvdata(pdev, bus);
+>  
+>  	profile = devm_kzalloc(dev, sizeof(*profile), GFP_KERNEL);
+>  	if (!profile)
+>  		return -ENOMEM;
+>  
+> -	node = of_parse_phandle(dev->of_node, "devfreq", 0);
+> +	node = of_parse_phandle(np, "devfreq", 0);
+>  	if (node) {
+>  		of_node_put(node);
+>  		passive = true;
+> @@ -461,12 +449,10 @@ static int exynos_bus_resume(struct device *dev)
+>  	int ret;
+>  
+>  	ret = exynos_bus_enable_edev(bus);
+> -	if (ret < 0) {
+> +	if (ret < 0)
+>  		dev_err(dev, "failed to enable the devfreq-event devices\n");
+> -		return ret;
+
+Keep the 'return ret' if error happen as I commented[1] on v1.
+[1] https://lkml.org/lkml/2019/7/26/331
+
+> -	}
+>  
+> -	return 0;
+> +	return ret;
+
+And you just keep 'return 0' or you can change it as 'return ret'.
+
+>  }
+>  
+>  static int exynos_bus_suspend(struct device *dev)
+> @@ -475,12 +461,10 @@ static int exynos_bus_suspend(struct device *dev)
+>  	int ret;
+>  
+>  	ret = exynos_bus_disable_edev(bus);
+> -	if (ret < 0) {
+> +	if (ret < 0)
+>  		dev_err(dev, "failed to disable the devfreq-event devices\n");
+> -		return ret;
+
+Keep the 'return ret' if error happen as I commented[1] on v1.
+[1] https://lkml.org/lkml/2019/7/26/331
+
+> -	}
+>  
+> -	return 0;
+> +	return ret;
+
+And you just keep 'return 0' or you can change it as 'return ret'.
+
+>  }
+>  #endif
+>  
+> 
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
