@@ -1,129 +1,104 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [RFC PATCH v2 00/11] Simple QoS for exynos-bus driver using
- interconnect
-Date: Fri, 20 Sep 2019 11:14:20 +0900
-Message-ID: <d8550f93-d4cf-f215-c083-8ecad267d430@samsung.com>
-References: <CGME20190919142321eucas1p164c2591ad402427cb71fd00c348a29ec@eucas1p1.samsung.com>
-        <20190919142236.4071-1-a.swigon@samsung.com>
-        <fe6d026d-71b5-438d-6932-6a2234fc72c2@samsung.com>
+Subject: Re: [RFC PATCH v2 01/11] devfreq: exynos-bus: Extract
+ exynos_bus_profile_init()
+Date: Fri, 20 Sep 2019 11:15:08 +0900
+Message-ID: <2e49bd2c-e074-038b-f8a2-7dd8dea4a9af@samsung.com>
+References: <20190919142236.4071-1-a.swigon@samsung.com>
+ <CGME20190919142322eucas1p24bc477ee6e1bcd65546c305d55af097d@eucas1p2.samsung.com>
+ <20190919142236.4071-2-a.swigon@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <fe6d026d-71b5-438d-6932-6a2234fc72c2@samsung.com>
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190919142236.4071-2-a.swigon@samsung.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: myungjoo.ham@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, georgi.djakov@linaro.org, leonard.crestez@nxp.com, m.szyprowski@samsung.com, b.zolnierkie@samsung.com, krzk@kernel.org, "cpgs (cpgs@samsung.com)" <cpgs@samsung.com>
+Cc: =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>, b.zolnierkie@samsung.com, sw0312.kim@samsung.com, krzk@kernel.org, inki.dae@samsung.com, myungjoo.ham@samsung.com, leonard.crestez@nxp.com, georgi.djakov@linaro.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Artur,
-
-I tried to just build this patch on mainline kernel or linux-next.
-But, when I applied them, merge conflict happens. You didn't develop
-them on latest version. Please rebase them based on latest mainline kernel.
-
-On 19. 9. 20. 오전 10:07, Chanwoo Choi wrote:
-> Hi Artur,
-> 
-> On v1, I mentioned that we need to discuss how to change
-> the v2 for this. But, I have not received any reply from you on v1.
-> And, without your reply from v1, you just send v2.
-> 
-> I think that it is not proper development sequence.
-> I have spent many times to review your patches
-> and also I'll review your patches. You have to take care
-> the reply of reviewer and and keep the basic rule
-> of mailing contribution for discussion.
-> 
-> On 19. 9. 19. 오후 11:22, Artur Świgoń wrote:
->> The following patchset adds interconnect[1][2] framework support to the
->> exynos-bus devfreq driver. Extending the devfreq driver with interconnect
->> capabilities started as a response to the issue referenced in [3]. The
->> patches can be subdivided into four logical groups:
->>
->> (a) Refactoring the existing devfreq driver in order to improve readability
->> and accommodate for adding new code (patches 01--04/11).
->>
->> (b) Tweaking the interconnect framework to support the exynos-bus use case
->> (patches 05--07/11). Exporting of_icc_get_from_provider() allows us to
->> avoid hardcoding every single graph edge in the DT or driver source, and
->> relaxing the requirement contained in that function removes the need to
->> provide dummy node IDs in the DT. Adjusting the logic in
->> apply_constraints() (drivers/interconnect/core.c) accounts for the fact
->> that every bus is a separate entity and therefore a separate interconnect
->> provider, albeit constituting a part of a larger hierarchy.
->>
->> (c) Implementing interconnect providers in the exynos-bus devfreq driver
->> and adding required DT properties for one selected platform, namely
->> Exynos4412 (patches 08--09/11). Due to the fact that this aims to be a
->> generic driver for various Exynos SoCs, node IDs are generated dynamically
->> rather than hardcoded. This has been determined to be a simpler approach,
->> but depends on changes described in (b).
->>
->> (d) Implementing a sample interconnect consumer for exynos-mixer targeted
->> at the issue referenced in [3], again with DT info only for Exynos4412
->> (patches 10--11/11).
->>
->> Integration of devfreq and interconnect functionalities is achieved by
->> using dev_pm_qos_*() API[5]. All new code works equally well when
->> CONFIG_INTERCONNECT is 'n' (as in exynos_defconfig) in which case all
->> interconnect API functions are no-ops.
->>
->> This patchset depends on [5].
->>
->> --- Changes since v1 [6]:
->> * Rebase on [4] (coupled regulators).
->> * Rebase on [5] (dev_pm_qos for devfreq).
->> * Use dev_pm_qos_*() API[5] instead of overriding frequency in
->>   exynos_bus_target().
->> * Use IDR for node ID allocation.
->> * Avoid goto in functions extracted in patches 01 & 02 (cf. patch 04).
->> * Reverse order of multiplication and division in
->>   mixer_set_memory_bandwidth() (patch 11) to avoid integer overflow.
->>
->> ---
->> Artur Świgoń
->> Samsung R&D Institute Poland
->> Samsung Electronics
->>
->> ---
->> References:
->> [1] Documentation/interconnect/interconnect.rst
->> [2] Documentation/devicetree/bindings/interconnect/interconnect.txt
->> [3] https://patchwork.kernel.org/patch/10861757/ (original issue)
->> [4] https://patchwork.kernel.org/cover/11083663/ (coupled regulators; merged)
->> [5] https://patchwork.kernel.org/cover/11149497/ (dev_pm_qos for devfreq)
->> [6] https://patchwork.kernel.org/cover/11054417/ (v1 of this RFC)
->>
->> Artur Świgoń (10):
->>   devfreq: exynos-bus: Extract exynos_bus_profile_init()
->>   devfreq: exynos-bus: Extract exynos_bus_profile_init_passive()
->>   devfreq: exynos-bus: Change goto-based logic to if-else logic
->>   devfreq: exynos-bus: Clean up code
->>   interconnect: Export of_icc_get_from_provider()
->>   interconnect: Relax requirement in of_icc_get_from_provider()
->>   interconnect: Relax condition in apply_constraints()
->>   arm: dts: exynos: Add parents and #interconnect-cells to Exynos4412
->>   devfreq: exynos-bus: Add interconnect functionality to exynos-bus
->>   arm: dts: exynos: Add interconnects to Exynos4412 mixer
->>
->> Marek Szyprowski (1):
->>   drm: exynos: mixer: Add interconnect support
->>
->>  .../boot/dts/exynos4412-odroid-common.dtsi    |   1 +
->>  arch/arm/boot/dts/exynos4412.dtsi             |  10 +
->>  drivers/devfreq/exynos-bus.c                  | 319 +++++++++++++-----
->>  drivers/gpu/drm/exynos/exynos_mixer.c         |  71 +++-
->>  drivers/interconnect/core.c                   |  12 +-
->>  include/linux/interconnect-provider.h         |   6 +
->>  6 files changed, 327 insertions(+), 92 deletions(-)
->>
-> 
-> 
-
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+SGksCgpBcyBJIGFscmVhZHkgcmVwbGllZCBvbiB2MSwgcGF0Y2gxLzIvMyBjbGVhbi11cCBjb2Rl
+CmZvciByZWFkYWJpbGl0eSB3aXRob3V0IGFueSBiZWhhdmlvciBjaGFuZ2VzLiAKCkkgdGhpbmsg
+dGhhdCB5b3UgYmV0dGVyIHRvIG1lcmdlIHBhdGNoMS8yLzMgdG8gb25lIHBhdGNoLgoKT24gMTku
+IDkuIDE5LiDsmKTtm4QgMTE6MjIsIEFydHVyIMWad2lnb8WEIHdyb3RlOgo+IEZyb206IEFydHVy
+IMWad2lnb8WEIDxhLnN3aWdvbkBwYXJ0bmVyLnNhbXN1bmcuY29tPgo+IAo+IFRoaXMgcGF0Y2gg
+YWRkcyBhIG5ldyBzdGF0aWMgZnVuY3Rpb24sIGV4eW5vc19idXNfcHJvZmlsZV9pbml0KCksIGV4
+dHJhY3RlZAo+IGZyb20gZXh5bm9zX2J1c19wcm9iZSgpLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEFy
+dHVyIMWad2lnb8WEIDxhLnN3aWdvbkBwYXJ0bmVyLnNhbXN1bmcuY29tPgo+IC0tLQo+ICBkcml2
+ZXJzL2RldmZyZXEvZXh5bm9zLWJ1cy5jIHwgOTIgKysrKysrKysrKysrKysrKysrKysrLS0tLS0t
+LS0tLS0tLS0tCj4gIDEgZmlsZSBjaGFuZ2VkLCA1MyBpbnNlcnRpb25zKCspLCAzOSBkZWxldGlv
+bnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9kZXZmcmVxL2V4eW5vcy1idXMuYyBiL2Ry
+aXZlcnMvZGV2ZnJlcS9leHlub3MtYnVzLmMKPiBpbmRleCAyOWY0MjI0Njk5NjAuLjc4ZjM4Yjdm
+YjU5NiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2RldmZyZXEvZXh5bm9zLWJ1cy5jCj4gKysrIGIv
+ZHJpdmVycy9kZXZmcmVxL2V4eW5vcy1idXMuYwo+IEBAIC0yODcsMTIgKzI4Nyw2MiBAQCBzdGF0
+aWMgaW50IGV4eW5vc19idXNfcGFyc2Vfb2Yoc3RydWN0IGRldmljZV9ub2RlICpucCwKPiAgCXJl
+dHVybiByZXQ7Cj4gIH0KPiAgCj4gK3N0YXRpYyBpbnQgZXh5bm9zX2J1c19wcm9maWxlX2luaXQo
+c3RydWN0IGV4eW5vc19idXMgKmJ1cywKPiArCQkJCSAgIHN0cnVjdCBkZXZmcmVxX2Rldl9wcm9m
+aWxlICpwcm9maWxlKQo+ICt7Cj4gKwlzdHJ1Y3QgZGV2aWNlICpkZXYgPSBidXMtPmRldjsKPiAr
+CXN0cnVjdCBkZXZmcmVxX3NpbXBsZV9vbmRlbWFuZF9kYXRhICpvbmRlbWFuZF9kYXRhOwo+ICsJ
+aW50IHJldDsKPiArCj4gKwkvKiBJbml0aWFsaXplIHRoZSBzdHJ1Y3QgcHJvZmlsZSBhbmQgZ292
+ZXJub3IgZGF0YSBmb3IgcGFyZW50IGRldmljZSAqLwo+ICsJcHJvZmlsZS0+cG9sbGluZ19tcyA9
+IDUwOwo+ICsJcHJvZmlsZS0+dGFyZ2V0ID0gZXh5bm9zX2J1c190YXJnZXQ7Cj4gKwlwcm9maWxl
+LT5nZXRfZGV2X3N0YXR1cyA9IGV4eW5vc19idXNfZ2V0X2Rldl9zdGF0dXM7Cj4gKwlwcm9maWxl
+LT5leGl0ID0gZXh5bm9zX2J1c19leGl0Owo+ICsKPiArCW9uZGVtYW5kX2RhdGEgPSBkZXZtX2t6
+YWxsb2MoZGV2LCBzaXplb2YoKm9uZGVtYW5kX2RhdGEpLCBHRlBfS0VSTkVMKTsKPiArCWlmICgh
+b25kZW1hbmRfZGF0YSkgewo+ICsJCXJldCA9IC1FTk9NRU07Cj4gKwkJZ290byBlcnI7Cj4gKwl9
+Cj4gKwlvbmRlbWFuZF9kYXRhLT51cHRocmVzaG9sZCA9IDQwOwo+ICsJb25kZW1hbmRfZGF0YS0+
+ZG93bmRpZmZlcmVudGlhbCA9IDU7Cj4gKwo+ICsJLyogQWRkIGRldmZyZXEgZGV2aWNlIHRvIG1v
+bml0b3IgYW5kIGhhbmRsZSB0aGUgZXh5bm9zIGJ1cyAqLwo+ICsJYnVzLT5kZXZmcmVxID0gZGV2
+bV9kZXZmcmVxX2FkZF9kZXZpY2UoZGV2LCBwcm9maWxlLAo+ICsJCQkJCQlERVZGUkVRX0dPVl9T
+SU1QTEVfT05ERU1BTkQsCj4gKwkJCQkJCW9uZGVtYW5kX2RhdGEpOwo+ICsJaWYgKElTX0VSUihi
+dXMtPmRldmZyZXEpKSB7Cj4gKwkJZGV2X2VycihkZXYsICJmYWlsZWQgdG8gYWRkIGRldmZyZXEg
+ZGV2aWNlXG4iKTsKPiArCQlyZXQgPSBQVFJfRVJSKGJ1cy0+ZGV2ZnJlcSk7Cj4gKwkJZ290byBl
+cnI7Cj4gKwl9Cj4gKwo+ICsJLyoKPiArCSAqIEVuYWJsZSBkZXZmcmVxLWV2ZW50IHRvIGdldCBy
+YXcgZGF0YSB3aGljaCBpcyB1c2VkIHRvIGRldGVybWluZQo+ICsJICogY3VycmVudCBidXMgbG9h
+ZC4KPiArCSAqLwo+ICsJcmV0ID0gZXh5bm9zX2J1c19lbmFibGVfZWRldihidXMpOwo+ICsJaWYg
+KHJldCA8IDApIHsKPiArCQlkZXZfZXJyKGRldiwgImZhaWxlZCB0byBlbmFibGUgZGV2ZnJlcS1l
+dmVudCBkZXZpY2VzXG4iKTsKPiArCQlnb3RvIGVycjsKPiArCX0KPiArCj4gKwlyZXQgPSBleHlu
+b3NfYnVzX3NldF9ldmVudChidXMpOwo+ICsJaWYgKHJldCA8IDApIHsKPiArCQlkZXZfZXJyKGRl
+diwgImZhaWxlZCB0byBzZXQgZXZlbnQgdG8gZGV2ZnJlcS1ldmVudCBkZXZpY2VzXG4iKTsKPiAr
+CQlnb3RvIGVycjsKPiArCX0KPiArCj4gK2VycjoKPiArCXJldHVybiByZXQ7Cj4gK30KPiArCj4g
+IHN0YXRpYyBpbnQgZXh5bm9zX2J1c19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2
+KQo+ICB7Cj4gIAlzdHJ1Y3QgZGV2aWNlICpkZXYgPSAmcGRldi0+ZGV2Owo+ICAJc3RydWN0IGRl
+dmljZV9ub2RlICpucCA9IGRldi0+b2Zfbm9kZSwgKm5vZGU7Cj4gIAlzdHJ1Y3QgZGV2ZnJlcV9k
+ZXZfcHJvZmlsZSAqcHJvZmlsZTsKPiAtCXN0cnVjdCBkZXZmcmVxX3NpbXBsZV9vbmRlbWFuZF9k
+YXRhICpvbmRlbWFuZF9kYXRhOwo+ICAJc3RydWN0IGRldmZyZXFfcGFzc2l2ZV9kYXRhICpwYXNz
+aXZlX2RhdGE7Cj4gIAlzdHJ1Y3QgZGV2ZnJlcSAqcGFyZW50X2RldmZyZXE7Cj4gIAlzdHJ1Y3Qg
+ZXh5bm9zX2J1cyAqYnVzOwo+IEBAIC0zMzQsNDUgKzM4NCw5IEBAIHN0YXRpYyBpbnQgZXh5bm9z
+X2J1c19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICAJaWYgKHBhc3NpdmUp
+Cj4gIAkJZ290byBwYXNzaXZlOwo+ICAKPiAtCS8qIEluaXRpYWxpemUgdGhlIHN0cnVjdCBwcm9m
+aWxlIGFuZCBnb3Zlcm5vciBkYXRhIGZvciBwYXJlbnQgZGV2aWNlICovCj4gLQlwcm9maWxlLT5w
+b2xsaW5nX21zID0gNTA7Cj4gLQlwcm9maWxlLT50YXJnZXQgPSBleHlub3NfYnVzX3RhcmdldDsK
+PiAtCXByb2ZpbGUtPmdldF9kZXZfc3RhdHVzID0gZXh5bm9zX2J1c19nZXRfZGV2X3N0YXR1czsK
+PiAtCXByb2ZpbGUtPmV4aXQgPSBleHlub3NfYnVzX2V4aXQ7Cj4gLQo+IC0Jb25kZW1hbmRfZGF0
+YSA9IGRldm1fa3phbGxvYyhkZXYsIHNpemVvZigqb25kZW1hbmRfZGF0YSksIEdGUF9LRVJORUwp
+Owo+IC0JaWYgKCFvbmRlbWFuZF9kYXRhKSB7Cj4gLQkJcmV0ID0gLUVOT01FTTsKPiArCXJldCA9
+IGV4eW5vc19idXNfcHJvZmlsZV9pbml0KGJ1cywgcHJvZmlsZSk7Cj4gKwlpZiAocmV0IDwgMCkK
+PiAgCQlnb3RvIGVycjsKPiAtCX0KPiAtCW9uZGVtYW5kX2RhdGEtPnVwdGhyZXNob2xkID0gNDA7
+Cj4gLQlvbmRlbWFuZF9kYXRhLT5kb3duZGlmZmVyZW50aWFsID0gNTsKPiAtCj4gLQkvKiBBZGQg
+ZGV2ZnJlcSBkZXZpY2UgdG8gbW9uaXRvciBhbmQgaGFuZGxlIHRoZSBleHlub3MgYnVzICovCj4g
+LQlidXMtPmRldmZyZXEgPSBkZXZtX2RldmZyZXFfYWRkX2RldmljZShkZXYsIHByb2ZpbGUsCj4g
+LQkJCQkJCURFVkZSRVFfR09WX1NJTVBMRV9PTkRFTUFORCwKPiAtCQkJCQkJb25kZW1hbmRfZGF0
+YSk7Cj4gLQlpZiAoSVNfRVJSKGJ1cy0+ZGV2ZnJlcSkpIHsKPiAtCQlkZXZfZXJyKGRldiwgImZh
+aWxlZCB0byBhZGQgZGV2ZnJlcSBkZXZpY2VcbiIpOwo+IC0JCXJldCA9IFBUUl9FUlIoYnVzLT5k
+ZXZmcmVxKTsKPiAtCQlnb3RvIGVycjsKPiAtCX0KPiAtCj4gLQkvKgo+IC0JICogRW5hYmxlIGRl
+dmZyZXEtZXZlbnQgdG8gZ2V0IHJhdyBkYXRhIHdoaWNoIGlzIHVzZWQgdG8gZGV0ZXJtaW5lCj4g
+LQkgKiBjdXJyZW50IGJ1cyBsb2FkLgo+IC0JICovCj4gLQlyZXQgPSBleHlub3NfYnVzX2VuYWJs
+ZV9lZGV2KGJ1cyk7Cj4gLQlpZiAocmV0IDwgMCkgewo+IC0JCWRldl9lcnIoZGV2LCAiZmFpbGVk
+IHRvIGVuYWJsZSBkZXZmcmVxLWV2ZW50IGRldmljZXNcbiIpOwo+IC0JCWdvdG8gZXJyOwo+IC0J
+fQo+IC0KPiAtCXJldCA9IGV4eW5vc19idXNfc2V0X2V2ZW50KGJ1cyk7Cj4gLQlpZiAocmV0IDwg
+MCkgewo+IC0JCWRldl9lcnIoZGV2LCAiZmFpbGVkIHRvIHNldCBldmVudCB0byBkZXZmcmVxLWV2
+ZW50IGRldmljZXNcbiIpOwo+IC0JCWdvdG8gZXJyOwo+IC0JfQo+ICAKPiAgCWdvdG8gb3V0Owo+
+ICBwYXNzaXZlOgo+IAoKCi0tIApCZXN0IFJlZ2FyZHMsCkNoYW53b28gQ2hvaQpTYW1zdW5nIEVs
+ZWN0cm9uaWNzCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+XwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmlu
+ZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9s
+aW51eC1hcm0ta2VybmVsCg==
