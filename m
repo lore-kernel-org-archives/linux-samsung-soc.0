@@ -1,232 +1,230 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 2/2] dt-bindings: arm: samsung: Convert Exynos PMU bindings to json-schema
-Date: Fri, 20 Sep 2019 18:26:00 +0200
-Message-ID: <20190920162600.7486-2-krzk@kernel.org>
-References: <20190920162600.7486-1-krzk@kernel.org>
+Subject: [PATCH v2] dt-bindings: crypto: samsung: Convert SSS and SlimSSS bindings to json-schema
+Date: Fri, 20 Sep 2019 18:36:35 +0200
+Message-ID: <20190920163635.9186-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190920162600.7486-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, Kamil Konieczny <k.konieczny@partner.samsung.com>, linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Convert Samsung Exynos Power Management Unit (PMU) bindings to DT schema
-format using json-schema.
+Convert Samsung Exynos Security SubSystem (SSS) and SlimSSS hardware
+crypto accelerator bindings to DT schema format using json-schema.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 ---
 
-Changes since v2:
-1. Use select to skip other syscon nodes,
-2. Indent example with four spaces (more readable),
-3. Use pattern for clkoutN property,
-4. Include header with clock IDs in example to bring it closer to real DTS.
+Rebased on linux-next due to conflicting change in MAINTAINERS file
+coming through arm-soc tree.
 
 Changes since v1:
-1. Fix clock-names to match all elements against schema (any number of
-   any clkoutN values).
-   This currently fails:
-       properties:clock-names:items: {'enum': ['clkout0', 'clkout1', 'clkout2',
-       'clkout3', 'clkout4', 'clkout5', 'clkout6', 'clkout7', 'clkout8',
-       'clkout9', 'clkout10', 'clkout11', 'clkout12', 'clkout13', 'clkout14',
-       'clkout15', 'clkout16']} is not of type 'array
-
-2. Add syscon reboot and poweroff nodes.
+1. Add additionalProperties:false
 ---
- .../devicetree/bindings/arm/samsung/pmu.txt   |  72 ------------
- .../devicetree/bindings/arm/samsung/pmu.yaml  | 105 ++++++++++++++++++
- 2 files changed, 105 insertions(+), 72 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/samsung/pmu.txt
- create mode 100644 Documentation/devicetree/bindings/arm/samsung/pmu.yaml
+ .../bindings/crypto/samsung-slimsss.txt       | 19 ------
+ .../bindings/crypto/samsung-slimsss.yaml      | 47 +++++++++++++++
+ .../bindings/crypto/samsung-sss.txt           | 32 ----------
+ .../bindings/crypto/samsung-sss.yaml          | 58 +++++++++++++++++++
+ MAINTAINERS                                   |  4 +-
+ 5 files changed, 107 insertions(+), 53 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/crypto/samsung-slimsss.txt
+ create mode 100644 Documentation/devicetree/bindings/crypto/samsung-slimsss.yaml
+ delete mode 100644 Documentation/devicetree/bindings/crypto/samsung-sss.txt
+ create mode 100644 Documentation/devicetree/bindings/crypto/samsung-sss.yaml
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+diff --git a/Documentation/devicetree/bindings/crypto/samsung-slimsss.txt b/Documentation/devicetree/bindings/crypto/samsung-slimsss.txt
 deleted file mode 100644
-index 433bfd7593ac..000000000000
---- a/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+index 7ec9a5a7727a..000000000000
+--- a/Documentation/devicetree/bindings/crypto/samsung-slimsss.txt
 +++ /dev/null
-@@ -1,72 +0,0 @@
--SAMSUNG Exynos SoC series PMU Registers
+@@ -1,19 +0,0 @@
+-Samsung SoC SlimSSS (Slim Security SubSystem) module
 -
--Properties:
-- - compatible : should contain two values. First value must be one from following list:
--		   - "samsung,exynos3250-pmu" - for Exynos3250 SoC,
--		   - "samsung,exynos4210-pmu" - for Exynos4210 SoC,
--		   - "samsung,exynos4412-pmu" - for Exynos4412 SoC,
--		   - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
--		   - "samsung,exynos5260-pmu" - for Exynos5260 SoC.
--		   - "samsung,exynos5410-pmu" - for Exynos5410 SoC,
--		   - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
--		   - "samsung,exynos5433-pmu" - for Exynos5433 SoC.
--		   - "samsung,exynos7-pmu" - for Exynos7 SoC.
--		second value must be always "syscon".
+-The SlimSSS module in Exynos5433 SoC supports the following:
+--- Feeder (FeedCtrl)
+--- Advanced Encryption Standard (AES) with ECB,CBC,CTR,XTS and (CBC/XTS)/CTS
+--- SHA-1/SHA-256 and (SHA-1/SHA-256)/HMAC
 -
-- - reg : offset and length of the register set.
+-Required properties:
 -
-- - #clock-cells : must be <1>, since PMU requires once cell as clock specifier.
--		The single specifier cell is used as index to list of clocks
--		provided by PMU, which is currently:
--			0 : SoC clock output (CLKOUT pin)
+-- compatible : Should contain entry for slimSSS version:
+-  - "samsung,exynos5433-slim-sss" for Exynos5433 SoC.
+-- reg : Offset and length of the register set for the module
+-- interrupts : interrupt specifiers of SlimSSS module interrupts (one feed
+-		control interrupt).
 -
-- - clock-names : list of clock names for particular CLKOUT mux inputs in
--		following format:
--			"clkoutN", where N is a decimal number corresponding to
--			CLKOUT mux control bits value for given input, e.g.
--				"clkout0", "clkout7", "clkout15".
--
-- - clocks : list of phandles and specifiers to all input clocks listed in
+-- clocks : list of clock phandle and specifier pairs for all clocks listed in
 -		clock-names property.
--
--Optional properties:
--
--Some PMUs are capable of behaving as an interrupt controller (mostly
--to wake up a suspended PMU). In which case, they can have the
--following properties:
--
--- interrupt-controller: indicate that said PMU is an interrupt controller
--
--- #interrupt-cells: must be identical to the that of the parent interrupt
--  controller.
--
--
--Optional nodes:
--
--- nodes defining the restart and poweroff syscon children
--
--
--Example :
--pmu_system_controller: system-controller@10040000 {
--	compatible = "samsung,exynos5250-pmu", "syscon";
--	reg = <0x10040000 0x5000>;
--	interrupt-controller;
--	#interrupt-cells = <3>;
--	interrupt-parent = <&gic>;
--	#clock-cells = <1>;
--	clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
--			"clkout4", "clkout8", "clkout9";
--	clocks = <&clock CLK_OUT_DMC>, <&clock CLK_OUT_TOP>,
--		<&clock CLK_OUT_LEFTBUS>, <&clock CLK_OUT_RIGHTBUS>,
--		<&clock CLK_OUT_CPU>, <&clock CLK_XXTI>,
--		<&clock CLK_XUSBXTI>;
--};
--
--Example of clock consumer :
--
--usb3503: usb3503@8 {
--	/* ... */
--	clock-names = "refclk";
--	clocks = <&pmu_system_controller 0>;
--	/* ... */
--};
-diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.yaml b/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
+-- clock-names : list of device clock input names; should contain "pclk" and
+-		"aclk" for slim-sss in Exynos5433.
+diff --git a/Documentation/devicetree/bindings/crypto/samsung-slimsss.yaml b/Documentation/devicetree/bindings/crypto/samsung-slimsss.yaml
 new file mode 100644
-index 000000000000..73b56fc5bf58
+index 000000000000..04fe5dfa794a
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
-@@ -0,0 +1,105 @@
++++ b/Documentation/devicetree/bindings/crypto/samsung-slimsss.yaml
+@@ -0,0 +1,47 @@
 +# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/arm/samsung/pmu.yaml#
++$id: http://devicetree.org/schemas/crypto/samsung-slimsss.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Samsung Exynos SoC series Power Management Unit (PMU)
++title: Samsung Exynos SoC SlimSSS (Slim Security SubSystem) module
 +
 +maintainers:
 +  - Krzysztof Kozlowski <krzk@kernel.org>
++  - Kamil Konieczny <k.konieczny@partner.samsung.com>
 +
-+# Custom select to avoid matching all nodes with 'syscon'
-+select:
-+  properties:
-+    compatible:
-+      contains:
-+        enum:
-+          - samsung,exynos3250-pmu
-+          - samsung,exynos4210-pmu
-+          - samsung,exynos4412-pmu
-+          - samsung,exynos5250-pmu
-+          - samsung,exynos5260-pmu
-+          - samsung,exynos5410-pmu
-+          - samsung,exynos5420-pmu
-+          - samsung,exynos5433-pmu
-+          - samsung,exynos7-pmu
-+  required:
-+    - compatible
++description: |+
++  The SlimSSS module in Exynos5433 SoC supports the following:
++  -- Feeder (FeedCtrl)
++  -- Advanced Encryption Standard (AES) with ECB,CBC,CTR,XTS and (CBC/XTS)/CTS
++  -- SHA-1/SHA-256 and (SHA-1/SHA-256)/HMAC
++
++properties:
++  compatible:
++    items:
++      - const: samsung,exynos5433-slim-ss
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    minItems: 2
++    maxItems: 2
++
++  clock-names:
++    items:
++      - const: pclk
++      - const: aclk
++
++  interrupts:
++    description: One feed control interrupt.
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clock-names
++  - clocks
++  - interrupts
++
++additionalProperties: false
+diff --git a/Documentation/devicetree/bindings/crypto/samsung-sss.txt b/Documentation/devicetree/bindings/crypto/samsung-sss.txt
+deleted file mode 100644
+index 7a5ca56683cc..000000000000
+--- a/Documentation/devicetree/bindings/crypto/samsung-sss.txt
++++ /dev/null
+@@ -1,32 +0,0 @@
+-Samsung SoC SSS (Security SubSystem) module
+-
+-The SSS module in S5PV210 SoC supports the following:
+--- Feeder (FeedCtrl)
+--- Advanced Encryption Standard (AES)
+--- Data Encryption Standard (DES)/3DES
+--- Public Key Accelerator (PKA)
+--- SHA-1/SHA-256/MD5/HMAC (SHA-1/SHA-256/MD5)/PRNG
+--- PRNG: Pseudo Random Number Generator
+-
+-The SSS module in Exynos4 (Exynos4210) and
+-Exynos5 (Exynos5420 and Exynos5250) SoCs
+-supports the following also:
+--- ARCFOUR (ARC4)
+--- True Random Number Generator (TRNG)
+--- Secure Key Manager
+-
+-Required properties:
+-
+-- compatible : Should contain entries for this and backward compatible
+-  SSS versions:
+-  - "samsung,s5pv210-secss" for S5PV210 SoC.
+-  - "samsung,exynos4210-secss" for Exynos4210, Exynos4212, Exynos4412, Exynos5250,
+-		Exynos5260 and Exynos5420 SoCs.
+-- reg : Offset and length of the register set for the module
+-- interrupts : interrupt specifiers of SSS module interrupts (one feed
+-		control interrupt).
+-
+-- clocks : list of clock phandle and specifier pairs for all clocks  listed in
+-		clock-names property.
+-- clock-names : list of device clock input names; should contain one entry
+-		"secss".
+diff --git a/Documentation/devicetree/bindings/crypto/samsung-sss.yaml b/Documentation/devicetree/bindings/crypto/samsung-sss.yaml
+new file mode 100644
+index 000000000000..cf1c47a81d7f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/crypto/samsung-sss.yaml
+@@ -0,0 +1,58 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/crypto/samsung-sss.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung Exynos SoC SSS (Security SubSystem) module
++
++maintainers:
++  - Krzysztof Kozlowski <krzk@kernel.org>
++  - Kamil Konieczny <k.konieczny@partner.samsung.com>
++
++description: |+
++  The SSS module in S5PV210 SoC supports the following:
++  -- Feeder (FeedCtrl)
++  -- Advanced Encryption Standard (AES)
++  -- Data Encryption Standard (DES)/3DES
++  -- Public Key Accelerator (PKA)
++  -- SHA-1/SHA-256/MD5/HMAC (SHA-1/SHA-256/MD5)/PRNG
++  -- PRNG: Pseudo Random Number Generator
++
++  The SSS module in Exynos4 (Exynos4210) and Exynos5 (Exynos5420 and Exynos5250)
++  SoCs supports the following also:
++  -- ARCFOUR (ARC4)
++  -- True Random Number Generator (TRNG)
++  -- Secure Key Manager
 +
 +properties:
 +  compatible:
 +    items:
 +      - enum:
-+          - samsung,exynos3250-pmu
-+          - samsung,exynos4210-pmu
-+          - samsung,exynos4412-pmu
-+          - samsung,exynos5250-pmu
-+          - samsung,exynos5260-pmu
-+          - samsung,exynos5410-pmu
-+          - samsung,exynos5420-pmu
-+          - samsung,exynos5433-pmu
-+          - samsung,exynos7-pmu
-+      - const: syscon
++          - samsung,s5pv210-secss           # for S5PV210
++          - samsung,exynos4210-secss        # for Exynos4210, Exynos4212,
++                                            # Exynos4412, Exynos5250,
++                                            # Exynos5260 and Exynos5420
 +
 +  reg:
 +    maxItems: 1
 +
-+  '#clock-cells':
-+    const: 1
++  clocks:
++    maxItems: 1
 +
 +  clock-names:
-+    description:
-+      List of clock names for particular CLKOUT mux inputs
-+    minItems: 1
-+    maxItems: 32
 +    items:
-+      pattern: '^clkout([0-9]|[12][0-9]|3[0-1])$'
++      - const: secss
 +
-+  clocks:
-+    minItems: 1
-+    maxItems: 32
-+
-+  interrupt-controller:
-+    description:
-+      Some PMUs are capable of behaving as an interrupt controller (mostly
-+      to wake up a suspended PMU).
-+
-+  '#interrupt-cells':
-+    description:
-+      Must be identical to the that of the parent interrupt controller.
-+    const: 3
-+
-+  syscon-poweroff:
-+    $ref: "../../power/reset/syscon-poweroff.yaml#"
-+    type: object
-+    description:
-+      Node for power off method
-+
-+  syscon-reboot:
-+    $ref: "../../power/reset/syscon-reboot.yaml#"
-+    type: object
-+    description:
-+      Node for reboot method
++  interrupts:
++    description: One feed control interrupt.
++    maxItems: 1
 +
 +required:
 +  - compatible
 +  - reg
-+  - '#clock-cells'
 +  - clock-names
 +  - clocks
++  - interrupts
 +
-+examples:
-+  - |
-+    #include <dt-bindings/clock/exynos5250.h>
-+
-+    pmu_system_controller: system-controller@10040000 {
-+        compatible = "samsung,exynos5250-pmu", "syscon";
-+        reg = <0x10040000 0x5000>;
-+        interrupt-controller;
-+        #interrupt-cells = <3>;
-+        interrupt-parent = <&gic>;
-+        #clock-cells = <1>;
-+        clock-names = "clkout16";
-+        clocks = <&clock CLK_FIN_PLL>;
-+    };
++additionalProperties: false
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ee4e873c0f9a..331c40ae6a01 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14256,8 +14256,8 @@ M:	Kamil Konieczny <k.konieczny@partner.samsung.com>
+ L:	linux-crypto@vger.kernel.org
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/crypto/samsung-slimsss.txt
+-F:	Documentation/devicetree/bindings/crypto/samsung-sss.txt
++F:	Documentation/devicetree/bindings/crypto/samsung-slimsss.yaml
++F:	Documentation/devicetree/bindings/crypto/samsung-sss.yaml
+ F:	drivers/crypto/s5p-sss.c
+ 
+ SAMSUNG S5P/EXYNOS4 SOC SERIES CAMERA SUBSYSTEM DRIVERS
 -- 
 2.17.1
