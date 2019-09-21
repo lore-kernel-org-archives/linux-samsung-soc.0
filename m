@@ -1,230 +1,106 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2] dt-bindings: crypto: samsung: Convert SSS and SlimSSS bindings to json-schema
-Date: Fri, 20 Sep 2019 18:36:35 +0200
-Message-ID: <20190920163635.9186-1-krzk@kernel.org>
+Subject: [PATCH v3 2/8] ARM: dts: exynos: Rename Multi Core Timer node to "timer"
+Date: Sat, 21 Sep 2019 19:01:46 +0200
+Message-ID: <20190921170152.5033-2-krzk@kernel.org>
+References: <20190921170152.5033-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190921170152.5033-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, Kamil Konieczny <k.konieczny@partner.samsung.com>, linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <snawrocki@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Convert Samsung Exynos Security SubSystem (SSS) and SlimSSS hardware
-crypto accelerator bindings to DT schema format using json-schema.
+The device node name should reflect generic class of a device so rename
+the Multi Core Timer node from "mct" to "timer".  This will be also in
+sync with upcoming DT schema.  No functional change.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-
 ---
+ arch/arm/boot/dts/exynos3250.dtsi | 2 +-
+ arch/arm/boot/dts/exynos4210.dtsi | 2 +-
+ arch/arm/boot/dts/exynos4412.dtsi | 2 +-
+ arch/arm/boot/dts/exynos5250.dtsi | 2 +-
+ arch/arm/boot/dts/exynos5260.dtsi | 2 +-
+ arch/arm/boot/dts/exynos54xx.dtsi | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
 
-Rebased on linux-next due to conflicting change in MAINTAINERS file
-coming through arm-soc tree.
-
-Changes since v1:
-1. Add additionalProperties:false
----
- .../bindings/crypto/samsung-slimsss.txt       | 19 ------
- .../bindings/crypto/samsung-slimsss.yaml      | 47 +++++++++++++++
- .../bindings/crypto/samsung-sss.txt           | 32 ----------
- .../bindings/crypto/samsung-sss.yaml          | 58 +++++++++++++++++++
- MAINTAINERS                                   |  4 +-
- 5 files changed, 107 insertions(+), 53 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/crypto/samsung-slimsss.txt
- create mode 100644 Documentation/devicetree/bindings/crypto/samsung-slimsss.yaml
- delete mode 100644 Documentation/devicetree/bindings/crypto/samsung-sss.txt
- create mode 100644 Documentation/devicetree/bindings/crypto/samsung-sss.yaml
-
-diff --git a/Documentation/devicetree/bindings/crypto/samsung-slimsss.txt b/Documentation/devicetree/bindings/crypto/samsung-slimsss.txt
-deleted file mode 100644
-index 7ec9a5a7727a..000000000000
---- a/Documentation/devicetree/bindings/crypto/samsung-slimsss.txt
-+++ /dev/null
-@@ -1,19 +0,0 @@
--Samsung SoC SlimSSS (Slim Security SubSystem) module
--
--The SlimSSS module in Exynos5433 SoC supports the following:
---- Feeder (FeedCtrl)
---- Advanced Encryption Standard (AES) with ECB,CBC,CTR,XTS and (CBC/XTS)/CTS
---- SHA-1/SHA-256 and (SHA-1/SHA-256)/HMAC
--
--Required properties:
--
--- compatible : Should contain entry for slimSSS version:
--  - "samsung,exynos5433-slim-sss" for Exynos5433 SoC.
--- reg : Offset and length of the register set for the module
--- interrupts : interrupt specifiers of SlimSSS module interrupts (one feed
--		control interrupt).
--
--- clocks : list of clock phandle and specifier pairs for all clocks listed in
--		clock-names property.
--- clock-names : list of device clock input names; should contain "pclk" and
--		"aclk" for slim-sss in Exynos5433.
-diff --git a/Documentation/devicetree/bindings/crypto/samsung-slimsss.yaml b/Documentation/devicetree/bindings/crypto/samsung-slimsss.yaml
-new file mode 100644
-index 000000000000..04fe5dfa794a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/crypto/samsung-slimsss.yaml
-@@ -0,0 +1,47 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/crypto/samsung-slimsss.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung Exynos SoC SlimSSS (Slim Security SubSystem) module
-+
-+maintainers:
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-+  - Kamil Konieczny <k.konieczny@partner.samsung.com>
-+
-+description: |+
-+  The SlimSSS module in Exynos5433 SoC supports the following:
-+  -- Feeder (FeedCtrl)
-+  -- Advanced Encryption Standard (AES) with ECB,CBC,CTR,XTS and (CBC/XTS)/CTS
-+  -- SHA-1/SHA-256 and (SHA-1/SHA-256)/HMAC
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: samsung,exynos5433-slim-ss
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    minItems: 2
-+    maxItems: 2
-+
-+  clock-names:
-+    items:
-+      - const: pclk
-+      - const: aclk
-+
-+  interrupts:
-+    description: One feed control interrupt.
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clock-names
-+  - clocks
-+  - interrupts
-+
-+additionalProperties: false
-diff --git a/Documentation/devicetree/bindings/crypto/samsung-sss.txt b/Documentation/devicetree/bindings/crypto/samsung-sss.txt
-deleted file mode 100644
-index 7a5ca56683cc..000000000000
---- a/Documentation/devicetree/bindings/crypto/samsung-sss.txt
-+++ /dev/null
-@@ -1,32 +0,0 @@
--Samsung SoC SSS (Security SubSystem) module
--
--The SSS module in S5PV210 SoC supports the following:
---- Feeder (FeedCtrl)
---- Advanced Encryption Standard (AES)
---- Data Encryption Standard (DES)/3DES
---- Public Key Accelerator (PKA)
---- SHA-1/SHA-256/MD5/HMAC (SHA-1/SHA-256/MD5)/PRNG
---- PRNG: Pseudo Random Number Generator
--
--The SSS module in Exynos4 (Exynos4210) and
--Exynos5 (Exynos5420 and Exynos5250) SoCs
--supports the following also:
---- ARCFOUR (ARC4)
---- True Random Number Generator (TRNG)
---- Secure Key Manager
--
--Required properties:
--
--- compatible : Should contain entries for this and backward compatible
--  SSS versions:
--  - "samsung,s5pv210-secss" for S5PV210 SoC.
--  - "samsung,exynos4210-secss" for Exynos4210, Exynos4212, Exynos4412, Exynos5250,
--		Exynos5260 and Exynos5420 SoCs.
--- reg : Offset and length of the register set for the module
--- interrupts : interrupt specifiers of SSS module interrupts (one feed
--		control interrupt).
--
--- clocks : list of clock phandle and specifier pairs for all clocks  listed in
--		clock-names property.
--- clock-names : list of device clock input names; should contain one entry
--		"secss".
-diff --git a/Documentation/devicetree/bindings/crypto/samsung-sss.yaml b/Documentation/devicetree/bindings/crypto/samsung-sss.yaml
-new file mode 100644
-index 000000000000..cf1c47a81d7f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/crypto/samsung-sss.yaml
-@@ -0,0 +1,58 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/crypto/samsung-sss.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung Exynos SoC SSS (Security SubSystem) module
-+
-+maintainers:
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-+  - Kamil Konieczny <k.konieczny@partner.samsung.com>
-+
-+description: |+
-+  The SSS module in S5PV210 SoC supports the following:
-+  -- Feeder (FeedCtrl)
-+  -- Advanced Encryption Standard (AES)
-+  -- Data Encryption Standard (DES)/3DES
-+  -- Public Key Accelerator (PKA)
-+  -- SHA-1/SHA-256/MD5/HMAC (SHA-1/SHA-256/MD5)/PRNG
-+  -- PRNG: Pseudo Random Number Generator
-+
-+  The SSS module in Exynos4 (Exynos4210) and Exynos5 (Exynos5420 and Exynos5250)
-+  SoCs supports the following also:
-+  -- ARCFOUR (ARC4)
-+  -- True Random Number Generator (TRNG)
-+  -- Secure Key Manager
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - samsung,s5pv210-secss           # for S5PV210
-+          - samsung,exynos4210-secss        # for Exynos4210, Exynos4212,
-+                                            # Exynos4412, Exynos5250,
-+                                            # Exynos5260 and Exynos5420
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: secss
-+
-+  interrupts:
-+    description: One feed control interrupt.
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clock-names
-+  - clocks
-+  - interrupts
-+
-+additionalProperties: false
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ee4e873c0f9a..331c40ae6a01 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14256,8 +14256,8 @@ M:	Kamil Konieczny <k.konieczny@partner.samsung.com>
- L:	linux-crypto@vger.kernel.org
- L:	linux-samsung-soc@vger.kernel.org
- S:	Maintained
--F:	Documentation/devicetree/bindings/crypto/samsung-slimsss.txt
--F:	Documentation/devicetree/bindings/crypto/samsung-sss.txt
-+F:	Documentation/devicetree/bindings/crypto/samsung-slimsss.yaml
-+F:	Documentation/devicetree/bindings/crypto/samsung-sss.yaml
- F:	drivers/crypto/s5p-sss.c
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 784818490376..d122fb52d3d4 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -265,7 +265,7 @@
+ 					(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+ 		};
  
- SAMSUNG S5P/EXYNOS4 SOC SERIES CAMERA SUBSYSTEM DRIVERS
+-		mct@10050000 {
++		timer@10050000 {
+ 			compatible = "samsung,exynos4210-mct";
+ 			reg = <0x10050000 0x800>;
+ 			interrupts = <GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH>,
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index f220716239db..6d3f19562aab 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -106,7 +106,7 @@
+ 			arm,data-latency = <2 2 1>;
+ 		};
+ 
+-		mct: mct@10050000 {
++		mct: timer@10050000 {
+ 			compatible = "samsung,exynos4210-mct";
+ 			reg = <0x10050000 0x800>;
+ 			interrupt-parent = <&mct_map>;
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index d20db2dfe8e2..8b6d5875c75d 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -243,7 +243,7 @@
+ 			clock-names = "aclk200", "aclk400_mcuisp";
+ 		};
+ 
+-		mct@10050000 {
++		timer@10050000 {
+ 			compatible = "samsung,exynos4412-mct";
+ 			reg = <0x10050000 0x800>;
+ 			interrupt-parent = <&mct_map>;
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index fc966c10cf49..7a01349317a3 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -233,7 +233,7 @@
+ 			power-domains = <&pd_mau>;
+ 		};
+ 
+-		mct@101c0000 {
++		timer@101c0000 {
+ 			compatible = "samsung,exynos4210-mct";
+ 			reg = <0x101C0000 0x800>;
+ 			interrupt-controller;
+diff --git a/arch/arm/boot/dts/exynos5260.dtsi b/arch/arm/boot/dts/exynos5260.dtsi
+index 3581b57fbbf7..b0811dbbb362 100644
+--- a/arch/arm/boot/dts/exynos5260.dtsi
++++ b/arch/arm/boot/dts/exynos5260.dtsi
+@@ -180,7 +180,7 @@
+ 			reg = <0x10000000 0x100>;
+ 		};
+ 
+-		mct: mct@100b0000 {
++		mct: timer@100b0000 {
+ 			compatible = "samsung,exynos4210-mct";
+ 			reg = <0x100B0000 0x1000>;
+ 			clocks = <&fin_pll>, <&clock_peri PERI_CLK_MCT>;
+diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
+index 9c3b63b7cac6..247d23872384 100644
+--- a/arch/arm/boot/dts/exynos54xx.dtsi
++++ b/arch/arm/boot/dts/exynos54xx.dtsi
+@@ -64,7 +64,7 @@
+ 			};
+ 		};
+ 
+-		mct: mct@101c0000 {
++		mct: timer@101c0000 {
+ 			compatible = "samsung,exynos4210-mct";
+ 			reg = <0x101c0000 0xb00>;
+ 			interrupt-parent = <&mct_map>;
 -- 
 2.17.1
