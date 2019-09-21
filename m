@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFT v3 5/8] ARM: dts: exynos: Remove MCT subnode for interrupt map on Exynos4412
-Date: Sat, 21 Sep 2019 19:01:49 +0200
-Message-ID: <20190921170152.5033-5-krzk@kernel.org>
+Subject: [RFT v3 4/8] ARM: dts: exynos: Remove MCT subnode for interrupt map on Exynos4210
+Date: Sat, 21 Sep 2019 19:01:48 +0200
+Message-ID: <20190921170152.5033-4-krzk@kernel.org>
 References: <20190921170152.5033-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190921170152.5033-1-krzk@kernel.org>
@@ -15,27 +15,25 @@ GIC and combiner.  This was modeled with a interrupt-map within a
 subnode but can be expressed in an easier and more common way, directly
 in the node itself.
 
-Tested on Odroid U3 (Exynos4412).
-
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/boot/dts/exynos4412.dtsi | 18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index 8b6d5875c75d..7e2dabefd53f 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -243,25 +243,21 @@
- 			clock-names = "aclk200", "aclk400_mcuisp";
- 		};
- 
--		timer@10050000 {
-+		mct: timer@10050000 {
- 			compatible = "samsung,exynos4412-mct";
+---
+
+Not tested.
+---
+ arch/arm/boot/dts/exynos4210.dtsi | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index 6d3f19562aab..38c49ab8c733 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -109,23 +109,19 @@
+ 		mct: timer@10050000 {
+ 			compatible = "samsung,exynos4210-mct";
  			reg = <0x10050000 0x800>;
 -			interrupt-parent = <&mct_map>;
--			interrupts = <0>, <1>, <2>, <3>, <4>;
+-			interrupts = <0>, <1>, <2>, <3>, <4>, <5>;
  			clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
  			clock-names = "fin_pll", "mct";
 -
@@ -49,12 +47,13 @@ index 8b6d5875c75d..7e2dabefd53f 100644
 +			#size-cells = <0>;
 +			#interrupt-cells = <1>;
 +			interrupt-parent = <&mct>;
-+			interrupts = <0>, <1>, <2>, <3>, <4>;
++			interrupts = <0>, <1>, <2>, <3>, <4>, <5>;
 +			interrupt-map = <0 &gic 0 57 IRQ_TYPE_LEVEL_HIGH>,
- 					<1 &combiner 12 5>,
+ 					<1 &gic 0 69 IRQ_TYPE_LEVEL_HIGH>,
  					<2 &combiner 12 6>,
  					<3 &combiner 12 7>,
- 					<4 &gic 1 12 IRQ_TYPE_LEVEL_HIGH>;
+ 					<4 &gic 0 42 IRQ_TYPE_LEVEL_HIGH>,
+ 					<5 &gic 0 48 IRQ_TYPE_LEVEL_HIGH>;
 -			};
  		};
  
