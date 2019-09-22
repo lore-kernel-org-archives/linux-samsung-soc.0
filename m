@@ -1,13 +1,13 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.3 122/203] PM / devfreq: exynos-bus: Correct clock enable sequence
-Date: Sun, 22 Sep 2019 14:42:28 -0400
-Message-ID: <20190922184350.30563-122-sashal@kernel.org>
-References: <20190922184350.30563-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 111/185] PM / devfreq: exynos-bus: Correct clock enable sequence
+Date: Sun, 22 Sep 2019 14:48:09 -0400
+Message-ID: <20190922184924.32534-111-sashal@kernel.org>
+References: <20190922184924.32534-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190922184350.30563-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190922184924.32534-1-sashal@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Kamil Konieczny <k.konieczny@partner.samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
