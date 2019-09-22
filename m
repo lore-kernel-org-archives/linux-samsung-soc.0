@@ -1,12 +1,12 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 53/89] PM / devfreq: exynos-bus: Correct clock enable sequence
-Date: Sun, 22 Sep 2019 14:56:41 -0400
-Message-ID: <20190922185717.3412-53-sashal@kernel.org>
-References: <20190922185717.3412-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 076/128] PM / devfreq: exynos-bus: Correct clock enable sequence
+Date: Sun, 22 Sep 2019 14:53:26 -0400
+Message-ID: <20190922185418.2158-76-sashal@kernel.org>
+References: <20190922185418.2158-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190922185717.3412-1-sashal@kernel.org>
+In-Reply-To: <20190922185418.2158-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Kamil Konieczny <k.konieczny@partner.samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
@@ -31,7 +31,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 17 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-index 49f68929e024f..25ff31eb1044c 100644
+index c25658b265988..24a9658348d78 100644
 --- a/drivers/devfreq/exynos-bus.c
 +++ b/drivers/devfreq/exynos-bus.c
 @@ -194,11 +194,10 @@ static void exynos_bus_exit(struct device *dev)
@@ -95,7 +95,7 @@ index 49f68929e024f..25ff31eb1044c 100644
  
  	/* Initialize the struct profile and governor data for parent device */
  	profile->polling_ms = 50;
-@@ -509,6 +509,9 @@ static int exynos_bus_probe(struct platform_device *pdev)
+@@ -510,6 +510,9 @@ static int exynos_bus_probe(struct platform_device *pdev)
  err:
  	dev_pm_opp_of_remove_table(dev);
  	clk_disable_unprepare(bus->clk);
