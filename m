@@ -1,107 +1,109 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 8/8] ARM: dts: exynos: Use defines for MCT interrupt GIC SPI/PPI specifier
-Date: Sat, 21 Sep 2019 19:01:52 +0200
-Message-ID: <20190921170152.5033-8-krzk@kernel.org>
-References: <20190921170152.5033-1-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190921170152.5033-1-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <snawrocki@kernel.org>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.3 122/203] PM / devfreq: exynos-bus: Correct clock enable sequence
+Date: Sun, 22 Sep 2019 14:42:28 -0400
+Message-ID: <20190922184350.30563-122-sashal@kernel.org>
+References: <20190922184350.30563-1-sashal@kernel.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190922184350.30563-1-sashal@kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Kamil Konieczny <k.konieczny@partner.samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Replace hard-coded number with appropriate define for GIC SPI or PPI
-specifier in interrupt.  This makes code easier to read.  No expected
-functionality change.
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+[ Upstream commit 2c2b20e0da89c76759ee28c6824413ab2fa3bfc6 ]
+
+Regulators should be enabled before clocks to avoid h/w hang. This
+require change in exynos_bus_probe() to move exynos_bus_parse_of()
+after exynos_bus_parent_parse_of() and change in error handling.
+Similar change is needed in exynos_bus_exit() where clock should be
+disabled before regulators.
+
+Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/exynos4210.dtsi |  8 ++++----
- arch/arm/boot/dts/exynos4412.dtsi |  4 ++--
- arch/arm/boot/dts/exynos5250.dtsi |  4 ++--
- arch/arm/boot/dts/exynos54xx.dtsi | 16 ++++++++--------
- 4 files changed, 16 insertions(+), 16 deletions(-)
+ drivers/devfreq/exynos-bus.c | 31 +++++++++++++++++--------------
+ 1 file changed, 17 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index 38c49ab8c733..650bee6355e4 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -116,12 +116,12 @@
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&mct>;
- 			interrupts = <0>, <1>, <2>, <3>, <4>, <5>;
--			interrupt-map = <0 &gic 0 57 IRQ_TYPE_LEVEL_HIGH>,
--					<1 &gic 0 69 IRQ_TYPE_LEVEL_HIGH>,
-+			interrupt-map = <0 &gic GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-+					<1 &gic GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
- 					<2 &combiner 12 6>,
- 					<3 &combiner 12 7>,
--					<4 &gic 0 42 IRQ_TYPE_LEVEL_HIGH>,
--					<5 &gic 0 48 IRQ_TYPE_LEVEL_HIGH>;
-+					<4 &gic GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
-+					<5 &gic GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
- 		};
+diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+index d9f377912c104..7c06df8bd74fe 100644
+--- a/drivers/devfreq/exynos-bus.c
++++ b/drivers/devfreq/exynos-bus.c
+@@ -191,11 +191,10 @@ static void exynos_bus_exit(struct device *dev)
+ 	if (ret < 0)
+ 		dev_warn(dev, "failed to disable the devfreq-event devices\n");
  
- 		watchdog: watchdog@10060000 {
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index 7e2dabefd53f..0810c14bf424 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -253,11 +253,11 @@
- 			#interrupt-cells = <1>;
- 			interrupt-parent = <&mct>;
- 			interrupts = <0>, <1>, <2>, <3>, <4>;
--			interrupt-map = <0 &gic 0 57 IRQ_TYPE_LEVEL_HIGH>,
-+			interrupt-map = <0 &gic GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
- 					<1 &combiner 12 5>,
- 					<2 &combiner 12 6>,
- 					<3 &combiner 12 7>,
--					<4 &gic 1 12 IRQ_TYPE_LEVEL_HIGH>;
-+					<4 &gic GIC_PPI 12 IRQ_TYPE_LEVEL_HIGH>;
- 		};
+-	if (bus->regulator)
+-		regulator_disable(bus->regulator);
+-
+ 	dev_pm_opp_of_remove_table(dev);
+ 	clk_disable_unprepare(bus->clk);
++	if (bus->regulator)
++		regulator_disable(bus->regulator);
+ }
  
- 		watchdog: watchdog@10060000 {
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index e0fcf3c2f537..61f22feefda9 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -247,8 +247,8 @@
- 					<1 &combiner 23 4>,
- 					<2 &combiner 25 2>,
- 					<3 &combiner 25 3>,
--					<4 &gic 0 120 IRQ_TYPE_LEVEL_HIGH>,
--					<5 &gic 0 121 IRQ_TYPE_LEVEL_HIGH>;
-+					<4 &gic GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
-+					<5 &gic GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
- 		};
+ /*
+@@ -383,6 +382,7 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ 	struct exynos_bus *bus;
+ 	int ret, max_state;
+ 	unsigned long min_freq, max_freq;
++	bool passive = false;
  
- 		pinctrl_0: pinctrl@11400000 {
-diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
-index a1c10a9a86f8..f52c7ce5d320 100644
---- a/arch/arm/boot/dts/exynos54xx.dtsi
-+++ b/arch/arm/boot/dts/exynos54xx.dtsi
-@@ -77,14 +77,14 @@
- 					<1 &combiner 23 4>,
- 					<2 &combiner 25 2>,
- 					<3 &combiner 25 3>,
--					<4 &gic 0 120 IRQ_TYPE_LEVEL_HIGH>,
--					<5 &gic 0 121 IRQ_TYPE_LEVEL_HIGH>,
--					<6 &gic 0 122 IRQ_TYPE_LEVEL_HIGH>,
--					<7 &gic 0 123 IRQ_TYPE_LEVEL_HIGH>,
--					<8 &gic 0 128 IRQ_TYPE_LEVEL_HIGH>,
--					<9 &gic 0 129 IRQ_TYPE_LEVEL_HIGH>,
--					<10 &gic 0 130 IRQ_TYPE_LEVEL_HIGH>,
--					<11 &gic 0 131 IRQ_TYPE_LEVEL_HIGH>;
-+					<4 &gic GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
-+					<5 &gic GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
-+					<6 &gic GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
-+					<7 &gic GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-+					<8 &gic GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
-+					<9 &gic GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>,
-+					<10 &gic GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>,
-+					<11 &gic GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>;
- 		};
+ 	if (!np) {
+ 		dev_err(dev, "failed to find devicetree node\n");
+@@ -396,27 +396,27 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ 	bus->dev = &pdev->dev;
+ 	platform_set_drvdata(pdev, bus);
  
- 		watchdog: watchdog@101d0000 {
+-	/* Parse the device-tree to get the resource information */
+-	ret = exynos_bus_parse_of(np, bus);
+-	if (ret < 0)
+-		return ret;
+-
+ 	profile = devm_kzalloc(dev, sizeof(*profile), GFP_KERNEL);
+-	if (!profile) {
+-		ret = -ENOMEM;
+-		goto err;
+-	}
++	if (!profile)
++		return -ENOMEM;
+ 
+ 	node = of_parse_phandle(dev->of_node, "devfreq", 0);
+ 	if (node) {
+ 		of_node_put(node);
+-		goto passive;
++		passive = true;
+ 	} else {
+ 		ret = exynos_bus_parent_parse_of(np, bus);
++		if (ret < 0)
++			return ret;
+ 	}
+ 
++	/* Parse the device-tree to get the resource information */
++	ret = exynos_bus_parse_of(np, bus);
+ 	if (ret < 0)
+-		goto err;
++		goto err_reg;
++
++	if (passive)
++		goto passive;
+ 
+ 	/* Initialize the struct profile and governor data for parent device */
+ 	profile->polling_ms = 50;
+@@ -507,6 +507,9 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ err:
+ 	dev_pm_opp_of_remove_table(dev);
+ 	clk_disable_unprepare(bus->clk);
++err_reg:
++	if (!passive)
++		regulator_disable(bus->regulator);
+ 
+ 	return ret;
+ }
 -- 
-2.17.1
+2.20.1
