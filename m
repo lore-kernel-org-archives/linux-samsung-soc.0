@@ -1,13 +1,13 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 32/60] PM / devfreq: exynos-bus: Correct clock enable sequence
-Date: Sun, 22 Sep 2019 14:59:05 -0400
-Message-ID: <20190922185934.4305-32-sashal@kernel.org>
-References: <20190922185934.4305-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 53/89] PM / devfreq: exynos-bus: Correct clock enable sequence
+Date: Sun, 22 Sep 2019 14:56:41 -0400
+Message-ID: <20190922185717.3412-53-sashal@kernel.org>
+References: <20190922185717.3412-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20190922185934.4305-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190922185717.3412-1-sashal@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Kamil Konieczny <k.konieczny@partner.samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -31,10 +31,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 17 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-index 1b21bb60e7975..2c8f41fbe94fb 100644
+index 49f68929e024f..25ff31eb1044c 100644
 --- a/drivers/devfreq/exynos-bus.c
 +++ b/drivers/devfreq/exynos-bus.c
-@@ -198,11 +198,10 @@ static void exynos_bus_exit(struct device *dev)
+@@ -194,11 +194,10 @@ static void exynos_bus_exit(struct device *dev)
  	if (ret < 0)
  		dev_warn(dev, "failed to disable the devfreq-event devices\n");
  
@@ -48,7 +48,7 @@ index 1b21bb60e7975..2c8f41fbe94fb 100644
  }
  
  /*
-@@ -391,6 +390,7 @@ static int exynos_bus_probe(struct platform_device *pdev)
+@@ -386,6 +385,7 @@ static int exynos_bus_probe(struct platform_device *pdev)
  	struct exynos_bus *bus;
  	int ret, max_state;
  	unsigned long min_freq, max_freq;
@@ -56,7 +56,7 @@ index 1b21bb60e7975..2c8f41fbe94fb 100644
  
  	if (!np) {
  		dev_err(dev, "failed to find devicetree node\n");
-@@ -404,27 +404,27 @@ static int exynos_bus_probe(struct platform_device *pdev)
+@@ -399,27 +399,27 @@ static int exynos_bus_probe(struct platform_device *pdev)
  	bus->dev = &pdev->dev;
  	platform_set_drvdata(pdev, bus);
  
@@ -95,7 +95,7 @@ index 1b21bb60e7975..2c8f41fbe94fb 100644
  
  	/* Initialize the struct profile and governor data for parent device */
  	profile->polling_ms = 50;
-@@ -514,6 +514,9 @@ static int exynos_bus_probe(struct platform_device *pdev)
+@@ -509,6 +509,9 @@ static int exynos_bus_probe(struct platform_device *pdev)
  err:
  	dev_pm_opp_of_remove_table(dev);
  	clk_disable_unprepare(bus->clk);
