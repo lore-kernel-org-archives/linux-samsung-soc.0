@@ -1,16 +1,17 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 04/10] ASoC: wm8994: Add support for MCLKn clock gating
-Date: Mon, 23 Sep 2019 11:09:24 +0200
-Message-ID: <20190923090924.GB4577@pi3>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2 03/10] ASoC: wm8994: Add support for setting MCLK
+ clock rate
+Date: Mon, 23 Sep 2019 11:10:48 +0200
+Message-ID: <7334ce45-f192-4421-aa3d-d142582153ef@samsung.com>
 References: <20190920130218.32690-1-s.nawrocki@samsung.com>
- <CGME20190920130317eucas1p188d724710077d704f768798c6555c741@eucas1p1.samsung.com>
- <20190920130218.32690-5-s.nawrocki@samsung.com>
+ <CGME20190920130316eucas1p2de713006a13c62c0b895c2e33e0d14c7@eucas1p2.samsung.com>
+ <20190920130218.32690-4-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20190920130218.32690-5-s.nawrocki@samsung.com>
+In-Reply-To: <20190920130218.32690-4-s.nawrocki@samsung.com>
+Content-Language: en-GB
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -20,26 +21,27 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, ckeepax@opensource.cirrus.com, b.zolnierkie@samsung.com, sbkim73@samsung.com, patches@opensource.cirrus.com, lgirdwood@gmail.com, robh+dt@kernel.org, broonie@kernel.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+To: krzk@kernel.org, ckeepax@opensource.cirrus.com
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, patches@opensource.cirrus.com, lgirdwood@gmail.com, robh+dt@kernel.org, broonie@kernel.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 03:02:13PM +0200, Sylwester Nawrocki wrote:
-> As an intermediate step before covering the clocking subsystem
-> of the CODEC entirely by the clk API add handling of external CODEC's
-> master clocks in DAPM events when the AIFn clocks are sourced directly
-> from MCLKn; when FLLn are used we enable/disable respective MCLKn
-> before/after FLLn is enabled/disabled.
+On 9/20/19 15:02, Sylwester Nawrocki wrote:
+> Extend the set_sysclk() handler so we also set frequency of the MCLK1,
+> MCLK2 clocks through clk API when those clocks are specified in DT.
 > 
+> Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Sorry, I squashed other patch to this one but forgot to remove above tags, 
+not sure if those still stand as there was rather significant change in 
+the patch. 
+
 > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
 > Changes since v1:
->  - addressed review comments from Charles
+>  - getting of clocks moved from MFD to the CODEC's driver probe()
 > ---
->  sound/soc/codecs/wm8994.c | 108 ++++++++++++++++++++++++++++++++++++--
->  1 file changed, 104 insertions(+), 4 deletions(-)
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
+-- 
+Regards,
+Sylwester
