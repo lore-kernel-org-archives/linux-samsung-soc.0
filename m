@@ -1,7 +1,7 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v4 7/8] ARM: dts: exynos: Remove MCT subnode for interrupt map on Exynos54xx
-Date: Mon, 23 Sep 2019 18:14:10 +0200
-Message-ID: <20190923161411.9236-7-krzk@kernel.org>
+Subject: [PATCH v4 8/8] ARM: dts: exynos: Use defines for MCT interrupt GIC SPI/PPI specifier
+Date: Mon, 23 Sep 2019 18:14:11 +0200
+Message-ID: <20190923161411.9236-8-krzk@kernel.org>
 References: <20190923161411.9236-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20190923161411.9236-1-krzk@kernel.org>
@@ -10,65 +10,96 @@ To: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix
 Cc: Sylwester Nawrocki <snawrocki@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Multi Core Timer node has interrupts routed to two different parents -
-GIC and combiner.  This was modeled with a interrupt-map within a
-subnode but can be expressed in an easier and more common way, directly
-in the node itself.
-
-Tested on Odroid XU (Exynos5410), Odroid HC1 (Exynos5422) and Arndale
-Octa (Exynos5420).
+Replace hard-coded number with appropriate define for GIC SPI or PPI
+specifier in interrupt.  This makes code easier to read.  No expected
+functionality change.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-
 ---
+ arch/arm/boot/dts/exynos4210.dtsi |  8 ++++----
+ arch/arm/boot/dts/exynos4412.dtsi |  4 ++--
+ arch/arm/boot/dts/exynos5250.dtsi |  4 ++--
+ arch/arm/boot/dts/exynos54xx.dtsi | 16 ++++++++--------
+ 4 files changed, 16 insertions(+), 16 deletions(-)
 
-Changes since v3:
-1. Use interrupts-extended instead of interrupts-map.
----
- arch/arm/boot/dts/exynos54xx.dtsi | 33 +++++++++++--------------------
- 1 file changed, 12 insertions(+), 21 deletions(-)
-
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index 5fa33d43821e..aac3b7a20a37 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -111,12 +111,12 @@
+ 			reg = <0x10050000 0x800>;
+ 			clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
+ 			clock-names = "fin_pll", "mct";
+-			interrupts-extended = <&gic 0 57 IRQ_TYPE_LEVEL_HIGH>,
+-					      <&gic 0 69 IRQ_TYPE_LEVEL_HIGH>,
++			interrupts-extended = <&gic GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
++					      <&gic GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
+ 					      <&combiner 12 6>,
+ 					      <&combiner 12 7>,
+-					      <&gic 0 42 IRQ_TYPE_LEVEL_HIGH>,
+-					      <&gic 0 48 IRQ_TYPE_LEVEL_HIGH>;
++					      <&gic GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
++					      <&gic GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
+ 		watchdog: watchdog@10060000 {
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index 9b5fb4e54d7c..96a5ef3a2864 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -248,11 +248,11 @@
+ 			reg = <0x10050000 0x800>;
+ 			clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
+ 			clock-names = "fin_pll", "mct";
+-			interrupts-extended = <&gic 0 57 IRQ_TYPE_LEVEL_HIGH>,
++			interrupts-extended = <&gic GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
+ 					      <&combiner 12 5>,
+ 					      <&combiner 12 6>,
+ 					      <&combiner 12 7>,
+-					      <&gic 1 12 IRQ_TYPE_LEVEL_HIGH>;
++					      <&gic GIC_PPI 12 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
+ 		watchdog: watchdog@10060000 {
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index a549eafd2c64..f01e3156191d 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -242,8 +242,8 @@
+ 					      <&combiner 23 4>,
+ 					      <&combiner 25 2>,
+ 					      <&combiner 25 3>,
+-					      <&gic 0 120 IRQ_TYPE_LEVEL_HIGH>,
+-					      <&gic 0 121 IRQ_TYPE_LEVEL_HIGH>;
++					      <&gic GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
++					      <&gic GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
+ 		pinctrl_0: pinctrl@11400000 {
 diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
-index 247d23872384..aca1b4831e38 100644
+index aca1b4831e38..06ae40a2f1e9 100644
 --- a/arch/arm/boot/dts/exynos54xx.dtsi
 +++ b/arch/arm/boot/dts/exynos54xx.dtsi
-@@ -67,27 +67,18 @@
- 		mct: timer@101c0000 {
- 			compatible = "samsung,exynos4210-mct";
- 			reg = <0x101c0000 0xb00>;
--			interrupt-parent = <&mct_map>;
--			interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>,
--					<8>, <9>, <10>, <11>;
--
--			mct_map: mct-map {
--				#interrupt-cells = <1>;
--				#address-cells = <0>;
--				#size-cells = <0>;
--				interrupt-map = <0 &combiner 23 3>,
--						<1 &combiner 23 4>,
--						<2 &combiner 25 2>,
--						<3 &combiner 25 3>,
--						<4 &gic 0 120 IRQ_TYPE_LEVEL_HIGH>,
--						<5 &gic 0 121 IRQ_TYPE_LEVEL_HIGH>,
--						<6 &gic 0 122 IRQ_TYPE_LEVEL_HIGH>,
--						<7 &gic 0 123 IRQ_TYPE_LEVEL_HIGH>,
--						<8 &gic 0 128 IRQ_TYPE_LEVEL_HIGH>,
--						<9 &gic 0 129 IRQ_TYPE_LEVEL_HIGH>,
--						<10 &gic 0 130 IRQ_TYPE_LEVEL_HIGH>,
--						<11 &gic 0 131 IRQ_TYPE_LEVEL_HIGH>;
--			};
-+			interrupts-extended = <&combiner 23 3>,
-+					      <&combiner 23 4>,
-+					      <&combiner 25 2>,
-+					      <&combiner 25 3>,
-+					      <&gic 0 120 IRQ_TYPE_LEVEL_HIGH>,
-+					      <&gic 0 121 IRQ_TYPE_LEVEL_HIGH>,
-+					      <&gic 0 122 IRQ_TYPE_LEVEL_HIGH>,
-+					      <&gic 0 123 IRQ_TYPE_LEVEL_HIGH>,
-+					      <&gic 0 128 IRQ_TYPE_LEVEL_HIGH>,
-+					      <&gic 0 129 IRQ_TYPE_LEVEL_HIGH>,
-+					      <&gic 0 130 IRQ_TYPE_LEVEL_HIGH>,
-+					      <&gic 0 131 IRQ_TYPE_LEVEL_HIGH>;
+@@ -71,14 +71,14 @@
+ 					      <&combiner 23 4>,
+ 					      <&combiner 25 2>,
+ 					      <&combiner 25 3>,
+-					      <&gic 0 120 IRQ_TYPE_LEVEL_HIGH>,
+-					      <&gic 0 121 IRQ_TYPE_LEVEL_HIGH>,
+-					      <&gic 0 122 IRQ_TYPE_LEVEL_HIGH>,
+-					      <&gic 0 123 IRQ_TYPE_LEVEL_HIGH>,
+-					      <&gic 0 128 IRQ_TYPE_LEVEL_HIGH>,
+-					      <&gic 0 129 IRQ_TYPE_LEVEL_HIGH>,
+-					      <&gic 0 130 IRQ_TYPE_LEVEL_HIGH>,
+-					      <&gic 0 131 IRQ_TYPE_LEVEL_HIGH>;
++					      <&gic GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
++					      <&gic GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
++					      <&gic GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
++					      <&gic GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
++					      <&gic GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
++					      <&gic GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>,
++					      <&gic GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>,
++					      <&gic GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>;
  		};
  
  		watchdog: watchdog@101d0000 {
