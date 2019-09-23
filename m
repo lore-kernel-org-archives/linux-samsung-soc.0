@@ -1,109 +1,79 @@
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 076/128] PM / devfreq: exynos-bus: Correct clock enable sequence
-Date: Sun, 22 Sep 2019 14:53:26 -0400
-Message-ID: <20190922185418.2158-76-sashal@kernel.org>
-References: <20190922185418.2158-1-sashal@kernel.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [RFT v3 4/8] ARM: dts: exynos: Remove MCT subnode for interrupt
+ map on Exynos4210
+Date: Mon, 23 Sep 2019 08:56:46 +0200
+Message-ID: <c1d02aa3-b5f2-1c5b-0b7b-8749e7c0ce9a@samsung.com>
+References: <20190921170152.5033-1-krzk@kernel.org>
+        <CGME20190921203810epcas3p39f3d9e3224d2c5ef61c1e18df2ab403d@epcas3p3.samsung.com>
+        <20190921170152.5033-4-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190922185418.2158-1-sashal@kernel.org>
+In-Reply-To: <20190921170152.5033-4-krzk@kernel.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Kamil Konieczny <k.konieczny@partner.samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <snawrocki@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Hi Krzysztof,
 
-[ Upstream commit 2c2b20e0da89c76759ee28c6824413ab2fa3bfc6 ]
+On 21.09.2019 19:01, Krzysztof Kozlowski wrote:
+> Multi Core Timer node has interrupts routed to two different parents -
+> GIC and combiner.  This was modeled with a interrupt-map within a
+> subnode but can be expressed in an easier and more common way, directly
+> in the node itself.
 
-Regulators should be enabled before clocks to avoid h/w hang. This
-require change in exynos_bus_probe() to move exynos_bus_parse_of()
-after exynos_bus_parent_parse_of() and change in error handling.
-Similar change is needed in exynos_bus_exit() where clock should be
-disabled before regulators.
+Maybe we should simply use 'interrupts-extended' based approach and 
+simplify mct node even more (get rid of interrupt-parent, interrupts, 
+size/address cells)?
 
-Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/devfreq/exynos-bus.c | 31 +++++++++++++++++--------------
- 1 file changed, 17 insertions(+), 14 deletions(-)
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>
+> ---
+>
+> Not tested.
+> ---
+>   arch/arm/boot/dts/exynos4210.dtsi | 16 ++++++----------
+>   1 file changed, 6 insertions(+), 10 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+> index 6d3f19562aab..38c49ab8c733 100644
+> --- a/arch/arm/boot/dts/exynos4210.dtsi
+> +++ b/arch/arm/boot/dts/exynos4210.dtsi
+> @@ -109,23 +109,19 @@
+>   		mct: timer@10050000 {
+>   			compatible = "samsung,exynos4210-mct";
+>   			reg = <0x10050000 0x800>;
+> -			interrupt-parent = <&mct_map>;
+> -			interrupts = <0>, <1>, <2>, <3>, <4>, <5>;
+>   			clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
+>   			clock-names = "fin_pll", "mct";
+> -
+> -			mct_map: mct-map {
+> -				#interrupt-cells = <1>;
+> -				#address-cells = <0>;
+> -				#size-cells = <0>;
+> -				interrupt-map =
+> -					<0 &gic 0 57 IRQ_TYPE_LEVEL_HIGH>,
+> +			#address-cells = <0>;
+> +			#size-cells = <0>;
+> +			#interrupt-cells = <1>;
+> +			interrupt-parent = <&mct>;
+> +			interrupts = <0>, <1>, <2>, <3>, <4>, <5>;
+> +			interrupt-map = <0 &gic 0 57 IRQ_TYPE_LEVEL_HIGH>,
+>   					<1 &gic 0 69 IRQ_TYPE_LEVEL_HIGH>,
+>   					<2 &combiner 12 6>,
+>   					<3 &combiner 12 7>,
+>   					<4 &gic 0 42 IRQ_TYPE_LEVEL_HIGH>,
+>   					<5 &gic 0 48 IRQ_TYPE_LEVEL_HIGH>;
+> -			};
+>   		};
+>   
+>   		watchdog: watchdog@10060000 {
 
-diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-index c25658b265988..24a9658348d78 100644
---- a/drivers/devfreq/exynos-bus.c
-+++ b/drivers/devfreq/exynos-bus.c
-@@ -194,11 +194,10 @@ static void exynos_bus_exit(struct device *dev)
- 	if (ret < 0)
- 		dev_warn(dev, "failed to disable the devfreq-event devices\n");
- 
--	if (bus->regulator)
--		regulator_disable(bus->regulator);
--
- 	dev_pm_opp_of_remove_table(dev);
- 	clk_disable_unprepare(bus->clk);
-+	if (bus->regulator)
-+		regulator_disable(bus->regulator);
- }
- 
- /*
-@@ -386,6 +385,7 @@ static int exynos_bus_probe(struct platform_device *pdev)
- 	struct exynos_bus *bus;
- 	int ret, max_state;
- 	unsigned long min_freq, max_freq;
-+	bool passive = false;
- 
- 	if (!np) {
- 		dev_err(dev, "failed to find devicetree node\n");
-@@ -399,27 +399,27 @@ static int exynos_bus_probe(struct platform_device *pdev)
- 	bus->dev = &pdev->dev;
- 	platform_set_drvdata(pdev, bus);
- 
--	/* Parse the device-tree to get the resource information */
--	ret = exynos_bus_parse_of(np, bus);
--	if (ret < 0)
--		return ret;
--
- 	profile = devm_kzalloc(dev, sizeof(*profile), GFP_KERNEL);
--	if (!profile) {
--		ret = -ENOMEM;
--		goto err;
--	}
-+	if (!profile)
-+		return -ENOMEM;
- 
- 	node = of_parse_phandle(dev->of_node, "devfreq", 0);
- 	if (node) {
- 		of_node_put(node);
--		goto passive;
-+		passive = true;
- 	} else {
- 		ret = exynos_bus_parent_parse_of(np, bus);
-+		if (ret < 0)
-+			return ret;
- 	}
- 
-+	/* Parse the device-tree to get the resource information */
-+	ret = exynos_bus_parse_of(np, bus);
- 	if (ret < 0)
--		goto err;
-+		goto err_reg;
-+
-+	if (passive)
-+		goto passive;
- 
- 	/* Initialize the struct profile and governor data for parent device */
- 	profile->polling_ms = 50;
-@@ -510,6 +510,9 @@ static int exynos_bus_probe(struct platform_device *pdev)
- err:
- 	dev_pm_opp_of_remove_table(dev);
- 	clk_disable_unprepare(bus->clk);
-+err_reg:
-+	if (!passive)
-+		regulator_disable(bus->regulator);
- 
- 	return ret;
- }
+Best regards
 -- 
-2.20.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
