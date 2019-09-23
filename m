@@ -1,8 +1,8 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Subject: Re: [PATCH v2 03/10] ASoC: wm8994: Add support for setting MCLK
  clock rate
-Date: Mon, 23 Sep 2019 09:25:17 +0000
-Message-ID: <20190923092517.GO10204@ediswmail.ad.cirrus.com>
+Date: Mon, 23 Sep 2019 12:09:57 +0200
+Message-ID: <20190923100957.GA4723@pi3>
 References: <20190920130218.32690-1-s.nawrocki@samsung.com>
  <CGME20190920130316eucas1p2de713006a13c62c0b895c2e33e0d14c7@eucas1p2.samsung.com>
  <20190920130218.32690-4-s.nawrocki@samsung.com>
@@ -23,7 +23,7 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sbkim73@samsung.com, patches@opensource.cirrus.com, broonie@kernel.org, lgirdwood@gmail.com, krzk@kernel.org, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, ckeepax@opensource.cirrus.com, b.zolnierkie@samsung.com, sbkim73@samsung.com, patches@opensource.cirrus.com, lgirdwood@gmail.com, robh+dt@kernel.org, broonie@kernel.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
 On Mon, Sep 23, 2019 at 11:10:48AM +0200, Sylwester Nawrocki wrote:
@@ -37,9 +37,10 @@ On Mon, Sep 23, 2019 at 11:10:48AM +0200, Sylwester Nawrocki wrote:
 > Sorry, I squashed other patch to this one but forgot to remove above tags, 
 > not sure if those still stand as there was rather significant change in 
 > the patch. 
-> 
 
-I am happy with my tag being there.
+It's good. For the record:
 
-Thanks,
-Charles
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Best regards,
+Krzysztof
