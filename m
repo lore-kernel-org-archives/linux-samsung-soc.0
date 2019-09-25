@@ -1,40 +1,44 @@
 From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH 1/3] ARM: dts: exynos: Add interrupt to DMC controller in
- Exynos5422
-Date: Wed, 25 Sep 2019 18:18:11 +0200
-Message-ID: <20190925161813.21117-2-l.luba@partner.samsung.com>
-References: <20190925161813.21117-1-l.luba@partner.samsung.com>
-        <CGME20190925161842eucas1p271a9cf4f62b3d7af02c0a5d0d1eb9c4f@eucas1p2.samsung.com>
+Subject: [PATCH 0/3] Exynos5 DMC interrupt mode
+Date: Wed, 25 Sep 2019 18:18:10 +0200
+Message-ID: <20190925161813.21117-1-l.luba@partner.samsung.com>
+References: <CGME20190925161841eucas1p12b3b798020b3493e9a4804d98b422f17@eucas1p1.samsung.com>
 Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190925161813.21117-1-l.luba@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, mark.rutland@arm.com, cw00.choi@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, robh+dt@kernel.org, willy.mh.wolff.ml@gmail.com, Lukasz Luba <l.luba@partner.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add interrupt to Dynamic Memory Controller in Exynos5422 and Odroid
-XU3-family boards. It will be used instead of devfreq polling mode
-governor. The interrupt is connected to performance counters private
-for DMC, which might track utilisation of the memory channels.
+Hi all,
 
-Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
----
- arch/arm/boot/dts/exynos5420.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+This is a patch set for the Exynos5 Dynamic Memory Controller
+driver which could be found in Krzysztof's tree [1]. It is on top of a
+merge of the two branches [1][2].
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index ac49373baae7..72738e620d11 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -240,6 +240,8 @@
- 		dmc: memory-controller@10c20000 {
- 			compatible = "samsung,exynos5422-dmc";
- 			reg = <0x10c20000 0x100>, <0x10c30000 0x100>;
-+			interrupt-parent = <&combiner>;
-+			interrupts = <16 0>;
- 			clocks = <&clock CLK_FOUT_SPLL>,
- 				 <&clock CLK_MOUT_SCLK_SPLL>,
- 				 <&clock CLK_FF_DOUT_SPLL2>,
+It adds interrupt mode which does not relay on devfreq polling.
+Instead of checking the device state by the framework, driver uses local
+performance events counters which could trigger interrupt when overflow.
+Thanks to this approach the driver avoids issues present in devfreq framework,
+when default polling check does not occur.
+The algorithm calculates 'busy_time' and 'total_time' needed for devfreq
+governors (simple_ondemand) based on requests transactions traffic.
+
+Regards,
+Lukasz Luba
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git/log/?h=for-v5.4-5.5/memory-samsung-dmc
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git/log/?h=for-v5.4-5.5/memory-samsung-dmc-dt
+
+Lukasz Luba (3):
+  ARM: dts: exynos: Add interrupt to DMC controller in Exynos5422
+  ARM: dts: exynos: map 0x10000 SFR instead of 0x100 in DMC Exynos5422
+  memory: samsung: exynos5422-dmc: Add support for interrupt from
+    performance counters
+
+ arch/arm/boot/dts/exynos5420.dtsi       |   4 +-
+ drivers/memory/samsung/exynos5422-dmc.c | 297 ++++++++++++++++++++++--
+ 2 files changed, 275 insertions(+), 26 deletions(-)
+
 -- 
 2.17.1
