@@ -1,147 +1,175 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2] dt-bindings: gpu: Convert Samsung Image Scaler to
- dt-schema
-Date: Thu, 26 Sep 2019 14:56:14 +0200
-Message-ID: <20190926125614.10408-1-m.szyprowski@samsung.com>
-References: <CGME20190926125619eucas1p249ac149ef1e1a3eb975dae94b08cd7be@eucas1p2.samsung.com>
-Content-Type: text/plain; charset="utf-8"
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] dt-bindings: sound: Convert Samsung Exynos Odroid
+ XU3/XU4 audio complex to dt-schema
+Date: Thu, 26 Sep 2019 15:50:20 +0200
+Message-ID: <20190926135020.GB15876@pi3>
+References: <CGME20190926120115eucas1p20280a4e50c826d43bea7bfe5d670aebe@eucas1p2.samsung.com>
+ <20190926120111.8478-1-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190926120111.8478-1-m.szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Maciej Falkowski <m.falkowski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Maciej Falkowski <m.falkowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Maciej Falkowski <m.falkowski@samsung.com>
+On Thu, Sep 26, 2019 at 02:01:11PM +0200, Marek Szyprowski wrote:
+> From: Maciej Falkowski <m.falkowski@samsung.com>
+> 
+> Convert Samsung Exynos Odroid XU3/XU4 audio complex with MAX98090 codec
+> to newer dt-schema format.
+> 
+> 'clocks' property is unneeded in the bindings and is left undefined in 'properties'.
+> 
+> 'samsung,audio-widgets' and 'samsung,audio-routing' are optional from driver
+> perspective and they are set as unrequired.
+> 
+> Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  .../bindings/sound/samsung,odroid.txt         | 54 -----------
+>  .../bindings/sound/samsung,odroid.yaml        | 91 +++++++++++++++++++
+>  2 files changed, 91 insertions(+), 54 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/sound/samsung,odroid.txt
+>  create mode 100644 Documentation/devicetree/bindings/sound/samsung,odroid.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/samsung,odroid.txt b/Documentation/devicetree/bindings/sound/samsung,odroid.txt
+> deleted file mode 100644
+> index e9da2200e173..000000000000
+> --- a/Documentation/devicetree/bindings/sound/samsung,odroid.txt
+> +++ /dev/null
+> @@ -1,54 +0,0 @@
+> -Samsung Exynos Odroid XU3/XU4 audio complex with MAX98090 codec
+> -
+> -Required properties:
+> -
+> - - compatible - "hardkernel,odroid-xu3-audio" - for Odroid XU3 board,
+> -		"hardkernel,odroid-xu4-audio" - for Odroid XU4 board (deprecated),
+> -		"samsung,odroid-xu3-audio" - for Odroid XU3 board (deprecated),
+> -		"samsung,odroid-xu4-audio" - for Odroid XU4 board (deprecated)
+> - - model - the user-visible name of this sound complex
+> - - clocks - should contain entries matching clock names in the clock-names
+> -    property
+> - - samsung,audio-widgets - this property specifies off-codec audio elements
+> -   like headphones or speakers, for details see widgets.txt
+> - - samsung,audio-routing - a list of the connections between audio
+> -   components;  each entry is a pair of strings, the first being the
+> -   connection's sink, the second being the connection's source;
+> -   valid names for sources and sinks are the MAX98090's pins (as
+> -   documented in its binding), and the jacks on the board
+> -
+> -   For Odroid X2:
+> -     "Headphone Jack", "Mic Jack", "DMIC"
+> -
+> -   For Odroid U3, XU3:
+> -     "Headphone Jack", "Speakers"
+> -
+> -   For Odroid XU4:
+> -     no entries
+> -
+> -Required sub-nodes:
+> -
+> - - 'cpu' subnode with a 'sound-dai' property containing the phandle of the I2S
+> -    controller
+> - - 'codec' subnode with a 'sound-dai' property containing list of phandles
+> -    to the CODEC nodes, first entry must be corresponding to the MAX98090
+> -    CODEC and the second entry must be the phandle of the HDMI IP block node
+> -
+> -Example:
+> -
+> -sound {
+> -	compatible = "hardkernel,odroid-xu3-audio";
+> -	model = "Odroid-XU3";
+> -	samsung,audio-routing =
+> -		"Headphone Jack", "HPL",
+> -		"Headphone Jack", "HPR",
+> -		"IN1", "Mic Jack",
+> -		"Mic Jack", "MICBIAS";
+> -
+> -	cpu {
+> -		sound-dai = <&i2s0 0>;
+> -	};
+> -	codec {
+> -		sound-dai = <&hdmi>, <&max98090>;
+> -	};
+> -};
+> diff --git a/Documentation/devicetree/bindings/sound/samsung,odroid.yaml b/Documentation/devicetree/bindings/sound/samsung,odroid.yaml
+> new file mode 100644
+> index 000000000000..db6d3ea3180e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/samsung,odroid.yaml
+> @@ -0,0 +1,91 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/samsung,odroid.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Samsung Exynos Odroid XU3/XU4 audio complex with MAX98090 codec
+> +
+> +maintainers:
+> +  - Krzysztof Kozlowski <krzk@kernel.org>
+> +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - const: hardkernel,odroid-xu3-audio
+> +
+> +      - const: hardkernel,odroid-xu4-audio
+> +        deprecated: true
+> +
+> +      - const: samsung,odroid-xu3-audio
+> +        deprecated: true
+> +
+> +      - const: samsung,odroid-xu4-audio
+> +        deprecated: true
+> +
+> +  model:
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    description: The user-visible name of this sound complex.
+> +
+> +  cpu:
 
-Convert Samsung Image Scaler to newer dt-schema format.
+Continuing discussion from TM2 audio, these are not standard properties,
+so they can be in some reasonable order. Ordering might not only bring
+readability but also solve conflicts of simultaneous edits.  The same in
+"required" section (except compatible).
 
-Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-v2:
-- Removed quotation marks from string in 'compatible' property
-- Added if-then statement for 'clocks' and 'clock-names' property
-- Added include directive to example
-- Added GIC_SPI macro to example
+> +    type: object
+> +    properties:
+> +      sound-dai:
+> +        $ref: /schemas/types.yaml#/definitions/phandle-array
+> +        description: phandles to the I2S controllers
+> +
+> +  codec:
+> +    type: object
+> +    properties:
+> +      sound-dai:
+> +        $ref: /schemas/types.yaml#/definitions/phandle-array
+> +        description: |
+> +          List of phandles to the CODEC nodes,
+> +          first entry must be corresponding to the MAX98090 CODEC and
+> +          the second entry must be the phandle of the HDMI IP block node.
+> +
+> +  samsung,audio-widgets:
+> +    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
+> +    description: |
+> +      This property specifies off-codec audio elements
+> +      like headphones or speakers, for details see widgets.txt
+> +
+> +  samsung,audio-routing:
+> +    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
+> +    description: |
+> +      List of the connections between audio
+
+Too early word wrap.
+
+Rest looks good to me, so with the changes:
+
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Best regards,
-Maciej Falkowski
----
- .../bindings/gpu/samsung-scaler.txt           | 27 -------
- .../bindings/gpu/samsung-scaler.yaml          | 71 +++++++++++++++++++
- 2 files changed, 71 insertions(+), 27 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/gpu/samsung-scaler.txt
- create mode 100644 Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
-
-diff --git a/Documentation/devicetree/bindings/gpu/samsung-scaler.txt b/Documentation/devicetree/bindings/gpu/samsung-scaler.txt
-deleted file mode 100644
-index 9c3d98105dfd..000000000000
---- a/Documentation/devicetree/bindings/gpu/samsung-scaler.txt
-+++ /dev/null
-@@ -1,27 +0,0 @@
--* Samsung Exynos Image Scaler
--
--Required properties:
--  - compatible : value should be one of the following:
--	(a) "samsung,exynos5420-scaler" for Scaler IP in Exynos5420
--	(b) "samsung,exynos5433-scaler" for Scaler IP in Exynos5433
--
--  - reg : Physical base address of the IP registers and length of memory
--	  mapped region.
--
--  - interrupts : Interrupt specifier for scaler interrupt, according to format
--		 specific to interrupt parent.
--
--  - clocks : Clock specifier for scaler clock, according to generic clock
--	     bindings. (See Documentation/devicetree/bindings/clock/exynos*.txt)
--
--  - clock-names : Names of clocks. For exynos scaler, it should be "mscl"
--		  on 5420 and "pclk", "aclk" and "aclk_xiu" on 5433.
--
--Example:
--	scaler@12800000 {
--		compatible = "samsung,exynos5420-scaler";
--		reg = <0x12800000 0x1294>;
--		interrupts = <0 220 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&clock CLK_MSCL0>;
--		clock-names = "mscl";
--	};
-diff --git a/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml b/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
-new file mode 100644
-index 000000000000..af19930d052e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
-@@ -0,0 +1,71 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpu/samsung-scaler.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung Exynos SoC Image Scaler
-+
-+maintainers:
-+  - Inki Dae <inki.dae@samsung.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - samsung,exynos5420-scaler
-+      - samsung,exynos5433-scaler
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+if:
-+  properties:
-+    compatible:
-+      contains:
-+        const: samsung,exynos5420-scaler
-+then:
-+  properties:
-+    clocks:
-+      items:
-+        - description: mscl clock
-+
-+    clock-names:
-+      items:
-+        - const: mscl
-+else:
-+  properties:
-+    clocks:
-+      items:
-+        - description: mscl clock
-+        - description: aclk clock
-+        - description: aclk_xiu clock
-+
-+    clock-names:
-+      items:
-+        - const: pclk
-+        - const: aclk
-+        - const: aclk_xiu
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/exynos5420.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    scaler@12800000 {
-+        compatible = "samsung,exynos5420-scaler";
-+        reg = <0x12800000 0x1294>;
-+        interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&clock CLK_MSCL0>;
-+        clock-names = "mscl";
-+    };
-+
--- 
-2.17.1
+Krzysztof
