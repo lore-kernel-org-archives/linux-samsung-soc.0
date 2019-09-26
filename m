@@ -2,105 +2,158 @@ Return-Path: <SRS0=Ozgi=XV=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 566DEC432C2
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Sep 2019 09:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF6EDC432C2
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Sep 2019 11:02:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2804B222C4
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Sep 2019 09:22:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569489759;
-	bh=9rZafcAV7MIXOTETDreA4IFvVobdkioCQkmUQpMkyeY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=aCrGHWJM6+eha/zfPjN0H5M+FGWFvlBETwRMkEChKiIW32Ig/DMx/nazinC2YpD22
-	 7PEuXrwySdI6cNxpblKm/ilWYeH7Vv3VaJ/Gp10n19AfWJTxeo1EogpiGHPiukYh4a
-	 Vvxx4ILhtfISnpEgnYVX74s4WKNYNoKS9jJoHtt8=
+	by mail.kernel.org (Postfix) with ESMTP id 965AB222C5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Sep 2019 11:02:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vV+vsVcp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbfIZJWe (ORCPT
+        id S1725904AbfIZLC3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 26 Sep 2019 05:22:34 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:36684 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726690AbfIZJWd (ORCPT
+        Thu, 26 Sep 2019 07:02:29 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:43345 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725208AbfIZLC2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 26 Sep 2019 05:22:33 -0400
-Received: by mail-wm1-f66.google.com with SMTP id m18so1764497wmc.1;
-        Thu, 26 Sep 2019 02:22:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vgFOGD9cQQzr5aVgS0FXDv/JqrPP7fo8C4YuNbx6MHs=;
-        b=Z9GE9Zp4eccoo/IVec/bd3xtELk92OjGNpinpRl24yrvFtJGC/fi9y2ZPWFENyznzE
-         1LfEAcV7xSJ/0Q7si0Qyig2Wbr21TSHT/to28/uwfYDVA3+Dr9ebOVvBAaNGp7+HjTCI
-         Mzb/ebM2Cl3c2/q9J1AaL6H5sTVpB7+J1n75zHqvuEm60KPWvfIAh0bG4Xy9HMh2vHnx
-         oy2JcHtnoYRRk5iPSPIKEO9plL6sFJs4KDUoOg7Wc7RSyKkdPhQSd87dSpFRZGij4683
-         KFjtx6r3l/l980iu45tNG180oH9vetqWpO0evW3aC0UOk/f8rgkLwj1Zm1sQQHlRfRAW
-         XZ2A==
-X-Gm-Message-State: APjAAAVI89WoM/kuetZEITkLwEAMWlApgT0PvT/HSfJNp8T0TYePbhxW
-        PY62onL/Ff0CuRxmP0tcPZ8=
-X-Google-Smtp-Source: APXvYqwcXhG1KCHaxYekItIcx4iwKZ2ODFV3h1DqGAkuOzX3JiLYINdqNPu7SLDMZd7vv2fm67yFwA==
-X-Received: by 2002:a7b:cb08:: with SMTP id u8mr2290088wmj.6.1569489752065;
-        Thu, 26 Sep 2019 02:22:32 -0700 (PDT)
-Received: from pi3 ([194.230.155.145])
-        by smtp.googlemail.com with ESMTPSA id u22sm2238301wru.72.2019.09.26.02.22.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2019 02:22:31 -0700 (PDT)
-Date:   Thu, 26 Sep 2019 11:22:29 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
+        Thu, 26 Sep 2019 07:02:28 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190926110227euoutp02a0df90044a797310b04c8088c5f53b5b~H_BEEgxy50590405904euoutp02x
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Sep 2019 11:02:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190926110227euoutp02a0df90044a797310b04c8088c5f53b5b~H_BEEgxy50590405904euoutp02x
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1569495747;
+        bh=T1vG9yJ0SrvHDQJfyMirTT552HaxAD38CrVYzRGiMrA=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=vV+vsVcpVWomhaEqJilNT2Zsq8sW11jXNZViSCGly36ahapYZoqN+3/yVt0ZrSj3r
+         hUK8FJ/KY/amTMFidA1ZdLksfG/I74zS80TZMoJlZCNjNGhzS6UqZtMGTrvVsG7/v9
+         e4wN0UE8Q4yvOM8H7HGt/MV7Yr4zOLKBrSrt7i0o=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190926110226eucas1p2a5a0fb04e6ecd1ce99ed81599a1e85d4~H_BDry20e0586305863eucas1p20;
+        Thu, 26 Sep 2019 11:02:26 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 45.D8.04374.2CA9C8D5; Thu, 26
+        Sep 2019 12:02:26 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190926110226eucas1p24dbb1b39ffa3f607aa28c0c4d9ff6aba~H_BDSjD0z0586305863eucas1p2z;
+        Thu, 26 Sep 2019 11:02:26 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190926110226eusmtrp25ba1e9e4c5004f2f562a43e1a591292b~H_BDK4MpT2039620396eusmtrp2B;
+        Thu, 26 Sep 2019 11:02:26 +0000 (GMT)
+X-AuditID: cbfec7f5-4ddff70000001116-5b-5d8c9ac2c1e3
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 51.E9.04166.2CA9C8D5; Thu, 26
+        Sep 2019 12:02:26 +0100 (BST)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190926110225eusmtip162bc8419c3a731febe25b42acf6782c0~H_BCiMLpZ2692226922eusmtip1R;
+        Thu, 26 Sep 2019 11:02:25 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Mark Brown <broonie@kernel.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        Maciej Falkowski <m.falkowski@samsung.com>
-Subject: Re: [PATCH v5] dt-bindings: sound: Convert Samsung I2S controller to
- dt-schema
-Message-ID: <20190926092229.GB15552@pi3>
-References: <CGME20190925132644eucas1p2716a805d184f9bbc4ad7a94cc9cca633@eucas1p2.samsung.com>
- <20190925132628.31858-1-m.szyprowski@samsung.com>
-MIME-Version: 1.0
+        Maciej Falkowski <m.falkowski@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v2] ASoC: samsung: i2s: Document clocks macros
+Date:   Thu, 26 Sep 2019 13:02:19 +0200
+Message-Id: <20190926110219.6144-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphleLIzCtJLcpLzFFi42LZduznOd1Ds3piDdrea1pcuXiIyWLqwyds
+        FvOPnGO1OH9+A7vFtysdTBaXd81hs5hxfh+TxYPmdWwWa4/cZbdYev0ik0Xr3iPsFofftLM6
+        8Hhs+NzE5rFm3hpGj52z7rJ7bFrVyebRt2UVo8fnTXIBbFFcNimpOZllqUX6dglcGT+X32Ev
+        2MhVsan3PHsD4yWOLkYODgkBE4k9nxm7GLk4hARWMEqce32MBcL5wihxeN0S9i5GTiDnM6PE
+        ztmiMA2zp0LVLGeUmHviByNcw53mGWANbAKGEl1vu9hAbBGBOomzZ46AFTELHGGSaL7/mwkk
+        ISxgJ3F8bQ8LiM0ioCrx8vQSsAZeARuJKRtugNVICMhLrN5wgBmkWUKgmV3i39mTzBAJF4mv
+        /3oYIWxhiVfHt7BD2DIS/3fOZ4JqYJR4eG4tO4TTwyhxuWkGVIe1xOHjF1lBHmIW0JRYv0sf
+        IuwoceXNVhaIP/kkbrwVBAkzA5mTtk1nhgjzSnS0CUFUq0nMOr4Obu3BC5egTvOQ+LP6Hisk
+        5GIlDvYuYZnAKDcLYdcCRsZVjOKppcW56anFxnmp5XrFibnFpXnpesn5uZsYgWnk9L/jX3cw
+        7vuTdIhRgINRiYf3QFh3rBBrYllxZe4hRgkOZiURXt/Inlgh3pTEyqrUovz4otKc1OJDjNIc
+        LErivNUMD6KFBNITS1KzU1MLUotgskwcnFINjLFybCdDTugHlQkdv5Yd0flwwp+Mn+EmoVEC
+        D3hehYlcDtVP3vft3voDh8qeqR7ZdqdZWOi8ZQBzjK8b555DB6fEJwYcPNOdse66yJ9122p1
+        50juMHh2iCMq/8C1UtVVtq9i/nf2d3iyWNQVps3KksvfF3Qx7x+L1wcN380z3jhVRxX1Tirv
+        VWIpzkg01GIuKk4EAFo3rPUfAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCLMWRmVeSWpSXmKPExsVy+t/xu7qHZvXEGnTOZLW4cvEQk8XUh0/Y
+        LOYfOcdqcf78BnaLb1c6mCwu75rDZjHj/D4miwfN69gs1h65y26x9PpFJovWvUfYLQ6/aWd1
+        4PHY8LmJzWPNvDWMHjtn3WX32LSqk82jb8sqRo/Pm+QC2KL0bIryS0tSFTLyi0tslaINLYz0
+        DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLLUov07RL0Mn4uv8NesJGrYlPvefYGxkscXYwcHBIC
+        JhKzp7J0MXJxCAksZZTo6G4FcjiB4jISJ6c1sELYwhJ/rnWxQRR9YpT4+2whE0iCTcBQoust
+        REJEoIlR4tjmmWCjmAVOMUncuDqFEaRKWMBO4vjaHrCxLAKqEi9PL2EDsXkFbCSmbLjBBLFC
+        XmL1hgPMExh5FjAyrGIUSS0tzk3PLTbUK07MLS7NS9dLzs/dxAgM4W3Hfm7ewXhpY/AhRgEO
+        RiUe3gNh3bFCrIllxZW5hxglOJiVRHh9I3tihXhTEiurUovy44tKc1KLDzGaAi2fyCwlmpwP
+        jK+8knhDU0NzC0tDc2NzYzMLJXHeDoGDMUIC6YklqdmpqQWpRTB9TBycUg2ManbsrZOVu5bp
+        8lzX+s25PsXg2fQrJyb/apkSyOkqOSnjOsfKvY89WFSeajr3vK7af3FToU6p0M7uWIfzlez8
+        G2TvumeyPT+8pE8qWu4h47WVCltaw2q59220EGY5m+Xy+8M00z0u96coifP8Upj7fGXUIfVk
+        JfUtxsdv/JvzWDt59coHSZxblViKMxINtZiLihMBXlom33cCAAA=
+X-CMS-MailID: 20190926110226eucas1p24dbb1b39ffa3f607aa28c0c4d9ff6aba
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-In-Reply-To: <20190925132628.31858-1-m.szyprowski@samsung.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-RootMTR: 20190926110226eucas1p24dbb1b39ffa3f607aa28c0c4d9ff6aba
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190926110226eucas1p24dbb1b39ffa3f607aa28c0c4d9ff6aba
+References: <CGME20190926110226eucas1p24dbb1b39ffa3f607aa28c0c4d9ff6aba@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20190926092229.HZTiLh95TOKLTkthGUO3fleA4z1bk55cpVeeKLGCqjo@z>
+Message-ID: <20190926110219.QdqcaJBoLYIzEVRmCV_CkDBgfKcpnJxqhFd25soJcGg@z>
 
-On Wed, Sep 25, 2019 at 03:26:28PM +0200, Marek Szyprowski wrote:
-> From: Maciej Falkowski <m.falkowski@samsung.com>
-> 
-> Convert Samsung I2S controller to newer dt-schema format.
-> 
-> Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> v5:
-> - Removed '#clock-cells' property from required properties
-> - Added deprecated property to 'clock-output-names'
-> and removed corresponding comment. 
-> 
-> Best regards, 
-> Maciej Falkowski
-> ---
->  .../devicetree/bindings/sound/samsung-i2s.txt |  84 -----------
->  .../bindings/sound/samsung-i2s.yaml           | 136 ++++++++++++++++++
->  2 files changed, 136 insertions(+), 84 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sound/samsung-i2s.txt
->  create mode 100644 Documentation/devicetree/bindings/sound/samsung-i2s.yaml
+From: Maciej Falkowski <m.falkowski@samsung.com>
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Document clocks macros with their description
+from 'Documentation/devicetree/bindings/sound/samsung-i2s.txt'
+
+Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+v2:
+- Added proper commit message and description
+- Moved comments to the right side
 
 Best regards,
-Krzysztof
+Maciej Falkowski
+---
+ include/dt-bindings/sound/samsung-i2s.h | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/include/dt-bindings/sound/samsung-i2s.h b/include/dt-bindings/sound/samsung-i2s.h
+index 77545f14c379..250de0d6c734 100644
+--- a/include/dt-bindings/sound/samsung-i2s.h
++++ b/include/dt-bindings/sound/samsung-i2s.h
+@@ -2,8 +2,14 @@
+ #ifndef _DT_BINDINGS_SAMSUNG_I2S_H
+ #define _DT_BINDINGS_SAMSUNG_I2S_H
+ 
+-#define CLK_I2S_CDCLK		0
+-#define CLK_I2S_RCLK_SRC	1
+-#define CLK_I2S_RCLK_PSR	2
++#define CLK_I2S_CDCLK		0 /* the CDCLK (CODECLKO) gate clock */
++
++#define CLK_I2S_RCLK_SRC	1 /* the RCLKSRC mux clock (corresponding to
++				   * RCLKSRC bit in IISMOD register)
++				   */
++
++#define CLK_I2S_RCLK_PSR	2 /* the RCLK prescaler divider clock
++				   * (corresponding to the IISPSR register)
++				   */
+ 
+ #endif /* _DT_BINDINGS_SAMSUNG_I2S_H */
+-- 
+2.17.1
+
+
 
