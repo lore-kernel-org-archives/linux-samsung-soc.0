@@ -1,147 +1,191 @@
-From: Maciej Falkowski <m.falkowski@samsung.com>
-Subject: Re: [PATCH] dt-bindings: sound: Convert Samsung Exynos5433 TM2(E)
- audio complex with WM5110 codec to dt-schema
-Date: Thu, 26 Sep 2019 13:49:09 +0200
-Message-ID: <50932d65-6d8b-aca2-2bec-d4eedaba0bdc@samsung.com>
-References: <CGME20190924150230eucas1p295da8f6aa018aec4acabc068f6e1afa1@eucas1p2.samsung.com>
-        <20190924150146.15972-1-m.szyprowski@samsung.com>
-        <20190924152028.GD9218@pi3>
-Mime-Version: 1.0
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] dt-bindings: sound: Convert Samsung Exynos Odroid XU3/XU4
+ audio complex to dt-schema
+Date: Thu, 26 Sep 2019 14:01:11 +0200
+Message-ID: <20190926120111.8478-1-m.szyprowski@samsung.com>
+References: <CGME20190926120115eucas1p20280a4e50c826d43bea7bfe5d670aebe@eucas1p2.samsung.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190924152028.GD9218@pi3>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>
+To: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Maciej Falkowski <m.falkowski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+From: Maciej Falkowski <m.falkowski@samsung.com>
 
-On 9/24/19 5:20 PM, Krzysztof Kozlowski wrote:
-> On Tue, Sep 24, 2019 at 05:01:46PM +0200, Marek Szyprowski wrote:
->> From: Maciej Falkowski <m.falkowski@samsung.com>
->>
->> Convert Samsung Exynos5433 TM2(E) audio complex with WM5110 codec to newer dt-schema format.
->>
->> Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>   .../bindings/sound/samsung,tm2-audio.txt      | 42 ----------
->>   .../bindings/sound/samsung,tm2-audio.yaml     | 83 +++++++++++++++++++
->>   2 files changed, 83 insertions(+), 42 deletions(-)
->>   delete mode 100644 Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
->>   create mode 100644 Documentation/devicetree/bindings/sound/samsung,tm2-audio.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
->> deleted file mode 100644
->> index f5ccc12ddc00..000000000000
->> --- a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
->> +++ /dev/null
->> @@ -1,42 +0,0 @@
->> -Samsung Exynos5433 TM2(E) audio complex with WM5110 codec
->> -
->> -Required properties:
->> -
->> - - compatible		 : "samsung,tm2-audio"
->> - - model		 : the user-visible name of this sound complex
->> - - audio-codec		 : the first entry should be phandle of the wm5110 audio
->> -			   codec node, as described in ../mfd/arizona.txt;
->> -			   the second entry should be phandle of the HDMI
->> -			   transmitter node
->> - - i2s-controller	 : the list of phandle and argument tuples pointing to
->> -			   I2S controllers, the first entry should be I2S0 and
->> -			   the second one I2S1
->> - - audio-amplifier	 : the phandle of the MAX98504 amplifier
->> - - samsung,audio-routing : a list of the connections between audio components;
->> -			   each entry is a pair of strings, the first being the
->> -			   connection's sink, the second being the connection's
->> -			   source; valid names for sources and sinks are the
->> -			   WM5110's and MAX98504's pins and the jacks on the
->> -			   board: HP, SPK, Main Mic, Sub Mic, Third Mic,
->> -			   Headset Mic
->> - - mic-bias-gpios	 : GPIO pin that enables the Main Mic bias regulator
->> -
->> -
->> -Example:
->> -
->> -sound {
->> -	compatible = "samsung,tm2-audio";
->> -	audio-codec = <&wm5110>, <&hdmi>;
->> -	i2s-controller = <&i2s0 0>, <&i2s1 0>;
->> -	audio-amplifier = <&max98504>;
->> -	mic-bias-gpios = <&gpr3 2 0>;
->> -	model = "wm5110";
->> -	samsung,audio-routing =
->> -		"HP", "HPOUT1L",
->> -		"HP", "HPOUT1R",
->> -		"SPK", "SPKOUT",
->> -		"SPKOUT", "HPOUT2L",
->> -		"SPKOUT", "HPOUT2R",
->> -		"Main Mic", "MICBIAS2",
->> -		"IN1R", "Main Mic";
->> -};
->> diff --git a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.yaml b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.yaml
->> new file mode 100644
->> index 000000000000..377f8cbe17b8
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.yaml
->> @@ -0,0 +1,83 @@
->> +# SPDX-License-Identifier: GPL-2.0
->> +%YAML 1.2
->> +---
->> +$id: https://protect2.fireeye.com/url?k=ccb9abe11b8a2745.ccb820ae-a91cd712f01d248e&u=http://devicetree.org/schemas/sound/samsung,tm2-audio.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Samsung Exynos SoC Exynos5433 TM2(E) audio complex with WM5110 codec
->> +
->> +maintainers:
->> +  - Krzysztof Kozlowski <krzk@kernel.org>
->> +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
->> +
->> +properties:
->> +  compatible:
->> +    const: samsung,tm2-audio
->> +
->> +  model:
->> +    maxItems: 1
-> $ref to string, then maxItems are not needed.
-> Add description (copy-paste).
+Convert Samsung Exynos Odroid XU3/XU4 audio complex with MAX98090 codec
+to newer dt-schema format.
 
-Hi Krzysztof,
+'clocks' property is unneeded in the bindings and is left undefined in 'properties'.
 
-You're right, model is not a standard property.
+'samsung,audio-widgets' and 'samsung,audio-routing' are optional from driver
+perspective and they are set as unrequired.
 
->> +
->> +  audio-codec:
->> +    allOf:
->> +      - $ref: /schemas/types.yaml#/definitions/phandle-array
->> +      - items:
->> +          - description: |
->> +              phandle of the wm5110 audio codec node,
->> +              as described in ../mfd/arizona.txt;
->> +          - description: phandle of the HDMI transmitter node.
->> +
->> +  i2s-controller:
->> +    allOf:
->> +      - $ref: /schemas/types.yaml#/definitions/phandle-array
->> +      - items:
->> +          - description: phandle of the I2S0.
->> +          - description: phandle of the I2S1.
->> +
->> +  audio-amplifier:
-> Can you order the nodes here and in required section by name (except
-> compatible which should be first)?
+Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ .../bindings/sound/samsung,odroid.txt         | 54 -----------
+ .../bindings/sound/samsung,odroid.yaml        | 91 +++++++++++++++++++
+ 2 files changed, 91 insertions(+), 54 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/sound/samsung,odroid.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/samsung,odroid.yaml
 
-Current order is already well-established across bindings (even example).
-I think that sorted properties are undesired with that.
-
-Best regards,
-Maciej Falkowski
-
->
-> Best regards,
-> Krzysztof
->
->
->
+diff --git a/Documentation/devicetree/bindings/sound/samsung,odroid.txt b/Documentation/devicetree/bindings/sound/samsung,odroid.txt
+deleted file mode 100644
+index e9da2200e173..000000000000
+--- a/Documentation/devicetree/bindings/sound/samsung,odroid.txt
++++ /dev/null
+@@ -1,54 +0,0 @@
+-Samsung Exynos Odroid XU3/XU4 audio complex with MAX98090 codec
+-
+-Required properties:
+-
+- - compatible - "hardkernel,odroid-xu3-audio" - for Odroid XU3 board,
+-		"hardkernel,odroid-xu4-audio" - for Odroid XU4 board (deprecated),
+-		"samsung,odroid-xu3-audio" - for Odroid XU3 board (deprecated),
+-		"samsung,odroid-xu4-audio" - for Odroid XU4 board (deprecated)
+- - model - the user-visible name of this sound complex
+- - clocks - should contain entries matching clock names in the clock-names
+-    property
+- - samsung,audio-widgets - this property specifies off-codec audio elements
+-   like headphones or speakers, for details see widgets.txt
+- - samsung,audio-routing - a list of the connections between audio
+-   components;  each entry is a pair of strings, the first being the
+-   connection's sink, the second being the connection's source;
+-   valid names for sources and sinks are the MAX98090's pins (as
+-   documented in its binding), and the jacks on the board
+-
+-   For Odroid X2:
+-     "Headphone Jack", "Mic Jack", "DMIC"
+-
+-   For Odroid U3, XU3:
+-     "Headphone Jack", "Speakers"
+-
+-   For Odroid XU4:
+-     no entries
+-
+-Required sub-nodes:
+-
+- - 'cpu' subnode with a 'sound-dai' property containing the phandle of the I2S
+-    controller
+- - 'codec' subnode with a 'sound-dai' property containing list of phandles
+-    to the CODEC nodes, first entry must be corresponding to the MAX98090
+-    CODEC and the second entry must be the phandle of the HDMI IP block node
+-
+-Example:
+-
+-sound {
+-	compatible = "hardkernel,odroid-xu3-audio";
+-	model = "Odroid-XU3";
+-	samsung,audio-routing =
+-		"Headphone Jack", "HPL",
+-		"Headphone Jack", "HPR",
+-		"IN1", "Mic Jack",
+-		"Mic Jack", "MICBIAS";
+-
+-	cpu {
+-		sound-dai = <&i2s0 0>;
+-	};
+-	codec {
+-		sound-dai = <&hdmi>, <&max98090>;
+-	};
+-};
+diff --git a/Documentation/devicetree/bindings/sound/samsung,odroid.yaml b/Documentation/devicetree/bindings/sound/samsung,odroid.yaml
+new file mode 100644
+index 000000000000..db6d3ea3180e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/samsung,odroid.yaml
+@@ -0,0 +1,91 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/samsung,odroid.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung Exynos Odroid XU3/XU4 audio complex with MAX98090 codec
++
++maintainers:
++  - Krzysztof Kozlowski <krzk@kernel.org>
++  - Sylwester Nawrocki <s.nawrocki@samsung.com>
++
++properties:
++  compatible:
++    oneOf:
++      - const: hardkernel,odroid-xu3-audio
++
++      - const: hardkernel,odroid-xu4-audio
++        deprecated: true
++
++      - const: samsung,odroid-xu3-audio
++        deprecated: true
++
++      - const: samsung,odroid-xu4-audio
++        deprecated: true
++
++  model:
++    $ref: /schemas/types.yaml#/definitions/string
++    description: The user-visible name of this sound complex.
++
++  cpu:
++    type: object
++    properties:
++      sound-dai:
++        $ref: /schemas/types.yaml#/definitions/phandle-array
++        description: phandles to the I2S controllers
++
++  codec:
++    type: object
++    properties:
++      sound-dai:
++        $ref: /schemas/types.yaml#/definitions/phandle-array
++        description: |
++          List of phandles to the CODEC nodes,
++          first entry must be corresponding to the MAX98090 CODEC and
++          the second entry must be the phandle of the HDMI IP block node.
++
++  samsung,audio-widgets:
++    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
++    description: |
++      This property specifies off-codec audio elements
++      like headphones or speakers, for details see widgets.txt
++
++  samsung,audio-routing:
++    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
++    description: |
++      List of the connections between audio
++      components;  each entry is a pair of strings, the first being the
++      connection's sink, the second being the connection's source;
++      valid names for sources and sinks are the MAX98090's pins (as
++      documented in its binding), and the jacks on the board.
++      For Odroid X2: "Headphone Jack", "Mic Jack", "DMIC"
++      For Odroid U3, XU3: "Headphone Jack", "Speakers"
++      For Odroid XU4: no entries
++
++required:
++  - compatible
++  - model
++  - cpu
++  - codec
++
++examples:
++  - |
++    sound {
++        compatible = "hardkernel,odroid-xu3-audio";
++        model = "Odroid-XU3";
++        samsung,audio-routing =
++                "Headphone Jack", "HPL",
++                "Headphone Jack", "HPR",
++                "IN1", "Mic Jack",
++                "Mic Jack", "MICBIAS";
++
++        cpu {
++            sound-dai = <&i2s0 0>;
++        };
++
++        codec {
++            sound-dai = <&hdmi>, <&max98090>;
++        };
++    };
++
+-- 
+2.17.1
