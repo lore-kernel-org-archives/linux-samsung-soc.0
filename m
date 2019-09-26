@@ -2,189 +2,346 @@ Return-Path: <SRS0=Ozgi=XV=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C36C432C2
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Sep 2019 08:43:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E34CC432C2
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Sep 2019 09:21:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE2E6222C3
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Sep 2019 08:43:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="sRxHJIvV"
+	by mail.kernel.org (Postfix) with ESMTP id CF89B222C3
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Sep 2019 09:21:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1569489664;
+	bh=Y+SD64wkghYn0I0R/39NddGVoN1hJwFHnuCmOeAxM/A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=hTbYphogprgaFcrZZS2M6LFC9CjcSiwvZj5c3/fX7LOxuFTBz8qmMygIzTEhKTFig
+	 7Fo52xwSEhcsbiMcsq1N+qr2/Sq8YVDXgA1+iO2zLH19XHN4kCeJbD6xnLtG/v/nfN
+	 WzYw4Fu5w+9pQYgmQIQZm2rvQvJ+SjNxjo3fEm8o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729631AbfIZIn1 (ORCPT
+        id S1730304AbfIZJVD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 26 Sep 2019 04:43:27 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:14473 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727523AbfIZIn1 (ORCPT
+        Thu, 26 Sep 2019 05:21:03 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44387 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727518AbfIZJVD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 26 Sep 2019 04:43:27 -0400
-Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
-  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Claudiu.Beznea@microchip.com";
-  x-sender="Claudiu.Beznea@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa3.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Claudiu.Beznea@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa3.microchip.iphmx.com; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: bGPvAKkYtCCIgj6XsufIyAqUrQrFHrlqJehWu8yrdxg4XiZIE8HY3m74zYA4pBIl2dM7Pq+ZiJ
- LMvmeWr6vZnbyNa1dvP5oH0bFOGDI+E7wEt2XDFgNrRn/F2jWKLV/Sui2cTi/x8ankFs/PIURZ
- TCg8MTFdqbtLfps3qWHL/iIhNj31YdPJxbUvZNLKnOEScDu8lsPFT/Lo48djBzoPV70jWJWvau
- vMusOB4QRQ1oBRtYgjzGwcUplzmz3fjJ4kwuop2bnbMgjUTrRgFlSlR/yGLz4fFsqwnPjLBbN+
- /Jg=
-X-IronPort-AV: E=Sophos;i="5.64,551,1559545200"; 
-   d="scan'208";a="50637679"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 26 Sep 2019 01:43:21 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Thu, 26 Sep 2019 01:43:00 -0700
-Received: from NAM03-DM3-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.72) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5 via Frontend
- Transport; Thu, 26 Sep 2019 01:43:00 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LAKd7nZdlrszjrScV/mDSpWwlBQpz4OW0Dq5CkoWjMuANbBM/5HX/mvCJ1BNkwGaou60fK1luDG1SuErBCcdivcJl6U97E+tf1icsRtvuQ/c+Vr2D92oKwwatg0KqviXN2zYMA798CDsrMljh0bRj+9j1SbWoeVILlyHFAkEqx84mpvhrLkUSFLHJt4KtSrf/z7OA4pgb9SOD2xLoG0W4nM2nMGaKlqL1hWyj4ap6F9Q7eD/Dwx55GTPy9NYABjKlRNGK1h+vhv9d6jaUomv8NBO5QBvowkgirRyJRDu6PpaLkQDcirfByS9IQ6JXG+x/2GcEY46GPeFLsYudjLlxw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6EWbUDqnvgUzzXQW00IRG+60rKbfAvKMDdZxX46efN0=;
- b=PMuHzwlKZ/fYZX5ADVZQMHPliV3OCxDJetV6TPNVzFVpB9wpLqxsMO4dGQNYuW20PuyJ1gi3lxhJY2T7t0XOtb60I9UIvRErFWu0AakkepzRnilU+wMxIEn7YSnUWm315jeiJ1n9jl3CaJ9iIFD9QOFvG/zkfG7//OozLJdk5UxfBrXWpS68TI21N8kiWIIiE7jSToEPXJyxoMNzYcFomFLL+dxvwKQ4CAd/GIYbuKUGFHRHwLgZbGNKfW9ygkwPtRQFbsZIhzc8QabpS3eFPJQig+U2BqU+r4p3K44MosG5VXOrEtN0H1s7i5FFbpsZO5ToS4D6o1jN0neJDEjLcg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector2-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6EWbUDqnvgUzzXQW00IRG+60rKbfAvKMDdZxX46efN0=;
- b=sRxHJIvVGtZ8/GEHxWp33aMPe7Q4GBN7VmF5wkFAFLTlyjSyrWQenBoVymB9ziCE1mLc20JUtKFtda5cfZmJD77buGVJQ/kmAe0jvenOIQF+StDHIvxBJI3+CHQiN/0f+r5T2RN8LBa8K6t8Z5LFY6BQYYDheLYNVw6KDBXpydM=
-Received: from MWHPR11MB1549.namprd11.prod.outlook.com (10.172.54.17) by
- MWHPR11MB1901.namprd11.prod.outlook.com (10.175.54.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2284.26; Thu, 26 Sep 2019 08:42:58 +0000
-Received: from MWHPR11MB1549.namprd11.prod.outlook.com
- ([fe80::1c73:1329:a07:ab9a]) by MWHPR11MB1549.namprd11.prod.outlook.com
- ([fe80::1c73:1329:a07:ab9a%12]) with mapi id 15.20.2305.017; Thu, 26 Sep 2019
- 08:42:57 +0000
-From:   <Claudiu.Beznea@microchip.com>
-To:     <daniel.lezcano@linaro.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <linux@armlinux.org.uk>, <nsekhar@ti.com>,
-        <bgolaszewski@baylibre.com>, <monstr@monstr.eu>,
-        <john@phrozen.org>, <ralf@linux-mips.org>, <paul.burton@mips.com>,
-        <jhogan@kernel.org>, <lftan@altera.com>, <tglx@linutronix.de>,
-        <vgupta@synopsys.com>, <marc.zyngier@arm.com>,
-        <patrice.chotard@st.com>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@st.com>, <eric@anholt.net>, <wahrenst@gmx.net>,
-        <f.fainelli@gmail.com>, <rjui@broadcom.com>,
-        <sbranden@broadcom.com>, <bcm-kernel-feedback-list@broadcom.com>,
-        <linus.walleij@linaro.org>, <shc_work@mail.ru>, <kgene@kernel.org>,
-        <krzk@kernel.org>, <ysato@users.sourceforge.jp>,
-        <liviu.dudau@arm.com>, <sudeep.holla@arm.com>,
-        <lorenzo.pieralisi@arm.com>, <shawnguo@kernel.org>,
-        <s.hauer@pengutronix.de>, <kernel@pengutronix.de>,
-        <festevam@gmail.com>, <linux-imx@nxp.com>, <baohua@kernel.org>,
-        <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <Ludovic.Desroches@microchip.com>, <baruch@tkos.co.il>,
-        <u.kleine-koenig@pengutronix.de>, <guoren@kernel.org>,
-        <kaloz@openwrt.org>, <khalasa@piap.pl>, <ssantosh@kernel.org>,
-        <vz@mleia.com>, <slemieux.tyco@gmail.com>, <khilman@baylibre.com>,
-        <avifishman70@gmail.com>, <tmaimon77@gmail.com>,
-        <tali.perry1@gmail.com>, <venture@google.com>, <yuenn@google.com>,
-        <benjaminfair@google.com>, <afaerber@suse.de>,
-        <manivannan.sadhasivam@linaro.org>, <narmstrong@baylibre.com>,
-        <agross@kernel.org>, <palmer@sifive.com>, <aou@eecs.berkeley.edu>,
-        <heiko@sntech.de>, <orsonzhai@gmail.com>, <baolin.wang@linaro.org>,
-        <zhang.lyra@gmail.com>, <maxime.ripard@bootlin.com>,
-        <wens@csie.org>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <linux@prisktech.co.nz>,
-        <john.stultz@linaro.org>, <sboyd@kernel.org>,
-        <matthias.bgg@gmail.com>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mips@vger.kernel.org>, <nios2-dev@lists.rocketboards.org>,
-        <linux-snps-arc@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <uclinux-h8-devel@lists.sourceforge.jp>,
-        <linux-amlogic@lists.infradead.org>, <openbmc@lists.ozlabs.org>,
-        <linux-oxnas@groups.io>, <linux-arm-msm@vger.kernel.org>,
-        <linux-unisoc@lists.infradead.org>,
-        <linux-riscv@lists.infradead.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-tegra@vger.kernel.org>, <linux-mediatek@lists.infradead.org>
-Subject: Re: [PATCH 0/7] add support for clocksource/clockevent DT selection
-Thread-Topic: [PATCH 0/7] add support for clocksource/clockevent DT selection
-Thread-Index: AQHVc8VbrLXkUp4vH02J/Sk0g3X+4Kc9pRwA
-Date:   Thu, 26 Sep 2019 08:42:57 +0000
-Message-ID: <72edc5fd-df05-cba5-5aa7-39da1709415b@microchip.com>
-References: <1568123236-767-1-git-send-email-claudiu.beznea@microchip.com>
- <c3a68a08-d134-cd28-c8af-f757628e07f1@linaro.org>
-In-Reply-To: <c3a68a08-d134-cd28-c8af-f757628e07f1@linaro.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MR2P264CA0113.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:500:33::29) To MWHPR11MB1549.namprd11.prod.outlook.com
- (2603:10b6:301:c::17)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tagtoolbar-keys: D20190926114228283
-x-originating-ip: [94.177.32.156]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: bc557067-1077-42be-6717-08d7425d8720
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600167)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR11MB1901;
-x-ms-traffictypediagnostic: MWHPR11MB1901:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MWHPR11MB19011D574DC5569C649FB82D87860@MWHPR11MB1901.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 0172F0EF77
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(376002)(136003)(39860400002)(366004)(51914003)(199004)(189003)(446003)(4744005)(71200400001)(25786009)(386003)(6506007)(52116002)(229853002)(71190400001)(53546011)(6486002)(7416002)(76176011)(36756003)(7406005)(7366002)(31686004)(7336002)(14454004)(6512007)(66946007)(1191002)(561944003)(64756008)(66446008)(66476007)(7736002)(305945005)(99286004)(2501003)(5660300002)(102836004)(256004)(14444005)(66556008)(476003)(26005)(6116002)(6246003)(11346002)(486006)(86362001)(31696002)(316002)(8676002)(81166006)(81156014)(6436002)(478600001)(186003)(2171002)(3846002)(8936002)(110136005)(54906003)(2201001)(2616005)(4326008)(2906002)(66066001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR11MB1901;H:MWHPR11MB1549.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: JsNRlFiKu2xImweAE+BluMpKIUoInHFuE2sg+dLKuGs4T9kFDOqgcHKJUCYS2gybgMXXZI5osydBUn9KNyoHWWJ6/NEaYP7KAKFfRJ0/CBzJRNVV9Mpz72YJ/dwnH04AjmMgpY41/nVVGtmUYJYTJXrEzGLfmayrGh8nNn5Sbf4qIM3pSA5H8Sl3NizOFZQjufDCOp/GxaNSWWnBaSVrEfjMjVKTtgnofFe0H1aEiy8Tt0GakCl/TvuOscqDULtqdRbtiBBDaTwX3stbA4aowKc9J1UXVNNUbKf75xSs3TjOyQ7u+YASL6mozZNWDOz84BYusPgi0naRrvDr9rr+RxZsw27ZcfUbWPxhjmHmc/eWGyOuc1UAcucjh0WBPML8WyL/9v1fZOEV2kZBxSHkZAgdTmCtqwt/9/u7k/BT0i0=
-Content-Type: text/plain; charset="UTF-8"
-Content-ID: <BCA8ECD1111F6948AB05E557D0B1C52E@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Thu, 26 Sep 2019 05:21:03 -0400
+Received: by mail-wr1-f65.google.com with SMTP id i18so1535880wru.11;
+        Thu, 26 Sep 2019 02:20:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0yFgoWaDFqXC6Q4Iw65F2epQQ4rqVPkyo8j0S3UI0fw=;
+        b=iZKq2gtg9D6Ng1+95TUUzwfh38flkeUM3gq0EmFmIwd8a54Nb7oKSOhUkV1ZNzUut1
+         XmSOMrtZFynQw8yg4bSZQoLTks0BAoCP2B6yMCase1Wh4/7vvpbS6j8N5Gkx2tOyELi/
+         779QPE2A14nPwhFWHh/5YAIF4lPeNwAOCk1M1v42QoSCbCFXSMjQBytPpPNSl+kjBbpg
+         DucxXs9CR1G4YoVuKT0kIBJOrNy2jouaY0Hz9eYYatkSXCnPTKftcOMhSShEfdxJp8nZ
+         HeYIW8ECXB0Y+qLLiiyYbpQI5OnCSxvg94KhutgWX3d6SIZvYrUVnpabZRzARFGauz0z
+         FTaQ==
+X-Gm-Message-State: APjAAAXd9/3gsvDRe8Cxjo+NJe9MeynJaP2dXTIm18qrBAbULnwAB+EN
+        8llMOf6eiieuRZPU3He0Hq8=
+X-Google-Smtp-Source: APXvYqxXI3Jvln6ixBkRS1hL3oyOLtrK3tUaJhrXOIGErzBhakNRh0Xi682urKxf2Nm4Kl/qlmBfYQ==
+X-Received: by 2002:a5d:4646:: with SMTP id j6mr1975308wrs.173.1569489658421;
+        Thu, 26 Sep 2019 02:20:58 -0700 (PDT)
+Received: from pi3 ([194.230.155.145])
+        by smtp.googlemail.com with ESMTPSA id d28sm2678651wrb.95.2019.09.26.02.20.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2019 02:20:57 -0700 (PDT)
+Date:   Thu, 26 Sep 2019 11:20:55 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <snawrocki@kernel.org>
+Subject: Re: [PATCH v4 1/8] dt-bindings: timer: Convert Exynos MCT bindings
+ to json-schema
+Message-ID: <20190926092055.GA15552@pi3>
+References: <CGME20190923161449epcas3p4bf25ddc76d4893a93b9472c3a286f410@epcas3p4.samsung.com>
+ <20190923161411.9236-1-krzk@kernel.org>
+ <aa4acd33-eff3-175f-b86a-459ba8c1d17c@samsung.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: bc557067-1077-42be-6717-08d7425d8720
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Sep 2019 08:42:57.4048
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: eE5XSWl4V1fxZGL0K/Lmn+PqH/2rvLsnNBp8C6u5rbSFictpiZGwaDBVFvOtdFPhk1KlWc6lCOOc/r1X6WP3h/tNVqI8F7Vm3oPSfeDBGRU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1901
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+In-Reply-To: <aa4acd33-eff3-175f-b86a-459ba8c1d17c@samsung.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20190926084257.U5CATDUZbtMKaiPXCFalv6Afa0lmRFlery0eeDwTl6Y@z>
+Message-ID: <20190926092055.FE1zGIOpaMi9rBF0biIT3nPnL4QBBZpEHcIUNp6wYXI@z>
 
-DQoNCk9uIDI1LjA5LjIwMTkgMjA6MTksIERhbmllbCBMZXpjYW5vIHdyb3RlOg0KPiBFeHRlcm5h
-bCBFLU1haWwNCj4gDQo+IA0KPiBIaSBDbGF1ZGl1LA0KPiANCj4gT24gMTAvMDkvMjAxOSAxNTo0
-NywgQ2xhdWRpdSBCZXpuZWEgd3JvdGU6DQo+PiBIaSwNCj4+DQo+PiBUaGlzIHNlcmllcyBhZGRz
-IHN1cHBvcnQgdG8gcGVybWl0IHRoZSBzZWxlY3Rpb24gb2YgY2xvY2tzb3VyY2UvY2xvY2tldmVu
-dA0KPj4gdmlhIERULg0KPiANCj4gVGhhbmtzIGZvciB0aGUgcHJvcG9zYWwgYW5kIHRha2luZyBj
-YXJlIG9mIG1ha2luZyBzb21lIHByb2dyZXNzIG9uIHRoaXMuDQo+IA0KPiBJIGp1c3Qgd2FudGVk
-IHRvIGxldCB5b3Uga25vdyBJJ3ZlIGJlZW4gdHJhdmVsaW5nIGJ1dCB0aGUgc2VyaWVzIGlzIGlu
-DQo+IG15IHBpcGUgYW5kIEkgZGlkIG5vdCBmb3JnZXQgaXQuIEknbGwgY29tbWVudCBpdCBuZXh0
-IHdlZWsuDQoNCkhpIERhbmllbCwNCg0KTm8gcHJvYmxlbS4gVGhhbmsgeW91IGZvciBsZXR0aW5n
-IG1lIGtub3cuDQoNCkNsYXVkaXUNCg0KPiANCj4gIC0tIERhbmllbA0KPiANCj4gDQo=
+On Wed, Sep 25, 2019 at 03:40:52PM +0200, Marek Szyprowski wrote:
+> Hi Krzysztof,
+> 
+> On 23.09.2019 18:14, Krzysztof Kozlowski wrote:
+> > Convert Samsung Exynos Soc Multi Core Timer bindings to DT schema format
+> > using json-schema.
+> >
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> >
+> > ---
+> >
+> > Changes since v3:
+> > 1. Use interrupts-extended instead of interrupts-map.
+> >
+> > Changes since v1:
+> > 1. Indent example with four spaces (more readable),
+> > 2. Rename nodes in example to timer,
+> > 3. Remove mct-map subnode.
+> > ---
+> >   .../bindings/timer/samsung,exynos4210-mct.txt |  88 ------------
+> >   .../timer/samsung,exynos4210-mct.yaml         | 125 ++++++++++++++++++
+> >   2 files changed, 125 insertions(+), 88 deletions(-)
+> >   delete mode 100644 Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
+> >   create mode 100644 Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
+> > deleted file mode 100644
+> > index 8f78640ad64c..000000000000
+> > --- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
+> > +++ /dev/null
+> > @@ -1,88 +0,0 @@
+> > -Samsung's Multi Core Timer (MCT)
+> > -
+> > -The Samsung's Multi Core Timer (MCT) module includes two main blocks, the
+> > -global timer and CPU local timers. The global timer is a 64-bit free running
+> > -up-counter and can generate 4 interrupts when the counter reaches one of the
+> > -four preset counter values. The CPU local timers are 32-bit free running
+> > -down-counters and generate an interrupt when the counter expires. There is
+> > -one CPU local timer instantiated in MCT for every CPU in the system.
+> > -
+> > -Required properties:
+> > -
+> > -- compatible: should be "samsung,exynos4210-mct".
+> > -  (a) "samsung,exynos4210-mct", for mct compatible with Exynos4210 mct.
+> > -  (b) "samsung,exynos4412-mct", for mct compatible with Exynos4412 mct.
+> > -
+> > -- reg: base address of the mct controller and length of the address space
+> > -  it occupies.
+> > -
+> > -- interrupts: the list of interrupts generated by the controller. The following
+> > -  should be the order of the interrupts specified. The local timer interrupts
+> > -  should be specified after the four global timer interrupts have been
+> > -  specified.
+> > -
+> > -	0: Global Timer Interrupt 0
+> > -	1: Global Timer Interrupt 1
+> > -	2: Global Timer Interrupt 2
+> > -	3: Global Timer Interrupt 3
+> > -	4: Local Timer Interrupt 0
+> > -	5: Local Timer Interrupt 1
+> > -	6: ..
+> > -	7: ..
+> > -	i: Local Timer Interrupt n
+> > -
+> > -  For MCT block that uses a per-processor interrupt for local timers, such
+> > -  as ones compatible with "samsung,exynos4412-mct", only one local timer
+> > -  interrupt might be specified, meaning that all local timers use the same
+> > -  per processor interrupt.
+> > -
+> > -Example 1: In this example, the IP contains two local timers, using separate
+> > -	   interrupts, so two local timer interrupts have been specified,
+> > -	   in addition to four global timer interrupts.
+> > -
+> > -	mct@10050000 {
+> > -		compatible = "samsung,exynos4210-mct";
+> > -		reg = <0x10050000 0x800>;
+> > -		interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
+> > -			     <0 42 0>, <0 48 0>;
+> > -	};
+> > -
+> > -Example 2: In this example, the timer interrupts are connected to two separate
+> > -	   interrupt controllers. Hence, an interrupt-map is created to map
+> > -	   the interrupts to the respective interrupt controllers.
+> > -
+> > -	mct@101c0000 {
+> > -		compatible = "samsung,exynos4210-mct";
+> > -		reg = <0x101C0000 0x800>;
+> > -		interrupt-parent = <&mct_map>;
+> > -		interrupts = <0>, <1>, <2>, <3>, <4>, <5>;
+> > -
+> > -		mct_map: mct-map {
+> > -			#interrupt-cells = <1>;
+> > -			#address-cells = <0>;
+> > -			#size-cells = <0>;
+> > -			interrupt-map = <0 &gic 0 57 0>,
+> > -					<1 &gic 0 69 0>,
+> > -					<2 &combiner 12 6>,
+> > -					<3 &combiner 12 7>,
+> > -					<4 &gic 0 42 0>,
+> > -					<5 &gic 0 48 0>;
+> > -		};
+> > -	};
+> > -
+> > -Example 3: In this example, the IP contains four local timers, but using
+> > -	   a per-processor interrupt to handle them. Either all the local
+> > -	   timer interrupts can be specified, with the same interrupt specifier
+> > -	   value or just the first one.
+> > -
+> > -	mct@10050000 {
+> > -		compatible = "samsung,exynos4412-mct";
+> > -		reg = <0x10050000 0x800>;
+> > -
+> > -		/* Both ways are possible in this case. Either: */
+> > -		interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
+> > -			     <0 42 0>;
+> > -		/* or: */
+> > -		interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
+> > -			     <0 42 0>, <0 42 0>, <0 42 0>, <0 42 0>;
+> > -	};
+> > diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+> > new file mode 100644
+> > index 000000000000..bff3f54a398f
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+> > @@ -0,0 +1,125 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/timer/samsung,exynos4210-mct.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Samsung Exynos SoC Multi Core Timer (MCT)
+> > +
+> > +maintainers:
+> > +  - Krzysztof Kozlowski <krzk@kernel.org>
+> > +
+> > +description: |+
+> > +  The Samsung's Multi Core Timer (MCT) module includes two main blocks, the
+> > +  global timer and CPU local timers. The global timer is a 64-bit free running
+> > +  up-counter and can generate 4 interrupts when the counter reaches one of the
+> > +  four preset counter values. The CPU local timers are 32-bit free running
+> > +  down-counters and generate an interrupt when the counter expires. There is
+> > +  one CPU local timer instantiated in MCT for every CPU in the system.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - samsung,exynos4210-mct
+> > +      - samsung,exynos4412-mct
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    description: |
+> > +      Interrupts should be put in specific order. This is, the local timer
+> > +      interrupts should be specified after the four global timer interrupts
+> > +      have been specified:
+> > +      0: Global Timer Interrupt 0
+> > +      1: Global Timer Interrupt 1
+> > +      2: Global Timer Interrupt 2
+> > +      3: Global Timer Interrupt 3
+> > +      4: Local Timer Interrupt 0
+> > +      5: Local Timer Interrupt 1
+> > +      6: ..
+> > +      7: ..
+> > +      i: Local Timer Interrupt n
+> > +      For MCT block that uses a per-processor interrupt for local timers, such
+> > +      as ones compatible with "samsung,exynos4412-mct", only one local timer
+> > +      interrupt might be specified, meaning that all local timers use the same
+> > +      per processor interrupt.
+> > +    minItems: 5               # 4 Global + 1 local
+> > +    maxItems: 20              # 4 Global + 16 local
+> > +
+> > +  interrupts-extended:
+> > +    description: |
+> > +      If interrupts are coming from different controllers, this property
+> > +      can be used instead of regular "interrupts" property.
+> > +      The format is exactly the same as with "interrupts".
+> > +      Interrupts should be put in specific order. This is, the local timer
+> > +    minItems: 5               # 4 Global + 1 local
+> > +    maxItems: 20              # 4 Global + 16 local
+> > +
+> > +required:
+> > +  - compatible
+> > +  - interrupts
+> > +  - reg
+> > +
+> > +allOf:
+> > +  - if:
+> > +      not:
+> > +        required:
+> > +          - interrupts
+> > +    then:
+> > +      required:
+> > +        - interrupts-extended
+> > +
+> > +examples:
+> > +  - |
+> > +    // In this example, the IP contains two local timers, using separate
+> > +    // interrupts, so two local timer interrupts have been specified,
+> > +    // in addition to four global timer interrupts.
+> > +
+> > +    timer@10050000 {
+> > +        compatible = "samsung,exynos4210-mct";
+> > +        reg = <0x10050000 0x800>;
+> > +        interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
+> > +                     <0 42 0>, <0 48 0>;
+> > +    };
+> > +
+> > +  - |
+> > +    // In this example, the timer interrupts are connected to two separate
+> > +    // interrupt controllers. Hence, an interrupts-extended is needed.
+> > +
+> > +    timer@101c0000 {
+> > +        compatible = "samsung,exynos4210-mct";
+> > +        reg = <0x101C0000 0x800>;
+> > +        interrupts-extended = <&gic 0 57 0>,
+> > +                              <&gic 0 69 0>,
+> > +                              <&combiner 12 6>,
+> > +                              <&combiner 12 7>,
+> > +                              <&gic 0 42 0>,
+> > +                              <&gic 0 48 0>;
+> > +    };
+> > +
+> > +  - |
+> > +    // In this example, the IP contains four local timers, but using
+> > +    // a per-processor interrupt to handle them. Only one first local
+> > +    // interrupt is specified.
+> > +
+> > +    timer@10050000 {
+> > +        compatible = "samsung,exynos4412-mct";
+> > +        reg = <0x10050000 0x800>;
+> > +
+> > +        interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
+> > +                     <0 42 0>;
+> > +    };
+> > +
+> > +  - |
+> > +    // In this example, the IP contains four local timers, but using
+> > +    // a per-processor interrupt to handle them. All the local timer
+> > +    // interrupts are specified.
+> > +
+> > +    timer@10050000 {
+> > +        compatible = "samsung,exynos4412-mct";
+> > +        reg = <0x10050000 0x800>;
+> > +
+> > +        interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
+> > +                     <0 42 0>, <0 42 0>, <0 42 0>, <0 42 0>;
+> > +    };
+> I would add "#include <dt-bindings/interrupt-controller/arm-gic.h>" and
+> replace zeros with proper defines like GIC_SPI and GIC_PPI. The last two
+> examples describes per-processor-interrupts, but have 0 in the specifier
+> cell 0. I would also use proper IRQ_TYPE_LEVEL_HIGH at cell 3 instead
+> of 0. I would also consider adding artificial 'interrupt-parent = &git'
+> property to the 1st, 3rd and 4th examples to make it clear that they
+> refer to ARM GIC bindings.
+
+Makes sense, but how about doing this in separate patch? The example code
+was like this amd this just converts the bindings so I think it is better
+to reduce the amount of feature-like improvements.
+
+Best regards,
+Krzysztof
+
