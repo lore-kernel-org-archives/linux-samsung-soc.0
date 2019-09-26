@@ -1,145 +1,147 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] dt-bindings: sound: Convert Samsung Exynos5433 TM2(E)
- audio complex with WM5110 codec to dt-schema
-Date: Thu, 26 Sep 2019 14:43:46 +0200
-Message-ID: <20190926124346.GA15876@pi3>
-References: <CGME20190924150230eucas1p295da8f6aa018aec4acabc068f6e1afa1@eucas1p2.samsung.com>
- <20190924150146.15972-1-m.szyprowski@samsung.com>
- <20190924152028.GD9218@pi3>
- <50932d65-6d8b-aca2-2bec-d4eedaba0bdc@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v2] dt-bindings: gpu: Convert Samsung Image Scaler to
+ dt-schema
+Date: Thu, 26 Sep 2019 14:56:14 +0200
+Message-ID: <20190926125614.10408-1-m.szyprowski@samsung.com>
+References: <CGME20190926125619eucas1p249ac149ef1e1a3eb975dae94b08cd7be@eucas1p2.samsung.com>
+Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <50932d65-6d8b-aca2-2bec-d4eedaba0bdc@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Maciej Falkowski <m.falkowski@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>
+To: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Maciej Falkowski <m.falkowski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Sep 26, 2019 at 01:49:09PM +0200, Maciej Falkowski wrote:
-> 
-> On 9/24/19 5:20 PM, Krzysztof Kozlowski wrote:
-> > On Tue, Sep 24, 2019 at 05:01:46PM +0200, Marek Szyprowski wrote:
-> >> From: Maciej Falkowski <m.falkowski@samsung.com>
-> >>
-> >> Convert Samsung Exynos5433 TM2(E) audio complex with WM5110 codec to newer dt-schema format.
-> >>
-> >> Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
-> >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> >> ---
-> >>   .../bindings/sound/samsung,tm2-audio.txt      | 42 ----------
-> >>   .../bindings/sound/samsung,tm2-audio.yaml     | 83 +++++++++++++++++++
-> >>   2 files changed, 83 insertions(+), 42 deletions(-)
-> >>   delete mode 100644 Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
-> >>   create mode 100644 Documentation/devicetree/bindings/sound/samsung,tm2-audio.yaml
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
-> >> deleted file mode 100644
-> >> index f5ccc12ddc00..000000000000
-> >> --- a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
-> >> +++ /dev/null
-> >> @@ -1,42 +0,0 @@
-> >> -Samsung Exynos5433 TM2(E) audio complex with WM5110 codec
-> >> -
-> >> -Required properties:
-> >> -
-> >> - - compatible		 : "samsung,tm2-audio"
-> >> - - model		 : the user-visible name of this sound complex
-> >> - - audio-codec		 : the first entry should be phandle of the wm5110 audio
-> >> -			   codec node, as described in ../mfd/arizona.txt;
-> >> -			   the second entry should be phandle of the HDMI
-> >> -			   transmitter node
-> >> - - i2s-controller	 : the list of phandle and argument tuples pointing to
-> >> -			   I2S controllers, the first entry should be I2S0 and
-> >> -			   the second one I2S1
-> >> - - audio-amplifier	 : the phandle of the MAX98504 amplifier
-> >> - - samsung,audio-routing : a list of the connections between audio components;
-> >> -			   each entry is a pair of strings, the first being the
-> >> -			   connection's sink, the second being the connection's
-> >> -			   source; valid names for sources and sinks are the
-> >> -			   WM5110's and MAX98504's pins and the jacks on the
-> >> -			   board: HP, SPK, Main Mic, Sub Mic, Third Mic,
-> >> -			   Headset Mic
-> >> - - mic-bias-gpios	 : GPIO pin that enables the Main Mic bias regulator
-> >> -
-> >> -
-> >> -Example:
-> >> -
-> >> -sound {
-> >> -	compatible = "samsung,tm2-audio";
-> >> -	audio-codec = <&wm5110>, <&hdmi>;
-> >> -	i2s-controller = <&i2s0 0>, <&i2s1 0>;
-> >> -	audio-amplifier = <&max98504>;
-> >> -	mic-bias-gpios = <&gpr3 2 0>;
-> >> -	model = "wm5110";
-> >> -	samsung,audio-routing =
-> >> -		"HP", "HPOUT1L",
-> >> -		"HP", "HPOUT1R",
-> >> -		"SPK", "SPKOUT",
-> >> -		"SPKOUT", "HPOUT2L",
-> >> -		"SPKOUT", "HPOUT2R",
-> >> -		"Main Mic", "MICBIAS2",
-> >> -		"IN1R", "Main Mic";
-> >> -};
-> >> diff --git a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.yaml b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.yaml
-> >> new file mode 100644
-> >> index 000000000000..377f8cbe17b8
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.yaml
-> >> @@ -0,0 +1,83 @@
-> >> +# SPDX-License-Identifier: GPL-2.0
-> >> +%YAML 1.2
-> >> +---
-> >> +$id: https://protect2.fireeye.com/url?k=ccb9abe11b8a2745.ccb820ae-a91cd712f01d248e&u=http://devicetree.org/schemas/sound/samsung,tm2-audio.yaml#
-> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >> +
-> >> +title: Samsung Exynos SoC Exynos5433 TM2(E) audio complex with WM5110 codec
-> >> +
-> >> +maintainers:
-> >> +  - Krzysztof Kozlowski <krzk@kernel.org>
-> >> +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
-> >> +
-> >> +properties:
-> >> +  compatible:
-> >> +    const: samsung,tm2-audio
-> >> +
-> >> +  model:
-> >> +    maxItems: 1
-> > $ref to string, then maxItems are not needed.
-> > Add description (copy-paste).
-> 
-> Hi Krzysztof,
-> 
-> You're right, model is not a standard property.
-> 
-> >> +
-> >> +  audio-codec:
-> >> +    allOf:
-> >> +      - $ref: /schemas/types.yaml#/definitions/phandle-array
-> >> +      - items:
-> >> +          - description: |
-> >> +              phandle of the wm5110 audio codec node,
-> >> +              as described in ../mfd/arizona.txt;
-> >> +          - description: phandle of the HDMI transmitter node.
-> >> +
-> >> +  i2s-controller:
-> >> +    allOf:
-> >> +      - $ref: /schemas/types.yaml#/definitions/phandle-array
-> >> +      - items:
-> >> +          - description: phandle of the I2S0.
-> >> +          - description: phandle of the I2S1.
-> >> +
-> >> +  audio-amplifier:
-> > Can you order the nodes here and in required section by name (except
-> > compatible which should be first)?
-> 
-> Current order is already well-established across bindings (even example).
-> I think that sorted properties are undesired with that.
+From: Maciej Falkowski <m.falkowski@samsung.com>
 
-OK, good point, so leave the standard properties in order matching
-example-bindings. However order the reset because "audio-codec", then
-"i2s-controler" and then again "audio-...". So bring some order here.
+Convert Samsung Image Scaler to newer dt-schema format.
+
+Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+v2:
+- Removed quotation marks from string in 'compatible' property
+- Added if-then statement for 'clocks' and 'clock-names' property
+- Added include directive to example
+- Added GIC_SPI macro to example
 
 Best regards,
-Krzysztof
+Maciej Falkowski
+---
+ .../bindings/gpu/samsung-scaler.txt           | 27 -------
+ .../bindings/gpu/samsung-scaler.yaml          | 71 +++++++++++++++++++
+ 2 files changed, 71 insertions(+), 27 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/gpu/samsung-scaler.txt
+ create mode 100644 Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
+
+diff --git a/Documentation/devicetree/bindings/gpu/samsung-scaler.txt b/Documentation/devicetree/bindings/gpu/samsung-scaler.txt
+deleted file mode 100644
+index 9c3d98105dfd..000000000000
+--- a/Documentation/devicetree/bindings/gpu/samsung-scaler.txt
++++ /dev/null
+@@ -1,27 +0,0 @@
+-* Samsung Exynos Image Scaler
+-
+-Required properties:
+-  - compatible : value should be one of the following:
+-	(a) "samsung,exynos5420-scaler" for Scaler IP in Exynos5420
+-	(b) "samsung,exynos5433-scaler" for Scaler IP in Exynos5433
+-
+-  - reg : Physical base address of the IP registers and length of memory
+-	  mapped region.
+-
+-  - interrupts : Interrupt specifier for scaler interrupt, according to format
+-		 specific to interrupt parent.
+-
+-  - clocks : Clock specifier for scaler clock, according to generic clock
+-	     bindings. (See Documentation/devicetree/bindings/clock/exynos*.txt)
+-
+-  - clock-names : Names of clocks. For exynos scaler, it should be "mscl"
+-		  on 5420 and "pclk", "aclk" and "aclk_xiu" on 5433.
+-
+-Example:
+-	scaler@12800000 {
+-		compatible = "samsung,exynos5420-scaler";
+-		reg = <0x12800000 0x1294>;
+-		interrupts = <0 220 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&clock CLK_MSCL0>;
+-		clock-names = "mscl";
+-	};
+diff --git a/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml b/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
+new file mode 100644
+index 000000000000..af19930d052e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
+@@ -0,0 +1,71 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpu/samsung-scaler.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung Exynos SoC Image Scaler
++
++maintainers:
++  - Inki Dae <inki.dae@samsung.com>
++
++properties:
++  compatible:
++    enum:
++      - samsung,exynos5420-scaler
++      - samsung,exynos5433-scaler
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++if:
++  properties:
++    compatible:
++      contains:
++        const: samsung,exynos5420-scaler
++then:
++  properties:
++    clocks:
++      items:
++        - description: mscl clock
++
++    clock-names:
++      items:
++        - const: mscl
++else:
++  properties:
++    clocks:
++      items:
++        - description: mscl clock
++        - description: aclk clock
++        - description: aclk_xiu clock
++
++    clock-names:
++      items:
++        - const: pclk
++        - const: aclk
++        - const: aclk_xiu
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++
++examples:
++  - |
++    #include <dt-bindings/clock/exynos5420.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    scaler@12800000 {
++        compatible = "samsung,exynos5420-scaler";
++        reg = <0x12800000 0x1294>;
++        interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&clock CLK_MSCL0>;
++        clock-names = "mscl";
++    };
++
+-- 
+2.17.1
