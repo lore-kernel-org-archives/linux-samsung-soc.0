@@ -2,249 +2,237 @@ Return-Path: <SRS0=Ozgi=XV=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D2A6C4360C
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Sep 2019 12:56:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F003C352A9
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Sep 2019 13:50:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD8A0222C0
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Sep 2019 12:56:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Ysn18o/N"
+	by mail.kernel.org (Postfix) with ESMTP id 11CC9222C5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Sep 2019 13:50:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1569505827;
+	bh=apWU6v79zjp0y+stZs8LNPa1deISYSPdCh9xjSVMz9Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=sx2YGHTK5qGNhAJxyZKoGI0Ysbl2zx/x1SquOO4BrjyuWGntIfWOhPbxPNtEp1Ny0
+	 NbxII0Lk5Ims+Z6ByHm+0hf67J4dT6nmAtnKdccjfJHTFnT4xW9qW/epmtDyMO0lzq
+	 IQtk1n5E6rAy9GzWuy94sdBvX9djUF4BdTi0WoWI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726025AbfIZM4Z (ORCPT
+        id S1726676AbfIZNu0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 26 Sep 2019 08:56:25 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:51011 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725946AbfIZM4W (ORCPT
+        Thu, 26 Sep 2019 09:50:26 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39663 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726094AbfIZNu0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 26 Sep 2019 08:56:22 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190926125620euoutp019fb14754db9b15a9a534160c32067d28~H-kgLqYSp3125531255euoutp01K
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Sep 2019 12:56:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190926125620euoutp019fb14754db9b15a9a534160c32067d28~H-kgLqYSp3125531255euoutp01K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1569502580;
-        bh=2qQDxqYPHhCVF57kJMr4/wROezjZFSeNjBWmnGfCzE4=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=Ysn18o/NKgSQWz5nZnHoey2tB3+H37fdZ9XMu6Hu8GkkgBOTAICpi0bPt8bkKzaIE
-         ZkVwyTpkr/W56FWtYOCS5VHh5cAMHH0ZREwSGr1tbqLT6KHlKwBpSSMqgQ0B+YtY5v
-         JXg5hoQvz/NPAcvzuABZMmxbCvHW83+vwJyyI+84=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190926125620eucas1p29b39ec3cfd0a15952e064f6643dba2d3~H-kf3K8vG1380113801eucas1p28;
-        Thu, 26 Sep 2019 12:56:20 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 03.0A.04374.475BC8D5; Thu, 26
-        Sep 2019 13:56:20 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190926125619eucas1p249ac149ef1e1a3eb975dae94b08cd7be~H-kfkPKTa2227022270eucas1p2X;
-        Thu, 26 Sep 2019 12:56:19 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190926125619eusmtrp108d0625b63966590fcef45b2fd324cf6~H-kfkFhCI0264802648eusmtrp1s;
-        Thu, 26 Sep 2019 12:56:19 +0000 (GMT)
-X-AuditID: cbfec7f5-4ddff70000001116-6b-5d8cb574fb0d
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 53.A8.04166.375BC8D5; Thu, 26
-        Sep 2019 13:56:19 +0100 (BST)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190926125619eusmtip2a47b589aeba0c6fa54c368a75966592a~H-kfAr7cm1774917749eusmtip2L;
-        Thu, 26 Sep 2019 12:56:19 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
+        Thu, 26 Sep 2019 09:50:26 -0400
+Received: by mail-wm1-f65.google.com with SMTP id v17so2657367wml.4;
+        Thu, 26 Sep 2019 06:50:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=D/8T5m7hbGHRf18FTM0IPCMPxpbgEnnIkFO3iBtgMoI=;
+        b=nQeKbai9YfR0Lrh+v0Hm9coCUK2o2jf61jrhYnhIaM18AwruBNjJEHdF/5i5+TTG/g
+         AGxQLmDdjgz8DH+ueLcpD5Vo+RnIIvwWcdDAWs0QxBYbNrO45+yH12RSirMaiY6toBz/
+         9acX+ypWSOO1OEtg/KFQgqyYw1EL68j8l5Pv7wYPkqy3xwZspWu9t12tpvguTJEO2LfZ
+         uzlngXLGgTvKCrUKhOQh0atIo+agbvjXjhRhpb/kKoFuDoSlfIzJP63bioaKqnEm9R6L
+         k8J26BHcOQd7Ji7LLRNqML8A/NUBa0avUJMavs4OKAx6VfJX98jmvs9VG8FYeo9qNF8d
+         azSQ==
+X-Gm-Message-State: APjAAAXrkWUbK6bgltNptlEpbxYCL/N5rbV9+owfHrefj3Z11MLTjvTV
+        i0S7BX9sPU/cbVgSAJkqZBI=
+X-Google-Smtp-Source: APXvYqzdU1cIa3FD+JAPYVAaH707n4teHQKT/IIvZ7iBM1sXGF77mTWqzqflvK9u9d6gvprBoDLiEg==
+X-Received: by 2002:a7b:c949:: with SMTP id i9mr2903344wml.136.1569505823617;
+        Thu, 26 Sep 2019 06:50:23 -0700 (PDT)
+Received: from pi3 ([194.230.155.145])
+        by smtp.googlemail.com with ESMTPSA id l9sm2945985wme.45.2019.09.26.06.50.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2019 06:50:22 -0700 (PDT)
+Date:   Thu, 26 Sep 2019 15:50:20 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Maciej Falkowski <m.falkowski@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2] dt-bindings: gpu: Convert Samsung Image Scaler to
- dt-schema
-Date:   Thu, 26 Sep 2019 14:56:14 +0200
-Message-Id: <20190926125614.10408-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA0VSe0hTURzu7D52HV25TsGDidKgICHNCrqQRmbEMgSDoFwsW/OmopuyO18J
-        YYqla9lQTJlmBmYyHw2z5QYOnaMRhku3yqChhVOxTMFXRmpu1+y/73k++HEIRLiJhhFZSjWj
-        UspyRLgANb1Zdx5Wv9JKj7wd49NP7CMY7V5ZwOmaCR1KO51GPu2yNOF0g9PKoyfLu3G6y+7h
-        088+jfLoin47/7RA3NncCcQ9hipcPHHfwRNX9xqAeKknIgWTCOLSmZysAkYVc+q6IHPiRyuW
-        VxdRNDhLl4LpUA0gCEgdh0MfzmiAgBBS7QA+cpTzObIMYH+dCXBkCcA7LgdPAwL8jTb3Ux5n
-        PAewtckCdivfW7y4L4VTsVAzr8F9RghVBqDbPOd/GKEWARx82exPBVMX4bMWL+bDKHUA6qaH
-        /Jik4mGtx7qzFwk7jAOIrwypGRwuPXTinHEWvm5sxjgcDOccvXwOh8PhWi3KFcoB/DrSxeeI
-        FkBXWQPgUifhkGMU8x0BoQ7BF5YYTk6AHd/WMO42gXB8PsgnI9uwxlSPcDIJK+8KufRBqHd0
-        784Ovh/biYhhneWSTxZSUmgqW8F1IEL/f6oFAAMIZfJZRQbDHlMyhdGsTMHmKzOi5bmKHrD9
-        K4Y3HSt9wPrnhg1QBBDtJRsMWqkQkxWwxQobgAQiCiGTU7clMl1WfItR5aap8nMY1gb2Eago
-        lCzZM3lVSGXI1Ew2w+Qxqn8ujwgIKwVof1yJsHfq9upqUHx7o46nffyz81fV4sLWRmMbNtaa
-        NBItP3pt3Jq9fCI5od5sVxvbJbMVennxRuTHVC8wi7fSo7xxnpTEL+ue8O5Cidu2PPU7/EFl
-        2jm9O6nImnsz0XjlvPnCmisgNXBGu19OklLJgP6e3Pn5suVdvKa6T4SymbLYKETFyv4CCpMY
-        FhEDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKLMWRmVeSWpSXmKPExsVy+t/xe7rFW3tiDc4fNrSYf+Qcq8WVr+/Z
-        LCbdn8Bicf78BnaLy7vmsFnMOL+PyeJB8zo2i7VH7rJbLL1+kcmide8RdgcujzXz1jB6bFrV
-        yeZxv/s4k0ffllWMHp83yQWwRunZFOWXlqQqZOQXl9gqRRtaGOkZWlroGZlY6hkam8daGZkq
-        6dvZpKTmZJalFunbJehl3H+zhLVgqlzFwRcWDYzPxLsYOTkkBEwkll1ZyNTFyMUhJLCUUWL5
-        jH2sEAkZiZPTGqBsYYk/17rYIIo+MUpMe3+aBSTBJmAo0fUWIiEi0MYo8fnxFWYQh1ngC6PE
-        5r8/2EGqhAX8JZpX3wMbxSKgKjHh2WEwm1fAVmLy3X1MECvkJVZvOMA8gZFnASPDKkaR1NLi
-        3PTcYkO94sTc4tK8dL3k/NxNjMAg3Xbs5+YdjJc2Bh9iFOBgVOLh/bCmJ1aINbGsuDL3EKME
-        B7OSCK9vJFCINyWxsiq1KD++qDQntfgQoynQ8onMUqLJ+cAIyiuJNzQ1NLewNDQ3Njc2s1AS
-        5+0QOBgjJJCeWJKanZpakFoE08fEwSnVwBgjuuLWFHO32WIiHRrO5gqdfus+3yxoChO6/eJb
-        uu+eXy/2LVyowrBvcpogs1XLTUuNfPmDBn1T9l115LPRPV5cIFFm6Gf5K/nAytj9/q/PHXJ9
-        n1Yx6VmiMs8r5gV3U5Pip9bPnyNbuvBfYV1ZocbWvWUzRRPYVoRcuhQRLvu4iiXs9kq72Uos
-        xRmJhlrMRcWJAOCT+6JoAgAA
-X-CMS-MailID: 20190926125619eucas1p249ac149ef1e1a3eb975dae94b08cd7be
-X-Msg-Generator: CA
+        Mark Brown <broonie@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Maciej Falkowski <m.falkowski@samsung.com>
+Subject: Re: [PATCH] dt-bindings: sound: Convert Samsung Exynos Odroid
+ XU3/XU4 audio complex to dt-schema
+Message-ID: <20190926135020.GB15876@pi3>
+References: <CGME20190926120115eucas1p20280a4e50c826d43bea7bfe5d670aebe@eucas1p2.samsung.com>
+ <20190926120111.8478-1-m.szyprowski@samsung.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-X-RootMTR: 20190926125619eucas1p249ac149ef1e1a3eb975dae94b08cd7be
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190926125619eucas1p249ac149ef1e1a3eb975dae94b08cd7be
-References: <CGME20190926125619eucas1p249ac149ef1e1a3eb975dae94b08cd7be@eucas1p2.samsung.com>
+Content-Disposition: inline
+In-Reply-To: <20190926120111.8478-1-m.szyprowski@samsung.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20190926125614.hYJrj4h4K8ozJQzNBmwQLaDSHd_xWDlKjG2zhyiNHbE@z>
+Message-ID: <20190926135020.Ek-70pjBDxlsGkdCg6tVUUcsuP_1Cd0Nxam-21p75UE@z>
 
-From: Maciej Falkowski <m.falkowski@samsung.com>
+On Thu, Sep 26, 2019 at 02:01:11PM +0200, Marek Szyprowski wrote:
+> From: Maciej Falkowski <m.falkowski@samsung.com>
+> 
+> Convert Samsung Exynos Odroid XU3/XU4 audio complex with MAX98090 codec
+> to newer dt-schema format.
+> 
+> 'clocks' property is unneeded in the bindings and is left undefined in 'properties'.
+> 
+> 'samsung,audio-widgets' and 'samsung,audio-routing' are optional from driver
+> perspective and they are set as unrequired.
+> 
+> Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  .../bindings/sound/samsung,odroid.txt         | 54 -----------
+>  .../bindings/sound/samsung,odroid.yaml        | 91 +++++++++++++++++++
+>  2 files changed, 91 insertions(+), 54 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/sound/samsung,odroid.txt
+>  create mode 100644 Documentation/devicetree/bindings/sound/samsung,odroid.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/samsung,odroid.txt b/Documentation/devicetree/bindings/sound/samsung,odroid.txt
+> deleted file mode 100644
+> index e9da2200e173..000000000000
+> --- a/Documentation/devicetree/bindings/sound/samsung,odroid.txt
+> +++ /dev/null
+> @@ -1,54 +0,0 @@
+> -Samsung Exynos Odroid XU3/XU4 audio complex with MAX98090 codec
+> -
+> -Required properties:
+> -
+> - - compatible - "hardkernel,odroid-xu3-audio" - for Odroid XU3 board,
+> -		"hardkernel,odroid-xu4-audio" - for Odroid XU4 board (deprecated),
+> -		"samsung,odroid-xu3-audio" - for Odroid XU3 board (deprecated),
+> -		"samsung,odroid-xu4-audio" - for Odroid XU4 board (deprecated)
+> - - model - the user-visible name of this sound complex
+> - - clocks - should contain entries matching clock names in the clock-names
+> -    property
+> - - samsung,audio-widgets - this property specifies off-codec audio elements
+> -   like headphones or speakers, for details see widgets.txt
+> - - samsung,audio-routing - a list of the connections between audio
+> -   components;  each entry is a pair of strings, the first being the
+> -   connection's sink, the second being the connection's source;
+> -   valid names for sources and sinks are the MAX98090's pins (as
+> -   documented in its binding), and the jacks on the board
+> -
+> -   For Odroid X2:
+> -     "Headphone Jack", "Mic Jack", "DMIC"
+> -
+> -   For Odroid U3, XU3:
+> -     "Headphone Jack", "Speakers"
+> -
+> -   For Odroid XU4:
+> -     no entries
+> -
+> -Required sub-nodes:
+> -
+> - - 'cpu' subnode with a 'sound-dai' property containing the phandle of the I2S
+> -    controller
+> - - 'codec' subnode with a 'sound-dai' property containing list of phandles
+> -    to the CODEC nodes, first entry must be corresponding to the MAX98090
+> -    CODEC and the second entry must be the phandle of the HDMI IP block node
+> -
+> -Example:
+> -
+> -sound {
+> -	compatible = "hardkernel,odroid-xu3-audio";
+> -	model = "Odroid-XU3";
+> -	samsung,audio-routing =
+> -		"Headphone Jack", "HPL",
+> -		"Headphone Jack", "HPR",
+> -		"IN1", "Mic Jack",
+> -		"Mic Jack", "MICBIAS";
+> -
+> -	cpu {
+> -		sound-dai = <&i2s0 0>;
+> -	};
+> -	codec {
+> -		sound-dai = <&hdmi>, <&max98090>;
+> -	};
+> -};
+> diff --git a/Documentation/devicetree/bindings/sound/samsung,odroid.yaml b/Documentation/devicetree/bindings/sound/samsung,odroid.yaml
+> new file mode 100644
+> index 000000000000..db6d3ea3180e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/samsung,odroid.yaml
+> @@ -0,0 +1,91 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/samsung,odroid.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Samsung Exynos Odroid XU3/XU4 audio complex with MAX98090 codec
+> +
+> +maintainers:
+> +  - Krzysztof Kozlowski <krzk@kernel.org>
+> +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - const: hardkernel,odroid-xu3-audio
+> +
+> +      - const: hardkernel,odroid-xu4-audio
+> +        deprecated: true
+> +
+> +      - const: samsung,odroid-xu3-audio
+> +        deprecated: true
+> +
+> +      - const: samsung,odroid-xu4-audio
+> +        deprecated: true
+> +
+> +  model:
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    description: The user-visible name of this sound complex.
+> +
+> +  cpu:
 
-Convert Samsung Image Scaler to newer dt-schema format.
+Continuing discussion from TM2 audio, these are not standard properties,
+so they can be in some reasonable order. Ordering might not only bring
+readability but also solve conflicts of simultaneous edits.  The same in
+"required" section (except compatible).
 
-Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-v2:
-- Removed quotation marks from string in 'compatible' property
-- Added if-then statement for 'clocks' and 'clock-names' property
-- Added include directive to example
-- Added GIC_SPI macro to example
+> +    type: object
+> +    properties:
+> +      sound-dai:
+> +        $ref: /schemas/types.yaml#/definitions/phandle-array
+> +        description: phandles to the I2S controllers
+> +
+> +  codec:
+> +    type: object
+> +    properties:
+> +      sound-dai:
+> +        $ref: /schemas/types.yaml#/definitions/phandle-array
+> +        description: |
+> +          List of phandles to the CODEC nodes,
+> +          first entry must be corresponding to the MAX98090 CODEC and
+> +          the second entry must be the phandle of the HDMI IP block node.
+> +
+> +  samsung,audio-widgets:
+> +    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
+> +    description: |
+> +      This property specifies off-codec audio elements
+> +      like headphones or speakers, for details see widgets.txt
+> +
+> +  samsung,audio-routing:
+> +    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
+> +    description: |
+> +      List of the connections between audio
+
+Too early word wrap.
+
+Rest looks good to me, so with the changes:
+
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Best regards,
-Maciej Falkowski
----
- .../bindings/gpu/samsung-scaler.txt           | 27 -------
- .../bindings/gpu/samsung-scaler.yaml          | 71 +++++++++++++++++++
- 2 files changed, 71 insertions(+), 27 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/gpu/samsung-scaler.txt
- create mode 100644 Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
-
-diff --git a/Documentation/devicetree/bindings/gpu/samsung-scaler.txt b/Documentation/devicetree/bindings/gpu/samsung-scaler.txt
-deleted file mode 100644
-index 9c3d98105dfd..000000000000
---- a/Documentation/devicetree/bindings/gpu/samsung-scaler.txt
-+++ /dev/null
-@@ -1,27 +0,0 @@
--* Samsung Exynos Image Scaler
--
--Required properties:
--  - compatible : value should be one of the following:
--	(a) "samsung,exynos5420-scaler" for Scaler IP in Exynos5420
--	(b) "samsung,exynos5433-scaler" for Scaler IP in Exynos5433
--
--  - reg : Physical base address of the IP registers and length of memory
--	  mapped region.
--
--  - interrupts : Interrupt specifier for scaler interrupt, according to format
--		 specific to interrupt parent.
--
--  - clocks : Clock specifier for scaler clock, according to generic clock
--	     bindings. (See Documentation/devicetree/bindings/clock/exynos*.txt)
--
--  - clock-names : Names of clocks. For exynos scaler, it should be "mscl"
--		  on 5420 and "pclk", "aclk" and "aclk_xiu" on 5433.
--
--Example:
--	scaler@12800000 {
--		compatible = "samsung,exynos5420-scaler";
--		reg = <0x12800000 0x1294>;
--		interrupts = <0 220 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&clock CLK_MSCL0>;
--		clock-names = "mscl";
--	};
-diff --git a/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml b/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
-new file mode 100644
-index 000000000000..af19930d052e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
-@@ -0,0 +1,71 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpu/samsung-scaler.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung Exynos SoC Image Scaler
-+
-+maintainers:
-+  - Inki Dae <inki.dae@samsung.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - samsung,exynos5420-scaler
-+      - samsung,exynos5433-scaler
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+if:
-+  properties:
-+    compatible:
-+      contains:
-+        const: samsung,exynos5420-scaler
-+then:
-+  properties:
-+    clocks:
-+      items:
-+        - description: mscl clock
-+
-+    clock-names:
-+      items:
-+        - const: mscl
-+else:
-+  properties:
-+    clocks:
-+      items:
-+        - description: mscl clock
-+        - description: aclk clock
-+        - description: aclk_xiu clock
-+
-+    clock-names:
-+      items:
-+        - const: pclk
-+        - const: aclk
-+        - const: aclk_xiu
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/exynos5420.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    scaler@12800000 {
-+        compatible = "samsung,exynos5420-scaler";
-+        reg = <0x12800000 0x1294>;
-+        interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&clock CLK_MSCL0>;
-+        clock-names = "mscl";
-+    };
-+
--- 
-2.17.1
-
-
+Krzysztof
 
