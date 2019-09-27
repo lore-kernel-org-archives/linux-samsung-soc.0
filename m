@@ -7,143 +7,141 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C05ADC4360C
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Sep 2019 14:59:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73C2DC4360C
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Sep 2019 15:02:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F62821850
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Sep 2019 14:59:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BA2A21D7B
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Sep 2019 15:02:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569596399;
-	bh=4ZeYZF5rfbOcG858xzs2UwUFuWnyzoDXLMnGJ65sEOI=;
+	s=default; t=1569596569;
+	bh=PPVrg31jFsrd7Bb7WNQSWveOn6okoAYRcvr6DKHC6Rs=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=CPp6+hYgdFrFZGSxZLdzgSWIM4w0M8UP7MS62Ld8qAqyGe3PEyZaqKMty7LVc5gZC
-	 EjjfxbF5GivEo4KZV7ARadE0U+xxo4NOrS78aVgsttd0fcoU+7tyfsDywHdeHh/hMz
-	 xbROp2jM9zwdW6SrbI3AzENSJTZVzw1HHwsYi+hE=
+	b=cKzjPR3SA9yKKEHt6UcRZlVPDPJ8MZs+lJtV3RmKoL7vXA7rPBwNVZEQ+qwX7mVbP
+	 YB7siwM2yEB4IDMpyiUOKuuP1937kXzGFvMn7sC6MDd0ar82hCuL5cd71BexoDX2OU
+	 cTogrpb+dS9Ofz0pnq00YYRDO7nEw6k7F1u9a2fA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727120AbfI0O77 (ORCPT
+        id S1727506AbfI0PCp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 27 Sep 2019 10:59:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37680 "EHLO mail.kernel.org"
+        Fri, 27 Sep 2019 11:02:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726926AbfI0O77 (ORCPT
+        id S1727319AbfI0PCp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 27 Sep 2019 10:59:59 -0400
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+        Fri, 27 Sep 2019 11:02:45 -0400
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6829621850;
-        Fri, 27 Sep 2019 14:59:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8D5021D56;
+        Fri, 27 Sep 2019 15:02:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569596397;
-        bh=4ZeYZF5rfbOcG858xzs2UwUFuWnyzoDXLMnGJ65sEOI=;
+        s=default; t=1569596564;
+        bh=PPVrg31jFsrd7Bb7WNQSWveOn6okoAYRcvr6DKHC6Rs=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=eOebfeeBI4f0mYoksJW1Y9n3kCLeskoOArGkJBt8tBWzHKTGpdq3YXxTW645sqMdO
-         DfBbu/KsaKFO0OEGtzThnSXQNYIhGWX+4Bt5+SCzTRm2nzvNLv56BYz9SG2trR4+9n
-         m4zEeAH1bnMU+V0A4RkoEu394mYdEGuT7dH3Kt3c=
-Received: by mail-lj1-f171.google.com with SMTP id m7so2836524lji.2;
-        Fri, 27 Sep 2019 07:59:57 -0700 (PDT)
-X-Gm-Message-State: APjAAAXn7iBCWhH/Jg/rqNtCIlPeUq++v5PE12xdSFUcG77F3rNEQYAQ
-        kXiWrN5//SBocpDJIUxRsmmIReu/L7YsGBk9WhE=
-X-Google-Smtp-Source: APXvYqyfR4W0pf9jJu2HbF52tES3d61o9HB32ILl9iSDh6Qefr/bZ3EwJ3A3TAx3XoN+Yim9v2KMdTelKqFcDQfA3zc=
-X-Received: by 2002:a2e:7c17:: with SMTP id x23mr3207763ljc.210.1569596395620;
- Fri, 27 Sep 2019 07:59:55 -0700 (PDT)
+        b=anMo7lpQvcOoM8adFgciIu8hAZzGl/ACVS8D7IYkNWDzW/WQpmyh/sQAN+MObtq5Y
+         bhaJuxSa8BgmZphQLIYj4rwRFkpZ404mO5S1dODJ1+rPfTBAmVHkpNgPgXcQaE/3ls
+         iBK+Meh8QFWennVgtbzfwz1SUKKjE9n5IKE6m5bg=
+Received: by mail-lf1-f45.google.com with SMTP id q11so2155695lfc.11;
+        Fri, 27 Sep 2019 08:02:43 -0700 (PDT)
+X-Gm-Message-State: APjAAAV0x5vO0oQMmBT7hsS4AwbDWzkJc0qYnu/Qs0E2+A+yHgeWpqZY
+        Ny8nl5N5ba7aXE/WEOPwINdhuaR/UQNgy55BUc4=
+X-Google-Smtp-Source: APXvYqy7jRhfFe+G4lbc7z7OKjLE8RFoVguNq/Nw8wsZJrdUMbNUF8U/vQWDWWcPDvaR8I5XatG0ubwRa/is+GJvxEQ=
+X-Received: by 2002:ac2:4853:: with SMTP id 19mr3073713lfy.69.1569596561915;
+ Fri, 27 Sep 2019 08:02:41 -0700 (PDT)
 MIME-Version: 1.0
-References: <CGME20190927143314eucas1p2d419866cd740207426cd37cb6fdff468@eucas1p2.samsung.com>
- <20190927143306.12133-1-m.szyprowski@samsung.com>
-In-Reply-To: <20190927143306.12133-1-m.szyprowski@samsung.com>
+References: <CGME20190927143325eucas1p289cb46e8dcbb1ace0b1f80ade738c29b@eucas1p2.samsung.com>
+ <20190927143319.12232-1-m.szyprowski@samsung.com>
+In-Reply-To: <20190927143319.12232-1-m.szyprowski@samsung.com>
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Fri, 27 Sep 2019 16:59:44 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPdbDropa0iL6YP4Fb4aFSEXQ87thOk5mN+cSCU=i+ZwUw@mail.gmail.com>
+Date:   Fri, 27 Sep 2019 17:02:30 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPfUN5C3OXAYJ9TLp-wuuBQPZmbMkTher1nV8O5+F38ghg@mail.gmail.com>
 Message-ID:
- <CAJKOXPdbDropa0iL6YP4Fb4aFSEXQ87thOk5mN+cSCU=i+ZwUw@mail.gmail.com>
-Subject: Re: [PATCH v3] dt-bindings: gpu: Convert Samsung Image Scaler to dt-schema
-To:     Maciej Falkowski <m.falkowski@samsung.com>
+ <CAJKOXPfUN5C3OXAYJ9TLp-wuuBQPZmbMkTher1nV8O5+F38ghg@mail.gmail.com>
+Subject: Re: [PATCH v3] dt-bindings: gpu: Convert Samsung 2D Graphics
+ Accelerator to dt-schema
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Maciej Falkowski <m.falkowski@samsung.com>
 Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-samsung-soc@vger.kernel.org" 
         <linux-samsung-soc@vger.kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
+        Inki Dae <inki.dae@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20190927145944.5eJUm7CydvIFFk9uLrZAwUpI7veZHL3eqMvgs-0JThA@z>
+Message-ID: <20190927150230.OfuDF-Mm69CLXUmFP5TB-PzG1RpApJJduO1b0WQZNds@z>
 
 On Fri, 27 Sep 2019 at 16:33, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
 >
 > From: Maciej Falkowski <m.falkowski@samsung.com>
 >
-> Convert Samsung Image Scaler to newer dt-schema format.
+> Convert Samsung 2D Graphics Accelerator to newer dt-schema format
 >
 > Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
 > v3:
-> - Fixed description of 'clocks' property:
-> rather than 'mscl clock', 'pclk clock'
-> - Added empty line within if-else statement
+> - Merged two if-statements with single if-else statement
 > - Added 'additionalProperties: false'
 > - Listed all missing 'properties' in properties scope
 >
 > Best regards,
 > Maciej Falkowski
 > ---
->  .../bindings/gpu/samsung-scaler.txt           | 27 -------
->  .../bindings/gpu/samsung-scaler.yaml          | 81 +++++++++++++++++++
->  2 files changed, 81 insertions(+), 27 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/gpu/samsung-scaler.txt
->  create mode 100644 Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
+>  .../devicetree/bindings/gpu/samsung-g2d.txt   | 27 -------
+>  .../devicetree/bindings/gpu/samsung-g2d.yaml  | 75 +++++++++++++++++++
+>  2 files changed, 75 insertions(+), 27 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/gpu/samsung-g2d.txt
+>  create mode 100644 Documentation/devicetree/bindings/gpu/samsung-g2d.yaml
 >
-> diff --git a/Documentation/devicetree/bindings/gpu/samsung-scaler.txt b/Documentation/devicetree/bindings/gpu/samsung-scaler.txt
+> diff --git a/Documentation/devicetree/bindings/gpu/samsung-g2d.txt b/Documentation/devicetree/bindings/gpu/samsung-g2d.txt
 > deleted file mode 100644
-> index 9c3d98105dfd..000000000000
-> --- a/Documentation/devicetree/bindings/gpu/samsung-scaler.txt
+> index 1e7959332dbc..000000000000
+> --- a/Documentation/devicetree/bindings/gpu/samsung-g2d.txt
 > +++ /dev/null
 > @@ -1,27 +0,0 @@
-> -* Samsung Exynos Image Scaler
+> -* Samsung 2D Graphics Accelerator
 > -
 > -Required properties:
-> -  - compatible : value should be one of the following:
-> -       (a) "samsung,exynos5420-scaler" for Scaler IP in Exynos5420
-> -       (b) "samsung,exynos5433-scaler" for Scaler IP in Exynos5433
+> -  - compatible : value should be one among the following:
+> -       (a) "samsung,s5pv210-g2d" for G2D IP present in S5PV210 & Exynos4210 SoC
+> -       (b) "samsung,exynos4212-g2d" for G2D IP present in Exynos4x12 SoCs
+> -       (c) "samsung,exynos5250-g2d" for G2D IP present in Exynos5250 SoC
 > -
 > -  - reg : Physical base address of the IP registers and length of memory
 > -         mapped region.
 > -
-> -  - interrupts : Interrupt specifier for scaler interrupt, according to format
-> -                specific to interrupt parent.
-> -
-> -  - clocks : Clock specifier for scaler clock, according to generic clock
-> -            bindings. (See Documentation/devicetree/bindings/clock/exynos*.txt)
-> -
-> -  - clock-names : Names of clocks. For exynos scaler, it should be "mscl"
-> -                 on 5420 and "pclk", "aclk" and "aclk_xiu" on 5433.
+> -  - interrupts : G2D interrupt number to the CPU.
+> -  - clocks : from common clock binding: handle to G2D clocks.
+> -  - clock-names : names of clocks listed in clocks property, in the same
+> -                 order, depending on SoC type:
+> -                 - for S5PV210 and Exynos4 based SoCs: "fimg2d" and
+> -                   "sclk_fimg2d"
+> -                 - for Exynos5250 SoC: "fimg2d".
 > -
 > -Example:
-> -       scaler@12800000 {
-> -               compatible = "samsung,exynos5420-scaler";
-> -               reg = <0x12800000 0x1294>;
-> -               interrupts = <0 220 IRQ_TYPE_LEVEL_HIGH>;
-> -               clocks = <&clock CLK_MSCL0>;
-> -               clock-names = "mscl";
+> -       g2d@12800000 {
+> -               compatible = "samsung,s5pv210-g2d";
+> -               reg = <0x12800000 0x1000>;
+> -               interrupts = <0 89 0>;
+> -               clocks = <&clock 177>, <&clock 277>;
+> -               clock-names = "sclk_fimg2d", "fimg2d";
 > -       };
-> diff --git a/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml b/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
+> diff --git a/Documentation/devicetree/bindings/gpu/samsung-g2d.yaml b/Documentation/devicetree/bindings/gpu/samsung-g2d.yaml
 > new file mode 100644
-> index 000000000000..5317ac64426a
+> index 000000000000..e7daae862578
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
-> @@ -0,0 +1,81 @@
+> +++ b/Documentation/devicetree/bindings/gpu/samsung-g2d.yaml
+> @@ -0,0 +1,75 @@
 > +# SPDX-License-Identifier: GPL-2.0
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/gpu/samsung-scaler.yaml#
+> +$id: http://devicetree.org/schemas/gpu/samsung-g2d.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: Samsung Exynos SoC Image Scaler
+> +title: Samsung SoC 2D Graphics Accelerator
 > +
 > +maintainers:
 > +  - Inki Dae <inki.dae@samsung.com>
@@ -151,8 +149,9 @@ On Fri, 27 Sep 2019 at 16:33, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
 > +properties:
 > +  compatible:
 > +    enum:
-> +      - samsung,exynos5420-scaler
-> +      - samsung,exynos5433-scaler
+> +      - samsung,s5pv210-g2d    # in S5PV210 & Exynos4210 SoC
+> +      - samsung,exynos4212-g2d # in Exynos4x12 SoCs
+> +      - samsung,exynos5250-g2d
 > +
 > +  reg:
 > +    maxItems: 1
@@ -169,31 +168,27 @@ On Fri, 27 Sep 2019 at 16:33, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
 > +  properties:
 > +    compatible:
 > +      contains:
-> +        const: samsung,exynos5420-scaler
+> +        const: samsung,exynos5250-g2d
 > +
 > +then:
 > +  properties:
 > +    clocks:
 > +      items:
-> +        - description: mscl clock
-> +
+> +        - description: fimg2d clock
 > +    clock-names:
 > +      items:
-> +        - const: mscl
+> +        - const: fimg2d
 > +
 > +else:
 > +  properties:
 > +    clocks:
 > +      items:
-> +        - description: pclk clock
-> +        - description: aclk clock
-> +        - description: aclk_xiu clock
-> +
+> +        - description: sclk_fimg2d clock
+> +        - description: fimg2d clock
 > +    clock-names:
 > +      items:
-> +        - const: pclk
-> +        - const: aclk
-> +        - const: aclk_xiu
+> +        - const: sclk_fimg2d
+> +        - const: fimg2d
 > +
 > +required:
 > +  - compatible
@@ -206,20 +201,21 @@ On Fri, 27 Sep 2019 at 16:33, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
 > +
 > +examples:
 > +  - |
-> +    #include <dt-bindings/clock/exynos5420.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    scaler@12800000 {
-> +        compatible = "samsung,exynos5420-scaler";
-> +        reg = <0x12800000 0x1294>;
-> +        interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks = <&clock CLK_MSCL0>;
-> +        clock-names = "mscl";
+> +    g2d@12800000 {
+> +        compatible = "samsung,s5pv210-g2d";
+> +        reg = <0x12800000 0x1000>;
+> +        interrupts = <0 89 0>;
+> +        clocks = <&clock 177>, <&clock 277>;
+> +        clock-names = "sclk_fimg2d", "fimg2d";
 > +    };
 > +
 > +...
 
-You have some left-overs at the end. With cleaning them:
+The same trailing lines. I mentioned this already about scaler
+bindings. Please fix all your patches at once for the same commented
+issue.
+
+With this fixup:
 Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Best regards,
