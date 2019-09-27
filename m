@@ -2,124 +2,113 @@ Return-Path: <SRS0=6JFF=XW=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C48DC4360C
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Sep 2019 06:52:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66F1AC4360C
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Sep 2019 08:54:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E24B420872
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Sep 2019 06:52:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B5DC217D7
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Sep 2019 08:54:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569567156;
-	bh=5gBIEkjI6iWejQF/56wpFyaJjanOtL42ZOiB2WqlbO0=;
+	s=default; t=1569574456;
+	bh=m7xRihjqmTbUYotke/BMvoBlp2gj5PP0jUiuRNmbWoQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=04UvKof2i0l3K7xsX6CnUBIH8fuVZBViZfpkkaXMs7kFY48gMeX02gRXqx6v2t+sZ
-	 hLR/wmydIiTykrF4TUqHN/fYjkoY+D34fst8lIpqaM0p1sKPEV3kkhMOakm/1jg+6M
-	 aPXZoobyKyfGZzvWYCEMkzFIlzN6q0w/ckEFVD0U=
+	b=FPbsgwpl3sd8CIYbZDgV/1lCu2vsWhgVsbpf4nLF6ZeJKGLO3Cs87mP5dUssfMfsp
+	 i5ls2ryCyBb6U+trl/FZNIYskvqJjDF96WTUxNPTxzn6riR+oH8NVCtbDdzU8kxt46
+	 OogwQYsCymXTarj1oOUvreSAqLQgHkYWYNu6cRDk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726027AbfI0Gwf (ORCPT
+        id S1725992AbfI0IyQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 27 Sep 2019 02:52:35 -0400
-Received: from mail-wr1-f43.google.com ([209.85.221.43]:37285 "EHLO
-        mail-wr1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725837AbfI0Gwf (ORCPT
+        Fri, 27 Sep 2019 04:54:16 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39745 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725911AbfI0IyP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 27 Sep 2019 02:52:35 -0400
-Received: by mail-wr1-f43.google.com with SMTP id i1so1377124wro.4;
-        Thu, 26 Sep 2019 23:52:33 -0700 (PDT)
+        Fri, 27 Sep 2019 04:54:15 -0400
+Received: by mail-wr1-f66.google.com with SMTP id r3so1774019wrj.6;
+        Fri, 27 Sep 2019 01:54:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=od5B4j98TvNYBzRRG1HwoKOK/0TgQjKHWbpoGxQhWMA=;
-        b=ajcj43eQminsdWFZj1BcSC4hNR2IMMhCpFPxUMUxP1+887tOQm9PMtCmo5boupGYsM
-         Qziyr2ReK50I1cXAyQUoBteTD7/O/mB0ZBfIgmXSHSIbEPoyd4DP9PH9NSrowV2PeYvI
-         Ni6ibxFdiC7c3nkgGoe0CkpIbZ0sWID5T/uatlgVSaNxdkEprYcpGdWo7lHlteq8UCCo
-         fFSnln+5nqV/RJpXL9zJ8KnfY0fhZBe9aTq90IlxY5GNKIuGo4/I+fULL8S1ESh7e1p6
-         cGwNJs51Wk2LcDAisr1kyQoVG0M4pGIJ5xPBoPTpWcaF0+2VD9Ngz857HBdWDzV19B5X
-         bzqg==
-X-Gm-Message-State: APjAAAV+lryCbpGfvK4o6eCYoQ9//Kjxo9UM9tS5lv6eSOXpcG1m3yZQ
-        hCzEtoaBTzh2UfwoU7/PPm5MYDEP
-X-Google-Smtp-Source: APXvYqxdEtihX4Yerytw8i64RZ/298ncU9GqZWRrjMVs8x96gM2opoAvGjGhrDbKmbgWIrHpe/sbHg==
-X-Received: by 2002:adf:a350:: with SMTP id d16mr1667998wrb.326.1569567152554;
-        Thu, 26 Sep 2019 23:52:32 -0700 (PDT)
+        bh=YW69Gs/nZumApetQocA64F9f6OkcL5o8Z3LcVdigjvc=;
+        b=rCJ9PS1DXGNWZMIOYIPNeGsw2OIqoxdHgSWa3nN1Y4lHXBpaPz7aljO3XtKFfklxXs
+         UZTjfzAuW/jOqBoHZy0PlPHbemU3Zmaj2nprs0Wi80JMsxC/9PREHW50naRMJq3lWj99
+         mdsjwKaFXgFhPD/9OjjzMTQHmqKsvUPWahRmbgHSui3jS0YW0pYqg+E+hLLTuMpetxNZ
+         MIy7liK2yISmzbNtVkaXZzPIqP8b4qPA3p92h11FZmY/iHzR7wlX4H7ZeQypsrGN0MjV
+         DmPudK47p+cD448LfyxzALCLkrGvbl9sZfZaIpQDRnSmqdL45sHVzZnAg/cKB1gEcQdz
+         o3IA==
+X-Gm-Message-State: APjAAAU+d2F1lTU3wYIpA7FHsjpmo7tjX8JOeDWlSVPWuK0cgvh0Abjc
+        /0GhZ4JuH8TdKDNCulOH3sQ=
+X-Google-Smtp-Source: APXvYqw32zeeQTuvXuVsep+HUirogNC0QVZEqwyQa06udnJ+HOwPMSz7jgPC+e9bId+phk4DAB4dwg==
+X-Received: by 2002:adf:f2cd:: with SMTP id d13mr2169788wrp.143.1569574452936;
+        Fri, 27 Sep 2019 01:54:12 -0700 (PDT)
 Received: from pi3 ([194.230.155.145])
-        by smtp.googlemail.com with ESMTPSA id j1sm3672139wrg.24.2019.09.26.23.52.31
+        by smtp.googlemail.com with ESMTPSA id l6sm4346315wmg.2.2019.09.27.01.54.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2019 23:52:31 -0700 (PDT)
-Date:   Fri, 27 Sep 2019 08:52:29 +0200
+        Fri, 27 Sep 2019 01:54:12 -0700 (PDT)
+Date:   Fri, 27 Sep 2019 10:53:59 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: timer: Use defines instead of numbers in
- Exynos MCT examples
-Message-ID: <20190927065229.GA18923@pi3>
-References: <CGME20190926183707epcas3p350fe17bc738540b37f1130d967c31a62@epcas3p3.samsung.com>
- <20190926183643.7118-1-krzk@kernel.org>
- <fc0809b0-1e6a-0564-75d9-0ccb14d2826c@samsung.com>
+To:     Lukasz Luba <l.luba@partner.samsung.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com,
+        kgene@kernel.org, mark.rutland@arm.com, cw00.choi@samsung.com,
+        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
+        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
+        robh+dt@kernel.org, willy.mh.wolff.ml@gmail.com
+Subject: Re: [PATCH 1/3] ARM: dts: exynos: Add interrupt to DMC controller in
+ Exynos5422
+Message-ID: <20190927085359.GA19131@pi3>
+References: <20190925161813.21117-1-l.luba@partner.samsung.com>
+ <CGME20190925161842eucas1p271a9cf4f62b3d7af02c0a5d0d1eb9c4f@eucas1p2.samsung.com>
+ <20190925161813.21117-2-l.luba@partner.samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-In-Reply-To: <fc0809b0-1e6a-0564-75d9-0ccb14d2826c@samsung.com>
+In-Reply-To: <20190925161813.21117-2-l.luba@partner.samsung.com>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20190927065229.EGMpZ3ObcjgHbtBxYsk0lR45eDZLoWhdPgVA8VGVb2M@z>
+Message-ID: <20190927085359.MJZFhBtg_KfmkU-wJyzozxp--xoweQODyUVWrxql6BU@z>
 
-On Fri, Sep 27, 2019 at 08:36:47AM +0200, Marek Szyprowski wrote:
-> Hi Krzysztof,
- >   
-> >       timer@10050000 {
-> >           compatible = "samsung,exynos4412-mct";
-> >           reg = <0x10050000 0x800>;
-> >   
-> > -        interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
-> > -                     <0 42 0>;
-> > +        interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-> > +                     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
-> > +                     <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
-> > +                     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>,
-> > +                     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
+On Wed, Sep 25, 2019 at 06:18:11PM +0200, Lukasz Luba wrote:
+> Add interrupt to Dynamic Memory Controller in Exynos5422 and Odroid
+> XU3-family boards. It will be used instead of devfreq polling mode
+> governor. The interrupt is connected to performance counters private
+> for DMC, which might track utilisation of the memory channels.
 > 
-> the last one should be GIC_PPI
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5420.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> >       };
-> >   
-> >     - |
-> >       // In this example, the IP contains four local timers, but using
-> >       // a per-processor interrupt to handle them. All the local timer
-> >       // interrupts are specified.
-> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> >   
-> >       timer@10050000 {
-> >           compatible = "samsung,exynos4412-mct";
-> >           reg = <0x10050000 0x800>;
-> >   
-> > -        interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
-> > -                     <0 42 0>, <0 42 0>, <0 42 0>, <0 42 0>;
-> > +        interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-> > +                     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
-> > +                     <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
-> > +                     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>,
-> > +                     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
-> > +                     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
-> > +                     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
-> > +                     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
-> 
-> again, last 4 entries should use GIC_PPI
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index ac49373baae7..72738e620d11 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -240,6 +240,8 @@
+>  		dmc: memory-controller@10c20000 {
+>  			compatible = "samsung,exynos5422-dmc";
+>  			reg = <0x10c20000 0x100>, <0x10c30000 0x100>;
+> +			interrupt-parent = <&combiner>;
+> +			interrupts = <16 0>;
 
-Indeed, thanks for noticing it.
+You register DMC for DREX0 and DREX1 but take only DREX0 interrupt. Why
+skipping second?
 
 Best regards,
 Krzysztof
 
+
+>  			clocks = <&clock CLK_FOUT_SPLL>,
+>  				 <&clock CLK_MOUT_SCLK_SPLL>,
+>  				 <&clock CLK_FF_DOUT_SPLL2>,
+> -- 
+> 2.17.1
+> 
