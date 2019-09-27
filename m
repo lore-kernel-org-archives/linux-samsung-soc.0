@@ -1,64 +1,53 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] dt-bindings: timer: Use defines instead of numbers in
- Exynos MCT examples
-Date: Fri, 27 Sep 2019 08:52:29 +0200
-Message-ID: <20190927065229.GA18923@pi3>
-References: <CGME20190926183707epcas3p350fe17bc738540b37f1130d967c31a62@epcas3p3.samsung.com>
- <20190926183643.7118-1-krzk@kernel.org>
- <fc0809b0-1e6a-0564-75d9-0ccb14d2826c@samsung.com>
+Subject: Re: [PATCH 1/3] ARM: dts: exynos: Add interrupt to DMC controller in
+ Exynos5422
+Date: Fri, 27 Sep 2019 10:53:59 +0200
+Message-ID: <20190927085359.GA19131@pi3>
+References: <20190925161813.21117-1-l.luba@partner.samsung.com>
+ <CGME20190925161842eucas1p271a9cf4f62b3d7af02c0a5d0d1eb9c4f@eucas1p2.samsung.com>
+ <20190925161813.21117-2-l.luba@partner.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <fc0809b0-1e6a-0564-75d9-0ccb14d2826c@samsung.com>
+In-Reply-To: <20190925161813.21117-2-l.luba@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Lukasz Luba <l.luba@partner.samsung.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com, kgene@kernel.org, mark.rutland@arm.com, cw00.choi@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, robh+dt@kernel.org, willy.mh.wolff.ml@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Sep 27, 2019 at 08:36:47AM +0200, Marek Szyprowski wrote:
-> Hi Krzysztof,
- >   
-> >       timer@10050000 {
-> >           compatible = "samsung,exynos4412-mct";
-> >           reg = <0x10050000 0x800>;
-> >   
-> > -        interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
-> > -                     <0 42 0>;
-> > +        interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-> > +                     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
-> > +                     <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
-> > +                     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>,
-> > +                     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
+On Wed, Sep 25, 2019 at 06:18:11PM +0200, Lukasz Luba wrote:
+> Add interrupt to Dynamic Memory Controller in Exynos5422 and Odroid
+> XU3-family boards. It will be used instead of devfreq polling mode
+> governor. The interrupt is connected to performance counters private
+> for DMC, which might track utilisation of the memory channels.
 > 
-> the last one should be GIC_PPI
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5420.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> >       };
-> >   
-> >     - |
-> >       // In this example, the IP contains four local timers, but using
-> >       // a per-processor interrupt to handle them. All the local timer
-> >       // interrupts are specified.
-> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> >   
-> >       timer@10050000 {
-> >           compatible = "samsung,exynos4412-mct";
-> >           reg = <0x10050000 0x800>;
-> >   
-> > -        interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
-> > -                     <0 42 0>, <0 42 0>, <0 42 0>, <0 42 0>;
-> > +        interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-> > +                     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
-> > +                     <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
-> > +                     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>,
-> > +                     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
-> > +                     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
-> > +                     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
-> > +                     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
-> 
-> again, last 4 entries should use GIC_PPI
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index ac49373baae7..72738e620d11 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -240,6 +240,8 @@
+>  		dmc: memory-controller@10c20000 {
+>  			compatible = "samsung,exynos5422-dmc";
+>  			reg = <0x10c20000 0x100>, <0x10c30000 0x100>;
+> +			interrupt-parent = <&combiner>;
+> +			interrupts = <16 0>;
 
-Indeed, thanks for noticing it.
+You register DMC for DREX0 and DREX1 but take only DREX0 interrupt. Why
+skipping second?
 
 Best regards,
 Krzysztof
+
+
+>  			clocks = <&clock CLK_FOUT_SPLL>,
+>  				 <&clock CLK_MOUT_SCLK_SPLL>,
+>  				 <&clock CLK_FF_DOUT_SPLL2>,
+> -- 
+> 2.17.1
+> 
