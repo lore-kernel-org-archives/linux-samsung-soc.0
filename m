@@ -1,158 +1,90 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3] dt-bindings: gpu: Convert Samsung Image Scaler to
- dt-schema
-Date: Fri, 27 Sep 2019 16:33:06 +0200
-Message-ID: <20190927143306.12133-1-m.szyprowski@samsung.com>
-References: <CGME20190927143314eucas1p2d419866cd740207426cd37cb6fdff468@eucas1p2.samsung.com>
+Subject: [PATCH v3] dt-bindings: gpu: Convert Samsung 2D Graphics
+ Accelerator to dt-schema
+Date: Fri, 27 Sep 2019 16:33:19 +0200
+Message-ID: <20190927143319.12232-1-m.szyprowski@samsung.com>
+References: <CGME20190927143325eucas1p289cb46e8dcbb1ace0b1f80ade738c29b@eucas1p2.samsung.com>
+Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Maciej Falkowski <m.falkowski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Maciej Falkowski <m.falkowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Maciej Falkowski <m.falkowski@samsung.com>
-
-Convert Samsung Image Scaler to newer dt-schema format.
-
-Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-v3:
-- Fixed description of 'clocks' property:
-rather than 'mscl clock', 'pclk clock'
-- Added empty line within if-else statement
-- Added 'additionalProperties: false'
-- Listed all missing 'properties' in properties scope
-
-Best regards,
-Maciej Falkowski
----
- .../bindings/gpu/samsung-scaler.txt           | 27 -------
- .../bindings/gpu/samsung-scaler.yaml          | 81 +++++++++++++++++++
- 2 files changed, 81 insertions(+), 27 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/gpu/samsung-scaler.txt
- create mode 100644 Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
-
-diff --git a/Documentation/devicetree/bindings/gpu/samsung-scaler.txt b/Documentation/devicetree/bindings/gpu/samsung-scaler.txt
-deleted file mode 100644
-index 9c3d98105dfd..000000000000
---- a/Documentation/devicetree/bindings/gpu/samsung-scaler.txt
-+++ /dev/null
-@@ -1,27 +0,0 @@
--* Samsung Exynos Image Scaler
--
--Required properties:
--  - compatible : value should be one of the following:
--	(a) "samsung,exynos5420-scaler" for Scaler IP in Exynos5420
--	(b) "samsung,exynos5433-scaler" for Scaler IP in Exynos5433
--
--  - reg : Physical base address of the IP registers and length of memory
--	  mapped region.
--
--  - interrupts : Interrupt specifier for scaler interrupt, according to format
--		 specific to interrupt parent.
--
--  - clocks : Clock specifier for scaler clock, according to generic clock
--	     bindings. (See Documentation/devicetree/bindings/clock/exynos*.txt)
--
--  - clock-names : Names of clocks. For exynos scaler, it should be "mscl"
--		  on 5420 and "pclk", "aclk" and "aclk_xiu" on 5433.
--
--Example:
--	scaler@12800000 {
--		compatible = "samsung,exynos5420-scaler";
--		reg = <0x12800000 0x1294>;
--		interrupts = <0 220 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&clock CLK_MSCL0>;
--		clock-names = "mscl";
--	};
-diff --git a/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml b/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
-new file mode 100644
-index 000000000000..5317ac64426a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
-@@ -0,0 +1,81 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpu/samsung-scaler.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung Exynos SoC Image Scaler
-+
-+maintainers:
-+  - Inki Dae <inki.dae@samsung.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - samsung,exynos5420-scaler
-+      - samsung,exynos5433-scaler
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks: {}
-+  clock-names: {}
-+  iommus: {}
-+  power-domains: {}
-+
-+if:
-+  properties:
-+    compatible:
-+      contains:
-+        const: samsung,exynos5420-scaler
-+
-+then:
-+  properties:
-+    clocks:
-+      items:
-+        - description: mscl clock
-+
-+    clock-names:
-+      items:
-+        - const: mscl
-+
-+else:
-+  properties:
-+    clocks:
-+      items:
-+        - description: pclk clock
-+        - description: aclk clock
-+        - description: aclk_xiu clock
-+
-+    clock-names:
-+      items:
-+        - const: pclk
-+        - const: aclk
-+        - const: aclk_xiu
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/exynos5420.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    scaler@12800000 {
-+        compatible = "samsung,exynos5420-scaler";
-+        reg = <0x12800000 0x1294>;
-+        interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&clock CLK_MSCL0>;
-+        clock-names = "mscl";
-+    };
-+
-+...
--- 
-2.17.1
+RnJvbTogTWFjaWVqIEZhbGtvd3NraSA8bS5mYWxrb3dza2lAc2Ftc3VuZy5jb20+CgpDb252ZXJ0
+IFNhbXN1bmcgMkQgR3JhcGhpY3MgQWNjZWxlcmF0b3IgdG8gbmV3ZXIgZHQtc2NoZW1hIGZvcm1h
+dAoKU2lnbmVkLW9mZi1ieTogTWFjaWVqIEZhbGtvd3NraSA8bS5mYWxrb3dza2lAc2Ftc3VuZy5j
+b20+Ci0tLQp2MzoKLSBNZXJnZWQgdHdvIGlmLXN0YXRlbWVudHMgd2l0aCBzaW5nbGUgaWYtZWxz
+ZSBzdGF0ZW1lbnQKLSBBZGRlZCAnYWRkaXRpb25hbFByb3BlcnRpZXM6IGZhbHNlJwotIExpc3Rl
+ZCBhbGwgbWlzc2luZyAncHJvcGVydGllcycgaW4gcHJvcGVydGllcyBzY29wZQoKQmVzdCByZWdh
+cmRzLApNYWNpZWogRmFsa293c2tpCi0tLQogLi4uL2RldmljZXRyZWUvYmluZGluZ3MvZ3B1L3Nh
+bXN1bmctZzJkLnR4dCAgIHwgMjcgLS0tLS0tLQogLi4uL2RldmljZXRyZWUvYmluZGluZ3MvZ3B1
+L3NhbXN1bmctZzJkLnlhbWwgIHwgNzUgKysrKysrKysrKysrKysrKysrKwogMiBmaWxlcyBjaGFu
+Z2VkLCA3NSBpbnNlcnRpb25zKCspLCAyNyBkZWxldGlvbnMoLSkKIGRlbGV0ZSBtb2RlIDEwMDY0
+NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZ3B1L3NhbXN1bmctZzJkLnR4dAog
+Y3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncHUv
+c2Ftc3VuZy1nMmQueWFtbAoKZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
+aW5kaW5ncy9ncHUvc2Ftc3VuZy1nMmQudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
+bmRpbmdzL2dwdS9zYW1zdW5nLWcyZC50eHQKZGVsZXRlZCBmaWxlIG1vZGUgMTAwNjQ0CmluZGV4
+IDFlNzk1OTMzMmRiYy4uMDAwMDAwMDAwMDAwCi0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJl
+ZS9iaW5kaW5ncy9ncHUvc2Ftc3VuZy1nMmQudHh0CisrKyAvZGV2L251bGwKQEAgLTEsMjcgKzAs
+MCBAQAotKiBTYW1zdW5nIDJEIEdyYXBoaWNzIEFjY2VsZXJhdG9yCi0KLVJlcXVpcmVkIHByb3Bl
+cnRpZXM6Ci0gIC0gY29tcGF0aWJsZSA6IHZhbHVlIHNob3VsZCBiZSBvbmUgYW1vbmcgdGhlIGZv
+bGxvd2luZzoKLQkoYSkgInNhbXN1bmcsczVwdjIxMC1nMmQiIGZvciBHMkQgSVAgcHJlc2VudCBp
+biBTNVBWMjEwICYgRXh5bm9zNDIxMCBTb0MKLQkoYikgInNhbXN1bmcsZXh5bm9zNDIxMi1nMmQi
+IGZvciBHMkQgSVAgcHJlc2VudCBpbiBFeHlub3M0eDEyIFNvQ3MKLQkoYykgInNhbXN1bmcsZXh5
+bm9zNTI1MC1nMmQiIGZvciBHMkQgSVAgcHJlc2VudCBpbiBFeHlub3M1MjUwIFNvQwotCi0gIC0g
+cmVnIDogUGh5c2ljYWwgYmFzZSBhZGRyZXNzIG9mIHRoZSBJUCByZWdpc3RlcnMgYW5kIGxlbmd0
+aCBvZiBtZW1vcnkKLQkgIG1hcHBlZCByZWdpb24uCi0KLSAgLSBpbnRlcnJ1cHRzIDogRzJEIGlu
+dGVycnVwdCBudW1iZXIgdG8gdGhlIENQVS4KLSAgLSBjbG9ja3MgOiBmcm9tIGNvbW1vbiBjbG9j
+ayBiaW5kaW5nOiBoYW5kbGUgdG8gRzJEIGNsb2Nrcy4KLSAgLSBjbG9jay1uYW1lcyA6IG5hbWVz
+IG9mIGNsb2NrcyBsaXN0ZWQgaW4gY2xvY2tzIHByb3BlcnR5LCBpbiB0aGUgc2FtZQotCQkgIG9y
+ZGVyLCBkZXBlbmRpbmcgb24gU29DIHR5cGU6Ci0JCSAgLSBmb3IgUzVQVjIxMCBhbmQgRXh5bm9z
+NCBiYXNlZCBTb0NzOiAiZmltZzJkIiBhbmQKLQkJICAgICJzY2xrX2ZpbWcyZCIKLQkJICAtIGZv
+ciBFeHlub3M1MjUwIFNvQzogImZpbWcyZCIuCi0KLUV4YW1wbGU6Ci0JZzJkQDEyODAwMDAwIHsK
+LQkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLHM1cHYyMTAtZzJkIjsKLQkJcmVnID0gPDB4MTI4MDAw
+MDAgMHgxMDAwPjsKLQkJaW50ZXJydXB0cyA9IDwwIDg5IDA+OwotCQljbG9ja3MgPSA8JmNsb2Nr
+IDE3Nz4sIDwmY2xvY2sgMjc3PjsKLQkJY2xvY2stbmFtZXMgPSAic2Nsa19maW1nMmQiLCAiZmlt
+ZzJkIjsKLQl9OwpkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
+L2dwdS9zYW1zdW5nLWcyZC55YW1sIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
+L2dwdS9zYW1zdW5nLWcyZC55YW1sCm5ldyBmaWxlIG1vZGUgMTAwNjQ0CmluZGV4IDAwMDAwMDAw
+MDAwMC4uZTdkYWFlODYyNTc4Ci0tLSAvZGV2L251bGwKKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZp
+Y2V0cmVlL2JpbmRpbmdzL2dwdS9zYW1zdW5nLWcyZC55YW1sCkBAIC0wLDAgKzEsNzUgQEAKKyMg
+U1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjAKKyVZQU1MIDEuMgorLS0tCiskaWQ6IGh0
+dHA6Ly9kZXZpY2V0cmVlLm9yZy9zY2hlbWFzL2dwdS9zYW1zdW5nLWcyZC55YW1sIworJHNjaGVt
+YTogaHR0cDovL2RldmljZXRyZWUub3JnL21ldGEtc2NoZW1hcy9jb3JlLnlhbWwjCisKK3RpdGxl
+OiBTYW1zdW5nIFNvQyAyRCBHcmFwaGljcyBBY2NlbGVyYXRvcgorCittYWludGFpbmVyczoKKyAg
+LSBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+CisKK3Byb3BlcnRpZXM6CisgIGNvbXBh
+dGlibGU6CisgICAgZW51bToKKyAgICAgIC0gc2Ftc3VuZyxzNXB2MjEwLWcyZCAgICAjIGluIFM1
+UFYyMTAgJiBFeHlub3M0MjEwIFNvQworICAgICAgLSBzYW1zdW5nLGV4eW5vczQyMTItZzJkICMg
+aW4gRXh5bm9zNHgxMiBTb0NzCisgICAgICAtIHNhbXN1bmcsZXh5bm9zNTI1MC1nMmQKKworICBy
+ZWc6CisgICAgbWF4SXRlbXM6IDEKKworICBpbnRlcnJ1cHRzOgorICAgIG1heEl0ZW1zOiAxCisK
+KyAgY2xvY2tzOiB7fQorICBjbG9jay1uYW1lczoge30KKyAgaW9tbXVzOiB7fQorICBwb3dlci1k
+b21haW5zOiB7fQorCitpZjoKKyAgcHJvcGVydGllczoKKyAgICBjb21wYXRpYmxlOgorICAgICAg
+Y29udGFpbnM6CisgICAgICAgIGNvbnN0OiBzYW1zdW5nLGV4eW5vczUyNTAtZzJkCisKK3RoZW46
+CisgIHByb3BlcnRpZXM6CisgICAgY2xvY2tzOgorICAgICAgaXRlbXM6CisgICAgICAgIC0gZGVz
+Y3JpcHRpb246IGZpbWcyZCBjbG9jaworICAgIGNsb2NrLW5hbWVzOgorICAgICAgaXRlbXM6Cisg
+ICAgICAgIC0gY29uc3Q6IGZpbWcyZAorCitlbHNlOgorICBwcm9wZXJ0aWVzOgorICAgIGNsb2Nr
+czoKKyAgICAgIGl0ZW1zOgorICAgICAgICAtIGRlc2NyaXB0aW9uOiBzY2xrX2ZpbWcyZCBjbG9j
+aworICAgICAgICAtIGRlc2NyaXB0aW9uOiBmaW1nMmQgY2xvY2sKKyAgICBjbG9jay1uYW1lczoK
+KyAgICAgIGl0ZW1zOgorICAgICAgICAtIGNvbnN0OiBzY2xrX2ZpbWcyZAorICAgICAgICAtIGNv
+bnN0OiBmaW1nMmQKKworcmVxdWlyZWQ6CisgIC0gY29tcGF0aWJsZQorICAtIHJlZworICAtIGlu
+dGVycnVwdHMKKyAgLSBjbG9ja3MKKyAgLSBjbG9jay1uYW1lcworCithZGRpdGlvbmFsUHJvcGVy
+dGllczogZmFsc2UKKworZXhhbXBsZXM6CisgIC0gfAorICAgIGcyZEAxMjgwMDAwMCB7CisgICAg
+ICAgIGNvbXBhdGlibGUgPSAic2Ftc3VuZyxzNXB2MjEwLWcyZCI7CisgICAgICAgIHJlZyA9IDww
+eDEyODAwMDAwIDB4MTAwMD47CisgICAgICAgIGludGVycnVwdHMgPSA8MCA4OSAwPjsKKyAgICAg
+ICAgY2xvY2tzID0gPCZjbG9jayAxNzc+LCA8JmNsb2NrIDI3Nz47CisgICAgICAgIGNsb2NrLW5h
+bWVzID0gInNjbGtfZmltZzJkIiwgImZpbWcyZCI7CisgICAgfTsKKworLi4uCi0tIAoyLjE3LjEK
+CgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRl
+dmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8v
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
