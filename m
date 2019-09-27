@@ -2,221 +2,100 @@ Return-Path: <SRS0=6JFF=XW=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73C2DC4360C
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Sep 2019 15:02:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BEA2C4360C
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Sep 2019 16:17:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BA2A21D7B
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Sep 2019 15:02:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12F43217D9
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Sep 2019 16:17:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569596569;
-	bh=PPVrg31jFsrd7Bb7WNQSWveOn6okoAYRcvr6DKHC6Rs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=cKzjPR3SA9yKKEHt6UcRZlVPDPJ8MZs+lJtV3RmKoL7vXA7rPBwNVZEQ+qwX7mVbP
-	 YB7siwM2yEB4IDMpyiUOKuuP1937kXzGFvMn7sC6MDd0ar82hCuL5cd71BexoDX2OU
-	 cTogrpb+dS9Ofz0pnq00YYRDO7nEw6k7F1u9a2fA=
+	s=default; t=1569601076;
+	bh=uv722a5BUB6bqmmQcXdRp6nXhUSpjI/fA5tdtFy78/Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=RBR1TdgGa5227oPezd+pzBq7g5gw2vwA8styH0eUHUSMLN1bjxBiCq6b5GbV+YRBD
+	 psy+VjYiXrbQwH66sMwNqQHaJr+/pOpwHkuAbYVIItWoVF1kcwxt3XH8kQoXFByvwV
+	 WHzeV+gbxx1tp+65UruOF9wO7hU2WJIo2VGVoOks=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727506AbfI0PCp (ORCPT
+        id S1727472AbfI0QRz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 27 Sep 2019 11:02:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40282 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727319AbfI0PCp (ORCPT
+        Fri, 27 Sep 2019 12:17:55 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:46692 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727289AbfI0QRz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 27 Sep 2019 11:02:45 -0400
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8D5021D56;
-        Fri, 27 Sep 2019 15:02:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569596564;
-        bh=PPVrg31jFsrd7Bb7WNQSWveOn6okoAYRcvr6DKHC6Rs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=anMo7lpQvcOoM8adFgciIu8hAZzGl/ACVS8D7IYkNWDzW/WQpmyh/sQAN+MObtq5Y
-         bhaJuxSa8BgmZphQLIYj4rwRFkpZ404mO5S1dODJ1+rPfTBAmVHkpNgPgXcQaE/3ls
-         iBK+Meh8QFWennVgtbzfwz1SUKKjE9n5IKE6m5bg=
-Received: by mail-lf1-f45.google.com with SMTP id q11so2155695lfc.11;
-        Fri, 27 Sep 2019 08:02:43 -0700 (PDT)
-X-Gm-Message-State: APjAAAV0x5vO0oQMmBT7hsS4AwbDWzkJc0qYnu/Qs0E2+A+yHgeWpqZY
-        Ny8nl5N5ba7aXE/WEOPwINdhuaR/UQNgy55BUc4=
-X-Google-Smtp-Source: APXvYqy7jRhfFe+G4lbc7z7OKjLE8RFoVguNq/Nw8wsZJrdUMbNUF8U/vQWDWWcPDvaR8I5XatG0ubwRa/is+GJvxEQ=
-X-Received: by 2002:ac2:4853:: with SMTP id 19mr3073713lfy.69.1569596561915;
- Fri, 27 Sep 2019 08:02:41 -0700 (PDT)
+        Fri, 27 Sep 2019 12:17:55 -0400
+Received: by mail-oi1-f194.google.com with SMTP id k25so5637294oiw.13;
+        Fri, 27 Sep 2019 09:17:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=61wEmdcrcYWJhNxd2306tXwFPpNdjt5BEaPJ4YXafyM=;
+        b=sl2ZolqmqV65Ztk3sHxZHCOV9aPauDlkF3GUgvy9RMLDCDMA6LdpL6MiChww3mRzcd
+         D95lfweaY2gMu1daH2hJgeYQ6YtXi2CYouPz+41WXa2livWvCqgp1+ejnJxowPp25YwO
+         9qbzD/prS7WrGUF9zAZcOKKBcaRHUY45lwdK55HnBUZr3/co7aLd7ancJRnCxO9JLoU3
+         iJ/rAxy815MYq5S/a403j12db7rcY7hc6D00J5QZKojQp3RUeHXcHaiBsgc58mVI7yf1
+         wdRhI3N3A8Y4qGwzB/wuS1dCfFfZ0hYOqKjDsf+I/P6k+tLaBIPIHf73IIyCQLyHOoB1
+         orsA==
+X-Gm-Message-State: APjAAAUQrVbwHwYKI/IusXJ6P0CT0KmMv7USBRMSDu8lqhKalelXiWWA
+        MwGj5MrEearwrrleTjtKQxYXxeY=
+X-Google-Smtp-Source: APXvYqzQ50C+MzxL+jlDDEzxwVOUDJXNh2/Ri5dfX21zjNX52KVp6n8DSiAfRPZ1iIKlDQ96r5QBdw==
+X-Received: by 2002:aca:d58c:: with SMTP id m134mr7507074oig.178.1569601074750;
+        Fri, 27 Sep 2019 09:17:54 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id l81sm1778474oih.10.2019.09.27.09.17.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2019 09:17:54 -0700 (PDT)
+Date:   Fri, 27 Sep 2019 11:17:53 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Maciej Falkowski <m.falkowski@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v5] dt-bindings: sound: Convert Samsung I2S controller to
+  dt-schema
+Message-ID: <20190927161753.GA30805@bogus>
+References: <CGME20190925132644eucas1p2716a805d184f9bbc4ad7a94cc9cca633@eucas1p2.samsung.com>
+ <20190925132628.31858-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-References: <CGME20190927143325eucas1p289cb46e8dcbb1ace0b1f80ade738c29b@eucas1p2.samsung.com>
- <20190927143319.12232-1-m.szyprowski@samsung.com>
-In-Reply-To: <20190927143319.12232-1-m.szyprowski@samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Fri, 27 Sep 2019 17:02:30 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPfUN5C3OXAYJ9TLp-wuuBQPZmbMkTher1nV8O5+F38ghg@mail.gmail.com>
-Message-ID:
- <CAJKOXPfUN5C3OXAYJ9TLp-wuuBQPZmbMkTher1nV8O5+F38ghg@mail.gmail.com>
-Subject: Re: [PATCH v3] dt-bindings: gpu: Convert Samsung 2D Graphics
- Accelerator to dt-schema
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Maciej Falkowski <m.falkowski@samsung.com>
-Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Inki Dae <inki.dae@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+In-Reply-To: <20190925132628.31858-1-m.szyprowski@samsung.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20190927150230.OfuDF-Mm69CLXUmFP5TB-PzG1RpApJJduO1b0WQZNds@z>
+Message-ID: <20190927161753._2YHqIXn-qyTxNsoIKBLVnC5W_izn6MoukseWJuklyY@z>
 
-On Fri, 27 Sep 2019 at 16:33, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->
+On Wed, 25 Sep 2019 15:26:28 +0200, Marek Szyprowski wrote:
 > From: Maciej Falkowski <m.falkowski@samsung.com>
->
-> Convert Samsung 2D Graphics Accelerator to newer dt-schema format
->
+> 
+> Convert Samsung I2S controller to newer dt-schema format.
+> 
 > Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
-> v3:
-> - Merged two if-statements with single if-else statement
-> - Added 'additionalProperties: false'
-> - Listed all missing 'properties' in properties scope
->
-> Best regards,
+> v5:
+> - Removed '#clock-cells' property from required properties
+> - Added deprecated property to 'clock-output-names'
+> and removed corresponding comment. 
+> 
+> Best regards, 
 > Maciej Falkowski
 > ---
->  .../devicetree/bindings/gpu/samsung-g2d.txt   | 27 -------
->  .../devicetree/bindings/gpu/samsung-g2d.yaml  | 75 +++++++++++++++++++
->  2 files changed, 75 insertions(+), 27 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/gpu/samsung-g2d.txt
->  create mode 100644 Documentation/devicetree/bindings/gpu/samsung-g2d.yaml
->
-> diff --git a/Documentation/devicetree/bindings/gpu/samsung-g2d.txt b/Documentation/devicetree/bindings/gpu/samsung-g2d.txt
-> deleted file mode 100644
-> index 1e7959332dbc..000000000000
-> --- a/Documentation/devicetree/bindings/gpu/samsung-g2d.txt
-> +++ /dev/null
-> @@ -1,27 +0,0 @@
-> -* Samsung 2D Graphics Accelerator
-> -
-> -Required properties:
-> -  - compatible : value should be one among the following:
-> -       (a) "samsung,s5pv210-g2d" for G2D IP present in S5PV210 & Exynos4210 SoC
-> -       (b) "samsung,exynos4212-g2d" for G2D IP present in Exynos4x12 SoCs
-> -       (c) "samsung,exynos5250-g2d" for G2D IP present in Exynos5250 SoC
-> -
-> -  - reg : Physical base address of the IP registers and length of memory
-> -         mapped region.
-> -
-> -  - interrupts : G2D interrupt number to the CPU.
-> -  - clocks : from common clock binding: handle to G2D clocks.
-> -  - clock-names : names of clocks listed in clocks property, in the same
-> -                 order, depending on SoC type:
-> -                 - for S5PV210 and Exynos4 based SoCs: "fimg2d" and
-> -                   "sclk_fimg2d"
-> -                 - for Exynos5250 SoC: "fimg2d".
-> -
-> -Example:
-> -       g2d@12800000 {
-> -               compatible = "samsung,s5pv210-g2d";
-> -               reg = <0x12800000 0x1000>;
-> -               interrupts = <0 89 0>;
-> -               clocks = <&clock 177>, <&clock 277>;
-> -               clock-names = "sclk_fimg2d", "fimg2d";
-> -       };
-> diff --git a/Documentation/devicetree/bindings/gpu/samsung-g2d.yaml b/Documentation/devicetree/bindings/gpu/samsung-g2d.yaml
-> new file mode 100644
-> index 000000000000..e7daae862578
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpu/samsung-g2d.yaml
-> @@ -0,0 +1,75 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/gpu/samsung-g2d.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung SoC 2D Graphics Accelerator
-> +
-> +maintainers:
-> +  - Inki Dae <inki.dae@samsung.com>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - samsung,s5pv210-g2d    # in S5PV210 & Exynos4210 SoC
-> +      - samsung,exynos4212-g2d # in Exynos4x12 SoCs
-> +      - samsung,exynos5250-g2d
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks: {}
-> +  clock-names: {}
-> +  iommus: {}
-> +  power-domains: {}
-> +
-> +if:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        const: samsung,exynos5250-g2d
-> +
-> +then:
-> +  properties:
-> +    clocks:
-> +      items:
-> +        - description: fimg2d clock
-> +    clock-names:
-> +      items:
-> +        - const: fimg2d
-> +
-> +else:
-> +  properties:
-> +    clocks:
-> +      items:
-> +        - description: sclk_fimg2d clock
-> +        - description: fimg2d clock
-> +    clock-names:
-> +      items:
-> +        - const: sclk_fimg2d
-> +        - const: fimg2d
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    g2d@12800000 {
-> +        compatible = "samsung,s5pv210-g2d";
-> +        reg = <0x12800000 0x1000>;
-> +        interrupts = <0 89 0>;
-> +        clocks = <&clock 177>, <&clock 277>;
-> +        clock-names = "sclk_fimg2d", "fimg2d";
-> +    };
-> +
-> +...
+>  .../devicetree/bindings/sound/samsung-i2s.txt |  84 -----------
+>  .../bindings/sound/samsung-i2s.yaml           | 136 ++++++++++++++++++
+>  2 files changed, 136 insertions(+), 84 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/sound/samsung-i2s.txt
+>  create mode 100644 Documentation/devicetree/bindings/sound/samsung-i2s.yaml
+> 
 
-The same trailing lines. I mentioned this already about scaler
-bindings. Please fix all your patches at once for the same commented
-issue.
-
-With this fixup:
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
+Reviewed-by: Rob Herring <robh@kernel.org>
