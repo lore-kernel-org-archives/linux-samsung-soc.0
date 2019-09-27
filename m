@@ -2,536 +2,260 @@ Return-Path: <SRS0=6JFF=XW=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED4C4C352AB
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Sep 2019 09:19:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79583C4360C
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Sep 2019 14:33:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BBA4217F4
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Sep 2019 09:19:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569575973;
-	bh=KjR9vQf33MLL5MhUVO4CCa+ClNbvn/dQEJkDw28dsHA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=qSflGg7w/5pimAyW37CwI3MIGOyrWqypTFR2gNWbRcdJ9v259MbwsUQvNY9sK0O5Y
-	 7/9rkms/bEedhN8SsCtarlmLjYZnGrh7diPjmKyDr771ZKI3KzKRSOnbQWzzE9BSrM
-	 URPoavEFW7RzGCVTeyXTZKmBeDT1yWWhD0W37Rik=
+	by mail.kernel.org (Postfix) with ESMTP id 487A521920
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Sep 2019 14:33:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JOlbtDnB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726755AbfI0JT3 (ORCPT
+        id S1727252AbfI0OdR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 27 Sep 2019 05:19:29 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42677 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726178AbfI0JT3 (ORCPT
+        Fri, 27 Sep 2019 10:33:17 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:44526 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727076AbfI0OdR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 27 Sep 2019 05:19:29 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n14so1849980wrw.9;
-        Fri, 27 Sep 2019 02:19:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9bMVoxdlLvHIjoWHeMwt6kPSoxS+/NO2KX6uIJLjESM=;
-        b=CZiOskF9XoewzhOhjlPJ60zSNwE7VKEH0Y+WE+Kgn7ncu9LWVlogXKitAy0uEZaP3l
-         JuvWq7g45OsncVwChmjYDGuf7t6uU6Z3SPgtBoXDmUJ3lI0XaVQ4CItjzZrIyvp6tIEA
-         eCzppsfsPgLl592DNohcnu/XzquEP1VcuTNTdUOUHZAqbfI0OxGeEydFOZqHcd+BBdo6
-         L3dUDtHP9m1y59tloDW/8CPZ3QzyPEZSWH0iVbO3m2wSIMKWvWRjG3WMafpXkk1geRBN
-         z60FFhjgmj+l5znjTyGBSpUImB0EYZSE0a1lEndQaEQx2mpB23VMemV8wqJNnEEDJMap
-         0EBQ==
-X-Gm-Message-State: APjAAAU1N8Ep8ko9QhwYS0a8ffkaBpgjeno6tdWoLa+O/Usb31QuSemY
-        a8W+Zhrp/EUZ3zd0whFtLg0=
-X-Google-Smtp-Source: APXvYqxnZTC5rG/6DQ4aFQyQ/b8uU8CdFkVsUa7bx4AyaB0DD8Xa61xyMo0cQs7rfWcyLVEnoZk09w==
-X-Received: by 2002:a5d:6844:: with SMTP id o4mr2230253wrw.188.1569575965182;
-        Fri, 27 Sep 2019 02:19:25 -0700 (PDT)
-Received: from pi3 ([194.230.155.145])
-        by smtp.googlemail.com with ESMTPSA id a3sm7335197wmc.3.2019.09.27.02.19.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2019 02:19:24 -0700 (PDT)
-Date:   Fri, 27 Sep 2019 11:19:20 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Lukasz Luba <l.luba@partner.samsung.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com,
-        kgene@kernel.org, mark.rutland@arm.com, cw00.choi@samsung.com,
-        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
-        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
-        robh+dt@kernel.org, willy.mh.wolff.ml@gmail.com
-Subject: Re: [PATCH 3/3] memory: samsung: exynos5422-dmc: Add support for
- interrupt from performance counters
-Message-ID: <20190927091920.GB19131@pi3>
-References: <20190925161813.21117-1-l.luba@partner.samsung.com>
- <CGME20190925161844eucas1p2dc69a451c2d86fd7f4be2b33940f8d62@eucas1p2.samsung.com>
- <20190925161813.21117-4-l.luba@partner.samsung.com>
-MIME-Version: 1.0
+        Fri, 27 Sep 2019 10:33:17 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190927143314euoutp02bef2c15cf049514c28a56f472a2d8cd2~IUiZkZSh62244122441euoutp02Q
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Sep 2019 14:33:14 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190927143314euoutp02bef2c15cf049514c28a56f472a2d8cd2~IUiZkZSh62244122441euoutp02Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1569594795;
+        bh=hiJbO/O5KGuNuMhqp/5c2SuOZIf79Yix8ZcvFieL2Mg=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=JOlbtDnBj6kBsDPiX4+3E6Fa4uQ/QLX0X90pIthuoyqV7HA2Djc437/sfLxD/YP6s
+         qkvkC8TIXjGcB9y6tstcaC9npsiyW7L/f8vSEeWch1UZjERrnJg5fb/lQWIHZLdeN1
+         j1Ii+mttta/bSIrQT3POKaIVFlycH4exKN0lF5tY=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190927143314eucas1p1e8e031c5d7cd0b00ff7737c27491b61f~IUiZTsZ2k1143111431eucas1p13;
+        Fri, 27 Sep 2019 14:33:14 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id F8.88.04469.AAD1E8D5; Fri, 27
+        Sep 2019 15:33:14 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190927143314eucas1p2d419866cd740207426cd37cb6fdff468~IUiY6KbjF1734917349eucas1p2-;
+        Fri, 27 Sep 2019 14:33:14 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190927143314eusmtrp162aa909198e6ed383fa3d483e74658db~IUiY5caje3086830868eusmtrp1G;
+        Fri, 27 Sep 2019 14:33:14 +0000 (GMT)
+X-AuditID: cbfec7f2-569ff70000001175-c9-5d8e1daaff9a
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 69.25.04117.AAD1E8D5; Fri, 27
+        Sep 2019 15:33:14 +0100 (BST)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190927143313eusmtip1c0bd0ccf00d3fd9df7f66398d6fa7574~IUiYWmjgP0742707427eusmtip17;
+        Fri, 27 Sep 2019 14:33:13 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Maciej Falkowski <m.falkowski@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v3] dt-bindings: gpu: Convert Samsung Image Scaler to
+ dt-schema
+Date:   Fri, 27 Sep 2019 16:33:06 +0200
+Message-Id: <20190927143306.12133-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHIsWRmVeSWpSXmKPExsWy7djPc7qrZPtiDb7c1rCYf+Qcq8WVr+/Z
+        LCbdn8Bicf78BnaLy7vmsFnMOL+PyeJB8zo2i7VH7rJbLL1+kcmide8RdgcujzXz1jB6bFrV
+        yeZxv/s4k0ffllWMHp83yQWwRnHZpKTmZJalFunbJXBlXDmylalggXzFqt1rmRsYz0l0MXJy
+        SAiYSKw/vYAFxBYSWMEoseSPbhcjF5D9hVFixutPbBDOZ0aJP1P3McF0tCxoZoRILGeUuPjx
+        HlQ7UMv1WfIgNpuAoUTX2y6wbhGBJkaJKztfsYM4zAIfGCUObp7HBlIlLBAo0fnnLZjNIqAq
+        MfHLEzCbV8BW4tHm6VDr5CVWbzjADNIsIfCeTaJlSi8rRMJF4v2+T2wQtrDEq+Nb2CFsGYnT
+        k3tYIBqaGSUenlvLDuH0MEpcbprBCFFlLXH4+EWgSRxAN2lKrN+lD2JKCDhKzF0SCWHySdx4
+        KwhSzAxkTto2nRkizCvR0SYEMUNNYtbxdXBbD164xAxhe0gsa53EBgmUWIn/Lw8yTmCUm4Ww
+        agEj4ypG8dTS4tz01GLDvNRyveLE3OLSvHS95PzcTYzAVHH63/FPOxi/Xko6xCjAwajEw3uB
+        vS9WiDWxrLgy9xCjBAezkgivb2RPrBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHeaoYH0UIC6Ykl
+        qdmpqQWpRTBZJg5OqQZGu/n/mV8cjdfmW+u2QEZVcNKeXtfYSZpilb1pfbGtJaX90sccsrgD
+        m5emhCXP5bHS2Hqu5dOZ447l5acv7T2j+YuzaaHTLPOTBamT//NmLz0me9Lz25TLRvlz16/T
+        lIx3Uvzxne1GNJuYauHZKU06O5jzdF+d/q2dNy25/MDZMinpL9OcNLmUWIozEg21mIuKEwFJ
+        7kkCEQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGLMWRmVeSWpSXmKPExsVy+t/xu7qrZPtiDRY847aYf+Qcq8WVr+/Z
+        LCbdn8Bicf78BnaLy7vmsFnMOL+PyeJB8zo2i7VH7rJbLL1+kcmide8RdgcujzXz1jB6bFrV
+        yeZxv/s4k0ffllWMHp83yQWwRunZFOWXlqQqZOQXl9gqRRtaGOkZWlroGZlY6hkam8daGZkq
+        6dvZpKTmZJalFunbJehlXDmylalggXzFqt1rmRsYz0l0MXJySAiYSLQsaGbsYuTiEBJYyijR
+        9PYRC0RCRuLktAZWCFtY4s+1LjaIok+MEq/e3mQESbAJGEp0vYVIiAi0MUp8fnyFGcRhFvjC
+        KLH57w92kCphAX+Jezeug9ksAqoSE788YQOxeQVsJR5tns4EsUJeYvWGA8wTGHkWMDKsYhRJ
+        LS3OTc8tNtIrTswtLs1L10vOz93ECAzTbcd+btnB2PUu+BCjAAejEg9vBWtfrBBrYllxZe4h
+        RgkOZiURXt/Inlgh3pTEyqrUovz4otKc1OJDjKZAyycyS4km5wNjKK8k3tDU0NzC0tDc2NzY
+        zEJJnLdD4GCMkEB6YklqdmpqQWoRTB8TB6dUA6Po26T4f0u8272nuX/bW21q9PSaqGSJk0uI
+        zFQz86umcwoVKyViPu6tUP1UEBAy8fTMpYe4JCu2zzbaEcXhPv/44TOpT2PLwxYmhe1vDDZa
+        YfTpqkfn0nXHM3dbXZtwV6Fo5ZIl/v3nrPZsP5OldOv8qdzQsGmlR9uFTiV7f5GbVOk3LfHJ
+        79VKLMUZiYZazEXFiQCaoSdsaQIAAA==
+X-CMS-MailID: 20190927143314eucas1p2d419866cd740207426cd37cb6fdff468
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-In-Reply-To: <20190925161813.21117-4-l.luba@partner.samsung.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-RootMTR: 20190927143314eucas1p2d419866cd740207426cd37cb6fdff468
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190927143314eucas1p2d419866cd740207426cd37cb6fdff468
+References: <CGME20190927143314eucas1p2d419866cd740207426cd37cb6fdff468@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20190927091920.Ox8sNypCjRO6M3gCMZXudJwEC7_eg4uqqrXnKCy3Svk@z>
+Message-ID: <20190927143306.qeTV3DldM2PxPG0EAuSfXlvrF85TFHo9QR-dPP_AWiA@z>
 
-On Wed, Sep 25, 2019 at 06:18:13PM +0200, Lukasz Luba wrote:
-> Introduce a new interrupt driven mechanism for managing speed of the
-> memory controller. The interrupts are generated due to performance
-> counters overflow. The performance counters might track memory reads,
-> writes, transfers, page misses, etc. In the basic algorithm tracking
-> read transfers and calculating memory pressure should be enough to
-> skip polling mode in devfreq.
-> 
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
-> ---
->  drivers/memory/samsung/exynos5422-dmc.c | 297 ++++++++++++++++++++++--
->  1 file changed, 272 insertions(+), 25 deletions(-)
-> 
-> diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
-> index 0fe5f2186139..86e1844b97ef 100644
-> --- a/drivers/memory/samsung/exynos5422-dmc.c
-> +++ b/drivers/memory/samsung/exynos5422-dmc.c
-> @@ -8,6 +8,7 @@
->  #include <linux/devfreq.h>
->  #include <linux/devfreq-event.h>
->  #include <linux/device.h>
-> +#include <linux/interrupt.h>
->  #include <linux/io.h>
->  #include <linux/mfd/syscon.h>
->  #include <linux/module.h>
-> @@ -35,6 +36,29 @@
->  #define USE_BPLL_TIMINGS			(0)
->  #define EXYNOS5_AREF_NORMAL			(0x2e)
->  
-> +#define DREX_PPCCLKCON		(0x0130)
-> +#define DREX_PEREV2CONFIG	(0x013c)
-> +#define DREX_PMNC_PPC		(0xE000)
-> +#define DREX_CNTENS_PPC		(0xE010)
-> +#define DREX_CNTENC_PPC		(0xE020)
-> +#define DREX_INTENS_PPC		(0xE030)
-> +#define DREX_INTENC_PPC		(0xE040)
-> +#define DREX_FLAG_PPC		(0xE050)
-> +#define DREX_PMCNT2_PPC		(0xE130)
-> +
-> +#define CC_RESET		BIT(2)
-> +#define PPC_COUNTER_RESET	BIT(1)
-> +#define PPC_ENABLE		BIT(0)
-> +#define PEREV_CLK_EN		BIT(0)
-> +#define PERF_CNT2		BIT(2)
-> +#define PERF_CCNT		BIT(31)
+From: Maciej Falkowski <m.falkowski@samsung.com>
 
-Describe to which registers these bitfields are applicable.
+Convert Samsung Image Scaler to newer dt-schema format.
 
-> +
-> +#define READ_TRANSFER_CH0	(0x6d)
-> +#define READ_TRANSFER_CH1	(0x6f)
-
-The same. Otherwise they all look like some generic constants which is
-not true.
-
-> +
-> +#define PERF_COUNTER_START_VALUE 0xff000000
-> +#define PERF_EVENT_UP_DOWN_THRESHOLD 900000000ULL
-> +
->  /**
->   * struct dmc_opp_table - Operating level desciption
->   *
-> @@ -85,6 +109,9 @@ struct exynos5_dmc {
->  	struct clk *mout_mx_mspll_ccore_phy;
->  	struct devfreq_event_dev **counter;
->  	int num_counters;
-> +	u64 last_overflow_ts[2];
-> +	unsigned long load, total;
-
-One member per line.  This decreases readability.
-
-> +	bool in_irq_mode;
->  };
->  
->  #define TIMING_FIELD(t_name, t_bit_beg, t_bit_end) \
-> @@ -653,6 +680,167 @@ static int exynos5_counters_get(struct exynos5_dmc *dmc,
->  	return 0;
->  }
->  
-> +/**
-> + * exynos5_dmc_start_perf_events() - Setup and start performance event counters
-> + * @dmc:	device for which the counters are going to be checked
-> + * @beg_value:	initial value for the counter
-> + *
-> + * Function which enables needed counters, interrupts and sets initial values
-> + * then starts the counters.
-> + */
-> +static void exynos5_dmc_start_perf_events(struct exynos5_dmc *dmc,
-> +					  u32 beg_value)
-> +{
-> +	/* Enable interrupts for counter 2 */
-> +	writel(PERF_CNT2, dmc->base_drexi0 + DREX_INTENS_PPC);
-> +	writel(PERF_CNT2, dmc->base_drexi1 + DREX_INTENS_PPC);
-
-Blank line.
-
-> +	/* Enable counter 2 and CCNT  */
-> +	writel(PERF_CNT2 | PERF_CCNT, dmc->base_drexi0 + DREX_CNTENS_PPC);
-> +	writel(PERF_CNT2 | PERF_CCNT, dmc->base_drexi1 + DREX_CNTENS_PPC);
-
-Blank line.
-
-> +	/* Clear overflow flag for all counters */
-> +	writel(PERF_CNT2 | PERF_CCNT, dmc->base_drexi0 + DREX_FLAG_PPC);
-> +	writel(PERF_CNT2 | PERF_CCNT, dmc->base_drexi1 + DREX_FLAG_PPC);
-
-Blank line.
-
-> +	/* Reset all counters */
-> +	writel(CC_RESET | PPC_COUNTER_RESET, dmc->base_drexi0 + DREX_PMNC_PPC);
-> +	writel(CC_RESET | PPC_COUNTER_RESET, dmc->base_drexi1 + DREX_PMNC_PPC);
-
-Blank line.
-
-> +	/*
-> +	 * Set start value for the counters, the number of samples that
-> +	 * will be gathered is calculated as: 0xffffffff - beg_value
-> +	 */
-> +	writel(beg_value, dmc->base_drexi0 + DREX_PMCNT2_PPC);
-> +	writel(beg_value, dmc->base_drexi1 + DREX_PMCNT2_PPC);
-
-Blank line.
-
-> +	/* Start all counters */
-> +	writel(PPC_ENABLE, dmc->base_drexi0 + DREX_PMNC_PPC);
-> +	writel(PPC_ENABLE, dmc->base_drexi1 + DREX_PMNC_PPC);
-> +}
-> +
-> +/**
-> + * exynos5_dmc_perf_events_calc() - Calculate utilization
-> + * @dmc:	device for which the counters are going to be checked
-> + * @diff_ts:	time between last interrupt and current one
-> + *
-> + * Function which calculates needed utilization for the devfreq governor.
-> + * It prepares values for 'busy_time' and 'total_time' based on elapsed time
-> + * between interrupts, which approximates utilization.
-> + */
-> +static void exynos5_dmc_perf_events_calc(struct exynos5_dmc *dmc, u64 diff_ts)
-> +{
-> +	/*
-> +	 * This is a simple algorithm for managing traffic on DMC.
-> +	 * When there is almost no load the counters overflow every 4s,
-> +	 * no mater the DMC frequency.
-> +	 * The high load might be approximated using linear function.
-> +	 * Knowing that, simple calculation can provide 'busy_time' and
-> +	 * 'total_time' to the devfreq governor which picks up target
-> +	 * frequency.
-> +	 * We want a fast ramp up and slow decay in frequency change function.
-> +	 */
-> +	if (diff_ts < PERF_EVENT_UP_DOWN_THRESHOLD) {
-> +		/*
-> +		 * Set higher utilization for the simple_ondemand governor.
-> +		 * The governor should increase the frequency of the DMC.
-> +		 */
-> +		dmc->load = 70;
-> +		dmc->total = 100;
-> +	} else {
-> +		/*
-> +		 * Set low utilization for the simple_ondemand governor.
-> +		 * The governor should decrease the frequency of the DMC.
-> +		 */
-> +		dmc->load = 35;
-> +		dmc->total = 100;
-> +	}
-> +
-> +	dev_dbg(dmc->dev, "diff_ts=%llu\n", diff_ts);
-> +}
-> +
-> +/**
-> + * exynos5_dmc_perf_events_check() - Checks the status of the counters
-> + * @dmc:	device for which the counters are going to be checked
-> + *
-> + * Function which is called from threaded IRQ to check the counters state
-> + * and to call approximation for the needed utilization.
-> + */
-> +static void exynos5_dmc_perf_events_check(struct exynos5_dmc *dmc)
-> +{
-> +	u32 val;
-> +	u64 diff_ts, ts;
-> +
-> +	ts = ktime_get_ns();
-> +
-> +	/* Stop all counters */
-> +	writel(0, dmc->base_drexi0 + DREX_PMNC_PPC);
-> +	writel(0, dmc->base_drexi1 + DREX_PMNC_PPC);
-> +
-> +	/* Check the source in interrupt flag registers (which channel) */
-> +	val = readl(dmc->base_drexi0 + DREX_FLAG_PPC);
-> +	if (val) {
-> +		diff_ts = ts - dmc->last_overflow_ts[0];
-> +		dmc->last_overflow_ts[0] = ts;
-> +		dev_dbg(dmc->dev, "drex0 0xE050 val= 0x%08x\n",  val);
-> +	} else {
-> +		val = readl(dmc->base_drexi1 + DREX_FLAG_PPC);
-> +		diff_ts = ts - dmc->last_overflow_ts[1];
-> +		dmc->last_overflow_ts[1] = ts;
-> +		dev_dbg(dmc->dev, "drex1 0xE050 val= 0x%08x\n",  val);
-> +	}
-> +
-> +	exynos5_dmc_perf_events_calc(dmc, diff_ts);
-> +
-> +	exynos5_dmc_start_perf_events(dmc, PERF_COUNTER_START_VALUE);
-> +}
-> +
-> +/**
-> + * exynos5_dmc_enable_perf_events() - Enable performance events
-> + * @dmc:	device for which the counters are going to be checked
-> + *
-> + * Function which is setup needed environment and enables counters.
-> + */
-> +static void exynos5_dmc_enable_perf_events(struct exynos5_dmc *dmc)
-> +{
-> +	u64 ts;
-> +
-> +	/* Enable Performance Event Clock */
-> +	writel(PEREV_CLK_EN, dmc->base_drexi0 + DREX_PPCCLKCON);
-> +	writel(PEREV_CLK_EN, dmc->base_drexi1 + DREX_PPCCLKCON);
-> +
-> +	/* Select read transfers as performance event2 */
-> +	writel(READ_TRANSFER_CH0, dmc->base_drexi0 + DREX_PEREV2CONFIG);
-> +	writel(READ_TRANSFER_CH1, dmc->base_drexi1 + DREX_PEREV2CONFIG);
-> +
-> +	dmc->in_irq_mode = 1;
-
-Move this outside, to the probe. Logically it belongs there.
-
-> +
-> +	ts = ktime_get_ns();
-> +	dmc->last_overflow_ts[0] = ts;
-> +	dmc->last_overflow_ts[1] = ts;
-> +
-> +	/* Devfreq shouldn't be faster than initialization, play safe though. */
-> +	dmc->load = 99;
-> +	dmc->total = 100;
-> +}
-> +
-> +/**
-> + * exynos5_dmc_disable_perf_events() - Disable performance events
-> + * @dmc:	device for which the counters are going to be checked
-> + *
-> + * Function which stops, disables performance event counters and interrupts.
-> + */
-> +static void exynos5_dmc_disable_perf_events(struct exynos5_dmc *dmc)
-> +{
-> +	/* Stop all counters */
-> +	writel(0, dmc->base_drexi0 + DREX_PMNC_PPC);
-> +	writel(0, dmc->base_drexi1 + DREX_PMNC_PPC);
-
-Blank line here and later.
-
-> +	/* Disable interrupts for counter 2 */
-> +	writel(PERF_CNT2, dmc->base_drexi0 + DREX_INTENC_PPC);
-> +	writel(PERF_CNT2, dmc->base_drexi1 + DREX_INTENC_PPC);
-> +	/* Disable counter 2 and CCNT  */
-> +	writel(PERF_CNT2 | PERF_CCNT, dmc->base_drexi0 + DREX_CNTENC_PPC);
-> +	writel(PERF_CNT2 | PERF_CCNT, dmc->base_drexi1 + DREX_CNTENC_PPC);
-> +	/* Clear overflow flag for all counters */
-> +	writel(PERF_CNT2 | PERF_CCNT, dmc->base_drexi0 + DREX_FLAG_PPC);
-> +	writel(PERF_CNT2 | PERF_CCNT, dmc->base_drexi1 + DREX_FLAG_PPC);
-> +}
-> +
->  /**
->   * exynos5_dmc_get_status() - Read current DMC performance statistics.
->   * @dev:	device for which the statistics are requested
-> @@ -669,18 +857,24 @@ static int exynos5_dmc_get_status(struct device *dev,
->  	unsigned long load, total;
->  	int ret;
->  
-> -	ret = exynos5_counters_get(dmc, &load, &total);
-> -	if (ret < 0)
-> -		return -EINVAL;
-> +	if (dmc->in_irq_mode) {
-> +		stat->current_frequency = dmc->curr_rate;
-> +		stat->busy_time = dmc->load;
-> +		stat->total_time = dmc->total;
-> +	} else {
-> +		ret = exynos5_counters_get(dmc, &load, &total);
-> +		if (ret < 0)
-> +			return -EINVAL;
->  
-> -	/* To protect from overflow in calculation ratios, divide by 1024 */
-> -	stat->busy_time = load >> 10;
-> -	stat->total_time = total >> 10;
-> +		/* To protect from overflow, divide by 1024 */
-> +		stat->busy_time = load >> 10;
-> +		stat->total_time = total >> 10;
->  
-> -	ret = exynos5_counters_set_event(dmc);
-> -	if (ret < 0) {
-> -		dev_err(dev, "could not set event counter\n");
-> -		return ret;
-> +		ret = exynos5_counters_set_event(dmc);
-> +		if (ret < 0) {
-> +			dev_err(dev, "could not set event counter\n");
-> +			return ret;
-> +		}
->  	}
->  
->  	return 0;
-> @@ -712,7 +906,6 @@ static int exynos5_dmc_get_cur_freq(struct device *dev, unsigned long *freq)
->   * It provides to the devfreq framework needed functions and polling period.
->   */
->  static struct devfreq_dev_profile exynos5_dmc_df_profile = {
-> -	.polling_ms = 500,
->  	.target = exynos5_dmc_target,
->  	.get_dev_status = exynos5_dmc_get_status,
->  	.get_cur_freq = exynos5_dmc_get_cur_freq,
-> @@ -1108,6 +1301,26 @@ static inline int exynos5_dmc_set_pause_on_switching(struct exynos5_dmc *dmc)
->  	return 0;
->  }
->  
-> +static irqreturn_t dmc_irq_thread(int irq, void *priv)
-> +{
-> +	int res;
-> +	struct exynos5_dmc *dmc = priv;
-> +
-> +	dev_dbg(dmc->dev, "irq thread handler\n");
-
-Skip a debug in thread handler for memory. It can pollute your log (I
-guess depending on workload).
-
-> +
-> +	mutex_lock(&dmc->df->lock);
-> +
-> +	exynos5_dmc_perf_events_check(dmc);
-> +
-> +	res = update_devfreq(dmc->df);
-> +	if (res)
-> +		dev_err(dmc->dev, "devfreq failed with %d\n", res);
-
-dev_warn()
-
-> +
-> +	mutex_unlock(&dmc->df->lock);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
->  /**
->   * exynos5_dmc_probe() - Probe function for the DMC driver
->   * @pdev:	platform device for which the driver is going to be initialized
-> @@ -1125,6 +1338,7 @@ static int exynos5_dmc_probe(struct platform_device *pdev)
->  	struct device_node *np = dev->of_node;
->  	struct exynos5_dmc *dmc;
->  	struct resource *res;
-> +	int irq;
->  
->  	dmc = devm_kzalloc(dev, sizeof(*dmc), GFP_KERNEL);
->  	if (!dmc)
-> @@ -1172,24 +1386,48 @@ static int exynos5_dmc_probe(struct platform_device *pdev)
->  		goto remove_clocks;
->  	}
->  
-> -	ret = exynos5_performance_counters_init(dmc);
-> -	if (ret) {
-> -		dev_warn(dev, "couldn't probe performance counters\n");
-> -		goto remove_clocks;
-> -	}
-> -
->  	ret = exynos5_dmc_set_pause_on_switching(dmc);
->  	if (ret) {
->  		dev_warn(dev, "couldn't get access to PAUSE register\n");
->  		goto err_devfreq_add;
-
-This is wrong now, I think.
-
->  	}
->  
-> -	/*
-> -	 * Setup default thresholds for the devfreq governor.
-> -	 * The values are chosen based on experiments.
-> -	 */
-> -	dmc->gov_data.upthreshold = 30;
-> -	dmc->gov_data.downdifferential = 5;
-> +	/* There is two modes in which the driver works: polling or IRQ */
-> +	irq = platform_get_irq(pdev, 0);
-
-You need to document it in bindings.
-
-> +	if (irq < 0) {
-> +		ret = exynos5_performance_counters_init(dmc);
-> +		if (ret) {
-> +			dev_warn(dev, "couldn't probe performance counters\n");
-> +			goto remove_clocks;
-
-Weird, previous error jump goes to err_devfreq_add. This goes to error
-label which is narrower (less to cleanup).
+Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+v3:
+- Fixed description of 'clocks' property:
+rather than 'mscl clock', 'pclk clock'
+- Added empty line within if-else statement
+- Added 'additionalProperties: false'
+- Listed all missing 'properties' in properties scope
 
 Best regards,
-Krzysztof
+Maciej Falkowski
+---
+ .../bindings/gpu/samsung-scaler.txt           | 27 -------
+ .../bindings/gpu/samsung-scaler.yaml          | 81 +++++++++++++++++++
+ 2 files changed, 81 insertions(+), 27 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/gpu/samsung-scaler.txt
+ create mode 100644 Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
 
-> +		}
-> +
-> +		/*
-> +		 * Setup default thresholds for the devfreq governor.
-> +		 * The values are chosen based on experiments.
-> +		 */
-> +		dmc->gov_data.upthreshold = 30;
-> +		dmc->gov_data.downdifferential = 5;
-> +
-> +		exynos5_dmc_df_profile.polling_ms = 500;
-> +	} else {
-> +		ret = devm_request_threaded_irq(dev, irq, NULL,
-> +						dmc_irq_thread, IRQF_ONESHOT,
-> +						dev_name(dev), dmc);
-> +		if (ret) {
-> +			dev_err(dev, "couldn't grab IRQ\n");
-> +			goto remove_clocks;
-> +		}
-> +
-> +		/*
-> +		 * Setup default thresholds for the devfreq governor.
-> +		 * The values are chosen based on experiments.
-> +		 */
-> +		dmc->gov_data.upthreshold = 55;
-> +		dmc->gov_data.downdifferential = 5;
-> +
-> +		exynos5_dmc_enable_perf_events(dmc);
-> +	}
-> +
->  
->  	dmc->df = devm_devfreq_add_device(dev, &exynos5_dmc_df_profile,
->  					  DEVFREQ_GOV_SIMPLE_ONDEMAND,
-> @@ -1200,12 +1438,18 @@ static int exynos5_dmc_probe(struct platform_device *pdev)
->  		goto err_devfreq_add;
->  	}
->  
-> +	if (dmc->in_irq_mode)
-> +		exynos5_dmc_start_perf_events(dmc, PERF_COUNTER_START_VALUE);
-> +
->  	dev_info(dev, "DMC initialized\n");
->  
->  	return 0;
->  
->  err_devfreq_add:
-> -	exynos5_counters_disable_edev(dmc);
-> +	if (dmc->in_irq_mode)
-> +		exynos5_dmc_disable_perf_events(dmc);
-> +	else
-> +		exynos5_counters_disable_edev(dmc);
->  remove_clocks:
->  	clk_disable_unprepare(dmc->mout_bpll);
->  	clk_disable_unprepare(dmc->fout_bpll);
-> @@ -1225,7 +1469,10 @@ static int exynos5_dmc_remove(struct platform_device *pdev)
->  {
->  	struct exynos5_dmc *dmc = dev_get_drvdata(&pdev->dev);
->  
-> -	exynos5_counters_disable_edev(dmc);
-> +	if (dmc->in_irq_mode)
-> +		exynos5_dmc_disable_perf_events(dmc);
-> +	else
-> +		exynos5_counters_disable_edev(dmc);
->  
->  	clk_disable_unprepare(dmc->mout_bpll);
->  	clk_disable_unprepare(dmc->fout_bpll);
-> -- 
-> 2.17.1
-> 
+diff --git a/Documentation/devicetree/bindings/gpu/samsung-scaler.txt b/Documentation/devicetree/bindings/gpu/samsung-scaler.txt
+deleted file mode 100644
+index 9c3d98105dfd..000000000000
+--- a/Documentation/devicetree/bindings/gpu/samsung-scaler.txt
++++ /dev/null
+@@ -1,27 +0,0 @@
+-* Samsung Exynos Image Scaler
+-
+-Required properties:
+-  - compatible : value should be one of the following:
+-	(a) "samsung,exynos5420-scaler" for Scaler IP in Exynos5420
+-	(b) "samsung,exynos5433-scaler" for Scaler IP in Exynos5433
+-
+-  - reg : Physical base address of the IP registers and length of memory
+-	  mapped region.
+-
+-  - interrupts : Interrupt specifier for scaler interrupt, according to format
+-		 specific to interrupt parent.
+-
+-  - clocks : Clock specifier for scaler clock, according to generic clock
+-	     bindings. (See Documentation/devicetree/bindings/clock/exynos*.txt)
+-
+-  - clock-names : Names of clocks. For exynos scaler, it should be "mscl"
+-		  on 5420 and "pclk", "aclk" and "aclk_xiu" on 5433.
+-
+-Example:
+-	scaler@12800000 {
+-		compatible = "samsung,exynos5420-scaler";
+-		reg = <0x12800000 0x1294>;
+-		interrupts = <0 220 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&clock CLK_MSCL0>;
+-		clock-names = "mscl";
+-	};
+diff --git a/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml b/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
+new file mode 100644
+index 000000000000..5317ac64426a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
+@@ -0,0 +1,81 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpu/samsung-scaler.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung Exynos SoC Image Scaler
++
++maintainers:
++  - Inki Dae <inki.dae@samsung.com>
++
++properties:
++  compatible:
++    enum:
++      - samsung,exynos5420-scaler
++      - samsung,exynos5433-scaler
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks: {}
++  clock-names: {}
++  iommus: {}
++  power-domains: {}
++
++if:
++  properties:
++    compatible:
++      contains:
++        const: samsung,exynos5420-scaler
++
++then:
++  properties:
++    clocks:
++      items:
++        - description: mscl clock
++
++    clock-names:
++      items:
++        - const: mscl
++
++else:
++  properties:
++    clocks:
++      items:
++        - description: pclk clock
++        - description: aclk clock
++        - description: aclk_xiu clock
++
++    clock-names:
++      items:
++        - const: pclk
++        - const: aclk
++        - const: aclk_xiu
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/exynos5420.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    scaler@12800000 {
++        compatible = "samsung,exynos5420-scaler";
++        reg = <0x12800000 0x1294>;
++        interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&clock CLK_MSCL0>;
++        clock-names = "mscl";
++    };
++
++...
+-- 
+2.17.1
+
+
+
