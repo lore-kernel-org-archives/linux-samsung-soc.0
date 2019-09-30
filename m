@@ -1,81 +1,234 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [GIT PULL 1/2] arm64: dts: exynos: Pull for v5.4
-Date: Mon, 30 Sep 2019 10:02:17 +0200
-Message-ID: <20190930080217.GA23709@pi3>
-References: <20190911183632.4317-1-krzk@kernel.org>
- <CAK8P3a2pBV+fh0rHitZ30Zz61QNRLfNSD-nhnzq4ZtxSh66F1Q@mail.gmail.com>
- <CAJKOXPcOSvc2DfoN+7Tca=t5dSm3RcKqmm06AfR0PAVBeY=GvQ@mail.gmail.com>
- <20190929175134.fsieffurfdiqhpj2@localhost>
+Subject: Re: [PATCH v4 1/8] dt-bindings: timer: Convert Exynos MCT bindings
+ to json-schema
+Date: Mon, 30 Sep 2019 10:14:52 +0200
+Message-ID: <20190930081452.GB23709@pi3>
+References: <20190923161411.9236-1-krzk@kernel.org>
+ <20190927170701.GA27397@bogus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190929175134.fsieffurfdiqhpj2@localhost>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Olof Johansson <olof@lixom.net>
-Cc: DTML <devicetree@vger.kernel.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, SoC Team <soc@kernel.org>, arm-soc <arm@kernel.org>, Kukjin Kim <kgene@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <20190927170701.GA27397@bogus>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sun, Sep 29, 2019 at 10:51:34AM -0700, Olof Johansson wrote:
-> Hi,
+On Fri, Sep 27, 2019 at 12:07:01PM -0500, Rob Herring wrote:
+> On Mon, Sep 23, 2019 at 06:14:04PM +0200, Krzysztof Kozlowski wrote:
+> > Convert Samsung Exynos Soc Multi Core Timer bindings to DT schema format
+> > using json-schema.
+> > 
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > 
+> > ---
+> > 
+> > Changes since v3:
+> > 1. Use interrupts-extended instead of interrupts-map.
 > 
-> On Thu, Sep 12, 2019 at 08:32:47AM +0200, Krzysztof Kozlowski wrote:
-> > On Wed, 11 Sep 2019 at 23:07, Arnd Bergmann <arnd@arndb.de> wrote:
-> > >
-> > > On Wed, Sep 11, 2019 at 8:36 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > > >
-> > > > Hi,
-> > > >
-> > > > Unfortunately the patches were applied right after closing the linux-next.
-> > >
-> > > Hi Krzysztof,
-> > >
-> > > I took a look at these and am not convinced this is right:
-> > >
-> > > > 1. Fix boot of Exynos7 due to wrong address/size of memory node,
-> > >
-> > > The current state is clearly broken and a fix is needed, but
-> > > I'm not sure this is the right fix. Why do you have 32-bit physical
-> > > addressing on a 64-bit chip? I looked at commit ef72171b3621
-> > > that introduced it, and it seems it would be better to just
-> > > revert back to 64-bit addresses.
-> > 
-> > We discussed with Marek Szyprowski that either we can go back to
-> > 64-bit addressing or stick to 32. There are not known boards with more
-> > than 4 GB of RAM so from this point of view the choice was irrelevant.
-> > At the end of discussion I mentioned to stick with other arm64 boards
-> > (although not all), so revert to have 64 bit address... but Marek
-> > chosen differently. Since you ask, let's go back with revert.
-> > 
-> > >
-> > > > 2. Move GPU under /soc node,
-> > >
-> > > No problem
-> > >
-> > > > 3. Minor cleanup of #address-cells.
-> > >
-> > > IIRC, an interrupt-controller is required to have a #address-cells
-> > > property, even if that is normally zero. I don't remember the
-> > > details, but the gic binding lists it as mandatory, and I think
-> > > the PCI interrupt-map relies on it. I would just drop this patch.
-> > 
-> > Indeed, binding requires both address and size cells. I'll drop it.
-> 
-> Looking through the history of pending material, I didn't see a new pull for
-> this material. Just checking in to see if there's something we missed?
+> This is a binding change. You should mention it in the commit.
 
-No, it's me who forgot to resend. I was sure that I rebased the branch
-and created new pull request. However it seems I did not. Let's keep it
-for next merge window... v5.4-rc should be any minute, I guess?
+The interrupts-map was never a part of binding. It was only mentioned in
+the example to show how to route interrupts to different controllers.
+
+The bindings are not changed. Only example.
+
+> 
+> > 
+> > Changes since v1:
+> > 1. Indent example with four spaces (more readable),
+> > 2. Rename nodes in example to timer,
+> > 3. Remove mct-map subnode.
+> > ---
+> >  .../bindings/timer/samsung,exynos4210-mct.txt |  88 ------------
+> >  .../timer/samsung,exynos4210-mct.yaml         | 125 ++++++++++++++++++
+> >  2 files changed, 125 insertions(+), 88 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
+> >  create mode 100644 Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
+> > deleted file mode 100644
+> > index 8f78640ad64c..000000000000
+> > --- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
+> > +++ /dev/null
+> > @@ -1,88 +0,0 @@
+> > -Samsung's Multi Core Timer (MCT)
+> > -
+> > -The Samsung's Multi Core Timer (MCT) module includes two main blocks, the
+> > -global timer and CPU local timers. The global timer is a 64-bit free running
+> > -up-counter and can generate 4 interrupts when the counter reaches one of the
+> > -four preset counter values. The CPU local timers are 32-bit free running
+> > -down-counters and generate an interrupt when the counter expires. There is
+> > -one CPU local timer instantiated in MCT for every CPU in the system.
+> > -
+> > -Required properties:
+> > -
+> > -- compatible: should be "samsung,exynos4210-mct".
+> > -  (a) "samsung,exynos4210-mct", for mct compatible with Exynos4210 mct.
+> > -  (b) "samsung,exynos4412-mct", for mct compatible with Exynos4412 mct.
+> > -
+> > -- reg: base address of the mct controller and length of the address space
+> > -  it occupies.
+> > -
+> > -- interrupts: the list of interrupts generated by the controller. The following
+> > -  should be the order of the interrupts specified. The local timer interrupts
+> > -  should be specified after the four global timer interrupts have been
+> > -  specified.
+> > -
+> > -	0: Global Timer Interrupt 0
+> > -	1: Global Timer Interrupt 1
+> > -	2: Global Timer Interrupt 2
+> > -	3: Global Timer Interrupt 3
+> > -	4: Local Timer Interrupt 0
+> > -	5: Local Timer Interrupt 1
+> > -	6: ..
+> > -	7: ..
+> > -	i: Local Timer Interrupt n
+> > -
+> > -  For MCT block that uses a per-processor interrupt for local timers, such
+> > -  as ones compatible with "samsung,exynos4412-mct", only one local timer
+> > -  interrupt might be specified, meaning that all local timers use the same
+> > -  per processor interrupt.
+> > -
+> > -Example 1: In this example, the IP contains two local timers, using separate
+> > -	   interrupts, so two local timer interrupts have been specified,
+> > -	   in addition to four global timer interrupts.
+> > -
+> > -	mct@10050000 {
+> > -		compatible = "samsung,exynos4210-mct";
+> > -		reg = <0x10050000 0x800>;
+> > -		interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
+> > -			     <0 42 0>, <0 48 0>;
+> > -	};
+> > -
+> > -Example 2: In this example, the timer interrupts are connected to two separate
+> > -	   interrupt controllers. Hence, an interrupt-map is created to map
+> > -	   the interrupts to the respective interrupt controllers.
+> > -
+> > -	mct@101c0000 {
+> > -		compatible = "samsung,exynos4210-mct";
+> > -		reg = <0x101C0000 0x800>;
+> > -		interrupt-parent = <&mct_map>;
+> > -		interrupts = <0>, <1>, <2>, <3>, <4>, <5>;
+> > -
+> > -		mct_map: mct-map {
+> > -			#interrupt-cells = <1>;
+> > -			#address-cells = <0>;
+> > -			#size-cells = <0>;
+> > -			interrupt-map = <0 &gic 0 57 0>,
+> > -					<1 &gic 0 69 0>,
+> > -					<2 &combiner 12 6>,
+> > -					<3 &combiner 12 7>,
+> > -					<4 &gic 0 42 0>,
+> > -					<5 &gic 0 48 0>;
+> > -		};
+> > -	};
+> > -
+> > -Example 3: In this example, the IP contains four local timers, but using
+> > -	   a per-processor interrupt to handle them. Either all the local
+> > -	   timer interrupts can be specified, with the same interrupt specifier
+> > -	   value or just the first one.
+> > -
+> > -	mct@10050000 {
+> > -		compatible = "samsung,exynos4412-mct";
+> > -		reg = <0x10050000 0x800>;
+> > -
+> > -		/* Both ways are possible in this case. Either: */
+> > -		interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
+> > -			     <0 42 0>;
+> > -		/* or: */
+> > -		interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
+> > -			     <0 42 0>, <0 42 0>, <0 42 0>, <0 42 0>;
+> > -	};
+> > diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+> > new file mode 100644
+> > index 000000000000..bff3f54a398f
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+> > @@ -0,0 +1,125 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/timer/samsung,exynos4210-mct.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Samsung Exynos SoC Multi Core Timer (MCT)
+> > +
+> > +maintainers:
+> > +  - Krzysztof Kozlowski <krzk@kernel.org>
+> > +
+> > +description: |+
+> > +  The Samsung's Multi Core Timer (MCT) module includes two main blocks, the
+> > +  global timer and CPU local timers. The global timer is a 64-bit free running
+> > +  up-counter and can generate 4 interrupts when the counter reaches one of the
+> > +  four preset counter values. The CPU local timers are 32-bit free running
+> > +  down-counters and generate an interrupt when the counter expires. There is
+> > +  one CPU local timer instantiated in MCT for every CPU in the system.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - samsung,exynos4210-mct
+> > +      - samsung,exynos4412-mct
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    description: |
+> > +      Interrupts should be put in specific order. This is, the local timer
+> > +      interrupts should be specified after the four global timer interrupts
+> > +      have been specified:
+> > +      0: Global Timer Interrupt 0
+> > +      1: Global Timer Interrupt 1
+> > +      2: Global Timer Interrupt 2
+> > +      3: Global Timer Interrupt 3
+> > +      4: Local Timer Interrupt 0
+> > +      5: Local Timer Interrupt 1
+> > +      6: ..
+> > +      7: ..
+> > +      i: Local Timer Interrupt n
+> > +      For MCT block that uses a per-processor interrupt for local timers, such
+> > +      as ones compatible with "samsung,exynos4412-mct", only one local timer
+> > +      interrupt might be specified, meaning that all local timers use the same
+> > +      per processor interrupt.
+> > +    minItems: 5               # 4 Global + 1 local
+> > +    maxItems: 20              # 4 Global + 16 local
+> > +
+> > +  interrupts-extended:
+> 
+> No need for this. Just document 'interrupts' and the tooling takes care 
+> of supporting 'interrupts-extended' too.
+
+OK.
+
+> 
+> > +    description: |
+> > +      If interrupts are coming from different controllers, this property
+> > +      can be used instead of regular "interrupts" property.
+> > +      The format is exactly the same as with "interrupts".
+> > +      Interrupts should be put in specific order. This is, the local timer
+> > +    minItems: 5               # 4 Global + 1 local
+> > +    maxItems: 20              # 4 Global + 16 local
+> > +
+> > +required:
+> > +  - compatible
+> > +  - interrupts
+> > +  - reg
+> > +
+> > +allOf:
+> > +  - if:
+> > +      not:
+> > +        required:
+> > +          - interrupts
+> > +    then:
+> > +      required:
+> > +        - interrupts-extended
+> 
+> And this is taken care of too.
+
+Sure, thanks!
 
 Best regards,
 Krzysztof
