@@ -2,169 +2,136 @@ Return-Path: <SRS0=R3LL=XZ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.3 required=3.0 tests=DATE_IN_PAST_03_06,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BC0EC32792
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Sep 2019 15:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD3D5C32792
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Sep 2019 20:58:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E76FE2190F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Sep 2019 15:44:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569858278;
-	bh=skUSr7NVncfczKSccCPKJaTNJjIZK3sHjCWlfEUPQT4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FDkI1YrmPEgkGleTwPyRtUVHddlOZG3k9YaTsOe1cApmxLtazhKELtBACrnGsHqD2
-	 Sy4rDp7JzZKhQtvVzc9NGJue2xEjioJNV/BQXN8RRFWf9vwF5eTqFKjbrEKpTYNQ9C
-	 mSEXFFk/PBP1fb2NTcLFSCr152nSDs0bRqGAgOdY=
+	by mail.kernel.org (Postfix) with ESMTP id 9BE42224FE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Sep 2019 20:58:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="izfFFobe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728424AbfI3Poe (ORCPT
+        id S1727146AbfI3U6A (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 30 Sep 2019 11:44:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47448 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732102AbfI3Pod (ORCPT
+        Mon, 30 Sep 2019 16:58:00 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:44930 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727118AbfI3U6A (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 30 Sep 2019 11:44:33 -0400
-Received: from localhost.localdomain (unknown [194.230.155.145])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CBF4A216F4;
-        Mon, 30 Sep 2019 15:44:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569858272;
-        bh=skUSr7NVncfczKSccCPKJaTNJjIZK3sHjCWlfEUPQT4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wNyvw/lFlMpNtko3VhBO69gyJuppCLVQKHjARi4han4ZbchOHTg6dancx3TfPk62J
-         fssAmKjI5lWrYp/B7aALaXDzXT6notEIX431IyMtY3ghHthQNlzORVBLGEECCmp2DU
-         aqhw+IiDu1dhHa2PZQB+Y3NLF22O5Xx6i7QaihvI=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v5 2/2] dt-bindings: timer: Use defines instead of numbers in Exynos MCT examples
-Date:   Mon, 30 Sep 2019 17:44:18 +0200
-Message-Id: <20190930154418.4884-2-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190930154418.4884-1-krzk@kernel.org>
-References: <20190930154418.4884-1-krzk@kernel.org>
+        Mon, 30 Sep 2019 16:58:00 -0400
+Received: by mail-io1-f68.google.com with SMTP id w12so13951283iol.11
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Sep 2019 13:57:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=i3dwIE3HGnY2ji6BL2lgrdHCeKt8hwvNYITijQeMpag=;
+        b=izfFFobeeAuaCN1MYV2cqTTC9SJ2B7X/u+g6CPl+hSPnOUnRbP1/BCohkPY00SKjOS
+         ngbgS5eggV73d5N3fvNsmyx4AdZ9BelpEyLZgIOQWjYZ0H/t1h9hwcopTh8luMLUlkAD
+         UvFLMMtPQWZq9ybp6G3XRQa3ba3kFxGlWt+PhVFEisFiy/ivTvQCpq4WDb2zRJWntAjY
+         RnpfLShbUA0uQ0c6YpBTgnszBbNpKq4tSWd29vid/pr0QWpkPNtc9dlZZOHIWHtbr1I4
+         64grZ5gAZJhw0mPO812L2fmFF+Kgqu62rcwu8tU01ioPJdvJ0r7FYafvOLbDi1a734kX
+         h+0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=i3dwIE3HGnY2ji6BL2lgrdHCeKt8hwvNYITijQeMpag=;
+        b=LiOhfa88tXJnjWZ1UBwbeNCWKhVNGQFwLCcywMtttTF97lO3Gu0/l9K5AfuBeBt6Vt
+         lCuBHp1DJ7Donj2G/UNvr0e0QkH5e/KwLwak9xhp2bcHFvjrbgf6VEIVh/5huisN4whe
+         YtngZuLmj2rREKoS+rko7CeMC6KareQRcxJMFxGIFIYA9VTLedjlR2PVNqKKKf3X5Ve8
+         damacPlNSFID8kyjyiD3tNxgOfmH+thWC3bfK291VJ5cSH8lDEpm4VDKdDZ/Bv/JQYRt
+         yqNAjG2B2SWrNCQecWmqJ9VeBAlbfUqgR+D8SsQ6Q3s9zkKHJu8T48QGoPuqcFfKqbib
+         dqeA==
+X-Gm-Message-State: APjAAAWDz/D70si3FM913Wm3rqWNTP88Tp+DXyGEsq8coXZNV9IHwzpD
+        WOH0Wh7M0JNI4Of83lndlAo/uDz6SVIMvEU8BkOutYNxCz37aw==
+X-Google-Smtp-Source: APXvYqyXj8WDjHDG8Ly151dv7OzUri8sYlz4HJQ8uFbvR+QF/bAefpHZooDpQz+OMMR2j4tK+jKhsia3WuUY762LNpQ=
+X-Received: by 2002:a92:4799:: with SMTP id e25mr22126652ilk.72.1569864912988;
+ Mon, 30 Sep 2019 10:35:12 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190911183632.4317-1-krzk@kernel.org> <CAK8P3a2pBV+fh0rHitZ30Zz61QNRLfNSD-nhnzq4ZtxSh66F1Q@mail.gmail.com>
+ <CAJKOXPcOSvc2DfoN+7Tca=t5dSm3RcKqmm06AfR0PAVBeY=GvQ@mail.gmail.com>
+ <20190929175134.fsieffurfdiqhpj2@localhost> <20190930080217.GA23709@pi3>
+In-Reply-To: <20190930080217.GA23709@pi3>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Mon, 30 Sep 2019 10:35:01 -0700
+Message-ID:
+ <CAOesGMi2w9vci+kU=WFHJJBqgz9BM5RJBzqwwrR7k=275w4Tyg@mail.gmail.com>
+Subject: Re: [GIT PULL 1/2] arm64: dts: exynos: Pull for v5.4
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, arm-soc <arm@kernel.org>,
+        SoC Team <soc@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Message-ID: <20190930154418.LerNtCb1wWQ7H-knKJOJ6hodqoBskxtYe9pIMSSuvc0@z>
+Message-ID: <20190930173501.0VxK0_Rt8rg__aN6XubPTcUZIB6Pc0_UP_BAqN4Wnxo@z>
 
-Make the examples in Exynos Multi Core Timer bindings more readable and
-bring them closer to real DTS by using defines for interrupt flags.
-Fix also GIC interrupt type in example for Exynos4412 (from SPI to PPI).
+On Mon, Sep 30, 2019 at 1:02 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On Sun, Sep 29, 2019 at 10:51:34AM -0700, Olof Johansson wrote:
+> > Hi,
+> >
+> > On Thu, Sep 12, 2019 at 08:32:47AM +0200, Krzysztof Kozlowski wrote:
+> > > On Wed, 11 Sep 2019 at 23:07, Arnd Bergmann <arnd@arndb.de> wrote:
+> > > >
+> > > > On Wed, Sep 11, 2019 at 8:36 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > > > >
+> > > > > Hi,
+> > > > >
+> > > > > Unfortunately the patches were applied right after closing the linux-next.
+> > > >
+> > > > Hi Krzysztof,
+> > > >
+> > > > I took a look at these and am not convinced this is right:
+> > > >
+> > > > > 1. Fix boot of Exynos7 due to wrong address/size of memory node,
+> > > >
+> > > > The current state is clearly broken and a fix is needed, but
+> > > > I'm not sure this is the right fix. Why do you have 32-bit physical
+> > > > addressing on a 64-bit chip? I looked at commit ef72171b3621
+> > > > that introduced it, and it seems it would be better to just
+> > > > revert back to 64-bit addresses.
+> > >
+> > > We discussed with Marek Szyprowski that either we can go back to
+> > > 64-bit addressing or stick to 32. There are not known boards with more
+> > > than 4 GB of RAM so from this point of view the choice was irrelevant.
+> > > At the end of discussion I mentioned to stick with other arm64 boards
+> > > (although not all), so revert to have 64 bit address... but Marek
+> > > chosen differently. Since you ask, let's go back with revert.
+> > >
+> > > >
+> > > > > 2. Move GPU under /soc node,
+> > > >
+> > > > No problem
+> > > >
+> > > > > 3. Minor cleanup of #address-cells.
+> > > >
+> > > > IIRC, an interrupt-controller is required to have a #address-cells
+> > > > property, even if that is normally zero. I don't remember the
+> > > > details, but the gic binding lists it as mandatory, and I think
+> > > > the PCI interrupt-map relies on it. I would just drop this patch.
+> > >
+> > > Indeed, binding requires both address and size cells. I'll drop it.
+> >
+> > Looking through the history of pending material, I didn't see a new pull for
+> > this material. Just checking in to see if there's something we missed?
+>
+> No, it's me who forgot to resend. I was sure that I rebased the branch
+> and created new pull request. However it seems I did not. Let's keep it
+> for next merge window... v5.4-rc should be any minute, I guess?
 
-Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Yeah, we're too late for this merge window but feel free to send it
+for next release.
 
----
 
-Changes since v1:
-1. Use GIC_PPI where applicable.
-
-Rebased on top of:
-https://patchwork.kernel.org/project/linux-samsung-soc/list/?series=177667&state=*
----
- .../timer/samsung,exynos4210-mct.yaml         | 37 ++++++++++++++-----
- 1 file changed, 27 insertions(+), 10 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-index 3e26fd5e235a..273e359854dd 100644
---- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-+++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-@@ -57,51 +57,68 @@ examples:
-     // In this example, the IP contains two local timers, using separate
-     // interrupts, so two local timer interrupts have been specified,
-     // in addition to four global timer interrupts.
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
-     timer@10050000 {
-         compatible = "samsung,exynos4210-mct";
-         reg = <0x10050000 0x800>;
--        interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
--                     <0 42 0>, <0 48 0>;
-+        interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
-     };
- 
-   - |
-     // In this example, the timer interrupts are connected to two separate
-     // interrupt controllers. Hence, an interrupts-extended is needed.
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
-     timer@101c0000 {
-         compatible = "samsung,exynos4210-mct";
-         reg = <0x101C0000 0x800>;
--        interrupts-extended = <&gic 0 57 0>,
--                              <&gic 0 69 0>,
-+        interrupts-extended = <&gic GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-+                              <&gic GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
-                               <&combiner 12 6>,
-                               <&combiner 12 7>,
--                              <&gic 0 42 0>,
--                              <&gic 0 48 0>;
-+                              <&gic GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
-+                              <&gic GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
-     };
- 
-   - |
-     // In this example, the IP contains four local timers, but using
-     // a per-processor interrupt to handle them. Only one first local
-     // interrupt is specified.
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
-     timer@10050000 {
-         compatible = "samsung,exynos4412-mct";
-         reg = <0x10050000 0x800>;
- 
--        interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
--                     <0 42 0>;
-+        interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_PPI 42 IRQ_TYPE_LEVEL_HIGH>;
-     };
- 
-   - |
-     // In this example, the IP contains four local timers, but using
-     // a per-processor interrupt to handle them. All the local timer
-     // interrupts are specified.
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
-     timer@10050000 {
-         compatible = "samsung,exynos4412-mct";
-         reg = <0x10050000 0x800>;
- 
--        interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
--                     <0 42 0>, <0 42 0>, <0 42 0>, <0 42 0>;
-+        interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_PPI 42 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_PPI 42 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_PPI 42 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_PPI 42 IRQ_TYPE_LEVEL_HIGH>;
-     };
--- 
-2.17.1
-
+-Olof
