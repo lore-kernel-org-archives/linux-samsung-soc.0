@@ -1,85 +1,115 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 1/2] arm64: dts: exynos: Pull for v5.4
-Date: Mon, 30 Sep 2019 10:35:01 -0700
-Message-ID: <CAOesGMi2w9vci+kU=WFHJJBqgz9BM5RJBzqwwrR7k=275w4Tyg@mail.gmail.com>
-References: <20190911183632.4317-1-krzk@kernel.org>
- <CAK8P3a2pBV+fh0rHitZ30Zz61QNRLfNSD-nhnzq4ZtxSh66F1Q@mail.gmail.com>
- <CAJKOXPcOSvc2DfoN+7Tca=t5dSm3RcKqmm06AfR0PAVBeY=GvQ@mail.gmail.com>
- <20190929175134.fsieffurfdiqhpj2@localhost> <20190930080217.GA23709@pi3>
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v3] dt-bindings: gpu: Convert Samsung Image Scaler to
+ dt-schema
+Date: Mon, 30 Sep 2019 13:54:43 -0500
+Message-ID: <CAL_Jsq+5PDM97zJZhp_E27d=RVFf87=QFH4d6=q_YC+tff6v-w@mail.gmail.com>
+References: <CGME20190927143314eucas1p2d419866cd740207426cd37cb6fdff468@eucas1p2.samsung.com>
+ <20190927143306.12133-1-m.szyprowski@samsung.com>
+ <CAJKOXPdbDropa0iL6YP4Fb4aFSEXQ87thOk5mN+cSCU=i+ZwUw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190930080217.GA23709@pi3>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAJKOXPdbDropa0iL6YP4Fb4aFSEXQ87thOk5mN+cSCU=i+ZwUw@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: DTML <devicetree@vger.kernel.org>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, SoC Team <soc@kernel.org>, arm-soc <arm@kernel.org>, Kukjin Kim <kgene@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Maciej Falkowski <m.falkowski@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Sep 30, 2019 at 1:02 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On Sun, Sep 29, 2019 at 10:51:34AM -0700, Olof Johansson wrote:
-> > Hi,
-> >
-> > On Thu, Sep 12, 2019 at 08:32:47AM +0200, Krzysztof Kozlowski wrote:
-> > > On Wed, 11 Sep 2019 at 23:07, Arnd Bergmann <arnd@arndb.de> wrote:
-> > > >
-> > > > On Wed, Sep 11, 2019 at 8:36 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > > > >
-> > > > > Hi,
-> > > > >
-> > > > > Unfortunately the patches were applied right after closing the linux-next.
-> > > >
-> > > > Hi Krzysztof,
-> > > >
-> > > > I took a look at these and am not convinced this is right:
-> > > >
-> > > > > 1. Fix boot of Exynos7 due to wrong address/size of memory node,
-> > > >
-> > > > The current state is clearly broken and a fix is needed, but
-> > > > I'm not sure this is the right fix. Why do you have 32-bit physical
-> > > > addressing on a 64-bit chip? I looked at commit ef72171b3621
-> > > > that introduced it, and it seems it would be better to just
-> > > > revert back to 64-bit addresses.
-> > >
-> > > We discussed with Marek Szyprowski that either we can go back to
-> > > 64-bit addressing or stick to 32. There are not known boards with more
-> > > than 4 GB of RAM so from this point of view the choice was irrelevant.
-> > > At the end of discussion I mentioned to stick with other arm64 boards
-> > > (although not all), so revert to have 64 bit address... but Marek
-> > > chosen differently. Since you ask, let's go back with revert.
-> > >
-> > > >
-> > > > > 2. Move GPU under /soc node,
-> > > >
-> > > > No problem
-> > > >
-> > > > > 3. Minor cleanup of #address-cells.
-> > > >
-> > > > IIRC, an interrupt-controller is required to have a #address-cells
-> > > > property, even if that is normally zero. I don't remember the
-> > > > details, but the gic binding lists it as mandatory, and I think
-> > > > the PCI interrupt-map relies on it. I would just drop this patch.
-> > >
-> > > Indeed, binding requires both address and size cells. I'll drop it.
-> >
-> > Looking through the history of pending material, I didn't see a new pull for
-> > this material. Just checking in to see if there's something we missed?
->
-> No, it's me who forgot to resend. I was sure that I rebased the branch
-> and created new pull request. However it seems I did not. Let's keep it
-> for next merge window... v5.4-rc should be any minute, I guess?
-
-Yeah, we're too late for this merge window but feel free to send it
-for next release.
-
-
--Olof
+T24gRnJpLCBTZXAgMjcsIDIwMTkgYXQgOTo1OSBBTSBLcnp5c3p0b2YgS296bG93c2tpIDxrcnpr
+QGtlcm5lbC5vcmc+IHdyb3RlOgo+Cj4gT24gRnJpLCAyNyBTZXAgMjAxOSBhdCAxNjozMywgTWFy
+ZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPiB3cm90ZToKPiA+Cj4gPiBG
+cm9tOiBNYWNpZWogRmFsa293c2tpIDxtLmZhbGtvd3NraUBzYW1zdW5nLmNvbT4KPiA+Cj4gPiBD
+b252ZXJ0IFNhbXN1bmcgSW1hZ2UgU2NhbGVyIHRvIG5ld2VyIGR0LXNjaGVtYSBmb3JtYXQuCj4g
+Pgo+ID4gU2lnbmVkLW9mZi1ieTogTWFjaWVqIEZhbGtvd3NraSA8bS5mYWxrb3dza2lAc2Ftc3Vu
+Zy5jb20+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lA
+c2Ftc3VuZy5jb20+Cj4gPiAtLS0KPiA+IHYzOgo+ID4gLSBGaXhlZCBkZXNjcmlwdGlvbiBvZiAn
+Y2xvY2tzJyBwcm9wZXJ0eToKPiA+IHJhdGhlciB0aGFuICdtc2NsIGNsb2NrJywgJ3BjbGsgY2xv
+Y2snCj4gPiAtIEFkZGVkIGVtcHR5IGxpbmUgd2l0aGluIGlmLWVsc2Ugc3RhdGVtZW50Cj4gPiAt
+IEFkZGVkICdhZGRpdGlvbmFsUHJvcGVydGllczogZmFsc2UnCj4gPiAtIExpc3RlZCBhbGwgbWlz
+c2luZyAncHJvcGVydGllcycgaW4gcHJvcGVydGllcyBzY29wZQo+ID4KPiA+IEJlc3QgcmVnYXJk
+cywKPiA+IE1hY2llaiBGYWxrb3dza2kKPiA+IC0tLQo+ID4gIC4uLi9iaW5kaW5ncy9ncHUvc2Ft
+c3VuZy1zY2FsZXIudHh0ICAgICAgICAgICB8IDI3IC0tLS0tLS0KPiA+ICAuLi4vYmluZGluZ3Mv
+Z3B1L3NhbXN1bmctc2NhbGVyLnlhbWwgICAgICAgICAgfCA4MSArKysrKysrKysrKysrKysrKysr
+Cj4gPiAgMiBmaWxlcyBjaGFuZ2VkLCA4MSBpbnNlcnRpb25zKCspLCAyNyBkZWxldGlvbnMoLSkK
+PiA+ICBkZWxldGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
+L2dwdS9zYW1zdW5nLXNjYWxlci50eHQKPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRh
+dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwdS9zYW1zdW5nLXNjYWxlci55YW1sCj4gPgo+ID4g
+ZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncHUvc2Ftc3Vu
+Zy1zY2FsZXIudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwdS9zYW1z
+dW5nLXNjYWxlci50eHQKPiA+IGRlbGV0ZWQgZmlsZSBtb2RlIDEwMDY0NAo+ID4gaW5kZXggOWMz
+ZDk4MTA1ZGZkLi4wMDAwMDAwMDAwMDAKPiA+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJl
+ZS9iaW5kaW5ncy9ncHUvc2Ftc3VuZy1zY2FsZXIudHh0Cj4gPiArKysgL2Rldi9udWxsCj4gPiBA
+QCAtMSwyNyArMCwwIEBACj4gPiAtKiBTYW1zdW5nIEV4eW5vcyBJbWFnZSBTY2FsZXIKPiA+IC0K
+PiA+IC1SZXF1aXJlZCBwcm9wZXJ0aWVzOgo+ID4gLSAgLSBjb21wYXRpYmxlIDogdmFsdWUgc2hv
+dWxkIGJlIG9uZSBvZiB0aGUgZm9sbG93aW5nOgo+ID4gLSAgICAgICAoYSkgInNhbXN1bmcsZXh5
+bm9zNTQyMC1zY2FsZXIiIGZvciBTY2FsZXIgSVAgaW4gRXh5bm9zNTQyMAo+ID4gLSAgICAgICAo
+YikgInNhbXN1bmcsZXh5bm9zNTQzMy1zY2FsZXIiIGZvciBTY2FsZXIgSVAgaW4gRXh5bm9zNTQz
+Mwo+ID4gLQo+ID4gLSAgLSByZWcgOiBQaHlzaWNhbCBiYXNlIGFkZHJlc3Mgb2YgdGhlIElQIHJl
+Z2lzdGVycyBhbmQgbGVuZ3RoIG9mIG1lbW9yeQo+ID4gLSAgICAgICAgIG1hcHBlZCByZWdpb24u
+Cj4gPiAtCj4gPiAtICAtIGludGVycnVwdHMgOiBJbnRlcnJ1cHQgc3BlY2lmaWVyIGZvciBzY2Fs
+ZXIgaW50ZXJydXB0LCBhY2NvcmRpbmcgdG8gZm9ybWF0Cj4gPiAtICAgICAgICAgICAgICAgIHNw
+ZWNpZmljIHRvIGludGVycnVwdCBwYXJlbnQuCj4gPiAtCj4gPiAtICAtIGNsb2NrcyA6IENsb2Nr
+IHNwZWNpZmllciBmb3Igc2NhbGVyIGNsb2NrLCBhY2NvcmRpbmcgdG8gZ2VuZXJpYyBjbG9jawo+
+ID4gLSAgICAgICAgICAgIGJpbmRpbmdzLiAoU2VlIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
+aW5kaW5ncy9jbG9jay9leHlub3MqLnR4dCkKPiA+IC0KPiA+IC0gIC0gY2xvY2stbmFtZXMgOiBO
+YW1lcyBvZiBjbG9ja3MuIEZvciBleHlub3Mgc2NhbGVyLCBpdCBzaG91bGQgYmUgIm1zY2wiCj4g
+PiAtICAgICAgICAgICAgICAgICBvbiA1NDIwIGFuZCAicGNsayIsICJhY2xrIiBhbmQgImFjbGtf
+eGl1IiBvbiA1NDMzLgo+ID4gLQo+ID4gLUV4YW1wbGU6Cj4gPiAtICAgICAgIHNjYWxlckAxMjgw
+MDAwMCB7Cj4gPiAtICAgICAgICAgICAgICAgY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vczU0
+MjAtc2NhbGVyIjsKPiA+IC0gICAgICAgICAgICAgICByZWcgPSA8MHgxMjgwMDAwMCAweDEyOTQ+
+Owo+ID4gLSAgICAgICAgICAgICAgIGludGVycnVwdHMgPSA8MCAyMjAgSVJRX1RZUEVfTEVWRUxf
+SElHSD47Cj4gPiAtICAgICAgICAgICAgICAgY2xvY2tzID0gPCZjbG9jayBDTEtfTVNDTDA+Owo+
+ID4gLSAgICAgICAgICAgICAgIGNsb2NrLW5hbWVzID0gIm1zY2wiOwo+ID4gLSAgICAgICB9Owo+
+ID4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncHUvc2Ft
+c3VuZy1zY2FsZXIueWFtbCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncHUv
+c2Ftc3VuZy1zY2FsZXIueWFtbAo+ID4gbmV3IGZpbGUgbW9kZSAxMDA2NDQKPiA+IGluZGV4IDAw
+MDAwMDAwMDAwMC4uNTMxN2FjNjQ0MjZhCj4gPiAtLS0gL2Rldi9udWxsCj4gPiArKysgYi9Eb2N1
+bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZ3B1L3NhbXN1bmctc2NhbGVyLnlhbWwKPiA+
+IEBAIC0wLDAgKzEsODEgQEAKPiA+ICsjIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4w
+Cj4gPiArJVlBTUwgMS4yCj4gPiArLS0tCj4gPiArJGlkOiBodHRwOi8vZGV2aWNldHJlZS5vcmcv
+c2NoZW1hcy9ncHUvc2Ftc3VuZy1zY2FsZXIueWFtbCMKPiA+ICskc2NoZW1hOiBodHRwOi8vZGV2
+aWNldHJlZS5vcmcvbWV0YS1zY2hlbWFzL2NvcmUueWFtbCMKPiA+ICsKPiA+ICt0aXRsZTogU2Ft
+c3VuZyBFeHlub3MgU29DIEltYWdlIFNjYWxlcgo+ID4gKwo+ID4gK21haW50YWluZXJzOgo+ID4g
+KyAgLSBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+Cj4gPiArCj4gPiArcHJvcGVydGll
+czoKPiA+ICsgIGNvbXBhdGlibGU6Cj4gPiArICAgIGVudW06Cj4gPiArICAgICAgLSBzYW1zdW5n
+LGV4eW5vczU0MjAtc2NhbGVyCj4gPiArICAgICAgLSBzYW1zdW5nLGV4eW5vczU0MzMtc2NhbGVy
+Cj4gPiArCj4gPiArICByZWc6Cj4gPiArICAgIG1heEl0ZW1zOiAxCj4gPiArCj4gPiArICBpbnRl
+cnJ1cHRzOgo+ID4gKyAgICBtYXhJdGVtczogMQo+ID4gKwo+ID4gKyAgY2xvY2tzOiB7fQo+ID4g
+KyAgY2xvY2stbmFtZXM6IHt9Cj4gPiArICBpb21tdXM6IHt9Cj4gPiArICBwb3dlci1kb21haW5z
+OiB7fQo+ID4gKwo+ID4gK2lmOgo+ID4gKyAgcHJvcGVydGllczoKPiA+ICsgICAgY29tcGF0aWJs
+ZToKPiA+ICsgICAgICBjb250YWluczoKPiA+ICsgICAgICAgIGNvbnN0OiBzYW1zdW5nLGV4eW5v
+czU0MjAtc2NhbGVyCj4gPiArCj4gPiArdGhlbjoKPiA+ICsgIHByb3BlcnRpZXM6Cj4gPiArICAg
+IGNsb2NrczoKPiA+ICsgICAgICBpdGVtczoKPiA+ICsgICAgICAgIC0gZGVzY3JpcHRpb246IG1z
+Y2wgY2xvY2sKPiA+ICsKPiA+ICsgICAgY2xvY2stbmFtZXM6Cj4gPiArICAgICAgaXRlbXM6Cj4g
+PiArICAgICAgICAtIGNvbnN0OiBtc2NsCj4gPiArCj4gPiArZWxzZToKPiA+ICsgIHByb3BlcnRp
+ZXM6Cj4gPiArICAgIGNsb2NrczoKPiA+ICsgICAgICBpdGVtczoKPiA+ICsgICAgICAgIC0gZGVz
+Y3JpcHRpb246IHBjbGsgY2xvY2sKPiA+ICsgICAgICAgIC0gZGVzY3JpcHRpb246IGFjbGsgY2xv
+Y2sKPiA+ICsgICAgICAgIC0gZGVzY3JpcHRpb246IGFjbGtfeGl1IGNsb2NrCj4gPiArCj4gPiAr
+ICAgIGNsb2NrLW5hbWVzOgo+ID4gKyAgICAgIGl0ZW1zOgo+ID4gKyAgICAgICAgLSBjb25zdDog
+cGNsawo+ID4gKyAgICAgICAgLSBjb25zdDogYWNsawo+ID4gKyAgICAgICAgLSBjb25zdDogYWNs
+a194aXUKPiA+ICsKPiA+ICtyZXF1aXJlZDoKPiA+ICsgIC0gY29tcGF0aWJsZQo+ID4gKyAgLSBy
+ZWcKPiA+ICsgIC0gaW50ZXJydXB0cwo+ID4gKyAgLSBjbG9ja3MKPiA+ICsgIC0gY2xvY2stbmFt
+ZXMKPiA+ICsKPiA+ICthZGRpdGlvbmFsUHJvcGVydGllczogZmFsc2UKPiA+ICsKPiA+ICtleGFt
+cGxlczoKPiA+ICsgIC0gfAo+ID4gKyAgICAjaW5jbHVkZSA8ZHQtYmluZGluZ3MvY2xvY2svZXh5
+bm9zNTQyMC5oPgo+ID4gKyAgICAjaW5jbHVkZSA8ZHQtYmluZGluZ3MvaW50ZXJydXB0LWNvbnRy
+b2xsZXIvYXJtLWdpYy5oPgo+ID4gKwo+ID4gKyAgICBzY2FsZXJAMTI4MDAwMDAgewo+ID4gKyAg
+ICAgICAgY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vczU0MjAtc2NhbGVyIjsKPiA+ICsgICAg
+ICAgIHJlZyA9IDwweDEyODAwMDAwIDB4MTI5ND47Cj4gPiArICAgICAgICBpbnRlcnJ1cHRzID0g
+PEdJQ19TUEkgMjIwIElSUV9UWVBFX0xFVkVMX0hJR0g+Owo+ID4gKyAgICAgICAgY2xvY2tzID0g
+PCZjbG9jayBDTEtfTVNDTDA+Owo+ID4gKyAgICAgICAgY2xvY2stbmFtZXMgPSAibXNjbCI7Cj4g
+PiArICAgIH07Cj4gPiArCj4gPiArLi4uCj4KPiBZb3UgaGF2ZSBzb21lIGxlZnQtb3ZlcnMgYXQg
+dGhlIGVuZC4gV2l0aCBjbGVhbmluZyB0aGVtOgo+IFJldmlld2VkLWJ5OiBLcnp5c3p0b2YgS296
+bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+CgpZb3UgbWVhbiB0aGUgJy4uLic/IFRoYXQncyB0aGUg
+ZW5kIG9mIFlBTUwgbWFya2VyLiBJdCdzIG5vdCBzdHJpY3RseSBuZWVkZWQuCgpSb2IKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
