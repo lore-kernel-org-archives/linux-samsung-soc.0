@@ -2,136 +2,229 @@ Return-Path: <SRS0=R3LL=XZ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.3 required=3.0 tests=DATE_IN_PAST_03_06,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD3D5C32792
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Sep 2019 20:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A41C388F3
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Sep 2019 21:21:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BE42224FE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Sep 2019 20:58:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="izfFFobe"
+	by mail.kernel.org (Postfix) with ESMTP id 642162190F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Sep 2019 21:21:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1569878463;
+	bh=nDimeaTefAJte0JkKYh0LxNPHJJjkhIW+4kgCyDLziI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=zdEoArwh6ClgrRQy/fnbnUBXSOsd0HVKdp40PuVliYmUkoyQujZ/lmqnio4QNccad
+	 4lPoq1b8gK4eZeV2S021IbrA/yxHmAo1AD6d6M94UjHvzz2fB1tMf7pp7EkzD9zltL
+	 aCJOEFMEwVlcqeoAonToA0SYt9J9uXlCVDDKMoV4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727146AbfI3U6A (ORCPT
+        id S1730096AbfI3VUy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 30 Sep 2019 16:58:00 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:44930 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727118AbfI3U6A (ORCPT
+        Mon, 30 Sep 2019 17:20:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47810 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729855AbfI3VUy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 30 Sep 2019 16:58:00 -0400
-Received: by mail-io1-f68.google.com with SMTP id w12so13951283iol.11
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Sep 2019 13:57:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=i3dwIE3HGnY2ji6BL2lgrdHCeKt8hwvNYITijQeMpag=;
-        b=izfFFobeeAuaCN1MYV2cqTTC9SJ2B7X/u+g6CPl+hSPnOUnRbP1/BCohkPY00SKjOS
-         ngbgS5eggV73d5N3fvNsmyx4AdZ9BelpEyLZgIOQWjYZ0H/t1h9hwcopTh8luMLUlkAD
-         UvFLMMtPQWZq9ybp6G3XRQa3ba3kFxGlWt+PhVFEisFiy/ivTvQCpq4WDb2zRJWntAjY
-         RnpfLShbUA0uQ0c6YpBTgnszBbNpKq4tSWd29vid/pr0QWpkPNtc9dlZZOHIWHtbr1I4
-         64grZ5gAZJhw0mPO812L2fmFF+Kgqu62rcwu8tU01ioPJdvJ0r7FYafvOLbDi1a734kX
-         h+0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=i3dwIE3HGnY2ji6BL2lgrdHCeKt8hwvNYITijQeMpag=;
-        b=LiOhfa88tXJnjWZ1UBwbeNCWKhVNGQFwLCcywMtttTF97lO3Gu0/l9K5AfuBeBt6Vt
-         lCuBHp1DJ7Donj2G/UNvr0e0QkH5e/KwLwak9xhp2bcHFvjrbgf6VEIVh/5huisN4whe
-         YtngZuLmj2rREKoS+rko7CeMC6KareQRcxJMFxGIFIYA9VTLedjlR2PVNqKKKf3X5Ve8
-         damacPlNSFID8kyjyiD3tNxgOfmH+thWC3bfK291VJ5cSH8lDEpm4VDKdDZ/Bv/JQYRt
-         yqNAjG2B2SWrNCQecWmqJ9VeBAlbfUqgR+D8SsQ6Q3s9zkKHJu8T48QGoPuqcFfKqbib
-         dqeA==
-X-Gm-Message-State: APjAAAWDz/D70si3FM913Wm3rqWNTP88Tp+DXyGEsq8coXZNV9IHwzpD
-        WOH0Wh7M0JNI4Of83lndlAo/uDz6SVIMvEU8BkOutYNxCz37aw==
-X-Google-Smtp-Source: APXvYqyXj8WDjHDG8Ly151dv7OzUri8sYlz4HJQ8uFbvR+QF/bAefpHZooDpQz+OMMR2j4tK+jKhsia3WuUY762LNpQ=
-X-Received: by 2002:a92:4799:: with SMTP id e25mr22126652ilk.72.1569864912988;
- Mon, 30 Sep 2019 10:35:12 -0700 (PDT)
+        Mon, 30 Sep 2019 17:20:54 -0400
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 834CE224ED;
+        Mon, 30 Sep 2019 18:54:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569869695;
+        bh=nDimeaTefAJte0JkKYh0LxNPHJJjkhIW+4kgCyDLziI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=wJQ8Kzn/d79BEfVY4JQlE/ULuHR6uLx09oEVYsba9tU7oofK2UHc0aeB6nuNW6+LJ
+         zjl9T6uDZSievxqZ+K3mOKK9MOV4PH6kgNimYWGiEcc0hIDLG8P+tvXF2BQLG60CH6
+         jCp4rMLdAlO9p3d5fB/+IZDV6r3H2djgiNv6CFy8=
+Received: by mail-qt1-f175.google.com with SMTP id r5so18428130qtd.0;
+        Mon, 30 Sep 2019 11:54:55 -0700 (PDT)
+X-Gm-Message-State: APjAAAXDbZM4nBhPemoF1KTTQ/s77Ny1flMMkUPCpQWeIVj5NcQi9PGQ
+        fgq4u/EQn1uLQe0hAOpYYw2EQnOihhNCdRGFFA==
+X-Google-Smtp-Source: APXvYqwQYdlSI7/i8ggFNTh1DGOtr9KQeJIFZEEaJGmzqPFXf0j7zK7eWLxWs8gkLE1tDlyw5qjrswBNXHCBDP46w/8=
+X-Received: by 2002:ac8:444f:: with SMTP id m15mr26354991qtn.110.1569869694707;
+ Mon, 30 Sep 2019 11:54:54 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190911183632.4317-1-krzk@kernel.org> <CAK8P3a2pBV+fh0rHitZ30Zz61QNRLfNSD-nhnzq4ZtxSh66F1Q@mail.gmail.com>
- <CAJKOXPcOSvc2DfoN+7Tca=t5dSm3RcKqmm06AfR0PAVBeY=GvQ@mail.gmail.com>
- <20190929175134.fsieffurfdiqhpj2@localhost> <20190930080217.GA23709@pi3>
-In-Reply-To: <20190930080217.GA23709@pi3>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Mon, 30 Sep 2019 10:35:01 -0700
+References: <CGME20190927143314eucas1p2d419866cd740207426cd37cb6fdff468@eucas1p2.samsung.com>
+ <20190927143306.12133-1-m.szyprowski@samsung.com> <CAJKOXPdbDropa0iL6YP4Fb4aFSEXQ87thOk5mN+cSCU=i+ZwUw@mail.gmail.com>
+In-Reply-To: <CAJKOXPdbDropa0iL6YP4Fb4aFSEXQ87thOk5mN+cSCU=i+ZwUw@mail.gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 30 Sep 2019 13:54:43 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+5PDM97zJZhp_E27d=RVFf87=QFH4d6=q_YC+tff6v-w@mail.gmail.com>
 Message-ID:
- <CAOesGMi2w9vci+kU=WFHJJBqgz9BM5RJBzqwwrR7k=275w4Tyg@mail.gmail.com>
-Subject: Re: [GIT PULL 1/2] arm64: dts: exynos: Pull for v5.4
+ <CAL_Jsq+5PDM97zJZhp_E27d=RVFf87=QFH4d6=q_YC+tff6v-w@mail.gmail.com>
+Subject: Re: [PATCH v3] dt-bindings: gpu: Convert Samsung Image Scaler to dt-schema
 To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, arm-soc <arm@kernel.org>,
-        SoC Team <soc@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
+Cc:     Maciej Falkowski <m.falkowski@samsung.com>,
+        devicetree@vger.kernel.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20190930173501.0VxK0_Rt8rg__aN6XubPTcUZIB6Pc0_UP_BAqN4Wnxo@z>
+Message-ID: <20190930185443.w-IAdBzFfG0pHt9F0dweRrscASzHoGocUj-30Nsx9aQ@z>
 
-On Mon, Sep 30, 2019 at 1:02 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Fri, Sep 27, 2019 at 9:59 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
-> On Sun, Sep 29, 2019 at 10:51:34AM -0700, Olof Johansson wrote:
-> > Hi,
+> On Fri, 27 Sep 2019 at 16:33, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
 > >
-> > On Thu, Sep 12, 2019 at 08:32:47AM +0200, Krzysztof Kozlowski wrote:
-> > > On Wed, 11 Sep 2019 at 23:07, Arnd Bergmann <arnd@arndb.de> wrote:
-> > > >
-> > > > On Wed, Sep 11, 2019 at 8:36 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > > > >
-> > > > > Hi,
-> > > > >
-> > > > > Unfortunately the patches were applied right after closing the linux-next.
-> > > >
-> > > > Hi Krzysztof,
-> > > >
-> > > > I took a look at these and am not convinced this is right:
-> > > >
-> > > > > 1. Fix boot of Exynos7 due to wrong address/size of memory node,
-> > > >
-> > > > The current state is clearly broken and a fix is needed, but
-> > > > I'm not sure this is the right fix. Why do you have 32-bit physical
-> > > > addressing on a 64-bit chip? I looked at commit ef72171b3621
-> > > > that introduced it, and it seems it would be better to just
-> > > > revert back to 64-bit addresses.
-> > >
-> > > We discussed with Marek Szyprowski that either we can go back to
-> > > 64-bit addressing or stick to 32. There are not known boards with more
-> > > than 4 GB of RAM so from this point of view the choice was irrelevant.
-> > > At the end of discussion I mentioned to stick with other arm64 boards
-> > > (although not all), so revert to have 64 bit address... but Marek
-> > > chosen differently. Since you ask, let's go back with revert.
-> > >
-> > > >
-> > > > > 2. Move GPU under /soc node,
-> > > >
-> > > > No problem
-> > > >
-> > > > > 3. Minor cleanup of #address-cells.
-> > > >
-> > > > IIRC, an interrupt-controller is required to have a #address-cells
-> > > > property, even if that is normally zero. I don't remember the
-> > > > details, but the gic binding lists it as mandatory, and I think
-> > > > the PCI interrupt-map relies on it. I would just drop this patch.
-> > >
-> > > Indeed, binding requires both address and size cells. I'll drop it.
+> > From: Maciej Falkowski <m.falkowski@samsung.com>
 > >
-> > Looking through the history of pending material, I didn't see a new pull for
-> > this material. Just checking in to see if there's something we missed?
+> > Convert Samsung Image Scaler to newer dt-schema format.
+> >
+> > Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > ---
+> > v3:
+> > - Fixed description of 'clocks' property:
+> > rather than 'mscl clock', 'pclk clock'
+> > - Added empty line within if-else statement
+> > - Added 'additionalProperties: false'
+> > - Listed all missing 'properties' in properties scope
+> >
+> > Best regards,
+> > Maciej Falkowski
+> > ---
+> >  .../bindings/gpu/samsung-scaler.txt           | 27 -------
+> >  .../bindings/gpu/samsung-scaler.yaml          | 81 +++++++++++++++++++
+> >  2 files changed, 81 insertions(+), 27 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/gpu/samsung-scaler.txt
+> >  create mode 100644 Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/gpu/samsung-scaler.txt b/Documentation/devicetree/bindings/gpu/samsung-scaler.txt
+> > deleted file mode 100644
+> > index 9c3d98105dfd..000000000000
+> > --- a/Documentation/devicetree/bindings/gpu/samsung-scaler.txt
+> > +++ /dev/null
+> > @@ -1,27 +0,0 @@
+> > -* Samsung Exynos Image Scaler
+> > -
+> > -Required properties:
+> > -  - compatible : value should be one of the following:
+> > -       (a) "samsung,exynos5420-scaler" for Scaler IP in Exynos5420
+> > -       (b) "samsung,exynos5433-scaler" for Scaler IP in Exynos5433
+> > -
+> > -  - reg : Physical base address of the IP registers and length of memory
+> > -         mapped region.
+> > -
+> > -  - interrupts : Interrupt specifier for scaler interrupt, according to format
+> > -                specific to interrupt parent.
+> > -
+> > -  - clocks : Clock specifier for scaler clock, according to generic clock
+> > -            bindings. (See Documentation/devicetree/bindings/clock/exynos*.txt)
+> > -
+> > -  - clock-names : Names of clocks. For exynos scaler, it should be "mscl"
+> > -                 on 5420 and "pclk", "aclk" and "aclk_xiu" on 5433.
+> > -
+> > -Example:
+> > -       scaler@12800000 {
+> > -               compatible = "samsung,exynos5420-scaler";
+> > -               reg = <0x12800000 0x1294>;
+> > -               interrupts = <0 220 IRQ_TYPE_LEVEL_HIGH>;
+> > -               clocks = <&clock CLK_MSCL0>;
+> > -               clock-names = "mscl";
+> > -       };
+> > diff --git a/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml b/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
+> > new file mode 100644
+> > index 000000000000..5317ac64426a
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
+> > @@ -0,0 +1,81 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/gpu/samsung-scaler.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Samsung Exynos SoC Image Scaler
+> > +
+> > +maintainers:
+> > +  - Inki Dae <inki.dae@samsung.com>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - samsung,exynos5420-scaler
+> > +      - samsung,exynos5433-scaler
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    maxItems: 1
+> > +
+> > +  clocks: {}
+> > +  clock-names: {}
+> > +  iommus: {}
+> > +  power-domains: {}
+> > +
+> > +if:
+> > +  properties:
+> > +    compatible:
+> > +      contains:
+> > +        const: samsung,exynos5420-scaler
+> > +
+> > +then:
+> > +  properties:
+> > +    clocks:
+> > +      items:
+> > +        - description: mscl clock
+> > +
+> > +    clock-names:
+> > +      items:
+> > +        - const: mscl
+> > +
+> > +else:
+> > +  properties:
+> > +    clocks:
+> > +      items:
+> > +        - description: pclk clock
+> > +        - description: aclk clock
+> > +        - description: aclk_xiu clock
+> > +
+> > +    clock-names:
+> > +      items:
+> > +        - const: pclk
+> > +        - const: aclk
+> > +        - const: aclk_xiu
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - interrupts
+> > +  - clocks
+> > +  - clock-names
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/clock/exynos5420.h>
+> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > +
+> > +    scaler@12800000 {
+> > +        compatible = "samsung,exynos5420-scaler";
+> > +        reg = <0x12800000 0x1294>;
+> > +        interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>;
+> > +        clocks = <&clock CLK_MSCL0>;
+> > +        clock-names = "mscl";
+> > +    };
+> > +
+> > +...
 >
-> No, it's me who forgot to resend. I was sure that I rebased the branch
-> and created new pull request. However it seems I did not. Let's keep it
-> for next merge window... v5.4-rc should be any minute, I guess?
+> You have some left-overs at the end. With cleaning them:
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Yeah, we're too late for this merge window but feel free to send it
-for next release.
+You mean the '...'? That's the end of YAML marker. It's not strictly needed.
 
-
--Olof
+Rob
