@@ -1,89 +1,244 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 4/7] dt-bindings: chosen: Add clocksource and clockevent
- selection
-Date: Mon, 30 Sep 2019 09:32:46 -0500
-Message-ID: <20190930143246.GA19967@bogus>
-References: <1568123236-767-1-git-send-email-claudiu.beznea@microchip.com>
- <1568123236-767-5-git-send-email-claudiu.beznea@microchip.com>
- <20190910143231.GB14966@e107533-lin.cambridge.arm.com>
- <ab43b209-78fa-0cab-b8ea-acd4c550e689@microchip.com>
- <20190910150826.GA18308@e107533-lin.cambridge.arm.com>
- <20190910151055.GX21254@piout.net>
- <CACRpkda4mmpbPWa2nD93CvD6HWzcTUDzyyLdQxC2gNB7XiJF3w@mail.gmail.com>
- <a2aca46a-8eb9-d8a8-de42-9850a8a8f44c@microchip.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <a2aca46a-8eb9-d8a8-de42-9850a8a8f44c@microchip.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-snps-arc>,
- <mailto:linux-snps-arc-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-snps-arc/>
-List-Post: <mailto:linux-snps-arc@lists.infradead.org>
-List-Help: <mailto:linux-snps-arc-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-snps-arc>,
- <mailto:linux-snps-arc-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-snps-arc" <linux-snps-arc-bounces@lists.infradead.org>
-Errors-To: linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org
-To: Claudiu.Beznea@microchip.com
-Cc: tmaimon77@gmail.com, linus.walleij@linaro.org, nsekhar@ti.com, guoren@kernel.org, linux-stm32@st-md-mailman.stormreply.com, heiko@sntech.de, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, khilman@baylibre.com, Ludovic.Desroches@microchip.com, linux-imx@nxp.com, u.kleine-koenig@pengutronix.de, uclinux-h8-devel@lists.sourceforge.jp, marc.zyngier@arm.com, s.hauer@pengutronix.de, linux-unisoc@lists.infradead.org, khalasa@piap.pl, tglx@linutronix.de, sbranden@broadcom.com, linux-kernel@vger.kernel.org, ralf@linux-mips.org, paul.burton@mips.com, kernel@pengutronix.de, mark.rutland@arm.com, alexandre.belloni@bootlin.com, jhogan@kernel.org, palmer@sifive.com, eric@anholt.net, thierry.reding@gmail.com, manivannan.sadhasivam@linaro.org, ysato@users.sourceforge.jp, zhang.lyra@gmail.com, daniel.lezcano@linaro.org, jonathanh@nvidia.com, bgolaszewski@baylibre.co
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v5 1/2] dt-bindings: timer: Convert Exynos MCT bindings to json-schema
+Date: Mon, 30 Sep 2019 17:44:17 +0200
+Message-ID: <20190930154418.4884-1-krzk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Sep 11, 2019 at 07:18:07AM +0000, Claudiu.Beznea@microchip.com wrote:
-> 
-> 
-> On 11.09.2019 03:03, Linus Walleij wrote:
-> > External E-Mail
-> > 
-> > 
-> > On Tue, Sep 10, 2019 at 4:11 PM Alexandre Belloni
-> > <alexandre.belloni@bootlin.com> wrote:
-> >> On 10/09/2019 16:08:26+0100, Sudeep Holla wrote:
-> >>> On Tue, Sep 10, 2019 at 02:51:50PM +0000, Claudiu.Beznea@microchip.com wrote:
-> > 
-> >>> In that case, why can't we identify capability that with the compatibles
-> >>> for this timer IP ?
-> >>>
-> >>> IOW, I don't like the proposal as it's hardware limitation.
-> >>
-> >> To be clear, bot timers are exactly the same but can't be clocksource
-> >> and clockevent at the same time. Why would we have different compatibles
-> >> for the exact same IP?
-> > 
-> > In that case why not just pick the first one you find as clocksource
-> > and the second one as clock event? As they all come to the
-> > same timer of init function two simple local state variables can
-> > solve that:
-> > 
-> > static bool registered_clocksource;
-> > static bool registered_clockevent;
-> > 
-> > probe(timer) {
-> >    if (!registered_clocksource) {
-> >        register_clocksource(timer);
-> >        registrered_clocksource = true;
-> >        return;
-> >    }
-> >    if (!registered_clockevent) {
-> >        register_clockevent(timer);
-> >        registered_clockevent = true;
-> >        return;
-> >    }
-> >    pr_info("surplus timer %p\n", timer);
-> > }
-> > 
-> 
-> That was also my proposal for the driver I'm sending this series for (see
-> [1]) but it has been proposed to implement a mechanism similar to this one
-> in this series (see [2] and [3]).
+Convert Samsung Exynos Soc Multi Core Timer bindings to DT schema format
+using json-schema.
 
-This comes up over and over, and the answer is still no. Either each 
-block is identical and doesn't matter which one is used for what or 
-there is some h/w difference that you should describe. 
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-If you want something that would even be considered to put into DT, 
-then define something BSD or other OS's could use too. (That's not a 
-suggestion to respin this with generalized names.)
+---
 
-Rob
+Changes since v4:
+1. Do not mention interrupts-extended in the bindings (old bindings
+   mentioned only interrupts).
+
+Changes since v3:
+1. Use interrupts-extended instead of interrupts-map in example.
+
+Changes since v1:
+1. Indent example with four spaces (more readable),
+2. Rename nodes in example to timer,
+3. Remove mct-map subnode.
+---
+ .../bindings/timer/samsung,exynos4210-mct.txt |  88 --------------
+ .../timer/samsung,exynos4210-mct.yaml         | 107 ++++++++++++++++++
+ 2 files changed, 107 insertions(+), 88 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
+ create mode 100644 Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+
+diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
+deleted file mode 100644
+index 8f78640ad64c..000000000000
+--- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
++++ /dev/null
+@@ -1,88 +0,0 @@
+-Samsung's Multi Core Timer (MCT)
+-
+-The Samsung's Multi Core Timer (MCT) module includes two main blocks, the
+-global timer and CPU local timers. The global timer is a 64-bit free running
+-up-counter and can generate 4 interrupts when the counter reaches one of the
+-four preset counter values. The CPU local timers are 32-bit free running
+-down-counters and generate an interrupt when the counter expires. There is
+-one CPU local timer instantiated in MCT for every CPU in the system.
+-
+-Required properties:
+-
+-- compatible: should be "samsung,exynos4210-mct".
+-  (a) "samsung,exynos4210-mct", for mct compatible with Exynos4210 mct.
+-  (b) "samsung,exynos4412-mct", for mct compatible with Exynos4412 mct.
+-
+-- reg: base address of the mct controller and length of the address space
+-  it occupies.
+-
+-- interrupts: the list of interrupts generated by the controller. The following
+-  should be the order of the interrupts specified. The local timer interrupts
+-  should be specified after the four global timer interrupts have been
+-  specified.
+-
+-	0: Global Timer Interrupt 0
+-	1: Global Timer Interrupt 1
+-	2: Global Timer Interrupt 2
+-	3: Global Timer Interrupt 3
+-	4: Local Timer Interrupt 0
+-	5: Local Timer Interrupt 1
+-	6: ..
+-	7: ..
+-	i: Local Timer Interrupt n
+-
+-  For MCT block that uses a per-processor interrupt for local timers, such
+-  as ones compatible with "samsung,exynos4412-mct", only one local timer
+-  interrupt might be specified, meaning that all local timers use the same
+-  per processor interrupt.
+-
+-Example 1: In this example, the IP contains two local timers, using separate
+-	   interrupts, so two local timer interrupts have been specified,
+-	   in addition to four global timer interrupts.
+-
+-	mct@10050000 {
+-		compatible = "samsung,exynos4210-mct";
+-		reg = <0x10050000 0x800>;
+-		interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
+-			     <0 42 0>, <0 48 0>;
+-	};
+-
+-Example 2: In this example, the timer interrupts are connected to two separate
+-	   interrupt controllers. Hence, an interrupt-map is created to map
+-	   the interrupts to the respective interrupt controllers.
+-
+-	mct@101c0000 {
+-		compatible = "samsung,exynos4210-mct";
+-		reg = <0x101C0000 0x800>;
+-		interrupt-parent = <&mct_map>;
+-		interrupts = <0>, <1>, <2>, <3>, <4>, <5>;
+-
+-		mct_map: mct-map {
+-			#interrupt-cells = <1>;
+-			#address-cells = <0>;
+-			#size-cells = <0>;
+-			interrupt-map = <0 &gic 0 57 0>,
+-					<1 &gic 0 69 0>,
+-					<2 &combiner 12 6>,
+-					<3 &combiner 12 7>,
+-					<4 &gic 0 42 0>,
+-					<5 &gic 0 48 0>;
+-		};
+-	};
+-
+-Example 3: In this example, the IP contains four local timers, but using
+-	   a per-processor interrupt to handle them. Either all the local
+-	   timer interrupts can be specified, with the same interrupt specifier
+-	   value or just the first one.
+-
+-	mct@10050000 {
+-		compatible = "samsung,exynos4412-mct";
+-		reg = <0x10050000 0x800>;
+-
+-		/* Both ways are possible in this case. Either: */
+-		interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
+-			     <0 42 0>;
+-		/* or: */
+-		interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
+-			     <0 42 0>, <0 42 0>, <0 42 0>, <0 42 0>;
+-	};
+diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+new file mode 100644
+index 000000000000..3e26fd5e235a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+@@ -0,0 +1,107 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/timer/samsung,exynos4210-mct.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung Exynos SoC Multi Core Timer (MCT)
++
++maintainers:
++  - Krzysztof Kozlowski <krzk@kernel.org>
++
++description: |+
++  The Samsung's Multi Core Timer (MCT) module includes two main blocks, the
++  global timer and CPU local timers. The global timer is a 64-bit free running
++  up-counter and can generate 4 interrupts when the counter reaches one of the
++  four preset counter values. The CPU local timers are 32-bit free running
++  down-counters and generate an interrupt when the counter expires. There is
++  one CPU local timer instantiated in MCT for every CPU in the system.
++
++properties:
++  compatible:
++    enum:
++      - samsung,exynos4210-mct
++      - samsung,exynos4412-mct
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    description: |
++      Interrupts should be put in specific order. This is, the local timer
++      interrupts should be specified after the four global timer interrupts
++      have been specified:
++      0: Global Timer Interrupt 0
++      1: Global Timer Interrupt 1
++      2: Global Timer Interrupt 2
++      3: Global Timer Interrupt 3
++      4: Local Timer Interrupt 0
++      5: Local Timer Interrupt 1
++      6: ..
++      7: ..
++      i: Local Timer Interrupt n
++      For MCT block that uses a per-processor interrupt for local timers, such
++      as ones compatible with "samsung,exynos4412-mct", only one local timer
++      interrupt might be specified, meaning that all local timers use the same
++      per processor interrupt.
++    minItems: 5               # 4 Global + 1 local
++    maxItems: 20              # 4 Global + 16 local
++
++required:
++  - compatible
++  - interrupts
++  - reg
++
++examples:
++  - |
++    // In this example, the IP contains two local timers, using separate
++    // interrupts, so two local timer interrupts have been specified,
++    // in addition to four global timer interrupts.
++
++    timer@10050000 {
++        compatible = "samsung,exynos4210-mct";
++        reg = <0x10050000 0x800>;
++        interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
++                     <0 42 0>, <0 48 0>;
++    };
++
++  - |
++    // In this example, the timer interrupts are connected to two separate
++    // interrupt controllers. Hence, an interrupts-extended is needed.
++
++    timer@101c0000 {
++        compatible = "samsung,exynos4210-mct";
++        reg = <0x101C0000 0x800>;
++        interrupts-extended = <&gic 0 57 0>,
++                              <&gic 0 69 0>,
++                              <&combiner 12 6>,
++                              <&combiner 12 7>,
++                              <&gic 0 42 0>,
++                              <&gic 0 48 0>;
++    };
++
++  - |
++    // In this example, the IP contains four local timers, but using
++    // a per-processor interrupt to handle them. Only one first local
++    // interrupt is specified.
++
++    timer@10050000 {
++        compatible = "samsung,exynos4412-mct";
++        reg = <0x10050000 0x800>;
++
++        interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
++                     <0 42 0>;
++    };
++
++  - |
++    // In this example, the IP contains four local timers, but using
++    // a per-processor interrupt to handle them. All the local timer
++    // interrupts are specified.
++
++    timer@10050000 {
++        compatible = "samsung,exynos4412-mct";
++        reg = <0x10050000 0x800>;
++
++        interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
++                     <0 42 0>, <0 42 0>, <0 42 0>, <0 42 0>;
++    };
+-- 
+2.17.1
