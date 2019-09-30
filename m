@@ -2,131 +2,297 @@ Return-Path: <SRS0=R3LL=XZ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49AAAC4360C
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Sep 2019 08:02:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E49AAC4360C
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Sep 2019 08:15:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17B1F21855
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Sep 2019 08:02:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEC8E2190F
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Sep 2019 08:15:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569830546;
-	bh=gVWoOt5QIR04LPZZmJQ9F7du8ueLLuh79RcOf2CaaPI=;
+	s=default; t=1569831302;
+	bh=cel9jAqvL3iaHblZk8ZTRrE2O+n7vZEusm2pERmpmC8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=mDGn0YtAasEyWDY3dSyaMfU0BiZqEK/69jPwQXbzrISrejhTYlL0zg+hOfGuQBR8/
-	 LLaNtE8GGFNXzBhfmlmc6v31osJjASPerV0pTGVJTh5BVZRensDnaO1RyJxonSzWb4
-	 59XnWFyWcF0G5E9t0ENhrprqwDKq4OA6GT/+/pms=
+	b=iOSyPKsNvbh6NaMaYeOaFow5r5Ud6zI7WedyMtx0Nrix7oxGk1HvkVQytCvcYX1Sj
+	 BTY5rYlrPAaw4vjZFtGunIlGWEgBqdJ+wxipxatjobin1TH6rYoR2YNtBu8UWbcBhl
+	 Rg5QE3EaNk0UvcsdaQqkLRohdBTIsbxf3Bp5gK7s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726121AbfI3ICZ (ORCPT
+        id S1729928AbfI3IO7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 30 Sep 2019 04:02:25 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55240 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725767AbfI3ICZ (ORCPT
+        Mon, 30 Sep 2019 04:14:59 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39313 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbfI3IO7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 30 Sep 2019 04:02:25 -0400
-Received: by mail-wm1-f65.google.com with SMTP id p7so12217160wmp.4;
-        Mon, 30 Sep 2019 01:02:24 -0700 (PDT)
+        Mon, 30 Sep 2019 04:14:59 -0400
+Received: by mail-wr1-f66.google.com with SMTP id r3so10120853wrj.6;
+        Mon, 30 Sep 2019 01:14:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fizj4yTUNCuGZAq8TVj3hQISg7yH6mFEeG99CtKC4TE=;
-        b=IKc6hRLUXxyCgDakoy1CeXXtaLXx+BvOQn6YigMioJUI51jgbAfjgottgo0xQkzhto
-         g+3xSP/2RtuwhYwKknS9IFmT+l47ZoOMsGbL98lySFH0E7iWCu7WIkhVLNCX6mRjwhEp
-         aF8t9hbqnbVgdlp5lqg3S9e+MsiHvTlr3u+kPo8Qb53f5Smnng2BpC2gC88+SePD3fWs
-         gOzELo1MimWkNbNwk1tf85bgvffkJ5OVfDo21ZeAtRkNasFsmM/vsVq5J4jekI8uzujI
-         8MJfHu537HQwIfwhGLti1bkp5aBrH2ABqbeoS6oWSk7YfzR04O2k8YC0OjnvWN87ii1T
-         oYiw==
-X-Gm-Message-State: APjAAAWOagBPsKR92SAk5K6bce8YPIIekjnJKUWGgfFk4AjNLZO6oGE5
-        en4zLMUnaGrJlSfbBJxkG9fe5I+q
-X-Google-Smtp-Source: APXvYqxndPqHVxIHe63ZUThkAaMUEXaaoIZyED6YAbYpSbBXh+m6JJ93cT5e3vlVVimUo6YvZaoW2Q==
-X-Received: by 2002:a1c:c1cc:: with SMTP id r195mr16991339wmf.50.1569830543182;
-        Mon, 30 Sep 2019 01:02:23 -0700 (PDT)
+        bh=3CTmC1GsXW7IrK97J31Tmt/kV7wvmrOZDcAwkkYqHXE=;
+        b=rKxBO4ANQyjrCebLxTCoUiINFwdhJyfZXJBgm5OYg2r+uPGFcyfOdZRCDRAQUVdEco
+         kwdvCdz4DpN7UKSFyEVNJ6Bj9VIPgI4p8HNRLb2NEULOH3W+zW9TRmldDjAtsTBLqbKl
+         trTYuv+qEJbG9MwV2nb7GZMcxGEbfY4i/n+EnMoFx5orTsJOyQhMfxhHaEPZACqXD3mq
+         qzfm96/CyUKoCW3QTDeIt9iwha3LYV+Ls6j+LqW7YX5MzR8ZRCa6nkC1lVH8oYJ6iHuJ
+         X6Uy1y9A/wbcR+8R4OILpWeQWsg0CqS1JHZmK4MVeiOdsqb8PuDgGXoQnmrhF2ZsjojC
+         fYWA==
+X-Gm-Message-State: APjAAAXXH5e0CUHf2Z/qAmIA6ZfUnKA/jopA5cIS9WjmMqlse8/hGzn4
+        mevDmdNeT8VIxfGC4bTioC0=
+X-Google-Smtp-Source: APXvYqyf7LPtms1O8Jjd41VwHzPvoRICODDhTRieA6rYEiMiQODMkzZphFr+TqX/l6nwc1iXKYA+Wg==
+X-Received: by 2002:adf:ec44:: with SMTP id w4mr11667063wrn.251.1569831295653;
+        Mon, 30 Sep 2019 01:14:55 -0700 (PDT)
 Received: from pi3 ([194.230.155.145])
-        by smtp.googlemail.com with ESMTPSA id a3sm19395536wmc.3.2019.09.30.01.02.21
+        by smtp.googlemail.com with ESMTPSA id x2sm15727586wrn.81.2019.09.30.01.14.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2019 01:02:22 -0700 (PDT)
-Date:   Mon, 30 Sep 2019 10:02:17 +0200
+        Mon, 30 Sep 2019 01:14:54 -0700 (PDT)
+Date:   Mon, 30 Sep 2019 10:14:52 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Olof Johansson <olof@lixom.net>
-Cc:     Arnd Bergmann <arnd@arndb.de>, arm-soc <arm@kernel.org>,
-        SoC Team <soc@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>
-Subject: Re: [GIT PULL 1/2] arm64: dts: exynos: Pull for v5.4
-Message-ID: <20190930080217.GA23709@pi3>
-References: <20190911183632.4317-1-krzk@kernel.org>
- <CAK8P3a2pBV+fh0rHitZ30Zz61QNRLfNSD-nhnzq4ZtxSh66F1Q@mail.gmail.com>
- <CAJKOXPcOSvc2DfoN+7Tca=t5dSm3RcKqmm06AfR0PAVBeY=GvQ@mail.gmail.com>
- <20190929175134.fsieffurfdiqhpj2@localhost>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <snawrocki@kernel.org>
+Subject: Re: [PATCH v4 1/8] dt-bindings: timer: Convert Exynos MCT bindings
+ to json-schema
+Message-ID: <20190930081452.GB23709@pi3>
+References: <20190923161411.9236-1-krzk@kernel.org>
+ <20190927170701.GA27397@bogus>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-In-Reply-To: <20190929175134.fsieffurfdiqhpj2@localhost>
+In-Reply-To: <20190927170701.GA27397@bogus>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20190930080217.dQyCbjBoB1jmYRmu8aG1ohE_wmsod0V1BfMp4D6WnLg@z>
+Message-ID: <20190930081452.XJd3gRkxGt7DLjy8Dhbb8czZGZa9Y1pVnWiQB3Q4ydc@z>
 
-On Sun, Sep 29, 2019 at 10:51:34AM -0700, Olof Johansson wrote:
-> Hi,
+On Fri, Sep 27, 2019 at 12:07:01PM -0500, Rob Herring wrote:
+> On Mon, Sep 23, 2019 at 06:14:04PM +0200, Krzysztof Kozlowski wrote:
+> > Convert Samsung Exynos Soc Multi Core Timer bindings to DT schema format
+> > using json-schema.
+> > 
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > 
+> > ---
+> > 
+> > Changes since v3:
+> > 1. Use interrupts-extended instead of interrupts-map.
 > 
-> On Thu, Sep 12, 2019 at 08:32:47AM +0200, Krzysztof Kozlowski wrote:
-> > On Wed, 11 Sep 2019 at 23:07, Arnd Bergmann <arnd@arndb.de> wrote:
-> > >
-> > > On Wed, Sep 11, 2019 at 8:36 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > > >
-> > > > Hi,
-> > > >
-> > > > Unfortunately the patches were applied right after closing the linux-next.
-> > >
-> > > Hi Krzysztof,
-> > >
-> > > I took a look at these and am not convinced this is right:
-> > >
-> > > > 1. Fix boot of Exynos7 due to wrong address/size of memory node,
-> > >
-> > > The current state is clearly broken and a fix is needed, but
-> > > I'm not sure this is the right fix. Why do you have 32-bit physical
-> > > addressing on a 64-bit chip? I looked at commit ef72171b3621
-> > > that introduced it, and it seems it would be better to just
-> > > revert back to 64-bit addresses.
-> > 
-> > We discussed with Marek Szyprowski that either we can go back to
-> > 64-bit addressing or stick to 32. There are not known boards with more
-> > than 4 GB of RAM so from this point of view the choice was irrelevant.
-> > At the end of discussion I mentioned to stick with other arm64 boards
-> > (although not all), so revert to have 64 bit address... but Marek
-> > chosen differently. Since you ask, let's go back with revert.
-> > 
-> > >
-> > > > 2. Move GPU under /soc node,
-> > >
-> > > No problem
-> > >
-> > > > 3. Minor cleanup of #address-cells.
-> > >
-> > > IIRC, an interrupt-controller is required to have a #address-cells
-> > > property, even if that is normally zero. I don't remember the
-> > > details, but the gic binding lists it as mandatory, and I think
-> > > the PCI interrupt-map relies on it. I would just drop this patch.
-> > 
-> > Indeed, binding requires both address and size cells. I'll drop it.
-> 
-> Looking through the history of pending material, I didn't see a new pull for
-> this material. Just checking in to see if there's something we missed?
+> This is a binding change. You should mention it in the commit.
 
-No, it's me who forgot to resend. I was sure that I rebased the branch
-and created new pull request. However it seems I did not. Let's keep it
-for next merge window... v5.4-rc should be any minute, I guess?
+The interrupts-map was never a part of binding. It was only mentioned in
+the example to show how to route interrupts to different controllers.
+
+The bindings are not changed. Only example.
+
+> 
+> > 
+> > Changes since v1:
+> > 1. Indent example with four spaces (more readable),
+> > 2. Rename nodes in example to timer,
+> > 3. Remove mct-map subnode.
+> > ---
+> >  .../bindings/timer/samsung,exynos4210-mct.txt |  88 ------------
+> >  .../timer/samsung,exynos4210-mct.yaml         | 125 ++++++++++++++++++
+> >  2 files changed, 125 insertions(+), 88 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
+> >  create mode 100644 Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
+> > deleted file mode 100644
+> > index 8f78640ad64c..000000000000
+> > --- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
+> > +++ /dev/null
+> > @@ -1,88 +0,0 @@
+> > -Samsung's Multi Core Timer (MCT)
+> > -
+> > -The Samsung's Multi Core Timer (MCT) module includes two main blocks, the
+> > -global timer and CPU local timers. The global timer is a 64-bit free running
+> > -up-counter and can generate 4 interrupts when the counter reaches one of the
+> > -four preset counter values. The CPU local timers are 32-bit free running
+> > -down-counters and generate an interrupt when the counter expires. There is
+> > -one CPU local timer instantiated in MCT for every CPU in the system.
+> > -
+> > -Required properties:
+> > -
+> > -- compatible: should be "samsung,exynos4210-mct".
+> > -  (a) "samsung,exynos4210-mct", for mct compatible with Exynos4210 mct.
+> > -  (b) "samsung,exynos4412-mct", for mct compatible with Exynos4412 mct.
+> > -
+> > -- reg: base address of the mct controller and length of the address space
+> > -  it occupies.
+> > -
+> > -- interrupts: the list of interrupts generated by the controller. The following
+> > -  should be the order of the interrupts specified. The local timer interrupts
+> > -  should be specified after the four global timer interrupts have been
+> > -  specified.
+> > -
+> > -	0: Global Timer Interrupt 0
+> > -	1: Global Timer Interrupt 1
+> > -	2: Global Timer Interrupt 2
+> > -	3: Global Timer Interrupt 3
+> > -	4: Local Timer Interrupt 0
+> > -	5: Local Timer Interrupt 1
+> > -	6: ..
+> > -	7: ..
+> > -	i: Local Timer Interrupt n
+> > -
+> > -  For MCT block that uses a per-processor interrupt for local timers, such
+> > -  as ones compatible with "samsung,exynos4412-mct", only one local timer
+> > -  interrupt might be specified, meaning that all local timers use the same
+> > -  per processor interrupt.
+> > -
+> > -Example 1: In this example, the IP contains two local timers, using separate
+> > -	   interrupts, so two local timer interrupts have been specified,
+> > -	   in addition to four global timer interrupts.
+> > -
+> > -	mct@10050000 {
+> > -		compatible = "samsung,exynos4210-mct";
+> > -		reg = <0x10050000 0x800>;
+> > -		interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
+> > -			     <0 42 0>, <0 48 0>;
+> > -	};
+> > -
+> > -Example 2: In this example, the timer interrupts are connected to two separate
+> > -	   interrupt controllers. Hence, an interrupt-map is created to map
+> > -	   the interrupts to the respective interrupt controllers.
+> > -
+> > -	mct@101c0000 {
+> > -		compatible = "samsung,exynos4210-mct";
+> > -		reg = <0x101C0000 0x800>;
+> > -		interrupt-parent = <&mct_map>;
+> > -		interrupts = <0>, <1>, <2>, <3>, <4>, <5>;
+> > -
+> > -		mct_map: mct-map {
+> > -			#interrupt-cells = <1>;
+> > -			#address-cells = <0>;
+> > -			#size-cells = <0>;
+> > -			interrupt-map = <0 &gic 0 57 0>,
+> > -					<1 &gic 0 69 0>,
+> > -					<2 &combiner 12 6>,
+> > -					<3 &combiner 12 7>,
+> > -					<4 &gic 0 42 0>,
+> > -					<5 &gic 0 48 0>;
+> > -		};
+> > -	};
+> > -
+> > -Example 3: In this example, the IP contains four local timers, but using
+> > -	   a per-processor interrupt to handle them. Either all the local
+> > -	   timer interrupts can be specified, with the same interrupt specifier
+> > -	   value or just the first one.
+> > -
+> > -	mct@10050000 {
+> > -		compatible = "samsung,exynos4412-mct";
+> > -		reg = <0x10050000 0x800>;
+> > -
+> > -		/* Both ways are possible in this case. Either: */
+> > -		interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
+> > -			     <0 42 0>;
+> > -		/* or: */
+> > -		interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
+> > -			     <0 42 0>, <0 42 0>, <0 42 0>, <0 42 0>;
+> > -	};
+> > diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+> > new file mode 100644
+> > index 000000000000..bff3f54a398f
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+> > @@ -0,0 +1,125 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/timer/samsung,exynos4210-mct.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Samsung Exynos SoC Multi Core Timer (MCT)
+> > +
+> > +maintainers:
+> > +  - Krzysztof Kozlowski <krzk@kernel.org>
+> > +
+> > +description: |+
+> > +  The Samsung's Multi Core Timer (MCT) module includes two main blocks, the
+> > +  global timer and CPU local timers. The global timer is a 64-bit free running
+> > +  up-counter and can generate 4 interrupts when the counter reaches one of the
+> > +  four preset counter values. The CPU local timers are 32-bit free running
+> > +  down-counters and generate an interrupt when the counter expires. There is
+> > +  one CPU local timer instantiated in MCT for every CPU in the system.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - samsung,exynos4210-mct
+> > +      - samsung,exynos4412-mct
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    description: |
+> > +      Interrupts should be put in specific order. This is, the local timer
+> > +      interrupts should be specified after the four global timer interrupts
+> > +      have been specified:
+> > +      0: Global Timer Interrupt 0
+> > +      1: Global Timer Interrupt 1
+> > +      2: Global Timer Interrupt 2
+> > +      3: Global Timer Interrupt 3
+> > +      4: Local Timer Interrupt 0
+> > +      5: Local Timer Interrupt 1
+> > +      6: ..
+> > +      7: ..
+> > +      i: Local Timer Interrupt n
+> > +      For MCT block that uses a per-processor interrupt for local timers, such
+> > +      as ones compatible with "samsung,exynos4412-mct", only one local timer
+> > +      interrupt might be specified, meaning that all local timers use the same
+> > +      per processor interrupt.
+> > +    minItems: 5               # 4 Global + 1 local
+> > +    maxItems: 20              # 4 Global + 16 local
+> > +
+> > +  interrupts-extended:
+> 
+> No need for this. Just document 'interrupts' and the tooling takes care 
+> of supporting 'interrupts-extended' too.
+
+OK.
+
+> 
+> > +    description: |
+> > +      If interrupts are coming from different controllers, this property
+> > +      can be used instead of regular "interrupts" property.
+> > +      The format is exactly the same as with "interrupts".
+> > +      Interrupts should be put in specific order. This is, the local timer
+> > +    minItems: 5               # 4 Global + 1 local
+> > +    maxItems: 20              # 4 Global + 16 local
+> > +
+> > +required:
+> > +  - compatible
+> > +  - interrupts
+> > +  - reg
+> > +
+> > +allOf:
+> > +  - if:
+> > +      not:
+> > +        required:
+> > +          - interrupts
+> > +    then:
+> > +      required:
+> > +        - interrupts-extended
+> 
+> And this is taken care of too.
+
+Sure, thanks!
 
 Best regards,
 Krzysztof
