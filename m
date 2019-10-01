@@ -2,126 +2,100 @@ Return-Path: <SRS0=5wrF=X2=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94211ECE587
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Oct 2019 16:09:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D4D9C352AA
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Oct 2019 17:56:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 658CD21906
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Oct 2019 16:09:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="OzBe6rYt"
+	by mail.kernel.org (Postfix) with ESMTP id 754572190F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Oct 2019 17:56:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1569952572;
+	bh=09IA50iWj5UoOe6NoCLmvomcEfiW34UyApOZnOL+2Z4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=IzKggr5GGmh7gM4cIkPBl1zPo7todD2cN7wlu4X6Djekb1meN5LzEGnKhIV868WMa
+	 5EfFLjHavtm33mrD+8eOjAD8ZNVGucn6MbNo8s3fD3uLIj59IAhwiSqRTf2wC+wdQt
+	 6EGdhfNWgMX8Wz8tiSXs5CK7gKmoOmoE5lsjv0G8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730281AbfJAQJQ (ORCPT
+        id S1726554AbfJAR4M (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 1 Oct 2019 12:09:16 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:43728 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725865AbfJAQJP (ORCPT
+        Tue, 1 Oct 2019 13:56:12 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50482 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726402AbfJAR4L (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:09:15 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191001160914euoutp010df0080f67bcb4e3a5f9504619730114~JkbW6KZAB0806408064euoutp01y
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Oct 2019 16:09:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191001160914euoutp010df0080f67bcb4e3a5f9504619730114~JkbW6KZAB0806408064euoutp01y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1569946154;
-        bh=0iXMcbO5zbECgDnWNZ06BqtYV9m9VlieFlQ6pOPEbvA=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=OzBe6rYt5XCT0stjr5ugyXUZJPiZlu4PWOWyn3H3KQTrSugx2+lS0A+eEYTIg5VnE
-         A7/fVyDJMvGQeWkw/5DDRHEUux+iFx2k9O0o0FBH2tUnosJVSI7E0Tdtl/levzNTT6
-         qFjO5OGQ/OVeV+aNvEHe7nNkBKbjwQpfsCeAyBLw=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20191001160914eucas1p278f9a0f55b635d74feeb1c0e4117d6e1~JkbWrWueW2183421834eucas1p2Z;
-        Tue,  1 Oct 2019 16:09:14 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 9F.B8.04309.A2A739D5; Tue,  1
-        Oct 2019 17:09:14 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20191001160913eucas1p1ce452b9fe9bfa44843438a67a7822a57~JkbV_BVvv2988729887eucas1p1E;
-        Tue,  1 Oct 2019 16:09:13 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191001160913eusmtrp2acb5fb911c2b830ef6a7bb3f1d64291c~JkbV9V3dx1352113521eusmtrp2s;
-        Tue,  1 Oct 2019 16:09:13 +0000 (GMT)
-X-AuditID: cbfec7f4-ae1ff700000010d5-b1-5d937a2a24e6
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 27.F6.04166.92A739D5; Tue,  1
-        Oct 2019 17:09:13 +0100 (BST)
-Received: from [106.120.51.75] (unknown [106.120.51.75]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191001160913eusmtip28cac83a3c5e49e10aa8353c3e73e9d70~JkbVUfWlO1030610306eusmtip2I;
-        Tue,  1 Oct 2019 16:09:13 +0000 (GMT)
-Subject: Re: [PATCH v3 RESEND 3/3] ASoC: samsung: Rename Arndale card driver
-To:     broonie@kernel.org
+        Tue, 1 Oct 2019 13:56:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=77rfPmQCy4NXwloZ4biLbH0UoWsY3hytG2t401n/afc=; b=eI2nep1RAhBR2abcugd1/Ea6s
+        rfSgWdDz2KAaU2EOkXu1FHsMVCt4LY2BtmwcRr1KnqMiDc1Fkm2phQOq/BxW++5cUO1PJk2zTGVmG
+        x/U6KJoQnO9U3OgeXlpjA4vFOPi72QbhbMeKhKt09Ie9yHnU6K8B0DO/ejuOkLsQ1VSx4=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iFMNW-0005s6-1a; Tue, 01 Oct 2019 17:56:02 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 8191727429C0; Tue,  1 Oct 2019 18:56:01 +0100 (BST)
+Date:   Tue, 1 Oct 2019 18:56:01 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc:     krzk@kernel.org, lgirdwood@gmail.com,
         ckeepax@opensource.cirrus.com, sbkim73@samsung.com,
         alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com,
         m.szyprowski@samsung.com
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-ID: <4baf2a0d-f0b3-579c-365c-2948e7c841c9@samsung.com>
-Date:   Tue, 1 Oct 2019 18:09:12 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.8.0
+Subject: Re: [PATCH v3 RESEND 1/3] ASoC: samsung: arndale: Simplify DAI link
+ initialization
+Message-ID: <20191001175601.GB14762@sirena.co.uk>
+References: <CGME20191001123637eucas1p25c7551d4c967e4a2855f6c8d3b096ff5@eucas1p2.samsung.com>
+ <20191001123625.19370-1-s.nawrocki@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20191001123625.19370-3-s.nawrocki@samsung.com>
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjuO5ftuFp8ztvLkoqxP0U3JehAIkWBEwqkfhSF1ClPGrkpO2rO
-        ytRu3tJKa+s0yUuwGl10VmoXrU03TdgUTBSzC0mhIIYbQRSutlPkv+d53ud93+95+RhS5abV
-        zHFDHm80cNkamYJ66v7hXb+2qC59U+W8mh0ZdhJsm+URzV7/NCVjRy44EOvztcrZ7yPlBOv4
-        PEqzFl83wT7onZSz/rkemh2+GyC2LdW1+stkui5xUq5z2CtkuvY7Z3VmaxDpah7bkc7vWJkm
-        P6BIyuCzjxfwxo3JhxVZlzpjcr1Eoc0yKCtB9UQlimAAbwbxRhVViRSMCt9F0DgukhIJILhf
-        2y2TiB/B4Plzf2xMuKXegyXdhuChd4AOjVLhWQS3XIqQJwrvgjafKSRH41iYsFaEh5K4gYBp
-        ew8ZKshwAlzuq0EhrMTJ4D3vpkKYwloY/CKGZ8bg/TD/0UVLnkgYuDkV9kTgJGjxPwz3kjgO
-        ygL3aAmvgo5Za3gZ4PdysHZ8kks5d8JM71tawlEw43n8V4+HYNdtQmo4h6D6+YRcIlcQfPA0
-        Ism1FVyeYToUjcRr4NGzjZK8HbpezBHSVZbD2Gyk9IjlcO2pmZRkJZRfVEluLfy0m/+eXQ1V
-        U0HqCtKIi6KJi+KIi+KI//c2IsqO4vh8QZ/JC4kG/uQGgdML+YbMDUdz9A7053cNLngCnejZ
-        ryNOhBmkWaYs2VOXrqK5AsGkdyJgSE20MunXtXSVMoMzFfHGnEPG/GxecKIVDKWJU55a8vGg
-        CmdyefwJns/ljf+qBBOhLkHapgTfrr2NhS9fGXaL0/7U6nXeBkXfvoGhuaPN/c0tZadZ5nXQ
-        Uv/tw8KTjOoIxVetUjg43dlfbAnM82VgMDe3p8X7V7pNtU2aN6ljy4bp3ZytYW+pb8vNsVWu
-        1LSa4I6lD8aHYgtSrua9e5+Y0hSXmLq62HUs1zZdKjtjHa3VUEIWl7CWNArcb1mudhRZAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOIsWRmVeSWpSXmKPExsVy+t/xe7qaVZNjDfbd0ba4cvEQk8XGGetZ
-        LaY+fMJmcaV1E6PF+fMb2C2+Xelgstj0+BqrxYzz+5gs1h65y27x+f1+VouLK74wOXB7bPjc
-        xOaxc9Zddo9NqzrZPDYvqfeYPuc/o0ffllWMHp83yQWwR+nZFOWXlqQqZOQXl9gqRRtaGOkZ
-        WlroGZlY6hkam8daGZkq6dvZpKTmZJalFunbJehltO8QLTjHVLF8xmm2BsYpTF2MHBwSAiYS
-        U44LdDFycQgJLGWU2PdpNjNEXEpifotSFyMnkCks8edaFxuILSTwmlHi5Z5QkBJhAR+Jjecr
-        QcIiAmISt+d0MoOMYRaYyyTR928zC8TMg4wSWx7vYAWpYhMwlOg92scIYvMK2EmcaznGAmKz
-        CKhInH42C6xGVCBC4vCOWVA1ghInZz4Bq+EUsJFY/HkdWJxZQF3iz7xLzBC2uETTl5WsELa8
-        xPa3c5gnMArNQtI+C0nLLCQts5C0LGBkWcUoklpanJueW2yoV5yYW1yal66XnJ+7iREYqduO
-        /dy8g/HSxuBDjAIcjEo8vA1Bk2OFWBPLiitzDzFKcDArifDa/JkUK8SbklhZlVqUH19UmpNa
-        fIjRFOi5icxSosn5wCSSVxJvaGpobmFpaG5sbmxmoSTO2yFwMEZIID2xJDU7NbUgtQimj4mD
-        U6qBsW05K8v6qpbKXw7Ps/Nr+Q/pJpv+We0ZYLZWS/3xm8mXFkifyJvZK7/F3nxhnV4Qg/os
-        j+oZ13Jvb7FRPaV/8ebZXyuXaX4QWnXwgN9ilzzLNU/0/qodCz60WtrA7Fe9ntjXz6mLuquP
-        d8R+Fg7M0T26OTyiJFJm1uF8wfdnXDmiLm9bkmfOpMRSnJFoqMVcVJwIANxqanXqAgAA
-X-CMS-MailID: 20191001160913eucas1p1ce452b9fe9bfa44843438a67a7822a57
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="UTF-8"
-X-RootMTR: 20191001123640eucas1p265d38cc9ad2a3103abd63b5d04d18628
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20191001123640eucas1p265d38cc9ad2a3103abd63b5d04d18628
-References: <20191001123625.19370-1-s.nawrocki@samsung.com>
-        <CGME20191001123640eucas1p265d38cc9ad2a3103abd63b5d04d18628@eucas1p2.samsung.com>
-        <20191001123625.19370-3-s.nawrocki@samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="QKdGvSO+nmPlgiQ/"
+Content-Disposition: inline
+In-Reply-To: <20191001123625.19370-1-s.nawrocki@samsung.com>
+X-Cookie: Happiness is twin floppies.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20191001160912.1ZAK22TswIyxoMSLighktIJNsAFYx1PzfAZTEjXnpqI@z>
+Message-ID: <20191001175601.X8NQbr3J3xgTLOFiVJT_jrdsV66PE2hte0DCa5srZd8@z>
 
-On 10/1/19 14:36, Sylwester Nawrocki wrote:
-> Rename arndale_rt5631.c to just arnddale.c as we support other CODECs
-> than RT5631.  While at it replace spaces in Kconfig with tabs.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-I forgot to add carry the tag:
- Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+--QKdGvSO+nmPlgiQ/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Oct 01, 2019 at 02:36:23PM +0200, Sylwester Nawrocki wrote:
+
+> Changes since v1:
+>  - rebased due to reordering patches in the series
+
+These still don't apply, please check and resend specifying what you're
+basing them on - I don't think this is an ordering issue.
+
+--QKdGvSO+nmPlgiQ/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2TkzAACgkQJNaLcl1U
+h9CUywf/abOQN54gj8rAY85VcxKmxrItf1FNrBL2z0rFILYKV38ByUMbaQN/JVVu
+shCwNnjyFJxrrVJJkd/S9UyQNZUSzoHLHCfhaAtwqNVsHAJpH5bUxSgkVNODw39H
+w6tUOpW2N1Y6ty1twaaOxAhMUM0UmFfnDSL1oQEYiRcOnTbUBJaUmqKB3VZDm565
+nBhbBhYIdIFMkgQk8FsP3wlAAvOhRmSIwd6asxxbgw+7QCVC2qQzssNNFfTs8p/F
+bcQ/MqECHte1NoQaq3ripZM47/JcCTylz952igL+3ksBpdBTP/a8XmQrwA3jXprj
+zHSqIDv1k9Dkd6sYolAYzv14oA8b9w==
+=y3H6
+-----END PGP SIGNATURE-----
+
+--QKdGvSO+nmPlgiQ/--
