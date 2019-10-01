@@ -1,38 +1,42 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v5 2/2] dt-bindings: timer: Use defines instead of
- numbers in Exynos MCT examples
-Date: Tue, 1 Oct 2019 08:39:39 -0500
-Message-ID: <20191001133939.GA13715@bogus>
-References: <20190930154418.4884-1-krzk@kernel.org>
- <20190930154418.4884-2-krzk@kernel.org>
+Subject: Re: [PATCH v3] dt-bindings: gpu: Convert Samsung Image Scaler to
+  dt-schema
+Date: Tue, 1 Oct 2019 08:43:51 -0500
+Message-ID: <20191001134351.GA21744@bogus>
+References: <CGME20190927143314eucas1p2d419866cd740207426cd37cb6fdff468@eucas1p2.samsung.com>
+ <20190927143306.12133-1-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190930154418.4884-2-krzk@kernel.org>
+In-Reply-To: <20190927143306.12133-1-m.szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Maciej Falkowski <m.falkowski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 30 Sep 2019 17:44:18 +0200, Krzysztof Kozlowski wrote:
-> Make the examples in Exynos Multi Core Timer bindings more readable and
-> bring them closer to real DTS by using defines for interrupt flags.
-> Fix also GIC interrupt type in example for Exynos4412 (from SPI to PPI).
+On Fri, 27 Sep 2019 16:33:06 +0200, Marek Szyprowski wrote:
+> From: Maciej Falkowski <m.falkowski@samsung.com>
 > 
-> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Convert Samsung Image Scaler to newer dt-schema format.
 > 
+> Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
+> v3:
+> - Fixed description of 'clocks' property:
+> rather than 'mscl clock', 'pclk clock'
+> - Added empty line within if-else statement
+> - Added 'additionalProperties: false'
+> - Listed all missing 'properties' in properties scope
 > 
-> Changes since v1:
-> 1. Use GIC_PPI where applicable.
-> 
-> Rebased on top of:
-> https://patchwork.kernel.org/project/linux-samsung-soc/list/?series=177667&state=*
+> Best regards,
+> Maciej Falkowski
 > ---
->  .../timer/samsung,exynos4210-mct.yaml         | 37 ++++++++++++++-----
->  1 file changed, 27 insertions(+), 10 deletions(-)
+>  .../bindings/gpu/samsung-scaler.txt           | 27 -------
+>  .../bindings/gpu/samsung-scaler.yaml          | 81 +++++++++++++++++++
+>  2 files changed, 81 insertions(+), 27 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/gpu/samsung-scaler.txt
+>  create mode 100644 Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
 > 
 
 Applied, thanks.
