@@ -1,115 +1,426 @@
-From: Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v3] dt-bindings: gpu: Convert Samsung Image Scaler to
- dt-schema
-Date: Mon, 30 Sep 2019 13:54:43 -0500
-Message-ID: <CAL_Jsq+5PDM97zJZhp_E27d=RVFf87=QFH4d6=q_YC+tff6v-w@mail.gmail.com>
-References: <CGME20190927143314eucas1p2d419866cd740207426cd37cb6fdff468@eucas1p2.samsung.com>
- <20190927143306.12133-1-m.szyprowski@samsung.com>
- <CAJKOXPdbDropa0iL6YP4Fb4aFSEXQ87thOk5mN+cSCU=i+ZwUw@mail.gmail.com>
+From: Lukasz Luba <l.luba@partner.samsung.com>
+Subject: Re: [PATCH 3/3] memory: samsung: exynos5422-dmc: Add support for
+ interrupt from performance counters
+Date: Tue, 1 Oct 2019 12:11:27 +0200
+Message-ID: <9ca20d38-672f-fde5-c940-61e89f8a0805@partner.samsung.com>
+References: <20190925161813.21117-1-l.luba@partner.samsung.com>
+        <CGME20190925161844eucas1p2dc69a451c2d86fd7f4be2b33940f8d62@eucas1p2.samsung.com>
+        <20190925161813.21117-4-l.luba@partner.samsung.com>
+        <20190927091920.GB19131@pi3>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAJKOXPdbDropa0iL6YP4Fb4aFSEXQ87thOk5mN+cSCU=i+ZwUw@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190927091920.GB19131@pi3>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Maciej Falkowski <m.falkowski@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com, kgene@kernel.org, mark.rutland@arm.com, cw00.choi@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, robh+dt@kernel.org, willy.mh.wolff.ml@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gRnJpLCBTZXAgMjcsIDIwMTkgYXQgOTo1OSBBTSBLcnp5c3p0b2YgS296bG93c2tpIDxrcnpr
-QGtlcm5lbC5vcmc+IHdyb3RlOgo+Cj4gT24gRnJpLCAyNyBTZXAgMjAxOSBhdCAxNjozMywgTWFy
-ZWsgU3p5cHJvd3NraSA8bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPiB3cm90ZToKPiA+Cj4gPiBG
-cm9tOiBNYWNpZWogRmFsa293c2tpIDxtLmZhbGtvd3NraUBzYW1zdW5nLmNvbT4KPiA+Cj4gPiBD
-b252ZXJ0IFNhbXN1bmcgSW1hZ2UgU2NhbGVyIHRvIG5ld2VyIGR0LXNjaGVtYSBmb3JtYXQuCj4g
-Pgo+ID4gU2lnbmVkLW9mZi1ieTogTWFjaWVqIEZhbGtvd3NraSA8bS5mYWxrb3dza2lAc2Ftc3Vu
-Zy5jb20+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lA
-c2Ftc3VuZy5jb20+Cj4gPiAtLS0KPiA+IHYzOgo+ID4gLSBGaXhlZCBkZXNjcmlwdGlvbiBvZiAn
-Y2xvY2tzJyBwcm9wZXJ0eToKPiA+IHJhdGhlciB0aGFuICdtc2NsIGNsb2NrJywgJ3BjbGsgY2xv
-Y2snCj4gPiAtIEFkZGVkIGVtcHR5IGxpbmUgd2l0aGluIGlmLWVsc2Ugc3RhdGVtZW50Cj4gPiAt
-IEFkZGVkICdhZGRpdGlvbmFsUHJvcGVydGllczogZmFsc2UnCj4gPiAtIExpc3RlZCBhbGwgbWlz
-c2luZyAncHJvcGVydGllcycgaW4gcHJvcGVydGllcyBzY29wZQo+ID4KPiA+IEJlc3QgcmVnYXJk
-cywKPiA+IE1hY2llaiBGYWxrb3dza2kKPiA+IC0tLQo+ID4gIC4uLi9iaW5kaW5ncy9ncHUvc2Ft
-c3VuZy1zY2FsZXIudHh0ICAgICAgICAgICB8IDI3IC0tLS0tLS0KPiA+ICAuLi4vYmluZGluZ3Mv
-Z3B1L3NhbXN1bmctc2NhbGVyLnlhbWwgICAgICAgICAgfCA4MSArKysrKysrKysrKysrKysrKysr
-Cj4gPiAgMiBmaWxlcyBjaGFuZ2VkLCA4MSBpbnNlcnRpb25zKCspLCAyNyBkZWxldGlvbnMoLSkK
-PiA+ICBkZWxldGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
-L2dwdS9zYW1zdW5nLXNjYWxlci50eHQKPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRh
-dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwdS9zYW1zdW5nLXNjYWxlci55YW1sCj4gPgo+ID4g
-ZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncHUvc2Ftc3Vu
-Zy1zY2FsZXIudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwdS9zYW1z
-dW5nLXNjYWxlci50eHQKPiA+IGRlbGV0ZWQgZmlsZSBtb2RlIDEwMDY0NAo+ID4gaW5kZXggOWMz
-ZDk4MTA1ZGZkLi4wMDAwMDAwMDAwMDAKPiA+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJl
-ZS9iaW5kaW5ncy9ncHUvc2Ftc3VuZy1zY2FsZXIudHh0Cj4gPiArKysgL2Rldi9udWxsCj4gPiBA
-QCAtMSwyNyArMCwwIEBACj4gPiAtKiBTYW1zdW5nIEV4eW5vcyBJbWFnZSBTY2FsZXIKPiA+IC0K
-PiA+IC1SZXF1aXJlZCBwcm9wZXJ0aWVzOgo+ID4gLSAgLSBjb21wYXRpYmxlIDogdmFsdWUgc2hv
-dWxkIGJlIG9uZSBvZiB0aGUgZm9sbG93aW5nOgo+ID4gLSAgICAgICAoYSkgInNhbXN1bmcsZXh5
-bm9zNTQyMC1zY2FsZXIiIGZvciBTY2FsZXIgSVAgaW4gRXh5bm9zNTQyMAo+ID4gLSAgICAgICAo
-YikgInNhbXN1bmcsZXh5bm9zNTQzMy1zY2FsZXIiIGZvciBTY2FsZXIgSVAgaW4gRXh5bm9zNTQz
-Mwo+ID4gLQo+ID4gLSAgLSByZWcgOiBQaHlzaWNhbCBiYXNlIGFkZHJlc3Mgb2YgdGhlIElQIHJl
-Z2lzdGVycyBhbmQgbGVuZ3RoIG9mIG1lbW9yeQo+ID4gLSAgICAgICAgIG1hcHBlZCByZWdpb24u
-Cj4gPiAtCj4gPiAtICAtIGludGVycnVwdHMgOiBJbnRlcnJ1cHQgc3BlY2lmaWVyIGZvciBzY2Fs
-ZXIgaW50ZXJydXB0LCBhY2NvcmRpbmcgdG8gZm9ybWF0Cj4gPiAtICAgICAgICAgICAgICAgIHNw
-ZWNpZmljIHRvIGludGVycnVwdCBwYXJlbnQuCj4gPiAtCj4gPiAtICAtIGNsb2NrcyA6IENsb2Nr
-IHNwZWNpZmllciBmb3Igc2NhbGVyIGNsb2NrLCBhY2NvcmRpbmcgdG8gZ2VuZXJpYyBjbG9jawo+
-ID4gLSAgICAgICAgICAgIGJpbmRpbmdzLiAoU2VlIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
-aW5kaW5ncy9jbG9jay9leHlub3MqLnR4dCkKPiA+IC0KPiA+IC0gIC0gY2xvY2stbmFtZXMgOiBO
-YW1lcyBvZiBjbG9ja3MuIEZvciBleHlub3Mgc2NhbGVyLCBpdCBzaG91bGQgYmUgIm1zY2wiCj4g
-PiAtICAgICAgICAgICAgICAgICBvbiA1NDIwIGFuZCAicGNsayIsICJhY2xrIiBhbmQgImFjbGtf
-eGl1IiBvbiA1NDMzLgo+ID4gLQo+ID4gLUV4YW1wbGU6Cj4gPiAtICAgICAgIHNjYWxlckAxMjgw
-MDAwMCB7Cj4gPiAtICAgICAgICAgICAgICAgY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vczU0
-MjAtc2NhbGVyIjsKPiA+IC0gICAgICAgICAgICAgICByZWcgPSA8MHgxMjgwMDAwMCAweDEyOTQ+
-Owo+ID4gLSAgICAgICAgICAgICAgIGludGVycnVwdHMgPSA8MCAyMjAgSVJRX1RZUEVfTEVWRUxf
-SElHSD47Cj4gPiAtICAgICAgICAgICAgICAgY2xvY2tzID0gPCZjbG9jayBDTEtfTVNDTDA+Owo+
-ID4gLSAgICAgICAgICAgICAgIGNsb2NrLW5hbWVzID0gIm1zY2wiOwo+ID4gLSAgICAgICB9Owo+
-ID4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncHUvc2Ft
-c3VuZy1zY2FsZXIueWFtbCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncHUv
-c2Ftc3VuZy1zY2FsZXIueWFtbAo+ID4gbmV3IGZpbGUgbW9kZSAxMDA2NDQKPiA+IGluZGV4IDAw
-MDAwMDAwMDAwMC4uNTMxN2FjNjQ0MjZhCj4gPiAtLS0gL2Rldi9udWxsCj4gPiArKysgYi9Eb2N1
-bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZ3B1L3NhbXN1bmctc2NhbGVyLnlhbWwKPiA+
-IEBAIC0wLDAgKzEsODEgQEAKPiA+ICsjIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4w
-Cj4gPiArJVlBTUwgMS4yCj4gPiArLS0tCj4gPiArJGlkOiBodHRwOi8vZGV2aWNldHJlZS5vcmcv
-c2NoZW1hcy9ncHUvc2Ftc3VuZy1zY2FsZXIueWFtbCMKPiA+ICskc2NoZW1hOiBodHRwOi8vZGV2
-aWNldHJlZS5vcmcvbWV0YS1zY2hlbWFzL2NvcmUueWFtbCMKPiA+ICsKPiA+ICt0aXRsZTogU2Ft
-c3VuZyBFeHlub3MgU29DIEltYWdlIFNjYWxlcgo+ID4gKwo+ID4gK21haW50YWluZXJzOgo+ID4g
-KyAgLSBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+Cj4gPiArCj4gPiArcHJvcGVydGll
-czoKPiA+ICsgIGNvbXBhdGlibGU6Cj4gPiArICAgIGVudW06Cj4gPiArICAgICAgLSBzYW1zdW5n
-LGV4eW5vczU0MjAtc2NhbGVyCj4gPiArICAgICAgLSBzYW1zdW5nLGV4eW5vczU0MzMtc2NhbGVy
-Cj4gPiArCj4gPiArICByZWc6Cj4gPiArICAgIG1heEl0ZW1zOiAxCj4gPiArCj4gPiArICBpbnRl
-cnJ1cHRzOgo+ID4gKyAgICBtYXhJdGVtczogMQo+ID4gKwo+ID4gKyAgY2xvY2tzOiB7fQo+ID4g
-KyAgY2xvY2stbmFtZXM6IHt9Cj4gPiArICBpb21tdXM6IHt9Cj4gPiArICBwb3dlci1kb21haW5z
-OiB7fQo+ID4gKwo+ID4gK2lmOgo+ID4gKyAgcHJvcGVydGllczoKPiA+ICsgICAgY29tcGF0aWJs
-ZToKPiA+ICsgICAgICBjb250YWluczoKPiA+ICsgICAgICAgIGNvbnN0OiBzYW1zdW5nLGV4eW5v
-czU0MjAtc2NhbGVyCj4gPiArCj4gPiArdGhlbjoKPiA+ICsgIHByb3BlcnRpZXM6Cj4gPiArICAg
-IGNsb2NrczoKPiA+ICsgICAgICBpdGVtczoKPiA+ICsgICAgICAgIC0gZGVzY3JpcHRpb246IG1z
-Y2wgY2xvY2sKPiA+ICsKPiA+ICsgICAgY2xvY2stbmFtZXM6Cj4gPiArICAgICAgaXRlbXM6Cj4g
-PiArICAgICAgICAtIGNvbnN0OiBtc2NsCj4gPiArCj4gPiArZWxzZToKPiA+ICsgIHByb3BlcnRp
-ZXM6Cj4gPiArICAgIGNsb2NrczoKPiA+ICsgICAgICBpdGVtczoKPiA+ICsgICAgICAgIC0gZGVz
-Y3JpcHRpb246IHBjbGsgY2xvY2sKPiA+ICsgICAgICAgIC0gZGVzY3JpcHRpb246IGFjbGsgY2xv
-Y2sKPiA+ICsgICAgICAgIC0gZGVzY3JpcHRpb246IGFjbGtfeGl1IGNsb2NrCj4gPiArCj4gPiAr
-ICAgIGNsb2NrLW5hbWVzOgo+ID4gKyAgICAgIGl0ZW1zOgo+ID4gKyAgICAgICAgLSBjb25zdDog
-cGNsawo+ID4gKyAgICAgICAgLSBjb25zdDogYWNsawo+ID4gKyAgICAgICAgLSBjb25zdDogYWNs
-a194aXUKPiA+ICsKPiA+ICtyZXF1aXJlZDoKPiA+ICsgIC0gY29tcGF0aWJsZQo+ID4gKyAgLSBy
-ZWcKPiA+ICsgIC0gaW50ZXJydXB0cwo+ID4gKyAgLSBjbG9ja3MKPiA+ICsgIC0gY2xvY2stbmFt
-ZXMKPiA+ICsKPiA+ICthZGRpdGlvbmFsUHJvcGVydGllczogZmFsc2UKPiA+ICsKPiA+ICtleGFt
-cGxlczoKPiA+ICsgIC0gfAo+ID4gKyAgICAjaW5jbHVkZSA8ZHQtYmluZGluZ3MvY2xvY2svZXh5
-bm9zNTQyMC5oPgo+ID4gKyAgICAjaW5jbHVkZSA8ZHQtYmluZGluZ3MvaW50ZXJydXB0LWNvbnRy
-b2xsZXIvYXJtLWdpYy5oPgo+ID4gKwo+ID4gKyAgICBzY2FsZXJAMTI4MDAwMDAgewo+ID4gKyAg
-ICAgICAgY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vczU0MjAtc2NhbGVyIjsKPiA+ICsgICAg
-ICAgIHJlZyA9IDwweDEyODAwMDAwIDB4MTI5ND47Cj4gPiArICAgICAgICBpbnRlcnJ1cHRzID0g
-PEdJQ19TUEkgMjIwIElSUV9UWVBFX0xFVkVMX0hJR0g+Owo+ID4gKyAgICAgICAgY2xvY2tzID0g
-PCZjbG9jayBDTEtfTVNDTDA+Owo+ID4gKyAgICAgICAgY2xvY2stbmFtZXMgPSAibXNjbCI7Cj4g
-PiArICAgIH07Cj4gPiArCj4gPiArLi4uCj4KPiBZb3UgaGF2ZSBzb21lIGxlZnQtb3ZlcnMgYXQg
-dGhlIGVuZC4gV2l0aCBjbGVhbmluZyB0aGVtOgo+IFJldmlld2VkLWJ5OiBLcnp5c3p0b2YgS296
-bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+CgpZb3UgbWVhbiB0aGUgJy4uLic/IFRoYXQncyB0aGUg
-ZW5kIG9mIFlBTUwgbWFya2VyLiBJdCdzIG5vdCBzdHJpY3RseSBuZWVkZWQuCgpSb2IKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
-bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+Hi Krzysztof,
+
+On 9/27/19 11:19 AM, Krzysztof Kozlowski wrote:
+> On Wed, Sep 25, 2019 at 06:18:13PM +0200, Lukasz Luba wrote:
+>> Introduce a new interrupt driven mechanism for managing speed of the
+>> memory controller. The interrupts are generated due to performance
+>> counters overflow. The performance counters might track memory reads,
+>> writes, transfers, page misses, etc. In the basic algorithm tracking
+>> read transfers and calculating memory pressure should be enough to
+>> skip polling mode in devfreq.
+>>
+>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+>> ---
+>>   drivers/memory/samsung/exynos5422-dmc.c | 297 ++++++++++++++++++++++--
+>>   1 file changed, 272 insertions(+), 25 deletions(-)
+>>
+>> diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
+>> index 0fe5f2186139..86e1844b97ef 100644
+>> --- a/drivers/memory/samsung/exynos5422-dmc.c
+>> +++ b/drivers/memory/samsung/exynos5422-dmc.c
+>> @@ -8,6 +8,7 @@
+>>   #include <linux/devfreq.h>
+>>   #include <linux/devfreq-event.h>
+>>   #include <linux/device.h>
+>> +#include <linux/interrupt.h>
+>>   #include <linux/io.h>
+>>   #include <linux/mfd/syscon.h>
+>>   #include <linux/module.h>
+>> @@ -35,6 +36,29 @@
+>>   #define USE_BPLL_TIMINGS			(0)
+>>   #define EXYNOS5_AREF_NORMAL			(0x2e)
+>>   
+>> +#define DREX_PPCCLKCON		(0x0130)
+>> +#define DREX_PEREV2CONFIG	(0x013c)
+>> +#define DREX_PMNC_PPC		(0xE000)
+>> +#define DREX_CNTENS_PPC		(0xE010)
+>> +#define DREX_CNTENC_PPC		(0xE020)
+>> +#define DREX_INTENS_PPC		(0xE030)
+>> +#define DREX_INTENC_PPC		(0xE040)
+>> +#define DREX_FLAG_PPC		(0xE050)
+>> +#define DREX_PMCNT2_PPC		(0xE130)
+>> +
+>> +#define CC_RESET		BIT(2)
+>> +#define PPC_COUNTER_RESET	BIT(1)
+>> +#define PPC_ENABLE		BIT(0)
+>> +#define PEREV_CLK_EN		BIT(0)
+>> +#define PERF_CNT2		BIT(2)
+>> +#define PERF_CCNT		BIT(31)
+> 
+> Describe to which registers these bitfields are applicable.
+OK, I will add comment above them.
+> 
+>> +
+>> +#define READ_TRANSFER_CH0	(0x6d)
+>> +#define READ_TRANSFER_CH1	(0x6f)
+> 
+> The same. Otherwise they all look like some generic constants which is
+> not true.
+Make sense, agree. I will add comment above them.
+> 
+>> +
+>> +#define PERF_COUNTER_START_VALUE 0xff000000
+>> +#define PERF_EVENT_UP_DOWN_THRESHOLD 900000000ULL
+>> +
+>>   /**
+>>    * struct dmc_opp_table - Operating level desciption
+>>    *
+>> @@ -85,6 +109,9 @@ struct exynos5_dmc {
+>>   	struct clk *mout_mx_mspll_ccore_phy;
+>>   	struct devfreq_event_dev **counter;
+>>   	int num_counters;
+>> +	u64 last_overflow_ts[2];
+>> +	unsigned long load, total;
+> 
+> One member per line.  This decreases readability.
+OK
+> 
+>> +	bool in_irq_mode;
+>>   };
+>>   
+>>   #define TIMING_FIELD(t_name, t_bit_beg, t_bit_end) \
+>> @@ -653,6 +680,167 @@ static int exynos5_counters_get(struct exynos5_dmc *dmc,
+>>   	return 0;
+>>   }
+>>   
+>> +/**
+>> + * exynos5_dmc_start_perf_events() - Setup and start performance event counters
+>> + * @dmc:	device for which the counters are going to be checked
+>> + * @beg_value:	initial value for the counter
+>> + *
+>> + * Function which enables needed counters, interrupts and sets initial values
+>> + * then starts the counters.
+>> + */
+>> +static void exynos5_dmc_start_perf_events(struct exynos5_dmc *dmc,
+>> +					  u32 beg_value)
+>> +{
+>> +	/* Enable interrupts for counter 2 */
+>> +	writel(PERF_CNT2, dmc->base_drexi0 + DREX_INTENS_PPC);
+>> +	writel(PERF_CNT2, dmc->base_drexi1 + DREX_INTENS_PPC);
+> 
+> Blank line.
+> 
+>> +	/* Enable counter 2 and CCNT  */
+>> +	writel(PERF_CNT2 | PERF_CCNT, dmc->base_drexi0 + DREX_CNTENS_PPC);
+>> +	writel(PERF_CNT2 | PERF_CCNT, dmc->base_drexi1 + DREX_CNTENS_PPC);
+> 
+> Blank line.
+> 
+>> +	/* Clear overflow flag for all counters */
+>> +	writel(PERF_CNT2 | PERF_CCNT, dmc->base_drexi0 + DREX_FLAG_PPC);
+>> +	writel(PERF_CNT2 | PERF_CCNT, dmc->base_drexi1 + DREX_FLAG_PPC);
+> 
+> Blank line.
+> 
+>> +	/* Reset all counters */
+>> +	writel(CC_RESET | PPC_COUNTER_RESET, dmc->base_drexi0 + DREX_PMNC_PPC);
+>> +	writel(CC_RESET | PPC_COUNTER_RESET, dmc->base_drexi1 + DREX_PMNC_PPC);
+> 
+> Blank line.
+> 
+>> +	/*
+>> +	 * Set start value for the counters, the number of samples that
+>> +	 * will be gathered is calculated as: 0xffffffff - beg_value
+>> +	 */
+>> +	writel(beg_value, dmc->base_drexi0 + DREX_PMCNT2_PPC);
+>> +	writel(beg_value, dmc->base_drexi1 + DREX_PMCNT2_PPC);
+> 
+> Blank line.
+> 
+>> +	/* Start all counters */
+>> +	writel(PPC_ENABLE, dmc->base_drexi0 + DREX_PMNC_PPC);
+>> +	writel(PPC_ENABLE, dmc->base_drexi1 + DREX_PMNC_PPC);
+>> +}
+>> +
+>> +/**
+>> + * exynos5_dmc_perf_events_calc() - Calculate utilization
+>> + * @dmc:	device for which the counters are going to be checked
+>> + * @diff_ts:	time between last interrupt and current one
+>> + *
+>> + * Function which calculates needed utilization for the devfreq governor.
+>> + * It prepares values for 'busy_time' and 'total_time' based on elapsed time
+>> + * between interrupts, which approximates utilization.
+>> + */
+>> +static void exynos5_dmc_perf_events_calc(struct exynos5_dmc *dmc, u64 diff_ts)
+>> +{
+>> +	/*
+>> +	 * This is a simple algorithm for managing traffic on DMC.
+>> +	 * When there is almost no load the counters overflow every 4s,
+>> +	 * no mater the DMC frequency.
+>> +	 * The high load might be approximated using linear function.
+>> +	 * Knowing that, simple calculation can provide 'busy_time' and
+>> +	 * 'total_time' to the devfreq governor which picks up target
+>> +	 * frequency.
+>> +	 * We want a fast ramp up and slow decay in frequency change function.
+>> +	 */
+>> +	if (diff_ts < PERF_EVENT_UP_DOWN_THRESHOLD) {
+>> +		/*
+>> +		 * Set higher utilization for the simple_ondemand governor.
+>> +		 * The governor should increase the frequency of the DMC.
+>> +		 */
+>> +		dmc->load = 70;
+>> +		dmc->total = 100;
+>> +	} else {
+>> +		/*
+>> +		 * Set low utilization for the simple_ondemand governor.
+>> +		 * The governor should decrease the frequency of the DMC.
+>> +		 */
+>> +		dmc->load = 35;
+>> +		dmc->total = 100;
+>> +	}
+>> +
+>> +	dev_dbg(dmc->dev, "diff_ts=%llu\n", diff_ts);
+>> +}
+>> +
+>> +/**
+>> + * exynos5_dmc_perf_events_check() - Checks the status of the counters
+>> + * @dmc:	device for which the counters are going to be checked
+>> + *
+>> + * Function which is called from threaded IRQ to check the counters state
+>> + * and to call approximation for the needed utilization.
+>> + */
+>> +static void exynos5_dmc_perf_events_check(struct exynos5_dmc *dmc)
+>> +{
+>> +	u32 val;
+>> +	u64 diff_ts, ts;
+>> +
+>> +	ts = ktime_get_ns();
+>> +
+>> +	/* Stop all counters */
+>> +	writel(0, dmc->base_drexi0 + DREX_PMNC_PPC);
+>> +	writel(0, dmc->base_drexi1 + DREX_PMNC_PPC);
+>> +
+>> +	/* Check the source in interrupt flag registers (which channel) */
+>> +	val = readl(dmc->base_drexi0 + DREX_FLAG_PPC);
+>> +	if (val) {
+>> +		diff_ts = ts - dmc->last_overflow_ts[0];
+>> +		dmc->last_overflow_ts[0] = ts;
+>> +		dev_dbg(dmc->dev, "drex0 0xE050 val= 0x%08x\n",  val);
+>> +	} else {
+>> +		val = readl(dmc->base_drexi1 + DREX_FLAG_PPC);
+>> +		diff_ts = ts - dmc->last_overflow_ts[1];
+>> +		dmc->last_overflow_ts[1] = ts;
+>> +		dev_dbg(dmc->dev, "drex1 0xE050 val= 0x%08x\n",  val);
+>> +	}
+>> +
+>> +	exynos5_dmc_perf_events_calc(dmc, diff_ts);
+>> +
+>> +	exynos5_dmc_start_perf_events(dmc, PERF_COUNTER_START_VALUE);
+>> +}
+>> +
+>> +/**
+>> + * exynos5_dmc_enable_perf_events() - Enable performance events
+>> + * @dmc:	device for which the counters are going to be checked
+>> + *
+>> + * Function which is setup needed environment and enables counters.
+>> + */
+>> +static void exynos5_dmc_enable_perf_events(struct exynos5_dmc *dmc)
+>> +{
+>> +	u64 ts;
+>> +
+>> +	/* Enable Performance Event Clock */
+>> +	writel(PEREV_CLK_EN, dmc->base_drexi0 + DREX_PPCCLKCON);
+>> +	writel(PEREV_CLK_EN, dmc->base_drexi1 + DREX_PPCCLKCON);
+>> +
+>> +	/* Select read transfers as performance event2 */
+>> +	writel(READ_TRANSFER_CH0, dmc->base_drexi0 + DREX_PEREV2CONFIG);
+>> +	writel(READ_TRANSFER_CH1, dmc->base_drexi1 + DREX_PEREV2CONFIG);
+>> +
+>> +	dmc->in_irq_mode = 1;
+> 
+> Move this outside, to the probe. Logically it belongs there.
+OK
+> 
+>> +
+>> +	ts = ktime_get_ns();
+>> +	dmc->last_overflow_ts[0] = ts;
+>> +	dmc->last_overflow_ts[1] = ts;
+>> +
+>> +	/* Devfreq shouldn't be faster than initialization, play safe though. */
+>> +	dmc->load = 99;
+>> +	dmc->total = 100;
+>> +}
+>> +
+>> +/**
+>> + * exynos5_dmc_disable_perf_events() - Disable performance events
+>> + * @dmc:	device for which the counters are going to be checked
+>> + *
+>> + * Function which stops, disables performance event counters and interrupts.
+>> + */
+>> +static void exynos5_dmc_disable_perf_events(struct exynos5_dmc *dmc)
+>> +{
+>> +	/* Stop all counters */
+>> +	writel(0, dmc->base_drexi0 + DREX_PMNC_PPC);
+>> +	writel(0, dmc->base_drexi1 + DREX_PMNC_PPC);
+> 
+> Blank line here and later.
+OK - for all the 'blank line' hints.
+> 
+>> +	/* Disable interrupts for counter 2 */
+>> +	writel(PERF_CNT2, dmc->base_drexi0 + DREX_INTENC_PPC);
+>> +	writel(PERF_CNT2, dmc->base_drexi1 + DREX_INTENC_PPC);
+>> +	/* Disable counter 2 and CCNT  */
+>> +	writel(PERF_CNT2 | PERF_CCNT, dmc->base_drexi0 + DREX_CNTENC_PPC);
+>> +	writel(PERF_CNT2 | PERF_CCNT, dmc->base_drexi1 + DREX_CNTENC_PPC);
+>> +	/* Clear overflow flag for all counters */
+>> +	writel(PERF_CNT2 | PERF_CCNT, dmc->base_drexi0 + DREX_FLAG_PPC);
+>> +	writel(PERF_CNT2 | PERF_CCNT, dmc->base_drexi1 + DREX_FLAG_PPC);
+>> +}
+>> +
+>>   /**
+>>    * exynos5_dmc_get_status() - Read current DMC performance statistics.
+>>    * @dev:	device for which the statistics are requested
+>> @@ -669,18 +857,24 @@ static int exynos5_dmc_get_status(struct device *dev,
+>>   	unsigned long load, total;
+>>   	int ret;
+>>   
+>> -	ret = exynos5_counters_get(dmc, &load, &total);
+>> -	if (ret < 0)
+>> -		return -EINVAL;
+>> +	if (dmc->in_irq_mode) {
+>> +		stat->current_frequency = dmc->curr_rate;
+>> +		stat->busy_time = dmc->load;
+>> +		stat->total_time = dmc->total;
+>> +	} else {
+>> +		ret = exynos5_counters_get(dmc, &load, &total);
+>> +		if (ret < 0)
+>> +			return -EINVAL;
+>>   
+>> -	/* To protect from overflow in calculation ratios, divide by 1024 */
+>> -	stat->busy_time = load >> 10;
+>> -	stat->total_time = total >> 10;
+>> +		/* To protect from overflow, divide by 1024 */
+>> +		stat->busy_time = load >> 10;
+>> +		stat->total_time = total >> 10;
+>>   
+>> -	ret = exynos5_counters_set_event(dmc);
+>> -	if (ret < 0) {
+>> -		dev_err(dev, "could not set event counter\n");
+>> -		return ret;
+>> +		ret = exynos5_counters_set_event(dmc);
+>> +		if (ret < 0) {
+>> +			dev_err(dev, "could not set event counter\n");
+>> +			return ret;
+>> +		}
+>>   	}
+>>   
+>>   	return 0;
+>> @@ -712,7 +906,6 @@ static int exynos5_dmc_get_cur_freq(struct device *dev, unsigned long *freq)
+>>    * It provides to the devfreq framework needed functions and polling period.
+>>    */
+>>   static struct devfreq_dev_profile exynos5_dmc_df_profile = {
+>> -	.polling_ms = 500,
+>>   	.target = exynos5_dmc_target,
+>>   	.get_dev_status = exynos5_dmc_get_status,
+>>   	.get_cur_freq = exynos5_dmc_get_cur_freq,
+>> @@ -1108,6 +1301,26 @@ static inline int exynos5_dmc_set_pause_on_switching(struct exynos5_dmc *dmc)
+>>   	return 0;
+>>   }
+>>   
+>> +static irqreturn_t dmc_irq_thread(int irq, void *priv)
+>> +{
+>> +	int res;
+>> +	struct exynos5_dmc *dmc = priv;
+>> +
+>> +	dev_dbg(dmc->dev, "irq thread handler\n");
+> 
+> Skip a debug in thread handler for memory. It can pollute your log (I
+> guess depending on workload).
+OK, I will remove it.
+> 
+>> +
+>> +	mutex_lock(&dmc->df->lock);
+>> +
+>> +	exynos5_dmc_perf_events_check(dmc);
+>> +
+>> +	res = update_devfreq(dmc->df);
+>> +	if (res)
+>> +		dev_err(dmc->dev, "devfreq failed with %d\n", res);
+> 
+> dev_warn()
+OK
+> 
+>> +
+>> +	mutex_unlock(&dmc->df->lock);
+>> +
+>> +	return IRQ_HANDLED;
+>> +}
+>> +
+>>   /**
+>>    * exynos5_dmc_probe() - Probe function for the DMC driver
+>>    * @pdev:	platform device for which the driver is going to be initialized
+>> @@ -1125,6 +1338,7 @@ static int exynos5_dmc_probe(struct platform_device *pdev)
+>>   	struct device_node *np = dev->of_node;
+>>   	struct exynos5_dmc *dmc;
+>>   	struct resource *res;
+>> +	int irq;
+>>   
+>>   	dmc = devm_kzalloc(dev, sizeof(*dmc), GFP_KERNEL);
+>>   	if (!dmc)
+>> @@ -1172,24 +1386,48 @@ static int exynos5_dmc_probe(struct platform_device *pdev)
+>>   		goto remove_clocks;
+>>   	}
+>>   
+>> -	ret = exynos5_performance_counters_init(dmc);
+>> -	if (ret) {
+>> -		dev_warn(dev, "couldn't probe performance counters\n");
+>> -		goto remove_clocks;
+>> -	}
+>> -
+>>   	ret = exynos5_dmc_set_pause_on_switching(dmc);
+>>   	if (ret) {
+>>   		dev_warn(dev, "couldn't get access to PAUSE register\n");
+>>   		goto err_devfreq_add;
+> 
+> This is wrong now, I think.
+Good point, should be 'goto remove_clocks'.
+> 
+>>   	}
+>>   
+>> -	/*
+>> -	 * Setup default thresholds for the devfreq governor.
+>> -	 * The values are chosen based on experiments.
+>> -	 */
+>> -	dmc->gov_data.upthreshold = 30;
+>> -	dmc->gov_data.downdifferential = 5;
+>> +	/* There is two modes in which the driver works: polling or IRQ */
+>> +	irq = platform_get_irq(pdev, 0);
+> 
+> You need to document it in bindings.
+OK
+> 
+>> +	if (irq < 0) {
+>> +		ret = exynos5_performance_counters_init(dmc);
+>> +		if (ret) {
+>> +			dev_warn(dev, "couldn't probe performance counters\n");
+>> +			goto remove_clocks;
+> 
+> Weird, previous error jump goes to err_devfreq_add. This goes to error
+> label which is narrower (less to cleanup).
+
+Right.
+
+Thank you for the review. I will address the issues in the next version.
+
+Regards,
+Lukasz
