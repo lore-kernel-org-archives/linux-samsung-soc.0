@@ -1,14 +1,14 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: wm8994: Add support for MCLKn clock gating" to the
- asoc tree
+Subject: Applied "ASoC: wm8994: Add support for setting MCLK clock rate" to
+ the asoc tree
 Date: Tue,  1 Oct 2019 12:40:50 +0100 (BST)
-Message-ID: <20191001114050.9CC842742A10@ypsilon.sirena.org.uk>
-References: <20190920130218.32690-5-s.nawrocki@samsung.com>
+Message-ID: <20191001114050.DE1BD2742A30@ypsilon.sirena.org.uk>
+References: <20190920130218.32690-4-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20190920130218.32690-5-s.nawrocki@samsung.com>
+In-Reply-To: <20190920130218.32690-4-s.nawrocki@samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -24,7 +24,7 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 The patch
 
-   ASoC: wm8994: Add support for MCLKn clock gating
+   ASoC: wm8994: Add support for setting MCLK clock rate
 
 has been applied to the asoc tree at
 
@@ -49,219 +49,164 @@ to this mail.
 Thanks,
 Mark
 
->From 001b83d395ab2acfddc46b73376f8dbdece89af7 Mon Sep 17 00:00:00 2001
+>From 419e2f50833661cec15200d5ee7385daee733667 Mon Sep 17 00:00:00 2001
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Fri, 20 Sep 2019 15:02:13 +0200
-Subject: [PATCH] ASoC: wm8994: Add support for MCLKn clock gating
+Date: Fri, 20 Sep 2019 15:02:12 +0200
+Subject: [PATCH] ASoC: wm8994: Add support for setting MCLK clock rate
 
-As an intermediate step before covering the clocking subsystem
-of the CODEC entirely by the clk API add handling of external CODEC's
-master clocks in DAPM events when the AIFn clocks are sourced directly
-from MCLKn; when FLLn are used we enable/disable respective MCLKn
-before/after FLLn is enabled/disabled.
+Extend the set_sysclk() handler so we also set frequency of the MCLK1,
+MCLK2 clocks through clk API when those clocks are specified in DT.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-Link: https://lore.kernel.org/r/20190920130218.32690-5-s.nawrocki@samsung.com
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Link: https://lore.kernel.org/r/20190920130218.32690-4-s.nawrocki@samsung.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/wm8994.c | 108 ++++++++++++++++++++++++++++++++++++--
- 1 file changed, 104 insertions(+), 4 deletions(-)
+ sound/soc/codecs/wm8994.c | 48 +++++++++++++++++++++++++++++++++++----
+ sound/soc/codecs/wm8994.h | 10 +++++++-
+ 2 files changed, 52 insertions(+), 6 deletions(-)
 
 diff --git a/sound/soc/codecs/wm8994.c b/sound/soc/codecs/wm8994.c
-index 35fbaa0138bf..b633093afb9d 100644
+index c3d06e8bc54f..35fbaa0138bf 100644
 --- a/sound/soc/codecs/wm8994.c
 +++ b/sound/soc/codecs/wm8994.c
-@@ -1033,6 +1033,45 @@ static bool wm8994_check_class_w_digital(struct snd_soc_component *component)
- 	return true;
+@@ -167,12 +167,12 @@ static int configure_aif_clock(struct snd_soc_component *component, int aif)
+ 
+ 	switch (wm8994->sysclk[aif]) {
+ 	case WM8994_SYSCLK_MCLK1:
+-		rate = wm8994->mclk[0];
++		rate = wm8994->mclk_rate[0];
+ 		break;
+ 
+ 	case WM8994_SYSCLK_MCLK2:
+ 		reg1 |= 0x8;
+-		rate = wm8994->mclk[1];
++		rate = wm8994->mclk_rate[1];
+ 		break;
+ 
+ 	case WM8994_SYSCLK_FLL1:
+@@ -2367,12 +2367,29 @@ static int wm8994_set_fll(struct snd_soc_dai *dai, int id, int src,
+ 	return _wm8994_set_fll(dai->component, id, src, freq_in, freq_out);
  }
  
-+static int aif_mclk_set(struct snd_soc_component *component, int aif, bool enable)
++static int wm8994_set_mclk_rate(struct wm8994_priv *wm8994, unsigned int id,
++				unsigned int *freq)
 +{
-+	struct wm8994_priv *wm8994 = snd_soc_component_get_drvdata(component);
-+	unsigned int offset, val, clk_idx;
 +	int ret;
 +
-+	if (aif)
-+		offset = 4;
-+	else
-+		offset = 0;
-+
-+	val = snd_soc_component_read32(component, WM8994_AIF1_CLOCKING_1 + offset);
-+	val &= WM8994_AIF1CLK_SRC_MASK;
-+
-+	switch (val) {
-+	case 0:
-+		clk_idx = WM8994_MCLK1;
-+		break;
-+	case 1:
-+		clk_idx = WM8994_MCLK2;
-+		break;
-+	default:
++	if (!wm8994->mclk[id].clk || *freq == wm8994->mclk_rate[id])
 +		return 0;
-+	}
 +
-+	if (enable) {
-+		ret = clk_prepare_enable(wm8994->mclk[clk_idx].clk);
-+		if (ret < 0) {
-+			dev_err(component->dev,	"Failed to enable MCLK%d\n",
-+				clk_idx);
-+			return ret;
-+		}
-+	} else {
-+		clk_disable_unprepare(wm8994->mclk[clk_idx].clk);
-+	}
++	ret = clk_set_rate(wm8994->mclk[id].clk, *freq);
++	if (ret < 0)
++		return ret;
++
++	*freq = clk_get_rate(wm8994->mclk[id].clk);
 +
 +	return 0;
 +}
 +
- static int aif1clk_ev(struct snd_soc_dapm_widget *w,
- 		      struct snd_kcontrol *kcontrol, int event)
+ static int wm8994_set_dai_sysclk(struct snd_soc_dai *dai,
+ 		int clk_id, unsigned int freq, int dir)
  {
-@@ -1040,7 +1079,7 @@ static int aif1clk_ev(struct snd_soc_dapm_widget *w,
+ 	struct snd_soc_component *component = dai->component;
  	struct wm8994_priv *wm8994 = snd_soc_component_get_drvdata(component);
- 	struct wm8994 *control = wm8994->wm8994;
- 	int mask = WM8994_AIF1DAC1L_ENA | WM8994_AIF1DAC1R_ENA;
 -	int i;
 +	int ret, i;
- 	int dac;
- 	int adc;
- 	int val;
-@@ -1056,6 +1095,10 @@ static int aif1clk_ev(struct snd_soc_dapm_widget *w,
  
- 	switch (event) {
- 	case SND_SOC_DAPM_PRE_PMU:
-+		ret = aif_mclk_set(component, 0, true);
+ 	switch (dai->id) {
+ 	case 1:
+@@ -2387,7 +2404,12 @@ static int wm8994_set_dai_sysclk(struct snd_soc_dai *dai,
+ 	switch (clk_id) {
+ 	case WM8994_SYSCLK_MCLK1:
+ 		wm8994->sysclk[dai->id - 1] = WM8994_SYSCLK_MCLK1;
+-		wm8994->mclk[0] = freq;
++
++		ret = wm8994_set_mclk_rate(wm8994, dai->id - 1, &freq);
 +		if (ret < 0)
 +			return ret;
 +
- 		/* Don't enable timeslot 2 if not in use */
- 		if (wm8994->channels[0] <= 2)
- 			mask &= ~(WM8994_AIF1DAC2L_ENA | WM8994_AIF1DAC2R_ENA);
-@@ -1128,6 +1171,12 @@ static int aif1clk_ev(struct snd_soc_dapm_widget *w,
++		wm8994->mclk_rate[0] = freq;
+ 		dev_dbg(dai->dev, "AIF%d using MCLK1 at %uHz\n",
+ 			dai->id, freq);
  		break;
- 	}
- 
-+	switch (event) {
-+	case SND_SOC_DAPM_POST_PMD:
-+		aif_mclk_set(component, 0, false);
-+		break;
-+	}
+@@ -2395,7 +2417,12 @@ static int wm8994_set_dai_sysclk(struct snd_soc_dai *dai,
+ 	case WM8994_SYSCLK_MCLK2:
+ 		/* TODO: Set GPIO AF */
+ 		wm8994->sysclk[dai->id - 1] = WM8994_SYSCLK_MCLK2;
+-		wm8994->mclk[1] = freq;
 +
- 	return 0;
- }
- 
-@@ -1135,13 +1184,17 @@ static int aif2clk_ev(struct snd_soc_dapm_widget *w,
- 		      struct snd_kcontrol *kcontrol, int event)
++		ret = wm8994_set_mclk_rate(wm8994, dai->id - 1, &freq);
++		if (ret < 0)
++			return ret;
++
++		wm8994->mclk_rate[1] = freq;
+ 		dev_dbg(dai->dev, "AIF%d using MCLK2 at %uHz\n",
+ 			dai->id, freq);
+ 		break;
+@@ -4447,6 +4474,7 @@ static const struct snd_soc_component_driver soc_component_dev_wm8994 = {
+ static int wm8994_probe(struct platform_device *pdev)
  {
- 	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
--	int i;
-+	int ret, i;
- 	int dac;
- 	int adc;
- 	int val;
+ 	struct wm8994_priv *wm8994;
++	int ret;
  
- 	switch (event) {
- 	case SND_SOC_DAPM_PRE_PMU:
-+		ret = aif_mclk_set(component, 1, true);
-+		if (ret < 0)
-+			return ret;
+ 	wm8994 = devm_kzalloc(&pdev->dev, sizeof(struct wm8994_priv),
+ 			      GFP_KERNEL);
+@@ -4458,6 +4486,16 @@ static int wm8994_probe(struct platform_device *pdev)
+ 
+ 	wm8994->wm8994 = dev_get_drvdata(pdev->dev.parent);
+ 
++	wm8994->mclk[WM8994_MCLK1].id = "MCLK1";
++	wm8994->mclk[WM8994_MCLK2].id = "MCLK2";
 +
- 		val = snd_soc_component_read32(component, WM8994_AIF2_CONTROL_1);
- 		if ((val & WM8994_AIF2ADCL_SRC) &&
- 		    (val & WM8994_AIF2ADCR_SRC))
-@@ -1213,6 +1266,12 @@ static int aif2clk_ev(struct snd_soc_dapm_widget *w,
- 		break;
- 	}
- 
-+	switch (event) {
-+	case SND_SOC_DAPM_POST_PMD:
-+		aif_mclk_set(component, 1, false);
-+		break;
++	ret = devm_clk_bulk_get_optional(pdev->dev.parent, ARRAY_SIZE(wm8994->mclk),
++					 wm8994->mclk);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Failed to get clocks: %d\n", ret);
++		return ret;
 +	}
 +
- 	return 0;
- }
+ 	pm_runtime_enable(&pdev->dev);
+ 	pm_runtime_idle(&pdev->dev);
  
-@@ -1618,10 +1677,10 @@ SND_SOC_DAPM_POST("Late Disable PGA", late_disable_ev)
- static const struct snd_soc_dapm_widget wm8994_lateclk_widgets[] = {
- SND_SOC_DAPM_SUPPLY("AIF1CLK", WM8994_AIF1_CLOCKING_1, 0, 0, aif1clk_ev,
- 		    SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU |
--		    SND_SOC_DAPM_PRE_PMD),
-+		    SND_SOC_DAPM_PRE_PMD | SND_SOC_DAPM_POST_PMD),
- SND_SOC_DAPM_SUPPLY("AIF2CLK", WM8994_AIF2_CLOCKING_1, 0, 0, aif2clk_ev,
- 		    SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU |
--		    SND_SOC_DAPM_PRE_PMD),
-+		    SND_SOC_DAPM_PRE_PMD | SND_SOC_DAPM_POST_PMD),
- SND_SOC_DAPM_PGA("Direct Voice", SND_SOC_NOPM, 0, 0, NULL, 0),
- SND_SOC_DAPM_MIXER("SPKL", WM8994_POWER_MANAGEMENT_3, 8, 0,
- 		   left_speaker_mixer, ARRAY_SIZE(left_speaker_mixer)),
-@@ -2136,6 +2195,7 @@ static int _wm8994_set_fll(struct snd_soc_component *component, int id, int src,
- 	u16 reg, clk1, aif_reg, aif_src;
- 	unsigned long timeout;
- 	bool was_enabled;
-+	struct clk *mclk;
+diff --git a/sound/soc/codecs/wm8994.h b/sound/soc/codecs/wm8994.h
+index 1d6f2abe1c11..41c4b126114d 100644
+--- a/sound/soc/codecs/wm8994.h
++++ b/sound/soc/codecs/wm8994.h
+@@ -6,6 +6,7 @@
+ #ifndef _WM8994_H
+ #define _WM8994_H
  
- 	switch (id) {
- 	case WM8994_FLL1:
-@@ -2211,6 +2271,27 @@ static int _wm8994_set_fll(struct snd_soc_component *component, int id, int src,
- 	snd_soc_component_update_bits(component, WM8994_FLL1_CONTROL_1 + reg_offset,
- 			    WM8994_FLL1_ENA, 0);
++#include <linux/clk.h>
+ #include <sound/soc.h>
+ #include <linux/firmware.h>
+ #include <linux/completion.h>
+@@ -14,6 +15,12 @@
  
-+	/* Disable MCLK if needed before we possibly change to new clock parent */
-+	if (was_enabled) {
-+		reg = snd_soc_component_read32(component, WM8994_FLL1_CONTROL_5
-+							+ reg_offset);
-+		reg = ((reg & WM8994_FLL1_REFCLK_SRC_MASK)
-+			>> WM8994_FLL1_REFCLK_SRC_SHIFT) + 1;
-+
-+		switch (reg) {
-+		case WM8994_FLL_SRC_MCLK1:
-+			mclk = wm8994->mclk[WM8994_MCLK1].clk;
-+			break;
-+		case WM8994_FLL_SRC_MCLK2:
-+			mclk = wm8994->mclk[WM8994_MCLK2].clk;
-+			break;
-+		default:
-+			mclk = NULL;
-+		}
-+
-+		clk_disable_unprepare(mclk);
-+	}
-+
- 	if (wm8994->fll_byp && src == WM8994_FLL_SRC_BCLK &&
- 	    freq_in == freq_out && freq_out) {
- 		dev_dbg(component->dev, "Bypassing FLL%d\n", id + 1);
-@@ -2255,10 +2336,29 @@ static int _wm8994_set_fll(struct snd_soc_component *component, int id, int src,
- 	/* Clear any pending completion from a previous failure */
- 	try_wait_for_completion(&wm8994->fll_locked[id]);
+ #include "wm_hubs.h"
  
-+	switch (src) {
-+	case WM8994_FLL_SRC_MCLK1:
-+		mclk = wm8994->mclk[WM8994_MCLK1].clk;
-+		break;
-+	case WM8994_FLL_SRC_MCLK2:
-+		mclk = wm8994->mclk[WM8994_MCLK2].clk;
-+		break;
-+	default:
-+		mclk = NULL;
-+	}
++enum {
++	WM8994_MCLK1,
++	WM8994_MCLK2,
++	WM8994_NUM_MCLK
++};
 +
- 	/* Enable (with fractional mode if required) */
- 	if (freq_out) {
-+		ret = clk_prepare_enable(mclk);
-+		if (ret < 0) {
-+			dev_err(component->dev, "Failed to enable MCLK for FLL%d\n",
-+				id + 1);
-+			return ret;
-+		}
-+
- 		/* Enable VMID if we need it */
- 		if (!was_enabled) {
-+
- 			active_reference(component);
- 
- 			switch (control->type) {
+ /* Sources for AIF1/2 SYSCLK - use with set_dai_sysclk() */
+ #define WM8994_SYSCLK_MCLK1 1
+ #define WM8994_SYSCLK_MCLK2 2
+@@ -73,9 +80,10 @@ struct wm8994;
+ struct wm8994_priv {
+ 	struct wm_hubs_data hubs;
+ 	struct wm8994 *wm8994;
++	struct clk_bulk_data mclk[WM8994_NUM_MCLK];
+ 	int sysclk[2];
+ 	int sysclk_rate[2];
+-	int mclk[2];
++	int mclk_rate[2];
+ 	int aifclk[2];
+ 	int aifdiv[2];
+ 	int channels[2];
 -- 
 2.20.1
