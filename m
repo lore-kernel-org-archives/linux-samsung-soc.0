@@ -1,44 +1,38 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v5 1/2] dt-bindings: timer: Convert Exynos MCT bindings
- to json-schema
-Date: Tue, 1 Oct 2019 08:39:25 -0500
-Message-ID: <20191001133925.GA13146@bogus>
+Subject: Re: [PATCH v5 2/2] dt-bindings: timer: Use defines instead of
+ numbers in Exynos MCT examples
+Date: Tue, 1 Oct 2019 08:39:39 -0500
+Message-ID: <20191001133939.GA13715@bogus>
 References: <20190930154418.4884-1-krzk@kernel.org>
+ <20190930154418.4884-2-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190930154418.4884-1-krzk@kernel.org>
+In-Reply-To: <20190930154418.4884-2-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 30 Sep 2019 17:44:17 +0200, Krzysztof Kozlowski wrote:
-> Convert Samsung Exynos Soc Multi Core Timer bindings to DT schema format
-> using json-schema.
+On Mon, 30 Sep 2019 17:44:18 +0200, Krzysztof Kozlowski wrote:
+> Make the examples in Exynos Multi Core Timer bindings more readable and
+> bring them closer to real DTS by using defines for interrupt flags.
+> Fix also GIC interrupt type in example for Exynos4412 (from SPI to PPI).
 > 
+> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > 
 > ---
 > 
-> Changes since v4:
-> 1. Do not mention interrupts-extended in the bindings (old bindings
->    mentioned only interrupts).
-> 
-> Changes since v3:
-> 1. Use interrupts-extended instead of interrupts-map in example.
-> 
 > Changes since v1:
-> 1. Indent example with four spaces (more readable),
-> 2. Rename nodes in example to timer,
-> 3. Remove mct-map subnode.
+> 1. Use GIC_PPI where applicable.
+> 
+> Rebased on top of:
+> https://patchwork.kernel.org/project/linux-samsung-soc/list/?series=177667&state=*
 > ---
->  .../bindings/timer/samsung,exynos4210-mct.txt |  88 --------------
->  .../timer/samsung,exynos4210-mct.yaml         | 107 ++++++++++++++++++
->  2 files changed, 107 insertions(+), 88 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
->  create mode 100644 Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+>  .../timer/samsung,exynos4210-mct.yaml         | 37 ++++++++++++++-----
+>  1 file changed, 27 insertions(+), 10 deletions(-)
 > 
 
 Applied, thanks.
