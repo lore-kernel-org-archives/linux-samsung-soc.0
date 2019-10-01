@@ -1,47 +1,49 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] pinctrl: samsung: exynos: Add of_node_put() before return
-Date: Tue, 1 Oct 2019 21:32:37 +0200
-Message-ID: <20191001193237.GB1815@kozik-lap>
-References: <20190804160200.5139-1-nishkadg.linux@gmail.com>
- <20190805162154.GA24769@kozik-lap>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH] PM / devfreq: exynos-ppmu: remove useless assignment
+Date: Wed, 2 Oct 2019 06:33:44 +0900
+Message-ID: <b70439ce-0300-1a95-7ed2-41d70db559a8@samsung.com>
+References: <CGME20191001124646eucas1p2768afab3fc8fbaaf7c2bcf1966b06781@eucas1p2.samsung.com>
+        <20191001124641.22896-1-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20190805162154.GA24769@kozik-lap>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Nishka Dasgupta <nishkadg.linux@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linus.walleij@linaro.org, tomasz.figa@gmail.com, linux-gpio@vger.kernel.org, kgene@kernel.org, s.nawrocki@samsung.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191001124641.22896-1-m.szyprowski@samsung.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 06:21:54PM +0200, Krzysztof Kozlowski wrote:
-> On Sun, Aug 04, 2019 at 09:32:00PM +0530, Nishka Dasgupta wrote:
-> > Each iteration of for_each_child_of_node puts the previous node, but in
-> > the case of a return from the middle of the loop, there is no put, thus
-> > causing a memory leak. Hence add an of_node_put before the return.
-> > Issue found with Coccinelle.
-> > 
-> > Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
-> > ---
-> >  drivers/pinctrl/samsung/pinctrl-exynos.c | 4 +++-
+Hi,
+
+On 19. 10. 1. 오후 9:46, Marek Szyprowski wrote:
+> The error code is propagated to the caller, so there is no need to keep
+> it additionally in the unused variable.
 > 
-> Thanks, applied.
->
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/devfreq/event/exynos-ppmu.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
+> index 87b42055e6bc..85c7a77bf3f0 100644
+> --- a/drivers/devfreq/event/exynos-ppmu.c
+> +++ b/drivers/devfreq/event/exynos-ppmu.c
+> @@ -673,7 +673,6 @@ static int exynos_ppmu_probe(struct platform_device *pdev)
+>  	for (i = 0; i < info->num_events; i++) {
+>  		edev[i] = devm_devfreq_event_add_edev(&pdev->dev, &desc[i]);
+>  		if (IS_ERR(edev[i])) {
+> -			ret = PTR_ERR(edev[i]);
+>  			dev_err(&pdev->dev,
+>  				"failed to add devfreq-event device\n");
+>  			return PTR_ERR(edev[i]);
+> 
 
-Hi Nishka,
+Thanks.
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-I am sorry but I missed the v5.4 merge window and did not push this to
-Linus. It's my fault. I'll push it this time, for v5.5 (no need for
-action from your side).
-
-Best regards,
-Krzysztof
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
