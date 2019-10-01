@@ -1,34 +1,53 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] PM / devfreq: exynos-ppmu: remove useless assignment
-Date: Tue,  1 Oct 2019 14:46:41 +0200
-Message-ID: <20191001124641.22896-1-m.szyprowski@samsung.com>
-References: <CGME20191001124646eucas1p2768afab3fc8fbaaf7c2bcf1966b06781@eucas1p2.samsung.com>
+From: Lukasz Luba <l.luba@partner.samsung.com>
+Subject: [PATCH v2 1/4] dt-bindings: memory-controllers: Add Exynos5422 DMC
+ interrupts description
+Date: Tue,  1 Oct 2019 14:54:33 +0200
+Message-ID: <20191001125436.24086-2-l.luba@partner.samsung.com>
+References: <20191001125436.24086-1-l.luba@partner.samsung.com>
+        <CGME20191001125444eucas1p2e4254acf8434e1fadf0e208dbe62b2d7@eucas1p2.samsung.com>
 Content-Type: text/plain; charset="utf-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191001125436.24086-1-l.luba@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, mark.rutland@arm.com, cw00.choi@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, robh+dt@kernel.org, willy.mh.wolff.ml@gmail.com, Lukasz Luba <l.luba@partner.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The error code is propagated to the caller, so there is no need to keep
-it additionally in the unused variable.
+Add description for optional interrupt lines. It provides a new operation
+mode, which uses internal performance counters interrupt when overflow.
+This is more reliable than using default polling mode implemented in
+devfreq.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 ---
- drivers/devfreq/event/exynos-ppmu.c | 1 -
- 1 file changed, 1 deletion(-)
+ .../bindings/memory-controllers/exynos5422-dmc.txt     | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
-index 87b42055e6bc..85c7a77bf3f0 100644
---- a/drivers/devfreq/event/exynos-ppmu.c
-+++ b/drivers/devfreq/event/exynos-ppmu.c
-@@ -673,7 +673,6 @@ static int exynos_ppmu_probe(struct platform_device *pdev)
- 	for (i = 0; i < info->num_events; i++) {
- 		edev[i] = devm_devfreq_event_add_edev(&pdev->dev, &desc[i]);
- 		if (IS_ERR(edev[i])) {
--			ret = PTR_ERR(edev[i]);
- 			dev_err(&pdev->dev,
- 				"failed to add devfreq-event device\n");
- 			return PTR_ERR(edev[i]);
+diff --git a/Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt b/Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt
+index 02aeb3b5a820..afc38aea6b1c 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt
++++ b/Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt
+@@ -31,6 +31,13 @@ Required properties for DMC device for Exynos5422:
+ 	The register offsets are in the driver code and specyfic for this SoC
+ 	type.
+ 
++Optional properties for DMC device for Exynos5422:
++- interrupt-parent : The parent interrupt controller.
++- interrupts : Contains the IRQ line numbers for the DMC internal performance
++  event counters. Align with specification of the interrupt line(s) in the
++  interrupt-parent controller.
++- interrupt-names : List of IRQ names.
++
+ Example:
+ 
+ 	ppmu_dmc0_0: ppmu@10d00000 {
+@@ -70,4 +77,7 @@ Example:
+ 		device-handle = <&samsung_K3QF2F20DB>;
+ 		vdd-supply = <&buck1_reg>;
+ 		samsung,syscon-clk = <&clock>;
++		interrupt-parent = <&combiner>;
++		interrupts = <16 0>, <16 1>;
++		interrupt-names = "drex_0", "drex_1";
+ 	};
 -- 
 2.17.1
