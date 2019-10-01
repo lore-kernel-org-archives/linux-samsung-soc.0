@@ -2,133 +2,95 @@ Return-Path: <SRS0=5wrF=X2=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 081C4C352AA
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Oct 2019 19:29:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C7D4ECE587
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Oct 2019 19:32:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7FF92133F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Oct 2019 19:29:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53CB021855
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Oct 2019 19:32:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569958195;
-	bh=guYVGS4oFESxTEwbT7ZgiDUNt4rDMEZo7bPXE23p2v4=;
+	s=default; t=1569958363;
+	bh=xHOQAR2EN/rWQ24FFJkuUQoUC/7ga20TE+gudo3uAFI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=HWkxxtxWYGYo8nyNALRfz3CXHX8MhWX0aqDYKA8v9QKvqnv0v/sLSPPfyaW5LBKms
-	 y1ZmpLIGkQkbf27VXOcrdk19sW/hoD+2UJ1blQ0O4uPN+5rr1GPbsSkD9RGI/ejGnn
-	 LSp5p/0ucyqmGRDypywnq+++3AUvxiHr7QL7k6IU=
+	b=xaiHBo4Dv+OwgzZLCOj0Q7cLKiT6Q0+D9IJT0oOqf6/oFddBc+VleDievsYAo0uSp
+	 HBUijvYrp89gvI+kKjhP1YBQ4oJ2G3GMOLPg3L6dL+OKwWzbRmRgXNUQ8IY4t1ligP
+	 XILdDw+gFgf5ECdW+SBOhVfwGJ9W7OxIjfllnwL4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726453AbfJAT3z (ORCPT
+        id S1726692AbfJATcn (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 1 Oct 2019 15:29:55 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38757 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726284AbfJAT3z (ORCPT
+        Tue, 1 Oct 2019 15:32:43 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44712 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726509AbfJATcm (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 1 Oct 2019 15:29:55 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 3so4485491wmi.3;
-        Tue, 01 Oct 2019 12:29:53 -0700 (PDT)
+        Tue, 1 Oct 2019 15:32:42 -0400
+Received: by mail-wr1-f68.google.com with SMTP id z9so3767946wrl.11;
+        Tue, 01 Oct 2019 12:32:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Q0iDGc1E9ekhBaWFlBf1LP49ZCDrj5bAJUiHy7EZfQo=;
-        b=OJEsqWCPeV3koRWKNwLNdwiJ+hZaOw3z45FgC0fUt06AXrTwkdRv+B2Un4gb98yCTk
-         54C7MH7n671dH+6eeUX3AGH455+Mg8qY9T7Mr5Y5cBIgBzP7H6iOFCWpbXYkC8o+WZZb
-         ehChgjEVj5BxYp/p7L13qhnZ1MXfTlg0O9Wx+ykMVMCoA73NMC6zNMIH5L5SAAVao9Z8
-         17u55mDdOZ0yukHeMp0ljbtTQr+4htkOxme+y7BtJVMA1bD/+/V13+Kozknl4NxOd1l1
-         TKreACbVJDWuX+p9+7VeqJU43rl7l2ZLUam3k6+S7WdG20nCO7SweK6wbdj1kZF8DYR9
-         s8Jw==
-X-Gm-Message-State: APjAAAVJU+BkQrPDWV8UB7nD45voFEAK3XXqLD5BnTVsPSllR8ryIRY4
-        HJU4ahcdE6Fsa3/zVyWUXiE=
-X-Google-Smtp-Source: APXvYqz8SWAyLJpy57Jibq45aJj30fnZ1zAgPLs0+ck9XS1xtptYz2Won1AlyuNYf/aSOVkTsYP1bw==
-X-Received: by 2002:a05:600c:351:: with SMTP id u17mr5345904wmd.130.1569958192282;
-        Tue, 01 Oct 2019 12:29:52 -0700 (PDT)
+        bh=ayUbWJsxkqD+mo0+GTLk1QtdaMyIPMQiVn/aJA6TKg8=;
+        b=aG16SI8+yP/uMVk4R/RE2X/uZ3hTAvchJDTvLuIt1HL+7l300TZw1JtQbomGG2DvWW
+         Yna4S2abLYPXX3xAt30NxkyvgWSZZd/fHH68WAXMHrKPyyjnYfCIUTI7Vm5t48dD72m9
+         JCMlamy3hNS3txsulO06zBYo63i370I//bnQlOld6JSRZ+8Rh9xTEs8wa8UOZQloym5d
+         fVZsecM11/mBtVPhRtFzU0rRQCCd/dMnv/1wu8pnwBKMy7W0SunmqR63mZ+oges9NyJc
+         79QyazIqV72iHH+8tbh/hzeKbJoIa/xVPjFylzdb8RIE2/PKvBmEmY+D/zwVPFhtRNjW
+         Rlqg==
+X-Gm-Message-State: APjAAAXSHGgtRDlxcN63ATYwHCoAsKDExT4tBqj8/vdYGgT9eeDew/m+
+        hv/eGDpk3ZURvdyo9K3Q22Y=
+X-Google-Smtp-Source: APXvYqwGswH3573Oay8QhO1I8alNz0mzREZr4xpskZM5gCgbs1QivesTORhlknY68JOJMjfr7TIqUA==
+X-Received: by 2002:a5d:6411:: with SMTP id z17mr7835261wru.274.1569958360403;
+        Tue, 01 Oct 2019 12:32:40 -0700 (PDT)
 Received: from kozik-lap ([194.230.155.145])
-        by smtp.googlemail.com with ESMTPSA id b186sm6524895wmd.16.2019.10.01.12.29.49
+        by smtp.googlemail.com with ESMTPSA id f8sm2516442wmb.37.2019.10.01.12.32.38
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 01 Oct 2019 12:29:51 -0700 (PDT)
-Date:   Tue, 1 Oct 2019 21:29:47 +0200
+        Tue, 01 Oct 2019 12:32:39 -0700 (PDT)
+Date:   Tue, 1 Oct 2019 21:32:37 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Lukasz Luba <l.luba@partner.samsung.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, b.zolnierkie@samsung.com, kgene@kernel.org,
-        mark.rutland@arm.com, robh+dt@kernel.org, cw00.choi@samsung.com,
-        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
-        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
-        keescook@chromium.org, tony@atomide.com, jroedel@suse.de,
-        treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org,
-        willy.mh.wolff.ml@gmail.com
-Subject: Re: [PATCH v13 0/8] Exynos5 Dynamic Memory Controller driver
-Message-ID: <20191001192947.GA1815@kozik-lap>
-References: <CGME20190821104316eucas1p2ecd715f3105921ec83e0acf1291201f8@eucas1p2.samsung.com>
- <20190821104303.32079-1-l.luba@partner.samsung.com>
+To:     Nishka Dasgupta <nishkadg.linux@gmail.com>
+Cc:     linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, tomasz.figa@gmail.com,
+        s.nawrocki@samsung.com, kgene@kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: samsung: exynos: Add of_node_put() before return
+Message-ID: <20191001193237.GB1815@kozik-lap>
+References: <20190804160200.5139-1-nishkadg.linux@gmail.com>
+ <20190805162154.GA24769@kozik-lap>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-In-Reply-To: <20190821104303.32079-1-l.luba@partner.samsung.com>
+In-Reply-To: <20190805162154.GA24769@kozik-lap>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20191001192947.O2W8_hM6hSLDBWH5BASgZFkCkmF2OjSZBozNQ6podlM@z>
+Message-ID: <20191001193237.mBL5sL06W7nVNo5sCZ0jd4yXVfHh0D09vXsNpCcLIVM@z>
 
-On Wed, Aug 21, 2019 at 12:42:55PM +0200, Lukasz Luba wrote:
-> Hi all,
+On Mon, Aug 05, 2019 at 06:21:54PM +0200, Krzysztof Kozlowski wrote:
+> On Sun, Aug 04, 2019 at 09:32:00PM +0530, Nishka Dasgupta wrote:
+> > Each iteration of for_each_child_of_node puts the previous node, but in
+> > the case of a return from the middle of the loop, there is no put, thus
+> > causing a memory leak. Hence add an of_node_put before the return.
+> > Issue found with Coccinelle.
+> > 
+> > Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
+> > ---
+> >  drivers/pinctrl/samsung/pinctrl-exynos.c | 4 +++-
 > 
-> This is v13 which makes cosmetic changes. It is based on current mainline
-> (v5.3-rc5) with with devfreq/for-next where there is a PPMU patch [1].
-> 
-> The patch set adds support of Dynamic Memory Controller for Exynos5422 SoC.
-> The driver supports Dynamic Voltage and Frequency Scaling
-> for the DMC and DRAM. It also provides needed timings for different
-> speed operations of the DRAM memory.
-> There is also new generic code in of_memory and headers which allows to parse
-> LPDDR3 memories defined in device-tree.
-> 
-> Here are the last changes suggested by Krzysztof during his review.
-> For the previous changes in older revisions please refer to [2], there is
-> more detailed change log.
-> 
-> changes:
-> v13:
-> - skipped patch with chipID changes in DT, since it is not used anymore,
-> - removed license comment in of_memory.c since SPDX has been merged,
-> - aligned comment to the current fields in the structure,
-> - changed printed warning when timings are not found,
-> 
-> Regards,
-> Lukasz Luba
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git/commit/?h=for-next&id=b617376df8f01c975dee66802f4da16291f92079
-> [2] https://lkml.org/lkml/2019/7/22/251
-> 
-> 
-> Lukasz Luba (8):
->   dt-bindings: ddr: rename lpddr2 directory
->   dt-bindings: ddr: add LPDDR3 memories
->   drivers: memory: extend of_memory by LPDDR3 support
->   dt-bindings: memory-controllers: add Exynos5422 DMC device description
->   drivers: memory: add DMC driver for Exynos5422
->   ARM: dts: exynos: add syscon to clock compatible
->   ARM: dts: exynos: add DMC device for exynos5422
->   ARM: exynos_defconfig: enable DMC driver
+> Thanks, applied.
 >
 
-Just to let you know:
+Hi Nishka,
 
-I applied the set some days ago but this did not make to merge window.
-Now, I put it on for-next branch so will appear on linux-next soon. I
-also applied the fixes sent later.
-
-I'll take also the latest work with interrupt mode for DMC (after minor
-fix in bindings).
+I am sorry but I missed the v5.4 merge window and did not push this to
+Linus. It's my fault. I'll push it this time, for v5.5 (no need for
+action from your side).
 
 Best regards,
 Krzysztof
-
