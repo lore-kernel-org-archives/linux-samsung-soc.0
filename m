@@ -2,95 +2,154 @@ Return-Path: <SRS0=5wrF=X2=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C7D4ECE587
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Oct 2019 19:32:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB3ECECE587
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Oct 2019 21:29:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53CB021855
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Oct 2019 19:32:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569958363;
-	bh=xHOQAR2EN/rWQ24FFJkuUQoUC/7ga20TE+gudo3uAFI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=xaiHBo4Dv+OwgzZLCOj0Q7cLKiT6Q0+D9IJT0oOqf6/oFddBc+VleDievsYAo0uSp
-	 HBUijvYrp89gvI+kKjhP1YBQ4oJ2G3GMOLPg3L6dL+OKwWzbRmRgXNUQ8IY4t1ligP
-	 XILdDw+gFgf5ECdW+SBOhVfwGJ9W7OxIjfllnwL4=
+	by mail.kernel.org (Postfix) with ESMTP id 5546D21920
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Oct 2019 21:29:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="B7G370sx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726692AbfJATcn (ORCPT
+        id S1727842AbfJAV3C (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 1 Oct 2019 15:32:43 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44712 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726509AbfJATcm (ORCPT
+        Tue, 1 Oct 2019 17:29:02 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:47663 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727814AbfJAV3B (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 1 Oct 2019 15:32:42 -0400
-Received: by mail-wr1-f68.google.com with SMTP id z9so3767946wrl.11;
-        Tue, 01 Oct 2019 12:32:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ayUbWJsxkqD+mo0+GTLk1QtdaMyIPMQiVn/aJA6TKg8=;
-        b=aG16SI8+yP/uMVk4R/RE2X/uZ3hTAvchJDTvLuIt1HL+7l300TZw1JtQbomGG2DvWW
-         Yna4S2abLYPXX3xAt30NxkyvgWSZZd/fHH68WAXMHrKPyyjnYfCIUTI7Vm5t48dD72m9
-         JCMlamy3hNS3txsulO06zBYo63i370I//bnQlOld6JSRZ+8Rh9xTEs8wa8UOZQloym5d
-         fVZsecM11/mBtVPhRtFzU0rRQCCd/dMnv/1wu8pnwBKMy7W0SunmqR63mZ+oges9NyJc
-         79QyazIqV72iHH+8tbh/hzeKbJoIa/xVPjFylzdb8RIE2/PKvBmEmY+D/zwVPFhtRNjW
-         Rlqg==
-X-Gm-Message-State: APjAAAXSHGgtRDlxcN63ATYwHCoAsKDExT4tBqj8/vdYGgT9eeDew/m+
-        hv/eGDpk3ZURvdyo9K3Q22Y=
-X-Google-Smtp-Source: APXvYqwGswH3573Oay8QhO1I8alNz0mzREZr4xpskZM5gCgbs1QivesTORhlknY68JOJMjfr7TIqUA==
-X-Received: by 2002:a5d:6411:: with SMTP id z17mr7835261wru.274.1569958360403;
-        Tue, 01 Oct 2019 12:32:40 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.145])
-        by smtp.googlemail.com with ESMTPSA id f8sm2516442wmb.37.2019.10.01.12.32.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 01 Oct 2019 12:32:39 -0700 (PDT)
-Date:   Tue, 1 Oct 2019 21:32:37 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Nishka Dasgupta <nishkadg.linux@gmail.com>
-Cc:     linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, tomasz.figa@gmail.com,
-        s.nawrocki@samsung.com, kgene@kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: samsung: exynos: Add of_node_put() before return
-Message-ID: <20191001193237.GB1815@kozik-lap>
-References: <20190804160200.5139-1-nishkadg.linux@gmail.com>
- <20190805162154.GA24769@kozik-lap>
+        Tue, 1 Oct 2019 17:29:01 -0400
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20191001212859epoutp03399a3b117afb0664376096f4e245e541~JoyiVmAj83038230382epoutp03M
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Oct 2019 21:28:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20191001212859epoutp03399a3b117afb0664376096f4e245e541~JoyiVmAj83038230382epoutp03M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1569965339;
+        bh=Yw3R56mDxhyX+u4BbNdpgiLhPEMauvLJ8lCJK6ld5rI=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=B7G370sxl+pK92P/zn2FfPr/DyZWbVTyus2c5paURjEeGrcd5iEhvMk9iyHRDu0ti
+         ZLfNXJtlPiFOIF17nzNkLRiJ3ue/3w1nOtZSYv3Hn7pnwPeT/iydEUjeYSPaE1Qhn1
+         z5i3jhol3E7+w/H/rD3fLxFPjoufAMODqNdOZKdk=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20191001212859epcas1p3994901743dac42e89b4e5b8246638f0e~Joyh9zKKr2696226962epcas1p3W;
+        Tue,  1 Oct 2019 21:28:59 +0000 (GMT)
+Received: from epsmges1p5.samsung.com (unknown [182.195.40.156]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 46jXT50YFmzMqYkV; Tue,  1 Oct
+        2019 21:28:57 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+        4C.9D.04068.815C39D5; Wed,  2 Oct 2019 06:28:57 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20191001212856epcas1p3e718d6ad3965a6956cc49007e3a95fd4~JoyfOofDg2696226962epcas1p3V;
+        Tue,  1 Oct 2019 21:28:56 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191001212856epsmtrp17d413fd26795ac38443de3f1128b6b65~JoyfLOYjM2299222992epsmtrp1f;
+        Tue,  1 Oct 2019 21:28:56 +0000 (GMT)
+X-AuditID: b6c32a39-f5fff70000000fe4-6c-5d93c518e45c
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        6E.9F.03889.815C39D5; Wed,  2 Oct 2019 06:28:56 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191001212856epsmtip12fe8c2e438560997049fb2d8134b9bd1~Joye-1klJ2152221522epsmtip1S;
+        Tue,  1 Oct 2019 21:28:56 +0000 (GMT)
+Subject: Re: [PATCH] PM / devfreq: exynos-ppmu: remove useless assignment
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <b70439ce-0300-1a95-7ed2-41d70db559a8@samsung.com>
+Date:   Wed, 2 Oct 2019 06:33:44 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <20191001124641.22896-1-m.szyprowski@samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0gUURjt7uzOjuHWtGp9SpROEiioO+rqKBpBERv2Qygoim2ddNiVfbaz
+        hlbQ9lDTsiyjdEt70UMjTTEpTRfUNAXflaFogi5lREFZmEq0zij573zfd84937n3EpiyAg8i
+        Mi0Ozm5hTRS+WtrQFhYREfi6RKu6VSFhaktrZExf3zM5M9R4C2d+FrUjprSvRcI8bR+TM6On
+        H+Pb5Zq6qgJcc6m+Cml+1m1KxQ4akwwcm8HZgzlLujUj06JPplL26nbo1HEqOoJOYOKpYAtr
+        5pKpnXtSI3ZlmrzmVPAx1pTlbaWyPE9FbUuyW7McXLDByjuSKc6WYbIl2CJ51sxnWfSR6VZz
+        Iq1SRau9xDSjofrvuMRWTGSfuzErc6JBvBD5EEDGwmTeGXkhWk0oyRcI3g4UYWLxA8F7z1eZ
+        WPxG0HOzQbosKfRU4OKgGcHD6j9LxXcEHQ0FkkWWH7kbPo3XCwN/8iKC6dF+4SyMLERQPNwi
+        W2ThZDi4P38QVllLhsC72Um0iBXkNvhaPiNwpGQozLbUCt4B5AH4MdEmEznroKtsSuj7ePnz
+        j12CFiM3wMjUbYmIN8PZ5zeFREB+xKEzNxcTQ+yEucE3S9gPvnTWy0UcBNOX85bwCajsasdF
+        8XkE9e5+mTiIAfeDEq8D4XUIg5rGKLEdAi/ny5eWWAPffl2ULVKAVMD5PKVI2QJDE2MSEQfC
+        /fwCvBhRrhVxXCsiuFZEcP03u4OkVWg9Z+PNeo6nbeqVD16HhL8ZnvACdfTuaUUkgShfxYd9
+        JVqljD3G55hbERAY5a9IWriqVSoy2JzjnN2qs2eZOL4Vqb23fQULCki3en+6xaGj1dExMTFM
+        LB2npmlqg0Kjd2qVpJ51cEaOs3H2ZZ2E8Alyothn3MbW41uPenqaQsnaJ579AWu6a21NzemX
+        VO6XJ+Ou6VbFb8k3DBlPlRq0vr1HJuuaIpt3DQ8/0oQ2vvI/OLKQeKi7sqhgIFuZ5ryRW3P4
+        +t2U+Ed7D+TMXwB//J6xp7I/bGTq2/sZz9Gq0bnOabc6obojJMdZmZ3W1ZQ3HtJSRkl5A0uH
+        Y3ae/QdqMkX4sQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnkeLIzCtJLcpLzFFi42LZdlhJTlfi6ORYg3sTRCw2zljPanH+/AZ2
+        i8u75rBZfO49wmgx4/w+Jou1R+6yW9xuXMHmwO6xaVUnm0ffllWMHp83yQUwR3HZpKTmZJal
+        FunbJXBlrPt3j6lgAkdFy/QfrA2Ml9i6GDk5JARMJLqezgOzhQR2M0q0X1CAiEtKTLt4lLmL
+        kQPIFpY4fLi4i5ELqOQto8SB02fB6oUFPCWe39vCBpIQEehhlHj3ah8jiMMM4mxrWsUK0TKR
+        UWLXm9lMIC1sAloS+1/cAGvnF1CUuPrjMSOIzStgJ/Fm7hdWEJtFQEXix76NLCC2qECExOEd
+        s6BqBCVOznwCFucEqv+9AiLOLKAu8WfeJWYIW1zi1pP5TBC2vETz1tnMExiFZyFpn4WkZRaS
+        lllIWhYwsqxilEwtKM5Nzy02LDDKSy3XK07MLS7NS9dLzs/dxAiOHi2tHYwnTsQfYhTgYFTi
+        4b0RMjlWiDWxrLgy9xCjBAezkgivzZ9JsUK8KYmVValF+fFFpTmpxYcYpTlYlMR55fOPRQoJ
+        pCeWpGanphakFsFkmTg4pRoYiwoFmJeafOY90+jfFTOz7JH8yfnFmY5hO+34hdwlbnRkBbJ9
+        sVHMsqz9JpH0Xcvqi+cG8RdX6xPfy/WrqN9oOnXcO5X/k1Orcuu+WyvXNDHfiOq7onaeK7Sq
+        3mbZpVzhNaaV96dOcd2wn2dWRNyU+aavGENL9pyrXvb7h0RIzsN3k3b+SJqgxFKckWioxVxU
+        nAgAeqdNmpoCAAA=
+X-CMS-MailID: 20191001212856epcas1p3e718d6ad3965a6956cc49007e3a95fd4
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-In-Reply-To: <20190805162154.GA24769@kozik-lap>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20191001124646eucas1p2768afab3fc8fbaaf7c2bcf1966b06781
+References: <CGME20191001124646eucas1p2768afab3fc8fbaaf7c2bcf1966b06781@eucas1p2.samsung.com>
+        <20191001124641.22896-1-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20191001193237.mBL5sL06W7nVNo5sCZ0jd4yXVfHh0D09vXsNpCcLIVM@z>
+Message-ID: <20191001213344.OXTwItIhwlTVYmyr53iNsBa1bopCZtKCJU84s3TagTY@z>
 
-On Mon, Aug 05, 2019 at 06:21:54PM +0200, Krzysztof Kozlowski wrote:
-> On Sun, Aug 04, 2019 at 09:32:00PM +0530, Nishka Dasgupta wrote:
-> > Each iteration of for_each_child_of_node puts the previous node, but in
-> > the case of a return from the middle of the loop, there is no put, thus
-> > causing a memory leak. Hence add an of_node_put before the return.
-> > Issue found with Coccinelle.
-> > 
-> > Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
-> > ---
-> >  drivers/pinctrl/samsung/pinctrl-exynos.c | 4 +++-
+Hi,
+
+On 19. 10. 1. 오후 9:46, Marek Szyprowski wrote:
+> The error code is propagated to the caller, so there is no need to keep
+> it additionally in the unused variable.
 > 
-> Thanks, applied.
->
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/devfreq/event/exynos-ppmu.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
+> index 87b42055e6bc..85c7a77bf3f0 100644
+> --- a/drivers/devfreq/event/exynos-ppmu.c
+> +++ b/drivers/devfreq/event/exynos-ppmu.c
+> @@ -673,7 +673,6 @@ static int exynos_ppmu_probe(struct platform_device *pdev)
+>  	for (i = 0; i < info->num_events; i++) {
+>  		edev[i] = devm_devfreq_event_add_edev(&pdev->dev, &desc[i]);
+>  		if (IS_ERR(edev[i])) {
+> -			ret = PTR_ERR(edev[i]);
+>  			dev_err(&pdev->dev,
+>  				"failed to add devfreq-event device\n");
+>  			return PTR_ERR(edev[i]);
+> 
 
-Hi Nishka,
+Thanks.
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-I am sorry but I missed the v5.4 merge window and did not push this to
-Linus. It's my fault. I'll push it this time, for v5.5 (no need for
-action from your side).
-
-Best regards,
-Krzysztof
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
