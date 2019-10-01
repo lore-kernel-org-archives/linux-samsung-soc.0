@@ -2,176 +2,159 @@ Return-Path: <SRS0=5wrF=X2=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F719C352AA
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Oct 2019 12:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04091ECE58A
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Oct 2019 12:38:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFD8721924
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Oct 2019 12:36:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C63D321920
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  1 Oct 2019 12:38:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VEhDDGOA"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Kc5elUoe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387854AbfJAMgn (ORCPT
+        id S1732783AbfJAMir (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 1 Oct 2019 08:36:43 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:52498 "EHLO
+        Tue, 1 Oct 2019 08:38:47 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:53166 "EHLO
         mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387837AbfJAMgm (ORCPT
+        with ESMTP id S2387880AbfJAMiq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 1 Oct 2019 08:36:42 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191001123641euoutp01ca15dc9f2a65151977730ecacd20dd08~JhhxTI3xI0998109981euoutp01E
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Oct 2019 12:36:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191001123641euoutp01ca15dc9f2a65151977730ecacd20dd08~JhhxTI3xI0998109981euoutp01E
+        Tue, 1 Oct 2019 08:38:46 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191001123845euoutp0157ffec21265337d1ae9c821660db42a3~JhjkmcrQ51202112021euoutp01z
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Oct 2019 12:38:45 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191001123845euoutp0157ffec21265337d1ae9c821660db42a3~JhjkmcrQ51202112021euoutp01z
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1569933401;
-        bh=6Pr3bvlwTEEuaJryJIjyun0TpsiDiHDMaMQxx7hutTk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VEhDDGOAJcXcLxe+oLqmkUtIfGibVYCn3SHrBjdPXiXV+lZJCqaxqCPyQD0RyzVb2
-         X7kuz057tW+timTJgXhB65EyIyVIUNe+pT6FEba50Cye6I6A4ep8A9ljJjt6WDWBo0
-         Z/5EtmEGZZSVpwgVRPulBlBw+XW01xfcZg89oBhw=
+        s=mail20170921; t=1569933525;
+        bh=P3LQEMEr2ElljIQFeYWukVZZz3LkJ8Ybhmdpwqsf1A0=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=Kc5elUoefFeEupRb9TuW6SBOmhq0W00Sgqtnjrb8pKXWT+NKi+hoJeb/qvF0gGVVG
+         NoZI8p5nmKYN8hY5xHbJw4rqe5k9m1AVPqtoiECyhShwguXFa9/qdB9UXt6R3BTe+N
+         OdQUq9BQutxwBb67S4dwN3H9dOtXYhYtoVKv6K8s=
 Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20191001123640eucas1p20b765903788d7e533396cf28af66f0f2~Jhhw8BUhk0767207672eucas1p28;
-        Tue,  1 Oct 2019 12:36:40 +0000 (GMT)
+        20191001123844eucas1p24a109be47dc918a3c988aeeb63b7f6f0~JhjkOeLGg2967929679eucas1p2a;
+        Tue,  1 Oct 2019 12:38:44 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id A5.33.04374.858439D5; Tue,  1
-        Oct 2019 13:36:40 +0100 (BST)
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id EB.73.04374.4D8439D5; Tue,  1
+        Oct 2019 13:38:44 +0100 (BST)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20191001123640eucas1p265d38cc9ad2a3103abd63b5d04d18628~JhhwqTg3E0566705667eucas1p2K;
-        Tue,  1 Oct 2019 12:36:40 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20191001123844eucas1p1ab3cf26fa7a5ec8748b67f49df5aaa47~JhjjyhIH60392003920eucas1p1_;
+        Tue,  1 Oct 2019 12:38:44 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191001123640eusmtrp108eb05d1591c62afe095edda02189ddf~Jhhwpo-zP0390803908eusmtrp1P;
-        Tue,  1 Oct 2019 12:36:40 +0000 (GMT)
-X-AuditID: cbfec7f5-4f7ff70000001116-be-5d934858d106
+        20191001123844eusmtrp10339363d1656fab2f497e0178b59ca6e~JhjjxsAZZ0473004730eusmtrp1X;
+        Tue,  1 Oct 2019 12:38:44 +0000 (GMT)
+X-AuditID: cbfec7f5-4f7ff70000001116-24-5d9348d4aacc
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 1F.33.04117.858439D5; Tue,  1
-        Oct 2019 13:36:40 +0100 (BST)
-Received: from AMDC3061.DIGITAL.local (unknown [106.120.51.75]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id CA.0B.04166.4D8439D5; Tue,  1
+        Oct 2019 13:38:44 +0100 (BST)
+Received: from [106.120.51.20] (unknown [106.120.51.20]) by
         eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191001123640eusmtip25fdf9f8993637bb262eebb300b1dd1a5~JhhwEfYGH1272012720eusmtip2i;
-        Tue,  1 Oct 2019 12:36:39 +0000 (GMT)
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-To:     broonie@kernel.org, krzk@kernel.org
-Cc:     lgirdwood@gmail.com, ckeepax@opensource.cirrus.com,
-        sbkim73@samsung.com, alsa-devel@alsa-project.org,
-        patches@opensource.cirrus.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com,
-        m.szyprowski@samsung.com,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v3 RESEND 3/3] ASoC: samsung: Rename Arndale card driver
-Date:   Tue,  1 Oct 2019 14:36:25 +0200
-Message-Id: <20191001123625.19370-3-s.nawrocki@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191001123625.19370-1-s.nawrocki@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA0WSe0hTYRjG+85lO1ueOk7JL7OkpZRCXjLihNIFw47/xP4Iisxq5Ulnbsrm
-        JY1ILC9NU1Nqy5Q0ZtnUnJuKZllMc5DV0LS0EF0KZiYDp0klmdtR+u/3PM/78L58fAQqqsS9
-        CZkilVUqpElinhBr6/31fvdJpjw2ZHpqHz3Yb0boZm0TTt+xTfLowVwjoK1WA5/+OViA0MaJ
-        jzittXYhdGPPKJ922F/idPePfJzur5tHDrkxBkcOj+moGOUzRv1NHmPSXWM0lcuAKW7RA8Zh
-        3CbhnxJGxLFJsnRWGXzgnDDhTXkhSLGJLptbZpFsML5RDQQEpPZC63Q9Tw2EhIiqA9Dc3bUq
-        5gGs6elBOOEA0GjUgLXKk7d3MS54DOCCYYbnDFyVkqciJ/OoUHjrdbGr4EnthGPaHNxZQKkO
-        BH4dGsOcgQfFwPxPcy7GKH9Ya83GnUxS4dA2N4xx23xhveEVqgYEIaAiYIFewNmP+HBAd4zj
-        I9D2rX31OA/43dLC59gH9pUXuQ6F1HUAizq/8DlRCuCYpXq1EQ67Lf24cwFKBcCmZ8GcfRh2
-        PLcjThtSG+DwrLvTRlewrE2DcjYJC/JE3LQf/KPXIBx7w8LJZYwbYWDvvQzuqUoA1FXp+KXA
-        t+L/rmoA9MCLTVPJ41lVmILNCFJJ5ao0RXzQhWS5Eaz8mb6/loV20LV03gwoAojdSHrqdqwI
-        l6arMuVmAAlU7ElGLJXFisg4aWYWq0w+q0xLYlVmsIXAxF7klXXjMSIqXprKXmLZFFa5liKE
-        wDsbSELco37nHR9wJwNytye/aMjCpurFHyYSvBKx2hOF8vGaeptpz6bGKrt4UfaQIWdkiRlZ
-        pzc3fE4IGzbFPNhlUSOsRCLY0XoGOVjeOsprXh8dRXZuNeWH40fDyEXPG6iPn+ni/c7IIXmd
-        ttY/sFe+/133yEJAdKTWXjGiuZomxlQJ0tBAVKmS/gOln6FGLwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLLMWRmVeSWpSXmKPExsVy+t/xe7oRHpNjDaZOVLS4cvEQk8XGGetZ
-        LaY+fMJmcaV1E6PF+fMb2C2+Xelgstj0+BqrxYzz+5gs1h65y27x+f1+VovDb9pZLS6u+MLk
-        wOOx4XMTm8fOWXfZPTat6mTz2Lyk3mP6nP+MHn1bVjF6fN4kF8AepWdTlF9akqqQkV9cYqsU
-        bWhhpGdoaaFnZGKpZ2hsHmtlZKqkb2eTkpqTWZZapG+XoJdxanI3Y8FDoYpDW94yNTA+4O9i
-        5OSQEDCRWHlmGksXIxeHkMBSRolfX2YxdjFyACWkJOa3KEHUCEv8udbFBmILCXxiBHJcQWw2
-        AUOJ3qN9jCC2iICmRMe826wgc5gFDjNJLO44yAKSEBbwkGi//gnMZhFQlVh6voEVxOYVsJZ4
-        +OkGC8QCeYnVGw4wg+zlFLCR6FjFCbHLWqLl6xrGCYx8CxgZVjGKpJYW56bnFhvpFSfmFpfm
-        pesl5+duYgQG/bZjP7fsYOx6F3yIUYCDUYmH1+L5xFgh1sSy4srcQ4wSHMxKIrw2fybFCvGm
-        JFZWpRblxxeV5qQWH2I0BbppIrOUaHI+MCLzSuINTQ3NLSwNzY3Njc0slMR5OwQOxggJpCeW
-        pGanphakFsH0MXFwSjUw7pl0b+vCKWH5Zf7ea+XMe3Yqei/lZFtyJ8D83Jwfl7WfMR1y7v9l
-        ljn/zpoVAelVjdemLNUtW///SFLX+t0Mnq21q44FSPxjatVSDdo5bc8PLoaY+fkvDh00+afc
-        m9agN7FtzeMdai93KDht2BKgdujlT64JlnnlAtdr/mimn+sRTZH6tPWFqBJLcUaioRZzUXEi
-        AJfY47SQAgAA
-X-CMS-MailID: 20191001123640eucas1p265d38cc9ad2a3103abd63b5d04d18628
+        20191001123843eusmtip237921a023022d439d4283e2bae0b2dd9~JhjjG90Ma1599415994eusmtip2u;
+        Tue,  1 Oct 2019 12:38:43 +0000 (GMT)
+Subject: Re: [PATCH 1/3] ARM: dts: exynos: Add interrupt to DMC controller
+ in Exynos5422
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com,
+        kgene@kernel.org, mark.rutland@arm.com, cw00.choi@samsung.com,
+        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
+        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
+        robh+dt@kernel.org, willy.mh.wolff.ml@gmail.com
+From:   Lukasz Luba <l.luba@partner.samsung.com>
+Message-ID: <16c56e81-d0a7-a405-fa12-83442364c260@partner.samsung.com>
+Date:   Tue, 1 Oct 2019 14:38:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190927085359.GA19131@pi3>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRju29m5OJodp+WbhcEKUkMzKvgg8QIq+5XRrzBWrXZQyU3bmZYm
+        5KWLzmtalqs0pZoMY2ViOkpBl1O6mOYtozCVpFKLZg3BLI/HyH/P+7zP+z7P+/ExhGKI9GOS
+        9EbOoNckKymZtLlr/lXwgKpCHZo/sh0/vG4j8fDcFIlrHK9IXDrxlcC9vQ9o/DJ3msaNE0Mk
+        fmO/SWFXsQPh671tEnzf8Z7Gd4f7JPhdTj2FLzx10Lhz+hKJf3WPo0hW1VDdgFSt5ve0qtFa
+        QKke3TmnKmmyIpWr0f8AFS8L03LJSemcYWf4MVliSf2O1HbZmdqKQjIbdTImxDDA7oEnV3Um
+        5MEo2HoETlOgCcmW8ByC9hdtlFi4EPTbZ0hBJQzk5UyQYsOCILfsrUQsZhCU5nykBZU3Gw8N
+        rkGpgH3YQBj+7V6eJlgzAYM1QYI1xYZAi/WUQMvZWCirvCcRaCm7DS4WUAK9nj0EP8Y6SVHi
+        BT1Vk8sbPZY2jtxYpMWNvjA6WSMR8RZ4PHOTEOIAm8OA6ZsTiaGjYd49KxGxN3xxNtEi3gzP
+        K4qkIuYhu7h2RZ8FE6W3VjT7oNPZRwrZiCVjm32nSEdBV79FKj6iJ4zMeIkRPKG8+Roh0nLI
+        v6gQ1QHQVPR6JcAGsDRU0mVIaV51mHnVMeZVx5j/+95GUivy5dJ4XQLH79Zzp0N4jY5P0yeE
+        nEjRNaKl3/Z80fmzBbUtHO9ALIOUa+V46rJaQWrS+QxdBwKGUPrIwxbK1Qq5VpORyRlSjhrS
+        kjm+A21ipEpf+dk1Y4cVbILGyJ3kuFTO8K8rYTz8slHcEKxxr1PRza37Y5SLan0wepeSanRE
+        dEcfKd0b62+LURf98aprabI0X+juW7BndXwecGurAii/iO/h97e7t1SFvul5Vh1l4lsTvGxH
+        XMYPYenedYu2SGvhp6nM+BPjwXULvv3G9vNbr+QRksKNEQfDb0BitU+c1t81SrGWWaWUT9Ts
+        CiIMvOYvnYKBEGkDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDIsWRmVeSWpSXmKPExsVy+t/xe7pXPCbHGlz7x2WxccZ6VovrX56z
+        Wsw/co7Vov/xa2aL8+c3sFucbXrDbrHp8TVWi8u75rBZfO49wmgx4/w+Jou1R+6yWyy9fpHJ
+        4nbjCjaL1r1H2C0Ov2lntfh24hGjg4DHmnlrGD12zrrL7rFpVSebx+Yl9R59W1YxenzeJBfA
+        FqVnU5RfWpKqkJFfXGKrFG1oYaRnaGmhZ2RiqWdobB5rZWSqpG9nk5Kak1mWWqRvl6CX0bdC
+        u2A/V8XCyd2sDYyHOboYOTkkBEwkmhsfs4LYQgJLGSWez3aBiItJTNq3nR3CFpb4c62LrYuR
+        C6jmNaNEz7wvjCAJYYEoib3r54MViQhoSlz/+50VpIhZYBazxPorzSwQHS8YJa6caGfuYuTg
+        YBPQk9ixqhCkgVfATWLCtGVMIGEWARWJtk42kLCoQITE4R2zGCFKBCVOznzCAmJzAs2/Mfsf
+        2C5mATOJeZsfMkPY4hK3nsxngrDlJba/ncM8gVFoFpL2WUhaZiFpmYWkZQEjyypGkdTS4tz0
+        3GJDveLE3OLSvHS95PzcTYzAmN527OfmHYyXNgYfYhTgYFTi4Z3wcmKsEGtiWXFl7iFGCQ5m
+        JRFemz+TYoV4UxIrq1KL8uOLSnNSiw8xmgL9NpFZSjQ5H5hu8kriDU0NzS0sDc2NzY3NLJTE
+        eTsEDsYICaQnlqRmp6YWpBbB9DFxcEo1MHpxKDecfPNweoayqUnCvMmsm5R5mzvaJ28V+Ga8
+        5+mzAwuvTFzWlsFswOb8audV/6uc4do3n7olV5Y/67GdWjWR+7uzyxpG89CdLw/tWhYcvvYr
+        Z/h52xtRSTpfV83ICZ9aMEV/2VdR48Pad4SPxPvX+LO8VZjBOWmvbqtguYLziic/prJy6Cqx
+        FGckGmoxFxUnAgDoPfRt/wIAAA==
+X-CMS-MailID: 20191001123844eucas1p1ab3cf26fa7a5ec8748b67f49df5aaa47
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="UTF-8"
-X-RootMTR: 20191001123640eucas1p265d38cc9ad2a3103abd63b5d04d18628
+X-RootMTR: 20190925161842eucas1p271a9cf4f62b3d7af02c0a5d0d1eb9c4f
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20191001123640eucas1p265d38cc9ad2a3103abd63b5d04d18628
-References: <20191001123625.19370-1-s.nawrocki@samsung.com>
-        <CGME20191001123640eucas1p265d38cc9ad2a3103abd63b5d04d18628@eucas1p2.samsung.com>
+X-CMS-RootMailID: 20190925161842eucas1p271a9cf4f62b3d7af02c0a5d0d1eb9c4f
+References: <20190925161813.21117-1-l.luba@partner.samsung.com>
+        <CGME20190925161842eucas1p271a9cf4f62b3d7af02c0a5d0d1eb9c4f@eucas1p2.samsung.com>
+        <20190925161813.21117-2-l.luba@partner.samsung.com>
+        <20190927085359.GA19131@pi3>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20191001123625.B5n9nORpNSSzfg1CbZKFago6HlmYrZqW0dXyTNbKMmA@z>
+Message-ID: <20191001123843.7AiEG1QaSbq28c43uXlx4m5AIUOBMzP056sKwrWCa5M@z>
 
-Rename arndale_rt5631.c to just arnddale.c as we support other CODECs
-than RT5631.  While at it replace spaces in Kconfig with tabs.
+Hi Krzysztof,
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
-Changes since v1:
- - new patch.
----
- sound/soc/samsung/Kconfig                         | 10 +++++-----
- sound/soc/samsung/Makefile                        |  4 ++--
- sound/soc/samsung/{arndale_rt5631.c => arndale.c} |  0
- 3 files changed, 7 insertions(+), 7 deletions(-)
- rename sound/soc/samsung/{arndale_rt5631.c => arndale.c} (100%)
+On 9/27/19 10:53 AM, Krzysztof Kozlowski wrote:
+> On Wed, Sep 25, 2019 at 06:18:11PM +0200, Lukasz Luba wrote:
+>> Add interrupt to Dynamic Memory Controller in Exynos5422 and Odroid
+>> XU3-family boards. It will be used instead of devfreq polling mode
+>> governor. The interrupt is connected to performance counters private
+>> for DMC, which might track utilisation of the memory channels.
+>>
+>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+>> ---
+>>   arch/arm/boot/dts/exynos5420.dtsi | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+>> index ac49373baae7..72738e620d11 100644
+>> --- a/arch/arm/boot/dts/exynos5420.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+>> @@ -240,6 +240,8 @@
+>>   		dmc: memory-controller@10c20000 {
+>>   			compatible = "samsung,exynos5422-dmc";
+>>   			reg = <0x10c20000 0x100>, <0x10c30000 0x100>;
+>> +			interrupt-parent = <&combiner>;
+>> +			interrupts = <16 0>;
+> 
+> You register DMC for DREX0 and DREX1 but take only DREX0 interrupt. Why
+> skipping second?
+> 
 
-diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-index 6803cbfa9e46..1a0b163ca47b 100644
---- a/sound/soc/samsung/Kconfig
-+++ b/sound/soc/samsung/Kconfig
-@@ -194,11 +194,11 @@ config SND_SOC_ODROID
- 	help
- 	  Say Y here to enable audio support for the Odroid XU3/XU4.
- 
--config SND_SOC_ARNDALE_RT5631_ALC5631
--        tristate "Audio support for RT5631(ALC5631) on Arndale Board"
--        depends on I2C
--        select SND_SAMSUNG_I2S
--        select SND_SOC_RT5631
-+config SND_SOC_ARNDALE
-+	tristate "Audio support for Arndale Board"
-+	depends on I2C
-+	select SND_SAMSUNG_I2S
-+	select SND_SOC_RT5631
- 	select MFD_WM8994
- 	select SND_SOC_WM8994
- 
-diff --git a/sound/soc/samsung/Makefile b/sound/soc/samsung/Makefile
-index c3b76035f69c..8f5dfe20b9f1 100644
---- a/sound/soc/samsung/Makefile
-+++ b/sound/soc/samsung/Makefile
-@@ -39,7 +39,7 @@ snd-soc-lowland-objs := lowland.o
- snd-soc-littlemill-objs := littlemill.o
- snd-soc-bells-objs := bells.o
- snd-soc-odroid-objs := odroid.o
--snd-soc-arndale-rt5631-objs := arndale_rt5631.o
-+snd-soc-arndale-objs := arndale.o
- snd-soc-tm2-wm5110-objs := tm2_wm5110.o
- 
- obj-$(CONFIG_SND_SOC_SAMSUNG_JIVE_WM8750) += snd-soc-jive-wm8750.o
-@@ -62,5 +62,5 @@ obj-$(CONFIG_SND_SOC_LOWLAND) += snd-soc-lowland.o
- obj-$(CONFIG_SND_SOC_LITTLEMILL) += snd-soc-littlemill.o
- obj-$(CONFIG_SND_SOC_BELLS) += snd-soc-bells.o
- obj-$(CONFIG_SND_SOC_ODROID) += snd-soc-odroid.o
--obj-$(CONFIG_SND_SOC_ARNDALE_RT5631_ALC5631) += snd-soc-arndale-rt5631.o
-+obj-$(CONFIG_SND_SOC_ARNDALE) += snd-soc-arndale.o
- obj-$(CONFIG_SND_SOC_SAMSUNG_TM2_WM5110) += snd-soc-tm2-wm5110.o
-diff --git a/sound/soc/samsung/arndale_rt5631.c b/sound/soc/samsung/arndale.c
-similarity index 100%
-rename from sound/soc/samsung/arndale_rt5631.c
-rename to sound/soc/samsung/arndale.c
--- 
-2.17.1
+Right, the second should also be there: <16 1>. The channel 1 has not
+been triggered in CPU test cases but might be used by some other
+NoC clients.
+I will add it in the next version.
 
+Regards,
+Lukasz
