@@ -1,17 +1,13 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v3 RESEND 1/3] ASoC: samsung: arndale: Simplify DAI link
+Subject: [PATCH v4 1/3] ASoC: samsung: arndale: Simplify DAI link
  initialization
-Date: Wed, 2 Oct 2019 12:56:14 +0200
-Message-ID: <9ddc271f-e88f-8991-2625-b885f2f2fae7@samsung.com>
-References: <CGME20191001123637eucas1p25c7551d4c967e4a2855f6c8d3b096ff5@eucas1p2.samsung.com>
- <20191001123625.19370-1-s.nawrocki@samsung.com>
- <20191001175601.GB14762@sirena.co.uk>
+Date: Wed,  2 Oct 2019 12:56:50 +0200
+Message-ID: <20191002105652.24821-1-s.nawrocki@samsung.com>
+References: <CGME20191002105705eucas1p1561d6fb9c9b7355047868e589f6a25c8@eucas1p1.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20191001175601.GB14762@sirena.co.uk>
-Content-Language: en-GB
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -21,28 +17,89 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mark Brown <broonie@kernel.org>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, ckeepax@opensource.cirrus.com, b.zolnierkie@samsung.com, sbkim73@samsung.com, patches@opensource.cirrus.com, lgirdwood@gmail.com, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+To: broonie@kernel.org
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, ckeepax@opensource.cirrus.com, b.zolnierkie@samsung.com, sbkim73@samsung.com, patches@opensource.cirrus.com, lgirdwood@gmail.com, krzk@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 10/1/19 19:56, Mark Brown wrote:
-> On Tue, Oct 01, 2019 at 02:36:23PM +0200, Sylwester Nawrocki wrote:
-> 
->> Changes since v1:
->>  - rebased due to reordering patches in the series
->
-> These still don't apply, please check and resend specifying what you're
-> basing them on - I don't think this is an ordering issue.
+There is only one DAI link so we can drop an unnecessary loop statement.
+Use card->dai_link in place of direct static arndale_rt5631_dai[] array
+dereference as a prerequisite for adding support for other CODECs.
+Unnecessary assignment of dai_link->codecs->name to NULL is removed.
 
-Sory, the above is an old comment, it just refers to what I did
-between v1 and v2. I'm not sure what happened, the patches were based 
-on for-next branch, git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+Based on for-next branch from
+git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound
 
-I will resend shortly with a fix for issue reported by the kbuild test.
+Changes since v2:
+ - none.
 
-ea7bfc805cee ASoC: samsung: Rename Arndale card driver
-2db0e4f97a07 ASoC: samsung: arndale: Add support for WM1811 CODEC
-fb5ca16f40f0 ASoC: samsung: arndale: Simplify DAI link initialization
-82965165b0a9 Merge branch 'asoc-5.5' into asoc-next
-952139a546d0 Merge branch 'asoc-5.4' into asoc-linus
-4bb41984bf2f ASoC: max98373: check for device node before parsing
+Changes since v1:
+ - rebased due to reordering patches in the series
+---
+ sound/soc/samsung/arndale_rt5631.c | 42 +++++++++++++-----------------
+ 1 file changed, 18 insertions(+), 24 deletions(-)
+
+diff --git a/sound/soc/samsung/arndale_rt5631.c b/sound/soc/samsung/arndale_rt5631.c
+index fd8c6642fb0d..004c84fafad9 100644
+--- a/sound/soc/samsung/arndale_rt5631.c
++++ b/sound/soc/samsung/arndale_rt5631.c
+@@ -88,36 +88,30 @@ static void arndale_put_of_nodes(struct snd_soc_card *card)
+
+ static int arndale_audio_probe(struct platform_device *pdev)
+ {
+-	int n, ret;
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct snd_soc_card *card = &arndale_rt5631;
++	struct snd_soc_dai_link *dai_link;
++	int ret;
+
+ 	card->dev = &pdev->dev;
++	dai_link = card->dai_link;
++
++	dai_link->cpus->of_node = of_parse_phandle(np, "samsung,audio-cpu", 0);
++	if (!dai_link->cpus->of_node) {
++		dev_err(&pdev->dev,
++			"Property 'samsung,audio-cpu' missing or invalid\n");
++		return -EINVAL;
++	}
+
+-	for (n = 0; np && n < ARRAY_SIZE(arndale_rt5631_dai); n++) {
+-		if (!arndale_rt5631_dai[n].cpus->dai_name) {
+-			arndale_rt5631_dai[n].cpus->of_node = of_parse_phandle(np,
+-					"samsung,audio-cpu", n);
+-
+-			if (!arndale_rt5631_dai[n].cpus->of_node) {
+-				dev_err(&pdev->dev,
+-				"Property 'samsung,audio-cpu' missing or invalid\n");
+-				return -EINVAL;
+-			}
+-		}
+-		if (!arndale_rt5631_dai[n].platforms->name)
+-			arndale_rt5631_dai[n].platforms->of_node =
+-					arndale_rt5631_dai[n].cpus->of_node;
+-
+-		arndale_rt5631_dai[n].codecs->name = NULL;
+-		arndale_rt5631_dai[n].codecs->of_node = of_parse_phandle(np,
+-					"samsung,audio-codec", n);
+-		if (!arndale_rt5631_dai[0].codecs->of_node) {
+-			dev_err(&pdev->dev,
++	if (!dai_link->platforms->name)
++		dai_link->platforms->of_node = dai_link->cpus->of_node;
++
++	dai_link->codecs->of_node = of_parse_phandle(np, "samsung,audio-codec", 0);
++	if (!dai_link->codecs->of_node) {
++		dev_err(&pdev->dev,
+ 			"Property 'samsung,audio-codec' missing or invalid\n");
+-			ret = -EINVAL;
+-			goto err_put_of_nodes;
+-		}
++		ret = -EINVAL;
++		goto err_put_of_nodes;
+ 	}
+
+ 	ret = devm_snd_soc_register_card(card->dev, card);
+--
+2.17.1
