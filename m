@@ -1,47 +1,38 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 1/2] ARM: dts: exynos: Add support ARM architected
- timers on Exynos5
-Date: Wed, 2 Oct 2019 17:43:53 +0200
-Message-ID: <20191002154353.GA3469@kozik-lap>
-References: <20190828121005.29368-1-m.szyprowski@samsung.com>
- <CGME20190828121012eucas1p10bac7ebb742d968bca251f21dd3aad11@eucas1p1.samsung.com>
- <20190828121005.29368-2-m.szyprowski@samsung.com>
+Subject: Re: [PATCH v4 5/6] ARM: dts: Add "syscon" compatible string to
+ chipid node
+Date: Wed, 2 Oct 2019 17:44:37 +0200
+Message-ID: <20191002154437.GB3469@kozik-lap>
+References: <20190910123618.27985-1-s.nawrocki@samsung.com>
+ <CGME20190910123644eucas1p234a55b19e68046900539195f55ea60dd@eucas1p2.samsung.com>
+ <20190910123618.27985-6-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190828121005.29368-2-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc@vger.kernel.org, Marc Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+In-Reply-To: <20190910123618.27985-6-s.nawrocki@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: vireshk@kernel.org, robh+dt@kernel.org, kgene@kernel.org, devicetree@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 02:10:04PM +0200, Marek Szyprowski wrote:
-> All CortexA7/A15 based Exynos5 SoCs have ARM architected timers, so enable
-> support for them directly in the base dtsi. None of the known firmware
-> properly configures CNTFRQ arch timer register, so force clock frequency
-> to 24MHz, which is the only configuration supported by the remaining
-> clock drivers so far.
+On Tue, Sep 10, 2019 at 02:36:17PM +0200, Sylwester Nawrocki wrote:
+> The CHIP ID block in addition to exact chip revision information
+> contains data and control registers for ASV (Adaptive Supply Voltage)
+> and ABB (Adaptive Body Bias). Add "syscon" compatible so the CHIPID
+> block can be shared by respective drivers.
 > 
-> Stock firmware for Peach Pit and Pi Chromebooks also doesn't reset
-> properly other arch timer registers, so add respective properties
-> indicating that. Other Exynos5-based boards behaves correctly in this area,
-> what finally allows to enable support for KVM-based virtualization.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
->  arch/arm/boot/dts/exynos5420-peach-pit.dts | 4 ++++
->  arch/arm/boot/dts/exynos54xx.dtsi          | 9 +++++++++
->  arch/arm/boot/dts/exynos5800-peach-pi.dts  | 4 ++++
+> Changes since v2:
+>  - none
+> 
+> Changes since v1 (RFC):
+>  - new patch
+> ---
+>  arch/arm/boot/dts/exynos5.dtsi | 4 ++--
+
+Please do not forget about exynos prefix in subject.
 
 Thanks, applied.
 
