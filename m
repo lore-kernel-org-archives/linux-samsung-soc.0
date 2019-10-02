@@ -1,211 +1,101 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v4 2/3] ASoC: samsung: arndale: Add support for WM1811 CODEC
-Date: Wed,  2 Oct 2019 12:56:51 +0200
-Message-ID: <20191002105652.24821-2-s.nawrocki@samsung.com>
-References: <20191002105652.24821-1-s.nawrocki@samsung.com>
- <CGME20191002105711eucas1p199322dc928a0ea4724fe0e0f5e6cb156@eucas1p1.samsung.com>
+From: <Claudiu.Beznea@microchip.com>
+Subject: Re: [PATCH 4/7] dt-bindings: chosen: Add clocksource and clockevent
+ selection
+Date: Wed, 2 Oct 2019 13:32:44 +0000
+Message-ID: <e78e7520-213c-8075-d71e-b8db2ebdceb7@microchip.com>
+References: <1568123236-767-1-git-send-email-claudiu.beznea@microchip.com>
+ <1568123236-767-5-git-send-email-claudiu.beznea@microchip.com>
+ <20190910143231.GB14966@e107533-lin.cambridge.arm.com>
+ <ab43b209-78fa-0cab-b8ea-acd4c550e689@microchip.com>
+ <20190910150826.GA18308@e107533-lin.cambridge.arm.com>
+ <20190910151055.GX21254@piout.net>
+ <CACRpkda4mmpbPWa2nD93CvD6HWzcTUDzyyLdQxC2gNB7XiJF3w@mail.gmail.com>
+ <a2aca46a-8eb9-d8a8-de42-9850a8a8f44c@microchip.com>
+ <20190930143246.GA19967@bogus>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20191002105652.24821-1-s.nawrocki@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: broonie@kernel.org
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, ckeepax@opensource.cirrus.com, b.zolnierkie@samsung.com, sbkim73@samsung.com, patches@opensource.cirrus.com, lgirdwood@gmail.com, krzk@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+Return-path: <linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20190930143246.GA19967@bogus>
+Content-Language: en-US
+Content-ID: <2405F53375D403478DD0705798481038@namprd11.prod.outlook.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-snps-arc>,
+ <mailto:linux-snps-arc-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-snps-arc/>
+List-Post: <mailto:linux-snps-arc@lists.infradead.org>
+List-Help: <mailto:linux-snps-arc-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-snps-arc>,
+ <mailto:linux-snps-arc-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-snps-arc" <linux-snps-arc-bounces@lists.infradead.org>
+Errors-To: linux-snps-arc-bounces+gla-linux-snps-arc=m.gmane.org@lists.infradead.org
+To: robh@kernel.org
+Cc: tmaimon77@gmail.com, linus.walleij@linaro.org, nsekhar@ti.com, guoren@kernel.org, linux-stm32@st-md-mailman.stormreply.com, heiko@sntech.de, linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, khilman@baylibre.com, Ludovic.Desroches@microchip.com, linux-imx@nxp.com, u.kleine-koenig@pengutronix.de, uclinux-h8-devel@lists.sourceforge.jp, marc.zyngier@arm.com, s.hauer@pengutronix.de, linux-unisoc@lists.infradead.org, khalasa@piap.pl, tglx@linutronix.de, sbranden@broadcom.com, linux-kernel@vger.kernel.org, ralf@linux-mips.org, paul.burton@mips.com, kernel@pengutronix.de, mark.rutland@arm.com, alexandre.belloni@bootlin.com, jhogan@kernel.org, palmer@sifive.com, eric@anholt.net, thierry.reding@gmail.com, manivannan.sadhasivam@linaro.org, ysato@users.sourceforge.jp, zhang.lyra@gmail.com, daniel.lezcano@linaro.org, jonathanh@nvidia.com, bgolaszewski@baylibre.co
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The Arndale boards come with different types of the audio daughter
-board.  In order to support the WM1811 one we add new definition of
-an ASoC card which will be registered when the driver matches on
-"samsung,arndale-wm1811" compatible.  There is no runtime detection of
-the audio daughter board type at the moment, compatible string of the
-audio card needs to be adjusted in DT, e.g. by the bootloader,
-depending on actual audio board (CODEC) used.
 
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
-Changes since v3:
- - fixed the MODULE_DEVICE_TABLE entry declaration
 
-Changes since v1:
- - removed unneeded __maybe_used attribute
----
- sound/soc/samsung/Kconfig          |  2 +
- sound/soc/samsung/arndale_rt5631.c | 85 +++++++++++++++++++++++++-----
- 2 files changed, 74 insertions(+), 13 deletions(-)
+On 30.09.2019 17:32, Rob Herring wrote:
+> On Wed, Sep 11, 2019 at 07:18:07AM +0000, Claudiu.Beznea@microchip.com wrote:
+>>
+>>
+>> On 11.09.2019 03:03, Linus Walleij wrote:
+>>> External E-Mail
+>>>
+>>>
+>>> On Tue, Sep 10, 2019 at 4:11 PM Alexandre Belloni
+>>> <alexandre.belloni@bootlin.com> wrote:
+>>>> On 10/09/2019 16:08:26+0100, Sudeep Holla wrote:
+>>>>> On Tue, Sep 10, 2019 at 02:51:50PM +0000, Claudiu.Beznea@microchip.com wrote:
+>>>
+>>>>> In that case, why can't we identify capability that with the compatibles
+>>>>> for this timer IP ?
+>>>>>
+>>>>> IOW, I don't like the proposal as it's hardware limitation.
+>>>>
+>>>> To be clear, bot timers are exactly the same but can't be clocksource
+>>>> and clockevent at the same time. Why would we have different compatibles
+>>>> for the exact same IP?
+>>>
+>>> In that case why not just pick the first one you find as clocksource
+>>> and the second one as clock event? As they all come to the
+>>> same timer of init function two simple local state variables can
+>>> solve that:
+>>>
+>>> static bool registered_clocksource;
+>>> static bool registered_clockevent;
+>>>
+>>> probe(timer) {
+>>>    if (!registered_clocksource) {
+>>>        register_clocksource(timer);
+>>>        registrered_clocksource = true;
+>>>        return;
+>>>    }
+>>>    if (!registered_clockevent) {
+>>>        register_clockevent(timer);
+>>>        registered_clockevent = true;
+>>>        return;
+>>>    }
+>>>    pr_info("surplus timer %p\n", timer);
+>>> }
+>>>
+>>
+>> That was also my proposal for the driver I'm sending this series for (see
+>> [1]) but it has been proposed to implement a mechanism similar to this one
+>> in this series (see [2] and [3]).
+> 
+> This comes up over and over, and the answer is still no. Either each 
+> block is identical and doesn't matter which one is used for what or 
+> there is some h/w difference that you should describe. 
 
-diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-index 638983123d8f..6803cbfa9e46 100644
---- a/sound/soc/samsung/Kconfig
-+++ b/sound/soc/samsung/Kconfig
-@@ -199,6 +199,8 @@ config SND_SOC_ARNDALE_RT5631_ALC5631
-         depends on I2C
-         select SND_SAMSUNG_I2S
-         select SND_SOC_RT5631
-+	select MFD_WM8994
-+	select SND_SOC_WM8994
- 
- config SND_SOC_SAMSUNG_TM2_WM5110
- 	tristate "SoC I2S Audio support for WM5110 on TM2 board"
-diff --git a/sound/soc/samsung/arndale_rt5631.c b/sound/soc/samsung/arndale_rt5631.c
-index 004c84fafad9..d64602950cbd 100644
---- a/sound/soc/samsung/arndale_rt5631.c
-+++ b/sound/soc/samsung/arndale_rt5631.c
-@@ -14,10 +14,11 @@
- #include <sound/pcm.h>
- #include <sound/pcm_params.h>
- 
-+#include "../codecs/wm8994.h"
- #include "i2s.h"
- 
--static int arndale_hw_params(struct snd_pcm_substream *substream,
--	struct snd_pcm_hw_params *params)
-+static int arndale_rt5631_hw_params(struct snd_pcm_substream *substream,
-+				    struct snd_pcm_hw_params *params)
- {
- 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
- 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
-@@ -47,13 +48,45 @@ static int arndale_hw_params(struct snd_pcm_substream *substream,
- 	return 0;
- }
- 
--static struct snd_soc_ops arndale_ops = {
--	.hw_params = arndale_hw_params,
-+static struct snd_soc_ops arndale_rt5631_ops = {
-+	.hw_params = arndale_rt5631_hw_params,
-+};
-+
-+static int arndale_wm1811_hw_params(struct snd_pcm_substream *substream,
-+				    struct snd_pcm_hw_params *params)
-+{
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct snd_soc_dai *codec_dai = rtd->codec_dai;
-+	unsigned int rfs, rclk;
-+
-+	/* Ensure AIF1CLK is >= 3 MHz for optimal performance */
-+	if (params_width(params) == 24)
-+		rfs = 384;
-+	else if (params_rate(params) == 8000 || params_rate(params) == 11025)
-+		rfs = 512;
-+	else
-+		rfs = 256;
-+
-+	rclk = params_rate(params) * rfs;
-+
-+	/*
-+	 * We add 1 to the frequency value to ensure proper EPLL setting
-+	 * for each audio sampling rate (see epll_24mhz_tbl in drivers/clk/
-+	 * samsung/clk-exynos5250.c for list of available EPLL rates).
-+	 * The CODEC uses clk API and the value will be rounded hence the MCLK1
-+	 * clock's frequency will still be exact multiple of the sample rate.
-+	 */
-+	return snd_soc_dai_set_sysclk(codec_dai, WM8994_SYSCLK_MCLK1,
-+					rclk + 1, SND_SOC_CLOCK_IN);
-+}
-+
-+static struct snd_soc_ops arndale_wm1811_ops = {
-+	.hw_params = arndale_wm1811_hw_params,
- };
- 
- SND_SOC_DAILINK_DEFS(rt5631_hifi,
- 	DAILINK_COMP_ARRAY(COMP_EMPTY()),
--	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "rt5631-hifi")),
-+	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "rt5631-aif1")),
- 	DAILINK_COMP_ARRAY(COMP_EMPTY()));
- 
- static struct snd_soc_dai_link arndale_rt5631_dai[] = {
-@@ -63,11 +96,28 @@ static struct snd_soc_dai_link arndale_rt5631_dai[] = {
- 		.dai_fmt = SND_SOC_DAIFMT_I2S
- 			| SND_SOC_DAIFMT_NB_NF
- 			| SND_SOC_DAIFMT_CBS_CFS,
--		.ops = &arndale_ops,
-+		.ops = &arndale_rt5631_ops,
- 		SND_SOC_DAILINK_REG(rt5631_hifi),
- 	},
- };
- 
-+SND_SOC_DAILINK_DEFS(wm1811_hifi,
-+	DAILINK_COMP_ARRAY(COMP_EMPTY()),
-+	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "wm8994-aif1")),
-+	DAILINK_COMP_ARRAY(COMP_EMPTY()));
-+
-+static struct snd_soc_dai_link arndale_wm1811_dai[] = {
-+	{
-+		.name = "WM1811 HiFi",
-+		.stream_name = "Primary",
-+		.dai_fmt = SND_SOC_DAIFMT_I2S
-+			| SND_SOC_DAIFMT_NB_NF
-+			| SND_SOC_DAIFMT_CBM_CFM,
-+		.ops = &arndale_wm1811_ops,
-+		SND_SOC_DAILINK_REG(wm1811_hifi),
-+	},
-+};
-+
- static struct snd_soc_card arndale_rt5631 = {
- 	.name = "Arndale RT5631",
- 	.owner = THIS_MODULE,
-@@ -75,6 +125,13 @@ static struct snd_soc_card arndale_rt5631 = {
- 	.num_links = ARRAY_SIZE(arndale_rt5631_dai),
- };
- 
-+static struct snd_soc_card arndale_wm1811 = {
-+	.name = "Arndale WM1811",
-+	.owner = THIS_MODULE,
-+	.dai_link = arndale_wm1811_dai,
-+	.num_links = ARRAY_SIZE(arndale_wm1811_dai),
-+};
-+
- static void arndale_put_of_nodes(struct snd_soc_card *card)
- {
- 	struct snd_soc_dai_link *dai_link;
-@@ -89,10 +146,11 @@ static void arndale_put_of_nodes(struct snd_soc_card *card)
- static int arndale_audio_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
--	struct snd_soc_card *card = &arndale_rt5631;
-+	struct snd_soc_card *card;
- 	struct snd_soc_dai_link *dai_link;
- 	int ret;
- 
-+	card = (struct snd_soc_card *)of_device_get_match_data(&pdev->dev);
- 	card->dev = &pdev->dev;
- 	dai_link = card->dai_link;
- 
-@@ -134,18 +192,19 @@ static int arndale_audio_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--static const struct of_device_id samsung_arndale_rt5631_of_match[] __maybe_unused = {
--	{ .compatible = "samsung,arndale-rt5631", },
--	{ .compatible = "samsung,arndale-alc5631", },
-+static const struct of_device_id arndale_audio_of_match[] = {
-+	{ .compatible = "samsung,arndale-rt5631",  .data = &arndale_rt5631 },
-+	{ .compatible = "samsung,arndale-alc5631", .data = &arndale_rt5631 },
-+	{ .compatible = "samsung,arndale-wm1811",  .data = &arndale_wm1811 },
- 	{},
- };
--MODULE_DEVICE_TABLE(of, samsung_arndale_rt5631_of_match);
-+MODULE_DEVICE_TABLE(of, arndale_audio_of_match);
- 
- static struct platform_driver arndale_audio_driver = {
- 	.driver = {
--		.name   = "arndale-audio",
-+		.name = "arndale-audio",
- 		.pm = &snd_soc_pm_ops,
--		.of_match_table = of_match_ptr(samsung_arndale_rt5631_of_match),
-+		.of_match_table = arndale_audio_of_match,
- 	},
- 	.probe = arndale_audio_probe,
- 	.remove = arndale_audio_remove,
--- 
-2.17.1
+There are no hardware differences in my case. The block just cannot work at
+the same time  as clocksource and clockevent. And on SAM9X60's we want to
+use it as clockevent for high resolution timers support.
+
+> 
+> If you want something that would even be considered to put into DT, 
+> then define something BSD or other OS's could use too. (That's not a 
+> suggestion to respin this with generalized names.)
+> 
+> Rob
+> 
+> 
