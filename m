@@ -2,114 +2,93 @@ Return-Path: <SRS0=sIcv=X3=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D69C352AA
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Oct 2019 16:44:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 839BDC352AA
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Oct 2019 17:19:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE19921848
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Oct 2019 16:44:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BFF521D81
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Oct 2019 17:19:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570034696;
-	bh=R3JtOA0Dfq49tu8H2veFMJQO3r2gPbDYYE4d7ZI1Ix8=;
-	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dlzsBk7QpySAZGc8/P+EqhWEca3xw7fXIUbmGtZYuBFwtZR+9ZOSFEFIUiVzHA0T8
-	 +2yjh/GR7a9WPjNswIchqH2XdR++NRQF/pL3X9JVqZSSpuThK5xtbxbCBOhRhHwDAA
-	 Fl79XZCudKVdmRZHA9RWTZtnXs/znxeJkfadUP7c=
+	s=default; t=1570036756;
+	bh=SzMBednxOeur9TowNPougkDQHQmhYAAdQ89j3E/TUoQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=y4v0px3W0q5UOgdQYygtNnYYSuFrkJG7c9iq3iXrTtxHBxYWKQgbwkAFgsHJImgsE
+	 21rpdNo6GBB6SUxFqLNMaE5zu9Q3IAnKbA4Ug8keOwnBc8OpS95j2gQAj1ByiU42Q5
+	 XnmT9/w1txQnfHyUetcgGfNys1sTkz/zOEq9tYMQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727667AbfJBQoz (ORCPT
+        id S1728638AbfJBRTN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 2 Oct 2019 12:44:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49330 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727587AbfJBQoz (ORCPT
+        Wed, 2 Oct 2019 13:19:13 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53217 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726798AbfJBRTN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 2 Oct 2019 12:44:55 -0400
-Received: from localhost.localdomain (unknown [194.230.155.145])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00C5221D82;
-        Wed,  2 Oct 2019 16:44:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570034694;
-        bh=R3JtOA0Dfq49tu8H2veFMJQO3r2gPbDYYE4d7ZI1Ix8=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=MwRjVxg5VW4JlCPfao/vHhQoNy67kt4iEbnc0YMpw30oX3aIBpRBHn1zF4T4qxZXD
-         KgPq9w5E8dz4qOVlO3mwxSRUskZsQ/cKaUCvbCNT4eDs8BcppMaWMcEWxri1AhtN0Q
-         pz0an0WXawlkxRqiL5dOMDVreqb08i6T1muT0iAI=
+        Wed, 2 Oct 2019 13:19:13 -0400
+Received: by mail-wm1-f67.google.com with SMTP id r19so8057212wmh.2;
+        Wed, 02 Oct 2019 10:19:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=no+pVuOU4/2ncxfp2PCuYfXSUaMyBiG5X4wKsXpzwTQ=;
+        b=swTaXDKnnqPuZhOZEC0b1nEBZKPcDoYossUaqP6nArs1SrMiCc9O0xfNteBkU1W2cV
+         yuosn9JUdoDtmeoN5pvijQiBKTSrxST1KMXEnFLj/lsXNcoyULoGMOm5zBXC43rJtq27
+         saVjgcYqTjMiQ5x5+ITKbWQyo7l+4Dqk0gHD9dI0acHavGF34dvVvAOQ1ADfHaa3AFRO
+         SCiDmnoKhRlR5LFyuvVdDdjqBZQtQI4FpJatbgtuJ7nqa6lmDAmiV6vO6wNY9dXkrCsx
+         IPhj8r8mo5CrBGlKctOo8vbXPn2/eUaTcU2enNnmKJZPNSr6r1h3jnw6b1D8T2xYUtaC
+         NguA==
+X-Gm-Message-State: APjAAAXvPoGIt5sCH2EPMjpKCdte/WD6refVmHO0xkjzGsS3kEj4/AkO
+        7VuDtqUzFY+roUh3XZHeH3c=
+X-Google-Smtp-Source: APXvYqw/Sxw1D9QQ1ZzdqSb5BBqVgBbTwx0GfHLbZdDtnNnd+IxSlJStKyhtgTNKeqQVDgJz09jEbQ==
+X-Received: by 2002:a7b:c764:: with SMTP id x4mr3662517wmk.62.1570036751382;
+        Wed, 02 Oct 2019 10:19:11 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.145])
+        by smtp.googlemail.com with ESMTPSA id z142sm12591475wmc.24.2019.10.02.10.19.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 02 Oct 2019 10:19:10 -0700 (PDT)
+Date:   Wed, 2 Oct 2019 19:19:07 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH v3 10/10] ARM: dts: omap: Rename "ocmcram" node to "sram"
-Date:   Wed,  2 Oct 2019 18:43:16 +0200
-Message-Id: <20191002164316.14905-10-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191002164316.14905-1-krzk@kernel.org>
-References: <20191002164316.14905-1-krzk@kernel.org>
+To:     Lukasz Luba <l.luba@partner.samsung.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, b.zolnierkie@samsung.com, kgene@kernel.org,
+        mark.rutland@arm.com, robh+dt@kernel.org, cw00.choi@samsung.com,
+        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
+        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
+        keescook@chromium.org, tony@atomide.com, jroedel@suse.de,
+        treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org,
+        willy.mh.wolff.ml@gmail.com
+Subject: Re: [PATCH v13 8/8] ARM: exynos_defconfig: enable DMC driver
+Message-ID: <20191002171907.GA21463@kozik-lap>
+References: <20190821104303.32079-1-l.luba@partner.samsung.com>
+ <CGME20190821104326eucas1p1f22b49095a17f0b303910c391ff1e906@eucas1p1.samsung.com>
+ <20190821104303.32079-9-l.luba@partner.samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+In-Reply-To: <20190821104303.32079-9-l.luba@partner.samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
+Message-ID: <20191002171907.5D8LRc-DGpFKGYz0MbkeW_YzEeBmkpjjkamgkLn3PcY@z>
 
-The device node name should reflect generic class of a device so rename
-the "ocmcram" node to "sram".  This will be also in sync with upcoming DT
-schema.  No functional change.
+On Wed, Aug 21, 2019 at 12:43:03PM +0200, Lukasz Luba wrote:
+> Enable driver for Exynos5422 Dynamic Memory Controller supporting
+> dynamic frequency and voltage scaling in Exynos5422 SoCs.
+> 
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  arch/arm/configs/exynos_defconfig | 1 +
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/boot/dts/omap4.dtsi | 2 +-
- arch/arm/boot/dts/omap5.dtsi | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Thanks, applied.
 
-diff --git a/arch/arm/boot/dts/omap4.dtsi b/arch/arm/boot/dts/omap4.dtsi
-index 7cc95bc1598b..413304540f8b 100644
---- a/arch/arm/boot/dts/omap4.dtsi
-+++ b/arch/arm/boot/dts/omap4.dtsi
-@@ -148,7 +148,7 @@
- 		l4_abe: interconnect@40100000 {
- 		};
- 
--		ocmcram: ocmcram@40304000 {
-+		ocmcram: sram@40304000 {
- 			compatible = "mmio-sram";
- 			reg = <0x40304000 0xa000>; /* 40k */
- 		};
-diff --git a/arch/arm/boot/dts/omap5.dtsi b/arch/arm/boot/dts/omap5.dtsi
-index 1fb7937638f0..9f1621f554d7 100644
---- a/arch/arm/boot/dts/omap5.dtsi
-+++ b/arch/arm/boot/dts/omap5.dtsi
-@@ -162,7 +162,7 @@
- 		l4_abe: interconnect@40100000 {
- 		};
- 
--		ocmcram: ocmcram@40300000 {
-+		ocmcram: sram@40300000 {
- 			compatible = "mmio-sram";
- 			reg = <0x40300000 0x20000>; /* 128k */
- 		};
--- 
-2.17.1
+Best regards,
+Krzysztof
 
