@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F455C10F14
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Oct 2019 17:23:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A759C10F14
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Oct 2019 17:24:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A484222BE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Oct 2019 17:23:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22BB121D81
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Oct 2019 17:24:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570037011;
-	bh=GTf5yNJ7S0HU9sYcO2iHUV21skQdtTTYlg2eukDC07M=;
+	s=default; t=1570037091;
+	bh=cayeZ8/19tXXwj72HqNQV4pPBJeu+NuXMMCm0DzSnkM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=yBQrFL9I/CKQAV2upIK4siJsQ3Xb32Z2/KId3vIiKvsTg9073E3Pem7xG7w/et6dn
-	 cHSC/e8WbwnJg2NUoYVjPkSt80qodFgghOtku1kVeKl0xV4LJZOEM9m1b8HQGWIeLc
-	 iGGLyaBiBAkZNH77tnAIpAN4MR3wu9f5O56cgUKw=
+	b=fVCcHzrw4BFQ8T0LE0s7zoN6EqhF6O4PaP2uS0DHmXnS8vsZEWDqxt9i83gXs0ysy
+	 udoXJ5Uu2LxewDynqS2fyUa4RsniOw5nbTne9Am8e7iOcYtyzHtNDxdDoHW9xEeORN
+	 zaxzwFIzcvRGUYIpgCYatiL2zO2GTxD87UkY26mM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727766AbfJBRX1 (ORCPT
+        id S1727970AbfJBRYr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 2 Oct 2019 13:23:27 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46654 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726669AbfJBRX1 (ORCPT
+        Wed, 2 Oct 2019 13:24:47 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36333 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727624AbfJBRYq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 2 Oct 2019 13:23:27 -0400
-Received: by mail-wr1-f66.google.com with SMTP id o18so20547485wrv.13;
-        Wed, 02 Oct 2019 10:23:23 -0700 (PDT)
+        Wed, 2 Oct 2019 13:24:46 -0400
+Received: by mail-wr1-f65.google.com with SMTP id y19so20605770wrd.3;
+        Wed, 02 Oct 2019 10:24:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nzNAW4QY/zCjsjZa28ydl9OQI+8F/1QiLCLBnRQrEao=;
-        b=togZMZgLDitqtf5W3tyUWg20Bo3G0qTe42BCGz8HSS35JN7Cpm642Rw6u49PitUzKk
-         hj1kqUOl37k0pM62pQfWNY8qE36Al0XDgZJZIu5s3oRkmBLkOIpUm+J+e+fR7jQC0nmW
-         dGTCqqci9fniz8zM7dqCe95WPO6wlYGk223xKUjBxLpxfevwBtYOLorwWYqwQckJzrFP
-         GrRZC/W1Q0wF/jt40YM+d9EI9jFtyWjWXcsXpwOo3hHrepmvCGXsyoyDTKjvzqu5VDI7
-         ZiLpzqruxwo5k+NcW4ZdssDMc3nKUtpUuY9q25x2nG+CNLKJlKu+8KrhP/0bq7N2fGj5
-         +R8g==
-X-Gm-Message-State: APjAAAWltOo/wNeFl6D0cFVbLZG9vXpfiAkkRUPr4A1DCHY0ugZjEwUK
-        Q/EzcoPvtHvFULe4tMv8Fe8=
-X-Google-Smtp-Source: APXvYqwNucqhWJvk5ezJtj648rwbekIqzLM6WPWAfMSVXhINx3Syw+zxmOe53m4oBLNZvolGL2J00w==
-X-Received: by 2002:adf:e988:: with SMTP id h8mr3602872wrm.354.1570037003007;
-        Wed, 02 Oct 2019 10:23:23 -0700 (PDT)
+        bh=8OID6bEMxv+Gv/QZ0YNXTE8bbklUElxmTKC2iUlX+wc=;
+        b=qouyxiVPu+1ZscgSXDmQJiINAPazmk13qJdeRwYzR+eYd2tgFVyzIRPLt8nhuSITp9
+         g4RXOqVhV9zLy7qAV7VNnprzzorZaC8JX5v4yJAOWxH7ubXn2B3Af4A679b4smPWAEhn
+         TDbMlPkmh4s6x+UwiS7ng25NchES1ajuhh/wGp+pyRYG3dtzVtUSmYjmckX7/hxs/3K6
+         rfqKA6ukboXZ+NQqvNdUEKAb7lCsYlJHuHd9Yk69r7sJ2VOe6FW0WNoyHnoDL8XZRNp0
+         VjWb4Iu1wMJUOOqxpjnaBT9owHTfyTWFlcHoGkzaODnWgA+zkDJH0NUyPThr5TkSEzyF
+         IPDg==
+X-Gm-Message-State: APjAAAUYcLEb0a/anLTj7Fre3vTuTQ4Mh8AcWz6DNO+iCabYtDT3DPCR
+        0PVHjIhKKfcCL9d9xPOHd08=
+X-Google-Smtp-Source: APXvYqx57q0j9xKZVurytfcIVWaGsSq1z7w9C8yIVXe6bOgJ7O5sIHMewl93NN5Ecs+5iEJ0GKvLSg==
+X-Received: by 2002:a5d:424c:: with SMTP id s12mr3652381wrr.221.1570037084261;
+        Wed, 02 Oct 2019 10:24:44 -0700 (PDT)
 Received: from kozik-lap ([194.230.155.145])
-        by smtp.googlemail.com with ESMTPSA id 79sm10111624wmb.7.2019.10.02.10.23.20
+        by smtp.googlemail.com with ESMTPSA id 26sm7246476wmf.20.2019.10.02.10.24.42
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 02 Oct 2019 10:23:22 -0700 (PDT)
-Date:   Wed, 2 Oct 2019 19:23:19 +0200
+        Wed, 02 Oct 2019 10:24:43 -0700 (PDT)
+Date:   Wed, 2 Oct 2019 19:24:40 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Lukasz Luba <l.luba@partner.samsung.com>
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -60,32 +60,32 @@ Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         kyungmin.park@samsung.com, m.szyprowski@samsung.com,
         s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
         robh+dt@kernel.org, willy.mh.wolff.ml@gmail.com
-Subject: Re: [PATCH v3 1/4] dt-bindings: memory-controllers: Add Exynos5422
- DMC interrupts description
-Message-ID: <20191002172319.GC21463@kozik-lap>
+Subject: Re: [PATCH v3 2/4] ARM: dts: exynos: Add interrupt to DMC controller
+ in Exynos5422
+Message-ID: <20191002172440.GD21463@kozik-lap>
 References: <20191002060455.3834-1-l.luba@partner.samsung.com>
- <CGME20191002060504eucas1p2f023677bb85a7f6a1efebf891e8d81df@eucas1p2.samsung.com>
- <20191002060455.3834-2-l.luba@partner.samsung.com>
+ <CGME20191002060505eucas1p2efd80ccde8c728973df8d932580cd58b@eucas1p2.samsung.com>
+ <20191002060455.3834-3-l.luba@partner.samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-In-Reply-To: <20191002060455.3834-2-l.luba@partner.samsung.com>
+In-Reply-To: <20191002060455.3834-3-l.luba@partner.samsung.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20191002172319.gISRRplt77yL0Qo4qbgKOtc8pry7W6TA5L1nGPy9WbA@z>
+Message-ID: <20191002172440.1jLz4UJrLXBEgvhCgqMkSfJ9SVdwtvsoX-CcTCgwuA4@z>
 
-On Wed, Oct 02, 2019 at 08:04:52AM +0200, Lukasz Luba wrote:
-> Add description for optional interrupt lines. It provides a new operation
-> mode, which uses internal performance counters interrupt when overflow.
-> This is more reliable than using default polling mode implemented in
-> devfreq.
+On Wed, Oct 02, 2019 at 08:04:53AM +0200, Lukasz Luba wrote:
+> Add interrupt to Dynamic Memory Controller in Exynos5422 and Odroid
+> XU3-family boards. It will be used instead of devfreq polling mode
+> governor. The interrupt is connected to performance counters private
+> for DMC, which might track utilisation of the memory channels.
 > 
 > Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 > ---
->  .../bindings/memory-controllers/exynos5422-dmc.txt    | 11 +++++++++++
+>  arch/arm/boot/dts/exynos5420.dtsi | 3 +++
 
 Thanks, applied.
 
