@@ -1,90 +1,48 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v4 1/6] opp: Handle target/min/max voltage in
- dev_pm_opp_adjust_voltage()
-Date: Wed, 2 Oct 2019 16:33:10 +0200
-Message-ID: <20191002143310.GA15898@pi3>
-References: <20190910123618.27985-1-s.nawrocki@samsung.com>
- <CGME20190910123636eucas1p250ec04901f227b947cc38936563f63b2@eucas1p2.samsung.com>
- <20190910123618.27985-2-s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2 09/10] ARM: dts: arndale: Add audio
+ support (WM1811 CODEC boards)
+Date: Wed, 2 Oct 2019 16:42:11 +0200
+Message-ID: <20191002144211.GB15898@pi3>
+References: <20190920130218.32690-1-s.nawrocki@samsung.com>
+ <CGME20190920130324eucas1p118bfab45306a29752bf4c1cfdd8f61a1@eucas1p1.samsung.com>
+ <20190920130218.32690-10-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
 Content-Disposition: inline
-In-Reply-To: <20190910123618.27985-2-s.nawrocki@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20190920130218.32690-10-s.nawrocki@samsung.com>
+List-Unsubscribe: <https://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <https://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: "Alsa-devel" <alsa-devel-bounces@alsa-project.org>
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: vireshk@kernel.org, robh+dt@kernel.org, kgene@kernel.org, devicetree@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, ckeepax@opensource.cirrus.com, b.zolnierkie@samsung.com, sbkim73@samsung.com, patches@opensource.cirrus.com, lgirdwood@gmail.com, robh+dt@kernel.org, broonie@kernel.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 02:36:13PM +0200, Sylwester Nawrocki wrote:
-> To be squashed with patch "PM / OPP: Support adjusting OPP voltages
-> at runtime".
+On Fri, Sep 20, 2019 at 03:02:18PM +0200, Sylwester Nawrocki wrote:
+> Add sound node and the clock configurations for the I2S controller
+> for audio support on the Exynos5250 SoC Arndale boards with
+> WM1811 based audio daughter board.
+> 
+> We need to increase drive strength of the I2S bus, otherwise
+> the audio CODEC doesn't work. Likely the CODEC's master clock
+> is the main issue here.
 > 
 > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
-> Changes since v3:
->  - new patch
-> 
->  drivers/opp/core.c     | 10 ++++++++--
->  include/linux/pm_opp.h |  3 ++-
->  2 files changed, 10 insertions(+), 3 deletions(-)
+> Changes since v1:
+>  - moved &clock, &clock_audss parts to preserve alphabetical order
+> ---
+>  arch/arm/boot/dts/exynos5250-arndale.dts | 27 +++++++++++++++++++++++-
+>  1 file changed, 26 insertions(+), 1 deletion(-)
 
-I'll take the ASV driver via samsung-soc but I see it depends on this
-one.  Please provide me a stable tag with it or an Ack.
+This does not apply. Please rebase and resend.
 
 Best regards,
 Krzysztof
-
-
-> 
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index 407a07f29b12..4ebe5a6c280b 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -2057,14 +2057,18 @@ static int _opp_set_availability(struct device *dev, unsigned long freq,
->   * dev_pm_opp_adjust_voltage() - helper to change the voltage of an OPP
->   * @dev:		device for which we do this operation
->   * @freq:		OPP frequency to adjust voltage of
-> - * @u_volt:		new OPP voltage
-> + * @u_volt:		new OPP target voltage
-> + * @u_volt_min:		new OPP min voltage
-> + * @u_volt_max:		new OPP max voltage
->   *
->   * Return: -EINVAL for bad pointers, -ENOMEM if no memory available for the
->   * copy operation, returns 0 if no modifcation was done OR modification was
->   * successful.
->   */
->  int dev_pm_opp_adjust_voltage(struct device *dev, unsigned long freq,
-> -			      unsigned long u_volt)
-> +			      unsigned long u_volt, unsigned long u_volt_min,
-> +			      unsigned long u_volt_max)
-> +
->  {
->  	struct opp_table *opp_table;
->  	struct dev_pm_opp *tmp_opp, *opp = ERR_PTR(-ENODEV);
-> @@ -2098,6 +2102,8 @@ int dev_pm_opp_adjust_voltage(struct device *dev, unsigned long freq,
->  		goto adjust_unlock;
-> 
->  	opp->supplies->u_volt = u_volt;
-> +	opp->supplies->u_volt_min = u_volt_min;
-> +	opp->supplies->u_volt_max = u_volt_max;
-> 
->  	dev_pm_opp_get(opp);
->  	mutex_unlock(&opp_table->lock);
-> diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-> index 86947d53e8c4..0ee1daafe6af 100644
-> --- a/include/linux/pm_opp.h
-> +++ b/include/linux/pm_opp.h
-> @@ -113,7 +113,8 @@ void dev_pm_opp_remove(struct device *dev, unsigned long freq);
->  void dev_pm_opp_remove_all_dynamic(struct device *dev);
-> 
->  int dev_pm_opp_adjust_voltage(struct device *dev, unsigned long freq,
-> -			      unsigned long u_volt);
-> +			      unsigned long u_volt, unsigned long u_volt_min,
-> +			      unsigned long u_volt_max);
-> 
->  int dev_pm_opp_enable(struct device *dev, unsigned long freq);
-> 
-> --
-> 2.17.1
-> 
