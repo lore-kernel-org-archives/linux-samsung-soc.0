@@ -1,34 +1,36 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 1/2] ARM: dts: exynos: split phandle in dmas property
-Date: Wed, 2 Oct 2019 17:49:14 +0200
-Message-ID: <20191002154914.GC4072@kozik-lap>
-References: <CAL_JsqJ=QWk07y=h7dHFiRrKuE7NGoUr50bu3kiOC+YU8qS9jg@mail.gmail.com>
- <CGME20190920121525eucas1p27562c205c41200221540b720c9084fb4@eucas1p2.samsung.com>
- <20190920121431.31678-1-m.szyprowski@samsung.com>
+Subject: Re: [PATCH v4 2/8] ARM: dts: exynos: Rename Multi Core Timer node to
+ "timer"
+Date: Wed, 2 Oct 2019 17:49:47 +0200
+Message-ID: <20191002154947.GD4072@kozik-lap>
+References: <20190923161411.9236-1-krzk@kernel.org>
+ <20190923161411.9236-2-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190920121431.31678-1-m.szyprowski@samsung.com>
+In-Reply-To: <20190923161411.9236-2-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, Maciej Falkowski <m.falkowski@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Sylwester Nawrocki <snawrocki@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 02:14:30PM +0200, Marek Szyprowski wrote:
-> From: Maciej Falkowski <m.falkowski@samsung.com>
+On Mon, Sep 23, 2019 at 06:14:05PM +0200, Krzysztof Kozlowski wrote:
+> The device node name should reflect generic class of a device so rename
+> the Multi Core Timer node from "mct" to "timer".  This will be also in
+> sync with upcoming DT schema.  No functional change.
 > 
-> Change representation of phandle array as then
-> dt-schema counts number of its items properly.
-> 
-> Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
->  arch/arm/boot/dts/exynos5250.dtsi | 14 +++++++-------
->  arch/arm/boot/dts/exynos5410.dtsi |  6 +++---
->  arch/arm/boot/dts/exynos5420.dtsi | 14 +++++++-------
+>  arch/arm/boot/dts/exynos3250.dtsi | 2 +-
+>  arch/arm/boot/dts/exynos4210.dtsi | 2 +-
+>  arch/arm/boot/dts/exynos4412.dtsi | 2 +-
+>  arch/arm/boot/dts/exynos5250.dtsi | 2 +-
+>  arch/arm/boot/dts/exynos5260.dtsi | 2 +-
+>  arch/arm/boot/dts/exynos54xx.dtsi | 2 +-
+>  6 files changed, 6 insertions(+), 6 deletions(-)
 
-Thanks, applied.
+I applied all dts related patches from this set.
 
 Best regards,
 Krzysztof
