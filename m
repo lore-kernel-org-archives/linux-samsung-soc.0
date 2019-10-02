@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 075D5C35280
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Oct 2019 16:08:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF577C35280
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Oct 2019 16:08:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D23FC222C0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Oct 2019 16:08:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E7FF222CD
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Oct 2019 16:08:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570032492;
-	bh=aTT+KOPtG7lEZoKFjOcg12k7mYDVzqbZ+kRKqJj+Q/Y=;
+	s=default; t=1570032495;
+	bh=CKWsaVFJ1pyROvRofNrA9Sj5mcok/rVqOa4bO0jGwWY=;
 	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=cJYUmIbn00Ek5UFEEIc1zMMKbHoGQbPMSRj8VUtwoW8dq2MkWpzV+ywzrnLKR+Dne
-	 RxLVzZdYk7tUXpoZaMssBzBpZlvcOXCe6BHV2SPVxaYNYRcTx/02HML4TzJTdh2RZK
-	 cuLK4uzzzy4CE4DGDQrLEs4K4OlFCzCZM1mAa7wE=
+	b=YF7BbMpxybVhqAaEzAMgja7AhLjuuSWLmLgcb/JmSHZRZYnQRByuBBv7V6YRUUBwn
+	 MDLlqyMzc5u2d0IdSL9+x7ifx/HlwALLY6+PC/84YIIb10fyrq2GLbJV8VyTzgK5hX
+	 qeIOsIx+Yd41CA9y4IqIDzrH1TruVXljluB61dnQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729241AbfJBQIJ (ORCPT
+        id S1729261AbfJBQIO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 2 Oct 2019 12:08:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36940 "EHLO mail.kernel.org"
+        Wed, 2 Oct 2019 12:08:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37100 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728141AbfJBQII (ORCPT
+        id S1728141AbfJBQIO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 2 Oct 2019 12:08:08 -0400
+        Wed, 2 Oct 2019 12:08:14 -0400
 Received: from localhost.localdomain (unknown [194.230.155.145])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A88A021D82;
-        Wed,  2 Oct 2019 16:08:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6268A21D81;
+        Wed,  2 Oct 2019 16:08:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570032487;
-        bh=aTT+KOPtG7lEZoKFjOcg12k7mYDVzqbZ+kRKqJj+Q/Y=;
+        s=default; t=1570032493;
+        bh=CKWsaVFJ1pyROvRofNrA9Sj5mcok/rVqOa4bO0jGwWY=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=yEmU39OEZPdIZkciVrsHxumq0dwlb6xYD984LvdxOpFBegUQbYQWY/kqPJNkQB/S/
-         klHIFe9iE5JLM4gPOXgmmzDpt+3ictm+NdolqN8XcQ+4TvJlyCpK97vjB/H7i3U59c
-         6CWPL8cy4Ul0kVyv78QOfgaINaaEebGmpqnpqAvk=
+        b=HOgyQ6jTZyuTQSlfcd5EApZtCMwcAA+mL9QuokFlSO7ni1IlPpqFtsQ05do6ZvSjM
+         stvNpVocU9CzdcHRUdoKxOm6ISLUvdb0eMcnJomw+YmGmLhDpH6TlkRLOXg6I9MAM5
+         JadUGUH+ytR5T56T/0yFJsxQCKmOmjpwTuGwgx0s=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -56,9 +56,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-iio@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-rtc@vger.kernel.org
-Subject: [PATCH 2/4] dt-bindings: rtc: s3c: Use defines instead of clock numbers
-Date:   Wed,  2 Oct 2019 18:07:42 +0200
-Message-Id: <20191002160744.11307-2-krzk@kernel.org>
+Subject: [PATCH 3/4] dt-bindings: rtc: s3c: Include generic dt-schema bindings
+Date:   Wed,  2 Oct 2019 18:07:43 +0200
+Message-Id: <20191002160744.11307-3-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191002160744.11307-1-krzk@kernel.org>
 References: <20191002160744.11307-1-krzk@kernel.org>
@@ -67,37 +67,29 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Message-ID: <20191002160742.M6qFpN7Y7wy3IE8zvLrpfOY8_Fsj7HtU0HlkGiutyZE@z>
+Message-ID: <20191002160743.SA4C8xOzaIi1uk8gozPlLrlxxGQ6_-2XxaGdPJ1bwD0@z>
 
-Make the examples in S3C RTC bindings more readable and bring them
-closer to real DTS by using defines for clocks.
+Include the generic rtc.yaml bindings in Samsung S3C RTC bindings.  This
+brings the requirement of proper node names and adds parsing of
+additional properties.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- Documentation/devicetree/bindings/rtc/s3c-rtc.yaml | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/rtc/s3c-rtc.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/Documentation/devicetree/bindings/rtc/s3c-rtc.yaml b/Documentation/devicetree/bindings/rtc/s3c-rtc.yaml
-index 95570d7e19eb..4d91cdc9b998 100644
+index 4d91cdc9b998..76bbf8b7555b 100644
 --- a/Documentation/devicetree/bindings/rtc/s3c-rtc.yaml
 +++ b/Documentation/devicetree/bindings/rtc/s3c-rtc.yaml
-@@ -75,11 +75,14 @@ allOf:
+@@ -48,6 +48,7 @@ properties:
+     maxItems: 2
  
- examples:
-   - |
-+    #include <dt-bindings/clock/exynos5420.h>
-+    #include <dt-bindings/clock/samsung,s2mps11.h>
-+
-     rtc@10070000 {
-         compatible = "samsung,s3c6410-rtc";
-         reg = <0x10070000 0x100>;
-         interrupts = <0 44 4>, <0 45 4>;
--        clocks = <&clock 0>, // CLK_RTC
--                 <&s2mps11_osc 0>; // S2MPS11_CLK_AP
-+        clocks = <&clock CLK_RTC>,
-+                 <&s2mps11_osc S2MPS11_CLK_AP>;
-         clock-names = "rtc", "rtc_src";
-     };
+ allOf:
++  - $ref: rtc.yaml#
+   - if:
+       properties:
+         compatible:
 -- 
 2.17.1
 
