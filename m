@@ -1,13 +1,14 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v4 1/3] ASoC: samsung: arndale: Simplify DAI link
- initialization
-Date: Wed,  2 Oct 2019 12:56:50 +0200
-Message-ID: <20191002105652.24821-1-s.nawrocki@samsung.com>
-References: <CGME20191002105705eucas1p1561d6fb9c9b7355047868e589f6a25c8@eucas1p1.samsung.com>
+Subject: [PATCH v4 3/3] ASoC: samsung: Rename Arndale card driver
+Date: Wed,  2 Oct 2019 12:56:52 +0200
+Message-ID: <20191002105652.24821-3-s.nawrocki@samsung.com>
+References: <20191002105652.24821-1-s.nawrocki@samsung.com>
+ <CGME20191002105714eucas1p1d22a05b0a2daf48fd5daf22e47693f3d@eucas1p1.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20191002105652.24821-1-s.nawrocki@samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -21,85 +22,69 @@ To: broonie@kernel.org
 Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, ckeepax@opensource.cirrus.com, b.zolnierkie@samsung.com, sbkim73@samsung.com, patches@opensource.cirrus.com, lgirdwood@gmail.com, krzk@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-There is only one DAI link so we can drop an unnecessary loop statement.
-Use card->dai_link in place of direct static arndale_rt5631_dai[] array
-dereference as a prerequisite for adding support for other CODECs.
-Unnecessary assignment of dai_link->codecs->name to NULL is removed.
+Rename arndale_rt5631.c to just arnddale.c as we support other CODECs
+than RT5631.  While at it replace spaces in Kconfig with tabs.
 
 Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
-Based on for-next branch from
-git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound
-
 Changes since v2:
  - none.
 
 Changes since v1:
- - rebased due to reordering patches in the series
+ - new patch.
 ---
- sound/soc/samsung/arndale_rt5631.c | 42 +++++++++++++-----------------
- 1 file changed, 18 insertions(+), 24 deletions(-)
+ sound/soc/samsung/Kconfig                         | 10 +++++-----
+ sound/soc/samsung/Makefile                        |  4 ++--
+ sound/soc/samsung/{arndale_rt5631.c => arndale.c} |  0
+ 3 files changed, 7 insertions(+), 7 deletions(-)
+ rename sound/soc/samsung/{arndale_rt5631.c => arndale.c} (100%)
 
-diff --git a/sound/soc/samsung/arndale_rt5631.c b/sound/soc/samsung/arndale_rt5631.c
-index fd8c6642fb0d..004c84fafad9 100644
---- a/sound/soc/samsung/arndale_rt5631.c
-+++ b/sound/soc/samsung/arndale_rt5631.c
-@@ -88,36 +88,30 @@ static void arndale_put_of_nodes(struct snd_soc_card *card)
+diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
+index 6803cbfa9e46..1a0b163ca47b 100644
+--- a/sound/soc/samsung/Kconfig
++++ b/sound/soc/samsung/Kconfig
+@@ -194,11 +194,11 @@ config SND_SOC_ODROID
+ 	help
+ 	  Say Y here to enable audio support for the Odroid XU3/XU4.
 
- static int arndale_audio_probe(struct platform_device *pdev)
- {
--	int n, ret;
- 	struct device_node *np = pdev->dev.of_node;
- 	struct snd_soc_card *card = &arndale_rt5631;
-+	struct snd_soc_dai_link *dai_link;
-+	int ret;
+-config SND_SOC_ARNDALE_RT5631_ALC5631
+-        tristate "Audio support for RT5631(ALC5631) on Arndale Board"
+-        depends on I2C
+-        select SND_SAMSUNG_I2S
+-        select SND_SOC_RT5631
++config SND_SOC_ARNDALE
++	tristate "Audio support for Arndale Board"
++	depends on I2C
++	select SND_SAMSUNG_I2S
++	select SND_SOC_RT5631
+ 	select MFD_WM8994
+ 	select SND_SOC_WM8994
 
- 	card->dev = &pdev->dev;
-+	dai_link = card->dai_link;
-+
-+	dai_link->cpus->of_node = of_parse_phandle(np, "samsung,audio-cpu", 0);
-+	if (!dai_link->cpus->of_node) {
-+		dev_err(&pdev->dev,
-+			"Property 'samsung,audio-cpu' missing or invalid\n");
-+		return -EINVAL;
-+	}
+diff --git a/sound/soc/samsung/Makefile b/sound/soc/samsung/Makefile
+index c3b76035f69c..8f5dfe20b9f1 100644
+--- a/sound/soc/samsung/Makefile
++++ b/sound/soc/samsung/Makefile
+@@ -39,7 +39,7 @@ snd-soc-lowland-objs := lowland.o
+ snd-soc-littlemill-objs := littlemill.o
+ snd-soc-bells-objs := bells.o
+ snd-soc-odroid-objs := odroid.o
+-snd-soc-arndale-rt5631-objs := arndale_rt5631.o
++snd-soc-arndale-objs := arndale.o
+ snd-soc-tm2-wm5110-objs := tm2_wm5110.o
 
--	for (n = 0; np && n < ARRAY_SIZE(arndale_rt5631_dai); n++) {
--		if (!arndale_rt5631_dai[n].cpus->dai_name) {
--			arndale_rt5631_dai[n].cpus->of_node = of_parse_phandle(np,
--					"samsung,audio-cpu", n);
--
--			if (!arndale_rt5631_dai[n].cpus->of_node) {
--				dev_err(&pdev->dev,
--				"Property 'samsung,audio-cpu' missing or invalid\n");
--				return -EINVAL;
--			}
--		}
--		if (!arndale_rt5631_dai[n].platforms->name)
--			arndale_rt5631_dai[n].platforms->of_node =
--					arndale_rt5631_dai[n].cpus->of_node;
--
--		arndale_rt5631_dai[n].codecs->name = NULL;
--		arndale_rt5631_dai[n].codecs->of_node = of_parse_phandle(np,
--					"samsung,audio-codec", n);
--		if (!arndale_rt5631_dai[0].codecs->of_node) {
--			dev_err(&pdev->dev,
-+	if (!dai_link->platforms->name)
-+		dai_link->platforms->of_node = dai_link->cpus->of_node;
-+
-+	dai_link->codecs->of_node = of_parse_phandle(np, "samsung,audio-codec", 0);
-+	if (!dai_link->codecs->of_node) {
-+		dev_err(&pdev->dev,
- 			"Property 'samsung,audio-codec' missing or invalid\n");
--			ret = -EINVAL;
--			goto err_put_of_nodes;
--		}
-+		ret = -EINVAL;
-+		goto err_put_of_nodes;
- 	}
-
- 	ret = devm_snd_soc_register_card(card->dev, card);
+ obj-$(CONFIG_SND_SOC_SAMSUNG_JIVE_WM8750) += snd-soc-jive-wm8750.o
+@@ -62,5 +62,5 @@ obj-$(CONFIG_SND_SOC_LOWLAND) += snd-soc-lowland.o
+ obj-$(CONFIG_SND_SOC_LITTLEMILL) += snd-soc-littlemill.o
+ obj-$(CONFIG_SND_SOC_BELLS) += snd-soc-bells.o
+ obj-$(CONFIG_SND_SOC_ODROID) += snd-soc-odroid.o
+-obj-$(CONFIG_SND_SOC_ARNDALE_RT5631_ALC5631) += snd-soc-arndale-rt5631.o
++obj-$(CONFIG_SND_SOC_ARNDALE) += snd-soc-arndale.o
+ obj-$(CONFIG_SND_SOC_SAMSUNG_TM2_WM5110) += snd-soc-tm2-wm5110.o
+diff --git a/sound/soc/samsung/arndale_rt5631.c b/sound/soc/samsung/arndale.c
+similarity index 100%
+rename from sound/soc/samsung/arndale_rt5631.c
+rename to sound/soc/samsung/arndale.c
 --
 2.17.1
