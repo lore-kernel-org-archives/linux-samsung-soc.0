@@ -1,34 +1,90 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [RESEND PATCH v5 3/4] ARM: dts: exynos: add initial data for
- coupled regulators for Exynos5422/5800
-Date: Wed, 2 Oct 2019 16:27:04 +0200
-Message-ID: <20191002142704.GA15827@pi3>
-References: <20190808090234.12577-1-k.konieczny@partner.samsung.com>
- <CGME20190808090252eucas1p2afec3e288965bb7e7aa6f96f67686273@eucas1p2.samsung.com>
- <20190808090234.12577-4-k.konieczny@partner.samsung.com>
+Subject: Re: [PATCH v4 1/6] opp: Handle target/min/max voltage in
+ dev_pm_opp_adjust_voltage()
+Date: Wed, 2 Oct 2019 16:33:10 +0200
+Message-ID: <20191002143310.GA15898@pi3>
+References: <20190910123618.27985-1-s.nawrocki@samsung.com>
+ <CGME20190910123636eucas1p250ec04901f227b947cc38936563f63b2@eucas1p2.samsung.com>
+ <20190910123618.27985-2-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190808090234.12577-4-k.konieczny@partner.samsung.com>
+In-Reply-To: <20190910123618.27985-2-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Mark Rutland <mark.rutland@arm.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: vireshk@kernel.org, robh+dt@kernel.org, kgene@kernel.org, devicetree@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Aug 08, 2019 at 11:02:33AM +0200, Kamil Konieczny wrote:
-> From: Marek Szyprowski <m.szyprowski@samsung.com>
+On Tue, Sep 10, 2019 at 02:36:13PM +0200, Sylwester Nawrocki wrote:
+> To be squashed with patch "PM / OPP: Support adjusting OPP voltages
+> at runtime".
 > 
-> Declare Exynos5422/5800 voltage ranges for opp points for big cpu core and
-> bus wcore and couple their voltage supllies as vdd_arm and vdd_int should
-> be in 300mV range.
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+> Changes since v3:
+>  - new patch
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> [k.konieczny: add missing patch description]
-> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+>  drivers/opp/core.c     | 10 ++++++++--
+>  include/linux/pm_opp.h |  3 ++-
+>  2 files changed, 10 insertions(+), 3 deletions(-)
 
-The bindings were acked. Can I pick it up?
+I'll take the ASV driver via samsung-soc but I see it depends on this
+one.  Please provide me a stable tag with it or an Ack.
 
 Best regards,
 Krzysztof
+
+
+> 
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index 407a07f29b12..4ebe5a6c280b 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -2057,14 +2057,18 @@ static int _opp_set_availability(struct device *dev, unsigned long freq,
+>   * dev_pm_opp_adjust_voltage() - helper to change the voltage of an OPP
+>   * @dev:		device for which we do this operation
+>   * @freq:		OPP frequency to adjust voltage of
+> - * @u_volt:		new OPP voltage
+> + * @u_volt:		new OPP target voltage
+> + * @u_volt_min:		new OPP min voltage
+> + * @u_volt_max:		new OPP max voltage
+>   *
+>   * Return: -EINVAL for bad pointers, -ENOMEM if no memory available for the
+>   * copy operation, returns 0 if no modifcation was done OR modification was
+>   * successful.
+>   */
+>  int dev_pm_opp_adjust_voltage(struct device *dev, unsigned long freq,
+> -			      unsigned long u_volt)
+> +			      unsigned long u_volt, unsigned long u_volt_min,
+> +			      unsigned long u_volt_max)
+> +
+>  {
+>  	struct opp_table *opp_table;
+>  	struct dev_pm_opp *tmp_opp, *opp = ERR_PTR(-ENODEV);
+> @@ -2098,6 +2102,8 @@ int dev_pm_opp_adjust_voltage(struct device *dev, unsigned long freq,
+>  		goto adjust_unlock;
+> 
+>  	opp->supplies->u_volt = u_volt;
+> +	opp->supplies->u_volt_min = u_volt_min;
+> +	opp->supplies->u_volt_max = u_volt_max;
+> 
+>  	dev_pm_opp_get(opp);
+>  	mutex_unlock(&opp_table->lock);
+> diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
+> index 86947d53e8c4..0ee1daafe6af 100644
+> --- a/include/linux/pm_opp.h
+> +++ b/include/linux/pm_opp.h
+> @@ -113,7 +113,8 @@ void dev_pm_opp_remove(struct device *dev, unsigned long freq);
+>  void dev_pm_opp_remove_all_dynamic(struct device *dev);
+> 
+>  int dev_pm_opp_adjust_voltage(struct device *dev, unsigned long freq,
+> -			      unsigned long u_volt);
+> +			      unsigned long u_volt, unsigned long u_volt_min,
+> +			      unsigned long u_volt_max);
+> 
+>  int dev_pm_opp_enable(struct device *dev, unsigned long freq);
+> 
+> --
+> 2.17.1
+> 
