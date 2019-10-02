@@ -1,54 +1,48 @@
-From: Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH v3 1/4] dt-bindings: memory-controllers: Add Exynos5422 DMC
- interrupts description
-Date: Wed,  2 Oct 2019 08:04:52 +0200
-Message-ID: <20191002060455.3834-2-l.luba@partner.samsung.com>
-References: <20191002060455.3834-1-l.luba@partner.samsung.com>
-        <CGME20191002060504eucas1p2f023677bb85a7f6a1efebf891e8d81df@eucas1p2.samsung.com>
-Content-Type: text/plain; charset="utf-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191002060455.3834-1-l.luba@partner.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org, mark.rutland@arm.com, cw00.choi@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, myungjoo.ham@samsung.com, robh+dt@kernel.org, willy.mh.wolff.ml@gmail.com, Lukasz Luba <l.luba@partner.samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v3 RESEND 1/3] ASoC: samsung: arndale: Simplify DAI link
+ initialization
+Date: Wed, 2 Oct 2019 12:56:14 +0200
+Message-ID: <9ddc271f-e88f-8991-2625-b885f2f2fae7@samsung.com>
+References: <CGME20191001123637eucas1p25c7551d4c967e4a2855f6c8d3b096ff5@eucas1p2.samsung.com>
+ <20191001123625.19370-1-s.nawrocki@samsung.com>
+ <20191001175601.GB14762@sirena.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20191001175601.GB14762@sirena.co.uk>
+Content-Language: en-GB
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Mark Brown <broonie@kernel.org>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, ckeepax@opensource.cirrus.com, b.zolnierkie@samsung.com, sbkim73@samsung.com, patches@opensource.cirrus.com, lgirdwood@gmail.com, krzk@kernel.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add description for optional interrupt lines. It provides a new operation
-mode, which uses internal performance counters interrupt when overflow.
-This is more reliable than using default polling mode implemented in
-devfreq.
+On 10/1/19 19:56, Mark Brown wrote:
+> On Tue, Oct 01, 2019 at 02:36:23PM +0200, Sylwester Nawrocki wrote:
+> 
+>> Changes since v1:
+>>  - rebased due to reordering patches in the series
+>
+> These still don't apply, please check and resend specifying what you're
+> basing them on - I don't think this is an ordering issue.
 
-Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
----
- .../bindings/memory-controllers/exynos5422-dmc.txt    | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Sory, the above is an old comment, it just refers to what I did
+between v1 and v2. I'm not sure what happened, the patches were based 
+on for-next branch, git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt b/Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt
-index 02aeb3b5a820..e2434cac4858 100644
---- a/Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt
-+++ b/Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt
-@@ -31,6 +31,14 @@ Required properties for DMC device for Exynos5422:
- 	The register offsets are in the driver code and specyfic for this SoC
- 	type.
- 
-+Optional properties for DMC device for Exynos5422:
-+- interrupt-parent : The parent interrupt controller.
-+- interrupts : Contains the IRQ line numbers for the DMC internal performance
-+  event counters in DREX0 and DREX1 channels. Align with specification of the
-+  interrupt line(s) in the interrupt-parent controller.
-+- interrupt-names : IRQ names "drex_0" and "drex_1", the order should be the
-+  same as in the 'interrupts' list above.
-+
- Example:
- 
- 	ppmu_dmc0_0: ppmu@10d00000 {
-@@ -70,4 +78,7 @@ Example:
- 		device-handle = <&samsung_K3QF2F20DB>;
- 		vdd-supply = <&buck1_reg>;
- 		samsung,syscon-clk = <&clock>;
-+		interrupt-parent = <&combiner>;
-+		interrupts = <16 0>, <16 1>;
-+		interrupt-names = "drex_0", "drex_1";
- 	};
--- 
-2.17.1
+I will resend shortly with a fix for issue reported by the kbuild test.
+
+ea7bfc805cee ASoC: samsung: Rename Arndale card driver
+2db0e4f97a07 ASoC: samsung: arndale: Add support for WM1811 CODEC
+fb5ca16f40f0 ASoC: samsung: arndale: Simplify DAI link initialization
+82965165b0a9 Merge branch 'asoc-5.5' into asoc-next
+952139a546d0 Merge branch 'asoc-5.4' into asoc-linus
+4bb41984bf2f ASoC: max98373: check for device node before parsing
