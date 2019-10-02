@@ -7,172 +7,321 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81BA9C352AA
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Oct 2019 16:14:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63E0FC35280
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Oct 2019 16:43:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55C21222BE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Oct 2019 16:14:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E45A222C2
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Oct 2019 16:43:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570032847;
-	bh=kO8M38DmM9I+02SfH1lZx8c4kQqQUy1vQcjLyNx6/UI=;
+	s=default; t=1570034633;
+	bh=6TGfhp6A9L6XL3h83OQIrQQEBV22mU2Dsc9NbOkvBhE=;
 	h=From:To:Subject:Date:List-ID:From;
-	b=AqXKERIAHtO3TZPL+TnE4vE/mGBfoW8tmyVWm285sTItZDQTsiRyQ8D2LcjJQ9o/w
-	 LghbU6tGHqfGNcBkkLisw+qnMmrXqFVxn98bEwJ6uGmt9iNplxH0n1HOLOp4QWSHde
-	 O64KS9tcXNnTV35LkWNmIHUl7oDqSVLTAj9IRBkM=
+	b=EM6v6prG72NE8O2VqOxwT9mOCoKO+Lkszs6qS3/LvIAq7E3nBG9pIt2ddyRVRb4Eo
+	 qpQ9Hg7kcPoMC/QMa6THiVGrAr138r0JuJTsCmsRgXUgePuc0HOC5Y1fn8MzWkXq+y
+	 e6cRFLfGM7mqFHzTw0r+KlqS19sYq6LlHFr/QYBU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbfJBQOH (ORCPT
+        id S1726708AbfJBQnw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 2 Oct 2019 12:14:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38986 "EHLO mail.kernel.org"
+        Wed, 2 Oct 2019 12:43:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726215AbfJBQOG (ORCPT
+        id S1726000AbfJBQnw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 2 Oct 2019 12:14:06 -0400
+        Wed, 2 Oct 2019 12:43:52 -0400
 Received: from localhost.localdomain (unknown [194.230.155.145])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4882121D81;
-        Wed,  2 Oct 2019 16:14:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DABB21848;
+        Wed,  2 Oct 2019 16:43:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570032845;
-        bh=kO8M38DmM9I+02SfH1lZx8c4kQqQUy1vQcjLyNx6/UI=;
+        s=default; t=1570034631;
+        bh=6TGfhp6A9L6XL3h83OQIrQQEBV22mU2Dsc9NbOkvBhE=;
         h=From:To:Subject:Date:From;
-        b=pTAciPHwF/1ekI5rhATeOVb8L8s04YFa4IDtpwye5eD2HwpcrP8u9snStb72j0OQe
-         G9ymOpPTDfJDoGksbnBOvrC2FeRLF7Kfn1SNbF2/GdUMvGf3gbj4Tn7K0e7M1ll4vF
-         hajl3K1m4oB7OKu+EQOX+Dp4i73QkHkl3KN7vgOw=
+        b=CUwCvhqHj52pdVjBwYJz3x8y4HFSYL0mkneIaaksQyDIdslFJVbjijLvVgE87v8rT
+         KrjejYQZ+S1jh4cl0pkZv3OUPYLAcyQCZAtffRQlzEv3OlI2A/NasNcZoq7V/U+Z5R
+         nFf4LVNvIJZ9Pua6oAB+4yuo2FyAQMem8vO0pIXM=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Rob Herring <robh+dt@kernel.org>,
+To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3] dt-bindings: rng: exynos4-rng: Convert Exynos PRNG bindings to json-schema
-Date:   Wed,  2 Oct 2019 18:13:40 +0200
-Message-Id: <20191002161340.11846-1-krzk@kernel.org>
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH v3 01/10] dt-bindings: sram: Convert SRAM bindings to json-schema
+Date:   Wed,  2 Oct 2019 18:43:07 +0200
+Message-Id: <20191002164316.14905-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20191002161340.SLZGixJaLtDHL942RylfGdIXLepN7vfNtKs6gRKAc3U@z>
 
-Convert Samsung Exynos Pseudo Random Number Generator bindings to DT
-schema format using json-schema.
+Convert generic mmio-sram bindings to DT schema format using
+json-schema.  Require the address/size cells to be 1, not equal to root
+node.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 ---
 
 Changes since v2:
-1. Add additionalProperties false,
-2. Include clock header and use defines instead of clock numbers.
+1. Add Rob as maintainer,
+2. Use "contains" for compatible,
+3. Fix address and size cells to 1,
+4. Add maxitems to reg under children,
+5. Remove unneeded string type from label.
 
 Changes since v1:
 1. Indent example with four spaces (more readable).
 ---
- .../bindings/rng/samsung,exynos4-rng.txt      | 19 --------
- .../bindings/rng/samsung,exynos4-rng.yaml     | 45 +++++++++++++++++++
- MAINTAINERS                                   |  2 +-
- 3 files changed, 46 insertions(+), 20 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/rng/samsung,exynos4-rng.txt
- create mode 100644 Documentation/devicetree/bindings/rng/samsung,exynos4-rng.yaml
+ .../devicetree/bindings/sram/sram.txt         |  80 -----------
+ .../devicetree/bindings/sram/sram.yaml        | 134 ++++++++++++++++++
+ 2 files changed, 134 insertions(+), 80 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/sram/sram.txt
+ create mode 100644 Documentation/devicetree/bindings/sram/sram.yaml
 
-diff --git a/Documentation/devicetree/bindings/rng/samsung,exynos4-rng.txt b/Documentation/devicetree/bindings/rng/samsung,exynos4-rng.txt
+diff --git a/Documentation/devicetree/bindings/sram/sram.txt b/Documentation/devicetree/bindings/sram/sram.txt
 deleted file mode 100644
-index a13fbdb4bd88..000000000000
---- a/Documentation/devicetree/bindings/rng/samsung,exynos4-rng.txt
+index e98908bd4227..000000000000
+--- a/Documentation/devicetree/bindings/sram/sram.txt
 +++ /dev/null
-@@ -1,19 +0,0 @@
--Exynos Pseudo Random Number Generator
+@@ -1,80 +0,0 @@
+-Generic on-chip SRAM
+-
+-Simple IO memory regions to be managed by the genalloc API.
 -
 -Required properties:
 -
--- compatible  : One of:
--                - "samsung,exynos4-rng" for Exynos4210 and Exynos4412
--                - "samsung,exynos5250-prng" for Exynos5250+
--- reg         : Specifies base physical address and size of the registers map.
--- clocks      : Phandle to clock-controller plus clock-specifier pair.
--- clock-names : "secss" as a clock name.
+-- compatible : mmio-sram or atmel,sama5d2-securam
+-
+-- reg : SRAM iomem address range
+-
+-Reserving sram areas:
+----------------------
+-
+-Each child of the sram node specifies a region of reserved memory. Each
+-child node should use a 'reg' property to specify a specific range of
+-reserved memory.
+-
+-Following the generic-names recommended practice, node names should
+-reflect the purpose of the node. Unit address (@<address>) should be
+-appended to the name.
+-
+-Required properties in the sram node:
+-
+-- #address-cells, #size-cells : should use the same values as the root node
+-- ranges : standard definition, should translate from local addresses
+-           within the sram to bus addresses
+-
+-Optional properties in the sram node:
+-
+-- no-memory-wc : the flag indicating, that SRAM memory region has not to
+-                 be remapped as write combining. WC is used by default.
+-
+-Required properties in the area nodes:
+-
+-- reg : iomem address range, relative to the SRAM range
+-
+-Optional properties in the area nodes:
+-
+-- compatible : standard definition, should contain a vendor specific string
+-               in the form <vendor>,[<device>-]<usage>
+-- pool : indicates that the particular reserved SRAM area is addressable
+-         and in use by another device or devices
+-- export : indicates that the reserved SRAM area may be accessed outside
+-           of the kernel, e.g. by bootloader or userspace
+-- protect-exec : Same as 'pool' above but with the additional
+-		 constraint that code wil be run from the region and
+-		 that the memory is maintained as read-only, executable
+-		 during code execution. NOTE: This region must be page
+-		 aligned on start and end in order to properly allow
+-		 manipulation of the page attributes.
+-- label : the name for the reserved partition, if omitted, the label
+-          is taken from the node name excluding the unit address.
+-- clocks : a list of phandle and clock specifier pair that controls the
+-	   single SRAM clock.
 -
 -Example:
 -
--	rng@10830400 {
--		compatible = "samsung,exynos4-rng";
--		reg = <0x10830400 0x200>;
--		clocks = <&clock CLK_SSS>;
--		clock-names = "secss";
+-sram: sram@5c000000 {
+-	compatible = "mmio-sram";
+-	reg = <0x5c000000 0x40000>; /* 256 KiB SRAM at address 0x5c000000 */
+-
+-	#address-cells = <1>;
+-	#size-cells = <1>;
+-	ranges = <0 0x5c000000 0x40000>;
+-
+-	smp-sram@100 {
+-		compatible = "socvendor,smp-sram";
+-		reg = <0x100 0x50>;
 -	};
-diff --git a/Documentation/devicetree/bindings/rng/samsung,exynos4-rng.yaml b/Documentation/devicetree/bindings/rng/samsung,exynos4-rng.yaml
+-
+-	device-sram@1000 {
+-		reg = <0x1000 0x1000>;
+-		pool;
+-	};
+-
+-	exported@20000 {
+-		reg = <0x20000 0x20000>;
+-		export;
+-	};
+-};
+diff --git a/Documentation/devicetree/bindings/sram/sram.yaml b/Documentation/devicetree/bindings/sram/sram.yaml
 new file mode 100644
-index 000000000000..3362cb1213c0
+index 000000000000..a1c1ec2183f2
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/rng/samsung,exynos4-rng.yaml
-@@ -0,0 +1,45 @@
++++ b/Documentation/devicetree/bindings/sram/sram.yaml
+@@ -0,0 +1,134 @@
 +# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/rng/samsung,exynos4-rng.yaml#
++$id: http://devicetree.org/schemas/sram/sram.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Samsung Exynos SoC Pseudo Random Number Generator
++title: Generic on-chip SRAM
 +
 +maintainers:
-+  - Krzysztof Kozlowski <krzk@kernel.org>
++  - Rob Herring <robh@kernel.org>
++
++description: |+
++  Simple IO memory regions to be managed by the genalloc API.
++
++  Each child of the sram node specifies a region of reserved memory. Each
++  child node should use a 'reg' property to specify a specific range of
++  reserved memory.
++
++  Following the generic-names recommended practice, node names should
++  reflect the purpose of the node. Unit address (@<address>) should be
++  appended to the name.
 +
 +properties:
++  $nodename:
++    pattern: "^sram(@.*)?"
++
 +  compatible:
-+    enum:
-+      - samsung,exynos4-rng                   # for Exynos4210 and Exynos4412
-+      - samsung,exynos5250-prng               # for Exynos5250+
++    contains:
++      enum:
++        - mmio-sram
++        - atmel,sama5d2-securam
 +
 +  reg:
 +    maxItems: 1
 +
-+  clocks:
-+    maxItems: 1
++  "#address-cells":
++    const: 1
 +
-+  clock-names:
-+    items:
-+      - const: secss
++  "#size-cells":
++    const: 1
++
++  ranges:
++    description:
++      Should translate from local addresses within the sram to bus addresses.
++
++  no-memory-wc:
++    description:
++      The flag indicating, that SRAM memory region has not to be remapped
++      as write combining. WC is used by default.
++    type: boolean
++
++patternProperties:
++  "^([a-z]*-)?sram@[a-f0-9]$":
++    type: object
++    description:
++      Each child of the sram node specifies a region of reserved memory.
++    properties:
++      reg:
++        description:
++          IO mem address range, relative to the SRAM range.
++        maxItems: 1
++
++      compatible:
++        $ref: /schemas/types.yaml#/definitions/string
++        description:
++          Should contain a vendor specific string in the form
++          <vendor>,[<device>-]<usage>
++
++      pool:
++        description:
++          Indicates that the particular reserved SRAM area is addressable
++          and in use by another device or devices.
++        type: boolean
++
++      export:
++        description:
++          Indicates that the reserved SRAM area may be accessed outside
++          of the kernel, e.g. by bootloader or userspace.
++        type: boolean
++
++      protect-exec:
++        description: |
++          Same as 'pool' above but with the additional constraint that code
++          will be run from the region and that the memory is maintained as
++          read-only, executable during code execution. NOTE: This region must
++          be page aligned on start and end in order to properly allow
++          manipulation of the page attributes.
++        type: boolean
++
++      label:
++        description:
++          The name for the reserved partition, if omitted, the label is taken
++          from the node name excluding the unit address.
++
++      clocks:
++        description:
++          A list of phandle and clock specifier pair that controls the
++          single SRAM clock.
++
++    required:
++      - reg
 +
 +required:
 +  - compatible
 +  - reg
-+  - clock-names
-+  - clocks
-+
-+additionalProperties: false
++  - "#address-cells"
++  - "#size-cells"
++  - ranges
 +
 +examples:
 +  - |
-+    #include <dt-bindings/clock/exynos4.h>
++    sram: sram@5c000000 {
++        compatible = "mmio-sram";
++        reg = <0x5c000000 0x40000>; /* 256 KiB SRAM at address 0x5c000000 */
 +
-+    rng@10830400 {
-+        compatible = "samsung,exynos4-rng";
-+        reg = <0x10830400 0x200>;
-+        clocks = <&clock CLK_SSS>;
-+        clock-names = "secss";
++        #address-cells = <1>;
++        #size-cells = <1>;
++        ranges = <0 0x5c000000 0x40000>;
++
++        smp-sram@100 {
++            compatible = "socvendor,smp-sram";
++            reg = <0x100 0x50>;
++        };
++
++        device-sram@1000 {
++            reg = <0x1000 0x1000>;
++            pool;
++        };
++
++        exported@20000 {
++            reg = <0x20000 0x20000>;
++            export;
++        };
 +    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 00b75028b280..b26b2009c230 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14212,7 +14212,7 @@ L:	linux-crypto@vger.kernel.org
- L:	linux-samsung-soc@vger.kernel.org
- S:	Maintained
- F:	drivers/crypto/exynos-rng.c
--F:	Documentation/devicetree/bindings/rng/samsung,exynos4-rng.txt
-+F:	Documentation/devicetree/bindings/rng/samsung,exynos4-rng.yaml
- 
- SAMSUNG EXYNOS TRUE RANDOM NUMBER GENERATOR (TRNG) DRIVER
- M:	Łukasz Stelmach <l.stelmach@samsung.com>
 -- 
 2.17.1
 
