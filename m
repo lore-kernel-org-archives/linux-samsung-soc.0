@@ -2,95 +2,114 @@ Return-Path: <SRS0=sIcv=X3=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D382C10F14
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Oct 2019 17:38:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C830C10F14
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Oct 2019 17:44:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F70921D81
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Oct 2019 17:38:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE9A521D82
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  2 Oct 2019 17:44:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570037901;
-	bh=BiMF+rr+fWqAS746ljdAXP5lde95Gmakphk001kAUpk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=gj7F4sp7L7ivFk8iDWUpXmNFv2VX6ysLeJ1uK2j/RbiJBf/P+9nmAJPM5Ta1gPe0i
-	 lrQXB2BXELKpdUAv8ijUsYHMgtH/YRNPMcK8joJL8BpI2iIcy6nakeiVnEf4i2hRNL
-	 pNsS6dQ/HljMLubn31kpWZ5SBwAdRc+SwDC6XQsQ=
+	s=default; t=1570038255;
+	bh=MZYQ5QLRxsH5Lm/zp4Xs3ZdRx+OF3lS8A4Qr/ENHFmY=;
+	h=From:To:Subject:Date:List-ID:From;
+	b=Kt59beuHgYZ3uIfSRk4rcoDwaXvT4kUqkBYlVKmYEOBDn6sRjvU7JV/J8x/k6iNuF
+	 dDaMMj9n7dOJde/z2cvqhNdxJN2xChvUV8lG20NdIp09WVWQbRRxnVD/Crs3ftm8iM
+	 Uyf59BhactJBuP3ClblEcVxCNXddwV7FvtXDHKhM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727721AbfJBRiV (ORCPT
+        id S1728213AbfJBRoO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 2 Oct 2019 13:38:21 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35750 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727357AbfJBRiU (ORCPT
+        Wed, 2 Oct 2019 13:44:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42476 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726076AbfJBRoO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 2 Oct 2019 13:38:20 -0400
-Received: by mail-wr1-f68.google.com with SMTP id v8so13215wrt.2;
-        Wed, 02 Oct 2019 10:38:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YTmH8EafQxbdYgDMckejIA27/8MmwdAdTeYHGHhQuPA=;
-        b=gWY1xml5LcvInf3O4tQ/lV/rFRNxLTuNPhucXdb89v/v6mcIdga8/m89+L3rCJ73/f
-         ADT8gWPf4pAVp7cWcVAx1p+fOb7cjqKmfezu9AgrqTAqvBkb3Yb/L+uC6xV3VL5CEnai
-         1K27G5W7167AgUHudwoiZUqzULu1N6AMrPgHhw7PrzwFEeZDsVLJ83MVlXVO/1z2E9Yh
-         pqr+Oe5fIHauPMBTLM1asAG/ybJcm5CcaXE9xbmjR1oU3YNcrOh1z4D9NaAFALBB3boK
-         /N+luVkh8RWKolGmdABfcu79SsPgkxshVrY0fCYZ6NrVNLcx/LmYeBUGXIOAiMuKpIz2
-         ajew==
-X-Gm-Message-State: APjAAAX1XhY85fE8mscCNcTpxbj589Vye3znTEBKX/8cL3yVngoLfaje
-        N0BdE8G3+jrgjgzNEgi6s94=
-X-Google-Smtp-Source: APXvYqylJhVMEK3ifyltGwEzTf9OuJVwke1QEVnvk2FVIatTz4vfsE+ISc2rNCBhpXG9RhGqGRoxkQ==
-X-Received: by 2002:adf:fe92:: with SMTP id l18mr3630971wrr.369.1570037898167;
-        Wed, 02 Oct 2019 10:38:18 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.145])
-        by smtp.googlemail.com with ESMTPSA id q66sm6742037wme.39.2019.10.02.10.38.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 02 Oct 2019 10:38:17 -0700 (PDT)
-Date:   Wed, 2 Oct 2019 19:38:14 +0200
+        Wed, 2 Oct 2019 13:44:14 -0400
+Received: from localhost.localdomain (unknown [194.230.155.145])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA15221D81;
+        Wed,  2 Oct 2019 17:44:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570038253;
+        bh=MZYQ5QLRxsH5Lm/zp4Xs3ZdRx+OF3lS8A4Qr/ENHFmY=;
+        h=From:To:Subject:Date:From;
+        b=B6EQLsiyV2WDt8tyVi5J3ORL9Qfx9JZa0Vniop0dnsfyqz4zo0SEzy7rAOTqu3E+h
+         vEGELl6rkQy2Vb5oNtHGMWmp213uVAdOmqAed0SL/6IUulw+ufw8irmG3PKg5dq/rw
+         9ltiv4qOVeqc9733aEdZuhclwmwyTNJNUQwOf3sY=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Lukasz Luba <l.luba@partner.samsung.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com,
-        kgene@kernel.org, mark.rutland@arm.com, cw00.choi@samsung.com,
-        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
-        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
-        robh+dt@kernel.org, willy.mh.wolff.ml@gmail.com
-Subject: Re: [PATCH v3 4/4] memory: samsung: exynos5422-dmc: Add support for
- interrupt from performance counters
-Message-ID: <20191002173814.GF21463@kozik-lap>
-References: <20191002060455.3834-1-l.luba@partner.samsung.com>
- <CGME20191002060507eucas1p169394dec59f010e112eb38d83e3fb8ba@eucas1p1.samsung.com>
- <20191002060455.3834-5-l.luba@partner.samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-In-Reply-To: <20191002060455.3834-5-l.luba@partner.samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Lukasz Luba <l.luba@partner.samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: memory-controllers: exynos5422-dmc: Correct example syntax and memory region
+Date:   Wed,  2 Oct 2019 19:44:01 +0200
+Message-Id: <20191002174401.17590-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20191002173814.U4XJFL2WQIEogax-zWSpiJDmwzoNeYEvkvUUSVMrL7c@z>
+Content-Type: text/plain; charset="UTF-8"
+Message-ID: <20191002174401.QZJP8lg_2PxpRBbPYlRw7VNDWwE9LxWtDcHD5oMegNs@z>
 
-On Wed, Oct 02, 2019 at 08:04:55AM +0200, Lukasz Luba wrote:
-> Introduce a new interrupt driven mechanism for managing speed of the
-> memory controller. The interrupts are generated due to performance
-> counters overflow. The performance counters might track memory reads,
-> writes, transfers, page misses, etc. In the basic algorithm tracking
-> read transfers and calculating memory pressure should be enough to
-> skip polling mode in devfreq.
-> 
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
-> ---
->  drivers/memory/samsung/exynos5422-dmc.c | 345 ++++++++++++++++++++++--
+After adding the interrupt properties to Exynos5422 DMC bindings
+example, the mapped memory region must be big enough to access
+performance counters registers.
 
-Thanks, applied.
+Fix also syntax errors (semicolons) and adjust indentation.
 
-Best regards,
-Krzysztof
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+---
+
+Rebased on top of my for-next branch as exynos5422-dmc.txt bindings were
+applied by me.
+---
+ .../bindings/memory-controllers/exynos5422-dmc.txt        | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt b/Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt
+index e2434cac4858..02e4a1f862f1 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt
++++ b/Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt
+@@ -55,7 +55,7 @@ Example:
+ 
+ 	dmc: memory-controller@10c20000 {
+ 		compatible = "samsung,exynos5422-dmc";
+-		reg = <0x10c20000 0x100>, <0x10c30000 0x100>,
++		reg = <0x10c20000 0x10000>, <0x10c30000 0x10000>;
+ 		clocks = <&clock CLK_FOUT_SPLL>,
+ 			 <&clock CLK_MOUT_SCLK_SPLL>,
+ 			 <&clock CLK_FF_DOUT_SPLL2>,
+@@ -63,7 +63,7 @@ Example:
+ 			 <&clock CLK_MOUT_BPLL>,
+ 			 <&clock CLK_SCLK_BPLL>,
+ 			 <&clock CLK_MOUT_MX_MSPLL_CCORE>,
+-			 <&clock CLK_MOUT_MCLK_CDREX>,
++			 <&clock CLK_MOUT_MCLK_CDREX>;
+ 		clock-names = "fout_spll",
+ 			      "mout_sclk_spll",
+ 			      "ff_dout_spll2",
+@@ -71,10 +71,10 @@ Example:
+ 			      "mout_bpll",
+ 			      "sclk_bpll",
+ 			      "mout_mx_mspll_ccore",
+-			      "mout_mclk_cdrex",
++			      "mout_mclk_cdrex";
+ 		operating-points-v2 = <&dmc_opp_table>;
+ 		devfreq-events = <&ppmu_event3_dmc0_0>,	<&ppmu_event3_dmc0_1>,
+-				<&ppmu_event3_dmc1_0>, <&ppmu_event3_dmc1_1>;
++				 <&ppmu_event3_dmc1_0>, <&ppmu_event3_dmc1_1>;
+ 		device-handle = <&samsung_K3QF2F20DB>;
+ 		vdd-supply = <&buck1_reg>;
+ 		samsung,syscon-clk = <&clock>;
+-- 
+2.17.1
 
