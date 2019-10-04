@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DAFC47404
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Oct 2019 23:10:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E375EC4360C
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Oct 2019 23:10:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3E99222C2
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Oct 2019 23:10:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B853E222C7
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Oct 2019 23:10:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SodK6+/x"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IHm78qz1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731502AbfJDXK2 (ORCPT
+        id S1725730AbfJDXKX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 4 Oct 2019 19:10:28 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36803 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731444AbfJDXK2 (ORCPT
+        Fri, 4 Oct 2019 19:10:23 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:39088 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730836AbfJDXKX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 4 Oct 2019 19:10:28 -0400
-Received: by mail-pl1-f195.google.com with SMTP id j11so3817760plk.3;
-        Fri, 04 Oct 2019 16:10:26 -0700 (PDT)
+        Fri, 4 Oct 2019 19:10:23 -0400
+Received: by mail-pl1-f194.google.com with SMTP id s17so3804068plp.6;
+        Fri, 04 Oct 2019 16:10:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=jc9tGVeJ4olVgaKePn3t6HbonR38LaaryzX91Se5rAI=;
-        b=SodK6+/xa+e4ldidjLKc5QB0qs8HJbZzihBLhcV41Gv49iVQLtoRhio/UufZW9ir7G
-         dXvlkyc/2BZ6QhUKfynNyAr/RiD2y00kNLlVrP/jKjIQgda5CYA8mSS8f9Ra5+wjzW2q
-         BoPfRRuRIZowm8ac84qqkHNo54j1t3zqwKfrHj0GiL1NTR+HHoahivJq693U91HEeAkB
-         AidC5XPHHZ9V456LZlJ3TrtvDRsdkjoFEDhVBy1IWgw0BuEJZH3rCvETf3TmiHK1FVO8
-         JV/6m79OL6XSqQzLhnkOwoBZ6NRqk1yLC1Xz78EE1LoonNYgXFFipFgmraWvHi9cubVc
-         oc6A==
+        bh=Yjj0ewSKx7ox/yYkfSTVMnTAWZ/lGeFABqgpIkt08rk=;
+        b=IHm78qz1FqJlfD5KHvJKh8yZH1kmSAMJOhY/m7kn/wgS59HqfD/mlsuCAzu80QtdP4
+         3Oefhce4mgHkrz1BBJL9/EsEWGTt4bsanbjiY7ppz9IoNUDa5AHPJlHrZbDuhaaksMMO
+         Ybxo+73VJ2ahMp98dUtcjH7EpFYwxMbZjkf79LiERlMchltrLUNqlYPY+L1K1H0jHbSz
+         CYsMH/zevb1TOWy9suUdD67i/HMV2ObeJsh3nfU1oY3wBI1RFtMjYMvDtiDl0Iq1YMz9
+         5V+dBf8JSaCpu8OwemItAY+VpIab4GX2swklN06exySTl6uwFtFIiFR0csiZBm7hfE1u
+         RM/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=jc9tGVeJ4olVgaKePn3t6HbonR38LaaryzX91Se5rAI=;
-        b=dFWKd3r4Rr4zsVolcAkHV+34psAeeORnAzIQfYD4NF0kAfQUf8YuGJiP8EWajbvl2K
-         0TZX7bYrEkXFj8f2qNzMJzy+EYw92toNrxqJ9cOwyFN2xJN751vz6qgeY0p6/k/9M6Ld
-         oRNF4PGtABtG0SHHD4GisJgYG/E3w280OkqYNb4yxvd061D76AOHvbz3wgNWHkzye7IE
-         1H3Q9bgzlin69HVngkPwoiiSL/uGXNnJ2aOPtojg63pG8SXvv/YQ13UEaQB5scxTcRcH
-         YK0QuxSilpavEDVIIQHnTdYKRJZAIBo3A/+xSJv5qy/w2V/KkvhoEV1bj77GKxYMaSmn
-         HEbA==
-X-Gm-Message-State: APjAAAWkKKjEajlIuQAa1gta8g1Gt/qcwP6XgHWwdIP2gO/ykNSQlvax
-        XS7cfuz8uAYm6UKzeOYdXgY=
-X-Google-Smtp-Source: APXvYqxc1YTK7GZZaOa6IlN4K3qw0kyub04c7nWYesQHa+EsVVo+UARwT22654v3Yt6yrKNzkUxwPw==
-X-Received: by 2002:a17:902:322:: with SMTP id 31mr17719352pld.150.1570230625926;
-        Fri, 04 Oct 2019 16:10:25 -0700 (PDT)
+        bh=Yjj0ewSKx7ox/yYkfSTVMnTAWZ/lGeFABqgpIkt08rk=;
+        b=kZONWgRQCcY8KDiW7sGkEztDppoEyOvpocHN1mWLAxpk/Ewd8mL/+yYDCJgY6gYaEq
+         0dH6nLOD/yFHt5hl9gJx7H2PNuh+yQpiTgElJN1monW2/JXb6Setx82UcWqi5bEx3bgR
+         yOSnp+N0+dvTyFWAykxXMNO2ebLHFMfDj/ntEOfvNjPP6fslQZl1JtuktmqflJ8HBr2H
+         7rY1hmSyLnjmsWIf4052YsXclA9pmOEofG9c0Up5ske/ngcWLgJNQNOc+jBZbELj9tV5
+         3suxqLlKDq2kKSdNp/XkmOC221alWsTg7AoQE0amc1n2+wn9ZgEh9tTlSmYfx30g3auX
+         dVjA==
+X-Gm-Message-State: APjAAAVwqewGg229vx9gVw6K7+fsZexjZEy6cCzL1U44k5tdzzl5fLUz
+        kALEexS27Prp4eGx7SVD7aQ=
+X-Google-Smtp-Source: APXvYqzLakY1ydYvGFKWS4SDddsfkd04iJuPWj6lCDzXCZSQ5YmsKi4iqDwSdZSOUfocNuyoYMQ78w==
+X-Received: by 2002:a17:902:144:: with SMTP id 62mr17717673plb.283.1570230622173;
+        Fri, 04 Oct 2019 16:10:22 -0700 (PDT)
 Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id o9sm7406542pfp.67.2019.10.04.16.10.24
+        by smtp.gmail.com with ESMTPSA id o9sm7406542pfp.67.2019.10.04.16.10.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 16:10:25 -0700 (PDT)
+        Fri, 04 Oct 2019 16:10:21 -0700 (PDT)
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     Mark Brown <broonie@kernel.org>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
@@ -66,9 +66,9 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Sangbeom Kim <sbkim73@samsung.com>,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 4/7] regulator: s2mps11: switch to using devm_fwnode_gpiod_get
-Date:   Fri,  4 Oct 2019 16:10:14 -0700
-Message-Id: <20191004231017.130290-5-dmitry.torokhov@gmail.com>
+Subject: [PATCH 1/7] regulator: s5m8767: switch to using devm_fwnode_gpiod_get
+Date:   Fri,  4 Oct 2019 16:10:11 -0700
+Message-Id: <20191004231017.130290-2-dmitry.torokhov@gmail.com>
 X-Mailer: git-send-email 2.23.0.581.g78d2f28ef7-goog
 In-Reply-To: <20191004231017.130290-1-dmitry.torokhov@gmail.com>
 References: <20191004231017.130290-1-dmitry.torokhov@gmail.com>
@@ -79,7 +79,7 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Message-ID: <20191004231014.Ovi_6KpBAdAE_69gksmARczhCxqIv9zjok65j48E7ao@z>
+Message-ID: <20191004231011.xp8V3VpKcVauUD8ozA6VJGoHeEzp2dBroODdakjehxM@z>
 
 devm_gpiod_get_from_of_node() is being retired in favor of
 devm_fwnode_gpiod_get_index(), that behaves similar to
@@ -91,27 +91,28 @@ Let's switch this driver over.
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
 
- drivers/regulator/s2mps11.c | 7 +++----
+ drivers/regulator/s5m8767.c | 7 +++----
  1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 5bc00884cf51..4f2dc5ebffdc 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -844,10 +844,9 @@ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
- 		if (!rdata[reg].init_data || !rdata[reg].of_node)
+diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
+index 6ca27e9d5ef7..bdc07739e9a2 100644
+--- a/drivers/regulator/s5m8767.c
++++ b/drivers/regulator/s5m8767.c
+@@ -567,11 +567,10 @@ static int s5m8767_pmic_dt_parse_pdata(struct platform_device *pdev,
  			continue;
+ 		}
  
--		gpio[reg] = devm_gpiod_get_from_of_node(&pdev->dev,
--				rdata[reg].of_node,
--				"samsung,ext-control-gpios",
--				0,
-+		gpio[reg] = devm_fwnode_gpiod_get(&pdev->dev,
-+				of_fwnode_handle(rdata[reg].of_node),
-+				"samsung,ext-control",
- 				GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
- 				"s2mps11-regulator");
- 		if (PTR_ERR(gpio[reg]) == -ENOENT)
+-		rdata->ext_control_gpiod = devm_gpiod_get_from_of_node(
++		rdata->ext_control_gpiod = devm_fwnode_gpiod_get(
+ 			&pdev->dev,
+-			reg_np,
+-			"s5m8767,pmic-ext-control-gpios",
+-			0,
++			of_fwnode_handle(reg_np),
++			"s5m8767,pmic-ext-control",
+ 			GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
+ 			"s5m8767");
+ 		if (PTR_ERR(rdata->ext_control_gpiod) == -ENOENT)
 -- 
 2.23.0.581.g78d2f28ef7-goog
 
