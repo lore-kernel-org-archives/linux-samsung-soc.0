@@ -1,165 +1,239 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 3/3] dt-bindings: serial: Convert Samsung UART bindings to
- json-schema
-Date: Fri,  4 Oct 2019 17:14:14 +0200
-Message-ID: <20191004151414.8458-3-krzk@kernel.org>
-References: <20191004151414.8458-1-krzk@kernel.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: samsung: arndale: Add support for WM1811 CODEC" to the
+ asoc tree
+Date: Fri,  4 Oct 2019 18:52:36 +0100 (BST)
+Message-ID: <20191004175236.C3EC72741EF0@ypsilon.sirena.org.uk>
+References: <20191002105652.24821-2-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20191004151414.8458-1-krzk@kernel.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Lee Jones <lee.jones@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Maciej Falkowski <m.falkowski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20191002105652.24821-2-s.nawrocki@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, ckeepax@opensource.cirrus.com, b.zolnierkie@samsung.com, sbkim73@samsung.com, patches@opensource.cirrus.com, lgirdwood@gmail.com, Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Q29udmVydCBTYW1zdW5nIFMzQy9TNVAvRXh5bm9zIFNlcmlhbC9VQVJUIGJpbmRpbmdzIHRvIERU
-IHNjaGVtYSBmb3JtYXQKdXNpbmcganNvbi1zY2hlbWEuCgpTaWduZWQtb2ZmLWJ5OiBLcnp5c3p0
-b2YgS296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+Ci0tLQogLi4uL2JpbmRpbmdzL21mZC9zYW1z
-dW5nLGV4eW5vczU0MzMtbHBhc3MudHh0IHwgICAyICstCiAuLi4vYmluZGluZ3Mvc2VyaWFsL3Nh
-bXN1bmdfdWFydC50eHQgICAgICAgICAgfCAgNTggLS0tLS0tLQogLi4uL2JpbmRpbmdzL3Nlcmlh
-bC9zYW1zdW5nX3VhcnQueWFtbCAgICAgICAgIHwgMTQ4ICsrKysrKysrKysrKysrKysrKwogMyBm
-aWxlcyBjaGFuZ2VkLCAxNDkgaW5zZXJ0aW9ucygrKSwgNTkgZGVsZXRpb25zKC0pCiBkZWxldGUg
-bW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3NlcmlhbC9zYW1z
-dW5nX3VhcnQudHh0CiBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
-L2JpbmRpbmdzL3NlcmlhbC9zYW1zdW5nX3VhcnQueWFtbAoKZGlmZiAtLWdpdCBhL0RvY3VtZW50
-YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZmQvc2Ftc3VuZyxleHlub3M1NDMzLWxwYXNzLnR4
-dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZmQvc2Ftc3VuZyxleHlub3M1
-NDMzLWxwYXNzLnR4dAppbmRleCBkNzU5ZGE2MDZmNzUuLjMwZWEyN2MzOTM2ZCAxMDA2NDQKLS0t
-IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21mZC9zYW1zdW5nLGV4eW5vczU0
-MzMtbHBhc3MudHh0CisrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZmQv
-c2Ftc3VuZyxleHlub3M1NDMzLWxwYXNzLnR4dApAQCAtMTgsNyArMTgsNyBAQCBhbiBvcHRpb25h
-bCBzdWItbm9kZS4gRm9yICJzYW1zdW5nLGV4eW5vczU0MzMtbHBhc3MiIGNvbXBhdGlibGUgdGhp
-cyBpbmNsdWRlczoKIFVBUlQsIFNMSU1CVVMsIFBDTSwgSTJTLCBETUFDLCBUaW1lcnMgMC4uLjQs
-IFZJQywgV0RUIDAuLi4xIGRldmljZXMuCiAKIEJpbmRpbmdzIG9mIHRoZSBzdWItbm9kZXMgYXJl
-IGRlc2NyaWJlZCBpbjoKLSAgLi4vc2VyaWFsL3NhbXN1bmdfdWFydC50eHQKKyAgLi4vc2VyaWFs
-L3NhbXN1bmdfdWFydC55YW1sCiAgIC4uL3NvdW5kL3NhbXN1bmctaTJzLnR4dAogICAuLi9kbWEv
-YXJtLXBsMzMwLnR4dAogCmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
-ZGluZ3Mvc2VyaWFsL3NhbXN1bmdfdWFydC50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
-YmluZGluZ3Mvc2VyaWFsL3NhbXN1bmdfdWFydC50eHQKZGVsZXRlZCBmaWxlIG1vZGUgMTAwNjQ0
-CmluZGV4IGU4NWYzN2VjMzNmMC4uMDAwMDAwMDAwMDAwCi0tLSBhL0RvY3VtZW50YXRpb24vZGV2
-aWNldHJlZS9iaW5kaW5ncy9zZXJpYWwvc2Ftc3VuZ191YXJ0LnR4dAorKysgL2Rldi9udWxsCkBA
-IC0xLDU4ICswLDAgQEAKLSogU2Ftc3VuZydzIFVBUlQgQ29udHJvbGxlcgotCi1UaGUgU2Ftc3Vu
-ZydzIFVBUlQgY29udHJvbGxlciBpcyB1c2VkIGZvciBpbnRlcmZhY2luZyBTb0Mgd2l0aCBzZXJp
-YWwKLWNvbW11bmljYWlvbiBkZXZpY2VzLgotCi1SZXF1aXJlZCBwcm9wZXJ0aWVzOgotLSBjb21w
-YXRpYmxlOiBzaG91bGQgYmUgb25lIG9mIGZvbGxvd2luZzoKLSAgLSAic2Ftc3VuZyxleHlub3M0
-MjEwLXVhcnQiIC0gIEV4eW5vczQyMTAgU29DLAotICAtICJzYW1zdW5nLHMzYzI0MTAtdWFydCIg
-LSBjb21wYXRpYmxlIHdpdGggcG9ydHMgcHJlc2VudCBvbiBTM0MyNDEwIFNvQywKLSAgLSAic2Ft
-c3VuZyxzM2MyNDEyLXVhcnQiIC0gY29tcGF0aWJsZSB3aXRoIHBvcnRzIHByZXNlbnQgb24gUzND
-MjQxMiBTb0MsCi0gIC0gInNhbXN1bmcsczNjMjQ0MC11YXJ0IiAtIGNvbXBhdGlibGUgd2l0aCBw
-b3J0cyBwcmVzZW50IG9uIFMzQzI0NDAgU29DLAotICAtICJzYW1zdW5nLHMzYzY0MDAtdWFydCIg
-LSBjb21wYXRpYmxlIHdpdGggcG9ydHMgcHJlc2VudCBvbiBTM0M2NDAwIFNvQywKLSAgLSAic2Ft
-c3VuZyxzNXB2MjEwLXVhcnQiIC0gY29tcGF0aWJsZSB3aXRoIHBvcnRzIHByZXNlbnQgb24gUzVQ
-VjIxMCBTb0MuCi0KLS0gcmVnOiBiYXNlIHBoeXNpY2FsIGFkZHJlc3Mgb2YgdGhlIGNvbnRyb2xs
-ZXIgYW5kIGxlbmd0aCBvZiBtZW1vcnkgbWFwcGVkCi0gIHJlZ2lvbi4KLQotLSBpbnRlcnJ1cHRz
-OiBhIHNpbmdsZSBpbnRlcnJ1cHQgc2lnbmFsIHRvIFNvQyBpbnRlcnJ1cHQgY29udHJvbGxlciwK
-LSAgYWNjb3JkaW5nIHRvIGludGVycnVwdCBiaW5kaW5ncyBkb2N1bWVudGF0aW9uIFsxXS4KLQot
-LSBjbG9jay1uYW1lczogaW5wdXQgbmFtZXMgb2YgY2xvY2tzIHVzZWQgYnkgdGhlIGNvbnRyb2xs
-ZXI6Ci0gIC0gInVhcnQiIC0gY29udHJvbGxlciBidXMgY2xvY2ssCi0gIC0gImNsa191YXJ0X2Jh
-dWROIiAtIE50aCBiYXVkIGJhc2UgY2xvY2sgaW5wdXQgKE4gPSAwLCAxLCAuLi4pLAotICAgIGFj
-Y29yZGluZyB0byBTb0MgVXNlcidzIE1hbnVhbCAob25seSBOID0gMCBpcyBhbGxvd2VkZm9yIFNv
-Q3Mgd2l0aG91dAotICAgIGludGVybmFsIGJhdWQgY2xvY2sgbXV4KS4KLS0gY2xvY2tzOiBwaGFu
-ZGxlcyBhbmQgc3BlY2lmaWVycyBmb3IgYWxsIGNsb2NrcyBzcGVjaWZpZWQgaW4gImNsb2NrLW5h
-bWVzIgotICBwcm9wZXJ0eSwgaW4gdGhlIHNhbWUgb3JkZXIsIGFjY29yZGluZyB0byBjbG9jayBi
-aW5kaW5ncyBkb2N1bWVudGF0aW9uIFsyXS4KLQotWzFdIERvY3VtZW50YXRpb24vZGV2aWNldHJl
-ZS9iaW5kaW5ncy9pbnRlcnJ1cHQtY29udHJvbGxlci9pbnRlcnJ1cHRzLnR4dAotWzJdIERvY3Vt
-ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9jbG9jay1iaW5kaW5ncy50eHQKLQot
-T3B0aW9uYWwgcHJvcGVydGllczoKLS0gc2Ftc3VuZyx1YXJ0LWZpZm9zaXplOiBUaGUgZmlmbyBz
-aXplIHN1cHBvcnRlZCBieSB0aGUgVUFSVCBjaGFubmVsCi0KLU5vdGU6IEVhY2ggU2Ftc3VuZyBV
-QVJUIHNob3VsZCBoYXZlIGFuIGFsaWFzIGNvcnJlY3RseSBudW1iZXJlZCBpbiB0aGUKLSJhbGlh
-c2VzIiBub2RlLCBhY2NvcmRpbmcgdG8gc2VyaWFsTiBmb3JtYXQsIHdoZXJlIE4gaXMgdGhlIHBv
-cnQgbnVtYmVyCi0obm9uLW5lZ2F0aXZlIGRlY2ltYWwgaW50ZWdlcikgYXMgc3BlY2lmaWVkIGJ5
-IFVzZXIncyBNYW51YWwgb2YgcmVzcGVjdGl2ZQotU29DLgotCi1FeGFtcGxlOgotCWFsaWFzZXMg
-ewotCQlzZXJpYWwwID0gJnVhcnQwOwotCQlzZXJpYWwxID0gJnVhcnQxOwotCQlzZXJpYWwyID0g
-JnVhcnQyOwotCX07Ci0KLUV4YW1wbGU6Ci0JdWFydDE6IHNlcmlhbEA3ZjAwNTQwMCB7Ci0JCWNv
-bXBhdGlibGUgPSAic2Ftc3VuZyxzM2M2NDAwLXVhcnQiOwotCQlyZWcgPSA8MHg3ZjAwNTQwMCAw
-eDEwMD47Ci0JCWludGVycnVwdC1wYXJlbnQgPSA8JnZpYzE+OwotCQlpbnRlcnJ1cHRzID0gPDY+
-OwotCQljbG9jay1uYW1lcyA9ICJ1YXJ0IiwgImNsa191YXJ0X2JhdWQyIiwKLQkJCQkiY2xrX3Vh
-cnRfYmF1ZDMiOwotCQljbG9ja3MgPSA8JmNsb2NrcyBQQ0xLX1VBUlQxPiwgPCZjbG9ja3MgUENM
-S19VQVJUMT4sCi0JCQkJPCZjbG9ja3MgU0NMS19VQVJUPjsKLQkJc2Ftc3VuZyx1YXJ0LWZpZm9z
-aXplID0gPDE2PjsKLQl9OwpkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
-bmRpbmdzL3NlcmlhbC9zYW1zdW5nX3VhcnQueWFtbCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJl
-ZS9iaW5kaW5ncy9zZXJpYWwvc2Ftc3VuZ191YXJ0LnlhbWwKbmV3IGZpbGUgbW9kZSAxMDA2NDQK
-aW5kZXggMDAwMDAwMDAwMDAwLi4yNzZiZWExYzIzMWEKLS0tIC9kZXYvbnVsbAorKysgYi9Eb2N1
-bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mvc2VyaWFsL3NhbXN1bmdfdWFydC55YW1sCkBA
-IC0wLDAgKzEsMTQ4IEBACisjIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wCislWUFN
-TCAxLjIKKy0tLQorJGlkOiBodHRwOi8vZGV2aWNldHJlZS5vcmcvc2NoZW1hcy9zZXJpYWwvc2Ft
-c3VuZ191YXJ0LnlhbWwjCiskc2NoZW1hOiBodHRwOi8vZGV2aWNldHJlZS5vcmcvbWV0YS1zY2hl
-bWFzL2NvcmUueWFtbCMKKwordGl0bGU6IFNhbXN1bmcgUzNDLCBTNVAgYW5kIEV4eW5vcyBTb0Mg
-VUFSVCBDb250cm9sbGVyCisKK21haW50YWluZXJzOgorICAtIEtyenlzenRvZiBLb3psb3dza2kg
-PGtyemtAa2VybmVsLm9yZz4KKyAgLSBHcmVnIEtyb2FoLUhhcnRtYW4gPGdyZWdraEBsaW51eGZv
-dW5kYXRpb24ub3JnPgorCitkZXNjcmlwdGlvbjogfCsKKyAgRWFjaCBTYW1zdW5nIFVBUlQgc2hv
-dWxkIGhhdmUgYW4gYWxpYXMgY29ycmVjdGx5IG51bWJlcmVkIGluIHRoZSAiYWxpYXNlcyIKKyAg
-bm9kZSwgYWNjb3JkaW5nIHRvIHNlcmlhbE4gZm9ybWF0LCB3aGVyZSBOIGlzIHRoZSBwb3J0IG51
-bWJlciAobm9uLW5lZ2F0aXZlCisgIGRlY2ltYWwgaW50ZWdlcikgYXMgc3BlY2lmaWVkIGJ5IFVz
-ZXIncyBNYW51YWwgb2YgcmVzcGVjdGl2ZSBTb0MuCisKK3Byb3BlcnRpZXM6CisgIGNvbXBhdGli
-bGU6CisgICAgaXRlbXM6CisgICAgICAtIGVudW06CisgICAgICAgICAgLSBzYW1zdW5nLHMzYzI0
-MTAtdWFydAorICAgICAgICAgIC0gc2Ftc3VuZyxzM2MyNDEyLXVhcnQKKyAgICAgICAgICAtIHNh
-bXN1bmcsczNjMjQ0MC11YXJ0CisgICAgICAgICAgLSBzYW1zdW5nLHMzYzY0MDAtdWFydAorICAg
-ICAgICAgIC0gc2Ftc3VuZyxzNXB2MjEwLXVhcnQKKyAgICAgICAgICAtIHNhbXN1bmcsZXh5bm9z
-NDIxMC11YXJ0CisKKyAgcmVnOgorICAgIG1heEl0ZW1zOiAxCisKKyAgY2xvY2tzOgorICAgIG1p
-bkl0ZW1zOiAyCisgICAgbWF4SXRlbXM6IDUKKworICBjbG9jay1uYW1lczoKKyAgICBkZXNjcmlw
-dGlvbjogfAorICAgICAgTGlzdCBvZiBjbG9jayBuYW1lczoKKyAgICAgICAgLSAidWFydCIgLSBj
-b250cm9sbGVyIGJ1cyBjbG9jaywKKyAgICAgICAgLSAiY2xrX3VhcnRfYmF1ZE4iIC0gTnRoIGJh
-dWQgYmFzZSBjbG9jayBpbnB1dCAoTiA9IDAsIDEsIC4uLikuCisgICAgICBOID0gMCBpcyBhbGxv
-d2VkIGZvciBTb0NzIHdpdGhvdXQgaW50ZXJuYWwgYmF1ZCBjbG9jayBtdXguCisgICAgbWluSXRl
-bXM6IDIKKyAgICBtYXhJdGVtczogNQorICAgIGFsbE9mOgorICAgICAgLSB1bmlxdWVJdGVtczog
-dHJ1ZQorICAgICAgLSBvbmVPZjoKKyAgICAgICAgICAtIGl0ZW1zOgorICAgICAgICAgICAgICAt
-IGNvbnN0OiB1YXJ0CisgICAgICAgICAgICAgIC0gcGF0dGVybjogJ15jbGtfdWFydF9iYXVkWzAt
-M10kJworICAgICAgICAgIC0gaXRlbXM6CisgICAgICAgICAgICAgIC0gY29uc3Q6IHVhcnQKKyAg
-ICAgICAgICAgICAgLSBwYXR0ZXJuOiAnXmNsa191YXJ0X2JhdWRbMC0zXSQnCisgICAgICAgICAg
-ICAgIC0gcGF0dGVybjogJ15jbGtfdWFydF9iYXVkWzAtM10kJworICAgICAgICAgIC0gaXRlbXM6
-CisgICAgICAgICAgICAgIC0gY29uc3Q6IHVhcnQKKyAgICAgICAgICAgICAgLSBwYXR0ZXJuOiAn
-XmNsa191YXJ0X2JhdWRbMC0zXSQnCisgICAgICAgICAgICAgIC0gcGF0dGVybjogJ15jbGtfdWFy
-dF9iYXVkWzAtM10kJworICAgICAgICAgICAgICAtIHBhdHRlcm46ICdeY2xrX3VhcnRfYmF1ZFsw
-LTNdJCcKKyAgICAgICAgICAtIGl0ZW1zOgorICAgICAgICAgICAgICAtIGNvbnN0OiB1YXJ0Cisg
-ICAgICAgICAgICAgIC0gcGF0dGVybjogJ15jbGtfdWFydF9iYXVkWzAtM10kJworICAgICAgICAg
-ICAgICAtIHBhdHRlcm46ICdeY2xrX3VhcnRfYmF1ZFswLTNdJCcKKyAgICAgICAgICAgICAgLSBw
-YXR0ZXJuOiAnXmNsa191YXJ0X2JhdWRbMC0zXSQnCisgICAgICAgICAgICAgIC0gcGF0dGVybjog
-J15jbGtfdWFydF9iYXVkWzAtM10kJworCisgIGludGVycnVwdHM6CisgICAgbWluSXRlbXM6IDEK
-KyAgICBtYXhJdGVtczogMgorCisgIHNhbXN1bmcsdWFydC1maWZvc2l6ZToKKyAgICBkZXNjcmlw
-dGlvbjogVGhlIGZpZm8gc2l6ZSBzdXBwb3J0ZWQgYnkgdGhlIFVBUlQgY2hhbm5lbAorICAgIGFs
-bE9mOgorICAgICAgLSAkcmVmOiAvc2NoZW1hcy90eXBlcy55YW1sIy9kZWZpbml0aW9ucy91aW50
-MzIKKyAgICAgIC0gZW51bTogWzE2LCA2NCwgMjU2XQorCityZXF1aXJlZDoKKyAgLSBjb21wYXRp
-YmxlCisgIC0gY2xvY2tzCisgIC0gY2xvY2stbmFtZXMKKyAgLSBpbnRlcnJ1cHRzCisgIC0gcmVn
-CisKK2FsbE9mOgorICAtIGlmOgorICAgICAgcHJvcGVydGllczoKKyAgICAgICAgY29tcGF0aWJs
-ZToKKyAgICAgICAgICBjb250YWluczoKKyAgICAgICAgICAgIGVudW06CisgICAgICAgICAgICAg
-IC0gc2Ftc3VuZyxzM2MyNDEwLXVhcnQKKyAgICAgICAgICAgICAgLSBzYW1zdW5nLHM1cHYyMTAt
-dWFydAorICAgIHRoZW46CisgICAgICBwcm9wZXJ0aWVzOgorICAgICAgICBjbG9ja3M6CisgICAg
-ICAgICAgbWluSXRlbXM6IDIKKyAgICAgICAgICBtYXhJdGVtczogMworICAgICAgICBjbG9jay1u
-YW1lczoKKyAgICAgICAgICBtaW5JdGVtczogMgorICAgICAgICAgIG1heEl0ZW1zOiAzCisgICAg
-ICAgICAgYWxsT2Y6CisgICAgICAgICAgICAtIHVuaXF1ZUl0ZW1zOiB0cnVlCisgICAgICAgICAg
-ICAtIG9uZU9mOgorICAgICAgICAgICAgICAgIC0gaXRlbXM6CisgICAgICAgICAgICAgICAgICAg
-IC0gY29uc3Q6IHVhcnQKKyAgICAgICAgICAgICAgICAgICAgLSBwYXR0ZXJuOiAnXmNsa191YXJ0
-X2JhdWRbMC0xXSQnCisgICAgICAgICAgICAgICAgLSBpdGVtczoKKyAgICAgICAgICAgICAgICAg
-ICAgLSBjb25zdDogdWFydAorICAgICAgICAgICAgICAgICAgICAtIHBhdHRlcm46ICdeY2xrX3Vh
-cnRfYmF1ZFswLTFdJCcKKyAgICAgICAgICAgICAgICAgICAgLSBwYXR0ZXJuOiAnXmNsa191YXJ0
-X2JhdWRbMC0xXSQnCisKKyAgLSBpZjoKKyAgICAgIHByb3BlcnRpZXM6CisgICAgICAgIGNvbXBh
-dGlibGU6CisgICAgICAgICAgY29udGFpbnM6CisgICAgICAgICAgICBlbnVtOgorICAgICAgICAg
-ICAgICAtIHNhbXN1bmcsZXh5bm9zNDIxMC11YXJ0CisgICAgdGhlbjoKKyAgICAgIHByb3BlcnRp
-ZXM6CisgICAgICAgIGNsb2NrczoKKyAgICAgICAgICBtaW5JdGVtczogMgorICAgICAgICAgIG1h
-eEl0ZW1zOiAyCisgICAgICAgIGNsb2NrLW5hbWVzOgorICAgICAgICAgIG1pbkl0ZW1zOiAyCisg
-ICAgICAgICAgbWF4SXRlbXM6IDIKKyAgICAgICAgICBhbGxPZjoKKyAgICAgICAgICAgIC0gdW5p
-cXVlSXRlbXM6IHRydWUKKyAgICAgICAgICAgIC0gaXRlbXM6CisgICAgICAgICAgICAgICAgLSBj
-b25zdDogdWFydAorICAgICAgICAgICAgICAgIC0gY29uc3Q6IGNsa191YXJ0X2JhdWQwCisKK2V4
-YW1wbGVzOgorICAtIHwKKyAgICAjaW5jbHVkZSA8ZHQtYmluZGluZ3MvY2xvY2svc2Ftc3VuZyxz
-M2M2NHh4LWNsb2NrLmg+CisKKyAgICBhbGlhc2VzIHsKKyAgICAgICAgc2VyaWFsMCA9ICZ1YXJ0
-MDsKKyAgICB9OworCisgICAgdWFydDA6IHNlcmlhbEA3ZjAwNTAwMCB7CisgICAgICAgIGNvbXBh
-dGlibGUgPSAic2Ftc3VuZyxzM2M2NDAwLXVhcnQiOworICAgICAgICByZWcgPSA8MHg3ZjAwNTAw
-MCAweDEwMD47CisgICAgICAgIGludGVycnVwdC1wYXJlbnQgPSA8JnZpYzE+OworICAgICAgICBp
-bnRlcnJ1cHRzID0gPDU+OworICAgICAgICBjbG9jay1uYW1lcyA9ICJ1YXJ0IiwgImNsa191YXJ0
-X2JhdWQyIiwKKyAgICAgICAgICAgICAgICAgICAgICAiY2xrX3VhcnRfYmF1ZDMiOworICAgICAg
-ICBjbG9ja3MgPSA8JmNsb2NrcyBQQ0xLX1VBUlQwPiwgPCZjbG9ja3MgUENMS19VQVJUMD4sCisg
-ICAgICAgICAgICAgICAgIDwmY2xvY2tzIFNDTEtfVUFSVD47CisgICAgICAgIHNhbXN1bmcsdWFy
-dC1maWZvc2l6ZSA9IDwxNj47CisgICAgfTsKLS0gCjIuMTcuMQoKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
-ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+The patch
+
+   ASoC: samsung: arndale: Add support for WM1811 CODEC
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.5
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 03081cc370b9d0d91addbb163e2f5347a7f51571 Mon Sep 17 00:00:00 2001
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date: Wed, 2 Oct 2019 12:56:51 +0200
+Subject: [PATCH] ASoC: samsung: arndale: Add support for WM1811 CODEC
+
+The Arndale boards come with different types of the audio daughter
+board.  In order to support the WM1811 one we add new definition of
+an ASoC card which will be registered when the driver matches on
+"samsung,arndale-wm1811" compatible.  There is no runtime detection of
+the audio daughter board type at the moment, compatible string of the
+audio card needs to be adjusted in DT, e.g. by the bootloader,
+depending on actual audio board (CODEC) used.
+
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Link: https://lore.kernel.org/r/20191002105652.24821-2-s.nawrocki@samsung.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/samsung/Kconfig          |  2 +
+ sound/soc/samsung/arndale_rt5631.c | 85 +++++++++++++++++++++++++-----
+ 2 files changed, 74 insertions(+), 13 deletions(-)
+
+diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
+index 638983123d8f..6803cbfa9e46 100644
+--- a/sound/soc/samsung/Kconfig
++++ b/sound/soc/samsung/Kconfig
+@@ -199,6 +199,8 @@ config SND_SOC_ARNDALE_RT5631_ALC5631
+         depends on I2C
+         select SND_SAMSUNG_I2S
+         select SND_SOC_RT5631
++	select MFD_WM8994
++	select SND_SOC_WM8994
+ 
+ config SND_SOC_SAMSUNG_TM2_WM5110
+ 	tristate "SoC I2S Audio support for WM5110 on TM2 board"
+diff --git a/sound/soc/samsung/arndale_rt5631.c b/sound/soc/samsung/arndale_rt5631.c
+index 004c84fafad9..d64602950cbd 100644
+--- a/sound/soc/samsung/arndale_rt5631.c
++++ b/sound/soc/samsung/arndale_rt5631.c
+@@ -14,10 +14,11 @@
+ #include <sound/pcm.h>
+ #include <sound/pcm_params.h>
+ 
++#include "../codecs/wm8994.h"
+ #include "i2s.h"
+ 
+-static int arndale_hw_params(struct snd_pcm_substream *substream,
+-	struct snd_pcm_hw_params *params)
++static int arndale_rt5631_hw_params(struct snd_pcm_substream *substream,
++				    struct snd_pcm_hw_params *params)
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+ 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+@@ -47,13 +48,45 @@ static int arndale_hw_params(struct snd_pcm_substream *substream,
+ 	return 0;
+ }
+ 
+-static struct snd_soc_ops arndale_ops = {
+-	.hw_params = arndale_hw_params,
++static struct snd_soc_ops arndale_rt5631_ops = {
++	.hw_params = arndale_rt5631_hw_params,
++};
++
++static int arndale_wm1811_hw_params(struct snd_pcm_substream *substream,
++				    struct snd_pcm_hw_params *params)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct snd_soc_dai *codec_dai = rtd->codec_dai;
++	unsigned int rfs, rclk;
++
++	/* Ensure AIF1CLK is >= 3 MHz for optimal performance */
++	if (params_width(params) == 24)
++		rfs = 384;
++	else if (params_rate(params) == 8000 || params_rate(params) == 11025)
++		rfs = 512;
++	else
++		rfs = 256;
++
++	rclk = params_rate(params) * rfs;
++
++	/*
++	 * We add 1 to the frequency value to ensure proper EPLL setting
++	 * for each audio sampling rate (see epll_24mhz_tbl in drivers/clk/
++	 * samsung/clk-exynos5250.c for list of available EPLL rates).
++	 * The CODEC uses clk API and the value will be rounded hence the MCLK1
++	 * clock's frequency will still be exact multiple of the sample rate.
++	 */
++	return snd_soc_dai_set_sysclk(codec_dai, WM8994_SYSCLK_MCLK1,
++					rclk + 1, SND_SOC_CLOCK_IN);
++}
++
++static struct snd_soc_ops arndale_wm1811_ops = {
++	.hw_params = arndale_wm1811_hw_params,
+ };
+ 
+ SND_SOC_DAILINK_DEFS(rt5631_hifi,
+ 	DAILINK_COMP_ARRAY(COMP_EMPTY()),
+-	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "rt5631-hifi")),
++	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "rt5631-aif1")),
+ 	DAILINK_COMP_ARRAY(COMP_EMPTY()));
+ 
+ static struct snd_soc_dai_link arndale_rt5631_dai[] = {
+@@ -63,11 +96,28 @@ static struct snd_soc_dai_link arndale_rt5631_dai[] = {
+ 		.dai_fmt = SND_SOC_DAIFMT_I2S
+ 			| SND_SOC_DAIFMT_NB_NF
+ 			| SND_SOC_DAIFMT_CBS_CFS,
+-		.ops = &arndale_ops,
++		.ops = &arndale_rt5631_ops,
+ 		SND_SOC_DAILINK_REG(rt5631_hifi),
+ 	},
+ };
+ 
++SND_SOC_DAILINK_DEFS(wm1811_hifi,
++	DAILINK_COMP_ARRAY(COMP_EMPTY()),
++	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "wm8994-aif1")),
++	DAILINK_COMP_ARRAY(COMP_EMPTY()));
++
++static struct snd_soc_dai_link arndale_wm1811_dai[] = {
++	{
++		.name = "WM1811 HiFi",
++		.stream_name = "Primary",
++		.dai_fmt = SND_SOC_DAIFMT_I2S
++			| SND_SOC_DAIFMT_NB_NF
++			| SND_SOC_DAIFMT_CBM_CFM,
++		.ops = &arndale_wm1811_ops,
++		SND_SOC_DAILINK_REG(wm1811_hifi),
++	},
++};
++
+ static struct snd_soc_card arndale_rt5631 = {
+ 	.name = "Arndale RT5631",
+ 	.owner = THIS_MODULE,
+@@ -75,6 +125,13 @@ static struct snd_soc_card arndale_rt5631 = {
+ 	.num_links = ARRAY_SIZE(arndale_rt5631_dai),
+ };
+ 
++static struct snd_soc_card arndale_wm1811 = {
++	.name = "Arndale WM1811",
++	.owner = THIS_MODULE,
++	.dai_link = arndale_wm1811_dai,
++	.num_links = ARRAY_SIZE(arndale_wm1811_dai),
++};
++
+ static void arndale_put_of_nodes(struct snd_soc_card *card)
+ {
+ 	struct snd_soc_dai_link *dai_link;
+@@ -89,10 +146,11 @@ static void arndale_put_of_nodes(struct snd_soc_card *card)
+ static int arndale_audio_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+-	struct snd_soc_card *card = &arndale_rt5631;
++	struct snd_soc_card *card;
+ 	struct snd_soc_dai_link *dai_link;
+ 	int ret;
+ 
++	card = (struct snd_soc_card *)of_device_get_match_data(&pdev->dev);
+ 	card->dev = &pdev->dev;
+ 	dai_link = card->dai_link;
+ 
+@@ -134,18 +192,19 @@ static int arndale_audio_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static const struct of_device_id samsung_arndale_rt5631_of_match[] __maybe_unused = {
+-	{ .compatible = "samsung,arndale-rt5631", },
+-	{ .compatible = "samsung,arndale-alc5631", },
++static const struct of_device_id arndale_audio_of_match[] = {
++	{ .compatible = "samsung,arndale-rt5631",  .data = &arndale_rt5631 },
++	{ .compatible = "samsung,arndale-alc5631", .data = &arndale_rt5631 },
++	{ .compatible = "samsung,arndale-wm1811",  .data = &arndale_wm1811 },
+ 	{},
+ };
+-MODULE_DEVICE_TABLE(of, samsung_arndale_rt5631_of_match);
++MODULE_DEVICE_TABLE(of, arndale_audio_of_match);
+ 
+ static struct platform_driver arndale_audio_driver = {
+ 	.driver = {
+-		.name   = "arndale-audio",
++		.name = "arndale-audio",
+ 		.pm = &snd_soc_pm_ops,
+-		.of_match_table = of_match_ptr(samsung_arndale_rt5631_of_match),
++		.of_match_table = arndale_audio_of_match,
+ 	},
+ 	.probe = arndale_audio_probe,
+ 	.remove = arndale_audio_remove,
+-- 
+2.20.1
