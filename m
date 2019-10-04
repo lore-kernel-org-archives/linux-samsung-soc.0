@@ -1,48 +1,48 @@
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 0/7] regulator: switch to using [devm_]fwnode_gpiod_get_index
-Date: Fri,  4 Oct 2019 16:10:10 -0700
-Message-ID: <20191004231017.130290-1-dmitry.torokhov@gmail.com>
+Subject: [PATCH 1/7] regulator: s5m8767: switch to using devm_fwnode_gpiod_get
+Date: Fri,  4 Oct 2019 16:10:11 -0700
+Message-ID: <20191004231017.130290-2-dmitry.torokhov@gmail.com>
+References: <20191004231017.130290-1-dmitry.torokhov@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191004231017.130290-1-dmitry.torokhov@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Mark Brown <broonie@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Sangbeom Kim <sbkim73@samsung.com>, Support Opensource <support.opensource@diasemi.com>, linux-samsung-soc@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Sangbeom Kim <sbkim73@samsung.com>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This series swiches regulator drivers form using
-[devm_]gpiod_get_from_of_node() that is scheduled to be removed in favor
-of [devm_]fwnode_gpiod_get_index() that behaves more like standard
-[devm_]gpiod_get_index() and will potentially handle secondary software
-nodes in cases we need to augment platform firmware.
+devm_gpiod_get_from_of_node() is being retired in favor of
+devm_fwnode_gpiod_get_index(), that behaves similar to
+devm_gpiod_get_index(), but can work with arbitrary firmware node. It
+will also be able to support secondary software nodes.
 
-This depends on the new code that can be found in
-ib-fwnode-gpiod-get-index immutable branch of Linus' Walleij tree:
+Let's switch this driver over.
 
-	git pull git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git ib-fwnode-gpiod-get-index
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
 
-I hope that it would be possible to pull in this immutable branch and
-not wait until after 5.5 merge window.
+ drivers/regulator/s5m8767.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Thanks!
-
-Dmitry Torokhov (7):
-  regulator: s5m8767: switch to using devm_fwnode_gpiod_get
-  regulator: slg51000: switch to using fwnode_gpiod_get_index
-  regulator: tps65090: switch to using devm_fwnode_gpiod_get
-  regulator: s2mps11: switch to using devm_fwnode_gpiod_get
-  regulator: da9211: switch to using devm_fwnode_gpiod_get
-  regulator: tps65132: switch to using devm_fwnode_gpiod_get()
-  regulator: max77686: switch to using fwnode_gpiod_get_index
-
- drivers/regulator/da9211-regulator.c   | 12 ++++++------
- drivers/regulator/max77686-regulator.c |  5 +++--
- drivers/regulator/s2mps11.c            |  7 +++----
- drivers/regulator/s5m8767.c            |  7 +++----
- drivers/regulator/slg51000-regulator.c | 13 +++++--------
- drivers/regulator/tps65090-regulator.c | 26 +++++++++++++++-----------
- drivers/regulator/tps65132-regulator.c | 17 ++++++++++-------
- 7 files changed, 45 insertions(+), 42 deletions(-)
-
+diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
+index 6ca27e9d5ef7..bdc07739e9a2 100644
+--- a/drivers/regulator/s5m8767.c
++++ b/drivers/regulator/s5m8767.c
+@@ -567,11 +567,10 @@ static int s5m8767_pmic_dt_parse_pdata(struct platform_device *pdev,
+ 			continue;
+ 		}
+ 
+-		rdata->ext_control_gpiod = devm_gpiod_get_from_of_node(
++		rdata->ext_control_gpiod = devm_fwnode_gpiod_get(
+ 			&pdev->dev,
+-			reg_np,
+-			"s5m8767,pmic-ext-control-gpios",
+-			0,
++			of_fwnode_handle(reg_np),
++			"s5m8767,pmic-ext-control",
+ 			GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
+ 			"s5m8767");
+ 		if (PTR_ERR(rdata->ext_control_gpiod) == -ENOENT)
 -- 
 2.23.0.581.g78d2f28ef7-goog
