@@ -1,48 +1,36 @@
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 2/2] ARM: multi_v7_defconfig: Enable Exynos bus and memory frequency scaling (devfreq)
-Date: Fri,  4 Oct 2019 17:00:40 +0200
-Message-ID: <20191004150040.5833-2-krzk@kernel.org>
-References: <20191004150040.5833-1-krzk@kernel.org>
+Subject: [PATCH 1/3] dt-bindings: arm: samsung: Force clkoutN names to be unique in PMU
+Date: Fri,  4 Oct 2019 17:14:12 +0200
+Message-ID: <20191004151414.8458-1-krzk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191004150040.5833-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <krzk@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Lee Jones <lee.jones@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Maciej Falkowski <m.falkowski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-serial@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Enable devfreq events along with drivers for scaling frequency and
-voltages of Exynos buses and Dynamic Memory Controller (DMC).  This
-usually brings energy saving benefits.
-
-So far devfreq was disabled because it was causing hangs during system
-reboot (voltage not matching reset frequency). This was already fixed.
-
-Occasionally, devfreq might negatively impact performance of certain SoC
-blocks, e.g. when a bus is scaled down but some block (like Mixer with
-two Full HD windows) wants to perform high-throughput DMA operations.
+The clkoutN names of clocks must be unique because they represent
+unique inputs of clock multiplexer.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/configs/multi_v7_defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+ Documentation/devicetree/bindings/arm/samsung/pmu.yaml | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 7f7978dba8ab..1296e7aaa801 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -977,11 +977,14 @@ CONFIG_ARCH_TEGRA_2x_SOC=y
- CONFIG_ARCH_TEGRA_3x_SOC=y
- CONFIG_ARCH_TEGRA_114_SOC=y
- CONFIG_ARCH_TEGRA_124_SOC=y
-+CONFIG_ARM_EXYNOS_BUS_DEVFREQ=m
- CONFIG_ARM_TEGRA_DEVFREQ=m
-+CONFIG_DEVFREQ_EVENT_EXYNOS_NOCP=m
- CONFIG_EXTCON_MAX14577=m
- CONFIG_EXTCON_MAX77693=m
- CONFIG_EXTCON_MAX8997=m
- CONFIG_TI_AEMIF=y
-+CONFIG_EXYNOS5422_DMC=m
- CONFIG_IIO=y
- CONFIG_IIO_SW_TRIGGER=y
- CONFIG_ASPEED_ADC=m
+diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.yaml b/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
+index 73b56fc5bf58..d8e03716f5d2 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
++++ b/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
+@@ -53,8 +53,10 @@ properties:
+       List of clock names for particular CLKOUT mux inputs
+     minItems: 1
+     maxItems: 32
+-    items:
+-      pattern: '^clkout([0-9]|[12][0-9]|3[0-1])$'
++    allOf:
++      - items:
++          pattern: '^clkout([0-9]|[12][0-9]|3[0-1])$'
++      - uniqueItems: true
+ 
+   clocks:
+     minItems: 1
 -- 
 2.17.1
