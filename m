@@ -1,46 +1,270 @@
-From: Kamil Konieczny <k.konieczny@samsung.com>
-Subject: Re: Devfreq looks for unsupported frequencies on Exynos
-Date: Fri, 4 Oct 2019 14:46:43 +0200
-Message-ID: <e68cb899-b207-a674-e7b0-fa5f8cbb6a1b@samsung.com>
-References: <CGME20191004103109epcas5p23221e4098d5d62faaf5d8db871ac3770@epcas5p2.samsung.com>
-        <20191004103101.GA9176@pi3>
-Mime-Version: 1.0
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v6] dt-bindings: sound: Convert Samsung I2S controller to
+ dt-schema
+Date: Fri,  4 Oct 2019 14:59:14 +0200
+Message-ID: <20191004125914.1033-1-m.szyprowski@samsung.com>
+References: <CGME20191004125919eucas1p21149ecdf6d83fbe7bc8c39eaa8b29a46@eucas1p2.samsung.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191004103101.GA9176@pi3>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kamil Konieczny <k.konieczny@partner.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maciej Falkowski <m.falkowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 04.10.2019 12:31, Krzysztof Kozlowski wrote:
-> 
-> Hi All,
-> 
-> I noticed recently error logs when booting Odroid HC1 (Exynos5422) on
-> exynos_defconfig, 5.4.0-rc1-next-20191004:
-> [...]
-> [    5.225222] exynos-bus soc:bus_wcore: dev_pm_opp_set_rate: failed to find current OPP for freq 532000000 (-34)
-> [    5.225975] exynos-bus: new bus device registered: soc:bus_peri ( 67000 KHz ~  67000 KHz)
-> [    5.238824] exynos-bus soc:bus_noc: dev_pm_opp_set_rate: failed to find current OPP for freq 111000000 (-34)
-> [    5.245719] exynos-bus: new bus device registered: soc:bus_g2d ( 84000 KHz ~ 333000 KHz)
-> [    5.252653] exynos-bus soc:bus_fsys_apb: dev_pm_opp_set_rate: failed to find current OPP for freq 222000000 (-34)
-> [...]
-> You can see that Exynos devfreq was trying to set 532000000 Hz for
-> wcore, 111000000 for noc and 222000000 for fsys_apb. These are higher
-> frequencies than we have in DTSI.
-> 
-> Any ideas why? It does not look normal...
+From: Maciej Falkowski <m.falkowski@samsung.com>
 
-Thank you for report. This is known issue, clocks left by u-boot are too
-high and they are not present in opp tables. Lukasz Luba sended patchset
-"[PATCH v1 00/50] Exynos5x clocks and buses changes" but it should first
-be made in u-boot.
+Convert Samsung I2S controller to newer dt-schema format.
 
-I have idea for a fix and will send it soon after weekend.
+Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
+[mszyprow: integrated fix for minor spelling issues]
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+v6:
+- integrated fix for minor spelling issues
+- collected tags
+---
+ .../devicetree/bindings/sound/samsung-i2s.txt |  84 -----------
+ .../bindings/sound/samsung-i2s.yaml           | 138 ++++++++++++++++++
+ 2 files changed, 138 insertions(+), 84 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/sound/samsung-i2s.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/samsung-i2s.yaml
 
+diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.txt b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
+deleted file mode 100644
+index a88cb00fa096..000000000000
+--- a/Documentation/devicetree/bindings/sound/samsung-i2s.txt
++++ /dev/null
+@@ -1,84 +0,0 @@
+-* Samsung I2S controller
+-
+-Required SoC Specific Properties:
+-
+-- compatible : should be one of the following.
+-   - samsung,s3c6410-i2s: for 8/16/24bit stereo I2S.
+-   - samsung,s5pv210-i2s: for 8/16/24bit multichannel(5.1) I2S with
+-     secondary fifo, s/w reset control and internal mux for root clk src.
+-   - samsung,exynos5420-i2s: for 8/16/24bit multichannel(5.1) I2S for
+-     playback, stereo channel capture, secondary fifo using internal
+-     or external dma, s/w reset control, internal mux for root clk src
+-     and 7.1 channel TDM support for playback. TDM (Time division multiplexing)
+-     is to allow transfer of multiple channel audio data on single data line.
+-   - samsung,exynos7-i2s: with all the available features of exynos5 i2s,
+-     exynos7 I2S has 7.1 channel TDM support for capture, secondary fifo
+-     with only external dma and more no.of root clk sampling frequencies.
+-   - samsung,exynos7-i2s1: I2S1 on previous samsung platforms supports
+-     stereo channels. exynos7 i2s1 upgraded to 5.1 multichannel with
+-     slightly modified bit offsets.
+-
+-- reg: physical base address of the controller and length of memory mapped
+-  region.
+-- dmas: list of DMA controller phandle and DMA request line ordered pairs.
+-- dma-names: identifier string for each DMA request line in the dmas property.
+-  These strings correspond 1:1 with the ordered pairs in dmas.
+-- clocks: Handle to iis clock and RCLK source clk.
+-- clock-names:
+-  i2s0 uses some base clocks from CMU and some are from audio subsystem internal
+-  clock controller. The clock names for i2s0 should be "iis", "i2s_opclk0" and
+-  "i2s_opclk1" as shown in the example below.
+-  i2s1 and i2s2 uses clocks from CMU. The clock names for i2s1 and i2s2 should
+-  be "iis" and "i2s_opclk0".
+-  "iis" is the i2s bus clock and i2s_opclk0, i2s_opclk1 are sources of the root
+-  clk. i2s0 has internal mux to select the source of root clk and i2s1 and i2s2
+-  doesn't have any such mux.
+-- #clock-cells: should be 1, this property must be present if the I2S device
+-  is a clock provider in terms of the common clock bindings, described in
+-  ../clock/clock-bindings.txt.
+-- clock-output-names (deprecated): from the common clock bindings, names of
+-  the CDCLK I2S output clocks, suggested values are "i2s_cdclk0", "i2s_cdclk1",
+-  "i2s_cdclk3" for the I2S0, I2S1, I2S2 devices respectively.
+-
+-There are following clocks available at the I2S device nodes:
+- CLK_I2S_CDCLK    - the CDCLK (CODECLKO) gate clock,
+- CLK_I2S_RCLK_PSR - the RCLK prescaler divider clock (corresponding to the
+-		    IISPSR register),
+- CLK_I2S_RCLK_SRC - the RCLKSRC mux clock (corresponding to RCLKSRC bit in
+-		    IISMOD register).
+-
+-Refer to the SoC datasheet for availability of the above clocks.
+-The CLK_I2S_RCLK_PSR and CLK_I2S_RCLK_SRC clocks are usually only available
+-in the IIS Multi Audio Interface.
+-
+-Note: Old DTs may not have the #clock-cells property and then not use the I2S
+-node as a clock supplier.
+-
+-Optional SoC Specific Properties:
+-
+-- samsung,idma-addr: Internal DMA register base address of the audio
+-  sub system(used in secondary sound source).
+-- pinctrl-0: Should specify pin control groups used for this controller.
+-- pinctrl-names: Should contain only one value - "default".
+-- #sound-dai-cells: should be 1.
+-
+-
+-Example:
+-
+-i2s0: i2s@3830000 {
+-	compatible = "samsung,s5pv210-i2s";
+-	reg = <0x03830000 0x100>;
+-	dmas = <&pdma0 10
+-		&pdma0 9
+-		&pdma0 8>;
+-	dma-names = "tx", "rx", "tx-sec";
+-	clocks = <&clock_audss EXYNOS_I2S_BUS>,
+-		<&clock_audss EXYNOS_I2S_BUS>,
+-		<&clock_audss EXYNOS_SCLK_I2S>;
+-	clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
+-	#clock-cells = <1>;
+-	samsung,idma-addr = <0x03000000>;
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&i2s0_bus>;
+-	#sound-dai-cells = <1>;
+-};
+diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.yaml b/Documentation/devicetree/bindings/sound/samsung-i2s.yaml
+new file mode 100644
+index 000000000000..53e3bad4178c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/samsung-i2s.yaml
+@@ -0,0 +1,138 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/samsung-i2s.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung SoC I2S controller
++
++maintainers:
++  - Krzysztof Kozlowski <krzk@kernel.org>
++  - Sylwester Nawrocki <s.nawrocki@samsung.com>
++
++properties:
++  compatible:
++    description: |
++      samsung,s3c6410-i2s: for 8/16/24bit stereo I2S.
++
++      samsung,s5pv210-i2s: for 8/16/24bit multichannel (5.1) I2S with
++      secondary FIFO, s/w reset control and internal mux for root clock
++      source.
++
++      samsung,exynos5420-i2s: for 8/16/24bit multichannel (5.1) I2S for
++      playback, stereo channel capture, secondary FIFO using internal
++      or external DMA, s/w reset control, internal mux for root clock
++      source and 7.1 channel TDM support for playback; TDM (Time division
++      multiplexing) is to allow transfer of multiple channel audio data on
++      single data line.
++
++      samsung,exynos7-i2s: with all the available features of Exynos5 I2S.
++      Exynos7 I2S has 7.1 channel TDM support for capture, secondary FIFO
++      with only external DMA and more number of root clock sampling
++      frequencies.
++
++      samsung,exynos7-i2s1: I2S1 on previous samsung platforms supports
++      stereo channels. Exynos7 I2S1 upgraded to 5.1 multichannel with
++      slightly modified bit offsets.
++    enum:
++      - samsung,s3c6410-i2s
++      - samsung,s5pv210-i2s
++      - samsung,exynos5420-i2s
++      - samsung,exynos7-i2s
++      - samsung,exynos7-i2s1
++
++  reg:
++    maxItems: 1
++
++  dmas:
++    minItems: 2
++    maxItems: 3
++
++  dma-names:
++    oneOf:
++      - items:
++          - const: tx
++          - const: rx
++      - items:
++          - const: tx
++          - const: rx
++          - const: tx-sec
++
++  clocks:
++    minItems: 1
++    maxItems: 3
++
++  clock-names:
++    oneOf:
++      - items:
++          - const: iis
++      - items: # for I2S0
++          - const: iis
++          - const: i2s_opclk0
++          - const: i2s_opclk1
++      - items: # for I2S1 and I2S2
++          - const: iis
++          - const: i2s_opclk0
++    description: |
++      "iis" is the I2S bus clock and i2s_opclk0, i2s_opclk1 are sources
++      of the root clock. I2S0 has internal mux to select the source
++      of root clock and I2S1 and I2S2 doesn't have any such mux.
++
++  "#clock-cells":
++    const: 1
++
++  clock-output-names:
++    deprecated: true
++    oneOf:
++      - items: # for I2S0
++          - const: i2s_cdclk0
++      - items: # for I2S1
++          - const: i2s_cdclk1
++      - items: # for I2S2
++          - const: i2s_cdclk2
++    description: Names of the CDCLK I2S output clocks.
++
++  samsung,idma-addr:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: |
++      Internal DMA register base address of the audio
++      subsystem (used in secondary sound source).
++
++  pinctrl-0:
++    description: Should specify pin control groups used for this controller.
++
++  pinctrl-names:
++    const: default
++
++  "#sound-dai-cells":
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - dmas
++  - dma-names
++  - clocks
++  - clock-names
++
++examples:
++  - |
++    #include <dt-bindings/clock/exynos-audss-clk.h>
++
++    i2s0: i2s@3830000 {
++        compatible = "samsung,s5pv210-i2s";
++        reg = <0x03830000 0x100>;
++        dmas = <&pdma0 10>,
++                <&pdma0 9>,
++                <&pdma0 8>;
++        dma-names = "tx", "rx", "tx-sec";
++        clocks = <&clock_audss EXYNOS_I2S_BUS>,
++                <&clock_audss EXYNOS_I2S_BUS>,
++                <&clock_audss EXYNOS_SCLK_I2S>;
++        clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
++        #clock-cells = <1>;
++        samsung,idma-addr = <0x03000000>;
++        pinctrl-names = "default";
++        pinctrl-0 = <&i2s0_bus>;
++        #sound-dai-cells = <1>;
++    };
 -- 
-Best regards,
-Kamil Konieczny
-Samsung R&D Institute Poland
+2.17.1
