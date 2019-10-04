@@ -7,96 +7,87 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40198C47404
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Oct 2019 15:00:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB6E2C47404
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Oct 2019 15:14:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17BA3222C5
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Oct 2019 15:00:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F1E4222C9
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Oct 2019 15:14:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570201258;
-	bh=oHpPukB6B9nYWBy+UwEt06VVM0sOiP39yRkduK0FfyA=;
+	s=default; t=1570202074;
+	bh=T+96WbhywkN9TZ3RgQsCxJM8eZpY0gKukrAqlx2v0jM=;
 	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RC9+j5twdWhR9E22IEWwJoeoI5shYd+SqdehHa9Faf5Zhoex2aaPF366G+gLJYlWX
-	 OUUqd1JY1IYTvdCAWV/I9aYZPhV/A/LXzvfDY9GbPbv7xJfRauWxpk/JXGy22IESB2
-	 Tbv2U5Yl8ibCmkDYbO69GvYv+EJXm5J/86G7ul6E=
+	b=astUBTjXUkx6sdJAsd3PqroD1FZtlZ5498Ip3RiC4fOcXIql1gFnMJ28oMj4EP2z4
+	 OPdPIOfwUwK3iaSqt7oIaPvOXO7br5Qohyfv3sOBWoZ875QCiaEUuTaKdVTlUBF7/9
+	 LvJ5x9PXR3y2I3Q8K3nOOAH1QLUuQ/zheM9gLlHU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389653AbfJDPA5 (ORCPT
+        id S2389776AbfJDPOb (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 4 Oct 2019 11:00:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48598 "EHLO mail.kernel.org"
+        Fri, 4 Oct 2019 11:14:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389651AbfJDPA5 (ORCPT
+        id S2389596AbfJDPOa (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 4 Oct 2019 11:00:57 -0400
+        Fri, 4 Oct 2019 11:14:30 -0400
 Received: from localhost.localdomain (unknown [194.230.155.145])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99E922133F;
-        Fri,  4 Oct 2019 15:00:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA3AC222C2;
+        Fri,  4 Oct 2019 15:14:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570201256;
-        bh=oHpPukB6B9nYWBy+UwEt06VVM0sOiP39yRkduK0FfyA=;
+        s=default; t=1570202070;
+        bh=T+96WbhywkN9TZ3RgQsCxJM8eZpY0gKukrAqlx2v0jM=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=naYVCKVE90MUi+D8gWav2uNsSkNjDc0xvWVMLN7bjXO+gK8ChM6YuTL+HGl5EVEH0
-         QoVuGX2eldJVcAoBIHR0FVq6zoEFeFy4draMwTSwOO7226+ecAVEmhII3Q1JUu6nm7
-         E4Hc2XpBajKHsK+ihIQxxY4vbt30kI2Ln0BlspP4=
+        b=XbNy0vjvtdDr7yclvUmZXuFX91a7a2NmRHOkhWFrYJdsLiTWwiw/PY+VE2zOSgaJc
+         JFCE8U5N2omSGBkLx5Jk0Qwqr+2WfhjbCDPbIZ3uKUHxw7weadLSquNzRFbcUSBly3
+         QGtdp9XUgZgmaydqz8uauSYOun9jHAwHXMzTCQrE=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        Olof Johansson <olof@lixom.net>,
+To:     Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 2/2] ARM: multi_v7_defconfig: Enable Exynos bus and memory frequency scaling (devfreq)
-Date:   Fri,  4 Oct 2019 17:00:40 +0200
-Message-Id: <20191004150040.5833-2-krzk@kernel.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Lee Jones <lee.jones@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Maciej Falkowski <m.falkowski@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-serial@vger.kernel.org
+Subject: [PATCH 2/3] dt-bindings: gpu: samsung-rotator: Fix indentation
+Date:   Fri,  4 Oct 2019 17:14:13 +0200
+Message-Id: <20191004151414.8458-2-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191004150040.5833-1-krzk@kernel.org>
-References: <20191004150040.5833-1-krzk@kernel.org>
+In-Reply-To: <20191004151414.8458-1-krzk@kernel.org>
+References: <20191004151414.8458-1-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Message-ID: <20191004150040.Vx5HA9ONyikv39wmKylhzgflyqSzmkWA_ESWVWByoBg@z>
+Message-ID: <20191004151413.SJEpYbwUlqeoN0xIV4ciTjkyUXTp0VGOoeEg_m3MJ68@z>
 
-Enable devfreq events along with drivers for scaling frequency and
-voltages of Exynos buses and Dynamic Memory Controller (DMC).  This
-usually brings energy saving benefits.
-
-So far devfreq was disabled because it was causing hangs during system
-reboot (voltage not matching reset frequency). This was already fixed.
-
-Occasionally, devfreq might negatively impact performance of certain SoC
-blocks, e.g. when a bus is scaled down but some block (like Mixer with
-two Full HD windows) wants to perform high-throughput DMA operations.
+Array elements under 'items' should be indented.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/configs/multi_v7_defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+ Documentation/devicetree/bindings/gpu/samsung-rotator.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 7f7978dba8ab..1296e7aaa801 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -977,11 +977,14 @@ CONFIG_ARCH_TEGRA_2x_SOC=y
- CONFIG_ARCH_TEGRA_3x_SOC=y
- CONFIG_ARCH_TEGRA_114_SOC=y
- CONFIG_ARCH_TEGRA_124_SOC=y
-+CONFIG_ARM_EXYNOS_BUS_DEVFREQ=m
- CONFIG_ARM_TEGRA_DEVFREQ=m
-+CONFIG_DEVFREQ_EVENT_EXYNOS_NOCP=m
- CONFIG_EXTCON_MAX14577=m
- CONFIG_EXTCON_MAX77693=m
- CONFIG_EXTCON_MAX8997=m
- CONFIG_TI_AEMIF=y
-+CONFIG_EXYNOS5422_DMC=m
- CONFIG_IIO=y
- CONFIG_IIO_SW_TRIGGER=y
- CONFIG_ASPEED_ADC=m
+diff --git a/Documentation/devicetree/bindings/gpu/samsung-rotator.yaml b/Documentation/devicetree/bindings/gpu/samsung-rotator.yaml
+index 45ce562435fa..f4dfa6fc724c 100644
+--- a/Documentation/devicetree/bindings/gpu/samsung-rotator.yaml
++++ b/Documentation/devicetree/bindings/gpu/samsung-rotator.yaml
+@@ -27,7 +27,7 @@ properties:
+ 
+   clock-names:
+     items:
+-    - const: rotator
++      - const: rotator
+ 
+ required:
+   - compatible
 -- 
 2.17.1
 
