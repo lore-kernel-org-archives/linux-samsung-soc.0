@@ -2,148 +2,371 @@ Return-Path: <SRS0=VUgU=X5=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6804C4360C
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Oct 2019 12:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43016C4360C
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Oct 2019 12:59:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D5D6222BE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Oct 2019 12:46:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05F32207FF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  4 Oct 2019 12:59:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MrjNG3iW"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="erajWbRY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387440AbfJDMqs (ORCPT
+        id S2387616AbfJDM7X (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 4 Oct 2019 08:46:48 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:44317 "EHLO
+        Fri, 4 Oct 2019 08:59:23 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:48951 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387431AbfJDMqs (ORCPT
+        with ESMTP id S2388052AbfJDM7W (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 4 Oct 2019 08:46:48 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20191004124644euoutp02a6d989909cca3ae54d9cad846a80307d~KcmaHy1aY0591205912euoutp02f
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  4 Oct 2019 12:46:44 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20191004124644euoutp02a6d989909cca3ae54d9cad846a80307d~KcmaHy1aY0591205912euoutp02f
+        Fri, 4 Oct 2019 08:59:22 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20191004125920euoutp02eff87cae616996d7e6a4241c2ecfb13e~KcxZ2jfuR1602016020euoutp02X
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  4 Oct 2019 12:59:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20191004125920euoutp02eff87cae616996d7e6a4241c2ecfb13e~KcxZ2jfuR1602016020euoutp02X
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1570193204;
-        bh=BcsNEFkM/KTH9Df3ovnCXdA3VkXksZAwn5HvSZ+nBDM=;
-        h=Subject:To:From:Date:In-Reply-To:References:From;
-        b=MrjNG3iWw7FUBi7zfXM4p45Y2o9SEGjKcNVURL3FBoZSFNAHPAAJ98Oz9gpSJs1Lj
-         BYSTK6KQHFiZ/61fEdHPKA3NwSiQQtV/pvx25AE1XcYude0K67CG9Itl/h+RxL+o5p
-         NbqoepF+l2axgNKUh3sv35LLpzc5Dhjw3lJMHMf8=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191004124644eucas1p194f7eaee75c8cd1a7cd374f89d0d1809~KcmZx9Qhy0766807668eucas1p1a;
-        Fri,  4 Oct 2019 12:46:44 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 8F.2E.04374.43F379D5; Fri,  4
-        Oct 2019 13:46:44 +0100 (BST)
+        s=mail20170921; t=1570193960;
+        bh=GcBauXsEMEiJCxPDlVLXlQ0KFOglngvIkek6lOAaf7k=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=erajWbRYmnsHq1QJR1CJC/Bm1agzdXmnP1hlnB87ygKnzpviiS87lINMmPen7J214
+         oU6u0Pz731hF6blwty46EAvEOwzMGo6suKlIgp1IGSgfd+AofJGXNJrYRqxlyM3wk5
+         7UeZLprz8FkO50ocaEUXDWx/yIqsUEj9CYfHOsTc=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20191004125919eucas1p2654352f8c6e5147bbd04dd3be2af28e0~KcxZbqVQf0815808158eucas1p2B;
+        Fri,  4 Oct 2019 12:59:19 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 59.09.04309.722479D5; Fri,  4
+        Oct 2019 13:59:19 +0100 (BST)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20191004124644eucas1p2c8469c29442a5f0b10da0c931b04aa11~KcmZdRjaC2510225102eucas1p2-;
-        Fri,  4 Oct 2019 12:46:44 +0000 (GMT)
+        20191004125919eucas1p21149ecdf6d83fbe7bc8c39eaa8b29a46~KcxZH15pd0817408174eucas1p2D;
+        Fri,  4 Oct 2019 12:59:19 +0000 (GMT)
 Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191004124644eusmtrp10ab8216e023690352696d27b8eb85786~KcmZcn1Zu1984919849eusmtrp1K;
-        Fri,  4 Oct 2019 12:46:44 +0000 (GMT)
-X-AuditID: cbfec7f5-4ddff70000001116-01-5d973f34216e
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 76.6C.04166.33F379D5; Fri,  4
-        Oct 2019 13:46:44 +0100 (BST)
-Received: from [106.120.51.18] (unknown [106.120.51.18]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191004124643eusmtip2d03720b6194d44f3f3e0755f64c9c6e3~KcmZA4zty2489424894eusmtip2d;
-        Fri,  4 Oct 2019 12:46:43 +0000 (GMT)
-Subject: Re: Devfreq looks for unsupported frequencies on Exynos
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kamil Konieczny <k.konieczny@partner.samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From:   Kamil Konieczny <k.konieczny@samsung.com>
-Message-ID: <e68cb899-b207-a674-e7b0-fa5f8cbb6a1b@samsung.com>
-Date:   Fri, 4 Oct 2019 14:46:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20191004103101.GA9176@pi3>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUhTURjGPbv3bnfTyXVavmooDQsV0iLJC4kZBI3Q6h8pFNGlFz9yUzY/
-        MgMVR36PysF02IchOBepbbb8mKJONJUaqWTMCkWHES0tDQpDa95F/vc7z/M+nPc5HBITmYhA
-        MkdeyCjk0jwxV4CbJ37ZjkWf0aYevz90kF7YWiNo9fAuom22Hh5tXHlL0HMDrVx6s3Ec0c22
-        YQ79dPwDj16s1HPj+RKjoZYrMbWXS0a/WjgSda8BSTaNwZeJZEFsJpOXU8woouLSBdn2+UsF
-        04IbX+zVqAINk3WITwIVDaaJerwOCUgRpUdQbengsoctBG2qLreziUD3uo/4F2mo3XAbHQju
-        djW7I04EVY1rWB0iSV8qHvqcMS7dj1rhgPalai/NpaJg9NUU7mIhFQeaqgnMxTgVCk1q9R4f
-        oK7C9yUrwc74wFTL6t48nwqDiZ0hjosxyh/sqw/dHAIvnK2Y6zKgzDx4Vj+Hsaueg86R54hl
-        X/g82ctj+RDMNDXgLJeAo03NY8MqBEvV39zGabBOviFcbTAqHLoHolj5LFh6NvZkoLzhndOH
-        3cEb7pm1GCsLoea2iJ0+AmvTDRyWg6But8v9iBJof7zLu4MO6/a11O1rptvXTPd/h0cINyB/
-        pkgpy2KUJ+VMSaRSKlMWybMiM/JlRvT3K83sTP7oQ8O/r40hikRiL2HzKW2qiJAWK0tlYwhI
-        TOwnnO3WpIqEmdLSm4wiP01RlMcox1AQiYv9hWUeSykiKktayFxnmAJG8c/lkPzACvQxwuxI
-        bA3Qnlfd2uZ1LD6pGcxtdxzt7BznzONJHpU/g7XIGG5PLtO0eKc7ghI85V7LtTJLeaJpfeli
-        07o2IzblvTltYURf+2kjgBoIKY0JS+BaklTbudw2iUFjnepvthKDs+v6B3NX0hs9GvovyGOc
-        09tCe2iZJywPVmvEuDJbeiICUyilfwBGSXURRgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJIsWRmVeSWpSXmKPExsVy+t/xe7om9tNjDfZuZ7K4/uU5q0Xfvv+M
-        FufPb2C32PT4GqvF5V1z2Cw+9x5htJhxfh+Txdojd9ktbjeuYHPg9Ni0qpPNY/OSeo+D7/Yw
-        efRtWcXo8XmTXABrlJ5NUX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpO
-        Zllqkb5dgl7GrSv+Bae4Kt7camdsYNzH0cXIySEhYCLR0/mBpYuRi0NIYCmjxNKWi+wQCWmJ
-        xtOrmSBsYYk/17rYIIpeM0r8eviSsYuRg0NYwEFix1tzkLiIwFMmiVmLz4E1CwlUS3z6+wus
-        mU1AX+Lg2ZMsIDavgJ3ElOZjzCA2i4CKxOS+PjBbVCBC4vCOWYwQNYISJ2c+AavnFNCQOPZv
-        L9gcZgF1iT/zLjFD2OISt57Mh4rLS2x/O4d5AqPgLCTts5C0zELSMgtJywJGllWMIqmlxbnp
-        ucWGesWJucWleel6yfm5mxiB0bbt2M/NOxgvbQw+xCjAwajEw/vBYnqsEGtiWXFl7iFGCQ5m
-        JRHeS+unxArxpiRWVqUW5ccXleakFh9iNAV6biKzlGhyPjAR5JXEG5oamltYGpobmxubWSiJ
-        83YIHIwREkhPLEnNTk0tSC2C6WPi4JRqYJzddKd4kkTUer+TrPdXnZ3E3KP9RbMr/dXnbv1P
-        M0Q3Wtkt/GmQobRCUX6qcFZmmc/DKYI3eRZtYFCdc6vS4eim2afqW+Plb7b3mUoeXVKqmXr/
-        x/kLjP+9Hq55s6H5iLNc0oMnPmsLqj8alp78FrL/lcsS9vufM5hyP2aZdwv+2LFq02KODwuV
-        WIozEg21mIuKEwEn51LCzAIAAA==
-X-CMS-MailID: 20191004124644eucas1p2c8469c29442a5f0b10da0c931b04aa11
+        20191004125919eusmtrp181c7b6d9ce9bfe3836201023081d05c2~KcxZHJ5Eq2829528295eusmtrp1W;
+        Fri,  4 Oct 2019 12:59:19 +0000 (GMT)
+X-AuditID: cbfec7f4-ae1ff700000010d5-6f-5d9742277290
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 3B.1E.04166.722479D5; Fri,  4
+        Oct 2019 13:59:19 +0100 (BST)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191004125919eusmtip1edb4f2ee17db898daf6413aea45e7a27~KcxYjCVlC0401604016eusmtip1V;
+        Fri,  4 Oct 2019 12:59:18 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Maciej Falkowski <m.falkowski@samsung.com>
+Subject: [PATCH v6] dt-bindings: sound: Convert Samsung I2S controller to
+ dt-schema
+Date:   Fri,  4 Oct 2019 14:59:14 +0200
+Message-Id: <20191004125914.1033-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphleLIzCtJLcpLzFFi42LZduznOV11p+mxBi0fzC2uXDzEZLFxxnpW
+        i6kPn7BZzD9yjtXi/PkN7BbfrnQwWVzeNYfNYsb5fUwWD5rXsVmsPXKX3eLwm3ZWB26PDZ+b
+        2Dx2zrrL7rFpVSebR9+WVYwenzfJBbBGcdmkpOZklqUW6dslcGVM3P+AveCFR8WXw69ZGhgn
+        WHQxcnJICJhIvNx4lrWLkYtDSGAFo8S3pRegnC+MErs+bGeCcD4zSnz82ssK09I9tZEZxBYS
+        WM4oseWBH1xH35zfYEVsAoYSXW+72EBsEYE6ibNnjjCCFDELbGaS2Hh1JViRsECoxNxFHYwg
+        NouAqsSZLWvYQWxeARuJ85+bmCG2yUus3nCAGaRZQuA3m8Snd9sZIRIuErt6jrNB2MISr45v
+        YYewZSROT+5hgWhoZpR4eG4tO4TTwyhxuWkGVLe1xOHjF4HO4AC6SVNi/S59iLCjxL/9r5lA
+        whICfBI33gqChJmBzEnbpjNDhHklOtqEIKrVJGYdXwe39uCFS1A3e0hMmzeNFRJCsRI3e94x
+        TmCUm4WwawEj4ypG8dTS4tz01GKjvNRyveLE3OLSvHS95PzcTYzAtHH63/EvOxh3/Uk6xCjA
+        wajEw/vBYnqsEGtiWXFl7iFGCQ5mJRHeS+unxArxpiRWVqUW5ccXleakFh9ilOZgURLnrWZ4
+        EC0kkJ5YkpqdmlqQWgSTZeLglGpgNNndIsCTIN6WJ8Aa0yV1YZnW8dcf/HcU2pe556517fhb
+        VnJ5Y9PcuWnyZgXZ57kSZ9VGcZrazt4WkcLnfUpH4b7X21WiQRJKabMCXz49+r1L+5hFt8nH
+        z39TTlsIia42zL5r5LE44PyWTR9culZ9eV4dNDdr+mVzY5ET67Yb3nivOyEocBqTEktxRqKh
+        FnNRcSIAZnwnUxcDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFLMWRmVeSWpSXmKPExsVy+t/xu7rqTtNjDa5Nlre4cvEQk8XGGetZ
+        LaY+fMJmMf/IOVaL8+c3sFt8u9LBZHF51xw2ixnn9zFZPGhex2ax9shddovDb9pZHbg9Nnxu
+        YvPYOesuu8emVZ1sHn1bVjF6fN4kF8AapWdTlF9akqqQkV9cYqsUbWhhpGdoaaFnZGKpZ2hs
+        HmtlZKqkb2eTkpqTWZZapG+XoJcxcf8D9oIXHhVfDr9maWCcYNHFyMkhIWAi0T21kbmLkYtD
+        SGApo0Tn/mZGiISMxMlpDawQtrDEn2tdbCC2kMAnRomlXwtAbDYBQ4mutyBxLg4RgSZGiWOb
+        Z7KAOMwC25kkzjcfAesQFgiWWHWwiQXEZhFQlTizZQ07iM0rYCNx/nMTM8QGeYnVGw4wT2Dk
+        WcDIsIpRJLW0ODc9t9hQrzgxt7g0L10vOT93EyMwXLcd+7l5B+OljcGHGAU4GJV4eD9YTI8V
+        Yk0sK67MPcQowcGsJMJ7af2UWCHelMTKqtSi/Pii0pzU4kOMpkDLJzJLiSbnA2MpryTe0NTQ
+        3MLS0NzY3NjMQkmct0PgYIyQQHpiSWp2ampBahFMHxMHp1QDY+HuX7vv2l75uDjDeWLvjSta
+        33dUr5s6aVLqz6lbG1yk7z+bsiel/kr+6dqG72dDpr14cHCqdFr/xuC/f7oKdjeUhbR8kEo8
+        tanP9ZzUdqfz0nsdlWd6vf6iURbcz+Og4fOVof21aduLBx//W836oFSx537B9omPWF7HLNwy
+        XT76fVgtH9+JWfZKLMUZiYZazEXFiQChayBLbQIAAA==
+X-CMS-MailID: 20191004125919eucas1p21149ecdf6d83fbe7bc8c39eaa8b29a46
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="UTF-8"
-X-RootMTR: 20191004103109epcas5p23221e4098d5d62faaf5d8db871ac3770
+X-RootMTR: 20191004125919eucas1p21149ecdf6d83fbe7bc8c39eaa8b29a46
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20191004103109epcas5p23221e4098d5d62faaf5d8db871ac3770
-References: <CGME20191004103109epcas5p23221e4098d5d62faaf5d8db871ac3770@epcas5p2.samsung.com>
-        <20191004103101.GA9176@pi3>
+X-CMS-RootMailID: 20191004125919eucas1p21149ecdf6d83fbe7bc8c39eaa8b29a46
+References: <CGME20191004125919eucas1p21149ecdf6d83fbe7bc8c39eaa8b29a46@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20191004124643.k4VpzHE37wa6_yxpwi1QPxFtoZvpkaXV4pJDf3oFfjc@z>
+Message-ID: <20191004125914.4cMS0hc6xwe2jBLdnwuk_LKt_9iniCw7LDLrcN6AAqs@z>
 
-On 04.10.2019 12:31, Krzysztof Kozlowski wrote:
-> 
-> Hi All,
-> 
-> I noticed recently error logs when booting Odroid HC1 (Exynos5422) on
-> exynos_defconfig, 5.4.0-rc1-next-20191004:
-> [...]
-> [    5.225222] exynos-bus soc:bus_wcore: dev_pm_opp_set_rate: failed to find current OPP for freq 532000000 (-34)
-> [    5.225975] exynos-bus: new bus device registered: soc:bus_peri ( 67000 KHz ~  67000 KHz)
-> [    5.238824] exynos-bus soc:bus_noc: dev_pm_opp_set_rate: failed to find current OPP for freq 111000000 (-34)
-> [    5.245719] exynos-bus: new bus device registered: soc:bus_g2d ( 84000 KHz ~ 333000 KHz)
-> [    5.252653] exynos-bus soc:bus_fsys_apb: dev_pm_opp_set_rate: failed to find current OPP for freq 222000000 (-34)
-> [...]
-> You can see that Exynos devfreq was trying to set 532000000 Hz for
-> wcore, 111000000 for noc and 222000000 for fsys_apb. These are higher
-> frequencies than we have in DTSI.
-> 
-> Any ideas why? It does not look normal...
+From: Maciej Falkowski <m.falkowski@samsung.com>
 
-Thank you for report. This is known issue, clocks left by u-boot are too
-high and they are not present in opp tables. Lukasz Luba sended patchset
-"[PATCH v1 00/50] Exynos5x clocks and buses changes" but it should first
-be made in u-boot.
+Convert Samsung I2S controller to newer dt-schema format.
 
-I have idea for a fix and will send it soon after weekend.
+Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
+[mszyprow: integrated fix for minor spelling issues]
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+v6:
+- integrated fix for minor spelling issues
+- collected tags
+---
+ .../devicetree/bindings/sound/samsung-i2s.txt |  84 -----------
+ .../bindings/sound/samsung-i2s.yaml           | 138 ++++++++++++++++++
+ 2 files changed, 138 insertions(+), 84 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/sound/samsung-i2s.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/samsung-i2s.yaml
 
+diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.txt b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
+deleted file mode 100644
+index a88cb00fa096..000000000000
+--- a/Documentation/devicetree/bindings/sound/samsung-i2s.txt
++++ /dev/null
+@@ -1,84 +0,0 @@
+-* Samsung I2S controller
+-
+-Required SoC Specific Properties:
+-
+-- compatible : should be one of the following.
+-   - samsung,s3c6410-i2s: for 8/16/24bit stereo I2S.
+-   - samsung,s5pv210-i2s: for 8/16/24bit multichannel(5.1) I2S with
+-     secondary fifo, s/w reset control and internal mux for root clk src.
+-   - samsung,exynos5420-i2s: for 8/16/24bit multichannel(5.1) I2S for
+-     playback, stereo channel capture, secondary fifo using internal
+-     or external dma, s/w reset control, internal mux for root clk src
+-     and 7.1 channel TDM support for playback. TDM (Time division multiplexing)
+-     is to allow transfer of multiple channel audio data on single data line.
+-   - samsung,exynos7-i2s: with all the available features of exynos5 i2s,
+-     exynos7 I2S has 7.1 channel TDM support for capture, secondary fifo
+-     with only external dma and more no.of root clk sampling frequencies.
+-   - samsung,exynos7-i2s1: I2S1 on previous samsung platforms supports
+-     stereo channels. exynos7 i2s1 upgraded to 5.1 multichannel with
+-     slightly modified bit offsets.
+-
+-- reg: physical base address of the controller and length of memory mapped
+-  region.
+-- dmas: list of DMA controller phandle and DMA request line ordered pairs.
+-- dma-names: identifier string for each DMA request line in the dmas property.
+-  These strings correspond 1:1 with the ordered pairs in dmas.
+-- clocks: Handle to iis clock and RCLK source clk.
+-- clock-names:
+-  i2s0 uses some base clocks from CMU and some are from audio subsystem internal
+-  clock controller. The clock names for i2s0 should be "iis", "i2s_opclk0" and
+-  "i2s_opclk1" as shown in the example below.
+-  i2s1 and i2s2 uses clocks from CMU. The clock names for i2s1 and i2s2 should
+-  be "iis" and "i2s_opclk0".
+-  "iis" is the i2s bus clock and i2s_opclk0, i2s_opclk1 are sources of the root
+-  clk. i2s0 has internal mux to select the source of root clk and i2s1 and i2s2
+-  doesn't have any such mux.
+-- #clock-cells: should be 1, this property must be present if the I2S device
+-  is a clock provider in terms of the common clock bindings, described in
+-  ../clock/clock-bindings.txt.
+-- clock-output-names (deprecated): from the common clock bindings, names of
+-  the CDCLK I2S output clocks, suggested values are "i2s_cdclk0", "i2s_cdclk1",
+-  "i2s_cdclk3" for the I2S0, I2S1, I2S2 devices respectively.
+-
+-There are following clocks available at the I2S device nodes:
+- CLK_I2S_CDCLK    - the CDCLK (CODECLKO) gate clock,
+- CLK_I2S_RCLK_PSR - the RCLK prescaler divider clock (corresponding to the
+-		    IISPSR register),
+- CLK_I2S_RCLK_SRC - the RCLKSRC mux clock (corresponding to RCLKSRC bit in
+-		    IISMOD register).
+-
+-Refer to the SoC datasheet for availability of the above clocks.
+-The CLK_I2S_RCLK_PSR and CLK_I2S_RCLK_SRC clocks are usually only available
+-in the IIS Multi Audio Interface.
+-
+-Note: Old DTs may not have the #clock-cells property and then not use the I2S
+-node as a clock supplier.
+-
+-Optional SoC Specific Properties:
+-
+-- samsung,idma-addr: Internal DMA register base address of the audio
+-  sub system(used in secondary sound source).
+-- pinctrl-0: Should specify pin control groups used for this controller.
+-- pinctrl-names: Should contain only one value - "default".
+-- #sound-dai-cells: should be 1.
+-
+-
+-Example:
+-
+-i2s0: i2s@3830000 {
+-	compatible = "samsung,s5pv210-i2s";
+-	reg = <0x03830000 0x100>;
+-	dmas = <&pdma0 10
+-		&pdma0 9
+-		&pdma0 8>;
+-	dma-names = "tx", "rx", "tx-sec";
+-	clocks = <&clock_audss EXYNOS_I2S_BUS>,
+-		<&clock_audss EXYNOS_I2S_BUS>,
+-		<&clock_audss EXYNOS_SCLK_I2S>;
+-	clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
+-	#clock-cells = <1>;
+-	samsung,idma-addr = <0x03000000>;
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&i2s0_bus>;
+-	#sound-dai-cells = <1>;
+-};
+diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.yaml b/Documentation/devicetree/bindings/sound/samsung-i2s.yaml
+new file mode 100644
+index 000000000000..53e3bad4178c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/samsung-i2s.yaml
+@@ -0,0 +1,138 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/samsung-i2s.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung SoC I2S controller
++
++maintainers:
++  - Krzysztof Kozlowski <krzk@kernel.org>
++  - Sylwester Nawrocki <s.nawrocki@samsung.com>
++
++properties:
++  compatible:
++    description: |
++      samsung,s3c6410-i2s: for 8/16/24bit stereo I2S.
++
++      samsung,s5pv210-i2s: for 8/16/24bit multichannel (5.1) I2S with
++      secondary FIFO, s/w reset control and internal mux for root clock
++      source.
++
++      samsung,exynos5420-i2s: for 8/16/24bit multichannel (5.1) I2S for
++      playback, stereo channel capture, secondary FIFO using internal
++      or external DMA, s/w reset control, internal mux for root clock
++      source and 7.1 channel TDM support for playback; TDM (Time division
++      multiplexing) is to allow transfer of multiple channel audio data on
++      single data line.
++
++      samsung,exynos7-i2s: with all the available features of Exynos5 I2S.
++      Exynos7 I2S has 7.1 channel TDM support for capture, secondary FIFO
++      with only external DMA and more number of root clock sampling
++      frequencies.
++
++      samsung,exynos7-i2s1: I2S1 on previous samsung platforms supports
++      stereo channels. Exynos7 I2S1 upgraded to 5.1 multichannel with
++      slightly modified bit offsets.
++    enum:
++      - samsung,s3c6410-i2s
++      - samsung,s5pv210-i2s
++      - samsung,exynos5420-i2s
++      - samsung,exynos7-i2s
++      - samsung,exynos7-i2s1
++
++  reg:
++    maxItems: 1
++
++  dmas:
++    minItems: 2
++    maxItems: 3
++
++  dma-names:
++    oneOf:
++      - items:
++          - const: tx
++          - const: rx
++      - items:
++          - const: tx
++          - const: rx
++          - const: tx-sec
++
++  clocks:
++    minItems: 1
++    maxItems: 3
++
++  clock-names:
++    oneOf:
++      - items:
++          - const: iis
++      - items: # for I2S0
++          - const: iis
++          - const: i2s_opclk0
++          - const: i2s_opclk1
++      - items: # for I2S1 and I2S2
++          - const: iis
++          - const: i2s_opclk0
++    description: |
++      "iis" is the I2S bus clock and i2s_opclk0, i2s_opclk1 are sources
++      of the root clock. I2S0 has internal mux to select the source
++      of root clock and I2S1 and I2S2 doesn't have any such mux.
++
++  "#clock-cells":
++    const: 1
++
++  clock-output-names:
++    deprecated: true
++    oneOf:
++      - items: # for I2S0
++          - const: i2s_cdclk0
++      - items: # for I2S1
++          - const: i2s_cdclk1
++      - items: # for I2S2
++          - const: i2s_cdclk2
++    description: Names of the CDCLK I2S output clocks.
++
++  samsung,idma-addr:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: |
++      Internal DMA register base address of the audio
++      subsystem (used in secondary sound source).
++
++  pinctrl-0:
++    description: Should specify pin control groups used for this controller.
++
++  pinctrl-names:
++    const: default
++
++  "#sound-dai-cells":
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - dmas
++  - dma-names
++  - clocks
++  - clock-names
++
++examples:
++  - |
++    #include <dt-bindings/clock/exynos-audss-clk.h>
++
++    i2s0: i2s@3830000 {
++        compatible = "samsung,s5pv210-i2s";
++        reg = <0x03830000 0x100>;
++        dmas = <&pdma0 10>,
++                <&pdma0 9>,
++                <&pdma0 8>;
++        dma-names = "tx", "rx", "tx-sec";
++        clocks = <&clock_audss EXYNOS_I2S_BUS>,
++                <&clock_audss EXYNOS_I2S_BUS>,
++                <&clock_audss EXYNOS_SCLK_I2S>;
++        clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
++        #clock-cells = <1>;
++        samsung,idma-addr = <0x03000000>;
++        pinctrl-names = "default";
++        pinctrl-0 = <&i2s0_bus>;
++        #sound-dai-cells = <1>;
++    };
 -- 
-Best regards,
-Kamil Konieczny
-Samsung R&D Institute Poland
+2.17.1
 
