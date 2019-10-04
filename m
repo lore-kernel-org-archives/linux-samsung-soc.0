@@ -1,7 +1,7 @@
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 1/7] regulator: s5m8767: switch to using devm_fwnode_gpiod_get
-Date: Fri,  4 Oct 2019 16:10:11 -0700
-Message-ID: <20191004231017.130290-2-dmitry.torokhov@gmail.com>
+Subject: [PATCH 4/7] regulator: s2mps11: switch to using devm_fwnode_gpiod_get
+Date: Fri,  4 Oct 2019 16:10:14 -0700
+Message-ID: <20191004231017.130290-5-dmitry.torokhov@gmail.com>
 References: <20191004231017.130290-1-dmitry.torokhov@gmail.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -22,27 +22,26 @@ Let's switch this driver over.
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
 
- drivers/regulator/s5m8767.c | 7 +++----
+ drivers/regulator/s2mps11.c | 7 +++----
  1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
-index 6ca27e9d5ef7..bdc07739e9a2 100644
---- a/drivers/regulator/s5m8767.c
-+++ b/drivers/regulator/s5m8767.c
-@@ -567,11 +567,10 @@ static int s5m8767_pmic_dt_parse_pdata(struct platform_device *pdev,
+diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+index 5bc00884cf51..4f2dc5ebffdc 100644
+--- a/drivers/regulator/s2mps11.c
++++ b/drivers/regulator/s2mps11.c
+@@ -844,10 +844,9 @@ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
+ 		if (!rdata[reg].init_data || !rdata[reg].of_node)
  			continue;
- 		}
  
--		rdata->ext_control_gpiod = devm_gpiod_get_from_of_node(
-+		rdata->ext_control_gpiod = devm_fwnode_gpiod_get(
- 			&pdev->dev,
--			reg_np,
--			"s5m8767,pmic-ext-control-gpios",
--			0,
-+			of_fwnode_handle(reg_np),
-+			"s5m8767,pmic-ext-control",
- 			GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
- 			"s5m8767");
- 		if (PTR_ERR(rdata->ext_control_gpiod) == -ENOENT)
+-		gpio[reg] = devm_gpiod_get_from_of_node(&pdev->dev,
+-				rdata[reg].of_node,
+-				"samsung,ext-control-gpios",
+-				0,
++		gpio[reg] = devm_fwnode_gpiod_get(&pdev->dev,
++				of_fwnode_handle(rdata[reg].of_node),
++				"samsung,ext-control",
+ 				GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
+ 				"s2mps11-regulator");
+ 		if (PTR_ERR(gpio[reg]) == -ENOENT)
 -- 
 2.23.0.581.g78d2f28ef7-goog
