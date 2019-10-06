@@ -1,95 +1,241 @@
-Return-Path: <SRS0=oEg9=X6=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=bmd/=X7=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B4BC4740A
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  5 Oct 2019 19:02:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBF87C4360C
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Oct 2019 10:01:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C64A222CB
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  5 Oct 2019 19:02:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yjBGb7Yk"
+	by mail.kernel.org (Postfix) with ESMTP id 9A58F214D9
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  6 Oct 2019 10:01:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1570356097;
+	bh=pKw7s1workqYRM+2lrKQUKnNzQh2w7qZEa6yX1ajVRo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=1T82o7u9tY5NGxHF+KZpgU1ABVgtjLnV4XywifCKZjF7Oji292KhSCt1oExNOGZzK
+	 UigjfD4U952HTPEJ+j+zIHqIaYOEuGEEtJTg6fKmispjWUbQSDtKx8bbGokPME0+mI
+	 P4YdlERJYL7GUfLhtqvA0//q3zraaM3f/gTu/M0M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729253AbfJETBz (ORCPT
+        id S1726484AbfJFKBe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 5 Oct 2019 15:01:55 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:35639 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729755AbfJETBz (ORCPT
+        Sun, 6 Oct 2019 06:01:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57392 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726291AbfJFKBe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 5 Oct 2019 15:01:55 -0400
-Received: by mail-lj1-f194.google.com with SMTP id m7so9733667lji.2
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 05 Oct 2019 12:01:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cLnPIVbBJS+TxpO+SqFajYphNiVo4QZ5RCiCT+hdl/0=;
-        b=yjBGb7YkhVlUnWVh1z11Gt4T3I97PkNYGB6u4AujbJIlRcsROUQ8lx59RmCuXDtVnY
-         JfEWnWsXwUbqOoYErwHaZXi9lFD8Ayfsp0mlFtidGFrHL2LKYDLTcBcMTnjxc3C70RVq
-         DYrDQLnn6ZPatonqM+3qWgFGx3No3skQVde3fwBREmdmPk6ZzSy8a9UPJi1n8B/Z0ODl
-         muwChKMZQyZH6wvqbjQ1c6JdYQ+y+0/Ljcqlmw3wvaWn+nr9WxkwR6papCF1gwnqJSk7
-         ks/UQQjnVMMNw8op4JJ/oNy1yd4x3ehqU9P+Yj5j5bfL0I7fP7r2pEqRwPevh90q6EN9
-         GW6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cLnPIVbBJS+TxpO+SqFajYphNiVo4QZ5RCiCT+hdl/0=;
-        b=sPF43zmqhpNRqrq7OuMztia7MCx7TUhLHnWiDNlk/tFHb7Xg1OHGhWGR2OnAMfaOGT
-         y0oMzESJIrpitnktkepWpLijJD7e3MLKztX+JYLEanlr1jW48pKCXBc79Db0D1lympYG
-         Ew7ej+2mzBSGcn9hTocRJxp41+TY1w8vV9vfZ/iziAJ4fi3U7JSV9GdpWsp3GDZlfhSV
-         dRDThlntFaeXzMI6Ej0KUbL0XVC1NgVomnxVT7Ojb60kwd7kl//aX7Ks8KiLI/tAkEw7
-         mz68QbG95OytnXmr2SAXysYR5/bT2Nr+KMEuaIaV/bms8IO7MjacQBPyPgbix988Ec4V
-         umzA==
-X-Gm-Message-State: APjAAAWC8/cuP4ciEbgfDoG15IrKa4qLkKCHDOpbl38SeZj30pYnFgcA
-        53vyr//tI6c2bqwpUOv7mZgM6BQo3XR4KfEyiqqaCg==
-X-Google-Smtp-Source: APXvYqzKaW2NgNBp6MUPtuvXz9pw5/psSZ8RIpsZPr6vu/11xyyRUj+RCR6PRRrx5s83L0M46vj7xj5KMzhRPKRww8k=
-X-Received: by 2002:a2e:9094:: with SMTP id l20mr13767405ljg.35.1570302112498;
- Sat, 05 Oct 2019 12:01:52 -0700 (PDT)
+        Sun, 6 Oct 2019 06:01:34 -0400
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 038762133F;
+        Sun,  6 Oct 2019 10:01:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570356093;
+        bh=pKw7s1workqYRM+2lrKQUKnNzQh2w7qZEa6yX1ajVRo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=G/nSFvUWTcK7PcyEYcYNM6YIeOOpvmyF9PJb02ZQz4pAAb2eqwsC7q9UE+MLrM7LU
+         zRDwd8OmhtvvqEQ1WhCkS8jNuUIXWs5BjQz4D32ZJy9luyc87xuw7i2pe94yKZ1acQ
+         P3uEAvkJR8D4Uwt6VUI64Ax7Km+L3Znx2at8Lpg8=
+Date:   Sun, 6 Oct 2019 11:01:26 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Sebastian Reichel <sre@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: samsung: Indent examples with four
+ spaces
+Message-ID: <20191006110126.131b0ca4@archlinux>
+In-Reply-To: <20191002160744.11307-1-krzk@kernel.org>
+References: <20191002160744.11307-1-krzk@kernel.org>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20191004231017.130290-1-dmitry.torokhov@gmail.com>
-In-Reply-To: <20191004231017.130290-1-dmitry.torokhov@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sat, 5 Oct 2019 21:01:37 +0200
-Message-ID:
- <CACRpkdZ_+YKKmNrho5edu7hn8UsOCPySSn2YMWz+qjYwMxgvpw@mail.gmail.com>
-Subject: Re: [PATCH 0/7] regulator: switch to using [devm_]fwnode_gpiod_get_index
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20191005190137.n-FpIEhU2YKj6vHCkMS3kEynDW_B6QkhY2oJOSc8g-o@z>
+Message-ID: <20191006100126.az1e1A4oP3Rfc_llu3n4ZAn-RSzQ8viPbSVnOO0tHyw@z>
 
-On Sat, Oct 5, 2019 at 1:10 AM Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
+On Wed,  2 Oct 2019 18:07:41 +0200
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-> This series swiches regulator drivers form using
-> [devm_]gpiod_get_from_of_node() that is scheduled to be removed in favor
-> of [devm_]fwnode_gpiod_get_index() that behaves more like standard
-> [devm_]gpiod_get_index() and will potentially handle secondary software
-> nodes in cases we need to augment platform firmware.
+> Change the indentation of examples used in json-schema bindings from two
+> to four spaces as this makes the code easier to read and seems to be
+> preferred in other files.
+> 
 
-The series:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+I'm assuming Rob will pick these up given they span multiple subsystems.
 
-Too bad with the build robots being unable to parse the
-pull deps. Now they hammer out complaints.
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Yours,
-Linus Walleij
+Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com> # for iio
+
+> ---
+>  .../bindings/arm/samsung/exynos-chipid.yaml   |  4 +-
+>  .../bindings/iio/adc/samsung,exynos-adc.yaml  | 64 +++++++++----------
+>  .../bindings/power/reset/syscon-poweroff.yaml |  8 +--
+>  .../bindings/power/reset/syscon-reboot.yaml   |  8 +--
+>  .../devicetree/bindings/rtc/s3c-rtc.yaml      | 12 ++--
+>  5 files changed, 48 insertions(+), 48 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.yaml b/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.yaml
+> index 9c573ad7dc7d..ce40adabb4e8 100644
+> --- a/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.yaml
+> +++ b/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.yaml
+> @@ -20,6 +20,6 @@ properties:
+>  examples:
+>    - |
+>      chipid@10000000 {
+> -      compatible = "samsung,exynos4210-chipid";
+> -      reg = <0x10000000 0x100>;
+> +        compatible = "samsung,exynos4210-chipid";
+> +        reg = <0x10000000 0x100>;
+>      };
+> diff --git a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+> index b4c6c26681d9..a0a9b909ac40 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+> @@ -112,40 +112,40 @@ allOf:
+>  examples:
+>    - |
+>      adc: adc@12d10000 {
+> -      compatible = "samsung,exynos-adc-v1";
+> -      reg = <0x12d10000 0x100>;
+> -      interrupts = <0 106 0>;
+> -      #io-channel-cells = <1>;
+> -      io-channel-ranges;
+> -
+> -      clocks = <&clock 303>;
+> -      clock-names = "adc";
+> -
+> -      vdd-supply = <&buck5_reg>;
+> -      samsung,syscon-phandle = <&pmu_system_controller>;
+> -
+> -      /* NTC thermistor is a hwmon device */
+> -      ncp15wb473@0 {
+> -        compatible = "murata,ncp15wb473";
+> -        pullup-uv = <1800000>;
+> -        pullup-ohm = <47000>;
+> -        pulldown-ohm = <0>;
+> -        io-channels = <&adc 4>;
+> -      };
+> +        compatible = "samsung,exynos-adc-v1";
+> +        reg = <0x12d10000 0x100>;
+> +        interrupts = <0 106 0>;
+> +        #io-channel-cells = <1>;
+> +        io-channel-ranges;
+> +
+> +        clocks = <&clock 303>;
+> +        clock-names = "adc";
+> +
+> +        vdd-supply = <&buck5_reg>;
+> +        samsung,syscon-phandle = <&pmu_system_controller>;
+> +
+> +        /* NTC thermistor is a hwmon device */
+> +        ncp15wb473@0 {
+> +            compatible = "murata,ncp15wb473";
+> +            pullup-uv = <1800000>;
+> +            pullup-ohm = <47000>;
+> +            pulldown-ohm = <0>;
+> +            io-channels = <&adc 4>;
+> +          };
+>      };
+>  
+>    - |
+>      adc@126c0000 {
+> -      compatible = "samsung,exynos3250-adc";
+> -      reg = <0x126C0000 0x100>;
+> -      interrupts = <0 137 0>;
+> -      #io-channel-cells = <1>;
+> -      io-channel-ranges;
+> -
+> -      clocks = <&cmu 0>, // CLK_TSADC
+> -               <&cmu 1>; // CLK_SCLK_TSADC
+> -      clock-names = "adc", "sclk";
+> -
+> -      vdd-supply = <&buck5_reg>;
+> -      samsung,syscon-phandle = <&pmu_system_controller>;
+> +        compatible = "samsung,exynos3250-adc";
+> +        reg = <0x126C0000 0x100>;
+> +        interrupts = <0 137 0>;
+> +        #io-channel-cells = <1>;
+> +        io-channel-ranges;
+> +
+> +        clocks = <&cmu 0>, // CLK_TSADC
+> +                 <&cmu 1>; // CLK_SCLK_TSADC
+> +        clock-names = "adc", "sclk";
+> +
+> +        vdd-supply = <&buck5_reg>;
+> +        samsung,syscon-phandle = <&pmu_system_controller>;
+>      };
+> diff --git a/Documentation/devicetree/bindings/power/reset/syscon-poweroff.yaml b/Documentation/devicetree/bindings/power/reset/syscon-poweroff.yaml
+> index fb812937b534..520e07e6f21b 100644
+> --- a/Documentation/devicetree/bindings/power/reset/syscon-poweroff.yaml
+> +++ b/Documentation/devicetree/bindings/power/reset/syscon-poweroff.yaml
+> @@ -53,8 +53,8 @@ allOf:
+>  examples:
+>    - |
+>      poweroff {
+> -      compatible = "syscon-poweroff";
+> -      regmap = <&regmapnode>;
+> -      offset = <0x0>;
+> -      mask = <0x7a>;
+> +        compatible = "syscon-poweroff";
+> +        regmap = <&regmapnode>;
+> +        offset = <0x0>;
+> +        mask = <0x7a>;
+>      };
+> diff --git a/Documentation/devicetree/bindings/power/reset/syscon-reboot.yaml b/Documentation/devicetree/bindings/power/reset/syscon-reboot.yaml
+> index a7920f5eef79..d38006b1f1f4 100644
+> --- a/Documentation/devicetree/bindings/power/reset/syscon-reboot.yaml
+> +++ b/Documentation/devicetree/bindings/power/reset/syscon-reboot.yaml
+> @@ -53,8 +53,8 @@ allOf:
+>  examples:
+>    - |
+>      reboot {
+> -      compatible = "syscon-reboot";
+> -      regmap = <&regmapnode>;
+> -      offset = <0x0>;
+> -      mask = <0x1>;
+> +        compatible = "syscon-reboot";
+> +        regmap = <&regmapnode>;
+> +        offset = <0x0>;
+> +        mask = <0x1>;
+>      };
+> diff --git a/Documentation/devicetree/bindings/rtc/s3c-rtc.yaml b/Documentation/devicetree/bindings/rtc/s3c-rtc.yaml
+> index 951a6a485709..95570d7e19eb 100644
+> --- a/Documentation/devicetree/bindings/rtc/s3c-rtc.yaml
+> +++ b/Documentation/devicetree/bindings/rtc/s3c-rtc.yaml
+> @@ -76,10 +76,10 @@ allOf:
+>  examples:
+>    - |
+>      rtc@10070000 {
+> -      compatible = "samsung,s3c6410-rtc";
+> -      reg = <0x10070000 0x100>;
+> -      interrupts = <0 44 4>, <0 45 4>;
+> -      clocks = <&clock 0>, // CLK_RTC
+> -               <&s2mps11_osc 0>; // S2MPS11_CLK_AP
+> -      clock-names = "rtc", "rtc_src";
+> +        compatible = "samsung,s3c6410-rtc";
+> +        reg = <0x10070000 0x100>;
+> +        interrupts = <0 44 4>, <0 45 4>;
+> +        clocks = <&clock 0>, // CLK_RTC
+> +                 <&s2mps11_osc 0>; // S2MPS11_CLK_AP
+> +        clock-names = "rtc", "rtc_src";
+>      };
+
