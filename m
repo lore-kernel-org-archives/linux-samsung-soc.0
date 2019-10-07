@@ -1,10 +1,10 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: s2mps11: switch to using devm_fwnode_gpiod_get" to the regulator tree
-Date: Mon,  7 Oct 2019 14:03:16 +0100 (BST)
-Message-ID: <20191007130316.7A7D9274162F@ypsilon.sirena.org.uk>
-References: <20191004231017.130290-5-dmitry.torokhov@gmail.com>
+Subject: Applied "regulator: s5m8767: switch to using devm_fwnode_gpiod_get" to the regulator tree
+Date: Mon,  7 Oct 2019 14:03:19 +0100 (BST)
+Message-ID: <20191007130319.4C63D274162F@ypsilon.sirena.org.uk>
+References: <20191004231017.130290-2-dmitry.torokhov@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191004231017.130290-5-dmitry.torokhov@gmail.com>
+In-Reply-To: <20191004231017.130290-2-dmitry.torokhov@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>
@@ -12,11 +12,11 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 The patch
 
-   regulator: s2mps11: switch to using devm_fwnode_gpiod_get
+   regulator: s5m8767: switch to using devm_fwnode_gpiod_get
 
 has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.5
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -37,10 +37,10 @@ to this mail.
 Thanks,
 Mark
 
->From de2792b507675641885075bc99e283de861b1ce6 Mon Sep 17 00:00:00 2001
+>From 5be0e549e18f8ad7efa81b3e054ca094b7782f55 Mon Sep 17 00:00:00 2001
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Fri, 4 Oct 2019 16:10:14 -0700
-Subject: [PATCH] regulator: s2mps11: switch to using devm_fwnode_gpiod_get
+Date: Fri, 4 Oct 2019 16:10:11 -0700
+Subject: [PATCH] regulator: s5m8767: switch to using devm_fwnode_gpiod_get
 
 devm_gpiod_get_from_of_node() is being retired in favor of
 devm_fwnode_gpiod_get_index(), that behaves similar to
@@ -50,30 +50,31 @@ will also be able to support secondary software nodes.
 Let's switch this driver over.
 
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Link: https://lore.kernel.org/r/20191004231017.130290-5-dmitry.torokhov@gmail.com
+Link: https://lore.kernel.org/r/20191004231017.130290-2-dmitry.torokhov@gmail.com
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/s2mps11.c | 7 +++----
+ drivers/regulator/s5m8767.c | 7 +++----
  1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 5bc00884cf51..4f2dc5ebffdc 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -844,10 +844,9 @@ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
- 		if (!rdata[reg].init_data || !rdata[reg].of_node)
+diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
+index 6ca27e9d5ef7..bdc07739e9a2 100644
+--- a/drivers/regulator/s5m8767.c
++++ b/drivers/regulator/s5m8767.c
+@@ -567,11 +567,10 @@ static int s5m8767_pmic_dt_parse_pdata(struct platform_device *pdev,
  			continue;
+ 		}
  
--		gpio[reg] = devm_gpiod_get_from_of_node(&pdev->dev,
--				rdata[reg].of_node,
--				"samsung,ext-control-gpios",
--				0,
-+		gpio[reg] = devm_fwnode_gpiod_get(&pdev->dev,
-+				of_fwnode_handle(rdata[reg].of_node),
-+				"samsung,ext-control",
- 				GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
- 				"s2mps11-regulator");
- 		if (PTR_ERR(gpio[reg]) == -ENOENT)
+-		rdata->ext_control_gpiod = devm_gpiod_get_from_of_node(
++		rdata->ext_control_gpiod = devm_fwnode_gpiod_get(
+ 			&pdev->dev,
+-			reg_np,
+-			"s5m8767,pmic-ext-control-gpios",
+-			0,
++			of_fwnode_handle(reg_np),
++			"s5m8767,pmic-ext-control",
+ 			GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
+ 			"s5m8767");
+ 		if (PTR_ERR(rdata->ext_control_gpiod) == -ENOENT)
 -- 
 2.20.1
