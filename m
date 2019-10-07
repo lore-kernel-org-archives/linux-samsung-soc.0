@@ -1,80 +1,185 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: s5m8767: switch to using devm_fwnode_gpiod_get" to the regulator tree
-Date: Mon,  7 Oct 2019 14:03:19 +0100 (BST)
-Message-ID: <20191007130319.4C63D274162F@ypsilon.sirena.org.uk>
-References: <20191004231017.130290-2-dmitry.torokhov@gmail.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: Re: [PATCH 1/4] dt-bindings: samsung: Indent examples with four
+ spaces
+Date: Mon, 7 Oct 2019 15:17:22 +0200
+Message-ID: <20191007131722.GI4254@piout.net>
+References: <20191002160744.11307-1-krzk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191004231017.130290-2-dmitry.torokhov@gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20191002160744.11307-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Sebastian Reichel <sre@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch
+On 02/10/2019 18:07:41+0200, Krzysztof Kozlowski wrote:
+> Change the indentation of examples used in json-schema bindings from two
+> to four spaces as this makes the code easier to read and seems to be
+> preferred in other files.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-   regulator: s5m8767: switch to using devm_fwnode_gpiod_get
+> ---
+>  .../bindings/arm/samsung/exynos-chipid.yaml   |  4 +-
+>  .../bindings/iio/adc/samsung,exynos-adc.yaml  | 64 +++++++++----------
+>  .../bindings/power/reset/syscon-poweroff.yaml |  8 +--
+>  .../bindings/power/reset/syscon-reboot.yaml   |  8 +--
+>  .../devicetree/bindings/rtc/s3c-rtc.yaml      | 12 ++--
+>  5 files changed, 48 insertions(+), 48 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.yaml b/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.yaml
+> index 9c573ad7dc7d..ce40adabb4e8 100644
+> --- a/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.yaml
+> +++ b/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.yaml
+> @@ -20,6 +20,6 @@ properties:
+>  examples:
+>    - |
+>      chipid@10000000 {
+> -      compatible = "samsung,exynos4210-chipid";
+> -      reg = <0x10000000 0x100>;
+> +        compatible = "samsung,exynos4210-chipid";
+> +        reg = <0x10000000 0x100>;
+>      };
+> diff --git a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+> index b4c6c26681d9..a0a9b909ac40 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
+> @@ -112,40 +112,40 @@ allOf:
+>  examples:
+>    - |
+>      adc: adc@12d10000 {
+> -      compatible = "samsung,exynos-adc-v1";
+> -      reg = <0x12d10000 0x100>;
+> -      interrupts = <0 106 0>;
+> -      #io-channel-cells = <1>;
+> -      io-channel-ranges;
+> -
+> -      clocks = <&clock 303>;
+> -      clock-names = "adc";
+> -
+> -      vdd-supply = <&buck5_reg>;
+> -      samsung,syscon-phandle = <&pmu_system_controller>;
+> -
+> -      /* NTC thermistor is a hwmon device */
+> -      ncp15wb473@0 {
+> -        compatible = "murata,ncp15wb473";
+> -        pullup-uv = <1800000>;
+> -        pullup-ohm = <47000>;
+> -        pulldown-ohm = <0>;
+> -        io-channels = <&adc 4>;
+> -      };
+> +        compatible = "samsung,exynos-adc-v1";
+> +        reg = <0x12d10000 0x100>;
+> +        interrupts = <0 106 0>;
+> +        #io-channel-cells = <1>;
+> +        io-channel-ranges;
+> +
+> +        clocks = <&clock 303>;
+> +        clock-names = "adc";
+> +
+> +        vdd-supply = <&buck5_reg>;
+> +        samsung,syscon-phandle = <&pmu_system_controller>;
+> +
+> +        /* NTC thermistor is a hwmon device */
+> +        ncp15wb473@0 {
+> +            compatible = "murata,ncp15wb473";
+> +            pullup-uv = <1800000>;
+> +            pullup-ohm = <47000>;
+> +            pulldown-ohm = <0>;
+> +            io-channels = <&adc 4>;
+> +          };
+>      };
+>  
+>    - |
+>      adc@126c0000 {
+> -      compatible = "samsung,exynos3250-adc";
+> -      reg = <0x126C0000 0x100>;
+> -      interrupts = <0 137 0>;
+> -      #io-channel-cells = <1>;
+> -      io-channel-ranges;
+> -
+> -      clocks = <&cmu 0>, // CLK_TSADC
+> -               <&cmu 1>; // CLK_SCLK_TSADC
+> -      clock-names = "adc", "sclk";
+> -
+> -      vdd-supply = <&buck5_reg>;
+> -      samsung,syscon-phandle = <&pmu_system_controller>;
+> +        compatible = "samsung,exynos3250-adc";
+> +        reg = <0x126C0000 0x100>;
+> +        interrupts = <0 137 0>;
+> +        #io-channel-cells = <1>;
+> +        io-channel-ranges;
+> +
+> +        clocks = <&cmu 0>, // CLK_TSADC
+> +                 <&cmu 1>; // CLK_SCLK_TSADC
+> +        clock-names = "adc", "sclk";
+> +
+> +        vdd-supply = <&buck5_reg>;
+> +        samsung,syscon-phandle = <&pmu_system_controller>;
+>      };
+> diff --git a/Documentation/devicetree/bindings/power/reset/syscon-poweroff.yaml b/Documentation/devicetree/bindings/power/reset/syscon-poweroff.yaml
+> index fb812937b534..520e07e6f21b 100644
+> --- a/Documentation/devicetree/bindings/power/reset/syscon-poweroff.yaml
+> +++ b/Documentation/devicetree/bindings/power/reset/syscon-poweroff.yaml
+> @@ -53,8 +53,8 @@ allOf:
+>  examples:
+>    - |
+>      poweroff {
+> -      compatible = "syscon-poweroff";
+> -      regmap = <&regmapnode>;
+> -      offset = <0x0>;
+> -      mask = <0x7a>;
+> +        compatible = "syscon-poweroff";
+> +        regmap = <&regmapnode>;
+> +        offset = <0x0>;
+> +        mask = <0x7a>;
+>      };
+> diff --git a/Documentation/devicetree/bindings/power/reset/syscon-reboot.yaml b/Documentation/devicetree/bindings/power/reset/syscon-reboot.yaml
+> index a7920f5eef79..d38006b1f1f4 100644
+> --- a/Documentation/devicetree/bindings/power/reset/syscon-reboot.yaml
+> +++ b/Documentation/devicetree/bindings/power/reset/syscon-reboot.yaml
+> @@ -53,8 +53,8 @@ allOf:
+>  examples:
+>    - |
+>      reboot {
+> -      compatible = "syscon-reboot";
+> -      regmap = <&regmapnode>;
+> -      offset = <0x0>;
+> -      mask = <0x1>;
+> +        compatible = "syscon-reboot";
+> +        regmap = <&regmapnode>;
+> +        offset = <0x0>;
+> +        mask = <0x1>;
+>      };
+> diff --git a/Documentation/devicetree/bindings/rtc/s3c-rtc.yaml b/Documentation/devicetree/bindings/rtc/s3c-rtc.yaml
+> index 951a6a485709..95570d7e19eb 100644
+> --- a/Documentation/devicetree/bindings/rtc/s3c-rtc.yaml
+> +++ b/Documentation/devicetree/bindings/rtc/s3c-rtc.yaml
+> @@ -76,10 +76,10 @@ allOf:
+>  examples:
+>    - |
+>      rtc@10070000 {
+> -      compatible = "samsung,s3c6410-rtc";
+> -      reg = <0x10070000 0x100>;
+> -      interrupts = <0 44 4>, <0 45 4>;
+> -      clocks = <&clock 0>, // CLK_RTC
+> -               <&s2mps11_osc 0>; // S2MPS11_CLK_AP
+> -      clock-names = "rtc", "rtc_src";
+> +        compatible = "samsung,s3c6410-rtc";
+> +        reg = <0x10070000 0x100>;
+> +        interrupts = <0 44 4>, <0 45 4>;
+> +        clocks = <&clock 0>, // CLK_RTC
+> +                 <&s2mps11_osc 0>; // S2MPS11_CLK_AP
+> +        clock-names = "rtc", "rtc_src";
+>      };
+> -- 
+> 2.17.1
+> 
 
-has been applied to the regulator tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 5be0e549e18f8ad7efa81b3e054ca094b7782f55 Mon Sep 17 00:00:00 2001
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Fri, 4 Oct 2019 16:10:11 -0700
-Subject: [PATCH] regulator: s5m8767: switch to using devm_fwnode_gpiod_get
-
-devm_gpiod_get_from_of_node() is being retired in favor of
-devm_fwnode_gpiod_get_index(), that behaves similar to
-devm_gpiod_get_index(), but can work with arbitrary firmware node. It
-will also be able to support secondary software nodes.
-
-Let's switch this driver over.
-
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Link: https://lore.kernel.org/r/20191004231017.130290-2-dmitry.torokhov@gmail.com
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/s5m8767.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
-index 6ca27e9d5ef7..bdc07739e9a2 100644
---- a/drivers/regulator/s5m8767.c
-+++ b/drivers/regulator/s5m8767.c
-@@ -567,11 +567,10 @@ static int s5m8767_pmic_dt_parse_pdata(struct platform_device *pdev,
- 			continue;
- 		}
- 
--		rdata->ext_control_gpiod = devm_gpiod_get_from_of_node(
-+		rdata->ext_control_gpiod = devm_fwnode_gpiod_get(
- 			&pdev->dev,
--			reg_np,
--			"s5m8767,pmic-ext-control-gpios",
--			0,
-+			of_fwnode_handle(reg_np),
-+			"s5m8767,pmic-ext-control",
- 			GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
- 			"s5m8767");
- 		if (PTR_ERR(rdata->ext_control_gpiod) == -ENOENT)
 -- 
-2.20.1
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
