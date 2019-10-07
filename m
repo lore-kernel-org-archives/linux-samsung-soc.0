@@ -1,110 +1,79 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 1/2] ARM: multi_v7_defconfig: Enable options for boards
- with Exynos SoC
-Date: Mon, 7 Oct 2019 09:05:56 +0200
-Message-ID: <CAJKOXPdgsTTmNs+Q5_sshZQSvCMBge9jkNh0=L6F4VewEeXxbg@mail.gmail.com>
-References: <20191004150040.5833-1-krzk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20191004150040.5833-1-krzk@kernel.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King <linux@armlinux.org.uk>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <krzk@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "regulator: s2mps11: switch to using devm_fwnode_gpiod_get" to the regulator tree
+Date: Mon,  7 Oct 2019 14:03:16 +0100 (BST)
+Message-ID: <20191007130316.7A7D9274162F@ypsilon.sirena.org.uk>
+References: <20191004231017.130290-5-dmitry.torokhov@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191004231017.130290-5-dmitry.torokhov@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, 4 Oct 2019 at 17:00, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> Sync with exynos_defconfig and enable following options for Samsung
-> Exynos SoC based boards:
-> 1. NFC_S3FWRN5_I2C (with NFC stack): Samsung S3FWRN5 NCI NFC Controller,
->    used for example on Exynos5433 (if booted in 32-bit mode),
-> 2. S3C2410_WATCHDOG: watchdog driver used on S3C, S5P and Exynos SoCs,
-> 3. REGULATOR_S2MPA01: Samsung S2MPA01 regulators driver present on
->    Exynos5260 RexNos REX-RED board,
-> 4. SND_SOC_ARNDALE: sound support on Arndale boards,
-> 5. EXYNOS_IOMMU: IOMMU driver used on all Exynos SocS,,
-> 6. EXTCON_MAX14577, EXTCON_MAX77693 and EXTCON_MAX8997: extcon drivers
->    for handling micro USB on mobile Samsung boards (Trats, Trats2,
->    Rinato),
-> 7. PHY_EXYNOS5250_SATA: SATA phy for Exynos5250 present on Arndale and
->    SMDK5250 boards.
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->
-> ---
->
-> SND_SOC_ARNDALE is in progress (not yet applied)
-> ---
->  arch/arm/configs/multi_v7_defconfig | 18 ++++++++++++++++--
->  1 file changed, 16 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-> index 198de8e36d92..7f7978dba8ab 100644
-> --- a/arch/arm/configs/multi_v7_defconfig
-> +++ b/arch/arm/configs/multi_v7_defconfig
-> @@ -168,6 +168,14 @@ CONFIG_MAC80211=m
->  CONFIG_RFKILL=y
->  CONFIG_RFKILL_INPUT=y
->  CONFIG_RFKILL_GPIO=y
-> +CONFIG_NFC=m
-> +CONFIG_NFC_DIGITAL=m
-> +CONFIG_NFC_NCI=m
-> +CONFIG_NFC_NCI_SPI=m
-> +CONFIG_NFC_NCI_UART=m
-> +CONFIG_NFC_HCI=m
-> +CONFIG_NFC_SHDLC=y
-> +CONFIG_NFC_S3FWRN5_I2C=m
->  CONFIG_PCIEPORTBUS=y
->  CONFIG_PCI_MVEBU=y
->  CONFIG_PCI_TEGRA=y
-> @@ -491,12 +499,12 @@ CONFIG_BCM2835_THERMAL=m
->  CONFIG_BRCMSTB_THERMAL=m
->  CONFIG_ST_THERMAL_MEMMAP=y
->  CONFIG_UNIPHIER_THERMAL=y
-> -CONFIG_WATCHDOG=y
->  CONFIG_DA9063_WATCHDOG=m
->  CONFIG_XILINX_WATCHDOG=y
->  CONFIG_ARM_SP805_WATCHDOG=y
->  CONFIG_AT91SAM9X_WATCHDOG=y
->  CONFIG_SAMA5D4_WATCHDOG=y
-> +CONFIG_S3C2410_WATCHDOG=m
->  CONFIG_DW_WATCHDOG=y
->  CONFIG_DAVINCI_WATCHDOG=m
->  CONFIG_ORION_WATCHDOG=y
-> @@ -581,6 +589,7 @@ CONFIG_REGULATOR_QCOM_RPM=y
->  CONFIG_REGULATOR_QCOM_SMD_RPM=m
->  CONFIG_REGULATOR_RK808=y
->  CONFIG_REGULATOR_RN5T618=y
-> +CONFIG_REGULATOR_S2MPA01=m
->  CONFIG_REGULATOR_S2MPS11=y
->  CONFIG_REGULATOR_S5M8767=y
->  CONFIG_REGULATOR_STM32_BOOSTER=m
-> @@ -711,6 +720,7 @@ CONFIG_SND_SOC_SAMSUNG_SMDK_WM8994=m
->  CONFIG_SND_SOC_SMDK_WM8994_PCM=m
->  CONFIG_SND_SOC_SNOW=m
->  CONFIG_SND_SOC_ODROID=m
-> +CONFIG_SND_SOC_ARNDALE=m
->  CONFIG_SND_SOC_SH4_FSI=m
->  CONFIG_SND_SOC_RCAR=m
->  CONFIG_SND_SOC_STI=m
-> @@ -933,7 +943,7 @@ CONFIG_BCM2835_MBOX=y
->  CONFIG_ROCKCHIP_IOMMU=y
->  CONFIG_TEGRA_IOMMU_GART=y
->  CONFIG_TEGRA_IOMMU_SMMU=y
-> -CONFIG_REMOTEPROC=y
+The patch
 
-This appeared here by mistake. It's wrong.
+   regulator: s2mps11: switch to using devm_fwnode_gpiod_get
 
-I'll send v2.
+has been applied to the regulator tree at
 
-Best regards,
-Krzysztof
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.5
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From de2792b507675641885075bc99e283de861b1ce6 Mon Sep 17 00:00:00 2001
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Date: Fri, 4 Oct 2019 16:10:14 -0700
+Subject: [PATCH] regulator: s2mps11: switch to using devm_fwnode_gpiod_get
+
+devm_gpiod_get_from_of_node() is being retired in favor of
+devm_fwnode_gpiod_get_index(), that behaves similar to
+devm_gpiod_get_index(), but can work with arbitrary firmware node. It
+will also be able to support secondary software nodes.
+
+Let's switch this driver over.
+
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Link: https://lore.kernel.org/r/20191004231017.130290-5-dmitry.torokhov@gmail.com
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/s2mps11.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+index 5bc00884cf51..4f2dc5ebffdc 100644
+--- a/drivers/regulator/s2mps11.c
++++ b/drivers/regulator/s2mps11.c
+@@ -844,10 +844,9 @@ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
+ 		if (!rdata[reg].init_data || !rdata[reg].of_node)
+ 			continue;
+ 
+-		gpio[reg] = devm_gpiod_get_from_of_node(&pdev->dev,
+-				rdata[reg].of_node,
+-				"samsung,ext-control-gpios",
+-				0,
++		gpio[reg] = devm_fwnode_gpiod_get(&pdev->dev,
++				of_fwnode_handle(rdata[reg].of_node),
++				"samsung,ext-control",
+ 				GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
+ 				"s2mps11-regulator");
+ 		if (PTR_ERR(gpio[reg]) == -ENOENT)
+-- 
+2.20.1
