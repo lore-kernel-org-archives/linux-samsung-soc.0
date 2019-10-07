@@ -2,162 +2,124 @@ Return-Path: <SRS0=jzbt=YA=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C841C47404
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Oct 2019 07:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA489C47404
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Oct 2019 08:54:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5FFB22478
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Oct 2019 07:06:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570431971;
-	bh=8sW/Eg/VYWUda4EhYFmrvqzQ7MKg2MNc3wIOjrczV4U=;
-	h=References:In-Reply-To:From:Date:Subject:To:List-ID:From;
-	b=cHB3klec9NtyB8Q/XZtrAzv+LUfR2IksKLTG4IslpSq5PQsqLJn+AL7HtekHO0haR
-	 IqYGJQAnxDnUrUb/+36aOJ81JXMmJFXYgaB9ihcAsGWosM/jO5MeAEHvxV4CAI1xAE
-	 m3J5mzPkLNELabRBNTTZ20hRPITmKOPvYOYL5s28=
+	by mail.kernel.org (Postfix) with ESMTP id B084821872
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  7 Oct 2019 08:54:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="DvLE/Oa5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726984AbfJGHGL (ORCPT
+        id S1726969AbfJGIye (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 7 Oct 2019 03:06:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53054 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726889AbfJGHGL (ORCPT
+        Mon, 7 Oct 2019 04:54:34 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:50639 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727345AbfJGIye (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 7 Oct 2019 03:06:11 -0400
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D268922477;
-        Mon,  7 Oct 2019 07:06:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570431970;
-        bh=8sW/Eg/VYWUda4EhYFmrvqzQ7MKg2MNc3wIOjrczV4U=;
-        h=References:In-Reply-To:From:Date:Subject:To:From;
-        b=Qk/+5g5Wq8zUXSUYr1l4rxDkOzI9ACN3zF36YRTiJ1XqzNvsi+KHYXrjmb30fwamU
-         h0Tq5bJnkthn7olqepQjD99tOnNnpiHMJ3L+QLUdKgRTujvLg4KCYC8Q3Sb0W2kRtz
-         ZZlCHdZQWlSF96KWX6ejOmJwHiTeCrAcPCXcemqc=
-Received: by mail-lf1-f47.google.com with SMTP id u28so8435220lfc.5;
-        Mon, 07 Oct 2019 00:06:09 -0700 (PDT)
-X-Gm-Message-State: APjAAAV6fKxgfLNWnpT04LER4pDG/C6MAFuRXkhHT+FtEP5YWV/z3Bbk
-        HznzxC2SWWctnCPcbItzrXoZRKgTUGwgvUXJfv8=
-X-Google-Smtp-Source: APXvYqxAfuauMSQ3WZV1NyYj9PyUVq7AtJqvDHhNdltqqFqN36OPpfEhQ8BKMosonlhMTVdoCco8OINcb6EQinzQB0A=
-X-Received: by 2002:ac2:4853:: with SMTP id 19mr15582682lfy.69.1570431967954;
- Mon, 07 Oct 2019 00:06:07 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191004150040.5833-1-krzk@kernel.org>
-In-Reply-To: <20191004150040.5833-1-krzk@kernel.org>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Mon, 7 Oct 2019 09:05:56 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPdgsTTmNs+Q5_sshZQSvCMBge9jkNh0=L6F4VewEeXxbg@mail.gmail.com>
-Message-ID:
- <CAJKOXPdgsTTmNs+Q5_sshZQSvCMBge9jkNh0=L6F4VewEeXxbg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ARM: multi_v7_defconfig: Enable options for boards
- with Exynos SoC
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Olof Johansson <olof@lixom.net>,
+        Mon, 7 Oct 2019 04:54:34 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20191007085431euoutp02f707cb521b0dfd200d03f4e76a88d835~LUXg1tB0N2428124281euoutp02G
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Oct 2019 08:54:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20191007085431euoutp02f707cb521b0dfd200d03f4e76a88d835~LUXg1tB0N2428124281euoutp02G
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1570438471;
+        bh=064HXfS3AFjBnI0MX93YdyVJAf6y/HoVJIYC+iEeTK0=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=DvLE/Oa5x7w4aHQYsZjmLqcjaRPWJWLHhJqq+UWD+7dhiUIYegU1g88z7M4gaaW/F
+         usx+ksByjBn3xVw7a1AS3Whv2EK1DCs//eMSkeetlr9HZSxas4Fp1K4W/NmbZNOTYq
+         OOl5l4dpH6l9S2Ouj5ANrpsRF/5GiR1uMe47K21g=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20191007085431eucas1p1c60f3b52762e125d580ad23e8df80d54~LUXgh57aB1827918279eucas1p1Y;
+        Mon,  7 Oct 2019 08:54:31 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id E7.69.04374.74DFA9D5; Mon,  7
+        Oct 2019 09:54:31 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20191007085431eucas1p2e77a9866f3b4f56b286e8f40bc3195df~LUXgIZZN61353913539eucas1p2y;
+        Mon,  7 Oct 2019 08:54:31 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191007085431eusmtrp1c77da1d44d8edf8ec997f3671f37f792~LUXgHqDjG1783317833eusmtrp1E;
+        Mon,  7 Oct 2019 08:54:31 +0000 (GMT)
+X-AuditID: cbfec7f5-4ddff70000001116-fe-5d9afd475de9
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 94.DB.04166.64DFA9D5; Mon,  7
+        Oct 2019 09:54:30 +0100 (BST)
+Received: from [106.120.51.75] (unknown [106.120.51.75]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191007085430eusmtip2ee2aacc27441c51339347f35049a1c06~LUXfrVO9c0580805808eusmtip2L;
+        Mon,  7 Oct 2019 08:54:30 +0000 (GMT)
+Subject: Re: [PATCH] clk: samsung: exynos5433: Fix error paths
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <7c7b0760-d45f-e19b-7abf-177d59410a5b@samsung.com>
+Date:   Mon, 7 Oct 2019 10:54:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20191002085309.9473-1-m.szyprowski@samsung.com>
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOKsWRmVeSWpSXmKPExsWy7djPc7ruf2fFGvzokbbYOGM9q8X1L89Z
+        Lc6f38Bu8bHnHqvFjPP7mCzWHrnLbvHv2kYWi/anL5kdODw2repk8+jbsorR4/MmuQDmKC6b
+        lNSczLLUIn27BK6MfS8uMRdsZ6o4deE2cwNjJ1MXIyeHhICJxI9dy5i7GLk4hARWMEq0T9rP
+        AuF8YZR4cuoJO4TzmVHi8JmDzDAtn95fhGpZziix4/IjKOcto8Tvt4dYQaqEBewknvy9wAhi
+        iwgEScy5cx1sFDPI3OkTTrCAJNgEDCV6j/YBFXFw8AI1LNllBBJmEVCR2LRnF1iJqECExKcH
+        h8Fm8goISpyc+QQszilgK/Gs8zjYE8wC4hJNX1ayQtjyEtvfzgE7SEJgE7tE/7FrrBBnu0ic
+        fd/CCGELS7w6voUdwpaROD25hwWioZlRomf3bXYIZwKjxP3jC6A6rCUOH7/ICnIps4CmxPpd
+        +hBhR4ntLz6xgIQlBPgkbrwVhDiCT2LStunMEGFeiY42IYhqFYnfq6ZDA15KovvJf5YJjEqz
+        kLw2C8k7s5C8Mwth7wJGllWM4qmlxbnpqcXGeanlesWJucWleel6yfm5mxiByef0v+NfdzDu
+        +5N0iFGAg1GJh9dDc1asEGtiWXFl7iFGCQ5mJRFeuaUzYoV4UxIrq1KL8uOLSnNSiw8xSnOw
+        KInzVjM8iBYSSE8sSc1OTS1ILYLJMnFwSjUwXtToeMzeppC08dsXUZVtzD/KPrvvSqjqP9+w
+        fMGcKeHvbC4KRNoVzfk2fWnMfK3EMK+nivvL3z5aGF97euKLhafX3HT9MOnDppzL1ppO9kt3
+        +0i3XnRt9W6+ttOZrc1EVTYgnMco2M3wf8i1jyGXZx5KWXw3JrwhdRPzzCWLd64KaD7Ody7b
+        VomlOCPRUIu5qDgRAH6vVdE6AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBIsWRmVeSWpSXmKPExsVy+t/xe7puf2fFGtxZY22xccZ6VovrX56z
+        Wpw/v4Hd4mPPPVaLGef3MVmsPXKX3eLftY0sFu1PXzI7cHhsWtXJ5tG3ZRWjx+dNcgHMUXo2
+        RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZ+15cYi7Y
+        zlRx6sJt5gbGTqYuRk4OCQETiU/vLzJ3MXJxCAksZZS4PesIexcjB1BCSmJ+ixJEjbDEn2td
+        bBA1rxkl+ta8ZQVJCAvYSTz5e4ERxBYRCJI4NPsD2CBmgS+MEj+/PWaE6JjAKHHy6RGwKjYB
+        Q4neo32MIBt4gbqX7DICCbMIqEhs2rOLBcQWFYiQOLxjFlg5r4CgxMmZT8DinAK2Es86j4Nd
+        zSygLvFn3iVmCFtcounLSlYIW15i+9s5zBMYhWYhaZ+FpGUWkpZZSFoWMLKsYhRJLS3OTc8t
+        NtQrTswtLs1L10vOz93ECIy1bcd+bt7BeGlj8CFGAQ5GJR5eD81ZsUKsiWXFlbmHGCU4mJVE
+        eOWWzogV4k1JrKxKLcqPLyrNSS0+xGgK9NxEZinR5HxgGsgriTc0NTS3sDQ0NzY3NrNQEuft
+        EDgYIySQnliSmp2aWpBaBNPHxMEp1cDYVVG/XVotx+5UnLTIlrXa39w3zYp7lb2xUEjCLXvS
+        4ehTJ9Squ6MjHbovWiq6pz8u3M5Y/KHPISu4xPmoW/61Fu55/9vCc4NFX9c8/p5rfWye7F+v
+        4yGqvtMZ5CY/OLxc63are+3fE8dDPt/ex9DzpcbferfQ0/Yl/VqZOQe79suuTHvL8UKJpTgj
+        0VCLuag4EQDrTLXaywIAAA==
+X-CMS-MailID: 20191007085431eucas1p2e77a9866f3b4f56b286e8f40bc3195df
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20191002085320eucas1p2e4c35fe7783deb38fbd2e9f87f4f1234
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20191002085320eucas1p2e4c35fe7783deb38fbd2e9f87f4f1234
+References: <CGME20191002085320eucas1p2e4c35fe7783deb38fbd2e9f87f4f1234@eucas1p2.samsung.com>
+        <20191002085309.9473-1-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20191007070556.ou5xX_uQYfRVOi90AmlpfT2a8U2hWuQhoaoAo3_USh0@z>
 
-On Fri, 4 Oct 2019 at 17:00, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> Sync with exynos_defconfig and enable following options for Samsung
-> Exynos SoC based boards:
-> 1. NFC_S3FWRN5_I2C (with NFC stack): Samsung S3FWRN5 NCI NFC Controller,
->    used for example on Exynos5433 (if booted in 32-bit mode),
-> 2. S3C2410_WATCHDOG: watchdog driver used on S3C, S5P and Exynos SoCs,
-> 3. REGULATOR_S2MPA01: Samsung S2MPA01 regulators driver present on
->    Exynos5260 RexNos REX-RED board,
-> 4. SND_SOC_ARNDALE: sound support on Arndale boards,
-> 5. EXYNOS_IOMMU: IOMMU driver used on all Exynos SocS,,
-> 6. EXTCON_MAX14577, EXTCON_MAX77693 and EXTCON_MAX8997: extcon drivers
->    for handling micro USB on mobile Samsung boards (Trats, Trats2,
->    Rinato),
-> 7. PHY_EXYNOS5250_SATA: SATA phy for Exynos5250 present on Arndale and
->    SMDK5250 boards.
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->
-> ---
->
-> SND_SOC_ARNDALE is in progress (not yet applied)
-> ---
->  arch/arm/configs/multi_v7_defconfig | 18 ++++++++++++++++--
->  1 file changed, 16 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-> index 198de8e36d92..7f7978dba8ab 100644
-> --- a/arch/arm/configs/multi_v7_defconfig
-> +++ b/arch/arm/configs/multi_v7_defconfig
-> @@ -168,6 +168,14 @@ CONFIG_MAC80211=m
->  CONFIG_RFKILL=y
->  CONFIG_RFKILL_INPUT=y
->  CONFIG_RFKILL_GPIO=y
-> +CONFIG_NFC=m
-> +CONFIG_NFC_DIGITAL=m
-> +CONFIG_NFC_NCI=m
-> +CONFIG_NFC_NCI_SPI=m
-> +CONFIG_NFC_NCI_UART=m
-> +CONFIG_NFC_HCI=m
-> +CONFIG_NFC_SHDLC=y
-> +CONFIG_NFC_S3FWRN5_I2C=m
->  CONFIG_PCIEPORTBUS=y
->  CONFIG_PCI_MVEBU=y
->  CONFIG_PCI_TEGRA=y
-> @@ -491,12 +499,12 @@ CONFIG_BCM2835_THERMAL=m
->  CONFIG_BRCMSTB_THERMAL=m
->  CONFIG_ST_THERMAL_MEMMAP=y
->  CONFIG_UNIPHIER_THERMAL=y
-> -CONFIG_WATCHDOG=y
->  CONFIG_DA9063_WATCHDOG=m
->  CONFIG_XILINX_WATCHDOG=y
->  CONFIG_ARM_SP805_WATCHDOG=y
->  CONFIG_AT91SAM9X_WATCHDOG=y
->  CONFIG_SAMA5D4_WATCHDOG=y
-> +CONFIG_S3C2410_WATCHDOG=m
->  CONFIG_DW_WATCHDOG=y
->  CONFIG_DAVINCI_WATCHDOG=m
->  CONFIG_ORION_WATCHDOG=y
-> @@ -581,6 +589,7 @@ CONFIG_REGULATOR_QCOM_RPM=y
->  CONFIG_REGULATOR_QCOM_SMD_RPM=m
->  CONFIG_REGULATOR_RK808=y
->  CONFIG_REGULATOR_RN5T618=y
-> +CONFIG_REGULATOR_S2MPA01=m
->  CONFIG_REGULATOR_S2MPS11=y
->  CONFIG_REGULATOR_S5M8767=y
->  CONFIG_REGULATOR_STM32_BOOSTER=m
-> @@ -711,6 +720,7 @@ CONFIG_SND_SOC_SAMSUNG_SMDK_WM8994=m
->  CONFIG_SND_SOC_SMDK_WM8994_PCM=m
->  CONFIG_SND_SOC_SNOW=m
->  CONFIG_SND_SOC_ODROID=m
-> +CONFIG_SND_SOC_ARNDALE=m
->  CONFIG_SND_SOC_SH4_FSI=m
->  CONFIG_SND_SOC_RCAR=m
->  CONFIG_SND_SOC_STI=m
-> @@ -933,7 +943,7 @@ CONFIG_BCM2835_MBOX=y
->  CONFIG_ROCKCHIP_IOMMU=y
->  CONFIG_TEGRA_IOMMU_GART=y
->  CONFIG_TEGRA_IOMMU_SMMU=y
-> -CONFIG_REMOTEPROC=y
+On 10/2/19 10:53, Marek Szyprowski wrote:
+> Add checking the value returned by samsung_clk_alloc_reg_dump() and
+> devm_kcalloc(). While fixing this, also release all gathered clocks.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-This appeared here by mistake. It's wrong.
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-I'll send v2.
-
-Best regards,
-Krzysztof
