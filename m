@@ -2,125 +2,167 @@ Return-Path: <SRS0=Gd86=YB=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2AB5C4360C
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Oct 2019 11:50:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17337C10F14
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Oct 2019 12:01:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 886FB206BB
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Oct 2019 11:50:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570535432;
-	bh=TnCK/FJHSQzNMdHj08vt9f6JynyG3tVaHYmfhv1ar4A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=FM2PaW5XBC8OAeTAREKfL1ywcYm7RMuNyvnWaRrTQCla23TFA6IZNJRNcXjIp3WxW
-	 bt1IleWFanclUJtXmTq6e4Ir6M8UB3JzSGAOULm9cmIr2vmwQDr8G2eaYrBVGFl71C
-	 TGfKVsQbPgtwb9Clzvs6v11fn4gb/Y2ISbJTf7CI=
+	by mail.kernel.org (Postfix) with ESMTP id 8E3AC206C2
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Oct 2019 12:01:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PgSJLnrS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730511AbfJHLuc (ORCPT
+        id S1730709AbfJHMBT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Oct 2019 07:50:32 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59860 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730503AbfJHLub (ORCPT
+        Tue, 8 Oct 2019 08:01:19 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:42119 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730671AbfJHMBT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Oct 2019 07:50:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=HU5Z8WYkEcy2A0wU6XIUSzSQGNyQSuE2XR7coM1PA08=; b=l/T7t9Ub/pYvcCITICGEh94C5
-        u4ZwpFmxbsiOdc0nusHOtfMzz8pB9HThddX24FyCbpmAslty2U1sAn6/NmMv5e6J8qsMMMmOu6gNT
-        2a8D3OT0j99z5tB7aCyAch+KsV/5kMz1JnN+yDCAApZq+CGtrUqaGFMVVK//O+9z7f2kI=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1iHo0Y-0008Cn-Pl; Tue, 08 Oct 2019 11:50:26 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 02C082742998; Tue,  8 Oct 2019 12:50:25 +0100 (BST)
-Date:   Tue, 8 Oct 2019 12:50:25 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
+        Tue, 8 Oct 2019 08:01:19 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20191008120117euoutp02a88af09f9216be0568b4f4cc8ff95aa8~Lqj3QzRax2360323603euoutp02m
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  8 Oct 2019 12:01:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20191008120117euoutp02a88af09f9216be0568b4f4cc8ff95aa8~Lqj3QzRax2360323603euoutp02m
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1570536077;
+        bh=29kiwqVOEaiKlMxTYLYcsXxmyGzt/l2voELEUoFOCR8=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=PgSJLnrSr1e/KHhEq7QXzClJogEOY9SKt5lGvnbmoHAtHSQDMOx7T8GLilOHzNta7
+         6gWfik5HYW7qaWNcG9UQh3CN/sONLcf3NjQrCWkd3rpzInhPcN+xaTcMqIYvAuyPVu
+         OA7SD8+nUuSXk5Y5aT6ux148IRbuQMxmHCkXlFIo=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20191008120117eucas1p24da17d2002057bcbe401ea23f4a36cae~Lqj20NzTF0092000920eucas1p23;
+        Tue,  8 Oct 2019 12:01:17 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 8D.35.04374.C8A7C9D5; Tue,  8
+        Oct 2019 13:01:17 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20191008120116eucas1p2b0f2d2cbb230ca77b388b1d2530a1703~Lqj2cj7e00093200932eucas1p29;
+        Tue,  8 Oct 2019 12:01:16 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191008120116eusmtrp1bb48ba15bdfb853306c3593cf13bea24~Lqj2b5Pud2889428894eusmtrp1X;
+        Tue,  8 Oct 2019 12:01:16 +0000 (GMT)
+X-AuditID: cbfec7f5-4ddff70000001116-10-5d9c7a8cd848
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 02.A2.04117.C8A7C9D5; Tue,  8
+        Oct 2019 13:01:16 +0100 (BST)
+Received: from [106.120.51.15] (unknown [106.120.51.15]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191008120116eusmtip183663f56246c99fdabd1de4356c94c25~Lqj2A4SN70181301813eusmtip1I;
+        Tue,  8 Oct 2019 12:01:16 +0000 (GMT)
+Subject: Re: [PATCH] regulator: core: Skip balancing of the enabled
+ regulators in regulator_enable()
+To:     Mark Brown <broonie@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Lucas Stach <l.stach@pengutronix.de>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH] regulator: core: Skip balancing of the enabled
- regulators in regulator_enable()
-Message-ID: <20191008115025.GF4382@sirena.co.uk>
-References: <CGME20191008101720eucas1p2e0d1bca6e696848bf689067e05620679@eucas1p2.samsung.com>
- <20191008101709.13827-1-m.szyprowski@samsung.com>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <0e222fdd-4407-51ea-b75c-a62621cbe622@samsung.com>
+Date:   Tue, 8 Oct 2019 14:01:15 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+        Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="eNMatiwYGLtwo1cJ"
-Content-Disposition: inline
-In-Reply-To: <20191008101709.13827-1-m.szyprowski@samsung.com>
-X-Cookie: Do not disturb.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191008115025.GF4382@sirena.co.uk>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHKsWRmVeSWpSXmKPExsWy7djP87q9VXNiDX7WWmycsZ7VYurDJ2wW
+        qz8+ZrQ4f34Du8WDuTeZLL5d6WCyuLxrDpvFjPP7mBw4PHbOusvusWlVJ5tH/18Dj74tqxg9
+        Pm+SC2CN4rJJSc3JLEst0rdL4Mp4sfY3Y8FB4Yrm7++YGxgnC3QxcnJICJhInNh/kKmLkYtD
+        SGAFo8Shb2fYQRJCAl8YJfo2GEIkPjNKnJ5xhRmmY13XDWaIxHJGiaMXD0E5bxklDm89BdYu
+        LJAmMenVFxYQW0RAWeLq970sIEXMAlOZJB78/MYIkmATMJToetvFBmLzCthJnN99DyzOIqAi
+        sXTffSYQW1QgVuLej+PMEDWCEidnPgEbygnUe7T1OSuIzSwgL7H97RxmCFtc4taT+WAPSQjs
+        Y5e4s2UiI8TdLhKHpk1kgbCFJV4d38IOYctInJ7cwwLR0Mwo8fDcWnYIp4dR4nLTDKhua4nD
+        xy8CreMAWqEpsX6XPogpIeAo0bImBcLkk7jxVhDiBj6JSdumM0OEeSU62oQgZqhJzDq+Dm7r
+        wQuXmCcwKs1C8tksJN/MQvLNLIS1CxhZVjGKp5YW56anFhvnpZbrFSfmFpfmpesl5+duYgSm
+        otP/jn/dwbjvT9IhRgEORiUeXgdgihJiTSwrrsw9xCjBwawkwiu3dEasEG9KYmVValF+fFFp
+        TmrxIUZpDhYlcd5qhgfRQgLpiSWp2ampBalFMFkmDk6pBsZ6xd3a3tvD3/LdmeUudl5z9qmY
+        db1hC4/7BAYr5c6c8Uh1x+buyd9CXNQPH/3h/TLw0gKZ84uELVmb1xye8jPn2uPgOcxpO9/s
+        TZimsD7Pr0j2AkexOcv6x0KXnoRu3yA7xW5Z9psHua1/BWPqjYXmZX5KCqktrtsTkLzoRI3W
+        TAU+gaBFKhlKLMUZiYZazEXFiQBBVwamQQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIIsWRmVeSWpSXmKPExsVy+t/xu7o9VXNiDc7fULbYOGM9q8XUh0/Y
+        LFZ/fMxocf78BnaLB3NvMll8u9LBZHF51xw2ixnn9zE5cHjsnHWX3WPTqk42j/6/Bh59W1Yx
+        enzeJBfAGqVnU5RfWpKqkJFfXGKrFG1oYaRnaGmhZ2RiqWdobB5rZWSqpG9nk5Kak1mWWqRv
+        l6CX8WLtb8aCg8IVzd/fMTcwThboYuTkkBAwkVjXdYO5i5GLQ0hgKaPEuzd9LBAJGYmT0xpY
+        IWxhiT/Xutggil4zSnw+/JkRJCEskCZx//BjMFtEQFni6ve9LCBFzAJTmSQ27d7KDpIQEtjB
+        KLHuuRSIzSZgKNH1FmQSJwevgJ3E+d33wJpZBFQklu67z9TFyMEhKhArsWmvGUSJoMTJmU/A
+        DuIEaj3a+hzsIGYBM4l5mx8yQ9jyEtvfzoGyxSVuPZnPNIFRaBaS9llIWmYhaZmFpGUBI8sq
+        RpHU0uLc9NxiI73ixNzi0rx0veT83E2MwOjbduznlh2MXe+CDzEKcDAq8fA6AKNSiDWxrLgy
+        9xCjBAezkgiv3NIZsUK8KYmVValF+fFFpTmpxYcYTYF+m8gsJZqcD0wMeSXxhqaG5haWhubG
+        5sZmFkrivB0CB2OEBNITS1KzU1MLUotg+pg4OKUaGE9ZtuZEHXpRVnRy+jpjm2tVjBnsRRv+
+        zjVsv8DOMmnKhR+c026tvmC6pdS0q5NNTqxGcXLopWLxgGalw6rKqyXXTXhyX3+nX9TG3Hq+
+        n0fLLJ5MWxkZz3H0ao7/j9s1pyq+rhc8x3xqwjafLrE1d3i8jgqdv/aK6feSBUcVlzxelaHO
+        MrFu3nklluKMREMt5qLiRAA6XMZw1AIAAA==
+X-CMS-MailID: 20191008120116eucas1p2b0f2d2cbb230ca77b388b1d2530a1703
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="UTF-8"
+X-RootMTR: 20191008101720eucas1p2e0d1bca6e696848bf689067e05620679
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20191008101720eucas1p2e0d1bca6e696848bf689067e05620679
+References: <CGME20191008101720eucas1p2e0d1bca6e696848bf689067e05620679@eucas1p2.samsung.com>
+        <20191008101709.13827-1-m.szyprowski@samsung.com>
+        <20191008115025.GF4382@sirena.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20191008115025.Xb51YKX75sXndUvCdlizneW_XHR9Cm2UqbUV3aaHLKY@z>
+Message-ID: <20191008120115.PZ1HmdxjYLmvFqjEh474DMUGpJKCZtyQ5QFUjoc62bI@z>
 
+Hi Mark,
 
---eNMatiwYGLtwo1cJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 08.10.2019 13:50, Mark Brown wrote:
+> On Tue, Oct 08, 2019 at 12:17:09PM +0200, Marek Szyprowski wrote:
+>> Commit f8702f9e4aa7 ("regulator: core: Use ww_mutex for regulators
+>> locking"), regardless of the subject, added additional call to
+>> regulator_balance_voltage() during regulator_enable(). This is basically
+>> a good idea, however it causes some issue for the regulators which are
+>> already enabled at boot and are critical for system operation (for example
+>> provides supply to the CPU).
+> If regulators are essential to system operation they should be marked as
+> always-on...
 
-On Tue, Oct 08, 2019 at 12:17:09PM +0200, Marek Szyprowski wrote:
-> Commit f8702f9e4aa7 ("regulator: core: Use ww_mutex for regulators
-> locking"), regardless of the subject, added additional call to
-> regulator_balance_voltage() during regulator_enable(). This is basically
-> a good idea, however it causes some issue for the regulators which are
-> already enabled at boot and are critical for system operation (for example
-> provides supply to the CPU).
+The are marked as always on:
 
-If regulators are essential to system operation they should be marked as
-always-on...
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm/boot/dts/exynos5800-peach-pi.dts#n253
 
-> CPUfreq or other drivers typically call regulator_enable() on such
-> regulators during their probe, although the regulators are already enabled
-> by bootloader. The mentioned patch however added a call to
-> regulator_balance_voltage(), what in case of system boot, where no
-> additional requirements are set yet, typically causes to limit the voltage
-> to the minimal value defined at regulator constraints. This causes a crash
-> of the system when voltage on the CPU regulator is set to the lowest
-> possible value without adjusting the operation frequency. Fix this by
-> adding a check if regulator is already enabled - if so, then skip the
-> balancing procedure. The voltage will be balanced later anyway once the
-> required voltage value is requested.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm/boot/dts/exynos5800-peach-pi.dts#n265
 
-This then means that for users that might legitimately enable and
-disable regulators that need to be constrained are forced to change the
-voltage when they enable the regualtors in order to have their
-constraints take effect which seems bad.  I'd rather change the the
-cpufreq consumers to either not do the enable (since there really should
-be an always-on constraint this should be redundant, we might need to
-fix the core to take account of their settings though I think we lost
-that) or to set the voltage to whatever they need prior to doing their
-first enable, that seems more robust.
+>> CPUfreq or other drivers typically call regulator_enable() on such
+>> regulators during their probe, although the regulators are already enabled
+>> by bootloader. The mentioned patch however added a call to
+>> regulator_balance_voltage(), what in case of system boot, where no
+>> additional requirements are set yet, typically causes to limit the voltage
+>> to the minimal value defined at regulator constraints. This causes a crash
+>> of the system when voltage on the CPU regulator is set to the lowest
+>> possible value without adjusting the operation frequency. Fix this by
+>> adding a check if regulator is already enabled - if so, then skip the
+>> balancing procedure. The voltage will be balanced later anyway once the
+>> required voltage value is requested.
+> This then means that for users that might legitimately enable and
+> disable regulators that need to be constrained are forced to change the
+> voltage when they enable the regualtors in order to have their
+> constraints take effect which seems bad.  I'd rather change the the
+> cpufreq consumers to either not do the enable (since there really should
+> be an always-on constraint this should be redundant, we might need to
+> fix the core to take account of their settings though I think we lost
+> that) or to set the voltage to whatever they need prior to doing their
+> first enable, that seems more robust.
 
---eNMatiwYGLtwo1cJ
-Content-Type: application/pgp-signature; name="signature.asc"
+Well, I'm open for other ways of fixing this issue. Calling enable on 
+always-on regulator imho should not change its rate...
 
------BEGIN PGP SIGNATURE-----
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2ceAEACgkQJNaLcl1U
-h9DWoAf/dbUB8lRI6R+Hiquem9S07NhSAZKa1EzqebKLcAZ9dLQMvsXS+i8xm+uY
-fUCKtKGaxmGAq8NE3Mf9rrwR3J4xRt0HmJNcQjH7zlb+rq8Vg2m6dwr+Vk1sm+AK
-gHX0zgtg8sCvTJekKSso8/kb/ac/qhKn7MZAryUFaXLvOWWdwGlPjl49BrqEAej0
-GCem17IW9Xa8qZ3F+woV41hdO95n8HmTS9nj0NWhZGFUu9LCAea3cMp5QcQ6AUNS
-099DSn2Y/opczEuevMQALSFMiAvBToZRUzO1+HuEfwjpxbKY1ErJ/yIMUySnZQI2
-m+88vWiJU1TxV7C3gTg/cAeuEhr9FQ==
-=dYbd
------END PGP SIGNATURE-----
-
---eNMatiwYGLtwo1cJ--
