@@ -2,112 +2,118 @@ Return-Path: <SRS0=Gd86=YB=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30433C4360C
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Oct 2019 16:21:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D6B4C10F14
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Oct 2019 16:59:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 048AE206C2
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Oct 2019 16:21:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3233721835
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Oct 2019 16:59:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570551682;
-	bh=f8LtTLcSLuwcW0QEx0gKm4OdVi730CGRB5XVZy9gLQg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=mtznE1m0GyjREiy3dYkwWonjngwM7iKjE6R32M80EAoMB9d+Dwl12kd9NMGlWcex8
-	 ki3r+m2JRp15rp1yIxkJl8watuD9jyVY0sVn22agNdXJdYHKviQNmsAGQeU3K5Axgm
-	 TnIv7iHXxENH1NbMYbxaATbHBcbs5YA4JPC0Ritw=
+	s=default; t=1570553970;
+	bh=dF2A6bAxUEMaFmUvUj+ll27edvmItLZmDILm3HS9nUU=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=2ppEuhN8pGXdSBXz1F/UfvkG+siI4B447E0afqoeFs4JTAjE06VLYKkqVzvdpPgvy
+	 wHug4u9FW1uI8lHacW4V33Rn7zF9CXClIb9zzTStTe/XAcFr83Qeqa2INudE8jn5my
+	 noRDoR1CtUyw0EW/Ndn9eo0WqP+A9Wt0jekTqGhk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728763AbfJHQVV (ORCPT
+        id S1728762AbfJHQ73 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Oct 2019 12:21:21 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35280 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728629AbfJHQVV (ORCPT
+        Tue, 8 Oct 2019 12:59:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34930 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726822AbfJHQ73 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Oct 2019 12:21:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=f8LtTLcSLuwcW0QEx0gKm4OdVi730CGRB5XVZy9gLQg=; b=FEHW7M9ozNSp3kKRM635g6370
-        0YtqMtXSvk/FaKyKfYAg2Za2hL9Fx/PwVWU0ur2/MykL+au7adCUWYFYuO0uxFtMDJqG+UdQxhmOB
-        GKAYV3MMPncHmVlvddxXnQ+u7X9UgiBHC2wUtslHeaOFRCG6Lk7rvsa2yeWDikRHdCNFw=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1iHsEe-0000SG-1u; Tue, 08 Oct 2019 16:21:16 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 41A2C2740D4A; Tue,  8 Oct 2019 17:21:15 +0100 (BST)
-Date:   Tue, 8 Oct 2019 17:21:15 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-kernel@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Kamil Konieczny <k.konieczny@samsung.com>
-Subject: Re: [PATCH] regulator: core: Skip balancing of the enabled
- regulators in regulator_enable()
-Message-ID: <20191008162115.GO4382@sirena.co.uk>
-References: <CGME20191008101720eucas1p2e0d1bca6e696848bf689067e05620679@eucas1p2.samsung.com>
- <20191008101709.13827-1-m.szyprowski@samsung.com>
- <20191008115025.GF4382@sirena.co.uk>
- <0e222fdd-4407-51ea-b75c-a62621cbe622@samsung.com>
- <20191008120611.GG4382@sirena.co.uk>
- <9268b455-ec66-97e1-909d-f964ac31c0ef@samsung.com>
- <20191008124736.GJ4382@sirena.co.uk>
- <86b9b4b5-cca5-9052-7c87-c5679dfffff4@samsung.com>
- <20191008154844.GM4382@sirena.co.uk>
- <86eb668d-7bcf-798b-dabb-95071d16cbb6@samsung.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="w6U88vdWm8UqIXvc"
-Content-Disposition: inline
-In-Reply-To: <86eb668d-7bcf-798b-dabb-95071d16cbb6@samsung.com>
-X-Cookie: Do not disturb.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 8 Oct 2019 12:59:29 -0400
+Received: from localhost.localdomain (unknown [194.230.155.145])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 634C52070B;
+        Tue,  8 Oct 2019 16:59:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570553968;
+        bh=dF2A6bAxUEMaFmUvUj+ll27edvmItLZmDILm3HS9nUU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=V4ydDdEHj1By7ZtTlpkr4meoeVJ4FOr6t7JqgJ1lyGLu/DQS6rrRwpS43Nw2hXpST
+         AJ9gGuDKkQ8oi5rE/w/uiyjwLpSO06r5OmwB8XiZ+yJExHgJdhRTP7EioFtGRYqwbE
+         2tZ+B8De839x222LyU2u8aj7JQ5R5C/Z5E5+71hU=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Lihua Yao <ylhuajnu@outlook.com>
+Subject: [PATCH] ARM: dts: s3c64xx: Fix init order of clock providers
+Date:   Tue,  8 Oct 2019 18:59:17 +0200
+Message-Id: <20191008165917.23908-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20191008162115.CznAl4n4bpPve5K6fgvzEmSAhFepwwd4VXMZ19BLT9I@z>
+Content-Type: text/plain; charset="UTF-8"
+Message-ID: <20191008165917.l3y2LUPRPdYvki-lne8EY7HAuOugwy-ANmqs2V5Yo7o@z>
 
+From: Lihua Yao <ylhuajnu@outlook.com>
 
---w6U88vdWm8UqIXvc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+fin_pll is the parent of clock-controller@7e00f000, specify
+the dependency to ensure proper initialization order of clock
+providers.
 
-On Tue, Oct 08, 2019 at 06:02:08PM +0200, Bartlomiej Zolnierkiewicz wrote:
+without this patch:
+[    0.000000] S3C6410 clocks: apll = 0, mpll = 0
+[    0.000000]  epll = 0, arm_clk = 0
 
-> Taking into account your remark about enable operation on coupled
-> regulators and Dmitry's mail about cpufreq issue I think now that just
-> dropping opp change is the most straightforward fix.
+with this patch:
+[    0.000000] S3C6410 clocks: apll = 532000000, mpll = 532000000
+[    0.000000]  epll = 24000000, arm_clk = 532000000
 
-It's certainly the most straightforward thing for the immediate problem.
-I do think we probably need to improve how we're handling the coupling
-though, we've got some fragility here that needs addressing.
+Fixes: 3f6d439f2022 ("clk: reverse default clk provider initialization order in of_clk_init()")
+Signed-off-by: Lihua Yao <ylhuajnu@outlook.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
---w6U88vdWm8UqIXvc
-Content-Type: application/pgp-signature; name="signature.asc"
+---
 
------BEGIN PGP SIGNATURE-----
+Sending in author's name because outlook bounces from the lists.
+---
+ arch/arm/boot/dts/s3c6410-mini6410.dts | 4 ++++
+ arch/arm/boot/dts/s3c6410-smdk6410.dts | 4 ++++
+ 2 files changed, 8 insertions(+)
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2ct3oACgkQJNaLcl1U
-h9Dj8gf/am+aDjhH0XOJytk0p4raEeJSTiqQjIosjRjvn4bWBbFEjKG4sA7Y4Lic
-TbeAtFH9Gufpb9nzkff0yT8dH/rxZAb5VL3fPH59Q/4J7GyokfRg4j/0TX1+3V2x
-DzPoSUY0fWgomFr/FoKPZaV3lxCFKuaCxfGSXkwoz8S+yr9rC2TrnehWsCux3F5V
-wlLQzyjlno+RZRZV57Xgo/zSNNIWjHAEiLP71xABACYhQNSCSQ7iyotrOD8br5je
-Fj7YEPNg0Z8qJrPxqjMbOhUJzQFxNuBbGbzHWj8+07YYAnKXYY5ItMcdmJSkC743
-8QYm7pCKTBVlAP1hU2AgmJjOOvbfHg==
-=hr4I
------END PGP SIGNATURE-----
+diff --git a/arch/arm/boot/dts/s3c6410-mini6410.dts b/arch/arm/boot/dts/s3c6410-mini6410.dts
+index 0e159c884f97..1aeac33b0d34 100644
+--- a/arch/arm/boot/dts/s3c6410-mini6410.dts
++++ b/arch/arm/boot/dts/s3c6410-mini6410.dts
+@@ -165,6 +165,10 @@
+ 	};
+ };
+ 
++&clocks {
++	clocks = <&fin_pll>;
++};
++
+ &sdhci0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sd0_clk>, <&sd0_cmd>, <&sd0_cd>, <&sd0_bus4>;
+diff --git a/arch/arm/boot/dts/s3c6410-smdk6410.dts b/arch/arm/boot/dts/s3c6410-smdk6410.dts
+index a9a5689dc462..3bf6c450a26e 100644
+--- a/arch/arm/boot/dts/s3c6410-smdk6410.dts
++++ b/arch/arm/boot/dts/s3c6410-smdk6410.dts
+@@ -69,6 +69,10 @@
+ 	};
+ };
+ 
++&clocks {
++	clocks = <&fin_pll>;
++};
++
+ &sdhci0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sd0_clk>, <&sd0_cmd>, <&sd0_cd>, <&sd0_bus4>;
+-- 
+2.17.1
 
---w6U88vdWm8UqIXvc--
