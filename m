@@ -2,67 +2,100 @@ Return-Path: <SRS0=Gd86=YB=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B5FC4360C
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Oct 2019 09:08:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D12EC4360C
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Oct 2019 09:45:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58237217D7
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Oct 2019 09:08:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BF7621721
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Oct 2019 09:45:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729935AbfJHJIQ (ORCPT
+        id S1729375AbfJHJpG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Oct 2019 05:08:16 -0400
-Received: from 8bytes.org ([81.169.241.247]:46464 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729799AbfJHJIP (ORCPT
+        Tue, 8 Oct 2019 05:45:06 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:51653 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728866AbfJHJpF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Oct 2019 05:08:15 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 51E203D0; Tue,  8 Oct 2019 11:08:13 +0200 (CEST)
-Date:   Tue, 8 Oct 2019 11:08:13 +0200
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Tom Murphy <murphyt7@tcd.ie>
-Cc:     iommu@lists.linux-foundation.org, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tue, 8 Oct 2019 05:45:05 -0400
+X-Originating-IP: 2.139.156.91
+Received: from localhost (91.red-2-139-156.staticip.rima-tde.net [2.139.156.91])
+        (Authenticated sender: gregory.clement@bootlin.com)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 0001520011;
+        Tue,  8 Oct 2019 09:44:59 +0000 (UTC)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Andy Gross <agross@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH v6 0/5] iommu/amd: Convert the AMD iommu driver to the
- dma-iommu api
-Message-ID: <20191008090813.GB2514@8bytes.org>
-References: <20190908165642.22253-1-murphyt7@tcd.ie>
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3 05/10] ARM: dts: dove: Rename "sa-sram" node to "sram"
+In-Reply-To: <20191002164316.14905-5-krzk@kernel.org>
+References: <20191002164316.14905-1-krzk@kernel.org> <20191002164316.14905-5-krzk@kernel.org>
+Date:   Tue, 08 Oct 2019 11:44:58 +0200
+Message-ID: <87imoztvtx.fsf@FE-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-In-Reply-To: <20190908165642.22253-1-murphyt7@tcd.ie>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20191008090813.NAa2wwE8Ipl6JirQVfaXhEj_zn0bwO3qczIC6syhzz8@z>
 
-On Sun, Sep 08, 2019 at 09:56:36AM -0700, Tom Murphy wrote:
-> Convert the AMD iommu driver to the dma-iommu api. Remove the iova
-> handling and reserve region code from the AMD iommu driver.
+Hi Krzysztof Kozlowski,
 
-Applied, thanks. Note that it will not show up in linux-next before
--rc3.
+> The device node name should reflect generic class of a device so rename
+> the "sa-sram" node to "sram".  This will be also in sync with upcoming DT
+> schema.  No functional change.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Applied on mvebu/dt
+
+Thanks,
+
+Gregory
+
+> ---
+>  arch/arm/boot/dts/dove.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/boot/dts/dove.dtsi b/arch/arm/boot/dts/dove.dtsi
+> index 2e8a3977219f..3081b04e8c08 100644
+> --- a/arch/arm/boot/dts/dove.dtsi
+> +++ b/arch/arm/boot/dts/dove.dtsi
+> @@ -784,7 +784,7 @@
+>  				status = "disabled";
+>  			};
+>  
+> -			crypto_sram: sa-sram@ffffe000 {
+> +			crypto_sram: sram@ffffe000 {
+>  				compatible = "mmio-sram";
+>  				reg = <0xffffe000 0x800>;
+>  				clocks = <&gate_clk 15>;
+> -- 
+> 2.17.1
+>
+
+-- 
+Gregory Clement, Bootlin
+Embedded Linux and Kernel engineering
+http://bootlin.com
