@@ -6,99 +6,119 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD62EC4360C
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Oct 2019 15:10:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D3AC4360C
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Oct 2019 15:48:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7993C2070B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Oct 2019 15:10:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 961D1206BB
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Oct 2019 15:48:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570547435;
-	bh=ZwNYdJEcqdnycNPUhUKzVR7Mj81YHnVJ+qnDhlhWJbA=;
+	s=default; t=1570549731;
+	bh=JNzbLzDcXc87xmnkelg6rQOjzITocqo5lp2MvM726Mw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=pdzxOIVZ4rAyXdN4bzHBbvqMFhMn8cUGf1LGpAxCJRQYY8ljTUdSOKoH7nh3hwdLR
-	 39RT+IE2lQPu0Vu7MLOXq3H0ODVbJNzyV9epC+Bcog1WN5c+Qhp0mod85nM+zplBmK
-	 4jS41w4xvc8NvzqP6BXEBBedTdDr+IUF6lpgxmKw=
+	b=IF6BsbSXWYRgeJeZbLb+vPa91cisf7q6QxGkUKZfqU57ebagW+5oJgMoO7rKjYgDo
+	 qS3KR/G+HvappWZrb8d8Fhg+Rd9tLyg/rH1d/u/QbUiHTZbmKnD6zA57N0+6OQYQEa
+	 XOqP0DQjSGODedPuXGffpmViMLcsJm5fF2OYRZOQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726211AbfJHPKe (ORCPT
+        id S1727711AbfJHPsv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Oct 2019 11:10:34 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36468 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725989AbfJHPKd (ORCPT
+        Tue, 8 Oct 2019 11:48:51 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37120 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725908AbfJHPsu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Oct 2019 11:10:33 -0400
-Received: by mail-wr1-f65.google.com with SMTP id y19so19868009wrd.3;
-        Tue, 08 Oct 2019 08:10:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jDr1BzlICCTlwhp3uNGJEPl314YzfcfD31Fib2fRNSo=;
-        b=fxrRLXHiFr9wcrSrK69zhEYSFeedRkodUXLrs8Mdsd9rpVEY2kgpk2ejmAw/e7rmgt
-         xptxfzSJ3cnZ+qQRsGc16l/NOy8dx2N5/tLvFAGCOqEUZ3ApVRgxixCZlTJ4//jj/UPf
-         LsKWfifF/8HrsB9OYukj+kJWFLNO27319nuP1QtlmAFs4C1/UFWKsKNShl4AFgtjHfc6
-         +kIK9YxqwjqsCHihiUKi+KL88Goqkljx/Urh0UbFQvoRisHpnqj+uDys63LST1/ah9F4
-         XUZVEdBXDAuytgkq14CvU9nikhppnqLv1oodvsk9oFMJTZyxGWBcSa3s+5UU7xI5EKcY
-         W2LA==
-X-Gm-Message-State: APjAAAWKgsBa4WPakrimhevEwSuh0IMCRgT+U7XUNeu6Qec40HqWm6aK
-        UPS1jVyDrRw2Ckbqec+Xa8QfimiI
-X-Google-Smtp-Source: APXvYqzX4ka2psn6HEE8SlAx19V028jaUxy26b9V7r9ws/He1WJtNpQAY+Uuwiz4uo5g6s4xsd7i9w==
-X-Received: by 2002:adf:ecc1:: with SMTP id s1mr19736353wro.223.1570547431457;
-        Tue, 08 Oct 2019 08:10:31 -0700 (PDT)
-Received: from pi3 ([194.230.155.145])
-        by smtp.googlemail.com with ESMTPSA id 90sm26487496wrr.1.2019.10.08.08.10.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2019 08:10:30 -0700 (PDT)
-Date:   Tue, 8 Oct 2019 17:10:28 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Kukjin Kim <kgene@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Lee Jones <lee.jones@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Maciej Falkowski <m.falkowski@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
-Subject: Re: [PATCH 1/3] dt-bindings: arm: samsung: Force clkoutN names to be
- unique in PMU
-Message-ID: <20191008151028.GA2720@pi3>
-References: <20191004151414.8458-1-krzk@kernel.org>
- <CAL_JsqJDTcHu5oXG6zszGHCBhTE6EW94AANUjyMV78SkKcn5yA@mail.gmail.com>
- <20191008125038.GA2550@pi3>
- <CAL_Jsq+GcsUWN6kjBLkyr1rHGh6_4=w6JL6+k7DBXkBcvHcSBw@mail.gmail.com>
- <CAL_JsqKBzZCShxx99aB4z15XYNbUionVicmfNNXEfq=iohWLCA@mail.gmail.com>
- <20191008142900.GA2635@pi3>
- <CAL_Jsq+ObMD=inkMFqkZbKFoKZUxw53gUMnjsC1pU5GwumK8LQ@mail.gmail.com>
- <20191008150456.GA2683@pi3>
+        Tue, 8 Oct 2019 11:48:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=PIZUg0Oa3MGso9tzbx/nd/Wklht6uzJyalmMLQer1VM=; b=Codb8f6MisVNUD3PDeMFVLQOO
+        jdDVcgPSoU0iOm4HdH7fuMB+WVIsNjgGBzRkCrHNuHmxut1tkioFIq1oiudG8ZCEnm/ndws24EUhW
+        U2+EVALOZmrFqtGQkmuMMCjuqvngazjL8DyjA2OPkwXBypBM3vrKltAHG/EA8KSSNuXL4=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iHrjB-0000O0-Mx; Tue, 08 Oct 2019 15:48:45 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id AF19A2740D4A; Tue,  8 Oct 2019 16:48:44 +0100 (BST)
+Date:   Tue, 8 Oct 2019 16:48:44 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-kernel@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Kamil Konieczny <k.konieczny@samsung.com>
+Subject: Re: [PATCH] regulator: core: Skip balancing of the enabled
+ regulators in regulator_enable()
+Message-ID: <20191008154844.GM4382@sirena.co.uk>
+References: <CGME20191008101720eucas1p2e0d1bca6e696848bf689067e05620679@eucas1p2.samsung.com>
+ <20191008101709.13827-1-m.szyprowski@samsung.com>
+ <20191008115025.GF4382@sirena.co.uk>
+ <0e222fdd-4407-51ea-b75c-a62621cbe622@samsung.com>
+ <20191008120611.GG4382@sirena.co.uk>
+ <9268b455-ec66-97e1-909d-f964ac31c0ef@samsung.com>
+ <20191008124736.GJ4382@sirena.co.uk>
+ <86b9b4b5-cca5-9052-7c87-c5679dfffff4@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="QqzFzR/RUlLahzby"
 Content-Disposition: inline
-In-Reply-To: <20191008150456.GA2683@pi3>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <86b9b4b5-cca5-9052-7c87-c5679dfffff4@samsung.com>
+X-Cookie: Do not disturb.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20191008151028.oHOl8wal2fYTiA0DLMmex7YHkMM4g156jPY6dv6oQkY@z>
+Message-ID: <20191008154844.Q_6hI6ZkabRhGUp7yEX5jec__mpQt3T8HRXUPNF98Wc@z>
 
-On Tue, Oct 08, 2019 at 05:04:56PM +0200, Krzysztof Kozlowski wrote:
-> On Tue, Oct 08, 2019 at 09:38:15AM -0500, Rob Herring wrote:
-> > Are you running using DT_SCHEMA_FILES? If so, you won't get the core schema.
-> 
-> Ah, yes, now I see proper errors. Thanks for pointing this.
-> 
-> I'll send next version of this patch only (if others are ok).
-> 
 
-Of course, there will be no v2, this patch can be just skipped.
+--QqzFzR/RUlLahzby
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Best regards,
-Krzysztof
+On Tue, Oct 08, 2019 at 03:24:17PM +0200, Bartlomiej Zolnierkiewicz wrote:
 
+> Commit 7f93ff73f7c8 ("opp: core: add regulators enable and disable")
+> currently can be safely reverted as all affected users use always-on
+> regulators. However IMHO it should be possible to enable always-on
+> regulator without side-effects.
+
+With coupled regulators you might have something kicking in because a
+change was made on a completely different regulator...  If we don't take
+account of coupling requirements we'd doubtless have issues with that at
+some point.
+
+> When it comes to setting regulator constraints before doing enable
+> operation, it also seems to be possible solution but would require
+> splitting regulator_set_voltage() operation on two functions:
+
+> - one for setting constraints (before regulator_enable() operation)
+
+> - the other one actually setting voltage (after enable operation)
+
+I don't follow?  What would a "constraint" be in this context and how
+would it be different to the voltage range you'd set in normal operation?
+
+--QqzFzR/RUlLahzby
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2cr9sACgkQJNaLcl1U
+h9BXUAf/RIbUmUSu6zGVv3srXuV8KnuydZCjPiPMkIelBiSu7RSvLATKLqNqlwBY
+x1g4Juy1G+35SyaWtq/xZLRG+ZuPkM/LVhIgS1Um3fwnmtAVzV0LfJwwYcGrBQgu
+r+/jh59o7qvEwIJb96cbQZLAaEEnKgK2IbbUknyVVa/YMLKKK/uivkFAeVP/t4Rc
+fnG9lsDLZYkK8IdyJjFnZf96l1ONZVPUQ8GgI52bxl6szXy588MSzhERreQ8h9kg
+BDsxxlGGPYG8vM17fFbzQ4E1SUwEZmWHo7otFKIJSl2ctuurcGpJpp/mCfYl0wl7
+qVOA1l/WDyWdvk6L+gCNfkhWmtgSKQ==
+=KF++
+-----END PGP SIGNATURE-----
+
+--QqzFzR/RUlLahzby--
