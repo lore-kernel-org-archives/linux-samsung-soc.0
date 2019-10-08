@@ -2,155 +2,137 @@ Return-Path: <SRS0=Gd86=YB=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE2AC4360C
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Oct 2019 14:38:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DBBFC4360C
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Oct 2019 15:02:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4027D2070B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Oct 2019 14:38:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570545509;
-	bh=1Q4mMsOb96kylNfFxUq+jNGhofo0vA75cx96BsraELc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=VZiXbQzmosC9maKeNEJtznrPpVsGTT3GsyYpZ1sagvVIU1rMeySP1bMgaqC2xkRYu
-	 MjNX7r0chzCeaimbgtP2hSlKwPyeDNi/51PfzfqKHeWZMc28USvQggKkx/OSmC9Zgt
-	 By8UaLJ543yaNm93srgdPOJogcZsiLh54dvYbGos=
+	by mail.kernel.org (Postfix) with ESMTP id 4C95E2070B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Oct 2019 15:02:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wr+YXFbD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725987AbfJHOi3 (ORCPT
+        id S1725987AbfJHPCp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Oct 2019 10:38:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56052 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725795AbfJHOi2 (ORCPT
+        Tue, 8 Oct 2019 11:02:45 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:35851 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725908AbfJHPCo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Oct 2019 10:38:28 -0400
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7CAC121871;
-        Tue,  8 Oct 2019 14:38:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570545507;
-        bh=1Q4mMsOb96kylNfFxUq+jNGhofo0vA75cx96BsraELc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=uHp1KfTNQWDdfSngQbG2a61L+AfiFcIuxX05zWvcMEkTqqrjwkoMahdNpPRCZmhIE
-         tVQ3fNX1NmBrY9KHHIFaQ4zNPuZjGbiRB5ZesilRKdAOxL+BPAI1T/DOb0BmSvVELs
-         1jc6/vhHbdHTBxIGs2mMmAIIDgK/7nDthGD7t1KQ=
-Received: by mail-qt1-f178.google.com with SMTP id u40so25602172qth.11;
-        Tue, 08 Oct 2019 07:38:27 -0700 (PDT)
-X-Gm-Message-State: APjAAAV41OQzXMAcbq7Gh2qacZEcT1HaztH+KfVEjGw5v9p24adHGmu2
-        //MmURqu+tSaA7L9xAATbsEcij8qJ9mECBZUNA==
-X-Google-Smtp-Source: APXvYqyTiDBKsgu4+AG5Pntyh3cdGaf1r6LnkyAMi4aS1suYyJJDpHx4CMSAkGYGBnyIWM7DQIrHIaFzaWMBtTBS7B8=
-X-Received: by 2002:a05:6214:1590:: with SMTP id m16mr32958286qvw.20.1570545506528;
- Tue, 08 Oct 2019 07:38:26 -0700 (PDT)
+        Tue, 8 Oct 2019 11:02:44 -0400
+Received: by mail-lf1-f65.google.com with SMTP id x80so12231221lff.3;
+        Tue, 08 Oct 2019 08:02:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=hanP64qrgvYP3vcHeIcVDhG/zEHvopBb2ZM93vS38+E=;
+        b=Wr+YXFbDG3SuKJgcC8V6ICw1ifCnCImtHQRsskiQ0R+DvOgI7lzWJwXLdjwWrrcld9
+         2w6Em2HQOzrhddTgsyP7oyfYqCyuJ1Tfc5bBc/Zd38d8th6Kdutpu4E7w83DSbCrPyJT
+         3TgzGwp50rxctT7CwmaLEcPNXj/R+9LhxK/+fV+jpJ3C/2vGN798qQMipU0MpYNhTEjv
+         l0WKTRWN9McoM1wZB4MeSHLOm3WnvKQO5Q6MzXCMaeai6kyAY0dxFk1DAE0a+C2+W75x
+         FCZ5jr5kG1UV1qtMO9aIVKTJHdeyPYqyqnSvDP5LYPcXlvBctZR+DSqCtLV7/rMyI17B
+         ycNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=hanP64qrgvYP3vcHeIcVDhG/zEHvopBb2ZM93vS38+E=;
+        b=pGISBUnv/024TJucCP8NjUM+QhG/lpLW+xgkDOYAQt472P+M8L3c/z0KpF6f6VLaTO
+         AHPt36K6RRJR7up3QZuhBRjmOjEjcGqo5K+DAeZuHw+wvDhwfUzE2sZUIJg1rxIZJEqt
+         kCbmdnwJQpOJn9WmVzxUrS+vukiVE5X9HE5bSH9Co4wG2KviN+JKEw2haKdKgjfILHiv
+         5U6onnkxcfAaJxvKQGY49uBskqM6Xfgy79HUGdrh59rUzcgbV85bGPKaWHv68wEWvd28
+         5MY25LJVZ5HZpbscM3nnmLPCBJBjM3mkzW3fR0tTqiZtLMP7Pf/yvTZ/xebTAVdQP0Vx
+         9CDA==
+X-Gm-Message-State: APjAAAURI7CRpQUa3i60CXh92RVKvn06B9Fl6KYAvu5647XqfgU2F8Lg
+        ZFKLg6XhyU7/TVnZ/jtzm6o=
+X-Google-Smtp-Source: APXvYqynG39rtW8ewBqivAhxBMiEYn8Rg0jVcXQa/Zub1o83LOmidrw9zWPspJtxHGVFbVYdYlUwQQ==
+X-Received: by 2002:a19:c002:: with SMTP id q2mr21169179lff.62.1570546958611;
+        Tue, 08 Oct 2019 08:02:38 -0700 (PDT)
+Received: from [192.168.2.145] ([94.29.34.231])
+        by smtp.googlemail.com with ESMTPSA id t16sm4066596ljj.29.2019.10.08.08.02.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Oct 2019 08:02:37 -0700 (PDT)
+Subject: Re: [PATCH] regulator: core: Skip balancing of the enabled regulators
+ in regulator_enable()
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Mark Brown <broonie@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Kamil Konieczny <k.konieczny@samsung.com>
+References: <CGME20191008101720eucas1p2e0d1bca6e696848bf689067e05620679@eucas1p2.samsung.com>
+ <20191008101709.13827-1-m.szyprowski@samsung.com>
+ <20191008115025.GF4382@sirena.co.uk>
+ <0e222fdd-4407-51ea-b75c-a62621cbe622@samsung.com>
+ <20191008120611.GG4382@sirena.co.uk>
+ <9268b455-ec66-97e1-909d-f964ac31c0ef@samsung.com>
+ <20191008124736.GJ4382@sirena.co.uk>
+ <86b9b4b5-cca5-9052-7c87-c5679dfffff4@samsung.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <be8d3280-9855-ed18-b2ab-d7fb28d80b82@gmail.com>
+Date:   Tue, 8 Oct 2019 18:02:36 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-References: <20191004151414.8458-1-krzk@kernel.org> <CAL_JsqJDTcHu5oXG6zszGHCBhTE6EW94AANUjyMV78SkKcn5yA@mail.gmail.com>
- <20191008125038.GA2550@pi3> <CAL_Jsq+GcsUWN6kjBLkyr1rHGh6_4=w6JL6+k7DBXkBcvHcSBw@mail.gmail.com>
- <CAL_JsqKBzZCShxx99aB4z15XYNbUionVicmfNNXEfq=iohWLCA@mail.gmail.com> <20191008142900.GA2635@pi3>
-In-Reply-To: <20191008142900.GA2635@pi3>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 8 Oct 2019 09:38:15 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+ObMD=inkMFqkZbKFoKZUxw53gUMnjsC1pU5GwumK8LQ@mail.gmail.com>
-Message-ID:
- <CAL_Jsq+ObMD=inkMFqkZbKFoKZUxw53gUMnjsC1pU5GwumK8LQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: arm: samsung: Force clkoutN names to be
- unique in PMU
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Kukjin Kim <kgene@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Lee Jones <lee.jones@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Maciej Falkowski <m.falkowski@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
+In-Reply-To: <86b9b4b5-cca5-9052-7c87-c5679dfffff4@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20191008143815.236EjFDfQx5kY7fc2nIBSHEdo6LMUiX48qPuOuCaZjs@z>
+Message-ID: <20191008150236.KdN2f25LLkHLmbVyvU2wfcYAPmzFdMLFQOUKEoZpP88@z>
 
-On Tue, Oct 8, 2019 at 9:29 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On Tue, Oct 08, 2019 at 09:17:16AM -0500, Rob Herring wrote:
-> > On Tue, Oct 8, 2019 at 9:05 AM Rob Herring <robh+dt@kernel.org> wrote:
-> > >
-> > > On Tue, Oct 8, 2019 at 7:50 AM Krzysztof Kozlowski <krzk@kernel.org> =
-wrote:
-> > > >
-> > > > On Tue, Oct 08, 2019 at 07:38:14AM -0500, Rob Herring wrote:
-> > > > > On Fri, Oct 4, 2019 at 10:14 AM Krzysztof Kozlowski <krzk@kernel.=
-org> wrote:
-> > > > > >
-> > > > > > The clkoutN names of clocks must be unique because they represe=
-nt
-> > > > > > unique inputs of clock multiplexer.
-> > > > > >
-> > > > > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > > > > > ---
-> > > > > >  Documentation/devicetree/bindings/arm/samsung/pmu.yaml | 6 +++=
-+--
-> > > > > >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > > > > >
-> > > > > > diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.=
-yaml b/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
-> > > > > > index 73b56fc5bf58..d8e03716f5d2 100644
-> > > > > > --- a/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
-> > > > > > +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
-> > > > > > @@ -53,8 +53,10 @@ properties:
-> > > > > >        List of clock names for particular CLKOUT mux inputs
-> > > > > >      minItems: 1
-> > > > > >      maxItems: 32
-> > > > > > -    items:
-> > > > > > -      pattern: '^clkout([0-9]|[12][0-9]|3[0-1])$'
-> > > > > > +    allOf:
-> > > > > > +      - items:
-> > > > > > +          pattern: '^clkout([0-9]|[12][0-9]|3[0-1])$'
-> > > > > > +      - uniqueItems: true
-> > > > >
-> > > > > You shouldn't need the 'allOf', just add uniqueItems at the same =
-level as items.
-> > > >
-> > > > If you mean something like:
-> > > >   56     uniqueItems: true
-> > > >   57     items:
-> > > >   58       pattern: '^clkout([0-9]|[12][0-9]|3[0-1])$'
-> > > >
-> > > > Then the dt_binding_check fails:
-> > > >
-> > > > dev/linux/Documentation/devicetree/bindings/arm/samsung/pmu.yaml: p=
-roperties:clock-names:
-> > > > 'uniqueItems' is not one of ['$ref', 'additionalItems', 'additional=
-Properties', 'allOf', 'anyOf', 'const', 'contains', 'default', 'dependencie=
-s', 'deprecated', 'description', 'else', 'enum', 'items', 'if', 'minItems',=
- 'minimum', 'maxItems', 'maximum', 'not', 'oneOf', 'pattern', 'patternPrope=
-rties', 'properties', 'required', 'then', 'type', 'typeSize', 'unevaluatedP=
-roperties']
-> > >
-> > > I can add it.
-> > >
-> > > The other option is to fix this in the clock schema. I'm not sure if
-> > > there's a need for duplicate clock-names. Seems unlikely. I'll test
-> > > that.
-> >
-> > Actually, clock-names is already set to be unique. Did you see otherwis=
-e?
->
-> Yeah, I duplicated on purpose "clkout1" and it was not reported as an
-> error. That's why I added "uniqueItems".
+08.10.2019 16:24, Bartlomiej Zolnierkiewicz пишет:
+> 
+> On 10/8/19 2:47 PM, Mark Brown wrote:
+>> On Tue, Oct 08, 2019 at 02:38:55PM +0200, Marek Szyprowski wrote:
+>>
+>>> Then if I get it right, the issue is caused by the commit 7f93ff73f7c8 
+>>> ("opp: core: add regulators enable and disable"). I've checked and 
+>>> indeed reverting it fixes Peach Pi to boot properly.
 
-Are you running using DT_SCHEMA_FILES? If so, you won't get the core schema=
-.
+Yes, please note that the "ww_mutex" patch didn't change the original logic and only
+rearranged the code a tad.
 
-Rob
+ The question is if
+>>> this is desired behavior or not?
+>>
+>> That doesn't seem ideal - either it's redundant for regulators that need
+>> to be marked as always-on anyway or it's going to force the regulators
+>> on when a device could do runtime PM (eg, if the same code can run on
+>> something like a GPU which can be turned off while the screen is off or
+>> is displaying a static image).
+> 
+> Commit 7f93ff73f7c8 ("opp: core: add regulators enable and disable")
+> currently can be safely reverted as all affected users use always-on
+> regulators. However IMHO it should be possible to enable always-on
+> regulator without side-effects.
+> 
+> When it comes to setting regulator constraints before doing enable
+> operation, it also seems to be possible solution but would require
+> splitting regulator_set_voltage() operation on two functions:
+> 
+> - one for setting constraints (before regulator_enable() operation)
+> 
+> - the other one actually setting voltage (after enable operation)
+> 
+> Unfortunately this is much bigger task and doesn't seem to be -rc
+> time material so I'm in favor of just applying Marek's fix as it is
+> for now.
+
+That OPP patch caused the same problem for the NVIDIA Tegra20 CPUFreq driver (in-progress)
+and I resolved it in the coupler's code [0]. Perhaps the generic coupler could do the same
+thing by assuming that min_uV=current_uV until any consumer sets the voltage, i.e. if
+regulator_check_consumers(min_uV=0) returns min_uV=0.
+
+[0] https://lkml.org/lkml/2019/7/25/892
