@@ -1,43 +1,57 @@
-From: Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH 1/3] dt-bindings: arm: samsung: Force clkoutN names to be
- unique in PMU
-Date: Tue, 8 Oct 2019 07:38:14 -0500
-Message-ID: <CAL_JsqJDTcHu5oXG6zszGHCBhTE6EW94AANUjyMV78SkKcn5yA@mail.gmail.com>
-References: <20191004151414.8458-1-krzk@kernel.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] regulator: core: Skip balancing of the enabled
+ regulators in regulator_enable()
+Date: Tue, 8 Oct 2019 14:38:55 +0200
+Message-ID: <9268b455-ec66-97e1-909d-f964ac31c0ef@samsung.com>
+References: <CGME20191008101720eucas1p2e0d1bca6e696848bf689067e05620679@eucas1p2.samsung.com>
+        <20191008101709.13827-1-m.szyprowski@samsung.com>
+        <20191008115025.GF4382@sirena.co.uk>
+        <0e222fdd-4407-51ea-b75c-a62621cbe622@samsung.com>
+        <20191008120611.GG4382@sirena.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191004151414.8458-1-krzk@kernel.org>
+In-Reply-To: <20191008120611.GG4382@sirena.co.uk>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Mark Rutland <mark.rutland@arm.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, Lee Jones <lee.jones@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Maciej Falkowski <m.falkowski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Lucas Stach <l.stach@pengutronix.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Kamil Konieczny <k.konieczny@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Oct 4, 2019 at 10:14 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> The clkoutN names of clocks must be unique because they represent
-> unique inputs of clock multiplexer.
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  Documentation/devicetree/bindings/arm/samsung/pmu.yaml | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.yaml b/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
-> index 73b56fc5bf58..d8e03716f5d2 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
-> +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
-> @@ -53,8 +53,10 @@ properties:
->        List of clock names for particular CLKOUT mux inputs
->      minItems: 1
->      maxItems: 32
-> -    items:
-> -      pattern: '^clkout([0-9]|[12][0-9]|3[0-1])$'
-> +    allOf:
-> +      - items:
-> +          pattern: '^clkout([0-9]|[12][0-9]|3[0-1])$'
-> +      - uniqueItems: true
+Hi Mark,
 
-You shouldn't need the 'allOf', just add uniqueItems at the same level as items.
+On 08.10.2019 14:06, Mark Brown wrote:
+> On Tue, Oct 08, 2019 at 02:01:15PM +0200, Marek Szyprowski wrote:
+>> On 08.10.2019 13:50, Mark Brown wrote:
+>>> This then means that for users that might legitimately enable and
+>>> disable regulators that need to be constrained are forced to change the
+>>> voltage when they enable the regualtors in order to have their
+>>> constraints take effect which seems bad.  I'd rather change the the
+>>> cpufreq consumers to either not do the enable (since there really should
+>>> be an always-on constraint this should be redundant, we might need to
+>>> fix the core to take account of their settings though I think we lost
+>>> that) or to set the voltage to whatever they need prior to doing their
+>>> first enable, that seems more robust.
+>> Well, I'm open for other ways of fixing this issue. Calling enable on
+>> always-on regulator imho should not change its rate...
+> Yes, although there is the whole "don't touch things until a consumer
+> tells us to" thing going on.  I had expected that this was kicking in
+> because we weren't paying attention to the constraints of disabled
+> regulators but I can't see the code implementing that any more so I
+> guess we removed it at some point (it was always debatable).
 
-Rob
+Then if I get it right, the issue is caused by the commit 7f93ff73f7c8 
+("opp: core: add regulators enable and disable"). I've checked and 
+indeed reverting it fixes Peach Pi to boot properly. The question is if 
+this is desired behavior or not?
+
+I've CC: Viresh, Kamil and Bartlomiej, here is the link to the beginning 
+of this thread:
+
+https://lkml.org/lkml/2019/10/8/265
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
