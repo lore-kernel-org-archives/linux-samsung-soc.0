@@ -1,60 +1,75 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] regulator: core: Skip balancing of the enabled
- regulators in regulator_enable()
-Date: Tue, 8 Oct 2019 15:24:17 +0200
-Message-ID: <86b9b4b5-cca5-9052-7c87-c5679dfffff4@samsung.com>
-References: <CGME20191008101720eucas1p2e0d1bca6e696848bf689067e05620679@eucas1p2.samsung.com>
-        <20191008101709.13827-1-m.szyprowski@samsung.com>
-        <20191008115025.GF4382@sirena.co.uk>
-        <0e222fdd-4407-51ea-b75c-a62621cbe622@samsung.com>
-        <20191008120611.GG4382@sirena.co.uk>
-        <9268b455-ec66-97e1-909d-f964ac31c0ef@samsung.com>
-        <20191008124736.GJ4382@sirena.co.uk>
+From: k.konieczny@partner.samsung.com
+Subject: [PATCH] devfreq: exynos-bus: workaround dev_pm_opp_set_rate()
+ errors on Exynos5422/5800 SoCs
+Date: Tue,  8 Oct 2019 15:49:23 +0200
+Message-ID: <20191008134923.30123-1-k.konieczny@partner.samsung.com>
+References: <CGME20191008134950eucas1p15cfef5800efc10d5b18ec5eb37dde60b@eucas1p1.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191008124736.GJ4382@sirena.co.uk>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Lucas Stach <l.stach@pengutronix.de>, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Kamil Konieczny <k.konieczny@samsung.com>
+To: k.konieczny@partner.samsung.com
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Commit 4294a779bd8d ("PM / devfreq: exynos-bus: Convert to use
+dev_pm_opp_set_rate()") introduced errors:
+exynos-bus: new bus device registered: soc:bus_wcore ( 84000 KHz ~ 400000 KHz)
+exynos-bus: new bus device registered: soc:bus_noc ( 67000 KHz ~ 100000 KHz)
+exynos-bus: new bus device registered: soc:bus_fsys_apb (100000 KHz ~ 200000 KHz)
+...
+exynos-bus soc:bus_wcore: dev_pm_opp_set_rate: failed to find current OPP for freq 532000000 (-34)
+exynos-bus soc:bus_noc: dev_pm_opp_set_rate: failed to find current OPP for freq 111000000 (-34)
+exynos-bus soc:bus_fsys_apb: dev_pm_opp_set_rate: failed to find current OPP for freq 222000000 (-34)
 
-On 10/8/19 2:47 PM, Mark Brown wrote:
-> On Tue, Oct 08, 2019 at 02:38:55PM +0200, Marek Szyprowski wrote:
-> 
->> Then if I get it right, the issue is caused by the commit 7f93ff73f7c8 
->> ("opp: core: add regulators enable and disable"). I've checked and 
->> indeed reverting it fixes Peach Pi to boot properly. The question is if 
->> this is desired behavior or not?
-> 
-> That doesn't seem ideal - either it's redundant for regulators that need
-> to be marked as always-on anyway or it's going to force the regulators
-> on when a device could do runtime PM (eg, if the same code can run on
-> something like a GPU which can be turned off while the screen is off or
-> is displaying a static image).
+They are caused by incorrect PLL assigned to clock source, which results
+in clock rate outside of OPP range. Add workaround for this in
+exynos_bus_parse_of() by adjusting clock rate to those present in OPP.
 
-Commit 7f93ff73f7c8 ("opp: core: add regulators enable and disable")
-currently can be safely reverted as all affected users use always-on
-regulators. However IMHO it should be possible to enable always-on
-regulator without side-effects.
+Fixes: 4294a779bd8d ("PM / devfreq: exynos-bus: Convert to use dev_pm_opp_set_rate()")
+Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+---
+ drivers/devfreq/exynos-bus.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-When it comes to setting regulator constraints before doing enable
-operation, it also seems to be possible solution but would require
-splitting regulator_set_voltage() operation on two functions:
-
-- one for setting constraints (before regulator_enable() operation)
-
-- the other one actually setting voltage (after enable operation)
-
-Unfortunately this is much bigger task and doesn't seem to be -rc
-time material so I'm in favor of just applying Marek's fix as it is
-for now.
+diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+index c832673273a2..37bd34d5625b 100644
+--- a/drivers/devfreq/exynos-bus.c
++++ b/drivers/devfreq/exynos-bus.c
+@@ -243,7 +243,7 @@ static int exynos_bus_parse_of(struct device_node *np,
+ {
+ 	struct device *dev = bus->dev;
+ 	struct dev_pm_opp *opp;
+-	unsigned long rate;
++	unsigned long rate, opp_rate;
+ 	int ret;
  
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+ 	/* Get the clock to provide each bus with source clock */
+@@ -267,13 +267,21 @@ static int exynos_bus_parse_of(struct device_node *np,
+ 	}
+ 
+ 	rate = clk_get_rate(bus->clk);
+-
+-	opp = devfreq_recommended_opp(dev, &rate, 0);
++	opp_rate = rate;
++	opp = devfreq_recommended_opp(dev, &opp_rate, 0);
+ 	if (IS_ERR(opp)) {
+ 		dev_err(dev, "failed to find dev_pm_opp\n");
+ 		ret = PTR_ERR(opp);
+ 		goto err_opp;
+ 	}
++	/*
++	 * FIXME: U-boot leaves clock source at incorrect PLL, this results
++	 * in clock rate outside defined OPP rate. Work around this bug by
++	 * setting clock rate to recommended one.
++	 */
++	if (rate > opp_rate)
++		clk_set_rate(bus->clk, opp_rate);
++
+ 	bus->curr_freq = dev_pm_opp_get_freq(opp);
+ 	dev_pm_opp_put(opp);
+ 
+-- 
+2.23.0
