@@ -1,58 +1,62 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] regulator: core: Skip balancing of the enabled
- regulators in regulator_enable()
-Date: Tue, 8 Oct 2019 13:47:36 +0100
-Message-ID: <20191008124736.GJ4382@sirena.co.uk>
-References: <CGME20191008101720eucas1p2e0d1bca6e696848bf689067e05620679@eucas1p2.samsung.com>
- <20191008101709.13827-1-m.szyprowski@samsung.com>
- <20191008115025.GF4382@sirena.co.uk>
- <0e222fdd-4407-51ea-b75c-a62621cbe622@samsung.com>
- <20191008120611.GG4382@sirena.co.uk>
- <9268b455-ec66-97e1-909d-f964ac31c0ef@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 1/3] dt-bindings: arm: samsung: Force clkoutN names to be
+ unique in PMU
+Date: Tue, 8 Oct 2019 14:50:38 +0200
+Message-ID: <20191008125038.GA2550@pi3>
+References: <20191004151414.8458-1-krzk@kernel.org>
+ <CAL_JsqJDTcHu5oXG6zszGHCBhTE6EW94AANUjyMV78SkKcn5yA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="liqSWPDvh3eyfZ9k"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <9268b455-ec66-97e1-909d-f964ac31c0ef@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Lucas Stach <l.stach@pengutronix.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Kamil Konieczny <k.konieczny@samsung.com>
+In-Reply-To: <CAL_JsqJDTcHu5oXG6zszGHCBhTE6EW94AANUjyMV78SkKcn5yA@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Maciej Falkowski <m.falkowski@samsung.com>, "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>, David Airlie <airlied@linux.ie>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Kukjin Kim <kgene@kernel.org>, Lee Jones <lee.jones@linaro.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
---liqSWPDvh3eyfZ9k
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Oct 08, 2019 at 02:38:55PM +0200, Marek Szyprowski wrote:
-
-> Then if I get it right, the issue is caused by the commit 7f93ff73f7c8=20
-> ("opp: core: add regulators enable and disable"). I've checked and=20
-> indeed reverting it fixes Peach Pi to boot properly. The question is if=
-=20
-> this is desired behavior or not?
-
-That doesn't seem ideal - either it's redundant for regulators that need
-to be marked as always-on anyway or it's going to force the regulators
-on when a device could do runtime PM (eg, if the same code can run on
-something like a GPU which can be turned off while the screen is off or
-is displaying a static image).
-
---liqSWPDvh3eyfZ9k
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2chWcACgkQJNaLcl1U
-h9CXBQf/b+pmbUPYAhUShO4eVdxzuwWcxfei9CJpiBusJoaR/D523P4pH5wKHcU1
-tuxCRGKqrO3Ty6SAttrXl6/8hPRkESeRnWXfCqeorDOC3LSC/wrTHR7UedCALn69
-hmT7pqOJeD2130JqCuPKit1HxxjxgT8KZHMEamDgqFcB7nh2wU3VwMCWTGRl1VyK
-GN9McMSpWCQeSSRRhrrlKGRf+UAiAeDo1MdDe7eO8cowlc4OWOHsaPyL6LU0Uvli
-ou6lJxFBUH9ZVbYEX45741FGDAXZimtGkmnwoBgH7r3WB23D9G90L60auCMemmk+
-pmMMDHYAfBOliiuDs57KsPnmbgDZDw==
-=J/eq
------END PGP SIGNATURE-----
-
---liqSWPDvh3eyfZ9k--
+T24gVHVlLCBPY3QgMDgsIDIwMTkgYXQgMDc6Mzg6MTRBTSAtMDUwMCwgUm9iIEhlcnJpbmcgd3Jv
+dGU6Cj4gT24gRnJpLCBPY3QgNCwgMjAxOSBhdCAxMDoxNCBBTSBLcnp5c3p0b2YgS296bG93c2tp
+IDxrcnprQGtlcm5lbC5vcmc+IHdyb3RlOgo+ID4KPiA+IFRoZSBjbGtvdXROIG5hbWVzIG9mIGNs
+b2NrcyBtdXN0IGJlIHVuaXF1ZSBiZWNhdXNlIHRoZXkgcmVwcmVzZW50Cj4gPiB1bmlxdWUgaW5w
+dXRzIG9mIGNsb2NrIG11bHRpcGxleGVyLgo+ID4KPiA+IFNpZ25lZC1vZmYtYnk6IEtyenlzenRv
+ZiBLb3psb3dza2kgPGtyemtAa2VybmVsLm9yZz4KPiA+IC0tLQo+ID4gIERvY3VtZW50YXRpb24v
+ZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vc2Ftc3VuZy9wbXUueWFtbCB8IDYgKysrKy0tCj4gPiAg
+MSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKPiA+Cj4gPiBk
+aWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9zYW1zdW5n
+L3BtdS55YW1sIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9zYW1zdW5n
+L3BtdS55YW1sCj4gPiBpbmRleCA3M2I1NmZjNWJmNTguLmQ4ZTAzNzE2ZjVkMiAxMDA2NDQKPiA+
+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vc2Ftc3VuZy9wbXUu
+eWFtbAo+ID4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9zYW1z
+dW5nL3BtdS55YW1sCj4gPiBAQCAtNTMsOCArNTMsMTAgQEAgcHJvcGVydGllczoKPiA+ICAgICAg
+ICBMaXN0IG9mIGNsb2NrIG5hbWVzIGZvciBwYXJ0aWN1bGFyIENMS09VVCBtdXggaW5wdXRzCj4g
+PiAgICAgIG1pbkl0ZW1zOiAxCj4gPiAgICAgIG1heEl0ZW1zOiAzMgo+ID4gLSAgICBpdGVtczoK
+PiA+IC0gICAgICBwYXR0ZXJuOiAnXmNsa291dChbMC05XXxbMTJdWzAtOV18M1swLTFdKSQnCj4g
+PiArICAgIGFsbE9mOgo+ID4gKyAgICAgIC0gaXRlbXM6Cj4gPiArICAgICAgICAgIHBhdHRlcm46
+ICdeY2xrb3V0KFswLTldfFsxMl1bMC05XXwzWzAtMV0pJCcKPiA+ICsgICAgICAtIHVuaXF1ZUl0
+ZW1zOiB0cnVlCj4gCj4gWW91IHNob3VsZG4ndCBuZWVkIHRoZSAnYWxsT2YnLCBqdXN0IGFkZCB1
+bmlxdWVJdGVtcyBhdCB0aGUgc2FtZSBsZXZlbCBhcyBpdGVtcy4KCklmIHlvdSBtZWFuIHNvbWV0
+aGluZyBsaWtlOgogIDU2ICAgICB1bmlxdWVJdGVtczogdHJ1ZQogIDU3ICAgICBpdGVtczoKICA1
+OCAgICAgICBwYXR0ZXJuOiAnXmNsa291dChbMC05XXxbMTJdWzAtOV18M1swLTFdKSQnCgpUaGVu
+IHRoZSBkdF9iaW5kaW5nX2NoZWNrIGZhaWxzOgoKZGV2L2xpbnV4L0RvY3VtZW50YXRpb24vZGV2
+aWNldHJlZS9iaW5kaW5ncy9hcm0vc2Ftc3VuZy9wbXUueWFtbDogcHJvcGVydGllczpjbG9jay1u
+YW1lczoKJ3VuaXF1ZUl0ZW1zJyBpcyBub3Qgb25lIG9mIFsnJHJlZicsICdhZGRpdGlvbmFsSXRl
+bXMnLCAnYWRkaXRpb25hbFByb3BlcnRpZXMnLCAnYWxsT2YnLCAnYW55T2YnLCAnY29uc3QnLCAn
+Y29udGFpbnMnLCAnZGVmYXVsdCcsICdkZXBlbmRlbmNpZXMnLCAnZGVwcmVjYXRlZCcsICdkZXNj
+cmlwdGlvbicsICdlbHNlJywgJ2VudW0nLCAnaXRlbXMnLCAnaWYnLCAnbWluSXRlbXMnLCAnbWlu
+aW11bScsICdtYXhJdGVtcycsICdtYXhpbXVtJywgJ25vdCcsICdvbmVPZicsICdwYXR0ZXJuJywg
+J3BhdHRlcm5Qcm9wZXJ0aWVzJywgJ3Byb3BlcnRpZXMnLCAncmVxdWlyZWQnLCAndGhlbicsICd0
+eXBlJywgJ3R5cGVTaXplJywgJ3VuZXZhbHVhdGVkUHJvcGVydGllcyddCgpCZXN0IHJlZ2FyZHMs
+CktyenlzenRvZgoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bA==
