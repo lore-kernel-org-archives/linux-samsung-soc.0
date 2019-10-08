@@ -2,117 +2,107 @@ Return-Path: <SRS0=Gd86=YB=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FAE2C4360C
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Oct 2019 12:06:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AFC6C4360C
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Oct 2019 12:38:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45B96206C2
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Oct 2019 12:06:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0549721721
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  8 Oct 2019 12:38:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570536378;
-	bh=Tp7W2qNt3xmj2uz/0unJgy9NljpDnUvi+6KS4MOzt5w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=WcA+PUqywIvuqLRiDHe5OKY/zQwRyduk2o/LdtSmqtQYOCp3rMmO1egZGgCtW/cWF
-	 2LHifYLVfqwtmjd9JyAKP9x1D8065Pw+aY4Wul4+N6MNB3sjsnw9uFchbzNUOCzjH2
-	 X2hgAQQgD32Pk5pnDwZwjKy/nJBcNyKnnZhgGc50=
+	s=default; t=1570538309;
+	bh=0172FbZMwE+uHkpHQaDTjmrpy7r6UVMZViKRxp2jAkE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=zNJ5cZmR/7xwuStQpFqR5RM8gRfm+bvTZpjZPTsrlKuHNbnQ7bwZ20OIZwwDp1Kaa
+	 nC0y/jG+neY4hbEhhsewQOHV14bEeqouyjQwpArT0o04l5yHBx7a7wW7n6pH5f9sj2
+	 l2ZIahx+Jgd3a8m+Ig0isZr2zddInIYY5C5jaAzE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730371AbfJHMGS (ORCPT
+        id S1730674AbfJHMi2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 8 Oct 2019 08:06:18 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58158 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730249AbfJHMGR (ORCPT
+        Tue, 8 Oct 2019 08:38:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37230 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730705AbfJHMi2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 8 Oct 2019 08:06:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=iNXCq0tdrGr+v7qLVsnpGqjHYmCeZ78z3PFZJHaeMP8=; b=WL1P9kiXgzGcYtmdIzPPUSwi2
-        e078UMBv6u0H4uP1gcANf0zyzq0lvQhR51bV3+nh60NbKPhmoAecyshaBuTQX3uYm+BE+q8IsHMQn
-        7D4Eb/yl0AzxicYvZRRBfuLR73k7qSPLzHG5B5F8ryNieZ0cskUt0siySP076tEecLF2I=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1iHoFo-0008EX-8U; Tue, 08 Oct 2019 12:06:12 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 6F8752742998; Tue,  8 Oct 2019 13:06:11 +0100 (BST)
-Date:   Tue, 8 Oct 2019 13:06:11 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-kernel@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH] regulator: core: Skip balancing of the enabled
- regulators in regulator_enable()
-Message-ID: <20191008120611.GG4382@sirena.co.uk>
-References: <CGME20191008101720eucas1p2e0d1bca6e696848bf689067e05620679@eucas1p2.samsung.com>
- <20191008101709.13827-1-m.szyprowski@samsung.com>
- <20191008115025.GF4382@sirena.co.uk>
- <0e222fdd-4407-51ea-b75c-a62621cbe622@samsung.com>
+        Tue, 8 Oct 2019 08:38:28 -0400
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27E3F20815;
+        Tue,  8 Oct 2019 12:38:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570538307;
+        bh=0172FbZMwE+uHkpHQaDTjmrpy7r6UVMZViKRxp2jAkE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Fj0cjOYfJqhfG7IwXrmsg43ZvERQ73aD0HiD62uK8K0QAnuFy4VbETrnvYSymrBqN
+         xM7+aR53XRnXLF/IMVEBQZral9XGk3sgp1dp0oYVgvM71fmByrgK0ow2kcUo6seEJK
+         WtzTvf6j2ztu57+zCR9T41ITyxFFnOHtYtMF77Dg=
+Received: by mail-qt1-f178.google.com with SMTP id 3so25036855qta.1;
+        Tue, 08 Oct 2019 05:38:27 -0700 (PDT)
+X-Gm-Message-State: APjAAAWy7yPA/NtOvpSA6JR3NprGx8Az19d2KJ7yNuGjuPzyDXqjvnis
+        K4kBX5jtWvt8+jEEf+4j0OI9GPFAKm8BTMhU1w==
+X-Google-Smtp-Source: APXvYqzxC6rl6FMV1ScqL2fgXOVZv3hYhSzySpUPq3nsKaUzT0TVTrLa+50ZC/gUauiPJFRY9Nd2MNSIBGFt1IYYeV8=
+X-Received: by 2002:ac8:6982:: with SMTP id o2mr35571093qtq.143.1570538306332;
+ Tue, 08 Oct 2019 05:38:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="+1TulI7fc0PCHNy3"
-Content-Disposition: inline
-In-Reply-To: <0e222fdd-4407-51ea-b75c-a62621cbe622@samsung.com>
-X-Cookie: Do not disturb.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191004151414.8458-1-krzk@kernel.org>
+In-Reply-To: <20191004151414.8458-1-krzk@kernel.org>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 8 Oct 2019 07:38:14 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJDTcHu5oXG6zszGHCBhTE6EW94AANUjyMV78SkKcn5yA@mail.gmail.com>
+Message-ID:
+ <CAL_JsqJDTcHu5oXG6zszGHCBhTE6EW94AANUjyMV78SkKcn5yA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: arm: samsung: Force clkoutN names to be
+ unique in PMU
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Kukjin Kim <kgene@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Lee Jones <lee.jones@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Maciej Falkowski <m.falkowski@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20191008120611.qYONPR4QSYxfr8yWNdXP9Gb4QLc2d78r5wI2un3n6Lg@z>
+Message-ID: <20191008123814.0GLj0YLUkFI5UCBcUSbXP3gzcaqHFusMG_BHRHkFayc@z>
 
+On Fri, Oct 4, 2019 at 10:14 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> The clkoutN names of clocks must be unique because they represent
+> unique inputs of clock multiplexer.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/arm/samsung/pmu.yaml | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.yaml b/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
+> index 73b56fc5bf58..d8e03716f5d2 100644
+> --- a/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
+> +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
+> @@ -53,8 +53,10 @@ properties:
+>        List of clock names for particular CLKOUT mux inputs
+>      minItems: 1
+>      maxItems: 32
+> -    items:
+> -      pattern: '^clkout([0-9]|[12][0-9]|3[0-1])$'
+> +    allOf:
+> +      - items:
+> +          pattern: '^clkout([0-9]|[12][0-9]|3[0-1])$'
+> +      - uniqueItems: true
 
---+1TulI7fc0PCHNy3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+You shouldn't need the 'allOf', just add uniqueItems at the same level as items.
 
-On Tue, Oct 08, 2019 at 02:01:15PM +0200, Marek Szyprowski wrote:
-> On 08.10.2019 13:50, Mark Brown wrote:
-
-> > This then means that for users that might legitimately enable and
-> > disable regulators that need to be constrained are forced to change the
-> > voltage when they enable the regualtors in order to have their
-> > constraints take effect which seems bad.  I'd rather change the the
-> > cpufreq consumers to either not do the enable (since there really should
-> > be an always-on constraint this should be redundant, we might need to
-> > fix the core to take account of their settings though I think we lost
-> > that) or to set the voltage to whatever they need prior to doing their
-> > first enable, that seems more robust.
-
-> Well, I'm open for other ways of fixing this issue. Calling enable on=20
-> always-on regulator imho should not change its rate...
-
-Yes, although there is the whole "don't touch things until a consumer
-tells us to" thing going on.  I had expected that this was kicking in
-because we weren't paying attention to the constraints of disabled
-regulators but I can't see the code implementing that any more so I
-guess we removed it at some point (it was always debatable).
-
---+1TulI7fc0PCHNy3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2ce7IACgkQJNaLcl1U
-h9AGmwf/UbimQ9sq/zEYWdR5N0U5nYyw0n1illJslo92MzhrHjeXkA+J75dNT9wo
-E1wtoPEndtrRtb0F+650lzfqvceJauFIaDwb2WvG3vxutwoSdFCJ9qjoPoXLFZOx
-T0gTrPtDX9HHTgMoFackql9B0xwjwHg+cEV6bcAfw3B4F6LnwYIZB27i4Rbf+DXt
-oxB70sgrULzP0QJAtJLMN3QZtNOg94vNdA8xH83V/FeXdtZiE1VLlJVSQ0hjAjc2
-GJ+zjjSFfC5qRLw+DpKpF6CbBO9NwkcBEhFt5CVNiQlQCwL/tuXHBBGUAXvlk/GN
-zDivlP9XJXhyJRNSbxzDX7C4rEqn3w==
-=Qc9y
------END PGP SIGNATURE-----
-
---+1TulI7fc0PCHNy3--
+Rob
