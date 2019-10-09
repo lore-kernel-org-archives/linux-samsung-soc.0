@@ -1,59 +1,46 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] regulator: core: Skip balancing of the enabled
- regulators in regulator_enable()
-Date: Wed, 9 Oct 2019 15:13:52 +0100
-Message-ID: <20191009141352.GC3929@sirena.co.uk>
-References: <20191008124736.GJ4382@sirena.co.uk>
- <86b9b4b5-cca5-9052-7c87-c5679dfffff4@samsung.com>
- <be8d3280-9855-ed18-b2ab-d7fb28d80b82@gmail.com>
- <20191008161535.GN4382@sirena.co.uk>
- <4ad890b7-705e-94f9-2e61-1f3a60984c91@gmail.com>
- <20191008171747.GS4382@sirena.co.uk>
- <439154a4-1502-40af-7086-d4e3eb24025f@gmail.com>
- <CGME20191008180759epcas3p3c367142db499635c71d9601dd3e63956@epcas3p3.samsung.com>
- <20191008180750.GT4382@sirena.co.uk>
- <c9e3ff21-ec50-97c2-06cb-b2f44c70eac8@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 1/2] ARM: multi_v7_defconfig: Enable options for
+ boards with Exynos SoC
+Date: Wed, 9 Oct 2019 19:01:52 +0200
+Message-ID: <20191009170152.GA28821@kozik-lap>
+References: <20191008160234.3106-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="JgQwtEuHJzHdouWu"
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <c9e3ff21-ec50-97c2-06cb-b2f44c70eac8@samsung.com>
+In-Reply-To: <20191008160234.3106-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Dmitry Osipenko <digetx@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Lucas Stach <l.stach@pengutronix.de>, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Kamil Konieczny <k.konieczny@samsung.com>
+To: Russell King <linux@armlinux.org.uk>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Simon Horman <horms+renesas@verge.net.au>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+On Tue, Oct 08, 2019 at 06:02:33PM +0200, Krzysztof Kozlowski wrote:
+> Sync with exynos_defconfig and enable following options for Samsung
+> Exynos SoC based boards:
+> 1. NFC_S3FWRN5_I2C (with NFC stack): Samsung S3FWRN5 NCI NFC Controller,
+>    used for example on Exynos5433 (if booted in 32-bit mode),
+> 2. S3C2410_WATCHDOG: watchdog driver used on S3C, S5P and Exynos SoCs,
+> 3. REGULATOR_S2MPA01: Samsung S2MPA01 regulators driver present on
+>    Exynos5260 RexNos REX-RED board,
+> 4. SND_SOC_ARNDALE: sound support on Arndale boards,
+> 5. EXYNOS_IOMMU: IOMMU driver used on all Exynos SocS,,
+> 6. EXTCON_MAX14577, EXTCON_MAX77693 and EXTCON_MAX8997: extcon drivers
+>    for handling micro USB on mobile Samsung boards (Trats, Trats2,
+>    Rinato),
+> 7. PHY_EXYNOS5250_SATA: SATA phy for Exynos5250 present on Arndale and
+>    SMDK5250 boards.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> ---
+> 
+> SND_SOC_ARNDALE is in progress (patch introducing it was not yet applied)
+> 
+> Changes since v1:
+> 1. Bring back REMOTEPROC.
+> ---
+>  arch/arm/configs/multi_v7_defconfig | 17 ++++++++++++++++-
 
---JgQwtEuHJzHdouWu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied both.
 
-On Wed, Oct 09, 2019 at 12:29:00PM +0200, Marek Szyprowski wrote:
-
-> Okay, then what is the conclusion, as I got lost a bit? How do you want=
-=20
-> this issue to be fixed?
-
-We should revert the enable call, it shouldn't be required, and ideally
-the default balancer could be updated to only make configuration changes
-if they're actually required which would help avoid triggering any such
-things in future if we don't absolutely have to.
-
---JgQwtEuHJzHdouWu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2d6wkACgkQJNaLcl1U
-h9BlRAf/YGiMG169n7MCXyjkc8bcLmLH7+9S3stdFllmTYuhOP/M1y/JQJmzzQwg
-XDnAA2bX++oSN2E5ywHFEFnnEMStg5lUCHik0tZbf1SJNwS4O1XsuQaLS3tJajgQ
-ForbctxszdR9Yb+PpwMsjeH1ke5L851Cxd6XjwIVhy8DMqY4vWhrriiojk6ZqniV
-BLMMwT7B1fMwVqVqeLjOlwc7eZopT7cFim47sO1NfXizcuJ0eX9VthVh0HRnM294
-92eCpqwgT1HTNmrkZgmnme9gWgbdB710n/G9w6Ez0/iC8fPp9S5OMyNA92ajbuMs
-JpMjsKKdeYiEQe2ugez8CeAphm/pFg==
-=ljBl
------END PGP SIGNATURE-----
-
---JgQwtEuHJzHdouWu--
+Best regards,
+Krzysztof
