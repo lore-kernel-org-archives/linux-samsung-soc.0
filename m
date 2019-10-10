@@ -1,102 +1,305 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 01/36] ARM: samsung: make S3C24XX_MISCCR access indirect
-Date: Thu, 10 Oct 2019 22:29:45 +0200
-Message-ID: <20191010203043.1241612-1-arnd@arndb.de>
+Subject: [PATCH 02/36] ARM: s3c: simplify mach/io.h
+Date: Thu, 10 Oct 2019 22:29:46 +0200
+Message-ID: <20191010203043.1241612-2-arnd@arndb.de>
 References: <20191010202802.1132272-1-arnd@arndb.de>
+ <20191010203043.1241612-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20191010202802.1132272-1-arnd@arndb.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20191010203043.1241612-1-arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The clk driver uses both a function call into an exported
-platform file and a direct register access to a hardcoded
-virtual address for accessing the MISCCR register, both
-become are a problem for a multiplatform kernel because
-of the header file dependency.
+s3c24xx has a custom implementation of the inb/outb family of I/O
+accessors, implementing both general register access and ISA I/O port
+through a multiplexer.
 
-Make this an indirect function call through platform data
-instead.
+As far as I can tell, the first case has never been needed, and certainly
+is not used now, as drivers only use inb/outb to actually driver ISA or
+PCI port I/O.
+
+Similarly, the special ISA support is limited to a single machine, the
+Simtec Electronics BAST (EB2410ITX) with its PC/104 expansion connector,
+all other machines could simply use the generic implementation from
+asm/io.h that expects a single memory-mapped address range for byte,
+word and dword access. As no other machines besides BAST actually selects
+CONFIG_ISA, this is likely not even necessary.
+
+As a cleanup, remove suport for the non-ISA access from the helpers,
+and make the ISA access use the virtual address window that we use
+elsewhere for PCI I/O ports. In configurations without the BAST machine,
+this now falls back on the generic implementation from asm/io.h, but
+the mach/io.h header is still relied on to include a number of other
+header files implicitly.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-s3c24xx/common.c         |  3 +++
- drivers/clk/samsung/clk-s3c2410-dclk.c | 10 ++++------
- 2 files changed, 7 insertions(+), 6 deletions(-)
+ arch/arm/mach-s3c24xx/include/mach/io.h      | 209 +++----------------
+ arch/arm/plat-samsung/include/plat/map-s3c.h |  10 +-
+ 2 files changed, 26 insertions(+), 193 deletions(-)
 
-diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/common.c
-index 3dc029c2d2cb..ebf6bde67816 100644
---- a/arch/arm/mach-s3c24xx/common.c
-+++ b/arch/arm/mach-s3c24xx/common.c
-@@ -667,5 +667,8 @@ struct platform_device s3c2410_device_dclk = {
- 	.id		= 0,
- 	.num_resources	= ARRAY_SIZE(s3c2410_dclk_resource),
- 	.resource	= s3c2410_dclk_resource,
-+	.dev		= {
-+		.platform_data = s3c2410_modify_misccr,
-+	},
- };
- #endif
-diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
-index 1281672cb00e..fbcec0252c45 100644
---- a/drivers/clk/samsung/clk-s3c2410-dclk.c
-+++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
-@@ -14,10 +14,6 @@
- #include <linux/module.h>
- #include "clk.h"
+diff --git a/arch/arm/mach-s3c24xx/include/mach/io.h b/arch/arm/mach-s3c24xx/include/mach/io.h
+index f960e6d10114..3e8bff26cdd5 100644
+--- a/arch/arm/mach-s3c24xx/include/mach/io.h
++++ b/arch/arm/mach-s3c24xx/include/mach/io.h
+@@ -12,201 +12,40 @@
  
--/* legacy access to misccr, until dt conversion is finished */
--#include <mach/hardware.h>
--#include <mach/regs-gpio.h>
+ #include <mach/hardware.h>
+ 
+-#define IO_SPACE_LIMIT 0xffffffff
+ 
+ /*
+- * We use two different types of addressing - PC style addresses, and ARM
+- * addresses.  PC style accesses the PC hardware with the normal PC IO
+- * addresses, eg 0x3f8 for serial#1.  ARM addresses are above A28
+- * and are translated to the start of IO.  Note that all addresses are
+- * not shifted left!
++ * ISA style IO, for each machine to sort out mappings for,
++ * if it implements it. We reserve two 16M regions for ISA,
++ * so the PC/104 can use separate addresses for 8-bit and
++ * 16-bit port I/O.
+  */
++#define PCIO_BASE		S3C_ADDR(0x02000000)
++#define IO_SPACE_LIMIT		0x00ffffff
++#define S3C24XX_VA_ISA_WORD	(PCIO_BASE)
++#define S3C24XX_VA_ISA_BYTE	(PCIO_BASE + 0x01000000)
+ 
+-#define __PORT_PCIO(x)	((x) < (1<<28))
++#ifdef CONFIG_ISA
+ 
+-#define PCIO_BASE	 (S3C24XX_VA_ISA_WORD)
+-#define PCIO_BASE_b	 (S3C24XX_VA_ISA_BYTE)
+-#define PCIO_BASE_w	 (S3C24XX_VA_ISA_WORD)
+-#define PCIO_BASE_l	 (S3C24XX_VA_ISA_WORD)
+-/*
+- * Dynamic IO functions - let the compiler
+- * optimize the expressions
+- */
 -
- #define MUX_DCLK0	0
- #define MUX_DCLK1	1
- #define DIV_DCLK0	2
-@@ -52,6 +48,7 @@ struct s3c24xx_clkout {
- 	struct clk_hw		hw;
- 	u32			mask;
- 	u8			shift;
-+	unsigned int (*modify_misccr)(unsigned int clr, unsigned int chg);
- };
+-#define DECLARE_DYN_OUT(sz,fnsuffix,instr) \
+-static inline void __out##fnsuffix (unsigned int val, unsigned int port) \
+-{ \
+-	unsigned long temp;				      \
+-	__asm__ __volatile__(				      \
+-	"cmp	%2, #(1<<28)\n\t"			      \
+-	"mov	%0, %2\n\t"				      \
+-	"addcc	%0, %0, %3\n\t"				      \
+-	"str" instr " %1, [%0, #0 ]	@ out" #fnsuffix      \
+-	: "=&r" (temp)					      \
+-	: "r" (val), "r" (port), "Ir" (PCIO_BASE_##fnsuffix)  \
+-	: "cc");					      \
+-}
+-
+-
+-#define DECLARE_DYN_IN(sz,fnsuffix,instr)				\
+-static inline unsigned sz __in##fnsuffix (unsigned int port)		\
+-{									\
+-	unsigned long temp, value;					\
+-	__asm__ __volatile__(						\
+-	"cmp	%2, #(1<<28)\n\t"					\
+-	"mov	%0, %2\n\t"						\
+-	"addcc	%0, %0, %3\n\t"						\
+-	"ldr" instr "	%1, [%0, #0 ]	@ in" #fnsuffix		\
+-	: "=&r" (temp), "=r" (value)					\
+-	: "r" (port), "Ir" (PCIO_BASE_##fnsuffix)	\
+-	: "cc");							\
+-	return (unsigned sz)value;					\
+-}
++#define inb(p)		readb(S3C24XX_VA_ISA_BYTE + (p))
++#define inw(p)		readw(S3C24XX_VA_ISA_WORD + (p))
++#define inl(p)		readl(S3C24XX_VA_ISA_WORD + (p))
  
- #define to_s3c24xx_clkout(_hw) container_of(_hw, struct s3c24xx_clkout, hw)
-@@ -62,7 +59,7 @@ static u8 s3c24xx_clkout_get_parent(struct clk_hw *hw)
- 	int num_parents = clk_hw_get_num_parents(hw);
- 	u32 val;
+-static inline void __iomem *__ioaddr (unsigned long port)
+-{
+-	return __PORT_PCIO(port) ? (PCIO_BASE + port) : (void __iomem *)port;
+-}
++#define outb(v,p)	writeb((v), S3C24XX_VA_ISA_BYTE + (p))
++#define outw(v,p)	writew((v), S3C24XX_VA_ISA_WORD + (p))
++#define outl(v,p)	writel((v), S3C24XX_VA_ISA_WORD + (p))
  
--	val = readl_relaxed(S3C24XX_MISCCR) >> clkout->shift;
-+	val = clkout->modify_misccr(0, 0) >> clkout->shift;
- 	val >>= clkout->shift;
- 	val &= clkout->mask;
+-#define DECLARE_IO(sz,fnsuffix,instr)	\
+-	DECLARE_DYN_IN(sz,fnsuffix,instr) \
+-	DECLARE_DYN_OUT(sz,fnsuffix,instr)
++#define insb(p,d,l)	readsb(S3C24XX_VA_ISA_BYTE + (p),d,l)
++#define insw(p,d,l)	readsw(S3C24XX_VA_ISA_WORD + (p),d,l)
++#define insl(p,d,l)	readsl(S3C24XX_VA_ISA_WORD + (p),d,l)
  
-@@ -76,7 +73,7 @@ static int s3c24xx_clkout_set_parent(struct clk_hw *hw, u8 index)
- {
- 	struct s3c24xx_clkout *clkout = to_s3c24xx_clkout(hw);
+-DECLARE_IO(char,b,"b")
+-DECLARE_IO(short,w,"h")
+-DECLARE_IO(int,l,"")
++#define outsb(p,d,l)	writesb(S3C24XX_VA_ISA_BYTE + (p),d,l)
++#define outsw(p,d,l)	writesw(S3C24XX_VA_ISA_WORD + (p),d,l)
++#define outsl(p,d,l)	writesl(S3C24XX_VA_ISA_WORD + (p),d,l)
  
--	s3c2410_modify_misccr((clkout->mask << clkout->shift),
-+	clkout->modify_misccr((clkout->mask << clkout->shift),
- 			      (index << clkout->shift));
+-#undef DECLARE_IO
+-#undef DECLARE_DYN_IN
+-
+-/*
+- * Constant address IO functions
+- *
+- * These have to be macros for the 'J' constraint to work -
+- * +/-4096 immediate operand.
+- */
+-#define __outbc(value,port)						\
+-({									\
+-	if (__PORT_PCIO((port)))					\
+-		__asm__ __volatile__(					\
+-		"strb	%0, [%1, %2]	@ outbc"			\
+-		: : "r" (value), "r" (PCIO_BASE), "Jr" ((port)));	\
+-	else								\
+-		__asm__ __volatile__(					\
+-		"strb	%0, [%1, #0]	@ outbc"			\
+-		: : "r" (value), "r" ((port)));				\
+-})
++#else
  
- 	return 0;
-@@ -110,6 +107,7 @@ static struct clk_hw *s3c24xx_register_clkout(struct device *dev,
- 	clkout->shift = shift;
- 	clkout->mask = mask;
- 	clkout->hw.init = &init;
-+	clkout->modify_misccr = dev->platform_data;
+-#define __inbc(port)							\
+-({									\
+-	unsigned char result;						\
+-	if (__PORT_PCIO((port)))					\
+-		__asm__ __volatile__(					\
+-		"ldrb	%0, [%1, %2]	@ inbc"				\
+-		: "=r" (result) : "r" (PCIO_BASE), "Jr" ((port)));	\
+-	else								\
+-		__asm__ __volatile__(					\
+-		"ldrb	%0, [%1, #0]	@ inbc"				\
+-		: "=r" (result) : "r" ((port)));			\
+-	result;								\
+-})
++#define __io(x) (PCIO_BASE + (x))
  
- 	ret = clk_hw_register(dev, &clkout->hw);
- 	if (ret)
+-#define __outwc(value,port)						\
+-({									\
+-	unsigned long v = value;					\
+-	if (__PORT_PCIO((port))) {					\
+-		if ((port) < 256 && (port) > -256)			\
+-			__asm__ __volatile__(				\
+-			"strh	%0, [%1, %2]	@ outwc"		\
+-			: : "r" (v), "r" (PCIO_BASE), "Jr" ((port)));	\
+-		else if ((port) > 0)					\
+-			__asm__ __volatile__(				\
+-			"strh	%0, [%1, %2]	@ outwc"		\
+-			: : "r" (v),					\
+-			    "r" (PCIO_BASE + ((port) & ~0xff)),		\
+-			     "Jr" (((port) & 0xff)));			\
+-		else							\
+-			__asm__ __volatile__(				\
+-			"strh	%0, [%1, #0]	@ outwc"		\
+-			: : "r" (v),					\
+-			    "r" (PCIO_BASE + (port)));			\
+-	} else								\
+-		__asm__ __volatile__(					\
+-		"strh	%0, [%1, #0]	@ outwc"			\
+-		: : "r" (v), "r" ((port)));				\
+-})
+-
+-#define __inwc(port)							\
+-({									\
+-	unsigned short result;						\
+-	if (__PORT_PCIO((port))) {					\
+-		if ((port) < 256 && (port) > -256 )			\
+-			__asm__ __volatile__(				\
+-			"ldrh	%0, [%1, %2]	@ inwc"			\
+-			: "=r" (result)					\
+-			: "r" (PCIO_BASE),				\
+-			  "Jr" ((port)));				\
+-		else if ((port) > 0)					\
+-			__asm__ __volatile__(				\
+-			"ldrh	%0, [%1, %2]	@ inwc"			\
+-			: "=r" (result)					\
+-			: "r" (PCIO_BASE + ((port) & ~0xff)),		\
+-			  "Jr" (((port) & 0xff)));			\
+-		else							\
+-			__asm__ __volatile__(				\
+-			"ldrh	%0, [%1, #0]	@ inwc"			\
+-			: "=r" (result)					\
+-			: "r" (PCIO_BASE + ((port))));			\
+-	} else								\
+-		__asm__ __volatile__(					\
+-		"ldrh	%0, [%1, #0]	@ inwc"				\
+-		: "=r" (result) : "r" ((port)));			\
+-	result;								\
+-})
+-
+-#define __outlc(value,port)						\
+-({									\
+-	unsigned long v = value;					\
+-	if (__PORT_PCIO((port)))					\
+-		__asm__ __volatile__(					\
+-		"str	%0, [%1, %2]	@ outlc"			\
+-		: : "r" (v), "r" (PCIO_BASE), "Jr" ((port)));	\
+-	else								\
+-		__asm__ __volatile__(					\
+-		"str	%0, [%1, #0]	@ outlc"			\
+-		: : "r" (v), "r" ((port)));		\
+-})
+-
+-#define __inlc(port)							\
+-({									\
+-	unsigned long result;						\
+-	if (__PORT_PCIO((port)))					\
+-		__asm__ __volatile__(					\
+-		"ldr	%0, [%1, %2]	@ inlc"				\
+-		: "=r" (result) : "r" (PCIO_BASE), "Jr" ((port)));	\
+-	else								\
+-		__asm__ __volatile__(					\
+-		"ldr	%0, [%1, #0]	@ inlc"				\
+-		: "=r" (result) : "r" ((port)));		\
+-	result;								\
+-})
+-
+-#define __ioaddrc(port)	((__PORT_PCIO(port) ? PCIO_BASE + (port) : (void __iomem *)0 + (port)))
+-
+-#define inb(p)		(__builtin_constant_p((p)) ? __inbc(p)	   : __inb(p))
+-#define inw(p)		(__builtin_constant_p((p)) ? __inwc(p)	   : __inw(p))
+-#define inl(p)		(__builtin_constant_p((p)) ? __inlc(p)	   : __inl(p))
+-#define outb(v,p)	(__builtin_constant_p((p)) ? __outbc(v,p) : __outb(v,p))
+-#define outw(v,p)	(__builtin_constant_p((p)) ? __outwc(v,p) : __outw(v,p))
+-#define outl(v,p)	(__builtin_constant_p((p)) ? __outlc(v,p) : __outl(v,p))
+-#define __ioaddr(p)	(__builtin_constant_p((p)) ? __ioaddr(p)  : __ioaddrc(p))
+-
+-#define insb(p,d,l)	__raw_readsb(__ioaddr(p),d,l)
+-#define insw(p,d,l)	__raw_readsw(__ioaddr(p),d,l)
+-#define insl(p,d,l)	__raw_readsl(__ioaddr(p),d,l)
+-
+-#define outsb(p,d,l)	__raw_writesb(__ioaddr(p),d,l)
+-#define outsw(p,d,l)	__raw_writesw(__ioaddr(p),d,l)
+-#define outsl(p,d,l)	__raw_writesl(__ioaddr(p),d,l)
++#endif
+ 
+ #endif
+diff --git a/arch/arm/plat-samsung/include/plat/map-s3c.h b/arch/arm/plat-samsung/include/plat/map-s3c.h
+index 4244acbf4b65..bf247d836684 100644
+--- a/arch/arm/plat-samsung/include/plat/map-s3c.h
++++ b/arch/arm/plat-samsung/include/plat/map-s3c.h
+@@ -9,6 +9,8 @@
+ #ifndef __ASM_PLAT_MAP_S3C_H
+ #define __ASM_PLAT_MAP_S3C_H __FILE__
+ 
++#include <mach/map.h>
++
+ #define S3C24XX_VA_IRQ		S3C_VA_IRQ
+ #define S3C24XX_VA_MEMCTRL	S3C_VA_MEM
+ #define S3C24XX_VA_UART		S3C_VA_UART
+@@ -45,16 +47,8 @@
+ 
+ #define S3C_VA_USB_HSPHY	S3C64XX_VA_USB_HSPHY
+ 
+-/*
+- * ISA style IO, for each machine to sort out mappings for,
+- * if it implements it. We reserve two 16M regions for ISA.
+- */
+-
+ #define S3C2410_ADDR(x)		S3C_ADDR(x)
+ 
+-#define S3C24XX_VA_ISA_WORD	S3C2410_ADDR(0x02000000)
+-#define S3C24XX_VA_ISA_BYTE	S3C2410_ADDR(0x03000000)
+-
+ /* deal with the registers that move under the 2412/2413 */
+ 
+ #if defined(CONFIG_CPU_S3C2412)
 -- 
 2.20.0
