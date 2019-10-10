@@ -1,207 +1,148 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 15/36] ARM: s3c: adc: move header to linux/soc/samsung
-Date: Thu, 10 Oct 2019 22:29:59 +0200
-Message-ID: <20191010203043.1241612-15-arnd@arndb.de>
+Subject: [PATCH 16/36] ARM: s3c: move spi fiq handler into platform
+Date: Thu, 10 Oct 2019 22:30:00 +0200
+Message-ID: <20191010203043.1241612-16-arnd@arndb.de>
 References: <20191010202802.1132272-1-arnd@arndb.de>
  <20191010203043.1241612-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20191010203043.1241612-1-arnd@arndb.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sebastian Reichel <sre@kernel.org>
-Cc: linux-hwmon@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-pm@vger.kernel.org, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>, Andi Shyti <andi@etezian.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-There are multiple drivers using the private adc interface.
-It seems unlikely that they would ever get converted to iio,
-so make the current state official by making the header file
-global.
+The fiq handler needs access to some register definitions that
+should not be used directly by device drivers.
 
-The s3c2410_ts driver needs a couple of register definitions
-as well.
+Since this is closely related to the irqchip driver anyway,
+move it into the same place.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-s3c64xx/mach-crag6410.c         |  2 +-
- arch/arm/mach-s3c64xx/mach-mini6410.c         |  2 +-
- arch/arm/mach-s3c64xx/mach-real6410.c         |  2 +-
- arch/arm/mach-s3c64xx/mach-smdk6410.c         |  2 +-
- arch/arm/plat-samsung/adc.c                   |  2 +-
- arch/arm/plat-samsung/devs.c                  |  2 +-
- drivers/hwmon/s3c-hwmon.c                     |  2 +-
- drivers/input/touchscreen/s3c2410_ts.c        | 37 ++++++++++++++++++-
- drivers/power/supply/s3c_adc_battery.c        |  2 +-
- .../linux/soc/samsung/s3c-adc.h               |  0
- 10 files changed, 43 insertions(+), 10 deletions(-)
- rename arch/arm/plat-samsung/include/plat/adc.h => include/linux/soc/samsung/s3c-adc.h (100%)
+ arch/arm/mach-s3c24xx/Makefile                           | 2 ++
+ arch/arm/mach-s3c24xx/irq-s3c24xx-fiq-exports.c          | 9 +++++++++
+ .../arm/mach-s3c24xx/irq-s3c24xx-fiq.S                   | 2 +-
+ drivers/spi/Makefile                                     | 1 -
+ drivers/spi/spi-s3c24xx.c                                | 7 +------
+ .../spi-s3c24xx-fiq.h => include/linux/spi/s3c24xx-fiq.h | 5 +++++
+ 6 files changed, 18 insertions(+), 8 deletions(-)
+ create mode 100644 arch/arm/mach-s3c24xx/irq-s3c24xx-fiq-exports.c
+ rename drivers/spi/spi-s3c24xx-fiq.S => arch/arm/mach-s3c24xx/irq-s3c24xx-fiq.S (98%)
+ rename drivers/spi/spi-s3c24xx-fiq.h => include/linux/spi/s3c24xx-fiq.h (78%)
 
-diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
-index da5b50981a14..133453562d23 100644
---- a/arch/arm/mach-s3c64xx/mach-crag6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
-@@ -57,7 +57,7 @@
- #include <plat/keypad.h>
- #include <plat/devs.h>
- #include <plat/cpu.h>
--#include <plat/adc.h>
-+#include <linux/soc/samsung/s3c-adc.h>
- #include <linux/platform_data/i2c-s3c2410.h>
- #include <plat/pm.h>
- #include <plat/samsung-time.h>
-diff --git a/arch/arm/mach-s3c64xx/mach-mini6410.c b/arch/arm/mach-s3c64xx/mach-mini6410.c
-index 0dd36ae49e6a..c7140300bd3f 100644
---- a/arch/arm/mach-s3c64xx/mach-mini6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-mini6410.c
-@@ -27,7 +27,7 @@
- #include <mach/regs-gpio.h>
- #include <mach/gpio-samsung.h>
+diff --git a/arch/arm/mach-s3c24xx/Makefile b/arch/arm/mach-s3c24xx/Makefile
+index 8c31f84f8c97..695573df00b1 100644
+--- a/arch/arm/mach-s3c24xx/Makefile
++++ b/arch/arm/mach-s3c24xx/Makefile
+@@ -9,6 +9,8 @@
  
--#include <plat/adc.h>
-+#include <linux/soc/samsung/s3c-adc.h>
- #include <plat/cpu.h>
- #include <plat/devs.h>
- #include <plat/fb.h>
-diff --git a/arch/arm/mach-s3c64xx/mach-real6410.c b/arch/arm/mach-s3c64xx/mach-real6410.c
-index 0ff88b6859c4..f55097fde94c 100644
---- a/arch/arm/mach-s3c64xx/mach-real6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-real6410.c
-@@ -29,7 +29,7 @@
- #include <mach/gpio-samsung.h>
- #include <mach/irqs.h>
+ obj-y				+= common.o
+ obj-y				+= irq-s3c24xx.o
++obj-$(CONFIG_SPI_S3C24XX_FIQ)	+= irq-s3c24xx-fiq.o
++obj-$(CONFIG_SPI_S3C24XX_FIQ)	+= irq-s3c24xx-fiq-exports.o
  
--#include <plat/adc.h>
-+#include <linux/soc/samsung/s3c-adc.h>
- #include <plat/cpu.h>
- #include <plat/devs.h>
- #include <plat/fb.h>
-diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-index 95bdcfe95a53..3042f6cbffd9 100644
---- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-@@ -60,7 +60,7 @@
- 
- #include <plat/devs.h>
- #include <plat/cpu.h>
--#include <plat/adc.h>
-+#include <linux/soc/samsung/s3c-adc.h>
- #include <linux/platform_data/touchscreen-s3c2410.h>
- #include <plat/keypad.h>
- #include <plat/samsung-time.h>
-diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.c
-index ee3d5c989a76..623a9774cc52 100644
---- a/arch/arm/plat-samsung/adc.c
-+++ b/arch/arm/plat-samsung/adc.c
-@@ -20,7 +20,7 @@
- #include <linux/regulator/consumer.h>
- 
- #include <plat/regs-adc.h>
--#include <plat/adc.h>
-+#include <linux/soc/samsung/s3c-adc.h>
- 
- /* This driver is designed to control the usage of the ADC block between
-  * the touchscreen and any other drivers that may need to use it, such as
-diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-index fd94a35e22f8..ddd90f0bb380 100644
---- a/arch/arm/plat-samsung/devs.c
-+++ b/arch/arm/plat-samsung/devs.c
-@@ -44,7 +44,7 @@
- 
- #include <plat/cpu.h>
- #include <plat/devs.h>
--#include <plat/adc.h>
-+#include <linux/soc/samsung/s3c-adc.h>
- #include <linux/platform_data/ata-samsung_cf.h>
- #include <plat/fb.h>
- #include <plat/fb-s3c2410.h>
-diff --git a/drivers/hwmon/s3c-hwmon.c b/drivers/hwmon/s3c-hwmon.c
-index b490fe3d2ee8..f2703c5460d0 100644
---- a/drivers/hwmon/s3c-hwmon.c
-+++ b/drivers/hwmon/s3c-hwmon.c
-@@ -20,7 +20,7 @@
- #include <linux/hwmon.h>
- #include <linux/hwmon-sysfs.h>
- 
--#include <plat/adc.h>
-+#include <linux/soc/samsung/s3c-adc.h>
- #include <linux/platform_data/hwmon-s3c.h>
- 
- struct s3c_hwmon_attr {
-diff --git a/drivers/input/touchscreen/s3c2410_ts.c b/drivers/input/touchscreen/s3c2410_ts.c
-index b346e7cafd62..1a5a178ea286 100644
---- a/drivers/input/touchscreen/s3c2410_ts.c
-+++ b/drivers/input/touchscreen/s3c2410_ts.c
-@@ -21,10 +21,43 @@
- #include <linux/clk.h>
- #include <linux/io.h>
- 
--#include <plat/adc.h>
--#include <plat/regs-adc.h>
-+#include <linux/soc/samsung/s3c-adc.h>
- #include <linux/platform_data/touchscreen-s3c2410.h>
- 
-+#define	S3C2410_ADCCON			(0x00)
-+#define	S3C2410_ADCTSC			(0x04)
-+#define	S3C2410_ADCDLY			(0x08)
-+#define	S3C2410_ADCDAT0			(0x0C)
-+#define	S3C2410_ADCDAT1			(0x10)
-+#define	S3C64XX_ADCUPDN			(0x14)
-+#define	S3C2443_ADCMUX			(0x18)
-+#define	S3C64XX_ADCCLRINT		(0x18)
-+#define	S5P_ADCMUX			(0x1C)
-+#define	S3C64XX_ADCCLRINTPNDNUP		(0x20)
+ obj-$(CONFIG_CPU_S3C2410)	+= s3c2410.o
+ obj-$(CONFIG_S3C2410_PLL)	+= pll-s3c2410.o
+diff --git a/arch/arm/mach-s3c24xx/irq-s3c24xx-fiq-exports.c b/arch/arm/mach-s3c24xx/irq-s3c24xx-fiq-exports.c
+new file mode 100644
+index 000000000000..ef2d1f664e67
+--- /dev/null
++++ b/arch/arm/mach-s3c24xx/irq-s3c24xx-fiq-exports.c
+@@ -0,0 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
 +
-+/* ADCTSC Register Bits */
-+#define S3C2443_ADCTSC_UD_SEN		(1 << 8)
-+#define S3C2410_ADCTSC_YM_SEN		(1<<7)
-+#define S3C2410_ADCTSC_YP_SEN		(1<<6)
-+#define S3C2410_ADCTSC_XM_SEN		(1<<5)
-+#define S3C2410_ADCTSC_XP_SEN		(1<<4)
-+#define S3C2410_ADCTSC_PULL_UP_DISABLE	(1<<3)
-+#define S3C2410_ADCTSC_AUTO_PST		(1<<2)
-+#define S3C2410_ADCTSC_XY_PST(x)	(((x)&0x3)<<0)
++#include <linux/stddef.h>
++#include <linux/export.h>
++#include <linux/spi/s3c24xx-fiq.h>
 +
-+/* ADCDAT0 Bits */
-+#define S3C2410_ADCDAT0_UPDOWN		(1<<15)
-+#define S3C2410_ADCDAT0_AUTO_PST	(1<<14)
-+#define S3C2410_ADCDAT0_XY_PST		(0x3<<12)
-+#define S3C2410_ADCDAT0_XPDATA_MASK	(0x03FF)
-+
-+/* ADCDAT1 Bits */
-+#define S3C2410_ADCDAT1_UPDOWN		(1<<15)
-+#define S3C2410_ADCDAT1_AUTO_PST	(1<<14)
-+#define S3C2410_ADCDAT1_XY_PST		(0x3<<12)
-+#define S3C2410_ADCDAT1_YPDATA_MASK	(0x03FF)
-+
-+
- #define TSC_SLEEP  (S3C2410_ADCTSC_PULL_UP_DISABLE | S3C2410_ADCTSC_XY_PST(0))
++EXPORT_SYMBOL(s3c24xx_spi_fiq_rx);
++EXPORT_SYMBOL(s3c24xx_spi_fiq_txrx);
++EXPORT_SYMBOL(s3c24xx_spi_fiq_tx);
+diff --git a/drivers/spi/spi-s3c24xx-fiq.S b/arch/arm/mach-s3c24xx/irq-s3c24xx-fiq.S
+similarity index 98%
+rename from drivers/spi/spi-s3c24xx-fiq.S
+rename to arch/arm/mach-s3c24xx/irq-s3c24xx-fiq.S
+index 9d5f8f1e5e81..2a84535a14fd 100644
+--- a/drivers/spi/spi-s3c24xx-fiq.S
++++ b/arch/arm/mach-s3c24xx/irq-s3c24xx-fiq.S
+@@ -13,7 +13,7 @@
+ #include <mach/map.h>
+ #include <mach/regs-irq.h>
  
- #define INT_DOWN	(0)
-diff --git a/drivers/power/supply/s3c_adc_battery.c b/drivers/power/supply/s3c_adc_battery.c
-index 3d00b35cafc9..60b7f41ab063 100644
---- a/drivers/power/supply/s3c_adc_battery.c
-+++ b/drivers/power/supply/s3c_adc_battery.c
-@@ -22,7 +22,7 @@
- #include <linux/init.h>
+-#include "spi-s3c24xx-fiq.h"
++#include <linux/spi/s3c24xx-fiq.h>
+ 
+ #define S3C2410_SPTDAT           (0x10)
+ #define S3C2410_SPRDAT           (0x14)
+diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
+index bb49c9e6d0a0..4bcbbd35d2e8 100644
+--- a/drivers/spi/Makefile
++++ b/drivers/spi/Makefile
+@@ -89,7 +89,6 @@ obj-$(CONFIG_SPI_RB4XX)			+= spi-rb4xx.o
+ obj-$(CONFIG_SPI_RSPI)			+= spi-rspi.o
+ obj-$(CONFIG_SPI_S3C24XX)		+= spi-s3c24xx-hw.o
+ spi-s3c24xx-hw-y			:= spi-s3c24xx.o
+-spi-s3c24xx-hw-$(CONFIG_SPI_S3C24XX_FIQ) += spi-s3c24xx-fiq.o
+ obj-$(CONFIG_SPI_S3C64XX)		+= spi-s3c64xx.o
+ obj-$(CONFIG_SPI_SC18IS602)		+= spi-sc18is602.o
+ obj-$(CONFIG_SPI_SH)			+= spi-sh.o
+diff --git a/drivers/spi/spi-s3c24xx.c b/drivers/spi/spi-s3c24xx.c
+index 2f395e4861f6..464146fc8420 100644
+--- a/drivers/spi/spi-s3c24xx.c
++++ b/drivers/spi/spi-s3c24xx.c
+@@ -19,12 +19,12 @@
+ #include <linux/spi/spi.h>
+ #include <linux/spi/spi_bitbang.h>
+ #include <linux/spi/s3c24xx.h>
++#include <linux/spi/s3c24xx-fiq.h>
  #include <linux/module.h>
  
--#include <plat/adc.h>
-+#include <linux/soc/samsung/s3c-adc.h>
+ #include <asm/fiq.h>
  
- #define BAT_POLL_INTERVAL		10000 /* ms */
- #define JITTER_DELAY			500 /* ms */
-diff --git a/arch/arm/plat-samsung/include/plat/adc.h b/include/linux/soc/samsung/s3c-adc.h
-similarity index 100%
-rename from arch/arm/plat-samsung/include/plat/adc.h
-rename to include/linux/soc/samsung/s3c-adc.h
+ #include "spi-s3c24xx-regs.h"
+-#include "spi-s3c24xx-fiq.h"
+ 
+ /**
+  * s3c24xx_spi_devstate - per device data
+@@ -229,10 +229,6 @@ struct spi_fiq_code {
+ 	u8	data[0];
+ };
+ 
+-extern struct spi_fiq_code s3c24xx_spi_fiq_txrx;
+-extern struct spi_fiq_code s3c24xx_spi_fiq_tx;
+-extern struct spi_fiq_code s3c24xx_spi_fiq_rx;
+-
+ /**
+  * ack_bit - turn IRQ into IRQ acknowledgement bit
+  * @irq: The interrupt number
+@@ -282,7 +278,6 @@ static void s3c24xx_spi_tryfiq(struct s3c24xx_spi *hw)
+ 	regs.uregs[fiq_rrx]  = (long)hw->rx;
+ 	regs.uregs[fiq_rtx]  = (long)hw->tx + 1;
+ 	regs.uregs[fiq_rcount] = hw->len - 1;
+-	regs.uregs[fiq_rirq] = (long)S3C24XX_VA_IRQ;
+ 
+ 	set_fiq_regs(&regs);
+ 
+diff --git a/drivers/spi/spi-s3c24xx-fiq.h b/include/linux/spi/s3c24xx-fiq.h
+similarity index 78%
+rename from drivers/spi/spi-s3c24xx-fiq.h
+rename to include/linux/spi/s3c24xx-fiq.h
+index 7786b0ea56ec..954452618dfe 100644
+--- a/drivers/spi/spi-s3c24xx-fiq.h
++++ b/include/linux/spi/s3c24xx-fiq.h
+@@ -12,6 +12,11 @@
+ #ifdef __ASSEMBLY__
+ #define __REG_NR(x)     r##x
+ #else
++
++extern struct spi_fiq_code s3c24xx_spi_fiq_txrx;
++extern struct spi_fiq_code s3c24xx_spi_fiq_tx;
++extern struct spi_fiq_code s3c24xx_spi_fiq_rx;
++
+ #define __REG_NR(x)     (x)
+ #endif
+ 
 -- 
 2.20.0
