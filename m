@@ -2,98 +2,144 @@ Return-Path: <SRS0=rstS=YD=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3614C4360C
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Oct 2019 21:51:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5992DC10F14
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Oct 2019 21:53:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 568972067B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Oct 2019 21:51:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570744308;
-	bh=EfYl3DEKiMDTEd71Sf/gNrcgc3iPbO+kTX4RjvVd1p8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=J/uHI1caw1jFDZWeckqch80NOfP9tiFAY9C9UThekbTs/3gOF2ffZkY1cB6QgD+ve
-	 tYw+nNxLFDygr4NTcBY5qSa/9dWCgWMwfUvNqiOfKY6Wpxt2uO8TBxioRiGWBwmxqw
-	 xmoAssKxzqAzr/76CTIO2ZeF83T83lKuOciLeuPE=
+	by mail.kernel.org (Postfix) with ESMTP id 340B421920
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Oct 2019 21:53:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbfJJVvs (ORCPT
+        id S1727452AbfJJVxg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 10 Oct 2019 17:51:48 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:35855 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbfJJVvr (ORCPT
+        Thu, 10 Oct 2019 17:53:36 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:39694 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbfJJVxf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Oct 2019 17:51:47 -0400
-Received: by mail-ot1-f67.google.com with SMTP id 67so6254070oto.3;
-        Thu, 10 Oct 2019 14:51:47 -0700 (PDT)
+        Thu, 10 Oct 2019 17:53:35 -0400
+Received: by mail-qk1-f194.google.com with SMTP id 4so7064788qki.6;
+        Thu, 10 Oct 2019 14:53:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BsPwSU6X2gQyCit53YR9b2X6LOdSxAWOyZ/eXX+wmiM=;
-        b=s4+67hOZqHoXoQJfJZZ63GCBSBsTweKg+dRP9lxkUlFoOBpILsrRQmwmZxy8PlakNX
-         xq/RQ9oEi8QbebI+PbFWBNFqDb1+Ba9rs3e3gb7TtjGv5g314oHPF8n9lHyde7JCE0u+
-         CDIKPZHaAJBmJbkSxf/7G8Qu4u2D5wBPI+jg8Vp//fcVBOn3TZ/GNr9gXO4rB1W8Fktn
-         TARzcmMlfi9geugeoNVLRlmHC9heOqUBguG1xv3tlQ0JqZWj5CtZDwVHuLipQC5aAKG7
-         cQONmtrjycsx99s8Xz3RqVfsvUPtgrlO+9NSlQEN6hFCCk2L6UeWQGVpaKaG3vmFnG6o
-         8xvg==
-X-Gm-Message-State: APjAAAUOR6PqmooBM97Exg9UORwxiYpXlWAZGGs3v2/+zLaj903JoWQO
-        pTcXlr1kMCy1PhWxK6XipeYyPog=
-X-Google-Smtp-Source: APXvYqyeeCI7SWt8DgFaTGCvI1pwHUIrAXSg4kf5ngWc9Hr2IhfYul0XKR9JMoYXpLjIpfiKIDNnZQ==
-X-Received: by 2002:a05:6830:1e03:: with SMTP id s3mr403637otr.289.1570744306660;
-        Thu, 10 Oct 2019 14:51:46 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id f205sm2022658oib.11.2019.10.10.14.51.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 14:51:46 -0700 (PDT)
-Date:   Thu, 10 Oct 2019 16:51:45 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Maciej Falkowski <m.falkowski@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2] ASoC: samsung: i2s: Document clocks macros
-Message-ID: <20191010215145.GA24430@bogus>
-References: <CGME20190926110226eucas1p24dbb1b39ffa3f607aa28c0c4d9ff6aba@eucas1p2.samsung.com>
- <20190926110219.6144-1-m.szyprowski@samsung.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5KUJrhrPz34prZHQPwuRHd4WWImJkzkCSryx5fAKFeY=;
+        b=sqfZoSPYvhJdBSFx66TubOXenl7vwDwrcMjXHOEXQIQmPdExbFoRcOt+j/4P9JjLQ2
+         S/42IHla/cnpX3Gy8uyjOIWmrJWfquHaf8lVX/Oapb6+fzR25cnW+2gPJ6dj7TUJrhRI
+         /+xXH02sl3/edXhLXYcaxataXcwMo7yu51pG7MReQwO4wmc0Ydow+bBrm36EUIyTdZaM
+         zO7EAioFfp7/TJtsdhCnY9nZBSyzuzAG5NUcgukakBoWpj7HLaHCDJWezEgEpajGw5M7
+         YdijZqozE0IjOPV3OE49ppP2esKu1/mn3GNt/6KwHTzYcETyvhbDCew2iUR6cDw2NGtq
+         WK6A==
+X-Gm-Message-State: APjAAAW2ZKl1wNeiJsNUirxt6Yc98UpOQZOw0qedSemwaer8OhbMdIhi
+        Cpet7MfqD3EwdekjoOLmdRikz3mzPGf9RUf2OyM=
+X-Google-Smtp-Source: APXvYqwI5aZHDA5AQ5r7nRWW4bmOM1FPEwqypeNgqzsA4zDVqF3VF9ai0AW+gXH8pRsYBpeg659n6diW29XFvF8Ul3Q=
+X-Received: by 2002:a05:620a:218f:: with SMTP id g15mr12031339qka.3.1570744414547;
+ Thu, 10 Oct 2019 14:53:34 -0700 (PDT)
 MIME-Version: 1.0
+References: <20191010202802.1132272-1-arnd@arndb.de> <20191010203043.1241612-1-arnd@arndb.de>
+ <20191010203043.1241612-34-arnd@arndb.de> <20191010210208.GK25745@shell.armlinux.org.uk>
+In-Reply-To: <20191010210208.GK25745@shell.armlinux.org.uk>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 10 Oct 2019 23:53:18 +0200
+Message-ID:
+ <CAK8P3a2HTrxhncNbFtGA3itsZU6hfvRm6bW5ikx-PMFpVKcwdg@mail.gmail.com>
+Subject: Re: [PATCH 34/36] ARM: s3c: stop including mach/hardware.h from mach/io.h
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-In-Reply-To: <20190926110219.6144-1-m.szyprowski@samsung.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20191010215145.wEvvJYLh0VM5OGVmKtAQnlzB3WpRWQINlpSAhrpzBY4@z>
+Message-ID: <20191010215318.jskxXHk0oGMbOcdFyVQsMsvo449hpeFamtzVSDBAsgk@z>
 
-On Thu, 26 Sep 2019 13:02:19 +0200, Marek Szyprowski wrote:
-> From: Maciej Falkowski <m.falkowski@samsung.com>
-> 
-> Document clocks macros with their description
-> from 'Documentation/devicetree/bindings/sound/samsung-i2s.txt'
-> 
-> Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> v2:
-> - Added proper commit message and description
-> - Moved comments to the right side
-> 
-> Best regards,
-> Maciej Falkowski
-> ---
->  include/dt-bindings/sound/samsung-i2s.h | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
+On Thu, Oct 10, 2019 at 11:02 PM Russell King - ARM Linux admin
+<linux@armlinux.org.uk> wrote:
+>
+> On Thu, Oct 10, 2019 at 10:30:18PM +0200, Arnd Bergmann wrote:
+> > diff --git a/arch/arm/mach-s3c24xx/include/mach/gpio-samsung.h b/arch/arm/mach-s3c24xx/include/mach/gpio-samsung.h
+> > index 2ad22b2d459b..f8a114891f16 100644
+> > --- a/arch/arm/mach-s3c24xx/include/mach/gpio-samsung.h
+> > +++ b/arch/arm/mach-s3c24xx/include/mach/gpio-samsung.h
+> > @@ -14,6 +14,8 @@
+> >  #ifndef GPIO_SAMSUNG_S3C24XX_H
+> >  #define GPIO_SAMSUNG_S3C24XX_H
+> >
+> > +#include <mach/map.h>
+> > +
+>
+> Why?  Nothing in this file uses anything from mach/map.h
 
-Applied, thanks.
+Good point, I don't recall how this happened, most likely either
+edited the wrong file after a build regression, or I had moved some
+definition into this file in a patch that I later discarded and this
+change got left behind.
 
-Rob
+> > diff --git a/arch/arm/mach-s3c24xx/include/mach/regs-clock.h b/arch/arm/mach-s3c24xx/include/mach/regs-clock.h
+> > index 7ca3dd4f13c0..da4e7b3aeba6 100644
+> > --- a/arch/arm/mach-s3c24xx/include/mach/regs-clock.h
+> > +++ b/arch/arm/mach-s3c24xx/include/mach/regs-clock.h
+> > @@ -9,6 +9,8 @@
+> >  #ifndef __ASM_ARM_REGS_CLOCK
+> >  #define __ASM_ARM_REGS_CLOCK
+> >
+> > +#include <mach/map.h>
+> > +
+>
+> Why?  Nothing in this file uses anything from mach/map.h
+
+I think I added this one for S3C24XX_VA_CLKPWR, which is in
+plat/map-s3c.h
+
+> > diff --git a/drivers/spi/spi-s3c24xx-regs.h b/drivers/spi/spi-s3c24xx-regs.h
+> > index 37b93ff7c7fe..b76d591eba8c 100644
+> > --- a/drivers/spi/spi-s3c24xx-regs.h
+> > +++ b/drivers/spi/spi-s3c24xx-regs.h
+> > @@ -8,6 +8,8 @@
+> >  #ifndef __ASM_ARCH_REGS_SPI_H
+> >  #define __ASM_ARCH_REGS_SPI_H
+> >
+> > +#include <mach/map.h>
+> > +
+>
+> If this is outside of arch/arm, it shouldn't need anything from
+> mach/map.h - mach/map.h is not for driver use.
+
+This was the result of a botched rebase: The patch was initially
+at the start of the series where the #include was still required
+but later moved to the end behind the patch that used to remove
+it again.
+
+> > diff --git a/drivers/usb/gadget/udc/s3c2410_udc_regs.h b/drivers/usb/gadget/udc/s3c2410_udc_regs.h
+> > index d8d2eeaca088..4df279342cdd 100644
+> > --- a/drivers/usb/gadget/udc/s3c2410_udc_regs.h
+> > +++ b/drivers/usb/gadget/udc/s3c2410_udc_regs.h
+> > @@ -6,6 +6,8 @@
+> >  #ifndef __ASM_ARCH_REGS_UDC_H
+> >  #define __ASM_ARCH_REGS_UDC_H
+> >
+> > +#include <mach/map.h>
+> > +
+>
+> If this is outside of arch/arm, it shouldn't need anything from
+> mach/map.h - mach/map.h is not for driver use.
+
+Same here.
+
+Thanks for taking a look, I'll fix it all up tomorrow.
+
+          Arnd
