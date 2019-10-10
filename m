@@ -7,426 +7,639 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 307B7C10F14
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Oct 2019 20:47:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F0FC10F14
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Oct 2019 20:48:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFC7D21835
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Oct 2019 20:47:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DFAD20B7C
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Oct 2019 20:48:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726802AbfJJUrZ (ORCPT
+        id S1727077AbfJJUsS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 10 Oct 2019 16:47:25 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:41273 "EHLO
+        Thu, 10 Oct 2019 16:48:18 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:36041 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbfJJUrZ (ORCPT
+        with ESMTP id S1725867AbfJJUsR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Oct 2019 16:47:25 -0400
+        Thu, 10 Oct 2019 16:48:17 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MXGSU-1iatlv2eSc-00YkjM; Thu, 10 Oct 2019 22:46:01 +0200
+ 1MALql-1iOTAM1dyF-00BspN; Thu, 10 Oct 2019 22:47:57 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+        Ben Dooks <ben-linux@fluff.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
 Cc:     linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        alsa-devel@alsa-project.org
-Subject: [PATCH 21/36] ARM: s3c: move iis pinctrl config into boards
-Date:   Thu, 10 Oct 2019 22:30:05 +0200
-Message-Id: <20191010203043.1241612-21-arnd@arndb.de>
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org
+Subject: [PATCH 23/36] ARM: s3c: move s3cmci pinctrl handling into board files
+Date:   Thu, 10 Oct 2019 22:30:07 +0200
+Message-Id: <20191010203043.1241612-23-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20191010203043.1241612-1-arnd@arndb.de>
 References: <20191010202802.1132272-1-arnd@arndb.de>
  <20191010203043.1241612-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:FbNz4MvRRGBncg5ezbVW89EBV/sK6D7IabepOWQf3wEPdeV2bB1
- jHeI/tWAg9rmbqWA2OhJAcG3rS7xIQbQHlXhcZP9oMFhwW4GaaBEAdW2srX0WiYtRtLBTNF
- 6XBXu6/HMSUFl0iZC4Kvr9Rpn88WR8UnUnmGlNAzwwczLySawBLRWChz9V1moU20yfdaWEv
- ewIu+YHqjpXuy5Y5opLQA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:rHn01qD3zdo=:K3nBq2JE5bRE+bp5DAhXFd
- yMkVuBEICs69EQawP4PwOeeLyXNcw/WCQ052HWG0ysXqw+2+ds9Kyn8+PjaTSnmAZt2ymqIyS
- 57wbtGJ8L2lANV7HxCjpIItji1dPYcwKmmS4Vkqs4gsE1FLEY+A8EWVxLZefp12i3UznrQjCz
- 983txz5B8K7k9TKIZPVQ4tDyZ2l2jeQEKFv4otjtBVzLMNrT10ZPEQEe48zXcsX96NW9axeN/
- 5MUqMS4TwcmXbBSBkhxAoHzEN2jG/4mGek5W8CPWCWG2CC6ohIDNC6RlURNa/FJOwZUdetMzT
- rcBfv+5CT+mxoZ0dA0udnMilT4Y4nrfSewO8ExoccnsoESsjFJrWV8lc21ATPdRpqy4cPOhF0
- QkEzbIQTMbmos8vP0K0F+3dAxA3UMUx564tTICxTiy+yBmn+nuXGHPghvwxDJUshaDerRx17o
- /Lak4489Sry29SkCGakDMPZp59ghrTZOIp2w/E8PsGsf6wWzbAJ1QufRlDo+n7PketY/NCfth
- 1vEP9HdYuRTPHO5EP2NtAysK/i/OfVZfWIjcKleHHiNHqQ42JjZbPFNnEsR8bjkobX8TZkjLA
- NOKRWmPncCZlptvCWm3D6e8JdmrBFDQxzkdP/eP8faa27W1UVpqij51aSL6OPgEpE4yhRZ8Kz
- xqweltP7k9XKGIGXK0jNixcfHkap5v216H8HkSFP/CNgn3j+54DzpBEeT0UOyek506/nmrWoz
- XnUK1TxWYJjHt2zBCGsWBK0ipXQ1pm0ZfbUd85v6N/ur0o+VkbcN+3N/KdUZ9NFakD/BqXbmR
- tAUweKD7dBjLvig8tVQDcflpc0j8WnrH+P4Vd8gZa6GPPOitkJsFR2WT80cpqfEFViHpYF5HI
- CaJNUTKWbUSYJgbgM5aw==
+X-Provags-ID: V03:K1:rPPBDmEKZBgr/Jt0rffhckqx3eDiZmg8fptUPi7Ha1NWOAqpHYc
+ nYu/o+9VCGsq71FSsay0K4C00mrFMStjTd2EoH/e5ack1ul0D20lYvKbltiSjiTxBx5nYuO
+ 8RvKECp3w018b8O5QJNLmD3OALNlMhAOP0oKE7ct5mXDPl7huvtedmrQdvNGI5dTDgQJimw
+ ++B7NzArZpDNt1oba/HZw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:XV+khM9zgX4=:AIohGbNO4T30teiUQeZbu0
+ RA4fFhtvkUF/lEJb8CvQZzOTyNwOYt5PfUBewkw8oTLfAObwr8+SFyew4benw14lTByTXbvAs
+ G+xa8GRUTDRI1fxANuXeTRqFeTw8medp+bOijhkW5kX50IXYulZI797sQfubT6YErhrcs7hes
+ rHAvDxBe5361dPii/T1oeG7qBeOjamWzR3l/6grwbrmJpwzZA/zVgLh6s2iCCX2eHdM9cSxJV
+ x3uk6SQTuL8gUCOcwTL8PwAo1RjGv4vTt3Gon8utIcXwzbHiVdZ5fqZK2y5VbmPenKwsPB5l9
+ 4XfWpBvBHSBIJMnV/td5prPtbi1QFKfTr2X+wbuFr3hEnJRNAopXiLWE8uPwMvpqhY+W7VOH2
+ v2yUgb8rMBigshOUKb5o8EqAQmiVFIaa/ZGhaTQo+qG6fmDgq0Okis2mF5KX91evu30AC1Vqv
+ WXRlupB5rjvk5UTkrcvbKgjT61IOup19gToZPmDc9LwTA/oy7oYdgfqXA4ZTi0KkuLGqsLmY5
+ 4Dz46ecPg5OjKFefhEhgHaJZ+8brQ10zSXvnzp/lfTjB84LMIuJhdXROr84x3HXC63ix4CpD1
+ KOoXMAa0Xh+ROngzbyKQ5rYnePpdLqgcTw9WEYtfydn+2PV70CswVQES/dp2B2hDYxk10Amk7
+ fBP1TODi7Ke56nsP26NbcvCVyh9x8Yi4j66hOZvNUeAeYUMF1VP8pzmlfpWolPFo6a0ip+Bsz
+ R9ikv+2obFrFMf94QKEUKj9LKc5kanKlcu04TeM6gSYssM3TvMqjIWc099aGAfuePFthH2L4x
+ Ht7i1U1CUw5Eh2dM5PUvG/deNvAnwOGLrMBjfeU1nRRKMe2xJLiLLbB7DYd0Njwqld7v+o+rK
+ WqobvkK2BfkNTj3zQgzg==
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Message-ID: <20191010203005.rjt-oDqYLWksz0FKucs4LjqRLQwRj73A0lrRQpQK5to@z>
+Message-ID: <20191010203007.R3tkDrXKQeaPDzzIYxKKkisbiNCFf0eOOyDy6YJGlO0@z>
 
-The s3c_gpio_cfgall_range() function is an internal interface of
-the samsung gpio driver and should not be called directly by drivers,
-so move the iis pin initialization into the boards.
+Rather than call the internal s3c_gpio_cfgall_range() function
+through a platform header, move the code into the set_power
+callback that is already exported by the board, and add
+a default implementation.
 
-Note that the s3c2412-i2s driver has no boards using it in
-mainline linux, the driver gets selected for the jive machine
-but is never instantiated.
+In DT mode, the code already does not set the pin config,
+so nothing changes there.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-s3c24xx/mach-gta02.c    | 4 ++++
- arch/arm/mach-s3c24xx/mach-h1940.c    | 3 +++
- arch/arm/mach-s3c24xx/mach-mini2440.c | 5 +++++
- arch/arm/mach-s3c24xx/mach-n30.c      | 5 +++++
- arch/arm/mach-s3c24xx/mach-nexcoder.c | 5 +++++
- arch/arm/mach-s3c24xx/mach-otom.c     | 6 ++++++
- arch/arm/mach-s3c24xx/mach-qt2410.c   | 3 +++
- arch/arm/mach-s3c24xx/mach-rx1950.c   | 3 +++
- arch/arm/mach-s3c24xx/mach-rx3715.c   | 4 ++++
- arch/arm/mach-s3c24xx/mach-smdk2410.c | 5 +++++
- arch/arm/mach-s3c24xx/mach-smdk2413.c | 4 ++++
- arch/arm/mach-s3c24xx/mach-smdk2440.c | 6 +++++-
- arch/arm/mach-s3c24xx/mach-vstms.c    | 6 +++++-
- arch/arm/mach-s3c24xx/simtec-audio.c  | 6 ++++++
- sound/soc/samsung/s3c2412-i2s.c       | 7 -------
- sound/soc/samsung/s3c24xx-i2s.c       | 7 -------
- 16 files changed, 63 insertions(+), 16 deletions(-)
+ arch/arm/mach-s3c24xx/include/mach/pm-core.h |  1 +
+ arch/arm/mach-s3c24xx/mach-amlm5900.c        | 15 +++++
+ arch/arm/mach-s3c24xx/mach-at2440evb.c       | 10 ++-
+ arch/arm/mach-s3c24xx/mach-gta02.c           | 15 +++++
+ arch/arm/mach-s3c24xx/mach-h1940.c           |  8 +++
+ arch/arm/mach-s3c24xx/mach-mini2440.c        |  9 ++-
+ arch/arm/mach-s3c24xx/mach-n30.c             |  9 +++
+ arch/arm/mach-s3c24xx/mach-qt2410.c          | 15 +++++
+ arch/arm/mach-s3c24xx/mach-rx1950.c          |  9 +++
+ arch/arm/mach-s3c24xx/mach-tct_hammer.c      | 15 +++++
+ arch/arm/plat-samsung/devs.c                 | 29 ++++++++
+ drivers/mmc/host/s3cmci.c                    | 69 +++++---------------
+ include/linux/platform_data/mmc-s3cmci.h     |  2 +
+ 13 files changed, 152 insertions(+), 54 deletions(-)
 
-diff --git a/arch/arm/mach-s3c24xx/mach-gta02.c b/arch/arm/mach-s3c24xx/mach-gta02.c
-index 526fd0933289..1ca0460d82f4 100644
---- a/arch/arm/mach-s3c24xx/mach-gta02.c
-+++ b/arch/arm/mach-s3c24xx/mach-gta02.c
-@@ -540,6 +540,10 @@ static void __init gta02_machine_init(void)
+diff --git a/arch/arm/mach-s3c24xx/include/mach/pm-core.h b/arch/arm/mach-s3c24xx/include/mach/pm-core.h
+index 8f87606c4cdc..a22b4a37ee57 100644
+--- a/arch/arm/mach-s3c24xx/include/mach/pm-core.h
++++ b/arch/arm/mach-s3c24xx/include/mach/pm-core.h
+@@ -12,6 +12,7 @@
  
- 	i2c_register_board_info(0, gta02_i2c_devs, ARRAY_SIZE(gta02_i2c_devs));
+ #include "regs-clock.h"
+ #include "regs-irq.h"
++#include <mach/irqs.h>
  
-+	/* Configure the I2S pins (GPE0...GPE4) in correct mode */
-+	s3c_gpio_cfgall_range(S3C2410_GPE(0), 5, S3C_GPIO_SFN(2),
-+			      S3C_GPIO_PULL_NONE);
-+
- 	gpiod_add_lookup_table(&gta02_audio_gpio_table);
- 	platform_add_devices(gta02_devices, ARRAY_SIZE(gta02_devices));
- 	pm_power_off = gta02_poweroff;
-diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-s3c24xx/mach-h1940.c
-index 922d53bacbdf..11f705fb5e32 100644
---- a/arch/arm/mach-s3c24xx/mach-h1940.c
-+++ b/arch/arm/mach-s3c24xx/mach-h1940.c
-@@ -709,6 +709,9 @@ static void __init h1940_init(void)
- 	s3c24xx_fb_set_platdata(&h1940_fb_info);
- 	gpiod_add_lookup_table(&h1940_mmc_gpio_table);
- 	gpiod_add_lookup_table(&h1940_audio_gpio_table);
-+	/* Configure the I2S pins (GPE0...GPE4) in correct mode */
-+	s3c_gpio_cfgall_range(S3C2410_GPE(0), 5, S3C_GPIO_SFN(2),
-+			      S3C_GPIO_PULL_NONE);
- 	s3c24xx_mci_set_platdata(&h1940_mmc_cfg);
-  	s3c24xx_udc_set_platdata(&h1940_udc_cfg);
- 	s3c24xx_ts_set_platdata(&h1940_ts_cfg);
-diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
-index 9035f868fb34..bb44b8704d64 100644
---- a/arch/arm/mach-s3c24xx/mach-mini2440.c
-+++ b/arch/arm/mach-s3c24xx/mach-mini2440.c
-@@ -685,6 +685,11 @@ static void __init mini2440_init(void)
- 		s3c_gpio_setpull(mini2440_buttons[i].gpio, S3C_GPIO_PULL_UP);
- 		s3c_gpio_cfgpin(mini2440_buttons[i].gpio, S3C2410_GPIO_INPUT);
- 	}
-+
-+	/* Configure the I2S pins (GPE0...GPE4) in correct mode */
-+	s3c_gpio_cfgall_range(S3C2410_GPE(0), 5, S3C_GPIO_SFN(2),
-+			      S3C_GPIO_PULL_NONE);
-+
- 	if (features.lcd_index != -1) {
- 		int li;
- 
-diff --git a/arch/arm/mach-s3c24xx/mach-n30.c b/arch/arm/mach-s3c24xx/mach-n30.c
-index d856f23939af..1836f1cc0992 100644
---- a/arch/arm/mach-s3c24xx/mach-n30.c
-+++ b/arch/arm/mach-s3c24xx/mach-n30.c
-@@ -36,6 +36,7 @@
- #include <mach/regs-gpio.h>
- #include <mach/regs-lcd.h>
- #include <mach/gpio-samsung.h>
-+#include <plat/gpio-cfg.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/mach/irq.h>
-@@ -570,6 +571,10 @@ static void __init n30_init(void)
- 			      S3C2410_MISCCR_USBSUSPND0 |
- 			      S3C2410_MISCCR_USBSUSPND1, 0x0);
- 
-+	/* Configure the I2S pins (GPE0...GPE4) in correct mode */
-+	s3c_gpio_cfgall_range(S3C2410_GPE(0), 5, S3C_GPIO_SFN(2),
-+			      S3C_GPIO_PULL_NONE);
-+
- 	if (machine_is_n30()) {
- 		/* Turn off suspend on both USB ports, and switch the
- 		 * selectable USB port to USB device mode. */
-diff --git a/arch/arm/mach-s3c24xx/mach-nexcoder.c b/arch/arm/mach-s3c24xx/mach-nexcoder.c
-index c2f34758ccb6..a05c92b6de2e 100644
---- a/arch/arm/mach-s3c24xx/mach-nexcoder.c
-+++ b/arch/arm/mach-s3c24xx/mach-nexcoder.c
-@@ -145,6 +145,11 @@ static void __init nexcoder_init_time(void)
- static void __init nexcoder_init(void)
+ static inline void s3c_pm_debug_init_uart(void)
  {
- 	s3c_i2c0_set_platdata(NULL);
-+
-+	/* Configure the I2S pins (GPE0...GPE4) in correct mode */
-+	s3c_gpio_cfgall_range(S3C2410_GPE(0), 5, S3C_GPIO_SFN(2),
-+			      S3C_GPIO_PULL_NONE);
-+
- 	platform_add_devices(nexcoder_devices, ARRAY_SIZE(nexcoder_devices));
+diff --git a/arch/arm/mach-s3c24xx/mach-amlm5900.c b/arch/arm/mach-s3c24xx/mach-amlm5900.c
+index 9a9daf526d0c..40ad23b52bc0 100644
+--- a/arch/arm/mach-s3c24xx/mach-amlm5900.c
++++ b/arch/arm/mach-s3c24xx/mach-amlm5900.c
+@@ -13,6 +13,7 @@
+ #include <linux/list.h>
+ #include <linux/timer.h>
+ #include <linux/init.h>
++#include <linux/gpio/machine.h>
+ #include <linux/gpio.h>
+ #include <linux/device.h>
+ #include <linux/platform_device.h>
+@@ -124,6 +125,19 @@ static struct s3c2410_uartcfg amlm5900_uartcfgs[] = {
+ 	}
  };
  
-diff --git a/arch/arm/mach-s3c24xx/mach-otom.c b/arch/arm/mach-s3c24xx/mach-otom.c
-index 4e24d89e870b..c834f16e5ba0 100644
---- a/arch/arm/mach-s3c24xx/mach-otom.c
-+++ b/arch/arm/mach-s3c24xx/mach-otom.c
-@@ -24,6 +24,8 @@
++static struct gpiod_lookup_table amlm5900_mmc_gpio_table = {
++	.dev_id = "s3c2410-sdi",
++	.table = {
++		/* bus pins */
++		GPIO_LOOKUP_IDX("GPIOE",  5, "bus", 0, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  6, "bus", 1, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  7, "bus", 2, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  8, "bus", 3, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  9, "bus", 4, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE", 10, "bus", 5, GPIO_ACTIVE_HIGH),
++		{ },
++	},
++};
  
- #include <mach/hardware.h>
- #include <mach/regs-gpio.h>
-+#include <mach/gpio-samsung.h>
-+#include <plat/gpio-cfg.h>
- 
- #include <plat/cpu.h>
- #include <plat/devs.h>
-@@ -107,6 +109,10 @@ static void __init otom11_init_time(void)
- static void __init otom11_init(void)
- {
+ static struct platform_device *amlm5900_devices[] __initdata = {
+ #ifdef CONFIG_FB_S3C2410
+@@ -219,6 +233,7 @@ static void __init amlm5900_init(void)
+ 	s3c24xx_fb_set_platdata(&amlm5900_fb_info);
+ #endif
  	s3c_i2c0_set_platdata(NULL);
-+
-+	/* Configure the I2S pins (GPE0...GPE4) in correct mode */
-+	s3c_gpio_cfgall_range(S3C2410_GPE(0), 5, S3C_GPIO_SFN(2),
-+			      S3C_GPIO_PULL_NONE);
- 	platform_add_devices(otom11_devices, ARRAY_SIZE(otom11_devices));
++	gpiod_add_lookup_table(&amlm5900_mmc_gpio_table);
+ 	platform_add_devices(amlm5900_devices, ARRAY_SIZE(amlm5900_devices));
  }
+ 
+diff --git a/arch/arm/mach-s3c24xx/mach-at2440evb.c b/arch/arm/mach-s3c24xx/mach-at2440evb.c
+index 58c5ef3cf1d7..3a793aaf2cba 100644
+--- a/arch/arm/mach-s3c24xx/mach-at2440evb.c
++++ b/arch/arm/mach-s3c24xx/mach-at2440evb.c
+@@ -136,7 +136,7 @@ static struct platform_device at2440evb_device_eth = {
+ };
+ 
+ static struct s3c24xx_mci_pdata at2440evb_mci_pdata __initdata = {
+-	/* Intentionally left blank */
++	.set_power = s3c24xx_mci_def_set_power,
+ };
+ 
+ static struct gpiod_lookup_table at2440evb_mci_gpio_table = {
+@@ -144,10 +144,18 @@ static struct gpiod_lookup_table at2440evb_mci_gpio_table = {
+ 	.table = {
+ 		/* Card detect S3C2410_GPG(10) */
+ 		GPIO_LOOKUP("GPG", 10, "cd", GPIO_ACTIVE_LOW),
++		/* bus pins */
++		GPIO_LOOKUP_IDX("GPIOE",  5, "bus", 0, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  6, "bus", 1, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  7, "bus", 2, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  8, "bus", 3, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  9, "bus", 4, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE", 10, "bus", 5, GPIO_ACTIVE_HIGH),
+ 		{ },
+ 	},
+ };
+ 
++
+ /* 7" LCD panel */
+ 
+ static struct s3c2410fb_display at2440evb_lcd_cfg __initdata = {
+diff --git a/arch/arm/mach-s3c24xx/mach-gta02.c b/arch/arm/mach-s3c24xx/mach-gta02.c
+index 1ca0460d82f4..61b8c6badeb8 100644
+--- a/arch/arm/mach-s3c24xx/mach-gta02.c
++++ b/arch/arm/mach-s3c24xx/mach-gta02.c
+@@ -489,6 +489,20 @@ static struct platform_device gta02_audio = {
+ 	.id = -1,
+ };
+ 
++static struct gpiod_lookup_table gta02_mmc_gpio_table = {
++	.dev_id = "s3c2410-sdi",
++	.table = {
++		/* bus pins */
++		GPIO_LOOKUP_IDX("GPIOE",  5, "bus", 0, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  6, "bus", 1, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  7, "bus", 2, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  8, "bus", 3, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  9, "bus", 4, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE", 10, "bus", 5, GPIO_ACTIVE_HIGH),
++		{ },
++	},
++};
++
+ static void __init gta02_map_io(void)
+ {
+ 	s3c24xx_init_io(gta02_iodesc, ARRAY_SIZE(gta02_iodesc));
+@@ -545,6 +559,7 @@ static void __init gta02_machine_init(void)
+ 			      S3C_GPIO_PULL_NONE);
+ 
+ 	gpiod_add_lookup_table(&gta02_audio_gpio_table);
++	gpiod_add_lookup_table(&gta02_mmc_gpio_table);
+ 	platform_add_devices(gta02_devices, ARRAY_SIZE(gta02_devices));
+ 	pm_power_off = gta02_poweroff;
+ 
+diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-s3c24xx/mach-h1940.c
+index 11f705fb5e32..24f785da7659 100644
+--- a/arch/arm/mach-s3c24xx/mach-h1940.c
++++ b/arch/arm/mach-s3c24xx/mach-h1940.c
+@@ -462,6 +462,7 @@ static void h1940_set_mmc_power(unsigned char power_mode, unsigned short vdd)
+ static struct s3c24xx_mci_pdata h1940_mmc_cfg __initdata = {
+ 	.set_power     = h1940_set_mmc_power,
+ 	.ocr_avail     = MMC_VDD_32_33,
++	.set_power = s3c24xx_mci_def_set_power,
+ };
+ 
+ static struct gpiod_lookup_table h1940_mmc_gpio_table = {
+@@ -471,6 +472,13 @@ static struct gpiod_lookup_table h1940_mmc_gpio_table = {
+ 		GPIO_LOOKUP("GPF", 5, "cd", GPIO_ACTIVE_LOW),
+ 		/* Write protect S3C2410_GPH(8) */
+ 		GPIO_LOOKUP("GPH", 8, "wp", GPIO_ACTIVE_LOW),
++		/* bus pins */
++		GPIO_LOOKUP_IDX("GPIOE",  5, "bus", 0, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  6, "bus", 1, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  7, "bus", 2, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  8, "bus", 3, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  9, "bus", 4, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE", 10, "bus", 5, GPIO_ACTIVE_HIGH),
+ 		{ },
+ 	},
+ };
+diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
+index 894d43ff94f1..5c000efdf0e8 100644
+--- a/arch/arm/mach-s3c24xx/mach-mini2440.c
++++ b/arch/arm/mach-s3c24xx/mach-mini2440.c
+@@ -236,7 +236,7 @@ static struct s3c2410fb_mach_info mini2440_fb_info __initdata = {
+ 
+ static struct s3c24xx_mci_pdata mini2440_mmc_cfg __initdata = {
+ 	.wprotect_invert	= 1,
+-	.set_power		= NULL,
++	.set_power		= s3c24xx_mci_def_set_power,
+ 	.ocr_avail		= MMC_VDD_32_33|MMC_VDD_33_34,
+ };
+ 
+@@ -247,6 +247,13 @@ static struct gpiod_lookup_table mini2440_mmc_gpio_table = {
+ 		GPIO_LOOKUP("GPG", 8, "cd", GPIO_ACTIVE_LOW),
+ 		/* Write protect S3C2410_GPH(8) */
+ 		GPIO_LOOKUP("GPH", 8, "wp", GPIO_ACTIVE_HIGH),
++		/* bus pins */
++		GPIO_LOOKUP_IDX("GPIOE",  5, "bus", 0, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  6, "bus", 1, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  7, "bus", 2, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  8, "bus", 3, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  9, "bus", 4, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE", 10, "bus", 5, GPIO_ACTIVE_HIGH),
+ 		{ },
+ 	},
+ };
+diff --git a/arch/arm/mach-s3c24xx/mach-n30.c b/arch/arm/mach-s3c24xx/mach-n30.c
+index 5f5ca4b7015c..8d7ad61e9930 100644
+--- a/arch/arm/mach-s3c24xx/mach-n30.c
++++ b/arch/arm/mach-s3c24xx/mach-n30.c
+@@ -339,6 +339,8 @@ static struct s3c2410fb_mach_info n30_fb_info __initdata = {
+ 
+ static void n30_sdi_set_power(unsigned char power_mode, unsigned short vdd)
+ {
++	s3c24xx_mci_def_set_power(power_mode, vdd);
++
+ 	switch (power_mode) {
+ 	case MMC_POWER_ON:
+ 	case MMC_POWER_UP:
+@@ -364,6 +366,13 @@ static struct gpiod_lookup_table n30_mci_gpio_table = {
+ 		/* Write protect S3C2410_GPG(10) */
+ 		GPIO_LOOKUP("GPG", 10, "wp", GPIO_ACTIVE_LOW),
+ 		{ },
++		/* bus pins */
++		GPIO_LOOKUP_IDX("GPIOE",  5, "bus", 0, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  6, "bus", 1, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  7, "bus", 2, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  8, "bus", 3, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  9, "bus", 4, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE", 10, "bus", 5, GPIO_ACTIVE_HIGH),
+ 	},
+ };
  
 diff --git a/arch/arm/mach-s3c24xx/mach-qt2410.c b/arch/arm/mach-s3c24xx/mach-qt2410.c
-index 5d48e5b6e738..3cf8423c76c6 100644
+index 6686f02a3f4f..9b47b8434f10 100644
 --- a/arch/arm/mach-s3c24xx/mach-qt2410.c
 +++ b/arch/arm/mach-s3c24xx/mach-qt2410.c
-@@ -337,6 +337,9 @@ static void __init qt2410_machine_init(void)
- 	s3c24xx_udc_set_platdata(&qt2410_udc_cfg);
- 	s3c_i2c0_set_platdata(NULL);
+@@ -219,6 +219,20 @@ static struct gpiod_lookup_table qt2410_spi_gpiod_table = {
+ 	},
+ };
  
-+	/* Configure the I2S pins (GPE0...GPE4) in correct mode */
-+	s3c_gpio_cfgall_range(S3C2410_GPE(0), 5, S3C_GPIO_SFN(2),
-+			      S3C_GPIO_PULL_NONE);
++static struct gpiod_lookup_table qt2410_mmc_gpiod_table = {
++	.dev_id = "s3c2410-sdi",
++	.table = {
++		/* bus pins */
++		GPIO_LOOKUP_IDX("GPIOE",  5, "bus", 0, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  6, "bus", 1, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  7, "bus", 2, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  8, "bus", 3, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  9, "bus", 4, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE", 10, "bus", 5, GPIO_ACTIVE_HIGH),
++		{ },
++	},
++};
++
+ /* Board devices */
+ 
+ static struct platform_device *qt2410_devices[] __initdata = {
+@@ -342,6 +356,7 @@ static void __init qt2410_machine_init(void)
+ 	s3c_gpio_cfgall_range(S3C2410_GPE(0), 5, S3C_GPIO_SFN(2),
+ 			      S3C_GPIO_PULL_NONE);
  	gpiod_add_lookup_table(&qt2410_spi_gpiod_table);
++	gpiod_add_lookup_table(&qt2410_mmc_gpiod_table);
  	platform_add_devices(qt2410_devices, ARRAY_SIZE(qt2410_devices));
  	s3c_pm_init();
+ }
 diff --git a/arch/arm/mach-s3c24xx/mach-rx1950.c b/arch/arm/mach-s3c24xx/mach-rx1950.c
-index 9f3b0f18cd36..4eeede398775 100644
+index 4eeede398775..820e626f5129 100644
 --- a/arch/arm/mach-s3c24xx/mach-rx1950.c
 +++ b/arch/arm/mach-s3c24xx/mach-rx1950.c
-@@ -825,6 +825,9 @@ static void __init rx1950_init_machine(void)
+@@ -545,6 +545,8 @@ static struct platform_device rx1950_backlight = {
  
- 	pwm_add_table(rx1950_pwm_lookup, ARRAY_SIZE(rx1950_pwm_lookup));
- 	gpiod_add_lookup_table(&rx1950_audio_gpio_table);
-+	/* Configure the I2S pins (GPE0...GPE4) in correct mode */
-+	s3c_gpio_cfgall_range(S3C2410_GPE(0), 5, S3C_GPIO_SFN(2),
-+			      S3C_GPIO_PULL_NONE);
- 	platform_add_devices(rx1950_devices, ARRAY_SIZE(rx1950_devices));
- 
- 	i2c_register_board_info(0, rx1950_i2c_devices,
-diff --git a/arch/arm/mach-s3c24xx/mach-rx3715.c b/arch/arm/mach-s3c24xx/mach-rx3715.c
-index 529c6faf862f..2542c523ad46 100644
---- a/arch/arm/mach-s3c24xx/mach-rx3715.c
-+++ b/arch/arm/mach-s3c24xx/mach-rx3715.c
-@@ -39,6 +39,7 @@
- #include <mach/regs-gpio.h>
- #include <mach/regs-lcd.h>
- #include <mach/gpio-samsung.h>
-+#include <plat/gpio-cfg.h>
- 
- #include <plat/cpu.h>
- #include <plat/devs.h>
-@@ -199,6 +200,9 @@ static void __init rx3715_init_machine(void)
- 
- 	s3c_nand_set_platdata(&rx3715_nand_info);
- 	s3c24xx_fb_set_platdata(&rx3715_fb_info);
-+	/* Configure the I2S pins (GPE0...GPE4) in correct mode */
-+	s3c_gpio_cfgall_range(S3C2410_GPE(0), 5, S3C_GPIO_SFN(2),
-+			      S3C_GPIO_PULL_NONE);
- 	platform_add_devices(rx3715_devices, ARRAY_SIZE(rx3715_devices));
- }
- 
-diff --git a/arch/arm/mach-s3c24xx/mach-smdk2410.c b/arch/arm/mach-s3c24xx/mach-smdk2410.c
-index 18dfef52c8bf..02adaac4d6df 100644
---- a/arch/arm/mach-s3c24xx/mach-smdk2410.c
-+++ b/arch/arm/mach-s3c24xx/mach-smdk2410.c
-@@ -19,6 +19,8 @@
- #include <linux/serial_s3c.h>
- #include <linux/platform_device.h>
- #include <linux/io.h>
-+#include <mach/gpio-samsung.h>
-+#include <plat/gpio-cfg.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
-@@ -94,6 +96,9 @@ static void __init smdk2410_init(void)
+ static void rx1950_set_mmc_power(unsigned char power_mode, unsigned short vdd)
  {
- 	s3c_i2c0_set_platdata(NULL);
- 	platform_add_devices(smdk2410_devices, ARRAY_SIZE(smdk2410_devices));
-+	/* Configure the I2S pins (GPE0...GPE4) in correct mode */
-+	s3c_gpio_cfgall_range(S3C2410_GPE(0), 5, S3C_GPIO_SFN(2),
-+			      S3C_GPIO_PULL_NONE);
- 	smdk_machine_init();
- }
- 
-diff --git a/arch/arm/mach-s3c24xx/mach-smdk2413.c b/arch/arm/mach-s3c24xx/mach-smdk2413.c
-index ca80167f268d..2bba4f1fa7ee 100644
---- a/arch/arm/mach-s3c24xx/mach-smdk2413.c
-+++ b/arch/arm/mach-s3c24xx/mach-smdk2413.c
-@@ -37,6 +37,7 @@
- #include <linux/platform_data/i2c-s3c2410.h>
- #include <mach/gpio-samsung.h>
- #include <mach/fb.h>
-+#include <plat/gpio-cfg.h>
- 
- #include <plat/devs.h>
- #include <plat/cpu.h>
-@@ -119,6 +120,9 @@ static void __init smdk2413_machine_init(void)
- 
-  	s3c24xx_udc_set_platdata(&smdk2413_udc_cfg);
- 	s3c_i2c0_set_platdata(NULL);
-+	/* Configure the I2S pins (GPE0...GPE4) in correct mode */
-+	s3c_gpio_cfgall_range(S3C2410_GPE(0), 5, S3C_GPIO_SFN(2),
-+			      S3C_GPIO_PULL_NONE);
- 
- 	platform_add_devices(smdk2413_devices, ARRAY_SIZE(smdk2413_devices));
- 	smdk_machine_init();
-diff --git a/arch/arm/mach-s3c24xx/mach-smdk2440.c b/arch/arm/mach-s3c24xx/mach-smdk2440.c
-index 7bafcd8ea104..f0fceda3e8e6 100644
---- a/arch/arm/mach-s3c24xx/mach-smdk2440.c
-+++ b/arch/arm/mach-s3c24xx/mach-smdk2440.c
-@@ -29,6 +29,8 @@
- 
- #include <mach/regs-gpio.h>
- #include <mach/regs-lcd.h>
-+#include <mach/gpio-samsung.h>
-+#include <plat/gpio-cfg.h>
- 
- #include <mach/fb.h>
- #include <linux/platform_data/i2c-s3c2410.h>
-@@ -167,7 +169,9 @@ static void __init smdk2440_machine_init(void)
- {
- 	s3c24xx_fb_set_platdata(&smdk2440_fb_info);
- 	s3c_i2c0_set_platdata(NULL);
--
-+	/* Configure the I2S pins (GPE0...GPE4) in correct mode */
-+	s3c_gpio_cfgall_range(S3C2410_GPE(0), 5, S3C_GPIO_SFN(2),
-+			      S3C_GPIO_PULL_NONE);
- 	platform_add_devices(smdk2440_devices, ARRAY_SIZE(smdk2440_devices));
- 	smdk_machine_init();
- }
-diff --git a/arch/arm/mach-s3c24xx/mach-vstms.c b/arch/arm/mach-s3c24xx/mach-vstms.c
-index d76b28b65e65..f333ca05de68 100644
---- a/arch/arm/mach-s3c24xx/mach-vstms.c
-+++ b/arch/arm/mach-s3c24xx/mach-vstms.c
-@@ -31,6 +31,8 @@
- 
- #include <mach/regs-gpio.h>
- #include <mach/regs-lcd.h>
-+#include <mach/gpio-samsung.h>
-+#include <plat/gpio-cfg.h>
- 
- #include <mach/fb.h>
- 
-@@ -149,7 +151,9 @@ static void __init vstms_init(void)
- {
- 	s3c_i2c0_set_platdata(NULL);
- 	s3c_nand_set_platdata(&vstms_nand_info);
--
-+	/* Configure the I2S pins (GPE0...GPE4) in correct mode */
-+	s3c_gpio_cfgall_range(S3C2410_GPE(0), 5, S3C_GPIO_SFN(2),
-+			      S3C_GPIO_PULL_NONE);
- 	platform_add_devices(vstms_devices, ARRAY_SIZE(vstms_devices));
- }
- 
-diff --git a/arch/arm/mach-s3c24xx/simtec-audio.c b/arch/arm/mach-s3c24xx/simtec-audio.c
-index 12e17f82dae3..0c12ba4a4704 100644
---- a/arch/arm/mach-s3c24xx/simtec-audio.c
-+++ b/arch/arm/mach-s3c24xx/simtec-audio.c
-@@ -14,6 +14,8 @@
- 
- #include <mach/hardware.h>
- #include <mach/regs-gpio.h>
-+#include <mach/gpio-samsung.h>
-+#include <plat/gpio-cfg.h>
- 
- #include <linux/platform_data/asoc-s3c24xx_simtec.h>
- #include <plat/devs.h>
-@@ -65,6 +67,10 @@ int __init simtec_audio_add(const char *name, bool has_lr_routing,
- 	if (has_lr_routing)
- 		simtec_audio_platdata.startup = simtec_audio_startup_lrroute;
- 
-+	/* Configure the I2S pins (GPE0...GPE4) in correct mode */
-+	s3c_gpio_cfgall_range(S3C2410_GPE(0), 5, S3C_GPIO_SFN(2),
-+			      S3C_GPIO_PULL_NONE);
++	s3c24xx_mci_def_set_power(power_mode, vdd);
 +
- 	platform_device_register(&s3c_device_iis);
- 	platform_device_register(&simtec_audio_dev);
- 	return 0;
-diff --git a/sound/soc/samsung/s3c2412-i2s.c b/sound/soc/samsung/s3c2412-i2s.c
-index 5bf571762e89..fd17765670f1 100644
---- a/sound/soc/samsung/s3c2412-i2s.c
-+++ b/sound/soc/samsung/s3c2412-i2s.c
-@@ -19,9 +19,6 @@
- #include <sound/soc.h>
- #include <sound/pcm_params.h>
+ 	switch (power_mode) {
+ 	case MMC_POWER_OFF:
+ 		gpio_direction_output(S3C2410_GPJ(1), 0);
+@@ -570,6 +572,13 @@ static struct gpiod_lookup_table rx1950_mmc_gpio_table = {
+ 		GPIO_LOOKUP("GPF", 5, "cd", GPIO_ACTIVE_LOW),
+ 		/* Write protect S3C2410_GPH(8) */
+ 		GPIO_LOOKUP("GPH", 8, "wp", GPIO_ACTIVE_LOW),
++		/* bus pins */
++		GPIO_LOOKUP_IDX("GPIOE",  5, "bus", 0, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  6, "bus", 1, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  7, "bus", 2, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  8, "bus", 3, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  9, "bus", 4, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE", 10, "bus", 5, GPIO_ACTIVE_HIGH),
+ 		{ },
+ 	},
+ };
+diff --git a/arch/arm/mach-s3c24xx/mach-tct_hammer.c b/arch/arm/mach-s3c24xx/mach-tct_hammer.c
+index 8d8ddd6ea305..d6dbbe6759bc 100644
+--- a/arch/arm/mach-s3c24xx/mach-tct_hammer.c
++++ b/arch/arm/mach-s3c24xx/mach-tct_hammer.c
+@@ -7,6 +7,7 @@
+ // derived from linux/arch/arm/mach-s3c2410/mach-bast.c, written by
+ // Ben Dooks <ben@simtec.co.uk>
  
--#include <mach/gpio-samsung.h>
++#include <linux/gpio/machine.h>
+ #include <linux/kernel.h>
+ #include <linux/types.h>
+ #include <linux/interrupt.h>
+@@ -103,6 +104,19 @@ static struct s3c2410_uartcfg tct_hammer_uartcfgs[] = {
+ 	}
+ };
+ 
++static struct gpiod_lookup_table tct_hammer_mmc_gpio_table = {
++	.dev_id = "s3c2410-sdi",
++	.table = {
++		/* bus pins */
++		GPIO_LOOKUP_IDX("GPIOE",  5, "bus", 0, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  6, "bus", 1, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  7, "bus", 2, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  8, "bus", 3, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE",  9, "bus", 4, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("GPIOE", 10, "bus", 5, GPIO_ACTIVE_HIGH),
++		{ },
++	},
++};
+ 
+ static struct platform_device *tct_hammer_devices[] __initdata = {
+ 	&s3c_device_adc,
+@@ -131,6 +145,7 @@ static void __init tct_hammer_init_time(void)
+ static void __init tct_hammer_init(void)
+ {
+ 	s3c_i2c0_set_platdata(NULL);
++	gpiod_add_lookup_table(&tct_hammer_mmc_gpio_table);
+ 	platform_add_devices(tct_hammer_devices, ARRAY_SIZE(tct_hammer_devices));
+ }
+ 
+diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+index ddd90f0bb380..c0739bda060b 100644
+--- a/arch/arm/plat-samsung/devs.c
++++ b/arch/arm/plat-samsung/devs.c
+@@ -5,6 +5,7 @@
+ //
+ // Base SAMSUNG platform device definitions
+ 
++#include <linux/gpio.h>
+ #include <linux/kernel.h>
+ #include <linux/types.h>
+ #include <linux/interrupt.h>
+@@ -40,6 +41,8 @@
+ #include <mach/dma.h>
+ #include <mach/irqs.h>
+ #include <mach/map.h>
++#include <mach/gpio-samsung.h>
++#include <plat/gpio-cfg.h>
+ #include <mach/regs-s3c2443-clock.h>
+ 
+ #include <plat/cpu.h>
+@@ -833,16 +836,42 @@ struct platform_device s3c_device_rtc = {
+ /* SDI */
+ 
+ #ifdef CONFIG_PLAT_S3C24XX
++void s3c24xx_mci_def_set_power(unsigned char power_mode, unsigned short vdd)
++{
++	switch (power_mode) {
++	case MMC_POWER_ON:
++	case MMC_POWER_UP:
++		/* Configure GPE5...GPE10 pins in SD mode */
++		s3c_gpio_cfgall_range(S3C2410_GPE(5), 6, S3C_GPIO_SFN(2),
++				      S3C_GPIO_PULL_NONE);
++		break;
++
++	case MMC_POWER_OFF:
++	default:
++		gpio_direction_output(S3C2410_GPE(5), 0);
++		break;
++	}
++}
++
+ static struct resource s3c_sdi_resource[] = {
+ 	[0] = DEFINE_RES_MEM(S3C24XX_PA_SDI, S3C24XX_SZ_SDI),
+ 	[1] = DEFINE_RES_IRQ(IRQ_SDI),
+ };
+ 
++static struct s3c24xx_mci_pdata s3cmci_def_pdata = {
++	/* This is currently here to avoid a number of if (host->pdata)
++	 * checks. Any zero fields to ensure reasonable defaults are picked. */
++	.no_wprotect = 1,
++	.no_detect = 1,
++	.set_power = s3c24xx_mci_def_set_power,
++};
++
+ struct platform_device s3c_device_sdi = {
+ 	.name		= "s3c2410-sdi",
+ 	.id		= -1,
+ 	.num_resources	= ARRAY_SIZE(s3c_sdi_resource),
+ 	.resource	= s3c_sdi_resource,
++	.dev.platform_data = &s3cmci_def_pdata,
+ };
+ 
+ void __init s3c24xx_mci_set_platdata(struct s3c24xx_mci_pdata *pdata)
+diff --git a/drivers/mmc/host/s3cmci.c b/drivers/mmc/host/s3cmci.c
+index bce9c33bc4b5..c2b46640a78b 100644
+--- a/drivers/mmc/host/s3cmci.c
++++ b/drivers/mmc/host/s3cmci.c
+@@ -25,9 +25,7 @@
+ #include <linux/of_device.h>
+ #include <linux/mmc/slot-gpio.h>
+ 
 -#include <plat/gpio-cfg.h>
--
- #include "dma.h"
- #include "regs-i2s-v2.h"
- #include "s3c2412-i2s.h"
-@@ -70,10 +67,6 @@ static int s3c2412_i2s_probe(struct snd_soc_dai *dai)
- 	if (ret)
- 		goto err;
- 
--	/* Configure the I2S pins (GPE0...GPE4) in correct mode */
--	s3c_gpio_cfgall_range(S3C2410_GPE(0), 5, S3C_GPIO_SFN(2),
--			      S3C_GPIO_PULL_NONE);
--
- 	return 0;
- 
- err:
-diff --git a/sound/soc/samsung/s3c24xx-i2s.c b/sound/soc/samsung/s3c24xx-i2s.c
-index 92bdaf0878f8..5ca263f6a39e 100644
---- a/sound/soc/samsung/s3c24xx-i2s.c
-+++ b/sound/soc/samsung/s3c24xx-i2s.c
-@@ -18,10 +18,7 @@
- #include <sound/soc.h>
- #include <sound/pcm_params.h>
- 
+ #include <mach/dma.h>
 -#include <mach/gpio-samsung.h>
--#include <plat/gpio-cfg.h>
- #include "regs-iis.h"
+ 
+ #include <linux/platform_data/mmc-s3cmci.h>
+ 
+@@ -307,7 +305,8 @@ static inline void clear_imask(struct s3cmci_host *host)
+ static void s3cmci_check_sdio_irq(struct s3cmci_host *host)
+ {
+ 	if (host->sdio_irqen) {
+-		if (gpio_get_value(S3C2410_GPE(8)) == 0) {
++		if (host->pdata->bus[3] &&
++		    gpiod_get_value(host->pdata->bus[3]) == 0) {
+ 			pr_debug("%s: signalling irq\n", __func__);
+ 			mmc_signal_sdio_irq(host->mmc);
+ 		}
+@@ -1213,33 +1212,20 @@ static void s3cmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 	switch (ios->power_mode) {
+ 	case MMC_POWER_ON:
+ 	case MMC_POWER_UP:
+-		/* Configure GPE5...GPE10 pins in SD mode */
+-		if (!host->pdev->dev.of_node)
+-			s3c_gpio_cfgall_range(S3C2410_GPE(5), 6, S3C_GPIO_SFN(2),
+-					      S3C_GPIO_PULL_NONE);
 -
- #include "dma.h"
- #include "s3c24xx-i2s.h"
- 
-@@ -348,10 +345,6 @@ static int s3c24xx_i2s_probe(struct snd_soc_dai *dai)
- 	if (ret)
- 		return ret;
- 
--	/* Configure the I2S pins (GPE0...GPE4) in correct mode */
--	s3c_gpio_cfgall_range(S3C2410_GPE(0), 5, S3C_GPIO_SFN(2),
--			      S3C_GPIO_PULL_NONE);
+-		if (host->pdata->set_power)
+-			host->pdata->set_power(ios->power_mode, ios->vdd);
 -
- 	writel(S3C2410_IISCON_IISEN, s3c24xx_i2s.regs + S3C2410_IISCON);
+ 		if (!host->is2440)
+ 			mci_con |= S3C2410_SDICON_FIFORESET;
+-
+ 		break;
  
- 	s3c24xx_snd_txctrl(0);
+ 	case MMC_POWER_OFF:
+ 	default:
+-		if (!host->pdev->dev.of_node)
+-			gpio_direction_output(S3C2410_GPE(5), 0);
+-
+ 		if (host->is2440)
+ 			mci_con |= S3C2440_SDICON_SDRESET;
+-
+-		if (host->pdata->set_power)
+-			host->pdata->set_power(ios->power_mode, ios->vdd);
+-
+ 		break;
+ 	}
+ 
++	if (host->pdata->set_power)
++		host->pdata->set_power(ios->power_mode, ios->vdd);
++
+ 	s3cmci_set_clk(host, ios);
+ 
+ 	/* Set CLOCK_ENABLE */
+@@ -1317,13 +1303,6 @@ static const struct mmc_host_ops s3cmci_ops = {
+ 	.enable_sdio_irq = s3cmci_enable_sdio_irq,
+ };
+ 
+-static struct s3c24xx_mci_pdata s3cmci_def_pdata = {
+-	/* This is currently here to avoid a number of if (host->pdata)
+-	 * checks. Any zero fields to ensure reasonable defaults are picked. */
+-	 .no_wprotect = 1,
+-	 .no_detect = 1,
+-};
+-
+ #ifdef CONFIG_ARM_S3C24XX_CPUFREQ
+ 
+ static int s3cmci_cpufreq_transition(struct notifier_block *nb,
+@@ -1477,24 +1456,21 @@ static int s3cmci_probe_pdata(struct s3cmci_host *host)
+ 	int i, ret;
+ 
+ 	host->is2440 = platform_get_device_id(pdev)->driver_data;
++	pdata = pdev->dev.platform_data;
++	if (!pdata) {
++		dev_err(&pdev->dev, "need platform data");
++		return -ENXIO;
++	}
+ 
+-	for (i = S3C2410_GPE(5); i <= S3C2410_GPE(10); i++) {
+-		ret = gpio_request(i, dev_name(&pdev->dev));
+-		if (ret) {
++	for (i = 0; i < 6; i++) {
++		pdata->bus[i] = devm_gpiod_get_index(&pdev->dev, "bus", i,
++						     GPIOD_OUT_LOW);
++		if (IS_ERR(pdata->bus[i])) {
+ 			dev_err(&pdev->dev, "failed to get gpio %d\n", i);
+-
+-			for (i--; i >= S3C2410_GPE(5); i--)
+-				gpio_free(i);
+-
+-			return ret;
++			return PTR_ERR(pdata->bus[i]);
+ 		}
+ 	}
+ 
+-	if (!pdev->dev.platform_data)
+-		pdev->dev.platform_data = &s3cmci_def_pdata;
+-
+-	pdata = pdev->dev.platform_data;
+-
+ 	if (pdata->no_wprotect)
+ 		mmc->caps2 |= MMC_CAP2_NO_WRITE_PROTECT;
+ 
+@@ -1549,7 +1525,6 @@ static int s3cmci_probe(struct platform_device *pdev)
+ 	struct s3cmci_host *host;
+ 	struct mmc_host	*mmc;
+ 	int ret;
+-	int i;
+ 
+ 	mmc = mmc_alloc_host(sizeof(struct s3cmci_host), &pdev->dev);
+ 	if (!mmc) {
+@@ -1593,7 +1568,7 @@ static int s3cmci_probe(struct platform_device *pdev)
+ 			"failed to get io memory region resource.\n");
+ 
+ 		ret = -ENOENT;
+-		goto probe_free_gpio;
++		goto probe_free_host;
+ 	}
+ 
+ 	host->mem = request_mem_region(host->mem->start,
+@@ -1602,7 +1577,7 @@ static int s3cmci_probe(struct platform_device *pdev)
+ 	if (!host->mem) {
+ 		dev_err(&pdev->dev, "failed to request io memory region.\n");
+ 		ret = -ENOENT;
+-		goto probe_free_gpio;
++		goto probe_free_host;
+ 	}
+ 
+ 	host->base = ioremap(host->mem->start, resource_size(host->mem));
+@@ -1726,11 +1701,6 @@ static int s3cmci_probe(struct platform_device *pdev)
+  probe_free_mem_region:
+ 	release_mem_region(host->mem->start, resource_size(host->mem));
+ 
+- probe_free_gpio:
+-	if (!pdev->dev.of_node)
+-		for (i = S3C2410_GPE(5); i <= S3C2410_GPE(10); i++)
+-			gpio_free(i);
+-
+  probe_free_host:
+ 	mmc_free_host(mmc);
+ 
+@@ -1756,7 +1726,6 @@ static int s3cmci_remove(struct platform_device *pdev)
+ {
+ 	struct mmc_host		*mmc  = platform_get_drvdata(pdev);
+ 	struct s3cmci_host	*host = mmc_priv(mmc);
+-	int i;
+ 
+ 	s3cmci_shutdown(pdev);
+ 
+@@ -1769,10 +1738,6 @@ static int s3cmci_remove(struct platform_device *pdev)
+ 
+ 	free_irq(host->irq, host);
+ 
+-	if (!pdev->dev.of_node)
+-		for (i = S3C2410_GPE(5); i <= S3C2410_GPE(10); i++)
+-			gpio_free(i);
+-
+ 	iounmap(host->base);
+ 	release_mem_region(host->mem->start, resource_size(host->mem));
+ 
+diff --git a/include/linux/platform_data/mmc-s3cmci.h b/include/linux/platform_data/mmc-s3cmci.h
+index 33310b11cbdd..bacb86db3112 100644
+--- a/include/linux/platform_data/mmc-s3cmci.h
++++ b/include/linux/platform_data/mmc-s3cmci.h
+@@ -35,6 +35,7 @@ struct s3c24xx_mci_pdata {
+ 	unsigned long	ocr_avail;
+ 	void		(*set_power)(unsigned char power_mode,
+ 				     unsigned short vdd);
++	struct gpio_desc *bus[6];
+ };
+ 
+ /**
+@@ -44,6 +45,7 @@ struct s3c24xx_mci_pdata {
+  * Copy the platform data supplied by @pdata so that this can be marked
+  * __initdata.
+  */
++extern void s3c24xx_mci_def_set_power(unsigned char power_mode, unsigned short vdd);
+ extern void s3c24xx_mci_set_platdata(struct s3c24xx_mci_pdata *pdata);
+ 
+ #endif /* _ARCH_NCI_H */
 -- 
 2.20.0
 
