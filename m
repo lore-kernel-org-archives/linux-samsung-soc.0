@@ -1,148 +1,205 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 16/36] ARM: s3c: move spi fiq handler into platform
-Date: Thu, 10 Oct 2019 22:30:00 +0200
-Message-ID: <20191010203043.1241612-16-arnd@arndb.de>
+Subject: [PATCH 17/36] ARM: s3c: h1940-audio: turn into platform driver
+Date: Thu, 10 Oct 2019 22:30:01 +0200
+Message-ID: <20191010203043.1241612-17-arnd@arndb.de>
 References: <20191010202802.1132272-1-arnd@arndb.de>
  <20191010203043.1241612-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <20191010203043.1241612-1-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>, Andi Shyti <andi@etezian.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The fiq handler needs access to some register definitions that
-should not be used directly by device drivers.
-
-Since this is closely related to the irqchip driver anyway,
-move it into the same place.
+Avoid machine specific headers by using a gpio lookup table
+combined with a platform_driver for this board.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-s3c24xx/Makefile                           | 2 ++
- arch/arm/mach-s3c24xx/irq-s3c24xx-fiq-exports.c          | 9 +++++++++
- .../arm/mach-s3c24xx/irq-s3c24xx-fiq.S                   | 2 +-
- drivers/spi/Makefile                                     | 1 -
- drivers/spi/spi-s3c24xx.c                                | 7 +------
- .../spi-s3c24xx-fiq.h => include/linux/spi/s3c24xx-fiq.h | 5 +++++
- 6 files changed, 18 insertions(+), 8 deletions(-)
- create mode 100644 arch/arm/mach-s3c24xx/irq-s3c24xx-fiq-exports.c
- rename drivers/spi/spi-s3c24xx-fiq.S => arch/arm/mach-s3c24xx/irq-s3c24xx-fiq.S (98%)
- rename drivers/spi/spi-s3c24xx-fiq.h => include/linux/spi/s3c24xx-fiq.h (78%)
+ arch/arm/mach-s3c24xx/mach-h1940.c | 18 ++++++++
+ sound/soc/samsung/h1940_uda1380.c  | 71 ++++++++++--------------------
+ 2 files changed, 41 insertions(+), 48 deletions(-)
 
-diff --git a/arch/arm/mach-s3c24xx/Makefile b/arch/arm/mach-s3c24xx/Makefile
-index 8c31f84f8c97..695573df00b1 100644
---- a/arch/arm/mach-s3c24xx/Makefile
-+++ b/arch/arm/mach-s3c24xx/Makefile
-@@ -9,6 +9,8 @@
- 
- obj-y				+= common.o
- obj-y				+= irq-s3c24xx.o
-+obj-$(CONFIG_SPI_S3C24XX_FIQ)	+= irq-s3c24xx-fiq.o
-+obj-$(CONFIG_SPI_S3C24XX_FIQ)	+= irq-s3c24xx-fiq-exports.o
- 
- obj-$(CONFIG_CPU_S3C2410)	+= s3c2410.o
- obj-$(CONFIG_S3C2410_PLL)	+= pll-s3c2410.o
-diff --git a/arch/arm/mach-s3c24xx/irq-s3c24xx-fiq-exports.c b/arch/arm/mach-s3c24xx/irq-s3c24xx-fiq-exports.c
-new file mode 100644
-index 000000000000..ef2d1f664e67
---- /dev/null
-+++ b/arch/arm/mach-s3c24xx/irq-s3c24xx-fiq-exports.c
-@@ -0,0 +1,9 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+
-+#include <linux/stddef.h>
-+#include <linux/export.h>
-+#include <linux/spi/s3c24xx-fiq.h>
-+
-+EXPORT_SYMBOL(s3c24xx_spi_fiq_rx);
-+EXPORT_SYMBOL(s3c24xx_spi_fiq_txrx);
-+EXPORT_SYMBOL(s3c24xx_spi_fiq_tx);
-diff --git a/drivers/spi/spi-s3c24xx-fiq.S b/arch/arm/mach-s3c24xx/irq-s3c24xx-fiq.S
-similarity index 98%
-rename from drivers/spi/spi-s3c24xx-fiq.S
-rename to arch/arm/mach-s3c24xx/irq-s3c24xx-fiq.S
-index 9d5f8f1e5e81..2a84535a14fd 100644
---- a/drivers/spi/spi-s3c24xx-fiq.S
-+++ b/arch/arm/mach-s3c24xx/irq-s3c24xx-fiq.S
-@@ -13,7 +13,7 @@
- #include <mach/map.h>
- #include <mach/regs-irq.h>
- 
--#include "spi-s3c24xx-fiq.h"
-+#include <linux/spi/s3c24xx-fiq.h>
- 
- #define S3C2410_SPTDAT           (0x10)
- #define S3C2410_SPRDAT           (0x14)
-diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
-index bb49c9e6d0a0..4bcbbd35d2e8 100644
---- a/drivers/spi/Makefile
-+++ b/drivers/spi/Makefile
-@@ -89,7 +89,6 @@ obj-$(CONFIG_SPI_RB4XX)			+= spi-rb4xx.o
- obj-$(CONFIG_SPI_RSPI)			+= spi-rspi.o
- obj-$(CONFIG_SPI_S3C24XX)		+= spi-s3c24xx-hw.o
- spi-s3c24xx-hw-y			:= spi-s3c24xx.o
--spi-s3c24xx-hw-$(CONFIG_SPI_S3C24XX_FIQ) += spi-s3c24xx-fiq.o
- obj-$(CONFIG_SPI_S3C64XX)		+= spi-s3c64xx.o
- obj-$(CONFIG_SPI_SC18IS602)		+= spi-sc18is602.o
- obj-$(CONFIG_SPI_SH)			+= spi-sh.o
-diff --git a/drivers/spi/spi-s3c24xx.c b/drivers/spi/spi-s3c24xx.c
-index 2f395e4861f6..464146fc8420 100644
---- a/drivers/spi/spi-s3c24xx.c
-+++ b/drivers/spi/spi-s3c24xx.c
-@@ -19,12 +19,12 @@
- #include <linux/spi/spi.h>
- #include <linux/spi/spi_bitbang.h>
- #include <linux/spi/s3c24xx.h>
-+#include <linux/spi/s3c24xx-fiq.h>
- #include <linux/module.h>
- 
- #include <asm/fiq.h>
- 
- #include "spi-s3c24xx-regs.h"
--#include "spi-s3c24xx-fiq.h"
- 
- /**
-  * s3c24xx_spi_devstate - per device data
-@@ -229,10 +229,6 @@ struct spi_fiq_code {
- 	u8	data[0];
+diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-s3c24xx/mach-h1940.c
+index 74d6b68e91c7..922d53bacbdf 100644
+--- a/arch/arm/mach-s3c24xx/mach-h1940.c
++++ b/arch/arm/mach-s3c24xx/mach-h1940.c
+@@ -475,6 +475,22 @@ static struct gpiod_lookup_table h1940_mmc_gpio_table = {
+ 	},
  };
  
--extern struct spi_fiq_code s3c24xx_spi_fiq_txrx;
--extern struct spi_fiq_code s3c24xx_spi_fiq_tx;
--extern struct spi_fiq_code s3c24xx_spi_fiq_rx;
++static struct gpiod_lookup_table h1940_audio_gpio_table = {
++	.dev_id = "h1940-audio",
++	.table = {
++		GPIO_LOOKUP("H1940_LATCH",
++			    H1940_LATCH_AUDIO_POWER - H1940_LATCH_GPIO(0),
++			    "speaker-power", GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("GPIOG", 4, "hp", GPIO_ACTIVE_HIGH),
++		{ },
++	},
++};
++
++static struct platform_device h1940_audio = {
++	.name = "h1940-audio",
++	.id   = -1,
++};
++
+ static struct pwm_lookup h1940_pwm_lookup[] = {
+ 	PWM_LOOKUP("samsung-pwm", 0, "pwm-backlight", NULL, 36296,
+ 		   PWM_POLARITY_NORMAL),
+@@ -652,6 +668,7 @@ static struct platform_device *h1940_devices[] __initdata = {
+ 	&s3c_device_ts,
+ 	&power_supply,
+ 	&h1940_battery,
++	&h1940_audio,
+ };
+ 
+ static void __init h1940_map_io(void)
+@@ -691,6 +708,7 @@ static void __init h1940_init(void)
+ 
+ 	s3c24xx_fb_set_platdata(&h1940_fb_info);
+ 	gpiod_add_lookup_table(&h1940_mmc_gpio_table);
++	gpiod_add_lookup_table(&h1940_audio_gpio_table);
+ 	s3c24xx_mci_set_platdata(&h1940_mmc_cfg);
+  	s3c24xx_udc_set_platdata(&h1940_udc_cfg);
+ 	s3c24xx_ts_set_platdata(&h1940_ts_cfg);
+diff --git a/sound/soc/samsung/h1940_uda1380.c b/sound/soc/samsung/h1940_uda1380.c
+index a95c34e53a2b..5fc001b4effd 100644
+--- a/sound/soc/samsung/h1940_uda1380.c
++++ b/sound/soc/samsung/h1940_uda1380.c
+@@ -15,9 +15,6 @@
+ #include <sound/jack.h>
+ 
+ #include "regs-iis.h"
+-#include <asm/mach-types.h>
 -
- /**
-  * ack_bit - turn IRQ into IRQ acknowledgement bit
-  * @irq: The interrupt number
-@@ -282,7 +278,6 @@ static void s3c24xx_spi_tryfiq(struct s3c24xx_spi *hw)
- 	regs.uregs[fiq_rrx]  = (long)hw->rx;
- 	regs.uregs[fiq_rtx]  = (long)hw->tx + 1;
- 	regs.uregs[fiq_rcount] = hw->len - 1;
--	regs.uregs[fiq_rirq] = (long)S3C24XX_VA_IRQ;
+-#include <mach/gpio-samsung.h>
+ #include "s3c24xx-i2s.h"
  
- 	set_fiq_regs(&regs);
+ static const unsigned int rates[] = {
+@@ -31,6 +28,8 @@ static const struct snd_pcm_hw_constraint_list hw_rates = {
+ 	.list = rates,
+ };
  
-diff --git a/drivers/spi/spi-s3c24xx-fiq.h b/include/linux/spi/s3c24xx-fiq.h
-similarity index 78%
-rename from drivers/spi/spi-s3c24xx-fiq.h
-rename to include/linux/spi/s3c24xx-fiq.h
-index 7786b0ea56ec..954452618dfe 100644
---- a/drivers/spi/spi-s3c24xx-fiq.h
-+++ b/include/linux/spi/s3c24xx-fiq.h
-@@ -12,6 +12,11 @@
- #ifdef __ASSEMBLY__
- #define __REG_NR(x)     r##x
- #else
++static struct gpio_desc *gpiod_speaker_power;
 +
-+extern struct spi_fiq_code s3c24xx_spi_fiq_txrx;
-+extern struct spi_fiq_code s3c24xx_spi_fiq_tx;
-+extern struct spi_fiq_code s3c24xx_spi_fiq_rx;
-+
- #define __REG_NR(x)     (x)
- #endif
+ static struct snd_soc_jack hp_jack;
  
+ static struct snd_soc_jack_pin hp_jack_pins[] = {
+@@ -47,7 +46,6 @@ static struct snd_soc_jack_pin hp_jack_pins[] = {
+ 
+ static struct snd_soc_jack_gpio hp_jack_gpios[] = {
+ 	{
+-		.gpio			= S3C2410_GPG(4),
+ 		.name			= "hp-gpio",
+ 		.report			= SND_JACK_HEADPHONE,
+ 		.invert			= 1,
+@@ -123,9 +121,9 @@ static int h1940_spk_power(struct snd_soc_dapm_widget *w,
+ 				struct snd_kcontrol *kcontrol, int event)
+ {
+ 	if (SND_SOC_DAPM_EVENT_ON(event))
+-		gpio_set_value(S3C_GPIO_END + 9, 1);
++		gpiod_set_value(gpiod_speaker_power, 1);
+ 	else
+-		gpio_set_value(S3C_GPIO_END + 9, 0);
++		gpiod_set_value(gpiod_speaker_power, 0);
+ 
+ 	return 0;
+ }
+@@ -151,8 +149,6 @@ static const struct snd_soc_dapm_route audio_map[] = {
+ 	{"VINM", NULL, "Mic Jack"},
+ };
+ 
+-static struct platform_device *s3c24xx_snd_device;
+-
+ static int h1940_uda1380_init(struct snd_soc_pcm_runtime *rtd)
+ {
+ 	snd_soc_card_jack_new(rtd->card, "Headphone Jack", SND_JACK_HEADPHONE,
+@@ -194,55 +190,34 @@ static struct snd_soc_card h1940_asoc = {
+ 	.num_dapm_routes = ARRAY_SIZE(audio_map),
+ };
+ 
+-static int __init h1940_init(void)
++static int h1940_probe(struct platform_device *pdev)
+ {
+-	int ret;
++	struct device *dev = &pdev->dev;
+ 
+-	if (!machine_is_h1940())
+-		return -ENODEV;
++	h1940_asoc.dev = dev;
++	hp_jack_gpios[0].gpiod_dev = dev;
++	gpiod_speaker_power = devm_gpiod_get(&pdev->dev, "speaker-power",
++					     GPIOD_OUT_LOW);
+ 
+-	/* configure some gpios */
+-	ret = gpio_request(S3C_GPIO_END + 9, "speaker-power");
+-	if (ret)
+-		goto err_out;
+-
+-	ret = gpio_direction_output(S3C_GPIO_END + 9, 0);
+-	if (ret)
+-		goto err_gpio;
+-
+-	s3c24xx_snd_device = platform_device_alloc("soc-audio", -1);
+-	if (!s3c24xx_snd_device) {
+-		ret = -ENOMEM;
+-		goto err_gpio;
++	if (IS_ERR(gpiod_speaker_power)) {
++		dev_err(dev, "Could not get gpio\n");
++		return PTR_ERR(gpiod_speaker_power);
+ 	}
+ 
+-	platform_set_drvdata(s3c24xx_snd_device, &h1940_asoc);
+-	ret = platform_device_add(s3c24xx_snd_device);
+-
+-	if (ret)
+-		goto err_plat;
+-
+-	return 0;
+-
+-err_plat:
+-	platform_device_put(s3c24xx_snd_device);
+-err_gpio:
+-	gpio_free(S3C_GPIO_END + 9);
+-
+-err_out:
+-	return ret;
+-}
+-
+-static void __exit h1940_exit(void)
+-{
+-	platform_device_unregister(s3c24xx_snd_device);
+-	gpio_free(S3C_GPIO_END + 9);
++	return devm_snd_soc_register_card(dev, &h1940_asoc);
+ }
+ 
+-module_init(h1940_init);
+-module_exit(h1940_exit);
++static struct platform_driver h1940_audio_driver = {
++	.driver = {
++		.name = "h1940-audio",
++		.pm = &snd_soc_pm_ops,
++	},
++	.probe = h1940_probe,
++};
++module_platform_driver(h1940_audio_driver);
+ 
+ /* Module information */
+ MODULE_AUTHOR("Arnaud Patard, Vasily Khoruzhick");
+ MODULE_DESCRIPTION("ALSA SoC H1940");
+ MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:h1940-audio");
 -- 
 2.20.0
