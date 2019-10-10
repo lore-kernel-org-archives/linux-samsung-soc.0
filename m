@@ -1,140 +1,206 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2] dt-bindings: sound: Convert Samsung Exynos5433 TM2(E)
- audio complex with WM5110 codec to dt-schema
-Date: Thu, 10 Oct 2019 16:56:01 -0500
-Message-ID: <20191010215601.GA24757@bogus>
-References: <CGME20190926120221eucas1p1a11b4182b93b408d5d5507dc65c951b4@eucas1p1.samsung.com>
- <20190926120210.8544-1-m.szyprowski@samsung.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH 15/36] ARM: s3c: adc: move header to linux/soc/samsung
+Date: Thu, 10 Oct 2019 15:20:32 -0700
+Message-ID: <da32e8a3-cbb3-ea08-1c55-55980b3dc53e@roeck-us.net>
+References: <20191010202802.1132272-1-arnd@arndb.de>
+ <20191010203043.1241612-1-arnd@arndb.de>
+ <20191010203043.1241612-15-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190926120210.8544-1-m.szyprowski@samsung.com>
+In-Reply-To: <20191010203043.1241612-15-arnd@arndb.de>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Maciej Falkowski <m.falkowski@samsung.com>
+To: Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Jean Delvare <jdelvare@suse.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sebastian Reichel <sre@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Sep 26, 2019 at 02:02:10PM +0200, Marek Szyprowski wrote:
-> From: Maciej Falkowski <m.falkowski@samsung.com>
+On 10/10/19 1:29 PM, Arnd Bergmann wrote:
+> There are multiple drivers using the private adc interface.
+> It seems unlikely that they would ever get converted to iio,
+> so make the current state official by making the header file
+> global.
 > 
-> Convert Samsung Exynos5433 TM2(E) audio complex with WM5110 codec to
-> newer dt-schema format.
+> The s3c2410_ts driver needs a couple of register definitions
+> as well.
 > 
-> Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+For hwmon:
+
+Acked-by: Guenter Roeck <linux@roeck-us.net>
+
 > ---
-> v2:
-> - Added type and description and removed number of items from 'model' property.
+>   arch/arm/mach-s3c64xx/mach-crag6410.c         |  2 +-
+>   arch/arm/mach-s3c64xx/mach-mini6410.c         |  2 +-
+>   arch/arm/mach-s3c64xx/mach-real6410.c         |  2 +-
+>   arch/arm/mach-s3c64xx/mach-smdk6410.c         |  2 +-
+>   arch/arm/plat-samsung/adc.c                   |  2 +-
+>   arch/arm/plat-samsung/devs.c                  |  2 +-
+>   drivers/hwmon/s3c-hwmon.c                     |  2 +-
+>   drivers/input/touchscreen/s3c2410_ts.c        | 37 ++++++++++++++++++-
+>   drivers/power/supply/s3c_adc_battery.c        |  2 +-
+>   .../linux/soc/samsung/s3c-adc.h               |  0
+>   10 files changed, 43 insertions(+), 10 deletions(-)
+>   rename arch/arm/plat-samsung/include/plat/adc.h => include/linux/soc/samsung/s3c-adc.h (100%)
 > 
-> Best regards,
-> Maciej Falkowski
-> ---
->  .../bindings/sound/samsung,tm2-audio.txt      | 42 ----------
->  .../bindings/sound/samsung,tm2-audio.yaml     | 84 +++++++++++++++++++
->  2 files changed, 84 insertions(+), 42 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
->  create mode 100644 Documentation/devicetree/bindings/sound/samsung,tm2-audio.yaml
-
-> diff --git a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.yaml b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.yaml
-> new file mode 100644
-> index 000000000000..62b5b9a1dec0
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.yaml
-> @@ -0,0 +1,84 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sound/samsung,tm2-audio.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
+> index da5b50981a14..133453562d23 100644
+> --- a/arch/arm/mach-s3c64xx/mach-crag6410.c
+> +++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
+> @@ -57,7 +57,7 @@
+>   #include <plat/keypad.h>
+>   #include <plat/devs.h>
+>   #include <plat/cpu.h>
+> -#include <plat/adc.h>
+> +#include <linux/soc/samsung/s3c-adc.h>
+>   #include <linux/platform_data/i2c-s3c2410.h>
+>   #include <plat/pm.h>
+>   #include <plat/samsung-time.h>
+> diff --git a/arch/arm/mach-s3c64xx/mach-mini6410.c b/arch/arm/mach-s3c64xx/mach-mini6410.c
+> index 0dd36ae49e6a..c7140300bd3f 100644
+> --- a/arch/arm/mach-s3c64xx/mach-mini6410.c
+> +++ b/arch/arm/mach-s3c64xx/mach-mini6410.c
+> @@ -27,7 +27,7 @@
+>   #include <mach/regs-gpio.h>
+>   #include <mach/gpio-samsung.h>
+>   
+> -#include <plat/adc.h>
+> +#include <linux/soc/samsung/s3c-adc.h>
+>   #include <plat/cpu.h>
+>   #include <plat/devs.h>
+>   #include <plat/fb.h>
+> diff --git a/arch/arm/mach-s3c64xx/mach-real6410.c b/arch/arm/mach-s3c64xx/mach-real6410.c
+> index 0ff88b6859c4..f55097fde94c 100644
+> --- a/arch/arm/mach-s3c64xx/mach-real6410.c
+> +++ b/arch/arm/mach-s3c64xx/mach-real6410.c
+> @@ -29,7 +29,7 @@
+>   #include <mach/gpio-samsung.h>
+>   #include <mach/irqs.h>
+>   
+> -#include <plat/adc.h>
+> +#include <linux/soc/samsung/s3c-adc.h>
+>   #include <plat/cpu.h>
+>   #include <plat/devs.h>
+>   #include <plat/fb.h>
+> diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3c64xx/mach-smdk6410.c
+> index 95bdcfe95a53..3042f6cbffd9 100644
+> --- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
+> +++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
+> @@ -60,7 +60,7 @@
+>   
+>   #include <plat/devs.h>
+>   #include <plat/cpu.h>
+> -#include <plat/adc.h>
+> +#include <linux/soc/samsung/s3c-adc.h>
+>   #include <linux/platform_data/touchscreen-s3c2410.h>
+>   #include <plat/keypad.h>
+>   #include <plat/samsung-time.h>
+> diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.c
+> index ee3d5c989a76..623a9774cc52 100644
+> --- a/arch/arm/plat-samsung/adc.c
+> +++ b/arch/arm/plat-samsung/adc.c
+> @@ -20,7 +20,7 @@
+>   #include <linux/regulator/consumer.h>
+>   
+>   #include <plat/regs-adc.h>
+> -#include <plat/adc.h>
+> +#include <linux/soc/samsung/s3c-adc.h>
+>   
+>   /* This driver is designed to control the usage of the ADC block between
+>    * the touchscreen and any other drivers that may need to use it, such as
+> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+> index fd94a35e22f8..ddd90f0bb380 100644
+> --- a/arch/arm/plat-samsung/devs.c
+> +++ b/arch/arm/plat-samsung/devs.c
+> @@ -44,7 +44,7 @@
+>   
+>   #include <plat/cpu.h>
+>   #include <plat/devs.h>
+> -#include <plat/adc.h>
+> +#include <linux/soc/samsung/s3c-adc.h>
+>   #include <linux/platform_data/ata-samsung_cf.h>
+>   #include <plat/fb.h>
+>   #include <plat/fb-s3c2410.h>
+> diff --git a/drivers/hwmon/s3c-hwmon.c b/drivers/hwmon/s3c-hwmon.c
+> index b490fe3d2ee8..f2703c5460d0 100644
+> --- a/drivers/hwmon/s3c-hwmon.c
+> +++ b/drivers/hwmon/s3c-hwmon.c
+> @@ -20,7 +20,7 @@
+>   #include <linux/hwmon.h>
+>   #include <linux/hwmon-sysfs.h>
+>   
+> -#include <plat/adc.h>
+> +#include <linux/soc/samsung/s3c-adc.h>
+>   #include <linux/platform_data/hwmon-s3c.h>
+>   
+>   struct s3c_hwmon_attr {
+> diff --git a/drivers/input/touchscreen/s3c2410_ts.c b/drivers/input/touchscreen/s3c2410_ts.c
+> index b346e7cafd62..1a5a178ea286 100644
+> --- a/drivers/input/touchscreen/s3c2410_ts.c
+> +++ b/drivers/input/touchscreen/s3c2410_ts.c
+> @@ -21,10 +21,43 @@
+>   #include <linux/clk.h>
+>   #include <linux/io.h>
+>   
+> -#include <plat/adc.h>
+> -#include <plat/regs-adc.h>
+> +#include <linux/soc/samsung/s3c-adc.h>
+>   #include <linux/platform_data/touchscreen-s3c2410.h>
+>   
+> +#define	S3C2410_ADCCON			(0x00)
+> +#define	S3C2410_ADCTSC			(0x04)
+> +#define	S3C2410_ADCDLY			(0x08)
+> +#define	S3C2410_ADCDAT0			(0x0C)
+> +#define	S3C2410_ADCDAT1			(0x10)
+> +#define	S3C64XX_ADCUPDN			(0x14)
+> +#define	S3C2443_ADCMUX			(0x18)
+> +#define	S3C64XX_ADCCLRINT		(0x18)
+> +#define	S5P_ADCMUX			(0x1C)
+> +#define	S3C64XX_ADCCLRINTPNDNUP		(0x20)
 > +
-> +title: Samsung Exynos SoC Exynos5433 TM2(E) audio complex with WM5110 codec
+> +/* ADCTSC Register Bits */
+> +#define S3C2443_ADCTSC_UD_SEN		(1 << 8)
+> +#define S3C2410_ADCTSC_YM_SEN		(1<<7)
+> +#define S3C2410_ADCTSC_YP_SEN		(1<<6)
+> +#define S3C2410_ADCTSC_XM_SEN		(1<<5)
+> +#define S3C2410_ADCTSC_XP_SEN		(1<<4)
+> +#define S3C2410_ADCTSC_PULL_UP_DISABLE	(1<<3)
+> +#define S3C2410_ADCTSC_AUTO_PST		(1<<2)
+> +#define S3C2410_ADCTSC_XY_PST(x)	(((x)&0x3)<<0)
 > +
-> +maintainers:
-> +  - Krzysztof Kozlowski <krzk@kernel.org>
-> +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
+> +/* ADCDAT0 Bits */
+> +#define S3C2410_ADCDAT0_UPDOWN		(1<<15)
+> +#define S3C2410_ADCDAT0_AUTO_PST	(1<<14)
+> +#define S3C2410_ADCDAT0_XY_PST		(0x3<<12)
+> +#define S3C2410_ADCDAT0_XPDATA_MASK	(0x03FF)
 > +
-> +properties:
-> +  compatible:
-> +    const: samsung,tm2-audio
+> +/* ADCDAT1 Bits */
+> +#define S3C2410_ADCDAT1_UPDOWN		(1<<15)
+> +#define S3C2410_ADCDAT1_AUTO_PST	(1<<14)
+> +#define S3C2410_ADCDAT1_XY_PST		(0x3<<12)
+> +#define S3C2410_ADCDAT1_YPDATA_MASK	(0x03FF)
 > +
-> +  model:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description: The user-visible name of this sound complex.
 > +
-> +  audio-codec:
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/phandle-array
-> +      - items:
-
-This way works, but we get better error messages if you move this up to 
-'allOf' level. IOW, only the $ref has to be under an 'allOf'.
-
-> +          - description: |
-> +              phandle of the wm5110 audio codec node,
-> +              as described in ../mfd/arizona.txt;
-> +          - description: phandle of the HDMI transmitter node.
-> +
-> +  i2s-controller:
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/phandle-array
-> +      - items:
-> +          - description: phandle of the I2S0.
-> +          - description: phandle of the I2S1.
-> +
-> +  audio-amplifier:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: phandle of the MAX98504 amplifier.
-> +
-> +  samsung,audio-routing:
-> +    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
-> +    description: |
-> +      List of the connections between audio components.
-> +      Each entry is a pair of strings, the first being the
-> +      connection's sink, the second being the connection's
-> +      source. Valid names for sources and sinks are
-> +      the WM5110's and MAX98504's pins and the jacks on the
-> +      board: HP, SPK, Main Mic, Sub Mic, Third Mic, Headset Mic.
-
-Please enumerate the possible strings.
-
-> +
-> +  mic-bias-gpios:
-> +    description: GPIO pin that enables the Main Mic bias regulator.
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - model
-> +  - audio-codec
-> +  - i2s-controller
-> +  - audio-amplifier
-> +  - samsung,audio-routing
-> +  - mic-bias-gpios
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    sound {
-> +        compatible = "samsung,tm2-audio";
-> +        model = "wm5110";
-> +        audio-codec = <&wm5110>, <&hdmi>;
-> +        i2s-controller = <&i2s0 0>, <&i2s1 0>;
-> +        audio-amplifier = <&max98504>;
-> +        mic-bias-gpios = <&gpr3>;
-> +        samsung,audio-routing =
-> +                "HP", "HPOUT1L",
-> +                "HP", "HPOUT1R",
-> +                "SPK", "SPKOUT",
-> +                "SPKOUT", "HPOUT2L",
-> +                "SPKOUT", "HPOUT2R",
-> +                "Main Mic", "MICBIAS2",
-> +                "IN1R", "Main Mic";
-> +    };
-> +
-> -- 
-> 2.17.1
-> 
-> 
+>   #define TSC_SLEEP  (S3C2410_ADCTSC_PULL_UP_DISABLE | S3C2410_ADCTSC_XY_PST(0))
+>   
+>   #define INT_DOWN	(0)
+> diff --git a/drivers/power/supply/s3c_adc_battery.c b/drivers/power/supply/s3c_adc_battery.c
+> index 3d00b35cafc9..60b7f41ab063 100644
+> --- a/drivers/power/supply/s3c_adc_battery.c
+> +++ b/drivers/power/supply/s3c_adc_battery.c
+> @@ -22,7 +22,7 @@
+>   #include <linux/init.h>
+>   #include <linux/module.h>
+>   
+> -#include <plat/adc.h>
+> +#include <linux/soc/samsung/s3c-adc.h>
+>   
+>   #define BAT_POLL_INTERVAL		10000 /* ms */
+>   #define JITTER_DELAY			500 /* ms */
+> diff --git a/arch/arm/plat-samsung/include/plat/adc.h b/include/linux/soc/samsung/s3c-adc.h
+> similarity index 100%
+> rename from arch/arm/plat-samsung/include/plat/adc.h
+> rename to include/linux/soc/samsung/s3c-adc.h
 > 
