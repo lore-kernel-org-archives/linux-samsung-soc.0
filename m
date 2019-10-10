@@ -1,43 +1,36 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2] dt-bindings: crypto: samsung: Convert SSS and SlimSSS
- bindings to json-schema
-Date: Thu, 10 Oct 2019 16:25:25 -0500
-Message-ID: <20191010212525.GA10949@bogus>
-References: <20190920163635.9186-1-krzk@kernel.org>
+Subject: Re: [PATCH v2] ASoC: samsung: i2s: Document clocks macros
+Date: Thu, 10 Oct 2019 16:51:45 -0500
+Message-ID: <20191010215145.GA24430@bogus>
+References: <CGME20190926110226eucas1p24dbb1b39ffa3f607aa28c0c4d9ff6aba@eucas1p2.samsung.com>
+ <20190926110219.6144-1-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20190920163635.9186-1-krzk@kernel.org>
+In-Reply-To: <20190926110219.6144-1-m.szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Vladimir Zapolskiy <vz@mleia.com>, Kamil Konieczny <k.konieczny@partner.samsung.com>, linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Maciej Falkowski <m.falkowski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, 20 Sep 2019 18:36:35 +0200, Krzysztof Kozlowski wrote:
-> Convert Samsung Exynos Security SubSystem (SSS) and SlimSSS hardware
-> crypto accelerator bindings to DT schema format using json-schema.
+On Thu, 26 Sep 2019 13:02:19 +0200, Marek Szyprowski wrote:
+> From: Maciej Falkowski <m.falkowski@samsung.com>
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Document clocks macros with their description
+> from 'Documentation/devicetree/bindings/sound/samsung-i2s.txt'
 > 
+> Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
+> v2:
+> - Added proper commit message and description
+> - Moved comments to the right side
 > 
-> Rebased on linux-next due to conflicting change in MAINTAINERS file
-> coming through arm-soc tree.
-> 
-> Changes since v1:
-> 1. Add additionalProperties:false
+> Best regards,
+> Maciej Falkowski
 > ---
->  .../bindings/crypto/samsung-slimsss.txt       | 19 ------
->  .../bindings/crypto/samsung-slimsss.yaml      | 47 +++++++++++++++
->  .../bindings/crypto/samsung-sss.txt           | 32 ----------
->  .../bindings/crypto/samsung-sss.yaml          | 58 +++++++++++++++++++
->  MAINTAINERS                                   |  4 +-
->  5 files changed, 107 insertions(+), 53 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/crypto/samsung-slimsss.txt
->  create mode 100644 Documentation/devicetree/bindings/crypto/samsung-slimsss.yaml
->  delete mode 100644 Documentation/devicetree/bindings/crypto/samsung-sss.txt
->  create mode 100644 Documentation/devicetree/bindings/crypto/samsung-sss.yaml
+>  include/dt-bindings/sound/samsung-i2s.h | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
 > 
 
 Applied, thanks.
