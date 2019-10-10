@@ -1,93 +1,43 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] devfreq: exynos-bus: workaround dev_pm_opp_set_rate()
- errors on Exynos5422/5800 SoCs
-Date: Thu, 10 Oct 2019 11:50:13 +0900
-Message-ID: <4f14d3af-e455-d05b-fc03-cba58e001f41@samsung.com>
-References: <CGME20191008134950eucas1p15cfef5800efc10d5b18ec5eb37dde60b@eucas1p1.samsung.com>
-        <20191008134923.30123-1-k.konieczny@partner.samsung.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH] regulator: core: Skip balancing of the enabled
+ regulators in regulator_enable()
+Date: Thu, 10 Oct 2019 12:59:13 +0530
+Message-ID: <20191010072913.jsjdl6uc4qkbmlpa@vireshk-i7>
+References: <86b9b4b5-cca5-9052-7c87-c5679dfffff4@samsung.com>
+ <be8d3280-9855-ed18-b2ab-d7fb28d80b82@gmail.com>
+ <20191008161535.GN4382@sirena.co.uk>
+ <4ad890b7-705e-94f9-2e61-1f3a60984c91@gmail.com>
+ <20191008171747.GS4382@sirena.co.uk>
+ <439154a4-1502-40af-7086-d4e3eb24025f@gmail.com>
+ <CGME20191008180759epcas3p3c367142db499635c71d9601dd3e63956@epcas3p3.samsung.com>
+ <20191008180750.GT4382@sirena.co.uk>
+ <c9e3ff21-ec50-97c2-06cb-b2f44c70eac8@samsung.com>
+ <20191009141352.GC3929@sirena.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191008134923.30123-1-k.konieczny@partner.samsung.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20191009141352.GC3929@sirena.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: k.konieczny@partner.samsung.com
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Dmitry Osipenko <digetx@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Lucas Stach <l.stach@pengutronix.de>, Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, Kamil Konieczny <k.konieczny@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2019년 10월 08일 22:49, k.konieczny@partner.samsung.com wrote:
-> Commit 4294a779bd8d ("PM / devfreq: exynos-bus: Convert to use
-> dev_pm_opp_set_rate()") introduced errors:
-> exynos-bus: new bus device registered: soc:bus_wcore ( 84000 KHz ~ 400000 KHz)
-> exynos-bus: new bus device registered: soc:bus_noc ( 67000 KHz ~ 100000 KHz)
-> exynos-bus: new bus device registered: soc:bus_fsys_apb (100000 KHz ~ 200000 KHz)
-> ...
-> exynos-bus soc:bus_wcore: dev_pm_opp_set_rate: failed to find current OPP for freq 532000000 (-34)
-> exynos-bus soc:bus_noc: dev_pm_opp_set_rate: failed to find current OPP for freq 111000000 (-34)
-> exynos-bus soc:bus_fsys_apb: dev_pm_opp_set_rate: failed to find current OPP for freq 222000000 (-34)
+On 09-10-19, 15:13, Mark Brown wrote:
+> On Wed, Oct 09, 2019 at 12:29:00PM +0200, Marek Szyprowski wrote:
 > 
-> They are caused by incorrect PLL assigned to clock source, which results
-> in clock rate outside of OPP range. Add workaround for this in
-> exynos_bus_parse_of() by adjusting clock rate to those present in OPP.
-
-If the clock caused this issue, you can set the initial clock on DeviceTree
-with assigned-clock-* properties. Because the probe time of clock driver
-is early than the any device drivers.
-
-It is not proper to fix the clock issue on other device driver.
-I think you can fix it by using the supported clock properties.
-
-
+> > Okay, then what is the conclusion, as I got lost a bit? How do you want 
+> > this issue to be fixed?
 > 
-> Fixes: 4294a779bd8d ("PM / devfreq: exynos-bus: Convert to use dev_pm_opp_set_rate()")
-> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-> ---
->  drivers/devfreq/exynos-bus.c | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-> index c832673273a2..37bd34d5625b 100644
-> --- a/drivers/devfreq/exynos-bus.c
-> +++ b/drivers/devfreq/exynos-bus.c
-> @@ -243,7 +243,7 @@ static int exynos_bus_parse_of(struct device_node *np,
->  {
->  	struct device *dev = bus->dev;
->  	struct dev_pm_opp *opp;
-> -	unsigned long rate;
-> +	unsigned long rate, opp_rate;
->  	int ret;
->  
->  	/* Get the clock to provide each bus with source clock */
-> @@ -267,13 +267,21 @@ static int exynos_bus_parse_of(struct device_node *np,
->  	}
->  
->  	rate = clk_get_rate(bus->clk);
-> -
-> -	opp = devfreq_recommended_opp(dev, &rate, 0);
-> +	opp_rate = rate;
-> +	opp = devfreq_recommended_opp(dev, &opp_rate, 0);
->  	if (IS_ERR(opp)) {
->  		dev_err(dev, "failed to find dev_pm_opp\n");
->  		ret = PTR_ERR(opp);
->  		goto err_opp;
->  	}
-> +	/*
-> +	 * FIXME: U-boot leaves clock source at incorrect PLL, this results
-> +	 * in clock rate outside defined OPP rate. Work around this bug by
-> +	 * setting clock rate to recommended one.
-> +	 */
-> +	if (rate > opp_rate)
-> +		clk_set_rate(bus->clk, opp_rate);
-> +
->  	bus->curr_freq = dev_pm_opp_get_freq(opp);
->  	dev_pm_opp_put(opp);
->  
-> 
+> We should revert the enable call, it shouldn't be required, and ideally
+> the default balancer could be updated to only make configuration changes
+> if they're actually required which would help avoid triggering any such
+> things in future if we don't absolutely have to.
 
+Sorry for the delay in responding, just came back after vacations.
+
+Should the OPP change be reverted ? Someone going to send that revert to me with
+the required explanation ?
 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+viresh
