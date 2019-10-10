@@ -2,144 +2,201 @@ Return-Path: <SRS0=rstS=YD=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5992DC10F14
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Oct 2019 21:53:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE0CBC4360C
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Oct 2019 21:56:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 340B421920
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Oct 2019 21:53:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8D60214E0
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Oct 2019 21:56:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1570744567;
+	bh=BNI522JmrnQCrUNPJF2FQ3PaQA+xDQmUyWIq4kHaM0I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=V8YGv0TB+FiksicBP7t3x5/QpsBCzVgUe0UHNdKOn839Q5AYTexM3jZkr03gSIeU/
+	 +MynpOKkzb0CYYl/Cso6MuBFXxSoEC8I8e4ibpOvg65eTotyo+mtYtKDHfW62W5sd8
+	 s1A8ATDYFC4Ylw959It6pTzqCSUbeTbj0tN9w7mk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbfJJVxg (ORCPT
+        id S1727224AbfJJV4E (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 10 Oct 2019 17:53:36 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:39694 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbfJJVxf (ORCPT
+        Thu, 10 Oct 2019 17:56:04 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:46497 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbfJJV4E (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Oct 2019 17:53:35 -0400
-Received: by mail-qk1-f194.google.com with SMTP id 4so7064788qki.6;
-        Thu, 10 Oct 2019 14:53:35 -0700 (PDT)
+        Thu, 10 Oct 2019 17:56:04 -0400
+Received: by mail-oi1-f194.google.com with SMTP id k25so6259923oiw.13;
+        Thu, 10 Oct 2019 14:56:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5KUJrhrPz34prZHQPwuRHd4WWImJkzkCSryx5fAKFeY=;
-        b=sqfZoSPYvhJdBSFx66TubOXenl7vwDwrcMjXHOEXQIQmPdExbFoRcOt+j/4P9JjLQ2
-         S/42IHla/cnpX3Gy8uyjOIWmrJWfquHaf8lVX/Oapb6+fzR25cnW+2gPJ6dj7TUJrhRI
-         /+xXH02sl3/edXhLXYcaxataXcwMo7yu51pG7MReQwO4wmc0Ydow+bBrm36EUIyTdZaM
-         zO7EAioFfp7/TJtsdhCnY9nZBSyzuzAG5NUcgukakBoWpj7HLaHCDJWezEgEpajGw5M7
-         YdijZqozE0IjOPV3OE49ppP2esKu1/mn3GNt/6KwHTzYcETyvhbDCew2iUR6cDw2NGtq
-         WK6A==
-X-Gm-Message-State: APjAAAW2ZKl1wNeiJsNUirxt6Yc98UpOQZOw0qedSemwaer8OhbMdIhi
-        Cpet7MfqD3EwdekjoOLmdRikz3mzPGf9RUf2OyM=
-X-Google-Smtp-Source: APXvYqwI5aZHDA5AQ5r7nRWW4bmOM1FPEwqypeNgqzsA4zDVqF3VF9ai0AW+gXH8pRsYBpeg659n6diW29XFvF8Ul3Q=
-X-Received: by 2002:a05:620a:218f:: with SMTP id g15mr12031339qka.3.1570744414547;
- Thu, 10 Oct 2019 14:53:34 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191010202802.1132272-1-arnd@arndb.de> <20191010203043.1241612-1-arnd@arndb.de>
- <20191010203043.1241612-34-arnd@arndb.de> <20191010210208.GK25745@shell.armlinux.org.uk>
-In-Reply-To: <20191010210208.GK25745@shell.armlinux.org.uk>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 10 Oct 2019 23:53:18 +0200
-Message-ID:
- <CAK8P3a2HTrxhncNbFtGA3itsZU6hfvRm6bW5ikx-PMFpVKcwdg@mail.gmail.com>
-Subject: Re: [PATCH 34/36] ARM: s3c: stop including mach/hardware.h from mach/io.h
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     Kukjin Kim <kgene@kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dmEyns0qiRRKvVwvDe9b3zXgdL6xxWI9qrjMl+HbFFk=;
+        b=Ox6Eyd4q1MlGDsI3KA19i3I5H4Lu74wDkew+/3fGKZ5n67gAtKuOA8R1TunFl+NpRk
+         uSxtHBltX+QBza7C2ve2d+oVYidlJYBdvge97iXVjqaMBMQgT2lw36M/xlMvHn9Pzc13
+         at++C/VK8K/WsholIOdpOBoijbSs9Kl877G7H19GNYV7KgjcTpmoXly08BIyAxhLDOmy
+         ZdDygntNVAAq8ppYL2FPVJqMnvrJ9Vabs54hm0o9RI7gRX6dElTw2zvPBvITaImqYsRn
+         tssmK/4HBWj4QmExX1CRw7mG6THQHBqOyyctEzP53PTLZMVCqzKOeowncqw31wb2UB1e
+         xI5w==
+X-Gm-Message-State: APjAAAWr6kiJxrGNBDqWGttJK5EgUBIUidU04p2PYI7K3xuW/YGqdJFc
+        4Dp6HEjNLqa5qQuj7++GzQ==
+X-Google-Smtp-Source: APXvYqzj4kur/33FK2sd//f66BtsRFHAy4do5i9dVlNwbGf5OzP49TJkH5CgWCvXWaooiVa5ktHY5w==
+X-Received: by 2002:aca:cdc3:: with SMTP id d186mr9834094oig.162.1570744563038;
+        Thu, 10 Oct 2019 14:56:03 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id o23sm2108179ote.67.2019.10.10.14.56.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2019 14:56:02 -0700 (PDT)
+Date:   Thu, 10 Oct 2019 16:56:01 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
+        Mark Brown <broonie@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Maciej Falkowski <m.falkowski@samsung.com>
+Subject: Re: [PATCH v2] dt-bindings: sound: Convert Samsung Exynos5433 TM2(E)
+ audio complex with WM5110 codec to dt-schema
+Message-ID: <20191010215601.GA24757@bogus>
+References: <CGME20190926120221eucas1p1a11b4182b93b408d5d5507dc65c951b4@eucas1p1.samsung.com>
+ <20190926120210.8544-1-m.szyprowski@samsung.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+In-Reply-To: <20190926120210.8544-1-m.szyprowski@samsung.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20191010215318.jskxXHk0oGMbOcdFyVQsMsvo449hpeFamtzVSDBAsgk@z>
+Message-ID: <20191010215601.GlljqLmx_GDA6cPYf-RhewuFz0D9_zolFij2wuClhLQ@z>
 
-On Thu, Oct 10, 2019 at 11:02 PM Russell King - ARM Linux admin
-<linux@armlinux.org.uk> wrote:
->
-> On Thu, Oct 10, 2019 at 10:30:18PM +0200, Arnd Bergmann wrote:
-> > diff --git a/arch/arm/mach-s3c24xx/include/mach/gpio-samsung.h b/arch/arm/mach-s3c24xx/include/mach/gpio-samsung.h
-> > index 2ad22b2d459b..f8a114891f16 100644
-> > --- a/arch/arm/mach-s3c24xx/include/mach/gpio-samsung.h
-> > +++ b/arch/arm/mach-s3c24xx/include/mach/gpio-samsung.h
-> > @@ -14,6 +14,8 @@
-> >  #ifndef GPIO_SAMSUNG_S3C24XX_H
-> >  #define GPIO_SAMSUNG_S3C24XX_H
-> >
-> > +#include <mach/map.h>
-> > +
->
-> Why?  Nothing in this file uses anything from mach/map.h
+On Thu, Sep 26, 2019 at 02:02:10PM +0200, Marek Szyprowski wrote:
+> From: Maciej Falkowski <m.falkowski@samsung.com>
+> 
+> Convert Samsung Exynos5433 TM2(E) audio complex with WM5110 codec to
+> newer dt-schema format.
+> 
+> Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> v2:
+> - Added type and description and removed number of items from 'model' property.
+> 
+> Best regards,
+> Maciej Falkowski
+> ---
+>  .../bindings/sound/samsung,tm2-audio.txt      | 42 ----------
+>  .../bindings/sound/samsung,tm2-audio.yaml     | 84 +++++++++++++++++++
+>  2 files changed, 84 insertions(+), 42 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
+>  create mode 100644 Documentation/devicetree/bindings/sound/samsung,tm2-audio.yaml
 
-Good point, I don't recall how this happened, most likely either
-edited the wrong file after a build regression, or I had moved some
-definition into this file in a patch that I later discarded and this
-change got left behind.
+> diff --git a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.yaml b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.yaml
+> new file mode 100644
+> index 000000000000..62b5b9a1dec0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.yaml
+> @@ -0,0 +1,84 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/samsung,tm2-audio.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Samsung Exynos SoC Exynos5433 TM2(E) audio complex with WM5110 codec
+> +
+> +maintainers:
+> +  - Krzysztof Kozlowski <krzk@kernel.org>
+> +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: samsung,tm2-audio
+> +
+> +  model:
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    description: The user-visible name of this sound complex.
+> +
+> +  audio-codec:
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/phandle-array
+> +      - items:
 
-> > diff --git a/arch/arm/mach-s3c24xx/include/mach/regs-clock.h b/arch/arm/mach-s3c24xx/include/mach/regs-clock.h
-> > index 7ca3dd4f13c0..da4e7b3aeba6 100644
-> > --- a/arch/arm/mach-s3c24xx/include/mach/regs-clock.h
-> > +++ b/arch/arm/mach-s3c24xx/include/mach/regs-clock.h
-> > @@ -9,6 +9,8 @@
-> >  #ifndef __ASM_ARM_REGS_CLOCK
-> >  #define __ASM_ARM_REGS_CLOCK
-> >
-> > +#include <mach/map.h>
-> > +
->
-> Why?  Nothing in this file uses anything from mach/map.h
+This way works, but we get better error messages if you move this up to 
+'allOf' level. IOW, only the $ref has to be under an 'allOf'.
 
-I think I added this one for S3C24XX_VA_CLKPWR, which is in
-plat/map-s3c.h
+> +          - description: |
+> +              phandle of the wm5110 audio codec node,
+> +              as described in ../mfd/arizona.txt;
+> +          - description: phandle of the HDMI transmitter node.
+> +
+> +  i2s-controller:
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/phandle-array
+> +      - items:
+> +          - description: phandle of the I2S0.
+> +          - description: phandle of the I2S1.
+> +
+> +  audio-amplifier:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: phandle of the MAX98504 amplifier.
+> +
+> +  samsung,audio-routing:
+> +    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
+> +    description: |
+> +      List of the connections between audio components.
+> +      Each entry is a pair of strings, the first being the
+> +      connection's sink, the second being the connection's
+> +      source. Valid names for sources and sinks are
+> +      the WM5110's and MAX98504's pins and the jacks on the
+> +      board: HP, SPK, Main Mic, Sub Mic, Third Mic, Headset Mic.
 
-> > diff --git a/drivers/spi/spi-s3c24xx-regs.h b/drivers/spi/spi-s3c24xx-regs.h
-> > index 37b93ff7c7fe..b76d591eba8c 100644
-> > --- a/drivers/spi/spi-s3c24xx-regs.h
-> > +++ b/drivers/spi/spi-s3c24xx-regs.h
-> > @@ -8,6 +8,8 @@
-> >  #ifndef __ASM_ARCH_REGS_SPI_H
-> >  #define __ASM_ARCH_REGS_SPI_H
-> >
-> > +#include <mach/map.h>
-> > +
->
-> If this is outside of arch/arm, it shouldn't need anything from
-> mach/map.h - mach/map.h is not for driver use.
+Please enumerate the possible strings.
 
-This was the result of a botched rebase: The patch was initially
-at the start of the series where the #include was still required
-but later moved to the end behind the patch that used to remove
-it again.
-
-> > diff --git a/drivers/usb/gadget/udc/s3c2410_udc_regs.h b/drivers/usb/gadget/udc/s3c2410_udc_regs.h
-> > index d8d2eeaca088..4df279342cdd 100644
-> > --- a/drivers/usb/gadget/udc/s3c2410_udc_regs.h
-> > +++ b/drivers/usb/gadget/udc/s3c2410_udc_regs.h
-> > @@ -6,6 +6,8 @@
-> >  #ifndef __ASM_ARCH_REGS_UDC_H
-> >  #define __ASM_ARCH_REGS_UDC_H
-> >
-> > +#include <mach/map.h>
-> > +
->
-> If this is outside of arch/arm, it shouldn't need anything from
-> mach/map.h - mach/map.h is not for driver use.
-
-Same here.
-
-Thanks for taking a look, I'll fix it all up tomorrow.
-
-          Arnd
+> +
+> +  mic-bias-gpios:
+> +    description: GPIO pin that enables the Main Mic bias regulator.
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - model
+> +  - audio-codec
+> +  - i2s-controller
+> +  - audio-amplifier
+> +  - samsung,audio-routing
+> +  - mic-bias-gpios
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    sound {
+> +        compatible = "samsung,tm2-audio";
+> +        model = "wm5110";
+> +        audio-codec = <&wm5110>, <&hdmi>;
+> +        i2s-controller = <&i2s0 0>, <&i2s1 0>;
+> +        audio-amplifier = <&max98504>;
+> +        mic-bias-gpios = <&gpr3>;
+> +        samsung,audio-routing =
+> +                "HP", "HPOUT1L",
+> +                "HP", "HPOUT1R",
+> +                "SPK", "SPKOUT",
+> +                "SPKOUT", "HPOUT2L",
+> +                "SPKOUT", "HPOUT2R",
+> +                "Main Mic", "MICBIAS2",
+> +                "IN1R", "Main Mic";
+> +    };
+> +
+> -- 
+> 2.17.1
+> 
+> 
+> 
