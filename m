@@ -1,7 +1,7 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 17/36] ARM: s3c: h1940-audio: turn into platform driver
-Date: Thu, 10 Oct 2019 22:30:01 +0200
-Message-ID: <20191010203043.1241612-17-arnd@arndb.de>
+Subject: [PATCH 18/36] ARM: s3c: gta02-audio: turn into platform driver
+Date: Thu, 10 Oct 2019 22:30:02 +0200
+Message-ID: <20191010203043.1241612-18-arnd@arndb.de>
 References: <20191010202802.1132272-1-arnd@arndb.de>
  <20191010203043.1241612-1-arnd@arndb.de>
 Mime-Version: 1.0
@@ -19,7 +19,7 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Avoid machine specific headers by using a gpio lookup table
@@ -27,179 +27,203 @@ combined with a platform_driver for this board.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-s3c24xx/mach-h1940.c | 18 ++++++++
- sound/soc/samsung/h1940_uda1380.c  | 71 ++++++++++--------------------
- 2 files changed, 41 insertions(+), 48 deletions(-)
+ arch/arm/mach-s3c24xx/mach-gta02.c | 17 ++++++
+ sound/soc/samsung/neo1973_wm8753.c | 85 +++++++++---------------------
+ 2 files changed, 43 insertions(+), 59 deletions(-)
 
-diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-s3c24xx/mach-h1940.c
-index 74d6b68e91c7..922d53bacbdf 100644
---- a/arch/arm/mach-s3c24xx/mach-h1940.c
-+++ b/arch/arm/mach-s3c24xx/mach-h1940.c
-@@ -475,6 +475,22 @@ static struct gpiod_lookup_table h1940_mmc_gpio_table = {
+diff --git a/arch/arm/mach-s3c24xx/mach-gta02.c b/arch/arm/mach-s3c24xx/mach-gta02.c
+index 594901f3b8e5..526fd0933289 100644
+--- a/arch/arm/mach-s3c24xx/mach-gta02.c
++++ b/arch/arm/mach-s3c24xx/mach-gta02.c
+@@ -15,6 +15,7 @@
+ #include <linux/delay.h>
+ #include <linux/timer.h>
+ #include <linux/init.h>
++#include <linux/gpio/machine.h>
+ #include <linux/gpio.h>
+ #include <linux/gpio_keys.h>
+ #include <linux/workqueue.h>
+@@ -474,6 +475,20 @@ static struct platform_device gta02_buttons_device = {
  	},
  };
  
-+static struct gpiod_lookup_table h1940_audio_gpio_table = {
-+	.dev_id = "h1940-audio",
++static struct gpiod_lookup_table gta02_audio_gpio_table = {
++	.dev_id = "neo1973-audio",
 +	.table = {
-+		GPIO_LOOKUP("H1940_LATCH",
-+			    H1940_LATCH_AUDIO_POWER - H1940_LATCH_GPIO(0),
-+			    "speaker-power", GPIO_ACTIVE_HIGH),
-+		GPIO_LOOKUP("GPIOG", 4, "hp", GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("GPIOJ", 2, "amp-shut", GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("GPIOJ", 1, "hp", GPIO_ACTIVE_HIGH),
 +		{ },
 +	},
 +};
 +
-+static struct platform_device h1940_audio = {
-+	.name = "h1940-audio",
-+	.id   = -1,
++static struct platform_device gta02_audio = {
++	.name = "neo1973-audio",
++	.id = -1,
 +};
 +
- static struct pwm_lookup h1940_pwm_lookup[] = {
- 	PWM_LOOKUP("samsung-pwm", 0, "pwm-backlight", NULL, 36296,
- 		   PWM_POLARITY_NORMAL),
-@@ -652,6 +668,7 @@ static struct platform_device *h1940_devices[] __initdata = {
+ static void __init gta02_map_io(void)
+ {
+ 	s3c24xx_init_io(gta02_iodesc, ARRAY_SIZE(gta02_iodesc));
+@@ -498,6 +513,7 @@ static struct platform_device *gta02_devices[] __initdata = {
+ 	&gta02_buttons_device,
+ 	&s3c_device_adc,
  	&s3c_device_ts,
- 	&power_supply,
- 	&h1940_battery,
-+	&h1940_audio,
++	&gta02_audio,
  };
  
- static void __init h1940_map_io(void)
-@@ -691,6 +708,7 @@ static void __init h1940_init(void)
+ static void gta02_poweroff(void)
+@@ -524,6 +540,7 @@ static void __init gta02_machine_init(void)
  
- 	s3c24xx_fb_set_platdata(&h1940_fb_info);
- 	gpiod_add_lookup_table(&h1940_mmc_gpio_table);
-+	gpiod_add_lookup_table(&h1940_audio_gpio_table);
- 	s3c24xx_mci_set_platdata(&h1940_mmc_cfg);
-  	s3c24xx_udc_set_platdata(&h1940_udc_cfg);
- 	s3c24xx_ts_set_platdata(&h1940_ts_cfg);
-diff --git a/sound/soc/samsung/h1940_uda1380.c b/sound/soc/samsung/h1940_uda1380.c
-index a95c34e53a2b..5fc001b4effd 100644
---- a/sound/soc/samsung/h1940_uda1380.c
-+++ b/sound/soc/samsung/h1940_uda1380.c
-@@ -15,9 +15,6 @@
- #include <sound/jack.h>
+ 	i2c_register_board_info(0, gta02_i2c_devs, ARRAY_SIZE(gta02_i2c_devs));
  
- #include "regs-iis.h"
--#include <asm/mach-types.h>
--
++	gpiod_add_lookup_table(&gta02_audio_gpio_table);
+ 	platform_add_devices(gta02_devices, ARRAY_SIZE(gta02_devices));
+ 	pm_power_off = gta02_poweroff;
+ 
+diff --git a/sound/soc/samsung/neo1973_wm8753.c b/sound/soc/samsung/neo1973_wm8753.c
+index 38f536bafa09..b41e3dc297e7 100644
+--- a/sound/soc/samsung/neo1973_wm8753.c
++++ b/sound/soc/samsung/neo1973_wm8753.c
+@@ -11,14 +11,11 @@
+ 
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ 
+ #include <sound/soc.h>
+ 
 -#include <mach/gpio-samsung.h>
+-#include <asm/mach-types.h>
+ #include "regs-iis.h"
+-
+ #include "../codecs/wm8753.h"
  #include "s3c24xx-i2s.h"
  
- static const unsigned int rates[] = {
-@@ -31,6 +28,8 @@ static const struct snd_pcm_hw_constraint_list hw_rates = {
- 	.list = rates,
+@@ -166,6 +163,7 @@ static struct snd_soc_ops neo1973_voice_ops = {
+ 	.hw_free = neo1973_voice_hw_free,
  };
  
-+static struct gpio_desc *gpiod_speaker_power;
-+
- static struct snd_soc_jack hp_jack;
++static struct gpio_desc *gpiod_hp_in, *gpiod_amp_shut;
+ static int gta02_speaker_enabled;
  
- static struct snd_soc_jack_pin hp_jack_pins[] = {
-@@ -47,7 +46,6 @@ static struct snd_soc_jack_pin hp_jack_pins[] = {
- 
- static struct snd_soc_jack_gpio hp_jack_gpios[] = {
- 	{
--		.gpio			= S3C2410_GPG(4),
- 		.name			= "hp-gpio",
- 		.report			= SND_JACK_HEADPHONE,
- 		.invert			= 1,
-@@ -123,9 +121,9 @@ static int h1940_spk_power(struct snd_soc_dapm_widget *w,
- 				struct snd_kcontrol *kcontrol, int event)
+ static int lm4853_set_spk(struct snd_kcontrol *kcontrol,
+@@ -173,7 +171,7 @@ static int lm4853_set_spk(struct snd_kcontrol *kcontrol,
  {
- 	if (SND_SOC_DAPM_EVENT_ON(event))
--		gpio_set_value(S3C_GPIO_END + 9, 1);
-+		gpiod_set_value(gpiod_speaker_power, 1);
- 	else
--		gpio_set_value(S3C_GPIO_END + 9, 0);
-+		gpiod_set_value(gpiod_speaker_power, 0);
+ 	gta02_speaker_enabled = ucontrol->value.integer.value[0];
+ 
+-	gpio_set_value(S3C2410_GPJ(2), !gta02_speaker_enabled);
++	gpiod_set_value(gpiod_hp_in, !gta02_speaker_enabled);
  
  	return 0;
  }
-@@ -151,8 +149,6 @@ static const struct snd_soc_dapm_route audio_map[] = {
- 	{"VINM", NULL, "Mic Jack"},
- };
- 
--static struct platform_device *s3c24xx_snd_device;
--
- static int h1940_uda1380_init(struct snd_soc_pcm_runtime *rtd)
+@@ -188,7 +186,7 @@ static int lm4853_get_spk(struct snd_kcontrol *kcontrol,
+ static int lm4853_event(struct snd_soc_dapm_widget *w,
+ 			struct snd_kcontrol *k, int event)
  {
- 	snd_soc_card_jack_new(rtd->card, "Headphone Jack", SND_JACK_HEADPHONE,
-@@ -194,55 +190,34 @@ static struct snd_soc_card h1940_asoc = {
- 	.num_dapm_routes = ARRAY_SIZE(audio_map),
+-	gpio_set_value(S3C2410_GPJ(1), SND_SOC_DAPM_EVENT_OFF(event));
++	gpiod_set_value(gpiod_amp_shut, SND_SOC_DAPM_EVENT_OFF(event));
+ 
+ 	return 0;
+ }
+@@ -308,13 +306,8 @@ static struct snd_soc_codec_conf neo1973_codec_conf[] = {
+ 	},
  };
  
--static int __init h1940_init(void)
-+static int h1940_probe(struct platform_device *pdev)
+-static const struct gpio neo1973_gta02_gpios[] = {
+-	{ S3C2410_GPJ(2), GPIOF_OUT_INIT_HIGH, "GTA02_HP_IN" },
+-	{ S3C2410_GPJ(1), GPIOF_OUT_INIT_HIGH, "GTA02_AMP_SHUT" },
+-};
+-
+ static struct snd_soc_card neo1973 = {
+-	.name = "neo1973",
++	.name = "neo1973gta02",
+ 	.owner = THIS_MODULE,
+ 	.dai_link = neo1973_dai,
+ 	.num_links = ARRAY_SIZE(neo1973_dai),
+@@ -332,62 +325,36 @@ static struct snd_soc_card neo1973 = {
+ 	.fully_routed = true,
+ };
+ 
+-static struct platform_device *neo1973_snd_device;
+-
+-static int __init neo1973_init(void)
++static int neo1973_probe(struct platform_device *pdev)
  {
 -	int ret;
+-
+-	if (!machine_is_neo1973_gta02())
+-		return -ENODEV;
 +	struct device *dev = &pdev->dev;
  
--	if (!machine_is_h1940())
--		return -ENODEV;
-+	h1940_asoc.dev = dev;
-+	hp_jack_gpios[0].gpiod_dev = dev;
-+	gpiod_speaker_power = devm_gpiod_get(&pdev->dev, "speaker-power",
-+					     GPIOD_OUT_LOW);
- 
--	/* configure some gpios */
--	ret = gpio_request(S3C_GPIO_END + 9, "speaker-power");
--	if (ret)
--		goto err_out;
+-	if (machine_is_neo1973_gta02()) {
+-		neo1973.name = "neo1973gta02";
+-		neo1973.num_aux_devs = 1;
 -
--	ret = gpio_direction_output(S3C_GPIO_END + 9, 0);
--	if (ret)
--		goto err_gpio;
+-		ret = gpio_request_array(neo1973_gta02_gpios,
+-				ARRAY_SIZE(neo1973_gta02_gpios));
+-		if (ret)
+-			return ret;
++	gpiod_hp_in = devm_gpiod_get(dev, "hp", GPIOD_OUT_HIGH);
++	if (IS_ERR(gpiod_hp_in)) {
++		dev_err(dev, "missing gpio %s\n", "hp");
++		return PTR_ERR(gpiod_hp_in);
+ 	}
 -
--	s3c24xx_snd_device = platform_device_alloc("soc-audio", -1);
--	if (!s3c24xx_snd_device) {
+-	neo1973_snd_device = platform_device_alloc("soc-audio", -1);
+-	if (!neo1973_snd_device) {
 -		ret = -ENOMEM;
--		goto err_gpio;
-+	if (IS_ERR(gpiod_speaker_power)) {
-+		dev_err(dev, "Could not get gpio\n");
-+		return PTR_ERR(gpiod_speaker_power);
+-		goto err_gpio_free;
++	gpiod_amp_shut = devm_gpiod_get(dev, "amp-shut", GPIOD_OUT_HIGH);
++	if (IS_ERR(gpiod_amp_shut)) {
++		dev_err(dev, "missing gpio %s\n", "amp-shut");
++		return PTR_ERR(gpiod_amp_shut);
  	}
  
--	platform_set_drvdata(s3c24xx_snd_device, &h1940_asoc);
--	ret = platform_device_add(s3c24xx_snd_device);
+-	platform_set_drvdata(neo1973_snd_device, &neo1973);
+-	ret = platform_device_add(neo1973_snd_device);
 -
 -	if (ret)
--		goto err_plat;
+-		goto err_put_device;
 -
 -	return 0;
 -
--err_plat:
--	platform_device_put(s3c24xx_snd_device);
--err_gpio:
--	gpio_free(S3C_GPIO_END + 9);
--
--err_out:
+-err_put_device:
+-	platform_device_put(neo1973_snd_device);
+-err_gpio_free:
+-	if (machine_is_neo1973_gta02()) {
+-		gpio_free_array(neo1973_gta02_gpios,
+-				ARRAY_SIZE(neo1973_gta02_gpios));
+-	}
 -	return ret;
--}
--
--static void __exit h1940_exit(void)
--{
--	platform_device_unregister(s3c24xx_snd_device);
--	gpio_free(S3C_GPIO_END + 9);
-+	return devm_snd_soc_register_card(dev, &h1940_asoc);
++	neo1973.dev = dev;
++	return devm_snd_soc_register_card(dev, &neo1973);
  }
+-module_init(neo1973_init);
+-
+-static void __exit neo1973_exit(void)
+-{
+-	platform_device_unregister(neo1973_snd_device);
  
--module_init(h1940_init);
--module_exit(h1940_exit);
-+static struct platform_driver h1940_audio_driver = {
+-	if (machine_is_neo1973_gta02()) {
+-		gpio_free_array(neo1973_gta02_gpios,
+-				ARRAY_SIZE(neo1973_gta02_gpios));
+-	}
+-}
+-module_exit(neo1973_exit);
++struct platform_driver neo1973_audio = {
 +	.driver = {
-+		.name = "h1940-audio",
++		.name = "neo1973-audio",
 +		.pm = &snd_soc_pm_ops,
 +	},
-+	.probe = h1940_probe,
++	.probe = neo1973_probe,
 +};
-+module_platform_driver(h1940_audio_driver);
++module_platform_driver(neo1973_audio);
  
  /* Module information */
- MODULE_AUTHOR("Arnaud Patard, Vasily Khoruzhick");
- MODULE_DESCRIPTION("ALSA SoC H1940");
+ MODULE_AUTHOR("Graeme Gregory, graeme@openmoko.org, www.openmoko.org");
+ MODULE_DESCRIPTION("ALSA SoC WM8753 Neo1973 and Frerunner");
  MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:h1940-audio");
++MODULE_ALIAS("platform:neo1973-audio");
 -- 
 2.20.0
