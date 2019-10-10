@@ -2,100 +2,276 @@ Return-Path: <SRS0=rstS=YD=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2271C4360C
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Oct 2019 18:41:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C41EC10F14
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Oct 2019 19:12:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 933B4214E0
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Oct 2019 18:41:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 449DD21D6C
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 10 Oct 2019 19:12:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570732865;
-	bh=l0Xei6/9N4UDEa7ldmuBwq53U9K808SKgsDr3Wd09rQ=;
+	s=default; t=1570734772;
+	bh=CzECmPElfOBV82JB55pzmLPRpMe5y3G/RB8ZAL55fJo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=fvj3cFEKvdacJBV7keMCfyevHyGECqMZXATZYjIygK+aJEI8h5OmXmDhiRTpOTiIx
-	 y59wdyE+NTJYIgwKzlaP1KiPSiauNSDRH+GNz8U6DQm2LVwHJRRbIXhhRZFiNbFBLS
-	 tJ3BRrjhuv3juQGFqPUxUTxaM28buBmO8J4b5eT4=
+	b=p6g/Cpf1f+gEjOorPa1l8/5goofkARyHau8JTxg8DcwNwW88KDeVDEcPSzdXwGEl1
+	 FqtNhIls/mXLkzBLQLDEqa7gHxWtXVImuCanHbfYCBiAbu80Ttl5C7kgBP9xfb5hFh
+	 tXrtQn/tYlkYoAk38jYOYOFwSF7p3M++p8d68JMA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726535AbfJJSlF (ORCPT
+        id S1727073AbfJJTMp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 10 Oct 2019 14:41:05 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:43864 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726489AbfJJSlE (ORCPT
+        Thu, 10 Oct 2019 15:12:45 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:33712 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726007AbfJJTMp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 10 Oct 2019 14:41:04 -0400
-Received: by mail-oi1-f194.google.com with SMTP id t84so5808880oih.10;
-        Thu, 10 Oct 2019 11:41:04 -0700 (PDT)
+        Thu, 10 Oct 2019 15:12:45 -0400
+Received: by mail-oi1-f196.google.com with SMTP id a15so5927730oic.0;
+        Thu, 10 Oct 2019 12:12:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XmWVPPP865LCrxGXKVMx+awlUtO1lgx35IM/Tkg3d/4=;
-        b=eoT/bWUPn7NoTvOY/2jwtFZD/F5hKCCwpQowzBZCD+kN2ufrKaiu7XfmBv2agV0KL1
-         C++LYgthWufWKOps4h65S12q2lCF2Tn956VkR1E/rgNc0TsrXHtZy/XMJ7Hii1RtpPte
-         NMXH8XomxbnmmTAZpHKS2F1ftlEhfgnVzBNFH5E/LsuFWBDj/5RZzeAILaMlPm/vK4qv
-         WCRMB8JrFjd2pyoyCkKXEuHNXFIiIUCUoaiaask7auM5Dste3kx+Dcv737K5rFJZy3IE
-         GJJgvGy+Lh1PPkFM+OaryqrRqOgwuUMYikpjkJK+8ZQLVtPVvJTJA9emW2AiovSm9V3C
-         FzGw==
-X-Gm-Message-State: APjAAAUWjrtc70KWnzGv1HGzD3aNyA/27LxtqNEQk1wOtVa3glFxef2e
-        LYgJp5GYlICUpX2HPA60tw==
-X-Google-Smtp-Source: APXvYqyhnaWIZALC+KGjjdwYuY6XqSa0t4X1o/I5FP/w0EG3/e1rUV3ELAxXyTApAAYjD9jmtuIQiQ==
-X-Received: by 2002:aca:a9ca:: with SMTP id s193mr9116907oie.85.1570732863751;
-        Thu, 10 Oct 2019 11:41:03 -0700 (PDT)
+        bh=TB0eH3ae3vSi2BTINdu4YWUfxkdAB53RghmO04INfwE=;
+        b=ArSe95mAfCRXqkMIytaj6fYFOTlqU0iiet4ZBsvBJKCLbX5pFyegLfOk9Zw2XyKJt9
+         Y37Izxrxg/OWZ4ju2R5WE+jmSIgLrm4VNKDsJGgcKTHlGELiPfsM3XjsE5OP4B2eESDv
+         bt7nfZRXhFDGrY5t3SYUQ5RVp1UHlGsV7rBitwNGZgBvAQ3+oyfFIj3JgKY57MvsEHn3
+         hyXisd3PjfV9QZE1OIT291GcqmLABdEFBrtmnQKVrYKaA1RkO4EX+RkbNAJwyXVH+1Ly
+         +LLJtkkreadhM0twrcQuCNd5y/3cSTMCQWwlGIVZuF/x0nj0uIrqcIzDSLgTv2ap4KyA
+         mlxg==
+X-Gm-Message-State: APjAAAVbEGi6Dbyf/xPTaxNN2llK5495iT+JNKzN8whta/u34h3z7Jgm
+        08hpgSg2MvVHf3Sku3WNKw==
+X-Google-Smtp-Source: APXvYqzTNwu0JxpmueZM2zdBUYD25a/vLovCXlgQYNf1BmMTJANPQvgzTPJMPVKxRBQ9IHDbu1EaRw==
+X-Received: by 2002:a54:4419:: with SMTP id k25mr8594181oiw.0.1570734762353;
+        Thu, 10 Oct 2019 12:12:42 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id t10sm1836170oib.49.2019.10.10.11.41.02
+        by smtp.gmail.com with ESMTPSA id s194sm1910974oie.19.2019.10.10.12.12.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2019 11:41:02 -0700 (PDT)
-Date:   Thu, 10 Oct 2019 13:41:02 -0500
+        Thu, 10 Oct 2019 12:12:41 -0700 (PDT)
+Date:   Thu, 10 Oct 2019 14:12:40 -0500
 From:   Rob Herring <robh@kernel.org>
 To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+Cc:     Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>,
+        =?iso-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] dt-bindings: rng: exynos4-rng: Convert Exynos PRNG
- bindings to json-schema
-Message-ID: <20191010184102.GA16673@bogus>
-References: <20191002161340.11846-1-krzk@kernel.org>
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3 01/10] dt-bindings: sram: Convert SRAM bindings to
+ json-schema
+Message-ID: <20191010191240.GA15006@bogus>
+References: <20191002164316.14905-1-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-In-Reply-To: <20191002161340.11846-1-krzk@kernel.org>
+In-Reply-To: <20191002164316.14905-1-krzk@kernel.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20191010184102.BDIHfAQLgzZtNTJEw2cLGVxp6U0u1TTAE-AsN2PFurs@z>
+Message-ID: <20191010191240.gZD0iQ8b5Ml8OJ6JRKoykd7ue-7YLvNVwsny0oZ-HDs@z>
 
-On Wed,  2 Oct 2019 18:13:40 +0200, Krzysztof Kozlowski wrote:
-> Convert Samsung Exynos Pseudo Random Number Generator bindings to DT
-> schema format using json-schema.
+On Wed, Oct 02, 2019 at 06:43:07PM +0200, Krzysztof Kozlowski wrote:
+> Convert generic mmio-sram bindings to DT schema format using
+> json-schema.  Require the address/size cells to be 1, not equal to root
+> node.
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > 
 > ---
 > 
 > Changes since v2:
-> 1. Add additionalProperties false,
-> 2. Include clock header and use defines instead of clock numbers.
+> 1. Add Rob as maintainer,
+> 2. Use "contains" for compatible,
+> 3. Fix address and size cells to 1,
+> 4. Add maxitems to reg under children,
+> 5. Remove unneeded string type from label.
 > 
 > Changes since v1:
 > 1. Indent example with four spaces (more readable).
 > ---
->  .../bindings/rng/samsung,exynos4-rng.txt      | 19 --------
->  .../bindings/rng/samsung,exynos4-rng.yaml     | 45 +++++++++++++++++++
->  MAINTAINERS                                   |  2 +-
->  3 files changed, 46 insertions(+), 20 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/rng/samsung,exynos4-rng.txt
->  create mode 100644 Documentation/devicetree/bindings/rng/samsung,exynos4-rng.yaml
+>  .../devicetree/bindings/sram/sram.txt         |  80 -----------
+>  .../devicetree/bindings/sram/sram.yaml        | 134 ++++++++++++++++++
+>  2 files changed, 134 insertions(+), 80 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/sram/sram.txt
+>  create mode 100644 Documentation/devicetree/bindings/sram/sram.yaml
+
+
+> diff --git a/Documentation/devicetree/bindings/sram/sram.yaml b/Documentation/devicetree/bindings/sram/sram.yaml
+> new file mode 100644
+> index 000000000000..a1c1ec2183f2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sram/sram.yaml
+> @@ -0,0 +1,134 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sram/sram.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Generic on-chip SRAM
+> +
+> +maintainers:
+> +  - Rob Herring <robh@kernel.org>
+> +
+> +description: |+
+> +  Simple IO memory regions to be managed by the genalloc API.
+> +
+> +  Each child of the sram node specifies a region of reserved memory. Each
+> +  child node should use a 'reg' property to specify a specific range of
+> +  reserved memory.
+> +
+> +  Following the generic-names recommended practice, node names should
+> +  reflect the purpose of the node. Unit address (@<address>) should be
+> +  appended to the name.
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^sram(@.*)?"
+> +
+> +  compatible:
+> +    contains:
+> +      enum:
+> +        - mmio-sram
+> +        - atmel,sama5d2-securam
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 1
+> +
+> +  ranges:
+> +    description:
+> +      Should translate from local addresses within the sram to bus addresses.
+> +
+> +  no-memory-wc:
+> +    description:
+> +      The flag indicating, that SRAM memory region has not to be remapped
+> +      as write combining. WC is used by default.
+> +    type: boolean
+> +
+> +patternProperties:
+> +  "^([a-z]*-)?sram@[a-f0-9]$":
+> +    type: object
+> +    description:
+> +      Each child of the sram node specifies a region of reserved memory.
+> +    properties:
+> +      reg:
+> +        description:
+> +          IO mem address range, relative to the SRAM range.
+> +        maxItems: 1
+> +
+> +      compatible:
+> +        $ref: /schemas/types.yaml#/definitions/string
+
+No need to define the type again. We can say 'maxItems: 1' if we really 
+want to force it to 1 entry.
+
+> +        description:
+> +          Should contain a vendor specific string in the form
+> +          <vendor>,[<device>-]<usage>
+> +
+> +      pool:
+> +        description:
+> +          Indicates that the particular reserved SRAM area is addressable
+> +          and in use by another device or devices.
+> +        type: boolean
+> +
+> +      export:
+> +        description:
+> +          Indicates that the reserved SRAM area may be accessed outside
+> +          of the kernel, e.g. by bootloader or userspace.
+> +        type: boolean
+> +
+> +      protect-exec:
+> +        description: |
+> +          Same as 'pool' above but with the additional constraint that code
+> +          will be run from the region and that the memory is maintained as
+> +          read-only, executable during code execution. NOTE: This region must
+> +          be page aligned on start and end in order to properly allow
+> +          manipulation of the page attributes.
+> +        type: boolean
+> +
+> +      label:
+> +        description:
+> +          The name for the reserved partition, if omitted, the label is taken
+> +          from the node name excluding the unit address.
+> +
+> +      clocks:
+
+Shouldn't this be up one level? Looks like this is the only case 
+(Marvell and i.MX are the only ones I see with clocks).
+
+> +        description:
+> +          A list of phandle and clock specifier pair that controls the
+> +          single SRAM clock.
+
+maxItems: 1
+
+> +
+> +    required:
+> +      - reg
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#address-cells"
+> +  - "#size-cells"
+> +  - ranges
+
+Does 'additionalProperties' work here and/or in the child node? I guess 
+not if we keep some node names.
+
+> +
+> +examples:
+> +  - |
+> +    sram: sram@5c000000 {
+> +        compatible = "mmio-sram";
+> +        reg = <0x5c000000 0x40000>; /* 256 KiB SRAM at address 0x5c000000 */
+> +
+> +        #address-cells = <1>;
+> +        #size-cells = <1>;
+> +        ranges = <0 0x5c000000 0x40000>;
+> +
+> +        smp-sram@100 {
+> +            compatible = "socvendor,smp-sram";
+> +            reg = <0x100 0x50>;
+> +        };
+> +
+> +        device-sram@1000 {
+> +            reg = <0x1000 0x1000>;
+> +            pool;
+> +        };
+> +
+> +        exported@20000 {
+
+This one doesn't match the pattern. That's fine I guess for dts files, 
+but examples should be good examples.
+
+> +            reg = <0x20000 0x20000>;
+> +            export;
+> +        };
+> +    };
+> -- 
+> 2.17.1
 > 
-
-Applied, thanks.
-
-Rob
