@@ -1,68 +1,107 @@
-From: Laurent Vivier <lvivier@redhat.com>
-Subject: Re: [PATCH] hw_random: move add_early_randomness() out of rng_mutex
-Date: Fri, 11 Oct 2019 13:00:55 +0200
-Message-ID: <bbd13e79-b28a-e339-61e8-048f658437be@redhat.com>
-References: <20190912133022.14870-1-lvivier@redhat.com>
- <CGME20191011084523eucas1p1fe003b9be75fc2fa864f0ab2bd896677@eucas1p1.samsung.com>
- <5aec0832-e18f-a557-3614-33970bc4ff1f@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] devfreq: exynos-bus: workaround dev_pm_opp_set_rate()
+ errors on Exynos5422/5800 SoCs
+Date: Fri, 11 Oct 2019 13:33:53 +0200
+Message-ID: <0ce56e65-d989-18f8-af84-2fbd74ba20aa@samsung.com>
+References: <CGME20191008134950eucas1p15cfef5800efc10d5b18ec5eb37dde60b@eucas1p1.samsung.com>
+        <20191008134923.30123-1-k.konieczny@partner.samsung.com>
+        <4f14d3af-e455-d05b-fc03-cba58e001f41@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5aec0832-e18f-a557-3614-33970bc4ff1f@samsung.com>
+In-Reply-To: <4f14d3af-e455-d05b-fc03-cba58e001f41@samsung.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, Matt Mackall <mpm@selenic.com>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
+To: Chanwoo Choi <cw00.choi@samsung.com>, k.konieczny@partner.samsung.com
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 11/10/2019 10:45, Marek Szyprowski wrote:
-> Hi Laurent,
-> 
-> On 12.09.2019 15:30, Laurent Vivier wrote:
->> add_early_randomness() is called every time a new rng backend is added
->> and every time it is set as the current rng provider.
+Hi Chanwoo,
+
+On 10.10.2019 04:50, Chanwoo Choi wrote:
+> On 2019년 10월 08일 22:49, k.konieczny@partner.samsung.com wrote:
+>> Commit 4294a779bd8d ("PM / devfreq: exynos-bus: Convert to use
+>> dev_pm_opp_set_rate()") introduced errors:
+>> exynos-bus: new bus device registered: soc:bus_wcore ( 84000 KHz ~ 400000 KHz)
+>> exynos-bus: new bus device registered: soc:bus_noc ( 67000 KHz ~ 100000 KHz)
+>> exynos-bus: new bus device registered: soc:bus_fsys_apb (100000 KHz ~ 200000 KHz)
+>> ...
+>> exynos-bus soc:bus_wcore: dev_pm_opp_set_rate: failed to find current OPP for freq 532000000 (-34)
+>> exynos-bus soc:bus_noc: dev_pm_opp_set_rate: failed to find current OPP for freq 111000000 (-34)
+>> exynos-bus soc:bus_fsys_apb: dev_pm_opp_set_rate: failed to find current OPP for freq 222000000 (-34)
 >>
->> add_early_randomness() is called from functions locking rng_mutex,
->> and if it hangs all the hw_random framework hangs: we can't read sysfs,
->> add or remove a backend.
+>> They are caused by incorrect PLL assigned to clock source, which results
+>> in clock rate outside of OPP range. Add workaround for this in
+>> exynos_bus_parse_of() by adjusting clock rate to those present in OPP.
+> If the clock caused this issue, you can set the initial clock on DeviceTree
+> with assigned-clock-* properties. Because the probe time of clock driver
+> is early than the any device drivers.
+>
+> It is not proper to fix the clock issue on other device driver.
+> I think you can fix it by using the supported clock properties.
+
+This issue is about something completely different. The OPPs defined in 
+DT cannot be applied, because it is not possible to derive the needed 
+clock rate from the bootloader-configured clock topology (mainly due to 
+lack of common divisor values for some of the parent clocks). Some time 
+ago Lukasz tried initially to redefine this clock topology using 
+assigned-clock-rates/parents properties (see 
+https://lkml.org/lkml/2019/7/15/276), but it has limitations and some 
+such changes has to be done in bootloader. Until this is resolved, 
+devfreq simply cannot set some of the defined OPPs.
+
+This issue was there from the beginning, recent Kamil's patch only 
+revealed it. In fact it was even worse - devfreq and common clock 
+framework silently set lower clock than the given OPP defined.
+
+>> Fixes: 4294a779bd8d ("PM / devfreq: exynos-bus: Convert to use dev_pm_opp_set_rate()")
+>> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
+>> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+>> ---
+>>   drivers/devfreq/exynos-bus.c | 14 +++++++++++---
+>>   1 file changed, 11 insertions(+), 3 deletions(-)
 >>
->> This patch move add_early_randomness() out of the rng_mutex zone.
->> It only needs the reading_mutex.
+>> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+>> index c832673273a2..37bd34d5625b 100644
+>> --- a/drivers/devfreq/exynos-bus.c
+>> +++ b/drivers/devfreq/exynos-bus.c
+>> @@ -243,7 +243,7 @@ static int exynos_bus_parse_of(struct device_node *np,
+>>   {
+>>   	struct device *dev = bus->dev;
+>>   	struct dev_pm_opp *opp;
+>> -	unsigned long rate;
+>> +	unsigned long rate, opp_rate;
+>>   	int ret;
+>>   
+>>   	/* Get the clock to provide each bus with source clock */
+>> @@ -267,13 +267,21 @@ static int exynos_bus_parse_of(struct device_node *np,
+>>   	}
+>>   
+>>   	rate = clk_get_rate(bus->clk);
+>> -
+>> -	opp = devfreq_recommended_opp(dev, &rate, 0);
+>> +	opp_rate = rate;
+>> +	opp = devfreq_recommended_opp(dev, &opp_rate, 0);
+>>   	if (IS_ERR(opp)) {
+>>   		dev_err(dev, "failed to find dev_pm_opp\n");
+>>   		ret = PTR_ERR(opp);
+>>   		goto err_opp;
+>>   	}
+>> +	/*
+>> +	 * FIXME: U-boot leaves clock source at incorrect PLL, this results
+>> +	 * in clock rate outside defined OPP rate. Work around this bug by
+>> +	 * setting clock rate to recommended one.
+>> +	 */
+>> +	if (rate > opp_rate)
+>> +		clk_set_rate(bus->clk, opp_rate);
+>> +
+>>   	bus->curr_freq = dev_pm_opp_get_freq(opp);
+>>   	dev_pm_opp_put(opp);
+>>   
 >>
->> Signed-off-by: Laurent Vivier <lvivier@redhat.com>
-> 
-> This patch landed in today's linux-next and causes the following warning 
-> on ARM 32bit Exynos5420-based Chromebook Peach-Pit board:
-> 
-> tpm_i2c_infineon 9-0020: 1.2 TPM (device-id 0x1A)
-> ------------[ cut here ]------------
-> WARNING: CPU: 3 PID: 1 at lib/refcount.c:156 hwrng_register+0x13c/0x1b4
-> refcount_t: increment on 0; use-after-free.
-> Modules linked in:
-> CPU: 3 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc1-00061-gdaae28debcb0 
-> #6714
-> Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-> [<c01124c8>] (unwind_backtrace) from [<c010dfb8>] (show_stack+0x10/0x14)
-> [<c010dfb8>] (show_stack) from [<c0ae86d8>] (dump_stack+0xa8/0xd4)
-> [<c0ae86d8>] (dump_stack) from [<c0127428>] (__warn+0xf4/0x10c)
-> [<c0127428>] (__warn) from [<c01274b4>] (warn_slowpath_fmt+0x74/0xb8)
-> [<c01274b4>] (warn_slowpath_fmt) from [<c054729c>] 
-> (hwrng_register+0x13c/0x1b4)
-
-This can happen if hwrng_init() has not been called for rng, that is
-called by set_current_rng().
-
-It appears with this patch because I have introduced the kref_get()
-before the call of add_early_randomness() when the rng device is new but
-is not set as the current one. So add_early_randomness() was called on
-an unitialized device (it was already the case before)
-
-I wanted to take the ref before releasing the mutex to avoid race
-condition, but if the new rng device is not the new current_rng one, we
-don't need that as the ref is only used with current_rng device.
-
-I'm going to rework this patch.
-
-Thanks,
-Laurent
+>
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
