@@ -1,107 +1,200 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] devfreq: exynos-bus: workaround dev_pm_opp_set_rate()
- errors on Exynos5422/5800 SoCs
-Date: Fri, 11 Oct 2019 13:33:53 +0200
-Message-ID: <0ce56e65-d989-18f8-af84-2fbd74ba20aa@samsung.com>
-References: <CGME20191008134950eucas1p15cfef5800efc10d5b18ec5eb37dde60b@eucas1p1.samsung.com>
-        <20191008134923.30123-1-k.konieczny@partner.samsung.com>
-        <4f14d3af-e455-d05b-fc03-cba58e001f41@samsung.com>
+From: Laurent Vivier <lvivier@redhat.com>
+Subject: [PATCH v2] hwrng: core - move add_early_randomness() out of rng_mutex
+Date: Fri, 11 Oct 2019 15:47:24 +0200
+Message-ID: <20191011134724.28651-1-lvivier@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4f14d3af-e455-d05b-fc03-cba58e001f41@samsung.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, k.konieczny@partner.samsung.com
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-crypto@vger.kernel.org, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, Laurent Vivier <lvivier@redhat.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Chanwoo,
+add_early_randomness() is called every time a new rng backend is added
+and every time it is set as the current rng provider.
 
-On 10.10.2019 04:50, Chanwoo Choi wrote:
-> On 2019년 10월 08일 22:49, k.konieczny@partner.samsung.com wrote:
->> Commit 4294a779bd8d ("PM / devfreq: exynos-bus: Convert to use
->> dev_pm_opp_set_rate()") introduced errors:
->> exynos-bus: new bus device registered: soc:bus_wcore ( 84000 KHz ~ 400000 KHz)
->> exynos-bus: new bus device registered: soc:bus_noc ( 67000 KHz ~ 100000 KHz)
->> exynos-bus: new bus device registered: soc:bus_fsys_apb (100000 KHz ~ 200000 KHz)
->> ...
->> exynos-bus soc:bus_wcore: dev_pm_opp_set_rate: failed to find current OPP for freq 532000000 (-34)
->> exynos-bus soc:bus_noc: dev_pm_opp_set_rate: failed to find current OPP for freq 111000000 (-34)
->> exynos-bus soc:bus_fsys_apb: dev_pm_opp_set_rate: failed to find current OPP for freq 222000000 (-34)
->>
->> They are caused by incorrect PLL assigned to clock source, which results
->> in clock rate outside of OPP range. Add workaround for this in
->> exynos_bus_parse_of() by adjusting clock rate to those present in OPP.
-> If the clock caused this issue, you can set the initial clock on DeviceTree
-> with assigned-clock-* properties. Because the probe time of clock driver
-> is early than the any device drivers.
->
-> It is not proper to fix the clock issue on other device driver.
-> I think you can fix it by using the supported clock properties.
+add_early_randomness() is called from functions locking rng_mutex,
+and if it hangs all the hw_random framework hangs: we can't read sysfs,
+add or remove a backend.
 
-This issue is about something completely different. The OPPs defined in 
-DT cannot be applied, because it is not possible to derive the needed 
-clock rate from the bootloader-configured clock topology (mainly due to 
-lack of common divisor values for some of the parent clocks). Some time 
-ago Lukasz tried initially to redefine this clock topology using 
-assigned-clock-rates/parents properties (see 
-https://lkml.org/lkml/2019/7/15/276), but it has limitations and some 
-such changes has to be done in bootloader. Until this is resolved, 
-devfreq simply cannot set some of the defined OPPs.
+This patch moves add_early_randomness() out of the rng_mutex zone.
+It only needs the reading_mutex.
 
-This issue was there from the beginning, recent Kamil's patch only 
-revealed it. In fact it was even worse - devfreq and common clock 
-framework silently set lower clock than the given OPP defined.
+Signed-off-by: Laurent Vivier <lvivier@redhat.com>
+---
 
->> Fixes: 4294a779bd8d ("PM / devfreq: exynos-bus: Convert to use dev_pm_opp_set_rate()")
->> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
->> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
->> ---
->>   drivers/devfreq/exynos-bus.c | 14 +++++++++++---
->>   1 file changed, 11 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
->> index c832673273a2..37bd34d5625b 100644
->> --- a/drivers/devfreq/exynos-bus.c
->> +++ b/drivers/devfreq/exynos-bus.c
->> @@ -243,7 +243,7 @@ static int exynos_bus_parse_of(struct device_node *np,
->>   {
->>   	struct device *dev = bus->dev;
->>   	struct dev_pm_opp *opp;
->> -	unsigned long rate;
->> +	unsigned long rate, opp_rate;
->>   	int ret;
->>   
->>   	/* Get the clock to provide each bus with source clock */
->> @@ -267,13 +267,21 @@ static int exynos_bus_parse_of(struct device_node *np,
->>   	}
->>   
->>   	rate = clk_get_rate(bus->clk);
->> -
->> -	opp = devfreq_recommended_opp(dev, &rate, 0);
->> +	opp_rate = rate;
->> +	opp = devfreq_recommended_opp(dev, &opp_rate, 0);
->>   	if (IS_ERR(opp)) {
->>   		dev_err(dev, "failed to find dev_pm_opp\n");
->>   		ret = PTR_ERR(opp);
->>   		goto err_opp;
->>   	}
->> +	/*
->> +	 * FIXME: U-boot leaves clock source at incorrect PLL, this results
->> +	 * in clock rate outside defined OPP rate. Work around this bug by
->> +	 * setting clock rate to recommended one.
->> +	 */
->> +	if (rate > opp_rate)
->> +		clk_set_rate(bus->clk, opp_rate);
->> +
->>   	bus->curr_freq = dev_pm_opp_get_freq(opp);
->>   	dev_pm_opp_put(opp);
->>   
->>
->
-Best regards
+Notes:
+    v2: in hwrng_register, take rng->ref only if rng is the new current_rng
+
+ drivers/char/hw_random/core.c | 61 +++++++++++++++++++++++++----------
+ 1 file changed, 44 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/char/hw_random/core.c b/drivers/char/hw_random/core.c
+index 80b850ef1bf6..d85c6e18a2d2 100644
+--- a/drivers/char/hw_random/core.c
++++ b/drivers/char/hw_random/core.c
+@@ -112,6 +112,14 @@ static void drop_current_rng(void)
+ }
+ 
+ /* Returns ERR_PTR(), NULL or refcounted hwrng */
++static struct hwrng *get_current_rng_nolock(void)
++{
++	if (current_rng)
++		kref_get(&current_rng->ref);
++
++	return current_rng;
++}
++
+ static struct hwrng *get_current_rng(void)
+ {
+ 	struct hwrng *rng;
+@@ -119,9 +127,7 @@ static struct hwrng *get_current_rng(void)
+ 	if (mutex_lock_interruptible(&rng_mutex))
+ 		return ERR_PTR(-ERESTARTSYS);
+ 
+-	rng = current_rng;
+-	if (rng)
+-		kref_get(&rng->ref);
++	rng = get_current_rng_nolock();
+ 
+ 	mutex_unlock(&rng_mutex);
+ 	return rng;
+@@ -156,8 +162,6 @@ static int hwrng_init(struct hwrng *rng)
+ 	reinit_completion(&rng->cleanup_done);
+ 
+ skip_init:
+-	add_early_randomness(rng);
+-
+ 	current_quality = rng->quality ? : default_quality;
+ 	if (current_quality > 1024)
+ 		current_quality = 1024;
+@@ -321,12 +325,13 @@ static ssize_t hwrng_attr_current_store(struct device *dev,
+ 					const char *buf, size_t len)
+ {
+ 	int err = -ENODEV;
+-	struct hwrng *rng;
++	struct hwrng *rng, *old_rng, *new_rng;
+ 
+ 	err = mutex_lock_interruptible(&rng_mutex);
+ 	if (err)
+ 		return -ERESTARTSYS;
+ 
++	old_rng = current_rng;
+ 	if (sysfs_streq(buf, "")) {
+ 		err = enable_best_rng();
+ 	} else {
+@@ -338,9 +343,15 @@ static ssize_t hwrng_attr_current_store(struct device *dev,
+ 			}
+ 		}
+ 	}
+-
++	new_rng = get_current_rng_nolock();
+ 	mutex_unlock(&rng_mutex);
+ 
++	if (new_rng) {
++		if (new_rng != old_rng)
++			add_early_randomness(new_rng);
++		put_rng(new_rng);
++	}
++
+ 	return err ? : len;
+ }
+ 
+@@ -460,13 +471,15 @@ static void start_khwrngd(void)
+ int hwrng_register(struct hwrng *rng)
+ {
+ 	int err = -EINVAL;
+-	struct hwrng *old_rng, *tmp;
++	struct hwrng *tmp;
+ 	struct list_head *rng_list_ptr;
++	bool is_new_current = false;
+ 
+ 	if (!rng->name || (!rng->data_read && !rng->read))
+ 		goto out;
+ 
+ 	mutex_lock(&rng_mutex);
++
+ 	/* Must not register two RNGs with the same name. */
+ 	err = -EEXIST;
+ 	list_for_each_entry(tmp, &rng_list, list) {
+@@ -485,10 +498,8 @@ int hwrng_register(struct hwrng *rng)
+ 	}
+ 	list_add_tail(&rng->list, rng_list_ptr);
+ 
+-	old_rng = current_rng;
+-	err = 0;
+-	if (!old_rng ||
+-	    (!cur_rng_set_by_user && rng->quality > old_rng->quality)) {
++	if (!current_rng ||
++	    (!cur_rng_set_by_user && rng->quality > current_rng->quality)) {
+ 		/*
+ 		 * Set new rng as current as the new rng source
+ 		 * provides better entropy quality and was not
+@@ -497,19 +508,26 @@ int hwrng_register(struct hwrng *rng)
+ 		err = set_current_rng(rng);
+ 		if (err)
+ 			goto out_unlock;
++		/* to use current_rng in add_early_randomness() we need
++		 * to take a ref
++		 */
++		is_new_current = true;
++		kref_get(&rng->ref);
+ 	}
+-
+-	if (old_rng && !rng->init) {
++	mutex_unlock(&rng_mutex);
++	if (is_new_current || !rng->init) {
+ 		/*
+ 		 * Use a new device's input to add some randomness to
+ 		 * the system.  If this rng device isn't going to be
+ 		 * used right away, its init function hasn't been
+-		 * called yet; so only use the randomness from devices
+-		 * that don't need an init callback.
++		 * called yet by set_current_rng(); so only use the
++		 * randomness from devices that don't need an init callback
+ 		 */
+ 		add_early_randomness(rng);
+ 	}
+-
++	if (is_new_current)
++		put_rng(rng);
++	return 0;
+ out_unlock:
+ 	mutex_unlock(&rng_mutex);
+ out:
+@@ -519,10 +537,12 @@ EXPORT_SYMBOL_GPL(hwrng_register);
+ 
+ void hwrng_unregister(struct hwrng *rng)
+ {
++	struct hwrng *old_rng, *new_rng;
+ 	int err;
+ 
+ 	mutex_lock(&rng_mutex);
+ 
++	old_rng = current_rng;
+ 	list_del(&rng->list);
+ 	if (current_rng == rng) {
+ 		err = enable_best_rng();
+@@ -532,6 +552,7 @@ void hwrng_unregister(struct hwrng *rng)
+ 		}
+ 	}
+ 
++	new_rng = get_current_rng_nolock();
+ 	if (list_empty(&rng_list)) {
+ 		mutex_unlock(&rng_mutex);
+ 		if (hwrng_fill)
+@@ -539,6 +560,12 @@ void hwrng_unregister(struct hwrng *rng)
+ 	} else
+ 		mutex_unlock(&rng_mutex);
+ 
++	if (new_rng) {
++		if (old_rng != new_rng)
++			add_early_randomness(new_rng);
++		put_rng(new_rng);
++	}
++
+ 	wait_for_completion(&rng->cleanup_done);
+ }
+ EXPORT_SYMBOL_GPL(hwrng_unregister);
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.21.0
