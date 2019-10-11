@@ -1,16 +1,16 @@
-From: Sebastian Reichel <sre@kernel.org>
-Subject: Re: [PATCH 15/36] ARM: s3c: adc: move header to linux/soc/samsung
-Date: Fri, 11 Oct 2019 00:44:36 +0200
-Message-ID: <20191010224436.t6gwb5fassr2dymp@earth.universe>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 11/36] ARM: s5pv210: split from plat-samsung
+Date: Fri, 11 Oct 2019 07:51:49 +0200
+Message-ID: <20191011055149.4dudr4tk2znpt65u@pengutronix.de>
 References: <20191010202802.1132272-1-arnd@arndb.de>
  <20191010203043.1241612-1-arnd@arndb.de>
- <20191010203043.1241612-15-arnd@arndb.de>
- <da32e8a3-cbb3-ea08-1c55-55980b3dc53e@roeck-us.net>
- <20191010222955.GB229325@dtor-ws>
+ <20191010203043.1241612-11-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1761450439335636980=="
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20191010222955.GB229325@dtor-ws>
+Content-Disposition: inline
+In-Reply-To: <20191010203043.1241612-11-arnd@arndb.de>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -20,261 +20,95 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-pm@vger.kernel.org, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Jean Delvare <jdelvare@suse.com>, Kukjin Kim <kgene@kernel.org>, linux-input@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, linus.walleij@linaro.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>, linux-serial@vger.kernel.org, Jiri Slaby <jslaby@suse.com>, linux-pwm@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sascha Hauer <s.hauer@pengutronix.de>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, linux-arm-kernel@lists.infradead.org, Sangbeom Kim <sbkim73@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-mmc@vger.kernel.org, Takashi Iwai <tiwai@>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+On Thu, Oct 10, 2019 at 10:29:55PM +0200, Arnd Bergmann wrote:
+> These can be build completely independently, so split
+> the two Kconfig symbols.
+> =
 
---===============1761450439335636980==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mopqc6x4c2h7s3hb"
-Content-Disposition: inline
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
+I'd mention the two symbols' names you're working on in the commit log.
+I guess it's about PLAT_SAMSUNG and ARCH_S5PV210. And I wouldn't call it
+"split" which IMHO suggests there was only one symbol before.
 
---mopqc6x4c2h7s3hb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Maybe:
 
-Hi,
+	Don't imply PLAT_SAMSUNG if ARCH_S5PV210 is enabled
 
-On Thu, Oct 10, 2019 at 03:29:55PM -0700, Dmitry Torokhov wrote:
-> On Thu, Oct 10, 2019 at 03:20:32PM -0700, Guenter Roeck wrote:
-> > On 10/10/19 1:29 PM, Arnd Bergmann wrote:
-> > > There are multiple drivers using the private adc interface.
-> > > It seems unlikely that they would ever get converted to iio,
-> > > so make the current state official by making the header file
-> > > global.
-> > >=20
-> > > The s3c2410_ts driver needs a couple of register definitions
-> > > as well.
-> > >=20
-> > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> >=20
-> > For hwmon:
-> >=20
-> > Acked-by: Guenter Roeck <linux@roeck-us.net>
->=20
-> For input:
->=20
-> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+would be a better subject line?
 
-For power-supply:
+> ---
+>  arch/arm/Kconfig.debug        | 6 +++---
+>  arch/arm/Makefile             | 1 -
+>  arch/arm/plat-samsung/Kconfig | 2 +-
+>  drivers/mmc/host/Kconfig      | 2 +-
+>  drivers/pwm/Kconfig           | 2 +-
+>  drivers/spi/Kconfig           | 2 +-
+>  drivers/tty/serial/Kconfig    | 2 +-
+>  sound/soc/samsung/Kconfig     | 2 +-
+>  8 files changed, 9 insertions(+), 10 deletions(-)
+> =
 
-Acked-by: Sebastian Reichel <sre@kernel.org>
+> diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+> index 9c4f2d6deb06..4c4e97ae4fcb 100644
+> --- a/arch/arm/Kconfig.debug
+> +++ b/arch/arm/Kconfig.debug
+> @@ -998,7 +998,7 @@ choice
+>  		  via SCIFA4 on Renesas SH-Mobile AG5 (SH73A0).
+>  =
 
--- Sebastian
+>  	config DEBUG_S3C_UART0
+> -		depends on PLAT_SAMSUNG || ARCH_EXYNOS
+> +		depends on PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS
+>  		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
+>  		select DEBUG_S3C24XX_UART if ARCH_S3C24XX
+>  		select DEBUG_S3C64XX_UART if ARCH_S3C64XX
+> @@ -1010,7 +1010,7 @@ choice
+>  		  by the boot-loader before use.
+>  =
 
-> > > ---
-> > >   arch/arm/mach-s3c64xx/mach-crag6410.c         |  2 +-
-> > >   arch/arm/mach-s3c64xx/mach-mini6410.c         |  2 +-
-> > >   arch/arm/mach-s3c64xx/mach-real6410.c         |  2 +-
-> > >   arch/arm/mach-s3c64xx/mach-smdk6410.c         |  2 +-
-> > >   arch/arm/plat-samsung/adc.c                   |  2 +-
-> > >   arch/arm/plat-samsung/devs.c                  |  2 +-
-> > >   drivers/hwmon/s3c-hwmon.c                     |  2 +-
-> > >   drivers/input/touchscreen/s3c2410_ts.c        | 37 ++++++++++++++++=
-++-
-> > >   drivers/power/supply/s3c_adc_battery.c        |  2 +-
-> > >   .../linux/soc/samsung/s3c-adc.h               |  0
-> > >   10 files changed, 43 insertions(+), 10 deletions(-)
-> > >   rename arch/arm/plat-samsung/include/plat/adc.h =3D> include/linux/=
-soc/samsung/s3c-adc.h (100%)
-> > >=20
-> > > diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3=
-c64xx/mach-crag6410.c
-> > > index da5b50981a14..133453562d23 100644
-> > > --- a/arch/arm/mach-s3c64xx/mach-crag6410.c
-> > > +++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
-> > > @@ -57,7 +57,7 @@
-> > >   #include <plat/keypad.h>
-> > >   #include <plat/devs.h>
-> > >   #include <plat/cpu.h>
-> > > -#include <plat/adc.h>
-> > > +#include <linux/soc/samsung/s3c-adc.h>
-> > >   #include <linux/platform_data/i2c-s3c2410.h>
-> > >   #include <plat/pm.h>
-> > >   #include <plat/samsung-time.h>
-> > > diff --git a/arch/arm/mach-s3c64xx/mach-mini6410.c b/arch/arm/mach-s3=
-c64xx/mach-mini6410.c
-> > > index 0dd36ae49e6a..c7140300bd3f 100644
-> > > --- a/arch/arm/mach-s3c64xx/mach-mini6410.c
-> > > +++ b/arch/arm/mach-s3c64xx/mach-mini6410.c
-> > > @@ -27,7 +27,7 @@
-> > >   #include <mach/regs-gpio.h>
-> > >   #include <mach/gpio-samsung.h>
-> > > -#include <plat/adc.h>
-> > > +#include <linux/soc/samsung/s3c-adc.h>
-> > >   #include <plat/cpu.h>
-> > >   #include <plat/devs.h>
-> > >   #include <plat/fb.h>
-> > > diff --git a/arch/arm/mach-s3c64xx/mach-real6410.c b/arch/arm/mach-s3=
-c64xx/mach-real6410.c
-> > > index 0ff88b6859c4..f55097fde94c 100644
-> > > --- a/arch/arm/mach-s3c64xx/mach-real6410.c
-> > > +++ b/arch/arm/mach-s3c64xx/mach-real6410.c
-> > > @@ -29,7 +29,7 @@
-> > >   #include <mach/gpio-samsung.h>
-> > >   #include <mach/irqs.h>
-> > > -#include <plat/adc.h>
-> > > +#include <linux/soc/samsung/s3c-adc.h>
-> > >   #include <plat/cpu.h>
-> > >   #include <plat/devs.h>
-> > >   #include <plat/fb.h>
-> > > diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3=
-c64xx/mach-smdk6410.c
-> > > index 95bdcfe95a53..3042f6cbffd9 100644
-> > > --- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
-> > > +++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-> > > @@ -60,7 +60,7 @@
-> > >   #include <plat/devs.h>
-> > >   #include <plat/cpu.h>
-> > > -#include <plat/adc.h>
-> > > +#include <linux/soc/samsung/s3c-adc.h>
-> > >   #include <linux/platform_data/touchscreen-s3c2410.h>
-> > >   #include <plat/keypad.h>
-> > >   #include <plat/samsung-time.h>
-> > > diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.c
-> > > index ee3d5c989a76..623a9774cc52 100644
-> > > --- a/arch/arm/plat-samsung/adc.c
-> > > +++ b/arch/arm/plat-samsung/adc.c
-> > > @@ -20,7 +20,7 @@
-> > >   #include <linux/regulator/consumer.h>
-> > >   #include <plat/regs-adc.h>
-> > > -#include <plat/adc.h>
-> > > +#include <linux/soc/samsung/s3c-adc.h>
-> > >   /* This driver is designed to control the usage of the ADC block be=
-tween
-> > >    * the touchscreen and any other drivers that may need to use it, s=
-uch as
-> > > diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/dev=
-s.c
-> > > index fd94a35e22f8..ddd90f0bb380 100644
-> > > --- a/arch/arm/plat-samsung/devs.c
-> > > +++ b/arch/arm/plat-samsung/devs.c
-> > > @@ -44,7 +44,7 @@
-> > >   #include <plat/cpu.h>
-> > >   #include <plat/devs.h>
-> > > -#include <plat/adc.h>
-> > > +#include <linux/soc/samsung/s3c-adc.h>
-> > >   #include <linux/platform_data/ata-samsung_cf.h>
-> > >   #include <plat/fb.h>
-> > >   #include <plat/fb-s3c2410.h>
-> > > diff --git a/drivers/hwmon/s3c-hwmon.c b/drivers/hwmon/s3c-hwmon.c
-> > > index b490fe3d2ee8..f2703c5460d0 100644
-> > > --- a/drivers/hwmon/s3c-hwmon.c
-> > > +++ b/drivers/hwmon/s3c-hwmon.c
-> > > @@ -20,7 +20,7 @@
-> > >   #include <linux/hwmon.h>
-> > >   #include <linux/hwmon-sysfs.h>
-> > > -#include <plat/adc.h>
-> > > +#include <linux/soc/samsung/s3c-adc.h>
-> > >   #include <linux/platform_data/hwmon-s3c.h>
-> > >   struct s3c_hwmon_attr {
-> > > diff --git a/drivers/input/touchscreen/s3c2410_ts.c b/drivers/input/t=
-ouchscreen/s3c2410_ts.c
-> > > index b346e7cafd62..1a5a178ea286 100644
-> > > --- a/drivers/input/touchscreen/s3c2410_ts.c
-> > > +++ b/drivers/input/touchscreen/s3c2410_ts.c
-> > > @@ -21,10 +21,43 @@
-> > >   #include <linux/clk.h>
-> > >   #include <linux/io.h>
-> > > -#include <plat/adc.h>
-> > > -#include <plat/regs-adc.h>
-> > > +#include <linux/soc/samsung/s3c-adc.h>
-> > >   #include <linux/platform_data/touchscreen-s3c2410.h>
-> > > +#define	S3C2410_ADCCON			(0x00)
-> > > +#define	S3C2410_ADCTSC			(0x04)
-> > > +#define	S3C2410_ADCDLY			(0x08)
-> > > +#define	S3C2410_ADCDAT0			(0x0C)
-> > > +#define	S3C2410_ADCDAT1			(0x10)
-> > > +#define	S3C64XX_ADCUPDN			(0x14)
-> > > +#define	S3C2443_ADCMUX			(0x18)
-> > > +#define	S3C64XX_ADCCLRINT		(0x18)
-> > > +#define	S5P_ADCMUX			(0x1C)
-> > > +#define	S3C64XX_ADCCLRINTPNDNUP		(0x20)
-> > > +
-> > > +/* ADCTSC Register Bits */
-> > > +#define S3C2443_ADCTSC_UD_SEN		(1 << 8)
-> > > +#define S3C2410_ADCTSC_YM_SEN		(1<<7)
-> > > +#define S3C2410_ADCTSC_YP_SEN		(1<<6)
-> > > +#define S3C2410_ADCTSC_XM_SEN		(1<<5)
-> > > +#define S3C2410_ADCTSC_XP_SEN		(1<<4)
-> > > +#define S3C2410_ADCTSC_PULL_UP_DISABLE	(1<<3)
-> > > +#define S3C2410_ADCTSC_AUTO_PST		(1<<2)
-> > > +#define S3C2410_ADCTSC_XY_PST(x)	(((x)&0x3)<<0)
-> > > +
-> > > +/* ADCDAT0 Bits */
-> > > +#define S3C2410_ADCDAT0_UPDOWN		(1<<15)
-> > > +#define S3C2410_ADCDAT0_AUTO_PST	(1<<14)
-> > > +#define S3C2410_ADCDAT0_XY_PST		(0x3<<12)
-> > > +#define S3C2410_ADCDAT0_XPDATA_MASK	(0x03FF)
-> > > +
-> > > +/* ADCDAT1 Bits */
-> > > +#define S3C2410_ADCDAT1_UPDOWN		(1<<15)
-> > > +#define S3C2410_ADCDAT1_AUTO_PST	(1<<14)
-> > > +#define S3C2410_ADCDAT1_XY_PST		(0x3<<12)
-> > > +#define S3C2410_ADCDAT1_YPDATA_MASK	(0x03FF)
-> > > +
-> > > +
-> > >   #define TSC_SLEEP  (S3C2410_ADCTSC_PULL_UP_DISABLE | S3C2410_ADCTSC=
-_XY_PST(0))
-> > >   #define INT_DOWN	(0)
-> > > diff --git a/drivers/power/supply/s3c_adc_battery.c b/drivers/power/s=
-upply/s3c_adc_battery.c
-> > > index 3d00b35cafc9..60b7f41ab063 100644
-> > > --- a/drivers/power/supply/s3c_adc_battery.c
-> > > +++ b/drivers/power/supply/s3c_adc_battery.c
-> > > @@ -22,7 +22,7 @@
-> > >   #include <linux/init.h>
-> > >   #include <linux/module.h>
-> > > -#include <plat/adc.h>
-> > > +#include <linux/soc/samsung/s3c-adc.h>
-> > >   #define BAT_POLL_INTERVAL		10000 /* ms */
-> > >   #define JITTER_DELAY			500 /* ms */
-> > > diff --git a/arch/arm/plat-samsung/include/plat/adc.h b/include/linux=
-/soc/samsung/s3c-adc.h
-> > > similarity index 100%
-> > > rename from arch/arm/plat-samsung/include/plat/adc.h
-> > > rename to include/linux/soc/samsung/s3c-adc.h
-> > >=20
-> >=20
->=20
-> --=20
-> Dmitry
+>  	config DEBUG_S3C_UART1
+> -		depends on PLAT_SAMSUNG || ARCH_EXYNOS
+> +		depends on PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS
+>  		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
+>  		select DEBUG_S3C24XX_UART if ARCH_S3C24XX
+>  		select DEBUG_S3C64XX_UART if ARCH_S3C64XX
+> @@ -1022,7 +1022,7 @@ choice
+>  		  by the boot-loader before use.
+>  =
 
---mopqc6x4c2h7s3hb
-Content-Type: application/pgp-signature; name="signature.asc"
+>  	config DEBUG_S3C_UART2
+> -		depends on PLAT_SAMSUNG || ARCH_EXYNOS
+> +		depends on PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS
+>  		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
+>  		select DEBUG_S3C24XX_UART if ARCH_S3C24XX
+>  		select DEBUG_S3C64XX_UART if ARCH_S3C64XX
+> diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+> index f492d7c338fe..a1bc15cda751 100644
+> --- a/arch/arm/Makefile
+> +++ b/arch/arm/Makefile
+> @@ -235,7 +235,6 @@ machine-$(CONFIG_PLAT_SPEAR)		+=3D spear
+>  # by CONFIG_* macro name.
+>  plat-$(CONFIG_ARCH_OMAP)	+=3D omap
+>  plat-$(CONFIG_ARCH_S3C64XX)	+=3D samsung
+> -plat-$(CONFIG_ARCH_S5PV210)	+=3D samsung
 
------BEGIN PGP SIGNATURE-----
+Would it make more sense to make this
 
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl2ftFAACgkQ2O7X88g7
-+ppCxxAAn15YlBwsqaGwUaYchBuBq14qU4EobExBzZbw8oYHQL4I5oAbH2t+3oOa
-UrhNrvHnWWftmlq/2ycEzWRk4NOQ8ZES1AD/4r7q56i4QxyV/zk/cRiAjRjcCm5w
-IRJEAVVSxyADbMTxK0omr0GW2cIqUlJcRmW5JyqQvXKC5wOXVz3+0C613tQCm0o2
-JBSC+HqZkoDAlcBF/6IDcDfy1K+3FEhCEYkvFTPNeh+7I48u7qdLFS6Xf66+kLPW
-ccKaSTBw6WV9KLrwf4+sEukRP5QfA0ehVuaV447SiH2n1uzSQlju4w5pRleAwlps
-umOd1n1rFcrxBf+TEQS0XsRJ7Oa/h11DXkkLWPtCtA84FXO1IvHGLmkSx3yxRxSz
-JIszIsYHyTWwJJNKorhB2PjpSGZoaciwgOE/lt8mgPc5I64MZXvHosV2nlAMsFhJ
-LMKyxh69aShi8ylCFBy+ukiC8yXM4CzRNh1chazvB2cjNNB1p6BS/4zAxlTmIvGo
-9lUxde12J325Z9peeP6OInu1h1/v+fRfrg2wxsblwCQmdC6eQoWTPTynH9t+WADr
-ka6XkZvcoAEoaPji8fyGfY6DUkhiRwSkDpn3bk1zg7nmm5jAlH1MCoMBVrUOKylv
-Xp2bULDZLS6KD5LBn+s3bsZ1hatAJpU2746uE4Afal2lgcAnqb4=
-=0aUK
------END PGP SIGNATURE-----
+	plat-$(PLAT_SAMSUNG) +=3D samsung
 
---mopqc6x4c2h7s3hb--
+(in a separate patch)? Hmm, it seems there is no plat-y for
+PLAT_S3C24XX=3Dy builds. Is this intended? If yes, the directory name
+containing "samsung" suggests something that seems untrue.
 
+Best regards
+Uwe
 
---===============1761450439335636980==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+-- =
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============1761450439335636980==--
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
