@@ -1,200 +1,155 @@
-From: Laurent Vivier <lvivier@redhat.com>
-Subject: [PATCH v2] hwrng: core - move add_early_randomness() out of rng_mutex
-Date: Fri, 11 Oct 2019 15:47:24 +0200
-Message-ID: <20191011134724.28651-1-lvivier@redhat.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 1/3] dt-bindings: power: Convert Generic
+ Power Domain bindings to json-schema
+Date: Fri, 11 Oct 2019 10:03:39 -0500
+Message-ID: <20191011150339.GA16245@bogus>
+References: <20191002160632.11140-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-crypto@vger.kernel.org, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, Laurent Vivier <lvivier@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20191002160632.11140-1-krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/freedreno>
+List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Krzysztof Kozlowski <krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, etnaviv-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Boyd <sboyd-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>, freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-add_early_randomness() is called every time a new rng backend is added
-and every time it is set as the current rng provider.
-
-add_early_randomness() is called from functions locking rng_mutex,
-and if it hangs all the hw_random framework hangs: we can't read sysfs,
-add or remove a backend.
-
-This patch moves add_early_randomness() out of the rng_mutex zone.
-It only needs the reading_mutex.
-
-Signed-off-by: Laurent Vivier <lvivier@redhat.com>
----
-
-Notes:
-    v2: in hwrng_register, take rng->ref only if rng is the new current_rng
-
- drivers/char/hw_random/core.c | 61 +++++++++++++++++++++++++----------
- 1 file changed, 44 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/char/hw_random/core.c b/drivers/char/hw_random/core.c
-index 80b850ef1bf6..d85c6e18a2d2 100644
---- a/drivers/char/hw_random/core.c
-+++ b/drivers/char/hw_random/core.c
-@@ -112,6 +112,14 @@ static void drop_current_rng(void)
- }
- 
- /* Returns ERR_PTR(), NULL or refcounted hwrng */
-+static struct hwrng *get_current_rng_nolock(void)
-+{
-+	if (current_rng)
-+		kref_get(&current_rng->ref);
-+
-+	return current_rng;
-+}
-+
- static struct hwrng *get_current_rng(void)
- {
- 	struct hwrng *rng;
-@@ -119,9 +127,7 @@ static struct hwrng *get_current_rng(void)
- 	if (mutex_lock_interruptible(&rng_mutex))
- 		return ERR_PTR(-ERESTARTSYS);
- 
--	rng = current_rng;
--	if (rng)
--		kref_get(&rng->ref);
-+	rng = get_current_rng_nolock();
- 
- 	mutex_unlock(&rng_mutex);
- 	return rng;
-@@ -156,8 +162,6 @@ static int hwrng_init(struct hwrng *rng)
- 	reinit_completion(&rng->cleanup_done);
- 
- skip_init:
--	add_early_randomness(rng);
--
- 	current_quality = rng->quality ? : default_quality;
- 	if (current_quality > 1024)
- 		current_quality = 1024;
-@@ -321,12 +325,13 @@ static ssize_t hwrng_attr_current_store(struct device *dev,
- 					const char *buf, size_t len)
- {
- 	int err = -ENODEV;
--	struct hwrng *rng;
-+	struct hwrng *rng, *old_rng, *new_rng;
- 
- 	err = mutex_lock_interruptible(&rng_mutex);
- 	if (err)
- 		return -ERESTARTSYS;
- 
-+	old_rng = current_rng;
- 	if (sysfs_streq(buf, "")) {
- 		err = enable_best_rng();
- 	} else {
-@@ -338,9 +343,15 @@ static ssize_t hwrng_attr_current_store(struct device *dev,
- 			}
- 		}
- 	}
--
-+	new_rng = get_current_rng_nolock();
- 	mutex_unlock(&rng_mutex);
- 
-+	if (new_rng) {
-+		if (new_rng != old_rng)
-+			add_early_randomness(new_rng);
-+		put_rng(new_rng);
-+	}
-+
- 	return err ? : len;
- }
- 
-@@ -460,13 +471,15 @@ static void start_khwrngd(void)
- int hwrng_register(struct hwrng *rng)
- {
- 	int err = -EINVAL;
--	struct hwrng *old_rng, *tmp;
-+	struct hwrng *tmp;
- 	struct list_head *rng_list_ptr;
-+	bool is_new_current = false;
- 
- 	if (!rng->name || (!rng->data_read && !rng->read))
- 		goto out;
- 
- 	mutex_lock(&rng_mutex);
-+
- 	/* Must not register two RNGs with the same name. */
- 	err = -EEXIST;
- 	list_for_each_entry(tmp, &rng_list, list) {
-@@ -485,10 +498,8 @@ int hwrng_register(struct hwrng *rng)
- 	}
- 	list_add_tail(&rng->list, rng_list_ptr);
- 
--	old_rng = current_rng;
--	err = 0;
--	if (!old_rng ||
--	    (!cur_rng_set_by_user && rng->quality > old_rng->quality)) {
-+	if (!current_rng ||
-+	    (!cur_rng_set_by_user && rng->quality > current_rng->quality)) {
- 		/*
- 		 * Set new rng as current as the new rng source
- 		 * provides better entropy quality and was not
-@@ -497,19 +508,26 @@ int hwrng_register(struct hwrng *rng)
- 		err = set_current_rng(rng);
- 		if (err)
- 			goto out_unlock;
-+		/* to use current_rng in add_early_randomness() we need
-+		 * to take a ref
-+		 */
-+		is_new_current = true;
-+		kref_get(&rng->ref);
- 	}
--
--	if (old_rng && !rng->init) {
-+	mutex_unlock(&rng_mutex);
-+	if (is_new_current || !rng->init) {
- 		/*
- 		 * Use a new device's input to add some randomness to
- 		 * the system.  If this rng device isn't going to be
- 		 * used right away, its init function hasn't been
--		 * called yet; so only use the randomness from devices
--		 * that don't need an init callback.
-+		 * called yet by set_current_rng(); so only use the
-+		 * randomness from devices that don't need an init callback
- 		 */
- 		add_early_randomness(rng);
- 	}
--
-+	if (is_new_current)
-+		put_rng(rng);
-+	return 0;
- out_unlock:
- 	mutex_unlock(&rng_mutex);
- out:
-@@ -519,10 +537,12 @@ EXPORT_SYMBOL_GPL(hwrng_register);
- 
- void hwrng_unregister(struct hwrng *rng)
- {
-+	struct hwrng *old_rng, *new_rng;
- 	int err;
- 
- 	mutex_lock(&rng_mutex);
- 
-+	old_rng = current_rng;
- 	list_del(&rng->list);
- 	if (current_rng == rng) {
- 		err = enable_best_rng();
-@@ -532,6 +552,7 @@ void hwrng_unregister(struct hwrng *rng)
- 		}
- 	}
- 
-+	new_rng = get_current_rng_nolock();
- 	if (list_empty(&rng_list)) {
- 		mutex_unlock(&rng_mutex);
- 		if (hwrng_fill)
-@@ -539,6 +560,12 @@ void hwrng_unregister(struct hwrng *rng)
- 	} else
- 		mutex_unlock(&rng_mutex);
- 
-+	if (new_rng) {
-+		if (old_rng != new_rng)
-+			add_early_randomness(new_rng);
-+		put_rng(new_rng);
-+	}
-+
- 	wait_for_completion(&rng->cleanup_done);
- }
- EXPORT_SYMBOL_GPL(hwrng_unregister);
--- 
-2.21.0
+T24gV2VkLCBPY3QgMDIsIDIwMTkgYXQgMDY6MDY6MzBQTSArMDIwMCwgS3J6eXN6dG9mIEtvemxv
+d3NraSB3cm90ZToKPiBDb252ZXJ0IEdlbmVyaWMgUG93ZXIgRG9tYWluIGJpbmRpbmdzIHRvIERU
+IHNjaGVtYSBmb3JtYXQgdXNpbmcKPiBqc29uLXNjaGVtYS4gIFRoZSBjb25zdW1lciBiaW5kaW5n
+cyBhcmUgc3BsaXQgdG8gc2VwYXJhdGUgZmlsZS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBLcnp5c3p0
+b2YgS296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+Cj4gCj4gLS0tCj4gCj4gQ2hhbmdlcyBzaW5j
+ZSB2MToKPiAxLiBTZWxlY3QgYWxsIG5vZGVzIGZvciBjb25zdW1lcnMsCj4gMi4gUmVtb3ZlIGZy
+b20gY29uc3VtZXJzIGR1cGxpY2F0ZWQgcHJvcGVydGllcyB3aXRoIGR0LXNjaGVtYSwKPiAzLiBG
+aXggcG93ZXIgZG9tYWluIHBhdHRlcm4sCj4gNC4gUmVtb3ZlIHVubmVlZGVkIHR5cGVzLgo+IC0t
+LQo+ICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vYXJtLHNjbWkudHh0ICAgICAgfCAgIDIg
+Ky0KPiAgLi4uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL2FybSxzY3BpLnR4dCAgICAgIHwgICAy
+ICstCj4gIC4uLi9iaW5kaW5ncy9hcm0vZnJlZXNjYWxlL2ZzbCxzY3UudHh0ICAgICAgICB8ICAg
+MiArLQo+ICAuLi4vYmluZGluZ3MvY2xvY2svY2xrLWV4eW5vcy1hdWRzcy50eHQgICAgICAgfCAg
+IDIgKy0KPiAgLi4uL2JpbmRpbmdzL2Nsb2NrL2V4eW5vczU0MzMtY2xvY2sudHh0ICAgICAgIHwg
+ICA0ICstCj4gIC4uLi9iaW5kaW5ncy9jbG9jay9yZW5lc2FzLGNwZy1tc3NyLnR4dCAgICAgICB8
+ICAgMiArLQo+ICAuLi4vY2xvY2svcmVuZXNhcyxyOGE3Nzc4LWNwZy1jbG9ja3MudHh0ICAgICAg
+fCAgIDIgKy0KPiAgLi4uL2Nsb2NrL3JlbmVzYXMscjhhNzc3OS1jcGctY2xvY2tzLnR4dCAgICAg
+IHwgICAyICstCj4gIC4uLi9jbG9jay9yZW5lc2FzLHJjYXItZ2VuMi1jcGctY2xvY2tzLnR4dCAg
+ICB8ICAgMiArLQo+ICAuLi4vYmluZGluZ3MvY2xvY2svcmVuZXNhcyxyei1jcGctY2xvY2tzLnR4
+dCAgfCAgIDIgKy0KPiAgLi4uL2JpbmRpbmdzL2Nsb2NrL3RpL2RhdmluY2kvcHNjLnR4dCAgICAg
+ICAgIHwgICAyICstCj4gIC4uLi9iaW5kaW5ncy9kaXNwbGF5L2V0bmF2aXYvZXRuYXZpdi1kcm0u
+dHh0ICB8ICAgMiArLQo+ICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L21zbS9kcHUu
+dHh0ICAgfCAgIDIgKy0KPiAgLi4uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9tc20vbWRw
+NS50eHQgIHwgICAyICstCj4gIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL2RzcC9mc2wsZHNwLnlh
+bWwgICAgICB8ICAgMiArLQo+ICAuLi4vZmlybXdhcmUvbnZpZGlhLHRlZ3JhMTg2LWJwbXAudHh0
+ICAgICAgICAgfCAgIDIgKy0KPiAgLi4uL2JpbmRpbmdzL21lZGlhL2lteDctbWlwaS1jc2kyLnR4
+dCAgICAgICAgIHwgICAzICstCj4gIC4uLi9iaW5kaW5ncy9tZWRpYS9tZWRpYXRlay1qcGVnLWRl
+Y29kZXIudHh0ICB8ICAgMyArLQo+ICAuLi4vYmluZGluZ3MvbWVkaWEvbWVkaWF0ZWstbWRwLnR4
+dCAgICAgICAgICAgfCAgIDMgKy0KPiAgLi4uL2JpbmRpbmdzL29wcC9xY29tLW52bWVtLWNwdWZy
+ZXEudHh0ICAgICAgIHwgICAyICstCj4gIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BjaS9wY2kt
+a2V5c3RvbmUudHh0ICB8ICAgMiArLQo+ICAuLi4vYmluZGluZ3MvcGh5L3RpLHBoeS1hbTY1NC1z
+ZXJkZXMudHh0ICAgICAgfCAgIDIgKy0KPiAgLi4uL2JpbmRpbmdzL3Bvd2VyL2FtbG9naWMsbWVz
+b24tZ3gtcHdyYy50eHQgIHwgICAyICstCj4gIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL3Bvd2Vy
+L2ZzbCxpbXgtZ3BjLnR4dCB8ICAgMiArLQo+ICAuLi4vYmluZGluZ3MvcG93ZXIvZnNsLGlteC1n
+cGN2Mi50eHQgICAgICAgICAgfCAgIDIgKy0KPiAgLi4uL3Bvd2VyL3Bvd2VyLWRvbWFpbi1jb25z
+dW1lcnMueWFtbCAgICAgICAgIHwgMTA1ICsrKysrKysrKwo+ICAuLi4vYmluZGluZ3MvcG93ZXIv
+cG93ZXItZG9tYWluLnlhbWwgICAgICAgICAgfCAxMzQgKysrKysrKysrKysrCj4gIC4uLi9iaW5k
+aW5ncy9wb3dlci9wb3dlcl9kb21haW4udHh0ICAgICAgICAgICB8IDIwNSAtLS0tLS0tLS0tLS0t
+LS0tLS0KPiAgLi4uL2RldmljZXRyZWUvYmluZGluZ3MvcG93ZXIvcWNvbSxycG1wZC50eHQgIHwg
+ICAyICstCj4gIC4uLi9iaW5kaW5ncy9wb3dlci9yZW5lc2FzLHJjYXItc3lzYy50eHQgICAgICB8
+ICAgMiArLQo+ICAuLi4vYmluZGluZ3MvcG93ZXIvcmVuZXNhcyxzeXNjLXJtb2JpbGUudHh0ICAg
+fCAgIDIgKy0KPiAgLi4uL2JpbmRpbmdzL3Bvd2VyL3hsbngsenlucW1wLWdlbnBkLnR4dCAgICAg
+IHwgICAyICstCj4gIC4uLi9iaW5kaW5ncy9zb2MvYmNtL2JyY20sYmNtMjgzNS1wbS50eHQgICAg
+ICB8ICAgMiArLQo+ICAuLi4vYmluZGluZ3Mvc29jL21lZGlhdGVrL3NjcHN5cy50eHQgICAgICAg
+ICAgfCAgIDIgKy0KPiAgLi4uL2JpbmRpbmdzL3NvYy90aS9zY2ktcG0tZG9tYWluLnR4dCAgICAg
+ICAgIHwgICAyICstCj4gIC4uLi9iaW5kaW5ncy91c2IvbnZpZGlhLHRlZ3JhMTI0LXh1c2IudHh0
+ICAgICB8ICAgNCArLQo+ICBNQUlOVEFJTkVSUyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgfCAgIDIgKy0KPiAgMzcgZmlsZXMgY2hhbmdlZCwgMjc4IGluc2VydGlvbnMoKyksIDI0
+MSBkZWxldGlvbnMoLSkKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNl
+dHJlZS9iaW5kaW5ncy9wb3dlci9wb3dlci1kb21haW4tY29uc3VtZXJzLnlhbWwKPiAgY3JlYXRl
+IG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9wb3dlci9wb3dl
+ci1kb21haW4ueWFtbAo+ICBkZWxldGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0
+cmVlL2JpbmRpbmdzL3Bvd2VyL3Bvd2VyX2RvbWFpbi50eHQKCgo+IGRpZmYgLS1naXQgYS9Eb2N1
+bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcG93ZXIvcG93ZXItZG9tYWluLWNvbnN1bWVy
+cy55YW1sIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3Bvd2VyL3Bvd2VyLWRv
+bWFpbi1jb25zdW1lcnMueWFtbAo+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4gaW5kZXggMDAwMDAw
+MDAwMDAwLi5mNjUwNzhlMTI2MGUKPiAtLS0gL2Rldi9udWxsCj4gKysrIGIvRG9jdW1lbnRhdGlv
+bi9kZXZpY2V0cmVlL2JpbmRpbmdzL3Bvd2VyL3Bvd2VyLWRvbWFpbi1jb25zdW1lcnMueWFtbAo+
+IEBAIC0wLDAgKzEsMTA1IEBACj4gKyMgU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjAK
+PiArJVlBTUwgMS4yCj4gKy0tLQo+ICskaWQ6IGh0dHA6Ly9kZXZpY2V0cmVlLm9yZy9zY2hlbWFz
+L3Bvd2VyL3Bvd2VyLWRvbWFpbi1jb25zdW1lcnMueWFtbCMKPiArJHNjaGVtYTogaHR0cDovL2Rl
+dmljZXRyZWUub3JnL21ldGEtc2NoZW1hcy9jb3JlLnlhbWwjCj4gKwo+ICt0aXRsZTogUE0gZG9t
+YWluIGNvbnN1bWVycwo+ICsKPiArbWFpbnRhaW5lcnM6Cj4gKyAgLSBSYWZhZWwgSi4gV3lzb2Nr
+aSA8cmp3QHJqd3lzb2NraS5uZXQ+Cj4gKyAgLSBLZXZpbiBIaWxtYW4gPGtoaWxtYW5Aa2VybmVs
+Lm9yZz4KPiArICAtIFVsZiBIYW5zc29uIDx1bGYuaGFuc3NvbkBsaW5hcm8ub3JnPgo+ICsKPiAr
+ZGVzY3JpcHRpb246IHwrCj4gKyAgU2VlIHBvd2VyLWRvbWFpbi55YW1sCj4gKwo+ICtzZWxlY3Q6
+IHRydWUKPiArCj4gK2FsbE9mOgo+ICsgIC0gJHJlZjogL3NjaGVtYXMvcG93ZXItZG9tYWluL3Bv
+d2VyLWRvbWFpbi1jb25zdW1lci55YW1sCgpJIGRvbid0IGxpa2UgdGhpcyBzcGxpdC4gV2Ugc2hv
+dWxkIG1vdmUgdGhlIGNvbnRlbnRzIG9mIHRoaXMgZmlsZSB0byB0aGUgCmFib3ZlIGZpbGUuCgpJ
+IGNoZWNrZWQgdGhlIGF1dGhvcnNoaXAgb2YgdGhlIHJlbGV2YW50IGxpbmVzIGFuZCB0aGV5IGFy
+ZSBhbGwgZXhjZXB0IApmb3IgYSBzbWFsbCBudW1iZXIgb2YgbGluZXMgZnJvbSBMaW5hcm8gYXV0
+aG9ycyAoVmlyZXNoIGFuZCBVbGYpLiBJIGhhdmUgCnBlcm1pc3Npb24gZnJvbSBMaW5hcm8gdG8g
+ZHVhbCBsaWNlbnNlIExpbmFybyBhdXRob3JlZCBiaW5kaW5ncywgc28gaXQncyAKbm90IGEgcHJv
+YmxlbSB0byBtb3ZlIHRoaXMuIEkgY2FuIGRvIHRoYXQgYW5kIHlvdSBjYW4ganVzdCBkcm9wIHRo
+aXMgZmlsZS4KCj4gKwo+ICtwcm9wZXJ0aWVzOgo+ICsgIHJlcXVpcmVkLW9wcHM6Cj4gKyAgICAk
+cmVmOiAvc2NoZW1hcy90eXBlcy55YW1sIy9kZWZpbml0aW9ucy9waGFuZGxlCj4gKyAgICBkZXNj
+cmlwdGlvbjoKPiArICAgICAgVGhpcyBjb250YWlucyBwaGFuZGxlIHRvIGFuIE9QUCBub2RlIGlu
+IGFub3RoZXIgZGV2aWNlJ3MgT1BQIHRhYmxlLgo+ICsgICAgICBJdCBtYXkgY29udGFpbiBhbiBh
+cnJheSBvZiBwaGFuZGxlcywgd2hlcmUgZWFjaCBwaGFuZGxlIHBvaW50cyB0byBhbiBPUFAKPiAr
+ICAgICAgb2YgYSBkaWZmZXJlbnQgZGV2aWNlLiBJdCBzaG91bGQgbm90IGNvbnRhaW4gbXVsdGlw
+bGUgcGhhbmRsZXMgdG8gdGhlIE9QUAo+ICsgICAgICBub2RlcyBpbiB0aGUgc2FtZSBPUFAgdGFi
+bGUuIFRoaXMgc3BlY2lmaWVzIHRoZSBtaW5pbXVtIHJlcXVpcmVkIE9QUAo+ICsgICAgICBvZiB0
+aGUgZGV2aWNlKHMpLCB3aG9zZSBPUFAncyBwaGFuZGxlIGlzIHByZXNlbnQgaW4gdGhpcyBwcm9w
+ZXJ0eSwKPiArICAgICAgZm9yIHRoZSBmdW5jdGlvbmluZyBvZiB0aGUgY3VycmVudCBkZXZpY2Ug
+YXQgdGhlIGN1cnJlbnQgT1BQICh3aGVyZSB0aGlzCj4gKyAgICAgIHByb3BlcnR5IGlzIHByZXNl
+bnQpLgo+ICsKPiArZXhhbXBsZXM6Cj4gKyAgLSB8Cj4gKyAgICBsZWFreS1kZXZpY2VAMTIzNTAw
+MDAgewo+ICsgICAgICBjb21wYXRpYmxlID0gImZvbyxpLWxlYWstY3VycmVudCI7Cj4gKyAgICAg
+IHJlZyA9IDwweDEyMzUwMDAwIDB4MTAwMD47Cj4gKyAgICAgIHBvd2VyLWRvbWFpbnMgPSA8JnBv
+d2VyIDA+Owo+ICsgICAgICBwb3dlci1kb21haW4tbmFtZXMgPSAiaW8iOwo+ICsgICAgfTsKPiAr
+Cj4gKyAgICBsZWFreS1kZXZpY2VAMTIzNTEwMDAgewo+ICsgICAgICBjb21wYXRpYmxlID0gImZv
+byxpLWxlYWstY3VycmVudCI7Cj4gKyAgICAgIHJlZyA9IDwweDEyMzUxMDAwIDB4MTAwMD47Cj4g
+KyAgICAgIHBvd2VyLWRvbWFpbnMgPSA8JnBvd2VyIDA+LCA8JnBvd2VyIDE+IDsKPiArICAgICAg
+cG93ZXItZG9tYWluLW5hbWVzID0gImlvIiwgImNsayI7Cj4gKyAgICB9Owo+ICsKPiArICAgIC8v
+IFRoZSBmaXJzdCBleGFtcGxlIGFib3ZlIGRlZmluZXMgYSB0eXBpY2FsIFBNIGRvbWFpbiBjb25z
+dW1lciBkZXZpY2UsIHdoaWNoIGlzCj4gKyAgICAvLyBsb2NhdGVkIGluc2lkZSBhIFBNIGRvbWFp
+biB3aXRoIGluZGV4IDAgb2YgYSBwb3dlciBjb250cm9sbGVyIHJlcHJlc2VudGVkIGJ5IGEKPiAr
+ICAgIC8vIG5vZGUgd2l0aCB0aGUgbGFiZWwgInBvd2VyIi4KPiArICAgIC8vIEluIHRoZSBzZWNv
+bmQgZXhhbXBsZSB0aGUgY29uc3VtZXIgZGV2aWNlIGFyZSBwYXJ0aXRpb25lZCBhY3Jvc3MgdHdv
+IFBNIGRvbWFpbnMsCj4gKyAgICAvLyB0aGUgZmlyc3Qgd2l0aCBpbmRleCAwIGFuZCB0aGUgc2Vj
+b25kIHdpdGggaW5kZXggMSwgb2YgYSBwb3dlciBjb250cm9sbGVyIHRoYXQKPiArICAgIC8vIGlz
+IHJlcHJlc2VudGVkIGJ5IGEgbm9kZSB3aXRoIHRoZSBsYWJlbCAicG93ZXIiLgo+ICsKPiArICAt
+IHwKPiArICAgIC8vIEV4YW1wbGUgd2l0aCAgT1BQIHRhYmxlIGZvciBkb21haW4gcHJvdmlkZXIg
+dGhhdCBwcm92aWRlcyB0d28gZG9tYWluczoKPiArCj4gKyAgICBkb21haW4wX29wcF90YWJsZTog
+b3BwLXRhYmxlMCB7Cj4gKyAgICAgIGNvbXBhdGlibGUgPSAib3BlcmF0aW5nLXBvaW50cy12MiI7
+Cj4gKwo+ICsgICAgICBkb21haW4wX29wcF8wOiBvcHAtMTAwMDAwMDAwMCB7Cj4gKyAgICAgICAg
+b3BwLWh6ID0gL2JpdHMvIDY0IDwxMDAwMDAwMDAwPjsKPiArICAgICAgICBvcHAtbWljcm92b2x0
+ID0gPDk3NTAwMCA5NzAwMDAgOTg1MDAwPjsKPiArICAgICAgfTsKPiArICAgICAgZG9tYWluMF9v
+cHBfMTogb3BwLTExMDAwMDAwMDAgewo+ICsgICAgICAgIG9wcC1oeiA9IC9iaXRzLyA2NCA8MTEw
+MDAwMDAwMD47Cj4gKyAgICAgICAgb3BwLW1pY3Jvdm9sdCA9IDwxMDAwMDAwIDk4MDAwMCAxMDEw
+MDAwPjsKPiArICAgICAgfTsKPiArICAgIH07Cj4gKwo+ICsgICAgZG9tYWluMV9vcHBfdGFibGU6
+IG9wcC10YWJsZTEgewo+ICsgICAgICBjb21wYXRpYmxlID0gIm9wZXJhdGluZy1wb2ludHMtdjIi
+Owo+ICsKPiArICAgICAgZG9tYWluMV9vcHBfMDogb3BwLTEyMDAwMDAwMDAgewo+ICsgICAgICAg
+IG9wcC1oeiA9IC9iaXRzLyA2NCA8MTIwMDAwMDAwMD47Cj4gKyAgICAgICAgb3BwLW1pY3Jvdm9s
+dCA9IDw5NzUwMDAgOTcwMDAwIDk4NTAwMD47Cj4gKyAgICAgIH07Cj4gKyAgICAgIGRvbWFpbjFf
+b3BwXzE6IG9wcC0xMzAwMDAwMDAwIHsKPiArICAgICAgICBvcHAtaHogPSAvYml0cy8gNjQgPDEz
+MDAwMDAwMDA+Owo+ICsgICAgICAgIG9wcC1taWNyb3ZvbHQgPSA8MTAwMDAwMCA5ODAwMDAgMTAx
+MDAwMD47Cj4gKyAgICAgIH07Cj4gKyAgICB9Owo+ICsKPiArICAgIHBvd2VyOiBwb3dlci1jb250
+cm9sbGVyQDEyMzQwMDAwIHsKPiArICAgICAgY29tcGF0aWJsZSA9ICJmb28scG93ZXItY29udHJv
+bGxlciI7Cj4gKyAgICAgIHJlZyA9IDwweDEyMzQwMDAwIDB4MTAwMD47Cj4gKyAgICAgICNwb3dl
+ci1kb21haW4tY2VsbHMgPSA8MT47Cj4gKyAgICAgIG9wZXJhdGluZy1wb2ludHMtdjIgPSA8JmRv
+bWFpbjBfb3BwX3RhYmxlPiwgPCZkb21haW4xX29wcF90YWJsZT47Cj4gKyAgICB9Owo+ICsKPiAr
+ICAgIGxlYWt5LWRldmljZTBAMTIzNTAwMDAgewo+ICsgICAgICBjb21wYXRpYmxlID0gImZvbyxp
+LWxlYWstY3VycmVudCI7Cj4gKyAgICAgIHJlZyA9IDwweDEyMzUwMDAwIDB4MTAwMD47Cj4gKyAg
+ICAgIHBvd2VyLWRvbWFpbnMgPSA8JnBvd2VyIDA+Owo+ICsgICAgICByZXF1aXJlZC1vcHBzID0g
+PCZkb21haW4wX29wcF8wPjsKPiArICAgIH07Cj4gKwo+ICsgICAgbGVha3ktZGV2aWNlMUAxMjM1
+MDAwMCB7Cj4gKyAgICAgIGNvbXBhdGlibGUgPSAiZm9vLGktbGVhay1jdXJyZW50IjsKPiArICAg
+ICAgcmVnID0gPDB4MTIzNTAwMDAgMHgxMDAwPjsKPiArICAgICAgcG93ZXItZG9tYWlucyA9IDwm
+cG93ZXIgMT47Cj4gKyAgICAgIHJlcXVpcmVkLW9wcHMgPSA8JmRvbWFpbjFfb3BwXzE+Owo+ICsg
+ICAgfTsKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KRnJl
+ZWRyZW5vIG1haWxpbmcgbGlzdApGcmVlZHJlbm9AbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBz
+Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZnJlZWRyZW5v
