@@ -1,58 +1,45 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2] hwrng: core - move add_early_randomness() out of
- rng_mutex
-Date: Mon, 14 Oct 2019 09:26:46 +0200
-Message-ID: <cf2e09ba-108c-819d-cce1-3ee4818254d2@samsung.com>
-References: <20191011134724.28651-1-lvivier@redhat.com>
-        <CGME20191012120942epcas2p35ece13866825a2a056703882d58ad080@epcas2p3.samsung.com>
-        <20191012120928.GA24544@gondor.apana.org.au>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: Re: clk: samsung: Checking a kmemdup() call in
+ _samsung_clk_register_pll()
+Date: Mon, 14 Oct 2019 10:05:09 +0200
+Message-ID: <ecfa721b-4176-71cb-85de-2aefe0b3d30a@web.de>
+References: <CGME20191012141739epcas3p31e41c151b30d49c94aeb933aa42dc9f7@epcas3p3.samsung.com>
+ <c1bc5e4d-0802-4485-2c07-248bab2a3330@web.de>
+ <725ace30-a4a7-25dd-2351-f007bb8b35ed@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20191012120928.GA24544@gondor.apana.org.au>
+In-Reply-To: <725ace30-a4a7-25dd-2351-f007bb8b35ed@samsung.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>, Laurent Vivier <lvivier@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Matt Mackall <mpm@selenic.com>, linux-crypto@vger.kernel.org, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
+To: Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/drivers/clk/samsung/clk-pll.c?id=3D1c0cc5f1ae5ee5a6913704c0d75a6e99604ee3=
+0a#n1275
+>> https://protect2.fireeye.com/url?k=3D7e77b0ebee9a0c3e.7e763ba4-43f341fd=
+fe1d32b1&u=3Dhttps://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/clk/=
+samsung/clk-pll.c#L1275
+=E2=80=A6
+> drivers/clk/samsung/clk-pll.c considers the case of 'pll->rate_table is =
+NULL'
+> So, maybe just show the warning message if failed to allocate memory
+> of 'pll->rate_table'.
 
-On 12.10.2019 14:09, Herbert Xu wrote:
-> On Fri, Oct 11, 2019 at 03:47:24PM +0200, Laurent Vivier wrote:
->> add_early_randomness() is called every time a new rng backend is added
->> and every time it is set as the current rng provider.
->>
->> add_early_randomness() is called from functions locking rng_mutex,
->> and if it hangs all the hw_random framework hangs: we can't read sysfs,
->> add or remove a backend.
->>
->> This patch moves add_early_randomness() out of the rng_mutex zone.
->> It only needs the reading_mutex.
->>
->> Signed-off-by: Laurent Vivier <lvivier@redhat.com>
->> ---
->>
->> Notes:
->>      v2: in hwrng_register, take rng->ref only if rng is the new current_rng
->>
->>   drivers/char/hw_random/core.c | 61 +++++++++++++++++++++++++----------
->>   1 file changed, 44 insertions(+), 17 deletions(-)
-> Please rebase your patch on top of the cryptodev tree, i.e., make
-> this an incremental patch with a Fixes header.
-
-This v2 applied on the linux-next with reverted v1 fixes my issue.
+How do you think about to recheck information sources around
+the Linux allocation failure report?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/coding-style.rst?id=3Dda94001239cceb93c132a31928d6ddc4=
+214862d5#n878
 
 
-When you prepare the incremental patch, feel free to add:
+> Bu, IMHO, the error handling is necessary in order to support
+> what 'pll_clk->rate_table' isn't NULL.
 
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Fixes: daae28debcb0 ("hwrng: core - move add_early_randomness() out of 
-rng_mutex")
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Can an other error handling strategy make sense at this place?
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Regards,
+Markus
