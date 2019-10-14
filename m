@@ -2,88 +2,113 @@ Return-Path: <SRS0=B52k=YH=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7DD2ECE58C
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Oct 2019 03:57:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A66C47404
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Oct 2019 06:26:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 991B720882
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Oct 2019 03:57:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00CBA207FF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Oct 2019 06:26:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B3zqYCPz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729839AbfJND5E (ORCPT
+        id S1729983AbfJNG0x (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 13 Oct 2019 23:57:04 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:46062 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729706AbfJND5E (ORCPT
+        Mon, 14 Oct 2019 02:26:53 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41990 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729978AbfJNG0x (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 13 Oct 2019 23:57:04 -0400
-Received: by mail-io1-f69.google.com with SMTP id o11so24607401iop.12
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 13 Oct 2019 20:57:01 -0700 (PDT)
+        Mon, 14 Oct 2019 02:26:53 -0400
+Received: by mail-pf1-f194.google.com with SMTP id q12so9781841pff.9
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 13 Oct 2019 23:26:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=VdgH+nFnpDPa9juK1t6otWCG6Xaqbuih2fXaylHvPvE=;
+        b=B3zqYCPzpZ53dHXN8oDf/c08zmMGZ8dmuzZiRkVq/9ljeb+rZZkYTdxuoxbcUWbZop
+         VmrCIMbg+3apzEPWk17eaXHpVqhbm64eJ34zysSrPb3lTg4WKc6RcjsNAbRTeynPy/Ef
+         XmUb816R5xT5xDAh1R5LvB+Pl6+n9iG2Sjrzl2HXVZ7by/oeflZ9lOgiR38IbZBHpR+4
+         qkcQt+jHx5Gn1PGK+7sWCRkKceC7kSnYcRB3iskJnCLt+o+GClf4qVPnH/Ovhi7KytrE
+         O0hZj1fr0LCnwn9q3aedbpxFQ90LJpjpC1adrXHy8eaxIYQRvt5MgLITp+zt6ilwwO/m
+         Netw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=OuWAyTtmm63QQUGDPXR+DkHDOHPMuPnOWQaHNFnyLBY=;
-        b=gMfR+o5RocnJVausRFHPUifL/bzCrvYurml4yUXXjh4v3DZ/5m5C0OlgZP/dUocLqf
-         dewnoAmFshmFp6zoOCB39WACRApISaltQAlUZhVKGlTAvRZ/BNPJDvrVv8cLWEws7RT6
-         sP5la+EnyAPPdVp+s9dkFUq+NaXh7+REcFbfuxe+hYaUgYboVUdiT5umB9dWNGVkD8IU
-         2LXI/sQ+UxzNDITQ5EqFNq0XQxeq3m+ifx5iXlmFHM41IFWEuJDQw9SHrC2DtSmhegVl
-         PksiXG+Q9NMOgWLPBunql3VObbYQC77piXyxc65WhrS6iN/h5saIdm/EHtA6swI+zXrN
-         G9CA==
-X-Gm-Message-State: APjAAAWosv9/09UUpVRlw8WU5jzq4+WHCfMsdUry6o/HZom2j7kxq0V3
-        OEFGX8wQRa3aWVN/H8F1OiRh9lQ/m+PaTvFknMsXHbSOXShD
-X-Google-Smtp-Source: APXvYqwVwyIy9nSYbsyJl/5Ky7DslcWs3entkTykv54QRnqMyvOOoULUzhOD3mtwNZ2fJRFRwM9mAxsY/zpxHu8l3i0Nylw2l3P/
-MIME-Version: 1.0
-X-Received: by 2002:a5d:93c7:: with SMTP id j7mr6139939ioo.167.1571025421311;
- Sun, 13 Oct 2019 20:57:01 -0700 (PDT)
-Date:   Sun, 13 Oct 2019 20:57:01 -0700
-In-Reply-To: <00000000000059b6d40594d0f776@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002ba5570594d6dc99@google.com>
-Subject: Re: WARNING in batadv_iv_send_outstanding_bat_ogm_packet
-From:   syzbot <syzbot+c0b807de416427ff3dd1@syzkaller.appspotmail.com>
-To:     a@unstable.cc, akpm@osdl.org, arvind.yadav.cs@gmail.com,
-        b.a.t.m.a.n@lists.open-mesh.org, davem@davemloft.net,
-        kgene@kernel.org, krzk@kernel.org, kyungmin.park@samsung.com,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VdgH+nFnpDPa9juK1t6otWCG6Xaqbuih2fXaylHvPvE=;
+        b=rrOliACFT5sy/Eovj/hWyM9SWF1zDpMWvz1bWSNm50Kb2oyvsDJSRjMjKcYDbA/dIg
+         a0l7yw3ZY7eNZCenYlwDHRyEK/Eyow2VLBtxcNq4gQtlZPJfmdfp0Jj2rJxJgA9R4EOH
+         NcHzgJKy23vqZXoZ7haemhMhYLO9azzgf0wV/5LaGLJWL2ziG5f5JQJQfP0pqfMMgcZ6
+         +huCKmsMxPWfgh8x98TPHYBMxT+8nbwsDCZoLEGLa/FyxwRS8S/So1qfJ08kYXtRLCHz
+         Sxo83zG8ltyeMgBPoa4mGuYayAEw5QHi4tarPmBjv76YwuQgTv8gqmHCQaB/JPdcJYmt
+         +KIw==
+X-Gm-Message-State: APjAAAW1/1oKeAHliCRqBDv4OV4OZK+gY0c+h6RlyxWkjTqDUeSz6Z2I
+        rXnednUcUGl8W10Gqov/VPxnzg==
+X-Google-Smtp-Source: APXvYqze9R1UhejFkkerzxsIc4d4k9w/R6mIFU5o7LQ/TGuP24hrQzTovg/lsOwESRWK134nKAgrzw==
+X-Received: by 2002:aa7:8b02:: with SMTP id f2mr29391368pfd.151.1571034412588;
+        Sun, 13 Oct 2019 23:26:52 -0700 (PDT)
+Received: from localhost ([122.172.151.112])
+        by smtp.gmail.com with ESMTPSA id r28sm20393311pfg.62.2019.10.13.23.26.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 13 Oct 2019 23:26:51 -0700 (PDT)
+Date:   Mon, 14 Oct 2019 11:56:49 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>, vireshk@kernel.org,
+        robh+dt@kernel.org, kgene@kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        mareklindner@neomailbox.ch, mchehab@kernel.org,
-        mchehab@s-opensource.com, mingo@kernel.org, netdev@vger.kernel.org,
-        oleg@tv-sign.ru, roland@redhat.com, s.nawrocki@samsung.com,
-        sven@narfation.org, sw@simonwunderlich.de,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; delsp="yes"; format="flowed"
+        b.zolnierkie@samsung.com, m.szyprowski@samsung.com
+Subject: Re: [PATCH v4 1/6] opp: Handle target/min/max voltage in
+ dev_pm_opp_adjust_voltage()
+Message-ID: <20191014062649.oegc2rwigmdv6kju@vireshk-i7>
+References: <20190910123618.27985-1-s.nawrocki@samsung.com>
+ <CGME20190910123636eucas1p250ec04901f227b947cc38936563f63b2@eucas1p2.samsung.com>
+ <20190910123618.27985-2-s.nawrocki@samsung.com>
+ <20191002143310.GA15898@pi3>
+ <ada1bb2f-a824-c34e-6561-04a35782a9b8@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+In-Reply-To: <ada1bb2f-a824-c34e-6561-04a35782a9b8@samsung.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20191014035701.1VRUBDSaqsVThwIEefO_Gie4MQQIOgAFjmjmCOt_ABs@z>
+Message-ID: <20191014062649.50MKYAfwN-RlrN-Yqydg9kCSQktz-Ag5V_e0rQJbHTo@z>
 
-syzbot has bisected this bug to:
+On 02-10-19, 17:54, Sylwester Nawrocki wrote:
+> On 10/2/19 16:33, Krzysztof Kozlowski wrote:
+> > On Tue, Sep 10, 2019 at 02:36:13PM +0200, Sylwester Nawrocki wrote:
+> >> To be squashed with patch "PM / OPP: Support adjusting OPP voltages
+> >> at runtime".
+> >>
+> >> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> >> ---
+> >>
+> >>  drivers/opp/core.c     | 10 ++++++++--
+> >>  include/linux/pm_opp.h |  3 ++-
+> >>  2 files changed, 10 insertions(+), 3 deletions(-)
+> >
+> > I'll take the ASV driver via samsung-soc but I see it depends on this
+> > one.  Please provide me a stable tag with it or an Ack.
+> 
+> There is further dependency on patch 
+> "[PATCH v4 6/8] PM / OPP: Support adjusting OPP voltages at runtime"
+> https://lore.kernel.org/linux-arm-kernel/1565703113-31479-7-git-send-email-andrew-sh.cheng@mediatek.com
+> 
+> Viresh, what are your plans WRT to those patches?
 
-commit 26d051e301f67cdd2ea3404abb43902f13214efa
-Author: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Date:   Thu Jun 29 08:21:35 2017 +0000
+I am waiting for Andrew to send me the next set of patches. You depend
+on only one of the patches ? In that case you can just pick that patch
+from his series, keep his authorship intact and make changes from 1/6
+and send along with your series.
 
-     media: exynos4-is: fimc-is-i2c: constify dev_pm_ops structures
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10a0aff0e00000
-start commit:   da940012 Merge tag 'char-misc-5.4-rc3' of git://git.kernel..
-git tree:       upstream
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=12a0aff0e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=14a0aff0e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2d2fd92a28d3e50
-dashboard link: https://syzkaller.appspot.com/bug?extid=c0b807de416427ff3dd1
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=141ffd77600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11edd580e00000
-
-Reported-by: syzbot+c0b807de416427ff3dd1@syzkaller.appspotmail.com
-Fixes: 26d051e301f6 ("media: exynos4-is: fimc-is-i2c: constify dev_pm_ops  
-structures")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+-- 
+viresh
