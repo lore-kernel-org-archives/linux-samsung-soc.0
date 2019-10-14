@@ -2,91 +2,163 @@ Return-Path: <SRS0=B52k=YH=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95570ECE587
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Oct 2019 11:33:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6468C4CECE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Oct 2019 11:46:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E0CB207FF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Oct 2019 11:33:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1571052788;
-	bh=FSljipgj28Jh531QTYWyNWy84keWUIqkOhpaU8aRBic=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=1jCaI5ocjxCTmcU5QIj2RWhLSGlHtnDr6934kLM0+Odl1FSlZ9Pn2R3Y5ky+XCNmJ
-	 fyYpNDBoU1PoeMWqLu06mR+nHsGQjRFNP27ULreFm9Qud3l8cexznU1cX9l3xTZ/2d
-	 jTYgk2B79Tky9RT35mZRFuPtgVaDKTsIe7CCn4/c=
+	by mail.kernel.org (Postfix) with ESMTP id C0F11207FF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Oct 2019 11:46:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730279AbfJNLdF (ORCPT
+        id S1730946AbfJNLqh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 14 Oct 2019 07:33:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38128 "EHLO mail.kernel.org"
+        Mon, 14 Oct 2019 07:46:37 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54018 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729930AbfJNLdE (ORCPT
+        id S1730593AbfJNLqh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 14 Oct 2019 07:33:04 -0400
-Received: from dragon (li937-157.members.linode.com [45.56.119.157])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        Mon, 14 Oct 2019 07:46:37 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D7A2206A3;
-        Mon, 14 Oct 2019 11:32:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571052784;
-        bh=FSljipgj28Jh531QTYWyNWy84keWUIqkOhpaU8aRBic=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=f7wNMYV2ne00JOhb796Z8tyUFSjnyzPW6imfoRacHOloX0vYCqWJieivDji1GxSb8
-         cib3dPUITid2TtczHaYgqz58cRQ2fKGO2SNTulJsfhGDP94nzGxD/jBXRebRqlVOU1
-         jeA9+zacLu4ynvmPM3ep/VDk+wZonBk2sbUg2RiY=
-Date:   Mon, 14 Oct 2019 19:32:41 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        =?iso-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v3 06/10] ARM: dts: imx: Rename "iram" node to "sram"
-Message-ID: <20191014113240.GN12262@dragon>
-References: <20191002164316.14905-1-krzk@kernel.org>
- <20191002164316.14905-6-krzk@kernel.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id A35CC801673;
+        Mon, 14 Oct 2019 11:46:35 +0000 (UTC)
+Received: from thinkpad.redhat.com (ovpn-116-247.ams2.redhat.com [10.36.116.247])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5186619C6A;
+        Mon, 14 Oct 2019 11:46:33 +0000 (UTC)
+From:   Laurent Vivier <lvivier@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Matt Mackall <mpm@selenic.com>,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-crypto@vger.kernel.org, Laurent Vivier <lvivier@redhat.com>
+Subject: [PATCH] hwrng: core - Fix use-after-free warning in hwrng_register()
+Date:   Mon, 14 Oct 2019 13:46:32 +0200
+Message-Id: <20191014114632.10875-1-lvivier@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-In-Reply-To: <20191002164316.14905-6-krzk@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.67]); Mon, 14 Oct 2019 11:46:36 +0000 (UTC)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20191014113241.dMUyP1Pqv0TwNCDqiz36H3LRuiElOwaaRRu8Z4jIhIQ@z>
+Content-Type: text/plain; charset="UTF-8"
+Message-ID: <20191014114632.T_nQ-ZlA5HvVJ5-9Sca0f9XaVpypATbmRSq21geuiXU@z>
 
-On Wed, Oct 02, 2019 at 06:43:12PM +0200, Krzysztof Kozlowski wrote:
-> The device node name should reflect generic class of a device so rename
-> the "iram" node to "sram".  This will be also in sync with upcoming DT
-> schema.  No functional change.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Commit daae28debcb0 has moved add_early_randomness() out of the
+rng_mutex and tries to protect the reference of the new rng device
+by incrementing the reference counter.
 
-Acked-by: Shawn Guo <shawnguo@kernel.org>
+But in hwrng_register(), the function can be called with a new device
+that is not set as the current_rng device and the reference has not been
+initialized. This patch fixes the problem by not using the reference
+counter when the device is not the current one: the reference counter
+is only meaningful in the case of the current rng device and a device
+is not used if it is not the current one (except in hwrng_register())
 
-Let me know if you want it go through IMX tree.
+The problem has been reported by Marek Szyprowski on ARM 32bit
+Exynos5420-based Chromebook Peach-Pit board:
 
-Shawn
+WARNING: CPU: 3 PID: 1 at lib/refcount.c:156 hwrng_register+0x13c/0x1b4
+refcount_t: increment on 0; use-after-free.
+Modules linked in:
+CPU: 3 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc1-00061-gdaae28debcb0
+Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[<c01124c8>] (unwind_backtrace) from [<c010dfb8>] (show_stack+0x10/0x14)
+[<c010dfb8>] (show_stack) from [<c0ae86d8>] (dump_stack+0xa8/0xd4)
+[<c0ae86d8>] (dump_stack) from [<c0127428>] (__warn+0xf4/0x10c)
+[<c0127428>] (__warn) from [<c01274b4>] (warn_slowpath_fmt+0x74/0xb8)
+[<c01274b4>] (warn_slowpath_fmt) from [<c054729c>] (hwrng_register+0x13c/0x1b4)
+[<c054729c>] (hwrng_register) from [<c0547e54>] (tpm_chip_register+0xc4/0x274)
+...
+
+Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Fixes: daae28debcb0 ("hwrng: core - move add_early_randomness() out of rng_mutex")
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Laurent Vivier <lvivier@redhat.com>
+---
+ drivers/char/hw_random/core.c | 33 ++++++++++++++++-----------------
+ 1 file changed, 16 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/char/hw_random/core.c b/drivers/char/hw_random/core.c
+index 29f50c045c92..d85c6e18a2d2 100644
+--- a/drivers/char/hw_random/core.c
++++ b/drivers/char/hw_random/core.c
+@@ -471,17 +471,15 @@ static void start_khwrngd(void)
+ int hwrng_register(struct hwrng *rng)
+ {
+ 	int err = -EINVAL;
+-	struct hwrng *old_rng, *new_rng, *tmp;
++	struct hwrng *tmp;
+ 	struct list_head *rng_list_ptr;
++	bool is_new_current = false;
+ 
+ 	if (!rng->name || (!rng->data_read && !rng->read))
+ 		goto out;
+ 
+ 	mutex_lock(&rng_mutex);
+ 
+-	old_rng = current_rng;
+-	new_rng = NULL;
+-
+ 	/* Must not register two RNGs with the same name. */
+ 	err = -EEXIST;
+ 	list_for_each_entry(tmp, &rng_list, list) {
+@@ -500,9 +498,8 @@ int hwrng_register(struct hwrng *rng)
+ 	}
+ 	list_add_tail(&rng->list, rng_list_ptr);
+ 
+-	err = 0;
+-	if (!old_rng ||
+-	    (!cur_rng_set_by_user && rng->quality > old_rng->quality)) {
++	if (!current_rng ||
++	    (!cur_rng_set_by_user && rng->quality > current_rng->quality)) {
+ 		/*
+ 		 * Set new rng as current as the new rng source
+ 		 * provides better entropy quality and was not
+@@ -511,15 +508,14 @@ int hwrng_register(struct hwrng *rng)
+ 		err = set_current_rng(rng);
+ 		if (err)
+ 			goto out_unlock;
++		/* to use current_rng in add_early_randomness() we need
++		 * to take a ref
++		 */
++		is_new_current = true;
++		kref_get(&rng->ref);
+ 	}
+-
+-	new_rng = rng;
+-	kref_get(&new_rng->ref);
+-out_unlock:
+ 	mutex_unlock(&rng_mutex);
+-
+-	if (new_rng) {
+-		if (new_rng != old_rng || !rng->init) {
++	if (is_new_current || !rng->init) {
+ 		/*
+ 		 * Use a new device's input to add some randomness to
+ 		 * the system.  If this rng device isn't going to be
+@@ -527,10 +523,13 @@ int hwrng_register(struct hwrng *rng)
+ 		 * called yet by set_current_rng(); so only use the
+ 		 * randomness from devices that don't need an init callback
+ 		 */
+-			add_early_randomness(new_rng);
+-		}
+-		put_rng(new_rng);
++		add_early_randomness(rng);
+ 	}
++	if (is_new_current)
++		put_rng(rng);
++	return 0;
++out_unlock:
++	mutex_unlock(&rng_mutex);
+ out:
+ 	return err;
+ }
+-- 
+2.21.0
+
