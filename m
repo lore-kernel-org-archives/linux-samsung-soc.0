@@ -2,236 +2,158 @@ Return-Path: <SRS0=B52k=YH=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5942AC47404
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Oct 2019 06:41:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AE51ECE587
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Oct 2019 06:50:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 024792089C
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Oct 2019 06:41:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D33CF20882
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 14 Oct 2019 06:50:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JDbMiGt1"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lginjuMi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729790AbfJNGlQ (ORCPT
+        id S1730188AbfJNGuo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 14 Oct 2019 02:41:16 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:42019 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728628AbfJNGlQ (ORCPT
+        Mon, 14 Oct 2019 02:50:44 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:26676 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730184AbfJNGuo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 14 Oct 2019 02:41:16 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20191014064113epoutp0335555cbe0b606fe3a71760639e30b502~NcEH5M7Zp0042400424epoutp03I
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Oct 2019 06:41:13 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20191014064113epoutp0335555cbe0b606fe3a71760639e30b502~NcEH5M7Zp0042400424epoutp03I
+        Mon, 14 Oct 2019 02:50:44 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20191014065041epoutp04cb5f57a06c17c30b64fe49f5f170bc48~NcMZC9g6J3092430924epoutp04d
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Oct 2019 06:50:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20191014065041epoutp04cb5f57a06c17c30b64fe49f5f170bc48~NcMZC9g6J3092430924epoutp04d
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1571035273;
-        bh=etSmYkdlLCLqB+EQLVgfIlp/7aIMo3cLq0v/Hx3Nrvs=;
+        s=mail20170921; t=1571035841;
+        bh=1eQGo33uKjTdCkkdKahf1ARNyu1XQkPjhgfubEbxddw=;
         h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=JDbMiGt1aUZjoL667/X1a71yzZJv3wNMlMyzqbuiVAjrss/LpuKRG65tRSP31BiWj
-         FguYoLPFyvouzsS7dbgvx1BOu2F2yt0oYpwoYDGJAR0CdgFXLWyJbPMsllXyuVzSyI
-         IFVeZubhVj8X7utUsq6AMxBaiLu43L2J3g/GMEQs=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        b=lginjuMi+IaIM6K5HCv0ec661XLxMEJYP1prYNou+rNtOuvzUHmIpF9QXioW6u7sy
+         RuHZIacTbjA/iBw+Pj3+SpgZBfoZVt+yj0SlxS1TwVbGfyvzn8sL0nTQEmW+M4YNzP
+         AKgKkfNlpZF1HdCAAsTOQFvYjdfTBKNZyljsY7+c=
+Received: from epsnrtp5.localdomain (unknown [182.195.42.166]) by
         epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20191014064113epcas1p347dc9c7f71af8295f8c38114783c475c~NcEHa9vq_0560805608epcas1p3u;
-        Mon, 14 Oct 2019 06:41:13 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.153]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 46s88c5hdyzMqYkX; Mon, 14 Oct
-        2019 06:41:04 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        86.DC.04224.08814AD5; Mon, 14 Oct 2019 15:41:04 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        20191014065041epcas1p358c1ec08078fb7c3a8713c609fd83d1e~NcMYqLBoq1509415094epcas1p3T;
+        Mon, 14 Oct 2019 06:50:41 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.154]) by
+        epsnrtp5.localdomain (Postfix) with ESMTP id 46s8Mg1RcBzMqYkh; Mon, 14 Oct
+        2019 06:50:39 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A9.A8.04085.FBA14AD5; Mon, 14 Oct 2019 15:50:39 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
         epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20191014064103epcas1p35c029412778c82b174330560b5651196~NcD_dLO-Z0544405444epcas1p3S;
-        Mon, 14 Oct 2019 06:41:03 +0000 (GMT)
+        20191014065038epcas1p38813e16958dbdacf5d3201b677429f22~NcMWDZjvH1290112901epcas1p34;
+        Mon, 14 Oct 2019 06:50:38 +0000 (GMT)
 Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191014064103epsmtrp1b166e8df8c2ad17648b32d758d1032ab~NcD_cSe4z1480814808epsmtrp1a;
-        Mon, 14 Oct 2019 06:41:03 +0000 (GMT)
-X-AuditID: b6c32a38-1b4639c000001080-b8-5da41880d38c
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20191014065038epsmtrp269318e5e70208b7ddacaf8a128ce1695~NcMWCkLmu1524115241epsmtrp20;
+        Mon, 14 Oct 2019 06:50:38 +0000 (GMT)
+X-AuditID: b6c32a37-e19ff70000000ff5-58-5da41abf4ee3
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
         epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        45.5C.04081.F7814AD5; Mon, 14 Oct 2019 15:41:03 +0900 (KST)
+        69.0D.04081.EBA14AD5; Mon, 14 Oct 2019 15:50:38 +0900 (KST)
 Received: from [10.113.221.102] (unknown [10.113.221.102]) by
         epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191014064103epsmtip1e2707a260a0879b4da818937faf1ac81~NcD_B-bYV0502505025epsmtip1G;
-        Mon, 14 Oct 2019 06:41:03 +0000 (GMT)
-Subject: Re: [PATCH] devfreq: exynos-bus: workaround dev_pm_opp_set_rate()
- errors on Exynos5422/5800 SoCs
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        k.konieczny@partner.samsung.com
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+        20191014065038epsmtip1a31c68c943611dcbd837e7577bf5392a~NcMVuCBb50984009840epsmtip1a;
+        Mon, 14 Oct 2019 06:50:38 +0000 (GMT)
+Subject: Re: clk: samsung: Checking a kmemdup() call in
+ _samsung_clk_register_pll()
+To:     Markus Elfring <Markus.Elfring@web.de>, linux-clk@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>,
+        Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>,
+        Stephen McCamant <smccaman@umn.edu>
 From:   Chanwoo Choi <cw00.choi@samsung.com>
 Organization: Samsung Electronics
-Message-ID: <d742e7be-ca79-ae9e-6cc2-dc1fae08d252@samsung.com>
-Date:   Mon, 14 Oct 2019 15:46:03 +0900
+Message-ID: <725ace30-a4a7-25dd-2351-f007bb8b35ed@samsung.com>
+Date:   Mon, 14 Oct 2019 15:55:38 +0900
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
         Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <0ce56e65-d989-18f8-af84-2fbd74ba20aa@samsung.com>
+In-Reply-To: <c1bc5e4d-0802-4485-2c07-248bab2a3330@web.de>
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKJsWRmVeSWpSXmKPExsWy7bCmrm6DxJJYg1kd+hYbZ6xntejb95/R
-        ov/xa2aL8+c3sFucbXrDbrHp8TVWi8u75rBZfO49wmgx4/w+Jou1R+6yW9xuXMHmwO2xaVUn
-        m8fmJfUeB9/tYfLo27KK0ePzJrkA1qhsm4zUxJTUIoXUvOT8lMy8dFsl7+B453hTMwNDXUNL
-        C3MlhbzE3FRbJRefAF23zBygy5QUyhJzSoFCAYnFxUr6djZF+aUlqQoZ+cUltkqpBSk5BZYF
-        esWJucWleel6yfm5VoYGBkamQIUJ2RlXHt5gK5ijVrH65S3GBsap8l2MHBwSAiYSb44rdjFy
-        cQgJ7GCUuPtjGnsXIyeQ84lRomt1IUTiG6PE/kVtTDANO4/bQMT3MkpsmL2cCaLhPaPE+enJ
-        ILawQLbEt9PLmEFsEYEgicX3ZzCCNDAL3GaS6P30iwUkwSagJbH/xQ02EJtfQFHi6o/HjCA2
-        r4CdxOV3DWBxFgFViaeHt7KCLBYViJA4/TURokRQ4uTMJ2BjOAXsJR7/2w92NLOAuMStJ/OZ
-        IGx5ieats5lB9koI9LNLzFzbCdYgIeAi8ef7VyYIW1ji1fEt7BC2lMTL/jYou1pi5ckjbBDN
-        HYwSW/ZfYIVIGEvsXzoZHBLMApoS63fpQ4QVJXb+nssIsZhP4t3XHlZIYPFKdLQJQZQoS1x+
-        cBdqraTE4vZOtgmMSrOQvDMLyQuzkLwwC2HZAkaWVYxiqQXFuempxYYFJshRvYkRnGS1LHYw
-        7jnnc4hRgINRiYdXIW1xrBBrYllxZe4hRgkOZiURXoYJC2KFeFMSK6tSi/Lji0pzUosPMZoC
-        A3sis5Rocj4wA+SVxBuaGhkbG1uYGJqZGhoqifOyMs6PFRJITyxJzU5NLUgtgulj4uCUamD0
-        5mxbL2Rpxd9s1en35Xdyy80l7/2WGwZxzvzbFX5vp3G5SveMdywGn70u78hdmLswbJrXbe3A
-        PuWE1qyPppen8VuVCfjEmC5n2nN0E+eTEzU/uQXaWgXs1Teeqn15W39/ROjkgD3HXRgrb30R
-        bNFlZp39xSnpdc7X5NdJ3O5OM3UCajWDziuxFGckGmoxFxUnAgA/rkBGyAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMIsWRmVeSWpSXmKPExsWy7bCSnG69xJJYg71npCw2zljPatG37z+j
-        Rf/j18wW589vYLc42/SG3WLT42usFpd3zWGz+Nx7hNFixvl9TBZrj9xlt7jduILNgdtj06pO
-        No/NS+o9Dr7bw+TRt2UVo8fnTXIBrFFcNimpOZllqUX6dglcGVce3mArmKNWsfrlLcYGxqny
-        XYwcHBICJhI7j9t0MXJxCAnsZpTYvWcaUxcjJ1BcUmLaxaPMEDXCEocPF0PUvGWUuPXrHwtI
-        jbBAtsS308uYQWwRgSCJRzNesYEUMQvcZZJY9+0DE0RHE5PE55k7GUGq2AS0JPa/uMEGYvML
-        KEpc/fEYLM4rYCdx+V0DWJxFQFXi6eGtrCC2qECExPPtN6BqBCVOznwCtplTwF7i8b/97CA2
-        s4C6xJ95l5ghbHGJW0/mM0HY8hLNW2czT2AUnoWkfRaSlllIWmYhaVnAyLKKUTK1oDg3PbfY
-        sMAwL7Vcrzgxt7g0L10vOT93EyM46rQ0dzBeXhJ/iFGAg1GJh/dE8uJYIdbEsuLK3EOMEhzM
-        SiK8DBMWxArxpiRWVqUW5ccXleakFh9ilOZgURLnfZp3LFJIID2xJDU7NbUgtQgmy8TBKdXA
-        WOmVY5LIrzK1aDdH7zYGjngG11viwR7BDusNmj7LKtasyEo5GLJSM/NzSzvTSb1fp6WZd21L
-        aKvuOVQ39/YN8UtWmeHtcztPK2xqs7n+JrV+WsBS66eKl5Zs/ZN06tDFbxw2mXG5W3arnoi/
-        VO2cd9NplddO24crLj4I2FLy68tlG94ns6ZOUmIpzkg01GIuKk4EABQJz9S2AgAA
-X-CMS-MailID: 20191014064103epcas1p35c029412778c82b174330560b5651196
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLJsWRmVeSWpSXmKPExsWy7bCmge5+qSWxBk8Oclo8a5zOarH1lrTF
+        iXln2S0+9txjtbi8aw6bxYzz+5gs/s96zmpx8ZSrxeLlPxktDr9pZ7X4d20ji8W0L4vYLVbt
+        +sPowOvx/kYru8fOWXfZPTat6mTz6NuyitHj6sImdo/Pm+Q8bj/bxhLAHpVtk5GamJJapJCa
+        l5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr5OIToOuWmQN0rJJCWWJOKVAoILG4WEnf
+        zqYov7QkVSEjv7jEVim1ICWnwLJArzgxt7g0L10vOT/XytDAwMgUqDAhO2PR3X7mgt2cFb93
+        /GdvYPzL3sXIySEhYCLxc+ku5i5GLg4hgR2MEhMffmKBcD4xSvS/OcYI4XxjlPg47QgLTMuB
+        3u3sEIm9jBJb7r2Ect4zSrz+OYENpEpYIFRixZO7rCAJEYE+Jom2favBqpgFLjJKLLz3jwmk
+        ik1AS2L/ixtgHfwCihJXfzxmBLF5Bewk1p34DWazCKhKLFw+Bcjm4BAViJA4/TURokRQ4uTM
+        J2AncQpYSSx+8w+snFlAXOLWk/lMELa8RPPW2WDfSQisYpe4O/cdE8QPLhJ7DhxkhLCFJV4d
+        3wINDimJz+/2skHY1RIrTx5hg2juAPpz/wVWiISxxP6lk5lADmIW0JRYv0sfIqwosfP3XKgj
+        +CTefe1hBSmREOCV6GgTgihRlrj84C7UCZISi9s72SYwKs1C8s4sJC/MQvLCLIRlCxhZVjGK
+        pRYU56anFhsWGCPH9yZGcFLWMt/BuOGczyFGAQ5GJR5ehbTFsUKsiWXFlbmHGCU4mJVEeBkm
+        LIgV4k1JrKxKLcqPLyrNSS0+xGgKDOyJzFKiyfnAjJFXEm9oamRsbGxhYmhmamioJM7Lyjg/
+        VkggPbEkNTs1tSC1CKaPiYNTqoExu2u/ikPa/Yhd2c3XC3Wq+p399k1UN+KyYbSYMWFThxb/
+        RN/S205KPxJPpm07qPdb9to1lxeWpupp3A1LxNTWPBd7EqnCfnZSU57+Cb6rCyZNfWrJZPTr
+        Co92fjzfxJP9bjF7ko7Od5nKw6FqyhxW1/X856Zfu66rPd3/IijuR8+ZgoSLm1YrsRRnJBpq
+        MRcVJwIABv194uADAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBIsWRmVeSWpSXmKPExsWy7bCSnO4+qSWxBtuPKlk8a5zOarH1lrTF
+        iXln2S0+9txjtbi8aw6bxYzz+5gs/s96zmpx8ZSrxeLlPxktDr9pZ7X4d20ji8W0L4vYLVbt
+        +sPowOvx/kYru8fOWXfZPTat6mTz6NuyitHj6sImdo/Pm+Q8bj/bxhLAHsVlk5Kak1mWWqRv
+        l8CVsehuP3PBbs6K3zv+szcw/mXvYuTkkBAwkTjQux3I5uIQEtjNKNGzuIERIiEpMe3iUeYu
+        Rg4gW1ji8OFiiJq3jBKz3jWzgNQIC4RKrHhylxUkISIwgUliz865jCAOs8BFRolD/9azQrT0
+        MkqsO/UVrIVNQEti/4sbbCA2v4CixNUfj8HW8QrYSaw78RvMZhFQlVi4fAqYLSoQIfF8+w2o
+        GkGJkzOfgM3hFLCSWPzmH1icWUBd4s+8S8wQtrjErSfzmSBseYnmrbOZJzAKz0LSPgtJyywk
+        LbOQtCxgZFnFKJlaUJybnltsWGCYl1quV5yYW1yal66XnJ+7iREcn1qaOxgvL4k/xCjAwajE
+        w3sieXGsEGtiWXFl7iFGCQ5mJRFehgkLYoV4UxIrq1KL8uOLSnNSiw8xSnOwKInzPs07Fikk
+        kJ5YkpqdmlqQWgSTZeLglGpgrH2yJuJb7TWDadv+PwpLys84lzlH9PNUuf/W3to6zQlXzWX3
+        Bf3p3eIau7g0cJ55ionA3dQdu8Iu9xbc9PniljNlRskG1h3+AWsyV58M+8VTrzfR+rdDVcfL
+        AhXWu34TF2h82Pug5kiHiRWf7L8l0lvaWTpP1dn8UVkQfe3m3W8N/zec/1b7RImlOCPRUIu5
+        qDgRAISKLRHLAgAA
+X-CMS-MailID: 20191014065038epcas1p38813e16958dbdacf5d3201b677429f22
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="UTF-8"
 X-Sendblock-Type: SVC_REQ_APPROVE
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191008134950eucas1p15cfef5800efc10d5b18ec5eb37dde60b
-References: <CGME20191008134950eucas1p15cfef5800efc10d5b18ec5eb37dde60b@eucas1p1.samsung.com>
-        <20191008134923.30123-1-k.konieczny@partner.samsung.com>
-        <4f14d3af-e455-d05b-fc03-cba58e001f41@samsung.com>
-        <0ce56e65-d989-18f8-af84-2fbd74ba20aa@samsung.com>
+X-CMS-RootMailID: 20191012141739epcas3p31e41c151b30d49c94aeb933aa42dc9f7
+References: <CGME20191012141739epcas3p31e41c151b30d49c94aeb933aa42dc9f7@epcas3p3.samsung.com>
+        <c1bc5e4d-0802-4485-2c07-248bab2a3330@web.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20191014064603.hRuMa6NWsc_wqRumbpwKp6-Q8qd33p6aTni-f5XWiSw@z>
+Message-ID: <20191014065538.t5Y4c3lB5hoEfeg1XhhCOFxZQsiuM9JyT_v9fZ2mfnM@z>
 
-Hi Marek,
+Hello,
 
-On 19. 10. 11. 오후 8:33, Marek Szyprowski wrote:
-> Hi Chanwoo,
+On 19. 10. 12. 오후 11:17, Markus Elfring wrote:
+> Hello,
 > 
-> On 10.10.2019 04:50, Chanwoo Choi wrote:
->> On 2019년 10월 08일 22:49, k.konieczny@partner.samsung.com wrote:
->>> Commit 4294a779bd8d ("PM / devfreq: exynos-bus: Convert to use
->>> dev_pm_opp_set_rate()") introduced errors:
->>> exynos-bus: new bus device registered: soc:bus_wcore ( 84000 KHz ~ 400000 KHz)
->>> exynos-bus: new bus device registered: soc:bus_noc ( 67000 KHz ~ 100000 KHz)
->>> exynos-bus: new bus device registered: soc:bus_fsys_apb (100000 KHz ~ 200000 KHz)
->>> ...
->>> exynos-bus soc:bus_wcore: dev_pm_opp_set_rate: failed to find current OPP for freq 532000000 (-34)
->>> exynos-bus soc:bus_noc: dev_pm_opp_set_rate: failed to find current OPP for freq 111000000 (-34)
->>> exynos-bus soc:bus_fsys_apb: dev_pm_opp_set_rate: failed to find current OPP for freq 222000000 (-34)
->>>
->>> They are caused by incorrect PLL assigned to clock source, which results
->>> in clock rate outside of OPP range. Add workaround for this in
->>> exynos_bus_parse_of() by adjusting clock rate to those present in OPP.
->> If the clock caused this issue, you can set the initial clock on DeviceTree
->> with assigned-clock-* properties. Because the probe time of clock driver
->> is early than the any device drivers.
->>
->> It is not proper to fix the clock issue on other device driver.
->> I think you can fix it by using the supported clock properties.
+> I tried another script for the semantic patch language out.
+> This source code analysis approach points out that the implementation
+> of the function “_samsung_clk_register_pll” contains also a call
+> of the function “kmemdup”.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/samsung/clk-pll.c?id=1c0cc5f1ae5ee5a6913704c0d75a6e99604ee30a#n1275
+> https://protect2.fireeye.com/url?k=7e77b0ebee9a0c3e.7e763ba4-43f341fdfe1d32b1&u=https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/clk/samsung/clk-pll.c#L1275
 > 
-> This issue is about something completely different. The OPPs defined in 
-> DT cannot be applied, because it is not possible to derive the needed 
-> clock rate from the bootloader-configured clock topology (mainly due to 
-> lack of common divisor values for some of the parent clocks). Some time 
-> ago Lukasz tried initially to redefine this clock topology using 
-> assigned-clock-rates/parents properties (see 
-> https://protect2.fireeye.com/url?k=4b80c0304459bc8e.4b814b7f-f87f1e1aee1a85c0&u=https://lkml.org/lkml/2019/7/15/276), but it has limitations and some 
-> such changes has to be done in bootloader. Until this is resolved, 
-> devfreq simply cannot set some of the defined OPPs.
+> * Do you find the usage of the format string “%s: could not allocate
+>   rate table for %s\n” still appropriate at this place?
+> 
+> * Is there a need to adjust the error handling here?
 
-As you mentioned, the wrong setting in bootloader cause the this issue.
-So, this patch change the rate on exynos-bus.c in order to fix
-the issue with workaround style. 
-
-But, also, it can be fixed by initializing the clock rate on DT
-although it is not fundamental solution as you mentioned.
-
-If above two method are workaround way, I think that set the clock
-rate in DT is proper. The role of 'assigned-clock-*' properties
-is for this case in order to set the initial frequency on probe time.
-
-I think that the previous patch[1] of Kamil Konieczny is missing
-the patches which initialize the clock rate on DT file.
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=4294a779bd8dff6c65e7e85ffe7a1ea236e92a68
+drivers/clk/samsung/clk-pll.c considers the case of 'pll->rate_table is NULL'
+So, maybe just show the warning message if failed to allocate memory
+of 'pll->rate_table'. Bu, IMHO, the error handling is necessary
+in order to support what 'pll_clk->rate_table' isn't NULL.
 
 > 
-> This issue was there from the beginning, recent Kamil's patch only 
-> revealed it. In fact it was even worse - devfreq and common clock 
-> framework silently set lower clock than the given OPP defined.
+> Regards,
+> Markus
 > 
->>> Fixes: 4294a779bd8d ("PM / devfreq: exynos-bus: Convert to use dev_pm_opp_set_rate()")
->>> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
->>> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
->>> ---
->>>   drivers/devfreq/exynos-bus.c | 14 +++++++++++---
->>>   1 file changed, 11 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
->>> index c832673273a2..37bd34d5625b 100644
->>> --- a/drivers/devfreq/exynos-bus.c
->>> +++ b/drivers/devfreq/exynos-bus.c
->>> @@ -243,7 +243,7 @@ static int exynos_bus_parse_of(struct device_node *np,
->>>   {
->>>   	struct device *dev = bus->dev;
->>>   	struct dev_pm_opp *opp;
->>> -	unsigned long rate;
->>> +	unsigned long rate, opp_rate;
->>>   	int ret;
->>>   
->>>   	/* Get the clock to provide each bus with source clock */
->>> @@ -267,13 +267,21 @@ static int exynos_bus_parse_of(struct device_node *np,
->>>   	}
->>>   
->>>   	rate = clk_get_rate(bus->clk);
->>> -
->>> -	opp = devfreq_recommended_opp(dev, &rate, 0);
->>> +	opp_rate = rate;
->>> +	opp = devfreq_recommended_opp(dev, &opp_rate, 0);
->>>   	if (IS_ERR(opp)) {
->>>   		dev_err(dev, "failed to find dev_pm_opp\n");
->>>   		ret = PTR_ERR(opp);
->>>   		goto err_opp;
->>>   	}
->>> +	/*
->>> +	 * FIXME: U-boot leaves clock source at incorrect PLL, this results
->>> +	 * in clock rate outside defined OPP rate. Work around this bug by
->>> +	 * setting clock rate to recommended one.
->>> +	 */
->>> +	if (rate > opp_rate)
->>> +		clk_set_rate(bus->clk, opp_rate);
->>> +
->>>   	bus->curr_freq = dev_pm_opp_get_freq(opp);
->>>   	dev_pm_opp_put(opp);
->>>   
->>>
->>
-> Best regards
 > 
 
 
