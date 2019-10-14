@@ -1,28 +1,124 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH v3 06/10] ARM: dts: imx: Rename "iram" node to "sram"
-Date: Mon, 14 Oct 2019 19:32:41 +0800
-Message-ID: <20191014113240.GN12262@dragon>
-References: <20191002164316.14905-1-krzk@kernel.org>
- <20191002164316.14905-6-krzk@kernel.org>
+From: Laurent Vivier <lvivier@redhat.com>
+Subject: [PATCH] hwrng: core - Fix use-after-free warning in hwrng_register()
+Date: Mon, 14 Oct 2019 13:46:32 +0200
+Message-ID: <20191014114632.10875-1-lvivier@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20191002164316.14905-6-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, =?iso-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@bootlin.com>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Santosh Shilimkar <ssantosh@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.orglinux-
+To: linux-kernel@vger.kernel.org
+Cc: Matt Mackall <mpm@selenic.com>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org, Laurent Vivier <lvivier@redhat.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 02, 2019 at 06:43:12PM +0200, Krzysztof Kozlowski wrote:
-> The device node name should reflect generic class of a device so rename
-> the "iram" node to "sram".  This will be also in sync with upcoming DT
-> schema.  No functional change.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Commit daae28debcb0 has moved add_early_randomness() out of the
+rng_mutex and tries to protect the reference of the new rng device
+by incrementing the reference counter.
 
-Acked-by: Shawn Guo <shawnguo@kernel.org>
+But in hwrng_register(), the function can be called with a new device
+that is not set as the current_rng device and the reference has not been
+initialized. This patch fixes the problem by not using the reference
+counter when the device is not the current one: the reference counter
+is only meaningful in the case of the current rng device and a device
+is not used if it is not the current one (except in hwrng_register())
 
-Let me know if you want it go through IMX tree.
+The problem has been reported by Marek Szyprowski on ARM 32bit
+Exynos5420-based Chromebook Peach-Pit board:
 
-Shawn
+WARNING: CPU: 3 PID: 1 at lib/refcount.c:156 hwrng_register+0x13c/0x1b4
+refcount_t: increment on 0; use-after-free.
+Modules linked in:
+CPU: 3 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc1-00061-gdaae28debcb0
+Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[<c01124c8>] (unwind_backtrace) from [<c010dfb8>] (show_stack+0x10/0x14)
+[<c010dfb8>] (show_stack) from [<c0ae86d8>] (dump_stack+0xa8/0xd4)
+[<c0ae86d8>] (dump_stack) from [<c0127428>] (__warn+0xf4/0x10c)
+[<c0127428>] (__warn) from [<c01274b4>] (warn_slowpath_fmt+0x74/0xb8)
+[<c01274b4>] (warn_slowpath_fmt) from [<c054729c>] (hwrng_register+0x13c/0x1b4)
+[<c054729c>] (hwrng_register) from [<c0547e54>] (tpm_chip_register+0xc4/0x274)
+...
+
+Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Fixes: daae28debcb0 ("hwrng: core - move add_early_randomness() out of rng_mutex")
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Laurent Vivier <lvivier@redhat.com>
+---
+ drivers/char/hw_random/core.c | 33 ++++++++++++++++-----------------
+ 1 file changed, 16 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/char/hw_random/core.c b/drivers/char/hw_random/core.c
+index 29f50c045c92..d85c6e18a2d2 100644
+--- a/drivers/char/hw_random/core.c
++++ b/drivers/char/hw_random/core.c
+@@ -471,17 +471,15 @@ static void start_khwrngd(void)
+ int hwrng_register(struct hwrng *rng)
+ {
+ 	int err = -EINVAL;
+-	struct hwrng *old_rng, *new_rng, *tmp;
++	struct hwrng *tmp;
+ 	struct list_head *rng_list_ptr;
++	bool is_new_current = false;
+ 
+ 	if (!rng->name || (!rng->data_read && !rng->read))
+ 		goto out;
+ 
+ 	mutex_lock(&rng_mutex);
+ 
+-	old_rng = current_rng;
+-	new_rng = NULL;
+-
+ 	/* Must not register two RNGs with the same name. */
+ 	err = -EEXIST;
+ 	list_for_each_entry(tmp, &rng_list, list) {
+@@ -500,9 +498,8 @@ int hwrng_register(struct hwrng *rng)
+ 	}
+ 	list_add_tail(&rng->list, rng_list_ptr);
+ 
+-	err = 0;
+-	if (!old_rng ||
+-	    (!cur_rng_set_by_user && rng->quality > old_rng->quality)) {
++	if (!current_rng ||
++	    (!cur_rng_set_by_user && rng->quality > current_rng->quality)) {
+ 		/*
+ 		 * Set new rng as current as the new rng source
+ 		 * provides better entropy quality and was not
+@@ -511,15 +508,14 @@ int hwrng_register(struct hwrng *rng)
+ 		err = set_current_rng(rng);
+ 		if (err)
+ 			goto out_unlock;
++		/* to use current_rng in add_early_randomness() we need
++		 * to take a ref
++		 */
++		is_new_current = true;
++		kref_get(&rng->ref);
+ 	}
+-
+-	new_rng = rng;
+-	kref_get(&new_rng->ref);
+-out_unlock:
+ 	mutex_unlock(&rng_mutex);
+-
+-	if (new_rng) {
+-		if (new_rng != old_rng || !rng->init) {
++	if (is_new_current || !rng->init) {
+ 		/*
+ 		 * Use a new device's input to add some randomness to
+ 		 * the system.  If this rng device isn't going to be
+@@ -527,10 +523,13 @@ int hwrng_register(struct hwrng *rng)
+ 		 * called yet by set_current_rng(); so only use the
+ 		 * randomness from devices that don't need an init callback
+ 		 */
+-			add_early_randomness(new_rng);
+-		}
+-		put_rng(new_rng);
++		add_early_randomness(rng);
+ 	}
++	if (is_new_current)
++		put_rng(rng);
++	return 0;
++out_unlock:
++	mutex_unlock(&rng_mutex);
+ out:
+ 	return err;
+ }
+-- 
+2.21.0
