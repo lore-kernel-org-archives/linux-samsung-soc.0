@@ -1,127 +1,47 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] devfreq: exynos-bus: workaround dev_pm_opp_set_rate()
- errors on Exynos5422/5800 SoCs
-Date: Mon, 14 Oct 2019 15:46:03 +0900
-Message-ID: <d742e7be-ca79-ae9e-6cc2-dc1fae08d252@samsung.com>
-References: <CGME20191008134950eucas1p15cfef5800efc10d5b18ec5eb37dde60b@eucas1p1.samsung.com>
-        <20191008134923.30123-1-k.konieczny@partner.samsung.com>
-        <4f14d3af-e455-d05b-fc03-cba58e001f41@samsung.com>
-        <0ce56e65-d989-18f8-af84-2fbd74ba20aa@samsung.com>
+Subject: Re: clk: samsung: Checking a kmemdup() call in
+ _samsung_clk_register_pll()
+Date: Mon, 14 Oct 2019 15:55:38 +0900
+Message-ID: <725ace30-a4a7-25dd-2351-f007bb8b35ed@samsung.com>
+References: <CGME20191012141739epcas3p31e41c151b30d49c94aeb933aa42dc9f7@epcas3p3.samsung.com>
+        <c1bc5e4d-0802-4485-2c07-248bab2a3330@web.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <0ce56e65-d989-18f8-af84-2fbd74ba20aa@samsung.com>
+In-Reply-To: <c1bc5e4d-0802-4485-2c07-248bab2a3330@web.de>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, k.konieczny@partner.samsung.com
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Markus Elfring <Markus.Elfring@web.de>, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+Hello,
 
-On 19. 10. 11. 오후 8:33, Marek Szyprowski wrote:
-> Hi Chanwoo,
+On 19. 10. 12. 오후 11:17, Markus Elfring wrote:
+> Hello,
 > 
-> On 10.10.2019 04:50, Chanwoo Choi wrote:
->> On 2019년 10월 08일 22:49, k.konieczny@partner.samsung.com wrote:
->>> Commit 4294a779bd8d ("PM / devfreq: exynos-bus: Convert to use
->>> dev_pm_opp_set_rate()") introduced errors:
->>> exynos-bus: new bus device registered: soc:bus_wcore ( 84000 KHz ~ 400000 KHz)
->>> exynos-bus: new bus device registered: soc:bus_noc ( 67000 KHz ~ 100000 KHz)
->>> exynos-bus: new bus device registered: soc:bus_fsys_apb (100000 KHz ~ 200000 KHz)
->>> ...
->>> exynos-bus soc:bus_wcore: dev_pm_opp_set_rate: failed to find current OPP for freq 532000000 (-34)
->>> exynos-bus soc:bus_noc: dev_pm_opp_set_rate: failed to find current OPP for freq 111000000 (-34)
->>> exynos-bus soc:bus_fsys_apb: dev_pm_opp_set_rate: failed to find current OPP for freq 222000000 (-34)
->>>
->>> They are caused by incorrect PLL assigned to clock source, which results
->>> in clock rate outside of OPP range. Add workaround for this in
->>> exynos_bus_parse_of() by adjusting clock rate to those present in OPP.
->> If the clock caused this issue, you can set the initial clock on DeviceTree
->> with assigned-clock-* properties. Because the probe time of clock driver
->> is early than the any device drivers.
->>
->> It is not proper to fix the clock issue on other device driver.
->> I think you can fix it by using the supported clock properties.
+> I tried another script for the semantic patch language out.
+> This source code analysis approach points out that the implementation
+> of the function “_samsung_clk_register_pll” contains also a call
+> of the function “kmemdup”.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/samsung/clk-pll.c?id=1c0cc5f1ae5ee5a6913704c0d75a6e99604ee30a#n1275
+> https://protect2.fireeye.com/url?k=7e77b0ebee9a0c3e.7e763ba4-43f341fdfe1d32b1&u=https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/clk/samsung/clk-pll.c#L1275
 > 
-> This issue is about something completely different. The OPPs defined in 
-> DT cannot be applied, because it is not possible to derive the needed 
-> clock rate from the bootloader-configured clock topology (mainly due to 
-> lack of common divisor values for some of the parent clocks). Some time 
-> ago Lukasz tried initially to redefine this clock topology using 
-> assigned-clock-rates/parents properties (see 
-> https://protect2.fireeye.com/url?k=4b80c0304459bc8e.4b814b7f-f87f1e1aee1a85c0&u=https://lkml.org/lkml/2019/7/15/276), but it has limitations and some 
-> such changes has to be done in bootloader. Until this is resolved, 
-> devfreq simply cannot set some of the defined OPPs.
+> * Do you find the usage of the format string “%s: could not allocate
+>   rate table for %s\n” still appropriate at this place?
+> 
+> * Is there a need to adjust the error handling here?
 
-As you mentioned, the wrong setting in bootloader cause the this issue.
-So, this patch change the rate on exynos-bus.c in order to fix
-the issue with workaround style. 
-
-But, also, it can be fixed by initializing the clock rate on DT
-although it is not fundamental solution as you mentioned.
-
-If above two method are workaround way, I think that set the clock
-rate in DT is proper. The role of 'assigned-clock-*' properties
-is for this case in order to set the initial frequency on probe time.
-
-I think that the previous patch[1] of Kamil Konieczny is missing
-the patches which initialize the clock rate on DT file.
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=4294a779bd8dff6c65e7e85ffe7a1ea236e92a68
+drivers/clk/samsung/clk-pll.c considers the case of 'pll->rate_table is NULL'
+So, maybe just show the warning message if failed to allocate memory
+of 'pll->rate_table'. Bu, IMHO, the error handling is necessary
+in order to support what 'pll_clk->rate_table' isn't NULL.
 
 > 
-> This issue was there from the beginning, recent Kamil's patch only 
-> revealed it. In fact it was even worse - devfreq and common clock 
-> framework silently set lower clock than the given OPP defined.
+> Regards,
+> Markus
 > 
->>> Fixes: 4294a779bd8d ("PM / devfreq: exynos-bus: Convert to use dev_pm_opp_set_rate()")
->>> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
->>> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
->>> ---
->>>   drivers/devfreq/exynos-bus.c | 14 +++++++++++---
->>>   1 file changed, 11 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
->>> index c832673273a2..37bd34d5625b 100644
->>> --- a/drivers/devfreq/exynos-bus.c
->>> +++ b/drivers/devfreq/exynos-bus.c
->>> @@ -243,7 +243,7 @@ static int exynos_bus_parse_of(struct device_node *np,
->>>   {
->>>   	struct device *dev = bus->dev;
->>>   	struct dev_pm_opp *opp;
->>> -	unsigned long rate;
->>> +	unsigned long rate, opp_rate;
->>>   	int ret;
->>>   
->>>   	/* Get the clock to provide each bus with source clock */
->>> @@ -267,13 +267,21 @@ static int exynos_bus_parse_of(struct device_node *np,
->>>   	}
->>>   
->>>   	rate = clk_get_rate(bus->clk);
->>> -
->>> -	opp = devfreq_recommended_opp(dev, &rate, 0);
->>> +	opp_rate = rate;
->>> +	opp = devfreq_recommended_opp(dev, &opp_rate, 0);
->>>   	if (IS_ERR(opp)) {
->>>   		dev_err(dev, "failed to find dev_pm_opp\n");
->>>   		ret = PTR_ERR(opp);
->>>   		goto err_opp;
->>>   	}
->>> +	/*
->>> +	 * FIXME: U-boot leaves clock source at incorrect PLL, this results
->>> +	 * in clock rate outside defined OPP rate. Work around this bug by
->>> +	 * setting clock rate to recommended one.
->>> +	 */
->>> +	if (rate > opp_rate)
->>> +		clk_set_rate(bus->clk, opp_rate);
->>> +
->>>   	bus->curr_freq = dev_pm_opp_get_freq(opp);
->>>   	dev_pm_opp_put(opp);
->>>   
->>>
->>
-> Best regards
 > 
 
 
