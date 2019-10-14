@@ -1,45 +1,28 @@
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: Re: clk: samsung: Checking a kmemdup() call in
- _samsung_clk_register_pll()
-Date: Mon, 14 Oct 2019 10:05:09 +0200
-Message-ID: <ecfa721b-4176-71cb-85de-2aefe0b3d30a@web.de>
-References: <CGME20191012141739epcas3p31e41c151b30d49c94aeb933aa42dc9f7@epcas3p3.samsung.com>
- <c1bc5e4d-0802-4485-2c07-248bab2a3330@web.de>
- <725ace30-a4a7-25dd-2351-f007bb8b35ed@samsung.com>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH v3 06/10] ARM: dts: imx: Rename "iram" node to "sram"
+Date: Mon, 14 Oct 2019 19:32:41 +0800
+Message-ID: <20191014113240.GN12262@dragon>
+References: <20191002164316.14905-1-krzk@kernel.org>
+ <20191002164316.14905-6-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <725ace30-a4a7-25dd-2351-f007bb8b35ed@samsung.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20191002164316.14905-6-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>, Stephen McCamant <smccaman@umn.edu>, LKML <linux-kernel@vger.kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, =?iso-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@bootlin.com>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Santosh Shilimkar <ssantosh@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.orglinux-
 List-Id: linux-samsung-soc@vger.kernel.org
 
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/drivers/clk/samsung/clk-pll.c?id=3D1c0cc5f1ae5ee5a6913704c0d75a6e99604ee3=
-0a#n1275
->> https://protect2.fireeye.com/url?k=3D7e77b0ebee9a0c3e.7e763ba4-43f341fd=
-fe1d32b1&u=3Dhttps://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/clk/=
-samsung/clk-pll.c#L1275
-=E2=80=A6
-> drivers/clk/samsung/clk-pll.c considers the case of 'pll->rate_table is =
-NULL'
-> So, maybe just show the warning message if failed to allocate memory
-> of 'pll->rate_table'.
+On Wed, Oct 02, 2019 at 06:43:12PM +0200, Krzysztof Kozlowski wrote:
+> The device node name should reflect generic class of a device so rename
+> the "iram" node to "sram".  This will be also in sync with upcoming DT
+> schema.  No functional change.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-How do you think about to recheck information sources around
-the Linux allocation failure report?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/coding-style.rst?id=3Dda94001239cceb93c132a31928d6ddc4=
-214862d5#n878
+Acked-by: Shawn Guo <shawnguo@kernel.org>
 
+Let me know if you want it go through IMX tree.
 
-> Bu, IMHO, the error handling is necessary in order to support
-> what 'pll_clk->rate_table' isn't NULL.
-
-Can an other error handling strategy make sense at this place?
-
-Regards,
-Markus
+Shawn
