@@ -1,36 +1,49 @@
-From: syzbot <syzbot+c0b807de416427ff3dd1@syzkaller.appspotmail.com>
-Subject: Re: WARNING in batadv_iv_send_outstanding_bat_ogm_packet
-Date: Sun, 13 Oct 2019 20:57:01 -0700
-Message-ID: <0000000000002ba5570594d6dc99@google.com>
-References: <00000000000059b6d40594d0f776@google.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v4 1/6] opp: Handle target/min/max voltage in
+ dev_pm_opp_adjust_voltage()
+Date: Mon, 14 Oct 2019 11:56:49 +0530
+Message-ID: <20191014062649.oegc2rwigmdv6kju@vireshk-i7>
+References: <20190910123618.27985-1-s.nawrocki@samsung.com>
+ <CGME20190910123636eucas1p250ec04901f227b947cc38936563f63b2@eucas1p2.samsung.com>
+ <20190910123618.27985-2-s.nawrocki@samsung.com>
+ <20191002143310.GA15898@pi3>
+ <ada1bb2f-a824-c34e-6561-04a35782a9b8@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <00000000000059b6d40594d0f776@google.com>
-Sender: netdev-owner@vger.kernel.org
-To: a@unstable.cc, akpm@osdl.org, arvind.yadav.cs@gmail.com, b.a.t.m.a.n@lists.open-mesh.org, davem@davemloft.net, kgene@kernel.org, krzk@kernel.org, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, mareklindner@neomailbox.ch, mchehab@kernel.org, mchehab@s-opensource.com, mingo@kernel.org, netdev@vger.kernel.org, oleg@tv-sign.ru, roland@redhat.com, s.nawrocki@samsung.com, sven@narfation.org, sw@simonwunderlich.de, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <ada1bb2f-a824-c34e-6561-04a35782a9b8@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, vireshk@kernel.org, robh+dt@kernel.org, kgene@kernel.org, devicetree@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-syzbot has bisected this bug to:
+On 02-10-19, 17:54, Sylwester Nawrocki wrote:
+> On 10/2/19 16:33, Krzysztof Kozlowski wrote:
+> > On Tue, Sep 10, 2019 at 02:36:13PM +0200, Sylwester Nawrocki wrote:
+> >> To be squashed with patch "PM / OPP: Support adjusting OPP voltages
+> >> at runtime".
+> >>
+> >> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> >> ---
+> >>
+> >>  drivers/opp/core.c     | 10 ++++++++--
+> >>  include/linux/pm_opp.h |  3 ++-
+> >>  2 files changed, 10 insertions(+), 3 deletions(-)
+> >
+> > I'll take the ASV driver via samsung-soc but I see it depends on this
+> > one.  Please provide me a stable tag with it or an Ack.
+> 
+> There is further dependency on patch 
+> "[PATCH v4 6/8] PM / OPP: Support adjusting OPP voltages at runtime"
+> https://lore.kernel.org/linux-arm-kernel/1565703113-31479-7-git-send-email-andrew-sh.cheng@mediatek.com
+> 
+> Viresh, what are your plans WRT to those patches?
 
-commit 26d051e301f67cdd2ea3404abb43902f13214efa
-Author: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Date:   Thu Jun 29 08:21:35 2017 +0000
+I am waiting for Andrew to send me the next set of patches. You depend
+on only one of the patches ? In that case you can just pick that patch
+from his series, keep his authorship intact and make changes from 1/6
+and send along with your series.
 
-     media: exynos4-is: fimc-is-i2c: constify dev_pm_ops structures
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10a0aff0e00000
-start commit:   da940012 Merge tag 'char-misc-5.4-rc3' of git://git.kernel..
-git tree:       upstream
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=12a0aff0e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=14a0aff0e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2d2fd92a28d3e50
-dashboard link: https://syzkaller.appspot.com/bug?extid=c0b807de416427ff3dd1
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=141ffd77600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11edd580e00000
-
-Reported-by: syzbot+c0b807de416427ff3dd1@syzkaller.appspotmail.com
-Fixes: 26d051e301f6 ("media: exynos4-is: fimc-is-i2c: constify dev_pm_ops  
-structures")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+-- 
+viresh
