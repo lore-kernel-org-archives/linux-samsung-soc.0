@@ -2,136 +2,93 @@ Return-Path: <SRS0=ZUuD=YI=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D93FC10F14
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Oct 2019 17:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3CDEECE58C
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Oct 2019 19:26:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCE252067B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Oct 2019 17:55:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="IL40Azom"
+	by mail.kernel.org (Postfix) with ESMTP id 8FE4E2168B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Oct 2019 19:26:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1571167593;
+	bh=5/1f+CZP9I4ojMUsdsrnltQ04fuafyAOnyVZnUzu5ak=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=vrjn4X1gQ5Kuk8B802xlIypDYBOtaJgNM6vcPRvYFkveqgPvwhz1I8H0GW2CewUp1
+	 hcKYPtne8HY3MhWVCv7zF8T7hNUJtWk6Wb3mI3wA1HpiKs1ImFeRy8T8ioRx5jTB4I
+	 GOH4werNNP4Ec+hrnSwkymGQv1SZPYbhpqQBSzb4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388855AbfJORzg (ORCPT
+        id S1732200AbfJOT0d (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 15 Oct 2019 13:55:36 -0400
-Received: from mout.web.de ([212.227.15.14]:44223 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731694AbfJORzg (ORCPT
+        Tue, 15 Oct 2019 15:26:33 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:38542 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730550AbfJOT0c (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 15 Oct 2019 13:55:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1571162121;
-        bh=TZIhK7EPJZ3JVj0kpDPDNCPLGn4fJ8OQ0rsR71wX43g=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=IL40AzomKPZnMDzdF2ZsIESiMuOZ2yOfmKNRD78hQk37bqCJqCJIwPPWkYSr3Vsc6
-         xv/ns6b0TCLYgZLxQCzRHzcLUxVFk7M0S6wZnvIb38vXAl9BnItPkl24Erw8j8wlqo
-         21o2aVH4NGZ4p22ua8lHnLQWhKqTi7lcmVFLD5Eg=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.132.79.11]) by smtp.web.de (mrweb003
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0M7bVP-1i65p0023L-00xKuS; Tue, 15
- Oct 2019 19:55:21 +0200
-Subject: Re: clk: samsung: Checking a kmemdup() call in
- _samsung_clk_register_pll()
-To:     Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
-        Navid Emamdoost <emamd001@umn.edu>,
-        Stephen McCamant <smccaman@umn.edu>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <7933ce8f-ca1b-6ed8-14b9-59679130dc47@web.de>
- <CA+Ln22GpcMF5e8wjwoRH0wExyoGfta4n3YuaOBNDE+rfqhSZjg@mail.gmail.com>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <39a142ae-e0a1-0683-d68c-128b388f480e@web.de>
-Date:   Tue, 15 Oct 2019 19:55:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.2
+        Tue, 15 Oct 2019 15:26:32 -0400
+Received: by mail-oi1-f196.google.com with SMTP id m16so17869846oic.5;
+        Tue, 15 Oct 2019 12:26:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5iiAtGxSrTdQp0QGKq/f7302iXtdKwjl0hjxQ3NkrD4=;
+        b=EynyRgJzI+0+jLAEKEHb5caDIoBIuZE/ZpH5in0iv5GZgOyAPZTr2GILVE7oTg5uNa
+         wT/HcHVIkGpLn1kma1r/FYyzG5UR5OTFXjQcivOcKQ+OPmpGoHRYHLIZIxferJY2n/4s
+         Sy4LRJiX5KvghRWWZrXCsoCvQtnVRIMTNdUDk3Nreeqw5+5GlBvprqF/nua//dDLU0WY
+         6W0oSY/cw9bifpW6Q45sJHFoIYkKzSPFsDdrR/tKStUm0djAOtUtK7r+/zlOcMjE1wCB
+         CbNvyIlPODYKmMzEpXDXyjOC/hmIGx5q9e0M8OFudZszQGliyMKsku0/f0+wjfWbMOgO
+         qfXA==
+X-Gm-Message-State: APjAAAVZ12IYlSCxT1lz7PaYxO7d5jadGgkbLA5UANjQBDNd/tg0PtMD
+        mYoywnBxUyfRv31mLVNWyLS+xOk=
+X-Google-Smtp-Source: APXvYqw58v3zVqOimrVk1o2jEAKMnN+uiNnsHPtWXeHnlXi8YNPQ9rDOhWl9vJKQ34wRh1IL0tYZ8A==
+X-Received: by 2002:a05:6808:1:: with SMTP id u1mr132396oic.137.1571167590519;
+        Tue, 15 Oct 2019 12:26:30 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 109sm6977628otc.52.2019.10.15.12.26.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2019 12:26:29 -0700 (PDT)
+Date:   Tue, 15 Oct 2019 14:26:29 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Lee Jones <lee.jones@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Maciej Falkowski <m.falkowski@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-serial@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: gpu: samsung-rotator: Fix indentation
+Message-ID: <20191015192629.GA3241@bogus>
+References: <20191004151414.8458-1-krzk@kernel.org>
+ <20191004151414.8458-2-krzk@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CA+Ln22GpcMF5e8wjwoRH0wExyoGfta4n3YuaOBNDE+rfqhSZjg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-X-Provags-ID: V03:K1:vadA7w8m5et9Kx41H25zGHRg87E2nONtqAmT24ocOvYR+/eR7T0
- VMPqm5RUNgyq33b4RjrGIEBwZAFmm6bbhFD9qNQBPfk723JYDya+BMR3FL5RdTuGA7ilppy
- 6UFGsC/yeZjqwv7SY85tIGJG5HfxRMzw9iyn+BLJzHn236tyO5ZKMdBaksDa0Cv0VBE2kUC
- a3RPcid4HumSc6v5ZR6rQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:4kQck1rPbFM=:htyPbTF0j7kl8J+L+lMiO3
- qt/aTYR1DvNtX+KzXL8WKylAgGco7HQwFzSmuncX4vCLC3Hx7QiR9gyipEw7yXCeWeDMCJ0bj
- mzC7GeJDvKvkP9P8b3x0DRf3ggsMJlP6NMB1Q835ZjLtbporFTsp9T5q3vpV89W2mPArr8hWi
- CBBS17LLsljzyn+4X2vOx3dLH/A25OH2oGBmnAqIvb+UVRgT5Dra5hzVqdHO+QN/vk1Q9a5va
- 3qicr6/JVOhH/1DsNIsr+UOLB1GxK4cDrmHY2t+PBOMetFWzhniHnDIzIUzu+W3IucL4YUZam
- 8hwi42xQTcfz19U97RIupnMSYdtqyJLCxp5YjpqjWGy31XebbnudKiSf1FnGYafFnrI4y5oXG
- Fns+MP+6verfm5LtHO0LVY9o0WwczNgeAAU3HUq27G2GUX9puXLbfBeQ28oFl0cYURarYGd3j
- LQF0fcNFhq3L/40sjgn+3qODUt5nOMc+taBED9tiFU1CK/zcGcg/ORZhh4T5qt+9a5EsfSawC
- aIXkqF1ZR9CCSA5ZTuf+at8q7RM8wVBKAiaSOz6Pn984rSyxyd1BGmXNJKdMgUa7WaJW+fsrT
- 9+zUa2eEdF3rwUDqI7wnTbOjD35N4um9F9QcX3hLubMIq1RCSzQY0+gaW4EbC0c4z8SogVtvh
- qO4n8A+h//m88D9ND+mjjM97FYn8EXPjxa8EGMOnRlcMeogKqOwx0ANWtA85L7R14mbroe7zP
- KcL/BctqRT7W1PDDyhx4zX0CK8qjRhZPQaExoZ1S8LLEo4snem1K2KFj5ATR9fTgIoWc5gXfv
- gd8wdnpUOBGVj6HHHXTxj3ZfcZ7MrT7JZMVTX3fafYS1coWahkr3Mq0vIsYbJ6XTSsOpb8JtP
- bfSIQegqjl0PUgfQp/Id6xX5ZA7QVAaSpOF1MlnJrd5Q1hQVXk5OWhonZZfHj/+rbAXat//7j
- 8pfe0/wk7Ka0TGRE+qT8duVMLWItTCF3LspkLIeojKvFxL5Z9PJLXBhUkcmmM2pWyK47G0yUJ
- 7jR9V/EDrvrdKstvLzTTlZEqE5LDuBsT0LQ6K165zjCKQOwHmyow6dIaP8tX37Jx9pVubfQHh
- zFd+VcpvYi8yqqty7bKN/Od8jEqdFlRUl8JweYJfI5//zN0XtQ1mc6BjtdMqn4aNp/uUNs5nt
- P/4bXt8uAz2UuTq0X1aYl2yUm67FRyxDxBlDx3WMBnda1mbmyOnGrFK7eNtqQyAQdCSC7fxtT
- htMbaG8h5rPe3tzVin41PuPNoNBk0nM1pKjbUYBB4PH5RmlRwNNKxXCrvYTY=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191004151414.8458-2-krzk@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-> That said, there is no need to print any warnings or error messages on
-> allocation failure, so technically they could be removed.
+On Fri,  4 Oct 2019 17:14:13 +0200, Krzysztof Kozlowski wrote:
+> Array elements under 'items' should be indented.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/gpu/samsung-rotator.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-Do you find information sufficient from the Linux allocation failure report?
+Applied, thanks.
 
-Regards,
-Markus
+Rob
