@@ -2,75 +2,77 @@ Return-Path: <SRS0=ZUuD=YI=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC31BECE58F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Oct 2019 14:49:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2243BECE588
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Oct 2019 14:52:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8202020873
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Oct 2019 14:49:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E952F2054F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Oct 2019 14:52:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HpChALqW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MJZ9w+VR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733052AbfJOOtv (ORCPT
+        id S1732933AbfJOOwv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 15 Oct 2019 10:49:51 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:46769 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732949AbfJOOtu (ORCPT
+        Tue, 15 Oct 2019 10:52:51 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:43367 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732738AbfJOOwv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 15 Oct 2019 10:49:50 -0400
-Received: by mail-io1-f68.google.com with SMTP id c6so46371101ioo.13;
-        Tue, 15 Oct 2019 07:49:50 -0700 (PDT)
+        Tue, 15 Oct 2019 10:52:51 -0400
+Received: by mail-io1-f66.google.com with SMTP id v2so46493344iob.10;
+        Tue, 15 Oct 2019 07:52:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=MnfGhBwoMQVplo0Mxn7uRwpUlFBd/nvB/PMi8g7Xh1U=;
-        b=HpChALqW5ydj92GSRYuzlp/a2ptuL2yYJa9gu43hB86GrFD2wsntp8ZwrGiipcl4Io
-         1+Jp8HIXVFih7E4dj18vLN2+zF7PktHbNlCWjgUVqLzofRBzEg5UyGO8Ytvk9VI8D+Rb
-         ixa92S1aqah9LEEOfHVsw2rfoIUvuyFFFyENM98IzYOT3NeRZEjBSZ5kvrHCpqZsQK8d
-         pkVkSYaflHnt0uHjPTtSvChOsK6mlx/tla+N6pBcZmdk1DYhNGzPtrwwEyYUTnmZ4ARc
-         KhvCYtl3MJ/HznGBMkU+jGXry/UWXhsE2hF8k+vzbIAsl5FI0/DfEoGTENgs1ff8g9q/
-         DXpA==
+        bh=lR+fhPNWor2rYZMGYZDZtF6Wt6PhWh078oo5smcPWbw=;
+        b=MJZ9w+VR4SFMaPZYIna1r3mj3e36YkhvZ1IdOtv8qjqDmJhTXTlqITpoqccq7AwgWW
+         NsTWW8ftDTCbwVR5fHTrtYCrjmjd2CtLBp8y1+RicahyIuZGeoONq8nwLSpJ66hZYGNj
+         ZbpMNivy5IHSzWONETf1DHvVJO4ZCDG0M10fVpGdt3lyIw7FTGFrn7qxXZ8BgkbFdnOO
+         NaAaxE2AOvqlMagIN/pFYvcYwdv7JpKn9t/GwWin5j0yTUtMtx/KY0bUuSfF4Hy6aNnO
+         tZVdFU+m2NgFXiQK287gPdv3t4OF4Z9QLOb3BXRVnvHdS1O7mmJsWH0WL4yjRHtaK9sY
+         r5wQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=MnfGhBwoMQVplo0Mxn7uRwpUlFBd/nvB/PMi8g7Xh1U=;
-        b=ALnBrhIEsSo45W0YNxWQGRDpGq20UGLIgL51jH/IxWxdib7we+Nbx/urudcz3o/3mN
-         gvGtaWYBgfn/82bPhSydz+RP0x+KwvcJuTtwFNj4+JYe7YBdeDJB5ar6nvm4X5Jx5ZsW
-         G6hEHTMimFrmqfhnmlZ54+6FtsXErpO8OoQLXFE8ZrD8yPm/5WGolj8UbYKalBd4T59D
-         bRHqi594gvT8wORtOWGZo9p6rNyQ25d0mgHnAPgkaQ09APoGyUO/lbWfZ1gtPdGvULgK
-         Qkzf0WvFjWcip94s56wZ4J/1arMPtqxQaDP6p8qnQ2s8b+YRcWPgsy+UMVRV3fC13p7d
-         vZPQ==
-X-Gm-Message-State: APjAAAWTTAW5UlWQHVFm4b1nfkQGN06FF/2f4EROGzJqZA+CmxVd0kQS
-        1CaGN+O5+iCIv5P7rH0hvsq4UEDCWK/loDgFwDo=
-X-Google-Smtp-Source: APXvYqxTZYfSAInwbYJYC/2UZ9Wkj95sKUVbKbOdag8+jQHHQ0zR2edcTXeR50zAV5DWbzbCGXPPiw6GtJnoneBkA98=
-X-Received: by 2002:a92:9ecd:: with SMTP id s74mr2230665ilk.145.1571150989602;
- Tue, 15 Oct 2019 07:49:49 -0700 (PDT)
+        bh=lR+fhPNWor2rYZMGYZDZtF6Wt6PhWh078oo5smcPWbw=;
+        b=euTFRlWMsfAd3ilpLFm2yYX9L+MCRXVKL+Xao/4huEa/cjkDPaXX2rS2Nyrry/xPbI
+         26Bx82PaVex5MoMjEaKzLrX0f8N48R5E7qDSQ29Ocp5YHBztXTzaITd4U3qdIYf6OZeA
+         cJ7hSzIWlV8TQHUW8+zYkN3jPoICkrMdyOtcdmsxffR1i4xU74JY74AjkRhg47K7nIM+
+         uByHkiOq6LbWnYq6qLa0fIkW9wDtNKYEsefUPGtqpMNe8lGorKKQPeeKWebWAiiFw9aK
+         airHL5WT22BXbndjLLEJ58u32b4pMSeiTbEXyTeaSLQd4fv5sI/m1GQmbNrvnJPJMP6x
+         UbRA==
+X-Gm-Message-State: APjAAAWUq0KyPUT+ZZy5g4GVPS3AqI//3alMLdEXm6leq619ImxjAwWP
+        l4SgjAtuTCnYmxohEqzueVD6cGws74sI29UQMpOdDQ==
+X-Google-Smtp-Source: APXvYqy1Ajm+FY69Bd8FosgGeFPehh7/h8rWF2Bp7Qa2VvtQg18WBXbmBLNJGBSkFZNXJ6QtB6gMbldg00EplaHfJ/A=
+X-Received: by 2002:a92:6701:: with SMTP id b1mr912513ilc.181.1571151170241;
+ Tue, 15 Oct 2019 07:52:50 -0700 (PDT)
 MIME-Version: 1.0
-References: <7933ce8f-ca1b-6ed8-14b9-59679130dc47@web.de>
-In-Reply-To: <7933ce8f-ca1b-6ed8-14b9-59679130dc47@web.de>
+References: <20191010202802.1132272-1-arnd@arndb.de> <20191010203043.1241612-1-arnd@arndb.de>
+In-Reply-To: <20191010203043.1241612-1-arnd@arndb.de>
 From:   Tomasz Figa <tomasz.figa@gmail.com>
-Date:   Tue, 15 Oct 2019 23:49:39 +0900
-Message-ID: <CA+Ln22GpcMF5e8wjwoRH0wExyoGfta4n3YuaOBNDE+rfqhSZjg@mail.gmail.com>
-Subject: Re: clk: samsung: Checking a kmemdup() call in _samsung_clk_register_pll()
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+Date:   Tue, 15 Oct 2019 23:52:39 +0900
+Message-ID: <CA+Ln22HJmVwC1r+SuWG6RgFLCtsG6TPzQK_t8rUtB=SsZ0LyhA@mail.gmail.com>
+Subject: Re: [PATCH 01/36] ARM: samsung: make S3C24XX_MISCCR access indirect
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         "moderated list:SAMSUNG SOC CLOCK DRIVERS" 
         <linux-samsung-soc@vger.kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>,
-        Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>,
-        Stephen McCamant <smccaman@umn.edu>
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -78,43 +80,44 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Markus,
+Hi Arnd,
 
-2019=E5=B9=B410=E6=9C=8812=E6=97=A5(=E5=9C=9F) 23:17 Markus Elfring <Markus=
-.Elfring@web.de>:
+2019=E5=B9=B410=E6=9C=8811=E6=97=A5(=E9=87=91) 5:30 Arnd Bergmann <arnd@arn=
+db.de>:
 >
-> Hello,
+> The clk driver uses both a function call into an exported
+> platform file and a direct register access to a hardcoded
+> virtual address for accessing the MISCCR register, both
+> become are a problem for a multiplatform kernel because
+> of the header file dependency.
 >
-> I tried another script for the semantic patch language out.
-> This source code analysis approach points out that the implementation
-> of the function =E2=80=9C_samsung_clk_register_pll=E2=80=9D contains also=
- a call
-> of the function =E2=80=9Ckmemdup=E2=80=9D.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/d=
-rivers/clk/samsung/clk-pll.c?id=3D1c0cc5f1ae5ee5a6913704c0d75a6e99604ee30a#=
-n1275
-> https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/clk/samsung/clk-=
-pll.c#L1275
-
-Thanks for the report.
-
+> Make this an indirect function call through platform data
+> instead.
 >
-> * Do you find the usage of the format string =E2=80=9C%s: could not alloc=
-ate
->   rate table for %s\n=E2=80=9D still appropriate at this place?
-
-Yes, AFAICT there is nothing wrong with that format string.
-
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/arm/mach-s3c24xx/common.c         |  3 +++
+>  drivers/clk/samsung/clk-s3c2410-dclk.c | 10 ++++------
+>  2 files changed, 7 insertions(+), 6 deletions(-)
 >
-> * Is there a need to adjust the error handling here?
+> diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/commo=
+n.c
+> index 3dc029c2d2cb..ebf6bde67816 100644
+> --- a/arch/arm/mach-s3c24xx/common.c
+> +++ b/arch/arm/mach-s3c24xx/common.c
+> @@ -667,5 +667,8 @@ struct platform_device s3c2410_device_dclk =3D {
+>         .id             =3D 0,
+>         .num_resources  =3D ARRAY_SIZE(s3c2410_dclk_resource),
+>         .resource       =3D s3c2410_dclk_resource,
+> +       .dev            =3D {
+> +               .platform_data =3D s3c2410_modify_misccr,
 
-No, there isn't much that can be done if we fail the allocation at
-such an early stage.
+Thanks for the patch!
 
-That said, there is no need to print any warnings or error messages on
-allocation failure, so technically they could be removed. It doesn't
-really give us anything in case of existing code, though, and only
-makes a potential for merge conflicts, so I'd just leave it alone.
+Just one minor nit: It doesn't look very nice to pass a function
+pointer directly as platform data. Could we have a struct defined
+instead - with a kerneldoc comment describing the function pointer
+field?
 
 Best regards,
 Tomasz
