@@ -1,446 +1,57 @@
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 07/25] crypto: s5p - switch to skcipher API
-Date: Mon, 14 Oct 2019 14:18:52 +0200
-Message-ID: <20191014121910.7264-8-ard.biesheuvel@linaro.org>
-References: <20191014121910.7264-1-ard.biesheuvel@linaro.org>
+From: <Claudiu.Beznea@microchip.com>
+Subject: Re: [PATCH 0/7] add support for clocksource/clockevent DT selection
+Date: Tue, 15 Oct 2019 09:23:35 +0000
+Message-ID: <7071b6fa-f7ed-c879-4a43-44100dbe6121@microchip.com>
+References: <1568123236-767-1-git-send-email-claudiu.beznea@microchip.com>
+ <c3a68a08-d134-cd28-c8af-f757628e07f1@linaro.org>
+ <72edc5fd-df05-cba5-5aa7-39da1709415b@microchip.com>
+ <620a19d5-73b8-709d-9eec-49274ac23e51@microchip.com>
+ <187d7020-fbe9-7984-2358-8a70faef019f@microchip.com>
+ <14df6e5d-19ef-4ebc-fd11-9953bc3fc44e@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20191014121910.7264-1-ard.biesheuvel@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-crypto@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, Eric Biggers <ebiggers@google.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, Kamil Konieczny <k.konieczny@partner.samsung.com>, "David S. Miller" <davem@davemloft.net>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <14df6e5d-19ef-4ebc-fd11-9953bc3fc44e@linaro.org>
+Content-Language: en-US
+Content-ID: <BFEA965B7AA9B54388AC67448362747B@namprd11.prod.outlook.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: daniel.lezcano@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, nsekhar@ti.com, bgolaszewski@baylibre.com, monstr@monstr.eu, john@phrozen.org, ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org, lftan@altera.com, tglx@linutronix.de, vgupta@synopsys.com, marc.zyngier@arm.com, patrice.chotard@st.com, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com, eric@anholt.net, wahrenst@gmx.net, f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, linus.walleij@linaro.org, shc_work@mail.ru, kgene@kernel.org, krzk@kernel.org, ysato@users.sourceforge.jp, liviu.dudau@arm.com, sudeep.holla@arm.com, lorenzo.pieralisi@arm.com, shawnguo@kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, nios2-dev@lists.rocketboards.org, linux-snps-arc@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-rpi-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, uclinux-h8-devel@lists.sourceforge.jp, linux-amlogic@lists.infradead.org, openbmc@lists.ozlabs.org, linux-oxnas@groups.io, linux-arm-msm@vger.kernel.org, linux-unisoc@lists.infradead.org, linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Commit 7a7ffe65c8c5 ("crypto: skcipher - Add top-level skcipher interface")
-dated 20 august 2015 introduced the new skcipher API which is supposed to
-replace both blkcipher and ablkcipher. While all consumers of the API have
-been converted long ago, some producers of the ablkcipher remain, forcing
-us to keep the ablkcipher support routines alive, along with the matching
-code to expose [a]blkciphers via the skcipher API.
-
-So switch this driver to the skcipher API, allowing us to finally drop the
-blkcipher code in the near future.
-
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- drivers/crypto/s5p-sss.c | 191 ++++++++++----------
- 1 file changed, 91 insertions(+), 100 deletions(-)
-
-diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-index 010f1bb20dad..e6f1d4d5186c 100644
---- a/drivers/crypto/s5p-sss.c
-+++ b/drivers/crypto/s5p-sss.c
-@@ -303,7 +303,7 @@ struct s5p_aes_dev {
- 	void __iomem			*aes_ioaddr;
- 	int				irq_fc;
- 
--	struct ablkcipher_request	*req;
-+	struct skcipher_request	*req;
- 	struct s5p_aes_ctx		*ctx;
- 	struct scatterlist		*sg_src;
- 	struct scatterlist		*sg_dst;
-@@ -456,7 +456,7 @@ static void s5p_free_sg_cpy(struct s5p_aes_dev *dev, struct scatterlist **sg)
- 	if (!*sg)
- 		return;
- 
--	len = ALIGN(dev->req->nbytes, AES_BLOCK_SIZE);
-+	len = ALIGN(dev->req->cryptlen, AES_BLOCK_SIZE);
- 	free_pages((unsigned long)sg_virt(*sg), get_order(len));
- 
- 	kfree(*sg);
-@@ -478,27 +478,27 @@ static void s5p_sg_copy_buf(void *buf, struct scatterlist *sg,
- 
- static void s5p_sg_done(struct s5p_aes_dev *dev)
- {
--	struct ablkcipher_request *req = dev->req;
--	struct s5p_aes_reqctx *reqctx = ablkcipher_request_ctx(req);
-+	struct skcipher_request *req = dev->req;
-+	struct s5p_aes_reqctx *reqctx = skcipher_request_ctx(req);
- 
- 	if (dev->sg_dst_cpy) {
- 		dev_dbg(dev->dev,
- 			"Copying %d bytes of output data back to original place\n",
--			dev->req->nbytes);
-+			dev->req->cryptlen);
- 		s5p_sg_copy_buf(sg_virt(dev->sg_dst_cpy), dev->req->dst,
--				dev->req->nbytes, 1);
-+				dev->req->cryptlen, 1);
- 	}
- 	s5p_free_sg_cpy(dev, &dev->sg_src_cpy);
- 	s5p_free_sg_cpy(dev, &dev->sg_dst_cpy);
- 	if (reqctx->mode & FLAGS_AES_CBC)
--		memcpy_fromio(req->info, dev->aes_ioaddr + SSS_REG_AES_IV_DATA(0), AES_BLOCK_SIZE);
-+		memcpy_fromio(req->iv, dev->aes_ioaddr + SSS_REG_AES_IV_DATA(0), AES_BLOCK_SIZE);
- 
- 	else if (reqctx->mode & FLAGS_AES_CTR)
--		memcpy_fromio(req->info, dev->aes_ioaddr + SSS_REG_AES_CNT_DATA(0), AES_BLOCK_SIZE);
-+		memcpy_fromio(req->iv, dev->aes_ioaddr + SSS_REG_AES_CNT_DATA(0), AES_BLOCK_SIZE);
- }
- 
- /* Calls the completion. Cannot be called with dev->lock hold. */
--static void s5p_aes_complete(struct ablkcipher_request *req, int err)
-+static void s5p_aes_complete(struct skcipher_request *req, int err)
- {
- 	req->base.complete(&req->base, err);
- }
-@@ -523,7 +523,7 @@ static int s5p_make_sg_cpy(struct s5p_aes_dev *dev, struct scatterlist *src,
- 	if (!*dst)
- 		return -ENOMEM;
- 
--	len = ALIGN(dev->req->nbytes, AES_BLOCK_SIZE);
-+	len = ALIGN(dev->req->cryptlen, AES_BLOCK_SIZE);
- 	pages = (void *)__get_free_pages(GFP_ATOMIC, get_order(len));
- 	if (!pages) {
- 		kfree(*dst);
-@@ -531,7 +531,7 @@ static int s5p_make_sg_cpy(struct s5p_aes_dev *dev, struct scatterlist *src,
- 		return -ENOMEM;
- 	}
- 
--	s5p_sg_copy_buf(pages, src, dev->req->nbytes, 0);
-+	s5p_sg_copy_buf(pages, src, dev->req->cryptlen, 0);
- 
- 	sg_init_table(*dst, 1);
- 	sg_set_buf(*dst, pages, len);
-@@ -660,7 +660,7 @@ static irqreturn_t s5p_aes_interrupt(int irq, void *dev_id)
- {
- 	struct platform_device *pdev = dev_id;
- 	struct s5p_aes_dev *dev = platform_get_drvdata(pdev);
--	struct ablkcipher_request *req;
-+	struct skcipher_request *req;
- 	int err_dma_tx = 0;
- 	int err_dma_rx = 0;
- 	int err_dma_hx = 0;
-@@ -1208,7 +1208,7 @@ static int s5p_hash_prepare_sgs(struct s5p_hash_reqctx *ctx,
-  *
-  * Note 1: we can have update flag _and_ final flag at the same time.
-  * Note 2: we enter here when digcnt > BUFLEN (=HASH_BLOCK_SIZE) or
-- *	   either req->nbytes or ctx->bufcnt + req->nbytes is > BUFLEN or
-+ *	   either req->cryptlen or ctx->bufcnt + req->cryptlen is > BUFLEN or
-  *	   we have final op
-  */
- static int s5p_hash_prepare_request(struct ahash_request *req, bool update)
-@@ -1555,7 +1555,7 @@ static int s5p_hash_final_shash(struct ahash_request *req)
-  * s5p_hash_final() - close up hash and calculate digest
-  * @req:	AHASH request
-  *
-- * Note: in final req->src do not have any data, and req->nbytes can be
-+ * Note: in final req->src do not have any data, and req->cryptlen can be
-  * non-zero.
-  *
-  * If there were no input data processed yet and the buffered hash data is
-@@ -1870,7 +1870,7 @@ static bool s5p_is_sg_aligned(struct scatterlist *sg)
- }
- 
- static int s5p_set_indata_start(struct s5p_aes_dev *dev,
--				struct ablkcipher_request *req)
-+				struct skcipher_request *req)
- {
- 	struct scatterlist *sg;
- 	int err;
-@@ -1897,7 +1897,7 @@ static int s5p_set_indata_start(struct s5p_aes_dev *dev,
- }
- 
- static int s5p_set_outdata_start(struct s5p_aes_dev *dev,
--				 struct ablkcipher_request *req)
-+				 struct skcipher_request *req)
- {
- 	struct scatterlist *sg;
- 	int err;
-@@ -1925,7 +1925,7 @@ static int s5p_set_outdata_start(struct s5p_aes_dev *dev,
- 
- static void s5p_aes_crypt_start(struct s5p_aes_dev *dev, unsigned long mode)
- {
--	struct ablkcipher_request *req = dev->req;
-+	struct skcipher_request *req = dev->req;
- 	u32 aes_control;
- 	unsigned long flags;
- 	int err;
-@@ -1938,12 +1938,12 @@ static void s5p_aes_crypt_start(struct s5p_aes_dev *dev, unsigned long mode)
- 
- 	if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CBC) {
- 		aes_control |= SSS_AES_CHAIN_MODE_CBC;
--		iv = req->info;
-+		iv = req->iv;
- 		ctr = NULL;
- 	} else if ((mode & FLAGS_AES_MODE_MASK) == FLAGS_AES_CTR) {
- 		aes_control |= SSS_AES_CHAIN_MODE_CTR;
- 		iv = NULL;
--		ctr = req->info;
-+		ctr = req->iv;
- 	} else {
- 		iv = NULL; /* AES_ECB */
- 		ctr = NULL;
-@@ -2021,21 +2021,21 @@ static void s5p_tasklet_cb(unsigned long data)
- 	if (backlog)
- 		backlog->complete(backlog, -EINPROGRESS);
- 
--	dev->req = ablkcipher_request_cast(async_req);
-+	dev->req = skcipher_request_cast(async_req);
- 	dev->ctx = crypto_tfm_ctx(dev->req->base.tfm);
--	reqctx   = ablkcipher_request_ctx(dev->req);
-+	reqctx   = skcipher_request_ctx(dev->req);
- 
- 	s5p_aes_crypt_start(dev, reqctx->mode);
- }
- 
- static int s5p_aes_handle_req(struct s5p_aes_dev *dev,
--			      struct ablkcipher_request *req)
-+			      struct skcipher_request *req)
- {
- 	unsigned long flags;
- 	int err;
- 
- 	spin_lock_irqsave(&dev->lock, flags);
--	err = ablkcipher_enqueue_request(&dev->queue, req);
-+	err = crypto_enqueue_request(&dev->queue, &req->base);
- 	if (dev->busy) {
- 		spin_unlock_irqrestore(&dev->lock, flags);
- 		return err;
-@@ -2049,17 +2049,17 @@ static int s5p_aes_handle_req(struct s5p_aes_dev *dev,
- 	return err;
- }
- 
--static int s5p_aes_crypt(struct ablkcipher_request *req, unsigned long mode)
-+static int s5p_aes_crypt(struct skcipher_request *req, unsigned long mode)
- {
--	struct crypto_ablkcipher *tfm = crypto_ablkcipher_reqtfm(req);
--	struct s5p_aes_reqctx *reqctx = ablkcipher_request_ctx(req);
--	struct s5p_aes_ctx *ctx = crypto_ablkcipher_ctx(tfm);
-+	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
-+	struct s5p_aes_reqctx *reqctx = skcipher_request_ctx(req);
-+	struct s5p_aes_ctx *ctx = crypto_skcipher_ctx(tfm);
- 	struct s5p_aes_dev *dev = ctx->dev;
- 
--	if (!req->nbytes)
-+	if (!req->cryptlen)
- 		return 0;
- 
--	if (!IS_ALIGNED(req->nbytes, AES_BLOCK_SIZE) &&
-+	if (!IS_ALIGNED(req->cryptlen, AES_BLOCK_SIZE) &&
- 			((mode & FLAGS_AES_MODE_MASK) != FLAGS_AES_CTR)) {
- 		dev_dbg(dev->dev, "request size is not exact amount of AES blocks\n");
- 		return -EINVAL;
-@@ -2070,10 +2070,10 @@ static int s5p_aes_crypt(struct ablkcipher_request *req, unsigned long mode)
- 	return s5p_aes_handle_req(dev, req);
- }
- 
--static int s5p_aes_setkey(struct crypto_ablkcipher *cipher,
-+static int s5p_aes_setkey(struct crypto_skcipher *cipher,
- 			  const u8 *key, unsigned int keylen)
- {
--	struct crypto_tfm *tfm = crypto_ablkcipher_tfm(cipher);
-+	struct crypto_tfm *tfm = crypto_skcipher_tfm(cipher);
- 	struct s5p_aes_ctx *ctx = crypto_tfm_ctx(tfm);
- 
- 	if (keylen != AES_KEYSIZE_128 &&
-@@ -2087,106 +2087,97 @@ static int s5p_aes_setkey(struct crypto_ablkcipher *cipher,
- 	return 0;
- }
- 
--static int s5p_aes_ecb_encrypt(struct ablkcipher_request *req)
-+static int s5p_aes_ecb_encrypt(struct skcipher_request *req)
- {
- 	return s5p_aes_crypt(req, 0);
- }
- 
--static int s5p_aes_ecb_decrypt(struct ablkcipher_request *req)
-+static int s5p_aes_ecb_decrypt(struct skcipher_request *req)
- {
- 	return s5p_aes_crypt(req, FLAGS_AES_DECRYPT);
- }
- 
--static int s5p_aes_cbc_encrypt(struct ablkcipher_request *req)
-+static int s5p_aes_cbc_encrypt(struct skcipher_request *req)
- {
- 	return s5p_aes_crypt(req, FLAGS_AES_CBC);
- }
- 
--static int s5p_aes_cbc_decrypt(struct ablkcipher_request *req)
-+static int s5p_aes_cbc_decrypt(struct skcipher_request *req)
- {
- 	return s5p_aes_crypt(req, FLAGS_AES_DECRYPT | FLAGS_AES_CBC);
- }
- 
--static int s5p_aes_ctr_crypt(struct ablkcipher_request *req)
-+static int s5p_aes_ctr_crypt(struct skcipher_request *req)
- {
- 	return s5p_aes_crypt(req, FLAGS_AES_CTR);
- }
- 
--static int s5p_aes_cra_init(struct crypto_tfm *tfm)
-+static int s5p_aes_init_tfm(struct crypto_skcipher *tfm)
- {
--	struct s5p_aes_ctx *ctx = crypto_tfm_ctx(tfm);
-+	struct s5p_aes_ctx *ctx = crypto_skcipher_ctx(tfm);
- 
- 	ctx->dev = s5p_dev;
--	tfm->crt_ablkcipher.reqsize = sizeof(struct s5p_aes_reqctx);
-+	crypto_skcipher_set_reqsize(tfm, sizeof(struct s5p_aes_reqctx));
- 
- 	return 0;
- }
- 
--static struct crypto_alg algs[] = {
-+static struct skcipher_alg algs[] = {
- 	{
--		.cra_name		= "ecb(aes)",
--		.cra_driver_name	= "ecb-aes-s5p",
--		.cra_priority		= 100,
--		.cra_flags		= CRYPTO_ALG_TYPE_ABLKCIPHER |
--					  CRYPTO_ALG_ASYNC |
-+		.base.cra_name		= "ecb(aes)",
-+		.base.cra_driver_name	= "ecb-aes-s5p",
-+		.base.cra_priority	= 100,
-+		.base.cra_flags		= CRYPTO_ALG_ASYNC |
- 					  CRYPTO_ALG_KERN_DRIVER_ONLY,
--		.cra_blocksize		= AES_BLOCK_SIZE,
--		.cra_ctxsize		= sizeof(struct s5p_aes_ctx),
--		.cra_alignmask		= 0x0f,
--		.cra_type		= &crypto_ablkcipher_type,
--		.cra_module		= THIS_MODULE,
--		.cra_init		= s5p_aes_cra_init,
--		.cra_u.ablkcipher = {
--			.min_keysize	= AES_MIN_KEY_SIZE,
--			.max_keysize	= AES_MAX_KEY_SIZE,
--			.setkey		= s5p_aes_setkey,
--			.encrypt	= s5p_aes_ecb_encrypt,
--			.decrypt	= s5p_aes_ecb_decrypt,
--		}
-+		.base.cra_blocksize	= AES_BLOCK_SIZE,
-+		.base.cra_ctxsize	= sizeof(struct s5p_aes_ctx),
-+		.base.cra_alignmask	= 0x0f,
-+		.base.cra_module	= THIS_MODULE,
-+
-+		.min_keysize		= AES_MIN_KEY_SIZE,
-+		.max_keysize		= AES_MAX_KEY_SIZE,
-+		.setkey			= s5p_aes_setkey,
-+		.encrypt		= s5p_aes_ecb_encrypt,
-+		.decrypt		= s5p_aes_ecb_decrypt,
-+		.init			= s5p_aes_init_tfm,
- 	},
- 	{
--		.cra_name		= "cbc(aes)",
--		.cra_driver_name	= "cbc-aes-s5p",
--		.cra_priority		= 100,
--		.cra_flags		= CRYPTO_ALG_TYPE_ABLKCIPHER |
--					  CRYPTO_ALG_ASYNC |
-+		.base.cra_name		= "cbc(aes)",
-+		.base.cra_driver_name	= "cbc-aes-s5p",
-+		.base.cra_priority	= 100,
-+		.base.cra_flags		= CRYPTO_ALG_ASYNC |
- 					  CRYPTO_ALG_KERN_DRIVER_ONLY,
--		.cra_blocksize		= AES_BLOCK_SIZE,
--		.cra_ctxsize		= sizeof(struct s5p_aes_ctx),
--		.cra_alignmask		= 0x0f,
--		.cra_type		= &crypto_ablkcipher_type,
--		.cra_module		= THIS_MODULE,
--		.cra_init		= s5p_aes_cra_init,
--		.cra_u.ablkcipher = {
--			.min_keysize	= AES_MIN_KEY_SIZE,
--			.max_keysize	= AES_MAX_KEY_SIZE,
--			.ivsize		= AES_BLOCK_SIZE,
--			.setkey		= s5p_aes_setkey,
--			.encrypt	= s5p_aes_cbc_encrypt,
--			.decrypt	= s5p_aes_cbc_decrypt,
--		}
-+		.base.cra_blocksize	= AES_BLOCK_SIZE,
-+		.base.cra_ctxsize	= sizeof(struct s5p_aes_ctx),
-+		.base.cra_alignmask	= 0x0f,
-+		.base.cra_module	= THIS_MODULE,
-+
-+		.min_keysize		= AES_MIN_KEY_SIZE,
-+		.max_keysize		= AES_MAX_KEY_SIZE,
-+		.ivsize			= AES_BLOCK_SIZE,
-+		.setkey			= s5p_aes_setkey,
-+		.encrypt		= s5p_aes_cbc_encrypt,
-+		.decrypt		= s5p_aes_cbc_decrypt,
-+		.init			= s5p_aes_init_tfm,
- 	},
- 	{
--		.cra_name		= "ctr(aes)",
--		.cra_driver_name	= "ctr-aes-s5p",
--		.cra_priority		= 100,
--		.cra_flags		= CRYPTO_ALG_TYPE_ABLKCIPHER |
--					  CRYPTO_ALG_ASYNC |
-+		.base.cra_name		= "ctr(aes)",
-+		.base.cra_driver_name	= "ctr-aes-s5p",
-+		.base.cra_priority	= 100,
-+		.base.cra_flags		= CRYPTO_ALG_ASYNC |
- 					  CRYPTO_ALG_KERN_DRIVER_ONLY,
--		.cra_blocksize		= 1,
--		.cra_ctxsize		= sizeof(struct s5p_aes_ctx),
--		.cra_alignmask		= 0x0f,
--		.cra_type		= &crypto_ablkcipher_type,
--		.cra_module		= THIS_MODULE,
--		.cra_init		= s5p_aes_cra_init,
--		.cra_u.ablkcipher = {
--			.min_keysize	= AES_MIN_KEY_SIZE,
--			.max_keysize	= AES_MAX_KEY_SIZE,
--			.ivsize		= AES_BLOCK_SIZE,
--			.setkey		= s5p_aes_setkey,
--			.encrypt	= s5p_aes_ctr_crypt,
--			.decrypt	= s5p_aes_ctr_crypt,
--		}
-+		.base.cra_blocksize	= 1,
-+		.base.cra_ctxsize	= sizeof(struct s5p_aes_ctx),
-+		.base.cra_alignmask	= 0x0f,
-+		.base.cra_module	= THIS_MODULE,
-+
-+		.min_keysize		= AES_MIN_KEY_SIZE,
-+		.max_keysize		= AES_MAX_KEY_SIZE,
-+		.ivsize			= AES_BLOCK_SIZE,
-+		.setkey			= s5p_aes_setkey,
-+		.encrypt		= s5p_aes_ctr_crypt,
-+		.decrypt		= s5p_aes_ctr_crypt,
-+		.init			= s5p_aes_init_tfm,
- 	},
- };
- 
-@@ -2297,7 +2288,7 @@ static int s5p_aes_probe(struct platform_device *pdev)
- 	crypto_init_queue(&pdata->queue, CRYPTO_QUEUE_LEN);
- 
- 	for (i = 0; i < ARRAY_SIZE(algs); i++) {
--		err = crypto_register_alg(&algs[i]);
-+		err = crypto_register_skcipher(&algs[i]);
- 		if (err)
- 			goto err_algs;
- 	}
-@@ -2334,11 +2325,11 @@ static int s5p_aes_probe(struct platform_device *pdev)
- 
- err_algs:
- 	if (i < ARRAY_SIZE(algs))
--		dev_err(dev, "can't register '%s': %d\n", algs[i].cra_name,
-+		dev_err(dev, "can't register '%s': %d\n", algs[i].base.cra_name,
- 			err);
- 
- 	for (j = 0; j < i; j++)
--		crypto_unregister_alg(&algs[j]);
-+		crypto_unregister_skcipher(&algs[j]);
- 
- 	tasklet_kill(&pdata->tasklet);
- 
-@@ -2362,7 +2353,7 @@ static int s5p_aes_remove(struct platform_device *pdev)
- 		return -ENODEV;
- 
- 	for (i = 0; i < ARRAY_SIZE(algs); i++)
--		crypto_unregister_alg(&algs[i]);
-+		crypto_unregister_skcipher(&algs[i]);
- 
- 	tasklet_kill(&pdata->tasklet);
- 	if (pdata->use_hash) {
--- 
-2.20.1
+SGkgRGFuaWVsLA0KDQpPbiAxMy4xMC4yMDE5IDIxOjE2LCBEYW5pZWwgTGV6Y2FubyB3cm90ZToN
+Cj4gSGkgQ2xhdWRpdSwNCj4gDQo+IHNvcnJ5IGZvciB0aGUgZGVsYXksIEkgd2FzIE9vTyBhZ2Fp
+bi4NCg0KTm8gcHJvYmxlbSwgdGhhbmsgeW91IGZvciB5b3VyIHJlcGx5Lg0KDQo+IA0KPiBPbiAw
+My8xMC8yMDE5IDEyOjQzLCBDbGF1ZGl1LkJlem5lYUBtaWNyb2NoaXAuY29tIHdyb3RlOg0KPj4N
+Cj4+DQo+PiBPbiAwMi4xMC4yMDE5IDE2OjM1LCBDbGF1ZGl1IEJlem5lYSB3cm90ZToNCj4+PiBI
+aSBEYW5pZWwsDQo+Pj4NCj4+PiBUYWtpbmcgaW50byBhY2NvdW50IHRoYXQgUm9iIGRvZXNuJ3Qg
+YWdyZWUgd2l0aCB0aGUgc29sdXRpb24gcHJvcG9zZWQgaW4NCj4+PiB0aGlzIHNlcmllcyBkbyB5
+b3UgdGhpbmsgdGhlcmUgaXMgYSBjaGFuY2UgdG8gbWVyZ2UgdGhpcyBkcml2ZXIgYXMgaXM/DQo+
+Pg0KPj4gU29ycnksIEkgd2FzIHRhbGtpbmcgaGVyZSBhYm91dCB0aGUgZHJpdmVyIGF0IFsxXS4N
+Cj4+DQo+PiBbMV0gaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGttbC8xNTUyNTgwNzcyLTg0OTkt
+MS1naXQtc2VuZC1lbWFpbC1jbGF1ZGl1LmJlem5lYUBtaWNyb2NoaXAuY29tLw0KPiANCj4gRGFt
+biEgNyBtb250aHMgb2xkLiBJJ20gdHJ1bHkgc29ycnkgd2UgZG8gbm90IGhhdmUgcHJvZ3Jlc3Mg
+b24gdGhpcy4gTGV0DQo+IGZpeCB0aGlzIG9uY2UgYW5kIGZvciBhbGwuDQo+IA0KPiBJbiB0aGUg
+ZHJpdmVyOg0KPiANCj4gcmV0ID0gb2ZfcHJvcGVydHlfcmVhZF91MzIobm9kZSwgImNsb2NrLWZy
+ZXF1ZW5jeSIsICZmcmVxKTsNCj4gDQo+IEl0IGlzIHVuY2xlYXIgaG93IGlzIHVzZWQgdGhpcyBw
+cm9wZXJ0eS4gSXQgc2hvdWxkIGJlIHRoZSBmcmVxdWVuY3kNCj4gZHJpdmluZyB0aGUgdGltZXIs
+IGJ1dCBjYW4gd2UgZ2V0IGZyb20gYSBjbGtfZ2V0X3JhdGUoKSBhbmQgYSBmaXhlZCBkaXZpZGVy
+Pw0KPiANCg0KVGhlIHRpbWVyIGNvdWxkIGJlIGRyaXZlbiBieSAyIGNsb2NrIHNvdXJjZXMsIG9u
+ZSBpcyBjYWxsZWQgcGVyaXBoZXJhbA0KY2xvY2sgYW5kIGlzIHRoZSBjbG9jayB0aGF0IGlzIGFs
+c28gZHJpdmluZyB0aGUgSVAgaXRzZWxmLCBhbmQgb25lIGlzDQpjYWxsZWQgZ2VuZXJpYyBjbG9j
+ayAodGhpcyBjb3VsZCBkcml2ZSBvbmx5IHRoZSB0aW1lciBpdHNlbGYpIGFuZCBzaG91bGQgYmUN
+CmF0IGxlYXN0IDMgdGltZXMgbG93ZXIgdGhhbiB0aGUgcGVyaXBoZXJhbCBjbG9jay4NCg0KV2Ug
+Y291bGQgY2hvb3NlIHRoZSBjbG9jayBkcml2aW5nIHRoZSB0aW1lciBieSBzZXR0aW5nIHRoZSBQ
+SVQ2NEJfTVIuU0dDTEsNCmJpdCAoMCAtIG1lYW5zIHRoZSB0aW1lciBpdHNlbGYgaXMgZHJpdmVu
+IGJ5IHBlcmlwaGVyYWwgY2xvY2ssIDEgLSBtZWFucw0KdGhlIHRpbWVyIGlzIGRyaXZlbiBieSB0
+aGUgZ2VuZXJpYyBjbG9jaykuDQoNClRoZSB0aW1lciBjbG9jayBzb3VyY2UgY291bGQgYmUgZGl2
+aWRlZCBieSBNUi5QUkVTICsgMS4NCg0KU28sIEkgdXNlZCB0aGUgY2xvY2stZnJlcXVlbmN5IERU
+IGJpbmRpbmcgdG8gbGV0IHVzZXIgY2hvb3NlIHRoZSB0aW1lcidzDQpmcmVxdWVuY3kuIEJhc2Vk
+IG9uIHRoZSB2YWx1ZSBwcm92aWRlZCB2aWEgdGhpcyBEVCBiaW5kaW5nIHRoZSBiZXN0IGNsb2Nr
+DQpzb3VyY2UgYW5kIHByZXNjYWxlciBpcyBjaG9zZW4gdmlhIG1jaHBfcGl0NjRiX3ByZXNfcHJl
+cGFyZSgpIGZ1bmN0aW9uLg0KDQpBcyB0aGUgZGF0YXNoZWV0IGZvciB0aGUgcHJvZHVjdCB0aGF0
+IGlzIHVzaW5nIHRoaXMgSVAgaXMgb3BlbiBub3csIEknbQ0KaW5zZXJ0aW5nIGhlcmUgYSBsaW5r
+IHRvIGl0IFsxXS4NCg0KVGhhbmsgeW91LA0KQ2xhdWRpdSBCZXpuZWENCg0KWzFdDQpodHRwOi8v
+d3cxLm1pY3JvY2hpcC5jb20vZG93bmxvYWRzL2VuL0RldmljZURvYy9TQU05WDYwLURhdGEtU2hl
+ZXQtRFM2MDAwMTU3OUEucGRmDQoNCj4gDQo=
