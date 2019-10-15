@@ -2,122 +2,153 @@ Return-Path: <SRS0=ZUuD=YI=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2243BECE588
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Oct 2019 14:52:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BE00C10F14
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Oct 2019 16:56:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E952F2054F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Oct 2019 14:52:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MJZ9w+VR"
+	by mail.kernel.org (Postfix) with ESMTP id 416E52084B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Oct 2019 16:56:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732933AbfJOOwv (ORCPT
+        id S1726529AbfJOQ4x (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 15 Oct 2019 10:52:51 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:43367 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732738AbfJOOwv (ORCPT
+        Tue, 15 Oct 2019 12:56:53 -0400
+Received: from foss.arm.com ([217.140.110.172]:43382 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726360AbfJOQ4w (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 15 Oct 2019 10:52:51 -0400
-Received: by mail-io1-f66.google.com with SMTP id v2so46493344iob.10;
-        Tue, 15 Oct 2019 07:52:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=lR+fhPNWor2rYZMGYZDZtF6Wt6PhWh078oo5smcPWbw=;
-        b=MJZ9w+VR4SFMaPZYIna1r3mj3e36YkhvZ1IdOtv8qjqDmJhTXTlqITpoqccq7AwgWW
-         NsTWW8ftDTCbwVR5fHTrtYCrjmjd2CtLBp8y1+RicahyIuZGeoONq8nwLSpJ66hZYGNj
-         ZbpMNivy5IHSzWONETf1DHvVJO4ZCDG0M10fVpGdt3lyIw7FTGFrn7qxXZ8BgkbFdnOO
-         NaAaxE2AOvqlMagIN/pFYvcYwdv7JpKn9t/GwWin5j0yTUtMtx/KY0bUuSfF4Hy6aNnO
-         tZVdFU+m2NgFXiQK287gPdv3t4OF4Z9QLOb3BXRVnvHdS1O7mmJsWH0WL4yjRHtaK9sY
-         r5wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=lR+fhPNWor2rYZMGYZDZtF6Wt6PhWh078oo5smcPWbw=;
-        b=euTFRlWMsfAd3ilpLFm2yYX9L+MCRXVKL+Xao/4huEa/cjkDPaXX2rS2Nyrry/xPbI
-         26Bx82PaVex5MoMjEaKzLrX0f8N48R5E7qDSQ29Ocp5YHBztXTzaITd4U3qdIYf6OZeA
-         cJ7hSzIWlV8TQHUW8+zYkN3jPoICkrMdyOtcdmsxffR1i4xU74JY74AjkRhg47K7nIM+
-         uByHkiOq6LbWnYq6qLa0fIkW9wDtNKYEsefUPGtqpMNe8lGorKKQPeeKWebWAiiFw9aK
-         airHL5WT22BXbndjLLEJ58u32b4pMSeiTbEXyTeaSLQd4fv5sI/m1GQmbNrvnJPJMP6x
-         UbRA==
-X-Gm-Message-State: APjAAAWUq0KyPUT+ZZy5g4GVPS3AqI//3alMLdEXm6leq619ImxjAwWP
-        l4SgjAtuTCnYmxohEqzueVD6cGws74sI29UQMpOdDQ==
-X-Google-Smtp-Source: APXvYqy1Ajm+FY69Bd8FosgGeFPehh7/h8rWF2Bp7Qa2VvtQg18WBXbmBLNJGBSkFZNXJ6QtB6gMbldg00EplaHfJ/A=
-X-Received: by 2002:a92:6701:: with SMTP id b1mr912513ilc.181.1571151170241;
- Tue, 15 Oct 2019 07:52:50 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191010202802.1132272-1-arnd@arndb.de> <20191010203043.1241612-1-arnd@arndb.de>
-In-Reply-To: <20191010203043.1241612-1-arnd@arndb.de>
-From:   Tomasz Figa <tomasz.figa@gmail.com>
-Date:   Tue, 15 Oct 2019 23:52:39 +0900
-Message-ID: <CA+Ln22HJmVwC1r+SuWG6RgFLCtsG6TPzQK_t8rUtB=SsZ0LyhA@mail.gmail.com>
-Subject: Re: [PATCH 01/36] ARM: samsung: make S3C24XX_MISCCR access indirect
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Kukjin Kim <kgene@kernel.org>,
+        Tue, 15 Oct 2019 12:56:52 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D4DFA337;
+        Tue, 15 Oct 2019 09:56:51 -0700 (PDT)
+Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B74A23F68E;
+        Tue, 15 Oct 2019 09:56:49 -0700 (PDT)
+Date:   Tue, 15 Oct 2019 17:56:47 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        "moderated list:SAMSUNG SOC CLOCK DRIVERS" 
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Kukjin Kim <kgene@kernel.org>, Yue Wang <yue.wang@Amlogic.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        YueHaibing <yuehaibing@huawei.com>,
+        zhong jiang <zhongjiang@huawei.com>
+Subject: Re: [PATCH] PCI: dwc: Use PTR_ERR_OR_ZERO() in five functions
+Message-ID: <20191015165647.GD25674@e121166-lin.cambridge.arm.com>
+References: <95c9dfae-af81-82ad-e989-1fdf5f29808e@web.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <95c9dfae-af81-82ad-e989-1fdf5f29808e@web.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Arnd,
-
-2019=E5=B9=B410=E6=9C=8811=E6=97=A5(=E9=87=91) 5:30 Arnd Bergmann <arnd@arn=
-db.de>:
->
-> The clk driver uses both a function call into an exported
-> platform file and a direct register access to a hardcoded
-> virtual address for accessing the MISCCR register, both
-> become are a problem for a multiplatform kernel because
-> of the header file dependency.
->
-> Make this an indirect function call through platform data
-> instead.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On Fri, Sep 06, 2019 at 08:50:07PM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 6 Sep 2019 20:40:06 +0200
+> 
+> Simplify these function implementations by using a known function.
+> 
+> Generated by: scripts/coccinelle/api/ptr_ret.cocci
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->  arch/arm/mach-s3c24xx/common.c         |  3 +++
->  drivers/clk/samsung/clk-s3c2410-dclk.c | 10 ++++------
->  2 files changed, 7 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/commo=
-n.c
-> index 3dc029c2d2cb..ebf6bde67816 100644
-> --- a/arch/arm/mach-s3c24xx/common.c
-> +++ b/arch/arm/mach-s3c24xx/common.c
-> @@ -667,5 +667,8 @@ struct platform_device s3c2410_device_dclk =3D {
->         .id             =3D 0,
->         .num_resources  =3D ARRAY_SIZE(s3c2410_dclk_resource),
->         .resource       =3D s3c2410_dclk_resource,
-> +       .dev            =3D {
-> +               .platform_data =3D s3c2410_modify_misccr,
+>  drivers/pci/controller/dwc/pci-exynos.c |  5 +----
+>  drivers/pci/controller/dwc/pci-meson.c  | 10 ++--------
+>  drivers/pci/controller/dwc/pcie-kirin.c | 10 ++--------
+>  3 files changed, 5 insertions(+), 20 deletions(-)
 
-Thanks for the patch!
+https://lore.kernel.org/linux-pci/20190527140952.GB7202@ulmo/
 
-Just one minor nit: It doesn't look very nice to pass a function
-pointer directly as platform data. Could we have a struct defined
-instead - with a kerneldoc comment describing the function pointer
-field?
+Dropped, sorry.
 
-Best regards,
-Tomasz
+Lorenzo
+
+> diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
+> index cee5f2f590e2..b6ab1cc5d895 100644
+> --- a/drivers/pci/controller/dwc/pci-exynos.c
+> +++ b/drivers/pci/controller/dwc/pci-exynos.c
+> @@ -92,10 +92,7 @@ static int exynos5440_pcie_get_mem_resources(struct platform_device *pdev,
+> 
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	ep->mem_res->elbi_base = devm_ioremap_resource(dev, res);
+> -	if (IS_ERR(ep->mem_res->elbi_base))
+> -		return PTR_ERR(ep->mem_res->elbi_base);
+> -
+> -	return 0;
+> +	return PTR_ERR_OR_ZERO(ep->mem_res->elbi_base);
+>  }
+> 
+>  static int exynos5440_pcie_get_clk_resources(struct exynos_pcie *ep)
+> diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
+> index e35e9eaa50ee..713059918002 100644
+> --- a/drivers/pci/controller/dwc/pci-meson.c
+> +++ b/drivers/pci/controller/dwc/pci-meson.c
+> @@ -182,10 +182,7 @@ static int meson_pcie_get_mems(struct platform_device *pdev,
+> 
+>  	/* Meson SoC has two PCI controllers use same phy register*/
+>  	mp->mem_res.phy_base = meson_pcie_get_mem_shared(pdev, mp, "phy");
+> -	if (IS_ERR(mp->mem_res.phy_base))
+> -		return PTR_ERR(mp->mem_res.phy_base);
+> -
+> -	return 0;
+> +	return PTR_ERR_OR_ZERO(mp->mem_res.phy_base);
+>  }
+> 
+>  static void meson_pcie_power_on(struct meson_pcie *mp)
+> @@ -259,10 +256,7 @@ static int meson_pcie_probe_clocks(struct meson_pcie *mp)
+>  		return PTR_ERR(res->general_clk);
+> 
+>  	res->clk = meson_pcie_probe_clock(dev, "pcie", 0);
+> -	if (IS_ERR(res->clk))
+> -		return PTR_ERR(res->clk);
+> -
+> -	return 0;
+> +	return PTR_ERR_OR_ZERO(res->clk);
+>  }
+> 
+>  static inline void meson_elb_writel(struct meson_pcie *mp, u32 val, u32 reg)
+> diff --git a/drivers/pci/controller/dwc/pcie-kirin.c b/drivers/pci/controller/dwc/pcie-kirin.c
+> index c19617a912bd..75b1f1dde747 100644
+> --- a/drivers/pci/controller/dwc/pcie-kirin.c
+> +++ b/drivers/pci/controller/dwc/pcie-kirin.c
+> @@ -138,10 +138,7 @@ static long kirin_pcie_get_clk(struct kirin_pcie *kirin_pcie,
+>  		return PTR_ERR(kirin_pcie->apb_sys_clk);
+> 
+>  	kirin_pcie->pcie_aclk = devm_clk_get(dev, "pcie_aclk");
+> -	if (IS_ERR(kirin_pcie->pcie_aclk))
+> -		return PTR_ERR(kirin_pcie->pcie_aclk);
+> -
+> -	return 0;
+> +	return PTR_ERR_OR_ZERO(kirin_pcie->pcie_aclk);
+>  }
+> 
+>  static long kirin_pcie_get_resource(struct kirin_pcie *kirin_pcie,
+> @@ -174,10 +171,7 @@ static long kirin_pcie_get_resource(struct kirin_pcie *kirin_pcie,
+> 
+>  	kirin_pcie->sysctrl =
+>  		syscon_regmap_lookup_by_compatible("hisilicon,hi3660-sctrl");
+> -	if (IS_ERR(kirin_pcie->sysctrl))
+> -		return PTR_ERR(kirin_pcie->sysctrl);
+> -
+> -	return 0;
+> +	return PTR_ERR_OR_ZERO(kirin_pcie->sysctrl);
+>  }
+> 
+>  static int kirin_pcie_phy_init(struct kirin_pcie *kirin_pcie)
+> --
+> 2.23.0
+> 
