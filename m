@@ -2,94 +2,94 @@ Return-Path: <SRS0=YSTQ=YJ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF7FAFA372A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Oct 2019 10:09:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C958CFA3728
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Oct 2019 10:46:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B897120650
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Oct 2019 10:09:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="EA00SE6Z"
+	by mail.kernel.org (Postfix) with ESMTP id A96B5218DE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Oct 2019 10:46:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392236AbfJPKJQ (ORCPT
+        id S2392522AbfJPKqr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Oct 2019 06:09:16 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:43568 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727235AbfJPKJQ (ORCPT
+        Wed, 16 Oct 2019 06:46:47 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:43510 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2392422AbfJPKqr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Oct 2019 06:09:16 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x9GA51sp009174;
-        Wed, 16 Oct 2019 05:09:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=PODMain02222019;
- bh=wY7mAvj5F21+V86bnuE18PYzkAjmvRHb8mMHS3hceXQ=;
- b=EA00SE6Z2E3k7SYFmqLaahzFj9XBNXjotsuUm/KPxWHyilfAJAm5KZPxQmDDAJgrJUle
- gnJUdIu3m1gPVluI0VzrM0AX1MdVV/iAOspKE8s/QO1nKSpmsxQkQfyJoUEt4/lXWVew
- LF6SWzPJAJWOR2PKHdG4CaibjbMB8WtQqdgVSmrR41mibmFPlpRucfSj++0eq28ey8OI
- SMP0stSn8afBqt+M1O/iK/mZvq+3iAlZZUfF8bB3guzQMjGxX6mPTHo3W2v/TfMfmhz0
- qZU8xVquIHF32s7/MTVCNiLTmcVXo6jMXqbbLwD2Y03PXK3bCfQXNh10hu5x7koRn8j7 cQ== 
-Authentication-Results: ppops.net;
-        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from ediex02.ad.cirrus.com ([87.246.76.36])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2vkc83dbua-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Wed, 16 Oct 2019 05:09:06 -0500
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Wed, 16 Oct
- 2019 11:09:04 +0100
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
- Transport; Wed, 16 Oct 2019 11:09:04 +0100
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id AB4E92C1;
-        Wed, 16 Oct 2019 10:09:04 +0000 (UTC)
-Date:   Wed, 16 Oct 2019 10:09:04 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-CC:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        Wed, 16 Oct 2019 06:46:47 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 58013CFF3E76FCB7C8C4;
+        Wed, 16 Oct 2019 18:46:44 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Wed, 16 Oct 2019
+ 18:46:34 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <herbert@gondor.apana.org.au>, <mpm@selenic.com>, <arnd@arndb.de>,
+        <gregkh@linuxfoundation.org>, <nicolas.ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <ludovic.desroches@microchip.com>,
+        <f.fainelli@gmail.com>, <rjui@broadcom.com>,
+        <sbranden@broadcom.com>, <bcm-kernel-feedback-list@broadcom.com>,
+        <eric@anholt.net>, <wahrenst@gmx.net>, <l.stelmach@samsung.com>,
+        <kgene@kernel.org>, <krzk@kernel.org>, <khilman@baylibre.com>,
+        <dsaxena@plexity.net>, <patrice.chotard@st.com>
+CC:     <linux-crypto@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
         <linux-samsung-soc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 12/36] ARM: s3c64xx: remove mach/hardware.h
-Message-ID: <20191016100904.GC31391@ediswmail.ad.cirrus.com>
-References: <20191010202802.1132272-1-arnd@arndb.de>
- <20191010203043.1241612-1-arnd@arndb.de>
- <20191010203043.1241612-12-arnd@arndb.de>
+        <linux-amlogic@lists.infradead.org>,
+        <linuxppc-dev@lists.ozlabs.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next 00/13] hwrng: use devm_platform_ioremap_resource() to simplify code
+Date:   Wed, 16 Oct 2019 18:46:08 +0800
+Message-ID: <20191016104621.26056-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20191010203043.1241612-12-arnd@arndb.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-SPF-Result: fail
-X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
- -all
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 suspectscore=0
- phishscore=0 malwarescore=0 mlxscore=0 impostorscore=0 clxscore=1011
- lowpriorityscore=0 mlxlogscore=942 adultscore=0 spamscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1908290000
- definitions=main-1910160090
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 10:29:56PM +0200, Arnd Bergmann wrote:
-> This header is empty and conflicts with the s3c24xx version
-> of the same file when we merge the two, so stop including it.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
+devm_platform_ioremap_resource() internally have platform_get_resource()
+and devm_ioremap_resource() in it. So instead of calling them separately
+use devm_platform_ioremap_resource() directly.
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+YueHaibing (13):
+  hwrng: atmel - use devm_platform_ioremap_resource() to simplify code
+  hwrng: bcm2835 - use devm_platform_ioremap_resource() to simplify code
+  hwrng: exynos - use devm_platform_ioremap_resource() to simplify code
+  hwrng: hisi - use devm_platform_ioremap_resource() to simplify code
+  hwrng: ks-sa - use devm_platform_ioremap_resource() to simplify code
+  hwrng: meson - use devm_platform_ioremap_resource() to simplify code
+  hwrng: npcm - use devm_platform_ioremap_resource() to simplify code
+  hwrng: omap - use devm_platform_ioremap_resource() to simplify code
+  hwrng: pasemi - use devm_platform_ioremap_resource() to simplify code
+  hwrng: pic32 - use devm_platform_ioremap_resource() to simplify code
+  hwrng: st - use devm_platform_ioremap_resource() to simplify code
+  hwrng: tx4939 - use devm_platform_ioremap_resource() to simplify code
+  hwrng: xgene - use devm_platform_ioremap_resource() to simplify code
 
-Thanks,
-Charles
+ drivers/char/hw_random/atmel-rng.c   | 4 +---
+ drivers/char/hw_random/bcm2835-rng.c | 5 +----
+ drivers/char/hw_random/exynos-trng.c | 4 +---
+ drivers/char/hw_random/hisi-rng.c    | 4 +---
+ drivers/char/hw_random/ks-sa-rng.c   | 4 +---
+ drivers/char/hw_random/meson-rng.c   | 4 +---
+ drivers/char/hw_random/npcm-rng.c    | 4 +---
+ drivers/char/hw_random/omap-rng.c    | 4 +---
+ drivers/char/hw_random/pasemi-rng.c  | 4 +---
+ drivers/char/hw_random/pic32-rng.c   | 4 +---
+ drivers/char/hw_random/st-rng.c      | 4 +---
+ drivers/char/hw_random/tx4939-rng.c  | 4 +---
+ drivers/char/hw_random/xgene-rng.c   | 4 +---
+ 13 files changed, 13 insertions(+), 40 deletions(-)
+
+-- 
+2.7.4
+
+
