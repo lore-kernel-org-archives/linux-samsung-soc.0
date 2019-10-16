@@ -1,357 +1,128 @@
-Return-Path: <SRS0=ZUuD=YI=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=YSTQ=YJ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBBB0ECE58F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Oct 2019 19:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB50AECE588
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Oct 2019 09:16:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF40520873
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 15 Oct 2019 19:40:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1571168412;
-	bh=tM0AjEWhyx9R5ZiZRV/jBIEBRXP9ZXt7z9KPZ31rQdU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=HewdIC16d8ff0+ATuRWLkNkDqvdt4RI8gCNmzE4pMZlbe1zlzaRHb+c4bZUClZMxR
-	 Snoe3Qm4A5CWoaJZW85TSka9eymrDDjxYL67Xq9tFSyc9JCM0A57dzqxYvQD8HU8re
-	 ZLm5BWNxGMhk5fkqZqOCLsS5zOkLB8mMR8KHFcr4=
+	by mail.kernel.org (Postfix) with ESMTP id 8BDBC218DE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Oct 2019 09:16:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sNdzysg8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729606AbfJOTkJ (ORCPT
+        id S1726640AbfJPJP7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 15 Oct 2019 15:40:09 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:40593 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727856AbfJOTkJ (ORCPT
+        Wed, 16 Oct 2019 05:15:59 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:38275 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391892AbfJPJP7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 15 Oct 2019 15:40:09 -0400
-Received: by mail-oi1-f194.google.com with SMTP id k9so17909546oib.7;
-        Tue, 15 Oct 2019 12:40:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=f5z1afL3zYQYcRyoERZzjsi7/SiRTHqNbFhLxSAuGLs=;
-        b=nuIXrwVaKyb3aseG4ulaPJ5ugUB7/9Cg5YOcvHDimEcXKQlclj4XLD0VlPf8dMGpbl
-         xoZOcdPdrcsKLrSoIgh9S2EAo5YKL+wm+Q+/D+6vflKJx/J2ml1VZotknGuYp6/L8eqG
-         ZcAniBvTymC4x4vkNUUB+7t5epWzgYAM7NAmRe9b+79pCrYY9DXcRfsqs1IumEYQ9SWw
-         6eFm+BGGcfRHDJFag+/0Y5hmiUgM7mN42wKfLO7Dl0Csaq4FatXk2oTbG4p0Ur+OO3Ym
-         0pvl1TYvG/rdal+0V8kv3Nu3UrSdAvVKPf+OKtbrBNowdA/2oDri7NvMDRk/wpZiNnBQ
-         dE7A==
-X-Gm-Message-State: APjAAAVDc0L6qTMyq4cym8jLrjd8hD9Dh5Xd/XgtZQGCICRa79rO21aF
-        engBSy1bxf+NJttjmXz3ww==
-X-Google-Smtp-Source: APXvYqxhtUbYR837DFUipAtkBDduyyeI6vaqqhzSUmhgED4fPdNsTQT8GLSgnjNjdjHJLBDi7GG+5w==
-X-Received: by 2002:a54:418c:: with SMTP id 12mr203382oiy.154.1571168407330;
-        Tue, 15 Oct 2019 12:40:07 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id b10sm1556470oic.55.2019.10.15.12.40.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2019 12:40:06 -0700 (PDT)
-Date:   Tue, 15 Oct 2019 14:40:06 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Kukjin Kim <kgene@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Lee Jones <lee.jones@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Maciej Falkowski <m.falkowski@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-serial@vger.kernel.org
-Subject: Re: [PATCH 3/3] dt-bindings: serial: Convert Samsung UART bindings
- to json-schema
-Message-ID: <20191015194006.GA3540@bogus>
-References: <20191004151414.8458-1-krzk@kernel.org>
- <20191004151414.8458-3-krzk@kernel.org>
+        Wed, 16 Oct 2019 05:15:59 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191016091556euoutp01823fbf6ff27176bbdd4f32d77f791e83~OFdyC1_jP2350723507euoutp01n
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Oct 2019 09:15:56 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191016091556euoutp01823fbf6ff27176bbdd4f32d77f791e83~OFdyC1_jP2350723507euoutp01n
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1571217356;
+        bh=9dORfT2C1mUG6n6ublUc6Js/kNhg/nSvlOn7r+wmFJ4=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=sNdzysg8IV07QNG16Sqy/DKIqRHBTS5BGJOQaTDU2zaYxUBgBMC+HeYqZRshKMdmT
+         qJ04kweMoohiCCraSv/ToLHiTYk6D4mm+VFIyn3ob4xoaKl0maAkb2Q2w9dnWGpdjz
+         0joGX0IzVpR8VQYrNtOBDk+Mgd0HAV326YW6umUc=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20191016091556eucas1p11bbb7d273f8cce2bcb1ec23c429781ff~OFdxpaz0_0289802898eucas1p1V;
+        Wed, 16 Oct 2019 09:15:56 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 04.EB.04469.CCFD6AD5; Wed, 16
+        Oct 2019 10:15:56 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20191016091556eucas1p2b94b3ca327b17248afc651cda1d57606~OFdxW4yHG2333023330eucas1p2c;
+        Wed, 16 Oct 2019 09:15:56 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20191016091556eusmtrp2f8dc80fafe484d2653d7fb16d861d72f~OFdxWGaIA0353103531eusmtrp2g;
+        Wed, 16 Oct 2019 09:15:56 +0000 (GMT)
+X-AuditID: cbfec7f2-569ff70000001175-d3-5da6dfcc2389
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 5F.FF.04117.CCFD6AD5; Wed, 16
+        Oct 2019 10:15:56 +0100 (BST)
+Received: from [106.120.51.75] (unknown [106.120.51.75]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191016091555eusmtip2d51b4724fb25774ae834cd2813c1cc02~OFdwzmirq1657316573eusmtip2u;
+        Wed, 16 Oct 2019 09:15:55 +0000 (GMT)
+Subject: Re: [PATCH v4 1/6] opp: Handle target/min/max voltage in
+ dev_pm_opp_adjust_voltage()
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>, vireshk@kernel.org,
+        robh+dt@kernel.org, kgene@kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        b.zolnierkie@samsung.com, m.szyprowski@samsung.com
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <83933504-bef3-a1f5-1420-d3aa2864bab5@samsung.com>
+Date:   Wed, 16 Oct 2019 11:15:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191004151414.8458-3-krzk@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191014062649.oegc2rwigmdv6kju@vireshk-i7>
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIKsWRmVeSWpSXmKPExsWy7djPc7pn7i+LNeh7IWaxccZ6Vov5R86x
+        WvQ/fs1scf78BnaLTY+vsVpc3jWHzeJz7xFGixnn9zFZrD1yl92ide8RdouNXz0sNj84xubA
+        47FpVSebx51re9g8Ni+p9+jbsorR4/MmuQDWKC6blNSczLLUIn27BK6MGTcbWApamSsOdPaz
+        NDBuZOpi5OSQEDCRWPPpGZDNxSEksIJR4kn3RGYI5wujxK/5/1khnM+MEl3vp7N1MXKAteyb
+        xQ0RX84osan9FVT7W0aJtv5p7CBzhQXiJXZMOsAO0iAioCXx8mYqSA2zwB4miVUT1rOB1LAJ
+        GEr0Hu1jBLF5Bewk/n7ZBhZnEVCV2PnvAhNIr6hAhMTpr4kQJYISJ2c+YQGxOQUsJY437wN7
+        gVlAXKLpy0pWCFteYvvbOWAfSAhcY5d41riUGeJPF4n3a15C2cISr45vYYewZST+75zPBNHQ
+        zCjRs/s2O4QzgVHi/vEFjBBV1hKHj19kBbmIWUBTYv0ufYiwo8Sb57uhocInceOtIMQRfBKT
+        tk1nhgjzSnS0CUFUq0j8XjUdGuxSEt1P/rNMYFSaheS1WUjemYXknVkIexcwsqxiFE8tLc5N
+        Ty02zEst1ytOzC0uzUvXS87P3cQITFin/x3/tIPx66WkQ4wCHIxKPLwJPctihVgTy4orcw8x
+        SnAwK4nwzm9ZEivEm5JYWZValB9fVJqTWnyIUZqDRUmct5rhQbSQQHpiSWp2ampBahFMlomD
+        U6qB0dn8gmmu8mJL71VOV4yKdy2PdE/I3sfTctZzRpmO4hwrnfiQHT++XXu+tn3rrNOJPxZ6
+        cBx4tahH/yfLOnsdK950veIY1/+XDZy6xE/6X/1yQPyyZ/OeeoHA+p9Zpxj5j9y5f1Oq9zTz
+        VMVXGzcsZgz68NN7fnqb2IYFny5e5yp6J+PaGzCzXYmlOCPRUIu5qDgRAG3vEoJUAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMIsWRmVeSWpSXmKPExsVy+t/xe7pn7i+LNZj4kNli44z1rBbzj5xj
+        teh//JrZ4vz5DewWmx5fY7W4vGsOm8Xn3iOMFjPO72OyWHvkLrtF694j7BYbv3pYbH5wjM2B
+        x2PTqk42jzvX9rB5bF5S79G3ZRWjx+dNcgGsUXo2RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaW
+        eobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZM242sBS0Mlcc6OxnaWDcyNTFyMEhIWAisW8Wdxcj
+        F4eQwFJGidWHJzJDxKUk5rcodTFyApnCEn+udbFB1LxmlDi/7RkjSEJYIF5ix6QD7CD1IgJa
+        Ei9vpoLUMAvsYZJoarnKCNFwiEliStM2dpAGNgFDid6jfWDNvAJ2En+/bGMDsVkEVCV2/rvA
+        BGKLCkRIPN9+A6pGUOLkzCcsIDangKXE8eZ9YDXMAuoSf+ZdYoawxSWavqxkhbDlJba/ncM8
+        gVFoFpL2WUhaZiFpmYWkZQEjyypGkdTS4tz03GIjveLE3OLSvHS95PzcTYzACN127OeWHYxd
+        74IPMQpwMCrx8CrMXxYrxJpYVlyZe4hRgoNZSYR3fsuSWCHelMTKqtSi/Pii0pzU4kOMpkDP
+        TWSWEk3OByaPvJJ4Q1NDcwtLQ3Njc2MzCyVx3g6BgzFCAumJJanZqakFqUUwfUwcnFINjG3Z
+        WZccbhxXOSnxOHPpW/aNSW76zY6V/1lvVCW+9bU9t3fZvwlTjqRt/hkUJNRzc2L4+taSFKmt
+        AVx/rMOXreEsDOzdZ3XRd7/CDDfxLxFiCmo/41ZXPlZ3l0ie41YiX3/pwNznk+xOb2usjmjh
+        YYjSeXp0vmK3bG6pjHjkT8W3DdqtEeoZSizFGYmGWsxFxYkA4b+6k+YCAAA=
+X-CMS-MailID: 20191016091556eucas1p2b94b3ca327b17248afc651cda1d57606
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190910123636eucas1p250ec04901f227b947cc38936563f63b2
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190910123636eucas1p250ec04901f227b947cc38936563f63b2
+References: <20190910123618.27985-1-s.nawrocki@samsung.com>
+        <CGME20190910123636eucas1p250ec04901f227b947cc38936563f63b2@eucas1p2.samsung.com>
+        <20190910123618.27985-2-s.nawrocki@samsung.com> <20191002143310.GA15898@pi3>
+        <ada1bb2f-a824-c34e-6561-04a35782a9b8@samsung.com>
+        <20191014062649.oegc2rwigmdv6kju@vireshk-i7>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Oct 04, 2019 at 05:14:14PM +0200, Krzysztof Kozlowski wrote:
-> Convert Samsung S3C/S5P/Exynos Serial/UART bindings to DT schema format
-> using json-schema.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  .../bindings/mfd/samsung,exynos5433-lpass.txt |   2 +-
->  .../bindings/serial/samsung_uart.txt          |  58 -------
->  .../bindings/serial/samsung_uart.yaml         | 148 ++++++++++++++++++
->  3 files changed, 149 insertions(+), 59 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/serial/samsung_uart.txt
->  create mode 100644 Documentation/devicetree/bindings/serial/samsung_uart.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
-> index d759da606f75..30ea27c3936d 100644
-> --- a/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
-> +++ b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
-> @@ -18,7 +18,7 @@ an optional sub-node. For "samsung,exynos5433-lpass" compatible this includes:
->  UART, SLIMBUS, PCM, I2S, DMAC, Timers 0...4, VIC, WDT 0...1 devices.
->  
->  Bindings of the sub-nodes are described in:
-> -  ../serial/samsung_uart.txt
-> +  ../serial/samsung_uart.yaml
->    ../sound/samsung-i2s.txt
->    ../dma/arm-pl330.txt
->  
-> diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.txt b/Documentation/devicetree/bindings/serial/samsung_uart.txt
-> deleted file mode 100644
-> index e85f37ec33f0..000000000000
-> --- a/Documentation/devicetree/bindings/serial/samsung_uart.txt
-> +++ /dev/null
-> @@ -1,58 +0,0 @@
-> -* Samsung's UART Controller
-> -
-> -The Samsung's UART controller is used for interfacing SoC with serial
-> -communicaion devices.
-> -
-> -Required properties:
-> -- compatible: should be one of following:
-> -  - "samsung,exynos4210-uart" -  Exynos4210 SoC,
-> -  - "samsung,s3c2410-uart" - compatible with ports present on S3C2410 SoC,
-> -  - "samsung,s3c2412-uart" - compatible with ports present on S3C2412 SoC,
-> -  - "samsung,s3c2440-uart" - compatible with ports present on S3C2440 SoC,
-> -  - "samsung,s3c6400-uart" - compatible with ports present on S3C6400 SoC,
-> -  - "samsung,s5pv210-uart" - compatible with ports present on S5PV210 SoC.
-> -
-> -- reg: base physical address of the controller and length of memory mapped
-> -  region.
-> -
-> -- interrupts: a single interrupt signal to SoC interrupt controller,
-> -  according to interrupt bindings documentation [1].
-> -
-> -- clock-names: input names of clocks used by the controller:
-> -  - "uart" - controller bus clock,
-> -  - "clk_uart_baudN" - Nth baud base clock input (N = 0, 1, ...),
-> -    according to SoC User's Manual (only N = 0 is allowedfor SoCs without
-> -    internal baud clock mux).
-> -- clocks: phandles and specifiers for all clocks specified in "clock-names"
-> -  property, in the same order, according to clock bindings documentation [2].
-> -
-> -[1] Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
-> -[2] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> -
-> -Optional properties:
-> -- samsung,uart-fifosize: The fifo size supported by the UART channel
-> -
-> -Note: Each Samsung UART should have an alias correctly numbered in the
-> -"aliases" node, according to serialN format, where N is the port number
-> -(non-negative decimal integer) as specified by User's Manual of respective
-> -SoC.
-> -
-> -Example:
-> -	aliases {
-> -		serial0 = &uart0;
-> -		serial1 = &uart1;
-> -		serial2 = &uart2;
-> -	};
-> -
-> -Example:
-> -	uart1: serial@7f005400 {
-> -		compatible = "samsung,s3c6400-uart";
-> -		reg = <0x7f005400 0x100>;
-> -		interrupt-parent = <&vic1>;
-> -		interrupts = <6>;
-> -		clock-names = "uart", "clk_uart_baud2",
-> -				"clk_uart_baud3";
-> -		clocks = <&clocks PCLK_UART1>, <&clocks PCLK_UART1>,
-> -				<&clocks SCLK_UART>;
-> -		samsung,uart-fifosize = <16>;
-> -	};
-> diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-> new file mode 100644
-> index 000000000000..276bea1c231a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-> @@ -0,0 +1,148 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/serial/samsung_uart.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung S3C, S5P and Exynos SoC UART Controller
-> +
-> +maintainers:
-> +  - Krzysztof Kozlowski <krzk@kernel.org>
-> +  - Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> +
-> +description: |+
-> +  Each Samsung UART should have an alias correctly numbered in the "aliases"
-> +  node, according to serialN format, where N is the port number (non-negative
-> +  decimal integer) as specified by User's Manual of respective SoC.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - samsung,s3c2410-uart
-> +          - samsung,s3c2412-uart
-> +          - samsung,s3c2440-uart
-> +          - samsung,s3c6400-uart
-> +          - samsung,s5pv210-uart
-> +          - samsung,exynos4210-uart
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    minItems: 2
-> +    maxItems: 5
-> +
-> +  clock-names:
-> +    description: |
-> +      List of clock names:
-> +        - "uart" - controller bus clock,
-> +        - "clk_uart_baudN" - Nth baud base clock input (N = 0, 1, ...).
+On 10/14/19 08:26, Viresh Kumar wrote:
+> I am waiting for Andrew to send me the next set of patches. You depend
+> on only one of the patches ? In that case you can just pick that patch
+> from his series, keep his authorship intact and make changes from 1/6
+> and send along with your series.
 
-Kind of redundant to list this here.
-
-> +      N = 0 is allowed for SoCs without internal baud clock mux.
-
-You can add a description with the item:
-
-items:
-  - pattern: '^clk_uart_baud[0-3]$'
-    description: N = 0 is allowed for SoCs without internal baud clock mux.
-
-Or leave it here is fine too.
-
-> +    minItems: 2
-> +    maxItems: 5
-> +    allOf:
-> +      - uniqueItems: true
-
-You can drop this.
-
-> +      - oneOf:
-> +          - items:
-> +              - const: uart
-> +              - pattern: '^clk_uart_baud[0-3]$'
-> +          - items:
-> +              - const: uart
-> +              - pattern: '^clk_uart_baud[0-3]$'
-> +              - pattern: '^clk_uart_baud[0-3]$'
-> +          - items:
-> +              - const: uart
-> +              - pattern: '^clk_uart_baud[0-3]$'
-> +              - pattern: '^clk_uart_baud[0-3]$'
-> +              - pattern: '^clk_uart_baud[0-3]$'
-> +          - items:
-> +              - const: uart
-> +              - pattern: '^clk_uart_baud[0-3]$'
-> +              - pattern: '^clk_uart_baud[0-3]$'
-> +              - pattern: '^clk_uart_baud[0-3]$'
-> +              - pattern: '^clk_uart_baud[0-3]$'
-
-You only need the last case. With 'minItems: 2', the additional items 
-here will just be ignored.
-
-> +
-> +  interrupts:
-> +    minItems: 1
-> +    maxItems: 2
-
-What is each item?
-
-> +
-> +  samsung,uart-fifosize:
-> +    description: The fifo size supported by the UART channel
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +      - enum: [16, 64, 256]
-> +
-> +required:
-> +  - compatible
-> +  - clocks
-> +  - clock-names
-> +  - interrupts
-> +  - reg
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - samsung,s3c2410-uart
-> +              - samsung,s5pv210-uart
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 2
-> +          maxItems: 3
-> +        clock-names:
-> +          minItems: 2
-> +          maxItems: 3
-> +          allOf:
-> +            - uniqueItems: true
-> +            - oneOf:
-> +                - items:
-> +                    - const: uart
-> +                    - pattern: '^clk_uart_baud[0-1]$'
-> +                - items:
-> +                    - const: uart
-> +                    - pattern: '^clk_uart_baud[0-1]$'
-> +                    - pattern: '^clk_uart_baud[0-1]$'
-
-Similar simplification can be done here.
-
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - samsung,exynos4210-uart
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 2
-> +          maxItems: 2
-> +        clock-names:
-> +          minItems: 2
-> +          maxItems: 2
-> +          allOf:
-> +            - uniqueItems: true
-> +            - items:
-> +                - const: uart
-> +                - const: clk_uart_baud0
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/samsung,s3c64xx-clock.h>
-> +
-> +    aliases {
-> +        serial0 = &uart0;
-> +    };
-
-Drop this. It will cause a warning if we enforce 'aliases' to be at the 
-root node.
-
-> +
-> +    uart0: serial@7f005000 {
-> +        compatible = "samsung,s3c6400-uart";
-> +        reg = <0x7f005000 0x100>;
-> +        interrupt-parent = <&vic1>;
-> +        interrupts = <5>;
-> +        clock-names = "uart", "clk_uart_baud2",
-> +                      "clk_uart_baud3";
-> +        clocks = <&clocks PCLK_UART0>, <&clocks PCLK_UART0>,
-> +                 <&clocks SCLK_UART>;
-> +        samsung,uart-fifosize = <16>;
-> +    };
-> -- 
-> 2.17.1
-> 
+Yes, only that single patch. I will incorporate my changes then and resend, 
+thank you.
