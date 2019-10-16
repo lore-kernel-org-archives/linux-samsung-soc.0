@@ -2,102 +2,90 @@ Return-Path: <SRS0=YSTQ=YJ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4B9AFA372A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Oct 2019 16:18:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D89AFA3728
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Oct 2019 16:26:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAED4218DE
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Oct 2019 16:18:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1571242736;
-	bh=4COz89P1zpzTlupxFFQQGh+6woY2hW0X2gsI1bc8HjQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=BEqDZgD62Y7433IpauZ0RVL70F30EgFLOfH2vOioKp7GhA0nlzp1bFIL1k3yX9kLD
-	 7aDg5MHiMLlVsxuKZWO/EPF8Far2qtYk/Qx2LnHV3trJsLTBLye4KHbysspzpssMaR
-	 f0krzk5IGPe1dPEq2hTp9252WGGYjMCYHh4osBCY=
+	by mail.kernel.org (Postfix) with ESMTP id 15C1D21A4C
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Oct 2019 16:26:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="LgzC5Cn/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393699AbfJPQSw (ORCPT
+        id S2393762AbfJPQ0r (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Oct 2019 12:18:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32998 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727154AbfJPQSv (ORCPT
+        Wed, 16 Oct 2019 12:26:47 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42118 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389295AbfJPQ0r (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Oct 2019 12:18:51 -0400
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF22521928;
-        Wed, 16 Oct 2019 16:18:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571242731;
-        bh=4COz89P1zpzTlupxFFQQGh+6woY2hW0X2gsI1bc8HjQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=xwM3DTxgTRrC9GLPoyMIVyLVBPvVCnMIYci5oDwuIfmHMX1amrkAZRVTHxCv2wXtc
-         iN9BRwPh3p5AIcva79D+7Ov7/Jet8aumvERgrxkZ9IfryBELEq9tQ6GTaGWHZTJSpO
-         FvlLYzakgxBw3HbEL7engUbcO4kAnu7OK4vX8AWM=
-Received: by mail-lj1-f179.google.com with SMTP id f5so24654496ljg.8;
-        Wed, 16 Oct 2019 09:18:50 -0700 (PDT)
-X-Gm-Message-State: APjAAAUXkIUHaNPy8woBVm4cfuX74uUpiYXDPfyGsVwW0S1FBSG+4VzZ
-        +u4XqI6hBlrp9w9MbLWrOxzq4BnLLM1pfRUJkkg=
-X-Google-Smtp-Source: APXvYqzu0RRV4q5pmM2b1sIMqFIXCTIwcolo7Dbv37lXTeqNkqpQA3nPxoPmIeAXJmVDW5spOsl8eEkJOiSX9IsOuoQ=
-X-Received: by 2002:a2e:9ec2:: with SMTP id h2mr23068539ljk.85.1571242729071;
- Wed, 16 Oct 2019 09:18:49 -0700 (PDT)
+        Wed, 16 Oct 2019 12:26:47 -0400
+Received: by mail-pg1-f193.google.com with SMTP id f14so9472896pgi.9
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Oct 2019 09:26:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=2XIK6irSOUYOqaT55Cb2rTG7oY2nstdNhyuJ62jJp1w=;
+        b=LgzC5Cn/xPt2olUE60N4pEOt4RSI2ZpcK9ac3jR5QUoHjfZ6KopcgFKySrAzfqZTLK
+         xw/GP4Ayp98mwvf5lXiBtokVwF22c/go7Jq2fmAHO3+z/dfZ4UGj2h2lSPA4WPi3wTu5
+         kx2xY3EISo3KDeawhuE8CoFt6RS3ckhddrTpZUBfj85vPWLuQ5gjqKgIodSgMg2Z8UOE
+         QLXiWAtlZnMJukqaX13llRVWRA5GhM1++i+VT2hv2z7Jz1d1zTL4o+yZm0aV0tI5Dor3
+         5/Lm+xvgudiyUXI4Q4b3d+P6YU/hlFTOozKWQPwvl5Qs3pkxxAMSoh8rHBJCZr+G0LNL
+         AJnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=2XIK6irSOUYOqaT55Cb2rTG7oY2nstdNhyuJ62jJp1w=;
+        b=Tocz/kkvUep6Serjq2pqEDbNgkEdN3SbHOf9fEUvNiyDcfL6LhR/1TD7K+4LDKLe30
+         c6caTKFsse9qtd98HJe2gsBggs2OL2wJUyVedN5/Ae57ynfE/gm+89OQVGK2gii9exA4
+         fEfIPCysSpXUCnp66/Oe1V4shSU8RWg3i7GXLA6ZNn1+Xiom0RQzFFeoCRE/DX5c5/bi
+         N+EUM28lZn03LH1ll5YNGy4YxinM8Zl6cSx6WoPibXPLAHjXDySGdFkffuJc91c4kxm9
+         t55ozz4Q8ltipB/Hise5KUzoUNZGPMODHaoDP4LQdj6qUSuFnKXEGuQrhz7oYBoXu3ep
+         Jiww==
+X-Gm-Message-State: APjAAAVkoJpKLOv3qRldcDMe/VSAsjTOSxzorNx6KjSgaruC7Ah8vWLo
+        7Zd/XvigVaTqe35hGq/GLJT20Q==
+X-Google-Smtp-Source: APXvYqygm5XuOYj8EY825cN0gcWiXGpwZtxv9FetNVUXLKyxWccm3GGuLgq33/o/9nNMAg3YUL0DMw==
+X-Received: by 2002:a63:4705:: with SMTP id u5mr24757808pga.317.1571243205298;
+        Wed, 16 Oct 2019 09:26:45 -0700 (PDT)
+Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
+        by smtp.gmail.com with ESMTPSA id c16sm3155360pja.2.2019.10.16.09.26.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 16 Oct 2019 09:26:44 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     YueHaibing <yuehaibing@huawei.com>, herbert@gondor.apana.org.au,
+        mpm@selenic.com, arnd@arndb.de, gregkh@linuxfoundation.org,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        ludovic.desroches@microchip.com, f.fainelli@gmail.com,
+        rjui@broadcom.com, sbranden@broadcom.com,
+        bcm-kernel-feedback-list@broadcom.com, eric@anholt.net,
+        wahrenst@gmx.net, l.stelmach@samsung.com, kgene@kernel.org,
+        krzk@kernel.org, dsaxena@plexity.net, patrice.chotard@st.com
+Cc:     linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: Re: [PATCH -next 06/13] hwrng: meson - use devm_platform_ioremap_resource() to simplify code
+In-Reply-To: <20191016104621.26056-7-yuehaibing@huawei.com>
+References: <20191016104621.26056-1-yuehaibing@huawei.com> <20191016104621.26056-7-yuehaibing@huawei.com>
+Date:   Wed, 16 Oct 2019 09:26:43 -0700
+Message-ID: <7h4l08hd18.fsf@baylibre.com>
 MIME-Version: 1.0
-References: <20191002164316.14905-1-krzk@kernel.org> <20191002164316.14905-6-krzk@kernel.org>
- <20191014113240.GN12262@dragon>
-In-Reply-To: <20191014113240.GN12262@dragon>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Wed, 16 Oct 2019 19:18:34 +0300
-X-Gmail-Original-Message-ID: <CAJKOXPccVj3KJTzzxvQpzFeBYHX1onoh+DfApr8AA-QxvPzWLg@mail.gmail.com>
-Message-ID: <CAJKOXPccVj3KJTzzxvQpzFeBYHX1onoh+DfApr8AA-QxvPzWLg@mail.gmail.com>
-Subject: Re: [PATCH v3 06/10] ARM: dts: imx: Rename "iram" node to "sram"
-To:     Shawn Guo <shawnguo@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-omap@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 14 Oct 2019 at 14:33, Shawn Guo <shawnguo@kernel.org> wrote:
->
-> On Wed, Oct 02, 2019 at 06:43:12PM +0200, Krzysztof Kozlowski wrote:
-> > The device node name should reflect generic class of a device so rename
-> > the "iram" node to "sram".  This will be also in sync with upcoming DT
-> > schema.  No functional change.
-> >
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->
-> Acked-by: Shawn Guo <shawnguo@kernel.org>
->
-> Let me know if you want it go through IMX tree.
+YueHaibing <yuehaibing@huawei.com> writes:
 
-Yes please, I think each of these should go through soc maintainers.
+> Use devm_platform_ioremap_resource() to simplify the code a bit.
+> This is detected by coccinelle.
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Best regards,
-Krzysztof
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
