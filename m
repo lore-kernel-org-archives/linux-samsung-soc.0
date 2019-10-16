@@ -7,26 +7,26 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3677EFA3728
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Oct 2019 10:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1939FA372A
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Oct 2019 10:47:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 198A721848
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Oct 2019 10:47:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7AFC21848
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Oct 2019 10:47:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404712AbfJPKrI (ORCPT
+        id S2404700AbfJPKrF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Oct 2019 06:47:08 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3783 "EHLO huawei.com"
+        Wed, 16 Oct 2019 06:47:05 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:49574 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2404702AbfJPKrG (ORCPT
+        id S2404685AbfJPKrD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Oct 2019 06:47:06 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 97CE53AA7BC64B30075C;
-        Wed, 16 Oct 2019 18:47:04 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Wed, 16 Oct 2019
- 18:46:57 +0800
+        Wed, 16 Oct 2019 06:47:03 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 63C8FED70F4B7B250492;
+        Wed, 16 Oct 2019 18:47:00 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Wed, 16 Oct 2019
+ 18:46:52 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
 To:     <herbert@gondor.apana.org.au>, <mpm@selenic.com>, <arnd@arndb.de>,
         <gregkh@linuxfoundation.org>, <nicolas.ferre@microchip.com>,
@@ -43,9 +43,9 @@ CC:     <linux-crypto@vger.kernel.org>,
         <linux-samsung-soc@vger.kernel.org>,
         <linux-amlogic@lists.infradead.org>,
         <linuxppc-dev@lists.ozlabs.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 10/13] hwrng: pic32 - use devm_platform_ioremap_resource() to simplify code
-Date:   Wed, 16 Oct 2019 18:46:18 +0800
-Message-ID: <20191016104621.26056-11-yuehaibing@huawei.com>
+Subject: [PATCH -next 08/13] hwrng: omap - use devm_platform_ioremap_resource() to simplify code
+Date:   Wed, 16 Oct 2019 18:46:16 +0800
+Message-ID: <20191016104621.26056-9-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 In-Reply-To: <20191016104621.26056-1-yuehaibing@huawei.com>
 References: <20191016104621.26056-1-yuehaibing@huawei.com>
@@ -63,31 +63,31 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/char/hw_random/pic32-rng.c | 4 +---
+ drivers/char/hw_random/omap-rng.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/char/hw_random/pic32-rng.c b/drivers/char/hw_random/pic32-rng.c
-index 90f498c..81080cb 100644
---- a/drivers/char/hw_random/pic32-rng.c
-+++ b/drivers/char/hw_random/pic32-rng.c
-@@ -70,7 +70,6 @@ static int pic32_rng_read(struct hwrng *rng, void *buf, size_t max,
- static int pic32_rng_probe(struct platform_device *pdev)
+diff --git a/drivers/char/hw_random/omap-rng.c b/drivers/char/hw_random/omap-rng.c
+index b27f396..b3f4a00 100644
+--- a/drivers/char/hw_random/omap-rng.c
++++ b/drivers/char/hw_random/omap-rng.c
+@@ -432,7 +432,6 @@ static int get_omap_rng_device_details(struct omap_rng_dev *omap_rng)
+ static int omap_rng_probe(struct platform_device *pdev)
  {
- 	struct pic32_rng *priv;
+ 	struct omap_rng_dev *priv;
 -	struct resource *res;
- 	u32 v;
+ 	struct device *dev = &pdev->dev;
  	int ret;
  
-@@ -78,8 +77,7 @@ static int pic32_rng_probe(struct platform_device *pdev)
- 	if (!priv)
- 		return -ENOMEM;
+@@ -449,8 +448,7 @@ static int omap_rng_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, priv);
+ 	priv->dev = dev;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	priv->base = devm_ioremap_resource(&pdev->dev, res);
+-	priv->base = devm_ioremap_resource(dev, res);
 +	priv->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(priv->base))
- 		return PTR_ERR(priv->base);
- 
+ 	if (IS_ERR(priv->base)) {
+ 		ret = PTR_ERR(priv->base);
+ 		goto err_ioremap;
 -- 
 2.7.4
 
