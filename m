@@ -2,189 +2,145 @@ Return-Path: <SRS0=qdBE=YK=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8079CECE58E
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Oct 2019 09:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C77FA3730
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Oct 2019 09:32:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4709F21925
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Oct 2019 09:29:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="h0ogVYM7"
+	by mail.kernel.org (Postfix) with ESMTP id 5586E20663
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Oct 2019 09:32:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405433AbfJQJ34 (ORCPT
+        id S2439456AbfJQJc3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 17 Oct 2019 05:29:56 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:53813 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392150AbfJQJ34 (ORCPT
+        Thu, 17 Oct 2019 05:32:29 -0400
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:2164 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393479AbfJQJc2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 17 Oct 2019 05:29:56 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20191017092954euoutp02853c71fe7b09238696eef3316b0322d6~OZTQbx6Ut1106211062euoutp02Y
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Oct 2019 09:29:54 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20191017092954euoutp02853c71fe7b09238696eef3316b0322d6~OZTQbx6Ut1106211062euoutp02Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1571304594;
-        bh=AZdVAI8mpGcBE9pPmmB/AtQ4Fwrc9hnMXEZrXafSrJk=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=h0ogVYM70aSf7Tp0Rz6S8W67pcy/l8B+nVbg7z0v1OkG5HSfIrF9oES6MYlF2xke/
-         Zv84X7rKYodU1VxBAdS2MnNtwQNUDNslRigi3/OoXSiLBwylMw/ZeYGJ5X9mI5nNdr
-         aXmDlUba/uG+vUFiPAt8X8jMABFtMe+iULH/Cp3E=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191017092954eucas1p140e423338f18e841fd670ec99aca6734~OZTQBxuxI2126021260eucas1p1V;
-        Thu, 17 Oct 2019 09:29:54 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id A0.96.04469.19438AD5; Thu, 17
-        Oct 2019 10:29:53 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20191017092953eucas1p259c1e03eb2cb4d19aa48eaa2e3cca2dc~OZTPtAhJM0648306483eucas1p2e;
-        Thu, 17 Oct 2019 09:29:53 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191017092953eusmtrp17f62f839f61fa99d9025415421ea344e~OZTPsTIIP1633216332eusmtrp1K;
-        Thu, 17 Oct 2019 09:29:53 +0000 (GMT)
-X-AuditID: cbfec7f2-54fff70000001175-50-5da83491a45c
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 48.BD.04166.19438AD5; Thu, 17
-        Oct 2019 10:29:53 +0100 (BST)
-Received: from AMDC3061.DIGITAL.local (unknown [106.120.51.75]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191017092953eusmtip2f4ef56add6868611954ec7fd29136e49~OZTPNNBIX2907729077eusmtip2K;
-        Thu, 17 Oct 2019 09:29:53 +0000 (GMT)
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-To:     robh+dt@kernel.org
-Cc:     krzk@kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v6] dt-bindings: arm: samsung: Update the CHIPID binding for
- ASV
-Date:   Thu, 17 Oct 2019 11:29:39 +0200
-Message-Id: <20191017092939.25899-1-s.nawrocki@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrAIsWRmVeSWpSXmKPExsWy7djPc7oTTVbEGvRNsrHYOGM9q8X8I+dY
-        Lc6f38BusenxNVaLz71HGC1mnN/HZLH2yF12i9a9R9gtDr9pZ3Xg9Ni0qpPNY/OSeo++LasY
-        PT5vkgtgieKySUnNySxLLdK3S+DKuDt1E3PBVqGKtat7WBoYD/N1MXJySAiYSOyc283YxcjF
-        ISSwglFi+e4HUM4XRokv/WeYIZzPjBL/vj5jhmlZcvMGK0RiOaPE/Ul9YAmwljlbxEBsNgFD
-        id6jfUCjODhEBMQk9q4VBQkzC/xklHj0WgLEFhYIktj9fAsjiM0ioCoxb80ZJpByXgFridat
-        JhCr5CVWbzgAdoOEwH02iWU397NCJFwkpv/cDWULS7w6voUdwpaROD25hwWioZlRomf3bXYI
-        ZwLQoccXMEJUWUscPn6RFWQbs4CmxPpd+hBhR4nl07rBbpYQ4JO48VYQ4mY+iUnbpjNDhHkl
-        OtqEIKpVJH6vms4EYUtJdD/5zwJR4iEx4UcyJEBiJW7M/Mk4gVFuFsKqBYyMqxjFU0uLc9NT
-        iw3zUsv1ihNzi0vz0vWS83M3MQLTwel/xz/tYPx6KekQowAHoxIP7wTG5bFCrIllxZW5hxgl
-        OJiVRHjntyyJFeJNSaysSi3Kjy8qzUktPsQozcGiJM5bzfAgWkggPbEkNTs1tSC1CCbLxMEp
-        1cDYP/nZwoasRSo53RzTKtaf5V3RGuCbufXdAq24LPGfslwf6h/F/Gjcurzh9KJ5MoeqFz6O
-        CsgI3GPjd+xFmUXg5zXrOs7eKQ57WF8xdXtf763G+W83/ji14+rsTfpfd1xbk/XNjdvSsyrk
-        bEJad8udWKXbvr8yfX721BXXP8psusd8k1MrgbtLiaU4I9FQi7moOBEAArexdQMDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOLMWRmVeSWpSXmKPExsVy+t/xe7oTTVbEGmx8o2KxccZ6Vov5R86x
-        Wpw/v4HdYtPja6wWn3uPMFrMOL+PyWLtkbvsFq17j7BbHH7TzurA6bFpVSebx+Yl9R59W1Yx
-        enzeJBfAEqVnU5RfWpKqkJFfXGKrFG1oYaRnaGmhZ2RiqWdobB5rZWSqpG9nk5Kak1mWWqRv
-        l6CXcXfqJuaCrUIVa1f3sDQwHubrYuTkkBAwkVhy8wZrFyMXh5DAUkaJg71HWLoYOYASUhLz
-        W5QgaoQl/lzrYoOo+cQocfzdcUaQBJuAoUTv0T5GkHoRATGJvWtFQWqYBRqZJG5smwVWIywQ
-        IPHkHUgzJweLgKrEvDVnmEDqeQWsJVq3mkDMl5dYveEA8wRGngWMDKsYRVJLi3PTc4sN9YoT
-        c4tL89L1kvNzNzECA3HbsZ+bdzBe2hh8iFGAg1GJh3cC4/JYIdbEsuLK3EOMEhzMSiK881uW
-        xArxpiRWVqUW5ccXleakFh9iNAXaPZFZSjQ5HxgleSXxhqaG5haWhubG5sZmFkrivB0CB2OE
-        BNITS1KzU1MLUotg+pg4OKUaGJM38n/oc5+cs2Udp0718TYvnTUZtiFiJl1/KqTb513jeND3
-        Z/7VH63Ldye+93h5e/bhCcYvDKOERMvaXR3uPu0R/yt9KTmF337VKn4ft6OHjDzj5Vb1yX1i
-        urv8C+NBvkmZa6a1FqYG/XlgvrBP77WS79uon0z5Bd1ZaqtuHlk2OZNdbOWjG0osxRmJhlrM
-        RcWJAAP7r5xaAgAA
-X-CMS-MailID: 20191017092953eucas1p259c1e03eb2cb4d19aa48eaa2e3cca2dc
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20191017092953eucas1p259c1e03eb2cb4d19aa48eaa2e3cca2dc
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20191017092953eucas1p259c1e03eb2cb4d19aa48eaa2e3cca2dc
-References: <CGME20191017092953eucas1p259c1e03eb2cb4d19aa48eaa2e3cca2dc@eucas1p2.samsung.com>
+        Thu, 17 Oct 2019 05:32:28 -0400
+Received-SPF: Pass (esa5.microchip.iphmx.com: domain of
+  Ludovic.Desroches@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
+  envelope-from="Ludovic.Desroches@microchip.com";
+  x-sender="Ludovic.Desroches@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa5.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
+  envelope-from="Ludovic.Desroches@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa5.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Ludovic.Desroches@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: RiPCekASyK4XX90kgCguTCZ6Fewhru0nFfg686muQ+X+vlhkeieyRjrnEUVS3yVAzWUE6DVNG+
+ GbSV9HVpkfwpF5mY5RfpApF4VBMWZ6Nxn4Q20rPm7PF5NNjQ5Cpi7M9xdDogU32xpnXuMWJm0n
+ 3t1QxTxeSK2r8AE+Fb7kj5deB6wBEHEx99oxp3Qz0lElf95HmZxlZUQrQNXL1fWFtxS0DWquEo
+ AGwgYe+DhTVb79+g3k+w7BNGS4y2GVg7aRO4olJlG4V4OVjeRqhLz2OBHRZLPchMQ6XbubaumY
+ geg=
+X-IronPort-AV: E=Sophos;i="5.67,307,1566889200"; 
+   d="scan'208";a="51838929"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 17 Oct 2019 02:32:12 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 17 Oct 2019 02:32:10 -0700
+Received: from localhost (10.10.85.251) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
+ Transport; Thu, 17 Oct 2019 02:32:10 -0700
+Date:   Thu, 17 Oct 2019 11:32:37 +0200
+From:   Ludovic Desroches <ludovic.desroches@microchip.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+CC:     <herbert@gondor.apana.org.au>, <mpm@selenic.com>, <arnd@arndb.de>,
+        <gregkh@linuxfoundation.org>, <nicolas.ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <f.fainelli@gmail.com>,
+        <rjui@broadcom.com>, <sbranden@broadcom.com>,
+        <bcm-kernel-feedback-list@broadcom.com>, <eric@anholt.net>,
+        <wahrenst@gmx.net>, <l.stelmach@samsung.com>, <kgene@kernel.org>,
+        <krzk@kernel.org>, <khilman@baylibre.com>, <dsaxena@plexity.net>,
+        <patrice.chotard@st.com>, <linux-crypto@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH -next 01/13] hwrng: atmel - use
+ devm_platform_ioremap_resource() to simplify code
+Message-ID: <20191017093237.3poaq7unlm62mhwt@M43218.corp.atmel.com>
+Mail-Followup-To: YueHaibing <yuehaibing@huawei.com>,
+        herbert@gondor.apana.org.au, mpm@selenic.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org, nicolas.ferre@microchip.com,
+        alexandre.belloni@bootlin.com, f.fainelli@gmail.com,
+        rjui@broadcom.com, sbranden@broadcom.com,
+        bcm-kernel-feedback-list@broadcom.com, eric@anholt.net,
+        wahrenst@gmx.net, l.stelmach@samsung.com, kgene@kernel.org,
+        krzk@kernel.org, khilman@baylibre.com, dsaxena@plexity.net,
+        patrice.chotard@st.com, linux-crypto@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
+References: <20191016104621.26056-1-yuehaibing@huawei.com>
+ <20191016104621.26056-2-yuehaibing@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20191016104621.26056-2-yuehaibing@huawei.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This patch adds documentation of new optional "samsung,asv-bin"
-property in the chipid device node and documents requirement of
-"syscon" compatible string.  These additions are needed to support
-Exynos ASV (Adaptive Supply Voltage) feature.
+On Wed, Oct 16, 2019 at 06:46:09PM +0800, YueHaibing wrote:
+> External E-Mail
+> 
+> 
+> Use devm_platform_ioremap_resource() to simplify the code a bit.
+> This is detected by coccinelle.
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
-Depends on patch ("8d0daa4c89c9 dt-bindings: arm: samsung: Convert
-Exynos Chipid bindings to json-schema") already applied to Rob's
-dt/next.
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
 
-Changes since v5:
- - removed uneeded allOf from 'compatible' property section
+Thanks
 
-Changes since v4:
- - converted to YAML
-
-Changes since v3:
- - none
-
-Changes since v2:
- - corrected patch summary line prefix, the patch moved in the
-   sequence
-
-Changes since v1 (RFC):
- - new patch
----
- .../bindings/arm/samsung/exynos-chipid.yaml   | 26 ++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.yaml b/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.yaml
-index 9c573ad7dc7d..c7f06aa1963c 100644
---- a/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.yaml
-+++ b/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.yaml
-@@ -9,17 +9,41 @@ title: Samsung Exynos SoC series Chipid driver
- maintainers:
-   - Krzysztof Kozlowski <krzk@kernel.org>
-
-+# Custom select to avoid matching all nodes with 'syscon'
-+select:
-+  properties:
-+    compatible:
-+      contains:
-+        const: samsung,exynos4210-chipid
-+  required:
-+    - compatible
-+
- properties:
-   compatible:
-     items:
-       - const: samsung,exynos4210-chipid
-+      - const: syscon
-
-   reg:
-     maxItems: 1
-
-+  samsung,asv-bin:
-+    description:
-+      Adaptive Supply Voltage bin selection. This can be used
-+      to determine the ASV bin of an SoC if respective information
-+      is missing in the CHIPID registers or in the OTP memory.
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32
-+      - enum: [ 0, 1, 2, 3 ]
-+
-+required:
-+  - compatible
-+  - reg
-+
- examples:
-   - |
-     chipid@10000000 {
--      compatible = "samsung,exynos4210-chipid";
-+      compatible = "samsung,exynos4210-chipid", "syscon";
-       reg = <0x10000000 0x100>;
-+      samsung,asv-bin = <2>;
-     };
---
-2.17.1
-
+> ---
+>  drivers/char/hw_random/atmel-rng.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/char/hw_random/atmel-rng.c b/drivers/char/hw_random/atmel-rng.c
+> index e557057..b3138ec2 100644
+> --- a/drivers/char/hw_random/atmel-rng.c
+> +++ b/drivers/char/hw_random/atmel-rng.c
+> @@ -62,15 +62,13 @@ static void atmel_trng_disable(struct atmel_trng *trng)
+>  static int atmel_trng_probe(struct platform_device *pdev)
+>  {
+>  	struct atmel_trng *trng;
+> -	struct resource *res;
+>  	int ret;
+>  
+>  	trng = devm_kzalloc(&pdev->dev, sizeof(*trng), GFP_KERNEL);
+>  	if (!trng)
+>  		return -ENOMEM;
+>  
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	trng->base = devm_ioremap_resource(&pdev->dev, res);
+> +	trng->base = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(trng->base))
+>  		return PTR_ERR(trng->base);
+>  
+> -- 
+> 2.7.4
+> 
+> 
+> 
