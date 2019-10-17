@@ -1,71 +1,132 @@
-Return-Path: <SRS0=YSTQ=YJ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=qdBE=YK=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1F13FA3728
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Oct 2019 23:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC8EECE599
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Oct 2019 01:27:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8D8621848
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 16 Oct 2019 23:34:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1571268867;
-	bh=vteasG9t82lTuUd1FLxsGGoHzxtVjFCukWZwh1O1yTw=;
-	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
-	b=tBrZh9gn+3AQ90UTlIohaQ5tkX11E5eKRbgpRYgcl8mjmesSghkk41dvyou5jJ8Z9
-	 ON8yxEnRsZFL9DhKvTSmxJtj0/A+IA1X3EHZANhSh/wVAABDAbPSLEJeBTXmJilhw8
-	 9zY35gqSrShqTZ+D1Pa7kgS0osA6x5iAEmqwtqr8=
+	by mail.kernel.org (Postfix) with ESMTP id AB1FB21928
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Oct 2019 01:27:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439011AbfJPXeX (ORCPT
+        id S1731017AbfJQB1Y (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 16 Oct 2019 19:34:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56132 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728302AbfJPXeX (ORCPT
+        Wed, 16 Oct 2019 21:27:24 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4194 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727916AbfJQB1Y (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 16 Oct 2019 19:34:23 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCA782168B;
-        Wed, 16 Oct 2019 23:34:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571268862;
-        bh=vteasG9t82lTuUd1FLxsGGoHzxtVjFCukWZwh1O1yTw=;
-        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
-        b=IJCEHxCyF/QrZcX1ouR2Xs87dz0bNKCt5dCEU2dtoyrONT+mSIiaEMnpeI3tAKWnd
-         PvioMJG9hafa5yrkztUz0Emnqt23HrRJl78oroPpPjm3trt2MeRsBm0ofYHYE2jv8p
-         2+zO2yQ8jmca61oU2cjWsnjZ2Enjzkypu/J18af8=
-Content-Type: text/plain; charset="utf-8"
+        Wed, 16 Oct 2019 21:27:24 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 735A76153B773426C5B9;
+        Thu, 17 Oct 2019 09:27:20 +0800 (CST)
+Received: from [127.0.0.1] (10.133.213.239) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Thu, 17 Oct 2019
+ 09:27:17 +0800
+Subject: Re: [PATCH -next 00/13] hwrng: use devm_platform_ioremap_resource()
+ to simplify code
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        <herbert@gondor.apana.org.au>, <mpm@selenic.com>, <arnd@arndb.de>,
+        <gregkh@linuxfoundation.org>, <nicolas.ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <ludovic.desroches@microchip.com>,
+        <rjui@broadcom.com>, <sbranden@broadcom.com>,
+        <bcm-kernel-feedback-list@broadcom.com>, <eric@anholt.net>,
+        <wahrenst@gmx.net>, <l.stelmach@samsung.com>, <kgene@kernel.org>,
+        <krzk@kernel.org>, <khilman@baylibre.com>, <dsaxena@plexity.net>,
+        <patrice.chotard@st.com>
+References: <20191016104621.26056-1-yuehaibing@huawei.com>
+ <2c60b926-1e98-cca0-ec17-6b45f9da404a@gmail.com>
+CC:     <linux-crypto@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linuxppc-dev@lists.ozlabs.org>
+From:   Yuehaibing <yuehaibing@huawei.com>
+Message-ID: <7c0269b6-cab3-bded-7f9d-76430be89f9c@huawei.com>
+Date:   Thu, 17 Oct 2019 09:27:13 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191015142424.25944-1-yuehaibing@huawei.com>
-References: <20191015142424.25944-1-yuehaibing@huawei.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     YueHaibing <yuehaibing@huawei.com>, cw00.choi@samsung.com,
-        kgene@kernel.org, krzk@kernel.org, mturquette@baylibre.com,
-        s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
-Subject: Re: [PATCH -next] clk: s3c2410: use devm_platform_ioremap_resource() to simplify code
-User-Agent: alot/0.8.1
-Date:   Wed, 16 Oct 2019 16:34:22 -0700
-Message-Id: <20191016233422.CCA782168B@mail.kernel.org>
+In-Reply-To: <2c60b926-1e98-cca0-ec17-6b45f9da404a@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Quoting YueHaibing (2019-10-15 07:24:24)
-> Use devm_platform_ioremap_resource() to simplify the code a bit.
-> This is detected by coccinelle.
->=20
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
 
-Applied to clk-next
+
+On 2019/10/17 0:44, Florian Fainelli wrote:
+> On 10/16/19 3:46 AM, YueHaibing wrote:
+>> devm_platform_ioremap_resource() internally have platform_get_resource()
+>> and devm_ioremap_resource() in it. So instead of calling them separately
+>> use devm_platform_ioremap_resource() directly.
+> 
+> Did your coccinelle script not cover
+> drivers/char/hw_random/iproc-rng200.c somehow? Do you mind including it
+> as a separate patch?
+
+A patch from Markus Elfring has be queued:
+
+commit a68b931932c5574aa5bd459529c766ba577c72b3
+Author: Markus Elfring <elfring@users.sourceforge.net>
+Date:   Wed Sep 18 09:09:22 2019 +0200
+
+    hwrng: iproc-rng200 - Use devm_platform_ioremap_resource() in iproc_rng200_probe()
+
+    Simplify this function implementation by using a known wrapper function.
+
+    This issue was detected by using the Coccinelle software.
+
+    Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+    Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+    Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+    Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+
+
+
+
+> Thanks
+> 
+>>
+>> YueHaibing (13):
+>>   hwrng: atmel - use devm_platform_ioremap_resource() to simplify code
+>>   hwrng: bcm2835 - use devm_platform_ioremap_resource() to simplify code
+>>   hwrng: exynos - use devm_platform_ioremap_resource() to simplify code
+>>   hwrng: hisi - use devm_platform_ioremap_resource() to simplify code
+>>   hwrng: ks-sa - use devm_platform_ioremap_resource() to simplify code
+>>   hwrng: meson - use devm_platform_ioremap_resource() to simplify code
+>>   hwrng: npcm - use devm_platform_ioremap_resource() to simplify code
+>>   hwrng: omap - use devm_platform_ioremap_resource() to simplify code
+>>   hwrng: pasemi - use devm_platform_ioremap_resource() to simplify code
+>>   hwrng: pic32 - use devm_platform_ioremap_resource() to simplify code
+>>   hwrng: st - use devm_platform_ioremap_resource() to simplify code
+>>   hwrng: tx4939 - use devm_platform_ioremap_resource() to simplify code
+>>   hwrng: xgene - use devm_platform_ioremap_resource() to simplify code
+>>
+>>  drivers/char/hw_random/atmel-rng.c   | 4 +---
+>>  drivers/char/hw_random/bcm2835-rng.c | 5 +----
+>>  drivers/char/hw_random/exynos-trng.c | 4 +---
+>>  drivers/char/hw_random/hisi-rng.c    | 4 +---
+>>  drivers/char/hw_random/ks-sa-rng.c   | 4 +---
+>>  drivers/char/hw_random/meson-rng.c   | 4 +---
+>>  drivers/char/hw_random/npcm-rng.c    | 4 +---
+>>  drivers/char/hw_random/omap-rng.c    | 4 +---
+>>  drivers/char/hw_random/pasemi-rng.c  | 4 +---
+>>  drivers/char/hw_random/pic32-rng.c   | 4 +---
+>>  drivers/char/hw_random/st-rng.c      | 4 +---
+>>  drivers/char/hw_random/tx4939-rng.c  | 4 +---
+>>  drivers/char/hw_random/xgene-rng.c   | 4 +---
+>>  13 files changed, 13 insertions(+), 40 deletions(-)
+>>
+> 
+> 
 
