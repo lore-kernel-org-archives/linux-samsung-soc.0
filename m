@@ -2,253 +2,100 @@ Return-Path: <SRS0=qdBE=YK=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37274ECE58D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Oct 2019 18:56:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52F5CECE58D
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Oct 2019 19:28:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF5DA21835
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Oct 2019 18:56:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2072820869
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Oct 2019 19:28:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1571338592;
-	bh=qXo6exvudcIbVnUP2PB0Rmm+J/ae6gIvjV4+nUKOp7c=;
+	s=default; t=1571340497;
+	bh=koa3VOJNloTppeB8ILkxIlYZ6IQRTHOirtNHRv1r/JI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=rxOPJZVINLj12yc6N3arA27oHA424Bz+rDWil9AWXI1NvI1vYBFcUIoHp6vwJ+SDS
-	 jDuafPzhGUuk57zRD/fccqDjWl9qGTcvfgfypGVqjRkBdd59t4nNPyxVA5nN0kXbVH
-	 wv/qRPskS9yC2wLu/H7lDPcOsD1ZlE/RpqxIXzAs=
+	b=nN31JmXrNVZQgrems1yM7z+eqrslJB36iqRrFSNrLXfEVf+6bh5YZvE1dvHvU9XXS
+	 3T7lv8h0r+zjXGOF4f+wbE9WhJG9MU3y3Sd3zB2+FYCDKKaPLcAbEZrxuQRGlyCZHx
+	 Aq88JuS+EQFu7HMmJ5Frpi6dNzFTPVqt8inTb9AY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390650AbfJQS4b (ORCPT
+        id S2436755AbfJQT2Q (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 17 Oct 2019 14:56:31 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:33155 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728796AbfJQS4b (ORCPT
+        Thu, 17 Oct 2019 15:28:16 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:34427 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393438AbfJQT2Q (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 17 Oct 2019 14:56:31 -0400
-Received: by mail-oi1-f193.google.com with SMTP id a15so3118516oic.0;
-        Thu, 17 Oct 2019 11:56:30 -0700 (PDT)
+        Thu, 17 Oct 2019 15:28:16 -0400
+Received: by mail-oi1-f195.google.com with SMTP id 83so3193567oii.1;
+        Thu, 17 Oct 2019 12:28:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OIlKYxbD3v48QhMXdWaoqqWvm2v29IB+F6T3fMPmGFY=;
-        b=f2DhRuv5rDAdaWbzcdKuddvNBx2VN+PKV6E5oGhIE6f6c48uLDli1u6eoXsVoOpYqR
-         TjLQxo0Wvj2uh8JRhkA71FspOU5WKLv+En8o2/CGYHbNHJSWLfJQ3ybWb7Mk6hwIAJuO
-         6EsUQWKod+iKUnZuBtaCpjbwXSEywUo1beTph8VZftb6fSZhQCBcgSKB8l+CNoYV1lKU
-         r7fw3D86i9/ldcdmTOHj8Mix0jnTfJNoJ/2DhxEVtvR+4ro6ojcfw3dBybxed7xWDL2p
-         /jCRwKULcQac4tc52tmWCKn7391jK2laBjCLZYRBUA7XgXP+L1zq906ZjwXR3MAoUAM3
-         QlnA==
-X-Gm-Message-State: APjAAAVvherq/Dj9nH9dLrZYAMcocJWb4wYwAgHFYHISktdoQPmMVE+R
-        Ut8kYM4CQqIE2+V6i1lUHw==
-X-Google-Smtp-Source: APXvYqwbL0Ei9KK0E8mppc/FlyCSa2rde90FmcjmHdODK5gTRt8Pn98hBtxCMqhBOwYMBmAnsbM/PA==
-X-Received: by 2002:a05:6808:614:: with SMTP id y20mr4647422oih.60.1571338589906;
-        Thu, 17 Oct 2019 11:56:29 -0700 (PDT)
+        bh=SqAFHmUiEpU5rAmf8Tug9HDaQyGE8/7zvO3FldJ1AqM=;
+        b=Wka6aIl5cs5n1XdkVNOuJhfT8xZbmwZdcn6nCgs7yi91vRG8g3T18SKf9px3rtNoGM
+         oYtV2gI5irD7APhSu2G2Xqjd+gSM/EIzVF6Sxuj9U5kNxKgiWf9PYuAsnWDQwRGi/pSn
+         7D/y+ZUVN4h7AhBYFQTi1t4RVnMToOwg4b5fEaTM6d2/59NxCKWHij0m+mXl9YngB4lE
+         jn/3nL8QrQAhqYU+qwvp9CXN9YitjZ6pZUP3Oan9NLrF/n9jEE2oWqD2R2wqSI/J1aZq
+         xUaFU89UsXEMy2jmCXNo/dH91lvdGptjQsSWaKZOu59xaxJhv1z5N3KB7jK7Ti46s3e/
+         B/Ig==
+X-Gm-Message-State: APjAAAWCxeQ5XZ6P6sKLPc3UoGJoIRimlTyBHvKbr+JRnUoPy78ie2+L
+        Bz4sIXcnnzK/OtGTI/Ast0mPG08=
+X-Google-Smtp-Source: APXvYqwB11uurv4LKiBTMRl3GG7b35sfh5jfB3nvxXh730JUGJ8/aXCy41c7F0cQoRKMXbYcf965bg==
+X-Received: by 2002:a54:4582:: with SMTP id z2mr4497593oib.53.1571340495419;
+        Thu, 17 Oct 2019 12:28:15 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id a88sm846203otb.0.2019.10.17.11.56.29
+        by smtp.gmail.com with ESMTPSA id b31sm818240otc.70.2019.10.17.12.28.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2019 11:56:29 -0700 (PDT)
-Date:   Thu, 17 Oct 2019 13:56:28 -0500
+        Thu, 17 Oct 2019 12:28:14 -0700 (PDT)
+Date:   Thu, 17 Oct 2019 14:28:14 -0500
 From:   Rob Herring <robh@kernel.org>
 To:     Marek Szyprowski <m.szyprowski@samsung.com>
 Cc:     devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
         Mark Brown <broonie@kernel.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Maciej Falkowski <m.falkowski@samsung.com>
-Subject: Re: [PATCH v3] dt-bindings: sound: Convert Samsung Exynos5433 TM2(E)
- audio complex with WM5110 codec to dt-schema
-Message-ID: <20191017185628.GA25020@bogus>
-References: <CGME20191017100514eucas1p2e189e26e887c9cdd2209357c91846641@eucas1p2.samsung.com>
- <20191017100506.4036-1-m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2] dt-bindings: sound: Convert Samsung Exynos Odroid
+  XU3/XU4 audio complex to dt-schema
+Message-ID: <20191017192814.GA11356@bogus>
+References: <CGME20191017100534eucas1p1407cf6ef5606d6bd6a4140502cc95984@eucas1p1.samsung.com>
+ <20191017100529.4183-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191017100506.4036-1-m.szyprowski@samsung.com>
+In-Reply-To: <20191017100529.4183-1-m.szyprowski@samsung.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 12:05:06PM +0200, Marek Szyprowski wrote:
+On Thu, 17 Oct 2019 12:05:29 +0200, Marek Szyprowski wrote:
 > From: Maciej Falkowski <m.falkowski@samsung.com>
 > 
-> Convert Samsung Exynos5433 TM2(E) audio complex with WM5110 codec to
-> newer dt-schema format.
+> Convert Samsung Exynos Odroid XU3/XU4 audio complex with MAX98090 codec
+> to newer dt-schema format.
+> 
+> 'clocks' property is unneeded in the bindings and is left undefined in 'properties'.
+> 
+> 'samsung,audio-widgets' and 'samsung,audio-routing' are optional from driver
+> perspective and they are set as unrequired.
 > 
 > Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
-> [mszyprow: reordered non-standard properties, added list of values
->  for widgets, minor other fixes]
+> [mszyprow: reordered non-standard properties]
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->  .../bindings/sound/samsung,tm2-audio.txt      | 42 --------
->  .../bindings/sound/samsung,tm2-audio.yaml     | 99 +++++++++++++++++++
->  2 files changed, 99 insertions(+), 42 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
->  create mode 100644 Documentation/devicetree/bindings/sound/samsung,tm2-audio.yaml
+>  .../bindings/sound/samsung,odroid.txt         | 54 -----------
+>  .../bindings/sound/samsung,odroid.yaml        | 91 +++++++++++++++++++
+>  2 files changed, 91 insertions(+), 54 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/sound/samsung,odroid.txt
+>  create mode 100644 Documentation/devicetree/bindings/sound/samsung,odroid.yaml
 > 
-> diff --git a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
-> deleted file mode 100644
-> index f5ccc12ddc00..000000000000
-> --- a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
-> +++ /dev/null
-> @@ -1,42 +0,0 @@
-> -Samsung Exynos5433 TM2(E) audio complex with WM5110 codec
-> -
-> -Required properties:
-> -
-> - - compatible		 : "samsung,tm2-audio"
-> - - model		 : the user-visible name of this sound complex
-> - - audio-codec		 : the first entry should be phandle of the wm5110 audio
-> -			   codec node, as described in ../mfd/arizona.txt;
-> -			   the second entry should be phandle of the HDMI
-> -			   transmitter node
-> - - i2s-controller	 : the list of phandle and argument tuples pointing to
-> -			   I2S controllers, the first entry should be I2S0 and
-> -			   the second one I2S1
-> - - audio-amplifier	 : the phandle of the MAX98504 amplifier
-> - - samsung,audio-routing : a list of the connections between audio components;
-> -			   each entry is a pair of strings, the first being the
-> -			   connection's sink, the second being the connection's
-> -			   source; valid names for sources and sinks are the
-> -			   WM5110's and MAX98504's pins and the jacks on the
-> -			   board: HP, SPK, Main Mic, Sub Mic, Third Mic,
-> -			   Headset Mic
-> - - mic-bias-gpios	 : GPIO pin that enables the Main Mic bias regulator
-> -
-> -
-> -Example:
-> -
-> -sound {
-> -	compatible = "samsung,tm2-audio";
-> -	audio-codec = <&wm5110>, <&hdmi>;
-> -	i2s-controller = <&i2s0 0>, <&i2s1 0>;
-> -	audio-amplifier = <&max98504>;
-> -	mic-bias-gpios = <&gpr3 2 0>;
-> -	model = "wm5110";
-> -	samsung,audio-routing =
-> -		"HP", "HPOUT1L",
-> -		"HP", "HPOUT1R",
-> -		"SPK", "SPKOUT",
-> -		"SPKOUT", "HPOUT2L",
-> -		"SPKOUT", "HPOUT2R",
-> -		"Main Mic", "MICBIAS2",
-> -		"IN1R", "Main Mic";
-> -};
-> diff --git a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.yaml b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.yaml
-> new file mode 100644
-> index 000000000000..c9178d928ad4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.yaml
-> @@ -0,0 +1,99 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sound/samsung,tm2-audio.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung Exynos SoC Exynos5433 TM2(E) audio complex with WM5110 codec
-> +
-> +maintainers:
-> +  - Krzysztof Kozlowski <krzk@kernel.org>
-> +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: samsung,tm2-audio
-> +
-> +  model:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description: The user-visible name of this sound complex.
-> +
-> +  i2s-controller:
-> +    allOf:
-> +    - $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    - items:
-> +       - description: phandle of the I2S0.
-> +       - description: phandle of the I2S1.
-> +
-> +  audio-codec:
-> +    allOf:
-> +    - $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    - items:
-> +       - description: |
-> +            phandle of the wm5110 audio codec node,
-> +            as described in ../mfd/arizona.txt;
-> +       - description: phandle of the HDMI transmitter node.
-> +
-> +  audio-amplifier:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: phandle of the MAX98504 amplifier.
-> +
-> +  mic-bias-gpios:
-> +    description: GPIO pin that enables the Main Mic bias regulator.
-> +    maxItems: 1
-> +
-> +  samsung,audio-routing:
-> +    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
-> +    description: |
-> +      List of the connections between audio components.
-> +      Each entry is a pair of strings, the first being the
-> +      connection's sink, the second being the connection's
-> +      source. Valid names for sources and sinks are:
-> +      the WM5110's pins:
-> +         "HPOUT1L",
-> +         "HPOUT1R",
-> +         "HPOUT2L",
-> +         "HPOUT2R",
-> +         "HPOUT3L",
-> +         "HPOUT3R",
-> +      MAX98504's pins:
-> +         "SPKOUT"
-> +      and the jacks on the board:
-> +         "HP",
-> +         "SPK",
-> +         "RCV",
-> +         "Main Mic",
-> +         "Sub Mic",
-> +         "Third Mic",
-> +         "Headset Mic".
 
-All these strings can be a schema.
-
-> +
-> +required:
-> +  - compatible
-> +  - model
-> +  - i2s-controller
-> +  - audio-codec
-> +  - audio-amplifier
-> +  - mic-bias-gpios
-> +  - samsung,audio-routing
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    sound {
-> +        compatible = "samsung,tm2-audio";
-> +        model = "wm5110";
-> +        i2s-controller = <&i2s0 0>, <&i2s1 0>;
-> +        audio-codec = <&wm5110>, <&hdmi>;
-> +        audio-amplifier = <&max98504>;
-> +        mic-bias-gpios = <&gpr3>;
-> +        samsung,audio-routing =
-> +                "HP", "HPOUT1L",
-> +                "HP", "HPOUT1R",
-> +                "SPK", "SPKOUT",
-> +                "SPKOUT", "HPOUT2L",
-> +                "SPKOUT", "HPOUT2R",
-> +                "Main Mic", "MICBIAS2",
-> +                "IN1R", "Main Mic";
-> +    };
-> +
-> -- 
-> 2.17.1
-> 
+Reviewed-by: Rob Herring <robh@kernel.org>
