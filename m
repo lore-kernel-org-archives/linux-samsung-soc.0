@@ -2,155 +2,253 @@ Return-Path: <SRS0=qdBE=YK=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8567AFA372A
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Oct 2019 15:29:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37274ECE58D
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Oct 2019 18:56:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56DFB20872
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Oct 2019 15:29:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rtG7U/WF"
+	by mail.kernel.org (Postfix) with ESMTP id EF5DA21835
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 17 Oct 2019 18:56:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1571338592;
+	bh=qXo6exvudcIbVnUP2PB0Rmm+J/ae6gIvjV4+nUKOp7c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=rxOPJZVINLj12yc6N3arA27oHA424Bz+rDWil9AWXI1NvI1vYBFcUIoHp6vwJ+SDS
+	 jDuafPzhGUuk57zRD/fccqDjWl9qGTcvfgfypGVqjRkBdd59t4nNPyxVA5nN0kXbVH
+	 wv/qRPskS9yC2wLu/H7lDPcOsD1ZlE/RpqxIXzAs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407700AbfJQP3C (ORCPT
+        id S2390650AbfJQS4b (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 17 Oct 2019 11:29:02 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:52489 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407699AbfJQP3B (ORCPT
+        Thu, 17 Oct 2019 14:56:31 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:33155 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728796AbfJQS4b (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 17 Oct 2019 11:29:01 -0400
-Received: by mail-wm1-f66.google.com with SMTP id r19so3027524wmh.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Oct 2019 08:28:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8ekt2r633krBIKdm2MRWn1/pbuY6S29TraTxsvnoK4k=;
-        b=rtG7U/WFEJB937Z+UVa7zX93QaONAQY6vMOSjaE/oYZkhh4E4IlI7dU+lRGEsJwSyA
-         mymkOhBUkVE6YLDzZhDWJIWv/XRTly2XbhE+BioypJNcpOJW7FBP2z/j7nHOhQecV+fu
-         fL2/XPHmaAkSk3IaJA+V050VgvfGv2HtmATwlaUVKV6+ePESSqHNCk62XsACKWvn+edL
-         HkANTtvyN4Wfo62Boe8Nclhv5FwClad+EPHthVIPdHYQKxQMh4TQjTITGGS0ARd5gkJj
-         Op5jHtvoqsuSyRVNPiNSE5/UtL5/7TYcnJ5c2mjYYijHfDfynZOaj2XkOcs5jTbNfNkc
-         nErw==
+        Thu, 17 Oct 2019 14:56:31 -0400
+Received: by mail-oi1-f193.google.com with SMTP id a15so3118516oic.0;
+        Thu, 17 Oct 2019 11:56:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8ekt2r633krBIKdm2MRWn1/pbuY6S29TraTxsvnoK4k=;
-        b=VjcHZMJgzpGiFaizLqQHT3ToRILhay7lpyIl4474YWzM2Wq4mLpr4dRBPGArRxzIOy
-         mRHR8rXnZYNQyF0UNpxbTNpLplLCx8Vj5asthuAbvlGl16HExn+Hoa3Jdq60yl9NPqbg
-         v0i7arGG0axPhQfQtOV+LxMGbxG0mk0o7u4q8unhCuXG0X5OZZ5eDY6LBy4teU8OiNNx
-         b51UgG1mCbR7UWW5Y9AzbyRjF8M/EelGamQtJiUApVPQEaoasI9xdk2th85DAnbx1kHu
-         eeQf+59azNFrncBuCeEhSS8pIi5tINm9wgswlR1GZPzg0ZFlOQuFkcXi9QB5rdISlnIw
-         +eWQ==
-X-Gm-Message-State: APjAAAVRdRNdQ8udIyXTwLH4wzXVl5Gr88ec8bqtIuOreQz2d5hRWepx
-        kqk7EQVGD9sbLV9LSlXkrk8tjeD51+rLdTILchmIqw==
-X-Google-Smtp-Source: APXvYqwQkbkxfA5DYAC5X7GLKci02tkbzr1oFaST60w1ilVREPi79ZyDCQMpkLqMnzKmdtR1QNgJ17evb3jAUFvvsKk=
-X-Received: by 2002:a1c:a651:: with SMTP id p78mr3454453wme.53.1571326138344;
- Thu, 17 Oct 2019 08:28:58 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191014121910.7264-1-ard.biesheuvel@linaro.org>
- <CGME20191014121950epcas4p18dbe227632fbee9b09f322d80deeb1c1@epcas4p1.samsung.com>
- <20191014121910.7264-8-ard.biesheuvel@linaro.org> <c07712f3-dea5-7953-82a0-706c1fe0e5d6@samsung.com>
-In-Reply-To: <c07712f3-dea5-7953-82a0-706c1fe0e5d6@samsung.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 17 Oct 2019 17:28:48 +0200
-Message-ID: <CAKv+Gu_R1WUn98n1FYdrY0S4B5+a9aKKLCqqKk=_9Q=zjXhaAQ@mail.gmail.com>
-Subject: Re: [PATCH 07/25] crypto: s5p - switch to skcipher API
-To:     Kamil Konieczny <k.konieczny@samsung.com>
-Cc:     "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Biggers <ebiggers@google.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OIlKYxbD3v48QhMXdWaoqqWvm2v29IB+F6T3fMPmGFY=;
+        b=f2DhRuv5rDAdaWbzcdKuddvNBx2VN+PKV6E5oGhIE6f6c48uLDli1u6eoXsVoOpYqR
+         TjLQxo0Wvj2uh8JRhkA71FspOU5WKLv+En8o2/CGYHbNHJSWLfJQ3ybWb7Mk6hwIAJuO
+         6EsUQWKod+iKUnZuBtaCpjbwXSEywUo1beTph8VZftb6fSZhQCBcgSKB8l+CNoYV1lKU
+         r7fw3D86i9/ldcdmTOHj8Mix0jnTfJNoJ/2DhxEVtvR+4ro6ojcfw3dBybxed7xWDL2p
+         /jCRwKULcQac4tc52tmWCKn7391jK2laBjCLZYRBUA7XgXP+L1zq906ZjwXR3MAoUAM3
+         QlnA==
+X-Gm-Message-State: APjAAAVvherq/Dj9nH9dLrZYAMcocJWb4wYwAgHFYHISktdoQPmMVE+R
+        Ut8kYM4CQqIE2+V6i1lUHw==
+X-Google-Smtp-Source: APXvYqwbL0Ei9KK0E8mppc/FlyCSa2rde90FmcjmHdODK5gTRt8Pn98hBtxCMqhBOwYMBmAnsbM/PA==
+X-Received: by 2002:a05:6808:614:: with SMTP id y20mr4647422oih.60.1571338589906;
+        Thu, 17 Oct 2019 11:56:29 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id a88sm846203otb.0.2019.10.17.11.56.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2019 11:56:29 -0700 (PDT)
+Date:   Thu, 17 Oct 2019 13:56:28 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Kamil Konieczny <k.konieczny@partner.samsung.com>,
-        linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Maciej Falkowski <m.falkowski@samsung.com>
+Subject: Re: [PATCH v3] dt-bindings: sound: Convert Samsung Exynos5433 TM2(E)
+ audio complex with WM5110 codec to dt-schema
+Message-ID: <20191017185628.GA25020@bogus>
+References: <CGME20191017100514eucas1p2e189e26e887c9cdd2209357c91846641@eucas1p2.samsung.com>
+ <20191017100506.4036-1-m.szyprowski@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191017100506.4036-1-m.szyprowski@samsung.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 17 Oct 2019 at 17:18, Kamil Konieczny <k.konieczny@samsung.com> wrote:
->
-> Hi,
->
-> On 14.10.2019 14:18, Ard Biesheuvel wrote:
-> > Commit 7a7ffe65c8c5 ("crypto: skcipher - Add top-level skcipher interface")
-> > dated 20 august 2015 introduced the new skcipher API which is supposed to
-> > replace both blkcipher and ablkcipher. While all consumers of the API have
-> > been converted long ago, some producers of the ablkcipher remain, forcing
-> > us to keep the ablkcipher support routines alive, along with the matching
-> > code to expose [a]blkciphers via the skcipher API.
-> >
-> > So switch this driver to the skcipher API, allowing us to finally drop the
-> > blkcipher code in the near future.
-> >
-> > Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> > Cc: Vladimir Zapolskiy <vz@mleia.com>
-> > Cc: Kamil Konieczny <k.konieczny@partner.samsung.com>
-> > Cc: linux-samsung-soc@vger.kernel.org
-> > Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > ---
->
-> There are comments for hash functions changed, see below.
-> With that fixed, you can add my
->
-> Reviewed-by: Kamil Konieczny <k.konieczny@samsung.com>
-> Tested-by: Kamil Konieczny <k.konieczny@samsung.com>
->
+On Thu, Oct 17, 2019 at 12:05:06PM +0200, Marek Szyprowski wrote:
+> From: Maciej Falkowski <m.falkowski@samsung.com>
+> 
+> Convert Samsung Exynos5433 TM2(E) audio complex with WM5110 codec to
+> newer dt-schema format.
+> 
+> Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
+> [mszyprow: reordered non-standard properties, added list of values
+>  for widgets, minor other fixes]
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  .../bindings/sound/samsung,tm2-audio.txt      | 42 --------
+>  .../bindings/sound/samsung,tm2-audio.yaml     | 99 +++++++++++++++++++
+>  2 files changed, 99 insertions(+), 42 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
+>  create mode 100644 Documentation/devicetree/bindings/sound/samsung,tm2-audio.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
+> deleted file mode 100644
+> index f5ccc12ddc00..000000000000
+> --- a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.txt
+> +++ /dev/null
+> @@ -1,42 +0,0 @@
+> -Samsung Exynos5433 TM2(E) audio complex with WM5110 codec
+> -
+> -Required properties:
+> -
+> - - compatible		 : "samsung,tm2-audio"
+> - - model		 : the user-visible name of this sound complex
+> - - audio-codec		 : the first entry should be phandle of the wm5110 audio
+> -			   codec node, as described in ../mfd/arizona.txt;
+> -			   the second entry should be phandle of the HDMI
+> -			   transmitter node
+> - - i2s-controller	 : the list of phandle and argument tuples pointing to
+> -			   I2S controllers, the first entry should be I2S0 and
+> -			   the second one I2S1
+> - - audio-amplifier	 : the phandle of the MAX98504 amplifier
+> - - samsung,audio-routing : a list of the connections between audio components;
+> -			   each entry is a pair of strings, the first being the
+> -			   connection's sink, the second being the connection's
+> -			   source; valid names for sources and sinks are the
+> -			   WM5110's and MAX98504's pins and the jacks on the
+> -			   board: HP, SPK, Main Mic, Sub Mic, Third Mic,
+> -			   Headset Mic
+> - - mic-bias-gpios	 : GPIO pin that enables the Main Mic bias regulator
+> -
+> -
+> -Example:
+> -
+> -sound {
+> -	compatible = "samsung,tm2-audio";
+> -	audio-codec = <&wm5110>, <&hdmi>;
+> -	i2s-controller = <&i2s0 0>, <&i2s1 0>;
+> -	audio-amplifier = <&max98504>;
+> -	mic-bias-gpios = <&gpr3 2 0>;
+> -	model = "wm5110";
+> -	samsung,audio-routing =
+> -		"HP", "HPOUT1L",
+> -		"HP", "HPOUT1R",
+> -		"SPK", "SPKOUT",
+> -		"SPKOUT", "HPOUT2L",
+> -		"SPKOUT", "HPOUT2R",
+> -		"Main Mic", "MICBIAS2",
+> -		"IN1R", "Main Mic";
+> -};
+> diff --git a/Documentation/devicetree/bindings/sound/samsung,tm2-audio.yaml b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.yaml
+> new file mode 100644
+> index 000000000000..c9178d928ad4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/samsung,tm2-audio.yaml
+> @@ -0,0 +1,99 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/samsung,tm2-audio.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Samsung Exynos SoC Exynos5433 TM2(E) audio complex with WM5110 codec
+> +
+> +maintainers:
+> +  - Krzysztof Kozlowski <krzk@kernel.org>
+> +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: samsung,tm2-audio
+> +
+> +  model:
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    description: The user-visible name of this sound complex.
+> +
+> +  i2s-controller:
+> +    allOf:
+> +    - $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    - items:
+> +       - description: phandle of the I2S0.
+> +       - description: phandle of the I2S1.
+> +
+> +  audio-codec:
+> +    allOf:
+> +    - $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    - items:
+> +       - description: |
+> +            phandle of the wm5110 audio codec node,
+> +            as described in ../mfd/arizona.txt;
+> +       - description: phandle of the HDMI transmitter node.
+> +
+> +  audio-amplifier:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: phandle of the MAX98504 amplifier.
+> +
+> +  mic-bias-gpios:
+> +    description: GPIO pin that enables the Main Mic bias regulator.
+> +    maxItems: 1
+> +
+> +  samsung,audio-routing:
+> +    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
+> +    description: |
+> +      List of the connections between audio components.
+> +      Each entry is a pair of strings, the first being the
+> +      connection's sink, the second being the connection's
+> +      source. Valid names for sources and sinks are:
+> +      the WM5110's pins:
+> +         "HPOUT1L",
+> +         "HPOUT1R",
+> +         "HPOUT2L",
+> +         "HPOUT2R",
+> +         "HPOUT3L",
+> +         "HPOUT3R",
+> +      MAX98504's pins:
+> +         "SPKOUT"
+> +      and the jacks on the board:
+> +         "HP",
+> +         "SPK",
+> +         "RCV",
+> +         "Main Mic",
+> +         "Sub Mic",
+> +         "Third Mic",
+> +         "Headset Mic".
 
-Thanks!
+All these strings can be a schema.
 
-> >  drivers/crypto/s5p-sss.c | 191 ++++++++++----------
-> >  1 file changed, 91 insertions(+), 100 deletions(-)
-> >  [...]
-> > diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-> > index 010f1bb20dad..e6f1d4d5186c 100644
-> > --- a/drivers/crypto/s5p-sss.c
-> > +++ b/drivers/crypto/s5p-sss.c
-> > [...]
-> > @@ -660,7 +660,7 @@ static irqreturn_t s5p_aes_interrupt(int irq, void *dev_id)
-> >  {
-> >       struct platform_device *pdev = dev_id;
-> >       struct s5p_aes_dev *dev = platform_get_drvdata(pdev);
-> > -     struct ablkcipher_request *req;
-> > +     struct skcipher_request *req;
-> >       int err_dma_tx = 0;
-> >       int err_dma_rx = 0;
-> >       int err_dma_hx = 0;
->
-> These two comments below should not be touched, they are for hash part.
->
-> > @@ -1208,7 +1208,7 @@ static int s5p_hash_prepare_sgs(struct s5p_hash_reqctx *ctx,
-> >   *
-> >   * Note 1: we can have update flag _and_ final flag at the same time.
-> >   * Note 2: we enter here when digcnt > BUFLEN (=HASH_BLOCK_SIZE) or
-> > - *      either req->nbytes or ctx->bufcnt + req->nbytes is > BUFLEN or
-> > + *      either req->cryptlen or ctx->bufcnt + req->cryptlen is > BUFLEN or
-> >   *      we have final op
-> >   */
-> >  static int s5p_hash_prepare_request(struct ahash_request *req, bool update)
-> > @@ -1555,7 +1555,7 @@ static int s5p_hash_final_shash(struct ahash_request *req)
-> >   * s5p_hash_final() - close up hash and calculate digest
-> >   * @req:     AHASH request
-> >   *
-> > - * Note: in final req->src do not have any data, and req->nbytes can be
-> > + * Note: in final req->src do not have any data, and req->cryptlen can be
-> >   * non-zero.
-> >   *
-> >   * If there were no input data processed yet and the buffered hash data is
-> > [...]
->
-> --
-> Best regards,
-> Kamil Konieczny
-> Samsung R&D Institute Poland
->
+> +
+> +required:
+> +  - compatible
+> +  - model
+> +  - i2s-controller
+> +  - audio-codec
+> +  - audio-amplifier
+> +  - mic-bias-gpios
+> +  - samsung,audio-routing
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    sound {
+> +        compatible = "samsung,tm2-audio";
+> +        model = "wm5110";
+> +        i2s-controller = <&i2s0 0>, <&i2s1 0>;
+> +        audio-codec = <&wm5110>, <&hdmi>;
+> +        audio-amplifier = <&max98504>;
+> +        mic-bias-gpios = <&gpr3>;
+> +        samsung,audio-routing =
+> +                "HP", "HPOUT1L",
+> +                "HP", "HPOUT1R",
+> +                "SPK", "SPKOUT",
+> +                "SPKOUT", "HPOUT2L",
+> +                "SPKOUT", "HPOUT2R",
+> +                "Main Mic", "MICBIAS2",
+> +                "IN1R", "Main Mic";
+> +    };
+> +
+> -- 
+> 2.17.1
+> 
