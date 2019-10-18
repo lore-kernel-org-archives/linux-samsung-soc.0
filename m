@@ -2,146 +2,87 @@ Return-Path: <SRS0=D2Jb=YL=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0B1BCA9EA0
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Oct 2019 07:12:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0299CA9EA0
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Oct 2019 08:07:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1FE4222C3
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Oct 2019 07:12:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CkyYl2n2"
+	by mail.kernel.org (Postfix) with ESMTP id A404721D80
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Oct 2019 08:07:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392272AbfJRHMB (ORCPT
+        id S2504795AbfJRIHA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 18 Oct 2019 03:12:01 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:51736 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732742AbfJRHMB (ORCPT
+        Fri, 18 Oct 2019 04:07:00 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:37420 "EHLO fornost.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2442157AbfJRIHA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 18 Oct 2019 03:12:01 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20191018071158euoutp02e80ae3ccbf899927c29c419b5b20a1be~OrEHhf8Lt0234402344euoutp02U
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Oct 2019 07:11:58 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20191018071158euoutp02e80ae3ccbf899927c29c419b5b20a1be~OrEHhf8Lt0234402344euoutp02U
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1571382718;
-        bh=/b+UtEDzqIRy6CN2PZOjcj8YUjV1F/6jvH4ZCUASKwQ=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=CkyYl2n2M+rMDRP/d/kPhsf5OJI7YdicMcRVpvMpNv+QMgrdQFCfWdKtWdaAm9kQP
-         BYifBme/C7N5wNk8ucTlmPV3QzC5qyWznE3ndq2V46gD9UVBLaN2khDUB7G4K1hahA
-         ycnFLc1R0ZKj95+N6uaQoWmQzAh4YLDHaqHjXrpE=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191018071158eucas1p1b4360baf515416e1769aa7c27d3c2e17~OrEHNxF4h3269432694eucas1p1Y;
-        Fri, 18 Oct 2019 07:11:58 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 8B.D4.04469.EB569AD5; Fri, 18
-        Oct 2019 08:11:58 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20191018071158eucas1p122811d8eafc3a26ec01c1402ad4fbd29~OrEGtj5PQ0537705377eucas1p1S;
-        Fri, 18 Oct 2019 07:11:58 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191018071158eusmtrp151f87c2ded25646c165448642c0527fa~OrEGsxByD0657006570eusmtrp1k;
-        Fri, 18 Oct 2019 07:11:58 +0000 (GMT)
-X-AuditID: cbfec7f2-54fff70000001175-c4-5da965bec4ee
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id EC.36.04117.DB569AD5; Fri, 18
-        Oct 2019 08:11:57 +0100 (BST)
-Received: from [106.120.51.15] (unknown [106.120.51.15]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191018071157eusmtip2c2847cd7dea4752f23fb6028350b0127~OrEGDvu8D0960909609eusmtip2W;
-        Fri, 18 Oct 2019 07:11:57 +0000 (GMT)
-Subject: Re: [PATCH] opp: core: Revert "add regulators enable and disable"
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Kamil Konieczny <k.konieczny@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <db377033-3d1d-f8c7-b0c0-5a7359022a62@samsung.com>
-Date:   Fri, 18 Oct 2019 09:11:56 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
-        Thunderbird/60.9.0
+        Fri, 18 Oct 2019 04:07:00 -0400
+Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
+        by fornost.hmeau.com with smtp (Exim 4.89 #2 (Debian))
+        id 1iLNHW-00021C-T6; Fri, 18 Oct 2019 19:06:44 +1100
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 18 Oct 2019 19:06:42 +1100
+Date:   Fri, 18 Oct 2019 19:06:42 +1100
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Laurent Vivier <lvivier@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Matt Mackall <mpm@selenic.com>,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-crypto@vger.kernel.org
+Subject: Re: [PATCH] hwrng: core - Fix use-after-free warning in
+ hwrng_register()
+Message-ID: <20191018080642.GN25128@gondor.apana.org.au>
+References: <20191014114632.10875-1-lvivier@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20191018043026.xm7a6emczm6w7bck@vireshk-i7>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfyyUcRzHfe957rnH5exx2H1Go27Tlq2TxnrErNIfN2smWW3pyskzLD+u
-        O0StzY/04yJGhstGNvkVOowjGZJL1hEjFEOqMbeGrKvVVXePyn/vz/v7+n4/7/f2JTHhc64L
-        GZeYzCgT5fFigo+3D34z7Oth6mT7zW/EtLa0mUsXLywRdMPae0RXrpdy6ZGRxzx6vKucoDfy
-        BhBdOtLDoVdNrzi0eVKL09pNKd06P0gctpN2amZ50pb624T03WQ3Ib3bVo+k+qkOjnSjxS2U
-        OMMPiGbi41IZpVdgJD92wBymaCDTfmX+4GUgE6FGtiRQPlCUX81TIz4ppGoR5LSYcHb4gqC4
-        YprDDhsIVu6PIzUirVd02mDWr0EwqNduQUYEc0+qrJAjFQw5qxKLdKI8YXmasSAYdQ+D9p/5
-        mGU1QXmD2qi2xhBQgVA4VGn1ccoDarSTuEU7UzKYM+kxlnGAobIlq29L+UH+QCvHojHKHTqM
-        5RirRTCzVGHNA9QiD3RZmxw29DHIrg5jKzvCir6Nx+qdMFyUi7N8NoIFQyOPHXIRjGeVIpby
-        h2f611zLQxi1F5q7vFj7CDQVvMDY9+1hyujAZrCHwvaSLVsAt24IWXoPaPRN/9b2jY5hBUis
-        2dZMs62NZlsbzf+9lQivRyImRZUQw6i8E5nLEpU8QZWSGCO5kJTQgv58rmGzfl2HNsei+hFF
-        IrGdQBdaKxNy5amq9IR+BCQmdhKc9K+TCQXR8vQrjDLpvDIlnlH1I1cSF4sEV23mI4RUjDyZ
-        ucgwCkb595RD2rpkIAeP9cLIiADZpYdlb5t2nbgpM3QdellyztXQ5xf33d435ENGXna3sFbk
-        1rswdu1sxvRBY3Lm7HRQ6HGbEMOa39eJB/69BwbNVY3LrWN1p+74OJ/WhiuUK2mjqYum609X
-        ojiuZCe5e+ZRmsTjqMI3MujThHTHx3DGP1CTWVLmXvV5SYyrYuXenphSJf8NGUtu8VgDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOIsWRmVeSWpSXmKPExsVy+t/xe7p7U1fGGmxusLbYOGM9q8XUh0/Y
-        LFZ/fMxoseDTDFaL8+c3sFtc3jWHzeJz7xFGixnn9zFZvPlxlsni37WNLBYbv3pYbH5wjM2B
-        x2PnrLvsHptWdbJ53Lm2h82jb8sqRo/jN7YzeXzeJBfAFqVnU5RfWpKqkJFfXGKrFG1oYaRn
-        aGmhZ2RiqWdobB5rZWSqpG9nk5Kak1mWWqRvl6CXceRfUMFqjor/jX/YGxh/sHUxcnBICJhI
-        7Njo1cXIxSEksJRR4uvnh+xdjJxAcRmJk9MaWCFsYYk/17rYIIpeM0rseriEGaRZWMBLovWN
-        HogpIqAl8fJmKkgJs8A0ZonLPz+yQ9TvZ5TYtPEr2FA2AUOJrrcggzg5eAXsJCadXMAMYrMI
-        qEos33iNBWSQqECsxKa9ZhAlghInZz5hAbE5BSwl+o9sZgKxmQXMJOZtfsgMYctLbH87B8oW
-        l7j1ZD7TBEahWUjaZyFpmYWkZRaSlgWMLKsYRVJLi3PTc4uN9IoTc4tL89L1kvNzNzECI3Xb
-        sZ9bdjB2vQs+xCjAwajEw7sjYEWsEGtiWXFl7iFGCQ5mJRHeYOuVsUK8KYmVValF+fFFpTmp
-        xYcYTYF+m8gsJZqcD0wieSXxhqaG5haWhubG5sZmFkrivB0CB2OEBNITS1KzU1MLUotg+pg4
-        OKUaGLsezt4udTvcv62+hu/d/rg1sfaBV87wV8eW719kbRfw9I4C86Il139pn3Xzap5xuMaY
-        48/fezO+cnrUbZq05B1zHB9v7Ow9EZ4zHstOSb11rklF6FPSPc31G+a2m3a6hUvGMx1/ySi5
-        tEjaxGn22p9TVkqbnwwR3LVyHt9kl/aLe3ITZl25pqzEUpyRaKjFXFScCACz7TtV6gIAAA==
-X-CMS-MailID: 20191018071158eucas1p122811d8eafc3a26ec01c1402ad4fbd29
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20191017102843eucas1p164993b3644d006481fb041e36175eebe
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20191017102843eucas1p164993b3644d006481fb041e36175eebe
-References: <CGME20191017102843eucas1p164993b3644d006481fb041e36175eebe@eucas1p1.samsung.com>
-        <20191017102758.8104-1-m.szyprowski@samsung.com>
-        <20191018043026.xm7a6emczm6w7bck@vireshk-i7>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191014114632.10875-1-lvivier@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Mon, Oct 14, 2019 at 01:46:32PM +0200, Laurent Vivier wrote:
+> Commit daae28debcb0 has moved add_early_randomness() out of the
+> rng_mutex and tries to protect the reference of the new rng device
+> by incrementing the reference counter.
+> 
+> But in hwrng_register(), the function can be called with a new device
+> that is not set as the current_rng device and the reference has not been
+> initialized. This patch fixes the problem by not using the reference
+> counter when the device is not the current one: the reference counter
+> is only meaningful in the case of the current rng device and a device
+> is not used if it is not the current one (except in hwrng_register())
+> 
+> The problem has been reported by Marek Szyprowski on ARM 32bit
+> Exynos5420-based Chromebook Peach-Pit board:
+> 
+> WARNING: CPU: 3 PID: 1 at lib/refcount.c:156 hwrng_register+0x13c/0x1b4
+> refcount_t: increment on 0; use-after-free.
+> Modules linked in:
+> CPU: 3 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc1-00061-gdaae28debcb0
+> Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+> [<c01124c8>] (unwind_backtrace) from [<c010dfb8>] (show_stack+0x10/0x14)
+> [<c010dfb8>] (show_stack) from [<c0ae86d8>] (dump_stack+0xa8/0xd4)
+> [<c0ae86d8>] (dump_stack) from [<c0127428>] (__warn+0xf4/0x10c)
+> [<c0127428>] (__warn) from [<c01274b4>] (warn_slowpath_fmt+0x74/0xb8)
+> [<c01274b4>] (warn_slowpath_fmt) from [<c054729c>] (hwrng_register+0x13c/0x1b4)
+> [<c054729c>] (hwrng_register) from [<c0547e54>] (tpm_chip_register+0xc4/0x274)
+> ...
+> 
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Fixes: daae28debcb0 ("hwrng: core - move add_early_randomness() out of rng_mutex")
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Laurent Vivier <lvivier@redhat.com>
+> ---
+>  drivers/char/hw_random/core.c | 33 ++++++++++++++++-----------------
+>  1 file changed, 16 insertions(+), 17 deletions(-)
 
-On 18.10.2019 06:30, Viresh Kumar wrote:
-> On 17-10-19, 12:27, Marek Szyprowski wrote:
->> All the drivers, which use the OPP framework control regulators, which
->> are already enabled. Typically those regulators are also system critical,
->> due to providing power to CPU core or system buses. It turned out that
->> there are cases, where calling regulator_enable() on such boot-enabled
->> regulator has side-effects and might change its initial voltage due to
->> performing initial voltage balancing without all restrictions from the
->> consumers. Until this issue becomes finally solved in regulator core,
->> avoid calling regulator_enable()/disable() from the OPP framework.
->>
->> This reverts commit 7f93ff73f7c8c8bfa6be33bcc16470b0b44682aa.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->> This is a follow-up from the following discussion:
->> https://lkml.org/lkml/2019/10/9/541
-> I suppose this must go the v5.4-rcs, right ?
-
-Yes, please.
-
-Best regards
+Patch applied.  Thanks.
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
