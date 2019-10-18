@@ -2,87 +2,136 @@ Return-Path: <SRS0=D2Jb=YL=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0299CA9EA0
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Oct 2019 08:07:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B93CA9EA0
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Oct 2019 10:18:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A404721D80
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Oct 2019 08:07:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E088222C5
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Oct 2019 10:18:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XsexphU4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504795AbfJRIHA (ORCPT
+        id S2388560AbfJRKSb (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 18 Oct 2019 04:07:00 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:37420 "EHLO fornost.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2442157AbfJRIHA (ORCPT
+        Fri, 18 Oct 2019 06:18:31 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:22642 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389649AbfJRKSb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 18 Oct 2019 04:07:00 -0400
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
-        by fornost.hmeau.com with smtp (Exim 4.89 #2 (Debian))
-        id 1iLNHW-00021C-T6; Fri, 18 Oct 2019 19:06:44 +1100
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 18 Oct 2019 19:06:42 +1100
-Date:   Fri, 18 Oct 2019 19:06:42 +1100
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Laurent Vivier <lvivier@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Matt Mackall <mpm@selenic.com>,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-crypto@vger.kernel.org
-Subject: Re: [PATCH] hwrng: core - Fix use-after-free warning in
- hwrng_register()
-Message-ID: <20191018080642.GN25128@gondor.apana.org.au>
-References: <20191014114632.10875-1-lvivier@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191014114632.10875-1-lvivier@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 18 Oct 2019 06:18:31 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20191018101829epoutp034b05e3f42ef59049e74ef300da2ab4f9~Otm9F22zN1602416024epoutp03F
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Oct 2019 10:18:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20191018101829epoutp034b05e3f42ef59049e74ef300da2ab4f9~Otm9F22zN1602416024epoutp03F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1571393909;
+        bh=dSk8JPa5kW5kXgyEr7wIhif1EMT7yieZmQ48Y5Fzy1Q=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=XsexphU4O6zt6jOwY2SLXN4xg9xlrSWnuZefjI2TgDS9bHfZ1VcQ38XYcV11CLK95
+         T2FE8RjfoCwAicF5IQv7weSnvVuWTaKKOmpcWgDaNf9atuPvGzgCXBoJabZ9LJGrOC
+         FtrScvsVgI3kaErMoqlaawwKFXuyGeaZF+1sxZ+A=
+Received: from epsnrtp5.localdomain (unknown [182.195.42.166]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20191018101828epcas1p32367e10fecd2be8cbe95e49f235dc035~Otm8Z5ieo2286322863epcas1p3H;
+        Fri, 18 Oct 2019 10:18:28 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.154]) by
+        epsnrtp5.localdomain (Postfix) with ESMTP id 46vhnZ0rk2zMqYkW; Fri, 18 Oct
+        2019 10:18:26 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        3A.BE.04144.27199AD5; Fri, 18 Oct 2019 19:18:26 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20191018101825epcas1p3fc6c1d01b4d898ebd0db64527e17b536~Otm5d5UrF2286322863epcas1p3C;
+        Fri, 18 Oct 2019 10:18:25 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20191018101825epsmtrp261d4a94f93dbce568dc78e92aa38b082~Otm5dMici2367223672epsmtrp2e;
+        Fri, 18 Oct 2019 10:18:25 +0000 (GMT)
+X-AuditID: b6c32a35-2c7ff70000001030-70-5da991727d46
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        46.94.04081.07199AD5; Fri, 18 Oct 2019 19:18:24 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.113.221.222]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191018101824epsmtip155e0cd0f1f8fdd9b72417a894fe2b01e~Otm5OSrx31057410574epsmtip1D;
+        Fri, 18 Oct 2019 10:18:24 +0000 (GMT)
+From:   Seung-Woo Kim <sw0312.kim@samsung.com>
+To:     linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        s.nawrocki@samsung.com, mchehab@kernel.org, krzk@kernel.org
+Cc:     sw0312.kim@samsung.com
+Subject: [PATCH] media: exynos4-is: Fix recursive locking in
+ isp_video_release()
+Date:   Fri, 18 Oct 2019 19:20:52 +0900
+Message-Id: <1571394052-24446-1-git-send-email-sw0312.kim@samsung.com>
+X-Mailer: git-send-email 1.7.4.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLKsWRmVeSWpSXmKPExsWy7bCmrm7RxJWxBnv+sFicP7+B3aJnw1ZW
+        ixnn9zFZLNv0h8ni8Jt2IHfySzYHNo9NqzrZPPq2rGL0+LxJLoA5KtsmIzUxJbVIITUvOT8l
+        My/dVsk7ON453tTMwFDX0NLCXEkhLzE31VbJxSdA1y0zB2ivkkJZYk4pUCggsbhYSd/Opii/
+        tCRVISO/uMRWKbUgJafAskCvODG3uDQvXS85P9fK0MDAyBSoMCE7Y/P8z+wFv9krNkxfw9TA
+        +J6ti5GDQ0LARGLCMpMuRi4OIYEdjBId8zayQjifGCUeLW4AcjiBnG+MEp9/eoLYIA3LVz1j
+        hCjayyjRcPITC4TzhVHiyLbNjCBVbAI6EvuX/AYbJSLQyChx/dwEFpAEs4CUxLal69lAbGGB
+        IIn7l86C2SwCqhI9L3+B2bwCbhI7ZnxkhFinILHg3ls2kEESAm9ZJb5+O84OkXCRaP6/mAnC
+        FpZ4dXwLVFxK4vO7vWwQdrXE9gk/2SGaOxgletobWSASxhL7l05mAoUAs4CmxPpd+hBhRYmd
+        v+cyQhzKJ/Huaw8rJJB4JTrahCBKVCR2Hp0EDTspiVkbgiHCHhLLTl9jgYRWrMSjO8/ZJjDK
+        zkKYv4CRcRWjWGpBcW56arFhgSFyJG1iBCclLdMdjFPO+RxiFOBgVOLh3RGwIlaINbGsuDL3
+        EKMEB7OSCG+w9cpYId6UxMqq1KL8+KLSnNTiQ4ymwMCbyCwlmpwPTJh5JfGGpkbGxsYWJoZm
+        poaGSuK8jsuXxgoJpCeWpGanphakFsH0MXFwSjUwHhTd/Mp/+jon5RXq3G9MLB9/0un19/sh
+        l3NM8OfnGHlOnmc/9u7gvDP7u3Z0kWv63JOCDzacTd6TwxaSfmSb0ZwHjZIvfI1+PalO8jVg
+        sL9S+kQs/+W/1Q8rk3ed3Pc6aMu/mMWS4p6bAoOnPIzpV2j+p33LWD7+2jv7DVt73zCrL4mw
+        3fItQomlOCPRUIu5qDgRAGoUPYRgAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNJMWRmVeSWpSXmKPExsWy7bCSnG7hxJWxBpO4Lc6f38Bu0bNhK6vF
+        jPP7mCyWbfrDZHH4TTuQO/klmwObx6ZVnWwefVtWMXp83iQXwBzFZZOSmpNZllqkb5fAlbF5
+        /mf2gt/sFRumr2FqYHzP1sXIySEhYCKxfNUzRhBbSGA3o8S8YyoQcSmJud+2A8U5gGxhicOH
+        i7sYuYBKPjFKbP83iQmkhk1AR2L/kt+sIAkRgXZGiV9bb7KDJJiBmrctXQ+2QFggQOJN52sw
+        m0VAVaLn5S8wm1fATWLHjI+MEMsUJBbce8s2gZFnASPDKkbJ1ILi3PTcYsMCw7zUcr3ixNzi
+        0rx0veT83E2M4CDR0tzBeHlJ/CFGAQ5GJR7eHQErYoVYE8uKK3MPMUpwMCuJ8AZbr4wV4k1J
+        rKxKLcqPLyrNSS0+xCjNwaIkzvs071ikkEB6YklqdmpqQWoRTJaJg1OqgdH3c9zhY7sKfi49
+        k7HlW8pHv4+PErRNgz4YS1fY8dUw/Hd/f8reQl1b66jzLWPXh2wvHjktPpzt7Pl6T+gsWdsd
+        F6a5nG98ZLq9o8/i3rGvb52Zsq/uPGpSeVnAJ+tIWEZyyZr2R6GVG85mtVyNnpd7TyRwdmDS
+        y6ANM6T9VXa803hS/dmBc4YSS3FGoqEWc1FxIgBZDc74DgIAAA==
+X-CMS-MailID: 20191018101825epcas1p3fc6c1d01b4d898ebd0db64527e17b536
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20191018101825epcas1p3fc6c1d01b4d898ebd0db64527e17b536
+References: <CGME20191018101825epcas1p3fc6c1d01b4d898ebd0db64527e17b536@epcas1p3.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 14, 2019 at 01:46:32PM +0200, Laurent Vivier wrote:
-> Commit daae28debcb0 has moved add_early_randomness() out of the
-> rng_mutex and tries to protect the reference of the new rng device
-> by incrementing the reference counter.
-> 
-> But in hwrng_register(), the function can be called with a new device
-> that is not set as the current_rng device and the reference has not been
-> initialized. This patch fixes the problem by not using the reference
-> counter when the device is not the current one: the reference counter
-> is only meaningful in the case of the current rng device and a device
-> is not used if it is not the current one (except in hwrng_register())
-> 
-> The problem has been reported by Marek Szyprowski on ARM 32bit
-> Exynos5420-based Chromebook Peach-Pit board:
-> 
-> WARNING: CPU: 3 PID: 1 at lib/refcount.c:156 hwrng_register+0x13c/0x1b4
-> refcount_t: increment on 0; use-after-free.
-> Modules linked in:
-> CPU: 3 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc1-00061-gdaae28debcb0
-> Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-> [<c01124c8>] (unwind_backtrace) from [<c010dfb8>] (show_stack+0x10/0x14)
-> [<c010dfb8>] (show_stack) from [<c0ae86d8>] (dump_stack+0xa8/0xd4)
-> [<c0ae86d8>] (dump_stack) from [<c0127428>] (__warn+0xf4/0x10c)
-> [<c0127428>] (__warn) from [<c01274b4>] (warn_slowpath_fmt+0x74/0xb8)
-> [<c01274b4>] (warn_slowpath_fmt) from [<c054729c>] (hwrng_register+0x13c/0x1b4)
-> [<c054729c>] (hwrng_register) from [<c0547e54>] (tpm_chip_register+0xc4/0x274)
-> ...
-> 
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Fixes: daae28debcb0 ("hwrng: core - move add_early_randomness() out of rng_mutex")
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Laurent Vivier <lvivier@redhat.com>
-> ---
->  drivers/char/hw_random/core.c | 33 ++++++++++++++++-----------------
->  1 file changed, 16 insertions(+), 17 deletions(-)
+From isp_video_release(), &isp->video_lock is held and subsequent
+vb2_fop_release() tries to lock vdev->lock which is same with the
+previous one. Replace vb2_fop_release() with _vb2_fop_release() to
+fix the recursive locking.
 
-Patch applied.  Thanks.
+Fixes: 1380f5754cb0 ("[media] videobuf2: Add missing lock held on vb2_fop_release")
+Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+---
+ drivers/media/platform/exynos4-is/fimc-isp-video.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/media/platform/exynos4-is/fimc-isp-video.c b/drivers/media/platform/exynos4-is/fimc-isp-video.c
+index 378cc30..d2cbcdc 100644
+--- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
++++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
+@@ -313,7 +313,7 @@ static int isp_video_release(struct file *file)
+ 		ivc->streaming = 0;
+ 	}
+ 
+-	vb2_fop_release(file);
++	_vb2_fop_release(file, NULL);
+ 
+ 	if (v4l2_fh_is_singular_file(file)) {
+ 		fimc_pipeline_call(&ivc->ve, close);
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+1.7.4.1
+
