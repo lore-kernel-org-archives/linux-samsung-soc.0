@@ -2,122 +2,103 @@ Return-Path: <SRS0=D2Jb=YL=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A3D9CA9EA0
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Oct 2019 10:32:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69BB9CA9EA0
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Oct 2019 11:42:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9439222C6
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Oct 2019 10:32:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tvVPQPIu"
+	by mail.kernel.org (Postfix) with ESMTP id 3F1F72089C
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 18 Oct 2019 11:42:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1571398940;
+	bh=bxQ3oNa0TABOgDWBQ/9ale8vMQAfpMYiyrwn8aMjqW4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=L97xUOgaCAAeJEEnD+3szaBRgAh5hXm1cxnL8CYVjwK+xVJNWXVWBc/ueqwxeM4xn
+	 mrkcjnhPT4rXFHyX2VNPAQusHf9j4yd1XMvPCGT7KJCYdtTQ8lm3gIhLC6Joo/Z7Jw
+	 VLZn7Vcl5uROEmBv+ovaXOGSZa5b4XOeBABnjX/I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408210AbfJRKch (ORCPT
+        id S2442659AbfJRLmT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 18 Oct 2019 06:32:37 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:41369 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407941AbfJRKch (ORCPT
+        Fri, 18 Oct 2019 07:42:19 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47584 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390948AbfJRLmT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 18 Oct 2019 06:32:37 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20191018103235euoutp0267c026a4703b66005f91a530112dc1db~OtzRQy0PV0501305013euoutp02B
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Oct 2019 10:32:35 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20191018103235euoutp0267c026a4703b66005f91a530112dc1db~OtzRQy0PV0501305013euoutp02B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1571394755;
-        bh=Ysrx07gQCp3rWiZMT5yZDjt62qpEUaWVhwuVePnhwVY=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=tvVPQPIuCQEvZ4YIPfYVLFhFVmbtXsScB6GgdHCr3oTte5Sx+qXDGpmU2qgZbEBj5
-         luPlyWKdbmNxxohNzvdTODFpFteX1m/dtNCUL1x+5NjW1DI6glp0BQTj1pUnyTYBTz
-         IQl72zMiEKmD8xcRQbLW0FmXtP9rXeXBplQZxV9Q=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20191018103235eucas1p24f7a0c0270c9c788ed7e6fb155c3ae6b~OtzRBdFRb1997219972eucas1p2C;
-        Fri, 18 Oct 2019 10:32:35 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id AB.93.04374.2C499AD5; Fri, 18
-        Oct 2019 11:32:35 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20191018103234eucas1p1ca07b12d4ac2e934c8dc486c2998eef4~OtzQriZN_1739717397eucas1p1O;
-        Fri, 18 Oct 2019 10:32:34 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191018103234eusmtrp1811badc5d6743e8dba86226eb6b7d460~OtzQq8dRP1051510515eusmtrp1j;
-        Fri, 18 Oct 2019 10:32:34 +0000 (GMT)
-X-AuditID: cbfec7f5-4f7ff70000001116-fb-5da994c2cae4
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 50.AE.04166.2C499AD5; Fri, 18
-        Oct 2019 11:32:34 +0100 (BST)
-Received: from [106.120.51.75] (unknown [106.120.51.75]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191018103234eusmtip23193efe964e4c71a939cf28d160ae295~OtzQWlj_61038010380eusmtip2M;
-        Fri, 18 Oct 2019 10:32:34 +0000 (GMT)
-Subject: Re: [PATCH] media: exynos4-is: Fix recursive locking in
- isp_video_release()
-To:     Seung-Woo Kim <sw0312.kim@samsung.com>, linux-media@vger.kernel.org
-Cc:     linux-samsung-soc@vger.kernel.org, mchehab@kernel.org,
-        krzk@kernel.org
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-ID: <88842c64-7101-2ebd-201f-9975ab69b32d@samsung.com>
-Date:   Fri, 18 Oct 2019 12:32:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.9.0
+        Fri, 18 Oct 2019 07:42:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=bxQ3oNa0TABOgDWBQ/9ale8vMQAfpMYiyrwn8aMjqW4=; b=PmMLrwSRB9YtHzgtZKWC6wq1G
+        G6wEOmkUGjj2wW5IUTNTKz9PkS2LYcKQuYVfZNb7Bh1Ziq9f/zs5b3wwx75SGVHd0ixGaqAAA2k/O
+        hefo7LXmBJcbXisZs+d0fDw4Kql6wiN5ifU4awYoCNtBXJHth1T9tahzZ/hMdGigxW64k=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iLQe4-0003Sm-Rt; Fri, 18 Oct 2019 11:42:12 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 057342741DEA; Fri, 18 Oct 2019 12:42:11 +0100 (BST)
+Date:   Fri, 18 Oct 2019 12:42:11 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Kamil Konieczny <k.konieczny@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] opp: core: Revert "add regulators enable and disable"
+Message-ID: <20191018114211.GA4828@sirena.co.uk>
+References: <CGME20191017102843eucas1p164993b3644d006481fb041e36175eebe@eucas1p1.samsung.com>
+ <20191017102758.8104-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <1571394052-24446-1-git-send-email-sw0312.kim@samsung.com>
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKKsWRmVeSWpSXmKPExsWy7djP87qHp6yMNbh/hdHi/PkN7BY9G7ay
-        Wsw4v4/JYtmmP0wWMya/ZHNg9di0qpPNo2/LKkaPz5vkApijuGxSUnMyy1KL9O0SuDK+TtrC
-        VvCcuWJnz2PGBsaFzF2MnBwSAiYSd/8tZu1i5OIQEljBKLHl6ilGkISQwBdGibPXQiASnxkl
-        7v09xtLFyAHWcXlKCUR8OaNE49dZzBDOW0aJrvYP7CDdwgJhEnPav7GB2CIC7hK9Z96BxZkF
-        vCQ6dv8As9kEDCV6j/aBbeMVsJNY9v4tE4jNIqAq8W97HxvIMlGBCInTXxMhSgQlTs58wgJi
-        cwKN/LzxDtRIcYmmLytZIWx5ie1v54DdIyEwmV3iwfXF7BBvukh0XJvJCmELS7w6vgUqLiNx
-        enIPC0RDM6NEz+7b7BDOBEaJ+8cXMEJUWUscPn6RFeQiZgFNifW79CHCjhI/tq9gg4QKn8SN
-        t4IQR/BJTNo2nRkizCvR0SYEUa0i8XvVdCYIW0qi+8l/lgmMSrOQvDYLyTuzkLwzC2HvAkaW
-        VYziqaXFuempxcZ5qeV6xYm5xaV56XrJ+bmbGIGJ5fS/4193MO77k3SIUYCDUYmHd0fAilgh
-        1sSy4srcQ4wSHMxKIrzB1itjhXhTEiurUovy44tKc1KLDzFKc7AoifNWMzyIFhJITyxJzU5N
-        LUgtgskycXBKNTCG6nRc6j/Uy3LEzViwk1+m8tQ7q+UHZ3ufr5lYWfqpfDtPdabYvPfP0sqf
-        L14esEK6KZbpVpXIrWYu6+gHUsKx7NfWJLInvz7Jdf+I8Y8of+YVSya4hspVMtbmcog0GE2z
-        bZylWH1gvec9Pc4ZPxQinshMZP7a3tgQcjzTkD9w0xoVfam5hUosxRmJhlrMRcWJACgPX/Mo
-        AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOIsWRmVeSWpSXmKPExsVy+t/xe7qHpqyMNWh/pmJx/vwGdoueDVtZ
-        LWac38dksWzTHyaLGZNfsjmwemxa1cnm0bdlFaPH501yAcxRejZF+aUlqQoZ+cUltkrRhhZG
-        eoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehlfJ21hK3jOXLGz5zFjA+NC5i5GDg4J
-        AROJy1NKuhi5OIQEljJKnFn5kA0iLiUxv0Wpi5ETyBSW+HOtiw3EFhJ4zSixrykRxBYWCJOY
-        0/4NLC4i4C7Re+YdO8ScWYwS/yZuZAVJMAt4SXTs/sEOYrMJGEr0Hu1jBLF5Bewklr1/ywRi
-        swioSvzb3gc2SFQgQuL59htQNYISJ2c+YQGxOYEWfN54hx1iprrEn3mXmCFscYmmLyuhdslL
-        bH87h3kCo9AsJO2zkLTMQtIyC0nLAkaWVYwiqaXFuem5xYZ6xYm5xaV56XrJ+bmbGIGRtO3Y
-        z807GC9tDD7EKMDBqMTDuyNgRawQa2JZcWXuIUYJDmYlEd5g65WxQrwpiZVVqUX58UWlOanF
-        hxhNgZ6byCwlmpwPjPK8knhDU0NzC0tDc2NzYzMLJXHeDoGDMUIC6YklqdmpqQWpRTB9TByc
-        Ug2MAQsrJ6QbMYip7Hm+YM7eQ4mT5+9t/lkkcfINS0w09zr+YwHV5pblSc6Hil4/eq0593MD
-        7w7xLzE2iyeaJRTckY2ILNGbeNR3wtnkuGxH5SsSEzSP6b976fR/3bli3djybjmPB0x+7/7c
-        MrX8aKtwNEW5YJ/8oc4FCqt+iJXoe29tvbgyU9RJiaU4I9FQi7moOBEACf27w7oCAAA=
-X-CMS-MailID: 20191018103234eucas1p1ca07b12d4ac2e934c8dc486c2998eef4
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20191018101825epcas1p3fc6c1d01b4d898ebd0db64527e17b536
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20191018101825epcas1p3fc6c1d01b4d898ebd0db64527e17b536
-References: <CGME20191018101825epcas1p3fc6c1d01b4d898ebd0db64527e17b536@epcas1p3.samsung.com>
-        <1571394052-24446-1-git-send-email-sw0312.kim@samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
+Content-Disposition: inline
+In-Reply-To: <20191017102758.8104-1-m.szyprowski@samsung.com>
+X-Cookie: Smear the road with a runner!!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 10/18/19 12:20, Seung-Woo Kim wrote:
->>From isp_video_release(), &isp->video_lock is held and subsequent
-> vb2_fop_release() tries to lock vdev->lock which is same with the
-> previous one. Replace vb2_fop_release() with _vb2_fop_release() to
-> fix the recursive locking.
-> 
-> Fixes: 1380f5754cb0 ("[media] videobuf2: Add missing lock held on vb2_fop_release")
-> Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+--ikeVEW9yuYc//A+q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, Oct 17, 2019 at 12:27:58PM +0200, Marek Szyprowski wrote:
+> All the drivers, which use the OPP framework control regulators, which
+> are already enabled. Typically those regulators are also system critical,
+> due to providing power to CPU core or system buses. It turned out that
+> there are cases, where calling regulator_enable() on such boot-enabled
+> regulator has side-effects and might change its initial voltage due to
+> performing initial voltage balancing without all restrictions from the
+> consumers. Until this issue becomes finally solved in regulator core,
+> avoid calling regulator_enable()/disable() from the OPP framework.
+
+Reviewed-by: Mark Brown <broonie@kernel.org>
+
+--ikeVEW9yuYc//A+q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2ppRMACgkQJNaLcl1U
+h9AQ0Qf/YJW+4sFCOojivciJSSqs/v5S0eCBH3F74e648ET8wW+lGP6d7Wabk09w
+lkvEnfxTqHUbDCKBN9GqkOKINxccWUlw4iSlPh24Z0J90Z/jXq0WpnzIxLyviQJh
+J0mDFLrAO1TU7Bu8Hq0qnjA9TFVL7ZtBJS4ShzCgTWzIZAa02VbIDYzE3sC3YhT1
+JJpkMq76noTi2LW9Rb6gsO+WXkDYrWxf9s3PKCkEyrVqRas+l01sYed8YQ/X4doW
+D6tb542gwAIlCEu7QM+XU3Gkdi3a/h3t0RM/SW4cMifuWlcXndcApzsmtslwfQSx
+dRCApMxr2BQbuHDWW3uWdE9VIk8Wow==
+=PYPe
+-----END PGP SIGNATURE-----
+
+--ikeVEW9yuYc//A+q--
