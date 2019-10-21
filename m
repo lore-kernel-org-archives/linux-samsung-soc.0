@@ -2,231 +2,136 @@ Return-Path: <SRS0=nJnZ=YO=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48539CA9EAF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Oct 2019 16:21:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B30CA9EAF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Oct 2019 18:00:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1116C205C9
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Oct 2019 16:21:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D2A220B7C
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Oct 2019 18:00:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1571674881;
-	bh=Y7oaW/0nI72JG2ZWy1YcBEZ9QdOG7gwptvk2YsxdDrM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=hmsMT9o9iONhkpw+PLJwS0jiLWPgV/jeXmMb9tq9TM/a8Mdvdf+lY5Ru3HVYW7/rv
-	 X6PtQBkmQb2vLVhMHkVeXbfA0Qmcwn9p9vF/gO0GULh5aRMVHYJLMu/SpUyirL0s17
-	 YM7SWnbNa18/YxVvBwFdJaCRxd2tBngD5493aQ98=
+	s=default; t=1571680855;
+	bh=XM+FygnugCQee4JxAth0vGJ2t52VZLAJMmBqZuGFwU4=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=NrM/txpjH2BFDu/8089Mqq1/OuI0I/xpyhV9QA5WUbtzS3wsvikBMsPaM3Fl92nJc
+	 C1pKWEdtw3RUjxSIaohXBsxpgroJurppFGj168tgACAfeWEwV6ZlhjIKCPKwiePJhL
+	 fYOUk0NbtOOKkGuPnCvIPgkxgBnw4zJm6zGrYcLQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728375AbfJUQVU (ORCPT
+        id S1729406AbfJUSAz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 21 Oct 2019 12:21:20 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:44483 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726289AbfJUQVU (ORCPT
+        Mon, 21 Oct 2019 14:00:55 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38986 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728196AbfJUSAz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 21 Oct 2019 12:21:20 -0400
-Received: by mail-ed1-f66.google.com with SMTP id r16so10452837edq.11;
-        Mon, 21 Oct 2019 09:21:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=J7kXhyBYin2hNshrQsLbIqexvEmaaX5JxfmgulPDAhs=;
-        b=CGr9u20Eu4lRUt+v0PYZHqyWvsAmExvqOXoupAx41lYGj2F5fY1Xz29lqY/18b1Nf1
-         m1CBj5ETQ3XlPpUS+9nbmDuh44fkeGHJuX8Ab1xezRLekjUd1t8qxFRYC5gE32F0MHR9
-         eVfRGZm2PVKM5FwaNDtaY/M/jFpUk45Fpfp6DOJQspMZonQnvyALEwoMeHRLBUVbrlJj
-         L1oQDju4Djah1aAkkMrfFn50VibZ2ZV4qPIYXFMdE3/Eu+GV2xzpYO8+Uh35xo1WW8Eo
-         fM9ikHCwiVJUSEjfaGcvpr4KAxFRl2hVzMCPW8oPTw/AddDwqmaiyNqcYAJXGi3xjYf6
-         O0NA==
-X-Gm-Message-State: APjAAAUOpcPwJO4PEXTpXJDsdizazoWfhlXnxqiH5NJCCo3GHBsGkJQN
-        VHDZTsJAP6x+QSlEhAH5ZWs=
-X-Google-Smtp-Source: APXvYqzJjaDGk3bh7Rvx5mKz/l/mNrNxKhU6SPIZK78xraCXfMm3Bl9vspYovV2bf8f1O66wvaY1DQ==
-X-Received: by 2002:aa7:d915:: with SMTP id a21mr26132055edr.46.1571674877915;
-        Mon, 21 Oct 2019 09:21:17 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.217])
-        by smtp.googlemail.com with ESMTPSA id s4sm363303edt.34.2019.10.21.09.21.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Oct 2019 09:21:17 -0700 (PDT)
-Date:   Mon, 21 Oct 2019 18:21:15 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Alim Akhtar <alim.akhtar@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mon, 21 Oct 2019 14:00:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=uq0cbL+MVqRsyuw0sPQS5GA0v05y+bqGq3kL9K0P2h8=; b=PGEycT3N3lTQ
+        NSSgmXX+NrJZnmMPp0DDgf3TJ5vpiZ60E/A5h7/jh7v9/BlffeXg/8qSJZDhUVO94BoiVkdBKZIA6
+        oHFGZxOgPxsjFb2uNM5ycbXGiYwo6ZffM4e2i8UHOVbaL6uUVM1svJMDhy6F5RQfWvgyT7vK5Cl+k
+        9gRQU=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iMbz5-0004bf-DO; Mon, 21 Oct 2019 18:00:47 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 8052B2743293; Mon, 21 Oct 2019 19:00:46 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Maciej Falkowski <m.falkowski@samsung.com>
+Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mark Brown <broonie@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: exynos: Rename children of SysRAM node to
- "sram"
-Message-ID: <20191021162115.GA21883@kozik-lap>
-References: <20191021151440.13505-1-krzk@kernel.org>
- <CAGOxZ531SdYcud3nQ-6hbCRZptUYznTRajVyxwEi-mFmm8-zPg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAGOxZ531SdYcud3nQ-6hbCRZptUYznTRajVyxwEi-mFmm8-zPg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Applied "ASoC: samsung: i2s: Document clocks macros" to the asoc tree
+In-Reply-To: <20190926110219.6144-1-m.szyprowski@samsung.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20191021180046.8052B2743293@ypsilon.sirena.org.uk>
+Date:   Mon, 21 Oct 2019 19:00:46 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 21, 2019 at 09:37:24PM +0530, Alim Akhtar wrote:
-> On Mon, Oct 21, 2019 at 8:45 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >
-> > The device node name should reflect generic class of a device so rename
-> > the children of SysRAM node to "smp-sysram".  This will be also in sync
-> Typo "smp-sram"
+The patch
 
-Thanks, indeed.
+   ASoC: samsung: i2s: Document clocks macros
 
-> > with upcoming DT schema.  No functional change.
-> >
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > ---
-> Looks good to me.
+has been applied to the asoc tree at
 
-Shall I add your review-tag?
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.5
 
-Best regards,
-Krzysztof
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-> 
-> >  arch/arm/boot/dts/exynos3250.dtsi               | 4 ++--
-> >  arch/arm/boot/dts/exynos4210-universal_c210.dts | 6 +++---
-> >  arch/arm/boot/dts/exynos4210.dtsi               | 4 ++--
-> >  arch/arm/boot/dts/exynos4412.dtsi               | 4 ++--
-> >  arch/arm/boot/dts/exynos5250.dtsi               | 4 ++--
-> >  arch/arm/boot/dts/exynos54xx.dtsi               | 4 ++--
-> >  6 files changed, 13 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-> > index b016b0b68306..044e5da64a76 100644
-> > --- a/arch/arm/boot/dts/exynos3250.dtsi
-> > +++ b/arch/arm/boot/dts/exynos3250.dtsi
-> > @@ -145,12 +145,12 @@
-> >                         #size-cells = <1>;
-> >                         ranges = <0 0x02020000 0x40000>;
-> >
-> > -                       smp-sysram@0 {
-> > +                       smp-sram@0 {
-> >                                 compatible = "samsung,exynos4210-sysram";
-> >                                 reg = <0x0 0x1000>;
-> >                         };
-> >
-> > -                       smp-sysram@3f000 {
-> > +                       smp-sram@3f000 {
-> >                                 compatible = "samsung,exynos4210-sysram-ns";
-> >                                 reg = <0x3f000 0x1000>;
-> >                         };
-> > diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-> > index 09d3d54d09ff..a1bdf7830a87 100644
-> > --- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-> > +++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-> > @@ -590,16 +590,16 @@
-> >  };
-> >
-> >  &sysram {
-> > -       smp-sysram@0 {
-> > +       smp-sram@0 {
-> >                 status = "disabled";
-> >         };
-> >
-> > -       smp-sysram@5000 {
-> > +       smp-sram@5000 {
-> >                 compatible = "samsung,exynos4210-sysram";
-> >                 reg = <0x5000 0x1000>;
-> >         };
-> >
-> > -       smp-sysram@1f000 {
-> > +       smp-sram@1f000 {
-> >                 status = "disabled";
-> >         };
-> >  };
-> > diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-> > index 554819ae1446..b4466232f0c1 100644
-> > --- a/arch/arm/boot/dts/exynos4210.dtsi
-> > +++ b/arch/arm/boot/dts/exynos4210.dtsi
-> > @@ -79,12 +79,12 @@
-> >                         #size-cells = <1>;
-> >                         ranges = <0 0x02020000 0x20000>;
-> >
-> > -                       smp-sysram@0 {
-> > +                       smp-sram@0 {
-> >                                 compatible = "samsung,exynos4210-sysram";
-> >                                 reg = <0x0 0x1000>;
-> >                         };
-> >
-> > -                       smp-sysram@1f000 {
-> > +                       smp-sram@1f000 {
-> >                                 compatible = "samsung,exynos4210-sysram-ns";
-> >                                 reg = <0x1f000 0x1000>;
-> >                         };
-> > diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-> > index 5022aa574b26..48868947373e 100644
-> > --- a/arch/arm/boot/dts/exynos4412.dtsi
-> > +++ b/arch/arm/boot/dts/exynos4412.dtsi
-> > @@ -195,12 +195,12 @@
-> >                         #size-cells = <1>;
-> >                         ranges = <0 0x02020000 0x40000>;
-> >
-> > -                       smp-sysram@0 {
-> > +                       smp-sram@0 {
-> >                                 compatible = "samsung,exynos4210-sysram";
-> >                                 reg = <0x0 0x1000>;
-> >                         };
-> >
-> > -                       smp-sysram@2f000 {
-> > +                       smp-sram@2f000 {
-> >                                 compatible = "samsung,exynos4210-sysram-ns";
-> >                                 reg = <0x2f000 0x1000>;
-> >                         };
-> > diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> > index e1f0215e3985..ec983283f573 100644
-> > --- a/arch/arm/boot/dts/exynos5250.dtsi
-> > +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> > @@ -171,12 +171,12 @@
-> >                         #size-cells = <1>;
-> >                         ranges = <0 0x02020000 0x30000>;
-> >
-> > -                       smp-sysram@0 {
-> > +                       smp-sram@0 {
-> >                                 compatible = "samsung,exynos4210-sysram";
-> >                                 reg = <0x0 0x1000>;
-> >                         };
-> >
-> > -                       smp-sysram@2f000 {
-> > +                       smp-sram@2f000 {
-> >                                 compatible = "samsung,exynos4210-sysram-ns";
-> >                                 reg = <0x2f000 0x1000>;
-> >                         };
-> > diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
-> > index f78dee801cd9..8aa5117e58ce 100644
-> > --- a/arch/arm/boot/dts/exynos54xx.dtsi
-> > +++ b/arch/arm/boot/dts/exynos54xx.dtsi
-> > @@ -62,12 +62,12 @@
-> >                         #size-cells = <1>;
-> >                         ranges = <0 0x02020000 0x54000>;
-> >
-> > -                       smp-sysram@0 {
-> > +                       smp-sram@0 {
-> >                                 compatible = "samsung,exynos4210-sysram";
-> >                                 reg = <0x0 0x1000>;
-> >                         };
-> >
-> > -                       smp-sysram@53000 {
-> > +                       smp-sram@53000 {
-> >                                 compatible = "samsung,exynos4210-sysram-ns";
-> >                                 reg = <0x53000 0x1000>;
-> >                         };
-> > --
-> > 2.17.1
-> >
-> 
-> 
-> -- 
-> Regards,
-> Alim
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 6cc23ed2ceab880e96ad287d9c85b53659050510 Mon Sep 17 00:00:00 2001
+From: Maciej Falkowski <m.falkowski@samsung.com>
+Date: Thu, 26 Sep 2019 13:02:19 +0200
+Subject: [PATCH] ASoC: samsung: i2s: Document clocks macros
+
+Document clocks macros with their description
+from 'Documentation/devicetree/bindings/sound/samsung-i2s.txt'
+
+Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Link: https://lore.kernel.org/r/20190926110219.6144-1-m.szyprowski@samsung.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ include/dt-bindings/sound/samsung-i2s.h | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/include/dt-bindings/sound/samsung-i2s.h b/include/dt-bindings/sound/samsung-i2s.h
+index 77545f14c379..250de0d6c734 100644
+--- a/include/dt-bindings/sound/samsung-i2s.h
++++ b/include/dt-bindings/sound/samsung-i2s.h
+@@ -2,8 +2,14 @@
+ #ifndef _DT_BINDINGS_SAMSUNG_I2S_H
+ #define _DT_BINDINGS_SAMSUNG_I2S_H
+ 
+-#define CLK_I2S_CDCLK		0
+-#define CLK_I2S_RCLK_SRC	1
+-#define CLK_I2S_RCLK_PSR	2
++#define CLK_I2S_CDCLK		0 /* the CDCLK (CODECLKO) gate clock */
++
++#define CLK_I2S_RCLK_SRC	1 /* the RCLKSRC mux clock (corresponding to
++				   * RCLKSRC bit in IISMOD register)
++				   */
++
++#define CLK_I2S_RCLK_PSR	2 /* the RCLK prescaler divider clock
++				   * (corresponding to the IISPSR register)
++				   */
+ 
+ #endif /* _DT_BINDINGS_SAMSUNG_I2S_H */
+-- 
+2.20.1
+
