@@ -2,157 +2,222 @@ Return-Path: <SRS0=nJnZ=YO=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64EBBCA9EA0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Oct 2019 01:55:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 453ECCA9EB5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Oct 2019 08:58:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D1EF21D80
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Oct 2019 01:55:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AD8C206C2
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Oct 2019 08:58:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Zog9zJpL"
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="pxr9UaNp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726733AbfJUBzn (ORCPT
+        id S1726725AbfJUI6S (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 20 Oct 2019 21:55:43 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:51011 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726725AbfJUBzn (ORCPT
+        Mon, 21 Oct 2019 04:58:18 -0400
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:42625 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726181AbfJUI6S (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 20 Oct 2019 21:55:43 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20191021015540epoutp01ff762941579edb2722e482640d201ed5~PhrzQ3sXo1334213342epoutp01F
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Oct 2019 01:55:40 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20191021015540epoutp01ff762941579edb2722e482640d201ed5~PhrzQ3sXo1334213342epoutp01F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1571622940;
-        bh=9f5YfBTEjPcmpONPEFF6bY/gVV1cnKBlwsBlV+Kzzn0=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=Zog9zJpLhZpXD0sWKCixf6ToBOKhGa6RTT7pthl1btwnZY6lIZzGOhpgmITSq7J5H
-         M1SSNE38O/tz2wthf98R8KIkk+Ez4I9KuLSLFEvw0FoeCuvQiwwLe38lfHdsKo4iIS
-         l2HR2nKYlzkjYQupcz+1K/YjkXDHNfJmF8ZDCSvY=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20191021015540epcas1p3af8daa9c5d261287142282ef5a8fdfde~PhrzA7qFX1008110081epcas1p3q;
-        Mon, 21 Oct 2019 01:55:40 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.152]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 46xKV11RLHzMqYkn; Mon, 21 Oct
-        2019 01:55:37 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        EC.2D.04068.8101DAD5; Mon, 21 Oct 2019 10:55:36 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20191021015536epcas1p3d9dc18f8f4e4a98de0dc7a9a84525cd1~PhrvPCvii0786507865epcas1p34;
-        Mon, 21 Oct 2019 01:55:36 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191021015536epsmtrp22321d6bf6a0e03d4caf81819380078df~PhrvNtppe1327513275epsmtrp2L;
-        Mon, 21 Oct 2019 01:55:36 +0000 (GMT)
-X-AuditID: b6c32a39-f5fff70000000fe4-b5-5dad1018b538
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C6.01.04081.8101DAD5; Mon, 21 Oct 2019 10:55:36 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.113.221.222]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191021015535epsmtip1c9e6f7bc54337a8a4c9fb4ce58263324~PhrvBhKYt0176701767epsmtip1Z;
-        Mon, 21 Oct 2019 01:55:35 +0000 (GMT)
-From:   Seung-Woo Kim <sw0312.kim@samsung.com>
-To:     linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        s.nawrocki@samsung.com, mchehab@kernel.org, krzk@kernel.org
-Cc:     sw0312.kim@samsung.com
-Subject: [PATCH] media: exynos4-is: fix wrong mdev and v4l2 dev order in
- error path
-Date:   Mon, 21 Oct 2019 10:58:04 +0900
-Message-Id: <1571623084-2705-1-git-send-email-sw0312.kim@samsung.com>
-X-Mailer: git-send-email 1.7.4.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUhTYRTm3cd1Ssvb1DxMsnVLqNF01znbNMvIYpDRYBUkLbvpxck+2Z2i
-        mbUkypnpSiLTIrGstA9t+BmY6NAITA3MILAf9aelBaVpoUnb7qT+Pef5eM/hvEfAFY3zxYJC
-        i4O2WygTgUXwur3bEmWAP9HL31cmqMbHO8JU1R1dfFX9+AuO6r5nmaPyzl7yl3U+LBPTeNpc
-        mKamsw1p5jzxWm6OcaeBpvJpu4S25FnzCy0FGcQBXe7eXGWqnJSRatUOQmKhzHQGkZWtle0v
-        NPn7EpJiylTkp7QUwxBJu3barUUOWmKwMo4Mgrblm2xqWyJDmZkiS0FintWcRsrlyUq/8aTR
-        sOSaR7ZX60pcCzVcJ7oSWYXCBYCnQGPtMFaFIgQivBfB17nXYWzxA8HSBWdIWUAwuVjLW43U
-        tQ7yWKEfwfRgPWKLeQTu+VEUcGH4dhi4t8QPCNH4eQTvxtzBOBcXQ3dLOxbAUfgR8E2NBTEP
-        T4Anrj/BsBDfB6Mzy6F2Emj68DU4B+Df+dBe8SwkZEH/ijeMxVHw5WVnCIth7ls/xuIy6HH/
-        DmPDlQiqL50PhRUw0FLHqUIC/0TboP15Ektvgr6l24gddC18+1nND1gAF0LlRRFr2QJ9w9cw
-        lhZDQ4eOpTXQfn2CE8AiXA+fXSscN9rQ8O/9JoTa0HraxpgLaIa0Kf//Jg8KHpNU3YtGxrKH
-        EC5AxBph5o3HehGfKmZKzUMIBFwiWqhLb9WLhPlU6Wnabs21F5loZggp/cu7yhXH5Fn9p2lx
-        5JLKZIVCoUohU5UkScQK9zxo0YvwAspBG2naRttXcxxBuNiJbnVOH3Z+f8pd/qyVzTw8ob17
-        J+bLsEx68+1sGZNTkynLmI3azUwfHNH1aCXGfk7z7qxfW4+ntDSW+0Qfj6k/FKdNoZmSuDiF
-        +EwfLp1a/BQfs/Jo8Kjv6LmKR7Kn6W/mvPKux+WGSXL60ObL8ubIU9dxQ2y0u1yqH50427NR
-        N0DwGANFSrl2hvoL69OGjGIDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLJMWRmVeSWpSXmKPExsWy7bCSnK6EwNpYg6k9rBbnz29gt+jZsJXV
-        Ysb5fUwWyzb9YbI4/KYdyJ38ks2BzWPTqk42j74tqxg9Pm+SC2CO4rJJSc3JLEst0rdL4Mr4
-        3fmFseCkYEXntz7mBsZe/i5GTg4JAROJySsPsnQxcnEICexmlHh9fgUTREJKYu637YxdjBxA
-        trDE4cPFEDWfGCV+X5wFVsMmoCOxf8lvVpCEiEA7o8SvrTfZQRLMQM3blq5nA7GFBYIl9k0+
-        BGazCKhKrO38ywhi8wq4Spx5/YcFYpmCxIJ7b9kmMPIsYGRYxSiZWlCcm55bbFhgmJdarlec
-        mFtcmpeul5yfu4kRHChamjsYLy+JP8QowMGoxMPrMH1NrBBrYllxZe4hRgkOZiUR3mDrlbFC
-        vCmJlVWpRfnxRaU5qcWHGKU5WJTEeZ/mHYsUEkhPLEnNTk0tSC2CyTJxcEo1MHYdO8NwQ15z
-        w7IDUYpOXEV6vySWCZ7ddlHmt+1dnmMxVxR7DXefjr72LLNmbVz3WpNFPK+23lU2n77OYE7x
-        bv6mFqHnz3Kapm7NEufSvrtC7+jOI/ue7XX6dsI3PXbvnMx1d08tvnJtH4cD7yR+caZkywV2
-        jrducr3dyZJgKBe5dPcfK88Gj6lKLMUZiYZazEXFiQCb6bo0EAIAAA==
-X-CMS-MailID: 20191021015536epcas1p3d9dc18f8f4e4a98de0dc7a9a84525cd1
-X-Msg-Generator: CA
+        Mon, 21 Oct 2019 04:58:18 -0400
+Received-SPF: Pass (esa1.microchip.iphmx.com: domain of
+  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa1.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="Claudiu.Beznea@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa1.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa1.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa1.microchip.iphmx.com; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: WEj1RSGINlH0YP7nNoiViAPn5fKFEykpOmUAsfeXVHQ0ptRTq9IpWZydSiG1TTXVqc+rNAMCa/
+ 9g8VAxylPb52ieSRnXN023ATEiHh15sJrP9LRA/gLvEfORXrjE8Ff4VovtElpoPzXALRS2RyKR
+ UTafdxNN4tSsDQl7Ysd8k345wN1/xMrGFno4nYmeH6fMCcZlPmhuetz3JpZ4FubkklDDCD3lVe
+ zYQdyHnncGWMnn7IPVTn7h96BeUeQdnMwgkzIWrgvfPEvPUdaJJ7hA0PLu/s3eaa9nqXhHUS7P
+ E08=
+X-IronPort-AV: E=Sophos;i="5.67,323,1566889200"; 
+   d="scan'208";a="54996746"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 21 Oct 2019 01:58:14 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Mon, 21 Oct 2019 01:58:12 -0700
+Received: from NAM04-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.87.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
+ via Frontend Transport; Mon, 21 Oct 2019 01:58:12 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UVxpEboKD5DSydpkrO0hbX/rigOqbuO5TP6ccH+2DzAFCGEaO5ljvmIbi9Fu1Jo53ItQGCCUz5JSZV0Ib8u+NlWkjfyUTQRz9t+msHA2hqkhmlrnoU/llKTMp+J9SJ+ZgRJjGykn8azB+YrdH+4kTKKyfGfzUechUffjngE7m6GKtCAcr4UuKMYxCNF2kOHu7a+yK9ZPpXo3uI/J0xAw0YaYa/T60PdL8t9AK3IQ3NI5Ax3EKBENOAl+VH1MlCj1x+40F+v54pSuUilkCE8DCECziiuPx3wMEkoB8qTE4Loe1fakmb5ZZ8eRWzgHYA6sEzgnVL60z8dhtwcWREy3Fg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Wpk8sLUcO1HMbgN1/NAq9gdAZbl2KgQ3dc/W6Au6XM0=;
+ b=LKmKWGJmAsZaXX3+cpB4qWFxtZdyXFdbJIeIlMIJl2zf+7l+TJ+C+bznjNHBWur1PnqY45GpcCpwBopzStdU7c7QJH9dEa83PsmlFcC/M4oaqnE5FyAq8fixilRSKb3BT9NL/NTbf+G2JHP7j2hFIpdXvpW8cfPNDmwe8ZrQMUlCp0Hl8RJ+LT6967I00ajrJbDHX0hwscoSTwIKPVikxcVrUfCDL833NXmHBlfYkX1SG8Wc/TCfV2bJ3Yqk8DncLuNNi7+N/VtWLtVkM7uxlcJeskQnrMPq1p1nRX2xR+yCws9cpSY1TZVOTQQH5NYsiRDxQcV1M08RBe51lpMbdg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector2-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Wpk8sLUcO1HMbgN1/NAq9gdAZbl2KgQ3dc/W6Au6XM0=;
+ b=pxr9UaNpSC7Br5tgOLkO3zHprkIgLGONPrpbtdj2C45CdFZnAwPkknwXUKT0HqMmb+e3UMmEqtFsLITRZH0xhOJsj8EO8rgfFo4QfBQlL7+Vj7eg4qD7WLXp0CE7N/zFiOa3VmQiyRqkS5e3hANOIFZlhDOIHBhKiQw1IvecwNA=
+Received: from DM6PR11MB3225.namprd11.prod.outlook.com (20.176.120.85) by
+ DM6PR11MB4234.namprd11.prod.outlook.com (52.132.249.203) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2347.17; Mon, 21 Oct 2019 08:58:11 +0000
+Received: from DM6PR11MB3225.namprd11.prod.outlook.com
+ ([fe80::3874:9f3c:5325:d22]) by DM6PR11MB3225.namprd11.prod.outlook.com
+ ([fe80::3874:9f3c:5325:d22%6]) with mapi id 15.20.2347.029; Mon, 21 Oct 2019
+ 08:58:11 +0000
+From:   <Claudiu.Beznea@microchip.com>
+To:     <daniel.lezcano@linaro.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <linux@armlinux.org.uk>, <nsekhar@ti.com>,
+        <bgolaszewski@baylibre.com>, <monstr@monstr.eu>,
+        <john@phrozen.org>, <ralf@linux-mips.org>, <paul.burton@mips.com>,
+        <jhogan@kernel.org>, <lftan@altera.com>, <tglx@linutronix.de>,
+        <vgupta@synopsys.com>, <marc.zyngier@arm.com>,
+        <patrice.chotard@st.com>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@st.com>, <eric@anholt.net>, <wahrenst@gmx.net>,
+        <f.fainelli@gmail.com>, <rjui@broadcom.com>,
+        <sbranden@broadcom.com>, <bcm-kernel-feedback-list@broadcom.com>,
+        <linus.walleij@linaro.org>, <shc_work@mail.ru>, <kgene@kernel.org>,
+        <krzk@kernel.org>, <ysato@users.sourceforge.jp>,
+        <liviu.dudau@arm.com>, <sudeep.holla@arm.com>,
+        <lorenzo.pieralisi@arm.com>, <shawnguo@kernel.org>,
+        <s.hauer@pengutronix.de>, <kernel@pengutronix.de>,
+        <festevam@gmail.com>, <linux-imx@nxp.com>, <baohua@kernel.org>,
+        <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <Ludovic.Desroches@microchip.com>, <baruch@tkos.co.il>,
+        <u.kleine-koenig@pengutronix.de>, <guoren@kernel.org>,
+        <kaloz@openwrt.org>, <khalasa@piap.pl>, <ssantosh@kernel.org>,
+        <vz@mleia.com>, <slemieux.tyco@gmail.com>, <khilman@baylibre.com>,
+        <avifishman70@gmail.com>, <tmaimon77@gmail.com>,
+        <tali.perry1@gmail.com>, <venture@google.com>, <yuenn@google.com>,
+        <benjaminfair@google.com>, <afaerber@suse.de>,
+        <manivannan.sadhasivam@linaro.org>, <narmstrong@baylibre.com>,
+        <agross@kernel.org>, <palmer@sifive.com>, <aou@eecs.berkeley.edu>,
+        <heiko@sntech.de>, <orsonzhai@gmail.com>, <baolin.wang@linaro.org>,
+        <zhang.lyra@gmail.com>, <maxime.ripard@bootlin.com>,
+        <wens@csie.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <linux@prisktech.co.nz>,
+        <john.stultz@linaro.org>, <sboyd@kernel.org>,
+        <matthias.bgg@gmail.com>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mips@vger.kernel.org>, <nios2-dev@lists.rocketboards.org>,
+        <linux-snps-arc@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <uclinux-h8-devel@lists.sourceforge.jp>,
+        <linux-amlogic@lists.infradead.org>, <openbmc@lists.ozlabs.org>,
+        <linux-oxnas@groups.io>, <linux-arm-msm@vger.kernel.org>,
+        <linux-unisoc@lists.infradead.org>,
+        <linux-riscv@lists.infradead.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-tegra@vger.kernel.org>, <linux-mediatek@lists.infradead.org>
+Subject: Re: [PATCH 0/7] add support for clocksource/clockevent DT selection
+Thread-Topic: [PATCH 0/7] add support for clocksource/clockevent DT selection
+Thread-Index: AQHVc8VbrLXkUp4vH02J/Sk0g3X+4A==
+Date:   Mon, 21 Oct 2019 08:58:10 +0000
+Message-ID: <215a1cd3-b1a8-5171-d70c-8d8081038e7f@microchip.com>
+References: <1568123236-767-1-git-send-email-claudiu.beznea@microchip.com>
+ <c3a68a08-d134-cd28-c8af-f757628e07f1@linaro.org>
+ <72edc5fd-df05-cba5-5aa7-39da1709415b@microchip.com>
+ <620a19d5-73b8-709d-9eec-49274ac23e51@microchip.com>
+ <187d7020-fbe9-7984-2358-8a70faef019f@microchip.com>
+ <14df6e5d-19ef-4ebc-fd11-9953bc3fc44e@linaro.org>
+ <7071b6fa-f7ed-c879-4a43-44100dbe6121@microchip.com>
+ <8e9f709f-2ded-c666-26e0-9235d6107c34@linaro.org>
+In-Reply-To: <8e9f709f-2ded-c666-26e0-9235d6107c34@linaro.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: LO2P265CA0421.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a0::25) To DM6PR11MB3225.namprd11.prod.outlook.com
+ (2603:10b6:5:59::21)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tagtoolbar-keys: D20191021115748754
+x-originating-ip: [94.177.32.156]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 3810ac50-35e2-4d42-7e6a-08d75604cc1f
+x-ms-traffictypediagnostic: DM6PR11MB4234:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DM6PR11MB42347F81DD4DE1159ECD573287690@DM6PR11MB4234.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 0197AFBD92
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(39860400002)(136003)(376002)(346002)(189003)(199004)(1191002)(36756003)(316002)(478600001)(5660300002)(14444005)(256004)(8676002)(2501003)(31686004)(6486002)(31696002)(229853002)(66066001)(102836004)(81156014)(6512007)(81166006)(6436002)(3846002)(52116002)(4326008)(99286004)(7406005)(2906002)(7336002)(6116002)(7366002)(2201001)(7416002)(110136005)(66446008)(66556008)(66946007)(66476007)(76176011)(6246003)(54906003)(86362001)(8936002)(71190400001)(71200400001)(25786009)(14454004)(11346002)(2616005)(446003)(476003)(386003)(6506007)(53546011)(7736002)(486006)(186003)(26005)(64756008)(2171002)(305945005)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR11MB4234;H:DM6PR11MB3225.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: BrURRVHxFOouoiEdT0XbRFhNbwLrjgICSsKdC1OVvjMDSPo2aviQut/pZmL6HMZKpmcEV97WzzAl7rTGFjlLCOoePFDwzRYPak3rKuYeuLRsIRO3gW7ayTGeDDucDl9w/XQG+vAup3pdj1PQJVZunDjh+4/+TGPP1DhTC625LXkUP0XrUptDb5rCpri00nNsoRpPSGdIW8UzSrhqXeuyLBkTLoQISGV1uyRV+PdI+rOyUI6WmRgMRXO95grqzacoGYQqRGoX0iDlhpbXvbHva803pt9flPrVjd+V6dLrjm6+EAa4L23DAe1MqTf/qDrY0EZh8GCP7PDr96MqIH38pXDhJAuFssZzo1l3wxv9mk8flNfDWzNGn3D8ylRo4lbZA8QDzObqbkeIU/74rIXVUclo14lTM2XsZITYDK8IbroE/uSqDKFwTk6tbmCdUad5
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191021015536epcas1p3d9dc18f8f4e4a98de0dc7a9a84525cd1
-References: <CGME20191021015536epcas1p3d9dc18f8f4e4a98de0dc7a9a84525cd1@epcas1p3.samsung.com>
+Content-ID: <60F94980C60DF447B0B88B0D90F5A4BE@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3810ac50-35e2-4d42-7e6a-08d75604cc1f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Oct 2019 08:58:10.4876
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: XTVZQGsCKvIe/8hNUSvF0owHehWJYzdiVDOMD3guyXcrA6p8GMydRkwxoWKIu99kzwLS+96zH72X1Ru6hK3krIEC608LEOoTiq4/TfVr4Bs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB4234
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-When driver is built as module and probe during insmod is deferred
-because of sensor subdevs, there is NULL pointer deference because
-mdev is cleaned up and then access it from v4l2_device_unregister().
-Fix the wrong mdev and v4l2 dev odder in error path of probe.
-
-This fixes below null pointer deference:
-   Unable to handle kernel NULL pointer dereference at virtual address 00000000
-   pgd = ca026f68
-   [00000000] *pgd=00000000
-   Internal error: Oops: 5 [#1] PREEMPT SMP ARM
-   [...]
-   Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-   PC is at ida_free+0x7c/0x160
-   LR is at xas_start+0x44/0x204
-   [...]
-   [<c0dafd60>] (ida_free) from [<c083c20c>] (__media_device_unregister_entity+0x18/0xc0)
-   [<c083c20c>] (__media_device_unregister_entity) from [<c083c2e0>] (media_device_unregister_entity+0x2c/0x38)
-   [<c083c2e0>] (media_device_unregister_entity) from [<c0843404>] (v4l2_device_release+0xd0/0x104)
-   [<c0843404>] (v4l2_device_release) from [<c0632558>] (device_release+0x28/0x98)
-   [<c0632558>] (device_release) from [<c0db1204>] (kobject_put+0xa4/0x208)
-   [<c0db1204>] (kct_put) from [<bf00bac4>] (fimc_capture_subdev_unregistered+0x58/0x6c [s5p_fimc])
-   [<bf00bac4>] (fimc_capture_subdev_unregistered [s5p_fimc]) from [<c084a1cc>] (v4l2_device_unregister_subdev+0x6c/0xa8)
-   [<c084a1cc>] (v4l2_device_unregister_subdev) from [<c084a350>] (v4l2_device_unregister+0x64/0x94)
-   [<c084a350>] (v4l2_device_unregister) from [<bf0101ac>] (fimc_md_probe+0x4ec/0xaf8 [s5p_fimc])
-   [...]
-
-Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
----
- drivers/media/platform/exynos4-is/media-dev.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index a838189..3685c91e6 100644
---- a/drivers/media/platform/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -1520,8 +1520,8 @@ static int fimc_md_probe(struct platform_device *pdev)
- err_clk:
- 	fimc_md_put_clocks(fmd);
- err_md:
--	media_device_cleanup(&fmd->media_dev);
- 	v4l2_device_unregister(&fmd->v4l2_dev);
-+	media_device_cleanup(&fmd->media_dev);
- 	return ret;
- }
- 
--- 
-1.7.4.1
-
+SGkgRGFuaWVsLA0KDQpPbiAxOC4xMC4yMDE5IDIzOjI0LCBEYW5pZWwgTGV6Y2FubyB3cm90ZToN
+Cj4gSGkgQ2xhdWRpdSwNCj4gDQo+IE9uIDE1LzEwLzIwMTkgMTE6MjMsIENsYXVkaXUuQmV6bmVh
+QG1pY3JvY2hpcC5jb20gd3JvdGU6DQo+IA0KPiBbIC4uLiBdDQo+IA0KPj4gVGhlIHRpbWVyIGNs
+b2NrIHNvdXJjZSBjb3VsZCBiZSBkaXZpZGVkIGJ5IE1SLlBSRVMgKyAxLg0KPj4NCj4+IFNvLCBJ
+IHVzZWQgdGhlIGNsb2NrLWZyZXF1ZW5jeSBEVCBiaW5kaW5nIHRvIGxldCB1c2VyIGNob29zZSB0
+aGUgdGltZXIncw0KPj4gZnJlcXVlbmN5LiBCYXNlZCBvbiB0aGUgdmFsdWUgcHJvdmlkZWQgdmlh
+IHRoaXMgRFQgYmluZGluZyB0aGUgYmVzdCBjbG9jaw0KPj4gc291cmNlIGFuZCBwcmVzY2FsZXIg
+aXMgY2hvc2VuIHZpYSBtY2hwX3BpdDY0Yl9wcmVzX3ByZXBhcmUoKSBmdW5jdGlvbi4NCj4gDQo+
+IEknbSB3aWxsaW5nIHRvIHRha2UgdGhlIGRyaXZlciBidXQgSSBkb3VidCB0aGUgcHVycG9zZSBv
+ZiB0aGUNCj4gY2xvY2stZnJlcXVlbmN5IGlzIHRvIGxldCB0aGUgdXNlciBjaG9vc2UgdGhlIGZy
+ZXF1ZW5jeS4NCj4gDQoNCkkgZm91bmQgdGhpcyBhcHByb2FjaCBpbiB0aGUgZm9sbG93aW5nIGFs
+cmVhZHkgaW50ZWdyYXRlZCBkcml2ZXJzOg0KZHJpdmVycy9jbG9ja3NvdXJjZS9hcm12N21fc3lz
+dGljay5jDQpkcml2ZXJzL2Nsb2Nrc291cmNlL2JjbTI4MzVfdGltZXIuYw0KZHJpdmVycy9jbG9j
+a3NvdXJjZS9iY21fa29uYV90aW1lci5jDQpkcml2ZXJzL2Nsb2Nrc291cmNlL21pcHMtZ2ljLXRp
+bWVyLmMNCmRyaXZlcnMvY2xvY2tzb3VyY2UvbXBzMi10aW1lci5jDQpkcml2ZXJzL2Nsb2Nrc291
+cmNlL3RpbWVyLXFjb20uYw0KZHJpdmVycy9jbG9ja3NvdXJjZS9hcm1fYXJjaF90aW1lci5jDQoN
+Ckxvb2tpbmcgdGhyb3VnaCB0aGUgZG9jdW1lbnRhdGlvbiBvZiB0aGVzZSwgbW9zdCBvZiB0aGVt
+IGRvY3VtZW50IHRoaXMgRFQNCnByb3BlcnR5IGFzIHRoZSBmcmVxdWVuY3kgb2YgdGhlIGNsb2Nr
+IHRoYXQgZHJpdmVycyB0aGUgdGltZXIsIGJ1dCBub25lIG9mDQp0aGVtIHNlZW1zIHRvIGhhdmUg
+c29tZSBJUCBpbnRlcm5hbCBkaXZpZGVycyBzbyB0aGF0IHRoZSB0aW1lciB0byB0aWNrIGF0DQpk
+aWZmZXJlbnQgZnJlcXVlbmN5IHRoYW4gdGhlIGNsb2NrIHRoYXQgZmVlZHMgdGhlIElQLiBGcm9t
+IHRoZQ0KZG9jdW1lbnRhdGlvbiBvZiB0aGUgYWJvdmUgZHJpdmVyczsNCmRyaXZlcnMvY2xvY2tz
+b3VyY2UvYXJtdjdtX3N5c3RpY2suYw0KCS0gY2xvY2stZnJlcXVlbmN5IDogVGhlIHJhdGUgaW4g
+SFogaW4gaW5wdXQgb2YgdGhlIEFSTSBTeXNUaWNrDQoNCmRyaXZlcnMvY2xvY2tzb3VyY2UvYmNt
+MjgzNV90aW1lci5jDQoJLSBjbG9jay1mcmVxdWVuY3kgOiBUaGUgZnJlcXVlbmN5IG9mIHRoZSBj
+bG9jayB0aGF0IGRyaXZlcyB0aGUgY291bnRlciwgaW4NCkh6Lg0KZHJpdmVycy9jbG9ja3NvdXJj
+ZS9iY21fa29uYV90aW1lci5jDQoJLSBjbG9jay1mcmVxdWVuY3k6IGZyZXF1ZW5jeSB0aGF0IHRo
+ZSBjbG9jayBvcGVyYXRlcw0KDQpkcml2ZXJzL2Nsb2Nrc291cmNlL21pcHMtZ2ljLXRpbWVyLmMN
+CgljbG9jay1mcmVxdWVuY3kgOiBDbG9jayBmcmVxdWVuY3kgYXQgd2hpY2ggdGhlIEdJQyB0aW1l
+cnMgb3BlcmF0ZS4NCmRyaXZlcnMvY2xvY2tzb3VyY2UvbXBzMi10aW1lci5jDQoJLSBjbG9jay1m
+cmVxdWVuY3kgOiBUaGUgcmF0ZSBpbiBIWiBpbiBpbnB1dCBvZiB0aGUgQVJNIE1QUzIgdGltZXIN
+Cg0KZHJpdmVycy9jbG9ja3NvdXJjZS90aW1lci1xY29tLmMNCgktIGNsb2NrLWZyZXF1ZW5jeSA6
+IFRoZSBmcmVxdWVuY3kgb2YgdGhlIGRlYnVnIHRpbWVyIGFuZCB0aGUgZ2VuZXJhbA0KcHVycG9z
+ZQ0KICAgICAgICAgICAgICAgICAgICB0aW1lcihzKSBpbiBIeiBpbiB0aGF0IG9yZGVyLg0KDQoN
+ClRoaXMgaXMgd2h5IEkgYWxzbyBjaG9zZSB0aGlzIERUIGJpbmRpbmdzLg0KDQpJZiB5b3Ugd2Fu
+dCBJIGNhbiBzdGljayB0byBhIGZpeGVkIGZyZXF1ZW5jeSBoYXJkIGNvZGVkIGluIHRoZSBkcml2
+ZXIuDQpQbGVhc2UgbGV0IG1lIGtub3cgaWYgdGhpcyB3b3VsZCBiZSBPSyBmb3IgeW91Lg0KDQpU
+aGFuayB5b3UsDQpDbGF1ZGl1IEJlem5lYQ0KDQo+IA0KPiBbIC4uLiBdDQo+IA0KPiANCg==
