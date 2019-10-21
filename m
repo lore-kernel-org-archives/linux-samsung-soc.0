@@ -2,121 +2,295 @@ Return-Path: <SRS0=nJnZ=YO=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6F6BCA9EB0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Oct 2019 12:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1430CA9EB0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Oct 2019 13:25:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDAAB20700
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Oct 2019 12:01:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DZayBbwz"
+	by mail.kernel.org (Postfix) with ESMTP id 7E9BA20B7C
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Oct 2019 13:25:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1571664346;
+	bh=ZhaFyri7A1KDC/fyWajZH2nBZgD2bkb1zm3DEpMhCmI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=NUzX2xlArUSfxprcRUuCrl5XbLe/ZiGeWYXS4dML1AfCPhpMhYXxjM6kcDQQ29Wa2
+	 0HIefjAcyMST/xL/ni/tBmvv6SYf9V4G5c43LM2H47x2CGIreWYhp7uVyjUtJcf5tC
+	 Wifk/6uwKwy9okDP2sutFJvPgwSo3ttLaw+Ho5AE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728323AbfJUMBJ (ORCPT
+        id S1728851AbfJUNZn (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 21 Oct 2019 08:01:09 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40075 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728083AbfJUMBJ (ORCPT
+        Mon, 21 Oct 2019 09:25:43 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:35687 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727322AbfJUNZn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 21 Oct 2019 08:01:09 -0400
-Received: by mail-wr1-f66.google.com with SMTP id o28so13646271wro.7
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Oct 2019 05:01:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mWEB9osAQee35AyhlgRxJbWS6irJ5cvGkHpX55XRn1E=;
-        b=DZayBbwzidagHXfjzo+vzE7AoicDQbfH28tq6Q3lvonVDXLWmKQFdudte2p5G1rCYp
-         RVCcVYLiRDHe1rxz+iGD1bJ19a2LoAC5z0miBg8I788Def1js93fq7drRVXZdNS26R13
-         UnnRmVsYQpkMOQqyFLSt6RoynkjorxsG76w0WY9nzHxR3eknHms4r6T1PRRybxDGFUz7
-         X6O82uWSVvSR5YTRhUvqJeUZihX/r7KOV478vNKXthZopVovLmhUu5PLjXBG8sTKgQ9m
-         amHtltZ0/s0L/DU1nqWZ3iNpJkbb7B6kjHoNQTSeFULE+WdU31YltZ0C/osAUTntiGEl
-         l4yg==
+        Mon, 21 Oct 2019 09:25:43 -0400
+Received: by mail-ed1-f65.google.com with SMTP id v8so10010957eds.2;
+        Mon, 21 Oct 2019 06:25:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mWEB9osAQee35AyhlgRxJbWS6irJ5cvGkHpX55XRn1E=;
-        b=CxViOqk6I+7zZ+AkhiEPb3pePNU3eQwHj2xxtSs+sxyDF623ma0A8e0Ul20ZsRAQJL
-         b/mHnrIQcaqS5JlvvE9fxOKfIkM+o2cYRw0hTFGAAapRiCrq3CwPhNEDKqORSFMO6vDD
-         HDqodZy4GucNH3tGC3GM3f29MEVuz0SUZgNXusQ7VaQtEV8Z76SfEPTTlyRKOf+3veHK
-         UwO4P2t0bjd1q4jH8hzP7eBD4VnpuSetSdORz+i6FsoFf7iPLoyfldXsCTMtJmyRN6DF
-         VbFVXKDmvbYJMtr9dnl3/LrEvMPsxwobqlNzEEIa7ELLZaTVmFmvUi9ColfyTUuIZG+T
-         c37g==
-X-Gm-Message-State: APjAAAXV3WhfROzxYbcaxAEKV3Cx8akx4wcJNxDH72XKgfxRraSAb/VB
-        Bsrw29O748p8J9AEGEh+NHRoxVUCtzgvtiO8tnITFA==
-X-Google-Smtp-Source: APXvYqyi04G4z3qmQczX0PrqdoD0ePmtzfbw4P+sB+JZvmXhdomvbxqXJ3pHKBiLdD/c9bC+H9OTsi2VKUlpDUvwjCE=
-X-Received: by 2002:adf:f685:: with SMTP id v5mr16542105wrp.246.1571659265641;
- Mon, 21 Oct 2019 05:01:05 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kbWYhDCDbV5qK8VclXFPP6NqeqAgLz5VFjeSpIHBB+s=;
+        b=P0o5J7f463rPShMQQdGTGJS20mF2seoybaOTC4XO+XDKDg6l1fOsb8gqP8MipaHRJh
+         LN00Ug1Tp4PXOAuJrrt/0xNLtrDBFjkRBQBeMHtbW80SsFwb246NudnxChuk8bEkGsC/
+         9V+ZGM9ExrIynBsCe4sajVYLz1/iTrKT7ejfjCkjCCqnZG1qgoAdd9HX4QpZRLeP2C4U
+         F4bNATd+6hI618giXSSP4BOhPgbsM1RxyQ6UpywxSZrrY9v3K2kL6N3WCrYjQLu6Zkel
+         zEykbjdl9LWYPyA5do00IRljzOV3TYWB9tGjh2zKX33/POEBea7PH/G4P1EoJfIWxyI+
+         9O9g==
+X-Gm-Message-State: APjAAAUCQSezwd0rDBE1ZWv26CZXBtwRrPgkUe6m2nByt4w+vETmB3J4
+        33ndeCeeTVIYWNdrwd0GOxI=
+X-Google-Smtp-Source: APXvYqyDVwXcr52I2wsb+Z4RGg4WcltwXXlohYeZzvFP+OKWg5ZNU8oHr/O1UXzcE6xe2rgQ+TiKng==
+X-Received: by 2002:a17:906:2584:: with SMTP id m4mr22390782ejb.287.1571664340356;
+        Mon, 21 Oct 2019 06:25:40 -0700 (PDT)
+Received: from pi3 ([194.230.155.217])
+        by smtp.googlemail.com with ESMTPSA id s4sm344795edt.34.2019.10.21.06.25.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2019 06:25:39 -0700 (PDT)
+Date:   Mon, 21 Oct 2019 15:25:36 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>,
+        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3 01/10] dt-bindings: sram: Convert SRAM bindings to
+ json-schema
+Message-ID: <20191021132536.GA2791@pi3>
+References: <20191002164316.14905-1-krzk@kernel.org>
+ <20191010191240.GA15006@bogus>
 MIME-Version: 1.0
-References: <20191014121910.7264-1-ard.biesheuvel@linaro.org>
- <20191014121910.7264-8-ard.biesheuvel@linaro.org> <20191021100517.GA1780@pi3>
-In-Reply-To: <20191021100517.GA1780@pi3>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 21 Oct 2019 14:00:59 +0200
-Message-ID: <CAKv+Gu8AK+oTRw5Q1NMWkxmycAD+tkqeiqBM-kV_oeebu2sYug@mail.gmail.com>
-Subject: Re: [PATCH 07/25] crypto: s5p - switch to skcipher API
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Biggers <ebiggers@google.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Kamil Konieczny <k.konieczny@partner.samsung.com>,
-        linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191010191240.GA15006@bogus>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 21 Oct 2019 at 12:05, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On Mon, Oct 14, 2019 at 02:18:52PM +0200, Ard Biesheuvel wrote:
-> > Commit 7a7ffe65c8c5 ("crypto: skcipher - Add top-level skcipher interface")
-> > dated 20 august 2015 introduced the new skcipher API which is supposed to
-> > replace both blkcipher and ablkcipher. While all consumers of the API have
-> > been converted long ago, some producers of the ablkcipher remain, forcing
-> > us to keep the ablkcipher support routines alive, along with the matching
-> > code to expose [a]blkciphers via the skcipher API.
-> >
-> > So switch this driver to the skcipher API, allowing us to finally drop the
-> > blkcipher code in the near future.
-> >
-> > Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> > Cc: Vladimir Zapolskiy <vz@mleia.com>
-> > Cc: Kamil Konieczny <k.konieczny@partner.samsung.com>
-> > Cc: linux-samsung-soc@vger.kernel.org
-> > Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+On Thu, Oct 10, 2019 at 02:12:40PM -0500, Rob Herring wrote:
+> On Wed, Oct 02, 2019 at 06:43:07PM +0200, Krzysztof Kozlowski wrote:
+> > Convert generic mmio-sram bindings to DT schema format using
+> > json-schema.  Require the address/size cells to be 1, not equal to root
+> > node.
+> > 
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > 
 > > ---
-> >  drivers/crypto/s5p-sss.c | 191 ++++++++++----------
-> >  1 file changed, 91 insertions(+), 100 deletions(-)
-> >
-> > diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-> > index 010f1bb20dad..e6f1d4d5186c 100644
-> > --- a/drivers/crypto/s5p-sss.c
-> > +++ b/drivers/crypto/s5p-sss.c
-> > @@ -303,7 +303,7 @@ struct s5p_aes_dev {
-> >       void __iomem                    *aes_ioaddr;
-> >       int                             irq_fc;
-> >
-> > -     struct ablkcipher_request       *req;
-> > +     struct skcipher_request *req;
->
-> You mix here indentation.
->
+> > 
+> > Changes since v2:
+> > 1. Add Rob as maintainer,
+> > 2. Use "contains" for compatible,
+> > 3. Fix address and size cells to 1,
+> > 4. Add maxitems to reg under children,
+> > 5. Remove unneeded string type from label.
+> > 
+> > Changes since v1:
+> > 1. Indent example with four spaces (more readable).
+> > ---
+> >  .../devicetree/bindings/sram/sram.txt         |  80 -----------
+> >  .../devicetree/bindings/sram/sram.yaml        | 134 ++++++++++++++++++
+> >  2 files changed, 134 insertions(+), 80 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/sram/sram.txt
+> >  create mode 100644 Documentation/devicetree/bindings/sram/sram.yaml
+> 
+> 
+> > diff --git a/Documentation/devicetree/bindings/sram/sram.yaml b/Documentation/devicetree/bindings/sram/sram.yaml
+> > new file mode 100644
+> > index 000000000000..a1c1ec2183f2
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/sram/sram.yaml
+> > @@ -0,0 +1,134 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/sram/sram.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Generic on-chip SRAM
+> > +
+> > +maintainers:
+> > +  - Rob Herring <robh@kernel.org>
+> > +
+> > +description: |+
+> > +  Simple IO memory regions to be managed by the genalloc API.
+> > +
+> > +  Each child of the sram node specifies a region of reserved memory. Each
+> > +  child node should use a 'reg' property to specify a specific range of
+> > +  reserved memory.
+> > +
+> > +  Following the generic-names recommended practice, node names should
+> > +  reflect the purpose of the node. Unit address (@<address>) should be
+> > +  appended to the name.
+> > +
+> > +properties:
+> > +  $nodename:
+> > +    pattern: "^sram(@.*)?"
+> > +
+> > +  compatible:
+> > +    contains:
+> > +      enum:
+> > +        - mmio-sram
+> > +        - atmel,sama5d2-securam
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  "#address-cells":
+> > +    const: 1
+> > +
+> > +  "#size-cells":
+> > +    const: 1
+> > +
+> > +  ranges:
+> > +    description:
+> > +      Should translate from local addresses within the sram to bus addresses.
+> > +
+> > +  no-memory-wc:
+> > +    description:
+> > +      The flag indicating, that SRAM memory region has not to be remapped
+> > +      as write combining. WC is used by default.
+> > +    type: boolean
+> > +
+> > +patternProperties:
+> > +  "^([a-z]*-)?sram@[a-f0-9]$":
+> > +    type: object
+> > +    description:
+> > +      Each child of the sram node specifies a region of reserved memory.
+> > +    properties:
+> > +      reg:
+> > +        description:
+> > +          IO mem address range, relative to the SRAM range.
+> > +        maxItems: 1
+> > +
+> > +      compatible:
+> > +        $ref: /schemas/types.yaml#/definitions/string
+> 
+> No need to define the type again. We can say 'maxItems: 1' if we really 
+> want to force it to 1 entry.
 
-Will fix
+I'll fix it and integrate Samsung compatibles here.
 
-> Beside that:
->
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
->
+> 
+> > +        description:
+> > +          Should contain a vendor specific string in the form
+> > +          <vendor>,[<device>-]<usage>
+> > +
+> > +      pool:
+> > +        description:
+> > +          Indicates that the particular reserved SRAM area is addressable
+> > +          and in use by another device or devices.
+> > +        type: boolean
+> > +
+> > +      export:
+> > +        description:
+> > +          Indicates that the reserved SRAM area may be accessed outside
+> > +          of the kernel, e.g. by bootloader or userspace.
+> > +        type: boolean
+> > +
+> > +      protect-exec:
+> > +        description: |
+> > +          Same as 'pool' above but with the additional constraint that code
+> > +          will be run from the region and that the memory is maintained as
+> > +          read-only, executable during code execution. NOTE: This region must
+> > +          be page aligned on start and end in order to properly allow
+> > +          manipulation of the page attributes.
+> > +        type: boolean
+> > +
+> > +      label:
+> > +        description:
+> > +          The name for the reserved partition, if omitted, the label is taken
+> > +          from the node name excluding the unit address.
+> > +
+> > +      clocks:
+> 
+> Shouldn't this be up one level? Looks like this is the only case 
+> (Marvell and i.MX are the only ones I see with clocks).
 
-Thanks!
+Yes, that's a mistake in original bindings.
+
+> 
+> > +        description:
+> > +          A list of phandle and clock specifier pair that controls the
+> > +          single SRAM clock.
+> 
+> maxItems: 1
+
+Yes.
+
+> 
+> > +
+> > +    required:
+> > +      - reg
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - "#address-cells"
+> > +  - "#size-cells"
+> > +  - ranges
+> 
+> Does 'additionalProperties' work here and/or in the child node? I guess 
+> not if we keep some node names.
+
+It seems that it works.
+
+> 
+> > +
+> > +examples:
+> > +  - |
+> > +    sram: sram@5c000000 {
+> > +        compatible = "mmio-sram";
+> > +        reg = <0x5c000000 0x40000>; /* 256 KiB SRAM at address 0x5c000000 */
+> > +
+> > +        #address-cells = <1>;
+> > +        #size-cells = <1>;
+> > +        ranges = <0 0x5c000000 0x40000>;
+> > +
+> > +        smp-sram@100 {
+> > +            compatible = "socvendor,smp-sram";
+> > +            reg = <0x100 0x50>;
+> > +        };
+> > +
+> > +        device-sram@1000 {
+> > +            reg = <0x1000 0x1000>;
+> > +            pool;
+> > +        };
+> > +
+> > +        exported@20000 {
+> 
+> This one doesn't match the pattern. That's fine I guess for dts files, 
+> but examples should be good examples.
+
+Sure.
+
+Best regards,
+Krzysztof
+
+> 
+> > +            reg = <0x20000 0x20000>;
+> > +            export;
+> > +        };
+> > +    };
+> > -- 
+> > 2.17.1
+> > 
