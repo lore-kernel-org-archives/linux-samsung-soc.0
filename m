@@ -4,99 +4,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE45CCA9EAF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Oct 2019 10:22:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AABFCA9EB0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Oct 2019 11:24:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEECA2084C
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Oct 2019 10:22:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BECC20679
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Oct 2019 11:24:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1571653321;
-	bh=ldV1AAAsdREXDXeQW+llqEafSolwVY1a907bgC7rUUc=;
+	s=default; t=1571657042;
+	bh=a2UHtRt26/huoScw/p2X1IBkDX1yI2mM4U79evBbDqY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=TG29YYuk2EvEiTqhaGmgZ9GobowXzdzQ74novBdVqscgCxVb+S4/AYk42iIPOeB8O
-	 pK/GZa+NucQ7OaclaBxe+AyzyiSBLvtga/JtOiSKngkNPCPCjqsH1N6PdbusZ4mSrh
-	 03XA5IWeGVyI4U14IBOo2CGQIdUWhVtokx93thdg=
+	b=sjJ4AtlMVuYhTf8nuh1vRAd4Z+f+XFtYfrmz+8y7twh6JDiDrnAVKxOBtrxKY9806
+	 lx4I+rH8PJ+0tkee4caSGvDM6APMd6hW+gEhMFsEnAujzFKhLt/nCYp7mLlqnIkyFO
+	 at+5luMTgXBmJKohFY30IcDOV1QuJUW8Ph3hkipA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727685AbfJUKWB (ORCPT
+        id S1727571AbfJULYB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 21 Oct 2019 06:22:01 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:34698 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726725AbfJUKWB (ORCPT
+        Mon, 21 Oct 2019 07:24:01 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:33454 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727433AbfJULYB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 21 Oct 2019 06:22:01 -0400
-Received: by mail-ed1-f68.google.com with SMTP id b72so624815edf.1;
-        Mon, 21 Oct 2019 03:21:58 -0700 (PDT)
+        Mon, 21 Oct 2019 07:24:01 -0400
+Received: by mail-ed1-f67.google.com with SMTP id c4so9725449edl.0;
+        Mon, 21 Oct 2019 04:23:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NTXwyuKPtae41ucu10e0jfWsFbRgsyPTHworMEWDZyQ=;
-        b=pb+E/4ap3q0bRrAJk5CIzfayBk+FbTM76eQBLlXweruslA5z5v6RTjvoWXC5iXK07l
-         qLYgS/FhmXMS0L8uO2p+tPpK8Oi5G3JR12ZQjyMRfZzVeuUy2sN/r739tOko6v+upw+k
-         DRwwOR3QmieoUVm2juw8G0dI0deuzS/UYqRjkVmn0GKsC0N/kVw3snhbE9CepEQUxLkz
-         ncCs6awHyV6eCYzucufd2CT2kU8TmYDOQUgxPYzuyHlIvRnJmNn3EACkSlDIv4DtVXMh
-         0UpveYp4YQZL3Pco6qKaSpFGTXOYQZvAHX0vhYoYaBH4Y/fdQPlBt1uT5/ZCerV7n6i7
-         ljTg==
-X-Gm-Message-State: APjAAAXROgvpXeoiMZr8v0cKQUue1Gwygm1Yp23S41t8CmAGIowu0xY5
-        n2KZhx/1SPmcysCy/40kEGE=
-X-Google-Smtp-Source: APXvYqwXeK2/2BY3ORkuBAxMultEP+lVNX/1OoZXMoqOvq9xllY1syL/7QofFUXQ2efCb4ja3MbPsQ==
-X-Received: by 2002:a50:ec0f:: with SMTP id g15mr24142459edr.59.1571653317618;
-        Mon, 21 Oct 2019 03:21:57 -0700 (PDT)
+        bh=BVlXhkUOcHB+M6im4W80bsAnmThctBDhzXi/Z0FpqPM=;
+        b=S0V90N+JCrqNnp2dnTE9DRbdC6LfHTIezwPuiDSdPk9RbPLwEEUOEbiFij3ksnRY2a
+         swl+mXCUjqpoKfnsWigLH9jUEeSsPrT0lCqz8jCv7zNaIXiaLang8ux+zBMrAa3Qs4Nt
+         kp31ZpRZo4UKtPx0fVtYp3aNoAIrKXrponiD8ZcvD69VEoPoR8sE8pN07ncfgT4X193B
+         zQdaTLgcfzuQAxb/kLKTBR0mxJQ16NlSI/9qI0886GSxDDd3X+TN78j0NdMyECFn3C1I
+         Sy6gBcvIXCu0v4KWHD4rzxzC3jDfVqGvfeyCv70vGmPk2mQfJegvcJJ5KhiquzID1jfo
+         g2Bw==
+X-Gm-Message-State: APjAAAXrbCYpLnbKDqwO1D4j1d9hml48eaRfvQmKs39b65Ew0Ee9QVHv
+        bOc1/7IME92xRvKKsm1DwEM=
+X-Google-Smtp-Source: APXvYqwff/GiwAwp/7TONncf6a2J4jtHzGlSJbceQ9C74FUOcOXZ54eJ4FoTQ+a8fgD2rHnjfyIlmQ==
+X-Received: by 2002:a17:906:5292:: with SMTP id c18mr21356043ejm.129.1571657037596;
+        Mon, 21 Oct 2019 04:23:57 -0700 (PDT)
 Received: from pi3 ([194.230.155.217])
-        by smtp.googlemail.com with ESMTPSA id ay16sm181628edb.47.2019.10.21.03.21.56
+        by smtp.googlemail.com with ESMTPSA id w16sm579189edd.93.2019.10.21.04.23.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2019 03:21:56 -0700 (PDT)
-Date:   Mon, 21 Oct 2019 12:21:54 +0200
+        Mon, 21 Oct 2019 04:23:56 -0700 (PDT)
+Date:   Mon, 21 Oct 2019 13:23:54 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Maciej Falkowski <m.falkowski@samsung.com>
-Subject: Re: [PATCH v2] dt-bindings: sound: Convert Samsung Exynos Odroid
- XU3/XU4 audio complex to dt-schema
-Message-ID: <20191021102154.GA1903@pi3>
-References: <CGME20191017100534eucas1p1407cf6ef5606d6bd6a4140502cc95984@eucas1p1.samsung.com>
- <20191017100529.4183-1-m.szyprowski@samsung.com>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>, vireshk@kernel.org,
+        robh+dt@kernel.org, sboyd@kernel.org, roger.lu@mediatek.com,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
+        Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v5 1/4] PM / OPP: Support adjusting OPP voltages at
+ runtime
+Message-ID: <20191021112354.GA2262@pi3>
+References: <20191016145756.16004-1-s.nawrocki@samsung.com>
+ <CGME20191016145810eucas1p1b31400c9b2e7f30cdf6deeb4ccee2788@eucas1p1.samsung.com>
+ <20191016145756.16004-2-s.nawrocki@samsung.com>
+ <20191017064258.yfbh7iz3pbzfhdvr@vireshk-i7>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191017100529.4183-1-m.szyprowski@samsung.com>
+In-Reply-To: <20191017064258.yfbh7iz3pbzfhdvr@vireshk-i7>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Oct 17, 2019 at 12:05:29PM +0200, Marek Szyprowski wrote:
-> From: Maciej Falkowski <m.falkowski@samsung.com>
+On Thu, Oct 17, 2019 at 12:12:58PM +0530, Viresh Kumar wrote:
+> On 16-10-19, 16:57, Sylwester Nawrocki wrote:
+> > From: Stephen Boyd <sboyd@codeaurora.org>
+> > 
+> > On some SoCs the Adaptive Voltage Scaling (AVS) technique is
+> > employed to optimize the operating voltage of a device. At a
+> > given frequency, the hardware monitors dynamic factors and either
+> > makes a suggestion for how much to adjust a voltage for the
+> > current frequency, or it automatically adjusts the voltage
+> > without software intervention. Add an API to the OPP library for
+> > the former case, so that AVS type devices can update the voltages
+> > for an OPP when the hardware determines the voltage should
+> > change. The assumption is that drivers like CPUfreq or devfreq
+> > will register for the OPP notifiers and adjust the voltage
+> > according to suggestions that AVS makes.
+> > 
+> > This patch is derived from [1] submitted by Stephen.
+> > [1] https://lore.kernel.org/patchwork/patch/599279/
+> > 
+> > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> > Signed-off-by: Roger Lu <roger.lu@mediatek.com>
+> > [s.nawrocki@samsung.com: added handling of OPP min/max voltage]
+> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> > ---
+> >  drivers/opp/core.c     | 69 ++++++++++++++++++++++++++++++++++++++++++
+> >  include/linux/pm_opp.h | 13 ++++++++
+> >  2 files changed, 82 insertions(+)
 > 
-> Convert Samsung Exynos Odroid XU3/XU4 audio complex with MAX98090 codec
-> to newer dt-schema format.
-> 
-> 'clocks' property is unneeded in the bindings and is left undefined in 'properties'.
-> 
-> 'samsung,audio-widgets' and 'samsung,audio-routing' are optional from driver
-> perspective and they are set as unrequired.
-> 
-> Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
-> [mszyprow: reordered non-standard properties]
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  .../bindings/sound/samsung,odroid.txt         | 54 -----------
->  .../bindings/sound/samsung,odroid.yaml        | 91 +++++++++++++++++++
->  2 files changed, 91 insertions(+), 54 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sound/samsung,odroid.txt
->  create mode 100644 Documentation/devicetree/bindings/sound/samsung,odroid.yaml
+> Applied. Thanks.
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Hi Viresh,
+
+Can you provide a stable tag with this patch so I can take soc/samsung
+driver?
 
 Best regards,
 Krzysztof
