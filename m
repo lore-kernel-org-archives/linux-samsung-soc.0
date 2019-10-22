@@ -2,125 +2,112 @@ Return-Path: <SRS0=PNwi=YP=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B133CA9EA0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Oct 2019 14:27:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEB09CA9EA0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Oct 2019 15:53:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07C58218AE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Oct 2019 14:27:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EF362184C
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Oct 2019 15:53:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727867AbfJVO1W (ORCPT
+        id S2388392AbfJVPxv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 22 Oct 2019 10:27:22 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:34229 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725887AbfJVO1W (ORCPT
+        Tue, 22 Oct 2019 11:53:51 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:50825 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387888AbfJVPxv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 22 Oct 2019 10:27:22 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1Mzhax-1i9dMY3aYT-00vdGx; Tue, 22 Oct 2019 16:27:07 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Lukasz Luba <l.luba@partner.samsung.com>,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] PM / devfreq: events: fix excessive stack usage
-Date:   Tue, 22 Oct 2019 16:26:48 +0200
-Message-Id: <20191022142703.1789898-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Tue, 22 Oct 2019 11:53:51 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iMwT7-0006Ja-Jx; Tue, 22 Oct 2019 17:53:09 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iMwT5-0002EX-5J; Tue, 22 Oct 2019 17:53:07 +0200
+Date:   Tue, 22 Oct 2019 17:53:07 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Sangbeom Kim <sbkim73@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Olof Johansson <olof@lixom.net>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Faiz Abbas <faiz_abbas@ti.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        linux-serial@vger.kernel.org,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>
+Subject: Re: [PATCH 11/36] ARM: s5pv210: split from plat-samsung
+Message-ID: <20191022155307.izh4ryorm7thw7tq@pengutronix.de>
+References: <20191010202802.1132272-1-arnd@arndb.de>
+ <20191010203043.1241612-1-arnd@arndb.de>
+ <20191010203043.1241612-11-arnd@arndb.de>
+ <20191011055149.4dudr4tk2znpt65u@pengutronix.de>
+ <CAK8P3a1st8gR7u+8-oyP6HrzZdmrzhq7PRonYuz0a5O8rfKaSA@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:qh/RvLmjzDt8CUVV7ACatn1skvYcyfu5E28VkIq7AS6tttHZlMz
- TIjAjlq//c4oE0S7pk2+qn3TwWn+zIIDE+irKrPdUQkLSm9C+UMARBbwSYsXjmQ3A4Vj4+m
- WaYPiiDoSMGCRXT0S2+joZKLny6x7/4mgNiuXorMgIEGEcbqw0dHAFpnjrAPOburAvNGWF+
- 9WZ22K4YeTldC144O2aUQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:sL01PcIlAAs=:AntrFvxzg3D8JTrZICKrqN
- 1ZPcU53wnTXZaTpk0RQYe0TbS0a4kx0bLi2NKVF//lAiil22BuvuewyWdDVifb017uCRjc23M
- a8bn7moO7kXmW24pWlqE+VddKGpvytQMyzEzzGqKZPCHhUe7IErLHu6/FsS0GZj+qI3WiMuSj
- sdZrCdC+hXXvm+yDqnzpqzQ2PNTiGqUeYncWNojpuimzpwSVNBkd6ZUhaGp/ffsVMRA3ndliV
- P8ePYjyBGCeEOiCGk+WSL4mIsAJhFgopmppPVrLN4Y/L40+8DVKFXHJu4njXeEZxz7S4flg/H
- syJEdRIGPIpMeBIqzfhtr/YfVMRuiey+q6s4j9ibCcz3HZlDAxgHjM1USfC1qKlLiD2F/qTKL
- 2aB6GnHIJ/n8MqcKJBN6LcVOklxnFb62hwn0IF7mB9i4ZbUgwuQMoZJn7iq2S+uC86BA77rSZ
- 77t2x1ygZ+fNSEP2Qdee08lDS4Q9N7qkcUKrm7JPIK9meUfMzOgsnSwAPbc9pFIxAsJgD73El
- HN8hbnxKcaHLSKXN4RFXBMka2+4KtDTCQPqISfbeWJyEkUZY8Q1lNdsTIxtR80lVCL0XxtP33
- gx9qE9CPg0iYSV8AbwAggbQ3Aag0BfGSnPClLTRIhOY3NcISc7LnCzvryq8hmcpPpqLDOQDLW
- DBb4COdvFcGH+wED2mv5Rp4f/jkAz7Rj8f2re+ij6KoQuU34ryYMH6VA9pTnVqAQx2W/Bek+H
- iJqeYhoXUFR47tPo3Xo1uxkr+oYSmEzHbP/4WCDejGwmlioTth7WUFtwvbv/pYbZ3nCbst2bv
- zwbdwYn6oSVjStsGxfOWHEX4D4miVBlCvShwv//yhKuL0HP/BCDhx3o5UrU8O2YXXRBPlIu61
- ZV8Swi1xkpPum25vukVg==
+In-Reply-To: <CAK8P3a1st8gR7u+8-oyP6HrzZdmrzhq7PRonYuz0a5O8rfKaSA@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Putting a 'struct devfreq_event_dev' object on the stack is generally
-a bad idea and here it leads to a warnig about potential stack overflow:
+Hello,
 
-drivers/devfreq/event/exynos-ppmu.c:643:12: error: stack frame size of 1040 bytes in function 'exynos_ppmu_probe' [-Werror,-Wframe-larger-than=]
+On Tue, Oct 22, 2019 at 04:01:12PM +0200, Arnd Bergmann wrote:
+> > > @@ -235,7 +235,6 @@ machine-$(CONFIG_PLAT_SPEAR)              += spear
+> > >  # by CONFIG_* macro name.
+> > >  plat-$(CONFIG_ARCH_OMAP)     += omap
+> > >  plat-$(CONFIG_ARCH_S3C64XX)  += samsung
+> > > -plat-$(CONFIG_ARCH_S5PV210)  += samsung
+> >
+> > Would it make more sense to make this
+> >
+> >         plat-$(PLAT_SAMSUNG) += samsung
+> >
+> > (in a separate patch)? Hmm, it seems there is no plat-y for
+> > PLAT_S3C24XX=y builds. Is this intended? If yes, the directory name
+> > containing "samsung" suggests something that seems untrue.
+> 
+> By the end of the series, the plat-samsung directory is completely
+> removed (folded into mach-s3c), so that would only add more
+> churn for the same result I think.
 
-There is no real need for the device structure, only the string inside
-it, so add an internal helper function that simply takes the string
-as its argument and remove the device structure.
+fine for me. The background of my question was me wondering if builds
+for PLAT_S3C24XX=y (before your patch series) don't need plat-samsung.
 
-Fixes: 1dd62c66d345 ("PM / devfreq: events: extend events by type of counted data")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/devfreq/event/exynos-ppmu.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+Best regards
+Uwe
 
-diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
-index 87b42055e6bc..302e466549d3 100644
---- a/drivers/devfreq/event/exynos-ppmu.c
-+++ b/drivers/devfreq/event/exynos-ppmu.c
-@@ -101,17 +101,22 @@ static struct __exynos_ppmu_events {
- 	PPMU_EVENT(dmc1_1),
- };
- 
--static int exynos_ppmu_find_ppmu_id(struct devfreq_event_dev *edev)
-+static int __exynos_ppmu_find_ppmu_id(const char *edev_name)
- {
- 	int i;
- 
- 	for (i = 0; i < ARRAY_SIZE(ppmu_events); i++)
--		if (!strcmp(edev->desc->name, ppmu_events[i].name))
-+		if (!strcmp(edev_name, ppmu_events[i].name))
- 			return ppmu_events[i].id;
- 
- 	return -EINVAL;
- }
- 
-+static int exynos_ppmu_find_ppmu_id(struct devfreq_event_dev *edev)
-+{
-+	return __exynos_ppmu_find_ppmu_id(edev->desc->name);
-+}
-+
- /*
-  * The devfreq-event ops structure for PPMU v1.1
-  */
-@@ -556,13 +561,11 @@ static int of_get_devfreq_events(struct device_node *np,
- 			 * use default if not.
- 			 */
- 			if (info->ppmu_type == EXYNOS_TYPE_PPMU_V2) {
--				struct devfreq_event_dev edev;
- 				int id;
- 				/* Not all registers take the same value for
- 				 * read+write data count.
- 				 */
--				edev.desc = &desc[j];
--				id = exynos_ppmu_find_ppmu_id(&edev);
-+				id = __exynos_ppmu_find_ppmu_id(desc->name);
- 
- 				switch (id) {
- 				case PPMU_PMNCNT0:
 -- 
-2.20.0
-
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
