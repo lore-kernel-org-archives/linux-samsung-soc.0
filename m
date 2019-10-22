@@ -1,116 +1,125 @@
-Return-Path: <SRS0=nJnZ=YO=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=PNwi=YP=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 046FCCA9EAF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Oct 2019 18:05:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 312F7CA9EAF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Oct 2019 02:23:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDF3821906
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 21 Oct 2019 18:05:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1571681128;
-	bh=0CPJIU1rMIOyGYW8ZKtjAoM8g4H4SToVEeMTsL9SeOQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KMJ4k+Oflok05VM5mutZ5Y1XYG19zbfHjFP/Qe+l2DU2wse0KcdEGvE+ECURUTpJs
-	 ruEJmw76EwoeU4ClDWCnfmW8o62EcHmmJnVavkgVMFnlIGlCGBbVC1clS+CQv/eEdA
-	 mXMvxoQGw4zTFETArdd2mPURlTzW9SWfEgWaCCwg=
+	by mail.kernel.org (Postfix) with ESMTP id F27B42089E
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Oct 2019 02:23:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wAGpi/i7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730052AbfJUSF1 (ORCPT
+        id S1729573AbfJVCXs (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 21 Oct 2019 14:05:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38332 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730054AbfJUSF1 (ORCPT
+        Mon, 21 Oct 2019 22:23:48 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:41695 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727264AbfJVCXs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 21 Oct 2019 14:05:27 -0400
-Received: from localhost.localdomain (unknown [194.230.155.217])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86BBE20B7C;
-        Mon, 21 Oct 2019 18:05:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571681127;
-        bh=0CPJIU1rMIOyGYW8ZKtjAoM8g4H4SToVEeMTsL9SeOQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OhO3+gZ/Flb+yd21IPeK1WThLsplFx5zNC9VKGSJMJitEOeFANYtyZfHXWH4Y1NWh
-         8JdltN9eMwkFvz0IErvQKIfpBcrl4wiQduz2abHB6uf6EI7sj42CuNP9/Y9PWtZRRx
-         sM1fuBY1F+5JvRyb9ikYrxmAhv2eptbuMlFfnolc=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL 3/5] ARM: dts: exynos: memory DMC driver bindings for v5.5
-Date:   Mon, 21 Oct 2019 20:04:53 +0200
-Message-Id: <20191021180453.29455-6-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191021180453.29455-1-krzk@kernel.org>
-References: <20191021180453.29455-1-krzk@kernel.org>
+        Mon, 21 Oct 2019 22:23:48 -0400
+Received: by mail-pg1-f195.google.com with SMTP id t3so8971338pga.8
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Oct 2019 19:23:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=AT7Vp+yACQ0gxVA6T92L6+q4sc2TtEu5B2tW7M476fE=;
+        b=wAGpi/i7ToUnIHcgrBtOEeq9mKLemYp/7q8F4wQ/P1xghZ3Y/qiLVkjGKKUF2gZX2Q
+         pJoV0/cyU1QmMb5z1/vwfhE/rUxstwDIpHLgS/6MU8e/4artDj0yGxvvhCoRZbyLjbqh
+         uQ46+srG8EwwfpDLEILPDreo9TJu4K7WQmN+rDN5NoS1TRv10eQ/1WkenUw9cXcZLKVM
+         ayb82Zy28qa7/4Gyptku1v1M9M71FlhQzs7Vx2tWtcKicL+gR6y5AMRX9rMHLKLTHRT3
+         0Flf5YUfHgKm3tRu00ElqgxLV7OZW8AEPfCf/kFOXYdAZYRcHxTWNBK/nQKKYYyse3Jv
+         KQKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AT7Vp+yACQ0gxVA6T92L6+q4sc2TtEu5B2tW7M476fE=;
+        b=mGZPfZ0Py+TmcEMdDCDL0i02VUSzLe4zXeD8YIZ5sapzqemuEYr1dzDy3eKfwNaJjp
+         1tRsBsRkpLJth7AzhKa4rHFTETxHHLPv2aqCqIA18v4qC4fkaGoyZva/MxbhLFOQgwhb
+         +hsBseKB6fOi8IeGfrq/J5m69WIiClorNPnoi5bZC4JCRHMQeG5kA77gTnj+MXfHm5Qo
+         IPhyQnU3+92WqJZmwd0mf0rsp8JQCbExdgojMf3mkYlYHO2/W4MBO5ws70QY69USuoI/
+         HuLvL3iuG52/+sQysA+xgDcRoX/fPLIlTbkKVef2iTQzqFo7a9HEB+kbHvo9g3LSPvdG
+         vvyQ==
+X-Gm-Message-State: APjAAAWzCNv4TWkB/5T/YdMPFdeO8MkMGpp/CQCeItHOGOEfAR4qQ4oF
+        CS4V/nFAPtf8eLIXC92j5RPUHg==
+X-Google-Smtp-Source: APXvYqwD3LLESW9dtqRG9tRzGlNIUWLCdXMmmkM+V9LqAW0lYd0ou/d6RHGdRS4wqzKpk402x4m9pQ==
+X-Received: by 2002:a65:67d0:: with SMTP id b16mr1165736pgs.64.1571711027447;
+        Mon, 21 Oct 2019 19:23:47 -0700 (PDT)
+Received: from localhost ([122.172.151.112])
+        by smtp.gmail.com with ESMTPSA id 62sm16643422pfg.164.2019.10.21.19.23.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 21 Oct 2019 19:23:45 -0700 (PDT)
+Date:   Tue, 22 Oct 2019 07:53:41 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>, vireshk@kernel.org,
+        robh+dt@kernel.org, sboyd@kernel.org, roger.lu@mediatek.com,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
+        Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v5 1/4] PM / OPP: Support adjusting OPP voltages at
+ runtime
+Message-ID: <20191022022341.yd6ykeszsuprmop2@vireshk-i7>
+References: <20191016145756.16004-1-s.nawrocki@samsung.com>
+ <CGME20191016145810eucas1p1b31400c9b2e7f30cdf6deeb4ccee2788@eucas1p1.samsung.com>
+ <20191016145756.16004-2-s.nawrocki@samsung.com>
+ <20191017064258.yfbh7iz3pbzfhdvr@vireshk-i7>
+ <20191021112354.GA2262@pi3>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191021112354.GA2262@pi3>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+On 21-10-19, 13:23, Krzysztof Kozlowski wrote:
+> On Thu, Oct 17, 2019 at 12:12:58PM +0530, Viresh Kumar wrote:
+> > On 16-10-19, 16:57, Sylwester Nawrocki wrote:
+> > > From: Stephen Boyd <sboyd@codeaurora.org>
+> > > 
+> > > On some SoCs the Adaptive Voltage Scaling (AVS) technique is
+> > > employed to optimize the operating voltage of a device. At a
+> > > given frequency, the hardware monitors dynamic factors and either
+> > > makes a suggestion for how much to adjust a voltage for the
+> > > current frequency, or it automatically adjusts the voltage
+> > > without software intervention. Add an API to the OPP library for
+> > > the former case, so that AVS type devices can update the voltages
+> > > for an OPP when the hardware determines the voltage should
+> > > change. The assumption is that drivers like CPUfreq or devfreq
+> > > will register for the OPP notifiers and adjust the voltage
+> > > according to suggestions that AVS makes.
+> > > 
+> > > This patch is derived from [1] submitted by Stephen.
+> > > [1] https://lore.kernel.org/patchwork/patch/599279/
+> > > 
+> > > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> > > Signed-off-by: Roger Lu <roger.lu@mediatek.com>
+> > > [s.nawrocki@samsung.com: added handling of OPP min/max voltage]
+> > > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> > > ---
+> > >  drivers/opp/core.c     | 69 ++++++++++++++++++++++++++++++++++++++++++
+> > >  include/linux/pm_opp.h | 13 ++++++++
+> > >  2 files changed, 82 insertions(+)
+> > 
+> > Applied. Thanks.
+> 
+> Hi Viresh,
+> 
+> Can you provide a stable tag with this patch so I can take soc/samsung
+> driver?
 
-Topic branch/pull for DMC driver bindings/DTS. Patchset had many iterations
-on mailing lists and waited for very long.
+opp-5.4-support-adjust-voltages
 
-Best regards,
-Krzysztof
-
-
-The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
-
-  Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-dmc-5.5
-
-for you to fetch changes up to 41f277be1d028e64fb8d5e91a7ce74df600bde54:
-
-  dt-bindings: memory-controllers: exynos5422-dmc: Correct example syntax and memory region (2019-10-06 17:54:28 +0200)
-
-----------------------------------------------------------------
-Samsung DTS changes for DMC driver for v5.5
-
-Add bindings and update device tree sources of Exynos5422 platforms with
-new Dynamic Memory Controller nodes and properties.
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (1):
-      dt-bindings: memory-controllers: exynos5422-dmc: Correct example syntax and memory region
-
-Lukasz Luba (9):
-      dt-bindings: ddr: Rename lpddr2 directory
-      dt-bindings: ddr: Add bindings for LPDDR3 memories
-      dt-bindings: memory-controllers: Add Exynos5422 DMC device description
-      ARM: dts: exynos: Add syscon compatible to clock controller on Exynos542x
-      ARM: dts: exynos: Add DMC device to Exynos5422 and Odroid XU3-family boards
-      dt-bindings: ddr: Add bindings for Samsung LPDDR3 memories
-      dt-bindings: memory-controllers: exynos5422-dmc: Add interrupt mode
-      ARM: dts: exynos: Extend mapped region for DMC on Exynos5422
-      ARM: dts: exynos: Add interrupts to DMC controller in Exynos5422
-
- .../bindings/{lpddr2 => ddr}/lpddr2-timings.txt    |   0
- .../devicetree/bindings/{lpddr2 => ddr}/lpddr2.txt |   2 +-
- .../devicetree/bindings/ddr/lpddr3-timings.txt     |  58 ++++++++++
- Documentation/devicetree/bindings/ddr/lpddr3.txt   | 101 ++++++++++++++++++
- .../bindings/memory-controllers/exynos5422-dmc.txt |  84 +++++++++++++++
- arch/arm/boot/dts/exynos5420.dtsi                  |  76 ++++++++++++-
- arch/arm/boot/dts/exynos5422-odroid-core.dtsi      | 117 +++++++++++++++++++++
- arch/arm/boot/dts/exynos5800.dtsi                  |   2 +-
- 8 files changed, 437 insertions(+), 3 deletions(-)
- rename Documentation/devicetree/bindings/{lpddr2 => ddr}/lpddr2-timings.txt (100%)
- rename Documentation/devicetree/bindings/{lpddr2 => ddr}/lpddr2.txt (96%)
- create mode 100644 Documentation/devicetree/bindings/ddr/lpddr3-timings.txt
- create mode 100644 Documentation/devicetree/bindings/ddr/lpddr3.txt
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt
+-- 
+viresh
