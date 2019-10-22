@@ -2,106 +2,69 @@ Return-Path: <SRS0=PNwi=YP=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D0A1CA9EB9
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Oct 2019 16:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B6ACA9EA0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Oct 2019 16:35:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D18E218AE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Oct 2019 16:21:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 551D4205ED
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 22 Oct 2019 16:35:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731897AbfJVQVC convert rfc822-to-8bit (ORCPT
+        id S1731740AbfJVQf4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 22 Oct 2019 12:21:02 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:57715 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731795AbfJVQVB (ORCPT
+        Tue, 22 Oct 2019 12:35:56 -0400
+Received: from muru.com ([72.249.23.125]:39118 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725827AbfJVQfz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 22 Oct 2019 12:21:01 -0400
-Received: from mail-qt1-f173.google.com ([209.85.160.173]) by
- mrelayeu.kundenserver.de (mreue011 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MS3zP-1iSkhU2FY3-00TUuV; Tue, 22 Oct 2019 18:20:59 +0200
-Received: by mail-qt1-f173.google.com with SMTP id e14so7848020qto.1;
-        Tue, 22 Oct 2019 09:20:58 -0700 (PDT)
-X-Gm-Message-State: APjAAAUEAGN4gaRKmWrYNcXWxxrjr9EpakHb0V6ccEo0QzQadSWzAwwv
-        gi0XGRiecf2QPS6ja97yKeDLEfmUA3j4tbdrYnA=
-X-Google-Smtp-Source: APXvYqyoLKHktNxYMbHgU6oEzWDucDHxX3DzLUXc70BjhpXFB5K+Mcs4VGMIh8ghBPfcQzJ4zkTEBWIuMQ3o+13CFPs=
-X-Received: by 2002:ac8:33d4:: with SMTP id d20mr4201539qtb.204.1571761258010;
- Tue, 22 Oct 2019 09:20:58 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191010202802.1132272-1-arnd@arndb.de> <20191010203043.1241612-1-arnd@arndb.de>
- <20191010203043.1241612-11-arnd@arndb.de> <20191011055149.4dudr4tk2znpt65u@pengutronix.de>
- <CAK8P3a1st8gR7u+8-oyP6HrzZdmrzhq7PRonYuz0a5O8rfKaSA@mail.gmail.com> <20191022155307.izh4ryorm7thw7tq@pengutronix.de>
-In-Reply-To: <20191022155307.izh4ryorm7thw7tq@pengutronix.de>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 22 Oct 2019 18:20:41 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a1mvbss6Q-CQBYRAf7ozYgyOu3WFGkoaSaoJriUbuRACA@mail.gmail.com>
-Message-ID: <CAK8P3a1mvbss6Q-CQBYRAf7ozYgyOu3WFGkoaSaoJriUbuRACA@mail.gmail.com>
-Subject: Re: [PATCH 11/36] ARM: s5pv210: split from plat-samsung
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Olof Johansson <olof@lixom.net>,
+        Tue, 22 Oct 2019 12:35:55 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 3519380FA;
+        Tue, 22 Oct 2019 16:36:28 +0000 (UTC)
+Date:   Tue, 22 Oct 2019 09:35:50 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
-        =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Faiz Abbas <faiz_abbas@ti.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        linux-serial@vger.kernel.org,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K1:xTdslASVHIHUrHhldeTRZ3xwo4TLBMkIDaRn2OpT7m/YuhjhG+R
- XGtLKP+rAYVQiiYn/reZitmB/yJfTdP5fj6vMJUJFpaR5pumcjBEOGsubcXG0r84wqo5Vjy
- oPlP0Md5i33LzD8vXTAQWgxCYETGOKt/+y1WK7gZy58SMqd960JFgp3qz3CXZlZ4EMlJ59A
- 5yJ1p/dha+zR44g0r7y6Q==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:NJVNCE6D9/4=:bQGwHELXkragiXw7Rw7/m4
- cHgkoRcooelGES7hld6EZ6U3fPNI4aQcn2SzNGd1oxjRjSBfC42rcMDeSqjLJi03n9AVA/pXH
- QHlMuSwVgihQOffzuDk9O5VPAq5Qfas81/sgr7ZOZNtf1R/cjPX0dk0F2yCWzFbU8rTEBY27C
- ShF/6dAHu7qwO7BoBwm24P/B8U2olEHn8+iuaMLTd8utDAy0dk0mdsza8yVFoqODzpALUTBtg
- oPPJGBik0a9OjAb0DA8YEW6NmX1EQCUr/5pVQjH/HTSQ4Z0R8NFmelbccjIPAwWpCm6NoGk+Q
- 8DqCRptOiP7sk+WvgIs7nIbEh8IQBN+u9HGIhLoKMUn6ej1QlOSaauLdRCfuVwOHpS3XuM1yy
- k7jdRuRC++5kMpIbjnLic9McD2VL+BB8q0CJqKBa9tetAZcnsO2cRrcqML/187XpJaIsuPj+E
- jbrPVbjqKOjvRCkme/fMeAq+SCUK5q17S+Smc35ARQ1UK++KS5vWD98uhH3sQL57lLM5D8J5c
- ZlXey4O0CH1rEt5ujM5dbf+Y1cBFHxfxDDqTVb1bRnVf6ftgbh2w4WT8+gwXeONDdieFsDhdt
- jnry3ZefwYP/WCamKpQ5MGN7ycwY8j09z7bBQK8xjMQORv0LJTo01vCyTStmHqhQ/DUmIV1Xb
- /MG8pQ0LzLbNVFWedHIXfivsczUsdG32euwZ5/z+bIPT+XZ35hQSc9TWJuupODk5qK778jkB+
- NLOEjcM9133PGsomXQTIgpgnDo8xv0c0lWj1V5ecvMH2/9wj2YmLVPGhL1ptIuWnJwk5WKg04
- D/sgim9q7VMsNDuoaAjMA+iTJM+tzsUmNuDIioG5BY6EmhPHiKdm9TxLSA+uSxQUKBooQ0aQP
- fybl0M2Y7nN//7Hhcm4A==
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3 10/10] ARM: dts: omap: Rename "ocmcram" node to "sram"
+Message-ID: <20191022163550.GB5610@atomide.com>
+References: <20191002164316.14905-1-krzk@kernel.org>
+ <20191002164316.14905-10-krzk@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191002164316.14905-10-krzk@kernel.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Oct 22, 2019 at 5:53 PM Uwe Kleine-König
-<u.kleine-koenig@pengutronix.de> wrote:
-> The background of my question was me wondering if builds
-> for PLAT_S3C24XX=y (before your patch series) don't need plat-samsung.
+* Krzysztof Kozlowski <krzk@kernel.org> [191002 09:45]:
+> The device node name should reflect generic class of a device so rename
+> the "ocmcram" node to "sram".  This will be also in sync with upcoming DT
+> schema.  No functional change.
 
-What I found is that the DT-based platforms (exynos and s5p) need almost nothing
-from plat-samsung, while the board files and the s3c24xx/s3c64xx power
-management
-needs almost all of it.
+Applying this into omap-for-v5.5/dt thanks.
 
-      Arnd
+Tony
