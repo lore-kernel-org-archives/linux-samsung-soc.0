@@ -2,89 +2,187 @@ Return-Path: <SRS0=1mvF=YQ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF081CA9EB6
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 12:23:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEA57CA9EB6
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 12:32:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD1C221906
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 12:23:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B09EE214B2
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 12:32:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1571833926;
+	bh=Xsz3V0pAjeDbCXJuq/ZnByR2BhpcKM1AaYB5kYOjbFU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=CmFO5wi7vV50ZPLRTb1yPZRkSfgoI+ZHpIuqA8T7MIKfkJqV9RM9wH60TF6yxqyX/
+	 pqjQ+834Bhzlbg/mtpjb+ApNJEtcWus5OeHqY0HQjjgCGblX0tF1nReusWWD+32QvU
+	 ekwJXqn/Xcuw17FrniKmYrFijOktiOi2HwZzD+wk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730997AbfJWMXQ (ORCPT
+        id S2391482AbfJWMcG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 23 Oct 2019 08:23:16 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:33707 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726636AbfJWMXQ (ORCPT
+        Wed, 23 Oct 2019 08:32:06 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:35217 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391515AbfJWMcG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 23 Oct 2019 08:23:16 -0400
-Received: from mail-qk1-f179.google.com ([209.85.222.179]) by
- mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1M42fA-1iNFfW2BvM-0003WG; Wed, 23 Oct 2019 14:23:14 +0200
-Received: by mail-qk1-f179.google.com with SMTP id u184so19541488qkd.4;
-        Wed, 23 Oct 2019 05:23:14 -0700 (PDT)
-X-Gm-Message-State: APjAAAV1jZd8mWdGQrBmeGE15oZ30NbgA2sIAShlQqMihTtNfV0wJrHj
-        WJRJzpCs5sPRUBmBagya4XcaNUMWYjmGyiGUNJk=
-X-Google-Smtp-Source: APXvYqypyXNWat+KcfPfsodq+JQ+4QWo1ZTdvBPQPaxSxAVPk72AOIOGVimgq/tpICY5myV86eSBfmCrhOKUhQ+FPQU=
-X-Received: by 2002:a37:a50f:: with SMTP id o15mr6769403qke.3.1571833393352;
- Wed, 23 Oct 2019 05:23:13 -0700 (PDT)
+        Wed, 23 Oct 2019 08:32:06 -0400
+Received: by mail-ed1-f68.google.com with SMTP id k2so4920019edx.2;
+        Wed, 23 Oct 2019 05:32:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KQN2p3CqQqqGqvDm8RQZXLnReFZTauNKSF3Je5lv8Vs=;
+        b=gItzH1IURch9FFmt63SUbbuq/OHTKyUQ+X7g1I/SDPfP8SPD++IdzXjsJLSxhnrT+N
+         tMZ7HCc3PZJRuioc9AhYyW6s0zwbCsyhMjRSc+HbjmeoxuoLpnbM0yq6iN+cbvruD/vc
+         rTRSRo5AorLH7xpE5vk2bqL81l6/FVXACI8mFe7Wdjpog4PletWf2rPalNrBnsqgzsUK
+         prfA7+sG/29ktzTFqFMbvgGQWXW+KvNNHfIKEaRtVB7cwgWhrcPxHwDLydbg37kbcBJ0
+         x07ojpOZiqSzFVkx/TSKdq9HbYfZxw33JAMRD1oza44o3yyauaQUSvmvFXtThfrXTSBU
+         8O0g==
+X-Gm-Message-State: APjAAAVvImdjU/xeCMkWXraiHXTMP2+Fcn8XJl95qjDSMA8n5dxJII9U
+        XTuWekMG/g8hH5ZaaoDosG8=
+X-Google-Smtp-Source: APXvYqzAyy2/9uMMaEi+++Uil+JEuPxjvNWuDWfQdsPMkZduyAwEgeg60Y2iekGhRXEaJq6rYisoxg==
+X-Received: by 2002:a17:906:d214:: with SMTP id w20mr32128690ejz.68.1571833923476;
+        Wed, 23 Oct 2019 05:32:03 -0700 (PDT)
+Received: from pi3 ([194.230.155.217])
+        by smtp.googlemail.com with ESMTPSA id k24sm163420edx.46.2019.10.23.05.32.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2019 05:32:02 -0700 (PDT)
+Date:   Wed, 23 Oct 2019 14:32:00 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Kukjin Kim <kgene@kernel.org>, Andi Shyti <andi@etezian.org>,
+        Mark Brown <broonie@kernel.org>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH 13/36] ARM: s3c: move regs-spi.h into spi driver
+Message-ID: <20191023123200.GC11048@pi3>
+References: <20191010202802.1132272-1-arnd@arndb.de>
+ <20191010203043.1241612-1-arnd@arndb.de>
+ <20191010203043.1241612-13-arnd@arndb.de>
 MIME-Version: 1.0
-References: <20191010202802.1132272-1-arnd@arndb.de> <20191010203043.1241612-1-arnd@arndb.de>
- <20191010203043.1241612-6-arnd@arndb.de> <20191023101257.GC10630@pi3>
-In-Reply-To: <20191023101257.GC10630@pi3>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 23 Oct 2019 14:22:57 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a07S4bqeo_u0=Mk4eW=737jjh69q6bbMotugkiUQxt+ZA@mail.gmail.com>
-Message-ID: <CAK8P3a07S4bqeo_u0=Mk4eW=737jjh69q6bbMotugkiUQxt+ZA@mail.gmail.com>
-Subject: Re: [PATCH 06/36] ARM: samsung: move CONFIG_DEBUG_S3C_UART to Kconfig.debug
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Olof Johansson <olof@lixom.net>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:UGKnZroa7E6+xWfZo0iy9U5wjXjviLng+fzxhWiE5tn6Vuwnnhw
- aRJZ+eNnGNLlK3oCpXI6u4M419Iqshflj8hzylGEs1DfyYfmk6S8cMoxTXk+WzUYqz43RIt
- L2gwJS1SuKb/0Omj6rWhu4wgiPDMuvoITT4EcfkWrXo6dBWJT7nr0xemKZhmEcTCQ0I1V/O
- sxKdlNFmyjRcpXc56w9YA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:pEyuLDJqn4U=:Pgz+iimq285zAXrzlY2JnX
- 6vnfcgpCTL9TrDmUvEHLzxB8UccdCzLhmY0L8pSxd2sYFihyMoCfOZSVQH/AKmUR5Yq7RsB6R
- 5ITp3gDxoyMK72mI46KPB/m5Cd4XZbPViDgQWBQS6OkzgfNVduBM2AKIx6WP1rhMJWZwtS6J/
- XIMZigZFNJjGKSHvH3ufq624Wa5KfskBIbMbvCuCN52BDLODNv7JJiYVZAACiBXDmDQV/bXoF
- yCVJhj+ptsMZ7wC0lsjVRaT7SLX2T8nOpRMzpj8Ez6RvNU3Gjc2aDdX+MYHl3cK7hNRv+t9yU
- z1gBsS/WJX1mgvFswx0lpGz3rCPobZlygb6+/BfBvLlgek/rSIK+CJxbYtPzxec3Q7sYTIPjN
- RUQunC96WCOMPJnVp51MatB288f/26BkdQa8Jy1f0YZ6A1ZJH1jhEC+CSt6G0ky5p7NjcI9Gz
- knqPK4arDsxkM3rUQBMizFMjBj5mSbSB5D33iGqDrLxCSdxFBinPGF/sZDdkoeKhgo3EK/33p
- P98ajS5ifWf90+NogUffVLTTlz8uz1JYb9JIWqtZngM1z8bW2DJGUfsvsoUcXEEpyXBHLlPdP
- 2HsOXgF4aVo0Phoo1hASZ0LYYG62PDh/hKqz/E4wf2FbaroLlwV628juzTmdCelutelxSkXy9
- 8nwxAs7GbYF2bgasc+uBVxZepuIczicyf7A9BxlcxbBiX7Ff8vspKEFUbr30oL+FuscUK5YaZ
- P7l41LL+fiyT6aaLDS67V3AnO+J+cPWEm4QAgZ/9A3FSuzhltQ6VuYaPpPKecSKM6jprFVVr8
- qLeNnKPmgCDReYcNO/z4yXQgEVYMtgvwueOHM2tyQsHrsCVVdQ2NQWilSpO0k2xwOEZ4nfty7
- uw/MMpBmQMUknQQ6dhQQ==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191010203043.1241612-13-arnd@arndb.de>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 12:13 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On Thu, Oct 10, 2019 at 10:29:50PM +0200, Arnd Bergmann wrote:
-> > Before we can plat-samsung from the individual platforms,
->
-> "Before we can split"? Or moved? What did you want to say here?
+On Thu, Oct 10, 2019 at 10:29:57PM +0200, Arnd Bergmann wrote:
+> The file is mostly specific to the driver, the few bits that
+> are actually used by the platform code get moved to mach/map.h
+> instead.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/arm/mach-s3c24xx/include/mach/map.h                      | 2 ++
+>  arch/arm/mach-s3c24xx/s3c2412.c                               | 1 -
+>  arch/arm/plat-samsung/devs.c                                  | 1 -
+>  drivers/spi/spi-s3c24xx-fiq.S                                 | 4 +++-
+>  .../include/plat/regs-spi.h => drivers/spi/spi-s3c24xx-regs.h | 3 ---
+>  drivers/spi/spi-s3c24xx.c                                     | 3 +--
+>  6 files changed, 6 insertions(+), 8 deletions(-)
+>  rename arch/arm/plat-samsung/include/plat/regs-spi.h => drivers/spi/spi-s3c24xx-regs.h (95%)
+> 
+> diff --git a/arch/arm/mach-s3c24xx/include/mach/map.h b/arch/arm/mach-s3c24xx/include/mach/map.h
+> index bca93112f57d..a20c9fd0d855 100644
+> --- a/arch/arm/mach-s3c24xx/include/mach/map.h
+> +++ b/arch/arm/mach-s3c24xx/include/mach/map.h
+> @@ -86,6 +86,8 @@
+>  #define S3C2410_PA_SPI	   (0x59000000)
+>  #define S3C2443_PA_SPI0		(0x52000000)
+>  #define S3C2443_PA_SPI1		S3C2410_PA_SPI
+> +#define S3C2410_SPI1		(0x20)
+> +#define S3C2412_SPI1		(0x100)
+>  
+>  /* SDI */
+>  #define S3C2410_PA_SDI	   (0x5A000000)
+> diff --git a/arch/arm/mach-s3c24xx/s3c2412.c b/arch/arm/mach-s3c24xx/s3c2412.c
+> index 8fe4d4670dcb..c3fb3e6c0dd8 100644
+> --- a/arch/arm/mach-s3c24xx/s3c2412.c
+> +++ b/arch/arm/mach-s3c24xx/s3c2412.c
+> @@ -37,7 +37,6 @@
+>  #include <plat/cpu-freq.h>
+>  #include <plat/devs.h>
+>  #include <plat/pm.h>
+> -#include <plat/regs-spi.h>
+>  
+>  #include "common.h"
+>  #include "nand-core.h"
+> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+> index 6e4c1cb07104..fd94a35e22f8 100644
+> --- a/arch/arm/plat-samsung/devs.c
+> +++ b/arch/arm/plat-samsung/devs.c
+> @@ -59,7 +59,6 @@
+>  #include <linux/platform_data/usb-s3c2410_udc.h>
+>  #include <linux/platform_data/usb-ohci-s3c2410.h>
+>  #include <plat/usb-phy.h>
+> -#include <plat/regs-spi.h>
+>  #include <linux/platform_data/asoc-s3c.h>
+>  #include <linux/platform_data/spi-s3c64xx.h>
+>  
+> diff --git a/drivers/spi/spi-s3c24xx-fiq.S b/drivers/spi/spi-s3c24xx-fiq.S
+> index e95d6282109e..9d5f8f1e5e81 100644
+> --- a/drivers/spi/spi-s3c24xx-fiq.S
+> +++ b/drivers/spi/spi-s3c24xx-fiq.S
+> @@ -12,10 +12,12 @@
+>  
+>  #include <mach/map.h>
+>  #include <mach/regs-irq.h>
+> -#include <plat/regs-spi.h>
+>  
+>  #include "spi-s3c24xx-fiq.h"
+>  
+> +#define S3C2410_SPTDAT           (0x10)
+> +#define S3C2410_SPRDAT           (0x14)
+> +
+>  	.text
+>  
+>  	@ entry to these routines is as follows, with the register names
+> diff --git a/arch/arm/plat-samsung/include/plat/regs-spi.h b/drivers/spi/spi-s3c24xx-regs.h
+> similarity index 95%
+> rename from arch/arm/plat-samsung/include/plat/regs-spi.h
+> rename to drivers/spi/spi-s3c24xx-regs.h
+> index 607844311566..37b93ff7c7fe 100644
+> --- a/arch/arm/plat-samsung/include/plat/regs-spi.h
+> +++ b/drivers/spi/spi-s3c24xx-regs.h
+> @@ -8,9 +8,6 @@
+>  #ifndef __ASM_ARCH_REGS_SPI_H
+>  #define __ASM_ARCH_REGS_SPI_H
 
-Rephrased now to:
+Can you also update the guard name?
 
-| Before we can separate plat-samsung from the individual platforms,
-| this one has to get moved to a place where it remains accessible.
+Best regards,
+Krzysztof
 
-Thanks,
-
-     Arnd
+>  
+> -#define S3C2410_SPI1		(0x20)
+> -#define S3C2412_SPI1		(0x100)
+> -
+>  #define S3C2410_SPCON		(0x00)
+>  
+>  #define S3C2410_SPCON_SMOD_DMA	(2 << 5)	/* DMA mode */
+> diff --git a/drivers/spi/spi-s3c24xx.c b/drivers/spi/spi-s3c24xx.c
+> index 2d6e37f25e2d..2f395e4861f6 100644
+> --- a/drivers/spi/spi-s3c24xx.c
+> +++ b/drivers/spi/spi-s3c24xx.c
+> @@ -21,10 +21,9 @@
+>  #include <linux/spi/s3c24xx.h>
+>  #include <linux/module.h>
+>  
+> -#include <plat/regs-spi.h>
+> -
+>  #include <asm/fiq.h>
+>  
+> +#include "spi-s3c24xx-regs.h"
+>  #include "spi-s3c24xx-fiq.h"
+>  
+>  /**
+> -- 
+> 2.20.0
+> 
