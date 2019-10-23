@@ -2,92 +2,440 @@ Return-Path: <SRS0=1mvF=YQ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88580CA9EB6
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 13:36:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B13CA9EB6
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 13:38:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6449920640
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 13:36:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99AE221872
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 13:38:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1571837886;
+	bh=j7u+zIfcAoetoBmUvmQi5CFSMjXkmyTuKX1wcSZmq0Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=OMGqWZeG2DKypjnEi1dM/ErqaS37G5gAAuVxZ9cYWI8BUgQAQI6xY5M480srMLg7W
+	 lZxab85IjNT+42JfnpR2gtVy7P7TXawVERxAfcfoBVS9Lu2r2sarvHTMS/JWqnvseJ
+	 7nsoXYqUUT6I04+pAiO5i6bMxa2QBoGdVQ+MpyDc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392063AbfJWNgJ (ORCPT
+        id S2405891AbfJWNiG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 23 Oct 2019 09:36:09 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:44333 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389807AbfJWNgI (ORCPT
+        Wed, 23 Oct 2019 09:38:06 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:43662 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390754AbfJWNiG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 23 Oct 2019 09:36:08 -0400
-Received: from mail-qk1-f180.google.com ([209.85.222.180]) by
- mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MMGZS-1igRY912gQ-00JNsX; Wed, 23 Oct 2019 15:36:07 +0200
-Received: by mail-qk1-f180.google.com with SMTP id a194so15664356qkg.10;
-        Wed, 23 Oct 2019 06:36:06 -0700 (PDT)
-X-Gm-Message-State: APjAAAUs+06u4SNx39KClRYOpsTnfrvFRb9XBO/YIh26An3BB/kzEwwh
-        bYGBVR4fTdXCelohvVrEfzWBgbptP7y61NCK43g=
-X-Google-Smtp-Source: APXvYqwqW5j67aigUtbaQwMvvZPaRM75Zx1vwHK4rpCvIcwvfeEYCvDuZFw2giioKFckU9rb9ypL7pHNYyg0dml8Ps0=
-X-Received: by 2002:aed:3c67:: with SMTP id u36mr9047061qte.142.1571837765100;
- Wed, 23 Oct 2019 06:36:05 -0700 (PDT)
+        Wed, 23 Oct 2019 09:38:06 -0400
+Received: by mail-ed1-f65.google.com with SMTP id q24so9799839edr.10;
+        Wed, 23 Oct 2019 06:38:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JdQWHLcsUgyYWnnt0MPLxsj3f5JUEwKpW4xYYLo1gSQ=;
+        b=tNKS6Sb7l2xQZJkOooGBEPfbldl/fOqwujx6AhrN9ZFZvXNomNH0/QkXM6iAG/7Abb
+         Am5wNckwaDQBwfiHc/wzSBofMhWgssjPcveNRDnOwqlzcxw9UFziS9mGIiC5Xn/YOeNX
+         AHWjQIbVxguQMGhepSjOrdTpPrfFTgZFI106l1ow5Lralb3+jDVEu5NIOfbez4+vR18K
+         Vahiy3Vm8JICrCO1GQh9f+ckUbf8Zkvzp5n8GnTZq+kLJkV/1nTI+NwHIDuDGK8jYQhA
+         WhgDWmgP7wGHJlMALK9R4xHoQNqMzEwDZ7rK8Qc1uWHqgtSjgv3TpnUowxHqDFZ2YKUi
+         VkxA==
+X-Gm-Message-State: APjAAAWKaBsGe+Xx8G6DCimWENqo9bGZwxigKxrpPxPaTIsPpFszRi10
+        gwsYTTEC3u1uTZbAinEjRuY=
+X-Google-Smtp-Source: APXvYqznzfI2yu9EcEWXsQoudXaWG86Q6SHwWYne68/ze740Or62NpWTxWEuRpb3gsmBqnO6YC3r2w==
+X-Received: by 2002:aa7:c895:: with SMTP id p21mr38009391eds.38.1571837883219;
+        Wed, 23 Oct 2019 06:38:03 -0700 (PDT)
+Received: from pi3 ([194.230.155.217])
+        by smtp.googlemail.com with ESMTPSA id f6sm183016edu.68.2019.10.23.06.38.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2019 06:38:02 -0700 (PDT)
+Date:   Wed, 23 Oct 2019 15:38:00 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Kukjin Kim <kgene@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 30/36] ARM: s3c: remove cpufreq header dependencies
+Message-ID: <20191023133800.GI11048@pi3>
+References: <20191010202802.1132272-1-arnd@arndb.de>
+ <20191010203043.1241612-1-arnd@arndb.de>
+ <20191010203043.1241612-30-arnd@arndb.de>
 MIME-Version: 1.0
-References: <20191010202802.1132272-1-arnd@arndb.de> <20191010203043.1241612-1-arnd@arndb.de>
- <20191010203043.1241612-28-arnd@arndb.de> <20191023131321.GH11048@pi3>
-In-Reply-To: <20191023131321.GH11048@pi3>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 23 Oct 2019 15:35:49 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a03JtFrCYFUQAFnSENghrXSCDBQXB-QfiDG3yTxXxdpaw@mail.gmail.com>
-Message-ID: <CAK8P3a03JtFrCYFUQAFnSENghrXSCDBQXB-QfiDG3yTxXxdpaw@mail.gmail.com>
-Subject: Re: [PATCH 28/36] fbdev: s3c2410fb: remove mach header dependency
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:dlcVjROea1jaoI1MdzPRxFVjhVzRcIC5nkL5pQCG9c45CBvt/Gw
- OtS9RyEw9Wl+/QXCFcTyHcQMzd/kSbVdMywUxqWJw7PBsf3xheHztLfkvmMef+6rB5f7XYD
- /wypCgz03sZllX8iYByJGqCmIUTWHW6TPGSiQfO0sUcn6Xc1mp2mcMglRC9PpdWFJFEDpOm
- s+GIC3mT/30V55XKx434g==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:SlBXf2eBKF8=:LpnGX2aRKKhX+6Ax5hvUbj
- RP/UDtVFQ4CgxwMrzqfiKPJkWvny8Z0/R9H0m5Bqp2PeRqPVZCAOQ2pc0Gex5YkqWhsbqv7At
- srpiYCqw3yPZDMvr88lHykMICXKXo/LE0++1APDBQw9fL9pcwqWhCV48GVPlH8ifb15ihMvXH
- 4/KDZSw3yTUyvP/p1H67XmJp1jwZZDUJ2OpsEm4jwGxk+fX/F8kR0FSk60wLMnvT98MK8b2+i
- QAFoZUHlVdwcf04eSa0jCr6rOo8mrmH0SzjpKUmfsS9KXsXPcdm3BsA7EbuaLBfmgKZhea1D6
- cyhZPK4e6Dnfzsl8GmWxC6t0yVaFhNDj/5CcH4QzwSV74tX3urzqXC9hb/xH1shGi/XQm7D3d
- bq6PFa9Fhy795yfhUIG6ws8qk9gQKW2rtDg9WMXpeaUPJqbItjT+LGN+Byt0kK0HPwUtWS8d0
- FnVH+tA+VpSBR9cPbMGU2LEJIeiXVk0/L7tTYslYYnTGjZr9VjA+O3Pft5pPaSEV+1sxMHzRq
- hl5vin0aqfPk6RkNWHvqrL/omUGzLE9mPNq0hywEMkyG6n4G74bgN5tgf3Cli2Pa/IrXL6p2w
- vHlnf76tnf34Aj6Z4Aq12PR4rgC/bxe58YVqlF2WhfNgzU1EYDN9tr4NPyTekO26fzrzeD3LW
- x8Vl/W8hfAgUzYesNEN9UJZ6u496nXVieIBUbBWCHT3HwqzlHK97MSSDF7QcFRX185C6nOw4W
- ZwIjzC1VNizQYPonXkpiDX8Cb9GSYkbUjArBdKKAqNGRF1Xt8XC/LOx1tVORgmYdaBiEakrWu
- meRx9kHAMRafEfqq2gQPp9euWpIDeUnG1xjAVBkHWaXXUboEVAumYTPUUx4vqB5bJx9Q20ZsD
- QL3BGk5AOyeSPKwFkSVw==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191010203043.1241612-30-arnd@arndb.de>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 3:13 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On Thu, Oct 10, 2019 at 10:30:12PM +0200, Arnd Bergmann wrote:
+On Thu, Oct 10, 2019 at 10:30:14PM +0200, Arnd Bergmann wrote:
+> The cpufreq drivers are split between the machine directory
+> and the drivers/cpufreq directory. In order to share header
+> files after we convert s3c to multiplatform, those headers
+> have to live in a different global location.
+> 
+> Move them to linux/soc/samsung/ in lack of a better place.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/arm/mach-s3c24xx/common.c                         |  1 -
+>  arch/arm/mach-s3c24xx/cpufreq-utils.c                  |  2 +-
+>  arch/arm/mach-s3c24xx/iotiming-s3c2410.c               |  2 +-
+>  arch/arm/mach-s3c24xx/iotiming-s3c2412.c               |  2 +-
+>  arch/arm/mach-s3c24xx/mach-bast.c                      |  2 +-
+>  arch/arm/mach-s3c24xx/mach-osiris-dvs.c                |  2 +-
+>  arch/arm/mach-s3c24xx/mach-osiris.c                    |  2 +-
+>  arch/arm/mach-s3c24xx/pll-s3c2410.c                    |  4 ++--
+>  arch/arm/mach-s3c24xx/pll-s3c2440-12000000.c           |  4 ++--
+>  arch/arm/mach-s3c24xx/pll-s3c2440-16934400.c           |  4 ++--
+>  arch/arm/mach-s3c24xx/s3c2410.c                        |  1 -
+>  arch/arm/mach-s3c24xx/s3c2412.c                        |  1 -
+>  arch/arm/mach-s3c24xx/s3c244x.c                        |  2 --
+>  arch/arm/mach-s3c64xx/s3c6400.c                        |  1 -
+>  arch/arm/mach-s3c64xx/s3c6410.c                        |  2 +-
+>  arch/arm/plat-samsung/include/plat/cpu.h               |  9 ---------
+>  drivers/cpufreq/s3c2410-cpufreq.c                      |  5 ++---
+>  drivers/cpufreq/s3c2412-cpufreq.c                      |  5 ++---
+>  drivers/cpufreq/s3c2440-cpufreq.c                      |  5 ++---
+>  drivers/cpufreq/s3c24xx-cpufreq-debugfs.c              |  2 +-
+>  drivers/cpufreq/s3c24xx-cpufreq.c                      |  5 ++---
+>  .../linux/soc/samsung/s3c-cpu-freq.h                   |  0
+>  .../linux/soc/samsung/s3c-cpufreq-core.h               |  2 +-
+>  include/linux/soc/samsung/s3c-pm.h                     | 10 ++++++++++
+>  24 files changed, 33 insertions(+), 42 deletions(-)
+>  rename arch/arm/plat-samsung/include/plat/cpu-freq.h => include/linux/soc/samsung/s3c-cpu-freq.h (100%)
+>  rename arch/arm/plat-samsung/include/plat/cpu-freq-core.h => include/linux/soc/samsung/s3c-cpufreq-core.h (99%)
+> 
+> diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/common.c
+> index ebf6bde67816..d16a164df6c4 100644
+> --- a/arch/arm/mach-s3c24xx/common.c
+> +++ b/arch/arm/mach-s3c24xx/common.c
+> @@ -35,7 +35,6 @@
+>  
+>  #include <plat/cpu.h>
+>  #include <plat/devs.h>
+> -#include <plat/cpu-freq.h>
+>  #include <plat/pwm-core.h>
+>  
+>  #include "common.h"
+> diff --git a/arch/arm/mach-s3c24xx/cpufreq-utils.c b/arch/arm/mach-s3c24xx/cpufreq-utils.c
+> index 1a7f38d085dd..43ab714eaa9e 100644
+> --- a/arch/arm/mach-s3c24xx/cpufreq-utils.c
+> +++ b/arch/arm/mach-s3c24xx/cpufreq-utils.c
+> @@ -15,7 +15,7 @@
+>  #include <mach/map.h>
+>  #include <mach/regs-clock.h>
+>  
+> -#include <plat/cpu-freq-core.h>
+> +#include <linux/soc/samsung/s3c-cpufreq-core.h>
+>  
+>  #include "regs-mem.h"
+>  
+> diff --git a/arch/arm/mach-s3c24xx/iotiming-s3c2410.c b/arch/arm/mach-s3c24xx/iotiming-s3c2410.c
+> index 9f90aaf70bf3..5b3b16dd0ce8 100644
+> --- a/arch/arm/mach-s3c24xx/iotiming-s3c2410.c
+> +++ b/arch/arm/mach-s3c24xx/iotiming-s3c2410.c
+> @@ -17,7 +17,7 @@
+>  #include <mach/map.h>
+>  #include <mach/regs-clock.h>
+>  
+> -#include <plat/cpu-freq-core.h>
+> +#include <linux/soc/samsung/s3c-cpufreq-core.h>
+>  
+>  #include "regs-mem.h"
+>  
+> diff --git a/arch/arm/mach-s3c24xx/iotiming-s3c2412.c b/arch/arm/mach-s3c24xx/iotiming-s3c2412.c
+> index 59356d10fbcf..a22b5611697d 100644
+> --- a/arch/arm/mach-s3c24xx/iotiming-s3c2412.c
+> +++ b/arch/arm/mach-s3c24xx/iotiming-s3c2412.c
+> @@ -24,7 +24,7 @@
+>  #include <asm/mach/map.h>
+>  
+>  #include <plat/cpu.h>
+> -#include <plat/cpu-freq-core.h>
+> +#include <linux/soc/samsung/s3c-cpufreq-core.h>
+>  
+>  #include <mach/s3c2412.h>
+>  
+> diff --git a/arch/arm/mach-s3c24xx/mach-bast.c b/arch/arm/mach-s3c24xx/mach-bast.c
+> index cc941b5030ea..b2f2d036bca2 100644
+> --- a/arch/arm/mach-s3c24xx/mach-bast.c
+> +++ b/arch/arm/mach-s3c24xx/mach-bast.c
+> @@ -46,7 +46,7 @@
+>  #include <mach/gpio-samsung.h>
+>  
+>  #include <plat/cpu.h>
+> -#include <plat/cpu-freq.h>
+> +#include <linux/soc/samsung/s3c-cpu-freq.h>
+>  #include <plat/devs.h>
+>  #include <plat/gpio-cfg.h>
+>  #include <plat/samsung-time.h>
+> diff --git a/arch/arm/mach-s3c24xx/mach-osiris-dvs.c b/arch/arm/mach-s3c24xx/mach-osiris-dvs.c
+> index 5d819b6ea428..1250520b3bcc 100644
+> --- a/arch/arm/mach-s3c24xx/mach-osiris-dvs.c
+> +++ b/arch/arm/mach-s3c24xx/mach-osiris-dvs.c
+> @@ -14,7 +14,7 @@
+>  
+>  #include <linux/mfd/tps65010.h>
+>  
+> -#include <plat/cpu-freq.h>
+> +#include <linux/soc/samsung/s3c-cpu-freq.h>
+>  #include <mach/gpio-samsung.h>
+>  
+>  #define OSIRIS_GPIO_DVS	S3C2410_GPB(5)
+> diff --git a/arch/arm/mach-s3c24xx/mach-osiris.c b/arch/arm/mach-s3c24xx/mach-osiris.c
+> index 262e77bd48de..674164264076 100644
+> --- a/arch/arm/mach-s3c24xx/mach-osiris.c
+> +++ b/arch/arm/mach-s3c24xx/mach-osiris.c
+> @@ -37,7 +37,7 @@
+>  #include <linux/mtd/partitions.h>
+>  
+>  #include <plat/cpu.h>
+> -#include <plat/cpu-freq.h>
+> +#include <linux/soc/samsung/s3c-cpu-freq.h>
+>  #include <plat/devs.h>
+>  #include <plat/gpio-cfg.h>
+>  #include <plat/samsung-time.h>
+> diff --git a/arch/arm/mach-s3c24xx/pll-s3c2410.c b/arch/arm/mach-s3c24xx/pll-s3c2410.c
+> index 0561f79ddce8..3fbc99eaa4a2 100644
+> --- a/arch/arm/mach-s3c24xx/pll-s3c2410.c
+> +++ b/arch/arm/mach-s3c24xx/pll-s3c2410.c
+> @@ -15,8 +15,8 @@
+>  #include <linux/clk.h>
+>  #include <linux/err.h>
+>  
+> -#include <plat/cpu.h>
+> -#include <plat/cpu-freq-core.h>
+> +#include <linux/soc/samsung/s3c-cpufreq-core.h>
+> +#include <linux/soc/samsung/s3c-pm.h>
+>  
+>  /* This array should be sorted in ascending order of the frequencies */
+>  static struct cpufreq_frequency_table pll_vals_12MHz[] = {
+> diff --git a/arch/arm/mach-s3c24xx/pll-s3c2440-12000000.c b/arch/arm/mach-s3c24xx/pll-s3c2440-12000000.c
+> index 2ec3a2f9a6a5..fdb8e8c2fe3b 100644
+> --- a/arch/arm/mach-s3c24xx/pll-s3c2440-12000000.c
+> +++ b/arch/arm/mach-s3c24xx/pll-s3c2440-12000000.c
+> @@ -13,8 +13,8 @@
+>  #include <linux/clk.h>
+>  #include <linux/err.h>
+>  
+> -#include <plat/cpu.h>
+> -#include <plat/cpu-freq-core.h>
+> +#include <linux/soc/samsung/s3c-cpufreq-core.h>
+> +#include <linux/soc/samsung/s3c-pm.h>
+>  
+>  /* This array should be sorted in ascending order of the frequencies */
+>  static struct cpufreq_frequency_table s3c2440_plls_12[] = {
+> diff --git a/arch/arm/mach-s3c24xx/pll-s3c2440-16934400.c b/arch/arm/mach-s3c24xx/pll-s3c2440-16934400.c
+> index 4b3d9e36c6bb..438b6fc099a4 100644
+> --- a/arch/arm/mach-s3c24xx/pll-s3c2440-16934400.c
+> +++ b/arch/arm/mach-s3c24xx/pll-s3c2440-16934400.c
+> @@ -13,8 +13,8 @@
+>  #include <linux/clk.h>
+>  #include <linux/err.h>
+>  
+> -#include <plat/cpu.h>
+> -#include <plat/cpu-freq-core.h>
+> +#include <linux/soc/samsung/s3c-cpufreq-core.h>
+> +#include <linux/soc/samsung/s3c-pm.h>
+>  
+>  /* This array should be sorted in ascending order of the frequencies */
+>  static struct cpufreq_frequency_table s3c2440_plls_169344[] = {
+> diff --git a/arch/arm/mach-s3c24xx/s3c2410.c b/arch/arm/mach-s3c24xx/s3c2410.c
+> index 21fd5404bc98..8427c150dd22 100644
+> --- a/arch/arm/mach-s3c24xx/s3c2410.c
+> +++ b/arch/arm/mach-s3c24xx/s3c2410.c
+> @@ -30,7 +30,6 @@
+>  #include <asm/irq.h>
+>  #include <asm/system_misc.h>
+>  
+> -#include <plat/cpu-freq.h>
+>  
+>  #include <mach/regs-clock.h>
+>  
+> diff --git a/arch/arm/mach-s3c24xx/s3c2412.c b/arch/arm/mach-s3c24xx/s3c2412.c
+> index c3fb3e6c0dd8..209f952a6c98 100644
+> --- a/arch/arm/mach-s3c24xx/s3c2412.c
+> +++ b/arch/arm/mach-s3c24xx/s3c2412.c
+> @@ -34,7 +34,6 @@
+>  #include <mach/regs-gpio.h>
+>  
+>  #include <plat/cpu.h>
+> -#include <plat/cpu-freq.h>
+>  #include <plat/devs.h>
+>  #include <plat/pm.h>
+>  
+> diff --git a/arch/arm/mach-s3c24xx/s3c244x.c b/arch/arm/mach-s3c24xx/s3c244x.c
+> index a75f588b9d45..f5bd489bac85 100644
+> --- a/arch/arm/mach-s3c24xx/s3c244x.c
+> +++ b/arch/arm/mach-s3c24xx/s3c244x.c
+> @@ -28,8 +28,6 @@
+>  #include <mach/hardware.h>
+>  #include <asm/irq.h>
+>  
+> -#include <plat/cpu-freq.h>
+> -
+>  #include <mach/regs-clock.h>
+>  #include <mach/regs-gpio.h>
+>  
+> diff --git a/arch/arm/mach-s3c64xx/s3c6400.c b/arch/arm/mach-s3c64xx/s3c6400.c
+> index 81233495d548..d18af724c807 100644
+> --- a/arch/arm/mach-s3c64xx/s3c6400.c
+> +++ b/arch/arm/mach-s3c64xx/s3c6400.c
+> @@ -28,7 +28,6 @@
+>  
+>  #include <asm/irq.h>
+>  
+> -#include <plat/cpu-freq.h>
+>  #include <mach/regs-clock.h>
+>  
+>  #include <plat/cpu.h>
+> diff --git a/arch/arm/mach-s3c64xx/s3c6410.c b/arch/arm/mach-s3c64xx/s3c6410.c
+> index 9465a6e0f068..b1d725e55cd2 100644
+> --- a/arch/arm/mach-s3c64xx/s3c6410.c
+> +++ b/arch/arm/mach-s3c64xx/s3c6410.c
+> @@ -29,7 +29,7 @@
+>  
+>  #include <asm/irq.h>
+>  
+> -#include <plat/cpu-freq.h>
+> +#include <linux/soc/samsung/s3c-pm.h>
+>  #include <mach/regs-clock.h>
+>  
+>  #include <plat/cpu.h>
+> diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-samsung/include/plat/cpu.h
+> index 02d7f991d5a3..9dfd58bcc03d 100644
+> --- a/arch/arm/plat-samsung/include/plat/cpu.h
+> +++ b/arch/arm/plat-samsung/include/plat/cpu.h
+> @@ -124,15 +124,6 @@ extern struct syscore_ops s3c2412_pm_syscore_ops;
+>  extern struct syscore_ops s3c2416_pm_syscore_ops;
+>  extern struct syscore_ops s3c244x_pm_syscore_ops;
+>  
+> -/* system device subsystems */
+> -
+> -extern struct bus_type s3c2410_subsys;
+> -extern struct bus_type s3c2410a_subsys;
+> -extern struct bus_type s3c2412_subsys;
+> -extern struct bus_type s3c2416_subsys;
+> -extern struct bus_type s3c2440_subsys;
+> -extern struct bus_type s3c2442_subsys;
+> -extern struct bus_type s3c2443_subsys;
+>  extern struct bus_type s3c6410_subsys;
+>  
+>  #endif
+> diff --git a/drivers/cpufreq/s3c2410-cpufreq.c b/drivers/cpufreq/s3c2410-cpufreq.c
+> index 5c6cb590b63f..9c2f29cacdd0 100644
+> --- a/drivers/cpufreq/s3c2410-cpufreq.c
+> +++ b/drivers/cpufreq/s3c2410-cpufreq.c
+> @@ -16,13 +16,12 @@
+>  #include <linux/clk.h>
+>  #include <linux/err.h>
+>  #include <linux/io.h>
+> +#include <linux/soc/samsung/s3c-cpufreq-core.h>
+> +#include <linux/soc/samsung/s3c-pm.h>
+>  
+>  #include <asm/mach/arch.h>
+>  #include <asm/mach/map.h>
+>  
+> -#include <plat/cpu.h>
+> -#include <plat/cpu-freq-core.h>
+> -
+>  #include <mach/map.h>
+>  
+>  #define S3C2410_CLKREG(x) ((x) + S3C24XX_VA_CLKPWR)
+> diff --git a/drivers/cpufreq/s3c2412-cpufreq.c b/drivers/cpufreq/s3c2412-cpufreq.c
+> index d922d0d47c80..38dc9e6db633 100644
+> --- a/drivers/cpufreq/s3c2412-cpufreq.c
+> +++ b/drivers/cpufreq/s3c2412-cpufreq.c
+> @@ -19,15 +19,14 @@
+>  #include <linux/clk.h>
+>  #include <linux/err.h>
+>  #include <linux/io.h>
+> +#include <linux/soc/samsung/s3c-cpufreq-core.h>
+> +#include <linux/soc/samsung/s3c-pm.h>
+>  
+>  #include <asm/mach/arch.h>
+>  #include <asm/mach/map.h>
+>  
+>  #include <mach/s3c2412.h>
+>  
+> -#include <plat/cpu.h>
+> -#include <plat/cpu-freq-core.h>
+> -
+>  #include <mach/map.h>
+>  
+>  #define S3C2410_CLKREG(x) ((x) + S3C24XX_VA_CLKPWR)
+> diff --git a/drivers/cpufreq/s3c2440-cpufreq.c b/drivers/cpufreq/s3c2440-cpufreq.c
+> index 5fe7a891fa13..442abdccb9c1 100644
+> --- a/drivers/cpufreq/s3c2440-cpufreq.c
+> +++ b/drivers/cpufreq/s3c2440-cpufreq.c
+> @@ -20,13 +20,12 @@
+>  #include <linux/clk.h>
+>  #include <linux/err.h>
+>  #include <linux/io.h>
+> +#include <linux/soc/samsung/s3c-cpufreq-core.h>
+> +#include <linux/soc/samsung/s3c-pm.h>
+>  
+>  #include <asm/mach/arch.h>
+>  #include <asm/mach/map.h>
+>  
+> -#include <plat/cpu.h>
+> -#include <plat/cpu-freq-core.h>
+> -
+>  #include <mach/map.h>
+>  
+>  #define S3C2410_CLKREG(x) ((x) + S3C24XX_VA_CLKPWR)
+> diff --git a/drivers/cpufreq/s3c24xx-cpufreq-debugfs.c b/drivers/cpufreq/s3c24xx-cpufreq-debugfs.c
+> index 290e3539d03e..93971dfe7c75 100644
+> --- a/drivers/cpufreq/s3c24xx-cpufreq-debugfs.c
+> +++ b/drivers/cpufreq/s3c24xx-cpufreq-debugfs.c
+> @@ -18,7 +18,7 @@
+>  #include <linux/seq_file.h>
+>  #include <linux/err.h>
+>  
+> -#include <plat/cpu-freq-core.h>
+> +#include <linux/soc/samsung/s3c-cpufreq-core.h>
+>  
+>  static struct dentry *dbgfs_root;
+>  static struct dentry *dbgfs_file_io;
+> diff --git a/drivers/cpufreq/s3c24xx-cpufreq.c b/drivers/cpufreq/s3c24xx-cpufreq.c
+> index c786e1197d3c..01b1823ea208 100644
+> --- a/drivers/cpufreq/s3c24xx-cpufreq.c
+> +++ b/drivers/cpufreq/s3c24xx-cpufreq.c
+> @@ -21,13 +21,12 @@
+>  #include <linux/device.h>
+>  #include <linux/sysfs.h>
+>  #include <linux/slab.h>
+> +#include <linux/soc/samsung/s3c-cpufreq-core.h>
+> +#include <linux/soc/samsung/s3c-pm.h>
+>  
+>  #include <asm/mach/arch.h>
+>  #include <asm/mach/map.h>
+>  
+> -#include <plat/cpu.h>
+> -#include <plat/cpu-freq-core.h>
+> -
+>  #include <mach/map.h>
+>  
+>  /* note, cpufreq support deals in kHz, no Hz */
+> diff --git a/arch/arm/plat-samsung/include/plat/cpu-freq.h b/include/linux/soc/samsung/s3c-cpu-freq.h
+> similarity index 100%
+> rename from arch/arm/plat-samsung/include/plat/cpu-freq.h
+> rename to include/linux/soc/samsung/s3c-cpu-freq.h
+> diff --git a/arch/arm/plat-samsung/include/plat/cpu-freq-core.h b/include/linux/soc/samsung/s3c-cpufreq-core.h
+> similarity index 99%
+> rename from arch/arm/plat-samsung/include/plat/cpu-freq-core.h
+> rename to include/linux/soc/samsung/s3c-cpufreq-core.h
+> index 2c7cf2665634..4d22be1031b9 100644
 
-> > @@ -321,6 +320,7 @@ static struct s3c2410fb_mach_info jive_lcd_config = {
-> >        * data. */
-> >
-> >       .gpcup          = (0xf << 1) | (0x3f << 10),
-> > +     .gpcup_reg =    S3C2410_GPCUP,
->
-> Nits: indentation before/after '=' looks wrong. Tab should be
-> before '=', one space after.
+Can you also update the header guard names to match new location?
 
-Ok, fixed now for the four boards that had inconsistent indentation --
-jive, mini2440, smdk2440, and rx1950. Unfortunately each board
-seemed to have its own way of doing this.
+Best regards,
+Krzysztof
 
-      Arnd
