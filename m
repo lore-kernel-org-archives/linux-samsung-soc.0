@@ -2,133 +2,124 @@ Return-Path: <SRS0=1mvF=YQ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 642D5CA9EB7
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 14:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FAC2CA9EB6
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 15:38:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34E0C21920
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 14:12:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 537AB21929
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 15:38:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1571839957;
-	bh=aVuB+kbcyfFS5VKfJ8DdDA8G+/LuM70QRxmO3sxZC4g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Y/LwgIC++V6KqkVzhjNXs7CzcAgaHmfejX/tj769gIsu97SYG/bMC3Fl98T4UYhu6
-	 eK0xNmZhuA0mPRQCrp/R1dVJ2H8Lw2lRrF3e1BQQcfsuRqgth+SQIi8qzhCL9cdfPQ
-	 7e5gz7yhjl2OPjIdR7nPh6owfHWp1AgzOIbea3ZQ=
+	s=default; t=1571845123;
+	bh=bM/mEFcrlLuEZp0P1EMlHoIbnorgdXnXqaEVenoUobo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=xJAzCPZHNymErnwGEH74LKAQ5CipUYImVSe6zzl/btV/tpreh9RF1FbF2+39EolFq
+	 jA3bmbHtvSL8ee679fDPaKSujW3UsO67f8YQcXvK8emPMOKaD0VYYXvaBsm2g2+DSO
+	 B3GGGLyxGEPVjpq+ymMU6Gfgq/UM5KEApgIUKx2c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405700AbfJWOM3 (ORCPT
+        id S2406780AbfJWPij (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 23 Oct 2019 10:12:29 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:44482 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405316AbfJWOM3 (ORCPT
+        Wed, 23 Oct 2019 11:38:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36714 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2406692AbfJWPii (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 23 Oct 2019 10:12:29 -0400
-Received: by mail-ed1-f66.google.com with SMTP id r16so15850605edq.11;
-        Wed, 23 Oct 2019 07:12:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rcTMyT1DxjA7fFrS2w24JzXu+0SnoZwJUx+ToqxoQbY=;
-        b=FnUPTeClwtKNqLjQPMFpQm0p4bhUkbflqUYO7UEG+hyFyZVhjZiTsf4NoFA9XYyTe+
-         V/dhZuVxT3Og3mA0VGA6bPYauFduz338RgypJymPhfRg51npRHOlTYhy+YNyDVFa71CQ
-         pDXm3uKCqadjRMENRqPDgHPQbW0WnDZ8HxH+OSIvm669GTsR1Py5j/6hN8iftKbNYuQj
-         Cdn3tnGQqeWvA6whCrU2M3gSRLIWrkkfFeNtMOXiKvzwQZKZhIuXzpCaVXfxsKLS8y3h
-         ewjtgPv+7Qn9QzeZrh97+/bVEZ/VUGo75ZCNX68eHbcP8LS7UhxRs/H/LCm53dl331Ai
-         uqCg==
-X-Gm-Message-State: APjAAAXsFKwQJnoIOXwHhJO0UHlYmbfpppfA6Q8hEGWo6tnmE51WHufL
-        QdETKQ90T0PcgEi0bINFee0=
-X-Google-Smtp-Source: APXvYqxkd9DwWDZi/qHKDFHlMK0H8AlyVBKbEwPxz7lMmEqyzeKCvZ18JbP/k1gOjozG9nkYwgwxAA==
-X-Received: by 2002:a50:ee8d:: with SMTP id f13mr25391791edr.285.1571839945480;
-        Wed, 23 Oct 2019 07:12:25 -0700 (PDT)
-Received: from pi3 ([194.230.155.217])
-        by smtp.googlemail.com with ESMTPSA id p9sm60974edx.4.2019.10.23.07.12.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 07:12:24 -0700 (PDT)
-Date:   Wed, 23 Oct 2019 16:12:21 +0200
+        Wed, 23 Oct 2019 11:38:38 -0400
+Received: from localhost.localdomain (unknown [194.230.155.217])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98BAC21A4C;
+        Wed, 23 Oct 2019 15:38:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571845117;
+        bh=bM/mEFcrlLuEZp0P1EMlHoIbnorgdXnXqaEVenoUobo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=LFIe6aUM5wa79Oq3zx51FbUaTsKJLxlsXTmgfOYoBNi3ZXfGUQYka3xC8T0jZwAxb
+         vR3WlTWia7oj09i6auE3vk7sqbYzwjIv526kXHicgl0jR7zV4cqj3AM0YNYpAc0bsq
+         n9CEB1VIcKbzOy1iRM/Z/ni1Mv/rUbHLiZED8eW0=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Olof Johansson <olof@lixom.net>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Faiz Abbas <faiz_abbas@ti.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        linux-serial@vger.kernel.org,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>
-Subject: Re: [PATCH 11/36] ARM: s5pv210: split from plat-samsung
-Message-ID: <20191023141221.GA11575@pi3>
-References: <20191010202802.1132272-1-arnd@arndb.de>
- <20191010203043.1241612-1-arnd@arndb.de>
- <20191010203043.1241612-11-arnd@arndb.de>
- <20191023121458.GB11048@pi3>
- <CAK8P3a3ktdA12vpi6zrTXs7-03efk2Ke_0_mQ9X40MLNcZnEqA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a3ktdA12vpi6zrTXs7-03efk2Ke_0_mQ9X40MLNcZnEqA@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+To:     Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 2/2] ARM: s3c: Rename s5p_usb_phy functions
+Date:   Wed, 23 Oct 2019 17:38:24 +0200
+Message-Id: <20191023153824.6085-2-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191023153824.6085-1-krzk@kernel.org>
+References: <20191023153824.6085-1-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 03:17:35PM +0200, Arnd Bergmann wrote:
-> On Wed, Oct 23, 2019 at 2:15 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > On Thu, Oct 10, 2019 at 10:29:55PM +0200, Arnd Bergmann wrote:
-> > > These can be build completely independently, so split
-> > > the two Kconfig symbols.
-> > >       config DEBUG_S3C_UART0
-> > > -             depends on PLAT_SAMSUNG || ARCH_EXYNOS
-> > > +             depends on PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS
-> >
-> > How are you going to select DEBUG_S5PV210_UART now?
-> 
-> I don't see a problem here, the patch should not change the behavior at all.
-> 
-> The whole entry now looks like:
-> 
->         config DEBUG_S3C_UART0
->                 depends on PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS
->                 select DEBUG_EXYNOS_UART if ARCH_EXYNOS
->                 select DEBUG_S3C24XX_UART if ARCH_S3C24XX
->                 select DEBUG_S3C64XX_UART if ARCH_S3C64XX
->                 select DEBUG_S5PV210_UART if ARCH_S5PV210
->                 bool "Use Samsung S3C UART 0 for low-level debug"
-> 
-> so this will work as before with any of ARCH_EXYNOS, ARCH_S3C24XX,
-> ARCH_S3C64XX and ARCH_S5PV210.
-> 
-> What am I missing?
+The name s5p_usb_phy_init() suggests it is shared with S5Pv210 platform,
+but it is not.  It is specific to S3C64xx, so make it clear in the
+name.
 
-Ah, everything is OK, I mixed up removed with added line so it looked
-reversed (removal of ARCH_S5PV210).
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/mach-s3c64xx/setup-usb-phy.c        | 4 ++--
+ arch/arm/plat-samsung/devs.c                 | 4 ++--
+ arch/arm/plat-samsung/include/plat/usb-phy.h | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-Looks good.
-
-Best regards,
-Krzysztof
+diff --git a/arch/arm/mach-s3c64xx/setup-usb-phy.c b/arch/arm/mach-s3c64xx/setup-usb-phy.c
+index 6aaaa1d8e8b9..d6b0e3b268af 100644
+--- a/arch/arm/mach-s3c64xx/setup-usb-phy.c
++++ b/arch/arm/mach-s3c64xx/setup-usb-phy.c
+@@ -73,7 +73,7 @@ static int s3c_usb_otgphy_exit(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-int s5p_usb_phy_init(struct platform_device *pdev, int type)
++int s3c_usb_phy_init(struct platform_device *pdev, int type)
+ {
+ 	if (type == USB_PHY_TYPE_DEVICE)
+ 		return s3c_usb_otgphy_init(pdev);
+@@ -81,7 +81,7 @@ int s5p_usb_phy_init(struct platform_device *pdev, int type)
+ 	return -EINVAL;
+ }
+ 
+-int s5p_usb_phy_exit(struct platform_device *pdev, int type)
++int s3c_usb_phy_exit(struct platform_device *pdev, int type)
+ {
+ 	if (type == USB_PHY_TYPE_DEVICE)
+ 		return s3c_usb_otgphy_exit(pdev);
+diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+index 1d1fa068d228..1602f6dc900b 100644
+--- a/arch/arm/plat-samsung/devs.c
++++ b/arch/arm/plat-samsung/devs.c
+@@ -1010,9 +1010,9 @@ void __init dwc2_hsotg_set_platdata(struct dwc2_hsotg_plat *pd)
+ 	npd = s3c_set_platdata(pd, sizeof(*npd), &s3c_device_usb_hsotg);
+ 
+ 	if (!npd->phy_init)
+-		npd->phy_init = s5p_usb_phy_init;
++		npd->phy_init = s3c_usb_phy_init;
+ 	if (!npd->phy_exit)
+-		npd->phy_exit = s5p_usb_phy_exit;
++		npd->phy_exit = s3c_usb_phy_exit;
+ }
+ #endif /* CONFIG_S3C_DEV_USB_HSOTG */
+ 
+diff --git a/arch/arm/plat-samsung/include/plat/usb-phy.h b/arch/arm/plat-samsung/include/plat/usb-phy.h
+index 94da89ecbd3b..759d66a0773a 100644
+--- a/arch/arm/plat-samsung/include/plat/usb-phy.h
++++ b/arch/arm/plat-samsung/include/plat/usb-phy.h
+@@ -7,7 +7,7 @@
+ #ifndef __PLAT_SAMSUNG_USB_PHY_H
+ #define __PLAT_SAMSUNG_USB_PHY_H __FILE__
+ 
+-extern int s5p_usb_phy_init(struct platform_device *pdev, int type);
+-extern int s5p_usb_phy_exit(struct platform_device *pdev, int type);
++extern int s3c_usb_phy_init(struct platform_device *pdev, int type);
++extern int s3c_usb_phy_exit(struct platform_device *pdev, int type);
+ 
+ #endif /* __PLAT_SAMSUNG_USB_PHY_H */
+-- 
+2.17.1
 
