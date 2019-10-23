@@ -2,121 +2,113 @@ Return-Path: <SRS0=1mvF=YQ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27730CA9EB6
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 13:11:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA56CA9EB9
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 13:13:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDA0321872
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 13:10:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1571836260;
-	bh=XfD1Vyk8Auehu+lpd/AA3ke17tRs+2Dw4K2hWCStsDc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Cz5k6qg4dyfwb8OKQwIt1ik+13qB05byJxH6HCmQr4gHV8q+JYItyz/8MYVs6ZnLP
-	 PSymw6fqGBgsQdMhtsw0DoSnkd4p+51lGupcgfUQoT4ql3ugenuQ/1ppZ8E1A+l1rs
-	 wl4s/STDTPeqijj65H3ejr3FuGfuDStKgnfBZC/c=
+	by mail.kernel.org (Postfix) with ESMTP id AFC5D21920
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 13:13:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405613AbfJWNK5 convert rfc822-to-8bit (ORCPT
+        id S2405704AbfJWNNS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 23 Oct 2019 09:10:57 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:35592 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726032AbfJWNK4 (ORCPT
+        Wed, 23 Oct 2019 09:13:18 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:54037 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732284AbfJWNNS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 23 Oct 2019 09:10:56 -0400
-Received: by mail-ed1-f68.google.com with SMTP id k2so5018362edx.2;
-        Wed, 23 Oct 2019 06:10:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=lzwXfyhUE7yc9zrzbjqMe71sKuHvjq9U3aqm0Bd1AoI=;
-        b=S/A3aIGnph7/r49FdcX/+rOROLnuReURWi9z5AaaiFgwNDyHNguoHy2jLTKIg0AobS
-         Ii8Aob7iyqUE9px3EJl+QbMXPlHqS2i4AJjUkEXgVYMOpJB5ylqfR28AxSRz0LGrE0oN
-         dz0N+b0G4A1+WoZyqXNpZC27TiMgZrwh3OQIocjQVBgN+3XtOoyCaMvlIaqATpBbxqeb
-         aH+TRLRapqnj+ldkTcAZ0Bi9oR73bzEGJ0oLBkEdJwU7OEXluqUoH1Bhl4rcsWPwWDMa
-         DGF3xhA2WaMsusqyac2NzMIPJnBzhBlKnq/yDYu7/oI4+szOWAtVn2bNxBf1GiYtQfaY
-         jRtQ==
-X-Gm-Message-State: APjAAAXIBu2F0LkRRidZBYch85DAr88A/27wF1+klG85knTLuwFmQPUI
-        Ki2dfON5MI5tkKTRGbG4ylA=
-X-Google-Smtp-Source: APXvYqyft44OcCGb0xN0+fC1gmfK8usNRgvA/I5KY4vuTv2zLifQ5kptU9qNo1AQahi2rM4m7Aa/dg==
-X-Received: by 2002:aa7:c595:: with SMTP id g21mr36717915edq.79.1571836252860;
-        Wed, 23 Oct 2019 06:10:52 -0700 (PDT)
-Received: from pi3 ([194.230.155.217])
-        by smtp.googlemail.com with ESMTPSA id b12sm785479edq.75.2019.10.23.06.10.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 06:10:52 -0700 (PDT)
-Date:   Wed, 23 Oct 2019 15:10:49 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, patches@opensource.cirrus.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-clk@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-usb@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, alsa-devel@alsa-project.org,
-        Lihua Yao <ylhuajnu@163.com>,
-        =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>,
-        Lihua Yao <ylhuajnu@outlook.com>,
-        Sergio Prado <sergio.prado@e-labworks.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 00/36] ARM: samsung platform cleanup
-Message-ID: <20191023131049.GG11048@pi3>
-References: <20191010202802.1132272-1-arnd@arndb.de>
+        Wed, 23 Oct 2019 09:13:18 -0400
+Received: from mail-qt1-f174.google.com ([209.85.160.174]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1N0WsG-1i2Q9I2DmG-00wUtA; Wed, 23 Oct 2019 15:13:16 +0200
+Received: by mail-qt1-f174.google.com with SMTP id d17so17563196qto.3;
+        Wed, 23 Oct 2019 06:13:16 -0700 (PDT)
+X-Gm-Message-State: APjAAAUvr/EHRgKKqvbAbV5FhhCWbuOItsJJh3bd3H9fsCEz0JBKpLEM
+        6H/8nIYZhwEyTNRddt/T1wLK1+/3h8pbHHXc9qI=
+X-Google-Smtp-Source: APXvYqwyklGa+hU94PEjBetixWY4koQXLl44bdA7QqFGHctKg3vHkVWCQgnQFCjrA3OSGO0d2Jdn/TI29o9nax1bT50=
+X-Received: by 2002:ac8:33d4:: with SMTP id d20mr8948137qtb.204.1571836395377;
+ Wed, 23 Oct 2019 06:13:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20191010202802.1132272-1-arnd@arndb.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20191010202802.1132272-1-arnd@arndb.de> <20191010203043.1241612-1-arnd@arndb.de>
+ <20191010203043.1241612-10-arnd@arndb.de> <20191023115544.GA11048@pi3>
+In-Reply-To: <20191023115544.GA11048@pi3>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 23 Oct 2019 15:12:59 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a0s6VCujZRbFN3NkoX=LDw0jwYJg01xOnSdn=DM3TKm1Q@mail.gmail.com>
+Message-ID: <CAK8P3a0s6VCujZRbFN3NkoX=LDw0jwYJg01xOnSdn=DM3TKm1Q@mail.gmail.com>
+Subject: Re: [PATCH 10/36] ARM: s5pv210: use private pm save/restore
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:t+Hfc6SEiVLo6ko/SzZIszsVSiUE9AsrbclU9caoLGTrb7UsZHJ
+ ZQ8j7eZsohO992djr0lcPVhtZ/6i3VseunxbFXAFZze90Dse1xSWODDxnWcHbDMsOUwbfRA
+ uv/zQxv3LbuO7nDV4vLxsl8GlJP8105OjBvmS8uDZyHvwQhfJRF+Zj2QEyx1peiMFDZMeIF
+ lJ116TgLAMijLmB0HIAiA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:3ocy5qycobI=:5uIjV1XzRimLi8KksTah2i
+ PCKWN0Gcz4waoEVC/OwV3tQLO+3o8lZMIBwZWi6Jn4Hq8wedmWV7L79PTkDxsLbzit/4teN5A
+ +T6k6OeDvTw+Y+zLlNPYXSvp5d0uMkhhx0WYWu76mUHSBm+1wwfrVHB/sg3lpG4AizTP27ICX
+ qHqhp/YTmEZ2f2DP040k1R6+yp1cYZrv6ur95NdRDp7kbSWbbMTAH1UeXdZl18fESMC0PS078
+ K5eOLFpnGhpghH2iRByqVa1kxNs7wIhrn7Ju9u1YUWqVQnc3O68EpFqJZQTL50YjZZrjmnTQF
+ 4+YnR18YxMII6GNEXbOJoDG6wY0FY4A/lk0tH8tJYhkVZaVXK5CxPAHog+ha03tCeDwS1dcRh
+ U4MglaNTkTUTqVZr0QB42/I831+Ol+BhrOWvX1paJYozeSrz3n6U1+Xe3zP9ve+fbxQJBY3cE
+ 85SV9MwjL8GKDcXBWnvdE8ZW43YpRP0GmROHqWKs7OQsO984TmICxj2M+bR73VVI9JFHkepxX
+ kyBI7LRZ4hhcZY52DwH6KQ1Fs/CONWGzhcBX4cWXC+yLXvBiLrf1ihUXIXAq308/uIjIDAu2z
+ AcFcPqJbkwfTkb5fZpt0YMv3HRTedAKsIj+eO4wAW+CYF6va74q5C4gmTInC4pkVf1i+l5dl0
+ k8jtD1YF8ckrBeAjsy1e1uFXhhdsknoMtPyWHmR1smMGiF16KwsOMkylKiBa03ccveelluNWP
+ b23IA9KIS8xhCyZsdQWwFafWt+sNUhOTI6Z4aE7AUsJ2orRL0Je3+wzWrJ8UZ48aJ171618W1
+ u/mtJSrA9T+Dq6qglXvInZSB2DAIV9nEnIy+XEK9+9eb6/ZXaPRiyIMuKL/rdyoiEpX3MkZsZ
+ kxD0nBODwie5mYiSwsAQ==
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 10:28:02PM +0200, Arnd Bergmann wrote:
-> I've spent some time looking at the remaining ARMv4/ARMv5 platforms
-> that are not part of ARCH_MULTIPLATFORM, and tried to get them closer
-> to that. Here is what came out of that for the samsung platforms:
-> 
-> * Exynos and s5pv210 are made independent of plat-samsung
-> * device drivers stop using mach/*.h headers for s3c24xx
->   (and other platforms not in this series)
-> * s3c24xx and s3c64xx get merged into mach-s3c, removing
->   the need for plat-samsung (I have other patches for the
->   remaining plat-* directories)
-> * mach/io.h gets cleaned up to only be needed for BAST
->   PC104 mode (looking for ideas to proceed)
-> * mach/irqs.h remains for now, this still needs to be converted
->   to sparse IRQs.
-> 
-> Some bits are a little ugly, but overall I think this a big
-> improvement.
-> 
-> The contents are available for testing in
-> 
-> git://kernel.org:/pub/scm/linux/kernel/git/arnd/playground.git s3c-multiplatform
+> > diff --git a/arch/arm/mach-s5pv210/regs-clock.h b/arch/arm/mach-s5pv210/regs-clock.h
+> > index 2a35c831a9b0..8c7530614e37 100644
+> > --- a/arch/arm/mach-s5pv210/regs-clock.h
+> > +++ b/arch/arm/mach-s5pv210/regs-clock.h
+> > @@ -9,7 +9,7 @@
+> >  #ifndef __ASM_ARCH_REGS_CLOCK_H
+> >  #define __ASM_ARCH_REGS_CLOCK_H __FILE__
+> >
+> > -#include <plat/map-base.h>
+> > +#define S3C_VA_SYS           ((void __iomem __force *)0xF6100000)
+>
+> The same as for one of earlier patches - I prefer to keep the S3C_ADDR()
+> macro for consistency.
 
-When sending v2, can you Cc:
+Ok, done.
 
-Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Lihua Yao <ylhuajnu@outlook.com>
-(or Lihua Yao <ylhuajnu@163.com> if outlook.com bounces)
-Sergio Prado <sergio.prado@e-labworks.com>
-Sylwester Nawrocki <s.nawrocki@samsung.com>
+As the constant is only used in arch/arm/mach-s5pv210/pm.c and the
+s5pv210_dt_restart() function, I think it would be best to use ioremap()
+here and remove the constant as well as s5pv210_fdt_map_sys() and
+s5pv210_dt_map_io().
 
-These are folks which to my knowledge had working S3C and S5P boards
-so maybe they could provide testing.
+That can clearly be a follow-up patch.
 
-Best regards,
-Krzysztof
+> > diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
+> > index d88b9b84f3a9..025ce22876c1 100644
+> > --- a/arch/arm/plat-samsung/Makefile
+> > +++ b/arch/arm/plat-samsung/Makefile
+> > @@ -24,9 +24,7 @@ obj-$(CONFIG_GPIO_SAMSUNG)     += gpio-samsung.o
+> >
+> >  # PM support
+> >
+> > -obj-$(CONFIG_PM_SLEEP)               += pm-common.o
+> > -obj-$(CONFIG_EXYNOS_CPU_SUSPEND) += pm-common.o
+>
+> CONFIG_EXYNOS_CPU_SUSPEND looks unrelated and seems to be not needed at
+> all. Can you remove it in separate patch?
 
+Done.
+
+        Arnd
