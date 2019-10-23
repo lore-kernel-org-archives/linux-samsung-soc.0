@@ -2,272 +2,115 @@ Return-Path: <SRS0=1mvF=YQ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41DE7CA9EB6
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 10:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9206CA9EB6
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 10:43:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A78F20650
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 10:27:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A97462064A
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 10:43:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1571826477;
-	bh=7HIEdTMx0jnSUwqutjIsDTh2T/G2sB7CaCBFg0yG5qE=;
+	s=default; t=1571827392;
+	bh=w17ansr82Cw8bMrH42KGu0yry/M/xvT4mqS/2dVIBBg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=EKK/EHvWyvn9A2CZYseIetrEMM6ZhuMpsoaJFjbL62waXt6F9b6hf0xUbU7hqFs9h
-	 BxUM9X1PvlfaF4IOd2ggimHTmdMjZBSY/NG7kTfD9GayiPOWsg0wTYgjcDhteCrTBZ
-	 XShmHXw0mdQb9Tf3sBnoffyhq76LkgO1GCm+6/nY=
+	b=YKBPY1iZQcBPZJEuvR2gcJuJSR0QWhIonsUlmSz68eA0E5GeqkyO2h4lqSKCjfI3O
+	 blIDZNGVLKvQbHxq15dUbtXT3yOuT7aA6izilVHAqXgxgbC8H4BUU66HLe0UCDPHdj
+	 hvmxuw22/NFeyoE7HEnWKtju/Xo3AetKffE0Ismc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404435AbfJWK14 (ORCPT
+        id S2390181AbfJWKnM (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 23 Oct 2019 06:27:56 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:46360 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404405AbfJWK14 (ORCPT
+        Wed, 23 Oct 2019 06:43:12 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49322 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390566AbfJWKnM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 23 Oct 2019 06:27:56 -0400
-Received: by mail-ed1-f68.google.com with SMTP id r18so15310772eds.13;
-        Wed, 23 Oct 2019 03:27:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sN1khWqhEdLQ73NvMDu4PylBTsZjnLiQFTCzkxlO2MQ=;
-        b=F0u+ehzjT4ae6OiQ4jqVxPd5zPWvOQP8p8fz9TX0JEIN3ItYei2pAC25a4Sf8v5XT8
-         5vntyrdAAvA3SDOngyFPP/lICBsDdd14HJ8wPFNoMT2OkGz89XwZet9eLrMO/KNtn1hv
-         Vs8f3AqJBy5wfukxCHEk7jXyVh+BCyQdTcu6VVdUL6UzL5lfRLmqiPg+tT5M/e1niwt+
-         9Ja4/t5HQwnUN/GiMtUfZo+T0yYHDTxON7ALiJutEJlJLPwYkI+KKEvYbIgi38sG/bIK
-         6MoL+JSw4OsHzyKN5YQbhFW8VQZmduuWRV8eahT7X4xIF5skEgnr/wxRp04kbdvx4fQc
-         EDXg==
-X-Gm-Message-State: APjAAAWtihdFFSqOwAdTfUs3dkSweS89l2WGmV27DrhfBaHW1OqDV1vM
-        dWfleWu6IT2fUTshtC1pxwc=
-X-Google-Smtp-Source: APXvYqweO7L9OX5pU8/x+P5juNGpeFrV4kxRZI/Y+xaj7+Ve9ixjue5f2pYzFGNYsQIqVVZTlnBVtQ==
-X-Received: by 2002:a17:906:a2d1:: with SMTP id by17mr32249056ejb.206.1571826473749;
-        Wed, 23 Oct 2019 03:27:53 -0700 (PDT)
-Received: from pi3 ([194.230.155.217])
-        by smtp.googlemail.com with ESMTPSA id q2sm681528edh.41.2019.10.23.03.27.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 03:27:52 -0700 (PDT)
-Date:   Wed, 23 Oct 2019 12:27:50 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/36] ARM: samsung: make pm-debug platform independent
-Message-ID: <20191023102750.GD10630@pi3>
-References: <20191010202802.1132272-1-arnd@arndb.de>
- <20191010203043.1241612-1-arnd@arndb.de>
- <20191010203043.1241612-5-arnd@arndb.de>
+        Wed, 23 Oct 2019 06:43:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=o8+aRiWYArgOfcIQUpcz0HRWYDcLBPfXp8bzXS/M6uk=; b=osCh/jbEew5Dyc2YthYufYOzT
+        /wWvYeSc75A8nWZCJhQPtPZQJIPzRLmVMjAZHWDrgPwEE/cD+/tXhLi+RnPHgD+OxlAHWnpdBLkTV
+        GlWNDNNzdGUT/gMTgUuVag18SmkkVxCDkpkaaAQASWnWKQnpLoDjBpCmbLBxBwdkDyz48=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iNE6b-0000J4-QS; Wed, 23 Oct 2019 10:43:05 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 0557E2743259; Wed, 23 Oct 2019 11:43:04 +0100 (BST)
+Date:   Wed, 23 Oct 2019 11:43:04 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+Subject: Re: [PATCH] cpufreq: s3c64xx: Remove pointless NULL check in
+ s3c64xx_cpufreq_driver_init
+Message-ID: <20191023104304.GA5723@sirena.co.uk>
+References: <20191023000906.14374-1-natechancellor@gmail.com>
+ <20191023032302.tu5nkvulo2yoctgr@vireshk-i7>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="9amGYk9869ThD9tj"
 Content-Disposition: inline
-In-Reply-To: <20191010203043.1241612-5-arnd@arndb.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191023032302.tu5nkvulo2yoctgr@vireshk-i7>
+X-Cookie: MMM-MM!!  So THIS is BIO-NEBULATION!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 10:29:49PM +0200, Arnd Bergmann wrote:
-> The pm-debug code is one of the few things shared between s3c24xx/s3c64xx
-> and the newer s5pv210. In order to make s5pv210 independent of plat-samsung,
-> change the common bits of this code to no longer reference the s3c specific
-> bits.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/arm/mach-s3c24xx/include/mach/pm-core.h  |  7 +--
->  arch/arm/mach-s3c64xx/include/mach/pm-core.h  | 44 +---------------
->  arch/arm/mach-s3c64xx/pm.c                    | 50 +++++++++++++++++++
->  arch/arm/mach-s5pv210/pm.c                    |  6 +--
->  .../arm/plat-samsung/include/plat/pm-common.h | 29 +++++------
->  arch/arm/plat-samsung/pm-debug.c              | 23 ++-------
->  arch/arm/plat-samsung/pm.c                    | 10 ++--
->  7 files changed, 80 insertions(+), 89 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s3c24xx/include/mach/pm-core.h b/arch/arm/mach-s3c24xx/include/mach/pm-core.h
-> index 5e4ce89d0158..8f87606c4cdc 100644
-> --- a/arch/arm/mach-s3c24xx/include/mach/pm-core.h
-> +++ b/arch/arm/mach-s3c24xx/include/mach/pm-core.h
-> @@ -15,6 +15,7 @@
->  
->  static inline void s3c_pm_debug_init_uart(void)
->  {
-> +#ifdef CONFIG_SAMSUNG_PM_DEBUG
->  	unsigned long tmp = __raw_readl(S3C2410_CLKCON);
->  
->  	/* re-start uart clocks */
-> @@ -24,6 +25,7 @@ static inline void s3c_pm_debug_init_uart(void)
->  
->  	__raw_writel(tmp, S3C2410_CLKCON);
->  	udelay(10);
-> +#endif
->  }
->  
->  static inline void s3c_pm_arch_prepare_irqs(void)
-> @@ -75,11 +77,6 @@ static inline void s3c_pm_arch_show_resume_irqs(void)
->  				s3c_irqwake_eintmask);
->  }
->  
-> -static inline void s3c_pm_arch_update_uart(void __iomem *regs,
-> -					   struct pm_uart_save *save)
-> -{
-> -}
-> -
->  static inline void s3c_pm_restored_gpios(void) { }
->  static inline void samsung_pm_saved_gpios(void) { }
->  
-> diff --git a/arch/arm/mach-s3c64xx/include/mach/pm-core.h b/arch/arm/mach-s3c64xx/include/mach/pm-core.h
-> index bbf79ed28583..33cf242734a0 100644
-> --- a/arch/arm/mach-s3c64xx/include/mach/pm-core.h
-> +++ b/arch/arm/mach-s3c64xx/include/mach/pm-core.h
-> @@ -20,6 +20,7 @@
->  
->  static inline void s3c_pm_debug_init_uart(void)
->  {
-> +#ifdef CONFIG_SAMSUNG_PM_DEBUG
->  	u32 tmp = __raw_readl(S3C_PCLK_GATE);
->  
->  	/* As a note, since the S3C64XX UARTs generally have multiple
-> @@ -35,6 +36,7 @@ static inline void s3c_pm_debug_init_uart(void)
->  
->  	__raw_writel(tmp, S3C_PCLK_GATE);
->  	udelay(10);
-> +#endif
->  }
->  
->  static inline void s3c_pm_arch_prepare_irqs(void)
-> @@ -63,48 +65,6 @@ static inline void s3c_pm_arch_show_resume_irqs(void)
->  #define s3c_irqwake_intallow  0
->  #endif
->  
-> -static inline void s3c_pm_arch_update_uart(void __iomem *regs,
-> -					   struct pm_uart_save *save)
-> -{
-> -	u32 ucon = __raw_readl(regs + S3C2410_UCON);
-> -	u32 ucon_clk = ucon & S3C6400_UCON_CLKMASK;
-> -	u32 save_clk = save->ucon & S3C6400_UCON_CLKMASK;
-> -	u32 new_ucon;
-> -	u32 delta;
-> -
-> -	/* S3C64XX UART blocks only support level interrupts, so ensure that
-> -	 * when we restore unused UART blocks we force the level interrupt
-> -	 * settigs. */
-> -	save->ucon |= S3C2410_UCON_TXILEVEL | S3C2410_UCON_RXILEVEL;
-> -
-> -	/* We have a constraint on changing the clock type of the UART
-> -	 * between UCLKx and PCLK, so ensure that when we restore UCON
-> -	 * that the CLK field is correctly modified if the bootloader
-> -	 * has changed anything.
-> -	 */
-> -	if (ucon_clk != save_clk) {
-> -		new_ucon = save->ucon;
-> -		delta = ucon_clk ^ save_clk;
-> -
-> -		/* change from UCLKx => wrong PCLK,
-> -		 * either UCLK can be tested for by a bit-test
-> -		 * with UCLK0 */
-> -		if (ucon_clk & S3C6400_UCON_UCLK0 &&
-> -		    !(save_clk & S3C6400_UCON_UCLK0) &&
-> -		    delta & S3C6400_UCON_PCLK2) {
-> -			new_ucon &= ~S3C6400_UCON_UCLK0;
-> -		} else if (delta == S3C6400_UCON_PCLK2) {
-> -			/* as an precaution, don't change from
-> -			 * PCLK2 => PCLK or vice-versa */
-> -			new_ucon ^= S3C6400_UCON_PCLK2;
-> -		}
-> -
-> -		S3C_PMDBG("ucon change %04x => %04x (save=%04x)\n",
-> -			  ucon, new_ucon, save->ucon);
-> -		save->ucon = new_ucon;
-> -	}
-> -}
-> -
->  static inline void s3c_pm_restored_gpios(void)
->  {
->  	/* ensure sleep mode has been cleared from the system */
-> diff --git a/arch/arm/mach-s3c64xx/pm.c b/arch/arm/mach-s3c64xx/pm.c
-> index fd6dbb263ed5..a612e9779057 100644
-> --- a/arch/arm/mach-s3c64xx/pm.c
-> +++ b/arch/arm/mach-s3c64xx/pm.c
-> @@ -305,6 +305,56 @@ static void s3c64xx_pm_prepare(void)
->  	__raw_writel(__raw_readl(S3C64XX_WAKEUP_STAT), S3C64XX_WAKEUP_STAT);
->  }
->  
-> +#ifdef CONFIG_SAMSUNG_PM_DEBUG
-> +void s3c_pm_arch_update_uart(void __iomem *regs, struct pm_uart_save *save)
-> +{
-> +	u32 ucon;
-> +	u32 ucon_clk
-> +	u32 save_clk;
-> +	u32 new_ucon;
-> +	u32 delta;
-> +
-> +	if (!soc_is_s3c64xx())
-> +		return;
-> +
-> +	ucon = __raw_readl(regs + S3C2410_UCON);
-> +	ucon_clk = ucon & S3C6400_UCON_CLKMASK;
-> +	sav_clk = save->ucon & S3C6400_UCON_CLKMASK;
-> +
-> +	/* S3C64XX UART blocks only support level interrupts, so ensure that
-> +	 * when we restore unused UART blocks we force the level interrupt
-> +	 * settigs. */
-> +	save->ucon |= S3C2410_UCON_TXILEVEL | S3C2410_UCON_RXILEVEL;
-> +
-> +	/* We have a constraint on changing the clock type of the UART
-> +	 * between UCLKx and PCLK, so ensure that when we restore UCON
-> +	 * that the CLK field is correctly modified if the bootloader
-> +	 * has changed anything.
-> +	 */
-> +	if (ucon_clk != save_clk) {
-> +		new_ucon = save->ucon;
-> +		delta = ucon_clk ^ save_clk;
-> +
-> +		/* change from UCLKx => wrong PCLK,
-> +		 * either UCLK can be tested for by a bit-test
-> +		 * with UCLK0 */
-> +		if (ucon_clk & S3C6400_UCON_UCLK0 &&
-> +		    !(save_clk & S3C6400_UCON_UCLK0) &&
-> +		    delta & S3C6400_UCON_PCLK2) {
-> +			new_ucon &= ~S3C6400_UCON_UCLK0;
-> +		} else if (delta == S3C6400_UCON_PCLK2) {
-> +			/* as an precaution, don't change from
-> +			 * PCLK2 => PCLK or vice-versa */
-> +			new_ucon ^= S3C6400_UCON_PCLK2;
-> +		}
-> +
-> +		S3C_PMDBG("ucon change %04x => %04x (save=%04x)\n",
-> +			  ucon, new_ucon, save->ucon);
-> +		save->ucon = new_ucon;
-> +	}
-> +}
-> +#endif
-> +
->  int __init s3c64xx_pm_init(void)
->  {
->  	int i;
-> diff --git a/arch/arm/mach-s5pv210/pm.c b/arch/arm/mach-s5pv210/pm.c
-> index b336df0c57f3..efdb5a27c060 100644
-> --- a/arch/arm/mach-s5pv210/pm.c
-> +++ b/arch/arm/mach-s5pv210/pm.c
-> @@ -99,8 +99,6 @@ static int s5pv210_suspend_enter(suspend_state_t state)
->  	u32 eint_wakeup_mask = s5pv210_read_eint_wakeup_mask();
->  	int ret;
->  
-> -	s3c_pm_debug_init();
 
-Your patch is not equivalent here. If there is a reason behind removal
-of UART init (e.g. not needed), I prefer to make it in separate patch.
+--9amGYk9869ThD9tj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Rest looks good.
+On Wed, Oct 23, 2019 at 08:53:02AM +0530, Viresh Kumar wrote:
+> On 22-10-19, 17:09, Nathan Chancellor wrote:
+> > When building with Clang + -Wtautological-pointer-compare:
+> >=20
+> > drivers/cpufreq/s3c64xx-cpufreq.c:152:6: warning: comparison of array
+> > 's3c64xx_freq_table' equal to a null pointer is always false
+> > [-Wtautological-pointer-compare]
+> >         if (s3c64xx_freq_table =3D=3D NULL) {
+> >             ^~~~~~~~~~~~~~~~~~    ~~~~
+> > 1 warning generated.
+> >=20
+> > The definition of s3c64xx_freq_table is surrounded by an ifdef
+> > directive for CONFIG_CPU_S3C6410, which is always true for this driver
+> > because it depends on it in drivers/cpufreq/Kconfig.arm (and if it
+> > weren't, there would be a build error because s3c64xx_freq_table would
+> > not be a defined symbol).
 
-Best regards,
-Krzysztof
+> +broonie, who wrote this patch to see his views on why he kept it like
+> this.
 
+The driver should also have supported s3c6400 as well.
+
+--9amGYk9869ThD9tj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2wLrMACgkQJNaLcl1U
+h9B2ZAf/eQxJSi8vjkh2szC5fpPoxL3PqhhtoNyHk9pyamhKksLnfq8Wfc5cXoYf
+m805fFfs10op9oNpI//wwBy+WtmSWx7wFDZx+by2GeKvzPfCqjdXBvUziAtQhq/q
+pU4RI10nDISz7KV5+MogDYKIqS86tiaCpprrXQI9B524i1u1TCIiaqoW9EC6eho5
+104of9kneV1wM3wKRtz1W9HkOlV+Dnm1rDRWldGriYbd+HAJNhxGe+LNiLubnATf
+N3ntYDNTJmhuwc4KWuzOTHQE+5RXi2VBkk599ZoLoNSZhd6M5a4UU896+XYBjvEN
+NBjAKyjIVg55uIINznEJ2YtoD+u6qg==
+=wd9j
+-----END PGP SIGNATURE-----
+
+--9amGYk9869ThD9tj--
