@@ -2,306 +2,405 @@ Return-Path: <SRS0=1mvF=YQ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 127AACA9EB6
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 11:20:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4996DCA9EB6
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 11:32:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF75621906
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 11:20:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 110FE2084B
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 11:32:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1571829625;
-	bh=aRuWDdDz0ALYschCEyXmLCyrVzvYwcAu78247GK/ix8=;
+	s=default; t=1571830379;
+	bh=36mw5RBINCOuBE8TXREt+7OJI394uLXcJR1lXjARXvQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=CpiZBMCiLbjd1XQ+apKaWKoYvpgQYT24TwSqLmvN/24J8VhgV/YwIKE1JYvrARp2x
-	 8XEYQB4bT/dbdispBcCnSvZtCw4Y3kLePoCjkpsyhZYCn/NXU3iLqmjFxFYjoUiCAy
-	 eVCV8Q4viV77XghTvwfllEI+M+ROTVlFGaBJuKko=
+	b=dxk2ZswxNYUzcLrQEtf37dnlOLo4+r1rG23fIh2xj0i+8ItNDtmI9ovpcdVPPj5r2
+	 V7aUtDacH0VzzHgqeO2D0n0tpfHpgec92OfJDZoXRyR8y/WaRtY2A7BEsjJgoVeVYi
+	 TqVrfGcDgDGNa6D++N8wqiUWOyMXyMBF79rbKfcg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391109AbfJWLUZ (ORCPT
+        id S2404637AbfJWLc6 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 23 Oct 2019 07:20:25 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:35289 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390386AbfJWLUZ (ORCPT
+        Wed, 23 Oct 2019 07:32:58 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35781 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404612AbfJWLc6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 23 Oct 2019 07:20:25 -0400
-Received: by mail-ed1-f68.google.com with SMTP id k2so4761967edx.2;
-        Wed, 23 Oct 2019 04:20:22 -0700 (PDT)
+        Wed, 23 Oct 2019 07:32:58 -0400
+Received: by mail-ed1-f67.google.com with SMTP id k2so4788601edx.2;
+        Wed, 23 Oct 2019 04:32:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=U1Iv9oLwBhuv6+4c57usa5tS2bPjjw9Q5y32EOCdMPE=;
-        b=oX+Xkpd3D2iXdVNaoAfwOSfwK+m+/utG5ARYn4Tqa6FrN3eT+T9byRyHtWLxDKi/Ao
-         l3k03Vu37vlyBJShh5oq3RKUdwq3m4/+Gp/VhZsjpSNBG/6hZ383xyYoV0xFRcxJMIa8
-         2rKTJkYY/wTj0bL+B8ukhKjNJkSHL6xCr7Rhaq4VdXUmkP5/qKOvIf1zz7Fy9NrcYGDg
-         z78y/V00exYQNOJFLmuJ9wNMeBe75gSnccQT/PR6MiakNld+Er3hL1bdJeI8ylNIPVAw
-         8o5I6D4w8SVjOkkZhJ3Df4koTLo0nO108KN/Qnc+qqssAEl2Qv9C4OqOX8V/EBHKuX0G
-         DWYQ==
-X-Gm-Message-State: APjAAAWiiNSS9y/EAtu/+j7Ueayg56pnh7zIjmFvRwJuQ33ovv1qEUTw
-        lTxF+G3rGWdyKeULpA/hBgo=
-X-Google-Smtp-Source: APXvYqy24GIYro5b1SoxVfr90EPpn8DCMCQe6kqjHK5M83joyPKQX8ukV30FpXmPc6MEabt8o9/tvw==
-X-Received: by 2002:a17:906:e296:: with SMTP id gg22mr14621989ejb.211.1571829622111;
-        Wed, 23 Oct 2019 04:20:22 -0700 (PDT)
+        bh=hdwleZl7aKYSnuF89b0pQj4m1XzFQrFelIN3+m5OFq4=;
+        b=hLI/Qq8d44jZCnfrT6GvT4m7pSkrTeGLC+uQvnBMM9yHTtvzb9SSpT98LnHDGaYuWX
+         9uosXKK4eoVvlPQuESn3dKSAYMSrQhhB1vQFkuiRuu7srNL2PwJ09GgoblJ0t2VxlGGh
+         rCsMjIBLmKpJgHEX8UtqiGyvmB7+Lbqigsa6EypT9BjdyaP1Qcxjq20LiAKbOWiUxiQt
+         vnxuyuKMLvwxGmxFeZ4PeCNqB2ZFPYEfX9q9zQqDiRLclUdbj7/Cn2EWl7QcmKysZMK5
+         qfQqy8iZ+4kbTsEBE6wL5gEiaT2XEH76lXDkebg9Po1E5KVajoEak/n8QpVIeenhr0gX
+         NaQg==
+X-Gm-Message-State: APjAAAVdbhM33jXHACgk2Qzvl7AsutX7m83ELOC/BjjLwJPo7PpGsGnz
+        BVCPWXpZKnDIa5SJ0+iMjHI=
+X-Google-Smtp-Source: APXvYqwXMNsDkGP904tCfzaTaE0Lpi/HZOXZsU71cnQaD8EXOqDKzIJHoqvgOw1CI3PdQRGrXYQ73g==
+X-Received: by 2002:a50:ed01:: with SMTP id j1mr37031597eds.111.1571830375804;
+        Wed, 23 Oct 2019 04:32:55 -0700 (PDT)
 Received: from pi3 ([194.230.155.217])
-        by smtp.googlemail.com with ESMTPSA id j5sm873792edj.62.2019.10.23.04.20.20
+        by smtp.googlemail.com with ESMTPSA id a13sm279797eds.10.2019.10.23.04.32.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 04:20:21 -0700 (PDT)
-Date:   Wed, 23 Oct 2019 13:20:19 +0200
+        Wed, 23 Oct 2019 04:32:55 -0700 (PDT)
+Date:   Wed, 23 Oct 2019 13:32:52 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, sboyd@kernel.org, vireshk@kernel.org,
-        b.zolnierkie@samsung.com, roger.lu@mediatek.com,
-        robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
-        m.szyprowski@samsung.com
-Subject: Re: [PATCH v5 3/4] soc: samsung: Add Exynos Adaptive Supply Voltage
- driver
-Message-ID: <20191023112019.GA10883@pi3>
-References: <20191016145756.16004-1-s.nawrocki@samsung.com>
- <CGME20191016145813eucas1p1623db169f1ee93f88cb2c75090804747@eucas1p1.samsung.com>
- <20191016145756.16004-4-s.nawrocki@samsung.com>
- <20191022190419.GB8305@kozik-lap>
- <ccd20b0e-9c4c-93cd-2e7e-40aef1bb336c@samsung.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Kukjin Kim <kgene@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Pankaj Dubey <pankaj.dubey@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/36] ARM: samsung: move pm check code to drivers/soc
+Message-ID: <20191023113252.GG10630@pi3>
+References: <20191010202802.1132272-1-arnd@arndb.de>
+ <20191010203043.1241612-1-arnd@arndb.de>
+ <20191010203043.1241612-9-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ccd20b0e-9c4c-93cd-2e7e-40aef1bb336c@samsung.com>
+In-Reply-To: <20191010203043.1241612-9-arnd@arndb.de>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 12:48:34PM +0200, Sylwester Nawrocki wrote:
-> Hi Krzysztof,
+On Thu, Oct 10, 2019 at 10:29:53PM +0200, Arnd Bergmann wrote:
+> This is the only part of plat-samsung that is really
+> shared between the s3c and s5p ports. Moving it to
+> drivers/soc/ lets us make them completely independent.
 > 
-> On 10/22/19 21:04, Krzysztof Kozlowski wrote:
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/arm/mach-s5pv210/Kconfig                 |  1 +
+>  arch/arm/plat-samsung/Kconfig                 | 49 +----------
+>  arch/arm/plat-samsung/Makefile                |  2 -
+>  .../arm/plat-samsung/include/plat/pm-common.h | 70 +---------------
+>  drivers/soc/samsung/Kconfig                   | 48 ++++++++++-
+>  drivers/soc/samsung/Makefile                  |  3 +
+>  .../soc/samsung/s3c-pm-check.c                |  2 +-
+>  .../soc/samsung/s3c-pm-debug.c                |  3 +-
+>  include/linux/soc/samsung/s3c-pm.h            | 84 +++++++++++++++++++
+>  9 files changed, 139 insertions(+), 123 deletions(-)
+>  rename arch/arm/plat-samsung/pm-check.c => drivers/soc/samsung/s3c-pm-check.c (99%)
+>  rename arch/arm/plat-samsung/pm-debug.c => drivers/soc/samsung/s3c-pm-debug.c (97%)
+>  create mode 100644 include/linux/soc/samsung/s3c-pm.h
+> 
+> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+> index 03984a791879..d2b0e64bad7e 100644
+> --- a/arch/arm/mach-s5pv210/Kconfig
+> +++ b/arch/arm/mach-s5pv210/Kconfig
+> @@ -18,6 +18,7 @@ config ARCH_S5PV210
+>  	select HAVE_S3C_RTC if RTC_CLASS
+>  	select PINCTRL
+>  	select PINCTRL_EXYNOS
+> +	select SOC_SAMSUNG
+>  	help
+>  	  Samsung S5PV210/S5PC110 series based systems
 >  
-> > I wanted to apply this patch but spotted some unusual printk... 
-> > and then started looking for more...
-> > 
-> > Sparse complains:
-> > ../drivers/soc/samsung/exynos5422-asv.c:457:5: warning: symbol 
-> > 'exynos5422_asv_init' was not declared. Should it be static?
+> diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+> index e31a156a27df..740bdb23f38a 100644
+> --- a/arch/arm/plat-samsung/Kconfig
+> +++ b/arch/arm/plat-samsung/Kconfig
+> @@ -8,6 +8,7 @@ config PLAT_SAMSUNG
+>  	default y
+>  	select GENERIC_IRQ_CHIP
+>  	select NO_IOPORT_MAP
+> +	select SOC_SAMSUNG
+>  	help
+>  	  Base platform code for all Samsung SoC based systems
 >  
-> #include "exynos5422-asv.h" should be added to 
-> drivers/soc/samsung/exynos5422-asv.c.
-> 
-> >>  drivers/soc/samsung/Kconfig          |  10 +
-> >>  drivers/soc/samsung/Makefile         |   3 +
-> >>  drivers/soc/samsung/exynos-asv.c     | 179 ++++++++++
-> >>  drivers/soc/samsung/exynos-asv.h     |  82 +++++
-> >>  drivers/soc/samsung/exynos5422-asv.c | 509 +++++++++++++++++++++++++++
-> >>  drivers/soc/samsung/exynos5422-asv.h |  25 ++
-> >>  6 files changed, 808 insertions(+)
-> >>  create mode 100644 drivers/soc/samsung/exynos-asv.c
-> >>  create mode 100644 drivers/soc/samsung/exynos-asv.h
-> >>  create mode 100644 drivers/soc/samsung/exynos5422-asv.c
-> >>  create mode 100644 drivers/soc/samsung/exynos5422-asv.h
-> >>
-> 
-> >> +++ b/drivers/soc/samsung/exynos-asv.c
-> 
-> >> +#include <linux/cpu.h>
-> >> +#include <linux/delay.h>
-> > 
-> > Do you use this header?
-> 
-> It can be removed now, after conversion to dev_pm_opp_adjust_voltage().
-> 
-> >> +static int exynos_asv_probe(struct platform_device *pdev)
-> >> +{
-> >> +	int (*probe_func)(struct exynos_asv *asv);
-> >> +	struct exynos_asv *asv;
-> >> +	struct device *cpu_dev;
-> >> +	u32 product_id = 0;
-> >> +	int ret, i;
-> >> +
-> >> +	cpu_dev = get_cpu_device(0);
-> >> +	ret = dev_pm_opp_get_opp_count(cpu_dev);
-> >> +	if (ret < 0)
-> >> +		return -EPROBE_DEFER;
-> >> +
-> >> +	asv = devm_kzalloc(&pdev->dev, sizeof(*asv), GFP_KERNEL);
-> >> +	if (!asv)
-> >> +		return -ENOMEM;
-> >> +
-> >> +	asv->chipid_regmap = syscon_node_to_regmap(pdev->dev.of_node);
-> > 
-> > Since this binds to the same node as chipid, why do you need syscon for
-> > it? Why regular IO access does not work? Eventually, if this has to be
-> > regmap because of locking (does it?), then maybe simply
-> > device_node_to_regmap()?
-> 
-> We just need regmap available to any of the two drivers whichever needs it
-> first. device_node_to_regmap() sounds like a good idea. Then we could drop
-> "syscon" compatible from the binding.
-
-OK, let's keep the regmap for safe access to the same region by multiple
-drivers.
-
-> 
-> >> +	if (IS_ERR(asv->chipid_regmap)) {
-> >> +		dev_err(&pdev->dev, "Could not find syscon regmap\n");
-> >> +		return PTR_ERR(asv->chipid_regmap);
-> >> +	}
-> >> +
-> >> +	regmap_read(asv->chipid_regmap, EXYNOS_CHIPID_REG_PRO_ID, &product_id);
-> >> +
-> >> +	switch (product_id & EXYNOS_MASK) {
-> >> +	case 0xE5422000:
-> >> +		probe_func = exynos5422_asv_init;
-> >> +		break;
-> >> +	default:
-> >> +		dev_err(&pdev->dev, "Unsupported product ID: %#x", product_id);
-> > 
-> > Is this going to scream for every Exynos matching the 4210-chipid?
-> 
-> Yes, it should really be dev_info() or removed entirely.
-
-Remove it entirely please or leave it to dev_dbg (but even then add some
-calming message like "Unsupported ...., skipping ASV"). Driver binds on
-many devices and lack of ASV is kind of regular (till now there was no
-ASV at all).
-
-> 
-> >> +		return -ENODEV;
-> >> +	}
-> 
-> 
-> >> +++ b/drivers/soc/samsung/exynos-asv.h
-> 
-> >> +enum {
-> >> +	EXYNOS_ASV_SUBSYS_ID_ARM,
-> >> +	EXYNOS_ASV_SUBSYS_ID_EGL = EXYNOS_ASV_SUBSYS_ID_ARM,
-> >> +	EXYNOS_ASV_SUBSYS_ID_KFC,
-> >> +	EXYNOS_ASV_SUBSYS_ID_INT,
-> >> +	EXYNOS_ASV_SUBSYS_ID_MIF,
-> >> +	EXYNOS_ASV_SUBSYS_ID_G3D,
-> >> +	EXYNOS_ASV_SUBSYS_ID_CAM,
-> >> +	EXYNOS_ASV_SUBSYS_ID_MAX
-> >> +};
-> > 
-> > I cannot find usage of it in generic part of ASV driver. What's the
-> > purpose? Isn't it specific to Exynos5422?
-> 
-> It was meant as generic enumeration of available subsystems, it's not
-> Exynos5422 specific. It could be moved to the exynos5422 part of the 
-> driver (limited to EXYNOS_ASV_SUBSYS_ID_ARM, EXYNOS_ASV_SUBSYS_ID_KFC)
-> until support for of ther subsystems than CPU clusters is added.
-> The CPUs are now matched by compatible.
-
-Then let's move it to exynos5422 part, and later make it generic if
-needed.
-
-> 
-> >> +struct regmap;
-> >> +
-> >> +/* HPM, IDS values to select target group */
-> 
-> >> +struct exynos_asv_subsys {
-> >> +	struct exynos_asv *asv;
-> >> +	const char *cpu_dt_compat;
-> >> +	int id;
-> >> +	struct exynos_asv_table table;
-> >> +
-> >> +	unsigned int base_volt;
-> >> +	unsigned int offset_volt_h;
-> >> +	unsigned int offset_volt_l;
-> >> +};
-> >> +
-> >> +struct exynos_asv {
-> >> +	struct device *dev;
-> >> +	struct regmap *chipid_regmap;
-> >> +	struct exynos_asv_subsys subsys[2];
-> >> +
-> >> +	int (*opp_get_voltage)(struct exynos_asv_subsys *subs, int level,
-> >> +			       unsigned int voltage);
-> >> +	unsigned int group;
-> >> +	unsigned int table;
-> >> +
-> >> +	/* True if SG fields from PKG_ID register should be used */
-> >> +	bool use_sg;
-> >> +	/* ASV bin read from DT */
-> >> +	int of_bin;
-> >> +};
-> >> +
-> >> +static inline u32 __asv_get_table_entry(struct exynos_asv_table *table,
-> > 
-> > 'table' looks here like pointer to const.
-> 
-> Yes, const could be added here.
-> 
-> >> +					unsigned int row, unsigned int col)
-> >> +{
-> >> +	return table->buf[row * (table->num_cols) + col];
-> >> +}
-> >> +
-> >> +static inline u32 exynos_asv_opp_get_voltage(struct exynos_asv_subsys *subsys,
-> >> +					unsigned int level, unsigned int group)
-> >> +{
-> > 
-> > The same, for subsys.
-> 
-> Agreed.
+> @@ -234,54 +235,6 @@ config SAMSUNG_PM_GPIO
+>  	  pinctrl-samsung driver.
+>  endif
 >  
-> >> +	return __asv_get_table_entry(&subsys->table, level, group + 1);
-> >> +}
-> 
-> >> +++ b/drivers/soc/samsung/exynos5422-asv.c
-> 
-> >> +#include <linux/bitrev.h>
-> >> +#include <linux/device.h>
-> > 
-> > Is it used?
-> > 
-> >> +#include <linux/errno.h>
-> >> +#include <linux/of.h>
-> > 
-> > The same?
-> 
-> Some might be not used now, I will check it again.
-> 
-> >> +#include <linux/regmap.h>
-> >> +#include <linux/soc/samsung/exynos-chipid.h>
-> >> +#include <linux/slab.h>
-> >> +
-> >> +#include "exynos-asv.h"
-> 
-> 
-> >> +static int exynos5422_asv_opp_get_voltage(struct exynos_asv_subsys *subsys,
-> >> +				int level, unsigned int volt)
-> > 
-> > subsys is not modified.
+> -comment "Power management"
+> -
+> -config SAMSUNG_PM_DEBUG
+> -	bool "Samsung PM Suspend debug"
+> -	depends on PM && DEBUG_KERNEL
+> -	depends on PLAT_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210
+> -	depends on DEBUG_S3C24XX_UART || DEBUG_S3C2410_UART
+> -	help
+> -	  Say Y here if you want verbose debugging from the PM Suspend and
+> -	  Resume code. See <file:Documentation/arm/samsung-s3c24xx/suspend.rst>
+> -	  for more information.
+> -
+> -config S3C_PM_DEBUG_LED_SMDK
+> -       bool "SMDK LED suspend/resume debugging"
+> -       depends on PM && (MACH_SMDK6410)
+> -       help
+> -         Say Y here to enable the use of the SMDK LEDs on the baseboard
+> -	 for debugging of the state of the suspend and resume process.
+> -
+> -	 Note, this currently only works for S3C64XX based SMDK boards.
+> -
+> -config SAMSUNG_PM_CHECK
+> -	bool "S3C2410 PM Suspend Memory CRC"
+> -	depends on PM && (PLAT_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210)
+> -	select CRC32
+> -	help
+> -	  Enable the PM code's memory area checksum over sleep. This option
+> -	  will generate CRCs of all blocks of memory, and store them before
+> -	  going to sleep. The blocks are then checked on resume for any
+> -	  errors.
+> -
+> -	  Note, this can take several seconds depending on memory size
+> -	  and CPU speed.
+> -
+> -	  See <file:Documentation/arm/samsung-s3c24xx/suspend.rst>
+> -
+> -config SAMSUNG_PM_CHECK_CHUNKSIZE
+> -	int "S3C2410 PM Suspend CRC Chunksize (KiB)"
+> -	depends on PM && SAMSUNG_PM_CHECK
+> -	default 64
+> -	help
+> -	  Set the chunksize in Kilobytes of the CRC for checking memory
+> -	  corruption over suspend and resume. A smaller value will mean that
+> -	  the CRC data block will take more memory, but will identify any
+> -	  faults with better precision.
+> -
+> -	  See <file:Documentation/arm/samsung-s3c24xx/suspend.rst>
+> -
+>  config SAMSUNG_WAKEMASK
+>  	bool
+>  	depends on PM
+> diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
+> index 3db9d2c38258..d88b9b84f3a9 100644
+> --- a/arch/arm/plat-samsung/Makefile
+> +++ b/arch/arm/plat-samsung/Makefile
+> @@ -28,8 +28,6 @@ obj-$(CONFIG_PM_SLEEP)		+= pm-common.o
+>  obj-$(CONFIG_EXYNOS_CPU_SUSPEND) += pm-common.o
+>  obj-$(CONFIG_SAMSUNG_PM)	+= pm.o
+>  obj-$(CONFIG_SAMSUNG_PM_GPIO)	+= pm-gpio.o
+> -obj-$(CONFIG_SAMSUNG_PM_CHECK)	+= pm-check.o
+> -obj-$(CONFIG_SAMSUNG_PM_DEBUG)	+= pm-debug.o
 >  
-> 
-> >> +static unsigned int exynos5422_asv_parse_table(struct exynos_asv *asv,
-> >> +				      unsigned int pkg_id)
-> >> +{
-> > 
-> > The same, for asv. Looks BTW unused...
-> 
-> Indeed the asv argument should be dropped now.
-> 
-> >> +	return (pkg_id >> EXYNOS5422_TABLE_OFFSET) & EXYNOS5422_TABLE_MASK;
-> >> +}
-> 
-> >> +int exynos5422_asv_init(struct exynos_asv *asv)
-> >> +{
-> >> +	struct exynos_asv_subsys *subsys;
-> >> +	unsigned int table_index;
-> >> +	unsigned int pkg_id;
-> >> +	bool bin2;
-> >> +
-> > 
-> > How about checking if asv != null? It's a header exposed function.
-> 
-> Do we really need it? The caller will ensure that asv is not null.
+>  obj-$(CONFIG_SAMSUNG_WAKEMASK)	+= wakeup-mask.o
+>  obj-$(CONFIG_SAMSUNG_WDT_RESET)	+= watchdog-reset.o
+> diff --git a/arch/arm/plat-samsung/include/plat/pm-common.h b/arch/arm/plat-samsung/include/plat/pm-common.h
+> index 87fa97fd6e8b..18b9607e1e39 100644
+> --- a/arch/arm/plat-samsung/include/plat/pm-common.h
+> +++ b/arch/arm/plat-samsung/include/plat/pm-common.h
+> @@ -11,6 +11,7 @@
+>  #define __PLAT_SAMSUNG_PM_COMMON_H __FILE__
+>  
+>  #include <linux/irq.h>
+> +#include <linux/soc/samsung/s3c-pm.h>
+>  
+>  /* sleep save info */
+>  
+> @@ -36,73 +37,4 @@ extern void s3c_pm_do_save(struct sleep_save *ptr, int count);
+>  extern void s3c_pm_do_restore(const struct sleep_save *ptr, int count);
+>  extern void s3c_pm_do_restore_core(const struct sleep_save *ptr, int count);
+>  
+> -/* PM debug functions */
+> -
+> -/**
+> - * struct pm_uart_save - save block for core UART
+> - * @ulcon: Save value for S3C2410_ULCON
+> - * @ucon: Save value for S3C2410_UCON
+> - * @ufcon: Save value for S3C2410_UFCON
+> - * @umcon: Save value for S3C2410_UMCON
+> - * @ubrdiv: Save value for S3C2410_UBRDIV
+> - *
+> - * Save block for UART registers to be held over sleep and restored if they
+> - * are needed (say by debug).
+> -*/
+> -struct pm_uart_save {
+> -	u32	ulcon;
+> -	u32	ucon;
+> -	u32	ufcon;
+> -	u32	umcon;
+> -	u32	ubrdiv;
+> -	u32	udivslot;
+> -};
+> -
+> -#ifdef CONFIG_SAMSUNG_PM_DEBUG
+> -/**
+> - * s3c_pm_dbg() - low level debug function for use in suspend/resume.
+> - * @msg: The message to print.
+> - *
+> - * This function is used mainly to debug the resume process before the system
+> - * can rely on printk/console output. It uses the low-level debugging output
+> - * routine printascii() to do its work.
+> - */
+> -extern void s3c_pm_dbg(const char *msg, ...);
+> -
+> -#define S3C_PMDBG(fmt...) s3c_pm_dbg(fmt)
+> -
+> -extern void s3c_pm_save_uarts(bool is_s3c24xx);
+> -extern void s3c_pm_restore_uarts(bool is_s3c24xx);
+> -
+> -#ifdef CONFIG_ARCH_S3C64XX
+> -extern void s3c_pm_arch_update_uart(void __iomem *regs,
+> -				    struct pm_uart_save *save);
+> -#else
+> -static inline void
+> -s3c_pm_arch_update_uart(void __iomem *regs, struct pm_uart_save *save)
+> -{
+> -}
+> -#endif
+> -
+> -#else
+> -#define S3C_PMDBG(fmt...) pr_debug(fmt)
+> -
+> -static inline void s3c_pm_save_uarts(bool is_s3c24xx) { }
+> -static inline void s3c_pm_restore_uarts(bool is_s3c24xx) { }
+> -#endif
+> -
+> -/* suspend memory checking */
+> -
+> -#ifdef CONFIG_SAMSUNG_PM_CHECK
+> -extern void s3c_pm_check_prepare(void);
+> -extern void s3c_pm_check_restore(void);
+> -extern void s3c_pm_check_cleanup(void);
+> -extern void s3c_pm_check_store(void);
+> -#else
+> -#define s3c_pm_check_prepare() do { } while (0)
+> -#define s3c_pm_check_restore() do { } while (0)
+> -#define s3c_pm_check_cleanup() do { } while (0)
+> -#define s3c_pm_check_store()   do { } while (0)
+> -#endif
+> -
+>  #endif
+> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+> index 33ad0de2de3c..0ea7402ffba3 100644
+> --- a/drivers/soc/samsung/Kconfig
+> +++ b/drivers/soc/samsung/Kconfig
+> @@ -25,6 +25,52 @@ config EXYNOS_PMU_ARM_DRIVERS
+>  
+>  config EXYNOS_PM_DOMAINS
+>  	bool "Exynos PM domains" if COMPILE_TEST
+> -	depends on PM_GENERIC_DOMAINS || COMPILE_TEST
+> +	depends on (ARCH_EXYNOS && PM_GENERIC_DOMAINS) || COMPILE_TEST
+> +
+> +config SAMSUNG_PM_DEBUG
+> +	bool "Samsung PM Suspend debug"
+> +	depends on PM && DEBUG_KERNEL
+> +	depends on PLAT_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210
+> +	depends on DEBUG_S3C24XX_UART || DEBUG_S3C2410_UART
+> +	help
+> +	  Say Y here if you want verbose debugging from the PM Suspend and
+> +	  Resume code. See <file:Documentation/arm/samsung-s3c24xx/suspend.rst>
+> +	  for more information.
+> +
+> +config S3C_PM_DEBUG_LED_SMDK
+> +       bool "SMDK LED suspend/resume debugging"
+> +       depends on PM && (MACH_SMDK6410)
+> +       help
+> +         Say Y here to enable the use of the SMDK LEDs on the baseboard
+> +	 for debugging of the state of the suspend and resume process.
+> +
+> +	 Note, this currently only works for S3C64XX based SMDK boards.
+> +
+> +config SAMSUNG_PM_CHECK
+> +	bool "S3C2410 PM Suspend Memory CRC"
+> +	depends on PM && (PLAT_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210)
+> +	select CRC32
+> +	help
+> +	  Enable the PM code's memory area checksum over sleep. This option
+> +	  will generate CRCs of all blocks of memory, and store them before
+> +	  going to sleep. The blocks are then checked on resume for any
+> +	  errors.
+> +
+> +	  Note, this can take several seconds depending on memory size
+> +	  and CPU speed.
+> +
+> +	  See <file:Documentation/arm/samsung-s3c24xx/suspend.rst>
+> +
+> +config SAMSUNG_PM_CHECK_CHUNKSIZE
+> +	int "S3C2410 PM Suspend CRC Chunksize (KiB)"
+> +	depends on PM && SAMSUNG_PM_CHECK
+> +	default 64
+> +	help
+> +	  Set the chunksize in Kilobytes of the CRC for checking memory
+> +	  corruption over suspend and resume. A smaller value will mean that
+> +	  the CRC data block will take more memory, but will identify any
+> +	  faults with better precision.
+> +
+> +	  See <file:Documentation/arm/samsung-s3c24xx/suspend.rst>
+>  
+>  endif
+> diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
+> index 3b6a8797416c..88ae7a522055 100644
+> --- a/drivers/soc/samsung/Makefile
+> +++ b/drivers/soc/samsung/Makefile
+> @@ -6,3 +6,6 @@ obj-$(CONFIG_EXYNOS_PMU)	+= exynos-pmu.o
+>  obj-$(CONFIG_EXYNOS_PMU_ARM_DRIVERS)	+= exynos3250-pmu.o exynos4-pmu.o \
+>  					exynos5250-pmu.o exynos5420-pmu.o
+>  obj-$(CONFIG_EXYNOS_PM_DOMAINS) += pm_domains.o
+> +
+> +obj-$(CONFIG_SAMSUNG_PM_CHECK)	+= s3c-pm-check.o
+> +obj-$(CONFIG_SAMSUNG_PM_DEBUG)	+= s3c-pm-debug.o
+> diff --git a/arch/arm/plat-samsung/pm-check.c b/drivers/soc/samsung/s3c-pm-check.c
+> similarity index 99%
+> rename from arch/arm/plat-samsung/pm-check.c
+> rename to drivers/soc/samsung/s3c-pm-check.c
+> index cd2c02c68bc3..ff3e099fc208 100644
+> --- a/arch/arm/plat-samsung/pm-check.c
+> +++ b/drivers/soc/samsung/s3c-pm-check.c
+> @@ -15,7 +15,7 @@
+>  #include <linux/ioport.h>
+>  #include <linux/slab.h>
+>  
+> -#include <plat/pm-common.h>
+> +#include <linux/soc/samsung/s3c-pm.h>
+>  
+>  #if CONFIG_SAMSUNG_PM_CHECK_CHUNKSIZE < 1
+>  #error CONFIG_SAMSUNG_PM_CHECK_CHUNKSIZE must be a positive non-zero value
+> diff --git a/arch/arm/plat-samsung/pm-debug.c b/drivers/soc/samsung/s3c-pm-debug.c
+> similarity index 97%
+> rename from arch/arm/plat-samsung/pm-debug.c
+> rename to drivers/soc/samsung/s3c-pm-debug.c
+> index 482d53753e93..b5ce0e9a41e5 100644
+> --- a/arch/arm/plat-samsung/pm-debug.c
+> +++ b/drivers/soc/samsung/s3c-pm-debug.c
+> @@ -15,8 +15,7 @@
+>  
+>  #include <asm/mach/map.h>
+>  
+> -#include <plat/cpu.h>
+> -#include <plat/pm-common.h>
+> +#include <linux/soc/samsung/s3c-pm.h>
+>  
+>  static struct pm_uart_save uart_save;
+>  
+> diff --git a/include/linux/soc/samsung/s3c-pm.h b/include/linux/soc/samsung/s3c-pm.h
+> new file mode 100644
+> index 000000000000..d477b314d034
+> --- /dev/null
+> +++ b/include/linux/soc/samsung/s3c-pm.h
+> @@ -0,0 +1,84 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
+> + *	Tomasz Figa <t.figa@samsung.com>
+> + * Copyright (c) 2004 Simtec Electronics
+> + *	http://armlinux.simtec.co.uk/
+> + *	Written by Ben Dooks, <ben@simtec.co.uk>
+> + */
+> +
+> +#ifndef __SAMSUNG_SOC_S3C_PM_H
+> +#define __SAMSUNG_SOC_S3C_PM_H __FILE__
 
-Indeed, it's not needed. Skip my comment.
+Use guard name prefix consistent with other files, so:
+__LINUX_SOC_SAMSUNG_S3C_PM_H
+
+Rest looks good.
 
 Best regards,
 Krzysztof
