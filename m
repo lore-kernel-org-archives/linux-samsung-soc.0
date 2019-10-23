@@ -2,203 +2,306 @@ Return-Path: <SRS0=1mvF=YQ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6211BCA9EB6
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 10:57:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 127AACA9EB6
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 11:20:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 352C3214B2
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 10:57:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF75621906
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 11:20:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1571828243;
-	bh=mbTySTDT5cWvrH4ForUJvk4qnFV/+r9OnxYtu8S/N+8=;
+	s=default; t=1571829625;
+	bh=aRuWDdDz0ALYschCEyXmLCyrVzvYwcAu78247GK/ix8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=cErjwfgquEMSRzi8QFsnZSR4iHF9YhbPEHzOpv9vpK7JeQf/h1P54Y8Bx7Kbqn/p8
-	 AyfEnmtDx00aanGzJFiANo0669FgD/JOS8WLTySDCcuyzAFE0dr7RE2Y9LM4RnlRMv
-	 dGsLl5+Qqp/rW/Ua/Q9yCcZkfukyOBaJ2mdxyL8g=
+	b=CpiZBMCiLbjd1XQ+apKaWKoYvpgQYT24TwSqLmvN/24J8VhgV/YwIKE1JYvrARp2x
+	 8XEYQB4bT/dbdispBcCnSvZtCw4Y3kLePoCjkpsyhZYCn/NXU3iLqmjFxFYjoUiCAy
+	 eVCV8Q4viV77XghTvwfllEI+M+ROTVlFGaBJuKko=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390588AbfJWK5W (ORCPT
+        id S2391109AbfJWLUZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 23 Oct 2019 06:57:22 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43921 "EHLO
+        Wed, 23 Oct 2019 07:20:25 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:35289 "EHLO
         mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390540AbfJWK5W (ORCPT
+        with ESMTP id S2390386AbfJWLUZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 23 Oct 2019 06:57:22 -0400
-Received: by mail-ed1-f68.google.com with SMTP id q24so9419919edr.10;
-        Wed, 23 Oct 2019 03:57:20 -0700 (PDT)
+        Wed, 23 Oct 2019 07:20:25 -0400
+Received: by mail-ed1-f68.google.com with SMTP id k2so4761967edx.2;
+        Wed, 23 Oct 2019 04:20:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AVFd6LJ96F4qd/EigznQJuvz3SMKebF4Tl0OCKWEbU4=;
-        b=QzWyaQ7NqoDAwu3CVR9ad0gwsDFCbX0bqO8rrs6wPJchDSXiyHyIDgpHz5oDIRW1kN
-         jxOIRVSrZK/8e4qwWvE4BFo06pJId/91uJIlPt7HCmR6SNWky5BmJB4Kz4DEB6vKvCaw
-         rCEFWsiPeHEyd+IIeity+8p1Exxo4WPSIZP3l/sZRtSKClLBc1fqIJ4Ll8IGdwzp/ngS
-         oo2PQco+ck9k3ujfjKxF9sRwyNlgvtZNjvVRBzF8gQue0dG4qt2CcYT5aGb0qInL1DBM
-         6nF/PC+rjf0haW7Yb5jCWXcr7dk2YT4z/SC1xIU1nOsSOjrzojDI7wdUM+pf00CbbVQT
-         ItQA==
-X-Gm-Message-State: APjAAAX5VPED3PoKSSZeNKt83ug2mwXN9JLQlVVnEN4ZzbNCBgNT44dR
-        lAQ8193bos/6iMLliVK5ZuhJAEGR
-X-Google-Smtp-Source: APXvYqz2m9c3DsGIx81hfOZRR9q8BRfSarhYDkrVPcLRoup2R/1lZqDrXp+W/zwiqQP1RT4zv9Z6wQ==
-X-Received: by 2002:a17:906:585a:: with SMTP id h26mr20637220ejs.329.1571828239818;
-        Wed, 23 Oct 2019 03:57:19 -0700 (PDT)
+        bh=U1Iv9oLwBhuv6+4c57usa5tS2bPjjw9Q5y32EOCdMPE=;
+        b=oX+Xkpd3D2iXdVNaoAfwOSfwK+m+/utG5ARYn4Tqa6FrN3eT+T9byRyHtWLxDKi/Ao
+         l3k03Vu37vlyBJShh5oq3RKUdwq3m4/+Gp/VhZsjpSNBG/6hZ383xyYoV0xFRcxJMIa8
+         2rKTJkYY/wTj0bL+B8ukhKjNJkSHL6xCr7Rhaq4VdXUmkP5/qKOvIf1zz7Fy9NrcYGDg
+         z78y/V00exYQNOJFLmuJ9wNMeBe75gSnccQT/PR6MiakNld+Er3hL1bdJeI8ylNIPVAw
+         8o5I6D4w8SVjOkkZhJ3Df4koTLo0nO108KN/Qnc+qqssAEl2Qv9C4OqOX8V/EBHKuX0G
+         DWYQ==
+X-Gm-Message-State: APjAAAWiiNSS9y/EAtu/+j7Ueayg56pnh7zIjmFvRwJuQ33ovv1qEUTw
+        lTxF+G3rGWdyKeULpA/hBgo=
+X-Google-Smtp-Source: APXvYqy24GIYro5b1SoxVfr90EPpn8DCMCQe6kqjHK5M83joyPKQX8ukV30FpXmPc6MEabt8o9/tvw==
+X-Received: by 2002:a17:906:e296:: with SMTP id gg22mr14621989ejb.211.1571829622111;
+        Wed, 23 Oct 2019 04:20:22 -0700 (PDT)
 Received: from pi3 ([194.230.155.217])
-        by smtp.googlemail.com with ESMTPSA id m5sm143443ejc.70.2019.10.23.03.57.18
+        by smtp.googlemail.com with ESMTPSA id j5sm873792edj.62.2019.10.23.04.20.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 03:57:19 -0700 (PDT)
-Date:   Wed, 23 Oct 2019 12:57:17 +0200
+        Wed, 23 Oct 2019 04:20:21 -0700 (PDT)
+Date:   Wed, 23 Oct 2019 13:20:19 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org,
-        Olof Johansson <olof@lixom.net>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
-Subject: Re: [PATCH 08/36] ARM: exynos: stop selecting PLAT_SAMSUNG
-Message-ID: <20191023105717.GF10630@pi3>
-References: <20191010202802.1132272-1-arnd@arndb.de>
- <20191010203043.1241612-1-arnd@arndb.de>
- <20191010203043.1241612-8-arnd@arndb.de>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, sboyd@kernel.org, vireshk@kernel.org,
+        b.zolnierkie@samsung.com, roger.lu@mediatek.com,
+        robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+        m.szyprowski@samsung.com
+Subject: Re: [PATCH v5 3/4] soc: samsung: Add Exynos Adaptive Supply Voltage
+ driver
+Message-ID: <20191023112019.GA10883@pi3>
+References: <20191016145756.16004-1-s.nawrocki@samsung.com>
+ <CGME20191016145813eucas1p1623db169f1ee93f88cb2c75090804747@eucas1p1.samsung.com>
+ <20191016145756.16004-4-s.nawrocki@samsung.com>
+ <20191022190419.GB8305@kozik-lap>
+ <ccd20b0e-9c4c-93cd-2e7e-40aef1bb336c@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191010203043.1241612-8-arnd@arndb.de>
+In-Reply-To: <ccd20b0e-9c4c-93cd-2e7e-40aef1bb336c@samsung.com>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 10:29:52PM +0200, Arnd Bergmann wrote:
-> Now that no code in arch/arm is shared between mach-exynos and the
-> others, make the split formal.
+On Wed, Oct 23, 2019 at 12:48:34PM +0200, Sylwester Nawrocki wrote:
+> Hi Krzysztof,
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/arm/Kconfig.debug        | 8 ++++----
->  arch/arm/Makefile             | 1 -
->  arch/arm/mach-exynos/Makefile | 4 ----
->  arch/arm/plat-samsung/Kconfig | 4 ++--
->  drivers/mmc/host/Kconfig      | 2 +-
->  5 files changed, 7 insertions(+), 12 deletions(-)
+> On 10/22/19 21:04, Krzysztof Kozlowski wrote:
+>  
+> > I wanted to apply this patch but spotted some unusual printk... 
+> > and then started looking for more...
+> > 
+> > Sparse complains:
+> > ../drivers/soc/samsung/exynos5422-asv.c:457:5: warning: symbol 
+> > 'exynos5422_asv_init' was not declared. Should it be static?
+>  
+> #include "exynos5422-asv.h" should be added to 
+> drivers/soc/samsung/exynos5422-asv.c.
 > 
-> diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-> index d05b836dfeb2..9c4f2d6deb06 100644
-> --- a/arch/arm/Kconfig.debug
-> +++ b/arch/arm/Kconfig.debug
-> @@ -998,7 +998,7 @@ choice
->  		  via SCIFA4 on Renesas SH-Mobile AG5 (SH73A0).
->  
->  	config DEBUG_S3C_UART0
-> -		depends on PLAT_SAMSUNG
-> +		depends on PLAT_SAMSUNG || ARCH_EXYNOS
->  		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
->  		select DEBUG_S3C24XX_UART if ARCH_S3C24XX
->  		select DEBUG_S3C64XX_UART if ARCH_S3C64XX
-> @@ -1010,7 +1010,7 @@ choice
->  		  by the boot-loader before use.
->  
->  	config DEBUG_S3C_UART1
-> -		depends on PLAT_SAMSUNG
-> +		depends on PLAT_SAMSUNG || ARCH_EXYNOS
->  		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
->  		select DEBUG_S3C24XX_UART if ARCH_S3C24XX
->  		select DEBUG_S3C64XX_UART if ARCH_S3C64XX
-> @@ -1022,7 +1022,7 @@ choice
->  		  by the boot-loader before use.
->  
->  	config DEBUG_S3C_UART2
-> -		depends on PLAT_SAMSUNG
-> +		depends on PLAT_SAMSUNG || ARCH_EXYNOS
->  		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
->  		select DEBUG_S3C24XX_UART if ARCH_S3C24XX
->  		select DEBUG_S3C64XX_UART if ARCH_S3C64XX
-> @@ -1034,7 +1034,7 @@ choice
->  		  by the boot-loader before use.
->  
->  	config DEBUG_S3C_UART3
-> -		depends on PLAT_SAMSUNG && (ARCH_EXYNOS || ARCH_S5PV210)
-> +		depends on ARCH_EXYNOS || ARCH_S5PV210
+> >>  drivers/soc/samsung/Kconfig          |  10 +
+> >>  drivers/soc/samsung/Makefile         |   3 +
+> >>  drivers/soc/samsung/exynos-asv.c     | 179 ++++++++++
+> >>  drivers/soc/samsung/exynos-asv.h     |  82 +++++
+> >>  drivers/soc/samsung/exynos5422-asv.c | 509 +++++++++++++++++++++++++++
+> >>  drivers/soc/samsung/exynos5422-asv.h |  25 ++
+> >>  6 files changed, 808 insertions(+)
+> >>  create mode 100644 drivers/soc/samsung/exynos-asv.c
+> >>  create mode 100644 drivers/soc/samsung/exynos-asv.h
+> >>  create mode 100644 drivers/soc/samsung/exynos5422-asv.c
+> >>  create mode 100644 drivers/soc/samsung/exynos5422-asv.h
+> >>
+> 
+> >> +++ b/drivers/soc/samsung/exynos-asv.c
+> 
+> >> +#include <linux/cpu.h>
+> >> +#include <linux/delay.h>
+> > 
+> > Do you use this header?
+> 
+> It can be removed now, after conversion to dev_pm_opp_adjust_voltage().
+> 
+> >> +static int exynos_asv_probe(struct platform_device *pdev)
+> >> +{
+> >> +	int (*probe_func)(struct exynos_asv *asv);
+> >> +	struct exynos_asv *asv;
+> >> +	struct device *cpu_dev;
+> >> +	u32 product_id = 0;
+> >> +	int ret, i;
+> >> +
+> >> +	cpu_dev = get_cpu_device(0);
+> >> +	ret = dev_pm_opp_get_opp_count(cpu_dev);
+> >> +	if (ret < 0)
+> >> +		return -EPROBE_DEFER;
+> >> +
+> >> +	asv = devm_kzalloc(&pdev->dev, sizeof(*asv), GFP_KERNEL);
+> >> +	if (!asv)
+> >> +		return -ENOMEM;
+> >> +
+> >> +	asv->chipid_regmap = syscon_node_to_regmap(pdev->dev.of_node);
+> > 
+> > Since this binds to the same node as chipid, why do you need syscon for
+> > it? Why regular IO access does not work? Eventually, if this has to be
+> > regmap because of locking (does it?), then maybe simply
+> > device_node_to_regmap()?
+> 
+> We just need regmap available to any of the two drivers whichever needs it
+> first. device_node_to_regmap() sounds like a good idea. Then we could drop
+> "syscon" compatible from the binding.
 
-You need to keep PLAT_SAMSUNG because of additional architectures, so
-follow pattern from DEBUG_S3C_UART2.
+OK, let's keep the regmap for safe access to the same region by multiple
+drivers.
+
+> 
+> >> +	if (IS_ERR(asv->chipid_regmap)) {
+> >> +		dev_err(&pdev->dev, "Could not find syscon regmap\n");
+> >> +		return PTR_ERR(asv->chipid_regmap);
+> >> +	}
+> >> +
+> >> +	regmap_read(asv->chipid_regmap, EXYNOS_CHIPID_REG_PRO_ID, &product_id);
+> >> +
+> >> +	switch (product_id & EXYNOS_MASK) {
+> >> +	case 0xE5422000:
+> >> +		probe_func = exynos5422_asv_init;
+> >> +		break;
+> >> +	default:
+> >> +		dev_err(&pdev->dev, "Unsupported product ID: %#x", product_id);
+> > 
+> > Is this going to scream for every Exynos matching the 4210-chipid?
+> 
+> Yes, it should really be dev_info() or removed entirely.
+
+Remove it entirely please or leave it to dev_dbg (but even then add some
+calming message like "Unsupported ...., skipping ASV"). Driver binds on
+many devices and lack of ASV is kind of regular (till now there was no
+ASV at all).
+
+> 
+> >> +		return -ENODEV;
+> >> +	}
+> 
+> 
+> >> +++ b/drivers/soc/samsung/exynos-asv.h
+> 
+> >> +enum {
+> >> +	EXYNOS_ASV_SUBSYS_ID_ARM,
+> >> +	EXYNOS_ASV_SUBSYS_ID_EGL = EXYNOS_ASV_SUBSYS_ID_ARM,
+> >> +	EXYNOS_ASV_SUBSYS_ID_KFC,
+> >> +	EXYNOS_ASV_SUBSYS_ID_INT,
+> >> +	EXYNOS_ASV_SUBSYS_ID_MIF,
+> >> +	EXYNOS_ASV_SUBSYS_ID_G3D,
+> >> +	EXYNOS_ASV_SUBSYS_ID_CAM,
+> >> +	EXYNOS_ASV_SUBSYS_ID_MAX
+> >> +};
+> > 
+> > I cannot find usage of it in generic part of ASV driver. What's the
+> > purpose? Isn't it specific to Exynos5422?
+> 
+> It was meant as generic enumeration of available subsystems, it's not
+> Exynos5422 specific. It could be moved to the exynos5422 part of the 
+> driver (limited to EXYNOS_ASV_SUBSYS_ID_ARM, EXYNOS_ASV_SUBSYS_ID_KFC)
+> until support for of ther subsystems than CPU clusters is added.
+> The CPUs are now matched by compatible.
+
+Then let's move it to exynos5422 part, and later make it generic if
+needed.
+
+> 
+> >> +struct regmap;
+> >> +
+> >> +/* HPM, IDS values to select target group */
+> 
+> >> +struct exynos_asv_subsys {
+> >> +	struct exynos_asv *asv;
+> >> +	const char *cpu_dt_compat;
+> >> +	int id;
+> >> +	struct exynos_asv_table table;
+> >> +
+> >> +	unsigned int base_volt;
+> >> +	unsigned int offset_volt_h;
+> >> +	unsigned int offset_volt_l;
+> >> +};
+> >> +
+> >> +struct exynos_asv {
+> >> +	struct device *dev;
+> >> +	struct regmap *chipid_regmap;
+> >> +	struct exynos_asv_subsys subsys[2];
+> >> +
+> >> +	int (*opp_get_voltage)(struct exynos_asv_subsys *subs, int level,
+> >> +			       unsigned int voltage);
+> >> +	unsigned int group;
+> >> +	unsigned int table;
+> >> +
+> >> +	/* True if SG fields from PKG_ID register should be used */
+> >> +	bool use_sg;
+> >> +	/* ASV bin read from DT */
+> >> +	int of_bin;
+> >> +};
+> >> +
+> >> +static inline u32 __asv_get_table_entry(struct exynos_asv_table *table,
+> > 
+> > 'table' looks here like pointer to const.
+> 
+> Yes, const could be added here.
+> 
+> >> +					unsigned int row, unsigned int col)
+> >> +{
+> >> +	return table->buf[row * (table->num_cols) + col];
+> >> +}
+> >> +
+> >> +static inline u32 exynos_asv_opp_get_voltage(struct exynos_asv_subsys *subsys,
+> >> +					unsigned int level, unsigned int group)
+> >> +{
+> > 
+> > The same, for subsys.
+> 
+> Agreed.
+>  
+> >> +	return __asv_get_table_entry(&subsys->table, level, group + 1);
+> >> +}
+> 
+> >> +++ b/drivers/soc/samsung/exynos5422-asv.c
+> 
+> >> +#include <linux/bitrev.h>
+> >> +#include <linux/device.h>
+> > 
+> > Is it used?
+> > 
+> >> +#include <linux/errno.h>
+> >> +#include <linux/of.h>
+> > 
+> > The same?
+> 
+> Some might be not used now, I will check it again.
+> 
+> >> +#include <linux/regmap.h>
+> >> +#include <linux/soc/samsung/exynos-chipid.h>
+> >> +#include <linux/slab.h>
+> >> +
+> >> +#include "exynos-asv.h"
+> 
+> 
+> >> +static int exynos5422_asv_opp_get_voltage(struct exynos_asv_subsys *subsys,
+> >> +				int level, unsigned int volt)
+> > 
+> > subsys is not modified.
+>  
+> 
+> >> +static unsigned int exynos5422_asv_parse_table(struct exynos_asv *asv,
+> >> +				      unsigned int pkg_id)
+> >> +{
+> > 
+> > The same, for asv. Looks BTW unused...
+> 
+> Indeed the asv argument should be dropped now.
+> 
+> >> +	return (pkg_id >> EXYNOS5422_TABLE_OFFSET) & EXYNOS5422_TABLE_MASK;
+> >> +}
+> 
+> >> +int exynos5422_asv_init(struct exynos_asv *asv)
+> >> +{
+> >> +	struct exynos_asv_subsys *subsys;
+> >> +	unsigned int table_index;
+> >> +	unsigned int pkg_id;
+> >> +	bool bin2;
+> >> +
+> > 
+> > How about checking if asv != null? It's a header exposed function.
+> 
+> Do we really need it? The caller will ensure that asv is not null.
+
+Indeed, it's not needed. Skip my comment.
 
 Best regards,
 Krzysztof
-
->  		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
->  		select DEBUG_S3C64XX_UART if ARCH_S3C64XX
->  		select DEBUG_S5PV210_UART if ARCH_S5PV210
-> diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-> index db857d07114f..f492d7c338fe 100644
-> --- a/arch/arm/Makefile
-> +++ b/arch/arm/Makefile
-> @@ -233,7 +233,6 @@ machine-$(CONFIG_PLAT_SPEAR)		+= spear
->  
->  # Platform directory name.  This list is sorted alphanumerically
->  # by CONFIG_* macro name.
-> -plat-$(CONFIG_ARCH_EXYNOS)	+= samsung
->  plat-$(CONFIG_ARCH_OMAP)	+= omap
->  plat-$(CONFIG_ARCH_S3C64XX)	+= samsung
->  plat-$(CONFIG_ARCH_S5PV210)	+= samsung
-> diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
-> index 0fd3fcf8bfb0..53fa363c8e44 100644
-> --- a/arch/arm/mach-exynos/Makefile
-> +++ b/arch/arm/mach-exynos/Makefile
-> @@ -3,10 +3,6 @@
->  # Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
->  #		http://www.samsung.com/
->  
-> -ccflags-$(CONFIG_ARCH_MULTIPLATFORM) += -I$(srctree)/$(src)/include -I$(srctree)/arch/arm/plat-samsung/include
-> -
-> -# Core
-> -
->  obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o exynos-smc.o firmware.o
->  
->  obj-$(CONFIG_EXYNOS_CPU_SUSPEND) += pm.o sleep.o
-> diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-> index 832ab0e6cd72..e31a156a27df 100644
-> --- a/arch/arm/plat-samsung/Kconfig
-> +++ b/arch/arm/plat-samsung/Kconfig
-> @@ -4,7 +4,7 @@
->  
->  config PLAT_SAMSUNG
->  	bool
-> -	depends on PLAT_S3C24XX || ARCH_S3C64XX || ARCH_EXYNOS || ARCH_S5PV210
-> +	depends on PLAT_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210
->  	default y
->  	select GENERIC_IRQ_CHIP
->  	select NO_IOPORT_MAP
-> @@ -240,7 +240,7 @@ config SAMSUNG_PM_DEBUG
->  	bool "Samsung PM Suspend debug"
->  	depends on PM && DEBUG_KERNEL
->  	depends on PLAT_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210
-> -	depends on DEBUG_EXYNOS_UART || DEBUG_S3C24XX_UART || DEBUG_S3C2410_UART
-> +	depends on DEBUG_S3C24XX_UART || DEBUG_S3C2410_UART
->  	help
->  	  Say Y here if you want verbose debugging from the PM Suspend and
->  	  Resume code. See <file:Documentation/arm/samsung-s3c24xx/suspend.rst>
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index 49ea02c467bf..400a581c918c 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -275,7 +275,7 @@ config MMC_SDHCI_TEGRA
->  
->  config MMC_SDHCI_S3C
->  	tristate "SDHCI support on Samsung S3C SoC"
-> -	depends on MMC_SDHCI && PLAT_SAMSUNG
-> +	depends on MMC_SDHCI && (PLAT_SAMSUNG || ARCH_EXYNOS)
->  	help
->  	  This selects the Secure Digital Host Controller Interface (SDHCI)
->  	  often referrered to as the HSMMC block in some of the Samsung S3C
-> -- 
-> 2.20.0
-> 
