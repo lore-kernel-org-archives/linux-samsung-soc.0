@@ -2,90 +2,89 @@ Return-Path: <SRS0=1mvF=YQ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B94DACA9EB9
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 13:23:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CAA5C47E49
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 13:26:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 965E021D71
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 13:23:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E8E521928
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 13:26:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405831AbfJWNXo (ORCPT
+        id S2390125AbfJWN0i (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 23 Oct 2019 09:23:44 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:58323 "EHLO
+        Wed, 23 Oct 2019 09:26:38 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:39289 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405812AbfJWNXo (ORCPT
+        with ESMTP id S2389928AbfJWN0i (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 23 Oct 2019 09:23:44 -0400
-Received: from mail-qt1-f178.google.com ([209.85.160.178]) by
- mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1MpDVx-1hf9pS47iR-00qfp4; Wed, 23 Oct 2019 15:23:42 +0200
-Received: by mail-qt1-f178.google.com with SMTP id w14so32197503qto.9;
-        Wed, 23 Oct 2019 06:23:41 -0700 (PDT)
-X-Gm-Message-State: APjAAAUOEer4RSyYJoTiziHt8cYel+67LG9wADwnk7kk+F0IuyC1ktQY
-        QG1Ro0Qn/r+hOJoQLOSWGVIi/mOzQpv60MzBVto=
-X-Google-Smtp-Source: APXvYqwU3y5YqkOIsK2y7eYvy0ctJhOflxSMk/EdUo4ryq/EKaRqLWAAN8gOEJgyL2Cd6mKUElnaT6RSKuR35fFlkXE=
-X-Received: by 2002:a0c:c70a:: with SMTP id w10mr8851889qvi.222.1571837020471;
- Wed, 23 Oct 2019 06:23:40 -0700 (PDT)
+        Wed, 23 Oct 2019 09:26:38 -0400
+Received: from mail-qt1-f177.google.com ([209.85.160.177]) by
+ mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MwgKC-1i459K22OI-00y8o6; Wed, 23 Oct 2019 15:26:36 +0200
+Received: by mail-qt1-f177.google.com with SMTP id t8so14694157qtc.6;
+        Wed, 23 Oct 2019 06:26:36 -0700 (PDT)
+X-Gm-Message-State: APjAAAU1tvN3jqPtS6ucrhW9U06BIr3ClfPYQaluNbMdSL//yT2QUilw
+        b1F0gqKyccXbW3wxleHV7NHLemhJpqC7XBMf18s=
+X-Google-Smtp-Source: APXvYqxAZ5sW4MUn7hs0uPvxFoT5m55RrQo24Ahjlcek7m7qX3oExJe4OpV4BiqYQAQiBrLzW5XHJy3sKNWlb5r7mmE=
+X-Received: by 2002:ad4:5011:: with SMTP id s17mr8084805qvo.210.1571837195091;
+ Wed, 23 Oct 2019 06:26:35 -0700 (PDT)
 MIME-Version: 1.0
 References: <20191010202802.1132272-1-arnd@arndb.de> <20191010203043.1241612-1-arnd@arndb.de>
- <20191010203043.1241612-15-arnd@arndb.de> <20191023123722.GD11048@pi3>
-In-Reply-To: <20191023123722.GD11048@pi3>
+ <20191010203043.1241612-3-arnd@arndb.de> <20191023124648.GE11048@pi3>
+In-Reply-To: <20191023124648.GE11048@pi3>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 23 Oct 2019 15:23:24 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a13UWnsnTeDQPTDdAXjnwT+-UZchKqezqG+npEuFNK2vg@mail.gmail.com>
-Message-ID: <CAK8P3a13UWnsnTeDQPTDdAXjnwT+-UZchKqezqG+npEuFNK2vg@mail.gmail.com>
-Subject: Re: [PATCH 15/36] ARM: s3c: adc: move header to linux/soc/samsung
+Date:   Wed, 23 Oct 2019 15:26:18 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a0_iYkpK45HmLGYObEXkYbCjDjoDdZXS5Eybw9hPYC=CQ@mail.gmail.com>
+Message-ID: <CAK8P3a0_iYkpK45HmLGYObEXkYbCjDjoDdZXS5Eybw9hPYC=CQ@mail.gmail.com>
+Subject: Re: [PATCH 03/36] usb: gadget: s3c: use platform resources
 To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-hwmon@vger.kernel.org,
+Cc:     Felipe Balbi <balbi@kernel.org>,
         "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
         <linux-samsung-soc@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jean Delvare <jdelvare@suse.com>,
         Kukjin Kim <kgene@kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:giqxSs+A+LAWYj0Sxj5nusxA8wHxPgN5F7tmxIao8ABk3bArcf2
- zUzbNsCh/ELi1K0kYEtEHgESjQs8HH8mRSfd6UfgD6VoJILtQhIurqpPVu/Y7ppYgCxdeBO
- +KPW8WQc+3tYNDu+wtPaWzmF1d5joeNw55Bk/kXIYjEbT2M7JIc++gbj3x+D9b2+YVUHKmD
- CGd/U+YvZsxVeqmRKKhmQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:c23PmR9jg7U=:6laGSqdsRzet9T20EG8mhj
- lZQ2S+7Lre/1Kzv6tJnOjdHHK8EXjc/R15mmPPfPm5h+MuuAwjf1KuercXzl/j5MPe7UzUoo1
- C63FU6HnEhpnPHPYXb0KDFIlRTu9uAGEZC+XPCSGfbQEmEPYhQqHi/vgYSYfmYXIfzSDPpLN3
- f3cvZ13VuNbUM4x1o1VxHQ327ejTmy8a+Uf/oFKDLRsLl3qjxb+TxwMu0L2G63Sfr+ahQiHe1
- aJ852JJkqrYYBGDGft9v4qKqE2gmq6zGKoMVmFhc3hL2jC4I3GKFyufrGApIxZDOoJhCNjYmx
- OAFKxQB5OJDc4y6PMADDKi5eIUA2dJ5nI6F+Fvq9Y33vABOubg2B+kZgDjs6DrgNgLC1/LQNp
- 5OhBo0KjulvjcuGLeXq9FHG6rzYEFhsQp8nX7/Z9SMlXOhDszKiI6ksfZrl4r4nnXErAPCJQP
- OM0F6N7qjKmaeeE++LrBmfw3YHyvGs3i+ITKviJOiAdL9cIGDI6Itw3jrbwftAbf64tA033LD
- gaFdIIOYwk40PqVyx4ETW/tTJ8EuPAseG17aDzKz8zDxIO5vA8+ubHKCfiONgh6P1oyHOLL6x
- uAmOBPPyB+e4uGE5Zz6LpAj7LOTsfo1gdm/iJMnqPEyfJjOXqwwdOaD3zvv6f1f3mzrt5Zx3b
- KaXpf7+ujMKJBRmpkAprsHhO42e0jXZQJnxNSei2NARCRKJ0Hi2hTtZNzLxPBOwaI3iSqX1Jc
- srxZWs+TDPV0QWZYr3puP+6ixTN95m/CXe0vJ34uuR42GfSxSvdmDFuaz0abdbvy8HQiPB2wA
- y72Fdtkd/7Dz81LMb3+g/uP4lwPBAX6bRtWRxXe0iklXLSqImDosSqnK/QmOlhVi5TG1Wkq13
- XXob4cq0+k4U7jH5cCPA==
+X-Provags-ID: V03:K1:JyBlGR1sxo3dSE4MR9v+8MBkEF3qa+6oFZyj0ASbrjNJ6n+xWVC
+ /HFwzZHk+sodjDeC+bxfXLB4Lki30kkwdHymlKEErsDd6BB/AY+FtN/DcRmgg8I2ZPDpIeo
+ Ngkswh39yISPn0npljPSCbvACe0GdYZuK3ykFcsbxr9ebKcvLYJ5eZJfdNPcjufGYiaQrpc
+ L2XIKN5aeOPXMkhtSVTVQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:HFWpun0t+3g=:NxVkhyXE3OtsUPvDwwMAIR
+ PuJ+d2zVUDR3Dt9OLm8pMLjyMcKi3uVFgdVIKxJRrXzaaC/yNHnKq0GGnbQO990GKE0cM5duE
+ 1y7LYaQfIHfaMREaSnwbztWFzxA6sogqkfJfpH+VZkunckkPtckHSZmYpNmHNparBmYPVkjUR
+ oqU3tgyW9CnpsTA/v7MVNkMnYNsL8KPQ0fArt9h0+snflLoOP4sto5i+luTF8JyPXhihEA+WK
+ CMF1xu6oTAY9A6+uADIgJN3IeYXQ1nBrKxdRJ38JVbfvr3OO/vcuEbfnoAPiFR83hLGHPgS3m
+ M+/iMIttssravt9Tss7WO2/XY9cuYv+luHnfS2m1feZfX8Emn8F+zEtYzsNCHRSD0T8gBf/qj
+ d/Olt60SnjyWyeJri+FQdhMh0KSWbUuFarKo3coO/STnGUXi65Q2/YLoo+WOUyHjr47lTuq0r
+ WfDiFYKpiUtoClX+jAwBz70/Xq8ptxj6/32OqbDmFj6RPvhjDxMVgLdYx42/WKoP8Fghr50Ns
+ y6Cm39RDfHVLDW2k2epE9Z7VkuzLlT60zDvDADdx+0qx0ywjj7G4Rq9Pq3kwnOMTwDNb3JYNK
+ jbr98iOiYjFy4rYKujQUtDEsl4voujOLyjzcXiQbYm+4SKUQOFwvmNUOYdammPbE3CIiHaBc5
+ TZT+pLQSS/7xo3YpqwkJnPUhrk17NH8UM522vc6e257kUMjPICOCdIHp/bQtyQXPKcaAqAzjw
+ WArvsEV1xP2fiXrMvbhNsprSpGQLXNoYQSxVlPu/gFn/X96wQfF5eIfTHHd33j3tH7Bo+Y22Z
+ 9/UVNkSviqCTnnILmYGNx6s/+D3Y6muGFTzV9zxxuGe3iYJdLoH8/pWIzgm6VsWCeYoQEjqC1
+ lEX2tLg/lSHY2IgoKEdA==
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 2:41 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-
-> > diff --git a/arch/arm/plat-samsung/include/plat/adc.h b/include/linux/soc/samsung/s3c-adc.h
-> > similarity index 100%
-> > rename from arch/arm/plat-samsung/include/plat/adc.h
-> > rename to include/linux/soc/samsung/s3c-adc.h
+On Wed, Oct 23, 2019 at 2:47 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
-> Can you update the name of header guard? __LINUX_SOC_SAMSUNG_S3C_ADC_H?
+> On Thu, Oct 10, 2019 at 10:29:47PM +0200, Arnd Bergmann wrote:
+> > The resources are correctly initialized, so just use them
+> > instead of relying on hardcoded data from platform headers.
+>
+> Generic comment to all patches - you seem to break commit msg lines
+> slightly too early. In certain cases it makes them unnecessarily longer.
+> Maybe your editor has to be fixed to wrap at 75 column.
 
-Ok, done.
+I tend to use '/usr//bin/fmt' with the default setting. I think the idea of that
+default is that an email reply with added '>' characters doesn't immediately
+have to reflow the text.
 
        Arnd
