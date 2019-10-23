@@ -2,63 +2,50 @@ Return-Path: <SRS0=1mvF=YQ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AED7CA9EB6
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 16:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D799CA9EB6
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 16:37:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0101C2084C
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 16:26:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eSVKJPPS"
+	by mail.kernel.org (Postfix) with ESMTP id 0E53B2084C
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 16:37:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1571848627;
+	bh=TDwaUgac7SGDoOVgcgfx/jooWyoqj3/D+qlh6IbOnM0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=BjaWyBGFGjsQSJk4B/5IdYLrJzupzHsPSxu4ZdNV/MA9gHIUIT/7s8z2FeZxuGVPO
+	 6FMvZuwRZh8TU9APOQM5CDu1G8Z/8qrQuVsqc0HV972BwdTPy9lgTz0j916v0Aku6q
+	 8UShO/7Y8QcKm5qjjDCdaxavDzKwrYDDd9W3OR5w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407262AbfJWQ0c (ORCPT
+        id S2404934AbfJWQhD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 23 Oct 2019 12:26:32 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:43280 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404669AbfJWQ0b (ORCPT
+        Wed, 23 Oct 2019 12:37:03 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51218 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403971AbfJWQhD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 23 Oct 2019 12:26:31 -0400
-Received: by mail-ot1-f66.google.com with SMTP id j33so3489265ota.10;
-        Wed, 23 Oct 2019 09:26:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=EAeizC7dUymc6uqIjtz5jyoFjB5RNX3davj32nJWlag=;
-        b=eSVKJPPSrxkfXuHWE0N6bFOTDmX4LGsHHVQcIk6qNzDrNfvL0D431RQT5BrQp9Mej+
-         +esFGeEsSIY+RZzJcJGxgfxIRWgE5gSKWHI+YZ6uT9wXF38Jo43sb5mSYNELJCHdTW1p
-         eXIhe7NpJ8aEnZB6o6j+zasHLKgF8Pt0nTA0ui/+A10OBmAH15RKeimEIptjE/YfKWq9
-         kPLOj9nbUVnvaFtC7AoAr577+VENuOTy16j/F9zdfVv2JXW5j/FoInQDyfaUZIuy7qCR
-         HY0XIqGceqsOaww6Noi+0MMFYS/j7D3JE0F4FpUn+hM3UtAM9lj+divH+QNsm2j8bjRK
-         isng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EAeizC7dUymc6uqIjtz5jyoFjB5RNX3davj32nJWlag=;
-        b=JVqjFHeYuvLblfYa/0Izh2S71b0nC3CQvvdkxhKdofhwC37SYayVo7c5izVjv6UhMC
-         hpoRRgZKGe2mbYlBLqihXkn63LM+E2295fU8bKeIpCCXpw32MrencTYYmHx1Jfs7Pg4a
-         ZUzShaw68D4+ywntyNjCK5/pyI4UadqOVJe+KSydeOR7YyZwN6VIudORA0ox8MKj1Zfz
-         Abr9BojMAY4iJNJW+iwsGGhsJ0KdLILtG7gr4w1+INV6vbLs/N/11/LfQ6BrAN2NYw1Y
-         w79egGP0WA0qVfO1rzH1QnaaHt1N117UgHH4pIoJFQnSHjC2MdksLpSKK574zbIbMyAb
-         2IXA==
-X-Gm-Message-State: APjAAAXfj697yBx19QQdGd1UHihajUrW/hGmJgeKd+mWGerL74XCLOQ+
-        RcaqTxMb0NkuL+Xk65XBiK4=
-X-Google-Smtp-Source: APXvYqxGGHjlYhN0aCecroWTpgfM2cdkJJ4tljItbCQ5HKCIO85N4Hy2T18gE58ANs4ielIxOJ6sEw==
-X-Received: by 2002:a05:6830:1685:: with SMTP id k5mr8411180otr.203.1571847990325;
-        Wed, 23 Oct 2019 09:26:30 -0700 (PDT)
-Received: from ubuntu-m2-xlarge-x86 ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id k19sm5688229oiw.31.2019.10.23.09.26.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 23 Oct 2019 09:26:29 -0700 (PDT)
-Date:   Wed, 23 Oct 2019 09:26:28 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Mark Brown <broonie@kernel.org>
+        Wed, 23 Oct 2019 12:37:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=m700Ovhtawx1D7xYGjJcWREMnvuFfL4T8auLxTc4g+o=; b=tVW+N1CGFWe7AqjwhhUwObc5T
+        4DcO3owdYhBJ4EIo45+VMPO/QapuVR8eKr7Hk4KYvWTFDygVNHMgTfW2vVYJf4451ljrE1z7fnQGU
+        v2h/cr+LcMpU9LhKonteQt9Mc7RpjlboPdAiJmpHZKMCFJhUOm0rhoqvgfT6tteSrf55k=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iNJd3-0000wd-He; Wed, 23 Oct 2019 16:36:57 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 0F4AA2743021; Wed, 23 Oct 2019 17:36:57 +0100 (BST)
+Date:   Wed, 23 Oct 2019 17:36:56 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Nathan Chancellor <natechancellor@gmail.com>
 Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
         Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
@@ -68,53 +55,60 @@ Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
         linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
 Subject: Re: [PATCH] cpufreq: s3c64xx: Remove pointless NULL check in
  s3c64xx_cpufreq_driver_init
-Message-ID: <20191023162628.GA10997@ubuntu-m2-xlarge-x86>
+Message-ID: <20191023163656.GH5723@sirena.co.uk>
 References: <20191023000906.14374-1-natechancellor@gmail.com>
  <20191023032302.tu5nkvulo2yoctgr@vireshk-i7>
  <20191023104304.GA5723@sirena.co.uk>
+ <20191023162628.GA10997@ubuntu-m2-xlarge-x86>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="/Gk0KcsbyUMelFU1"
 Content-Disposition: inline
-In-Reply-To: <20191023104304.GA5723@sirena.co.uk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20191023162628.GA10997@ubuntu-m2-xlarge-x86>
+X-Cookie: MMM-MM!!  So THIS is BIO-NEBULATION!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 11:43:04AM +0100, Mark Brown wrote:
-> On Wed, Oct 23, 2019 at 08:53:02AM +0530, Viresh Kumar wrote:
-> > On 22-10-19, 17:09, Nathan Chancellor wrote:
-> > > When building with Clang + -Wtautological-pointer-compare:
-> > > 
-> > > drivers/cpufreq/s3c64xx-cpufreq.c:152:6: warning: comparison of array
-> > > 's3c64xx_freq_table' equal to a null pointer is always false
-> > > [-Wtautological-pointer-compare]
-> > >         if (s3c64xx_freq_table == NULL) {
-> > >             ^~~~~~~~~~~~~~~~~~    ~~~~
-> > > 1 warning generated.
-> > > 
-> > > The definition of s3c64xx_freq_table is surrounded by an ifdef
-> > > directive for CONFIG_CPU_S3C6410, which is always true for this driver
-> > > because it depends on it in drivers/cpufreq/Kconfig.arm (and if it
-> > > weren't, there would be a build error because s3c64xx_freq_table would
-> > > not be a defined symbol).
-> 
-> > +broonie, who wrote this patch to see his views on why he kept it like
-> > this.
-> 
-> The driver should also have supported s3c6400 as well.
 
-Kconfig says otherwise, unless I am missing something.
+--/Gk0KcsbyUMelFU1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-config ARM_S3C64XX_CPUFREQ
-        bool "Samsung S3C64XX"
-        depends on CPU_S3C6410
-        default y
-        help
-          This adds the CPUFreq driver for Samsung S3C6410 SoC.
+On Wed, Oct 23, 2019 at 09:26:28AM -0700, Nathan Chancellor wrote:
+> On Wed, Oct 23, 2019 at 11:43:04AM +0100, Mark Brown wrote:
 
-          If in doubt, say N.
+> > The driver should also have supported s3c6400 as well.
 
-Cheers,
-Nathan
+> Kconfig says otherwise, unless I am missing something.
+
+> config ARM_S3C64XX_CPUFREQ
+>         bool "Samsung S3C64XX"
+>         depends on CPU_S3C6410
+>         default y
+>         help
+>           This adds the CPUFreq driver for Samsung S3C6410 SoC.
+>=20
+>           If in doubt, say N.
+
+Note the XX in the config option.
+
+--/Gk0KcsbyUMelFU1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2wgagACgkQJNaLcl1U
+h9B+kgf/Tu4Mcdc2QLhbFdhdn07a8/luddZop3Dn6jL3SW5BZhP4E4UY9ekG3fTz
+CKU0uGyVB8qUYZKlNQIgwWmBghGl9HeqKuLUGEdsDcOxVxccnSJYTMk2ZNLz6IK9
+lH0wfeiXPIV7wguJCqAkkVZVfxdFZcKoQx00n6rTWjh7Py5qzuJtzwf/DTaDGsjC
+F5nqTo4vdQQSNm6WSAEX/I629qmL3Yd/ogB+jUVFYvcqxozLMcuae+CP5Nu8MH8T
+w5LrxCUugVJnkaUm6XUkeO29V9d2qmA3f9YU9BmyAm8caPdBABp5cjciu0X4sSCk
+03ZCDlb+0oZqbtMSlcjVKXin63aMOA==
+=JqnS
+-----END PGP SIGNATURE-----
+
+--/Gk0KcsbyUMelFU1--
