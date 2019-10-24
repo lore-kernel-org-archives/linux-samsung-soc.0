@@ -1,66 +1,65 @@
-Return-Path: <SRS0=1mvF=YQ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=JJY2=YR=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0733BCA9EB6
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 17:03:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA69CA9EB9
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Oct 2019 03:13:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBF9C21928
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 23 Oct 2019 17:03:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A11D20684
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 24 Oct 2019 03:13:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N4mOPS98"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sKQkrmUm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbfJWRDG (ORCPT
+        id S2392397AbfJXDNp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 23 Oct 2019 13:03:06 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:38820 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726497AbfJWRDG (ORCPT
+        Wed, 23 Oct 2019 23:13:45 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:47002 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390589AbfJXDNo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 23 Oct 2019 13:03:06 -0400
-Received: by mail-ot1-f65.google.com with SMTP id e11so18045694otl.5;
-        Wed, 23 Oct 2019 10:03:05 -0700 (PDT)
+        Wed, 23 Oct 2019 23:13:44 -0400
+Received: by mail-pf1-f196.google.com with SMTP id b25so125483pfi.13
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Oct 2019 20:13:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=LNIlo875oLUnbVBAslOcAnj59hqK1kHx858TCXge7cA=;
-        b=N4mOPS98IWbZY/2/KBp62o4U8DpmiY8K/DxEPJzcpUxxxheeFNhUu7vukEldTwgqYR
-         rHqct06pgkkgI7CxlYFrLPVZFWX0enc8m766N5KPfidbuNpOhSlOnf7lUm4GpzbTXhqi
-         mKxKG1Y07F9CS+p9fzQ9CFIozlQSEzIVJiYzQjPfo6BpMzEDSObuiZoB7x9je0fp6S0/
-         DyL2E/W6hxxWsJfr0QGpj9uWjDA0V25V2YCZx82kOEZYyAZ8gLMmecgtPLXiTgUOyeY+
-         X9ZQcx5xLJl2//NB9fL0WDdd6hfY1K67a98OMzhy12qY9cFN8oW7zGfw3Oiphk5MZUXX
-         LNyg==
+        bh=/FvSWUTwb3VLZA0Xf0z7RcCEXwmqXYbk21bOLI6Ind8=;
+        b=sKQkrmUmxlXGiYByd2i7MTXHlCBZpoduhmNKTn2b+4WTlEd9sqJxIlyZ+kwj6qCQt6
+         4BIQumt//PtptZYr9DJp8O83ejzzIWb9zwkVqmB0Bf2/fPyoyBokiTWczNosOTRJQ5OY
+         TLsGSWJWUIqamq4uD2ohoSqBavspu6j21L7o1rk5kyPzqVK/v/sq46u+fuxiWDYmaZ4u
+         AU0XcEHw1+rfCDqi9jXvViNv+pLj3EIXq/XhytlYWlx5bJCiOL1x2+v0vl7i5PZFoOwt
+         92BmIjiD3QDTfjY55Bk/GHBfFrBfes9X4OtcC3occLA7hH0pVPFddwHx3uWXMfnirMB3
+         pcLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LNIlo875oLUnbVBAslOcAnj59hqK1kHx858TCXge7cA=;
-        b=MNvc3Vph9kmIvuS0C8x2xUpu81uNJgC/oeQ3V5vx/tpkXM4PwilMxsxQgS2X2Drg+1
-         jOU3bc2yEHqHM4s97HW3IF4E200n3kXt1+nUzcNHo2Njrsq9VBAzaC2OCio8Vgt0egge
-         nb63icvMU5Bui6SsPTco4uGpixoY1LDqqj0RkgegvJDX1Mpb2C6F1jNaa0hv/eIZHk4w
-         8KhX/tphdeM6WPEG8XlJO7hpipgh7Rgow0ZB6eMxBi35vdwOUrj8prrwLygckeW0Qewm
-         BwX6vfzIAyfS6H0eTUuUF/IyF6s5GwpK8PoBaqGkA463UTDceAubckB037kX/6+bGmhI
-         Rk5g==
-X-Gm-Message-State: APjAAAVavtALCw53b/h//ReV5tJXX0OzBvasy3cYEOYqzF/TOsmalBm+
-        2icab+bE7uWmuJ1+DLTFKoQ=
-X-Google-Smtp-Source: APXvYqyr+KOjBV2W0qrTz7k8vKZIZRshNryK06zDkLhWk6XYcHe9LOVkSReS/D2+RnKymZPKRqgmvQ==
-X-Received: by 2002:a9d:6ace:: with SMTP id m14mr8170163otq.11.1571850184682;
-        Wed, 23 Oct 2019 10:03:04 -0700 (PDT)
-Received: from ubuntu-m2-xlarge-x86 ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id r26sm5705285oij.46.2019.10.23.10.03.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 23 Oct 2019 10:03:04 -0700 (PDT)
-Date:   Wed, 23 Oct 2019 10:03:02 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Kukjin Kim <kgene@kernel.org>,
+        bh=/FvSWUTwb3VLZA0Xf0z7RcCEXwmqXYbk21bOLI6Ind8=;
+        b=sy3xMq+W3EDFFNiex6ahMNHmcg8ySGBRLRXw+rX6dvWIdBTCUbiNjyA4IrJOjhRmyu
+         2qKB5fXqSaNSYJ68T9DkdRPCwOVvl6Em6Dy1Md37fYZqp9djEUrT/7q1pXmBRkHtYA6w
+         3RMRu5GIIXCrKoJr9I+pYUWjwPTBBdy3daKkiZXSfsao9XMPToGicVvKcn9JobufICeS
+         K9VSGjaxrgs6TuzghlwWUPm74nZjf2v0wMTvd+ztIXr2WAr9QMaa79Q39Cn+/HWzW3Th
+         1fEvitHIZCXAhCl2879KrthWxwoA7xRt5gvvqolJREmP+HNIP7aTuUuLCr0BQneKnc1N
+         bntg==
+X-Gm-Message-State: APjAAAVBXAsO7Sdu8kCtgo6/0pv0KRmk8Rh/+OXn2B+1MoO2fBnCI1tt
+        qy1UlSgf0552lVPbgwQhQH7wEg==
+X-Google-Smtp-Source: APXvYqydSOmNxbN/vYtkU1iPjd1cVFUew/aXCub1UINvWE/D7AIfNj9Kf6waQGQolR3SBvI3HEafpw==
+X-Received: by 2002:a63:1b59:: with SMTP id b25mr13990872pgm.267.1571886823938;
+        Wed, 23 Oct 2019 20:13:43 -0700 (PDT)
+Received: from localhost ([122.172.151.112])
+        by smtp.gmail.com with ESMTPSA id x12sm23593463pfm.130.2019.10.23.20.13.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 23 Oct 2019 20:13:43 -0700 (PDT)
+Date:   Thu, 24 Oct 2019 08:43:39 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         linux-arm-kernel@lists.infradead.org,
@@ -68,44 +67,46 @@ Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
         linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
 Subject: Re: [PATCH] cpufreq: s3c64xx: Remove pointless NULL check in
  s3c64xx_cpufreq_driver_init
-Message-ID: <20191023170302.GA45373@ubuntu-m2-xlarge-x86>
+Message-ID: <20191024031339.qaoh3p5efmaawslq@vireshk-i7>
 References: <20191023000906.14374-1-natechancellor@gmail.com>
- <20191023032302.tu5nkvulo2yoctgr@vireshk-i7>
- <20191023104304.GA5723@sirena.co.uk>
- <20191023162628.GA10997@ubuntu-m2-xlarge-x86>
- <20191023163656.GH5723@sirena.co.uk>
- <20191023165417.GA15082@ubuntu-m2-xlarge-x86>
- <20191023165923.GL5723@sirena.co.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191023165923.GL5723@sirena.co.uk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20191023000906.14374-1-natechancellor@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 05:59:23PM +0100, Mark Brown wrote:
-> On Wed, Oct 23, 2019 at 09:54:17AM -0700, Nathan Chancellor wrote:
-> > On Wed, Oct 23, 2019 at 05:36:56PM +0100, Mark Brown wrote:
-> > > On Wed, Oct 23, 2019 at 09:26:28AM -0700, Nathan Chancellor wrote:
-> > > > On Wed, Oct 23, 2019 at 11:43:04AM +0100, Mark Brown wrote:
+On 22-10-19, 17:09, Nathan Chancellor wrote:
+> When building with Clang + -Wtautological-pointer-compare:
 > 
-> > > > > The driver should also have supported s3c6400 as well.
+> drivers/cpufreq/s3c64xx-cpufreq.c:152:6: warning: comparison of array
+> 's3c64xx_freq_table' equal to a null pointer is always false
+> [-Wtautological-pointer-compare]
+>         if (s3c64xx_freq_table == NULL) {
+>             ^~~~~~~~~~~~~~~~~~    ~~~~
+> 1 warning generated.
 > 
-> > > > Kconfig says otherwise, unless I am missing something.
+> The definition of s3c64xx_freq_table is surrounded by an ifdef
+> directive for CONFIG_CPU_S3C6410, which is always true for this driver
+> because it depends on it in drivers/cpufreq/Kconfig.arm (and if it
+> weren't, there would be a build error because s3c64xx_freq_table would
+> not be a defined symbol).
 > 
-> > > Note the XX in the config option.
+> Resolve this warning by removing the unnecessary NULL check because it
+> is always false as Clang notes. While we are at it, remove the
+> unnecessary ifdef conditional because it is always true.
 > 
-> > But what about the depends and the help text?
-> 
-> Viresh asked why the driver was written with s3c6410 support optional.
-> I explained that the reason that it was written this way was to
-> accomodate s3c6400 support.
+> Fixes: b3748ddd8056 ("[ARM] S3C64XX: Initial support for DVFS")
+> Link: https://github.com/ClangBuiltLinux/linux/issues/748
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>  drivers/cpufreq/s3c64xx-cpufreq.c | 7 -------
+>  1 file changed, 7 deletions(-)
 
-Ah understood, thanks for the clarification and sorry for the
-misunderstanding!
+Applied. Thanks.
 
-Cheers,
-Nathan
+-- 
+viresh
