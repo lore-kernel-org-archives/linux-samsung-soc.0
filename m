@@ -2,100 +2,107 @@ Return-Path: <SRS0=fp8F=YS=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4C94CA9EA0
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 25 Oct 2019 09:02:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DDF3CA9EBD
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 25 Oct 2019 09:21:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C47221D7F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 25 Oct 2019 09:02:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 055CE21D7B
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 25 Oct 2019 09:21:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="gPk3Tl1j"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZFec/BZv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408647AbfJYJCP (ORCPT
+        id S1727128AbfJYJVQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 25 Oct 2019 05:02:15 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:36698 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2408064AbfJYJCO (ORCPT
+        Fri, 25 Oct 2019 05:21:16 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:48733 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726409AbfJYJVQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 25 Oct 2019 05:02:14 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191025090212euoutp012f70e2fbf7518c98e2688ecc8552e352~Q2FW-dCLr0419704197euoutp01B
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Oct 2019 09:02:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191025090212euoutp012f70e2fbf7518c98e2688ecc8552e352~Q2FW-dCLr0419704197euoutp01B
+        Fri, 25 Oct 2019 05:21:16 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20191025092114euoutp027ebd0ecf4b4e0d8dfa5d27e439d00eb2~Q2V_dvYja0386503865euoutp02Q
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Oct 2019 09:21:14 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20191025092114euoutp027ebd0ecf4b4e0d8dfa5d27e439d00eb2~Q2V_dvYja0386503865euoutp02Q
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1571994132;
-        bh=FYT2QZtALNZsHIRM0dwYVe/iO/f0eMf0dbLJRE5epa8=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=gPk3Tl1jvPxfO6OWNTbow3q2SUFsYDv/xD7JBSQBdSbEjKcmBh40O3qWnW7wWzSR8
-         T+EnPUZsqBjSUegyPxC20crjEf+1sNtsq13B72Uh/l2ogWeFV93sXodRBoKDa3dJwu
-         U4rKixnTtUY2DPfgzM8wHKAYNo7ureU0lZBi8w+U=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        s=mail20170921; t=1571995274;
+        bh=KMKNokIDIDnSm9WZEk03whwXAqbkj6Bt158JqveuvBw=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=ZFec/BZvlhxBr80rJFgtglRaDjZk627OVyetSS6j6j7/Jc01VJu2bl6zTMtL4gnEB
+         +XsLsqYR9fHHE9FlwwLWVJR1R22Tm9AEwpUSdEcLn4erKsm08WsfLqhrp7Hh96w31Z
+         KudDFPi3rIm/YuUck9ck0lE6I4GiNPpRNyFJ5+uI=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191025090212eucas1p1a8b8295706f9eb158685ddf0bc27bdac~Q2FWreziq0790207902eucas1p1i;
-        Fri, 25 Oct 2019 09:02:12 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 87.95.04469.41AB2BD5; Fri, 25
-        Oct 2019 10:02:12 +0100 (BST)
+        20191025092114eucas1p158de965a62669dece458bd8e4c2b60aa~Q2V_Hj4Hs2280722807eucas1p1g;
+        Fri, 25 Oct 2019 09:21:14 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 0D.ED.04309.A8EB2BD5; Fri, 25
+        Oct 2019 10:21:14 +0100 (BST)
 Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20191025090212eucas1p10ef782af07e01470b185e4fb190d3ce6~Q2FWasBZZ1933219332eucas1p1H;
-        Fri, 25 Oct 2019 09:02:12 +0000 (GMT)
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20191025092113eucas1p20f985822200e64277b4b41201adacd8a~Q2V9t-At70533305333eucas1p2Z;
+        Fri, 25 Oct 2019 09:21:13 +0000 (GMT)
 Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
         eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191025090212eusmtrp2cdfe7cf3fdbd973d89658b0f08c2f31d~Q2FWaBXM_0078000780eusmtrp2G;
-        Fri, 25 Oct 2019 09:02:12 +0000 (GMT)
-X-AuditID: cbfec7f2-569ff70000001175-36-5db2ba14b0a4
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id C1.76.04117.41AB2BD5; Fri, 25
-        Oct 2019 10:02:12 +0100 (BST)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191025090211eusmtip1b623e75260a2589aad1c657a84124369~Q2FWDD8Si0234802348eusmtip1L;
-        Fri, 25 Oct 2019 09:02:11 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
+        20191025092113eusmtrp221c24a84b23d5745e72a8bd88e651676~Q2V9tVacp1206612066eusmtrp28;
+        Fri, 25 Oct 2019 09:21:13 +0000 (GMT)
+X-AuditID: cbfec7f4-afbff700000010d5-42-5db2be8a1977
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id F4.39.04117.98EB2BD5; Fri, 25
+        Oct 2019 10:21:13 +0100 (BST)
+Received: from [106.120.51.75] (unknown [106.120.51.75]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191025092113eusmtip2ce601fc8f8477325ddabf4c03bfb324f~Q2V9QHSts1737817378eusmtip2L;
+        Fri, 25 Oct 2019 09:21:13 +0000 (GMT)
+Subject: Re: [PATCH] clk: samsung: exynos5420: Preserve PLL configuration
+ during suspend/resume
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Marian Mihailescu <mihailescu2m@gmail.com>
-Subject: [PATCH] clk: samsung: exynos5420: Preserve PLL configuration during
- suspend/resume
-Date:   Fri, 25 Oct 2019 11:02:01 +0200
-Message-Id: <20191025090201.30246-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHIsWRmVeSWpSXmKPExsWy7djP87oiuzbFGlz5L26xccZ6VovrX56z
-        Wpw/v4Hd4mPPPVaLGef3MVmsPXKX3WL9tJ+sFu1PXzI7cHjsnHWX3WPTqk42j74tqxg9Pm+S
-        C2CJ4rJJSc3JLEst0rdL4MpoXP2FpeAmZ8WPe0+YGhgncXQxcnJICJhILLy2jb2LkYtDSGAF
-        o8Sldb2sIAkhgS+MEm/XhUEkPjNKzDvYzAbT8fbUblaIxHJGiTVntrBAOEAd3d/bwKrYBAwl
-        ut52gdkiAg4Snz+9ZgQpYhboZ5Lo67vKDJIQFoiVmHv9Ntg+FgFViRtn3wM1cHDwCthK3NiS
-        ALFNXmL1hgPMEPZ1NokXdyogbBeJd1+3sEPYwhKvjsPYMhL/d85nAtklIdDMKPHw3Fp2CKeH
-        UeJy0wxGiCpricPHL7KCLGMW0JRYv0sfIuwose35DRaQsIQAn8SNt4IgYWYgc9K26cwQYV6J
-        jjYhiGo1iVnH18GtPXjhEtSZHhKdN9pYIKEYKzH94EbGCYxysxB2LWBkXMUonlpanJueWmyY
-        l1quV5yYW1yal66XnJ+7iRGYCk7/O/5pB+PXS0mHGAU4GJV4eF/0b4wVYk0sK67MPcQowcGs
-        JMK7Ww0oxJuSWFmVWpQfX1Sak1p8iFGag0VJnLea4UG0kEB6YklqdmpqQWoRTJaJg1OqgXFV
-        Tktl8JT5hzfWtpxTWLLRhlHnVOOtCpfVhm9uTrmyK03RepHdY0XhKU9yjjbH9M/fUHVCRPDj
-        nN7vSTN4OZxlfs+zbrizJufdkfUzihSunJgUExtu12pcm67b+8tnxSaR92JXmn4pFhVWPgnr
-        LfyyYJOBZdlGIaOnftJ2LnnrPlcrVNbP+qXEUpyRaKjFXFScCACw2FJTAQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKLMWRmVeSWpSXmKPExsVy+t/xu7oiuzbFGjSsZrPYOGM9q8X1L89Z
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <fcf29d21-5fbc-faf6-dc9a-3f7b874cb89a@samsung.com>
+Date:   Fri, 25 Oct 2019 11:21:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20191025090201.30246-1-m.szyprowski@samsung.com>
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFKsWRmVeSWpSXmKPExsWy7djPc7pd+zbFGmzo4rbYOGM9q8X1L89Z
         Lc6f38Bu8bHnHqvFjPP7mCzWHrnLbrF+2k9Wi/anL5kdODx2zrrL7rFpVSebR9+WVYwenzfJ
-        BbBE6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZmSrp29mkpOZklqUW6dsl6GU0
-        rv7CUnCTs+LHvSdMDYyTOLoYOTkkBEwk3p7azdrFyMUhJLCUUWLJs/tsEAkZiZPTGlghbGGJ
-        P9e62CCKPjFKfLz6FizBJmAo0fW2C6xBRMBJ4sG6N+wgRcwCk5kktjctZQFJCAtES2y/MgGs
-        iEVAVeLG2fdANgcHr4CtxI0tCRAL5CVWbzjAPIGRZwEjwypGkdTS4tz03GIjveLE3OLSvHS9
-        5PzcTYzAINx27OeWHYxd74IPMQpwMCrx8DpM2hgrxJpYVlyZe4hRgoNZSYR3txpQiDclsbIq
-        tSg/vqg0J7X4EKMp0O6JzFKiyfnACMkriTc0NTS3sDQ0NzY3NrNQEuftEDgYIySQnliSmp2a
-        WpBaBNPHxMEp1cA4M2GWs4SxEMfnWqUX7xzVYxJnfyrIO63nxC7yL/xIz5I/ieyrf7l/Clja
-        8mLbGQFTtoYNWTd3PC765HLoatqVFdN7RKc8/cOkc7F43s3vUoblBUm1VVMjHmc+E+rdHPJw
-        DV+kYMRx0fB16zQjzixsMUyQ81wX28nNVimpdv74i+Mt+teeRjYosRRnJBpqMRcVJwIAiuiP
-        DlgCAAA=
-X-CMS-MailID: 20191025090212eucas1p10ef782af07e01470b185e4fb190d3ce6
+        BbBEcdmkpOZklqUW6dslcGW8O7mZraCbtWLd7KUsDYxLWboYOTkkBEwk3kw5wd7FyMUhJLCC
+        UWLjojlQzhdGifubH7FCOJ8ZJZb8ncYO07Lh/k0WiMRyRomuvp1MEM5bRolHy+YxdzFycAgL
+        JErMPu0PYooI5EvMehsCUsIs8IhRYs32VjaQQWwChhK9R/sYQWxeATuJVb/vg8VZBFQlWk7N
+        ZAPpFRWIkDj9NRGiRFDi5MwnYGdzApU/WzyPFcRmFhCXaPqyEsqWl9j+dg4zyC4JgU3sElem
+        L2GEONpFYtaGj1APCEu8Or4FypaR+L9zPhNEQzOjRM/u2+wQzgSg/48vgOq2ljh8/CIryEXM
+        ApoS63fpQ4QdJbY9v8ECEpYQ4JO48VYQ4gg+iUnbpjNDhHklOtqEIKpVJH6vms4EYUtJdD/5
+        zzKBUWkWktdmIXlnFpJ3ZiHsXcDIsopRPLW0ODc9tdgoL7Vcrzgxt7g0L10vOT93EyMwBZ3+
+        d/zLDsZdf5IOMQpwMCrx8DpM2hgrxJpYVlyZe4hRgoNZSYR3txpQiDclsbIqtSg/vqg0J7X4
+        EKM0B4uSOG81w4NoIYH0xJLU7NTUgtQimCwTB6dUA6PoKfl7h7wXGIutOfncQllTecfbnQys
+        gop6Z829uX5H3ii+dPe57oLJjGk5zMf25bRfCgut9D6TLf9uf5zZ2ftFPgxx8SdXen+L69Zz
+        0//hPCfmxtTHP2/EXVkTalXie+uv5qoJ8l9610u9+F30wNbZ72Xlnn2WC9duy9JrUv++UG3/
+        nTt/twoqsRRnJBpqMRcVJwIAwK58CT0DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDIsWRmVeSWpSXmKPExsVy+t/xe7qd+zbFGtxdoGuxccZ6VovrX56z
+        Wpw/v4Hd4mPPPVaLGef3MVmsPXKX3WL9tJ+sFu1PXzI7cHjsnHWX3WPTqk42j74tqxg9Pm+S
+        C2CJ0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL0Mt4
+        d3IzW0E3a8W62UtZGhiXsnQxcnJICJhIbLh/E8wWEljKKHGsRaeLkQMoLiUxv0UJokRY4s+1
+        LrYuRi6gkteMEpdmv2AGqREWSJSYfdofpEZEIF9ixp1eRpAaZoFHjBLTth9jhGiYyChx6O9X
+        VpAqNgFDid6jfYwgNq+AncSq3/fZQGwWAVWJllMzwWxRgQiJ59tvQNUISpyc+QTsOE6g+meL
+        54HNYRZQl/gz7xIzhC0u0fRlJVRcXmL72znMExiFZiFpn4WkZRaSlllIWhYwsqxiFEktLc5N
+        zy020itOzC0uzUvXS87P3cQIjLltx35u2cHY9S74EKMAB6MSD6/DpI2xQqyJZcWVuYcYJTiY
+        lUR4d6sBhXhTEiurUovy44tKc1KLDzGaAj03kVlKNDkfmA7ySuINTQ3NLSwNzY3Njc0slMR5
+        OwQOxggJpCeWpGanphakFsH0MXFwSjUwznFZpbpnk3zsvi+XLiY1r7Xu5Tu/3l1A66exN6/8
+        2dgFl33ZbkyecPCUWDeDp7350xsmP4LTbu09wpriUbGGr7/29abnk0/OU5SufTe/qe1Gyto4
+        y4lHzNmVM/jTF/Ox/HzW/5ll+v6PsvvaJ5nd+3NP92/sFJ5Xd33KnFVZGFInOe0XyT4SpMRS
+        nJFoqMVcVJwIAJtZ6y/PAgAA
+X-CMS-MailID: 20191025092113eucas1p20f985822200e64277b4b41201adacd8a
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-RootMTR: 20191025090212eucas1p10ef782af07e01470b185e4fb190d3ce6
@@ -103,47 +110,21 @@ X-EPHeader: CA
 CMS-TYPE: 201P
 X-CMS-RootMailID: 20191025090212eucas1p10ef782af07e01470b185e4fb190d3ce6
 References: <CGME20191025090212eucas1p10ef782af07e01470b185e4fb190d3ce6@eucas1p1.samsung.com>
+        <20191025090201.30246-1-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Properly save and restore all top PLL related configuration registers
-during suspend/resume cycle. So far driver only handled EPLL and RPLL
-clocks, all other were reset to default values after suspend/resume cycle.
-This caused for example lower G3D (MALI Panfrost) performance after system
-resume, even if performance governor has been selected.
+On 10/25/19 11:02, Marek Szyprowski wrote:
+> Properly save and restore all top PLL related configuration registers
+> during suspend/resume cycle. So far driver only handled EPLL and RPLL
+> clocks, all other were reset to default values after suspend/resume cycle.
+> This caused for example lower G3D (MALI Panfrost) performance after system
+> resume, even if performance governor has been selected.
+> 
+> Reported-by: Reported-by: Marian Mihailescu <mihailescu2m@gmail.com>
+> Fixes: 773424326b51 ("clk: samsung: exynos5420: add more registers to restore list")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Reported-by: Reported-by: Marian Mihailescu <mihailescu2m@gmail.com>
-Fixes: 773424326b51 ("clk: samsung: exynos5420: add more registers to restore list")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos5420.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index d2e06ce58fb5..0aca98492029 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -165,12 +165,18 @@ static const unsigned long exynos5x_clk_regs[] __initconst = {
- 	GATE_BUS_CPU,
- 	GATE_SCLK_CPU,
- 	CLKOUT_CMU_CPU,
-+	CPLL_CON0,
-+	DPLL_CON0,
- 	EPLL_CON0,
- 	EPLL_CON1,
- 	EPLL_CON2,
- 	RPLL_CON0,
- 	RPLL_CON1,
- 	RPLL_CON2,
-+	IPLL_CON0,
-+	SPLL_CON0,
-+	VPLL_CON0,
-+	MPLL_CON0,
- 	SRC_TOP0,
- 	SRC_TOP1,
- 	SRC_TOP2,
--- 
-2.17.1
-
+Applied, thanks.
