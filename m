@@ -2,115 +2,87 @@ Return-Path: <SRS0=EJN4=YV=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 030A3CA9EC0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Oct 2019 15:47:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BB2ACA9EC0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Oct 2019 17:35:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C060C21783
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Oct 2019 15:47:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66C61208C0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Oct 2019 17:35:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572277657;
-	bh=VN/VMJbk3T/K50ccDfFzGjkQgMu5y5hAJUi2/hAx5tg=;
+	s=default; t=1572284144;
+	bh=1pGl8wS/kA7QWDCSMr3u2WpdYGE0b+F0m3AK76EPjJA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=gMez8nNQCvj/5MjdIueED2xvEKloZ4UGsAVrNo8gBWvcBm/rLyzxsvUF6CV5jfK/5
-	 zZYxhd+uLTfMM1Q3AJeczebrX2bYSWZRSCxQBzgesb8jj0CixI01lpP2how//qG4G9
-	 l6vDAfa/9moxBhOQhUE5d30CtqaMgDJN0Zn2lHPw=
+	b=RTHJ6YQFc8AU3QRMtE2gZapVrZYx71r8qkazr5fD0GLiGy1CjXxvGlf9LplZYpgDV
+	 ryInLcyAelXGr9fKVe2v4nMWPn/q6CK8o/pAsSZixx2rOkV0wdo1nRY8o8ZuSApla0
+	 xIYnOHNEEqnpAY42299UzQYQKUVPBrpUH3Af49Jw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726201AbfJ1Prh (ORCPT
+        id S1729246AbfJ1Rfo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 28 Oct 2019 11:47:37 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:42906 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726097AbfJ1Prh (ORCPT
+        Mon, 28 Oct 2019 13:35:44 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:37853 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725773AbfJ1Rfn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 28 Oct 2019 11:47:37 -0400
-Received: by mail-ed1-f65.google.com with SMTP id s20so8230032edq.9;
-        Mon, 28 Oct 2019 08:47:35 -0700 (PDT)
+        Mon, 28 Oct 2019 13:35:43 -0400
+Received: by mail-ed1-f67.google.com with SMTP id e12so8435956edr.4;
+        Mon, 28 Oct 2019 10:35:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xeouFKeqxI+jBZsGSFG26F9cl2bzWdfbTz7OAnsdkHs=;
-        b=ly8VR/WjJnSt5FKIMjmSxgeiEyfHjaZBJIPr3KXRDNZP+Rk9KncOG6HNq1ZIQgKPBO
-         t9Vf8p/2kQvKoBFZeqYyLhwFSfUgHaeVUdh7Uhs++CuvpGNrvmmjXWUkiW+etlxTbQ2z
-         wAozUNltofNAjeeEAwJq5Ktncklgu4fokspK6Yek/PtIjzuTA1AcmiseDSSy1RgI3Kqg
-         n9XA6kUh2f/8JAFTif+Oz+wMjKUeo/Hwzhl4DZx13IvFcMz4DGhmw5cKt3P1E8FycJXo
-         i3mfuH3lBtdcDxzQY9CuHsZCa3kti4rt1RksqncnzHhKZB1vdlFOIEB5+CRn3pXj5EbI
-         V9qA==
-X-Gm-Message-State: APjAAAV9FZCl50uHXqOYLEagfMzH/pm14bVpZ1MXTrPqZWcRN8ZshT8B
-        EmSAzw7BtQGY8KfCRMFObrM=
-X-Google-Smtp-Source: APXvYqzb5eJY5x6+xEfLs30NbzaiquwQRVOIdigZyIXD5gUp8DH2McCek9vsaaleRlSYLLP4jx4E1Q==
-X-Received: by 2002:aa7:d0c9:: with SMTP id u9mr19737617edo.217.1572277655066;
-        Mon, 28 Oct 2019 08:47:35 -0700 (PDT)
-Received: from pi3 ([194.230.155.180])
-        by smtp.googlemail.com with ESMTPSA id g43sm567693edb.14.2019.10.28.08.47.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2019 08:47:34 -0700 (PDT)
-Date:   Mon, 28 Oct 2019 16:47:32 +0100
+        bh=9dlbkLkbjNwkW8dWaTCD1qZUiGkWumkyUbrY4hy+PP0=;
+        b=PnottxPjqEi8TbNnyEKb6HLm8XjR8T/0aJm9XOa7YYk9xZm0QZblqiSl3R3Lw6rEeU
+         Hi8CLL4n13+4DjoscXA1xlUEc2RNkPWoHO0y/gTHzG3kUHslIIXIPLgfzGFbCEiYNs+a
+         eFFs7EvnN8RdyFgaDsw8yGImQS3YPhJ/LyGcQm2fYHp9yqhODEasNR5gk0AzaWQSsPJ/
+         R1XadkYa8GUfVDvCv9dVlbeUj/GRBcpJxpCmXO5jpoMkuwqBSyrnB6HrErVi7ubv83M4
+         OwZO7CMS4kX7XgPZyMGLjvNee10fACbJ7C9VHOUxO1QnewwrZjc70/kyExSXiivy65AD
+         X0Yg==
+X-Gm-Message-State: APjAAAWokOPmgnO04exvBVg6+lihM+fkseOC01ZI/FdxFk8pyyjU9iuI
+        3pXO5ruHK9M9ZHRo7hLBCLTvnBtx
+X-Google-Smtp-Source: APXvYqy34BMLtkw8CEAwuKj/UeFjOMF1P1pIJI/GgyugK8iJZkPbVsQ8W9s1ePT5wtn+zaKQGhDcow==
+X-Received: by 2002:a17:906:1c97:: with SMTP id g23mr17892494ejh.66.1572284141338;
+        Mon, 28 Oct 2019 10:35:41 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.180])
+        by smtp.googlemail.com with ESMTPSA id x6sm601095edc.50.2019.10.28.10.35.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 28 Oct 2019 10:35:40 -0700 (PDT)
+Date:   Mon, 28 Oct 2019 18:35:38 +0100
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org, vireshk@kernel.org,
         linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com,
         m.szyprowski@samsung.com
-Subject: Re: [PATCH 3/3] dt-bindings: arm: samsung: Drop syscon compatible
- from CHIPID binding
-Message-ID: <20191028154732.GA3746@pi3>
-References: <20191028152050.10220-1-s.nawrocki@samsung.com>
- <CGME20191028152100eucas1p2ed6bd2d53670c85f6bf550af0631a55a@eucas1p2.samsung.com>
- <20191028152050.10220-3-s.nawrocki@samsung.com>
+Subject: Re: [PATCH 1/3] soc: samsung: Drop "syscon" compatible requirement
+ from the chipid driver
+Message-ID: <20191028173538.GA14395@kozik-lap>
+References: <CGME20191028152057eucas1p1d6b4252e9ce3f15c0d81e6941a62d2be@eucas1p1.samsung.com>
+ <20191028152050.10220-1-s.nawrocki@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191028152050.10220-3-s.nawrocki@samsung.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191028152050.10220-1-s.nawrocki@samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 04:20:50PM +0100, Sylwester Nawrocki wrote:
-> The "syscon" compatible string was introduced mainly to allow sharing
-> of the CHIPID IO region between multiple drivers. However, such sharing
-> can be also done without an additional compatible so remove "syscon".
+On Mon, Oct 28, 2019 at 04:20:48PM +0100, Sylwester Nawrocki wrote:
+> As we dropped the requirement of "syscon" compatible in the chipid
+> nodes rework code acquiring the regmap to use device_node_to_regmap()
+> rather than syscon_node_to_regmap().
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  drivers/soc/samsung/exynos-chipid.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Thanks, applied.
 
 Best regards,
 Krzysztof
 
-> 
-> Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  .../devicetree/bindings/arm/samsung/exynos-chipid.yaml         | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.yaml b/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.yaml
-> index 53c29d567789..afcd70803c12 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.yaml
-> +++ b/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.yaml
-> @@ -13,7 +13,6 @@ properties:
->    compatible:
->      items:
->        - const: samsung,exynos4210-chipid
-> -      - const: syscon
->  
->    reg:
->      maxItems: 1
-> @@ -34,7 +33,7 @@ required:
->  examples:
->    - |
->      chipid@10000000 {
-> -        compatible = "samsung,exynos4210-chipid", "syscon";
-> +        compatible = "samsung,exynos4210-chipid";
->          reg = <0x10000000 0x100>;
->          samsung,asv-bin = <2>;
->      };
-> -- 
-> 2.17.1
-> 
