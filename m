@@ -2,90 +2,110 @@ Return-Path: <SRS0=EJN4=YV=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1B44CA9EC0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Oct 2019 17:36:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCFD3CA9EC0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Oct 2019 20:21:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F8C2208C0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Oct 2019 17:36:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572284171;
-	bh=mwWvQsluqTq2fcR9MNmBFhECPceO/cYwlxIEyloyDy0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ncidFgoXHTONwJgbOUIytPBBvqgzQuWtCgqA+ccj3kdky3YKS7z4Qur1Nf6aShncO
-	 eGPjVMN6nQAdKyWK+61rJzfjBs5lA5uqlgXBrUMl6ruGLTXLEpvGUgs976Ay9z5H2c
-	 Ul0mduAsDZR8Ty34zmpRHM1Ebo///noJ5HmhoLKo=
+	by mail.kernel.org (Postfix) with ESMTP id 96B1621D80
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Oct 2019 20:21:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oked80Gc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730227AbfJ1RgL (ORCPT
+        id S1733050AbfJ1UVz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 28 Oct 2019 13:36:11 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:43220 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725773AbfJ1RgL (ORCPT
+        Mon, 28 Oct 2019 16:21:55 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33821 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732924AbfJ1UVz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 28 Oct 2019 13:36:11 -0400
-Received: by mail-ed1-f65.google.com with SMTP id f25so3157456edw.10;
-        Mon, 28 Oct 2019 10:36:10 -0700 (PDT)
+        Mon, 28 Oct 2019 16:21:55 -0400
+Received: by mail-pg1-f194.google.com with SMTP id e4so3401693pgs.1;
+        Mon, 28 Oct 2019 13:21:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=o3RYmNY37sf+6DZhfgwoRw3pPEWurA9fTDFSIhMeWeU=;
+        b=Oked80GciIxQk1i/LR2xCPTKwGdtHhZxyUq2WWOVcfXgw0QLfGwTKSya0fFMyXHtjs
+         3AbRxlvW0j09zV7fmaXlpfIS1dMK7mr8MuFY2WEFdBy6HJ1RYD0hiloMysUpzCljhzrI
+         ZKK/t6YfTEPwojUcpk4fuRj4+cfm641mdi3Wzs0y/OhMQkeolPTdwh2ClmdFDdAqMlX4
+         Bj3PZiqDHS9HORzfHhTa2ekYwbrQt805VoctgMyx6pb73lLWoHNXPPL+2RybnV7fwz/2
+         TlIfAphcosj9xIuxhpNKOsCqccOcPpzAqkkcCg5+5pBT4FV60WobxJZa4glF1yuLJF/w
+         EzzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OAsEaZPXZx2ykx4Hduijb09lsGu9L40MOJoDfA4h76I=;
-        b=NqVUKe8AAwg3/e5kY88622dMhzzgUlYS3DU25SnI7zBTMDf43TCbzIhHX88RPpV9Co
-         BC/htzXURJuAnrnpn8jHBmR1oFdL4UJnyf2I4JL5scEz9AnMeRPXAWTgVZovILxy7kj3
-         fUetDNdRoRBszQZhxiH/rjmwlgTHW5Gvx8ZWdF7GDjCRfIGPYeam5ivheDIYk5Pf46el
-         hHkFPQLWFHxChN7ERyypWsO887L5d4rocM6iroJemBbQGq4Smt/8DSknmH5ke4GlBTvH
-         r47ySri5vkhrF4qk3K24cz3rT+jNh2pwAjWSnOsvd1pChMJ+++515ArC9GDNyZkuiyKH
-         NfzA==
-X-Gm-Message-State: APjAAAWcwWDffOVYGwHzRlx7qgtYm5cjFQYWywP+1Unn18zYQBpzBNU2
-        tS35N/RgyXz9jLwPutNkeOM=
-X-Google-Smtp-Source: APXvYqwJ3rGCTA5Ugojohtfi7BCoIjiTdyuBPtySkjGp2LNe5eVrME1DaNBUpbKCPFdjUbhwuwe2Nw==
-X-Received: by 2002:a50:ec0e:: with SMTP id g14mr20955345edr.274.1572284169385;
-        Mon, 28 Oct 2019 10:36:09 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.180])
-        by smtp.googlemail.com with ESMTPSA id rp21sm84757ejb.17.2019.10.28.10.36.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Oct 2019 10:36:08 -0700 (PDT)
-Date:   Mon, 28 Oct 2019 18:36:06 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     vireshk@kernel.org, linux-pm@vger.kernel.org,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=o3RYmNY37sf+6DZhfgwoRw3pPEWurA9fTDFSIhMeWeU=;
+        b=m2oUMBxzBeFs1A0o+ZuB3bNc14j/eWiA+gh/a1fXYoq+oiT1C8eEu+5arlS+6I5lN7
+         mI8eS4iUWXOV2RbU0cBUna+BQHYiWSVWzDsBm0EPAkyh6p2sUbiqvzZGcRLGTCfm7HY7
+         J75HSwI4qxWVgXm2cGFFiKuPCPMFKFPiIwxMAkfyGG4vryUsOUueEGmvI9FgFBHFey1h
+         xLVEDLJWa5DYacQuioG+DRDKe/VclT3ozf984tLzfbzYp864nEwfjhinIVaZAore9242
+         QO4bvPVwouYufvPVKRLi4XrMlNOtofKK+4iHc/rb9Dp8uOTAeB+kgguPr31Dtb8lDTzB
+         fAIQ==
+X-Gm-Message-State: APjAAAXCO5GiKn36HrVxcWNMBGBvc0xUJUvXL+JQ+ztMpr6WoJRy5Nfp
+        h7r3Ut/jNwiDvXfgXcSZPnk=
+X-Google-Smtp-Source: APXvYqwgMOgg9DoyjQ+QwjBbA0L2tFTAq78jMqvQKpUC2a2zoXo/IV6DRJzV2kNa8UPQGMxgPJo3JQ==
+X-Received: by 2002:a17:90a:a00e:: with SMTP id q14mr1489905pjp.132.1572294114235;
+        Mon, 28 Oct 2019 13:21:54 -0700 (PDT)
+Received: from saurav ([27.62.167.137])
+        by smtp.gmail.com with ESMTPSA id e198sm11908096pfh.83.2019.10.28.13.21.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2019 13:21:53 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 01:51:44 +0530
+From:   Saurav Girepunje <saurav.girepunje@gmail.com>
+To:     jingoohan1@gmail.com, lorenzo.pieralisi@arm.com,
+        andrew.murray@arm.com, bhelgaas@google.com, kgene@kernel.org,
+        krzk@kernel.org, linux-pci@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com,
-        m.szyprowski@samsung.com
-Subject: Re: [PATCH v6 2/2] ARM: EXYNOS: Enable exynos-asv driver for
- ARCH_EXYNOS
-Message-ID: <20191028173606.GC14395@kozik-lap>
-References: <20191028151534.9920-1-s.nawrocki@samsung.com>
- <CGME20191028151555eucas1p2178f1a2cfe9e09c5c03c39f0896ab289@eucas1p2.samsung.com>
- <20191028151534.9920-2-s.nawrocki@samsung.com>
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     saurav.girepunje@hotmail.com
+Subject: [PATCH] pci: controller: dwc: Remove dev_err use after
+ platform_get_irq
+Message-ID: <20191028202144.GA29158@saurav>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191028151534.9920-2-s.nawrocki@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 04:15:34PM +0100, Sylwester Nawrocki wrote:
-> Enable exynos-asv driver for Exynos 32-bit SoCs.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
-> Changes since v1 (RFC):
->  - none
-> 
->  arch/arm/mach-exynos/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+Don't need dev_err() messages when platform_get_irq() fails now that
+platform_get_irq() prints an error message itself when something goes
+wrong.
 
-Thanks, applied.
+Signed-off-by: Saurav Girepunje <saurav.girepunje@gmail.com>
+---
+ drivers/pci/controller/dwc/pci-exynos.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
+index 14a6ba4067fb..2293b346d96a 100644
+--- a/drivers/pci/controller/dwc/pci-exynos.c
++++ b/drivers/pci/controller/dwc/pci-exynos.c
+@@ -403,7 +403,6 @@ static int __init exynos_add_pcie_port(struct exynos_pcie *ep,
+ 
+ 	pp->irq = platform_get_irq(pdev, 1);
+ 	if (pp->irq < 0) {
+-		dev_err(dev, "failed to get irq\n");
+ 		return pp->irq;
+ 	}
+ 	ret = devm_request_irq(dev, pp->irq, exynos_pcie_irq_handler,
+@@ -416,7 +415,6 @@ static int __init exynos_add_pcie_port(struct exynos_pcie *ep,
+ 	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+ 		pp->msi_irq = platform_get_irq(pdev, 0);
+ 		if (pp->msi_irq < 0) {
+-			dev_err(dev, "failed to get msi irq\n");
+ 			return pp->msi_irq;
+ 		}
+ 	}
+-- 
+2.20.1
 
