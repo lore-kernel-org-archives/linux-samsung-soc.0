@@ -1,111 +1,110 @@
-Return-Path: <SRS0=EJN4=YV=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=sb5j=YW=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCFD3CA9EC0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Oct 2019 20:21:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7063CA9EC0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Oct 2019 00:48:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96B1621D80
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 28 Oct 2019 20:21:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8403421835
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Oct 2019 00:48:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oked80Gc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="viFgu90+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733050AbfJ1UVz (ORCPT
+        id S1727154AbfJ2AsN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 28 Oct 2019 16:21:55 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:33821 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732924AbfJ1UVz (ORCPT
+        Mon, 28 Oct 2019 20:48:13 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37741 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725848AbfJ2AsM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 28 Oct 2019 16:21:55 -0400
-Received: by mail-pg1-f194.google.com with SMTP id e4so3401693pgs.1;
-        Mon, 28 Oct 2019 13:21:54 -0700 (PDT)
+        Mon, 28 Oct 2019 20:48:12 -0400
+Received: by mail-pf1-f193.google.com with SMTP id u9so3493322pfn.4
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Oct 2019 17:48:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=o3RYmNY37sf+6DZhfgwoRw3pPEWurA9fTDFSIhMeWeU=;
-        b=Oked80GciIxQk1i/LR2xCPTKwGdtHhZxyUq2WWOVcfXgw0QLfGwTKSya0fFMyXHtjs
-         3AbRxlvW0j09zV7fmaXlpfIS1dMK7mr8MuFY2WEFdBy6HJ1RYD0hiloMysUpzCljhzrI
-         ZKK/t6YfTEPwojUcpk4fuRj4+cfm641mdi3Wzs0y/OhMQkeolPTdwh2ClmdFDdAqMlX4
-         Bj3PZiqDHS9HORzfHhTa2ekYwbrQt805VoctgMyx6pb73lLWoHNXPPL+2RybnV7fwz/2
-         TlIfAphcosj9xIuxhpNKOsCqccOcPpzAqkkcCg5+5pBT4FV60WobxJZa4glF1yuLJF/w
-         EzzQ==
+        h=from:to:cc:subject:date:message-id;
+        bh=gODeM3aIi/CYKQzR/W2C8FoLnpxaKvgYD714WLSE0WU=;
+        b=viFgu90+2Po+9d2Nc7w9MoH1LtQP8DqCvIvC5eNy4OHXa9IoLxeTRue5Y3fS/rIwsf
+         pgQa67yzk2kclO0YtiuOWiuYVKdoKKwHJBxE0JjUAf6OHRNNCnx/NmHI2jOz2/pLp+FU
+         HlbP6NbgsZONzJLGYXv/1qiV/cv8S697BhQ474vT+CmwTZDPVz3liLKn+AF5P49lMgod
+         b+r+rXaZ3yHG/7lA1Cc0FutBOaBEDLHuU5ZbteNj0gbhCBSDbPf7Bl6V6r1Xl+d9wa6/
+         CFZmnKdBzgY0TZjXWsm0R/XNhlDIp0Z9jIKaJa7eUx2OkyV9gDXAVM4rOulHpPxY/UAS
+         P0+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=o3RYmNY37sf+6DZhfgwoRw3pPEWurA9fTDFSIhMeWeU=;
-        b=m2oUMBxzBeFs1A0o+ZuB3bNc14j/eWiA+gh/a1fXYoq+oiT1C8eEu+5arlS+6I5lN7
-         mI8eS4iUWXOV2RbU0cBUna+BQHYiWSVWzDsBm0EPAkyh6p2sUbiqvzZGcRLGTCfm7HY7
-         J75HSwI4qxWVgXm2cGFFiKuPCPMFKFPiIwxMAkfyGG4vryUsOUueEGmvI9FgFBHFey1h
-         xLVEDLJWa5DYacQuioG+DRDKe/VclT3ozf984tLzfbzYp864nEwfjhinIVaZAore9242
-         QO4bvPVwouYufvPVKRLi4XrMlNOtofKK+4iHc/rb9Dp8uOTAeB+kgguPr31Dtb8lDTzB
-         fAIQ==
-X-Gm-Message-State: APjAAAXCO5GiKn36HrVxcWNMBGBvc0xUJUvXL+JQ+ztMpr6WoJRy5Nfp
-        h7r3Ut/jNwiDvXfgXcSZPnk=
-X-Google-Smtp-Source: APXvYqwgMOgg9DoyjQ+QwjBbA0L2tFTAq78jMqvQKpUC2a2zoXo/IV6DRJzV2kNa8UPQGMxgPJo3JQ==
-X-Received: by 2002:a17:90a:a00e:: with SMTP id q14mr1489905pjp.132.1572294114235;
-        Mon, 28 Oct 2019 13:21:54 -0700 (PDT)
-Received: from saurav ([27.62.167.137])
-        by smtp.gmail.com with ESMTPSA id e198sm11908096pfh.83.2019.10.28.13.21.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2019 13:21:53 -0700 (PDT)
-Date:   Tue, 29 Oct 2019 01:51:44 +0530
-From:   Saurav Girepunje <saurav.girepunje@gmail.com>
-To:     jingoohan1@gmail.com, lorenzo.pieralisi@arm.com,
-        andrew.murray@arm.com, bhelgaas@google.com, kgene@kernel.org,
-        krzk@kernel.org, linux-pci@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     saurav.girepunje@hotmail.com
-Subject: [PATCH] pci: controller: dwc: Remove dev_err use after
- platform_get_irq
-Message-ID: <20191028202144.GA29158@saurav>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=gODeM3aIi/CYKQzR/W2C8FoLnpxaKvgYD714WLSE0WU=;
+        b=UZiJbl38N6VWmpVzRMDalYZ5WcSh7uP650f7g7IHOiPIfwRItiJcJJDTK88k+BPt/s
+         wx7Ny4/hD6ln7dDu6hJ/PQuGON9CdjV1jT1/FREClDZ1isrRplhuedtD4yYvFsW7YqgI
+         uVj9NkvBrM9xuxLvAqA0GHhLCfnQKL28CjzP72fcg4QYxJpgG7XQRANL4Opzb1I8Jzxv
+         4psiPdgqhPMd3MPmjjm/4us8VSRnfvcZcLgoxp3j7RGtpMrDipQ/nKEc+2PRDn0rfbt4
+         B9KYp3+84Ot//q3jP3hGNEbAMgtHvxhLPP5WMyrahDZUvC2qa4WERluxHkl4wETblREk
+         cU3A==
+X-Gm-Message-State: APjAAAXX+yFTomV8vZbWL+LiomrdPmfqC1ip09sv0ATDbPefP2Ofb2LM
+        a3Z6DrzmfzZoWO+9gNE3IbK/QbQj
+X-Google-Smtp-Source: APXvYqx/eDYwY4g52IiUVAmQwIga45Ak404rcMNJZKJonIg9ISCj8JhcErEQ62/MH9ls3QcxkPszPg==
+X-Received: by 2002:a17:90a:aa81:: with SMTP id l1mr705211pjq.73.1572310090622;
+        Mon, 28 Oct 2019 17:48:10 -0700 (PDT)
+Received: from odroid.ad.adelaide.edu.au (staff-249-094.wireless.adelaide.edu.au. [129.127.249.94])
+        by smtp.googlemail.com with ESMTPSA id l24sm11794269pff.151.2019.10.28.17.48.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 28 Oct 2019 17:48:10 -0700 (PDT)
+From:   Marian Mihailescu <mihailescu2m@gmail.com>
+To:     linux-samsung-soc@vger.kernel.org
+Cc:     Marian Mihailescu <mihailescu2m@gmail.com>
+Subject: [PATCH] clk: samsung: exynos5420: add VPLL rate table
+Date:   Tue, 29 Oct 2019 11:17:58 +1030
+Message-Id: <20191029004758.4380-1-mihailescu2m@gmail.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Don't need dev_err() messages when platform_get_irq() fails now that
-platform_get_irq() prints an error message itself when something goes
-wrong.
+Add new table rate for VPLL for Exynos 542x SoC required to support
+Mali GPU clock frequencies.
 
-Signed-off-by: Saurav Girepunje <saurav.girepunje@gmail.com>
+Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
 ---
- drivers/pci/controller/dwc/pci-exynos.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/clk/samsung/clk-exynos5420.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
-index 14a6ba4067fb..2293b346d96a 100644
---- a/drivers/pci/controller/dwc/pci-exynos.c
-+++ b/drivers/pci/controller/dwc/pci-exynos.c
-@@ -403,7 +403,6 @@ static int __init exynos_add_pcie_port(struct exynos_pcie *ep,
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 7670cc596c74..f3133ed467c2 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -1414,6 +1414,17 @@ static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
+ 	PLL_36XX_RATE(24 * MHZ,  32768001U, 131, 3, 5, 4719),
+ };
  
- 	pp->irq = platform_get_irq(pdev, 1);
- 	if (pp->irq < 0) {
--		dev_err(dev, "failed to get irq\n");
- 		return pp->irq;
++static const struct samsung_pll_rate_table exynos5420_vpll_24mhz_tbl[] = {
++	PLL_35XX_RATE(24 * MHZ, 600000000U,  200, 2, 2),
++	PLL_35XX_RATE(24 * MHZ, 543000000U,  181, 2, 2),
++	PLL_35XX_RATE(24 * MHZ, 480000000U,  160, 2, 2),
++	PLL_35XX_RATE(24 * MHZ, 420000000U,  140, 2, 2),
++	PLL_35XX_RATE(24 * MHZ, 350000000U,  175, 3, 2),
++	PLL_35XX_RATE(24 * MHZ, 266000000U,  266, 3, 3),
++	PLL_35XX_RATE(24 * MHZ, 177000000U,  118, 2, 3),
++	PLL_35XX_RATE(24 * MHZ, 100000000U,  200, 3, 4),
++};
++
+ static struct samsung_pll_clock exynos5x_plls[nr_plls] __initdata = {
+ 	[apll] = PLL(pll_2550, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
+ 		APLL_CON0, NULL),
+@@ -1538,6 +1549,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
+ 		exynos5x_plls[apll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+ 		exynos5x_plls[epll].rate_table = exynos5420_epll_24mhz_tbl;
+ 		exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
++		exynos5x_plls[vpll].rate_table = exynos5420_vpll_24mhz_tbl;
  	}
- 	ret = devm_request_irq(dev, pp->irq, exynos_pcie_irq_handler,
-@@ -416,7 +415,6 @@ static int __init exynos_add_pcie_port(struct exynos_pcie *ep,
- 	if (IS_ENABLED(CONFIG_PCI_MSI)) {
- 		pp->msi_irq = platform_get_irq(pdev, 0);
- 		if (pp->msi_irq < 0) {
--			dev_err(dev, "failed to get msi irq\n");
- 			return pp->msi_irq;
- 		}
- 	}
+ 
+ 	if (soc == EXYNOS5420)
 -- 
-2.20.1
+2.14.1
 
