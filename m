@@ -2,127 +2,117 @@ Return-Path: <SRS0=sb5j=YW=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49117CA9EC4
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Oct 2019 14:12:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7C42CA9EC4
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Oct 2019 18:28:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F12821734
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Oct 2019 14:12:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF9D720874
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Oct 2019 18:28:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="N0XRci7n"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="CAURuji1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388692AbfJ2OMM (ORCPT
+        id S1731451AbfJ2S2B (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 29 Oct 2019 10:12:12 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:41486 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389088AbfJ2OMM (ORCPT
+        Tue, 29 Oct 2019 14:28:01 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:37134 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727282AbfJ2S2B (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 29 Oct 2019 10:12:12 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20191029141210euoutp025e7fa220281f93056a6c932e4c3969e9~SI5I2OiE90400904009euoutp02s
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Oct 2019 14:12:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20191029141210euoutp025e7fa220281f93056a6c932e4c3969e9~SI5I2OiE90400904009euoutp02s
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1572358330;
-        bh=ChEoizYgV/w6uZd4qptYsaEigNMegtu97pepCSLODYU=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=N0XRci7nn2XLteGlXbB0sxatV1hiVg24wQ5ifiCBJ3oKy2tsoz65rTcXUgJa6Wh8M
-         KcUWukYLNI4c4PMvwez0PB1Ej0qKoz9fWVDBGjfB8O+ZTAIpwKP8LoWUIsMK8QoNkm
-         izrkb7DXdpn15Wo47V6l2rIM3bGSwNYOVnCVo4eI=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20191029141210eucas1p2957b53860e0b6ede471244dced15cb01~SI5IjEZ4S1948019480eucas1p2v;
-        Tue, 29 Oct 2019 14:12:10 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id AB.E8.04469.AB848BD5; Tue, 29
-        Oct 2019 14:12:10 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20191029141210eucas1p22dad2a084cdc6caf623d30c32101b941~SI5IP0fGq1475114751eucas1p29;
-        Tue, 29 Oct 2019 14:12:10 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191029141210eusmtrp2343a630ad730c6a4f5748754a77746c0~SI5IPKAvp2228922289eusmtrp2d;
-        Tue, 29 Oct 2019 14:12:10 +0000 (GMT)
-X-AuditID: cbfec7f2-569ff70000001175-d4-5db848ba8e54
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id FA.8B.04117.AB848BD5; Tue, 29
-        Oct 2019 14:12:10 +0000 (GMT)
-Received: from [106.120.51.75] (unknown [106.120.51.75]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191029141209eusmtip21f8ff57f1db70c30583e82f7ef7536ee~SI5HyMccQ1852318523eusmtip2c;
-        Tue, 29 Oct 2019 14:12:09 +0000 (GMT)
-Subject: Re: [PATCH] clk: samsung: exynos5420: Add SET_RATE_PARENT flag to
- clocks on G3D path
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marian Mihailescu <mihailescu2m@gmail.com>
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-ID: <452b0ffb-e6b6-a8da-9167-cc9f03eb3c8f@samsung.com>
-Date:   Tue, 29 Oct 2019 15:12:09 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.9.0
+        Tue, 29 Oct 2019 14:28:01 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9TIOKxm171399;
+        Tue, 29 Oct 2019 18:27:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
+ bh=3AATR/URPY9uyZaZu/wUmJ2Mmcno1iZta5grAKv46Tg=;
+ b=CAURuji1EtN3K6OGy/DGSnsNq4Qj9vpPCto45l5eIF6ATqG1GT6ryOu3pgZmH7zXKCSo
+ XJh0NAUoOkB7TYTQHqIfWZsQi6E/LdjOwnWgHPpYYTPdgpN+PcK+GoY4Fi0V/5nKMC0m
+ iuhLFcnZfdWtMQ8a1MEjLRCc5vlWyhgxOmMrjjiVwbXeuRYXwDOTNvdHxJDuVtYyDJWY
+ xfQ7yt8cBntk0Uj0coyhf2vex2ThVTN+/UlLaemfy+Qh134rQ/d9lWC9l4LZwmb4H44T
+ 6qT3pgVePGxMzci203Cy1u9N089JXkkZzO86jT7R7U+PHRT3wM13EIH4NE5W8bPE7nqk NQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2vve3qb3je-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 29 Oct 2019 18:27:51 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9TI8SEf052470;
+        Tue, 29 Oct 2019 18:27:50 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2vxj8gqhyy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 29 Oct 2019 18:27:50 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9TIRmHE013828;
+        Tue, 29 Oct 2019 18:27:48 GMT
+Received: from mwanda (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 29 Oct 2019 11:27:47 -0700
+Date:   Tue, 29 Oct 2019 21:27:42 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Kukjin Kim <kgene@kernel.org>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] soc: samsung: exynos-asv: Potential NULL dereference in
+ exynos_asv_update_opps()
+Message-ID: <20191029182742.GC17569@mwanda>
 MIME-Version: 1.0
-In-Reply-To: <20191025093435.12143-1-m.szyprowski@samsung.com>
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGKsWRmVeSWpSXmKPExsWy7djP87q7PHbEGuyfKW6xccZ6VovrX56z
-        Wpw/v4Hd4mPPPVaLGef3MVmsPXKX3WL9tJ+sFu1PXzI7cHjsnHWX3WPTqk42j74tqxg9Pm+S
-        C2CJ4rJJSc3JLEst0rdL4MpY3PiMreAEc8XsDv8Gxu9MXYycHBICJhLvPuxl62Lk4hASWMEo
-        MXPXPUYI5wujRMPUb+wQzmdGiV/vzgKVcYC1TNhkARFfzijx+/4SRpBRQgJvGSUON7qA2MIC
-        8RInW58zg9giAvoS3W1XwGqYBRYwSWxa7wtiswkYSvQe7QOL8wrYSRyeNxWsnkVAVeL8+R/M
-        ILtEBSIkTn9NhCgRlDg58wkLiM0JVL6tZx8zxEhxiaYvK1khbHmJ7W/nMIPcJiGwjl1iaetz
-        Fog3XSQOfuxghLCFJV4d38IOYctI/N85nwmioZlRomf3bXYIZwKjxP3jC6A6rCUOH7/ICnIR
-        s4CmxPpd+l2M7EBhR4lv3JAg4ZO48VYQ4gQ+iUnbpjNDhHklOtqEIEaoSPxeNR0a5lIS3U/+
-        s0xgVJqF5LFZSJ6ZheSZWQhbFzCyrGIUTy0tzk1PLTbMSy3XK07MLS7NS9dLzs/dxAhMPaf/
-        Hf+0g/HrpaRDjAIcjEo8vBnqO2KFWBPLiitzDzFKcDArifBePLMtVog3JbGyKrUoP76oNCe1
-        +BCjNAeLkjhvNcODaCGB9MSS1OzU1ILUIpgsEwenVAOj/t/LmmeXK/9dp/80INJr4Uqh6Rv+
-        6bX0G39Z5ijr5Wiz4yR/1ORjBXeK3xy+wpUvnXHpgDD/3Cq+Y4bCe4XvPvL7+E3+3Hb3F4fU
-        Lf55zppl52oUYCUkH9/S6GpQX3nyBos818v6m2aFs/2E/dbK7qzJVl+UpTYjXdAuwmP21/M/
-        Q1kt+P8qsRRnJBpqMRcVJwIAs5iN0DkDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNIsWRmVeSWpSXmKPExsVy+t/xe7q7PHbEGqz+x2yxccZ6VovrX56z
-        Wpw/v4Hd4mPPPVaLGef3MVmsPXKX3WL9tJ+sFu1PXzI7cHjsnHWX3WPTqk42j74tqxg9Pm+S
-        C2CJ0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL0MtY
-        3PiMreAEc8XsDv8Gxu9MXYwcHBICJhITNll0MXJxCAksZZQ4tfslO0RcSmJ+i1IXIyeQKSzx
-        51oXG0TNa0aJGw96WEASwgLxEidbnzOD2CIC+hLdbVcYQWxmgUVMEkfOZEE0TGSU+Nw6DyzB
-        JmAo0Xu0D8zmFbCTODxvKlgzi4CqxPnzP8BsUYEIiefbb0DVCEqcnPkEbBknUP22nn3MEAvU
-        Jf7MuwRli0s0fVnJCmHLS2x/O4d5AqPQLCTts5C0zELSMgtJywJGllWMIqmlxbnpucVGesWJ
-        ucWleel6yfm5mxiBEbft2M8tOxi73gUfYhTgYFTi4T2guSNWiDWxrLgy9xCjBAezkgjvxTPb
-        YoV4UxIrq1KL8uOLSnNSiw8xmgI9N5FZSjQ5H5gM8kriDU0NzS0sDc2NzY3NLJTEeTsEDsYI
-        CaQnlqRmp6YWpBbB9DFxcEo1MHoHmB1lbald8c6Qs3R6/JM/Nas3S/AamvR/SL72Y8nGx/5x
-        vev2Btqxcni+X+SepqJmm2nw0m+r3mIX5djbZ5dee8jm3nY+ZNPh4HtfFUsvTrd6Y/Wv6XH7
-        uUitV96z81Uka18/4qi7rxgiOb1RTWG1be/upQ8/fbA8svCRgckGQdaUn4s22iixFGckGmox
-        FxUnAgDjEihZzgIAAA==
-X-CMS-MailID: 20191029141210eucas1p22dad2a084cdc6caf623d30c32101b941
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20191025093445eucas1p16ce610f491a9bd9b9ce894debcaec9be
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20191025093445eucas1p16ce610f491a9bd9b9ce894debcaec9be
-References: <CGME20191025093445eucas1p16ce610f491a9bd9b9ce894debcaec9be@eucas1p1.samsung.com>
-        <20191025093435.12143-1-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9425 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1910290160
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9425 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1910290161
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 10/25/19 11:34, Marek Szyprowski wrote:
-> Add CLK_SET_RATE_PARENT flag to all clocks on the path from VPLL to G3D,
-> so the G3D MALI driver can simply adjust the rate of its clock by doing
-> a single clk_set_rate() call, without the need to know the whole clock
-> topology in Exynos542x SoCs.
-> 
-> Suggested-by: Marian Mihailescu <mihailescu2m@gmail.com>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+The dev_pm_opp_get_opp_table() returns error pointers if it's disabled
+in the config and it returns NULL if there is an error.  This code only
+checks for error pointers so it could lead to an Oops inside the
+dev_pm_opp_put_opp_table() function.
 
-Patch applied, thank you.
+Fixes: 5ea428595cc5 ("soc: samsung: Add Exynos Adaptive Supply Voltage driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+When we add a new driver, could we specify the which prefix will be used
+going forward?  In other words commit 5ea428595cc5 could have the
+prefix "soc: samsung: exynos-asv: Add Exynos Adaptive Supply Voltage
+driver".  The "exynos-asv" bit was missing so the first person to send a
+fix has to guess what is desired.
+
+ drivers/soc/samsung/exynos-asv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/soc/samsung/exynos-asv.c b/drivers/soc/samsung/exynos-asv.c
+index 8abf4dfaa5c5..30bb7b7cc769 100644
+--- a/drivers/soc/samsung/exynos-asv.c
++++ b/drivers/soc/samsung/exynos-asv.c
+@@ -93,7 +93,7 @@ static int exynos_asv_update_opps(struct exynos_asv *asv)
+ 			continue;
+ 
+ 		opp_table = dev_pm_opp_get_opp_table(cpu);
+-		if (IS_ERR(opp_table))
++		if (IS_ERR_OR_NULL(opp_table))
+ 			continue;
+ 
+ 		if (!last_opp_table || opp_table != last_opp_table) {
+-- 
+2.20.1
+
