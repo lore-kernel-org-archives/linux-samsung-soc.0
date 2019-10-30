@@ -2,95 +2,116 @@ Return-Path: <SRS0=qXZT=YX=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FAKE_REPLY_C,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A09FDCA9EC5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Oct 2019 18:06:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B45A5CA9EC7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Oct 2019 21:46:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 600C02087E
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Oct 2019 18:06:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BA3F20874
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Oct 2019 21:46:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572458765;
-	bh=rZB+jB/GhHIadQPBUNnMZMqEdc0Z25SHClG1fS9zNIU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=yFxazmldYntJjQX7eTDOvBiWgW+VvCxdS+F/Bjk7BhtZTXyhDnyH/fqcr7Easvr/1
-	 CSEzdsN5AMxZFqxx86pNoHALYV1Yt1sfbP9FVP6zzd/hWAz7zvgRCJifTCzy0fGO4H
-	 +qYXpPWWHrizKSy1UkZkEpR+++U3P0dXuSXwpAV8=
+	s=default; t=1572471986;
+	bh=tul9G/l7oEq7DjuuWrHdlkxE9hMNRejXgxOVts2mk8A=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
+	b=FAxbFeKWoA96NK/nJ3ICYXVewHLdQeYj+panDOSvCUluZS18De1XmyShvnLsM7pGs
+	 at35D8BvA/MzXYLmMc4ErZ+sGpCZsGoCMCk8DM/J9GpPO8tm3+tjBr2kyKcLFCwWJ1
+	 JcWLzych625QDipSSIeOSVa2VDJV4becl69wwcbg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727763AbfJ3SGF (ORCPT
+        id S1727266AbfJ3Vq0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 30 Oct 2019 14:06:05 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:44395 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727762AbfJ3SGE (ORCPT
+        Wed, 30 Oct 2019 17:46:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56688 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726171AbfJ3VqZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 30 Oct 2019 14:06:04 -0400
-Received: by mail-ed1-f68.google.com with SMTP id b18so2505459edr.11;
-        Wed, 30 Oct 2019 11:06:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FrSVqR4rubXbOdoO4xIlrJ/g2AylU6DO+rRGS6ug+TM=;
-        b=uVssUMm6cjQdfCDkO8kwHYzIulhlCr5/nE+SqtXo0+491WDXG7QWahSPeru0ZFYibn
-         leaeEqPllET5IXOrX4qF6Skb+8y1383gTzhgM5hVDvNNiuS9QUNPygPkJ9O9n9XFosCB
-         t+064iV3AKOecHEQxo0lCsGy+Q/rX4oq83ZEMGu7xVqJWX/56DH16NdLtW6QMgP7NhaG
-         74a5oG4XF2fx3XwBYWxnejHJ5mfEeI2USU+utgsQq/fiZfpH2LEY0Gqttw508k1Kft6U
-         uwYojeyMFqv+WxjK6+JSCSapwJUwX88ydsGPBd5F9aXWBefdXvvbR8KZEid32+reyFKn
-         gbCg==
-X-Gm-Message-State: APjAAAU7NLQ/9XMwvQlISZmY5zwAlw6oVhpL/Cv1wY0Xn1hpMpSSC8ki
-        VurfnIUFAYuWU6jXm+qZH6s=
-X-Google-Smtp-Source: APXvYqzu4HoYoArCMfuZiHHYx5XLueApspB4kJAI+3/Kg9OneW/pR4iKPXYNA//dTC9X/UDqISTrsw==
-X-Received: by 2002:a17:906:c793:: with SMTP id cw19mr886699ejb.25.1572458762736;
-        Wed, 30 Oct 2019 11:06:02 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.180])
-        by smtp.googlemail.com with ESMTPSA id d26sm17952edu.37.2019.10.30.11.06.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Oct 2019 11:06:01 -0700 (PDT)
-Date:   Wed, 30 Oct 2019 19:05:59 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
+        Wed, 30 Oct 2019 17:46:25 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77F5F20862;
+        Wed, 30 Oct 2019 21:46:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572471985;
+        bh=tul9G/l7oEq7DjuuWrHdlkxE9hMNRejXgxOVts2mk8A=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=jaRpvqIMi991TIcZXEQyzF7YRHL9iXJUIgR3sM3Wo93AqZxd5xC3r55CtQFqbpcO4
+         ljRtlF7QFdO4ofQjimn9JySEf22M9jxbjlwDUmLusyGhPOCsA5Aoj9/y6gKesmeVlI
+         tHdiVnTLOqREjxEDBMut5RR4croVQFCamjKmm0r4=
+Date:   Wed, 30 Oct 2019 16:46:21 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Saurav Girepunje <saurav.girepunje@gmail.com>
+Cc:     jingoohan1@gmail.com, lorenzo.pieralisi@arm.com,
+        andrew.murray@arm.com, kgene@kernel.org, krzk@kernel.org,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] soc: samsung: exynos-asv: Potential NULL dereference in
- exynos_asv_update_opps()
-Message-ID: <20191030180559.GA8016@kozik-lap>
-References: <20191029182742.GC17569@mwanda>
+        saurav.girepunje@hotmail.com
+Subject: Re: [PATCH] pci: controller: dwc: Remove dev_err use after
+ platform_get_irq
+Message-ID: <20191030214621.GA256263@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191029182742.GC17569@mwanda>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20191028202144.GA29158@saurav>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Oct 29, 2019 at 09:27:42PM +0300, Dan Carpenter wrote:
-> The dev_pm_opp_get_opp_table() returns error pointers if it's disabled
-> in the config and it returns NULL if there is an error.  This code only
-> checks for error pointers so it could lead to an Oops inside the
-> dev_pm_opp_put_opp_table() function.
+Please run "git log --oneline drivers/pci/controller/dwc/pci-exynos.c"
+and make your subject line match, e.g.,
+
+  PCI: exynos: Remove dev_err() usage after platform_get_irq()
+
+The body of that was copied from similar commits like:
+
+  fb5a35dbee8d pwm: Remove dev_err() usage after platform_get_irq()
+  9a7957d0c955 mmc: Remove dev_err() usage after platform_get_irq()
+  1df217868178 tty: Remove dev_err() usage after platform_get_irq()
+
+It's nice when similar commits have similar subject lines.
+
+In fact, this whole thing has been approached before:
+
+  https://lore.kernel.org/lkml/20190730181557.90391-32-swboyd@chromium.org/
+
+That patch would have fixed many similar issues in PCI, but I don't
+know what happened to it.  Would you mind resurrecting that and fixing
+the minor issues so we can do everything in PCI at once?
+
+On Tue, Oct 29, 2019 at 01:51:44AM +0530, Saurav Girepunje wrote:
+> Don't need dev_err() messages when platform_get_irq() fails now that
+> platform_get_irq() prints an error message itself when something goes
+> wrong.
 > 
-> Fixes: 5ea428595cc5 ("soc: samsung: Add Exynos Adaptive Supply Voltage driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Saurav Girepunje <saurav.girepunje@gmail.com>
 > ---
-> When we add a new driver, could we specify the which prefix will be used
-> going forward?  In other words commit 5ea428595cc5 could have the
-> prefix "soc: samsung: exynos-asv: Add Exynos Adaptive Supply Voltage
-> driver".  The "exynos-asv" bit was missing so the first person to send a
-> fix has to guess what is desired.
-
-Indeed, I usually do not add it on first commit to avoid duplication
-(prefix and later explanation) but I see that it would be helpful.
-
-
-Thanks, applied.
-
-Best regards,
-Krzysztof
+>  drivers/pci/controller/dwc/pci-exynos.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
+> index 14a6ba4067fb..2293b346d96a 100644
+> --- a/drivers/pci/controller/dwc/pci-exynos.c
+> +++ b/drivers/pci/controller/dwc/pci-exynos.c
+> @@ -403,7 +403,6 @@ static int __init exynos_add_pcie_port(struct exynos_pcie *ep,
+>  
+>  	pp->irq = platform_get_irq(pdev, 1);
+>  	if (pp->irq < 0) {
+> -		dev_err(dev, "failed to get irq\n");
+>  		return pp->irq;
+>  	}
+>  	ret = devm_request_irq(dev, pp->irq, exynos_pcie_irq_handler,
+> @@ -416,7 +415,6 @@ static int __init exynos_add_pcie_port(struct exynos_pcie *ep,
+>  	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+>  		pp->msi_irq = platform_get_irq(pdev, 0);
+>  		if (pp->msi_irq < 0) {
+> -			dev_err(dev, "failed to get msi irq\n");
+>  			return pp->msi_irq;
+>  		}
+>  	}
+> -- 
+> 2.20.1
+> 
