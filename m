@@ -2,149 +2,236 @@ Return-Path: <SRS0=qXZT=YX=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14F05CA9EC5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Oct 2019 15:15:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B11C47E49
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Oct 2019 17:32:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D682B20679
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Oct 2019 15:15:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9AB22054F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Oct 2019 17:32:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572448556;
-	bh=E2VeR4DpC8qlFCo3RxqjxseT2yjTygu+f2xhqjwmhAo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Cu+tKr53YTFfn8uJdCKiDbzORUhPDwYiX/hdTKKdv2gWg8sMNaliykTotubpSQ/Sl
-	 fiWOX4ULC35RoPFiKLhT3xZ2AeDLozXtmBHV+MEEPEBLsvRn72yHF3DCJxpHqfubk7
-	 FRYkI2eBELOTVf7cvD5FM+bPlug4uBS7BrLPXwhw=
+	s=default; t=1572456756;
+	bh=7YttjPf25uaH/HJ9LjN93gAC67M6cLBWLgKLTrTSIEI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=esARtLmp42i7z/5893ATHTlOFGqby8CwT0ig0m9pNzmoJfvNaSKLYvlaCcQT8Th+p
+	 asjX4S+H9bi8aI/ADcBVvdKzgk/rQOAysK0r3BEhbWtZJ/av6fFHTOgEeIZQWTj4mt
+	 0V94hCwERP1JWBpPmSElrgE1NNF88WRmZ3Sk1r0I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726963AbfJ3PP4 (ORCPT
+        id S1727310AbfJ3Rcc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 30 Oct 2019 11:15:56 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:35217 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726967AbfJ3PP4 (ORCPT
+        Wed, 30 Oct 2019 13:32:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35528 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727093AbfJ3Rcb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 30 Oct 2019 11:15:56 -0400
-Received: by mail-ed1-f65.google.com with SMTP id k2so2059413edx.2;
-        Wed, 30 Oct 2019 08:15:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Y+WK5GKecV/KBDUIy9GWTH4bwpBGohOzkeFmBQZf1R0=;
-        b=nfWQzkkf4PhLpKtA94RjGAhAZG4wqbg/1DGKs9XoN9ILhlAKw3anczuzfN9NpGDRRJ
-         XIOP3/cVplHJCsQDuoltwlOgecJaKjLACrNJMOYsXp0Zjo3QIJWCJ+cVlmaMCIFIcWmr
-         204QilFckeUrG2141XFOBHcZ0ZwG3wA6KIL/8Zw5KADiX8djTmsh7/VzyVDTRqYVCJwy
-         DubfI8lvWWkJ1eeJZsR1sj5LwnZG41IrrsWGD3PM7UMPA4sQKucwz7+/Xp34Q8IDR3Dc
-         1npOEJOzQipz2F5HFaAuHgdQf6s0Ie8sTOgssHAcOkciUkSMjp3NL7/M2hAhZg2fLZJa
-         CR1w==
-X-Gm-Message-State: APjAAAUGQXGq6ANzKT4oW5bKtBAgfTvpAqxqIU+7lRYqXzq5Iw1ZsG2Q
-        Ph5JTp63Z0JJQ01FpI/AzNU=
-X-Google-Smtp-Source: APXvYqzW36JMfOP+9Ckkk57hi580dnNzKCE+o0IDHat7XROi4wbyfWLMRXpJoPeDKapILbXIURAeVg==
-X-Received: by 2002:a17:906:85da:: with SMTP id i26mr25000ejy.186.1572448553957;
-        Wed, 30 Oct 2019 08:15:53 -0700 (PDT)
-Received: from pi3 ([194.230.155.180])
-        by smtp.googlemail.com with ESMTPSA id 32sm6111edq.23.2019.10.30.08.15.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2019 08:15:53 -0700 (PDT)
-Date:   Wed, 30 Oct 2019 16:15:51 +0100
+        Wed, 30 Oct 2019 13:32:31 -0400
+Received: from localhost.localdomain (unknown [194.230.155.180])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC06D208C0;
+        Wed, 30 Oct 2019 17:32:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572456750;
+        bh=7YttjPf25uaH/HJ9LjN93gAC67M6cLBWLgKLTrTSIEI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=jdyAXwcuImbI5Dnlq9yhye6rNZ1vtiYHuRiN2L8gbUdOGL5amFQAfRXBN/oNUIDXQ
+         Rr0GeyLu7xuKScUnY6gDOVragLGpAe8+i4iaUEgigkqGy5LKaadTlTVr65c6J3b4FR
+         waArH0hxloCLG3ahcBQ+cvtPM2pe2sJdvzWb5/4M=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] soc: samsung: exynos-asv: fix potential overflow
- in multiply
-Message-ID: <20191030151551.GA25718@pi3>
-References: <20191030145457.10120-1-colin.king@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191030145457.10120-1-colin.king@canonical.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v3 2/2] dt-bindings: power: Convert Samsung Exynos Power Domain bindings to json-schema
+Date:   Wed, 30 Oct 2019 18:32:16 +0100
+Message-Id: <20191030173216.5993-2-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191030173216.5993-1-krzk@kernel.org>
+References: <20191030173216.5993-1-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 30, 2019 at 02:54:57PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The multiplication of opp_freq by MHZ is performed using unsigned int
-> multiplication however the result is being passed into a function where
-> the frequency is an unsigned long, so there is an expectation that the
-> result won't fit into an unsigned int. Fix any potential integer overflow
-> my making opp_freq an unsigned long.  Also change from %u to %lu format
-> specifiers
-> 
-> Addresses-Coverity: ("Unintentional integer overflow")
-> Fixes: 5ea428595cc5 ("soc: samsung: Add Exynos Adaptive Supply Voltage driver")
+Convert Samsung Exynos Soc Power Domain bindings to DT schema format using
+json-schema.
 
-Although I like the idea of using the same type as the
-dev_pm_opp_find_freq_exact() interface, but I do not agree with severity
-of this. This is currently only ARMv7 (32-bit) driver, so using long
-does not change anything. It's still 4 bytes and it is still up to 4
-GHz.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Therefore on ARMv7, the possibility of overflow is exactly the same as
-before. Nothing was fixed.
+---
 
-If we really want to fix it, then all this should be "long long" or
-value should be checked while parsing DT.
+Changes since v2:
+1. Use new name of file in samsung,sysmmu.yaml and MAINTAINERS.
 
-Semantically I agree, so I would prefer to adjust only the commit
-message.
+Changes since v1:
+1. Indent example with four spaces (more readable),
+2. Remove unneeded types,
+3. Add missing address in example and fix the name.
+---
+ .../bindings/iommu/samsung,sysmmu.yaml        |  2 +-
+ .../devicetree/bindings/power/pd-samsung.txt  | 45 -------------
+ .../devicetree/bindings/power/pd-samsung.yaml | 66 +++++++++++++++++++
+ MAINTAINERS                                   |  2 +-
+ 4 files changed, 68 insertions(+), 47 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/power/pd-samsung.txt
+ create mode 100644 Documentation/devicetree/bindings/power/pd-samsung.yaml
 
-Best regards,
-Krzysztof
+diff --git a/Documentation/devicetree/bindings/iommu/samsung,sysmmu.yaml b/Documentation/devicetree/bindings/iommu/samsung,sysmmu.yaml
+index ecde98da5b72..7cdd3aaa2ba4 100644
+--- a/Documentation/devicetree/bindings/iommu/samsung,sysmmu.yaml
++++ b/Documentation/devicetree/bindings/iommu/samsung,sysmmu.yaml
+@@ -69,7 +69,7 @@ properties:
+     description: |
+       Required if the System MMU is needed to gate its power.
+       Please refer to the following document:
+-      Documentation/devicetree/bindings/power/pd-samsung.txt
++      Documentation/devicetree/bindings/power/pd-samsung.yaml
+     maxItems: 1
+ 
+ required:
+diff --git a/Documentation/devicetree/bindings/power/pd-samsung.txt b/Documentation/devicetree/bindings/power/pd-samsung.txt
+deleted file mode 100644
+index 92ef355e8f64..000000000000
+--- a/Documentation/devicetree/bindings/power/pd-samsung.txt
++++ /dev/null
+@@ -1,45 +0,0 @@
+-* Samsung Exynos Power Domains
+-
+-Exynos processors include support for multiple power domains which are used
+-to gate power to one or more peripherals on the processor.
+-
+-Required Properties:
+-- compatible: should be one of the following.
+-    * samsung,exynos4210-pd - for exynos4210 type power domain.
+-    * samsung,exynos5433-pd - for exynos5433 type power domain.
+-- reg: physical base address of the controller and length of memory mapped
+-    region.
+-- #power-domain-cells: number of cells in power domain specifier;
+-    must be 0.
+-
+-Optional Properties:
+-- label: Human readable string with domain name. Will be visible in userspace
+-	to let user to distinguish between multiple domains in SoC.
+-- power-domains: phandle pointing to the parent power domain, for more details
+-		 see Documentation/devicetree/bindings/power/power_domain.txt
+-
+-Deprecated Properties:
+-- clocks
+-- clock-names
+-
+-Node of a device using power domains must have a power-domains property
+-defined with a phandle to respective power domain.
+-
+-Example:
+-
+-	lcd0: power-domain-lcd0 {
+-		compatible = "samsung,exynos4210-pd";
+-		reg = <0x10023C00 0x10>;
+-		#power-domain-cells = <0>;
+-		label = "LCD0";
+-	};
+-
+-	mfc_pd: power-domain@10044060 {
+-		compatible = "samsung,exynos4210-pd";
+-		reg = <0x10044060 0x20>;
+-		#power-domain-cells = <0>;
+-		label = "MFC";
+-	};
+-
+-See Documentation/devicetree/bindings/power/power_domain.txt for description
+-of consumer-side bindings.
+diff --git a/Documentation/devicetree/bindings/power/pd-samsung.yaml b/Documentation/devicetree/bindings/power/pd-samsung.yaml
+new file mode 100644
+index 000000000000..09bdd96c1ec1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/power/pd-samsung.yaml
+@@ -0,0 +1,66 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/power/pd-samsung.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung Exynos SoC Power Domains
++
++maintainers:
++  - Krzysztof Kozlowski <krzk@kernel.org>
++
++description: |+
++  Exynos processors include support for multiple power domains which are used
++  to gate power to one or more peripherals on the processor.
++
++allOf:
++  - $ref: power-domain.yaml#
++
++properties:
++  compatible:
++    enum:
++      - samsung,exynos4210-pd
++      - samsung,exynos5433-pd
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    deprecated: true
++    maxItems: 1
++
++  clock-names:
++    deprecated: true
++    maxItems: 1
++
++  label:
++    description:
++      Human readable string with domain name. Will be visible in userspace
++      to let user to distinguish between multiple domains in SoC.
++
++  "#power-domain-cells":
++    const: 0
++
++  power-domains:
++    maxItems: 1
++
++required:
++  - compatible
++  - "#power-domain-cells"
++  - reg
++
++examples:
++  - |
++    lcd0_pd: power-domain@10023c80 {
++        compatible = "samsung,exynos4210-pd";
++        reg = <0x10023c80 0x20>;
++        #power-domain-cells = <0>;
++        label = "LCD0";
++    };
++
++    mfc_pd: power-domain@10044060 {
++        compatible = "samsung,exynos4210-pd";
++        reg = <0x10044060 0x20>;
++        #power-domain-cells = <0>;
++        label = "MFC";
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8fde5aa64bda..7126d3e079a4 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2258,7 +2258,7 @@ F:	drivers/soc/samsung/
+ F:	include/linux/soc/samsung/
+ F:	Documentation/arm/samsung/
+ F:	Documentation/devicetree/bindings/arm/samsung/
+-F:	Documentation/devicetree/bindings/power/pd-samsung.txt
++F:	Documentation/devicetree/bindings/power/pd-samsung.yaml
+ N:	exynos
+ 
+ ARM/SAMSUNG MOBILE MACHINE SUPPORT
+-- 
+2.17.1
 
-
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/soc/samsung/exynos-asv.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/soc/samsung/exynos-asv.c b/drivers/soc/samsung/exynos-asv.c
-> index 8abf4dfaa5c5..d66fc74379a3 100644
-> --- a/drivers/soc/samsung/exynos-asv.c
-> +++ b/drivers/soc/samsung/exynos-asv.c
-> @@ -30,7 +30,7 @@ static int exynos_asv_update_cpu_opps(struct exynos_asv *asv,
->  {
->  	struct exynos_asv_subsys *subsys = NULL;
->  	struct dev_pm_opp *opp;
-> -	unsigned int opp_freq;
-> +	unsigned long opp_freq;
->  	int i;
->  
->  	for (i = 0; i < ARRAY_SIZE(asv->subsys); i++) {
-> @@ -51,7 +51,7 @@ static int exynos_asv_update_cpu_opps(struct exynos_asv *asv,
->  
->  		opp = dev_pm_opp_find_freq_exact(cpu, opp_freq * MHZ, true);
->  		if (IS_ERR(opp)) {
-> -			dev_info(asv->dev, "cpu%d opp%d, freq: %u missing\n",
-> +			dev_info(asv->dev, "cpu%d opp%d, freq: %lu missing\n",
->  				 cpu->id, i, opp_freq);
->  
->  			continue;
-> @@ -68,11 +68,11 @@ static int exynos_asv_update_cpu_opps(struct exynos_asv *asv,
->  						new_volt, new_volt, new_volt);
->  		if (ret < 0)
->  			dev_err(asv->dev,
-> -				"Failed to adjust OPP %u Hz/%u uV for cpu%d\n",
-> +				"Failed to adjust OPP %lu Hz/%u uV for cpu%d\n",
->  				opp_freq, new_volt, cpu->id);
->  		else
->  			dev_dbg(asv->dev,
-> -				"Adjusted OPP %u Hz/%u -> %u uV, cpu%d\n",
-> +				"Adjusted OPP %lu Hz/%u -> %u uV, cpu%d\n",
->  				opp_freq, volt, new_volt, cpu->id);
->  	}
->  
-> -- 
-> 2.20.1
-> 
