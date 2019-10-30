@@ -1,118 +1,199 @@
-Return-Path: <SRS0=sb5j=YW=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=qXZT=YX=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7C42CA9EC4
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Oct 2019 18:28:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33789CA9EAF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Oct 2019 08:14:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF9D720874
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 29 Oct 2019 18:28:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="CAURuji1"
+	by mail.kernel.org (Postfix) with ESMTP id 0B532217F9
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Oct 2019 08:14:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1572423287;
+	bh=/I/XdAmqC3W0ZbidrEPHILv0kwB10OkvAVYu1I/ABMU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=a1OEpbOZTCUaL19hVeqspxUO3taL3SYMv8Q86h6yz3XKFIz4bawP5BqUMyNDVf5NM
+	 1G2p1xIQ8ZM7zi3LsDaYP2qU2IP3GX00uI7uIVy0bT0GE2h5iTVReUAm6Brw+rETFG
+	 MPOivLAzN8a18HxN6l8skYZcO+SMx8+Lnz467Q0U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731451AbfJ2S2B (ORCPT
+        id S1726137AbfJ3IOq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 29 Oct 2019 14:28:01 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:37134 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727282AbfJ2S2B (ORCPT
+        Wed, 30 Oct 2019 04:14:46 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:44880 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725822AbfJ3IOq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 29 Oct 2019 14:28:01 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9TIOKxm171399;
-        Tue, 29 Oct 2019 18:27:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
- bh=3AATR/URPY9uyZaZu/wUmJ2Mmcno1iZta5grAKv46Tg=;
- b=CAURuji1EtN3K6OGy/DGSnsNq4Qj9vpPCto45l5eIF6ATqG1GT6ryOu3pgZmH7zXKCSo
- XJh0NAUoOkB7TYTQHqIfWZsQi6E/LdjOwnWgHPpYYTPdgpN+PcK+GoY4Fi0V/5nKMC0m
- iuhLFcnZfdWtMQ8a1MEjLRCc5vlWyhgxOmMrjjiVwbXeuRYXwDOTNvdHxJDuVtYyDJWY
- xfQ7yt8cBntk0Uj0coyhf2vex2ThVTN+/UlLaemfy+Qh134rQ/d9lWC9l4LZwmb4H44T
- 6qT3pgVePGxMzci203Cy1u9N089JXkkZzO86jT7R7U+PHRT3wM13EIH4NE5W8bPE7nqk NQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2vve3qb3je-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Oct 2019 18:27:51 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x9TI8SEf052470;
-        Tue, 29 Oct 2019 18:27:50 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2vxj8gqhyy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Oct 2019 18:27:50 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x9TIRmHE013828;
-        Tue, 29 Oct 2019 18:27:48 GMT
-Received: from mwanda (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 29 Oct 2019 11:27:47 -0700
-Date:   Tue, 29 Oct 2019 21:27:42 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Kukjin Kim <kgene@kernel.org>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] soc: samsung: exynos-asv: Potential NULL dereference in
- exynos_asv_update_opps()
-Message-ID: <20191029182742.GC17569@mwanda>
+        Wed, 30 Oct 2019 04:14:46 -0400
+Received: by mail-ed1-f68.google.com with SMTP id b18so997297edr.11
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Oct 2019 01:14:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1n8w6xKEN3g/M5sfu+FaAMSXKcxLqw2rs+v6nMFKHAQ=;
+        b=rLUVD8lpkxjdFeveJDyuP3gcrhNO10jMLlDI8LNd9FVCMTRDVhKZ1b+iRaWihpkKyJ
+         SYL9mItnGq8jUs+ufe7RMTALOitp9vOXXCAHQhCxYFwZRS29FHjzymRSIHrQv6t3ce1S
+         D2+bJlDw+ciRp4aA5zF+aeHZideCH8ayNzXJG/KSDWpe/WCwEI3u2I2+UySP276u4nEP
+         dTcrwt0PcBfTRYUx6g1unaiTRsM7A6ocXbV6Nq+4n0hnHNJ+WSriyNfXuh2R9DZggau0
+         yMgkkGHk3ynPyQNcsZ0oCYVQajZ/cRXBtDw1CzPKOkO9OR3WUO/g5vlBBgNDraSwP52l
+         BKug==
+X-Gm-Message-State: APjAAAXHEL7+QpnxjIwykb72sGlDg/vOjYjSOmXxgEkTG6DDLHoNEhs4
+        SEIr97TWkNMWbt2EiFoZy19YrHTW
+X-Google-Smtp-Source: APXvYqwoieXfzojDskEBuqJjCs4yqMq7bUQGfg8g64suU4nC1eIIKC3wpkqodeja6NsaPMVb5c6pGg==
+X-Received: by 2002:a50:e002:: with SMTP id e2mr1011427edl.278.1572423284671;
+        Wed, 30 Oct 2019 01:14:44 -0700 (PDT)
+Received: from pi3 ([194.230.155.180])
+        by smtp.googlemail.com with ESMTPSA id n19sm9263edo.36.2019.10.30.01.14.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2019 01:14:43 -0700 (PDT)
+Date:   Wed, 30 Oct 2019 09:14:42 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Marian Mihailescu <mihailescu2m@gmail.com>
+Cc:     linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: exynos5420: add mali dt bindings and enable
+ mali on Odroid XU3/4
+Message-ID: <20191030081442.GA25260@pi3>
+References: <20191029011312.4601-1-mihailescu2m@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9425 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1910290160
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9425 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1910290161
+In-Reply-To: <20191029011312.4601-1-mihailescu2m@gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The dev_pm_opp_get_opp_table() returns error pointers if it's disabled
-in the config and it returns NULL if there is an error.  This code only
-checks for error pointers so it could lead to an Oops inside the
-dev_pm_opp_put_opp_table() function.
+Hi,
 
-Fixes: 5ea428595cc5 ("soc: samsung: Add Exynos Adaptive Supply Voltage driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-When we add a new driver, could we specify the which prefix will be used
-going forward?  In other words commit 5ea428595cc5 could have the
-prefix "soc: samsung: exynos-asv: Add Exynos Adaptive Supply Voltage
-driver".  The "exynos-asv" bit was missing so the first person to send a
-fix has to guess what is desired.
+Thanks for the patch.
 
- drivers/soc/samsung/exynos-asv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Use scripts/get_maintainer.pl to get list of maintainer and lists to Cc.
 
-diff --git a/drivers/soc/samsung/exynos-asv.c b/drivers/soc/samsung/exynos-asv.c
-index 8abf4dfaa5c5..30bb7b7cc769 100644
---- a/drivers/soc/samsung/exynos-asv.c
-+++ b/drivers/soc/samsung/exynos-asv.c
-@@ -93,7 +93,7 @@ static int exynos_asv_update_opps(struct exynos_asv *asv)
- 			continue;
- 
- 		opp_table = dev_pm_opp_get_opp_table(cpu);
--		if (IS_ERR(opp_table))
-+		if (IS_ERR_OR_NULL(opp_table))
- 			continue;
- 
- 		if (!last_opp_table || opp_table != last_opp_table) {
--- 
-2.20.1
+On Tue, Oct 29, 2019 at 11:43:12AM +1030, Marian Mihailescu wrote:
+> Add device tree bindings for Mali GPU for Exynos 542x SoC.
 
+"Add device tree nodes", not bindings.
+
+> GPU is disabled by default, and is enabled for each board after the regulator
+> is defined. Tested on Odroid-XU4.
+> 
+> Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
+> ---
+>  arch/arm/boot/dts/exynos5420.dtsi             | 49 +++++++++++++++++++++++++++
+>  arch/arm/boot/dts/exynos5422-odroid-core.dtsi |  5 +++
+>  2 files changed, 54 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index 7d51e0f4ab79..5d60e0f1b09a 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -670,6 +670,55 @@
+>  			iommus = <&sysmmu_gscl1>;
+>  		};
+>  
+> +		mali: mali@11800000 {
+
+The node should be generic, so use gpu. Also for the label.
+
+> +			compatible = "samsung,exynos5420-mali", "arm,malit628";
+
+First compatible is not documented - please run scripts/checkpatch.pl.
+See: https://patchwork.kernel.org/patch/10996479/
+
+Second compatible looks wrong.
+
+> +			reg = <0x11800000 0x5000>;
+> +			interrupts = <GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH>,
+> +						 <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
+> +						 <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>;
+
+Broken indentation. Align it with <GIC_SPI before.
+
+> +			interrupt-names = "JOB", "MMU", "GPU";
+
+Does not match bindings.
+
+> +
+> +			clocks = <&clock CLK_G3D>;
+> +			clock-names = "core";
+> +			power-domains = <&g3d_pd>;
+> +			operating-points-v2 = <&gpu_opp_table>;
+
+This should be also cooling device so at least cooling cells are needed.
+The best would be to connect it with TMU GPU but this could be in next
+patches.
+
+> +
+> +			status = "disabled";
+> +
+> +			gpu_opp_table: gpu-opp-table {
+
+The node name: just opp-table, to be generic.
+
+> +				compatible = "operating-points-v2";
+> +
+> +				opp@177000000 {
+> +					opp-hz = /bits/ 64 <177000000>;
+> +					opp-microvolt = <812500>;
+> +				};
+> +				opp@266000000 {
+> +					opp-hz = /bits/ 64 <266000000>;
+> +					opp-microvolt = <862500>;
+> +				};
+> +				opp@350000000 {
+> +					opp-hz = /bits/ 64 <350000000>;
+> +					opp-microvolt = <912500>;
+> +				};
+> +				opp-420000000 {
+> +					opp-hz = /bits/ 64 <420000000>;
+> +					opp-microvolt = <962500>;
+> +				};
+> +				opp-480000000 {
+> +					opp-hz = /bits/ 64 <480000000>;
+> +					opp-microvolt = <1000000>;
+> +				};
+> +				opp-543000000 {
+> +					opp-hz = /bits/ 64 <543000000>;
+> +					opp-microvolt = <1037500>;
+> +				};
+> +				opp-600000000 {
+> +					opp-hz = /bits/ 64 <600000000>;
+> +					opp-microvolt = <1150000>;
+> +				};
+> +			};
+> +		};
+> +
+>  		scaler_0: scaler@12800000 {
+>  			compatible = "samsung,exynos5420-scaler";
+>  			reg = <0x12800000 0x1294>;
+> diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+> index 422692b20c46..210c305a0ce8 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+> +++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+> @@ -659,6 +659,11 @@
+>  	status = "okay";
+>  };
+>  
+> +&mali {
+> +	mali-supply = <&buck4_reg>;
+
+Remove the always-on from buck4.
+
+Best regards,
+Krzysztof
+
+
+> +	status = "okay";
+> +};
+> +
+>  &rtc {
+>  	status = "okay";
+>  	clocks = <&clock CLK_RTC>, <&s2mps11_osc S2MPS11_CLK_AP>;
+> -- 
+> 2.14.1
+> 
