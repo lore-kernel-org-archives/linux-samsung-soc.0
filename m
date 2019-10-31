@@ -1,117 +1,156 @@
-Return-Path: <SRS0=qXZT=YX=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=d/6x=YY=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FAKE_REPLY_C,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B45A5CA9EC7
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Oct 2019 21:46:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04E5ACA9ECB
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 31 Oct 2019 15:03:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BA3F20874
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 30 Oct 2019 21:46:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572471986;
-	bh=tul9G/l7oEq7DjuuWrHdlkxE9hMNRejXgxOVts2mk8A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
-	b=FAxbFeKWoA96NK/nJ3ICYXVewHLdQeYj+panDOSvCUluZS18De1XmyShvnLsM7pGs
-	 at35D8BvA/MzXYLmMc4ErZ+sGpCZsGoCMCk8DM/J9GpPO8tm3+tjBr2kyKcLFCwWJ1
-	 JcWLzych625QDipSSIeOSVa2VDJV4becl69wwcbg=
+	by mail.kernel.org (Postfix) with ESMTP id A7CD12083E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 31 Oct 2019 15:03:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="q5QzfrWK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727266AbfJ3Vq0 (ORCPT
+        id S1728109AbfJaPDi (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 30 Oct 2019 17:46:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56688 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726171AbfJ3VqZ (ORCPT
+        Thu, 31 Oct 2019 11:03:38 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:58228 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728032AbfJaPDi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 30 Oct 2019 17:46:25 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77F5F20862;
-        Wed, 30 Oct 2019 21:46:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572471985;
-        bh=tul9G/l7oEq7DjuuWrHdlkxE9hMNRejXgxOVts2mk8A=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=jaRpvqIMi991TIcZXEQyzF7YRHL9iXJUIgR3sM3Wo93AqZxd5xC3r55CtQFqbpcO4
-         ljRtlF7QFdO4ofQjimn9JySEf22M9jxbjlwDUmLusyGhPOCsA5Aoj9/y6gKesmeVlI
-         tHdiVnTLOqREjxEDBMut5RR4croVQFCamjKmm0r4=
-Date:   Wed, 30 Oct 2019 16:46:21 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Saurav Girepunje <saurav.girepunje@gmail.com>
-Cc:     jingoohan1@gmail.com, lorenzo.pieralisi@arm.com,
-        andrew.murray@arm.com, kgene@kernel.org, krzk@kernel.org,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        saurav.girepunje@hotmail.com
-Subject: Re: [PATCH] pci: controller: dwc: Remove dev_err use after
- platform_get_irq
-Message-ID: <20191030214621.GA256263@google.com>
+        Thu, 31 Oct 2019 11:03:38 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20191031150335euoutp02cb8a2a5ca8d681f032302eefdc9efb78~Sw4mIPCYG2899228992euoutp02E
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Oct 2019 15:03:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20191031150335euoutp02cb8a2a5ca8d681f032302eefdc9efb78~Sw4mIPCYG2899228992euoutp02E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1572534215;
+        bh=N/rr1ATWj6Fr8BjjF7ON7fKYP92kHGFezwLqpPsY0TM=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=q5QzfrWK9ojPk1KhL4OSfugqNiYR7Wmf6snRdKHLuDMMWy7oxePiW7CwD+/N0b9Nu
+         5ZLNHz+CxKSpU6X0+55bdUQLWMBxaAkfT4vtEOq+ofRsVVhiEhRXty8rzb4eFbFp/m
+         zdUWABGHMEDvGYuS5bcOZC1ciznikX95Lpca0jnI=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20191031150335eucas1p268dfe1ecfa718ab5f3462830ea1a8b75~Sw4l6qreF2541525415eucas1p2T;
+        Thu, 31 Oct 2019 15:03:35 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 67.DA.04309.7C7FABD5; Thu, 31
+        Oct 2019 15:03:35 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20191031150334eucas1p1c72857d23468cd693fee18ff1175b897~Sw4lp6VuB0775507755eucas1p15;
+        Thu, 31 Oct 2019 15:03:34 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20191031150334eusmtrp2cac717f4f3849501c9f439ee7325036e~Sw4lpT8WH1622416224eusmtrp26;
+        Thu, 31 Oct 2019 15:03:34 +0000 (GMT)
+X-AuditID: cbfec7f4-afbff700000010d5-8e-5dbaf7c70256
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 64.64.04166.6C7FABD5; Thu, 31
+        Oct 2019 15:03:34 +0000 (GMT)
+Received: from [106.120.51.75] (unknown [106.120.51.75]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191031150334eusmtip146c9b932987b6821624b2d85a961dbe0~Sw4lQQsNp2920029200eusmtip1w;
+        Thu, 31 Oct 2019 15:03:34 +0000 (GMT)
+Subject: [GIT PULL] clk/samsung updates for v5.5
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <af9676da-d448-50e8-d181-680aba7078db@samsung.com>
+Date:   Thu, 31 Oct 2019 16:03:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191028202144.GA29158@saurav>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <7647a10d-8e37-f086-a014-77f8ddcdd006@samsung.com>
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLKsWRmVeSWpSXmKPExsWy7djP87rHv++KNZh1mM1i44z1rBbXvzxn
+        tfjYc4/VYsb5fUwWF0+5Wvy7tpHFgc3j/Y1Wdo9NqzrZPPq2rGL0+LxJLoAlissmJTUnsyy1
+        SN8ugSvj0OrjbAVfuCt2nYhpYPzE2cXIySEhYCLxdPJG1i5GLg4hgRWMEmuePWCHcL4wSvx7
+        OZkZwvnMKLHk1VumLkYOsJarE/Qh4ssZJZrf/YEqesso8WzOcxaQImEBA4nZ561AVogIBEnc
+        6V/LBlLDLHAIaMWip2wgCTYBQ4neo32MIDavgJ3E6e87wXpZBFQlph7OADFFBSIkTn9NhKgQ
+        lDg58wkLiM0pYC9xte8qmM0sIC7R9GUlK4QtL7H97RywcyQEFrFLfH12jA3iTReJE6veM0PY
+        whKvjm9hh7BlJP7vnM8E0dDMKNGz+zY7hDOBUeL+8QWMEFXWEoePX2QFuYhZQFNi/S59iLCj
+        xL6Fb1khgcInceOtIMQRfBKTtk1nhgjzSnS0CUFUq0j8XjWdCcKWkuh+8p9lAqPSLCSvzULy
+        ziwk78xC2LuAkWUVo3hqaXFuemqxUV5quV5xYm5xaV66XnJ+7iZGYKI5/e/4lx2Mu/4kHWIU
+        4GBU4uGdULYzVog1say4MhcY+BzMSiK832yAQrwpiZVVqUX58UWlOanFhxilOViUxHmrGR5E
+        CwmkJ5akZqemFqQWwWSZODilGhgzzxXxTmq5+ybUiK1vwqmnrl+7F2s9XrXGLZLjv5T3yeR7
+        PoePf6y8vTn76I/9/iuELQvtXrRf/nKfV1KxVts1tzeV+VvQiY9vVtSs3t51zOtZX92FPfyt
+        7dMien4eOXDDcP2yVInPj7eXxz7cV9olO89py4vIjx7NHeb/bsaEprkURR3JWn1PiaU4I9FQ
+        i7moOBEA03JfgjADAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHIsWRmVeSWpSXmKPExsVy+t/xu7rHvu+KNbh229Bi44z1rBbXvzxn
+        tfjYc4/VYsb5fUwWF0+5Wvy7tpHFgc3j/Y1Wdo9NqzrZPPq2rGL0+LxJLoAlSs+mKL+0JFUh
+        I7+4xFYp2tDCSM/Q0kLPyMRSz9DYPNbKyFRJ384mJTUnsyy1SN8uQS/j0OrjbAVfuCt2nYhp
+        YPzE2cXIwSEhYCJxdYJ+FyMXh5DAUkaJ3+9PMUHEpSTmtyh1MXICmcISf651sUHUvGaU6O95
+        xA5SIyxgIDH7vBVIjYhAkMSvPfdYQWqYBQ4xSvzf8YIZJCEkYCexfed7RhCbTcBQovdoH5jN
+        CxQ//X0nC8gcFgFViamHM0DCogIREs+334AqEZQ4OfMJC4jNKWAvcbXvKpjNLKAu8WfeJWYI
+        W1yi6ctKVghbXmL72znMExiFZiFpn4WkZRaSlllIWhYwsqxiFEktLc5Nzy021CtOzC0uzUvX
+        S87P3cQIjKttx35u3sF4aWPwIUYBDkYlHt4JZTtjhVgTy4orc4F+5WBWEuH9ZgMU4k1JrKxK
+        LcqPLyrNSS0+xGgK9NtEZinR5HxgzOeVxBuaGppbWBqaG5sbm1koifN2CByMERJITyxJzU5N
+        LUgtgulj4uCUamDMeTffX9fITPO2b17qjdTIPq3iCXFef29LLnXLvizr1cC0ovYNt7B2utll
+        V++HmnbbEu+HnfhtfSQwYe2OqNC7f63Cc8J2vTAq9vzPOHnjofJg3fex9zb1Tt3Rv7ijLriC
+        31FV9Mj0yl2/9f5czTnJNGNrSsoCi2vnitkf7P80aVHU58sCqQ+UWIozEg21mIuKEwFYW+kK
+        wQIAAA==
+X-CMS-MailID: 20191031150334eucas1p1c72857d23468cd693fee18ff1175b897
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20191031150334eucas1p1c72857d23468cd693fee18ff1175b897
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20191031150334eucas1p1c72857d23468cd693fee18ff1175b897
+References: <7647a10d-8e37-f086-a014-77f8ddcdd006@samsung.com>
+        <CGME20191031150334eucas1p1c72857d23468cd693fee18ff1175b897@eucas1p1.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Please run "git log --oneline drivers/pci/controller/dwc/pci-exynos.c"
-and make your subject line match, e.g.,
+Hi Stephen, Mike,
+This PR is on top of my previous one (tags/clk-v5.4-samsung-fixes).
 
-  PCI: exynos: Remove dev_err() usage after platform_get_irq()
 
-The body of that was copied from similar commits like:
+The following changes since commit e9323b664ce29547d996195e8a6129a351c39108:
 
-  fb5a35dbee8d pwm: Remove dev_err() usage after platform_get_irq()
-  9a7957d0c955 mmc: Remove dev_err() usage after platform_get_irq()
-  1df217868178 tty: Remove dev_err() usage after platform_get_irq()
+  clk: samsung: exynos5420: Preserve PLL configuration during suspend/resume (2019-10-25 11:20:00 +0200)
 
-It's nice when similar commits have similar subject lines.
+are available in the Git repository at:
 
-In fact, this whole thing has been approached before:
+  https://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git clk-v5.5-samsung
 
-  https://lore.kernel.org/lkml/20190730181557.90391-32-swboyd@chromium.org/
+for you to fetch changes up to 45f10dabb56bc5dee52df47dccd3bfab1e58eea1:
 
-That patch would have fixed many similar issues in PCI, but I don't
-know what happened to it.  Would you mind resurrecting that and fixing
-the minor issues so we can do everything in PCI at once?
+  clk: samsung: exynos5420: Add SET_RATE_PARENT flag to clocks on G3D path (2019-10-29 14:57:22 +0100)
 
-On Tue, Oct 29, 2019 at 01:51:44AM +0530, Saurav Girepunje wrote:
-> Don't need dev_err() messages when platform_get_irq() fails now that
-> platform_get_irq() prints an error message itself when something goes
-> wrong.
-> 
-> Signed-off-by: Saurav Girepunje <saurav.girepunje@gmail.com>
-> ---
->  drivers/pci/controller/dwc/pci-exynos.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
-> index 14a6ba4067fb..2293b346d96a 100644
-> --- a/drivers/pci/controller/dwc/pci-exynos.c
-> +++ b/drivers/pci/controller/dwc/pci-exynos.c
-> @@ -403,7 +403,6 @@ static int __init exynos_add_pcie_port(struct exynos_pcie *ep,
->  
->  	pp->irq = platform_get_irq(pdev, 1);
->  	if (pp->irq < 0) {
-> -		dev_err(dev, "failed to get irq\n");
->  		return pp->irq;
->  	}
->  	ret = devm_request_irq(dev, pp->irq, exynos_pcie_irq_handler,
-> @@ -416,7 +415,6 @@ static int __init exynos_add_pcie_port(struct exynos_pcie *ep,
->  	if (IS_ENABLED(CONFIG_PCI_MSI)) {
->  		pp->msi_irq = platform_get_irq(pdev, 0);
->  		if (pp->msi_irq < 0) {
-> -			dev_err(dev, "failed to get msi irq\n");
->  			return pp->msi_irq;
->  		}
->  	}
-> -- 
-> 2.20.1
-> 
+----------------------------------------------------------------
+clk/samsung updates for 5.5
+
+ - Addition of rate table for the VPLL and GPU related clock
+   tree definition update to allow the GPU driver for setting
+   the GPU's clock without requiring detailed knowledge of
+   clock topology on each exynos542x SoC;
+ - Fix for potential CPU performance degradation after system
+   suspend/resume cycle on exynos542x SoCs.
+
+----------------------------------------------------------------
+Marek Szyprowski (1):
+      clk: samsung: exynos5420: Add SET_RATE_PARENT flag to clocks on G3D path
+
+Marian Mihailescu (2):
+      clk: samsung: exynos5420: Add VPLL rate table
+      clk: samsung: exynos5420: Preserve CPU clocks configuration during suspend/resume
+
+ drivers/clk/samsung/clk-exynos5420.c | 34 ++++++++++++++++++++++++++--------
+ 1 file changed, 26 insertions(+), 8 deletions(-)
+
+-- 
+Thanks,
+Sylwester
