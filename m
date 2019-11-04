@@ -2,126 +2,102 @@ Return-Path: <SRS0=rkI/=Y4=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21900CA9ED3
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Nov 2019 09:57:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16907CA9EB5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Nov 2019 15:50:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E775322469
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Nov 2019 09:57:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC0F320869
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Nov 2019 15:49:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JEm4uTRU"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="im3j2OBb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726633AbfKDJ5n (ORCPT
+        id S1728321AbfKDPt7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 4 Nov 2019 04:57:43 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:57717 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727444AbfKDJ5n (ORCPT
+        Mon, 4 Nov 2019 10:49:59 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53554 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727838AbfKDPt7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 4 Nov 2019 04:57:43 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191104095741euoutp0112f0722378f1670eb13e2ef8b9eab471~T7Spq5Kwk1114211142euoutp01q
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  4 Nov 2019 09:57:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191104095741euoutp0112f0722378f1670eb13e2ef8b9eab471~T7Spq5Kwk1114211142euoutp01q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1572861461;
-        bh=aKYmWHn5rk8z/w3sM8htZFwNA+g0GxNvmU1BcW1DIZI=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=JEm4uTRUwOY1yT7zRFrH/a8V4iXRZRW7f8EqBlkbWv0ZIyGtFGVFubNtQKumO2WJb
-         +derHLWc3gu3IdMGUgoLzbtHk1alNt/uzMECHNeL7nC6Yn90SoGF/JPXPs6Cf7P2cq
-         1HR8m4pyBVuyJV+JpQ4oIJi2ek17JU1KloZ8BNeQ=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191104095741eucas1p14777153fe838beadd14be597e62a3843~T7Spg_HbA1734117341eucas1p1G;
-        Mon,  4 Nov 2019 09:57:41 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 31.1D.04469.416FFBD5; Mon,  4
-        Nov 2019 09:57:41 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20191104095740eucas1p10cbb0cc5f6d857f06c0f4674c637ffbe~T7SpLsF1w1712717127eucas1p1_;
-        Mon,  4 Nov 2019 09:57:40 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191104095740eusmtrp18f1e51019c0924b00b1d584501803c28~T7SpLAF3l1598615986eusmtrp1I;
-        Mon,  4 Nov 2019 09:57:40 +0000 (GMT)
-X-AuditID: cbfec7f2-54fff70000001175-04-5dbff614c9b7
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 2E.91.04117.416FFBD5; Mon,  4
-        Nov 2019 09:57:40 +0000 (GMT)
-Received: from [106.120.51.75] (unknown [106.120.51.75]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191104095740eusmtip15867e3ceafb6e91132d5cda719eeda82~T7So3bqdL0225002250eusmtip1e;
-        Mon,  4 Nov 2019 09:57:40 +0000 (GMT)
-Subject: Re: [PATCH v2] media: exynos4-is: fix wrong mdev and v4l2 dev order
- in error path
-To:     Seung-Woo Kim <sw0312.kim@samsung.com>, linux-media@vger.kernel.org
-Cc:     linux-samsung-soc@vger.kernel.org, mchehab@kernel.org,
-        krzk@kernel.org
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-ID: <88ff8e70-4bb0-cabe-aa3f-203714dc4b37@samsung.com>
-Date:   Mon, 4 Nov 2019 10:57:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.9.0
+        Mon, 4 Nov 2019 10:49:59 -0500
+Received: by mail-wm1-f65.google.com with SMTP id x4so6070775wmi.3;
+        Mon, 04 Nov 2019 07:49:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5Gh6ypC21DF1xtMKX6b7wG5FsVhzjCIpzo9aEJOM0Ec=;
+        b=im3j2OBbbqi4Fc6j0I3KRw5w3dJD+PpY4wjlEOrP3B2bqWJXjq6Oj32CwXt0fiDWYl
+         qkQ/1govBFgqO8lDQVfxIGGJUi49jLWrDdMOuFl8Ei5jLh37feq4/6FWPDec/b+/DSNe
+         YGtfjOwAf0mi/fXBruyCTSbdQrwEnefKsA9FwF0BgQxNj7r6tdv2kunbNFtyCMfBONrb
+         ddgigulvNajaQblYrKEq59EZYeEP56Me8KgDwW8MahMr17IWkEJp8pp5+iU4T3syzFJD
+         Nol9qlrgcq4JSTVIxTz5nZi9+1+SjnMk17x/rwxVBP9cRqHZ/2hxuwOJDGyTNoVjlEmT
+         N25Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5Gh6ypC21DF1xtMKX6b7wG5FsVhzjCIpzo9aEJOM0Ec=;
+        b=RkLGuGrNBAi+hQ8Ik7g8DYwbNNlQtLca9gRB0wvd+HBzR4y6NECpPqE1hJdi6YL+zt
+         Cm75y53e4YSQUacn/FUazxcOiwxPYb5ukavZ9kw4OlsBQThu+FpofxTq2I8Mki/ea6uW
+         MWazYM2e89RwAT37qfL0M7/vMPPm+3jvA/sVX91yYq13kNTwLSDbec3250Gv+1LNG3G9
+         tv/9+Urk+2NqcRo0NL+A0wxNMmxqqKsQJXvuNzRLfSqNsfeQ1j7Tk6uMTB8rJdBqFoGZ
+         YJbJ0PMy6pCIlaqHsQ3r+fgL9QdUyskzuIqG9MJNrZpzGk9MhMX0D3u8JxATPpIwGFn3
+         5rMg==
+X-Gm-Message-State: APjAAAXtAGabodINOHUFFp215Lz7ec2SB6MqAxP+14+wtQ5aZKQdxvlt
+        0yLaPoUzs2PTcovWouVIKf4=
+X-Google-Smtp-Source: APXvYqxBbQ0WXX+4m67jdYFm9J7caqNO4J9KmFZqX9e2cr9tFfT+cfmL9jbMVOp2qFx+BherG9wLoQ==
+X-Received: by 2002:a05:600c:28c:: with SMTP id 12mr16472749wmk.25.1572882597179;
+        Mon, 04 Nov 2019 07:49:57 -0800 (PST)
+Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
+        by smtp.gmail.com with ESMTPSA id i71sm23332521wri.68.2019.11.04.07.49.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2019 07:49:56 -0800 (PST)
+From:   Chuhong Yuan <hslester96@gmail.com>
+Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH] media: exynos4-is: add missed clk_disable_unprepare in remove
+Date:   Mon,  4 Nov 2019 23:49:42 +0800
+Message-Id: <20191104154942.8935-1-hslester96@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <1572860792-4471-1-git-send-email-sw0312.kim@samsung.com>
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprGKsWRmVeSWpSXmKPExsWy7djPc7qi3/bHGvRuZrI4f34Du0XPhq2s
-        FjPO72OyWLbpD5PFjMkv2RxYPTat6mTz6NuyitHj8ya5AOYoLpuU1JzMstQifbsErowlEzaw
-        FmxmqWg5P4u5gfEicxcjJ4eEgInE6hkn2LoYuTiEBFYwShyYt4wZwvnCKNGydgojhPOZUeJF
-        XycLTMvRHeeZIBLLGSVm7O6Cct4ySjxduQ2ohYNDWCBGon0mWIOIgLtE75l37CA2s4CXRMfu
-        H2A2m4ChRO/RPkYQm1fATuLuhdVMIDaLgIrE3f+nWEDGiApESJz+mghRIihxcuYTsJGcAm4S
-        s+5+Z4IYKS7R9GUlK4QtL7H97RywDyQEprNLnH6yCepoF4l/Hz+yQdjCEq+Ob2GHsGUkTk/u
-        YYFoaGaU6Nl9mx3CmcAocf/4AkaIKmuJw8cvsoJcxCygKbF+lz5E2FHi7ek1YIdKCPBJ3Hgr
-        CHEEn8SkbdOZIcK8Eh1tQhDVKhK/V01ngrClJLqf/GeZwKg0C8lrs5C8MwvJO7MQ9i5gZFnF
-        KJ5aWpybnlpsmJdarlecmFtcmpeul5yfu4kRmFpO/zv+aQfj10tJhxgFOBiVeHgdePbHCrEm
-        lhVX5h5ilOBgVhLhvThjb6wQb0piZVVqUX58UWlOavEhRmkOFiVx3mqGB9FCAumJJanZqakF
-        qUUwWSYOTqkGxkUfy1ar1gXOyy6Qu+CrxPUvUtlnWoLY/ZjrswRqJpz3rFdf4ZQa9WbXxTbr
-        bObb1nc+qG67ElS60khvVWtSMgeHrfHNywu60h9lxuz7eb6bYZnFy1k3BWslb4n4HJC6aqTz
-        mitd92RE98udHl6v9R3vL/lb38pmI6VpU2vzTY1V5L7j9mQZJZbijERDLeai4kQAParfoykD
-        AAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBIsWRmVeSWpSXmKPExsVy+t/xu7oi3/bHGiyfrGdx/vwGdoueDVtZ
-        LWac38dksWzTHyaLGZNfsjmwemxa1cnm0bdlFaPH501yAcxRejZF+aUlqQoZ+cUltkrRhhZG
-        eoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehlLJmxgLdjMUtFyfhZzA+NF5i5GTg4J
-        AROJozvOM3UxcnEICSxllOg894qti5EDKCElMb9FCaJGWOLPtS42iJrXjBItr68xgtQIC8RI
-        tM9kAakREXCX6D3zjh2iZiajxNU551hBEswCXhIdu3+wg9hsAoYSvUf7GEFsXgE7ibsXVjOB
-        2CwCKhJ3/58CGyQqECHxfPsNqBpBiZMzn4DFOQXcJGbd/c4EMVNd4s+8S8wQtrhE05eVULvk
-        Jba/ncM8gVFoFpL2WUhaZiFpmYWkZQEjyypGkdTS4tz03GIjveLE3OLSvHS95PzcTYzAWNp2
-        7OeWHYxd74IPMQpwMCrx8L7g3B8rxJpYVlyZe4hRgoNZSYT34oy9sUK8KYmVValF+fFFpTmp
-        xYcYTYGem8gsJZqcD4zzvJJ4Q1NDcwtLQ3Njc2MzCyVx3g6BgzFCAumJJanZqakFqUUwfUwc
-        nFINjD027w7Z+ZnNezBXu/zwM7MXO66ctwx5aCm3LL3jmNBcaedn3ilzNzqUcKswsr+x1Mzy
-        fsDCcMKn0ClVd+pG0x12X8O1FX8F8W4TFJn/3LL5v7n22SjJqMh1sn7HmPr+H910n2FG1+7z
-        14z/N3/nVxKLn7eo/c8CCZ+111fdP+94g23K+U1TfyixFGckGmoxFxUnAgAFz+4yuwIAAA==
-X-CMS-MailID: 20191104095740eucas1p10cbb0cc5f6d857f06c0f4674c637ffbe
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20191104094357epcas1p171fa65258ca760f93ade2d07082a48be
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20191104094357epcas1p171fa65258ca760f93ade2d07082a48be
-References: <CGME20191104094357epcas1p171fa65258ca760f93ade2d07082a48be@epcas1p1.samsung.com>
-        <1572860792-4471-1-git-send-email-sw0312.kim@samsung.com>
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 11/4/19 10:46, Seung-Woo Kim wrote:
-> When driver is built as module and probe during insmod is deferred
-> because of sensor subdevs, there is NULL pointer deference because
-> mdev is cleaned up and then access it from v4l2_device_unregister().
-> Fix the wrong mdev and v4l2 dev odder in error path of probe.
+This driver forgets to disable and unprepare clock when remove.
+Add a call to clk_disable_unprepare to fix it.
 
-> Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+---
+ drivers/media/platform/exynos4-is/fimc-lite.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
+index e87c6a09205b..6748bd96aada 100644
+--- a/drivers/media/platform/exynos4-is/fimc-lite.c
++++ b/drivers/media/platform/exynos4-is/fimc-lite.c
+@@ -1614,6 +1614,7 @@ static int fimc_lite_remove(struct platform_device *pdev)
+ 	struct fimc_lite *fimc = platform_get_drvdata(pdev);
+ 	struct device *dev = &pdev->dev;
+ 
++	clk_disable_unprepare(fimc->clock);
+ 	pm_runtime_disable(dev);
+ 	pm_runtime_set_suspended(dev);
+ 	fimc_lite_unregister_capture_subdev(fimc);
+-- 
+2.23.0
 
-I think also 
-Fixes: ("9832e155f1ed [media] media-device: split media initialization and registration")
-
-could be added.
