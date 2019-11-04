@@ -1,284 +1,149 @@
-Return-Path: <SRS0=bCub=Y3=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=rkI/=Y4=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EC6ACA9EB0
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  3 Nov 2019 16:01:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA15CA9ECF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Nov 2019 09:18:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E141D214B2
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  3 Nov 2019 16:01:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572796883;
-	bh=ltTqN0B/R+pEdxmuWRoWrrtTRWlzTt6eMa88sa/Ypxg=;
-	h=From:To:Subject:Date:List-ID:From;
-	b=gwC3IYXDlK3ZSegQaFgjGhZjwdzihqBXKIrW6osAJHXY41lr3s3aRb0XUt7xSOvks
-	 vwn6kRMFd1QpHzZTyOgcJg7eGX2njkjE5S4IYpGl87/cw3ZxEyvP5NAah1DgSQHBdv
-	 XlV0NUNKP4VbJLoc8mKfdLGF5y0lOp275AISh1HI=
+	by mail.kernel.org (Postfix) with ESMTP id 825AD222D3
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Nov 2019 09:18:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KQWoM9Hb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727855AbfKCQBW (ORCPT
+        id S1727454AbfKDJSQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 3 Nov 2019 11:01:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39268 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727523AbfKCQBW (ORCPT
+        Mon, 4 Nov 2019 04:18:16 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:40119 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727327AbfKDJSQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 3 Nov 2019 11:01:22 -0500
-Received: from localhost.localdomain (unknown [194.230.155.180])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7EFF2080F;
-        Sun,  3 Nov 2019 16:01:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572796880;
-        bh=ltTqN0B/R+pEdxmuWRoWrrtTRWlzTt6eMa88sa/Ypxg=;
-        h=From:To:Subject:Date:From;
-        b=tcbzxuzQGDpk0C/tC0ODHIP4kdGJKYY6eQibJ8pKdl5w9T0UnJxtbMQlY/qUFTDXA
-         hN2U3poojPG6MWlyaLnI41p/x2hfibLXKer+RYk//46HaYgf7R63Ez2g2HuXI9lQWo
-         U/iiHBmQeh9dOfq08FeJe4OPpwJowfHh/nsq3UGE=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Subject: [PATCH v2] dt-bindings: serial: Convert Samsung UART bindings to json-schema
-Date:   Sun,  3 Nov 2019 17:01:12 +0100
-Message-Id: <20191103160112.10764-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        Mon, 4 Nov 2019 04:18:16 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191104091813euoutp012105d55a25d1b3996284f291b4f82fd7~T6wMxiHIk0864608646euoutp01_
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  4 Nov 2019 09:18:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191104091813euoutp012105d55a25d1b3996284f291b4f82fd7~T6wMxiHIk0864608646euoutp01_
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1572859093;
+        bh=XaX9T477Gykmou4U+0wO1VDWcRASPonroFzAOLtMk+g=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=KQWoM9HbHG+2Bud/puWLVuL89PlaViUQB43idN5NsjLYboVXO3XIaWWjhCZP8ZBX0
+         gYB3KnFPInRdD2pmtjKn2QXyi0xWhg+jokT1ATJ+ygIJVNVpXgKrcNj52D7W35d6QB
+         PYMChsH7k1jXFgb5vYu82+bPD5l03KHThhp2yogM=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20191104091813eucas1p22cae6df30ac7dfd064909cb0635a227f~T6wMhuLXv1921519215eucas1p2w;
+        Mon,  4 Nov 2019 09:18:13 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 7F.E6.04374.5DCEFBD5; Mon,  4
+        Nov 2019 09:18:13 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20191104091813eucas1p2452dd973a4b935b3b43059fe122ca084~T6wMNyfCo1470514705eucas1p2H;
+        Mon,  4 Nov 2019 09:18:13 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191104091813eusmtrp110d71bd6a269545066b063cac3f0231a~T6wMNO1452204422044eusmtrp1P;
+        Mon,  4 Nov 2019 09:18:13 +0000 (GMT)
+X-AuditID: cbfec7f5-4f7ff70000001116-1b-5dbfecd5150a
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 5A.39.04166.5DCEFBD5; Mon,  4
+        Nov 2019 09:18:13 +0000 (GMT)
+Received: from [106.120.51.75] (unknown [106.120.51.75]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191104091812eusmtip2c5e71223c8b4a254a90af7c1dd01301a~T6wL8xeIV0750307503eusmtip2l;
+        Mon,  4 Nov 2019 09:18:12 +0000 (GMT)
+Subject: Re: [PATCH] media: exynos4-is: fix wrong mdev and v4l2 dev order in
+ error path
+To:     Seung-Woo Kim <sw0312.kim@samsung.com>, linux-media@vger.kernel.org
+Cc:     linux-samsung-soc@vger.kernel.org, mchehab@kernel.org,
+        krzk@kernel.org
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <fdd591ce-f0b3-8737-bd1f-27645035ce7e@samsung.com>
+Date:   Mon, 4 Nov 2019 10:18:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <1571623084-2705-1-git-send-email-sw0312.kim@samsung.com>
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprGKsWRmVeSWpSXmKPExsWy7djPc7pX3+yPNViyQ8bi/PkN7BY9G7ay
+        Wsw4v4/JYtmmP0wWMya/ZHNg9di0qpPNo2/LKkaPz5vkApijuGxSUnMyy1KL9O0SuDJ6JrUx
+        FXzirJi14j57A+NKji5GTg4JAROJlhOrWbsYuTiEBFYwSjza08wE4XxhlFh5/wuU85lRYvGu
+        1ywwLa3nzjNCJJYzSlxY/Rqq/y2Q09LIDFIlLBApMffmGjYQW0TAXaL3zDt2EJtZwEuiY/cP
+        MJtNwFCi92gf0CQODl4BO4m7X9NBwiwCKhKTvs9jAQmLCkRInP6aCBLmFRCUODnzCdgNnAJu
+        EpPmT2WDmCgu0fRlJSuELS+x/e0cZpBzJASms0vsubuQFeJoF4nTrx8zQ9jCEq+Ob2GHsGUk
+        Tk/uYYFoaGaU6Nl9mx3CmcAocf/4AkaIKmuJw8cvsoJcxCygKbF+lz5E2FHi8J+bYPdLCPBJ
+        3HgrCHEEn8SkbdOZIcK8Eh1tQhDVKhK/V01ngrClJLqf/GeZwKg0C8lrs5C8MwvJO7MQ9i5g
+        ZFnFKJ5aWpybnlpsnJdarlecmFtcmpeul5yfu4kRmFpO/zv+dQfjvj9JhxgFOBiVeHgdePbH
+        CrEmlhVX5h5ilOBgVhLhvThjb6wQb0piZVVqUX58UWlOavEhRmkOFiVx3mqGB9FCAumJJanZ
+        qakFqUUwWSYOTqkGRje5dTu5Duyo1rc/vJt5v63hpzPrV694IRpYGM5+KaavXzj/zLbEpLrM
+        Cvt7W5USdRNz3ONdSgJj2iaU2epvXlLRrfzQQkiv03BNjlvewe2Tvlo/Yz+hL/lOVOZG8+ZV
+        DTPCGLSCnq17wdC1fJL67ZiiKadiXsuk8rC/PrU3+M6+vDDdVi93JZbijERDLeai4kQAw6jd
+        ZikDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBIsWRmVeSWpSXmKPExsVy+t/xe7pX3+yPNTjXxGNx/vwGdoueDVtZ
+        LWac38dksWzTHyaLGZNfsjmwemxa1cnm0bdlFaPH501yAcxRejZF+aUlqQoZ+cUltkrRhhZG
+        eoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehk9k9qYCj5xVsxacZ+9gXElRxcjJ4eE
+        gIlE67nzjF2MXBxCAksZJVb86mDvYuQASkhJzG9RgqgRlvhzrYsNouY1o8TjQwuYQBLCApES
+        c2+uYQOxRQTcJXrPvGOHKJrJKHHt/FN2kASzgJdEx+4fYDabgKFE79E+RpAFvAJ2Ene/poOE
+        WQRUJCZ9n8cCYosKREg8336DEcTmFRCUODnzCVicU8BNYtL8qWwQI9Ul/sy7xAxhi0s0fVnJ
+        CmHLS2x/O4d5AqPQLCTts5C0zELSMgtJywJGllWMIqmlxbnpucWGesWJucWleel6yfm5mxiB
+        sbTt2M/NOxgvbQw+xCjAwajEw/uCc3+sEGtiWXFl7iFGCQ5mJRHeizP2xgrxpiRWVqUW5ccX
+        leakFh9iNAV6biKzlGhyPjDO80riDU0NzS0sDc2NzY3NLJTEeTsEDsYICaQnlqRmp6YWpBbB
+        9DFxcEo1MCZXMepPYM+7wsa0S+fQXpFP9Svtpr5brF+x1dtr7+xzwmZ6QS3NvMz9Vu4XlWef
+        X/JzCtcURYv5Biv77Ku03x5dw6vG9Wi2gVpljtzd3UlX395o+mHK9frfxdDMG5bBUx+IKJ9u
+        PlayuiBf4vnW/d3rrbUDs1dsk8kPWVcReP2r6ftJviUJTUosxRmJhlrMRcWJAOn78Ae7AgAA
+X-CMS-MailID: 20191104091813eucas1p2452dd973a4b935b3b43059fe122ca084
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20191021015536epcas1p3d9dc18f8f4e4a98de0dc7a9a84525cd1
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20191021015536epcas1p3d9dc18f8f4e4a98de0dc7a9a84525cd1
+References: <CGME20191021015536epcas1p3d9dc18f8f4e4a98de0dc7a9a84525cd1@epcas1p3.samsung.com>
+        <1571623084-2705-1-git-send-email-sw0312.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Convert Samsung S3C/S5P/Exynos Serial/UART bindings to DT schema format
-using json-schema.
+Hi Seung-Woo,
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+On 10/21/19 03:58, Seung-Woo Kim wrote:
+> When driver is built as module and probe during insmod is deferred
+> because of sensor subdevs, there is NULL pointer deference because
+> mdev is cleaned up and then access it from v4l2_device_unregister().
+> Fix the wrong mdev and v4l2 dev odder in error path of probe.
 
----
+> Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
 
-Changes since v1:
-1. Simplify 'clock-names' patters after Rob's suggestions,
-2. Add description to 'interrupts',
-3. Remove 'uniqueItems' where not needed,
-4. Remove aliases from example.
----
- .../bindings/mfd/samsung,exynos5433-lpass.txt |   2 +-
- .../bindings/serial/samsung_uart.txt          |  58 ---------
- .../bindings/serial/samsung_uart.yaml         | 118 ++++++++++++++++++
- 3 files changed, 119 insertions(+), 59 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/serial/samsung_uart.txt
- create mode 100644 Documentation/devicetree/bindings/serial/samsung_uart.yaml
+The patch looks good, however we need to also call media_device_cleanup()
+when v4l2_device_register() fails.
 
-diff --git a/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
-index d759da606f75..30ea27c3936d 100644
---- a/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
-+++ b/Documentation/devicetree/bindings/mfd/samsung,exynos5433-lpass.txt
-@@ -18,7 +18,7 @@ an optional sub-node. For "samsung,exynos5433-lpass" compatible this includes:
- UART, SLIMBUS, PCM, I2S, DMAC, Timers 0...4, VIC, WDT 0...1 devices.
- 
- Bindings of the sub-nodes are described in:
--  ../serial/samsung_uart.txt
-+  ../serial/samsung_uart.yaml
-   ../sound/samsung-i2s.txt
-   ../dma/arm-pl330.txt
- 
-diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.txt b/Documentation/devicetree/bindings/serial/samsung_uart.txt
-deleted file mode 100644
-index e85f37ec33f0..000000000000
---- a/Documentation/devicetree/bindings/serial/samsung_uart.txt
-+++ /dev/null
-@@ -1,58 +0,0 @@
--* Samsung's UART Controller
--
--The Samsung's UART controller is used for interfacing SoC with serial
--communicaion devices.
--
--Required properties:
--- compatible: should be one of following:
--  - "samsung,exynos4210-uart" -  Exynos4210 SoC,
--  - "samsung,s3c2410-uart" - compatible with ports present on S3C2410 SoC,
--  - "samsung,s3c2412-uart" - compatible with ports present on S3C2412 SoC,
--  - "samsung,s3c2440-uart" - compatible with ports present on S3C2440 SoC,
--  - "samsung,s3c6400-uart" - compatible with ports present on S3C6400 SoC,
--  - "samsung,s5pv210-uart" - compatible with ports present on S5PV210 SoC.
--
--- reg: base physical address of the controller and length of memory mapped
--  region.
--
--- interrupts: a single interrupt signal to SoC interrupt controller,
--  according to interrupt bindings documentation [1].
--
--- clock-names: input names of clocks used by the controller:
--  - "uart" - controller bus clock,
--  - "clk_uart_baudN" - Nth baud base clock input (N = 0, 1, ...),
--    according to SoC User's Manual (only N = 0 is allowedfor SoCs without
--    internal baud clock mux).
--- clocks: phandles and specifiers for all clocks specified in "clock-names"
--  property, in the same order, according to clock bindings documentation [2].
--
--[1] Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
--[2] Documentation/devicetree/bindings/clock/clock-bindings.txt
--
--Optional properties:
--- samsung,uart-fifosize: The fifo size supported by the UART channel
--
--Note: Each Samsung UART should have an alias correctly numbered in the
--"aliases" node, according to serialN format, where N is the port number
--(non-negative decimal integer) as specified by User's Manual of respective
--SoC.
--
--Example:
--	aliases {
--		serial0 = &uart0;
--		serial1 = &uart1;
--		serial2 = &uart2;
--	};
--
--Example:
--	uart1: serial@7f005400 {
--		compatible = "samsung,s3c6400-uart";
--		reg = <0x7f005400 0x100>;
--		interrupt-parent = <&vic1>;
--		interrupts = <6>;
--		clock-names = "uart", "clk_uart_baud2",
--				"clk_uart_baud3";
--		clocks = <&clocks PCLK_UART1>, <&clocks PCLK_UART1>,
--				<&clocks SCLK_UART>;
--		samsung,uart-fifosize = <16>;
--	};
-diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-new file mode 100644
-index 000000000000..9d2ce347875b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-@@ -0,0 +1,118 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/serial/samsung_uart.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung S3C, S5P and Exynos SoC UART Controller
-+
-+maintainers:
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-+  - Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-+
-+description: |+
-+  Each Samsung UART should have an alias correctly numbered in the "aliases"
-+  node, according to serialN format, where N is the port number (non-negative
-+  decimal integer) as specified by User's Manual of respective SoC.
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - samsung,s3c2410-uart
-+          - samsung,s3c2412-uart
-+          - samsung,s3c2440-uart
-+          - samsung,s3c6400-uart
-+          - samsung,s5pv210-uart
-+          - samsung,exynos4210-uart
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    minItems: 2
-+    maxItems: 5
-+
-+  clock-names:
-+    description: N = 0 is allowed for SoCs without internal baud clock mux.
-+    minItems: 2
-+    maxItems: 5
-+    items:
-+      - const: uart
-+      - pattern: '^clk_uart_baud[0-3]$'
-+      - pattern: '^clk_uart_baud[0-3]$'
-+      - pattern: '^clk_uart_baud[0-3]$'
-+      - pattern: '^clk_uart_baud[0-3]$'
-+
-+  interrupts:
-+    description: RX interrupt and optionally TX interrupt.
-+    minItems: 1
-+    maxItems: 2
-+
-+  samsung,uart-fifosize:
-+    description: The fifo size supported by the UART channel.
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32
-+      - enum: [16, 64, 256]
-+
-+required:
-+  - compatible
-+  - clocks
-+  - clock-names
-+  - interrupts
-+  - reg
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - samsung,s3c2410-uart
-+              - samsung,s5pv210-uart
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 2
-+          maxItems: 3
-+        clock-names:
-+          minItems: 2
-+          maxItems: 3
-+          items:
-+            - const: uart
-+            - pattern: '^clk_uart_baud[0-1]$'
-+            - pattern: '^clk_uart_baud[0-1]$'
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - samsung,exynos4210-uart
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 2
-+          maxItems: 2
-+        clock-names:
-+          minItems: 2
-+          maxItems: 2
-+          items:
-+            - const: uart
-+            - const: clk_uart_baud0
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/samsung,s3c64xx-clock.h>
-+
-+    uart0: serial@7f005000 {
-+        compatible = "samsung,s3c6400-uart";
-+        reg = <0x7f005000 0x100>;
-+        interrupt-parent = <&vic1>;
-+        interrupts = <5>;
-+        clock-names = "uart", "clk_uart_baud2",
-+                      "clk_uart_baud3";
-+        clocks = <&clocks PCLK_UART0>, <&clocks PCLK_UART0>,
-+                 <&clocks SCLK_UART>;
-+        samsung,uart-fifosize = <16>;
-+    };
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+
+> ---
+>  drivers/media/platform/exynos4-is/media-dev.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
+> index a838189..3685c91e6 100644
+> --- a/drivers/media/platform/exynos4-is/media-dev.c
+> +++ b/drivers/media/platform/exynos4-is/media-dev.c
+> @@ -1520,8 +1520,8 @@ static int fimc_md_probe(struct platform_device *pdev)
+>  err_clk:
+>  	fimc_md_put_clocks(fmd);
+>  err_md:
+> -	media_device_cleanup(&fmd->media_dev);
+>  	v4l2_device_unregister(&fmd->v4l2_dev);
+> +	media_device_cleanup(&fmd->media_dev);
+>  	return ret;
+>  }
+
 -- 
-2.17.1
-
+Thanks,
+Sylwester
