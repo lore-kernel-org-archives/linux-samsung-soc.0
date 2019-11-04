@@ -2,93 +2,84 @@ Return-Path: <SRS0=rkI/=Y4=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D049ACA9EB5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Nov 2019 17:59:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6394DCA9ED3
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Nov 2019 18:00:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABF0D21744
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Nov 2019 17:59:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3671C214E0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 Nov 2019 18:00:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572890355;
-	bh=7ghGrmoiEIxN4IpLB8JEUAW5aI+a94fxk1XNN5k5Y9Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=k/axxonJkjvXx3GgwXd2lnH8FjUKMND1xO6zj8Lyom4FO4fi5eJ/KOSbVKQoEKuMC
-	 q3NxyUpR4QqT1NGqktUYI0iqXLyEm/rzY5Ls/90rfvm388w1N6UxQWYbZeEWs4ZLa4
-	 oEef5gfq0ACbJa3orFnVqbUvTKBlaB9++zrsQMfs=
+	s=default; t=1572890417;
+	bh=gXrJj408R+3JEAaui6yuBsw4emXJCh8v5eUygTDK8TI=;
+	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
+	b=Xz/+FrPBGm+htboFqDV0OzH4zURt3geJYFtfRzT9F1rsxgUH2nx1hx89q82H/NPib
+	 bYh2O60aKlhaIlGN/oGH0BHt91Fh+TwFTl72oXMdOyrDPYDsDBWc2Qw/nRi2dJvA4s
+	 YRh1mBeUzggoyXsLP/5hX/7XYFnFxm9TUva2i5r0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728800AbfKDR7P (ORCPT
+        id S1728174AbfKDSAQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 4 Nov 2019 12:59:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36764 "EHLO mail.kernel.org"
+        Mon, 4 Nov 2019 13:00:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728174AbfKDR7P (ORCPT
+        id S1727998AbfKDSAQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 4 Nov 2019 12:59:15 -0500
-Received: from localhost.localdomain (unknown [194.230.155.180])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Mon, 4 Nov 2019 13:00:16 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E7C02184C;
-        Mon,  4 Nov 2019 17:59:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E89C420B7C;
+        Mon,  4 Nov 2019 18:00:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572890354;
-        bh=7ghGrmoiEIxN4IpLB8JEUAW5aI+a94fxk1XNN5k5Y9Q=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cOZ2pWZA0y4VDkNtlai4dc6Nq9LOmCdV/DcOiR1N/0WcdNsF/8p2ySJPWeDEVKL9A
-         Ph29g1ciVxTQJ1RupdWgogkr8PqdgCnGMIN2AeYweO7xsMNS9UPLKKTD2dQnJR0RjJ
-         DypJkGVPfiHpfw5U8/MGYHG5mpnUR+WWwLwSMwlU=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL 2/2] ARM: samsung: S3C/Exynos for v5.5
-Date:   Mon,  4 Nov 2019 18:59:02 +0100
-Message-Id: <20191104175902.12224-2-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191104175902.12224-1-krzk@kernel.org>
-References: <20191104175902.12224-1-krzk@kernel.org>
+        s=default; t=1572890416;
+        bh=gXrJj408R+3JEAaui6yuBsw4emXJCh8v5eUygTDK8TI=;
+        h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
+        b=MNvsJMkNlrXLPK4QrUbUIg5cFxSNvwEEm3060UzNGTET1p7ltlN3U5OSTH1FaWAv9
+         v/+PkK8y1tORPbkiU/I2bEOSefma/D2by/oj1U3feqy/omfkMohH862GYdElCuhYCc
+         UVkz450797IRo806d99nRM9kEEhcvy+BO+fzp4NY=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <7647a10d-8e37-f086-a014-77f8ddcdd006@samsung.com>
+References: <CGME20191025153902eucas1p174c36ab6b80d297290181456bebacca2@eucas1p1.samsung.com> <7647a10d-8e37-f086-a014-77f8ddcdd006@samsung.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [GIT PULL] clk/samsung fixes for v5.4
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+User-Agent: alot/0.8.1
+Date:   Mon, 04 Nov 2019 10:00:15 -0800
+Message-Id: <20191104180015.E89C420B7C@mail.kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
+Quoting Sylwester Nawrocki (2019-10-25 08:39:01)
+> Hi Stephen, Mike,
+>=20
+> The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c=
+5c:
+>=20
+>   Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/=
+clk-v5.4-samsung-fixes
+>=20
+> for you to fetch changes up to e9323b664ce29547d996195e8a6129a351c39108:
+>=20
+>   clk: samsung: exynos5420: Preserve PLL configuration during suspend/res=
+ume (2019-10-25 11:20:00 +0200)
+>=20
+> ----------------------------------------------------------------
 
-  Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
+Thanks. Pulled into clk-fixes.
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-5.5
-
-for you to fetch changes up to 4134b762eb133787273500101223e10728c154cd:
-
-  ARM: exynos: Enable exynos-asv driver for ARCH_EXYNOS (2019-10-28 18:22:33 +0100)
-
-----------------------------------------------------------------
-Samsung mach/soc changes for v5.5
-
-1. Minor cleanups in S3C platforms,
-2. Enable newly added EXYNOS_ASV (Adaptive Supply Voltage) driver.
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (2):
-      ARM: s3c: Rename s3c64xx_spi_setname() function
-      ARM: s3c: Rename s5p_usb_phy functions
-
-Sylwester Nawrocki (1):
-      ARM: exynos: Enable exynos-asv driver for ARCH_EXYNOS
-
- arch/arm/mach-exynos/Kconfig                 | 1 +
- arch/arm/mach-s3c24xx/s3c2416.c              | 2 +-
- arch/arm/mach-s3c24xx/s3c2443.c              | 2 +-
- arch/arm/mach-s3c24xx/spi-core.h             | 2 +-
- arch/arm/mach-s3c64xx/setup-usb-phy.c        | 4 ++--
- arch/arm/plat-samsung/devs.c                 | 4 ++--
- arch/arm/plat-samsung/include/plat/usb-phy.h | 4 ++--
- 7 files changed, 10 insertions(+), 9 deletions(-)
