@@ -2,91 +2,119 @@ Return-Path: <SRS0=KVLS=Y5=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA5EC17498
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Nov 2019 14:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98CCFC5DF60
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Nov 2019 19:43:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B94521929
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Nov 2019 14:41:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bBozmJV5"
+	by mail.kernel.org (Postfix) with ESMTP id 3E21321A49
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  5 Nov 2019 19:43:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1572982981;
+	bh=zEYP3BT2QPCevrSWwMMB/d5iNR+kVf8pnUfXeEMOYo0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=V32jMbkBBFBbBlKMlP17JreQzNEr+fS9/Pjj8TT3mEfnYbJmqxOjUa0Tl4VbNClWa
+	 Cuw2xlrcx7RPMRx4x2VaeuKK8GHN+zjk4S3shMuT7HFcr4h3W2cAYG93Nuk1DMCgIr
+	 k7w7R7bs1Rfh0c9vVi75Hff/J+vI1ENfLho2gt0w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387763AbfKEOlk (ORCPT
+        id S2390802AbfKETnA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 5 Nov 2019 09:41:40 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:44431 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728417AbfKEOlk (ORCPT
+        Tue, 5 Nov 2019 14:43:00 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:37604 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390893AbfKETnA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 5 Nov 2019 09:41:40 -0500
-Received: by mail-lf1-f65.google.com with SMTP id v4so15319574lfd.11
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Nov 2019 06:41:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jBzTOxq85jxdofnlZM+XjruaJTIDQtuSsbh7qG9jKHg=;
-        b=bBozmJV5Qw6b9lVapPQvukL2eua22QYk1tsW4G0355k0kjw9pURqm/uRwStnFEhLZR
-         qC+5Ag8kIoG1xVD1hfQfSl7+po3u37+/b6N0zQAdCCEZWLhKMeOM3qvwZbD/y5ZPSoh6
-         MTpvr6/VaUaAyoUz4Y8JccTmFEyS+gGu9TWdmB4keanawpHY4PkyNbC/Voz7M14+OnwZ
-         TAYmCLZMTmHCvh1OlS+QhfLx88suOLdzkGHhH4anmzik178Ir6mYQkjWWe3B1jcu/+04
-         a4brbdKi5sikiFVFPQq2Ib0/aLqGEoQrOSpOQwKU5qoOl+r+i4V2u+8HjMNE1sB13TOv
-         FTSw==
+        Tue, 5 Nov 2019 14:43:00 -0500
+Received: by mail-oi1-f193.google.com with SMTP id y194so18703709oie.4;
+        Tue, 05 Nov 2019 11:42:59 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jBzTOxq85jxdofnlZM+XjruaJTIDQtuSsbh7qG9jKHg=;
-        b=bcGO8xW9FvE5MR/Xxz8Vvy9nKgEXY3AzKoke7Mqf9hIj7+C/lu6u5kcCfvfGuP8gX6
-         ByoLpGpTWPIwz+2IE3kUKF/XjtBWLL4nGMxee/zU/K6cFNyE+BpI4RTpw5dErO3KZMll
-         e36NC9VCX2B4hfEccAlAluAQrvu00/Zf/bXjNqk2wqsDrLg/hbbzAAqqbdkkCML6BwGH
-         YAOsI1Js6UYGlDxpugSpoTowANefVszaP2VhS4BjgaZzt1RmRO/GZJHLYf4zoFbm8RPW
-         YI0JFVr+7oTUgnmObaw9alfsBe+rgu0eVmTpNqTqKumkY/0145ohngnlIDTn3QBSQlaG
-         IHqA==
-X-Gm-Message-State: APjAAAXIc+Pk1EOtxLq/Af4klBjsNaKWJdW9AADtAxTCtJSLgXTgdq+S
-        m1PwNpPNIVFIGjDkbV3Toft0amY9rz7Gan9UldOLsg==
-X-Google-Smtp-Source: APXvYqwfEk1h321csKMTRrt3DsgpCia8GUNn3QPeXjglwCRgaQ1riCiRrh9/anJdOd37y0N/igvpYMZJnznCmdaOJ5c=
-X-Received: by 2002:a19:651b:: with SMTP id z27mr20715395lfb.117.1572964898491;
- Tue, 05 Nov 2019 06:41:38 -0800 (PST)
-MIME-Version: 1.0
-References: <20191104175744.12041-1-krzk@kernel.org>
-In-Reply-To: <20191104175744.12041-1-krzk@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 5 Nov 2019 15:41:27 +0100
-Message-ID: <CACRpkda6mtF=yjPMJReO50q1Xnys6i51zm2iJvHRidxZJCKU6w@mail.gmail.com>
-Subject: Re: [GIT PULL] pinctrl: samsung: Pull for v5.5
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5Pu4OrE4K395x5nbpd+Cxz5TnD1x0ZYI5bC4xcqiIR0=;
+        b=JNMrC84KxdGXfILVX9RhPXCC8Q9BYNzNB+Zu0sskZD/5kjX/KYd3tuwLnHIfR3T7O6
+         85OQ0i5EvASW8MKBxkXIyDXenMWPKfAr6fSDqkQF7wl33Wdpe4I0u0sXvQ8hG/qUSMRh
+         lmt4lXquYfvzdi3Zs2dAGZ+vnF0XZdstP4o/YzJp/XsW6eq3m/He/pYwhGMcbL79DFBI
+         6bGLu64SaOIZySJHb5V/F+Kj0WmAfdZ3rUmbzpICJ+NkE61acdrcwC1ljyiaVnNyKSNh
+         lX6Nvnqj++p3QoqH9QDWhfl/7RGYJjlzppDY2Rm4+lpQZaJovsEycy+nb4yCHBsNYp/m
+         UqYw==
+X-Gm-Message-State: APjAAAXVFPT/JD0qCmGZ4QQaXdqPHzvPRetkiYBSsx7yDAYrNrLou2cU
+        h05RaYdrK7mfIocsowQ6xg==
+X-Google-Smtp-Source: APXvYqwYe+tnDrfr4RSjoqyyhwqH3QE61rOcmw20rYatfALydaTmRWxeZcywYJxSB7Lbx0p2zYxoqw==
+X-Received: by 2002:aca:f1c5:: with SMTP id p188mr536700oih.125.1572982979431;
+        Tue, 05 Nov 2019 11:42:59 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 32sm6576711ott.43.2019.11.05.11.42.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2019 11:42:58 -0800 (PST)
+Date:   Tue, 5 Nov 2019 13:42:58 -0600
+From:   Rob Herring <robh@kernel.org>
 To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: power: Convert Generic Power Domain
+ bindings to json-schema
+Message-ID: <20191105194257.GA16066@bogus>
+References: <20191030173216.5993-1-krzk@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191030173216.5993-1-krzk@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Nov 4, 2019 at 6:57 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Wed, 30 Oct 2019 18:32:15 +0100, Krzysztof Kozlowski wrote:
+> Convert Generic Power Domain bindings to DT schema format using
+> json-schema.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> 
+> ---
+> 
+> Changes since v2:
+> 1. Keep description of consumers in power-domain.txt,
+> 2. Rename power_domain.txt to power-domain.txt,
+> 3. Indent example with four spaces (more readable).
+> 
+> Changes since v1:
+> 1. Select all nodes for consumers,
+> 2. Remove from consumers duplicated properties with dt-schema,
+> 3. Fix power domain pattern,
+> 4. Remove unneeded types.
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  .../devicetree/bindings/arm/arm,scmi.txt      |   2 +-
+>  .../devicetree/bindings/arm/arm,scpi.txt      |   2 +-
+>  .../bindings/arm/freescale/fsl,scu.txt        |   2 +-
+>  .../bindings/clock/renesas,cpg-mssr.txt       |   2 +-
+>  .../bindings/clock/ti/davinci/psc.txt         |   2 +-
+>  .../firmware/nvidia,tegra186-bpmp.txt         |   2 +-
+>  .../bindings/power/amlogic,meson-gx-pwrc.txt  |   2 +-
+>  .../devicetree/bindings/power/fsl,imx-gpc.txt |   2 +-
+>  .../bindings/power/fsl,imx-gpcv2.txt          |   2 +-
+>  .../{power_domain.txt => power-domain.txt}    |  95 +------------
+>  .../bindings/power/power-domain.yaml          | 133 ++++++++++++++++++
+>  .../bindings/power/renesas,sysc-rmobile.txt   |   2 +-
+>  .../bindings/power/xlnx,zynqmp-genpd.txt      |   2 +-
+>  .../bindings/soc/bcm/brcm,bcm2835-pm.txt      |   2 +-
+>  .../bindings/soc/mediatek/scpsys.txt          |   2 +-
+>  .../bindings/soc/ti/sci-pm-domain.txt         |   2 +-
+>  MAINTAINERS                                   |   2 +-
+>  17 files changed, 149 insertions(+), 109 deletions(-)
+>  rename Documentation/devicetree/bindings/power/{power_domain.txt => power-domain.txt} (51%)
+>  create mode 100644 Documentation/devicetree/bindings/power/power-domain.yaml
+> 
 
-> The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
->
->   Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
->
-> are available in the Git repository at:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-5.5
->
-> for you to fetch changes up to a322b3377f4bac32aa25fb1acb9e7afbbbbd0137:
->
->   pinctrl: samsung: Fix device node refcount leaks in init code (2019-10-01 20:22:04 +0200)
-
-Pulled into my pinctrl "devel" branch for v5.5, thanks!
-
-Yours,
-Linus Walleij
+Reviewed-by: Rob Herring <robh@kernel.org>
