@@ -2,117 +2,87 @@ Return-Path: <SRS0=K8sZ=Y6=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2B5EC5DF62
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Nov 2019 13:46:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2FF0C5DF65
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Nov 2019 19:30:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF691214D8
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Nov 2019 13:46:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADD5D2187F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Nov 2019 19:30:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573047965;
-	bh=9ooMijLLX5vEJI2zDzsStr/RjiYwBZXaTA+1USQBnms=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=igzCMywovlbQYFlhZCYQaqWjG3dqFt/I1SnKS8sn2qJ++EjF79noFP+2zC/+NUXNI
-	 iHbFvoDd5RhusLbtjaTXTdbWCOWuzYZTsihn/sGaxLwq9AbHKozQfq+mb6oQaLpmM5
-	 misBOPB2nhuHqwIBadJR2OG4AOS0tDjs0NUaJE8s=
+	s=default; t=1573068629;
+	bh=k1Pgbj2+aYX796HDlV1Ckua3uDnAGzU9BajlcJ7cxs4=;
+	h=In-Reply-To:References:Subject:From:To:Cc:Date:List-ID:From;
+	b=guWdwTL/SJYHxYc8sfz6B5C6S2wLLWfEePnCcjsSXWiZ4lLVN1aTtZda1dcZi1z+h
+	 Vl2IXCqoQoWc98exbsHC9D8+GpskksLq+ZZM3EVl5nCUVxwUeO8RJtkeKFjSjH+fgV
+	 KZTtqIrQ0oothU1ViO5d55CnBnZ+m8sA/r88FkVQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729001AbfKFNqC (ORCPT
+        id S1728627AbfKFTa3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 6 Nov 2019 08:46:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58214 "EHLO mail.kernel.org"
+        Wed, 6 Nov 2019 14:30:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59354 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726673AbfKFNqC (ORCPT
+        id S1726713AbfKFTa3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 6 Nov 2019 08:46:02 -0500
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Wed, 6 Nov 2019 14:30:29 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9E342173B;
-        Wed,  6 Nov 2019 13:46:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 503C92178F;
+        Wed,  6 Nov 2019 19:30:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573047961;
-        bh=9ooMijLLX5vEJI2zDzsStr/RjiYwBZXaTA+1USQBnms=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=pZ6MI4Sa049skPVFLBG3b4ECjI+spwZDDYYLuQmcoCwpX2x/KjjvmuSgGXK94BpMe
-         61HVlmpakTvXD/KibUaNPv5EwHV2PyFuUytZDFNH2hgJMvyzlBUTtaYtQXFQbvXchZ
-         zKW2nGg7lFjfTJc9Fo5gXzmObjVaF1BaA3riwJuQ=
-Received: by mail-qk1-f174.google.com with SMTP id q70so24551147qke.12;
-        Wed, 06 Nov 2019 05:46:01 -0800 (PST)
-X-Gm-Message-State: APjAAAVONt3z2JA0tx21FP/vsWjuMRZYtOXOc6t1DTcdeqgll3Y+1rMI
-        IUIGdcwMWABb8wMPw3HKw8Abaxaymfo+TF3Daw==
-X-Google-Smtp-Source: APXvYqzKodA0H+8cMHnbaVAdmWVwHGhTRa20VjkV1siY7MSUKBtGxZ924TlE85C0A3FqVoYNE8H52coUZjb/5ccw+4s=
-X-Received: by 2002:a05:620a:205d:: with SMTP id d29mr2070554qka.152.1573047960848;
- Wed, 06 Nov 2019 05:46:00 -0800 (PST)
+        s=default; t=1573068628;
+        bh=k1Pgbj2+aYX796HDlV1Ckua3uDnAGzU9BajlcJ7cxs4=;
+        h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
+        b=NLPMUUonM96fvY57QNjx1nDH2DwgCE06qEKhOnOKD7E+x8UJREHctwdmW04d6AzFD
+         gj4XoYhN0JRc/n0WzeQMcW2aOOG0dD2JfSAtW1QXvRp7+ff8IlD9nWiFCOMdH8J8dp
+         rsGw122KBNKAudMnVjpMZeVD495NIfmVTbLKwTj0=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20191106062511.3262-1-mihailescu2m@gmail.com>
-In-Reply-To: <20191106062511.3262-1-mihailescu2m@gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 6 Nov 2019 07:45:44 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJeSsih37PrRtE8TgOM4eEv+fwfuaUWDMamM-T32_=5ug@mail.gmail.com>
-Message-ID: <CAL_JsqJeSsih37PrRtE8TgOM4eEv+fwfuaUWDMamM-T32_=5ug@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: exynos5420: add mali dt bindings and enable
- mali on Odroid XU3/4
-To:     Marian Mihailescu <mihailescu2m@gmail.com>
-Cc:     linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <af9676da-d448-50e8-d181-680aba7078db@samsung.com>
+References: <7647a10d-8e37-f086-a014-77f8ddcdd006@samsung.com> <CGME20191031150334eucas1p1c72857d23468cd693fee18ff1175b897@eucas1p1.samsung.com> <af9676da-d448-50e8-d181-680aba7078db@samsung.com>
+Subject: Re: [GIT PULL] clk/samsung updates for v5.5
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+User-Agent: alot/0.8.1
+Date:   Wed, 06 Nov 2019 11:30:27 -0800
+Message-Id: <20191106193028.503C92178F@mail.kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Nov 6, 2019 at 12:25 AM Marian Mihailescu
-<mihailescu2m@gmail.com> wrote:
->
-> From: memeka <mihailescu2m@gmail.com>
->
-> Add device tree bindings and nodes for Mali GPU for Exynos 542x SoC.
-> GPU is disabled by default, and is enabled for each board after the regulator
-> is defined. Tested on Odroid-XU4.
->
-> Changes since v1:
-> - used generic node and label for GPU
-> - added bindings for compatible
-> - fixed irq indentation
-> - fixed interrupt-names to match bindings
-> - added cooling cells for future TMU connection
-> - used generic node and label for GPU opp table
-> - removed always-on from SoC GPU regulator
->
-> Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
-> ---
->  .../devicetree/bindings/gpu/arm,mali-midgard.yaml  |  5 ++-
+Quoting Sylwester Nawrocki (2019-10-31 08:03:33)
+> Hi Stephen, Mike,
+> This PR is on top of my previous one (tags/clk-v5.4-samsung-fixes).
+>=20
+>=20
+> The following changes since commit e9323b664ce29547d996195e8a6129a351c391=
+08:
+>=20
+>   clk: samsung: exynos5420: Preserve PLL configuration during suspend/res=
+ume (2019-10-25 11:20:00 +0200)
+>=20
+> are available in the Git repository at:
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git clk-v=
+5.5-samsung
+>=20
+> for you to fetch changes up to 45f10dabb56bc5dee52df47dccd3bfab1e58eea1:
+>=20
+>   clk: samsung: exynos5420: Add SET_RATE_PARENT flag to clocks on G3D pat=
+h (2019-10-29 14:57:22 +0100)
+>=20
+> ----------------------------------------------------------------
 
-Split to a separate patch.
+Thanks. Pulled into clk-next
 
->  arch/arm/boot/dts/exynos5420.dtsi                  | 50 ++++++++++++++++++++++
->  arch/arm/boot/dts/exynos5422-odroid-core.dtsi      |  6 ++-
->  3 files changed, 59 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
-> index 47bc1ac36426..e8868cb587de 100644
-> --- a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
-> +++ b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
-> @@ -38,9 +38,12 @@ properties:
->            - enum:
->               - samsung,exynos5433-mali
->            - const: arm,mali-t760
-> +      - items:
-> +          - enum:
-> +             - samsung,exynis5420-mali
-
-exynis?
-
-> +          - const: arm,mali-t628
->
->            # "arm,mali-t624"
-> -          # "arm,mali-t628"
->            # "arm,mali-t830"
->            # "arm,mali-t880"
->
