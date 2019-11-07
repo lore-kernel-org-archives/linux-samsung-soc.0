@@ -1,188 +1,139 @@
-Return-Path: <SRS0=K8sZ=Y6=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=DrXp=Y7=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F8F5FC6195
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Nov 2019 22:55:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A52A3FA372C
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Nov 2019 02:21:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E55272187F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  6 Nov 2019 22:55:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7632821929
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  7 Nov 2019 02:21:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OdEEXEf0"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SDJGXLGg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727295AbfKFWzt (ORCPT
+        id S1732990AbfKGCVb (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 6 Nov 2019 17:55:49 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:44362 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725937AbfKFWzt (ORCPT
+        Wed, 6 Nov 2019 21:21:31 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:43866 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728569AbfKGCVa (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 6 Nov 2019 17:55:49 -0500
-Received: by mail-pg1-f194.google.com with SMTP id f19so74195pgk.11;
-        Wed, 06 Nov 2019 14:55:47 -0800 (PST)
+        Wed, 6 Nov 2019 21:21:30 -0500
+Received: by mail-pl1-f193.google.com with SMTP id a18so355769plm.10
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Nov 2019 18:21:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=WwmAXrpZu1baXaKN4OHedrq+hk5dzg0MV9DJtmeM5HE=;
-        b=OdEEXEf0qkDqsHtYS7pq4C8nmslrlJTdjW9dPAIa1jbutFk3tUZXnW+4clWiI2ich0
-         5YEQThPkDG0EnyQLLVbjZ7LahZg4By60KPsRfP+xE2+Q/su/4oMFO74cSKEgpFugWuo1
-         MqxkWJ7xkke6p5RGvLvvHGRqSrK/ZYGxTcPVTOK7vgUy//4eItotPTNKeWQzJcTy5kZh
-         vwzSn59Exx4C2nqYb2PFQQtBH0SWgKyAPq62hAnezeRhpL2jCvd+EhE33yz3SSvxpNgz
-         DaPQT+etQDdqLZRNwXJSIzwKsF7zwGSh1e1NheSfVUXWEAVhdZIVJIEiTL8EzPi1K7KH
-         1lHA==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=F8VYuNOSid43MrjVcuL5CaqvY6S8eW3r2yuK7BO5dwk=;
+        b=SDJGXLGggE+E5m+gMdad8MXvtzmZkX9FQLHSFJY3No1jFMqqPX+P84oKpd1BRIrIhv
+         iHfXEo4bZUfrs6P/8pwMKgedu8kInPSpg5nFo2uz3zf1gdd8OL1Ng0DHLWx5c7Uee8Q9
+         yJyvD+Bykzyl0Hg3JVhqGVV5HWNrOjC214hZ1NoZk6sskkkKY2Al6aqc1NU5TPF28t3M
+         Btek2alNVky8HWFU/w7EbzgdzWyIrgtDDLzh67x7C7u9sOC4exJ799z/f1N8WPY+IoGY
+         FURMba0tsOS5HB1nWufsBEGQUFaKz/ilUfP4nAKu7Ux+y/z4gug6Zwg+mxN8Jj2GEr+Q
+         pQow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=WwmAXrpZu1baXaKN4OHedrq+hk5dzg0MV9DJtmeM5HE=;
-        b=WR3OiQKQGpNfwOD16eLT9lq5oOYbXrUL/ieptsfgXEKulIJJQmzOOMolCI8hODms4U
-         Mye2K9SkRXJgLFHBStVdZOEIxBM66QiSmac+LkWKi7zLmLdt51oc7s3cLqcwbsXOpjBq
-         HwdZzCozJY2k2kGVCkJtim0XM556eJBPYa4PC5RHV+Y27z+sYMNV3WKg08lxBJBGVQMA
-         ePxbgYJlcIAgHUQALLUllFQQcF65vAbiUPuAbt0uQFbshPIhFELYLNQuL9g49G3V/DAy
-         0jBlKpFEUpG/e0w6yo2vmqn8z7lVmuBjlhkuT8g2xkUTd+I66dsLRt8SH7UBSXW9TMSJ
-         TeKQ==
-X-Gm-Message-State: APjAAAXYroovfDTSD2y4zVbeQhAriyltO44xE+oJeUT3+laaXbHPwpCd
-        ZnwQK33+S+L1RNspdX47th5yQpMYlB8=
-X-Google-Smtp-Source: APXvYqx2gZUmxB7PHKNEnVpURy1RgEUrL9gwFxw9zOyKVDCH3QDFfNgLDcVtNEFtrylLD/GkuKsARQ==
-X-Received: by 2002:a63:4104:: with SMTP id o4mr353589pga.169.1573080947192;
-        Wed, 06 Nov 2019 14:55:47 -0800 (PST)
-Received: from odroid.ad.adelaide.edu.au (staff-249-202.wireless.adelaide.edu.au. [129.127.249.202])
-        by smtp.googlemail.com with ESMTPSA id y16sm32851pfo.62.2019.11.06.14.55.43
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=F8VYuNOSid43MrjVcuL5CaqvY6S8eW3r2yuK7BO5dwk=;
+        b=ps8f3YfyZk6/pfQjIkATk20s2a821uDhaWrBPNsZOFxw3++mxiYYDFfOmCSqn5ASVA
+         qflDcxR8kGEpgmPqIwMknl5QXAorAh4lLCysFpPU3pGuwbc22fAzwXAhpNNhvbGiuZad
+         UtaojGgUy5GUmFjPw3H1YbMDIcPzEL1iqCZJGn0ZbbJbgyUv6NjpCN4bbi+ra8O7JZhP
+         wP3FhZSGcVcUpjWIJ/CdfVjKzoHQnEqwQJbTDMSEWrDgVHBfRW8go/34SgV2BTKRtLFx
+         /W/m550CrdnxWFfJCNC38ftEIVQepg1iDSWO2rT3cPOBwwCXv60E+fb2ZcJkuLO5cAWD
+         EQTg==
+X-Gm-Message-State: APjAAAVQ82vXMAoJ/fg6lNRjbzuSXqYaZWVzHr/aVyFH6VrH9a+kS3hL
+        Nw0mNdRdYPxxf/rA0rS/h1kzrQ==
+X-Google-Smtp-Source: APXvYqwCjUUa2EravddhWJUCM9i3hC9daXOm5Ys3mXL0S5Zxg/iGcWx5LIEoQdFU17focrcutXV10A==
+X-Received: by 2002:a17:902:6946:: with SMTP id k6mr1064471plt.60.1573093289898;
+        Wed, 06 Nov 2019 18:21:29 -0800 (PST)
+Received: from localhost ([122.171.110.253])
+        by smtp.gmail.com with ESMTPSA id s23sm402279pgh.21.2019.11.06.18.21.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Nov 2019 14:55:46 -0800 (PST)
-From:   Marian Mihailescu <mihailescu2m@gmail.com>
-To:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, krzk@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, kgene@kernel.org
-Cc:     Marian Mihailescu <mihailescu2m@gmail.com>
-Subject: [PATCH v4 2/2] ARM: dts: exynos5420: add mali dt node and enable mali on Odroid XU3/4
-Date:   Thu,  7 Nov 2019 09:25:27 +1030
-Message-Id: <20191106225527.9121-2-mihailescu2m@gmail.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20191106225527.9121-1-mihailescu2m@gmail.com>
-References: <20191106225527.9121-1-mihailescu2m@gmail.com>
+        Wed, 06 Nov 2019 18:21:29 -0800 (PST)
+Date:   Thu, 7 Nov 2019 07:51:25 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, edubezval@gmail.com,
+        Amit Daniel Kachhap <amit.kachhap@gmail.com>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Guillaume La Roque <glaroque@baylibre.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Javi Merino <javi.merino@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jun Nie <jun.nie@linaro.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 08/11] thermal: samsung: Appease the kernel-doc deity
+Message-ID: <20191107022125.wkdsdoolondcxhju@vireshk-i7>
+References: <cover.1573046440.git.amit.kucheria@linaro.org>
+ <ef268335454e96e6ee3d13deb1cb89af0d0a3b61.1573046440.git.amit.kucheria@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ef268335454e96e6ee3d13deb1cb89af0d0a3b61.1573046440.git.amit.kucheria@linaro.org>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add device tree node for Mali GPU for Exynos 542x SoC.
-GPU is disabled by default, and is enabled for each board after the
-regulator is defined. Tested on Odroid-XU4.
+On 06-11-19, 18:58, Amit Kucheria wrote:
+> Fix up the following warning when compiled with make W=1:
+> 
+> linux.git/drivers/thermal/mtk_thermal.c:374: warning: cannot understand function prototype: 'const struct mtk_thermal_data mt8173_thermal_data = '
+> linux.git/drivers/thermal/mtk_thermal.c:413: warning: cannot understand function prototype: 'const struct mtk_thermal_data mt2701_thermal_data = '
+> linux.git/drivers/thermal/mtk_thermal.c:443: warning: cannot understand function prototype: 'const struct mtk_thermal_data mt2712_thermal_data = '
+> linux.git/drivers/thermal/mtk_thermal.c:499: warning: cannot understand function prototype: 'const struct mtk_thermal_data mt8183_thermal_data = '
+> linux.git/drivers/thermal/mtk_thermal.c:529: warning: Function parameter or member 'sensno' not described in 'raw_to_mcelsius'
 
-Changes since v3:
-- fixed compatible to match bindings
+Incorrect log here.
 
-Changes since v2:
-- separate patch for bindings
-- fixed bindings typo
+> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> ---
+>  drivers/thermal/samsung/exynos_tmu.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index fb2c55123a99e..8193b66a3f831 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -138,7 +138,7 @@ enum soc_type {
+>  
+>  /**
+>   * struct exynos_tmu_data : A structure to hold the private data of the TMU
+> -	driver
+> + *			    driver
+>   * @id: identifier of the one instance of the TMU controller.
+>   * @base: base address of the single instance of the TMU controller.
+>   * @base_second: base address of the common registers of the TMU controller.
+> @@ -162,8 +162,11 @@ enum soc_type {
+>   *	0 < reference_voltage <= 31
+>   * @regulator: pointer to the TMU regulator structure.
+>   * @reg_conf: pointer to structure to register with core thermal.
+> + * @tzd: pointer to thermal_zone_device structure
+>   * @ntrip: number of supported trip points.
+>   * @enabled: current status of TMU device
+> + * @tmu_set_trip_temp: SoC specific method to set trip (rising threshold)
+> + * @tmu_set_trip_hyst: SoC specific to set hysteresis (falling threshold)
+>   * @tmu_initialize: SoC specific TMU initialization method
+>   * @tmu_control: SoC specific TMU control method
+>   * @tmu_read: SoC specific TMU temperature read method
+> -- 
+> 2.17.1
 
-Changes since v1:
-- used generic node and label for GPU
-- added bindings for compatible
-- fixed irq indentation
-- fixed interrupt-names to match bindings
-- added cooling cells for future TMU connection
-- used generic node and label for GPU opp table
-- removed always-on from SoC GPU regulator
-
-Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
----
- arch/arm/boot/dts/exynos5420.dtsi             | 50 +++++++++++++++++++++++++++
- arch/arm/boot/dts/exynos5422-odroid-core.dtsi |  6 +++-
- 2 files changed, 55 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 7d51e0f4ab79..31b5f7ba0e3b 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -670,6 +670,56 @@
- 			iommus = <&sysmmu_gscl1>;
- 		};
- 
-+		gpu: gpu@11800000 {
-+			compatible = "samsung,exynos5420-mali", "arm,mali-t628";
-+			reg = <0x11800000 0x5000>;
-+			interrupts = <GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "job", "mmu", "gpu";
-+
-+			clocks = <&clock CLK_G3D>;
-+			clock-names = "core";
-+			power-domains = <&g3d_pd>;
-+			operating-points-v2 = <&gpu_opp_table>;
-+
-+			status = "disabled";
-+			#cooling-cells = <2>;
-+
-+			gpu_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				opp@177000000 {
-+					opp-hz = /bits/ 64 <177000000>;
-+					opp-microvolt = <812500>;
-+				};
-+				opp@266000000 {
-+					opp-hz = /bits/ 64 <266000000>;
-+					opp-microvolt = <862500>;
-+				};
-+				opp@350000000 {
-+					opp-hz = /bits/ 64 <350000000>;
-+					opp-microvolt = <912500>;
-+				};
-+				opp-420000000 {
-+					opp-hz = /bits/ 64 <420000000>;
-+					opp-microvolt = <962500>;
-+				};
-+				opp-480000000 {
-+					opp-hz = /bits/ 64 <480000000>;
-+					opp-microvolt = <1000000>;
-+				};
-+				opp-543000000 {
-+					opp-hz = /bits/ 64 <543000000>;
-+					opp-microvolt = <1037500>;
-+				};
-+				opp-600000000 {
-+					opp-hz = /bits/ 64 <600000000>;
-+					opp-microvolt = <1150000>;
-+				};
-+			};
-+		};
-+
- 		scaler_0: scaler@12800000 {
- 			compatible = "samsung,exynos5420-scaler";
- 			reg = <0x12800000 0x1294>;
-diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-index 422692b20c46..ce774f7b2ce0 100644
---- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-@@ -522,7 +522,6 @@
- 				regulator-name = "vdd_g3d";
- 				regulator-min-microvolt = <800000>;
- 				regulator-max-microvolt = <1400000>;
--				regulator-always-on;
- 				regulator-boot-on;
- 
- 				regulator-state-mem {
-@@ -659,6 +658,11 @@
- 	status = "okay";
- };
- 
-+&gpu {
-+	mali-supply = <&buck4_reg>;
-+	status = "okay";
-+};
-+
- &rtc {
- 	status = "okay";
- 	clocks = <&clock CLK_RTC>, <&s2mps11_osc S2MPS11_CLK_AP>;
 -- 
-2.14.1
-
+viresh
