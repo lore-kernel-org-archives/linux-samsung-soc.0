@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EFC9C17443
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 10 Nov 2019 03:01:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DEDC43331
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 10 Nov 2019 03:09:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ADDF21019
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 10 Nov 2019 03:01:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42C1F21848
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 10 Nov 2019 03:09:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573354880;
-	bh=BIKvivTgbhJmyqsY0AFtQ/h+1Vep9bWqDEIZO2zDLAM=;
+	s=default; t=1573355341;
+	bh=irSFSlP4lDy18Th9gU+TMXSW4JZxVtRA522JoQhDzh0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Wh2IAuCBqhCCtxZnoQRL8gLRxh3PTvrdqc56cLmWHUK7Bwu0sNxY2DZEuPz19rDlZ
-	 qzqA8NpsmeWqj2szvy+j8MljiRhotqhWPBybPD+eswSzXmxePqqgdWMnAF+rGpNCLg
-	 mQ7wBw2koOSnfG9utSjoLXFZY6gCZsrtoMRHJMvI=
+	b=HEhOjz81fXq88wDxZevg7KYX0Bc14tBIJkQhFVI+uF6Y8jZgrHDEXnSHJbZAKoP0r
+	 NyYe0k4q/JpFG5V48YEEwPYsU3zWvjy+k2jfhQCGBIO7VpjTHuchoCag1ez0Rn8MNm
+	 0P/IoKx6q76Rl3o4uymrtpErFT8F0kmp+J7+DBJ4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729567AbfKJDBG (ORCPT
+        id S1728646AbfKJCop (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 9 Nov 2019 22:01:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47210 "EHLO mail.kernel.org"
+        Sat, 9 Nov 2019 21:44:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729185AbfKJC4q (ORCPT
+        id S1728632AbfKJCom (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:56:46 -0500
+        Sat, 9 Nov 2019 21:44:42 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B2E7224B8;
-        Sun, 10 Nov 2019 02:48:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE4F221D7B;
+        Sun, 10 Nov 2019 02:44:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573354091;
-        bh=BIKvivTgbhJmyqsY0AFtQ/h+1Vep9bWqDEIZO2zDLAM=;
+        s=default; t=1573353881;
+        bh=irSFSlP4lDy18Th9gU+TMXSW4JZxVtRA522JoQhDzh0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cTnzitFwU+qsS41Ld/cmBtE38VYB55bLroDHW5U3lFO/tJhuh6aLieiZUc9luE92P
-         YxUaNvfTU3yZBih5Esdz1jpopET1HiqabhYxWp+i5u94RV/5GlFNXnVA/EpT0ssu8p
-         gdzfheQQGluTfQBJmqV+4nybuKfXbguNPCio+Zjo=
+        b=epz5I0ydhLZtxw06ZtIgQPeG4w7P4pXiLG9Xe/b428NihDvKEt8CFbJndK71DlONm
+         oSdA58LsGx0NKbG+Nzd40kPzW/2cA8S+3HOAGLOnIolTec+u5rPC9BCw5Wn6yXubOk
+         zJ5vk+Lbd/5dz7yGfJ0JaPtN04STiYi+xpf82gjM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Christoph Manszewski <c.manszewski@samsung.com>,
@@ -48,12 +48,12 @@ Cc:     Christoph Manszewski <c.manszewski@samsung.com>,
         Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 086/109] crypto: s5p-sss: Fix Fix argument list alignment
-Date:   Sat,  9 Nov 2019 21:45:18 -0500
-Message-Id: <20191110024541.31567-86-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 158/191] crypto: s5p-sss: Fix Fix argument list alignment
+Date:   Sat,  9 Nov 2019 21:39:40 -0500
+Message-Id: <20191110024013.29782-158-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191110024541.31567-1-sashal@kernel.org>
-References: <20191110024541.31567-1-sashal@kernel.org>
+In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
+References: <20191110024013.29782-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -79,10 +79,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-index aec66159566dd..9a5213cbcbe18 100644
+index 9021ad9df0c45..b7216935236f0 100644
 --- a/drivers/crypto/s5p-sss.c
 +++ b/drivers/crypto/s5p-sss.c
-@@ -323,7 +323,7 @@ static void s5p_unset_indata(struct s5p_aes_dev *dev)
+@@ -491,7 +491,7 @@ static void s5p_unset_indata(struct s5p_aes_dev *dev)
  }
  
  static int s5p_make_sg_cpy(struct s5p_aes_dev *dev, struct scatterlist *src,
@@ -91,7 +91,7 @@ index aec66159566dd..9a5213cbcbe18 100644
  {
  	void *pages;
  	int len;
-@@ -569,7 +569,7 @@ static int s5p_set_indata_start(struct s5p_aes_dev *dev,
+@@ -1889,7 +1889,7 @@ static int s5p_set_indata_start(struct s5p_aes_dev *dev,
  }
  
  static int s5p_set_outdata_start(struct s5p_aes_dev *dev,
