@@ -2,84 +2,158 @@ Return-Path: <SRS0=BOTl=ZF=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A27FC43331
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Nov 2019 03:21:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDDADC17449
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Nov 2019 09:13:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 520CF222BD
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Nov 2019 03:21:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573615300;
-	bh=bQFk3ld2rDVrbWbkcAfKuIPNaNAuTTmtxal+zD1t0io=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=UuYcfxtLKpaOxkfpwtMqLnKdQCOM7rKKhtaa24jK74u99g2jPFKM1f7gFPrcBgz9Y
-	 dZf9xObyaWwuPjzEN0gKqMZ3yl4PbJ5H9fHnmejQmBzwadJfysoxw0tC6sCUsxHW2G
-	 aYQ2QjT9kOgH1WEA8xrpB4VyPwyf9SVtNzPJ08VY=
+	by mail.kernel.org (Postfix) with ESMTP id A8FFB222D0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 13 Nov 2019 09:13:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rj95D70l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727555AbfKMDVh (ORCPT
+        id S1726086AbfKMJNy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 12 Nov 2019 22:21:37 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:40074 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726980AbfKMDVg (ORCPT
+        Wed, 13 Nov 2019 04:13:54 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:34890 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726318AbfKMJNx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 12 Nov 2019 22:21:36 -0500
-Received: by mail-ot1-f67.google.com with SMTP id m15so371496otq.7;
-        Tue, 12 Nov 2019 19:21:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZpV1BsOVjY8q8m9cj3xdi1GErJhtJv7dWu4+vEcZ+LU=;
-        b=tKN6nP5oIC8i+LZ/mzld99wsbFF+M8YSEsKF2D44YaMi72GufuKFv87XrZM9mRWzW0
-         PXlAWP7gUto2LnQP8xAnl+ony2nudL8urudiv5lHfOVR6vg2Sfdp08xHE8TasiYlxRKp
-         cRy2bVxU20c/E+AP9gvXkQdRDKF/g4e+8TKYwyxF1ubbiaoQxGVAdh9zUwfRbBwQoHL3
-         x2xBjj98jtIkJcTmj6ubsLCGzNXEARWa/LuN6xcYFDMegyzECvbzDMFwsGigYxGFKzI0
-         pF1pPkFTxVNthh2Cst28QaxaMTfbS/TA6nSkxxrumGgStc3+9yea61OUzKOTUB6ieWN2
-         Oy7g==
-X-Gm-Message-State: APjAAAXkLu7AuCblwe6WnC0djKROQ2EGnjixW6MsERl1QR/x+dOT+ZBt
-        Kf3rFgpWseyGtI4qUa0TzA==
-X-Google-Smtp-Source: APXvYqyGSOaOY6zYR3u9pUTxpKNtPkaV8wIzmQP3ltkXxEBF05SZjChVa48v9pS0fFiji5WzBFYwMw==
-X-Received: by 2002:a9d:6452:: with SMTP id m18mr820905otl.325.1573615295837;
-        Tue, 12 Nov 2019 19:21:35 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id z2sm325119otp.2.2019.11.12.19.21.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2019 19:21:35 -0800 (PST)
-Date:   Tue, 12 Nov 2019 21:21:34 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Marian Mihailescu <mihailescu2m@gmail.com>
-Cc:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, krzk@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, kgene@kernel.org,
-        Marian Mihailescu <mihailescu2m@gmail.com>
-Subject: Re: [PATCH v4 1/2] dt-bindings: gpu: mali-midgard: add samsung
- exynos 5420 compatible
-Message-ID: <20191113032134.GA22574@bogus>
-References: <20191106225527.9121-1-mihailescu2m@gmail.com>
+        Wed, 13 Nov 2019 04:13:53 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191113091351euoutp01c614c05233dfba8039009bf9c3d6e6c2~Wrf9DRja_1861518615euoutp01d
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Nov 2019 09:13:51 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191113091351euoutp01c614c05233dfba8039009bf9c3d6e6c2~Wrf9DRja_1861518615euoutp01d
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1573636431;
+        bh=6kTIaVH2hMyJlHyAYmy99jGCeC1LIi6Ohv9O3YM4Dvc=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=rj95D70lxVbV4YVeTzttbxgdPWJruQPh9R/izAgq1ApkoPlQ9lZxtyODzLAk6oJHb
+         POzk570MHcEwzFZFO9Cgyl+WkZMsNBDpMAXw4wVEppU3TAb9Azxm55f3pLGsC5SGdN
+         zI2HRbxHCD/xjjP+pQr6zqVdW125SCx064ILDlCc=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20191113091351eucas1p1210e2308350b47d60d85c2acc80ac4a3~Wrf8sDk4O1871618716eucas1p1k;
+        Wed, 13 Nov 2019 09:13:51 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 05.82.04469.F49CBCD5; Wed, 13
+        Nov 2019 09:13:51 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20191113091350eucas1p2545166dfa1dc3b85aee375e353d7a604~Wrf8YNfPx1330013300eucas1p2C;
+        Wed, 13 Nov 2019 09:13:50 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191113091350eusmtrp1d9c37e38c230652370bbc1e1c037574c~Wrf8XJE4a0965609656eusmtrp1h;
+        Wed, 13 Nov 2019 09:13:50 +0000 (GMT)
+X-AuditID: cbfec7f2-54fff70000001175-a5-5dcbc94fa996
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id C6.DA.04117.E49CBCD5; Wed, 13
+        Nov 2019 09:13:50 +0000 (GMT)
+Received: from AMDC3218.digital.local (unknown [106.120.51.18]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191113091350eusmtip1d741020f48953919fddc6530d8f7a470~Wrf7zwrm00369203692eusmtip1N;
+        Wed, 13 Nov 2019 09:13:50 +0000 (GMT)
+From:   Kamil Konieczny <k.konieczny@samsung.com>
+To:     k.konieczny@samsung.com
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Kamil Konieczny <k.konieczny@partner.samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: [PATCH 0/7] devfreq: improve devfreq statistics counting
+Date:   Wed, 13 Nov 2019 10:13:29 +0100
+Message-Id: <20191113091336.5218-1-k.konieczny@samsung.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191106225527.9121-1-mihailescu2m@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDKsWRmVeSWpSXmKPExsWy7djPc7r+J0/HGrx/w2uxccZ6VovrX56z
+        WvTt+89oseDTDFaL/sevmS3On9/AbnG26Q27xabH11gtLu+aw2bxufcIo8WM8/uYLNYeuctu
+        cbtxBZsDr8emVZ1sHpuX1HscfLeHyaNvyypGj8+b5AJYo7hsUlJzMstSi/TtErgy9vb9YS3Y
+        w12xcuc/lgbGKZxdjJwcEgImEjsnTGDuYuTiEBJYwSjR9Ww9lPOFUeJ132V2COczo8SV7j2M
+        MC1zmy9BJZYzSqzado0JruVz7y8WkCo2AX2Jg2dPgtkiAtISnYsmghUxCzxnlrg8/z8zSEJY
+        wFHi8vHDYEUsAqoSq9evB1vBK2At0d/WCmRzAK2Tl5jzVgMiLChxcuYTsHJmoHDz1tlgt0oI
+        LGOX2HyuhwXiPBeJlfeeMUHYwhKvjm9hh7BlJE5Phqkpl3i6sI8dormFUeJB+0eohLXE4eMX
+        WUEWMwtoSqzfpQ8RdpTob37JDHEPn8SNt4IQN/BJTNo2HSrMK9HRJgRRrSrx/FQP1AXSEl3/
+        17FC2B4S+6/+AVskJBArsel5D9sERoVZSD6bheSzWQg3LGBkXsUonlpanJueWmyYl1quV5yY
+        W1yal66XnJ+7iRGYpk7/O/5pB+PXS0mHGAU4GJV4eCUWnooVYk0sK67MPcQowcGsJMK7o+JE
+        rBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHeaoYH0UIC6YklqdmpqQWpRTBZJg5OqQbGcoPWClEW
+        KfZAs0pBHr71h+ccX2PXaKogtnNxma39BlPTGNWNMU6Xm/vDo55dfi/Qy/vQ9OGDJ+efnWz8
+        xZ8iNTW0tDIwhF0+3XIG44me7OPrBWYJZrKxXeoIyvLx2/91r//dqe/DRTnesNrPtt6rmx1k
+        9WB+/db2s06PJnw7K3rsb/DLimlKLMUZiYZazEXFiQC5eWZ0TwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEIsWRmVeSWpSXmKPExsVy+t/xu7p+J0/HGnzeb2axccZ6VovrX56z
+        WvTt+89oseDTDFaL/sevmS3On9/AbnG26Q27xabH11gtLu+aw2bxufcIo8WM8/uYLNYeuctu
+        cbtxBZsDr8emVZ1sHpuX1HscfLeHyaNvyypGj8+b5AJYo/RsivJLS1IVMvKLS2yVog0tjPQM
+        LS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQy9vb9YS3Yw12xcuc/lgbGKZxdjJwcEgIm
+        EnObL7F3MXJxCAksZZSYt7aZESIhLdF4ejUThC0s8edaFxtE0SdGia89W5hBEmwC+hIHz55k
+        AbFFgBo6F01kAiliFnjPLDFpzxZWkISwgKPE5eOHwYpYBFQlVq9fD7aBV8Baor+tFcjmANog
+        LzHnrQZEWFDi5MwnYOXMQOHmrbOZJzDyzUKSmoUktYCRaRWjSGppcW56brGRXnFibnFpXrpe
+        cn7uJkZgfGw79nPLDsaud8GHGAU4GJV4eA/MOxUrxJpYVlyZe4hRgoNZSYR3R8WJWCHelMTK
+        qtSi/Pii0pzU4kOMpkC3TmSWEk3OB8ZuXkm8oamhuYWlobmxubGZhZI4b4fAwRghgfTEktTs
+        1NSC1CKYPiYOTqkGxi65yYfXSsmdNf7zfPc8p4VHynmWbWthl3G7uOn2lTSDK+8vsD+X0Kna
+        0bX43BejdWUzLvD9nLVO95vNNJ+t/gmFK+2ndP5Lf116y8FpannsvOM5E7nWiJ1UbtW7dOpf
+        3rnKs2zCB6eb2xW07fgk+Olk7cOMRYumcF6fY999ZtsH4fwHkgu9L69QYinOSDTUYi4qTgQA
+        xVDFz6UCAAA=
+X-CMS-MailID: 20191113091350eucas1p2545166dfa1dc3b85aee375e353d7a604
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20191113091350eucas1p2545166dfa1dc3b85aee375e353d7a604
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20191113091350eucas1p2545166dfa1dc3b85aee375e353d7a604
+References: <CGME20191113091350eucas1p2545166dfa1dc3b85aee375e353d7a604@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu,  7 Nov 2019 09:25:26 +1030, Marian Mihailescu wrote:
-> Add "samsung,exynos5420-mali" binding
-> 
-> Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
-> ---
->  Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
+Hi,
 
-Applied, thanks.
+this patch series improves devfreq statistics:
 
-Rob
+- do conversion to use 64-bit jiffies for storing elapsed time and prevent counters
+  overflow,
+
+- add ability to reset statistics using sysfs,
+
+- move statistics data to separate structure for improved code
+  readability and maintenance,
+
+- make devfreq statistics code more similar to cpufreq statistics
+  code for improved long-term maintainability
+
+The first four patches fix time stats to use 64-bits, add spinlock for protecting data
+access, add new function in sysfs for clearing statistics counters and change var name
+used in time counters. Remaining patches make steps to moving stats into separate
+structure devfreq_stats.
+
+Best regards,
+Kamil Konieczny
+Samsung R&D Institute Poland
+
+Kamil Konieczny (7):
+  devfreq: change time stats to 64-bit
+  devfreq: protect devfreq stats data with spinlock
+  devfreq: add clearing transitions stats in sysfs
+  devfreq: change var name used in time statistics
+  devfreq: move transition statistics to devfreq profile structure
+  devfreq: move transition statistics allocations to set_freq_stats()
+  devfreq: move statistics to separate struct
+
+ drivers/devfreq/devfreq.c          | 199 ++++++++++++++++++-----------
+ drivers/devfreq/exynos-bus.c       |   6 +-
+ drivers/devfreq/governor_passive.c |  26 ++--
+ include/linux/devfreq.h            |  41 +++---
+ 4 files changed, 167 insertions(+), 105 deletions(-)
+
+-- 
+2.24.0
+
