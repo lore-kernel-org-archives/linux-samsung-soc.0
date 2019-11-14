@@ -2,113 +2,129 @@ Return-Path: <SRS0=bjZ+=ZG=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE46C432C3
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Nov 2019 13:06:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B92C432C3
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Nov 2019 16:42:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09B87206DC
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Nov 2019 13:06:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DDCC20724
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 Nov 2019 16:42:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573736813;
-	bh=KCNO+MrgVqwz18fwdIJHkLq2GV4c6TSpcgDSJNunoDI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=cGDQFZ5bg/eieBuwp6sg++ZK86Ts8GlrlTKWqCk0In/3f6V96xdR/YfJH0cPY6JVP
-	 6/QRC6/Szdkego1VLiGnTyc6Q15Bz0H0uqgppZj8BFkcwJGYQ2vLV78Q/+phsVJ6xq
-	 bA//k0keU+AcuG2Vv0qv4tKexbMcpDBWQlHRbbL0=
+	s=default; t=1573749728;
+	bh=vtbCclPT+zYqUalm1ApV+FNGPcRf/b9M6eu8ZE4q16Q=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=1Mu1BJrd/b8GF7FAkO8KAMMTuL1oFbUCYKj+Frr5l/PFJj/5QYBPlt2TYEzRopERB
+	 rynWNwiri6FPjhRfaOwg2H3bSNDXH9bf5u3sg28JGLes7rXeaeGndfXQhCFgIoX6wa
+	 TZ/26onOEDBSwpQUwghMSeLUBzU2TCgCQ3STGKX8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726318AbfKNNGt (ORCPT
+        id S1727100AbfKNQmE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 14 Nov 2019 08:06:49 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:46676 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726202AbfKNNGt (ORCPT
+        Thu, 14 Nov 2019 11:42:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39116 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726214AbfKNQmE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 14 Nov 2019 08:06:49 -0500
-Received: by mail-pg1-f194.google.com with SMTP id r18so3737635pgu.13;
-        Thu, 14 Nov 2019 05:06:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jKxQ3g2QCYw1ETJ7eUyt+P4Yh1YMiRwmIUhbyNGbkvI=;
-        b=rLZ3bzbEbWhNLHL4Ssj2NSpg4wSwAIR1dlqCuNj2rYva0CZYBW3HcGF5jLDifxbHQu
-         i2SJGfcBmmzDZmvIWCdfTNcX7TK2px7OJedspXOuxXiqoDF0Aj6Xe7vnvG9GmloMCOen
-         j85OgtPLNbWvFpfh+7yk4VSYtTalzE/MVF/6qkHSRLvoRiyVFlTS9gT8ua3nHZ+y0N+W
-         n/6GrxBzCjbqZn0ZCBATFwMxJJH1Oz+uiW+BMbgXDWAny5xnBtZLRzVCxy1L+hMu/6sU
-         7hCVI9DXnnbxOxKdD/W+bcaYw+HjcNeFKCvsl8SDX/iscqoc+IoLVI7eAEmqRwK4JizL
-         h2xw==
-X-Gm-Message-State: APjAAAXMcebFkveW4ATYo1Tova328DDjlgcyYBZ3UPqhecBHEcTscyEw
-        wBHlwNEplUw50K4IY4drsO0=
-X-Google-Smtp-Source: APXvYqz6HcLDXMbPV2kam2Ol4yOZFbMzJdRPhAXcsvJIpmq2YBHH7ZD8SfAkqfvj4SThTSNe5HmhhA==
-X-Received: by 2002:a17:90a:e90:: with SMTP id 16mr12337378pjx.65.1573736808378;
-        Thu, 14 Nov 2019 05:06:48 -0800 (PST)
-Received: from kozik-lap ([118.189.143.39])
-        by smtp.googlemail.com with ESMTPSA id fz12sm5781898pjb.15.2019.11.14.05.06.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Nov 2019 05:06:47 -0800 (PST)
-Date:   Thu, 14 Nov 2019 14:06:43 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marian Mihailescu <mihailescu2m@gmail.com>
-Cc:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, kgene@kernel.org
-Subject: Re: [PATCH v5] ARM: dts: exynos5420: add mali dt node and enable
- mali on Odroid XU3/4
-Message-ID: <20191114130643.GB3084@kozik-lap>
-References: <20191114000900.26962-1-mihailescu2m@gmail.com>
+        Thu, 14 Nov 2019 11:42:04 -0500
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD51920727;
+        Thu, 14 Nov 2019 16:42:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573749722;
+        bh=vtbCclPT+zYqUalm1ApV+FNGPcRf/b9M6eu8ZE4q16Q=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=eSe0IvX2y9Wj/36cOsbQWZo2r/flZoR95ZUx9zbAQ72DT7NfJH7j3KTR29VnrqtoH
+         jnNw5uqT7e0Gds5meXc+jFJjbsMH0XhlTSeT7VxkLcBboqkO0SmGsrUM7gUfqQn5RQ
+         w/A9jtP+kVlgVy9Aigrw0Nm04tD72R3d5391n1hA=
+Received: by mail-qt1-f170.google.com with SMTP id r20so7412342qtp.13;
+        Thu, 14 Nov 2019 08:42:02 -0800 (PST)
+X-Gm-Message-State: APjAAAVEUW1bwnWbEbl3PzqcTQEuIkJZyW35KEdkZfhB0mIIxhEUlXQ/
+        TIqnVXM3JVwufYFat7hEdtYzIWvlrz3+33l7MQ==
+X-Google-Smtp-Source: APXvYqxjuNP7BfYPb5x+ylRHTKdxw88/n1phCYuux3ImKi057RYvcMQ05BWyQKmncaEprsWM0Zap0QYGz4BodN4GT7w=
+X-Received: by 2002:ac8:3094:: with SMTP id v20mr9302910qta.110.1573749721974;
+ Thu, 14 Nov 2019 08:42:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191114000900.26962-1-mihailescu2m@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20191030173216.5993-1-krzk@kernel.org> <20191105194257.GA16066@bogus>
+ <20191114125923.GA3084@kozik-lap>
+In-Reply-To: <20191114125923.GA3084@kozik-lap>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 14 Nov 2019 10:41:50 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJCps_s1OGt2SvPa4uBj9EQp0ZqyeHVw8fMR+rSSVh9ow@mail.gmail.com>
+Message-ID: <CAL_JsqJCps_s1OGt2SvPa4uBj9EQp0ZqyeHVw8fMR+rSSVh9ow@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: power: Convert Generic Power Domain
+ bindings to json-schema
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Nov 14, 2019 at 10:39:00AM +1030, Marian Mihailescu wrote:
-> Add device tree node for Mali GPU for Exynos 542x SoC.
-> GPU is disabled by default, and is enabled for each board after the
-> regulator is defined. Tested on Odroid-XU4.
-> 
-> Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
-> ---
-> 
-> Changes since v4:
-> - fixed so it applies for latest 5.4-rc7
-> 
-> Changes since v3:
-> - fixed compatible to match bindings
-> 
-> Changes since v2:
-> - separate patch for bindings
-> - fixed bindings typo
-> 
-> Changes since v1:
-> - used generic node and label for GPU
-> - added bindings for compatible
-> - fixed irq indentation
-> - fixed interrupt-names to match bindings
-> - added cooling cells for future TMU connection
-> - used generic node and label for GPU opp table
-> - removed always-on from SoC GPU regulator
-> 
-> ---
->  arch/arm/boot/dts/exynos5420.dtsi             | 50 +++++++++++++++++++++++++++
->  arch/arm/boot/dts/exynos5422-odroid-core.dtsi |  6 +++-
->  2 files changed, 55 insertions(+), 1 deletion(-)
+On Thu, Nov 14, 2019 at 6:59 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On Tue, Nov 05, 2019 at 01:42:58PM -0600, Rob Herring wrote:
+> > On Wed, 30 Oct 2019 18:32:15 +0100, Krzysztof Kozlowski wrote:
+> > > Convert Generic Power Domain bindings to DT schema format using
+> > > json-schema.
+> > >
+> > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > > Acked-by: Stephen Boyd <sboyd@kernel.org>
+> > >
+> > > ---
+> > >
+> > > Changes since v2:
+> > > 1. Keep description of consumers in power-domain.txt,
+> > > 2. Rename power_domain.txt to power-domain.txt,
+> > > 3. Indent example with four spaces (more readable).
+> > >
+> > > Changes since v1:
+> > > 1. Select all nodes for consumers,
+> > > 2. Remove from consumers duplicated properties with dt-schema,
+> > > 3. Fix power domain pattern,
+> > > 4. Remove unneeded types.
+> > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > > ---
+> > >  .../devicetree/bindings/arm/arm,scmi.txt      |   2 +-
+> > >  .../devicetree/bindings/arm/arm,scpi.txt      |   2 +-
+> > >  .../bindings/arm/freescale/fsl,scu.txt        |   2 +-
+> > >  .../bindings/clock/renesas,cpg-mssr.txt       |   2 +-
+> > >  .../bindings/clock/ti/davinci/psc.txt         |   2 +-
+> > >  .../firmware/nvidia,tegra186-bpmp.txt         |   2 +-
+> > >  .../bindings/power/amlogic,meson-gx-pwrc.txt  |   2 +-
+> > >  .../devicetree/bindings/power/fsl,imx-gpc.txt |   2 +-
+> > >  .../bindings/power/fsl,imx-gpcv2.txt          |   2 +-
+> > >  .../{power_domain.txt => power-domain.txt}    |  95 +------------
+> > >  .../bindings/power/power-domain.yaml          | 133 ++++++++++++++++++
+> > >  .../bindings/power/renesas,sysc-rmobile.txt   |   2 +-
+> > >  .../bindings/power/xlnx,zynqmp-genpd.txt      |   2 +-
+> > >  .../bindings/soc/bcm/brcm,bcm2835-pm.txt      |   2 +-
+> > >  .../bindings/soc/mediatek/scpsys.txt          |   2 +-
+> > >  .../bindings/soc/ti/sci-pm-domain.txt         |   2 +-
+> > >  MAINTAINERS                                   |   2 +-
+> > >  17 files changed, 149 insertions(+), 109 deletions(-)
+> > >  rename Documentation/devicetree/bindings/power/{power_domain.txt => power-domain.txt} (51%)
+> > >  create mode 100644 Documentation/devicetree/bindings/power/power-domain.yaml
+> > >
+> >
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+>
+> The patches should apply cleanly in top of your tree so maybe you can
+> pick them up?
 
-Again tried to apply... but it causes new DTS warnings:
+I didn't on this one because it touches a lot of files. Though on
+second thought, they are all across the tree, so I might as well apply
+them.
 
-arch/arm/boot/dts/exynos5420.dtsi:692.19-695.7: Warning (unit_address_vs_reg): /soc/gpu@11800000/opp-table/opp@177000000: node has a unit name, but no reg property
-
-Send the patches passing checkpatch and not introducing warnings (make
-dtbs W=1).
-
-Best regards,
-Krzysztof
-
+Rob
