@@ -2,227 +2,116 @@ Return-Path: <SRS0=p+An=ZL=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5098C432C3
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Nov 2019 16:46:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C764C432C0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Nov 2019 17:02:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB4CB223AB
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Nov 2019 16:46:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB2D822384
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Nov 2019 17:02:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1574182955;
+	bh=9xlP6l6zc8LrRTuryqi4QOF5/Hg74NZf0SPlZK2mEU8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=jSC3fgS1I0k90FtIIP2+iAFkpUYtlOgY7cRfAhLcPXACQigKbrA/y04ep1P2qEUHU
+	 bbwdH/e3wR+ccrMFbeeYY5ZdSdmmkz/fZ+j+9WDDTpHv5MVF0yxVeAW912xfSpLTzf
+	 Yrsc0tHgkRUE8neWeM4V5AH/1WdWBzKtB6tciV1M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728250AbfKSQq5 (ORCPT
+        id S1728645AbfKSRC3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 19 Nov 2019 11:46:57 -0500
-Received: from verein.lst.de ([213.95.11.211]:35305 "EHLO verein.lst.de"
+        Tue, 19 Nov 2019 12:02:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726985AbfKSQq5 (ORCPT
+        id S1727560AbfKSRC3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 19 Nov 2019 11:46:57 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 0469068BFE; Tue, 19 Nov 2019 17:46:53 +0100 (CET)
-Date:   Tue, 19 Nov 2019 17:46:52 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        iommu@lists.linux-foundation.org,
-        Russell King <linux@armlinux.org.uk>,
-        linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        Robin Gong <yibin.gong@nxp.com>, Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH 1/3] dma-direct: unify the dma_capable definitions
-Message-ID: <20191119164652.GA18983@lst.de>
-References: <20191113073539.9660-1-hch@lst.de> <CGME20191113073648epcas3p214f97ad5937559bebbc937e507fa54d9@epcas3p2.samsung.com> <20191113073539.9660-2-hch@lst.de> <1c227c91-512c-e871-0e03-a27b2c0435d7@samsung.com> <CAJKOXPdM1+x_4PQ1AfoPY6GuV0e9bk3hv_1EfEdHcLjMwwYxgw@mail.gmail.com> <a3e2d65b-7270-9555-a251-d7ed0c4fb85c@samsung.com>
+        Tue, 19 Nov 2019 12:02:29 -0500
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 522C222384;
+        Tue, 19 Nov 2019 17:02:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574182943;
+        bh=9xlP6l6zc8LrRTuryqi4QOF5/Hg74NZf0SPlZK2mEU8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=hHdDFqFWJkwOuMKZk0NzaOxgeAE6UqGlvZAVH+WTtjEaZ3CCkLs6cDI5yFhIl9SRE
+         54T4E31B4t+satNSKMSJ+416Ec7m0NKdD49RPHEpukOMZs6k0mxIRc9AHYb5zIBbTG
+         bNPOVvg5RSncACs08sPyTJmxe1NXOpvf8io01pqY=
+Received: by mail-qk1-f179.google.com with SMTP id z16so18462574qkg.7;
+        Tue, 19 Nov 2019 09:02:23 -0800 (PST)
+X-Gm-Message-State: APjAAAWDgqNzuLMJs8sFoNhCpmKJ/NCyiGWxa3+rUuO7R+v5e5LWatrG
+        AnMysVzyQOrrnIp3ZSRcxGlXeEucbJgpgLW1ZA==
+X-Google-Smtp-Source: APXvYqxucfdWSXPgW2vd8l9633HeMvIH864eMJ/p+Bk0FhDvh444Pum/yEC+Gs6buUxeu7x2jucgvrCcmOz57phmAkg=
+X-Received: by 2002:a05:620a:205d:: with SMTP id d29mr30290391qka.152.1574182942398;
+ Tue, 19 Nov 2019 09:02:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="YiEDa0DAkWCtVeE4"
-Content-Disposition: inline
-In-Reply-To: <a3e2d65b-7270-9555-a251-d7ed0c4fb85c@samsung.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <20191119144315.11261-1-krzk@kernel.org>
+In-Reply-To: <20191119144315.11261-1-krzk@kernel.org>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 19 Nov 2019 11:02:11 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+1hHneSW5DzLNxU00AqQJ49chTyULJ0S3JR-CqfOfTgA@mail.gmail.com>
+Message-ID: <CAL_Jsq+1hHneSW5DzLNxU00AqQJ49chTyULJ0S3JR-CqfOfTgA@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: power: Fix path to power-domain.txt bindings
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        etnaviv@lists.freedesktop.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        PCI <linux-pci@vger.kernel.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Tue, Nov 19, 2019 at 8:43 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> With split of power domain controller bindings to power-domain.yaml, the
+> consumer part was renamed to power-domain.txt.  Update the references in
+> other bindings.
+>
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Fixes: abb4805e343a ("dt-bindings: power: Convert Samsung Exynos Power Domain bindings to json-schema")
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/clock/clk-exynos-audss.txt  | 2 +-
+>  Documentation/devicetree/bindings/clock/exynos5433-clock.txt  | 2 +-
+>  .../devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt  | 2 +-
+>  .../devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt  | 2 +-
+>  .../bindings/clock/renesas,rcar-gen2-cpg-clocks.txt           | 2 +-
+>  .../devicetree/bindings/clock/renesas,rz-cpg-clocks.txt       | 2 +-
+>  .../devicetree/bindings/display/etnaviv/etnaviv-drm.txt       | 2 +-
+>  Documentation/devicetree/bindings/display/msm/dpu.txt         | 2 +-
+>  Documentation/devicetree/bindings/display/msm/mdp5.txt        | 2 +-
+>  Documentation/devicetree/bindings/dsp/fsl,dsp.yaml            | 2 +-
+>  Documentation/devicetree/bindings/media/imx7-mipi-csi2.txt    | 2 +-
+>  .../devicetree/bindings/media/mediatek-jpeg-decoder.txt       | 2 +-
+>  Documentation/devicetree/bindings/media/mediatek-mdp.txt      | 2 +-
+>  Documentation/devicetree/bindings/opp/qcom-nvmem-cpufreq.txt  | 2 +-
+>  Documentation/devicetree/bindings/pci/pci-keystone.txt        | 2 +-
+>  Documentation/devicetree/bindings/phy/ti,phy-am654-serdes.txt | 2 +-
+>  Documentation/devicetree/bindings/power/qcom,rpmpd.txt        | 2 +-
+>  Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt | 2 +-
+>  .../devicetree/bindings/usb/nvidia,tegra124-xusb.txt          | 4 ++--
+>  19 files changed, 20 insertions(+), 20 deletions(-)
 
---YiEDa0DAkWCtVeE4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Please no. Can you just undo the renaming back to power_domain.txt
 
-On Tue, Nov 19, 2019 at 11:26:39AM +0100, Marek Szyprowski wrote:
-> Christoph: Let me know if this is a proper fix for you, then I will send 
-> it as a full patch.
-
-Besides the point from Robin, which is really older than you patch
-I'm not a fan of duplicating dma_capable here.  Let me know what you
-think of the two attached patches.
-
---YiEDa0DAkWCtVeE4
-Content-Type: text/x-patch; charset=us-ascii
-Content-Disposition: attachment; filename="0001-dma-direct-don-t-check-swiotlb-force-in-dma_direct_m.patch"
-
-From db897c2ec63e7af78137c533c9f821c594896167 Mon Sep 17 00:00:00 2001
-From: Christoph Hellwig <hch@lst.de>
-Date: Tue, 19 Nov 2019 17:35:36 +0100
-Subject: dma-direct: don't check swiotlb=force in dma_direct_map_resource
-
-When mapping resources we can't just use swiotlb ram for bounce
-buffering.  Switch to a direct dma_capable check instead.
-
-Fixes: cfced786969c ("dma-mapping: remove the default map_resource implementation")
-Reported-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- kernel/dma/direct.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-index 077876ae5c74..a479bd2d1e8b 100644
---- a/kernel/dma/direct.c
-+++ b/kernel/dma/direct.c
-@@ -412,7 +412,7 @@ dma_addr_t dma_direct_map_resource(struct device *dev, phys_addr_t paddr,
- {
- 	dma_addr_t dma_addr = paddr;
- 
--	if (unlikely(!dma_direct_possible(dev, dma_addr, size))) {
-+	if (unlikely(!dma_capable(dev, dma_addr, size))) {
- 		report_addr(dev, dma_addr, size);
- 		return DMA_MAPPING_ERROR;
- 	}
--- 
-2.20.1
-
-
---YiEDa0DAkWCtVeE4
-Content-Type: text/x-patch; charset=us-ascii
-Content-Disposition: attachment; filename="0002-dma-direct-exclude-dma_direct_map_resource-from-the-.patch"
-
-From fd82d238a42e3a5f12dd0621db2c724b89509b02 Mon Sep 17 00:00:00 2001
-From: Christoph Hellwig <hch@lst.de>
-Date: Tue, 19 Nov 2019 17:38:58 +0100
-Subject: dma-direct: exclude dma_direct_map_resource from the min_low_pfn
- check
-
-The valid memory address check in dma_capable only makes sense when mapping
-normal memory, not when using dma_map_resource to map a device resource.
-Add a new boolean argument to dma_capable to exclude that check for the
-dma_map_resource case.
-
-Fixes: b12d66278dd6 ("dma-direct: check for overflows on 32 bit DMA addresses")
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/x86/kernel/amd_gart_64.c | 4 ++--
- drivers/xen/swiotlb-xen.c     | 4 ++--
- include/linux/dma-direct.h    | 5 +++--
- kernel/dma/direct.c           | 4 ++--
- kernel/dma/swiotlb.c          | 2 +-
- 5 files changed, 10 insertions(+), 9 deletions(-)
-
-diff --git a/arch/x86/kernel/amd_gart_64.c b/arch/x86/kernel/amd_gart_64.c
-index a6ac3712db8b..5cfab41e8509 100644
---- a/arch/x86/kernel/amd_gart_64.c
-+++ b/arch/x86/kernel/amd_gart_64.c
-@@ -185,13 +185,13 @@ static void iommu_full(struct device *dev, size_t size, int dir)
- static inline int
- need_iommu(struct device *dev, unsigned long addr, size_t size)
- {
--	return force_iommu || !dma_capable(dev, addr, size);
-+	return force_iommu || !dma_capable(dev, addr, size, true);
- }
- 
- static inline int
- nonforced_iommu(struct device *dev, unsigned long addr, size_t size)
- {
--	return !dma_capable(dev, addr, size);
-+	return !dma_capable(dev, addr, size, true);
- }
- 
- /* Map a single continuous physical area into the IOMMU.
-diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
-index 3f8b2cdb4acb..b6d27762c6f8 100644
---- a/drivers/xen/swiotlb-xen.c
-+++ b/drivers/xen/swiotlb-xen.c
-@@ -375,7 +375,7 @@ static dma_addr_t xen_swiotlb_map_page(struct device *dev, struct page *page,
- 	 * we can safely return the device addr and not worry about bounce
- 	 * buffering it.
- 	 */
--	if (dma_capable(dev, dev_addr, size) &&
-+	if (dma_capable(dev, dev_addr, size, true) &&
- 	    !range_straddles_page_boundary(phys, size) &&
- 		!xen_arch_need_swiotlb(dev, phys, dev_addr) &&
- 		swiotlb_force != SWIOTLB_FORCE)
-@@ -397,7 +397,7 @@ static dma_addr_t xen_swiotlb_map_page(struct device *dev, struct page *page,
- 	/*
- 	 * Ensure that the address returned is DMA'ble
- 	 */
--	if (unlikely(!dma_capable(dev, dev_addr, size))) {
-+	if (unlikely(!dma_capable(dev, dev_addr, size, true))) {
- 		swiotlb_tbl_unmap_single(dev, map, size, size, dir,
- 				attrs | DMA_ATTR_SKIP_CPU_SYNC);
- 		return DMA_MAPPING_ERROR;
-diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
-index f8959f75e496..99b77dd5f79b 100644
---- a/include/linux/dma-direct.h
-+++ b/include/linux/dma-direct.h
-@@ -49,14 +49,15 @@ static inline phys_addr_t dma_to_phys(struct device *dev, dma_addr_t daddr)
- 	return __sme_clr(__dma_to_phys(dev, daddr));
- }
- 
--static inline bool dma_capable(struct device *dev, dma_addr_t addr, size_t size)
-+static inline bool dma_capable(struct device *dev, dma_addr_t addr, size_t size,
-+		bool is_ram)
- {
- 	dma_addr_t end = addr + size - 1;
- 
- 	if (!dev->dma_mask)
- 		return false;
- 
--	if (!IS_ENABLED(CONFIG_ARCH_DMA_ADDR_T_64BIT) &&
-+	if (is_ram && !IS_ENABLED(CONFIG_ARCH_DMA_ADDR_T_64BIT) &&
- 	    min(addr, end) < phys_to_dma(dev, PFN_PHYS(min_low_pfn)))
- 		return false;
- 
-diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-index a479bd2d1e8b..40f1f0aac4b1 100644
---- a/kernel/dma/direct.c
-+++ b/kernel/dma/direct.c
-@@ -363,7 +363,7 @@ static inline bool dma_direct_possible(struct device *dev, dma_addr_t dma_addr,
- 		size_t size)
- {
- 	return swiotlb_force != SWIOTLB_FORCE &&
--		dma_capable(dev, dma_addr, size);
-+		dma_capable(dev, dma_addr, size, true);
- }
- 
- dma_addr_t dma_direct_map_page(struct device *dev, struct page *page,
-@@ -412,7 +412,7 @@ dma_addr_t dma_direct_map_resource(struct device *dev, phys_addr_t paddr,
- {
- 	dma_addr_t dma_addr = paddr;
- 
--	if (unlikely(!dma_capable(dev, dma_addr, size))) {
-+	if (unlikely(!dma_capable(dev, dma_addr, size, false))) {
- 		report_addr(dev, dma_addr, size);
- 		return DMA_MAPPING_ERROR;
- 	}
-diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-index 673a2cdb2656..9280d6f8271e 100644
---- a/kernel/dma/swiotlb.c
-+++ b/kernel/dma/swiotlb.c
-@@ -678,7 +678,7 @@ bool swiotlb_map(struct device *dev, phys_addr_t *phys, dma_addr_t *dma_addr,
- 
- 	/* Ensure that the address returned is DMA'ble */
- 	*dma_addr = __phys_to_dma(dev, *phys);
--	if (unlikely(!dma_capable(dev, *dma_addr, size))) {
-+	if (unlikely(!dma_capable(dev, *dma_addr, size, true))) {
- 		swiotlb_tbl_unmap_single(dev, *phys, size, size, dir,
- 			attrs | DMA_ATTR_SKIP_CPU_SYNC);
- 		return false;
--- 
-2.20.1
-
-
---YiEDa0DAkWCtVeE4--
+Rob
