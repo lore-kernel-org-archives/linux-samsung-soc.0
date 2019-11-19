@@ -2,103 +2,203 @@ Return-Path: <SRS0=p+An=ZL=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A155DC432C0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Nov 2019 16:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F883C432C3
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Nov 2019 16:16:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8241D22360
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Nov 2019 16:00:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F46D223BD
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Nov 2019 16:16:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728427AbfKSQA1 (ORCPT
+        id S1728462AbfKSQQL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 19 Nov 2019 11:00:27 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:46179 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727509AbfKSQA0 (ORCPT
+        Tue, 19 Nov 2019 11:16:11 -0500
+Received: from foss.arm.com ([217.140.110.172]:54824 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728341AbfKSQQL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 19 Nov 2019 11:00:26 -0500
-Received: by mail-oi1-f195.google.com with SMTP id n14so19350085oie.13;
-        Tue, 19 Nov 2019 08:00:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lOp09REXBJlIhxRQLG3yF3pkOzVMqVXKGYr5zOkYKTU=;
-        b=tvirj1n2/8raLM1mnIsqp2gtwTG5uKIyP1xLwQY0vY3qjRyRnMTQn215elCAXasSfy
-         WSyp8Uwl85PcYNgWjZwZCCdkqTskSJ7Rg1xm3satC2WKj3DCWtIcVjDP0SHl9JfadCE7
-         iQzb2KSMDGkLqXoZ4QACKQLtKY3Q7Mxtk0GCW53GI6ZE3T4ApWiG6V6gSuFNhNyUc/Zb
-         0a/IjQe5z6lDgHz8T0LrFt3P57rYJKyytp5fk+au0tF9Mz2CIDBpgZN0BPu/OZv7iZxX
-         Rt8K5H761gL0OeumSjzBiNg5XjPK7ROO/j9j68puMeduawUwkVi0Ii3t4994/lK3JRSY
-         QfEg==
-X-Gm-Message-State: APjAAAU8JKYPSL1ZgPixnZpQwmt6hecZN3aEXOBQkZEKuEurNgWD71f2
-        JpBl0Ntpex8oGGzdJhPHeyLiWU3wsUy5mfxGH/g=
-X-Google-Smtp-Source: APXvYqyFjVcr3DV/kDkPHFaPjGoNOAPUlx3qgBTMVdhzS/Ov2hib4acxOvn1dSc2R4bN1wN/M0QqvauTflblBxgZCm8=
-X-Received: by 2002:aca:fc92:: with SMTP id a140mr4573964oii.153.1574179223502;
- Tue, 19 Nov 2019 08:00:23 -0800 (PST)
+        Tue, 19 Nov 2019 11:16:11 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 674B131B;
+        Tue, 19 Nov 2019 08:16:10 -0800 (PST)
+Received: from [10.1.196.37] (e121345-lin.cambridge.arm.com [10.1.196.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A28AD3F6C4;
+        Tue, 19 Nov 2019 08:16:08 -0800 (PST)
+Subject: Re: [PATCH 1/3] dma-direct: unify the dma_capable definitions
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Vinod Koul <vkoul@kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        linux-mips@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        Robin Gong <yibin.gong@nxp.com>, linuxppc-dev@lists.ozlabs.org,
+        Christoph Hellwig <hch@lst.de>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+References: <20191113073539.9660-1-hch@lst.de>
+ <CGME20191113073648epcas3p214f97ad5937559bebbc937e507fa54d9@epcas3p2.samsung.com>
+ <20191113073539.9660-2-hch@lst.de>
+ <1c227c91-512c-e871-0e03-a27b2c0435d7@samsung.com>
+ <CAJKOXPdM1+x_4PQ1AfoPY6GuV0e9bk3hv_1EfEdHcLjMwwYxgw@mail.gmail.com>
+ <a3e2d65b-7270-9555-a251-d7ed0c4fb85c@samsung.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <dd7f90e8-76cb-259f-cb48-2aac7bffb404@arm.com>
+Date:   Tue, 19 Nov 2019 16:16:03 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20191119144315.11261-1-krzk@kernel.org>
-In-Reply-To: <20191119144315.11261-1-krzk@kernel.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 19 Nov 2019 17:00:05 +0100
-Message-ID: <CAMuHMdUnn8uYyQ+D=6rp1+R1sE_W-SS1t+EuNHm=vWaKQ9Z6tQ@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: power: Fix path to power-domain.txt bindings
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        etnaviv@lists.freedesktop.org,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        freedreno@lists.freedesktop.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <a3e2d65b-7270-9555-a251-d7ed0c4fb85c@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+On 19/11/2019 10:26 am, Marek Szyprowski wrote:
+> Hi Krzysztof,
+> 
+> On 19.11.2019 10:44, Krzysztof Kozlowski wrote:
+>> On Tue, 19 Nov 2019 at 17:27, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>>> Hi Christoph,
+>>>
+>>> On 13.11.2019 08:35, Christoph Hellwig wrote:
+>>>> Currently each architectures that wants to override dma_to_phys and
+>>>> phys_to_dma also has to provide dma_capable.  But there isn't really
+>>>> any good reason for that.  powerpc and mips just have copies of the
+>>>> generic one minus the latests fix, and the arm one was the inspiration
+>>>> for said fix, but misses the bus_dma_mask handling.
+>>>> Make all architectures use the generic version instead.
+>>>>
+>>>> Signed-off-by: Christoph Hellwig <hch@lst.de>
+>>> This patch breaks DMAengine PL330 driver on Samsung Exynos SoCs:
+>>
+>> Thanks Marek for bisecting it. I wonder whether it is also the cause
+>> for boot failures I see on NXP Vybrid VF50 SoC (NXP/Freescale
+>> fsl-edma) since few days:
+>>
+>> [ 2.853428] fsl-edma 40018000.dma-controller: overflow 0x40027007+1 of
+>> DMA mask ffffffff bus mask 0
+>> [ 2.862566] ------------[ cut here ]------------
+>> [ 2.867273] WARNING: CPU: 0 PID: 1 at
+>> /home/buildbot/worker/builddir_yocto/build/build/tmp/work-shared/col-vf50-proceq-mainline-next/kernel-source/kernel/dma/direct.c:35
+>> report_addr+0xc0/0xfc
+>> [ 2.884380] Modules linked in:
+>> [ 2.887486] CPU: 0 PID: 1 Comm: swapper Tainted: G W
+>> 5.4.0-rc7-next-20191118-g519ead8f6a32 #1
+>> [ 2.897364] Hardware name: Freescale Vybrid VF5xx/VF6xx (Device Tree)
+>> [ 2.903892] [<8010ddfc>] (unwind_backtrace) from [<8010b4b8>]
+>> (show_stack+0x10/0x14)
+>> [ 2.911712] [<8010b4b8>] (show_stack) from [<8011b08c>] (__warn+0xd4/0xec)
+>> [ 2.918653] [<8011b08c>] (__warn) from [<8011b154>]
+>> (warn_slowpath_fmt+0xb0/0xb8)
+>> [ 2.926218] [<8011b154>] (warn_slowpath_fmt) from [<80155f7c>]
+>> (report_addr+0xc0/0xfc)
+>> [ 2.934221] [<80155f7c>] (report_addr) from [<801561f0>]
+>> (dma_direct_map_resource+0x98/0xa4)
+>> [ 2.942744] [<801561f0>] (dma_direct_map_resource) from [<8041d5d4>]
+>> (fsl_edma_prep_slave_dma+0x12c/0x150)
+>> [ 2.952475] [<8041d5d4>] (fsl_edma_prep_slave_dma) from [<8041d8cc>]
+>> (fsl_edma_prep_dma_cyclic+0x30/0x21c)
+>> [ 2.962213] [<8041d8cc>] (fsl_edma_prep_dma_cyclic) from [<80452e10>]
+>> (lpuart_rx_dma_startup+0x188/0x36c)
+>> [ 2.971871] [<80452e10>] (lpuart_rx_dma_startup) from [<80453058>]
+>> (lpuart_startup+0x64/0x78)
+>> [ 2.980477] [<80453058>] (lpuart_startup) from [<8044e924>]
+>> (uart_startup.part.7+0x110/0x23c)
+>> [ 2.989080] [<8044e924>] (uart_startup.part.7) from [<8044eaa0>]
+>> (uart_port_activate+0x50/0x7c)
+>> [ 2.997857] [<8044eaa0>] (uart_port_activate) from [<80438dc0>]
+>> (tty_port_open+0x74/0xc0)
+>> [ 3.006111] [<80438dc0>] (tty_port_open) from [<8044be30>] (uart_open+0x18/0x20)
+>> [ 3.013588] [<8044be30>] (uart_open) from [<80431b4c>] (tty_open+0x108/0x428)
+>> [ 3.020794] [<80431b4c>] (tty_open) from [<801edb48>] (chrdev_open+0xac/0x164)
+>> [ 3.028098] [<801edb48>] (chrdev_open) from [<801e55c8>]
+>> (do_dentry_open+0x22c/0x3e4)
+>> [ 3.036010] [<801e55c8>] (do_dentry_open) from [<801f72a8>]
+>> (path_openat+0x4a4/0xf78)
+>> [ 3.043912] [<801f72a8>] (path_openat) from [<801f8d34>]
+>> (do_filp_open+0x70/0xdc)
+>> [ 3.051472] [<801f8d34>] (do_filp_open) from [<801e6998>]
+>> (do_sys_open+0x128/0x1f4)
+>> [ 3.059217] [<801e6998>] (do_sys_open) from [<80a00ee0>]
+>> (kernel_init_freeable+0x150/0x1c4)
+>> [ 3.067658] [<80a00ee0>] (kernel_init_freeable) from [<8068e208>]
+>> (kernel_init+0x8/0x110)
+>> [ 3.075917] [<8068e208>] (kernel_init) from [<801010e8>]
+>> (ret_from_fork+0x14/0x2c)
+>> [ 3.083539] Exception stack(0x86843fb0 to 0x86843ff8)
+>> [ 3.088631] 3fa0: 00000000 00000000 00000000 00000000
+>> [ 3.096866] 3fc0: 00000000 00000000 00000000 00000000 00000000
+>> 00000000 00000000 00000000
+>> [ 3.105103] 3fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+>> [ 3.111752] ---[ end trace 6fb699802256a309 ]---
+>> [    3.116423] fsl-lpuart 40027000.serial: Cannot prepare cyclic DMA
+>> [    3.192968] VFS: Mounted root (nfs4 filesystem) on device 0:13.
+>> [    3.201432] devtmpfs: mounted
+>> [    3.210985] Freeing unused kernel memory: 1024K
+>> [    3.217854] Run /sbin/init as init process
+>> [    4.643355] systemd[1]: System time before build time, advancing clock.
+>> [    4.774106] random: systemd: uninitialized urandom read (16 bytes read)
+>> [    4.838361] systemd[1]: systemd 232 running in system mode. (-PAM
+>> -AUDIT -SELINUX -IMA -APPARMOR -SMACK +SYSVINIT +UTMP -LIBCRYPTSETUP
+>> -GCRYPT -GNUTLS +ACL +XZ -LZ4 -SECCOMP +BLKID -ELFUTILS +KMOD -IDN)
+>> [    4.858997] systemd[1]: Detected architecture arm.
+>> [    4.873438] fsl-lpuart 40027000.serial: Cannot prepare TX slave DMA!
+>> [    4.880138] fsl-lpuart 40027000.serial: Cannot prepare TX slave DMA!
+>> [    4.886585] fsl-lpuart 40027000.serial: Cannot prepare TX slave DMA!
+>> [    4.893124] fsl-lpuart 40027000.serial: Cannot prepare TX slave DMA!
+>> [    4.899679] fsl-lpuart 40027000.serial: Cannot prepare TX slave DMA!
+>> [    4.906110] fsl-lpuart 40027000.serial: Cannot prepare TX slave DMA!
+>> [    4.912616] fsl-lpuart 40027000.serial: Cannot prepare TX slave DMA!
+>>
+>> Although maybe that's just the fsl-edma problem?
+> 
+> This is the same issue.
+> 
+> A quick looks at the dma-direct code revealed that the
+> dma_direct_map_resource() is broken after this unification, because it
+> calls dma_direct_possible(), which then calls dma_capable(). The generic
+> dma_capable() from include/linux/dma-direct.h checks if the provided
+> address is in RAM memory range, what in the case of
+> dma_direct_map_resource() is not true.
+> 
+> A quick fix for this issue is to inline dma_direct_possible() with a
+> modified dma_capable() directly to the dma_direct_map_resource()
+> function (without the min_low_pfn check):
+> 
+> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+> index 077876ae5c74..b6dd6a0b338b 100644
+> --- a/kernel/dma/direct.c
+> +++ b/kernel/dma/direct.c
+> @@ -411,8 +411,10 @@ dma_addr_t dma_direct_map_resource(struct device
+> *dev, phys_addr_t paddr,
+>                   size_t size, enum dma_data_direction dir, unsigned long
+> attrs)
+>    {
+>           dma_addr_t dma_addr = paddr;
+> +       dma_addr_t end = dma_addr + size - 1;
+> 
+> -       if (unlikely(!dma_direct_possible(dev, dma_addr, size))) {
+> +       if (unlikely(swiotlb_force == SWIOTLB_FORCE || !dev->dma_mask ||
 
-On Tue, Nov 19, 2019 at 3:43 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> With split of power domain controller bindings to power-domain.yaml, the
-> consumer part was renamed to power-domain.txt.  Update the references in
-> other bindings.
->
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Fixes: abb4805e343a ("dt-bindings: power: Convert Samsung Exynos Power Domain bindings to json-schema")
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+You don't want the swiotlb_force check in there - we can't bounce-buffer 
+device-to-device accesses, regardless of the SWIOTLB policy.
 
-Thanks for your patch!
+Robin.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
->  .../bindings/clock/renesas,rcar-gen2-cpg-clocks.txt           | 2 +-
-
-Please note this file is no longer present in next.
-But robh/for-next still has it.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> +                    end > min_not_zero(*dev->dma_mask,
+> dev->bus_dma_mask))) {
+>                   report_addr(dev, dma_addr, size);
+>                   return DMA_MAPPING_ERROR;
+>           }
+> 
+> Christoph: Let me know if this is a proper fix for you, then I will send
+> it as a full patch.
+> 
+> Best regards
+> 
