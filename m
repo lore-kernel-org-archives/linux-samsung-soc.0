@@ -2,140 +2,277 @@ Return-Path: <SRS0=p+An=ZL=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8980BC432C3
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Nov 2019 09:58:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1179CC43215
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Nov 2019 10:20:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68CC92230E
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Nov 2019 09:58:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E765E2230C
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Nov 2019 10:19:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726921AbfKSJ6Y (ORCPT
+        id S1726783AbfKSKT7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 19 Nov 2019 04:58:24 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:35928 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726590AbfKSJ6X (ORCPT
+        Tue, 19 Nov 2019 05:19:59 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50404 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725798AbfKSKT7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 19 Nov 2019 04:58:23 -0500
-Received: by mail-ot1-f67.google.com with SMTP id f10so17342014oto.3;
-        Tue, 19 Nov 2019 01:58:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=R2QfOLQ66mKJM4oqvv+8/7SnafH2D5zzrRD8WOBy5DA=;
-        b=L1Xf8EC5Q4JoXOCzw1uJNx7tPF6TYhUwg32F0prwdYlMC6vPLwRf4Vfwyc/YxXrB3J
-         JR+IRNPw5P4ij9RVyKUdAbWqdJxergZgvW0P1d7r+7X9YLXTN2jeYUr6C6vbH1Dq+Ttb
-         rP2G1BZx7oBnqjUf43a5NtK/665r9sD/cDnHlt1Ss1h+s4AZ24cVRPLvFu5UJ9hnncNq
-         lc+2/s1XEmqOTpjXvLot3fLuv/TAvoloOSKpCyHSdTCJ6FfY/XpwiNThNv5BNyo9snkk
-         mINqcGQPdgEjh4zgXRoDjLP5V4IJP/braHHKgUif9AlEZyRaMCyfSF+nnmTcRdZEd4Bo
-         Vpnw==
-X-Gm-Message-State: APjAAAVWIpmH1QPui5NFopgp44O49lwr2ExvBHLCFRNd0Kpu4p36Atr5
-        3H8KE4FbRx5a2fOzUKVvHBsIurpDwGNhhkWKCTE=
-X-Google-Smtp-Source: APXvYqzXEAB1RN2ztsSPnJrNlveKBRzWXzUVBsrYqaVf7OxCOQc193FoRkJyyExGk2AxheB0N+YhwRziF7J9QuWRKJQ=
-X-Received: by 2002:a9d:5511:: with SMTP id l17mr3048301oth.145.1574157502733;
- Tue, 19 Nov 2019 01:58:22 -0800 (PST)
+        Tue, 19 Nov 2019 05:19:59 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 405A9B301;
+        Tue, 19 Nov 2019 10:19:56 +0000 (UTC)
+Message-ID: <fb25b868bd49f368874d97dda7befc07e8db6057.camel@suse.de>
+Subject: Re: [PATCH 1/3] dma-direct: unify the dma_capable definitions
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Christoph Hellwig <hch@lst.de>,
+        iommu@lists.linux-foundation.org,
+        Russell King <linux@armlinux.org.uk>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
+Date:   Tue, 19 Nov 2019 11:19:54 +0100
+In-Reply-To: <1c227c91-512c-e871-0e03-a27b2c0435d7@samsung.com>
+References: <20191113073539.9660-1-hch@lst.de>
+         <CGME20191113073648epcas3p214f97ad5937559bebbc937e507fa54d9@epcas3p2.samsung.com>
+         <20191113073539.9660-2-hch@lst.de>
+         <1c227c91-512c-e871-0e03-a27b2c0435d7@samsung.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-9aduMZ9FwgNk+BtbhcTa"
+User-Agent: Evolution 3.34.1 
 MIME-Version: 1.0
-References: <20191030173216.5993-1-krzk@kernel.org> <20191105194257.GA16066@bogus>
- <20191114125923.GA3084@kozik-lap> <CAL_JsqJCps_s1OGt2SvPa4uBj9EQp0ZqyeHVw8fMR+rSSVh9ow@mail.gmail.com>
-In-Reply-To: <CAL_JsqJCps_s1OGt2SvPa4uBj9EQp0ZqyeHVw8fMR+rSSVh9ow@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 19 Nov 2019 10:58:11 +0100
-Message-ID: <CAMuHMdXYg4u1SF+j=doJqaDFw+O61g2th8ppt+CBrez8QAgJRA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: power: Convert Generic Power Domain
- bindings to json-schema
-To:     Rob Herring <robh@kernel.org>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Rob, Krzysztof,
 
-On Thu, Nov 14, 2019 at 5:42 PM Rob Herring <robh@kernel.org> wrote:
-> On Thu, Nov 14, 2019 at 6:59 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > On Tue, Nov 05, 2019 at 01:42:58PM -0600, Rob Herring wrote:
-> > > On Wed, 30 Oct 2019 18:32:15 +0100, Krzysztof Kozlowski wrote:
-> > > > Convert Generic Power Domain bindings to DT schema format using
-> > > > json-schema.
-> > > >
-> > > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > > > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > > > Acked-by: Stephen Boyd <sboyd@kernel.org>
-> > > >
-> > > > ---
-> > > >
-> > > > Changes since v2:
-> > > > 1. Keep description of consumers in power-domain.txt,
-> > > > 2. Rename power_domain.txt to power-domain.txt,
-> > > > 3. Indent example with four spaces (more readable).
-> > > >
-> > > > Changes since v1:
-> > > > 1. Select all nodes for consumers,
-> > > > 2. Remove from consumers duplicated properties with dt-schema,
-> > > > 3. Fix power domain pattern,
-> > > > 4. Remove unneeded types.
-> > > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > > > ---
-> > > >  .../devicetree/bindings/arm/arm,scmi.txt      |   2 +-
-> > > >  .../devicetree/bindings/arm/arm,scpi.txt      |   2 +-
-> > > >  .../bindings/arm/freescale/fsl,scu.txt        |   2 +-
-> > > >  .../bindings/clock/renesas,cpg-mssr.txt       |   2 +-
-> > > >  .../bindings/clock/ti/davinci/psc.txt         |   2 +-
-> > > >  .../firmware/nvidia,tegra186-bpmp.txt         |   2 +-
-> > > >  .../bindings/power/amlogic,meson-gx-pwrc.txt  |   2 +-
-> > > >  .../devicetree/bindings/power/fsl,imx-gpc.txt |   2 +-
-> > > >  .../bindings/power/fsl,imx-gpcv2.txt          |   2 +-
-> > > >  .../{power_domain.txt => power-domain.txt}    |  95 +------------
-> > > >  .../bindings/power/power-domain.yaml          | 133 ++++++++++++++++++
-> > > >  .../bindings/power/renesas,sysc-rmobile.txt   |   2 +-
-> > > >  .../bindings/power/xlnx,zynqmp-genpd.txt      |   2 +-
-> > > >  .../bindings/soc/bcm/brcm,bcm2835-pm.txt      |   2 +-
-> > > >  .../bindings/soc/mediatek/scpsys.txt          |   2 +-
-> > > >  .../bindings/soc/ti/sci-pm-domain.txt         |   2 +-
-> > > >  MAINTAINERS                                   |   2 +-
-> > > >  17 files changed, 149 insertions(+), 109 deletions(-)
-> > > >  rename Documentation/devicetree/bindings/power/{power_domain.txt => power-domain.txt} (51%)
-> > > >  create mode 100644 Documentation/devicetree/bindings/power/power-domain.yaml
-> > > >
-> > >
-> > > Reviewed-by: Rob Herring <robh@kernel.org>
-> >
-> > The patches should apply cleanly in top of your tree so maybe you can
-> > pick them up?
->
-> I didn't on this one because it touches a lot of files. Though on
-> second thought, they are all across the tree, so I might as well apply
-> them.
+--=-9aduMZ9FwgNk+BtbhcTa
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There are still several leftover references to power_domain.txt.
-Krzysztof: Do you plan to convert these, too, or do you expect the
-individual maintainers to handle that?
+On Tue, 2019-11-19 at 10:27 +0100, Marek Szyprowski wrote:
+> Hi Christoph,
+>=20
+> On 13.11.2019 08:35, Christoph Hellwig wrote:
+> > Currently each architectures that wants to override dma_to_phys and
+> > phys_to_dma also has to provide dma_capable.  But there isn't really
+> > any good reason for that.  powerpc and mips just have copies of the
+> > generic one minus the latests fix, and the arm one was the inspiration
+> > for said fix, but misses the bus_dma_mask handling.
+> > Make all architectures use the generic version instead.
+> >=20
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+>=20
+> This patch breaks DMAengine PL330 driver on Samsung Exynos SoCs:
+>=20
+> [    3.602338] dma-pl330 12690000.pdma: overflow 0x13810020+1 of DMA=20
+> mask ffffffff bus mask 0
+> [    3.605113] ------------[ cut here ]------------
+> [    3.609719] WARNING: CPU: 2 PID: 1 at kernel/dma/direct.c:36=20
+> report_addr+0xc0/0xfc
+> [    3.617226] Modules linked in:
+> [    3.620271] CPU: 2 PID: 1 Comm: init Not tainted=20
+> 5.4.0-rc5-00056-gb037b220e71d #6911
+> [    3.627986] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+> [    3.634094] [<c01124e8>] (unwind_backtrace) from [<c010dfcc>]=20
+> (show_stack+0x10/0x14)
+> [    3.641803] [<c010dfcc>] (show_stack) from [<c0ae9af8>]=20
+> (dump_stack+0xa8/0xd4)
+> [    3.649002] [<c0ae9af8>] (dump_stack) from [<c012746c>]=20
+> (__warn+0xf4/0x10c)
+> [    3.655940] [<c012746c>] (__warn) from [<c0127534>]=20
+> (warn_slowpath_fmt+0xb0/0xb8)
+> [    3.663404] [<c0127534>] (warn_slowpath_fmt) from [<c01b4ff4>]=20
+> (report_addr+0xc0/0xfc)
+> [    3.671303] [<c01b4ff4>] (report_addr) from [<c01b5264>]=20
+> (dma_direct_map_resource+0x98/0xa0)
+> [    3.679739] [<c01b5264>] (dma_direct_map_resource) from [<c04fbb58>]=
+=20
+> (pl330_prep_slave_fifo+0xe4/0x128)
+> [    3.689099] [<c04fbb58>] (pl330_prep_slave_fifo) from [<c04fe2b8>]=20
+> (pl330_prep_slave_sg+0x54/0x1cc)
+> [    3.698129] [<c04fe2b8>] (pl330_prep_slave_sg) from [<c053e5f0>]=20
+> (s3c24xx_serial_start_tx_dma+0x118/0x1e8)
+> [    3.707764] [<c053e5f0>] (s3c24xx_serial_start_tx_dma) from=20
+> [<c0535f70>] (uart_write+0xe4/0x1e0)
+> [    3.716532] [<c0535f70>] (uart_write) from [<c05186a0>]=20
+> (n_tty_write+0x1c8/0x474)
+> [    3.723992] [<c05186a0>] (n_tty_write) from [<c05163c0>]=20
+> (tty_write+0x154/0x314)
+> [    3.731380] [<c05163c0>] (tty_write) from [<c02a5748>]=20
+> (__vfs_write+0x30/0x1d0)
+> [    3.738662] [<c02a5748>] (__vfs_write) from [<c02a851c>]=20
+> (vfs_write+0xa4/0x180)
+> [    3.745949] [<c02a851c>] (vfs_write) from [<c02a8778>]=20
+> (ksys_write+0x60/0xd8)
+> [    3.753069] [<c02a8778>] (ksys_write) from [<c0101000>]=20
+> (ret_fast_syscall+0x0/0x28)
+> [    3.760705] Exception stack(0xee8dffa8 to 0xee8dfff0)
+> [    3.765739] ffa0:                   0000004a beca876c 00000002=20
+> beca876c 0000004a 00000000
+> [    3.773900] ffc0: 0000004a beca876c b6f02cf0 00000004 beca876c=20
+> 0000004a 00000000 b6f99010
+> [    3.782056] ffe0: 0000006c beca8628 b6e1d000 b6e7a634
+> [    3.787092] irq event stamp: 289740
+> [    3.790571] hardirqs last  enabled at (289739): [<c0b0d0c4>]=20
+> _raw_spin_unlock_irqrestore+0x6c/0x74
+> [    3.799503] hardirqs last disabled at (289740): [<c0b0caf8>]=20
+> _raw_spin_lock_irqsave+0x1c/0x58
+> [    3.808011] softirqs last  enabled at (289576): [<c01026bc>]=20
+> __do_softirq+0x4fc/0x5fc
+> [    3.815830] softirqs last disabled at (289567): [<c0130044>]=20
+> irq_exit+0x16c/0x170
+> [    3.823286] ---[ end trace b1432c658797b861 ]---
+> [    3.827898] samsung-uart 13810000.serial: Unable to get desc for Tx
+> [    3.834624] samsung-uart 13810000.serial: Unable to get desc for Tx
+> [    3.840487] samsung-uart 13810000.serial: Unable to get desc for Tx
+>=20
+> I'm checking now which part of it causes the issue.
 
-Thanks!
+Hi Marek,
+is this a on a non LPAE ARM32 device?
 
-Gr{oetje,eeting}s,
+Regards,
+Nicolas
 
-                        Geert
+> > ---
+> >   arch/arm/include/asm/dma-direct.h     | 19 -------------------
+> >   arch/mips/include/asm/dma-direct.h    |  8 --------
+> >   arch/powerpc/include/asm/dma-direct.h |  9 ---------
+> >   include/linux/dma-direct.h            |  2 +-
+> >   4 files changed, 1 insertion(+), 37 deletions(-)
+> >=20
+> > diff --git a/arch/arm/include/asm/dma-direct.h b/arch/arm/include/asm/d=
+ma-
+> > direct.h
+> > index b67e5fc1fe43..7c3001a6a775 100644
+> > --- a/arch/arm/include/asm/dma-direct.h
+> > +++ b/arch/arm/include/asm/dma-direct.h
+> > @@ -14,23 +14,4 @@ static inline phys_addr_t __dma_to_phys(struct devic=
+e
+> > *dev, dma_addr_t dev_addr)
+> >   	return __pfn_to_phys(dma_to_pfn(dev, dev_addr)) + offset;
+> >   }
+> >  =20
+> > -static inline bool dma_capable(struct device *dev, dma_addr_t addr, si=
+ze_t
+> > size)
+> > -{
+> > -	u64 limit, mask;
+> > -
+> > -	if (!dev->dma_mask)
+> > -		return 0;
+> > -
+> > -	mask =3D *dev->dma_mask;
+> > -
+> > -	limit =3D (mask + 1) & ~mask;
+> > -	if (limit && size > limit)
+> > -		return 0;
+> > -
+> > -	if ((addr | (addr + size - 1)) & ~mask)
+> > -		return 0;
+> > -
+> > -	return 1;
+> > -}
+> > -
+> >   #endif /* ASM_ARM_DMA_DIRECT_H */
+> > diff --git a/arch/mips/include/asm/dma-direct.h b/arch/mips/include/asm=
+/dma-
+> > direct.h
+> > index b5c240806e1b..14e352651ce9 100644
+> > --- a/arch/mips/include/asm/dma-direct.h
+> > +++ b/arch/mips/include/asm/dma-direct.h
+> > @@ -2,14 +2,6 @@
+> >   #ifndef _MIPS_DMA_DIRECT_H
+> >   #define _MIPS_DMA_DIRECT_H 1
+> >  =20
+> > -static inline bool dma_capable(struct device *dev, dma_addr_t addr, si=
+ze_t
+> > size)
+> > -{
+> > -	if (!dev->dma_mask)
+> > -		return false;
+> > -
+> > -	return addr + size - 1 <=3D *dev->dma_mask;
+> > -}
+> > -
+> >   dma_addr_t __phys_to_dma(struct device *dev, phys_addr_t paddr);
+> >   phys_addr_t __dma_to_phys(struct device *dev, dma_addr_t daddr);
+> >  =20
+> > diff --git a/arch/powerpc/include/asm/dma-direct.h
+> > b/arch/powerpc/include/asm/dma-direct.h
+> > index a2912b47102c..e29e8a236b8d 100644
+> > --- a/arch/powerpc/include/asm/dma-direct.h
+> > +++ b/arch/powerpc/include/asm/dma-direct.h
+> > @@ -2,15 +2,6 @@
+> >   #ifndef ASM_POWERPC_DMA_DIRECT_H
+> >   #define ASM_POWERPC_DMA_DIRECT_H 1
+> >  =20
+> > -static inline bool dma_capable(struct device *dev, dma_addr_t addr, si=
+ze_t
+> > size)
+> > -{
+> > -	if (!dev->dma_mask)
+> > -		return false;
+> > -
+> > -	return addr + size - 1 <=3D
+> > -		min_not_zero(*dev->dma_mask, dev->bus_dma_mask);
+> > -}
+> > -
+> >   static inline dma_addr_t __phys_to_dma(struct device *dev, phys_addr_=
+t
+> > paddr)
+> >   {
+> >   	if (!dev)
+> > diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
+> > index 6db863c3eb93..991f8aa2676e 100644
+> > --- a/include/linux/dma-direct.h
+> > +++ b/include/linux/dma-direct.h
+> > @@ -24,6 +24,7 @@ static inline phys_addr_t __dma_to_phys(struct device
+> > *dev, dma_addr_t dev_addr)
+> >  =20
+> >   	return paddr + ((phys_addr_t)dev->dma_pfn_offset << PAGE_SHIFT);
+> >   }
+> > +#endif /* !CONFIG_ARCH_HAS_PHYS_TO_DMA */
+> >  =20
+> >   static inline bool dma_capable(struct device *dev, dma_addr_t addr, s=
+ize_t
+> > size)
+> >   {
+> > @@ -38,7 +39,6 @@ static inline bool dma_capable(struct device *dev,
+> > dma_addr_t addr, size_t size)
+> >  =20
+> >   	return end <=3D min_not_zero(*dev->dma_mask, dev->bus_dma_mask);
+> >   }
+> > -#endif /* !CONFIG_ARCH_HAS_PHYS_TO_DMA */
+> >  =20
+> >   #ifdef CONFIG_ARCH_HAS_FORCE_DMA_UNENCRYPTED
+> >   bool force_dma_unencrypted(struct device *dev);
+>=20
+> Best regards
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--=-9aduMZ9FwgNk+BtbhcTa
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl3TwcoACgkQlfZmHno8
+x/4hYggAgy09wSQ1ZdnrSCRXM/qq4EQzGTlWlNYjUCtT8eDcvo8fKm0pfdBpGStG
+QPbrAzJaKNlsIR6Tx/TEF/m1JX1I/QzNsng9h76ShOpn9CGshg57W91L82b57qT4
+vJDniIW8Gv3SQ+jSSspU8N2UVYLYCqOqpxxjyy8zTRkU0CtyaJCyLXeSQTLjGyab
+fs/5NI6u7gE4bLChR9+lkqu7t3ga1Wsxuoq2Fx/J8tio0q82ZFowbsevVWAFzb0b
+Nfm1YGv7BYtSYOldIHrYPwiwJzcJ5zv5tAJh+GaszzXMTIGk9Tpv2VpjymlSbLja
+HCVKkk0xkKPJrTOWzYpiiX4w6WeybA==
+=xWer
+-----END PGP SIGNATURE-----
+
+--=-9aduMZ9FwgNk+BtbhcTa--
+
