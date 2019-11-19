@@ -2,107 +2,151 @@ Return-Path: <SRS0=p+An=ZL=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E159C432C0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Nov 2019 14:20:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE468C43215
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Nov 2019 14:32:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3BB1222A5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Nov 2019 14:20:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B340022316
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Nov 2019 14:32:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1574173239;
-	bh=bDknmdXel1QhemGwQ74XJ2xEvUlEwuXxxvu6HOA2Uek=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=M3timZiP5SVNbIj5xmiduBwPpgtqZDuvcj+kkn2akam/BdM8fLQOeZQ2C9xglPlgy
-	 DnJAQs0u9AMWd4y15XLkIVdUWLLzGJ+AnAcr+F6w6ZA1l0mdRlyCA2fBhQOW0o57qu
-	 0sdAWKBEpFGeTYmzNTEZ2zy4mKqxRJdIdlkbxwxU=
+	s=default; t=1574173942;
+	bh=1aEll8z1CeW98RoAv0j3QdSEeThTrt3K/OFXPeoKmGA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=LoZtZirF3qXnC5wKaUIwidPzuCl1m9KpfWW0aAAe5YdVOa45hQEE6TvPWhaHUiuVC
+	 JiVbY+VQCUcGvdtQABcezQjk6Uc9aJci3EMYo4PUfynX4Nw04qyVdwK4CED7S7exhQ
+	 ltfaeHGTGM11ZxOjM7+e/TnocfMtpp6Z7EgQPclo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727836AbfKSOUf (ORCPT
+        id S1727456AbfKSOcT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 19 Nov 2019 09:20:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51050 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726202AbfKSOUe (ORCPT
+        Tue, 19 Nov 2019 09:32:19 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:41427 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726409AbfKSOcT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 19 Nov 2019 09:20:34 -0500
-Received: from localhost.localdomain (unknown [118.189.143.39])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF85821852;
-        Tue, 19 Nov 2019 14:20:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574173233;
-        bh=bDknmdXel1QhemGwQ74XJ2xEvUlEwuXxxvu6HOA2Uek=;
-        h=From:To:Cc:Subject:Date:From;
-        b=D+UMymV5RJXQGaDr1xNwW0igze7OsE0mJxe/AeIC9IeHqKddkQss4Npl1JCSz/IV+
-         4icbHQsvk6C33XK9EKKgrRDT9OkTdf1TH5V15YriRB6FpHbqC8nUk/h8bIKhJ4e8RE
-         nN6VZH1lEJt/Z1PhUP5lPy9kQZrGu+y5hoet7DTs=
+        Tue, 19 Nov 2019 09:32:19 -0500
+Received: by mail-pl1-f193.google.com with SMTP id d29so11854545plj.8;
+        Tue, 19 Nov 2019 06:32:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eBb56gUBpWkIX0FYW+z97CZQ4gz538W2egeN9/8KSE8=;
+        b=pZXXu3lBLRApHusvZrYkz2ouGihJZRI8gQ44a4dmRKQHcBZO7yODWVqgNEoRN781vE
+         H9ILCAWDXG7KJbWOkpr9g6EPgbrUQhSOL06m2U0pNBavdBSTLUTT3aVMMPsFtRwsoD6T
+         sUCNxtQLSo2jnLf2WyJRbgCH1IPEYFV7mBcy2HFhNtIqmUKYB8XcXMsH2gqd2l9EinZD
+         L4UZavYG0HisciKki9I9cINZEO5+bL4YeSG0ql2h+d5FqKax9oDT9wd9K8g0jGu0WiQb
+         jUBBB91lC9Km+MOroiXk0wnlqLS24eWxiBDM7PupsZ2I1jBdXo+ECV4VQwAnS5Bw2FqV
+         hYDQ==
+X-Gm-Message-State: APjAAAWq/buJeUyG9W3WnFse8GD1fpPTKr+0RjekoSuJoSN+04ppKg6d
+        5yHJnM8+XER6J8eFvbfmH7naQevb
+X-Google-Smtp-Source: APXvYqwwGsoq53FUp+0XzND+b9LLSYSKvrjBZwNTHzre77bCa3jKZ67sI4NXD0mR6B+oWVnerf80Lg==
+X-Received: by 2002:a17:90a:5d17:: with SMTP id s23mr6591558pji.55.1574173937748;
+        Tue, 19 Nov 2019 06:32:17 -0800 (PST)
+Received: from kozik-lap ([118.189.143.39])
+        by smtp.googlemail.com with ESMTPSA id z62sm28857634pfz.135.2019.11.19.06.32.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Nov 2019 06:32:16 -0800 (PST)
+Date:   Tue, 19 Nov 2019 22:32:11 +0800
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] ARM: dts: exynos: Second pull for v5.5
-Date:   Tue, 19 Nov 2019 15:20:26 +0100
-Message-Id: <20191119142026.7190-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: power: Convert Generic Power Domain
+ bindings to json-schema
+Message-ID: <20191119143211.GA7804@kozik-lap>
+References: <20191030173216.5993-1-krzk@kernel.org>
+ <20191105194257.GA16066@bogus>
+ <20191114125923.GA3084@kozik-lap>
+ <CAL_JsqJCps_s1OGt2SvPa4uBj9EQp0ZqyeHVw8fMR+rSSVh9ow@mail.gmail.com>
+ <CAMuHMdXYg4u1SF+j=doJqaDFw+O61g2th8ppt+CBrez8QAgJRA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXYg4u1SF+j=doJqaDFw+O61g2th8ppt+CBrez8QAgJRA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+On Tue, Nov 19, 2019 at 10:58:11AM +0100, Geert Uytterhoeven wrote:
+> Hi Rob, Krzysztof,
+> 
+> On Thu, Nov 14, 2019 at 5:42 PM Rob Herring <robh@kernel.org> wrote:
+> > On Thu, Nov 14, 2019 at 6:59 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > > On Tue, Nov 05, 2019 at 01:42:58PM -0600, Rob Herring wrote:
+> > > > On Wed, 30 Oct 2019 18:32:15 +0100, Krzysztof Kozlowski wrote:
+> > > > > Convert Generic Power Domain bindings to DT schema format using
+> > > > > json-schema.
+> > > > >
+> > > > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > > > > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > > > > Acked-by: Stephen Boyd <sboyd@kernel.org>
+> > > > >
+> > > > > ---
+> > > > >
+> > > > > Changes since v2:
+> > > > > 1. Keep description of consumers in power-domain.txt,
+> > > > > 2. Rename power_domain.txt to power-domain.txt,
+> > > > > 3. Indent example with four spaces (more readable).
+> > > > >
+> > > > > Changes since v1:
+> > > > > 1. Select all nodes for consumers,
+> > > > > 2. Remove from consumers duplicated properties with dt-schema,
+> > > > > 3. Fix power domain pattern,
+> > > > > 4. Remove unneeded types.
+> > > > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > > > > ---
+> > > > >  .../devicetree/bindings/arm/arm,scmi.txt      |   2 +-
+> > > > >  .../devicetree/bindings/arm/arm,scpi.txt      |   2 +-
+> > > > >  .../bindings/arm/freescale/fsl,scu.txt        |   2 +-
+> > > > >  .../bindings/clock/renesas,cpg-mssr.txt       |   2 +-
+> > > > >  .../bindings/clock/ti/davinci/psc.txt         |   2 +-
+> > > > >  .../firmware/nvidia,tegra186-bpmp.txt         |   2 +-
+> > > > >  .../bindings/power/amlogic,meson-gx-pwrc.txt  |   2 +-
+> > > > >  .../devicetree/bindings/power/fsl,imx-gpc.txt |   2 +-
+> > > > >  .../bindings/power/fsl,imx-gpcv2.txt          |   2 +-
+> > > > >  .../{power_domain.txt => power-domain.txt}    |  95 +------------
+> > > > >  .../bindings/power/power-domain.yaml          | 133 ++++++++++++++++++
+> > > > >  .../bindings/power/renesas,sysc-rmobile.txt   |   2 +-
+> > > > >  .../bindings/power/xlnx,zynqmp-genpd.txt      |   2 +-
+> > > > >  .../bindings/soc/bcm/brcm,bcm2835-pm.txt      |   2 +-
+> > > > >  .../bindings/soc/mediatek/scpsys.txt          |   2 +-
+> > > > >  .../bindings/soc/ti/sci-pm-domain.txt         |   2 +-
+> > > > >  MAINTAINERS                                   |   2 +-
+> > > > >  17 files changed, 149 insertions(+), 109 deletions(-)
+> > > > >  rename Documentation/devicetree/bindings/power/{power_domain.txt => power-domain.txt} (51%)
+> > > > >  create mode 100644 Documentation/devicetree/bindings/power/power-domain.yaml
+> > > > >
+> > > >
+> > > > Reviewed-by: Rob Herring <robh@kernel.org>
+> > >
+> > > The patches should apply cleanly in top of your tree so maybe you can
+> > > pick them up?
+> >
+> > I didn't on this one because it touches a lot of files. Though on
+> > second thought, they are all across the tree, so I might as well apply
+> > them.
+> 
+> There are still several leftover references to power_domain.txt.
+> Krzysztof: Do you plan to convert these, too, or do you expect the
+> individual maintainers to handle that?
 
-On top of previous pull request - minor updates for next cycle.
-
+Ahh, I think that's my fault after one of iterations of the patchset. I
+can fix it up fast and maybe let's queue it through the same tree (Rob's).
 
 Best regards,
 Krzysztof
 
-
-The following changes since commit d60d0cff4ab01255b25375425745c3cff69558ad:
-
-  ARM: dts: s3c64xx: Fix init order of clock providers (2019-10-08 22:45:20 +0200)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-5.5-2
-
-for you to fetch changes up to 1a5a85c5640241ba1407c77792a96cb6d0253483:
-
-  ARM: dts: exynos: Add Mali/GPU node on Exynos5420 and enable it on Odroid XU3/4 (2019-11-18 13:45:22 +0100)
-
-----------------------------------------------------------------
-Samsung DTS ARM changes for v5.5, part 2
-
-1. Cleanup by adjusting DTS to bindings,
-2. Add touch-sensitive buttons to Midas (Galaxy S III family phones),
-3. Add GPU/Mali to Exynos542x and Odroid XU3/XU4 family.
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (1):
-      ARM: dts: exynos: Rename children of SysRAM node to "sram"
-
-Marian Mihailescu (1):
-      ARM: dts: exynos: Add Mali/GPU node on Exynos5420 and enable it on Odroid XU3/4
-
-Simon Shields (1):
-      ARM: dts: exynos: Add support for the touch-sensitive buttons on Midas family
-
- arch/arm/boot/dts/exynos3250.dtsi               |  4 +-
- arch/arm/boot/dts/exynos4210-universal_c210.dts |  6 +--
- arch/arm/boot/dts/exynos4210.dtsi               |  4 +-
- arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi     |  5 +++
- arch/arm/boot/dts/exynos4412-midas.dtsi         | 29 ++++++++++++++
- arch/arm/boot/dts/exynos4412-n710x.dts          |  5 +++
- arch/arm/boot/dts/exynos4412.dtsi               |  4 +-
- arch/arm/boot/dts/exynos5250.dtsi               |  4 +-
- arch/arm/boot/dts/exynos5420.dtsi               | 50 +++++++++++++++++++++++++
- arch/arm/boot/dts/exynos5422-odroid-core.dtsi   |  6 ++-
- arch/arm/boot/dts/exynos54xx.dtsi               |  4 +-
- 11 files changed, 107 insertions(+), 14 deletions(-)
