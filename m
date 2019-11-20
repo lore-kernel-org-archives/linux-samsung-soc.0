@@ -2,132 +2,138 @@ Return-Path: <SRS0=n6u7=ZM=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51295C432C3
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Nov 2019 15:46:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80273C432C0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Nov 2019 18:24:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26E942071B
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Nov 2019 15:46:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A0B420878
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Nov 2019 18:24:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sx33veXR"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VL1V16VF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732559AbfKTPqp (ORCPT
+        id S1727656AbfKTSYD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 20 Nov 2019 10:46:45 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:38966 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729758AbfKTPp2 (ORCPT
+        Wed, 20 Nov 2019 13:24:03 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:34029 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726675AbfKTSYD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 20 Nov 2019 10:45:28 -0500
-Received: by mail-pj1-f68.google.com with SMTP id t103so14889pjb.6
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Nov 2019 07:45:28 -0800 (PST)
+        Wed, 20 Nov 2019 13:24:03 -0500
+Received: by mail-wm1-f65.google.com with SMTP id j18so5765438wmk.1;
+        Wed, 20 Nov 2019 10:24:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=p1oQ2/ApuLBZfJjzJxbReeEfweEJSenuiYCAOd26jOY=;
-        b=sx33veXRT/WG71DXlr2LQUN/kHNNUnPt88phqsfsYVlAgZGxBvXbK0fqchczHwjND/
-         1EGPyi7lDPIkCrm+8jV6C6faKYzD2LwCZtawDM48VNil5JrKDFYq/j92RN3POFavam4Q
-         3M+Tutp1fhrWLVf5po3HELVk4FWWjzopaxpiuFaSbEUlC19y3zCMMjRiDRAIjNgB3Vs4
-         BX5kbPUQ3ld73hsLb3GuVJmcROm71Vb4Y1uWFMHNmbnhMSz53nFcT9/CBimpRqCrj33I
-         3/U1bD9M8Kdjx6Vb62TMyRxIX5ab6z88+AMp21kU32iV1Yznt8pQb9jqRWu7JaM6XwcU
-         sQwg==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=ctnDyGHzcexXd+oP584wBl9d7IxFFJWy5ZdVe62LHoE=;
+        b=VL1V16VFQxZ8XMocZhWLNpaqWaciq49VEDgTT20hTZ2yyx5FJ/yiZs0L9Sk1ZjgBEK
+         ZQFwsDZMY4sQSyrSluU//F0W/SafTb60GaqzxPcYnMCkdKMrxsYxLv64vtUBgUSaN+vY
+         rUZY5N3I4wP8T67v1xbS7tpahYg9M2b2njujgRU8RfCo8J3Gs5m7wX6mbOLkOnJtXhYm
+         vFjCIbWxIQaLARPh3facBK7DFjrAUs4xeHXTq3ABYGeq5h8eJL1wagohiNRUwtReZ66b
+         acMMAu4ox1rvuHa12fYh4vee2/XbX6/7G80yZi5E8zAG5bw9D6eqf2OrPEgCs1eE4PzL
+         pNNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=p1oQ2/ApuLBZfJjzJxbReeEfweEJSenuiYCAOd26jOY=;
-        b=SZJdC2eF3xnR8fl5cQEJVaYUYaU8hfdwFUXYBqDReX45yYPjDEnHw8CzTbIKPPKI2P
-         3VCpX8EOEIA8MTatn01p/oou5ahGovxLySCjsOa5aaCdXeDrqZcf6ibez4mf1tvmOZWA
-         YgvJ7UgdOtho6caUtCpxT1oO3acb2u/f+rkrTJZOnfRqx6y67GxZJtZNW9GuO+pJv8ZJ
-         8i4FPyS77MMWNrz7jdAgQAtFxs6lKSpEGlCpUnxljdwcfg2u8HNd6Ipz2+LhtrtbTzhV
-         A0Ci0Mfr/p8dowWsW/ex6Pdiy/nrFz400DcPUniRT4a4iJB71Qykd6qYs/3sPthHQ581
-         zc+w==
-X-Gm-Message-State: APjAAAUMzCB4uQ9KHehH8izbj4F6M1vkdv38OjUMdSEfrMR0oK8pJmxv
-        JJu/u7baRbuBE+g94Nop0u/Ifg==
-X-Google-Smtp-Source: APXvYqxogLp6gc4NSWr1kl81LqhVaiFMVmTnBYfJTGwLUMofS4/vu9+JzshkluAWJdxeFvOnWyJZAQ==
-X-Received: by 2002:a17:90a:bb82:: with SMTP id v2mr5064560pjr.62.1574264727478;
-        Wed, 20 Nov 2019 07:45:27 -0800 (PST)
-Received: from localhost ([14.96.110.98])
-        by smtp.gmail.com with ESMTPSA id q41sm7643756pja.20.2019.11.20.07.45.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Nov 2019 07:45:26 -0800 (PST)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org, edubezval@gmail.com,
-        Amit Daniel Kachhap <amit.kachhap@gmail.com>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Javi Merino <javi.merino@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jun Nie <jun.nie@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>
-Cc:     linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v2 00/11] thermal: clean up output of make W=1 
-Date:   Wed, 20 Nov 2019 21:15:09 +0530
-Message-Id: <cover.1574242756.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ctnDyGHzcexXd+oP584wBl9d7IxFFJWy5ZdVe62LHoE=;
+        b=Rz9HBUBifPzbWEcXtL4j3WXHxkdQj6DFd7aLgpRWuvXg0+VmxTZrZM6dFMvsro957u
+         AVVO60Wg06p44RYrjYQUAqp5CdvYnnSkJqSfGjd0gafSIeeQyXE+WTF0+VfSMkKiUYlJ
+         gaiY1pmMU7/K+qjNtyziscTEHplCH+AsA8dzi4fuA8/mtjZowoDokpa5orwIvaAUZw7r
+         AhL+69XD5VDoJp1a4/cxvVYhiJSHQek1fX8tL1o4D9ydrc5PCrY4cqxLf3vA5Fzy9SqR
+         MVQ7Y8gjmsnnIJe/hoc3iOv4UAokQ8jnznmgiERQmBez+FnMj8mtQYE43r4vN9bA38N8
+         Cq8g==
+X-Gm-Message-State: APjAAAXcqhjYCZJ6KJXVKQiOFmPrZ0gPJleECcUYOodcISn97d79Zsnw
+        IolJglrIsdLoOllz2ZliByM=
+X-Google-Smtp-Source: APXvYqwt5vSje349iw69oqaDAMKixDjb6/bUVwR02G1KgTftbQDyi/rylGLW1hUSGLsUrQbk95hTpQ==
+X-Received: by 2002:a1c:4907:: with SMTP id w7mr4848109wma.62.1574274241330;
+        Wed, 20 Nov 2019 10:24:01 -0800 (PST)
+Received: from giga-mm ([62.68.23.15])
+        by smtp.gmail.com with ESMTPSA id g184sm154611wma.8.2019.11.20.10.23.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2019 10:24:00 -0800 (PST)
+Date:   Wed, 20 Nov 2019 19:23:58 +0100
+From:   Alexander Sverdlin <alexander.sverdlin@gmail.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        Hartley Sweeten <hsweeten@visionengravers.com>,
+        Linus Walleij <linusw@kernel.org>,
+        Imre Kaloz <kaloz@openwrt.org>,
+        Krzysztof Halasa <khalasa@piap.pl>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Tony Lindgren <tony@atomide.com>,
+        Barry Song <baohua@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH] ARM: Fix Kconfig indentation
+Message-Id: <20191120192358.389c43da67a4d07c0d19b90d@gmail.com>
+In-Reply-To: <20191120133734.12345-1-krzk@kernel.org>
+References: <20191120133734.12345-1-krzk@kernel.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-unknown-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Cleanup output of make W=1 inside drivers/thermal. This should allow us to
-focus on real issues that tend to get lost in the noise much better.
+Hi Krzysztof,
 
-There is no functional change. This series was generate on top of
-linux-next from 20191119.
+for the EP93xx part,
 
-Changes since v1:
-- Add review tags
-- Fixed up commit message for devfreq_cooling and samsung changes
+On Wed, 20 Nov 2019 21:37:34 +0800
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-Regards,
-Amit
+> Adjust indentation from spaces to tab (+optional two spaces) as in
+> coding style with command like:
+> 	$ sed -e 's/^        /\t/' -i */Kconfig
+>
 
+Acked-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+ 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  arch/arm/Kconfig-nommu        | 10 +++++-----
+>  arch/arm/Kconfig.debug        |  4 ++--
+>  arch/arm/mach-ep93xx/Kconfig  |  8 ++++----
+>  arch/arm/mach-ixp4xx/Kconfig  | 16 ++++++++--------
+>  arch/arm/mach-mmp/Kconfig     |  2 +-
+>  arch/arm/mach-omap1/Kconfig   | 14 +++++++-------
+>  arch/arm/mach-prima2/Kconfig  |  6 +++---
+>  arch/arm/mach-s3c24xx/Kconfig |  4 ++--
+>  arch/arm/mach-s3c64xx/Kconfig |  6 +++---
+>  arch/arm/plat-samsung/Kconfig |  2 +-
+>  10 files changed, 36 insertions(+), 36 deletions(-)
+> 
 
-Amit Kucheria (11):
-  thermal: of-thermal: Appease the kernel-doc deity
-  thermal: cpu_cooling: Appease the kernel-doc deity
-  thermal: step_wise: Appease the kernel-doc deity
-  thermal: devfreq_cooling: Appease the kernel-doc deity
-  thermal: max77620: Appease the kernel-doc deity
-  thermal: mediatek: Appease the kernel-doc deity
-  thermal: rockchip: Appease the kernel-doc deity
-  thermal: samsung: Appease the kernel-doc deity
-  thermal: tegra: Appease the kernel-doc deity
-  thermal: amlogic: Appease the kernel-doc deity
-  thermal: zx2967: Appease the kernel-doc deity
+[...]
 
- drivers/thermal/amlogic_thermal.c    |  6 +++++-
- drivers/thermal/cpu_cooling.c        |  1 +
- drivers/thermal/devfreq_cooling.c    |  3 ++-
- drivers/thermal/fair_share.c         |  4 ++--
- drivers/thermal/gov_bang_bang.c      |  4 ++--
- drivers/thermal/max77620_thermal.c   |  2 +-
- drivers/thermal/mtk_thermal.c        | 12 ++++++------
- drivers/thermal/of-thermal.c         |  2 +-
- drivers/thermal/rockchip_thermal.c   | 22 ++++++++++++++++------
- drivers/thermal/samsung/exynos_tmu.c |  5 ++++-
- drivers/thermal/step_wise.c          |  4 ++--
- drivers/thermal/tegra/soctherm.c     | 15 +++++++++++++--
- drivers/thermal/user_space.c         |  4 ++--
- drivers/thermal/zx2967_thermal.c     |  1 +
- 14 files changed, 58 insertions(+), 27 deletions(-)
+> diff --git a/arch/arm/mach-ep93xx/Kconfig b/arch/arm/mach-ep93xx/Kconfig
+> index f2db5fd38145..bf81dfab7f1b 100644
+> --- a/arch/arm/mach-ep93xx/Kconfig
+> +++ b/arch/arm/mach-ep93xx/Kconfig
+> @@ -126,10 +126,10 @@ config MACH_MICRO9S
+>  	  Contec Micro9-Slim board.
+>  
+>  config MACH_SIM_ONE
+> -        bool "Support Simplemachines Sim.One board"
+> -        help
+> -          Say 'Y' here if you want your kernel to support the
+> -          Simplemachines Sim.One board.
+> +	bool "Support Simplemachines Sim.One board"
+> +	help
+> +	  Say 'Y' here if you want your kernel to support the
+> +	  Simplemachines Sim.One board.
+>  
+>  config MACH_SNAPPER_CL15
+>  	bool "Support Bluewater Systems Snapper CL15 Module"
+
 
 -- 
-2.20.1
-
+Alexander Sverdlin.
