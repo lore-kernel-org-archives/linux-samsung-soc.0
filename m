@@ -1,60 +1,60 @@
-Return-Path: <SRS0=p+An=ZL=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=n6u7=ZM=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C764C432C0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Nov 2019 17:02:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96C52C432C3
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Nov 2019 01:27:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB2D822384
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 Nov 2019 17:02:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EBFB2246A
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Nov 2019 01:27:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1574182955;
-	bh=9xlP6l6zc8LrRTuryqi4QOF5/Hg74NZf0SPlZK2mEU8=;
+	s=default; t=1574213233;
+	bh=D7abHCeD4TPvV2CC5GlYUE+dpzX7mKsMT4oa0/yvIRw=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=jSC3fgS1I0k90FtIIP2+iAFkpUYtlOgY7cRfAhLcPXACQigKbrA/y04ep1P2qEUHU
-	 bbwdH/e3wR+ccrMFbeeYY5ZdSdmmkz/fZ+j+9WDDTpHv5MVF0yxVeAW912xfSpLTzf
-	 Yrsc0tHgkRUE8neWeM4V5AH/1WdWBzKtB6tciV1M=
+	b=NKzPJb6530HHa7Z1BegVNUvFgZcEIdjZpKUeVSCZdmzNuleovndLfbkadylsBjX3R
+	 O4D282i4WLLp6ldQV2vMwR1wqaEgFf/ix9DS1fx/n0jcJw2ASKDcroY0eRq8ojhPo2
+	 0EnI0datQvBjQ7vO2lDoQuYDnoBnOstHHvMHv9P0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728645AbfKSRC3 (ORCPT
+        id S1727506AbfKTB1H (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 19 Nov 2019 12:02:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56396 "EHLO mail.kernel.org"
+        Tue, 19 Nov 2019 20:27:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727560AbfKSRC3 (ORCPT
+        id S1727262AbfKTB1H (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 19 Nov 2019 12:02:29 -0500
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+        Tue, 19 Nov 2019 20:27:07 -0500
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 522C222384;
-        Tue, 19 Nov 2019 17:02:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 52C1E22461;
+        Wed, 20 Nov 2019 01:27:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574182943;
-        bh=9xlP6l6zc8LrRTuryqi4QOF5/Hg74NZf0SPlZK2mEU8=;
+        s=default; t=1574213225;
+        bh=D7abHCeD4TPvV2CC5GlYUE+dpzX7mKsMT4oa0/yvIRw=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=hHdDFqFWJkwOuMKZk0NzaOxgeAE6UqGlvZAVH+WTtjEaZ3CCkLs6cDI5yFhIl9SRE
-         54T4E31B4t+satNSKMSJ+416Ec7m0NKdD49RPHEpukOMZs6k0mxIRc9AHYb5zIBbTG
-         bNPOVvg5RSncACs08sPyTJmxe1NXOpvf8io01pqY=
-Received: by mail-qk1-f179.google.com with SMTP id z16so18462574qkg.7;
-        Tue, 19 Nov 2019 09:02:23 -0800 (PST)
-X-Gm-Message-State: APjAAAWDgqNzuLMJs8sFoNhCpmKJ/NCyiGWxa3+rUuO7R+v5e5LWatrG
-        AnMysVzyQOrrnIp3ZSRcxGlXeEucbJgpgLW1ZA==
-X-Google-Smtp-Source: APXvYqxucfdWSXPgW2vd8l9633HeMvIH864eMJ/p+Bk0FhDvh444Pum/yEC+Gs6buUxeu7x2jucgvrCcmOz57phmAkg=
-X-Received: by 2002:a05:620a:205d:: with SMTP id d29mr30290391qka.152.1574182942398;
- Tue, 19 Nov 2019 09:02:22 -0800 (PST)
+        b=eOnkCcpi3XzYZrccf26EVRVyjaGrzkJM2FuzIDz2a6nLVVzbAKGJvodiPcmIUpL3n
+         gvLbf/JklQkvF0ImVVa7jx4efmK2auYAzjeEnnvBU1Q65nizUJ4S0UKbhUJEeKDjdz
+         rdCWWF+ApEM0lz17r/TTjMw7fMaTerpB/fD8csH0=
+Received: by mail-lf1-f53.google.com with SMTP id d6so18745704lfc.0;
+        Tue, 19 Nov 2019 17:27:05 -0800 (PST)
+X-Gm-Message-State: APjAAAUKRq3XKE8QT0x5qE0h/21pDFj44fuQ8cctQ3kEraAAenqEU+lf
+        Qkkok+3kqgbXLelxZfNoQpnxYjfrZaZRWbKP1bY=
+X-Google-Smtp-Source: APXvYqwRCZuOLwwW4yV+7MFk/VIFl8MVP82eHlcf4qaQKdX30EKfsryD1YdVJwUyn/6jRxu7hGaF3j94H2BVMIxjCZE=
+X-Received: by 2002:a19:da1a:: with SMTP id r26mr450883lfg.60.1574213223486;
+ Tue, 19 Nov 2019 17:27:03 -0800 (PST)
 MIME-Version: 1.0
-References: <20191119144315.11261-1-krzk@kernel.org>
-In-Reply-To: <20191119144315.11261-1-krzk@kernel.org>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 19 Nov 2019 11:02:11 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+1hHneSW5DzLNxU00AqQJ49chTyULJ0S3JR-CqfOfTgA@mail.gmail.com>
-Message-ID: <CAL_Jsq+1hHneSW5DzLNxU00AqQJ49chTyULJ0S3JR-CqfOfTgA@mail.gmail.com>
+References: <20191119144315.11261-1-krzk@kernel.org> <CAL_Jsq+1hHneSW5DzLNxU00AqQJ49chTyULJ0S3JR-CqfOfTgA@mail.gmail.com>
+In-Reply-To: <CAL_Jsq+1hHneSW5DzLNxU00AqQJ49chTyULJ0S3JR-CqfOfTgA@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Wed, 20 Nov 2019 09:26:51 +0800
+X-Gmail-Original-Message-ID: <CAJKOXPep1ftnw0gGEtzmSZaZBaAiyDhCsVygRfNAQ4egiJK1tA@mail.gmail.com>
+Message-ID: <CAJKOXPep1ftnw0gGEtzmSZaZBaAiyDhCsVygRfNAQ4egiJK1tA@mail.gmail.com>
 Subject: Re: [PATCH] dt-bindings: power: Fix path to power-domain.txt bindings
-To:     Krzysztof Kozlowski <krzk@kernel.org>
+To:     Rob Herring <robh@kernel.org>
 Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Kevin Hilman <khilman@kernel.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
@@ -81,37 +81,44 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 8:43 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Wed, 20 Nov 2019 at 01:02, Rob Herring <robh@kernel.org> wrote:
 >
-> With split of power domain controller bindings to power-domain.yaml, the
-> consumer part was renamed to power-domain.txt.  Update the references in
-> other bindings.
+> On Tue, Nov 19, 2019 at 8:43 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >
+> > With split of power domain controller bindings to power-domain.yaml, the
+> > consumer part was renamed to power-domain.txt.  Update the references in
+> > other bindings.
+> >
+> > Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > Fixes: abb4805e343a ("dt-bindings: power: Convert Samsung Exynos Power Domain bindings to json-schema")
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > ---
+> >  Documentation/devicetree/bindings/clock/clk-exynos-audss.txt  | 2 +-
+> >  Documentation/devicetree/bindings/clock/exynos5433-clock.txt  | 2 +-
+> >  .../devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt  | 2 +-
+> >  .../devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt  | 2 +-
+> >  .../bindings/clock/renesas,rcar-gen2-cpg-clocks.txt           | 2 +-
+> >  .../devicetree/bindings/clock/renesas,rz-cpg-clocks.txt       | 2 +-
+> >  .../devicetree/bindings/display/etnaviv/etnaviv-drm.txt       | 2 +-
+> >  Documentation/devicetree/bindings/display/msm/dpu.txt         | 2 +-
+> >  Documentation/devicetree/bindings/display/msm/mdp5.txt        | 2 +-
+> >  Documentation/devicetree/bindings/dsp/fsl,dsp.yaml            | 2 +-
+> >  Documentation/devicetree/bindings/media/imx7-mipi-csi2.txt    | 2 +-
+> >  .../devicetree/bindings/media/mediatek-jpeg-decoder.txt       | 2 +-
+> >  Documentation/devicetree/bindings/media/mediatek-mdp.txt      | 2 +-
+> >  Documentation/devicetree/bindings/opp/qcom-nvmem-cpufreq.txt  | 2 +-
+> >  Documentation/devicetree/bindings/pci/pci-keystone.txt        | 2 +-
+> >  Documentation/devicetree/bindings/phy/ti,phy-am654-serdes.txt | 2 +-
+> >  Documentation/devicetree/bindings/power/qcom,rpmpd.txt        | 2 +-
+> >  Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt | 2 +-
+> >  .../devicetree/bindings/usb/nvidia,tegra124-xusb.txt          | 4 ++--
+> >  19 files changed, 20 insertions(+), 20 deletions(-)
 >
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Fixes: abb4805e343a ("dt-bindings: power: Convert Samsung Exynos Power Domain bindings to json-schema")
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  Documentation/devicetree/bindings/clock/clk-exynos-audss.txt  | 2 +-
->  Documentation/devicetree/bindings/clock/exynos5433-clock.txt  | 2 +-
->  .../devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt  | 2 +-
->  .../devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt  | 2 +-
->  .../bindings/clock/renesas,rcar-gen2-cpg-clocks.txt           | 2 +-
->  .../devicetree/bindings/clock/renesas,rz-cpg-clocks.txt       | 2 +-
->  .../devicetree/bindings/display/etnaviv/etnaviv-drm.txt       | 2 +-
->  Documentation/devicetree/bindings/display/msm/dpu.txt         | 2 +-
->  Documentation/devicetree/bindings/display/msm/mdp5.txt        | 2 +-
->  Documentation/devicetree/bindings/dsp/fsl,dsp.yaml            | 2 +-
->  Documentation/devicetree/bindings/media/imx7-mipi-csi2.txt    | 2 +-
->  .../devicetree/bindings/media/mediatek-jpeg-decoder.txt       | 2 +-
->  Documentation/devicetree/bindings/media/mediatek-mdp.txt      | 2 +-
->  Documentation/devicetree/bindings/opp/qcom-nvmem-cpufreq.txt  | 2 +-
->  Documentation/devicetree/bindings/pci/pci-keystone.txt        | 2 +-
->  Documentation/devicetree/bindings/phy/ti,phy-am654-serdes.txt | 2 +-
->  Documentation/devicetree/bindings/power/qcom,rpmpd.txt        | 2 +-
->  Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt | 2 +-
->  .../devicetree/bindings/usb/nvidia,tegra124-xusb.txt          | 4 ++--
->  19 files changed, 20 insertions(+), 20 deletions(-)
+> Please no. Can you just undo the renaming back to power_domain.txt
 
-Please no. Can you just undo the renaming back to power_domain.txt
+The renaming was done to make it consistent with yaml and other
+bindings but indeed it creates some churn... I'll send rename-undo
+then.
 
-Rob
+Best regards,
+Krzysztof
