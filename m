@@ -2,60 +2,57 @@ Return-Path: <SRS0=n6u7=ZM=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28B38C432C0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Nov 2019 15:46:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51295C432C3
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Nov 2019 15:46:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB5B020709
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Nov 2019 15:46:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26E942071B
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Nov 2019 15:46:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pyfzMEiX"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sx33veXR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730652AbfKTPqV (ORCPT
+        id S1732559AbfKTPqp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 20 Nov 2019 10:46:21 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45084 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732471AbfKTPp6 (ORCPT
+        Wed, 20 Nov 2019 10:46:45 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:38966 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729758AbfKTPp2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 20 Nov 2019 10:45:58 -0500
-Received: by mail-pf1-f193.google.com with SMTP id z4so14387375pfn.12
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Nov 2019 07:45:58 -0800 (PST)
+        Wed, 20 Nov 2019 10:45:28 -0500
+Received: by mail-pj1-f68.google.com with SMTP id t103so14889pjb.6
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Nov 2019 07:45:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=NSg5zBP2bkEtgf/AJ9lwtdlcJh9mMI+s8A/QE9EBrqI=;
-        b=pyfzMEiXET5WNLh0lbzWH2k8Ma4kL/gchA2TSfgf9FOt77Ipge3tgeetL+B/eMQ3nQ
-         qK74PRyKA6Xzfhp8SDKE8IDOG9FnvPqI6zAxyvVWg6TQP7y92eClE7VPgn5EQgevKmTn
-         31isyeVwYrt/63T3W7c/7GYIA5cpiXc/FjWnfRx3+zoDJBZViOljMLADxrUxQ7RA6vsu
-         R4P0FAggkEapQV9P/JrJvCvOqiJCr2EcBVxIorboYb7NdrqFEAaI3ZrbK10/PJQHQdmL
-         XAbs0VUQKIfNCfpp8OueO+3Wys7vJrR6BqL9ZgscME+PrmMK7xFCfeyBCRbpBj9pzPrW
-         baSg==
+        h=from:to:cc:subject:date:message-id;
+        bh=p1oQ2/ApuLBZfJjzJxbReeEfweEJSenuiYCAOd26jOY=;
+        b=sx33veXRT/WG71DXlr2LQUN/kHNNUnPt88phqsfsYVlAgZGxBvXbK0fqchczHwjND/
+         1EGPyi7lDPIkCrm+8jV6C6faKYzD2LwCZtawDM48VNil5JrKDFYq/j92RN3POFavam4Q
+         3M+Tutp1fhrWLVf5po3HELVk4FWWjzopaxpiuFaSbEUlC19y3zCMMjRiDRAIjNgB3Vs4
+         BX5kbPUQ3ld73hsLb3GuVJmcROm71Vb4Y1uWFMHNmbnhMSz53nFcT9/CBimpRqCrj33I
+         3/U1bD9M8Kdjx6Vb62TMyRxIX5ab6z88+AMp21kU32iV1Yznt8pQb9jqRWu7JaM6XwcU
+         sQwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=NSg5zBP2bkEtgf/AJ9lwtdlcJh9mMI+s8A/QE9EBrqI=;
-        b=omLcVOY0IVHq86uqCMG7/yL8SkQEjR8OUhaTIe0gEt0scnbAQuKxEvMiMub4D8kWhY
-         6i06CE1PnJLToo98uKszHk5haS+8BVudEIQIpxUW3htYpWh3ImUdN7TlEBIkMdkeLNGm
-         4Yp2vwQKo3Ck9yFXc3ExRhSory19RSD0r3icnCdVbw/T8noEnIxd/p5BgLaZBpzEtkO7
-         tm+eQ7SlovSEQk+fiva8EotEPklfsyqQAkgw/qtpGkCdohAcQrTKc+ddLOfHJQVu6NYO
-         Wmt0peDp014jVEJP5a3fT8lu9+iQ931rK4iX1VTTSfia9LM+7HNTSSto8hXgxjalH7iD
-         u/ag==
-X-Gm-Message-State: APjAAAW2drStzvXU2dRlNWRKiKYhaTp1uCfVptl1jWs9RVZOe986V/cp
-        lxYe0JFqBwagKWQZASh9XJKV7Q==
-X-Google-Smtp-Source: APXvYqzJUD458tw9LKLIOVTpzUVrazVeldBx+3/BvF6tmCLBMY2h07OohUoX/CJQd6M8piZEF0jNfw==
-X-Received: by 2002:aa7:8b08:: with SMTP id f8mr4854182pfd.92.1574264757863;
-        Wed, 20 Nov 2019 07:45:57 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=p1oQ2/ApuLBZfJjzJxbReeEfweEJSenuiYCAOd26jOY=;
+        b=SZJdC2eF3xnR8fl5cQEJVaYUYaU8hfdwFUXYBqDReX45yYPjDEnHw8CzTbIKPPKI2P
+         3VCpX8EOEIA8MTatn01p/oou5ahGovxLySCjsOa5aaCdXeDrqZcf6ibez4mf1tvmOZWA
+         YgvJ7UgdOtho6caUtCpxT1oO3acb2u/f+rkrTJZOnfRqx6y67GxZJtZNW9GuO+pJv8ZJ
+         8i4FPyS77MMWNrz7jdAgQAtFxs6lKSpEGlCpUnxljdwcfg2u8HNd6Ipz2+LhtrtbTzhV
+         A0Ci0Mfr/p8dowWsW/ex6Pdiy/nrFz400DcPUniRT4a4iJB71Qykd6qYs/3sPthHQ581
+         zc+w==
+X-Gm-Message-State: APjAAAUMzCB4uQ9KHehH8izbj4F6M1vkdv38OjUMdSEfrMR0oK8pJmxv
+        JJu/u7baRbuBE+g94Nop0u/Ifg==
+X-Google-Smtp-Source: APXvYqxogLp6gc4NSWr1kl81LqhVaiFMVmTnBYfJTGwLUMofS4/vu9+JzshkluAWJdxeFvOnWyJZAQ==
+X-Received: by 2002:a17:90a:bb82:: with SMTP id v2mr5064560pjr.62.1574264727478;
+        Wed, 20 Nov 2019 07:45:27 -0800 (PST)
 Received: from localhost ([14.96.110.98])
-        by smtp.gmail.com with ESMTPSA id 125sm29559387pfu.136.2019.11.20.07.45.56
+        by smtp.gmail.com with ESMTPSA id q41sm7643756pja.20.2019.11.20.07.45.25
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Nov 2019 07:45:57 -0800 (PST)
+        Wed, 20 Nov 2019 07:45:26 -0800 (PST)
 From:   Amit Kucheria <amit.kucheria@linaro.org>
 To:     linux-kernel@vger.kernel.org, edubezval@gmail.com,
         Amit Daniel Kachhap <amit.kachhap@gmail.com>,
@@ -74,64 +71,63 @@ To:     linux-kernel@vger.kernel.org, edubezval@gmail.com,
         Thierry Reding <thierry.reding@gmail.com>,
         Viresh Kumar <viresh.kumar@linaro.org>,
         Zhang Rui <rui.zhang@intel.com>
-Cc:     linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 08/11] thermal: samsung: Appease the kernel-doc deity
-Date:   Wed, 20 Nov 2019 21:15:17 +0530
-Message-Id: <1ded1697c6e5eff11b034b3302b9c79e88fa9c42.1574242756.git.amit.kucheria@linaro.org>
+Cc:     linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH v2 00/11] thermal: clean up output of make W=1 
+Date:   Wed, 20 Nov 2019 21:15:09 +0530
+Message-Id: <cover.1574242756.git.amit.kucheria@linaro.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1574242756.git.amit.kucheria@linaro.org>
-References: <cover.1574242756.git.amit.kucheria@linaro.org>
-In-Reply-To: <cover.1574242756.git.amit.kucheria@linaro.org>
-References: <cover.1574242756.git.amit.kucheria@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Fix up the following warning when compiled with make W=1:
+Cleanup output of make W=1 inside drivers/thermal. This should allow us to
+focus on real issues that tend to get lost in the noise much better.
 
-linux.git/drivers/thermal/samsung/exynos_tmu.c:141: warning: bad
-line:         driver
-linux.git/drivers/thermal/samsung/exynos_tmu.c:203: warning: Function
-parameter or member 'tzd' not described in 'exynos_tmu_data'
-linux.git/drivers/thermal/samsung/exynos_tmu.c:203: warning: Function
-parameter or member 'tmu_set_trip_temp' not described in
-'exynos_tmu_data'
-linux.git/drivers/thermal/samsung/exynos_tmu.c:203: warning: Function
-parameter or member 'tmu_set_trip_hyst' not described in
-'exynos_tmu_data'
+There is no functional change. This series was generate on top of
+linux-next from 20191119.
 
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
----
- drivers/thermal/samsung/exynos_tmu.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Changes since v1:
+- Add review tags
+- Fixed up commit message for devfreq_cooling and samsung changes
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index fb2c55123a99..8193b66a3f83 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -138,7 +138,7 @@ enum soc_type {
- 
- /**
-  * struct exynos_tmu_data : A structure to hold the private data of the TMU
--	driver
-+ *			    driver
-  * @id: identifier of the one instance of the TMU controller.
-  * @base: base address of the single instance of the TMU controller.
-  * @base_second: base address of the common registers of the TMU controller.
-@@ -162,8 +162,11 @@ enum soc_type {
-  *	0 < reference_voltage <= 31
-  * @regulator: pointer to the TMU regulator structure.
-  * @reg_conf: pointer to structure to register with core thermal.
-+ * @tzd: pointer to thermal_zone_device structure
-  * @ntrip: number of supported trip points.
-  * @enabled: current status of TMU device
-+ * @tmu_set_trip_temp: SoC specific method to set trip (rising threshold)
-+ * @tmu_set_trip_hyst: SoC specific to set hysteresis (falling threshold)
-  * @tmu_initialize: SoC specific TMU initialization method
-  * @tmu_control: SoC specific TMU control method
-  * @tmu_read: SoC specific TMU temperature read method
+Regards,
+Amit
+
+
+Amit Kucheria (11):
+  thermal: of-thermal: Appease the kernel-doc deity
+  thermal: cpu_cooling: Appease the kernel-doc deity
+  thermal: step_wise: Appease the kernel-doc deity
+  thermal: devfreq_cooling: Appease the kernel-doc deity
+  thermal: max77620: Appease the kernel-doc deity
+  thermal: mediatek: Appease the kernel-doc deity
+  thermal: rockchip: Appease the kernel-doc deity
+  thermal: samsung: Appease the kernel-doc deity
+  thermal: tegra: Appease the kernel-doc deity
+  thermal: amlogic: Appease the kernel-doc deity
+  thermal: zx2967: Appease the kernel-doc deity
+
+ drivers/thermal/amlogic_thermal.c    |  6 +++++-
+ drivers/thermal/cpu_cooling.c        |  1 +
+ drivers/thermal/devfreq_cooling.c    |  3 ++-
+ drivers/thermal/fair_share.c         |  4 ++--
+ drivers/thermal/gov_bang_bang.c      |  4 ++--
+ drivers/thermal/max77620_thermal.c   |  2 +-
+ drivers/thermal/mtk_thermal.c        | 12 ++++++------
+ drivers/thermal/of-thermal.c         |  2 +-
+ drivers/thermal/rockchip_thermal.c   | 22 ++++++++++++++++------
+ drivers/thermal/samsung/exynos_tmu.c |  5 ++++-
+ drivers/thermal/step_wise.c          |  4 ++--
+ drivers/thermal/tegra/soctherm.c     | 15 +++++++++++++--
+ drivers/thermal/user_space.c         |  4 ++--
+ drivers/thermal/zx2967_thermal.c     |  1 +
+ 14 files changed, 58 insertions(+), 27 deletions(-)
+
 -- 
 2.20.1
 
