@@ -2,315 +2,148 @@ Return-Path: <SRS0=n6u7=ZM=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 546A2C432C0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Nov 2019 13:37:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E3F7C432C0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Nov 2019 13:39:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1749E22528
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Nov 2019 13:37:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1574257063;
-	bh=royTIsDGbR59SLB7/NLrqRD4lgudhWkxXLjm/TxsRw0=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=bHXdqxs1wHkHsgYuNL3t+Tfm+ULQUTDx/lA1mNXCOOJS+c1fJu51oOWprSjjFywGB
-	 PgkMsY6719IqcVrMVJr2Nair8COU2Cb2mqRWpQXQ7IzWAgpcCJlx2hnD0lxiEllPql
-	 ClQqK6Uv9Px3Z/z2bhxfaTO9pESZIEDc2ou6ciKU=
+	by mail.kernel.org (Postfix) with ESMTP id 2D49E2252C
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Nov 2019 13:39:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HhojbSGY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729812AbfKTNhm (ORCPT
+        id S1730992AbfKTNiQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 20 Nov 2019 08:37:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44616 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729804AbfKTNhm (ORCPT
+        Wed, 20 Nov 2019 08:38:16 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:57462 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730981AbfKTNiN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 20 Nov 2019 08:37:42 -0500
-Received: from localhost.localdomain (unknown [118.189.143.39])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFE4821939;
-        Wed, 20 Nov 2019 13:37:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574257061;
-        bh=royTIsDGbR59SLB7/NLrqRD4lgudhWkxXLjm/TxsRw0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=d137YXE8uePWZ/+npYcIpXhSS84YRGwL3LSfFCFpFdNMI2jnyzmWnK3Kn/USArB/Y
-         DsOC7pmmrkVchPyjrC7aJxLqE20xVLhyGnlS9I29/glqju4fnmM5KiBHrfOSgKAZJg
-         BiwFm4nrtd831E3qKpcOWygpWSj/Kh0HIMWnTezE=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
+        Wed, 20 Nov 2019 08:38:13 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191120133811euoutp017c623d13d8f6f0030368baa2fe792947~Y4nvnXgGx1975819758euoutp01O
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Nov 2019 13:38:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191120133811euoutp017c623d13d8f6f0030368baa2fe792947~Y4nvnXgGx1975819758euoutp01O
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1574257091;
+        bh=NZ/p/16m2xALQW3+YM64mLJ35Kbe8jF90nNS0QSxIQM=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=HhojbSGYAr8MKMnOjHdM6O/+UTWie+iWs7Hr3PR5lU5W4ZQc0uKdT6EOvaGplOgDq
+         9li00ilq8F6AjP3/yn5GwDiOV54K+lzLtx82wN/Ur6UwODOSkP0NxFt82rXZs8Smp5
+         yNoGeGMEXDTbdyz5D2m8BZ7RbFraIUYjZXkHCOOg=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20191120133811eucas1p1aeae67c68b1bf1cfa0ee5c35ca02693c~Y4nvPrd4z1877618776eucas1p16;
+        Wed, 20 Nov 2019 13:38:11 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id B4.A2.04309.3C145DD5; Wed, 20
+        Nov 2019 13:38:11 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20191120133810eucas1p1731d928e7870f8b1815d955d2e0331d7~Y4nu_78U21877618776eucas1p15;
+        Wed, 20 Nov 2019 13:38:10 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20191120133810eusmtrp2ecb96d0be4071c7a66731ad1031b775b~Y4nu_RV8H1397513975eusmtrp2a;
+        Wed, 20 Nov 2019 13:38:10 +0000 (GMT)
+X-AuditID: cbfec7f4-ae1ff700000010d5-e1-5dd541c3e7cf
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 74.68.04166.2C145DD5; Wed, 20
+        Nov 2019 13:38:10 +0000 (GMT)
+Received: from AMDC3218.digital.local (unknown [106.120.51.18]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191120133810eusmtip1a990f6ba622461c83c81e9a136dd478f~Y4nunjxkG1799317993eusmtip1V;
+        Wed, 20 Nov 2019 13:38:10 +0000 (GMT)
+From:   Kamil Konieczny <k.konieczny@samsung.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Hartley Sweeten <hsweeten@visionengravers.com>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-        Linus Walleij <linusw@kernel.org>,
-        Imre Kaloz <kaloz@openwrt.org>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Tony Lindgren <tony@atomide.com>,
-        Barry Song <baohua@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH] ARM: Fix Kconfig indentation
-Date:   Wed, 20 Nov 2019 21:37:34 +0800
-Message-Id: <20191120133734.12345-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
+Cc:     Kamil Konieczny <k.konieczny@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: [PATCH] MAINTAINERS: update my e-mail address
+Date:   Wed, 20 Nov 2019 14:37:55 +0100
+Message-Id: <20191120133755.6508-1-k.konieczny@samsung.com>
+X-Mailer: git-send-email 2.24.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIKsWRmVeSWpSXmKPExsWy7djP87qHHa/GGsy+yW6xccZ6VovrX56z
+        Wiz4NIPV4vz5DewW9+/9ZLK4vGsOm8WM8/uYHNg9Nq3qZPPo27KK0ePzJrkA5igum5TUnMyy
+        1CJ9uwSujNmHW1kL5nBVdHT1sDcwPuLoYuTgkBAwkdh1wL6LkYtDSGAFo8SJn78YIZwvjBJz
+        e38zQTifGSV+LN7HAtOx9GIARHw5o8Szk8/Y4Tq6V/WydTFycrAJ6EscPHuSBcQWEVCQ2Nz7
+        jBWkiFngO6PEl4ufGUESwgJmEiueP2cFsVkEVCUWnZwAtoFXwFri6aQQiGXyEnPeaoBU8AoI
+        Spyc+QRsJDNQuHnrbGaQkRICr9kknq5axASSkBBwkZixsJkRwhaWeHV8CzuELSPxf+d8qJpy
+        iacL+9ghmlsYJR60f2SBSFhLHD5+kRVkMbOApsT6XfoQNzhK3HwfA2HySdx4KwhxAp/EpG3T
+        mSHCvBIdbUIQM1Qlnp/qgVokLdH1fx0rhO0h8WL7SrC4kECsxI9Dc1gnMCrMQvLYLCSPzUI4
+        YQEj8ypG8dTS4tz01GKjvNRyveLE3OLSvHS95PzcTYzAhHL63/EvOxh3/Uk6xCjAwajEwyug
+        djVWiDWxrLgy9xCjBAezkgjvnutXYoV4UxIrq1KL8uOLSnNSiw8xSnOwKInzVjM8iBYSSE8s
+        Sc1OTS1ILYLJMnFwSjUwah3cJvSy+ckrz8maq1QKXsjNPch7blKt55JTPzdyl36+X1hWf3TC
+        6rlSD++9+aDgrFGQuma3L0PXB4cHl2492fHPg/HWrJzLX6QP6bzLaRA8n66U2rJufW7nApHI
+        Rw8XvW8Xl2m4/TpTtOxS+bpbj9f9Vl/url28rqFLnr08+VsJ65eiLYvPnFBiKc5INNRiLipO
+        BABXwBm5JAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsVy+t/xu7qHHK/GGnx9bWSxccZ6VovrX56z
+        Wiz4NIPV4vz5DewW9+/9ZLK4vGsOm8WM8/uYHNg9Nq3qZPPo27KK0ePzJrkA5ig9m6L80pJU
+        hYz84hJbpWhDCyM9Q0sLPSMTSz1DY/NYKyNTJX07m5TUnMyy1CJ9uwS9jNmHW1kL5nBVdHT1
+        sDcwPuLoYuTgkBAwkVh6MaCLkYtDSGApo8SZnuOMXYycQHFpicbTq5kgbGGJP9e62CCKPjFK
+        NEz5zgaSYBPQlzh49iQLiC0ioCCxufcZK0gRs8BvRok5J0EcTg5hATOJFc+fg9ksAqoSi05O
+        YAHZzCtgLfF0UgjEEfISc95qgFTwCghKnJz5BGwkM1C4eets5gmMfLOQpGYhSS1gZFrFKJJa
+        WpybnltsqFecmFtcmpeul5yfu4kRGMzbjv3cvIPx0sbgQ4wCHIxKPLwCaldjhVgTy4orcw8x
+        SnAwK4nw7rl+JVaINyWxsiq1KD++qDQntfgQoynQqROZpUST84GRllcSb2hqaG5haWhubG5s
+        ZqEkztshcDBGSCA9sSQ1OzW1ILUIpo+Jg1OqgTHd22qbrpzRyZYfwcvtbzc+qSxpDepvrDgT
+        rpr3YKHpgacOU19LR+p3e1zpy8nvCjXl6tnUVL4xbi3fmsCl/8x9yyVfGNw86vFcZ/Irb+FN
+        RsFnMo7niqw+++bnj71Fcq9TszOqqtbcnefgyCzKt0LbaHXkgePbP+TV1UaYG26YznxFerns
+        RCWW4oxEQy3mouJEAHq+bfx8AgAA
+X-CMS-MailID: 20191120133810eucas1p1731d928e7870f8b1815d955d2e0331d7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20191120133810eucas1p1731d928e7870f8b1815d955d2e0331d7
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20191120133810eucas1p1731d928e7870f8b1815d955d2e0331d7
+References: <CGME20191120133810eucas1p1731d928e7870f8b1815d955d2e0331d7@eucas1p1.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Adjust indentation from spaces to tab (+optional two spaces) as in
-coding style with command like:
-	$ sed -e 's/^        /\t/' -i */Kconfig
+Update my e-mail address to @samsung.com in maintainers.
+Add also map in .mailmap to new e-mail.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Kamil Konieczny <k.konieczny@samsung.com>
 ---
- arch/arm/Kconfig-nommu        | 10 +++++-----
- arch/arm/Kconfig.debug        |  4 ++--
- arch/arm/mach-ep93xx/Kconfig  |  8 ++++----
- arch/arm/mach-ixp4xx/Kconfig  | 16 ++++++++--------
- arch/arm/mach-mmp/Kconfig     |  2 +-
- arch/arm/mach-omap1/Kconfig   | 14 +++++++-------
- arch/arm/mach-prima2/Kconfig  |  6 +++---
- arch/arm/mach-s3c24xx/Kconfig |  4 ++--
- arch/arm/mach-s3c64xx/Kconfig |  6 +++---
- arch/arm/plat-samsung/Kconfig |  2 +-
- 10 files changed, 36 insertions(+), 36 deletions(-)
+ .mailmap    | 1 +
+ MAINTAINERS | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/Kconfig-nommu b/arch/arm/Kconfig-nommu
-index 36c80d3dd93f..548419dc6f58 100644
---- a/arch/arm/Kconfig-nommu
-+++ b/arch/arm/Kconfig-nommu
-@@ -58,9 +58,9 @@ config ARM_MPU
-        depends on CPU_V7 || CPU_V7M
-        default y if CPU_V7
-        help
--         Some ARM systems without an MMU have instead a Memory Protection
--         Unit (MPU) that defines the type and permissions for regions of
--         memory.
-+	 Some ARM systems without an MMU have instead a Memory Protection
-+	 Unit (MPU) that defines the type and permissions for regions of
-+	 memory.
- 
--         If your CPU has an MPU then you should choose 'y' here unless you
--         know that you do not want to use the MPU.
-+	 If your CPU has an MPU then you should choose 'y' here unless you
-+	 know that you do not want to use the MPU.
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index 8bcbd0cd739b..0e5d52fbddbd 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -274,7 +274,7 @@ choice
- 		select DEBUG_UART_8250
- 		help
- 		  Say Y here if you want the debug print routines to direct
--                  their output to the CNS3xxx UART0.
-+	          their output to the CNS3xxx UART0.
- 
- 	config DEBUG_DAVINCI_DA8XX_UART1
- 		bool "Kernel low-level debugging on DaVinci DA8XX using UART1"
-@@ -828,7 +828,7 @@ choice
- 		select DEBUG_UART_8250
- 		help
- 		  Say Y here if you want kernel low-level debugging support
--                  on Rockchip RV1108 based platforms.
-+	          on Rockchip RV1108 based platforms.
- 
- 	config DEBUG_RV1108_UART1
- 		bool "Kernel low-level debugging messages via Rockchip RV1108 UART1"
-diff --git a/arch/arm/mach-ep93xx/Kconfig b/arch/arm/mach-ep93xx/Kconfig
-index f2db5fd38145..bf81dfab7f1b 100644
---- a/arch/arm/mach-ep93xx/Kconfig
-+++ b/arch/arm/mach-ep93xx/Kconfig
-@@ -126,10 +126,10 @@ config MACH_MICRO9S
- 	  Contec Micro9-Slim board.
- 
- config MACH_SIM_ONE
--        bool "Support Simplemachines Sim.One board"
--        help
--          Say 'Y' here if you want your kernel to support the
--          Simplemachines Sim.One board.
-+	bool "Support Simplemachines Sim.One board"
-+	help
-+	  Say 'Y' here if you want your kernel to support the
-+	  Simplemachines Sim.One board.
- 
- config MACH_SNAPPER_CL15
- 	bool "Support Bluewater Systems Snapper CL15 Module"
-diff --git a/arch/arm/mach-ixp4xx/Kconfig b/arch/arm/mach-ixp4xx/Kconfig
-index f7211b57b1e7..484e8eb16baa 100644
---- a/arch/arm/mach-ixp4xx/Kconfig
-+++ b/arch/arm/mach-ixp4xx/Kconfig
-@@ -214,14 +214,14 @@ config IXP4XX_INDIRECT_PCI
- 	bool "Use indirect PCI memory access"
- 	depends on PCI
- 	help
--          IXP4xx provides two methods of accessing PCI memory space:
--
--          1) A direct mapped window from 0x48000000 to 0x4BFFFFFF (64MB).
--             To access PCI via this space, we simply ioremap() the BAR
--             into the kernel and we can use the standard read[bwl]/write[bwl]
--             macros. This is the preferred method due to speed but it
--             limits the system to just 64MB of PCI memory. This can be
--             problematic if using video cards and other memory-heavy devices.
-+	  IXP4xx provides two methods of accessing PCI memory space:
-+
-+	  1) A direct mapped window from 0x48000000 to 0x4BFFFFFF (64MB).
-+	     To access PCI via this space, we simply ioremap() the BAR
-+	     into the kernel and we can use the standard read[bwl]/write[bwl]
-+	     macros. This is the preferred method due to speed but it
-+	     limits the system to just 64MB of PCI memory. This can be
-+	     problematic if using video cards and other memory-heavy devices.
- 
- 	  2) If > 64MB of memory space is required, the IXP4xx can be
- 	     configured to use indirect registers to access the whole PCI
-diff --git a/arch/arm/mach-mmp/Kconfig b/arch/arm/mach-mmp/Kconfig
-index b58a03b18bde..1192aaaf5e90 100644
---- a/arch/arm/mach-mmp/Kconfig
-+++ b/arch/arm/mach-mmp/Kconfig
-@@ -168,7 +168,7 @@ config CPU_MMP2
- 	  Select code specific to MMP2. MMP2 is ARMv7 compatible.
- 
- config USB_EHCI_MV_U2O
--        bool "EHCI support for PXA USB OTG controller"
-+	bool "EHCI support for PXA USB OTG controller"
- 	depends on USB_EHCI_MV
- 	help
- 	  Enables support for OTG controller which can be switched to host mode.
-diff --git a/arch/arm/mach-omap1/Kconfig b/arch/arm/mach-omap1/Kconfig
-index 948da556162e..d169efee7402 100644
---- a/arch/arm/mach-omap1/Kconfig
-+++ b/arch/arm/mach-omap1/Kconfig
-@@ -59,8 +59,8 @@ config MACH_OMAP_INNOVATOR
- 	bool "TI Innovator"
- 	depends on ARCH_OMAP15XX || ARCH_OMAP16XX
- 	help
--          TI OMAP 1510 or 1610 Innovator board support. Say Y here if you
--          have such a board.
-+	  TI OMAP 1510 or 1610 Innovator board support. Say Y here if you
-+	  have such a board.
- 
- config MACH_OMAP_H2
- 	bool "TI H2 Support"
-@@ -87,7 +87,7 @@ config MACH_OMAP_OSK
- 	depends on ARCH_OMAP16XX
-     	help
- 	  TI OMAP 5912 OSK (OMAP Starter Kit) board support. Say Y here
--          if you have such a board.
-+	  if you have such a board.
- 
- config OMAP_OSK_MISTRAL
- 	bool "Mistral QVGA board Support"
-@@ -173,10 +173,10 @@ config MACH_OMAP_GENERIC
- 	bool "Generic OMAP board"
- 	depends on ARCH_OMAP15XX || ARCH_OMAP16XX
- 	help
--          Support for generic OMAP-1510, 1610 or 1710 board with
--          no FPGA. Can be used as template for porting Linux to
--          custom OMAP boards. Say Y here if you have a custom
--          board.
-+	  Support for generic OMAP-1510, 1610 or 1710 board with
-+	  no FPGA. Can be used as template for porting Linux to
-+	  custom OMAP boards. Say Y here if you have a custom
-+	  board.
- 
- endmenu
- 
-diff --git a/arch/arm/mach-prima2/Kconfig b/arch/arm/mach-prima2/Kconfig
-index 6f66785fab01..88a76d265fd9 100644
---- a/arch/arm/mach-prima2/Kconfig
-+++ b/arch/arm/mach-prima2/Kconfig
-@@ -22,7 +22,7 @@ config ARCH_ATLAS6
- 	default y
- 	select SIRF_IRQ
- 	help
--          Support for CSR SiRFSoC ARM Cortex A9 Platform
-+	  Support for CSR SiRFSoC ARM Cortex A9 Platform
- 
- config ARCH_ATLAS7
- 	bool "CSR SiRFSoC ATLAS7 ARM Cortex A7 Platform"
-@@ -32,7 +32,7 @@ config ARCH_ATLAS7
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_SMP
- 	help
--          Support for CSR SiRFSoC ARM Cortex A7 Platform
-+	  Support for CSR SiRFSoC ARM Cortex A7 Platform
- 
- config ARCH_PRIMA2
- 	bool "CSR SiRFSoC PRIMA2 ARM Cortex A9 Platform"
-@@ -41,7 +41,7 @@ config ARCH_PRIMA2
- 	select ZONE_DMA
- 	select PRIMA2_TIMER
- 	help
--          Support for CSR SiRFSoC ARM Cortex A9 Platform
-+	  Support for CSR SiRFSoC ARM Cortex A9 Platform
- 
- config SIRF_IRQ
- 	bool
-diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
-index 686f0bbde998..95db290637aa 100644
---- a/arch/arm/mach-s3c24xx/Kconfig
-+++ b/arch/arm/mach-s3c24xx/Kconfig
-@@ -141,8 +141,8 @@ config S3C2410_CPUFREQ_UTILS
-        bool
-        depends on ARM_S3C24XX_CPUFREQ
-        help
--         Internal node to select timing code that is common to the s3c2410
--         and s3c2440/s3c244 cpu frequency support.
-+	 Internal node to select timing code that is common to the s3c2410
-+	 and s3c2440/s3c244 cpu frequency support.
- 
- # cpu frequency support common to s3c2412, s3c2413 and s3c2442
- 
-diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
-index 5700822e3c74..125e50301d2a 100644
---- a/arch/arm/mach-s3c64xx/Kconfig
-+++ b/arch/arm/mach-s3c64xx/Kconfig
-@@ -202,7 +202,7 @@ config SMDK6410_SD_CH0
- 	bool "Use channel 0 only"
- 	depends on MACH_SMDK6410
- 	help
--          Select CON7 (channel 0) as the MMC/SD slot, as
-+	  Select CON7 (channel 0) as the MMC/SD slot, as
- 	  at least some SMDK6410 boards come with the
- 	  resistors fitted so that the card detects for
- 	  channels 0 and 1 are the same.
-@@ -211,7 +211,7 @@ config SMDK6410_SD_CH1
- 	bool "Use channel 1 only"
- 	depends on MACH_SMDK6410
- 	help
--          Select CON6 (channel 1) as the MMC/SD slot, as
-+	  Select CON6 (channel 1) as the MMC/SD slot, as
- 	  at least some SMDK6410 boards come with the
- 	  resistors fitted so that the card detects for
- 	  channels 0 and 1 are the same.
-@@ -257,7 +257,7 @@ config MACH_NCP
- 	select S3C_DEV_HSMMC1
- 	select S3C_DEV_I2C1
- 	help
--          Machine support for the Samsung NCP
-+	  Machine support for the Samsung NCP
- 
- config MACH_HMT
- 	bool "Airgoo HMT"
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index 301e572651c0..99ae92fa452a 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -250,7 +250,7 @@ config S3C_PM_DEBUG_LED_SMDK
-        bool "SMDK LED suspend/resume debugging"
-        depends on PM && (MACH_SMDK6410)
-        help
--         Say Y here to enable the use of the SMDK LEDs on the baseboard
-+	 Say Y here to enable the use of the SMDK LEDs on the baseboard
- 	 for debugging of the state of the suspend and resume process.
- 
- 	 Note, this currently only works for S3C64XX based SMDK boards.
+diff --git a/.mailmap b/.mailmap
+index fd6219293057..3727a0066bb1 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -133,6 +133,7 @@ Juha Yrjola <at solidboot.com>
+ Juha Yrjola <juha.yrjola@nokia.com>
+ Juha Yrjola <juha.yrjola@solidboot.com>
+ Julien Thierry <julien.thierry.kdev@gmail.com> <julien.thierry@arm.com>
++Kamil Konieczny <k.konieczny@samsung.com> <k.konieczny@partner.samsung.com>
+ Kay Sievers <kay.sievers@vrfy.org>
+ Kenneth W Chen <kenneth.w.chen@intel.com>
+ Konstantin Khlebnikov <koct9i@gmail.com> <k.khlebnikov@samsung.com>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e4f170d8bc29..0caf7560c782 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14294,7 +14294,7 @@ F:	drivers/media/i2c/s5k5baf.c
+ SAMSUNG S5P Security SubSystem (SSS) DRIVER
+ M:	Krzysztof Kozlowski <krzk@kernel.org>
+ M:	Vladimir Zapolskiy <vz@mleia.com>
+-M:	Kamil Konieczny <k.konieczny@partner.samsung.com>
++M:	Kamil Konieczny <k.konieczny@samsung.com>
+ L:	linux-crypto@vger.kernel.org
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
 -- 
-2.17.1
+2.24.0
 
