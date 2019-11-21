@@ -2,278 +2,182 @@ Return-Path: <SRS0=tYdk=ZN=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9C58C432C3
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Nov 2019 07:38:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E01C43215
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Nov 2019 10:12:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3BFF2088F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Nov 2019 07:38:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1574321903;
-	bh=iPaegC2Fc/YfqxXzQq+rKC4ut3oJhHjxsJHyhJOMr6o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=r69f1pc0Bg/UQn0PQ0hNo3h8j1B/ZRnH2Bt8gIWzefHQdozTbujARYYd8vh+1Gko2
-	 9jQBXO18lmCbigchgzRwVtqLhdrQlL4BA72ZVrEANIc7OicmYZkBv51ZKGz4W3uSed
-	 BUEcnw+JPqVbt2zd4cllKRta6HKFbQeZTJ+FkwgM=
+	by mail.kernel.org (Postfix) with ESMTP id AF40B2089F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Nov 2019 10:12:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NAI3W06u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726554AbfKUHiX (ORCPT
+        id S1726014AbfKUKMC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 21 Nov 2019 02:38:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40588 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726170AbfKUHiX (ORCPT
+        Thu, 21 Nov 2019 05:12:02 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:38378 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726165AbfKUKMB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 21 Nov 2019 02:38:23 -0500
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E9672089F;
-        Thu, 21 Nov 2019 07:38:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574321901;
-        bh=iPaegC2Fc/YfqxXzQq+rKC4ut3oJhHjxsJHyhJOMr6o=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Gxmr7hkqoqe4nozqTBM5oRmtM3cW053hJ1ImnHqQFqn1tLjOTuUcVPQFfefy/lrPK
-         yeX0TKfwGDSz3ZuemTTnDzyMNjNySRvpFCGcqHoF/ttJLxHAHrHwH889CiGd6tCK0Y
-         3oa+LmP/JdwIg1SLH+4Bw3porGtIoT1wzexr5ExY=
-Received: by mail-lj1-f177.google.com with SMTP id g3so2014686ljl.11;
-        Wed, 20 Nov 2019 23:38:21 -0800 (PST)
-X-Gm-Message-State: APjAAAUhvwKWD3iH1D8OJsUHN9o6gygBy/lOZPra62d2T2wbXQk9MyQ9
-        CMFLXS7sH+COC/i9fSOvPVA1oLx8E0LpHHWsr10=
-X-Google-Smtp-Source: APXvYqzIZSww42wLMbKd99lnRiuy4DvVWuQlpvBLqdlbdGUmZM2j6BMEs6rEqORD0iP6Pis5OViGamvZ0Ari2qlGhoY=
-X-Received: by 2002:a2e:3009:: with SMTP id w9mr6359832ljw.74.1574321899606;
- Wed, 20 Nov 2019 23:38:19 -0800 (PST)
-MIME-Version: 1.0
-References: <CGME20191121072643epcas2p452071a503725c7764acf5084d24425b1@epcas2p4.samsung.com>
- <001001d5a03d$05de1f70$119a5e50$@samsung.com>
-In-Reply-To: <001001d5a03d$05de1f70$119a5e50$@samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Thu, 21 Nov 2019 15:38:08 +0800
-X-Gmail-Original-Message-ID: <CAJKOXPckbRowhCmnJfT8-DT3gYaTpDOf0wVxmxdf-tZpOyM5ew@mail.gmail.com>
-Message-ID: <CAJKOXPckbRowhCmnJfT8-DT3gYaTpDOf0wVxmxdf-tZpOyM5ew@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: samsung: modularize samsung pinctrl driver
-To:     =?UTF-8?B?6rWs7ZiE6riw?= <hyunki00.koo@samsung.com>
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>, s.nawrocki@samsung.com,
-        linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-gpio@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 21 Nov 2019 05:12:01 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191121101159euoutp01d622ac25cc78da263f498235492f7b02~ZJc-aL85z1442814428euoutp01F
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Nov 2019 10:11:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191121101159euoutp01d622ac25cc78da263f498235492f7b02~ZJc-aL85z1442814428euoutp01F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1574331119;
+        bh=VbYhHBXrQ+f9JjMUWur76w2gZqUs+ZT1uklf3hdsPNA=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=NAI3W06ukbHKJfrkx5YxZNeQbiDHEJkSiWOLbcLDT8+zbJ0GScq/4NcYTNex9+Azn
+         YwqhhZoyVSTvBz0PvZfrMzRTEx2zjX00+/vY5Q+lKndDjo3XVwT440TpWSRhDS+zUM
+         NIVKFH1ZftGTaQfQE1gngKumPW8WFUAOC+pyQfmU=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20191121101159eucas1p1ba3fe11736ba0b1f7f148ff6d8645e26~ZJc-H6lXq1800618006eucas1p1L;
+        Thu, 21 Nov 2019 10:11:59 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id B8.E7.04374.FE266DD5; Thu, 21
+        Nov 2019 10:11:59 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20191121101158eucas1p26b1f74cd2396a2461530e684d17a82e8~ZJc_xhgZd2129221292eucas1p2J;
+        Thu, 21 Nov 2019 10:11:58 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191121101158eusmtrp151356fbcbf44e1001b83c0360f1f7cfd~ZJc_wDVv31441014410eusmtrp1T;
+        Thu, 21 Nov 2019 10:11:58 +0000 (GMT)
+X-AuditID: cbfec7f5-4ddff70000001116-3c-5dd662ef9291
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 63.B9.04166.EE266DD5; Thu, 21
+        Nov 2019 10:11:58 +0000 (GMT)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191121101158eusmtip1d9bdb89752255ad1605b0d8717f83358~ZJc_OZGE82070020700eusmtip1_;
+        Thu, 21 Nov 2019 10:11:58 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marian Mihailescu <mihailescu2m@gmail.com>
+Subject: [PATCH] clk: samsung: exynos5420: Keep top G3D clocks enabled
+Date:   Thu, 21 Nov 2019 11:11:45 +0100
+Message-Id: <20191121101145.15899-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPIsWRmVeSWpSXmKPExsWy7djPc7rvk67FGnQ0M1tsnLGe1eL6l+es
+        FufPb2C3+Nhzj9Vixvl9TBZrj9xlt1g/7SerRfvTl8wOHB47Z91l99i0qpPNo2/LKkaPz5vk
+        AliiuGxSUnMyy1KL9O0SuDIa1uxkLtgnW7GleT5zA+MFyS5GTg4JAROJd3O3MncxcnEICaxg
+        lGjsWwflfGGUeNr/jh3C+cwo8fncGpYuRg6wlr2bzCDiyxklbn7/yQjX0bPtEiPIXDYBQ4mu
+        t11sILaIgIPE50+vwYqYBfqZJPr6rjKDJIQF3CS+zJsIVsQioCqxYO4+JhCbV8BW4nLnPRaI
+        A+UlVm84AHaThMB9Nom/Ey+yQiRcJD5v38EOYQtLvDq+BcqWkTg9uYcFoqGZUeLhubXsEE4P
+        o8TlphmMEFXWEoePg0ziALpJU2L9Ln2IsKPE1ccnWCH+5JO48VYQJMwMZE7aNp0ZIswr0dEm
+        BFGtJjHr+Dq4tQcvXGKGsD0kjm3+A1YuJBAr8f2s0gRGuVkIqxYwMq5iFE8tLc5NTy02zkst
+        1ytOzC0uzUvXS87P3cQITAan/x3/uoNx35+kQ4wCHIxKPLwCaldjhVgTy4orcw8xSnAwK4nw
+        7rl+JVaINyWxsiq1KD++qDQntfgQozQHi5I4bzXDg2ghgfTEktTs1NSC1CKYLBMHp1QDI+/0
+        2av/qfDufHVXRyN5YYH0eW6b+H+JJXK/66LLg/ZenZpxyGJis3jHfM2WdLmvR3LTFp67ZLH2
+        XmLAb5u5PJlv3tS8aZde23iLc+4Of6191tvDfVraNW4Ur1DmP5304KKO1LN81/7iW59nHFva
+        eZHVrvv37t/KHyY1rVVe9apwwWJbd5Wb65RYijMSDbWYi4oTAXD2WGUCAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKLMWRmVeSWpSXmKPExsVy+t/xu7rvkq7FGjzpVrbYOGM9q8X1L89Z
+        Lc6f38Bu8bHnHqvFjPP7mCzWHrnLbrF+2k9Wi/anL5kdODx2zrrL7rFpVSebR9+WVYwenzfJ
+        BbBE6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZmSrp29mkpOZklqUW6dsl6GU0
+        rNnJXLBPtmJL83zmBsYLkl2MHBwSAiYSezeZdTFycQgJLGWUmNH7lb2LkRMoLiNxcloDK4Qt
+        LPHnWhcbRNEnRolDE3qZQRJsAoYSXW9BEpwcIgJOEg/WvWEHKWIWmMwksb1pKQtIQljATeLL
+        vIlgRSwCqhIL5u5jArF5BWwlLnfeY4HYIC+xesMB5gmMPAsYGVYxiqSWFuem5xYb6hUn5haX
+        5qXrJefnbmIEBuG2Yz8372C8tDH4EKMAB6MSD6+A2tVYIdbEsuLK3EOMEhzMSiK8e65fiRXi
+        TUmsrEotyo8vKs1JLT7EaAq0fCKzlGhyPjBC8kriDU0NzS0sDc2NzY3NLJTEeTsEDsYICaQn
+        lqRmp6YWpBbB9DFxcEo1MAZEb6yYXO/fqsuafkl0m8a151q1XtfXCSyXr9zGH7Zf02f9q0lO
+        Xv/TdCa75386dVJWy8vpxELBoFdr3d4wC4ixJKQ/mH00Iv7bt9u/L62cL65T9bRy6+VKfZ7s
+        JRGnDHafefBVdkLEAfaHExxWr5BdufR24iQbme8nU5zrp92yMtjx2nKTcrgSS3FGoqEWc1Fx
+        IgB/t6vQWAIAAA==
+X-CMS-MailID: 20191121101158eucas1p26b1f74cd2396a2461530e684d17a82e8
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20191121101158eucas1p26b1f74cd2396a2461530e684d17a82e8
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20191121101158eucas1p26b1f74cd2396a2461530e684d17a82e8
+References: <CGME20191121101158eucas1p26b1f74cd2396a2461530e684d17a82e8@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+All top clocks on G3D path has to be enabled all the time to allow proper
+G3D power domain operation. This is achieved by adding CRITICAL flag to
+"mout_sw_aclk_g3d" clock, what keeps this clock and all its parents
+enabled.
 
-Thanks for the patch. Few comments below:
+This fixes following imprecise abort issue observed on Odroid XU3/XU4
+after enabling Panfrost driver by commit 1a5a85c56402 "ARM: dts: exynos:
+Add Mali/GPU node on Exynos5420 and enable it on Odroid XU3/4"):
 
-On Thu, 21 Nov 2019 at 15:26, =EA=B5=AC=ED=98=84=EA=B8=B0 <hyunki00.koo@sam=
-sung.com> wrote:
->
-> Enable samsung pinctrl driver to be compiled as modules.
+panfrost 11800000.gpu: clock rate = 400000000
+panfrost 11800000.gpu: failed to get regulator: -517
+panfrost 11800000.gpu: regulator init failed -517
+Power domain G3D disable failed
+...
+panfrost 11800000.gpu: clock rate = 400000000
+8<--- cut here ---
+Unhandled fault: imprecise external abort (0x1406) at 0x00000000
+pgd = (ptrval)
+[00000000] *pgd=00000000
+Internal error: : 1406 [#1] PREEMPT SMP ARM
+Modules linked in:
+CPU: 7 PID: 53 Comm: kworker/7:1 Not tainted 5.4.0-rc8-next-20191119-00032-g56f1001191a6 #6923
+Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+Workqueue: events deferred_probe_work_func
+PC is at panfrost_gpu_soft_reset+0x94/0x110
+LR is at ___might_sleep+0x128/0x2dc
+...
+[<c05c231c>] (panfrost_gpu_soft_reset) from [<c05c2704>] (panfrost_gpu_init+0x10/0x67c)
+[<c05c2704>] (panfrost_gpu_init) from [<c05c15d0>] (panfrost_device_init+0x158/0x2cc)
+[<c05c15d0>] (panfrost_device_init) from [<c05c0cb0>] (panfrost_probe+0x80/0x178)
+[<c05c0cb0>] (panfrost_probe) from [<c05cfaa0>] (platform_drv_probe+0x48/0x9c)
+[<c05cfaa0>] (platform_drv_probe) from [<c05cd20c>] (really_probe+0x1c4/0x474)
+[<c05cd20c>] (really_probe) from [<c05cd694>] (driver_probe_device+0x78/0x1bc)
+[<c05cd694>] (driver_probe_device) from [<c05cb374>] (bus_for_each_drv+0x74/0xb8)
+[<c05cb374>] (bus_for_each_drv) from [<c05ccfa8>] (__device_attach+0xd4/0x16c)
+[<c05ccfa8>] (__device_attach) from [<c05cc110>] (bus_probe_device+0x88/0x90)
+[<c05cc110>] (bus_probe_device) from [<c05cc634>] (deferred_probe_work_func+0x4c/0xd0)
+[<c05cc634>] (deferred_probe_work_func) from [<c0149df0>] (process_one_work+0x300/0x864)
+[<c0149df0>] (process_one_work) from [<c014a3ac>] (worker_thread+0x58/0x5a0)
+[<c014a3ac>] (worker_thread) from [<c0151174>] (kthread+0x12c/0x160)
+[<c0151174>] (kthread) from [<c01010b4>] (ret_from_fork+0x14/0x20)
+Exception stack(0xee03dfb0 to 0xee03dff8)
+...
+Code: e594300c e5933020 e3130c01 1a00000f (ebefff50).
+---[ end trace badde2b74a65a540 ]---
 
-Why? What's the benefit? Are platforms capable of such boot? Pinctrl
-is needed early - even before mounting rootfs...
-What about module unloading? Is it reasonable?
-Please answer to all this also in commit message.
+In the above case, the Panfrost driver disables G3D clocks after failure
+of getting the needed regulator and return with -EPROVE_DEFER code. This
+causes G3D power domain disable failure and then, during second probe
+an imprecise abort is triggered due to undefined power domain state.
 
->
-> Change-Id: I92a9953c92831a316f7f50146898ff19831549ec
+Fixes: 45f10dabb56b ("clk: samsung: exynos5420: Add SET_RATE_PARENT flag to clocks on G3D path")
+Fixes: c9f7567aff31 ("clk: samsung: exynos542x: Move G3D subsystem clocks to its sub-CMU")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5420.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This does not belong to Git.
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 3a991ca1ee36..89126ba66995 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -712,7 +712,7 @@ static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
+ 	MUX(0, "mout_sw_aclk266_g2d", mout_sw_aclk266_g2d_p,
+ 			SRC_TOP12, 12, 1),
+ 	MUX_F(0, "mout_sw_aclk_g3d", mout_sw_aclk_g3d_p, SRC_TOP12, 16, 1,
+-	      CLK_SET_RATE_PARENT, 0),
++	      CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
+ 	MUX(0, "mout_sw_aclk300_jpeg", mout_sw_aclk300_jpeg_p,
+ 			SRC_TOP12, 20, 1),
+ 	MUX(CLK_MOUT_SW_ACLK300, "mout_sw_aclk300_disp1",
+-- 
+2.17.1
 
-> Signed-off-by: Hyunki Koo <hyunki00.koo@samsung.com>
-
-You "From" name is different than written here in Signed-off-by. They
-should match and I do not know Korean to be able to tell whether they
-really match or not :).
-How about using Latin transliteration also in "From" field?
-
-> ---
->  drivers/pinctrl/samsung/Kconfig                |  5 +----
->  drivers/pinctrl/samsung/Makefile               | 13 +++++++------
->  drivers/pinctrl/samsung/pinctrl-exynos-arm.c   |  2 ++
->  drivers/pinctrl/samsung/pinctrl-exynos-arm64.c |  2 ++
->  drivers/pinctrl/samsung/pinctrl-exynos.c       |  2 ++
->  drivers/pinctrl/samsung/pinctrl-samsung.c      | 13 +++++++++++++
->  6 files changed, 27 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/pinctrl/samsung/Kconfig
-> b/drivers/pinctrl/samsung/Kconfig
-> index 425fadd6c346..25e16984ef23 100644
-> --- a/drivers/pinctrl/samsung/Kconfig
-> +++ b/drivers/pinctrl/samsung/Kconfig
-> @@ -3,14 +3,13 @@
->  # Samsung Pin control drivers
->  #
->  config PINCTRL_SAMSUNG
-> -       bool
-> +       tristate "Pinctrl driver data for Samsung SoCs"
->         select PINMUX
->         select PINCONF
->
->  config PINCTRL_EXYNOS
->         bool "Pinctrl driver data for Samsung EXYNOS SoCs"
->         depends on OF && GPIOLIB && (ARCH_EXYNOS || ARCH_S5PV210)
-> -       select PINCTRL_SAMSUNG
->         select PINCTRL_EXYNOS_ARM if ARM && (ARCH_EXYNOS || ARCH_S5PV210)
->         select PINCTRL_EXYNOS_ARM64 if ARM64 && ARCH_EXYNOS
->
-> @@ -25,9 +24,7 @@ config PINCTRL_EXYNOS_ARM64
->  config PINCTRL_S3C24XX
->         bool "Samsung S3C24XX SoC pinctrl driver"
->         depends on ARCH_S3C24XX && OF
-> -       select PINCTRL_SAMSUNG
->
->  config PINCTRL_S3C64XX
->         bool "Samsung S3C64XX SoC pinctrl driver"
->         depends on ARCH_S3C64XX
-> -       select PINCTRL_SAMSUNG
-> diff --git a/drivers/pinctrl/samsung/Makefile
-> b/drivers/pinctrl/samsung/Makefile
-> index ed951df6a112..b3ac01838b8a 100644
-> --- a/drivers/pinctrl/samsung/Makefile
-> +++ b/drivers/pinctrl/samsung/Makefile
-> @@ -1,9 +1,10 @@
->  # SPDX-License-Identifier: GPL-2.0
->  # Samsung pin control drivers
->
-> -obj-$(CONFIG_PINCTRL_SAMSUNG)  +=3D pinctrl-samsung.o
-> -obj-$(CONFIG_PINCTRL_EXYNOS)   +=3D pinctrl-exynos.o
-> -obj-$(CONFIG_PINCTRL_EXYNOS_ARM)       +=3D pinctrl-exynos-arm.o
-> -obj-$(CONFIG_PINCTRL_EXYNOS_ARM64)     +=3D pinctrl-exynos-arm64.o
-> -obj-$(CONFIG_PINCTRL_S3C24XX)  +=3D pinctrl-s3c24xx.o
-> -obj-$(CONFIG_PINCTRL_S3C64XX)  +=3D pinctrl-s3c64xx.o
-> +obj-$(CONFIG_PINCTRL_SAMSUNG)  +=3D pinctrl-samsung-super.o
-> +pinctrl-samsung-super-$(CONFIG_PINCTRL_SAMSUNG)        +=3D pinctrl-sams=
-ung.o
-> +pinctrl-samsung-super-$(CONFIG_PINCTRL_EXYNOS) +=3D pinctrl-exynos.o
-> +pinctrl-samsung-super-$(CONFIG_PINCTRL_EXYNOS_ARM)     +=3D pinctrl-exyn=
-os-
-> arm.o
-> +pinctrl-samsung-super-$(CONFIG_PINCTRL_EXYNOS_ARM64)   +=3D pinctrl-exyn=
-os-
-> arm64.o
-> +pinctrl-samsung-super-$(CONFIG_PINCTRL_S3C24XX)        +=3D pinctrl-s3c2=
-4xx.o
-> +pinctrl-samsung-super-$(CONFIG_PINCTRL_S3C64XX)        +=3D pinctrl-s3c6=
-4xx.o
-
-I don't get why you need to rename obj to pinctrl-samsung-super?
-
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-> b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-> index 85ddf49a5188..28906bf213c4 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-> @@ -14,6 +14,7 @@
->  // external gpio and wakeup interrupt support.
->
->  #include <linux/device.h>
-> +#include <linux/module.h>
->  #include <linux/of_address.h>
->  #include <linux/slab.h>
->  #include <linux/err.h>
-> @@ -891,3 +892,4 @@ const struct samsung_pinctrl_of_match_data
-> exynos5420_of_data __initconst =3D {
->         .ctrl           =3D exynos5420_pin_ctrl,
->         .num_ctrl       =3D ARRAY_SIZE(exynos5420_pin_ctrl),
->  };
-> +MODULE_LICENSE("GPL");
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> index b6e56422a700..2b19476ad5ff 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> @@ -14,6 +14,7 @@
->  // external gpio and wakeup interrupt support.
->
->  #include <linux/slab.h>
-> +#include <linux/module.h>
->  #include <linux/soc/samsung/exynos-regs-pmu.h>
->
->  #include "pinctrl-samsung.h"
-> @@ -422,3 +423,4 @@ const struct samsung_pinctrl_of_match_data
-> exynos7_of_data __initconst =3D {
->         .ctrl           =3D exynos7_pin_ctrl,
->         .num_ctrl       =3D ARRAY_SIZE(exynos7_pin_ctrl),
->  };
-> +MODULE_LICENSE("GPL");
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c
-> b/drivers/pinctrl/samsung/pinctrl-exynos.c
-> index ebc27b06718c..630d606330f1 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-> @@ -18,6 +18,7 @@
->  #include <linux/irqdomain.h>
->  #include <linux/irq.h>
->  #include <linux/irqchip/chained_irq.h>
-> +#include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/of_irq.h>
->  #include <linux/slab.h>
-> @@ -713,3 +714,4 @@ exynos_retention_init(struct samsung_pinctrl_drv_data
-> *drvdata,
->
->         return ctrl;
->  }
-> +MODULE_LICENSE("GPL");
-> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> index de0477bb469d..4483eaed27f8 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> @@ -15,6 +15,7 @@
->  // but provides extensions to which platform specific implementation of
-> the gpio
->  // and wakeup interrupts can be hooked to.
->
-> +#include <linux/module.h>
->  #include <linux/init.h>
->  #include <linux/platform_device.h>
->  #include <linux/io.h>
-> @@ -1275,6 +1276,7 @@ static const struct of_device_id
-> samsung_pinctrl_dt_match[] =3D {
->  #endif
->         {},
->  };
-> +MODULE_DEVICE_TABLE(of, samsung_pinctrl_dt_match);
->
->  static const struct dev_pm_ops samsung_pinctrl_pm_ops =3D {
->         SET_LATE_SYSTEM_SLEEP_PM_OPS(samsung_pinctrl_suspend,
-> @@ -1296,3 +1298,14 @@ static int __init samsung_pinctrl_drv_register(voi=
-d)
->         return platform_driver_register(&samsung_pinctrl_driver);
->  }
->  postcore_initcall(samsung_pinctrl_drv_register);
-> +
-> +static void __exit samsung_pinctrl_drv_unregister(void)
-> +{
-> +       platform_driver_unregister(&samsung_pinctrl_driver);
-> +}
-> +module_exit(samsung_pinctrl_drv_unregister);
-
-Since .suppress_bind_attrs are defined, I find it weird to be able to
-unload module... Another warning sign...
-
-> +
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_AUTHOR("Hyunki Koo <hyunki00.koo@samsung.com>");
-
-I cannot find any contributions to this file from you. The author
-should be the main contributor(s). You need to go through history...
-
-> +MODULE_DESCRIPTION("Samsung Exynos PINCTRL driver");
-
-That's not Exynos but Samsung-generic part... Samsung Exynos/S3C/S5P
-pinctrl driver.
-
-Best regards,
-Krzysztof
