@@ -1,139 +1,215 @@
-Return-Path: <SRS0=n6u7=ZM=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=tYdk=ZN=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80273C432C0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Nov 2019 18:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8EE3C432C0
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Nov 2019 03:19:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A0B420878
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 Nov 2019 18:24:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VL1V16VF"
+	by mail.kernel.org (Postfix) with ESMTP id A175F208A3
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Nov 2019 03:19:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1574306383;
+	bh=lchu/KX2vsWxSi8jH1B3g1xn82G2zo0dqdm09ot22HI=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=uPpLxaKtrknHEOCnw27BJY1lyuo0+E1bEtham6o2qfCf3W6C++G+06JZdilsqSApG
+	 yagY6S+/B+d/eeOGs+zDOxB/oTZ22ZsdFuF/8pQ9s0vBzagI80Jc5uwpDANXQv2kRj
+	 Ehpv2jnu0NW0aCG4Qa7If1h5FXjAqOE1QMLec4R0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727656AbfKTSYD (ORCPT
+        id S1727259AbfKUDTm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 20 Nov 2019 13:24:03 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:34029 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726675AbfKTSYD (ORCPT
+        Wed, 20 Nov 2019 22:19:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33080 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726541AbfKUDTm (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 20 Nov 2019 13:24:03 -0500
-Received: by mail-wm1-f65.google.com with SMTP id j18so5765438wmk.1;
-        Wed, 20 Nov 2019 10:24:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ctnDyGHzcexXd+oP584wBl9d7IxFFJWy5ZdVe62LHoE=;
-        b=VL1V16VFQxZ8XMocZhWLNpaqWaciq49VEDgTT20hTZ2yyx5FJ/yiZs0L9Sk1ZjgBEK
-         ZQFwsDZMY4sQSyrSluU//F0W/SafTb60GaqzxPcYnMCkdKMrxsYxLv64vtUBgUSaN+vY
-         rUZY5N3I4wP8T67v1xbS7tpahYg9M2b2njujgRU8RfCo8J3Gs5m7wX6mbOLkOnJtXhYm
-         vFjCIbWxIQaLARPh3facBK7DFjrAUs4xeHXTq3ABYGeq5h8eJL1wagohiNRUwtReZ66b
-         acMMAu4ox1rvuHa12fYh4vee2/XbX6/7G80yZi5E8zAG5bw9D6eqf2OrPEgCs1eE4PzL
-         pNNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ctnDyGHzcexXd+oP584wBl9d7IxFFJWy5ZdVe62LHoE=;
-        b=Rz9HBUBifPzbWEcXtL4j3WXHxkdQj6DFd7aLgpRWuvXg0+VmxTZrZM6dFMvsro957u
-         AVVO60Wg06p44RYrjYQUAqp5CdvYnnSkJqSfGjd0gafSIeeQyXE+WTF0+VfSMkKiUYlJ
-         gaiY1pmMU7/K+qjNtyziscTEHplCH+AsA8dzi4fuA8/mtjZowoDokpa5orwIvaAUZw7r
-         AhL+69XD5VDoJp1a4/cxvVYhiJSHQek1fX8tL1o4D9ydrc5PCrY4cqxLf3vA5Fzy9SqR
-         MVQ7Y8gjmsnnIJe/hoc3iOv4UAokQ8jnznmgiERQmBez+FnMj8mtQYE43r4vN9bA38N8
-         Cq8g==
-X-Gm-Message-State: APjAAAXcqhjYCZJ6KJXVKQiOFmPrZ0gPJleECcUYOodcISn97d79Zsnw
-        IolJglrIsdLoOllz2ZliByM=
-X-Google-Smtp-Source: APXvYqwt5vSje349iw69oqaDAMKixDjb6/bUVwR02G1KgTftbQDyi/rylGLW1hUSGLsUrQbk95hTpQ==
-X-Received: by 2002:a1c:4907:: with SMTP id w7mr4848109wma.62.1574274241330;
-        Wed, 20 Nov 2019 10:24:01 -0800 (PST)
-Received: from giga-mm ([62.68.23.15])
-        by smtp.gmail.com with ESMTPSA id g184sm154611wma.8.2019.11.20.10.23.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2019 10:24:00 -0800 (PST)
-Date:   Wed, 20 Nov 2019 19:23:58 +0100
-From:   Alexander Sverdlin <alexander.sverdlin@gmail.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        Hartley Sweeten <hsweeten@visionengravers.com>,
-        Linus Walleij <linusw@kernel.org>,
-        Imre Kaloz <kaloz@openwrt.org>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Tony Lindgren <tony@atomide.com>,
-        Barry Song <baohua@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        Wed, 20 Nov 2019 22:19:42 -0500
+Received: from PC-kkoz.proceq.com (unknown [213.160.61.66])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C8FB20721;
+        Thu, 21 Nov 2019 03:19:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574306381;
+        bh=lchu/KX2vsWxSi8jH1B3g1xn82G2zo0dqdm09ot22HI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=1qFijktoYtNuoo2iHnx0rqjpGJjP02Yc5gPd+CW1iSG9vJLkQYbMTxMELAFtjhFPG
+         w2BhV+09JwK9X0A29WfnOZ5EbM/ylnO/95HH8edvu+yi/g6OUYQbS8pukMHE42X3Ku
+         h7ChmHewCd8fa5hjE1wV1MeRWjc8TZ7yLp5QvXAs=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH] ARM: Fix Kconfig indentation
-Message-Id: <20191120192358.389c43da67a4d07c0d19b90d@gmail.com>
-In-Reply-To: <20191120133734.12345-1-krzk@kernel.org>
-References: <20191120133734.12345-1-krzk@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-unknown-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v2] media: Fix Kconfig indentation
+Date:   Thu, 21 Nov 2019 04:19:37 +0100
+Message-Id: <1574306377-30120-1-git-send-email-krzk@kernel.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+Adjust indentation from spaces to tab (+optional two spaces) as in
+coding style with command like:
+	$ sed -e 's/^        /\t/' -i */Kconfig
 
-for the EP93xx part,
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-On Wed, 20 Nov 2019 21:37:34 +0800
-Krzysztof Kozlowski <krzk@kernel.org> wrote:
+---
 
-> Adjust indentation from spaces to tab (+optional two spaces) as in
-> coding style with command like:
-> 	$ sed -e 's/^        /\t/' -i */Kconfig
->
+Changes since v1:
+1. Fix also 7-space and tab+1 space indentation issues.
+---
+ drivers/media/Kconfig                     |  6 +--
+ drivers/media/platform/Kconfig            | 74 +++++++++++++++----------------
+ drivers/media/platform/exynos4-is/Kconfig |  2 +-
+ drivers/media/radio/si470x/Kconfig        |  4 +-
+ 4 files changed, 43 insertions(+), 43 deletions(-)
 
-Acked-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+diff --git a/drivers/media/Kconfig b/drivers/media/Kconfig
+index b36a41332867..9dfea5c4b6ab 100644
+--- a/drivers/media/Kconfig
++++ b/drivers/media/Kconfig
+@@ -208,9 +208,9 @@ config MEDIA_SUBDRV_AUTOSELECT
+ 	  If unsure say Y.
  
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  arch/arm/Kconfig-nommu        | 10 +++++-----
->  arch/arm/Kconfig.debug        |  4 ++--
->  arch/arm/mach-ep93xx/Kconfig  |  8 ++++----
->  arch/arm/mach-ixp4xx/Kconfig  | 16 ++++++++--------
->  arch/arm/mach-mmp/Kconfig     |  2 +-
->  arch/arm/mach-omap1/Kconfig   | 14 +++++++-------
->  arch/arm/mach-prima2/Kconfig  |  6 +++---
->  arch/arm/mach-s3c24xx/Kconfig |  4 ++--
->  arch/arm/mach-s3c64xx/Kconfig |  6 +++---
->  arch/arm/plat-samsung/Kconfig |  2 +-
->  10 files changed, 36 insertions(+), 36 deletions(-)
-> 
-
-[...]
-
-> diff --git a/arch/arm/mach-ep93xx/Kconfig b/arch/arm/mach-ep93xx/Kconfig
-> index f2db5fd38145..bf81dfab7f1b 100644
-> --- a/arch/arm/mach-ep93xx/Kconfig
-> +++ b/arch/arm/mach-ep93xx/Kconfig
-> @@ -126,10 +126,10 @@ config MACH_MICRO9S
->  	  Contec Micro9-Slim board.
->  
->  config MACH_SIM_ONE
-> -        bool "Support Simplemachines Sim.One board"
-> -        help
-> -          Say 'Y' here if you want your kernel to support the
-> -          Simplemachines Sim.One board.
-> +	bool "Support Simplemachines Sim.One board"
-> +	help
-> +	  Say 'Y' here if you want your kernel to support the
-> +	  Simplemachines Sim.One board.
->  
->  config MACH_SNAPPER_CL15
->  	bool "Support Bluewater Systems Snapper CL15 Module"
-
-
+ config MEDIA_HIDE_ANCILLARY_SUBDRV
+-        bool
+-        depends on MEDIA_SUBDRV_AUTOSELECT && !COMPILE_TEST && !EXPERT
+-        default y
++	bool
++	depends on MEDIA_SUBDRV_AUTOSELECT && !COMPILE_TEST && !EXPERT
++	default y
+ 
+ config MEDIA_ATTACH
+ 	bool
+diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
+index e84f35d3a68e..cd977dfb1da2 100644
+--- a/drivers/media/platform/Kconfig
++++ b/drivers/media/platform/Kconfig
+@@ -610,49 +610,49 @@ config CEC_GPIO
+ 	  between compatible devices.
+ 
+ config VIDEO_SAMSUNG_S5P_CEC
+-       tristate "Samsung S5P CEC driver"
+-       depends on ARCH_EXYNOS || COMPILE_TEST
+-       select CEC_CORE
+-       select CEC_NOTIFIER
+-       help
+-	 This is a driver for Samsung S5P HDMI CEC interface. It uses the
+-	 generic CEC framework interface.
+-	 CEC bus is present in the HDMI connector and enables communication
+-	 between compatible devices.
++	tristate "Samsung S5P CEC driver"
++	depends on ARCH_EXYNOS || COMPILE_TEST
++	select CEC_CORE
++	select CEC_NOTIFIER
++	help
++	  This is a driver for Samsung S5P HDMI CEC interface. It uses the
++	  generic CEC framework interface.
++	  CEC bus is present in the HDMI connector and enables communication
++	  between compatible devices.
+ 
+ config VIDEO_STI_HDMI_CEC
+-       tristate "STMicroelectronics STiH4xx HDMI CEC driver"
+-       depends on ARCH_STI || COMPILE_TEST
+-       select CEC_CORE
+-       select CEC_NOTIFIER
+-       help
+-	 This is a driver for STIH4xx HDMI CEC interface. It uses the
+-	 generic CEC framework interface.
+-	 CEC bus is present in the HDMI connector and enables communication
+-	 between compatible devices.
++	tristate "STMicroelectronics STiH4xx HDMI CEC driver"
++	depends on ARCH_STI || COMPILE_TEST
++	select CEC_CORE
++	select CEC_NOTIFIER
++	help
++	  This is a driver for STIH4xx HDMI CEC interface. It uses the
++	  generic CEC framework interface.
++	  CEC bus is present in the HDMI connector and enables communication
++	  between compatible devices.
+ 
+ config VIDEO_STM32_HDMI_CEC
+-       tristate "STMicroelectronics STM32 HDMI CEC driver"
+-       depends on ARCH_STM32 || COMPILE_TEST
+-       select REGMAP
+-       select REGMAP_MMIO
+-       select CEC_CORE
+-       help
+-	 This is a driver for STM32 interface. It uses the
+-	 generic CEC framework interface.
+-	 CEC bus is present in the HDMI connector and enables communication
+-	 between compatible devices.
++	tristate "STMicroelectronics STM32 HDMI CEC driver"
++	depends on ARCH_STM32 || COMPILE_TEST
++	select REGMAP
++	select REGMAP_MMIO
++	select CEC_CORE
++	help
++	  This is a driver for STM32 interface. It uses the
++	  generic CEC framework interface.
++	  CEC bus is present in the HDMI connector and enables communication
++	  between compatible devices.
+ 
+ config VIDEO_TEGRA_HDMI_CEC
+-       tristate "Tegra HDMI CEC driver"
+-       depends on ARCH_TEGRA || COMPILE_TEST
+-       select CEC_CORE
+-       select CEC_NOTIFIER
+-       help
+-	 This is a driver for the Tegra HDMI CEC interface. It uses the
+-	 generic CEC framework interface.
+-	 The CEC bus is present in the HDMI connector and enables communication
+-	 between compatible devices.
++	tristate "Tegra HDMI CEC driver"
++	depends on ARCH_TEGRA || COMPILE_TEST
++	select CEC_CORE
++	select CEC_NOTIFIER
++	help
++	  This is a driver for the Tegra HDMI CEC interface. It uses the
++	  generic CEC framework interface.
++	  The CEC bus is present in the HDMI connector and enables communication
++	  between compatible devices.
+ 
+ config VIDEO_SECO_CEC
+ 	tristate "SECO Boards HDMI CEC driver"
+diff --git a/drivers/media/platform/exynos4-is/Kconfig b/drivers/media/platform/exynos4-is/Kconfig
+index 989cb34f19b1..be4effcbfe7b 100644
+--- a/drivers/media/platform/exynos4-is/Kconfig
++++ b/drivers/media/platform/exynos4-is/Kconfig
+@@ -13,7 +13,7 @@ config VIDEO_SAMSUNG_EXYNOS4_IS
+ if VIDEO_SAMSUNG_EXYNOS4_IS
+ 
+ config VIDEO_EXYNOS4_IS_COMMON
+-       tristate
++	tristate
+ 
+ config VIDEO_S5P_FIMC
+ 	tristate "S5P/EXYNOS4 FIMC/CAMIF camera interface driver"
+diff --git a/drivers/media/radio/si470x/Kconfig b/drivers/media/radio/si470x/Kconfig
+index 537f8e1601f3..a1ba8bc54b62 100644
+--- a/drivers/media/radio/si470x/Kconfig
++++ b/drivers/media/radio/si470x/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config RADIO_SI470X
+-        tristate "Silicon Labs Si470x FM Radio Receiver support"
+-        depends on VIDEO_V4L2
++	tristate "Silicon Labs Si470x FM Radio Receiver support"
++	depends on VIDEO_V4L2
+ 	help
+ 	  This is a driver for devices with the Silicon Labs SI470x
+ 	  chip (either via USB or I2C buses).
 -- 
-Alexander Sverdlin.
+2.7.4
+
