@@ -2,120 +2,115 @@ Return-Path: <SRS0=tYdk=ZN=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC38DC432C0
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Nov 2019 05:12:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FDB0C432C0
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Nov 2019 05:32:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 842562089D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Nov 2019 05:12:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1574313171;
-	bh=yy8eEgfEToYok9X919w45b2ihXhTxEEJn5CiGGVDfoM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=eBqf7XpwiZcvkD1gRao52kp3NEZ1YowNH5EX/1smdEQGU59oTreYmLmSf1HFxJozo
-	 7G/rPZiobQlwx23AFnU9KPyIBjhSGATxJleV2R2oJMbsdtiqX/cbOnfG+xYG3hC7qb
-	 sWluJ/3T2uksL9T9FTMZejWvUrsHhasKISyprq3o=
+	by mail.kernel.org (Postfix) with ESMTP id 4FA5A20872
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 Nov 2019 05:32:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M7BBqQwb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726132AbfKUFMs (ORCPT
+        id S1726614AbfKUFcO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 21 Nov 2019 00:12:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34612 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725819AbfKUFMr (ORCPT
+        Thu, 21 Nov 2019 00:32:14 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:38970 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726132AbfKUFcN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 21 Nov 2019 00:12:47 -0500
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0E462089F;
-        Thu, 21 Nov 2019 05:12:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574313167;
-        bh=yy8eEgfEToYok9X919w45b2ihXhTxEEJn5CiGGVDfoM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=mKuypisHYvT7ozeokzlA/k7waKynSB7RrigmxtE8TVtEQNZTNSz9J9sVneUFJshXd
-         r4dfMa+EsEIKRoqDsamTur0C32gB9oY15SIeKFk93MMW0VKR5IGCde/MMZg+gsE5xA
-         XjtoXHIiyEOZWP0oc/oxuXpmpoIwq0oOu0Nq3lx0=
-Received: by mail-lf1-f48.google.com with SMTP id v24so1475014lfi.7;
-        Wed, 20 Nov 2019 21:12:46 -0800 (PST)
-X-Gm-Message-State: APjAAAWiK506L6FrvZZOWY/Fl7/7JivKwOe8gm6+pPl0BwP661Tx9/vD
-        mw5hzpRURxCWw8r5/0OZrPK68vvCq/dMeUegeHA=
-X-Google-Smtp-Source: APXvYqwe+YxRVk4uB/CYpPNi/J/RM2esWAW289Akjpc5j6wiUwS4+H5KYBHSq/z0sWZPIW3rPbPxnMrC5oOFL0kd1/s=
-X-Received: by 2002:a19:7510:: with SMTP id y16mr5757908lfe.24.1574313164896;
- Wed, 20 Nov 2019 21:12:44 -0800 (PST)
-MIME-Version: 1.0
-References: <CGME20191120135541eucas1p14033edaac4d015cf1d2110d9d08f2f05@eucas1p1.samsung.com>
- <20191120135527.7636-1-k.konieczny@samsung.com>
-In-Reply-To: <20191120135527.7636-1-k.konieczny@samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Thu, 21 Nov 2019 13:12:33 +0800
-X-Gmail-Original-Message-ID: <CAJKOXPefL_nyNaUExCJv6zKmhPTvgiPaaPT-sRoyyOw59aTZiQ@mail.gmail.com>
-Message-ID: <CAJKOXPefL_nyNaUExCJv6zKmhPTvgiPaaPT-sRoyyOw59aTZiQ@mail.gmail.com>
-Subject: Re: [RESEND PATCH] MAINTAINERS: update my e-mail address
-To:     Kamil Konieczny <k.konieczny@samsung.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Thu, 21 Nov 2019 00:32:13 -0500
+Received: by mail-pg1-f194.google.com with SMTP id b126so998366pga.6
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Nov 2019 21:32:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yE3H52ST3bCRAdHmUDzhL/7UmgqQkrfup+4Ir818ZIQ=;
+        b=M7BBqQwbeIa8JPve1L1VxPnrWig2i9WY0ZyJQqNtb4XAMmkDMSCMWoXgsK/BUgwDUG
+         +d9RoKdI2qyNSdaD+nSIAoT7F4oQIUqrWJd/nlez1kwBmCmhxwHQwABfxrJ5IP+wo2Np
+         tAso4ANpMBRdhCbXYBWd9wpXO9r11KzHWL9BoyF9oNUi9p7j3jazmA2qZctVscY3YyDJ
+         GWW/g07xgm2+CEP4ffmAH+DyewVtNhP/yJaOVzOJK5pztvZNrR1n9PqUzwRYF8FWjpFf
+         +nQ0SA77fRXYfHhgPIg2TTZCDsMmEdFh0XpHNs3hB8UFqQTbHJ0EM/l3gY7KwLMyAD30
+         cNtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yE3H52ST3bCRAdHmUDzhL/7UmgqQkrfup+4Ir818ZIQ=;
+        b=JEkiqhlkWgmd4RNjMzZlKrKF0tF0ismRnGV8p4+9BdaZxfYlbMgJrgeMK8y+sg2lEM
+         GctI8x0f1hnZJF+YJFZkCQUXTtY03/FvJimCQTc6PagHeMgX6fQbAQtm3taRrBz9Re7b
+         +5Hju/fNBU3V8x1YNKWArz4VuW+NVOJzFBsVtZSHt2usgxXL5POvpD32Js6iUMlC1Mcc
+         o7k9BpRas1I64SI0GISkDWuWIUjnpQ6OJPTISUxe6Fvr3sDUvS435fLBSW45Q0yQZ2Jv
+         1GdLG7zykHZjFr0JAhhiAWi40x2rXhnwJrHtbYeeYsrhudnDQY3NitHCNTa9fB9XxYQW
+         p+Tg==
+X-Gm-Message-State: APjAAAV4D46yD3QmPxROZ02/gsHJ8BPAb3x7Za0hFSUpL6xsnq4qJkeZ
+        zORkkjbGEjfzwf7tKCFaZUwt1Q==
+X-Google-Smtp-Source: APXvYqwNM9dZdansKs8pKoOeaen5b9vqImpjSGgtw89kbCl3/6894oiyg46ElaulgywEwwJJ0Y0fIQ==
+X-Received: by 2002:aa7:8421:: with SMTP id q1mr8754271pfn.174.1574314333119;
+        Wed, 20 Nov 2019 21:32:13 -0800 (PST)
+Received: from localhost ([223.226.74.76])
+        by smtp.gmail.com with ESMTPSA id p16sm1083971pjp.31.2019.11.20.21.32.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Nov 2019 21:32:12 -0800 (PST)
+Date:   Thu, 21 Nov 2019 11:02:07 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, edubezval@gmail.com,
+        Amit Daniel Kachhap <amit.kachhap@gmail.com>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Guillaume La Roque <glaroque@baylibre.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Javi Merino <javi.merino@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jun Nie <jun.nie@linaro.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 08/11] thermal: samsung: Appease the kernel-doc deity
+Message-ID: <20191121053207.gyulu3vb3caaituv@vireshk-i7>
+References: <cover.1574242756.git.amit.kucheria@linaro.org>
+ <1ded1697c6e5eff11b034b3302b9c79e88fa9c42.1574242756.git.amit.kucheria@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1ded1697c6e5eff11b034b3302b9c79e88fa9c42.1574242756.git.amit.kucheria@linaro.org>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 20 Nov 2019 at 21:55, Kamil Konieczny <k.konieczny@samsung.com> wrote:
->
-> Update my e-mail address to @samsung.com in maintainers.
-> Add also map in .mailmap to new e-mail.
->
-> Signed-off-by: Kamil Konieczny <k.konieczny@samsung.com>
-
-Hi Kamil,
-
-To whom are you addressing it? All people are on CC so I am not sure
-if I am the one to pick it up.
-
-Best regards,
-Krzysztof
-
+On 20-11-19, 21:15, Amit Kucheria wrote:
+> Fix up the following warning when compiled with make W=1:
+> 
+> linux.git/drivers/thermal/samsung/exynos_tmu.c:141: warning: bad
+> line:         driver
+> linux.git/drivers/thermal/samsung/exynos_tmu.c:203: warning: Function
+> parameter or member 'tzd' not described in 'exynos_tmu_data'
+> linux.git/drivers/thermal/samsung/exynos_tmu.c:203: warning: Function
+> parameter or member 'tmu_set_trip_temp' not described in
+> 'exynos_tmu_data'
+> linux.git/drivers/thermal/samsung/exynos_tmu.c:203: warning: Function
+> parameter or member 'tmu_set_trip_hyst' not described in
+> 'exynos_tmu_data'
+> 
+> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
 > ---
->  .mailmap    | 1 +
->  MAINTAINERS | 2 +-
->  2 files changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/.mailmap b/.mailmap
-> index fd6219293057..3727a0066bb1 100644
-> --- a/.mailmap
-> +++ b/.mailmap
-> @@ -133,6 +133,7 @@ Juha Yrjola <at solidboot.com>
->  Juha Yrjola <juha.yrjola@nokia.com>
->  Juha Yrjola <juha.yrjola@solidboot.com>
->  Julien Thierry <julien.thierry.kdev@gmail.com> <julien.thierry@arm.com>
-> +Kamil Konieczny <k.konieczny@samsung.com> <k.konieczny@partner.samsung.com>
->  Kay Sievers <kay.sievers@vrfy.org>
->  Kenneth W Chen <kenneth.w.chen@intel.com>
->  Konstantin Khlebnikov <koct9i@gmail.com> <k.khlebnikov@samsung.com>
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index e4f170d8bc29..0caf7560c782 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14294,7 +14294,7 @@ F:      drivers/media/i2c/s5k5baf.c
->  SAMSUNG S5P Security SubSystem (SSS) DRIVER
->  M:     Krzysztof Kozlowski <krzk@kernel.org>
->  M:     Vladimir Zapolskiy <vz@mleia.com>
-> -M:     Kamil Konieczny <k.konieczny@partner.samsung.com>
-> +M:     Kamil Konieczny <k.konieczny@samsung.com>
->  L:     linux-crypto@vger.kernel.org
->  L:     linux-samsung-soc@vger.kernel.org
->  S:     Maintained
-> --
-> 2.24.0
->
+>  drivers/thermal/samsung/exynos_tmu.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+
+Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
+
+-- 
+viresh
