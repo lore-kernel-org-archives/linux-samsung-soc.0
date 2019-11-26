@@ -2,66 +2,66 @@ Return-Path: <SRS0=iOP1=ZS=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0863DC432C0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 Nov 2019 01:21:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 909ACC432C0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 Nov 2019 06:09:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC9182071E
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 Nov 2019 01:21:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50CE920727
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 Nov 2019 06:09:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1574731302;
-	bh=e7359V1WvyvcBQg5ikrLHwOABGhZa5YKZhU8/BE3aQo=;
+	s=default; t=1574748577;
+	bh=pHxQw4eAkDVM2NOdyDU2Qf2aPQMBOwtOkM9PYH46Vws=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=cd12N/sXG/xYhYVTE8H6YTY05cQjFYxFvKaphuEN9ZZdmQLMSBD0qPhVtWprmtYEd
-	 VhgJBJRN2iJ6vbdJSqiNnhBmXuNZxdN29Vrh6EdLLLLw/zidMD88Nf0uhiM5bRzZVN
-	 /fDCRiibL5vCfoXrggti78conytlOs3pgDyeyVTk=
+	b=2CWNR5liB6xORfcevSAB3yfaVFs1RotO+j3an61L1RZVUlSdqONq98tHJ1WvQB7fg
+	 xepaZOdhjWjd3rnpP23RzHbq4ceNiGQEm1uH9hqju2LExmtztzeugivggU6iy65mVv
+	 wADzILWRV/m55n69OHPXIUijTgQjUOa7fy2yIQTY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726866AbfKZBVm (ORCPT
+        id S1727297AbfKZGJh (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 25 Nov 2019 20:21:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47384 "EHLO mail.kernel.org"
+        Tue, 26 Nov 2019 01:09:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726016AbfKZBVm (ORCPT
+        id S1726947AbfKZGJg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 25 Nov 2019 20:21:42 -0500
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+        Tue, 26 Nov 2019 01:09:36 -0500
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA4122071E;
-        Tue, 26 Nov 2019 01:21:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92C282073F;
+        Tue, 26 Nov 2019 06:09:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574731301;
-        bh=e7359V1WvyvcBQg5ikrLHwOABGhZa5YKZhU8/BE3aQo=;
+        s=default; t=1574748575;
+        bh=pHxQw4eAkDVM2NOdyDU2Qf2aPQMBOwtOkM9PYH46Vws=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=TE4m1oxmJmtlpVBG2eV6GOyAZ2V6quFqvt6pOhdOEYr32QdTwJexQbOxOmgYOCByU
-         R7Z0hJ1VD+Xmr3oKXp/OEVQMM57EbnFPmu7K6n9eF2UbnZ32Wa3EYsRowzF1Avsgkw
-         j5HFzPpeOdf0LPymBsSvvhJL/WrZU6IkpUg8Bdkw=
-Received: by mail-lf1-f43.google.com with SMTP id b20so12618172lfp.4;
-        Mon, 25 Nov 2019 17:21:40 -0800 (PST)
-X-Gm-Message-State: APjAAAUeNHVvsyZ/b8Jb0i5H8NKsTAr851BntrLlgGQnhVr20STqxaq6
-        uq016jjCRlAVrJmrOdxeuJvAZJIHNwRXHrDIAk0=
-X-Google-Smtp-Source: APXvYqzjm0lHW/dFvML+RlZZjEu7Rk6hAz7NCz+1OhCEN70pKaWUsjUhF/xxKAAoAZzcpU4p6wW3pniZS2DRGdBKHuI=
-X-Received: by 2002:ac2:5228:: with SMTP id i8mr22194773lfl.69.1574731298851;
- Mon, 25 Nov 2019 17:21:38 -0800 (PST)
+        b=kiBuFTigYwZGLvOACGTXFW13iDjzjtD3cPkIOnekL34wG1IppWnQZpwTnlvmjcWTV
+         sjZhepeFmfbcT3aa0oJirH+VZRIrULYBuu4/NJM3r2zz107qZwcSd3j2D6mpZZUDPD
+         VUzLSTlamDYz0Sb7zz+ucMU3kzft7sObn55ekn3I=
+Received: by mail-lf1-f52.google.com with SMTP id b20so13047692lfp.4;
+        Mon, 25 Nov 2019 22:09:35 -0800 (PST)
+X-Gm-Message-State: APjAAAUiJjOBytTkUvI5p5ABxCjUAN7vNV9A6m/SrJRpKJdQBPKsM5KQ
+        nO/wZ6yh61rOdrq8bJQlaQb+jNKQBP3X7CZZ7iY=
+X-Google-Smtp-Source: APXvYqz+mGoODbXvuWOpDuoB4deHWZfXkDpLgYpz6o9dXanE8DhcvBX9SLi7XUWlKABR+ahnXp9G2qAt2UtBvsZP3es=
+X-Received: by 2002:ac2:51b5:: with SMTP id f21mr23141783lfk.159.1574748573659;
+ Mon, 25 Nov 2019 22:09:33 -0800 (PST)
 MIME-Version: 1.0
-References: <CGME20191125125531eucas1p17f4044301903eeafe56865ed63738798@eucas1p1.samsung.com>
- <20191125125515.30795-1-m.szyprowski@samsung.com> <7f6a5924-58f9-aafb-18c5-c749ad355a02@samsung.com>
- <20191125093932.4a111dc8@gandalf.local.home> <5fdca7d0-c130-457a-2ce2-74f645b60f8d@samsung.com>
-In-Reply-To: <5fdca7d0-c130-457a-2ce2-74f645b60f8d@samsung.com>
+References: <CGME20191121072643epcas2p452071a503725c7764acf5084d24425b1@epcas2p4.samsung.com>
+ <001001d5a03d$05de1f70$119a5e50$@samsung.com> <CAJKOXPckbRowhCmnJfT8-DT3gYaTpDOf0wVxmxdf-tZpOyM5ew@mail.gmail.com>
+ <028901d5a3f6$e2d72310$a8856930$@samsung.com>
+In-Reply-To: <028901d5a3f6$e2d72310$a8856930$@samsung.com>
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Tue, 26 Nov 2019 09:21:27 +0800
-X-Gmail-Original-Message-ID: <CAJKOXPept5Po3UDfLWCTYEupiip-Y6ZXtdaOGTQd8K-6m11DbA@mail.gmail.com>
-Message-ID: <CAJKOXPept5Po3UDfLWCTYEupiip-Y6ZXtdaOGTQd8K-6m11DbA@mail.gmail.com>
-Subject: Re: [PATCH] arm: exynos_config: Restore debugfs support
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc:     Kusanagi Kouichi <slash@ac.auone-net.jp>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
+Date:   Tue, 26 Nov 2019 14:09:22 +0800
+X-Gmail-Original-Message-ID: <CAJKOXPdy=oxkwspt3CpF-qV5XRPMKrupMOpbWXJT3e7trqvXkw@mail.gmail.com>
+Message-ID: <CAJKOXPdy=oxkwspt3CpF-qV5XRPMKrupMOpbWXJT3e7trqvXkw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: samsung: modularize samsung pinctrl driver
+To:     Hyunki Koo <hyunki00.koo@samsung.com>
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>, s.nawrocki@samsung.com,
+        linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
         "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
+        <linux-samsung-soc@vger.kernel.org>, linux-gpio@vger.kernel.org,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -70,52 +70,140 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 25 Nov 2019 at 23:31, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
+On Tue, 26 Nov 2019 at 09:14, Hyunki Koo <hyunki00.koo@samsung.com> wrote:
 >
->
-> On 11/25/19 3:39 PM, Steven Rostedt wrote:
-> > On Mon, 25 Nov 2019 15:30:39 +0100
-> > Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com> wrote:
+> On Thu, 21 Nov 2019 at 16:38, Krzysztof Kozlowski <krzk@kernel.org> wrote=
+:
+> > Hi,
 > >
-> >> It seems that commit 0e4a459f56c3 ("tracing: Remove unnecessary DEBUG_=
-FS
-> >> dependency") disabled DEBUG_FS also in some other ARM defconfigs.
-> >>
-> >> For some of them it may be a correct change but a preferred way to
-> >> introduce such changes would be to:
-> >>
-> >> - add explicit CONFIG_DEBUG_FS=3Dy instances to all affected defconfig=
-s
-> >>   while removing DEBUG_FS selection from TRACING config item
-> >>
+> > Thanks for the patch. Few comments below:
 > >
-> > I strongly disagree. It was wrong to assume DEBUG_FS is attached to
-> > TRACING. If someone wanted DEBUG_FS in their def config, they should
-> > have added it specifically. The addition of DEBUG_FS to defconfigs no
+> > On Thu, 21 Nov 2019 at 15:26, =EA=B5=AC=ED=98=84=EA=B8=B0 <hyunki00.koo=
+@samsung.com> wrote:
+> >>
+> >> Enable samsung pinctrl driver to be compiled as modules.
+> >
+> > Why? What's the benefit? Are platforms capable of such boot? Pinctrl is=
+ needed early - even before mounting rootfs...
+> > What about module unloading? Is it reasonable?
+> > Please answer to all this also in commit message.
+> >
 >
-> There is a theory and a practice.
->
-> In theory you are are correct. ;-)
->
-> In practice people don't manually edit configuration files nowadays.
->
-> They do 'make menuconfig' and enable what they need and disable what
-> they do not need.  Then they do 'make savedefconfig' and copy resulting
-> "stripped" defconfig file as their new platform defconfig. As a result
-> defconfigs rely on many default settings (also they explicitly disable
-> only items that are enabled by default but you don't want them).
+> Sorry to late and Thank you for your comment, I would like to apply GKI o=
+n the pinctrl driver
+> So I would like to cut off dependency from ARCH_EXYNOS.
 
-I agree with Bart=C5=82omiej. Your interpretation Steven essentially
-prohibits any use of savedefconfig to trim automatically the config
-from unneeded options. Therefore many defconfigs which do not have
-DEBUG_FS or other options directly, but they want it.
+This is driver for Exynos and S3C so why cutting off the dependency? I
+mean, wait, it is a driver for Exynos so it cannot work on other
+boards...
 
-Some time ago I had patches removing specific non-existing options
-from defconfigs. For each option I provided a rationale that it is
-gone/etc so let's remove it from defconfig. Most of maintainers picked
-them up but few (2-3?) instead run savedefconfig to clean up
-everything automatically.
+> I will split into two part,
+> First, cut off the dependency with ARCH_EXYNOS in arch/arm64/Kconfig.plat=
+form.
+> Second, I will make the pinctrl driver as a module.
+
+Then you are doing it in wrong order - this patch makes it as a module
+but you send it as first one.
+
+You did not resolve however my questions about:
+1. Will this even work? Will platforms boot?
+2. How are you going to handle module unloading since on purpose we
+added suppress_bind?
+
+>
+> >>
+> >> Change-Id: I92a9953c92831a316f7f50146898ff19831549ec
+> >
+> > This does not belong to Git.
+> >
+> >> Signed-off-by: Hyunki Koo <hyunki00.koo@samsung.com>
+> >
+> >You "From" name is different than written here in Signed-off-by. They sh=
+ould match and I do not know Korean to be able to tell whether they really =
+match or not :).
+> >How about using Latin transliteration also in "From" field?
+> >
+> >> ---
+> >>  drivers/pinctrl/samsung/Kconfig                |  5 +----
+> >>  drivers/pinctrl/samsung/Makefile               | 13 +++++++------
+> >>  drivers/pinctrl/samsung/pinctrl-exynos-arm.c   |  2 ++
+> >>  drivers/pinctrl/samsung/pinctrl-exynos-arm64.c |  2 ++
+> >>  drivers/pinctrl/samsung/pinctrl-exynos.c       |  2 ++
+> >>  drivers/pinctrl/samsung/pinctrl-samsung.c      | 13 +++++++++++++
+> >>  6 files changed, 27 insertions(+), 10 deletions(-)
+> >>
+> >> diff --git a/drivers/pinctrl/samsung/Kconfig
+> >> b/drivers/pinctrl/samsung/Kconfig index 425fadd6c346..25e16984ef23
+> >> 100644
+> >> --- a/drivers/pinctrl/samsung/Kconfig
+> >> +++ b/drivers/pinctrl/samsung/Kconfig
+> >> @@ -3,14 +3,13 @@
+> >>  # Samsung Pin control drivers
+> >>  #
+> >>  config PINCTRL_SAMSUNG
+> >> -       bool
+> >> +       tristate "Pinctrl driver data for Samsung SoCs"
+> >>         select PINMUX
+> >>         select PINCONF
+> >>
+> >>  config PINCTRL_EXYNOS
+> >>         bool "Pinctrl driver data for Samsung EXYNOS SoCs"
+> >>         depends on OF && GPIOLIB && (ARCH_EXYNOS || ARCH_S5PV210)
+> >> -       select PINCTRL_SAMSUNG
+> >>         select PINCTRL_EXYNOS_ARM if ARM && (ARCH_EXYNOS || ARCH_S5PV2=
+10)
+> >>         select PINCTRL_EXYNOS_ARM64 if ARM64 && ARCH_EXYNOS
+> >>
+> >> @@ -25,9 +24,7 @@ config PINCTRL_EXYNOS_ARM64  config PINCTRL_S3C24XX
+> >>         bool "Samsung S3C24XX SoC pinctrl driver"
+> >>         depends on ARCH_S3C24XX && OF
+> >> -       select PINCTRL_SAMSUNG
+> >>
+> >>  config PINCTRL_S3C64XX
+> >>         bool "Samsung S3C64XX SoC pinctrl driver"
+> >>         depends on ARCH_S3C64XX
+> >> -       select PINCTRL_SAMSUNG
+> >> diff --git a/drivers/pinctrl/samsung/Makefile
+> >> b/drivers/pinctrl/samsung/Makefile
+> >> index ed951df6a112..b3ac01838b8a 100644
+> >> --- a/drivers/pinctrl/samsung/Makefile
+> >> +++ b/drivers/pinctrl/samsung/Makefile
+> >> @@ -1,9 +1,10 @@
+> >>  # SPDX-License-Identifier: GPL-2.0
+> >>  # Samsung pin control drivers
+> >>
+> >> -obj-$(CONFIG_PINCTRL_SAMSUNG)  +=3D pinctrl-samsung.o
+> >> -obj-$(CONFIG_PINCTRL_EXYNOS)   +=3D pinctrl-exynos.o
+> >> -obj-$(CONFIG_PINCTRL_EXYNOS_ARM)       +=3D pinctrl-exynos-arm.o
+> >> -obj-$(CONFIG_PINCTRL_EXYNOS_ARM64)     +=3D pinctrl-exynos-arm64.o
+> >> -obj-$(CONFIG_PINCTRL_S3C24XX)  +=3D pinctrl-s3c24xx.o
+> >> -obj-$(CONFIG_PINCTRL_S3C64XX)  +=3D pinctrl-s3c64xx.o
+> >> +obj-$(CONFIG_PINCTRL_SAMSUNG)  +=3D pinctrl-samsung-super.o
+> >> +pinctrl-samsung-super-$(CONFIG_PINCTRL_SAMSUNG)        +=3D pinctrl-s=
+amsung.o
+> >> +pinctrl-samsung-super-$(CONFIG_PINCTRL_EXYNOS) +=3D pinctrl-exynos.o
+> >> +pinctrl-samsung-super-$(CONFIG_PINCTRL_EXYNOS_ARM)     +=3D pinctrl-e=
+xynos-
+> >> arm.o
+> >> +pinctrl-samsung-super-$(CONFIG_PINCTRL_EXYNOS_ARM64)   +=3D pinctrl-e=
+xynos-
+> >> arm64.o
+> >> +pinctrl-samsung-super-$(CONFIG_PINCTRL_S3C24XX)        +=3D pinctrl-s=
+3c24xx.o
+> >> +pinctrl-samsung-super-$(CONFIG_PINCTRL_S3C64XX)        +=3D pinctrl-s=
+3c64xx.o
+> >
+> > I don't get why you need to rename obj to pinctrl-samsung-super?
+>
+> I would like to make pinctrl as a super module. It is many dependency bet=
+ween pinctrl-exynos, pinctr-exynos-arm64 and pinctrl-samsung
+
+Might be a stupid question but what is "Super module"?
+
+Second, the dependencies are there because this is a integral part of them.
+
+I think I miss some bigger picture here because I still do not
+understand what you want to achieve in the end (why doing this)?
 
 Best regards,
 Krzysztof
