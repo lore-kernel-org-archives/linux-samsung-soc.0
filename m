@@ -2,111 +2,94 @@ Return-Path: <SRS0=JUvH=ZT=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32213C432C0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Nov 2019 01:58:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66FF8C432C3
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Nov 2019 07:58:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0431D2068E
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Nov 2019 01:58:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1574819899;
-	bh=yUbAjVfl4t6YJAMVRmQUHJSbU7woRgvSxyinA20eFYM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=Vm01BXx2UZyUYc8jDSgXK8gH6WlA4fDWlFnaIFCogfjBLuuD3gVne+6e+LFMs+ICE
-	 o+SPTkfDqlTDHHlJfn+f3sBY+xh+rnT2hxo+l5xYmUGh89mvRTB3JdlmbEllWWukbL
-	 IHkZYnvJap77/K4PNeeRMu0kQHK17mCDsQ9Innus=
+	by mail.kernel.org (Postfix) with ESMTP id 352F32073F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 27 Nov 2019 07:58:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="objLnNse"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726099AbfK0B6S (ORCPT
+        id S1726446AbfK0H6c (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 26 Nov 2019 20:58:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39460 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726081AbfK0B6S (ORCPT
+        Wed, 27 Nov 2019 02:58:32 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37489 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726373AbfK0H6c (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 26 Nov 2019 20:58:18 -0500
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C77F207DD;
-        Wed, 27 Nov 2019 01:58:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574819897;
-        bh=yUbAjVfl4t6YJAMVRmQUHJSbU7woRgvSxyinA20eFYM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=0ZNGcffCJymTkmD+GCOqe68NqvcHxx9oTOOiXzNOkx1yaNP67r6T4TeXgp02Ewifv
-         HxjD97jqQqE1rS31Nh2HR41UdfBARkHMMQ1Msg0KzDdgc4Ehm1RHF7rYyLKZVjo6c1
-         UepOkE+88NNcDcV0vn96sTXFYJVTPm5PAkcJtTXI=
-Received: by mail-lf1-f54.google.com with SMTP id l28so15790561lfj.1;
-        Tue, 26 Nov 2019 17:58:17 -0800 (PST)
-X-Gm-Message-State: APjAAAXVxuvr00uWe/43bH/tSoQ2H0o8vuV9NCRHVXIJEGajZh6zrCXL
-        dzUJ3HcrCpG24dOlaweABMjZuFttUpQ43w/AOEc=
-X-Google-Smtp-Source: APXvYqwqQ/PbVuU9oIO70cIYil2g5zlwFyjYkXkGME8+qAz9dLFuBuYWwtL8567qd0a3L5qbl7PDHSoong7wifBfy60=
-X-Received: by 2002:a19:7510:: with SMTP id y16mr26681496lfe.24.1574819895739;
- Tue, 26 Nov 2019 17:58:15 -0800 (PST)
+        Wed, 27 Nov 2019 02:58:32 -0500
+Received: by mail-lj1-f196.google.com with SMTP id d5so23343563ljl.4
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Nov 2019 23:58:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bbcrs/kI0pTK9FOJP+Wv13rPCiF+hN+1C4Agw6T2rIU=;
+        b=objLnNseuznC0txiinrwy8QyrEZ7UyuUmwPV5oF+NR+gEsYfrAO9zBx4pXg3v02RzZ
+         66UzhBrJ4DhcGoHcDweZQR+pXwfUft7Y/5oXtR9jKLVACnNWPl6wRNPKcTRb+M4oSADb
+         hiCUuDJ3UTk5a5VtPSAYiV74J/W2qqcsFC+uClQvY7supDZ0zRvwRHWbHu2xjiOZN03K
+         e+XcZNPaJHI7ykrJwuWsLLicrxelKYjFioS+0cIW1Zsffhp+EpDOUud2r9nL4a9tQ5x2
+         Z26EfqUe/52WwFLQgEjxn71xn4bT3SIyxINqbkDXay/Gm0xxjAiaQ0499fIsMAQ5XffC
+         HBSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bbcrs/kI0pTK9FOJP+Wv13rPCiF+hN+1C4Agw6T2rIU=;
+        b=YJ/gn/sGIFHoxE51wWoc42JcfWD3gsT3zrT5l/vJHmRfu4oT/zDFlJbgi1EFeL5SpJ
+         66XXAyWYmi4x3Pgb79dM7TO0LIN5bQbZDmqI86i2Kowtkjrh82Gj69L7dWW//uUGqs91
+         e81e0eXAXE/Zb0GPKlg80QRSZyKpQnTFkAuPjOMs1aDE40gDVCXjYHVbe6cHU41ok7/I
+         nwlP6ILkTROlsv/T62epwRjvU8guDG7DOoX5NJC14R77soibW+IGs+CR5sP08SlnAuRU
+         z+Wnd2LK+wzBcZBfclsF6VkGKVJmm1CS+MKSSV5NhMSVzO1MAMAW3fpctRYkDiViQFAt
+         rrXg==
+X-Gm-Message-State: APjAAAUE18I8oFL4hHNJxc0vYN+yCvMkwdDOBVuMGFin6Tij2TuiiSHa
+        oc61wD5GVpHWh0hxQoS7R7fVkqH8rBb000jChSei/g==
+X-Google-Smtp-Source: APXvYqwXokp6S08/9H2q2tiKF4c70CagV2hXIPK2TWYczw+i5IFfpgrIPZDP3kFvcpNvJhRVZ4WRkmYWwtH3POwkE5w=
+X-Received: by 2002:a2e:b4f6:: with SMTP id s22mr17213389ljm.218.1574841510592;
+ Tue, 26 Nov 2019 23:58:30 -0800 (PST)
 MIME-Version: 1.0
 References: <CGME20191121072643epcas2p452071a503725c7764acf5084d24425b1@epcas2p4.samsung.com>
  <001001d5a03d$05de1f70$119a5e50$@samsung.com> <CAJKOXPckbRowhCmnJfT8-DT3gYaTpDOf0wVxmxdf-tZpOyM5ew@mail.gmail.com>
- <028901d5a3f6$e2d72310$a8856930$@samsung.com> <CAJKOXPdy=oxkwspt3CpF-qV5XRPMKrupMOpbWXJT3e7trqvXkw@mail.gmail.com>
-In-Reply-To: <CAJKOXPdy=oxkwspt3CpF-qV5XRPMKrupMOpbWXJT3e7trqvXkw@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Wed, 27 Nov 2019 09:58:04 +0800
-X-Gmail-Original-Message-ID: <CAJKOXPdDYv2McfMPabmTkhDFFL-68yHqcOOTCw75=+HpCRRHMg@mail.gmail.com>
-Message-ID: <CAJKOXPdDYv2McfMPabmTkhDFFL-68yHqcOOTCw75=+HpCRRHMg@mail.gmail.com>
+ <028901d5a3f6$e2d72310$a8856930$@samsung.com>
+In-Reply-To: <028901d5a3f6$e2d72310$a8856930$@samsung.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 27 Nov 2019 08:58:18 +0100
+Message-ID: <CACRpkdbX-RQY+0Sa6x3BFeovNb3vSkTTnZjcXDDFEyDQWms6zg@mail.gmail.com>
 Subject: Re: [PATCH] pinctrl: samsung: modularize samsung pinctrl driver
 To:     Hyunki Koo <hyunki00.koo@samsung.com>
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>, s.nawrocki@samsung.com,
-        linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-gpio@vger.kernel.org,
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 26 Nov 2019 at 14:09, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On Tue, 26 Nov 2019 at 09:14, Hyunki Koo <hyunki00.koo@samsung.com> wrote=
-:
-> >
-> > On Thu, 21 Nov 2019 at 16:38, Krzysztof Kozlowski <krzk@kernel.org> wro=
-te:
-> > > Hi,
-> > >
-> > > Thanks for the patch. Few comments below:
-> > >
-> > > On Thu, 21 Nov 2019 at 15:26, =EA=B5=AC=ED=98=84=EA=B8=B0 <hyunki00.k=
-oo@samsung.com> wrote:
-> > >>
-> > >> Enable samsung pinctrl driver to be compiled as modules.
-> > >
-> > > Why? What's the benefit? Are platforms capable of such boot? Pinctrl =
-is needed early - even before mounting rootfs...
-> > > What about module unloading? Is it reasonable?
-> > > Please answer to all this also in commit message.
-> > >
-> >
-> > Sorry to late and Thank you for your comment, I would like to apply GKI=
- on the pinctrl driver
-> > So I would like to cut off dependency from ARCH_EXYNOS.
->
-> This is driver for Exynos and S3C so why cutting off the dependency? I
-> mean, wait, it is a driver for Exynos so it cannot work on other
-> boards...
+On Tue, Nov 26, 2019 at 2:14 AM Hyunki Koo <hyunki00.koo@samsung.com> wrote:
 
-One more thought about Generic Kernel Image for Android. It implies
-that vendor stuff will be in modules... but only for out-of-tree code.
-The Exynos pinctrl driver is already in mainline so moving it into
-module is not necessary.
+> I would like to apply GKI on the pinctrl driver
+> So I would like to cut off dependency from ARCH_EXYNOS.
 
-As for dependency on ARCH_EXYNOS - I do not get why this is a problem.
-ARCH_EXYNOS is multiplatform ready so you can boot multi_v7... What
-would be the benefit of removing this dependency?
+If the pins need to be configured for the system to boot that needs
+to be in the big kernel image anyway. And then it should be bool.
 
-Best regards,
-Krzysztof
+Example: to mount the root filesystem on external flash pin
+configuration needs to happen.
+
+There is a slight paradigm shift sometimes: in distribution
+kernels it might be required that necessary modules are
+included in an initramfs attached to the kernel. I do not know
+if we want to encourage that type of configuration for embedded
+ARM.
+
+Yours,
+Linus Walleij
