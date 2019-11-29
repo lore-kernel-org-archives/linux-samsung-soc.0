@@ -2,157 +2,185 @@ Return-Path: <SRS0=7Xu2=ZV=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9156C432C0
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 Nov 2019 11:53:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4944C432C0
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 Nov 2019 22:49:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 957B021774
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 Nov 2019 11:53:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94E1E208E4
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 Nov 2019 22:49:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725892AbfK2LxR (ORCPT
+        id S1727142AbfK2WtY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 29 Nov 2019 06:53:17 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:46552 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726604AbfK2LxR (ORCPT
+        Fri, 29 Nov 2019 17:49:24 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:42180 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727116AbfK2WtY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 29 Nov 2019 06:53:17 -0500
-Received: from 79.184.255.242.ipv4.supernova.orange.pl (79.184.255.242) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
- id eb27ea56cf9eb12a; Fri, 29 Nov 2019 12:53:13 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
+        Fri, 29 Nov 2019 17:49:24 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 277DE28A5AE
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Collabora Kernel ML <kernel@collabora.com>, groeck@chromium.org,
+        bleung@chromium.org, dtor@chromium.org,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] PM / devfreq: Add missing locking while setting suspend_freq
-Date:   Fri, 29 Nov 2019 12:53:12 +0100
-Message-ID: <1608436.tOKWp43cha@kreacher>
-In-Reply-To: <1d992c15-66bd-4d53-114f-66e3105e5fae@samsung.com>
-References: <CGME20191112104809eucas1p14d5d364021a359861788472b513e43e5@eucas1p1.samsung.com> <20191112104734.31074-1-m.szyprowski@samsung.com> <1d992c15-66bd-4d53-114f-66e3105e5fae@samsung.com>
+        Gwendal Grignou <gwendal@chromium.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
+        Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Joel Stanley <joel@jms.id.au>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Bastien Nocera <hadess@hadess.net>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-tegra@vger.kernel.org,
+        Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Anson Huang <Anson.Huang@nxp.com>
+Subject: [RESEND PATCH] arm/arm64: defconfig: Update configs to use the new CROS_EC options
+Date:   Fri, 29 Nov 2019 23:49:12 +0100
+Message-Id: <20191129224912.32087-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wednesday, November 13, 2019 3:17:17 AM CET Chanwoo Choi wrote:
-> Dear Rafael,
-> 
-> Could you take this patch directly into linux-pm.git for v5.5-rc1?
-> 
-> Because the devfreq pull-request for v5.5-rc1 contained issue. This patch
-> fix the issue of following patch[1].
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/commit/?h=linux-next&id=2abb0d5268ae7b5ddf82099b1f8d5aa8414637d4
+Recently we refactored the CrOS EC drivers moving part of the code from
+the MFD subsystem to the platform chrome subsystem. During this change
+we needed to rename some config options, so, update the defconfigs
+accordingly.
 
-I missed this previously, sorry.
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+Tested-by: Gwendal Grignou <gwendal@chromium.org>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+---
 
-Now applied as a fix for 5.5, thanks!
+ arch/arm/configs/exynos_defconfig   | 6 +++++-
+ arch/arm/configs/multi_v7_defconfig | 6 ++++--
+ arch/arm/configs/pxa_defconfig      | 4 +++-
+ arch/arm/configs/tegra_defconfig    | 2 +-
+ arch/arm64/configs/defconfig        | 6 ++++--
+ 5 files changed, 17 insertions(+), 7 deletions(-)
 
-
-> ---
-> Hi Marek,
-> 
-> Thanks for the fixup.
-> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-> 
-> Regards,
-> Chanwoo Choi
-> 
-> 
-> On 11/12/19 7:47 PM, Marek Szyprowski wrote:
-> > Commit 2abb0d5268ae ("PM / devfreq: Lock devfreq in trans_stat_show")
-> > revealed a missing locking while calling devfreq_update_status() function
-> > during suspend/resume cycle.
-> > 
-> > Code analysis revealed that devfreq_set_target() function was called
-> > without needed locks held for setting device specific suspend_freq if such
-> > has been defined. This patch fixes that by adding the needed locking, what
-> > fixes following kernel warning on Exynos4412-based OdroidU3 board during
-> > system suspend:
-> > 
-> > PM: suspend entry (deep)
-> > Filesystems sync: 0.002 seconds
-> > Freezing user space processes ... (elapsed 0.001 seconds) done.
-> > OOM killer disabled.
-> > Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 2 PID: 1385 at drivers/devfreq/devfreq.c:204 devfreq_update_status+0xc0/0x188
-> > Modules linked in:
-> > CPU: 2 PID: 1385 Comm: rtcwake Not tainted 5.4.0-rc6-next-20191111 #6848
-> > Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-> > [<c0112588>] (unwind_backtrace) from [<c010e070>] (show_stack+0x10/0x14)
-> > [<c010e070>] (show_stack) from [<c0afb010>] (dump_stack+0xb4/0xe0)
-> > [<c0afb010>] (dump_stack) from [<c01272e0>] (__warn+0xf4/0x10c)
-> > [<c01272e0>] (__warn) from [<c01273a8>] (warn_slowpath_fmt+0xb0/0xb8)
-> > [<c01273a8>] (warn_slowpath_fmt) from [<c07d105c>] (devfreq_update_status+0xc0/0x188)
-> > [<c07d105c>] (devfreq_update_status) from [<c07d2d70>] (devfreq_set_target+0xb0/0x15c)
-> > [<c07d2d70>] (devfreq_set_target) from [<c07d3598>] (devfreq_suspend+0x2c/0x64)
-> > [<c07d3598>] (devfreq_suspend) from [<c05de0b0>] (dpm_suspend+0xa4/0x57c)
-> > [<c05de0b0>] (dpm_suspend) from [<c05def74>] (dpm_suspend_start+0x98/0xa0)
-> > [<c05def74>] (dpm_suspend_start) from [<c0195b58>] (suspend_devices_and_enter+0xec/0xc74)
-> > [<c0195b58>] (suspend_devices_and_enter) from [<c0196a20>] (pm_suspend+0x340/0x410)
-> > [<c0196a20>] (pm_suspend) from [<c019480c>] (state_store+0x6c/0xc8)
-> > [<c019480c>] (state_store) from [<c033fc50>] (kernfs_fop_write+0x10c/0x228)
-> > [<c033fc50>] (kernfs_fop_write) from [<c02a6d3c>] (__vfs_write+0x30/0x1d0)
-> > [<c02a6d3c>] (__vfs_write) from [<c02a9afc>] (vfs_write+0xa4/0x180)
-> > [<c02a9afc>] (vfs_write) from [<c02a9d58>] (ksys_write+0x60/0xd8)
-> > [<c02a9d58>] (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
-> > Exception stack(0xed3d7fa8 to 0xed3d7ff0)
-> > ...
-> > irq event stamp: 9667
-> > hardirqs last  enabled at (9679): [<c0b1e7c4>] _raw_spin_unlock_irq+0x20/0x58
-> > hardirqs last disabled at (9698): [<c0b16a20>] __schedule+0xd8/0x818
-> > softirqs last  enabled at (9694): [<c01026fc>] __do_softirq+0x4fc/0x5fc
-> > softirqs last disabled at (9719): [<c012fe68>] irq_exit+0x16c/0x170
-> > ---[ end trace 41ac5b57d046bdbc ]---
-> > ------------[ cut here ]------------
-> > 
-> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > ---
-> >  drivers/devfreq/devfreq.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> > index 94fb8e821e12..65a4b6cf3fa5 100644
-> > --- a/drivers/devfreq/devfreq.c
-> > +++ b/drivers/devfreq/devfreq.c
-> > @@ -957,7 +957,9 @@ int devfreq_suspend_device(struct devfreq *devfreq)
-> >  	}
-> >  
-> >  	if (devfreq->suspend_freq) {
-> > +		mutex_lock(&devfreq->lock);
-> >  		ret = devfreq_set_target(devfreq, devfreq->suspend_freq, 0);
-> > +		mutex_unlock(&devfreq->lock);
-> >  		if (ret)
-> >  			return ret;
-> >  	}
-> > @@ -985,7 +987,9 @@ int devfreq_resume_device(struct devfreq *devfreq)
-> >  		return 0;
-> >  
-> >  	if (devfreq->resume_freq) {
-> > +		mutex_lock(&devfreq->lock);
-> >  		ret = devfreq_set_target(devfreq, devfreq->resume_freq, 0);
-> > +		mutex_unlock(&devfreq->lock);
-> >  		if (ret)
-> >  			return ret;
-> >  	}
-> > 
-> 
-> 
-> 
-
-
-
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 08db1c83eb2d..e09bb7642272 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -157,7 +157,11 @@ CONFIG_CPU_THERMAL=y
+ CONFIG_THERMAL_EMULATION=y
+ CONFIG_WATCHDOG=y
+ CONFIG_S3C2410_WATCHDOG=y
+-CONFIG_MFD_CROS_EC=y
++CONFIG_MFD_CROS_EC_DEV=y
++CONFIG_CHROME_PLATFORMS=y
++CONFIG_CROS_EC=y
++CONFIG_CROS_EC_I2C=y
++CONFIG_CROS_EC_SPI=y
+ CONFIG_MFD_MAX14577=y
+ CONFIG_MFD_MAX77686=y
+ CONFIG_MFD_MAX77693=y
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index e4c8def9a0a5..fd9a3ba3a88f 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -525,10 +525,12 @@ CONFIG_MFD_BCM590XX=y
+ CONFIG_MFD_AC100=y
+ CONFIG_MFD_AXP20X_I2C=y
+ CONFIG_MFD_AXP20X_RSB=y
+-CONFIG_MFD_CROS_EC=m
++CONFIG_MFD_CROS_EC_DEV=m
++CONFIG_CHROME_PLATFORMS=y
++CONFIG_CROS_EC=m
+ CONFIG_CROS_EC_I2C=m
+ CONFIG_CROS_EC_SPI=m
+-CONFIG_MFD_CROS_EC_CHARDEV=m
++CONFIG_CROS_EC_CHARDEV=m
+ CONFIG_MFD_DA9063=m
+ CONFIG_MFD_MAX14577=y
+ CONFIG_MFD_MAX77686=y
+diff --git a/arch/arm/configs/pxa_defconfig b/arch/arm/configs/pxa_defconfig
+index b817c57f05f1..f1b084ace88d 100644
+--- a/arch/arm/configs/pxa_defconfig
++++ b/arch/arm/configs/pxa_defconfig
+@@ -393,7 +393,9 @@ CONFIG_SA1100_WATCHDOG=m
+ CONFIG_MFD_AS3711=y
+ CONFIG_MFD_BCM590XX=m
+ CONFIG_MFD_AXP20X=y
+-CONFIG_MFD_CROS_EC=m
++CONFIG_MFD_CROS_EC_DEV=m
++CONFIG_CHROME_PLATFORMS=y
++CONFIG_CROS_EC=m
+ CONFIG_CROS_EC_I2C=m
+ CONFIG_CROS_EC_SPI=m
+ CONFIG_MFD_ASIC3=y
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index 8f5c6a5b444c..061037012335 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -147,7 +147,7 @@ CONFIG_SENSORS_LM95245=y
+ CONFIG_WATCHDOG=y
+ CONFIG_TEGRA_WATCHDOG=y
+ CONFIG_MFD_AS3722=y
+-CONFIG_MFD_CROS_EC=y
++CONFIG_MFD_CROS_EC_DEV=y
+ CONFIG_MFD_MAX8907=y
+ CONFIG_MFD_STMPE=y
+ CONFIG_MFD_PALMAS=y
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index c9a867ac32d4..952d4b915430 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -466,8 +466,7 @@ CONFIG_MFD_ALTERA_SYSMGR=y
+ CONFIG_MFD_BD9571MWV=y
+ CONFIG_MFD_AXP20X_I2C=y
+ CONFIG_MFD_AXP20X_RSB=y
+-CONFIG_MFD_CROS_EC=y
+-CONFIG_MFD_CROS_EC_CHARDEV=m
++CONFIG_MFD_CROS_EC_DEV=y
+ CONFIG_MFD_EXYNOS_LPASS=m
+ CONFIG_MFD_HI6421_PMIC=y
+ CONFIG_MFD_HI655X_PMIC=y
+@@ -683,8 +682,11 @@ CONFIG_VIRTIO_BALLOON=y
+ CONFIG_VIRTIO_MMIO=y
+ CONFIG_XEN_GNTDEV=y
+ CONFIG_XEN_GRANT_DEV_ALLOC=y
++CONFIG_CHROME_PLATFORMS=y
++CONFIG_CROS_EC=y
+ CONFIG_CROS_EC_I2C=y
+ CONFIG_CROS_EC_SPI=y
++CONFIG_CROS_EC_CHARDEV=m
+ CONFIG_COMMON_CLK_RK808=y
+ CONFIG_COMMON_CLK_SCPI=y
+ CONFIG_COMMON_CLK_CS2000_CP=y
+-- 
+2.20.1
 
