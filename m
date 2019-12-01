@@ -1,186 +1,118 @@
-Return-Path: <SRS0=7Xu2=ZV=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=cp60=ZX=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4944C432C0
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 Nov 2019 22:49:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 393B5C43215
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  1 Dec 2019 11:38:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94E1E208E4
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 Nov 2019 22:49:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19CDB2146E
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  1 Dec 2019 11:38:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727142AbfK2WtY (ORCPT
+        id S1725993AbfLALiz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 29 Nov 2019 17:49:24 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:42180 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727116AbfK2WtY (ORCPT
+        Sun, 1 Dec 2019 06:38:55 -0500
+Received: from asavdk3.altibox.net ([109.247.116.14]:45996 "EHLO
+        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726138AbfLALiy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 29 Nov 2019 17:49:24 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 277DE28A5AE
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Collabora Kernel ML <kernel@collabora.com>, groeck@chromium.org,
-        bleung@chromium.org, dtor@chromium.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
-        Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Joel Stanley <joel@jms.id.au>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Bastien Nocera <hadess@hadess.net>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        Sun, 1 Dec 2019 06:38:54 -0500
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk3.altibox.net (Postfix) with ESMTPS id 5FD8C20034;
+        Sun,  1 Dec 2019 12:33:24 +0100 (CET)
+Date:   Sun, 1 Dec 2019 12:33:23 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     dri-devel@lists.freedesktop.org,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Alexios Zavras <alexios.zavras@intel.com>,
+        Alison Wang <alison.wang@nxp.com>,
+        Allison Randal <allison@lohutok.net>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Enrico Weigelt <info@metux.net>,
+        Fabio Estevam <festevam@gmail.com>,
+        Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Jonas Karlman <jonas@kwiboo.se>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        linux-tegra@vger.kernel.org,
-        Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Russell King <linux@armlinux.org.uk>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Marek Vasut <marex@denx.de>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sean Paul <sean@poorly.run>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
         Shawn Guo <shawnguo@kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Anson Huang <Anson.Huang@nxp.com>
-Subject: [RESEND PATCH] arm/arm64: defconfig: Update configs to use the new CROS_EC options
-Date:   Fri, 29 Nov 2019 23:49:12 +0100
-Message-Id: <20191129224912.32087-1-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.20.1
+        Stefan Agner <stefan@agner.ch>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincent Abriou <vincent.abriou@st.com>
+Subject: Re: [PATCH v1 09/16] drm/tegra: fix opencoded use of drm_panel_*
+Message-ID: <20191201113323.GE8753@ravnborg.org>
+References: <20190804201637.1240-1-sam@ravnborg.org>
+ <20190804201637.1240-10-sam@ravnborg.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190804201637.1240-10-sam@ravnborg.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=eMA9ckh1 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=7gkXJVJtAAAA:8
+        a=pGLkceISAAAA:8 a=Ikd4Dj_1AAAA:8 a=VwQbUJbxAAAA:8 a=1aT4lBfQcbWOAA5cYXYA:9
+        a=CjuIK1q_8ugA:10 a=E9Po1WZjFZOl8hwRPBS3:22 a=AjGcO6oz07-iQ99wixmX:22
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Recently we refactored the CrOS EC drivers moving part of the code from
-the MFD subsystem to the platform chrome subsystem. During this change
-we needed to rename some config options, so, update the defconfigs
-accordingly.
+On Sun, Aug 04, 2019 at 10:16:30PM +0200, Sam Ravnborg wrote:
+> Use the drm_panel_get_modes function.
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
-Tested-by: Gwendal Grignou <gwendal@chromium.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
----
+Applied to drm-misc-next.
 
- arch/arm/configs/exynos_defconfig   | 6 +++++-
- arch/arm/configs/multi_v7_defconfig | 6 ++++--
- arch/arm/configs/pxa_defconfig      | 4 +++-
- arch/arm/configs/tegra_defconfig    | 2 +-
- arch/arm64/configs/defconfig        | 6 ++++--
- 5 files changed, 17 insertions(+), 7 deletions(-)
-
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index 08db1c83eb2d..e09bb7642272 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -157,7 +157,11 @@ CONFIG_CPU_THERMAL=y
- CONFIG_THERMAL_EMULATION=y
- CONFIG_WATCHDOG=y
- CONFIG_S3C2410_WATCHDOG=y
--CONFIG_MFD_CROS_EC=y
-+CONFIG_MFD_CROS_EC_DEV=y
-+CONFIG_CHROME_PLATFORMS=y
-+CONFIG_CROS_EC=y
-+CONFIG_CROS_EC_I2C=y
-+CONFIG_CROS_EC_SPI=y
- CONFIG_MFD_MAX14577=y
- CONFIG_MFD_MAX77686=y
- CONFIG_MFD_MAX77693=y
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index e4c8def9a0a5..fd9a3ba3a88f 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -525,10 +525,12 @@ CONFIG_MFD_BCM590XX=y
- CONFIG_MFD_AC100=y
- CONFIG_MFD_AXP20X_I2C=y
- CONFIG_MFD_AXP20X_RSB=y
--CONFIG_MFD_CROS_EC=m
-+CONFIG_MFD_CROS_EC_DEV=m
-+CONFIG_CHROME_PLATFORMS=y
-+CONFIG_CROS_EC=m
- CONFIG_CROS_EC_I2C=m
- CONFIG_CROS_EC_SPI=m
--CONFIG_MFD_CROS_EC_CHARDEV=m
-+CONFIG_CROS_EC_CHARDEV=m
- CONFIG_MFD_DA9063=m
- CONFIG_MFD_MAX14577=y
- CONFIG_MFD_MAX77686=y
-diff --git a/arch/arm/configs/pxa_defconfig b/arch/arm/configs/pxa_defconfig
-index b817c57f05f1..f1b084ace88d 100644
---- a/arch/arm/configs/pxa_defconfig
-+++ b/arch/arm/configs/pxa_defconfig
-@@ -393,7 +393,9 @@ CONFIG_SA1100_WATCHDOG=m
- CONFIG_MFD_AS3711=y
- CONFIG_MFD_BCM590XX=m
- CONFIG_MFD_AXP20X=y
--CONFIG_MFD_CROS_EC=m
-+CONFIG_MFD_CROS_EC_DEV=m
-+CONFIG_CHROME_PLATFORMS=y
-+CONFIG_CROS_EC=m
- CONFIG_CROS_EC_I2C=m
- CONFIG_CROS_EC_SPI=m
- CONFIG_MFD_ASIC3=y
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 8f5c6a5b444c..061037012335 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -147,7 +147,7 @@ CONFIG_SENSORS_LM95245=y
- CONFIG_WATCHDOG=y
- CONFIG_TEGRA_WATCHDOG=y
- CONFIG_MFD_AS3722=y
--CONFIG_MFD_CROS_EC=y
-+CONFIG_MFD_CROS_EC_DEV=y
- CONFIG_MFD_MAX8907=y
- CONFIG_MFD_STMPE=y
- CONFIG_MFD_PALMAS=y
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index c9a867ac32d4..952d4b915430 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -466,8 +466,7 @@ CONFIG_MFD_ALTERA_SYSMGR=y
- CONFIG_MFD_BD9571MWV=y
- CONFIG_MFD_AXP20X_I2C=y
- CONFIG_MFD_AXP20X_RSB=y
--CONFIG_MFD_CROS_EC=y
--CONFIG_MFD_CROS_EC_CHARDEV=m
-+CONFIG_MFD_CROS_EC_DEV=y
- CONFIG_MFD_EXYNOS_LPASS=m
- CONFIG_MFD_HI6421_PMIC=y
- CONFIG_MFD_HI655X_PMIC=y
-@@ -683,8 +682,11 @@ CONFIG_VIRTIO_BALLOON=y
- CONFIG_VIRTIO_MMIO=y
- CONFIG_XEN_GNTDEV=y
- CONFIG_XEN_GRANT_DEV_ALLOC=y
-+CONFIG_CHROME_PLATFORMS=y
-+CONFIG_CROS_EC=y
- CONFIG_CROS_EC_I2C=y
- CONFIG_CROS_EC_SPI=y
-+CONFIG_CROS_EC_CHARDEV=m
- CONFIG_COMMON_CLK_RK808=y
- CONFIG_COMMON_CLK_SCPI=y
- CONFIG_COMMON_CLK_CS2000_CP=y
--- 
-2.20.1
-
+        Sam
+> 
+> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: linux-tegra@vger.kernel.org
+> ---
+>  drivers/gpu/drm/tegra/output.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
+> index 274cb955e2e1..52b8396ec2dc 100644
+> --- a/drivers/gpu/drm/tegra/output.c
+> +++ b/drivers/gpu/drm/tegra/output.c
+> @@ -23,7 +23,7 @@ int tegra_output_connector_get_modes(struct drm_connector *connector)
+>  	 * ignore any other means of obtaining a mode.
+>  	 */
+>  	if (output->panel) {
+> -		err = output->panel->funcs->get_modes(output->panel);
+> +		err = drm_panel_get_modes(output->panel);
+>  		if (err > 0)
+>  			return err;
+>  	}
+> -- 
+> 2.20.1
