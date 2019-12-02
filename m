@@ -2,193 +2,179 @@ Return-Path: <SRS0=GbDS=ZY=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0832FC33C99
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Dec 2019 19:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21124C432C0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Dec 2019 19:59:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D07D220661
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Dec 2019 19:34:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF8FC214AF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Dec 2019 19:59:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IoKSmzU7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="InHq5aiL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728183AbfLBTdr (ORCPT
+        id S1728120AbfLBT7n (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 2 Dec 2019 14:33:47 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46799 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728168AbfLBTdq (ORCPT
+        Mon, 2 Dec 2019 14:59:43 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:47027 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727586AbfLBT7m (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 2 Dec 2019 14:33:46 -0500
-Received: by mail-lj1-f193.google.com with SMTP id z17so775264ljk.13;
-        Mon, 02 Dec 2019 11:33:44 -0800 (PST)
+        Mon, 2 Dec 2019 14:59:42 -0500
+Received: by mail-il1-f195.google.com with SMTP id t17so815051ilm.13;
+        Mon, 02 Dec 2019 11:59:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=M6n2l/EBcueNmX8f7XdGTcQ8vUUpCGLFuWYhReTcoKE=;
-        b=IoKSmzU7gpDxUkxl0EdaC0gWScyLrTcPd3YGGa7b4HdIqDI8G1e8FafzmGs6jogxMu
-         4PaXLxX2BIT63x1BMLWqC0EPxIfNV0uUXhjGCBjRnJ95PdBZFSepRhXi48HzJsmPgR6p
-         nThEDz1xjPUYPgGBuMacP2vLvP9wWncj/fCylCldeMQpyFCLJm5HWIrbkmRKu/suIXcT
-         vIYjVTMiZs6FqypDWxZOFvWoZcnXdjd+tuFuhS6aQUTO3t/0WeH9ez7RD5TQj5BoePw9
-         HzDH58XmVFP8bucXCVQ2dtV46btVIkJ2YXGk7aWvtGn8MUVFB/j0ggZVaoWoBhBKZ+LB
-         gSjw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/1GIiVAt9IkBpoZ9Uj4zenbh/EnV7XYXqjcP5Gkayek=;
+        b=InHq5aiL3hR9tFDnhuqx6aayq30VOPnHw69PCMZh0fSzKM55HtwqVJl0b4YhHu7o0S
+         +vKSRzTuJwrb/lXpHGExaIBaelO+6e1no2J7UB2BWeJc2O8zSrV6zrjf11Joenv7+K+O
+         bIOK66rwnalFLRsaiCMoP1L5Q+Gri2cgksvOUQua6x2NZ9JNO0modjT5LhxhvqbmC8dc
+         2FZZWCxZ4UxsFPSHkDVN45m1Rxjv8DMuTLQZdROk5eqrpDHYKSl4SPzzPtiTLnQvNG4L
+         Gdc25pYlvp0qSQqCaGqVXUgLhtnumBY8uup6p7tMk8yK2DpH0DcOK17AODcn1FefgjKv
+         oLRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=M6n2l/EBcueNmX8f7XdGTcQ8vUUpCGLFuWYhReTcoKE=;
-        b=ORvUTb0iT8dSn2XumLtCYiqz9sTCOiT5alyq/BLoMRG5kpy70SwqYJZKU22WpVaMNH
-         bYiMbxumjErRJm4irWdtV04CYOHsjQgOsA/jkFfJHYXMtRM3N0d4HamYM0AfvNzQ5Ar7
-         Is8+AMY4Z80XAZY8cz13j+nHSNi/S+feJSubp7PA7PZ1ylUENpEr6y+t84FG5dBfFFcn
-         JxJdZRzaqIcRwfScFvWrnJSsg8kjPSgLX5DK7S+4r1EsobjoAXUgUJv5RizNdrzxQy78
-         gafZ8REI7yoV6bsa9Ij2EaCN0u5rDSqmDEOXxfwQYGP313xMXiFVInIR6ZPifptMK4nv
-         E05w==
-X-Gm-Message-State: APjAAAWd5D9Z6XJQAyZfrH4y0ghYje/bcHfupD8LhXs0lLHWO3OjV5sI
-        5gsozUPvx30uohQMXnW2LCs=
-X-Google-Smtp-Source: APXvYqyrVRyyR4w53XWdXd/Ds8WXmJXF4JV6lta6C9GpnzvDF7NujpVpoOacgf9V4KFroqTFA7Q4PA==
-X-Received: by 2002:a2e:8804:: with SMTP id x4mr277866ljh.2.1575315224026;
-        Mon, 02 Dec 2019 11:33:44 -0800 (PST)
-Received: from saturn.lan (18.158-248-194.customer.lyse.net. [158.248.194.18])
-        by smtp.gmail.com with ESMTPSA id g13sm79482lfb.74.2019.12.02.11.33.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2019 11:33:43 -0800 (PST)
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     dri-devel@lists.freedesktop.org,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/1GIiVAt9IkBpoZ9Uj4zenbh/EnV7XYXqjcP5Gkayek=;
+        b=EP9OBlmFSylY4Q11Sems+Yi8x1vH/6WD5rWtnltu/NMokHQvz/wQutueTHejM0txvi
+         Ifgw9montiJScWkTuzdjPJI3FlRiSmJZ55clpxm0gCdwYFoQrjZk4v/dRkkrIzYkkvnE
+         ZpItF8eu8iFIS+xvnwf2EpmUSbt+VemT7s6LXCjpIp4Tm0TJUetFRPPqX5gkrctYKAhR
+         dB6IMSI4AJRysKUm2nkxMJoeFpxTemzIrxVUup2fi/Wz6fEkBkYqE4lEHcjbKXbDKhHB
+         SHjPZMYYQThj3wnnyP3OHGI+igAwOd6XFOS5Hl/tk2AdEfmGJCkbdqu4tUMQxhiBUoCs
+         uChA==
+X-Gm-Message-State: APjAAAUIh0yZnbqSI8B6EekfzYDRarb9+pI6514M5jb54TU5mwHvouw7
+        4j50BaqCMxOzBxr04tPygL0ijzSdVELnsqlZijM=
+X-Google-Smtp-Source: APXvYqx6YUMOUm+z16ig9xldwuTeM19+Bd22B3aBAblOLhFaOGglg7N1XrSehMoTWzvuuSea3OH9TLlXRGuqdFXhTE0=
+X-Received: by 2002:a92:4891:: with SMTP id j17mr565262ilg.33.1575316780879;
+ Mon, 02 Dec 2019 11:59:40 -0800 (PST)
+MIME-Version: 1.0
+References: <20191202193230.21310-1-sam@ravnborg.org>
+In-Reply-To: <20191202193230.21310-1-sam@ravnborg.org>
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Date:   Mon, 2 Dec 2019 12:59:29 -0700
+Message-ID: <CAOCk7NoKPoxcETLYQ4CyAtYGnPwvYapdSavZM=aRdswDydTLEA@mail.gmail.com>
+Subject: Re: [PATCH v1 0/26] drm/panel infrastructure + backlight update
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Abhinav Kumar <abhinavk@codeaurora.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        David Airlie <airlied@linux.ie>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Stefan Agner <stefan@agner.ch>,
         Andrzej Hajda <a.hajda@samsung.com>,
         Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jitao Shi <jitao.shi@mediatek.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
         linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Jitao Shi <jitao.shi@mediatek.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <mripard@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        linux-mediatek@lists.infradead.org,
+        Abhinav Kumar <abhinavk@codeaurora.org>,
+        linux-tegra@vger.kernel.org, Sean Paul <sean@poorly.run>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Purism Kernel Team <kernel@puri.sm>,
-        Sean Paul <sean@poorly.run>, Stefan Agner <stefan@agner.ch>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Sam Ravnborg <sam@ravnborg.org>
-Subject: [PATCH v1 21/26] drm/panel: sharp-lq101r1sx01: use drm_panel backlight support
-Date:   Mon,  2 Dec 2019 20:32:25 +0100
-Message-Id: <20191202193230.21310-22-sam@ravnborg.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191202193230.21310-1-sam@ravnborg.org>
-References: <20191202193230.21310-1-sam@ravnborg.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        linux-renesas-soc@vger.kernel.org,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use the backlight support in drm_panel to simplify the driver
+On Mon, Dec 2, 2019 at 12:33 PM Sam Ravnborg <sam@ravnborg.org> wrote:
+>
+> This patchset include a couple of different
+> things - all related to panels.
+>
+> - The panel callbacks are optional - so drop error if
+>   callback is not present.
+>
+> - Add support for backlight in drm_panel.
+>   This allows us to make much simpler backlight
+>   support to most panels.
+>   The patchset include conversion of most of the
+>   trivial cases.
+>
+> - Drop drm_connector from drm_panel.
+>   This change required many changes to most
+>   panels and many bridges and display drivers.
+>   This is by far the most invasive change in this patchset.
+>
+> - Drop the unused get_timings() callback.
+>   No users, so no need to keep it around.
+>
+> With this patchset drm_panel_(attach|detach) are nop's
+> but they are kept for now.
+>
+> A few of these patches has been sent out before - but versioning
+> started again from v1 - as the most patches are new.
+>
+> I have tested the panel-simple changes, and thus some
+> of the infrastructure changes.
+> The testing was done on an earlier iteration - and I ended
+> up submitting this as Laurent and others started to depend on it.
+> Jitao has a patch to add more callbacks, and I wanted the
+> simplification of the callbacks before we add more callbacks.
+>
+>         Sam
+>
+>
+> Sam Ravnborg (26):
+>       drm/drm_panel: no error when no callback
+>       drm/panel: add backlight support
+>       drm/panel: simple: use drm_panel backlight support
+>       drm: get drm_bridge_panel connector via helper
+>       drm/panel: add drm_connector argument to get_modes()
+>       drm/panel: decouple connector from drm_panel
+>       drm/panel: remove get_timings
+>       drm/panel: drop drm_device from drm_panel
+>       drm/panel: feiyang-fy07024di26a30d: use drm_panel backlight support
+>       drm/panel: ilitek-ili9881c: use drm_panel backlight support
+>       drm/panel: innolux-p079zca: use drm_panel backlight support
+>       drm/panel: kingdisplay-kd097d04: use drm_panel backlight support
+>       drm/panel: lvds: use drm_panel backlight support
+>       drm/panel: olimex-lcd-olinuxino: use drm_panel backlight support
+>       drm/panel: osd-osd101t2587-53ts: use drm_panel backlight support
+>       drm/panel: panasonic-vvx10f034n00: use drm_panel backlight support
+>       drm/panel: raydium-rm68200: use drm_panel backlight support
+>       drm/panel: rocktech-jh057n00900: use drm_panel backlight support
+>       drm/panel: ronbo-rb070d30: use drm_panel backlight support
+>       drm/panel: seiko-43wvf1g: use drm_panel backlight support
+>       drm/panel: sharp-lq101r1sx01: use drm_panel backlight support
+>       drm/panel: sharp-ls043t1le01: use drm_panel backlight support
+>       drm/panel: sitronix-st7701: use drm_panel backlight support
+>       drm/panel: sitronix-st7789v: use drm_panel backlight support
+>       drm/panel: tpo-td028ttec1: use drm_panel backlight support
+>       drm/panel: tpo-tpg110: use drm_panel backlight support
+>
+>  drivers/gpu/drm/bridge/analogix/analogix-anx6345.c |   2 +-
+>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c |   2 +-
+>  drivers/gpu/drm/bridge/panel.c                     |  18 +++-
+>  drivers/gpu/drm/bridge/parade-ps8622.c             |   2 +-
+>  drivers/gpu/drm/bridge/tc358764.c                  |   2 +-
+>  drivers/gpu/drm/bridge/tc358767.c                  |   2 +-
+>  drivers/gpu/drm/bridge/ti-sn65dsi86.c              |   2 +-
+>  drivers/gpu/drm/drm_panel.c                        |  96 ++++++++++++++----
+>  drivers/gpu/drm/exynos/exynos_drm_dpi.c            |   2 +-
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c            |   2 +-
+>  drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c          |   2 +-
+>  drivers/gpu/drm/imx/imx-ldb.c                      |   2 +-
+>  drivers/gpu/drm/imx/parallel-display.c             |   2 +-
+>  drivers/gpu/drm/mediatek/mtk_dsi.c                 |   2 +-
+>  .../gpu/drm/msm/disp/mdp4/mdp4_lvds_connector.c    |   2 +-
+>  drivers/gpu/drm/msm/dsi/dsi_manager.c              |   2 +-
 
-Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Sam Ravnborg <sam@ravnborg.org>
----
- .../gpu/drm/panel/panel-sharp-lq101r1sx01.c   | 21 +++++++------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c b/drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c
-index 17d406f49c3d..b5d1977221a7 100644
---- a/drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c
-+++ b/drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c
-@@ -3,7 +3,6 @@
-  * Copyright (C) 2014 NVIDIA Corporation
-  */
- 
--#include <linux/backlight.h>
- #include <linux/delay.h>
- #include <linux/gpio/consumer.h>
- #include <linux/module.h>
-@@ -23,7 +22,6 @@ struct sharp_panel {
- 	struct mipi_dsi_device *link1;
- 	struct mipi_dsi_device *link2;
- 
--	struct backlight_device *backlight;
- 	struct regulator *supply;
- 
- 	bool prepared;
-@@ -94,8 +92,6 @@ static int sharp_panel_disable(struct drm_panel *panel)
- 	if (!sharp->enabled)
- 		return 0;
- 
--	backlight_disable(sharp->backlight);
--
- 	sharp->enabled = false;
- 
- 	return 0;
-@@ -258,8 +254,6 @@ static int sharp_panel_enable(struct drm_panel *panel)
- 	if (sharp->enabled)
- 		return 0;
- 
--	backlight_enable(sharp->backlight);
--
- 	sharp->enabled = true;
- 
- 	return 0;
-@@ -317,7 +311,7 @@ MODULE_DEVICE_TABLE(of, sharp_of_match);
- 
- static int sharp_panel_add(struct sharp_panel *sharp)
- {
--	struct device *dev = &sharp->link1->dev;
-+	int ret;
- 
- 	sharp->mode = &default_mode;
- 
-@@ -325,14 +319,13 @@ static int sharp_panel_add(struct sharp_panel *sharp)
- 	if (IS_ERR(sharp->supply))
- 		return PTR_ERR(sharp->supply);
- 
--	sharp->backlight = devm_of_find_backlight(dev);
--
--	if (IS_ERR(sharp->backlight))
--		return PTR_ERR(sharp->backlight);
--
- 	drm_panel_init(&sharp->base, &sharp->link1->dev, &sharp_panel_funcs,
- 		       DRM_MODE_CONNECTOR_DSI);
- 
-+	ret = drm_panel_of_backlight(&sharp->base);
-+	if (ret)
-+		return ret;
-+
- 	return drm_panel_add(&sharp->base);
- }
- 
-@@ -408,7 +401,7 @@ static int sharp_panel_remove(struct mipi_dsi_device *dsi)
- 		return 0;
- 	}
- 
--	err = sharp_panel_disable(&sharp->base);
-+	err = drm_panel_disable(&sharp->base);
- 	if (err < 0)
- 		dev_err(&dsi->dev, "failed to disable panel: %d\n", err);
- 
-@@ -429,7 +422,7 @@ static void sharp_panel_shutdown(struct mipi_dsi_device *dsi)
- 	if (!sharp)
- 		return;
- 
--	sharp_panel_disable(&sharp->base);
-+	drm_panel_disable(&sharp->base);
- }
- 
- static struct mipi_dsi_driver sharp_panel_driver = {
--- 
-2.20.1
-
+How come the diff stat in the cover letter here indicates a change to
+this file, yet I cannot find a change to this file in any of the
+patches?  What am I missing?
