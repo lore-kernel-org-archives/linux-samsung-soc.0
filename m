@@ -2,366 +2,407 @@ Return-Path: <SRS0=GbDS=ZY=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93AD3C432C0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Dec 2019 15:22:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7766C432C0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Dec 2019 17:05:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55E3320833
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Dec 2019 15:22:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A9CD20848
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Dec 2019 17:05:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="iWqTI/3k"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mGd8TmKg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727511AbfLBPWW (ORCPT
+        id S1727813AbfLBRFV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 2 Dec 2019 10:22:22 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:33006 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727431AbfLBPWV (ORCPT
+        Mon, 2 Dec 2019 12:05:21 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:37049 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727809AbfLBRFV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 2 Dec 2019 10:22:21 -0500
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id E2287309;
-        Mon,  2 Dec 2019 16:22:17 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1575300138;
-        bh=flJG6bVAL2kMZF6DJHO5Mg9mRQIBSRj4ecc7nkCx5RU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iWqTI/3kbR43KzyU6ckoNJKrKdt1JwcaiV+BZ8buJzqFYbjz6ImRdCScocYMk+7Ta
-         JWZaiYviP5sKwqQYYT0Phvbbep4xpqxVvgXZ0pPPzX6ac7LzeF5ATvRSMwtXOaV8a4
-         dPNFCxrXB4YQLB8oh74M2npsHF/+FytcBKYRJ5ew=
-Date:   Mon, 2 Dec 2019 17:22:11 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     dri-devel@lists.freedesktop.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Alison Wang <alison.wang@nxp.com>,
-        Allison Randal <allison@lohutok.net>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Enrico Weigelt <info@metux.net>,
-        Fabio Estevam <festevam@gmail.com>,
-        Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        Mon, 2 Dec 2019 12:05:21 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20191202170518euoutp022defbd534528a29ef03f97e20fcbf15f~cnMANzXrT0903509035euoutp029
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Dec 2019 17:05:18 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20191202170518euoutp022defbd534528a29ef03f97e20fcbf15f~cnMANzXrT0903509035euoutp029
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1575306318;
+        bh=st3c9KPKtPtiDw5raSov1qy5fVYNC0lFSVzRu5QYeQw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=mGd8TmKgUfIkFckj4SZrMmPAUbBhpsn4iq0b3y3wx40p+Xac8B1mVzol8wrrQtt9s
+         MQgici/jsdSZAsbDI0SbKHayrm97/tCQp6FhPiMwnRL/NVgBvJ7E5soaoI6ptmzGjS
+         1DMXh2nLlbaWa+yMsD/ZKUfNPR0l8dt0g5BlYSnA=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20191202170517eucas1p2bd2c406bcdac2cc0142d77454aaa4ac8~cnL-zLzZs2657226572eucas1p2D;
+        Mon,  2 Dec 2019 17:05:17 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 5E.63.60698.D4445ED5; Mon,  2
+        Dec 2019 17:05:17 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20191202170517eucas1p1d9298087e553dbc9d9986dc7ec41d669~cnL-fddXR2466624666eucas1p1L;
+        Mon,  2 Dec 2019 17:05:17 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191202170517eusmtrp1624e4c831d116920e8ed941cf479123f~cnL-er8Lk2436324363eusmtrp1W;
+        Mon,  2 Dec 2019 17:05:17 +0000 (GMT)
+X-AuditID: cbfec7f5-a0fff7000001ed1a-c1-5de5444d1904
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 67.B7.08375.D4445ED5; Mon,  2
+        Dec 2019 17:05:17 +0000 (GMT)
+Received: from AMDC3555 (unknown [106.120.51.67]) by eusmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20191202170516eusmtip1dab1e87cd2d1bc05270ebbc122ad427f~cnL_vWgkg2058220582eusmtip1e;
+        Mon,  2 Dec 2019 17:05:16 +0000 (GMT)
+Message-ID: <9b3b21d3e4678946724531c58ad7f9c7a3993a95.camel@samsung.com>
+Subject: Re: [RFC PATCH v2 09/11] devfreq: exynos-bus: Add interconnect
+ functionality to exynos-bus
+From:   Artur =?UTF-8?Q?=C5=9Awigo=C5=84?= <a.swigon@samsung.com>
+To:     Chanwoo Choi <cw00.choi@samsung.com>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Marek Vasut <marex@denx.de>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sean Paul <sean@poorly.run>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Abriou <vincent.abriou@st.com>
-Subject: Re: [PATCH v1 14/16] drm/panel: call prepare/enable only once
-Message-ID: <20191202152211.GB18532@pendragon.ideasonboard.com>
-References: <20190804201637.1240-1-sam@ravnborg.org>
- <20190804201637.1240-15-sam@ravnborg.org>
- <20190805105928.GI29747@pendragon.ideasonboard.com>
- <20190805165117.GA23301@ravnborg.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190805165117.GA23301@ravnborg.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc:     myungjoo.ham@samsung.com, inki.dae@samsung.com,
+        sw0312.kim@samsung.com, georgi.djakov@linaro.org,
+        leonard.crestez@nxp.com, m.szyprowski@samsung.com,
+        b.zolnierkie@samsung.com, krzk@kernel.org
+Date:   Mon, 02 Dec 2019 18:05:16 +0100
+In-Reply-To: <e004bedd-294b-172b-5e34-bf7afcfd04bc@samsung.com>
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTYRjG+3YuO46mxyn5YpI0KFIqrSQPFc3A6lR0769CauXRRXMbO2pX
+        aGpWswvLiKkZWkqZIdpaSyUNdTnJ5TLLvKaUFllqtTLsojmPYf893/s9v+d5P/goTOYkAqmD
+        mkROr1Gq5aQEt9WPNi3aHN0fE95+O4K5m1VKMK++vSeYPHsTwbz4Pkwy5ioLyWT2mHDG5SoT
+        M0XdXwjG8raVYFoqc0nGfcGOmCxXtYgpsXeLmc6UIpLJuvyBjPJhLcVGku1qfUiyPeccIvZe
+        4Un27lC5iL1oLUas2zJnm3i3ZFUspz6YzOnDVu+TqMZHunBd37ojI+M1uAHlR2YgLwroCEi/
+        ko1nIAklo4sQuCoMmHD4hqCvw0Z6XDLajaC9ff0/wmS8RAqmWwieFaZPEe8QvLE4xRmIoqQ0
+        C7/c4R7Aj+Ygt+QB5tEkrYCnnSMij9+fHppoePR5EsboegRVXaO4x4XT86C08gbpCfKaILqc
+        O4XmhTD45CIu5PvCn3I/zxijgyHt/tXJGKAHxfB0PA8X/NFgNbswQfvBgMMqFnQQNF4+P+Xh
+        ob+ihxBgAwLLTfsUsBLqHM2EpwyjQyb2CRPGa8CZ2jG5A9De0DboK+zgDZk2MyaMpXD2tEyQ
+        cqjM9hZAgNQ7rVPZLFjTcnETmpsz/Zac/96SM92aj7BiFMAl8QnxHL9Mwx1ezCsT+CRN/OID
+        2gQLmvhjjWOO7+Wo+vf+WkRTSD5TqvrZFyMjlMn80YRaBBQm95faoD9GJo1VHj3G6bV79Ulq
+        jq9FsylcHiA9PqN3j4yOVyZyhzhOx+n/3Yoor0ADskg+BoUGGW6rgnszfRqQPORlzYZPKXFx
+        z19fMBY0JrapV8z2qzSbZLusFQvK2rRo4OO1weVDGyN9xrp3bFXMt29P/HFP5/I9FuVStK4d
+        1kbvGG6ZNSeteNz2VZcZYtzyeNPSwOaWs+uizCeJDRWnCgrNDWea4zbXZasiTihSrm9CcpxX
+        KZeEYnpe+RcvRCOVXwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKIsWRmVeSWpSXmKPExsVy+t/xu7q+Lk9jDSadk7PYOGM9q8X1L89Z
+        LeYfOcdqceXrezaL6Xs3sVlMuj+BxeL8+Q3sFivufmS12PT4GqvF5V1z2Cw+9x5htJhxfh+T
+        xdojd9ktbjeuYLOYMfklmwO/x6ZVnWwed67tYfO4332cyWPzknqPje92MHn0bVnF6PF5k1wA
+        e5SeTVF+aUmqQkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6dTUpqTmZZapG+XYJexv9v
+        d1gKnrhVfPt/kKWBcYF5FyMnh4SAicSEzolsXYxcHEICSxklFv64ygaRkJD4uP4GK4QtLPHn
+        WhdU0RNGiftN34ASHBy8Ah4Svz8bgNQIC6RKzFm7nRnEZhOwlzh7+xsTSL2IwHtGiQ/b37GD
+        OMwCJxgldl57DraBRUBVYv2uRWwggziBOu6cCYZY8IVR4vSJmWCbmQU0JVq3/2aHuEJH4u2p
+        PhaIxYISf3cIQ5TISzRvnc08gVFwFpKOWQhVs5BULWBkXsUoklpanJueW2yoV5yYW1yal66X
+        nJ+7iREYpduO/dy8g/HSxuBDjAIcjEo8vBm/nsQKsSaWFVfmHmKU4GBWEuHdJvE0Vog3JbGy
+        KrUoP76oNCe1+BCjKdA7E5mlRJPzgQkkryTe0NTQ3MLS0NzY3NjMQkmct0PgYIyQQHpiSWp2
+        ampBahFMHxMHp1QD4xwzzmRWFu2nVWu/Gh1cKP3HKfr4nLcPGmINrbe1OsZEsDBu9yl/teeS
+        4oqzRjGB+QoHd7J/27eF7+oNxoh1+ksvt6Vx/JX+usJGOrNk1sR4N4tpG5ZGc1+6lfrQrzNt
+        x+Xvj2wdu1dtbepIzN74l+uz2pxbjjVPOsX1Tl03Sr0ScHf1e5P2w0osxRmJhlrMRcWJALqT
+        cq7oAgAA
+X-CMS-MailID: 20191202170517eucas1p1d9298087e553dbc9d9986dc7ec41d669
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190919142329eucas1p2e53992eab9ec6b404f716f955b3c228e
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190919142329eucas1p2e53992eab9ec6b404f716f955b3c228e
+References: <20190919142236.4071-1-a.swigon@samsung.com>
+        <CGME20190919142329eucas1p2e53992eab9ec6b404f716f955b3c228e@eucas1p2.samsung.com>
+        <20190919142236.4071-10-a.swigon@samsung.com>
+        <e004bedd-294b-172b-5e34-bf7afcfd04bc@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Sam,
+Hi Chanwoo,
 
-On Mon, Aug 05, 2019 at 06:51:17PM +0200, Sam Ravnborg wrote:
-> > On Sun, Aug 04, 2019 at 10:16:35PM +0200, Sam Ravnborg wrote:
-> > > Many panel drivers duplicate logic to prevent prepare to be called
-> > > for a panel that is already prepared.
-> > > Likewise for enable.
-> > > 
-> > > Implement this logic in drm_panel so the individual drivers
-> > > no longer needs this.
-> > > A panel is considered prepared/enabled only if the prepare/enable call
-> > > succeeds.
-> > > For disable/unprepare it is unconditionally considered
-> > > disabled/unprepared.
-> > > 
-> > > This allows calls to prepare/enable again, even if there were
-> > > some issue disabling a regulator or similar during disable/unprepare.
+On Wed, 2019-09-25 at 16:03 +0900, Chanwoo Choi wrote:
+> Hi,
+> 
+> I need the time to dig the ICC framework
+> to understand them detailed. After that, I'll review this.
+
+Any updates on this topic?
+
+Regardless of the purpose of this RFC, I think patches 01-04
+are still beneficial to devfreq. I can rebase and post them
+as a separate series if you wish.
+
+> Basically, I agree this approach. But, I'm wondering
+> the existing binding method between 'bus_leftbus' and 'bus_dmc'.
+> From before, I thought that devfreq framework need to
+> enhance the binding method between parent devfreq device
+> and passive devfreq device instead of 'devfreq' property.
+> 
+> On this patch, use the same binding way between
+> 'bus_leftbus' and 'bus_dmc' with 'parent' property
+> as following:
+> 
+> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> @@ -106,6 +106,7 @@
+>  &bus_leftbus {
+>  	devfreq-events = <&ppmu_leftbus_3>, <&ppmu_rightbus_3>;
+>  	vdd-supply = <&buck3_reg>;
+> +	parent = <&bus_dmc>;
+>  	status = "okay";
+>  };
+> 
+> I'm not sure about continuing to use this method for new feature.
+> If possible, hope to replace the existing binding style
+> with new method like of_graph. Actually, I don't know the correct method.
+> 
+> 
+> On 19. 9. 19. 오후 11:22, Artur Świgoń wrote:
+> > From: Artur Świgoń <a.swigon@partner.samsung.com>
 > > 
-> > Is this the right place to handle this ? Shouldn't the upper layers
-> > ensure than enable/disable and prepare/unprepare are correcty balanced,
-> > and not called multiple times ? Adding enabled and prepared state to
-> > drm_panel not only doesn't align well with atomic state handling, but
-> > also would hide issues in upper layers that should really be fixed
-> > there.
+> > This patch adds interconnect functionality to the exynos-bus devfreq
+> > driver.
+> > 
+> > The SoC topology is a graph (or, more specifically, a tree) and most of
+> > its edges are taken from the devfreq parent-child hierarchy (cf.
+> > Documentation/devicetree/bindings/devfreq/exynos-bus.txt). Due to
+> > unspecified relative probing order, -EPROBE_DEFER may be propagated to
+> > guarantee that a child is probed before its parent.
+> > 
+> > Each bus is now an interconnect provider and an interconnect node as well
+> > (cf. Documentation/interconnect/interconnect.rst), i.e. every bus registers
+> > itself as a node. Node IDs are not hardcoded but rather assigned at
+> > runtime, in probing order (subject to the above-mentioned exception
+> > regarding relative order). This approach allows for using this driver with
+> > various Exynos SoCs.
+> > 
+> > Frequencies requested via the interconnect API for a given node are
+> > propagated to devfreq using dev_pm_qos_update_request(). Please note that
+> > it is not an error when CONFIG_INTERCONNECT is 'n', in which case all
+> > interconnect API functions are no-op.
+> > 
+> > Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
+> > ---
+> >  drivers/devfreq/exynos-bus.c | 153 +++++++++++++++++++++++++++++++++++
+> >  1 file changed, 153 insertions(+)
+> > 
+> > diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+> > index 8d44810cac69..e0232202720d 100644
+> > --- a/drivers/devfreq/exynos-bus.c
+> > +++ b/drivers/devfreq/exynos-bus.c
+> > @@ -14,14 +14,19 @@
+> >  #include <linux/devfreq-event.h>
+> >  #include <linux/device.h>
+> >  #include <linux/export.h>
+> > +#include <linux/idr.h>
+> > +#include <linux/interconnect-provider.h>
+> >  #include <linux/module.h>
+> >  #include <linux/of.h>
+> >  #include <linux/pm_opp.h>
+> > +#include <linux/pm_qos.h>
+> >  #include <linux/platform_device.h>
+> >  #include <linux/regulator/consumer.h>
+> >  
+> >  #define DEFAULT_SATURATION_RATIO	40
+> >  
+> > +#define icc_units_to_khz(x) ((x) / 8)
+> > +
+> >  struct exynos_bus {
+> >  	struct device *dev;
+> >  
+> > @@ -35,6 +40,12 @@ struct exynos_bus {
+> >  	struct opp_table *opp_table;
+> >  	struct clk *clk;
+> >  	unsigned int ratio;
+> > +
+> > +	/* One provider per bus, one node per provider */
+> > +	struct icc_provider provider;
+> > +	struct icc_node *node;
+> > +
+> > +	struct dev_pm_qos_request qos_req;
+> >  };
+> >  
+> >  /*
+> > @@ -59,6 +70,13 @@ exynos_bus_ops_edev(enable_edev);
+> >  exynos_bus_ops_edev(disable_edev);
+> >  exynos_bus_ops_edev(set_event);
+> >  
+> > +static int exynos_bus_next_id(void)
+> > +{
+> > +	static DEFINE_IDA(exynos_bus_icc_ida);
+> > +
+> > +	return ida_alloc(&exynos_bus_icc_ida, GFP_KERNEL);
+> > +}
+> > +
+> >  static int exynos_bus_get_event(struct exynos_bus *bus,
+> >  				struct devfreq_event_data *edata)
+> >  {
+> > @@ -171,6 +189,38 @@ static void exynos_bus_passive_exit(struct device *dev)
+> >  	clk_disable_unprepare(bus->clk);
+> >  }
+> >  
+> > +static int exynos_bus_icc_set(struct icc_node *src, struct icc_node *dst)
+> > +{
+> > +	struct exynos_bus *src_bus = src->data, *dst_bus = dst->data;
+> > +	s32 src_freq = icc_units_to_khz(src->avg_bw);
+> > +	s32 dst_freq = icc_units_to_khz(dst->avg_bw);
+> > +
+> > +	dev_pm_qos_update_request(&src_bus->qos_req, src_freq);
+> > +	dev_pm_qos_update_request(&dst_bus->qos_req, dst_freq);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int exynos_bus_icc_aggregate(struct icc_node *node, u32 tag, u32 avg_bw,
+> > +				    u32 peak_bw, u32 *agg_avg, u32 *agg_peak)
+> > +{
+> > +	*agg_avg += avg_bw;
+> > +	*agg_peak = max(*agg_peak, peak_bw);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static struct icc_node *exynos_bus_icc_xlate(struct of_phandle_args *spec,
+> > +					     void *data)
+> > +{
+> > +	struct exynos_bus *bus = data;
+> > +
+> > +	if (spec->np != bus->dev->of_node)
+> > +		return ERR_PTR(-EINVAL);
+> > +
+> > +	return bus->node;
+> > +}
+> > +
+> >  static int exynos_bus_parent_parse_of(struct device_node *np,
+> >  					struct exynos_bus *bus)
+> >  {
+> > @@ -366,6 +416,101 @@ static int exynos_bus_profile_init_passive(struct exynos_bus *bus,
+> >  	return 0;
+> >  }
+> >  
+> > +static int exynos_bus_icc_connect(struct exynos_bus *bus)
+> > +{
+> > +	struct device_node *np = bus->dev->of_node;
+> > +	struct devfreq *parent_devfreq;
+> > +	struct icc_node *parent_node = NULL;
+> > +	struct of_phandle_args args;
+> > +	int ret = 0;
+> > +
+> > +	parent_devfreq = devfreq_get_devfreq_by_phandle(bus->dev, 0);
+> > +	if (!IS_ERR(parent_devfreq)) {
+> > +		struct exynos_bus *parent_bus;
+> > +
+> > +		parent_bus = dev_get_drvdata(parent_devfreq->dev.parent);
+> > +		parent_node = parent_bus->node;
+> > +	} else {
+> > +		/* Look for parent in DT */
+> > +		int num = of_count_phandle_with_args(np, "parent",
+> > +						     "#interconnect-cells");
+> > +		if (num != 1)
+> > +			goto out; /* 'parent' is optional */
+> > +
+> > +		ret = of_parse_phandle_with_args(np, "parent",
+> > +						 "#interconnect-cells",
+> > +						 0, &args);
+> > +		if (ret < 0)
+> > +			goto out;
+> > +
+> > +		of_node_put(args.np);
+> > +
+> > +		parent_node = of_icc_get_from_provider(&args);
+> > +		if (IS_ERR(parent_node)) {
+> > +			/* May be -EPROBE_DEFER */
+> > +			ret = PTR_ERR(parent_node);
+> > +			goto out;
+> > +		}
+> > +	}
 > 
-> The main rationale behind starting on this was that ~15 panel drivers
-> already implements logic to prevent the prepare/enable/disable/unprepare
-> functions to be called out of order.
-> $ cd drivers/gpu/drm/panel/; git grep enabled | grep bool | wc -l
 > 
-> Several of the panel drivers also implements a
-> mipi_dsi_driver.shutdown() or platform_driver.shutdown().
-> To the best of my knowledge we cannot guarantee that the upper layers
-> have done the proper disable()/unprepare() dance before a shutdown.
-
-If the display controller drivers all behaved correctly, their
-.shutdown() implementation would disable all the output, and thus
-disable the panels. I think that's the best way forward, and we should
-ideally remove .shutdown() from the panel drivers, as otherwise the
-panel may be disabled before the display driver .shutdown() operation is
-called, and weird things can then happen.
-
-This being said, guaranteeing proper operation of the display controller
-drivers isn't easy, so I'm not calling for removing .shutdown() from
-panel drivers right now, but I think we shouldn't accept that operation
-in new panel drivers going forward.
-
-> So the flags exists to allow the driver to unconditionally call
-> disable() / unprepare() in the shutdown methods.
-> Same goes for *_driver.remove()
-
-I'd rather get rid of the hacks instead of trying to refactor them in
-generic hack-support helpers ;-) But I get your point, as an interim
-measure this is probably our best option.
-
-> One improvement could be to detect if the panel is prepare() when
-> upper layers call enable() and warn/error in this situation.
-> With the current implementation this is not checked at all.
-> Likewise for unprepare() (require it was never enabled or disable() was
-> caled first)
 > 
-> I claim the check exists for the benefit of .remove and .shutdown,
-> so we could also check if prepare() or enable() is called twice.
+> > +
+> > +	ret = icc_link_create(bus->node, parent_node->id);
+> > +
+> > +out:
+> > +	return ret;
+> > +}
+> > +
+> > +static int exynos_bus_icc_init(struct exynos_bus *bus)
+> > +{
+> > +	struct device *dev = bus->dev;
+> > +	struct icc_provider *provider = &bus->provider;
+> > +	struct icc_node *node;
+> > +	int id, ret;
+> > +
+> > +	/* Initialize the interconnect provider */
+> > +	provider->set = exynos_bus_icc_set;
+> > +	provider->aggregate = exynos_bus_icc_aggregate;
+> > +	provider->xlate = exynos_bus_icc_xlate;
+> > +	provider->dev = dev;
+> > +	provider->data = bus;
+> > +
+> > +	ret = icc_provider_add(provider);
+> > +	if (ret < 0)
+> > +		goto out;
+> > +
+> > +	ret = id = exynos_bus_next_id();
+> > +	if (ret < 0)
+> > +		goto err_node;
+> > +
+> > +	node = icc_node_create(id);
+> > +	if (IS_ERR(node)) {
+> > +		ret = PTR_ERR(node);
+> > +		goto err_node;
+> > +	}
+> > +
+> > +	bus->node = node;
+> > +	node->name = dev->of_node->name;
+> > +	node->data = bus;
+> > +	icc_node_add(node, provider);
+> > +
+> > +	ret = exynos_bus_icc_connect(bus);
+> > +	if (ret < 0)
+> > +		goto err_connect;
+> > +
+> > +	ret = dev_pm_qos_add_request(bus->devfreq->dev.parent, &bus->qos_req,
+> > +				     DEV_PM_QOS_MIN_FREQUENCY, 0);
+> > +
+> > +out:
+> > +	return ret;
+> > +
+> > +err_connect:
+> > +	icc_node_del(node);
+> > +	icc_node_destroy(id);
+> > +err_node:
+> > +	icc_provider_del(provider);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> >  static int exynos_bus_probe(struct platform_device *pdev)
+> >  {
+> >  	struct device *dev = &pdev->dev;
+> > @@ -415,6 +560,14 @@ static int exynos_bus_probe(struct platform_device *pdev)
+> >  	if (ret < 0)
+> >  		goto err;
+> >  
+> > +	/*
+> > +	 * Initialize interconnect provider. A return value of -ENOTSUPP means
+> > +	 * that CONFIG_INTERCONNECT is disabled.
+> > +	 */
+> > +	ret = exynos_bus_icc_init(bus);
+> > +	if (ret < 0 && ret != -ENOTSUPP)
+> > +		goto err;
+> > +
+> >  	max_state = bus->devfreq->profile->max_state;
+> >  	min_freq = (bus->devfreq->profile->freq_table[0] / 1000);
+> >  	max_freq = (bus->devfreq->profile->freq_table[max_state - 1] / 1000);
+> > 
 > 
-> Adding logic to call prepare() automagically would hide probems in upper
-> layers and this was only briefly considered - and discarded as hiding
-> bugs.
 
-I agree with you.
-
-> So to sum up:
-> - Moving the checks from drivers to the core is a good thing
-> - The core shall check that a panel is prepared when enable is called
->   and error out if not (or warn).
-> - The core shall check that a panel is disabled when unprepare is called
->   and error out if not (or warn).
->   The core shall check if prepare() and enable() is called out of order.
-> 
-> The patch needs to be extended to cover the last three points.
-> 
-> Laurent / Emil / Thierry - agree/comments?
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-Maybe with a note in the Documentation/gpu/todo.rst to remove
-.shutdown() in panel drivers as a long term goal ?
-
-> Note: Did a quick round to see if could spot any wrong use of
-> drm_panel_* functions.
-> Most looked good, but then I did not do a throughly check.
-> 
-> bridge/analogix/analogix_dp_core.c looks fishy.
-> Looks like analogix_dp_prepare_panel() is a nop the way it is called.
-> I did not look too much on this, maybe I am wrong.
-> 
-> > > Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-> > > Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> > > Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> > > Cc: Sean Paul <sean@poorly.run>
-> > > Cc: Thierry Reding <thierry.reding@gmail.com>
-> > > Cc: Sam Ravnborg <sam@ravnborg.org>
-> > > Cc: David Airlie <airlied@linux.ie>
-> > > Cc: Daniel Vetter <daniel@ffwll.ch>
-> > > ---
-> > >  drivers/gpu/drm/drm_panel.c | 66 ++++++++++++++++++++++++++++++-------
-> > >  include/drm/drm_panel.h     | 21 ++++++++++++
-> > >  2 files changed, 75 insertions(+), 12 deletions(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
-> > > index da19d5b4a2f4..0853764040de 100644
-> > > --- a/drivers/gpu/drm/drm_panel.c
-> > > +++ b/drivers/gpu/drm/drm_panel.c
-> > > @@ -66,10 +66,21 @@ EXPORT_SYMBOL(drm_panel_init);
-> > >   */
-> > >  int drm_panel_prepare(struct drm_panel *panel)
-> > >  {
-> > > -	if (panel && panel->funcs && panel->funcs->prepare)
-> > > -		return panel->funcs->prepare(panel);
-> > > +	int ret = -ENOSYS;
-> > >  
-> > > -	return panel ? -ENOSYS : -EINVAL;
-> > > +	if (!panel)
-> > > +		return -EINVAL;
-> > > +
-> > > +	if (panel->prepared)
-> > > +		return 0;
-> > > +
-> > > +	if (panel->funcs && panel->funcs->prepare)
-> > > +		ret = panel->funcs->prepare(panel);
-> > > +
-> > > +	if (ret >= 0)
-> > > +		panel->prepared = true;
-> > > +
-> > > +	return ret;
-> > >  }
-> > >  EXPORT_SYMBOL(drm_panel_prepare);
-> > >  
-> > > @@ -85,10 +96,21 @@ EXPORT_SYMBOL(drm_panel_prepare);
-> > >   */
-> > >  int drm_panel_enable(struct drm_panel *panel)
-> > >  {
-> > > -	if (panel && panel->funcs && panel->funcs->enable)
-> > > -		return panel->funcs->enable(panel);
-> > > +	int ret = -ENOSYS;
-> > >  
-> > > -	return panel ? -ENOSYS : -EINVAL;
-> > > +	if (!panel)
-> > > +		return -EINVAL;
-> > > +
-> > > +	if (panel->enabled)
-> > > +		return 0;
-> > > +
-> > > +	if (panel->funcs && panel->funcs->enable)
-> > > +		ret = panel->funcs->enable(panel);
-> > > +
-> > > +	if (ret >= 0)
-> > > +		panel->enabled = true;
-> > > +
-> > > +	return ret;
-> > >  }
-> > >  EXPORT_SYMBOL(drm_panel_enable);
-> > >  
-> > > @@ -104,10 +126,20 @@ EXPORT_SYMBOL(drm_panel_enable);
-> > >   */
-> > >  int drm_panel_disable(struct drm_panel *panel)
-> > >  {
-> > > -	if (panel && panel->funcs && panel->funcs->disable)
-> > > -		return panel->funcs->disable(panel);
-> > > +	int ret = -ENOSYS;
-> > >  
-> > > -	return panel ? -ENOSYS : -EINVAL;
-> > > +	if (!panel)
-> > > +		return -EINVAL;
-> > > +
-> > > +	if (!panel->enabled)
-> > > +		return 0;
-> > > +
-> > > +	if (panel->funcs && panel->funcs->disable)
-> > > +		ret = panel->funcs->disable(panel);
-> > > +
-> > > +	panel->enabled = false;
-> > > +
-> > > +	return ret;
-> > >  }
-> > >  EXPORT_SYMBOL(drm_panel_disable);
-> > >  
-> > > @@ -124,10 +156,20 @@ EXPORT_SYMBOL(drm_panel_disable);
-> > >   */
-> > >  int drm_panel_unprepare(struct drm_panel *panel)
-> > >  {
-> > > -	if (panel && panel->funcs && panel->funcs->unprepare)
-> > > -		return panel->funcs->unprepare(panel);
-> > > +	int ret = -ENOSYS;
-> > >  
-> > > -	return panel ? -ENOSYS : -EINVAL;
-> > > +	if (!panel)
-> > > +		return -EINVAL;
-> > > +
-> > > +	if (!panel->prepared)
-> > > +		return 0;
-> > > +
-> > > +	if (panel->funcs && panel->funcs->unprepare)
-> > > +		ret = panel->funcs->unprepare(panel);
-> > > +
-> > > +	panel->prepared = false;
-> > > +
-> > > +	return ret;
-> > >  }
-> > >  EXPORT_SYMBOL(drm_panel_unprepare);
-> > >  
-> > > diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
-> > > index 624bd15ecfab..7493500fc9bd 100644
-> > > --- a/include/drm/drm_panel.h
-> > > +++ b/include/drm/drm_panel.h
-> > > @@ -65,6 +65,9 @@ struct drm_panel_funcs {
-> > >  	 * @prepare:
-> > >  	 *
-> > >  	 * Turn on panel and perform set up.
-> > > +	 * When the panel is successfully prepared the prepare() function
-> > > +	 * will not be called again until the panel has been unprepared.
-> > > +	 *
-> > >  	 */
-> > >  	int (*prepare)(struct drm_panel *panel);
-> > >  
-> > > @@ -72,6 +75,8 @@ struct drm_panel_funcs {
-> > >  	 * @enable:
-> > >  	 *
-> > >  	 * Enable panel (turn on back light, etc.).
-> > > +	 * When the panel is successfully enabled the enable() function
-> > > +	 * will not be called again until the panel has been disabled.
-> > >  	 */
-> > >  	int (*enable)(struct drm_panel *panel);
-> > >  
-> > > @@ -79,6 +84,7 @@ struct drm_panel_funcs {
-> > >  	 * @disable:
-> > >  	 *
-> > >  	 * Disable panel (turn off back light, etc.).
-> > > +	 * If the panel is already disabled the disable() function is not called.
-> > >  	 */
-> > >  	int (*disable)(struct drm_panel *panel);
-> > >  
-> > > @@ -86,6 +92,7 @@ struct drm_panel_funcs {
-> > >  	 * @unprepare:
-> > >  	 *
-> > >  	 * Turn off panel.
-> > > +	 * If the panel is already unprepared the unprepare() function is not called.
-> > >  	 */
-> > >  	int (*unprepare)(struct drm_panel *panel);
-> > >  
-> > > @@ -145,6 +152,20 @@ struct drm_panel {
-> > >  	 * Panel entry in registry.
-> > >  	 */
-> > >  	struct list_head list;
-> > > +
-> > > +	/**
-> > > +	 * @prepared:
-> > > +	 *
-> > > +	 * Set to true when the panel is successfully prepared.
-> > > +	 */
-> > > +	bool prepared;
-> > > +
-> > > +	/**
-> > > +	 * @enabled:
-> > > +	 *
-> > > +	 * Set to true when the panel is successfully enabled.
-> > > +	 */
-> > > +	bool enabled;
-> > >  };
-> > >  
-> > >  void drm_panel_init(struct drm_panel *panel);
-
+Best regards,
 -- 
-Regards,
+Artur Świgoń
+Samsung R&D Institute Poland
+Samsung Electronics
 
-Laurent Pinchart
+
