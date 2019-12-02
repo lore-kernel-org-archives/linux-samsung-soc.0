@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 850BDC43141
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Dec 2019 19:33:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6962EC33CA0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Dec 2019 19:33:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50A83215E5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Dec 2019 19:33:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34B3E24652
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Dec 2019 19:33:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pt4eRo+r"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JrpzjoCo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728226AbfLBTd4 (ORCPT
+        id S1728229AbfLBTd5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 2 Dec 2019 14:33:56 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:42216 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728214AbfLBTdy (ORCPT
+        Mon, 2 Dec 2019 14:33:57 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:38335 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728089AbfLBTdu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 2 Dec 2019 14:33:54 -0500
-Received: by mail-lf1-f66.google.com with SMTP id y19so756761lfl.9;
-        Mon, 02 Dec 2019 11:33:51 -0800 (PST)
+        Mon, 2 Dec 2019 14:33:50 -0500
+Received: by mail-lf1-f67.google.com with SMTP id r14so787519lfm.5;
+        Mon, 02 Dec 2019 11:33:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=sQFlzyFny1i3dHVwTEws0fP7Z8KCjLT5c7TINBzn22A=;
-        b=pt4eRo+rlUMtO4GzjerqssqjlO0TO1vFSYLwXnfqMSsS6I6x4kY1DKOw6u9G9vdsgW
-         VAXzxTR5zDmXqrnHapjbB2IRlTBgXXfxGeEzL71oJVndvo7oGsIzdM4JNNW+vJ9wI25g
-         Qpon0HiFbTQdsFgeRb9y24Z617Q2A4fAEvuGRRje5A0OM5b/IzFlUNEFnzszoF9xFYKW
-         CFKHrlknb1/H6PzMT5qxX68gQRn6wKxNlsb26QKyV9LEm0W4VdQaXIu/ffS0UbmwteSa
-         ESNzQZVCq6Z1dS+LBlZ71mm/mZiCmeduZsUF8YAG5RFC59oKdaCyFJU+oIb5eWrZqitl
-         CEAw==
+        bh=u1P14KeAOzrkL3LNTshRMs65q8V9CfCv8YTP7h0aK64=;
+        b=JrpzjoCoLqwt9XJXm9NiiM6/tImyc78Qynmiev/loI9ukXyLXuVueEfltQnqgtLMsR
+         JycYlyEvffuZWj7Z7TOdRqlz+dyRHYl5icP+sjNhYoVrW/GPm5XmLAsdlYd8VGUI4aOj
+         vGYTy8sjIrLh/pcKwJ/iOhlyeCR3u06MCTKDI8Cvb8bFmM3gyXY+jwIWsXaDh8bqssFz
+         hQw5MqZ1KqhzUUum8KD0GL3eFU2X6gW0+rpXl5mpPep81T1FBL9xtPRbI0xjfS3u78is
+         Dx9sJKJwySbgX5RyJ+xbNW1dS8FbwR58QRkO08VBKwazlwTmeO0U0FJ9N15PZT741s1A
+         Ru/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=sQFlzyFny1i3dHVwTEws0fP7Z8KCjLT5c7TINBzn22A=;
-        b=VA1D9gY44+nnra9oW2yqbGHJCAxRnsVubdxM6m7HV8O2BmduGin8akX1ufJl95cgCz
-         VsLqFuDwfW15LNNGvG/F5QmDiAcUfcpBsQJpS1xyskG5wYHDDzR/7GIXByveavRLS1O/
-         E/P86J+7TMNx/pXEKOpKA7PMIUrwRAXpK7lnfPDIXNDf9MgnK+029+gnIG8/hcPAH/YD
-         PoI8F9ozEc/8kpnxTljcikulwVoTc5EJYOLGEo1w6nUDB9xFI9N7mMYB747+Ffvj+Z4x
-         qOPteBfKo2OSkyQRftotwhR9DoXBLFk9inNQoib89SBksto2wk2XG5OLujWZjctSwqcg
-         Kf5A==
-X-Gm-Message-State: APjAAAXCVu2KSG8C2/zE/Ao1eeEI5tll3uRgMQHDCBF9uBraK5sVZ7M4
-        ZiIThklJDRQw9CqdY1mIVGs=
-X-Google-Smtp-Source: APXvYqw+I2ccfhtX+jZIDSZ8cLTRrK19+BfFlN/G+FBcKPfk4B/UKRsY/a6pLRlAL5tf08+wnj+Qzg==
-X-Received: by 2002:ac2:4a89:: with SMTP id l9mr397464lfp.121.1575315231117;
-        Mon, 02 Dec 2019 11:33:51 -0800 (PST)
+        bh=u1P14KeAOzrkL3LNTshRMs65q8V9CfCv8YTP7h0aK64=;
+        b=KjovvWsRiOCm3whPRK5jx1QCdzD+EdsW1ofXFJNlwu2oRpEM6Fr1rsufKyoep7lHgR
+         ISJTRjMXz7jlrJFELkme/JTNk+kudj1zVcRCl8wxs/8gZo6ztrFrvTjru+iJtuc9pjos
+         sklsIi7+50ZDDln2jFqsUM/T01AlyQCVyexSOCJTSNd7vR/dPk8qSWRk84FTFErbaULO
+         kRHH7vfRXgD+DQxNKMAMa394qbsWfWFlcPAL+5Ei7TiHYHPDRpWeShwq2PgeFwlEcpy8
+         RZnYTiyK5gvxGkaYPH1ibOV1970aSjYv+s+EDggqt20IBpHhINqni5nG7OIGmiVr5qbH
+         aGiQ==
+X-Gm-Message-State: APjAAAXtpYCz7H2enW65gShqq57xJI/HDSIWzitdNg+J/1WsgoZonxT0
+        eq6Kr81w8VwxBafHMLnGSYs=
+X-Google-Smtp-Source: APXvYqxwbVLzsiX6A4ZpKGEcYM1Fgrfee7HhMpCObNZmnZ3kty6IsgrehL3h2mIoslhqWhw9cf4q1A==
+X-Received: by 2002:a05:6512:499:: with SMTP id v25mr439414lfq.9.1575315227477;
+        Mon, 02 Dec 2019 11:33:47 -0800 (PST)
 Received: from saturn.lan (18.158-248-194.customer.lyse.net. [158.248.194.18])
-        by smtp.gmail.com with ESMTPSA id g13sm79482lfb.74.2019.12.02.11.33.49
+        by smtp.gmail.com with ESMTPSA id g13sm79482lfb.74.2019.12.02.11.33.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2019 11:33:50 -0800 (PST)
+        Mon, 02 Dec 2019 11:33:46 -0800 (PST)
 From:   Sam Ravnborg <sam@ravnborg.org>
 To:     dri-devel@lists.freedesktop.org,
         Thierry Reding <thierry.reding@gmail.com>,
@@ -83,9 +83,9 @@ Cc:     Abhinav Kumar <abhinavk@codeaurora.org>,
         Sean Paul <sean@poorly.run>, Stefan Agner <stefan@agner.ch>,
         Tomi Valkeinen <tomi.valkeinen@ti.com>,
         Sam Ravnborg <sam@ravnborg.org>
-Subject: [PATCH v1 25/26] drm/panel: tpo-td028ttec1: use drm_panel backlight support
-Date:   Mon,  2 Dec 2019 20:32:29 +0100
-Message-Id: <20191202193230.21310-26-sam@ravnborg.org>
+Subject: [PATCH v1 23/26] drm/panel: sitronix-st7701: use drm_panel backlight support
+Date:   Mon,  2 Dec 2019 20:32:27 +0100
+Message-Id: <20191202193230.21310-24-sam@ravnborg.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191202193230.21310-1-sam@ravnborg.org>
 References: <20191202193230.21310-1-sam@ravnborg.org>
@@ -99,72 +99,71 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 Use the backlight support in drm_panel to simplify the driver
 
 Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+Cc: Jagan Teki <jagan@amarulasolutions.com>
 Cc: Thierry Reding <thierry.reding@gmail.com>
 Cc: Sam Ravnborg <sam@ravnborg.org>
 ---
- drivers/gpu/drm/panel/panel-tpo-td028ttec1.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+ drivers/gpu/drm/panel/panel-sitronix-st7701.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c b/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c
-index 37252590b541..cf29405a2dbe 100644
---- a/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c
-+++ b/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c
-@@ -17,7 +17,6 @@
-  * H. Nikolaus Schaller <hns@goldelico.com>
-  */
+diff --git a/drivers/gpu/drm/panel/panel-sitronix-st7701.c b/drivers/gpu/drm/panel/panel-sitronix-st7701.c
+index c08a865a2a93..4b4f2558e3b4 100644
+--- a/drivers/gpu/drm/panel/panel-sitronix-st7701.c
++++ b/drivers/gpu/drm/panel/panel-sitronix-st7701.c
+@@ -9,7 +9,6 @@
+ #include <drm/drm_panel.h>
+ #include <drm/drm_print.h>
  
 -#include <linux/backlight.h>
+ #include <linux/gpio/consumer.h>
  #include <linux/delay.h>
  #include <linux/module.h>
- #include <linux/spi/spi.h>
-@@ -83,7 +82,6 @@ struct td028ttec1_panel {
- 	struct drm_panel panel;
+@@ -103,7 +102,6 @@ struct st7701 {
+ 	struct mipi_dsi_device *dsi;
+ 	const struct st7701_panel_desc *desc;
  
- 	struct spi_device *spi;
 -	struct backlight_device *backlight;
- };
+ 	struct regulator_bulk_data *supplies;
+ 	struct gpio_desc *reset;
+ 	unsigned int sleep_delay;
+@@ -223,7 +221,6 @@ static int st7701_enable(struct drm_panel *panel)
+ 	struct st7701 *st7701 = panel_to_st7701(panel);
  
- #define to_td028ttec1_device(p) container_of(p, struct td028ttec1_panel, panel)
-@@ -243,8 +241,6 @@ static int td028ttec1_enable(struct drm_panel *panel)
- 	if (ret)
- 		return ret;
+ 	ST7701_DSI(st7701, MIPI_DCS_SET_DISPLAY_ON, 0x00);
+-	backlight_enable(st7701->backlight);
  
--	backlight_enable(lcd->backlight);
--
  	return 0;
  }
- 
-@@ -252,8 +248,6 @@ static int td028ttec1_disable(struct drm_panel *panel)
+@@ -232,7 +229,6 @@ static int st7701_disable(struct drm_panel *panel)
  {
- 	struct td028ttec1_panel *lcd = to_td028ttec1_device(panel);
+ 	struct st7701 *st7701 = panel_to_st7701(panel);
  
--	backlight_disable(lcd->backlight);
--
- 	jbt_ret_write_0(lcd, JBT_REG_DISPLAY_OFF, NULL);
+-	backlight_disable(st7701->backlight);
+ 	ST7701_DSI(st7701, MIPI_DCS_SET_DISPLAY_OFF, 0x00);
  
  	return 0;
-@@ -334,10 +328,6 @@ static int td028ttec1_probe(struct spi_device *spi)
- 	spi_set_drvdata(spi, lcd);
- 	lcd->spi = spi;
+@@ -366,10 +362,6 @@ static int st7701_dsi_probe(struct mipi_dsi_device *dsi)
+ 		return PTR_ERR(st7701->reset);
+ 	}
  
--	lcd->backlight = devm_of_find_backlight(&spi->dev);
--	if (IS_ERR(lcd->backlight))
--		return PTR_ERR(lcd->backlight);
+-	st7701->backlight = devm_of_find_backlight(&dsi->dev);
+-	if (IS_ERR(st7701->backlight))
+-		return PTR_ERR(st7701->backlight);
 -
- 	spi->mode = SPI_MODE_3;
- 	spi->bits_per_word = 9;
+ 	drm_panel_init(&st7701->panel, &dsi->dev, &st7701_funcs,
+ 		       DRM_MODE_CONNECTOR_DSI);
  
-@@ -350,6 +340,10 @@ static int td028ttec1_probe(struct spi_device *spi)
- 	drm_panel_init(&lcd->panel, &lcd->spi->dev, &td028ttec1_funcs,
- 		       DRM_MODE_CONNECTOR_DPI);
+@@ -384,6 +376,10 @@ static int st7701_dsi_probe(struct mipi_dsi_device *dsi)
+ 	 */
+ 	st7701->sleep_delay = 120 + desc->panel_sleep_delay;
  
-+	ret = drm_panel_of_backlight(&lcd->panel);
++	ret = drm_panel_of_backlight(&st7701->panel);
 +	if (ret)
 +		return ret;
 +
- 	return drm_panel_add(&lcd->panel);
- }
- 
+ 	ret = drm_panel_add(&st7701->panel);
+ 	if (ret < 0)
+ 		return ret;
 -- 
 2.20.1
 
