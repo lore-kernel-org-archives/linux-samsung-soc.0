@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6962EC33CA0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Dec 2019 19:33:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 669B4C33CBB
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Dec 2019 19:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34B3E24652
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Dec 2019 19:33:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A5FA20833
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Dec 2019 19:33:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JrpzjoCo"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sQ5sz84a"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728229AbfLBTd5 (ORCPT
+        id S1728225AbfLBTd4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 2 Dec 2019 14:33:57 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:38335 "EHLO
+        Mon, 2 Dec 2019 14:33:56 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:34812 "EHLO
         mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728089AbfLBTdu (ORCPT
+        with ESMTP id S1728003AbfLBTdz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 2 Dec 2019 14:33:50 -0500
-Received: by mail-lf1-f67.google.com with SMTP id r14so787519lfm.5;
-        Mon, 02 Dec 2019 11:33:48 -0800 (PST)
+        Mon, 2 Dec 2019 14:33:55 -0500
+Received: by mail-lf1-f67.google.com with SMTP id l18so808122lfc.1;
+        Mon, 02 Dec 2019 11:33:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=u1P14KeAOzrkL3LNTshRMs65q8V9CfCv8YTP7h0aK64=;
-        b=JrpzjoCoLqwt9XJXm9NiiM6/tImyc78Qynmiev/loI9ukXyLXuVueEfltQnqgtLMsR
-         JycYlyEvffuZWj7Z7TOdRqlz+dyRHYl5icP+sjNhYoVrW/GPm5XmLAsdlYd8VGUI4aOj
-         vGYTy8sjIrLh/pcKwJ/iOhlyeCR3u06MCTKDI8Cvb8bFmM3gyXY+jwIWsXaDh8bqssFz
-         hQw5MqZ1KqhzUUum8KD0GL3eFU2X6gW0+rpXl5mpPep81T1FBL9xtPRbI0xjfS3u78is
-         Dx9sJKJwySbgX5RyJ+xbNW1dS8FbwR58QRkO08VBKwazlwTmeO0U0FJ9N15PZT741s1A
-         Ru/g==
+        bh=CU1uoHEr1EClqVOFtZU3zB21PkkAQa6gthbvOIOjhXw=;
+        b=sQ5sz84ahngu04detfdJb7WzDQ0QcopqKxnDfHTl6wWuDWFdmsW99YWf0HBWKVWdCP
+         RtINs73RJ+Sk7G71eUzuQ9dzzWizDYLIb9hlwzETpJLExqI+mi5bryV4yuHDhM1bk64b
+         vEQDA0fYt2NVXGAInm08lTk2qc9z8Zuy/bBxOD7ZeK96/nmYABuBHoroyzZmnlYo/3hL
+         e6lBlbFUTJ/vQgNEhqRXR+CF6RtFCvzDPOJRsXl7kAidChgKhYB4T34t/JadF6qMZ/54
+         Ia1/574eLMCCnimEAcJi1a8cMBlCfwJLuzWlre+3Lh7dtm0Umq9xTA63WTRQ+KYk8fR2
+         Esxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=u1P14KeAOzrkL3LNTshRMs65q8V9CfCv8YTP7h0aK64=;
-        b=KjovvWsRiOCm3whPRK5jx1QCdzD+EdsW1ofXFJNlwu2oRpEM6Fr1rsufKyoep7lHgR
-         ISJTRjMXz7jlrJFELkme/JTNk+kudj1zVcRCl8wxs/8gZo6ztrFrvTjru+iJtuc9pjos
-         sklsIi7+50ZDDln2jFqsUM/T01AlyQCVyexSOCJTSNd7vR/dPk8qSWRk84FTFErbaULO
-         kRHH7vfRXgD+DQxNKMAMa394qbsWfWFlcPAL+5Ei7TiHYHPDRpWeShwq2PgeFwlEcpy8
-         RZnYTiyK5gvxGkaYPH1ibOV1970aSjYv+s+EDggqt20IBpHhINqni5nG7OIGmiVr5qbH
-         aGiQ==
-X-Gm-Message-State: APjAAAXtpYCz7H2enW65gShqq57xJI/HDSIWzitdNg+J/1WsgoZonxT0
-        eq6Kr81w8VwxBafHMLnGSYs=
-X-Google-Smtp-Source: APXvYqxwbVLzsiX6A4ZpKGEcYM1Fgrfee7HhMpCObNZmnZ3kty6IsgrehL3h2mIoslhqWhw9cf4q1A==
-X-Received: by 2002:a05:6512:499:: with SMTP id v25mr439414lfq.9.1575315227477;
-        Mon, 02 Dec 2019 11:33:47 -0800 (PST)
+        bh=CU1uoHEr1EClqVOFtZU3zB21PkkAQa6gthbvOIOjhXw=;
+        b=k0fRxTQTqbDyjaDSe+ASYQfli1ub7asoCpHBIWVW5ObyIhdsMoAcUxfSP2oVqIEPdf
+         nBtfkbBhsM4D0hVDz7LtUZWkVQyslePClS5NnYfagArLHNHh/c7gK8gUjQ5oC7UU5lpP
+         CBWc//cdLFD2KPI4RWMfOUqoAGwE4jpcd/CjwloKfyCWN+fG8cnPaVaZQFaT9cfk3OOk
+         2NP3pbAY1D3k91q/oifRv+6o309S7o0hDLuuIEp6P3cqxTfbH86t1LPZlxjukVL8FhDE
+         7fmu+4wht5eYN4ei5gFUUWRLpgI9/xrQBK6rqkUIZJA1EwaTMOGcbPbfLJnr8t/4n9CY
+         7NjQ==
+X-Gm-Message-State: APjAAAXVZmGymqbU6bmCculr1PvlbhS36H4kEW9lIzHB0OLjYQYaQ8Rq
+        VPEedGu0XIMTcgvCzM6bGU8=
+X-Google-Smtp-Source: APXvYqy6JtwNRfjOhSCiLRMY0PnjwO80lGs4bEHgQWo2w/EjSnAnF5rp0zEQoTYkYl1Ki13jCNJp3w==
+X-Received: by 2002:ac2:5388:: with SMTP id g8mr412443lfh.43.1575315232849;
+        Mon, 02 Dec 2019 11:33:52 -0800 (PST)
 Received: from saturn.lan (18.158-248-194.customer.lyse.net. [158.248.194.18])
-        by smtp.gmail.com with ESMTPSA id g13sm79482lfb.74.2019.12.02.11.33.45
+        by smtp.gmail.com with ESMTPSA id g13sm79482lfb.74.2019.12.02.11.33.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2019 11:33:46 -0800 (PST)
+        Mon, 02 Dec 2019 11:33:52 -0800 (PST)
 From:   Sam Ravnborg <sam@ravnborg.org>
 To:     dri-devel@lists.freedesktop.org,
         Thierry Reding <thierry.reding@gmail.com>,
@@ -83,9 +83,9 @@ Cc:     Abhinav Kumar <abhinavk@codeaurora.org>,
         Sean Paul <sean@poorly.run>, Stefan Agner <stefan@agner.ch>,
         Tomi Valkeinen <tomi.valkeinen@ti.com>,
         Sam Ravnborg <sam@ravnborg.org>
-Subject: [PATCH v1 23/26] drm/panel: sitronix-st7701: use drm_panel backlight support
-Date:   Mon,  2 Dec 2019 20:32:27 +0100
-Message-Id: <20191202193230.21310-24-sam@ravnborg.org>
+Subject: [PATCH v1 26/26] drm/panel: tpo-tpg110: use drm_panel backlight support
+Date:   Mon,  2 Dec 2019 20:32:30 +0100
+Message-Id: <20191202193230.21310-27-sam@ravnborg.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191202193230.21310-1-sam@ravnborg.org>
 References: <20191202193230.21310-1-sam@ravnborg.org>
@@ -99,71 +99,85 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 Use the backlight support in drm_panel to simplify the driver
 
 Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-Cc: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: Thierry Reding <thierry.reding@gmail.com>
 Cc: Sam Ravnborg <sam@ravnborg.org>
 ---
- drivers/gpu/drm/panel/panel-sitronix-st7701.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/panel/panel-tpo-tpg110.c | 20 ++++++--------------
+ 1 file changed, 6 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-sitronix-st7701.c b/drivers/gpu/drm/panel/panel-sitronix-st7701.c
-index c08a865a2a93..4b4f2558e3b4 100644
---- a/drivers/gpu/drm/panel/panel-sitronix-st7701.c
-+++ b/drivers/gpu/drm/panel/panel-sitronix-st7701.c
-@@ -9,7 +9,6 @@
+diff --git a/drivers/gpu/drm/panel/panel-tpo-tpg110.c b/drivers/gpu/drm/panel/panel-tpo-tpg110.c
+index bee213ea1a42..8472d018c16f 100644
+--- a/drivers/gpu/drm/panel/panel-tpo-tpg110.c
++++ b/drivers/gpu/drm/panel/panel-tpo-tpg110.c
+@@ -14,13 +14,13 @@
  #include <drm/drm_panel.h>
  #include <drm/drm_print.h>
  
 -#include <linux/backlight.h>
- #include <linux/gpio/consumer.h>
+ #include <linux/bitops.h>
  #include <linux/delay.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
  #include <linux/module.h>
-@@ -103,7 +102,6 @@ struct st7701 {
- 	struct mipi_dsi_device *dsi;
- 	const struct st7701_panel_desc *desc;
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/spi/spi.h>
  
+@@ -76,10 +76,6 @@ struct tpg110 {
+ 	 * @panel: the DRM panel instance for this device
+ 	 */
+ 	struct drm_panel panel;
+-	/**
+-	 * @backlight: backlight for this panel
+-	 */
 -	struct backlight_device *backlight;
- 	struct regulator_bulk_data *supplies;
- 	struct gpio_desc *reset;
- 	unsigned int sleep_delay;
-@@ -223,7 +221,6 @@ static int st7701_enable(struct drm_panel *panel)
- 	struct st7701 *st7701 = panel_to_st7701(panel);
+ 	/**
+ 	 * @panel_type: the panel mode as detected
+ 	 */
+@@ -356,8 +352,6 @@ static int tpg110_disable(struct drm_panel *panel)
+ 	val &= ~TPG110_CTRL2_PM;
+ 	tpg110_write_reg(tpg, TPG110_CTRL2_PM, val);
  
- 	ST7701_DSI(st7701, MIPI_DCS_SET_DISPLAY_ON, 0x00);
--	backlight_enable(st7701->backlight);
- 
+-	backlight_disable(tpg->backlight);
+-
  	return 0;
  }
-@@ -232,7 +229,6 @@ static int st7701_disable(struct drm_panel *panel)
- {
- 	struct st7701 *st7701 = panel_to_st7701(panel);
  
--	backlight_disable(st7701->backlight);
- 	ST7701_DSI(st7701, MIPI_DCS_SET_DISPLAY_OFF, 0x00);
+@@ -366,8 +360,6 @@ static int tpg110_enable(struct drm_panel *panel)
+ 	struct tpg110 *tpg = to_tpg110(panel);
+ 	u8 val;
  
- 	return 0;
-@@ -366,10 +362,6 @@ static int st7701_dsi_probe(struct mipi_dsi_device *dsi)
- 		return PTR_ERR(st7701->reset);
- 	}
- 
--	st7701->backlight = devm_of_find_backlight(&dsi->dev);
--	if (IS_ERR(st7701->backlight))
--		return PTR_ERR(st7701->backlight);
+-	backlight_enable(tpg->backlight);
 -
- 	drm_panel_init(&st7701->panel, &dsi->dev, &st7701_funcs,
- 		       DRM_MODE_CONNECTOR_DSI);
+ 	/* Take chip out of standby */
+ 	val = tpg110_read_reg(tpg, TPG110_CTRL2_PM);
+ 	val |= TPG110_CTRL2_PM;
+@@ -432,11 +424,6 @@ static int tpg110_probe(struct spi_device *spi)
+ 	if (ret)
+ 		DRM_DEV_ERROR(dev, "no panel height specified\n");
  
-@@ -384,6 +376,10 @@ static int st7701_dsi_probe(struct mipi_dsi_device *dsi)
- 	 */
- 	st7701->sleep_delay = 120 + desc->panel_sleep_delay;
+-	/* Look for some optional backlight */
+-	tpg->backlight = devm_of_find_backlight(dev);
+-	if (IS_ERR(tpg->backlight))
+-		return PTR_ERR(tpg->backlight);
+-
+ 	/* This asserts the GRESTB signal, putting the display into reset */
+ 	tpg->grestb = devm_gpiod_get(dev, "grestb", GPIOD_OUT_HIGH);
+ 	if (IS_ERR(tpg->grestb)) {
+@@ -459,6 +446,11 @@ static int tpg110_probe(struct spi_device *spi)
  
-+	ret = drm_panel_of_backlight(&st7701->panel);
+ 	drm_panel_init(&tpg->panel, dev, &tpg110_drm_funcs,
+ 		       DRM_MODE_CONNECTOR_DPI);
++
++	ret = drm_panel_of_backlight(&tpg->panel);
 +	if (ret)
 +		return ret;
 +
- 	ret = drm_panel_add(&st7701->panel);
- 	if (ret < 0)
- 		return ret;
+ 	spi_set_drvdata(spi, tpg);
+ 
+ 	return drm_panel_add(&tpg->panel);
 -- 
 2.20.1
 
