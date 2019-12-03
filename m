@@ -2,33 +2,64 @@ Return-Path: <SRS0=FBR0=ZZ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46CBFC432C3
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Dec 2019 08:39:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76CB0C43215
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Dec 2019 13:20:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CF93206E0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Dec 2019 08:39:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D8E4205F4
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Dec 2019 13:20:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZrU6IFrN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725773AbfLCIjn (ORCPT
+        id S1726131AbfLCNUi (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 3 Dec 2019 03:39:43 -0500
-Received: from asavdk4.altibox.net ([109.247.116.15]:35880 "EHLO
-        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbfLCIjn (ORCPT
+        Tue, 3 Dec 2019 08:20:38 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38992 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726098AbfLCNUi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 3 Dec 2019 03:39:43 -0500
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk4.altibox.net (Postfix) with ESMTPS id 5E20E80477;
-        Tue,  3 Dec 2019 09:39:37 +0100 (CET)
-Date:   Tue, 3 Dec 2019 09:39:36 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Maxime Ripard <mripard@kernel.org>
-Cc:     dri-devel@lists.freedesktop.org,
+        Tue, 3 Dec 2019 08:20:38 -0500
+Received: by mail-lj1-f196.google.com with SMTP id e10so3772392ljj.6
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Dec 2019 05:20:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dM7DxIKsuRuWaeq1kSkAx5tZP4LQ1yRPP8TIc6mxOpk=;
+        b=ZrU6IFrNs/v9Z2rJ1KSkzGUV8fZWcRdhMKoXG6DN0M3+iAn1ApiRmE3ZgJ94Uo+9wZ
+         DzuzeCNox0Z3xZRWRhWq9NS7Kq69iqJ360qMic+xi3WSoWvVfcJIHPlubUEr1YqjPC6n
+         SXn0dfovwrRDvRAR6nMb9zlsIw6BuH674zeFIB8i/F1/gIumJJ3bD7wOLIyyAD+Ch5OE
+         m/5UDp46mghUjs7ZT/ryJZOV8cAlXyc2Lu2UOO2gh5yc7puCj66NVcdtTPnHrWtBY2u6
+         W3zW+ts6HbCNkFX+sFqM/OCNNJVzIuEg+uhrXbWD/7147S61i6ovPikcw7eFS0ik9JEC
+         sNog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dM7DxIKsuRuWaeq1kSkAx5tZP4LQ1yRPP8TIc6mxOpk=;
+        b=sItpSuXQWmnOBJWg1UnW/UgZRZx/UdDhRIHwZFxEMweTsBl4vvffMB/2s2XyPkFBiU
+         DDufHEnPmPUTJyrdoqkD978zbFTLPsIO21bHRRxkjk8yZKZRtB3sGB3UnHFfCwy4/UEd
+         Dg7u/EJfvm5VG0kKrqPNyNTdKviAfD31PgStMxjsw7xgV9TUtL1UuB1ip7hLXYIpUhAb
+         C67aeP01TeIdkR1VToXzaoBOb6HSxwjEHWf9HRMMik/4D+B+mKbAdhUrpsl7m1+ve5bH
+         7j7neVx7eo1uEI9lE+4eDvdkVcor2RvNz/13x3vrVrlFlG3KEtOwYR1AG19aImbmwq8w
+         W4Pw==
+X-Gm-Message-State: APjAAAVIpMh+YEHFjpmN6dlkDC7FgLZ9xj+pot1Temi6/isNCZcPF71i
+        kcocUnft2byAYiqoNp6oqCAJF+CAZDBk9lYdrL78fQ==
+X-Google-Smtp-Source: APXvYqzTzhKdgwJ8WJIcY2A5WR+ez0+zwm8p5MUMtgC+M9HuNmXbczoLdnQOw0NdPlAjvpjtAI7gsHbZmOicQtBst1Q=
+X-Received: by 2002:a2e:8045:: with SMTP id p5mr2556134ljg.251.1575379236563;
+ Tue, 03 Dec 2019 05:20:36 -0800 (PST)
+MIME-Version: 1.0
+References: <20191202193230.21310-1-sam@ravnborg.org> <20191202193230.21310-27-sam@ravnborg.org>
+In-Reply-To: <20191202193230.21310-27-sam@ravnborg.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 3 Dec 2019 14:20:25 +0100
+Message-ID: <CACRpkdZcLeJuOiPPa81qj17ifi3T0YxPq0zPP0oqNv-8pvzeKg@mail.gmail.com>
+Subject: Re: [PATCH v1 26/26] drm/panel: tpo-tpg110: use drm_panel backlight support
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Abhinav Kumar <abhinavk@codeaurora.org>,
@@ -39,136 +70,38 @@ Cc:     dri-devel@lists.freedesktop.org,
         David Airlie <airlied@linux.ie>,
         Jagan Teki <jagan@amarulasolutions.com>,
         Jitao Shi <jitao.shi@mediatek.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
         Neil Armstrong <narmstrong@baylibre.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         Purism Kernel Team <kernel@puri.sm>,
         Sean Paul <sean@poorly.run>, Stefan Agner <stefan@agner.ch>,
         Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCH v1 07/26] drm/panel: remove get_timings
-Message-ID: <20191203083935.GB30687@ravnborg.org>
-References: <20191202193230.21310-1-sam@ravnborg.org>
- <20191202193230.21310-8-sam@ravnborg.org>
- <20191203074659.ilsyv4yx7pzw5vax@gilmour.lan>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191203074659.ilsyv4yx7pzw5vax@gilmour.lan>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=VcLZwmh9 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=7gkXJVJtAAAA:8
-        a=pGLkceISAAAA:8 a=P1BnusSwAAAA:8 a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8
-        a=-nbbn2pJxVWvY7Vi8LwA:9 a=Vfx8YJUf9hFrv8O-:21 a=HM9-6MrTAUSx7c7w:21
-        a=CjuIK1q_8ugA:10 a=E9Po1WZjFZOl8hwRPBS3:22 a=D0XLA9XvdZm18NrgonBM:22
-        a=AjGcO6oz07-iQ99wixmX:22
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Maxime.
+On Mon, Dec 2, 2019 at 8:33 PM Sam Ravnborg <sam@ravnborg.org> wrote:
 
-On Tue, Dec 03, 2019 at 08:46:59AM +0100, Maxime Ripard wrote:
-> Hi,
-> 
-> On Mon, Dec 02, 2019 at 08:32:11PM +0100, Sam Ravnborg wrote:
-> > There was no users - so remove it.
-> > The callback was implemented in two drivers - deleted.
-> >
-> > Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-> > Cc: Thierry Reding <thierry.reding@gmail.com>
-> > Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-> > Cc: Sam Ravnborg <sam@ravnborg.org>
-> > Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> > Cc: Maxime Ripard <mripard@kernel.org>
-> > Cc: David Airlie <airlied@linux.ie>
-> > Cc: Daniel Vetter <daniel@ffwll.ch>
-> > ---
-> >  drivers/gpu/drm/panel/panel-seiko-43wvf1g.c | 18 ------------------
-> >  drivers/gpu/drm/panel/panel-simple.c        | 18 ------------------
-> >  include/drm/drm_panel.h                     |  9 ---------
-> >  3 files changed, 45 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c b/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c
-> > index b878930b17e4..3bcba64235c4 100644
-> > --- a/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c
-> > +++ b/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c
-> > @@ -217,30 +217,12 @@ static int seiko_panel_get_modes(struct drm_panel *panel,
-> >  	return seiko_panel_get_fixed_modes(p, connector);
-> >  }
-> >
-> > -static int seiko_panel_get_timings(struct drm_panel *panel,
-> > -				    unsigned int num_timings,
-> > -				    struct display_timing *timings)
-> > -{
-> > -	struct seiko_panel *p = to_seiko_panel(panel);
-> > -	unsigned int i;
-> > -
-> > -	if (p->desc->num_timings < num_timings)
-> > -		num_timings = p->desc->num_timings;
-> > -
-> > -	if (timings)
-> > -		for (i = 0; i < num_timings; i++)
-> > -			timings[i] = p->desc->timings[i];
-> > -
-> > -	return p->desc->num_timings;
-> > -}
-> > -
-> >  static const struct drm_panel_funcs seiko_panel_funcs = {
-> >  	.disable = seiko_panel_disable,
-> >  	.unprepare = seiko_panel_unprepare,
-> >  	.prepare = seiko_panel_prepare,
-> >  	.enable = seiko_panel_enable,
-> >  	.get_modes = seiko_panel_get_modes,
-> > -	.get_timings = seiko_panel_get_timings,
-> >  };
-> 
-> If anything, I think we should grow the usage of timings and / or make
-> it usable by everyone.
-> 
-> Using only the mode as we do currently has a bunch of shortcomings as
-> almost no encoder will be able to provide the typical pixel clock, and
-> that situation leads to multiple things:
-> 
->   - If someone working on one encoder wants to upstream a panel they
->     have tested, chances are this will not be the typical pixel clock
->     / timings being used but rather the one that will match what that
->     SoC is capable of. Trouble comes when a second user comes in with
->     a different encoder and different capabilities, and then we have a
->     maintainance fight over which timing is the true timing (with a
->     significant chance that none of them are).
-> 
->   - If we can't match the pixel clock, we currently have no easy way
->     to make the usual measures of reducing / growing the porches and
->     blankings areas to match the pixel clock we can provide, since we
->     don't have an easy way to get the tolerance on those timings for a
->     given panel. There's some ad hoc solutions on some drivers (I
->     think vc4 has that?) to ignore the panel and just play around with
->     the timings, but I think this should be generalised.
-> 
-> Timings solves the first case since we have the operating range now
-> and not a single set of timings, and it solves the second since we can
-> use that range to take those measures instead of taking a shot in the
-> dark.
-> 
-> I appreciate that it's pretty far from where we are today, but
-> removing the get_timings means that all the timings already defined in
-> the panel drivers are becoming useless too, and that eventually it
-> will get removed.
+> Use the backlight support in drm_panel to simplify the driver
+>
+> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Sam Ravnborg <sam@ravnborg.org>
 
-Thanks for this nice explanation. I will drop the patch,
-and add an entry to my TODO list to look closer at this later.
-There are things to improve in this area.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-So the conclusion is more work rather than removing code :-)
+Thanks for cleaning all of this up!
 
-	Sam
+Linus Walleij
