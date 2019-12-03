@@ -2,64 +2,66 @@ Return-Path: <SRS0=FBR0=ZZ=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1674C432C3
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Dec 2019 13:27:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B157C432C0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Dec 2019 15:20:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8AF72073B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Dec 2019 13:27:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D8202073C
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Dec 2019 15:20:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Kf2TrLzo"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AWHhNjjj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726291AbfLCN1s (ORCPT
+        id S1726957AbfLCPUi (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 3 Dec 2019 08:27:48 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:36759 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726190AbfLCN1s (ORCPT
+        Tue, 3 Dec 2019 10:20:38 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45128 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726738AbfLCPUi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 3 Dec 2019 08:27:48 -0500
-Received: by mail-lf1-f65.google.com with SMTP id f16so2972805lfm.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Dec 2019 05:27:46 -0800 (PST)
+        Tue, 3 Dec 2019 10:20:38 -0500
+Received: by mail-lj1-f194.google.com with SMTP id d20so4211870ljc.12
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Dec 2019 07:20:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=w5kvvsNqTWUYowCw16IbU3x1YCmaOiYf5tGr6DU/4Oo=;
-        b=Kf2TrLzoeW7GPO93jICax9H7npFli7nKkPrAa/7pensbMPErLdSyO5cAPXKjgJ5SwW
-         dQrNoMOKIZ0oZKLp96BDVuif4EmGi5MgCrhh0N20691gPfYKiIWpucl1bpxPv8HyWwEO
-         sV/o0T5vo3zUWjf4mn/5JFm4iQ9eVy7Qwu71lDN9Y0jhqghCBoOVDyB/uDoKZVeoM5qE
-         lirCwRmMcZeJCvVkm4a8hz6Ijs6Aw/lR6XRBXo/Au/eoIX7M/1cljIRGuyDeppCzGaRX
-         SiP6V0C53L9KztUCT76fN77bWsENOXX1T2+wgpTdxmhUZRMwMYpW+0PGCrTHVh2H+JbJ
-         2ZrQ==
+         :cc;
+        bh=m3zQ0bKSvISFi+1fBMi3jNVJYg+1MoT8ThtuF+2ovSQ=;
+        b=AWHhNjjjjGYoZzrFZIUydXTE8P04GoVEj/nkxXov5Xl+m6KVTmezfYzIS189Xbp2d9
+         AoBT8kGo9Ilce7YjmHJ3BR2nLuZhHz+3UDJ/UUeou1iPTqwGwNddK1xb8tuMlXbwtqUv
+         IvCc9hkMqkDp2pZ1+fqZfUoFvFdi6r9t/BjcweQbftCQDIBBsX3LPi/p1NolQb2re4oG
+         PcRRUdNQdc96SBz0HlnkEujZ0AHARIftTj2fcd6E527NVp6lJFODir0h6yiz4ltMi1q/
+         ex1vgLswTSItO9QwCbjS0LEF/qs2+n2yDsn1fJAg1JwWMO95Ffh1DJlmg/hRr4/s9Iog
+         mqEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=w5kvvsNqTWUYowCw16IbU3x1YCmaOiYf5tGr6DU/4Oo=;
-        b=QbH2iYZ2i8XEhvrmHaiVVv/FGY3hGh1b0ZJPZyMVNQ59JOk4n8pTCpFlnBL94svJdf
-         I94hf5M+tBVA3HX5Oe1QMJb5AWIZJeLp6LWRP7cxWO+pdX7orfTnZ7WVaYcldV6KOXUz
-         xdqfblnS7BbC/eSci7zO+ADjEi3sPJIpQx+KFmkowfyctwaiZk7gyz+Is858Tod7K3JR
-         dpE/44bvM4GRinchC4ko2MV33DjkQeybGvmRnTrZk7x+cHdhmd8uYZqu99wIpP3KP3NR
-         kiDD7I7rM6tsVaHF7LnZaN4yhHI+1CCSoQb3HwdbNFH+0CsFvsJM8hkWeWxN+bCwlm8d
-         PpBA==
-X-Gm-Message-State: APjAAAV1cpbOSr6b9VQa8NXvmF4BuITz1waQ+BpI9Hcai6lDVuG8r+Pd
-        yR5P2o4VC5rNw0DxR3NwZOCTo9IY8ffRLkHEycBDBg==
-X-Google-Smtp-Source: APXvYqyofMBPFWLLzB1STopamPLWqp8a6SLsme2LKB0JzU+G9blqUgnpYL5l6F2TBybbdU6uzjI0Yo9WQ+oH5mP/T40=
-X-Received: by 2002:a19:f701:: with SMTP id z1mr2657953lfe.133.1575379666036;
- Tue, 03 Dec 2019 05:27:46 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=m3zQ0bKSvISFi+1fBMi3jNVJYg+1MoT8ThtuF+2ovSQ=;
+        b=e1WDH+9GcC6Tz4gz8Ve1JBK7nEdjolwsVrWR7WMUWGvSslEWpNvdnBRX/cKPnWs5ZA
+         +hHCb7JzrMrre7Gs6VRqROB3v5Axnpu5lN2ljJuQlOuO569snAbao2w48u/AFe81LkTC
+         EUoNmq4ekqMxRXsyYqh67mLFvvgQohYVR+h2CCKEMiFzsLFuxRR8CJh6FmyqD2oRiS5O
+         I7vJuoaxCgUXVb6GidCxCBY+tfW9zrkjNDIB1VLWSIO4PEaSUQyxfr4p1exPq9JGZQkP
+         wbNMvI24kIJ0QeezFNKjBd7zCy/MLuZphkKM5IwZYWHV75gD7zkWDrB50ry+R3p7T38P
+         MyAg==
+X-Gm-Message-State: APjAAAWfIz4SPrt6aNefBaI25coT6wYSiSu7WOeoMD8wYd8CGDGF/iIU
+        Tj0LctxSCu8rGgrwoq6pTC7TZf2A/U27x4TG4ZxRlw==
+X-Google-Smtp-Source: APXvYqzeswPvfb4bN8LEsJSRL/PyxST5l5bJCtG71jQQSWLOGmPl2rs5haGp6u2c8kSn123mUXgOro1vUhgVEbncNNQ=
+X-Received: by 2002:a2e:9ec4:: with SMTP id h4mr2954959ljk.77.1575386436713;
+ Tue, 03 Dec 2019 07:20:36 -0800 (PST)
 MIME-Version: 1.0
-References: <20191202193230.21310-1-sam@ravnborg.org> <20191202193230.21310-9-sam@ravnborg.org>
-In-Reply-To: <20191202193230.21310-9-sam@ravnborg.org>
+References: <20191202193230.21310-1-sam@ravnborg.org> <20191202193230.21310-8-sam@ravnborg.org>
+ <20191203074659.ilsyv4yx7pzw5vax@gilmour.lan>
+In-Reply-To: <20191203074659.ilsyv4yx7pzw5vax@gilmour.lan>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 3 Dec 2019 14:27:34 +0100
-Message-ID: <CACRpkdbiyVcUDrxuCK_wgsB6Vn+XZptsc9H3zB0cXxjeOtw+Ug@mail.gmail.com>
-Subject: Re: [PATCH v1 08/26] drm/panel: drop drm_device from drm_panel
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+Date:   Tue, 3 Dec 2019 16:20:24 +0100
+Message-ID: <CACRpkdZrReQs08+bXS7s7eJ-K76nMGvRgQ-L-1-baunEtiF40g@mail.gmail.com>
+Subject: Re: [PATCH v1 07/26] drm/panel: remove get_timings
+To:     Maxime Ripard <mripard@kernel.org>
+Cc:     Sam Ravnborg <sam@ravnborg.org>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Abhinav Kumar <abhinavk@codeaurora.org>,
@@ -78,58 +80,57 @@ Cc:     "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
         linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
         linux-tegra@vger.kernel.org,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
         Neil Armstrong <narmstrong@baylibre.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         Purism Kernel Team <kernel@puri.sm>,
         Sean Paul <sean@poorly.run>, Stefan Agner <stefan@agner.ch>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Stefan Mavrodiev <stefan@olimex.com>,
-        Robert Chiras <robert.chiras@nxp.com>,
-        =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
+        Tomi Valkeinen <tomi.valkeinen@ti.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Dec 2, 2019 at 8:33 PM Sam Ravnborg <sam@ravnborg.org> wrote:
+Hi Maxime,
 
-> The panel drivers used drm_panel.drm for two purposes:
-> 1) Argument to drm_mode_duplicate()
-> 2) drm->dev was used in error messages
->
-> The first usage is replaced with drm_connector.dev
-> - drm_connector is already connected to a drm_device
->   and we have a valid connector
->
-> The second usage is replaced with drm_panel.dev
-> - this makes drivers more consistent in their dev argument
->   used for dev_err() and friends
->
-> With these replacements there are no more uses of drm_panel.drm,
-> so it is removed from struct drm_panel.
-> With this change drm_panel_attach() and drm_panel_detach()
-> no logner has any use as they are empty functions.
->
-> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-> Cc: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Jagan Teki <jagan@amarulasolutions.com>
-> Cc: Stefan Mavrodiev <stefan@olimex.com>
-> Cc: Robert Chiras <robert.chiras@nxp.com>
-> Cc: "Guido G=C3=BCnther" <agx@sigxcpu.org>
-> Cc: Purism Kernel Team <kernel@puri.sm>
+On Tue, Dec 3, 2019 at 8:47 AM Maxime Ripard <mripard@kernel.org> wrote:
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Using only the mode as we do currently has a bunch of shortcomings as
+> almost no encoder will be able to provide the typical pixel clock, and
+> that situation leads to multiple things:
+>
+>   - If someone working on one encoder wants to upstream a panel they
+>     have tested, chances are this will not be the typical pixel clock
+>     / timings being used but rather the one that will match what that
+>     SoC is capable of. Trouble comes when a second user comes in with
+>     a different encoder and different capabilities, and then we have a
+>     maintainance fight over which timing is the true timing (with a
+>     significant chance that none of them are).
+>
+>   - If we can't match the pixel clock, we currently have no easy way
+>     to make the usual measures of reducing / growing the porches and
+>     blankings areas to match the pixel clock we can provide, since we
+>     don't have an easy way to get the tolerance on those timings for a
+>     given panel. There's some ad hoc solutions on some drivers (I
+>     think vc4 has that?) to ignore the panel and just play around with
+>     the timings, but I think this should be generalised.
+
+I've been confused with these things as they look today and it seems
+the whole struct drm_display_mode could need some improvement?
+
+If .clock is supposed to be htotal * vtotal * vrefresh, what is the
+.clock doing there anyway.
+
+Sadly I am too inexperienced to realize where the tolerances should
+be stated, but I guess just stating that hsync_start etc are typical,
+then specify some tolerance for each would help a bit?
+
+On the DSI displays in video mode there is also this EOL area
+which seems to be where the logic is normally just idling for a
+while, that can be adjusted on some hardware as well, but
+I don't quite understand it admittedly. Sometimes I wonder if
+anyone really understands DSI... :/
 
 Yours,
 Linus Walleij
