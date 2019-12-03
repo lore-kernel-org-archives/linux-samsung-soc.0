@@ -6,58 +6,58 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 754F6C432C0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Dec 2019 13:25:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1674C432C3
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Dec 2019 13:27:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47172207DD
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Dec 2019 13:25:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8AF72073B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Dec 2019 13:27:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xvis201g"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Kf2TrLzo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726182AbfLCNZT (ORCPT
+        id S1726291AbfLCN1s (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 3 Dec 2019 08:25:19 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:37705 "EHLO
+        Tue, 3 Dec 2019 08:27:48 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:36759 "EHLO
         mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726086AbfLCNZS (ORCPT
+        with ESMTP id S1726190AbfLCN1s (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 3 Dec 2019 08:25:18 -0500
-Received: by mail-lf1-f65.google.com with SMTP id b15so2950180lfc.4
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Dec 2019 05:25:17 -0800 (PST)
+        Tue, 3 Dec 2019 08:27:48 -0500
+Received: by mail-lf1-f65.google.com with SMTP id f16so2972805lfm.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Dec 2019 05:27:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=9a1hL+PexI1M8Jq7K439+8ni7/mVSuwFTy8tepPE5ag=;
-        b=xvis201gXI3TiO7rQvoI1mKBfSgzASqAd5iNB/gKNTcG/vn4Yqzhacn1uV/53tfqU8
-         kD2NRTag5a/3oe4AJYonE/5qZUY9d/e3gtDw1PcpmJ/wbepHuPFpAO2vAYkoiRl+EaUf
-         eNzFxpDgdSJ7gWNidrFThpe2xiov+axfIBro+R28+EWkRF0w07eNS6dozJjhFBRBpmMt
-         usXLfgmME3MTm5zAC5CIERmWX1iAN+xefTx1Q2ApRqbMrUAp3Ylf9AiZA9HwCUstvsYg
-         6tssUWKZp25YEHHE3kRX0wSoNqFps0sLQNBE4276+BCka+7PILtOjKGV7mxPqc5LGtcR
-         hgNg==
+        bh=w5kvvsNqTWUYowCw16IbU3x1YCmaOiYf5tGr6DU/4Oo=;
+        b=Kf2TrLzoeW7GPO93jICax9H7npFli7nKkPrAa/7pensbMPErLdSyO5cAPXKjgJ5SwW
+         dQrNoMOKIZ0oZKLp96BDVuif4EmGi5MgCrhh0N20691gPfYKiIWpucl1bpxPv8HyWwEO
+         sV/o0T5vo3zUWjf4mn/5JFm4iQ9eVy7Qwu71lDN9Y0jhqghCBoOVDyB/uDoKZVeoM5qE
+         lirCwRmMcZeJCvVkm4a8hz6Ijs6Aw/lR6XRBXo/Au/eoIX7M/1cljIRGuyDeppCzGaRX
+         SiP6V0C53L9KztUCT76fN77bWsENOXX1T2+wgpTdxmhUZRMwMYpW+0PGCrTHVh2H+JbJ
+         2ZrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=9a1hL+PexI1M8Jq7K439+8ni7/mVSuwFTy8tepPE5ag=;
-        b=gsZ4NIrFntCqQD/IdL6sEt03exKca/Q1m42HiAzyWUKaL8ICaqBWGcWpVK9aRVUPb6
-         z6OLPQLLSgAeMzaxw1ZwYjK8/mbXOZeyJdzITZ7gIFBgk1880tRmClp+c1US+QGn2lEr
-         /psTfpazPZJzbFeLY+UBNvd/Pd0Al4z/Vnu4fFx74r9BJ4MbvZjMyZkJR+YY08Jh22fc
-         x6M+HbIiLP89IwXaKu12yx6tEReVoTlFCLjVa5b2YCtrdEbB/vhCP3NbdGBplx6bG0j5
-         oquMFmP5NjerlSpa7jwlXZ4vPGyZBQrVZmGThP2kMhRZS1Qhz8V74bFwM3CtCc8CDCLV
-         hbCw==
-X-Gm-Message-State: APjAAAXlz2BhHl/PoehPXXzUnstj7D7rq77BSbzpp7oyXMVjcZn9bEPN
-        fClzaOS+qcErP9wHNkuFEydCwJnXwXyAqq3sILzATw==
-X-Google-Smtp-Source: APXvYqxTXADDPAMH7cAkcCdHzl2vjK+aV5Roq/rNhp0U0HmtoXe1KfDsidebtQJoYG7+XHWaVda6PVL/JLS+4QQ0S+k=
-X-Received: by 2002:a19:7611:: with SMTP id c17mr2569127lff.86.1575379516980;
- Tue, 03 Dec 2019 05:25:16 -0800 (PST)
+        bh=w5kvvsNqTWUYowCw16IbU3x1YCmaOiYf5tGr6DU/4Oo=;
+        b=QbH2iYZ2i8XEhvrmHaiVVv/FGY3hGh1b0ZJPZyMVNQ59JOk4n8pTCpFlnBL94svJdf
+         I94hf5M+tBVA3HX5Oe1QMJb5AWIZJeLp6LWRP7cxWO+pdX7orfTnZ7WVaYcldV6KOXUz
+         xdqfblnS7BbC/eSci7zO+ADjEi3sPJIpQx+KFmkowfyctwaiZk7gyz+Is858Tod7K3JR
+         dpE/44bvM4GRinchC4ko2MV33DjkQeybGvmRnTrZk7x+cHdhmd8uYZqu99wIpP3KP3NR
+         kiDD7I7rM6tsVaHF7LnZaN4yhHI+1CCSoQb3HwdbNFH+0CsFvsJM8hkWeWxN+bCwlm8d
+         PpBA==
+X-Gm-Message-State: APjAAAV1cpbOSr6b9VQa8NXvmF4BuITz1waQ+BpI9Hcai6lDVuG8r+Pd
+        yR5P2o4VC5rNw0DxR3NwZOCTo9IY8ffRLkHEycBDBg==
+X-Google-Smtp-Source: APXvYqyofMBPFWLLzB1STopamPLWqp8a6SLsme2LKB0JzU+G9blqUgnpYL5l6F2TBybbdU6uzjI0Yo9WQ+oH5mP/T40=
+X-Received: by 2002:a19:f701:: with SMTP id z1mr2657953lfe.133.1575379666036;
+ Tue, 03 Dec 2019 05:27:46 -0800 (PST)
 MIME-Version: 1.0
-References: <20191202193230.21310-1-sam@ravnborg.org> <20191202193230.21310-6-sam@ravnborg.org>
-In-Reply-To: <20191202193230.21310-6-sam@ravnborg.org>
+References: <20191202193230.21310-1-sam@ravnborg.org> <20191202193230.21310-9-sam@ravnborg.org>
+In-Reply-To: <20191202193230.21310-9-sam@ravnborg.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 3 Dec 2019 14:25:04 +0100
-Message-ID: <CACRpkdb9c__FUBWE6j6g9uFwYRE6CrX8gu2gbHZ-xPpZ+YkF6Q@mail.gmail.com>
-Subject: Re: [PATCH v1 05/26] drm/panel: add drm_connector argument to get_modes()
+Date:   Tue, 3 Dec 2019 14:27:34 +0100
+Message-ID: <CACRpkdbiyVcUDrxuCK_wgsB6Vn+XZptsc9H3zB0cXxjeOtw+Ug@mail.gmail.com>
+Subject: Re: [PATCH v1 08/26] drm/panel: drop drm_device from drm_panel
 To:     Sam Ravnborg <sam@ravnborg.org>
 Cc:     "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
         Thierry Reding <thierry.reding@gmail.com>,
@@ -97,15 +97,26 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On Mon, Dec 2, 2019 at 8:33 PM Sam Ravnborg <sam@ravnborg.org> wrote:
 
-> Today the bridge creates the drm_connector, but that is planned
-> to be moved to the display drivers.
-> To facilitate this, update drm_panel_funcs.get_modes() to
-> take drm_connector as an argument.
-> All panel drivers implementing get_modes() are updated.
+> The panel drivers used drm_panel.drm for two purposes:
+> 1) Argument to drm_mode_duplicate()
+> 2) drm->dev was used in error messages
+>
+> The first usage is replaced with drm_connector.dev
+> - drm_connector is already connected to a drm_device
+>   and we have a valid connector
+>
+> The second usage is replaced with drm_panel.dev
+> - this makes drivers more consistent in their dev argument
+>   used for dev_err() and friends
+>
+> With these replacements there are no more uses of drm_panel.drm,
+> so it is removed from struct drm_panel.
+> With this change drm_panel_attach() and drm_panel_detach()
+> no logner has any use as they are empty functions.
 >
 > Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
 > Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
 > Cc: Sam Ravnborg <sam@ravnborg.org>
 > Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
 > Cc: Maxime Ripard <mripard@kernel.org>
@@ -117,8 +128,6 @@ On Mon, Dec 2, 2019 at 8:33 PM Sam Ravnborg <sam@ravnborg.org> wrote:
 > Cc: Robert Chiras <robert.chiras@nxp.com>
 > Cc: "Guido G=C3=BCnther" <agx@sigxcpu.org>
 > Cc: Purism Kernel Team <kernel@puri.sm>
-
-This looks reasonable to me.
 
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
