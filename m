@@ -6,58 +6,58 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76CB0C43215
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Dec 2019 13:20:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06916C432C0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Dec 2019 13:23:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D8E4205F4
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Dec 2019 13:20:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D30F420684
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  3 Dec 2019 13:23:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZrU6IFrN"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZwcHFup3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726131AbfLCNUi (ORCPT
+        id S1726763AbfLCNXP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 3 Dec 2019 08:20:38 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38992 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726098AbfLCNUi (ORCPT
+        Tue, 3 Dec 2019 08:23:15 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:46441 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726516AbfLCNXD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 3 Dec 2019 08:20:38 -0500
-Received: by mail-lj1-f196.google.com with SMTP id e10so3772392ljj.6
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Dec 2019 05:20:37 -0800 (PST)
+        Tue, 3 Dec 2019 08:23:03 -0500
+Received: by mail-lf1-f65.google.com with SMTP id a17so2889829lfi.13
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Dec 2019 05:23:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=dM7DxIKsuRuWaeq1kSkAx5tZP4LQ1yRPP8TIc6mxOpk=;
-        b=ZrU6IFrNs/v9Z2rJ1KSkzGUV8fZWcRdhMKoXG6DN0M3+iAn1ApiRmE3ZgJ94Uo+9wZ
-         DzuzeCNox0Z3xZRWRhWq9NS7Kq69iqJ360qMic+xi3WSoWvVfcJIHPlubUEr1YqjPC6n
-         SXn0dfovwrRDvRAR6nMb9zlsIw6BuH674zeFIB8i/F1/gIumJJ3bD7wOLIyyAD+Ch5OE
-         m/5UDp46mghUjs7ZT/ryJZOV8cAlXyc2Lu2UOO2gh5yc7puCj66NVcdtTPnHrWtBY2u6
-         W3zW+ts6HbCNkFX+sFqM/OCNNJVzIuEg+uhrXbWD/7147S61i6ovPikcw7eFS0ik9JEC
-         sNog==
+        bh=lefF5BM/gcR+So8Ygs7RCzWIIBhGl0bonM5D7lIAz2M=;
+        b=ZwcHFup3L1FGPGk2xtvdRZFPmqpjl+1VvQLCjzq0rimrVIVqaG32x7PCDfBwRBdhIo
+         wfFVMCzt/nwBpmmu726MfJIBszKsNjFvMWKcURMFeYoJFnyFPvGbWfNUAkjmA0arprAH
+         xxbwDWIJo9nDwD2K3RFDnub+OayDe800qVEItuex48rNok6smlLWT62Pp3P8wxG/YbWQ
+         q5dde7mJTd61eoUyIeQ0PMpdo8DxM6TZOnmuYEYlu4eIbFMQ/aYRNjWF4Qj24lP7V1JO
+         X4rGteLiKCtTpowk5xUuEB1HkwUeJ5Mr5SgOtJornUUaf2Dz/nR/O6sc39dTBk+hVW6X
+         1kmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=dM7DxIKsuRuWaeq1kSkAx5tZP4LQ1yRPP8TIc6mxOpk=;
-        b=sItpSuXQWmnOBJWg1UnW/UgZRZx/UdDhRIHwZFxEMweTsBl4vvffMB/2s2XyPkFBiU
-         DDufHEnPmPUTJyrdoqkD978zbFTLPsIO21bHRRxkjk8yZKZRtB3sGB3UnHFfCwy4/UEd
-         Dg7u/EJfvm5VG0kKrqPNyNTdKviAfD31PgStMxjsw7xgV9TUtL1UuB1ip7hLXYIpUhAb
-         C67aeP01TeIdkR1VToXzaoBOb6HSxwjEHWf9HRMMik/4D+B+mKbAdhUrpsl7m1+ve5bH
-         7j7neVx7eo1uEI9lE+4eDvdkVcor2RvNz/13x3vrVrlFlG3KEtOwYR1AG19aImbmwq8w
-         W4Pw==
-X-Gm-Message-State: APjAAAVIpMh+YEHFjpmN6dlkDC7FgLZ9xj+pot1Temi6/isNCZcPF71i
-        kcocUnft2byAYiqoNp6oqCAJF+CAZDBk9lYdrL78fQ==
-X-Google-Smtp-Source: APXvYqzTzhKdgwJ8WJIcY2A5WR+ez0+zwm8p5MUMtgC+M9HuNmXbczoLdnQOw0NdPlAjvpjtAI7gsHbZmOicQtBst1Q=
-X-Received: by 2002:a2e:8045:: with SMTP id p5mr2556134ljg.251.1575379236563;
- Tue, 03 Dec 2019 05:20:36 -0800 (PST)
+        bh=lefF5BM/gcR+So8Ygs7RCzWIIBhGl0bonM5D7lIAz2M=;
+        b=Ia5IptD9E9GEVeTSVCerEvkC26ZI0FlCSKKhN3SltoLA8sfl13j7hzMegrLppITULO
+         OZ50JstCiPO1wO7ggnRh0AkcrRX1+RY0ZudGPSqULVCMz0q3lE4VQyLyhL6u+8jSD9dg
+         /5GtZzCyf+4VDDZRtyumKTOImXXwfSngXbIslPhvLoGxY3aBp72qcrAe8ax4mNMWvKru
+         EVQM8CfYY1FndHd1P7B+K3tRJmxuDlZ3OSFNpYmU/TP1ml7AwkDVo9ov+2XgK2MDxpH7
+         XC7shcjJsgj+5YnM/IWd+WBUXpGoejZls0Xs62QyczqbWaYIOENyHv/s48getVMUi6Uy
+         UPhw==
+X-Gm-Message-State: APjAAAXhEoftkHKDniCQXn1jw0xBceXhX6YTC+JX0JwPZ0m7D46PrNVC
+        MXAEejKQwOyH/W9VL0TSZIVP/T9bliD+5wZvXbwCFg==
+X-Google-Smtp-Source: APXvYqx22ebZnmuYdNzG9TrFSZg4isgk95/zsKEGLemAt431mQBCED4F4+fJ5lhPiKhrPXI40LsyMbi9cYOMTmUUeRQ=
+X-Received: by 2002:ac2:5083:: with SMTP id f3mr1970416lfm.135.1575379381560;
+ Tue, 03 Dec 2019 05:23:01 -0800 (PST)
 MIME-Version: 1.0
-References: <20191202193230.21310-1-sam@ravnborg.org> <20191202193230.21310-27-sam@ravnborg.org>
-In-Reply-To: <20191202193230.21310-27-sam@ravnborg.org>
+References: <20191202193230.21310-1-sam@ravnborg.org> <20191202193230.21310-5-sam@ravnborg.org>
+In-Reply-To: <20191202193230.21310-5-sam@ravnborg.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 3 Dec 2019 14:20:25 +0100
-Message-ID: <CACRpkdZcLeJuOiPPa81qj17ifi3T0YxPq0zPP0oqNv-8pvzeKg@mail.gmail.com>
-Subject: Re: [PATCH v1 26/26] drm/panel: tpo-tpg110: use drm_panel backlight support
+Date:   Tue, 3 Dec 2019 14:22:50 +0100
+Message-ID: <CACRpkdYT8u2Liq60xtTWeLc2q-R16XWtE1YstGp2WTgM2Cc6CA@mail.gmail.com>
+Subject: Re: [PATCH v1 04/26] drm: get drm_bridge_panel connector via helper
 To:     Sam Ravnborg <sam@ravnborg.org>
 Cc:     "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
         Thierry Reding <thierry.reding@gmail.com>,
@@ -84,7 +84,10 @@ Cc:     "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         Purism Kernel Team <kernel@puri.sm>,
         Sean Paul <sean@poorly.run>, Stefan Agner <stefan@agner.ch>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Eric Anholt <eric@anholt.net>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
@@ -93,15 +96,29 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On Mon, Dec 2, 2019 at 8:33 PM Sam Ravnborg <sam@ravnborg.org> wrote:
 
-> Use the backlight support in drm_panel to simplify the driver
+> The drm_connector created by drm_panel_bridge was accessed
+> via drm_panel.connector.
+> Avoid the detour around drm_panel by providing a simple get method.
+> This avoids direct access to the connector field in drm_panel in
+> the two users.
+>
+> Update pl111 and tve200 to use the new helper.
 >
 > Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Andrzej Hajda <a.hajda@samsung.com>
+> Cc: Neil Armstrong <narmstrong@baylibre.com>
+> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> Cc: Jonas Karlman <jonas@kwiboo.se>
+> Cc: Jernej Skrabec <jernej.skrabec@siol.net>
+> Cc: Eric Anholt <eric@anholt.net>
 > Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
 
+With the little issues found by Laurent fixed:
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Thanks for cleaning all of this up!
-
+Yours,
 Linus Walleij
