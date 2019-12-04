@@ -2,84 +2,199 @@ Return-Path: <SRS0=DrGz=Z2=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7B19C43603
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Dec 2019 07:06:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1982BC3F68F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Dec 2019 08:05:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 634EA20640
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Dec 2019 07:05:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBE922068E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Dec 2019 08:05:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1575443148;
-	bh=S6YXY0WSGd40GdEaNS2ZuBBJrr6gttgFTL/R8NsDtj0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=y+Cy+1eFMJYqewJgY6r9mmYBKtiemZ/0KJCdAVlzM4+BfNARbdn5InO7SN/R+PC4N
-	 ZetcMOwXiCQ7vhDKHYE6ma0XdoxupMeuRTUi7+HZ0uH83pmYYHyq/sTVAoOjg7PGOy
-	 8SqZAPIKV5ViWNexg3xl66W98VXnUtf/qohrClHg=
+	s=default; t=1575446743;
+	bh=4Hw9lWp6MYS1roMlvPfnLEYA+bo3DC0x2fFPmKaOglE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=x+0cRlomhfqDrQ5LGbyuSlInREV9YvMV+nU63LbqKUoowE9AJhrtbnvKKWWEg4mbG
+	 C2tUNZ7wHWaL6e7WG43umTteJ+F2IJVdJEvsw8pBQIYxVABCLEvXYPGbLJBtEKxCBr
+	 6dyVfrWin267PaVSgppr4bRLHcMw62UBjrFK4h2o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727196AbfLDHFs (ORCPT
+        id S1726632AbfLDIFn (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 4 Dec 2019 02:05:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35714 "EHLO mail.kernel.org"
+        Wed, 4 Dec 2019 03:05:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52874 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727195AbfLDHFs (ORCPT
+        id S1725951AbfLDIFn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 4 Dec 2019 02:05:48 -0500
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Wed, 4 Dec 2019 03:05:43 -0500
+Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E97C20640;
-        Wed,  4 Dec 2019 07:05:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1CB2F20640;
+        Wed,  4 Dec 2019 08:05:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575443147;
-        bh=S6YXY0WSGd40GdEaNS2ZuBBJrr6gttgFTL/R8NsDtj0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=oPQhtVT6DXaj/yFVSSehxU12rdGiiY2EW3oHDV3cNfOND2cxeIo9d0ygr0ouEQwRO
-         5poye7OWzkmKepdangoL/gKDAfiHtY/HIN+0W4xnLmygGO0Tw56raoYHvHBvOgXjbc
-         3vqrZjwqLoL3PfDMkKNRZ/Ewl9VxeCmS8ih4+3zo=
-Received: by mail-lj1-f179.google.com with SMTP id e10so6772149ljj.6;
-        Tue, 03 Dec 2019 23:05:46 -0800 (PST)
-X-Gm-Message-State: APjAAAXaNgMf9uF+Y+mPS9JeYcWPElf3P51l7lo7i6aerRLn4eavOf0y
-        dQqxzUD+ctmAt4935KSnGlGfYTUonf9eOHDK8fA=
-X-Google-Smtp-Source: APXvYqwmL/CgrLwkzf1hlZYxR/WYkN2neDMd1x0s3IQW70j+RMiyMWx9RmGC7qai42FYwmWcxLrrjlMhD8JwCd2wdw4=
-X-Received: by 2002:a2e:b0db:: with SMTP id g27mr983748ljl.74.1575443145285;
- Tue, 03 Dec 2019 23:05:45 -0800 (PST)
+        s=default; t=1575446741;
+        bh=4Hw9lWp6MYS1roMlvPfnLEYA+bo3DC0x2fFPmKaOglE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uEtCVoaJMD09CukTvWhpr/nzDplQfjsDB5w2UaNVVWgDqza0H6Hj4ABJvg9t8ESLw
+         wS0IqF2JWtyueuaBHYQ6v+E9IDoVDHfBlYOva15UOKiltZqM3UDsxN2PJ4FyZiCqlJ
+         uHxe4taqacBg7dEZj+qNssQ2EXeHaxU/JRMI+uk8=
+Date:   Wed, 4 Dec 2019 09:05:39 +0100
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     dri-devel@lists.freedesktop.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Abhinav Kumar <abhinavk@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jitao Shi <jitao.shi@mediatek.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Purism Kernel Team <kernel@puri.sm>,
+        Sean Paul <sean@poorly.run>, Stefan Agner <stefan@agner.ch>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCH v1 07/26] drm/panel: remove get_timings
+Message-ID: <20191204080539.z2ovccj4kjsrpttm@gilmour.lan>
+References: <20191202193230.21310-1-sam@ravnborg.org>
+ <20191202193230.21310-8-sam@ravnborg.org>
+ <20191203074659.ilsyv4yx7pzw5vax@gilmour.lan>
+ <20191203083935.GB30687@ravnborg.org>
 MIME-Version: 1.0
-References: <20191203214838.9680-1-christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20191203214838.9680-1-christophe.jaillet@wanadoo.fr>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Wed, 4 Dec 2019 15:05:33 +0800
-X-Gmail-Original-Message-ID: <CAJKOXPdfdWYELkxh0HO4GhoinG55Uk7G9o6-q+A4+pPn3f+-jA@mail.gmail.com>
-Message-ID: <CAJKOXPdfdWYELkxh0HO4GhoinG55Uk7G9o6-q+A4+pPn3f+-jA@mail.gmail.com>
-Subject: Re: [PATCH] regulator: s5m8767: Fix a warning message
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     sbkim73@samsung.com,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
-        <b.zolnierkie@samsung.com>, lgirdwood@gmail.com,
-        broonie@kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zbo7byqykz6hibco"
+Content-Disposition: inline
+In-Reply-To: <20191203083935.GB30687@ravnborg.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 4 Dec 2019 at 10:45, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> Axe a duplicated word ("property") in a warning message.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/regulator/s5m8767.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+--zbo7byqykz6hibco
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Best regards,
-Krzysztof
+On Tue, Dec 03, 2019 at 09:39:36AM +0100, Sam Ravnborg wrote:
+> On Tue, Dec 03, 2019 at 08:46:59AM +0100, Maxime Ripard wrote:
+> > Hi,
+> >
+> > On Mon, Dec 02, 2019 at 08:32:11PM +0100, Sam Ravnborg wrote:
+> > > There was no users - so remove it.
+> > > The callback was implemented in two drivers - deleted.
+> > >
+> > > Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+> > > Cc: Thierry Reding <thierry.reding@gmail.com>
+> > > Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> > > Cc: Sam Ravnborg <sam@ravnborg.org>
+> > > Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> > > Cc: Maxime Ripard <mripard@kernel.org>
+> > > Cc: David Airlie <airlied@linux.ie>
+> > > Cc: Daniel Vetter <daniel@ffwll.ch>
+> > > ---
+> > >  drivers/gpu/drm/panel/panel-seiko-43wvf1g.c | 18 ------------------
+> > >  drivers/gpu/drm/panel/panel-simple.c        | 18 ------------------
+> > >  include/drm/drm_panel.h                     |  9 ---------
+> > >  3 files changed, 45 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c b/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c
+> > > index b878930b17e4..3bcba64235c4 100644
+> > > --- a/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c
+> > > +++ b/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c
+> > > @@ -217,30 +217,12 @@ static int seiko_panel_get_modes(struct drm_panel *panel,
+> > >  	return seiko_panel_get_fixed_modes(p, connector);
+> > >  }
+> > >
+> > > -static int seiko_panel_get_timings(struct drm_panel *panel,
+> > > -				    unsigned int num_timings,
+> > > -				    struct display_timing *timings)
+> > > -{
+> > > -	struct seiko_panel *p = to_seiko_panel(panel);
+> > > -	unsigned int i;
+> > > -
+> > > -	if (p->desc->num_timings < num_timings)
+> > > -		num_timings = p->desc->num_timings;
+> > > -
+> > > -	if (timings)
+> > > -		for (i = 0; i < num_timings; i++)
+> > > -			timings[i] = p->desc->timings[i];
+> > > -
+> > > -	return p->desc->num_timings;
+> > > -}
+> > > -
+> > >  static const struct drm_panel_funcs seiko_panel_funcs = {
+> > >  	.disable = seiko_panel_disable,
+> > >  	.unprepare = seiko_panel_unprepare,
+> > >  	.prepare = seiko_panel_prepare,
+> > >  	.enable = seiko_panel_enable,
+> > >  	.get_modes = seiko_panel_get_modes,
+> > > -	.get_timings = seiko_panel_get_timings,
+> > >  };
+> >
+> > If anything, I think we should grow the usage of timings and / or make
+> > it usable by everyone.
+> >
+> > Using only the mode as we do currently has a bunch of shortcomings as
+> > almost no encoder will be able to provide the typical pixel clock, and
+> > that situation leads to multiple things:
+> >
+> >   - If someone working on one encoder wants to upstream a panel they
+> >     have tested, chances are this will not be the typical pixel clock
+> >     / timings being used but rather the one that will match what that
+> >     SoC is capable of. Trouble comes when a second user comes in with
+> >     a different encoder and different capabilities, and then we have a
+> >     maintainance fight over which timing is the true timing (with a
+> >     significant chance that none of them are).
+> >
+> >   - If we can't match the pixel clock, we currently have no easy way
+> >     to make the usual measures of reducing / growing the porches and
+> >     blankings areas to match the pixel clock we can provide, since we
+> >     don't have an easy way to get the tolerance on those timings for a
+> >     given panel. There's some ad hoc solutions on some drivers (I
+> >     think vc4 has that?) to ignore the panel and just play around with
+> >     the timings, but I think this should be generalised.
+> >
+> > Timings solves the first case since we have the operating range now
+> > and not a single set of timings, and it solves the second since we can
+> > use that range to take those measures instead of taking a shot in the
+> > dark.
+> >
+> > I appreciate that it's pretty far from where we are today, but
+> > removing the get_timings means that all the timings already defined in
+> > the panel drivers are becoming useless too, and that eventually it
+> > will get removed.
+>
+> Thanks for this nice explanation. I will drop the patch,
+> and add an entry to my TODO list to look closer at this later.
+> There are things to improve in this area.
+>
+> So the conclusion is more work rather than removing code :-)
+
+Yeah, unfortunately.. :)
+
+Maxime
+
+--zbo7byqykz6hibco
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXedo0wAKCRDj7w1vZxhR
+xfd0AP9Vt4GkG6OTb63xkfVRNr+vESfQY3qRIc1RQUyo98hYNAD/VlGCgKCQh5F4
+erCNwUBYU5DZjrI9H+0p1o4neRRPMQM=
+=tp+8
+-----END PGP SIGNATURE-----
+
+--zbo7byqykz6hibco--
