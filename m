@@ -1,172 +1,434 @@
-Return-Path: <SRS0=DrGz=Z2=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=RElU=Z3=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60D66C2BD09
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Dec 2019 16:29:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DA82C3F68F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Dec 2019 02:30:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E24020881
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Dec 2019 16:29:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A014224F8
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Dec 2019 02:30:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SFaE4RCI"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kM3AmubE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727008AbfLDQ3I (ORCPT
+        id S1728321AbfLECaI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 4 Dec 2019 11:29:08 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36531 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727989AbfLDQ3I (ORCPT
+        Wed, 4 Dec 2019 21:30:08 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:51867 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728470AbfLECaH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 4 Dec 2019 11:29:08 -0500
-Received: by mail-wr1-f67.google.com with SMTP id z3so9392086wru.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Dec 2019 08:29:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=D5rUamk1jRqETnVA6xkEMUx0o5lujMHw5GXFxHClaJw=;
-        b=SFaE4RCIwmDDdSz0C9bhzC30iU+zd/w4XXJA2AzOeR1+ARZdOgtzcuyR8IgqmWT2jr
-         tSSIBBgYdwJy+/ScbAlBPFWNkTK5zh7Y/ct8qIaiYNn9lVK1tx/vArTZQid8RjWdegbl
-         a6qEI4wvQ8/vObbkP8VJTj5sdoP2gWv5Rpx+mD4sYJ93Ourf2fY+UNjuPlpkWwxmVt1F
-         xjqG1DGqj6SRLZQIsx1L5atT/n2VnIRD8QsjKYU+LOcMZOMoHKFLdwMswSd69zGe307B
-         jrZ5NPTADNQj7SBcsI+MKqmlaF8QQGO5cUVZ8qF7e62rsZ5an0gr68EpJrPrfZu55APL
-         7xhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=D5rUamk1jRqETnVA6xkEMUx0o5lujMHw5GXFxHClaJw=;
-        b=GE6wzBobx5dBNzEHuVaTQjtmhsT/WD8cdGIQn/IrS8Xn88ubRKe76eVAHDGotXF9fU
-         nl5bWC0CvCtpBozFk/fCWOMOz7hJE2s0+1d+TAyG0riUtuEzM7pVS5+JEG40Vl1LzPaT
-         VIWRRbakHb0KBi9eCpCLW1GE/0JY+Z3ZVhWegi5fG+Y828FsEL3XXN78qsbh9z4QU8qs
-         5qLV1Z6FCXTb5c8qwSzp93W2YVC6Ue5QK5AsH0zjQmAqDwlGwcEvtmncwOUF9f99wBAs
-         6b1SIZYv8T7wlMpAAp+pY5Std3IkohRVeOs8hZgsI0Wyju+nbgJh/BEfgl8QpbLFbNFB
-         C4eg==
-X-Gm-Message-State: APjAAAXu7CatfaPSJKa4ZzDc2l6W6VLYszrXoad7qAQI0b7VuVWKcB3W
-        r1fLWEuf+sb7VUG2JyfGRRRoWg==
-X-Google-Smtp-Source: APXvYqxITTt4HxwKJDBAdAOuT1oxKRnN7NiezOH1hmqfYsbbHcZe+pn3Eyw/7aP7Lev4C3+bqA0x/g==
-X-Received: by 2002:a5d:4ec2:: with SMTP id s2mr4801350wrv.291.1575476945208;
-        Wed, 04 Dec 2019 08:29:05 -0800 (PST)
-Received: from ?IPv6:2a01:e34:ed2f:f020:d965:ceae:a314:6edb? ([2a01:e34:ed2f:f020:d965:ceae:a314:6edb])
-        by smtp.googlemail.com with ESMTPSA id f24sm7269260wmb.37.2019.12.04.08.29.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Dec 2019 08:29:04 -0800 (PST)
-Subject: Re: [PATCH v2 00/11] thermal: clean up output of make W=1
-To:     Amit Kucheria <amit.kucheria@linaro.org>,
-        linux-kernel@vger.kernel.org, edubezval@gmail.com,
-        Amit Daniel Kachhap <amit.kachhap@gmail.com>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Javi Merino <javi.merino@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jun Nie <jun.nie@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>
-Cc:     linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <cover.1574242756.git.amit.kucheria@linaro.org>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <4318ca22-2e7c-c529-e97d-73eec7266376@linaro.org>
-Date:   Wed, 4 Dec 2019 17:29:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        Wed, 4 Dec 2019 21:30:07 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20191205023002epoutp0143706c300f7b48f646878bcc04af4a3c~dWLppFN7G0159301593epoutp01o
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Dec 2019 02:30:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20191205023002epoutp0143706c300f7b48f646878bcc04af4a3c~dWLppFN7G0159301593epoutp01o
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1575513002;
+        bh=xbucTyOyREF5meUyQSLulUXE71x8nxaKe9G52STj/fU=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=kM3AmubES3GAbwHu2NP1Io1QtURJ/lGDaA+lBNM3Ozrdum9oLHJENbSwBnlFkagO9
+         X1WjXU4ZRWpq9ROaaCN7GOBK2L8zBvgL3GCFWm7r3g7wRJJTP5POyP/f+/6hnvNsmX
+         8GEGdutfrIKXhUb3uTmXaHkKxcgbgLPOtFHiGIQE=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20191205023001epcas1p106a6b1a5dd25d446e3ef1ba24b210f38~dWLpFOQRT1269412694epcas1p1F;
+        Thu,  5 Dec 2019 02:30:01 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.158]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 47T06v08VNzMqYky; Thu,  5 Dec
+        2019 02:29:59 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B7.12.48019.6AB68ED5; Thu,  5 Dec 2019 11:29:58 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20191205022958epcas1p17f0a9e0e9eab0cf0a694488a6ea600e8~dWLmIOJO13049230492epcas1p1Z;
+        Thu,  5 Dec 2019 02:29:58 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191205022958epsmtrp10453ecaaba8a07de06d53e080f850b2a~dWLmHYiXM2210222102epsmtrp1T;
+        Thu,  5 Dec 2019 02:29:58 +0000 (GMT)
+X-AuditID: b6c32a38-23fff7000001bb93-2b-5de86ba6e638
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        ED.94.10238.6AB68ED5; Thu,  5 Dec 2019 11:29:58 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191205022958epsmtip2895550fb1dc64ea8aa192e53892d5d02~dWLl2eFut2086620866epsmtip2Z;
+        Thu,  5 Dec 2019 02:29:58 +0000 (GMT)
+Subject: Re: [RFC PATCH v2 09/11] devfreq: exynos-bus: Add interconnect
+ functionality to exynos-bus
+To:     =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc:     myungjoo.ham@samsung.com, inki.dae@samsung.com,
+        sw0312.kim@samsung.com, georgi.djakov@linaro.org,
+        leonard.crestez@nxp.com, m.szyprowski@samsung.com,
+        b.zolnierkie@samsung.com, krzk@kernel.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <1050604c-00e7-ca81-032b-1aee9a3f8c9f@samsung.com>
+Date:   Thu, 5 Dec 2019 11:36:12 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1574242756.git.amit.kucheria@linaro.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <9b3b21d3e4678946724531c58ad7f9c7a3993a95.camel@samsung.com>
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrBJsWRmVeSWpSXmKPExsWy7bCmnu6y7BexBkfmWFvcn9fKaLFxxnpW
+        i/lHzrFaXPn6ns1i+t5NbBaT7k9gsTh/fgO7xYq7H1ktNj2+xmpxedccNovPvUcYLWac38dk
+        sfbIXXaL240r2CxmTH7J5sDvsWlVJ5vHnWt72Dzudx9n8ti8pN5j47sdTB59W1YxenzeJBfA
+        HpVtk5GamJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr5OIToOuWmQN0t5JC
+        WWJOKVAoILG4WEnfzqYov7QkVSEjv7jEVim1ICWnwLJArzgxt7g0L10vOT/XytDAwMgUqDAh
+        O2PXJO2Cg94Ve5+vYGpgbLPtYuTkkBAwkdj/qJe5i5GLQ0hgB6PEjdfL2CGcT4wSe2a9ZoVw
+        vjFKLL3dwQzTcvz+aTaIxF5Giat7t0G1vGeU2PnxKQtIlbBAqsSctdvBBosI/GeUOL1sJdgs
+        ZoFjjBJ77/wEq2IT0JLY/+IGG4jNL6AocfXHY0YQm1fATmLOnVfsIDaLgIrErM0XmEBsUYEw
+        iZPbWqBqBCVOznwCNodTwFPi7JZ3YDazgLjErSfzmSBseYnmrbPBrpAQ2Mcu8fbaWSaIJ1wk
+        Tm3+zwphC0u8Or6FHcKWknjZ3wZlV0usPHmEDaK5g1Fiy/4LUA3GEvuXTgYaxAG0QVNi/S59
+        iLCixM7fcxkhFvNJvPvawwpSIiHAK9HRJgRRoixx+cFdqBMkJRa3d7JNYFSaheSdWUhemIXk
+        hVkIyxYwsqxiFEstKM5NTy02LDBBju9NjOBUrWWxg3HPOZ9DjAIcjEo8vA2bnscKsSaWFVfm
+        HmKU4GBWEuHdJvE0Vog3JbGyKrUoP76oNCe1+BCjKTC0JzJLiSbnA/NIXkm8oamRsbGxhYmh
+        mamhoZI4L8ePi7FCAumJJanZqakFqUUwfUwcnFINjByVHvcKJxmYdO9xMG3ssVqSMOlE0fGK
+        v5c7ps9waWtcskBo+jPbPw+KTMMirv3u3N6/uvBOhWHcvLuzre+XLzmbz2p354j5uh1vr/K1
+        e/m5cS11MrFdKr7ygmVdReQkTZMNr4QZ/8d4T/28+Gx+w5LTW1o0p6f637jY0vTt+04P3zce
+        TU93f1FiKc5INNRiLipOBABRkh746wMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsWy7bCSvO6y7BexBsc+iVvcn9fKaLFxxnpW
+        i/lHzrFaXPn6ns1i+t5NbBaT7k9gsTh/fgO7xYq7H1ktNj2+xmpxedccNovPvUcYLWac38dk
+        sfbIXXaL240r2CxmTH7J5sDvsWlVJ5vHnWt72Dzudx9n8ti8pN5j47sdTB59W1YxenzeJBfA
+        HsVlk5Kak1mWWqRvl8CVsWuSdsFB74q9z1cwNTC22XYxcnJICJhIHL9/mq2LkYtDSGA3o8Sf
+        ZX/ZIRKSEtMuHmXuYuQAsoUlDh8uhqh5yyixc+t0VpAaYYFUiTlrtzODJEQE/jNKPGw7xgji
+        MAscY5T4uGI9K0TLBiaJ27/6wVrYBLQk9r+4wQZi8wsoSlz98ZgRxOYVsJOYc+cV2GoWARWJ
+        WZsvMIHYogJhEjuXPGaCqBGUODnzCQuIzSngKXF2yzswm1lAXeLPvEvMELa4xK0n85kgbHmJ
+        5q2zmScwCs9C0j4LScssJC2zkLQsYGRZxSiZWlCcm55bbFhgmJdarlecmFtcmpeul5yfu4kR
+        HLNamjsYLy+JP8QowMGoxMPbsOl5rBBrYllxZe4hRgkOZiUR3m0ST2OFeFMSK6tSi/Lji0pz
+        UosPMUpzsCiJ8z7NOxYpJJCeWJKanZpakFoEk2Xi4JRqYFze2724vVslWKfUn/l5WdSdutXi
+        pWaLDs+LN3onPj+4ZP+sT34vTnbfNahS/Pxk42fJ9hSnkIuT5ZLY9k3YeD+r+NrFmPPcNhOq
+        uH0PaGnu2Rl4LFbv1/+Ebd96u/bET8peV9Xe8cg12l+mZWFz4S5bv+V8PPuaGPNrTq2Yd8BI
+        /b/GpG63V0osxRmJhlrMRcWJAPwoDGfVAgAA
+X-CMS-MailID: 20191205022958epcas1p17f0a9e0e9eab0cf0a694488a6ea600e8
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190919142329eucas1p2e53992eab9ec6b404f716f955b3c228e
+References: <20190919142236.4071-1-a.swigon@samsung.com>
+        <CGME20190919142329eucas1p2e53992eab9ec6b404f716f955b3c228e@eucas1p2.samsung.com>
+        <20190919142236.4071-10-a.swigon@samsung.com>
+        <e004bedd-294b-172b-5e34-bf7afcfd04bc@samsung.com>
+        <9b3b21d3e4678946724531c58ad7f9c7a3993a95.camel@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 20/11/2019 16:45, Amit Kucheria wrote:
-> Cleanup output of make W=1 inside drivers/thermal. This should allow us to
-> focus on real issues that tend to get lost in the noise much better.
-> 
-> There is no functional change. This series was generate on top of
-> linux-next from 20191119.
-> 
-> Changes since v1:
-> - Add review tags
-> - Fixed up commit message for devfreq_cooling and samsung changes
+Hi Artur,
 
-Applied, thanks!
+On 12/3/19 2:05 AM, Artur Świgoń wrote:
+> Hi Chanwoo,
+> 
+> On Wed, 2019-09-25 at 16:03 +0900, Chanwoo Choi wrote:
+>> Hi,
+>>
+>> I need the time to dig the ICC framework
+>> to understand them detailed. After that, I'll review this.
+> 
+> Any updates on this topic?
+
+I'm sorry for delaying the review of  this topic related to icc.
+The review and merge of devfreq pm-qos feature will be finished over soon.
+Because this series depends on the devfreq pm-qos feature
+
+I'll dig into ICC related patches for exynos and imx[1].
+[1] https://lore.kernel.org/linux-arm-kernel/008f2fa973b23fc716d678c5bd35af54@akkea.ca/T/
+[PATCH RFC v6 0/9] interconnect: Add imx support via devfreq
+
+> 
+> Regardless of the purpose of this RFC, I think patches 01-04
+> are still beneficial to devfreq. I can rebase and post them
+> as a separate series if you wish.
+
+Yes. please split out patch1-4 from this series
+and send them based on linux-next.git separately.
+
+> 
+>> Basically, I agree this approach. But, I'm wondering
+>> the existing binding method between 'bus_leftbus' and 'bus_dmc'.
+>> From before, I thought that devfreq framework need to
+>> enhance the binding method between parent devfreq device
+>> and passive devfreq device instead of 'devfreq' property.
+>>
+>> On this patch, use the same binding way between
+>> 'bus_leftbus' and 'bus_dmc' with 'parent' property
+>> as following:
+>>
+>> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+>> @@ -106,6 +106,7 @@
+>>  &bus_leftbus {
+>>  	devfreq-events = <&ppmu_leftbus_3>, <&ppmu_rightbus_3>;
+>>  	vdd-supply = <&buck3_reg>;
+>> +	parent = <&bus_dmc>;
+>>  	status = "okay";
+>>  };
+>>
+>> I'm not sure about continuing to use this method for new feature.
+>> If possible, hope to replace the existing binding style
+>> with new method like of_graph. Actually, I don't know the correct method.
+>>
+>>
+>> On 19. 9. 19. 오후 11:22, Artur Świgoń wrote:
+>>> From: Artur Świgoń <a.swigon@partner.samsung.com>
+>>>
+>>> This patch adds interconnect functionality to the exynos-bus devfreq
+>>> driver.
+>>>
+>>> The SoC topology is a graph (or, more specifically, a tree) and most of
+>>> its edges are taken from the devfreq parent-child hierarchy (cf.
+>>> Documentation/devicetree/bindings/devfreq/exynos-bus.txt). Due to
+>>> unspecified relative probing order, -EPROBE_DEFER may be propagated to
+>>> guarantee that a child is probed before its parent.
+>>>
+>>> Each bus is now an interconnect provider and an interconnect node as well
+>>> (cf. Documentation/interconnect/interconnect.rst), i.e. every bus registers
+>>> itself as a node. Node IDs are not hardcoded but rather assigned at
+>>> runtime, in probing order (subject to the above-mentioned exception
+>>> regarding relative order). This approach allows for using this driver with
+>>> various Exynos SoCs.
+>>>
+>>> Frequencies requested via the interconnect API for a given node are
+>>> propagated to devfreq using dev_pm_qos_update_request(). Please note that
+>>> it is not an error when CONFIG_INTERCONNECT is 'n', in which case all
+>>> interconnect API functions are no-op.
+>>>
+>>> Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
+>>> ---
+>>>  drivers/devfreq/exynos-bus.c | 153 +++++++++++++++++++++++++++++++++++
+>>>  1 file changed, 153 insertions(+)
+>>>
+>>> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+>>> index 8d44810cac69..e0232202720d 100644
+>>> --- a/drivers/devfreq/exynos-bus.c
+>>> +++ b/drivers/devfreq/exynos-bus.c
+>>> @@ -14,14 +14,19 @@
+>>>  #include <linux/devfreq-event.h>
+>>>  #include <linux/device.h>
+>>>  #include <linux/export.h>
+>>> +#include <linux/idr.h>
+>>> +#include <linux/interconnect-provider.h>
+>>>  #include <linux/module.h>
+>>>  #include <linux/of.h>
+>>>  #include <linux/pm_opp.h>
+>>> +#include <linux/pm_qos.h>
+>>>  #include <linux/platform_device.h>
+>>>  #include <linux/regulator/consumer.h>
+>>>  
+>>>  #define DEFAULT_SATURATION_RATIO	40
+>>>  
+>>> +#define icc_units_to_khz(x) ((x) / 8)
+>>> +
+>>>  struct exynos_bus {
+>>>  	struct device *dev;
+>>>  
+>>> @@ -35,6 +40,12 @@ struct exynos_bus {
+>>>  	struct opp_table *opp_table;
+>>>  	struct clk *clk;
+>>>  	unsigned int ratio;
+>>> +
+>>> +	/* One provider per bus, one node per provider */
+>>> +	struct icc_provider provider;
+>>> +	struct icc_node *node;
+>>> +
+>>> +	struct dev_pm_qos_request qos_req;
+>>>  };
+>>>  
+>>>  /*
+>>> @@ -59,6 +70,13 @@ exynos_bus_ops_edev(enable_edev);
+>>>  exynos_bus_ops_edev(disable_edev);
+>>>  exynos_bus_ops_edev(set_event);
+>>>  
+>>> +static int exynos_bus_next_id(void)
+>>> +{
+>>> +	static DEFINE_IDA(exynos_bus_icc_ida);
+>>> +
+>>> +	return ida_alloc(&exynos_bus_icc_ida, GFP_KERNEL);
+>>> +}
+>>> +
+>>>  static int exynos_bus_get_event(struct exynos_bus *bus,
+>>>  				struct devfreq_event_data *edata)
+>>>  {
+>>> @@ -171,6 +189,38 @@ static void exynos_bus_passive_exit(struct device *dev)
+>>>  	clk_disable_unprepare(bus->clk);
+>>>  }
+>>>  
+>>> +static int exynos_bus_icc_set(struct icc_node *src, struct icc_node *dst)
+>>> +{
+>>> +	struct exynos_bus *src_bus = src->data, *dst_bus = dst->data;
+>>> +	s32 src_freq = icc_units_to_khz(src->avg_bw);
+>>> +	s32 dst_freq = icc_units_to_khz(dst->avg_bw);
+>>> +
+>>> +	dev_pm_qos_update_request(&src_bus->qos_req, src_freq);
+>>> +	dev_pm_qos_update_request(&dst_bus->qos_req, dst_freq);
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static int exynos_bus_icc_aggregate(struct icc_node *node, u32 tag, u32 avg_bw,
+>>> +				    u32 peak_bw, u32 *agg_avg, u32 *agg_peak)
+>>> +{
+>>> +	*agg_avg += avg_bw;
+>>> +	*agg_peak = max(*agg_peak, peak_bw);
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static struct icc_node *exynos_bus_icc_xlate(struct of_phandle_args *spec,
+>>> +					     void *data)
+>>> +{
+>>> +	struct exynos_bus *bus = data;
+>>> +
+>>> +	if (spec->np != bus->dev->of_node)
+>>> +		return ERR_PTR(-EINVAL);
+>>> +
+>>> +	return bus->node;
+>>> +}
+>>> +
+>>>  static int exynos_bus_parent_parse_of(struct device_node *np,
+>>>  					struct exynos_bus *bus)
+>>>  {
+>>> @@ -366,6 +416,101 @@ static int exynos_bus_profile_init_passive(struct exynos_bus *bus,
+>>>  	return 0;
+>>>  }
+>>>  
+>>> +static int exynos_bus_icc_connect(struct exynos_bus *bus)
+>>> +{
+>>> +	struct device_node *np = bus->dev->of_node;
+>>> +	struct devfreq *parent_devfreq;
+>>> +	struct icc_node *parent_node = NULL;
+>>> +	struct of_phandle_args args;
+>>> +	int ret = 0;
+>>> +
+>>> +	parent_devfreq = devfreq_get_devfreq_by_phandle(bus->dev, 0);
+>>> +	if (!IS_ERR(parent_devfreq)) {
+>>> +		struct exynos_bus *parent_bus;
+>>> +
+>>> +		parent_bus = dev_get_drvdata(parent_devfreq->dev.parent);
+>>> +		parent_node = parent_bus->node;
+>>> +	} else {
+>>> +		/* Look for parent in DT */
+>>> +		int num = of_count_phandle_with_args(np, "parent",
+>>> +						     "#interconnect-cells");
+>>> +		if (num != 1)
+>>> +			goto out; /* 'parent' is optional */
+>>> +
+>>> +		ret = of_parse_phandle_with_args(np, "parent",
+>>> +						 "#interconnect-cells",
+>>> +						 0, &args);
+>>> +		if (ret < 0)
+>>> +			goto out;
+>>> +
+>>> +		of_node_put(args.np);
+>>> +
+>>> +		parent_node = of_icc_get_from_provider(&args);
+>>> +		if (IS_ERR(parent_node)) {
+>>> +			/* May be -EPROBE_DEFER */
+>>> +			ret = PTR_ERR(parent_node);
+>>> +			goto out;
+>>> +		}
+>>> +	}
+>>
+>>
+>>
+>>> +
+>>> +	ret = icc_link_create(bus->node, parent_node->id);
+>>> +
+>>> +out:
+>>> +	return ret;
+>>> +}
+>>> +
+>>> +static int exynos_bus_icc_init(struct exynos_bus *bus)
+>>> +{
+>>> +	struct device *dev = bus->dev;
+>>> +	struct icc_provider *provider = &bus->provider;
+>>> +	struct icc_node *node;
+>>> +	int id, ret;
+>>> +
+>>> +	/* Initialize the interconnect provider */
+>>> +	provider->set = exynos_bus_icc_set;
+>>> +	provider->aggregate = exynos_bus_icc_aggregate;
+>>> +	provider->xlate = exynos_bus_icc_xlate;
+>>> +	provider->dev = dev;
+>>> +	provider->data = bus;
+>>> +
+>>> +	ret = icc_provider_add(provider);
+>>> +	if (ret < 0)
+>>> +		goto out;
+>>> +
+>>> +	ret = id = exynos_bus_next_id();
+>>> +	if (ret < 0)
+>>> +		goto err_node;
+>>> +
+>>> +	node = icc_node_create(id);
+>>> +	if (IS_ERR(node)) {
+>>> +		ret = PTR_ERR(node);
+>>> +		goto err_node;
+>>> +	}
+>>> +
+>>> +	bus->node = node;
+>>> +	node->name = dev->of_node->name;
+>>> +	node->data = bus;
+>>> +	icc_node_add(node, provider);
+>>> +
+>>> +	ret = exynos_bus_icc_connect(bus);
+>>> +	if (ret < 0)
+>>> +		goto err_connect;
+>>> +
+>>> +	ret = dev_pm_qos_add_request(bus->devfreq->dev.parent, &bus->qos_req,
+>>> +				     DEV_PM_QOS_MIN_FREQUENCY, 0);
+>>> +
+>>> +out:
+>>> +	return ret;
+>>> +
+>>> +err_connect:
+>>> +	icc_node_del(node);
+>>> +	icc_node_destroy(id);
+>>> +err_node:
+>>> +	icc_provider_del(provider);
+>>> +
+>>> +	return ret;
+>>> +}
+>>> +
+>>>  static int exynos_bus_probe(struct platform_device *pdev)
+>>>  {
+>>>  	struct device *dev = &pdev->dev;
+>>> @@ -415,6 +560,14 @@ static int exynos_bus_probe(struct platform_device *pdev)
+>>>  	if (ret < 0)
+>>>  		goto err;
+>>>  
+>>> +	/*
+>>> +	 * Initialize interconnect provider. A return value of -ENOTSUPP means
+>>> +	 * that CONFIG_INTERCONNECT is disabled.
+>>> +	 */
+>>> +	ret = exynos_bus_icc_init(bus);
+>>> +	if (ret < 0 && ret != -ENOTSUPP)
+>>> +		goto err;
+>>> +
+>>>  	max_state = bus->devfreq->profile->max_state;
+>>>  	min_freq = (bus->devfreq->profile->freq_table[0] / 1000);
+>>>  	max_freq = (bus->devfreq->profile->freq_table[max_state - 1] / 1000);
+>>>
+>>
+> 
+> Best regards,
+> 
 
 
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
