@@ -2,154 +2,141 @@ Return-Path: <SRS0=2tJj=Z4=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ACACC2BD09
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Dec 2019 11:46:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9464BC43603
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Dec 2019 12:48:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 400132464E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Dec 2019 11:46:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B95C24670
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Dec 2019 12:48:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fowoM1Jn"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XEKnfpA2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726193AbfLFLqc (ORCPT
+        id S1726171AbfLFMs2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 6 Dec 2019 06:46:32 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:38078 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726140AbfLFLqc (ORCPT
+        Fri, 6 Dec 2019 07:48:28 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:51899 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726124AbfLFMs2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 6 Dec 2019 06:46:32 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191206114631euoutp01d8c0d7ad59f2ddca5a74294a737c342e~dxa0EjZhz0067800678euoutp01E
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Dec 2019 11:46:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191206114631euoutp01d8c0d7ad59f2ddca5a74294a737c342e~dxa0EjZhz0067800678euoutp01E
+        Fri, 6 Dec 2019 07:48:28 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20191206124827euoutp0271535c75bfe843617b5c7b553d28d83e~dyQ4Y9Bxw0630306303euoutp027
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Dec 2019 12:48:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20191206124827euoutp0271535c75bfe843617b5c7b553d28d83e~dyQ4Y9Bxw0630306303euoutp027
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1575632791;
-        bh=svjuCCVEXJk6xEMPEM9gCBIhbE25vykclQTcfBA9yTk=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=fowoM1Jnhv1fVdwI+A25kV/kTBvpdJYT9012TiUqs+MLDOZKQ9gSLwHYuO6CbJyJA
-         vd+hUGJj6nL9c8/l7toJavDOediMBGqvRX8scIxWLrc3t1Jz2hjdEDyYcgrfJIAITO
-         QTWs0G91JiFT6hYYFdnidDW70XzeV3+/CgHS4kaM=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        s=mail20170921; t=1575636507;
+        bh=0mPnHOxifTMNnDk+T8fh9C2CByasDOb3u9TlEkhdvR4=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=XEKnfpA2fXDm6f5sVUNBzF7SDyQ1nqBIgq4EY0vg8um2pjYjvIHpvcujsVYUUS+MY
+         YT2nVXy5GJkcgdTGuFIUKb7YD4WpX+PgQhz9arZ7Maplnf7kA0L63vK+8NLaNNeNNF
+         NjXAN/+5hSBn+z7ELVvB48UA9CXcFWpW0JyQqQWs=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191206114631eucas1p1a7fa8fb65a2a33237fb6f23ef8b44a2b~dxazy5hkp0753707537eucas1p1H;
-        Fri,  6 Dec 2019 11:46:31 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 07.88.60698.79F3AED5; Fri,  6
-        Dec 2019 11:46:31 +0000 (GMT)
+        20191206124826eucas1p1e6e997b1a7927169c80d7d73249bd548~dyQ4LYOdH0877408774eucas1p1h;
+        Fri,  6 Dec 2019 12:48:26 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 49.77.60679.A1E4AED5; Fri,  6
+        Dec 2019 12:48:26 +0000 (GMT)
 Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20191206114630eucas1p2e7f83a827da063649b2308ede1a8dc6b~dxazft6Hj2249122491eucas1p2N;
-        Fri,  6 Dec 2019 11:46:30 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        20191206124826eucas1p246538607df51f2d68bce3b09d974b292~dyQ34_iYE2365523655eucas1p2u;
+        Fri,  6 Dec 2019 12:48:26 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191206114630eusmtrp24d6f90b580cc149a5cb7d5dc6c4f08c6~dxazfIVbk2763727637eusmtrp2G;
-        Fri,  6 Dec 2019 11:46:30 +0000 (GMT)
-X-AuditID: cbfec7f5-a0fff7000001ed1a-06-5dea3f970aca
+        20191206124826eusmtrp2e9ec69db6caf0d03d430b187952856dd~dyQ34Z2LY3235632356eusmtrp25;
+        Fri,  6 Dec 2019 12:48:26 +0000 (GMT)
+X-AuditID: cbfec7f4-0e5ff7000001ed07-4b-5dea4e1aa5a0
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 2D.90.07950.69F3AED5; Fri,  6
-        Dec 2019 11:46:30 +0000 (GMT)
-Received: from [106.120.51.15] (unknown [106.120.51.15]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 91.86.08375.A1E4AED5; Fri,  6
+        Dec 2019 12:48:26 +0000 (GMT)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
         eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191206114630eusmtip2e6238553c02e57269920faa1ab773881~dxazIjI943030430304eusmtip2f;
-        Fri,  6 Dec 2019 11:46:30 +0000 (GMT)
-Subject: Re: [PATCH 2/2] dmaengine: pl330: Convert to the *_late and *_early
- system sleep callbacks
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
+        20191206124825eusmtip216330cd05f244d74a0f3faecf941c28a~dyQ3Xd6RI0676806768eusmtip2B;
+        Fri,  6 Dec 2019 12:48:25 +0000 (GMT)
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <5b0b6206-00c2-4abe-bdcd-97245ac6f692@samsung.com>
-Date:   Fri, 6 Dec 2019 12:46:30 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
-        Thunderbird/60.9.1
-MIME-Version: 1.0
-In-Reply-To: <20191205143746.24873-3-ulf.hansson@linaro.org>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLKsWRmVeSWpSXmKPExsWy7djPc7rT7V/FGux8w26xeupfVovz5zew
-        W2x6fI3VYsb5fUwWx9eGW+y8c4LZgc1j06pONo871/aweWxeUu/xeZNcAEsUl01Kak5mWWqR
-        vl0CV8aTWd/YCiZwVpzYdp+1gXEXexcjJ4eEgInEiZd3mboYuTiEBFYwSiz50MgK4XxhlOj+
-        fAzK+cwoMbvlIiNMS++nyVAtyxklWj88YYdw3jJKfF3ZA+RwcAgLpEqs3WgO0iAikCIxZc5i
-        VpAws0CJxIO7fiBhNgFDia63XWwgNq+AncSCSa2sIDaLgIrE2hOLWEDKRQViJTqWZ0CUCEqc
-        nPmEBcTmFLCR2LnlCxOIzSwgL7H97RxmCFtc4taT+WCnSQgsYpfo+rmEBeJmF4nuzkNsELaw
-        xKvjW6Del5H4vxOmoZlR4uG5tewQTg+jxOWmGVAfW0scPn4R6gFNifW79CHCjhLTL65kBglL
-        CPBJ3HgrCHEEn8SkbdOhwrwSHW1CENVqErOOr4Nbe/DCJeYJjEqzkLw2C8k7s5C8Mwth7wJG
-        llWM4qmlxbnpqcXGeanlesWJucWleel6yfm5mxiBieb0v+NfdzDu+5N0iFGAg1GJh3fG5xex
-        QqyJZcWVuYcYJTiYlUR40/lexgrxpiRWVqUW5ccXleakFh9ilOZgURLnNV4ElBJITyxJzU5N
-        LUgtgskycXBKNTCyvBIpmzL/RoSMxfO8F8rtuwuCH8++sN10vk7kuxz+Pd8dnCYUxmzj+bCs
-        e1KJx2Xx99XNWW0VkceSrq6b0H1D1O5TyNIVyk5TOX/NDgxnOFDjG1KYot83W3DlxaKcP28q
-        1r2qiozd7War2M8buThQR3Ad287tMTuaJSJ+6b398zpsbxTHOUMlluKMREMt5qLiRADEjJfY
-        MAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHIsWRmVeSWpSXmKPExsVy+t/xe7rT7F/FGqxsNrdYPfUvq8X58xvY
-        LTY9vsZqMeP8PiaL42vDLXbeOcHswOaxaVUnm8eda3vYPDYvqff4vEkugCVKz6Yov7QkVSEj
-        v7jEVina0MJIz9DSQs/IxFLP0Ng81srIVEnfziYlNSezLLVI3y5BL+PJrG9sBRM4K05su8/a
-        wLiLvYuRk0NCwESi99Nkpi5GLg4hgaWMEh/ffWOGSMhInJzWwAphC0v8udbFBmILCbxmlHjw
-        2quLkYNDWCBVYu1Gc5CwiECKxLm2h6wgYWaBEolZL7Igqg8ySkzeaQRiswkYSnS9hZjCK2An
-        sWBSK9h0FgEVibUnFrGA2KICsRLfV35ihKgRlDg58wlYnFPARmLnli9MIDazgJnEvM0PmSFs
-        eYntb+dA2eISt57MZ5rAKDQLSfssJC2zkLTMQtKygJFlFaNIamlxbnpusZFecWJucWleul5y
-        fu4mRmBcbTv2c8sOxq53wYcYBTgYlXh4Z3x+ESvEmlhWXJl7iFGCg1lJhDed72WsEG9KYmVV
-        alF+fFFpTmrxIUZToOcmMkuJJucDYz6vJN7Q1NDcwtLQ3Njc2MxCSZy3Q+BgjJBAemJJanZq
-        akFqEUwfEwenVAOjzRkD/tgZF7j8ll1izzErUXhxwdZd36tacdZ048l7ioKcN7/fPl/5VXzK
-        a+5UC4Poi/p/PjCr7PjhwCoroW/tzXslM+G6ud7izRFsWUuenfJ9MdPp+7uCP8y75oVVH9uu
-        3zz/AqOVLvMXHw1HzuMHMubOFxY95cjy7ArLG8alR7bETzjm46asxFKckWioxVxUnAgAAsah
-        G8ECAAA=
-X-CMS-MailID: 20191206114630eucas1p2e7f83a827da063649b2308ede1a8dc6b
+To:     linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Kusanagi Kouichi <slash@ac.auone-net.jp>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH v2] arm: exynos_config: Restore debugfs support
+Date:   Fri,  6 Dec 2019 13:47:21 +0100
+Message-Id: <20191206124721.9025-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOIsWRmVeSWpSXmKPExsWy7djP87pSfq9iDbY90LXYOGM9q8X58xvY
+        LTY9vsZqcXnXHDaLGef3MVmsPXKX3WJfxwMmi+evzjI7cHisWLSX3aNl3y12j02rOtk8Ni+p
+        9+jbsorR4/MmuQC2KC6blNSczLLUIn27BK6M8+t/sBTs5qz4ePwlUwPjNI4uRk4OCQETicPX
+        rjJ1MXJxCAmsYJRo33SVHcL5wihxZdsbFgjnM6PEjWtH2WFarh/aB9WynFFidtc/FpAEWMuz
+        yYkgNpuAoUTX2y42EFtEIFui8/EDRpAGZoFHjBJ/dl5nAkkIC9hL7LuwixHEZhFQlVjRvRQs
+        zitgI7Fy5U+obfISqzccYIawn7NJTH4nCmG7SGye+YMJwhaWeHV8C1S9jMT/nfPBrpMQaGaU
+        eHhuLTuE08MocblpBiNElbXE4eMXWbsYOYBO0pRYv0sfxJQQcJRYskQZwuSTuPFWEKSYGcic
+        tG06M0SYV6KjTQhihprErOPr4LYevHAJ6koPiafrTzBDgiRWomfbfLYJjHKzEFYtYGRcxSie
+        Wlqcm55abJSXWq5XnJhbXJqXrpecn7uJEZgcTv87/mUH464/SYcYBTgYlXh4Z3x+ESvEmlhW
+        XJl7iFGCg1lJhDed72WsEG9KYmVValF+fFFpTmrxIUZpDhYlcV7jRUApgfTEktTs1NSC1CKY
+        LBMHp1QDI0PLcrP1E0veiShZ52gunGXyS/pZQYn3GoYrX/aaBUhd+hFh0v04Vrtsm4cOc8Wy
+        bvFpfruma8yUM0jb9FxjmfIfXtYT3HlLWoTniCvdmykWfuWU3Fy3fosV4SvCm76tnjBhg4ST
+        bfezrNnb4r6dXr1mWRujFcvR3lVM1wSrXhss2ilXuD6PX4mlOCPRUIu5qDgRADJOk0kKAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLLMWRmVeSWpSXmKPExsVy+t/xe7pSfq9iDdbtFbfYOGM9q8X58xvY
+        LTY9vsZqcXnXHDaLGef3MVmsPXKX3WJfxwMmi+evzjI7cHisWLSX3aNl3y12j02rOtk8Ni+p
+        9+jbsorR4/MmuQC2KD2bovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSc
+        zLLUIn27BL2M8+t/sBTs5qz4ePwlUwPjNI4uRk4OCQETieuH9jGB2EICSxklpq7RhojLSJyc
+        1sAKYQtL/LnWxdbFyAVU84lR4t7Ey2wgCTYBQ4mutyAJDg4RgVyJN8vEQWqYBZ4wSpxad54R
+        pEZYwF5i34VdYDaLgKrEiu6lYMt4BWwkVq78yQ6xQF5i9YYDzBMYeRYwMqxiFEktLc5Nzy02
+        1CtOzC0uzUvXS87P3cQIDMptx35u3sF4aWPwIUYBDkYlHt4Zn1/ECrEmlhVX5h5ilOBgVhLh
+        Ted7GSvEm5JYWZValB9fVJqTWnyI0RRo+URmKdHkfGDE5JXEG5oamltYGpobmxubWSiJ83YI
+        HIwREkhPLEnNTk0tSC2C6WPi4JRqYLRdvzU4NH/fweRlmtv3GFX0THs0Z3Jg+BqO74vP/5Cz
+        zHZcvbDmGPvWPyphZRtvGEg3vN+i9Vlw26TXmUl7a+ZOy+L+r2a1T8t75RZZrl9yz6K2mR5W
+        TbioEvQxdmvR3a2G4lwdlt+eFcV/FyiWuBO8asfTKEVBu+ajHC/1Tr3pYXf32XTa6K8SS3FG
+        oqEWc1FxIgCjTb9tYAIAAA==
+X-CMS-MailID: 20191206124826eucas1p246538607df51f2d68bce3b09d974b292
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20191205143808epcas5p2d9182674322e4799497a87b59c6c8a7d
+X-RootMTR: 20191206124826eucas1p246538607df51f2d68bce3b09d974b292
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20191205143808epcas5p2d9182674322e4799497a87b59c6c8a7d
-References: <20191205143746.24873-1-ulf.hansson@linaro.org>
-        <CGME20191205143808epcas5p2d9182674322e4799497a87b59c6c8a7d@epcas5p2.samsung.com>
-        <20191205143746.24873-3-ulf.hansson@linaro.org>
+X-CMS-RootMailID: 20191206124826eucas1p246538607df51f2d68bce3b09d974b292
+References: <CGME20191206124826eucas1p246538607df51f2d68bce3b09d974b292@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Commit 9f532d26c75c ("ARM: exynos_defconfig: Trim and reorganize with
+savedefconfig") removed explicit enable line for CONFIG_DEBUG_FS, because
+that feature has been selected by other enabled options: CONFIG_TRACING,
+which in turn had been selected by CONFIG_PERF_EVENTS and
+CONFIG_PROVE_LOCKING.
 
-On 05.12.2019 15:37, Ulf Hansson wrote:
-> It has turned out that it's in general a good idea for dmaengines to allow
-> DMA requests during the entire dpm_suspend() phase. Therefore, convert the
-> pl330 driver into using SET_LATE_SYSTEM_SLEEP_PM_OPS.
->
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+In meantime, commit 0e4a459f56c3 ("tracing: Remove unnecessary DEBUG_FS
+dependency") removed the dependency between CONFIG_DEBUG_FS and
+CONFIG_TRACING, so CONFIG_DEBUG_FS is no longer enabled in default builds.
 
-Works fine on various Samsung Exynos boards I have for tests.
+Enable it again explicitly, as debugfs support is essential for various
+automated testing tools.
 
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/configs/exynos_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-> ---
->   drivers/dma/pl330.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-> index 8e01da157518..88b884cbb7c1 100644
-> --- a/drivers/dma/pl330.c
-> +++ b/drivers/dma/pl330.c
-> @@ -2981,7 +2981,9 @@ static int __maybe_unused pl330_resume(struct device *dev)
->   	return ret;
->   }
->   
-> -static SIMPLE_DEV_PM_OPS(pl330_pm, pl330_suspend, pl330_resume);
-> +static const struct dev_pm_ops pl330_pm = {
-> +	SET_LATE_SYSTEM_SLEEP_PM_OPS(pl330_suspend, pl330_resume)
-> +};
->   
->   static int
->   pl330_probe(struct amba_device *adev, const struct amba_id *id)
-
-Best regards
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index dd3e0684f746..3758311bcc27 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -350,6 +350,7 @@ CONFIG_PRINTK_TIME=y
+ CONFIG_DYNAMIC_DEBUG=y
+ CONFIG_DEBUG_INFO=y
+ CONFIG_MAGIC_SYSRQ=y
++CONFIG_DEBUG_FS=y
+ CONFIG_DEBUG_KERNEL=y
+ CONFIG_SOFTLOCKUP_DETECTOR=y
+ # CONFIG_DETECT_HUNG_TASK is not set
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.17.1
 
