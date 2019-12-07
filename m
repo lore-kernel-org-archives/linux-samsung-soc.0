@@ -2,184 +2,181 @@ Return-Path: <SRS0=T68K=Z5=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CA8AC43603
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  7 Dec 2019 14:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD9CC2D0C2
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  7 Dec 2019 22:24:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 726A324676
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  7 Dec 2019 14:04:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15A4C24670
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  7 Dec 2019 22:24:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MOsjEX8G"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U1LXHG0V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726484AbfLGOE5 (ORCPT
+        id S1726949AbfLGWY5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 7 Dec 2019 09:04:57 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36212 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726410AbfLGOE5 (ORCPT
+        Sat, 7 Dec 2019 17:24:57 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:41403 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726968AbfLGWYy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 7 Dec 2019 09:04:57 -0500
-Received: by mail-lj1-f196.google.com with SMTP id r19so10734833ljg.3;
-        Sat, 07 Dec 2019 06:04:55 -0800 (PST)
+        Sat, 7 Dec 2019 17:24:54 -0500
+Received: by mail-pl1-f193.google.com with SMTP id bd4so4199620plb.8;
+        Sat, 07 Dec 2019 14:24:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Ax5u03O4GlUXYUvsqNfWqp3nl/wfPRGvWRKaUynTqzE=;
-        b=MOsjEX8G2hTD3/Fqw0NAaEC1u+eRNTD8YHbsDUThxCNZ0y7lK+EPqSY7l0iB0EIoBu
-         WR15mn/7DrpvWuejz3eWKvcRkQgfLwrUvNhSp1gY7/7ZlXFmSX2+iE1tyP4SKPER/keM
-         AWg11mGYe7VbBl0OhcfPXQafEzJMP7xS6RJ2GlKsZ4uct5p4piuCX67LTXP/8Cavq5ES
-         rNHvpjQTrS87tvX0PN23KywnIG3H2tBDf13yBTNiJ0TVC23/BCL2XGnKZMCACyg0zM7l
-         GYvBqeAxr9/24mGWgBOXYagq5hgYuZyDuiQQqr+zUDXeJdI4Dsy103KEw0gG1d9kuI+p
-         w8/A==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=ExI/TKDdtqZJzeoXoc2AmfkP7V2dbpxkrYjX02g6qW8=;
+        b=U1LXHG0VqwagIGA58czXmw1H4VD/s4EQgeoMRqcaqrB4IHMlYDFRyLonTr3/YNyqfQ
+         ssWFu20NjDv55dUc6YSELfgM2hGxVqpE8E2EEzCeiNr28psNeLADRkC67b4dZTnX/8Ag
+         GF/Xij3GKtlCwBTwIUNgng+p82rkDjxUGC/UUdPzLyewnRZ/IVHBTNcp0HWBA3z/TW6X
+         sSoufAOKOQoQcSbrKpW+SY18KjvhVrhMuBT7tDuv3fahEWQUEeRAc1n/AiFKO5R1oGGF
+         qUznNHp8pumNfO7tnNk9ZTzOCPpdEKHxPLSX610n37BAZJ16kc2fIFso407JTCNEbQlv
+         sd8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=Ax5u03O4GlUXYUvsqNfWqp3nl/wfPRGvWRKaUynTqzE=;
-        b=FxKlZvfUQ6ZbnwXopqPLTbZMj7U5oX/9tDlbhgxuWJSHeif9fFujZ0DZ+ho8x2Jncn
-         rWRP7VD05t8o+3Anq+6e9RjhhMz6+i3+DUYKFVIJlZp5oKd1Ktd6v3hrchJwZmM0mj+O
-         lR67jbY/haC3IM8P3o9ucG8He0G1Lf6xpdCAFX37MxusHrMzAvck/d67wLt6zZkcv2K9
-         gta8iK3V45cs/+NFIsjOVw478/NBOjjlf44CAx3rUhCC9C189sPMMVJzIrGCfxAmyEpS
-         gQ1Q8YFC54sqaVHFvOBL7v9L2kLvBap5sAGMy1HFdr/1f5IixkDG3kxW9lNFt6DtM04t
-         T0Wg==
-X-Gm-Message-State: APjAAAUtniUocO4Y+QnnE6o9bByuEIQFtn2fHwyrzLvOMB2SeoLY1nje
-        v6UqKm5cEbJ4O2c4+31Dw+c=
-X-Google-Smtp-Source: APXvYqwuVFG+u6wmnSLIj8XDvpMwmzMMOJBAB41245Fellx5JQ1423tL59LT5rneoJWV6nyNmS7r1A==
-X-Received: by 2002:a05:651c:1b5:: with SMTP id c21mr12024851ljn.115.1575727494401;
-        Sat, 07 Dec 2019 06:04:54 -0800 (PST)
-Received: from saturn.lan (18.158-248-194.customer.lyse.net. [158.248.194.18])
-        by smtp.gmail.com with ESMTPSA id w17sm5644188lfn.22.2019.12.07.06.04.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Dec 2019 06:04:53 -0800 (PST)
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     dri-devel@lists.freedesktop.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sam Ravnborg <sam@ravnborg.org>
-Cc:     Abhinav Kumar <abhinavk@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jitao Shi <jitao.shi@mediatek.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=ExI/TKDdtqZJzeoXoc2AmfkP7V2dbpxkrYjX02g6qW8=;
+        b=S6KWBgTUtP0hZ4PV3OmTaoRDzQXo1y73eSnPxCEsAxBu74Vz+lBpfRwUELFJH9O/uU
+         p8XxywAROP4uXrDt9Mzvwc8CYmkaH9eIhUJYRu2xPQqh4TkXIX+BP6vdw8ivf0p/jjSd
+         v/jyy49emjTQpsMbB3KE2p2AT/YXidl7WVtGAEstigBiuHcNnpApIJ/cOGCsvXv/Agl9
+         uYk0NNHwwKYG+FqUOYYiF9eWtVkLrXbSSj4hMZVYyZaoL8dzmdB/1dgjqGlotSn6Usdo
+         4SMnvKHtIQcwnafC2Taka1A6pi9/tTegRtZVJZffslck5y+ylGqtvAl2lyIS2vZSwwls
+         7ECQ==
+X-Gm-Message-State: APjAAAUAWfihxU7kzGDNtfgprA7bww9LHBireY0BIHDYRhmb9LHmugr4
+        hsSBmarKbQnAF+yF7HK9M6s=
+X-Google-Smtp-Source: APXvYqx7bStIx6xSAxvlhcLeWquMhjmkWNjHW7tGd9W2s1pTJYJMoxzoc3cto86XzIWwTO2kvqyL3Q==
+X-Received: by 2002:a17:90a:2486:: with SMTP id i6mr24849994pje.9.1575757493839;
+        Sat, 07 Dec 2019 14:24:53 -0800 (PST)
+Received: from [192.168.0.53] ([211.243.117.64])
+        by smtp.gmail.com with ESMTPSA id w11sm16400204pfn.4.2019.12.07.14.24.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 07 Dec 2019 14:24:53 -0800 (PST)
+Subject: Re: [PATCH 1/2] irqchip: define EXYNOS_IRQ_COMBINER
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     linux@armlinux.org.uk, kgene@kernel.org, tglx@linutronix.de,
+        jason@lakedaemon.net, maz@kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Purism Kernel Team <kernel@puri.sm>,
-        Sean Paul <sean@poorly.run>, Stefan Agner <stefan@agner.ch>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: [PATCH v2 25/25] drm/panel: tpo-tpg110: use drm_panel backlight support
-Date:   Sat,  7 Dec 2019 15:03:53 +0100
-Message-Id: <20191207140353.23967-26-sam@ravnborg.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191207140353.23967-1-sam@ravnborg.org>
-References: <20191207140353.23967-1-sam@ravnborg.org>
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        kernel-team@android.com, Hyunki Koo <hyunki00.koo@samsung.com>
+References: <20191207130049.27533-1-hyunki00.koo@gmail.com>
+ <20191207130049.27533-2-hyunki00.koo@gmail.com>
+ <20191207132855.GA4384@kozik-lap>
+ <CAJKOXPcUXRGa7+ZgSYomo5v_eh=GjqyWYBkzsXUJi0zAPHcOjg@mail.gmail.com>
+From:   Hyunki Koo <hyunki00.koo@gmail.com>
+Message-ID: <e6c3661e-36df-5ae8-eedb-1961063bcabb@gmail.com>
+Date:   Sun, 8 Dec 2019 07:24:49 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
+In-Reply-To: <CAJKOXPcUXRGa7+ZgSYomo5v_eh=GjqyWYBkzsXUJi0zAPHcOjg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use the backlight support in drm_panel to simplify the driver
 
-Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Sam Ravnborg <sam@ravnborg.org>
----
- drivers/gpu/drm/panel/panel-tpo-tpg110.c | 20 ++++++--------------
- 1 file changed, 6 insertions(+), 14 deletions(-)
+On 19. 12. 7. 오후 10:37, Krzysztof Kozlowski wrote:
+> On Sat, 7 Dec 2019 at 14:28, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> On Sat, Dec 07, 2019 at 10:00:48PM +0900, Hyunki Koo wrote:
+>>> From: Hyunki Koo <hyunki00.koo@samsung.com>
+>>>
+>>> Not all exynos device have IRQ_COMBINER.
+>>> Thus add the config for EXYNOS_IRQ_COMBINER.
+>>>
+>>> Signed-off-by: Hyunki Koo <hyunki00.koo@samsung.com>
+>>> ---
+>>>   drivers/irqchip/Kconfig  | 7 +++++++
+>>>   drivers/irqchip/Makefile | 2 +-
+>>>   2 files changed, 8 insertions(+), 1 deletion(-)
+>>>
+>> Hi,
+>>
+>> There is no changelog and versioning of this patch so I do not
+>> understand how it differs with previous. It's a resend? v2? It brings
+>> the confusion and looks like you're ignoring previous comments.
+>>
+>> Looks the same and looks like breaking Exynos platforms in the same way.
+>>
+>> If you not want to skip combiner on ARMv8, it makes sense, then please
+>> follow the approach we did for Pinctrl drivers (PINCTRL_EXYNOS_ARM and
+>> PINCTRL_EXYNOS_ARM64).
+>>
+>> Best regards,
+>> Krzysztof
+> Ah, now I see the second patch. Still you break bisect which requires
+> specific ordering of patches or squashing them into one. Optionally
+> this could be default=y if ARCH_EXYNOS && ARM. I prefer just squashing
+> both into one patch in this case.
 
-diff --git a/drivers/gpu/drm/panel/panel-tpo-tpg110.c b/drivers/gpu/drm/panel/panel-tpo-tpg110.c
-index bee213ea1a42..8472d018c16f 100644
---- a/drivers/gpu/drm/panel/panel-tpo-tpg110.c
-+++ b/drivers/gpu/drm/panel/panel-tpo-tpg110.c
-@@ -14,13 +14,13 @@
- #include <drm/drm_panel.h>
- #include <drm/drm_print.h>
- 
--#include <linux/backlight.h>
- #include <linux/bitops.h>
- #include <linux/delay.h>
- #include <linux/gpio/consumer.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/spi/spi.h>
- 
-@@ -76,10 +76,6 @@ struct tpg110 {
- 	 * @panel: the DRM panel instance for this device
- 	 */
- 	struct drm_panel panel;
--	/**
--	 * @backlight: backlight for this panel
--	 */
--	struct backlight_device *backlight;
- 	/**
- 	 * @panel_type: the panel mode as detected
- 	 */
-@@ -356,8 +352,6 @@ static int tpg110_disable(struct drm_panel *panel)
- 	val &= ~TPG110_CTRL2_PM;
- 	tpg110_write_reg(tpg, TPG110_CTRL2_PM, val);
- 
--	backlight_disable(tpg->backlight);
--
- 	return 0;
- }
- 
-@@ -366,8 +360,6 @@ static int tpg110_enable(struct drm_panel *panel)
- 	struct tpg110 *tpg = to_tpg110(panel);
- 	u8 val;
- 
--	backlight_enable(tpg->backlight);
--
- 	/* Take chip out of standby */
- 	val = tpg110_read_reg(tpg, TPG110_CTRL2_PM);
- 	val |= TPG110_CTRL2_PM;
-@@ -432,11 +424,6 @@ static int tpg110_probe(struct spi_device *spi)
- 	if (ret)
- 		DRM_DEV_ERROR(dev, "no panel height specified\n");
- 
--	/* Look for some optional backlight */
--	tpg->backlight = devm_of_find_backlight(dev);
--	if (IS_ERR(tpg->backlight))
--		return PTR_ERR(tpg->backlight);
--
- 	/* This asserts the GRESTB signal, putting the display into reset */
- 	tpg->grestb = devm_gpiod_get(dev, "grestb", GPIOD_OUT_HIGH);
- 	if (IS_ERR(tpg->grestb)) {
-@@ -459,6 +446,11 @@ static int tpg110_probe(struct spi_device *spi)
- 
- 	drm_panel_init(&tpg->panel, dev, &tpg110_drm_funcs,
- 		       DRM_MODE_CONNECTOR_DPI);
-+
-+	ret = drm_panel_of_backlight(&tpg->panel);
-+	if (ret)
-+		return ret;
-+
- 	spi_set_drvdata(spi, tpg);
- 
- 	return drm_panel_add(&tpg->panel);
--- 
-2.20.1
+you mean squashing two files arch/arm/mach-exynos/Kconfig and 
+arch/arm/mach-exynos/Kconfig into one patch
 
+or squashing into only one file like blow?
+
++config EXYNOS_IRQ_COMBINER
++       bool "Samsung Exynos IRQ combiner support"
++       depends on (ARCH_EXYNOS  && ARM) || COMPILE_TEST
++       default y
+
+I prefer first one (squashing two files into one patch)
+
+>
+>>> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+>>> index ba152954324b..3ed7b7f2ae26 100644
+>>> --- a/drivers/irqchip/Kconfig
+>>> +++ b/drivers/irqchip/Kconfig
+>>> @@ -499,4 +499,11 @@ config SIFIVE_PLIC
+>>>
+>>>           If you don't know what to do here, say Y.
+>>>
+>>> +config EXYNOS_IRQ_COMBINER
+>>> +     bool "Samsung Exynos IRQ combiner support"
+> Now point it to be visible. Only for COMPILE_TEST
+>
+>>> +     depends on ARCH_EXYNOS
+> Since you make it a separate option, make it COMPILE_TEST.
+
+Is this  good ?
+
++config EXYNOS_IRQ_COMBINER
+
++       bool "Samsung Exynos IRQ combiner support"
++       depends on (ARCH_EXYNOS  && ARM) || COMPILE_TEST
+
+>
+> Best regards,
+> Krzysztof
+>
+>>> +     help
+>>> +       Say yes here to add support for the IRQ combiner devices embedded
+>>> +       in Samsung Exynos chips.
+>>> +
+>>>   endmenu
+>>> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+>>> index e806dda690ea..60d7c7260fc3 100644
+>>> --- a/drivers/irqchip/Makefile
+>>> +++ b/drivers/irqchip/Makefile
+>>> @@ -9,7 +9,7 @@ obj-$(CONFIG_ARCH_BCM2835)            += irq-bcm2835.o
+>>>   obj-$(CONFIG_ARCH_BCM2835)           += irq-bcm2836.o
+>>>   obj-$(CONFIG_DAVINCI_AINTC)          += irq-davinci-aintc.o
+>>>   obj-$(CONFIG_DAVINCI_CP_INTC)                += irq-davinci-cp-intc.o
+>>> -obj-$(CONFIG_ARCH_EXYNOS)            += exynos-combiner.o
+>>> +obj-$(CONFIG_EXYNOS_IRQ_COMBINER)    += exynos-combiner.o
+>>>   obj-$(CONFIG_FARADAY_FTINTC010)              += irq-ftintc010.o
+>>>   obj-$(CONFIG_ARCH_HIP04)             += irq-hip04.o
+>>>   obj-$(CONFIG_ARCH_LPC32XX)           += irq-lpc32xx.o
+>>> --
+>>> 2.17.1
+>>>
