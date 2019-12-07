@@ -2,147 +2,235 @@ Return-Path: <SRS0=T68K=Z5=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8967C43603
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  7 Dec 2019 13:37:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D4CC2D0BE
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  7 Dec 2019 14:04:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 912A324677
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  7 Dec 2019 13:37:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1575725872;
-	bh=9IaAWLB4YM37hZ4K6+hLzc+2+j5HMFfWFGUX46FSuRc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=vxnsvDUmLXOKdX0/r9IyXTHhQlNML0sXqoNdxOGABBOgVHVuVOoAMKdNkvid7aBH3
-	 5ln2ziSkrFKe83MDNjT7MFsoS+Ytf5mb35smcgRuByag/xeEsLHYEGPlc39dINJgXa
-	 FoZgq/H7GXU5EYZfngc3YuRyqCBit79qIQJpMk60=
+	by mail.kernel.org (Postfix) with ESMTP id C864124677
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  7 Dec 2019 14:04:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eUPpUGcM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726307AbfLGNhw (ORCPT
+        id S1726421AbfLGOEJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 7 Dec 2019 08:37:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54742 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726371AbfLGNhw (ORCPT
+        Sat, 7 Dec 2019 09:04:09 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:40590 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726397AbfLGOEI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 7 Dec 2019 08:37:52 -0500
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 36D4F2467C;
-        Sat,  7 Dec 2019 13:37:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575725870;
-        bh=9IaAWLB4YM37hZ4K6+hLzc+2+j5HMFfWFGUX46FSuRc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=XOetANLa2aHZVuclnuWNqTAIG3Xje4nos+YX3L8udJ4F9MleOkR8UnlSKNvQ5ONSd
-         cM+FZ7DhhM6S/8YDPeATg0M771CyyRMSemIj7Gp3jru5HSdGR54TgMU/KRgs+5ZmA8
-         JG5E3T8mG1fvv8UDiflqzXjVp70hAHH7w4IbB9ik=
-Received: by mail-lf1-f43.google.com with SMTP id 203so7338380lfa.12;
-        Sat, 07 Dec 2019 05:37:50 -0800 (PST)
-X-Gm-Message-State: APjAAAXCbOeaHj0IY1f0dsaeaVfu04x1f0ktmX4/scFx3mR+almkYdIQ
-        HwFLUtKj6Jbu7pyfFh88m1pr5z1bjM7m5ZPmCg0=
-X-Google-Smtp-Source: APXvYqyOF9srqVRZQzGGYzVp/uW2kHgzDvPmYy8GKUsxbHw54dS4knoGV2DrOYoYaX2xML7sWWsLllv4ZTFD6QAEMu0=
-X-Received: by 2002:ac2:5dc7:: with SMTP id x7mr10801121lfq.24.1575725868267;
- Sat, 07 Dec 2019 05:37:48 -0800 (PST)
-MIME-Version: 1.0
-References: <20191207130049.27533-1-hyunki00.koo@gmail.com>
- <20191207130049.27533-2-hyunki00.koo@gmail.com> <20191207132855.GA4384@kozik-lap>
-In-Reply-To: <20191207132855.GA4384@kozik-lap>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Sat, 7 Dec 2019 14:37:36 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPcUXRGa7+ZgSYomo5v_eh=GjqyWYBkzsXUJi0zAPHcOjg@mail.gmail.com>
-Message-ID: <CAJKOXPcUXRGa7+ZgSYomo5v_eh=GjqyWYBkzsXUJi0zAPHcOjg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] irqchip: define EXYNOS_IRQ_COMBINER
-To:     Hyunki Koo <hyunki00.koo@gmail.com>
-Cc:     linux@armlinux.org.uk, kgene@kernel.org, tglx@linutronix.de,
-        jason@lakedaemon.net, maz@kernel.org,
+        Sat, 7 Dec 2019 09:04:08 -0500
+Received: by mail-lj1-f193.google.com with SMTP id s22so10700429ljs.7;
+        Sat, 07 Dec 2019 06:04:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=09R7/ETfAQongQcpHtYMvdgzNr6cEpi4kt0evNQlel8=;
+        b=eUPpUGcM24jDpW09ox7tYraxBMMPEoKCHBpyoFXU1ns5j5BvUftRnblywc3foi01+4
+         3A+ev/GecfdzXRjqwAcMS7rNmEmYpiozwEokncVBQetDG7bcNV3lI4cydiiOh0QpHJk3
+         jK/rvpbz+6e5uvZkap5tHgKSt8VfyPFChgne+wo4LZCzX8MGTZsid4cbYNtuBXEzzB7z
+         Sx35EmAqlw0iGBTV8Bg5MK0kgjSgE1VrwrfGdMQ6RdfMVR7MZPBOPBQZNi0qIGUpNFYz
+         8g+cfSCeP9qNF7zrJ3v+L4qVEkVD75c5JDBCiG0OvRCLFrPzt7FRGQnuyY+6j15UP0DJ
+         hsOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=09R7/ETfAQongQcpHtYMvdgzNr6cEpi4kt0evNQlel8=;
+        b=aU0ABnWMmz/+ZBKfRcPYkYbK9UdhNglWANHIAUTsXumDhp1VUKEF9G69GgBwty198C
+         xERoilJWBGzA5xoA9RxX9Xn3COaCG4LXc4ywD3X2Ap7+bEj4nnem+DzJl7A1rj5Q6wgd
+         03epYqyaJ2zO5c20LK+t/WlKpTpi+islY5F792LtHDQYmCbQogcMK/cEyazFIq2dEfyn
+         ryoQSKqvpxmLmFE4zzn0m8Y/CMPFBYDvcpKEViBS0X1rEG06EOGPZdEOSvLfSjWp1144
+         gpG4MjZDK4LxXvRsoF+H6+usNv6FHpUlPsfd/I5hlzprHXo4KFUxneTojHQc2AwNUEKH
+         +wsQ==
+X-Gm-Message-State: APjAAAXj5rs163t2A8XgKe0Xzl0SbQNJI6+aJ39UMHGOZCturpWCVCTp
+        l8CN6B3JLhjUbh57I5n30ac=
+X-Google-Smtp-Source: APXvYqzzuQW/QsZdeNm/EDYoiqS87VHKamnYK3WVlv8ULbQEytIe7i24ai/v96Ta4eVh7joLCdMOCQ==
+X-Received: by 2002:a2e:b017:: with SMTP id y23mr11609484ljk.229.1575727445413;
+        Sat, 07 Dec 2019 06:04:05 -0800 (PST)
+Received: from saturn.lan (18.158-248-194.customer.lyse.net. [158.248.194.18])
+        by smtp.gmail.com with ESMTPSA id w17sm5644188lfn.22.2019.12.07.06.04.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 Dec 2019 06:04:04 -0800 (PST)
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     dri-devel@lists.freedesktop.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sam Ravnborg <sam@ravnborg.org>
+Cc:     Abhinav Kumar <abhinavk@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jitao Shi <jitao.shi@mediatek.com>,
         linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        kernel-team@android.com, Hyunki Koo <hyunki00.koo@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Purism Kernel Team <kernel@puri.sm>,
+        Sean Paul <sean@poorly.run>, Stefan Agner <stefan@agner.ch>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: [PATCH v2 0/25] drm/panel infrastructure + backlight update
+Date:   Sat,  7 Dec 2019 15:03:28 +0100
+Message-Id: <20191207140353.23967-1-sam@ravnborg.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, 7 Dec 2019 at 14:28, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On Sat, Dec 07, 2019 at 10:00:48PM +0900, Hyunki Koo wrote:
-> > From: Hyunki Koo <hyunki00.koo@samsung.com>
-> >
-> > Not all exynos device have IRQ_COMBINER.
-> > Thus add the config for EXYNOS_IRQ_COMBINER.
-> >
-> > Signed-off-by: Hyunki Koo <hyunki00.koo@samsung.com>
-> > ---
-> >  drivers/irqchip/Kconfig  | 7 +++++++
-> >  drivers/irqchip/Makefile | 2 +-
-> >  2 files changed, 8 insertions(+), 1 deletion(-)
-> >
->
-> Hi,
->
-> There is no changelog and versioning of this patch so I do not
-> understand how it differs with previous. It's a resend? v2? It brings
-> the confusion and looks like you're ignoring previous comments.
->
-> Looks the same and looks like breaking Exynos platforms in the same way.
->
-> If you not want to skip combiner on ARMv8, it makes sense, then please
-> follow the approach we did for Pinctrl drivers (PINCTRL_EXYNOS_ARM and
-> PINCTRL_EXYNOS_ARM64).
->
-> Best regards,
-> Krzysztof
+This patchset include a couple of different
+things - all related to panels.
 
-Ah, now I see the second patch. Still you break bisect which requires
-specific ordering of patches or squashing them into one. Optionally
-this could be default=y if ARCH_EXYNOS && ARM. I prefer just squashing
-both into one patch in this case.
+- The callbacks are optional - so drop error if
+  callback is not present.
+ 
+- Add support for backlight in drm_panel.
+  This allows us to make much simpler backlight
+  support to most panels.
+  The patchset include conversion of most of the
+  trivial cases.
 
->
-> > diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-> > index ba152954324b..3ed7b7f2ae26 100644
-> > --- a/drivers/irqchip/Kconfig
-> > +++ b/drivers/irqchip/Kconfig
-> > @@ -499,4 +499,11 @@ config SIFIVE_PLIC
-> >
-> >          If you don't know what to do here, say Y.
-> >
-> > +config EXYNOS_IRQ_COMBINER
-> > +     bool "Samsung Exynos IRQ combiner support"
+- Drop drm_connector from drm_panel.
+  This change required many changes to most
+  panels and many bridges and display drivers.
+  This is by far the most invasive change in this patchset.
 
-Now point it to be visible. Only for COMPILE_TEST
+With this patchset drm_panel_(attach|detach) are nop's
+but they are kept for now.
 
-> > +     depends on ARCH_EXYNOS
+A few of these patches has been sent out before - but versioning
+started again from v1 - as the most patches are new.
 
-Since you make it a separate option, make it COMPILE_TEST.
+I have tested the panel-simple changes, and thus some
+of the infrastructure changes.
+The testing was done on an earlier iteration - and I ended
+up submitting this as Laurent and others started to depend on it.
 
-Best regards,
-Krzysztof
+v2:
+  This is mostly addressing comments from Laurent.
+  - drop get_timings removal, we should start using it
+  - do not fail in drm_panel_of_backlight() if DT is not enabled
+  - updated changelogs and code comments in many places (thanks Laurent!)
+  - get_modes is a mandatory callback - return -EOPNOTSUPP if not specified
+  - log if backlight update fails
+  - added a-b/r-bs
+    o thanks to Laurent and Linus for the prompt reviews!
 
-> > +     help
-> > +       Say yes here to add support for the IRQ combiner devices embedded
-> > +       in Samsung Exynos chips.
-> > +
-> >  endmenu
-> > diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-> > index e806dda690ea..60d7c7260fc3 100644
-> > --- a/drivers/irqchip/Makefile
-> > +++ b/drivers/irqchip/Makefile
-> > @@ -9,7 +9,7 @@ obj-$(CONFIG_ARCH_BCM2835)            += irq-bcm2835.o
-> >  obj-$(CONFIG_ARCH_BCM2835)           += irq-bcm2836.o
-> >  obj-$(CONFIG_DAVINCI_AINTC)          += irq-davinci-aintc.o
-> >  obj-$(CONFIG_DAVINCI_CP_INTC)                += irq-davinci-cp-intc.o
-> > -obj-$(CONFIG_ARCH_EXYNOS)            += exynos-combiner.o
-> > +obj-$(CONFIG_EXYNOS_IRQ_COMBINER)    += exynos-combiner.o
-> >  obj-$(CONFIG_FARADAY_FTINTC010)              += irq-ftintc010.o
-> >  obj-$(CONFIG_ARCH_HIP04)             += irq-hip04.o
-> >  obj-$(CONFIG_ARCH_LPC32XX)           += irq-lpc32xx.o
-> > --
-> > 2.17.1
-> >
+When "drm/panel: add backlight support" is reviewed I plan to
+apply the full series to drm-misc-next.
+
+	Sam
+
+Sam Ravnborg (25):
+      drm/drm_panel: no error when no callback
+      drm/panel: add backlight support
+      drm/panel: simple: use drm_panel backlight support
+      drm: get drm_bridge_panel connector via helper
+      drm/panel: add drm_connector argument to get_modes()
+      drm/panel: decouple connector from drm_panel
+      drm/panel: drop drm_device from drm_panel
+      drm/panel: feiyang-fy07024di26a30d: use drm_panel backlight support
+      drm/panel: ilitek-ili9881c: use drm_panel backlight support
+      drm/panel: innolux-p079zca: use drm_panel backlight support
+      drm/panel: kingdisplay-kd097d04: use drm_panel backlight support
+      drm/panel: lvds: use drm_panel backlight support
+      drm/panel: olimex-lcd-olinuxino: use drm_panel backlight support
+      drm/panel: osd-osd101t2587-53ts: use drm_panel backlight support
+      drm/panel: panasonic-vvx10f034n00: use drm_panel backlight support
+      drm/panel: raydium-rm68200: use drm_panel backlight support
+      drm/panel: rocktech-jh057n00900: use drm_panel backlight support
+      drm/panel: ronbo-rb070d30: use drm_panel backlight support
+      drm/panel: seiko-43wvf1g: use drm_panel backlight support
+      drm/panel: sharp-lq101r1sx01: use drm_panel backlight support
+      drm/panel: sharp-ls043t1le01: use drm_panel backlight support
+      drm/panel: sitronix-st7701: use drm_panel backlight support
+      drm/panel: sitronix-st7789v: use drm_panel backlight support
+      drm/panel: tpo-td028ttec1: use drm_panel backlight support
+      drm/panel: tpo-tpg110: use drm_panel backlight support
+
+ drivers/gpu/drm/bridge/analogix/analogix-anx6345.c |   2 +-
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c |   2 +-
+ drivers/gpu/drm/bridge/panel.c                     |  19 +++-
+ drivers/gpu/drm/bridge/parade-ps8622.c             |   2 +-
+ drivers/gpu/drm/bridge/tc358764.c                  |   2 +-
+ drivers/gpu/drm/bridge/tc358767.c                  |   2 +-
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c              |   2 +-
+ drivers/gpu/drm/drm_panel.c                        | 107 +++++++++++++++++----
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c            |   2 +-
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c            |   2 +-
+ drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c          |   2 +-
+ drivers/gpu/drm/imx/imx-ldb.c                      |   2 +-
+ drivers/gpu/drm/imx/parallel-display.c             |   2 +-
+ drivers/gpu/drm/mediatek/mtk_dsi.c                 |   2 +-
+ .../gpu/drm/msm/disp/mdp4/mdp4_lvds_connector.c    |   2 +-
+ drivers/gpu/drm/msm/dsi/dsi_manager.c              |   2 +-
+ drivers/gpu/drm/mxsfb/mxsfb_out.c                  |   2 +-
+ drivers/gpu/drm/omapdrm/omap_connector.c           |   3 +-
+ drivers/gpu/drm/panel/panel-arm-versatile.c        |   6 +-
+ .../gpu/drm/panel/panel-feiyang-fy07024di26a30d.c  |  16 ++-
+ drivers/gpu/drm/panel/panel-ilitek-ili9322.c       |  19 ++--
+ drivers/gpu/drm/panel/panel-ilitek-ili9881c.c      |  29 ++----
+ drivers/gpu/drm/panel/panel-innolux-p079zca.c      |  45 +++------
+ drivers/gpu/drm/panel/panel-jdi-lt070me05000.c     |  11 ++-
+ drivers/gpu/drm/panel/panel-kingdisplay-kd097d04.c |  43 +++------
+ drivers/gpu/drm/panel/panel-lg-lb035q02.c          |   6 +-
+ drivers/gpu/drm/panel/panel-lg-lg4573.c            |  12 +--
+ drivers/gpu/drm/panel/panel-lvds.c                 |  46 ++-------
+ drivers/gpu/drm/panel/panel-nec-nl8048hl11.c       |   6 +-
+ drivers/gpu/drm/panel/panel-novatek-nt39016.c      |   6 +-
+ drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c |  27 ++----
+ drivers/gpu/drm/panel/panel-orisetech-otm8009a.c   |  11 ++-
+ drivers/gpu/drm/panel/panel-osd-osd101t2587-53ts.c |  37 +++----
+ .../gpu/drm/panel/panel-panasonic-vvx10f034n00.c   |  58 +++--------
+ .../gpu/drm/panel/panel-raspberrypi-touchscreen.c  |   9 +-
+ drivers/gpu/drm/panel/panel-raydium-rm67191.c      |   8 +-
+ drivers/gpu/drm/panel/panel-raydium-rm68200.c      |  26 +++--
+ drivers/gpu/drm/panel/panel-rocktech-jh057n00900.c |  35 +++----
+ drivers/gpu/drm/panel/panel-ronbo-rb070d30.c       |  31 ++----
+ drivers/gpu/drm/panel/panel-samsung-ld9040.c       |   4 +-
+ drivers/gpu/drm/panel/panel-samsung-s6d16d0.c      |   6 +-
+ drivers/gpu/drm/panel/panel-samsung-s6e3ha2.c      |   6 +-
+ drivers/gpu/drm/panel/panel-samsung-s6e63j0x03.c   |   6 +-
+ drivers/gpu/drm/panel/panel-samsung-s6e63m0.c      |   6 +-
+ drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c      |   4 +-
+ drivers/gpu/drm/panel/panel-seiko-43wvf1g.c        |  54 +++--------
+ drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c    |  34 +++----
+ drivers/gpu/drm/panel/panel-sharp-ls037v7dw01.c    |   6 +-
+ drivers/gpu/drm/panel/panel-sharp-ls043t1le01.c    |  33 +++----
+ drivers/gpu/drm/panel/panel-simple.c               |  92 ++++++------------
+ drivers/gpu/drm/panel/panel-sitronix-st7701.c      |  23 ++---
+ drivers/gpu/drm/panel/panel-sitronix-st7789v.c     |  49 ++--------
+ drivers/gpu/drm/panel/panel-sony-acx565akm.c       |   6 +-
+ drivers/gpu/drm/panel/panel-tpo-td028ttec1.c       |  20 ++--
+ drivers/gpu/drm/panel/panel-tpo-td043mtea1.c       |   6 +-
+ drivers/gpu/drm/panel/panel-tpo-tpg110.c           |  26 ++---
+ drivers/gpu/drm/panel/panel-truly-nt35597.c        |   4 +-
+ drivers/gpu/drm/pl111/pl111_drv.c                  |   2 +-
+ drivers/gpu/drm/rcar-du/rcar_lvds.c                |   2 +-
+ drivers/gpu/drm/rockchip/rockchip_lvds.c           |   2 +-
+ drivers/gpu/drm/sti/sti_dvo.c                      |   2 +-
+ drivers/gpu/drm/sun4i/sun4i_lvds.c                 |   2 +-
+ drivers/gpu/drm/sun4i/sun4i_rgb.c                  |   2 +-
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c             |   2 +-
+ drivers/gpu/drm/tegra/output.c                     |   2 +-
+ drivers/gpu/drm/tve200/tve200_drv.c                |   2 +-
+ include/drm/drm_bridge.h                           |   1 +
+ include/drm/drm_panel.h                            |  61 ++++++++----
+ 68 files changed, 491 insertions(+), 620 deletions(-)
+
+
