@@ -2,309 +2,162 @@ Return-Path: <SRS0=Dzkt=Z7=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95EDDC43603
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Dec 2019 00:56:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7835C43603
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Dec 2019 08:41:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A2AE206F4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Dec 2019 00:56:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="T5cbUBsZ"
+	by mail.kernel.org (Postfix) with ESMTP id 797BD207FD
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Dec 2019 08:41:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1575880880;
+	bh=UXLOMurqwKkA+gAmAEDj8T5iIPVpTAJCi4LFLRjm3Jk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=W04LKeAvHsu1Xai5fM/1c4ixW6BE8npxrsaItoskRWuJR/g0pXozW5CAkjkMa98Hd
+	 jwLuitABRGWgxCKrKQVANl1Kx9lee8rqqcS1VykKnqO7tDMeY0Vctu4hnIWm/wWMd0
+	 RXhgc/xApu+2ht2RKz7oJsG3lmXejiITVkOf0hAA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726812AbfLIA4E (ORCPT
+        id S1727113AbfLIIlU convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 8 Dec 2019 19:56:04 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:49858 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726596AbfLIA4D (ORCPT
+        Mon, 9 Dec 2019 03:41:20 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:35994 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727047AbfLIIlT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 8 Dec 2019 19:56:03 -0500
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id E011752B;
-        Mon,  9 Dec 2019 01:56:00 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1575852961;
-        bh=J6yIt17nBqwPKwVZXRtdxjHrhpUgI8Kou5WpdOIZ5YE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=T5cbUBsZJFEm8iBpxpsDzOaQbbEBdWh0bc55kfLncjhrFA90srpzIJTF5ep242mQO
-         b5t70DxIKO2bWncxDKMv8rEKTqbMGB6Wc4rf0t1JrZ0hGjCETsQDuEAh6St3IsX09H
-         Vk/pTQgLD1qS5KsBNhE3mVt1u8/X3js4Qn7p822U=
-Date:   Mon, 9 Dec 2019 02:55:54 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     dri-devel@lists.freedesktop.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Abhinav Kumar <abhinavk@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jitao Shi <jitao.shi@mediatek.com>,
+        Mon, 9 Dec 2019 03:41:19 -0500
+Received: by mail-ed1-f66.google.com with SMTP id j17so11966630edp.3;
+        Mon, 09 Dec 2019 00:41:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=2kW38B0cuYpIKkhvAIys+E2QTBK5Yh5SHGBkdoRtsZ8=;
+        b=U/doeb0ASSeLccIJVyuKbb14cdUxK+NMzI2y90TfR7K3CZwcVjYwkvNnO5Rw3QGWGE
+         Zum0Y67eA2gRY8/0VR9U3KOBRBqWkNgYCiLUlqBFcOgDH/pnPT1OJLhmIIkAMxSMVRmb
+         HmXWsLh67esThZGiT3KpWIYDWC3OMkFaZ1gz3VTqwzwB6R/fy5mazUrJoem9J37zncAi
+         Izh9SzhCN6IQdmCJaKXlMJNZ0WTFgVi4Q29Jrw9vpTAcHdFOEe99MhOy/uFDPUu2GvbZ
+         NQDZdw/mVtrDUTvvmipdM7vw40EImRgmK5viRm8+77NQLRyozrbbx3TifCX3VUIVCzJU
+         a6Pw==
+X-Gm-Message-State: APjAAAWiP69oileIM5fG9hkeZS9/X/lElHQ9S8J9Um2hA6jG+L1SqDds
+        ht3ivArDIdrxBv5QiJiztiM=
+X-Google-Smtp-Source: APXvYqxnmfRBujpXQ+VU19W08DbV8Aj87ESy1oEsbFuJ+8f1z5uvtmn43KkwiQePVPVKDlPT9/CHWg==
+X-Received: by 2002:a17:906:2db1:: with SMTP id g17mr13034085eji.240.1575880877907;
+        Mon, 09 Dec 2019 00:41:17 -0800 (PST)
+Received: from pi3 ([194.230.155.234])
+        by smtp.googlemail.com with ESMTPSA id f13sm703065edq.26.2019.12.09.00.41.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2019 00:41:17 -0800 (PST)
+Date:   Mon, 9 Dec 2019 09:41:15 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Hyunki Koo <hyunki00.koo@gmail.com>
+Cc:     linux@armlinux.org.uk, kgene@kernel.org, tglx@linutronix.de,
+        jason@lakedaemon.net, maz@kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Purism Kernel Team <kernel@puri.sm>,
-        Sean Paul <sean@poorly.run>, Stefan Agner <stefan@agner.ch>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: Re: [PATCH v2 02/25] drm/panel: add backlight support
-Message-ID: <20191209005554.GK14311@pendragon.ideasonboard.com>
-References: <20191207140353.23967-1-sam@ravnborg.org>
- <20191207140353.23967-3-sam@ravnborg.org>
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        kernel-team@android.com, Hyunki Koo <hyunki00.koo@samsung.com>
+Subject: Re: [PATCH 1/2] irqchip: define EXYNOS_IRQ_COMBINER
+Message-ID: <20191209084115.GA6375@pi3>
+References: <20191207130049.27533-1-hyunki00.koo@gmail.com>
+ <20191207130049.27533-2-hyunki00.koo@gmail.com>
+ <20191207132855.GA4384@kozik-lap>
+ <CAJKOXPcUXRGa7+ZgSYomo5v_eh=GjqyWYBkzsXUJi0zAPHcOjg@mail.gmail.com>
+ <e6c3661e-36df-5ae8-eedb-1961063bcabb@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191207140353.23967-3-sam@ravnborg.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <e6c3661e-36df-5ae8-eedb-1961063bcabb@gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Sam,
-
-Thank you for the patch.
-
-On Sat, Dec 07, 2019 at 03:03:30PM +0100, Sam Ravnborg wrote:
-> Panels often supports backlight as specified in a device tree.
-
-s/supports/support/
-
-> Update the drm_panel infrastructure to support this to
-> simplify the drivers.
+On Sun, Dec 08, 2019 at 07:24:49AM +0900, Hyunki Koo wrote:
 > 
-> With this the panel driver just needs to add the following to the
-> probe() function:
+> On 19. 12. 7. 오후 10:37, Krzysztof Kozlowski wrote:
+> > On Sat, 7 Dec 2019 at 14:28, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > > On Sat, Dec 07, 2019 at 10:00:48PM +0900, Hyunki Koo wrote:
+> > > > From: Hyunki Koo <hyunki00.koo@samsung.com>
+> > > > 
+> > > > Not all exynos device have IRQ_COMBINER.
+> > > > Thus add the config for EXYNOS_IRQ_COMBINER.
+> > > > 
+> > > > Signed-off-by: Hyunki Koo <hyunki00.koo@samsung.com>
+> > > > ---
+> > > >   drivers/irqchip/Kconfig  | 7 +++++++
+> > > >   drivers/irqchip/Makefile | 2 +-
+> > > >   2 files changed, 8 insertions(+), 1 deletion(-)
+> > > > 
+> > > Hi,
+> > > 
+> > > There is no changelog and versioning of this patch so I do not
+> > > understand how it differs with previous. It's a resend? v2? It brings
+> > > the confusion and looks like you're ignoring previous comments.
+> > > 
+> > > Looks the same and looks like breaking Exynos platforms in the same way.
+> > > 
+> > > If you not want to skip combiner on ARMv8, it makes sense, then please
+> > > follow the approach we did for Pinctrl drivers (PINCTRL_EXYNOS_ARM and
+> > > PINCTRL_EXYNOS_ARM64).
+> > > 
+> > > Best regards,
+> > > Krzysztof
+> > Ah, now I see the second patch. Still you break bisect which requires
+> > specific ordering of patches or squashing them into one. Optionally
+> > this could be default=y if ARCH_EXYNOS && ARM. I prefer just squashing
+> > both into one patch in this case.
 > 
->     err = drm_panel_of_backlight(panel);
->     if (err)
->             return err;
+> you mean squashing two files arch/arm/mach-exynos/Kconfig and
+> arch/arm/mach-exynos/Kconfig into one patch
 > 
-> Then drm_panel will handle all the rest.
+> or squashing into only one file like blow?
 > 
-> There is one caveat with the backlight support.
-> If drm_panel_(enable|disable) are called multiple times
-> in row then backlight_(enable|disable) will be called multiple times.
-
-s/in row/in a row/
-
-> The above will happen when a panel drivers unconditionally
-> calls drm_panel_disable() in their shutdown() function,
-> whan the panel is already disabled and then shutdown() is called.
+> +config EXYNOS_IRQ_COMBINER
+> +       bool "Samsung Exynos IRQ combiner support"
+> +       depends on (ARCH_EXYNOS  && ARM) || COMPILE_TEST
+> +       default y
 > 
-> Reading the backlight code it seems safe to call
-> the backlight_(enable|disable) several times.
+> I prefer first one (squashing two files into one patch)
+
+Squashing two patches into one.
+
 > 
-> v3:
-> - Improve comments, fix grammar (Laurent)
-> - Do not fail in drm_panel_of_backlight() if no DT support (Laurent)
-> - Log if backlight_(enable|disable) fails (Laurent)
-> - Improve drm_panel_of_backlight() docs
-> - Updated changelog with backlight analysis (triggered by Laurent)
+> > 
+> > > > diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+> > > > index ba152954324b..3ed7b7f2ae26 100644
+> > > > --- a/drivers/irqchip/Kconfig
+> > > > +++ b/drivers/irqchip/Kconfig
+> > > > @@ -499,4 +499,11 @@ config SIFIVE_PLIC
+> > > > 
+> > > >           If you don't know what to do here, say Y.
+> > > > 
+> > > > +config EXYNOS_IRQ_COMBINER
+> > > > +     bool "Samsung Exynos IRQ combiner support"
+> > Now point it to be visible. Only for COMPILE_TEST
+
+Typo from my side. I wanted to say "No point" - this should not be
+selectable by user.
+
+> > 
+> > > > +     depends on ARCH_EXYNOS
+> > Since you make it a separate option, make it COMPILE_TEST.
 > 
-> v2:
-> - Drop test of CONFIG_DRM_PANEL in header-file (Laurent)
-> - do not enable backlight if ->enable() returns an error
-> 
-> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> Cc: Sean Paul <sean@poorly.run>
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> ---
->  drivers/gpu/drm/drm_panel.c | 58 ++++++++++++++++++++++++++++++++++++-
->  include/drm/drm_panel.h     | 25 ++++++++++++++++
->  2 files changed, 82 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
-> index 4ab7229fb22b..c312d5eb214d 100644
-> --- a/drivers/gpu/drm/drm_panel.c
-> +++ b/drivers/gpu/drm/drm_panel.c
-> @@ -21,11 +21,13 @@
->   * DEALINGS IN THE SOFTWARE.
->   */
->  
-> +#include <linux/backlight.h>
->  #include <linux/err.h>
->  #include <linux/module.h>
->  
->  #include <drm/drm_crtc.h>
->  #include <drm/drm_panel.h>
-> +#include <drm/drm_print.h>
->  
->  static DEFINE_MUTEX(panel_lock);
->  static LIST_HEAD(panel_list);
-> @@ -196,11 +198,20 @@ EXPORT_SYMBOL(drm_panel_unprepare);
->   */
->  int drm_panel_enable(struct drm_panel *panel)
->  {
-> +	int ret = 0;
-> +
->  	if (!panel)
->  		return -EINVAL;
->  
->  	if (panel->funcs && panel->funcs->enable)
-> -		return panel->funcs->enable(panel);
-> +		ret = panel->funcs->enable(panel);
-> +
-> +	if (ret < 0)
-> +		return ret;
+> Is this  good ?
 
-You can move this within the above if () block and avoid initializing
-ret to 0:
+Not entirely. The bool should be also with "if COMPILE TEST" so:
 
-	if (panel->funcs && panel->funcs->enable) {
-		ret = panel->funcs->enable(panel);
-		if (ret < 0)
-			return ret;
-	}
+config EXYNOS_IRQ_COMBINER
+	bool "Samsung Exynos IRQ combiner support" if COMPILE_TEST
+	depends on (ARCH_EXYNOS && ARM) || COMPILE_TEST
 
-With these small issues addressed,
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Best regards,
+Krzysztof
 
-> +	ret = backlight_enable(panel->backlight);
-> +	if (ret < 0)
-> +		DRM_DEV_INFO(panel->dev, "failed to enable backlight: %d\n", ret);
->  
->  	return 0;
->  }
-> @@ -218,9 +229,15 @@ EXPORT_SYMBOL(drm_panel_enable);
->   */
->  int drm_panel_disable(struct drm_panel *panel)
->  {
-> +	int ret;
-> +
->  	if (!panel)
->  		return -EINVAL;
->  
-> +	ret = backlight_disable(panel->backlight);
-> +	if (ret < 0)
-> +		DRM_DEV_INFO(panel->dev, "failed to disable backlight: %d\n", ret);
-> +
->  	if (panel->funcs && panel->funcs->disable)
->  		return panel->funcs->disable(panel);
->  
-> @@ -289,6 +306,45 @@ struct drm_panel *of_drm_find_panel(const struct device_node *np)
->  EXPORT_SYMBOL(of_drm_find_panel);
->  #endif
->  
-> +#ifdef CONFIG_BACKLIGHT_CLASS_DEVICE
-> +/**
-> + * drm_panel_of_backlight - use backlight device node for backlight
-> + * @panel: DRM panel
-> + *
-> + * Use this function to enable backlight handling if your panel
-> + * uses device tree and has a backlight phandle.
-> + *
-> + * When the panel is enabled backlight will be enabled after a
-> + * successfull call to &drm_panel_funcs.enable()
-> + *
-> + * When the panel is disabled backlight will be disabled before the
-> + * call to &drm_panel_funcs.disable().
-> + *
-> + * A typical implementation for a panel driver supporting device tree
-> + * will call this function at probe time. Backlight will then be handled
-> + * transparently without requiring any intervention from the driver.
-> + * drm_panel_of_backlight() must be called after the call to drm_panel_init().
-> + *
-> + * Return: 0 on success or a negative error code on failure.
-> + */
-> +int drm_panel_of_backlight(struct drm_panel *panel)
-> +{
-> +	struct backlight_device *backlight;
-> +
-> +	if (!panel || !panel->dev)
-> +		return -EINVAL;
-> +
-> +	backlight = devm_of_find_backlight(panel->dev);
-> +
-> +	if (IS_ERR(backlight))
-> +                return PTR_ERR(backlight);
-> +
-> +	panel->backlight = backlight;
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(drm_panel_of_backlight);
-> +#endif
-> +
->  MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
->  MODULE_DESCRIPTION("DRM panel infrastructure");
->  MODULE_LICENSE("GPL and additional rights");
-> diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
-> index d71655b2634c..c751c9b17df0 100644
-> --- a/include/drm/drm_panel.h
-> +++ b/include/drm/drm_panel.h
-> @@ -28,6 +28,7 @@
->  #include <linux/errno.h>
->  #include <linux/list.h>
->  
-> +struct backlight_device;
->  struct device_node;
->  struct drm_connector;
->  struct drm_device;
-> @@ -59,6 +60,10 @@ struct display_timing;
->   *
->   * To save power when no video data is transmitted, a driver can power down
->   * the panel. This is the job of the .unprepare() function.
-> + *
-> + * Backlight can be handled automatically if configured using
-> + * drm_panel_of_backlight(). Then the driver does not need to implement the
-> + * functionality to enable/disable backlight.
->   */
->  struct drm_panel_funcs {
->  	/**
-> @@ -146,6 +151,17 @@ struct drm_panel {
->  	 */
->  	struct device *dev;
->  
-> +	/**
-> +	 * @backlight:
-> +	 *
-> +	 * Backlight device, used to turn on backlight after the call
-> +	 * to enable(), and to turn off backlight before the call to
-> +	 * disable().
-> +	 * backlight is set by drm_panel_of_backlight() and drivers
-> +	 * shall not assign it.
-> +	 */
-> +	struct backlight_device *backlight;
-> +
->  	/**
->  	 * @funcs:
->  	 *
-> @@ -197,4 +213,13 @@ static inline struct drm_panel *of_drm_find_panel(const struct device_node *np)
->  }
->  #endif
->  
-> +#if IS_ENABLED(CONFIG_BACKLIGHT_CLASS_DEVICE)
-> +int drm_panel_of_backlight(struct drm_panel *panel);
-> +#else
-> +static inline int drm_panel_of_backlight(struct drm_panel *panel)
-> +{
-> +	return 0;
-> +}
-> +#endif
-> +
->  #endif
-
--- 
-Regards,
-
-Laurent Pinchart
