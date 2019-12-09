@@ -2,129 +2,362 @@ Return-Path: <SRS0=Dzkt=Z7=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80C42C43603
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Dec 2019 18:05:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2712FC04E30
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Dec 2019 19:57:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5150F207FF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Dec 2019 18:05:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1575914757;
-	bh=4Tiwn+vOanX6VoEEg918KRKbn6cy8IHjhRhssNZygkE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=wfCJGcKKnNWcLDfyrtTkAT0pvjtnfhGGvy8JU/U+LzJ+tvR6d6ZuGVmMjj2HJYsob
-	 TkCHhDqs1Aj73f6DCb5Fduqrg5AVhKk6ljHUCGOB7J6AQyNtjE3Zr47JOl4snDt7H7
-	 hsJ4ln6iFdKRFanKzzBLDG5GMfeLosulQk9uaLqw=
+	by mail.kernel.org (Postfix) with ESMTP id ED73F208C3
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Dec 2019 19:57:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j+hgEZpZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726365AbfLISF5 (ORCPT
+        id S1726495AbfLIT5w (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 9 Dec 2019 13:05:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51782 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726342AbfLISF4 (ORCPT
+        Mon, 9 Dec 2019 14:57:52 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37242 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726230AbfLIT5w (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 9 Dec 2019 13:05:56 -0500
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F813207FF;
-        Mon,  9 Dec 2019 18:05:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575914755;
-        bh=4Tiwn+vOanX6VoEEg918KRKbn6cy8IHjhRhssNZygkE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=SFdINz0ynQImL0tk9EB5fi8ytIGSUuDqOOYuA7Rs3thOooTVfWMMD92r6kYTm+141
-         9mprDm7Hsz9E04D52FrYRii1lJwQeEZ8XHKT/VTbtNfXkdgv+1t51MwmnqYK1vz15H
-         az+0Axd0XwXhTOFq3CEFcupSeMesdBc7Z3Otx3eU=
-Received: by mail-lj1-f174.google.com with SMTP id r19so16741793ljg.3;
-        Mon, 09 Dec 2019 10:05:55 -0800 (PST)
-X-Gm-Message-State: APjAAAVJ/qTUXnInh2PUgN2FXhYK+oLrSWPcZZSzKX+a4+lf/ZOAJrmU
-        qTx7PqQ8fgz1pYtat3LW3WGrfmJHqxTuNWTM5oA=
-X-Google-Smtp-Source: APXvYqw83XhliSCNEUuMHvHHzMeUdnvH5X4suB7IaLFNC3HKulskeEunmRve/1IH26yOI6m30Pg4bLtY3IujXGJlf0U=
-X-Received: by 2002:a2e:9d9a:: with SMTP id c26mr294597ljj.225.1575914753603;
- Mon, 09 Dec 2019 10:05:53 -0800 (PST)
-MIME-Version: 1.0
-References: <CGME20191206125123eucas1p1c1652484cbccef8d8df37e09affe4e25@eucas1p1.samsung.com>
- <20191206125112.11006-1-m.szyprowski@samsung.com> <CAMuHMdUsRa2QTDw4oM8SGUqfmsGt3-Mc=AnZoPV8RSqehUxyrg@mail.gmail.com>
- <CAOesGMiC+_ouDdFecV-2DvVzmBkeE=JjrwNyTgcr81=cBhhoAw@mail.gmail.com>
-In-Reply-To: <CAOesGMiC+_ouDdFecV-2DvVzmBkeE=JjrwNyTgcr81=cBhhoAw@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Mon, 9 Dec 2019 19:05:42 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPccvtbmvZKdR3OJu4ZVkgBmKhqt1jR36DCZvxWcmt46yQ@mail.gmail.com>
-Message-ID: <CAJKOXPccvtbmvZKdR3OJu4ZVkgBmKhqt1jR36DCZvxWcmt46yQ@mail.gmail.com>
-Subject: Re: [PATCH] arm: multi_v7_config: Restore debugfs support
-To:     Olof Johansson <olof@lixom.net>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kusanagi Kouichi <slash@ac.auone-net.jp>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Kevin Hilman <khilman@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 9 Dec 2019 14:57:52 -0500
+Received: by mail-pf1-f193.google.com with SMTP id s18so7763133pfm.4;
+        Mon, 09 Dec 2019 11:57:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=IvoK48XMkvTMy8qiYExc0dK2WdplKiTgSr2CX/mQRuY=;
+        b=j+hgEZpZ55FVOsvuQu5R+uJRyxi6R8PbS8VSObrqP6U6QABWGFNmJk7rsKEttOtMqY
+         CWLgzTDEnRHLon5MC6xAns6zDB1Q6TFv4m2LjMws94TmRUFuwVijAuAYrAnjNg2hgy/b
+         L++ZcMnL/zWmMyU8iQvSzEtUCtE8wNjH1U+wYQhpCluLfkLAZ1PMjqCKh5AloR6aB6Nf
+         VCVpKkxGRHFeNE5Nw4bGTeFtYHeK2yPSlqVGT14zz+uzsVeYoin8sj3wewHRPEsa5H5F
+         I0XNdbA8FosC/WO4PPbL8xwsZbUO3cYHpEnpqi40sF0mL2PKdkjFCAcfT1bXJ6UElPFb
+         P8FQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=IvoK48XMkvTMy8qiYExc0dK2WdplKiTgSr2CX/mQRuY=;
+        b=IyPQFlK8NGka0jx69aWawHQnKJNSB+qaFMUGh+sGfrp/vwp+1gZKTAbpwSHRGbxz/S
+         /H0G8oo9eCWyTVERVg1lXGJxup/51If3jdrVuXIzUrx17Bxl3MEibPDQkrL98ru/UI7j
+         IYLLh+24AGopJTLlYCjY0ceWM9uaNNEW53QjhhhleIv6Vk89T96uRbhbe4e2veqcS9vK
+         MXKEpnOZ9MDwSlmE+ummKkY1Ixc2Ei5YDsNArnT74as57M1+eMqmHEuBBU1G7PfLrRRx
+         Q+qCPT3iyg2FCT1Ccs/Fw7mOQtt5ljwklPV+nWj7bhJOVE2rKc6jVd7hK94u+pOLWYew
+         wtHQ==
+X-Gm-Message-State: APjAAAU2FDXfVNFDvw2td824AZBuiI1T/hTjNHaBdFylcr6YGqBliyq2
+        pRkjcGw2H+ioO1OVT8k4idDJTQ+Ibk8qindo
+X-Google-Smtp-Source: APXvYqwuBV1uQV1WLQZ4M+aEZQMsoHsNQhsRHxo1Ou+jCE6+Qsb06pjjlBpaPji+HVgJJhu669OFbA==
+X-Received: by 2002:a63:2808:: with SMTP id o8mr20217117pgo.39.1575921471235;
+        Mon, 09 Dec 2019 11:57:51 -0800 (PST)
+Received: from localhost ([2001:19f0:6001:12c8:5400:2ff:fe72:6403])
+        by smtp.gmail.com with ESMTPSA id e10sm316733pfm.3.2019.12.09.11.57.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 09 Dec 2019 11:57:50 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     afaerber@suse.de, manivannan.sadhasivam@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        Eugeniy.Paltsev@synopsys.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, agross@kernel.org, s.nawrocki@samsung.com,
+        tomasz.figa@gmail.com, cw00.choi@samsung.com, kgene@kernel.org,
+        krzk@kernel.org, palmer@sifive.com, paul.walmsley@sifive.com,
+        dinguyen@kernel.org, mripard@kernel.org, wens@csie.org,
+        emilio@elopez.com.ar, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        matthias.bgg@gmail.com, rfontana@redhat.com,
+        gregkh@linuxfoundation.org, t-kristo@ti.com, john@phrozen.org,
+        tglx@linutronix.de, allison@lohutok.net,
+        kstewart@linuxfoundation.org, swinslow@gmail.com,
+        aisheng.dong@nxp.com, robh@kernel.org, daniel.baluta@nxp.com,
+        weiyongjun1@huawei.com, wangyan.wang@mediatek.com,
+        chunhui.dai@mediatek.com, miquel.raynal@bootlin.com,
+        heiko@sntech.de, jcmvbkbc@gmail.com, nsekhar@ti.com,
+        geert+renesas@glider.be
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH 01/17] clk: sunxi: sunxi-ng: convert to devm_platform_ioremap_resource
+Date:   Mon,  9 Dec 2019 19:57:33 +0000
+Message-Id: <20191209195749.868-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, 9 Dec 2019 at 18:45, Olof Johansson <olof@lixom.net> wrote:
->
-> +Kevin, since this seems like something ideally we would see some
-> coverage of from Kernel CI at some point.
->
->
-> On Mon, Dec 9, 2019 at 1:29 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> >
-> > Hi Marek,
-> >
-> > On Fri, Dec 6, 2019 at 1:51 PM Marek Szyprowski
-> > <m.szyprowski@samsung.com> wrote:
-> > > Commit fd7d58f0dbc3 ("ARM: multi_v7_defconfig: renormalize based on recent
-> > > additions") removed explicit enable line for CONFIG_DEBUG_FS, because
-> > > that feature has been selected by other enabled options: CONFIG_TRACING,
-> > > which were enabled by CONFIG_PERF_EVENTS.
-> > >
-> > > In meantime, commit 0e4a459f56c3 ("tracing: Remove unnecessary DEBUG_FS
-> > > dependency") removed the dependency between CONFIG_DEBUG_FS and
-> > > CONFIG_TRACING, so CONFIG_DEBUG_FS is no longer enabled in default builds.
-> > >
-> > > Enable it again explicitly, as debugfs support is essential for various
-> > > automated testing tools.
-> >
-> > ... and for systemd :-(
-> >
-> > E.g. with Debian 9 nfsroot:
-> >
-> >     [FAILED] Failed to mount /sys/kernel/debug.
-> >     See 'systemctl status sys-kernel-debug.mount' for details.
-> >     [DEPEND] Dependency failed for Local File Systems.
-> >     ...
-> >     You are in emergGive root password for maintenance
-> >     (or press Control-D to continue):
-> >
-> > > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> >
-> > Thank you!
-> >
-> > Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >
-> > This is gonna bite lots of people (and defconfigs)...
->
-> Looks like the in-tree affected defconfigs are:
->
-> olof@quad:~/work/arm-soc/arch/arm/configs (for-next) $ fgrep -L
-> CONFIG_DEBUG_FS $(fgrep -l CONFIG_PERF_EVENTS *)
-> aspeed_g4_defconfig
-> aspeed_g5_defconfig
-> exynos_defconfig
+Use devm_platform_ioremap_resource() to simplify code.
 
-I picked up already Marek's patch for exynos_defconfig.
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c    | 4 +---
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c     | 4 +---
+ drivers/clk/sunxi-ng/ccu-sun8i-a83t.c    | 4 +---
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.c     | 4 +---
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.c     | 4 +---
+ drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c  | 4 +---
+ drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c | 4 +---
+ drivers/clk/sunxi-ng/ccu-sun9i-a80.c     | 4 +---
+ drivers/clk/sunxi/clk-mod0.c             | 4 +---
+ drivers/clk/sunxi/clk-sun6i-apb0-gates.c | 4 +---
+ drivers/clk/sunxi/clk-sun6i-apb0.c       | 4 +---
+ drivers/clk/sunxi/clk-sun6i-ar100.c      | 4 +---
+ drivers/clk/sunxi/clk-sun8i-apb0.c       | 4 +---
+ 13 files changed, 13 insertions(+), 39 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+index 49bd7a4c015c..087880b20c15 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+@@ -923,12 +923,10 @@ static const struct sunxi_ccu_desc sun50i_a64_ccu_desc = {
+ 
+ static int sun50i_a64_ccu_probe(struct platform_device *pdev)
+ {
+-	struct resource *res;
+ 	void __iomem *reg;
+ 	u32 val;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	reg = devm_ioremap_resource(&pdev->dev, res);
++	reg = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(reg))
+ 		return PTR_ERR(reg);
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+index f2497d0a4683..00fa8ff2f51b 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+@@ -1183,13 +1183,11 @@ static const u32 usb2_clk_regs[] = {
+ 
+ static int sun50i_h6_ccu_probe(struct platform_device *pdev)
+ {
+-	struct resource *res;
+ 	void __iomem *reg;
+ 	u32 val;
+ 	int i;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	reg = devm_ioremap_resource(&pdev->dev, res);
++	reg = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(reg))
+ 		return PTR_ERR(reg);
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
+index 2b434521c5cc..b2aaa99ad23f 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
+@@ -887,12 +887,10 @@ static void sun8i_a83t_cpu_pll_fixup(void __iomem *reg)
+ 
+ static int sun8i_a83t_ccu_probe(struct platform_device *pdev)
+ {
+-	struct resource *res;
+ 	void __iomem *reg;
+ 	u32 val;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	reg = devm_ioremap_resource(&pdev->dev, res);
++	reg = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(reg))
+ 		return PTR_ERR(reg);
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+index d9668493c3f9..f48f61297551 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+@@ -251,7 +251,6 @@ static const struct sunxi_ccu_desc sun8i_v3s_de2_clk_desc = {
+ 
+ static int sunxi_de2_clk_probe(struct platform_device *pdev)
+ {
+-	struct resource *res;
+ 	struct clk *bus_clk, *mod_clk;
+ 	struct reset_control *rstc;
+ 	void __iomem *reg;
+@@ -262,8 +261,7 @@ static int sunxi_de2_clk_probe(struct platform_device *pdev)
+ 	if (!ccu_desc)
+ 		return -EINVAL;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	reg = devm_ioremap_resource(&pdev->dev, res);
++	reg = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(reg))
+ 		return PTR_ERR(reg);
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+index 897490800102..b456f85fd8da 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+@@ -1294,14 +1294,12 @@ static struct regmap_config sun8i_r40_ccu_regmap_config = {
+ 
+ static int sun8i_r40_ccu_probe(struct platform_device *pdev)
+ {
+-	struct resource *res;
+ 	struct regmap *regmap;
+ 	void __iomem *reg;
+ 	u32 val;
+ 	int ret;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	reg = devm_ioremap_resource(&pdev->dev, res);
++	reg = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(reg))
+ 		return PTR_ERR(reg);
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c b/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
+index 6616e8114f62..94552199d54d 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
++++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
+@@ -203,14 +203,12 @@ static const struct sunxi_ccu_desc sun9i_a80_de_clk_desc = {
+ 
+ static int sun9i_a80_de_clk_probe(struct platform_device *pdev)
+ {
+-	struct resource *res;
+ 	struct clk *bus_clk;
+ 	struct reset_control *rstc;
+ 	void __iomem *reg;
+ 	int ret;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	reg = devm_ioremap_resource(&pdev->dev, res);
++	reg = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(reg))
+ 		return PTR_ERR(reg);
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c b/drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c
+index 4b4a507d04ed..adac159a5f63 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c
++++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c
+@@ -92,13 +92,11 @@ static const struct sunxi_ccu_desc sun9i_a80_usb_clk_desc = {
+ 
+ static int sun9i_a80_usb_clk_probe(struct platform_device *pdev)
+ {
+-	struct resource *res;
+ 	struct clk *bus_clk;
+ 	void __iomem *reg;
+ 	int ret;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	reg = devm_ioremap_resource(&pdev->dev, res);
++	reg = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(reg))
+ 		return PTR_ERR(reg);
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80.c b/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
+index dcac1391767f..8295667e2252 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
++++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
+@@ -1213,12 +1213,10 @@ static void sun9i_a80_cpu_pll_fixup(void __iomem *reg)
+ 
+ static int sun9i_a80_ccu_probe(struct platform_device *pdev)
+ {
+-	struct resource *res;
+ 	void __iomem *reg;
+ 	u32 val;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	reg = devm_ioremap_resource(&pdev->dev, res);
++	reg = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(reg))
+ 		return PTR_ERR(reg);
+ 
+diff --git a/drivers/clk/sunxi/clk-mod0.c b/drivers/clk/sunxi/clk-mod0.c
+index 0cca91e075a5..cdb98937f584 100644
+--- a/drivers/clk/sunxi/clk-mod0.c
++++ b/drivers/clk/sunxi/clk-mod0.c
+@@ -88,14 +88,12 @@ CLK_OF_DECLARE_DRIVER(sun4i_a10_mod0, "allwinner,sun4i-a10-mod0-clk",
+ static int sun4i_a10_mod0_clk_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+-	struct resource *r;
+ 	void __iomem *reg;
+ 
+ 	if (!np)
+ 		return -ENODEV;
+ 
+-	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	reg = devm_ioremap_resource(&pdev->dev, r);
++	reg = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(reg))
+ 		return PTR_ERR(reg);
+ 
+diff --git a/drivers/clk/sunxi/clk-sun6i-apb0-gates.c b/drivers/clk/sunxi/clk-sun6i-apb0-gates.c
+index a165e7172346..abae2813c59e 100644
+--- a/drivers/clk/sunxi/clk-sun6i-apb0-gates.c
++++ b/drivers/clk/sunxi/clk-sun6i-apb0-gates.c
+@@ -41,7 +41,6 @@ static int sun6i_a31_apb0_gates_clk_probe(struct platform_device *pdev)
+ 	const struct gates_data *data;
+ 	const char *clk_parent;
+ 	const char *clk_name;
+-	struct resource *r;
+ 	void __iomem *reg;
+ 	int ngates;
+ 	int i;
+@@ -55,8 +54,7 @@ static int sun6i_a31_apb0_gates_clk_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	data = device->data;
+ 
+-	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	reg = devm_ioremap_resource(&pdev->dev, r);
++	reg = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(reg))
+ 		return PTR_ERR(reg);
+ 
+diff --git a/drivers/clk/sunxi/clk-sun6i-apb0.c b/drivers/clk/sunxi/clk-sun6i-apb0.c
+index 10f70c35c265..f80c67bafe38 100644
+--- a/drivers/clk/sunxi/clk-sun6i-apb0.c
++++ b/drivers/clk/sunxi/clk-sun6i-apb0.c
+@@ -32,12 +32,10 @@ static int sun6i_a31_apb0_clk_probe(struct platform_device *pdev)
+ 	struct device_node *np = pdev->dev.of_node;
+ 	const char *clk_name = np->name;
+ 	const char *clk_parent;
+-	struct resource *r;
+ 	void __iomem *reg;
+ 	struct clk *clk;
+ 
+-	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	reg = devm_ioremap_resource(&pdev->dev, r);
++	reg = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(reg))
+ 		return PTR_ERR(reg);
+ 
+diff --git a/drivers/clk/sunxi/clk-sun6i-ar100.c b/drivers/clk/sunxi/clk-sun6i-ar100.c
+index e1b7d0929cf7..ffc297732f8f 100644
+--- a/drivers/clk/sunxi/clk-sun6i-ar100.c
++++ b/drivers/clk/sunxi/clk-sun6i-ar100.c
+@@ -71,12 +71,10 @@ static DEFINE_SPINLOCK(sun6i_ar100_lock);
+ static int sun6i_a31_ar100_clk_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+-	struct resource *r;
+ 	void __iomem *reg;
+ 	struct clk *clk;
+ 
+-	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	reg = devm_ioremap_resource(&pdev->dev, r);
++	reg = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(reg))
+ 		return PTR_ERR(reg);
+ 
+diff --git a/drivers/clk/sunxi/clk-sun8i-apb0.c b/drivers/clk/sunxi/clk-sun8i-apb0.c
+index fc5d6e3b77d1..f605ecca879f 100644
+--- a/drivers/clk/sunxi/clk-sun8i-apb0.c
++++ b/drivers/clk/sunxi/clk-sun8i-apb0.c
+@@ -87,12 +87,10 @@ CLK_OF_DECLARE_DRIVER(sun8i_a23_apb0, "allwinner,sun8i-a23-apb0-clk",
+ static int sun8i_a23_apb0_clk_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+-	struct resource *r;
+ 	void __iomem *reg;
+ 	struct clk *clk;
+ 
+-	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	reg = devm_ioremap_resource(&pdev->dev, r);
++	reg = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(reg))
+ 		return PTR_ERR(reg);
+ 
+-- 
+2.17.1
+
