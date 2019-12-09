@@ -2,162 +2,108 @@ Return-Path: <SRS0=Dzkt=Z7=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7835C43603
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Dec 2019 08:41:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45DD7C43603
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Dec 2019 09:29:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 797BD207FD
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Dec 2019 08:41:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1575880880;
-	bh=UXLOMurqwKkA+gAmAEDj8T5iIPVpTAJCi4LFLRjm3Jk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=W04LKeAvHsu1Xai5fM/1c4ixW6BE8npxrsaItoskRWuJR/g0pXozW5CAkjkMa98Hd
-	 jwLuitABRGWgxCKrKQVANl1Kx9lee8rqqcS1VykKnqO7tDMeY0Vctu4hnIWm/wWMd0
-	 RXhgc/xApu+2ht2RKz7oJsG3lmXejiITVkOf0hAA=
+	by mail.kernel.org (Postfix) with ESMTP id 1DF0F2077B
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Dec 2019 09:29:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbfLIIlU convert rfc822-to-8bit (ORCPT
+        id S1727307AbfLIJ3p (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 9 Dec 2019 03:41:20 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:35994 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727047AbfLIIlT (ORCPT
+        Mon, 9 Dec 2019 04:29:45 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:36224 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727247AbfLIJ3p (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 9 Dec 2019 03:41:19 -0500
-Received: by mail-ed1-f66.google.com with SMTP id j17so11966630edp.3;
-        Mon, 09 Dec 2019 00:41:18 -0800 (PST)
+        Mon, 9 Dec 2019 04:29:45 -0500
+Received: by mail-oi1-f196.google.com with SMTP id c16so5736637oic.3;
+        Mon, 09 Dec 2019 01:29:45 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=2kW38B0cuYpIKkhvAIys+E2QTBK5Yh5SHGBkdoRtsZ8=;
-        b=U/doeb0ASSeLccIJVyuKbb14cdUxK+NMzI2y90TfR7K3CZwcVjYwkvNnO5Rw3QGWGE
-         Zum0Y67eA2gRY8/0VR9U3KOBRBqWkNgYCiLUlqBFcOgDH/pnPT1OJLhmIIkAMxSMVRmb
-         HmXWsLh67esThZGiT3KpWIYDWC3OMkFaZ1gz3VTqwzwB6R/fy5mazUrJoem9J37zncAi
-         Izh9SzhCN6IQdmCJaKXlMJNZ0WTFgVi4Q29Jrw9vpTAcHdFOEe99MhOy/uFDPUu2GvbZ
-         NQDZdw/mVtrDUTvvmipdM7vw40EImRgmK5viRm8+77NQLRyozrbbx3TifCX3VUIVCzJU
-         a6Pw==
-X-Gm-Message-State: APjAAAWiP69oileIM5fG9hkeZS9/X/lElHQ9S8J9Um2hA6jG+L1SqDds
-        ht3ivArDIdrxBv5QiJiztiM=
-X-Google-Smtp-Source: APXvYqxnmfRBujpXQ+VU19W08DbV8Aj87ESy1oEsbFuJ+8f1z5uvtmn43KkwiQePVPVKDlPT9/CHWg==
-X-Received: by 2002:a17:906:2db1:: with SMTP id g17mr13034085eji.240.1575880877907;
-        Mon, 09 Dec 2019 00:41:17 -0800 (PST)
-Received: from pi3 ([194.230.155.234])
-        by smtp.googlemail.com with ESMTPSA id f13sm703065edq.26.2019.12.09.00.41.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2019 00:41:17 -0800 (PST)
-Date:   Mon, 9 Dec 2019 09:41:15 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Hyunki Koo <hyunki00.koo@gmail.com>
-Cc:     linux@armlinux.org.uk, kgene@kernel.org, tglx@linutronix.de,
-        jason@lakedaemon.net, maz@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        kernel-team@android.com, Hyunki Koo <hyunki00.koo@samsung.com>
-Subject: Re: [PATCH 1/2] irqchip: define EXYNOS_IRQ_COMBINER
-Message-ID: <20191209084115.GA6375@pi3>
-References: <20191207130049.27533-1-hyunki00.koo@gmail.com>
- <20191207130049.27533-2-hyunki00.koo@gmail.com>
- <20191207132855.GA4384@kozik-lap>
- <CAJKOXPcUXRGa7+ZgSYomo5v_eh=GjqyWYBkzsXUJi0zAPHcOjg@mail.gmail.com>
- <e6c3661e-36df-5ae8-eedb-1961063bcabb@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1gULj/UHb6CAUs/AsGazsmlKOk9MdWHJvdvd6WmLJ/U=;
+        b=RUmWU91Gl4BXlW19BUqWB1qmfMsuVBqLS1Zb/4dX6wdD8+0EPoddGwHsL+iOhKQSmT
+         xeIVIhxHKdH4CaO4R7nGdIm0nsHXYQR21draJ0+cQO1XyQKZpCQh8yas93fA32BBpaW1
+         bCyrGTjIC4Od7M/9UK1friDbBlJxPfSWs7C6D0Nf5Y05xXGL9EdfqfKlPmTm7rmfvwsC
+         mV3IG79VzqNpOHrJ1mpiS+TwVm61tB97GBwBloj0lgck9A8ByGR5u1nNIomYH8ODkkjs
+         8E9d6NbNSGTGhiVsb3SiEuWeG3OGSyQtvNHCKAHMrRkCMpp3EP68ISE5CsbJHjLHfHWg
+         FwVA==
+X-Gm-Message-State: APjAAAWOkVvgBuKzUlOvvvMzvjrDaMKWXkkLBKgFi/U3R/cAB669NPkP
+        jBojuGGHbYmDqWwhyp5MeUitugNA24UPWmapsTY=
+X-Google-Smtp-Source: APXvYqwhw1FYzw4YPddtUo6DIlvGABZ3x2lom006suf84ck1j4ZXpOiChOtD0P3hN28a/6SGLQerqc9J9q3hGAiDOu8=
+X-Received: by 2002:aca:4e87:: with SMTP id c129mr22496549oib.153.1575883784546;
+ Mon, 09 Dec 2019 01:29:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <e6c3661e-36df-5ae8-eedb-1961063bcabb@gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+References: <CGME20191206125123eucas1p1c1652484cbccef8d8df37e09affe4e25@eucas1p1.samsung.com>
+ <20191206125112.11006-1-m.szyprowski@samsung.com>
+In-Reply-To: <20191206125112.11006-1-m.szyprowski@samsung.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 9 Dec 2019 10:29:32 +0100
+Message-ID: <CAMuHMdUsRa2QTDw4oM8SGUqfmsGt3-Mc=AnZoPV8RSqehUxyrg@mail.gmail.com>
+Subject: Re: [PATCH] arm: multi_v7_config: Restore debugfs support
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kusanagi Kouichi <slash@ac.auone-net.jp>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Olof Johansson <olof@lixom.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, Dec 08, 2019 at 07:24:49AM +0900, Hyunki Koo wrote:
-> 
-> On 19. 12. 7. 오후 10:37, Krzysztof Kozlowski wrote:
-> > On Sat, 7 Dec 2019 at 14:28, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > > On Sat, Dec 07, 2019 at 10:00:48PM +0900, Hyunki Koo wrote:
-> > > > From: Hyunki Koo <hyunki00.koo@samsung.com>
-> > > > 
-> > > > Not all exynos device have IRQ_COMBINER.
-> > > > Thus add the config for EXYNOS_IRQ_COMBINER.
-> > > > 
-> > > > Signed-off-by: Hyunki Koo <hyunki00.koo@samsung.com>
-> > > > ---
-> > > >   drivers/irqchip/Kconfig  | 7 +++++++
-> > > >   drivers/irqchip/Makefile | 2 +-
-> > > >   2 files changed, 8 insertions(+), 1 deletion(-)
-> > > > 
-> > > Hi,
-> > > 
-> > > There is no changelog and versioning of this patch so I do not
-> > > understand how it differs with previous. It's a resend? v2? It brings
-> > > the confusion and looks like you're ignoring previous comments.
-> > > 
-> > > Looks the same and looks like breaking Exynos platforms in the same way.
-> > > 
-> > > If you not want to skip combiner on ARMv8, it makes sense, then please
-> > > follow the approach we did for Pinctrl drivers (PINCTRL_EXYNOS_ARM and
-> > > PINCTRL_EXYNOS_ARM64).
-> > > 
-> > > Best regards,
-> > > Krzysztof
-> > Ah, now I see the second patch. Still you break bisect which requires
-> > specific ordering of patches or squashing them into one. Optionally
-> > this could be default=y if ARCH_EXYNOS && ARM. I prefer just squashing
-> > both into one patch in this case.
-> 
-> you mean squashing two files arch/arm/mach-exynos/Kconfig and
-> arch/arm/mach-exynos/Kconfig into one patch
-> 
-> or squashing into only one file like blow?
-> 
-> +config EXYNOS_IRQ_COMBINER
-> +       bool "Samsung Exynos IRQ combiner support"
-> +       depends on (ARCH_EXYNOS  && ARM) || COMPILE_TEST
-> +       default y
-> 
-> I prefer first one (squashing two files into one patch)
+Hi Marek,
 
-Squashing two patches into one.
+On Fri, Dec 6, 2019 at 1:51 PM Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> Commit fd7d58f0dbc3 ("ARM: multi_v7_defconfig: renormalize based on recent
+> additions") removed explicit enable line for CONFIG_DEBUG_FS, because
+> that feature has been selected by other enabled options: CONFIG_TRACING,
+> which were enabled by CONFIG_PERF_EVENTS.
+>
+> In meantime, commit 0e4a459f56c3 ("tracing: Remove unnecessary DEBUG_FS
+> dependency") removed the dependency between CONFIG_DEBUG_FS and
+> CONFIG_TRACING, so CONFIG_DEBUG_FS is no longer enabled in default builds.
+>
+> Enable it again explicitly, as debugfs support is essential for various
+> automated testing tools.
 
-> 
-> > 
-> > > > diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-> > > > index ba152954324b..3ed7b7f2ae26 100644
-> > > > --- a/drivers/irqchip/Kconfig
-> > > > +++ b/drivers/irqchip/Kconfig
-> > > > @@ -499,4 +499,11 @@ config SIFIVE_PLIC
-> > > > 
-> > > >           If you don't know what to do here, say Y.
-> > > > 
-> > > > +config EXYNOS_IRQ_COMBINER
-> > > > +     bool "Samsung Exynos IRQ combiner support"
-> > Now point it to be visible. Only for COMPILE_TEST
+... and for systemd :-(
 
-Typo from my side. I wanted to say "No point" - this should not be
-selectable by user.
+E.g. with Debian 9 nfsroot:
 
-> > 
-> > > > +     depends on ARCH_EXYNOS
-> > Since you make it a separate option, make it COMPILE_TEST.
-> 
-> Is this  good ?
+    [FAILED] Failed to mount /sys/kernel/debug.
+    See 'systemctl status sys-kernel-debug.mount' for details.
+    [DEPEND] Dependency failed for Local File Systems.
+    ...
+    You are in emergGive root password for maintenance
+    (or press Control-D to continue):
 
-Not entirely. The bool should be also with "if COMPILE TEST" so:
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-config EXYNOS_IRQ_COMBINER
-	bool "Samsung Exynos IRQ combiner support" if COMPILE_TEST
-	depends on (ARCH_EXYNOS && ARM) || COMPILE_TEST
+Thank you!
 
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Best regards,
-Krzysztof
+This is gonna bite lots of people (and defconfigs)...
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
