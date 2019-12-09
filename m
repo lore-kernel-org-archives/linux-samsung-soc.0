@@ -2,95 +2,129 @@ Return-Path: <SRS0=Dzkt=Z7=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30109C43603
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Dec 2019 18:01:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80C42C43603
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Dec 2019 18:05:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 030E624656
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Dec 2019 18:01:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5150F207FF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Dec 2019 18:05:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1575914482;
-	bh=YulCWfGFQ/5kVEqLXec5lV0Jn7vDvr47wNbFqi37rmk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=c1KmNDjYKi5mfh1XGYMnBFpkF4ZFUc/dvrLndxHf2uPX7DDUJ769DTuYxxzp0xPkH
-	 yZkcOeu/G4G6F+aKzFB9Xp+DY7pCNJcfKtwvi6bPtxJwAhqkA8ZurlCaflIPwyuNRl
-	 M32njSl683qxMLeL9ZyTYM6QFPQ7J28odvlXcJ50=
+	s=default; t=1575914757;
+	bh=4Tiwn+vOanX6VoEEg918KRKbn6cy8IHjhRhssNZygkE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=wfCJGcKKnNWcLDfyrtTkAT0pvjtnfhGGvy8JU/U+LzJ+tvR6d6ZuGVmMjj2HJYsob
+	 TkCHhDqs1Aj73f6DCb5Fduqrg5AVhKk6ljHUCGOB7J6AQyNtjE3Zr47JOl4snDt7H7
+	 hsJ4ln6iFdKRFanKzzBLDG5GMfeLosulQk9uaLqw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726354AbfLISBV (ORCPT
+        id S1726365AbfLISF5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 9 Dec 2019 13:01:21 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:39552 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726335AbfLISBV (ORCPT
+        Mon, 9 Dec 2019 13:05:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51782 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726342AbfLISF4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 9 Dec 2019 13:01:21 -0500
-Received: by mail-ed1-f68.google.com with SMTP id v16so13478715edy.6;
-        Mon, 09 Dec 2019 10:01:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XBPWF36yw8kGA9V4eiTwglCircLVoutwoSlSz402ncU=;
-        b=Iv8/V824canxNMj/5A4QWVlXrLi5uSkhD8ItHRwH2dM7IRnoLIubfKCUkCZ38j0T37
-         KzCSipPDUbW2Qnhm7ZG/Q/BJA95z0Qow7EkCZYLPNXxbBJJEgo/D1/fwE60XzW4oQnHJ
-         M61isQdGe8fHVSMYoF5aBp3+cQeT7UiYvhsvg8Az7kxjX/tDTjz94YLe02I8P7HBWvsq
-         GJ0kPMncNUsKKoZlJxCkSvRhW+V5+d+s4WU+9pUB/nj9lOaLTHMLQeFUUdRJb/nnRalQ
-         +NlbVMKFOU4yRLfpUFYZd014p8cw3upmVFrCmvvFPyCCgBzX9lnoqu0BIVX0sJoPiO2P
-         c0WQ==
-X-Gm-Message-State: APjAAAVUE2doUUTvizZplUbBVJNdvJGklberWARerEeUOe10elZBR6rd
-        7pFjR4fPz/rvmcVccXyheF8=
-X-Google-Smtp-Source: APXvYqyTu65gV4dJb5bBPF7KsnrL0RqP0HQAb2e4Y/50STU+LI6n3y6uAA7xycpb0Hu/XIbsj/m5Gg==
-X-Received: by 2002:a17:906:fccc:: with SMTP id qx12mr33020600ejb.325.1575914479628;
-        Mon, 09 Dec 2019 10:01:19 -0800 (PST)
-Received: from kozik-lap ([194.230.155.234])
-        by smtp.googlemail.com with ESMTPSA id k15sm15418ejc.35.2019.12.09.10.01.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 09 Dec 2019 10:01:18 -0800 (PST)
-Date:   Mon, 9 Dec 2019 19:01:15 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Kusanagi Kouichi <slash@ac.auone-net.jp>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH v2] arm: exynos_config: Restore debugfs support
-Message-ID: <20191209180115.GA13800@kozik-lap>
-References: <CGME20191206124826eucas1p246538607df51f2d68bce3b09d974b292@eucas1p2.samsung.com>
- <20191206124721.9025-1-m.szyprowski@samsung.com>
+        Mon, 9 Dec 2019 13:05:56 -0500
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F813207FF;
+        Mon,  9 Dec 2019 18:05:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575914755;
+        bh=4Tiwn+vOanX6VoEEg918KRKbn6cy8IHjhRhssNZygkE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=SFdINz0ynQImL0tk9EB5fi8ytIGSUuDqOOYuA7Rs3thOooTVfWMMD92r6kYTm+141
+         9mprDm7Hsz9E04D52FrYRii1lJwQeEZ8XHKT/VTbtNfXkdgv+1t51MwmnqYK1vz15H
+         az+0Axd0XwXhTOFq3CEFcupSeMesdBc7Z3Otx3eU=
+Received: by mail-lj1-f174.google.com with SMTP id r19so16741793ljg.3;
+        Mon, 09 Dec 2019 10:05:55 -0800 (PST)
+X-Gm-Message-State: APjAAAVJ/qTUXnInh2PUgN2FXhYK+oLrSWPcZZSzKX+a4+lf/ZOAJrmU
+        qTx7PqQ8fgz1pYtat3LW3WGrfmJHqxTuNWTM5oA=
+X-Google-Smtp-Source: APXvYqw83XhliSCNEUuMHvHHzMeUdnvH5X4suB7IaLFNC3HKulskeEunmRve/1IH26yOI6m30Pg4bLtY3IujXGJlf0U=
+X-Received: by 2002:a2e:9d9a:: with SMTP id c26mr294597ljj.225.1575914753603;
+ Mon, 09 Dec 2019 10:05:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191206124721.9025-1-m.szyprowski@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <CGME20191206125123eucas1p1c1652484cbccef8d8df37e09affe4e25@eucas1p1.samsung.com>
+ <20191206125112.11006-1-m.szyprowski@samsung.com> <CAMuHMdUsRa2QTDw4oM8SGUqfmsGt3-Mc=AnZoPV8RSqehUxyrg@mail.gmail.com>
+ <CAOesGMiC+_ouDdFecV-2DvVzmBkeE=JjrwNyTgcr81=cBhhoAw@mail.gmail.com>
+In-Reply-To: <CAOesGMiC+_ouDdFecV-2DvVzmBkeE=JjrwNyTgcr81=cBhhoAw@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Mon, 9 Dec 2019 19:05:42 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPccvtbmvZKdR3OJu4ZVkgBmKhqt1jR36DCZvxWcmt46yQ@mail.gmail.com>
+Message-ID: <CAJKOXPccvtbmvZKdR3OJu4ZVkgBmKhqt1jR36DCZvxWcmt46yQ@mail.gmail.com>
+Subject: Re: [PATCH] arm: multi_v7_config: Restore debugfs support
+To:     Olof Johansson <olof@lixom.net>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kusanagi Kouichi <slash@ac.auone-net.jp>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Kevin Hilman <khilman@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Dec 06, 2019 at 01:47:21PM +0100, Marek Szyprowski wrote:
-> Commit 9f532d26c75c ("ARM: exynos_defconfig: Trim and reorganize with
-> savedefconfig") removed explicit enable line for CONFIG_DEBUG_FS, because
-> that feature has been selected by other enabled options: CONFIG_TRACING,
-> which in turn had been selected by CONFIG_PERF_EVENTS and
-> CONFIG_PROVE_LOCKING.
-> 
-> In meantime, commit 0e4a459f56c3 ("tracing: Remove unnecessary DEBUG_FS
-> dependency") removed the dependency between CONFIG_DEBUG_FS and
-> CONFIG_TRACING, so CONFIG_DEBUG_FS is no longer enabled in default builds.
-> 
-> Enable it again explicitly, as debugfs support is essential for various
-> automated testing tools.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  arch/arm/configs/exynos_defconfig | 1 +
+On Mon, 9 Dec 2019 at 18:45, Olof Johansson <olof@lixom.net> wrote:
+>
+> +Kevin, since this seems like something ideally we would see some
+> coverage of from Kernel CI at some point.
+>
+>
+> On Mon, Dec 9, 2019 at 1:29 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> >
+> > Hi Marek,
+> >
+> > On Fri, Dec 6, 2019 at 1:51 PM Marek Szyprowski
+> > <m.szyprowski@samsung.com> wrote:
+> > > Commit fd7d58f0dbc3 ("ARM: multi_v7_defconfig: renormalize based on recent
+> > > additions") removed explicit enable line for CONFIG_DEBUG_FS, because
+> > > that feature has been selected by other enabled options: CONFIG_TRACING,
+> > > which were enabled by CONFIG_PERF_EVENTS.
+> > >
+> > > In meantime, commit 0e4a459f56c3 ("tracing: Remove unnecessary DEBUG_FS
+> > > dependency") removed the dependency between CONFIG_DEBUG_FS and
+> > > CONFIG_TRACING, so CONFIG_DEBUG_FS is no longer enabled in default builds.
+> > >
+> > > Enable it again explicitly, as debugfs support is essential for various
+> > > automated testing tools.
+> >
+> > ... and for systemd :-(
+> >
+> > E.g. with Debian 9 nfsroot:
+> >
+> >     [FAILED] Failed to mount /sys/kernel/debug.
+> >     See 'systemctl status sys-kernel-debug.mount' for details.
+> >     [DEPEND] Dependency failed for Local File Systems.
+> >     ...
+> >     You are in emergGive root password for maintenance
+> >     (or press Control-D to continue):
+> >
+> > > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >
+> > Thank you!
+> >
+> > Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >
+> > This is gonna bite lots of people (and defconfigs)...
+>
+> Looks like the in-tree affected defconfigs are:
+>
+> olof@quad:~/work/arm-soc/arch/arm/configs (for-next) $ fgrep -L
+> CONFIG_DEBUG_FS $(fgrep -l CONFIG_PERF_EVENTS *)
+> aspeed_g4_defconfig
+> aspeed_g5_defconfig
+> exynos_defconfig
 
-Thanks, applied.
+I picked up already Marek's patch for exynos_defconfig.
 
 Best regards,
 Krzysztof
-
