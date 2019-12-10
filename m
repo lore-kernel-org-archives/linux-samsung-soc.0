@@ -2,54 +2,55 @@ Return-Path: <SRS0=92EP=2A=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FFF8C2D0BF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Dec 2019 14:50:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18ADEC43603
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Dec 2019 14:52:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D030920828
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Dec 2019 14:50:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E311E207FF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Dec 2019 14:52:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1575989439;
-	bh=K5Q8z1lZuFpZiVpIxPLlK/TX3uShRnvwUeaP79l8aCQ=;
+	s=default; t=1575989531;
+	bh=dFAzoWFqZ3axImMuFtqVBpswlNQq1NMO/hoo1pIY4vI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=q4h3T85WKHL04s3/pq83b9oNvGBCq/bQaZjEK6zouHyi58Qn8o7ABMIwXXp1D7z9R
-	 SUx7+cAn4r4t2znbcCdWjRVMyqkDXZYesOl6TtuVDVCvu8BFGQ7+joyN0h2w3E3vXV
-	 WG0mGhn7kQCEjJrwhqd2hqgAo7msXrLYX5MHZu5M=
+	b=IdgsNkhi0rJfBZ2t2KAGbg8NOOF9IFOTBH/xBsAqgYe9x3wnsQppaP6V3CVf9MBn8
+	 MRc15gLEcZ7GfNfQL5j5E8Y244m4PKmdZhbyaupSWCEZdBKGNEzDeVLPq06Mp4ZtaH
+	 pOxFvx8RW7USR4PWSKTFm4ZrmymXQSwD0WXqOokM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727545AbfLJOuj (ORCPT
+        id S1727345AbfLJOwH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 10 Dec 2019 09:50:39 -0500
-Received: from mail-ed1-f45.google.com ([209.85.208.45]:41450 "EHLO
-        mail-ed1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727426AbfLJOuj (ORCPT
+        Tue, 10 Dec 2019 09:52:07 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:46710 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727159AbfLJOwH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 10 Dec 2019 09:50:39 -0500
-Received: by mail-ed1-f45.google.com with SMTP id c26so16195477eds.8;
-        Tue, 10 Dec 2019 06:50:38 -0800 (PST)
+        Tue, 10 Dec 2019 09:52:07 -0500
+Received: by mail-ed1-f66.google.com with SMTP id m8so16172641edi.13;
+        Tue, 10 Dec 2019 06:52:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=K5Q8z1lZuFpZiVpIxPLlK/TX3uShRnvwUeaP79l8aCQ=;
-        b=pXDB9N2U+NF3eawcyFQGbcJo+HQjlckrI3gYejQdia9gHm26jndAATRMSX6wxt1Ob8
-         tKPhm8cm0omBfywCyhXD7AQfb/LmQJ3gjzpNUsyQ9iKWEce0Sp4w78sz38mwMbMRFqxB
-         m2dbNSZaH6Y98SKZzI0qaFScgesoJriWWFy7LKJ+UNCDFW5vYcFlaLQOtZImT5bJ9wJg
-         KniOTahFMWAcbQB3LvSrsdwW2UxLUMZyxW/rqaqw22K2ShPxXF4lOS/txuG+rdtgiH0q
-         GBQMmB88+ARRV+zJAdlhAzhTkASglImqXQfLE1H8R7n3Cr5xsmkrNMUx4lTZkMSiVPgG
-         w5cg==
-X-Gm-Message-State: APjAAAXD5EA4/j1PyU4tKGAEC2Cl21HI8vtRnvMMrM681QAKLnuhUuQl
-        VDGGQ9cMs1wKP5vtqYNBZRs=
-X-Google-Smtp-Source: APXvYqwuN01ZSvEFWiSad17awZBF1YnGwKo55xzlbJfwiNjZIBopYV+8aRQtqJcQFqLeXFumyKiHsg==
-X-Received: by 2002:a17:906:1354:: with SMTP id x20mr4101913ejb.279.1575989437156;
-        Tue, 10 Dec 2019 06:50:37 -0800 (PST)
+        bh=vnMo0Q3LhdLOTfXftmwazBAlZMLfT/1Z0Eq6LrQUqdc=;
+        b=adoZTKddLqHvuYyIzQFY1Gx43lt3pjw3kYkZ1J+HKzPnj+gbYU4t1/G0d3c9PAIo51
+         gMSab1fBkpepKR0lfFBMC5ibUmOG7AAH1P9sMD+cUNuKrgV/CPBVFG/9FwQGldomW3ny
+         Ty9R7YIQPvfvYzVLIW7PvC8DYhe5ozbyLhZXnQZpxKltcQXthlXBS6jVg4tPtKk8eCqm
+         6OcOnBrqaSjtWxljxKyqbuMY5nf1/THInhPiDx66/0Rrsw+be/GmH2hsveiqV4+eAubi
+         sSQEd0g+JJGZgRl5mplU/9bKOgprc6R9ICTFCiwCsjNfkmah9XjCcHYtYXCqVSCrhzrF
+         vbRQ==
+X-Gm-Message-State: APjAAAViWlIpwNawOGoHXEtWnWdyaYHOP4upIxO1Hb9ZN8xls5YTcpEz
+        C7LUMpP3JDfrmjg0umA7DIQ=
+X-Google-Smtp-Source: APXvYqw8E22/mA1z+Pv20fl6fJbN59CqfIhZcA5CUD+tWG45/U1MB8pFtq/LQzK21g3Bfic01PlZWQ==
+X-Received: by 2002:a05:6402:17f2:: with SMTP id t18mr40260410edy.9.1575989524821;
+        Tue, 10 Dec 2019 06:52:04 -0800 (PST)
 Received: from pi3 ([194.230.155.234])
-        by smtp.googlemail.com with ESMTPSA id dd17sm88984edb.9.2019.12.10.06.50.35
+        by smtp.googlemail.com with ESMTPSA id m17sm76622edq.37.2019.12.10.06.52.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2019 06:50:36 -0800 (PST)
-Date:   Tue, 10 Dec 2019 15:50:34 +0100
+        Tue, 10 Dec 2019 06:52:04 -0800 (PST)
+Date:   Tue, 10 Dec 2019 15:52:02 +0100
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-serial@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
@@ -59,24 +60,40 @@ Cc:     linux-serial@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
         Jiri Slaby <jslaby@suse.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/10] tty: serial: samsung.h: remove reset_port callback
- from struct s3c24xx_uart_info
-Message-ID: <20191210145034.GC11222@pi3>
+Subject: Re: [PATCH 05/10] tty: serial: samsung_tty: delete samsung.h
+Message-ID: <20191210145202.GD11222@pi3>
 References: <20191210143706.3928480-1-gregkh@linuxfoundation.org>
- <20191210143706.3928480-4-gregkh@linuxfoundation.org>
+ <20191210143706.3928480-5-gregkh@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191210143706.3928480-4-gregkh@linuxfoundation.org>
+In-Reply-To: <20191210143706.3928480-5-gregkh@linuxfoundation.org>
 User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 03:37:00PM +0100, Greg Kroah-Hartman wrote:
-> The callback was never set, nor called, so remove the pointer entirely
-> from struct s3c24xx_uart_info.
+On Tue, Dec 10, 2019 at 03:37:01PM +0100, Greg Kroah-Hartman wrote:
+> There is no need for a .h file for a single .c file, so just move all of
+> the content of samsung.h into samsung_tty.c
+> 
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Hyunki Koo <kkoos00@naver.com>
+> Cc: HYUN-KI KOO <hyunki00.koo@samsung.com>
+> Cc: Shinbeom Choi <sbeom.choi@samsung.com>
+> Cc: Jiri Slaby <jslaby@suse.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-serial@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  drivers/tty/serial/samsung.h     | 144 -------------------------------
+>  drivers/tty/serial/samsung_tty.c | 133 +++++++++++++++++++++++++++-
+>  2 files changed, 130 insertions(+), 147 deletions(-)
+>  delete mode 100644 drivers/tty/serial/samsung.h
 
 Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
