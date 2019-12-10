@@ -7,53 +7,54 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B81EC2D0BF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Dec 2019 21:07:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D57FBC3F68F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Dec 2019 21:21:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F01E624684
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Dec 2019 21:07:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9F3D207FF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Dec 2019 21:21:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576012026;
-	bh=ceSWH49Z1fn5M+WPTJEUWplL1sTDSb98CQd+itGpjPg=;
+	s=default; t=1576012873;
+	bh=MnjkOJzQpeys/zJdC8tULjlZdIzXW7jVsRu4TsHrD9k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lbBSIhmmrFPNCGokiNRSZqwGn8BubvPuaswGyJsuhj2hlAFv+8XWBebPJgMuBk4kf
-	 evHOaTlCx3vV06M8QkWF+8U+Hv3dSw9PXVV3qh+77PGjIdACG6lAhxBTdmw9hvxow+
-	 p30j3DQVsAutmNnCEA37Wzgn+3APICeWWupheQDk=
+	b=fZwcyAbJXylFa1gjUqDTcisyUDQvkdi9Wbxnp8emMhZDQ659wCZ2sje3jXDTVenir
+	 4J6Ns1coA3WXbXmr6NQ8ojPabX0+ydM3OrATJAiPYhgCFx7yGDvXjdEUMMn4IQBjn+
+	 rLQPk20jRVFedTTdB/VOpsh290L7VNwYwDL/cD10=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727347AbfLJVHC (ORCPT
+        id S1728916AbfLJVVJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 10 Dec 2019 16:07:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48924 "EHLO mail.kernel.org"
+        Tue, 10 Dec 2019 16:21:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727010AbfLJVEM (ORCPT
+        id S1728859AbfLJVLx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 10 Dec 2019 16:04:12 -0500
+        Tue, 10 Dec 2019 16:11:53 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBCAB24653;
-        Tue, 10 Dec 2019 21:04:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 591F5246A8;
+        Tue, 10 Dec 2019 21:11:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576011850;
-        bh=ceSWH49Z1fn5M+WPTJEUWplL1sTDSb98CQd+itGpjPg=;
+        s=default; t=1576012312;
+        bh=MnjkOJzQpeys/zJdC8tULjlZdIzXW7jVsRu4TsHrD9k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=agBOGRizH/AKsUvFqUmZ7sqt8iwDVhKFq+iBBRfRC5mqImcD8YjYl44yjrSRKF+08
-         SKeu7mAu+GiAgA6zMbPIZnD1df1bKKDAoXZ8LPFjT3Lmsk7n1mmAjWqzXnn543ledc
-         r06OXxwzVAIg/gCn0CbdXqwO6nX/PqBeeK6yjySI=
+        b=YBNw3FRXIgSAB5/1mbeqZzh8gJyq0B/LsZ5FuXS75EsqT3EZ+Va2oLBsJonlMPfbE
+         +V74QoafMGXn9c4Uuw1wVQJ19JK7XrZenDpYvQsu/gooGxqyq4Y9Ysx1okG1AIZEad
+         +y6ejDOm/cFyoxEzHLvLMGL9Z1+gS87Em/WrmB+E=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dariusz Marcinkiewicz <darekm@google.com>,
+Cc:     Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 006/350] drm: exynos: exynos_hdmi: use cec_notifier_conn_(un)register
-Date:   Tue, 10 Dec 2019 15:58:18 -0500
-Message-Id: <20191210210402.8367-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 247/350] media: exynos4-is: fix wrong mdev and v4l2 dev order in error path
+Date:   Tue, 10 Dec 2019 16:05:52 -0500
+Message-Id: <20191210210735.9077-208-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191210210402.8367-1-sashal@kernel.org>
-References: <20191210210402.8367-1-sashal@kernel.org>
+In-Reply-To: <20191210210735.9077-1-sashal@kernel.org>
+References: <20191210210735.9077-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -63,127 +64,77 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Dariusz Marcinkiewicz <darekm@google.com>
+From: Seung-Woo Kim <sw0312.kim@samsung.com>
 
-[ Upstream commit 71137bfd98973efb7b762ba168df077b87b34311 ]
+[ Upstream commit 4d741cbd58bf889c8a68cf6e592a7892b5c2802e ]
 
-Use the new cec_notifier_conn_(un)register() functions to
-(un)register the notifier for the HDMI connector, and fill in
-the cec_connector_info.
+When driver is built as module and probe during insmod is deferred
+because of sensor subdevs, there is NULL pointer deference because
+mdev is cleaned up and then access it from v4l2_device_unregister().
+Fix the wrong mdev and v4l2 dev order in error path of probe.
 
-Changes since v7:
-	- err_runtime_disable -> err_rpm_disable
-Changes since v2:
-	- removed unnecessary call to invalidate phys address before
-	deregistering the notifier,
-	- use cec_notifier_phys_addr_invalidate instead of setting
-	invalid address on a notifier.
+This fixes below null pointer deference:
+   Unable to handle kernel NULL pointer dereference at virtual address 00000000
+   pgd = ca026f68
+   [00000000] *pgd=00000000
+   Internal error: Oops: 5 [#1] PREEMPT SMP ARM
+   [...]
+   Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+   PC is at ida_free+0x7c/0x160
+   LR is at xas_start+0x44/0x204
+   [...]
+   [<c0dafd60>] (ida_free) from [<c083c20c>] (__media_device_unregister_entity+0x18/0xc0)
+   [<c083c20c>] (__media_device_unregister_entity) from [<c083c2e0>] (media_device_unregister_entity+0x2c/0x38)
+   [<c083c2e0>] (media_device_unregister_entity) from [<c0843404>] (v4l2_device_release+0xd0/0x104)
+   [<c0843404>] (v4l2_device_release) from [<c0632558>] (device_release+0x28/0x98)
+   [<c0632558>] (device_release) from [<c0db1204>] (kobject_put+0xa4/0x208)
+   [<c0db1204>] (kct_put) from [<bf00bac4>] (fimc_capture_subdev_unregistered+0x58/0x6c [s5p_fimc])
+   [<bf00bac4>] (fimc_capture_subdev_unregistered [s5p_fimc]) from [<c084a1cc>] (v4l2_device_unregister_subdev+0x6c/0xa8)
+   [<c084a1cc>] (v4l2_device_unregister_subdev) from [<c084a350>] (v4l2_device_unregister+0x64/0x94)
+   [<c084a350>] (v4l2_device_unregister) from [<bf0101ac>] (fimc_md_probe+0x4ec/0xaf8 [s5p_fimc])
+   [...]
 
-Signed-off-by: Dariusz Marcinkiewicz <darekm@google.com>
-Tested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-[hverkuil-cisco@xs4all.nl: use 'if (!hdata->notifier)' instead of '== NULL']
+Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Fixes: 9832e155f1ed ("[media] media-device: split media initialization and registration")
 Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190828123415.139441-1-darekm@google.com
+Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/exynos/exynos_hdmi.c | 31 ++++++++++++++++------------
- 1 file changed, 18 insertions(+), 13 deletions(-)
+ drivers/media/platform/exynos4-is/media-dev.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index bc1565f1822ab..09aa73c0f2add 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -852,6 +852,10 @@ static enum drm_connector_status hdmi_detect(struct drm_connector *connector,
- 
- static void hdmi_connector_destroy(struct drm_connector *connector)
- {
-+	struct hdmi_context *hdata = connector_to_hdmi(connector);
-+
-+	cec_notifier_conn_unregister(hdata->notifier);
-+
- 	drm_connector_unregister(connector);
- 	drm_connector_cleanup(connector);
- }
-@@ -935,6 +939,7 @@ static int hdmi_create_connector(struct drm_encoder *encoder)
- {
- 	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
- 	struct drm_connector *connector = &hdata->connector;
-+	struct cec_connector_info conn_info;
- 	int ret;
- 
- 	connector->interlace_allowed = true;
-@@ -957,6 +962,15 @@ static int hdmi_create_connector(struct drm_encoder *encoder)
- 			DRM_DEV_ERROR(hdata->dev, "Failed to attach bridge\n");
+diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
+index a838189d44902..9aaf3b8060d50 100644
+--- a/drivers/media/platform/exynos4-is/media-dev.c
++++ b/drivers/media/platform/exynos4-is/media-dev.c
+@@ -1457,12 +1457,12 @@ static int fimc_md_probe(struct platform_device *pdev)
+ 	ret = v4l2_device_register(dev, &fmd->v4l2_dev);
+ 	if (ret < 0) {
+ 		v4l2_err(v4l2_dev, "Failed to register v4l2_device: %d\n", ret);
+-		return ret;
++		goto err_md;
  	}
  
-+	cec_fill_conn_info_from_drm(&conn_info, connector);
-+
-+	hdata->notifier = cec_notifier_conn_register(hdata->dev, NULL,
-+						     &conn_info);
-+	if (!hdata->notifier) {
-+		ret = -ENOMEM;
-+		DRM_DEV_ERROR(hdata->dev, "Failed to allocate CEC notifier\n");
-+	}
-+
+ 	ret = fimc_md_get_clocks(fmd);
+ 	if (ret)
+-		goto err_md;
++		goto err_v4l2dev;
+ 
+ 	ret = fimc_md_get_pinctrl(fmd);
+ 	if (ret < 0) {
+@@ -1519,9 +1519,10 @@ static int fimc_md_probe(struct platform_device *pdev)
+ 	fimc_md_unregister_entities(fmd);
+ err_clk:
+ 	fimc_md_put_clocks(fmd);
++err_v4l2dev:
++	v4l2_device_unregister(&fmd->v4l2_dev);
+ err_md:
+ 	media_device_cleanup(&fmd->media_dev);
+-	v4l2_device_unregister(&fmd->v4l2_dev);
  	return ret;
  }
  
-@@ -1528,8 +1542,8 @@ static void hdmi_disable(struct drm_encoder *encoder)
- 		 */
- 		mutex_unlock(&hdata->mutex);
- 		cancel_delayed_work(&hdata->hotplug_work);
--		cec_notifier_set_phys_addr(hdata->notifier,
--					   CEC_PHYS_ADDR_INVALID);
-+		if (hdata->notifier)
-+			cec_notifier_phys_addr_invalidate(hdata->notifier);
- 		return;
- 	}
- 
-@@ -2006,12 +2020,6 @@ static int hdmi_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	hdata->notifier = cec_notifier_get(&pdev->dev);
--	if (hdata->notifier == NULL) {
--		ret = -ENOMEM;
--		goto err_hdmiphy;
--	}
--
- 	pm_runtime_enable(dev);
- 
- 	audio_infoframe = &hdata->audio.infoframe;
-@@ -2023,7 +2031,7 @@ static int hdmi_probe(struct platform_device *pdev)
- 
- 	ret = hdmi_register_audio_device(hdata);
- 	if (ret)
--		goto err_notifier_put;
-+		goto err_rpm_disable;
- 
- 	ret = component_add(&pdev->dev, &hdmi_component_ops);
- 	if (ret)
-@@ -2034,8 +2042,7 @@ static int hdmi_probe(struct platform_device *pdev)
- err_unregister_audio:
- 	platform_device_unregister(hdata->audio.pdev);
- 
--err_notifier_put:
--	cec_notifier_put(hdata->notifier);
-+err_rpm_disable:
- 	pm_runtime_disable(dev);
- 
- err_hdmiphy:
-@@ -2054,12 +2061,10 @@ static int hdmi_remove(struct platform_device *pdev)
- 	struct hdmi_context *hdata = platform_get_drvdata(pdev);
- 
- 	cancel_delayed_work_sync(&hdata->hotplug_work);
--	cec_notifier_set_phys_addr(hdata->notifier, CEC_PHYS_ADDR_INVALID);
- 
- 	component_del(&pdev->dev, &hdmi_component_ops);
- 	platform_device_unregister(hdata->audio.pdev);
- 
--	cec_notifier_put(hdata->notifier);
- 	pm_runtime_disable(&pdev->dev);
- 
- 	if (!IS_ERR(hdata->reg_hdmi_en))
 -- 
 2.20.1
 
