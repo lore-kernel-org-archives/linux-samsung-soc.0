@@ -7,142 +7,119 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 622D6C43603
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Dec 2019 02:04:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 787C5C2D0BF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Dec 2019 04:14:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2473720726
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Dec 2019 02:04:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A99324653
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Dec 2019 04:14:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JJQk8o7y"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JiDJQnnp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbfLJCEW (ORCPT
+        id S1726818AbfLJEOM (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 9 Dec 2019 21:04:22 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:35128 "EHLO
+        Mon, 9 Dec 2019 23:14:12 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:51427 "EHLO
         mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726538AbfLJCEW (ORCPT
+        with ESMTP id S1726787AbfLJEOL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 9 Dec 2019 21:04:22 -0500
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20191210020418epoutp04311046dab4d46ed4a083aa16c0a91919~e4DmxOs8I1450614506epoutp04I;
-        Tue, 10 Dec 2019 02:04:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20191210020418epoutp04311046dab4d46ed4a083aa16c0a91919~e4DmxOs8I1450614506epoutp04I
+        Mon, 9 Dec 2019 23:14:11 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20191210041406epoutp04076d1d8e57dbe72008f3736651e66592~e508odqWC2454924549epoutp04r
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Dec 2019 04:14:06 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20191210041406epoutp04076d1d8e57dbe72008f3736651e66592~e508odqWC2454924549epoutp04r
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1575943458;
-        bh=JIlFhIxGiAWFjXmj8eutng+eKDk0ywJyefbSTWOuCns=;
+        s=mail20170921; t=1575951246;
+        bh=8ZnAdhmubYW5U3geKUg1GbxHGDRqr4E2F3dUKd6lc18=;
         h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=JJQk8o7yF1js+i8wr7DbP4opuQkC18/V/d/fwlp5vdnBQjUIzATM1kk6fxI3RPdpb
-         rh7ASkXsDo+PQ7yvMHdsyb0gPx72Wzsf+zGS996PoLxs3IA7lReAemwE1J/Egerf1d
-         5FfKNG2QNaVEXPDJkF7jHjTJmB+U3FAFXzAX3t+c=
+        b=JiDJQnnpEPFZtDXmG9H+DuxuoVRiKKiu6MAT3Ve+VDdW8fNKP5sWnIOFmlPi4kLJ+
+         ApfT2Ys1gTlOi0X1YL57IM1QeETCho8rWRwG/rbFiRdUG+O5umgUATRUXgk9RKLoR6
+         EKX+7kxnDu8Fa8UtAHPB0xCp7tSUBUzJAiEZNeow=
 Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20191210020417epcas1p3103e50cf5f2838be97d66d7844edca06~e4DmOD-n70406004060epcas1p3V;
-        Tue, 10 Dec 2019 02:04:17 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.156]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 47X3Jv075zzMqYl1; Tue, 10 Dec
-        2019 02:04:15 +0000 (GMT)
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20191210041406epcas1p2573bfb61527a7855c7b6aec8dde088af~e508MtcJb2988229882epcas1p2d;
+        Tue, 10 Dec 2019 04:14:06 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.153]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 47X6Bh1pCmzMqYkY; Tue, 10 Dec
+        2019 04:14:04 +0000 (GMT)
 Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        84.58.48498.E1DFEED5; Tue, 10 Dec 2019 11:04:14 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        DC.FC.52419.C8B1FED5; Tue, 10 Dec 2019 13:14:04 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
         epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20191210020413epcas1p3e11eda64344c8e15d7781c5071e76953~e4DjAEU5S0406004060epcas1p3Q;
-        Tue, 10 Dec 2019 02:04:13 +0000 (GMT)
+        20191210041403epcas1p393e978279a9c29aa550de20c7fe20bbe~e505p7wtv2140221402epcas1p3p;
+        Tue, 10 Dec 2019 04:14:03 +0000 (GMT)
 Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191210020413epsmtrp2b7f2e8b02004fb0c1daadd1d2454ecce~e4Di_LLlV2765727657epsmtrp2N;
-        Tue, 10 Dec 2019 02:04:13 +0000 (GMT)
-X-AuditID: b6c32a36-a55ff7000001bd72-dd-5deefd1ee477
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191210041403epsmtrp18a202e3c5061bc1510377099ea9ee898~e505o4xMi2236922369epsmtrp1S;
+        Tue, 10 Dec 2019 04:14:03 +0000 (GMT)
+X-AuditID: b6c32a37-59fff7000001ccc3-f1-5def1b8cbff1
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
         epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C6.AD.10238.D1DFEED5; Tue, 10 Dec 2019 11:04:13 +0900 (KST)
+        D6.36.10238.B8B1FED5; Tue, 10 Dec 2019 13:14:03 +0900 (KST)
 Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191210020413epsmtip2b78f213eb12d5fbee4bff5729c9aae69~e4DiI_two1930619306epsmtip2Y;
-        Tue, 10 Dec 2019 02:04:13 +0000 (GMT)
-Subject: Re: [PATCH 03/17] clk: samsung: convert to
- devm_platform_ioremap_resource
-To:     Yangtao Li <tiny.windzz@gmail.com>, afaerber@suse.de,
-        manivannan.sadhasivam@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, Eugeniy.Paltsev@synopsys.com,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, agross@kernel.org,
-        s.nawrocki@samsung.com, tomasz.figa@gmail.com, kgene@kernel.org,
-        krzk@kernel.org, palmer@sifive.com, paul.walmsley@sifive.com,
-        dinguyen@kernel.org, mripard@kernel.org, wens@csie.org,
-        emilio@elopez.com.ar, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        matthias.bgg@gmail.com, rfontana@redhat.com,
-        gregkh@linuxfoundation.org, t-kristo@ti.com, john@phrozen.org,
-        tglx@linutronix.de, allison@lohutok.net,
-        kstewart@linuxfoundation.org, swinslow@gmail.com,
-        aisheng.dong@nxp.com, robh@kernel.org, daniel.baluta@nxp.com,
-        wangyan.wang@mediatek.com, chunhui.dai@mediatek.com,
-        miquel.raynal@bootlin.com, heiko@sntech.de, jcmvbkbc@gmail.com,
-        nsekhar@ti.com, geert+renesas@glider.be
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191210041403epsmtip1d12679440965b765de3305bac30411c1~e505RZSEm3119531195epsmtip1U;
+        Tue, 10 Dec 2019 04:14:03 +0000 (GMT)
+Subject: Re: [PATCH v3 4/4] devfreq: exynos-bus: Clean up code
+To:     =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        kgene@kernel.org, krzk@kernel.org, b.zolnierkie@samsung.com,
+        m.szyprowski@samsung.com, inki.dae@samsung.com,
+        sw0312.kim@samsung.com, k.konieczny@samsung.com,
+        leonard.crestez@nxp.com
 From:   Chanwoo Choi <cw00.choi@samsung.com>
 Organization: Samsung Electronics
-Message-ID: <02ece950-b3d2-0d1a-fd94-acb64272bc96@samsung.com>
-Date:   Tue, 10 Dec 2019 11:10:39 +0900
+Message-ID: <ab5cd151-0f9f-929e-fcbe-e7fe7b6c8645@samsung.com>
+Date:   Tue, 10 Dec 2019 13:20:29 +0900
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
         Thunderbird/59.0
 MIME-Version: 1.0
-In-Reply-To: <20191209195749.868-3-tiny.windzz@gmail.com>
+In-Reply-To: <20191209104902.11904-5-a.swigon@samsung.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01UbTCcVxSeu+/HLo3mrUhdfrTrzbSdmBEWy9FGqq3KO22m1SYxnXSM7tg3
-        KNZ2l3z+aBKKRQbJENkS5KNKZHwOayPWEBGdYRmNSmszjZVISzdV35XQta9M/XvOc55znnvu
-        mXslhKtR4ilJUKXyGpUiiaWdyZbunb4+rz23RfvlVoVAeqMWBqwrJMwVGQmovrtKQvaDchoa
-        2i009JhviuBx/Zydqyql4OG9T6Hs+3MI0q/U0bA2PkXBwsNKBObFNhoy9JdJqClqIyHfOkWA
-        2VwvhrzSMwgarSMUFJr6xTCT94CCnH+rCRg2ltIwnD6EoGU2g4YSc4cIdHN6GiwZOgrOZARA
-        d1YHBZm6HygY+ulDMJ2tF0FTQYWd0m+FczeKENwvPwzt1joC1toNYnje2khC93QWBasjDSQ8
-        aXYH09AMgquPsmloaiwiYNl4iYSylQIaaozPEJTXLFGw3GUWhcm5p6PfiblLtSe5+vHrFPfM
-        tpcr7Pfh2vQWMddYo6O5sZF2mrMNDIg5U1mtmGu6+i03Mz0h5jL6TCR3Nt1Gcw02g4jLf+4X
-        6XEocXc8r1DyGimvik1RJqjiQtmP98d8ECMP8pP5yEIgmJWqFMl8KBu+L9InIiHJvhhWekSR
-        lGanIhVaLeu7Z7cmJS2Vl8anaFNDWV6tTFKHqHdpFcnaNFXcrtiU5Ldlfn7+crvwq8T4ptb7
-        tPq09NiPqwvoFJrwzEFOEswEYuvf42QOcpa4MgaE8+5mbwT/IPyo04SEYAHhyYV84kWJZXRR
-        LCRuIfxHbhEhBE8R7pz5jVxXbWMOYENOnSPhxuRK8Oj5CdF6QDC5Itwwf9HRi2a8senJKL2O
-        tzJe+N6SFa1jF2YPzusZdGhI5g38s9VCrePtTBTua8nY0LyC+y5OONycmBCcXlnv6EMw7vjX
-        iXKRgF/HrX+VOk6BmcdO+GZtCSkMEY6ndHdEAt6G/+xtFgvYE8/abtECPomr+27TQnE2ws2m
-        QUpIBGDTtfP2YondYSeuM/oKtBduWylDgvHL2DafR61LMOOCszNdBckOPPy7ZcPWA1/J0tEF
-        iNVvGke/aQT9phH0/5tVILIGvcqrtclxvFam9t+88EbkeLfeQQZ0eWBfF2IkiN3iUhFmi3al
-        FEe0x5O7EJYQrJtLb6adclEqjp/gNSkxmrQkXtuF5PbbLiQ8t8em2H8BVWqMTO4fEBAAgbIg
-        uUzGurtIloaiXZk4RSqfyPNqXvOiTiRx8jyFOqePvTXWkz8+Jl/8xT+n2ItNZnV7O3KrTzh7
-        tn00rwz0z6racQgHv3cNfV1w5/OXqg9ohnMj3umN3n+jmIogK4Pn3L5oCi5ee3fS+bNvhma7
-        37TU+VTNRjdUhU9KT28xHD34viHqwnKU/GB9eKLH0RK/w7bbYZMGZb+0YND45fXpT9xZUhuv
-        kHkTGq3iP+SSlHzNBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxTZxTH89x3iJ2XouOBbXFrsiwj0YFOPSaGsCXKs2zJ/KAuminrxh26
-        0Up6QSdbMkc7pBUmmnS6y0thkCmdrqUYKdDRhK4oZlAYg+Bia7RlIcHWEBF1Ao4L2cK33/mf
-        8/t/OgKtbeYyhMPGEslk1BfpuGTmakC3bv1L84kDWf3nssDskWEw+pSBGXsXDa3XFxiojDg4
-        aPOFOQiGuin42z2zmF2oY+HO6PtQX3sWgbnZxcGzu1MszN5pQhB61MmBRfmRAae9k4HT0Ska
-        QiE3D1V15Qg80TEWzvgHeJiuirBg+6eVhpGuOg5GzMMIrj6wcHA+1EOBdUbhIGyxslBu2QSB
-        kz0sVFh/YmH4xg7wV7spaK9pXIyU1XD2sh3BTcen4Iu6aHjm8/Iw3+FhIHDvJAsLY20MTF5J
-        A//wNIKWiUoO2j12Gp50NTBQ/7SGA2fXHAKH8zELT3pDVO5mcn/8W540XPqSuO/+zJK5RB45
-        M7CedCphnnicVo7cGvNxJDE4yBN//SWetLd8TabvxXhi6fczpNqc4EhbwkuR0/NZu9L3J28v
-        kIoOH5VMb+R8lHyoveMmV/zNy19cXJhFJ1Asw4aSBCy+icPjj3gbSha0YjfCtQ/rqeVFOv5+
-        OEjbkLDIqTgQkNVYK8YRttemqJwq7sZem4tW3TXiKQH3TTWz6kCLpygc/L2C/r/V1tTGqAon
-        ZmL/5Din8mrxFTz6OIpU1og5uCo4RKvMiK/iP6NhVuW14l7c2RKllm9ScP8PsaWeJHEbNje5
-        l3po8TU81/AHvcxp+K+Yg1rmdbgjXkfXoFRlha6sUJQVirJCaUSME6VLxbKh0CBnF2cbpWMb
-        ZL1BLjUWbvjkiMGDll4383UvGmnJ70WigHSrNI25iQNaVn9UPm7oRVigdWs01yoWI02B/niZ
-        ZDqSbyotkuRe9ILA6NI0E8a+fVqxUF8ifS5JxZLpvy0lJGWcQBsrg4kJmMlNlOdt/My6J0jy
-        nfa3r2/d9MF06pbq4O7SaGVZyh783pzl+dKPW6mCdzb/MurfX+KJ73y32xlxVfhs511f3U6P
-        7NslXPwub6e/8MVfu82zQz3b4m9dmLgfL7u8d6sSueH9bXLMdpDEnsseUm5byZUBR2vfhzty
-        Dj44N69j5EP67EzaJOv/BcgKhNC2AwAA
-X-CMS-MailID: 20191210020413epcas1p3e11eda64344c8e15d7781c5071e76953
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLJsWRmVeSWpSXmKPExsWy7bCmvm6P9PtYg+UbOS3uz2tltNg4Yz2r
+        xaT7E1gsFnyawWrR//g1s8X58xvYLc42vWG3WHH3I6vFpsfXWC0u75rDZvG59wijxYzz+5gs
+        1h65y25xu3EFm8WMyS/ZHPg9Nq3qZPPYvKTeY+O7HUwefVtWMXp83iQXwBqVbZORmpiSWqSQ
+        mpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDdK2SQlliTilQKCCxuFhJ
+        386mKL+0JFUhI7+4xFYptSAlp8CyQK84Mbe4NC9dLzk/18rQwMDIFKgwITtj1ouMgp+GFatn
+        TmFsYFyn3sXIySEhYCIxa9dK9i5GLg4hgR2MEq/au9kgnE+MEh0HnrJAON+AnLs9TDAt11cv
+        ZoVI7GWU6Fz5A6rqPaPErTnNrCBVwgJ2EssW7GACSYgIHGCUOLC+GcxhFvjCKNF84y87SBWb
+        gJbE/hc32EBsfgFFias/HjOC2LxA3f1PHzOD2CwCqhKXt28FqxcVCJM4ua0FqkZQ4uTMJywg
+        NqeAlcSqmefB5jALiEvcejKfCcKWl2jeOpsZ4u517BLTf5pB2C4SjbM3QcWFJV4d38IOYUtJ
+        vOxvg7KrJVaePAIODQmBDkaJLfsvsEIkjCX2L50MtIADaIGmxPpd+hBhRYmdv+cyQuzlk3j3
+        tYcVpERCgFeio00IokRZ4vKDu9BglJRY3N7JNoFRaRaSb2Yh+WAWkg9mISxbwMiyilEstaA4
+        Nz212LDAGDm6NzGCk7KW+Q7GDed8DjEKcDAq8fAucHgXK8SaWFZcmXuIUYKDWUmE93gbUIg3
+        JbGyKrUoP76oNCe1+BCjKTCwJzJLiSbnAzNGXkm8oamRsbGxhYmhmamhoZI4L8ePi7FCAumJ
+        JanZqakFqUUwfUwcnFINjFnbNk0NPeQb2N9wbOnaE6k+PXdMWdxS1m7YJnJqRdHCzn3L6uoD
+        s24GrwpQ3ndMMLZA+mPD3MkhT4RK/n25uet174P1GyvOOS9z0Zhs9vX0gr1/2j9F3JIweyP3
+        60D88cVrd00PFDyfPvW6caG1eDITn4F55zSr/01cKZe4eXf13OXj1Ty3c6sSS3FGoqEWc1Fx
+        IgCeXYH14AMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGIsWRmVeSWpSXmKPExsWy7bCSnG639PtYg/uz5Szuz2tltNg4Yz2r
+        xaT7E1gsFnyawWrR//g1s8X58xvYLc42vWG3WHH3I6vFpsfXWC0u75rDZvG59wijxYzz+5gs
+        1h65y25xu3EFm8WMyS/ZHPg9Nq3qZPPYvKTeY+O7HUwefVtWMXp83iQXwBrFZZOSmpNZllqk
+        b5fAlTHrRUbBT8OK1TOnMDYwrlPvYuTkkBAwkbi+ejFrFyMXh5DAbkaJO5cusUMkJCWmXTzK
+        3MXIAWQLSxw+XAwSFhJ4yyixtFcTxBYWsJNYtmAHE0iviMABRonNO2czgSSYBb4wShx9Eg4x
+        dC+jxI61B1hBEmwCWhL7X9xgA7H5BRQlrv54zAhi8wJN6n/6mBnEZhFQlbi8fSvYEaICYRI7
+        lzxmgqgRlDg58wkLiM0pYCWxauZ5Nohl6hJ/5l1ihrDFJW49mQ91hLxE89bZzBMYhWchaZ+F
+        pGUWkpZZSFoWMLKsYpRMLSjOTc8tNiwwzEst1ytOzC0uzUvXS87P3cQIjk0tzR2Ml5fEH2IU
+        4GBU4uFd4PAuVog1say4MvcQowQHs5II7/E2oBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHep3nH
+        IoUE0hNLUrNTUwtSi2CyTBycUg2M0v4uJ+e5V0Y9bqoSuFFeO4n71iyGE6UxbP5XSkqO/Dbt
+        Kw/hVwjmebW/8tPNUJ1tlSH6LM0HlrxPm6cq8M8rsVp/9TTvXxMl/XK/u4fzuv2LVCq/ckTm
+        k+iN5/auE5tqOPJmrn5nu27vZD1m9eafu54dmvLq3bUvGzrOlE0UiKqdmm/2dNkKJZbijERD
+        Leai4kQAKr+0eskCAAA=
+X-CMS-MailID: 20191210041403epcas1p393e978279a9c29aa550de20c7fe20bbe
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: SVC_REQ_APPROVE
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191209195912epcas5p2759273f3c5b15df7e78285e5db964ee5
-References: <20191209195749.868-1-tiny.windzz@gmail.com>
-        <CGME20191209195912epcas5p2759273f3c5b15df7e78285e5db964ee5@epcas5p2.samsung.com>
-        <20191209195749.868-3-tiny.windzz@gmail.com>
+X-CMS-RootMailID: 20191209105034eucas1p277be9a40363fec76b4241d28e71e40d2
+References: <20191209104902.11904-1-a.swigon@samsung.com>
+        <CGME20191209105034eucas1p277be9a40363fec76b4241d28e71e40d2@eucas1p2.samsung.com>
+        <20191209104902.11904-5-a.swigon@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
@@ -150,102 +127,207 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 Hi,
 
-On 12/10/19 4:57 AM, Yangtao Li wrote:
-> Use devm_platform_ioremap_resource() to simplify code.
-> 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
->  drivers/clk/samsung/clk-exynos-audss.c   | 4 +---
->  drivers/clk/samsung/clk-exynos4412-isp.c | 4 +---
->  drivers/clk/samsung/clk-exynos5433.c     | 4 +---
->  drivers/clk/samsung/clk-s5pv210-audss.c  | 4 +---
->  4 files changed, 4 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-> index 42b5d32c6cc7..9cc127a162ad 100644
-> --- a/drivers/clk/samsung/clk-exynos-audss.c
-> +++ b/drivers/clk/samsung/clk-exynos-audss.c
-> @@ -129,7 +129,6 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
->  	struct clk *pll_ref, *pll_in, *cdclk, *sclk_audio, *sclk_pcm_in;
->  	const struct exynos_audss_clk_drvdata *variant;
->  	struct clk_hw **clk_table;
-> -	struct resource *res;
->  	struct device *dev = &pdev->dev;
->  	int i, ret = 0;
->  
-> @@ -137,8 +136,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
->  	if (!variant)
->  		return -EINVAL;
->  
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	reg_base = devm_ioremap_resource(dev, res);
-> +	reg_base = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(reg_base))
->  		return PTR_ERR(reg_base);
->  
-> diff --git a/drivers/clk/samsung/clk-exynos4412-isp.c b/drivers/clk/samsung/clk-exynos4412-isp.c
-> index 4b9e73608c21..20f5129f7212 100644
-> --- a/drivers/clk/samsung/clk-exynos4412-isp.c
-> +++ b/drivers/clk/samsung/clk-exynos4412-isp.c
-> @@ -110,11 +110,9 @@ static int __init exynos4x12_isp_clk_probe(struct platform_device *pdev)
->  	struct samsung_clk_provider *ctx;
->  	struct device *dev = &pdev->dev;
->  	struct device_node *np = dev->of_node;
-> -	struct resource *res;
->  	void __iomem *reg_base;
->  
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	reg_base = devm_ioremap_resource(dev, res);
-> +	reg_base = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(reg_base)) {
->  		dev_err(dev, "failed to map registers\n");
->  		return PTR_ERR(reg_base);
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index 4b1aa9382ad2..b0d48cddfd6e 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -5557,7 +5557,6 @@ static int __init exynos5433_cmu_probe(struct platform_device *pdev)
->  	struct exynos5433_cmu_data *data;
->  	struct samsung_clk_provider *ctx;
->  	struct device *dev = &pdev->dev;
-> -	struct resource *res;
->  	void __iomem *reg_base;
->  	int i;
->  
-> @@ -5570,8 +5569,7 @@ static int __init exynos5433_cmu_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  	ctx = &data->ctx;
->  
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	reg_base = devm_ioremap_resource(dev, res);
-> +	reg_base = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(reg_base))
->  		return PTR_ERR(reg_base);
->  
-> diff --git a/drivers/clk/samsung/clk-s5pv210-audss.c b/drivers/clk/samsung/clk-s5pv210-audss.c
-> index 14985ebd043b..503bd8a10d8f 100644
-> --- a/drivers/clk/samsung/clk-s5pv210-audss.c
-> +++ b/drivers/clk/samsung/clk-s5pv210-audss.c
-> @@ -63,15 +63,13 @@ static struct syscore_ops s5pv210_audss_clk_syscore_ops = {
->  static int s5pv210_audss_clk_probe(struct platform_device *pdev)
->  {
->  	int i, ret = 0;
-> -	struct resource *res;
->  	const char *mout_audss_p[2];
->  	const char *mout_i2s_p[3];
->  	const char *hclk_p;
->  	struct clk_hw **clk_table;
->  	struct clk *hclk, *pll_ref, *pll_in, *cdclk, *sclk_audio;
->  
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	reg_base = devm_ioremap_resource(&pdev->dev, res);
-> +	reg_base = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(reg_base)) {
->  		dev_err(&pdev->dev, "failed to map audss registers\n");
->  		return PTR_ERR(reg_base);
-> 
+This patch contains the clean-up code related to 'goto' style.
+Please merge the the clean-up code of 'goto' to one patch with patch3/patch4.
+- patch3 related to 'goto' clean-up code
+- patch4 related to remaining clean-up code. 
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+And I added the comment below. Please check them.
+
+On 12/9/19 7:49 PM, Artur Świgoń wrote:
+> This patch adds minor improvements to the exynos-bus driver, including
+> cleaning up header includes, variables, and return paths.
+> 
+> Signed-off-by: Artur Świgoń <a.swigon@samsung.com>
+> ---
+>  drivers/devfreq/exynos-bus.c | 56 +++++++++++++++---------------------
+>  1 file changed, 23 insertions(+), 33 deletions(-)
+> 
+> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+> index 0b557df63666..3eb6a043284a 100644
+> --- a/drivers/devfreq/exynos-bus.c
+> +++ b/drivers/devfreq/exynos-bus.c
+> @@ -15,11 +15,10 @@
+>  #include <linux/device.h>
+>  #include <linux/export.h>
+>  #include <linux/module.h>
+> -#include <linux/of_device.h>
+> +#include <linux/of.h>
+>  #include <linux/pm_opp.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regulator/consumer.h>
+> -#include <linux/slab.h>
+>  
+>  #define DEFAULT_SATURATION_RATIO	40
+>  
+> @@ -178,7 +177,7 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
+>  	struct device *dev = bus->dev;
+>  	struct opp_table *opp_table;
+>  	const char *vdd = "vdd";
+> -	int i, ret, count, size;
+> +	int i, ret, count;
+>  
+>  	opp_table = dev_pm_opp_set_regulators(dev, &vdd, 1);
+>  	if (IS_ERR(opp_table)) {
+> @@ -201,8 +200,7 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
+>  	}
+>  	bus->edev_count = count;
+>  
+> -	size = sizeof(*bus->edev) * count;
+> -	bus->edev = devm_kzalloc(dev, size, GFP_KERNEL);
+> +	bus->edev = devm_kcalloc(dev, count, sizeof(*bus->edev), GFP_KERNEL);
+
+ditto.
+It depends on personal style. Don't change it because we cannot
+modify them at the all device driver. If is not wrong,
+just keep the original code.
+
+
+>  	if (!bus->edev) {
+>  		ret = -ENOMEM;
+>  		goto err_regulator;
+> @@ -301,10 +299,9 @@ static int exynos_bus_profile_init(struct exynos_bus *bus,
+>  	profile->exit = exynos_bus_exit;
+>  
+>  	ondemand_data = devm_kzalloc(dev, sizeof(*ondemand_data), GFP_KERNEL);
+> -	if (!ondemand_data) {
+> -		ret = -ENOMEM;
+> -		goto err;
+> -	}
+> +	if (!ondemand_data)
+> +		return -ENOMEM;
+> +
+>  	ondemand_data->upthreshold = 40;
+>  	ondemand_data->downdifferential = 5;
+>  
+> @@ -314,15 +311,14 @@ static int exynos_bus_profile_init(struct exynos_bus *bus,
+>  						ondemand_data);
+>  	if (IS_ERR(bus->devfreq)) {
+>  		dev_err(dev, "failed to add devfreq device\n");
+> -		ret = PTR_ERR(bus->devfreq);
+> -		goto err;
+> +		return PTR_ERR(bus->devfreq);
+>  	}
+>  
+>  	/* Register opp_notifier to catch the change of OPP  */
+>  	ret = devm_devfreq_register_opp_notifier(dev, bus->devfreq);
+>  	if (ret < 0) {
+>  		dev_err(dev, "failed to register opp notifier\n");
+> -		goto err;
+> +		return ret;
+>  	}
+>  
+>  	/*
+> @@ -332,17 +328,16 @@ static int exynos_bus_profile_init(struct exynos_bus *bus,
+>  	ret = exynos_bus_enable_edev(bus);
+>  	if (ret < 0) {
+>  		dev_err(dev, "failed to enable devfreq-event devices\n");
+> -		goto err;
+> +		return ret;
+>  	}
+>  
+>  	ret = exynos_bus_set_event(bus);
+>  	if (ret < 0) {
+>  		dev_err(dev, "failed to set event to devfreq-event devices\n");
+> -		goto err;
+> +		return ret;
+>  	}
+>  
+> -err:
+> -	return ret;
+> +	return 0;
+>  }
+>  
+>  static int exynos_bus_profile_init_passive(struct exynos_bus *bus,
+> @@ -351,7 +346,6 @@ static int exynos_bus_profile_init_passive(struct exynos_bus *bus,
+>  	struct device *dev = bus->dev;
+>  	struct devfreq_passive_data *passive_data;
+>  	struct devfreq *parent_devfreq;
+> -	int ret = 0;
+>  
+>  	/* Initialize the struct profile and governor data for passive device */
+>  	profile->target = exynos_bus_target;
+> @@ -359,30 +353,26 @@ static int exynos_bus_profile_init_passive(struct exynos_bus *bus,
+>  
+>  	/* Get the instance of parent devfreq device */
+>  	parent_devfreq = devfreq_get_devfreq_by_phandle(dev, 0);
+> -	if (IS_ERR(parent_devfreq)) {
+> -		ret = -EPROBE_DEFER;
+> -		goto err;
+> -	}
+> +	if (IS_ERR(parent_devfreq))
+> +		return -EPROBE_DEFER;
+>  
+>  	passive_data = devm_kzalloc(dev, sizeof(*passive_data), GFP_KERNEL);
+> -	if (!passive_data) {
+> -		ret = -ENOMEM;
+> -		goto err;
+> -	}
+> +	if (!passive_data)
+> +		return -ENOMEM;
+> +
+>  	passive_data->parent = parent_devfreq;
+>  
+>  	/* Add devfreq device for exynos bus with passive governor */
+> -	bus->devfreq = devm_devfreq_add_device(dev, profile, DEVFREQ_GOV_PASSIVE,
+> +	bus->devfreq = devm_devfreq_add_device(dev, profile,
+> +						DEVFREQ_GOV_PASSIVE,
+
+It is not clean-up. It depends on personal style. Don't change it
+because we cannot modify them at the all device driver. If is not wrong,
+just keep the original code.
+
+>  						passive_data);
+>  	if (IS_ERR(bus->devfreq)) {
+>  		dev_err(dev,
+>  			"failed to add devfreq dev with passive governor\n");
+> -		ret = PTR_ERR(bus->devfreq);
+> -		goto err;
+> +		return PTR_ERR(bus->devfreq);
+>  	}
+>  
+> -err:
+> -	return ret;
+> +	return 0;
+>  }
+>  
+>  static int exynos_bus_probe(struct platform_device *pdev)
+> @@ -400,18 +390,18 @@ static int exynos_bus_probe(struct platform_device *pdev)
+>  		return -EINVAL;
+>  	}
+>  
+> -	bus = devm_kzalloc(&pdev->dev, sizeof(*bus), GFP_KERNEL);
+> +	bus = devm_kzalloc(dev, sizeof(*bus), GFP_KERNEL);
+
+ditto.
+It depends on personal style. Don't change it because we cannot
+modify them at the all device driver. If is not wrong,
+just keep the original code.
+
+>  	if (!bus)
+>  		return -ENOMEM;
+>  	mutex_init(&bus->lock);
+> -	bus->dev = &pdev->dev;
+> +	bus->dev = dev;
+
+ditto.
+It depends on personal style. Don't change it because we cannot
+modify them at the all device driver. If is not wrong,
+just keep the original code.
+
+
+>  	platform_set_drvdata(pdev, bus);
+>  
+>  	profile = devm_kzalloc(dev, sizeof(*profile), GFP_KERNEL);
+>  	if (!profile)
+>  		return -ENOMEM;
+>  
+> -	node = of_parse_phandle(dev->of_node, "devfreq", 0);
+> +	node = of_parse_phandle(np, "devfreq", 0);
+>  	if (node) {
+>  		of_node_put(node);
+>  		passive = true;
+> 
 
 
 -- 
