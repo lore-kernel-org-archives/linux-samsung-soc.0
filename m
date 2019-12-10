@@ -2,101 +2,188 @@ Return-Path: <SRS0=92EP=2A=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F84C43603
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Dec 2019 15:14:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B81EC2D0BF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Dec 2019 21:07:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A99AB207FF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Dec 2019 15:14:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F01E624684
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Dec 2019 21:07:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1575990864;
-	bh=V6MZNLm2j7hVKWt9rqYjJ6yZxOfwMZwEaEdKlXtfuAY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ITwWX6IqmbjotYtb9uuIVywnxtVtVxKqqSnkyTlbMDXEIBO2f7ucraC9lB7g5whKf
-	 ww+NYaIkSkK7O//0pVDeDRS12UHpcpj9HeDN11biKva2yId5yzT5QNmQo1szyA2/Pi
-	 jOZGde/QGwt/HZvhl0uBDibFXe0bkHxufE/2jEAg=
+	s=default; t=1576012026;
+	bh=ceSWH49Z1fn5M+WPTJEUWplL1sTDSb98CQd+itGpjPg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=lbBSIhmmrFPNCGokiNRSZqwGn8BubvPuaswGyJsuhj2hlAFv+8XWBebPJgMuBk4kf
+	 evHOaTlCx3vV06M8QkWF+8U+Hv3dSw9PXVV3qh+77PGjIdACG6lAhxBTdmw9hvxow+
+	 p30j3DQVsAutmNnCEA37Wzgn+3APICeWWupheQDk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbfLJPOY (ORCPT
+        id S1727347AbfLJVHC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 10 Dec 2019 10:14:24 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:35961 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727272AbfLJPOY (ORCPT
+        Tue, 10 Dec 2019 16:07:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48924 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727010AbfLJVEM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 10 Dec 2019 10:14:24 -0500
-Received: by mail-ed1-f67.google.com with SMTP id j17so16291654edp.3;
-        Tue, 10 Dec 2019 07:14:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rX25mRS0R7g3H36vg6LDxr3jtSDYFtlmlEW5V9/gpU8=;
-        b=ZoJ+4DEAXEcKVSza2UlmyrsgMR//dPplOqwwZaqYF4VRwGqLfSQXQ8LjP4D6wiT4jp
-         DTygpUQpD5TF95vJlc+3tIc/yYt13WyRIKEZGvpwaw5YB00OQc23oivm+gv61sHafJy6
-         VH6Lt6OHz64oUhUknkufwSdNLL05gKtWh8irPlHe0DPf5Yo6OclUSnsqABK9o2nHzt4S
-         DJyEnvHSGnhpnLLwsUBnHA4bI5Tv83/6iZiGkCXODCo7SbFZi+pD3Yrn6nZt+dIGV6mR
-         sllkW2KYFbJ9nUg+Nw7MmmW+55NsJ3hf07tWG4nzhljuDyByuwacWT+T7aZdDmM5hzBs
-         iCAw==
-X-Gm-Message-State: APjAAAVMMSR8XFO3ngaL5XNJZ5qGtC1aJ26Pd/5HVMu2sRs9Ui4ams8K
-        LGJVQf4wmmv6GISQvChKdSQ=
-X-Google-Smtp-Source: APXvYqxNSi19yPBjqzrP1CJjzpcPh+Cif4qA9wuPjYukX6ukeWARbEqHYn1ret7hPkYE00vjlNw0tg==
-X-Received: by 2002:a17:906:ff01:: with SMTP id zn1mr4176403ejb.323.1575990861966;
-        Tue, 10 Dec 2019 07:14:21 -0800 (PST)
-Received: from pi3 ([194.230.155.234])
-        by smtp.googlemail.com with ESMTPSA id r4sm73616edb.82.2019.12.10.07.14.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2019 07:14:21 -0800 (PST)
-Date:   Tue, 10 Dec 2019 16:14:19 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-serial@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
-        Hyunki Koo <kkoos00@naver.com>,
-        HYUN-KI KOO <hyunki00.koo@samsung.com>,
-        Shinbeom Choi <sbeom.choi@samsung.com>,
-        Jiri Slaby <jslaby@suse.com>,
+        Tue, 10 Dec 2019 16:04:12 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBCAB24653;
+        Tue, 10 Dec 2019 21:04:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576011850;
+        bh=ceSWH49Z1fn5M+WPTJEUWplL1sTDSb98CQd+itGpjPg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=agBOGRizH/AKsUvFqUmZ7sqt8iwDVhKFq+iBBRfRC5mqImcD8YjYl44yjrSRKF+08
+         SKeu7mAu+GiAgA6zMbPIZnD1df1bKKDAoXZ8LPFjT3Lmsk7n1mmAjWqzXnn543ledc
+         r06OXxwzVAIg/gCn0CbdXqwO6nX/PqBeeK6yjySI=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Dariusz Marcinkiewicz <darekm@google.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/10] tty: serial: samsung_tty: fix up minor comment
- formatting
-Message-ID: <20191210151419.GJ11222@pi3>
-References: <20191210143706.3928480-1-gregkh@linuxfoundation.org>
- <20191210143706.3928480-9-gregkh@linuxfoundation.org>
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 006/350] drm: exynos: exynos_hdmi: use cec_notifier_conn_(un)register
+Date:   Tue, 10 Dec 2019 15:58:18 -0500
+Message-Id: <20191210210402.8367-6-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191210210402.8367-1-sashal@kernel.org>
+References: <20191210210402.8367-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191210143706.3928480-9-gregkh@linuxfoundation.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 03:37:05PM +0100, Greg Kroah-Hartman wrote:
-> Fix up some minor formatting of comment blocks to make checkpatch
-> happier and to make things look more uniform.
-> 
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Hyunki Koo <kkoos00@naver.com>
-> Cc: HYUN-KI KOO <hyunki00.koo@samsung.com>
-> Cc: Shinbeom Choi <sbeom.choi@samsung.com>
-> Cc: Jiri Slaby <jslaby@suse.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-serial@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  drivers/tty/serial/samsung_tty.c | 16 +++++++++-------
->  1 file changed, 9 insertions(+), 7 deletions(-)
+From: Dariusz Marcinkiewicz <darekm@google.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-(also if combined with next one)
+[ Upstream commit 71137bfd98973efb7b762ba168df077b87b34311 ]
 
-Best regards,
-Krzysztof
+Use the new cec_notifier_conn_(un)register() functions to
+(un)register the notifier for the HDMI connector, and fill in
+the cec_connector_info.
+
+Changes since v7:
+	- err_runtime_disable -> err_rpm_disable
+Changes since v2:
+	- removed unnecessary call to invalidate phys address before
+	deregistering the notifier,
+	- use cec_notifier_phys_addr_invalidate instead of setting
+	invalid address on a notifier.
+
+Signed-off-by: Dariusz Marcinkiewicz <darekm@google.com>
+Tested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+[hverkuil-cisco@xs4all.nl: use 'if (!hdata->notifier)' instead of '== NULL']
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190828123415.139441-1-darekm@google.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 31 ++++++++++++++++------------
+ 1 file changed, 18 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index bc1565f1822ab..09aa73c0f2add 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -852,6 +852,10 @@ static enum drm_connector_status hdmi_detect(struct drm_connector *connector,
+ 
+ static void hdmi_connector_destroy(struct drm_connector *connector)
+ {
++	struct hdmi_context *hdata = connector_to_hdmi(connector);
++
++	cec_notifier_conn_unregister(hdata->notifier);
++
+ 	drm_connector_unregister(connector);
+ 	drm_connector_cleanup(connector);
+ }
+@@ -935,6 +939,7 @@ static int hdmi_create_connector(struct drm_encoder *encoder)
+ {
+ 	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
+ 	struct drm_connector *connector = &hdata->connector;
++	struct cec_connector_info conn_info;
+ 	int ret;
+ 
+ 	connector->interlace_allowed = true;
+@@ -957,6 +962,15 @@ static int hdmi_create_connector(struct drm_encoder *encoder)
+ 			DRM_DEV_ERROR(hdata->dev, "Failed to attach bridge\n");
+ 	}
+ 
++	cec_fill_conn_info_from_drm(&conn_info, connector);
++
++	hdata->notifier = cec_notifier_conn_register(hdata->dev, NULL,
++						     &conn_info);
++	if (!hdata->notifier) {
++		ret = -ENOMEM;
++		DRM_DEV_ERROR(hdata->dev, "Failed to allocate CEC notifier\n");
++	}
++
+ 	return ret;
+ }
+ 
+@@ -1528,8 +1542,8 @@ static void hdmi_disable(struct drm_encoder *encoder)
+ 		 */
+ 		mutex_unlock(&hdata->mutex);
+ 		cancel_delayed_work(&hdata->hotplug_work);
+-		cec_notifier_set_phys_addr(hdata->notifier,
+-					   CEC_PHYS_ADDR_INVALID);
++		if (hdata->notifier)
++			cec_notifier_phys_addr_invalidate(hdata->notifier);
+ 		return;
+ 	}
+ 
+@@ -2006,12 +2020,6 @@ static int hdmi_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	hdata->notifier = cec_notifier_get(&pdev->dev);
+-	if (hdata->notifier == NULL) {
+-		ret = -ENOMEM;
+-		goto err_hdmiphy;
+-	}
+-
+ 	pm_runtime_enable(dev);
+ 
+ 	audio_infoframe = &hdata->audio.infoframe;
+@@ -2023,7 +2031,7 @@ static int hdmi_probe(struct platform_device *pdev)
+ 
+ 	ret = hdmi_register_audio_device(hdata);
+ 	if (ret)
+-		goto err_notifier_put;
++		goto err_rpm_disable;
+ 
+ 	ret = component_add(&pdev->dev, &hdmi_component_ops);
+ 	if (ret)
+@@ -2034,8 +2042,7 @@ static int hdmi_probe(struct platform_device *pdev)
+ err_unregister_audio:
+ 	platform_device_unregister(hdata->audio.pdev);
+ 
+-err_notifier_put:
+-	cec_notifier_put(hdata->notifier);
++err_rpm_disable:
+ 	pm_runtime_disable(dev);
+ 
+ err_hdmiphy:
+@@ -2054,12 +2061,10 @@ static int hdmi_remove(struct platform_device *pdev)
+ 	struct hdmi_context *hdata = platform_get_drvdata(pdev);
+ 
+ 	cancel_delayed_work_sync(&hdata->hotplug_work);
+-	cec_notifier_set_phys_addr(hdata->notifier, CEC_PHYS_ADDR_INVALID);
+ 
+ 	component_del(&pdev->dev, &hdmi_component_ops);
+ 	platform_device_unregister(hdata->audio.pdev);
+ 
+-	cec_notifier_put(hdata->notifier);
+ 	pm_runtime_disable(&pdev->dev);
+ 
+ 	if (!IS_ERR(hdata->reg_hdmi_en))
+-- 
+2.20.1
 
