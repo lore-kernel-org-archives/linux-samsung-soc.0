@@ -2,391 +2,121 @@ Return-Path: <SRS0=92EP=2A=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 152FBC00454
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Dec 2019 14:37:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E0D2C43603
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Dec 2019 14:47:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D38042077B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Dec 2019 14:37:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 015942077B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Dec 2019 14:47:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1575988673;
-	bh=EB9ChD0hXmG5xdPjCrhg5MAtFSmavgKATxmIiH5oyrQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=p4nMWEKEH6Iz4wLnFb4jvnPcrRrdW2EcKkjE699HXtVaplHmNWws0gZNxpxSJHkmm
-	 Ni7zBthzRwFNPaJj5MECDC5KyFcvdLhsTf3KhZdyMLP7czKRWP4ZLGA/rcpnJDa6x1
-	 9hORiNsGXPgQVODP+EKqaY2yXlXXrq58gO/nHM4Q=
+	s=default; t=1575989222;
+	bh=O6oH7aEbLpR99ICof6cbh0Ucv+JfuHatu8JFDkQm3M4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=NYGNoV7x0C3AWHyVemUMRVDxUmk4mrAy8TGXRKnRqDR0Bs+YdLu25X/DVMQurKncy
+	 5km2ALorl7bdH8oJHLexYDZ50CIJ2iWArhgIPntBtY5mkNlPIps7ayZDMNa1EqYeCv
+	 Qx+XdPQzkmIsjHWXtVqaBP98R/+PDiTSyy4/fKq4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727603AbfLJOha (ORCPT
+        id S1727380AbfLJOrB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 10 Dec 2019 09:37:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52360 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727595AbfLJOh3 (ORCPT
+        Tue, 10 Dec 2019 09:47:01 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:37420 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727145AbfLJOrB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 10 Dec 2019 09:37:29 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 159E420663;
-        Tue, 10 Dec 2019 14:37:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575988647;
-        bh=EB9ChD0hXmG5xdPjCrhg5MAtFSmavgKATxmIiH5oyrQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oaZIBfVhoxrb0bPGi+HmOCcQWvZuNi7S4YBDyn1sWgzZlHs4IudRF/17WuvrlPr8Y
-         jGynrj3b3XkU866mQz0DUMgxuNs5vvGfNwT/QCc/mxzBOlNSrqGVH6WZhgjdiamREL
-         q35DZMIHYUi75Bp+q2RcTNye2HqHTwNvj5E/yvOw=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-serial@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        Tue, 10 Dec 2019 09:47:01 -0500
+Received: by mail-ed1-f68.google.com with SMTP id cy15so16205311edb.4;
+        Tue, 10 Dec 2019 06:47:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YhaZZr/VtnLO8eSaQcdnch7Ah/fM7ZqN8a+3yLWOzB0=;
+        b=TmAhfc5KZel99Qk6C2qwM4/dxmyp0oH1E0QhdgfpEc21/lFhjqnN454inmI9y5OxSS
+         Oi1vaAPU/YXV2R06a51Qw9CvCvjkKzjeCiTLdalavQzQp801QdKpAaQYBi85X5uZ4/UP
+         HjYkp9PlAE6VEsGckbs6q5pAnwsRn3XoZX4+R8xfnK+Me/iHF5P7h5sKw1PhPMJEa2p0
+         7z1V30giJ7clIGROoH+1+xV68e/NVvY4q6khMQDEL9a7aXkC0AyBmR5cMf9bGmpXcL8z
+         msfDDJ9t/KGV7DFazepuHT7LlwbCgrSmflowL113Wds1DKO6/4hoPMvZh4PmUuDwlqY1
+         2uxA==
+X-Gm-Message-State: APjAAAXDLMczuomDg8xnVDo0/CEyzh5ZeKeG85o5x6ZYX4jZaNnlR1ht
+        zIirkQ3PQPd0TxMCmHpTx8A=
+X-Google-Smtp-Source: APXvYqzN26AGf6Gq95ol7usng2Lc94cprpK12qzMUmBicV9faXvBpRLDu6WMkpMOaxtC2z0oN0dWEg==
+X-Received: by 2002:a17:906:5957:: with SMTP id g23mr4155261ejr.187.1575989219144;
+        Tue, 10 Dec 2019 06:46:59 -0800 (PST)
+Received: from pi3 ([194.230.155.234])
+        by smtp.googlemail.com with ESMTPSA id p14sm110628ejr.40.2019.12.10.06.46.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2019 06:46:58 -0800 (PST)
+Date:   Tue, 10 Dec 2019 15:46:56 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-serial@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
         Hyunki Koo <kkoos00@naver.com>,
         HYUN-KI KOO <hyunki00.koo@samsung.com>,
         Shinbeom Choi <sbeom.choi@samsung.com>,
         Jiri Slaby <jslaby@suse.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 05/10] tty: serial: samsung_tty: delete samsung.h
-Date:   Tue, 10 Dec 2019 15:37:01 +0100
-Message-Id: <20191210143706.3928480-5-gregkh@linuxfoundation.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191210143706.3928480-1-gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 01/10] tty: serial: samsung: allow driver to be built by
+ anyone
+Message-ID: <20191210144656.GA11222@pi3>
 References: <20191210143706.3928480-1-gregkh@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191210143706.3928480-1-gregkh@linuxfoundation.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-There is no need for a .h file for a single .c file, so just move all of
-the content of samsung.h into samsung_tty.c
+On Tue, Dec 10, 2019 at 03:36:57PM +0100, Greg Kroah-Hartman wrote:
+> There is no need to tie this driver to only the OMAP platform,
 
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Hyunki Koo <kkoos00@naver.com>
-Cc: HYUN-KI KOO <hyunki00.koo@samsung.com>
-Cc: Shinbeom Choi <sbeom.choi@samsung.com>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-serial@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/tty/serial/samsung.h     | 144 -------------------------------
- drivers/tty/serial/samsung_tty.c | 133 +++++++++++++++++++++++++++-
- 2 files changed, 130 insertions(+), 147 deletions(-)
- delete mode 100644 drivers/tty/serial/samsung.h
+s/OMAP/Exynos/
 
-diff --git a/drivers/tty/serial/samsung.h b/drivers/tty/serial/samsung.h
-deleted file mode 100644
-index 7255ef287857..000000000000
---- a/drivers/tty/serial/samsung.h
-+++ /dev/null
-@@ -1,144 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef __SAMSUNG_H
--#define __SAMSUNG_H
--
--/*
-- * Driver for Samsung SoC onboard UARTs.
-- *
-- * Ben Dooks, Copyright (c) 2003-2008 Simtec Electronics
-- *	http://armlinux.simtec.co.uk/
-- */
--
--#include <linux/dmaengine.h>
--
--struct s3c24xx_uart_info {
--	char			*name;
--	unsigned int		type;
--	unsigned int		fifosize;
--	unsigned long		rx_fifomask;
--	unsigned long		rx_fifoshift;
--	unsigned long		rx_fifofull;
--	unsigned long		tx_fifomask;
--	unsigned long		tx_fifoshift;
--	unsigned long		tx_fifofull;
--	unsigned int		def_clk_sel;
--	unsigned long		num_clks;
--	unsigned long		clksel_mask;
--	unsigned long		clksel_shift;
--
--	/* uart port features */
--
--	unsigned int		has_divslot:1;
--};
--
--struct s3c24xx_serial_drv_data {
--	struct s3c24xx_uart_info	*info;
--	struct s3c2410_uartcfg		*def_cfg;
--	unsigned int			fifosize[CONFIG_SERIAL_SAMSUNG_UARTS];
--};
--
--struct s3c24xx_uart_dma {
--	unsigned int			rx_chan_id;
--	unsigned int			tx_chan_id;
--
--	struct dma_slave_config		rx_conf;
--	struct dma_slave_config		tx_conf;
--
--	struct dma_chan			*rx_chan;
--	struct dma_chan			*tx_chan;
--
--	dma_addr_t			rx_addr;
--	dma_addr_t			tx_addr;
--
--	dma_cookie_t			rx_cookie;
--	dma_cookie_t			tx_cookie;
--
--	char				*rx_buf;
--
--	dma_addr_t			tx_transfer_addr;
--
--	size_t				rx_size;
--	size_t				tx_size;
--
--	struct dma_async_tx_descriptor	*tx_desc;
--	struct dma_async_tx_descriptor	*rx_desc;
--
--	int				tx_bytes_requested;
--	int				rx_bytes_requested;
--};
--
--struct s3c24xx_uart_port {
--	unsigned char			rx_claimed;
--	unsigned char			tx_claimed;
--	unsigned int			pm_level;
--	unsigned long			baudclk_rate;
--	unsigned int			min_dma_size;
--
--	unsigned int			rx_irq;
--	unsigned int			tx_irq;
--
--	unsigned int			tx_in_progress;
--	unsigned int			tx_mode;
--	unsigned int			rx_mode;
--
--	struct s3c24xx_uart_info	*info;
--	struct clk			*clk;
--	struct clk			*baudclk;
--	struct uart_port		port;
--	struct s3c24xx_serial_drv_data	*drv_data;
--
--	/* reference to platform data */
--	struct s3c2410_uartcfg		*cfg;
--
--	struct s3c24xx_uart_dma		*dma;
--
--#ifdef CONFIG_ARM_S3C24XX_CPUFREQ
--	struct notifier_block		freq_transition;
--#endif
--};
--
--/* conversion functions */
--
--#define s3c24xx_dev_to_port(__dev) dev_get_drvdata(__dev)
--
--/* register access controls */
--
--#define portaddr(port, reg) ((port)->membase + (reg))
--#define portaddrl(port, reg) \
--	((unsigned long *)(unsigned long)((port)->membase + (reg)))
--
--#define rd_regb(port, reg) (readb_relaxed(portaddr(port, reg)))
--#define rd_regl(port, reg) (readl_relaxed(portaddr(port, reg)))
--
--#define wr_regb(port, reg, val) writeb_relaxed(val, portaddr(port, reg))
--#define wr_regl(port, reg, val) writel_relaxed(val, portaddr(port, reg))
--
--/* Byte-order aware bit setting/clearing functions. */
--
--static inline void s3c24xx_set_bit(struct uart_port *port, int idx,
--				   unsigned int reg)
--{
--	unsigned long flags;
--	u32 val;
--
--	local_irq_save(flags);
--	val = rd_regl(port, reg);
--	val |= (1 << idx);
--	wr_regl(port, reg, val);
--	local_irq_restore(flags);
--}
--
--static inline void s3c24xx_clear_bit(struct uart_port *port, int idx,
--				     unsigned int reg)
--{
--	unsigned long flags;
--	u32 val;
--
--	local_irq_save(flags);
--	val = rd_regl(port, reg);
--	val &= ~(1 << idx);
--	wr_regl(port, reg, val);
--	local_irq_restore(flags);
--}
--
--#endif
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index 67c5a84d0a26..1a3bf5879344 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -44,11 +44,8 @@
- #include <linux/clk.h>
- #include <linux/cpufreq.h>
- #include <linux/of.h>
--
- #include <asm/irq.h>
- 
--#include "samsung.h"
--
- #if	defined(CONFIG_SERIAL_SAMSUNG_DEBUG) &&	\
- 	!defined(MODULE)
- 
-@@ -89,6 +86,136 @@ static void dbg(const char *fmt, ...)
- /* flag to ignore all characters coming in */
- #define RXSTAT_DUMMY_READ (0x10000000)
- 
-+struct s3c24xx_uart_info {
-+	char			*name;
-+	unsigned int		type;
-+	unsigned int		fifosize;
-+	unsigned long		rx_fifomask;
-+	unsigned long		rx_fifoshift;
-+	unsigned long		rx_fifofull;
-+	unsigned long		tx_fifomask;
-+	unsigned long		tx_fifoshift;
-+	unsigned long		tx_fifofull;
-+	unsigned int		def_clk_sel;
-+	unsigned long		num_clks;
-+	unsigned long		clksel_mask;
-+	unsigned long		clksel_shift;
-+
-+	/* uart port features */
-+
-+	unsigned int		has_divslot:1;
-+};
-+
-+struct s3c24xx_serial_drv_data {
-+	struct s3c24xx_uart_info	*info;
-+	struct s3c2410_uartcfg		*def_cfg;
-+	unsigned int			fifosize[CONFIG_SERIAL_SAMSUNG_UARTS];
-+};
-+
-+struct s3c24xx_uart_dma {
-+	unsigned int			rx_chan_id;
-+	unsigned int			tx_chan_id;
-+
-+	struct dma_slave_config		rx_conf;
-+	struct dma_slave_config		tx_conf;
-+
-+	struct dma_chan			*rx_chan;
-+	struct dma_chan			*tx_chan;
-+
-+	dma_addr_t			rx_addr;
-+	dma_addr_t			tx_addr;
-+
-+	dma_cookie_t			rx_cookie;
-+	dma_cookie_t			tx_cookie;
-+
-+	char				*rx_buf;
-+
-+	dma_addr_t			tx_transfer_addr;
-+
-+	size_t				rx_size;
-+	size_t				tx_size;
-+
-+	struct dma_async_tx_descriptor	*tx_desc;
-+	struct dma_async_tx_descriptor	*rx_desc;
-+
-+	int				tx_bytes_requested;
-+	int				rx_bytes_requested;
-+};
-+
-+struct s3c24xx_uart_port {
-+	unsigned char			rx_claimed;
-+	unsigned char			tx_claimed;
-+	unsigned int			pm_level;
-+	unsigned long			baudclk_rate;
-+	unsigned int			min_dma_size;
-+
-+	unsigned int			rx_irq;
-+	unsigned int			tx_irq;
-+
-+	unsigned int			tx_in_progress;
-+	unsigned int			tx_mode;
-+	unsigned int			rx_mode;
-+
-+	struct s3c24xx_uart_info	*info;
-+	struct clk			*clk;
-+	struct clk			*baudclk;
-+	struct uart_port		port;
-+	struct s3c24xx_serial_drv_data	*drv_data;
-+
-+	/* reference to platform data */
-+	struct s3c2410_uartcfg		*cfg;
-+
-+	struct s3c24xx_uart_dma		*dma;
-+
-+#ifdef CONFIG_ARM_S3C24XX_CPUFREQ
-+	struct notifier_block		freq_transition;
-+#endif
-+};
-+
-+/* conversion functions */
-+
-+#define s3c24xx_dev_to_port(__dev) dev_get_drvdata(__dev)
-+
-+/* register access controls */
-+
-+#define portaddr(port, reg) ((port)->membase + (reg))
-+#define portaddrl(port, reg) \
-+	((unsigned long *)(unsigned long)((port)->membase + (reg)))
-+
-+#define rd_regb(port, reg) (readb_relaxed(portaddr(port, reg)))
-+#define rd_regl(port, reg) (readl_relaxed(portaddr(port, reg)))
-+
-+#define wr_regb(port, reg, val) writeb_relaxed(val, portaddr(port, reg))
-+#define wr_regl(port, reg, val) writel_relaxed(val, portaddr(port, reg))
-+
-+/* Byte-order aware bit setting/clearing functions. */
-+
-+static inline void s3c24xx_set_bit(struct uart_port *port, int idx,
-+				   unsigned int reg)
-+{
-+	unsigned long flags;
-+	u32 val;
-+
-+	local_irq_save(flags);
-+	val = rd_regl(port, reg);
-+	val |= (1 << idx);
-+	wr_regl(port, reg, val);
-+	local_irq_restore(flags);
-+}
-+
-+static inline void s3c24xx_clear_bit(struct uart_port *port, int idx,
-+				     unsigned int reg)
-+{
-+	unsigned long flags;
-+	u32 val;
-+
-+	local_irq_save(flags);
-+	val = rd_regl(port, reg);
-+	val &= ~(1 << idx);
-+	wr_regl(port, reg, val);
-+	local_irq_restore(flags);
-+}
-+
- static inline struct s3c24xx_uart_port *to_ourport(struct uart_port *port)
- {
- 	return container_of(port, struct s3c24xx_uart_port, port);
--- 
-2.24.0
+Beside that:
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
+Best regards,
+Krzysztof
+
+
+> especially for build testing.  So add COMPILE_TEST as an option allowing
+> it to be built on any platform.
+> 
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Hyunki Koo <kkoos00@naver.com>
+> Cc: HYUN-KI KOO <hyunki00.koo@samsung.com>
+> Cc: Shinbeom Choi <sbeom.choi@samsung.com>
+> Cc: Jiri Slaby <jslaby@suse.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-serial@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  drivers/tty/serial/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+> index 99f5da3bf913..c835e10bd97e 100644
+> --- a/drivers/tty/serial/Kconfig
+> +++ b/drivers/tty/serial/Kconfig
+> @@ -237,7 +237,7 @@ config SERIAL_CLPS711X_CONSOLE
+>  
+>  config SERIAL_SAMSUNG
+>  	tristate "Samsung SoC serial support"
+> -	depends on PLAT_SAMSUNG || ARCH_EXYNOS
+> +	depends on PLAT_SAMSUNG || ARCH_EXYNOS || COMPILE_TEST
+>  	select SERIAL_CORE
+>  	help
+>  	  Support for the on-chip UARTs on the Samsung S3C24XX series CPUs,
+> -- 
+> 2.24.0
+> 
