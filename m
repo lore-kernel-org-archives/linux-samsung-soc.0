@@ -2,70 +2,70 @@ Return-Path: <SRS0=92EP=2A=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 308DFC2D0BE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Dec 2019 06:09:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F02C2D0C4
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Dec 2019 09:47:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0516D206E0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Dec 2019 06:09:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1575958174;
-	bh=4rDF19OTGhWr2Yz1zu32PLgeh+yNxqh4/GNJ9Sj427g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ahGiJ3qPVFzW7teIGahhaWDqWZQfFBGc73xeesoURrDDqSBVh/4Hvs9MqFhHpYr0L
-	 udB62rjRVSajlG0suw2NMLOlZTfsXhLBw8zkJR/lkyJPq4X36qk0fxPjfWfTRXm16Q
-	 OsDdQE0+XjVv1Fduxt8nXpReqo1+tmz4+8h7tnqw=
+	by mail.kernel.org (Postfix) with ESMTP id 388A720663
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Dec 2019 09:47:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726573AbfLJGJd (ORCPT
+        id S1727149AbfLJJq4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 10 Dec 2019 01:09:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54546 "EHLO mail.kernel.org"
+        Tue, 10 Dec 2019 04:46:56 -0500
+Received: from foss.arm.com ([217.140.110.172]:37386 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725942AbfLJGJd (ORCPT
+        id S1726915AbfLJJq4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 10 Dec 2019 01:09:33 -0500
-Received: from localhost (unknown [106.201.45.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DBA43206D5;
-        Tue, 10 Dec 2019 06:09:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575958172;
-        bh=4rDF19OTGhWr2Yz1zu32PLgeh+yNxqh4/GNJ9Sj427g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Rt9q6vjmgljzO240i4f+vxunERmneKwL8BMDsiVxxdMc67sKv/yFx5gVOynIUhVpb
-         UUfaA8QiYCrS9wNEmBbs4ZMSLsRoiJULBsV1B6YYy9S2U9fdiprzbBVoJxVIHtgfc2
-         Kaa1yLnY3TVClvhMB4smhcqMuOMTZFgk81LkjFyA=
-Date:   Tue, 10 Dec 2019 11:39:28 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     dmaengine@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 0/2] dmaengine: pl330: A few system suspend/resume changes
-Message-ID: <20191210060928.GS82508@vkoul-mobl>
-References: <20191205143746.24873-1-ulf.hansson@linaro.org>
+        Tue, 10 Dec 2019 04:46:56 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5721D1FB;
+        Tue, 10 Dec 2019 01:46:55 -0800 (PST)
+Received: from [10.37.12.166] (unknown [10.37.12.166])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DBD7B3F6CF;
+        Tue, 10 Dec 2019 01:46:53 -0800 (PST)
+Subject: Re: [PATCH] MAINTAINERS: update my email address
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, b.zolnierkie@samsung.com,
+        Dietmar.Eggemann@arm.com
+References: <20191209093907.6646-1-lukasz.luba@arm.com>
+ <20191209175335.GA26324@kozik-lap>
+From:   Lukasz Luba <lukasz.luba@arm.com>
+Message-ID: <af195207-b05b-26ae-96b0-345f22c00b84@arm.com>
+Date:   Tue, 10 Dec 2019 09:46:51 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191205143746.24873-1-ulf.hansson@linaro.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191209175335.GA26324@kozik-lap>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 05-12-19, 15:37, Ulf Hansson wrote:
-> I accidentally stumbled over a couple of things for the system suspend/resume
-> support in the pl330 driver, that I thought deserved to be improved. So here
-> there are, only compile tested, so far.
 
-Applied both, thanks
 
--- 
-~Vinod
+On 12/9/19 5:53 PM, Krzysztof Kozlowski wrote:
+> On Mon, Dec 09, 2019 at 09:39:07AM +0000, lukasz.luba@arm.com wrote:
+>> From: Lukasz Luba <lukasz.luba@arm.com>
+>>
+>> Update my email address to @arm.com in MAINTAINERS and map it correctly
+>> in .mailmap file.
+>>
+>> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
+>> ---
+>> Hi Krzysztof,
+>>
+>> Could you pick it up, please?
+> 
+> Thanks, applied for current (v5.5) cycle.
+
+Thank you!
+
+Regards,
+Lukasz
