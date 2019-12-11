@@ -2,98 +2,105 @@ Return-Path: <SRS0=qlte=2B=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47549C00454
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Dec 2019 18:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9215DC43603
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Dec 2019 18:20:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2EFE2077B
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Dec 2019 18:09:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 694A7206C3
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Dec 2019 18:20:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576087789;
-	bh=4cSg5ovzSGHo0KMc3anPHBEou2tBO8A2zNetChjRs8Y=;
+	s=default; t=1576088425;
+	bh=TXEAhtqD3tgxcqJu42x3BiK1JCY1RSod0Wk0VQDOpHA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=o2dT4VbqZCMW6f5vbRJvSzyqJr+p6DoUNmkmC1ybmPPhucLqLqtKMsJfRrDL/Sjgi
-	 NaJSAVDGF1d+P3kA7v3fIQoWxlUQDCOjxydyzTP0AlPtEXdlkl45jlOGJevyB/30VZ
-	 WlaOqWSHwjXh06wxkoCjMrc+aCcI4d8ZrtXobLxo=
+	b=ITHAE3mmypdcwPjbKbVMK82H1gbEOzwL6X9gQ70rVgafVmDH0G3UqMpqIS9brAJwW
+	 Vf6AAm+jPBM9TN8bV5KAeI8jWeoB+fIdUKYxTo9j+b3aAHeHJti9ajjrByaKfKBmT9
+	 g0DpeXytjE/s1ze903fdBVhclja/HuLk+j3iL8sk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730903AbfLKSJo (ORCPT
+        id S1729877AbfLKSUZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 11 Dec 2019 13:09:44 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:42477 "EHLO
+        Wed, 11 Dec 2019 13:20:25 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:41430 "EHLO
         mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731046AbfLKSJn (ORCPT
+        with ESMTP id S1728912AbfLKSUY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 11 Dec 2019 13:09:43 -0500
-Received: by mail-ed1-f67.google.com with SMTP id e10so20184899edv.9;
-        Wed, 11 Dec 2019 10:09:42 -0800 (PST)
+        Wed, 11 Dec 2019 13:20:24 -0500
+Received: by mail-ed1-f67.google.com with SMTP id c26so20220083eds.8;
+        Wed, 11 Dec 2019 10:20:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ILp2Lf5P15MYbkV7ek1FJDOE0NtqRWE6/NU2Ipca/04=;
-        b=uVTl6HIOGVQ8MZQ1GLPSbu4MARErsCM7KoITJ7LRkp50tXD2e4hHj7k5u++WuKNtJo
-         FEhlYyN3G1MCCpK8W+p3zZh4tqQ3ET+fkWzoVoEtk8fXARmrLiGDHt7QSc59utV/KILE
-         TrlAFmW/XrRUWwn6jzfwRc6ELr/grQ5OKtB1EvqN6T3CEQhuudXW8McMbZ0Qk7EjuczJ
-         ejeoW9gPB8kB5xDL+pux0b61tAymTktJLyGXfO8ztEM75iciPV5LWTnYDxYaBl9YSBn1
-         j/pjcPk4Ds/k+ttKV4SQtHdF6zhB56Ir2jkzQGvcveEtdOGfxWSzSBQ+ZxLO074sepU4
-         xAkw==
-X-Gm-Message-State: APjAAAUi8ZDtxRbo8ezFcDnJzRxzUCvgpmo30wAnU83gqLvMqtIXR93C
-        LwttezGz4MDyfrAXasDthWM=
-X-Google-Smtp-Source: APXvYqxbSc/1pMrFp7jj1xrbhKuiKUxJi3QB/0yA0bRIjtn2bO+hRfiUZUax+luAzlnxU6ZmzIqDVQ==
-X-Received: by 2002:a05:6402:1350:: with SMTP id y16mr4911656edw.176.1576087781772;
-        Wed, 11 Dec 2019 10:09:41 -0800 (PST)
+        bh=cCq+YLmjndsqzVRfIXx595cSZyYTIfyoVBGa1n3MlZo=;
+        b=csOvR/hhPlWuwKRi5xvRzIXhe54IBHinIQVS++u/nqij0gEe7+NhVVrdwAPiYX1tm/
+         qhsyxp4hwZhIqmmDNi+llI8SyQc9n9+eJAjpCQlw19B4H4Y/NuSBsRydcebyYenFQf4z
+         J/4YOYDF2l53ju3wm7OQGr6s9x3hmbCiyM7hbaYQ7sSgxsC0QnlI/S+1PU+ciZnrWq+D
+         lW7ULnqTMY8YH1p8wqJ4vXoJ6vLqA8iSMh46qZkD6M4Ojpprso6VrBI+e4gl4rfkuqcq
+         ppDEQ52H4NBo8RGIuqDo5vjFWM/LYNKJ/BM5cY71Wtm/zWKiq+XsmTGYhHGJto0GAccv
+         bjOg==
+X-Gm-Message-State: APjAAAXdM85IdqATnJJ3Pg+v9xodkLAciDgdgFCCCi0RXOV+QJTGtGqU
+        QL1Q9UZkTuJxyMq8OIeKbjA=
+X-Google-Smtp-Source: APXvYqxSrBfPuZyxedBUFXHa4HwHCjZ0I74AtbkA+bPFUbpLrYb2Uyy2G8q4PvOG2wVqT+P/uDRiBA==
+X-Received: by 2002:a17:906:c791:: with SMTP id cw17mr4796655ejb.69.1576088422783;
+        Wed, 11 Dec 2019 10:20:22 -0800 (PST)
 Received: from kozik-lap ([194.230.155.234])
-        by smtp.googlemail.com with ESMTPSA id o30sm64065edc.61.2019.12.11.10.09.40
+        by smtp.googlemail.com with ESMTPSA id b17sm67400edr.42.2019.12.11.10.20.21
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 Dec 2019 10:09:41 -0800 (PST)
-Date:   Wed, 11 Dec 2019 19:09:38 +0100
+        Wed, 11 Dec 2019 10:20:22 -0800 (PST)
+Date:   Wed, 11 Dec 2019 19:20:19 +0100
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Lukasz Luba <l.luba@partner.samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: exynos_defconfig: Bring back explicitly wanted
- options
-Message-ID: <20191211180938.GA6690@kozik-lap>
-References: <CGME20191205200017epcas5p446f5f29988e34d939601287a7517fdfe@epcas5p4.samsung.com>
- <20191205200006.5164-1-krzk@kernel.org>
- <08916577-3218-ecd4-a8e2-ab4fbff5332b@samsung.com>
+Cc:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Kamil Konieczny <k.konieczny@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Doug Anderson <dianders@chromium.org>,
+        Andreas Faerber <afaerber@suse.de>,
+        Arjun K V <arjun.kv@samsung.com>
+Subject: Re: [PATCH 0/2] Increase CPU frequency in Exynos5422/5800 SoCs
+Message-ID: <20191211182019.GA2427@kozik-lap>
+References: <CGME20191210114035eucas1p213dc81b3934969baf2bb9235d5ab8d28@eucas1p2.samsung.com>
+ <20191210114027.14910-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <08916577-3218-ecd4-a8e2-ab4fbff5332b@samsung.com>
+In-Reply-To: <20191210114027.14910-1-m.szyprowski@samsung.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Dec 06, 2019 at 09:01:07AM +0100, Marek Szyprowski wrote:
-> Hi Krzyszotof,
+On Tue, Dec 10, 2019 at 12:40:25PM +0100, Marek Szyprowski wrote:
+> Dear All,
 > 
-> On 05.12.2019 21:00, Krzysztof Kozlowski wrote:
-> > Few options KALLSYMS_ALL, SCSI, PM_DEVFREQ and mutex/spinlock debugging
-> > were removed with savedefconfig because they were selected by other
-> > options.  However these are user-visible options and they might not be
-> > selected in the future.  Exactly this happened with commit 0e4a459f56c3
-> > ("tracing: Remove unnecessary DEBUG_FS dependency") removing the
-> > dependency between DEBUG_FS and TRACING.
-> >
-> > To avoid losing these options in the future, explicitly mention them in
-> > defconfig.
-> >
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> This patchset is a resurrection of the patch posted about 3 years ago:
+> https://patchwork.kernel.org/patch/9475909/
 > 
-> I will not mind adding:
+> That time it was not possible to merge it, because a few minor pieces
+> were still missing in mainline kernel. This has been finally resolved
+> and there should be no blockers for adding the higher CPU frequencies
+> in Exynos5422/5800 SoCs:
+> 
+> 1. support for coupled regulators (and all its dependencies) landed
+>    in the regulator framework and patch #1 adds needed coupling for
+>    the Exynos5422/5800 based boards;
+> 
+> 2. support for the Exynos ASV has been merged to v5.4
+> 
+> Patches has been rebased onto the v5.5-rc1 kernel release. They were
+> tested on the following boards: Odroid XU3, XU3-lite, XU4, HC1 and
+> Chromebook Pi.
+> 
+> Best regards
+> Marek Szyprowski
+> Samsung R&D Institute Poland
 > 
 
-Applied.
+Thanks, applied both.
 
 Best regards,
 Krzysztof
