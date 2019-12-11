@@ -2,60 +2,60 @@ Return-Path: <SRS0=qlte=2B=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 999EEC00454
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Dec 2019 14:46:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2283AC2D0C6
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Dec 2019 14:46:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66368208C3
+	by mail.kernel.org (Postfix) with ESMTP id EC196214D8
 	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Dec 2019 14:46:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="B3eaRYB5"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="EmnrUMMc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729460AbfLKOqv (ORCPT
+        id S1729497AbfLKOqw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 11 Dec 2019 09:46:51 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:33278 "EHLO
+        Wed, 11 Dec 2019 09:46:52 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:33291 "EHLO
         mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729359AbfLKOqu (ORCPT
+        with ESMTP id S1729370AbfLKOqu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Wed, 11 Dec 2019 09:46:50 -0500
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191211144649euoutp01e241bee9051307ee70974a1c73b26dc7~fWGqG_WTD1943619436euoutp01K
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191211144649euoutp014b974723c539d6637dfa7e5620074b02~fWGqb8_mg1952519525euoutp01B
         for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Dec 2019 14:46:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191211144649euoutp01e241bee9051307ee70974a1c73b26dc7~fWGqG_WTD1943619436euoutp01K
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191211144649euoutp014b974723c539d6637dfa7e5620074b02~fWGqb8_mg1952519525euoutp01B
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
         s=mail20170921; t=1576075609;
-        bh=XB9Dsgs+MX/AW0zv105VApQLwH1V9mP5dnZl5ja9Fws=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=B3eaRYB5Mr5X1qoQKjpAxqQ+/m+bFucthlmfslL7uK4t2T56Rnc4I+gqKXDSvbEZf
-         koSrdW0qg9CccebV2zHfS6EXlRLe/RLoUBYHRm6aNB3VNs41I0c7jDESUTylIJWB2j
-         Jg7xhD1QbFizIWDASrrUBTUBAG8v+5VWmkxpRvSA=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191211144648eucas1p1f40add69b0d3c98ea90cc7eb58bfaa21~fWGpnfauJ0132701327eucas1p1t;
-        Wed, 11 Dec 2019 14:46:48 +0000 (GMT)
+        bh=6yPCbgLPq9lCGS66YYBtZYi6Uzkol1G5zMpyUCDGzKk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=EmnrUMMcH5XNif7pvCvVPYLVpnPabTH4EaVo4rgAbtalSKf7ITfDl9doCe2eAS8dN
+         LWFT2sjmZUw1db9kdWvOnwqteKDmPJtzA1o4FUj4xviiKIFerULZzmNdAdgvclRfVP
+         J4jeEIY9MnEYXwSJuExiCHBxWonGpcoAq4GCKS/4=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20191211144649eucas1p2304a23219d0b5fed15aa82ee8b2ab5a7~fWGqB0q0T2855628556eucas1p2Y;
+        Wed, 11 Dec 2019 14:46:49 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 79.19.60679.85101FD5; Wed, 11
-        Dec 2019 14:46:48 +0000 (GMT)
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 3A.0E.60698.85101FD5; Wed, 11
+        Dec 2019 14:46:49 +0000 (GMT)
 Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20191211144647eucas1p23d85dee21029f864076eece98aadd525~fWGpBdiL80793007930eucas1p2g;
-        Wed, 11 Dec 2019 14:46:47 +0000 (GMT)
+        20191211144648eucas1p2065aac523ce190a5c0e6e2b5b11bd5ce~fWGpoDUOw3050630506eucas1p2K;
+        Wed, 11 Dec 2019 14:46:48 +0000 (GMT)
 Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
         eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191211144647eusmtrp2d8491073638ef673156b058d2fc4659a~fWGpAmAX10169801698eusmtrp20;
-        Wed, 11 Dec 2019 14:46:47 +0000 (GMT)
-X-AuditID: cbfec7f4-0e5ff7000001ed07-35-5df101584de4
+        20191211144648eusmtrp2d3ecab1613505b685bb325903dde0a11~fWGpnXy2A0169801698eusmtrp21;
+        Wed, 11 Dec 2019 14:46:48 +0000 (GMT)
+X-AuditID: cbfec7f5-a0fff7000001ed1a-a1-5df10158cbdd
 Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 9C.9A.07950.75101FD5; Wed, 11
-        Dec 2019 14:46:47 +0000 (GMT)
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id CD.9A.07950.85101FD5; Wed, 11
+        Dec 2019 14:46:48 +0000 (GMT)
 Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
         eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191211144647eusmtip1c700ac96bfe3e4b5c78b020d9f2807c5~fWGoV4f1Q0906009060eusmtip1p;
+        20191211144647eusmtip15998910aa904bd33dab89c66ced87407~fWGo9_zTD0944809448eusmtip1n;
         Wed, 11 Dec 2019 14:46:47 +0000 (GMT)
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
 To:     linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
@@ -71,110 +71,107 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Stefan Agner <stefan@agner.ch>,
         Chunfeng Yun <chunfeng.yun@mediatek.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 0/4] USB3503: correct GPIOs polarity and update the
- driver
-Date:   Wed, 11 Dec 2019 15:46:34 +0100
-Message-Id: <20191211144638.24676-1-m.szyprowski@samsung.com>
+Subject: [PATCH v2 1/4] ARM: dts: exynos: Correct USB3503 GPIOs polarity
+Date:   Wed, 11 Dec 2019 15:46:35 +0100
+Message-Id: <20191211144638.24676-2-m.szyprowski@samsung.com>
 X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA0WSa0hTYRzGe3fOzjmOZscp+WKlsDBIyEuKvJlJSdApAqMPJcWopSc1ncrm
-        LP1Q6rzkKqkVZtLKpml5d96XaM1yedu8lOxDSlMoDWZ4gTS7OY/at+f//H8Pz5+Xl8JETXwP
-        Ki4xhZUnShPEhABv6Vk274sEcxL/6fdiZJ5awVFDUR0f9XfN4iivU4sjVWkdgSyWehLpp8b4
-        aNTwmECjqmGAiiydPKQrz8FQzdtxEmVlB6Lc/HI+aqzNI9Gy0cI7TDOlPyYwpn6yis+0F4+T
-        jL4yn2A+jXUQTJe2mmQay24w2b1dOFPQVAmYBb3nKcE5QWg0mxCXysr9wi4KYjVLbfzkTpdr
-        Vo2VzACZzmrgREE6CE5PaEg1EFAi+gWAQ4O1PG5YBHBwrAJ3UCJ6AUBz+/GNhM30CuOgCgC7
-        p5/gm4llk3otQdABUG1XE46FG10N4MqdojUKo80Y1KqG1yhXOgJW6mw8h8Zpb7iiyiIcWkgf
-        gq1lH3CuzwtW1b9e64O0gYRf5tsAtzgKDRlz65Ar/GZqIjm9E/5tf8rjAioAbeYakhtuAzia
-        VbSePgi7TcN8NaBWb9oL6wx+nH0EagdWcIcNaWdotbs4bGxValoeYpwthDdzRRy9Bxabajdr
-        3wyNrCMM1FqiuKeTwL7Z57y7wLP4f1UJAJXAnVUqZDGsYn8ie9VXIZUplIkxvlFJMj1Y/Uv9
-        f0yLbcDw65IR0BQQbxWWtH6XiPjSVEWazAgghYndhKbcWYlIGC1NS2flSRfkygRWYQQ7KFzs
-        LgzUzUhEdIw0hY1n2WRWvrHlUU4eGeCELNX95MtGSXrUrivKxUcd0c278z529xYr4ye3LTkL
-        +3p4QcHXBzSlx2L0D7T2yLrgwu2kt83ZHnFLTzTr5l2Q+fy83HAWZaVPPSND6S1KGwDN78IP
-        NPxeVlpnxJfvF/p3iX6G+fr4FRhGzthPh+e4Z4aoaS/83ufYr/MhEjGuiJUG+GByhfQfFhoT
-        TkcDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupikeLIzCtJLcpLzFFi42I5/e/4Xd1wxo+xBm2bzS3OPf7NYrFxxnpW
-        i9P737FYtO+by2LRvHg9m8X58xvYLTY9vsZqcXnXHDaLy80XGS1mnN/HZLFoWSuzxdojd9kt
-        mlqMLdo6l7FabF7Xzm7x89B5JgcBj8Xf7zF7bHi0mtVj56y77B6bVnWyedy5tofNY//cNewe
-        m5fUe7Sc3M/i0bdlFaPH501yAVxRejZF+aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZG
-        pkr6djYpqTmZZalF+nYJehmTfuxgLdgnWHFj0g32BsZGvi5GTg4JAROJh8d3M3cxcnEICSxl
-        lJj9/wUTREJG4uS0BlYIW1jiz7UuNoiiT4wS8zu2MIIk2AQMJbreQiREBDYwSpx5/4QFJMEs
-        cI1ZYtlmaRBbWMBXYs3fOWBTWQRUJX43N7GB2LwCthLbl1xhgdggL7F6wwHmCYw8CxgZVjGK
-        pJYW56bnFhvpFSfmFpfmpesl5+duYgTGw7ZjP7fsYOx6F3yIUYCDUYmHd8H297FCrIllxZW5
-        hxglOJiVRHiPt72LFeJNSaysSi3Kjy8qzUktPsRoCrR8IrOUaHI+MFbzSuINTQ3NLSwNzY3N
-        jc0slMR5OwQOxggJpCeWpGanphakFsH0MXFwSjUwbvbm4rSVmnjpzYlNcyNPlhgpPPm1Tf1r
-        w43JkecrC5z2JzV3L/oa7DSpws8vbppG5iF9zV0yE28e98mRnzdBd8nd0mbVnx/7Xv03+nL0
-        0Mpq/+f3DV515sc9W5s11ajhXq3DvTT1cIfVp54xfzuUeffcBw+/d5MWJAU9fFa1Tc30wF/z
-        pqd9z5RYijMSDbWYi4oTAfL3nrmdAgAA
-X-CMS-MailID: 20191211144647eucas1p23d85dee21029f864076eece98aadd525
+In-Reply-To: <20191211144638.24676-1-m.szyprowski@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA0VSaUiTYRzv2XtuNX2dgg8aGeuwAi/mh4e8CoJeiMIP9aFg6NI3tXTKpqYS
+        ZM40LUvFcpmWU1Px2ppH3lfmCGUeSytQIQ1EwSNMyyzN+WZ9+53/Hzw8NCbpJpzoCGUsp1Iq
+        IqWkCG/qXze7XQZf5Z5jhQCZZzZw9EqrJ9BA1yKO0juLcKQp1ZNoaMhAIePMOIEsrYUksmhG
+        ANIOdQpQSfldDNX2TVIoJVWG0jLKCVRfl06h9d4hwSmGLf0+hbGG6WqCbSmYpFhjVQbJToy3
+        k2xXUQ3F1pfdZlPfdeHsw4YqwK4YDwSKroh8Q7nIiHhO5eEfLApPKZsAMXV2CXey3wuSwbBN
+        JhDSkPGGxvyXZCYQ0RKmEkDzWz1hNSTMNwDvb53kjRUAJ9pyBLuNmeHGv40KAEf6dRRPthtL
+        T+Z36iTjBTMXMndSDkwNgBtZWtxKMMaMwSLNCG5N2TMs7DSU7DRw5gi0VM5iVixm/OBw5SDJ
+        77nAakP3tk7TQsYf5vUkWu9AZpSCbe1G3KpD5gzMn7vAx+3hvKmB4vF+uNXyQsDnNQB+NtdS
+        PHkAoCVFC/iUD3xjGiGshzDmONS3evDyaThteSbg79vAjwt2VhnbhrlN+Rgvi+G9NAmfPgoL
+        THX/ZnuGRzEes3CpK5ngHygHwK2ObjIbuBT8HysGoAo4cnHqqDBOLVNyN93Viih1nDLMPSQ6
+        ygi2/9XApmm1GXT+utoLGBpI94mLXy/JJYQiXp0Y1QsgjUkdxKa0RblEHKpITOJU0UGquEhO
+        3QucaVzqKJaVzMklTJgilrvBcTGcatcV0EKnZEA1A5vl2MPnbJ10a7N5jw4dQ03XK2UJISsL
+        16rPPncpFvqdb7j1wTXYfW1Pm6cmqWT1x5YbHtGx7t1aU+0xKaN8Ls0X5n+Zt91rdg1w+zSV
+        8FjYEuv0e8kcFLg8cTHXx/lpgc7XXe6/8TOrok+nlLCawUbZizGfqYOFweMBm1p/Ka4OV3id
+        wFRqxR9W36iMUwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIIsWRmVeSWpSXmKPExsVy+t/xu7oRjB9jDe6uUrY49/g3i8XGGetZ
+        LU7vf8di0b5vLotF8+L1bBbnz29gt9j0+BqrxeVdc9gsLjdfZLSYcX4fk8WiZa3MFmuP3GW3
+        aGoxtmjrXMZqsXldO7vFz0PnmRwEPBZ/v8fsseHRalaPnbPusntsWtXJ5nHn2h42j/1z17B7
+        bF5S79Fycj+LR9+WVYwenzfJBXBF6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZ
+        mSrp29mkpOZklqUW6dsl6GU0LbnDWLBOsKJxwhWmBsYLfF2MnBwSAiYSjy9sZeti5OIQEljK
+        KPGv5xQbREJG4uS0BlYIW1jiz7UuqKJPjBInvlxlAkmwCRhKdL2FSIgIbGCUOPP+CQtIglng
+        GrPEss3SILawgIfEvg2LwCaxCKhKXF7xnBnE5hWwlbiw4gzUNnmJ1RsOAMU5ODgF7CSmHKwE
+        CQsBldybdIhtAiPfAkaGVYwiqaXFuem5xUZ6xYm5xaV56XrJ+bmbGIHRs+3Yzy07GLveBR9i
+        FOBgVOLhXbD9fawQa2JZcWXuIUYJDmYlEd7jbe9ihXhTEiurUovy44tKc1KLDzGaAt00kVlK
+        NDkfGNl5JfGGpobmFpaG5sbmxmYWSuK8HQIHY4QE0hNLUrNTUwtSi2D6mDg4pRoYvV3a5jn/
+        l1IQu8GmPonp8MHrH6c84PnqM8G5dJ2Nh9jxRzMkDqysTr7kYMBUKseysKj77V61v7o9x6//
+        OKoQxhAcXTctskgrdt+8TX+/ZOa4ZWVskXMXOLnYUc7V42jc7dB0xYWrF5llhR7lyDv7vd6o
+        knVj9E+5WlFhz9vRLzi4BD+XcXEosRRnJBpqMRcVJwIA3Caj6rQCAAA=
+X-CMS-MailID: 20191211144648eucas1p2065aac523ce190a5c0e6e2b5b11bd5ce
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20191211144647eucas1p23d85dee21029f864076eece98aadd525
+X-RootMTR: 20191211144648eucas1p2065aac523ce190a5c0e6e2b5b11bd5ce
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20191211144647eucas1p23d85dee21029f864076eece98aadd525
-References: <CGME20191211144647eucas1p23d85dee21029f864076eece98aadd525@eucas1p2.samsung.com>
+X-CMS-RootMailID: 20191211144648eucas1p2065aac523ce190a5c0e6e2b5b11bd5ce
+References: <20191211144638.24676-1-m.szyprowski@samsung.com>
+        <CGME20191211144648eucas1p2065aac523ce190a5c0e6e2b5b11bd5ce@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Dear All,
+Current USB3503 driver ignores GPIO polarity and always operates as if the
+GPIO lines were flagged as ACTIVE_HIGH. Fix the polarity for the existing
+USB3503 chip applications to match the chip specification and common
+convention for naming the pins. The only pin, which has to be ACTIVE_LOW
+is the reset pin. The remaining are ACTIVE_HIGH. This change allows later
+to fix the USB3503 driver to properly use generic GPIO bindings and read
+polarity from DT.
 
-A few days ago a patch for USB3503 driver has been posted (see v1 in the
-changelog below), which changes the GPIO API used by the driver to the
-new one (descriptor based). It turned out that this conversion broke USB
-HUB operation on some boards (observed on Arndale5250).
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 2 +-
+ arch/arm/boot/dts/exynos5250-arndale.dts        | 2 +-
+ arch/arm/boot/dts/exynos5410-odroidxu.dts       | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-Further analysis revealed that the existing code ignored the GPIO
-polarity flags in the device tree. On the other hand the current GPIO
-polarity flags used by various boards were simply incorrect, as it was
-not possible to test them properly.
-
-This patchset provides some standardisation for the GPIO polarity flags
-for USB3503 chips in various DTS files and adds matching logic to USB3503
-driver. For more information and rationale behind this approach, see the
-thread linked as v1 below.
-
-This patchset has been tested on the following boards:
-Odroid X2, U3, XU and Arndale5250.
-
-The patch for USB3503 driver should be merged one release later than the
-DTS changes to keep the affected boards working in meantime.
-
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
-
-
-Changelog:
-v2:
-- added DTS fixes, assumed that RESET GPIO should be ACTIVE_LOW and all
-  other GPIOs ACTIVE_HIGH
-- integrated a fixup for USB3503 driver inverting the logic behind the
-  RESET GPIO to match the standardised GPIOs polarity
-
-v1: https://lore.kernel.org/linux-usb/20191205145633.187511-1-linus.walleij@linaro.org/T/
-- initial version, contains only USB3503 driver patch
-
-
-Patch summary:
-
-Linus Walleij (1):
-  usb: usb3503: Convert to use GPIO descriptors
-
-Marek Szyprowski (3):
-  ARM: dts: exynos: Correct USB3503 GPIOs polarity
-  ARM: dts: qcom: Correct USB3503 GPIOs polarity
-  ARM: dts: sun8i: a83t: Correct USB3503 GPIOs polarity
-
- .../boot/dts/exynos4412-odroid-common.dtsi    |  2 +-
- arch/arm/boot/dts/exynos5250-arndale.dts      |  2 +-
- arch/arm/boot/dts/exynos5410-odroidxu.dts     |  2 +-
- .../dts/qcom-mdm9615-wp8548-mangoh-green.dts  |  2 +-
- .../boot/dts/sun8i-a83t-cubietruck-plus.dts   |  2 +-
- drivers/usb/misc/usb3503.c                    | 94 +++++++------------
- include/linux/platform_data/usb3503.h         |  3 -
- 7 files changed, 40 insertions(+), 67 deletions(-)
-
+diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+index ea55f377d17c..9c39e82e4ecb 100644
+--- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
++++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+@@ -267,7 +267,7 @@
+ 
+ 		intn-gpios = <&gpx3 0 GPIO_ACTIVE_HIGH>;
+ 		connect-gpios = <&gpx3 4 GPIO_ACTIVE_HIGH>;
+-		reset-gpios = <&gpx3 5 GPIO_ACTIVE_HIGH>;
++		reset-gpios = <&gpx3 5 GPIO_ACTIVE_LOW>;
+ 		initial-mode = <1>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+index d6c85efdb465..3eddf5dbcf7b 100644
+--- a/arch/arm/boot/dts/exynos5250-arndale.dts
++++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+@@ -154,7 +154,7 @@
+ 		compatible = "smsc,usb3503a";
+ 
+ 		reset-gpios = <&gpx3 5 GPIO_ACTIVE_LOW>;
+-		connect-gpios = <&gpd1 7 GPIO_ACTIVE_LOW>;
++		connect-gpios = <&gpd1 7 GPIO_ACTIVE_HIGH>;
+ 	};
+ };
+ 
+diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
+index e0db251e253f..4f9297ae0763 100644
+--- a/arch/arm/boot/dts/exynos5410-odroidxu.dts
++++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
+@@ -170,7 +170,7 @@
+ 
+ 		intn-gpios = <&gpx0 7 GPIO_ACTIVE_HIGH>;
+ 		connect-gpios = <&gpx0 6 GPIO_ACTIVE_HIGH>;
+-		reset-gpios = <&gpx1 4 GPIO_ACTIVE_HIGH>;
++		reset-gpios = <&gpx1 4 GPIO_ACTIVE_LOW>;
+ 		initial-mode = <1>;
+ 
+ 		clock-names = "refclk";
 -- 
 2.17.1
 
