@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2283AC2D0C6
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Dec 2019 14:46:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 372EBC00454
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Dec 2019 14:47:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC196214D8
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Dec 2019 14:46:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED1DC2173E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Dec 2019 14:47:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="EmnrUMMc"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="THjkas/M"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729497AbfLKOqw (ORCPT
+        id S1728030AbfLKOqx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 11 Dec 2019 09:46:52 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:33291 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729370AbfLKOqu (ORCPT
+        Wed, 11 Dec 2019 09:46:53 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:55248 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729609AbfLKOqx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 11 Dec 2019 09:46:50 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191211144649euoutp014b974723c539d6637dfa7e5620074b02~fWGqb8_mg1952519525euoutp01B
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Dec 2019 14:46:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191211144649euoutp014b974723c539d6637dfa7e5620074b02~fWGqb8_mg1952519525euoutp01B
+        Wed, 11 Dec 2019 09:46:53 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20191211144651euoutp02483386ef7fe1d02a0c4be26661c37850~fWGssYpZo0993509935euoutp02a
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Dec 2019 14:46:51 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20191211144651euoutp02483386ef7fe1d02a0c4be26661c37850~fWGssYpZo0993509935euoutp02a
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1576075609;
-        bh=6yPCbgLPq9lCGS66YYBtZYi6Uzkol1G5zMpyUCDGzKk=;
+        s=mail20170921; t=1576075611;
+        bh=jPVQGv2B63dkrb4xPXViL+0AtlLT78bLnq0v7ybfs38=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EmnrUMMcH5XNif7pvCvVPYLVpnPabTH4EaVo4rgAbtalSKf7ITfDl9doCe2eAS8dN
-         LWFT2sjmZUw1db9kdWvOnwqteKDmPJtzA1o4FUj4xviiKIFerULZzmNdAdgvclRfVP
-         J4jeEIY9MnEYXwSJuExiCHBxWonGpcoAq4GCKS/4=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        b=THjkas/MzYhyi5bxqtCiFaTMibrLiG6/ck6oyH1BG9YDd+R0tv75XJyMeZIH2Z3Uc
+         Cqb6KktBqHRIYoiJmozBgSLRRo8su4NtNjz4qtYJyLCPMFdXUie/JzePoGOJ64PTnI
+         WCMy3cUoT1Q0+9I6X+VX/ESrMMr24h7OiDpZmNcQ=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20191211144649eucas1p2304a23219d0b5fed15aa82ee8b2ab5a7~fWGqB0q0T2855628556eucas1p2Y;
-        Wed, 11 Dec 2019 14:46:49 +0000 (GMT)
+        20191211144651eucas1p2a3b9c45b1a4754c000c8860c82504333~fWGr_xD2d0794007940eucas1p2Z;
+        Wed, 11 Dec 2019 14:46:51 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 3A.0E.60698.85101FD5; Wed, 11
-        Dec 2019 14:46:49 +0000 (GMT)
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id E4.2F.61286.B5101FD5; Wed, 11
+        Dec 2019 14:46:51 +0000 (GMT)
 Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20191211144648eucas1p2065aac523ce190a5c0e6e2b5b11bd5ce~fWGpoDUOw3050630506eucas1p2K;
-        Wed, 11 Dec 2019 14:46:48 +0000 (GMT)
+        20191211144650eucas1p221857c5e96ee4b5730fad80e105933ac~fWGroaE5d1014710147eucas1p2R;
+        Wed, 11 Dec 2019 14:46:50 +0000 (GMT)
 Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
         eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191211144648eusmtrp2d3ecab1613505b685bb325903dde0a11~fWGpnXy2A0169801698eusmtrp21;
-        Wed, 11 Dec 2019 14:46:48 +0000 (GMT)
-X-AuditID: cbfec7f5-a0fff7000001ed1a-a1-5df10158cbdd
+        20191211144650eusmtrp26bb810620493b236aed5f8ff33c1102f~fWGrnsfxn0169801698eusmtrp29;
+        Wed, 11 Dec 2019 14:46:50 +0000 (GMT)
+X-AuditID: cbfec7f2-f0bff7000001ef66-93-5df1015b3e91
 Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id CD.9A.07950.85101FD5; Wed, 11
-        Dec 2019 14:46:48 +0000 (GMT)
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 42.AA.07950.A5101FD5; Wed, 11
+        Dec 2019 14:46:50 +0000 (GMT)
 Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
         eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191211144647eusmtip15998910aa904bd33dab89c66ced87407~fWGo9_zTD0944809448eusmtip1n;
-        Wed, 11 Dec 2019 14:46:47 +0000 (GMT)
+        20191211144649eusmtip1181d94ddc9fa416ac400580ecdc322e8~fWGq4HQtg0888708887eusmtip19;
+        Wed, 11 Dec 2019 14:46:49 +0000 (GMT)
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
 To:     linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -70,108 +70,249 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Stefan Agner <stefan@agner.ch>,
         Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 1/4] ARM: dts: exynos: Correct USB3503 GPIOs polarity
-Date:   Wed, 11 Dec 2019 15:46:35 +0100
-Message-Id: <20191211144638.24676-2-m.szyprowski@samsung.com>
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v2 4/4] usb: usb3503: Convert to use GPIO descriptors
+Date:   Wed, 11 Dec 2019 15:46:38 +0100
+Message-Id: <20191211144638.24676-5-m.szyprowski@samsung.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191211144638.24676-1-m.szyprowski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA0VSaUiTYRzv2XtuNX2dgg8aGeuwAi/mh4e8CoJeiMIP9aFg6NI3tXTKpqYS
-        ZM40LUvFcpmWU1Px2ppH3lfmCGUeSytQIQ1EwSNMyyzN+WZ9+53/Hzw8NCbpJpzoCGUsp1Iq
-        IqWkCG/qXze7XQZf5Z5jhQCZZzZw9EqrJ9BA1yKO0juLcKQp1ZNoaMhAIePMOIEsrYUksmhG
-        ANIOdQpQSfldDNX2TVIoJVWG0jLKCVRfl06h9d4hwSmGLf0+hbGG6WqCbSmYpFhjVQbJToy3
-        k2xXUQ3F1pfdZlPfdeHsw4YqwK4YDwSKroh8Q7nIiHhO5eEfLApPKZsAMXV2CXey3wuSwbBN
-        JhDSkPGGxvyXZCYQ0RKmEkDzWz1hNSTMNwDvb53kjRUAJ9pyBLuNmeHGv40KAEf6dRRPthtL
-        T+Z36iTjBTMXMndSDkwNgBtZWtxKMMaMwSLNCG5N2TMs7DSU7DRw5gi0VM5iVixm/OBw5SDJ
-        77nAakP3tk7TQsYf5vUkWu9AZpSCbe1G3KpD5gzMn7vAx+3hvKmB4vF+uNXyQsDnNQB+NtdS
-        PHkAoCVFC/iUD3xjGiGshzDmONS3evDyaThteSbg79vAjwt2VhnbhrlN+Rgvi+G9NAmfPgoL
-        THX/ZnuGRzEes3CpK5ngHygHwK2ObjIbuBT8HysGoAo4cnHqqDBOLVNyN93Viih1nDLMPSQ6
-        ygi2/9XApmm1GXT+utoLGBpI94mLXy/JJYQiXp0Y1QsgjUkdxKa0RblEHKpITOJU0UGquEhO
-        3QucaVzqKJaVzMklTJgilrvBcTGcatcV0EKnZEA1A5vl2MPnbJ10a7N5jw4dQ03XK2UJISsL
-        16rPPncpFvqdb7j1wTXYfW1Pm6cmqWT1x5YbHtGx7t1aU+0xKaN8Ls0X5n+Zt91rdg1w+zSV
-        8FjYEuv0e8kcFLg8cTHXx/lpgc7XXe6/8TOrok+nlLCawUbZizGfqYOFweMBm1p/Ka4OV3id
-        wFRqxR9W36iMUwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIIsWRmVeSWpSXmKPExsVy+t/xu7oRjB9jDe6uUrY49/g3i8XGGetZ
-        LU7vf8di0b5vLotF8+L1bBbnz29gt9j0+BqrxeVdc9gsLjdfZLSYcX4fk8WiZa3MFmuP3GW3
-        aGoxtmjrXMZqsXldO7vFz0PnmRwEPBZ/v8fsseHRalaPnbPusntsWtXJ5nHn2h42j/1z17B7
-        bF5S79Fycj+LR9+WVYwenzfJBXBF6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZ
-        mSrp29mkpOZklqUW6dsl6GU0LbnDWLBOsKJxwhWmBsYLfF2MnBwSAiYSjy9sZeti5OIQEljK
-        KPGv5xQbREJG4uS0BlYIW1jiz7UuqKJPjBInvlxlAkmwCRhKdL2FSIgIbGCUOPP+CQtIglng
-        GrPEss3SILawgIfEvg2LwCaxCKhKXF7xnBnE5hWwlbiw4gzUNnmJ1RsOAMU5ODgF7CSmHKwE
-        CQsBldybdIhtAiPfAkaGVYwiqaXFuem5xUZ6xYm5xaV56XrJ+bmbGIHRs+3Yzy07GLveBR9i
-        FOBgVOLhXbD9fawQa2JZcWXuIUYJDmYlEd7jbe9ihXhTEiurUovy44tKc1KLDzGaAt00kVlK
-        NDkfGNl5JfGGpobmFpaG5sbmxmYWSuK8HQIHY4QE0hNLUrNTUwtSi2D6mDg4pRoYvV3a5jn/
-        l1IQu8GmPonp8MHrH6c84PnqM8G5dJ2Nh9jxRzMkDqysTr7kYMBUKseysKj77V61v7o9x6//
-        OKoQxhAcXTctskgrdt+8TX+/ZOa4ZWVskXMXOLnYUc7V42jc7dB0xYWrF5llhR7lyDv7vd6o
-        knVj9E+5WlFhz9vRLzi4BD+XcXEosRRnJBpqMRcVJwIA3Caj6rQCAAA=
-X-CMS-MailID: 20191211144648eucas1p2065aac523ce190a5c0e6e2b5b11bd5ce
+X-Brightmail-Tracker: H4sIAAAAAAAAA0VSaUhUURjlzntv3nNw5DkjeF1KGigryAWjLqWSYfGEjET6k0015XPBlRnX
+        /iTuDikmSpNmiYqW+5bOaGkuOamD44JmkFppoImWS4Yams9n9u+c757znXMvl8Ik7whrKjg8
+        ilWGK0JlQhHe3LsxeMoPLMud+uoxNDizhaN6TS2BBjqWcJTWXoijpJJaITIa60iU+6dcgBpm
+        xgk02vpUiEaThgHSGNsFqLgsBUPVPZMkSkx2QakZZQRqrEkj0UaXUXDBnCn5PYUxdV8rCUaX
+        P0kyDRUZQubT+Gsh01FYRTKNpQ+Y5L4OnMlqqgDMasPha6IbIld/NjQ4hlU6ut8RBTXNNJOR
+        z53i1vtniQSgt1cDEwrSp2FZTjGpBiJKQr8AcGzTIOTJGoCFKZ2AU0noVQBnJwLVgNpzpHQf
+        5zXlAC63aIgDw8v1MZwzCGlnqF5U722yoKsA3MrU4BzB6E0MflxI2VsrpS/B9JphgsM4fRQW
+        pGcJOCym3WCHYRvwBe1gZd1bjIs2od1hbmc8twfSUySc07ZjvMYTjpa0EzyWwu/6JpLHtnBH
+        91zAG5IA/DJYTfLkIYCjiZr9hPOwW8+1oHbrnYC1rY782AMWJJUD/s5mcGLRnBtjuzCn+THG
+        j8UwPVXCq4/BfH3NQWzn0Mh+NQbOf9DsP+kjALOW10E2sMv/H1YEQAWwZKNVYYGsyjmcjXVQ
+        KcJU0eGBDvciwhrA7uca2NavaMGvkbtdgKaAzFRc1PJDLiEUMar4sC4AKUxmIdanLsklYn9F
+        /H1WGXFbGR3KqrqADYXLLMUuxfNyCR2oiGJDWDaSVf47FVAm1gmAiF9jv32WHrnlsXnWNQAa
+        SqdEcQYm08tautC2vWgXaz70ZvqJp2vUZWfCtsAqxnD1kK7HNK/FLLvc1jck8fq01n/55pXq
+        wYDGZ4IKey9v77lZn9Bz/WfmrH76OW29d7R55aOd1Y2PFOM+F92KVhql9XnyhZh5Ue96W6Fv
+        snEnW4arghTOJzGlSvEXORxtJVgDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKIsWRmVeSWpSXmKPExsVy+t/xu7pRjB9jDTqeaFqce/ybxWLjjPWs
+        Fqf3v2OxaN83l8WiefF6Novz5zewW0z5s5zJYtPja6wWl3fNYbO43HyR0WLG+X1MFouWtTJb
+        rD1yl92iqcXYoq1zGavF5nXt7BY/D51nchD0WPz9HrPHhkerWT12zrrL7rFpVSebx51re9g8
+        9s9dw+6xeUm9R8vJ/SwefVtWMXp83iQXwBWlZ1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqln
+        aGwea2VkqqRvZ5OSmpNZllqkb5egl7Hl8Tb2gvkGFd9OPWFtYDyu3sXIwSEhYCLReliji5GL
+        Q0hgKaPE0yfHmLsYOYHiMhInpzWwQtjCEn+udbFBFH1ilFh9ajNYgk3AUKLrLURCRGADo8SZ
+        909YQBLMAk0sEicPqYDYwgKuEh3rLoI1sAioSszu6GMCsXkFbCX2n/nHCLFBXmL1hgPMIBdx
+        CthJTDlYCRIWAiq5N+kQ2wRGvgWMDKsYRVJLi3PTc4uN9IoTc4tL89L1kvNzNzECo2jbsZ9b
+        djB2vQs+xCjAwajEw7tg+/tYIdbEsuLK3EOMEhzMSiK8x9vexQrxpiRWVqUW5ccXleakFh9i
+        NAW6aSKzlGhyPjDC80riDU0NzS0sDc2NzY3NLJTEeTsEDsYICaQnlqRmp6YWpBbB9DFxcEo1
+        MKpknr333+BegsOc+Rc3p//yKv4fKy7yJ4zvc3qNimDDs6hMP2XXmflvzFO3b1j3al7Jxcdi
+        PZ+nc9sILFq0ZsUBuWU50oUfL3/kfKkw94LmGu/JOy9NFM7Z9OdFrcv869ffP1PdLPfmjahc
+        2pH7BuK8xQYCxis2xiZ92/r3TvOOz8ftumqVZj5TYinOSDTUYi4qTgQArFTau7gCAAA=
+X-CMS-MailID: 20191211144650eucas1p221857c5e96ee4b5730fad80e105933ac
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20191211144648eucas1p2065aac523ce190a5c0e6e2b5b11bd5ce
+X-RootMTR: 20191211144650eucas1p221857c5e96ee4b5730fad80e105933ac
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20191211144648eucas1p2065aac523ce190a5c0e6e2b5b11bd5ce
+X-CMS-RootMailID: 20191211144650eucas1p221857c5e96ee4b5730fad80e105933ac
 References: <20191211144638.24676-1-m.szyprowski@samsung.com>
-        <CGME20191211144648eucas1p2065aac523ce190a5c0e6e2b5b11bd5ce@eucas1p2.samsung.com>
+        <CGME20191211144650eucas1p221857c5e96ee4b5730fad80e105933ac@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Current USB3503 driver ignores GPIO polarity and always operates as if the
-GPIO lines were flagged as ACTIVE_HIGH. Fix the polarity for the existing
-USB3503 chip applications to match the chip specification and common
-convention for naming the pins. The only pin, which has to be ACTIVE_LOW
-is the reset pin. The remaining are ACTIVE_HIGH. This change allows later
-to fix the USB3503 driver to properly use generic GPIO bindings and read
-polarity from DT.
+From: Linus Walleij <linus.walleij@linaro.org>
 
+This converts the USB3503 to pick GPIO descriptors from the
+device tree instead of iteratively picking out GPIO number
+references and then referencing these from the global GPIO
+numberspace.
+
+The USB3503 is only used from device tree among the in-tree
+platforms. If board files would still desire to use it they can
+provide machine descriptor tables.
+
+Make sure to preserve semantics such as the reset delay
+introduced by Stefan.
+
+Cc: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Stefan Agner <stefan@agner.ch>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+[mszyprow: invert the logic behind reset GPIO line]
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 2 +-
- arch/arm/boot/dts/exynos5250-arndale.dts        | 2 +-
- arch/arm/boot/dts/exynos5410-odroidxu.dts       | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/usb/misc/usb3503.c            | 94 ++++++++++-----------------
+ include/linux/platform_data/usb3503.h |  3 -
+ 2 files changed, 35 insertions(+), 62 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index ea55f377d17c..9c39e82e4ecb 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -267,7 +267,7 @@
+diff --git a/drivers/usb/misc/usb3503.c b/drivers/usb/misc/usb3503.c
+index 72f39a9751b5..116bd789e568 100644
+--- a/drivers/usb/misc/usb3503.c
++++ b/drivers/usb/misc/usb3503.c
+@@ -7,11 +7,10 @@
  
- 		intn-gpios = <&gpx3 0 GPIO_ACTIVE_HIGH>;
- 		connect-gpios = <&gpx3 4 GPIO_ACTIVE_HIGH>;
--		reset-gpios = <&gpx3 5 GPIO_ACTIVE_HIGH>;
-+		reset-gpios = <&gpx3 5 GPIO_ACTIVE_LOW>;
- 		initial-mode = <1>;
- 	};
- 
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index d6c85efdb465..3eddf5dbcf7b 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -154,7 +154,7 @@
- 		compatible = "smsc,usb3503a";
- 
- 		reset-gpios = <&gpx3 5 GPIO_ACTIVE_LOW>;
--		connect-gpios = <&gpd1 7 GPIO_ACTIVE_LOW>;
-+		connect-gpios = <&gpd1 7 GPIO_ACTIVE_HIGH>;
- 	};
+ #include <linux/clk.h>
+ #include <linux/i2c.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/delay.h>
+ #include <linux/slab.h>
+ #include <linux/module.h>
+-#include <linux/of_gpio.h>
+ #include <linux/platform_device.h>
+ #include <linux/platform_data/usb3503.h>
+ #include <linux/regmap.h>
+@@ -47,19 +46,19 @@ struct usb3503 {
+ 	struct device		*dev;
+ 	struct clk		*clk;
+ 	u8	port_off_mask;
+-	int	gpio_intn;
+-	int	gpio_reset;
+-	int	gpio_connect;
++	struct gpio_desc	*intn;
++	struct gpio_desc 	*reset;
++	struct gpio_desc 	*connect;
+ 	bool	secondary_ref_clk;
  };
  
-diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-index e0db251e253f..4f9297ae0763 100644
---- a/arch/arm/boot/dts/exynos5410-odroidxu.dts
-+++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-@@ -170,7 +170,7 @@
+ static int usb3503_reset(struct usb3503 *hub, int state)
+ {
+-	if (!state && gpio_is_valid(hub->gpio_connect))
+-		gpio_set_value_cansleep(hub->gpio_connect, 0);
++	if (!state && hub->connect)
++		gpiod_set_value_cansleep(hub->connect, 0);
  
- 		intn-gpios = <&gpx0 7 GPIO_ACTIVE_HIGH>;
- 		connect-gpios = <&gpx0 6 GPIO_ACTIVE_HIGH>;
--		reset-gpios = <&gpx1 4 GPIO_ACTIVE_HIGH>;
-+		reset-gpios = <&gpx1 4 GPIO_ACTIVE_LOW>;
- 		initial-mode = <1>;
+-	if (gpio_is_valid(hub->gpio_reset))
+-		gpio_set_value_cansleep(hub->gpio_reset, state);
++	if (hub->reset)
++		gpiod_set_value_cansleep(hub->reset, !state);
  
- 		clock-names = "refclk";
+ 	/* Wait T_HUBINIT == 4ms for hub logic to stabilize */
+ 	if (state)
+@@ -115,8 +114,8 @@ static int usb3503_connect(struct usb3503 *hub)
+ 		}
+ 	}
+ 
+-	if (gpio_is_valid(hub->gpio_connect))
+-		gpio_set_value_cansleep(hub->gpio_connect, 1);
++	if (hub->connect)
++		gpiod_set_value_cansleep(hub->connect, 1);
+ 
+ 	hub->mode = USB3503_MODE_HUB;
+ 	dev_info(dev, "switched to HUB mode\n");
+@@ -163,13 +162,11 @@ static int usb3503_probe(struct usb3503 *hub)
+ 	int err;
+ 	u32 mode = USB3503_MODE_HUB;
+ 	const u32 *property;
++	enum gpiod_flags flags;
+ 	int len;
+ 
+ 	if (pdata) {
+ 		hub->port_off_mask	= pdata->port_off_mask;
+-		hub->gpio_intn		= pdata->gpio_intn;
+-		hub->gpio_connect	= pdata->gpio_connect;
+-		hub->gpio_reset		= pdata->gpio_reset;
+ 		hub->mode		= pdata->initial_mode;
+ 	} else if (np) {
+ 		u32 rate = 0;
+@@ -230,59 +227,38 @@ static int usb3503_probe(struct usb3503 *hub)
+ 			}
+ 		}
+ 
+-		hub->gpio_intn	= of_get_named_gpio(np, "intn-gpios", 0);
+-		if (hub->gpio_intn == -EPROBE_DEFER)
+-			return -EPROBE_DEFER;
+-		hub->gpio_connect = of_get_named_gpio(np, "connect-gpios", 0);
+-		if (hub->gpio_connect == -EPROBE_DEFER)
+-			return -EPROBE_DEFER;
+-		hub->gpio_reset = of_get_named_gpio(np, "reset-gpios", 0);
+-		if (hub->gpio_reset == -EPROBE_DEFER)
+-			return -EPROBE_DEFER;
+ 		of_property_read_u32(np, "initial-mode", &mode);
+ 		hub->mode = mode;
+ 	}
+ 
+-	if (hub->port_off_mask && !hub->regmap)
+-		dev_err(dev, "Ports disabled with no control interface\n");
+-
+-	if (gpio_is_valid(hub->gpio_intn)) {
+-		int val = hub->secondary_ref_clk ? GPIOF_OUT_INIT_LOW :
+-						   GPIOF_OUT_INIT_HIGH;
+-		err = devm_gpio_request_one(dev, hub->gpio_intn, val,
+-					    "usb3503 intn");
+-		if (err) {
+-			dev_err(dev,
+-				"unable to request GPIO %d as interrupt pin (%d)\n",
+-				hub->gpio_intn, err);
+-			return err;
+-		}
+-	}
+-
+-	if (gpio_is_valid(hub->gpio_connect)) {
+-		err = devm_gpio_request_one(dev, hub->gpio_connect,
+-				GPIOF_OUT_INIT_LOW, "usb3503 connect");
+-		if (err) {
+-			dev_err(dev,
+-				"unable to request GPIO %d as connect pin (%d)\n",
+-				hub->gpio_connect, err);
+-			return err;
+-		}
+-	}
+-
+-	if (gpio_is_valid(hub->gpio_reset)) {
+-		err = devm_gpio_request_one(dev, hub->gpio_reset,
+-				GPIOF_OUT_INIT_LOW, "usb3503 reset");
++	if (hub->secondary_ref_clk)
++		flags = GPIOD_OUT_LOW;
++	else
++		flags = GPIOD_OUT_HIGH;
++	hub->intn = devm_gpiod_get_optional(dev, "intn", flags);
++	if (IS_ERR(hub->intn))
++		return PTR_ERR(hub->intn);
++	if (hub->intn)
++		gpiod_set_consumer_name(hub->intn, "usb3503 intn");
++
++	hub->connect = devm_gpiod_get_optional(dev, "connect", GPIOD_OUT_LOW);
++	if (IS_ERR(hub->connect))
++		return PTR_ERR(hub->connect);
++	if (hub->connect)
++		gpiod_set_consumer_name(hub->connect, "usb3503 connect");
++
++	hub->reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
++	if (IS_ERR(hub->reset))
++		return PTR_ERR(hub->reset);
++	if (hub->reset) {
+ 		/* Datasheet defines a hardware reset to be at least 100us */
+ 		usleep_range(100, 10000);
+-		if (err) {
+-			dev_err(dev,
+-				"unable to request GPIO %d as reset pin (%d)\n",
+-				hub->gpio_reset, err);
+-			return err;
+-		}
++		gpiod_set_consumer_name(hub->reset, "usb3503 reset");
+ 	}
+ 
++	if (hub->port_off_mask && !hub->regmap)
++		dev_err(dev, "Ports disabled with no control interface\n");
++
+ 	usb3503_switch_mode(hub, hub->mode);
+ 
+ 	dev_info(dev, "%s: probed in %s mode\n", __func__,
+diff --git a/include/linux/platform_data/usb3503.h b/include/linux/platform_data/usb3503.h
+index e049d51c1353..d01ef97ddf36 100644
+--- a/include/linux/platform_data/usb3503.h
++++ b/include/linux/platform_data/usb3503.h
+@@ -17,9 +17,6 @@ enum usb3503_mode {
+ struct usb3503_platform_data {
+ 	enum usb3503_mode	initial_mode;
+ 	u8	port_off_mask;
+-	int	gpio_intn;
+-	int	gpio_connect;
+-	int	gpio_reset;
+ };
+ 
+ #endif
 -- 
 2.17.1
 
