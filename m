@@ -4,88 +4,84 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C3D3C3F68F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Dec 2019 18:21:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12380C2D0C6
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Dec 2019 18:27:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B8BB206C3
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Dec 2019 18:21:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF5742077B
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Dec 2019 18:27:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576088462;
-	bh=RL+vgrR0bpHGQbqra3a6ewso/rrC+bWmrcxhU6IGH5g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=IP0rgEVFr7qVqV/LNXEfNleuyl3i/yskxwG5saAbP2DnFWtVrfjGZU66pBGlKEL7G
-	 /g5oZOng8pVW04pmmwJMBzWzjNyx1cuIlpA/mSD4+Gofid7s8WITM5snVzWMKWRXjQ
-	 qBLwC17Bi3sIPDC1okIMxwqAxVeQWiK+Gx8F7qmk=
+	s=default; t=1576088866;
+	bh=gHlCBn0ZHH3LHnMqSeDPjmDBICp9tgkzGh4pUIHCkno=;
+	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
+	b=AydVTpxzIryEyHw4cOnnhdX1FKX7LP7dcOsa77yz/61aRquUm9I9D+UL6TtfD9IYv
+	 mvCBlphlsc5CLIBpnXdyqvyGqInlATxzDXvuI1FRsF6gAIfr3JCD3sRNlxMvVPCJUd
+	 mc3cv3ZCuUDLXyEZCB7e32qDKZgSYK72RgYwq8KE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731140AbfLKSVB (ORCPT
+        id S1729877AbfLKS1p (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 11 Dec 2019 13:21:01 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:33176 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729877AbfLKSVB (ORCPT
+        Wed, 11 Dec 2019 13:27:45 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:39040 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729230AbfLKS1o (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 11 Dec 2019 13:21:01 -0500
-Received: by mail-ed1-f68.google.com with SMTP id r21so9590203edq.0;
-        Wed, 11 Dec 2019 10:20:59 -0800 (PST)
+        Wed, 11 Dec 2019 13:27:44 -0500
+Received: by mail-ed1-f67.google.com with SMTP id v16so20245652edy.6;
+        Wed, 11 Dec 2019 10:27:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+        h=x-gm-message-state:date:from:to:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=M9sVToONd+fTEwhYvsJ/8k0wg86wy07LtQtX5S1NlxU=;
-        b=KBGSx15+7gGmDC1XdV2rKOqYqA6FhTb0qs633B65HiQgs+uYWtvKQusjC9QlqphqJv
-         mh6pcCbw3J2ILk9r7h2uCKBuVCMdYiEsNRdhFJJO+t0GGoGtIoG+DQQdA8K8kuICKjxH
-         P02JfyiexWFeKFcLULHIBFHHVtcWZA851KcANe67B+s6z5FPZQrTyDtfOV43AZeGBxZ4
-         qBuXxUVVmErhqYQfBYq66G+pqbsdbhxqqKFcro2ApUnDwHpzRtHDQMBotzq9fRLCh8gh
-         eiNNiN/4r152UQZ0h6riLUisz5+HG4rIlBiSjC3dVCxVXlAd2BhgGtq5OqqjefT2Lp5d
-         5aJg==
-X-Gm-Message-State: APjAAAXjCnyicd14+5kYfrSp/uzpZ5L+CiNVB9hlkl/FpOhDpUiLeAh8
-        Y0KLuDZDRlSM/YVoK+4OyX0=
-X-Google-Smtp-Source: APXvYqwVUE8J5FCuoKASkA48pjyAQ91Qg6Fc1R2pY0YltL8SDnG4jJfjRhmh/4RHa1sFybNMqZ48pA==
-X-Received: by 2002:a05:6402:1659:: with SMTP id s25mr4814152edx.219.1576088459075;
-        Wed, 11 Dec 2019 10:20:59 -0800 (PST)
+        bh=Ff7CQdMliIKDFZWCzAdUrG86rvuqf7GP0H4SQLsLeJ8=;
+        b=r3g2M0sQFfeGY4gsIr9J3WhVNjQbv7Otg+2XlGUBUML2ETTFS6Jg0vbTasWuuIXXY5
+         s1j5tGolNK1l7vGhuCylD7roW9TidmAZhKM8z6UAJAcqBvqq6hMLXa0OHei4mFBXS+0L
+         +gKvd4QRYwIl7x6223f2WQfGa7sGU1CeyoeYcl8UfagdyGeGF9jWWDSoKjgYsDQT+nL8
+         kD6wqj17tj6J+Y+1h8wAR8lYDem3i5sUm0JGvzFfi1SXM+VbtfP864kl+bdK/aPfFgEW
+         YKUGzOEQk1ERKcHaCrz/q7TT6FWM3HmRcYFs7gMaNA+dMpQxNrQ76wOQjnQdXFPlFlns
+         bqhQ==
+X-Gm-Message-State: APjAAAV1LvXu4QlcRXgsUGE8hxVPShfmpuu7gvHDTOp5HKex/cgV/aN3
+        tGllvvg7dS3fCdnmmi4toOs=
+X-Google-Smtp-Source: APXvYqyJ7PblsCZH6vXzuWl2i8OZSvSR9RTMyV0zfdp9izG/UcT0/mLxk6V7A62vz392qKGcAPOvrg==
+X-Received: by 2002:a17:906:a950:: with SMTP id hh16mr4812284ejb.75.1576088862984;
+        Wed, 11 Dec 2019 10:27:42 -0800 (PST)
 Received: from kozik-lap ([194.230.155.234])
-        by smtp.googlemail.com with ESMTPSA id 2sm65676edv.87.2019.12.11.10.20.57
+        by smtp.googlemail.com with ESMTPSA id x15sm64891edl.48.2019.12.11.10.27.41
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 Dec 2019 10:20:58 -0800 (PST)
-Date:   Wed, 11 Dec 2019 19:20:56 +0100
+        Wed, 11 Dec 2019 10:27:42 -0800 (PST)
+Date:   Wed, 11 Dec 2019 19:27:39 +0100
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org, vireshk@kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com,
-        m.szyprowski@samsung.com
-Subject: Re: [PATCH 2/3] ARM: dts: exynos: Remove syscon compatible from
- chipid node on Exynos5
-Message-ID: <20191211182056.GB2427@kozik-lap>
-References: <20191028152050.10220-1-s.nawrocki@samsung.com>
- <CGME20191028152059eucas1p2b48166c35f61dfc8edfa99f54434e8ee@eucas1p2.samsung.com>
- <20191028152050.10220-2-s.nawrocki@samsung.com>
+To:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] pinctrl: samsung: Enable compile test for build
+ coverage
+Message-ID: <20191211182739.GA6931@kozik-lap>
+References: <20191209163937.8156-1-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191028152050.10220-2-s.nawrocki@samsung.com>
+In-Reply-To: <20191209163937.8156-1-krzk@kernel.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 04:20:49PM +0100, Sylwester Nawrocki wrote:
-> The "syscon" compatible string was introduced in commit ("cdcce1ee977b
-> ARM: dts: exynos: Add "syscon" compatible string to chipid node on Exynos5")
-> to allow sharing of the CHIPID IO region between multiple drivers.
-> However, such sharing can be also done without an additional compatible
-> so remove the syscon entry.
+On Mon, Dec 09, 2019 at 05:39:36PM +0100, Krzysztof Kozlowski wrote:
+> The Samsung pinctrl drivers require only GPIOLIB and OF for building.
+> The should be buildable on all architectures so enable COMPILE_TEST.
 > 
-> Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
->  arch/arm/boot/dts/exynos5.dtsi | 2 +-
+>  drivers/pinctrl/samsung/Kconfig | 8 +++++---
 
-Thanks, applied.
+Applied both to my tree. I'll send them to you Linus later in pull
+request (unless 0-day catches some build failures).
 
 Best regards,
 Krzysztof
