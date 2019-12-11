@@ -2,182 +2,102 @@ Return-Path: <SRS0=qlte=2B=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE47C43603
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Dec 2019 09:49:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 865C4C43603
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Dec 2019 11:02:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8ABC7205C9
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Dec 2019 09:49:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="CQsS00MB"
+	by mail.kernel.org (Postfix) with ESMTP id 62D572073D
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Dec 2019 11:02:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728642AbfLKJtG (ORCPT
+        id S1728857AbfLKLC1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 11 Dec 2019 04:49:06 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:4235 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728030AbfLKJtG (ORCPT
+        Wed, 11 Dec 2019 06:02:27 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:39977 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728401AbfLKLC0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 11 Dec 2019 04:49:06 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5df0bb8a0000>; Wed, 11 Dec 2019 01:48:58 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 11 Dec 2019 01:49:04 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 11 Dec 2019 01:49:04 -0800
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 11 Dec
- 2019 09:49:04 +0000
-Received: from tbergstrom-lnx.Nvidia.com (10.124.1.5) by
- DRHQMAIL107.nvidia.com (10.27.9.16) with Microsoft SMTP Server (TLS) id
- 15.0.1473.3; Wed, 11 Dec 2019 09:49:03 +0000
-Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
-        id 83C0540D1A; Wed, 11 Dec 2019 11:49:01 +0200 (EET)
-Date:   Wed, 11 Dec 2019 11:49:01 +0200
-From:   Peter De Schrijver <pdeschrijver@nvidia.com>
-To:     Yangtao Li <tiny.windzz@gmail.com>
-CC:     <afaerber@suse.de>, <manivannan.sadhasivam@linaro.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <Eugeniy.Paltsev@synopsys.com>, <shawnguo@kernel.org>,
-        <s.hauer@pengutronix.de>, <kernel@pengutronix.de>,
-        <festevam@gmail.com>, <linux-imx@nxp.com>, <agross@kernel.org>,
-        <s.nawrocki@samsung.com>, <tomasz.figa@gmail.com>,
-        <cw00.choi@samsung.com>, <kgene@kernel.org>, <krzk@kernel.org>,
-        <palmer@sifive.com>, <paul.walmsley@sifive.com>,
-        <dinguyen@kernel.org>, <mripard@kernel.org>, <wens@csie.org>,
-        <emilio@elopez.com.ar>, <pgaikwad@nvidia.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <matthias.bgg@gmail.com>, <rfontana@redhat.com>,
-        <gregkh@linuxfoundation.org>, <t-kristo@ti.com>,
-        <john@phrozen.org>, <tglx@linutronix.de>, <allison@lohutok.net>,
-        <kstewart@linuxfoundation.org>, <swinslow@gmail.com>,
-        <aisheng.dong@nxp.com>, <robh@kernel.org>, <daniel.baluta@nxp.com>,
-        <weiyongjun1@huawei.com>, <wangyan.wang@mediatek.com>,
-        <chunhui.dai@mediatek.com>, <miquel.raynal@bootlin.com>,
-        <heiko@sntech.de>, <jcmvbkbc@gmail.com>, <nsekhar@ti.com>,
-        <geert+renesas@glider.be>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-riscv@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>
-Subject: Re: [PATCH 06/17] clk: tegra: convert to
- devm_platform_ioremap_resource
-Message-ID: <20191211094901.GY28289@pdeschrijver-desktop.Nvidia.com>
-References: <20191209195749.868-1-tiny.windzz@gmail.com>
- <20191209195749.868-6-tiny.windzz@gmail.com>
+        Wed, 11 Dec 2019 06:02:26 -0500
+Received: from [192.168.1.155] ([95.118.81.154]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MdNTy-1i5ew40D9U-00ZRFl; Wed, 11 Dec 2019 12:02:00 +0100
+Subject: Re: [PATCH 02/10] tty: serial: samsung_tty: fix build warning
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-serial@vger.kernel.org
+Cc:     Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Hyunki Koo <kkoos00@naver.com>,
+        HYUN-KI KOO <hyunki00.koo@samsung.com>,
+        Shinbeom Choi <sbeom.choi@samsung.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191210143706.3928480-1-gregkh@linuxfoundation.org>
+ <20191210143706.3928480-2-gregkh@linuxfoundation.org>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Message-ID: <181db297-2865-5b34-6ef1-e410babaf3bb@metux.net>
+Date:   Wed, 11 Dec 2019 12:01:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20191209195749.868-6-tiny.windzz@gmail.com>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1576057738; bh=r6KMkLsJhUlJn6kT8Vu8wn2241qWLrLOKRW+auTAdBw=;
-        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
-         MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-         X-NVConfidentiality:User-Agent:X-Originating-IP:X-ClientProxiedBy;
-        b=CQsS00MBTnuDN86oN6k+Fvv3zdMv2pmyrsfl4LEvz3FuB3pLJ2qjLuKbXqMEmEM0d
-         3UO4ao+0Je37cK7moGSSetlBG/zEYwHpgXtMUzLCjbRbM/q1nyQoCociGvJ8FMY//f
-         I5yk1Rvh55fIvagtjK0kTZEbQLetWYoJzYSba65tCBjG1zBRKM/vVyDLGZUtPRZfh9
-         rOpdnHLKIfbasD3tSumKnS+0iQCX2FPKPZfd1MEHXYD8CbGksQzmQl1cYFL9QoF58M
-         H9srLa33FxJMfbCw2/hrs6LIIjtwd/jibSO5mp6vhKTQdMd5BJh7RliwmQD2yEUcq0
-         5lSXdg0nohQ3g==
+In-Reply-To: <20191210143706.3928480-2-gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: tl
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:UT50J8jS+O2S/9OxMUm9VbwE4Uc5ui9b+5/2mfssfXgX7gstXYh
+ v794Od+JFSR+AXZd6xGKhWx5cGrLbHktNqKvg0K0pha1WKf+6v/JE9d7o6RYluYowDYlNtB
+ Hv6z2xrK/KnscNoYynkZoDUkv81cvKYgYk9/haP7FzHB8OPiazs93+LZNCDyZtWdxvP/mcV
+ 3UZRb+Ih7lWNu+dEwK13Q==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Fp1viWlXRto=:J9OyfXmzpxj6Tp3U+1SQo9
+ giFGmk6/go7HR5CkCRmfLF3hq7Dra6NGqfbPjbTzLp3UWkyaAZiewbojt73Y9KNRAjs++Gy/1
+ swwK5mq0YekiYAn6Sg/H9HVf1ib+cMsnBQhFLg+/kN8PUsE+VRJghOa8kLSIlxj3UhJ/t1c91
+ XDZHnMGQf5vpeckKnRxdl+gfE5kDFKwcTZRpoAnLTcCww/c5FyaAO0ModpX+4SDtvsHfgDTGO
+ 6VqJe4Hf7hWJHMpcDqBY/SWF7o9KQWgs1wTd1YWB9P77YALPWm0YUMgpVsOArfCiwY/CxFRNJ
+ 1LvIw5fAD9zH5EWsVee1ohe7CQqfA+dSK84EXQHyQxxE5JjHZJu5d7LijQR447s0nqo8n0yKq
+ qmD48V1la7iQ0BrXfYJcE7NLcZVtqrR8G7rrx/XrW/30dDyijRE++1FgUAeiaG16LBqx7LPgm
+ thTK0utJJA21A9vh1swj8ARNAUY3zf0YaneKSIIdcO9DHgylh197o0/2N9PwWH1vNkR0wLM2T
+ fmT7epkEo0HbV1AuwkbjACwHDSFmx6UXwHTxEB6r99c/izTYmRumjMCpJLzY/q6ewan6wmAhs
+ SHegSp2U7Et511tr82VzQNscyl6gcAhPQ8AKeLy9jRek7kTzAJDRGRRRm6s6Tl9v9Bmesa7tJ
+ 7rYVxqB6F60c7HPLZNLeN4fmuBZv1FDT3Z4P89AODQQWZLQNMK8Jj+jR0PubfbOVmcm8xcXX9
+ VR6Xzo7HrW4MlYY9kRY0nJVpcllr/jyu0REys86WN4ublVWs+uh1eFXFd9myF0k+wLSsRRMGv
+ yW8byDvsJlCyLhFFeIHG8BJFBeZVjLEqAWhdfoEZo7bXMedlPG5MluaymAn5JdiQSjutsiNdE
+ cRAEYA8b+i8shCB0SM4Q==
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Dec 09, 2019 at 07:57:38PM +0000, Yangtao Li wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
+On 10.12.19 15:36, Greg Kroah-Hartman wrote:
 
-Acked-by:  Peter De Schrijver <pdeschrijver@nvidia.com>
+Hi,
 
-> Use devm_platform_ioremap_resource() to simplify code.
-> 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
->  drivers/clk/tegra/clk-dfll.c | 34 ++++------------------------------
->  1 file changed, 4 insertions(+), 30 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-> index c051d92c2bbf..070a2957e119 100644
-> --- a/drivers/clk/tegra/clk-dfll.c
-> +++ b/drivers/clk/tegra/clk-dfll.c
-> @@ -1935,7 +1935,6 @@ static int dfll_fetch_common_params(struct tegra_dfll *td)
->  int tegra_dfll_register(struct platform_device *pdev,
->                         struct tegra_dfll_soc_data *soc)
->  {
-> -       struct resource *mem;
->         struct tegra_dfll *td;
->         int ret;
-> 
-> @@ -1985,51 +1984,26 @@ int tegra_dfll_register(struct platform_device *pdev,
->                 return ret;
->         }
-> 
-> -       mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -       if (!mem) {
-> -               dev_err(td->dev, "no control register resource\n");
-> -               return -ENODEV;
-> -       }
-> -
-> -       td->base = devm_ioremap(td->dev, mem->start, resource_size(mem));
-> +       td->base = devm_platform_ioremap_resource(pdev, 0);
->         if (!td->base) {
->                 dev_err(td->dev, "couldn't ioremap DFLL control registers\n");
->                 return -ENODEV;
->         }
-> 
-> -       mem = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> -       if (!mem) {
-> -               dev_err(td->dev, "no i2c_base resource\n");
-> -               return -ENODEV;
-> -       }
-> -
-> -       td->i2c_base = devm_ioremap(td->dev, mem->start, resource_size(mem));
-> +       td->i2c_base = devm_platform_ioremap_resource(pdev, 1);
->         if (!td->i2c_base) {
->                 dev_err(td->dev, "couldn't ioremap i2c_base resource\n");
->                 return -ENODEV;
->         }
-> 
-> -       mem = platform_get_resource(pdev, IORESOURCE_MEM, 2);
-> -       if (!mem) {
-> -               dev_err(td->dev, "no i2c_controller_base resource\n");
-> -               return -ENODEV;
-> -       }
-> -
-> -       td->i2c_controller_base = devm_ioremap(td->dev, mem->start,
-> -                                              resource_size(mem));
-> +       td->i2c_controller_base = devm_platform_ioremap_resource(pdev, 2);
->         if (!td->i2c_controller_base) {
->                 dev_err(td->dev,
->                         "couldn't ioremap i2c_controller_base resource\n");
->                 return -ENODEV;
->         }
-> 
-> -       mem = platform_get_resource(pdev, IORESOURCE_MEM, 3);
-> -       if (!mem) {
-> -               dev_err(td->dev, "no lut_base resource\n");
-> -               return -ENODEV;
-> -       }
-> -
-> -       td->lut_base = devm_ioremap(td->dev, mem->start, resource_size(mem));
-> +       td->lut_base = devm_platform_ioremap_resource(pdev, 3);
->         if (!td->lut_base) {
->                 dev_err(td->dev,
->                         "couldn't ioremap lut_base resource\n");
-> --
-> 2.17.1
-> 
+> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+> index 83fd51607741..67c5a84d0a26 100644
+> --- a/drivers/tty/serial/samsung_tty.c
+> +++ b/drivers/tty/serial/samsung_tty.c
+> @@ -1851,7 +1851,10 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
+>  
+>  /* Device driver serial port probe */
+>  
+> +#ifdef CONFIG_OF
+>  static const struct of_device_id s3c24xx_uart_dt_match[];
+> +#endif
+> +
+
+By the way: I've got some patch for conditionally declaring of match
+tables (including MODULE_DEVICE_TABE() call), so such ifdef's aren't
+needed anymore.
+
+Would you like to see it ?
+(IIRC already posted it quite some time ago, but probably went
+unnoticed)
+
+
+--mtx
+
+---
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
