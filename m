@@ -2,119 +2,110 @@ Return-Path: <SRS0=7hfY=2C=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6494C43603
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Dec 2019 16:41:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B47CEC43603
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Dec 2019 16:48:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79F8822527
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Dec 2019 16:41:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8857E21655
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Dec 2019 16:48:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576168896;
-	bh=kAhkMJgoZo1BWz+qs5Xno3OsSKZ86r1MkClH94NFChM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=2UlW0+32rBhfw2KDnmZvEVX+9DPwSvQI2HyE1o04sjf0idCOnEgUdROBl9JBFLcyY
-	 2k6Y3oC2UwQt9BZ3+FFFOyMoyURTUGrMbeQDK496GCZ63oGpms10AJ1U0+ElOKaO2k
-	 itzr77wlQqssSpq35rKhudoFaUtpPL/jsoOdTa6k=
+	s=default; t=1576169292;
+	bh=c1is5yWpQ/pjCV/lmKQ/sltbXOXLEPlFpvz/h8cdpUY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=qg6tE5MSuOzKe/N8BLLcaoQ7OoSdpwGyZfZBw75sUMfpe+BhkFyaw4efGGXibhH8e
+	 vFpIPq1X3Fp7izKXUj2qDyz7A+1QgQy5GJA2pnTys6EYxla2NGUWHDzlHv1ROG8Yi+
+	 Z+Z6TwotytRiyOL0rdQsNIFs/BJufcXzhMw16NGk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729899AbfLLQlf (ORCPT
+        id S1729776AbfLLQsM (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 12 Dec 2019 11:41:35 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:36300 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729852AbfLLQlf (ORCPT
+        Thu, 12 Dec 2019 11:48:12 -0500
+Received: from foss.arm.com ([217.140.110.172]:53180 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729762AbfLLQsM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 12 Dec 2019 11:41:35 -0500
-Received: by mail-oi1-f196.google.com with SMTP id c16so911263oic.3;
-        Thu, 12 Dec 2019 08:41:34 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kAhkMJgoZo1BWz+qs5Xno3OsSKZ86r1MkClH94NFChM=;
-        b=ZGBqSKgXkEU8zPLpGwOZI18a87nXD3r2fvq+D0pW0f6ala7KTcbSKdwgARMwzpLDo4
-         /sq6isXWuLTvxs9DS/Od/BRQV71ITatVSEE8jrjkTiQI/F+F6bAy/8MAtD/lKC7CTOvu
-         8yt+sbayYou0QAebyUFWnsK3+qC4E6/QN1h0DJLlpfocwiR+l7Vnz51BvA4nMGtaADPP
-         dJGrGuvRiL2ONf0lcuvqYuw2Zwj9camNbSiRGy8mXJKS4lj2SLgJPOOYxROStCWYZzq5
-         1zhmyYzlD73Fz09SK7yo71qm4vVCFOCALtGbpUxvPPlVEAbVv0fDDm0sLv5YVamB1UD2
-         44zg==
-X-Gm-Message-State: APjAAAXV64tNbqEUDxHk2raeRvNW+E07L16mGZy1zciz+572uUlwJFdh
-        JLHMnQaOXQdnvrepsOLi/1WCPIFCn9o+xe1++jk=
-X-Google-Smtp-Source: APXvYqz/HR4b555gMUmBfIr+En2JhqxAwZmSDSEDPYWP867i+78mHmWSktUG5yszyRCA4BCxfwarPEWTLzzeFMNk+PY=
-X-Received: by 2002:a05:6808:b38:: with SMTP id t24mr5694666oij.110.1576168894436;
- Thu, 12 Dec 2019 08:41:34 -0800 (PST)
+        Thu, 12 Dec 2019 11:48:12 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6378930E;
+        Thu, 12 Dec 2019 08:48:11 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D6B6C3F6CF;
+        Thu, 12 Dec 2019 08:48:10 -0800 (PST)
+Date:   Thu, 12 Dec 2019 16:48:09 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Tzung-Bi Shih <tzungbi@google.com>, alsa-devel@alsa-project.org,
+        dgreid@google.com, cychiang@google.com,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [alsa-devel] [PATCH v2] ASoC: max98090: save and restore SHDN
+ when changing sensitive registers
+Message-ID: <20191212164809.GH4310@sirena.org.uk>
+References: <CGME20191128152110epcas3p2b205b4b55f6d8bfac42fcb8faaade93c@epcas3p2.samsung.com>
+ <20191128151908.180871-1-tzungbi@google.com>
+ <8aceb9ec-aa6e-1fa4-cee9-e22084c141e8@samsung.com>
+ <129540e9-a4e8-3d01-41bc-e7c9c04bbefe@samsung.com>
 MIME-Version: 1.0
-References: <20191108042225.45391-1-dmitry.torokhov@gmail.com>
- <20191108042225.45391-2-dmitry.torokhov@gmail.com> <CGME20191212111237eucas1p1a278d2d5d2437e3219896367e82604cc@eucas1p1.samsung.com>
- <b3f6ca8b-dbdf-0cec-aa8f-47ffcc5c5307@samsung.com> <20191212112825.GK32742@smile.fi.intel.com>
-In-Reply-To: <20191212112825.GK32742@smile.fi.intel.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 12 Dec 2019 17:41:21 +0100
-Message-ID: <CAJZ5v0i3dSOSa37yWLM+zDVnMKVTkOxbyKD4vo0KVwj_uFB26Q@mail.gmail.com>
-Subject: Re: [PATCH v8 1/6] software node: rename is_array to is_inline
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Linux USB Mailing List <linux-usb@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="U3BNvdZEnlJXqmh+"
+Content-Disposition: inline
+In-Reply-To: <129540e9-a4e8-3d01-41bc-e7c9c04bbefe@samsung.com>
+X-Cookie: We have DIFFERENT amounts of HAIR --
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 12:28 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Thu, Dec 12, 2019 at 12:12:36PM +0100, Marek Szyprowski wrote:
-> > Dear All,
-> >
-> > On 08.11.2019 05:22, Dmitry Torokhov wrote:
-> > > We do not need a special flag to know if we are dealing with an array,
-> > > as we can get that data from ratio between element length and the data
-> > > size, however we do need a flag to know whether the data is stored
-> > > directly inside property_entry or separately.
-> > >
-> > > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> >
-> > Today I've noticed that this patch got merged to linux-next as commit
-> > e6bff4665c595b5a4aff173848851ed49ac3bfad. Sadly it breaks DWC3/xHCI
-> > driver operation on Samsung Exynos5 SoCs (and probably on other SoCs
-> > which use DWC3 in host mode too). I get the following errors during boot:
-> >
-> > dwc3 12000000.dwc3: failed to add properties to xHCI
-> > dwc3 12000000.dwc3: failed to initialize host
-> > dwc3: probe of 12000000.dwc3 failed with error -61
-> >
-> > Here is a full kernel log from Exynos5250-based Snow Chromebook on KernelCI:
-> >
-> > https://storage.kernelci.org/next/master/next-20191212/arm/exynos_defconfig/gcc-8/lab-collabora/boot-exynos5250-snow.txt
-> >
-> > (lack of 'ref' clk is not related nor fatal to the driver operation).
-> >
-> > The code which fails after this patch is located in
-> > drivers/usb/dwc3/host.c. Let me know if I can help more in locating the bug.
->
-> Thank you for report.
->
-> I think we should not have that patch in the fist place... I used to have
-> a bad feeling about it and then forgot about it existence.
 
-Well, I think you mean the [2/6].
+--U3BNvdZEnlJXqmh+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The $subject one really shouldn't change functionality, we must have
-missed something here.
+On Thu, Dec 12, 2019 at 05:02:50PM +0100, Marek Szyprowski wrote:
+> On 12.12.2019 15:09, Marek Szyprowski wrote:
 
-Anyway, I'll drop this branch from the linux-next one for now.
+Please delete unneeded context from mails when replying.  Doing this
+makes it much easier to find your reply in the message, helping ensure
+it won't be missed by people scrolling through the irrelevant quoted
+material.
+
+> >> +static void max98090_shdn_save(struct max98090_priv *max98090)
+> >> +{
+> >> + mutex_lock(&max98090->component->card->dapm_mutex);
+
+> The NULL pointer dereference demonstrated above is caused by=20
+> max98090->component->card being NULL here. Adding a simple !=3D NULL chec=
+k=20
+> here and in the max98090_shdn_restore() function fixes the boot issue,=20
+> although the deplock warning is still there. The question is that is the=
+=20
+> max98090->component->card being NULL is a normal case or something that=
+=20
+> needs further analysis.
+
+It'd be good to get a bit more analysis, the _shdn_save() call looks to
+have come from a userspace write and we shouldn't be exposing the card
+and hence the controls on the card to userspace until it's fully
+instantiated.
+
+--U3BNvdZEnlJXqmh+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3yb0gACgkQJNaLcl1U
+h9C/Wgf/Y7I6BrvNaFrXEHzt/taVhn/ZZlQSgnHib0N9rpkW7Zf1L//y4/7mCnDu
+qJGJ5JruhXB4XgVIlHKcLVOLf56SLMRIMyFg/hg92q0osUO1B3otOdzHRoWLXlms
+VAJK9oarfeMgC3YZ3Z0DGKTUlpco0nl9QCs34Rv0E0Aff78l82UBpbDjjnntXGI+
+ljNTxjoMrfsiyY4qORmoj8kOrEqamZPawYLLOxmyd9NKCbAldAOXj0cBJ82y8/ua
+unOYRfbXfswv5Ah6w3xrjUo/2Zqbc9s1PgQl4J2pYxyROaIUA4LNdq3a1UUjRth2
+BBzbbMKZt6G+oBpRzW9dAuknlEIwqA==
+=5wJQ
+-----END PGP SIGNATURE-----
+
+--U3BNvdZEnlJXqmh+--
