@@ -2,397 +2,191 @@ Return-Path: <SRS0=7hfY=2C=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_2
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CECE1C2D0C6
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Dec 2019 01:46:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 933AAC43603
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Dec 2019 02:10:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98A5A22527
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Dec 2019 01:46:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BC2A208C3
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Dec 2019 02:10:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="uscqWLRS"
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="rFHOh26/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727473AbfLLBqO (ORCPT
+        id S1727637AbfLLCKO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 11 Dec 2019 20:46:14 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:38454 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727536AbfLLBqO (ORCPT
+        Wed, 11 Dec 2019 21:10:14 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:46952 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727544AbfLLCKN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 11 Dec 2019 20:46:14 -0500
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20191212014610epoutp046750ecaaf99d8aeb02051cefbc09b81b~ffGWSJ4Ev2191521915epoutp04f
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Dec 2019 01:46:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20191212014610epoutp046750ecaaf99d8aeb02051cefbc09b81b~ffGWSJ4Ev2191521915epoutp04f
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1576115170;
-        bh=Y+nUEVrvjvB4DwJ+teW7r5InmUSkqPPV4kbsqylmtf4=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=uscqWLRSwkzkwBTCiZRdev2IoeV50KR7l9PjVTyi8xH1/OaxzpXFGGtw15kPhRIle
-         wMDM/2jPnZqLHdYu69ZCsvNfQdCRqvpLFf5zoc78uipChIXxjr7oBwlEIJAT7KuShG
-         H4f4JrX+/YV0OgeLEPDQHpS1e80F3EEZCZyXxpVs=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191212014609epcas1p1e43b6a2391966c2d30eef1e6cace6962~ffGVif-4G0732107321epcas1p1Q;
-        Thu, 12 Dec 2019 01:46:09 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.158]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 47YGq26fkrzMqYlx; Thu, 12 Dec
-        2019 01:46:06 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        3C.67.48019.EDB91FD5; Thu, 12 Dec 2019 10:46:06 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20191212014605epcas1p42a0b58fc4828dd209dcbc3915b6ae59d~ffGR-Trmw0342203422epcas1p43;
-        Thu, 12 Dec 2019 01:46:05 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191212014605epsmtrp2882f4a0f7543000b487fbb4d12e38743~ffGR_fyLK1885318853epsmtrp2P;
-        Thu, 12 Dec 2019 01:46:05 +0000 (GMT)
-X-AuditID: b6c32a38-257ff7000001bb93-cc-5df19bdef27a
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        BD.89.06569.DDB91FD5; Thu, 12 Dec 2019 10:46:05 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191212014605epsmtip16eedcad2bccb2c9a8bde04041dd7b2a8~ffGRoCjHE1539315393epsmtip1I;
-        Thu, 12 Dec 2019 01:46:05 +0000 (GMT)
-Subject: Re: [PATCH v3 4/4] devfreq: exynos-bus: Clean up code
-To:     =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
-Cc:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        kgene@kernel.org, krzk@kernel.org, b.zolnierkie@samsung.com,
-        m.szyprowski@samsung.com, inki.dae@samsung.com,
-        sw0312.kim@samsung.com, k.konieczny@samsung.com,
-        leonard.crestez@nxp.com, rostedt@goodmis.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <852f742c-1f7b-0981-4409-d2d50ee86301@samsung.com>
-Date:   Thu, 12 Dec 2019 10:52:29 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        Wed, 11 Dec 2019 21:10:13 -0500
+X-UUID: 28645188f81543daa26b4ac3a15a528a-20191212
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=VpgZcjR1SsBox1/HBPJxCX6RUerx/cuwQ7AnJYi8EIw=;
+        b=rFHOh26/RdrbPri00JBSqbakNv5Z+KWYLRxSTLUP6hzQD4EB8b13qUeWaYA6yDXfV1e3tmXrX2vujjEV9oe1VvqjtJrC79MKDtuzI+UN/j8nxawAb+F0ohcvupfQg/UXuikDh/GrtsHuG1YLle/Yy0vRICBb4cP5AHalL3Yyk9A=;
+X-UUID: 28645188f81543daa26b4ac3a15a528a-20191212
+Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 197373770; Thu, 12 Dec 2019 10:10:02 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS32N2.mediatek.inc
+ (172.27.4.72) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 12 Dec
+ 2019 10:05:23 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 12 Dec 2019 10:10:06 +0800
+Message-ID: <1576116600.21256.3.camel@mhfsdcap03>
+Subject: Re: [PATCH v2 4/4] usb: usb3503: Convert to use GPIO descriptors
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+CC:     <linux-usb@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "Stefan Agner" <stefan@agner.ch>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date:   Thu, 12 Dec 2019 10:10:00 +0800
+In-Reply-To: <20191211145226.25074-1-m.szyprowski@samsung.com>
+References: <20191211145054.24835-1-m.szyprowski@samsung.com>
+         <CGME20191211145231eucas1p29d4e0ed105274c79682b48a613b45904@eucas1p2.samsung.com>
+         <20191211145226.25074-1-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-In-Reply-To: <32cd66aca8d9435bed69732771a7716db883f5a0.camel@samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOJsWRmVeSWpSXmKPExsWy7bCmvu692R9jDaYeNbW4P6+V0WLjjPWs
-        FpPuT2CxWPBpBqtF/+PXzBbnz29gtzjb9IbdYsXdj6wWmx5fY7W4vGsOm8Xn3iOMFjPO72Oy
-        WHvkLrvF7cYVbBb7Oh4wWcyY/JLNQcCjZd8tdo9NqzrZPDYvqffY+G4Hk0ffllWMHp83yQWw
-        RWXbZKQmpqQWKaTmJeenZOal2yp5B8c7x5uaGRjqGlpamCsp5CXmptoqufgE6Lpl5gDdraRQ
-        lphTChQKSCwuVtK3synKLy1JVcjILy6xVUotSMkpsCzQK07MLS7NS9dLzs+1MjQwMDIFKkzI
-        zti8U63go2vFlUMbGRsYH5l3MXJySAiYSLyfcYexi5GLQ0hgB6NE49tJTBDOJ0aJrQ9ms0M4
-        3xgluvZdZYVpeT5tMzNEYi+jxPu5r6Gq3jNKvOp7xQJSJSxgJ7FswQ6wWSICBxglDqxvBnOY
-        BTqZJDq7d4NVsQloSex/cYMNxOYXUJS4+uMx0CkcHLxA3c1PhUDCLAKqEi3LPoKViAqESZzc
-        1sIIYvMKCEqcnPkEbAyngKfEhrnzwM5jFhCXuPVkPhOELS/RvHU22KkSArvYJd5O2w31g4vE
-        mmUzmSFsYYlXx7ewQ9hSEp/f7WWDsKslVp48wgbR3MEosWX/BahmY4n9SyczgRzKLKApsX6X
-        PkRYUWLn77mMEIv5JN597WEFKZEQ4JXoaBOCKFGWuPzgLhOELSmxuL2TbQKj0iwk78xC8sIs
-        JC/MQli2gJFlFaNYakFxbnpqsWGBCXJ0b2IEJ2otix2Me875HGIU4GBU4uF9IP0xVog1say4
-        MvcQowQHs5II7/G2d7FCvCmJlVWpRfnxRaU5qcWHGE2BoT2RWUo0OR+YRfJK4g1NjYyNjS1M
-        DM1MDQ2VxHk5flyMFRJITyxJzU5NLUgtgulj4uCUamDc/PO/4OdTguqZauJ6v9Zx3riarXb8
-        Vc3bK1VvFlvYtx5L+XKzIOT6pcce/ZJHC32+VtcemikYonc+KCrv5fmpEjoP/7ZcEjPu/RCZ
-        rj6303Td9bw+Dlf7zgterhO6jv4/sojnmL/wVs2Nf7O2xxfk+ZzcWre1SJRNtPmm57U09ahT
-        O5UmFC9VYinOSDTUYi4qTgQAVX3kvOoDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIIsWRmVeSWpSXmKPExsWy7bCSnO7d2R9jDRqWKVjcn9fKaLFxxnpW
-        i0n3J7BYLPg0g9Wi//FrZovz5zewW5xtesNuseLuR1aLTY+vsVpc3jWHzeJz7xFGixnn9zFZ
-        rD1yl93iduMKNot9HQ+YLGZMfsnmIODRsu8Wu8emVZ1sHpuX1HtsfLeDyaNvyypGj8+b5ALY
-        orhsUlJzMstSi/TtErgyNu9UK/joWnHl0EbGBsZH5l2MnBwSAiYSz6dtZu5i5OIQEtjNKPFz
-        UjcLREJSYtrFo0AJDiBbWOLw4WKImreMEgvvzWYHqREWsJNYtmAHE0hCROAAo8TmnbPBHGaB
-        TiaJXx/Ws0G0bGSS2Nu/GGwsm4CWxP4XN9hAbH4BRYmrPx4zgqzgBRrV/FQIJMwioCrRsuwj
-        WImoQJjEziWPmUBsXgFBiZMzn4CN4RTwlNgwdx4riM0soC7xZ94lZghbXOLWk/lMELa8RPPW
-        2cwTGIVnIWmfhaRlFpKWWUhaFjCyrGKUTC0ozk3PLTYsMMpLLdcrTswtLs1L10vOz93ECI5Y
-        La0djCdOxB9iFOBgVOLh7ZD8GCvEmlhWXJl7iFGCg1lJhPd427tYId6UxMqq1KL8+KLSnNTi
-        Q4zSHCxK4rzy+ccihQTSE0tSs1NTC1KLYLJMHJxSDYzLnab+e7DvSW7P1p55v7R13L2v936r
-        m6fd6Vvxf9G3puXvNe79YJD+XLkx/2HULcN3T6rl0v6yVVZNbCo+q6b7tlogyTpsX+TN0jIl
-        l122ERnuszkYP7faiHS8yrNa7nVF0yfaJtpsw5YTO1yEXcyFYi1cO9775HVFrTOrW7v/utbJ
-        5mnVZ5RYijMSDbWYi4oTAU07MqHUAgAA
-X-CMS-MailID: 20191212014605epcas1p42a0b58fc4828dd209dcbc3915b6ae59d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191209105034eucas1p277be9a40363fec76b4241d28e71e40d2
-References: <20191209104902.11904-1-a.swigon@samsung.com>
-        <CGME20191209105034eucas1p277be9a40363fec76b4241d28e71e40d2@eucas1p2.samsung.com>
-        <20191209104902.11904-5-a.swigon@samsung.com>
-        <ab5cd151-0f9f-929e-fcbe-e7fe7b6c8645@samsung.com>
-        <32cd66aca8d9435bed69732771a7716db883f5a0.camel@samsung.com>
+X-TM-SNTS-SMTP: 3AA4084B10160E7ED06A631047B49B5C3DEDD960766FE10618DCAC976FA6C5572000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+T24gV2VkLCAyMDE5LTEyLTExIGF0IDE1OjUyICswMTAwLCBNYXJlayBTenlwcm93c2tpIHdyb3Rl
+Og0KPiBGcm9tOiBMaW51cyBXYWxsZWlqIDxsaW51cy53YWxsZWlqQGxpbmFyby5vcmc+DQo+IA0K
+PiBUaGlzIGNvbnZlcnRzIHRoZSBVU0IzNTAzIHRvIHBpY2sgR1BJTyBkZXNjcmlwdG9ycyBmcm9t
+IHRoZQ0KPiBkZXZpY2UgdHJlZSBpbnN0ZWFkIG9mIGl0ZXJhdGl2ZWx5IHBpY2tpbmcgb3V0IEdQ
+SU8gbnVtYmVyDQo+IHJlZmVyZW5jZXMgYW5kIHRoZW4gcmVmZXJlbmNpbmcgdGhlc2UgZnJvbSB0
+aGUgZ2xvYmFsIEdQSU8NCj4gbnVtYmVyc3BhY2UuDQo+IA0KPiBUaGUgVVNCMzUwMyBpcyBvbmx5
+IHVzZWQgZnJvbSBkZXZpY2UgdHJlZSBhbW9uZyB0aGUgaW4tdHJlZQ0KPiBwbGF0Zm9ybXMuIElm
+IGJvYXJkIGZpbGVzIHdvdWxkIHN0aWxsIGRlc2lyZSB0byB1c2UgaXQgdGhleSBjYW4NCj4gcHJv
+dmlkZSBtYWNoaW5lIGRlc2NyaXB0b3IgdGFibGVzLg0KPiANCj4gTWFrZSBzdXJlIHRvIHByZXNl
+cnZlIHNlbWFudGljcyBzdWNoIGFzIHRoZSByZXNldCBkZWxheQ0KPiBpbnRyb2R1Y2VkIGJ5IFN0
+ZWZhbi4NCj4gDQo+IENjOiBDaHVuZmVuZyBZdW4gPGNodW5mZW5nLnl1bkBtZWRpYXRlay5jb20+
+DQo+IENjOiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dza2lAc2Ftc3VuZy5jb20+DQo+IENj
+OiBTdGVmYW4gQWduZXIgPHN0ZWZhbkBhZ25lci5jaD4NCj4gQ2M6IEtyenlzenRvZiBLb3psb3dz
+a2kgPGtyemtAa2VybmVsLm9yZz4NCj4gU2lnbmVkLW9mZi1ieTogTGludXMgV2FsbGVpaiA8bGlu
+dXMud2FsbGVpakBsaW5hcm8ub3JnPg0KPiBbbXN6eXByb3c6IGludmVydCB0aGUgbG9naWMgYmVo
+aW5kIHJlc2V0IEdQSU8gbGluZV0NCj4gU2lnbmVkLW9mZi1ieTogTWFyZWsgU3p5cHJvd3NraSA8
+bS5zenlwcm93c2tpQHNhbXN1bmcuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvdXNiL21pc2MvdXNi
+MzUwMy5jICAgICAgICAgICAgfCA5NCArKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0NCj4gIGlu
+Y2x1ZGUvbGludXgvcGxhdGZvcm1fZGF0YS91c2IzNTAzLmggfCAgMyAtDQo+ICAyIGZpbGVzIGNo
+YW5nZWQsIDM1IGluc2VydGlvbnMoKyksIDYyIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvdXNiL21pc2MvdXNiMzUwMy5jIGIvZHJpdmVycy91c2IvbWlzYy91c2IzNTAz
+LmMNCj4gaW5kZXggNzJmMzlhOTc1MWI1Li4xMTZiZDc4OWU1NjggMTAwNjQ0DQo+IC0tLSBhL2Ry
+aXZlcnMvdXNiL21pc2MvdXNiMzUwMy5jDQo+ICsrKyBiL2RyaXZlcnMvdXNiL21pc2MvdXNiMzUw
+My5jDQo+IEBAIC03LDExICs3LDEwIEBADQo+ICANCj4gICNpbmNsdWRlIDxsaW51eC9jbGsuaD4N
+Cj4gICNpbmNsdWRlIDxsaW51eC9pMmMuaD4NCj4gLSNpbmNsdWRlIDxsaW51eC9ncGlvLmg+DQo+
+ICsjaW5jbHVkZSA8bGludXgvZ3Bpby9jb25zdW1lci5oPg0KPiAgI2luY2x1ZGUgPGxpbnV4L2Rl
+bGF5Lmg+DQo+ICAjaW5jbHVkZSA8bGludXgvc2xhYi5oPg0KPiAgI2luY2x1ZGUgPGxpbnV4L21v
+ZHVsZS5oPg0KPiAtI2luY2x1ZGUgPGxpbnV4L29mX2dwaW8uaD4NCj4gICNpbmNsdWRlIDxsaW51
+eC9wbGF0Zm9ybV9kZXZpY2UuaD4NCj4gICNpbmNsdWRlIDxsaW51eC9wbGF0Zm9ybV9kYXRhL3Vz
+YjM1MDMuaD4NCj4gICNpbmNsdWRlIDxsaW51eC9yZWdtYXAuaD4NCj4gQEAgLTQ3LDE5ICs0Niwx
+OSBAQCBzdHJ1Y3QgdXNiMzUwMyB7DQo+ICAJc3RydWN0IGRldmljZQkJKmRldjsNCj4gIAlzdHJ1
+Y3QgY2xrCQkqY2xrOw0KPiAgCXU4CXBvcnRfb2ZmX21hc2s7DQo+IC0JaW50CWdwaW9faW50bjsN
+Cj4gLQlpbnQJZ3Bpb19yZXNldDsNCj4gLQlpbnQJZ3Bpb19jb25uZWN0Ow0KPiArCXN0cnVjdCBn
+cGlvX2Rlc2MJKmludG47DQo+ICsJc3RydWN0IGdwaW9fZGVzYyAJKnJlc2V0Ow0KPiArCXN0cnVj
+dCBncGlvX2Rlc2MgCSpjb25uZWN0Ow0KPiAgCWJvb2wJc2Vjb25kYXJ5X3JlZl9jbGs7DQo+ICB9
+Ow0KPiAgDQo+ICBzdGF0aWMgaW50IHVzYjM1MDNfcmVzZXQoc3RydWN0IHVzYjM1MDMgKmh1Yiwg
+aW50IHN0YXRlKQ0KPiAgew0KPiAtCWlmICghc3RhdGUgJiYgZ3Bpb19pc192YWxpZChodWItPmdw
+aW9fY29ubmVjdCkpDQo+IC0JCWdwaW9fc2V0X3ZhbHVlX2NhbnNsZWVwKGh1Yi0+Z3Bpb19jb25u
+ZWN0LCAwKTsNCj4gKwlpZiAoIXN0YXRlICYmIGh1Yi0+Y29ubmVjdCkNCj4gKwkJZ3Bpb2Rfc2V0
+X3ZhbHVlX2NhbnNsZWVwKGh1Yi0+Y29ubmVjdCwgMCk7DQo+ICANCj4gLQlpZiAoZ3Bpb19pc192
+YWxpZChodWItPmdwaW9fcmVzZXQpKQ0KPiAtCQlncGlvX3NldF92YWx1ZV9jYW5zbGVlcChodWIt
+PmdwaW9fcmVzZXQsIHN0YXRlKTsNCj4gKwlpZiAoaHViLT5yZXNldCkNCj4gKwkJZ3Bpb2Rfc2V0
+X3ZhbHVlX2NhbnNsZWVwKGh1Yi0+cmVzZXQsICFzdGF0ZSk7DQpXaGF0IGFib3V0IHByZXBhcmlu
+ZyBhbm90aGVyIHBhdGNoIGZvciBAc3RhdGUgYmVmb3JlIHRoaXMgcGF0aD8NCg0KPiAgDQo+ICAJ
+LyogV2FpdCBUX0hVQklOSVQgPT0gNG1zIGZvciBodWIgbG9naWMgdG8gc3RhYmlsaXplICovDQo+
+ICAJaWYgKHN0YXRlKQ0KPiBAQCAtMTE1LDggKzExNCw4IEBAIHN0YXRpYyBpbnQgdXNiMzUwM19j
+b25uZWN0KHN0cnVjdCB1c2IzNTAzICpodWIpDQo+ICAJCX0NCj4gIAl9DQo+ICANCj4gLQlpZiAo
+Z3Bpb19pc192YWxpZChodWItPmdwaW9fY29ubmVjdCkpDQo+IC0JCWdwaW9fc2V0X3ZhbHVlX2Nh
+bnNsZWVwKGh1Yi0+Z3Bpb19jb25uZWN0LCAxKTsNCj4gKwlpZiAoaHViLT5jb25uZWN0KQ0KPiAr
+CQlncGlvZF9zZXRfdmFsdWVfY2Fuc2xlZXAoaHViLT5jb25uZWN0LCAxKTsNCj4gIA0KPiAgCWh1
+Yi0+bW9kZSA9IFVTQjM1MDNfTU9ERV9IVUI7DQo+ICAJZGV2X2luZm8oZGV2LCAic3dpdGNoZWQg
+dG8gSFVCIG1vZGVcbiIpOw0KPiBAQCAtMTYzLDEzICsxNjIsMTEgQEAgc3RhdGljIGludCB1c2Iz
+NTAzX3Byb2JlKHN0cnVjdCB1c2IzNTAzICpodWIpDQo+ICAJaW50IGVycjsNCj4gIAl1MzIgbW9k
+ZSA9IFVTQjM1MDNfTU9ERV9IVUI7DQo+ICAJY29uc3QgdTMyICpwcm9wZXJ0eTsNCj4gKwllbnVt
+IGdwaW9kX2ZsYWdzIGZsYWdzOw0KPiAgCWludCBsZW47DQo+ICANCj4gIAlpZiAocGRhdGEpIHsN
+Cj4gIAkJaHViLT5wb3J0X29mZl9tYXNrCT0gcGRhdGEtPnBvcnRfb2ZmX21hc2s7DQo+IC0JCWh1
+Yi0+Z3Bpb19pbnRuCQk9IHBkYXRhLT5ncGlvX2ludG47DQo+IC0JCWh1Yi0+Z3Bpb19jb25uZWN0
+CT0gcGRhdGEtPmdwaW9fY29ubmVjdDsNCj4gLQkJaHViLT5ncGlvX3Jlc2V0CQk9IHBkYXRhLT5n
+cGlvX3Jlc2V0Ow0KPiAgCQlodWItPm1vZGUJCT0gcGRhdGEtPmluaXRpYWxfbW9kZTsNCj4gIAl9
+IGVsc2UgaWYgKG5wKSB7DQo+ICAJCXUzMiByYXRlID0gMDsNCj4gQEAgLTIzMCw1OSArMjI3LDM4
+IEBAIHN0YXRpYyBpbnQgdXNiMzUwM19wcm9iZShzdHJ1Y3QgdXNiMzUwMyAqaHViKQ0KPiAgCQkJ
+fQ0KPiAgCQl9DQo+ICANCj4gLQkJaHViLT5ncGlvX2ludG4JPSBvZl9nZXRfbmFtZWRfZ3Bpbyhu
+cCwgImludG4tZ3Bpb3MiLCAwKTsNCj4gLQkJaWYgKGh1Yi0+Z3Bpb19pbnRuID09IC1FUFJPQkVf
+REVGRVIpDQo+IC0JCQlyZXR1cm4gLUVQUk9CRV9ERUZFUjsNCj4gLQkJaHViLT5ncGlvX2Nvbm5l
+Y3QgPSBvZl9nZXRfbmFtZWRfZ3BpbyhucCwgImNvbm5lY3QtZ3Bpb3MiLCAwKTsNCj4gLQkJaWYg
+KGh1Yi0+Z3Bpb19jb25uZWN0ID09IC1FUFJPQkVfREVGRVIpDQo+IC0JCQlyZXR1cm4gLUVQUk9C
+RV9ERUZFUjsNCj4gLQkJaHViLT5ncGlvX3Jlc2V0ID0gb2ZfZ2V0X25hbWVkX2dwaW8obnAsICJy
+ZXNldC1ncGlvcyIsIDApOw0KPiAtCQlpZiAoaHViLT5ncGlvX3Jlc2V0ID09IC1FUFJPQkVfREVG
+RVIpDQo+IC0JCQlyZXR1cm4gLUVQUk9CRV9ERUZFUjsNCj4gIAkJb2ZfcHJvcGVydHlfcmVhZF91
+MzIobnAsICJpbml0aWFsLW1vZGUiLCAmbW9kZSk7DQo+ICAJCWh1Yi0+bW9kZSA9IG1vZGU7DQo+
+ICAJfQ0KPiAgDQo+IC0JaWYgKGh1Yi0+cG9ydF9vZmZfbWFzayAmJiAhaHViLT5yZWdtYXApDQo+
+IC0JCWRldl9lcnIoZGV2LCAiUG9ydHMgZGlzYWJsZWQgd2l0aCBubyBjb250cm9sIGludGVyZmFj
+ZVxuIik7DQo+IC0NCj4gLQlpZiAoZ3Bpb19pc192YWxpZChodWItPmdwaW9faW50bikpIHsNCj4g
+LQkJaW50IHZhbCA9IGh1Yi0+c2Vjb25kYXJ5X3JlZl9jbGsgPyBHUElPRl9PVVRfSU5JVF9MT1cg
+Og0KPiAtCQkJCQkJICAgR1BJT0ZfT1VUX0lOSVRfSElHSDsNCj4gLQkJZXJyID0gZGV2bV9ncGlv
+X3JlcXVlc3Rfb25lKGRldiwgaHViLT5ncGlvX2ludG4sIHZhbCwNCj4gLQkJCQkJICAgICJ1c2Iz
+NTAzIGludG4iKTsNCj4gLQkJaWYgKGVycikgew0KPiAtCQkJZGV2X2VycihkZXYsDQo+IC0JCQkJ
+InVuYWJsZSB0byByZXF1ZXN0IEdQSU8gJWQgYXMgaW50ZXJydXB0IHBpbiAoJWQpXG4iLA0KPiAt
+CQkJCWh1Yi0+Z3Bpb19pbnRuLCBlcnIpOw0KPiAtCQkJcmV0dXJuIGVycjsNCj4gLQkJfQ0KPiAt
+CX0NCj4gLQ0KPiAtCWlmIChncGlvX2lzX3ZhbGlkKGh1Yi0+Z3Bpb19jb25uZWN0KSkgew0KPiAt
+CQllcnIgPSBkZXZtX2dwaW9fcmVxdWVzdF9vbmUoZGV2LCBodWItPmdwaW9fY29ubmVjdCwNCj4g
+LQkJCQlHUElPRl9PVVRfSU5JVF9MT1csICJ1c2IzNTAzIGNvbm5lY3QiKTsNCj4gLQkJaWYgKGVy
+cikgew0KPiAtCQkJZGV2X2VycihkZXYsDQo+IC0JCQkJInVuYWJsZSB0byByZXF1ZXN0IEdQSU8g
+JWQgYXMgY29ubmVjdCBwaW4gKCVkKVxuIiwNCj4gLQkJCQlodWItPmdwaW9fY29ubmVjdCwgZXJy
+KTsNCj4gLQkJCXJldHVybiBlcnI7DQo+IC0JCX0NCj4gLQl9DQo+IC0NCj4gLQlpZiAoZ3Bpb19p
+c192YWxpZChodWItPmdwaW9fcmVzZXQpKSB7DQo+IC0JCWVyciA9IGRldm1fZ3Bpb19yZXF1ZXN0
+X29uZShkZXYsIGh1Yi0+Z3Bpb19yZXNldCwNCj4gLQkJCQlHUElPRl9PVVRfSU5JVF9MT1csICJ1
+c2IzNTAzIHJlc2V0Iik7DQo+ICsJaWYgKGh1Yi0+c2Vjb25kYXJ5X3JlZl9jbGspDQo+ICsJCWZs
+YWdzID0gR1BJT0RfT1VUX0xPVzsNCj4gKwllbHNlDQo+ICsJCWZsYWdzID0gR1BJT0RfT1VUX0hJ
+R0g7DQo+ICsJaHViLT5pbnRuID0gZGV2bV9ncGlvZF9nZXRfb3B0aW9uYWwoZGV2LCAiaW50biIs
+IGZsYWdzKTsNCj4gKwlpZiAoSVNfRVJSKGh1Yi0+aW50bikpDQo+ICsJCXJldHVybiBQVFJfRVJS
+KGh1Yi0+aW50bik7DQo+ICsJaWYgKGh1Yi0+aW50bikNCj4gKwkJZ3Bpb2Rfc2V0X2NvbnN1bWVy
+X25hbWUoaHViLT5pbnRuLCAidXNiMzUwMyBpbnRuIik7DQo+ICsNCj4gKwlodWItPmNvbm5lY3Qg
+PSBkZXZtX2dwaW9kX2dldF9vcHRpb25hbChkZXYsICJjb25uZWN0IiwgR1BJT0RfT1VUX0xPVyk7
+DQo+ICsJaWYgKElTX0VSUihodWItPmNvbm5lY3QpKQ0KPiArCQlyZXR1cm4gUFRSX0VSUihodWIt
+PmNvbm5lY3QpOw0KPiArCWlmIChodWItPmNvbm5lY3QpDQo+ICsJCWdwaW9kX3NldF9jb25zdW1l
+cl9uYW1lKGh1Yi0+Y29ubmVjdCwgInVzYjM1MDMgY29ubmVjdCIpOw0KPiArDQo+ICsJaHViLT5y
+ZXNldCA9IGRldm1fZ3Bpb2RfZ2V0X29wdGlvbmFsKGRldiwgInJlc2V0IiwgR1BJT0RfT1VUX0hJ
+R0gpOw0KPiArCWlmIChJU19FUlIoaHViLT5yZXNldCkpDQo+ICsJCXJldHVybiBQVFJfRVJSKGh1
+Yi0+cmVzZXQpOw0KPiArCWlmIChodWItPnJlc2V0KSB7DQo+ICAJCS8qIERhdGFzaGVldCBkZWZp
+bmVzIGEgaGFyZHdhcmUgcmVzZXQgdG8gYmUgYXQgbGVhc3QgMTAwdXMgKi8NCj4gIAkJdXNsZWVw
+X3JhbmdlKDEwMCwgMTAwMDApOw0KPiAtCQlpZiAoZXJyKSB7DQo+IC0JCQlkZXZfZXJyKGRldiwN
+Cj4gLQkJCQkidW5hYmxlIHRvIHJlcXVlc3QgR1BJTyAlZCBhcyByZXNldCBwaW4gKCVkKVxuIiwN
+Cj4gLQkJCQlodWItPmdwaW9fcmVzZXQsIGVycik7DQo+IC0JCQlyZXR1cm4gZXJyOw0KPiAtCQl9
+DQo+ICsJCWdwaW9kX3NldF9jb25zdW1lcl9uYW1lKGh1Yi0+cmVzZXQsICJ1c2IzNTAzIHJlc2V0
+Iik7DQo+ICAJfQ0KPiAgDQo+ICsJaWYgKGh1Yi0+cG9ydF9vZmZfbWFzayAmJiAhaHViLT5yZWdt
+YXApDQo+ICsJCWRldl9lcnIoZGV2LCAiUG9ydHMgZGlzYWJsZWQgd2l0aCBubyBjb250cm9sIGlu
+dGVyZmFjZVxuIik7DQo+ICsNCj4gIAl1c2IzNTAzX3N3aXRjaF9tb2RlKGh1YiwgaHViLT5tb2Rl
+KTsNCj4gIA0KPiAgCWRldl9pbmZvKGRldiwgIiVzOiBwcm9iZWQgaW4gJXMgbW9kZVxuIiwgX19m
+dW5jX18sDQo+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L3BsYXRmb3JtX2RhdGEvdXNiMzUw
+My5oIGIvaW5jbHVkZS9saW51eC9wbGF0Zm9ybV9kYXRhL3VzYjM1MDMuaA0KPiBpbmRleCBlMDQ5
+ZDUxYzEzNTMuLmQwMWVmOTdkZGYzNiAxMDA2NDQNCj4gLS0tIGEvaW5jbHVkZS9saW51eC9wbGF0
+Zm9ybV9kYXRhL3VzYjM1MDMuaA0KPiArKysgYi9pbmNsdWRlL2xpbnV4L3BsYXRmb3JtX2RhdGEv
+dXNiMzUwMy5oDQo+IEBAIC0xNyw5ICsxNyw2IEBAIGVudW0gdXNiMzUwM19tb2RlIHsNCj4gIHN0
+cnVjdCB1c2IzNTAzX3BsYXRmb3JtX2RhdGEgew0KPiAgCWVudW0gdXNiMzUwM19tb2RlCWluaXRp
+YWxfbW9kZTsNCj4gIAl1OAlwb3J0X29mZl9tYXNrOw0KPiAtCWludAlncGlvX2ludG47DQo+IC0J
+aW50CWdwaW9fY29ubmVjdDsNCj4gLQlpbnQJZ3Bpb19yZXNldDsNCj4gIH07DQo+ICANCj4gICNl
+bmRpZg0KDQo=
 
-On 12/11/19 11:39 PM, Artur Świgoń wrote:
-> Hi,
-> 
-> On Tue, 2019-12-10 at 13:20 +0900, Chanwoo Choi wrote:
->> Hi,
->>
->> This patch contains the clean-up code related to 'goto' style.
->> Please merge the the clean-up code of 'goto' to one patch with patch3/patch4.
->> - patch3 related to 'goto' clean-up code
->> - patch4 related to remaining clean-up code. 
->>
->> And I added the comment below. Please check them.
-> 
-> OK, I can merge these patches. Please also see my comments below regarding
-> the issues you highlighted: kzalloc vs. kcalloc, fitting in 80 columns and
-> changing repeated expressions to variables.
-> 
->>
->> On 12/9/19 7:49 PM, Artur Świgoń wrote:
->>> This patch adds minor improvements to the exynos-bus driver, including
->>> cleaning up header includes, variables, and return paths.
->>>
->>> Signed-off-by: Artur Świgoń <a.swigon@samsung.com>
->>> ---
->>>  drivers/devfreq/exynos-bus.c | 56 +++++++++++++++---------------------
->>>  1 file changed, 23 insertions(+), 33 deletions(-)
->>>
->>> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
->>> index 0b557df63666..3eb6a043284a 100644
->>> --- a/drivers/devfreq/exynos-bus.c
->>> +++ b/drivers/devfreq/exynos-bus.c
->>> @@ -15,11 +15,10 @@
->>>  #include <linux/device.h>
->>>  #include <linux/export.h>
->>>  #include <linux/module.h>
->>> -#include <linux/of_device.h>
->>> +#include <linux/of.h>
->>>  #include <linux/pm_opp.h>
->>>  #include <linux/platform_device.h>
->>>  #include <linux/regulator/consumer.h>
->>> -#include <linux/slab.h>
->>>  
->>>  #define DEFAULT_SATURATION_RATIO	40
->>>  
->>> @@ -178,7 +177,7 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
->>>  	struct device *dev = bus->dev;
->>>  	struct opp_table *opp_table;
->>>  	const char *vdd = "vdd";
->>> -	int i, ret, count, size;
->>> +	int i, ret, count;
->>>  
->>>  	opp_table = dev_pm_opp_set_regulators(dev, &vdd, 1);
->>>  	if (IS_ERR(opp_table)) {
->>> @@ -201,8 +200,7 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
->>>  	}
->>>  	bus->edev_count = count;
->>>  
->>> -	size = sizeof(*bus->edev) * count;
->>> -	bus->edev = devm_kzalloc(dev, size, GFP_KERNEL);
->>> +	bus->edev = devm_kcalloc(dev, count, sizeof(*bus->edev), GFP_KERNEL);
->>
->> ditto.
->> It depends on personal style. Don't change it because we cannot
->> modify them at the all device driver. If is not wrong,
->> just keep the original code.
-> 
-> Of course, this is a matter of style, but I think that Coccinelle reports
-> such code, compare with e.g., https://protect2.fireeye.com/url?k=9d96be53-c05a72f6-9d97351c-0cc47a30d446-615469bafe78ddb7&u=https://lkml.org/lkml/2019/5/8/927
-
-OK. If it is result from Coccinelle reports, you need to add
-the 'Coccinelle reports' in the patch description.
-
-When you send v2, you can contain this clean-up
-with 'Coccinelle reports'. If there are reasonable reason,
-always I'll agree.
-
-> 
-> Anyway, I can drop it since the purpose of this patchset as a whole was to
-> untangle all the goto's and I agree this is kind of unrelated.
-> 
->>
->>>  	if (!bus->edev) {
->>>  		ret = -ENOMEM;
->>>  		goto err_regulator;
->>> @@ -301,10 +299,9 @@ static int exynos_bus_profile_init(struct exynos_bus *bus,
->>>  	profile->exit = exynos_bus_exit;
->>>  
->>>  	ondemand_data = devm_kzalloc(dev, sizeof(*ondemand_data), GFP_KERNEL);
->>> -	if (!ondemand_data) {
->>> -		ret = -ENOMEM;
->>> -		goto err;
->>> -	}
->>> +	if (!ondemand_data)
->>> +		return -ENOMEM;
->>> +
->>>  	ondemand_data->upthreshold = 40;
->>>  	ondemand_data->downdifferential = 5;
->>>  
->>> @@ -314,15 +311,14 @@ static int exynos_bus_profile_init(struct exynos_bus *bus,
->>>  						ondemand_data);
->>>  	if (IS_ERR(bus->devfreq)) {
->>>  		dev_err(dev, "failed to add devfreq device\n");
->>> -		ret = PTR_ERR(bus->devfreq);
->>> -		goto err;
->>> +		return PTR_ERR(bus->devfreq);
->>>  	}
->>>  
->>>  	/* Register opp_notifier to catch the change of OPP  */
->>>  	ret = devm_devfreq_register_opp_notifier(dev, bus->devfreq);
->>>  	if (ret < 0) {
->>>  		dev_err(dev, "failed to register opp notifier\n");
->>> -		goto err;
->>> +		return ret;
->>>  	}
->>>  
->>>  	/*
->>> @@ -332,17 +328,16 @@ static int exynos_bus_profile_init(struct exynos_bus *bus,
->>>  	ret = exynos_bus_enable_edev(bus);
->>>  	if (ret < 0) {
->>>  		dev_err(dev, "failed to enable devfreq-event devices\n");
->>> -		goto err;
->>> +		return ret;
->>>  	}
->>>  
->>>  	ret = exynos_bus_set_event(bus);
->>>  	if (ret < 0) {
->>>  		dev_err(dev, "failed to set event to devfreq-event devices\n");
->>> -		goto err;
->>> +		return ret;
->>>  	}
->>>  
->>> -err:
->>> -	return ret;
->>> +	return 0;
->>>  }
->>>  
->>>  static int exynos_bus_profile_init_passive(struct exynos_bus *bus,
->>> @@ -351,7 +346,6 @@ static int exynos_bus_profile_init_passive(struct exynos_bus *bus,
->>>  	struct device *dev = bus->dev;
->>>  	struct devfreq_passive_data *passive_data;
->>>  	struct devfreq *parent_devfreq;
->>> -	int ret = 0;
->>>  
->>>  	/* Initialize the struct profile and governor data for passive device */
->>>  	profile->target = exynos_bus_target;
->>> @@ -359,30 +353,26 @@ static int exynos_bus_profile_init_passive(struct exynos_bus *bus,
->>>  
->>>  	/* Get the instance of parent devfreq device */
->>>  	parent_devfreq = devfreq_get_devfreq_by_phandle(dev, 0);
->>> -	if (IS_ERR(parent_devfreq)) {
->>> -		ret = -EPROBE_DEFER;
->>> -		goto err;
->>> -	}
->>> +	if (IS_ERR(parent_devfreq))
->>> +		return -EPROBE_DEFER;
->>>  
->>>  	passive_data = devm_kzalloc(dev, sizeof(*passive_data), GFP_KERNEL);
->>> -	if (!passive_data) {
->>> -		ret = -ENOMEM;
->>> -		goto err;
->>> -	}
->>> +	if (!passive_data)
->>> +		return -ENOMEM;
->>> +
->>>  	passive_data->parent = parent_devfreq;
->>>  
->>>  	/* Add devfreq device for exynos bus with passive governor */
->>> -	bus->devfreq = devm_devfreq_add_device(dev, profile, DEVFREQ_GOV_PASSIVE,
->>> +	bus->devfreq = devm_devfreq_add_device(dev, profile,
->>> +						DEVFREQ_GOV_PASSIVE,
->>
->> It is not clean-up. It depends on personal style. Don't change it
->> because we cannot modify them at the all device driver. If is not wrong,
->> just keep the original code.
-> 
-> I wanted to make the code fit in 80 columns (issue reported by
-> scripts/checkpatch.pl). For the reasons stated in my previous comment,
-> I am happy to drop this change if you don't like it.
-
-ditto. Please mention the reason from checkpatch.pl on patch4 description.
-
-> 
->>
->>>  						passive_data);
->>>  	if (IS_ERR(bus->devfreq)) {
->>>  		dev_err(dev,
->>>  			"failed to add devfreq dev with passive governor\n");
->>> -		ret = PTR_ERR(bus->devfreq);
->>> -		goto err;
->>> +		return PTR_ERR(bus->devfreq);
->>>  	}
->>>  
->>> -err:
->>> -	return ret;
->>> +	return 0;
->>>  }
->>>  
->>>  static int exynos_bus_probe(struct platform_device *pdev)
->>> @@ -400,18 +390,18 @@ static int exynos_bus_probe(struct platform_device *pdev)
->>>  		return -EINVAL;
->>>  	}
->>>  
->>> -	bus = devm_kzalloc(&pdev->dev, sizeof(*bus), GFP_KERNEL);
->>> +	bus = devm_kzalloc(dev, sizeof(*bus), GFP_KERNEL);
->>
->> ditto.
->> It depends on personal style. Don't change it because we cannot
->> modify them at the all device driver. If is not wrong,
->> just keep the original code.
-> 
-> Please note that there exists this variable in exynos_bus_probe():
-> 
-> struct device *dev = &pdev->dev;
-> 
-> but the expression '&pdev->dev' is reused twice more ('dev' itself
-> is also used). Is there any reason for such inconsistency?
-
-Frankly, it is not any reason. Mabye, we could find same thing like thin
-in the linux kernel. As you commented, we better to keep the only one
-style without any specific reason.
-
-But, in my experience, these minor issues will happen continuously
-in linux kernel. I think tha it is not much valuable to change
-the these minor issues except for result rom checkpatch.pl/Coccinelle script.
-I think that sometimes it make the difficult to keep the patch history.
-
-If there are any special reason, In my case, just keep the origin code
-for the patch history.
-
-> 
->>
->>>  	if (!bus)
->>>  		return -ENOMEM;
->>>  	mutex_init(&bus->lock);
->>> -	bus->dev = &pdev->dev;
->>> +	bus->dev = dev;
->>
->> ditto.
->> It depends on personal style. Don't change it because we cannot
->> modify them at the all device driver. If is not wrong,
->> just keep the original code.
-> 
-> (See above)
-> 
->>
->>>  	platform_set_drvdata(pdev, bus);
->>>  
->>>  	profile = devm_kzalloc(dev, sizeof(*profile), GFP_KERNEL);
->>>  	if (!profile)
->>>  		return -ENOMEM;
->>>  
->>> -	node = of_parse_phandle(dev->of_node, "devfreq", 0);
->>> +	node = of_parse_phandle(np, "devfreq", 0);
->>>  	if (node) {
->>>  		of_node_put(node);
->>>  		passive = true;
->>>
->>
-> 
-> Best regards,
-> 
-
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
