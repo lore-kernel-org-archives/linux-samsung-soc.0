@@ -2,123 +2,94 @@ Return-Path: <SRS0=7hfY=2C=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E852DC43603
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Dec 2019 18:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B67DC43603
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Dec 2019 20:21:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFDEB206DA
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Dec 2019 18:05:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uGZeFuek"
+	by mail.kernel.org (Postfix) with ESMTP id 0106821556
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Dec 2019 20:21:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1576182099;
+	bh=m/+ZeYHmq8+ttJUjVN2Yb9qA1/uVMT7wh75REnSEa7Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=R3n5yGZQ+q0KiDivQQ2Z1IkShSzmpTHsxlOIg7eEq4p36dnBxJ50i5ptQjtX4wiLL
+	 yoPJNJBezwc7vDLpuEE8WI/33+FBer4+mZ5wOjj0cxcPQacy4q1u8iNEMEKbIwClQN
+	 8q2D8D8PqerhijuaRvRt0ZV2dD4+MfdxAfMiiHh0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730177AbfLLSFq (ORCPT
+        id S1730836AbfLLUVd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 12 Dec 2019 13:05:46 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:34268 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730159AbfLLSFq (ORCPT
+        Thu, 12 Dec 2019 15:21:33 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45483 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730707AbfLLUVd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 12 Dec 2019 13:05:46 -0500
-Received: by mail-io1-f67.google.com with SMTP id z193so3788972iof.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Dec 2019 10:05:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=h1PVTShbmTWPWoLzVKljKHRYw3rcqIPLwvlis0wSDhc=;
-        b=uGZeFuekrv7Zc4MOO091PIYsKXyeF/FwZfUf/VmtefCFnn3KJuevQ9b60DYdCvVANm
-         YBcNPL8S18NsVx5OehjETWmnBCr9ClopD0+tYCggVhw8nb5V/aDb9hTxM2FGbaI/8EZa
-         YVt1Lsdqbw8s8P8O9f+owG//TiP/QV8bqIl1MIu/BbdJi7vFA8tZCGDu1tZ26OZs5PQm
-         ipJRSK7FQGpgqpAIpMdteIJFpm0yMC8nXzV4V8+JBoLubSmQvU74ibd69tlx2GsfMxxs
-         rg2dremhaK3wWiRDM0WvEBj4Ew10byui7WDibVI5AF3QfeRZ6MD/RDo4J9kysPzbDFAn
-         D/Ng==
+        Thu, 12 Dec 2019 15:21:33 -0500
+Received: by mail-wr1-f66.google.com with SMTP id j42so4121525wrj.12;
+        Thu, 12 Dec 2019 12:21:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=h1PVTShbmTWPWoLzVKljKHRYw3rcqIPLwvlis0wSDhc=;
-        b=FDR3H54ExjWcD972NH7UAolY5E/WpW3n7EMUiZwAuDsK8PPMb50SaH8HHnaFmU5mPt
-         8Zx4N+mGVZlBjKao34G/IXwPQE698zbwk1aH0xuyJqS3OgOCNT3/QohnPB/LIA2r2Lzq
-         qtBc2UT18HBMAaV3k6NXqLczG4enhElWhl0NhWA4aQl2gUEKYlx4UItyIxlMTfF++Yri
-         Ynv1L9cPk+Axt3qIDcUIOoVUjOdf/csv+5avPDcacOrbP2UpXLCX5HKpM1jv4NmJnOEB
-         icaLgGJj0Xp/hHL1YhFTtwoi15LN7odJf0ZhwUEu+nvrdFEaK/rPKRh4gg+e6pmlpsbi
-         Ar0Q==
-X-Gm-Message-State: APjAAAWxVzGDjKlVnz3bZLe83HpqxAstupRidreKlVtxasviw6pnwlA9
-        hfD8n+9zxlf5GVzx8LbCYr6o+pkQX6lmbmlAxO2yrQ==
-X-Google-Smtp-Source: APXvYqwk0AUqlLisz5L1ubxtjt4aBWDgQPfRFolNYD7szCHBfjyDpPgFqHnAhng0q0VqeOrf2zrZi/b9oaSoCMmcH0M=
-X-Received: by 2002:a5d:9953:: with SMTP id v19mr4153981ios.118.1576173945200;
- Thu, 12 Dec 2019 10:05:45 -0800 (PST)
-MIME-Version: 1.0
-References: <CGME20191128152110epcas3p2b205b4b55f6d8bfac42fcb8faaade93c@epcas3p2.samsung.com>
- <20191128151908.180871-1-tzungbi@google.com> <8aceb9ec-aa6e-1fa4-cee9-e22084c141e8@samsung.com>
-In-Reply-To: <8aceb9ec-aa6e-1fa4-cee9-e22084c141e8@samsung.com>
-From:   Tzung-Bi Shih <tzungbi@google.com>
-Date:   Fri, 13 Dec 2019 02:05:32 +0800
-Message-ID: <CA+Px+wXPa_cwdZUQfCx4jAhhj4Q9b7bNABUGazLKOJ7U5ae-mA@mail.gmail.com>
-Subject: Re: [alsa-devel] [PATCH v2] ASoC: max98090: save and restore SHDN
- when changing sensitive registers
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CPNUf9ZfNsHV45XZGqiBQJlUTUhc2MVRp6BnooBqqSc=;
+        b=I49SI3JMgbdRmcSyXk+TmA97aoRu3zvvMUs0kL/WAdD/Mrv9aw3KtvpsFz/RmoaXZn
+         6AmfJ8t1D8tRGgH+j1qfqxHW4gSIxPW5XAwvR3xdTzJwQ+PsOAPJbTRz7oqzjeLPdL6W
+         ldUBE+4+jEoSTF56cnW//gHXmFWMeUrXtUkJN+2OUxpqkScMo1MG5uKlGst5lqaiak0g
+         tg5xBOLAk92p+bP5sw0S/oBquvj2wKT8DSgupO68wkWgNPHDlcYiAYno5ktNwMox/y8A
+         j15/oMipjfUrZn6XYfv4jmvkbDaJNNdVmFsdmpskEwjxUx3IRDb0xM0HMiyL7UdNMUqM
+         xTWg==
+X-Gm-Message-State: APjAAAXoLiXSoKA8mIBI7hpHu41k+ZS5h7kwPhFxjr/ZwN3sIyGXsM7c
+        xaqv3QYrpLIQO3R7jiE3n0v2lTs+
+X-Google-Smtp-Source: APXvYqzzbodyVYL3FNuaGg6Zp/U+21dUGiWWf3SbMNFJoJ0+vWDhCy4pxUgA9VjNMpaXXox/nvLRBw==
+X-Received: by 2002:a17:906:3953:: with SMTP id g19mr11516560eje.227.1576182089998;
+        Thu, 12 Dec 2019 12:21:29 -0800 (PST)
+Received: from kozik-lap ([194.230.155.234])
+        by smtp.googlemail.com with ESMTPSA id k36sm2772ede.57.2019.12.12.12.21.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 12 Dec 2019 12:21:29 -0800 (PST)
+Date:   Thu, 12 Dec 2019 21:21:26 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        ALSA development <alsa-devel@alsa-project.org>,
-        Dylan Reid <dgreid@google.com>,
-        Jimmy Cheng-Yi Chiang <cychiang@google.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v2 1/4] ARM: dts: exynos: Correct USB3503 GPIOs polarity
+Message-ID: <20191212202126.GA3534@kozik-lap>
+References: <20191211144638.24676-1-m.szyprowski@samsung.com>
+ <CGME20191211144648eucas1p2065aac523ce190a5c0e6e2b5b11bd5ce@eucas1p2.samsung.com>
+ <20191211144638.24676-2-m.szyprowski@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191211144638.24676-2-m.szyprowski@samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 10:09 PM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> -> #1 (&card->controls_rwsem){++++}:
->         snd_ctl_add_replace+0x3c/0x84
->         dapm_create_or_share_kcontrol+0x24c/0x2e0
->         snd_soc_dapm_new_widgets+0x308/0x594
->         snd_soc_bind_card+0x80c/0xac8
->         devm_snd_soc_register_card+0x34/0x6c
->         asoc_simple_probe+0x244/0x4a0
->         platform_drv_probe+0x6c/0xa4
->         really_probe+0x200/0x490
->         driver_probe_device+0x78/0x1f8
->         bus_for_each_drv+0x74/0xb8
->         __device_attach+0xd4/0x16c
->         bus_probe_device+0x88/0x90
->         deferred_probe_work_func+0x3c/0xd0
->         process_one_work+0x22c/0x7c4
->         worker_thread+0x44/0x524
->         kthread+0x130/0x164
->         ret_from_fork+0x14/0x20
->         0x0
-A key observation here is: the card registration got deferred.
+On Wed, Dec 11, 2019 at 03:46:35PM +0100, Marek Szyprowski wrote:
+> Current USB3503 driver ignores GPIO polarity and always operates as if the
+> GPIO lines were flagged as ACTIVE_HIGH. Fix the polarity for the existing
+> USB3503 chip applications to match the chip specification and common
+> convention for naming the pins. The only pin, which has to be ACTIVE_LOW
+> is the reset pin. The remaining are ACTIVE_HIGH. This change allows later
+> to fix the USB3503 driver to properly use generic GPIO bindings and read
+> polarity from DT.
+> 
 
->
-> -> #0 (&card->dapm_mutex){+.+.}:
->         lock_acquire+0xe8/0x270
->         __mutex_lock+0x9c/0xb18
->         mutex_lock_nested+0x1c/0x24
->         max98090_shdn_save+0x1c/0x28
->         max98090_put_enum_double+0x20/0x40
->         snd_ctl_ioctl+0x190/0xbb8
->         do_vfs_ioctl+0xb0/0xab0
->         ksys_ioctl+0x34/0x5c
->         ret_fast_syscall+0x0/0x28
->         0xbe9094dc
-And this is an ioctl( ) on a control (e.g. controlC0).
+Thanks, applied (for v5.6).
 
-I have no enough resources to test and trace the code temporarily.
-But is it possible:
-- snd_card_new( ) succeed in snd_soc_bind_card( ), so that userspace
-can see the control
-- code in later snd_soc_bind_card( ) decided to defer the probe
-- soc_cleanup_card_resources( ) may forget to clean the control?  (not
-sure about this)
-Then, when the card is instantiating next time, some userspace program
-tries to ioctl( ) to get the deadlock possibility and the NULL
-dereference.
+Best regards,
+Krzysztof
+
