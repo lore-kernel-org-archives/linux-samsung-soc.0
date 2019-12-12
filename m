@@ -2,110 +2,124 @@ Return-Path: <SRS0=7hfY=2C=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD2DC43603
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Dec 2019 10:39:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BBF5C43603
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Dec 2019 11:03:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CCBE206DA
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Dec 2019 10:39:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="Q8Q0AP1/"
+	by mail.kernel.org (Postfix) with ESMTP id 0F39E214D8
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Dec 2019 11:03:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1576148636;
+	bh=RlQYE4ISnB8w71cVPWrVxWmmiBw1vv7db6O06zPNTEg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=aHRQgECBqUywiu/VSi4H9VeURLsA+eBFU6PKyYVqRRSlFhsS0qIzR2EuMtPu7rsjZ
+	 iviHtqOrofQThFVwqk3GwXJndDdsmjC8fn6UepXy/WM9BfHImQahVzB6BMrcYRZWZ1
+	 S0vu4cogmbhmi68t5dwc2GfbhSeLfwlsIPfU0cmU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728615AbfLLKjm (ORCPT
+        id S1728872AbfLLLDv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 12 Dec 2019 05:39:42 -0500
-Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:38435 "EHLO
-        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728589AbfLLKjm (ORCPT
+        Thu, 12 Dec 2019 06:03:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52980 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728613AbfLLLDv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 12 Dec 2019 05:39:42 -0500
-Received: from [IPv6:2001:983:e9a7:1:1c4a:480a:7ba1:9c65]
- ([IPv6:2001:983:e9a7:1:1c4a:480a:7ba1:9c65])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id fLsgiYsLcGyJwfLshixjqv; Thu, 12 Dec 2019 11:39:40 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
-        t=1576147180; bh=KZ03RxcJQ7IpU9N7i9dUPkS6LtZ5asybaeAyewvmUuA=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=Q8Q0AP1/GpoSinBV4NfVIGCUhmhBF8NTjn37VVEeO2ZDq0Yb7yf8nIOiynqk058KR
-         lrk9NuMgN4sVd0Rf27AhSxOeZG/Q6D/Iuw2tmG21MkZkjNH6OBhSx7eMzxwl48XrhX
-         tBC4P3T8QK6bGOicO+cMvX47TjnVrOOD9CdOTmA62h3o8O1V+K4zP3w0Z/ACDum6zI
-         /R2SgQztYTBbliovBfv6LSBgesh8uL9AfOvsBL65ydaHNZohbdWDGG4cIVa9fkNCUm
-         uOQ97T0PoFyD+LWJNRsTOpFlkssAQZcnJr19k1lbArYzY/JMZPlCjKRv0uW/3T6nZD
-         QdEWFHXfqnqjg==
-Subject: Re: [PATCH] media: exynos4-is: add missed clk_disable_unprepare in
- remove
-To:     Chuhong Yuan <hslester96@gmail.com>
-Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
+        Thu, 12 Dec 2019 06:03:51 -0500
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E722122B48;
+        Thu, 12 Dec 2019 11:03:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576148630;
+        bh=RlQYE4ISnB8w71cVPWrVxWmmiBw1vv7db6O06zPNTEg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=qNHGjkNNfqbO/iMeXj8vAZpZYJ8k+Y0WPRnnKuM4Pf8VuXrW7AhgfhGO4LUE6HiOu
+         blPA7D7ic9Ty1uJUHM5vCOuzfgCP28aU3Pa87e9a2XhCQ7xXOShup8BjrRdhR14jtU
+         +ZblW4z0tyJeNYEmpZ0RB+p5B5Jkv/7nrfYLUgM4=
+Received: by mail-lf1-f43.google.com with SMTP id b15so1373439lfc.4;
+        Thu, 12 Dec 2019 03:03:49 -0800 (PST)
+X-Gm-Message-State: APjAAAUEWlCU5DXCXKu1M4vfAIaVNFhORK/RiPhAHEsMJ1gWYQbgkfd8
+        sqduhwSq1/wl+2XBlONreAGQFIPklV2gNmjp8e8=
+X-Google-Smtp-Source: APXvYqxdSYzPggRDnt0KWf86ulCn6elVREWxE1DfX8yzjxQqmOd7sEsDF55jGJFa+FUUT8TXBVfOjvz0/2nUFepPM/I=
+X-Received: by 2002:ac2:5dc7:: with SMTP id x7mr5301381lfq.24.1576148628033;
+ Thu, 12 Dec 2019 03:03:48 -0800 (PST)
+MIME-Version: 1.0
+References: <20191104154942.8935-1-hslester96@gmail.com> <29590e4f-cb9e-c9ac-608c-b7b72c308d25@xs4all.nl>
+In-Reply-To: <29590e4f-cb9e-c9ac-608c-b7b72c308d25@xs4all.nl>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Thu, 12 Dec 2019 12:03:36 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPctbuM_vZJPLORiyOh_8884Q3SEeEBmOmm7ON8xOp7m3w@mail.gmail.com>
+Message-ID: <CAJKOXPctbuM_vZJPLORiyOh_8884Q3SEeEBmOmm7ON8xOp7m3w@mail.gmail.com>
+Subject: Re: [PATCH] media: exynos4-is: add missed clk_disable_unprepare in remove
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Chuhong Yuan <hslester96@gmail.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191104154942.8935-1-hslester96@gmail.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <29590e4f-cb9e-c9ac-608c-b7b72c308d25@xs4all.nl>
-Date:   Thu, 12 Dec 2019 11:39:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20191104154942.8935-1-hslester96@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfNUG4uRitZeKdWfgazy03OKDZeNHpu/zYbU7lFqsLQVzvhPtSN/qHYwNYnsfJOOlWXm50QkhfippMYJWkrYp4MOJscB6J4SK8Cs0NwvTcuc/v8pjHghH
- 3rp4xs6O2eaA8cPfpx6Akjfe2nqHEYxuVvOZYoHHzusAKe6HKk6FLOQ2v3v2IKr6P1o1nqCVncofmrbkzihr1RYriUzaNGLqR2w+jFvSIdgN7UOInfbaj/vp
- yFmuwi6OF3RwfM5wCha9XBquMsMj107D7fiFnum8jYOgLXl73cf9ELUjB6ZNEH/4jPBocuiQEc4A0+EWBt3eDm030U5EuE3eb6OT87QgQkOZfbhml9elZaN2
- j8875GcFSGC94GWExwwN43VejsTR2agiFtL04hx4wFfCDiBkIgyOhLA+gQgr7KsLlWEcVE/k5JwVlOhYxqAS4O6c42bWd4joATbXyh3ksSqSIGJwXkfaG5HR
- qtetCaA4v9RC5q/R9DJIYEkuzDO3rCETzSvDCSfEl3F/iwZvs+29WFPx8v9JrD1f9Df6QYvQgDMq96RbdpmZlFEf84To9rsJiByRLYsEdKCGebLRmvbl6+Fv
- Zfbif4gABZow32cfBxb6Ek1/
+        Kukjin Kim <kgene@kernel.org>, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 11/4/19 4:49 PM, Chuhong Yuan wrote:
-> This driver forgets to disable and unprepare clock when remove.
-> Add a call to clk_disable_unprepare to fix it.
+On Thu, 12 Dec 2019 at 11:39, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>
+> On 11/4/19 4:49 PM, Chuhong Yuan wrote:
+> > This driver forgets to disable and unprepare clock when remove.
+> > Add a call to clk_disable_unprepare to fix it.
+>
+> I'd like an Ack from Samsung before I apply this. I see this in the probe() in fimc-lite.c:
+>
+>        if (!pm_runtime_enabled(dev)) {
+>                 ret = clk_prepare_enable(fimc->clock);
+>                 if (ret < 0)
+>                         goto err_sd;
+>         }
+>
+> So is it right to always call clk_disable_unprepare in the remove()?
+>
+> I suspect it is correct, but I would like someone else to take a look as well.
+>
+> Regards,
+>
+>         Hans
+>
+> >
+> > Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+> > ---
+> >  drivers/media/platform/exynos4-is/fimc-lite.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
+> > index e87c6a09205b..6748bd96aada 100644
+> > --- a/drivers/media/platform/exynos4-is/fimc-lite.c
+> > +++ b/drivers/media/platform/exynos4-is/fimc-lite.c
+> > @@ -1614,6 +1614,7 @@ static int fimc_lite_remove(struct platform_device *pdev)
+> >       struct fimc_lite *fimc = platform_get_drvdata(pdev);
+> >       struct device *dev = &pdev->dev;
+> >
+> > +     clk_disable_unprepare(fimc->clock);
+> >       pm_runtime_disable(dev);
+> >       pm_runtime_set_suspended(dev);
+> >       fimc_lite_unregister_capture_subdev(fimc);
 
-I'd like an Ack from Samsung before I apply this. I see this in the probe() in fimc-lite.c:
+No, it is wrong. The clock is enabled in probe only if
+!pm_runtime_enabled(). This will matter only if PM is disabled but now
+it leads to unbalanced disables. This was clearly not tested because I
+believe any test would trigger error. In such case, please mark the
+patches as RFT.
 
-       if (!pm_runtime_enabled(dev)) {
-                ret = clk_prepare_enable(fimc->clock);
-                if (ret < 0)
-                        goto err_sd;
-        }
+There is some tendency to post small "fixes" like this without
+testing... ok, not everyone has hardware but then just mark it as
+not-tested or RFT...
 
-So is it right to always call clk_disable_unprepare in the remove()?
-
-I suspect it is correct, but I would like someone else to take a look as well.
-
-Regards,
-
-	Hans
-
-> 
-> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-> ---
->  drivers/media/platform/exynos4-is/fimc-lite.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
-> index e87c6a09205b..6748bd96aada 100644
-> --- a/drivers/media/platform/exynos4-is/fimc-lite.c
-> +++ b/drivers/media/platform/exynos4-is/fimc-lite.c
-> @@ -1614,6 +1614,7 @@ static int fimc_lite_remove(struct platform_device *pdev)
->  	struct fimc_lite *fimc = platform_get_drvdata(pdev);
->  	struct device *dev = &pdev->dev;
->  
-> +	clk_disable_unprepare(fimc->clock);
->  	pm_runtime_disable(dev);
->  	pm_runtime_set_suspended(dev);
->  	fimc_lite_unregister_capture_subdev(fimc);
-> 
-
+Best regards,
+Krzysztof
