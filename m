@@ -2,155 +2,185 @@ Return-Path: <SRS0=lSeZ=2D=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D348C43603
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Dec 2019 01:24:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8797C3F68F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Dec 2019 03:03:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1DF02253D
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Dec 2019 01:24:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C9vmM3wb"
+	by mail.kernel.org (Postfix) with ESMTP id 9F2E82464B
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Dec 2019 03:03:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1576206193;
+	bh=1t1Xw/B0ewfrYzKWuGegjfGoPkRqeem6a2osUCvO3MM=;
+	h=In-Reply-To:References:Subject:To:From:Cc:Date:List-ID:From;
+	b=SSg6HCrQ4Jp5vWdOnm+jM491IMn2oGopxtpzOARC/IOTM3S3RWECygiCZrJH60wTR
+	 C0UyTt+RXGjhl/Uf+8fZmxc/vgbiDXKhzlx+Xu7crUVejmoMn3FP/CqOVPnCHkMDCL
+	 A9U0ZRu/77kH11aK3QzTips3MRprh6jQEo5ZIX38=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731311AbfLMBYR (ORCPT
+        id S1731885AbfLMDDN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 12 Dec 2019 20:24:17 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42022 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731288AbfLMBYR (ORCPT
+        Thu, 12 Dec 2019 22:03:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42092 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731884AbfLMDDN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 12 Dec 2019 20:24:17 -0500
-Received: by mail-pf1-f193.google.com with SMTP id 4so526236pfz.9;
-        Thu, 12 Dec 2019 17:24:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mVYnNLUWDZKpYLFTHOhdx5QMfZ/iaJU8SyrTIrnh1+U=;
-        b=C9vmM3wb6Ku+BwbrsiOw8sJcOapH9ak4S6OvvOJfkUVaVtflB03QO2A3IdCTuIPlw1
-         S0ecyAtDw8qd3a05aw/rdmjBr/xOrkoWb3NnVvNTm39DWW8P2ePVHV0BXKQlg6UNGRfi
-         L4f26CTJ71IIL8zgTDQNb9viGP8uNnLVRvIzmp0qqCS3J1HdUzIbZpXJsTsRAzcnmaDJ
-         gf5XOfBCm2jYtQryLN+pWkD/gTVVJztPbNTnmtbrTyFf//kGwyMRWcckgugnnxlXdu7I
-         tWoXUcQbMSdEng1Tda8UbAfvrXu5sAacDHgOHc3pq20si1CQFu8f1mIS3gKbwGyXw/zK
-         5YBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mVYnNLUWDZKpYLFTHOhdx5QMfZ/iaJU8SyrTIrnh1+U=;
-        b=PuXgIgYik+HTvvbw8ohhzAxLB+NJq5R+BqI3g6GEU6q/2ZteagsOFWhAXyCttPMzzD
-         pUnjeLeYKJj96aGF66nVFZM3YRCWkxX0k7T3xye8B9ZbSCWV21mk7XH9wxz17WuuBNNQ
-         9h/vzbAuFqCJbnyXT6xCu/1Dc2EIwR7MzdNI3Nu6UcE+UfAPQmgRFR3e+UvltVksXKcW
-         gwzdadHLt3144KqRjHBHs+2JEV/G1f0WoqCA97GKMCxvHJ5gwZCK/uzrZbKc+6Ikt/U7
-         QmfVNUQJNS7KXBsZuBajlMwAeesogaEfuRZrFkAz+KDRy8qWGcebQirkHmaZu0Ow7VIq
-         jxCA==
-X-Gm-Message-State: APjAAAVEiAicRacZAxlJEAsm5hbhfve0vBAIa632IdaprRIMWNB1I+1a
-        Fav5BKoHmcBhgBy7PertG1o=
-X-Google-Smtp-Source: APXvYqzslQWCGhhjC4AVQ3m239kr2s7F0YOheuzUQOjc5GF3xeZkaRbeg83aAHQgMnfEAhySOKU1Mg==
-X-Received: by 2002:a62:1883:: with SMTP id 125mr12979767pfy.166.1576200255999;
-        Thu, 12 Dec 2019 17:24:15 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id c18sm8230295pgj.24.2019.12.12.17.24.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2019 17:24:14 -0800 (PST)
-Date:   Thu, 12 Dec 2019 17:24:08 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Linux USB Mailing List <linux-usb@vger.kernel.org>
-Subject: Re: [PATCH v8 1/6] software node: rename is_array to is_inline
-Message-ID: <20191213012408.GH101194@dtor-ws>
-References: <20191108042225.45391-1-dmitry.torokhov@gmail.com>
- <20191108042225.45391-2-dmitry.torokhov@gmail.com>
- <CGME20191212111237eucas1p1a278d2d5d2437e3219896367e82604cc@eucas1p1.samsung.com>
- <b3f6ca8b-dbdf-0cec-aa8f-47ffcc5c5307@samsung.com>
+        Thu, 12 Dec 2019 22:03:13 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8FB3F2253D;
+        Fri, 13 Dec 2019 03:03:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576206191;
+        bh=1t1Xw/B0ewfrYzKWuGegjfGoPkRqeem6a2osUCvO3MM=;
+        h=In-Reply-To:References:Subject:To:From:Cc:Date:From;
+        b=eGDpMBg7AmTHFPKuwQweXSdYQC5ElaJQj9dCMpFnmDChinXqocC2zeu9LB6CnDMat
+         nNtySBuvAQnIMo51Tkm5vfw08mqL/+nYJpePnilEsCKMcVBnsd6U1y5BkigdccY3su
+         DLe438OQrjTX9Zo2XyVx1pMMy47YHC99FizpDbbg=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b3f6ca8b-dbdf-0cec-aa8f-47ffcc5c5307@samsung.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <f46f7d3d-c107-2542-d9ed-124c9079aeca@samsung.com>
+References: <CGME20191121101158eucas1p26b1f74cd2396a2461530e684d17a82e8@eucas1p2.samsung.com> <20191121101145.15899-1-m.szyprowski@samsung.com> <f46f7d3d-c107-2542-d9ed-124c9079aeca@samsung.com>
+Subject: Re: [PATCH] clk: samsung: exynos5420: Keep top G3D clocks enabled
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marian Mihailescu <mihailescu2m@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>
+User-Agent: alot/0.8.1
+Date:   Thu, 12 Dec 2019 19:03:10 -0800
+Message-Id: <20191213030311.8FB3F2253D@mail.kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+Quoting Sylwester Nawrocki (2019-12-12 03:53:17)
+> Cc: Stephen and Michael
+>=20
+> On 11/21/19 11:11, Marek Szyprowski wrote:
+> > All top clocks on G3D path has to be enabled all the time to allow prop=
+er
+> > G3D power domain operation. This is achieved by adding CRITICAL flag to
+> > "mout_sw_aclk_g3d" clock, what keeps this clock and all its parents
+> > enabled.
+> >=20
+> > This fixes following imprecise abort issue observed on Odroid XU3/XU4
+> > after enabling Panfrost driver by commit 1a5a85c56402 "ARM: dts: exynos:
+> > Add Mali/GPU node on Exynos5420 and enable it on Odroid XU3/4"):
+> >=20
+> > panfrost 11800000.gpu: clock rate =3D 400000000
+> > panfrost 11800000.gpu: failed to get regulator: -517
+> > panfrost 11800000.gpu: regulator init failed -517
+> > Power domain G3D disable failed
+> > ...
+> > panfrost 11800000.gpu: clock rate =3D 400000000
+> > 8<--- cut here ---
+> > Unhandled fault: imprecise external abort (0x1406) at 0x00000000
+> > pgd =3D (ptrval)
+> > [00000000] *pgd=3D00000000
+> > Internal error: : 1406 [#1] PREEMPT SMP ARM
+> > Modules linked in:
+> > CPU: 7 PID: 53 Comm: kworker/7:1 Not tainted 5.4.0-rc8-next-20191119-00=
+032-g56f1001191a6 #6923
+> > Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+> > Workqueue: events deferred_probe_work_func
+> > PC is at panfrost_gpu_soft_reset+0x94/0x110
+> > LR is at ___might_sleep+0x128/0x2dc
+> > ...
+> > [<c05c231c>] (panfrost_gpu_soft_reset) from [<c05c2704>] (panfrost_gpu_=
+init+0x10/0x67c)
+> > [<c05c2704>] (panfrost_gpu_init) from [<c05c15d0>] (panfrost_device_ini=
+t+0x158/0x2cc)
+> > [<c05c15d0>] (panfrost_device_init) from [<c05c0cb0>] (panfrost_probe+0=
+x80/0x178)
+> > [<c05c0cb0>] (panfrost_probe) from [<c05cfaa0>] (platform_drv_probe+0x4=
+8/0x9c)
+> > [<c05cfaa0>] (platform_drv_probe) from [<c05cd20c>] (really_probe+0x1c4=
+/0x474)
+> > [<c05cd20c>] (really_probe) from [<c05cd694>] (driver_probe_device+0x78=
+/0x1bc)
+> > [<c05cd694>] (driver_probe_device) from [<c05cb374>] (bus_for_each_drv+=
+0x74/0xb8)
+> > [<c05cb374>] (bus_for_each_drv) from [<c05ccfa8>] (__device_attach+0xd4=
+/0x16c)
+> > [<c05ccfa8>] (__device_attach) from [<c05cc110>] (bus_probe_device+0x88=
+/0x90)
+> > [<c05cc110>] (bus_probe_device) from [<c05cc634>] (deferred_probe_work_=
+func+0x4c/0xd0)
+> > [<c05cc634>] (deferred_probe_work_func) from [<c0149df0>] (process_one_=
+work+0x300/0x864)
+> > [<c0149df0>] (process_one_work) from [<c014a3ac>] (worker_thread+0x58/0=
+x5a0)
+> > [<c014a3ac>] (worker_thread) from [<c0151174>] (kthread+0x12c/0x160)
+> > [<c0151174>] (kthread) from [<c01010b4>] (ret_from_fork+0x14/0x20)
+> > Exception stack(0xee03dfb0 to 0xee03dff8)
+> > ...
+> > Code: e594300c e5933020 e3130c01 1a00000f (ebefff50).
+> > ---[ end trace badde2b74a65a540 ]---
+> >=20
+> > In the above case, the Panfrost driver disables G3D clocks after failure
+> > of getting the needed regulator and return with -EPROVE_DEFER code. This
+> > causes G3D power domain disable failure and then, during second probe
+> > an imprecise abort is triggered due to undefined power domain state.
+> >=20
+> > Fixes: 45f10dabb56b ("clk: samsung: exynos5420: Add SET_RATE_PARENT fla=
+g to clocks on G3D path")
+> > Fixes: c9f7567aff31 ("clk: samsung: exynos542x: Move G3D subsystem cloc=
+ks to its sub-CMU")
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > ---
+> >  drivers/clk/samsung/clk-exynos5420.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung=
+/clk-exynos5420.c
+> > index 3a991ca1ee36..89126ba66995 100644
+> > --- a/drivers/clk/samsung/clk-exynos5420.c
+> > +++ b/drivers/clk/samsung/clk-exynos5420.c
+> > @@ -712,7 +712,7 @@ static const struct samsung_mux_clock exynos5x_mux_=
+clks[] __initconst =3D {
+> >       MUX(0, "mout_sw_aclk266_g2d", mout_sw_aclk266_g2d_p,
+> >                       SRC_TOP12, 12, 1),
+> >       MUX_F(0, "mout_sw_aclk_g3d", mout_sw_aclk_g3d_p, SRC_TOP12, 16, 1,
+> > -           CLK_SET_RATE_PARENT, 0),
+> > +           CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
+> >       MUX(0, "mout_sw_aclk300_jpeg", mout_sw_aclk300_jpeg_p,
+>                         SRC_TOP12, 20, 1),
+>=20
+> Adding that flag to a mux clock doesn't look right, it feels we are not
+> addressing the issue properly and the root cause is not known.
+>=20
+> AFAICS CLK_IS_CRITICAL flag will also not ensure required root clock up=20
+> in the clk tree is enabled in case any reparenting is done after that mux=
+=20
+> clock has been registered.  The flag seems misused and the fix looks dubi=
+ous=20
+> and fragile to me.
+>=20
+> I would apply that to fix crashes we are seeing in -next but we ned to co=
+me
+> up with a better solution.
+>=20
+> Perhaps we could add a comment like:
+>=20
+> "CLK_IS_CRITICAL flag is added to this clock as a workaround for imprecis=
+e=20
+> external abort triggered by the Panfrost driver and will be removed once =
 
-On Thu, Dec 12, 2019 at 12:12:36PM +0100, Marek Szyprowski wrote:
-> Dear All,
-> 
-> On 08.11.2019 05:22, Dmitry Torokhov wrote:
-> > We do not need a special flag to know if we are dealing with an array,
-> > as we can get that data from ratio between element length and the data
-> > size, however we do need a flag to know whether the data is stored
-> > directly inside property_entry or separately.
-> >
-> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> 
-> Today I've noticed that this patch got merged to linux-next as commit 
-> e6bff4665c595b5a4aff173848851ed49ac3bfad. Sadly it breaks DWC3/xHCI 
-> driver operation on Samsung Exynos5 SoCs (and probably on other SoCs 
-> which use DWC3 in host mode too). I get the following errors during boot:
-> 
-> dwc3 12000000.dwc3: failed to add properties to xHCI
-> dwc3 12000000.dwc3: failed to initialize host
-> dwc3: probe of 12000000.dwc3 failed with error -61
-> 
-> Here is a full kernel log from Exynos5250-based Snow Chromebook on KernelCI:
-> 
-> https://storage.kernelci.org/next/master/next-20191212/arm/exynos_defconfig/gcc-8/lab-collabora/boot-exynos5250-snow.txt
-> 
-> (lack of 'ref' clk is not related nor fatal to the driver operation).
-> 
-> The code which fails after this patch is located in 
-> drivers/usb/dwc3/host.c. Let me know if I can help more in locating the bug.
+> the issue is properly addressed."
 
-Does the following help? If, as I expect, it does, I'll submit it
-formally.
+You should always add a comment to CLK_IS_CRITICAL usage. This sort of
+comment is not comforting though. When will the issue be properly
+addressed? Maybe we should block panfrost from being enabled on this
+platform until it is root caused?
 
----
-
-diff --git a/drivers/usb/dwc3/host.c b/drivers/usb/dwc3/host.c
-index 5567ed2cddbec..fa252870c926f 100644
---- a/drivers/usb/dwc3/host.c
-+++ b/drivers/usb/dwc3/host.c
-@@ -88,10 +88,10 @@ int dwc3_host_init(struct dwc3 *dwc)
- 	memset(props, 0, sizeof(struct property_entry) * ARRAY_SIZE(props));
- 
- 	if (dwc->usb3_lpm_capable)
--		props[prop_idx++].name = "usb3-lpm-capable";
-+		props[prop_idx++] = PROPERTY_ENTRY_BOOL("usb3-lpm-capable");
- 
- 	if (dwc->usb2_lpm_disable)
--		props[prop_idx++].name = "usb2-lpm-disable";
-+		props[prop_idx++] = PROPERTY_ENTRY_BOOL("usb2-lpm-disable");
- 
- 	/**
- 	 * WORKAROUND: dwc3 revisions <=3.00a have a limitation
-@@ -103,7 +103,7 @@ int dwc3_host_init(struct dwc3 *dwc)
- 	 * This following flag tells XHCI to do just that.
- 	 */
- 	if (dwc->revision <= DWC3_REVISION_300A)
--		props[prop_idx++].name = "quirk-broken-port-ped";
-+		props[prop_idx++] = PROPERTY_ENTRY_BOOL("quirk-broken-port-ped");
- 
- 	if (prop_idx) {
- 		ret = platform_device_add_properties(xhci, props);
-
-
--- 
-Dmitry
