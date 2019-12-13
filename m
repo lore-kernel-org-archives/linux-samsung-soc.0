@@ -6,58 +6,58 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D56C0C341B3
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Dec 2019 20:38:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD0EC341BB
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Dec 2019 20:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14F9A24750
+	by mail.kernel.org (Postfix) with ESMTP id B2DFE24796
 	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Dec 2019 20:38:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XbodqbL3"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lm3EUMhH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728001AbfLMQB4 (ORCPT
+        id S1728063AbfLMQDs (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 13 Dec 2019 11:01:56 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:33172 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727932AbfLMQB4 (ORCPT
+        Fri, 13 Dec 2019 11:03:48 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:40796 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727974AbfLMQDr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 13 Dec 2019 11:01:56 -0500
-Received: by mail-lj1-f195.google.com with SMTP id 21so3241915ljr.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Dec 2019 08:01:55 -0800 (PST)
+        Fri, 13 Dec 2019 11:03:47 -0500
+Received: by mail-lf1-f68.google.com with SMTP id i23so2334235lfo.7
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Dec 2019 08:03:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=5JutpvUzxOsyoaSk9NwrCbjNfxIk5I6Gyk3NK08J6cQ=;
-        b=XbodqbL3vPQgnrqfzeaCyEVhD38xe5Ee/7W6WG+3H0r8d3gK1zcoVwKVXMuUgAU0M2
-         4DQOvNLUDR/////SzUbHc5j5W1xWM/yBLPPmprf6fAhrBPgnVrF9MWLeN4O2vYZCJ7M1
-         4X1x8Fw9FLKKsz3moE9wj1ErHuqh07bNN9CKKPgDO7bCoXbsFXdawNp+ESB1lLm7lQbR
-         T7yralAgbY7NRKeWAjgOfz/kV7Au4VVQTOzHFNzsMAdqqDo6XqgWVar4MM1VmRxH+vOC
-         PfeOm17pCYVt57aHpW1G40Z4N/b7GfLJcpE1D+kmru6Dz8XIukjA6/e/RZoMG8TAjDWv
-         SgYg==
+        bh=kvwPLR8XH8zayvVN3UCZB+7bnWFYQS/MV8OjCwXgshE=;
+        b=Lm3EUMhHLF/p5ts9CtLbB2fyDZXRoWjputOXrBtc8w7ehCGKjKtMXvoPrTasEbwr9L
+         Q3AtGb4t5b12A4UETL2BUWgG5Cn3ExxVW9Yl6AUo8cXmMYvCfobKGRsZm6pxrhmK0a9z
+         6zhXvlJpLeBhB8oPfsi5pCryXMJx1gJbvGiSkKx+RtK40sUMHfAm6omvG+NKM8ZxMty/
+         w20SMAR0w64D3FA4cvC4PtT51ker8sPYcr61mC8aVoUs/PGoA1VNm+lQDmAsk/4duDpA
+         C1NaXWrGkDcKqm5BN9O+v2tClo6BGzebqA+UgrlOucQnwmsRGpCP/fmpfk0BdXurfeE0
+         TwXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=5JutpvUzxOsyoaSk9NwrCbjNfxIk5I6Gyk3NK08J6cQ=;
-        b=fXzXSpfqadUS3prutZpgptcPQBdkWglYIdBJz+rNAVz/bc8HF29r7rgSz+DD13HYDR
-         uE7E0TjG6hbVZL4pAPJPk8hd46QFA19QGC9eg8eOe07i3xtOylCslPNx0c+L+9vIFm8d
-         BrE6ahFcBUnk46jw5H1liUkbv97Iu5BIZ42eZx7vqLszDx2EyeWp0Ha/GLxJMSdg7Ans
-         3IB7NPRDCvyKyJhYJpfN5d45O+V/3tKthteet7f4te2prjm+cn/HkrAuvGkp1A8+Qhdl
-         xOekLU2gSbfV2D74MHl2pLgtX9JAXswEgfxYggOZ1bMhoGWJrXA+WjocDJTbKSeB2IQV
-         /MFQ==
-X-Gm-Message-State: APjAAAWk7evdqZPlUJ2nasO24tvwJ4HXmDEHtj/UOYI73cPjhCbp3a5h
-        +ivwx2sWWojh/NCnz/6PgWMldaX70/wrAB3M6SAKIQ==
-X-Google-Smtp-Source: APXvYqw5j7XQGOFi0lBLLQGKLSulok+o4hXa/wOnJ5dacau9siOORcPCGi5To+aftjmvKminoQEjm3PyKNxF1Nwhy2s=
-X-Received: by 2002:a05:651c:1049:: with SMTP id x9mr9948355ljm.233.1576252914355;
- Fri, 13 Dec 2019 08:01:54 -0800 (PST)
+        bh=kvwPLR8XH8zayvVN3UCZB+7bnWFYQS/MV8OjCwXgshE=;
+        b=RsDW8y/BKNnHBbxwBDz+1Wfva6SPP1WY+uldwYGbyn0M9dYQBXUNaAL+abrShIJc3C
+         yjM9Vi5DsJwUKYKqn8WGLLrJauFYTwE5uTDfMGxzW2wbF1/vAxZaex7ORTU2/XUbZ/SE
+         9ycPUZhGPLdsfYH5yM+BTk2lf0unms/fhLaRIRZc6uyKPQL2jF/2gbJwoDcb7gt9P0yD
+         IOxEJfFaEAuqAms+MiPzX8deok35TEsM+Ve/uZ4nPLorm/NhplHXGZ6kuP3heqzAAQ6J
+         CF7BLgKozaQv7r7qnQ/m6varGMkZPllPQCSmXlRyyxJQMq5DEFQpH/O6lOuYjzBXBrnH
+         FKlQ==
+X-Gm-Message-State: APjAAAUXO33m7zDx4oANrBvqy1R686oPqQ86iInnjWkbUlfJ17ovbPXA
+        0nbHQck+47q4cbGC9na0yPimV62I9KCH5F4ALLxCEg==
+X-Google-Smtp-Source: APXvYqzlUqj1JYbmvToLn4WKba8fTKOUKLwpvrIjGBIxwKCLtbdTwf4N8ZSiv2/s71Wmfh8n29zU9ltAma3PI2ii6Ck=
+X-Received: by 2002:ac2:4945:: with SMTP id o5mr9176651lfi.93.1576253025593;
+ Fri, 13 Dec 2019 08:03:45 -0800 (PST)
 MIME-Version: 1.0
-References: <20191209163937.8156-1-krzk@kernel.org> <20191209163937.8156-2-krzk@kernel.org>
-In-Reply-To: <20191209163937.8156-2-krzk@kernel.org>
+References: <20191209163937.8156-1-krzk@kernel.org> <20191211182739.GA6931@kozik-lap>
+In-Reply-To: <20191211182739.GA6931@kozik-lap>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 13 Dec 2019 17:01:43 +0100
-Message-ID: <CACRpkdbZ8d0K08uSUhzUwnDupXX=Y+Wc+sa_etK-LnPL7RDB_Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] pinctrl: samsung: Clarify the option titles/names
+Date:   Fri, 13 Dec 2019 17:03:33 +0100
+Message-ID: <CACRpkdYX+-GWvUhhXvJiJ1bCib-qjyEvZ0qYB35q+OT7hy=56Q@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: samsung: Enable compile test for build coverage
 To:     Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
@@ -71,16 +71,20 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Dec 9, 2019 at 5:40 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-
-> The config options toggle Samsung Exynos SoCs pinctrl drivers, not the
-> driver data.  Clarify this in the option title/name and also make it
-> consistent with other Samsung entries.  No functional change.
+On Wed, Dec 11, 2019 at 7:27 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On Mon, Dec 09, 2019 at 05:39:36PM +0100, Krzysztof Kozlowski wrote:
+> > The Samsung pinctrl drivers require only GPIOLIB and OF for building.
+> > The should be buildable on all architectures so enable COMPILE_TEST.
+> >
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > ---
+> >  drivers/pinctrl/samsung/Kconfig | 8 +++++---
 >
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Applied both to my tree. I'll send them to you Linus later in pull
+> request (unless 0-day catches some build failures).
 
-Like the other Samsung patch this doesn't apply to my tree
-devel branch which is close to v5.5-rc1.
+Ah I see OK that's fine, forget my comments about not being able
+to apply patches then, I'll just wait for the pull request :)
 
 Yours,
 Linus Walleij
