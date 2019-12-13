@@ -2,135 +2,125 @@ Return-Path: <SRS0=lSeZ=2D=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C07DC2D0BF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Dec 2019 08:32:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B0D5C2D0C9
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Dec 2019 08:37:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 179C124676
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Dec 2019 08:32:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CFh7cVkn"
+	by mail.kernel.org (Postfix) with ESMTP id 4308524679
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Dec 2019 08:37:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1576226268;
+	bh=hrUtcMROVbSj3bFQMrJtvcxKtecQ0YYWZGQ6UFEvpuE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=gQ1CpYMyihv76vM9SshEAVlruBl+HS1FC4oCOm3hGAH15pkCjQkX1ZdWA6poEIsT1
+	 IECD0Y4KVmGr6aFjlfEkD0nKLH5MjP0qwuZhcp979rO6dXcwwKuRgirFQFhvLjvQ0B
+	 q0FUKmPz9RV0OunyA35o8y1/4JrcUfHwg6O3MpYo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725818AbfLMIcL (ORCPT
+        id S1726613AbfLMIho (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 13 Dec 2019 03:32:11 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:35352 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbfLMIcL (ORCPT
+        Fri, 13 Dec 2019 03:37:44 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:39206 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725818AbfLMIhn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 13 Dec 2019 03:32:11 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191213083209euoutp01550fbe80ca4fc68de314f0ce649a693e~f4SHAmmk41875618756euoutp01J
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Dec 2019 08:32:09 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191213083209euoutp01550fbe80ca4fc68de314f0ce649a693e~f4SHAmmk41875618756euoutp01J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1576225929;
-        bh=Spljwi04NPz7tPwQDU3ylhpMAcBmPOyA+LcLqOe48yU=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=CFh7cVkn8C7UgZgkd8Mhj8lJeObDUOgbuwvO13Mc4Dq6KwMpTgONXh0iz5fwwCw/N
-         lpnA1vN0169VrQDnEWgVB/E/T+UdST7BfA+QpdOWqCxtRxEQy3MKdaClbr4wq1G2de
-         F7nrrZ9kQA4SNLeIX4GSh/2zwisAN/wZdJopGlVg=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191213083209eucas1p1754396da771e6006222b489b7f663df6~f4SGzosdc2297822978eucas1p1M;
-        Fri, 13 Dec 2019 08:32:09 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 53.9F.60698.98C43FD5; Fri, 13
-        Dec 2019 08:32:09 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20191213083209eucas1p1459831639297fc7c37089c8fef4e0248~f4SGfdDBv2219322193eucas1p12;
-        Fri, 13 Dec 2019 08:32:09 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191213083209eusmtrp2a21176fad3e597e08b9d3a284aa1ea80~f4SGetkis0540405404eusmtrp2e;
-        Fri, 13 Dec 2019 08:32:09 +0000 (GMT)
-X-AuditID: cbfec7f5-a29ff7000001ed1a-cb-5df34c89d862
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id A9.4C.08375.98C43FD5; Fri, 13
-        Dec 2019 08:32:09 +0000 (GMT)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191213083208eusmtip145e8ae9917b0302b6157455e10ed1be2~f4SGEA3wv1805818058eusmtip1S;
-        Fri, 13 Dec 2019 08:32:08 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH RESEND] phy: exynos5-usbdrd: Calibrating makes sense only
- for USB2.0 PHY
-Date:   Fri, 13 Dec 2019 09:31:57 +0100
-Message-Id: <20191213083157.9220-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBIsWRmVeSWpSXmKPExsWy7djP87qdPp9jDb7vkbLYOGM9q8WFpz1s
-        FufPb2C3uLxrDpvFjPP7mCwWLWtltlh75C67A7vHplWdbB59W1Yxehy/sZ3J4/MmuQCWKC6b
-        lNSczLLUIn27BK6MS+d/Mxbs5Kh4dvM7WwPjCvYuRk4OCQETifWf57J1MXJxCAmsYJS49GgK
-        lPOFUWL9y6fMEM5nRonmgwuZuhg5wFpuLfeHiC9nlJix+TQTyCiwjg0r00BsNgFDia63XWwg
-        toiAg8SSpXfApjILXGOUeN74CqxBWCBKYvmP5WBFLAKqEisvfAFbwCtgI7HsRQXEefISqzcc
-        ADtCQuAym8T6noMsEAkXiTM3P7FB2MISr45vgfpHRuL/zvlMEA3NjBIPz61lh3B6GCUuN81g
-        hKiyljh8/CIryDZmAU2J9bv0IT5zlNj9xQXC5JO48VYQpJgZyJy0bTozRJhXoqNNCGKGmsSs
-        4+vgth68cIkZwvaQ2HSnnw0SJLESd28+ZJ/AKDcLYdUCRsZVjOKppcW56anFxnmp5XrFibnF
-        pXnpesn5uZsYgfF/+t/xrzsY9/1JOsQowMGoxMPLkPIpVog1say4MvcQowQHs5IIb6r251gh
-        3pTEyqrUovz4otKc1OJDjNIcLErivMaLXsYKCaQnlqRmp6YWpBbBZJk4OKUaGA+uE13fwRK2
-        XqRZsXyai8l6u5l2F+bu5v3GcPbUz2pJjuSUW1ZeSvKRknGLZbyP2tnHGKh4TpM587n6/uM4
-        A9kDZqmM5pFNO613XT/17NjybbIbwjkjluz8F7BnC1eJz8ydZ7xmzFuWHrpDo2/rB3ab2kem
-        Ky/NeR5m9UfEtuMGT/3CTTkPjyuxFGckGmoxFxUnAgCw5Zn4+wIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPLMWRmVeSWpSXmKPExsVy+t/xu7qdPp9jDRYvYrbYOGM9q8WFpz1s
-        FufPb2C3uLxrDpvFjPP7mCwWLWtltlh75C67A7vHplWdbB59W1Yxehy/sZ3J4/MmuQCWKD2b
-        ovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27BL2MS+d/Mxbs
-        5Kh4dvM7WwPjCvYuRg4OCQETiVvL/bsYuTiEBJYySrQvncfWxcgJFJeRODmtgRXCFpb4c62L
-        DaLoE6PErmNfwBJsAoYSXW+7wBpEBJwkOteeBitiFrjFKPF5/jlmkISwQITEp03LwRpYBFQl
-        Vl74wgSymVfARmLZiwqIBfISqzccYJ7AyLOAkWEVo0hqaXFuem6xoV5xYm5xaV66XnJ+7iZG
-        YOBtO/Zz8w7GSxuDDzEKcDAq8fAypHyKFWJNLCuuzD3EKMHBrCTCm6r9OVaINyWxsiq1KD++
-        qDQntfgQoynQ7onMUqLJ+cCoyCuJNzQ1NLewNDQ3Njc2s1AS5+0QOBgjJJCeWJKanZpakFoE
-        08fEwSnVwMh5Tmqt3quWFe9vcU9MlbsR4uc+TYBlheHXhVoNgoyri1Tb8q6eOrw+rPGlx+vf
-        7X+l5Ursti/9d//FtTtvo+ualqxM/Se71+N9Vs3m4nW9izZWVO1/bh/y99ZNA6lPNccLay9k
-        pH2unb9ubtvk08031Hdwa7XtZ73TfTA3wdDsZ//L5rDF7POVWIozEg21mIuKEwHIYGwwUgIA
-        AA==
-X-CMS-MailID: 20191213083209eucas1p1459831639297fc7c37089c8fef4e0248
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20191213083209eucas1p1459831639297fc7c37089c8fef4e0248
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20191213083209eucas1p1459831639297fc7c37089c8fef4e0248
-References: <CGME20191213083209eucas1p1459831639297fc7c37089c8fef4e0248@eucas1p1.samsung.com>
+        Fri, 13 Dec 2019 03:37:43 -0500
+Received: by mail-ot1-f67.google.com with SMTP id 77so5492241oty.6;
+        Fri, 13 Dec 2019 00:37:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hrUtcMROVbSj3bFQMrJtvcxKtecQ0YYWZGQ6UFEvpuE=;
+        b=H6lumRRZfMia/fXBlvj0yzat0cyD68UyCiANSvczQJxLyOq6oAfOgLap1jr9Tn2tsn
+         7TDLX5aWebiv9J3cfR3UZIOxiwzAEh/eCHW0KflOTdV3kXgIk88ehdvTCDru07C6498n
+         3eAPRFv1XtTf8oIU+ohratFwAKEB3L7RVXvUs1AOSGpUwZaWPdpCj6f6DLlqTbfVtah2
+         +2tTSGUcnETLd4fwfAgMg1sbheSd0wUpwj0MU9pfUKPtlndiuuHnS5Ko9OwgGBYus0H5
+         ryOVoXRAsqf75liyAIK4E8qBsZj9G178YYRl0gEWTKcCR7u7g0TYN9/WlU0jLQx/lCjF
+         idxg==
+X-Gm-Message-State: APjAAAV6QgQ3Sd8dH+lBVpVOcnplffXI+YMLKgyqvSjNReQSo5EwpYxF
+        8RLDFGmIqqpzeFCC4LAG03vr8JTVIHGDe6YsIzM=
+X-Google-Smtp-Source: APXvYqzwQuxqpAXr1PaoHa2ITEuOSiCxR6CYI4S0X2/CUhtNPf5jZ7bP1wxtc/TXNOR61beC6esoVnZKEDS8l3BlkTs=
+X-Received: by 2002:a05:6830:18cd:: with SMTP id v13mr12830287ote.118.1576226262292;
+ Fri, 13 Dec 2019 00:37:42 -0800 (PST)
+MIME-Version: 1.0
+References: <20191108042225.45391-1-dmitry.torokhov@gmail.com>
+ <20191108042225.45391-2-dmitry.torokhov@gmail.com> <CGME20191212111237eucas1p1a278d2d5d2437e3219896367e82604cc@eucas1p1.samsung.com>
+ <b3f6ca8b-dbdf-0cec-aa8f-47ffcc5c5307@samsung.com> <20191212112825.GK32742@smile.fi.intel.com>
+ <CAJZ5v0i3dSOSa37yWLM+zDVnMKVTkOxbyKD4vo0KVwj_uFB26Q@mail.gmail.com> <ef1eb8d9-92f3-a4e4-f8d2-a2e247737c97@samsung.com>
+In-Reply-To: <ef1eb8d9-92f3-a4e4-f8d2-a2e247737c97@samsung.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 13 Dec 2019 09:37:31 +0100
+Message-ID: <CAJZ5v0ggTeUURcBpdQfKHLCLCrBCVGn_uiBDMhb-GagySNBytQ@mail.gmail.com>
+Subject: Re: [PATCH v8 1/6] software node: rename is_array to is_inline
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        Linux USB Mailing List <linux-usb@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-PHY calibration is needed only for USB2.0 (UTMI) PHY, so skip calling
-calibration code when phy_calibrate() is called for USB3.0 (PIPE3) PHY.
+On Fri, Dec 13, 2019 at 7:47 AM Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+>
+> Hi Rafael,
+>
+> On 12.12.2019 17:41, Rafael J. Wysocki wrote:
+> > On Thu, Dec 12, 2019 at 12:28 PM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> >> On Thu, Dec 12, 2019 at 12:12:36PM +0100, Marek Szyprowski wrote:
+> >>> On 08.11.2019 05:22, Dmitry Torokhov wrote:
+> >>>> We do not need a special flag to know if we are dealing with an array,
+> >>>> as we can get that data from ratio between element length and the data
+> >>>> size, however we do need a flag to know whether the data is stored
+> >>>> directly inside property_entry or separately.
+> >>>>
+> >>>> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> >>> Today I've noticed that this patch got merged to linux-next as commit
+> >>> e6bff4665c595b5a4aff173848851ed49ac3bfad. Sadly it breaks DWC3/xHCI
+> >>> driver operation on Samsung Exynos5 SoCs (and probably on other SoCs
+> >>> which use DWC3 in host mode too). I get the following errors during boot:
+> >>>
+> >>> dwc3 12000000.dwc3: failed to add properties to xHCI
+> >>> dwc3 12000000.dwc3: failed to initialize host
+> >>> dwc3: probe of 12000000.dwc3 failed with error -61
+> >>>
+> >>> Here is a full kernel log from Exynos5250-based Snow Chromebook on KernelCI:
+> >>>
+> >>> https://storage.kernelci.org/next/master/next-20191212/arm/exynos_defconfig/gcc-8/lab-collabora/boot-exynos5250-snow.txt
+> >>>
+> >>> (lack of 'ref' clk is not related nor fatal to the driver operation).
+> >>>
+> >>> The code which fails after this patch is located in
+> >>> drivers/usb/dwc3/host.c. Let me know if I can help more in locating the bug.
+> >> Thank you for report.
+> >>
+> >> I think we should not have that patch in the fist place... I used to have
+> >> a bad feeling about it and then forgot about it existence.
+> > Well, I think you mean the [2/6].
+> >
+> > The $subject one really shouldn't change functionality, we must have
+> > missed something here.
+>
+> Nope, I was really talking about [1/6]. It looks that it revealed an
+> issue in the DWC3 driver pointed by Dmitry.
 
-Fixes: d8c80bb3b55b ("phy: exynos5-usbdrd: Calibrate LOS levels for exynos5420/5800")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/phy/samsung/phy-exynos5-usbdrd.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Right, but I was referring to the Andy's comment.
 
-diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-index 646259bee909..f07edd80d2f3 100644
---- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-+++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-@@ -714,7 +714,9 @@ static int exynos5_usbdrd_phy_calibrate(struct phy *phy)
- 	struct phy_usb_instance *inst = phy_get_drvdata(phy);
- 	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
- 
--	return exynos5420_usbdrd_phy_calibrate(phy_drd);
-+	if (inst->phy_cfg->id == EXYNOS5_DRDPHY_UTMI)
-+		return exynos5420_usbdrd_phy_calibrate(phy_drd);
-+	return 0;
- }
- 
- static const struct phy_ops exynos5_usbdrd_phy_ops = {
--- 
-2.17.1
-
+Cheers!
