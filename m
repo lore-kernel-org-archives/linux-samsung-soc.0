@@ -1,98 +1,110 @@
-Return-Path: <SRS0=lSeZ=2D=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=ECku=2E=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCF60C751D1
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Dec 2019 20:38:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86921C43603
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 14 Dec 2019 17:54:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1D6C247AF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Dec 2019 20:38:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 592BB214D8
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 14 Dec 2019 17:54:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ymPQwlgo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gHnjEtAC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728303AbfLMQFF (ORCPT
+        id S1726072AbfLNRyx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 13 Dec 2019 11:05:05 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41315 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728215AbfLMQFF (ORCPT
+        Sat, 14 Dec 2019 12:54:53 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:46428 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725943AbfLNRyx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 13 Dec 2019 11:05:05 -0500
-Received: by mail-lj1-f193.google.com with SMTP id h23so3206765ljc.8
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Dec 2019 08:05:03 -0800 (PST)
+        Sat, 14 Dec 2019 12:54:53 -0500
+Received: by mail-pf1-f195.google.com with SMTP id y14so3226750pfm.13;
+        Sat, 14 Dec 2019 09:54:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gbf8k5yJ19A5wSZeXVRUlCPqOm3eyldLxkULlc81AFU=;
-        b=ymPQwlgoBu3AuxXxyAS8Pqr3jk0WyzPrXO0bCPOwIOGjnvgBRrGXil4Wbr2ayNyVg0
-         5oHwBqXWHlNYU4H4t0AGAUVusSZhkfHiNJjIj3uc5bx4NxoOqz31/r1rWdCvix34S3ZY
-         2LTTNgxyQ1bi8H8MZq9m+SG3t+rgn5AEU+AoO5VKhdPwcr7tzMRGFhdW9/jc9cvU1N9p
-         yEh3vCXdHeINwcTyiFYrKgZxEzP6mSe5+H8dC7GEWci+dHT6he+jJOMaqoKrHvuaroER
-         O8H3WuM0RCU6HzU+YAsXHI4yTGfj4+7zOW1wJoyn1ns5KWkT3b+TjkHMoaPRnN7i7Mnt
-         wJ2Q==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=HUgbRO2BhcAt34RLIr2Su6ppZQ/Nd1zKa7NZkK38qdo=;
+        b=gHnjEtACweKJQ9KxtQ461Zgr7NfGqheFDsRZTRRJFz6YFL8wuergs72JfrcnO77sdJ
+         /QS7UPm1Bg4iIc3NujE4sEMdigb/F/ubMD4/HZVOB5uT9H+42YKgm8+veKx3a8YgFdtN
+         4jggFFFOQRkLhxlPZm6C6OxcyQ1QbRzAyrzeiBX8bXkva7ITvJqNDVSY0Fae7CSC21vy
+         JP8PdkfrraxJdDi8nNQMD4jxIHdZTp8NmiB1F0c7GS7VpvR2GLV2CyfBpXw8hFKCMdY4
+         5RyngV4Optzg3+dljoTt0tZeJ5RhogtepGPUJ1LqLD44vd/D1CspHKleJVWmOwLZLop4
+         BhsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gbf8k5yJ19A5wSZeXVRUlCPqOm3eyldLxkULlc81AFU=;
-        b=Gdn5BNROwBRGXzYbNgQeOUWTyw4+/h4KTKsiTJ1pLPvCXyp5PF6x+t1kx1p8imQzSd
-         3SVR6w5wTrBnLMELlR4EpDb4LmyUwJ/GyJ5MU2YTlE1Qk+pz9Iv8q4Cv1NN94U+nwQZo
-         1W90k4QjA2VrRPaZCqnNM4149+BaH/raXqqu3f9mCU4F2PRREKZ/pHPbaMqgFYGKBycU
-         ByXEepqexhM489KZLCm/h+AyAA7bM5bhEuIhV/l0vKAg3fZrishAFGMlnQNsBrNO615W
-         s/0P+gf2GtwRphRj5iidv8YizVusTXJnFXtGoFBw1WwC/RyAEwiA9Sc2ntVs6SZQb1yf
-         hkGA==
-X-Gm-Message-State: APjAAAXmzDcZ3E+psG8CgOoFOSnHtY8F9GMC4wt2Jw08QtG55S5Ngv7l
-        7bjG6bxDuxum9QJThV4MBNUFuaY18Gbk5XIqpB6b0Q==
-X-Google-Smtp-Source: APXvYqwqvR2JGdbH6+gDLiMiftLZwqMCeGYmrtZEZ9p/3pwbALJms19uoBQteKErH11ha+LVboridg4Lm1ql8BrOASI=
-X-Received: by 2002:a05:651c:1049:: with SMTP id x9mr9963179ljm.233.1576253102887;
- Fri, 13 Dec 2019 08:05:02 -0800 (PST)
-MIME-Version: 1.0
-References: <CGME20191211145104eucas1p1ce04a26eebcd4c22d72f204e7ae0aa5a@eucas1p1.samsung.com>
- <20191211145054.24835-1-m.szyprowski@samsung.com>
-In-Reply-To: <20191211145054.24835-1-m.szyprowski@samsung.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 13 Dec 2019 17:04:51 +0100
-Message-ID: <CACRpkdbBBjXxftu1fw7H9N+hAe_MfkUPJErN6MPJ8Mxirh1w5A@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4 RESEND] USB3503: correct GPIOs polarity and update
- the driver
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-usb <linux-usb@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=HUgbRO2BhcAt34RLIr2Su6ppZQ/Nd1zKa7NZkK38qdo=;
+        b=i8hKxajTjMxSAODItWeKRUrbuDQXkdjNkwkbkZkTmfkNwfi9G33Kqc5rquh/mFpAwR
+         py5Q4w7J78nCsNUmGCy/oEpvNUwRrzFS6l5aTLiRcaT5lR1YrBZN3g7WTmFmevHJ8Cu+
+         lZKh0I7vNawShci/l03blwSRgSborehJPi5g0qtpIMb0HBhZ8ZAEs0GQ0rPxe9Vs1Wi1
+         K93o/AYWAE2eLIN0neHfmgFdyR3VzjiNOgmhBtMRvoZpoNu0UkRbtyG1HSWp+5hONjVx
+         S16DM5lNy5Yb3JUfQYuP55HdSxeX9A8rMCTWFTt2fe6sPFfzlnMlocAETznXqaaGbgDh
+         2Zaw==
+X-Gm-Message-State: APjAAAU2ma1G9QlDmJ5xnybgOLBs/9J1X2orCwxDFlOlSPU8t4lVQQO1
+        eboo52ItxVHDMQatHsYdOwg=
+X-Google-Smtp-Source: APXvYqzczN9kvUPQ7Hc2LxnRw9L6ohEd0G4hrwU0EL1lvwEgBvQanEfnjjXSSKWlr9BOfM41oALivA==
+X-Received: by 2002:a63:111e:: with SMTP id g30mr6840840pgl.251.1576346092717;
+        Sat, 14 Dec 2019 09:54:52 -0800 (PST)
+Received: from localhost ([2001:19f0:6001:12c8:5400:2ff:fe72:6403])
+        by smtp.gmail.com with ESMTPSA id j16sm16064250pfi.165.2019.12.14.09.54.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 14 Dec 2019 09:54:52 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     khilman@baylibre.com, leoyang.li@nxp.com, khalasa@piap.pl,
+        john@phrozen.org, matthias.bgg@gmail.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, kgene@kernel.org, krzk@kernel.org,
+        mripard@kernel.org, wens@csie.org, ssantosh@kernel.org,
+        jun.nie@linaro.org, shawnguo@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH 01/10] soc: sunxi: convert to devm_platform_ioremap_resource
+Date:   Sat, 14 Dec 2019 17:54:38 +0000
+Message-Id: <20191214175447.25482-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 3:51 PM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
+Use devm_platform_ioremap_resource() to simplify code.
 
-> Marek Szyprowski (3):
->   ARM: dts: exynos: Correct USB3503 GPIOs polarity
->   ARM: dts: qcom: Correct USB3503 GPIOs polarity
->   ARM: dts: sun8i: a83t: Correct USB3503 GPIOs polarity
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/soc/sunxi/sunxi_sram.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+diff --git a/drivers/soc/sunxi/sunxi_sram.c b/drivers/soc/sunxi/sunxi_sram.c
+index 1b0d50f36349..f73fbcc73f51 100644
+--- a/drivers/soc/sunxi/sunxi_sram.c
++++ b/drivers/soc/sunxi/sunxi_sram.c
+@@ -320,7 +320,6 @@ static struct regmap_config sunxi_sram_emac_clock_regmap = {
+ 
+ static int sunxi_sram_probe(struct platform_device *pdev)
+ {
+-	struct resource *res;
+ 	struct dentry *d;
+ 	struct regmap *emac_clock;
+ 	const struct sunxi_sramc_variant *variant;
+@@ -331,8 +330,7 @@ static int sunxi_sram_probe(struct platform_device *pdev)
+ 	if (!variant)
+ 		return -EINVAL;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	base = devm_ioremap_resource(&pdev->dev, res);
++	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+ 
+-- 
+2.17.1
 
-for all these three.
-
-Yours,
-Linus Walleij
