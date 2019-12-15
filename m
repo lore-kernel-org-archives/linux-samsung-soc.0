@@ -4,98 +4,86 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8678FC43603
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 15 Dec 2019 11:50:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC572C43603
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 15 Dec 2019 11:57:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B1642053B
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 15 Dec 2019 11:50:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87B0622B48
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 15 Dec 2019 11:57:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576410648;
-	bh=5WnJaA2pB81rlF30cK68l346QPHhyj2DUcLn2x16gBY=;
+	s=default; t=1576411053;
+	bh=dXNRUshaJSlqrNGldhEWNyYOku7yZOP3CnQOh1OnmBQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=jOlWG0Fl7DeEnqPTsW1Wb/C3B/NgyCF8eamFhjhlgFHlpzo86hDU6mLI8w6B1LMgz
-	 c5c1mcvqIUq29aAb41OGwQC2LGVimoLxNKj1HNNQsqbEixVQgz99FykqztUcfIU3cr
-	 P5JORzFdKEwltoWqY9oxfu2AzPl0v5CEYIBaUDrY=
+	b=nWGX0qNGuHWquCsO9Pmsz/OJLv5GAsqPkHQCZyteeNzvwwveDSI12OmBTav2YbpKd
+	 R/0BBDZP3i8DTIQorh6KGvmGdDiBHCTgaqCbcoweGcB/z47zc60Ozdy0YCJ4KYtoWd
+	 geSrHaZ3Kylb1Lkuwv7ZT95iUqT9JutjrK4UFKCk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726136AbfLOLup convert rfc822-to-8bit (ORCPT
+        id S1726099AbfLOL5d (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 15 Dec 2019 06:50:45 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:44794 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbfLOLup (ORCPT
+        Sun, 15 Dec 2019 06:57:33 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:42546 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726089AbfLOL5d (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 15 Dec 2019 06:50:45 -0500
-Received: by mail-ed1-f67.google.com with SMTP id cm12so2711030edb.11;
-        Sun, 15 Dec 2019 03:50:43 -0800 (PST)
+        Sun, 15 Dec 2019 06:57:33 -0500
+Received: by mail-ed1-f65.google.com with SMTP id e10so2723860edv.9;
+        Sun, 15 Dec 2019 03:57:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=VQb8AJk5LNTjc5T1l/6wnDNHTC2CJyoRZWm9i8TCC6Y=;
-        b=A0fe0YlK4Q7tH8msv7qbStmlJAgSVHaLyA5wWmFY4wDDzdrHTFZSOkJOjQaad8TbGK
-         JHaqHb3o+P1UFdJWfDWdT9Dp3jdOEk1wUu678ZLU55u0vM/Tx298fLBtvInjD9UbggAD
-         lWly1+sWanLAamCIdCwhlyF575Dgt+GugbEihslNuNIn+5pNwuHkWgBTXsJIvMjUYn7P
-         hTW3028KguKQKFiwQqhVsAQ+HPI4wTIL90feHseKR+g0UPlPeRMyT2bAQ3zN9xUA4sBn
-         TV9yzuQJhATJMMfgCzdzMpQE4kJPk/2Z5vNvitYGXhRYxupLZCX7NJ9J42X66gPSXlA4
-         65cg==
-X-Gm-Message-State: APjAAAUxWhQJEZPHI9s7cmUuoQEVpt3wrpy/K6ee6WYmaRI5HXPCt8C/
-        1VYd2eHkL1azlZP8AqXU70A=
-X-Google-Smtp-Source: APXvYqySGZN88GuNZI3q/4jIa46RYAeOm8r3e/4RoLEa9a1DPs6w4iZdHpCADlYueTiK1rOSy2zyGw==
-X-Received: by 2002:a17:906:229b:: with SMTP id p27mr27526719eja.21.1576410643077;
-        Sun, 15 Dec 2019 03:50:43 -0800 (PST)
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3bFRjA9UFM72dx5MZDZ0tLg6rOZz8LMmXjc51eyWHQw=;
+        b=LORjAGDMBD4G92L6A+18TwkKXPDsotX/LoXS9FsmfuEr2sfuGrrpxXJzR27mPZg4IH
+         I9t7+PXKJ6RrwYyNE2gr3BABRRtVZqxWhVGkW/mvI3uk5nhulJ2DyB3nR6LS8tO7fMhr
+         9xA/gsSp1MifN47pUhQA/4J946N0vTZ1VnU+jrotNSX0DRAaZwJUqNC0aVILC2jri8xe
+         g7mAIfTIXsl3F24wHWLlSFwtT94FtOhG0llkzZTyoIHcLFkFUQ6uL9QaNvwUDvmJoskt
+         JUjzW9o8T+xRZpgtcBxy2j6uRBFXgAKZmb6D6COZIRuS5t46FkN+yaQSE+u/zKK6yknz
+         Ob/A==
+X-Gm-Message-State: APjAAAUqPL1Vt+B4mEbBC94TcLvKAxJmU1u/es7/oRIar6lXrL+hnEeY
+        m1FlJGFB2BAo8CpocVN25NmOhfoe
+X-Google-Smtp-Source: APXvYqwZaqP3BPfUD1WWLgwtYw1XJJ7Zy4zkrjF1M4qRiNjNshTKEWnoyc7zscsZ5R0wuEWiJvnvIw==
+X-Received: by 2002:aa7:d306:: with SMTP id p6mr26042390edq.72.1576411050586;
+        Sun, 15 Dec 2019 03:57:30 -0800 (PST)
 Received: from kozik-lap ([194.230.155.234])
-        by smtp.googlemail.com with ESMTPSA id bo13sm1007730ejb.5.2019.12.15.03.50.41
+        by smtp.googlemail.com with ESMTPSA id l18sm663825edw.59.2019.12.15.03.57.28
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 15 Dec 2019 03:50:41 -0800 (PST)
-Date:   Sun, 15 Dec 2019 12:50:39 +0100
+        Sun, 15 Dec 2019 03:57:29 -0800 (PST)
+Date:   Sun, 15 Dec 2019 12:57:27 +0100
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Chen Zhou <chenzhou10@huawei.com>
-Subject: Re: [PATCH] pinctrl: samsung: Fix missing OF and GPIOLIB dependency
- on S3C24xx and S3C64xx
-Message-ID: <20191215115039.GA30973@kozik-lap>
-References: <1576221873-28738-1-git-send-email-krzk@kernel.org>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     khilman@baylibre.com, leoyang.li@nxp.com, khalasa@piap.pl,
+        john@phrozen.org, matthias.bgg@gmail.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, kgene@kernel.org, mripard@kernel.org,
+        wens@csie.org, ssantosh@kernel.org, jun.nie@linaro.org,
+        shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 02/10] soc: samsung: convert to
+ devm_platform_ioremap_resource
+Message-ID: <20191215115727.GB30973@kozik-lap>
+References: <20191214175447.25482-1-tiny.windzz@gmail.com>
+ <20191214175447.25482-2-tiny.windzz@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <1576221873-28738-1-git-send-email-krzk@kernel.org>
+In-Reply-To: <20191214175447.25482-2-tiny.windzz@gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 08:24:33AM +0100, Krzysztof Kozlowski wrote:
-> All Samsung pinctrl drivers select common part - PINCTRL_SAMSUNG which uses
-> both OF and GPIOLIB inside.  However only Exynos drivers depend on these,
-> therefore after enabling COMPILE_TEST, on x86_64 build of S3C64xx driver
-> failed:
+On Sat, Dec 14, 2019 at 05:54:39PM +0000, Yangtao Li wrote:
+> Use devm_platform_ioremap_resource() to simplify code.
 > 
->     drivers/pinctrl/samsung/pinctrl-samsung.c: In function ‘samsung_gpiolib_register’:
->     drivers/pinctrl/samsung/pinctrl-samsung.c:969:5: error: ‘struct gpio_chip’ has no member named ‘of_node’
->        gc->of_node = bank->of_node;
->          ^
-> 
-> Rework the dependencies so all Samsung drivers and common
-> PINCTRL_SAMSUNG part depend on OF_GPIO (which is default yes if GPIOLIB
-> and OF are enabled).
-> 
-> Reported-by: Chen Zhou <chenzhou10@huawei.com>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 > ---
->  drivers/pinctrl/samsung/Kconfig | 6 ++++--
+>  drivers/soc/samsung/exynos-pmu.c | 4 +---
 
-Applied.
+Thanks, applied.
 
 Best regards,
 Krzysztof
