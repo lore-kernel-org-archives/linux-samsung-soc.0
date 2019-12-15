@@ -2,112 +2,101 @@ Return-Path: <SRS0=GP7E=2F=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66627C3F68F
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 15 Dec 2019 10:48:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8678FC43603
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 15 Dec 2019 11:50:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CBCD24673
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 15 Dec 2019 10:48:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B1642053B
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 15 Dec 2019 11:50:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576406920;
-	bh=CJsSVHXB476Upc9lgt7guU2DBHksZsrLon30h4hEa9M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=hMc4sX/oqvQN2lhSoiU+3ZEoWeF4Y4ccjLTeqonl/giWgTpHpKmGYUpijI+mL1xPB
-	 Sd5TN52d89mLyzn8kGFkRlLU150jz1JlxTozbyIYCW7vg6RYSa1pzyLU4KnNt6eqwA
-	 5cpMYD0MWqwkjMxxwMnnLTeOVrYo3PIolUcl+Ejk=
+	s=default; t=1576410648;
+	bh=5WnJaA2pB81rlF30cK68l346QPHhyj2DUcLn2x16gBY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=jOlWG0Fl7DeEnqPTsW1Wb/C3B/NgyCF8eamFhjhlgFHlpzo86hDU6mLI8w6B1LMgz
+	 c5c1mcvqIUq29aAb41OGwQC2LGVimoLxNKj1HNNQsqbEixVQgz99FykqztUcfIU3cr
+	 P5JORzFdKEwltoWqY9oxfu2AzPl0v5CEYIBaUDrY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726101AbfLOKsg (ORCPT
+        id S1726136AbfLOLup convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 15 Dec 2019 05:48:36 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:33226 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726081AbfLOKsg (ORCPT
+        Sun, 15 Dec 2019 06:50:45 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:44794 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726130AbfLOLup (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 15 Dec 2019 05:48:36 -0500
-Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why)
-        by cheepnis.misterjones.org with esmtpsa (TLSv1.2:AES256-GCM-SHA384:256)
-        (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1igRRq-0007sB-2S; Sun, 15 Dec 2019 11:48:26 +0100
-Date:   Sun, 15 Dec 2019 10:48:24 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     Yangtao Li <tiny.windzz@gmail.com>
-Cc:     khilman@baylibre.com, leoyang.li@nxp.com, khalasa@piap.pl,
-        john@phrozen.org, matthias.bgg@gmail.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, kgene@kernel.org, krzk@kernel.org,
-        mripard@kernel.org, wens@csie.org, ssantosh@kernel.org,
-        jun.nie@linaro.org, shawnguo@kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 10/10] soc: qcom: convert to
- devm_platform_ioremap_resource
-Message-ID: <20191215104824.658889d3@why>
-In-Reply-To: <20191214175447.25482-10-tiny.windzz@gmail.com>
-References: <20191214175447.25482-1-tiny.windzz@gmail.com>
-        <20191214175447.25482-10-tiny.windzz@gmail.com>
-Organization: Approximate
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sun, 15 Dec 2019 06:50:45 -0500
+Received: by mail-ed1-f67.google.com with SMTP id cm12so2711030edb.11;
+        Sun, 15 Dec 2019 03:50:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=VQb8AJk5LNTjc5T1l/6wnDNHTC2CJyoRZWm9i8TCC6Y=;
+        b=A0fe0YlK4Q7tH8msv7qbStmlJAgSVHaLyA5wWmFY4wDDzdrHTFZSOkJOjQaad8TbGK
+         JHaqHb3o+P1UFdJWfDWdT9Dp3jdOEk1wUu678ZLU55u0vM/Tx298fLBtvInjD9UbggAD
+         lWly1+sWanLAamCIdCwhlyF575Dgt+GugbEihslNuNIn+5pNwuHkWgBTXsJIvMjUYn7P
+         hTW3028KguKQKFiwQqhVsAQ+HPI4wTIL90feHseKR+g0UPlPeRMyT2bAQ3zN9xUA4sBn
+         TV9yzuQJhATJMMfgCzdzMpQE4kJPk/2Z5vNvitYGXhRYxupLZCX7NJ9J42X66gPSXlA4
+         65cg==
+X-Gm-Message-State: APjAAAUxWhQJEZPHI9s7cmUuoQEVpt3wrpy/K6ee6WYmaRI5HXPCt8C/
+        1VYd2eHkL1azlZP8AqXU70A=
+X-Google-Smtp-Source: APXvYqySGZN88GuNZI3q/4jIa46RYAeOm8r3e/4RoLEa9a1DPs6w4iZdHpCADlYueTiK1rOSy2zyGw==
+X-Received: by 2002:a17:906:229b:: with SMTP id p27mr27526719eja.21.1576410643077;
+        Sun, 15 Dec 2019 03:50:43 -0800 (PST)
+Received: from kozik-lap ([194.230.155.234])
+        by smtp.googlemail.com with ESMTPSA id bo13sm1007730ejb.5.2019.12.15.03.50.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 15 Dec 2019 03:50:41 -0800 (PST)
+Date:   Sun, 15 Dec 2019 12:50:39 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Chen Zhou <chenzhou10@huawei.com>
+Subject: Re: [PATCH] pinctrl: samsung: Fix missing OF and GPIOLIB dependency
+ on S3C24xx and S3C64xx
+Message-ID: <20191215115039.GA30973@kozik-lap>
+References: <1576221873-28738-1-git-send-email-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 62.31.163.78
-X-SA-Exim-Rcpt-To: tiny.windzz@gmail.com, khilman@baylibre.com, leoyang.li@nxp.com, khalasa@piap.pl, john@phrozen.org, matthias.bgg@gmail.com, agross@kernel.org, bjorn.andersson@linaro.org, kgene@kernel.org, krzk@kernel.org, mripard@kernel.org, wens@csie.org, ssantosh@kernel.org, jun.nie@linaro.org, shawnguo@kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <1576221873-28738-1-git-send-email-krzk@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, 14 Dec 2019 17:54:47 +0000
-Yangtao Li <tiny.windzz@gmail.com> wrote:
-
-> Use devm_platform_ioremap_resource() to simplify code.
+On Fri, Dec 13, 2019 at 08:24:33AM +0100, Krzysztof Kozlowski wrote:
+> All Samsung pinctrl drivers select common part - PINCTRL_SAMSUNG which uses
+> both OF and GPIOLIB inside.  However only Exynos drivers depend on these,
+> therefore after enabling COMPILE_TEST, on x86_64 build of S3C64xx driver
+> failed:
 > 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+>     drivers/pinctrl/samsung/pinctrl-samsung.c: In function ‘samsung_gpiolib_register’:
+>     drivers/pinctrl/samsung/pinctrl-samsung.c:969:5: error: ‘struct gpio_chip’ has no member named ‘of_node’
+>        gc->of_node = bank->of_node;
+>          ^
+> 
+> Rework the dependencies so all Samsung drivers and common
+> PINCTRL_SAMSUNG part depend on OF_GPIO (which is default yes if GPIOLIB
+> and OF are enabled).
+> 
+> Reported-by: Chen Zhou <chenzhou10@huawei.com>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
->  drivers/soc/qcom/llcc-qcom.c    | 7 +------
->  drivers/soc/qcom/qcom-geni-se.c | 4 +---
->  drivers/soc/qcom/qcom_aoss.c    | 4 +---
->  drivers/soc/qcom/qcom_gsbi.c    | 5 +----
->  drivers/soc/qcom/spm.c          | 4 +---
->  5 files changed, 5 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
-> index 429b5a60a1ba..99e19df76889 100644
-> --- a/drivers/soc/qcom/llcc-qcom.c
-> +++ b/drivers/soc/qcom/llcc-qcom.c
-> @@ -387,7 +387,6 @@ static int qcom_llcc_remove(struct platform_device *pdev)
->  static struct regmap *qcom_llcc_init_mmio(struct platform_device *pdev,
->  		const char *name)
->  {
-> -	struct resource *res;
->  	void __iomem *base;
->  	struct regmap_config llcc_regmap_config = {
->  		.reg_bits = 32,
-> @@ -396,11 +395,7 @@ static struct regmap *qcom_llcc_init_mmio(struct platform_device *pdev,
->  		.fast_io = true,
->  	};
->  
-> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, name);
-> -	if (!res)
-> -		return ERR_PTR(-ENODEV);
-> -
-> -	base = devm_ioremap_resource(&pdev->dev, res);
-> +	base = devm_platform_ioremap_resource(pdev, 0);
+>  drivers/pinctrl/samsung/Kconfig | 6 ++++--
 
-What guarantees do you have that entry 0 matches name?
+Applied.
 
-I find these changes pointless: they don't add much to the readability
-or maintainability of the code, and instead introduce creative bugs.
+Best regards,
+Krzysztof
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
