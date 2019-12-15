@@ -1,113 +1,113 @@
-Return-Path: <SRS0=ECku=2E=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=GP7E=2F=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D5FC43603
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 14 Dec 2019 17:55:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66627C3F68F
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 15 Dec 2019 10:48:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C72E214AF
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 14 Dec 2019 17:55:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="etYuhZFI"
+	by mail.kernel.org (Postfix) with ESMTP id 3CBCD24673
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 15 Dec 2019 10:48:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1576406920;
+	bh=CJsSVHXB476Upc9lgt7guU2DBHksZsrLon30h4hEa9M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=hMc4sX/oqvQN2lhSoiU+3ZEoWeF4Y4ccjLTeqonl/giWgTpHpKmGYUpijI+mL1xPB
+	 Sd5TN52d89mLyzn8kGFkRlLU150jz1JlxTozbyIYCW7vg6RYSa1pzyLU4KnNt6eqwA
+	 5cpMYD0MWqwkjMxxwMnnLTeOVrYo3PIolUcl+Ejk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbfLNRzC (ORCPT
+        id S1726101AbfLOKsg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 14 Dec 2019 12:55:02 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:37242 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725943AbfLNRzC (ORCPT
+        Sun, 15 Dec 2019 05:48:36 -0500
+Received: from inca-roads.misterjones.org ([213.251.177.50]:33226 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726081AbfLOKsg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 14 Dec 2019 12:55:02 -0500
-Received: by mail-pl1-f196.google.com with SMTP id c23so2624696plz.4;
-        Sat, 14 Dec 2019 09:55:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+BU/Ff9gTll4l1H4cHIf9pN8etRhbZ4P9b/IJDTytGQ=;
-        b=etYuhZFIpCXV1kkHjldlFQSwc0TrxbWNSKhQinSIxVhNYBw8CEktZpcQFrLkDDF5K5
-         +Hsam8gZ8taAgwKYcXtKae2DICNa/JmCyH3kvS7XB0zTRIY0TJHSeG68zdGm045/AUbR
-         1Z1XSJoe2L4CqIeUX/+NIBoVqUBpAjYl91Yp/GeG2BvYdHn3A+WyBoXkLvsfKCYYcnbm
-         JaTVP6TRg7evuPWJApVMdGiJG7Rfl3BAD4FOd0aTybSzCnxYWajApbMeCYieL/hV6qvf
-         k6jIqlBdfGrtylYtS7K0+d2ygq+dZJ9r7ke8j7C2GWhYAbp2yLZxuLkpvIQusP4V85Qp
-         ZO+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=+BU/Ff9gTll4l1H4cHIf9pN8etRhbZ4P9b/IJDTytGQ=;
-        b=AdGje3babbpD7Xtr8sQQGQtbotfGsT20Pj22tjbuUmjpk+77861Sxmdjf1TN7quFxd
-         5EWbP89H90osXBOU49Bng5lreUGYKYyRymq2qr2mvVlEUB4pSv5FggklVj3U66aOu3Bq
-         inghQYpH3UPg++lx3J1DUpqYg/xcJDQ/Pk4Oj+soQRMDK4qa2ZNwJAqsTO8VQp5yJOLt
-         4DHCHFD5U8hEKhw1rN3pkTs6x3DEGGB6yJSZQfCYFXb8M+WpZ2HJwRr+jzDNUp0UV+oU
-         oqJWI7tDZ0l3bPMDCHnj4Cs/IomsSPMiLHW2r3b54oTO11tSekySzgltGClrQ1MHiXQg
-         I6pA==
-X-Gm-Message-State: APjAAAXWH4eJUGyiW94U6JnURfeVOdwdtKIZHPW9s7J/Dqtvur2IHGtL
-        ALCmaqiP8Tp3xPG1gNzqdv8=
-X-Google-Smtp-Source: APXvYqzDtz2PbMdoWI7FnmJ/zsXx+7KES2ydK86NxuECS3KFBEaYhRKYIxzKO0i61f2CWAU0CDUJ4g==
-X-Received: by 2002:a17:902:9048:: with SMTP id w8mr6142048plz.294.1576346101451;
-        Sat, 14 Dec 2019 09:55:01 -0800 (PST)
-Received: from localhost ([2001:19f0:6001:12c8:5400:2ff:fe72:6403])
-        by smtp.gmail.com with ESMTPSA id d22sm16263997pfo.187.2019.12.14.09.55.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 14 Dec 2019 09:55:01 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     khilman@baylibre.com, leoyang.li@nxp.com, khalasa@piap.pl,
+        Sun, 15 Dec 2019 05:48:36 -0500
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why)
+        by cheepnis.misterjones.org with esmtpsa (TLSv1.2:AES256-GCM-SHA384:256)
+        (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1igRRq-0007sB-2S; Sun, 15 Dec 2019 11:48:26 +0100
+Date:   Sun, 15 Dec 2019 10:48:24 +0000
+From:   Marc Zyngier <maz@kernel.org>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     khilman@baylibre.com, leoyang.li@nxp.com, khalasa@piap.pl,
         john@phrozen.org, matthias.bgg@gmail.com, agross@kernel.org,
         bjorn.andersson@linaro.org, kgene@kernel.org, krzk@kernel.org,
         mripard@kernel.org, wens@csie.org, ssantosh@kernel.org,
-        jun.nie@linaro.org, shawnguo@kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 04/10] soc: zte: convert to devm_platform_ioremap_resource
-Date:   Sat, 14 Dec 2019 17:54:41 +0000
-Message-Id: <20191214175447.25482-4-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191214175447.25482-1-tiny.windzz@gmail.com>
+        jun.nie@linaro.org, shawnguo@kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 10/10] soc: qcom: convert to
+ devm_platform_ioremap_resource
+Message-ID: <20191215104824.658889d3@why>
+In-Reply-To: <20191214175447.25482-10-tiny.windzz@gmail.com>
 References: <20191214175447.25482-1-tiny.windzz@gmail.com>
+        <20191214175447.25482-10-tiny.windzz@gmail.com>
+Organization: Approximate
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: tiny.windzz@gmail.com, khilman@baylibre.com, leoyang.li@nxp.com, khalasa@piap.pl, john@phrozen.org, matthias.bgg@gmail.com, agross@kernel.org, bjorn.andersson@linaro.org, kgene@kernel.org, krzk@kernel.org, mripard@kernel.org, wens@csie.org, ssantosh@kernel.org, jun.nie@linaro.org, shawnguo@kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify code.
+On Sat, 14 Dec 2019 17:54:47 +0000
+Yangtao Li <tiny.windzz@gmail.com> wrote:
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/soc/zte/zx2967_pm_domains.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+> Use devm_platform_ioremap_resource() to simplify code.
+> 
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  drivers/soc/qcom/llcc-qcom.c    | 7 +------
+>  drivers/soc/qcom/qcom-geni-se.c | 4 +---
+>  drivers/soc/qcom/qcom_aoss.c    | 4 +---
+>  drivers/soc/qcom/qcom_gsbi.c    | 5 +----
+>  drivers/soc/qcom/spm.c          | 4 +---
+>  5 files changed, 5 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
+> index 429b5a60a1ba..99e19df76889 100644
+> --- a/drivers/soc/qcom/llcc-qcom.c
+> +++ b/drivers/soc/qcom/llcc-qcom.c
+> @@ -387,7 +387,6 @@ static int qcom_llcc_remove(struct platform_device *pdev)
+>  static struct regmap *qcom_llcc_init_mmio(struct platform_device *pdev,
+>  		const char *name)
+>  {
+> -	struct resource *res;
+>  	void __iomem *base;
+>  	struct regmap_config llcc_regmap_config = {
+>  		.reg_bits = 32,
+> @@ -396,11 +395,7 @@ static struct regmap *qcom_llcc_init_mmio(struct platform_device *pdev,
+>  		.fast_io = true,
+>  	};
+>  
+> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, name);
+> -	if (!res)
+> -		return ERR_PTR(-ENODEV);
+> -
+> -	base = devm_ioremap_resource(&pdev->dev, res);
+> +	base = devm_platform_ioremap_resource(pdev, 0);
 
-diff --git a/drivers/soc/zte/zx2967_pm_domains.c b/drivers/soc/zte/zx2967_pm_domains.c
-index a4503e31b616..9f2a274d2759 100644
---- a/drivers/soc/zte/zx2967_pm_domains.c
-+++ b/drivers/soc/zte/zx2967_pm_domains.c
-@@ -113,7 +113,6 @@ int zx2967_pd_probe(struct platform_device *pdev,
- 		    int domain_num)
- {
- 	struct genpd_onecell_data *genpd_data;
--	struct resource *res;
- 	int i;
- 
- 	genpd_data = devm_kzalloc(&pdev->dev, sizeof(*genpd_data), GFP_KERNEL);
-@@ -123,8 +122,7 @@ int zx2967_pd_probe(struct platform_device *pdev,
- 	genpd_data->domains = zx_pm_domains;
- 	genpd_data->num_domains = domain_num;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pcubase = devm_ioremap_resource(&pdev->dev, res);
-+	pcubase = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pcubase))
- 		return PTR_ERR(pcubase);
- 
+What guarantees do you have that entry 0 matches name?
+
+I find these changes pointless: they don't add much to the readability
+or maintainability of the code, and instead introduce creative bugs.
+
+	M.
 -- 
-2.17.1
-
+Jazz is not dead. It just smells funny...
