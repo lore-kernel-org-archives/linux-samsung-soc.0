@@ -2,220 +2,273 @@ Return-Path: <SRS0=bM14=2H=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 342BFC43603
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 17 Dec 2019 14:18:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F32BC43603
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 17 Dec 2019 14:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E769F2176D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 17 Dec 2019 14:18:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5365A24672
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 17 Dec 2019 14:33:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="p4J54AiH"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="VZf0Iayo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728656AbfLQOSn (ORCPT
+        id S1727963AbfLQOd6 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 17 Dec 2019 09:18:43 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:51860 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728546AbfLQOSn (ORCPT
+        Tue, 17 Dec 2019 09:33:58 -0500
+Received: from mail-eopbgr70050.outbound.protection.outlook.com ([40.107.7.50]:10086
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727029AbfLQOd6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 17 Dec 2019 09:18:43 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191217141840euoutp01546529031dad57c25498be9deb5c9c2a~hLlzQ_YNi0398203982euoutp019
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Dec 2019 14:18:40 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191217141840euoutp01546529031dad57c25498be9deb5c9c2a~hLlzQ_YNi0398203982euoutp019
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1576592320;
-        bh=1s1Slf9ccB+OcGbIvFpqDKWcfakW9qQvQDw6GdUOUig=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=p4J54AiHoIDbKvzZxwd56Q7SRF0kFYTs4LjS4vqNiznb2P+tDlTdXLwBEYstUru1N
-         N6Sr76y0k/LMLf/uI7voRLU+VLesTW65T1VyAR5Lepy1h5wT2HS5mDCbcdizdtFvk1
-         lnG1Rp8RAj+yc3wRBblLn4y6Xz8SRKAbCLA3U8Ik=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191217141840eucas1p1a88133f0eb43637a68feeb7ce74146a0~hLly5Syug0596705967eucas1p12;
-        Tue, 17 Dec 2019 14:18:40 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id EC.7F.60698.0C3E8FD5; Tue, 17
-        Dec 2019 14:18:40 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20191217141839eucas1p1726ad57cc8389bc3aadf0b8e32e99d5a~hLlyiHekh0598705987eucas1p1D;
-        Tue, 17 Dec 2019 14:18:39 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191217141839eusmtrp129f474eee400c77e400d90fd5d159170~hLlyhgAw_3246532465eusmtrp1C;
-        Tue, 17 Dec 2019 14:18:39 +0000 (GMT)
-X-AuditID: cbfec7f5-a29ff7000001ed1a-00-5df8e3c0ec19
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 4A.9F.08375.FB3E8FD5; Tue, 17
-        Dec 2019 14:18:39 +0000 (GMT)
-Received: from [106.120.51.15] (unknown [106.120.51.15]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191217141839eusmtip110c702f147eac744cfc35dc17202ef5c~hLlyFnJvY2896128961eusmtip1L;
-        Tue, 17 Dec 2019 14:18:39 +0000 (GMT)
-Subject: Re: [alsa-devel] [PATCH v2] ASoC: max98090: save and restore SHDN
- when changing sensitive registers
-To:     Tzung-Bi Shih <tzungbi@google.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        ALSA development <alsa-devel@alsa-project.org>,
-        Dylan Reid <dgreid@google.com>,
-        Jimmy Cheng-Yi Chiang <cychiang@google.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <901df54d-96ad-b25a-fc0d-5901076f6c09@samsung.com>
-Date:   Tue, 17 Dec 2019 15:18:38 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
-        Thunderbird/60.9.1
-MIME-Version: 1.0
-In-Reply-To: <CA+Px+wXPa_cwdZUQfCx4jAhhj4Q9b7bNABUGazLKOJ7U5ae-mA@mail.gmail.com>
-Content-Transfer-Encoding: 7bit
+        Tue, 17 Dec 2019 09:33:58 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iAFNgzKIJoRvNuhTqtN+AEnIfYt3BaHIb1xlz63RafhKFB2Py6AkQXj/+SbW/pxo6Q+8rGUAkhEB+kRuRewuw+3d17s2pyGE28rt+vJ5FNq1D5rIlJh9aiduIXfPI/R1rEicjACSg7qaBvc4Am3WlM2epSseZPZc3BsT0CkcHUnCyFoM4GpsiwXmRfOQld1dFZurCwg2kJ60O9IbgOP/MOfe0l92y7YIJEu2BqlBKSA1iFg+TJzSqBwLmCbLRvmQO1gRg0G07bnQktg11SJABmQGz8zYW/NhB8YvUyJT0YXkrpticDkElEFy1C80f1YgC+Vb5tAvwkp8vkkDhV347Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=a67BXvFyL5lSprSXzZpMAHmyDRdW/sb9BrE3UvsM554=;
+ b=m8zkFz++YpeGQyTjQQPJqRfzZGfJbPM+sVDcbR2yRbsWQgBIfAMVEWmrFioHaPDpPMjINNOfJ/x9eifLUqpSDypc/wXlykBqumV4i3kcPUKD+hsjDiBWbfyffw2hKlL4mfXlKM2V9ekZNWoqa059342EOREogCyipKX/owCec5r2kKi65ysSHvhcMnX8uQ+WfA92bDuuSpf9njNcHBejpE1wnyHvzXQrZGgv++QZZVp69EQQT/2NmQXAkI/uC9zwNRNMqKAstjhUDMAuTek/u1T/q40mctWEZSb1VCCZ8h6fdk4pmIMZdFa0tV23puBpyZvzIWPRKGzjcpUTnQ+hyw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=a67BXvFyL5lSprSXzZpMAHmyDRdW/sb9BrE3UvsM554=;
+ b=VZf0Iayo2fYacEUCid43vgViRZXQiK8CcDk2PbIhvsAGmu4PPoTG8Hfg7vvU7CPbpBVuTzMUJ4thqz+m+rWw0LCWrRb6ziP2aHyDZ9NGUZdX5GCRvoCVWIdPoSamG6meOZpoTlt3AoZWIxdarLULrVPhxApFPDoSDj4JjMSAkEo=
+Received: from VI1PR04MB7023.eurprd04.prod.outlook.com (10.186.159.144) by
+ VI1PR04MB5359.eurprd04.prod.outlook.com (20.178.122.92) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2538.17; Tue, 17 Dec 2019 14:33:52 +0000
+Received: from VI1PR04MB7023.eurprd04.prod.outlook.com
+ ([fe80::2c49:44c8:2c02:68b1]) by VI1PR04MB7023.eurprd04.prod.outlook.com
+ ([fe80::2c49:44c8:2c02:68b1%5]) with mapi id 15.20.2538.019; Tue, 17 Dec 2019
+ 14:33:52 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>
+CC:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "heiko@sntech.de" <heiko@sntech.de>,
+        "lukasz.luba@arm.com" <lukasz.luba@arm.com>,
+        "a.swigon@samsung.com" <a.swigon@samsung.com>,
+        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
+        "kgene@kernel.org" <kgene@kernel.org>,
+        "myungjoo.ham@samsung.com" <myungjoo.ham@samsung.com>,
+        "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-rockchip@lists.infradead.org" 
+        <linux-rockchip@lists.infradead.org>
+Subject: Re: [PATCH 2/9] PM / devfreq: Remove devfreq_get_devfreq_by_phandle
+ function
+Thread-Topic: [PATCH 2/9] PM / devfreq: Remove devfreq_get_devfreq_by_phandle
+ function
+Thread-Index: AQHVtJ3+QgbB6+oDD0SBl418fSrNCQ==
+Date:   Tue, 17 Dec 2019 14:33:52 +0000
+Message-ID: <VI1PR04MB70231FA16F12ACA3A3C01772EE500@VI1PR04MB7023.eurprd04.prod.outlook.com>
+References: <20191217055738.28445-1-cw00.choi@samsung.com>
+ <CGME20191217055105epcas1p2d2930402a559e381a7854f515a683d15@epcas1p2.samsung.com>
+ <20191217055738.28445-3-cw00.choi@samsung.com>
+Accept-Language: en-US
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHe3e2s+No9rpZPpiZDBUSvGHFoUSS+jDoQxeiD9XQlQcV3ZTN
-        aXYh75clJZWpy1C8pCznZV6x1HTlCsVblpeYJYqRuL5skVJazqPlt9/zf/4vz/8PL0WIDDx3
-        KlaZxKiU8ngJKeC2D6wO+7+aX5EF1deI6Ymxfg5dNLdA0m9N6QSdW5qH6JGRJj5dMtLDoU3L
-        uTz65dgS/wQlbbJlkNIKo0Zq1OeT0nuteiS1GT3P8i4JQqOY+NhkRhUYFimIqe6t4iVOeV23
-        t82gNNTtrkVOFODDMFBuIRwswnUIRttus2xHMNQVrkWCDbYhWO40ou0H1koLyS5qEVQtNvPZ
-        wYqg6XX+pkuMldBX/Zx0sCv2hczBF4TDROAWDuSUmfiOBYmDQWvVbpqEOAwmG3s3dS72AX3x
-        KkeLKGovlkFebQxrcYF3pQtcBzvhc/DdYtlkAh+EDmsZwbIbzCyUc9ik7Xx4VhPJ8ilomW3m
-        syyGJXPrFnvA4MMCriMb4EwEc8MGPjsUIHifUbLV+TiYzGM8RyACH4LGrkBWDocnszbCIQN2
-        himrC5vBGR60F2/JQsjLEbFuX9CZG/6d7RsdJwqRRLejmW5HG92ONrr/dysQV4/cGI1aEc2o
-        Q5RMSoBarlBrlNEB1xIURrTxiQbXzT86Uc/vq/0IU0iyWwhJP2UinjxZnaroR0AREldhp9eG
-        JIySp95gVAkRKk08o+5H+ymuxE0YUvlNJsLR8iQmjmESGdX2lkM5uaehGvIA2RGQ/uuMz6Ns
-        v+h1j8qL3dMrTz8US73nPadU/uLzcW3klZNrtyyfjzmlLNIG2YXQ8aLH+qChrPrquzfve5OV
-        n45ofOs+eoYK9btW9d531kx7skylpyO+FFmsDc6q3prpr9bsN0c7JjkT9pL6fbjlT86aIXNw
-        btheeLl8OlvCVcfIg/0IlVr+F8wo0XFAAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsVy+t/xu7r7H/+INdj639jiysVDTBZTHz5h
-        szhxuJHZon1mB6PF+fMb2C1mnN/HZHH4TTurxZ6Lr9gdODw2fG5i81iwqdRj06pONo++LasY
-        PT5vkgtgjdKzKcovLUlVyMgvLrFVija0MNIztLTQMzKx1DM0No+1MjJV0rezSUnNySxLLdK3
-        S9DLWLJ/MWvBDYWKL1tvMTYw7pXqYuTkkBAwkXi76C5bFyMXh5DAUkaJWw/b2SESMhInpzWw
-        QtjCEn+udUEVvWaU+N+3jREkISyQJ3FwyWo2EFtEQE2i+fRuZhCbWWArk0TLLz+Ihg4miZW7
-        XrGAJNgEDCW63naBNfAK2ElcX78fbBuLgKrEquk/mUBsUYFYie8rPzFC1AhKnJz5BKyXUyBQ
-        4t3duywQC8wk5m1+CLVMXmL72zlQtrjErSfzmSYwCs1C0j4LScssJC2zkLQsYGRZxSiSWlqc
-        m55bbKhXnJhbXJqXrpecn7uJERh/24793LyD8dLG4EOMAhyMSjy8EiXfY4VYE8uKK3MPMUpw
-        MCuJ8O5QAArxpiRWVqUW5ccXleakFh9iNAV6biKzlGhyPjA15JXEG5oamltYGpobmxubWSiJ
-        83YIHIwREkhPLEnNTk0tSC2C6WPi4JRqYLRYu+9d2SuOV1++GPiUPtSS4hd5NldIsfXAatEn
-        n7b0Mug//dvyQPHYl+2lr3ptf3Gv8vJe4PM9bflR/pSFi558PnF99tPSxuTXvO9+Gaq3/y45
-        Ytde+6lZNu16436pW8bJ96447Tm2Xc9w6bGfqz7P5X7EZZL/sVm3s8ao8aL87ded++Zw7olS
-        YinOSDTUYi4qTgQAvklEZtUCAAA=
-X-CMS-MailID: 20191217141839eucas1p1726ad57cc8389bc3aadf0b8e32e99d5a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20191128152110epcas3p2b205b4b55f6d8bfac42fcb8faaade93c
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20191128152110epcas3p2b205b4b55f6d8bfac42fcb8faaade93c
-References: <CGME20191128152110epcas3p2b205b4b55f6d8bfac42fcb8faaade93c@epcas3p2.samsung.com>
-        <20191128151908.180871-1-tzungbi@google.com>
-        <8aceb9ec-aa6e-1fa4-cee9-e22084c141e8@samsung.com>
-        <CA+Px+wXPa_cwdZUQfCx4jAhhj4Q9b7bNABUGazLKOJ7U5ae-mA@mail.gmail.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [89.37.124.34]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 87c4335f-9303-4162-ffab-08d782fe2352
+x-ms-traffictypediagnostic: VI1PR04MB5359:
+x-microsoft-antispam-prvs: <VI1PR04MB53598C0A2E09F242C3EBE713EE500@VI1PR04MB5359.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2958;
+x-forefront-prvs: 02543CD7CD
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(346002)(396003)(136003)(366004)(39860400002)(199004)(189003)(8676002)(478600001)(6506007)(53546011)(86362001)(52536014)(5660300002)(186003)(8936002)(4326008)(81156014)(91956017)(55016002)(316002)(7416002)(76116006)(54906003)(110136005)(66946007)(66446008)(9686003)(64756008)(26005)(66556008)(66476007)(2906002)(44832011)(33656002)(7696005)(71200400001)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5359;H:VI1PR04MB7023.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: kaGmMq+qiqRfPVQdn72HkdkScAhoAYVLa3DcRyr26+4wclZT/udrnlICDOwuJOQqkqtzG7CjIGdL/xd4wPPMoFdH+kPvaR6QCkX5ya+reIsDyD3Fr9YjVgnuxlgCNu8+YByclMIf9eGhjMDVvwtFuLY3BdryN/2Nasdawn81ZRyegeSJptP0puza1I0c2bTUPcear6VZwEYt5jfwIkrENCrxdyav2YCA7IXzFzZJ3ji6XZi5r7inpnSAlEMZt2Wsg0gUBwmyMI849UyT2j9n3j83CsXwCj9tJEe6gKms8JtmhbV96xaOp2u44cwVSyQ6lS89E8LxK8ogXmrnv5dUN/LfcLWnZlkFAq21h1IKutnIWV7PQwS9MrvDz/YCO+GRINmssKz97y/Pfub4QksBK+fBpIbpuUDEOHjUr7gTmVM9VAlw7g/kFvh9OEKZ3Q+V
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 87c4335f-9303-4162-ffab-08d782fe2352
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Dec 2019 14:33:52.0428
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: hD8RERiaMu7LEB27PHVR24KtbWvJDBWmUGf0gwwyfvvy1uHj12fk8lTfZXyEPD8VpnL3ycjOkskGVRqsYz35yQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5359
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi All,
-
-On 12.12.2019 19:05, Tzung-Bi Shih wrote:
-> On Thu, Dec 12, 2019 at 10:09 PM Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
->> -> #1 (&card->controls_rwsem){++++}:
->>          snd_ctl_add_replace+0x3c/0x84
->>          dapm_create_or_share_kcontrol+0x24c/0x2e0
->>          snd_soc_dapm_new_widgets+0x308/0x594
->>          snd_soc_bind_card+0x80c/0xac8
->>          devm_snd_soc_register_card+0x34/0x6c
->>          asoc_simple_probe+0x244/0x4a0
->>          platform_drv_probe+0x6c/0xa4
->>          really_probe+0x200/0x490
->>          driver_probe_device+0x78/0x1f8
->>          bus_for_each_drv+0x74/0xb8
->>          __device_attach+0xd4/0x16c
->>          bus_probe_device+0x88/0x90
->>          deferred_probe_work_func+0x3c/0xd0
->>          process_one_work+0x22c/0x7c4
->>          worker_thread+0x44/0x524
->>          kthread+0x130/0x164
->>          ret_from_fork+0x14/0x20
->>          0x0
-> A key observation here is: the card registration got deferred.
-
-Right. The deferred probe is caused by missing regulator on the first try.
-
->> -> #0 (&card->dapm_mutex){+.+.}:
->>          lock_acquire+0xe8/0x270
->>          __mutex_lock+0x9c/0xb18
->>          mutex_lock_nested+0x1c/0x24
->>          max98090_shdn_save+0x1c/0x28
->>          max98090_put_enum_double+0x20/0x40
->>          snd_ctl_ioctl+0x190/0xbb8
->>          do_vfs_ioctl+0xb0/0xab0
->>          ksys_ioctl+0x34/0x5c
->>          ret_fast_syscall+0x0/0x28
->>          0xbe9094dc
-> And this is an ioctl( ) on a control (e.g. controlC0).
->
-> I have no enough resources to test and trace the code temporarily.
-> But is it possible:
-> - snd_card_new( ) succeed in snd_soc_bind_card( ), so that userspace
-> can see the control
-> - code in later snd_soc_bind_card( ) decided to defer the probe
-> - soc_cleanup_card_resources( ) may forget to clean the control?  (not
-> sure about this)
-> Then, when the card is instantiating next time, some userspace program
-> tries to ioctl( ) to get the deadlock possibility and the NULL
-> dereference.
-
-I've tried to debug this issue, but without much progress.
-
-Here is what I've noticed:
-
-1. This NULL ptr dereference happens on snd_ctl_elem_write(), with a 
-valid (at least previously registered) kcontrol object.
-
-2. The kcontrol ->put method is routed to 
-max98090_dapm_put_enum_double(), in which the function 
-snd_soc_kcontrol_component() returns random/buggy component pointer, 
-what then causes the NULL ptr dereference.
-
-3. The component object has been registered via the following function call:
-
-(snd_ctl_add) from [<c0829030>] (dapm_create_or_share_kcontrol+0x24c/0x2e0)
-(dapm_create_or_share_kcontrol) from [<c08293cc>] 
-(snd_soc_dapm_new_widgets+0x308/0x594)
-(snd_soc_dapm_new_widgets) from [<c0820a64>] (snd_soc_bind_card+0x80c/0xac8)
-(snd_soc_bind_card) from [<c083217c>] (devm_snd_soc_register_card+0x34/0x6c)
-(devm_snd_soc_register_card) from [<c084772c>] 
-(odroid_audio_probe+0x288/0x34c)
-(odroid_audio_probe) from [<c05e2b68>] (platform_drv_probe+0x6c/0xa4)
-(platform_drv_probe) from [<c05e02f0>] (really_probe+0x200/0x490)
-(really_probe) from [<c05e0754>] (driver_probe_device+0x78/0x1f8)
-(driver_probe_device) from [<c05de1fc>] (bus_for_each_drv+0x74/0xb8)
-(bus_for_each_drv) from [<c05e0050>] (__device_attach+0xd4/0x16c)
-(__device_attach) from [<c05df1c0>] (bus_probe_device+0x88/0x90)
-(bus_probe_device) from [<c05df6d8>] (deferred_probe_work_func+0x3c/0xd0)
-(deferred_probe_work_func) from [<c0149824>] (process_one_work+0x22c/0x7c4)
-(process_one_work) from [<c0149e00>] (worker_thread+0x44/0x524)
-(worker_thread) from [<c0150dbc>] (kthread+0x130/0x164)
-(kthread) from [<c01010b4>] (ret_from_fork+0x14/0x20)
-
-4. kcontrol->id.name during the registration is "LBENL Mux".
-
-5. It looks that the max98090 related kcontrols are registered in the 
-system only once, so it doesn't look like an issue with stale object 
-from the previous probe() try.
-
-I hope that the above observations helps a bit. The ASoC framework is so 
-complex, that I've never ever tried to learn its basic concepts.
-
-Best regards
-
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+On 17.12.2019 07:51, Chanwoo Choi wrote:=0A=
+> Previously, devfreq core support 'devfreq' property in order to get=0A=
+> the devfreq device by phandle. But, 'devfreq' property name is not proper=
+=0A=
+> on devicetree binding because this name doesn't mean the any h/w attribut=
+e.=0A=
+> =0A=
+> The devfreq core hand over the right to decide the property name=0A=
+> for getting the devfreq device on devicetree. Each devfreq driver=0A=
+> will decide the property name on devicetree binding and then get=0A=
+> the devfreq device by using devfreq_get_devfreq_by_node().=0A=
+> =0A=
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>=0A=
+> ---=0A=
+>   drivers/devfreq/devfreq.c    | 35 -----------------------------------=
+=0A=
+>   drivers/devfreq/exynos-bus.c | 14 ++++++++++++--=0A=
+>   include/linux/devfreq.h      |  8 --------=0A=
+>   3 files changed, 12 insertions(+), 45 deletions(-)=0A=
+> =0A=
+> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c=0A=
+> index cb8ca81c8973..c3d3c7c802a0 100644=0A=
+> --- a/drivers/devfreq/devfreq.c=0A=
+> +++ b/drivers/devfreq/devfreq.c=0A=
+> @@ -991,48 +991,13 @@ struct devfreq *devfreq_get_devfreq_by_node(struct =
+device_node *node)=0A=
+>   =0A=
+>   	return ERR_PTR(-ENODEV);=0A=
+>   }=0A=
+> -=0A=
+> -/*=0A=
+> - * devfreq_get_devfreq_by_phandle - Get the devfreq device from devicetr=
+ee=0A=
+> - * @dev - instance to the given device=0A=
+> - * @index - index into list of devfreq=0A=
+> - *=0A=
+> - * return the instance of devfreq device=0A=
+> - */=0A=
+> -struct devfreq *devfreq_get_devfreq_by_phandle(struct device *dev, int i=
+ndex)=0A=
+> -{=0A=
+> -	struct device_node *node;=0A=
+> -	struct devfreq *devfreq;=0A=
+> -=0A=
+> -	if (!dev)=0A=
+> -		return ERR_PTR(-EINVAL);=0A=
+> -=0A=
+> -	if (!dev->of_node)=0A=
+> -		return ERR_PTR(-EINVAL);=0A=
+> -=0A=
+> -	node =3D of_parse_phandle(dev->of_node, "devfreq", index);=0A=
+> -	if (!node)=0A=
+> -		return ERR_PTR(-ENODEV);=0A=
+> -=0A=
+> -	devfreq =3D devfreq_get_devfreq_by_node(node);=0A=
+> -	of_node_put(node);=0A=
+> -=0A=
+> -	return devfreq;=0A=
+> -}=0A=
+> -=0A=
+>   #else=0A=
+>   struct devfreq *devfreq_get_devfreq_by_node(struct device_node *node)=
+=0A=
+>   {=0A=
+>   	return ERR_PTR(-ENODEV);=0A=
+>   }=0A=
+> -=0A=
+> -struct devfreq *devfreq_get_devfreq_by_phandle(struct device *dev, int i=
+ndex)=0A=
+> -{=0A=
+> -	return ERR_PTR(-ENODEV);=0A=
+> -}=0A=
+>   #endif /* CONFIG_OF */=0A=
+>   EXPORT_SYMBOL_GPL(devfreq_get_devfreq_by_node);=0A=
+> -EXPORT_SYMBOL_GPL(devfreq_get_devfreq_by_phandle);=0A=
+>   =0A=
+>   /**=0A=
+>    * devm_devfreq_remove_device() - Resource-managed devfreq_remove_devic=
+e()=0A=
+> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c=
+=0A=
+> index 7f5917d59072..9aac2db956d5 100644=0A=
+> --- a/drivers/devfreq/exynos-bus.c=0A=
+> +++ b/drivers/devfreq/exynos-bus.c=0A=
+> @@ -146,6 +146,16 @@ static int exynos_bus_get_dev_status(struct device *=
+dev,=0A=
+>   	return ret;=0A=
+>   }=0A=
+>   =0A=
+> +static struct devfreq *get_parent_devfreq_by_node(struct device_node *np=
+)=0A=
+> +{=0A=
+> +	struct device_node *node =3D of_parse_phandle(np, "devfreq", 0);=0A=
+> +=0A=
+> +	if (!node)=0A=
+> +		return ERR_PTR(-ENODEV);=0A=
+> +=0A=
+> +	return devfreq_get_devfreq_by_node(node);=0A=
+> +}=0A=
+=0A=
+The _by_node suffix here is confusing because it actually fetches a =0A=
+property of the node unlike devfreq_get_devfreq_by_node. Maybe call this =
+=0A=
+get_parent_devfreq_from_node?=0A=
+=0A=
+Since it's a static function it could just be called get_parent_devfreq?=0A=
+=0A=
+> +=0A=
+>   static void exynos_bus_exit(struct device *dev)=0A=
+>   {=0A=
+>   	struct exynos_bus *bus =3D dev_get_drvdata(dev);=0A=
+> @@ -353,8 +363,8 @@ static int exynos_bus_profile_init_passive(struct exy=
+nos_bus *bus,=0A=
+>   	profile->exit =3D exynos_bus_passive_exit;=0A=
+>   =0A=
+>   	/* Get the instance of parent devfreq device */=0A=
+> -	parent_devfreq =3D devfreq_get_devfreq_by_phandle(dev, 0);=0A=
+> -	if (IS_ERR(parent_devfreq))=0A=
+> +	parent_devfreq =3D get_parent_devfreq_by_node(dev->of_node);=0A=
+> +	if (IS_ERR(parent_devfreq)) {=0A=
+>   		return -EPROBE_DEFER;=0A=
+>   =0A=
+>   	passive_data =3D devm_kzalloc(dev, sizeof(*passive_data), GFP_KERNEL);=
+=0A=
+> diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h=0A=
+> index e3633ae43349..3ed96426302e 100644=0A=
+> --- a/include/linux/devfreq.h=0A=
+> +++ b/include/linux/devfreq.h=0A=
+> @@ -254,8 +254,6 @@ extern void devm_devfreq_unregister_notifier(struct d=
+evice *dev,=0A=
+>   				struct notifier_block *nb,=0A=
+>   				unsigned int list);=0A=
+>   extern struct devfreq *devfreq_get_devfreq_by_node(struct device_node *=
+node);=0A=
+> -extern struct devfreq *devfreq_get_devfreq_by_phandle(struct device *dev=
+,=0A=
+> -						int index);=0A=
+>   =0A=
+>   #if IS_ENABLED(CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND)=0A=
+>   /**=0A=
+> @@ -413,12 +411,6 @@ struct devfreq *devfreq_get_devfreq_by_node(struct d=
+evice_node *node)=0A=
+>   	return ERR_PTR(-ENODEV);=0A=
+>   }=0A=
+>   =0A=
+> -static inline struct devfreq *devfreq_get_devfreq_by_phandle(struct devi=
+ce *dev,=0A=
+> -							int index)=0A=
+> -{=0A=
+> -	return ERR_PTR(-ENODEV);=0A=
+> -}=0A=
+> -=0A=
+>   static inline int devfreq_update_stats(struct devfreq *df)=0A=
+>   {=0A=
+>   	return -EINVAL;=0A=
+> =0A=
+=0A=
