@@ -2,479 +2,106 @@ Return-Path: <SRS0=wFHd=2I=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87885C2D0CD
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 18 Dec 2019 11:08:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67023C43603
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 18 Dec 2019 13:26:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A65621D7D
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 18 Dec 2019 11:08:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37B8C2176D
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 18 Dec 2019 13:26:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576667330;
-	bh=tUaeqcN6CkS43pagf5qs7h+ZistztqDqO0wjuHQPfEA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=q5ZO9XB5Zo72nFlt5NeyDqzyrL5tNl0ncHyHKPqkdk3l5MqbHIimTI9/sC9Q5CcP3
-	 65Du6R8KEI5Y8D/FCM4jL81BN5qATv00E8u4UYh9w3jiA3SZS9ZgFskBRaZTPemBYH
-	 4x4/+/FePls50JfKvZstZR/7r1KpmeqB5hPgwFUg=
+	s=default; t=1576675584;
+	bh=5HQCZzVOn4nq68gVdD4s0nQ4F6niPQbkASNQbR4Lo2g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=jE64Eg9AkC33fhzX+SJRG8R1qff+gKCOGfn5z8WJdi7E/OSoTSMmJ3Fv4cWa/y6Pg
+	 CqdtxgE4GbBgx7cXzB2YEPDW06nGJhmQpEjSSUzfGXCNkXN/xugc1jak5ML+D2+mcq
+	 bj9IhO4KpUYTQaKLVHYbyGpKkrjj2drDB0/ZHhac=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbfLRLIu (ORCPT
+        id S1727083AbfLRN0X (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 18 Dec 2019 06:08:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49926 "EHLO mail.kernel.org"
+        Wed, 18 Dec 2019 08:26:23 -0500
+Received: from foss.arm.com ([217.140.110.172]:46372 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726551AbfLRLIt (ORCPT
+        id S1726749AbfLRN0X (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 18 Dec 2019 06:08:49 -0500
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC99821D7D;
-        Wed, 18 Dec 2019 11:08:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576667328;
-        bh=tUaeqcN6CkS43pagf5qs7h+ZistztqDqO0wjuHQPfEA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=lrImmIoFd+NrnZ9DpifGyXM3GIbpnVAIKNC9vRU6KiPqFVthAzltRKmAJsvo414SP
-         cBL2TiGnNpr9Wkasn5LXyDGweB2zVBfTvv1CxMTkIj3rdo4ijmOuUCrS1DIXXyG+ge
-         BThU+akJfCGPMGwHz4RBaNs0V1NNo6KBjkeYyH9g=
-Received: by mail-lj1-f175.google.com with SMTP id z17so1632180ljk.13;
-        Wed, 18 Dec 2019 03:08:47 -0800 (PST)
-X-Gm-Message-State: APjAAAXnEikjIOWIoqdbSDK2YUwqR9+ltm9DavhvXaCx8P4TTHiq9D3d
-        e6YihBbuvk+UYQPnQgjMjFNoQNpOSS3QQoCpSxk=
-X-Google-Smtp-Source: APXvYqzzwkok4ysLB1UQSv2NrLCMMmJMEEkUWjEi1zn1zHAKMRYnIIpHYHZgMKhx1IkyluFOt6OFdYUDfYSvwOE37r8=
-X-Received: by 2002:a05:651c:106f:: with SMTP id y15mr1330269ljm.63.1576667326015;
- Wed, 18 Dec 2019 03:08:46 -0800 (PST)
+        Wed, 18 Dec 2019 08:26:23 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EA4BF30E;
+        Wed, 18 Dec 2019 05:26:22 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 686583F718;
+        Wed, 18 Dec 2019 05:26:22 -0800 (PST)
+Date:   Wed, 18 Dec 2019 13:26:20 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Tzung-Bi Shih <tzungbi@google.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        ALSA development <alsa-devel@alsa-project.org>,
+        Dylan Reid <dgreid@google.com>,
+        Jimmy Cheng-Yi Chiang <cychiang@google.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: Re: [alsa-devel] [PATCH v2] ASoC: max98090: save and restore SHDN
+ when changing sensitive registers
+Message-ID: <20191218132620.GE3219@sirena.org.uk>
+References: <CGME20191128152110epcas3p2b205b4b55f6d8bfac42fcb8faaade93c@epcas3p2.samsung.com>
+ <20191128151908.180871-1-tzungbi@google.com>
+ <8aceb9ec-aa6e-1fa4-cee9-e22084c141e8@samsung.com>
+ <CA+Px+wXPa_cwdZUQfCx4jAhhj4Q9b7bNABUGazLKOJ7U5ae-mA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190919142236.4071-1-a.swigon@samsung.com> <CGME20190919142329eucas1p2e53992eab9ec6b404f716f955b3c228e@eucas1p2.samsung.com>
- <20190919142236.4071-10-a.swigon@samsung.com> <35053bad-3f08-190a-0ffa-9aacd16da272@samsung.com>
- <95ac6056bc6c790b1de7e975f44faa320fd9876f.camel@samsung.com>
- <CAGTfZH1wVKBQAantrpqPP7+penwxeJud=gjH=5vVmKbzTGE=cQ@mail.gmail.com> <c3c161af17023a90e0fd7a0f925dbdad8b928ff4.camel@samsung.com>
-In-Reply-To: <c3c161af17023a90e0fd7a0f925dbdad8b928ff4.camel@samsung.com>
-From:   Chanwoo Choi <chanwoo@kernel.org>
-Date:   Wed, 18 Dec 2019 20:08:09 +0900
-X-Gmail-Original-Message-ID: <CAGTfZH1SbN2FkQ9SuaT3zONhvmdRGz0MVD3oqHjyuYDXsfkjfg@mail.gmail.com>
-Message-ID: <CAGTfZH1SbN2FkQ9SuaT3zONhvmdRGz0MVD3oqHjyuYDXsfkjfg@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 09/11] devfreq: exynos-bus: Add interconnect
- functionality to exynos-bus
-To:     =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>
-Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>, inki.dae@samsung.com,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="19uQFt6ulqmgNgg1"
+Content-Disposition: inline
+In-Reply-To: <CA+Px+wXPa_cwdZUQfCx4jAhhj4Q9b7bNABUGazLKOJ7U5ae-mA@mail.gmail.com>
+X-Cookie: Power is poison.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
 
-If possible, I'd like to apply these patches to v5.6-rc1.
-It is very useful feature to support the QoS for user device using memory b=
-us.
+--19uQFt6ulqmgNgg1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-2019=EB=85=84 12=EC=9B=94 18=EC=9D=BC (=EC=88=98) =EC=98=A4=ED=9B=84 7:48, =
-Artur =C5=9Awigo=C5=84 <a.swigon@samsung.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=
-=EC=84=B1:
->
-> On Wed, 2019-12-18 at 19:39 +0900, Chanwoo Choi wrote:
-> > Hi,
-> >
-> > 2019=EB=85=84 12=EC=9B=94 18=EC=9D=BC (=EC=88=98) =EC=98=A4=ED=9B=84 7:=
-19, Artur =C5=9Awigo=C5=84 <a.swigon@samsung.com>=EB=8B=98=EC=9D=B4 =EC=9E=
-=91=EC=84=B1:
-> > >
-> > > Hi,
-> > >
-> > > Thank you for the review.
-> > >
-> > > On Mon, 2019-12-16 at 09:44 +0900, Chanwoo Choi wrote:
-> > > > Hi,
-> > > >
-> > > > On 9/19/19 11:22 PM, Artur =C5=9Awigo=C5=84 wrote:
-> > > > > From: Artur =C5=9Awigo=C5=84 <a.swigon@partner.samsung.com>
-> > > > >
-> > > > > This patch adds interconnect functionality to the exynos-bus devf=
-req
-> > > > > driver.
-> > > > >
-> > > > > The SoC topology is a graph (or, more specifically, a tree) and m=
-ost of
-> > > > > its edges are taken from the devfreq parent-child hierarchy (cf.
-> > > > > Documentation/devicetree/bindings/devfreq/exynos-bus.txt). Due to
-> > > > > unspecified relative probing order, -EPROBE_DEFER may be propagat=
-ed to
-> > > > > guarantee that a child is probed before its parent.
-> > > > >
-> > > > > Each bus is now an interconnect provider and an interconnect node=
- as well
-> > > > > (cf. Documentation/interconnect/interconnect.rst), i.e. every bus=
- registers
-> > > > > itself as a node. Node IDs are not hardcoded but rather assigned =
-at
-> > > > > runtime, in probing order (subject to the above-mentioned excepti=
-on
-> > > > > regarding relative order). This approach allows for using this dr=
-iver with
-> > > > > various Exynos SoCs.
-> > > > >
-> > > > > Frequencies requested via the interconnect API for a given node a=
-re
-> > > > > propagated to devfreq using dev_pm_qos_update_request(). Please n=
-ote that
-> > > > > it is not an error when CONFIG_INTERCONNECT is 'n', in which case=
- all
-> > > > > interconnect API functions are no-op.
-> > > > >
-> > > > > Signed-off-by: Artur =C5=9Awigo=C5=84 <a.swigon@partner.samsung.c=
-om>
-> > > > > ---
-> > > > >  drivers/devfreq/exynos-bus.c | 153 +++++++++++++++++++++++++++++=
-++++++
-> > > > >  1 file changed, 153 insertions(+)
-> > > > >
-> > > > > diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exyno=
-s-bus.c
-> > > > > index 8d44810cac69..e0232202720d 100644
-> > > > > --- a/drivers/devfreq/exynos-bus.c
-> > > > > +++ b/drivers/devfreq/exynos-bus.c
-> > > > > @@ -14,14 +14,19 @@
-> > > > >  #include <linux/devfreq-event.h>
-> > > > >  #include <linux/device.h>
-> > > > >  #include <linux/export.h>
-> > > > > +#include <linux/idr.h>
-> > > > > +#include <linux/interconnect-provider.h>
-> > > > >  #include <linux/module.h>
-> > > > >  #include <linux/of.h>
-> > > > >  #include <linux/pm_opp.h>
-> > > > > +#include <linux/pm_qos.h>
-> > > > >  #include <linux/platform_device.h>
-> > > > >  #include <linux/regulator/consumer.h>
-> > > > >
-> > > > >  #define DEFAULT_SATURATION_RATIO   40
-> > > > >
-> > > > > +#define icc_units_to_khz(x) ((x) / 8)
-> > > >
-> > > > icc_units_to_khz() -> kpbs_to_khz()
-> > >
-> > > OK
-> > >
-> > > > > +
-> > > > >  struct exynos_bus {
-> > > > >     struct device *dev;
-> > > > >
-> > > > > @@ -35,6 +40,12 @@ struct exynos_bus {
-> > > > >     struct opp_table *opp_table;
-> > > > >     struct clk *clk;
-> > > > >     unsigned int ratio;
-> > > > > +
-> > > > > +   /* One provider per bus, one node per provider */
-> > > > > +   struct icc_provider provider;
-> > > > > +   struct icc_node *node;
-> > > > > +
-> > > > > +   struct dev_pm_qos_request qos_req;
-> > > > >  };
-> > > > >
-> > > > >  /*
-> > > > > @@ -59,6 +70,13 @@ exynos_bus_ops_edev(enable_edev);
-> > > > >  exynos_bus_ops_edev(disable_edev);
-> > > > >  exynos_bus_ops_edev(set_event);
-> > > > >
-> > > > > +static int exynos_bus_next_id(void)
-> > > > > +{
-> > > > > +   static DEFINE_IDA(exynos_bus_icc_ida);
-> > > > > +
-> > > > > +   return ida_alloc(&exynos_bus_icc_ida, GFP_KERNEL);
-> > > > > +}
-> > > > > +
-> > > > >  static int exynos_bus_get_event(struct exynos_bus *bus,
-> > > > >                             struct devfreq_event_data *edata)
-> > > > >  {
-> > > > > @@ -171,6 +189,38 @@ static void exynos_bus_passive_exit(struct d=
-evice *dev)
-> > > > >     clk_disable_unprepare(bus->clk);
-> > > > >  }
-> > > > >
-> > > > > +static int exynos_bus_icc_set(struct icc_node *src, struct icc_n=
-ode *dst)
-> > > > > +{
-> > > > > +   struct exynos_bus *src_bus =3D src->data, *dst_bus =3D dst->d=
-ata;
-> > > > > +   s32 src_freq =3D icc_units_to_khz(src->avg_bw);
-> > > > > +   s32 dst_freq =3D icc_units_to_khz(dst->avg_bw);
-> > > > > +
-> > > > > +   dev_pm_qos_update_request(&src_bus->qos_req, src_freq);
-> > > >
-> > > > Have to check the return value.
-> > > > If return error, show the waring with dev_warn.
-> > >
-> > > OK, I will change it to:
-> > >
-> > > ret =3D dev_pm_qos_update_request(&src_bus->qos_req, src_freq);
-> > > if (ret < 0) {
-> > >         dev_warn(src_bus->dev, "failed to update PM QoS request");
-> > >         return ret;
-> >
-> > If you return right after, better to use dev_err.
-> > If you use dev_warn, just show the warning message without return.
->
-> OK, I will use dev_err().
->
-> > > }
-> > >
-> > > > > +   dev_pm_qos_update_request(&dst_bus->qos_req, dst_freq);
-> > > >
-> > > > ditto.
-> > >
-> > > OK (same as above).
-> >
-> > ditto.
-> >
-> > >
-> > > > > +
-> > > > > +   return 0;
-> > > > > +}
-> > > > > +
-> > > > > +static int exynos_bus_icc_aggregate(struct icc_node *node, u32 t=
-ag, u32 avg_bw,
-> > > > > +                               u32 peak_bw, u32 *agg_avg, u32 *a=
-gg_peak)
-> > > > > +{
-> > > > > +   *agg_avg +=3D avg_bw;
-> > > > > +   *agg_peak =3D max(*agg_peak, peak_bw);
-> > > > > +
-> > > > > +   return 0;
-> > > > > +}
-> > > > > +
-> > > > > +static struct icc_node *exynos_bus_icc_xlate(struct of_phandle_a=
-rgs *spec,
-> > > > > +                                        void *data)
-> > > > > +{
-> > > > > +   struct exynos_bus *bus =3D data;
-> > > > > +
-> > > > > +   if (spec->np !=3D bus->dev->of_node)
-> > > > > +           return ERR_PTR(-EINVAL);
-> > > > > +
-> > > > > +   return bus->node;
-> > > > > +}
-> > > > > +
-> > > > >  static int exynos_bus_parent_parse_of(struct device_node *np,
-> > > > >                                     struct exynos_bus *bus)
-> > > > >  {
-> > > > > @@ -366,6 +416,101 @@ static int exynos_bus_profile_init_passive(=
-struct exynos_bus *bus,
-> > > > >     return 0;
-> > > > >  }
-> > > > >
-> > > > > +static int exynos_bus_icc_connect(struct exynos_bus *bus)
-> > > > > +{
-> > > > > +   struct device_node *np =3D bus->dev->of_node;
-> > > > > +   struct devfreq *parent_devfreq;
-> > > > > +   struct icc_node *parent_node =3D NULL;
-> > > > > +   struct of_phandle_args args;
-> > > > > +   int ret =3D 0;
-> > > > > +
-> > > > > +   parent_devfreq =3D devfreq_get_devfreq_by_phandle(bus->dev, 0=
-);
-> > > > > +   if (!IS_ERR(parent_devfreq)) {
-> > > > > +           struct exynos_bus *parent_bus;
-> > > > > +
-> > > > > +           parent_bus =3D dev_get_drvdata(parent_devfreq->dev.pa=
-rent);
-> > > > > +           parent_node =3D parent_bus->node;
-> > > > > +   } else {
-> > > > > +           /* Look for parent in DT */
-> > > > > +           int num =3D of_count_phandle_with_args(np, "parent",
-> > > > > +                                                "#interconnect-c=
-ells");
-> > > > > +           if (num !=3D 1)
-> > > > > +                   goto out; /* 'parent' is optional */
-> > > > > +
-> > > > > +           ret =3D of_parse_phandle_with_args(np, "parent",
-> > > > > +                                            "#interconnect-cells=
-",
-> > > > > +                                            0, &args);
-> > > >
-> > > >
-> > > > Actually, I agree your approach. I think that it is very useful
-> > > > and necessary to guarantee the PM QoS requirements between devices.
-> > > >
-> > > > But,
-> > > > As I already commented, I'm not sure that the "parent" property
-> > > > is proper for only this driver. If possible, you better to get
-> > > > the parent phandle through other way like OF graph.
-> > > >
-> > > > If you suggest the standard way to make the tree between
-> > > > the exynos-bus, I'll agree.
-> > >
-> > > As I commented in the answer to patch 08, I will use the
-> > > 'exynos,interconnect-parent-node' property for bus_display,
-> > > bus_leftbus and bus_dmc.
-> >
-> > OK.
-> >
-> > >
-> > > > Also, for interconnect path, you have to add the connection
-> > > > between 'bus_display' and 'bus_leftbus' regardless
-> > > > of the existing 'devfreq' property.
-> > > > - bus_display - bus_leftbus - bus_dmc
-> > > >
-> > > > > +           if (ret < 0)
-> > > > > +                   goto out;
-> > > > > +
-> > > > > +           of_node_put(args.np);
-> > > > > +
-> > > > > +           parent_node =3D of_icc_get_from_provider(&args);
-> > > > > +           if (IS_ERR(parent_node)) {
-> > > > > +                   /* May be -EPROBE_DEFER */
-> > > > > +                   ret =3D PTR_ERR(parent_node);
-> > > > > +                   goto out;
-> > > > > +           }
-> > > > > +   }
-> > > > > +
-> > > > > +   ret =3D icc_link_create(bus->node, parent_node->id);
-> > > > > +
-> > > > > +out:
-> > > > > +   return ret;
-> > > > > +}
-> > > > > +
-> > > > > +static int exynos_bus_icc_init(struct exynos_bus *bus)
-> > > > > +{
-> > > > > +   struct device *dev =3D bus->dev;
-> > > > > +   struct icc_provider *provider =3D &bus->provider;
-> > > > > +   struct icc_node *node;
-> > > > > +   int id, ret;
-> > > > > +
-> > > > > +   /* Initialize the interconnect provider */
-> > > > > +   provider->set =3D exynos_bus_icc_set;
-> > > > > +   provider->aggregate =3D exynos_bus_icc_aggregate;
-> > > > > +   provider->xlate =3D exynos_bus_icc_xlate;
-> > > > > +   provider->dev =3D dev;
-> > > > > +   provider->data =3D bus;
-> > > > > +
-> > > > > +   ret =3D icc_provider_add(provider);
-> > > > > +   if (ret < 0)
-> > > > > +           goto out;
-> > > >
-> > > > Return error without goto because there is no any requirement
-> > > > to free the resource before.
-> > >
-> > > OK.
-> > >
-> > > > > +
-> > > > > +   ret =3D id =3D exynos_bus_next_id();
-> > > > > +   if (ret < 0)
-> > > > > +           goto err_node;
-> > > > > +
-> > > > > +   node =3D icc_node_create(id);
-> > > > > +   if (IS_ERR(node)) {
-> > > > > +           ret =3D PTR_ERR(node);
-> > > > > +           goto err_node;
-> > > > > +   }
-> > > > > +
-> > > > > +   bus->node =3D node;
-> > > > > +   node->name =3D dev->of_node->name;
-> > > > > +   node->data =3D bus;
-> > > > > +   icc_node_add(node, provider);
-> > > > > +
-> > > > > +   ret =3D exynos_bus_icc_connect(bus);
-> > > > > +   if (ret < 0)
-> > > > > +           goto err_connect;
-> > > > > +
-> > > > > +   ret =3D dev_pm_qos_add_request(bus->devfreq->dev.parent, &bus=
-->qos_req,
-> > > >
-> > > > Check whether this line is over 80 char.
-> > >
-> > > It looks like 77 columns to me.
-> > >
-> > > >
-> > > > > +                                DEV_PM_QOS_MIN_FREQUENCY, 0);
-> > > >
-> > > >       Check the return value.
-> > >
-> > > OK.
-> > >
-> > > >
-> > > > > +
-> > > > > +out:
-> > > >
-> > > > Remove this goto due to not necessary.
-> > > >
-> > > > > +   return ret;
-> > > >
-> > > >       return 0;
-> > >
-> > > OK.
-> > >
-> > > Please also note that this function as well as exynos_bus_icc_connect=
-()
-> > > will
-> > > slightly change in v3 due to the changes regarding DT properties.
-> > >
-> > > >
-> > > > > +
-> > > > > +err_connect:
-> > > > > +   icc_node_del(node);
-> > > > > +   icc_node_destroy(id);
-> > > > > +err_node:
-> > > > > +   icc_provider_del(provider);
-> > > > > +
-> > > > > +   return ret;
-> > > > > +}
-> > > > > +
-> > > > >  static int exynos_bus_probe(struct platform_device *pdev)
-> > > > >  {
-> > > > >     struct device *dev =3D &pdev->dev;
-> > > > > @@ -415,6 +560,14 @@ static int exynos_bus_probe(struct platform_=
-device *pdev)
-> > > > >     if (ret < 0)
-> > > > >             goto err;
-> > > > >
-> > > > > +   /*
-> > > > > +    * Initialize interconnect provider. A return value of -ENOTS=
-UPP means
-> > > > > +    * that CONFIG_INTERCONNECT is disabled.
-> > > > > +    */
-> > > > > +   ret =3D exynos_bus_icc_init(bus);
-> > > > > +   if (ret < 0 && ret !=3D -ENOTSUPP)
-> > > > > +           goto err;
-> > > >
-> > > > Print error message.
-> > > >       dev_err(dev, "failed to initialize the interconnect provider"=
-);
-> > >
-> > > OK.
-> > >
-> > > >
-> > > > > +
-> > > > >     max_state =3D bus->devfreq->profile->max_state;
-> > > > >     min_freq =3D (bus->devfreq->profile->freq_table[0] / 1000);
-> > > > >     max_freq =3D (bus->devfreq->profile->freq_table[max_state - 1=
-] / 1000);
-> > > > >
->
-> --
-> Artur =C5=9Awigo=C5=84
-> Samsung R&D Institute Poland
-> Samsung Electronics
->
->
+On Fri, Dec 13, 2019 at 02:05:32AM +0800, Tzung-Bi Shih wrote:
 
+> I have no enough resources to test and trace the code temporarily.
+> But is it possible:
+> - snd_card_new( ) succeed in snd_soc_bind_card( ), so that userspace
+> can see the control
 
---=20
-Best Regards,
-Chanwoo Choi
+This feels like snd_card_new() is being overly enthusiastic here, I'd
+expect that we might have other problems elsewhere with that.  I'd not
+expect userspace to see things until snd_card_register() since between
+_new() and that we're in the process of building the card up.  Given
+this we *will* need to handle partially constructed cards after all,
+unless we change the ALSA core.  Takashi?
+
+> - code in later snd_soc_bind_card( ) decided to defer the probe
+> - soc_cleanup_card_resources( ) may forget to clean the control?  (not
+> sure about this)
+
+There's going to be a race condition where userspace can see the control
+on the partially built card regardless of if it gets cleaned up or not.
+
+--19uQFt6ulqmgNgg1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl36KPwACgkQJNaLcl1U
+h9B1FAf/cs3ZrczpxiE1GFa6hVrnrhHMslFp8vgCJtcL9LHgABdrhfm04brDk4PJ
+dx9OKHFPDmverQZCGNx6jGoeWcCwoUukplE3VO+EJG6yVIzwEhhZMPjdHhbnn3aI
+rcZP/MDL70bOuxcLCxSzUtZE/0c0da09vqZblmyPKKRMYfIz3LsIDdkNFsIOnmhk
+99U0K0WSEOCdZ9A/bcqPR2qm02Yf3Ng+v6KMMOAuIeGrnIugbLJY+yPuKPqCPykl
+3XzWVWaJGchqzwpMT33HK146N1lJpdddY2BztM56J1+isrYkZ0qcY8b24HlGKFiB
+0gK4QJHf6RYxKdMfiq0ofn6ARX3Cyw==
+=pw2R
+-----END PGP SIGNATURE-----
+
+--19uQFt6ulqmgNgg1--
