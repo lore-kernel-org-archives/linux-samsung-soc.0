@@ -2,146 +2,154 @@ Return-Path: <SRS0=HBcY=2J=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA03FC2D0C0
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Dec 2019 12:37:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F6FBC43603
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Dec 2019 12:54:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8ABD5222C2
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Dec 2019 12:37:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576759034;
-	bh=HfXFwm2OTVOtOEegELMeB2WDHLuPSp3FdYVhwyoA4LE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=DVIU1q3wWPUDgAkB8pr+KJbuBJZjup+fSR0JX2d6JP2nz4ax2MycqwDzDI6jFX4N9
-	 RynJbbx0spA8WUYSubtZq3G2DOMogJ/139nFPIdzpJToC8fvb+vPAbndkevl5neXFf
-	 CUsyGbm6EM1IzkMU0wYMXGwTFliqcg6AlqvPWkrQ=
+	by mail.kernel.org (Postfix) with ESMTP id BAC9E20716
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Dec 2019 12:54:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="OHVyXXUA";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=synopsys.onmicrosoft.com header.i=@synopsys.onmicrosoft.com header.b="KiuKtIiX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbfLSMhO (ORCPT
+        id S1726730AbfLSMyl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 19 Dec 2019 07:37:14 -0500
-Received: from foss.arm.com ([217.140.110.172]:38328 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726699AbfLSMhN (ORCPT
+        Thu, 19 Dec 2019 07:54:41 -0500
+Received: from sv2-smtprelay2.synopsys.com ([149.117.73.133]:46928 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726708AbfLSMyl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 19 Dec 2019 07:37:13 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 069DB31B;
-        Thu, 19 Dec 2019 04:37:13 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CF9E83F719;
-        Thu, 19 Dec 2019 04:37:11 -0800 (PST)
-Date:   Thu, 19 Dec 2019 12:37:09 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Tzung-Bi Shih <tzungbi@google.com>,
-        ALSA development <alsa-devel@alsa-project.org>,
-        Dylan Reid <dgreid@google.com>,
-        Jimmy Cheng-Yi Chiang <cychiang@google.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: Re: [alsa-devel] [PATCH v2] ASoC: max98090: save and restore SHDN
- when changing sensitive registers
-Message-ID: <20191219123709.GB5047@sirena.org.uk>
-References: <CGME20191128152110epcas3p2b205b4b55f6d8bfac42fcb8faaade93c@epcas3p2.samsung.com>
- <20191128151908.180871-1-tzungbi@google.com>
- <8aceb9ec-aa6e-1fa4-cee9-e22084c141e8@samsung.com>
- <CA+Px+wXPa_cwdZUQfCx4jAhhj4Q9b7bNABUGazLKOJ7U5ae-mA@mail.gmail.com>
- <20191218132620.GE3219@sirena.org.uk>
- <f6453e48-cd95-6471-8945-4cc0ab3d04d9@samsung.com>
- <20191218162422.GG3219@sirena.org.uk>
- <ef908cb8-875e-4339-33bd-5997b594f022@samsung.com>
+        Thu, 19 Dec 2019 07:54:41 -0500
+Received: from mailhost.synopsys.com (badc-mailhost1.synopsys.com [10.192.0.17])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 3808A405BC;
+        Thu, 19 Dec 2019 12:54:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1576760080; bh=Q1ER6K86z6A3jHiaM/mR7rc+Ff3LNSGXXroWsWjqt8E=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=OHVyXXUAKtceg5/kVMHspHtuV/jssIvCqWL1u1f90HY8BTDeCsiuPrIchQI7W+1AL
+         CbmwMrUamSParJPhvBTWkLGURQ4QoGYZTS/8lP86WO7nkd7GgxGe2/NKrisIKo2QN2
+         iOmhYs5RtADeDqiYwmaB1JMKD4tIZcI6ThBQDXJZIekdFpsQlTwu9Tf8QY0pR4zK/I
+         vASzLSxCf8XifzRWRq9DyECjHiP51g29+Q4I3dGcILTNIPCSkIpWkATOrK5QMerpwl
+         FzBRlVL3TMYlvvw8Af3ZvHasEeejuXUCGR9gBJo2IgzoJ785Fb44chlGjKh0rAvQXl
+         QxhII9LUgpfkA==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 74863A0079;
+        Thu, 19 Dec 2019 12:54:37 +0000 (UTC)
+Received: from us01hybrid1.internal.synopsys.com (10.200.27.51) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 19 Dec 2019 04:54:28 -0800
+Received: from NAM04-CO1-obe.outbound.protection.outlook.com (10.202.3.67) by
+ mrs.synopsys.com (10.200.27.51) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Thu, 19 Dec 2019 04:54:28 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Iq2k5zDMwH7AzpyzEO86x0TkOO/7F3TaiJkvh8JsFJxu/PCSHVuwwp/4uTF+756N3sPxSxls90VhhaE5ELVwlsms0QT2CM2feq5PR1RWldSdeiQa6zGlVGMZ+VtBEqrNEsW6NswfCPMODMe+rqYb0LhQFmfhvWuxP466vc8zctzfsZ2YY6x5FGWOYUXIYiLtAmUMrcn1e+5xdL/wmOWRGAzU2ivLsBkdSvbk6unaEVFaXzOnb2e0gIeAHSOR9kaa5e64amIEMHT4R+Y6AHmUVZ55dDDSfIqYzO16V/vgkeVNanZcO88E1E69jFGxFfYx5GHjvZtNu/5MJ+1KF3g3OQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Q1ER6K86z6A3jHiaM/mR7rc+Ff3LNSGXXroWsWjqt8E=;
+ b=H3x5OJpjiCecIMeh1Yf9btDMPshqLfzcDrdNe1C49MyEX7V4WmiGo/iZzBTZiAEWOs0DZkW+NLZQS82fyN5YXqErgoFx5Rgws0awry86Lnk8GM2cX1aVcARqJJZ4xJK/TYYGsqaJ+KBYQRvvHOc10N06A6zjZ3RCGLyTwXtfsb9VtHOYywSMOKcLokAZ2Rq1wzX/niGUGlpHg4MiLKr5upvIPUk8ovbsAdxg9XbozMXkpPrXnEBzjH9p8u2PD98k+Riiu00wF1pLBd/nZcervIkCZYkW9Fj1raoxiwTtFUjsam9Emq5VvjqVAwcUPP/lc+G08WwfloC5JfkHC30uCw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
+ dkim=pass header.d=synopsys.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=synopsys.onmicrosoft.com; s=selector2-synopsys-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Q1ER6K86z6A3jHiaM/mR7rc+Ff3LNSGXXroWsWjqt8E=;
+ b=KiuKtIiXowx2l1rwC6656rnWIFmqnC0dwY7zmjFFpxl7xryOV562JJKCkkaH22wLtNbonmBSdpvkLy0BfJxmVobTbdUKpGUaH8bWT4bPxgrOGPWCmbNcEt2jdXz4ZFXx+mSEkG9ibQbecKAOYWdD0NSXzaS2EAJcYLPUc5sWlok=
+Received: from MN2PR12MB4093.namprd12.prod.outlook.com (52.135.51.203) by
+ MN2PR12MB3454.namprd12.prod.outlook.com (20.178.242.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2559.14; Thu, 19 Dec 2019 12:54:27 +0000
+Received: from MN2PR12MB4093.namprd12.prod.outlook.com
+ ([fe80::d0e:7272:4a88:ffeb]) by MN2PR12MB4093.namprd12.prod.outlook.com
+ ([fe80::d0e:7272:4a88:ffeb%5]) with mapi id 15.20.2538.019; Thu, 19 Dec 2019
+ 12:54:27 +0000
+From:   Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
+To:     Benjamin Gaignard <benjamin.gaignard@st.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "kgene@kernel.org" <kgene@kernel.org>,
+        "krzk@kernel.org" <krzk@kernel.org>
+CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
+        "amelie.delaunay@st.com" <amelie.delaunay@st.com>
+Subject: Re: [PATCH v2 0/2] Add yaml DWC2 bindings
+Thread-Topic: [PATCH v2 0/2] Add yaml DWC2 bindings
+Thread-Index: AQHVtlg1SWbTGIsCKUivGYMMUpd+xafBajIA
+Date:   Thu, 19 Dec 2019 12:54:27 +0000
+Message-ID: <c6101bcb-1491-b9ce-b0f8-e50826202ee3@synopsys.com>
+References: <20191219103536.25485-1-benjamin.gaignard@st.com>
+In-Reply-To: <20191219103536.25485-1-benjamin.gaignard@st.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=hminas@synopsys.com; 
+x-originating-ip: [46.162.196.54]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e911fc8a-129b-4a9e-73a7-08d7848294ba
+x-ms-traffictypediagnostic: MN2PR12MB3454:
+x-microsoft-antispam-prvs: <MN2PR12MB3454F73E4F28AE818469A2B4A7520@MN2PR12MB3454.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-forefront-prvs: 0256C18696
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39850400004)(136003)(376002)(346002)(366004)(199004)(189003)(31696002)(5660300002)(478600001)(66946007)(81156014)(76116006)(81166006)(6512007)(4326008)(6486002)(110136005)(7416002)(36756003)(186003)(31686004)(86362001)(2906002)(91956017)(71200400001)(8936002)(66476007)(8676002)(316002)(2616005)(53546011)(54906003)(4744005)(6506007)(64756008)(26005)(66446008)(66556008);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR12MB3454;H:MN2PR12MB4093.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: synopsys.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: EiM1FTjAdoffOd9KgMPY5SSON6nrGJNf27wXHsGHeW+VDidOcxe58KFkhJFREd7TAq/etHeM1BrXRIAA6vR2cYn2PZzXyRZOZiXt/m9p2RrVBWxnC53IQc92Ive/rWMROEO6IFMiFb2ue+TK4a8uCJ+Xm3R96yiKHeuuxKmqyMRhIjukTjkK9wZFMqK43ZIOpVDdXdLZrPPtBvVfEruMKN1IgIfFP0CIX8HxI4yckbHcoYzvKbbSdOMctBY96iWDnb42VMg0FooNvoOWFrPByDS8l8IvdeWfoSexAu0Y0M2duu/ZiD4/5MNWufa8GPJ9QqpBsXfoooENLLprIeywvRUy+egTkPvM2Q+pkC5ldwhsyndojCMfFEtr2/52GOtYIDtdEtDGZGcBDav4P6oy+B54V4vePSLebra3x4T9mzHpPKnSlLVFFqI9QShFm6Ut
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C22F634CEFEC894B8CE99BABDC974744@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="i9LlY+UWpKt15+FH"
-Content-Disposition: inline
-In-Reply-To: <ef908cb8-875e-4339-33bd-5997b594f022@samsung.com>
-X-Cookie: I smell a RANCID CORN DOG!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e911fc8a-129b-4a9e-73a7-08d7848294ba
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Dec 2019 12:54:27.0553
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: YVGYFkMPBq5/FyCmv5ikFjz/6vhjEUVOr357SesOSHTczKPgRKomNUp0w6keKjZ3+LE4efhNQGXaQjJS75JFPw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3454
+X-OriginatorOrg: synopsys.com
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-
---i9LlY+UWpKt15+FH
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Dec 19, 2019 at 09:03:42AM +0100, Marek Szyprowski wrote:
-> On 18.12.2019 17:24, Mark Brown wrote:
-
-> I've checked again the exact probe order and here is what happens in the=
-=20
-> system:
-
-> 1. first call to odroid_audio_probe() is just after:
->=20
-> [    2.942428] samsung-i2s 3830000.i2s-sec: DMA channels sourced from dev=
-ice 3830000.i2s
-
-> 2. That time, i2s dai and max98090 devices are already registered.=20
-> However the snd_soc_of_get_dai_link_codecs() return -EPROBE_DEFER,=20
-> because it cannot get the HDMI codec component.
-
-> 3. HDMI codec is being registered when Exynos DRM initializes. This=20
-> happens later:
-
-> [=A0=A0=A0 3.127833] [drm] Initialized exynos 1.1.0 20180330 for exynos-d=
-rm on=20
-> minor 0
-
-> 4. Then odroid_audio_probe() is called again from the deferred probe=20
-> worker and succeeds:
-
-> [=A0=A0=A0 3.501198] ALSA device list:
-> [=A0=A0=A0 3.501300]=A0=A0 #0: Odroid-U3
-
-> 5. Then userspace starts:
-
-> [=A0=A0=A0 3.603825] Run /sbin/init as init process
->=20
-> 6. when userspace init scripts (alsactl) enumerates devices in the=20
-> system the lockdep warning is triggered:
->=20
-> [   10.068990] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> [   10.070970] WARNING: possible circular locking dependency detected
-> [   10.077136] 5.5.0-rc2-next-20191218 #7188 Not tainted
-> [   10.082168] ------------------------------------------------------
-> [   10.088332] alsactl/1106 is trying to acquire lock:
->=20
-> 7. then alsa utils probably tries to load the saved values for the contro=
-ls, what triggers the NULL ptr dereference:
->=20
-> [....] Setting up ALSA...[   10.502672] 8<--- cut here ---
-> [   10.502772] Unable to handle kernel NULL pointer dereference at virtua=
-l address 000000b0
-
-OK, so this is probably related to some of Morimoto-san's bisections.
-Is there any chance you coudld do a bisect to try to isolate where
-things go wrong?
-
---i9LlY+UWpKt15+FH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl37bvUACgkQJNaLcl1U
-h9CEAAf/XSI9nZq2Qput3O4cSd2w21qYD50j3CftlQ347thnlUCneiNqxxLoWUIG
-kNUK471Pr8mg+1sxXoyr6LUxFbFXLngFWkLW4ZJavXxqpPp88Sx9xXltUnp15grV
-tGPqRfguiytnGnOxNdTNYrJ3UFlnO/3PzMTMc/624RTXclOPHkG+IfS0UnX+w58O
-w65cgWyJXq6cI3PGkk3wkVJ148iYzIjRlNW9l3HOZF8uEXmmPK4mvuKZlgr9Jrdh
-Zcbj0F+w0G9C7Ex8pWL9ZZoHQ7oxmCby3QLv6+vMUOvb2pfudDDOAKPyIc1C9f18
-T1B3AMPS0eMM39HYyVYOwMbD7VmJIw==
-=VJv5
------END PGP SIGNATURE-----
-
---i9LlY+UWpKt15+FH--
+SGkgQmVuamFtaW4sDQoNCk9uIDEyLzE5LzIwMTkgMjozNSBQTSwgQmVuamFtaW4gR2FpZ25hcmQg
+d3JvdGU6DQo+IENvbnZlcnQgRFdDMiBiaW5kaW5ncyB0byBqc29uLXNjaGVtYSBhbmQgZml4IGlz
+c3VlIGluIGR0c2kgZmlsZS4NCj4gDQo+IEJlbmphbWluIEdhaWduYXJkICgyKToNCj4gICAgZHQt
+YmluZGluZ3M6IHVzYjogQ29udmVydCBEV0MyIGJpbmRpbmdzIHRvIGpzb24tc2NoZW1hDQo+ICAg
+IEFSTTogZHRzOiBleHlub3M6IFJlbW92ZSB1bm5lZWRlZCAic25wcyxkd2MyIiBmcm9tIGhzb3Rn
+IG5vZGUNCj4gDQo+ICAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3VzYi9kd2My
+LnR4dCAgfCAgNjQgLS0tLS0tLS0tLQ0KPiAgIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
+aW5ncy91c2IvZHdjMi55YW1sIHwgMTUyICsrKysrKysrKysrKysrKysrKysrKysrKw0KPiAgIGFy
+Y2gvYXJtL2Jvb3QvZHRzL2V4eW5vczMyNTAuZHRzaSAgICAgICAgICAgICAgIHwgICAyICstDQo+
+ICAgMyBmaWxlcyBjaGFuZ2VkLCAxNTMgaW5zZXJ0aW9ucygrKSwgNjUgZGVsZXRpb25zKC0pDQo+
+ICAgZGVsZXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy91
+c2IvZHdjMi50eHQNCj4gICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0
+cmVlL2JpbmRpbmdzL3VzYi9kd2MyLnlhbWwNCj4gDQoNCkluIE1haW50YWluZXJzIGZpbGUgbWVu
+dGlvbmVkIHRoYXQgRUhDSSBhbmQgT0hDSSBkcml2ZXJzIG1haW50YWluZXIgaXMgDQpBbGFuIFN0
+ZXJuLCBidXQgaW4gMiBleGlzdGluZyB5YW1sIGZpbGVzIChnZW5lcmljLWVoY2kueWFtbCBhbmQg
+DQpnZW5lcmljLW9oY2kueWFtbCkgbWVudGlvbmVkIHRoYXQgbWFpbnRhaW5lciBpcyBHcmVnIEty
+b2FoLUhhcnRtYW4uDQpTbywgSSdtIG5vdCBzdXJlIHRoYXQgaW4gZHdjMi55YW1sIGZpbGUgc2hv
+dWxkIGJlIHdyaXR0ZW4gbWUuDQpBY3R1YWxseSBJJ20gbm90IGZhbWlsaWFyIHdpdGggZG9jdW1l
+bnRhdGlvbi9iaW5kaW5ncy4NCg0KVGhhbmtzLA0KTWluYXMNCg==
