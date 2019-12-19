@@ -2,107 +2,127 @@ Return-Path: <SRS0=HBcY=2J=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C406FC43603
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Dec 2019 19:16:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3131C43603
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Dec 2019 20:19:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8447A222C2
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Dec 2019 19:16:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 710332467F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Dec 2019 20:19:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576783009;
-	bh=3Lb/bm6O7/E16LOdm529ZvJhVLb9zF5eQCVa6SdtU6Y=;
+	s=default; t=1576786764;
+	bh=3FSspEqjeV/r3JnSiuDrlylG7Wl9eHwnoKBtJftz4gk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=muOAOhJVE9RuRS0x9AB/ncNgvMfyT/kpNybWOjeaifzaDqeNHiu+EIiDNBGE3rZCA
-	 HhkFsC8CE3piuh53HhQXzeBJ5ImZbhH/3lR1fln/D2SjSncQ6bE0Ca3xoJNkEvU7VG
-	 pZIvjth74q9A3Ijh0xqHdyeUzHW7rh33zRoN15jo=
+	b=xnKAM7qZxKpaZ+PBhMGJtdinX0r1BSPvQZOYrdPlXHHMLqthNMBCHBxgB+kvM9LGz
+	 8FHxFzv0p6X0blbUwO/F7P/e5gkDHafln8HB674kwopk4WMt3lXDPr5V5Fmx8hGfq9
+	 4e5OCWMjWfd+GdqJFsd4Bkbp67m9lAwRRdJoYsDc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbfLSTQt (ORCPT
+        id S1726908AbfLSUTY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 19 Dec 2019 14:16:49 -0500
-Received: from foss.arm.com ([217.140.110.172]:43320 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726907AbfLSTQt (ORCPT
+        Thu, 19 Dec 2019 15:19:24 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:39358 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726880AbfLSUTX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 19 Dec 2019 14:16:49 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 393291FB;
-        Thu, 19 Dec 2019 11:16:48 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AD5843F67D;
-        Thu, 19 Dec 2019 11:16:47 -0800 (PST)
-Date:   Thu, 19 Dec 2019 19:16:46 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Tzung-Bi Shih <tzungbi@google.com>,
-        ALSA development <alsa-devel@alsa-project.org>,
-        Dylan Reid <dgreid@google.com>,
-        Jimmy Cheng-Yi Chiang <cychiang@google.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: Re: [alsa-devel] [PATCH v2] ASoC: max98090: save and restore SHDN
- when changing sensitive registers
-Message-ID: <20191219191646.GH5047@sirena.org.uk>
-References: <8aceb9ec-aa6e-1fa4-cee9-e22084c141e8@samsung.com>
- <CA+Px+wXPa_cwdZUQfCx4jAhhj4Q9b7bNABUGazLKOJ7U5ae-mA@mail.gmail.com>
- <20191218132620.GE3219@sirena.org.uk>
- <f6453e48-cd95-6471-8945-4cc0ab3d04d9@samsung.com>
- <20191218162422.GG3219@sirena.org.uk>
- <ef908cb8-875e-4339-33bd-5997b594f022@samsung.com>
- <20191219123709.GB5047@sirena.org.uk>
- <aba9f63c-d993-e54e-4daa-9dbc35d0683b@samsung.com>
- <20191219130559.GE5047@sirena.org.uk>
- <a10269be-8caf-6e07-71c6-582a1d2c1458@samsung.com>
+        Thu, 19 Dec 2019 15:19:23 -0500
+Received: by mail-ed1-f65.google.com with SMTP id t17so6136013eds.6;
+        Thu, 19 Dec 2019 12:19:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1z6z1Ui8LL1nkwwIvcM2qSFeAknNPztf5Dw5KcO2dK8=;
+        b=sS8NsZJcXcY8TgpHCpIbqW9V5OzarWXytTpQ8I79KR+JDiVB1Q4w0df8fgVfLkZLsP
+         QppebyM5rQLw4qBSyvplYNDscsIFUI7WytzCjfgSNR28svfrltxPY4sMrHe/KtE+gqKc
+         7o2xqq82jbtzbPzYCjvTd1E7C7k8iCwJwG6DuZ6augRV4mTuVT5iOZibGaICkZIk4OVs
+         /duT5SKPDGxCtDrTGp2snC0E4I0dMSi4j/6yeVfQIYdnd3w8Z7pPU0r5PqKoOODUJgKF
+         mBLPBfSlIyvl1WKvxRvYrzo5yl3kK+LEThN94aDmshg+bpNWNRO3soKrVjqgyJ8f1vDK
+         1r7g==
+X-Gm-Message-State: APjAAAVwDJaEYLWKsuFyemHOkK1sW++kXNjjvM+nrEaE6BpHxfVUL5pR
+        1v3dDHwmBIMCvNc+yE31cKo=
+X-Google-Smtp-Source: APXvYqwwejroRBv27RRKI+KjHOuS4q02b2b9jWEyzsgC2C9l3pOef3KwtMfRZqXDwDfmgHuveS0ogQ==
+X-Received: by 2002:a17:906:5606:: with SMTP id f6mr11822819ejq.179.1576786761612;
+        Thu, 19 Dec 2019 12:19:21 -0800 (PST)
+Received: from kozik-lap ([194.230.155.234])
+        by smtp.googlemail.com with ESMTPSA id m2sm626166edp.85.2019.12.19.12.19.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 19 Dec 2019 12:19:20 -0800 (PST)
+Date:   Thu, 19 Dec 2019 21:19:17 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, heiko@sntech.de,
+        leonard.crestez@nxp.com, lukasz.luba@arm.com, a.swigon@samsung.com,
+        m.szyprowski@samsung.com, kgene@kernel.org,
+        myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 7/9] memory: samsung: exynos5422-dmc: Replace deprecated
+ 'devfreq-events' property
+Message-ID: <20191219201917.GA21576@kozik-lap>
+References: <20191217055738.28445-1-cw00.choi@samsung.com>
+ <CGME20191217055106epcas1p2c43a45e34983c1b3e60cc6fd842dd33e@epcas1p2.samsung.com>
+ <20191217055738.28445-8-cw00.choi@samsung.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="uJrvpPjGB3z5kYrA"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <a10269be-8caf-6e07-71c6-582a1d2c1458@samsung.com>
-X-Cookie: I smell a RANCID CORN DOG!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191217055738.28445-8-cw00.choi@samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Tue, Dec 17, 2019 at 02:57:36PM +0900, Chanwoo Choi wrote:
+> In order to remove the deprecated 'devfreq-events' property, replace with
+> new 'exynos,ppmu-device' property in order to get the devfreq-event device
+> in devicetree file instead of 'devfreq-events' property. But, to guarantee
+> the backward-compatibility, keep the support 'devfreq-events' property.
+> 
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+>  .../memory-controllers/exynos5422-dmc.txt     |  6 ++--
+>  drivers/memory/samsung/exynos5422-dmc.c       | 29 +++++++++++++++----
+>  2 files changed, 26 insertions(+), 9 deletions(-)
 
---uJrvpPjGB3z5kYrA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In general looks good for me but I need an ack from Rob.  Patch should
+be also split and sent as one of first in the series (before code).
 
-On Thu, Dec 19, 2019 at 02:41:17PM +0100, Marek Szyprowski wrote:
-> On 19.12.2019 14:05, Mark Brown wrote:
+> 
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt b/Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt
+> index 02e4a1f862f1..1e1b3702f045 100644
+> --- a/Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt
+> +++ b/Documentation/devicetree/bindings/memory-controllers/exynos5422-dmc.txt
+> @@ -17,14 +17,14 @@ Required properties for DMC device for Exynos5422:
+>  - clock-names : should include "fout_spll", "mout_sclk_spll", "ff_dout_spll2",
+>    "fout_bpll", "mout_bpll", "sclk_bpll", "mout_mx_mspll_ccore",
+>    "mout_mclk_cdrex"  entries
+> -- devfreq-events : phandles for PPMU devices connected to this DMC.
+> +- exynos,ppmu-device : phandles for PPMU devices connected to this DMC.
+>  - vdd-supply : phandle for voltage regulator which is connected.
+>  - reg : registers of two CDREX controllers.
+>  - operating-points-v2 : phandle for OPPs described in v2 definition.
+>  - device-handle : phandle of the connected DRAM memory device. For more
+>  	information please refer to documentation file:
+>  	Documentation/devicetree/bindings/ddr/lpddr3.txt
+> -- devfreq-events : phandles of the PPMU events used by the controller.
+> +- exynos,ppmu-device : phandles of the PPMU events used by the controller.
+>  - samsung,syscon-clk : phandle of the clock register set used by the controller,
+>  	these registers are used for enabling a 'pause' feature and are not
+>  	exposed by clock framework but they must be used in a safe way.
+> @@ -73,7 +73,7 @@ Example:
+>  			      "mout_mx_mspll_ccore",
+>  			      "mout_mclk_cdrex";
+>  		operating-points-v2 = <&dmc_opp_table>;
+> -		devfreq-events = <&ppmu_event3_dmc0_0>,	<&ppmu_event3_dmc0_1>,
+> +		exynos,ppmu-device = <&ppmu_event3_dmc0_0>, <&ppmu_event3_dmc0_1>,
+>  				 <&ppmu_event3_dmc1_0>, <&ppmu_event3_dmc1_1>;
 
-> > You can't trigger this via any other mechanism, all the other controls
-> > are fine?  There's *clearly* no issue with what the commit is doing,
-> > it's just flagging up that the card is not set.
+Indentation is broken here.
 
-> I've cherrypicked the $subject commit onto vanilla v5.5-rc1 and the=20
-> issue is same.
+Best regards,
+Krzysztof
 
-Yeah, there were a lot of refactorings in the last merge window so that
-doesn't entirely surprise me.  The commit should backport futher than
-that I think?
-
---uJrvpPjGB3z5kYrA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl37zJ0ACgkQJNaLcl1U
-h9Cctgf/RHHQThaM3HgCq/Tt1yzFqhDhgbtzRGhB3VQUpQ4pH7xPLd9iBKMFJdfn
-tnMFXfg2BFIjk/sZ63wBagRh5lhI9r0MZE+GgRiYs5NAXn8L9/IDpe1D4JTvzF2o
-QptVlv20UYbmZXfS7CgACTNreMtCO5UWWEmoMj2lLmN6iF4HX6x5XKkAQ6xc4une
-9XxgYbfY64gyftKW+woaaOai1GM3Ru60tKnzLy3BTa/MP5tTEhlcLvfEee8ZCy5d
-UfXnubSxCYtE0iztv/SCkAIxPRvhMhP96edsub3clpVKPCUXfdeIQprp89OLk/bR
-16nounqBx0diZLPVES00DYHD3dZRCg==
-=nSB4
------END PGP SIGNATURE-----
-
---uJrvpPjGB3z5kYrA--
