@@ -2,112 +2,144 @@ Return-Path: <SRS0=uLO5=2K=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AB85C43603
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Dec 2019 12:02:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE2C6C2D0D3
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Dec 2019 12:02:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E2D124680
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Dec 2019 12:02:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576843321;
-	bh=qCSzQCM8A11yGm/7Od2Xtkk30Zfw3kkNK/R9qKkDMYo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=X8J940BHB0Jn7Tp3W2I0bdw2ApVCPlRmJdgKtPtaUV5Pcrz8SpkHExACCrYYN5o3d
-	 7U2AJeQszuQhEnAvxzNavYqEkeWwpxz/r0B6CcsNBZfE/UNnJvoLuhls/fk2runU7w
-	 p+qWzdjisPSBzQwwuQooL9ooKX9rQd1+S+ayvZpA=
+	by mail.kernel.org (Postfix) with ESMTP id B2D5224680
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Dec 2019 12:02:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="geNABEjI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727511AbfLTMCA (ORCPT
+        id S1727473AbfLTMCB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 20 Dec 2019 07:02:00 -0500
-Received: from foss.arm.com ([217.140.110.172]:50074 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727473AbfLTMB7 (ORCPT
+        Fri, 20 Dec 2019 07:02:01 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:36387 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727458AbfLTMBr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 20 Dec 2019 07:01:59 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 057D430E;
-        Fri, 20 Dec 2019 04:01:59 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B3D843F719;
-        Fri, 20 Dec 2019 04:01:57 -0800 (PST)
-Date:   Fri, 20 Dec 2019 12:01:54 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Tzung-Bi Shih <tzungbi@google.com>,
-        ALSA development <alsa-devel@alsa-project.org>,
-        Dylan Reid <dgreid@google.com>,
-        Jimmy Cheng-Yi Chiang <cychiang@google.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: Re: [alsa-devel] [PATCH v2] ASoC: max98090: save and restore SHDN
- when changing sensitive registers
-Message-ID: <20191220120154.GB4790@sirena.org.uk>
-References: <20191218162422.GG3219@sirena.org.uk>
- <ef908cb8-875e-4339-33bd-5997b594f022@samsung.com>
- <20191219123709.GB5047@sirena.org.uk>
- <aba9f63c-d993-e54e-4daa-9dbc35d0683b@samsung.com>
- <20191219130559.GE5047@sirena.org.uk>
- <a10269be-8caf-6e07-71c6-582a1d2c1458@samsung.com>
- <CGME20191219191651epcas5p2ab8031875093df401d9182e7c491eb3d@epcas5p2.samsung.com>
- <20191219191646.GH5047@sirena.org.uk>
- <b0e57646-8a14-e6c0-9daa-28c353dcb77a@samsung.com>
- <31bde14e-1fef-264a-ba1e-fc3051506bf3@samsung.com>
+        Fri, 20 Dec 2019 07:01:47 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191220120146euoutp01779e29de76e44547aa3acb6519135564~iEqIO6Vq61021410214euoutp01I
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2019 12:01:46 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191220120146euoutp01779e29de76e44547aa3acb6519135564~iEqIO6Vq61021410214euoutp01I
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1576843306;
+        bh=ottFIS2g2f1gTBdIXmtOFHs/1PpTz7Q1HbB6uCSxjhA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=geNABEjIaOFXEsDfuCtb/8bRiOyRzMqgb1u7bFO99PqV24v/4xhZrvWo2wynGp1Qw
+         80zQ1+esXMPoAXbVUhdyyN24TfbCOAQ9UG2avn2aW4IY+Ozjci3Snw+AKppMmhaMat
+         otrXz1NBJ/JcOC57Y+pBBtYIGEswYPy+hUahdpig=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20191220120146eucas1p277fcbaeb4927a426027d863a1b7fa318~iEqH5oQwq2774727747eucas1p2M;
+        Fri, 20 Dec 2019 12:01:46 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id C0.0F.61286.A28BCFD5; Fri, 20
+        Dec 2019 12:01:46 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20191220120146eucas1p25dada01c315215d18bb8a15e3173b52c~iEqHkkr5b2771427714eucas1p2-;
+        Fri, 20 Dec 2019 12:01:46 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20191220120146eusmtrp20bd7f72940e3e4eec57c60e3327bbce1~iEqHj4j7s2149221492eusmtrp22;
+        Fri, 20 Dec 2019 12:01:46 +0000 (GMT)
+X-AuditID: cbfec7f2-f0bff7000001ef66-e4-5dfcb82a814a
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 07.87.08375.928BCFD5; Fri, 20
+        Dec 2019 12:01:45 +0000 (GMT)
+Received: from AMDC3555.digital.local (unknown [106.120.51.67]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191220120145eusmtip2b65526bcbcb8592d3644f3e504e06f1f~iEqGuNs463105631056eusmtip2b;
+        Fri, 20 Dec 2019 12:01:45 +0000 (GMT)
+From:   =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>
+To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc:     =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>,
+        cw00.choi@samsung.com, myungjoo.ham@samsung.com,
+        inki.dae@samsung.com, sw0312.kim@samsung.com,
+        georgi.djakov@linaro.org, leonard.crestez@nxp.com,
+        m.szyprowski@samsung.com, b.zolnierkie@samsung.com, krzk@kernel.org
+Subject: [RFC PATCH v3 6/7] arm: dts: exynos: Add interconnects to
+ Exynos4412 mixer
+Date:   Fri, 20 Dec 2019 12:56:52 +0100
+Message-Id: <20191220115653.6487-7-a.swigon@samsung.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191220115653.6487-1-a.swigon@samsung.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="gatW/ieO32f1wygP"
-Content-Disposition: inline
-In-Reply-To: <31bde14e-1fef-264a-ba1e-fc3051506bf3@samsung.com>
-X-Cookie: I think we're in trouble.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTYRTv2919aE0+p+lBy3LUHwWtxIIvirCIuEHF/rHIGDb1ppGu2lXL
+        MPKBtpKWaOVcDyUixcjHqqmjQmy1huXQSgUNeyJGKWYKvlbb7qL++53ze5xz4HCU8g0dxR3V
+        ZwsGvS5TxQTLbS9m3OvWts1rN4zVLSXDt0oQaTE30aT/1whNahzdNHk7Nc6QqidWhlQMl8uJ
+        293Mkvr3EzSxfu6jyRv7DYZMXnIgYnY/lZH7jvcsGSysZ4i5cpRJwLy14QLDD/U9ZvjhMqeM
+        f3DnHN8y1ibjTQ8bED9pjdGwScFb04TMo7mCYf22w8EZYzfPnbjCnh69Wk0VIA99EQVxgDdC
+        /1szcxEFc0pcj6B53sb6CCX+hWCiPEwiJhE0vrzM/HU4Gl7QElGHoKd4jpUKr8PU0irzqRi8
+        HSqufvAT4diBoLJ2XO4rKHxDBsYLdXKfKgwnwsfnZn+uHK+GoY7nfrcCE3AOlrPSvBVwr7mD
+        8uEgvBkG3vVSkiYUXNVf/DmUV1P86Dol6SdYcNVFSngntBZVBfYOg2/Oh4HMZfC7vUYmYRG+
+        tg/77wFcgMB61xEI2gJD3bNeM+cdsAaa7Oul9nYoLXGyvjbgEBj4ESqtEAIVtipKaivAWKqU
+        oArs1SGSEaDoXl8gm4eerjKqHMVa/rvF8t8tln9jaxHVgCKFHDErXRDj9MIptajLEnP06erU
+        41lW5H21Lo/zZxua6k3pRJhDqiWKhCNzWiWtyxXzsjoRcJQqXDFonNEqFWm6vDOC4XiyISdT
+        EDtRNCdXRSrib49qlThdly0cE4QTguEvK+OCogrQPvX+V1Mjy62HVtl25KhnM/IbYyL2FmtS
+        53BE/qJDqaUHdimeJR48nN+x2yTGxyZdN5bONZmi6bMxffsKPZ+slXuuBeUyHlOiY2GhO1s/
+        zy62c7dW9n5HlugrS3uVo/xNTb0rLXlT9HiKe7qmsOxkf1zbrqfnn00/0eCyrtcJLpVczNDF
+        raUMou4PvSE3m2YDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrBIsWRmVeSWpSXmKPExsVy+t/xe7qaO/7EGqzdaG1xf14ro8XGGetZ
+        La5/ec5qMf/IOVaLK1/fs1lM37uJzWLS/QksFufPb2C3WHH3I6vFpsfXWC0u75rDZvG59wij
+        xYzz+5gs1h65y25xu3EFm8WMyS/ZHAQ8Nq3qZPO4c20Pm8f97uNMHpuX1HtsfLeDyaNvyypG
+        j8+b5ALYo/RsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/Tt
+        EvQy3s2tL5jCXvFy6kzmBsZ/rF2MnBwSAiYSR1YdA7OFBJYySnzpL4WIS0h8XH8DqkZY4s+1
+        LrYuRi6gmk+MEocn9rCDJNgEHCUmTX3ADpIQETjFKLF1+Tk2kASzwAomif45wiC2sECwxPSu
+        V2ANLAKqEncOHGUCsXkFLCSO357ADrFBXmL1hgPMIDangKXEjauXmCEuspDY+bkPql5Q4uTM
+        JyxdjBxA89Ul1s8TglglL9G8dTbzBEbBWUiqZiFUzUJStYCReRWjSGppcW56brGhXnFibnFp
+        Xrpecn7uJkZgrG479nPzDsZLG4MPMQpwMCrx8L5M/h0rxJpYVlyZe4hRgoNZSYT3dsfPWCHe
+        lMTKqtSi/Pii0pzU4kOMpkCvTWSWEk3OB6aRvJJ4Q1NDcwtLQ3Njc2MzCyVx3g6BgzFCAumJ
+        JanZqakFqUUwfUwcnFINjKZ768qWXluQvDj27Swrkbxn0V89eDo1zCMa1rnIlF7h6QqUOdT6
+        eXrF/jxdSYOTUueNZW2zw5UfMm0sPtHinflGJPCT9dMn+RyvG/gDznk1/y3Y/fdvQN7Nlx/y
+        m+dzSf3sv9o292XX+XSNfz8PekwV6vt26abywanKQlIf35lkZa9Oy7oqrMRSnJFoqMVcVJwI
+        ADa+5O7rAgAA
+X-CMS-MailID: 20191220120146eucas1p25dada01c315215d18bb8a15e3173b52c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20191220120146eucas1p25dada01c315215d18bb8a15e3173b52c
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20191220120146eucas1p25dada01c315215d18bb8a15e3173b52c
+References: <20191220115653.6487-1-a.swigon@samsung.com>
+        <CGME20191220120146eucas1p25dada01c315215d18bb8a15e3173b52c@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+This patch adds an 'interconnects' property to Exynos4412 DTS in order to
+declare the interconnect path used by the mixer. Please note that the
+'interconnect-names' property is not needed when there is only one path in
+'interconnects', in which case calling of_icc_get() with a NULL name simply
+returns the right path.
 
---gatW/ieO32f1wygP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Artur Świgoń <a.swigon@samsung.com>
+---
+ arch/arm/boot/dts/exynos4412.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Fri, Dec 20, 2019 at 10:05:52AM +0100, Marek Szyprowski wrote:
-> On 20.12.2019 09:28, Marek Szyprowski wrote:
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index 48868947373e..13a679a9a107 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -771,6 +771,7 @@
+ 	clock-names = "mixer", "hdmi", "sclk_hdmi", "vp";
+ 	clocks = <&clock CLK_MIXER>, <&clock CLK_HDMI>,
+ 		 <&clock CLK_SCLK_HDMI>, <&clock CLK_VP>;
++	interconnects = <&bus_display &bus_dmc>;
+ };
+ 
+ &pmu {
+-- 
+2.17.1
 
-> > I've tried initially to cherry-pick it to v5.4, but the the code=20
-> > didn't compile due to lack of some macros, so I've gave up trying. I=20
-> > will check that now and backport needed macros too if you think this=20
-> > would help.
-
-> Same issue. I've tried backporting it to each kernel release: 5.4, 5.3,=
-=20
-> 5.2, 5.1 and 5.0 (with additional backporting "ASoC: core: add=20
-> SND_SOC_BYTES_E" and "ASoC: Define a set of DAPM pre/post-up events").=20
-> In all cases the lockdep warning and oops is the same. Backporting to=20
-> v4.9 requires more changes to get it even compiled, so I gave up.
-
-OK, thanks - that's definitely not the recent refactorings then but
-something that's been a problem for a long time.  I'm surprised nobody
-else ran into anything if that's the case...
-
---gatW/ieO32f1wygP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl38uDIACgkQJNaLcl1U
-h9DDwQf/RpDA3CXzUmuNP7lNm2NA589ZoMyxBTqzZ5LEEXZlnhOgrjiX5aYJg8Py
-4+/lSkFqCbyXPZ8v09HkgVYeSX7uk35axOOxaNwcLI5s+/APia7vEx+ni91mierJ
-rOoOBaKJ+uFhtZ2Zjxr2icu6HsjVbd7uUb5MIQDHjtdZuQ5Q++2E/jlixv/pd2LP
-r27kWtDldOALwJbG0eZk5in2q2PdRsA8ZdlQjt7hFlXF9NaqTn4sQ+6DwscmS0uZ
-0SUvLEu1OOzOdqq0nrr/GaEwmxsq68S/ZRDoz60LAKDmsO4ByoWdM+7NgT9UrCu7
-9C4jPeUPe1CtO/aFXlo3tq/+FgqLlw==
-=3XTz
------END PGP SIGNATURE-----
-
---gatW/ieO32f1wygP--
