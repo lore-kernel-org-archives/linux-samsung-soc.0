@@ -2,271 +2,148 @@ Return-Path: <SRS0=POLG=2L=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D07C2D0D5
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 21 Dec 2019 20:15:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48603C2D0D3
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 21 Dec 2019 23:46:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0183B2070B
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 21 Dec 2019 20:15:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576959350;
-	bh=5ebffvH8RjGUA/CqJXLR3seJ47MPgsm90kIrp/SYkC8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=XBPmCGI3+MsfB0tHasiz8ns2rbuzIUtDSNivaGpZnLIsiL42DHrbUtLZngHMdDrgL
-	 MDJCesJqKMsLxUTGawmGD4np5kxQugQlMz6H6a7g6lXhoSHh40gpauw/dSwdjYPgSi
-	 MSLcguxL8n44bWFOHiRSllLGAcJ9FSInCY6tBPAI=
+	by mail.kernel.org (Postfix) with ESMTP id 1BBE320700
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 21 Dec 2019 23:46:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K2F08+kb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbfLUUPq (ORCPT
+        id S1726645AbfLUXqm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 21 Dec 2019 15:15:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45908 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726593AbfLUUPq (ORCPT
+        Sat, 21 Dec 2019 18:46:42 -0500
+Received: from mail-qv1-f65.google.com ([209.85.219.65]:34193 "EHLO
+        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726024AbfLUXqm (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 21 Dec 2019 15:15:46 -0500
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 738AE206D8;
-        Sat, 21 Dec 2019 20:15:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576959344;
-        bh=5ebffvH8RjGUA/CqJXLR3seJ47MPgsm90kIrp/SYkC8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=rRET7jGuQ9x3Bi6G6g9O1ZUsM1zX4zsiWIx1Nt2RxjGBVszQtqOvdsBF44Zl2BSMt
-         1/06vhY22BJ5Irc1JeHg41UBKX9WzhDW+rNMBK5x0tDO6y0e+Cza/GHqV8Sw63s/01
-         lpUg9+MvHXTQwpVg2VaK0P17ndrD+m0kBl/sU1CI=
-Received: by mail-lj1-f182.google.com with SMTP id a13so13616145ljm.10;
-        Sat, 21 Dec 2019 12:15:44 -0800 (PST)
-X-Gm-Message-State: APjAAAVY7MI3xsJU4gSDsvwvV8KoMBDiSSmJB1iMp9cB2mQtfgNLgyu5
-        IMnYJdjLvC6kiyRb8IfarSkHv2IKpwOOdf3KesQ=
-X-Google-Smtp-Source: APXvYqw/wOkj3/7bhV08O1Y2ozplefUJRTEti5Jg7xBvbgQ90EBzcMhD9yqJ5nlEbYLGWhZbqzIfqislmtInQwBiECg=
-X-Received: by 2002:a2e:9b05:: with SMTP id u5mr13652547lji.59.1576959342597;
- Sat, 21 Dec 2019 12:15:42 -0800 (PST)
-MIME-Version: 1.0
-References: <CGME20191220120146eucas1p22a7b0457be4f378b113f67dc25f2eba7@eucas1p2.samsung.com>
- <20191220115653.6487-1-a.swigon@samsung.com> <20191220115653.6487-8-a.swigon@samsung.com>
-In-Reply-To: <20191220115653.6487-8-a.swigon@samsung.com>
-From:   Chanwoo Choi <chanwoo@kernel.org>
-Date:   Sun, 22 Dec 2019 05:15:06 +0900
-X-Gmail-Original-Message-ID: <CAGTfZH0LKmBzAokgN+2K4-PS87gc2GnchYaHJi33nMQBCTNS-g@mail.gmail.com>
-Message-ID: <CAGTfZH0LKmBzAokgN+2K4-PS87gc2GnchYaHJi33nMQBCTNS-g@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 7/7] drm: exynos: mixer: Add interconnect support
-To:     =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>
-Cc:     devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
+        Sat, 21 Dec 2019 18:46:42 -0500
+Received: by mail-qv1-f65.google.com with SMTP id o18so5079840qvf.1;
+        Sat, 21 Dec 2019 15:46:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=DZy1sByRbPp81Fc4unsIfUDkM1speXohHbJEFLa+79Y=;
+        b=K2F08+kbBOHpEb5GI2snEkwsgZNjaPXWMKDftdpnSDrNjdoFsaU7mJy1E8X+UN6pTF
+         CqMGQGTCVzkASTJTbCKGzwmcE+xGW9X9DoBShnHYBHrUjwA2y0thgfSaIDeXsAsxh80K
+         Lzsw/9ErY21ZUOic82HoE2snRWWJy1wLWDPwW7IWmh5yvrdgv4rUVX4xVE004OheL+PI
+         /8AUmTvOKwGIU5Ku/sIm9m5U0rOim/SPjYy3gzVxef0QWGwTj1JJt9SDEH83TWoChVOq
+         wLkEyhYrjgWcWjYym7iQAuL3qcxgGsX3JQNmgv7pU5p9IHVMooy6My1cg5SbonFnCmxX
+         Fqwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DZy1sByRbPp81Fc4unsIfUDkM1speXohHbJEFLa+79Y=;
+        b=cvV8272CjqKNjseP9IVVUXbbxKJ0slLx1WsbkDJHDoeN/3vHwuctTz95T3x5v8qef4
+         wfQuL7StZwZjPkgUDbtB+lwe/oMAwB9Xbdy10mk/u+2jQR3GNEe7D0D74q70kMq9arlb
+         PNhpmuqIUw/xbiPYSNl5/rUdu6ZFvqxccOvNBRozsvoS6a54JRTc/3sqU3aSAA/0JUGC
+         Y3VAraup61c7CsK8ZBh2M96ClkM7ofpaMh+1a0fD0joJM0iWn/CYvcAr53OIWtdMFcZl
+         FXh0enaSlbVfnKVaYH03LCc6yFScN4tbWLcZmnZySjUxro6ycPDJmnN/BrhaN27W9cjt
+         IMDw==
+X-Gm-Message-State: APjAAAXdYKo5LbSIyB+ksyGRkl7Fcg1OvKReFWcuR7hCwWAQBk3DWZYm
+        wG6m4ecW0EFirlb5YPryXQA=
+X-Google-Smtp-Source: APXvYqxZv5pvU+COa+Z57bqd7TVlj3AKMVnWrlNSwtaonBLRwl6oAVA7CbZzWjXYXul1zP2Wc7+ZAQ==
+X-Received: by 2002:a05:6214:14b3:: with SMTP id bo19mr18216129qvb.93.1576972000657;
+        Sat, 21 Dec 2019 15:46:40 -0800 (PST)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id b7sm4323472qkh.106.2019.12.21.15.46.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 Dec 2019 15:46:40 -0800 (PST)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Sat, 21 Dec 2019 18:46:37 -0500
+To:     Tom Murphy <murphyt7@tcd.ie>
+Cc:     iommu@lists.linux-foundation.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>, inki.dae@samsung.com,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Julien Grall <julien.grall@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org
+Subject: Re: [PATCH 1/8] iommu/vt-d: clean up 32bit si_domain assignment
+Message-ID: <20191221234635.GA99623@rani.riverdale.lan>
+References: <20191221150402.13868-1-murphyt7@tcd.ie>
+ <20191221150402.13868-2-murphyt7@tcd.ie>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191221150402.13868-2-murphyt7@tcd.ie>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-On Fri, Dec 20, 2019 at 9:03 PM Artur =C5=9Awigo=C5=84 <a.swigon@samsung.co=
-m> wrote:
->
-> From: Marek Szyprowski <m.szyprowski@samsung.com>
->
-> This patch adds interconnect support to exynos-mixer. The mixer works
-> the same as before when CONFIG_INTERCONNECT is 'n'.
-
-The patch description doesn't include why interconnect is required
-and what to do.
-
->
-> Co-developed-by: Artur =C5=9Awigo=C5=84 <a.swigon@samsung.com>
-> Signed-off-by: Artur =C5=9Awigo=C5=84 <a.swigon@samsung.com>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+On Sat, Dec 21, 2019 at 03:03:53PM +0000, Tom Murphy wrote:
+> In the intel iommu driver devices which only support 32bit DMA can't be
+> direct mapped. The implementation of this is weird. Currently we assign
+> it a direct mapped domain and then remove the domain later and replace
+> it with a domain of type IOMMU_DOMAIN_IDENTITY. We should just assign it
+> a domain of type IOMMU_DOMAIN_IDENTITY from the begging rather than
+> needlessly swapping domains.
+> 
+> Signed-off-by: Tom Murphy <murphyt7@tcd.ie>
 > ---
->  drivers/gpu/drm/exynos/exynos_mixer.c | 71 +++++++++++++++++++++++++--
->  1 file changed, 66 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exyn=
-os/exynos_mixer.c
-> index 6cfdb95fef2f..a7e7240a055f 100644
-> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
-> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-> @@ -13,6 +13,7 @@
->  #include <linux/component.h>
->  #include <linux/delay.h>
->  #include <linux/i2c.h>
-> +#include <linux/interconnect.h>
->  #include <linux/interrupt.h>
->  #include <linux/irq.h>
->  #include <linux/kernel.h>
-> @@ -97,6 +98,7 @@ struct mixer_context {
->         struct exynos_drm_crtc  *crtc;
->         struct exynos_drm_plane planes[MIXER_WIN_NR];
->         unsigned long           flags;
-> +       struct icc_path         *soc_path;
->
->         int                     irq;
->         void __iomem            *mixer_regs;
-> @@ -931,6 +933,40 @@ static void mixer_disable_vblank(struct exynos_drm_c=
-rtc *crtc)
->         mixer_reg_writemask(mixer_ctx, MXR_INT_EN, 0, MXR_INT_EN_VSYNC);
->  }
->
-> +static void mixer_set_memory_bandwidth(struct exynos_drm_crtc *crtc)
-> +{
-> +       struct drm_display_mode *mode =3D &crtc->base.state->adjusted_mod=
-e;
-> +       struct mixer_context *ctx =3D crtc->ctx;
-> +       unsigned long bw, bandwidth =3D 0;
-> +       int i, j, sub;
-> +
-> +       if (!ctx->soc_path)
-> +               return;
-> +
-> +       for (i =3D 0; i < MIXER_WIN_NR; i++) {
-> +               struct drm_plane *plane =3D &ctx->planes[i].base;
-> +               const struct drm_format_info *format;
-> +
-> +               if (plane->state && plane->state->crtc && plane->state->f=
-b) {
-> +                       format =3D plane->state->fb->format;
-> +                       bw =3D mode->hdisplay * mode->vdisplay *
-> +                                                       drm_mode_vrefresh=
-(mode);
-> +                       if (mode->flags & DRM_MODE_FLAG_INTERLACE)
-> +                               bw /=3D 2;
-> +                       for (j =3D 0; j < format->num_planes; j++) {
-> +                               sub =3D j ? (format->vsub * format->hsub)=
- : 1;
-> +                               bandwidth +=3D format->cpp[j] * bw / sub;
-> +                       }
-> +               }
-> +       }
-> +
-> +       /* add 20% safety margin */
-> +       bandwidth =3D bandwidth / 4 * 5;
-> +
-> +       dev_dbg(ctx->dev, "exynos-mixer: safe bandwidth %ld Bps\n", bandw=
-idth);
-> +       icc_set_bw(ctx->soc_path, Bps_to_icc(bandwidth), 0);
-> +}
+>  drivers/iommu/intel-iommu.c | 88 +++++++++++++------------------------
+>  1 file changed, 31 insertions(+), 57 deletions(-)
+> 
+> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+> index 0c8d81f56a30..c1ea66467918 100644
+> --- a/drivers/iommu/intel-iommu.c
+> +++ b/drivers/iommu/intel-iommu.c
+> @@ -5640,7 +5609,12 @@ static int intel_iommu_add_device(struct device *dev)
+>  	domain = iommu_get_domain_for_dev(dev);
+>  	dmar_domain = to_dmar_domain(domain);
+>  	if (domain->type == IOMMU_DOMAIN_DMA) {
+> -		if (device_def_domain_type(dev) == IOMMU_DOMAIN_IDENTITY) {
+> +		/*
+> +		 * We check dma_mask >= dma_get_required_mask(dev) because
+> +		 * 32 bit DMA falls back to non-identity mapping.
+> +		 */
+> +		if (device_def_domain_type(dev) == IOMMU_DOMAIN_IDENTITY &&
+> +				dma_mask >= dma_get_required_mask(dev)) {
+>  			ret = iommu_request_dm_for_dev(dev);
+>  			if (ret) {
+>  				dmar_remove_one_dev_info(dev);
+> -- 
+> 2.20.1
+> 
 
-I recommend that add the role of this function in order to guarantee
-the minimum bandwidth to prevent performance drop or h/w issue.
-
-> +
->  static void mixer_atomic_begin(struct exynos_drm_crtc *crtc)
->  {
->         struct mixer_context *ctx =3D crtc->ctx;
-> @@ -982,6 +1018,7 @@ static void mixer_atomic_flush(struct exynos_drm_crt=
-c *crtc)
->         if (!test_bit(MXR_BIT_POWERED, &mixer_ctx->flags))
->                 return;
->
-> +       mixer_set_memory_bandwidth(crtc);
->         mixer_enable_sync(mixer_ctx);
->         exynos_crtc_handle_event(crtc);
->  }
-> @@ -1029,6 +1066,7 @@ static void mixer_disable(struct exynos_drm_crtc *c=
-rtc)
->         for (i =3D 0; i < MIXER_WIN_NR; i++)
->                 mixer_disable_plane(crtc, &ctx->planes[i]);
->
-> +       mixer_set_memory_bandwidth(crtc);
->         exynos_drm_pipe_clk_enable(crtc, false);
->
->         pm_runtime_put(ctx->dev);
-> @@ -1220,12 +1258,22 @@ static int mixer_probe(struct platform_device *pd=
-ev)
->         struct device *dev =3D &pdev->dev;
->         const struct mixer_drv_data *drv;
->         struct mixer_context *ctx;
-> +       struct icc_path *path;
->         int ret;
->
-> +       /*
-> +        * Returns NULL if CONFIG_INTERCONNECT is disabled.
-> +        * May return ERR_PTR(-EPROBE_DEFER).
-> +        */
-> +       path =3D of_icc_get(dev, NULL);
-> +       if (IS_ERR(path))
-> +               return PTR_ERR(path);
-> +
->         ctx =3D devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_KERNEL);
->         if (!ctx) {
->                 DRM_DEV_ERROR(dev, "failed to alloc mixer context.\n");
-> -               return -ENOMEM;
-> +               ret =3D -ENOMEM;
-> +               goto err;
->         }
->
->         drv =3D of_device_get_match_data(dev);
-> @@ -1233,6 +1281,7 @@ static int mixer_probe(struct platform_device *pdev=
-)
->         ctx->pdev =3D pdev;
->         ctx->dev =3D dev;
->         ctx->mxr_ver =3D drv->version;
-> +       ctx->soc_path =3D path;
->
->         if (drv->is_vp_enabled)
->                 __set_bit(MXR_BIT_VP_ENABLED, &ctx->flags);
-> @@ -1242,17 +1291,29 @@ static int mixer_probe(struct platform_device *pd=
-ev)
->         platform_set_drvdata(pdev, ctx);
->
->         ret =3D component_add(&pdev->dev, &mixer_component_ops);
-> -       if (!ret)
-> -               pm_runtime_enable(dev);
-> +       if (ret < 0)
-> +               goto err;
-> +
-> +       pm_runtime_enable(dev);
-> +
-> +       return 0;
-> +
-> +err:
-> +       icc_put(path);
->
->         return ret;
->  }
->
->  static int mixer_remove(struct platform_device *pdev)
->  {
-> -       pm_runtime_disable(&pdev->dev);
-> +       struct device *dev =3D &pdev->dev;
-> +       struct mixer_context *ctx =3D dev_get_drvdata(dev);
-> +
-> +       pm_runtime_disable(dev);
-> +
-> +       component_del(dev, &mixer_component_ops);
->
-> -       component_del(&pdev->dev, &mixer_component_ops);
-> +       icc_put(ctx->soc_path);
->
->         return 0;
->  }
-> --
-> 2.17.1
->
-
-Basically, I agree this patch about using ICC feature
-to guarantee the minimum bandwidth. But, I don't have
-the knowledge of exynos-mixer.c. So, just I reviewed
-the part of ICC usage. After digging the exynos-mixer.c,
-I'll reply the reviewed tag. Thanks.
-
---=20
-Best Regards,
-Chanwoo Choi
+Should this be dma_direct_get_required_mask? dma_get_required_mask may
+return DMA_BIT_MASK(32) -- it callbacks into intel_get_required_mask,
+but I'm not sure what iommu_no_mapping(dev) will do at this point?
