@@ -2,174 +2,144 @@ Return-Path: <SRS0=FMrg=2M=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D823C2D0D3
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 22 Dec 2019 17:09:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81AC3C2D0C8
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 22 Dec 2019 17:41:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 045902070A
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 22 Dec 2019 17:09:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1577034564;
-	bh=geqtjwNhYhPjKOQTr6T9PrwqzqjPWdQ7WW0r3/weydI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=hyBdtiQZziCZ9/k8MKwowZRAzsy9QOh9wUqYiO2ACdj4ngfO5d/C7ukXd7h5oIbKf
-	 kvAqpc+WpgAL2hBvWIrgMGVRab9d7RsA4FJMPa6yP7SGfzhclwCgUopO0W9XkruaHK
-	 z3xJtouKuVmBH3dWGRtkBI7ViQhx9ytYVySOC3oc=
+	by mail.kernel.org (Postfix) with ESMTP id 54C30206CB
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 22 Dec 2019 17:41:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mPCxLyET"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726010AbfLVRJV (ORCPT
+        id S1726189AbfLVRlg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 22 Dec 2019 12:09:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54142 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725919AbfLVRJV (ORCPT
+        Sun, 22 Dec 2019 12:41:36 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:40695 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725919AbfLVRlg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 22 Dec 2019 12:09:21 -0500
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46063206B7;
-        Sun, 22 Dec 2019 17:09:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577034559;
-        bh=geqtjwNhYhPjKOQTr6T9PrwqzqjPWdQ7WW0r3/weydI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=07BQMQ6Hi57dx/JRXrxf2u1oNEjJQB034YRiconHLdRB0lLKc4Hwfe97RW05Uv/tq
-         AKKDhe6nGpWcF/9npYiw5Fq7zftXQnLc13UPWdC0kF0ifrclA2+d+VZlDC8Ya5r7E8
-         tfwfwll4JDkG/JDZSwUMYCfglmEytTVVBzC+tQJE=
-Received: by mail-lf1-f52.google.com with SMTP id 15so10942870lfr.2;
-        Sun, 22 Dec 2019 09:09:19 -0800 (PST)
-X-Gm-Message-State: APjAAAWdkqqIfYX1GDzTIc5509s+wbpIH7AjL2VBEL49BBdSNBNLGv7+
-        va06MXGAiwGHQMgbCtUlsZzis6+27yCosBJMzwk=
-X-Google-Smtp-Source: APXvYqwBbqcf1Pd8XBumubRFDeYehrjcMzLoDXNvGe/zro6dSDNnXlMk5m00bIDMFtqyXV44zbdUED/i0ZPagGGw2/Y=
-X-Received: by 2002:ac2:5444:: with SMTP id d4mr15264932lfn.49.1577034557468;
- Sun, 22 Dec 2019 09:09:17 -0800 (PST)
-MIME-Version: 1.0
-References: <CGME20191220120143eucas1p1c9b01ae8c2e4ecd70423ef9d8001536f@eucas1p1.samsung.com>
- <20191220115653.6487-1-a.swigon@samsung.com> <20191220115653.6487-4-a.swigon@samsung.com>
-In-Reply-To: <20191220115653.6487-4-a.swigon@samsung.com>
-From:   Chanwoo Choi <chanwoo@kernel.org>
-Date:   Mon, 23 Dec 2019 02:08:41 +0900
-X-Gmail-Original-Message-ID: <CAGTfZH0zfvPYtTv6v+5nq99Gd2PVtg+O20dwf2nbV2j1U0nxCQ@mail.gmail.com>
-Message-ID: <CAGTfZH0zfvPYtTv6v+5nq99Gd2PVtg+O20dwf2nbV2j1U0nxCQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 3/7] interconnect: Allow inter-provider pairs to be configured
-To:     =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>
-Cc:     devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>, inki.dae@samsung.com,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Sun, 22 Dec 2019 12:41:36 -0500
+Received: by mail-pl1-f195.google.com with SMTP id s21so3543752plr.7;
+        Sun, 22 Dec 2019 09:41:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=GjIArb4hl7a0UGSCX9uBkL4nmbYXvZobEZoJkTTSRZE=;
+        b=mPCxLyETPkbxQhjDoSLsPUtXBpNUwEKEmKVzgnHkA4JnaBUw9M+lvbXtEb0YReHJzT
+         l9J15qZXXxVM2VC27XXsahsfGBCRDuqDDpjHhreb5qzctHmIQULVnWBhI+RiAetpgSrC
+         XSxwVxo1l7JEL0zM9SBC+n2cJSl4PakbOrBBpkdZt7zOzjPgKoSa0A4BlkPJX3lYH/zT
+         LoD2mwynQpO0XKOlsRQKLwlCpiqsJuanDg4131Td4qRhCD9CWw3dQyz+7xYoa9XyN7U4
+         3nrW7xwYI4zARl/3xWOI71nMSMLqScXF3MAuF7LNA6VGBJWEFZ6BAa6MEgugUlu8tYcZ
+         acSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=GjIArb4hl7a0UGSCX9uBkL4nmbYXvZobEZoJkTTSRZE=;
+        b=MrcsqpY2WFGT+YYRRwD2K0LBUKVeEPBqY5p2+f9+DDQ+ArXJExrzTQ1nnONPECUbBi
+         gPEJtHiE71SX2zcyAiKWOLT2DtlzRllEyTw5GwTGH3MPxTvG8PkwwSyVfjYEteafBzHj
+         qm3yi+fsSAzxuTxvPJBwsOAHTgGj/t5bzK2wx5rfXX/GXqmE5g8wfvF6ivxJ9W9FnLm1
+         +BWhT5IAWof8SRQ4/er/7/TdMNrjoxKGtZ4kOsJ/fKnMH+gXpdoykRJLjvui3S1CqNFh
+         1opeZM6by/CrmNTBCnPFc1sAkfKAVXXe7yUYsBP6qMvyGRiF5v/SUSlud8qHar/KHb3y
+         6K3g==
+X-Gm-Message-State: APjAAAUsAXjYO8Cyj9z+wSMg3exAwvJA1+rxc+f2z1QtkU401GqpLePy
+        7g9CXVhwBTKz9x6TwgjwdUQ=
+X-Google-Smtp-Source: APXvYqxWJxGk8wNhQDGsDwCsSuiO1+raKJZgeeqvjiRwYP/0gDQg6gDnZJGz3gr4oLv5qmI2Aww9Rw==
+X-Received: by 2002:a17:902:9f88:: with SMTP id g8mr27115715plq.100.1577036495552;
+        Sun, 22 Dec 2019 09:41:35 -0800 (PST)
+Received: from localhost ([2001:19f0:6001:12c8:5400:2ff:fe72:6403])
+        by smtp.gmail.com with ESMTPSA id i3sm19663100pfo.72.2019.12.22.09.41.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 22 Dec 2019 09:41:34 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     cw00.choi@samsung.com, myungjoo.ham@samsung.com,
+        kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH v2 1/2] PM / devfreq: rk3399_dmc: Disable devfreq-event device when fails
+Date:   Sun, 22 Dec 2019 17:41:31 +0000
+Message-Id: <20191222174132.3701-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+The probe process may fail, but the devfreq event device remains
+enabled. Call devfreq_event_disable_edev on the error return path.
 
-On Fri, Dec 20, 2019 at 9:03 PM Artur =C5=9Awigo=C5=84 <a.swigon@samsung.co=
-m> wrote:
->
-> In the exynos-bus devfreq driver every bus is probed separately and is
-
-IMHO, the patch description should specify the more general cause
-why have to be changed. Actually, almost people might not know
-the 'exynos-bus'. So, firstly, you have to specify the general cause
-why this patch is necessary without 'exynos-bus' word and then
-add the real use-case with 'exynos-bus' example.
-
-> assigned a separate interconnect provider. However, the interconnect
-> framework does not call the '->set' callback for pairs of nodes which
-> belong to different providers.
->
-> This patch adds support for a new boolean 'inter_set' field in struct
-> icc_provider. Setting it to 'true' enables calling '->set' for
-> inter-provider node pairs. All existing users of the interconnect
-> framework allocate this structure with kzalloc, and are therefore
-> unaffected.
->
-> Signed-off-by: Artur =C5=9Awigo=C5=84 <a.swigon@samsung.com>
-> ---
->  drivers/interconnect/core.c           | 11 +++++------
->  include/linux/interconnect-provider.h |  2 ++
->  2 files changed, 7 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-> index 74c68898a350..a28bd0f8a497 100644
-> --- a/drivers/interconnect/core.c
-> +++ b/drivers/interconnect/core.c
-> @@ -259,23 +259,22 @@ static int aggregate_requests(struct icc_node *node=
-)
->  static int apply_constraints(struct icc_path *path)
->  {
->         struct icc_node *next, *prev =3D NULL;
-> +       struct icc_provider *p;
->         int ret =3D -EINVAL;
->         int i;
->
->         for (i =3D 0; i < path->num_nodes; i++) {
->                 next =3D path->reqs[i].node;
-> +               p =3D next->provider;
->
-> -               /*
-> -                * Both endpoints should be valid master-slave pairs of t=
-he
-> -                * same interconnect provider that will be configured.
-> -                */
-> -               if (!prev || next->provider !=3D prev->provider) {
-> +               /* both endpoints should be valid master-slave pairs */
-> +               if (!prev || (p !=3D prev->provider && !p->inter_set)) {
->                         prev =3D next;
->                         continue;
->                 }
->
->                 /* set the constraints */
-> -               ret =3D next->provider->set(prev, next);
-> +               ret =3D p->set(prev, next);
->                 if (ret)
->                         goto out;
->
-> diff --git a/include/linux/interconnect-provider.h b/include/linux/interc=
-onnect-provider.h
-> index cc965b8fab53..b6ae0ee686c5 100644
-> --- a/include/linux/interconnect-provider.h
-> +++ b/include/linux/interconnect-provider.h
-> @@ -41,6 +41,7 @@ struct icc_node *of_icc_xlate_onecell(struct of_phandle=
-_args *spec,
->   * @xlate: provider-specific callback for mapping nodes from phandle arg=
-uments
->   * @dev: the device this interconnect provider belongs to
->   * @users: count of active users
-> + * @inter_set: whether inter-provider pairs will be configured with @set
->   * @data: pointer to private data
->   */
->  struct icc_provider {
-> @@ -53,6 +54,7 @@ struct icc_provider {
->         struct icc_node* (*xlate)(struct of_phandle_args *spec, void *dat=
-a);
->         struct device           *dev;
->         int                     users;
-> +       bool                    inter_set;
->         void                    *data;
->  };
->
-> --
-> 2.17.1
->
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+v2:
+-change subject
+-rename lable to err_edev
+-fix error path handler
+---
+ drivers/devfreq/rk3399_dmc.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
 
---=20
-Best Regards,
-Chanwoo Choi
+diff --git a/drivers/devfreq/rk3399_dmc.c b/drivers/devfreq/rk3399_dmc.c
+index 2f1027c5b647..4288745304c7 100644
+--- a/drivers/devfreq/rk3399_dmc.c
++++ b/drivers/devfreq/rk3399_dmc.c
+@@ -364,7 +364,8 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
+ 			if (res.a0) {
+ 				dev_err(dev, "Failed to set dram param: %ld\n",
+ 					res.a0);
+-				return -EINVAL;
++				ret = -EINVAL;
++				goto err_edev;
+ 			}
+ 		}
+ 	}
+@@ -373,8 +374,10 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
+ 	if (node) {
+ 		data->regmap_pmu = syscon_node_to_regmap(node);
+ 		of_node_put(node);
+-		if (IS_ERR(data->regmap_pmu))
+-			return PTR_ERR(data->regmap_pmu);
++		if (IS_ERR(data->regmap_pmu)) {
++			ret = PTR_ERR(data->regmap_pmu);
++			goto err_edev;
++		}
+ 	}
+ 
+ 	regmap_read(data->regmap_pmu, RK3399_PMUGRF_OS_REG2, &val);
+@@ -392,7 +395,8 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
+ 		data->odt_dis_freq = data->timing.lpddr4_odt_dis_freq;
+ 		break;
+ 	default:
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto err_edev;
+ 	};
+ 
+ 	arm_smccc_smc(ROCKCHIP_SIP_DRAM_FREQ, 0, 0,
+@@ -426,7 +430,8 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
+ 	 */
+ 	if (dev_pm_opp_of_add_table(dev)) {
+ 		dev_err(dev, "Invalid operating-points in device tree.\n");
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto err_edev;
+ 	}
+ 
+ 	of_property_read_u32(np, "upthreshold",
+@@ -466,6 +471,8 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
+ 
+ err_free_opp:
+ 	dev_pm_opp_of_remove_table(&pdev->dev);
++err_edev:
++	devfreq_event_disable_edev(data->edev);
+ 	return ret;
+ }
+ 
+-- 
+2.17.1
+
