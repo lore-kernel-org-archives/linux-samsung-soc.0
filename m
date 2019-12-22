@@ -1,149 +1,177 @@
-Return-Path: <SRS0=POLG=2L=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=FMrg=2M=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48603C2D0D3
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 21 Dec 2019 23:46:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B7AC2D0C8
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 22 Dec 2019 16:49:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BBE320700
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 21 Dec 2019 23:46:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K2F08+kb"
+	by mail.kernel.org (Postfix) with ESMTP id 64695206D3
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 22 Dec 2019 16:49:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1577033380;
+	bh=zNwV6UcRWYyXPEtNmmpVjDoWHyX7Z1gcx8eFJmze8mg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=HrEfYMUL/YayQQA7nzqxYjMRGWoGU/cfUL2twz62bDc+OI88KPCOhcckkO3sGyd63
+	 qI8QW6h2MqhrIQlfUugvwxvfrkx9Y+Bx0ggQSRUrGgN1PKG+NQ/JKYbYaW78AD7cXN
+	 E2ByMdHzBqHxsbSwQnL1ar1yCjBVjnwIj/H68FM4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726645AbfLUXqm (ORCPT
+        id S1725919AbfLVQtk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 21 Dec 2019 18:46:42 -0500
-Received: from mail-qv1-f65.google.com ([209.85.219.65]:34193 "EHLO
-        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726024AbfLUXqm (ORCPT
+        Sun, 22 Dec 2019 11:49:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38814 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725903AbfLVQtj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 21 Dec 2019 18:46:42 -0500
-Received: by mail-qv1-f65.google.com with SMTP id o18so5079840qvf.1;
-        Sat, 21 Dec 2019 15:46:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=DZy1sByRbPp81Fc4unsIfUDkM1speXohHbJEFLa+79Y=;
-        b=K2F08+kbBOHpEb5GI2snEkwsgZNjaPXWMKDftdpnSDrNjdoFsaU7mJy1E8X+UN6pTF
-         CqMGQGTCVzkASTJTbCKGzwmcE+xGW9X9DoBShnHYBHrUjwA2y0thgfSaIDeXsAsxh80K
-         Lzsw/9ErY21ZUOic82HoE2snRWWJy1wLWDPwW7IWmh5yvrdgv4rUVX4xVE004OheL+PI
-         /8AUmTvOKwGIU5Ku/sIm9m5U0rOim/SPjYy3gzVxef0QWGwTj1JJt9SDEH83TWoChVOq
-         wLkEyhYrjgWcWjYym7iQAuL3qcxgGsX3JQNmgv7pU5p9IHVMooy6My1cg5SbonFnCmxX
-         Fqwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DZy1sByRbPp81Fc4unsIfUDkM1speXohHbJEFLa+79Y=;
-        b=cvV8272CjqKNjseP9IVVUXbbxKJ0slLx1WsbkDJHDoeN/3vHwuctTz95T3x5v8qef4
-         wfQuL7StZwZjPkgUDbtB+lwe/oMAwB9Xbdy10mk/u+2jQR3GNEe7D0D74q70kMq9arlb
-         PNhpmuqIUw/xbiPYSNl5/rUdu6ZFvqxccOvNBRozsvoS6a54JRTc/3sqU3aSAA/0JUGC
-         Y3VAraup61c7CsK8ZBh2M96ClkM7ofpaMh+1a0fD0joJM0iWn/CYvcAr53OIWtdMFcZl
-         FXh0enaSlbVfnKVaYH03LCc6yFScN4tbWLcZmnZySjUxro6ycPDJmnN/BrhaN27W9cjt
-         IMDw==
-X-Gm-Message-State: APjAAAXdYKo5LbSIyB+ksyGRkl7Fcg1OvKReFWcuR7hCwWAQBk3DWZYm
-        wG6m4ecW0EFirlb5YPryXQA=
-X-Google-Smtp-Source: APXvYqxZv5pvU+COa+Z57bqd7TVlj3AKMVnWrlNSwtaonBLRwl6oAVA7CbZzWjXYXul1zP2Wc7+ZAQ==
-X-Received: by 2002:a05:6214:14b3:: with SMTP id bo19mr18216129qvb.93.1576972000657;
-        Sat, 21 Dec 2019 15:46:40 -0800 (PST)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id b7sm4323472qkh.106.2019.12.21.15.46.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Dec 2019 15:46:40 -0800 (PST)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Sat, 21 Dec 2019 18:46:37 -0500
-To:     Tom Murphy <murphyt7@tcd.ie>
-Cc:     iommu@lists.linux-foundation.org,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sun, 22 Dec 2019 11:49:39 -0500
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BDC22070A;
+        Sun, 22 Dec 2019 16:49:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577033378;
+        bh=zNwV6UcRWYyXPEtNmmpVjDoWHyX7Z1gcx8eFJmze8mg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=WdS5yxPmd7RX9ltaK4Oge25rmUk44wOe0yd4V6/7qk1BRZTYlcDg8xn+6N8wdvQPr
+         NlEMcuioxl8QWiP2mVUD69EIrOPzovxEMSWP3lpa4eeORQjsOJJlQijZbDZpthIXmx
+         FgdRE6YjBFTm2YXH1k4O+oylhv0x15M9UYwnjH1o=
+Received: by mail-lj1-f174.google.com with SMTP id l2so15505686lja.6;
+        Sun, 22 Dec 2019 08:49:38 -0800 (PST)
+X-Gm-Message-State: APjAAAU52rjvYOA6fm91y9A/g2X/bGQd+9PaEZbo5dpHnfWOfXMqNU0z
+        xQ7SEbI37+yc77dciduA10zmAmMtCJurImLed4k=
+X-Google-Smtp-Source: APXvYqw+7LsTvhfr17gQzvZhmz8/LnvcJbjWww+1BqNZBdSt5pyypiA6KMl3+4MaQAGBhgU3LpIiXqsY+ypdKUkPeTo=
+X-Received: by 2002:a2e:8551:: with SMTP id u17mr10521487ljj.165.1577033376732;
+ Sun, 22 Dec 2019 08:49:36 -0800 (PST)
+MIME-Version: 1.0
+References: <20191221181855.31380-1-tiny.windzz@gmail.com>
+In-Reply-To: <20191221181855.31380-1-tiny.windzz@gmail.com>
+From:   Chanwoo Choi <chanwoo@kernel.org>
+Date:   Mon, 23 Dec 2019 01:49:00 +0900
+X-Gmail-Original-Message-ID: <CAGTfZH1aObSb5oWnVzp_WaGALFfC9VQpRKQ+AWTauPVL7VPOSg@mail.gmail.com>
+Message-ID: <CAGTfZH1aObSb5oWnVzp_WaGALFfC9VQpRKQ+AWTauPVL7VPOSg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] PM / devfreq: rk3399_dmc: Add missing devfreq_event_disable_edev
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
         Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Julien Grall <julien.grall@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org
-Subject: Re: [PATCH 1/8] iommu/vt-d: clean up 32bit si_domain assignment
-Message-ID: <20191221234635.GA99623@rani.riverdale.lan>
-References: <20191221150402.13868-1-murphyt7@tcd.ie>
- <20191221150402.13868-2-murphyt7@tcd.ie>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191221150402.13868-2-murphyt7@tcd.ie>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, Dec 21, 2019 at 03:03:53PM +0000, Tom Murphy wrote:
-> In the intel iommu driver devices which only support 32bit DMA can't be
-> direct mapped. The implementation of this is weird. Currently we assign
-> it a direct mapped domain and then remove the domain later and replace
-> it with a domain of type IOMMU_DOMAIN_IDENTITY. We should just assign it
-> a domain of type IOMMU_DOMAIN_IDENTITY from the begging rather than
-> needlessly swapping domains.
-> 
-> Signed-off-by: Tom Murphy <murphyt7@tcd.ie>
-> ---
->  drivers/iommu/intel-iommu.c | 88 +++++++++++++------------------------
->  1 file changed, 31 insertions(+), 57 deletions(-)
-> 
-> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> index 0c8d81f56a30..c1ea66467918 100644
-> --- a/drivers/iommu/intel-iommu.c
-> +++ b/drivers/iommu/intel-iommu.c
-> @@ -5640,7 +5609,12 @@ static int intel_iommu_add_device(struct device *dev)
->  	domain = iommu_get_domain_for_dev(dev);
->  	dmar_domain = to_dmar_domain(domain);
->  	if (domain->type == IOMMU_DOMAIN_DMA) {
-> -		if (device_def_domain_type(dev) == IOMMU_DOMAIN_IDENTITY) {
-> +		/*
-> +		 * We check dma_mask >= dma_get_required_mask(dev) because
-> +		 * 32 bit DMA falls back to non-identity mapping.
-> +		 */
-> +		if (device_def_domain_type(dev) == IOMMU_DOMAIN_IDENTITY &&
-> +				dma_mask >= dma_get_required_mask(dev)) {
->  			ret = iommu_request_dm_for_dev(dev);
->  			if (ret) {
->  				dmar_remove_one_dev_info(dev);
-> -- 
-> 2.20.1
-> 
+Hi,
 
-Should this be dma_direct_get_required_mask? dma_get_required_mask may
-return DMA_BIT_MASK(32) -- it callbacks into intel_get_required_mask,
-but I'm not sure what iommu_no_mapping(dev) will do at this point?
+2019=EB=85=84 12=EC=9B=94 22=EC=9D=BC (=EC=9D=BC) =EC=98=A4=EC=A0=84 3:21, =
+Yangtao Li <tiny.windzz@gmail.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> The probe process may fail, but the devfreq event device remains
+> enabled. Call devfreq_event_disable_edev on the error return path.
+>
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  drivers/devfreq/rk3399_dmc.c | 17 ++++++++++++-----
+>  1 file changed, 12 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/devfreq/rk3399_dmc.c b/drivers/devfreq/rk3399_dmc.c
+> index 2f1027c5b647..4f4e7c041888 100644
+> --- a/drivers/devfreq/rk3399_dmc.c
+> +++ b/drivers/devfreq/rk3399_dmc.c
+> @@ -364,7 +364,8 @@ static int rk3399_dmcfreq_probe(struct platform_devic=
+e *pdev)
+>                         if (res.a0) {
+>                                 dev_err(dev, "Failed to set dram param: %=
+ld\n",
+>                                         res.a0);
+> -                               return -EINVAL;
+> +                               ret =3D -EINVAL;
+> +                               goto err_disable_edev;
+
+After jumping err_disable_edev, it calls the dev_pm_opp_of_remove_table().
+it is wrong. It doesn't need to remove the table.
+
+>                         }
+>                 }
+>         }
+> @@ -373,8 +374,10 @@ static int rk3399_dmcfreq_probe(struct platform_devi=
+ce *pdev)
+>         if (node) {
+>                 data->regmap_pmu =3D syscon_node_to_regmap(node);
+>                 of_node_put(node);
+> -               if (IS_ERR(data->regmap_pmu))
+> -                       return PTR_ERR(data->regmap_pmu);
+> +               if (IS_ERR(data->regmap_pmu)) {
+> +                       ret =3D PTR_ERR(data->regmap_pmu);
+> +                       goto err_disable_edev;
+
+ditto.
+
+After jumping err_disable_edev, it calls the dev_pm_opp_of_remove_table().
+it is wrong. It doesn't need to remove the table.
+
+> +               }
+>         }
+>
+>         regmap_read(data->regmap_pmu, RK3399_PMUGRF_OS_REG2, &val);
+> @@ -392,7 +395,8 @@ static int rk3399_dmcfreq_probe(struct platform_devic=
+e *pdev)
+>                 data->odt_dis_freq =3D data->timing.lpddr4_odt_dis_freq;
+>                 break;
+>         default:
+> -               return -EINVAL;
+> +               ret =3D -EINVAL;
+> +               goto err_disable_edev;
+
+ditto.
+
+>         };
+>
+>         arm_smccc_smc(ROCKCHIP_SIP_DRAM_FREQ, 0, 0,
+> @@ -426,7 +430,8 @@ static int rk3399_dmcfreq_probe(struct platform_devic=
+e *pdev)
+>          */
+>         if (dev_pm_opp_of_add_table(dev)) {
+>                 dev_err(dev, "Invalid operating-points in device tree.\n"=
+);
+> -               return -EINVAL;
+> +               ret =3D -EINVAL;
+> +               goto err_disable_edev;
+
+ditto.
+
+>         }
+>
+>         of_property_read_u32(np, "upthreshold",
+> @@ -464,6 +469,8 @@ static int rk3399_dmcfreq_probe(struct platform_devic=
+e *pdev)
+>
+>         return 0;
+>
+> +err_disable_edev:
+> +       devfreq_event_disable_edev(data->edev);
+
+It is wrong. It have to be called under dev_pm_opp_of_remove_table().
+It ignores the sequence of exception handling.
+
+>  err_free_opp:
+>         dev_pm_opp_of_remove_table(&pdev->dev);
+>         return ret;
+> --
+> 2.17.1
+>
+
+
+--=20
+Best Regards,
+Chanwoo Choi
