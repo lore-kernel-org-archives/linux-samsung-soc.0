@@ -5,57 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5308C2D0C0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 18:59:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D9EC2D0D0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 18:59:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2BA9207FF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 18:59:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86C41206B7
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 18:59:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RjgIjnGy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sj3ScPvY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726985AbfLWS72 (ORCPT
+        id S1727083AbfLWS7g (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 23 Dec 2019 13:59:28 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:37150 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726971AbfLWS72 (ORCPT
+        Mon, 23 Dec 2019 13:59:36 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:41949 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727050AbfLWS7e (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 23 Dec 2019 13:59:28 -0500
-Received: by mail-pj1-f68.google.com with SMTP id m13so149308pjb.2;
-        Mon, 23 Dec 2019 10:59:27 -0800 (PST)
+        Mon, 23 Dec 2019 13:59:34 -0500
+Received: by mail-pg1-f195.google.com with SMTP id x8so9234033pgk.8;
+        Mon, 23 Dec 2019 10:59:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=bLznaHMy4KKZ0cyTMqudvu5r2Rqk/jELD1oKLNSR2dU=;
-        b=RjgIjnGy+JvVdj2w8xB8Td7Jcp/uaEDjiyOG1FJNw7ItOBOMlDiBexx/UkW6dkkAGm
-         voY0QC4zCFHaNyKdZbneErqsNlEEsUkH+mUTUEX4IGwRuLutautx5/QiGR7Dg54OfMF4
-         Pzd2xf3gtJb7iLRKy3oLhDhaoannVg2g07KyLU/4m8Tg9yffQkks69i7RNV4T7iLy6Dw
-         leXWNSpzbps7unh9oz1fwH+msb7iJL7CO2jLuJIISG1WX9/pxpG18Yu7So73y4H8ZtNa
-         74d58L/NAst17PBprENwJOgzCuTFMGvNh/uHdQUQxylZpO1+sNfkhBafPyxxAqhwGPS0
-         uB1A==
+        bh=5ZbWphWmX6hvFuVRk+RWFgQofrZKH9eYm1th2d0tMTE=;
+        b=sj3ScPvYKe5RHFI5xmOOMlBPRjGR/tgOjWkESOKIqqPmaDssnIshdfvUqClYJX9tBI
+         aWTj09Nymr7gywt/h1PZWcO4ZCSrk4jUIfNb9EczsWNEBsdXnKKNITMxCjyYVu+s19l7
+         YAXAq4G5jR40lkSkK0YEvsK99KKl/GnrZZaTiZ3SpESVNG2IP5Ulkq1MmJRItVOmbX6v
+         XMrllxsXefXzoO2sZFtT//QIbDgjkg0TqQCyXeh2aZuxSrgKCrkqi5gQmYuZ8AUI75qV
+         YnI+G38Iba0W+Ixlv9IzdrnX4eE2J66bcVf5qNE5uqUZPU3l5fAfYo7YPXp3fl8fFIqR
+         lw3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=bLznaHMy4KKZ0cyTMqudvu5r2Rqk/jELD1oKLNSR2dU=;
-        b=evNxMDDKKycYBgs+NZJ8htDJPjne26ZZnI6PLp6unplTH7K4xigOe5r9dZwHkw9DAq
-         ndbZvGUaMytBxJ6B9jvhyN075UwVPVyzi+Fi9glZMx1iQjpgXXKitBlKgETLACS6/J0W
-         +nWdihzOPfk3vOxqz7jr5UVKsbnWgHHGc4M7ZseMomtAfEVcB+JI3x7qpXYKPBo+qWDh
-         JSNmFMrYcG6p3JvkDZFnmAkETFcQv3qHYOFnIYpGxBCEL6On02E4dCIhds6zQqnjugWK
-         uIJwEkUirdbty1/DEYAo4LRV9/lKFXkKH/ky5rR5CZre40JSxc0hfoUQvuNDb/UtQrCv
-         15mg==
-X-Gm-Message-State: APjAAAU8aOqtTWMOLHsG4XN1kQ319pd7Gohoa2c1tprENWH/7lo3GDhf
-        xESx+O4WI5TzG6Zur9XELa4=
-X-Google-Smtp-Source: APXvYqwSmasDf38gpvZQ5kYkHfbJ9oeF2AFKtP2Fehgro57BEHYXKQsly+hr8s0/HHHdkDEArOHtIA==
-X-Received: by 2002:a17:902:b788:: with SMTP id e8mr32700948pls.1.1577127567423;
-        Mon, 23 Dec 2019 10:59:27 -0800 (PST)
+        bh=5ZbWphWmX6hvFuVRk+RWFgQofrZKH9eYm1th2d0tMTE=;
+        b=J+SLzP1pNZlqKJyp8Eu4ZLuqJcmYs2FHj07OAOMAkKzrUjAdVzC2uBPse68XIM6JXY
+         7fwRVBMNJCPiXZ0DYXB/Yfmp6XJ2N5gkRW7ALavqImF+axBxfksKK6kUbQVqTamy0O2M
+         UGGeogHyYdAx6i9kUJcWW5T22LWD7FTco5hPansjSkzuxmkZV6S0cwHYBJKRvdaoOmDK
+         C6wYlbzE+pZISQUnn3CGHAAiwYLInuWNngmDNibbFucbQojSR/VusQlB8i1JFWOzyBFD
+         Rvjlghw1ByNm4C5Yxfp3ksiRGsj/YK5w7pr1usIaX3zsxCRu8m0knkzOKhVRv7Ygs5fH
+         oHTA==
+X-Gm-Message-State: APjAAAX1mH/8AiFIKVm9bbud2jpDIoocyHI8mmTZO1o2/a6ut92ywPDG
+        kVkycrgVCNZyiE/EW7Mt6so=
+X-Google-Smtp-Source: APXvYqyfnDFqyHRd1X6VzN2h1ANIGyik0u9/k4DGw0m2HkGzu2Jgf7Z0vBWv5sTHp/iv1nwqNbTz6Q==
+X-Received: by 2002:a63:214f:: with SMTP id s15mr34495783pgm.238.1577127574002;
+        Mon, 23 Dec 2019 10:59:34 -0800 (PST)
 Received: from localhost ([2001:19f0:6001:12c8:5400:2ff:fe72:6403])
-        by smtp.gmail.com with ESMTPSA id x4sm25703139pff.143.2019.12.23.10.59.26
+        by smtp.gmail.com with ESMTPSA id d5sm21091646pfd.107.2019.12.23.10.59.33
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 23 Dec 2019 10:59:26 -0800 (PST)
+        Mon, 23 Dec 2019 10:59:33 -0800 (PST)
 From:   Yangtao Li <tiny.windzz@gmail.com>
 To:     m.szyprowski@samsung.com, joro@8bytes.org, kgene@kernel.org,
         krzk@kernel.org, matthias.bgg@gmail.com, agross@kernel.org,
@@ -68,9 +68,9 @@ To:     m.szyprowski@samsung.com, joro@8bytes.org, kgene@kernel.org,
         linux-rockchip@lists.infradead.org,
         virtualization@lists.linux-foundation.org
 Cc:     Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 3/6] iommu/qcom: convert to devm_platform_ioremap_resource
-Date:   Mon, 23 Dec 2019 18:59:15 +0000
-Message-Id: <20191223185918.9877-4-tiny.windzz@gmail.com>
+Subject: [PATCH 6/6] iommu/rockchip: convert to devm_platform_ioremap_resource
+Date:   Mon, 23 Dec 2019 18:59:18 +0000
+Message-Id: <20191223185918.9877-7-tiny.windzz@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191223185918.9877-1-tiny.windzz@gmail.com>
 References: <20191223185918.9877-1-tiny.windzz@gmail.com>
@@ -83,31 +83,33 @@ Use devm_platform_ioremap_resource() to simplify code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/iommu/qcom_iommu.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/iommu/rockchip-iommu.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/iommu/qcom_iommu.c b/drivers/iommu/qcom_iommu.c
-index 52f38292df5b..bf94d4d67da4 100644
---- a/drivers/iommu/qcom_iommu.c
-+++ b/drivers/iommu/qcom_iommu.c
-@@ -709,7 +709,6 @@ static int qcom_iommu_ctx_probe(struct platform_device *pdev)
- 	struct qcom_iommu_ctx *ctx;
+diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
+index b33cdd5aad81..c6d50396f4c2 100644
+--- a/drivers/iommu/rockchip-iommu.c
++++ b/drivers/iommu/rockchip-iommu.c
+@@ -1138,7 +1138,6 @@ static int rk_iommu_probe(struct platform_device *pdev)
+ {
  	struct device *dev = &pdev->dev;
- 	struct qcom_iommu_dev *qcom_iommu = dev_get_drvdata(dev->parent);
+ 	struct rk_iommu *iommu;
 -	struct resource *res;
- 	int ret, irq;
+ 	int num_res = pdev->num_resources;
+ 	int err, i;
  
- 	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
-@@ -719,8 +718,7 @@ static int qcom_iommu_ctx_probe(struct platform_device *pdev)
- 	ctx->dev = dev;
- 	platform_set_drvdata(pdev, ctx);
+@@ -1156,10 +1155,7 @@ static int rk_iommu_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	ctx->base = devm_ioremap_resource(dev, res);
-+	ctx->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(ctx->base))
- 		return PTR_ERR(ctx->base);
- 
+ 	for (i = 0; i < num_res; i++) {
+-		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+-		if (!res)
+-			continue;
+-		iommu->bases[i] = devm_ioremap_resource(&pdev->dev, res);
++		iommu->bases[i] = devm_platform_ioremap_resource(pdev, 0);
+ 		if (IS_ERR(iommu->bases[i]))
+ 			continue;
+ 		iommu->num_mmu++;
 -- 
 2.17.1
 
