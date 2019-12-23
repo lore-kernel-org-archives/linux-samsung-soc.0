@@ -2,127 +2,124 @@ Return-Path: <SRS0=HMgQ=2N=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA2C3C2D0D4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 07:26:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F4060C2D0C0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 10:38:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAA2420709
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 07:26:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hPz3RnaV"
+	by mail.kernel.org (Postfix) with ESMTP id CB5902053B
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 10:38:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725822AbfLWH0W (ORCPT
+        id S1726733AbfLWKiC convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 23 Dec 2019 02:26:22 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:42226 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725811AbfLWH0W (ORCPT
+        Mon, 23 Dec 2019 05:38:02 -0500
+Received: from mga04.intel.com ([192.55.52.120]:59708 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726709AbfLWKiC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 23 Dec 2019 02:26:22 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBN7PSNE092418;
-        Mon, 23 Dec 2019 01:25:28 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1577085928;
-        bh=TZCdQwanBajUmjnrjOmrqqKE92Iuel2n9DhlReItHps=;
-        h=Subject:To:References:From:Date:In-Reply-To;
-        b=hPz3RnaVl31ARYBIL0RBmD5SzKuqviJ1KkCDboXFBZxeOJ9IcZzvmsXZHdkQFxI6B
-         Oz2OLdqF2IrpsXzqxe/wyQ6tZKGMEnhZuTUXG072+jQU9lzBfvdxi3+C27Z7O3J3z1
-         A7WMeFB+ewaknC0/CBCcFJqM/AZiK2GJJxucI/+g=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBN7PSuh040126
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 23 Dec 2019 01:25:28 -0600
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 23
- Dec 2019 01:25:27 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 23 Dec 2019 01:25:27 -0600
-Received: from [192.168.2.14] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBN7PL0n037979;
-        Mon, 23 Dec 2019 01:25:21 -0600
-Subject: Re: [PATCH 9/9] memory: omap-gpmc: switch to platform_get_irq
-To:     Yangtao Li <tiny.windzz@gmail.com>, <ssantosh@kernel.org>,
-        <paul@crapouillou.net>, <matthias.bgg@gmail.com>,
-        <tony@atomide.com>, <lukasz.luba@arm.com>, <kgene@kernel.org>,
-        <krzk@kernel.org>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <allison@lohutok.net>,
-        <tglx@linutronix.de>, <yong.wu@mediatek.com>, <jroedel@suse.de>,
-        <evgreen@chromium.org>, <rfontana@redhat.com>, <digetx@gmail.com>,
-        <pdeschrijver@nvidia.com>, <john@phrozen.org>,
-        <alexios.zavras@intel.com>, <sboyd@kernel.org>,
-        <kstewart@linuxfoundation.org>, <info@metux.net>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-omap@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>
-References: <20191222185034.4665-1-tiny.windzz@gmail.com>
- <20191222185034.4665-9-tiny.windzz@gmail.com>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <7dc78b4c-d1a7-a990-669c-8d3ddbacee0d@ti.com>
-Date:   Mon, 23 Dec 2019 09:25:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        Mon, 23 Dec 2019 05:38:02 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Dec 2019 02:38:01 -0800
+X-IronPort-AV: E=Sophos;i="5.69,347,1571727600"; 
+   d="scan'208";a="211517217"
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.161])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Dec 2019 02:37:49 -0800
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Tom Murphy <murphyt7@tcd.ie>, iommu@lists.linux-foundation.org
+Cc:     Tom Murphy <murphyt7@tcd.ie>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Julien Grall <julien.grall@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org
+Subject: Re: [PATCH 0/8] Convert the intel iommu driver to the dma-iommu api
+In-Reply-To: <20191221150402.13868-1-murphyt7@tcd.ie>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20191221150402.13868-1-murphyt7@tcd.ie>
+Date:   Mon, 23 Dec 2019 12:37:47 +0200
+Message-ID: <87blrzwcn8.fsf@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20191222185034.4665-9-tiny.windzz@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Sat, 21 Dec 2019, Tom Murphy <murphyt7@tcd.ie> wrote:
+> This patchset converts the intel iommu driver to the dma-iommu api.
+>
+> While converting the driver I exposed a bug in the intel i915 driver
+> which causes a huge amount of artifacts on the screen of my
+> laptop. You can see a picture of it here:
+> https://github.com/pippy360/kernelPatches/blob/master/IMG_20191219_225922.jpg
+>
+> This issue is most likely in the i915 driver and is most likely caused
+> by the driver not respecting the return value of the
+> dma_map_ops::map_sg function. You can see the driver ignoring the
+> return value here:
+> https://github.com/torvalds/linux/blob/7e0165b2f1a912a06e381e91f0f4e495f4ac3736/drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c#L51
+>
+> Previously this didn’t cause issues because the intel map_sg always
+> returned the same number of elements as the input scatter gather list
+> but with the change to this dma-iommu api this is no longer the
+> case. I wasn’t able to track the bug down to a specific line of code
+> unfortunately.
+>
+> Could someone from the intel team look at this?
 
-On 22/12/2019 20:50, Yangtao Li wrote:
-> platform_get_resource(pdev, IORESOURCE_IRQ) is not recommended for
-> requesting IRQ's resources, as they can be not ready yet. Using
-> platform_get_irq() instead is preferred for getting IRQ even if it
-> was not retrieved earlier.
-> 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Let me get this straight. There is current API that on success always
+returns the same number of elements as the input scatter gather
+list. You propose to change the API so that this is no longer the case?
 
-Acked-by: Roger Quadros <rogerq@ti.com>
+A quick check of various dma_map_sg() calls in the kernel seems to
+indicate checking for 0 for errors and then ignoring the non-zero return
+is a common pattern. Are you sure it's okay to make the change you're
+proposing?
 
-> ---
->   drivers/memory/omap-gpmc.c | 10 +++-------
->   1 file changed, 3 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
-> index eff26c1b1394..6dd19d168f75 100644
-> --- a/drivers/memory/omap-gpmc.c
-> +++ b/drivers/memory/omap-gpmc.c
-> @@ -2366,13 +2366,9 @@ static int gpmc_probe(struct platform_device *pdev)
->   	if (IS_ERR(gpmc_base))
->   		return PTR_ERR(gpmc_base);
->   
-> -	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-> -	if (!res) {
-> -		dev_err(&pdev->dev, "Failed to get resource: irq\n");
-> -		return -ENOENT;
-> -	}
-> -
-> -	gpmc->irq = res->start;
-> +	gpmc->irq = platform_get_irq(pdev, 0);
-> +	if (gpmc->irq < 0)
-> +		return gpmc->irq;
->   
->   	gpmc_l3_clk = devm_clk_get(&pdev->dev, "fck");
->   	if (IS_ERR(gpmc_l3_clk)) {
-> 
+Anyway, due to the time of year and all, I'd like to ask you to file a
+bug against i915 at [1] so this is not forgotten, and please let's not
+merge the changes before this is resolved.
+
+
+Thanks,
+Jani.
+
+
+[1] https://gitlab.freedesktop.org/drm/intel/issues/new
+
 
 -- 
-cheers,
--roger
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Jani Nikula, Intel Open Source Graphics Center
