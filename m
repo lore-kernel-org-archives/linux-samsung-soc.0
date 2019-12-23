@@ -2,81 +2,95 @@ Return-Path: <SRS0=HMgQ=2N=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F6EC2D0D2
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 19:00:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C730BC2D0C0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 19:19:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45830206B7
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 19:00:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A130A206CB
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 19:19:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SfdIJwjQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cdxjrTgx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726787AbfLWTAz (ORCPT
+        id S1726890AbfLWTT0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 23 Dec 2019 14:00:55 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:43248 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726766AbfLWTAy (ORCPT
+        Mon, 23 Dec 2019 14:19:26 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42588 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726787AbfLWTT0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 23 Dec 2019 14:00:54 -0500
-Received: by mail-io1-f65.google.com with SMTP id n21so15510850ioo.10;
-        Mon, 23 Dec 2019 11:00:54 -0800 (PST)
+        Mon, 23 Dec 2019 14:19:26 -0500
+Received: by mail-pf1-f196.google.com with SMTP id 4so9615555pfz.9;
+        Mon, 23 Dec 2019 11:19:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=5WjW3vD2cx3BUd8M8ubJSzV7k9hmJV/MjBgFD4V36+U=;
-        b=SfdIJwjQd53LNcv5/C/cr6A9iEyMN7mtz3lYF9IKVOqEJF4K/GVWvOWQb1Kcd791wO
-         78vVQCVClSM/UdNaSwbCDwWR2jbpSt6wIcGgF6Fmr0HxzOX+mFetSE5kyXy1IHA0B2my
-         DoJQiMO+vOPmtRaInuM2Fwt72TC1vzyknqOYRgvk/JLMKeP2yIX4+ZuP/VDK8u4fzpYj
-         URmGVaJLjdvXbrgjsALnwGUzPTgVQ7B7JftpvLnvVhxko3Eh3aiesJmQE3pannLAC87a
-         RehuChGYDJbbt7hUZrQ6xHXdrCoGMGIZWB6SbrjJ5yzrICvMwvOAcdqO+6iyhfQkVpyJ
-         graQ==
+        h=from:to:cc:subject:date:message-id;
+        bh=4psQtWa90JQilxXsmGId8ARflofhAVS5Nu5SDmjn/4g=;
+        b=cdxjrTgxNE4436krgq5tzOVmG2nYo+ZXj9106NQMnj/n7qcx0yGRnpiPPSV0NMwTMz
+         8QGY/kv3u/vbc7/dILKMb3h1h0l7xBmgZSNRucKj5D//JpIcyel9Ztjcv2I4o9LI8+PI
+         bPmw5aV9lS+Gh80O2TFL/0FxwoP/zJA57WaNbDC72FndUeiEuHQGo6FtHCOTyCm5vyyI
+         GDUjzD7nrEij04BTpH18qWhML9jhKQTqPRWx6h2yQ96TZQKINLJpfv6m53860V14vBjB
+         k9Xqmxcl4c8MdibdpKSUXCoa/GvwHKTbdT9eP78OgM7j2ZAUBIrvTkq6dtXHIcs7Ld2z
+         qW0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=5WjW3vD2cx3BUd8M8ubJSzV7k9hmJV/MjBgFD4V36+U=;
-        b=J9xXRZRaueSN0NryXXsqdf9ow6m2c6mTUR5Bce/rrss8mWqnn3pk7FfsL+GV8nUjZj
-         8DsibagEeCrVvEAzD3aJNhnMeZE3jW7hWm9TGHn3041Hq1j8XHRLjmjQa8txBzBaZ6/a
-         jQIyUjBrzHXQVoDuDHwlGfZ1kLP7uljrjrQ/s5a2MuOXYh6BYcs4Wf2z9G9hLf7O6cVi
-         P3sZOt2hiTFLijWT/HCnBl9PaDoz/GfhUNrm3ZCrhL4tl0DRiO6Xf8EP61+tgmjhPYsh
-         MQrfONjmz9k6suA2I49T2AnuLT8oFZWbdh6hSlLMP4Sb/vPQUOsiHi0LgtSJrBRrfcIY
-         egyw==
-X-Gm-Message-State: APjAAAX8NpaGn+mkpVPYGCsWeGXvUw22WSXlHi13MI62kEFFpRIAXuPk
-        5P1JtiVn/tbk5GrDAaWPjizgX6Lw3+Z5jCDLxIw=
-X-Google-Smtp-Source: APXvYqwaFZg7aCu6nzs0ZutPtYsj9R32aQwWIh0wX+JYOxpu64SuDTLXdlqTyVyvXRJJzV59D2yYDwSiSzYDcnKN32Y=
-X-Received: by 2002:a6b:b941:: with SMTP id j62mr22074614iof.168.1577127653723;
- Mon, 23 Dec 2019 11:00:53 -0800 (PST)
-MIME-Version: 1.0
-References: <20191223185918.9877-1-tiny.windzz@gmail.com> <20191223185918.9877-2-tiny.windzz@gmail.com>
-In-Reply-To: <20191223185918.9877-2-tiny.windzz@gmail.com>
-From:   Frank Lee <tiny.windzz@gmail.com>
-Date:   Tue, 24 Dec 2019 03:00:42 +0800
-Message-ID: <CAEExFWu771PdyjqHa3vF5W46ch_YecE6Dvv8iF42r5799yuF7A@mail.gmail.com>
-Subject: Re: [PATCH] virtio-mmio: convert to devm_platform_ioremap_resource
-To:     m.szyprowski@samsung.com, joro@8bytes.org,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>, agross@kernel.org,
-        bjorn.andersson@linaro.org, Rob Clark <robdclark@gmail.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, mst@redhat.com,
-        jasowang@redhat.com, iommu@lists.linux-foundation.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        virtualization@lists.linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=4psQtWa90JQilxXsmGId8ARflofhAVS5Nu5SDmjn/4g=;
+        b=sR5CsmxqHHRp4Vpm2hDXHPjfTnR/s8sZeimimmEUkJmYMxHk/kMNOeBUIoDARHy1T0
+         eR6xercH8I+EWDvs5Ny4NYxRbitwLlNv/ecLW2j83ufBZ8U/ien06Wj8X3YwCmSsgpui
+         uz9GOfM+sUPpZbyKma3bogLoXUlOJa6bZzVuBZ8x/+YJM51NSA24yp3ZOIyvXJb74Y+1
+         UXSj1l9YChXj95XQvPxntVl/9zQnYNYjQoifZAcuiumpXI1dqzyVpRiG3yx4nfFA9FPk
+         zo3v6FLVTNKLkWj1eo9GsxB+AmmHlQ5CU2Kh7pUvz68SDkZjesQ9CDH4d6IqMOUJPke2
+         bvCg==
+X-Gm-Message-State: APjAAAXK8RN1agJHQMo0NLcgagueWP/89sqJc/QHnoKSFlpjHN9rnOlP
+        qfRKA8+Ko/XHkgFS53TrIFo=
+X-Google-Smtp-Source: APXvYqxJoI9edkamQRQwobrhpyZtT7J3qbiDFkybKTc/HflCC2LJMWXBcj1bU3zoVC3UyW+JX9lxKw==
+X-Received: by 2002:a63:7b44:: with SMTP id k4mr32966608pgn.140.1577128765493;
+        Mon, 23 Dec 2019 11:19:25 -0800 (PST)
+Received: from localhost ([2001:19f0:6001:12c8:5400:2ff:fe72:6403])
+        by smtp.gmail.com with ESMTPSA id h7sm27175292pfq.36.2019.12.23.11.19.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 23 Dec 2019 11:19:24 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     cw00.choi@samsung.com, myungjoo.ham@samsung.com,
+        kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org
+Cc:     linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] PM / devfreq: exynos-bus: Add error log when get event fails
+Date:   Mon, 23 Dec 2019 19:19:23 +0000
+Message-Id: <20191223191923.10450-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Please ignore this patch.
+Adding an error log makes it easier to trace the function's error path.
+Because the error code may be rewritten on return, print error code here.
 
-Thx!
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/devfreq/exynos-bus.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+index 948e9340f91c..634d63fd00ea 100644
+--- a/drivers/devfreq/exynos-bus.c
++++ b/drivers/devfreq/exynos-bus.c
+@@ -126,6 +126,8 @@ static int exynos_bus_get_dev_status(struct device *dev,
+ 
+ 	ret = exynos_bus_get_event(bus, &edata);
+ 	if (ret < 0) {
++		dev_err(dev, "failed to get event from devfreq-event devices %d\n",
++			ret);
+ 		stat->total_time = stat->busy_time = 0;
+ 		goto err;
+ 	}
+-- 
+2.17.1
+
