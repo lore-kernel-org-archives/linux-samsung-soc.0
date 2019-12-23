@@ -2,369 +2,127 @@ Return-Path: <SRS0=HMgQ=2N=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12DDAC3F68F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 04:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA2C3C2D0D4
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 07:26:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF61C2073A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 04:41:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAA2420709
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 07:26:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tBqvFHTm"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hPz3RnaV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726616AbfLWElC (ORCPT
+        id S1725822AbfLWH0W (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 22 Dec 2019 23:41:02 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:51797 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726610AbfLWElB (ORCPT
+        Mon, 23 Dec 2019 02:26:22 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:42226 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725811AbfLWH0W (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 22 Dec 2019 23:41:01 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20191223044056epoutp04ea04602a5abd5de0c2185a2be95d2d4d~i5lFe58gh1063210632epoutp047
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Dec 2019 04:40:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20191223044056epoutp04ea04602a5abd5de0c2185a2be95d2d4d~i5lFe58gh1063210632epoutp047
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1577076056;
-        bh=JWZol/8nntnLTVgTQoSD0BY0RDkDKtGKIB8qaoY6nhA=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=tBqvFHTm2Dl3PzU0b0HalEXAaEEY+nN6nAUbcoXyPqPErOn3bK/sL9uBADXigOB4i
-         W+8sK6hLBoscDXwVN8LFS6nPlXPC2Im3xjv+oj5KWouu2xRhW7Yc3kATG1eM/+7sZ7
-         tB0lt9wQZMpB+XLqJ7pEw+P9d8K6EYhoTSlViL7E=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191223044056epcas1p1f5b15266039a55aae77a2f28aa4822a2~i5lFGuBPZ1328713287epcas1p1e;
-        Mon, 23 Dec 2019 04:40:56 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.156]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 47h69d6VcCzMqYkh; Mon, 23 Dec
-        2019 04:40:53 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        55.50.52419.255400E5; Mon, 23 Dec 2019 13:40:50 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20191223044050epcas1p3822bf563d7503dd38fe313caa7bf2993~i5k-oRMpk0872808728epcas1p3t;
-        Mon, 23 Dec 2019 04:40:50 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191223044050epsmtrp10a4fd0309dc26cdc671e03947582e85c~i5k-nj9iN2979929799epsmtrp1L;
-        Mon, 23 Dec 2019 04:40:50 +0000 (GMT)
-X-AuditID: b6c32a37-59fff7000001ccc3-e1-5e0045526d33
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        CD.FE.10238.255400E5; Mon, 23 Dec 2019 13:40:50 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.113.221.211]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191223044050epsmtip205c3062934fa3e887f8bb3b720548f5f~i5k-b7Tdg1900019000epsmtip2f;
-        Mon, 23 Dec 2019 04:40:50 +0000 (GMT)
-From:   Inki Dae <inki.dae@samsung.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     airlied@linux.ie, linux-samsung-soc@vger.kernel.org,
-        Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH] drm/exynos: change callback names
-Date:   Mon, 23 Dec 2019 13:44:23 +0900
-Message-Id: <1577076263-7363-1-git-send-email-inki.dae@samsung.com>
-X-Mailer: git-send-email 2.7.4
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKKsWRmVeSWpSXmKPExsWy7bCmvm6QK0OcwZF2U4vecyeZLK58fc9m
-        Men+BBaLGef3MTmweGz/9oDV4373cSaPvi2rGD0+b5ILYInKtslITUxJLVJIzUvOT8nMS7dV
-        8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBWqmkUJaYUwoUCkgsLlbSt7Mpyi8tSVXI
-        yC8usVVKLUjJKbAs0CtOzC0uzUvXS87PtTI0MDAyBSpMyM7Y9OAWW8FJ34qV+7ezNjDOdupi
-        5OSQEDCRmN3wkbWLkYtDSGAHo8TleyvZIJxPjBJ9P1cxQzjfGCXavs1ihGm58mAuVMteoJbz
-        x1lAEkICX4CcEx4gNpuAqsTEFffZQGwRAWWJvxNXgTUzC0RJXLg0AcwWFjCSaL57jhnEZgGq
-        3/e5kx3E5hVwltjY3MgEsUxO4ua5TrArJAResko0X/3HBpFwkZiz8wyULSzx6vgWdghbSuJl
-        fxuUXS7x7N0zoOM4gOwaiW9zKyBMY4mLK1JATGYBTYn1u/QhihUldv6eC3Uln8S7rz2sENW8
-        Eh1tQhAlShLHLt6AhoKExIUlE9kgSjwkzp7OhYRBrMTDY02MExhlZyHMX8DIuIpRLLWgODc9
-        tdiwwBg5hjYxgpOQlvkOxg3nfA4xCnAwKvHwJsz5HyvEmlhWXJl7iFGCg1lJhHd37d9YId6U
-        xMqq1KL8+KLSnNTiQ4ymwJCbyCwlmpwPTJB5JfGGpkbGxsYWJoZmpoaGSuK8HD8uxgoJpCeW
-        pGanphakFsH0MXFwSjUwNs5I+GOwPbT3iA/LdL3UP5O+PeJ58OMmT1kr58zNO/T5F6sqLiq+
-        s+jB01Wzpm+Mc+NaW3FQsHhvgLvKkkXczWyJoX/ahJfu7Hff6CO75slG4QydaZw//Wc+8jUz
-        DFuhssfi8r0q2ft9v++ICs+XeDT7ZqhkkVBaXcVy46hKwTo7torsZpNMJZbijERDLeai4kQA
-        kOA2B1gDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGJMWRmVeSWpSXmKPExsWy7bCSvG6QK0OcweZ5Qha9504yWVz5+p7N
-        YtL9CSwWM87vY3Jg8dj+7QGrx/3u40wefVtWMXp83iQXwBLFZZOSmpNZllqkb5fAlbHpwS22
-        gpO+FSv3b2dtYJzt1MXIySEhYCJx5cFc1i5GLg4hgd2MElNe/mPqYuQASkhIbNnKAWEKSxw+
-        XAxR8olR4saU5cwgvWwCqhITV9xnA7FFBJQl/k5cxQhiMwvESBy5ugmsRljASKL57jkwmwWo
-        ft/nTnYQm1fAWWJjcyMTxA1yEjfPdTJPYORZwMiwilEytaA4Nz232LDAMC+1XK84Mbe4NC9d
-        Lzk/dxMjODS0NHcwXl4Sf4hRgINRiYeXY9b/WCHWxLLiytxDjBIczEoivLtr/8YK8aYkVlal
-        FuXHF5XmpBYfYpTmYFES532adyxSSCA9sSQ1OzW1ILUIJsvEwSnVwFgaMetk/1RDXtPVm44y
-        MVx6983kWxvThqlTjWrfHLvlxpb4LoddS4dP6O6lm0/mpZ9uWvVzzrzHOpo7Nvj2rM/aIH12
-        N6NTzuNrfLuUYjt/12XMZmH4w/7qm4vjPBafbsUimyfyq+d+sjnzSm/bqmuqO42y1jMcMWru
-        WChw/Eqa2sujzDl/FvQosRRnJBpqMRcVJwIA+kPPHQkCAAA=
-X-CMS-MailID: 20191223044050epcas1p3822bf563d7503dd38fe313caa7bf2993
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191223044050epcas1p3822bf563d7503dd38fe313caa7bf2993
-References: <CGME20191223044050epcas1p3822bf563d7503dd38fe313caa7bf2993@epcas1p3.samsung.com>
+        Mon, 23 Dec 2019 02:26:22 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBN7PSNE092418;
+        Mon, 23 Dec 2019 01:25:28 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1577085928;
+        bh=TZCdQwanBajUmjnrjOmrqqKE92Iuel2n9DhlReItHps=;
+        h=Subject:To:References:From:Date:In-Reply-To;
+        b=hPz3RnaVl31ARYBIL0RBmD5SzKuqviJ1KkCDboXFBZxeOJ9IcZzvmsXZHdkQFxI6B
+         Oz2OLdqF2IrpsXzqxe/wyQ6tZKGMEnhZuTUXG072+jQU9lzBfvdxi3+C27Z7O3J3z1
+         A7WMeFB+ewaknC0/CBCcFJqM/AZiK2GJJxucI/+g=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBN7PSuh040126
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 23 Dec 2019 01:25:28 -0600
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 23
+ Dec 2019 01:25:27 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 23 Dec 2019 01:25:27 -0600
+Received: from [192.168.2.14] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBN7PL0n037979;
+        Mon, 23 Dec 2019 01:25:21 -0600
+Subject: Re: [PATCH 9/9] memory: omap-gpmc: switch to platform_get_irq
+To:     Yangtao Li <tiny.windzz@gmail.com>, <ssantosh@kernel.org>,
+        <paul@crapouillou.net>, <matthias.bgg@gmail.com>,
+        <tony@atomide.com>, <lukasz.luba@arm.com>, <kgene@kernel.org>,
+        <krzk@kernel.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <allison@lohutok.net>,
+        <tglx@linutronix.de>, <yong.wu@mediatek.com>, <jroedel@suse.de>,
+        <evgreen@chromium.org>, <rfontana@redhat.com>, <digetx@gmail.com>,
+        <pdeschrijver@nvidia.com>, <john@phrozen.org>,
+        <alexios.zavras@intel.com>, <sboyd@kernel.org>,
+        <kstewart@linuxfoundation.org>, <info@metux.net>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-omap@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>
+References: <20191222185034.4665-1-tiny.windzz@gmail.com>
+ <20191222185034.4665-9-tiny.windzz@gmail.com>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <7dc78b4c-d1a7-a990-669c-8d3ddbacee0d@ti.com>
+Date:   Mon, 23 Dec 2019 09:25:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
+MIME-Version: 1.0
+In-Reply-To: <20191222185034.4665-9-tiny.windzz@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This patch changes Exynos specific 'disable' and 'enable'
-callback names to 'atomic_disable/enable' for the consistency.
 
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
----
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 10 +++++-----
- drivers/gpu/drm/exynos/exynos7_drm_decon.c    | 10 +++++-----
- drivers/gpu/drm/exynos/exynos_drm_crtc.c      |  8 ++++----
- drivers/gpu/drm/exynos/exynos_drm_drv.h       |  8 ++++----
- drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 10 +++++-----
- drivers/gpu/drm/exynos/exynos_drm_vidi.c      |  8 ++++----
- drivers/gpu/drm/exynos/exynos_mixer.c         |  8 ++++----
- 7 files changed, 31 insertions(+), 31 deletions(-)
+On 22/12/2019 20:50, Yangtao Li wrote:
+> platform_get_resource(pdev, IORESOURCE_IRQ) is not recommended for
+> requesting IRQ's resources, as they can be not ready yet. Using
+> platform_get_irq() instead is preferred for getting IRQ even if it
+> was not retrieved earlier.
+> 
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 
-diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-index 2d5cbfd..8428ae1 100644
---- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-@@ -510,7 +510,7 @@ static void decon_swreset(struct decon_context *ctx)
- 	       ctx->addr + DECON_CRCCTRL);
- }
- 
--static void decon_enable(struct exynos_drm_crtc *crtc)
-+static void decon_atomic_enable(struct exynos_drm_crtc *crtc)
- {
- 	struct decon_context *ctx = crtc->ctx;
- 
-@@ -523,7 +523,7 @@ static void decon_enable(struct exynos_drm_crtc *crtc)
- 	decon_commit(ctx->crtc);
- }
- 
--static void decon_disable(struct exynos_drm_crtc *crtc)
-+static void decon_atomic_disable(struct exynos_drm_crtc *crtc)
- {
- 	struct decon_context *ctx = crtc->ctx;
- 	int i;
-@@ -599,8 +599,8 @@ static enum drm_mode_status decon_mode_valid(struct exynos_drm_crtc *crtc,
- }
- 
- static const struct exynos_drm_crtc_ops decon_crtc_ops = {
--	.enable			= decon_enable,
--	.disable		= decon_disable,
-+	.atomic_enable		= decon_atomic_enable,
-+	.atomic_disable		= decon_atomic_disable,
- 	.enable_vblank		= decon_enable_vblank,
- 	.disable_vblank		= decon_disable_vblank,
- 	.atomic_begin		= decon_atomic_begin,
-@@ -651,7 +651,7 @@ static void decon_unbind(struct device *dev, struct device *master, void *data)
- {
- 	struct decon_context *ctx = dev_get_drvdata(dev);
- 
--	decon_disable(ctx->crtc);
-+	decon_atomic_disable(ctx->crtc);
- 
- 	/* detach this sub driver from iommu mapping if supported. */
- 	exynos_drm_unregister_dma(ctx->drm_dev, ctx->dev);
-diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-index f064095..ff59c64 100644
---- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-@@ -526,7 +526,7 @@ static void decon_init(struct decon_context *ctx)
- 		writel(VIDCON1_VCLK_HOLD, ctx->regs + VIDCON1(0));
- }
- 
--static void decon_enable(struct exynos_drm_crtc *crtc)
-+static void decon_atomic_enable(struct exynos_drm_crtc *crtc)
- {
- 	struct decon_context *ctx = crtc->ctx;
- 
-@@ -546,7 +546,7 @@ static void decon_enable(struct exynos_drm_crtc *crtc)
- 	ctx->suspended = false;
- }
- 
--static void decon_disable(struct exynos_drm_crtc *crtc)
-+static void decon_atomic_disable(struct exynos_drm_crtc *crtc)
- {
- 	struct decon_context *ctx = crtc->ctx;
- 	int i;
-@@ -568,8 +568,8 @@ static void decon_disable(struct exynos_drm_crtc *crtc)
- }
- 
- static const struct exynos_drm_crtc_ops decon_crtc_ops = {
--	.enable = decon_enable,
--	.disable = decon_disable,
-+	.atomic_enable = decon_atomic_enable,
-+	.atomic_disable = decon_atomic_disable,
- 	.enable_vblank = decon_enable_vblank,
- 	.disable_vblank = decon_disable_vblank,
- 	.atomic_begin = decon_atomic_begin,
-@@ -653,7 +653,7 @@ static void decon_unbind(struct device *dev, struct device *master,
- {
- 	struct decon_context *ctx = dev_get_drvdata(dev);
- 
--	decon_disable(ctx->crtc);
-+	decon_atomic_disable(ctx->crtc);
- 
- 	if (ctx->encoder)
- 		exynos_dpi_remove(ctx->encoder);
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index 77ce789..1c03485 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -23,8 +23,8 @@ static void exynos_drm_crtc_atomic_enable(struct drm_crtc *crtc,
- {
- 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
- 
--	if (exynos_crtc->ops->enable)
--		exynos_crtc->ops->enable(exynos_crtc);
-+	if (exynos_crtc->ops->atomic_enable)
-+		exynos_crtc->ops->atomic_enable(exynos_crtc);
- 
- 	drm_crtc_vblank_on(crtc);
- }
-@@ -36,8 +36,8 @@ static void exynos_drm_crtc_atomic_disable(struct drm_crtc *crtc,
- 
- 	drm_crtc_vblank_off(crtc);
- 
--	if (exynos_crtc->ops->disable)
--		exynos_crtc->ops->disable(exynos_crtc);
-+	if (exynos_crtc->ops->atomic_disable)
-+		exynos_crtc->ops->atomic_disable(exynos_crtc);
- 
- 	if (crtc->state->event && !crtc->state->active) {
- 		spin_lock_irq(&crtc->dev->event_lock);
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index d4014ba..d4d21d8 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -118,8 +118,8 @@ struct exynos_drm_plane_config {
- /*
-  * Exynos drm crtc ops
-  *
-- * @enable: enable the device
-- * @disable: disable the device
-+ * @atomic_enable: enable the device
-+ * @atomic_disable: disable the device
-  * @enable_vblank: specific driver callback for enabling vblank interrupt.
-  * @disable_vblank: specific driver callback for disabling vblank interrupt.
-  * @mode_valid: specific driver callback for mode validation
-@@ -133,8 +133,8 @@ struct exynos_drm_plane_config {
-  */
- struct exynos_drm_crtc;
- struct exynos_drm_crtc_ops {
--	void (*enable)(struct exynos_drm_crtc *crtc);
--	void (*disable)(struct exynos_drm_crtc *crtc);
-+	void (*atomic_enable)(struct exynos_drm_crtc *crtc);
-+	void (*atomic_disable)(struct exynos_drm_crtc *crtc);
- 	int (*enable_vblank)(struct exynos_drm_crtc *crtc);
- 	void (*disable_vblank)(struct exynos_drm_crtc *crtc);
- 	enum drm_mode_status (*mode_valid)(struct exynos_drm_crtc *crtc,
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index 8d0a929..21aec38 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -894,7 +894,7 @@ static void fimd_disable_plane(struct exynos_drm_crtc *crtc,
- 		fimd_enable_shadow_channel_path(ctx, win, false);
- }
- 
--static void fimd_enable(struct exynos_drm_crtc *crtc)
-+static void fimd_atomic_enable(struct exynos_drm_crtc *crtc)
- {
- 	struct fimd_context *ctx = crtc->ctx;
- 
-@@ -912,7 +912,7 @@ static void fimd_enable(struct exynos_drm_crtc *crtc)
- 	fimd_commit(ctx->crtc);
- }
- 
--static void fimd_disable(struct exynos_drm_crtc *crtc)
-+static void fimd_atomic_disable(struct exynos_drm_crtc *crtc)
- {
- 	struct fimd_context *ctx = crtc->ctx;
- 	int i;
-@@ -1006,8 +1006,8 @@ static void fimd_dp_clock_enable(struct exynos_drm_clk *clk, bool enable)
- }
- 
- static const struct exynos_drm_crtc_ops fimd_crtc_ops = {
--	.enable = fimd_enable,
--	.disable = fimd_disable,
-+	.atomic_enable = fimd_atomic_enable,
-+	.atomic_disable = fimd_atomic_disable,
- 	.enable_vblank = fimd_enable_vblank,
- 	.disable_vblank = fimd_disable_vblank,
- 	.atomic_begin = fimd_atomic_begin,
-@@ -1098,7 +1098,7 @@ static void fimd_unbind(struct device *dev, struct device *master,
- {
- 	struct fimd_context *ctx = dev_get_drvdata(dev);
- 
--	fimd_disable(ctx->crtc);
-+	fimd_atomic_disable(ctx->crtc);
- 
- 	exynos_drm_unregister_dma(ctx->drm_dev, ctx->dev);
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-index 65b891c..b320b3a 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-@@ -120,7 +120,7 @@ static void vidi_update_plane(struct exynos_drm_crtc *crtc,
- 	DRM_DEV_DEBUG_KMS(ctx->dev, "dma_addr = %pad\n", &addr);
- }
- 
--static void vidi_enable(struct exynos_drm_crtc *crtc)
-+static void vidi_atomic_enable(struct exynos_drm_crtc *crtc)
- {
- 	struct vidi_context *ctx = crtc->ctx;
- 
-@@ -133,7 +133,7 @@ static void vidi_enable(struct exynos_drm_crtc *crtc)
- 	drm_crtc_vblank_on(&crtc->base);
- }
- 
--static void vidi_disable(struct exynos_drm_crtc *crtc)
-+static void vidi_atomic_disable(struct exynos_drm_crtc *crtc)
- {
- 	struct vidi_context *ctx = crtc->ctx;
- 
-@@ -147,8 +147,8 @@ static void vidi_disable(struct exynos_drm_crtc *crtc)
- }
- 
- static const struct exynos_drm_crtc_ops vidi_crtc_ops = {
--	.enable = vidi_enable,
--	.disable = vidi_disable,
-+	.atomic_enable = vidi_atomic_enable,
-+	.atomic_disable = vidi_atomic_disable,
- 	.enable_vblank = vidi_enable_vblank,
- 	.disable_vblank = vidi_disable_vblank,
- 	.update_plane = vidi_update_plane,
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index 6cfdb95..38ae9c3 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -986,7 +986,7 @@ static void mixer_atomic_flush(struct exynos_drm_crtc *crtc)
- 	exynos_crtc_handle_event(crtc);
- }
- 
--static void mixer_enable(struct exynos_drm_crtc *crtc)
-+static void mixer_atomic_enable(struct exynos_drm_crtc *crtc)
- {
- 	struct mixer_context *ctx = crtc->ctx;
- 
-@@ -1015,7 +1015,7 @@ static void mixer_enable(struct exynos_drm_crtc *crtc)
- 	set_bit(MXR_BIT_POWERED, &ctx->flags);
- }
- 
--static void mixer_disable(struct exynos_drm_crtc *crtc)
-+static void mixer_atomic_disable(struct exynos_drm_crtc *crtc)
- {
- 	struct mixer_context *ctx = crtc->ctx;
- 	int i;
-@@ -1109,8 +1109,8 @@ static bool mixer_mode_fixup(struct exynos_drm_crtc *crtc,
- }
- 
- static const struct exynos_drm_crtc_ops mixer_crtc_ops = {
--	.enable			= mixer_enable,
--	.disable		= mixer_disable,
-+	.atomic_enable		= mixer_atomic_enable,
-+	.atomic_disable		= mixer_atomic_disable,
- 	.enable_vblank		= mixer_enable_vblank,
- 	.disable_vblank		= mixer_disable_vblank,
- 	.atomic_begin		= mixer_atomic_begin,
+Acked-by: Roger Quadros <rogerq@ti.com>
+
+> ---
+>   drivers/memory/omap-gpmc.c | 10 +++-------
+>   1 file changed, 3 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
+> index eff26c1b1394..6dd19d168f75 100644
+> --- a/drivers/memory/omap-gpmc.c
+> +++ b/drivers/memory/omap-gpmc.c
+> @@ -2366,13 +2366,9 @@ static int gpmc_probe(struct platform_device *pdev)
+>   	if (IS_ERR(gpmc_base))
+>   		return PTR_ERR(gpmc_base);
+>   
+> -	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+> -	if (!res) {
+> -		dev_err(&pdev->dev, "Failed to get resource: irq\n");
+> -		return -ENOENT;
+> -	}
+> -
+> -	gpmc->irq = res->start;
+> +	gpmc->irq = platform_get_irq(pdev, 0);
+> +	if (gpmc->irq < 0)
+> +		return gpmc->irq;
+>   
+>   	gpmc_l3_clk = devm_clk_get(&pdev->dev, "fck");
+>   	if (IS_ERR(gpmc_l3_clk)) {
+> 
+
 -- 
-2.7.4
+cheers,
+-roger
 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
