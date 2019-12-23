@@ -5,56 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D346BC2D0C0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 18:59:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6432C2D0D0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 18:59:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC6032073A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 18:59:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E81C206B7
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 18:59:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eb4L4pil"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bIrbocA7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbfLWS7W (ORCPT
+        id S1727028AbfLWS7b (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 23 Dec 2019 13:59:22 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:56050 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726756AbfLWS7W (ORCPT
+        Mon, 23 Dec 2019 13:59:31 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45551 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727012AbfLWS7a (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 23 Dec 2019 13:59:22 -0500
-Received: by mail-pj1-f67.google.com with SMTP id d5so139163pjz.5;
-        Mon, 23 Dec 2019 10:59:21 -0800 (PST)
+        Mon, 23 Dec 2019 13:59:30 -0500
+Received: by mail-pg1-f195.google.com with SMTP id b9so9228389pgk.12;
+        Mon, 23 Dec 2019 10:59:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=TCR4AR5ucUHlq9yNJFguI2NxlI68W/tsOUZcT+YMNl0=;
-        b=eb4L4pil+JCG+cmdA0+Y497EM/NtrHh8JtUYUrydX0icSwue7g/LT7YybIYtTTcV/M
-         MDaDFzfK3rGsshR2RJN/EE3X86kt4E4btFV3briwaxtCutIASq/3rWfK0hgKIeBr+pCL
-         1DrjLmswrvXHxs3IvDOhgMcK+NehUow+N4Tv6eZIfMecsqBWCVjOwfJB/B9FMksOPQ/b
-         fk3OA/ihwGFJVxTedK7BuI7EMQMK1YysKr8bZUBHso5sGbkgqhpLR2KssbBPoVEOEyug
-         qB+K4Y29piISqu3qBMy6P1HWvW8dFPImPXFO3HIM7wgp0lRloRUfgj2KHzIbucnt9eu/
-         uC1Q==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=yYuhXbk2VYWkJUHqsC8Dp7ziko2oh3QWGKXaw3BKzKQ=;
+        b=bIrbocA75GjiXkwSJP3C51ubVyAnSLI/fBMTmh6962W79PT4Tqv+1+Mjw3cq7AGKFU
+         jHYIhsxDoH7RHVORa6yJexdhOgetkpm/PkZ6ybiEGu0rEOpFeiagFzU/A8ajKUUkgukz
+         3AsjKYBf3/aZo2PMmRXKMgxEkfrblyUVI3V0AYfA5DshVaGFTRxoepTY4p6RKBua5+RC
+         hwdBV6ESUTN2NcyHSsnNvmOAqmENn4PYY7sviRlsrgrPKRl79k7z6YX1VvUkJpHwbF8l
+         d6ihCxrqxgEDPq21x1NWyz3OWGl9kB/2yiUVsYw2xw4mEWhcBS8hcPRUPF2UdAVwvS+g
+         6lSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=TCR4AR5ucUHlq9yNJFguI2NxlI68W/tsOUZcT+YMNl0=;
-        b=U9Y7nV/SY6xQBlPC97tb8MnkxZBWS/o/pECUDfaZsMimPjH/nsM+yqMC37TtxKupIR
-         9eQ/GbPAV0Dw9x89c9P8dOXn6XX0ivvCPoz+m/UvHCiKJEiPQR0BubuPo0i0cysTOzTi
-         Ia9Zra1B2+Y9Km5gAbIY+kRhAFj3FSUBkz5fEkx+PjC8ghagmq9Oa3Dw1aCOHG8IHamw
-         DhCO1m7+Bp9zjJfCV2562B27bKamL/jwpcJ3/7JdFbTs/ESfjB9NasJsIsprpnpBKGKV
-         aWUBrB8IybDOCgmVbnH5MvqrbK8YUj4oBNbev4nwcJEU1OUXMqI99EuVvFPKITmYIwlU
-         JTyA==
-X-Gm-Message-State: APjAAAWTJDrYvrL3cUck96A+WT7Fp25g6raGd/twJqqIQBVDCySF7+SL
-        Dz+VVyvUkXArOw51PFjV9x4=
-X-Google-Smtp-Source: APXvYqz84TR8y+QXxgUTlt23B6h//l3KypRdsMB1YXrNQMBidJsu/m2w0mjr/wrZCM0wu9iBN7SuOQ==
-X-Received: by 2002:a17:902:b186:: with SMTP id s6mr32565870plr.333.1577127561141;
-        Mon, 23 Dec 2019 10:59:21 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=yYuhXbk2VYWkJUHqsC8Dp7ziko2oh3QWGKXaw3BKzKQ=;
+        b=NzFJe6RgP03ZMnoRN54UVUnQ/iA29zPMlvi7/KTAeziwLAG3RhH3LYBi2s/MiN97gk
+         IWLZwU1UD3CFNSp6Um99QwmeIdT1B1RkS7/QcccYEbV5q3iIpfdMYGSZEJtRpeOnhsVH
+         i4bxRh4afK5K9yNfOgGb04UYXwdtgvkw41AhTT/IR5p7wOMYsS1+0lVCmzvbMwlCTtkl
+         9f0OsaVqSiKyfDY046IsYo0eRigib0GnBTdQeaMNXH2xD/Ue0AEdfICtBJWRaOA+9oav
+         brbH0aQUxt6y3u8AUcZEKt5S9e/uXsTFjSIilIFtqyCj5rhUKrS89wLSKAAkrjt/JRev
+         y3SA==
+X-Gm-Message-State: APjAAAW6ByncUoFFtpyo5x5LtEm5skZW1KUfqEs/axVZc7hr0K57IcKp
+        lTvKIgxVODZCOD+dewSX+jU=
+X-Google-Smtp-Source: APXvYqxUB7sZmq8y8VINmqjxcxw1nx5P7rd/13e79L+vtzHV6ANBCs8nm6SgxE2CIKPWmst9f3sWdw==
+X-Received: by 2002:aa7:9ab6:: with SMTP id x22mr33198806pfi.260.1577127569760;
+        Mon, 23 Dec 2019 10:59:29 -0800 (PST)
 Received: from localhost ([2001:19f0:6001:12c8:5400:2ff:fe72:6403])
-        by smtp.gmail.com with ESMTPSA id r62sm25858012pfc.89.2019.12.23.10.59.20
+        by smtp.gmail.com with ESMTPSA id e1sm26283596pfl.98.2019.12.23.10.59.29
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 23 Dec 2019 10:59:20 -0800 (PST)
+        Mon, 23 Dec 2019 10:59:29 -0800 (PST)
 From:   Yangtao Li <tiny.windzz@gmail.com>
 To:     m.szyprowski@samsung.com, joro@8bytes.org, kgene@kernel.org,
         krzk@kernel.org, matthias.bgg@gmail.com, agross@kernel.org,
@@ -67,10 +68,12 @@ To:     m.szyprowski@samsung.com, joro@8bytes.org, kgene@kernel.org,
         linux-rockchip@lists.infradead.org,
         virtualization@lists.linux-foundation.org
 Cc:     Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 1/6] iommu/omap: convert to devm_platform_ioremap_resource
-Date:   Mon, 23 Dec 2019 18:59:12 +0000
-Message-Id: <20191223185918.9877-1-tiny.windzz@gmail.com>
+Subject: [PATCH 4/6] iommu/ipmmu-vmsa: convert to devm_platform_ioremap_resource
+Date:   Mon, 23 Dec 2019 18:59:16 +0000
+Message-Id: <20191223185918.9877-5-tiny.windzz@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191223185918.9877-1-tiny.windzz@gmail.com>
+References: <20191223185918.9877-1-tiny.windzz@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
@@ -80,30 +83,30 @@ Use devm_platform_ioremap_resource() to simplify code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/iommu/omap-iommu.c | 4 +---
+ drivers/iommu/ipmmu-vmsa.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/iommu/omap-iommu.c b/drivers/iommu/omap-iommu.c
-index be551cc34be4..297c1be7ecb0 100644
---- a/drivers/iommu/omap-iommu.c
-+++ b/drivers/iommu/omap-iommu.c
-@@ -1175,7 +1175,6 @@ static int omap_iommu_probe(struct platform_device *pdev)
- 	int err = -ENODEV;
- 	int irq;
- 	struct omap_iommu *obj;
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index d02edd2751f3..3124e28fee85 100644
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -1015,7 +1015,6 @@ static const struct of_device_id ipmmu_of_ids[] = {
+ static int ipmmu_probe(struct platform_device *pdev)
+ {
+ 	struct ipmmu_vmsa_device *mmu;
 -	struct resource *res;
- 	struct device_node *of = pdev->dev.of_node;
- 	struct orphan_dev *orphan_dev, *tmp;
+ 	int irq;
+ 	int ret;
  
-@@ -1218,8 +1217,7 @@ static int omap_iommu_probe(struct platform_device *pdev)
- 	spin_lock_init(&obj->iommu_lock);
- 	spin_lock_init(&obj->page_table_lock);
+@@ -1033,8 +1032,7 @@ static int ipmmu_probe(struct platform_device *pdev)
+ 	dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(40));
  
+ 	/* Map I/O memory and request IRQ. */
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	obj->regbase = devm_ioremap_resource(obj->dev, res);
-+	obj->regbase = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(obj->regbase))
- 		return PTR_ERR(obj->regbase);
+-	mmu->base = devm_ioremap_resource(&pdev->dev, res);
++	mmu->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(mmu->base))
+ 		return PTR_ERR(mmu->base);
  
 -- 
 2.17.1
