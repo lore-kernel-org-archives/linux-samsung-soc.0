@@ -2,195 +2,109 @@ Return-Path: <SRS0=HMgQ=2N=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA282C2D0C0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 15:42:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D346BC2D0C0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 18:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76E572073A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 15:42:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC6032073A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 18:59:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JcX2oVN3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eb4L4pil"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbfLWPmn (ORCPT
+        id S1726766AbfLWS7W (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 23 Dec 2019 10:42:43 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:40955 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726795AbfLWPmm (ORCPT
+        Mon, 23 Dec 2019 13:59:22 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:56050 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726756AbfLWS7W (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 23 Dec 2019 10:42:42 -0500
-Received: by mail-lj1-f194.google.com with SMTP id u1so18130243ljk.7;
-        Mon, 23 Dec 2019 07:42:40 -0800 (PST)
+        Mon, 23 Dec 2019 13:59:22 -0500
+Received: by mail-pj1-f67.google.com with SMTP id d5so139163pjz.5;
+        Mon, 23 Dec 2019 10:59:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=UfH6R7URisIBJYt/MBDGH5nz2k2vfj6ZWJ4j+/k+CPY=;
-        b=JcX2oVN3ptxY2GpvfCvva21mMZF0U/9nHZiLNdZES054N4kY1FycncMmQ/rwOj/BkL
-         1nIsIm4YqetOO5Lwr+SmkxRUlFh4evXomIl404VOhD/aG3IjcR3LdiS2ZzLgaDcaphJW
-         7Gr0EtkE+aGI7XhN7mYycGl+HUSFvNYWTucr+Vx7bQ/v0Jpbeg+BUT7BvFd104gzVdCt
-         T7fX0U9LACPJVbsdN4XKGh178cNa2spcOyu8cN9bGdJ84vYjTZr56AVRQlnoTSV96LB7
-         LjkolJ7dzOnp1NcKwdpm3w1o/wsuxNUroOQUGnQQvLgTyA4fH39pCbFC+wrnaH8IMLEE
-         s4GA==
+        h=from:to:cc:subject:date:message-id;
+        bh=TCR4AR5ucUHlq9yNJFguI2NxlI68W/tsOUZcT+YMNl0=;
+        b=eb4L4pil+JCG+cmdA0+Y497EM/NtrHh8JtUYUrydX0icSwue7g/LT7YybIYtTTcV/M
+         MDaDFzfK3rGsshR2RJN/EE3X86kt4E4btFV3briwaxtCutIASq/3rWfK0hgKIeBr+pCL
+         1DrjLmswrvXHxs3IvDOhgMcK+NehUow+N4Tv6eZIfMecsqBWCVjOwfJB/B9FMksOPQ/b
+         fk3OA/ihwGFJVxTedK7BuI7EMQMK1YysKr8bZUBHso5sGbkgqhpLR2KssbBPoVEOEyug
+         qB+K4Y29piISqu3qBMy6P1HWvW8dFPImPXFO3HIM7wgp0lRloRUfgj2KHzIbucnt9eu/
+         uC1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UfH6R7URisIBJYt/MBDGH5nz2k2vfj6ZWJ4j+/k+CPY=;
-        b=Adf+c3MDYzApuTL6L+Y/xYBz+vKyDNG44MJV36rN5eZLkMEAKfxwW7Xyr8FZnjqwZ4
-         YUAPHanpeJyzH4WNPeCHgwRc/OxSanHWKZwsHcALV1MnGxHC6ZiHCjaQD8jR04UHOsH5
-         NrO/y4UWqZGRlqcsXwfn6kkzE+T1myIAEk1QyMKxYG+4IHdSjYiwWt4gMTp38ricxwvf
-         JXf5UYxldC/0pqa/EFO8PolSPQxXkl0abucRg1OeXm2SqgctQZQ6LbXk9u+233FF544A
-         Qj58WgxrAJUJ88oWKdOkmwMm8vERa1fAJP6fbykLn2/wAd1zKaKSMjuxJoD0cgMtqrdx
-         uy4Q==
-X-Gm-Message-State: APjAAAXWqbeoSuuG+wMdlbWISZOraHezQLmIdEyOz5tnt3zDykRH4aja
-        QN22lkLNyzbsdiKRqszlDsLRVdnz
-X-Google-Smtp-Source: APXvYqxPpddbnO1oaHYjYKe79636XT0Af+JvtDZqrCXBmTftfr8pcshxfnvAxMJy3qrn5gr9oinTbQ==
-X-Received: by 2002:a2e:974b:: with SMTP id f11mr18478200ljj.173.1577115759073;
-        Mon, 23 Dec 2019 07:42:39 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id 21sm6953071ljv.19.2019.12.23.07.42.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Dec 2019 07:42:38 -0800 (PST)
-Subject: Re: [PATCH 4/9] memory: tegra: convert to
- devm_platform_ioremap_resource
-To:     Yangtao Li <tiny.windzz@gmail.com>, ssantosh@kernel.org,
-        paul@crapouillou.net, matthias.bgg@gmail.com, rogerq@ti.com,
-        tony@atomide.com, lukasz.luba@arm.com, kgene@kernel.org,
-        krzk@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        allison@lohutok.net, tglx@linutronix.de, yong.wu@mediatek.com,
-        jroedel@suse.de, evgreen@chromium.org, rfontana@redhat.com,
-        pdeschrijver@nvidia.com, john@phrozen.org,
-        alexios.zavras@intel.com, sboyd@kernel.org,
-        kstewart@linuxfoundation.org, info@metux.net,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-References: <20191222185034.4665-1-tiny.windzz@gmail.com>
- <20191222185034.4665-4-tiny.windzz@gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <04758814-8e22-79b9-8ed1-ac0c31762d21@gmail.com>
-Date:   Mon, 23 Dec 2019 18:42:36 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
-MIME-Version: 1.0
-In-Reply-To: <20191222185034.4665-4-tiny.windzz@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=TCR4AR5ucUHlq9yNJFguI2NxlI68W/tsOUZcT+YMNl0=;
+        b=U9Y7nV/SY6xQBlPC97tb8MnkxZBWS/o/pECUDfaZsMimPjH/nsM+yqMC37TtxKupIR
+         9eQ/GbPAV0Dw9x89c9P8dOXn6XX0ivvCPoz+m/UvHCiKJEiPQR0BubuPo0i0cysTOzTi
+         Ia9Zra1B2+Y9Km5gAbIY+kRhAFj3FSUBkz5fEkx+PjC8ghagmq9Oa3Dw1aCOHG8IHamw
+         DhCO1m7+Bp9zjJfCV2562B27bKamL/jwpcJ3/7JdFbTs/ESfjB9NasJsIsprpnpBKGKV
+         aWUBrB8IybDOCgmVbnH5MvqrbK8YUj4oBNbev4nwcJEU1OUXMqI99EuVvFPKITmYIwlU
+         JTyA==
+X-Gm-Message-State: APjAAAWTJDrYvrL3cUck96A+WT7Fp25g6raGd/twJqqIQBVDCySF7+SL
+        Dz+VVyvUkXArOw51PFjV9x4=
+X-Google-Smtp-Source: APXvYqz84TR8y+QXxgUTlt23B6h//l3KypRdsMB1YXrNQMBidJsu/m2w0mjr/wrZCM0wu9iBN7SuOQ==
+X-Received: by 2002:a17:902:b186:: with SMTP id s6mr32565870plr.333.1577127561141;
+        Mon, 23 Dec 2019 10:59:21 -0800 (PST)
+Received: from localhost ([2001:19f0:6001:12c8:5400:2ff:fe72:6403])
+        by smtp.gmail.com with ESMTPSA id r62sm25858012pfc.89.2019.12.23.10.59.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 23 Dec 2019 10:59:20 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     m.szyprowski@samsung.com, joro@8bytes.org, kgene@kernel.org,
+        krzk@kernel.org, matthias.bgg@gmail.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, robdclark@gmail.com, heiko@sntech.de,
+        mst@redhat.com, jasowang@redhat.com,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        virtualization@lists.linux-foundation.org
+Cc:     Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH 1/6] iommu/omap: convert to devm_platform_ioremap_resource
+Date:   Mon, 23 Dec 2019 18:59:12 +0000
+Message-Id: <20191223185918.9877-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-22.12.2019 21:50, Yangtao Li пишет:
-> Use devm_platform_ioremap_resource() to simplify code.
-> 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
->  drivers/memory/tegra/mc.c           | 4 +---
->  drivers/memory/tegra/tegra124-emc.c | 4 +---
->  drivers/memory/tegra/tegra186.c     | 4 +---
->  drivers/memory/tegra/tegra20-emc.c  | 4 +---
->  4 files changed, 4 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-> index ec8403557ed4..71390d4ad809 100644
-> --- a/drivers/memory/tegra/mc.c
-> +++ b/drivers/memory/tegra/mc.c
-> @@ -593,7 +593,6 @@ static __maybe_unused irqreturn_t tegra20_mc_irq(int irq, void *data)
->  
->  static int tegra_mc_probe(struct platform_device *pdev)
->  {
-> -	struct resource *res;
->  	struct tegra_mc *mc;
->  	void *isr;
->  	u64 mask;
-> @@ -619,8 +618,7 @@ static int tegra_mc_probe(struct platform_device *pdev)
->  	/* length of MC tick in nanoseconds */
->  	mc->tick = 30;
->  
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	mc->regs = devm_ioremap_resource(&pdev->dev, res);
-> +	mc->regs = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(mc->regs))
->  		return PTR_ERR(mc->regs);
->  
-> diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
-> index 464f0ceaee63..2c73260654ba 100644
-> --- a/drivers/memory/tegra/tegra124-emc.c
-> +++ b/drivers/memory/tegra/tegra124-emc.c
-> @@ -1085,7 +1085,6 @@ static int tegra_emc_probe(struct platform_device *pdev)
->  	struct platform_device *mc;
->  	struct device_node *np;
->  	struct tegra_emc *emc;
-> -	struct resource *res;
->  	u32 ram_code;
->  	int err;
->  
-> @@ -1095,8 +1094,7 @@ static int tegra_emc_probe(struct platform_device *pdev)
->  
->  	emc->dev = &pdev->dev;
->  
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	emc->regs = devm_ioremap_resource(&pdev->dev, res);
-> +	emc->regs = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(emc->regs))
->  		return PTR_ERR(emc->regs);
->  
-> diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
-> index 441213a35930..226d2b16036d 100644
-> --- a/drivers/memory/tegra/tegra186.c
-> +++ b/drivers/memory/tegra/tegra186.c
-> @@ -534,7 +534,6 @@ static const struct tegra_mc_client tegra186_mc_clients[] = {
->  
->  static int tegra186_mc_probe(struct platform_device *pdev)
->  {
-> -	struct resource *res;
->  	struct tegra_mc *mc;
->  	unsigned int i;
->  	int err = 0;
-> @@ -543,8 +542,7 @@ static int tegra186_mc_probe(struct platform_device *pdev)
->  	if (!mc)
->  		return -ENOMEM;
->  
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	mc->regs = devm_ioremap_resource(&pdev->dev, res);
-> +	mc->regs = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(mc->regs))
->  		return PTR_ERR(mc->regs);
->  
-> diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-> index 1b23b1c34476..d2efd0c658c0 100644
-> --- a/drivers/memory/tegra/tegra20-emc.c
-> +++ b/drivers/memory/tegra/tegra20-emc.c
-> @@ -482,7 +482,6 @@ static int tegra_emc_probe(struct platform_device *pdev)
->  {
->  	struct device_node *np;
->  	struct tegra_emc *emc;
-> -	struct resource *res;
->  	int irq, err;
->  
->  	/* driver has nothing to do in a case of memory timing absence */
-> @@ -518,8 +517,7 @@ static int tegra_emc_probe(struct platform_device *pdev)
->  	if (err)
->  		return err;
->  
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	emc->regs = devm_ioremap_resource(&pdev->dev, res);
-> +	emc->regs = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(emc->regs))
->  		return PTR_ERR(emc->regs);
->  
-> 
+Use devm_platform_ioremap_resource() to simplify code.
 
-Looks good, thanks!
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/iommu/omap-iommu.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+diff --git a/drivers/iommu/omap-iommu.c b/drivers/iommu/omap-iommu.c
+index be551cc34be4..297c1be7ecb0 100644
+--- a/drivers/iommu/omap-iommu.c
++++ b/drivers/iommu/omap-iommu.c
+@@ -1175,7 +1175,6 @@ static int omap_iommu_probe(struct platform_device *pdev)
+ 	int err = -ENODEV;
+ 	int irq;
+ 	struct omap_iommu *obj;
+-	struct resource *res;
+ 	struct device_node *of = pdev->dev.of_node;
+ 	struct orphan_dev *orphan_dev, *tmp;
+ 
+@@ -1218,8 +1217,7 @@ static int omap_iommu_probe(struct platform_device *pdev)
+ 	spin_lock_init(&obj->iommu_lock);
+ 	spin_lock_init(&obj->page_table_lock);
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	obj->regbase = devm_ioremap_resource(obj->dev, res);
++	obj->regbase = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(obj->regbase))
+ 		return PTR_ERR(obj->regbase);
+ 
+-- 
+2.17.1
+
