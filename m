@@ -2,33 +2,35 @@ Return-Path: <SRS0=HMgQ=2N=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E85A0C2D0C0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 11:29:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 520E3C2D0D6
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 11:41:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C643F20828
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 11:29:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 303F920709
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 11:41:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbfLWL3d (ORCPT
+        id S1726783AbfLWLlr convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 23 Dec 2019 06:29:33 -0500
-Received: from foss.arm.com ([217.140.110.172]:43030 "EHLO foss.arm.com"
+        Mon, 23 Dec 2019 06:41:47 -0500
+Received: from mga11.intel.com ([192.55.52.93]:49453 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726679AbfLWL3c (ORCPT
+        id S1726663AbfLWLlr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 23 Dec 2019 06:29:32 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9F7EC328;
-        Mon, 23 Dec 2019 03:29:31 -0800 (PST)
-Received: from [192.168.1.123] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EE2493F68F;
-        Mon, 23 Dec 2019 03:29:25 -0800 (PST)
-Subject: Re: [PATCH 0/8] Convert the intel iommu driver to the dma-iommu api
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Tom Murphy <murphyt7@tcd.ie>, iommu@lists.linux-foundation.org
+        Mon, 23 Dec 2019 06:41:47 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Dec 2019 03:41:45 -0800
+X-IronPort-AV: E=Sophos;i="5.69,347,1571727600"; 
+   d="scan'208";a="211530914"
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.161])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Dec 2019 03:41:35 -0800
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Robin Murphy <robin.murphy@arm.com>, Tom Murphy <murphyt7@tcd.ie>,
+        iommu@lists.linux-foundation.org
 Cc:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
         Rodrigo Vivi <rodrigo.vivi@intel.com>,
         David Airlie <airlied@linux.ie>,
@@ -61,75 +63,82 @@ Cc:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
         linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
         linux-tegra@vger.kernel.org,
         virtualization@lists.linux-foundation.org, kvm@vger.kernel.org
-References: <20191221150402.13868-1-murphyt7@tcd.ie>
- <87blrzwcn8.fsf@intel.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <432d306c-fe9f-75b2-f0f7-27698f1467ad@arm.com>
-Date:   Mon, 23 Dec 2019 11:29:17 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+Subject: Re: [PATCH 0/8] Convert the intel iommu driver to the dma-iommu api
+In-Reply-To: <432d306c-fe9f-75b2-f0f7-27698f1467ad@arm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20191221150402.13868-1-murphyt7@tcd.ie> <87blrzwcn8.fsf@intel.com> <432d306c-fe9f-75b2-f0f7-27698f1467ad@arm.com>
+Date:   Mon, 23 Dec 2019 13:41:33 +0200
+Message-ID: <87o8vzuv4i.fsf@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <87blrzwcn8.fsf@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 2019-12-23 10:37 am, Jani Nikula wrote:
-> On Sat, 21 Dec 2019, Tom Murphy <murphyt7@tcd.ie> wrote:
->> This patchset converts the intel iommu driver to the dma-iommu api.
->>
->> While converting the driver I exposed a bug in the intel i915 driver
->> which causes a huge amount of artifacts on the screen of my
->> laptop. You can see a picture of it here:
->> https://github.com/pippy360/kernelPatches/blob/master/IMG_20191219_225922.jpg
->>
->> This issue is most likely in the i915 driver and is most likely caused
->> by the driver not respecting the return value of the
->> dma_map_ops::map_sg function. You can see the driver ignoring the
->> return value here:
->> https://github.com/torvalds/linux/blob/7e0165b2f1a912a06e381e91f0f4e495f4ac3736/drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c#L51
->>
->> Previously this didn’t cause issues because the intel map_sg always
->> returned the same number of elements as the input scatter gather list
->> but with the change to this dma-iommu api this is no longer the
->> case. I wasn’t able to track the bug down to a specific line of code
->> unfortunately.
->>
->> Could someone from the intel team look at this?
-> 
-> Let me get this straight. There is current API that on success always
-> returns the same number of elements as the input scatter gather
-> list. You propose to change the API so that this is no longer the case?
+On Mon, 23 Dec 2019, Robin Murphy <robin.murphy@arm.com> wrote:
+> On 2019-12-23 10:37 am, Jani Nikula wrote:
+>> On Sat, 21 Dec 2019, Tom Murphy <murphyt7@tcd.ie> wrote:
+>>> This patchset converts the intel iommu driver to the dma-iommu api.
+>>>
+>>> While converting the driver I exposed a bug in the intel i915 driver
+>>> which causes a huge amount of artifacts on the screen of my
+>>> laptop. You can see a picture of it here:
+>>> https://github.com/pippy360/kernelPatches/blob/master/IMG_20191219_225922.jpg
+>>>
+>>> This issue is most likely in the i915 driver and is most likely caused
+>>> by the driver not respecting the return value of the
+>>> dma_map_ops::map_sg function. You can see the driver ignoring the
+>>> return value here:
+>>> https://github.com/torvalds/linux/blob/7e0165b2f1a912a06e381e91f0f4e495f4ac3736/drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c#L51
+>>>
+>>> Previously this didn’t cause issues because the intel map_sg always
+>>> returned the same number of elements as the input scatter gather list
+>>> but with the change to this dma-iommu api this is no longer the
+>>> case. I wasn’t able to track the bug down to a specific line of code
+>>> unfortunately.
+>>>
+>>> Could someone from the intel team look at this?
+>> 
+>> Let me get this straight. There is current API that on success always
+>> returns the same number of elements as the input scatter gather
+>> list. You propose to change the API so that this is no longer the case?
+>
+> No, the API for dma_map_sg() has always been that it may return fewer 
+> DMA segments than nents - see Documentation/DMA-API.txt (and otherwise, 
+> the return value would surely be a simple success/fail condition). 
+> Relying on a particular implementation behaviour has never been strictly 
+> correct, even if it does happen to be a very common behaviour.
+>
+>> A quick check of various dma_map_sg() calls in the kernel seems to
+>> indicate checking for 0 for errors and then ignoring the non-zero return
+>> is a common pattern. Are you sure it's okay to make the change you're
+>> proposing?
+>
+> Various code uses tricks like just iterating the mapped list until the 
+> first segment with zero sg_dma_len(). Others may well simply have bugs.
 
-No, the API for dma_map_sg() has always been that it may return fewer 
-DMA segments than nents - see Documentation/DMA-API.txt (and otherwise, 
-the return value would surely be a simple success/fail condition). 
-Relying on a particular implementation behaviour has never been strictly 
-correct, even if it does happen to be a very common behaviour.
+Thanks for the clarification.
 
-> A quick check of various dma_map_sg() calls in the kernel seems to
-> indicate checking for 0 for errors and then ignoring the non-zero return
-> is a common pattern. Are you sure it's okay to make the change you're
-> proposing?
+BR,
+Jani.
 
-Various code uses tricks like just iterating the mapped list until the 
-first segment with zero sg_dma_len(). Others may well simply have bugs.
+>
+> Robin.
+>
+>> Anyway, due to the time of year and all, I'd like to ask you to file a
+>> bug against i915 at [1] so this is not forgotten, and please let's not
+>> merge the changes before this is resolved.
+>> 
+>> 
+>> Thanks,
+>> Jani.
+>> 
+>> 
+>> [1] https://gitlab.freedesktop.org/drm/intel/issues/new
+>> 
+>> 
 
-Robin.
-
-> Anyway, due to the time of year and all, I'd like to ask you to file a
-> bug against i915 at [1] so this is not forgotten, and please let's not
-> merge the changes before this is resolved.
-> 
-> 
-> Thanks,
-> Jani.
-> 
-> 
-> [1] https://gitlab.freedesktop.org/drm/intel/issues/new
-> 
-> 
+-- 
+Jani Nikula, Intel Open Source Graphics Center
