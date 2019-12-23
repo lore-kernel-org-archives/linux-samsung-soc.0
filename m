@@ -2,128 +2,81 @@ Return-Path: <SRS0=HMgQ=2N=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E699C2D0C0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 18:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F6EC2D0D2
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 19:00:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A7922075B
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 18:59:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45830206B7
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 23 Dec 2019 19:00:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H87+VOrx"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SfdIJwjQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726924AbfLWS7Y (ORCPT
+        id S1726787AbfLWTAz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 23 Dec 2019 13:59:24 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:56053 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726756AbfLWS7Y (ORCPT
+        Mon, 23 Dec 2019 14:00:55 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:43248 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726766AbfLWTAy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 23 Dec 2019 13:59:24 -0500
-Received: by mail-pj1-f66.google.com with SMTP id d5so139198pjz.5;
-        Mon, 23 Dec 2019 10:59:23 -0800 (PST)
+        Mon, 23 Dec 2019 14:00:54 -0500
+Received: by mail-io1-f65.google.com with SMTP id n21so15510850ioo.10;
+        Mon, 23 Dec 2019 11:00:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=t2pcE/zB/zRFa+D+0DGOcMCSuy9rY9vAk3qxszJwLvo=;
-        b=H87+VOrxrVlOydWiSP/CZqoU2QHdFei/jyBu887pLm+G9l7owgyTBs5Yc2xPwbf+cF
-         2A/Z2a957FZNCq5ePoWmbgsjUXO3HoS2RterAFvRDcnuiWFq56AITBhwSig4wDQpcjod
-         4UmZ3oPM57B75+90Uv4tfswd7l2D+miZNLWKs0PV7rIN2f9huUDrTjekZev4ZwKgAUda
-         6IdAK5hLSt1s2wgiIbrUOfWBdEzP2VVYq8u8Y8LmWMrBcEdnkb/nE9GJJn6AL9IGTi9Y
-         9UVTNDE1xGhL2hu+PsmhLP30C51H8vCllgDS25vuLUF3UF2qxiMgSIeF5F2AfFw97/ZA
-         GdnQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=5WjW3vD2cx3BUd8M8ubJSzV7k9hmJV/MjBgFD4V36+U=;
+        b=SfdIJwjQd53LNcv5/C/cr6A9iEyMN7mtz3lYF9IKVOqEJF4K/GVWvOWQb1Kcd791wO
+         78vVQCVClSM/UdNaSwbCDwWR2jbpSt6wIcGgF6Fmr0HxzOX+mFetSE5kyXy1IHA0B2my
+         DoJQiMO+vOPmtRaInuM2Fwt72TC1vzyknqOYRgvk/JLMKeP2yIX4+ZuP/VDK8u4fzpYj
+         URmGVaJLjdvXbrgjsALnwGUzPTgVQ7B7JftpvLnvVhxko3Eh3aiesJmQE3pannLAC87a
+         RehuChGYDJbbt7hUZrQ6xHXdrCoGMGIZWB6SbrjJ5yzrICvMwvOAcdqO+6iyhfQkVpyJ
+         graQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=t2pcE/zB/zRFa+D+0DGOcMCSuy9rY9vAk3qxszJwLvo=;
-        b=KFXmbHpTkMAUg+CrFnRv7ObYSweuHQUxDiorAbQxn6Y+sqPwHzogDbSOr1wYIKqdaa
-         iqd2SNY0gfaCiazJ6lToYxe3QiORsp8ex3DbZF9SxEYuZwtpMNo5GB4UjgdIBJGnKs0w
-         bJT3fDXZMjRtn8uvFCp+FV65ZH9orOzaF/k89vyx2QtMbkyEasEKldiM4C6O/IAb1fn5
-         zNpwLsMd/7cgT4K/gZr/+OV81KalykQc63WCgxWfeVMgXg29VgegaQ+ge5QLtflPKC9+
-         EDWNkeONU09Nzs9VLVoXL1llJtEqK3YD3kJhNdm/YaBHwHXu8hf8QUFtXu4z596jnKJP
-         +3Eg==
-X-Gm-Message-State: APjAAAV/KQ5lGxhGFIcdwDM8xCEthd9utckPepJ77nV44RUs+mnCb6p5
-        4ZJCYjqfjLNCkDI9aBP1B88=
-X-Google-Smtp-Source: APXvYqxwTeofmvSQXzsVzn9vv5ovtl+Qlq7vr/WZrlMMh2w/A1BzAZFQoZorn2f8/xm484BESZek6A==
-X-Received: by 2002:a17:902:7b91:: with SMTP id w17mr31189741pll.94.1577127563256;
-        Mon, 23 Dec 2019 10:59:23 -0800 (PST)
-Received: from localhost ([2001:19f0:6001:12c8:5400:2ff:fe72:6403])
-        by smtp.gmail.com with ESMTPSA id v8sm24823853pff.151.2019.12.23.10.59.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 23 Dec 2019 10:59:22 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     m.szyprowski@samsung.com, joro@8bytes.org, kgene@kernel.org,
-        krzk@kernel.org, matthias.bgg@gmail.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, robdclark@gmail.com, heiko@sntech.de,
-        mst@redhat.com, jasowang@redhat.com,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=5WjW3vD2cx3BUd8M8ubJSzV7k9hmJV/MjBgFD4V36+U=;
+        b=J9xXRZRaueSN0NryXXsqdf9ow6m2c6mTUR5Bce/rrss8mWqnn3pk7FfsL+GV8nUjZj
+         8DsibagEeCrVvEAzD3aJNhnMeZE3jW7hWm9TGHn3041Hq1j8XHRLjmjQa8txBzBaZ6/a
+         jQIyUjBrzHXQVoDuDHwlGfZ1kLP7uljrjrQ/s5a2MuOXYh6BYcs4Wf2z9G9hLf7O6cVi
+         P3sZOt2hiTFLijWT/HCnBl9PaDoz/GfhUNrm3ZCrhL4tl0DRiO6Xf8EP61+tgmjhPYsh
+         MQrfONjmz9k6suA2I49T2AnuLT8oFZWbdh6hSlLMP4Sb/vPQUOsiHi0LgtSJrBRrfcIY
+         egyw==
+X-Gm-Message-State: APjAAAX8NpaGn+mkpVPYGCsWeGXvUw22WSXlHi13MI62kEFFpRIAXuPk
+        5P1JtiVn/tbk5GrDAaWPjizgX6Lw3+Z5jCDLxIw=
+X-Google-Smtp-Source: APXvYqwaFZg7aCu6nzs0ZutPtYsj9R32aQwWIh0wX+JYOxpu64SuDTLXdlqTyVyvXRJJzV59D2yYDwSiSzYDcnKN32Y=
+X-Received: by 2002:a6b:b941:: with SMTP id j62mr22074614iof.168.1577127653723;
+ Mon, 23 Dec 2019 11:00:53 -0800 (PST)
+MIME-Version: 1.0
+References: <20191223185918.9877-1-tiny.windzz@gmail.com> <20191223185918.9877-2-tiny.windzz@gmail.com>
+In-Reply-To: <20191223185918.9877-2-tiny.windzz@gmail.com>
+From:   Frank Lee <tiny.windzz@gmail.com>
+Date:   Tue, 24 Dec 2019 03:00:42 +0800
+Message-ID: <CAEExFWu771PdyjqHa3vF5W46ch_YecE6Dvv8iF42r5799yuF7A@mail.gmail.com>
+Subject: Re: [PATCH] virtio-mmio: convert to devm_platform_ioremap_resource
+To:     m.szyprowski@samsung.com, joro@8bytes.org,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>, agross@kernel.org,
+        bjorn.andersson@linaro.org, Rob Clark <robdclark@gmail.com>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, mst@redhat.com,
+        jasowang@redhat.com, iommu@lists.linux-foundation.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
         virtualization@lists.linux-foundation.org
-Cc:     Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] virtio-mmio: convert to devm_platform_ioremap_resource
-Date:   Mon, 23 Dec 2019 18:59:13 +0000
-Message-Id: <20191223185918.9877-2-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191223185918.9877-1-tiny.windzz@gmail.com>
-References: <20191223185918.9877-1-tiny.windzz@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify code, which
-contains platform_get_resource, devm_request_mem_region and
-devm_ioremap.
+Please ignore this patch.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/virtio/virtio_mmio.c | 15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/virtio/virtio_mmio.c b/drivers/virtio/virtio_mmio.c
-index e09edb5c5e06..97d5725fd9a2 100644
---- a/drivers/virtio/virtio_mmio.c
-+++ b/drivers/virtio/virtio_mmio.c
-@@ -531,18 +531,9 @@ static void virtio_mmio_release_dev(struct device *_d)
- static int virtio_mmio_probe(struct platform_device *pdev)
- {
- 	struct virtio_mmio_device *vm_dev;
--	struct resource *mem;
- 	unsigned long magic;
- 	int rc;
- 
--	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!mem)
--		return -EINVAL;
--
--	if (!devm_request_mem_region(&pdev->dev, mem->start,
--			resource_size(mem), pdev->name))
--		return -EBUSY;
--
- 	vm_dev = devm_kzalloc(&pdev->dev, sizeof(*vm_dev), GFP_KERNEL);
- 	if (!vm_dev)
- 		return -ENOMEM;
-@@ -554,9 +545,9 @@ static int virtio_mmio_probe(struct platform_device *pdev)
- 	INIT_LIST_HEAD(&vm_dev->virtqueues);
- 	spin_lock_init(&vm_dev->lock);
- 
--	vm_dev->base = devm_ioremap(&pdev->dev, mem->start, resource_size(mem));
--	if (vm_dev->base == NULL)
--		return -EFAULT;
-+	vm_dev->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(vm_dev->base))
-+		return PTR_ERR(vm_dev->base);
- 
- 	/* Check magic value */
- 	magic = readl(vm_dev->base + VIRTIO_MMIO_MAGIC_VALUE);
--- 
-2.17.1
-
+Thx!
