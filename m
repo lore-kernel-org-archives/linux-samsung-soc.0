@@ -1,137 +1,220 @@
-Return-Path: <SRS0=ZafQ=2O=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=FQzq=2Q=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0384BC2D0C3
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Dec 2019 21:11:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E5CC3F68F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Dec 2019 01:22:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE10C206D3
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 24 Dec 2019 21:11:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C25E21927
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Dec 2019 01:22:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RY6Z8gse"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XAPVSLRy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726214AbfLXVL0 (ORCPT
+        id S1726933AbfLZBWJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 24 Dec 2019 16:11:26 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:34911 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726184AbfLXVL0 (ORCPT
+        Wed, 25 Dec 2019 20:22:09 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:31099 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726885AbfLZBWJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 24 Dec 2019 16:11:26 -0500
-Received: by mail-pl1-f196.google.com with SMTP id g6so8846618plt.2;
-        Tue, 24 Dec 2019 13:11:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=ZiIq+ODPkbmk3OovkgYvNLseu4fXK344aj0AC+jChpw=;
-        b=RY6Z8gse4WXDdfZUdueg1YmV1qD/5ihmI7srcNXb/Yp7J/HxRn36oJWbCpXvJValW8
-         fX0pql5BS3/8FxAI0eTafuTOqUE2F2Pj/AfS/fjTSfJJ/xA/Qc5JCCWjv2NZpqvfp1R1
-         sh0HxjoxwLciBEgdmw9V8/K15LNahSLMjAzi28nSEbbPi3Mr0L8xbwtP/6MsK6q0Smsg
-         SsYBgEDd8V+o91ROgm5nfGt8Gfltntiz3OoM4/F55FXXbDOKUTaXcZMFaYzG/Nu3vTIj
-         H5XJA+lCN19m0kVswZuqNme/LBmDnjGQnT4FBEH9EZPxKPzMw104P3QGdDNKDqjlVp93
-         kEmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ZiIq+ODPkbmk3OovkgYvNLseu4fXK344aj0AC+jChpw=;
-        b=rSw/NyvfRfLu2A8dgkRyciQJQbQXXmqxYElqWTZl+WleSPZDrV83wJkgyJWMBfDB+W
-         cxMSBPwvjreyvP09HUWfnucCmCxAXCs7J/FGQdkh79hEyq67+VJHVwysf/jfrQeRB4OJ
-         nENI/f+pjy5sAbFeWtOuZGOGm5AiGfu9iU+vsu6hKzxInZymb20g7wEu2Fc2Gyih2REJ
-         MxIsjPVGODlkZnX2GOWlJaa0WX3Ggz7t4U2AzZeKyPB5ob9vbn39EeDmLFs/p8Kky3cM
-         QcwBaAae/p5EnTSpXkT4lGNqZDml3lZLqI/wnDKMzKaE/tyrcfXrYVzBVUh2aELwMM3U
-         yj5A==
-X-Gm-Message-State: APjAAAUGPF+lCp41GxIAkbmetomw9Et6rJKb5j7WzruoaFZRzlREM79I
-        6UnO4kVEHpDFEG9dba7rDbYsoViw
-X-Google-Smtp-Source: APXvYqz/C+9WgC+V/KEVMJDIBQxjgDS5AWjMUU0pMEE5lxF1QcLlKmnkbJUos6rMHuo0uN5S7XR9Zw==
-X-Received: by 2002:a17:902:bb8c:: with SMTP id m12mr38370736pls.320.1577221885159;
-        Tue, 24 Dec 2019 13:11:25 -0800 (PST)
-Received: from localhost.localdomain ([211.243.117.64])
-        by smtp.gmail.com with ESMTPSA id r28sm27021199pgk.39.2019.12.24.13.11.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Dec 2019 13:11:24 -0800 (PST)
-From:   Hyunki Koo <hyunki00.koo@gmail.com>
-Cc:     Hyunki Koo <hyunki00.koo@samsung.com>,
-        Russell King <linux@armlinux.org.uk>,
+        Wed, 25 Dec 2019 20:22:09 -0500
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20191226012204epoutp01057ee507dc0d0f4c3e032f11e9345e0e~jxzTr4egN3238232382epoutp016
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Dec 2019 01:22:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20191226012204epoutp01057ee507dc0d0f4c3e032f11e9345e0e~jxzTr4egN3238232382epoutp016
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1577323324;
+        bh=A4Y74hU4stuVNxeQUffqt8qHn8nJgO4jOxqfu0/HH5Y=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=XAPVSLRyj8kRjJrGksf+vqkBxtr2fFfK5uKytEJwM7CCnxGFXGQyPMOGxgYIMGNuo
+         hT8BSfTbAQ6x5gXMMqHwfrwmUUWgOosSDjcqyhQlrGxE/7rRlI/sK1aq66cxgwYgqH
+         ugNvkIIelEajk7huVX91dQQpob0BOMo6bb0XFdjs=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20191226012203epcas1p48d589dd2b963a40ab84a01f0dd14b944~jxzTFXyQo2035320353epcas1p49;
+        Thu, 26 Dec 2019 01:22:03 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.155]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 47jsck4bzCzMqYkn; Thu, 26 Dec
+        2019 01:21:58 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        17.FE.48019.33B040E5; Thu, 26 Dec 2019 10:21:55 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20191226012154epcas1p2edbed9b0b041607bc0d1d88eba93b973~jxzKLrWO-1488114881epcas1p2j;
+        Thu, 26 Dec 2019 01:21:54 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191226012154epsmtrp1c06d5ade9063e3531597b1a23c5f98dd~jxzKJKHA-2279122791epsmtrp1-;
+        Thu, 26 Dec 2019 01:21:54 +0000 (GMT)
+X-AuditID: b6c32a38-257ff7000001bb93-a3-5e040b332ad8
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        68.A9.06569.23B040E5; Thu, 26 Dec 2019 10:21:54 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191226012154epsmtip28ffab25f041e7a9971337debd09c038a~jxzJ_8Ogh0334903349epsmtip2X;
+        Thu, 26 Dec 2019 01:21:54 +0000 (GMT)
+Subject: Re: [PATCH] PM / devfreq: exynos-bus: Add error log when get event
+ fails
+To:     Frank Lee <tiny.windzz@gmail.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
         Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] irqchip: define EXYNOS_IRQ_COMBINER
-Date:   Wed, 25 Dec 2019 06:11:07 +0900
-Message-Id: <20191224211108.7128-1-hyunki00.koo@gmail.com>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <583cb300-ec4a-0c94-d597-4efcdf9e31ee@samsung.com>
+Date:   Thu, 26 Dec 2019 10:28:44 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
+MIME-Version: 1.0
+In-Reply-To: <CAEExFWs6Wtg9dJbx9nwq4F53Lc5e__rzRn0QedJt2ffJTKU3uA@mail.gmail.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxNYRzHPfece+4pLo+r9JONOpZNUzrdLsdLDZldL7NM84dNObpH9+q+
+        uedmYYZILwspW1y1zMukFnWFimrSpjJCmHnZkJG3myG7W8I5nUz/fZ7v8/3u93yf56EJXQ0V
+        SlvsbsFl560MFUhevTUrKko/lkyJye4P5I70fiK47u5aDXc3+7OG8/Y+UXM9TWUU9/1QO+KO
+        d7eouOf7KimufLCIWhxgbPS81Bi9VfmU8fLZPcbD9VXI+N07LUm9IWORWeBNgitMsKc5TBZ7
+        ejyzal1qYqphbgwbxc7n5jFhdt4mxDPLVidFLbdYpfMwYdt5a6YkJfGiyMxJWORyZLqFMLND
+        dMczgtNkdc53Rou8Tcy0p0enOWwL2JiYWINk3JRh9hbmU86Pk7M6+vvIvciPC1AADTgOShs7
+        SJl1uAFBR/2aAhQo8TcElx/6NMriJ4Ivj1rU/xIFdTkqZaMZQXHlj5FFvxSprkWyaxJeB61D
+        z4c5CEfAyfPnh00E9qng7ot+jbxB4Uho7XtKyTwBh8Njf+9wQIsT4Nq7HkmnaVIKn7gRJMvB
+        eD10Xj0wYpkInSfekrIlAK+Ffe1OWSZwCDx7W6FSeDpc+1JGyGMB/6GguW6IVBosg9ybNUjh
+        SfDxdr1G4VD4cOTgCO+CC53tlBLOQ1Dfen+kvh5az5Wo5MEEngWXmuYocjg0DpYjZfB48A0U
+        qmULYC3kHdQplhnQ8+qlSuEpcCY3nypCjGdUG8+oCp5RFTz/h51CZBWaLDhFW7ogss640Y/t
+        RcNfNZJrQDfurW5DmEbMOG3tFiJFp+a3iztsbQhoggnSVrtQik5r4nfsFFyOVFemVRDbkEG6
+        66NEaHCaQ/r4dncqa4jV6/VcHDvXwLJMiJb2P9iow+m8W8gQBKfg+pdT0QGhexF3zNeedWno
+        XPmUmpxoTQdDn+qanROZ3HLy96o60V8ysLshIrzkdR5fuqQp4fWdK7bEInO2ruJO0piu8IGc
+        +xf7BpO3nY6vfWNM3BIroEL/zCdjApN/5U7wFW8iCy1E8PW8IMerkJpHX7ct3J/1ftfS2ytm
+        bt28kjdNtVR/tU4r7mpmSNHMs5GES+T/AqkGpADAAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOIsWRmVeSWpSXmKPExsWy7bCSvK4RN0ucwcZmEYv+x6+ZLc6f38Bu
+        cbbpDbvFpsfXWC0u75rDZvG59wijxYzz+5gsbjeuYLOY+3sCmwOnx85Zd9k9Nq3qZPPYvKTe
+        o2/LKkaPz5vkAlijuGxSUnMyy1KL9O0SuDI29XSyFbwSqzjx/gVLA+MPgS5GTg4JAROJro2t
+        TF2MXBxCArsZJT5v38cIkZCUmHbxKHMXIweQLSxx+HAxRM1bRolbRyezg9QICwRL7P97G6xe
+        REBVYvby5WCDmAXeMUmsa1zLCpIQEuhikujabwliswloSex/cYMNxOYXUJS4+uMxWDOvgJ3E
+        9meX2UCWsQANmrlHBCQsKhAmsXPJYyaIEkGJkzOfsICUcAoESjQeKQAJMwuoS/yZd4kZwhaX
+        uPVkPhOELS+x/e0c5gmMwrOQdM9C0jILScssJC0LGFlWMUqmFhTnpucWGxYY5aWW6xUn5haX
+        5qXrJefnbmIER5eW1g7GEyfiDzEKcDAq8fBuSGOOE2JNLCuuzD3EKMHBrCTCu7qIMU6INyWx
+        siq1KD++qDQntfgQozQHi5I4r3z+sUghgfTEktTs1NSC1CKYLBMHp1QDo4C/z7QDSwSX7LIy
+        UJdN0pG/dXkPY/D0zSynuRR/nGLQiJf0m/Tup2u37KbQNpljW7z6X0emrN+SOemu2y5pm/2q
+        SiePXLnf8bA7YovBohBjTw/rkOPmzq+NZeXtnxufqXC9UDj1kER/XbrTq7IvN614hRvWxj7m
+        ythuKGP2mJ/neerMmLfCSizFGYmGWsxFxYkAA+r9J6oCAAA=
+X-CMS-MailID: 20191226012154epcas1p2edbed9b0b041607bc0d1d88eba93b973
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20191223191928epcas1p128d39bb875b8654d61ae21364e466ec7
+References: <CGME20191223191928epcas1p128d39bb875b8654d61ae21364e466ec7@epcas1p1.samsung.com>
+        <20191223191923.10450-1-tiny.windzz@gmail.com>
+        <7230b556-7a96-14d1-ed22-43b5a6cd5a71@samsung.com>
+        <CAEExFWs6Wtg9dJbx9nwq4F53Lc5e__rzRn0QedJt2ffJTKU3uA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Hyunki Koo <hyunki00.koo@samsung.com>
+On 12/24/19 11:51 PM, Frank Lee wrote:
+> On Tue, Dec 24, 2019 at 12:00 PM Chanwoo Choi <cw00.choi@samsung.com> wrote:
+>>
+>> Hi,
+>>
+>> I think that you better to use 'devfreq-event' instead of just 'event'
+>> as following:
+>>
+>> PM / devfreq: exynos-bus: Add error log when fail to get devfreq-event
+>>
+>> On 12/24/19 4:19 AM, Yangtao Li wrote:
+>>> Adding an error log makes it easier to trace the function's error path.
+>>> Because the error code may be rewritten on return, print error code here.
+>>>
+>>> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+>>> ---
+>>>  drivers/devfreq/exynos-bus.c | 2 ++
+>>>  1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+>>> index 948e9340f91c..634d63fd00ea 100644
+>>> --- a/drivers/devfreq/exynos-bus.c
+>>> +++ b/drivers/devfreq/exynos-bus.c
+>>> @@ -126,6 +126,8 @@ static int exynos_bus_get_dev_status(struct device *dev,
+>>>
+>>>       ret = exynos_bus_get_event(bus, &edata);
+>>>       if (ret < 0) {
+>>> +             dev_err(dev, "failed to get event from devfreq-event devices %d\n",
+>>> +                     ret);
+> 
+> Emmm, it looks a bit strange to me...
 
-This patch is written to clean up dependency of ARCH_EXYNOS
-Not all exynos device have IRQ_COMBINER, especially aarch64 EXYNOS
-but it is built for all exynos devices.
-Thus add the config for EXYNOS_IRQ_COMBINER
-remove direct dependency between ARCH_EXYNOS and exynos-combiner.c
-and only selected on the aarch32 devices
+If don't show the error value, it is possible to make it
+until 81 char. I edit it as following and applied it with
+modified patch title.
 
-Signed-off-by: Hyunki Koo <hyunki00.koo@samsung.com>
----
- arch/arm/mach-exynos/Kconfig | 1 +
- drivers/irqchip/Kconfig      | 7 +++++++
- drivers/irqchip/Makefile     | 2 +-
- 3 files changed, 9 insertions(+), 1 deletion(-)
+diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+index 1259a0da7db7..8fa8eb541373 100644
+--- a/drivers/devfreq/exynos-bus.c
++++ b/drivers/devfreq/exynos-bus.c
+@@ -126,6 +126,7 @@ static int exynos_bus_get_dev_status(struct device *dev,
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 4ef56571145b..6e7f10c8098a 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -12,6 +12,7 @@ menuconfig ARCH_EXYNOS
- 	select ARCH_SUPPORTS_BIG_ENDIAN
- 	select ARM_AMBA
- 	select ARM_GIC
-+	select EXYNOS_IRQ_COMBINER
- 	select COMMON_CLK_SAMSUNG
- 	select EXYNOS_ASV
- 	select EXYNOS_CHIPID
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index ba152954324b..4c774d85375b 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -499,4 +499,11 @@ config SIFIVE_PLIC
- 
- 	   If you don't know what to do here, say Y.
- 
-+config EXYNOS_IRQ_COMBINER
-+	bool "Samsung Exynos IRQ combiner support" if COMPILE_TEST
-+	depends on (ARCH_EXYNOS && ARM) || COMPILE_TEST
-+	help
-+	  Say yes here to add support for the IRQ combiner devices embedded
-+	  in Samsung Exynos chips.
-+
- endmenu
-diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index e806dda690ea..60d7c7260fc3 100644
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@ -9,7 +9,7 @@ obj-$(CONFIG_ARCH_BCM2835)		+= irq-bcm2835.o
- obj-$(CONFIG_ARCH_BCM2835)		+= irq-bcm2836.o
- obj-$(CONFIG_DAVINCI_AINTC)		+= irq-davinci-aintc.o
- obj-$(CONFIG_DAVINCI_CP_INTC)		+= irq-davinci-cp-intc.o
--obj-$(CONFIG_ARCH_EXYNOS)		+= exynos-combiner.o
-+obj-$(CONFIG_EXYNOS_IRQ_COMBINER)	+= exynos-combiner.o
- obj-$(CONFIG_FARADAY_FTINTC010)		+= irq-ftintc010.o
- obj-$(CONFIG_ARCH_HIP04)		+= irq-hip04.o
- obj-$(CONFIG_ARCH_LPC32XX)		+= irq-lpc32xx.o
+        ret = exynos_bus_get_event(bus, &edata);
+        if (ret < 0) {
++               dev_err(dev, "failed to get event from devfreq-event devices\n");
+                stat->total_time = stat->busy_time = 0;
+                goto err;
+        }
+
+> V2 has been sent.
+> 
+> Yours,
+> Yangtao
+> 
+> 
+>>
+>> Better to make it under 80 char as following:
+>>
+>> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+>> index f5d4c369c7fb..10f4fa1a0363 100644
+>> --- a/drivers/devfreq/exynos-bus.c
+>> +++ b/drivers/devfreq/exynos-bus.c
+>> @@ -126,7 +126,8 @@ static int exynos_bus_get_dev_status(struct device *dev,
+>>
+>>         ret = exynos_bus_get_event(bus, &edata);
+>>         if (ret < 0) {
+>> -               dev_err(dev, "failed to get event from devfreq-event devices %d\n",
+>> +               dev_err(dev,
+>> +                       "failed to get event from devfreq-event devices %d\n",
+>>                         ret);
+>>                 stat->total_time = stat->busy_time = 0;
+>>                 goto err;
+>>
+>>
+>>>               stat->total_time = stat->busy_time = 0;
+>>>               goto err;
+>>>       }
+>>>
+>>
+>>
+>> --
+>> Best Regards,
+>> Chanwoo Choi
+>> Samsung Electronics
+> 
+> 
+
+
 -- 
-2.17.1
-
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
