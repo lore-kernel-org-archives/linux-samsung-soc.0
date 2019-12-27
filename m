@@ -2,80 +2,212 @@ Return-Path: <SRS0=3VS0=2R=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00FEEC2D0C6
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Dec 2019 07:25:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23913C2D0C6
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Dec 2019 11:02:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA89720882
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Dec 2019 07:25:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB7CA20828
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Dec 2019 11:02:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="VaAGN2wH"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="h43HceZ8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726329AbfL0HZh (ORCPT
+        id S1726053AbfL0LCT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 27 Dec 2019 02:25:37 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:31976 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725994AbfL0HZh (ORCPT
+        Fri, 27 Dec 2019 06:02:19 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:58813 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726377AbfL0LCT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 27 Dec 2019 02:25:37 -0500
-X-UUID: cc95fa33284c46f0bc9ef4dc1262f116-20191227
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=Cf2QhICm8jgqgV69uk2tL7NwWEZjvfxdhHJdjjhmiyA=;
-        b=VaAGN2wH6YUGOQ604wyTPzkd0RXIkA5ZHShCGWuj1KhlMdOhaYWkYSRK7HdUI00qxycFDtd7m4ugqOOLy7wTIYC/jm0oiZJQqFhHQWs2uuOjF+sR6XJ+t5i4f3rW1bWEiYJMLVxWvQVIj6c0cr2QSiuH8flNMIUodoeQGRzicIg=;
-X-UUID: cc95fa33284c46f0bc9ef4dc1262f116-20191227
-Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <yong.wu@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1228658762; Fri, 27 Dec 2019 15:25:29 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS32DR.mediatek.inc
- (172.27.6.104) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 27 Dec
- 2019 15:25:14 +0800
-Received: from [10.17.3.153] (172.27.4.253) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 27 Dec 2019 15:25:58 +0800
-Message-ID: <1577431473.32039.14.camel@mhfsdcap03>
-Subject: Re: [PATCH 8/9] memory: mtk-smi: convert to
- devm_platform_ioremap_resource
-From:   Yong Wu <yong.wu@mediatek.com>
-To:     Yangtao Li <tiny.windzz@gmail.com>
-CC:     <ssantosh@kernel.org>, <paul@crapouillou.net>,
-        <matthias.bgg@gmail.com>, <rogerq@ti.com>, <tony@atomide.com>,
-        <lukasz.luba@arm.com>, <kgene@kernel.org>, <krzk@kernel.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <allison@lohutok.net>, <tglx@linutronix.de>, <jroedel@suse.de>,
-        <evgreen@chromium.org>, <rfontana@redhat.com>, <digetx@gmail.com>,
-        <pdeschrijver@nvidia.com>, <john@phrozen.org>,
-        <alexios.zavras@intel.com>, <sboyd@kernel.org>,
-        <kstewart@linuxfoundation.org>, <info@metux.net>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-omap@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>
-Date:   Fri, 27 Dec 2019 15:24:33 +0800
-In-Reply-To: <20191222185034.4665-8-tiny.windzz@gmail.com>
-References: <20191222185034.4665-1-tiny.windzz@gmail.com>
-         <20191222185034.4665-8-tiny.windzz@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
-MIME-Version: 1.0
-X-TM-SNTS-SMTP: CEF061E20910937DED535D5F798BA0EED8E7FC212D9D8E7E72D4D38ACE506EC52000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+        Fri, 27 Dec 2019 06:02:19 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20191227110217euoutp02384741b86cb05952ebcd0e27da1a8651~kNXMVDUqG0349503495euoutp02o
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Dec 2019 11:02:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20191227110217euoutp02384741b86cb05952ebcd0e27da1a8651~kNXMVDUqG0349503495euoutp02o
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1577444537;
+        bh=7IW5udX+iI/ujHDqlQbniwM2i8DuaCoh2oKCz0vZc9k=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=h43HceZ8a0ekUwJA+9LDMrPqT8NlDG8hiJuOb+8HYTJKegZu6ECEN/vZoyo7Qtr4Z
+         vyKRYpl3X2N276x2h9sSu7Hr783Qw2RcpoUyw3pUEiH3HbOJMKtTgGPVuwDVByfDfF
+         O2RfpJ4TFC2c2t2ZzSoHfKZH9KWd2SdAbTzJiBwU=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20191227110217eucas1p19cfaba571a02e6c727e24ba92a23a1b2~kNXMAgTp11154011540eucas1p1V;
+        Fri, 27 Dec 2019 11:02:17 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id B9.C9.60698.9B4E50E5; Fri, 27
+        Dec 2019 11:02:17 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20191227110216eucas1p17cbf91afa905852d3c0b1efeec0f6f8d~kNXLfY-sA1605716057eucas1p1F;
+        Fri, 27 Dec 2019 11:02:16 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20191227110216eusmtrp244914cb7ffdf08dd563e85d7c09fa281~kNXLermgo1574115741eusmtrp2_;
+        Fri, 27 Dec 2019 11:02:16 +0000 (GMT)
+X-AuditID: cbfec7f5-a0fff7000001ed1a-d4-5e05e4b91c39
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id ED.F0.07950.8B4E50E5; Fri, 27
+        Dec 2019 11:02:16 +0000 (GMT)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191227110216eusmtip2251225f2b120d14565874ed25c5b00ff~kNXKuphzW1996819968eusmtip2b;
+        Fri, 27 Dec 2019 11:02:16 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH] drm/bridge: Fix Exynos DSI after making bridge chain a
+ double-linked list
+Date:   Fri, 27 Dec 2019 12:01:35 +0100
+Message-Id: <20191227110135.4961-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA0WSe0hTYRjG+c7d4eQ0JT+8wqKgSG1ocSQLBaFjSPRnlJdmO3lJp2xOsyBE
+        UXQzr5VzilksFc3bUNNlYstcaGmpgYlLEo00L6VJTiTbdrT++73P+zzv+/LxUahIj3tQifJ0
+        TiGXJosJAdY9ZB3z653HY05Y572Z6dZRnOnQtuHMyNthhJncXCOY8tlSjBkbayeZwjI9yUwY
+        awhGO9aPMC2DFpIxFV9hGq1dgNFWLBKM1ViLhbqwa1N5JNtj0QO2V2ch2eqCKpw1NBUS7KzG
+        jLD6Bx8JtrizCbAbBp+LTpcFITIuOTGDUwScvSpIqOn6jKdpvG4aJ7eQbJAL1cCJgnQQXH7a
+        iKiBgBLRjQAWr75G+eIXgJahdZwvNgDsn5nE9iMTw4V7rgYAFwcXHA1HZHecsTNBS6B6RU2o
+        AUm50dfhE4cdpRdQm6PDYXelo6Bh6wdpZ4w+DAeqN3A7C+kQOPWzD/C7fGFz+4AjDOl6Eu7c
+        f0fwjXCoXf6K8OwKl8ydJM9ecLf3IcIHcgH8MtpC8kURgBM52r2xp+HM6LZtEmW76ShsMwbw
+        chhsLG7B7TKkXeDUygG7jNqwvLsS5WUhLMgX8e4jUGdu/bf25ftxlGcWfuuxkPyTRMP1olW8
+        FPjo/u+qA6AJuHMqZUo8pwyUc5n+SmmKUiWP97+WmmIAtr8z8se82QP6d+JMgKaA2FlYYMRi
+        RLg0Q5mVYgKQQsVuQnk8HiMSyqRZtzhFaqxClcwpTcCTwsTuwsDHi9EiOl6azt3guDROsd9F
+        KCePbFCrCw5SkV6Ft/MiG55XqM6dfFQ1J6nvHJpLlEVp/Ft9AoW5vs53vKPqwmWTkrD2LHl1
+        yd2M7nvmF1PjWFxOMDu+7ckKG57BEu+kC9/1xKdD0f1IxPm2HEzSA2dP5V9Kit04GPo7z7DU
+        lxmh0JR16yKvHI9rfjX9we+MvPZNZbkYUyZIJcdQhVL6F5hfPZs3AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrDLMWRmVeSWpSXmKPExsVy+t/xe7o7nrDGGVz6Z2xxa905VouNM9az
+        Wpw+c4rJ4srX92wWk+5PYLE4f34Du0XnxCXsFpd3zWGzmHF+H5PF2iN32S0O9UVbrPi5ldFi
+        xuSXbBY/d81jceDzeH+jld1jx90ljB47Z91l95jdMZPVY9OqTjaP+93HmTyWTLvK5tG3ZRWj
+        x+dNcgGcUXo2RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2
+        CXoZc7beYy3olqnYdeUHUwNjs0QXIyeHhICJxOVTncxdjFwcQgJLGSUeX9vPDJGQkTg5rYEV
+        whaW+HOtiw2i6BOjxO2We4wgCTYBQ4mutyAJTg4RgQyJ9olTwSYxC7xmlmi6cwUsISwQJXHk
+        73Z2EJtFQFXiwOzPYFN5BWwkbnzcwwixQV5i9YYDzBMYeRYwMqxiFEktLc5Nzy020itOzC0u
+        zUvXS87P3cQIDPltx35u2cHY9S74EKMAB6MSD6/BDpY4IdbEsuLK3EOMEhzMSiK8eemscUK8
+        KYmVValF+fFFpTmpxYcYTYGWT2SWEk3OB8ZjXkm8oamhuYWlobmxubGZhZI4b4fAwRghgfTE
+        ktTs1NSC1CKYPiYOTqkGRol7hw/1rVv5cYXY0gChF7eT+yc5Pcj2mxWWfoshzbFOPWJysKnH
+        H813h6OfctQd6wkxsrF02rFF/mhB9T1Gw5Z5Stal76rcrs9+ysneETclsGKRyb5lxzi3XN5T
+        y1B39tQkAwHG2h+xetu05i2p//at9uXcbsV3BtV9q1KqL0wU5ItXW5t9W4mlOCPRUIu5qDgR
+        ANFAaRaPAgAA
+X-CMS-MailID: 20191227110216eucas1p17cbf91afa905852d3c0b1efeec0f6f8d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20191227110216eucas1p17cbf91afa905852d3c0b1efeec0f6f8d
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20191227110216eucas1p17cbf91afa905852d3c0b1efeec0f6f8d
+References: <CGME20191227110216eucas1p17cbf91afa905852d3c0b1efeec0f6f8d@eucas1p1.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-T24gU3VuLCAyMDE5LTEyLTIyIGF0IDE4OjUwICswMDAwLCBZYW5ndGFvIExpIHdyb3RlOg0KPiBV
-c2UgZGV2bV9wbGF0Zm9ybV9pb3JlbWFwX3Jlc291cmNlKCkgdG8gc2ltcGxpZnkgY29kZS4NCj4g
-DQo+IFNpZ25lZC1vZmYtYnk6IFlhbmd0YW8gTGkgPHRpbnkud2luZHp6QGdtYWlsLmNvbT4NCj4g
-LS0tDQo+ICBkcml2ZXJzL21lbW9yeS9tdGstc21pLmMgfCAxMSArKystLS0tLS0tLQ0KPiAgMSBm
-aWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgOCBkZWxldGlvbnMoLSkNCg0KUmV2aWV3ZWQt
-Ynk6IFlvbmcgV3UgPHlvbmcud3VAbWVkaWF0ZWsuY29tPg0KDQo=
+Exynos DSI DRM driver uses private calls to out bridge to force certain
+order of operations during init/exit sequences. This no longer works after
+conversion of bridge chain to a double-linked list. To fix the regression
+call bridge related operations manually instead of the generic
+drm_bridge_chain_*() operations.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Fixes: 05193dc38197 ("drm/bridge: Make the bridge chain a double-linked list")
+---
+This patch is a result of the following discussion:
+https://www.spinics.net/lists/dri-devel/msg239256.html
+---
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 3955f84dc893..f5905c239a86 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -255,7 +255,6 @@ struct exynos_dsi {
+ 	struct mipi_dsi_host dsi_host;
+ 	struct drm_connector connector;
+ 	struct drm_panel *panel;
+-	struct list_head bridge_chain;
+ 	struct drm_bridge *out_bridge;
+ 	struct device *dev;
+ 
+@@ -1391,7 +1390,8 @@ static void exynos_dsi_enable(struct drm_encoder *encoder)
+ 		if (ret < 0)
+ 			goto err_put_sync;
+ 	} else {
+-		drm_bridge_chain_pre_enable(dsi->out_bridge);
++		if (dsi->out_bridge->funcs->pre_enable)
++			dsi->out_bridge->funcs->pre_enable(dsi->out_bridge);
+ 	}
+ 
+ 	exynos_dsi_set_display_mode(dsi);
+@@ -1402,7 +1402,8 @@ static void exynos_dsi_enable(struct drm_encoder *encoder)
+ 		if (ret < 0)
+ 			goto err_display_disable;
+ 	} else {
+-		drm_bridge_chain_enable(dsi->out_bridge);
++		if (dsi->out_bridge->funcs->enable)
++			dsi->out_bridge->funcs->enable(dsi->out_bridge);
+ 	}
+ 
+ 	dsi->state |= DSIM_STATE_VIDOUT_AVAILABLE;
+@@ -1427,10 +1428,12 @@ static void exynos_dsi_disable(struct drm_encoder *encoder)
+ 	dsi->state &= ~DSIM_STATE_VIDOUT_AVAILABLE;
+ 
+ 	drm_panel_disable(dsi->panel);
+-	drm_bridge_chain_disable(dsi->out_bridge);
++	if (dsi->out_bridge->funcs->disable)
++		dsi->out_bridge->funcs->disable(dsi->out_bridge);
+ 	exynos_dsi_set_display_enable(dsi, false);
+ 	drm_panel_unprepare(dsi->panel);
+-	drm_bridge_chain_post_disable(dsi->out_bridge);
++	if (dsi->out_bridge->funcs->post_disable)
++		dsi->out_bridge->funcs->post_disable(dsi->out_bridge);
+ 	dsi->state &= ~DSIM_STATE_ENABLED;
+ 	pm_runtime_put_sync(dsi->dev);
+ }
+@@ -1521,9 +1524,11 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
+ 
+ 	out_bridge  = of_drm_find_bridge(device->dev.of_node);
+ 	if (out_bridge) {
+-		drm_bridge_attach(encoder, out_bridge, NULL);
++		out_bridge->dev = drm;
++		out_bridge->encoder = encoder;
++		if (out_bridge->funcs->attach)
++			out_bridge->funcs->attach(out_bridge);
+ 		dsi->out_bridge = out_bridge;
+-		list_splice(&encoder->bridge_chain, &dsi->bridge_chain);
+ 	} else {
+ 		int ret = exynos_dsi_create_connector(encoder);
+ 
+@@ -1589,7 +1594,6 @@ static int exynos_dsi_host_detach(struct mipi_dsi_host *host,
+ 		if (dsi->out_bridge->funcs->detach)
+ 			dsi->out_bridge->funcs->detach(dsi->out_bridge);
+ 		dsi->out_bridge = NULL;
+-		INIT_LIST_HEAD(&dsi->bridge_chain);
+ 	}
+ 
+ 	if (drm->mode_config.poll_enabled)
+@@ -1737,7 +1741,6 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 	init_completion(&dsi->completed);
+ 	spin_lock_init(&dsi->transfer_lock);
+ 	INIT_LIST_HEAD(&dsi->transfer_list);
+-	INIT_LIST_HEAD(&dsi->bridge_chain);
+ 
+ 	dsi->dsi_host.ops = &exynos_dsi_ops;
+ 	dsi->dsi_host.dev = dev;
+-- 
+2.17.1
 
