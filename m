@@ -1,103 +1,138 @@
-Return-Path: <SRS0=3VS0=2R=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=ZsKX=2S=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43A2BC2D0C6
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Dec 2019 17:56:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E5BBC2D0CE
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 28 Dec 2019 06:44:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2085120CC7
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Dec 2019 17:56:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1577469415;
-	bh=xYHCqeSqTyw7YMuYYvLayPiWngIzGhgLfcAOH/sluAY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=D3Ue4PO1af2i0vG//K5wGW59pA8K5BEyyX4oefQPJg9BAyx4uXwBTHrpwoxPw5sX2
-	 Kgvvb038Kp67+HqSZ8zHYPW0bZKir9tpHKF+DATXzj73zZrKUVZxI/A3jbnoUbtW6a
-	 N9I0Y7rnImGYYGHnO/UEIqO1pNgUJkUKogJDs9fg=
+	by mail.kernel.org (Postfix) with ESMTP id 34C0B20722
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 28 Dec 2019 06:44:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cQ87Up34"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727130AbfL0R4u (ORCPT
+        id S1726018AbfL1GoF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 27 Dec 2019 12:56:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38452 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727648AbfL0Rlz (ORCPT
+        Sat, 28 Dec 2019 01:44:05 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:47001 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725857AbfL1GoF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 27 Dec 2019 12:41:55 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BCBE21D7E;
-        Fri, 27 Dec 2019 17:41:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577468514;
-        bh=xYHCqeSqTyw7YMuYYvLayPiWngIzGhgLfcAOH/sluAY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pPX4HnfrphBP8ln/fWl2yzFEk5lrA0IECFZ9h5UOstSh70hVWUBskl/aZ6GJ14oG5
-         y1cw2khDQx885oRrQQ5q24bDlP4Q8WCmSNTb/kfQkqBAjL6+IuVjVF8IupXWQbevEd
-         IMgeM0M9ucaRpfdDfBSyAYJ909pmYl33UKEeqiFU=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 047/187] ARM: exynos_defconfig: Restore debugfs support
-Date:   Fri, 27 Dec 2019 12:38:35 -0500
-Message-Id: <20191227174055.4923-47-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191227174055.4923-1-sashal@kernel.org>
-References: <20191227174055.4923-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+        Sat, 28 Dec 2019 01:44:05 -0500
+Received: by mail-pf1-f196.google.com with SMTP id n9so7881360pff.13;
+        Fri, 27 Dec 2019 22:44:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=k/Zh0wd0iyh47HJcj26AK+VtSYrhhFOp9r5l6dctHRg=;
+        b=cQ87Up34bttOiGDEXDLiZ+4e4O19HR8fqNNWjDzMEWGjLJeDt12PbmxIzk/sHUID9c
+         yPTUXIf5hAOPK1T2/s1zzolWudNsW/MYZkhVlRhXpj3Q8czVxQcMThExn6rkBiilqYLq
+         dz6cInYDh3jNyF8o/vex+/jNRJSs1g+OnegrFoWJtB/Ygj9clWo4AGnQsxtPXXK+K/mg
+         Jpd7VylXheG7lEVoyg9PUUlvvGYkyMSef7i/+xpgeTk0nUggIvdaAyX7jBWjWjKBLOn/
+         aDjUziw1rZ2zHCWzWzdk0QbXv70r+eWvqiN1mNHhZyUnzLWetCycgQMezieDHqOWEB9M
+         ZCCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=k/Zh0wd0iyh47HJcj26AK+VtSYrhhFOp9r5l6dctHRg=;
+        b=FK2rWTEn6pV6l2yTXeVBouAkt4NWmYtWug4hwDTsB6A1NH/VSxJthyp5EcAK87Urbr
+         99Jn5C54XVE1rIHkJJl/yeM6ZFFyudu/FDI1k56ZYdweO4Dsn7qbdczEc04PfEb5TKVx
+         toUkGHYIdoADH+Lhulr4rfMSbfQb7ggbh6DzWNVH9Y2ikgwU27tH1zEscib5yqr+6/1S
+         74C8R+Ge1+PU2rnjt3EZeo19tXx+18RAIQhAf09QgIr+f+WmF5b/zykFnG4ZSx8c8t/+
+         VjHGZDjVv0guAACduzBMl1D9662q0rL5BBZz6M+jWEeiNZc3cnP25FQOePz0/tGLJKE2
+         /LCA==
+X-Gm-Message-State: APjAAAW53UDrefiJ0Ss4Pgn/DTsv1GR56+6rQU537nWXEiDWnDwwI/Zp
+        0f7a0LWcfQLqT40920u35b8=
+X-Google-Smtp-Source: APXvYqxS56Xo+lxmahknG9q55wIA+ODBR3wY7WgCdNMBd37PV7FVIa4xuPsJ37k352RZ05q1fDWlBA==
+X-Received: by 2002:a65:66d7:: with SMTP id c23mr60290506pgw.40.1577515444820;
+        Fri, 27 Dec 2019 22:44:04 -0800 (PST)
+Received: from localhost ([43.224.245.179])
+        by smtp.gmail.com with ESMTPSA id q15sm39751585pgi.55.2019.12.27.22.44.03
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Fri, 27 Dec 2019 22:44:04 -0800 (PST)
+From:   qiwuchen55@gmail.com
+To:     kgene@kernel.org, krzk@kernel.org, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenqiwu <chenqiwu@xiaomi.com>
+Subject: [PATCH] cpufreq: s3c: avoid use after free issue in xxx_cpufreq_reboot_notifier_evt()
+Date:   Sat, 28 Dec 2019 14:43:59 +0800
+Message-Id: <1577515439-14477-1-git-send-email-qiwuchen55@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: chenqiwu <chenqiwu@xiaomi.com>
 
-[ Upstream commit a2315d3aea5976acd919d3d3fcf82f752562c25b ]
+There is a potential UAF issue in xxx_cpufreq_reboot_notifier_evt() that
+the cpufreq policy of cpu0 has been released before using it. So we should
+make a judgement to avoid it.
 
-Commit 9f532d26c75c ("ARM: exynos_defconfig: Trim and reorganize with
-savedefconfig") removed explicit enable line for CONFIG_DEBUG_FS, because
-that feature has been selected by other enabled options: CONFIG_TRACING,
-which in turn had been selected by CONFIG_PERF_EVENTS and
-CONFIG_PROVE_LOCKING.
-
-In meantime, commit 0e4a459f56c3 ("tracing: Remove unnecessary DEBUG_FS
-dependency") removed the dependency between CONFIG_DEBUG_FS and
-CONFIG_TRACING, so CONFIG_DEBUG_FS is no longer enabled in default builds.
-
-Enable it again explicitly, as debugfs support is essential for various
-automated testing tools.
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
 ---
- arch/arm/configs/exynos_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/cpufreq/s3c2416-cpufreq.c | 11 ++++++++++-
+ drivers/cpufreq/s5pv210-cpufreq.c | 10 +++++++++-
+ 2 files changed, 19 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index 08db1c83eb2d..736ed7a7bcf8 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -348,6 +348,7 @@ CONFIG_PRINTK_TIME=y
- CONFIG_DYNAMIC_DEBUG=y
- CONFIG_DEBUG_INFO=y
- CONFIG_MAGIC_SYSRQ=y
-+CONFIG_DEBUG_FS=y
- CONFIG_DEBUG_KERNEL=y
- CONFIG_SOFTLOCKUP_DETECTOR=y
- # CONFIG_DETECT_HUNG_TASK is not set
+diff --git a/drivers/cpufreq/s3c2416-cpufreq.c b/drivers/cpufreq/s3c2416-cpufreq.c
+index 1069103..0f576ba 100644
+--- a/drivers/cpufreq/s3c2416-cpufreq.c
++++ b/drivers/cpufreq/s3c2416-cpufreq.c
+@@ -304,6 +304,7 @@ static int s3c2416_cpufreq_reboot_notifier_evt(struct notifier_block *this,
+ {
+ 	struct s3c2416_data *s3c_freq = &s3c2416_cpufreq;
+ 	int ret;
++	struct cpufreq_policy policy;
+ 
+ 	mutex_lock(&cpufreq_lock);
+ 
+@@ -318,7 +319,15 @@ static int s3c2416_cpufreq_reboot_notifier_evt(struct notifier_block *this,
+ 	 */
+ 	if (s3c_freq->is_dvs) {
+ 		pr_debug("cpufreq: leave dvs on reboot\n");
+-		ret = cpufreq_driver_target(cpufreq_cpu_get(0), FREQ_SLEEP, 0);
++
++		memset(&policy, 0, sizeof(policy));
++		ret = cpufreq_get_policy(&policy, 0);
++		if (ret < 0) {
++			pr_debug("cpufreq: get no policy for cpu0\n");
++			return NOTIFY_BAD;
++		}
++
++		ret = cpufreq_driver_target(&policy, FREQ_SLEEP, 0);
+ 		if (ret < 0)
+ 			return NOTIFY_BAD;
+ 	}
+diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
+index 5d10030..d99b4b1 100644
+--- a/drivers/cpufreq/s5pv210-cpufreq.c
++++ b/drivers/cpufreq/s5pv210-cpufreq.c
+@@ -555,8 +555,16 @@ static int s5pv210_cpufreq_reboot_notifier_event(struct notifier_block *this,
+ 						 unsigned long event, void *ptr)
+ {
+ 	int ret;
++	struct cpufreq_policy *policy;
+ 
+-	ret = cpufreq_driver_target(cpufreq_cpu_get(0), SLEEP_FREQ, 0);
++	policy = cpufreq_cpu_get(0);
++	if (!policy) {
++		pr_debug("cpufreq: get no policy for cpu0\n");
++		return NOTIFY_BAD;
++	}
++
++	ret = cpufreq_driver_target(policy, SLEEP_FREQ, 0);
++	cpufreq_cpu_put(policy);
+ 	if (ret < 0)
+ 		return NOTIFY_BAD;
+ 
 -- 
-2.20.1
+1.9.1
 
