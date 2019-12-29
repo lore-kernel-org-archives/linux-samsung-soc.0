@@ -2,100 +2,129 @@ Return-Path: <SRS0=qRMl=2T=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 740DEC2D0CE
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 29 Dec 2019 16:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95BA2C2D0DB
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 29 Dec 2019 18:09:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33ABA208E4
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 29 Dec 2019 16:33:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7179A206A4
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 29 Dec 2019 18:09:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1577637184;
-	bh=pBPmHWLqe2FlkPVN3prkzi7i4zMhN8/dqgOqe3RsaMA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=drw4kzwdBlV+SocsFRrrQqRbziDw0eRfKah/ARiecZEJS6YdFt1dN1cIKQBl7cgIU
-	 zfu0yhy5viC8KmMOpsRyM607jWQGxMpSYIGHWP01Yh4yaS4QPCOsVQdZ1JxlTyOSML
-	 z2D4gHGTKYEskm/Wbh0unuf2GDNy0KE0EKOZzuco=
+	s=default; t=1577642973;
+	bh=+YBS7n7jqJ53S6HvX93BfgZRfoAttIJ+SIElGBLSgqM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=DRUM/S28fQ2lVqBjz9xfZzcLybT3W2Sx32deLW9tmV5qWDreF4PVSqcjRARdk7W4l
+	 XnPUQr+utvI0mRuJUjRhzHEKe6CmMXzAzMMIkAFRRmnLDN/2me5m9HxKPVrKzF3tw8
+	 Z2SFkH06/lforCd1VtOTjdDOn2MLDvXcKuoQzz/M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726455AbfL2QdD (ORCPT
+        id S1732105AbfL2SJ3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 29 Dec 2019 11:33:03 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:43395 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726410AbfL2QdD (ORCPT
+        Sun, 29 Dec 2019 13:09:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33896 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731365AbfL2SJ1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 29 Dec 2019 11:33:03 -0500
-Received: by mail-ed1-f66.google.com with SMTP id dc19so30277380edb.10;
-        Sun, 29 Dec 2019 08:33:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=w8219L+FFqUH9cjSnRUbblLwTHC5hsqSbYNReVBrhuc=;
-        b=sRpgMPCE61t2egxQc4nMr01Sf4kXmRcMUi17WkhMzbGaO9kRz58xvXbQirrtsQgFti
-         XvXARiLmW2LAFlDpGKxjjYtdWqSqitFKr1lEWc53nhOwcxQoXR8h/xAEhaLNYqt674s8
-         y85eRCsHFXloGmAeF+lwPlHycn7eFm9wGwZIKdlHu3xDfZZ8e5wQUZTULX3slJBKcktf
-         2+UGxGm+E2COQ+0iPmAYltgC+3+HLE68J3SYlJs1B7c/cG8QC1ngn0M0MdUcFWE73n8C
-         fnWNoDfviLmTB1Emz6GR1KE9w31Ap6BdEa+ItmEKX2sNAhj+8n3SNZQFk5y6P58Z7DjM
-         sqqg==
-X-Gm-Message-State: APjAAAUClLPGDKfskA1hQxsW4vUNz4oswvlFCdLfIKPbtQ4MgDVlmVu5
-        TQhuVlBLulHq1Wp0yIFWeceo4srF
-X-Google-Smtp-Source: APXvYqzRb6vwdUw8G86aJ7mHh+/AEBuqsi9vNpw708AECo/09tP3fogV3xvK3TJdPC/SJtQeQ+HDGA==
-X-Received: by 2002:a05:6402:3c5:: with SMTP id t5mr65295462edw.217.1577637181592;
-        Sun, 29 Dec 2019 08:33:01 -0800 (PST)
-Received: from kozik-lap ([194.230.155.138])
-        by smtp.googlemail.com with ESMTPSA id pv11sm5178514ejb.75.2019.12.29.08.32.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 29 Dec 2019 08:33:00 -0800 (PST)
-Date:   Sun, 29 Dec 2019 17:32:58 +0100
+        Sun, 29 Dec 2019 13:09:27 -0500
+Received: from localhost.localdomain (unknown [194.230.155.138])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 70560222C2;
+        Sun, 29 Dec 2019 18:09:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577642966;
+        bh=+YBS7n7jqJ53S6HvX93BfgZRfoAttIJ+SIElGBLSgqM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=uMgwPoibTPvXMuBnLasQwLeJludmN8WbGDEYxBWxxnh0U6rfIf1l/FTZyhAcMB23c
+         kDdi/LXORjlV7nRi8wYZhjc3QkRJzJn2u5rEXoEN3hGw07unFOx4hpQDUtK56XXsnb
+         B+2XHtCEwb47/eSsX21hJrZ+L/Q0LdGjKxpIZxh8=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Hyunki Koo <hyunki00.koo@gmail.com>
-Cc:     Hyunki Koo <hyunki00.koo@samsung.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Kukjin Kim <kgene@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] irqchip: define EXYNOS_IRQ_COMBINER
-Message-ID: <20191229163258.GA32260@kozik-lap>
-References: <20191224211108.7128-1-hyunki00.koo@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191224211108.7128-1-hyunki00.koo@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] cpuidle: arm: Enable compile testing for some of drivers
+Date:   Sun, 29 Dec 2019 19:09:12 +0100
+Message-Id: <20191229180912.17100-2-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191229180912.17100-1-krzk@kernel.org>
+References: <20191229180912.17100-1-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Dec 25, 2019 at 06:11:07AM +0900, Hyunki Koo wrote:
-> From: Hyunki Koo <hyunki00.koo@samsung.com>
-> 
-> This patch is written to clean up dependency of ARCH_EXYNOS
-> Not all exynos device have IRQ_COMBINER, especially aarch64 EXYNOS
-> but it is built for all exynos devices.
-> Thus add the config for EXYNOS_IRQ_COMBINER
-> remove direct dependency between ARCH_EXYNOS and exynos-combiner.c
-> and only selected on the aarch32 devices
-> 
-> Signed-off-by: Hyunki Koo <hyunki00.koo@samsung.com>
-> ---
->  arch/arm/mach-exynos/Kconfig | 1 +
->  drivers/irqchip/Kconfig      | 7 +++++++
->  drivers/irqchip/Makefile     | 2 +-
->  3 files changed, 9 insertions(+), 1 deletion(-)
+Some of cpuidle drivers for ARMv7 can be compile tested on this
+architecture because they do not depend on mach-specific bits.  Enable
+compile testing for big.LITTLE, Kirkwood, Zynq, AT91, Exynos and mvebu
+cpuidle drivers.
 
-I assume it will go through irqchip tree:
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/cpuidle/Kconfig.arm | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-If not, let me know, so I could take it via samsung-soc.
-
-Best regards,
-Krzysztof
+diff --git a/drivers/cpuidle/Kconfig.arm b/drivers/cpuidle/Kconfig.arm
+index a224d33dda7f..62272ecfa771 100644
+--- a/drivers/cpuidle/Kconfig.arm
++++ b/drivers/cpuidle/Kconfig.arm
+@@ -25,7 +25,7 @@ config ARM_PSCI_CPUIDLE
+ 
+ config ARM_BIG_LITTLE_CPUIDLE
+ 	bool "Support for ARM big.LITTLE processors"
+-	depends on ARCH_VEXPRESS_TC2_PM || ARCH_EXYNOS
++	depends on ARCH_VEXPRESS_TC2_PM || ARCH_EXYNOS || COMPILE_TEST
+ 	depends on MCPM && !ARM64
+ 	select ARM_CPU_SUSPEND
+ 	select CPU_IDLE_MULTIPLE_DRIVERS
+@@ -51,13 +51,13 @@ config ARM_HIGHBANK_CPUIDLE
+ 
+ config ARM_KIRKWOOD_CPUIDLE
+ 	bool "CPU Idle Driver for Marvell Kirkwood SoCs"
+-	depends on MACH_KIRKWOOD && !ARM64
++	depends on (MACH_KIRKWOOD || COMPILE_TEST) && !ARM64
+ 	help
+ 	  This adds the CPU Idle driver for Marvell Kirkwood SoCs.
+ 
+ config ARM_ZYNQ_CPUIDLE
+ 	bool "CPU Idle Driver for Xilinx Zynq processors"
+-	depends on ARCH_ZYNQ && !ARM64
++	depends on (ARCH_ZYNQ || COMPILE_TEST) && !ARM64
+ 	help
+ 	  Select this to enable cpuidle on Xilinx Zynq processors.
+ 
+@@ -70,19 +70,19 @@ config ARM_U8500_CPUIDLE
+ config ARM_AT91_CPUIDLE
+ 	bool "Cpu Idle Driver for the AT91 processors"
+ 	default y
+-	depends on ARCH_AT91 && !ARM64
++	depends on (ARCH_AT91 || COMPILE_TEST) && !ARM64
+ 	help
+ 	  Select this to enable cpuidle for AT91 processors.
+ 
+ config ARM_EXYNOS_CPUIDLE
+ 	bool "Cpu Idle Driver for the Exynos processors"
+-	depends on ARCH_EXYNOS && !ARM64
++	depends on (ARCH_EXYNOS || COMPILE_TEST) && !ARM64
+ 	select ARCH_NEEDS_CPU_IDLE_COUPLED if SMP
+ 	help
+ 	  Select this to enable cpuidle for Exynos processors.
+ 
+ config ARM_MVEBU_V7_CPUIDLE
+ 	bool "CPU Idle Driver for mvebu v7 family processors"
+-	depends on ARCH_MVEBU && !ARM64
++	depends on (ARCH_MVEBU || COMPILE_TEST) && !ARM64
+ 	help
+ 	  Select this to enable cpuidle on Armada 370, 38x and XP processors.
+-- 
+2.17.1
 
