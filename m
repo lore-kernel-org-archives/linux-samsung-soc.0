@@ -1,138 +1,101 @@
-Return-Path: <SRS0=ZsKX=2S=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=qRMl=2T=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E5BBC2D0CE
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 28 Dec 2019 06:44:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 740DEC2D0CE
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 29 Dec 2019 16:33:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34C0B20722
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 28 Dec 2019 06:44:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cQ87Up34"
+	by mail.kernel.org (Postfix) with ESMTP id 33ABA208E4
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 29 Dec 2019 16:33:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1577637184;
+	bh=pBPmHWLqe2FlkPVN3prkzi7i4zMhN8/dqgOqe3RsaMA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=drw4kzwdBlV+SocsFRrrQqRbziDw0eRfKah/ARiecZEJS6YdFt1dN1cIKQBl7cgIU
+	 zfu0yhy5viC8KmMOpsRyM607jWQGxMpSYIGHWP01Yh4yaS4QPCOsVQdZ1JxlTyOSML
+	 z2D4gHGTKYEskm/Wbh0unuf2GDNy0KE0EKOZzuco=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726018AbfL1GoF (ORCPT
+        id S1726455AbfL2QdD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 28 Dec 2019 01:44:05 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:47001 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725857AbfL1GoF (ORCPT
+        Sun, 29 Dec 2019 11:33:03 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:43395 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726410AbfL2QdD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 28 Dec 2019 01:44:05 -0500
-Received: by mail-pf1-f196.google.com with SMTP id n9so7881360pff.13;
-        Fri, 27 Dec 2019 22:44:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=k/Zh0wd0iyh47HJcj26AK+VtSYrhhFOp9r5l6dctHRg=;
-        b=cQ87Up34bttOiGDEXDLiZ+4e4O19HR8fqNNWjDzMEWGjLJeDt12PbmxIzk/sHUID9c
-         yPTUXIf5hAOPK1T2/s1zzolWudNsW/MYZkhVlRhXpj3Q8czVxQcMThExn6rkBiilqYLq
-         dz6cInYDh3jNyF8o/vex+/jNRJSs1g+OnegrFoWJtB/Ygj9clWo4AGnQsxtPXXK+K/mg
-         Jpd7VylXheG7lEVoyg9PUUlvvGYkyMSef7i/+xpgeTk0nUggIvdaAyX7jBWjWjKBLOn/
-         aDjUziw1rZ2zHCWzWzdk0QbXv70r+eWvqiN1mNHhZyUnzLWetCycgQMezieDHqOWEB9M
-         ZCCw==
+        Sun, 29 Dec 2019 11:33:03 -0500
+Received: by mail-ed1-f66.google.com with SMTP id dc19so30277380edb.10;
+        Sun, 29 Dec 2019 08:33:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=k/Zh0wd0iyh47HJcj26AK+VtSYrhhFOp9r5l6dctHRg=;
-        b=FK2rWTEn6pV6l2yTXeVBouAkt4NWmYtWug4hwDTsB6A1NH/VSxJthyp5EcAK87Urbr
-         99Jn5C54XVE1rIHkJJl/yeM6ZFFyudu/FDI1k56ZYdweO4Dsn7qbdczEc04PfEb5TKVx
-         toUkGHYIdoADH+Lhulr4rfMSbfQb7ggbh6DzWNVH9Y2ikgwU27tH1zEscib5yqr+6/1S
-         74C8R+Ge1+PU2rnjt3EZeo19tXx+18RAIQhAf09QgIr+f+WmF5b/zykFnG4ZSx8c8t/+
-         VjHGZDjVv0guAACduzBMl1D9662q0rL5BBZz6M+jWEeiNZc3cnP25FQOePz0/tGLJKE2
-         /LCA==
-X-Gm-Message-State: APjAAAW53UDrefiJ0Ss4Pgn/DTsv1GR56+6rQU537nWXEiDWnDwwI/Zp
-        0f7a0LWcfQLqT40920u35b8=
-X-Google-Smtp-Source: APXvYqxS56Xo+lxmahknG9q55wIA+ODBR3wY7WgCdNMBd37PV7FVIa4xuPsJ37k352RZ05q1fDWlBA==
-X-Received: by 2002:a65:66d7:: with SMTP id c23mr60290506pgw.40.1577515444820;
-        Fri, 27 Dec 2019 22:44:04 -0800 (PST)
-Received: from localhost ([43.224.245.179])
-        by smtp.gmail.com with ESMTPSA id q15sm39751585pgi.55.2019.12.27.22.44.03
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Fri, 27 Dec 2019 22:44:04 -0800 (PST)
-From:   qiwuchen55@gmail.com
-To:     kgene@kernel.org, krzk@kernel.org, rjw@rjwysocki.net,
-        viresh.kumar@linaro.org
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenqiwu <chenqiwu@xiaomi.com>
-Subject: [PATCH] cpufreq: s3c: avoid use after free issue in xxx_cpufreq_reboot_notifier_evt()
-Date:   Sat, 28 Dec 2019 14:43:59 +0800
-Message-Id: <1577515439-14477-1-git-send-email-qiwuchen55@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=w8219L+FFqUH9cjSnRUbblLwTHC5hsqSbYNReVBrhuc=;
+        b=sRpgMPCE61t2egxQc4nMr01Sf4kXmRcMUi17WkhMzbGaO9kRz58xvXbQirrtsQgFti
+         XvXARiLmW2LAFlDpGKxjjYtdWqSqitFKr1lEWc53nhOwcxQoXR8h/xAEhaLNYqt674s8
+         y85eRCsHFXloGmAeF+lwPlHycn7eFm9wGwZIKdlHu3xDfZZ8e5wQUZTULX3slJBKcktf
+         2+UGxGm+E2COQ+0iPmAYltgC+3+HLE68J3SYlJs1B7c/cG8QC1ngn0M0MdUcFWE73n8C
+         fnWNoDfviLmTB1Emz6GR1KE9w31Ap6BdEa+ItmEKX2sNAhj+8n3SNZQFk5y6P58Z7DjM
+         sqqg==
+X-Gm-Message-State: APjAAAUClLPGDKfskA1hQxsW4vUNz4oswvlFCdLfIKPbtQ4MgDVlmVu5
+        TQhuVlBLulHq1Wp0yIFWeceo4srF
+X-Google-Smtp-Source: APXvYqzRb6vwdUw8G86aJ7mHh+/AEBuqsi9vNpw708AECo/09tP3fogV3xvK3TJdPC/SJtQeQ+HDGA==
+X-Received: by 2002:a05:6402:3c5:: with SMTP id t5mr65295462edw.217.1577637181592;
+        Sun, 29 Dec 2019 08:33:01 -0800 (PST)
+Received: from kozik-lap ([194.230.155.138])
+        by smtp.googlemail.com with ESMTPSA id pv11sm5178514ejb.75.2019.12.29.08.32.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 29 Dec 2019 08:33:00 -0800 (PST)
+Date:   Sun, 29 Dec 2019 17:32:58 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Hyunki Koo <hyunki00.koo@gmail.com>
+Cc:     Hyunki Koo <hyunki00.koo@samsung.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Kukjin Kim <kgene@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] irqchip: define EXYNOS_IRQ_COMBINER
+Message-ID: <20191229163258.GA32260@kozik-lap>
+References: <20191224211108.7128-1-hyunki00.koo@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191224211108.7128-1-hyunki00.koo@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: chenqiwu <chenqiwu@xiaomi.com>
+On Wed, Dec 25, 2019 at 06:11:07AM +0900, Hyunki Koo wrote:
+> From: Hyunki Koo <hyunki00.koo@samsung.com>
+> 
+> This patch is written to clean up dependency of ARCH_EXYNOS
+> Not all exynos device have IRQ_COMBINER, especially aarch64 EXYNOS
+> but it is built for all exynos devices.
+> Thus add the config for EXYNOS_IRQ_COMBINER
+> remove direct dependency between ARCH_EXYNOS and exynos-combiner.c
+> and only selected on the aarch32 devices
+> 
+> Signed-off-by: Hyunki Koo <hyunki00.koo@samsung.com>
+> ---
+>  arch/arm/mach-exynos/Kconfig | 1 +
+>  drivers/irqchip/Kconfig      | 7 +++++++
+>  drivers/irqchip/Makefile     | 2 +-
+>  3 files changed, 9 insertions(+), 1 deletion(-)
 
-There is a potential UAF issue in xxx_cpufreq_reboot_notifier_evt() that
-the cpufreq policy of cpu0 has been released before using it. So we should
-make a judgement to avoid it.
+I assume it will go through irqchip tree:
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
----
- drivers/cpufreq/s3c2416-cpufreq.c | 11 ++++++++++-
- drivers/cpufreq/s5pv210-cpufreq.c | 10 +++++++++-
- 2 files changed, 19 insertions(+), 2 deletions(-)
+If not, let me know, so I could take it via samsung-soc.
 
-diff --git a/drivers/cpufreq/s3c2416-cpufreq.c b/drivers/cpufreq/s3c2416-cpufreq.c
-index 1069103..0f576ba 100644
---- a/drivers/cpufreq/s3c2416-cpufreq.c
-+++ b/drivers/cpufreq/s3c2416-cpufreq.c
-@@ -304,6 +304,7 @@ static int s3c2416_cpufreq_reboot_notifier_evt(struct notifier_block *this,
- {
- 	struct s3c2416_data *s3c_freq = &s3c2416_cpufreq;
- 	int ret;
-+	struct cpufreq_policy policy;
- 
- 	mutex_lock(&cpufreq_lock);
- 
-@@ -318,7 +319,15 @@ static int s3c2416_cpufreq_reboot_notifier_evt(struct notifier_block *this,
- 	 */
- 	if (s3c_freq->is_dvs) {
- 		pr_debug("cpufreq: leave dvs on reboot\n");
--		ret = cpufreq_driver_target(cpufreq_cpu_get(0), FREQ_SLEEP, 0);
-+
-+		memset(&policy, 0, sizeof(policy));
-+		ret = cpufreq_get_policy(&policy, 0);
-+		if (ret < 0) {
-+			pr_debug("cpufreq: get no policy for cpu0\n");
-+			return NOTIFY_BAD;
-+		}
-+
-+		ret = cpufreq_driver_target(&policy, FREQ_SLEEP, 0);
- 		if (ret < 0)
- 			return NOTIFY_BAD;
- 	}
-diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
-index 5d10030..d99b4b1 100644
---- a/drivers/cpufreq/s5pv210-cpufreq.c
-+++ b/drivers/cpufreq/s5pv210-cpufreq.c
-@@ -555,8 +555,16 @@ static int s5pv210_cpufreq_reboot_notifier_event(struct notifier_block *this,
- 						 unsigned long event, void *ptr)
- {
- 	int ret;
-+	struct cpufreq_policy *policy;
- 
--	ret = cpufreq_driver_target(cpufreq_cpu_get(0), SLEEP_FREQ, 0);
-+	policy = cpufreq_cpu_get(0);
-+	if (!policy) {
-+		pr_debug("cpufreq: get no policy for cpu0\n");
-+		return NOTIFY_BAD;
-+	}
-+
-+	ret = cpufreq_driver_target(policy, SLEEP_FREQ, 0);
-+	cpufreq_cpu_put(policy);
- 	if (ret < 0)
- 		return NOTIFY_BAD;
- 
--- 
-1.9.1
+Best regards,
+Krzysztof
 
