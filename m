@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95BA2C2D0DB
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 29 Dec 2019 18:09:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7210EC2D0DB
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 29 Dec 2019 18:09:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7179A206A4
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 29 Dec 2019 18:09:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C21B206A4
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 29 Dec 2019 18:09:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1577642973;
+	s=default; t=1577642975;
 	bh=+YBS7n7jqJ53S6HvX93BfgZRfoAttIJ+SIElGBLSgqM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DRUM/S28fQ2lVqBjz9xfZzcLybT3W2Sx32deLW9tmV5qWDreF4PVSqcjRARdk7W4l
-	 XnPUQr+utvI0mRuJUjRhzHEKe6CmMXzAzMMIkAFRRmnLDN/2me5m9HxKPVrKzF3tw8
-	 Z2SFkH06/lforCd1VtOTjdDOn2MLDvXcKuoQzz/M=
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=aehTmAbOUBnRSK3LShXaIqSkC4FRfhYf8ZYueGpfv9ARTqu5hXuGd21AURAa/1C5/
+	 JnXxnOJRNXutNgwHtMmFOU6+drE2afMZlwHC2ln81rPtWUsnZ4yOt1ekKcpXqr8RgC
+	 UKVMUxoIzGKu8VY7oylBW4RZ2DeRKw/fNV5rYkto=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732105AbfL2SJ3 (ORCPT
+        id S1730731AbfL2SJZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 29 Dec 2019 13:09:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33896 "EHLO mail.kernel.org"
+        Sun, 29 Dec 2019 13:09:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33806 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731365AbfL2SJ1 (ORCPT
+        id S1729626AbfL2SJY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 29 Dec 2019 13:09:27 -0500
+        Sun, 29 Dec 2019 13:09:24 -0500
 Received: from localhost.localdomain (unknown [194.230.155.138])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 70560222C2;
-        Sun, 29 Dec 2019 18:09:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 754DE206A4;
+        Sun, 29 Dec 2019 18:09:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577642966;
+        s=default; t=1577642964;
         bh=+YBS7n7jqJ53S6HvX93BfgZRfoAttIJ+SIElGBLSgqM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uMgwPoibTPvXMuBnLasQwLeJludmN8WbGDEYxBWxxnh0U6rfIf1l/FTZyhAcMB23c
-         kDdi/LXORjlV7nRi8wYZhjc3QkRJzJn2u5rEXoEN3hGw07unFOx4hpQDUtK56XXsnb
-         B+2XHtCEwb47/eSsX21hJrZ+L/Q0LdGjKxpIZxh8=
+        h=From:To:Cc:Subject:Date:From;
+        b=XytEjOEurhjJTShnLSoF6V0pKh8UWSrV3+ocJp0GzOkqtZdJ5E6PGSdOj+2fHjz+V
+         nQr/4bGruIfAdtca2M5HnUq2vsjPxWwLYpsrN3qkznS+R2YbvGVSM+AUz3xBgoMgmZ
+         4wpLCAucYhlvpbMJipEOStNlPUnQkGeA01iDvrwA=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
@@ -53,11 +53,9 @@ Cc:     linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org,
         Krzysztof Kozlowski <krzk@kernel.org>
 Subject: [PATCH] cpuidle: arm: Enable compile testing for some of drivers
-Date:   Sun, 29 Dec 2019 19:09:12 +0100
-Message-Id: <20191229180912.17100-2-krzk@kernel.org>
+Date:   Sun, 29 Dec 2019 19:09:11 +0100
+Message-Id: <20191229180912.17100-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191229180912.17100-1-krzk@kernel.org>
-References: <20191229180912.17100-1-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
