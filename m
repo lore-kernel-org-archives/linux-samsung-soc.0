@@ -4,125 +4,100 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7210EC2D0DB
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 29 Dec 2019 18:09:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C8AC2D0CE
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 29 Dec 2019 18:36:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C21B206A4
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 29 Dec 2019 18:09:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E800207FD
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 29 Dec 2019 18:36:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1577642975;
-	bh=+YBS7n7jqJ53S6HvX93BfgZRfoAttIJ+SIElGBLSgqM=;
+	s=default; t=1577644583;
+	bh=czUisFJmY3fA8ZbN0nGTyeSLt61Fc6iQHasHh+W7A9s=;
 	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=aehTmAbOUBnRSK3LShXaIqSkC4FRfhYf8ZYueGpfv9ARTqu5hXuGd21AURAa/1C5/
-	 JnXxnOJRNXutNgwHtMmFOU6+drE2afMZlwHC2ln81rPtWUsnZ4yOt1ekKcpXqr8RgC
-	 UKVMUxoIzGKu8VY7oylBW4RZ2DeRKw/fNV5rYkto=
+	b=kQW4bWzE/TrXxU0RgSsIzK1DsVCmjTueV5dpOETsai9IitGVVcFTneRkY77xBTq2h
+	 oqnxkPKRp1xkiQPY8zVC/d4gq2W2r0khUgWyiUQrGCTRuP71rFhn8brAqdE6YhCnLR
+	 s6Ul2hQdDlmyreGsSvHheev/mbE4igF0l5BvVAQk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730731AbfL2SJZ (ORCPT
+        id S1726490AbfL2SgX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 29 Dec 2019 13:09:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33806 "EHLO mail.kernel.org"
+        Sun, 29 Dec 2019 13:36:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729626AbfL2SJY (ORCPT
+        id S1726455AbfL2SgW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 29 Dec 2019 13:09:24 -0500
+        Sun, 29 Dec 2019 13:36:22 -0500
 Received: from localhost.localdomain (unknown [194.230.155.138])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 754DE206A4;
-        Sun, 29 Dec 2019 18:09:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B14820748;
+        Sun, 29 Dec 2019 18:36:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577642964;
-        bh=+YBS7n7jqJ53S6HvX93BfgZRfoAttIJ+SIElGBLSgqM=;
+        s=default; t=1577644582;
+        bh=czUisFJmY3fA8ZbN0nGTyeSLt61Fc6iQHasHh+W7A9s=;
         h=From:To:Cc:Subject:Date:From;
-        b=XytEjOEurhjJTShnLSoF6V0pKh8UWSrV3+ocJp0GzOkqtZdJ5E6PGSdOj+2fHjz+V
-         nQr/4bGruIfAdtca2M5HnUq2vsjPxWwLYpsrN3qkznS+R2YbvGVSM+AUz3xBgoMgmZ
-         4wpLCAucYhlvpbMJipEOStNlPUnQkGeA01iDvrwA=
+        b=OjFGQSfOacDRk3KxbOgA5t0fVE9LjnAFKB5NkdlF/9nppBfYnCELFHBJaz+4IHJLO
+         RQtOn4nEMbEsM0lH3UgCE50zZDEZLtlyNHAe6t7KBYvC/ZpmJGTVvrrGKrY6HmxqTm
+         c1leBBunL0FxfS4RhONrX0bAwo2xFf1DGxWIKnrw=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sudeep Holla <sudeep.holla@arm.com>
+To:     Kyungmin Park <kyungmin.park@samsung.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org,
         Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] cpuidle: arm: Enable compile testing for some of drivers
-Date:   Sun, 29 Dec 2019 19:09:11 +0100
-Message-Id: <20191229180912.17100-1-krzk@kernel.org>
+Subject: [PATCH 1/3] mtd: onenand: samsung: Fix pointer cast -Wpointer-to-int-cast warnings on 64 bit
+Date:   Sun, 29 Dec 2019 19:36:10 +0100
+Message-Id: <20191229183612.22133-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Some of cpuidle drivers for ARMv7 can be compile tested on this
-architecture because they do not depend on mach-specific bits.  Enable
-compile testing for big.LITTLE, Kirkwood, Zynq, AT91, Exynos and mvebu
-cpuidle drivers.
+iomem pointers should be casted to unsigned long to avoid
+-Wpointer-to-int-cast warnings when compiling on 64-bit platform (e.g.
+with COMPILE_TEST):
+
+    drivers/mtd/nand/onenand/samsung_mtd.c: In function ‘s3c_onenand_readw’:
+    drivers/mtd/nand/onenand/samsung_mtd.c:251:6: warning:
+        cast from pointer to integer of different size [-Wpointer-to-int-cast]
+      if ((unsigned int) addr < ONENAND_DATARAM && onenand->bootram_command) {
+          ^
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/cpuidle/Kconfig.arm | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/mtd/nand/onenand/samsung_mtd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/cpuidle/Kconfig.arm b/drivers/cpuidle/Kconfig.arm
-index a224d33dda7f..62272ecfa771 100644
---- a/drivers/cpuidle/Kconfig.arm
-+++ b/drivers/cpuidle/Kconfig.arm
-@@ -25,7 +25,7 @@ config ARM_PSCI_CPUIDLE
+diff --git a/drivers/mtd/nand/onenand/samsung_mtd.c b/drivers/mtd/nand/onenand/samsung_mtd.c
+index 55e5536a5850..70501d031db6 100644
+--- a/drivers/mtd/nand/onenand/samsung_mtd.c
++++ b/drivers/mtd/nand/onenand/samsung_mtd.c
+@@ -248,7 +248,7 @@ static unsigned short s3c_onenand_readw(void __iomem *addr)
+ 	}
  
- config ARM_BIG_LITTLE_CPUIDLE
- 	bool "Support for ARM big.LITTLE processors"
--	depends on ARCH_VEXPRESS_TC2_PM || ARCH_EXYNOS
-+	depends on ARCH_VEXPRESS_TC2_PM || ARCH_EXYNOS || COMPILE_TEST
- 	depends on MCPM && !ARM64
- 	select ARM_CPU_SUSPEND
- 	select CPU_IDLE_MULTIPLE_DRIVERS
-@@ -51,13 +51,13 @@ config ARM_HIGHBANK_CPUIDLE
+ 	/* BootRAM access control */
+-	if ((unsigned int) addr < ONENAND_DATARAM && onenand->bootram_command) {
++	if ((unsigned long)addr < ONENAND_DATARAM && onenand->bootram_command) {
+ 		if (word_addr == 0)
+ 			return s3c_read_reg(MANUFACT_ID_OFFSET);
+ 		if (word_addr == 1)
+@@ -289,7 +289,7 @@ static void s3c_onenand_writew(unsigned short value, void __iomem *addr)
+ 	}
  
- config ARM_KIRKWOOD_CPUIDLE
- 	bool "CPU Idle Driver for Marvell Kirkwood SoCs"
--	depends on MACH_KIRKWOOD && !ARM64
-+	depends on (MACH_KIRKWOOD || COMPILE_TEST) && !ARM64
- 	help
- 	  This adds the CPU Idle driver for Marvell Kirkwood SoCs.
- 
- config ARM_ZYNQ_CPUIDLE
- 	bool "CPU Idle Driver for Xilinx Zynq processors"
--	depends on ARCH_ZYNQ && !ARM64
-+	depends on (ARCH_ZYNQ || COMPILE_TEST) && !ARM64
- 	help
- 	  Select this to enable cpuidle on Xilinx Zynq processors.
- 
-@@ -70,19 +70,19 @@ config ARM_U8500_CPUIDLE
- config ARM_AT91_CPUIDLE
- 	bool "Cpu Idle Driver for the AT91 processors"
- 	default y
--	depends on ARCH_AT91 && !ARM64
-+	depends on (ARCH_AT91 || COMPILE_TEST) && !ARM64
- 	help
- 	  Select this to enable cpuidle for AT91 processors.
- 
- config ARM_EXYNOS_CPUIDLE
- 	bool "Cpu Idle Driver for the Exynos processors"
--	depends on ARCH_EXYNOS && !ARM64
-+	depends on (ARCH_EXYNOS || COMPILE_TEST) && !ARM64
- 	select ARCH_NEEDS_CPU_IDLE_COUPLED if SMP
- 	help
- 	  Select this to enable cpuidle for Exynos processors.
- 
- config ARM_MVEBU_V7_CPUIDLE
- 	bool "CPU Idle Driver for mvebu v7 family processors"
--	depends on ARCH_MVEBU && !ARM64
-+	depends on (ARCH_MVEBU || COMPILE_TEST) && !ARM64
- 	help
- 	  Select this to enable cpuidle on Armada 370, 38x and XP processors.
+ 	/* BootRAM access control */
+-	if ((unsigned int)addr < ONENAND_DATARAM) {
++	if ((unsigned long)addr < ONENAND_DATARAM) {
+ 		if (value == ONENAND_CMD_READID) {
+ 			onenand->bootram_command = 1;
+ 			return;
 -- 
 2.17.1
 
