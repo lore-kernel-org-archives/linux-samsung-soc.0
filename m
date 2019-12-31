@@ -2,200 +2,158 @@ Return-Path: <SRS0=IGlM=2V=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83189C2D0CE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 31 Dec 2019 07:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A24BC2D0DE
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 31 Dec 2019 09:23:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3147B206E4
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 31 Dec 2019 07:33:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38ECE206D9
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 31 Dec 2019 09:23:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1577777626;
-	bh=iK4Hj4AR62CaA9vF5pVPeSYRBA2XFBhqaml0eTfper0=;
+	s=default; t=1577784184;
+	bh=CRXnGizVpLhEDU5W+Mn1XPTimf2r4lvRUd9OOp3POpE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=HmPiqKqh46el+LbU0Qnr/EjWVuO3+Jfpyi0845ofA2ZtC837/xYPeLc9hOLiwXnh9
-	 D738P1ZpY8e8fSdf8SGHdrSRs0zOWSpcD9QYxvLcnHaXpJoFayACJQFrc4EmPjoVMi
-	 xFut7Tivj+9NkzMt2y+72aWH3n9WDtq217yRdWKY=
+	b=tBo2Svh9auIQsTeZQnOCH5IuqLwz2QWFKkwbuLLGNQa1zqsVBHCJHsV51VDGb2GAF
+	 hy5CeSHZBs5eSLYW5If3tSY0dOPkiCckTg1Y+SKGUS+hMwuPqh5vOrwFgabXOmrPLm
+	 bLcUFWlc4GdqxSec1hVYmPd5KDwt+m6wrcZpeIeI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725536AbfLaHdp (ORCPT
+        id S1726345AbfLaJXA convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 31 Dec 2019 02:33:45 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:44238 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725497AbfLaHdp (ORCPT
+        Tue, 31 Dec 2019 04:23:00 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:33427 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726119AbfLaJW7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 31 Dec 2019 02:33:45 -0500
-Received: by mail-ed1-f65.google.com with SMTP id bx28so34636102edb.11;
-        Mon, 30 Dec 2019 23:33:43 -0800 (PST)
+        Tue, 31 Dec 2019 04:22:59 -0500
+Received: by mail-ed1-f68.google.com with SMTP id r21so34818172edq.0;
+        Tue, 31 Dec 2019 01:22:58 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=CSBc4qS53J+lRZg5w7KXUGNuv3VGsAFByvWkMrjeDpo=;
-        b=Ca/xtfD+/8l3xmwyDAR2phyqJNgFMc5BpHssoycMRDSGg+MA0exn07gP+lr+WCGHXd
-         VJrTMRElzn6k+sCZMBuuPctiCOEJ49SROF+oKIXDd/8zYN+rxRYdxGMau9Jx2BIpwh5x
-         ysK/4pfyxTjRl40nn0NuOuV55BcV6p4yHnrROtQsTHhpBKb39uP7fS5lo6hWAMcAub5w
-         AtVpQa66S8tG33+ZaFeG2hYmmantErxO1qBd9W6oWt8pfAsyUgjy+BFLUx54aDOQKTbb
-         IpdC0tqmUQeSIJKcV1IRLjmU5gs/oIymHQO3c4edGZkm71j+Mx4WHRHUdBTh379u+VcQ
-         sCLA==
-X-Gm-Message-State: APjAAAU7saT9ds4iSlJe24O5qsFudl+dmPYu+ydPUwMCZrmt0MMGi5bS
-        KA4nwDj57WgkTJ4oBqve2Bw=
-X-Google-Smtp-Source: APXvYqxMofKUDqCew+FL9Zuc0mUQOhD1ebHisnFabz5QKmd1eWIJZsZZNqrtOE1XBrdPlrOaE6v4fg==
-X-Received: by 2002:a17:906:1b07:: with SMTP id o7mr76289121ejg.131.1577777622485;
-        Mon, 30 Dec 2019 23:33:42 -0800 (PST)
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=zcMF0DszYjdAAeSzpwgiwYYj0Rmxb5AATwzX117pufo=;
+        b=tp4tCPQqUUtrCUnBKOQ2hDTX5hSvi6k/POqxIqU8innGP4rro8a/dWwaydpd4O9XNS
+         mnLoYBZL+FEl/mV9XqJtWs37/+cc+PaVaRPFFwRqQ66mj38Uhrvf1F3ImtD1N8oO5fH8
+         TkQEDwbGnknv+AeVr9d+S/tPP8zzZ3wX9yml4nuDFflSbsTGKQjm05Pz8TJj3GzTPQ6J
+         NmzL0QvJCJ7JWVy25EA19RQXp5XfkQtoyl/0op5sW75QKDUW3FYay1eaZRs+n6jhf5b4
+         iSjN6x1TMno7z1EXAX55WBU3y0QWzlBEMxBkrDsklk6j+YzQuBmU/yGanfGg4fU5I/qI
+         2HQA==
+X-Gm-Message-State: APjAAAXnmYGksETNYv4hFNlSnDTR19e/fjZKK0xeP+prHxu5oodin03v
+        C3L5ixW3vh2F8iFDqOVC+Dk=
+X-Google-Smtp-Source: APXvYqzgzVpvRf+8IP6z3ujB3SZIWKfFAGfLl8aejvQf9p703WelAn4funQmIQW8H6z6pzmhM0Yc6w==
+X-Received: by 2002:a17:906:1fd5:: with SMTP id e21mr44856105ejt.97.1577784177492;
+        Tue, 31 Dec 2019 01:22:57 -0800 (PST)
 Received: from pi3 ([194.230.155.138])
-        by smtp.googlemail.com with ESMTPSA id o7sm5685770edv.71.2019.12.30.23.33.41
+        by smtp.googlemail.com with ESMTPSA id x15sm5693555edl.48.2019.12.31.01.22.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Dec 2019 23:33:41 -0800 (PST)
-Date:   Tue, 31 Dec 2019 08:33:39 +0100
+        Tue, 31 Dec 2019 01:22:56 -0800 (PST)
+Date:   Tue, 31 Dec 2019 10:22:54 +0100
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@lists.01.org, Kyungmin Park <kyungmin.park@samsung.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 3/3] mtd: onenand: Enable compile testing of OMAP and
- Samsung drivers
-Message-ID: <20191231073339.GA6747@pi3>
-References: <20191229183612.22133-3-krzk@kernel.org>
- <201912310904.9iM6MaFr%lkp@intel.com>
+To:     Artur =?utf-8?B?xZp3aWdvxYQ=?= <a.swigon@samsung.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        cw00.choi@samsung.com, myungjoo.ham@samsung.com,
+        inki.dae@samsung.com, sw0312.kim@samsung.com,
+        georgi.djakov@linaro.org, leonard.crestez@nxp.com,
+        m.szyprowski@samsung.com, b.zolnierkie@samsung.com
+Subject: Re: [RFC PATCH v3 4/7] arm: dts: exynos: Add interconnect bindings
+ for Exynos4412
+Message-ID: <20191231092254.GA6939@pi3>
+References: <20191220115653.6487-1-a.swigon@samsung.com>
+ <CGME20191220120144eucas1p119ececf161a6d45a6a194e432bbbd1f9@eucas1p1.samsung.com>
+ <20191220115653.6487-5-a.swigon@samsung.com>
+ <20191230154405.GC4918@pi3>
+ <2922135223b01126277ef92a53e6b294bc17bb5c.camel@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <201912310904.9iM6MaFr%lkp@intel.com>
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <2922135223b01126277ef92a53e6b294bc17bb5c.camel@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Dec 31, 2019 at 10:00:48AM +0800, kbuild test robot wrote:
-> Hi Krzysztof,
+On Tue, Dec 31, 2019 at 08:18:01AM +0100, Artur Świgoń wrote:
+> Hi,
 > 
-> I love your patch! Perhaps something to improve:
+> On Mon, 2019-12-30 at 16:44 +0100, Krzysztof Kozlowski wrote:
+> > On Fri, Dec 20, 2019 at 12:56:50PM +0100, Artur Świgoń wrote:
+> > > This patch adds the following properties to the Exynos4412 DT:
+> > >   - exynos,interconnect-parent-node: to declare connections between
+> > >     nodes in order to guarantee PM QoS requirements between nodes;
+> > >   - #interconnect-cells: required by the interconnect framework.
+> > > 
+> > > Note that #interconnect-cells is always zero and node IDs are not
+> > > hardcoded anywhere.
+> > > 
+> > > Signed-off-by: Artur Świgoń <a.swigon@samsung.com>
+> > > ---
+> > >  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 5 +++++
+> > >  1 file changed, 5 insertions(+)
+> > 
+> > The order of patches is confusing. Patches 4 and 6 are split - do the
+> > depend on 5? I doubt but...
 > 
-> [auto build test WARNING on linus/master]
-> [also build test WARNING on v5.5-rc4 next-20191220]
-> [if your patch is applied to the wrong git tree, please drop us a note to help
-> improve the system. BTW, we also suggest to use '--base' option to specify the
-> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+> Let me elaborate:
 > 
-> url:    https://github.com/0day-ci/linux/commits/Krzysztof-Kozlowski/mtd-onenand-samsung-Fix-pointer-cast-Wpointer-to-int-cast-warnings-on-64-bit/20191230-030838
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git bf8d1cd4386535004c4afe7f03d37f9864c9940e
-> reproduce:
->         # apt-get install sparse
->         # sparse version: v0.6.1-129-g341daf20-dirty
->         make ARCH=x86_64 allmodconfig
->         make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+> The order of the patches in this series is such that every subsequent
+> patch adds some functionality (and, of course, applying patches one-by-one
+> yields a working kernel at every step). Specifically for patches 04--07:
 > 
-> If you fix the issue, kindly add following tag
-> Reported-by: kbuild test robot <lkp@intel.com>
+>  -- patch 04 adds interconnect _provider_ properties for Exynos4412;
+>  -- patch 05 implements interconnect provider logic (depends on patch 04);
+>  -- patch 06 adds interconnect _consumer_ properties for Exynos4412 mixer;
+>  -- patch 07 implements interconnect consumer logic (depends on patches
+>     05 & 06);
 > 
+> My reasoning is that this order allows to e.g., merge the interconnect
+> provider for exynos-bus and leave the consumers for later (not limited to
+> the mixer). I hope this makes sense.
 
-It is not related to my patch. I'll fix it up soon.
+It is wrong. The driver should not depend on DTS changes because:
+1. DTS always go through separate branch and tree, so last patch
+   will have to wait up to 3 cycles (!!!),
+2. You break backward compatibility.
+
+In certain cases dependency on DTS changes is ok:
+1. Cleaning up deprecated properties,
+2. Ignoring the backward compatibility for e.g. new platforms.
+
+None of these are applicable here.
+
+You need to rework it, put DTS changes at the end. This clearly shows
+that there is no wrong dependency.
+
+> 
+> > Adjust the title to match the contents - you are not adding bindings but
+> > properties to bus nodes. Also the prefix is ARM: (look at recent
+> > commits).
+> 
+> OK.
+> 
+> > > 
+> > > diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> > > index 4ce3d77a6704..d9d70eacfcaf 100644
+> > > --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> > > +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> > > @@ -90,6 +90,7 @@
+> > >  &bus_dmc {
+> > >  	exynos,ppmu-device = <&ppmu_dmc0_3>, <&ppmu_dmc1_3>;
+> > >  	vdd-supply = <&buck1_reg>;
+> > > +	#interconnect-cells = <0>;
+> > 
+> > This does not look like property of Odroid but Exynos4412 or Exynos4.
+> 
+> Strangely enough, this file is where the 'exynos,parent-bus' (aka. 'devfreq')
+> properties are located (and everything in this RFC concerns devfreq).
+
+I cannot find exynos,parent-bus in exynos4412-odroid-common.dtsi. Can
+you elaborate?
 
 Best regards,
 Krzysztof
-
-> 
-> sparse warnings: (new ones prefixed by >>)
-> 
-> >> drivers/mtd/nand/onenand/samsung_mtd.c:678:17: sparse: sparse: incorrect type in argument 2 (different address spaces)
-> >> drivers/mtd/nand/onenand/samsung_mtd.c:678:17: sparse:    expected void const *from
-> >> drivers/mtd/nand/onenand/samsung_mtd.c:678:17: sparse:    got void [noderef] <asn:2> *[assigned] p
-> >> drivers/mtd/nand/onenand/samsung_mtd.c:679:19: sparse: sparse: incorrect type in assignment (different address spaces)
-> >> drivers/mtd/nand/onenand/samsung_mtd.c:679:19: sparse:    expected void [noderef] <asn:2> *[assigned] p
-> >> drivers/mtd/nand/onenand/samsung_mtd.c:679:19: sparse:    got unsigned char *
->    drivers/mtd/nand/onenand/samsung_mtd.c:682:9: sparse: sparse: incorrect type in argument 2 (different address spaces)
->    drivers/mtd/nand/onenand/samsung_mtd.c:682:9: sparse:    expected void const *from
->    drivers/mtd/nand/onenand/samsung_mtd.c:682:9: sparse:    got void [noderef] <asn:2> *[assigned] p
-> 
-> vim +678 drivers/mtd/nand/onenand/samsung_mtd.c
-> 
-> e23abf4b774322 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-09-28  614  
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  615  static int s5pc110_read_bufferram(struct mtd_info *mtd, int area,
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  616  		unsigned char *buffer, int offset, size_t count)
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  617  {
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  618  	struct onenand_chip *this = mtd->priv;
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  619  	void __iomem *p;
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  620  	void *buf = (void *) buffer;
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  621  	dma_addr_t dma_src, dma_dst;
-> 08b3af3092bb2c drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-11-02  622  	int err, ofs, page_dma = 0;
-> dcf08227e964a5 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-09-28  623  	struct device *dev = &onenand->pdev->dev;
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  624  
-> 9aba97ad004ed0 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-08-27  625  	p = this->base + area;
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  626  	if (ONENAND_CURRENT_BUFFERRAM(this)) {
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  627  		if (area == ONENAND_DATARAM)
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  628  			p += this->writesize;
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  629  		else
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  630  			p += mtd->oobsize;
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  631  	}
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  632  
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  633  	if (offset & 3 || (size_t) buf & 3 ||
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  634  		!onenand->dma_addr || count != mtd->writesize)
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  635  		goto normal;
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  636  
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  637  	/* Handle vmalloc address */
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  638  	if (buf >= high_memory) {
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  639  		struct page *page;
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  640  
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  641  		if (((size_t) buf & PAGE_MASK) !=
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  642  		    ((size_t) (buf + count - 1) & PAGE_MASK))
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  643  			goto normal;
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  644  		page = vmalloc_to_page(buf);
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  645  		if (!page)
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  646  			goto normal;
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  647  
-> 08b3af3092bb2c drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-11-02  648  		/* Page offset */
-> 08b3af3092bb2c drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-11-02  649  		ofs = ((size_t) buf & ~PAGE_MASK);
-> dcf08227e964a5 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-09-28  650  		page_dma = 1;
-> 08b3af3092bb2c drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-11-02  651  
-> dcf08227e964a5 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-09-28  652  		/* DMA routine */
-> dcf08227e964a5 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-09-28  653  		dma_src = onenand->phys_base + (p - this->base);
-> 08b3af3092bb2c drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-11-02  654  		dma_dst = dma_map_page(dev, page, ofs, count, DMA_FROM_DEVICE);
-> dcf08227e964a5 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-09-28  655  	} else {
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  656  		/* DMA routine */
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  657  		dma_src = onenand->phys_base + (p - this->base);
-> dcf08227e964a5 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-09-28  658  		dma_dst = dma_map_single(dev, buf, count, DMA_FROM_DEVICE);
-> dcf08227e964a5 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-09-28  659  	}
-> dcf08227e964a5 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-09-28  660  	if (dma_mapping_error(dev, dma_dst)) {
-> 102f66a740cfbe drivers/mtd/nand/onenand/samsung_mtd.c Krzysztof Kozlowski 2019-12-29  661  		dev_err(dev, "Couldn't map a %zu byte buffer for DMA\n", count);
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  662  		goto normal;
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  663  	}
-> 81d46c59550997 drivers/mtd/onenand/samsung.c          Arnd Bergmann       2014-05-08  664  	err = s5pc110_dma_ops(dma_dst, dma_src,
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  665  			count, S5PC110_DMA_DIR_READ);
-> dcf08227e964a5 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-09-28  666  
-> dcf08227e964a5 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-09-28  667  	if (page_dma)
-> dcf08227e964a5 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-09-28  668  		dma_unmap_page(dev, dma_dst, count, DMA_FROM_DEVICE);
-> dcf08227e964a5 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-09-28  669  	else
-> dcf08227e964a5 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-09-28  670  		dma_unmap_single(dev, dma_dst, count, DMA_FROM_DEVICE);
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  671  
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  672  	if (!err)
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  673  		return 0;
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  674  
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  675  normal:
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  676  	if (count != mtd->writesize) {
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  677  		/* Copy the bufferram to memory to prevent unaligned access */
-> 9aba97ad004ed0 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-08-27 @678  		memcpy(this->page_buf, p, mtd->writesize);
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28 @679  		p = this->page_buf + offset;
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  680  	}
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  681  
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  682  	memcpy(buffer, p, count);
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  683  
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  684  	return 0;
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  685  }
-> 46f3e88bd9da01 drivers/mtd/onenand/samsung.c          Kyungmin Park       2010-04-28  686  
-> 
-> :::::: The code at line 678 was first introduced by commit
-> :::::: 9aba97ad004ed0cde9747a9daf5b1484edb746cd mtd: OneNAND: Fix 2KiB pagesize handling at Samsung SoCs
-> 
-> :::::: TO: Kyungmin Park <kyungmin.park@samsung.com>
-> :::::: CC: David Woodhouse <David.Woodhouse@intel.com>
-> 
-> ---
-> 0-DAY kernel test infrastructure                 Open Source Technology Center
-> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
