@@ -1,260 +1,121 @@
-Return-Path: <SRS0=IGlM=2V=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=qMmp=2X=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E13C2D0DC
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 31 Dec 2019 11:03:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D997FC2D0DD
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Jan 2020 08:44:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 633C2206E4
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 31 Dec 2019 11:03:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD36220866
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Jan 2020 08:44:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BVropltx"
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="K14Npc1S"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727054AbfLaLDs (ORCPT
+        id S1727792AbgABIoD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 31 Dec 2019 06:03:48 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:51500 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726654AbfLaLDq (ORCPT
+        Thu, 2 Jan 2020 03:44:03 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:16404 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727756AbgABIoD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 31 Dec 2019 06:03:46 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191231110343euoutp01c943bf797b7999abd7c467435e19c394~lb9lgjfSc1198411984euoutp01a
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 31 Dec 2019 11:03:43 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191231110343euoutp01c943bf797b7999abd7c467435e19c394~lb9lgjfSc1198411984euoutp01a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1577790223;
-        bh=7+Bzmj/1YS4mP/XOTfqoL6jacDPrLgYgX5Dda/QTWHw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=BVropltxRsZN3ZbwTq+m3PNfg0dIYlPSJKB2mWulBCfR5C2+31+pbpZcTq/vKj3MH
-         yyXGRJ8hg4eZu+RrnSSX5eW7z3Uqdpl6eX5udG+hq0kNfHPCK2unMMI+RqKtZiwfNb
-         cb7f0NlVodvQSDaXsjB/Dpxf1w8Mw5wjHtjME3hE=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191231110343eucas1p126de462c8e6ced3397b47d8ddbaa09a7~lb9lI1MqD2384623846eucas1p1i;
-        Tue, 31 Dec 2019 11:03:43 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 59.DF.61286.F0B2B0E5; Tue, 31
-        Dec 2019 11:03:43 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20191231110343eucas1p2211c47c3442b4397e051836cc39e11a1~lb9ky991Q3033530335eucas1p2v;
-        Tue, 31 Dec 2019 11:03:43 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191231110343eusmtrp10fc8459914b75e6b325bb7c10db35ecc~lb9kyPA_02466224662eusmtrp1Y;
-        Tue, 31 Dec 2019 11:03:43 +0000 (GMT)
-X-AuditID: cbfec7f2-f0bff7000001ef66-d3-5e0b2b0f11d3
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 91.38.08375.E0B2B0E5; Tue, 31
-        Dec 2019 11:03:42 +0000 (GMT)
-Received: from AMDC3555 (unknown [106.120.51.67]) by eusmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20191231110342eusmtip1b4cd2129514c914c87bc8fd50997103a~lb9j-nB6N1319413194eusmtip13;
-        Tue, 31 Dec 2019 11:03:42 +0000 (GMT)
-Message-ID: <e364f979ad6b07a53f19fd25883e4d39e28c37be.camel@samsung.com>
-Subject: Re: [RFC PATCH v3 4/7] arm: dts: exynos: Add interconnect bindings
- for Exynos4412
-From:   Artur =?UTF-8?Q?=C5=9Awigo=C5=84?= <a.swigon@samsung.com>
+        Thu, 2 Jan 2020 03:44:03 -0500
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0028Z1nj022070;
+        Thu, 2 Jan 2020 09:43:42 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=STMicroelectronics;
+ bh=OS+yDpqq7SyVkVspEB/RBh0yAJda6QqIhoTkhDJ6UBk=;
+ b=K14Npc1SGCwL4TFz2snFFL7TQ9itMUDnjpjXZy6l8L2FA7qqeesT/oGwUz5v7nseBZRI
+ fx7wsI++iFevb4UCN/gF4GGCIdSYlHKAzUs7QoR0J7YMd5iMQ6NrpORi9i09n6j7IfjL
+ GDe6dfemNZmY652wtVyO0IPfDx/0+uW8qYW/G32NCVjLYXg6fkycaJSdWOpGfBoYNwH7
+ XkrccgRpLoDH9YzjiKczOSA2hyHbppdqt2/Ko1jtmiMyJmG3m+BxWs955A5d9vrNkNZM
+ FVzgGqYyF9hG0/nn9hUhK6DGsxVtCvOOH53u4yR2clZ41+rYCWruXZLzS05rv2pO+A1o Hw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2x5wd6a3g7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 02 Jan 2020 09:43:42 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 52C3710002A;
+        Thu,  2 Jan 2020 09:43:41 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1C5F92A6E01;
+        Thu,  2 Jan 2020 09:43:41 +0100 (CET)
+Received: from SFHDAG3NODE3.st.com (10.75.127.9) by SFHDAG3NODE1.st.com
+ (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 2 Jan
+ 2020 09:43:40 +0100
+Received: from SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476]) by
+ SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476%20]) with mapi id
+ 15.00.1347.000; Thu, 2 Jan 2020 09:43:40 +0100
+From:   Benjamin GAIGNARD <benjamin.gaignard@st.com>
 To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "kgene@kernel.org" <kgene@kernel.org>,
+        "hminas@synopsys.com" <hminas@synopsys.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
         "linux-samsung-soc@vger.kernel.org" 
         <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Chanwoo Choi <cw00.choi@samsung.com>, myungjoo.ham@samsung.com,
-        Inki Dae <inki.dae@samsung.com>,
-        Seung Woo Kim <sw0312.kim@samsung.com>,
-        georgi.djakov@linaro.org, leonard.crestez@nxp.com,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?UTF-8?Q?Bart=C5=82omiej_?= =?UTF-8?Q?=C5=BBo=C5=82nierkiewicz?= 
-        <b.zolnierkie@samsung.com>
-Date:   Tue, 31 Dec 2019 12:03:41 +0100
-In-Reply-To: <CAJKOXPezRMb0OnpcRWrRheKbBjyzqNXG3TDX-MQkjAm2sTSr1w@mail.gmail.com>
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHe3cuO66mp2ntyYXVpA9qm0kKB4q06HKiPiQUQZi26mCRW7HT
-        KoNoFYmXMknDNTXTaol5yZPaWpcPQzQqXVcNNhsVXYym5Swrs9o8k/r2f//P83v+zwMvhSke
-        EtHULsM+zmjQ5ahJGd7e+cOliUiYmrmwpULJtFiaCaZv5D3BVHf0EMyzr0MkU35HIJkz3hKc
-        cbmuSZm6/i8EI7zpJZinjkqS8Z/qQIzFdVfCNHb0Sxn30TqSsZQOkGkRrFBfQLKe3tsk6y3q
-        krDXLx1hWwbtEra4tR6xfiFmvXSzbMkOLmfXfs6YuHSrbKfl1Fm0t0xzcMT7ATejothCFEYB
-        nQxCTZskqBV0HYJ3no2FSBbQIwg+d55A4sOPoEZwSyeJqqHzhEhcQTDgiRGb3iFwNjRiwYKc
-        ZuGKuwIP6kg6A6zfvRMwSadCt/vbRFwUHQd946NEEMboVzjc6B+bKOD0fOh+JMJhdDq4i/Nw
-        MXkB+O4XBzQVCJgO4/bIoI3Rc+B4WwUWnAO0TwovBipD/Svges8vTNSR8LGrNXTBbHhQejLU
-        w8Pbm15ChM0IBFtHCFgMnp6fZDAMC2za7EgU7WXQNlokCdpAh8ML33Rxh3A4016OibYc8vMU
-        olSD41y4CAIcu9obms3C40sFRAmaZ/13i/W/W6z/Ui8grB4pOROvz+b4JAN3QMvr9LzJkK3d
-        vkcvoMAfe/C7a9iOvj7Z5kQ0hdTT5PlTZJkKQrefz9U7EVCYOkqenBGWqZDv0OUe4ox7soym
-        HI53IhWFq5XyRbUDWxR0tm4ft5vj9nLGyaqECos2o4vVSVWJw4P6mQlc2qfiWkLbvUZj86ui
-        +j1HNK0J5xsMQw2XRwujVx+tYh3tbtk9p9retI7QLlsVIR3esjLlNWFJtfhOq2rHmojnt8yb
-        Kmek5M8ZvE2V2ZbH3jW/LHiu+rK2e4Yt3VVSMFcbrryzYciflRtvWjDrcHxa5+uMuD9qnN+p
-        S4rHjLzuL9TdYeVfAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGIsWRmVeSWpSXmKPExsVy+t/xu7p82txxBt2HbCw2zljPanH9y3NW
-        i/lHzrFaXPn6ns1i+t5NbBaT7k9gsTh/fgO7xYq7H1ktNj2+xmpxedccNovPvUcYLWac38dk
-        sfbIXXaL240r2CxmTH7J5sDvsWlVJ5vHnWt72Dzudx9n8ti8pN5j47sdTB59W1YxenzeJBfA
-        HqVnU5RfWpKqkJFfXGKrFG1oYaRnaGmhZ2RiqWdobB5rZWSqpG9nk5Kak1mWWqRvl6CXMaN3
-        KmPBFN2KL/dfsDQwdit3MXJySAiYSMx9P4+1i5GLQ0hgKaPEqQe3WSESEhIf19+AsoUl/lzr
-        YoMoesIo8XnRdUaQBK+Ah8Ty27NZQGxhgRiJWT/us4PYbAL2Emdvf2MCsUUENCWu//0OtoFZ
-        4BGLxNvOy2ANLAKqEmcvQDRzCgRK3O5rY4HYMJ9FYs/My2CrmYG6W7f/Zoc4Q0fi7ak+oCIO
-        oM2CEn93CEOUyEs0b53NPIFRcBaSjlkIVbOQVC1gZF7FKJJaWpybnltsqFecmFtcmpeul5yf
-        u4kRGKfbjv3cvIPx0sbgQ4wCHIxKPLwPmLjihFgTy4orcw8xSnAwK4nwmsRwxgnxpiRWVqUW
-        5ccXleakFh9iNAX6ZyKzlGhyPjCF5JXEG5oamltYGpobmxubWSiJ83YIHIwREkhPLEnNTk0t
-        SC2C6WPi4JRqYNSwfhPJ8lCg7dQ2l3upE3uNfosUL2Tq1bu+MYa78q4506X7XaEXLYrUolee
-        3yvzxPke16YSx+IzTwIlp78QePxWZN3eomM9gu+2Ct3UDlR/m/43YOLNtGkh6y6ILpx9+0zh
-        h7feh1lmVR0uFjN9KqCbHaGsm9Cjda/71yrO4Ox/bQFvbosHxSuxFGckGmoxFxUnAgDEb1vn
-        6QIAAA==
-X-CMS-MailID: 20191231110343eucas1p2211c47c3442b4397e051836cc39e11a1
-X-Msg-Generator: CA
+        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
+        Amelie DELAUNAY <amelie.delaunay@st.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: usb: Convert DWC2 bindings to
+ json-schema
+Thread-Topic: [PATCH v2 1/2] dt-bindings: usb: Convert DWC2 bindings to
+ json-schema
+Thread-Index: AQHVtlgPPJ7kqTKWikGryQVd+VmeDKfS0A0AgARD9IA=
+Date:   Thu, 2 Jan 2020 08:43:40 +0000
+Message-ID: <b9b1b18f-b331-de6a-1622-ad43143eb56f@st.com>
+References: <20191219103536.25485-1-benjamin.gaignard@st.com>
+ <20191219103536.25485-2-benjamin.gaignard@st.com> <20191230153524.GA4918@pi3>
+In-Reply-To: <20191230153524.GA4918@pi3>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.50]
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20191220120144eucas1p119ececf161a6d45a6a194e432bbbd1f9
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20191220120144eucas1p119ececf161a6d45a6a194e432bbbd1f9
-References: <20191220115653.6487-1-a.swigon@samsung.com>
-        <CGME20191220120144eucas1p119ececf161a6d45a6a194e432bbbd1f9@eucas1p1.samsung.com>
-        <20191220115653.6487-5-a.swigon@samsung.com> <20191230154405.GC4918@pi3>
-        <2922135223b01126277ef92a53e6b294bc17bb5c.camel@samsung.com>
-        <20191231092254.GA6939@pi3>
-        <99427c18b1fcca3bc21e69609500abdbbef59167.camel@samsung.com>
-        <20191231100234.GA7024@pi3>
-        <29ed54c7700e35fb95fff4f4f5580eba24ffbb35.camel@samsung.com>
-        <CAJKOXPezRMb0OnpcRWrRheKbBjyzqNXG3TDX-MQkjAm2sTSr1w@mail.gmail.com>
+Content-ID: <37C7D06533EBC444B8B03560F4795446@st.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2020-01-02_02:2019-12-30,2020-01-02 signatures=0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 2019-12-31 at 11:38 +0100, Krzysztof Kozlowski wrote:
-> On Tue, 31 Dec 2019 at 11:23, Artur Świgoń <a.swigon@samsung.com> wrote:
-> > > 
-> > > The order of patches should reflect first of all real dependency.
-> > > Whether it compiles, works at all and does not break anything.  Logical
-> > > dependency of "when the feature will start working" is
-> > > irrelevant to DTS because DTS goes in separate way and driver is
-> > > independent of it.
-> > 
-> > The order of patches does indeed reflect real dependency. I can also reorder
-> > them (preserving the dependencies) so that DTS patches go first in the series
-> > if this is the more preferred way.
-> 
-> It looks wrong then. Driver should not depend on DTS. I cannot find
-> the patch changing bindings (should be first in patchset) which could
-> also point to this problem.
-> 
-> It seems you added requirement for interconnect properties while it
-> should be rather optional.
-
-No, there is no requirement for interconnect properties (other than that it
-simply does not make any sense to use the interconnect driver code and not the
-DTS properties for it in the long run).
-
-In case of the exynos-bus driver (code: patch 05, DTS: patch 04) if the DTS
-properties ('exynos,interconnect-parent-node') are missing, the new code handles
-it gracefully returning NULL from exynos_bus_icc_get_parent() (it is not an
-error condition).
-
-In case of the exynos-mixer driver (code: patch 07, DTS: patch 06) if the DTS
-property ('interconnects') is missing, of_icc_get() returns NULL and the code does
-not try to set any contraints for a NULL path. Same thing happens if
-CONFIG_INTERCONNECT is 'n'.
-
-The only case when something breaks is when you try to use the interconnect
-consumer (implemented in patches 06 & 07) when there is no interconnect provider
-(patches 04 & 05), in which case of_icc_get() returns an error (since it cannot
-find a path). From what I understand, it probably makes sense to merge any
-interconnect consumers one cycle later than the provider.
-
-> > > > I still think the order of these patches is the most logical one for someone
-> > > > reading this RFC as a whole.
-> > > 
-> > > I am sorry but it brings only confusion. DTS is orthogonal of the
-> > > driver code. You could even post the patchset without DTS (although then
-> > > it would raise questions where is the user of it, but still, you
-> > > could).
-> > > 
-> > > Further, DTS describes also hardware so you could send certain DTS
-> > > patches without driver implementation to describe the hardware.
-> > > 
-> > > Driver code and DTS are kind of different worlds so mixing them up for
-> > > logical review does not really make any sense.
-> > > 
-> > > Not mentioning it is different than most of other patches on mailing
-> > > lists.
-> > > 
-> > > BTW, it is the same as bindings which should (almost) always go first as
-> > > separate patches.
-> > 
-> > Thanks for elaborating on this, I appreciate it.
-> > Regarding your original concern, patches 04 & 06 are separate for several
-> > reasons, one of which is that they are related to two different drivers
-> > (exynos-bus vs. exynos-mixer).
-> 
-> It's okay then (for them to be split).
-> 
-> > 
-> > > > 
-> > > > > In certain cases dependency on DTS changes is ok:
-> > > > > 1. Cleaning up deprecated properties,
-> > > > > 2. Ignoring the backward compatibility for e.g. new platforms.
-> > > > > 
-> > > > > None of these are applicable here.
-> > > > > 
-> > > > > You need to rework it, put DTS changes at the end. This clearly shows
-> > > > > that there is no wrong dependency.
-> > > > > 
-> > > > > > 
-> > > > > > > Adjust the title to match the contents - you are not adding bindings but
-> > > > > > > properties to bus nodes. Also the prefix is ARM: (look at recent
-> > > > > > > commits).
-> > > > > > 
-> > > > > > OK.
-> > > > > > 
-> > > > > > > > 
-> > > > > > > > diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> > > > > > > > index 4ce3d77a6704..d9d70eacfcaf 100644
-> > > > > > > > --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> > > > > > > > +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> > > > > > > > @@ -90,6 +90,7 @@
-> > > > > > > >  &bus_dmc {
-> > > > > > > >     exynos,ppmu-device = <&ppmu_dmc0_3>, <&ppmu_dmc1_3>;
-> > > > > > > >     vdd-supply = <&buck1_reg>;
-> > > > > > > > +   #interconnect-cells = <0>;
-> > > > > > > 
-> > > > > > > This does not look like property of Odroid but Exynos4412 or Exynos4.
-> > > > > > 
-> > > > > > Strangely enough, this file is where the 'exynos,parent-bus' (aka. 'devfreq')
-> > > > > > properties are located (and everything in this RFC concerns devfreq).
-> > > > > 
-> > > > > I cannot find exynos,parent-bus in exynos4412-odroid-common.dtsi. Can
-> > > > > you elaborate?
-> > > > 
-> > > > Currently a name change is being made: 'devfreq' -> 'exynos,parent-bus'
-> > > > https://patchwork.kernel.org/patch/11304549/
-> > > > (a dependency of this RFC; also available in devfreq-testing branch)
-> > > 
-> > > I see. That property also does not look like board (Odroid) specific so
-> > > it should be moved to Exynos4412 DTSI.
-> > 
-> > Makes sense to me. Just from looking at the patch I referenced above, there is
-> > a significant level of code duplication between
-> > * arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
-> > * arch/arm/boot/dts/exynos4412-midas.dtsi
-> > * arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> > with relation to the devfreq*/exynos,* properties.
-> 
-> If you have in mind all the nodes with "status=okay", it's fine to
-> duplicate them.
-OK.
-
-Regards,
--- 
-Artur Świgoń
-Samsung R&D Institute Poland
-Samsung Electronics
-
-
+DQpPbiAxMi8zMC8xOSA0OjM1IFBNLCBLcnp5c3p0b2YgS296bG93c2tpIHdyb3RlOg0KPiBPbiBU
+aHUsIERlYyAxOSwgMjAxOSBhdCAxMTozNTozNUFNICswMTAwLCBCZW5qYW1pbiBHYWlnbmFyZCB3
+cm90ZToNCj4+IENvbnZlcnQgRFdDMiBiaW5kaW5ncyB0byBEVCBzY2hlbWEgZm9ybWF0IHVzaW5n
+IGpzb24tc2NoZW1hLg0KPj4gRFdDMiBpcyB3aWRlbHkgdXNlIGJ1dCBhIGNvdXBsZSBvZiBjb21w
+YXRpYmxlcyBhbmQgcHJvcGVydGllcw0KPj4gKHZ1c2JfZC1zdXBwbHksdnVzYl9hLXN1cHBseSkg
+d2VyZSBtaXNzaW5nIGluIGR3YzIudHh0LCB0aGUNCj4+IHBhdGNoIGFkZCB0aGVtLg0KPj4NCj4+
+IFNpZ25lZC1vZmYtYnk6IEJlbmphbWluIEdhaWduYXJkIDxiZW5qYW1pbi5nYWlnbmFyZEBzdC5j
+b20+DQo+PiAtLS0NCj4+IENDOiBNaW5hcyBIYXJ1dHl1bnlhbiA8aG1pbmFzQHN5bm9wc3lzLmNv
+bT4NCj4+DQo+PiBjaGFuZ2VzIGluIHZlcnNpb24gMjoNCj4+IC0gcHV0IE1pbmFzIEhhcnV0eXVu
+eWFuIDxobWluYXNAc3lub3BzeXMuY29tPiBhcyBtYWludGFpbmVyDQo+PiAtIHJlbW92ZSB0eXBl
+IGFuZCBkZXNjcmlwdGlvbiBmcm9tIHBoeSBwcm9wZXJ0eQ0KPj4gLSByZW1vdmUgZGVzY3JpcHRp
+b24gZnJvbSBjb21wYXRpYmxlIGl0ZW1zDQo+PiAtIHNpbXBsaWZ5IHNhbXN1bmcsczNjNjQwMC1o
+c290ZyBjb21wYXRpYmxlIGhhbmRsaW5nDQo+Pg0KPiAoLi4uKQ0KPg0KPj4gK3JlcXVpcmVkOg0K
+Pj4gKyAgLSBjb21wYXRpYmxlDQo+PiArICAtIHJlZw0KPj4gKyAgLSBpbnRlcnJ1cHRzDQo+PiAr
+ICAtIGNsb2Nrcw0KPj4gKyAgLSBjbG9jay1uYW1lcw0KPj4gKw0KPj4gK2FkZGl0aW9uYWxQcm9w
+ZXJ0aWVzOiBmYWxzZQ0KPj4gKw0KPj4gK2V4YW1wbGVzOg0KPj4gKyAgLSB8DQo+PiArICAgICAg
+dXNiQDEwMWMwMDAwIHsNCj4+ICsgICAgICAgIGNvbXBhdGlibGUgPSAicmFsaW5rLHJ0MzA1MC11
+c2IsIHNucHMsZHdjMiI7DQo+IERvZXMgaXQgcGFzcyBkdGJzX2NoZWNrPyBTaG91bGQgYmUgdHdv
+IHN0cmluZ3MuDQoNCkJhZCBjb3B5L3Bhc3QgZnJvbSB0aGUgb3JpZ2luYWwgdGV4dCBmaWxlLg0K
+DQpZb3UgYXJlIHJpZ2h0IGl0IHNob3VsZCB0d28gc3RyaW5ncyBhbmQgZHQgY2hlY2sgdG9vbHMg
+ZG9uJ3QgZGV0ZWN0IA0KYmVjYXVzZSB0aGV5IHNlZSBpdCBhcyBhIGRpZmZlcmVudCBjb21wYXRp
+YmxlLg0KDQpCZW5qYW1pbg0KDQo+DQo+IEJlc3QgcmVnYXJkcywNCj4gS3J6eXN6dG9mDQo+DQo+
