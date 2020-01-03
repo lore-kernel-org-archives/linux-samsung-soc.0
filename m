@@ -2,114 +2,103 @@ Return-Path: <SRS0=A+3s=2Y=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6313C2D0C2
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jan 2020 11:17:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 886C1C32767
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jan 2020 16:42:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9A8A2085B
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jan 2020 11:17:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5356E2465B
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jan 2020 16:42:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578050221;
-	bh=ZTWVLu1rOPLzy39EvIOvq5YGL+FAy+FCK8lZiKvt53o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=KjtkdJTMMesLlZRsMDddmFAhOg4I7GyZEBE94jukiP8uXetVo5COsuf4rfDoKorUK
-	 jg1rcZ65NDGcT5eD+zC2/n+2CPXVWnzO9izLvyNUNpT9wsOgNWWEC11w6AjIYc/d+Q
-	 E8l1Bs7omHt75A8wsWqb/MWODsCGOxDVM4Y7tn+o=
+	s=default; t=1578069729;
+	bh=I2X9wjbrKwZTwaNS0KDtFqqXOyBgCetpHii98gM1AAM=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=ttgJah3h3KE1iHumvh4oqDhmJfeiQVp/oaG0L3O/UVGvje0+g7fFKluvlJ6Vbcv0b
+	 OGgqF7FaZbWKwgO8ToXYZv+nWCiCYqRR99AII5LrNpd7i0eb4BXmtfeZALxi0osxqx
+	 d0cvfWfNPpFX2qlke2/EmZDemDD700ACOWYcw4Zc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727462AbgACLRB (ORCPT
+        id S1727859AbgACQmJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 3 Jan 2020 06:17:01 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:36290 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727220AbgACLRB (ORCPT
+        Fri, 3 Jan 2020 11:42:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51374 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727817AbgACQmI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 3 Jan 2020 06:17:01 -0500
-Received: by mail-ed1-f68.google.com with SMTP id j17so41375831edp.3;
-        Fri, 03 Jan 2020 03:16:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=4Cz1bHF5KTHAkw4Fc68MgiqMwjrbDHHdLD3F5Ae3Ezo=;
-        b=U2kTEpxLUAwEzsGJfscFLX4v3GZNYiWttCWG/tuuKQMPovjtkmn1KZLDYMoeQut83F
-         yHhvVzsyVrme/DdSeVPB/7jDi84eVMOwNp6Lzie1s0Z8V+V6y+zLiXcX2764dV70CUjk
-         KdQb8IahE44EdKgNppBWj+oLPApaDTZvOhsRG6Q4BA8WlwNRh6/hdR6HgpEN7PGnKIOu
-         xu455aZUdKO2ePCYERlWuyToYZbY9K6iOjyb9VTX0Q1JAI8KwDb6HZo975d/ujcXcV37
-         cO6r1vGJoYj6sCAX/nMFBhOT2r3N44Cz68blkwriz9rjdWlTjUBmxXMpsyw4tYLHEm4s
-         5yYw==
-X-Gm-Message-State: APjAAAXqMiq1fl11ua07wVnr/ulIpyQwhT/RiLUlPMIrzcPuOxbTjEJb
-        bPXRnBAvD55+rzReCCq9cRQ=
-X-Google-Smtp-Source: APXvYqwm0Aou1t/E4yDsF/8shNlUmMED7vothBxjbyR0PYteuXhZsEv8NzzR+qZMCInWvdpwvwuN7A==
-X-Received: by 2002:a17:906:a88e:: with SMTP id ha14mr91081234ejb.169.1578050218870;
-        Fri, 03 Jan 2020 03:16:58 -0800 (PST)
-Received: from pi3 ([194.230.155.149])
-        by smtp.googlemail.com with ESMTPSA id y4sm7699793ejr.41.2020.01.03.03.16.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jan 2020 03:16:58 -0800 (PST)
-Date:   Fri, 3 Jan 2020 12:16:55 +0100
+        Fri, 3 Jan 2020 11:42:08 -0500
+Received: from localhost.localdomain (unknown [194.230.155.149])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB45B206E6;
+        Fri,  3 Jan 2020 16:42:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578069728;
+        bh=I2X9wjbrKwZTwaNS0KDtFqqXOyBgCetpHii98gM1AAM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=aqrGsRlS2a621b+qKkT9kA3CrJ0vUkHCKsZZgkB1nM1geNG3RJGDoLiCZT8zqrbrQ
+         llKtHd1JgitrcTWJgiWv7twH24pj/UAICZ8jsT8KwBakzdZYtD0siuKnZ8bK6tjBya
+         FYIFRkLblGT/5giZ3DnbMlXsVXDIE9JpgjLwhbpA=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Benjamin GAIGNARD <benjamin.gaignard@st.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-Cc:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "kgene@kernel.org" <kgene@kernel.org>,
-        "hminas@synopsys.com" <hminas@synopsys.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
-        Amelie DELAUNAY <amelie.delaunay@st.com>
-Subject: Re: [PATCH v2 2/2] ARM: dts: exynos: Remove unneeded "snps,dwc2"
- from hsotg node
-Message-ID: <20200103111655.GA1605@pi3>
-References: <20191219103536.25485-1-benjamin.gaignard@st.com>
- <20191219103536.25485-3-benjamin.gaignard@st.com>
- <20191230153758.GB4918@pi3>
- <bbc7e34c-75c2-dfe0-70f3-0685e8e54fed@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <bbc7e34c-75c2-dfe0-70f3-0685e8e54fed@st.com>
+To:     Kyungmin Park <kyungmin.park@samsung.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [RFT] mtd: onenand: samsung: Fix iomem access with regular memcpy
+Date:   Fri,  3 Jan 2020 17:41:58 +0100
+Message-Id: <20200103164158.4265-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jan 02, 2020 at 08:50:39AM +0000, Benjamin GAIGNARD wrote:
-> 
-> On 12/30/19 4:37 PM, Krzysztof Kozlowski wrote:
-> > On Thu, Dec 19, 2019 at 11:35:36AM +0100, Benjamin Gaignard wrote:
-> >> Remove "snps,dwc2" from hsotg@12480000 node compatible list because
-> >> "samsung,s3c6400-hsotg" should be enough.
-> > The more detailed compatible is almost always "enough". Some other nodes
-> > also have detailed+generic compatible. In this case there is a driver
-> > matching "snps,dwc2" so why removing it?
-> 
-> First because, unlike the others dwc2 devices, this compatible wasn't 
-> describe in the bindings file
-> 
-> so I had to investigated how it should work and, on samsung DT files, 
-> only "samsung,s3c6400-hsotg".
-> 
->  From driver code point of view that seems coherent (we do the same for 
-> stm32).
-> 
-> With that in mind I have decided to remove "snps,dwc2" from exynos DT 
-> file rather than add it everywhere else.
->
+The __iomem memory should be copied with memcpy_fromio.  This fixes
+Sparse warnings like:
 
-Actually fine with me, although I would be happy if Rob or Mark could
-confirm that it is a preferred approach.
+    drivers/mtd/nand/onenand/samsung_mtd.c:678:40: warning: incorrect type in argument 2 (different address spaces)
+    drivers/mtd/nand/onenand/samsung_mtd.c:678:40:    expected void const *from
+    drivers/mtd/nand/onenand/samsung_mtd.c:678:40:    got void [noderef] <asn:2> *[assigned] p
+    drivers/mtd/nand/onenand/samsung_mtd.c:679:19: warning: incorrect type in assignment (different address spaces)
+    drivers/mtd/nand/onenand/samsung_mtd.c:679:19:    expected void [noderef] <asn:2> *[assigned] p
+    drivers/mtd/nand/onenand/samsung_mtd.c:679:19:    got unsigned char *
 
-Rob, Mark, could you share your thoughts?
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
 
-Best regards,
-Krzysztof
+Not tested
+
+---
+ drivers/mtd/nand/onenand/samsung_mtd.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/mtd/nand/onenand/samsung_mtd.c b/drivers/mtd/nand/onenand/samsung_mtd.c
+index 4a78c0aed6dd..01899f8bdfa7 100644
+--- a/drivers/mtd/nand/onenand/samsung_mtd.c
++++ b/drivers/mtd/nand/onenand/samsung_mtd.c
+@@ -675,12 +675,12 @@ static int s5pc110_read_bufferram(struct mtd_info *mtd, int area,
+ normal:
+ 	if (count != mtd->writesize) {
+ 		/* Copy the bufferram to memory to prevent unaligned access */
+-		memcpy(this->page_buf, p, mtd->writesize);
+-		p = this->page_buf + offset;
++		memcpy_fromio(this->page_buf, p, mtd->writesize);
++		memcpy(buffer, this->page_buf + offset, count);
++	} else {
++		memcpy_fromio(buffer, p, count);
+ 	}
+ 
+-	memcpy(buffer, p, count);
+-
+ 	return 0;
+ }
+ 
+-- 
+2.17.1
 
