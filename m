@@ -7,51 +7,50 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D30C32767
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jan 2020 17:12:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E414AC32771
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jan 2020 17:13:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFA722464E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jan 2020 17:12:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB2DC20866
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jan 2020 17:13:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578071568;
-	bh=/tnEtZ/TQAfcjo0cVjVkZvyHZiO0bR42EkUMFvapC2Y=;
+	s=default; t=1578071593;
+	bh=fPm5Yby+y1HvlcMvlRngQAQVaF5ytWsyr2iFrW2UnT4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wABkpl7U64TcMLai2Q6hVxbUvdk9Lbl3wkbLjapswmMtN9I4H21QrAnEiUS9znT6d
-	 9p/1zPQSdEMfSIuIEcLZ2UAqQ5FYV+IVGi8LVDVktxwJeQ9GtmQbuZBtp/UtDbWdZv
-	 uSMZRfIIR5wmQMFP/ASEt9TK5D84HL9QRjoPEUZU=
+	b=zY3ZluJOgFG9GZRJYeS01d50iNWL5wuCXHisk3pDQT+pWCfP2H1+hDtU2McddLWN4
+	 zs05vzSQ8pq92KThnzZEGhLo8FftnaOOg9KWmp29CzmFR4ih/983/FFz2o6heOSP+d
+	 lSIufoUFVuPkFpC4WeqyTJykME+khkutath3h5rI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728324AbgACRMr (ORCPT
+        id S1728141AbgACRNN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 3 Jan 2020 12:12:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47998 "EHLO mail.kernel.org"
+        Fri, 3 Jan 2020 12:13:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728320AbgACRMq (ORCPT
+        id S1728357AbgACRNG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 3 Jan 2020 12:12:46 -0500
+        Fri, 3 Jan 2020 12:13:06 -0500
 Received: from localhost.localdomain (unknown [194.230.155.149])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59D3B22522;
-        Fri,  3 Jan 2020 17:12:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC3AA215A4;
+        Fri,  3 Jan 2020 17:13:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578071566;
-        bh=/tnEtZ/TQAfcjo0cVjVkZvyHZiO0bR42EkUMFvapC2Y=;
+        s=default; t=1578071585;
+        bh=fPm5Yby+y1HvlcMvlRngQAQVaF5ytWsyr2iFrW2UnT4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=th77NZk1JmSUU4wgbn/QlglppOJamM8QXam/SHCjt871c0DsOwBJisl3Qf8ZuqYiQ
-         FM1oGJ90M66QTi2wrZJN7VsuAwGf5htwMQlVem+qCdh7zsVlyBbZfQpyLBpVbYyqMg
-         QlkJwbXG9RkAppksJIElwhpk9kg494it4zFWNGms=
+        b=nfU9D4Xqx4lG34UMVnNZSfUw6Ch56xCx/oZWiTm4y2AnbXl0SuB7flfJHj1RV9yKD
+         +vAI0BN/BgtI9wncq/ea2fc3NJ6Ol6nFpOPt2mWtzp8AM4dxk29DLWEohMgdWWUk2n
+         LcgyTE7qH6pAK7oYvUOlSI7+4SJwM+a/Kv+aOi/k=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        Sangbeom Kim <sbkim73@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 12/19] devfreq: exynos: Rename Exynos to lowercase
-Date:   Fri,  3 Jan 2020 18:11:24 +0100
-Message-Id: <20200103171131.9900-13-krzk@kernel.org>
+Subject: [PATCH 19/19] regulator: samsung: Rename Samsung to lowercase
+Date:   Fri,  3 Jan 2020 18:11:31 +0100
+Message-Id: <20200103171131.9900-20-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200103171131.9900-1-krzk@kernel.org>
 References: <20200103171131.9900-1-krzk@kernel.org>
@@ -60,109 +59,58 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Fix up inconsistent usage of upper and lowercase letters in "Exynos"
+Fix up inconsistent usage of upper and lowercase letters in "Samsung"
 name.
 
-"EXYNOS" is not an abbreviation but a regular trademarked name.
+"SAMSUNG" is not an abbreviation but a regular trademarked name.
 Therefore it should be written with lowercase letters starting with
 capital letter.
 
-The lowercase "Exynos" name is promoted by its manufacturer Samsung
-Electronics Co., Ltd., in advertisement materials and on website.
+Although advertisement materials usually use uppercase "SAMSUNG", the
+lowercase version is used in all legal aspects (e.g. on Wikipedia and in
+privacy/legal statements on
+https://www.samsung.com/semiconductor/privacy-global/).
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/devfreq/Kconfig             | 2 +-
- drivers/devfreq/event/Kconfig       | 4 ++--
- drivers/devfreq/event/exynos-nocp.c | 2 +-
- drivers/devfreq/event/exynos-nocp.h | 2 +-
- drivers/devfreq/event/exynos-ppmu.c | 2 +-
- drivers/devfreq/event/exynos-ppmu.h | 2 +-
- 6 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/regulator/s2mpa01.c | 2 +-
+ drivers/regulator/s2mps11.c | 2 +-
+ drivers/regulator/s5m8767.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
-index 1526f758daeb..0b1df12e0f21 100644
---- a/drivers/devfreq/Kconfig
-+++ b/drivers/devfreq/Kconfig
-@@ -77,7 +77,7 @@ config DEVFREQ_GOV_PASSIVE
- comment "DEVFREQ Drivers"
+diff --git a/drivers/regulator/s2mpa01.c b/drivers/regulator/s2mpa01.c
+index 51f7e8b74d8c..115f59530852 100644
+--- a/drivers/regulator/s2mpa01.c
++++ b/drivers/regulator/s2mpa01.c
+@@ -390,5 +390,5 @@ module_platform_driver(s2mpa01_pmic_driver);
+ /* Module information */
+ MODULE_AUTHOR("Sangbeom Kim <sbkim73@samsung.com>");
+ MODULE_AUTHOR("Sachin Kamat <sachin.kamat@samsung.com>");
+-MODULE_DESCRIPTION("SAMSUNG S2MPA01 Regulator Driver");
++MODULE_DESCRIPTION("Samsung S2MPA01 Regulator Driver");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+index 4f2dc5ebffdc..23d288278957 100644
+--- a/drivers/regulator/s2mps11.c
++++ b/drivers/regulator/s2mps11.c
+@@ -1265,5 +1265,5 @@ module_platform_driver(s2mps11_pmic_driver);
  
- config ARM_EXYNOS_BUS_DEVFREQ
--	tristate "ARM EXYNOS Generic Memory Bus DEVFREQ Driver"
-+	tristate "ARM Exynos Generic Memory Bus DEVFREQ Driver"
- 	depends on ARCH_EXYNOS || COMPILE_TEST
- 	select DEVFREQ_GOV_SIMPLE_ONDEMAND
- 	select DEVFREQ_GOV_PASSIVE
-diff --git a/drivers/devfreq/event/Kconfig b/drivers/devfreq/event/Kconfig
-index a53e0a6ffdfe..878825372f6f 100644
---- a/drivers/devfreq/event/Kconfig
-+++ b/drivers/devfreq/event/Kconfig
-@@ -15,7 +15,7 @@ menuconfig PM_DEVFREQ_EVENT
- if PM_DEVFREQ_EVENT
+ /* Module information */
+ MODULE_AUTHOR("Sangbeom Kim <sbkim73@samsung.com>");
+-MODULE_DESCRIPTION("SAMSUNG S2MPS11/S2MPS14/S2MPS15/S2MPU02 Regulator Driver");
++MODULE_DESCRIPTION("Samsung S2MPS11/S2MPS14/S2MPS15/S2MPU02 Regulator Driver");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
+index 12d6b8d2e97e..4abd3ed31f60 100644
+--- a/drivers/regulator/s5m8767.c
++++ b/drivers/regulator/s5m8767.c
+@@ -1015,5 +1015,5 @@ module_exit(s5m8767_pmic_exit);
  
- config DEVFREQ_EVENT_EXYNOS_NOCP
--	tristate "EXYNOS NoC (Network On Chip) Probe DEVFREQ event Driver"
-+	tristate "Exynos NoC (Network On Chip) Probe DEVFREQ event Driver"
- 	depends on ARCH_EXYNOS || COMPILE_TEST
- 	select PM_OPP
- 	select REGMAP_MMIO
-@@ -24,7 +24,7 @@ config DEVFREQ_EVENT_EXYNOS_NOCP
- 	  (Network on Chip) Probe counters to measure the bandwidth of AXI bus.
- 
- config DEVFREQ_EVENT_EXYNOS_PPMU
--	tristate "EXYNOS PPMU (Platform Performance Monitoring Unit) DEVFREQ event Driver"
-+	tristate "Exynos PPMU (Platform Performance Monitoring Unit) DEVFREQ event Driver"
- 	depends on ARCH_EXYNOS || COMPILE_TEST
- 	select PM_OPP
- 	help
-diff --git a/drivers/devfreq/event/exynos-nocp.c b/drivers/devfreq/event/exynos-nocp.c
-index 1c565926db9f..ccc531ee6938 100644
---- a/drivers/devfreq/event/exynos-nocp.c
-+++ b/drivers/devfreq/event/exynos-nocp.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * exynos-nocp.c - EXYNOS NoC (Network On Chip) Probe support
-+ * exynos-nocp.c - Exynos NoC (Network On Chip) Probe support
-  *
-  * Copyright (c) 2016 Samsung Electronics Co., Ltd.
-  * Author : Chanwoo Choi <cw00.choi@samsung.com>
-diff --git a/drivers/devfreq/event/exynos-nocp.h b/drivers/devfreq/event/exynos-nocp.h
-index 55cc96284a36..2d6f08cfd0c5 100644
---- a/drivers/devfreq/event/exynos-nocp.h
-+++ b/drivers/devfreq/event/exynos-nocp.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0-only */
- /*
-- * exynos-nocp.h - EXYNOS NoC (Network on Chip) Probe header file
-+ * exynos-nocp.h - Exynos NoC (Network on Chip) Probe header file
-  *
-  * Copyright (c) 2016 Samsung Electronics Co., Ltd.
-  * Author : Chanwoo Choi <cw00.choi@samsung.com>
-diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
-index 055deea42c37..17ed980d9099 100644
---- a/drivers/devfreq/event/exynos-ppmu.c
-+++ b/drivers/devfreq/event/exynos-ppmu.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * exynos_ppmu.c - EXYNOS PPMU (Platform Performance Monitoring Unit) support
-+ * exynos_ppmu.c - Exynos PPMU (Platform Performance Monitoring Unit) support
-  *
-  * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd.
-  * Author : Chanwoo Choi <cw00.choi@samsung.com>
-diff --git a/drivers/devfreq/event/exynos-ppmu.h b/drivers/devfreq/event/exynos-ppmu.h
-index 284420047455..97f667d0cbdd 100644
---- a/drivers/devfreq/event/exynos-ppmu.h
-+++ b/drivers/devfreq/event/exynos-ppmu.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0-only */
- /*
-- * exynos_ppmu.h - EXYNOS PPMU header file
-+ * exynos_ppmu.h - Exynos PPMU header file
-  *
-  * Copyright (c) 2015 Samsung Electronics Co., Ltd.
-  * Author : Chanwoo Choi <cw00.choi@samsung.com>
+ /* Module information */
+ MODULE_AUTHOR("Sangbeom Kim <sbkim73@samsung.com>");
+-MODULE_DESCRIPTION("SAMSUNG S5M8767 Regulator Driver");
++MODULE_DESCRIPTION("Samsung S5M8767 Regulator Driver");
+ MODULE_LICENSE("GPL");
 -- 
 2.17.1
 
