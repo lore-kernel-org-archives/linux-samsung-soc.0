@@ -4,53 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E414AC32771
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jan 2020 17:13:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68426C2D0CE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jan 2020 17:13:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB2DC20866
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jan 2020 17:13:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E1E122B48
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jan 2020 17:13:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578071593;
-	bh=fPm5Yby+y1HvlcMvlRngQAQVaF5ytWsyr2iFrW2UnT4=;
+	s=default; t=1578071597;
+	bh=GFeQ4Ri8+GF3+VI6hu+nKsN9aRFo/bhLlTlTOvAwCUM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zY3ZluJOgFG9GZRJYeS01d50iNWL5wuCXHisk3pDQT+pWCfP2H1+hDtU2McddLWN4
-	 zs05vzSQ8pq92KThnzZEGhLo8FftnaOOg9KWmp29CzmFR4ih/983/FFz2o6heOSP+d
-	 lSIufoUFVuPkFpC4WeqyTJykME+khkutath3h5rI=
+	b=dunaXP0zn5WF+1ZjQpPkAyFYAneduoqM2CEitiz39TWQ2BRLzYkG/NcZJk6R3wCqr
+	 Wzsj9oCxlAGr/6OVgDEU3JUx8PLYKkNn2KvRm+TL3MW3WsHJBLzWUtAW+LEMoYlGI3
+	 /otxn1LgFFaJ+WxozfguFDOxvVk9JO7VGducP3I8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728141AbgACRNN (ORCPT
+        id S1728066AbgACRM6 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 3 Jan 2020 12:13:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48982 "EHLO mail.kernel.org"
+        Fri, 3 Jan 2020 12:12:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728357AbgACRNG (ORCPT
+        id S1728357AbgACRMy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 3 Jan 2020 12:13:06 -0500
+        Fri, 3 Jan 2020 12:12:54 -0500
 Received: from localhost.localdomain (unknown [194.230.155.149])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC3AA215A4;
-        Fri,  3 Jan 2020 17:13:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EFF320866;
+        Fri,  3 Jan 2020 17:12:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578071585;
-        bh=fPm5Yby+y1HvlcMvlRngQAQVaF5ytWsyr2iFrW2UnT4=;
+        s=default; t=1578071574;
+        bh=GFeQ4Ri8+GF3+VI6hu+nKsN9aRFo/bhLlTlTOvAwCUM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nfU9D4Xqx4lG34UMVnNZSfUw6Ch56xCx/oZWiTm4y2AnbXl0SuB7flfJHj1RV9yKD
-         +vAI0BN/BgtI9wncq/ea2fc3NJ6Ol6nFpOPt2mWtzp8AM4dxk29DLWEohMgdWWUk2n
-         LcgyTE7qH6pAK7oYvUOlSI7+4SJwM+a/Kv+aOi/k=
+        b=vSTh4L0R82Cu1vyMMGt+dnxoyvsufDU/7T1VKVPbNIR5Rg3G025nqsYJdtrfLp0n3
+         c4YHDqgKimRx/8grqhqNt5u1s1OeJDPA3sn9SqcXWWNv7t44XXqly8vT7EI4QFkJdN
+         a/zO7L7xYrTvWAi9QB6ZLCOy/RVPHvgOl1rTgV64=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Kukjin Kim <kgene@kernel.org>, linux-pci@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 19/19] regulator: samsung: Rename Samsung to lowercase
-Date:   Fri,  3 Jan 2020 18:11:31 +0100
-Message-Id: <20200103171131.9900-20-krzk@kernel.org>
+Subject: [PATCH 15/19] pci: exynos: Rename Exynos to lowercase
+Date:   Fri,  3 Jan 2020 18:11:27 +0100
+Message-Id: <20200103171131.9900-16-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200103171131.9900-1-krzk@kernel.org>
 References: <20200103171131.9900-1-krzk@kernel.org>
@@ -59,58 +61,33 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Fix up inconsistent usage of upper and lowercase letters in "Samsung"
+Fix up inconsistent usage of upper and lowercase letters in "Exynos"
 name.
 
-"SAMSUNG" is not an abbreviation but a regular trademarked name.
+"EXYNOS" is not an abbreviation but a regular trademarked name.
 Therefore it should be written with lowercase letters starting with
 capital letter.
 
-Although advertisement materials usually use uppercase "SAMSUNG", the
-lowercase version is used in all legal aspects (e.g. on Wikipedia and in
-privacy/legal statements on
-https://www.samsung.com/semiconductor/privacy-global/).
+The lowercase "Exynos" name is promoted by its manufacturer Samsung
+Electronics Co., Ltd., in advertisement materials and on website.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/regulator/s2mpa01.c | 2 +-
- drivers/regulator/s2mps11.c | 2 +-
- drivers/regulator/s5m8767.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/pci/controller/dwc/pci-exynos.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/s2mpa01.c b/drivers/regulator/s2mpa01.c
-index 51f7e8b74d8c..115f59530852 100644
---- a/drivers/regulator/s2mpa01.c
-+++ b/drivers/regulator/s2mpa01.c
-@@ -390,5 +390,5 @@ module_platform_driver(s2mpa01_pmic_driver);
- /* Module information */
- MODULE_AUTHOR("Sangbeom Kim <sbkim73@samsung.com>");
- MODULE_AUTHOR("Sachin Kamat <sachin.kamat@samsung.com>");
--MODULE_DESCRIPTION("SAMSUNG S2MPA01 Regulator Driver");
-+MODULE_DESCRIPTION("Samsung S2MPA01 Regulator Driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 4f2dc5ebffdc..23d288278957 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -1265,5 +1265,5 @@ module_platform_driver(s2mps11_pmic_driver);
- 
- /* Module information */
- MODULE_AUTHOR("Sangbeom Kim <sbkim73@samsung.com>");
--MODULE_DESCRIPTION("SAMSUNG S2MPS11/S2MPS14/S2MPS15/S2MPU02 Regulator Driver");
-+MODULE_DESCRIPTION("Samsung S2MPS11/S2MPS14/S2MPS15/S2MPU02 Regulator Driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
-index 12d6b8d2e97e..4abd3ed31f60 100644
---- a/drivers/regulator/s5m8767.c
-+++ b/drivers/regulator/s5m8767.c
-@@ -1015,5 +1015,5 @@ module_exit(s5m8767_pmic_exit);
- 
- /* Module information */
- MODULE_AUTHOR("Sangbeom Kim <sbkim73@samsung.com>");
--MODULE_DESCRIPTION("SAMSUNG S5M8767 Regulator Driver");
-+MODULE_DESCRIPTION("Samsung S5M8767 Regulator Driver");
- MODULE_LICENSE("GPL");
+diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
+index 14a6ba4067fb..c5043d951e80 100644
+--- a/drivers/pci/controller/dwc/pci-exynos.c
++++ b/drivers/pci/controller/dwc/pci-exynos.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * PCIe host controller driver for Samsung EXYNOS SoCs
++ * PCIe host controller driver for Samsung Exynos SoCs
+  *
+  * Copyright (C) 2013 Samsung Electronics Co., Ltd.
+  *		http://www.samsung.com
 -- 
 2.17.1
 
