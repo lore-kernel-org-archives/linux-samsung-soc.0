@@ -4,100 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 886C1C32767
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jan 2020 16:42:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 121A6C2D0C2
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jan 2020 16:52:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5356E2465B
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jan 2020 16:42:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA4E52464E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jan 2020 16:52:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578069729;
-	bh=I2X9wjbrKwZTwaNS0KDtFqqXOyBgCetpHii98gM1AAM=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=ttgJah3h3KE1iHumvh4oqDhmJfeiQVp/oaG0L3O/UVGvje0+g7fFKluvlJ6Vbcv0b
-	 OGgqF7FaZbWKwgO8ToXYZv+nWCiCYqRR99AII5LrNpd7i0eb4BXmtfeZALxi0osxqx
-	 d0cvfWfNPpFX2qlke2/EmZDemDD700ACOWYcw4Zc=
+	s=default; t=1578070339;
+	bh=GNr6Irv4ZHYaD0lADq4BHgVbO6AWrFxItDdiA1EIOyQ=;
+	h=From:To:Subject:Date:List-ID:From;
+	b=flez+15l6AI3yuVXcy/8Ezyt+OLit+l8ZwHFzgDOqhl2tXX3By9+F+9G+xxMcbapV
+	 Wk7RsS8BMLCKNf13ltfNELNi+EP4m4lV4jsBlB1UjC8k+bzZJ6cftwcTm9G41VLNKo
+	 ToJmNazaLNaqCQnQ2Gai5WS5y88JRohX/qBKty8I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbgACQmJ (ORCPT
+        id S1728041AbgACQwQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 3 Jan 2020 11:42:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51374 "EHLO mail.kernel.org"
+        Fri, 3 Jan 2020 11:52:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727817AbgACQmI (ORCPT
+        id S1727912AbgACQwQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 3 Jan 2020 11:42:08 -0500
+        Fri, 3 Jan 2020 11:52:16 -0500
 Received: from localhost.localdomain (unknown [194.230.155.149])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB45B206E6;
-        Fri,  3 Jan 2020 16:42:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2449921734;
+        Fri,  3 Jan 2020 16:52:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578069728;
-        bh=I2X9wjbrKwZTwaNS0KDtFqqXOyBgCetpHii98gM1AAM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=aqrGsRlS2a621b+qKkT9kA3CrJ0vUkHCKsZZgkB1nM1geNG3RJGDoLiCZT8zqrbrQ
-         llKtHd1JgitrcTWJgiWv7twH24pj/UAICZ8jsT8KwBakzdZYtD0siuKnZ8bK6tjBya
-         FYIFRkLblGT/5giZ3DnbMlXsVXDIE9JpgjLwhbpA=
+        s=default; t=1578070335;
+        bh=GNr6Irv4ZHYaD0lADq4BHgVbO6AWrFxItDdiA1EIOyQ=;
+        h=From:To:Subject:Date:From;
+        b=hIYXmzwQSe0GJcYL5eJfh7B+W5SoNxd3n78lFtGRppNmkQbh4juqaawFJCNwACN31
+         cqU8MaAIJvTtaEzbAvzIQ6RU+/dc0Z2tid7Fy0xzv5CsXtW5tU8uCD5Q9inVGV2MFc
+         5B5nFs7Ges1vAFv5GQmDBQp8OMxXy2Ohp8MHRZic=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Kyungmin Park <kyungmin.park@samsung.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+To:     Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFT] mtd: onenand: samsung: Fix iomem access with regular memcpy
-Date:   Fri,  3 Jan 2020 17:41:58 +0100
-Message-Id: <20200103164158.4265-1-krzk@kernel.org>
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: exynos: Correct the help text for platform Kconfig option
+Date:   Fri,  3 Jan 2020 17:52:08 +0100
+Message-Id: <20200103165208.8287-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The __iomem memory should be copied with memcpy_fromio.  This fixes
-Sparse warnings like:
+ARCH_EXYNOS option is used for entire ARMv7 Exynos family, including
+also Exynos3 SoCs.
 
-    drivers/mtd/nand/onenand/samsung_mtd.c:678:40: warning: incorrect type in argument 2 (different address spaces)
-    drivers/mtd/nand/onenand/samsung_mtd.c:678:40:    expected void const *from
-    drivers/mtd/nand/onenand/samsung_mtd.c:678:40:    got void [noderef] <asn:2> *[assigned] p
-    drivers/mtd/nand/onenand/samsung_mtd.c:679:19: warning: incorrect type in assignment (different address spaces)
-    drivers/mtd/nand/onenand/samsung_mtd.c:679:19:    expected void [noderef] <asn:2> *[assigned] p
-    drivers/mtd/nand/onenand/samsung_mtd.c:679:19:    got unsigned char *
-
-Reported-by: kbuild test robot <lkp@intel.com>
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
+ arch/arm/mach-exynos/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Not tested
-
----
- drivers/mtd/nand/onenand/samsung_mtd.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/mtd/nand/onenand/samsung_mtd.c b/drivers/mtd/nand/onenand/samsung_mtd.c
-index 4a78c0aed6dd..01899f8bdfa7 100644
---- a/drivers/mtd/nand/onenand/samsung_mtd.c
-+++ b/drivers/mtd/nand/onenand/samsung_mtd.c
-@@ -675,12 +675,12 @@ static int s5pc110_read_bufferram(struct mtd_info *mtd, int area,
- normal:
- 	if (count != mtd->writesize) {
- 		/* Copy the bufferram to memory to prevent unaligned access */
--		memcpy(this->page_buf, p, mtd->writesize);
--		p = this->page_buf + offset;
-+		memcpy_fromio(this->page_buf, p, mtd->writesize);
-+		memcpy(buffer, this->page_buf + offset, count);
-+	} else {
-+		memcpy_fromio(buffer, p, count);
- 	}
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 4ef56571145b..9fb045ab80e4 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -41,7 +41,7 @@ menuconfig ARCH_EXYNOS
+ 	select POWER_RESET_SYSCON
+ 	select POWER_RESET_SYSCON_POWEROFF
+ 	help
+-	  Support for SAMSUNG EXYNOS SoCs (EXYNOS4/5)
++	  Support for SAMSUNG EXYNOS SoCs
  
--	memcpy(buffer, p, count);
--
- 	return 0;
- }
+ if ARCH_EXYNOS
  
 -- 
 2.17.1
