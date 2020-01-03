@@ -7,62 +7,51 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D87C2D0C2
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jan 2020 17:12:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D30C32767
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jan 2020 17:12:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B3F5215A4
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jan 2020 17:12:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFA722464E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  3 Jan 2020 17:12:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578071562;
-	bh=YExA720C2zKhWsisoqLbN/UbWLsHxMgSyDoDzqvYOYk=;
+	s=default; t=1578071568;
+	bh=/tnEtZ/TQAfcjo0cVjVkZvyHZiO0bR42EkUMFvapC2Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KWdhYlM7S3x1pjruVnE8yuOmBF7LM1CFziQlOzVMwzCvokfemsbQ0YptvLdagbm9/
-	 B9vzNdgFMBPJunhrIR4tMgc1mj5+BltGx1Fd7J07ia2D4yul2QBz1TUhV0olrzmp1c
-	 6e09GXaQgOVlvV3fVBQmKZHNKw8ByPsVCU5NxjTk=
+	b=wABkpl7U64TcMLai2Q6hVxbUvdk9Lbl3wkbLjapswmMtN9I4H21QrAnEiUS9znT6d
+	 9p/1zPQSdEMfSIuIEcLZ2UAqQ5FYV+IVGi8LVDVktxwJeQ9GtmQbuZBtp/UtDbWdZv
+	 uSMZRfIIR5wmQMFP/ASEt9TK5D84HL9QRjoPEUZU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728285AbgACRMl (ORCPT
+        id S1728324AbgACRMr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 3 Jan 2020 12:12:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47710 "EHLO mail.kernel.org"
+        Fri, 3 Jan 2020 12:12:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728259AbgACRMk (ORCPT
+        id S1728320AbgACRMq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 3 Jan 2020 12:12:40 -0500
+        Fri, 3 Jan 2020 12:12:46 -0500
 Received: from localhost.localdomain (unknown [194.230.155.149])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BB6320866;
-        Fri,  3 Jan 2020 17:12:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59D3B22522;
+        Fri,  3 Jan 2020 17:12:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578071559;
-        bh=YExA720C2zKhWsisoqLbN/UbWLsHxMgSyDoDzqvYOYk=;
+        s=default; t=1578071566;
+        bh=/tnEtZ/TQAfcjo0cVjVkZvyHZiO0bR42EkUMFvapC2Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mxsRs5JSRASe0LR8ZJjnkZ/nhak9Ww7c3pgSwMgZ7h5DePeHBXgztz8Mtw/EUuYew
-         dSzvY8/DtzFqNGLErbcqiAjEibf9J1Trqn0XPfleVmuVlesSqmsPJDJmO0x45vPVZ6
-         hSoGxVr40Hf6/jJpHMFSMjCs7hp6Kb/XSsXzP25U=
+        b=th77NZk1JmSUU4wgbn/QlglppOJamM8QXam/SHCjt871c0DsOwBJisl3Qf8ZuqYiQ
+         FM1oGJ90M66QTi2wrZJN7VsuAwGf5htwMQlVem+qCdh7zsVlyBbZfQpyLBpVbYyqMg
+         QlkJwbXG9RkAppksJIElwhpk9kg494it4zFWNGms=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Kamil Debski <kamil@wypas.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Allison Randal <allison@lohutok.net>,
-        Richard Fontana <rfontana@redhat.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Enrico Weigelt <info@metux.net>, devicetree@vger.kernel.org,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 09/19] phy: exynos: Rename Exynos to lowercase
-Date:   Fri,  3 Jan 2020 18:11:21 +0100
-Message-Id: <20200103171131.9900-10-krzk@kernel.org>
+Subject: [PATCH 12/19] devfreq: exynos: Rename Exynos to lowercase
+Date:   Fri,  3 Jan 2020 18:11:24 +0100
+Message-Id: <20200103171131.9900-13-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200103171131.9900-1-krzk@kernel.org>
 References: <20200103171131.9900-1-krzk@kernel.org>
@@ -83,183 +72,97 @@ Electronics Co., Ltd., in advertisement materials and on website.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- Documentation/devicetree/bindings/phy/samsung-phy.txt | 6 +++---
- drivers/phy/allwinner/phy-sun4i-usb.c                 | 2 +-
- drivers/phy/samsung/Kconfig                           | 8 ++++----
- drivers/phy/samsung/phy-exynos-dp-video.c             | 4 ++--
- drivers/phy/samsung/phy-exynos-mipi-video.c           | 4 ++--
- drivers/phy/samsung/phy-exynos-pcie.c                 | 2 +-
- drivers/phy/samsung/phy-exynos5-usbdrd.c              | 6 +++---
- drivers/phy/samsung/phy-samsung-usb2.c                | 2 +-
- 8 files changed, 17 insertions(+), 17 deletions(-)
+ drivers/devfreq/Kconfig             | 2 +-
+ drivers/devfreq/event/Kconfig       | 4 ++--
+ drivers/devfreq/event/exynos-nocp.c | 2 +-
+ drivers/devfreq/event/exynos-nocp.h | 2 +-
+ drivers/devfreq/event/exynos-ppmu.c | 2 +-
+ drivers/devfreq/event/exynos-ppmu.h | 2 +-
+ 6 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-index 1c40ccd40ce4..7510830a79bd 100644
---- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-@@ -1,4 +1,4 @@
--Samsung S5P/EXYNOS SoC series MIPI CSIS/DSIM DPHY
-+Samsung S5P/Exynos SoC series MIPI CSIS/DSIM DPHY
- -------------------------------------------------
+diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
+index 1526f758daeb..0b1df12e0f21 100644
+--- a/drivers/devfreq/Kconfig
++++ b/drivers/devfreq/Kconfig
+@@ -77,7 +77,7 @@ config DEVFREQ_GOV_PASSIVE
+ comment "DEVFREQ Drivers"
  
- Required properties:
-@@ -27,7 +27,7 @@ the PHY specifier identifies the PHY and its meaning is as follows:
- supports additional fifth PHY:
-   4 - MIPI CSIS 2.
- 
--Samsung EXYNOS SoC series Display Port PHY
-+Samsung Exynos SoC series Display Port PHY
- -------------------------------------------------
- 
- Required properties:
-@@ -38,7 +38,7 @@ Required properties:
- 		      control pmu registers for power isolation.
- - #phy-cells : from the generic PHY bindings, must be 0;
- 
--Samsung S5P/EXYNOS SoC series USB PHY
-+Samsung S5P/Exynos SoC series USB PHY
- -------------------------------------------------
- 
- Required properties:
-diff --git a/drivers/phy/allwinner/phy-sun4i-usb.c b/drivers/phy/allwinner/phy-sun4i-usb.c
-index 856927382248..7e09ad6a0b42 100644
---- a/drivers/phy/allwinner/phy-sun4i-usb.c
-+++ b/drivers/phy/allwinner/phy-sun4i-usb.c
-@@ -7,7 +7,7 @@
-  * Based on code from
-  * Allwinner Technology Co., Ltd. <www.allwinnertech.com>
-  *
-- * Modelled after: Samsung S5P/EXYNOS SoC series MIPI CSIS/DSIM DPHY driver
-+ * Modelled after: Samsung S5P/Exynos SoC series MIPI CSIS/DSIM DPHY driver
-  * Copyright (C) 2013 Samsung Electronics Co., Ltd.
-  * Author: Sylwester Nawrocki <s.nawrocki@samsung.com>
-  */
-diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
-index 290a6c70f570..3b39bec101b2 100644
---- a/drivers/phy/samsung/Kconfig
-+++ b/drivers/phy/samsung/Kconfig
-@@ -3,23 +3,23 @@
- # Phy drivers for Samsung platforms
- #
- config PHY_EXYNOS_DP_VIDEO
--	tristate "EXYNOS SoC series Display Port PHY driver"
-+	tristate "Exynos SoC series Display Port PHY driver"
- 	depends on OF
+ config ARM_EXYNOS_BUS_DEVFREQ
+-	tristate "ARM EXYNOS Generic Memory Bus DEVFREQ Driver"
++	tristate "ARM Exynos Generic Memory Bus DEVFREQ Driver"
  	depends on ARCH_EXYNOS || COMPILE_TEST
- 	default ARCH_EXYNOS
- 	select GENERIC_PHY
+ 	select DEVFREQ_GOV_SIMPLE_ONDEMAND
+ 	select DEVFREQ_GOV_PASSIVE
+diff --git a/drivers/devfreq/event/Kconfig b/drivers/devfreq/event/Kconfig
+index a53e0a6ffdfe..878825372f6f 100644
+--- a/drivers/devfreq/event/Kconfig
++++ b/drivers/devfreq/event/Kconfig
+@@ -15,7 +15,7 @@ menuconfig PM_DEVFREQ_EVENT
+ if PM_DEVFREQ_EVENT
+ 
+ config DEVFREQ_EVENT_EXYNOS_NOCP
+-	tristate "EXYNOS NoC (Network On Chip) Probe DEVFREQ event Driver"
++	tristate "Exynos NoC (Network On Chip) Probe DEVFREQ event Driver"
+ 	depends on ARCH_EXYNOS || COMPILE_TEST
+ 	select PM_OPP
+ 	select REGMAP_MMIO
+@@ -24,7 +24,7 @@ config DEVFREQ_EVENT_EXYNOS_NOCP
+ 	  (Network on Chip) Probe counters to measure the bandwidth of AXI bus.
+ 
+ config DEVFREQ_EVENT_EXYNOS_PPMU
+-	tristate "EXYNOS PPMU (Platform Performance Monitoring Unit) DEVFREQ event Driver"
++	tristate "Exynos PPMU (Platform Performance Monitoring Unit) DEVFREQ event Driver"
+ 	depends on ARCH_EXYNOS || COMPILE_TEST
+ 	select PM_OPP
  	help
--	  Support for Display Port PHY found on Samsung EXYNOS SoCs.
-+	  Support for Display Port PHY found on Samsung Exynos SoCs.
- 
- config PHY_EXYNOS_MIPI_VIDEO
--	tristate "S5P/EXYNOS SoC series MIPI CSI-2/DSI PHY driver"
-+	tristate "S5P/Exynos SoC series MIPI CSI-2/DSI PHY driver"
- 	depends on HAS_IOMEM
- 	depends on ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
- 	select GENERIC_PHY
- 	default y if ARCH_S5PV210 || ARCH_EXYNOS
- 	help
- 	  Support for MIPI CSI-2 and MIPI DSI DPHY found on Samsung S5P
--	  and EXYNOS SoCs.
-+	  and Exynos SoCs.
- 
- config PHY_EXYNOS_PCIE
- 	bool "Exynos PCIe PHY driver"
-diff --git a/drivers/phy/samsung/phy-exynos-dp-video.c b/drivers/phy/samsung/phy-exynos-dp-video.c
-index 6c607df1dc9a..2b670ef91deb 100644
---- a/drivers/phy/samsung/phy-exynos-dp-video.c
-+++ b/drivers/phy/samsung/phy-exynos-dp-video.c
+diff --git a/drivers/devfreq/event/exynos-nocp.c b/drivers/devfreq/event/exynos-nocp.c
+index 1c565926db9f..ccc531ee6938 100644
+--- a/drivers/devfreq/event/exynos-nocp.c
++++ b/drivers/devfreq/event/exynos-nocp.c
 @@ -1,6 +1,6 @@
  // SPDX-License-Identifier: GPL-2.0-only
  /*
-- * Samsung EXYNOS SoC series Display Port PHY driver
-+ * Samsung Exynos SoC series Display Port PHY driver
+- * exynos-nocp.c - EXYNOS NoC (Network On Chip) Probe support
++ * exynos-nocp.c - Exynos NoC (Network On Chip) Probe support
   *
-  * Copyright (C) 2013 Samsung Electronics Co., Ltd.
-  * Author: Jingoo Han <jg1.han@samsung.com>
-@@ -115,5 +115,5 @@ static struct platform_driver exynos_dp_video_phy_driver = {
- module_platform_driver(exynos_dp_video_phy_driver);
- 
- MODULE_AUTHOR("Jingoo Han <jg1.han@samsung.com>");
--MODULE_DESCRIPTION("Samsung EXYNOS SoC DP PHY driver");
-+MODULE_DESCRIPTION("Samsung Exynos SoC DP PHY driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/phy/samsung/phy-exynos-mipi-video.c b/drivers/phy/samsung/phy-exynos-mipi-video.c
-index bb51195f189f..c1df1ef3ee3c 100644
---- a/drivers/phy/samsung/phy-exynos-mipi-video.c
-+++ b/drivers/phy/samsung/phy-exynos-mipi-video.c
+  * Copyright (c) 2016 Samsung Electronics Co., Ltd.
+  * Author : Chanwoo Choi <cw00.choi@samsung.com>
+diff --git a/drivers/devfreq/event/exynos-nocp.h b/drivers/devfreq/event/exynos-nocp.h
+index 55cc96284a36..2d6f08cfd0c5 100644
+--- a/drivers/devfreq/event/exynos-nocp.h
++++ b/drivers/devfreq/event/exynos-nocp.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0-only */
+ /*
+- * exynos-nocp.h - EXYNOS NoC (Network on Chip) Probe header file
++ * exynos-nocp.h - Exynos NoC (Network on Chip) Probe header file
+  *
+  * Copyright (c) 2016 Samsung Electronics Co., Ltd.
+  * Author : Chanwoo Choi <cw00.choi@samsung.com>
+diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
+index 055deea42c37..17ed980d9099 100644
+--- a/drivers/devfreq/event/exynos-ppmu.c
++++ b/drivers/devfreq/event/exynos-ppmu.c
 @@ -1,6 +1,6 @@
  // SPDX-License-Identifier: GPL-2.0-only
  /*
-- * Samsung S5P/EXYNOS SoC series MIPI CSIS/DSIM DPHY driver
-+ * Samsung S5P/Exynos SoC series MIPI CSIS/DSIM DPHY driver
+- * exynos_ppmu.c - EXYNOS PPMU (Platform Performance Monitoring Unit) support
++ * exynos_ppmu.c - Exynos PPMU (Platform Performance Monitoring Unit) support
   *
-  * Copyright (C) 2013,2016 Samsung Electronics Co., Ltd.
-  * Author: Sylwester Nawrocki <s.nawrocki@samsung.com>
-@@ -364,6 +364,6 @@ static struct platform_driver exynos_mipi_video_phy_driver = {
- };
- module_platform_driver(exynos_mipi_video_phy_driver);
- 
--MODULE_DESCRIPTION("Samsung S5P/EXYNOS SoC MIPI CSI-2/DSI PHY driver");
-+MODULE_DESCRIPTION("Samsung S5P/Exynos SoC MIPI CSI-2/DSI PHY driver");
- MODULE_AUTHOR("Sylwester Nawrocki <s.nawrocki@samsung.com>");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/phy/samsung/phy-exynos-pcie.c b/drivers/phy/samsung/phy-exynos-pcie.c
-index 659e7ae0a6cf..7e28b1aea0d1 100644
---- a/drivers/phy/samsung/phy-exynos-pcie.c
-+++ b/drivers/phy/samsung/phy-exynos-pcie.c
+  * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd.
+  * Author : Chanwoo Choi <cw00.choi@samsung.com>
+diff --git a/drivers/devfreq/event/exynos-ppmu.h b/drivers/devfreq/event/exynos-ppmu.h
+index 284420047455..97f667d0cbdd 100644
+--- a/drivers/devfreq/event/exynos-ppmu.h
++++ b/drivers/devfreq/event/exynos-ppmu.h
 @@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
+ /* SPDX-License-Identifier: GPL-2.0-only */
  /*
-- * Samsung EXYNOS SoC series PCIe PHY driver
-+ * Samsung Exynos SoC series PCIe PHY driver
+- * exynos_ppmu.h - EXYNOS PPMU header file
++ * exynos_ppmu.h - Exynos PPMU header file
   *
-  * Phy provider for PCIe controller on Exynos SoC series
-  *
-diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-index e510732afb8b..eb06ce9f748f 100644
---- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-+++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Samsung EXYNOS5 SoC series USB DRD PHY driver
-+ * Samsung Exynos5 SoC series USB DRD PHY driver
-  *
-  * Phy provider for USB 3.0 DRD controller on Exynos5 SoC series
-  *
-@@ -33,7 +33,7 @@
- #define EXYNOS5_FSEL_24MHZ		0x5
- #define EXYNOS5_FSEL_50MHZ		0x7
- 
--/* EXYNOS5: USB 3.0 DRD PHY registers */
-+/* Exynos5: USB 3.0 DRD PHY registers */
- #define EXYNOS5_DRD_LINKSYSTEM			0x04
- 
- #define LINKSYSTEM_FLADJ_MASK			(0x3f << 1)
-@@ -958,7 +958,7 @@ static struct platform_driver exynos5_usb3drd_phy = {
- };
- 
- module_platform_driver(exynos5_usb3drd_phy);
--MODULE_DESCRIPTION("Samsung EXYNOS5 SoCs USB 3.0 DRD controller PHY driver");
-+MODULE_DESCRIPTION("Samsung Exynos5 SoCs USB 3.0 DRD controller PHY driver");
- MODULE_AUTHOR("Vivek Gautam <gautam.vivek@samsung.com>");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS("platform:exynos5_usb3drd_phy");
-diff --git a/drivers/phy/samsung/phy-samsung-usb2.c b/drivers/phy/samsung/phy-samsung-usb2.c
-index 090aa02e02de..a3ed3ff04690 100644
---- a/drivers/phy/samsung/phy-samsung-usb2.c
-+++ b/drivers/phy/samsung/phy-samsung-usb2.c
-@@ -255,7 +255,7 @@ static struct platform_driver samsung_usb2_phy_driver = {
- };
- 
- module_platform_driver(samsung_usb2_phy_driver);
--MODULE_DESCRIPTION("Samsung S5P/EXYNOS SoC USB PHY driver");
-+MODULE_DESCRIPTION("Samsung S5P/Exynos SoC USB PHY driver");
- MODULE_AUTHOR("Kamil Debski <k.debski@samsung.com>");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS("platform:samsung-usb2-phy");
+  * Copyright (c) 2015 Samsung Electronics Co., Ltd.
+  * Author : Chanwoo Choi <cw00.choi@samsung.com>
 -- 
 2.17.1
 
