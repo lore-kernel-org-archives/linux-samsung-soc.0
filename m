@@ -4,57 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C73C32771
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  4 Jan 2020 15:22:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC9FBC3276F
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  4 Jan 2020 15:22:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1A102467C
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  4 Jan 2020 15:22:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99E9324654
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  4 Jan 2020 15:22:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578151370;
-	bh=cwVHC9cbVgplkseh61brdp4+7/gA+lKOKfHqQ/RsvbM=;
+	s=default; t=1578151377;
+	bh=GFeQ4Ri8+GF3+VI6hu+nKsN9aRFo/bhLlTlTOvAwCUM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ro7dqwthtue1z5GxGMrwbKlxTRGGeClLFVnSWx8meAmI09SEJ7BsdW5J4/bwZMsOk
-	 i79mkiu04v6y+H4bmvLPEsA05rnUffKgk2WfbmSeez6TCLz9zsKevJVAiQJGxw2S1s
-	 h5vrStQWtO5ZlnsSnfJyeDfaTLVPvlyQWXYZDogc=
+	b=GlDg/H25guv8ksQY9r50XlDgOYKte0nXqk2CDQJWXMW/ZqoPlR9kYv6iceaEIleMC
+	 JbF5o29ECEZBmjt+S+X4L7U6yL+fD5aE29IjIib14ecXsAgDYIwsG3hefuXfihYoKI
+	 56nS4RhpYn061CgEZGSahJFwBLT7giBv26wm3aNU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726083AbgADPWt (ORCPT
+        id S1726373AbgADPWz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 4 Jan 2020 10:22:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60880 "EHLO mail.kernel.org"
+        Sat, 4 Jan 2020 10:22:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725946AbgADPWs (ORCPT
+        id S1727253AbgADPWz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 4 Jan 2020 10:22:48 -0500
+        Sat, 4 Jan 2020 10:22:55 -0500
 Received: from localhost.localdomain (unknown [194.230.155.149])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF10A24653;
-        Sat,  4 Jan 2020 15:22:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A35424653;
+        Sat,  4 Jan 2020 15:22:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578151368;
-        bh=cwVHC9cbVgplkseh61brdp4+7/gA+lKOKfHqQ/RsvbM=;
+        s=default; t=1578151374;
+        bh=GFeQ4Ri8+GF3+VI6hu+nKsN9aRFo/bhLlTlTOvAwCUM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=caye/OqaaDbiqYYjnZRpkvWLsTWq60WBd3unY9XD3X/MG16biqx1arMBswYacHcDd
-         Ze3xrzZXuWydaqiTEU86TPfZ+8OkloaCFghayiDk6Ehh4zJcJZC9S/bTKQuYsjamRg
-         iJFADtXDpkZS+jYV1jKIgfrNAnRl8cEKrdAnCuys=
+        b=O2KqfkxzAe9CnfY9psQIo1bcMQp0YPR8sx8io/45shLhV6aoq3Q/ELpTpyn0SaGOB
+         oAffrA8+Z4hnON5+1AEuGmPiuhJBBVwYriHdQc54PQxQilsaEIX4BaB6xkefNuDeK2
+         UMxoJ4FDxTub9m1H1mPEElsHVnfzP93GPv42hFfQ=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Kukjin Kim <kgene@kernel.org>,
-        dri-devel@lists.freedesktop.org,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Kukjin Kim <kgene@kernel.org>, linux-pci@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v2 14/20] drm/exynos: Rename Exynos to lowercase
-Date:   Sat,  4 Jan 2020 16:21:01 +0100
-Message-Id: <20200104152107.11407-15-krzk@kernel.org>
+Subject: [PATCH v2 16/20] pci: exynos: Rename Exynos to lowercase
+Date:   Sat,  4 Jan 2020 16:21:03 +0100
+Message-Id: <20200104152107.11407-17-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200104152107.11407-1-krzk@kernel.org>
 References: <20200104152107.11407-1-krzk@kernel.org>
@@ -75,52 +73,21 @@ Electronics Co., Ltd., in advertisement materials and on website.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/gpu/drm/exynos/Kconfig | 6 +++---
- include/uapi/drm/exynos_drm.h  | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/pci/controller/dwc/pci-exynos.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
-index 6f7d3b3b3628..6417f374b923 100644
---- a/drivers/gpu/drm/exynos/Kconfig
-+++ b/drivers/gpu/drm/exynos/Kconfig
-@@ -1,13 +1,13 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config DRM_EXYNOS
--	tristate "DRM Support for Samsung SoC EXYNOS Series"
-+	tristate "DRM Support for Samsung SoC Exynos Series"
- 	depends on OF && DRM && (ARCH_S3C64XX || ARCH_S5PV210 || ARCH_EXYNOS || ARCH_MULTIPLATFORM || COMPILE_TEST)
- 	depends on MMU
- 	select DRM_KMS_HELPER
- 	select VIDEOMODE_HELPERS
- 	select SND_SOC_HDMI_CODEC if SND_SOC
- 	help
--	  Choose this option if you have a Samsung SoC EXYNOS chipset.
-+	  Choose this option if you have a Samsung SoC Exynos chipset.
- 	  If M is selected the module will be called exynosdrm.
- 
- if DRM_EXYNOS
-@@ -62,7 +62,7 @@ config DRM_EXYNOS_DSI
- 	  This enables support for Exynos MIPI-DSI device.
- 
- config DRM_EXYNOS_DP
--	bool "EXYNOS specific extensions for Analogix DP driver"
-+	bool "Exynos specific extensions for Analogix DP driver"
- 	depends on DRM_EXYNOS_FIMD || DRM_EXYNOS7_DECON
- 	select DRM_ANALOGIX_DP
- 	default DRM_EXYNOS
-diff --git a/include/uapi/drm/exynos_drm.h b/include/uapi/drm/exynos_drm.h
-index 45c6582b3df3..a51aa1c618c1 100644
---- a/include/uapi/drm/exynos_drm.h
-+++ b/include/uapi/drm/exynos_drm.h
-@@ -394,7 +394,7 @@ struct drm_exynos_ioctl_ipp_commit {
- #define DRM_IOCTL_EXYNOS_IPP_COMMIT		DRM_IOWR(DRM_COMMAND_BASE + \
- 		DRM_EXYNOS_IPP_COMMIT, struct drm_exynos_ioctl_ipp_commit)
- 
--/* EXYNOS specific events */
-+/* Exynos specific events */
- #define DRM_EXYNOS_G2D_EVENT		0x80000000
- #define DRM_EXYNOS_IPP_EVENT		0x80000002
- 
+diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
+index 14a6ba4067fb..c5043d951e80 100644
+--- a/drivers/pci/controller/dwc/pci-exynos.c
++++ b/drivers/pci/controller/dwc/pci-exynos.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * PCIe host controller driver for Samsung EXYNOS SoCs
++ * PCIe host controller driver for Samsung Exynos SoCs
+  *
+  * Copyright (C) 2013 Samsung Electronics Co., Ltd.
+  *		http://www.samsung.com
 -- 
 2.17.1
 
