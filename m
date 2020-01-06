@@ -2,195 +2,143 @@ Return-Path: <SRS0=CwGy=23=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB763C32771
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Jan 2020 08:30:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 369ECC32771
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Jan 2020 09:44:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A9F9215A4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Jan 2020 08:30:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08C2321775
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Jan 2020 09:44:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sgcl4Nha"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h3uH4bw2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725908AbgAFIaW (ORCPT
+        id S1726133AbgAFJo0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Jan 2020 03:30:22 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:36093 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725446AbgAFIaW (ORCPT
+        Mon, 6 Jan 2020 04:44:26 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44716 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbgAFJo0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Jan 2020 03:30:22 -0500
-Received: by mail-pf1-f196.google.com with SMTP id x184so26649007pfb.3;
-        Mon, 06 Jan 2020 00:30:21 -0800 (PST)
+        Mon, 6 Jan 2020 04:44:26 -0500
+Received: by mail-pf1-f194.google.com with SMTP id 195so25872308pfw.11;
+        Mon, 06 Jan 2020 01:44:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0ZMM8rPl/5wZ+794bf91e79SwCRRg7n7qPgWsUoe+gM=;
-        b=Sgcl4NhaAj1CK3LylgkLWA5PkEVN4KmwayIz86BKDL3HpnwmsE7ZdsZQLmGIr/LHaP
-         MCf43shQ40RYRiqHrcjF4s4Sjv4V52jlagbE+7NQDqWVNxt8QrKIATtLXV3m1N692uer
-         FAalMZnharEcHUaPckaOYC5IBrfAHSFEAKHGNGwzr6PfFP2/vtdegYYJnljUcjmrRU6B
-         UljkB03EUB2YpypJOliMSDhlMxwj9RpC7XZD8ySD0zCu6Xlplsd4h9kfnxhmucBRKknS
-         YBgpCCTpSEhde3cm3196FTjHgNcVcOtiBzARBJAzl+kO+VK61fFO40XR1fniJiVSFE6Y
-         F7Rg==
+        h=from:to:cc:subject:date:message-id;
+        bh=KtGrKb7t1nXkvA9RAp03OXaiGM0Udf6t6g9rmOrwqQA=;
+        b=h3uH4bw2GU+o7uTeRb6skr6Lw6iWOzi9RYNZW+55FiG0+SlNjQei6NHPEjTEDs+5nI
+         HxYgS7bX6DgDzLlZRkirtbIM6O4tvP+ZtsdYxpaHg34HubMIlgcROK9AjKM+YESs6juR
+         4FA4EJiZq2VK5wshg1aBt5whcBt33ETeDV9DxiBzYCd9vyiMm7dWgfpK++DrsLul5NCz
+         +gSjZOjPIr0sgF+BpSEIE/Hei4C82qIjjGUfC+ATL4FqVOV5fbfk8NXlcqehG2W85uUe
+         uqBbmBXCt9uqRNSWkCTDWHtpZ2NovetviHdgDzrlhKnoc6MJl4mCF0vnyXMdyV9yS5U/
+         Ya8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0ZMM8rPl/5wZ+794bf91e79SwCRRg7n7qPgWsUoe+gM=;
-        b=KxCwns7YSJsXsf/7oyeGqeWFf6Bm3h0a3so/nwxI4Yahli7RHxJzuCb2vft15YDEWP
-         zwzb+gmp0h+HCxty9d4nvZXuN3YfExSHfJI7m0THKOoBf9qpl/6f/38Y4O/iLZyYP98o
-         0vR5FymZFnKLuq22vRMFHj89Y7ATGXrEsmDmC13nS/t2CpIUOgrnfULuerlvEubvmFl6
-         jP8kxztdfUHG6jx1OkedEs/pyeg8dyBJI47EG+f43qtwk2619q2ekSMyCeXDq05gHYTh
-         Vp2opVcta54uLLrShTvcuFi9wbDAvAsl5eWJCJVgtTPSfh3TnGU5MFbp7I4drmUQuKZA
-         zPUw==
-X-Gm-Message-State: APjAAAXIKrlxpUgVDffWj+LYDR2v+R8mL94wehzo+gVghQg8bgrUhTEu
-        3xQx2zsb0DPW96GHPzqD3z4=
-X-Google-Smtp-Source: APXvYqwMUd/x/Ld704TOMMgRs2SgTrv1gvTim77h9jeOE9N9fYpCUm8Cr3j9b5QihHwarQm2+/y+oQ==
-X-Received: by 2002:aa7:82d5:: with SMTP id f21mr110243047pfn.245.1578299421170;
-        Mon, 06 Jan 2020 00:30:21 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=KtGrKb7t1nXkvA9RAp03OXaiGM0Udf6t6g9rmOrwqQA=;
+        b=c6cvt6kXh15w2RlLb/bYt0dqwLzdOMuwRiASEKFf6dWzLiWxbkGuZjo9+zfq7G6cUH
+         sJNGgyJaDTDsSxhSs2fYwxmL7ox6Z7I+JB6II8OBdWPc9lqHRuTOHaPT2jztlTv5FjJ1
+         1YZrxzNDLCZw7+AR9ZHKWeee1F+JEPfzt71y4H/M6MDGj886p3o72PJtTPiO7Q4ahdpj
+         iy4vBH8gk0Bal+N3lY7YvXdjqHlyptfX2MaJ6GGwwjLJeux8kddHnAmVopwcLv/MhCqk
+         rn40r6NFBqM6ImM1hE7vwlm4ZZZBo433P6aa+eo82RywEveE+rB/+DxGQPFRyNcho6cS
+         iPNQ==
+X-Gm-Message-State: APjAAAUzeAlePa0IKTRre6Jq9iTOkr7RR0qMpmx8+ir1hx+EMjZn8xEj
+        yYFonlY6pAZaZRztC2GGOck=
+X-Google-Smtp-Source: APXvYqwXV771FUqOJJoDqNegv2vvgsnsYNEq3vey/xKO088jvc38DW99nYZ6CpWk+IyeSVRKLC6AAQ==
+X-Received: by 2002:a63:6c82:: with SMTP id h124mr109322399pgc.328.1578303865779;
+        Mon, 06 Jan 2020 01:44:25 -0800 (PST)
 Received: from localhost ([43.224.245.179])
-        by smtp.gmail.com with ESMTPSA id b193sm69181638pfb.57.2020.01.06.00.30.20
+        by smtp.gmail.com with ESMTPSA id u26sm74215521pfn.46.2020.01.06.01.44.24
         (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Mon, 06 Jan 2020 00:30:20 -0800 (PST)
-Date:   Mon, 6 Jan 2020 16:30:18 +0800
-From:   chenqiwu <qiwuchen55@gmail.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     kgene@kernel.org, krzk@kernel.org, rjw@rjwysocki.net,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: s3c: avoid use after free issue in
- xxx_cpufreq_reboot_notifier_evt()
-Message-ID: <20200106083018.GA19697@cqw-OptiPlex-7050>
-References: <1577515439-14477-1-git-send-email-qiwuchen55@gmail.com>
- <20200106054811.uduf2qdn5ecvbwrc@vireshk-i7>
- <20200106065249.GA16392@cqw-OptiPlex-7050>
- <20200106065502.bimpddvrvmfm2f5f@vireshk-i7>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200106065502.bimpddvrvmfm2f5f@vireshk-i7>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Mon, 06 Jan 2020 01:44:25 -0800 (PST)
+From:   qiwuchen55@gmail.com
+To:     kgene@kernel.org, krzk@kernel.org, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        chenqiwu <chenqiwu@xiaomi.com>
+Subject: [PATCH v2] cpufreq: s3c: avoid use after free issue in xxx_cpufreq_reboot_notifier_evt()
+Date:   Mon,  6 Jan 2020 17:44:21 +0800
+Message-Id: <1578303861-7217-1-git-send-email-qiwuchen55@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 06, 2020 at 12:25:02PM +0530, Viresh Kumar wrote:
-> On 06-01-20, 14:52, chenqiwu wrote:
-> > On Mon, Jan 06, 2020 at 11:18:11AM +0530, Viresh Kumar wrote:
-> > > On 28-12-19, 14:43, qiwuchen55@gmail.com wrote:
-> > > > From: chenqiwu <chenqiwu@xiaomi.com>
-> > > > 
-> > > > There is a potential UAF issue in xxx_cpufreq_reboot_notifier_evt() that
-> > > > the cpufreq policy of cpu0 has been released before using it. So we should
-> > > > make a judgement to avoid it.
-> > > 
-> > > There is no UAF problem here, but that we do cpufreq_cpu_get() with a
-> > > corresponding cpufreq_cpu_put().
-> > > 
-> > > > Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
-> > > > ---
-> > > >  drivers/cpufreq/s3c2416-cpufreq.c | 11 ++++++++++-
-> > > >  drivers/cpufreq/s5pv210-cpufreq.c | 10 +++++++++-
-> > > >  2 files changed, 19 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/cpufreq/s3c2416-cpufreq.c b/drivers/cpufreq/s3c2416-cpufreq.c
-> > > > index 1069103..0f576ba 100644
-> > > > --- a/drivers/cpufreq/s3c2416-cpufreq.c
-> > > > +++ b/drivers/cpufreq/s3c2416-cpufreq.c
-> > > > @@ -304,6 +304,7 @@ static int s3c2416_cpufreq_reboot_notifier_evt(struct notifier_block *this,
-> > > >  {
-> > > >  	struct s3c2416_data *s3c_freq = &s3c2416_cpufreq;
-> > > >  	int ret;
-> > > > +	struct cpufreq_policy policy;
-> > > >  
-> > > >  	mutex_lock(&cpufreq_lock);
-> > > >  
-> > > > @@ -318,7 +319,15 @@ static int s3c2416_cpufreq_reboot_notifier_evt(struct notifier_block *this,
-> > > >  	 */
-> > > >  	if (s3c_freq->is_dvs) {
-> > > >  		pr_debug("cpufreq: leave dvs on reboot\n");
-> > > > -		ret = cpufreq_driver_target(cpufreq_cpu_get(0), FREQ_SLEEP, 0);
-> > > > +
-> > > > +		memset(&policy, 0, sizeof(policy));
-> > > > +		ret = cpufreq_get_policy(&policy, 0);
-> > > > +		if (ret < 0) {
-> > > > +			pr_debug("cpufreq: get no policy for cpu0\n");
-> > > > +			return NOTIFY_BAD;
-> > > > +		}
-> > > > +
-> > > 
-> > > This doesn't make sense to me, why don't you do cpufreq_cpu_get() and
-> > > put() instead ?
-> > >
-> > Hi viresh,
-> > I can't explain which approach is better, but I think both approaches are
-> > effective for the situation.
-> 
-> The second one is better as it doesn't make copy of the policy, but
-> rather just increments the counter.
-> 
-> > By the way, there is a possibility that the cpu0 hotplug thread will call
-> > cpufreq_policy_free() to free cpufreq policy if cpu0 hotplug failed.
-> > I think there should be a judgement to avoid this UAF risk if necessary,
-> > or we just do panic if cpu0's cpufreq policy is free.
-> 
-> I think there are enough locks in place to avoid such issues and they
-> shouldn't happen.
->
+From: chenqiwu <chenqiwu@xiaomi.com>
 
-Hhh..I don't agree this, since the cpufreq policy of cpu0 may have
-been released before such UAF issue happenning.
-By the way, why not get invaild cpufreq policy of another cpu but
-only cpu0 here?
+There is a potential UAF issue in xxx_cpufreq_reboot_notifier_evt() that
+the cpufreq policy of cpu0 has been released before using it. So we should
+make a judgement to avoid it.
 
-> > > > +		ret = cpufreq_driver_target(&policy, FREQ_SLEEP, 0);
-> > > >  		if (ret < 0)
-> > > >  			return NOTIFY_BAD;
-> > > >  	}
-> > > > diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
-> > > > index 5d10030..d99b4b1 100644
-> > > > --- a/drivers/cpufreq/s5pv210-cpufreq.c
-> > > > +++ b/drivers/cpufreq/s5pv210-cpufreq.c
-> > > > @@ -555,8 +555,16 @@ static int s5pv210_cpufreq_reboot_notifier_event(struct notifier_block *this,
-> > > >  						 unsigned long event, void *ptr)
-> > > >  {
-> > > >  	int ret;
-> > > > +	struct cpufreq_policy *policy;
-> > > >  
-> > > > -	ret = cpufreq_driver_target(cpufreq_cpu_get(0), SLEEP_FREQ, 0);
-> > > > +	policy = cpufreq_cpu_get(0);
-> > > > +	if (!policy) {
-> > > > +		pr_debug("cpufreq: get no policy for cpu0\n");
-> > > > +		return NOTIFY_BAD;
-> > > > +	}
-> > > > +
-> > > > +	ret = cpufreq_driver_target(policy, SLEEP_FREQ, 0);
-> > > > +	cpufreq_cpu_put(policy);
-> > > 
-> > > Like what is done here.
-> > > 
-> > > Also add a blank line here.
-> > > 
-> > > >  	if (ret < 0)
-> > > >  		return NOTIFY_BAD;
-> > > >  
-> > > > -- 
-> > > > 1.9.1
-> > > 
-> > > -- 
-> > > viresh
-> > 
-> > Thanks for your review!
-> > Qiwu
-> 
-> -- 
-> viresh
+Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
+---
+changes in v2:
+ - use the combination of cpufreq_cpu_get() and cpufreq_cpu_put()
+   instead of cpufreq_get_policy() in s3c2416-cpufreq.c
+---
+ drivers/cpufreq/s3c2416-cpufreq.c | 12 +++++++++++-
+ drivers/cpufreq/s5pv210-cpufreq.c | 11 ++++++++++-
+ 2 files changed, 21 insertions(+), 2 deletions(-)
 
-Thanks!
-Qiwu
+diff --git a/drivers/cpufreq/s3c2416-cpufreq.c b/drivers/cpufreq/s3c2416-cpufreq.c
+index 1069103..f07c5d1 100644
+--- a/drivers/cpufreq/s3c2416-cpufreq.c
++++ b/drivers/cpufreq/s3c2416-cpufreq.c
+@@ -304,6 +304,7 @@ static int s3c2416_cpufreq_reboot_notifier_evt(struct notifier_block *this,
+ {
+ 	struct s3c2416_data *s3c_freq = &s3c2416_cpufreq;
+ 	int ret;
++	struct cpufreq_policy *policy;
+ 
+ 	mutex_lock(&cpufreq_lock);
+ 
+@@ -318,7 +319,16 @@ static int s3c2416_cpufreq_reboot_notifier_evt(struct notifier_block *this,
+ 	 */
+ 	if (s3c_freq->is_dvs) {
+ 		pr_debug("cpufreq: leave dvs on reboot\n");
+-		ret = cpufreq_driver_target(cpufreq_cpu_get(0), FREQ_SLEEP, 0);
++
++		policy = cpufreq_cpu_get(0);
++		if (!policy) {
++			pr_debug("cpufreq: get no policy for cpu0\n");
++			return NOTIFY_BAD;
++		}
++
++		ret = cpufreq_driver_target(&policy, FREQ_SLEEP, 0);
++		cpufreq_cpu_put(policy);
++
+ 		if (ret < 0)
+ 			return NOTIFY_BAD;
+ 	}
+diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
+index 5d10030..e84281e 100644
+--- a/drivers/cpufreq/s5pv210-cpufreq.c
++++ b/drivers/cpufreq/s5pv210-cpufreq.c
+@@ -555,8 +555,17 @@ static int s5pv210_cpufreq_reboot_notifier_event(struct notifier_block *this,
+ 						 unsigned long event, void *ptr)
+ {
+ 	int ret;
++	struct cpufreq_policy *policy;
++
++	policy = cpufreq_cpu_get(0);
++	if (!policy) {
++		pr_debug("cpufreq: get no policy for cpu0\n");
++		return NOTIFY_BAD;
++	}
++
++	ret = cpufreq_driver_target(policy, SLEEP_FREQ, 0);
++	cpufreq_cpu_put(policy);
+ 
+-	ret = cpufreq_driver_target(cpufreq_cpu_get(0), SLEEP_FREQ, 0);
+ 	if (ret < 0)
+ 		return NOTIFY_BAD;
+ 
+-- 
+1.9.1
+
