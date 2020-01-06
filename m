@@ -5,140 +5,115 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 369ECC32771
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Jan 2020 09:44:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB87CC33C9E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Jan 2020 19:10:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08C2321775
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Jan 2020 09:44:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DCBF207FF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Jan 2020 19:10:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h3uH4bw2"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ipVTd/8W"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726133AbgAFJo0 (ORCPT
+        id S1726818AbgAFTKJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Jan 2020 04:44:26 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:44716 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725821AbgAFJo0 (ORCPT
+        Mon, 6 Jan 2020 14:10:09 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:39006 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726569AbgAFTKI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Jan 2020 04:44:26 -0500
-Received: by mail-pf1-f194.google.com with SMTP id 195so25872308pfw.11;
-        Mon, 06 Jan 2020 01:44:26 -0800 (PST)
+        Mon, 6 Jan 2020 14:10:08 -0500
+Received: by mail-pg1-f195.google.com with SMTP id b137so27284090pga.6;
+        Mon, 06 Jan 2020 11:10:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=KtGrKb7t1nXkvA9RAp03OXaiGM0Udf6t6g9rmOrwqQA=;
-        b=h3uH4bw2GU+o7uTeRb6skr6Lw6iWOzi9RYNZW+55FiG0+SlNjQei6NHPEjTEDs+5nI
-         HxYgS7bX6DgDzLlZRkirtbIM6O4tvP+ZtsdYxpaHg34HubMIlgcROK9AjKM+YESs6juR
-         4FA4EJiZq2VK5wshg1aBt5whcBt33ETeDV9DxiBzYCd9vyiMm7dWgfpK++DrsLul5NCz
-         +gSjZOjPIr0sgF+BpSEIE/Hei4C82qIjjGUfC+ATL4FqVOV5fbfk8NXlcqehG2W85uUe
-         uqBbmBXCt9uqRNSWkCTDWHtpZ2NovetviHdgDzrlhKnoc6MJl4mCF0vnyXMdyV9yS5U/
-         Ya8A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=5UWJNKwGSnZRp2VqvhJODGUDqM6guG99MwzXRTV7Nb0=;
+        b=ipVTd/8WzUVxxKpTAZ5SKS4Qu+ymKDslRCsM2dW8CGQMRNF6NzHNamg6TOhJBPyGg4
+         ORhCV/Q5T8y2fc6B1zO52fudCe7Ri99+HF+7CYMnu/g6aUg/jkTAxDng5wgqVlYQPW5M
+         Eb1mHgurqw9jEMBxSZrCkCc/YNhvW1uG9OzYyDLsfbfTLtq8DxHe2/KfwxYAVG5uY07m
+         Bu+Es72kW0OdrMRIyWbKxuwGZnqRBRvhXad4hOpPqKc9VD/hJXtap77MbDviSyNM10Wi
+         rq9UBlVrwtu3Xybe/h9VTxYu7wSVEZitLRu2ig4aK71hqy34yItwhdaoDe3AQ1acwACR
+         8n1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=KtGrKb7t1nXkvA9RAp03OXaiGM0Udf6t6g9rmOrwqQA=;
-        b=c6cvt6kXh15w2RlLb/bYt0dqwLzdOMuwRiASEKFf6dWzLiWxbkGuZjo9+zfq7G6cUH
-         sJNGgyJaDTDsSxhSs2fYwxmL7ox6Z7I+JB6II8OBdWPc9lqHRuTOHaPT2jztlTv5FjJ1
-         1YZrxzNDLCZw7+AR9ZHKWeee1F+JEPfzt71y4H/M6MDGj886p3o72PJtTPiO7Q4ahdpj
-         iy4vBH8gk0Bal+N3lY7YvXdjqHlyptfX2MaJ6GGwwjLJeux8kddHnAmVopwcLv/MhCqk
-         rn40r6NFBqM6ImM1hE7vwlm4ZZZBo433P6aa+eo82RywEveE+rB/+DxGQPFRyNcho6cS
-         iPNQ==
-X-Gm-Message-State: APjAAAUzeAlePa0IKTRre6Jq9iTOkr7RR0qMpmx8+ir1hx+EMjZn8xEj
-        yYFonlY6pAZaZRztC2GGOck=
-X-Google-Smtp-Source: APXvYqwXV771FUqOJJoDqNegv2vvgsnsYNEq3vey/xKO088jvc38DW99nYZ6CpWk+IyeSVRKLC6AAQ==
-X-Received: by 2002:a63:6c82:: with SMTP id h124mr109322399pgc.328.1578303865779;
-        Mon, 06 Jan 2020 01:44:25 -0800 (PST)
-Received: from localhost ([43.224.245.179])
-        by smtp.gmail.com with ESMTPSA id u26sm74215521pfn.46.2020.01.06.01.44.24
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Mon, 06 Jan 2020 01:44:25 -0800 (PST)
-From:   qiwuchen55@gmail.com
-To:     kgene@kernel.org, krzk@kernel.org, rjw@rjwysocki.net,
-        viresh.kumar@linaro.org
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        chenqiwu <chenqiwu@xiaomi.com>
-Subject: [PATCH v2] cpufreq: s3c: avoid use after free issue in xxx_cpufreq_reboot_notifier_evt()
-Date:   Mon,  6 Jan 2020 17:44:21 +0800
-Message-Id: <1578303861-7217-1-git-send-email-qiwuchen55@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=5UWJNKwGSnZRp2VqvhJODGUDqM6guG99MwzXRTV7Nb0=;
+        b=pYL5uIdx7aZJKyaWj2wLXAJeeqolVv6liUqzlcoS60wXfZgwjqP2mVvsE61NAJkr4i
+         ytqzTjV3U4aG8EOKU/8LT8svShR8ZN8Cds4LtnpGBfiVCYydEBx1ak3XnlQ1wdrJF5DZ
+         U5p1YqY+I/N9/DfLQwferxZVhYpCM07XXOg4ajtm3QX8DOgsRBw68lyaAX0KIWvT4PWl
+         0yumoBq6/vkNYQlM956/VHWPGY3ozxW+Q+j60W0lo4gKzoDwdzorinWIsJOP/vdYmOaM
+         bWfcYT+2jS96ZEiOouiQeElvhMcSJSkCDi2siBZrdoXjg5l/mF6uMpvfpRGriCCFYaLJ
+         rHTw==
+X-Gm-Message-State: APjAAAUKM1ip9WzZeKOf1SqNxX9cNE529WGMLPVN1zdieadwqUG/nbsV
+        eOLr9cXpEa0iZb4hStipdSI=
+X-Google-Smtp-Source: APXvYqy3M3OIjOkADUaBh75HkL/X1n2uuXocdJbwJl2rTbC++kuHHBua+mNCifGNrP3hQMUCclRBEg==
+X-Received: by 2002:a63:7705:: with SMTP id s5mr110197804pgc.379.1578337808378;
+        Mon, 06 Jan 2020 11:10:08 -0800 (PST)
+Received: from localhost ([2001:19f0:6001:12c8:5400:2ff:fe72:6403])
+        by smtp.gmail.com with ESMTPSA id s24sm24868480pjp.17.2020.01.06.11.10.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 06 Jan 2020 11:10:07 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org,
+        krzk@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH 2/2] ARM: dts: exynos: tiny4412: add proper panel node
+Date:   Mon,  6 Jan 2020 19:10:03 +0000
+Message-Id: <20200106191003.21584-2-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200106191003.21584-1-tiny.windzz@gmail.com>
+References: <20200106191003.21584-1-tiny.windzz@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: chenqiwu <chenqiwu@xiaomi.com>
+This patch add at070tn92 panel for tiny4412 board.
 
-There is a potential UAF issue in xxx_cpufreq_reboot_notifier_evt() that
-the cpufreq policy of cpu0 has been released before using it. So we should
-make a judgement to avoid it.
-
-Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
-changes in v2:
- - use the combination of cpufreq_cpu_get() and cpufreq_cpu_put()
-   instead of cpufreq_get_policy() in s3c2416-cpufreq.c
----
- drivers/cpufreq/s3c2416-cpufreq.c | 12 +++++++++++-
- drivers/cpufreq/s5pv210-cpufreq.c | 11 ++++++++++-
- 2 files changed, 21 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/exynos4412-tiny4412.dts | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/cpufreq/s3c2416-cpufreq.c b/drivers/cpufreq/s3c2416-cpufreq.c
-index 1069103..f07c5d1 100644
---- a/drivers/cpufreq/s3c2416-cpufreq.c
-+++ b/drivers/cpufreq/s3c2416-cpufreq.c
-@@ -304,6 +304,7 @@ static int s3c2416_cpufreq_reboot_notifier_evt(struct notifier_block *this,
- {
- 	struct s3c2416_data *s3c_freq = &s3c2416_cpufreq;
- 	int ret;
-+	struct cpufreq_policy *policy;
+diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
+index 2b62cb27420c..57f9d09233ad 100644
+--- a/arch/arm/boot/dts/exynos4412-tiny4412.dts
++++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
+@@ -66,6 +66,16 @@
+ 			clock-frequency = <24000000>;
+ 		};
+ 	};
++
++	panel {
++		compatible = "innolux,at070tn92";
++
++		port {
++			panel_input: endpoint {
++				remote-endpoint = <&lcdc_output>;
++			};
++		};
++	};
+ };
  
- 	mutex_lock(&cpufreq_lock);
+ &fimd {
+@@ -74,6 +84,12 @@
+ 	#address-cells = <1>;
+ 	#size-cells = <0>;
+ 	status = "okay";
++	port@3 {
++		reg = <3>;
++		lcdc_output: endpoint {
++			remote-endpoint = <&panel_input>;
++		};
++	};
+ };
  
-@@ -318,7 +319,16 @@ static int s3c2416_cpufreq_reboot_notifier_evt(struct notifier_block *this,
- 	 */
- 	if (s3c_freq->is_dvs) {
- 		pr_debug("cpufreq: leave dvs on reboot\n");
--		ret = cpufreq_driver_target(cpufreq_cpu_get(0), FREQ_SLEEP, 0);
-+
-+		policy = cpufreq_cpu_get(0);
-+		if (!policy) {
-+			pr_debug("cpufreq: get no policy for cpu0\n");
-+			return NOTIFY_BAD;
-+		}
-+
-+		ret = cpufreq_driver_target(&policy, FREQ_SLEEP, 0);
-+		cpufreq_cpu_put(policy);
-+
- 		if (ret < 0)
- 			return NOTIFY_BAD;
- 	}
-diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
-index 5d10030..e84281e 100644
---- a/drivers/cpufreq/s5pv210-cpufreq.c
-+++ b/drivers/cpufreq/s5pv210-cpufreq.c
-@@ -555,8 +555,17 @@ static int s5pv210_cpufreq_reboot_notifier_event(struct notifier_block *this,
- 						 unsigned long event, void *ptr)
- {
- 	int ret;
-+	struct cpufreq_policy *policy;
-+
-+	policy = cpufreq_cpu_get(0);
-+	if (!policy) {
-+		pr_debug("cpufreq: get no policy for cpu0\n");
-+		return NOTIFY_BAD;
-+	}
-+
-+	ret = cpufreq_driver_target(policy, SLEEP_FREQ, 0);
-+	cpufreq_cpu_put(policy);
- 
--	ret = cpufreq_driver_target(cpufreq_cpu_get(0), SLEEP_FREQ, 0);
- 	if (ret < 0)
- 		return NOTIFY_BAD;
- 
+ &rtc {
 -- 
-1.9.1
+2.17.1
 
