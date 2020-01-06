@@ -2,234 +2,159 @@ Return-Path: <SRS0=CwGy=23=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37FD3C3F68F
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Jan 2020 01:44:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53E12C32767
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Jan 2020 05:48:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F03A21734
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Jan 2020 01:44:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F5FF21734
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Jan 2020 05:48:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="n0VtdPXM"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PCgb8Zzs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727244AbgAFBnz (ORCPT
+        id S1726536AbgAFFsO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 5 Jan 2020 20:43:55 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:48242 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727256AbgAFBny (ORCPT
+        Mon, 6 Jan 2020 00:48:14 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:33183 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725887AbgAFFsO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 5 Jan 2020 20:43:54 -0500
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200106014349epoutp038346807ba9d442fe94a9384236d6088c~nKMcNpjCX0084300843epoutp03f
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Jan 2020 01:43:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200106014349epoutp038346807ba9d442fe94a9384236d6088c~nKMcNpjCX0084300843epoutp03f
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1578275029;
-        bh=0KV/81+8NYUZoOd09j3uz5rKNhVd4P0bKNs9BXXZU2I=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=n0VtdPXMRxGvT7wxI2H+AxNGxqpjRlbuxU8SnJiSdoU2gFXoKGPMRZJi3PAjLPpXZ
-         0QH9O7yiqz7xKAEmsxrsOAQg8jTAYAzcQSZXHTDN+Enp+5d8ueDyhoVbQZ7lKmysHS
-         AF5IWftjTgA7FXFiTdTjiMPTScp/y/+31/rOZ7Dc=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20200106014349epcas1p3a9be5b37643dbb8d9972653f191c6625~nKMbpE_tg2455124551epcas1p3R;
-        Mon,  6 Jan 2020 01:43:49 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.154]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 47rdZp0WjzzMqYl2; Mon,  6 Jan
-        2020 01:43:46 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        4D.F5.48019.1D0921E5; Mon,  6 Jan 2020 10:43:45 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200106014345epcas1p220efaa80993b31c09359f5dee6931ca7~nKMYQqFAN1612316123epcas1p2C;
-        Mon,  6 Jan 2020 01:43:45 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200106014345epsmtrp1183fb04c0de0a96ce0f254aaa9992ea1~nKMYP7ENE3013530135epsmtrp1v;
-        Mon,  6 Jan 2020 01:43:45 +0000 (GMT)
-X-AuditID: b6c32a38-257ff7000001bb93-dc-5e1290d1a74d
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        2E.F8.10238.1D0921E5; Mon,  6 Jan 2020 10:43:45 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200106014345epsmtip2a827f50c8e9b1af55046c58e7ab473be~nKMYApXxr0734807348epsmtip2O;
-        Mon,  6 Jan 2020 01:43:45 +0000 (GMT)
-Subject: Re: [PATCH v2 13/20] devfreq: exynos: Rename Exynos to lowercase
-To:     Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org,
+        Mon, 6 Jan 2020 00:48:14 -0500
+Received: by mail-pj1-f66.google.com with SMTP id u63so4055003pjb.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 05 Jan 2020 21:48:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ittmWLzoiwbYfzA04b4FRh3oV8Mt00ekdOIO1DGBia4=;
+        b=PCgb8ZzsvivfjE9d60WEMDMyQbNBzEHv5fBK7m3g+KRKmJWigbH5K1vjI2ggSi7juH
+         HZhxqwZvLlxCGMbISviW9+xituKp0g0kxYOff5eS7vH2ZjXUOm2g1g6i/UDEiUaB6ga4
+         HWKRqfxhjX6jwLoDoTY5NRJpWervYA1ksV0EESrmsJX8eZUly31FDgtdL4x2rv3y+QjF
+         ppQA3qywUSgo6nlLkTaBFRp48rA1AtwpypHyQsb/2ggxnfe/mPfSEx5qOxc/aYYW6APm
+         aMzObXB6sDp7jt7vOWa2wDlO2JX8yi1QnBLwF4ZSGVkbXA3X5GxaNKC4XB6LuqQ9w8R3
+         Upvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ittmWLzoiwbYfzA04b4FRh3oV8Mt00ekdOIO1DGBia4=;
+        b=VJdN415TNXoYuGpbwRl/YWKyubUIDggclCEBy5piPV44bCfzvJlyC93zRgdNd+wzQr
+         epCzgQuwtCksPiUTqsR+LJh8+5B2VSgJrcObTShHr8AVTP6nQoLerypK8Sfn3hqTDGg+
+         VplMk3TQycVSEfW5HBJnlvFtRmfIFNs8ygRDbCGQcvT9gRYKVv+mqGtsbbR2ED6SVA1s
+         VaIpiFKBc0smwu9q3bFTjlh4vcKKtwAErLBTOUMccVSd66qTytDkN7N7rez9hGWehsjG
+         5V4uqsy5K2Ua58UrGAvhp02RPjo1bJI2Oh/xuur2kmODosj3rOjBFrn4ewVxVBzAkEzg
+         6/tw==
+X-Gm-Message-State: APjAAAU8oeJyi24RLiax792U6XaZHB6ni3v0abyreLhnPaUeJT1ZVCyd
+        qOnLKkQTIBDMdH+z3mCQrHPDgQ==
+X-Google-Smtp-Source: APXvYqzY7Y/N3u1EIAlYonSqEdQqQr5D/DGlIXfcIAtx/yQ+I9zoC0IR+vPRp+fuNusv/Ptc8RdGSA==
+X-Received: by 2002:a17:90a:5806:: with SMTP id h6mr41233347pji.63.1578289693795;
+        Sun, 05 Jan 2020 21:48:13 -0800 (PST)
+Received: from localhost ([122.172.26.121])
+        by smtp.gmail.com with ESMTPSA id 64sm73939461pfd.48.2020.01.05.21.48.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 05 Jan 2020 21:48:13 -0800 (PST)
+Date:   Mon, 6 Jan 2020 11:18:11 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     qiwuchen55@gmail.com
+Cc:     kgene@kernel.org, krzk@kernel.org, rjw@rjwysocki.net,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <c3c083b4-a7f4-946b-aea0-d91940e5ba56@samsung.com>
-Date:   Mon, 6 Jan 2020 10:50:51 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenqiwu <chenqiwu@xiaomi.com>
+Subject: Re: [PATCH] cpufreq: s3c: avoid use after free issue in
+ xxx_cpufreq_reboot_notifier_evt()
+Message-ID: <20200106054811.uduf2qdn5ecvbwrc@vireshk-i7>
+References: <1577515439-14477-1-git-send-email-qiwuchen55@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200104152107.11407-14-krzk@kernel.org>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMJsWRmVeSWpSXmKPExsWy7bCmru7FCUJxBkvXWlv0P37NbHH+/AZ2
-        i7NNb9gtNj2+xmpxedccNovPvUcYLWac38dkcbtxBZsDh8emVZ1sHpuX1Hv0bVnF6PF5k1wA
-        S1S2TUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QFUoK
-        ZYk5pUChgMTiYiV9O5ui/NKSVIWM/OISW6XUgpScAssCveLE3OLSvHS95PxcK0MDAyNToMKE
-        7Izf/d0sBX+UK3bMzGtgfCzbxcjJISFgIvGoZzNzFyMXh5DADkaJbduOs4IkhAQ+MUo0XtKA
-        sL8xSuw5Fg/TMOvCOSaIhr2MErtewDjvGSUefPzLDlIlLOApsXXWYzBbRMBdYsH/NWwgRcwC
-        9xgleuYtYAZJsAloSex/cYMNxOYXUJS4+uMxI4jNK2An8fzme7BmFgEViaPt08DqRQXCJE5u
-        a4GqEZQ4OfMJC4jNKWAm0f3wBdgcZgFxiVtP5jNB2PIS29/OAftNQuAzm8TiPZdYIX5wkdi4
-        diMbhC0s8er4FnYIW0riZX8blF0tsfLkETaI5g5GiS37L0A1G0vsXzoZaAMH0AZNifW79CHC
-        ihI7f89lhFjMJ/Huaw8rSImEAK9ER5sQRImyxOUHd5kgbEmJxe2dbBMYlWYheWcWkhdmIXlh
-        FsKyBYwsqxjFUguKc9NTiw0LTJAjexMjOIFqWexg3HPO5xCjAAejEg8vQ7BQnBBrYllxZe4h
-        RgkOZiUR3kY3wTgh3pTEyqrUovz4otKc1OJDjKbA0J7ILCWanA9M7nkl8YamRsbGxhYmhmam
-        hoZK4rwcPy7GCgmkJ5akZqemFqQWwfQxcXBKNTBKymrlTpjo0b4iJlb0379HzO3Mu7b2bnsv
-        IDO9rmjilTL973v3n9RZ09bJLbXir0jxszXb7RU8Hk6W/rrv+8krF/ZMWevv7SJ5pSQxcsUG
-        U/P7a/gkxf2kP0gtNvgyf1FV396IlZMK5/q5LNFmCNJpWPTpbeSF1Tv5KkRzNs+8pcbGdopP
-        JPWUEktxRqKhFnNRcSIAui4TpLYDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnkeLIzCtJLcpLzFFi42LZdlhJXvfiBKE4g9ZfMhb9j18zW5w/v4Hd
-        4mzTG3aLTY+vsVpc3jWHzeJz7xFGixnn9zFZ3G5cwebA4bFpVSebx+Yl9R59W1YxenzeJBfA
-        EsVlk5Kak1mWWqRvl8CV8bu/m6Xgj3LFjpl5DYyPZbsYOTkkBEwkZl04x9TFyMUhJLCbUWJj
-        90xGiISkxLSLR5m7GDmAbGGJw4eLIWreMkpMfPiPDaRGWMBTYuusx+wgtoiAu8SC/2vYQIqY
-        Be4xSjT/WAQ1dQujRP/B/0wgVWwCWhL7X9wA6+YXUJS4+uMx2DZeATuJ5zffg01iEVCRONo+
-        jRnEFhUIk9i55DETRI2gxMmZT1hAbE4BM4nuhy/A5jALqEv8mXeJGcIWl7j1ZD4ThC0vsf3t
-        HOYJjMKzkLTPQtIyC0nLLCQtCxhZVjFKphYU56bnFhsWGOallusVJ+YWl+al6yXn525iBEeT
-        luYOxstL4g8xCnAwKvHwrggQihNiTSwrrsw9xCjBwawkwtvoJhgnxJuSWFmVWpQfX1Sak1p8
-        iFGag0VJnPdp3rFIIYH0xJLU7NTUgtQimCwTB6dUA6Omnt5Kww2Zp49W7nr2d1HptfUaXEmv
-        LlrVTt2xat3+pu2/pyz5MWGOyj0/bnX1dx4SYXzpllZpc4+naYZL37bZdIJP4jIHRwSLdM+N
-        mwytDZf+xqosXuaxXIupOHxlzOFLOjZxU3gcJ14XEJ4XPIPJWM5vwUrnuqkHeQ/PmF0THtG7
-        +YaAx2clluKMREMt5qLiRAAyrMe9ogIAAA==
-X-CMS-MailID: 20200106014345epcas1p220efaa80993b31c09359f5dee6931ca7
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200104152251epcas4p2904c6be67570b1c0fd1cc43711f24b42
-References: <20200104152107.11407-1-krzk@kernel.org>
-        <CGME20200104152251epcas4p2904c6be67570b1c0fd1cc43711f24b42@epcas4p2.samsung.com>
-        <20200104152107.11407-14-krzk@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1577515439-14477-1-git-send-email-qiwuchen55@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 1/5/20 12:21 AM, Krzysztof Kozlowski wrote:
-> Fix up inconsistent usage of upper and lowercase letters in "Exynos"
-> name.
+On 28-12-19, 14:43, qiwuchen55@gmail.com wrote:
+> From: chenqiwu <chenqiwu@xiaomi.com>
 > 
-> "EXYNOS" is not an abbreviation but a regular trademarked name.
-> Therefore it should be written with lowercase letters starting with
-> capital letter.
-> 
-> The lowercase "Exynos" name is promoted by its manufacturer Samsung
-> Electronics Co., Ltd., in advertisement materials and on website.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/devfreq/Kconfig             | 2 +-
->  drivers/devfreq/event/Kconfig       | 4 ++--
->  drivers/devfreq/event/exynos-nocp.c | 2 +-
->  drivers/devfreq/event/exynos-nocp.h | 2 +-
->  drivers/devfreq/event/exynos-ppmu.c | 2 +-
->  drivers/devfreq/event/exynos-ppmu.h | 2 +-
->  6 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
-> index 1526f758daeb..0b1df12e0f21 100644
-> --- a/drivers/devfreq/Kconfig
-> +++ b/drivers/devfreq/Kconfig
-> @@ -77,7 +77,7 @@ config DEVFREQ_GOV_PASSIVE
->  comment "DEVFREQ Drivers"
->  
->  config ARM_EXYNOS_BUS_DEVFREQ
-> -	tristate "ARM EXYNOS Generic Memory Bus DEVFREQ Driver"
-> +	tristate "ARM Exynos Generic Memory Bus DEVFREQ Driver"
->  	depends on ARCH_EXYNOS || COMPILE_TEST
->  	select DEVFREQ_GOV_SIMPLE_ONDEMAND
->  	select DEVFREQ_GOV_PASSIVE
-> diff --git a/drivers/devfreq/event/Kconfig b/drivers/devfreq/event/Kconfig
-> index a53e0a6ffdfe..878825372f6f 100644
-> --- a/drivers/devfreq/event/Kconfig
-> +++ b/drivers/devfreq/event/Kconfig
-> @@ -15,7 +15,7 @@ menuconfig PM_DEVFREQ_EVENT
->  if PM_DEVFREQ_EVENT
->  
->  config DEVFREQ_EVENT_EXYNOS_NOCP
-> -	tristate "EXYNOS NoC (Network On Chip) Probe DEVFREQ event Driver"
-> +	tristate "Exynos NoC (Network On Chip) Probe DEVFREQ event Driver"
->  	depends on ARCH_EXYNOS || COMPILE_TEST
->  	select PM_OPP
->  	select REGMAP_MMIO
-> @@ -24,7 +24,7 @@ config DEVFREQ_EVENT_EXYNOS_NOCP
->  	  (Network on Chip) Probe counters to measure the bandwidth of AXI bus.
->  
->  config DEVFREQ_EVENT_EXYNOS_PPMU
-> -	tristate "EXYNOS PPMU (Platform Performance Monitoring Unit) DEVFREQ event Driver"
-> +	tristate "Exynos PPMU (Platform Performance Monitoring Unit) DEVFREQ event Driver"
->  	depends on ARCH_EXYNOS || COMPILE_TEST
->  	select PM_OPP
->  	help
-> diff --git a/drivers/devfreq/event/exynos-nocp.c b/drivers/devfreq/event/exynos-nocp.c
-> index 1c565926db9f..ccc531ee6938 100644
-> --- a/drivers/devfreq/event/exynos-nocp.c
-> +++ b/drivers/devfreq/event/exynos-nocp.c
-> @@ -1,6 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0-only
->  /*
-> - * exynos-nocp.c - EXYNOS NoC (Network On Chip) Probe support
-> + * exynos-nocp.c - Exynos NoC (Network On Chip) Probe support
->   *
->   * Copyright (c) 2016 Samsung Electronics Co., Ltd.
->   * Author : Chanwoo Choi <cw00.choi@samsung.com>
-> diff --git a/drivers/devfreq/event/exynos-nocp.h b/drivers/devfreq/event/exynos-nocp.h
-> index 55cc96284a36..2d6f08cfd0c5 100644
-> --- a/drivers/devfreq/event/exynos-nocp.h
-> +++ b/drivers/devfreq/event/exynos-nocp.h
-> @@ -1,6 +1,6 @@
->  /* SPDX-License-Identifier: GPL-2.0-only */
->  /*
-> - * exynos-nocp.h - EXYNOS NoC (Network on Chip) Probe header file
-> + * exynos-nocp.h - Exynos NoC (Network on Chip) Probe header file
->   *
->   * Copyright (c) 2016 Samsung Electronics Co., Ltd.
->   * Author : Chanwoo Choi <cw00.choi@samsung.com>
-> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
-> index 055deea42c37..17ed980d9099 100644
-> --- a/drivers/devfreq/event/exynos-ppmu.c
-> +++ b/drivers/devfreq/event/exynos-ppmu.c
-> @@ -1,6 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0-only
->  /*
-> - * exynos_ppmu.c - EXYNOS PPMU (Platform Performance Monitoring Unit) support
-> + * exynos_ppmu.c - Exynos PPMU (Platform Performance Monitoring Unit) support
->   *
->   * Copyright (c) 2014-2015 Samsung Electronics Co., Ltd.
->   * Author : Chanwoo Choi <cw00.choi@samsung.com>
-> diff --git a/drivers/devfreq/event/exynos-ppmu.h b/drivers/devfreq/event/exynos-ppmu.h
-> index 284420047455..97f667d0cbdd 100644
-> --- a/drivers/devfreq/event/exynos-ppmu.h
-> +++ b/drivers/devfreq/event/exynos-ppmu.h
-> @@ -1,6 +1,6 @@
->  /* SPDX-License-Identifier: GPL-2.0-only */
->  /*
-> - * exynos_ppmu.h - EXYNOS PPMU header file
-> + * exynos_ppmu.h - Exynos PPMU header file
->   *
->   * Copyright (c) 2015 Samsung Electronics Co., Ltd.
->   * Author : Chanwoo Choi <cw00.choi@samsung.com>
-> 
+> There is a potential UAF issue in xxx_cpufreq_reboot_notifier_evt() that
+> the cpufreq policy of cpu0 has been released before using it. So we should
+> make a judgement to avoid it.
 
-Applied it. Thanks.
+There is no UAF problem here, but that we do cpufreq_cpu_get() with a
+corresponding cpufreq_cpu_put().
+
+> Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
+> ---
+>  drivers/cpufreq/s3c2416-cpufreq.c | 11 ++++++++++-
+>  drivers/cpufreq/s5pv210-cpufreq.c | 10 +++++++++-
+>  2 files changed, 19 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/s3c2416-cpufreq.c b/drivers/cpufreq/s3c2416-cpufreq.c
+> index 1069103..0f576ba 100644
+> --- a/drivers/cpufreq/s3c2416-cpufreq.c
+> +++ b/drivers/cpufreq/s3c2416-cpufreq.c
+> @@ -304,6 +304,7 @@ static int s3c2416_cpufreq_reboot_notifier_evt(struct notifier_block *this,
+>  {
+>  	struct s3c2416_data *s3c_freq = &s3c2416_cpufreq;
+>  	int ret;
+> +	struct cpufreq_policy policy;
+>  
+>  	mutex_lock(&cpufreq_lock);
+>  
+> @@ -318,7 +319,15 @@ static int s3c2416_cpufreq_reboot_notifier_evt(struct notifier_block *this,
+>  	 */
+>  	if (s3c_freq->is_dvs) {
+>  		pr_debug("cpufreq: leave dvs on reboot\n");
+> -		ret = cpufreq_driver_target(cpufreq_cpu_get(0), FREQ_SLEEP, 0);
+> +
+> +		memset(&policy, 0, sizeof(policy));
+> +		ret = cpufreq_get_policy(&policy, 0);
+> +		if (ret < 0) {
+> +			pr_debug("cpufreq: get no policy for cpu0\n");
+> +			return NOTIFY_BAD;
+> +		}
+> +
+
+This doesn't make sense to me, why don't you do cpufreq_cpu_get() and
+put() instead ?
+
+> +		ret = cpufreq_driver_target(&policy, FREQ_SLEEP, 0);
+>  		if (ret < 0)
+>  			return NOTIFY_BAD;
+>  	}
+> diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
+> index 5d10030..d99b4b1 100644
+> --- a/drivers/cpufreq/s5pv210-cpufreq.c
+> +++ b/drivers/cpufreq/s5pv210-cpufreq.c
+> @@ -555,8 +555,16 @@ static int s5pv210_cpufreq_reboot_notifier_event(struct notifier_block *this,
+>  						 unsigned long event, void *ptr)
+>  {
+>  	int ret;
+> +	struct cpufreq_policy *policy;
+>  
+> -	ret = cpufreq_driver_target(cpufreq_cpu_get(0), SLEEP_FREQ, 0);
+> +	policy = cpufreq_cpu_get(0);
+> +	if (!policy) {
+> +		pr_debug("cpufreq: get no policy for cpu0\n");
+> +		return NOTIFY_BAD;
+> +	}
+> +
+> +	ret = cpufreq_driver_target(policy, SLEEP_FREQ, 0);
+> +	cpufreq_cpu_put(policy);
+
+Like what is done here.
+
+Also add a blank line here.
+
+>  	if (ret < 0)
+>  		return NOTIFY_BAD;
+>  
+> -- 
+> 1.9.1
 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+viresh
