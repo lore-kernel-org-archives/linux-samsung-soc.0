@@ -2,141 +2,112 @@ Return-Path: <SRS0=CwGy=23=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E44EAC33C8C
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Jan 2020 20:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69BA3C33C8C
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Jan 2020 22:16:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B55282072C
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Jan 2020 20:51:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BC3F2081E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Jan 2020 22:16:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578343875;
-	bh=VVzOQqRYfdWh0OkpoDZO9s2m89D+PC5M/quLlEkvZbY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
-	b=kX5RUMFuRCyiNEDdnDCSPOZQbbZbL62AFRnT+Zag9Y4KAONU0uQKpNzI9FLFpueyF
-	 03VZpBetl0KFoWThLJ0juwaPCPidWYi6bSFwZ6Q61gHzcHj20XZ3pOhZmXjnf2GDme
-	 Pa+nhlXYY4rDEgOCTNwXw9ISF3vMWzyLOxZE1l0M=
+	s=default; t=1578349007;
+	bh=fu2DqfrbuFaGWXKt9NCaBaBO2DiLlEmXWK2BMRTlfzM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=exrsh6ToL4jfT7macBN+BR+UVIT7V4gRSZHUJ5gDMs3yKvSTVXxESwL1TPAg418bY
+	 Hjbs1bgp9+6p70Hl6kLygwtwnXe/dwoV28XsmkxDsw29fHhRKcbv7prrfRC+wt6Gic
+	 YXpoxkiwK1Ad8TUKi+7epLiZ3y9FPpZned8WQpak=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726789AbgAFUvP (ORCPT
+        id S1726760AbgAFWQq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Jan 2020 15:51:15 -0500
-Received: from foss.arm.com ([217.140.110.172]:49256 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726778AbgAFUvP (ORCPT
+        Mon, 6 Jan 2020 17:16:46 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:35443 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726721AbgAFWQq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Jan 2020 15:51:15 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9201C106F;
-        Mon,  6 Jan 2020 12:51:14 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 18DFD3F534;
-        Mon,  6 Jan 2020 12:51:13 -0800 (PST)
-Date:   Mon, 06 Jan 2020 20:51:12 +0000
-From:   Mark Brown <broonie@kernel.org>
+        Mon, 6 Jan 2020 17:16:46 -0500
+Received: by mail-oi1-f195.google.com with SMTP id k4so17009745oik.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Jan 2020 14:16:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JawZyvCEqxbxDbUWcz/6qCJtFgFJJZ6Kq0F51D4TyLs=;
+        b=Y050GYG7NAHlHdqqEsnFtEgmuiY+sdihyAmJdfPFS0yWPzTBeB1+Q5aK1rhVMuzwHH
+         tgMsxiW95JnIbmSYNLt1adMp3m0K4wD3tIBiiDHna0CmJZtrx6PTclVSxSygRvJ9SVvS
+         jTRDsaghJpq1BUUlsuE+HjW3Cp13rx7DXO9gOqANY+zzyvkxalNTg2eQrMIy9P/NBTD3
+         vtxKOp8srE7lDqFZBho1EKl+SWPwg3J8sTqLKQ3C2VdIBpCP9XjLftalJGzJMO/e5F2c
+         brqJIRXb2+oVGWtitzevyCMy6SWk6H8A1vMzVrgIGacKdyGxdqICcQpF4DlqqFhAmAcq
+         Kxxg==
+X-Gm-Message-State: APjAAAVAkLRRyoGocPZPPwhD6hTZ0c76kWRhgV7ePwBFwWfCmD2i7OZ0
+        Y0u4xvjSxDAGvKm3zboXy5Fh3I8=
+X-Google-Smtp-Source: APXvYqyqraSTV5OAS2WxdbleupmjMjX7PgpzgVBdvQ8i+PTpDLG0DTj9ibTqD6I2aAO6khUb+ie2Mg==
+X-Received: by 2002:aca:f505:: with SMTP id t5mr6709381oih.136.1578349005523;
+        Mon, 06 Jan 2020 14:16:45 -0800 (PST)
+Received: from rob-hp-laptop (ip-70-5-121-225.ftwttx.spcsdns.net. [70.5.121.225])
+        by smtp.gmail.com with ESMTPSA id d7sm18888518oic.46.2020.01.06.14.16.44
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Jan 2020 14:16:44 -0800 (PST)
+Received: from rob (uid 1000)
+        (envelope-from rob@rob-hp-laptop)
+        id 22043f
+        by rob-hp-laptop (DragonFly Mail Agent v0.11);
+        Mon, 06 Jan 2020 16:16:43 -0600
+Date:   Mon, 6 Jan 2020 16:16:43 -0600
+From:   Rob Herring <robh@kernel.org>
 To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Sangbeom Kim <sbkim73@samsung.com>
-Subject: Applied "regulator: samsung: Rename Samsung to lowercase" to the regulator tree
-In-Reply-To: <20200103171131.9900-20-krzk@kernel.org>
-Message-Id: <applied-20200103171131.9900-20-krzk@kernel.org>
-X-Patchwork-Hint: ignore
+Cc:     linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Kamil Debski <kamil@wypas.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 01/20] dt-bindings: Rename Exynos to lowercase
+Message-ID: <20200106221643.GA31683@bogus>
+References: <20200104152107.11407-1-krzk@kernel.org>
+ <20200104152107.11407-2-krzk@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200104152107.11407-2-krzk@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The patch
+On Sat,  4 Jan 2020 16:20:48 +0100, Krzysztof Kozlowski wrote:
+> Fix up inconsistent usage of upper and lowercase letters in "Exynos"
+> name.
+> 
+> "EXYNOS" is not an abbreviation but a regular trademarked name.
+> Therefore it should be written with lowercase letters starting with
+> capital letter.
+> 
+> The lowercase "Exynos" name is promoted by its manufacturer Samsung
+> Electronics Co., Ltd., in advertisement materials and on website.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> ---
+> 
+> Changes since v1:
+> 1. New patch
+> ---
+>  .../devicetree/bindings/media/exynos-jpeg-codec.txt         | 2 +-
+>  Documentation/devicetree/bindings/media/exynos5-gsc.txt     | 2 +-
+>  Documentation/devicetree/bindings/media/samsung-fimc.txt    | 2 +-
+>  .../devicetree/bindings/media/samsung-mipi-csis.txt         | 2 +-
+>  Documentation/devicetree/bindings/phy/samsung-phy.txt       | 6 +++---
+>  5 files changed, 7 insertions(+), 7 deletions(-)
+> 
 
-   regulator: samsung: Rename Samsung to lowercase
+Applied, thanks.
 
-has been applied to the regulator tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.6
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From fc2b10d13602d3e9c8a5f671898b8c77c205a36a Mon Sep 17 00:00:00 2001
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Fri, 3 Jan 2020 18:11:31 +0100
-Subject: [PATCH] regulator: samsung: Rename Samsung to lowercase
-
-Fix up inconsistent usage of upper and lowercase letters in "Samsung"
-name.
-
-"SAMSUNG" is not an abbreviation but a regular trademarked name.
-Therefore it should be written with lowercase letters starting with
-capital letter.
-
-Although advertisement materials usually use uppercase "SAMSUNG", the
-lowercase version is used in all legal aspects (e.g. on Wikipedia and in
-privacy/legal statements on
-https://www.samsung.com/semiconductor/privacy-global/).
-
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Link: https://lore.kernel.org/r/20200103171131.9900-20-krzk@kernel.org
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/s2mpa01.c | 2 +-
- drivers/regulator/s2mps11.c | 2 +-
- drivers/regulator/s5m8767.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/regulator/s2mpa01.c b/drivers/regulator/s2mpa01.c
-index 51f7e8b74d8c..115f59530852 100644
---- a/drivers/regulator/s2mpa01.c
-+++ b/drivers/regulator/s2mpa01.c
-@@ -390,5 +390,5 @@ module_platform_driver(s2mpa01_pmic_driver);
- /* Module information */
- MODULE_AUTHOR("Sangbeom Kim <sbkim73@samsung.com>");
- MODULE_AUTHOR("Sachin Kamat <sachin.kamat@samsung.com>");
--MODULE_DESCRIPTION("SAMSUNG S2MPA01 Regulator Driver");
-+MODULE_DESCRIPTION("Samsung S2MPA01 Regulator Driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 4f2dc5ebffdc..23d288278957 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -1265,5 +1265,5 @@ module_platform_driver(s2mps11_pmic_driver);
- 
- /* Module information */
- MODULE_AUTHOR("Sangbeom Kim <sbkim73@samsung.com>");
--MODULE_DESCRIPTION("SAMSUNG S2MPS11/S2MPS14/S2MPS15/S2MPU02 Regulator Driver");
-+MODULE_DESCRIPTION("Samsung S2MPS11/S2MPS14/S2MPS15/S2MPU02 Regulator Driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
-index bdc07739e9a2..f5c5177bdb0a 100644
---- a/drivers/regulator/s5m8767.c
-+++ b/drivers/regulator/s5m8767.c
-@@ -1015,5 +1015,5 @@ module_exit(s5m8767_pmic_exit);
- 
- /* Module information */
- MODULE_AUTHOR("Sangbeom Kim <sbkim73@samsung.com>");
--MODULE_DESCRIPTION("SAMSUNG S5M8767 Regulator Driver");
-+MODULE_DESCRIPTION("Samsung S5M8767 Regulator Driver");
- MODULE_LICENSE("GPL");
--- 
-2.20.1
-
+Rob
