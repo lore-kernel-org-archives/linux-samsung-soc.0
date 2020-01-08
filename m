@@ -4,84 +4,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 248A9C282DD
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jan 2020 20:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64B5FC282DD
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jan 2020 20:49:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1B0C20643
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jan 2020 20:21:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3669D206DB
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jan 2020 20:49:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578514908;
-	bh=xbnZweZysNvjJs5HrwfqefXp1VjWQsaLFHlxz4jQYzo=;
+	s=default; t=1578516590;
+	bh=CkhtezZ3aI7W2ttzSwXUkCU/xpPlgbQ804mcJzg2vnI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=UDNqG1mYBZANidL0Bh85GmGx2MTS0HWaksNYmB1H9n6Rab7odR35CWfl9pSyRifRR
-	 yFZ+F3N+/+seVcwaAkiiVbneXCkzKFIXR6ahdzi3H22usR3r9+0rxTf41EnXJ71jYM
-	 p+LpbVrMopEHMOugEiHrVXCo+aC5vCm08QzqCQHE=
+	b=gtIRZ1iPEbIOrKFPWAjnsVYVa4Zq9j/7JjWlcWz5IG/tCDgO+D43fzpVeLrHlSsFm
+	 5Z7XB6rO4yPJm9q6JKVpBFZ8dUmrCLn/LNVSZCPqyq2A1TTLIyYNEJ8mq+Si+ihtdb
+	 B3nkd/+FOxU7zGiuXle3lTVKx9ukxPSFn4TDcL+o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726536AbgAHUVr (ORCPT
+        id S1726426AbgAHUtt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 8 Jan 2020 15:21:47 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55533 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726390AbgAHUVr (ORCPT
+        Wed, 8 Jan 2020 15:49:49 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:41743 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726155AbgAHUtt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Jan 2020 15:21:47 -0500
-Received: by mail-wm1-f66.google.com with SMTP id q9so297944wmj.5;
-        Wed, 08 Jan 2020 12:21:46 -0800 (PST)
+        Wed, 8 Jan 2020 15:49:49 -0500
+Received: by mail-oi1-f195.google.com with SMTP id i1so3908675oie.8
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Jan 2020 12:49:49 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DAChl6Ul9fKSKLSUyoPgGNo0ChhyAr0XJVth8mI90zs=;
-        b=MOPb+EvtynICKVb4YpklQxm9YdA2sGVaK1Bl47sG/ChZVWWUVkL7eP3lYVuj2dyRma
-         l91eqPosW4LgGGtMWM+7IJjQk0H8t4iLkhvyQ4RqgLNFpwaZVTO4wDwbhy9POvAPyKq2
-         G0bLrWOY/dw04ymaLWrNT1EuFJBVELceZxygSmjZIM+7MAeZP/02zkGGKyng+pX39eZo
-         FaDh5s2PT5r9ADpomlPW+uprxxyIju6zt8dgGW5r5d+EYC1zA6uwm+QXjmmz9oWpJUaE
-         i82OAbp/JkF2TA5mq/JXoWsVxEJuIw350pSWSoi7BVbO84XeQ7vDeSXlZCeLrA1QRElw
-         cGQw==
-X-Gm-Message-State: APjAAAVdbCh1Yz73cntUKfR0A5imwKzUC4JR6tApCF5vxVb2cYM+4Q3b
-        /o99l5DcktgelvzHFDMZXrSDt64tZuP12Q==
-X-Google-Smtp-Source: APXvYqzpZx5bVmQEcf1bpPT5tN7m0CBp56yBmQq5PdtRIz3mJs/1AeH+ujtV+juGwD4/yfPcficuPA==
-X-Received: by 2002:a7b:c93a:: with SMTP id h26mr408703wml.83.1578514905607;
-        Wed, 08 Jan 2020 12:21:45 -0800 (PST)
-Received: from kozik-book ([83.218.167.187])
-        by smtp.googlemail.com with ESMTPSA id q3sm238868wmj.38.2020.01.08.12.21.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 08 Jan 2020 12:21:44 -0800 (PST)
-Date:   Wed, 8 Jan 2020 21:21:42 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Yangtao Li <tiny.windzz@gmail.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ARM: dts: exynos: tiny4412: enable fimd node and add
- proper panel node
-Message-ID: <20200108202142.GA8492@kozik-book>
-References: <20200107191020.27475-1-tiny.windzz@gmail.com>
+        bh=Y2blFDS/4xPh5DF4rW8+xU8LHc7BSZTKgnRIfuXGUCs=;
+        b=j4KmsgZOJZ/YSNv9CBlB72AZhLmPHNMo5NZ6D1RwiQ3ftWV7aV67Kov1i8LcgUhc4L
+         5/+kil6NOTA36RuLJvzLnMpaOVmMDmV3PZbHZEUXiItYq630i1IGH9IsdFCVFgeQ32A5
+         +sgQCq1HNQY64wBLwoQ1Am9hPeddoMFyLBP01aaWeZ+GVdubZtMd9SFotC1xvvectzqD
+         6HzO6XjwKBnxtm5mDs2o7UeiNn876kMUBjyglQ5qeK8wIEJsZFslCGZdhPyU7uUED3vL
+         4B64VgvMWYD3zo+0muHAI4ayDASU0V4u3pbleCxWdV8Lg8UJT9O+oGzMpBZifSQ0L83Z
+         UXOQ==
+X-Gm-Message-State: APjAAAU+77lfUDHNrWOjgYVqSx0MwCSOfd3zoIjkxZd/9bq2/FLLslbM
+        4l9JWCGYh80QmEczc9JeZ4HkE1E=
+X-Google-Smtp-Source: APXvYqzFbzx9GrmgaARCFfQiMUwuXl8kTNxLU516t82pISlYTBu+SlrvP4NiPa8v7l0HraFCWPQd8g==
+X-Received: by 2002:aca:458:: with SMTP id 85mr451640oie.56.1578516589248;
+        Wed, 08 Jan 2020 12:49:49 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id e17sm1507076otq.58.2020.01.08.12.49.48
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Jan 2020 12:49:49 -0800 (PST)
+Received: from rob (uid 1000)
+        (envelope-from rob@rob-hp-laptop)
+        id 220333
+        by rob-hp-laptop (DragonFly Mail Agent v0.11);
+        Wed, 08 Jan 2020 14:49:48 -0600
+Date:   Wed, 8 Jan 2020 14:49:48 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Benjamin Gaignard <benjamin.gaignard@st.com>
+Cc:     gregkh@linuxfoundation.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org,
+        hminas@synopsys.com, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com,
+        amelie.delaunay@st.com,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: Re: [PATCH v3] dt-bindings: usb: Convert DWC2 bindings to json-schema
+Message-ID: <20200108204948.GA9782@bogus>
+References: <20200107091630.12796-1-benjamin.gaignard@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200107191020.27475-1-tiny.windzz@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200107091630.12796-1-benjamin.gaignard@st.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jan 07, 2020 at 07:10:20PM +0000, Yangtao Li wrote:
-> Enable fimd device node which is a display controller, and add panel
-> node required by it.
+On Tue, 7 Jan 2020 10:16:30 +0100, Benjamin Gaignard wrote:
+> Convert DWC2 bindings to DT schema format using json-schema.
+> DWC2 is widely use but a couple of compatibles and properties
+> (vusb_d-supply,vusb_a-supply) were missing in dwc2.txt, the
+> patch add them.
 > 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
 > ---
-> v2:
-> -update commit msg and merge to one patch
-> ---
->  arch/arm/boot/dts/exynos4412-tiny4412.dts | 25 +++++++++++++++++++++++
+> CC: Minas Harutyunyan <hminas@synopsys.com>
+> CC: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> changes in version 3:
+> - put Rob Herring as maintainer
+> - change the example to use one of the listed compatible
+> 
+> changes in version 2:
+> - put Minas Harutyunyan <hminas@synopsys.com> as maintainer
+> - remove type and description from phy property
+> - remove description from compatible items
+> - simplify samsung,s3c6400-hsotg compatible handling
+> 
+>  Documentation/devicetree/bindings/usb/dwc2.txt  |  64 ----------
+>  Documentation/devicetree/bindings/usb/dwc2.yaml | 151 ++++++++++++++++++++++++
+>  2 files changed, 151 insertions(+), 64 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/usb/dwc2.txt
+>  create mode 100644 Documentation/devicetree/bindings/usb/dwc2.yaml
+> 
 
-Thanks, applied.
+Applied, thanks.
 
-Best regards,
-Krzysztof
-
+Rob
