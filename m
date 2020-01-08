@@ -2,158 +2,167 @@ Return-Path: <SRS0=UunK=25=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F17ECC33CA1
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jan 2020 11:54:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54FCBC282DD
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jan 2020 13:23:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B89C4206DA
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jan 2020 11:54:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F0BC2075D
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jan 2020 13:23:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qvA+Z8V4"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="c+yxA71N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727640AbgAHLye (ORCPT
+        id S1727648AbgAHNXw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 8 Jan 2020 06:54:34 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:34095 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727457AbgAHLye (ORCPT
+        Wed, 8 Jan 2020 08:23:52 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:60875 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726087AbgAHNXw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Jan 2020 06:54:34 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200108115432euoutp018d1fc7cbbf8cd83815964518a3b4ef70~n50O-FoXw0899808998euoutp01N
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Jan 2020 11:54:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200108115432euoutp018d1fc7cbbf8cd83815964518a3b4ef70~n50O-FoXw0899808998euoutp01N
+        Wed, 8 Jan 2020 08:23:52 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200108132350euoutp02dae287c465dd565e7ecfe01b46120e0e~n7CNLg3Eo1548515485euoutp02A
+        for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Jan 2020 13:23:50 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200108132350euoutp02dae287c465dd565e7ecfe01b46120e0e~n7CNLg3Eo1548515485euoutp02A
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1578484472;
-        bh=S7Fy11AC/q5Y/YYr5eYfAY4T3HeQUsLZyyIfA2EOGFk=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=qvA+Z8V4YWmKcvMamraub7nWWAKcJAmeEqq7vaV6YyVbIAtaF0wUD1J7QYTa1NyJC
-         OKVnOim05CLnMVWYrFOP6CXvo0oEBJK/HV4Uadv3kmbL/7VYbnODxyN5//0yRnqYF4
-         a0FSadQ7sqdOZ+Zm06qaFuwhcqCPe/2eM0xxMfZM=
+        s=mail20170921; t=1578489830;
+        bh=vlkCVhdICE1g4MM364vsZ5VbqdQdf/4uTZNggyFrW9Q=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=c+yxA71Nh794nkg8brjoYvYsl+7euFKaCoYjvBhR4cuQfWfK2MpHSagOv1X6m/ZyG
+         D78NGdeQMEmVBYRGElwW/2joIynCcLz/r1n7Ia7OjKj5vfpQP4wh0oHSMd3QSLhPPo
+         oKcqN7kmqIBjEFYpaMTtObtd4XcLarAFjXcEb83A=
 Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200108115432eucas1p1b303a2a01beb91c9df71be8b68f98dc7~n50OssV_o2629826298eucas1p14;
-        Wed,  8 Jan 2020 11:54:32 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 7F.A3.60698.8F2C51E5; Wed,  8
-        Jan 2020 11:54:32 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200108132350eucas1p2d58bb50b50d3336746802bbfb32a5d17~n7CNAQeuR1278412784eucas1p2Z;
+        Wed,  8 Jan 2020 13:23:50 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 3D.AF.60698.6E7D51E5; Wed,  8
+        Jan 2020 13:23:50 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200108115431eucas1p1098698b3784ebaf88d5935bb594effe1~n50OYuvd62548525485eucas1p13;
-        Wed,  8 Jan 2020 11:54:31 +0000 (GMT)
+        20200108132350eucas1p1476f4aa038dbf5ea199b84c5c82a25a5~n7CMqvSkY1935519355eucas1p10;
+        Wed,  8 Jan 2020 13:23:50 +0000 (GMT)
 Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200108115431eusmtrp18f8db22203da6678ac10eb4f8c7a8536~n50OYGdp22175621756eusmtrp1e;
-        Wed,  8 Jan 2020 11:54:31 +0000 (GMT)
-X-AuditID: cbfec7f5-a29ff7000001ed1a-ce-5e15c2f8d174
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200108132350eusmtrp250a3eb32693a004f118db0c56523ce66~n7CMqEuz61195311953eusmtrp2s;
+        Wed,  8 Jan 2020 13:23:50 +0000 (GMT)
+X-AuditID: cbfec7f5-a29ff7000001ed1a-9f-5e15d7e6d122
 Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id E8.96.08375.7F2C51E5; Wed,  8
-        Jan 2020 11:54:31 +0000 (GMT)
-Received: from [106.120.51.15] (unknown [106.120.51.15]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 44.A1.08375.6E7D51E5; Wed,  8
+        Jan 2020 13:23:50 +0000 (GMT)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
         eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200108115431eusmtip1391481d5edb32f44859f5fe3206e6f80~n50N1VZ2B1978219782eusmtip1J;
-        Wed,  8 Jan 2020 11:54:31 +0000 (GMT)
-Subject: Re: [alsa-devel] [PATCH v2] ASoC: max98090: save and restore SHDN
- when changing sensitive registers
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Tzung-Bi Shih <tzungbi@google.com>,
-        ALSA development <alsa-devel@alsa-project.org>,
-        Dylan Reid <dgreid@google.com>,
-        Jimmy Cheng-Yi Chiang <cychiang@google.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Takashi Iwai <tiwai@suse.de>
+        20200108132349eusmtip15b9cf16c83a41c808627c1c7bb3f8eb5~n7CMN4Dh91653416534eusmtip1P;
+        Wed,  8 Jan 2020 13:23:49 +0000 (GMT)
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <aed6ff4e-1c04-e20c-aa55-4f2b05952f38@samsung.com>
-Date:   Wed, 8 Jan 2020 12:54:30 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.3.1
-MIME-Version: 1.0
-In-Reply-To: <20191220120154.GB4790@sirena.org.uk>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTcRjG+e+cnR2XG8c58c3CcIWUpGYKHbxlYLD85IeiiDSXnqblpuw4
-        0y7khdSmrDItHV3EWZaXMm+lmeG85QznNZz5xTBImURYqRHZ5tHy2+99nufl+b/wJzFJD9+D
-        TFKnMRq1IllGCPHWvhWL77LJLXZfdb+IHh8x8ejSmVmCftedjdH55QWItlgaBPR8dzuiyyyd
-        PLrbls+n55psPLpjZF4QIZQ3LOYQ8opGrbyx5joh//n+Fi7XN9cgedPgJflio2e04KQwNIFJ
-        TkpnNP7hccLEsbJaLLVJmNG5VIqy0AtSh5xIoIJg6tEMoUNCUkI9QWAz1/K54TuCiaGVdWcR
-        wWN9C7axUjPUIOCMagTXlvowblhA0Hdfv5ZypdTQVVVLOFhK7YSJpTe4I4RRegzMtsk1g6AC
-        QLegW2MRFQ6GwhKeg3FqFzy4UYIc7EbFwGp5C4/LuMBA+SzuYCdqP1R9bFsrw6gd8HLh3jq7
-        w9TsQ56jDKhRAbR/nRVw746EL9YPBMeuMN/fvK5vh8HbRTi3kItgZqhewA1FCMZyyhCXCoHp
-        oV/2bdJesQeet/tz8iHoqO8WOGSgxDC54MI9QgzFrXcxThZBQZ6ES3uDof/Zv9qu4VHsJpIZ
-        Np1m2HSOYdM5hv+9FQivQe6MllUpGTZQzVzwYxUqVqtW+sWnqBqR/W8N/un/8Qp1/j5jQhSJ
-        ZM6iZaM0VsJXpLOZKhMCEpNJRT577ZIoQZF5kdGknNZokxnWhLaRuMxdFFg5FyOhlIo05jzD
-        pDKaDZdHOnlkoTB9R2Rv4VjQt61Cr6XK1w1hUVdlOdbRz+IodlXjdG44Ol55kO8pNV4+nGbq
-        9R+vi6t7GpxjNXtZt7yVR5x11nufMO1uy/YszDvq4Rt8SmzMP6asKOCHTkPfiPSO0ZxrjjlS
-        JSsmbJ8OZPQkeJeGHNccw4ZjrizOWJsHcqHcLMPZREWAD6ZhFX8BqyTJ+1cDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKIsWRmVeSWpSXmKPExsVy+t/xu7rfD4nGGRzpNba4cvEQk8XUh0/Y
-        LE4cbmS2aJ/ZwWhx/vwGdotXh3cxWsw4v4/J4vCbdlaLl5vfMFnsufiK3YHLY8PnJjaPBZtK
-        PTat6mTz+HZmIotH35ZVjB6bT1d7fN4kF8AepWdTlF9akqqQkV9cYqsUbWhhpGdoaaFnZGKp
-        Z2hsHmtlZKqkb2eTkpqTWZZapG+XoJdxecZq5oLNXBX7vk9lbGDcyNHFyMkhIWAisercBvYu
-        Ri4OIYGljBLXrr1igUjISJyc1sAKYQtL/LnWxQZR9JpRYsfi52BFwgJ5EgeXrGYDsUUElCWu
-        ft/LAlLELNDHLLHj8hywbiGBdSwSl98JgthsAoYSXW+7wBp4BewkZnVPYQKxWQRUJOb1T2EE
-        sUUFYiW2b37IDFEjKHFy5hOwZZwCRhJLbu8EizMLmEnMg6phFpCX2P52DpQtLnHryXymCYxC
-        s5C0z0LSMgtJyywkLQsYWVYxiqSWFuem5xYb6hUn5haX5qXrJefnbmIERum2Yz8372C8tDH4
-        EKMAB6MSD++PxSJxQqyJZcWVuYcYJTiYlUR4tXSAQrwpiZVVqUX58UWlOanFhxhNgZ6byCwl
-        mpwPTCB5JfGGpobmFpaG5sbmxmYWSuK8HQIHY4QE0hNLUrNTUwtSi2D6mDg4pRoYqz8q/fOW
-        P29qcHh3Yut/7blLeec/XbfQ/WWO6UJOa6kpOx1fMxlwhKsefaC/3LBuV8r1r+8+qm5ldOj+
-        pLan4eb01B1/lp2cfHRJ1QQzXpN3FbedVq/nyXkdV3lc6Ej8Msl3FrfeTZ6g6rQkdjILj4dQ
-        9FqLoxsPNP2QePOLkXu3SoLIhMVx05VYijMSDbWYi4oTAUinNCDoAgAA
-X-CMS-MailID: 20200108115431eucas1p1098698b3784ebaf88d5935bb594effe1
+To:     linux-samsung-soc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] phy: core: Fix error path in devm_of_phy_get()
+Date:   Wed,  8 Jan 2020 14:23:42 +0100
+Message-Id: <20200108132342.14635-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPIsWRmVeSWpSXmKPExsWy7djPc7rProvGGbQvk7XY+OQ0o8XGGetZ
+        LS487WGzOH9+A7vF5V1z2CxmnN/HZLH2yF12B3aPTas62Tz6tqxi9Hj6Yy+zx/Eb25k8Pm+S
+        C2CN4rJJSc3JLEst0rdL4MqYe/QIW8FJ0Yq5c86wNDB+F+pi5OSQEDCRmLXqBFsXIxeHkMAK
+        Rol9W/YyQzhfGCU+bnnHDFIlJPCZUeL7cT6YjnX9qxkhipYzSnxdMokJruPoyeWMIFVsAoYS
+        XW+72EBsEQFVic9tC9hBipgFWpgkLr7azASSEBawl1h0ZQeYzQJU1P5yDyuIzStgK/Gu/RAr
+        xDp5idUbDoDdJCFwmU1i5sczjBAJF4kn626zQ9jCEq+Ob4GyZST+75zPBNHQzCjx8Nxadgin
+        h1HictMMqG5riTvnfgHdxwF0k6bE+l36EGFHif1PprOChCUE+CRuvBUECTMDmZO2TWeGCPNK
+        dLRBA09NYtbxdXBrD164BFXiIXF8bgAk5GIlVl9byD6BUW4WwqoFjIyrGMVTS4tz01OLjfNS
+        y/WKE3OLS/PS9ZLzczcxApPB6X/Hv+5g3Pcn6RCjAAejEg/vj8UicUKsiWXFlbmHGCU4mJVE
+        eLV0gEK8KYmVValF+fFFpTmpxYcYpTlYlMR5jRe9jBUSSE8sSc1OTS1ILYLJMnFwSjUwel45
+        UlrDteH55ZNNZrvS3lmFNPGc9mbX4NwZ8dI65np1pswGufLTfDJJaSsO8i/Vvr7Duf6Ewkfv
+        pyzq4jxvr5yffV2F6UdgneAPp4wb2Xlr/u+WbszZtOXBQZ9nght2PKu7e91j1eXTfKbnru3I
+        43RuTyh7pfzKw+3El/Vz52+Q4wl8ZHvzvRJLcUaioRZzUXEiAPbOXPYCAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGLMWRmVeSWpSXmKPExsVy+t/xu7rProvGGTQ9YbfY+OQ0o8XGGetZ
+        LS487WGzOH9+A7vF5V1z2CxmnN/HZLH2yF12B3aPTas62Tz6tqxi9Hj6Yy+zx/Eb25k8Pm+S
+        C2CN0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL0MuY
+        e/QIW8FJ0Yq5c86wNDB+F+pi5OSQEDCRWNe/mrGLkYtDSGApo8Sd85vYIBIyEienNbBC2MIS
+        f651sUEUfWKUeHlgJ1iCTcBQouttF1iDiICqxOe2BewgRcwCHUwSR2f2soMkhAXsJRZd2cEE
+        YrMAFbW/3APWzCtgK/Gu/RDUBnmJ1RsOME9g5FnAyLCKUSS1tDg3PbfYUK84Mbe4NC9dLzk/
+        dxMjMAy3Hfu5eQfjpY3BhxgFOBiVeHh/LBaJE2JNLCuuzD3EKMHBrCTCq6UDFOJNSaysSi3K
+        jy8qzUktPsRoCrR8IrOUaHI+MEbySuINTQ3NLSwNzY3Njc0slMR5OwQOxggJpCeWpGanphak
+        FsH0MXFwSjUwssaqhrNlpp9Xn3Hsz3KhczyG8yP8p61bOmNN7L5Unu//WAx3T1gfLPGg/frx
+        zk1OE/qV6kItdu8wfmNl/E+H7eKEp8mn32mkT5oWYFzKN7tmiteb8/ziTUq8FROexUrbl6qc
+        naH2ODA222wzx+oJp/saNjXM4LusJsL3ilH0lq2Lj9Z8/fVrlFiKMxINtZiLihMBatS9aFkC
+        AAA=
+X-CMS-MailID: 20200108132350eucas1p1476f4aa038dbf5ea199b84c5c82a25a5
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20191219191651epcas5p2ab8031875093df401d9182e7c491eb3d
+X-RootMTR: 20200108132350eucas1p1476f4aa038dbf5ea199b84c5c82a25a5
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20191219191651epcas5p2ab8031875093df401d9182e7c491eb3d
-References: <20191218162422.GG3219@sirena.org.uk>
-        <ef908cb8-875e-4339-33bd-5997b594f022@samsung.com>
-        <20191219123709.GB5047@sirena.org.uk>
-        <aba9f63c-d993-e54e-4daa-9dbc35d0683b@samsung.com>
-        <20191219130559.GE5047@sirena.org.uk>
-        <a10269be-8caf-6e07-71c6-582a1d2c1458@samsung.com>
-        <CGME20191219191651epcas5p2ab8031875093df401d9182e7c491eb3d@epcas5p2.samsung.com>
-        <20191219191646.GH5047@sirena.org.uk>
-        <b0e57646-8a14-e6c0-9daa-28c353dcb77a@samsung.com>
-        <31bde14e-1fef-264a-ba1e-fc3051506bf3@samsung.com>
-        <20191220120154.GB4790@sirena.org.uk>
+X-CMS-RootMailID: 20200108132350eucas1p1476f4aa038dbf5ea199b84c5c82a25a5
+References: <CGME20200108132350eucas1p1476f4aa038dbf5ea199b84c5c82a25a5@eucas1p1.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Mark,
+Commit 5253fe05bb47 ("phy: core: Add consumer device link support") added
+support for consumer device links, but it missed proper update for error
+handling in devm_of_phy_get(). Fix this by adding proper return statement.
 
-On 20.12.2019 13:01, Mark Brown wrote:
-> On Fri, Dec 20, 2019 at 10:05:52AM +0100, Marek Szyprowski wrote:
->> On 20.12.2019 09:28, Marek Szyprowski wrote:
->>> I've tried initially to cherry-pick it to v5.4, but the the code
->>> didn't compile due to lack of some macros, so I've gave up trying. I
->>> will check that now and backport needed macros too if you think this
->>> would help.
->> Same issue. I've tried backporting it to each kernel release: 5.4, 5.3,
->> 5.2, 5.1 and 5.0 (with additional backporting "ASoC: core: add
->> SND_SOC_BYTES_E" and "ASoC: Define a set of DAPM pre/post-up events").
->> In all cases the lockdep warning and oops is the same. Backporting to
->> v4.9 requires more changes to get it even compiled, so I gave up.
-> OK, thanks - that's definitely not the recent refactorings then but
-> something that's been a problem for a long time.  I'm surprised nobody
-> else ran into anything if that's the case...
+This patch fixes the following invalid pointer dereference on
+Exynos5250-based Arndale board with multi_v7_defconfig:
 
-It took me a while to get back into this issue and investigate it in 
-details. It turned out to be an incorrect helper to get component object 
-in max98090_dapm_put_enum_double() function. Following patches: 
-https://lkml.org/lkml/2020/1/8/358 fix this and (independent) lockdep 
-issues.
+8<--- cut here ---
+Unable to handle kernel paging request at virtual address fffffe7f
+pgd = (ptrval)
+[fffffe7f] *pgd=6ffff841, *pte=00000000, *ppte=00000000
+Internal error: Oops: 27 [#1] SMP ARM
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.5.0-rc5-next-20200108 #167
+Hardware name: Samsung Exynos (Flattened Device Tree)
+PC is at device_link_add+0x68/0x4c4
+LR is at device_link_add+0x68/0x4c4
+...
+Process swapper/0 (pid: 1, stack limit = 0x(ptrval))
+...
+[<c0984d70>] (device_link_add) from [<c0707e8c>] (devm_of_phy_get+0x6c/0xb0)
+[<c0707e8c>] (devm_of_phy_get) from [<c0a0deb8>] (ahci_platform_get_phy+0x28/0xe0)
+[<c0a0deb8>] (ahci_platform_get_phy) from [<c0a0e64c>] (ahci_platform_get_resources+0x398/0x48c)
+[<c0a0e64c>] (ahci_platform_get_resources) from [<c0a0daec>] (ahci_probe+0x14/0xb4)
+[<c0a0daec>] (ahci_probe) from [<c098a1ec>] (platform_drv_probe+0x48/0x9c)
+[<c098a1ec>] (platform_drv_probe) from [<c0988214>] (really_probe+0x1dc/0x33c)
+[<c0988214>] (really_probe) from [<c09884f4>] (driver_probe_device+0x60/0x164)
+[<c09884f4>] (driver_probe_device) from [<c09887a0>] (device_driver_attach+0x58/0x60)
+[<c09887a0>] (device_driver_attach) from [<c0988828>] (__driver_attach+0x80/0xbc)
+[<c0988828>] (__driver_attach) from [<c09865b4>] (bus_for_each_dev+0x68/0xb4)
+[<c09865b4>] (bus_for_each_dev) from [<c0987594>] (bus_add_driver+0x160/0x1e4)
+[<c0987594>] (bus_add_driver) from [<c09892c0>] (driver_register+0x78/0x10c)
+[<c09892c0>] (driver_register) from [<c0302f14>] (do_one_initcall+0x54/0x220)
+[<c0302f14>] (do_one_initcall) from [<c1500f4c>] (kernel_init_freeable+0x150/0x1b4)
+[<c1500f4c>] (kernel_init_freeable) from [<c0ef6b34>] (kernel_init+0x8/0x10c)
+[<c0ef6b34>] (kernel_init) from [<c03010e8>] (ret_from_fork+0x14/0x2c)
+...
 
-Best regards
+Fixes: 5253fe05bb47 ("phy: core: Add consumer device link support")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/phy/phy-core.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+index 8dfb4868c8c3..2eb28cc2d2dc 100644
+--- a/drivers/phy/phy-core.c
++++ b/drivers/phy/phy-core.c
+@@ -799,6 +799,7 @@ struct phy *devm_of_phy_get(struct device *dev, struct device_node *np,
+ 		devres_add(dev, ptr);
+ 	} else {
+ 		devres_free(ptr);
++		return phy;
+ 	}
+ 
+ 	link = device_link_add(dev, &phy->dev, DL_FLAG_STATELESS);
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.17.1
 
