@@ -2,64 +2,64 @@ Return-Path: <SRS0=ZqIQ=26=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD700C32771
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 05:11:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE8F1C32771
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 05:36:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1AB520678
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 05:11:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7441206ED
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 05:36:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VBLEGYkd"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="huiN23DI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725932AbgAIFLu (ORCPT
+        id S1725932AbgAIFgf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Jan 2020 00:11:50 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:37846 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725830AbgAIFLu (ORCPT
+        Thu, 9 Jan 2020 00:36:35 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:38321 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725922AbgAIFgf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Jan 2020 00:11:50 -0500
-Received: by mail-il1-f196.google.com with SMTP id t8so4687812iln.4
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Jan 2020 21:11:49 -0800 (PST)
+        Thu, 9 Jan 2020 00:36:35 -0500
+Received: by mail-il1-f194.google.com with SMTP id f5so4703718ilq.5
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Jan 2020 21:36:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=UfHlaQy6US7aBw4wjE4YMzRfD8j4wvVn9C/uKXknGvE=;
-        b=VBLEGYkdTZtdqR94sj6Tjf0h7XJq62AIYsTyd021wihafB/YFnQabl26zlE6suDM3b
-         YDoyoxxzX/u6qN8yuTxaZE7sLz5INyP7B2NVAKQbaOU7p3+SRqtKHOLSel8BnW4EvEmL
-         HJVwLSrnwsWoy2OT6r+FzNg3Hb7kHcxo6X5QyujDVSPzL+TMS6UJ0D+23U6qH8FJ+O6X
-         D2Mqip21qT/RzMp6BncnERjzOwUsWoS9AjuWBmAr5AhrAiQONi/7eUzgjF8PkTH1JsCg
-         P+6CaXE7Ir4pSrKnQRBuCewXmK+CuwIUj8SkT9sHuobdiK8s38RXGkToOdIhZeygll+8
-         ZIcw==
+        bh=sAHhoFZ0iYCPxYt+rh/Px3+8GOp5DO3V29oeS42DXAM=;
+        b=huiN23DIYcPHVv1KglkNFE9hwhktEqKgtWXiSkSJK5LmJDTbV3ps3AzdNKFwbVyRLU
+         j6622puSU0EYgKiTBzKbjnldBj6p+SqrQ5IAZDpUi8Mwg/UESiWJuv042WLDon1jb0fb
+         eG6eNsVZVo3F6z3ivbqJ842nbgPQHAGVoqVTN2RjedMNDHo32ifXrKlI4YvixtBl7NHU
+         2st3DsieNEM8T0b4/zNVLJJWvpkuCbrnmBaRNyYuw+F/Eviulg7v7aA8N2/pQkL2Ybet
+         g/9n823BtG2EUxnmgbY6Vzbo5Id0yUpX+Kfy4DlJQVetjj4ZGHYyMnjKI3X+dy7LGIYJ
+         LJyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=UfHlaQy6US7aBw4wjE4YMzRfD8j4wvVn9C/uKXknGvE=;
-        b=DCNLcL21ui72GTwpDxFGpkWxzgMj2l98ehwfkvOj65ESAy7IhaVH7wj0lALhEgEh1U
-         B3P1PYdihuIhayWF3VgbzSAkNtpWLKfJ3uzI7OJK7TUANxY3FuaZKkgU7Ur6t5zLzFSD
-         x4O7e7ym9DbTTBIISbW0yO1VstFJmJgVbLy8Cg4Lh+347UQ7SoGMe7ulF1XTOS4HkLQs
-         XWXCAAv78KkxlE1bttHlTCGsIMq+NHBpdCM19lu9rf4L/D72wSNOkzRuuLEM2b2pzCGE
-         7UCWgbiAOZVk0o8Q9mzkLfIqGdjt0Y3Qt/3o25dcUezuU0wa/CrupEkhnHxYQG/Usk6w
-         afIA==
-X-Gm-Message-State: APjAAAXaMOz8kAKlGAVMI0vdUh4Npq5GkVTl/X/1iNCfwcfO70JB1tVT
-        MifRuN1ABbhVxax1vDwLkAtboRg8OxFemG+D/+n8hw==
-X-Google-Smtp-Source: APXvYqy6jhW/BWgmeQryfExSbB5ZZCHIWOH5y455b2gRqd8d/+uz2PUeTmV3LSSnzW9mzk+cRkzMj2Q25Jj/hNuJe7U=
-X-Received: by 2002:a92:2907:: with SMTP id l7mr7102602ilg.140.1578546709305;
- Wed, 08 Jan 2020 21:11:49 -0800 (PST)
+        bh=sAHhoFZ0iYCPxYt+rh/Px3+8GOp5DO3V29oeS42DXAM=;
+        b=RcDuhIBc0OWOpcF03yB7kh9nn+iDTDXmOTZYwWHAuQw5BXtiXE+R72TArOgnn6P72r
+         PYpNH4QhbCFnKQydw+nwkHzzGjTCOYnrl0hmfJoNNzLdxV5Ozh0D86pzW/mdUYWucWVb
+         siZB8b9CQ937cc+BExPyIgjt7kVRvjtTA+Cj18SwxpvQpCL2c1vNwhdF7cUxJuRn8cst
+         4vb2q1+Pn0PzpirBk6TLCAeywdGfw2tz0j2FAIOCiAp/XVq2MBxzRGaTyqLwEou53Hzo
+         4K8KhBeYEMfm12hCOyJM8HDKGtFAQ+FFBhe2uInZ0+Ey/D8xOGfkmaCzGUsjMcL4wqyp
+         DGoA==
+X-Gm-Message-State: APjAAAXJJki9gmdIXcUW9ZFyvHkCe/YSHReGc0L5Pg4MTBmBrpChfl9R
+        5Ll7bqfGAQiKXc5EPy0TTZpvDpBAx8tceJVaWbiEt0PdiTw=
+X-Google-Smtp-Source: APXvYqzFc89SrQMcMWBXOOpciBA/UbRyMnmDTvKUFY09Y6diFKdpRQB/cIzzntYu/ZXrqm6Imlk1zgpmom3NbH7Nup8=
+X-Received: by 2002:a92:981b:: with SMTP id l27mr7483819ili.118.1578548194052;
+ Wed, 08 Jan 2020 21:36:34 -0800 (PST)
 MIME-Version: 1.0
-References: <CGME20200108115027eucas1p2abcd40e359e993e5b471229b02b69fc3@eucas1p2.samsung.com>
- <20200108115007.31095-1-m.szyprowski@samsung.com>
-In-Reply-To: <20200108115007.31095-1-m.szyprowski@samsung.com>
+References: <CGME20200108115027eucas1p1d3645ba53703780679c662921efbca78@eucas1p1.samsung.com>
+ <20200108115007.31095-1-m.szyprowski@samsung.com> <20200108115007.31095-2-m.szyprowski@samsung.com>
+In-Reply-To: <20200108115007.31095-2-m.szyprowski@samsung.com>
 From:   Tzung-Bi Shih <tzungbi@google.com>
-Date:   Thu, 9 Jan 2020 13:11:38 +0800
-Message-ID: <CA+Px+wUo7i331kEuc2mjE9uqSna7Lxnua=hvgPc+0T2YdeCgMg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ASoC: max98090: fix incorrect helper in max98090_dapm_put_enum_double()
+Date:   Thu, 9 Jan 2020 13:36:22 +0800
+Message-ID: <CA+Px+wXkFE5b_8bLz7-c95TvEdqHGD5s-XKRYMVr40xQkqTWxQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ASoC: max98090: fix lockdep warning
 To:     Marek Szyprowski <m.szyprowski@samsung.com>
 Cc:     ALSA development <alsa-devel@alsa-project.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
@@ -78,25 +78,67 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 On Wed, Jan 8, 2020 at 7:50 PM Marek Szyprowski
 <m.szyprowski@samsung.com> wrote:
-> Fixes: 62d5ae4cafb7 ("ASoC: max98090: save and restore SHDN when changing sensitive registers")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Tzung-Bi Shih <tzungbi@google.com>
+> Fix this by introducing a separate mutex only for serializing the SHDN
+> hardware register related operations.
 
-Thanks for finding and fixing the bug.
+This fix makes less sense to me.  We used dapm_mutex intentionally
+because: both DAPM and userspace mixer control would change SHDN bit
+at the same time.
 
-The fix also reminded me: there are two possible "context" to call
-max98090_dapm_put_enum_double( ): DAPM and userspace mixer control.
-- max98090_shdn_save( ) is designed for mixer control because it
-acquires dapm_mutex.
-- max98090_shdn_save_locked( ) is designed for DAPM without acquiring lock.
+> This fixes the following lockdep warning observed on Exynos4412-based
+> Odroid U3 board:
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 5.5.0-rc5-next-20200107 #166 Not tainted
+> ------------------------------------------------------
+> alsactl/1104 is trying to acquire lock:
+> ed0d50f4 (&card->dapm_mutex){+.+.}, at: max98090_shdn_save+0x1c/0x28
+>
+> but task is already holding lock:
+> edb4b49c (&card->controls_rwsem){++++}, at: snd_ctl_ioctl+0xcc/0xbb8
+>
+> which lock already depends on the new lock.
+>
+> the existing dependency chain (in reverse order) is:
+>
+> -> #1 (&card->controls_rwsem){++++}:
+>        snd_ctl_add_replace+0x3c/0x84
+>        dapm_create_or_share_kcontrol+0x24c/0x2e0
+>        snd_soc_dapm_new_widgets+0x308/0x594
+>        snd_soc_bind_card+0x80c/0xad4
+>        devm_snd_soc_register_card+0x34/0x6c
+>        odroid_audio_probe+0x288/0x34c
+>        platform_drv_probe+0x6c/0xa4
+>        really_probe+0x200/0x490
+>        driver_probe_device+0x78/0x1f8
+>        bus_for_each_drv+0x74/0xb8
+>        __device_attach+0xd4/0x16c
+>        bus_probe_device+0x88/0x90
+>        deferred_probe_work_func+0x3c/0xd0
+>        process_one_work+0x22c/0x7c4
+>        worker_thread+0x44/0x524
+>        kthread+0x130/0x164
+>        ret_from_fork+0x14/0x20
+>        0x0
+>
+> -> #0 (&card->dapm_mutex){+.+.}:
+>        lock_acquire+0xe8/0x270
+>        __mutex_lock+0x9c/0xb18
+>        mutex_lock_nested+0x1c/0x24
+>        max98090_shdn_save+0x1c/0x28
+>        max98090_put_enum_double+0x20/0x40
+>        snd_ctl_ioctl+0x190/0xbb8
+>        ksys_ioctl+0x470/0xaf8
+>        ret_fast_syscall+0x0/0x28
+>        0xbefaa564
 
-Current code:
-> +static int max98090_dapm_put_enum_double(struct snd_kcontrol *kcontrol,
-[snip]
-> + max98090_shdn_save(max98090);
-> + ret = snd_soc_dapm_put_enum_double(kcontrol, ucontrol);
-> + max98090_shdn_restore(max98090);
+As the stack trace suggested: when the card was still registering,
+alsactl can see the mixer control and try to change it.
 
-Should it cause a deadlock if DAPM calls the
-max98090_dapm_put_enum_double( )?  I didn't see a deadlock last time I
-tested the series.  Will do further analysis on this.
+We have a discussion on an older thread
+(https://mailman.alsa-project.org/pipermail/alsa-devel/2019-December/160454.html).
+It is weird: userspace should not see things (e.g. no controlC0) until
+snd_card_register( ).
+
+I would like to spend some time to find the root cause.  It would be a
+little challenging though (I have no real runtime to test...).
