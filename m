@@ -2,110 +2,246 @@ Return-Path: <SRS0=ZqIQ=26=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4690C282DD
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 21:18:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 420E1C33CA1
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 21:29:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8446A2073A
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 21:18:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C93F2082E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 21:29:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578604716;
-	bh=jrVfvp+e9h+2AmtydUAghLIE+M/WQkIoKpwscPAmfi8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=VBOg04GPr5QVcqpbr1rHzOSZCiClh9IDw2KvwCcNXRqvyEgSf9XCHR0WyVWkYzzNQ
-	 xuiDzY9zSnFzYblNGvlDLoyC8P/874/JvX1GCrJAya5ChsSP1lQxeUyyf+04Nve+Ry
-	 fPRQxIvvXZfMPB3n+7IVrhRofE9MvnEXy7GPoUyo=
+	s=default; t=1578605367;
+	bh=4qUrwsU7l12sukuigGsKfA/uwTxn6M5JeiQeo3OHO6g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
+	b=lOrEGhGb1EQh1Ur5PBVT2IAWpgpxw5nctlgdJr0Fl5XOWwK3xMOp4otieOi30GE7+
+	 sc5F0Q76zNqUBPJ/my878G1sc1dN9ydjnzPkNFmYuhXn76uIEAEQUXi/4eU/cfkRcW
+	 cT1BnNBMNIDuH9Bf3uUiP6KLWK0xKDiZzZK4Igzo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725971AbgAIVSg (ORCPT
+        id S1728686AbgAIV30 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Jan 2020 16:18:36 -0500
-Received: from foss.arm.com ([217.140.110.172]:36852 "EHLO foss.arm.com"
+        Thu, 9 Jan 2020 16:29:26 -0500
+Received: from foss.arm.com ([217.140.110.172]:36978 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725829AbgAIVSg (ORCPT
+        id S1725763AbgAIV30 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Jan 2020 16:18:36 -0500
+        Thu, 9 Jan 2020 16:29:26 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A28B031B;
-        Thu,  9 Jan 2020 13:18:35 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AFD9F1063;
+        Thu,  9 Jan 2020 13:29:25 -0800 (PST)
 Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 25B623F534;
-        Thu,  9 Jan 2020 13:18:35 -0800 (PST)
-Date:   Thu, 9 Jan 2020 21:18:33 +0000
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3763E3F534;
+        Thu,  9 Jan 2020 13:29:25 -0800 (PST)
+Date:   Thu, 09 Jan 2020 21:29:23 +0000
 From:   Mark Brown <broonie@kernel.org>
 To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Tzung-Bi Shih <tzungbi@google.com>,
-        ALSA development <alsa-devel@alsa-project.org>,
+Cc:     alsa-devel@alsa-project.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Dylan Reid <dgreid@google.com>,
         Jimmy Cheng-Yi Chiang <cychiang@google.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: Re: [alsa-devel] [PATCH v2] ASoC: max98090: save and restore SHDN
- when changing sensitive registers
-Message-ID: <20200109211832.GI3702@sirena.org.uk>
-References: <20191219123709.GB5047@sirena.org.uk>
- <aba9f63c-d993-e54e-4daa-9dbc35d0683b@samsung.com>
- <20191219130559.GE5047@sirena.org.uk>
- <a10269be-8caf-6e07-71c6-582a1d2c1458@samsung.com>
- <CGME20191219191651epcas5p2ab8031875093df401d9182e7c491eb3d@epcas5p2.samsung.com>
- <20191219191646.GH5047@sirena.org.uk>
- <b0e57646-8a14-e6c0-9daa-28c353dcb77a@samsung.com>
- <31bde14e-1fef-264a-ba1e-fc3051506bf3@samsung.com>
- <20191220120154.GB4790@sirena.org.uk>
- <aed6ff4e-1c04-e20c-aa55-4f2b05952f38@samsung.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="oxV4ZoPwBLqAyY+a"
-Content-Disposition: inline
-In-Reply-To: <aed6ff4e-1c04-e20c-aa55-4f2b05952f38@samsung.com>
-X-Cookie: Killing turkeys causes winter.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tzung-Bi Shih <tzungbi@google.com>
+Subject: Applied "ASoC: max98090: fix lockdep warning" to the asoc tree
+In-Reply-To: <20200108115007.31095-2-m.szyprowski@samsung.com>
+Message-Id: <applied-20200108115007.31095-2-m.szyprowski@samsung.com>
+X-Patchwork-Hint: ignore
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+The patch
 
---oxV4ZoPwBLqAyY+a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+   ASoC: max98090: fix lockdep warning
 
-On Wed, Jan 08, 2020 at 12:54:30PM +0100, Marek Szyprowski wrote:
-> On 20.12.2019 13:01, Mark Brown wrote:
+has been applied to the asoc tree at
 
-> > OK, thanks - that's definitely not the recent refactorings then but
-> > something that's been a problem for a long time.  I'm surprised nobody
-> > else ran into anything if that's the case...
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.6
 
-> It took me a while to get back into this issue and investigate it in=20
-> details. It turned out to be an incorrect helper to get component object=
-=20
-> in max98090_dapm_put_enum_double() function. Following patches:=20
-> https://lkml.org/lkml/2020/1/8/358 fix this and (independent) lockdep=20
-> issues.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Great - I already applied those.  Thanks so much for taking the time to
-dig into this and figure out what the underlying problem was!
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
---oxV4ZoPwBLqAyY+a
-Content-Type: application/pgp-signature; name="signature.asc"
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
------BEGIN PGP SIGNATURE-----
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4XmKgACgkQJNaLcl1U
-h9BWQwf7BHTGKaPMG4wpsTigkhm128e94wCef8tBKBif+xS1hZL0TvxZZk0OpSDc
-8kG+dxM64qp7AQio2LFSxFxyetR/E2U2NeZDfzQb1i1fsSYDC4SvKd9ah2LOqle4
-p0xqJoRUwJT9AH2fT/TEy+H41dT6JLjeI+mU1fOd2U3QzWLn44+K0q9RDjNZr9o/
-JGAXz+90+UwsrLgZv2+b12WePS9Meo+9D6uda4pqP8pUsrAyhtm+GwqTEx12nMuI
-zecZrvny60em/OskNoClNCBkUEVXwgxQlm43kDxXXcHdHqnE0FS3zERcVyEHWjYK
-zqQCFqhBWcY6X4wGKCdMDSeIOLVyaA==
-=wRRf
------END PGP SIGNATURE-----
+Thanks,
+Mark
 
---oxV4ZoPwBLqAyY+a--
+From 2dc98af62c32ff6c8b9a32365346c5c407e291a8 Mon Sep 17 00:00:00 2001
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Date: Wed, 8 Jan 2020 12:50:07 +0100
+Subject: [PATCH] ASoC: max98090: fix lockdep warning
+
+Commit 62d5ae4cafb7 ("ASoC: max98090: save and restore SHDN when changing
+sensitive registers") extended the code for handling many controls by
+adding a custom put function to them. That new custom put function
+properly handles relations between codec's hardware registers. However
+they used card->dapm_mutex to properly serialize those operations. This
+in turn triggers a lockdep warning about possible circular dependency.
+Fix this by introducing a separate mutex only for serializing the SHDN
+hardware register related operations.
+
+This fixes the following lockdep warning observed on Exynos4412-based
+Odroid U3 board:
+======================================================
+WARNING: possible circular locking dependency detected
+5.5.0-rc5-next-20200107 #166 Not tainted
+------------------------------------------------------
+alsactl/1104 is trying to acquire lock:
+ed0d50f4 (&card->dapm_mutex){+.+.}, at: max98090_shdn_save+0x1c/0x28
+
+but task is already holding lock:
+edb4b49c (&card->controls_rwsem){++++}, at: snd_ctl_ioctl+0xcc/0xbb8
+
+which lock already depends on the new lock.
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&card->controls_rwsem){++++}:
+       snd_ctl_add_replace+0x3c/0x84
+       dapm_create_or_share_kcontrol+0x24c/0x2e0
+       snd_soc_dapm_new_widgets+0x308/0x594
+       snd_soc_bind_card+0x80c/0xad4
+       devm_snd_soc_register_card+0x34/0x6c
+       odroid_audio_probe+0x288/0x34c
+       platform_drv_probe+0x6c/0xa4
+       really_probe+0x200/0x490
+       driver_probe_device+0x78/0x1f8
+       bus_for_each_drv+0x74/0xb8
+       __device_attach+0xd4/0x16c
+       bus_probe_device+0x88/0x90
+       deferred_probe_work_func+0x3c/0xd0
+       process_one_work+0x22c/0x7c4
+       worker_thread+0x44/0x524
+       kthread+0x130/0x164
+       ret_from_fork+0x14/0x20
+       0x0
+
+-> #0 (&card->dapm_mutex){+.+.}:
+       lock_acquire+0xe8/0x270
+       __mutex_lock+0x9c/0xb18
+       mutex_lock_nested+0x1c/0x24
+       max98090_shdn_save+0x1c/0x28
+       max98090_put_enum_double+0x20/0x40
+       snd_ctl_ioctl+0x190/0xbb8
+       ksys_ioctl+0x470/0xaf8
+       ret_fast_syscall+0x0/0x28
+       0xbefaa564
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&card->controls_rwsem);
+                               lock(&card->dapm_mutex);
+                               lock(&card->controls_rwsem);
+  lock(&card->dapm_mutex);
+
+ *** DEADLOCK ***
+
+1 lock held by alsactl/1104:
+ #0: edb4b49c (&card->controls_rwsem){++++}, at: snd_ctl_ioctl+0xcc/0xbb8
+
+stack backtrace:
+CPU: 0 PID: 1104 Comm: alsactl Not tainted 5.5.0-rc5-next-20200107 #166
+Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+(unwind_backtrace) from [<c010e180>] (show_stack+0x10/0x14)
+(show_stack) from [<c0b2a09c>] (dump_stack+0xb4/0xe0)
+(dump_stack) from [<c018a1c0>] (check_noncircular+0x1ec/0x208)
+(check_noncircular) from [<c018c5dc>] (__lock_acquire+0x1210/0x25ec)
+(__lock_acquire) from [<c018e2d8>] (lock_acquire+0xe8/0x270)
+(lock_acquire) from [<c0b49678>] (__mutex_lock+0x9c/0xb18)
+(__mutex_lock) from [<c0b4a110>] (mutex_lock_nested+0x1c/0x24)
+(mutex_lock_nested) from [<c0839b3c>] (max98090_shdn_save+0x1c/0x28)
+(max98090_shdn_save) from [<c083a5b8>] (max98090_put_enum_double+0x20/0x40)
+(max98090_put_enum_double) from [<c080d0e8>] (snd_ctl_ioctl+0x190/0xbb8)
+(snd_ctl_ioctl) from [<c02cafec>] (ksys_ioctl+0x470/0xaf8)
+(ksys_ioctl) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
+...
+
+Fixes: 62d5ae4cafb7 ("ASoC: max98090: save and restore SHDN when changing sensitive registers")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Link: https://lore.kernel.org/r/20200108115007.31095-2-m.szyprowski@samsung.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/max98090.c | 10 ++++++----
+ sound/soc/codecs/max98090.h |  1 +
+ 2 files changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/sound/soc/codecs/max98090.c b/sound/soc/codecs/max98090.c
+index ede03663cbed..ba0e3ba162f8 100644
+--- a/sound/soc/codecs/max98090.c
++++ b/sound/soc/codecs/max98090.c
+@@ -52,14 +52,14 @@ static void max98090_shdn_restore_locked(struct max98090_priv *max98090)
+ 
+ static void max98090_shdn_save(struct max98090_priv *max98090)
+ {
+-	mutex_lock(&max98090->component->card->dapm_mutex);
++	mutex_lock(&max98090->shdn_lock);
+ 	max98090_shdn_save_locked(max98090);
+ }
+ 
+ static void max98090_shdn_restore(struct max98090_priv *max98090)
+ {
+ 	max98090_shdn_restore_locked(max98090);
+-	mutex_unlock(&max98090->component->card->dapm_mutex);
++	mutex_unlock(&max98090->shdn_lock);
+ }
+ 
+ static int max98090_put_volsw(struct snd_kcontrol *kcontrol,
+@@ -2313,12 +2313,12 @@ static void max98090_pll_work(struct max98090_priv *max98090)
+ 	 */
+ 
+ 	/* Toggle shutdown OFF then ON */
+-	mutex_lock(&component->card->dapm_mutex);
++	mutex_lock(&max98090->shdn_lock);
+ 	snd_soc_component_update_bits(component, M98090_REG_DEVICE_SHUTDOWN,
+ 			    M98090_SHDNN_MASK, 0);
+ 	snd_soc_component_update_bits(component, M98090_REG_DEVICE_SHUTDOWN,
+ 			    M98090_SHDNN_MASK, M98090_SHDNN_MASK);
+-	mutex_unlock(&component->card->dapm_mutex);
++	mutex_unlock(&max98090->shdn_lock);
+ 
+ 	for (i = 0; i < 10; ++i) {
+ 		/* Give PLL time to lock */
+@@ -2731,6 +2731,8 @@ static int max98090_i2c_probe(struct i2c_client *i2c,
+ 	if (max98090 == NULL)
+ 		return -ENOMEM;
+ 
++	mutex_init(&max98090->shdn_lock);
++
+ 	if (ACPI_HANDLE(&i2c->dev)) {
+ 		acpi_id = acpi_match_device(i2c->dev.driver->acpi_match_table,
+ 					    &i2c->dev);
+diff --git a/sound/soc/codecs/max98090.h b/sound/soc/codecs/max98090.h
+index 0a31708b7df7..dabd8be34a01 100644
+--- a/sound/soc/codecs/max98090.h
++++ b/sound/soc/codecs/max98090.h
+@@ -1539,6 +1539,7 @@ struct max98090_priv {
+ 	unsigned int pa2en;
+ 	unsigned int sidetone;
+ 	bool master;
++	struct mutex shdn_lock;
+ 	int saved_count;
+ 	int saved_shdn;
+ };
+-- 
+2.20.1
+
