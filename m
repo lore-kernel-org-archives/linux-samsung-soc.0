@@ -2,204 +2,173 @@ Return-Path: <SRS0=ZqIQ=26=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8D2AC32771
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 11:09:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BABA3C33CA1
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 11:45:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88E6E2077B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 11:09:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 873E82075D
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 11:45:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ME3Z9YUL"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QMff/w1W"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730521AbgAILJH (ORCPT
+        id S1728569AbgAILpa (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Jan 2020 06:09:07 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:36179 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729239AbgAILJH (ORCPT
+        Thu, 9 Jan 2020 06:45:30 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:46862 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728571AbgAILp1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Jan 2020 06:09:07 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200109110905euoutp01764a4568f12fdd619747fbb4f7843c38~oM11GiueY0101201012euoutp01m
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Jan 2020 11:09:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200109110905euoutp01764a4568f12fdd619747fbb4f7843c38~oM11GiueY0101201012euoutp01m
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1578568145;
-        bh=tism4RfoqXjIFyAn12kvdI+qYh6axaml1VxlqbIWZzA=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=ME3Z9YUL8ZXjgC4xU/XWd+iRnbAMUfzu1XWHvNCQaBhiUdrCDitW5jVeWC+muXOc7
-         +d85hIG+TY3FpKgFoFeEeMyzQPFFNRhStiVMxK87zObIX7RwsdfThth9G930IDCbbK
-         qLj5lVP6hdDohQJXXqy/2cC7NewbxId9APmGpKng=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200109110904eucas1p161603f6d573aeba1d98e8d2e2eaf0708~oM10wWG5E2307623076eucas1p14;
-        Thu,  9 Jan 2020 11:09:04 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 97.C3.61286.0D9071E5; Thu,  9
-        Jan 2020 11:09:04 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200109110904eucas1p2e41cddd985fe74c2cea897c79c62de1d~oM10QrLAM0643506435eucas1p26;
-        Thu,  9 Jan 2020 11:09:04 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200109110904eusmtrp2db1a8f5de2f4722278c346c69e37b7e4~oM10PsF_a2478324783eusmtrp2W;
-        Thu,  9 Jan 2020 11:09:04 +0000 (GMT)
-X-AuditID: cbfec7f2-f0bff7000001ef66-63-5e1709d0f869
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 56.9C.08375.0D9071E5; Thu,  9
-        Jan 2020 11:09:04 +0000 (GMT)
-Received: from [106.120.51.15] (unknown [106.120.51.15]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200109110903eusmtip168d3934000f5ff36bd9c2b929d3437ed~oM1zpIKD52723827238eusmtip1C;
-        Thu,  9 Jan 2020 11:09:03 +0000 (GMT)
-Subject: Re: [PATCH 2/2] ASoC: max98090: fix lockdep warning
-To:     Tzung-Bi Shih <tzungbi@google.com>
-Cc:     ALSA development <alsa-devel@alsa-project.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Dylan Reid <dgreid@google.com>,
-        Jimmy Cheng-Yi Chiang <cychiang@google.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <83169752-ac05-d1b1-ece9-fbe1109287cf@samsung.com>
-Date:   Thu, 9 Jan 2020 12:09:03 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.3.1
+        Thu, 9 Jan 2020 06:45:27 -0500
+Received: by mail-wr1-f66.google.com with SMTP id z7so6982538wrl.13
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Jan 2020 03:45:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=M+Hleybvc0xNgkFFNo5eVdjk4X0NArxdjlsDgPzB5xM=;
+        b=QMff/w1W9s6CsJj7ISgeRx7ZokETKM1nkN+g0axCcpzfZHTd12c1zJ5D+3CHxqwvXE
+         s0k66KlUh3BR7eP7CwGA8+3/BP5ELuADkxMGo4M9/GAGivWntmJQpYwH1TUumw8gW2Da
+         3WioL9jhSPLhwcj2yKVHIpVfXrXXrXdKWEU/rsXeQEHoej8vPyA/iKLBu5AzX0QoFZYm
+         0vyPMJVvnmx3ktn8dFkHTuaGOw9HziD5NrSodSgOWBcH+SiJA7RsOHSNrHnzUSdOFciK
+         QFm7Ly+EYGZMZa72e0H9rkgadLLCSDC+kWdBvN8Cp6kQ0zdj4xD2Y9OangAPTDz9kiWC
+         +0oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=M+Hleybvc0xNgkFFNo5eVdjk4X0NArxdjlsDgPzB5xM=;
+        b=pKrPxutNB37a6/U0OFT/lUOjPwOFfi/Pstsl9aLdQbpY6EbIWJWbToUCCBSgFah4E5
+         Feu3M8Ddwb2MfwvzoS8Bvzi6jDJHrIUu0ELSlEWhRcD9keaCzgfdOSmJBMbXiFjESEQS
+         bLZUcT5sONIdnPtBcVwHZCQayxw64sQxNO9RppLvdPU/zDgieN3cDcLCrYMnNbPXoVWa
+         AXET2eHP8Mxis34ZnZfc80sQ0YtYX/2OgNd+xksCwKYYsc4Pip37ckTT2sCOeQB0CZSi
+         U6QNfEpVY7WHTyu7wc4oy1xunyIm67qu8kMK/A2j4Cp4AX+nYJ3MN76v64EBbx3hP/WL
+         ya7A==
+X-Gm-Message-State: APjAAAVad/Wibz1IPJ/DtHDgGWe2EgMHDgBQIFzPg44sUDTSrhLVpSjI
+        G5ePFp3Nr70pVWpe7TVb2nQGow==
+X-Google-Smtp-Source: APXvYqz13xiaB2c/AHMygGlCgFvL4DXkCGf0TFO1taGJ+xr9xsy5Q8LnIcRYOXeQIqh7/inPIHKmNw==
+X-Received: by 2002:a5d:6886:: with SMTP id h6mr10473834wru.154.1578570325074;
+        Thu, 09 Jan 2020 03:45:25 -0800 (PST)
+Received: from ?IPv6:2a01:e34:ed2f:f020:f1d5:61e0:e9d8:1c3d? ([2a01:e34:ed2f:f020:f1d5:61e0:e9d8:1c3d])
+        by smtp.googlemail.com with ESMTPSA id b16sm8163491wrj.23.2020.01.09.03.45.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Jan 2020 03:45:24 -0800 (PST)
+Subject: Re: [PATCH v2 06/20] thermal: exynos: Rename Samsung and Exynos to
+ lowercase
+To:     Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org
+Cc:     Jonathan Corbet <corbet@lwn.net>, Kukjin Kim <kgene@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20200104152107.11407-1-krzk@kernel.org>
+ <20200104152107.11407-7-krzk@kernel.org>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <7a61f167-07be-f60d-ec8e-cca171caeb94@linaro.org>
+Date:   Thu, 9 Jan 2020 12:45:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <CA+Px+wXkFE5b_8bLz7-c95TvEdqHGD5s-XKRYMVr40xQkqTWxQ@mail.gmail.com>
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20200104152107.11407-7-krzk@kernel.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUhTYRTHfXbv7l5qcp0rD2YmFxVSfMM+XEq0RGr1qfCboDXzopJO2Zxl
-        EJiGL0PClyJdaiKEttzUzTStjGY6TfO1RFOI0QqbbuJLgYKZ16vlt985///hnP/DI8SkXXxv
-        Yboyh1EpFRkUIcY7BzbGQsZFXknhFStB9KcJC49ur27l0w9tdoIe7LuL0cU1JYgeG2sT0FM9
-        tQRdPdbLo/uWivn06wmH4KxY3rZWQMgbTBq5SV9KyO936JF8zeR7mZ8gjkphMtJzGVVY9DVx
-        2sfCByjb7H3LZdjm56N1mRaJhECegnuLjXyWpWQzgg/LcVok3uF1BMY3I3vCGoJ6F6lFwt2B
-        BbuM8zQhcNYPYlzhRND+3YixJk8yCnSGBHZWRgZC4fCrXQ9GPsVgebScxwoEGQFap5ZgWUJG
-        Q9XQIGIZJ/2hd/45xvIRMhG2a17wOI8HDNXYcZZF5BVYyN/eZYw8AV3OWoxjL/hif8JjlwFp
-        EUBLXRPOxYyDx53mPfYEh7VDwLEPbHfvDxQisI0aBFxRhmCqoBpxrjMwP7pJsNEw8iS09oRx
-        7XNgMi8LuGdxhxmnB3eEO1R2PsK4tgRKiqScOxB0VuO/te/GJ7FyROkORNMdiKM7EEf3f28D
-        wvXIi9GoM1MZdYSSuRmqVmSqNcrU0OtZmSa0852G/1hXX6Jfk8kWRAoRdVjiRh1NkvIVueq8
-        TAsCIUbJJP0zOy1JiiLvNqPKuqrSZDBqCzomxCkvSWTjz0QpmarIYW4wTDaj2ld5QpF3PvIL
-        eFsVmWdzyaajYkrniPivv8MvrfprKrpH4or1p+dEIc+mL1LxzS6fgdoAz41xf3Nuc/CdqW/u
-        2fqMmV6bYUS2aV7q33JQ3l0pwUX0hG1xxXH+vdYtqd+4xZu1th/CYuQXAkesS7iqTPNZeVwS
-        G/uD3+Jb1zrbrMIDKv2SKVydpogIwlRqxV++0pPLSgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFIsWRmVeSWpSXmKPExsVy+t/xu7oXOMXjDK4dZrG4cvEQk8XGGetZ
-        LaY+fMJmceJwI7NF+8wORovz5zewW1zeNYfNYsb5fUwWh9+0s1rsufiK3YHLY8PnJjaPBZtK
-        PTat6mTz6NuyitHj8ya5ANYoPZui/NKSVIWM/OISW6VoQwsjPUNLCz0jE0s9Q2PzWCsjUyV9
-        O5uU1JzMstQifbsEvYyzzVMYCzZLVbxb+5+1gfGLSBcjB4eEgInEiydAJheHkMBSRonbm3ex
-        djFyAsVlJE5Oa4CyhSX+XOtigyh6zSix6tVkRpBmYQEbiVlro0BqRATUJJpP72YGsZkFVjJL
-        LOkyg6jvYZK43bmbDSTBJmAo0fW2C8zmFbCTmHzyBCOIzSKgIrHvzmqwZlGBWIntmx8yQ9QI
-        Spyc+YQFxOYUCJR40fCfBWKBmcQ8qBpmAXmJ7W/nQNniEreezGeawCg0C0n7LCQts5C0zELS
-        soCRZRWjSGppcW56brGhXnFibnFpXrpecn7uJkZgPG479nPzDsZLG4MPMQpwMCrx8DIoicUJ
-        sSaWFVfmHmKU4GBWEuE9egMoxJuSWFmVWpQfX1Sak1p8iNEU6LmJzFKiyfnAVJFXEm9oamhu
-        YWlobmxubGahJM7bIXAwRkggPbEkNTs1tSC1CKaPiYNTqoGRUeas8lnzpb+Ondt826Dfm4Wh
-        5UX5hNqLVwp8Lk6XLDp31+vNtAkbffQntqab2TefSPC2kZW/4Tslaolxvdv8fbHlX289f2j8
-        W9qqPmBXfnDcypamrxsEJkv9vaxwocV4zxRNscSTC7lCVil1erLkJAt/Tndizt1k0nRt+/eP
-        MXlrlsSnxZUpsRRnJBpqMRcVJwIANPT1iN0CAAA=
-X-CMS-MailID: 20200109110904eucas1p2e41cddd985fe74c2cea897c79c62de1d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200108115027eucas1p1d3645ba53703780679c662921efbca78
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200108115027eucas1p1d3645ba53703780679c662921efbca78
-References: <CGME20200108115027eucas1p1d3645ba53703780679c662921efbca78@eucas1p1.samsung.com>
-        <20200108115007.31095-1-m.szyprowski@samsung.com>
-        <20200108115007.31095-2-m.szyprowski@samsung.com>
-        <CA+Px+wXkFE5b_8bLz7-c95TvEdqHGD5s-XKRYMVr40xQkqTWxQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi
+On 04/01/2020 16:20, Krzysztof Kozlowski wrote:
+> Fix up inconsistent usage of upper and lowercase letters in "Samsung"
+> and "Exynos" names.
+> 
+> "SAMSUNG" and "EXYNOS" are not abbreviations but regular trademarked
+> names.  Therefore they should be written with lowercase letters starting
+> with capital letter.
+> 
+> The lowercase "Exynos" name is promoted by its manufacturer Samsung
+> Electronics Co., Ltd., in advertisement materials and on website.
+> 
+> Although advertisement materials usually use uppercase "SAMSUNG", the
+> lowercase version is used in all legal aspects (e.g. on Wikipedia and in
+> privacy/legal statements on
+> https://www.samsung.com/semiconductor/privacy-global/).
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
 
-On 09.01.2020 06:36, Tzung-Bi Shih wrote:
-> On Wed, Jan 8, 2020 at 7:50 PM Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
->> Fix this by introducing a separate mutex only for serializing the SHDN
->> hardware register related operations.
-> This fix makes less sense to me.  We used dapm_mutex intentionally
-> because: both DAPM and userspace mixer control would change SHDN bit
-> at the same time.
->
->> This fixes the following lockdep warning observed on Exynos4412-based
->> Odroid U3 board:
->> ======================================================
->> WARNING: possible circular locking dependency detected
->> 5.5.0-rc5-next-20200107 #166 Not tainted
->> ------------------------------------------------------
->> alsactl/1104 is trying to acquire lock:
->> ed0d50f4 (&card->dapm_mutex){+.+.}, at: max98090_shdn_save+0x1c/0x28
->>
->> but task is already holding lock:
->> edb4b49c (&card->controls_rwsem){++++}, at: snd_ctl_ioctl+0xcc/0xbb8
->>
->> which lock already depends on the new lock.
->>
->> the existing dependency chain (in reverse order) is:
->>
->> -> #1 (&card->controls_rwsem){++++}:
->>         snd_ctl_add_replace+0x3c/0x84
->>         dapm_create_or_share_kcontrol+0x24c/0x2e0
->>         snd_soc_dapm_new_widgets+0x308/0x594
->>         snd_soc_bind_card+0x80c/0xad4
->>         devm_snd_soc_register_card+0x34/0x6c
->>         odroid_audio_probe+0x288/0x34c
->>         platform_drv_probe+0x6c/0xa4
->>         really_probe+0x200/0x490
->>         driver_probe_device+0x78/0x1f8
->>         bus_for_each_drv+0x74/0xb8
->>         __device_attach+0xd4/0x16c
->>         bus_probe_device+0x88/0x90
->>         deferred_probe_work_func+0x3c/0xd0
->>         process_one_work+0x22c/0x7c4
->>         worker_thread+0x44/0x524
->>         kthread+0x130/0x164
->>         ret_from_fork+0x14/0x20
->>         0x0
->>
->> -> #0 (&card->dapm_mutex){+.+.}:
->>         lock_acquire+0xe8/0x270
->>         __mutex_lock+0x9c/0xb18
->>         mutex_lock_nested+0x1c/0x24
->>         max98090_shdn_save+0x1c/0x28
->>         max98090_put_enum_double+0x20/0x40
->>         snd_ctl_ioctl+0x190/0xbb8
->>         ksys_ioctl+0x470/0xaf8
->>         ret_fast_syscall+0x0/0x28
->>         0xbefaa564
-> As the stack trace suggested: when the card was still registering,
-> alsactl can see the mixer control and try to change it.
-
-Nope. This is just a lockdep warning about possible hypothetical 
-situation on the test system during the normal boot. It doesn't mean 
-that the circular dependency actually happens (if so, it would end in 
-deadlock). It also doesn't mean that such circular dependency can be 
-really triggered, because some other dependencies that not known to 
-lockdep engine might protect against it. However the easiest way to fix 
-it is to use fine-grained locking instead of reusing some framework 
-locks for other purposes. Such approach is also usually a good practice.
-
-> We have a discussion on an older thread
-> (https://mailman.alsa-project.org/pipermail/alsa-devel/2019-December/160454.html).
-> It is weird: userspace should not see things (e.g. no controlC0) until
-> snd_card_register( ).
->
-> I would like to spend some time to find the root cause.  It would be a
-> little challenging though (I have no real runtime to test...).
+Applied.
 
 
-Best regards
+
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
