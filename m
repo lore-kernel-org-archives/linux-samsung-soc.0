@@ -2,66 +2,63 @@ Return-Path: <SRS0=ZqIQ=26=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 286D6C33CA2
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 10:59:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8D2AC32771
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 11:09:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA01320656
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 10:59:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88E6E2077B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 11:09:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WxtF6rMh"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ME3Z9YUL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730504AbgAIK7x (ORCPT
+        id S1730521AbgAILJH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Jan 2020 05:59:53 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:39591 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728635AbgAIK7w (ORCPT
+        Thu, 9 Jan 2020 06:09:07 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:36179 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729239AbgAILJH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Jan 2020 05:59:52 -0500
-Received: by mail-io1-f65.google.com with SMTP id c16so6637798ioh.6
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Jan 2020 02:59:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QPi6QnVXghXv8TY7JMc2BuYgut9DZveS4sz8HSAzzAE=;
-        b=WxtF6rMhat0yOMYOkIGw1PZioR964EQ0WGOdDWYoA4+TwrtGwcvF471ZdqnxorH+R6
-         JEi1bKDztJVqWgCIWLQ5bH80cEw5JZJak2XTFCVGavFicQZFC0I57NcUbrKpmb6LMCQn
-         Ho8KowQTK6vAx+J2SE9zTNXGo9yBrJlC0mrEXy3/BVPRJ4DQf73YsijLrIt2W1mKC36m
-         1PsZ1RQk+yUVF1o3TrbcEtAyMCbPu5DHnO0G5bj4WPRbOMOcwwFVcIqYPfeUGYJuwM6E
-         0RkxNn+bxdnC4UEb7Xa8B18mFIv4FyhYRvMzcTnft+1mPcfXVyjRGHYpwzd36Gc/cpzW
-         FTJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QPi6QnVXghXv8TY7JMc2BuYgut9DZveS4sz8HSAzzAE=;
-        b=ujDqJ8fApqtjoMGkkPAlE1JKtRjqgstt9TKVn2kwsasVkP3+ifk5IEvpMJ9oJuPMpw
-         Ckl5+ttZBAVNS1TklpSR1xwU1lxrOhS3dLCU0L62QMRxHVcwOnxEDzJGGCDneXuPVfVS
-         6PT6sKf7Lv2usbPNOkq1R7Ugi5jPnwx5N8kysbJXlmbVBEMZDLlxDSnVz2hGkFQ7Nu5W
-         DOVSY5rAP5XGhMuUNsq4np1zNHc1ScvMMF9shzQZ/Th3v6Z6SjZm25wvRQDFxn3HwO7y
-         v7kAPEAOpOnY9Eozwx/3qw5Ni/Ynpwdb5RCHtVPOXc6Ov8sAxFZajwZ7qdDP5qwaLYSR
-         UeuA==
-X-Gm-Message-State: APjAAAU2BYjagx1H+euV11ytfmvheckhHRBibOlmEH8Tm2RzxLVxITFz
-        JyG4HpfFG0DpIQcIFpr28n0WxwmMnpu6J9HbuuBI7w==
-X-Google-Smtp-Source: APXvYqy5YRToV4ho+1HZN01NgOpFCbr14jsvMrxynyarJaFUyY1ek05rytw4zulCXWiF5tX1rdl3nX75mbjlAFbZqhc=
-X-Received: by 2002:a6b:8f41:: with SMTP id r62mr7053509iod.140.1578567590321;
- Thu, 09 Jan 2020 02:59:50 -0800 (PST)
-MIME-Version: 1.0
-References: <CGME20200108115027eucas1p1d3645ba53703780679c662921efbca78@eucas1p1.samsung.com>
- <20200108115007.31095-1-m.szyprowski@samsung.com> <20200108115007.31095-2-m.szyprowski@samsung.com>
- <CA+Px+wXkFE5b_8bLz7-c95TvEdqHGD5s-XKRYMVr40xQkqTWxQ@mail.gmail.com>
-In-Reply-To: <CA+Px+wXkFE5b_8bLz7-c95TvEdqHGD5s-XKRYMVr40xQkqTWxQ@mail.gmail.com>
-From:   Tzung-Bi Shih <tzungbi@google.com>
-Date:   Thu, 9 Jan 2020 18:59:39 +0800
-Message-ID: <CA+Px+wWVhZn+UrX04bGMnR8J0XeR0+Oy1r0DD4Spm+i1WPZKqQ@mail.gmail.com>
+        Thu, 9 Jan 2020 06:09:07 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200109110905euoutp01764a4568f12fdd619747fbb4f7843c38~oM11GiueY0101201012euoutp01m
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  9 Jan 2020 11:09:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200109110905euoutp01764a4568f12fdd619747fbb4f7843c38~oM11GiueY0101201012euoutp01m
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1578568145;
+        bh=tism4RfoqXjIFyAn12kvdI+qYh6axaml1VxlqbIWZzA=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=ME3Z9YUL8ZXjgC4xU/XWd+iRnbAMUfzu1XWHvNCQaBhiUdrCDitW5jVeWC+muXOc7
+         +d85hIG+TY3FpKgFoFeEeMyzQPFFNRhStiVMxK87zObIX7RwsdfThth9G930IDCbbK
+         qLj5lVP6hdDohQJXXqy/2cC7NewbxId9APmGpKng=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200109110904eucas1p161603f6d573aeba1d98e8d2e2eaf0708~oM10wWG5E2307623076eucas1p14;
+        Thu,  9 Jan 2020 11:09:04 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 97.C3.61286.0D9071E5; Thu,  9
+        Jan 2020 11:09:04 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200109110904eucas1p2e41cddd985fe74c2cea897c79c62de1d~oM10QrLAM0643506435eucas1p26;
+        Thu,  9 Jan 2020 11:09:04 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200109110904eusmtrp2db1a8f5de2f4722278c346c69e37b7e4~oM10PsF_a2478324783eusmtrp2W;
+        Thu,  9 Jan 2020 11:09:04 +0000 (GMT)
+X-AuditID: cbfec7f2-f0bff7000001ef66-63-5e1709d0f869
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 56.9C.08375.0D9071E5; Thu,  9
+        Jan 2020 11:09:04 +0000 (GMT)
+Received: from [106.120.51.15] (unknown [106.120.51.15]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200109110903eusmtip168d3934000f5ff36bd9c2b929d3437ed~oM1zpIKD52723827238eusmtip1C;
+        Thu,  9 Jan 2020 11:09:03 +0000 (GMT)
 Subject: Re: [PATCH 2/2] ASoC: max98090: fix lockdep warning
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
+To:     Tzung-Bi Shih <tzungbi@google.com>
 Cc:     ALSA development <alsa-devel@alsa-project.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
@@ -71,82 +68,138 @@ Cc:     ALSA development <alsa-devel@alsa-project.org>,
         Jimmy Cheng-Yi Chiang <cychiang@google.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <83169752-ac05-d1b1-ece9-fbe1109287cf@samsung.com>
+Date:   Thu, 9 Jan 2020 12:09:03 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.3.1
+MIME-Version: 1.0
+In-Reply-To: <CA+Px+wXkFE5b_8bLz7-c95TvEdqHGD5s-XKRYMVr40xQkqTWxQ@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUhTYRTHfXbv7l5qcp0rD2YmFxVSfMM+XEq0RGr1qfCboDXzopJO2Zxl
+        EJiGL0PClyJdaiKEttzUzTStjGY6TfO1RFOI0QqbbuJLgYKZ16vlt985///hnP/DI8SkXXxv
+        Yboyh1EpFRkUIcY7BzbGQsZFXknhFStB9KcJC49ur27l0w9tdoIe7LuL0cU1JYgeG2sT0FM9
+        tQRdPdbLo/uWivn06wmH4KxY3rZWQMgbTBq5SV9KyO936JF8zeR7mZ8gjkphMtJzGVVY9DVx
+        2sfCByjb7H3LZdjm56N1mRaJhECegnuLjXyWpWQzgg/LcVok3uF1BMY3I3vCGoJ6F6lFwt2B
+        BbuM8zQhcNYPYlzhRND+3YixJk8yCnSGBHZWRgZC4fCrXQ9GPsVgebScxwoEGQFap5ZgWUJG
+        Q9XQIGIZJ/2hd/45xvIRMhG2a17wOI8HDNXYcZZF5BVYyN/eZYw8AV3OWoxjL/hif8JjlwFp
+        EUBLXRPOxYyDx53mPfYEh7VDwLEPbHfvDxQisI0aBFxRhmCqoBpxrjMwP7pJsNEw8iS09oRx
+        7XNgMi8LuGdxhxmnB3eEO1R2PsK4tgRKiqScOxB0VuO/te/GJ7FyROkORNMdiKM7EEf3f28D
+        wvXIi9GoM1MZdYSSuRmqVmSqNcrU0OtZmSa0852G/1hXX6Jfk8kWRAoRdVjiRh1NkvIVueq8
+        TAsCIUbJJP0zOy1JiiLvNqPKuqrSZDBqCzomxCkvSWTjz0QpmarIYW4wTDaj2ld5QpF3PvIL
+        eFsVmWdzyaajYkrniPivv8MvrfprKrpH4or1p+dEIc+mL1LxzS6fgdoAz41xf3Nuc/CdqW/u
+        2fqMmV6bYUS2aV7q33JQ3l0pwUX0hG1xxXH+vdYtqd+4xZu1th/CYuQXAkesS7iqTPNZeVwS
+        G/uD3+Jb1zrbrMIDKv2SKVydpogIwlRqxV++0pPLSgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFIsWRmVeSWpSXmKPExsVy+t/xu7oXOMXjDK4dZrG4cvEQk8XGGetZ
+        LaY+fMJmceJwI7NF+8wORovz5zewW1zeNYfNYsb5fUwWh9+0s1rsufiK3YHLY8PnJjaPBZtK
+        PTat6mTz6NuyitHj8ya5ANYoPZui/NKSVIWM/OISW6VoQwsjPUNLCz0jE0s9Q2PzWCsjUyV9
+        O5uU1JzMstQifbsEvYyzzVMYCzZLVbxb+5+1gfGLSBcjB4eEgInEiydAJheHkMBSRonbm3ex
+        djFyAsVlJE5Oa4CyhSX+XOtigyh6zSix6tVkRpBmYQEbiVlro0BqRATUJJpP72YGsZkFVjJL
+        LOkyg6jvYZK43bmbDSTBJmAo0fW2C8zmFbCTmHzyBCOIzSKgIrHvzmqwZlGBWIntmx8yQ9QI
+        Spyc+YQFxOYUCJR40fCfBWKBmcQ8qBpmAXmJ7W/nQNniEreezGeawCg0C0n7LCQts5C0zELS
+        soCRZRWjSGppcW56brGhXnFibnFpXrpecn7uJkZgPG479nPzDsZLG4MPMQpwMCrx8DIoicUJ
+        sSaWFVfmHmKU4GBWEuE9egMoxJuSWFmVWpQfX1Sak1p8iNEU6LmJzFKiyfnAVJFXEm9oamhu
+        YWlobmxubGahJM7bIXAwRkggPbEkNTs1tSC1CKaPiYNTqoGRUeas8lnzpb+Ondt826Dfm4Wh
+        5UX5hNqLVwp8Lk6XLDp31+vNtAkbffQntqab2TefSPC2kZW/4Tslaolxvdv8fbHlX289f2j8
+        W9qqPmBXfnDcypamrxsEJkv9vaxwocV4zxRNscSTC7lCVil1erLkJAt/Tndizt1k0nRt+/eP
+        MXlrlsSnxZUpsRRnJBpqMRcVJwIANPT1iN0CAAA=
+X-CMS-MailID: 20200109110904eucas1p2e41cddd985fe74c2cea897c79c62de1d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200108115027eucas1p1d3645ba53703780679c662921efbca78
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200108115027eucas1p1d3645ba53703780679c662921efbca78
+References: <CGME20200108115027eucas1p1d3645ba53703780679c662921efbca78@eucas1p1.samsung.com>
+        <20200108115007.31095-1-m.szyprowski@samsung.com>
+        <20200108115007.31095-2-m.szyprowski@samsung.com>
+        <CA+Px+wXkFE5b_8bLz7-c95TvEdqHGD5s-XKRYMVr40xQkqTWxQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jan 9, 2020 at 1:36 PM Tzung-Bi Shih <tzungbi@google.com> wrote:
+Hi
+
+On 09.01.2020 06:36, Tzung-Bi Shih wrote:
 > On Wed, Jan 8, 2020 at 7:50 PM Marek Szyprowski
 > <m.szyprowski@samsung.com> wrote:
-> > This fixes the following lockdep warning observed on Exynos4412-based
-> > Odroid U3 board:
-> > ======================================================
-> > -> #1 (&card->controls_rwsem){++++}:
-> >        snd_ctl_add_replace+0x3c/0x84
-> >        dapm_create_or_share_kcontrol+0x24c/0x2e0
-> >        snd_soc_dapm_new_widgets+0x308/0x594
-> >        snd_soc_bind_card+0x80c/0xad4
-> >        devm_snd_soc_register_card+0x34/0x6c
-> >        odroid_audio_probe+0x288/0x34c
-> >        platform_drv_probe+0x6c/0xa4
+>> Fix this by introducing a separate mutex only for serializing the SHDN
+>> hardware register related operations.
+> This fix makes less sense to me.  We used dapm_mutex intentionally
+> because: both DAPM and userspace mixer control would change SHDN bit
+> at the same time.
+>
+>> This fixes the following lockdep warning observed on Exynos4412-based
+>> Odroid U3 board:
+>> ======================================================
+>> WARNING: possible circular locking dependency detected
+>> 5.5.0-rc5-next-20200107 #166 Not tainted
+>> ------------------------------------------------------
+>> alsactl/1104 is trying to acquire lock:
+>> ed0d50f4 (&card->dapm_mutex){+.+.}, at: max98090_shdn_save+0x1c/0x28
+>>
+>> but task is already holding lock:
+>> edb4b49c (&card->controls_rwsem){++++}, at: snd_ctl_ioctl+0xcc/0xbb8
+>>
+>> which lock already depends on the new lock.
+>>
+>> the existing dependency chain (in reverse order) is:
+>>
+>> -> #1 (&card->controls_rwsem){++++}:
+>>         snd_ctl_add_replace+0x3c/0x84
+>>         dapm_create_or_share_kcontrol+0x24c/0x2e0
+>>         snd_soc_dapm_new_widgets+0x308/0x594
+>>         snd_soc_bind_card+0x80c/0xad4
+>>         devm_snd_soc_register_card+0x34/0x6c
+>>         odroid_audio_probe+0x288/0x34c
+>>         platform_drv_probe+0x6c/0xa4
+>>         really_probe+0x200/0x490
+>>         driver_probe_device+0x78/0x1f8
+>>         bus_for_each_drv+0x74/0xb8
+>>         __device_attach+0xd4/0x16c
+>>         bus_probe_device+0x88/0x90
+>>         deferred_probe_work_func+0x3c/0xd0
+>>         process_one_work+0x22c/0x7c4
+>>         worker_thread+0x44/0x524
+>>         kthread+0x130/0x164
+>>         ret_from_fork+0x14/0x20
+>>         0x0
+>>
+>> -> #0 (&card->dapm_mutex){+.+.}:
+>>         lock_acquire+0xe8/0x270
+>>         __mutex_lock+0x9c/0xb18
+>>         mutex_lock_nested+0x1c/0x24
+>>         max98090_shdn_save+0x1c/0x28
+>>         max98090_put_enum_double+0x20/0x40
+>>         snd_ctl_ioctl+0x190/0xbb8
+>>         ksys_ioctl+0x470/0xaf8
+>>         ret_fast_syscall+0x0/0x28
+>>         0xbefaa564
+> As the stack trace suggested: when the card was still registering,
+> alsactl can see the mixer control and try to change it.
 
-I noticed the stack is a little different than the last time
-(odroid_audio_probe vs. asoc_simple_probe).  Did you use the same
-machine to test?
->        asoc_simple_probe+0x244/0x4a0
->        platform_drv_probe+0x6c/0xa4
-(https://mailman.alsa-project.org/pipermail/alsa-devel/2019-December/160142.html)
+Nope. This is just a lockdep warning about possible hypothetical 
+situation on the test system during the normal boot. It doesn't mean 
+that the circular dependency actually happens (if so, it would end in 
+deadlock). It also doesn't mean that such circular dependency can be 
+really triggered, because some other dependencies that not known to 
+lockdep engine might protect against it. However the easiest way to fix 
+it is to use fine-grained locking instead of reusing some framework 
+locks for other purposes. Such approach is also usually a good practice.
 
+> We have a discussion on an older thread
+> (https://mailman.alsa-project.org/pipermail/alsa-devel/2019-December/160454.html).
+> It is weird: userspace should not see things (e.g. no controlC0) until
+> snd_card_register( ).
+>
 > I would like to spend some time to find the root cause.  It would be a
 > little challenging though (I have no real runtime to test...).
 
-After a few hours of study, I failed to find the reason to cause the
-possible circular locking.  And would need more of your input.
 
-Followed the information provided in the message
-(https://mailman.alsa-project.org/pipermail/alsa-devel/2019-December/160535.html).
-As the message said "snd_soc_of_get_dai_link_codecs() return
--EPROBE_DEFER".  The snd_soc_of_get_dai_link_codecs( ) is before
-devm_snd_soc_register_card( ), and I didn't find any side effects in
-odroid_audio_probe( ).
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-Only a very minor issue: snd_soc_of_put_dai_link_codecs(codec_link)
-will be called twice.  One in snd_soc_of_get_dai_link_codecs( ) when
-return -EPROBE_DEFER; another one is under the label
-"err_put_cpu_dai".
-(https://elixir.bootlin.com/linux/v5.5-rc5/source/sound/soc/samsung/odroid.c#L328)
- The code doesn't generate any side effects because of
-snd_soc_of_put_dai_link_codecs( )'s robustness.
-
-Another minor thing: odroid_card_dais is not immutable but
-odroid_audio_probe( ) would try to modify it
-(https://elixir.bootlin.com/linux/v5.5-rc5/source/sound/soc/samsung/odroid.c#L295).
-Again, I don't think it would produce any troubles.  I guess no
-machine would have multiple sound cards, share the same machine
-driver, and unbind/bind in runtime.
-
-> It is weird: userspace should not see things (e.g. no controlC0) until
-> snd_card_register( ).
-
-(based on today's broonie/sound.git/for-next) I would like to provide
-you more information about this statement to help you find further
-information.
-When userspace can see the control device?  Ideally,
-snd_soc_bind_card( ) -> snd_card_register( ) ->
-snd_device_register_all( ) -> __snd_device_register( ) ->
-snd_ctl_dev_register( ) -> snd_register_device( ).
-If you look at the calling stack of possible circular locking,
-snd_soc_dapm_new_widgets( ) is before snd_card_register( ).  That's
-why we think userspace should not see control devices (i.e. controlC0,
-controlC1, ...) and should not be able to set mixer control via ioctl(
-).
-
-
-As this may not directly be related to the issue, could you share the
-init script of alsactl in your system?  Does it follow the convention?
- (i.e. sound card is ready when receives controlC* changed event in
-udev rule 78-sound-card.rules)
-> 6. when userspace init scripts (alsactl) enumerates devices
-(https://mailman.alsa-project.org/pipermail/alsa-devel/2019-December/160535.html)
