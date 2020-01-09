@@ -2,179 +2,151 @@ Return-Path: <SRS0=ZqIQ=26=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.2 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B5E5C33CA1
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 10:57:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 286D6C33CA2
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 10:59:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51DF52077B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 10:57:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA01320656
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 10:59:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WxtF6rMh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728945AbgAIK5K (ORCPT
+        id S1730504AbgAIK7x (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Jan 2020 05:57:10 -0500
-Received: from foss.arm.com ([217.140.110.172]:57036 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728635AbgAIK5K (ORCPT
+        Thu, 9 Jan 2020 05:59:53 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:39591 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728635AbgAIK7w (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Jan 2020 05:57:10 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EAB9C31B;
-        Thu,  9 Jan 2020 02:57:08 -0800 (PST)
-Received: from [10.37.12.111] (unknown [10.37.12.111])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3DA023F703;
-        Thu,  9 Jan 2020 02:57:05 -0800 (PST)
-Subject: Re: [PATCH v2 02/11] PM / devfreq: Remove
- devfreq_get_devfreq_by_phandle function
-To:     Chanwoo Choi <cw00.choi@samsung.com>, robh+dt@kernel.org,
-        krzk@kernel.org, heiko@sntech.de, leonard.crestez@nxp.com
-Cc:     mark.rutland@arm.com, a.swigon@samsung.com,
-        m.szyprowski@samsung.com, kgene@kernel.org,
-        myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
-References: <20191220002430.11995-1-cw00.choi@samsung.com>
- <CGME20191220001759epcas1p4ce1c2017937a35de84eab720b9732df0@epcas1p4.samsung.com>
- <20191220002430.11995-3-cw00.choi@samsung.com>
- <b9a1ebe5-e114-3a6b-6081-c794e1341329@arm.com>
- <22cde618-d51e-2d4d-461e-e2d2c1b52af2@samsung.com>
-From:   Lukasz Luba <lukasz.luba@arm.com>
-Message-ID: <3cb1e237-84b2-f110-4eb3-6394151cecc4@arm.com>
-Date:   Thu, 9 Jan 2020 10:57:03 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Thu, 9 Jan 2020 05:59:52 -0500
+Received: by mail-io1-f65.google.com with SMTP id c16so6637798ioh.6
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Jan 2020 02:59:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QPi6QnVXghXv8TY7JMc2BuYgut9DZveS4sz8HSAzzAE=;
+        b=WxtF6rMhat0yOMYOkIGw1PZioR964EQ0WGOdDWYoA4+TwrtGwcvF471ZdqnxorH+R6
+         JEi1bKDztJVqWgCIWLQ5bH80cEw5JZJak2XTFCVGavFicQZFC0I57NcUbrKpmb6LMCQn
+         Ho8KowQTK6vAx+J2SE9zTNXGo9yBrJlC0mrEXy3/BVPRJ4DQf73YsijLrIt2W1mKC36m
+         1PsZ1RQk+yUVF1o3TrbcEtAyMCbPu5DHnO0G5bj4WPRbOMOcwwFVcIqYPfeUGYJuwM6E
+         0RkxNn+bxdnC4UEb7Xa8B18mFIv4FyhYRvMzcTnft+1mPcfXVyjRGHYpwzd36Gc/cpzW
+         FTJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QPi6QnVXghXv8TY7JMc2BuYgut9DZveS4sz8HSAzzAE=;
+        b=ujDqJ8fApqtjoMGkkPAlE1JKtRjqgstt9TKVn2kwsasVkP3+ifk5IEvpMJ9oJuPMpw
+         Ckl5+ttZBAVNS1TklpSR1xwU1lxrOhS3dLCU0L62QMRxHVcwOnxEDzJGGCDneXuPVfVS
+         6PT6sKf7Lv2usbPNOkq1R7Ugi5jPnwx5N8kysbJXlmbVBEMZDLlxDSnVz2hGkFQ7Nu5W
+         DOVSY5rAP5XGhMuUNsq4np1zNHc1ScvMMF9shzQZ/Th3v6Z6SjZm25wvRQDFxn3HwO7y
+         v7kAPEAOpOnY9Eozwx/3qw5Ni/Ynpwdb5RCHtVPOXc6Ov8sAxFZajwZ7qdDP5qwaLYSR
+         UeuA==
+X-Gm-Message-State: APjAAAU2BYjagx1H+euV11ytfmvheckhHRBibOlmEH8Tm2RzxLVxITFz
+        JyG4HpfFG0DpIQcIFpr28n0WxwmMnpu6J9HbuuBI7w==
+X-Google-Smtp-Source: APXvYqy5YRToV4ho+1HZN01NgOpFCbr14jsvMrxynyarJaFUyY1ek05rytw4zulCXWiF5tX1rdl3nX75mbjlAFbZqhc=
+X-Received: by 2002:a6b:8f41:: with SMTP id r62mr7053509iod.140.1578567590321;
+ Thu, 09 Jan 2020 02:59:50 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <22cde618-d51e-2d4d-461e-e2d2c1b52af2@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <CGME20200108115027eucas1p1d3645ba53703780679c662921efbca78@eucas1p1.samsung.com>
+ <20200108115007.31095-1-m.szyprowski@samsung.com> <20200108115007.31095-2-m.szyprowski@samsung.com>
+ <CA+Px+wXkFE5b_8bLz7-c95TvEdqHGD5s-XKRYMVr40xQkqTWxQ@mail.gmail.com>
+In-Reply-To: <CA+Px+wXkFE5b_8bLz7-c95TvEdqHGD5s-XKRYMVr40xQkqTWxQ@mail.gmail.com>
+From:   Tzung-Bi Shih <tzungbi@google.com>
+Date:   Thu, 9 Jan 2020 18:59:39 +0800
+Message-ID: <CA+Px+wWVhZn+UrX04bGMnR8J0XeR0+Oy1r0DD4Spm+i1WPZKqQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ASoC: max98090: fix lockdep warning
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     ALSA development <alsa-devel@alsa-project.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Dylan Reid <dgreid@google.com>,
+        Jimmy Cheng-Yi Chiang <cychiang@google.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Thu, Jan 9, 2020 at 1:36 PM Tzung-Bi Shih <tzungbi@google.com> wrote:
+> On Wed, Jan 8, 2020 at 7:50 PM Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+> > This fixes the following lockdep warning observed on Exynos4412-based
+> > Odroid U3 board:
+> > ======================================================
+> > -> #1 (&card->controls_rwsem){++++}:
+> >        snd_ctl_add_replace+0x3c/0x84
+> >        dapm_create_or_share_kcontrol+0x24c/0x2e0
+> >        snd_soc_dapm_new_widgets+0x308/0x594
+> >        snd_soc_bind_card+0x80c/0xad4
+> >        devm_snd_soc_register_card+0x34/0x6c
+> >        odroid_audio_probe+0x288/0x34c
+> >        platform_drv_probe+0x6c/0xa4
+
+I noticed the stack is a little different than the last time
+(odroid_audio_probe vs. asoc_simple_probe).  Did you use the same
+machine to test?
+>        asoc_simple_probe+0x244/0x4a0
+>        platform_drv_probe+0x6c/0xa4
+(https://mailman.alsa-project.org/pipermail/alsa-devel/2019-December/160142.html)
+
+> I would like to spend some time to find the root cause.  It would be a
+> little challenging though (I have no real runtime to test...).
+
+After a few hours of study, I failed to find the reason to cause the
+possible circular locking.  And would need more of your input.
+
+Followed the information provided in the message
+(https://mailman.alsa-project.org/pipermail/alsa-devel/2019-December/160535.html).
+As the message said "snd_soc_of_get_dai_link_codecs() return
+-EPROBE_DEFER".  The snd_soc_of_get_dai_link_codecs( ) is before
+devm_snd_soc_register_card( ), and I didn't find any side effects in
+odroid_audio_probe( ).
+
+Only a very minor issue: snd_soc_of_put_dai_link_codecs(codec_link)
+will be called twice.  One in snd_soc_of_get_dai_link_codecs( ) when
+return -EPROBE_DEFER; another one is under the label
+"err_put_cpu_dai".
+(https://elixir.bootlin.com/linux/v5.5-rc5/source/sound/soc/samsung/odroid.c#L328)
+ The code doesn't generate any side effects because of
+snd_soc_of_put_dai_link_codecs( )'s robustness.
+
+Another minor thing: odroid_card_dais is not immutable but
+odroid_audio_probe( ) would try to modify it
+(https://elixir.bootlin.com/linux/v5.5-rc5/source/sound/soc/samsung/odroid.c#L295).
+Again, I don't think it would produce any troubles.  I guess no
+machine would have multiple sound cards, share the same machine
+driver, and unbind/bind in runtime.
+
+> It is weird: userspace should not see things (e.g. no controlC0) until
+> snd_card_register( ).
+
+(based on today's broonie/sound.git/for-next) I would like to provide
+you more information about this statement to help you find further
+information.
+When userspace can see the control device?  Ideally,
+snd_soc_bind_card( ) -> snd_card_register( ) ->
+snd_device_register_all( ) -> __snd_device_register( ) ->
+snd_ctl_dev_register( ) -> snd_register_device( ).
+If you look at the calling stack of possible circular locking,
+snd_soc_dapm_new_widgets( ) is before snd_card_register( ).  That's
+why we think userspace should not see control devices (i.e. controlC0,
+controlC1, ...) and should not be able to set mixer control via ioctl(
+).
 
 
-On 1/9/20 10:54 AM, Chanwoo Choi wrote:
-> On 1/9/20 7:37 PM, Lukasz Luba wrote:
->> Hi Chanwoo,
->>
->> On 12/20/19 12:24 AM, Chanwoo Choi wrote:
->>> Previously, devfreq core support 'devfreq' property in order to get
->>> the devfreq device by phandle. But, 'devfreq' property name is not proper
->>> on devicetree binding because this name doesn't mean the any h/w attribute.
->>>
->>> The devfreq core hand over the right to decide the property name
->>> for getting the devfreq device on devicetree. Each devfreq driver
->>> will decide the property name on devicetree binding and then get
->>> the devfreq device by using devfreq_get_devfreq_by_node().
->>>
->>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->>> ---
->>>    drivers/devfreq/devfreq.c    | 35 -----------------------------------
->>>    drivers/devfreq/exynos-bus.c | 12 +++++++++++-
->>>    include/linux/devfreq.h      |  8 --------
->>>    3 files changed, 11 insertions(+), 44 deletions(-)
->>>
->>> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
->>> index cb8ca81c8973..c3d3c7c802a0 100644
->>> --- a/drivers/devfreq/devfreq.c
->>> +++ b/drivers/devfreq/devfreq.c
->>> @@ -991,48 +991,13 @@ struct devfreq *devfreq_get_devfreq_by_node(struct device_node *node)
->>>          return ERR_PTR(-ENODEV);
->>>    }
->>> -
->>> -/*
->>> - * devfreq_get_devfreq_by_phandle - Get the devfreq device from devicetree
->>> - * @dev - instance to the given device
->>> - * @index - index into list of devfreq
->>> - *
->>> - * return the instance of devfreq device
->>> - */
->>> -struct devfreq *devfreq_get_devfreq_by_phandle(struct device *dev, int index)
->>> -{
->>> -    struct device_node *node;
->>> -    struct devfreq *devfreq;
->>> -
->>> -    if (!dev)
->>> -        return ERR_PTR(-EINVAL);
->>> -
->>> -    if (!dev->of_node)
->>> -        return ERR_PTR(-EINVAL);
->>> -
->>> -    node = of_parse_phandle(dev->of_node, "devfreq", index);
->>> -    if (!node)
->>> -        return ERR_PTR(-ENODEV);
->>> -
->>> -    devfreq = devfreq_get_devfreq_by_node(node);
->>> -    of_node_put(node);
->>> -
->>> -    return devfreq;
->>> -}
->>> -
->>>    #else
->>>    struct devfreq *devfreq_get_devfreq_by_node(struct device_node *node)
->>>    {
->>>        return ERR_PTR(-ENODEV);
->>>    }
->>> -
->>> -struct devfreq *devfreq_get_devfreq_by_phandle(struct device *dev, int index)
->>> -{
->>> -    return ERR_PTR(-ENODEV);
->>> -}
->>>    #endif /* CONFIG_OF */
->>>    EXPORT_SYMBOL_GPL(devfreq_get_devfreq_by_node);
->>> -EXPORT_SYMBOL_GPL(devfreq_get_devfreq_by_phandle);
->>>      /**
->>>     * devm_devfreq_remove_device() - Resource-managed devfreq_remove_device()
->>> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
->>> index 7f5917d59072..1bc4e3c81115 100644
->>> --- a/drivers/devfreq/exynos-bus.c
->>> +++ b/drivers/devfreq/exynos-bus.c
->>> @@ -86,6 +86,16 @@ static int exynos_bus_get_event(struct exynos_bus *bus,
->>>        return ret;
->>>    }
->>>    +static struct devfreq *exynos_bus_get_parent_devfreq(struct device_node *np)
->>> +{
->>> +    struct device_node *node = of_parse_phandle(np, "devfreq", 0);
->>> +
->>> +    if (!node)
->>> +        return ERR_PTR(-ENODEV);
->>> +
->>> +    return devfreq_get_devfreq_by_node(node);
->>> +}
->>> +
->>>    /*
->>>     * devfreq function for both simple-ondemand and passive governor
->>>     */
->>> @@ -353,7 +363,7 @@ static int exynos_bus_profile_init_passive(struct exynos_bus *bus,
->>>        profile->exit = exynos_bus_passive_exit;
->>>          /* Get the instance of parent devfreq device */
->>> -    parent_devfreq = devfreq_get_devfreq_by_phandle(dev, 0);
->>> +    parent_devfreq = exynos_bus_get_parent_devfreq(dev->of_node);
->>>        if (IS_ERR(parent_devfreq))
->>>            return -EPROBE_DEFER;
->>>    
->>
->> These changes won't apply, probably I need some base for it.
-> 
-> I developed it on devfreq-next branch[1]
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git/log/?h=devfreq-next
-> 
-> And I try to apply these patchset to linux-next[2] with tags/next-20200109.
-> But, patch10/11 of deviceetree has some merge conflict
-> because patch[3] related to exynos-bus was merged.
-> [2] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/
-> [3] https://patchwork.kernel.org/cover/11303235/
->      - [v2,0/2] Exynos5422: fix bus related OPPs for Odroid XU3/XU4/HC1
-> 
-> On next version, I'll rebase it on latest patches.
-
-Thank you for the information. I will update the base and continue the
-review.
-
-Lukasz
+As this may not directly be related to the issue, could you share the
+init script of alsactl in your system?  Does it follow the convention?
+ (i.e. sound card is ready when receives controlC* changed event in
+udev rule 78-sound-card.rules)
+> 6. when userspace init scripts (alsactl) enumerates devices
+(https://mailman.alsa-project.org/pipermail/alsa-devel/2019-December/160535.html)
