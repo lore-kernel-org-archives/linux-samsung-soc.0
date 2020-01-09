@@ -2,88 +2,72 @@ Return-Path: <SRS0=ZqIQ=26=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC06C282DD
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 15:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC52CC282DD
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 19:51:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D7C220721
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 15:18:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABB2F20721
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 19:51:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730836AbgAIPSb convert rfc822-to-8bit (ORCPT
+        id S1730515AbgAITv0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Jan 2020 10:18:31 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:36057 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727945AbgAIPSb (ORCPT
+        Thu, 9 Jan 2020 14:51:26 -0500
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:43554 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730077AbgAITv0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Jan 2020 10:18:31 -0500
+        Thu, 9 Jan 2020 14:51:26 -0500
+X-Greylist: delayed 1685 seconds by postgrey-1.27 at vger.kernel.org; Thu, 09 Jan 2020 14:51:25 EST
+Received: from relay7-d.mail.gandi.net (unknown [217.70.183.200])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id 5A8EE3AB693;
+        Thu,  9 Jan 2020 19:14:53 +0000 (UTC)
 X-Originating-IP: 91.224.148.103
-Received: from xps13 (unknown [91.224.148.103])
+Received: from localhost.localdomain (unknown [91.224.148.103])
         (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id AA51DE0009;
-        Thu,  9 Jan 2020 15:18:27 +0000 (UTC)
-Date:   Thu, 9 Jan 2020 16:18:26 +0100
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id DBC1920003;
+        Thu,  9 Jan 2020 19:14:51 +0000 (UTC)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@lists.01.org,
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
         Kyungmin Park <kyungmin.park@samsung.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
         Richard Weinberger <richard@nod.at>,
         Vignesh Raghavendra <vigneshr@ti.com>,
         linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 3/3] mtd: onenand: Enable compile testing of OMAP and
- Samsung drivers
-Message-ID: <20200109161826.7fda02a4@xps13>
-In-Reply-To: <20191231073339.GA6747@pi3>
-References: <20191229183612.22133-3-krzk@kernel.org>
-        <201912310904.9iM6MaFr%lkp@intel.com>
-        <20191231073339.GA6747@pi3>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Subject: Re: [RFT] mtd: onenand: samsung: Fix iomem access with regular memcpy
+Date:   Thu,  9 Jan 2020 20:14:50 +0100
+Message-Id: <20200109191450.10775-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200103164158.4265-1-krzk@kernel.org>
+References: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+X-linux-mtd-patch-notification: thanks
+X-linux-mtd-patch-commit: 14ebf24175df0f216256c8483ee2974f35a1a89c
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
-
-Krzysztof Kozlowski <krzk@kernel.org> wrote on Tue, 31 Dec 2019
-08:33:39 +0100:
-
-> On Tue, Dec 31, 2019 at 10:00:48AM +0800, kbuild test robot wrote:
-> > Hi Krzysztof,
-> > 
-> > I love your patch! Perhaps something to improve:
-> > 
-> > [auto build test WARNING on linus/master]
-> > [also build test WARNING on v5.5-rc4 next-20191220]
-> > [if your patch is applied to the wrong git tree, please drop us a note to help
-> > improve the system. BTW, we also suggest to use '--base' option to specify the
-> > base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
-> > 
-> > url:    https://github.com/0day-ci/linux/commits/Krzysztof-Kozlowski/mtd-onenand-samsung-Fix-pointer-cast-Wpointer-to-int-cast-warnings-on-64-bit/20191230-030838
-> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git bf8d1cd4386535004c4afe7f03d37f9864c9940e
-> > reproduce:
-> >         # apt-get install sparse
-> >         # sparse version: v0.6.1-129-g341daf20-dirty
-> >         make ARCH=x86_64 allmodconfig
-> >         make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
-> > 
-> > If you fix the issue, kindly add following tag
-> > Reported-by: kbuild test robot <lkp@intel.com>
-> >   
+On Fri, 2020-01-03 at 16:41:58 UTC, Krzysztof Kozlowski wrote:
+> The __iomem memory should be copied with memcpy_fromio.  This fixes
+> Sparse warnings like:
 > 
-> It is not related to my patch. I'll fix it up soon.
+>     drivers/mtd/nand/onenand/samsung_mtd.c:678:40: warning: incorrect type in argument 2 (different address spaces)
+>     drivers/mtd/nand/onenand/samsung_mtd.c:678:40:    expected void const *from
+>     drivers/mtd/nand/onenand/samsung_mtd.c:678:40:    got void [noderef] <asn:2> *[assigned] p
+>     drivers/mtd/nand/onenand/samsung_mtd.c:679:19: warning: incorrect type in assignment (different address spaces)
+>     drivers/mtd/nand/onenand/samsung_mtd.c:679:19:    expected void [noderef] <asn:2> *[assigned] p
+>     drivers/mtd/nand/onenand/samsung_mtd.c:679:19:    got unsigned char *
+> 
+> Reported-by: kbuild test robot <lkp@intel.com>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-I would like this to be fixed before enabling compile testing, is your
-fix read?
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/fixes, thanks.
 
-Thanks,
-Miquèl
+Miquel
