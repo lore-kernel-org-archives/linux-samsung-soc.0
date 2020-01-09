@@ -1,113 +1,102 @@
-Return-Path: <SRS0=UunK=25=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=ZqIQ=26=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64B5FC282DD
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jan 2020 20:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD700C32771
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 05:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3669D206DB
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Jan 2020 20:49:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578516590;
-	bh=CkhtezZ3aI7W2ttzSwXUkCU/xpPlgbQ804mcJzg2vnI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=gtIRZ1iPEbIOrKFPWAjnsVYVa4Zq9j/7JjWlcWz5IG/tCDgO+D43fzpVeLrHlSsFm
-	 5Z7XB6rO4yPJm9q6JKVpBFZ8dUmrCLn/LNVSZCPqyq2A1TTLIyYNEJ8mq+Si+ihtdb
-	 B3nkd/+FOxU7zGiuXle3lTVKx9ukxPSFn4TDcL+o=
+	by mail.kernel.org (Postfix) with ESMTP id B1AB520678
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 05:11:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VBLEGYkd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726426AbgAHUtt (ORCPT
+        id S1725932AbgAIFLu (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 8 Jan 2020 15:49:49 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:41743 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726155AbgAHUtt (ORCPT
+        Thu, 9 Jan 2020 00:11:50 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:37846 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725830AbgAIFLu (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Jan 2020 15:49:49 -0500
-Received: by mail-oi1-f195.google.com with SMTP id i1so3908675oie.8
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Jan 2020 12:49:49 -0800 (PST)
+        Thu, 9 Jan 2020 00:11:50 -0500
+Received: by mail-il1-f196.google.com with SMTP id t8so4687812iln.4
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Jan 2020 21:11:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UfHlaQy6US7aBw4wjE4YMzRfD8j4wvVn9C/uKXknGvE=;
+        b=VBLEGYkdTZtdqR94sj6Tjf0h7XJq62AIYsTyd021wihafB/YFnQabl26zlE6suDM3b
+         YDoyoxxzX/u6qN8yuTxaZE7sLz5INyP7B2NVAKQbaOU7p3+SRqtKHOLSel8BnW4EvEmL
+         HJVwLSrnwsWoy2OT6r+FzNg3Hb7kHcxo6X5QyujDVSPzL+TMS6UJ0D+23U6qH8FJ+O6X
+         D2Mqip21qT/RzMp6BncnERjzOwUsWoS9AjuWBmAr5AhrAiQONi/7eUzgjF8PkTH1JsCg
+         P+6CaXE7Ir4pSrKnQRBuCewXmK+CuwIUj8SkT9sHuobdiK8s38RXGkToOdIhZeygll+8
+         ZIcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Y2blFDS/4xPh5DF4rW8+xU8LHc7BSZTKgnRIfuXGUCs=;
-        b=j4KmsgZOJZ/YSNv9CBlB72AZhLmPHNMo5NZ6D1RwiQ3ftWV7aV67Kov1i8LcgUhc4L
-         5/+kil6NOTA36RuLJvzLnMpaOVmMDmV3PZbHZEUXiItYq630i1IGH9IsdFCVFgeQ32A5
-         +sgQCq1HNQY64wBLwoQ1Am9hPeddoMFyLBP01aaWeZ+GVdubZtMd9SFotC1xvvectzqD
-         6HzO6XjwKBnxtm5mDs2o7UeiNn876kMUBjyglQ5qeK8wIEJsZFslCGZdhPyU7uUED3vL
-         4B64VgvMWYD3zo+0muHAI4ayDASU0V4u3pbleCxWdV8Lg8UJT9O+oGzMpBZifSQ0L83Z
-         UXOQ==
-X-Gm-Message-State: APjAAAU+77lfUDHNrWOjgYVqSx0MwCSOfd3zoIjkxZd/9bq2/FLLslbM
-        4l9JWCGYh80QmEczc9JeZ4HkE1E=
-X-Google-Smtp-Source: APXvYqzFbzx9GrmgaARCFfQiMUwuXl8kTNxLU516t82pISlYTBu+SlrvP4NiPa8v7l0HraFCWPQd8g==
-X-Received: by 2002:aca:458:: with SMTP id 85mr451640oie.56.1578516589248;
-        Wed, 08 Jan 2020 12:49:49 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id e17sm1507076otq.58.2020.01.08.12.49.48
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jan 2020 12:49:49 -0800 (PST)
-Received: from rob (uid 1000)
-        (envelope-from rob@rob-hp-laptop)
-        id 220333
-        by rob-hp-laptop (DragonFly Mail Agent v0.11);
-        Wed, 08 Jan 2020 14:49:48 -0600
-Date:   Wed, 8 Jan 2020 14:49:48 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>
-Cc:     gregkh@linuxfoundation.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, kgene@kernel.org, krzk@kernel.org,
-        hminas@synopsys.com, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com,
-        amelie.delaunay@st.com,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: Re: [PATCH v3] dt-bindings: usb: Convert DWC2 bindings to json-schema
-Message-ID: <20200108204948.GA9782@bogus>
-References: <20200107091630.12796-1-benjamin.gaignard@st.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UfHlaQy6US7aBw4wjE4YMzRfD8j4wvVn9C/uKXknGvE=;
+        b=DCNLcL21ui72GTwpDxFGpkWxzgMj2l98ehwfkvOj65ESAy7IhaVH7wj0lALhEgEh1U
+         B3P1PYdihuIhayWF3VgbzSAkNtpWLKfJ3uzI7OJK7TUANxY3FuaZKkgU7Ur6t5zLzFSD
+         x4O7e7ym9DbTTBIISbW0yO1VstFJmJgVbLy8Cg4Lh+347UQ7SoGMe7ulF1XTOS4HkLQs
+         XWXCAAv78KkxlE1bttHlTCGsIMq+NHBpdCM19lu9rf4L/D72wSNOkzRuuLEM2b2pzCGE
+         7UCWgbiAOZVk0o8Q9mzkLfIqGdjt0Y3Qt/3o25dcUezuU0wa/CrupEkhnHxYQG/Usk6w
+         afIA==
+X-Gm-Message-State: APjAAAXaMOz8kAKlGAVMI0vdUh4Npq5GkVTl/X/1iNCfwcfO70JB1tVT
+        MifRuN1ABbhVxax1vDwLkAtboRg8OxFemG+D/+n8hw==
+X-Google-Smtp-Source: APXvYqy6jhW/BWgmeQryfExSbB5ZZCHIWOH5y455b2gRqd8d/+uz2PUeTmV3LSSnzW9mzk+cRkzMj2Q25Jj/hNuJe7U=
+X-Received: by 2002:a92:2907:: with SMTP id l7mr7102602ilg.140.1578546709305;
+ Wed, 08 Jan 2020 21:11:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200107091630.12796-1-benjamin.gaignard@st.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CGME20200108115027eucas1p2abcd40e359e993e5b471229b02b69fc3@eucas1p2.samsung.com>
+ <20200108115007.31095-1-m.szyprowski@samsung.com>
+In-Reply-To: <20200108115007.31095-1-m.szyprowski@samsung.com>
+From:   Tzung-Bi Shih <tzungbi@google.com>
+Date:   Thu, 9 Jan 2020 13:11:38 +0800
+Message-ID: <CA+Px+wUo7i331kEuc2mjE9uqSna7Lxnua=hvgPc+0T2YdeCgMg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ASoC: max98090: fix incorrect helper in max98090_dapm_put_enum_double()
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     ALSA development <alsa-devel@alsa-project.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Dylan Reid <dgreid@google.com>,
+        Jimmy Cheng-Yi Chiang <cychiang@google.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 7 Jan 2020 10:16:30 +0100, Benjamin Gaignard wrote:
-> Convert DWC2 bindings to DT schema format using json-schema.
-> DWC2 is widely use but a couple of compatibles and properties
-> (vusb_d-supply,vusb_a-supply) were missing in dwc2.txt, the
-> patch add them.
-> 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> ---
-> CC: Minas Harutyunyan <hminas@synopsys.com>
-> CC: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> changes in version 3:
-> - put Rob Herring as maintainer
-> - change the example to use one of the listed compatible
-> 
-> changes in version 2:
-> - put Minas Harutyunyan <hminas@synopsys.com> as maintainer
-> - remove type and description from phy property
-> - remove description from compatible items
-> - simplify samsung,s3c6400-hsotg compatible handling
-> 
->  Documentation/devicetree/bindings/usb/dwc2.txt  |  64 ----------
->  Documentation/devicetree/bindings/usb/dwc2.yaml | 151 ++++++++++++++++++++++++
->  2 files changed, 151 insertions(+), 64 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/usb/dwc2.txt
->  create mode 100644 Documentation/devicetree/bindings/usb/dwc2.yaml
-> 
+On Wed, Jan 8, 2020 at 7:50 PM Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> Fixes: 62d5ae4cafb7 ("ASoC: max98090: save and restore SHDN when changing sensitive registers")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Tzung-Bi Shih <tzungbi@google.com>
 
-Applied, thanks.
+Thanks for finding and fixing the bug.
 
-Rob
+The fix also reminded me: there are two possible "context" to call
+max98090_dapm_put_enum_double( ): DAPM and userspace mixer control.
+- max98090_shdn_save( ) is designed for mixer control because it
+acquires dapm_mutex.
+- max98090_shdn_save_locked( ) is designed for DAPM without acquiring lock.
+
+Current code:
+> +static int max98090_dapm_put_enum_double(struct snd_kcontrol *kcontrol,
+[snip]
+> + max98090_shdn_save(max98090);
+> + ret = snd_soc_dapm_put_enum_double(kcontrol, ucontrol);
+> + max98090_shdn_restore(max98090);
+
+Should it cause a deadlock if DAPM calls the
+max98090_dapm_put_enum_double( )?  I didn't see a deadlock last time I
+tested the series.  Will do further analysis on this.
