@@ -1,147 +1,106 @@
-Return-Path: <SRS0=ZqIQ=26=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=hDuM=27=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E0BC282DD
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 21:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FAA9C282DD
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jan 2020 01:06:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2A772077C
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Jan 2020 21:29:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578605374;
-	bh=psDmMSxAo8l2FMaG8nyRMSX71wmF0khdZ9Zb2z/djXQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
-	b=2nodW446vNNlsaU6cip5gQ4Au3R1RJl+4FufReNKBghgzXZlKwxnzOdj30dvEylwp
-	 yMMQVQRmiDUWy70VQPMHTWnrbkqxcZDCXb/1qQLLHJJSdekIL5L1tQF/O1uyaG/E/7
-	 7l1wwO8UUQICccpvPNXULNIpDBL+GgfEbzHFUtQc=
+	by mail.kernel.org (Postfix) with ESMTP id E26462072E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jan 2020 01:06:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q/SpiVFs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728843AbgAIV3d (ORCPT
+        id S1730365AbgAJBGL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 9 Jan 2020 16:29:33 -0500
-Received: from foss.arm.com ([217.140.110.172]:37004 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725763AbgAIV3d (ORCPT
+        Thu, 9 Jan 2020 20:06:11 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:40848 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730363AbgAJBGL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 9 Jan 2020 16:29:33 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3F39B31B;
-        Thu,  9 Jan 2020 13:29:32 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BB9863F534;
-        Thu,  9 Jan 2020 13:29:31 -0800 (PST)
-Date:   Thu, 09 Jan 2020 21:29:30 +0000
-From:   Mark Brown <broonie@kernel.org>
+        Thu, 9 Jan 2020 20:06:11 -0500
+Received: by mail-io1-f66.google.com with SMTP id x1so227504iop.7
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Jan 2020 17:06:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0AaGdesSrwy9CQvlbcsq69wkQKgx9ks9Un7URg79eFs=;
+        b=Q/SpiVFs4/CEUFt4OJSbX9xPIsfLj3jSr20AiDtXP9XvZICvdGeSQk0lhVHg5Qd5ZS
+         8VjrJNEgPxcXYOwEWkcs4vOmFRVOLcc8qYl7fD090QaaMrmq5H+H5eVVXXZjUIO6RwaS
+         coZEj5xntuTb9jKxuehVxmW5QEaU9gi9tM0Sd9ENZdBR1/dXMyjy6yw0raRCe/i0RLxy
+         SBed63A6k1u1GI0RmSCoxlYb8u+D7oW+/5KqjBw+xq6Dwx2vL77j0U9iaIkH5NOoYrsS
+         tQzyxjlVTJE1fnAPu9bhvkp1lCm49fC8vZlK8HTeqq84e6+FresN1q5780lOqNG8NjId
+         wgGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0AaGdesSrwy9CQvlbcsq69wkQKgx9ks9Un7URg79eFs=;
+        b=MKbscnBpiuTv4qRp2xxR14E+mvyhvt9BvIKvotWgtbYLCkWxEINcNLHZV+4N0qTWXI
+         JM5axuuCO4nsFksBbj5NPUy/t/JM3Pa1uuJyNyRzixLufO9IrB1wO4ctYW1sIXYM3EZk
+         UF+owSuDEyHT42ziTt3HucDVzs5pyTMd9hf8ItVErCH8iZ9TGT6DXJc7TOemNFrWxYSc
+         WAF/w5Zm9BV6isItLtzKxl6kPPgLKSg9O9qLS8zlPXQcfH0n9fbfYTi+v7yEHaSQ0dfl
+         CwQ+vaNVMk/79yTUFBRYXkFzNe6S1w9iIMT6xZes6mYCe48L5X/nNtwstnj72VwKCTxu
+         iwZA==
+X-Gm-Message-State: APjAAAWSagF/VEGSry1SGQJxXCNVNw6pUSB4uIjPl3fZ9QBYtxPXXqUK
+        UfhoP8DGVs9krOYUMbbFvu/8Fo/taofnBa3hv431Bw==
+X-Google-Smtp-Source: APXvYqy7FKLikZyPAOHw9u0R+JZtbYnesh6NErB95a1HKW/PFprxIo+ALAFJPqjDzEla5n9WWRiJb0HU6Pa+sn+1gKQ=
+X-Received: by 2002:a6b:8f41:: with SMTP id r62mr300820iod.140.1578618370473;
+ Thu, 09 Jan 2020 17:06:10 -0800 (PST)
+MIME-Version: 1.0
+References: <CGME20200108115027eucas1p1d3645ba53703780679c662921efbca78@eucas1p1.samsung.com>
+ <20200108115007.31095-1-m.szyprowski@samsung.com> <20200108115007.31095-2-m.szyprowski@samsung.com>
+ <CA+Px+wXkFE5b_8bLz7-c95TvEdqHGD5s-XKRYMVr40xQkqTWxQ@mail.gmail.com> <83169752-ac05-d1b1-ece9-fbe1109287cf@samsung.com>
+In-Reply-To: <83169752-ac05-d1b1-ece9-fbe1109287cf@samsung.com>
+From:   Tzung-Bi Shih <tzungbi@google.com>
+Date:   Fri, 10 Jan 2020 09:05:59 +0800
+Message-ID: <CA+Px+wWiZ9MWwi-moXo9rJrbgLFVEbOqjQMhOZmm5mRL7EeMbQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ASoC: max98090: fix lockdep warning
 To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     alsa-devel@alsa-project.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+Cc:     ALSA development <alsa-devel@alsa-project.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Dylan Reid <dgreid@google.com>,
         Jimmy Cheng-Yi Chiang <cychiang@google.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tzung-Bi Shih <tzungbi@google.com>
-Subject: Applied "ASoC: max98090: fix incorrect helper in max98090_dapm_put_enum_double()" to the asoc tree
-In-Reply-To:  <20200108115007.31095-1-m.szyprowski@samsung.com>
-Message-Id: <applied-20200108115007.31095-1-m.szyprowski@samsung.com>
-X-Patchwork-Hint: ignore
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
-Message-ID: <20200109212930.xeJcCKfuiKCJkNe1huakgq9od9brmlGudgIA1mdj3JQ@z>
 
-The patch
+On Thu, Jan 9, 2020 at 7:09 PM Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> On 09.01.2020 06:36, Tzung-Bi Shih wrote:
+> > On Wed, Jan 8, 2020 at 7:50 PM Marek Szyprowski
+> > <m.szyprowski@samsung.com> wrote:
+> >> Fix this by introducing a separate mutex only for serializing the SHDN
+> >> hardware register related operations.
+> > This fix makes less sense to me.  We used dapm_mutex intentionally
+> > because: both DAPM and userspace mixer control would change SHDN bit
+> > at the same time.
 
-   ASoC: max98090: fix incorrect helper in max98090_dapm_put_enum_double()
+We should not use a separate lock.  Either mixer control or DAPM would
+change the SHDN bit.  The patch overlooks the calling path from DAPM.
+As a result, DAPM can change the bit in the middle of mixer control.
 
-has been applied to the asoc tree at
+> Nope. This is just a lockdep warning about possible hypothetical
+> situation on the test system during the normal boot. It doesn't mean
+> that the circular dependency actually happens (if so, it would end in
+> deadlock). It also doesn't mean that such circular dependency can be
+> really triggered, because some other dependencies that not known to
+> lockdep engine might protect against it. However the easiest way to fix
+> it is to use fine-grained locking instead of reusing some framework
+> locks for other purposes. Such approach is also usually a good practice.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 1d7b051891722a36ee0b228bc940dd245f161ab1 Mon Sep 17 00:00:00 2001
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Date: Wed, 8 Jan 2020 12:50:06 +0100
-Subject: [PATCH] ASoC: max98090: fix incorrect helper in
- max98090_dapm_put_enum_double()
-
-Commit 62d5ae4cafb7 ("ASoC: max98090: save and restore SHDN when changing
-sensitive registers") extended the code for handling "LTENL Mux", "LTENR
-Mux", "LBENL Mux" and "LBENR Mux" controls by adding a custom
-max98090_dapm_put_enum_double() function to them. However that function
-used incorrect helper to get its component object. Fix this by using the
-proper snd_soc_dapm_* helper.
-
-This fixes the following NULL pointer exception observed on
-Exynos4412-based Odroid U3 board:
-8<--- cut here ---
-Unable to handle kernel NULL pointer dereference at virtual address 000000b0
-pgd = (ptrval)
-[000000b0] *pgd=00000000
-Internal error: Oops: 5 [#1] PREEMPT SMP ARM
-Modules linked in:
-CPU: 0 PID: 1104 Comm: alsactl Not tainted 5.5.0-rc5-next-20200107 #166
-Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-PC is at __mutex_lock+0x54/0xb18
-LR is at ___might_sleep+0x3c/0x2e0
-...
-Process alsactl (pid: 1104, stack limit = 0x(ptrval))
-...
-[<c0b49630>] (__mutex_lock) from [<c0b4a110>] (mutex_lock_nested+0x1c/0x24)
-[<c0b4a110>] (mutex_lock_nested) from [<c0839b3c>] (max98090_shdn_save+0x1c/0x28)
-[<c0839b3c>] (max98090_shdn_save) from [<c083a4f8>] (max98090_dapm_put_enum_double+0x20/0x40)
-[<c083a4f8>] (max98090_dapm_put_enum_double) from [<c080d0e8>] (snd_ctl_ioctl+0x190/0xbb8)
-[<c080d0e8>] (snd_ctl_ioctl) from [<c02cafec>] (ksys_ioctl+0x470/0xaf8)
-[<c02cafec>] (ksys_ioctl) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
-...
----[ end trace 0e93f0580f4b9241 ]---
-
-Fixes: 62d5ae4cafb7 ("ASoC: max98090: save and restore SHDN when changing sensitive registers")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Tzung-Bi Shih <tzungbi@google.com>
-Link: https://lore.kernel.org/r/20200108115007.31095-1-m.szyprowski@samsung.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/max98090.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/codecs/max98090.c b/sound/soc/codecs/max98090.c
-index 4c7b16d557e2..c01ce4a3f86d 100644
---- a/sound/soc/codecs/max98090.c
-+++ b/sound/soc/codecs/max98090.c
-@@ -82,7 +82,7 @@ static int max98090_dapm_put_enum_double(struct snd_kcontrol *kcontrol,
- 	struct snd_ctl_elem_value *ucontrol)
- {
- 	struct snd_soc_component *component =
--		snd_soc_kcontrol_component(kcontrol);
-+		snd_soc_dapm_kcontrol_component(kcontrol);
- 	struct max98090_priv *max98090 =
- 		snd_soc_component_get_drvdata(component);
- 	int ret;
--- 
-2.20.1
-
+If the possible circular locking is a hypothetical situation, shall we
+ignore it since we are very sure userspace cannot see the control
+devices when building the sound card?
