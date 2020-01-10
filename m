@@ -2,105 +2,63 @@ Return-Path: <SRS0=hDuM=27=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71A75C33CA4
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jan 2020 13:40:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32AF5C282DD
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jan 2020 17:23:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 487E02087F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jan 2020 13:40:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="O//lvPbN"
+	by mail.kernel.org (Postfix) with ESMTP id 0713F20882
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jan 2020 17:23:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1578677030;
+	bh=bJ7uSsD1XdjwYUW0kN2RzidhFDTOge2H7C13hNoWdlU=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=ZJRzAWTPay3kkUXXTNGMDAxxn5OK8gw3Fql61iGIsm9pix1QzjoRBBde0071aeqyt
+	 /pcv4/HRU18ntuli20MqV2aTbJYsZ+qvxLg8qpPMLKLcQ/esKJ8D0y4JbQycj64VHL
+	 Er/Et4cql47IUvM4qUoPqI7uN2vPpH0SYRexzGk8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728285AbgAJNk2 (ORCPT
+        id S1726463AbgAJRXt (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 10 Jan 2020 08:40:28 -0500
-Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:55451 "EHLO
-        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728192AbgAJNk1 (ORCPT
+        Fri, 10 Jan 2020 12:23:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38512 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726114AbgAJRXt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 10 Jan 2020 08:40:27 -0500
-Received: from [IPv6:2001:420:44c1:2577:c967:e1d3:183a:b8ef]
- ([IPv6:2001:420:44c1:2577:c967:e1d3:183a:b8ef])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id puWTinFt8pLtbpuWXiQqCI; Fri, 10 Jan 2020 14:40:25 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
-        t=1578663625; bh=MHkmQDKT0r4fQcBBc2IMAMBUeWf7ULY+mdGIXIE99eE=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=O//lvPbN29U0TCDl8YaGRGESV2JX23l8A0Y20wPkKhQ1ks/tuf+x5unexaa6kdXTR
-         FxMWw3eNi7id6vuDo7U48E1X6LmgJLBKrPoQPWPfsU/PWNJY4bvtYyTZRGasAk0q0P
-         STzuC6gf+2lBnFZFBemXD/K6XacpXE6XYveEnTRvJ2QTa+a6kffkPUx8obna9vc9lO
-         BJ0zBVsVzvXvW5MPItBtkSopbqfIgn10T5fUPwg5Qz9Y1BmoSICXRVWr4gdremE3zb
-         qadwjJkbh51NxAENND7Y50fQ2yM7oVYubS3SJNpp+ARUcviojJLb+TKnLttAlW420C
-         QcEGKYTwEG3OA==
-Subject: Re: [PATCH v2 RFT] media: exynos4-is: add missed
- clk_disable_unprepare in remove
-To:     Chuhong Yuan <hslester96@gmail.com>
-Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Fri, 10 Jan 2020 12:23:49 -0500
+Received: from localhost.localdomain (unknown [83.218.167.187])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB891206ED;
+        Fri, 10 Jan 2020 17:23:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578677028;
+        bh=bJ7uSsD1XdjwYUW0kN2RzidhFDTOge2H7C13hNoWdlU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=BU4Wcwnx0nkMXq9Pk3Zt3O8kDaE3+GH9VbRThsJaOH8a7utkjXCts3XO4Ffg1YAME
+         Gwk9WLVa/1c25PI4L1JY+RtS2khz7tNP9CR2DV4m+DQbmN+3hoXbUBNZSR7lvkjdu/
+         AGCTRS6MA3WSI1rrqIJOki89lgGhyh+Rn2FiOHsM=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm@kernel.org, soc@kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
         Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191219074824.15047-1-hslester96@gmail.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <f253eb6e-5e21-fd9b-8c2f-371beea66afa@xs4all.nl>
-Date:   Fri, 10 Jan 2020 14:40:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20191219074824.15047-1-hslester96@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfJQy4Gzf1IEMxWqhmwovv3bnMJlsGgGc6jsSNp9UlIaXbaOBGCM0fOyz5BB9dlhYab0a2NZJ0/noauOBJA9ZdcBv5EwI55HwlTGDB1ynYVVBZd1h/03T
- O4hsaRHDYftag8lWWDgwg2HpVXRJhpL0ByqssqOfSMG60XEEof9G1kt9azOy0ZSPZ1lT5/O5D0cQV0zCMgR18p4XLKXVhsMurGXOmIUElYQL9sMt+3lOh/gy
- jOlDIECumrBQcgjW3o26Y/pWEB8nNRiD9pussXQNgPn0i1MPDERpuPiMuXkE7iNHDV3fykh/PXJfTdoc+86o0WxqlS2T97gne+u6LPaCMLyXZ2pZMcpoStfa
- vMYM8qzbUzlq0Jpv0evU2P9HgaPtlnkZe9rLpIbtE6PhroHQNgM8R4OxQRQd+pppfk+7G8FlWfBhZZwq2pg0CJ3GZahhjzMO+A9ZABOwepNQp9dwgraqkZAy
- jjO4/GgJIshj4mQuXHa36d+rkfhKky1U+f4Q1hkns0MAP8Ze2NZXAtWAe6ZBJheqQ60g8ZHgB19XDbOBm0v6ciHUr4sCCbZUMERG+M+o9AE8fWt8oaVS1ofT
- oS5ReaE/M81QCgIbqU7TVF4GBtAFAtZmMQ1Fn1RYo36CdQ==
+Subject: [GIT PULL 0/3] ARM: Pull for v5.6
+Date:   Fri, 10 Jan 2020 18:23:29 +0100
+Message-Id: <20200110172334.4767-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Anyone able/willing to test this patch?
+Hi,
 
-Regards,
+Except three pull requests, also separate two patches
+at the end - not worth its own pull.
 
-	Hans
-
-On 12/19/19 8:48 AM, Chuhong Yuan wrote:
-> This driver forgets to disable and unprepare clock when remove.
-> Add a call to clk_disable_unprepare() to fix it.
-> 
-> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-> ---
-> Changes in v2:
->   - Add a check of pm_runtime_enable() to match enable in probe.
->   - Add RFT tag.
-> 
->  drivers/media/platform/exynos4-is/fimc-lite.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
-> index e87c6a09205b..17de14fbba31 100644
-> --- a/drivers/media/platform/exynos4-is/fimc-lite.c
-> +++ b/drivers/media/platform/exynos4-is/fimc-lite.c
-> @@ -1614,6 +1614,9 @@ static int fimc_lite_remove(struct platform_device *pdev)
->  	struct fimc_lite *fimc = platform_get_drvdata(pdev);
->  	struct device *dev = &pdev->dev;
->  
-> +	if (!pm_runtime_enabled(dev))
-> +		clk_disable_unprepare(fimc->clock);
-> +
->  	pm_runtime_disable(dev);
->  	pm_runtime_set_suspended(dev);
->  	fimc_lite_unregister_capture_subdev(fimc);
-> 
-
+Best regards,
+Krzysztof
