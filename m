@@ -7,52 +7,51 @@ X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71510C282DD
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jan 2020 17:24:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E0EC282DD
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jan 2020 17:44:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E01320880
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jan 2020 17:24:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D4492080D
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jan 2020 17:44:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578677051;
-	bh=PEEWZOXtjp+MV+ENjzNepmXB7JALrO/U96bkKTRD2HU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CWG5Ga+DJfcZAsnrEnsignp5PUZFba6VH2CZYIQvVdzUC9AMJjfFhegL1NyhPrnai
-	 TATGPwE8yQza7qzMDPccDxnmkAJbTn2qZcmJTph0LuTWoXAhhWvMP+Sja73EOE18qp
-	 MKyaap8bjrnG8lD0kfGgn8rP8qC40w/+yIzVMdww=
+	s=default; t=1578678275;
+	bh=+XlasTsclIpK9sBFtzJ91eHhptB1H+p3XDQ+dPHG9P8=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=2fH03Yx4cumqjiBMM+VbxJLjWa8FGdvdmB0/vXslXtzUlmr8LeIdlm2t05IIZClbi
+	 X3BIYsecDjZXWyPv4MSOrTfF0jwjV6fZifhSHLdgi+U2Vq5Iil8LXvt4w157r4CRH3
+	 kT3CnlN/6jBwzWrZG4n2yBsrVGlDBk726icC8HiI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726477AbgAJRYK (ORCPT
+        id S1727927AbgAJRof (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 10 Jan 2020 12:24:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39180 "EHLO mail.kernel.org"
+        Fri, 10 Jan 2020 12:44:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726114AbgAJRYK (ORCPT
+        id S1727742AbgAJRof (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 10 Jan 2020 12:24:10 -0500
+        Fri, 10 Jan 2020 12:44:35 -0500
 Received: from localhost.localdomain (unknown [83.218.167.187])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7E1B2080D;
-        Fri, 10 Jan 2020 17:24:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BB9D206ED;
+        Fri, 10 Jan 2020 17:44:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578677050;
-        bh=PEEWZOXtjp+MV+ENjzNepmXB7JALrO/U96bkKTRD2HU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Srn9kJKd0sPJ1cmBok1bROl1+1DyLwvY/44RiAi/t5xT5CX8qBGsdO2oBMxCSooMj
-         Wl98Fw/vUFs5sUBqmgY4uF4EuAE1fl9d9sh5LYRMkuGFYyeLDk//ELUT9jHjmKN9Hn
-         tmOvTxgATRgKfR2LuGJ5KJwIC4iOgp6evkBOyojc=
+        s=default; t=1578678274;
+        bh=+XlasTsclIpK9sBFtzJ91eHhptB1H+p3XDQ+dPHG9P8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=EBZniYie9cnWt7iquazlzLwNtr7fYI2ZXQhZre4JF3cJIxR0p5CQSnZp87RKCSkkQ
+         6KkrGYjnVaHse6kCXceAqCSkLYSZtlGFjw3yOjKBOLFTQu/HViAZ/Q/ZaTREHT+Oxt
+         5EGhTnygzSspBOzU04B8dHhF3ukhyZ1Z0wgEwlbc=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org
+To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL 3/3] ARM: samsung: Pull for v5.6
-Date:   Fri, 10 Jan 2020 18:23:32 +0100
-Message-Id: <20200110172334.4767-4-krzk@kernel.org>
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+Subject: [GIT PULL] pinctrl: samsung: Pull for v5.6
+Date:   Fri, 10 Jan 2020 18:44:26 +0100
+Message-Id: <20200110174426.5463-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200110172334.4767-1-krzk@kernel.org>
-References: <20200110172334.4767-1-krzk@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
@@ -64,32 +63,23 @@ The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-5.6
-`
-for you to fetch changes up to 45984f0c70ccc03e09f97ee5d0749396547b6594:
+  https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-5.6
 
-  ARM: samsung: Rename Samsung and Exynos to lowercase (2020-01-07 20:44:22 +0100)
+for you to fetch changes up to 225a2ec19aac426ef29f0e4accfc890c87d38bdc:
 
-----------------------------------------------------------------
-Samsung mach/soc changes for v5.6
-
-Cleanups (Samsung and Exynos names, Kconfig help text correction).
+  pinctrl: samsung: Fix missing OF and GPIOLIB dependency on S3C24xx and S3C64xx (2019-12-15 12:47:52 +0100)
 
 ----------------------------------------------------------------
-Krzysztof Kozlowski (2):
-      ARM: exynos: Correct the help text for platform Kconfig option
-      ARM: samsung: Rename Samsung and Exynos to lowercase
+Samsung pinctrl drivers changes for v5.6
 
- arch/arm/mach-exynos/Kconfig                      | 36 +++++++++++------------
- arch/arm/mach-exynos/common.h                     |  2 +-
- arch/arm/mach-exynos/exynos.c                     |  4 +--
- arch/arm/mach-exynos/include/mach/map.h           |  2 +-
- arch/arm/mach-exynos/pm.c                         |  2 +-
- arch/arm/mach-exynos/smc.h                        |  2 +-
- arch/arm/mach-exynos/suspend.c                    |  2 +-
- arch/arm/mach-s3c24xx/Kconfig                     | 16 +++++-----
- arch/arm/plat-samsung/adc.c                       |  2 +-
- arch/arm/plat-samsung/devs.c                      |  2 +-
- arch/arm/plat-samsung/gpio-samsung.c              |  2 +-
- arch/arm/plat-samsung/include/plat/samsung-time.h |  2 +-
- 12 files changed, 37 insertions(+), 37 deletions(-)
+Enable compile test for build coverage (and fix exposed missing
+dependency).  Clarify Kconfig option help text.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (3):
+      pinctrl: samsung: Enable compile test for build coverage
+      pinctrl: samsung: Clarify the option titles/names
+      pinctrl: samsung: Fix missing OF and GPIOLIB dependency on S3C24xx and S3C64xx
+
+ drivers/pinctrl/samsung/Kconfig | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
