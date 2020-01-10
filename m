@@ -2,140 +2,97 @@ Return-Path: <SRS0=hDuM=27=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E300C33CA2
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jan 2020 11:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22E7FC33CA2
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jan 2020 13:25:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E836820838
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jan 2020 11:00:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HtMROQ3j"
+	by mail.kernel.org (Postfix) with ESMTP id ED77120721
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jan 2020 13:25:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1578662704;
+	bh=kXfte3+yy+rRScPqwKLeTCK+9AO4YJRA5j6RJ3BHZl4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=y1LRU0JGU9bQ34PRXUbGWgehy4GYziMO0q0Ir8NX40dIUuFHP97avil39llFlsSub
+	 zDm7Wjv/92FehZltdmrFfv9JupKpKWa1RIDMo7KMi8QxDjEAj7hfSpkrgNciO0wLQD
+	 ALSLpJ/HL6U24jsiZNRo0Qt8kFMZg5s/gV3jO29o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727682AbgAJLAj (ORCPT
+        id S1727484AbgAJNZD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 10 Jan 2020 06:00:39 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:33880 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727670AbgAJLAj (ORCPT
+        Fri, 10 Jan 2020 08:25:03 -0500
+Received: from foss.arm.com ([217.140.110.172]:44350 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727358AbgAJNZD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 10 Jan 2020 06:00:39 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00AB0WIu035463;
-        Fri, 10 Jan 2020 05:00:32 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1578654032;
-        bh=jxtcpp4wv+hTwwi1lQ91nMik4CFwpDAD22wxC64xvi0=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=HtMROQ3jnHJqUDiQzlcPXO7ZOvxczkxJu3rEL/gvGaPNSUlbeUW5VIZ3T8wcBZOTF
-         9Bok2C3oOuWT5N/Y/iCoPjgRgbfvA4PzkF/nv+uf4KNN0xZjvx14QtpYWad6LS7y3l
-         NvmIbhUxP3f+u2KcoB6yLmfjOw+jcpCc0kHBKW08=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00AB0V5n126818
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 10 Jan 2020 05:00:32 -0600
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 10
- Jan 2020 05:00:31 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 10 Jan 2020 05:00:31 -0600
-Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00AB0SY0046697;
-        Fri, 10 Jan 2020 05:00:29 -0600
-Subject: Re: [PATCH] phy: core: Fix error path in devm_of_phy_get()
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        <linux-samsung-soc@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
+        Fri, 10 Jan 2020 08:25:03 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ECBB71FB;
+        Fri, 10 Jan 2020 05:25:02 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 73B233F534;
+        Fri, 10 Jan 2020 05:25:02 -0800 (PST)
+Date:   Fri, 10 Jan 2020 13:25:01 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     alsa-devel@alsa-project.org,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-References: <CGME20200108132350eucas1p1476f4aa038dbf5ea199b84c5c82a25a5@eucas1p1.samsung.com>
- <20200108132342.14635-1-m.szyprowski@samsung.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <4c612381-55c1-635a-d40d-e1bb3aa60998@ti.com>
-Date:   Fri, 10 Jan 2020 16:32:36 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Dylan Reid <dgreid@google.com>,
+        Jimmy Cheng-Yi Chiang <cychiang@google.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tzung-Bi Shih <tzungbi@google.com>
+Subject: Re: Applied "ASoC: max98090: fix incorrect helper in
+ max98090_dapm_put_enum_double()" to the asoc tree
+Message-ID: <20200110132501.GA5889@sirena.org.uk>
+References: <CGME20200109212932eucas1p17a0066e1b426db3d4fdbd89632ea5130@eucas1p1.samsung.com>
+ <applied-20200108115007.31095-1-m.szyprowski@samsung.com>
+ <77e524c5-f0a4-1996-2bf5-cbb7395f7c25@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20200108132342.14635-1-m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="7JfCtLOvnd9MIVvH"
+Content-Disposition: inline
+In-Reply-To: <77e524c5-f0a4-1996-2bf5-cbb7395f7c25@samsung.com>
+X-Cookie: A little pain never hurt anyone.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
+--7JfCtLOvnd9MIVvH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 08/01/20 6:53 PM, Marek Szyprowski wrote:
-> Commit 5253fe05bb47 ("phy: core: Add consumer device link support") added
-> support for consumer device links, but it missed proper update for error
-> handling in devm_of_phy_get(). Fix this by adding proper return statement.
-> 
-> This patch fixes the following invalid pointer dereference on
-> Exynos5250-based Arndale board with multi_v7_defconfig:
-> 
-> 8<--- cut here ---
-> Unable to handle kernel paging request at virtual address fffffe7f
-> pgd = (ptrval)
-> [fffffe7f] *pgd=6ffff841, *pte=00000000, *ppte=00000000
-> Internal error: Oops: 27 [#1] SMP ARM
-> Modules linked in:
-> CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.5.0-rc5-next-20200108 #167
-> Hardware name: Samsung Exynos (Flattened Device Tree)
-> PC is at device_link_add+0x68/0x4c4
-> LR is at device_link_add+0x68/0x4c4
-> ...
-> Process swapper/0 (pid: 1, stack limit = 0x(ptrval))
-> ...
-> [<c0984d70>] (device_link_add) from [<c0707e8c>] (devm_of_phy_get+0x6c/0xb0)
-> [<c0707e8c>] (devm_of_phy_get) from [<c0a0deb8>] (ahci_platform_get_phy+0x28/0xe0)
-> [<c0a0deb8>] (ahci_platform_get_phy) from [<c0a0e64c>] (ahci_platform_get_resources+0x398/0x48c)
-> [<c0a0e64c>] (ahci_platform_get_resources) from [<c0a0daec>] (ahci_probe+0x14/0xb4)
-> [<c0a0daec>] (ahci_probe) from [<c098a1ec>] (platform_drv_probe+0x48/0x9c)
-> [<c098a1ec>] (platform_drv_probe) from [<c0988214>] (really_probe+0x1dc/0x33c)
-> [<c0988214>] (really_probe) from [<c09884f4>] (driver_probe_device+0x60/0x164)
-> [<c09884f4>] (driver_probe_device) from [<c09887a0>] (device_driver_attach+0x58/0x60)
-> [<c09887a0>] (device_driver_attach) from [<c0988828>] (__driver_attach+0x80/0xbc)
-> [<c0988828>] (__driver_attach) from [<c09865b4>] (bus_for_each_dev+0x68/0xb4)
-> [<c09865b4>] (bus_for_each_dev) from [<c0987594>] (bus_add_driver+0x160/0x1e4)
-> [<c0987594>] (bus_add_driver) from [<c09892c0>] (driver_register+0x78/0x10c)
-> [<c09892c0>] (driver_register) from [<c0302f14>] (do_one_initcall+0x54/0x220)
-> [<c0302f14>] (do_one_initcall) from [<c1500f4c>] (kernel_init_freeable+0x150/0x1b4)
-> [<c1500f4c>] (kernel_init_freeable) from [<c0ef6b34>] (kernel_init+0x8/0x10c)
-> [<c0ef6b34>] (kernel_init) from [<c03010e8>] (ret_from_fork+0x14/0x2c)
+On Fri, Jan 10, 2020 at 10:02:05AM +0100, Marek Szyprowski wrote:
 
-I've already merged a patch fixing this.
+> This patch has been applied twice. First time for the=20
+> max98090_dapm_put_enum_double() function (as it has been designed),=20
+> second time for max98090_put_enum_double(), what is completely wrong=20
+> thing (it does exactly the opposite thing).
 
-Thanks
-Kishon
+> Mark, please revert/drop 4e93c1294f4b051d574d6bc59755d2863286990e commit.
 
-> ...
-> 
-> Fixes: 5253fe05bb47 ("phy: core: Add consumer device link support")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/phy/phy-core.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-> index 8dfb4868c8c3..2eb28cc2d2dc 100644
-> --- a/drivers/phy/phy-core.c
-> +++ b/drivers/phy/phy-core.c
-> @@ -799,6 +799,7 @@ struct phy *devm_of_phy_get(struct device *dev, struct device_node *np,
->  		devres_add(dev, ptr);
->  	} else {
->  		devres_free(ptr);
-> +		return phy;
->  	}
->  
->  	link = device_link_add(dev, &phy->dev, DL_FLAG_STATELESS);
-> 
+OK.  For things like this it's generally easiest to just send a revert
+that can be directly applied.
+
+--7JfCtLOvnd9MIVvH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4YeywACgkQJNaLcl1U
+h9Ah3wf+MDyukWg0tVh436KwxdTsrwn1OucKLb64Ll1MS9U38t0GcpHyTfqsPAjT
+4Y0mSanevxLyrIvGotqI9ISf1bHiFuhGq5EhfZ3TdROPUfet4153XmLguVDA0hyg
+y96Re9MuyvkMvhq9jGtTQoqTXGt90ajnsMEk6LxmdScADs3bzXyyEN2PxLUSCnAo
+1tOKL4qjjKzFNvhgo7aoMXFjmitGhRMgi+bFEz3WAzVvEXSYPKAMeXAlyNgNtJKV
+cF5lTQ36gBQuHoPAfdbnCzGyTRqkFGf9//9rYMFUf6rqZKzpwhPfFlL4O9cbNNQb
+UYm2/wAGzp78Zc1i4ejmMUZC84K1+w==
+=EG91
+-----END PGP SIGNATURE-----
+
+--7JfCtLOvnd9MIVvH--
