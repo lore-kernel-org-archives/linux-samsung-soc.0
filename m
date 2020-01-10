@@ -2,97 +2,105 @@ Return-Path: <SRS0=hDuM=27=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22E7FC33CA2
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jan 2020 13:25:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71A75C33CA4
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jan 2020 13:40:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED77120721
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jan 2020 13:25:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578662704;
-	bh=kXfte3+yy+rRScPqwKLeTCK+9AO4YJRA5j6RJ3BHZl4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=y1LRU0JGU9bQ34PRXUbGWgehy4GYziMO0q0Ir8NX40dIUuFHP97avil39llFlsSub
-	 zDm7Wjv/92FehZltdmrFfv9JupKpKWa1RIDMo7KMi8QxDjEAj7hfSpkrgNciO0wLQD
-	 ALSLpJ/HL6U24jsiZNRo0Qt8kFMZg5s/gV3jO29o=
+	by mail.kernel.org (Postfix) with ESMTP id 487E02087F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Jan 2020 13:40:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="O//lvPbN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727484AbgAJNZD (ORCPT
+        id S1728285AbgAJNk2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 10 Jan 2020 08:25:03 -0500
-Received: from foss.arm.com ([217.140.110.172]:44350 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727358AbgAJNZD (ORCPT
+        Fri, 10 Jan 2020 08:40:28 -0500
+Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:55451 "EHLO
+        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728192AbgAJNk1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 10 Jan 2020 08:25:03 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ECBB71FB;
-        Fri, 10 Jan 2020 05:25:02 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 73B233F534;
-        Fri, 10 Jan 2020 05:25:02 -0800 (PST)
-Date:   Fri, 10 Jan 2020 13:25:01 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     alsa-devel@alsa-project.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Dylan Reid <dgreid@google.com>,
-        Jimmy Cheng-Yi Chiang <cychiang@google.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Fri, 10 Jan 2020 08:40:27 -0500
+Received: from [IPv6:2001:420:44c1:2577:c967:e1d3:183a:b8ef]
+ ([IPv6:2001:420:44c1:2577:c967:e1d3:183a:b8ef])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id puWTinFt8pLtbpuWXiQqCI; Fri, 10 Jan 2020 14:40:25 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
+        t=1578663625; bh=MHkmQDKT0r4fQcBBc2IMAMBUeWf7ULY+mdGIXIE99eE=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=O//lvPbN29U0TCDl8YaGRGESV2JX23l8A0Y20wPkKhQ1ks/tuf+x5unexaa6kdXTR
+         FxMWw3eNi7id6vuDo7U48E1X6LmgJLBKrPoQPWPfsU/PWNJY4bvtYyTZRGasAk0q0P
+         STzuC6gf+2lBnFZFBemXD/K6XacpXE6XYveEnTRvJ2QTa+a6kffkPUx8obna9vc9lO
+         BJ0zBVsVzvXvW5MPItBtkSopbqfIgn10T5fUPwg5Qz9Y1BmoSICXRVWr4gdremE3zb
+         qadwjJkbh51NxAENND7Y50fQ2yM7oVYubS3SJNpp+ARUcviojJLb+TKnLttAlW420C
+         QcEGKYTwEG3OA==
+Subject: Re: [PATCH v2 RFT] media: exynos4-is: add missed
+ clk_disable_unprepare in remove
+To:     Chuhong Yuan <hslester96@gmail.com>
+Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tzung-Bi Shih <tzungbi@google.com>
-Subject: Re: Applied "ASoC: max98090: fix incorrect helper in
- max98090_dapm_put_enum_double()" to the asoc tree
-Message-ID: <20200110132501.GA5889@sirena.org.uk>
-References: <CGME20200109212932eucas1p17a0066e1b426db3d4fdbd89632ea5130@eucas1p1.samsung.com>
- <applied-20200108115007.31095-1-m.szyprowski@samsung.com>
- <77e524c5-f0a4-1996-2bf5-cbb7395f7c25@samsung.com>
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191219074824.15047-1-hslester96@gmail.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <f253eb6e-5e21-fd9b-8c2f-371beea66afa@xs4all.nl>
+Date:   Fri, 10 Jan 2020 14:40:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="7JfCtLOvnd9MIVvH"
-Content-Disposition: inline
-In-Reply-To: <77e524c5-f0a4-1996-2bf5-cbb7395f7c25@samsung.com>
-X-Cookie: A little pain never hurt anyone.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191219074824.15047-1-hslester96@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfJQy4Gzf1IEMxWqhmwovv3bnMJlsGgGc6jsSNp9UlIaXbaOBGCM0fOyz5BB9dlhYab0a2NZJ0/noauOBJA9ZdcBv5EwI55HwlTGDB1ynYVVBZd1h/03T
+ O4hsaRHDYftag8lWWDgwg2HpVXRJhpL0ByqssqOfSMG60XEEof9G1kt9azOy0ZSPZ1lT5/O5D0cQV0zCMgR18p4XLKXVhsMurGXOmIUElYQL9sMt+3lOh/gy
+ jOlDIECumrBQcgjW3o26Y/pWEB8nNRiD9pussXQNgPn0i1MPDERpuPiMuXkE7iNHDV3fykh/PXJfTdoc+86o0WxqlS2T97gne+u6LPaCMLyXZ2pZMcpoStfa
+ vMYM8qzbUzlq0Jpv0evU2P9HgaPtlnkZe9rLpIbtE6PhroHQNgM8R4OxQRQd+pppfk+7G8FlWfBhZZwq2pg0CJ3GZahhjzMO+A9ZABOwepNQp9dwgraqkZAy
+ jjO4/GgJIshj4mQuXHa36d+rkfhKky1U+f4Q1hkns0MAP8Ze2NZXAtWAe6ZBJheqQ60g8ZHgB19XDbOBm0v6ciHUr4sCCbZUMERG+M+o9AE8fWt8oaVS1ofT
+ oS5ReaE/M81QCgIbqU7TVF4GBtAFAtZmMQ1Fn1RYo36CdQ==
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Anyone able/willing to test this patch?
 
---7JfCtLOvnd9MIVvH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Regards,
 
-On Fri, Jan 10, 2020 at 10:02:05AM +0100, Marek Szyprowski wrote:
+	Hans
 
-> This patch has been applied twice. First time for the=20
-> max98090_dapm_put_enum_double() function (as it has been designed),=20
-> second time for max98090_put_enum_double(), what is completely wrong=20
-> thing (it does exactly the opposite thing).
+On 12/19/19 8:48 AM, Chuhong Yuan wrote:
+> This driver forgets to disable and unprepare clock when remove.
+> Add a call to clk_disable_unprepare() to fix it.
+> 
+> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+> ---
+> Changes in v2:
+>   - Add a check of pm_runtime_enable() to match enable in probe.
+>   - Add RFT tag.
+> 
+>  drivers/media/platform/exynos4-is/fimc-lite.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
+> index e87c6a09205b..17de14fbba31 100644
+> --- a/drivers/media/platform/exynos4-is/fimc-lite.c
+> +++ b/drivers/media/platform/exynos4-is/fimc-lite.c
+> @@ -1614,6 +1614,9 @@ static int fimc_lite_remove(struct platform_device *pdev)
+>  	struct fimc_lite *fimc = platform_get_drvdata(pdev);
+>  	struct device *dev = &pdev->dev;
+>  
+> +	if (!pm_runtime_enabled(dev))
+> +		clk_disable_unprepare(fimc->clock);
+> +
+>  	pm_runtime_disable(dev);
+>  	pm_runtime_set_suspended(dev);
+>  	fimc_lite_unregister_capture_subdev(fimc);
+> 
 
-> Mark, please revert/drop 4e93c1294f4b051d574d6bc59755d2863286990e commit.
-
-OK.  For things like this it's generally easiest to just send a revert
-that can be directly applied.
-
---7JfCtLOvnd9MIVvH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4YeywACgkQJNaLcl1U
-h9Ah3wf+MDyukWg0tVh436KwxdTsrwn1OucKLb64Ll1MS9U38t0GcpHyTfqsPAjT
-4Y0mSanevxLyrIvGotqI9ISf1bHiFuhGq5EhfZ3TdROPUfet4153XmLguVDA0hyg
-y96Re9MuyvkMvhq9jGtTQoqTXGt90ajnsMEk6LxmdScADs3bzXyyEN2PxLUSCnAo
-1tOKL4qjjKzFNvhgo7aoMXFjmitGhRMgi+bFEz3WAzVvEXSYPKAMeXAlyNgNtJKV
-cF5lTQ36gBQuHoPAfdbnCzGyTRqkFGf9//9rYMFUf6rqZKzpwhPfFlL4O9cbNNQb
-UYm2/wAGzp78Zc1i4ejmMUZC84K1+w==
-=EG91
------END PGP SIGNATURE-----
-
---7JfCtLOvnd9MIVvH--
