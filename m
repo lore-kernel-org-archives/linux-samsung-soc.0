@@ -2,119 +2,117 @@ Return-Path: <SRS0=k2we=3C=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9379FC33CA8
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jan 2020 08:34:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2DCDC33CAD
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jan 2020 11:51:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65A6B2073D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jan 2020 08:34:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578904448;
-	bh=9jMvUvSvJlkAqTVszqCKOcIot5UUibmC3ED/ano5fAs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Oy6KWUMknFedy+/kVp82l8mQC9elD52KlHt6djB5TxDVjI9V6ydzzQrYyXCUaO+tW
-	 aZYZV1JPLkfqDWfugwY64zRclL3kqhfEAozLSehYxE9u0PgpTwQY2nSuklAwZ/bNbL
-	 jDWOBjDfnkzzvLHmNvd91wFKrsSK/rWgFL9Tyz6I=
+	by mail.kernel.org (Postfix) with ESMTP id D327620CC7
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jan 2020 11:51:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728769AbgAMIeI (ORCPT
+        id S1726180AbgAMLvO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 13 Jan 2020 03:34:08 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:35425 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728699AbgAMIeI (ORCPT
+        Mon, 13 Jan 2020 06:51:14 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:58142 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726127AbgAMLvO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 13 Jan 2020 03:34:08 -0500
-Received: by mail-ed1-f65.google.com with SMTP id f8so7708906edv.2;
-        Mon, 13 Jan 2020 00:34:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=pwiky2V1HXRMgUMF8ZYenJSpk8xqF9IZsi12qqtxDSo=;
-        b=fd5DUeIDDm+CQTs37RXNuHsLos0XQ7KTVgM4m3jBRdz9BG3CjjEvOGam+l/fNpHmEe
-         rQXy+DS5Q+saka31qhZmDF16fxtQHpDBdXk5vspxkcdCh+In7ichPQQKK+bvXxaF7oDs
-         v16ZKejP86ci/iAGwkn2FQoBaJT0K3U8I4LwRdVtc+Irf+6iCxFdw+KFMKUljKPVvUmv
-         xaBmPWMJeKuFstg96LB9Wocd4aPVkrlxDOYDqegrhEt+tjQqsdmfTrF6ygOm3hRVwpG0
-         q3w4krAZBXtdGiF0vLO88H0KcxFsJNHPvZSI/j6DaLfzsYmKPjS3XeKPYMZCXGhL2DY5
-         IE1w==
-X-Gm-Message-State: APjAAAXiMxbt8EnWFI+aHLZBaTdX30VrumHt7BDHbh3X6776V3njcnCV
-        ZZBzX7RsN2ZmcaSktv62x6UZzg7sw6Y=
-X-Google-Smtp-Source: APXvYqzUQpNNjJExK/G4N7n06llOe2EgioVrrlEkmNYk0/kj7RSvUBziADQn4BpMSCo3rhZmQYBPWA==
-X-Received: by 2002:a17:906:66c9:: with SMTP id k9mr12247747ejp.341.1578904445904;
-        Mon, 13 Jan 2020 00:34:05 -0800 (PST)
-Received: from pi3 ([194.230.155.229])
-        by smtp.googlemail.com with ESMTPSA id m5sm399916ede.10.2020.01.13.00.34.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jan 2020 00:34:05 -0800 (PST)
-Date:   Mon, 13 Jan 2020 09:34:03 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Matheus Castello <matheus@castello.eng.br>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] power: supply: max17040: Correct IRQ wake handling
-Message-ID: <20200113083403.GA1320@pi3>
-References: <CGME20200110100620eucas1p12fff62b485570e93b283e23c7a9e5b57@eucas1p1.samsung.com>
- <20200110100540.27371-1-m.szyprowski@samsung.com>
+        Mon, 13 Jan 2020 06:51:14 -0500
+Received: from 79.184.255.90.ipv4.supernova.orange.pl (79.184.255.90) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
+ id e837cbaf30ffdffb; Mon, 13 Jan 2020 12:51:12 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH] cpuidle: arm: Enable compile testing for some of drivers
+Date:   Mon, 13 Jan 2020 12:51:12 +0100
+Message-ID: <112783298.KOQPr5xTch@kreacher>
+In-Reply-To: <20191229180912.17100-2-krzk@kernel.org>
+References: <20191229180912.17100-1-krzk@kernel.org> <20191229180912.17100-2-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200110100540.27371-1-m.szyprowski@samsung.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jan 10, 2020 at 11:05:40AM +0100, Marek Szyprowski wrote:
-> Don't disable IRQ wake feature without prior enabling it.
+On Sunday, December 29, 2019 7:09:12 PM CET Krzysztof Kozlowski wrote:
+> Some of cpuidle drivers for ARMv7 can be compile tested on this
+> architecture because they do not depend on mach-specific bits.  Enable
+> compile testing for big.LITTLE, Kirkwood, Zynq, AT91, Exynos and mvebu
+> cpuidle drivers.
 > 
-> This fixes following warning observed on Exynos3250-based Rinato board:
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 1288 at kernel/irq/manage.c:724 irq_set_irq_wake+0xfc/0x134
-> Unbalanced IRQ 83 wake disable
-> Modules linked in:
-> CPU: 0 PID: 1288 Comm: rtcwake Not tainted 5.5.0-rc5-next-20200110-00031-g6289fffbb3f5 #7266
-> Hardware name: Samsung Exynos (Flattened Device Tree)
-> [<c0112e48>] (unwind_backtrace) from [<c010e090>] (show_stack+0x10/0x14)
-> [<c010e090>] (show_stack) from [<c0b25b28>] (dump_stack+0xa4/0xd0)
-> [<c0b25b28>] (dump_stack) from [<c0128088>] (__warn+0xf4/0x10c)
-> [<c0128088>] (__warn) from [<c0128114>] (warn_slowpath_fmt+0x74/0xb8)
-> [<c0128114>] (warn_slowpath_fmt) from [<c019e9a0>] (irq_set_irq_wake+0xfc/0x134)
-> [<c019e9a0>] (irq_set_irq_wake) from [<c0772708>] (max17040_suspend+0x50/0x58)
-> [<c0772708>] (max17040_suspend) from [<c05f55ac>] (dpm_run_callback+0xb4/0x400)
-> [<c05f55ac>] (dpm_run_callback) from [<c05f5e38>] (__device_suspend+0x140/0x814)
-> [<c05f5e38>] (__device_suspend) from [<c05f9548>] (dpm_suspend+0x16c/0x564)
-> [<c05f9548>] (dpm_suspend) from [<c05fa2e4>] (dpm_suspend_start+0x90/0x98)
-> [<c05fa2e4>] (dpm_suspend_start) from [<c01977f4>] (suspend_devices_and_enter+0xec/0xc0c)
-> [<c01977f4>] (suspend_devices_and_enter) from [<c019862c>] (pm_suspend+0x318/0x3e8)
-> [<c019862c>] (pm_suspend) from [<c01963cc>] (state_store+0x68/0xc8)
-> [<c01963cc>] (state_store) from [<c03531a4>] (kernfs_fop_write+0x10c/0x220)
-> [<c03531a4>] (kernfs_fop_write) from [<c02b44c4>] (__vfs_write+0x2c/0x1c4)
-> [<c02b44c4>] (__vfs_write) from [<c02b7288>] (vfs_write+0xa4/0x180)
-> [<c02b7288>] (vfs_write) from [<c02b74d0>] (ksys_write+0x58/0xcc)
-> [<c02b74d0>] (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
-> Exception stack(0xd6e83fa8 to 0xd6e83ff0)
-> ...
-> irq event stamp: 18028
-> hardirqs last  enabled at (18027): [<c014b99c>] cancel_delayed_work+0x84/0xf8
-> hardirqs last disabled at (18028): [<c0b49b1c>] _raw_spin_lock_irqsave+0x1c/0x58
-> softirqs last  enabled at (17876): [<c01026d8>] __do_softirq+0x4f0/0x5e4
-> softirqs last disabled at (17869): [<c0130d34>] irq_exit+0x16c/0x170
-> ---[ end trace 0728005730004e60 ]---
-> 
-> Fixes: 2e17ed94de68 ("power: supply: max17040: Add IRQ handler for low SOC alert")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
->  drivers/power/supply/max17040_battery.c | 16 ++++------------
->  1 file changed, 4 insertions(+), 12 deletions(-)
+>  drivers/cpuidle/Kconfig.arm | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/cpuidle/Kconfig.arm b/drivers/cpuidle/Kconfig.arm
+> index a224d33dda7f..62272ecfa771 100644
+> --- a/drivers/cpuidle/Kconfig.arm
+> +++ b/drivers/cpuidle/Kconfig.arm
+> @@ -25,7 +25,7 @@ config ARM_PSCI_CPUIDLE
+>  
+>  config ARM_BIG_LITTLE_CPUIDLE
+>  	bool "Support for ARM big.LITTLE processors"
+> -	depends on ARCH_VEXPRESS_TC2_PM || ARCH_EXYNOS
+> +	depends on ARCH_VEXPRESS_TC2_PM || ARCH_EXYNOS || COMPILE_TEST
+>  	depends on MCPM && !ARM64
+>  	select ARM_CPU_SUSPEND
+>  	select CPU_IDLE_MULTIPLE_DRIVERS
+> @@ -51,13 +51,13 @@ config ARM_HIGHBANK_CPUIDLE
+>  
+>  config ARM_KIRKWOOD_CPUIDLE
+>  	bool "CPU Idle Driver for Marvell Kirkwood SoCs"
+> -	depends on MACH_KIRKWOOD && !ARM64
+> +	depends on (MACH_KIRKWOOD || COMPILE_TEST) && !ARM64
+>  	help
+>  	  This adds the CPU Idle driver for Marvell Kirkwood SoCs.
+>  
+>  config ARM_ZYNQ_CPUIDLE
+>  	bool "CPU Idle Driver for Xilinx Zynq processors"
+> -	depends on ARCH_ZYNQ && !ARM64
+> +	depends on (ARCH_ZYNQ || COMPILE_TEST) && !ARM64
+>  	help
+>  	  Select this to enable cpuidle on Xilinx Zynq processors.
+>  
+> @@ -70,19 +70,19 @@ config ARM_U8500_CPUIDLE
+>  config ARM_AT91_CPUIDLE
+>  	bool "Cpu Idle Driver for the AT91 processors"
+>  	default y
+> -	depends on ARCH_AT91 && !ARM64
+> +	depends on (ARCH_AT91 || COMPILE_TEST) && !ARM64
+>  	help
+>  	  Select this to enable cpuidle for AT91 processors.
+>  
+>  config ARM_EXYNOS_CPUIDLE
+>  	bool "Cpu Idle Driver for the Exynos processors"
+> -	depends on ARCH_EXYNOS && !ARM64
+> +	depends on (ARCH_EXYNOS || COMPILE_TEST) && !ARM64
+>  	select ARCH_NEEDS_CPU_IDLE_COUPLED if SMP
+>  	help
+>  	  Select this to enable cpuidle for Exynos processors.
+>  
+>  config ARM_MVEBU_V7_CPUIDLE
+>  	bool "CPU Idle Driver for mvebu v7 family processors"
+> -	depends on ARCH_MVEBU && !ARM64
+> +	depends on (ARCH_MVEBU || COMPILE_TEST) && !ARM64
+>  	help
+>  	  Select this to enable cpuidle on Armada 370, 38x and XP processors.
+> 
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Daniel, any concerns regarding this one?
 
-Best regards,
-Krzysztof
+
 
