@@ -2,86 +2,94 @@ Return-Path: <SRS0=k2we=3C=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FEEBC33CAF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jan 2020 14:12:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3C1AC33CB1
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jan 2020 19:11:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB62221569
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jan 2020 14:12:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A46824682
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jan 2020 19:11:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1578942672;
+	bh=ydXCvJJqUI2mPGsyzAz39IOL1oZeDpbDw4CepgczzdI=;
+	h=Date:From:To:CC:CC:CC:Subject:References:In-Reply-To:List-ID:
+	 From;
+	b=Hr6nm4lMBLyQqPL2S7wA9kqVM5zvZ74sIiuIjSgBzm1JstjNnR6UuO6zpYHRJ+5OM
+	 2m/PXvQiD4guxHfaGnndAHNganDt9rwMj72jMd5ZzPjdIzYJbKcduO0Mkx7ZBDsUl8
+	 PIGd2JKXpGIKSljs2zjzS/933PawQEVfyLNfY3Ao=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728679AbgAMOMn (ORCPT
+        id S1729296AbgAMTKu (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 13 Jan 2020 09:12:43 -0500
-Received: from foss.arm.com ([217.140.110.172]:40084 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726074AbgAMOMn (ORCPT
+        Mon, 13 Jan 2020 14:10:50 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33576 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729288AbgAMTKt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 13 Jan 2020 09:12:43 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B79EE1045;
-        Mon, 13 Jan 2020 06:12:42 -0800 (PST)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 82A5E3F68E;
-        Mon, 13 Jan 2020 06:12:41 -0800 (PST)
-Date:   Mon, 13 Jan 2020 14:12:39 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Kukjin Kim <kgene@kernel.org>, linux-pci@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>
-Subject: Re: [PATCH v2 16/20] pci: exynos: Rename Exynos to lowercase
-Message-ID: <20200113141239.GB15939@e121166-lin.cambridge.arm.com>
-References: <20200104152107.11407-1-krzk@kernel.org>
- <20200104152107.11407-17-krzk@kernel.org>
- <20200113122902.GA15939@e121166-lin.cambridge.arm.com>
- <CAJKOXPcNJ5QCabPUh4kcOj_9Gj2SF8+JGtSJu8cLEp0Ciqy96g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPcNJ5QCabPUh4kcOj_9Gj2SF8+JGtSJu8cLEp0Ciqy96g@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Mon, 13 Jan 2020 14:10:49 -0500
+Received: by mail-pg1-f196.google.com with SMTP id 6so5168586pgk.0;
+        Mon, 13 Jan 2020 11:10:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:from:to:cc:cc:cc:subject
+         :references:in-reply-to;
+        bh=TKkoejQV2c6zTi0Lk84zRP/sLh+dHPb6nJ3LQs91rO0=;
+        b=XQ5xJi8Gx6ysA2olw0EfSqn/dUSmhoexAm31/j56/8sFKStEsg95i3Q9lgqXqW3CHu
+         Jm5hxz8p/slk5A4JdIIICmFq7chJzuyXXALzxOWyFWwg5YLbE5oZe/b9HtnFz0nCbt9w
+         o46QjuWk/dJXDBtOygWVsNGNsIFsQyK9ZVI//kv3+/SIwK0uP8BUR9UHOfOtZdsA6bf+
+         bC7JRLvroUhQXmGHBkKmzeOJofzXr4k0KjNgoizaKJsaV9SmnVy78OzvTIpZFAWIV6Ob
+         RxHUH1YIZk0nXVgkMT93+Gps8r4HKfQoGrYMWcuu0WXPKJO/WW27L8VDDU1IGxdu0I8R
+         nnRA==
+X-Gm-Message-State: APjAAAV1EviHH5S1UnxywmvanpiAkA02FSNYbsyYn3agCIzd6wh8RzAo
+        6xK/rAxUkaZ4bNG2JZ6LXTo=
+X-Google-Smtp-Source: APXvYqxpcMDnuAK6LNWLusoFsllAJWymSw/KyOmcfqBZ+FKSDh+VYiY8UaD3R5kny7v3CzIXMzUf6w==
+X-Received: by 2002:a63:6b07:: with SMTP id g7mr21929891pgc.243.1578942648698;
+        Mon, 13 Jan 2020 11:10:48 -0800 (PST)
+Received: from localhost (MIPS-TECHNO.ear1.SanJose1.Level3.net. [4.15.122.74])
+        by smtp.gmail.com with ESMTPSA id y6sm14563154pgc.10.2020.01.13.11.10.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jan 2020 11:10:47 -0800 (PST)
+Message-ID: <5e1cc0b7.1c69fb81.c151b.187c@mx.google.com>
+Date:   Mon, 13 Jan 2020 11:10:47 -0800
+From:   Paul Burton <paulburton@kernel.org>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+CC:     khilman@baylibre.com, leoyang.li@nxp.com, khalasa@piap.pl,
+        john@phrozen.org, matthias.bgg@gmail.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, kgene@kernel.org, krzk@kernel.org,
+        mripard@kernel.org, wens@csie.org, ssantosh@kernel.org,
+        jun.nie@linaro.org, shawnguo@kernel.org
+CC:     linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+CC:     linux-mips@vger.kernel.org
+Subject: Re: [PATCH 08/10] soc: lantiq: convert to devm_platform_ioremap_resource
+References:  <20191214175447.25482-8-tiny.windzz@gmail.com>
+In-Reply-To:  <20191214175447.25482-8-tiny.windzz@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 01:44:45PM +0100, Krzysztof Kozlowski wrote:
-> On Mon, 13 Jan 2020 at 13:29, Lorenzo Pieralisi
-> <lorenzo.pieralisi@arm.com> wrote:
-> >
-> > On Sat, Jan 04, 2020 at 04:21:03PM +0100, Krzysztof Kozlowski wrote:
-> > > Fix up inconsistent usage of upper and lowercase letters in "Exynos"
-> > > name.
-> > >
-> > > "EXYNOS" is not an abbreviation but a regular trademarked name.
-> > > Therefore it should be written with lowercase letters starting with
-> > > capital letter.
-> > >
-> > > The lowercase "Exynos" name is promoted by its manufacturer Samsung
-> > > Electronics Co., Ltd., in advertisement materials and on website.
-> > >
-> > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > > ---
-> > >  drivers/pci/controller/dwc/pci-exynos.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> >
-> > Should I pick it up or you are sending the series via another tree ?
-> >
-> > If so (if it is not queued already):
-> >
-> > Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Hello,
+
+Yangtao Li wrote:
+> Use devm_platform_ioremap_resource() to simplify code.
+
+Applied to mips-next.
+
+> commit 23c25c732530
+> https://git.kernel.org/mips/c/23c25c732530
 > 
-> Please pick it up.
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> Signed-off-by: Paul Burton <paulburton@kernel.org>
 
-Done, pushed out on pci/misc, thanks.
+Thanks,
+    Paul
 
-Lorenzo
+[ This message was auto-generated; if you believe anything is incorrect
+  then please email paulburton@kernel.org to report it. ]
