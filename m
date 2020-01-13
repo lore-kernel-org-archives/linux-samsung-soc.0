@@ -2,62 +2,63 @@ Return-Path: <SRS0=k2we=3C=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 103E8C33CAF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jan 2020 11:58:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54D29C33CAF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jan 2020 12:24:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8435222C4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jan 2020 11:58:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21C37214AF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jan 2020 12:24:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v1MdmCCZ"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e2ogs20Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726127AbgAML6W (ORCPT
+        id S1726180AbgAMMYG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 13 Jan 2020 06:58:22 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38347 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727286AbgAML6W (ORCPT
+        Mon, 13 Jan 2020 07:24:06 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44110 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726277AbgAMMYF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 13 Jan 2020 06:58:22 -0500
-Received: by mail-wr1-f66.google.com with SMTP id y17so8270222wrh.5
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Jan 2020 03:58:20 -0800 (PST)
+        Mon, 13 Jan 2020 07:24:05 -0500
+Received: by mail-wr1-f67.google.com with SMTP id q10so8342851wrm.11
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Jan 2020 04:24:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+        h=subject:from:to:cc:references:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=jmeZS4anFcQaXMcpaNE6Oqncxq6vLa6b4erMWpqoNlI=;
-        b=v1MdmCCZShwVf8XkQd0I62htZin/oncbFvqYcgjWV8EHT17Nv0rL1Pjdut3iChBaar
-         wlIBT2aZ+wqW0iXKSa7H7Om5GQGsYbGtE+je3T7k5nKxWLACaREjg/BAEvOuyVPDCgZm
-         QogHvWEMuV0BtxgMaR6Sv1tqZUuM97gwfrhb3Em7MFDdpCk5bdYMH8+A8eJGaqXZ5Kkh
-         DwzoE2JGcPA93Chvo1ou8ximYqYcev4dFAnQtE4LIJxQpz2rWlSAIKGuXVx3cGkikogA
-         2HXRkqCbJkukfo//GzqrOSqrjb/wk5opPbhNFB8nvzvPZVJYlT3ZdPm7SDHVgW7yd9UZ
-         uUjg==
+        bh=Cvgm0FVHxXAwl6mhg94TXk7sJztT6zU2cH4KU4tuUVE=;
+        b=e2ogs20ZljcmL0i9Oy0CZARF5o0guvcRHb73243mFHZONAwx8/2UnVhipo9R2ugmP6
+         zNKZ3ALtYLAvcKpRH8u1INN7/IB/XWTJfX7n73idE0/3ZPMjP9W7U+2QE0xmcKKaOdkw
+         VyzIAUTL+Zx5CZKmk57dhlrgLbbkUW6fv0U85IYuc9Mnhb2Esuji2zVjOtpwMgzkqb3C
+         FZ3aFaScGNvgUj3VpYxlnL13aVmOO5WADopv9NNrteq8nbeA+DbK7bj+0SDDvb4kN4tL
+         diY5ZxZsX5w7KZxLEKOH4yFz2nwzNGPrQ6O8uvmOKDi2eDS1vvN0fzRiIcNBsu58bzhW
+         2pWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+        h=x-gm-message-state:subject:from:to:cc:references:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=jmeZS4anFcQaXMcpaNE6Oqncxq6vLa6b4erMWpqoNlI=;
-        b=cpYH4O3YG3E8GsJ2BrVfoZahHmfxe5iKWgaBEVtCLY8vQajcS8XXSgdgYiV9yCO7An
-         Lkvmn+CO90acxWg5k736Qoiq8U5rHhmJExmTUq5tUPyCG9B3R/lq+3WAh6euyjUjVQmA
-         dLeA9DLSRoE0wUrY+EFro8ZZq0qVvPyBgan2UEBxn5UW8rzcrxbM+84Ip3A9oVROclrg
-         +neSO7cwTVMdY4a4o6jLwBMUDIkt3wS8TKPQDUM4n25TtfqQqqm/iuhQIZFwvuKz2VyW
-         iy//J39FR6PeU4+wj5p8jk1/GzxPOxQVTNH29m/mrxTnLHXJSJ8NSyCHKLZwIC8tgRrb
-         S4Fw==
-X-Gm-Message-State: APjAAAVwPmfVmeocafHdr6Lz7y1oAMqs1SHnXRYJ/w06HSdc+a7uKYfo
-        myIR1lHFIPXQSY34AR0ksC7Htt6xpuRxEA==
-X-Google-Smtp-Source: APXvYqwTXmN/wzfsZzI5pdRXvNVjyM/rpo1JnbdBrPEIiYXjfTKCgLaCpQAQgHV2lYTiCu7P/1IB4Q==
-X-Received: by 2002:adf:e5cb:: with SMTP id a11mr17300798wrn.28.1578916699533;
-        Mon, 13 Jan 2020 03:58:19 -0800 (PST)
+        bh=Cvgm0FVHxXAwl6mhg94TXk7sJztT6zU2cH4KU4tuUVE=;
+        b=NwlkRu1rgu8LtXKT7LAZ8A4o8GBfOeIx3UXfAonTI36bHl9M6j7jwGQ5HEv9l4svQL
+         IBlefhYJnwD2gvmEoK7VoNj8uFY3BdLJ+aUPtMJDa80igJY1Yv0F/aR296CDA3T+9iu6
+         xB4fwj5Vz3TtaKuZc84dEpQ6b8rNGMzzZHZaIdwZx9pV6lAP1g/2vh+wusCBk2QGy+Z5
+         JoNURE4IUh98zcJG9trzJuC3rYFSf6CcKCVUY1nCyvVJgh0OfwKuhttIFfKDQrOeES5j
+         2E4w0CqbMpcqy+WA0ug+5+CQmi6rnXRVGP3YqQ6iDGhixYddbRmlMfCDN1zXA9+J47Q3
+         8+lA==
+X-Gm-Message-State: APjAAAUTFooAUv9ttGkwDn6gYHXPA2d8sSpuUhkPzienQarWWV3x3jrE
+        OzkuXozI1i1/hG6j4dLiGBIlJ7oHaHOiag==
+X-Google-Smtp-Source: APXvYqwFaJgGqemah52JqiAjSClaoETBRhE7Cl0vTrcYOieYYhy1zHqQ4ySTitpmLsjWb+3+RQRxcA==
+X-Received: by 2002:a5d:6692:: with SMTP id l18mr19324777wru.382.1578918242401;
+        Mon, 13 Jan 2020 04:24:02 -0800 (PST)
 Received: from ?IPv6:2a01:e34:ed2f:f020:257b:a7b6:7749:8057? ([2a01:e34:ed2f:f020:257b:a7b6:7749:8057])
-        by smtp.googlemail.com with ESMTPSA id y139sm14557785wmd.24.2020.01.13.03.58.18
+        by smtp.googlemail.com with ESMTPSA id z8sm14719065wrq.22.2020.01.13.04.24.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Jan 2020 03:58:19 -0800 (PST)
+        Mon, 13 Jan 2020 04:24:01 -0800 (PST)
 Subject: Re: [PATCH] cpuidle: arm: Enable compile testing for some of drivers
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -70,7 +71,7 @@ Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org
 References: <20191229180912.17100-1-krzk@kernel.org>
  <20191229180912.17100-2-krzk@kernel.org> <112783298.KOQPr5xTch@kreacher>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+ <a4fa3f89-e792-aeee-b9ea-9af244ace04a@linaro.org>
 Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
  xsFNBFv/yykBEADDdW8RZu7iZILSf3zxq5y8YdaeyZjI/MaqgnvG/c3WjFaunoTMspeusiFE
  sXvtg3ehTOoyD0oFjKkHaia1Zpa1m/gnNdT/WvTveLfGA1gH+yGes2Sr53Ht8hWYZFYMZc8V
@@ -125,12 +126,12 @@ Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
  i6D9VoMMi6ICko/CXUZ77OgLtMsy3JtzTRbn/wRySOY2AsMgg0Sw6yJ0wfrVk6XAMoLGjaVt
  X4iPTvwocEhjvrO4eXCicRBocsIB2qZaIj3mlhk2u4AkSpkKm9cN0KWYFUxlENF4/NKWMK+g
  fGfsCsS3cXXiZpufZFGr+GoHwiELqfLEAQ9AhlrHGCKcgVgTOI6NHg==
-Message-ID: <a4fa3f89-e792-aeee-b9ea-9af244ace04a@linaro.org>
-Date:   Mon, 13 Jan 2020 12:58:17 +0100
+Message-ID: <92592736-fa55-8fe8-c893-e9e7129fe910@linaro.org>
+Date:   Mon, 13 Jan 2020 13:24:00 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <112783298.KOQPr5xTch@kreacher>
+In-Reply-To: <a4fa3f89-e792-aeee-b9ea-9af244ace04a@linaro.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -139,75 +140,26 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 13/01/2020 12:51, Rafael J. Wysocki wrote:
-> On Sunday, December 29, 2019 7:09:12 PM CET Krzysztof Kozlowski wrote:
->> Some of cpuidle drivers for ARMv7 can be compile tested on this
->> architecture because they do not depend on mach-specific bits.  Enable
->> compile testing for big.LITTLE, Kirkwood, Zynq, AT91, Exynos and mvebu
->> cpuidle drivers.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->> ---
->>  drivers/cpuidle/Kconfig.arm | 12 ++++++------
->>  1 file changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/cpuidle/Kconfig.arm b/drivers/cpuidle/Kconfig.arm
->> index a224d33dda7f..62272ecfa771 100644
->> --- a/drivers/cpuidle/Kconfig.arm
->> +++ b/drivers/cpuidle/Kconfig.arm
->> @@ -25,7 +25,7 @@ config ARM_PSCI_CPUIDLE
->>  
->>  config ARM_BIG_LITTLE_CPUIDLE
->>  	bool "Support for ARM big.LITTLE processors"
->> -	depends on ARCH_VEXPRESS_TC2_PM || ARCH_EXYNOS
->> +	depends on ARCH_VEXPRESS_TC2_PM || ARCH_EXYNOS || COMPILE_TEST
->>  	depends on MCPM && !ARM64
->>  	select ARM_CPU_SUSPEND
->>  	select CPU_IDLE_MULTIPLE_DRIVERS
->> @@ -51,13 +51,13 @@ config ARM_HIGHBANK_CPUIDLE
->>  
->>  config ARM_KIRKWOOD_CPUIDLE
->>  	bool "CPU Idle Driver for Marvell Kirkwood SoCs"
->> -	depends on MACH_KIRKWOOD && !ARM64
->> +	depends on (MACH_KIRKWOOD || COMPILE_TEST) && !ARM64
->>  	help
->>  	  This adds the CPU Idle driver for Marvell Kirkwood SoCs.
->>  
->>  config ARM_ZYNQ_CPUIDLE
->>  	bool "CPU Idle Driver for Xilinx Zynq processors"
->> -	depends on ARCH_ZYNQ && !ARM64
->> +	depends on (ARCH_ZYNQ || COMPILE_TEST) && !ARM64
->>  	help
->>  	  Select this to enable cpuidle on Xilinx Zynq processors.
->>  
->> @@ -70,19 +70,19 @@ config ARM_U8500_CPUIDLE
->>  config ARM_AT91_CPUIDLE
->>  	bool "Cpu Idle Driver for the AT91 processors"
->>  	default y
->> -	depends on ARCH_AT91 && !ARM64
->> +	depends on (ARCH_AT91 || COMPILE_TEST) && !ARM64
->>  	help
->>  	  Select this to enable cpuidle for AT91 processors.
->>  
->>  config ARM_EXYNOS_CPUIDLE
->>  	bool "Cpu Idle Driver for the Exynos processors"
->> -	depends on ARCH_EXYNOS && !ARM64
->> +	depends on (ARCH_EXYNOS || COMPILE_TEST) && !ARM64
->>  	select ARCH_NEEDS_CPU_IDLE_COUPLED if SMP
->>  	help
->>  	  Select this to enable cpuidle for Exynos processors.
->>  
->>  config ARM_MVEBU_V7_CPUIDLE
->>  	bool "CPU Idle Driver for mvebu v7 family processors"
->> -	depends on ARCH_MVEBU && !ARM64
->> +	depends on (ARCH_MVEBU || COMPILE_TEST) && !ARM64
->>  	help
->>  	  Select this to enable cpuidle on Armada 370, 38x and XP processors.
->>
-> 
-> Daniel, any concerns regarding this one?
+On 13/01/2020 12:58, Daniel Lezcano wrote:
+> On 13/01/2020 12:51, Rafael J. Wysocki wrote:
+>> On Sunday, December 29, 2019 7:09:12 PM CET Krzysztof Kozlowski wrote:
+>>> Some of cpuidle drivers for ARMv7 can be compile tested on this
+>>> architecture because they do not depend on mach-specific bits.  Enable
+>>> compile testing for big.LITTLE, Kirkwood, Zynq, AT91, Exynos and mvebu
+>>> cpuidle drivers.
+>>>
+>>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>> ---
 
-Yes, I have a doubt about this patch. I'll double check before commenting.
+[ ... ]
+
+>> Daniel, any concerns regarding this one?
+> 
+> Yes, I have a doubt about this patch. I'll double check before commenting.
+
+Actually it is fine.
+
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
 
 -- 
