@@ -1,95 +1,178 @@
-Return-Path: <SRS0=k2we=3C=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=X1pf=3D=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3C1AC33CB1
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jan 2020 19:11:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30C63C33CA9
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Jan 2020 00:28:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A46824682
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Jan 2020 19:11:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578942672;
-	bh=ydXCvJJqUI2mPGsyzAz39IOL1oZeDpbDw4CepgczzdI=;
-	h=Date:From:To:CC:CC:CC:Subject:References:In-Reply-To:List-ID:
-	 From;
-	b=Hr6nm4lMBLyQqPL2S7wA9kqVM5zvZ74sIiuIjSgBzm1JstjNnR6UuO6zpYHRJ+5OM
-	 2m/PXvQiD4guxHfaGnndAHNganDt9rwMj72jMd5ZzPjdIzYJbKcduO0Mkx7ZBDsUl8
-	 PIGd2JKXpGIKSljs2zjzS/933PawQEVfyLNfY3Ao=
+	by mail.kernel.org (Postfix) with ESMTP id 082E3207FF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Jan 2020 00:28:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729296AbgAMTKu (ORCPT
+        id S1727382AbgANA2x (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 13 Jan 2020 14:10:50 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:33576 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729288AbgAMTKt (ORCPT
+        Mon, 13 Jan 2020 19:28:53 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:53574 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726536AbgANA2x (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 13 Jan 2020 14:10:49 -0500
-Received: by mail-pg1-f196.google.com with SMTP id 6so5168586pgk.0;
-        Mon, 13 Jan 2020 11:10:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:from:to:cc:cc:cc:subject
-         :references:in-reply-to;
-        bh=TKkoejQV2c6zTi0Lk84zRP/sLh+dHPb6nJ3LQs91rO0=;
-        b=XQ5xJi8Gx6ysA2olw0EfSqn/dUSmhoexAm31/j56/8sFKStEsg95i3Q9lgqXqW3CHu
-         Jm5hxz8p/slk5A4JdIIICmFq7chJzuyXXALzxOWyFWwg5YLbE5oZe/b9HtnFz0nCbt9w
-         o46QjuWk/dJXDBtOygWVsNGNsIFsQyK9ZVI//kv3+/SIwK0uP8BUR9UHOfOtZdsA6bf+
-         bC7JRLvroUhQXmGHBkKmzeOJofzXr4k0KjNgoizaKJsaV9SmnVy78OzvTIpZFAWIV6Ob
-         RxHUH1YIZk0nXVgkMT93+Gps8r4HKfQoGrYMWcuu0WXPKJO/WW27L8VDDU1IGxdu0I8R
-         nnRA==
-X-Gm-Message-State: APjAAAV1EviHH5S1UnxywmvanpiAkA02FSNYbsyYn3agCIzd6wh8RzAo
-        6xK/rAxUkaZ4bNG2JZ6LXTo=
-X-Google-Smtp-Source: APXvYqxpcMDnuAK6LNWLusoFsllAJWymSw/KyOmcfqBZ+FKSDh+VYiY8UaD3R5kny7v3CzIXMzUf6w==
-X-Received: by 2002:a63:6b07:: with SMTP id g7mr21929891pgc.243.1578942648698;
-        Mon, 13 Jan 2020 11:10:48 -0800 (PST)
-Received: from localhost (MIPS-TECHNO.ear1.SanJose1.Level3.net. [4.15.122.74])
-        by smtp.gmail.com with ESMTPSA id y6sm14563154pgc.10.2020.01.13.11.10.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jan 2020 11:10:47 -0800 (PST)
-Message-ID: <5e1cc0b7.1c69fb81.c151b.187c@mx.google.com>
-Date:   Mon, 13 Jan 2020 11:10:47 -0800
-From:   Paul Burton <paulburton@kernel.org>
-To:     Yangtao Li <tiny.windzz@gmail.com>
-CC:     khilman@baylibre.com, leoyang.li@nxp.com, khalasa@piap.pl,
-        john@phrozen.org, matthias.bgg@gmail.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, kgene@kernel.org, krzk@kernel.org,
-        mripard@kernel.org, wens@csie.org, ssantosh@kernel.org,
-        jun.nie@linaro.org, shawnguo@kernel.org
-CC:     linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-CC:     linux-mips@vger.kernel.org
-Subject: Re: [PATCH 08/10] soc: lantiq: convert to devm_platform_ioremap_resource
-References:  <20191214175447.25482-8-tiny.windzz@gmail.com>
-In-Reply-To:  <20191214175447.25482-8-tiny.windzz@gmail.com>
+        Mon, 13 Jan 2020 19:28:53 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id 70C25291454
+Received: by earth.universe (Postfix, from userid 1000)
+        id A1F453C0C7C; Tue, 14 Jan 2020 01:28:47 +0100 (CET)
+Date:   Tue, 14 Jan 2020 01:28:47 +0100
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Matheus Castello <matheus@castello.eng.br>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] power: supply: max17040: Correct IRQ wake handling
+Message-ID: <20200114002847.3wzj7j3y422fgrfz@earth.universe>
+References: <CGME20200110100620eucas1p12fff62b485570e93b283e23c7a9e5b57@eucas1p1.samsung.com>
+ <20200110100540.27371-1-m.szyprowski@samsung.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="s7x5qyghxj2shd5k"
+Content-Disposition: inline
+In-Reply-To: <20200110100540.27371-1-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hello,
 
-Yangtao Li wrote:
-> Use devm_platform_ioremap_resource() to simplify code.
+--s7x5qyghxj2shd5k
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied to mips-next.
+Hi,
 
-> commit 23c25c732530
-> https://git.kernel.org/mips/c/23c25c732530
-> 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> Signed-off-by: Paul Burton <paulburton@kernel.org>
+On Fri, Jan 10, 2020 at 11:05:40AM +0100, Marek Szyprowski wrote:
+> Don't disable IRQ wake feature without prior enabling it.
 
-Thanks,
-    Paul
+Thanks, queued to power-supply's for-next branch.
 
-[ This message was auto-generated; if you believe anything is incorrect
-  then please email paulburton@kernel.org to report it. ]
+-- Sebastian
+
+>=20
+> This fixes following warning observed on Exynos3250-based Rinato board:
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 1288 at kernel/irq/manage.c:724 irq_set_irq_wake+0xf=
+c/0x134
+> Unbalanced IRQ 83 wake disable
+> Modules linked in:
+> CPU: 0 PID: 1288 Comm: rtcwake Not tainted 5.5.0-rc5-next-20200110-00031-=
+g6289fffbb3f5 #7266
+> Hardware name: Samsung Exynos (Flattened Device Tree)
+> [<c0112e48>] (unwind_backtrace) from [<c010e090>] (show_stack+0x10/0x14)
+> [<c010e090>] (show_stack) from [<c0b25b28>] (dump_stack+0xa4/0xd0)
+> [<c0b25b28>] (dump_stack) from [<c0128088>] (__warn+0xf4/0x10c)
+> [<c0128088>] (__warn) from [<c0128114>] (warn_slowpath_fmt+0x74/0xb8)
+> [<c0128114>] (warn_slowpath_fmt) from [<c019e9a0>] (irq_set_irq_wake+0xfc=
+/0x134)
+> [<c019e9a0>] (irq_set_irq_wake) from [<c0772708>] (max17040_suspend+0x50/=
+0x58)
+> [<c0772708>] (max17040_suspend) from [<c05f55ac>] (dpm_run_callback+0xb4/=
+0x400)
+> [<c05f55ac>] (dpm_run_callback) from [<c05f5e38>] (__device_suspend+0x140=
+/0x814)
+> [<c05f5e38>] (__device_suspend) from [<c05f9548>] (dpm_suspend+0x16c/0x56=
+4)
+> [<c05f9548>] (dpm_suspend) from [<c05fa2e4>] (dpm_suspend_start+0x90/0x98)
+> [<c05fa2e4>] (dpm_suspend_start) from [<c01977f4>] (suspend_devices_and_e=
+nter+0xec/0xc0c)
+> [<c01977f4>] (suspend_devices_and_enter) from [<c019862c>] (pm_suspend+0x=
+318/0x3e8)
+> [<c019862c>] (pm_suspend) from [<c01963cc>] (state_store+0x68/0xc8)
+> [<c01963cc>] (state_store) from [<c03531a4>] (kernfs_fop_write+0x10c/0x22=
+0)
+> [<c03531a4>] (kernfs_fop_write) from [<c02b44c4>] (__vfs_write+0x2c/0x1c4)
+> [<c02b44c4>] (__vfs_write) from [<c02b7288>] (vfs_write+0xa4/0x180)
+> [<c02b7288>] (vfs_write) from [<c02b74d0>] (ksys_write+0x58/0xcc)
+> [<c02b74d0>] (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
+> Exception stack(0xd6e83fa8 to 0xd6e83ff0)
+> ...
+> irq event stamp: 18028
+> hardirqs last  enabled at (18027): [<c014b99c>] cancel_delayed_work+0x84/=
+0xf8
+> hardirqs last disabled at (18028): [<c0b49b1c>] _raw_spin_lock_irqsave+0x=
+1c/0x58
+> softirqs last  enabled at (17876): [<c01026d8>] __do_softirq+0x4f0/0x5e4
+> softirqs last disabled at (17869): [<c0130d34>] irq_exit+0x16c/0x170
+> ---[ end trace 0728005730004e60 ]---
+>=20
+> Fixes: 2e17ed94de68 ("power: supply: max17040: Add IRQ handler for low SO=
+C alert")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/power/supply/max17040_battery.c | 16 ++++------------
+>  1 file changed, 4 insertions(+), 12 deletions(-)
+>=20
+> diff --git a/drivers/power/supply/max17040_battery.c b/drivers/power/supp=
+ly/max17040_battery.c
+> index c1188e94cf54..8a1f0ee493aa 100644
+> --- a/drivers/power/supply/max17040_battery.c
+> +++ b/drivers/power/supply/max17040_battery.c
+> @@ -351,12 +351,8 @@ static int max17040_suspend(struct device *dev)
+> =20
+>  	cancel_delayed_work(&chip->work);
+> =20
+> -	if (client->irq) {
+> -		if (device_may_wakeup(dev))
+> -			enable_irq_wake(client->irq);
+> -		else
+> -			disable_irq_wake(client->irq);
+> -	}
+> +	if (client->irq && device_may_wakeup(dev))
+> +		enable_irq_wake(client->irq);
+> =20
+>  	return 0;
+>  }
+> @@ -369,12 +365,8 @@ static int max17040_resume(struct device *dev)
+>  	queue_delayed_work(system_power_efficient_wq, &chip->work,
+>  			   MAX17040_DELAY);
+> =20
+> -	if (client->irq) {
+> -		if (device_may_wakeup(dev))
+> -			disable_irq_wake(client->irq);
+> -		else
+> -			enable_irq_wake(client->irq);
+> -	}
+> +	if (client->irq && device_may_wakeup(dev))
+> +		disable_irq_wake(client->irq);
+> =20
+>  	return 0;
+>  }
+> --=20
+> 2.17.1
+>=20
+
+--s7x5qyghxj2shd5k
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl4dCzoACgkQ2O7X88g7
++poxbxAAhVoW4/5o/KXxFRNGik5QZkyYMCO6eWd5xYFy0ONasfKgvFJx3MUM3pb9
+alVeDGgJMARZWQwfzxMhhf+JFh4YM5S9iNLCYayPHZNT04avnF1GDiIvolGsmq76
+UqY5x7t00U57Q6rWppV+eZPaSWDf5yn7QXSy5+wY9Tyxui16JNH4nw+fZKoLBFZI
+3jNaTmvSbK7cFJr3Nd9MQf0iRuOjI0u4yyPvL4jzSQVatyIu64jEd2/j+UwQoc3F
+0jd351w/8KaKwRH4KfBFV7Bjwb9lUH2Q9zFpk5xMoYOVM0dWWjoCX6csgh/EWmme
+Ul6LTRnyoXsOBdosV0eY8DMNR0a9DGEwDr+z7pLVivKr1Ij1kvGczz1F6LX6af50
+Y7hl7txqHkZXovAhQXXAD/YMy3HA3B1zNg2FyfucA5fehyeQcX5Q8Plz+g0JNnRY
+lifkJlz3GhGnNSQBPXrya5kiQC0XGgS+jG4WN3x23EcXKSt1BPBQ7hxXO3+hGpbv
+D8i6tDC4TQkac8ck+tOy2DT4NCbQDGZMi3ttQTONRA/e69LhbRBUAgkLT+gxSjzJ
+RbiTMzT4plXDZbasgS6dblTCAa/BVYKJWuDE/3Up7sf+be6NFgt47IxZ3m2Qj5lZ
+WIYNVf40YaWIKOnH8Jna2FmHSrdK6CQ1pfRISgxPTwmrVTRffSw=
+=3Lbd
+-----END PGP SIGNATURE-----
+
+--s7x5qyghxj2shd5k--
