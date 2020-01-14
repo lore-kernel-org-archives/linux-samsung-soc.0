@@ -2,172 +2,76 @@ Return-Path: <SRS0=X1pf=3D=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A9AC33C9E
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Jan 2020 18:58:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F8CBC33C9E
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Jan 2020 22:51:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5208B24655
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Jan 2020 18:58:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579028297;
-	bh=tf/o2SOslhx05jLtLdGaZMcY/dh7CAZd9De5mDkeMf4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=jABzdgRheuhbnBwrfKy2rD38YwiA1iOgetGRF2KfUZJBB9kg20VlyY7dgDQ8ywIqx
-	 Onek2y0KabULXiqZ5xLLGmuZQzCvpWCEmUp1ru3K3+zLTzWHeD57OP943PQhKnAOk7
-	 QOsssxbUDI1Pib0KS2snTsKtA2NR6cboWSbTPDwc=
+	by mail.kernel.org (Postfix) with ESMTP id 3CBED2072B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Jan 2020 22:51:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728808AbgANS6M (ORCPT
+        id S1728882AbgANWvH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 14 Jan 2020 13:58:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43760 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726053AbgANS6M (ORCPT
+        Tue, 14 Jan 2020 17:51:07 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:51809 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728746AbgANWvG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Jan 2020 13:58:12 -0500
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B93C524672;
-        Tue, 14 Jan 2020 18:58:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579028291;
-        bh=tf/o2SOslhx05jLtLdGaZMcY/dh7CAZd9De5mDkeMf4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=rhHPwkDsEYo5s9OaBOs8zWlRq1ckApWqZBX6XG5ON2yMQCrS0rVFA3Oq4GbC81lMC
-         k4fdwcZntrM+DImSAtEzIlVzTcp8eX64KU/Lvq0wTsx4+p35gL9opG8cMGcRXj3riC
-         sTdrKifhnvYLTAsuwrV4+sJ9bMoEAkJLnsIEMt78=
-Received: by mail-lf1-f48.google.com with SMTP id y19so10664157lfl.9;
-        Tue, 14 Jan 2020 10:58:10 -0800 (PST)
-X-Gm-Message-State: APjAAAXCrQIPlnIk0EvCCBETpQkuoV/9CtFag35bpQ2EDdvstQA2HIjv
-        adfgYabIJznBapPNHZXnw2mIrk+IZjJ1hsMFP5k=
-X-Google-Smtp-Source: APXvYqwHQ2f4elu47X/7QicsiPxxCMwcNqD1zJyF4zqRmDXWzwTdd9U1U4qAAURR3V9bYvYPHyPXbFdnwTsZfi93v+4=
-X-Received: by 2002:a19:c80a:: with SMTP id y10mr2322353lff.177.1579028288854;
- Tue, 14 Jan 2020 10:58:08 -0800 (PST)
+        Tue, 14 Jan 2020 17:51:06 -0500
+Received: from 79.184.255.90.ipv4.supernova.orange.pl (79.184.255.90) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
+ id c1cb78ac0f69600f; Tue, 14 Jan 2020 23:51:04 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH] cpuidle: arm: Enable compile testing for some of drivers
+Date:   Tue, 14 Jan 2020 23:51:03 +0100
+Message-ID: <4692219.51FEeoGIeG@kreacher>
+In-Reply-To: <92592736-fa55-8fe8-c893-e9e7129fe910@linaro.org>
+References: <20191229180912.17100-1-krzk@kernel.org> <a4fa3f89-e792-aeee-b9ea-9af244ace04a@linaro.org> <92592736-fa55-8fe8-c893-e9e7129fe910@linaro.org>
 MIME-Version: 1.0
-References: <20191217055738.28445-1-cw00.choi@samsung.com> <CGME20191217055106epcas1p11f2bc81d6bb2db3fc4bc257d78c337b9@epcas1p1.samsung.com>
- <20191217055738.28445-5-cw00.choi@samsung.com> <20191226210119.GA8706@bogus>
- <a54e4275-012e-77d9-bdbe-1aab64b5c12b@samsung.com> <76616499-7c19-06b1-461a-28ae17a76c60@samsung.com>
-In-Reply-To: <76616499-7c19-06b1-461a-28ae17a76c60@samsung.com>
-From:   Chanwoo Choi <chanwoo@kernel.org>
-Date:   Wed, 15 Jan 2020 03:57:30 +0900
-X-Gmail-Original-Message-ID: <CAGTfZH0K65ON0FQGUjQbr71_9VWJXTmRbih1gko6Pcuy+PL63Q@mail.gmail.com>
-Message-ID: <CAGTfZH0K65ON0FQGUjQbr71_9VWJXTmRbih1gko6Pcuy+PL63Q@mail.gmail.com>
-Subject: Re: [PATCH 4/9] PM / devfreq: exynos-bus: Replace deprecated
- 'devfreq' property
-To:     Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>, lukasz.luba@arm.com,
-        =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Rob,
-
-On Mon, Jan 6, 2020 at 10:32 AM Chanwoo Choi <cw00.choi@samsung.com> wrote:
->
-> Hi Rob,
->
-> Gently Ping.
-
-Once again, ping. Could you please review?
-
-On v2[1], made separate patches for dt-binding.
-[1] https://patchwork.kernel.org/cover/11304545/
-
->
-> On 12/27/19 9:09 AM, Chanwoo Choi wrote:
-> > On 12/27/19 6:01 AM, Rob Herring wrote:
-> >> On Tue, Dec 17, 2019 at 02:57:33PM +0900, Chanwoo Choi wrote:
-> >>> In order to remove the deprecated 'devfreq' property, replace with
-> >>> new 'exynos,parent-bus' property in order to get the parent devfreq device
-> >>> in devicetree file instead of 'devfreq' property. But, to guarantee the
-> >>> backward-compatibility, keep the support 'devfreq' property.
+On Monday, January 13, 2020 1:24:00 PM CET Daniel Lezcano wrote:
+> On 13/01/2020 12:58, Daniel Lezcano wrote:
+> > On 13/01/2020 12:51, Rafael J. Wysocki wrote:
+> >> On Sunday, December 29, 2019 7:09:12 PM CET Krzysztof Kozlowski wrote:
+> >>> Some of cpuidle drivers for ARMv7 can be compile tested on this
+> >>> architecture because they do not depend on mach-specific bits.  Enable
+> >>> compile testing for big.LITTLE, Kirkwood, Zynq, AT91, Exynos and mvebu
+> >>> cpuidle drivers.
 > >>>
-> >>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> >>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > >>> ---
-> >>>  .../bindings/devfreq/exynos-bus.txt           | 16 +++++++--------
-> >>>  drivers/devfreq/exynos-bus.c                  | 20 ++++++++++++-------
-> >>>  2 files changed, 21 insertions(+), 15 deletions(-)
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
-> >>> index e71f752cc18f..c948cee01124 100644
-> >>> --- a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
-> >>> +++ b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
-> >>> @@ -45,7 +45,7 @@ Required properties only for parent bus device:
-> >>>    of buses.
-> >>>
-> >>>  Required properties only for passive bus device:
-> >>> -- devfreq: the parent bus device.
-> >>> +- exynos,parent-bus: the parent bus device.
-> >>
-> >> If you are going to do something new, why not use the interconnect
-> >> binding here?
-> >
-> > As I knew, interconnect make the data path among multiple nodes
-> > and set the average and peak bandwidth to the specific data path.
-> >
-> > It means that some data will be flowed from node_a to node_d
-> > or the reverse way because each node has the tightly coupled
-> > dependency for data flow.
-> >
-> >       node_a <-> node_b <-> node_c <-> node_d
-> >
-> >
-> > On the other hand, exynos-bus.c driver is not related to 'data path'.
-> > Each bus just need to control the their own frequency and voltage.
-> > But, share the power line (regulator) between exynos-bus device
-> > even if there are no any dependency of data flow.
-> >
-> > 'exynos,parent-bus' property just indicate the specific
-> > devfreq device(parent bus device) which controls
-> > the shared power line(regulator) in order to prevent
-> > the h/w problem due to the wrong pair of frequency and voltage.
-> >
-> > 'exynos,parent-bus' property is only used to catch
-> > the change timing of shared power line.
-> >
-> >
-> > And,
-> > as you commented, there are some data path among the exynos-bus
-> > devices for the display h/w as following:
-> >
-> >       bus_display -> bus_leftbus -> bus_dmc
-> >
-> > In order to make the data path between bus devices,
-> > interconnect binding is required. This approach[1] was posted.
-> > [1] https://patchwork.kernel.org/cover/11305265/
-> > - [RFC,v3,0/7] PM / devfreq: Simple QoS for exynos-bus using interconnect
-> >
->
-> Are there any other commentss?
->
->
-> --
-> Best Regards,
-> Chanwoo Choi
-> Samsung Electronics
+> 
+> [ ... ]
+> 
+> >> Daniel, any concerns regarding this one?
+> > 
+> > Yes, I have a doubt about this patch. I'll double check before commenting.
+> 
+> Actually it is fine.
+> 
+> Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+
+OK, patch applied.
+
+Thanks!
 
 
 
--- 
-Best Regards,
-Chanwoo Choi
