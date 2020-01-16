@@ -7,49 +7,51 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA74DC33CAF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 18:01:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F232C33CAF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 18:11:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CE1822522
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 18:01:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CC5920684
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 18:11:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579197693;
-	bh=YZ2eOXNd1MQ+7yOmzjKQ5GQzCB/Y6PKyK96hicTHRTs=;
+	s=default; t=1579198264;
+	bh=ON6UrWmq47JDT/IgdKlfSIgthc+sRzNmjam0nGQqChg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2qVGP/JuYbR9wbEwl3sJ4PxBdFedEx9IRvtblb2gsnoH7B3qw12sv1kdeMndSzdTj
-	 t66CyNetENaEvRzJX0BjrwFj+C9KkR0exfOYYdVa7f6/rs9rjwpO2tFHa6DGRal8g7
-	 /2Z3YZrcCcJU1ytZiXiHG637IpdR7k7nqvyPJ5YE=
+	b=w4RjhLbij22CSNv839x+QDI/lZ/RUK5WpeLafu0bOfRkTxI8hhR/IctZfnoOuXFi4
+	 CQs26Ngi4P3xa+/1kICpGezpPLa7dcahRvNpFLYqD3N+5Y0kGeDQDnIOO5XlYr1r8X
+	 2uqKCJijPSqR1EIY9IUIPMmfKbjG8N31lVXBd6DM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405679AbgAPRl2 (ORCPT
+        id S2395057AbgAPSKu (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Jan 2020 12:41:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59078 "EHLO mail.kernel.org"
+        Thu, 16 Jan 2020 13:10:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53118 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405669AbgAPRl1 (ORCPT
+        id S2393109AbgAPRhm (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:41:27 -0500
+        Thu, 16 Jan 2020 12:37:42 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C18BB246EF;
-        Thu, 16 Jan 2020 17:41:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A855C246C0;
+        Thu, 16 Jan 2020 17:37:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196487;
-        bh=YZ2eOXNd1MQ+7yOmzjKQ5GQzCB/Y6PKyK96hicTHRTs=;
+        s=default; t=1579196261;
+        bh=ON6UrWmq47JDT/IgdKlfSIgthc+sRzNmjam0nGQqChg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tHgeNC6ZatSXn2vm4EjG3CiCTr3B3Q1Ac9rkb8pYznl/C1rUH7a+6x5/uvJVutwZY
-         xXN1eg+V3aEnzXFoLk4icYdoqqTUeC97Vm7iwp5GxZGyPzFkEYVnZgHk3ysl50QixU
-         /rFn9TMhEd0wEl6pfeV+JPYOqNWxNGuGzUh95G0s=
+        b=xB51agJd95gsQ+efGgEquaZBw14Jt7xt/GG7d6eIoVS54PYnpjbRZtoPEkgSetc5n
+         636NFhJKigt7zPcFYUJlbdwwQcaIqxvvuoFZUM+JCHsz4wwubqC+vlkyU24wPgkavC
+         Vyq2VEnWZ+36mEJRsz7Ureu+Sj3YKe5NbeCiwTj0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marian Mihailescu <mihailescu2m@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
         Sasha Levin <sashal@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.9 232/251] clk: samsung: exynos5420: Preserve CPU clocks configuration during suspend/resume
-Date:   Thu, 16 Jan 2020 12:36:21 -0500
-Message-Id: <20200116173641.22137-192-sashal@kernel.org>
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 086/251] clocksource/drivers/exynos_mct: Fix error path in timer resources initialization
+Date:   Thu, 16 Jan 2020 12:33:55 -0500
+Message-Id: <20200116173641.22137-46-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
 References: <20200116173641.22137-1-sashal@kernel.org>
@@ -62,36 +64,50 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Marian Mihailescu <mihailescu2m@gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit e21be0d1d7bd7f78a77613f6bcb6965e72b22fc1 ]
+[ Upstream commit b9307420196009cdf18bad55e762ac49fb9a80f4 ]
 
-Save and restore top PLL related configuration registers for big (APLL)
-and LITTLE (KPLL) cores during suspend/resume cycle. So far, CPU clocks
-were reset to default values after suspend/resume cycle and performance
-after system resume was affected when performance governor has been selected.
+While freeing interrupt handlers in error path, don't assume that all
+requested interrupts are per-processor interrupts and properly release
+standard interrupts too.
 
-Fixes: 773424326b51 ("clk: samsung: exynos5420: add more registers to restore list")
-Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
+Fixes: 56a94f13919c ("clocksource: exynos_mct: Avoid blocking calls in the cpu hotplug notifier")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/samsung/clk-exynos5420.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clocksource/exynos_mct.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 2bb88d125113..7f8c7cf3c2ab 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -170,6 +170,8 @@ static const unsigned long exynos5x_clk_regs[] __initconst = {
- 	GATE_BUS_CPU,
- 	GATE_SCLK_CPU,
- 	CLKOUT_CMU_CPU,
-+	APLL_CON0,
-+	KPLL_CON0,
- 	CPLL_CON0,
- 	DPLL_CON0,
- 	EPLL_CON0,
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index d32248e2ceab..ae3cbaeffd9c 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -563,7 +563,19 @@ static int __init exynos4_timer_resources(struct device_node *np, void __iomem *
+ 	return 0;
+ 
+ out_irq:
+-	free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
++	if (mct_int_type == MCT_INT_PPI) {
++		free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
++	} else {
++		for_each_possible_cpu(cpu) {
++			struct mct_clock_event_device *pcpu_mevt =
++				per_cpu_ptr(&percpu_mct_tick, cpu);
++
++			if (pcpu_mevt->evt.irq != -1) {
++				free_irq(pcpu_mevt->evt.irq, pcpu_mevt);
++				pcpu_mevt->evt.irq = -1;
++			}
++		}
++	}
+ 	return err;
+ }
+ 
 -- 
 2.20.1
 
