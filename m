@@ -4,55 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2C7CC33CB6
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B36C33CAF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99A26214AF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:22:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47DAC246A1
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:30:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579195337;
-	bh=L/KSiELxp369zGbGPtlCYt4xEKWsCEJceCqSHQySHVI=;
+	s=default; t=1579195846;
+	bh=t3NzLjqky/Ad3i0HuvmURg01ba2B4dUEqMwPsFzQWqo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PPlA3UOGdQmHkk8tbwfn7wx4AWkCBQ344hfmfXrlOrQU3xTRmOfP+tAA+ad2pYSqE
-	 hbwb9F3eae1ujmSxZBBOF2AitcM6Kyw4GKgGqKkq2EqFNrk9HuObO2wagHrKyCF/yj
-	 9oXh9Njhk51xdAXW0gDzl0RIJNc0hieW0o1WZZts=
+	b=EaCbVptSNs0VRYh1En77PwqRpaQg+fJ6nwFgTfK3tqGyu3lvF3wnVwuf0aAnE6aNf
+	 TrTuqw8sP1BO6krcj58wIw1loBLAjwC9+BMMSD9WHEFK8Xkl117zPeK5VKpXThA3Ag
+	 +okZTGTiU6ah3mN46VLtfKcPVS3yIh+fOo3eXYDA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390817AbgAPRNo (ORCPT
+        id S2392995AbgAPRap (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Jan 2020 12:13:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59426 "EHLO mail.kernel.org"
+        Thu, 16 Jan 2020 12:30:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729010AbgAPRNn (ORCPT
+        id S2392984AbgAPRan (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:13:43 -0500
+        Thu, 16 Jan 2020 12:30:43 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE07F246A3;
-        Thu, 16 Jan 2020 17:13:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7BC1D2472A;
+        Thu, 16 Jan 2020 17:30:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194822;
-        bh=L/KSiELxp369zGbGPtlCYt4xEKWsCEJceCqSHQySHVI=;
+        s=default; t=1579195842;
+        bh=t3NzLjqky/Ad3i0HuvmURg01ba2B4dUEqMwPsFzQWqo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1FRzgi9ubCQRV+EzmkN2WYEVK5uh5EryC1lZzxaIsjuVqST7v04WehDNCVU1PJc7e
-         uPeTewY+AViOuo7+6R766lGX2EHpUUFiTpWogVeGHkwBGnMi+zONEDrMB6Tg7KMIMZ
-         shqOZ6ZeI5I1cC1gWRWDgpmxEyoyUShkJJ6jJTfE=
+        b=Axp8htsyCxcYWKw+aak2nbszJlbG3jkXeTybpGeH/MaFzR5wipeL1SenMEMiK7tG4
+         WpJ9mSOLqMlehk9OJF3uPyOmZAox2ORVFApudYAdMB3BqlciDxRBFD7WwYJ6T3XRyM
+         VA0Mf29cmzi9sw9J9rlEIw/jM5jPp9ZkIM02Z/jU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marian Mihailescu <mihailescu2m@gmail.com>,
+Cc:     Seung-Woo Kim <sw0312.kim@samsung.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 627/671] clk: samsung: exynos5420: Preserve CPU clocks configuration during suspend/resume
-Date:   Thu, 16 Jan 2020 12:04:25 -0500
-Message-Id: <20200116170509.12787-364-sashal@kernel.org>
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 344/371] media: exynos4-is: Fix recursive locking in isp_video_release()
+Date:   Thu, 16 Jan 2020 12:23:36 -0500
+Message-Id: <20200116172403.18149-287-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
-References: <20200116170509.12787-1-sashal@kernel.org>
+In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
+References: <20200116172403.18149-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -62,36 +64,38 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Marian Mihailescu <mihailescu2m@gmail.com>
+From: Seung-Woo Kim <sw0312.kim@samsung.com>
 
-[ Upstream commit e21be0d1d7bd7f78a77613f6bcb6965e72b22fc1 ]
+[ Upstream commit 704c6c80fb471d1bb0ef0d61a94617d1d55743cd ]
 
-Save and restore top PLL related configuration registers for big (APLL)
-and LITTLE (KPLL) cores during suspend/resume cycle. So far, CPU clocks
-were reset to default values after suspend/resume cycle and performance
-after system resume was affected when performance governor has been selected.
+>From isp_video_release(), &isp->video_lock is held and subsequent
+vb2_fop_release() tries to lock vdev->lock which is same with the
+previous one. Replace vb2_fop_release() with _vb2_fop_release() to
+fix the recursive locking.
 
-Fixes: 773424326b51 ("clk: samsung: exynos5420: add more registers to restore list")
-Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Fixes: 1380f5754cb0 ("[media] videobuf2: Add missing lock held on vb2_fop_release")
+Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/samsung/clk-exynos5420.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/platform/exynos4-is/fimc-isp-video.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index d5af93721299..6473af8903c5 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -171,6 +171,8 @@ static const unsigned long exynos5x_clk_regs[] __initconst = {
- 	GATE_BUS_CPU,
- 	GATE_SCLK_CPU,
- 	CLKOUT_CMU_CPU,
-+	APLL_CON0,
-+	KPLL_CON0,
- 	CPLL_CON0,
- 	DPLL_CON0,
- 	EPLL_CON0,
+diff --git a/drivers/media/platform/exynos4-is/fimc-isp-video.c b/drivers/media/platform/exynos4-is/fimc-isp-video.c
+index a920164f53f1..39340abefd14 100644
+--- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
++++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
+@@ -316,7 +316,7 @@ static int isp_video_release(struct file *file)
+ 		ivc->streaming = 0;
+ 	}
+ 
+-	vb2_fop_release(file);
++	_vb2_fop_release(file, NULL);
+ 
+ 	if (v4l2_fh_is_singular_file(file)) {
+ 		fimc_pipeline_call(&ivc->ve, close);
 -- 
 2.20.1
 
