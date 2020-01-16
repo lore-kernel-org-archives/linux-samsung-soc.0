@@ -2,98 +2,144 @@ Return-Path: <SRS0=lUWc=3F=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96E77C33CB6
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 11:44:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D1FC33CB6
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 14:42:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64901207FF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 11:44:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579175068;
-	bh=33EBja95wRnaNleuYy5XxD+LZM5YdUGD5P0ToeNX6gQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jUYmmd/NWwCyA5UlsLVlfXH3f9QfEmTYQXzbNDLelKjHKx5Zdk66QOGQC9G9PcrDP
-	 17t0eFa7wR5CAEvp0Y7XzkfnYadWleuLc/db/w6Jc1cTCQKGpZdSdiS2fZ1xrOc6sF
-	 dZ1fDRJKq37LRrFIXsZT6+CGKSo//Qsc55XardTU=
+	by mail.kernel.org (Postfix) with ESMTP id ED9C820684
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 14:42:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YB48G8WN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726864AbgAPLoY (ORCPT
+        id S1726876AbgAPOmp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Jan 2020 06:44:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38182 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725999AbgAPLoY (ORCPT
+        Thu, 16 Jan 2020 09:42:45 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:34842 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726861AbgAPOmo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Jan 2020 06:44:24 -0500
-Received: from PC-kkoz.proceq.com (unknown [213.160.61.66])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9B8D207E0;
-        Thu, 16 Jan 2020 11:44:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579175063;
-        bh=33EBja95wRnaNleuYy5XxD+LZM5YdUGD5P0ToeNX6gQ=;
+        Thu, 16 Jan 2020 09:42:44 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200116144243euoutp0192ae68df189e38c0c37efd33fa2dcad2~qZRWtr4Ix0097600976euoutp01c
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Jan 2020 14:42:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200116144243euoutp0192ae68df189e38c0c37efd33fa2dcad2~qZRWtr4Ix0097600976euoutp01c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1579185763;
+        bh=SFlSY5enk2NR7TvDU2U02lhcxcge/KC7e93n46VsVd8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pXUPk2wBwNnoNQQ3GzQoZbPwEN8jZRUYYisL5GC74/OverB94Q+4zrzbrdfMcYvMe
-         1VXNTotPuLj1/R+gX5W1eT6QpYUvrGQvDKs7ulbVvOg7iCT+Lmos/+vUBTbY8+fven
-         EesDo2HbE5YXmPBJM0kdlntHnZX3CTgpM/Jdc1Ho=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     linux-nfs@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>
-Subject: [PATCH 2/2] ARM: multi_v7_defconfig: Enable NFS v4.1 and v4.2
-Date:   Thu, 16 Jan 2020 12:44:07 +0100
-Message-Id: <1579175047-11351-2-git-send-email-krzk@kernel.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1579175047-11351-1-git-send-email-krzk@kernel.org>
-References: <1579175047-11351-1-git-send-email-krzk@kernel.org>
+        b=YB48G8WNjCB4BoOHcDMmC7pvEFh8u4IJnDURTJh5q9MbchEPE8EIHwp0i8Skahtp7
+         JUUebEfbWkIyZudIanxh2Tf2drba6sOIScdbeBEdyKHmcjvZfHWUCMiQWDxVLv6SHj
+         e8UyoomIBJuxfjTMdFhU8FvkX1w11MSTYbqruLi8=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200116144242eucas1p1d729d2f8bef381105f8bb0f77bcfdf0c~qZRWRkcSD1363913639eucas1p1V;
+        Thu, 16 Jan 2020 14:42:42 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id B7.F2.60679.266702E5; Thu, 16
+        Jan 2020 14:42:42 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200116144242eucas1p2bf8b4df91355974c8c96778f4ec117f7~qZRV7yP4t1420514205eucas1p2f;
+        Thu, 16 Jan 2020 14:42:42 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200116144242eusmtrp1ffba0c7783bbf33374fa349423bef34e~qZRV3QOBf0584505845eusmtrp1X;
+        Thu, 16 Jan 2020 14:42:42 +0000 (GMT)
+X-AuditID: cbfec7f4-0cbff7000001ed07-43-5e20766272a8
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 95.64.08375.266702E5; Thu, 16
+        Jan 2020 14:42:42 +0000 (GMT)
+Received: from AMDC3555.digital.local (unknown [106.120.51.67]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200116144241eusmtip27154e268eeeee0ec6f2693221b6a5bc9~qZRVWCd1a2133821338eusmtip2j;
+        Thu, 16 Jan 2020 14:42:41 +0000 (GMT)
+From:   =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>
+To:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>,
+        georgi.djakov@linaro.org, cw00.choi@samsung.com,
+        b.zolnierkie@samsung.com, m.szyprowski@samsung.com, krzk@kernel.org
+Subject: [PATCH v4 2/3] interconnect: Relax requirement in
+ of_icc_get_from_provider()
+Date:   Thu, 16 Jan 2020 15:42:01 +0100
+Message-Id: <20200116144202.12116-3-a.swigon@samsung.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200116144202.12116-1-a.swigon@samsung.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMKsWRmVeSWpSXmKPExsWy7djP87pJZQpxBrNnqVrcn9fKaLFxxnpW
+        i+tfnrNaTN+7ic3i/PkN7BaXd81hs/jce4TRYsb5fUwWa4/cZXfg9Ni0qpPN4861PWwefVtW
+        MXp83iQXwBLFZZOSmpNZllqkb5fAlbH783Tmgk8cFe2fFjA1MO5j72Lk5JAQMJF4+GEGWxcj
+        F4eQwApGiW9Pe5khnC+MEgfudDNCOJ8ZJe4sO84C07L78XKoluWMEkf//WCCa1nx6gDYYDYB
+        R4lJUx+A2SIC8RIft/1jASliFtjJKHHk7x8mkISwQLhE+7HVYDaLgKrEzZk72UBsXgFLidbp
+        D6AulJdYveEA0FEcHJwCVhKfH6tClAhKnJz5BOwiZqCS5q2zwe6WEFjGLjHx/hVGiF4Xic2/
+        /0KdLSzx6vgWqJkyEqcn90DFiyWe7rzPCtHcwCixadkRZoiEtcSdc7/YQBYzC2hKrN+lDxF2
+        lDh05DILSFhCgE/ixltBiBv4JCZtm84MEeaV6GgTgjCVJHbN5INolJBoWn0NaraHxN9Zj9kn
+        MCrOQvLMLCTPzEJYu4CReRWjeGppcW56arFRXmq5XnFibnFpXrpecn7uJkZg0jn97/iXHYy7
+        /iQdYhTgYFTi4Z0RpBAnxJpYVlyZe4hRgoNZSYT35AzZOCHelMTKqtSi/Pii0pzU4kOM0hws
+        SuK8xotexgoJpCeWpGanphakFsFkmTg4pRoYlxyedSO8SuiE1o9FMV/Ee78yG9dOt9P/z+Ag
+        8jHt51Pnls5TX3nr74h92HTPlHFhBl9jw8IpDuIn0g6aNvR81TH9lGXp8OzxHf/tHXahM75V
+        lZ1/9bMwcqKtetK6PUJyvucMv0ROXrpPjifJc0FLwLmThq9Plxjf+77/5DGVlSGuc2oF03rP
+        KLEUZyQaajEXFScCAIVa5SY2AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBIsWRmVeSWpSXmKPExsVy+t/xe7pJZQpxBp1vuC3uz2tltNg4Yz2r
+        xfUvz1ktpu/dxGZx/vwGdovLu+awWXzuPcJoMeP8PiaLtUfusjtwemxa1cnmcefaHjaPvi2r
+        GD0+b5ILYInSsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcksSy3S
+        t0vQy9j9eTpzwSeOivZPC5gaGPexdzFyckgImEjsfrycrYuRi0NIYCmjxMs376ESEhIf199g
+        hbCFJf5c64Iq+sQocW/PGkaQBJuAo8SkqQ/AGkQEEiVuPXrMDFLELLAfaNKdNjaQhLBAqMTi
+        x1vAGlgEVCVuztwJFucVsJRonf4Aapu8xOoNB4CaOTg4BawkPj9WBQkLAZXc3tjNClEuKHFy
+        5hMWkBJmAXWJ9fOEQMLMQJ3NW2czT2AUnIWkahZC1SwkVQsYmVcxiqSWFuem5xYb6hUn5haX
+        5qXrJefnbmIExtK2Yz8372C8tDH4EKMAB6MSD++MIIU4IdbEsuLK3EOMEhzMSiK8J2fIxgnx
+        piRWVqUW5ccXleakFh9iNAX6bCKzlGhyPjDO80riDU0NzS0sDc2NzY3NLJTEeTsEDsYICaQn
+        lqRmp6YWpBbB9DFxcEo1MEoW3vqtH7BeNaCGIY3z2HVGt7OWvw+lPmmT4jIwfbrBcM/LDQHb
+        RWL+1T+1s3o4eUrhfcNfgbfV5T+ynd2tYO+mq3ZSnvlyzRIRFX/TdfZ5+4pX3hZpUxXlYteS
+        CdYpnTBF7av0gy1LzU9smL+G89CxcmENpb1XvFvf9EzzeBNc7Pxi6hHZJiWW4oxEQy3mouJE
+        AMh6sPi7AgAA
+X-CMS-MailID: 20200116144242eucas1p2bf8b4df91355974c8c96778f4ec117f7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200116144242eucas1p2bf8b4df91355974c8c96778f4ec117f7
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200116144242eucas1p2bf8b4df91355974c8c96778f4ec117f7
+References: <20200116144202.12116-1-a.swigon@samsung.com>
+        <CGME20200116144242eucas1p2bf8b4df91355974c8c96778f4ec117f7@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-NFS is widely used in debugging and Continuous Integration systems, so
-enable the newest versions of protocol: v4.1 and v4.2.
+This patch relaxes the condition in of_icc_get_from_provider() so that
+it is no longer required to set '#interconnect-cells' to <1> in the DT,
+and therefore it is not required to supply dummy node IDs in the
+'interconnects' property when node IDs are dynamically generated rather
+than hardcoded (statically allocated).
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+In case of the devfreq driver for exynos-bus, node IDs are dynamically
+allocated and '#interconnect-cells' is always zero.
 
+Signed-off-by: Artur Świgoń <a.swigon@samsung.com>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
+ drivers/interconnect/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This happens to fix also troubles with mounting NFS v4 root after but in
-commit 6d972518b821 ("NFS: Add fs_context support."):
-
-  mount.nfs4 -o vers=4,nolock 192.168.1.10:/srv/nfs/odroidhc1 /new_root
-  [ 24.980839] NFS4: Couldn't follow remote path
-  [ 24.986201] NFS: Value for 'minorversion' out of range
-  mount.nfs4: Numerical result out of range
----
- arch/arm/configs/multi_v7_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 80373fe0280d..493ba3d3cf1e 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -1094,6 +1094,8 @@ CONFIG_PSTORE_RAM=y
- CONFIG_NFS_FS=y
- CONFIG_NFS_V3_ACL=y
- CONFIG_NFS_V4=y
-+CONFIG_NFS_V4_1=y
-+CONFIG_NFS_V4_2=y
- CONFIG_ROOT_NFS=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ISO8859_1=y
+diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+index 0be1764d3528..5ea270af5ff4 100644
+--- a/drivers/interconnect/core.c
++++ b/drivers/interconnect/core.c
+@@ -335,7 +335,7 @@ struct icc_node *of_icc_get_from_provider(struct of_phandle_args *spec)
+ 	struct icc_node *node = ERR_PTR(-EPROBE_DEFER);
+ 	struct icc_provider *provider;
+ 
+-	if (!spec || spec->args_count != 1)
++	if (!spec)
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	mutex_lock(&icc_lock);
 -- 
-2.7.4
+2.17.1
 
