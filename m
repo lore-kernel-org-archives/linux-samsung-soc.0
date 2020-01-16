@@ -7,54 +7,52 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F392C33CB6
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 18:31:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F14FC33CB6
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 19:12:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FCC320684
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 18:31:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41237206E6
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 19:12:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579199468;
-	bh=O8o+WPlQAMCaUyaOt/651Bm5d0NIgeMC6LmTx2pz0D4=;
+	s=default; t=1579201973;
+	bh=X5TfvNsELNbaSw1/f7bXQHcNfJu3UqudNC6wp+ZOdN0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hVsbBtz3jRf/wF2bszXwhNnnO2yJB0pBhRx5pe/Od/7Xb47465FkIwdlf1Al0vZsU
-	 Vyp6B7OkL0/GWfqWCWAaHv39aZ/1ih2xu6osbEZ0GcVs5usB0C0v74yA5qk0zb78E8
-	 h81eqdozQQXQKDn1ZffAhLML7UlBYIGuwiWiotRQ=
+	b=q9f6W8l2m/eCQU8Gwm5qBbFXPKBmYdshVUGDSiauo/3QJvz5i4thzTj+jT1LDWfwj
+	 O6ZVC/0/LFYeZPiqjA9JA0M+CAAyKDP2gZnX3tWFkGG4MOAQq02SDmrTS+rzucTkcQ
+	 d3RH/VQi/H+BpMsMHln7uxRT4fH5XWDW1L+mWR0Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391934AbgAPRZX (ORCPT
+        id S1729256AbgAPQ7o (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Jan 2020 12:25:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33030 "EHLO mail.kernel.org"
+        Thu, 16 Jan 2020 11:59:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391922AbgAPRZW (ORCPT
+        id S2387451AbgAPQ5M (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:25:22 -0500
+        Thu, 16 Jan 2020 11:57:12 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10D502468C;
-        Thu, 16 Jan 2020 17:25:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C371024673;
+        Thu, 16 Jan 2020 16:57:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195522;
-        bh=O8o+WPlQAMCaUyaOt/651Bm5d0NIgeMC6LmTx2pz0D4=;
+        s=default; t=1579193831;
+        bh=X5TfvNsELNbaSw1/f7bXQHcNfJu3UqudNC6wp+ZOdN0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y2i9GKcsQtbl9u++wKXfU9/uIhxDVsRYoEnov4zPpEIcPHXQczFUzfqeHPuRB54r8
-         uFcKzJXTkQRFkBIu5rLG26awXHYMcMqRlfjD53TO4HDchMsXH8nQAeJSG9UHfxE5iX
-         uPV4qZec3GfFwRcbrBAA6A8ydd84KcIteVoldbCg=
+        b=nxzCb8NwhWFE0wTmG+kWXdM/q0n4p3rHQTx5u63v6PKow936NbFi4Nnjsiu4ynxBf
+         nS7Bl2qhGcZ5CXIBel3yt5GjasIy/P5urkPA9sYQsGASsLgoNzoFVbdl65UTpzXKMb
+         SUrRtdF4iHLfGIzhe8jg5/ATbxz0CklGSpqNqW8E=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
+Cc:     Yangtao Li <tiny.windzz@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 119/371] clocksource/drivers/exynos_mct: Fix error path in timer resources initialization
-Date:   Thu, 16 Jan 2020 12:19:51 -0500
-Message-Id: <20200116172403.18149-62-sashal@kernel.org>
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 088/671] clk: samsung: exynos4: fix refcount leak in exynos4_get_xom()
+Date:   Thu, 16 Jan 2020 11:45:19 -0500
+Message-Id: <20200116165502.8838-88-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
-References: <20200116172403.18149-1-sashal@kernel.org>
+In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
+References: <20200116165502.8838-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -64,50 +62,34 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit b9307420196009cdf18bad55e762ac49fb9a80f4 ]
+[ Upstream commit cee82eb9532090cd1dc953e845d71f9b1445c84e ]
 
-While freeing interrupt handlers in error path, don't assume that all
-requested interrupts are per-processor interrupts and properly release
-standard interrupts too.
+The of_find_compatible_node() returns a node pointer with refcount
+incremented, but there is the lack of use of the of_node_put() when
+done. Add the missing of_node_put() to release the refcount.
 
-Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
-Fixes: 56a94f13919c ("clocksource: exynos_mct: Avoid blocking calls in the cpu hotplug notifier")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Fixes: e062b571777f ("clk: exynos4: register clocks using common clock framework")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clocksource/exynos_mct.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/clk/samsung/clk-exynos4.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index aaf5bfa9bd9c..e3ae041ac30e 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -563,7 +563,19 @@ static int __init exynos4_timer_resources(struct device_node *np, void __iomem *
- 	return 0;
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 0421960eb963..442309b56920 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -1226,6 +1226,7 @@ static unsigned long __init exynos4_get_xom(void)
+ 			xom = readl(chipid_base + 8);
  
- out_irq:
--	free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
-+	if (mct_int_type == MCT_INT_PPI) {
-+		free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
-+	} else {
-+		for_each_possible_cpu(cpu) {
-+			struct mct_clock_event_device *pcpu_mevt =
-+				per_cpu_ptr(&percpu_mct_tick, cpu);
-+
-+			if (pcpu_mevt->evt.irq != -1) {
-+				free_irq(pcpu_mevt->evt.irq, pcpu_mevt);
-+				pcpu_mevt->evt.irq = -1;
-+			}
-+		}
-+	}
- 	return err;
- }
+ 		iounmap(chipid_base);
++		of_node_put(np);
+ 	}
  
+ 	return xom;
 -- 
 2.20.1
 
