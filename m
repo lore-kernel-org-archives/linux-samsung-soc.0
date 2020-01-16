@@ -2,112 +2,112 @@ Return-Path: <SRS0=lUWc=3F=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F232C33CAF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 18:11:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B674AC33CB3
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 18:24:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CC5920684
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 18:11:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579198264;
-	bh=ON6UrWmq47JDT/IgdKlfSIgthc+sRzNmjam0nGQqChg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=w4RjhLbij22CSNv839x+QDI/lZ/RUK5WpeLafu0bOfRkTxI8hhR/IctZfnoOuXFi4
-	 CQs26Ngi4P3xa+/1kICpGezpPLa7dcahRvNpFLYqD3N+5Y0kGeDQDnIOO5XlYr1r8X
-	 2uqKCJijPSqR1EIY9IUIPMmfKbjG8N31lVXBd6DM=
+	by mail.kernel.org (Postfix) with ESMTP id 93F1D20684
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 18:24:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kZSr6tlx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395057AbgAPSKu (ORCPT
+        id S2436615AbgAPSYC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Jan 2020 13:10:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53118 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393109AbgAPRhm (ORCPT
+        Thu, 16 Jan 2020 13:24:02 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34442 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436589AbgAPSXn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:37:42 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A855C246C0;
-        Thu, 16 Jan 2020 17:37:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196261;
-        bh=ON6UrWmq47JDT/IgdKlfSIgthc+sRzNmjam0nGQqChg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xB51agJd95gsQ+efGgEquaZBw14Jt7xt/GG7d6eIoVS54PYnpjbRZtoPEkgSetc5n
-         636NFhJKigt7zPcFYUJlbdwwQcaIqxvvuoFZUM+JCHsz4wwubqC+vlkyU24wPgkavC
-         Vyq2VEnWZ+36mEJRsz7Ureu+Sj3YKe5NbeCiwTj0=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Thu, 16 Jan 2020 13:23:43 -0500
+Received: by mail-wr1-f68.google.com with SMTP id t2so20197604wrr.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Jan 2020 10:23:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=jVFQAPxxxKh7BrL4PuCJstmTo/0eDvZwSXWF/c8o6TQ=;
+        b=kZSr6tlxSDSMnhpEyb/7zL0zkHF/eQHJsSEZIjt4kMNTn7yeMUkfCQpBlCmhqiVs0L
+         kaQsclQziov1CuI4PtdACm3Stz1bhl1yRQ9gXYmGBaTuV3kAw3+mqueisvUv5m6jYlRM
+         TOznzUPgDAw/04lwlnAJ8Un+fydTco+kDdceRwDBWYW/kfHaJzDRyHAaRE8hPZUg/aWv
+         Abj21FQ1ZpKllu317NhyxkQ124z8T0IygtlzAfjl8QEhVndCYngUlMc06TDR38ePDr1y
+         rg9o7NOx8WEKf247RbRlmP/oskQ5yjD8QEy82KwbWIDJldVzkKQ1wPXiZL477W9kNEdh
+         TLYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=jVFQAPxxxKh7BrL4PuCJstmTo/0eDvZwSXWF/c8o6TQ=;
+        b=SLcnWmP4eUApqHePVcyINH4n9Z8MdvEhk3ze/zJm3pyLOhDcaExvhWyFu9+u0ul0aO
+         ndReStVCeh1TZXnDfyNH7QnHtDVqIYc2mok0OitKGLCNoL/ImP7XBpIJ1wL+EQK9YUHZ
+         3+aZni7zCKZRG57/errZApXIuB6llYbVmXThI07TRtAXIDLD0WEaZ+ZabdnMrjQiJ+i6
+         BZazAHvP+IO+DfFuRM0DnLcE1FzirzdTFB0YS5GlbEh2JxPy3gU1cIOC+TxOeILBp0IL
+         ug+GvbBkjMe/aPkf1xNjnXhvM39MoW++6rqbz6YnoN0TXLpzTqaKQ1RCIaLCQwrVw8qy
+         gmfA==
+X-Gm-Message-State: APjAAAXy5tSOO+iSXA267RLVr1GbMKt6wHA2xJLdFsvsNrWzHYLyIkfg
+        4KEYKRzRSECfoxwczkbW4JTMeA==
+X-Google-Smtp-Source: APXvYqxYBVzqX3/EddcHNcmwFI/IL+L51NjyXmq8HQM5xvfKCgh/wFpBEMU1Qnog3sNzqLpphKL6Lw==
+X-Received: by 2002:adf:ef0b:: with SMTP id e11mr4719536wro.128.1579199022086;
+        Thu, 16 Jan 2020 10:23:42 -0800 (PST)
+Received: from mai.imgcgcw.net ([2a01:e34:ed2f:f020:6c63:1b50:1156:7f0f])
+        by smtp.gmail.com with ESMTPSA id b137sm1087920wme.26.2020.01.16.10.23.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jan 2020 10:23:41 -0800 (PST)
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+To:     tglx@linutronix.de
+Cc:     linux-kernel@vger.kernel.org,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 086/251] clocksource/drivers/exynos_mct: Fix error path in timer resources initialization
-Date:   Thu, 16 Jan 2020 12:33:55 -0500
-Message-Id: <20200116173641.22137-46-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
-References: <20200116173641.22137-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+        Kukjin Kim <kgene@kernel.org>,
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG EXYNOS
+        ARM ARCHITECTURES),
+        linux-samsung-soc@vger.kernel.org (moderated list:ARM/SAMSUNG EXYNOS
+        ARM ARCHITECTURES)
+Subject: [PATCH 14/17] clocksource/drivers/exynos_mct: Rename Exynos to lowercase
+Date:   Thu, 16 Jan 2020 19:23:01 +0100
+Message-Id: <20200116182304.4926-14-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200116182304.4926-1-daniel.lezcano@linaro.org>
+References: <74bf7170-401f-2962-ea5a-1e21431a9349@linaro.org>
+ <20200116182304.4926-1-daniel.lezcano@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 
-[ Upstream commit b9307420196009cdf18bad55e762ac49fb9a80f4 ]
+Fix up inconsistent usage of upper and lowercase letters in "Exynos"
+name.
 
-While freeing interrupt handlers in error path, don't assume that all
-requested interrupts are per-processor interrupts and properly release
-standard interrupts too.
+"EXYNOS" is not an abbreviation but a regular trademarked name.
+Therefore it should be written with lowercase letters starting with
+capital letter.
 
-Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
-Fixes: 56a94f13919c ("clocksource: exynos_mct: Avoid blocking calls in the cpu hotplug notifier")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+The lowercase "Exynos" name is promoted by its manufacturer Samsung
+Electronics Co., Ltd., in advertisement materials and on website.
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Link: https://lore.kernel.org/r/20200104152107.11407-12-krzk@kernel.org
 ---
- drivers/clocksource/exynos_mct.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/clocksource/exynos_mct.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index d32248e2ceab..ae3cbaeffd9c 100644
+index 74cb299f5089..a267fe31ef13 100644
 --- a/drivers/clocksource/exynos_mct.c
 +++ b/drivers/clocksource/exynos_mct.c
-@@ -563,7 +563,19 @@ static int __init exynos4_timer_resources(struct device_node *np, void __iomem *
- 	return 0;
+@@ -4,7 +4,7 @@
+  * Copyright (c) 2011 Samsung Electronics Co., Ltd.
+  *		http://www.samsung.com
+  *
+- * EXYNOS4 MCT(Multi-Core Timer) support
++ * Exynos4 MCT(Multi-Core Timer) support
+ */
  
- out_irq:
--	free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
-+	if (mct_int_type == MCT_INT_PPI) {
-+		free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
-+	} else {
-+		for_each_possible_cpu(cpu) {
-+			struct mct_clock_event_device *pcpu_mevt =
-+				per_cpu_ptr(&percpu_mct_tick, cpu);
-+
-+			if (pcpu_mevt->evt.irq != -1) {
-+				free_irq(pcpu_mevt->evt.irq, pcpu_mevt);
-+				pcpu_mevt->evt.irq = -1;
-+			}
-+		}
-+	}
- 	return err;
- }
- 
+ #include <linux/interrupt.h>
 -- 
-2.20.1
+2.17.1
 
