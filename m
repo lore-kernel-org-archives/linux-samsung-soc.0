@@ -2,157 +2,96 @@ Return-Path: <SRS0=lUWc=3F=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E00BC33CB3
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 14:44:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28FD3C33CB3
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 16:49:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07CB222464
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 14:44:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qGFNauyA"
+	by mail.kernel.org (Postfix) with ESMTP id E9CE822522
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 16:49:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1579193345;
+	bh=4vXEaNwOIWp1f5jkZrk0mdAQPGxxPiXZxkS7gxe856Y=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=xKKTr5gSlTltP3utrpHWqVdGEHx9MO+P4m0Tu5xrVJjLU914Sf6Vvh1XK5m7cPXij
+	 iJIf6TWhGB55ituvATL5PdxyHkYqSiGF1rjYU0tysIyE86kLTEAROMhbex+STk9cWH
+	 kU8atYNG3imtBthLWc32vKHC/YZAMjvnoRwS5zV4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbgAPOoQ (ORCPT
+        id S1729976AbgAPQtE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Jan 2020 09:44:16 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:34822 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726559AbgAPOmo (ORCPT
+        Thu, 16 Jan 2020 11:49:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59748 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729094AbgAPQtD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Jan 2020 09:42:44 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200116144241euoutp01d5e24e5375b4f39e7094e93a85db84fc~qZRVjX7Fm0130901309euoutp01I
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Jan 2020 14:42:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200116144241euoutp01d5e24e5375b4f39e7094e93a85db84fc~qZRVjX7Fm0130901309euoutp01I
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1579185761;
-        bh=8Ahf2/0EsEBYG+/Mv5cyXwGGbXnNjNkyPPuFLBhAkYQ=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=qGFNauyArbJxWpVSh/xTaYHLyTlldsLv0uAEsQAHlPwZmyDS9MsmfVunPRStnc61P
-         TjBiTeG8jFl7zCOC8iWFJDb/iINEV8+jRDf4RyT32AQv17S2XGvdl5lk05vPsD/o0o
-         +I5dZL0WMgb+mOrQiVOdrWj+AOsdmmqn0f1lKPhg=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200116144241eucas1p21fbfa0f4e0e68dedad3a4bc6dcafeb64~qZRVRthGZ2314923149eucas1p2C;
-        Thu, 16 Jan 2020 14:42:41 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 14.D2.60698.166702E5; Thu, 16
-        Jan 2020 14:42:41 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200116144241eucas1p226c1d7fc2fad5bd1b9fb6d0fb1b22bff~qZRU3h-381442314423eucas1p2V;
-        Thu, 16 Jan 2020 14:42:41 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200116144241eusmtrp13ad69389c59a3c9b12dbcdca183a5a2a~qZRU20qKm0584505845eusmtrp1T;
-        Thu, 16 Jan 2020 14:42:41 +0000 (GMT)
-X-AuditID: cbfec7f5-a0fff7000001ed1a-e6-5e20766159d0
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id D4.64.08375.166702E5; Thu, 16
-        Jan 2020 14:42:41 +0000 (GMT)
-Received: from AMDC3555.digital.local (unknown [106.120.51.67]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200116144240eusmtip2b01528aecb320a8b1705f43c2d4928bd~qZRUV2MnO2614526145eusmtip2N;
-        Thu, 16 Jan 2020 14:42:40 +0000 (GMT)
-From:   =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>
-To:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>,
-        georgi.djakov@linaro.org, cw00.choi@samsung.com,
-        b.zolnierkie@samsung.com, m.szyprowski@samsung.com, krzk@kernel.org
-Subject: [PATCH v4 0/3] interconnect: Support Samsung Exynos use-case
-Date:   Thu, 16 Jan 2020 15:41:59 +0100
-Message-Id: <20200116144202.12116-1-a.swigon@samsung.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 16 Jan 2020 11:49:03 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C9D982176D;
+        Thu, 16 Jan 2020 16:48:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579193342;
+        bh=4vXEaNwOIWp1f5jkZrk0mdAQPGxxPiXZxkS7gxe856Y=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=pL6UF5rupPzP1r12clp9YARXJG2QoMSL30KGHxX49EUvJ4UgXUdR+nitFvnEy2Wf1
+         9YgYuim2d6O7mzKxxpnQy+kYpa44WwPKjnmu8gjB16QA2bBNTWFie/Vskwi5dA4Fji
+         1+iEON41ZD/wp0mvnDhw5UfJ3oTIMbXx4R8QVBEI=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Marian Mihailescu <mihailescu2m@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.4 078/205] clk: samsung: exynos5420: Preserve CPU clocks configuration during suspend/resume
+Date:   Thu, 16 Jan 2020 11:40:53 -0500
+Message-Id: <20200116164300.6705-78-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200116164300.6705-1-sashal@kernel.org>
+References: <20200116164300.6705-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAKsWRmVeSWpSXmKPExsWy7djP87qJZQpxBg23ZCzuz2tltNg4Yz2r
-        xfUvz1ktpu/dxGZx/vwGdovLu+awWXzuPcJoMeP8PiaLtUfusjtwemxa1cnmcefaHjaPvi2r
-        GD0+b5ILYInisklJzcksSy3St0vgyvj68j57wQ/eihcn5jA2MG7m7mLk5JAQMJHomdfPDmIL
-        CaxglOj/FQ9hf2GUuHfcu4uRC8j+zCix6/kzJpiGxzvesEAULWeU2P8+DaIIqOH95UVsIAk2
-        AUeJSVMfgE0VEYiX+LjtHwtIEbPATkaJI3//gE0SFnCV2NT4jRnEZhFQlfg6qQsszitgKXHo
-        7wxGiG3yEqs3HGCGiAtKnJz5BGwzM1C8eetsZpChEgKT2SUatu2DOs9FYtmaecwQtrDEq+Nb
-        2CFsGYnTk3tYIOxiiac777NCNDcwSmxadgSqwVrizrlfQC9wAG3QlFi/Sx/ElAD6Zvu6IAiT
-        T+LGW0GIE/gkJm2bzgwR5pXoaBOCMJUkds3kgxgnIdG0+hrUaA+JPTcWQ4MtVqLjSD/LBEaF
-        WUj+moXkr1kIFyxgZF7FKJ5aWpybnlpsnJdarlecmFtcmpeul5yfu4kRmG5O/zv+dQfjvj9J
-        hxgFOBiVeHg/hCjECbEmlhVX5h5ilOBgVhLhPTlDNk6INyWxsiq1KD++qDQntfgQozQHi5I4
-        r/Gil7FCAumJJanZqakFqUUwWSYOTqkGRqGyQ3Y2P4pn1Lg0yKxjkSvd7bagsnCGq6NV1bVL
-        f93Mw+adKuXPmT1z1u7U284T3s2av971voaD86+vJS+qPUWb0mMZrh22eGC1csksdtW9ba8N
-        W32eLJ47aXnlV6f4ZxlaCosLJ3++YhCRvGt6sQz/qb3Hpj89o5V192uWmMf+iRqplxMuPlFi
-        Kc5INNRiLipOBACAgVbSMwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIIsWRmVeSWpSXmKPExsVy+t/xe7qJZQpxBvs+sljcn9fKaLFxxnpW
-        i+tfnrNaTN+7ic3i/PkN7BaXd81hs/jce4TRYsb5fUwWa4/cZXfg9Ni0qpPN4861PWwefVtW
-        MXp83iQXwBKlZ1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OSmpNZllqk
-        b5egl/H15X32gh+8FS9OzGFsYNzM3cXIySEhYCLxeMcbli5GLg4hgaWMEj1757NDJCQkPq6/
-        wQphC0v8udbFBlH0iVFi+dSHbCAJNgFHiUlTH4A1iAgkStx69JgZpIhZYD+jxMs7bWBFwgKu
-        EpsavzGD2CwCqhJfJ3Uxgdi8ApYSh/7OYITYIC+xesMBZoi4oMTJmU+ATuIAGqQusX6eEEiY
-        Gaikeets5gmM/LOQVM1CqJqFpGoBI/MqRpHU0uLc9NxiQ73ixNzi0rx0veT83E2MwOjYduzn
-        5h2MlzYGH2IU4GBU4uGdEaQQJ8SaWFZcmXuIUYKDWUmE9+QM2Tgh3pTEyqrUovz4otKc1OJD
-        jKZAL0xklhJNzgdGbl5JvKGpobmFpaG5sbmxmYWSOG+HwMEYIYH0xJLU7NTUgtQimD4mDk6p
-        BkYPuZPXN+z/env+vG3yN9TFdmq/Vr345sxDVsNCn1f7rp1b8/yzd+jbTZwVq66KvPpQdch+
-        rwSXfx3vrwaT1isP1wq7s5VwPl40p3l7SdG3PPcfD3/ViC1XtFH+zuL3ujtIMdT5zIcSzyJW
-        RtUb98463LJPVn/jKH5SzuzIXKctsx68W72Eg91IiaU4I9FQi7moOBEA6vO3GKQCAAA=
-X-CMS-MailID: 20200116144241eucas1p226c1d7fc2fad5bd1b9fb6d0fb1b22bff
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200116144241eucas1p226c1d7fc2fad5bd1b9fb6d0fb1b22bff
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200116144241eucas1p226c1d7fc2fad5bd1b9fb6d0fb1b22bff
-References: <CGME20200116144241eucas1p226c1d7fc2fad5bd1b9fb6d0fb1b22bff@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Previously posted as a part of a larger RFC: [1].
+From: Marian Mihailescu <mihailescu2m@gmail.com>
 
-The Exynos SoC family relies on the devfreq driver for frequency
-scaling. However, a way to programmatically enforce QoS contraints
-(i.e., minimum frequency) is desired. A solution which uses the
-interconnect framework to ensure QoS is currently being developed[1].
+[ Upstream commit e21be0d1d7bd7f78a77613f6bcb6965e72b22fc1 ]
 
-The exynos-bus hierarchy is composed of multiple buses which are probed
-separately. Sometimes the DMC is even handled by a different driver.
-Since the exynos-bus driver is generic and supports multiple differing
-bus hierarchies, IDs for nodes (i.e. buses) are assigned dynamically. Due
-to the unspecified relative probing order, every bus registers its own
-interconnect provider.
+Save and restore top PLL related configuration registers for big (APLL)
+and LITTLE (KPLL) cores during suspend/resume cycle. So far, CPU clocks
+were reset to default values after suspend/resume cycle and performance
+after system resume was affected when performance governor has been selected.
 
-Rationale for each patch in this series:
-* Patch 01 (exporting of_icc_get_from_provider()) makes it easy to
-  retrieve the parent node from the DT (cf. patch 05 in [1]).
-* Patch 02 (allowing #interconnect-cells = <0>) allows to remove dummy
-  node IDs from the DT.
-* Patch 03 (allowing inter-provider node pairs) is necessary to make
-  such multi-provider hierarchy work. A new approach implemented in v3
-  ensures not to break any existing drivers.
-
+Fixes: 773424326b51 ("clk: samsung: exynos5420: add more registers to restore list")
+Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-Changes since v3 (to patches in this series):
-* Improve commit messages.
+ drivers/clk/samsung/clk-exynos5420.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
----
-Artur Świgoń
-Samsung R&D Institute Poland
-Samsung Electronics
-
----
-References:
-[1] https://patchwork.kernel.org/patch/11305287/
-
-Artur Świgoń (3):
-  interconnect: Export of_icc_get_from_provider()
-  interconnect: Relax requirement in of_icc_get_from_provider()
-  interconnect: Allow inter-provider pairs to be configured
-
- drivers/interconnect/core.c           | 16 ++++++++--------
- include/linux/interconnect-provider.h |  8 ++++++++
- 2 files changed, 16 insertions(+), 8 deletions(-)
-
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 31466cd1842f..3b7601647d7b 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -165,6 +165,8 @@ static const unsigned long exynos5x_clk_regs[] __initconst = {
+ 	GATE_BUS_CPU,
+ 	GATE_SCLK_CPU,
+ 	CLKOUT_CMU_CPU,
++	APLL_CON0,
++	KPLL_CON0,
+ 	CPLL_CON0,
+ 	DPLL_CON0,
+ 	EPLL_CON0,
 -- 
-2.17.1
+2.20.1
 
