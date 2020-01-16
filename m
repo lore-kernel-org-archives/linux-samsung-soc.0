@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B631C3F68F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:48:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B3BCC33CB3
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:57:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA2AF2468D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:48:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2ADE22077B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:57:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579196902;
-	bh=tjezgqyB0lb6GvQGpNFUAhir6YPDZj0KFE56LLwsDVs=;
+	s=default; t=1579197474;
+	bh=/bCCfSmxJZv3TMBHVGhlziVPqCKsegMIwgEErJMuXQ0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BhqMo6GBekOx5e+TQ0RFHXuBUHpYDdg6ARGOj5NoeNGZILKWFA2wBbH3TzbPmYOZu
-	 +sN+0WeI84kr0S95f9n3yGvIDMoDcRdkE2NWDywcR+9o+ZZio3y13Re4xQ1ereSrLY
-	 A5FSYg13seIN9Ppypqp7TR/k5ytDynEteKwrJerE=
+	b=pgzVxt8QWJeHlXEkLuW9Ao/c5f69mj9o5XOSgTkCT0U45/i9FlsGtoDD/TXXoEv3T
+	 1N4vTz4Qeardzkc7qLwFtgzQkkFs3krao9V/wwAVMJyt4x1gmFbOg6x290UY/l8Ust
+	 PsCTOz2Xv4mnE2mfPebEkCAP5C1uXbg2+tWrkqe4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406740AbgAPRqk (ORCPT
+        id S2394640AbgAPR5m (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Jan 2020 12:46:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39632 "EHLO mail.kernel.org"
+        Thu, 16 Jan 2020 12:57:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406738AbgAPRqj (ORCPT
+        id S2405807AbgAPRnV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:46:39 -0500
+        Thu, 16 Jan 2020 12:43:21 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B9E1246DE;
-        Thu, 16 Jan 2020 17:46:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C11672469C;
+        Thu, 16 Jan 2020 17:43:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196799;
-        bh=tjezgqyB0lb6GvQGpNFUAhir6YPDZj0KFE56LLwsDVs=;
+        s=default; t=1579196600;
+        bh=/bCCfSmxJZv3TMBHVGhlziVPqCKsegMIwgEErJMuXQ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mmR0MM0r7SDpzNzBbvY3PqCphAOfFOEiVp73TfZNdghLvEys3G9rOz3+WY2Bu6FZu
-         +Fk4tZ4lxcPRRz1WpY0/46OGvL5cP/xkm+lGNqUl+6Ah0GagbtWLYMU68ZxyL+wKM3
-         jSkJavCdjj6aaqTBw8lvMElyTueRT2L2u2N8Q+h4=
+        b=d7T39uP/7UsD8UyZg5gB124o4xBdlfknCBszknm0YPB2+7M0znqGWhNclq4Bc2PmZ
+         jdtdnraGZ97r9fg1c1N5uZv9OhRVsDXHn21oE+I7/Abxmz7wKps2HQl4hy3DDUDw8A
+         6Z2RLcwFVHke6AEt45VnPpD6XaYHAff10heaRaTM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marian Mihailescu <mihailescu2m@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+Cc:     Yangtao Li <tiny.windzz@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>,
         linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.4 159/174] clk: samsung: exynos5420: Preserve CPU clocks configuration during suspend/resume
-Date:   Thu, 16 Jan 2020 12:42:36 -0500
-Message-Id: <20200116174251.24326-159-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 022/174] clk: samsung: exynos4: fix refcount leak in exynos4_get_xom()
+Date:   Thu, 16 Jan 2020 12:40:19 -0500
+Message-Id: <20200116174251.24326-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116174251.24326-1-sashal@kernel.org>
 References: <20200116174251.24326-1-sashal@kernel.org>
@@ -62,36 +62,34 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Marian Mihailescu <mihailescu2m@gmail.com>
+From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit e21be0d1d7bd7f78a77613f6bcb6965e72b22fc1 ]
+[ Upstream commit cee82eb9532090cd1dc953e845d71f9b1445c84e ]
 
-Save and restore top PLL related configuration registers for big (APLL)
-and LITTLE (KPLL) cores during suspend/resume cycle. So far, CPU clocks
-were reset to default values after suspend/resume cycle and performance
-after system resume was affected when performance governor has been selected.
+The of_find_compatible_node() returns a node pointer with refcount
+incremented, but there is the lack of use of the of_node_put() when
+done. Add the missing of_node_put() to release the refcount.
 
-Fixes: 773424326b51 ("clk: samsung: exynos5420: add more registers to restore list")
-Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Fixes: e062b571777f ("clk: exynos4: register clocks using common clock framework")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/samsung/clk-exynos5420.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/samsung/clk-exynos4.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index c94de13ce362..21bfedf40478 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -166,6 +166,8 @@ static unsigned long exynos5x_clk_regs[] __initdata = {
- 	GATE_BUS_CPU,
- 	GATE_SCLK_CPU,
- 	CLKOUT_CMU_CPU,
-+	APLL_CON0,
-+	KPLL_CON0,
- 	CPLL_CON0,
- 	DPLL_CON0,
- 	EPLL_CON0,
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 7f370d3e0983..6c8e45e007c8 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -1224,6 +1224,7 @@ static unsigned long exynos4_get_xom(void)
+ 			xom = readl(chipid_base + 8);
+ 
+ 		iounmap(chipid_base);
++		of_node_put(np);
+ 	}
+ 
+ 	return xom;
 -- 
 2.20.1
 
