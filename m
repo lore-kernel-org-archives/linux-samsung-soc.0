@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37141C33CB1
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 16:52:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA93C33CAF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:02:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B78F21582
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 16:52:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D5BF24681
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:02:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579193548;
-	bh=z7KVdw7Z8+sBDxB18wiOv1PsdtW1lfFnRoY3zKQDzDI=;
+	s=default; t=1579194125;
+	bh=O8o+WPlQAMCaUyaOt/651Bm5d0NIgeMC6LmTx2pz0D4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=e7YksKT8ds04YL3qvfNceqSRD6ren4dXDdb4a72z/JQAZQkEjflFb5M2wwNBFqFfk
-	 qwUqnwIdybwg+q7+IG0CUdjwZ7bhtMX8H1yEM8JOAeoJ+QWjJPebeUrYKLFG2T51pD
-	 y5d+yqJu14otvs/2XBhpyhUlcni9dstM/gocH9g8=
+	b=APrGY/vxkvjNaY2VMFM/YTUFk/AwnITTZOLowZHYgT3WPE9xycs3JxWIWyoeiomaZ
+	 bFYYxMdK6fIwJFOyF0/3Uos7NgkReuKi0yjm40Pxlnk9Hbp6GjiPPDnlpmGSFqT1a3
+	 4dWgKCqzBNVkAbqABC9LYIHdN3n9llY1I8gh7vI8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729977AbgAPQw1 (ORCPT
+        id S2388255AbgAPRCF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Jan 2020 11:52:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35510 "EHLO mail.kernel.org"
+        Thu, 16 Jan 2020 12:02:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727008AbgAPQw0 (ORCPT
+        id S2387879AbgAPRCD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:52:26 -0500
+        Thu, 16 Jan 2020 12:02:03 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 521EC2081E;
-        Thu, 16 Jan 2020 16:52:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EAB18207FF;
+        Thu, 16 Jan 2020 17:02:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193546;
-        bh=z7KVdw7Z8+sBDxB18wiOv1PsdtW1lfFnRoY3zKQDzDI=;
+        s=default; t=1579194123;
+        bh=O8o+WPlQAMCaUyaOt/651Bm5d0NIgeMC6LmTx2pz0D4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xojj+wZx9ZHvc//UtF6JHXkeNEtyXIwIZcjI2NtVGR00TA9wYvoLv+5EshCiyJYfP
-         6WtcEYP9X00zOWckKu4do0kO1uM+UPsIOCr/dU8A19qFbK3Bq3uy/N16sVBzKqxYKQ
-         uX7r48x+B7qL1Hjibsw9Un+UKWZckrbCV76+C8e4=
+        b=yOS+jh5ENfXYVU9YdVGqeuQItcI1qZtzvZXP6B9YUiCOu6YuQuESzOASw02YJAKpR
+         2/+/KyJr0724vrvB0xxjmvlBEqIb42xe02mO3Pur41+Xpd+xFzzLyYILNGgrLgPJPo
+         Aqnl21c+8QWxdbMhNS9cGg9xosKtG/h6W4VPbhaY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Sasha Levin <sashal@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 100/205] media: exynos4-is: Fix recursive locking in isp_video_release()
-Date:   Thu, 16 Jan 2020 11:41:15 -0500
-Message-Id: <20200116164300.6705-100-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 215/671] clocksource/drivers/exynos_mct: Fix error path in timer resources initialization
+Date:   Thu, 16 Jan 2020 11:52:04 -0500
+Message-Id: <20200116165940.10720-98-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116164300.6705-1-sashal@kernel.org>
-References: <20200116164300.6705-1-sashal@kernel.org>
+In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
+References: <20200116165940.10720-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -64,38 +64,50 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Seung-Woo Kim <sw0312.kim@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit 704c6c80fb471d1bb0ef0d61a94617d1d55743cd ]
+[ Upstream commit b9307420196009cdf18bad55e762ac49fb9a80f4 ]
 
->From isp_video_release(), &isp->video_lock is held and subsequent
-vb2_fop_release() tries to lock vdev->lock which is same with the
-previous one. Replace vb2_fop_release() with _vb2_fop_release() to
-fix the recursive locking.
+While freeing interrupt handlers in error path, don't assume that all
+requested interrupts are per-processor interrupts and properly release
+standard interrupts too.
 
-Fixes: 1380f5754cb0 ("[media] videobuf2: Add missing lock held on vb2_fop_release")
-Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
+Fixes: 56a94f13919c ("clocksource: exynos_mct: Avoid blocking calls in the cpu hotplug notifier")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/exynos4-is/fimc-isp-video.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clocksource/exynos_mct.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-isp-video.c b/drivers/media/platform/exynos4-is/fimc-isp-video.c
-index 378cc302e1f8..d2cbcdca0463 100644
---- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
-+++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
-@@ -313,7 +313,7 @@ static int isp_video_release(struct file *file)
- 		ivc->streaming = 0;
- 	}
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index aaf5bfa9bd9c..e3ae041ac30e 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -563,7 +563,19 @@ static int __init exynos4_timer_resources(struct device_node *np, void __iomem *
+ 	return 0;
  
--	vb2_fop_release(file);
-+	_vb2_fop_release(file, NULL);
+ out_irq:
+-	free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
++	if (mct_int_type == MCT_INT_PPI) {
++		free_percpu_irq(mct_irqs[MCT_L0_IRQ], &percpu_mct_tick);
++	} else {
++		for_each_possible_cpu(cpu) {
++			struct mct_clock_event_device *pcpu_mevt =
++				per_cpu_ptr(&percpu_mct_tick, cpu);
++
++			if (pcpu_mevt->evt.irq != -1) {
++				free_irq(pcpu_mevt->evt.irq, pcpu_mevt);
++				pcpu_mevt->evt.irq = -1;
++			}
++		}
++	}
+ 	return err;
+ }
  
- 	if (v4l2_fh_is_singular_file(file)) {
- 		fimc_pipeline_call(&ivc->ve, close);
 -- 
 2.20.1
 
