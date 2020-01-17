@@ -2,105 +2,101 @@ Return-Path: <SRS0=K4lU=3G=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4896EC33C9E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Jan 2020 17:41:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F9FEC33C9E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Jan 2020 18:52:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 250A322525
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Jan 2020 17:41:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14F192082F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Jan 2020 18:52:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1579287125;
+	bh=tHnXJGIoKzzFzAoLZkImRjuVR+0Pubb7j5pKkVVTTT4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=0CHhk/djfzY50DgQKVbMuc1pMEq8C5WoodVbznI3T6Rd9rlYLdKQ9b4YoJgzhgN/W
+	 RQ9e8caTxAbajavl7DeiTRZ/dPD5UZnkBPJ4YMPnPflRqxDV4+reERcInibnzXH3jU
+	 cXnX3EKY5Obhrt6Mh2xGoLEoK/1LK9oo3fh3F4GQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728773AbgAQRl3 (ORCPT
+        id S1727115AbgAQSwE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 17 Jan 2020 12:41:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39812 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727573AbgAQRl3 (ORCPT
+        Fri, 17 Jan 2020 13:52:04 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:43541 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726897AbgAQSwE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 17 Jan 2020 12:41:29 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA7922082F;
-        Fri, 17 Jan 2020 17:41:28 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.93)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1isVcd-000QMZ-Jp; Fri, 17 Jan 2020 12:41:27 -0500
-Message-Id: <20200117174127.480853193@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Fri, 17 Jan 2020 12:41:12 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org,
-        linux-rt-users <linux-rt-users@vger.kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Carsten Emde <C.Emde@osadl.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        John Kacur <jkacur@redhat.com>,
-        Julia Cartwright <julia@ni.com>,
-        Daniel Wagner <wagi@monom.org>,
-        Tom Zanussi <zanussi@kernel.org>,
-        Benjamin Rouxel <benjamin.rouxel@uva.nl>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH RT 01/32] i2c: exynos5: Remove IRQF_ONESHOT
-References: <20200117174111.282847363@goodmis.org>
+        Fri, 17 Jan 2020 13:52:04 -0500
+Received: by mail-ed1-f68.google.com with SMTP id dc19so23209899edb.10;
+        Fri, 17 Jan 2020 10:52:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=iADPKHK7d3ydzoFY9n3Dkar3ylgJnVIkMCKC9IngmZs=;
+        b=XEHn9q74Q1Xfhv1QEjvJRzilcAvggvC4nE7R20Yu8yxcyglotDMjlVmjDiukqVWwPl
+         JQRO8Kl+hJXfvhfbS+UXWxnfOrlghNkiJnoKaBx4gUUAvjHiCpAWKXGj1NGWu2YWs/bE
+         1Y9kkmlb+FQ/lMcFvNDgwpi5WkVXKf1fC2tJINAemorWDU4Tv8Tmuz/5VpSA34X3GB4t
+         s6dH1zzp/MxWGnvmWbqrNTMmEmfsJq5NAISO2Y6VY0TtgBHPdFXq0673egGsOFlt4xZ7
+         UrmYs6ROwzrCdAndxDgQ8FYvfB5PCJj0wKNhiNKN+ggQsmBrgZ9ZWVhfrtBZKKrODI30
+         rdHA==
+X-Gm-Message-State: APjAAAWhFs0Is7u7st8UnC3kIp+wHSG5A78dkYL87HQ6KYgrdah1V5yy
+        PGLvGtYtXD/KS6c25nHtZotFSdSC
+X-Google-Smtp-Source: APXvYqzcraweFJDWFwGlf398rI/rRGx+XFkYWj0pg0IGtLTVPQOLZdqfXwp5uo+D0DDaQqKj9Y4jYw==
+X-Received: by 2002:a50:cc08:: with SMTP id m8mr5477698edi.263.1579287122537;
+        Fri, 17 Jan 2020 10:52:02 -0800 (PST)
+Received: from kozik-lap ([194.230.155.229])
+        by smtp.googlemail.com with ESMTPSA id x8sm999836eds.88.2020.01.17.10.52.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 17 Jan 2020 10:52:01 -0800 (PST)
+Date:   Fri, 17 Jan 2020 19:51:59 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 1/3] ARM: dts: exynos: Add GPU thermal zone cooling maps
+ for Odroid XU3/XU4/HC1
+Message-ID: <20200117185159.GA3772@kozik-lap>
+References: <CGME20200117123454eucas1p2a7a3a6b64fae5382ef404ac2542aa4b3@eucas1p2.samsung.com>
+ <20200117123448.13807-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200117123448.13807-1-m.szyprowski@samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-4.19.94-rt39-rc1 stable review patch.
-If anyone has any objections, please let me know.
+On Fri, Jan 17, 2020 at 01:34:46PM +0100, Marek Szyprowski wrote:
+> Add trip points and cooling maps for GPU thermal zone for Odroid
+> XU3/XU4/HC1 boards. Trip points are based on the CPU thermal zone for the
+> those boards.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5422-odroidhc1.dts    | 32 ++++++++++
+>  .../boot/dts/exynos5422-odroidxu3-common.dtsi | 59 +++++++++++++++++++
+>  2 files changed, 91 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5422-odroidhc1.dts b/arch/arm/boot/dts/exynos5422-odroidhc1.dts
+> index f163206265bb..8f38ef5bff55 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroidhc1.dts
+> +++ b/arch/arm/boot/dts/exynos5422-odroidhc1.dts
+> @@ -215,6 +215,38 @@
+>  				};
+>  			};
+>  		};
+> +		gpu_thermal: gpu-thermal {
+> +			thermal-sensors = <&tmu_gpu 0>;
+> +			polling-delay-passive = <250>;
+> +			polling-delay = <0>;
 
-------------------
+These should not be needed - you do not add more than 4 thermal zones.
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-
-[ Upstream commit 4b217df0ab3f7910c96e42091cc7d9f221d05f01 ]
-
-The drivers sets IRQF_ONESHOT and passes only a primary handler. The IRQ
-is masked while the primary is handler is invoked independently of
-IRQF_ONESHOT.
-With IRQF_ONESHOT the core code will not force-thread the interrupt and
-this is probably not intended. I *assume* that the original author copied
-the IRQ registration from another driver which passed a primary and
-secondary handler and removed the secondary handler but keeping the
-ONESHOT flag.
-
-Remove IRQF_ONESHOT.
-
-Reported-by: Benjamin Rouxel <benjamin.rouxel@uva.nl>
-Tested-by: Benjamin Rouxel <benjamin.rouxel@uva.nl>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- drivers/i2c/busses/i2c-exynos5.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-index c1ce2299a76e..5c57ecf4b79e 100644
---- a/drivers/i2c/busses/i2c-exynos5.c
-+++ b/drivers/i2c/busses/i2c-exynos5.c
-@@ -800,9 +800,7 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
- 	}
- 
- 	ret = devm_request_irq(&pdev->dev, i2c->irq, exynos5_i2c_irq,
--				IRQF_NO_SUSPEND | IRQF_ONESHOT,
--				dev_name(&pdev->dev), i2c);
--
-+			       IRQF_NO_SUSPEND, dev_name(&pdev->dev), i2c);
- 	if (ret != 0) {
- 		dev_err(&pdev->dev, "cannot request HS-I2C IRQ %d\n", i2c->irq);
- 		goto err_clk;
--- 
-2.24.1
-
+Best regards,
+Krzysztof
 
