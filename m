@@ -1,95 +1,162 @@
-Return-Path: <SRS0=lUWc=3F=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=K4lU=3G=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F14FC33CB6
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 19:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12D5AC33CB1
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Jan 2020 05:16:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41237206E6
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Jan 2020 19:12:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579201973;
-	bh=X5TfvNsELNbaSw1/f7bXQHcNfJu3UqudNC6wp+ZOdN0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=q9f6W8l2m/eCQU8Gwm5qBbFXPKBmYdshVUGDSiauo/3QJvz5i4thzTj+jT1LDWfwj
-	 O6ZVC/0/LFYeZPiqjA9JA0M+CAAyKDP2gZnX3tWFkGG4MOAQq02SDmrTS+rzucTkcQ
-	 d3RH/VQi/H+BpMsMHln7uxRT4fH5XWDW1L+mWR0Q=
+	by mail.kernel.org (Postfix) with ESMTP id C4DAA2083E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Jan 2020 05:16:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lhQdzzwy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729256AbgAPQ7o (ORCPT
+        id S1727766AbgAQFQr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Jan 2020 11:59:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44066 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387451AbgAPQ5M (ORCPT
+        Fri, 17 Jan 2020 00:16:47 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:11429 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727691AbgAQFQr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:57:12 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C371024673;
-        Thu, 16 Jan 2020 16:57:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193831;
-        bh=X5TfvNsELNbaSw1/f7bXQHcNfJu3UqudNC6wp+ZOdN0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nxzCb8NwhWFE0wTmG+kWXdM/q0n4p3rHQTx5u63v6PKow936NbFi4Nnjsiu4ynxBf
-         nS7Bl2qhGcZ5CXIBel3yt5GjasIy/P5urkPA9sYQsGASsLgoNzoFVbdl65UTpzXKMb
-         SUrRtdF4iHLfGIzhe8jg5/ATbxz0CklGSpqNqW8E=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yangtao Li <tiny.windzz@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 088/671] clk: samsung: exynos4: fix refcount leak in exynos4_get_xom()
-Date:   Thu, 16 Jan 2020 11:45:19 -0500
-Message-Id: <20200116165502.8838-88-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
-References: <20200116165502.8838-1-sashal@kernel.org>
+        Fri, 17 Jan 2020 00:16:47 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200117051644epoutp024b489cfb663669ba0d2dcb8df5859933~qlMelwt5s3096530965epoutp02x
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Jan 2020 05:16:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200117051644epoutp024b489cfb663669ba0d2dcb8df5859933~qlMelwt5s3096530965epoutp02x
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1579238204;
+        bh=Ve31F81RB+5f/YLj18CBdno2GZbuJKN9KNxty6tK3wc=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=lhQdzzwywXnkRC705BVL0YsW8W1apcEO9/0X39uolXtPT7PnZ+wT6Pnsj78GncKoG
+         YOjBOm3A+tmLY+Nyb2T82usjzwP8RcQ2rVgDd0U5i5NDyQ38D2z3IuhFeKJAHFAkfT
+         0KmLspe7MV0o4DwHlMTVU/bjln9lbuKSxx2Z5QwU=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200117051644epcas1p2cd702f26b18450c9e51ff28076316a8a~qlMeUe97W2278422784epcas1p2B;
+        Fri, 17 Jan 2020 05:16:44 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.158]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 47zTnQ00WwzMqYlm; Fri, 17 Jan
+        2020 05:16:42 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        8D.15.48498.833412E5; Fri, 17 Jan 2020 14:16:40 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20200117051640epcas1p3c34eb80a85f094bc40328680ac2e414d~qlMahij2T0513605136epcas1p30;
+        Fri, 17 Jan 2020 05:16:40 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200117051640epsmtrp29988ed15b6b2c469e9bf678aee37731b~qlMag2TTI1927919279epsmtrp2H;
+        Fri, 17 Jan 2020 05:16:40 +0000 (GMT)
+X-AuditID: b6c32a36-a3dff7000001bd72-9d-5e214338f446
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        48.38.10238.833412E5; Fri, 17 Jan 2020 14:16:40 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200117051639epsmtip2d881e0424acf8def4ad95e60ae18cf57~qlMaUeOz92252822528epsmtip2Z;
+        Fri, 17 Jan 2020 05:16:39 +0000 (GMT)
+Subject: Re: [PATCH v4 2/3] interconnect: Relax requirement in
+ of_icc_get_from_provider()
+To:     =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     georgi.djakov@linaro.org, b.zolnierkie@samsung.com,
+        m.szyprowski@samsung.com, krzk@kernel.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <a4068452-0de0-dc5d-a7a9-3312723a9163@samsung.com>
+Date:   Fri, 17 Jan 2020 14:24:00 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+In-Reply-To: <20200116144202.12116-3-a.swigon@samsung.com>
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTYRTn293uruLqa2adhGpeC1JQd7emN9EKkhSSsKKICtdluzhxL3Y3
+        yaQHPW3YC5faTIsiSDPMJ2Yty6ywqGX2sEiMMhpBz/UQpGjbNfK/3/nO73fO+Z3vUITyPBlP
+        FVudvMPKmWkyWtp1KykthV2RUKiuPrKIHW3Yj9jW2hYZW+NrI1m//7KcHeo5RbLBw/2IrfVf
+        l7CX+kfky6m8tqZDZN6rZ9fIvCMdTSgv2DavQLqpJMvEc0beoeKtBpux2FqUTa9ap1+h16Wr
+        mRRmCZtBq6ychc+mc/ILUlYWm0Nj0KpSzuwKPRVwgkCnLc1y2FxOXmWyCc5smrcbzfYl9lSB
+        swgua1GqwWbJZNRqjS5E3FpiejtxjLDfiN72vesCsRsNUW5EUYAXQ2C03I2iKSXuRhDwNiMx
+        +Ibgzni1TAx+IvCdeE+4UVREcfXsczKMldiHoCeQL5I+I2j21KFwIhZvhv2XPJJwYib2Ihge
+        PBhRE9gAnfWD0jAmcTL0BoYjlabjBHg6/jYiVuClMPykPYKleCH88j+IcOLwBhjo2jfJmQED
+        J8cidaJwJtyq+i0X68+Gl2OnJSKeD3s764jwEICDJIzXuyct5MCEp0Yu4lj4cLdjEsdD8JOP
+        FHE5NA70k6K4AkFH7yOZmNBC7/kqSXh7BE6Clp408TkBrkzUI7HxNPj0o1ImLlgBFQeUIiUR
+        hl6PSEQ8B84dPEQeQ7R3ih3vFAveKRa8/5udQdImNIu3C5YiXmDsmqm/3YYiJ5qc3o3OPszv
+        Q5hCdIyidq2qUCnjSoUySx8CiqBnKgZq5xYqFUaubDvvsOkdLjMv9CFdaNvHifg4gy108Fan
+        ntFptFotu5hJ1zEMPVtRkxOqg4s4J1/C83be8U8noaLidyO10vB9R8Y8tiT3c7k/5sVt3aby
+        yqSyxtaMHqN+cE+xP3X0eGN0u29083J9/4mdb1wNRvmdK+tvLqve0t7tLOUFaWxiq6ni/tCY
+        69m7m54Rz+DGjK9Hg+7cuF11H7/c0ERVcR8rW9aszg0Y8MXmA9KGLHdMkyHzokMz/96Cx386
+        tbRUMHFMMuEQuL+sSlePuAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAIsWRmVeSWpSXmKPExsWy7bCSvK6Fs2KcwZMeNov781oZLTbOWM9q
+        MX3vJjaL8+c3sFtc3jWHzeJz7xFGixnn9zFZrD1yl92Bw2PTqk42jzvX9rB59G1ZxejxeZNc
+        AEsUl01Kak5mWWqRvl0CV8bj3xOYCw5wVXzZtoK5gfEyRxcjJ4eEgInE7kXX2boYuTiEBHYz
+        Stz+P50NIiEpMe3iUeYuRg4gW1ji8OFiiJq3jBI7J75jBqkRFoiWaF07hQkkISIwi1Hi4I8+
+        sAZmgWSJO7NyIBr2MkqcetIBNpRNQEti/4sbYDa/gKLE1R+PGUFsXgE7iRtXNoPZLAKqEt/P
+        nwWrERUIk9i55DETRI2gxMmZT1hAbE4BK4nDk/+yg9jMAuoSf+ZdYoawxSVuPZnPBGHLSzRv
+        nc08gVF4FpL2WUhaZiFpmYWkZQEjyypGydSC4tz03GLDAsO81HK94sTc4tK8dL3k/NxNjOB4
+        0tLcwXh5SfwhRgEORiUe3hlBCnFCrIllxZW5hxglOJiVRHhPzpCNE+JNSaysSi3Kjy8qzUkt
+        PsQozcGiJM77NO9YpJBAemJJanZqakFqEUyWiYNTqoGx/fhDx6d5ffG9rn7SaZ2H0laeXhrl
+        9PDdFb8Q1gz55TZHpj90edsgnBeyjPNQ6QPhW9f33/hkXcO4Q4Bx65qniTdez547VeSk5Mqk
+        QzNWcLPU+5gWaJzjE3qr26qyOuqwmam3hu/xy0XmF/RuT7+alTor7KjXLWdnyfLLfQyyTwU1
+        QkM5/+cpsRRnJBpqMRcVJwIAF5plkqMCAAA=
+X-CMS-MailID: 20200117051640epcas1p3c34eb80a85f094bc40328680ac2e414d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200116144242eucas1p2bf8b4df91355974c8c96778f4ec117f7
+References: <20200116144202.12116-1-a.swigon@samsung.com>
+        <CGME20200116144242eucas1p2bf8b4df91355974c8c96778f4ec117f7@eucas1p2.samsung.com>
+        <20200116144202.12116-3-a.swigon@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Yangtao Li <tiny.windzz@gmail.com>
+Hi,
 
-[ Upstream commit cee82eb9532090cd1dc953e845d71f9b1445c84e ]
+On 1/16/20 11:42 PM, Artur Świgoń wrote:
+> This patch relaxes the condition in of_icc_get_from_provider() so that
+> it is no longer required to set '#interconnect-cells' to <1> in the DT,
+> and therefore it is not required to supply dummy node IDs in the
+> 'interconnects' property when node IDs are dynamically generated rather
+> than hardcoded (statically allocated).
+> 
+> In case of the devfreq driver for exynos-bus, node IDs are dynamically
+> allocated and '#interconnect-cells' is always zero.
+> 
+> Signed-off-by: Artur Świgoń <a.swigon@samsung.com>
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/interconnect/core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+> index 0be1764d3528..5ea270af5ff4 100644
+> --- a/drivers/interconnect/core.c
+> +++ b/drivers/interconnect/core.c
+> @@ -335,7 +335,7 @@ struct icc_node *of_icc_get_from_provider(struct of_phandle_args *spec)
+>  	struct icc_node *node = ERR_PTR(-EPROBE_DEFER);
+>  	struct icc_provider *provider;
+>  
+> -	if (!spec || spec->args_count != 1)
+> +	if (!spec)
+>  		return ERR_PTR(-EINVAL);
+>  
+>  	mutex_lock(&icc_lock);
+> 
 
-The of_find_compatible_node() returns a node pointer with refcount
-incremented, but there is the lack of use of the of_node_put() when
-done. Add the missing of_node_put() to release the refcount.
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Fixes: e062b571777f ("clk: exynos4: register clocks using common clock framework")
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/samsung/clk-exynos4.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 0421960eb963..442309b56920 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -1226,6 +1226,7 @@ static unsigned long __init exynos4_get_xom(void)
- 			xom = readl(chipid_base + 8);
- 
- 		iounmap(chipid_base);
-+		of_node_put(np);
- 	}
- 
- 	return xom;
 -- 
-2.20.1
-
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
