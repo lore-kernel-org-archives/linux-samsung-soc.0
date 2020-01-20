@@ -2,94 +2,101 @@ Return-Path: <SRS0=QOl6=3J=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF4DC32771
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jan 2020 05:43:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FEDCC2D0DB
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jan 2020 18:02:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5C972073A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jan 2020 05:43:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jmBNL68w"
+	by mail.kernel.org (Postfix) with ESMTP id 58E852253D
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Jan 2020 18:02:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1579543355;
+	bh=5g+nhNLBu3QaKcp7T3GYytUhOVrS04sl1IWrP+4wSqk=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=GM+fFEvaoAdwiTn593skS8golMjrhikh6PaWFZOz2fU63No4FaB5/hOmVy/vMLiIQ
+	 p7kllEczneLZJa3vJfEP8mjo0EaNG9ebLs3L60DNwU1m5GayoRtNHHAUwI4dQLW12v
+	 ov5/bYcPbkjF2XD3diPFTv7gkXcOfySFWfgq7iis=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725876AbgATFn3 (ORCPT
+        id S1726897AbgATSCf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Jan 2020 00:43:29 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:34729 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725783AbgATFn3 (ORCPT
+        Mon, 20 Jan 2020 13:02:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46494 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726642AbgATSCe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Jan 2020 00:43:29 -0500
-Received: by mail-pl1-f193.google.com with SMTP id c9so7399844plo.1;
-        Sun, 19 Jan 2020 21:43:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=64XMCd5LTgEtp+yMw+EJAZboO4/7kIhrsJP3cuFWUNQ=;
-        b=jmBNL68wUeMsIeo9T7IR9gSDDPRP76eyffnTrd4o2SsieCYjnJvqwZ2/gCB4G5GxfB
-         P6XSo/wrEm/Cvba1ZR2oAVjCJnQJUELWaVh9Cpa9WSkYGN5b+V5tYPSByNb26KwyBk0w
-         KxzLSdZtoCRX9a6DS8r8P24EyWV8Kh+nShqoTrBfOnahbxZsmiRSykoYP6hvOoYdkQFE
-         fJFtLQtZF2ZQ8M7nKkZcu34rzEWb0VScYmDJZNUaUGlDaZLT/PSanz7bQe6Mrjv3MvxO
-         TeD7duqsc3SXhis1f+5cD/7Gy9DEXbn1TvQyaX0co6Cy7NH4smleOAeZLqQxoAibRSrk
-         X5iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=64XMCd5LTgEtp+yMw+EJAZboO4/7kIhrsJP3cuFWUNQ=;
-        b=bj2bqL4Sqb184Hcj2qnyYXgtapI5mB2hS3sRjhD85rczs4hxDcWsM2W5/etqYpBru8
-         +0gSFNN1yXmqk2XxwGcKrbfk7h/TIEIo5uxG0l6TdStkSa+TdVIbY4oWbSWWSU0xrYKW
-         1CxD+aSMVOCZ4BTgSYqGIHs3Q1qWsQuf7uxWtSso92Chy8fx80dXxbuM/jt9DuRL5UFV
-         ieH7dCPfNVHjX+z33FU1bElUj0V6/DpY+EgLKGMswSY3BMaERriofNXUB6Ksghbz4dTs
-         cBLDwxdEDJK6Aozci3ugwDCl+BnL3mHeXBhoKKVMU0hQWbNykCGheIZ8lbijeJK0ZUf5
-         Kc9A==
-X-Gm-Message-State: APjAAAV/JML4QpF2gnJ67cSPw9yzn2T9GxD8G3uMgirkQBIXDeNxoyhe
-        NS+0BjCQCxoaQXGqFrUh7Sc=
-X-Google-Smtp-Source: APXvYqwsZKQ3dzCdikp0kMy3xYQVB4S6djt4GRgx6wrAUA6qZr+BJgFoB2KY0jXPL38GVfIpGgKDKg==
-X-Received: by 2002:a17:90a:d78f:: with SMTP id z15mr21856717pju.36.1579499008199;
-        Sun, 19 Jan 2020 21:43:28 -0800 (PST)
-Received: from localhost ([43.224.245.179])
-        by smtp.gmail.com with ESMTPSA id 12sm38005809pfn.177.2020.01.19.21.43.27
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Sun, 19 Jan 2020 21:43:27 -0800 (PST)
-Date:   Mon, 20 Jan 2020 13:43:25 +0800
-From:   chenqiwu <qiwuchen55@gmail.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     kgene@kernel.org, krzk@kernel.org, rjw@rjwysocki.net,
+        Mon, 20 Jan 2020 13:02:34 -0500
+Received: from localhost.localdomain (unknown [194.230.155.229])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DFE522314;
+        Mon, 20 Jan 2020 18:02:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579543354;
+        bh=5g+nhNLBu3QaKcp7T3GYytUhOVrS04sl1IWrP+4wSqk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=r2hEtFLB/hocwTKWiMWXITcsdVBrZg7eEOoxP3U3OvU4tVMZVxa/qtumf7KuOsFAh
+         JB70raMw7aosIAQP3fV7enDBefarYoslwimkcYRBEPAUBbZU2qLHbOnCFWJT+sJzpQ
+         LuAD+Xk5GJeM2eWK5I5ZnnWx2Ld91bsUBbeHaNa4=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm@kernel.org, soc@kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        chenqiwu <chenqiwu@xiaomi.com>
-Subject: Re: [PATCH v3] cpufreq: s3c: fix unbalances of cpufreq policy
- refcount
-Message-ID: <20200120054325.GA5185@cqw-OptiPlex-7050>
-References: <1578383599-11207-1-git-send-email-qiwuchen55@gmail.com>
- <20200107080145.7c4gxilnjjxjfqpc@vireshk-i7>
- <CAD1-QrohtJFLWDMCYmVs2G5WDcDN_E8xcsNZqJ428cEkohcB0Q@mail.gmail.com>
- <20200120052821.tvijbt3bzkn76yz6@vireshk-i7>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200120052821.tvijbt3bzkn76yz6@vireshk-i7>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] ARM: defconfig: Samsung defconfig for v5.6
+Date:   Mon, 20 Jan 2020 19:02:27 +0100
+Message-Id: <20200120180227.9061-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 20, 2020 at 10:58:21AM +0530, Viresh Kumar wrote:
-> On 19-01-20, 10:25, qiwu chen wrote:
-> > Hi
-> > Any progress about this patch?
-> 
-> I already applied it in my tree, it will be part for v5.5-rc1.
-> 
-> -- 
-> viresh
+Hi,
 
-OK, Thanks a lot!
+I hope it is not too late for these defconfig changes.
 
-Qiwu
+
+Best regards,
+Krzysztof
+
+
+The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
+
+  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-5.6
+
+for you to fetch changes up to cdfc88f1cdbf12b666dcf2da3f1de38fb1512262:
+
+  ARM: multi_v7_defconfig: Enable devfreq thermal integration (2020-01-17 20:28:54 +0100)
+
+----------------------------------------------------------------
+Samsung defconfig changes for v5.6
+
+1. Bring back explicitly wanted options which were removed through
+   `make savedefconfig`.  savedefconfig removes options selected by
+   other symbol, however developers of this other symbol can remove
+   anytime 'select' statement.
+2. Enable NFS v4.1 and v4.2, useful in testing/CI systems.
+3. Enable thermal throttling through devfreq framework.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (3):
+      ARM: exynos_defconfig: Bring back explicitly wanted options
+      ARM: exynos_defconfig: Enable NFS v4.1 and v4.2
+      ARM: multi_v7_defconfig: Enable NFS v4.1 and v4.2
+
+Marek Szyprowski (2):
+      ARM: exynos_defconfig: Enable devfreq thermal integration
+      ARM: multi_v7_defconfig: Enable devfreq thermal integration
+
+ arch/arm/configs/exynos_defconfig   | 9 +++++++++
+ arch/arm/configs/multi_v7_defconfig | 3 +++
+ 2 files changed, 12 insertions(+)
