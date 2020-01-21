@@ -4,32 +4,32 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B4C7C2D0CE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jan 2020 10:38:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D523C33CB6
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jan 2020 10:38:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E683424125
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jan 2020 10:37:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AD0124672
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jan 2020 10:38:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729654AbgAUKh2 (ORCPT
+        id S1729449AbgAUKiI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 21 Jan 2020 05:37:28 -0500
-Received: from albert.telenet-ops.be ([195.130.137.90]:38476 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729505AbgAUKh2 (ORCPT
+        Tue, 21 Jan 2020 05:38:08 -0500
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:33344 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729384AbgAUKh2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Tue, 21 Jan 2020 05:37:28 -0500
 Received: from ramsan ([84.195.182.253])
-        by albert.telenet-ops.be with bizsmtp
-        id sydS210185USYZQ06ydSoE; Tue, 21 Jan 2020 11:37:26 +0100
+        by baptiste.telenet-ops.be with bizsmtp
+        id sydS2100A5USYZQ01ydS2e; Tue, 21 Jan 2020 11:37:26 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1itquU-00011w-GD; Tue, 21 Jan 2020 11:37:26 +0100
+        id 1itquU-00011W-8y; Tue, 21 Jan 2020 11:37:26 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1itquU-0000Ud-F0; Tue, 21 Jan 2020 11:37:26 +0100
+        id 1itquU-0000UC-7a; Tue, 21 Jan 2020 11:37:26 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>,
         Olof Johansson <olof@lixom.net>
@@ -38,9 +38,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 19/20] ARM: s3c64xx: Drop unneeded select of TIMER_OF
-Date:   Tue, 21 Jan 2020 11:37:21 +0100
-Message-Id: <20200121103722.1781-19-geert+renesas@glider.be>
+Subject: [PATCH 10/20] ARM: exynos: Drop unneeded select of MIGHT_HAVE_CACHE_L2X0
+Date:   Tue, 21 Jan 2020 11:37:12 +0100
+Message-Id: <20200121103722.1781-10-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200121103722.1781-1-geert+renesas@glider.be>
 References: <20200121103413.1337-1-geert+renesas@glider.be>
@@ -50,10 +50,10 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Support for Samsung S3C64XX systems depends on ARCH_MULTI_V6, and thus
-on ARCH_MULTIPLATFORM.
-As the latter selects TIMER_OF, there is no need for MACH_S3C64XX_DT to
-select TIMER_OF.
+Support for Samsung Exynos SoCs depends on ARCH_MULTI_V7, which selects
+ARCH_MULTI_V6_V7.
+As the latter selects MIGHT_HAVE_CACHE_L2X0, there is no need for
+ARCH_EXYNOS4 to select MIGHT_HAVE_CACHE_L2X0.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Kukjin Kim <kgene@kernel.org>
@@ -63,21 +63,21 @@ Cc: linux-samsung-soc@vger.kernel.org
 All patches in this series are independent of each other.
 Cover letter at https://lore.kernel.org/r/20200121103413.1337-1-geert+renesas@glider.be
 
- arch/arm/mach-s3c64xx/Kconfig | 1 -
+ arch/arm/mach-exynos/Kconfig | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
-index 5700822e3c74b8e4..ac3e3563487fc6f9 100644
---- a/arch/arm/mach-s3c64xx/Kconfig
-+++ b/arch/arm/mach-s3c64xx/Kconfig
-@@ -336,7 +336,6 @@ config MACH_WLF_CRAGG_6410
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 73ce92a0cdb256dd..52a515017fe709ac 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -64,7 +64,6 @@ config ARCH_EXYNOS4
+ 	select CLKSRC_SAMSUNG_PWM if CPU_EXYNOS4210
+ 	select CPU_EXYNOS4210
+ 	select GIC_NON_BANKED
+-	select MIGHT_HAVE_CACHE_L2X0
+ 	help
+ 	  Samsung Exynos4 (Cortex-A9) SoC based systems
  
- config MACH_S3C64XX_DT
- 	bool "Samsung S3C6400/S3C6410 machine using Device Tree"
--	select TIMER_OF
- 	select CPU_S3C6400
- 	select CPU_S3C6410
- 	select PINCTRL
 -- 
 2.17.1
 
