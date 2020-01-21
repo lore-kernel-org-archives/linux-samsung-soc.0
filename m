@@ -2,158 +2,233 @@ Return-Path: <SRS0=ub5M=3K=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B710C32771
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jan 2020 02:00:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7DC2C33CAF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jan 2020 07:05:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFBE72073A
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jan 2020 02:00:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B47272253D
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jan 2020 07:05:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IFupxmd6"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="s/8kj1l7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727144AbgAUCAR (ORCPT
+        id S1727817AbgAUHFX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Jan 2020 21:00:17 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:35971 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726935AbgAUCAR (ORCPT
+        Tue, 21 Jan 2020 02:05:23 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:49853 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725890AbgAUHFX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Jan 2020 21:00:17 -0500
-Received: by mail-qk1-f194.google.com with SMTP id a203so1245434qkc.3;
-        Mon, 20 Jan 2020 18:00:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=upNueX43qx8SNiTkkymLpWe1nZzcm1rfEbeUh4i39po=;
-        b=IFupxmd60gC+cjVHiSKGpYfpmgQ/wjjHeohRWFcSHq/k2/sV+q9HSle4UMjyAIsz5X
-         DAZAEHs+ZHF57rw9lqwOk7NW6PPmI3eneDGvx+Ac/GusWGZkrc05xuGy8xHtuAQxV3e3
-         Geu6jk+DTGgjZLM059mWRXqskObBKD6R1MAp3SBV1r0sSIgNUqfZ1/7jlLlAb9HMqMGS
-         qjOT3GdpnWI9nD9S1ysiGOOngvVD5s0bsIAwM/NgNbrLRstU+nxKryGa2smYcPpCf6xS
-         wbCWKPjzf1eFq3GXBOl1P7eBrGk64eYgqUvtjJud8K9SaxPvM77BceJzrxrHYlQED2gL
-         mR9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=upNueX43qx8SNiTkkymLpWe1nZzcm1rfEbeUh4i39po=;
-        b=OvOth2iJTikPgijYlReNiHLQQGfp5uGDzJNEK1QkZqzml1MiLtRyCbcia5nFzhwhdt
-         TFz2b4uhEDr44CKyI0cQhafM7w37WTDhMuMs2fBIqV+WolgnZfQYQJJ5d1GE0QAQI9sQ
-         lS63SyixmgkrufaBba3eN6VDphWys+anbfU2WUhWtVY4Y3sqDl4a4efitxUXDjE0HsVA
-         /dp90r3dFtSTGQEcB58EVskq/WyFWTiKwVBUVYjVrFtw8tBjR0lZvPpqZcpBtT0q63KN
-         BsC6AACrBl/1oRNUcp3+gQK7En5d9SVChADkGhYLQQWMg5GLe/UigY2HI5kNv42H6Jj0
-         1Umg==
-X-Gm-Message-State: APjAAAUqu+qK+2xVdOHOEO9bOYBtfpX+HenqMe8mofIXTeK9GlElM06D
-        7bq2V/6R9dfwBh7/DsaFTfqDNAOHTAVQNxq/Y+8=
-X-Google-Smtp-Source: APXvYqy/kX8nvfjkwgUvD3CgwDoEmqiPhRp2Xir/IzRoqOTnx5cVtKlMi3AzJkpSEHZqIIXm0tVxDgbFh6vxtqzz3Zg=
-X-Received: by 2002:a37:5d0:: with SMTP id 199mr2327381qkf.131.1579572016362;
- Mon, 20 Jan 2020 18:00:16 -0800 (PST)
-MIME-Version: 1.0
-References: <20200120193328.17007-1-uwe@kleine-koenig.org>
-In-Reply-To: <20200120193328.17007-1-uwe@kleine-koenig.org>
-From:   Vasily Khoruzhick <anarsoul@gmail.com>
-Date:   Mon, 20 Jan 2020 18:01:04 -0800
-Message-ID: <CA+E=qVeEscYryOjD4FB+EH=JqFg6bVA3PHbx7sWrR7=9Zn003g@mail.gmail.com>
-Subject: Re: [PATCH] ARM: s3c24xx/rx1950: switch to atomic pwm API
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <uwe@kleine-koenig.org>
-Cc:     Kukjin Kim <kgene@kernel.org>,
+        Tue, 21 Jan 2020 02:05:23 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200121070521euoutp01f3c973963f836f5013562cecfc5652b6~r1Qcn0uHp1560015600euoutp01B
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Jan 2020 07:05:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200121070521euoutp01f3c973963f836f5013562cecfc5652b6~r1Qcn0uHp1560015600euoutp01B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1579590321;
+        bh=jz6YdJe+9oiv3h/P57nB26DlekL22/ed76FQBVgaSrY=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=s/8kj1l7tfs2HhdCctTtxpgpPHXDVKLe1BqaH/X3xHeuwYn266LNYVFpurUt0klUP
+         8G430K+qe/QDCh1GQwG3qpQApxcn5lbGj3TLLeKTtZ5PruCm0vIo/m1RFnY7YPeChQ
+         Q0PootTQZfF/W1y+PWUaW7prKeK/avWkAtDu0OHI=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200121070520eucas1p1661b2a62ef7419e85b38bb21dcf6e19f~r1QcLwOsC0793607936eucas1p1M;
+        Tue, 21 Jan 2020 07:05:20 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id C5.57.60679.0B2A62E5; Tue, 21
+        Jan 2020 07:05:20 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200121070520eucas1p29587eed877efcf6e6b9433440f3c10da~r1Qb1Vxbf3176231762eucas1p23;
+        Tue, 21 Jan 2020 07:05:20 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200121070520eusmtrp28b76c75abbbe60b93670cba358a3f8f2~r1Qb0rSk31202912029eusmtrp2C;
+        Tue, 21 Jan 2020 07:05:20 +0000 (GMT)
+X-AuditID: cbfec7f4-0e5ff7000001ed07-e8-5e26a2b00467
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id DF.45.07950.0B2A62E5; Tue, 21
+        Jan 2020 07:05:20 +0000 (GMT)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200121070519eusmtip2238a581f3dbd3c7f444f819c61f486ec~r1QbcZOYR2994429944eusmtip2Q;
+        Tue, 21 Jan 2020 07:05:19 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-pwm@vger.kernel.org,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        arm-linux <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v2] ARM: dts: exynos: Add GPU thermal zone cooling maps for
+ Odroid XU3/XU4/HC1
+Date:   Tue, 21 Jan 2020 08:05:10 +0100
+Message-Id: <20200121070510.31520-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrAIsWRmVeSWpSXmKPExsWy7djPc7obFqnFGcx5JGWxccZ6VovrX56z
+        Wpw/v4Hd4vKuOWwWM87vY7JYe+QuuwObx6ZVnWwefVtWMXp83iQXwBzFZZOSmpNZllqkb5fA
+        lbH+51vmgocSFXMf7GNtYPwq2MXIySEhYCLxuOEDcxcjF4eQwApGiek/t7NBOF8YJe6sv8UM
+        UiUk8JlR4tgDEZiOtqa/UEXLGSWeT/zAAtdxsO0MO0gVm4ChRNfbLjYQW0TAWaJhaiMTSBGz
+        wDZGidcLZoIVCQskSJyesIaxi5GDg0VAVaJtJlg9r4CtxOMntxkhtslLrN5wAOw+CYEDbBJt
+        d14yQyRcJLZObWaHsIUlXh3fAmXLSPzfOZ8JoqGZUeLhubXsEE4Po8TlphlQY60l7pz7xQay
+        mVlAU2L9Ln2IsKNE1+OP7CBhCQE+iRtvwYHEDGRO2jadGSLMK9HRJgRRrSYx6/g6uLUHL1yC
+        Os1DYv2v9eyQkIuV2HLmBdMERrlZCLsWMDKuYhRPLS3OTU8tNspLLdcrTswtLs1L10vOz93E
+        CIz30/+Of9nBuOtP0iFGAQ5GJR7eF5NV44RYE8uKK3MPMUpwMCuJ8C5oAgrxpiRWVqUW5ccX
+        leakFh9ilOZgURLnNV70MlZIID2xJDU7NbUgtQgmy8TBKdXAqFbiK+J9cvuRpcLrGN5vcdsl
+        elRld1yFzxr9rcm6msUTfns+upTwqiaiWsPkiNf71O7+ebtYVBzWzTQ0FJwpzbvmXf3N9XO3
+        mLvq2CbZXj60yuiczQJ7/+bPfQrpx0T7k6bbfvVOiDb0Drq+tZ6tUeb3k6T1hlkFPzpq6jeF
+        sYVyyJsI3ctTYinOSDTUYi4qTgQAgyVECfMCAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGLMWRmVeSWpSXmKPExsVy+t/xe7obFqnFGcw9yWGxccZ6VovrX56z
+        Wpw/v4Hd4vKuOWwWM87vY7JYe+QuuwObx6ZVnWwefVtWMXp83iQXwBylZ1OUX1qSqpCRX1xi
+        qxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OSmpNZllqkb5egl7H+51vmgocSFXMf7GNtYPwq
+        2MXIySEhYCLR1vSXrYuRi0NIYCmjxNHZE1khEjISJ6c1QNnCEn+udUEVfWKUWH3/LCNIgk3A
+        UKLrLUiCk0NEwFXi0IpeZpAiZoEdjBLdLRfYQRLCAnESZ1o/snQxcnCwCKhKtM0Eq+cVsJV4
+        /OQ2I8QCeYnVGw4wT2DkWcDIsIpRJLW0ODc9t9hIrzgxt7g0L10vOT93EyMwzLYd+7llB2PX
+        u+BDjAIcjEo8vA7TVOOEWBPLiitzDzFKcDArifAuaAIK8aYkVlalFuXHF5XmpBYfYjQF2j2R
+        WUo0OR8YA3kl8YamhuYWlobmxubGZhZK4rwdAgdjhATSE0tSs1NTC1KLYPqYODilGhgP6Dak
+        ztq690m/2co9felvKg9oPFdKDs45zPytqvvK3vlKJZMaTZMdlgksW5RtbHbxWPpaA8HP1/nm
+        layKnBM58Uzo8rkpeVK2R23543ZmTLT306sq52/5bMq36FyQ7TW5GSv3n9q1aWnrRUf28mdO
+        pY4fGbt4Pprsnx7FmbRSf8NLQ3+mlg4lluKMREMt5qLiRABVraLlSQIAAA==
+X-CMS-MailID: 20200121070520eucas1p29587eed877efcf6e6b9433440f3c10da
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200121070520eucas1p29587eed877efcf6e6b9433440f3c10da
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200121070520eucas1p29587eed877efcf6e6b9433440f3c10da
+References: <CGME20200121070520eucas1p29587eed877efcf6e6b9433440f3c10da@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 20, 2020 at 11:33 AM Uwe Kleine-K=C3=B6nig <uwe@kleine-koenig.o=
-rg> wrote:
->
-> Stop using the legacy PWM API which only still exists because there are
-> some users left.
->
-> Note this change make use of the fact that the value of struct
-> pwm_state::duty_cycle doesn't matter for a disabled PWM and so its value
-> can stay constant simplifying the code a bit.
->
-> A side effect of the conversion is that the pwm isn't stopped in
-> rx1950_backlight_init() by the call to pwm_apply_args() just before
-> reenabling it when rx1950_lcd_power(1) is called.
->
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <uwe@kleine-koenig.org>
+Add trip points and cooling maps for GPU thermal zone for Odroid
+XU3/XU4/HC1 boards. Trip points are based on the CPU thermal zone for the
+those boards.
 
-Reviewed-by: Vasily Khoruzhick <anarsoul@gmail.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+v2:
+- removed polling-delay related properties for HC1 as requested by Krzysztof
+--
+ arch/arm/boot/dts/exynos5422-odroidhc1.dts    | 30 ++++++++++
+ .../boot/dts/exynos5422-odroidxu3-common.dtsi | 59 +++++++++++++++++++
+ 2 files changed, 89 insertions(+)
 
-> ---
->  arch/arm/mach-s3c24xx/mach-rx1950.c | 19 ++++++++++++-------
->  1 file changed, 12 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/arm/mach-s3c24xx/mach-rx1950.c b/arch/arm/mach-s3c24xx/=
-mach-rx1950.c
-> index 29f9b345a531..03d8f27cdc32 100644
-> --- a/arch/arm/mach-s3c24xx/mach-rx1950.c
-> +++ b/arch/arm/mach-s3c24xx/mach-rx1950.c
-> @@ -377,6 +377,7 @@ static struct pwm_lookup rx1950_pwm_lookup[] =3D {
->  };
->
->  static struct pwm_device *lcd_pwm;
-> +static struct pwm_state lcd_pwm_state;
->
->  static void rx1950_lcd_power(int enable)
->  {
-> @@ -429,15 +430,16 @@ static void rx1950_lcd_power(int enable)
->
->                 /* GPB1->OUTPUT, GPB1->0 */
->                 gpio_direction_output(S3C2410_GPB(1), 0);
-> -               pwm_config(lcd_pwm, 0, LCD_PWM_PERIOD);
-> -               pwm_disable(lcd_pwm);
-> +
-> +               lcd_pwm_state.enabled =3D false;
-> +               pwm_apply_state(lcd_pwm, &lcd_pwm_state);
->
->                 /* GPC0->0, GPC10->0 */
->                 gpio_direction_output(S3C2410_GPC(0), 0);
->                 gpio_direction_output(S3C2410_GPC(10), 0);
->         } else {
-> -               pwm_config(lcd_pwm, LCD_PWM_DUTY, LCD_PWM_PERIOD);
-> -               pwm_enable(lcd_pwm);
-> +               lcd_pwm_state.enabled =3D true;
-> +               pwm_apply_state(lcd_pwm, &lcd_pwm_state);
->
->                 gpio_direction_output(S3C2410_GPC(0), 1);
->                 gpio_direction_output(S3C2410_GPC(5), 1);
-> @@ -493,10 +495,13 @@ static int rx1950_backlight_init(struct device *dev=
-)
->         }
->
->         /*
-> -        * FIXME: pwm_apply_args() should be removed when switching to
-> -        * the atomic PWM API.
-> +        * This is only required to initialize .polarity; all other value=
-s are
-> +        * fixed in this driver.
->          */
-> -       pwm_apply_args(lcd_pwm);
-> +       pwm_init_state(lcd_pwm, &lcd_pwm_state);
-> +
-> +       lcd_pwm_state.period =3D LCD_PWM_PERIOD;
-> +       lcd_pwm_state.duty_cycle =3D LCD_PWM_DUTY;
->
->         rx1950_lcd_power(1);
->         rx1950_bl_power(1);
-> --
-> 2.24.0
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/arch/arm/boot/dts/exynos5422-odroidhc1.dts b/arch/arm/boot/dts/exynos5422-odroidhc1.dts
+index f163206265bb..812659260278 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidhc1.dts
++++ b/arch/arm/boot/dts/exynos5422-odroidhc1.dts
+@@ -215,6 +215,36 @@
+ 				};
+ 			};
+ 		};
++		gpu_thermal: gpu-thermal {
++			thermal-sensors = <&tmu_gpu 0>;
++			trips {
++				gpu_alert0: gpu-alert-0 {
++					temperature = <70000>;
++					hysteresis = <10000>;
++					type = "active";
++				};
++				gpu_alert1: gpu-alert-1 {
++					temperature = <85000>;
++					hysteresis = <10000>;
++					type = "active";
++				};
++				gpu_crit0: gpu-crit-0 {
++					temperature = <120000>;
++					hysteresis = <0>;
++					type = "critical";
++				};
++			};
++			cooling-maps {
++				map0 {
++					trip = <&gpu_alert0>;
++					cooling-device = <&gpu 0 2>;
++				};
++				map1 {
++					trip = <&gpu_alert1>;
++					cooling-device = <&gpu 3 6>;
++				};
++			};
++		};
+ 	};
+ 
+ };
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+index 1865a708b49f..5da2d81e3be2 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+@@ -357,6 +357,65 @@
+ 				};
+ 			};
+ 		};
++		gpu_thermal: gpu-thermal {
++			thermal-sensors = <&tmu_gpu 0>;
++			polling-delay-passive = <250>;
++			polling-delay = <0>;
++			trips {
++				gpu_alert0: gpu-alert-0 {
++					temperature = <50000>;
++					hysteresis = <5000>;
++					type = "active";
++				};
++				gpu_alert1: gpu-alert-1 {
++					temperature = <60000>;
++					hysteresis = <5000>;
++					type = "active";
++				};
++				gpu_alert2: gpu-alert-2 {
++					temperature = <70000>;
++					hysteresis = <5000>;
++					type = "active";
++				};
++				gpu_crit0: gpu-crit-0 {
++					temperature = <120000>;
++					hysteresis = <0>;
++					type = "critical";
++				};
++				gpu_alert3: gpu-alert-3 {
++					temperature = <70000>;
++					hysteresis = <10000>;
++					type = "passive";
++				};
++				gpu_alert4: gpu-alert-4 {
++					temperature = <85000>;
++					hysteresis = <10000>;
++					type = "passive";
++				};
++			};
++			cooling-maps {
++				map0 {
++					trip = <&gpu_alert0>;
++					cooling-device = <&fan0 0 1>;
++				};
++				map1 {
++					trip = <&gpu_alert1>;
++					cooling-device = <&fan0 1 2>;
++				};
++				map2 {
++					trip = <&gpu_alert2>;
++					cooling-device = <&fan0 2 3>;
++				};
++				map3 {
++					trip = <&gpu_alert3>;
++					cooling-device = <&gpu 0 2>;
++				};
++				map4 {
++					trip = <&gpu_alert4>;
++					cooling-device = <&gpu 3 6>;
++				};
++			};
++		};
+ 	};
+ };
+ 
+-- 
+2.17.1
+
