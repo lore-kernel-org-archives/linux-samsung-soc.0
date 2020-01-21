@@ -6,86 +6,81 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10134C2D0CE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jan 2020 19:59:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6438C2D0CE
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jan 2020 19:59:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9E032465A
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jan 2020 19:59:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1A4D217F4
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jan 2020 19:59:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579636756;
-	bh=ud8ahcurYR27wEvpMAshVhvvw1OqTtU/SiZaJgsCHbQ=;
+	s=default; t=1579636767;
+	bh=E7/VCyBFhCbz5FGCj9d8OMTv1zgCqlkuq6Vg9ZHEQpA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=JehYAnIHRJlCySiFWsbOyyapRm7tPo5wavDOy2hLuW4SmJu+aEX1QV4ZBBZUDDbM9
-	 0Ur9bfe1vtIBUYSFZD75S+fmqYFpkTKuvgV857onUApvy77ngSJymfzCoElQydrBa2
-	 QzLWUK9Q3EDmNQCpwg87xpcJ3yYEh+oecOh1QY90=
+	b=BPIWBQGAmpdgbLY817R8AAruBFk73U+FOSPtUWzHalH4Nbx09QKpSix8Ryeflvsb7
+	 WzCuN/OCUSmnof4Oa0TG0Enqi249CDNd+JENQgwEAtxuKPUU7Q70QDxxLjqrp1caYg
+	 8qtjW0/9d7WzMQoXk3Fd6iHpdABoHUMfcAroUlBk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727360AbgAUT7Q convert rfc822-to-8bit (ORCPT
+        id S1727523AbgAUT71 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 21 Jan 2020 14:59:16 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:46174 "EHLO
+        Tue, 21 Jan 2020 14:59:27 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:33866 "EHLO
         mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727350AbgAUT7Q (ORCPT
+        with ESMTP id S1727350AbgAUT71 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 21 Jan 2020 14:59:16 -0500
-Received: by mail-ed1-f67.google.com with SMTP id m8so4240985edi.13;
-        Tue, 21 Jan 2020 11:59:15 -0800 (PST)
+        Tue, 21 Jan 2020 14:59:27 -0500
+Received: by mail-ed1-f67.google.com with SMTP id l8so4336189edw.1;
+        Tue, 21 Jan 2020 11:59:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=uhJ95Ie/Yb8Dbq3RWjp7bO5gpLNFCl4QU9krsyTd1e4=;
-        b=okx0hnDXLuTKUQhLpgzPBOChyI46T5tdKyejTEpwUCCEZF1rvNpFfb8651e4Chxpnu
-         cZ6LryZDY3uMt9+7UCDloZY107gMbZDvS6Ij1reCqCO8C9mYdQN9g5KRXZmdHB0mnOJd
-         niFdTTJkKfhrJhFIj+nKHtM254Zvxi8/VlQCvUi6fDH2EPGjrX43Q8Cumld0N9iMWdCE
-         EFe/qSYlmFXu5K4nyjzol4V76QbYmyM10rDWjvZRFpJvOk3sagjsuUm8CQRIVgPkmj/y
-         Acl1tTXcqD3XhL98mpN0BJuvU7hUod98zwD2IDiOESK/3KiYwHmE7vVcCGoerIVrf5JQ
-         HS8A==
-X-Gm-Message-State: APjAAAWf+1FuNhPVdKlocrcV+BGWGt38jyjbT8pmfi8vC8GI/Zt37PlX
-        VWHqJYqxE0sNOgLEUe7WTc8=
-X-Google-Smtp-Source: APXvYqy5oKpC5VbO57NNFXXW4t25xYdgBIF+hM+FYIhxJRDJvlHiKDyjWIptp4kr1V4nPuREunpnYg==
-X-Received: by 2002:a17:906:e083:: with SMTP id gh3mr5866963ejb.231.1579636754353;
-        Tue, 21 Jan 2020 11:59:14 -0800 (PST)
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yLP2mrDM4GzvFszqzHvSuZS42R+DLtGroTOxaZ4xrnA=;
+        b=OtccDkpbgxKsPNIJesVARemnG9HHHmKD5ubxyasWPhVWSIe1uDoPSm0HecUO0CQV2H
+         esVxcd0FRtR36D49JASKAkvZx+dS4TcELkFLzg/ni4Djj9GTP8EEvjtbdY2VbTDiY40D
+         cACHzcYPBLBH/flI1puzmOi0g2sPFaRn59Q8Az0/2+Uz5k8rdYuiR3IwajGns271IrZx
+         P3Wdxs2IRPxfW1iogBR/+NExxYyeBMiCypGorLCfOmAXgfV1yiXx2g1rUBdG1/UZNZ46
+         I4hxdjmu2LqIaql65ym7zviUb+Dhvah19nyrSDEJWqugh+tWV8ykWajswgr3WXG/jR2L
+         VbGA==
+X-Gm-Message-State: APjAAAX/dWRyL2EXjmk4b0Gf24UC6WvGMU1fkxY8NU+f//1ESUML+qK3
+        jof7pw02PH2nU69DYh/3Hdg=
+X-Google-Smtp-Source: APXvYqx8qpPI7rbjj7PMeTabytp7AQsKM7Q19VB32tG5zAWX+KB8OyA/6QmSuzDcmfSZD5PHOZ0eMA==
+X-Received: by 2002:a17:906:cccf:: with SMTP id ot15mr6127734ejb.7.1579636765312;
+        Tue, 21 Jan 2020 11:59:25 -0800 (PST)
 Received: from kozik-lap ([194.230.155.229])
-        by smtp.googlemail.com with ESMTPSA id f9sm1429279edr.66.2020.01.21.11.59.13
+        by smtp.googlemail.com with ESMTPSA id ay8sm1258847ejb.6.2020.01.21.11.59.24
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 21 Jan 2020 11:59:13 -0800 (PST)
-Date:   Tue, 21 Jan 2020 20:59:11 +0100
+        Tue, 21 Jan 2020 11:59:24 -0800 (PST)
+Date:   Tue, 21 Jan 2020 20:59:22 +0100
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH] ARM: s3c24xx/rx1950: switch to atomic pwm API
-Message-ID: <20200121195911.GA24380@kozik-lap>
-References: <20200120193328.17007-1-uwe@kleine-koenig.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Kukjin Kim <kgene@kernel.org>,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 19/20] ARM: s3c64xx: Drop unneeded select of TIMER_OF
+Message-ID: <20200121195922.GB24380@kozik-lap>
+References: <20200121103413.1337-1-geert+renesas@glider.be>
+ <20200121103722.1781-1-geert+renesas@glider.be>
+ <20200121103722.1781-19-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20200120193328.17007-1-uwe@kleine-koenig.org>
+In-Reply-To: <20200121103722.1781-19-geert+renesas@glider.be>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 20, 2020 at 08:33:28PM +0100, Uwe Kleine-König wrote:
-> Stop using the legacy PWM API which only still exists because there are
-> some users left.
+On Tue, Jan 21, 2020 at 11:37:21AM +0100, Geert Uytterhoeven wrote:
+> Support for Samsung S3C64XX systems depends on ARCH_MULTI_V6, and thus
+> on ARCH_MULTIPLATFORM.
+> As the latter selects TIMER_OF, there is no need for MACH_S3C64XX_DT to
+> select TIMER_OF.
 > 
-> Note this change make use of the fact that the value of struct
-> pwm_state::duty_cycle doesn't matter for a disabled PWM and so its value
-> can stay constant simplifying the code a bit.
-> 
-> A side effect of the conversion is that the pwm isn't stopped in
-> rx1950_backlight_init() by the call to pwm_apply_args() just before
-> reenabling it when rx1950_lcd_power(1) is called.
-> 
-> Signed-off-by: Uwe Kleine-König <uwe@kleine-koenig.org>
-> ---
->  arch/arm/mach-s3c24xx/mach-rx1950.c | 19 ++++++++++++-------
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
 
 Thanks, applied.
 
