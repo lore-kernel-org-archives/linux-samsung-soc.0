@@ -2,82 +2,88 @@ Return-Path: <SRS0=ub5M=3K=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D523C33CB6
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jan 2020 10:38:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A57AFC2D0CE
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jan 2020 12:18:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AD0124672
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jan 2020 10:38:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7954F22314
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jan 2020 12:18:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1579609098;
+	bh=Yyd+FLIHbRrh3jsQMDM0yDT3z9LFpjQTJAsHQj5LPOY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=BU+fFT75TVLzn/Qa2x0HIDNqucfXacAO0djBOS2W8n/RS5+EC56bu7wAWp4JOBC4P
+	 dTTSXH6g0OcCu1EhaumTqknDfWneswQS2YuC5jQi9ZxfwmbCSK7ZKGlG9tdxwYdkqQ
+	 SAOGHwNrvhsc8o0m/PDrtmBhAxTAH2QBZe5oGFxo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729449AbgAUKiI (ORCPT
+        id S1728760AbgAUMSS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 21 Jan 2020 05:38:08 -0500
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:33344 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729384AbgAUKh2 (ORCPT
+        Tue, 21 Jan 2020 07:18:18 -0500
+Received: from mail-ed1-f54.google.com ([209.85.208.54]:38283 "EHLO
+        mail-ed1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728655AbgAUMSR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 21 Jan 2020 05:37:28 -0500
-Received: from ramsan ([84.195.182.253])
-        by baptiste.telenet-ops.be with bizsmtp
-        id sydS2100A5USYZQ01ydS2e; Tue, 21 Jan 2020 11:37:26 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1itquU-00011W-8y; Tue, 21 Jan 2020 11:37:26 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1itquU-0000UC-7a; Tue, 21 Jan 2020 11:37:26 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>,
-        Olof Johansson <olof@lixom.net>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 10/20] ARM: exynos: Drop unneeded select of MIGHT_HAVE_CACHE_L2X0
-Date:   Tue, 21 Jan 2020 11:37:12 +0100
-Message-Id: <20200121103722.1781-10-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200121103722.1781-1-geert+renesas@glider.be>
-References: <20200121103413.1337-1-geert+renesas@glider.be>
- <20200121103722.1781-1-geert+renesas@glider.be>
+        Tue, 21 Jan 2020 07:18:17 -0500
+Received: by mail-ed1-f54.google.com with SMTP id i16so2753183edr.5;
+        Tue, 21 Jan 2020 04:18:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=SnG0TTyxgyt1zcjYn/1DgFM/Ap/My5QEMUd9Nz/FdQc=;
+        b=sXugVgZSjxSRARRjYDNsgNbTVBDzCJHTRryWUR68wPzT/Hebga8QIvg7mel+hsckDY
+         yfkZBnpK6DFr+jlAasf2zXFyAuLfoYsCO3rClv88iw9f7CWLlAVNVSvThZExy0aLO20C
+         RJ5gyj9/Ki4Ma45+OVtyqcQyWX/NtqSOXoMAmqjtXc3m8HC8V/FriefXZ8hHGphj4R5A
+         vG4fMvdj0RBvxk13dqInbZIo5/mQEB2BPtrin3j1gIatwM3dN9pfLWPhgybtNSbhnJmP
+         sfNlJJTyEIo65X7gQi7gwbrZRrKPfF8hnp9qiukhoNwkGIUM/T5r+oIFbyoEcujXO7sk
+         ntsg==
+X-Gm-Message-State: APjAAAWjTxCEtlFgpSZFMEijTI4sIK+1OUBJx0y6GVD8571aoRkTkhvO
+        P7d08wYGLKokcjuyVd5OQaEswWod
+X-Google-Smtp-Source: APXvYqxx2iaNPGTqZVW60KypS1ijtsKo2jYdA4u8I5swXCGUf+ubu04YZWD3F/ALLpq/zWxVztK/dg==
+X-Received: by 2002:a17:906:4d87:: with SMTP id s7mr3940129eju.221.1579609095691;
+        Tue, 21 Jan 2020 04:18:15 -0800 (PST)
+Received: from pi3 ([194.230.155.229])
+        by smtp.googlemail.com with ESMTPSA id n24sm1375491edr.30.2020.01.21.04.18.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Jan 2020 04:18:15 -0800 (PST)
+Date:   Tue, 21 Jan 2020 13:18:13 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v2] ARM: dts: exynos: Add GPU thermal zone cooling maps
+ for Odroid XU3/XU4/HC1
+Message-ID: <20200121121813.GA25629@pi3>
+References: <CGME20200121070520eucas1p29587eed877efcf6e6b9433440f3c10da@eucas1p2.samsung.com>
+ <20200121070510.31520-1-m.szyprowski@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200121070510.31520-1-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Support for Samsung Exynos SoCs depends on ARCH_MULTI_V7, which selects
-ARCH_MULTI_V6_V7.
-As the latter selects MIGHT_HAVE_CACHE_L2X0, there is no need for
-ARCH_EXYNOS4 to select MIGHT_HAVE_CACHE_L2X0.
+On Tue, Jan 21, 2020 at 08:05:10AM +0100, Marek Szyprowski wrote:
+> Add trip points and cooling maps for GPU thermal zone for Odroid
+> XU3/XU4/HC1 boards. Trip points are based on the CPU thermal zone for the
+> those boards.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> v2:
+> - removed polling-delay related properties for HC1 as requested by Krzysztof
+> --
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org
----
-All patches in this series are independent of each other.
-Cover letter at https://lore.kernel.org/r/20200121103413.1337-1-geert+renesas@glider.be
+Thanks, it looks good. It is however too late in the cycle and I will
+not be sending one more dts pull (probably only one mach/soc). I'll
+apply it after merge window.
 
- arch/arm/mach-exynos/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 73ce92a0cdb256dd..52a515017fe709ac 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -64,7 +64,6 @@ config ARCH_EXYNOS4
- 	select CLKSRC_SAMSUNG_PWM if CPU_EXYNOS4210
- 	select CPU_EXYNOS4210
- 	select GIC_NON_BANKED
--	select MIGHT_HAVE_CACHE_L2X0
- 	help
- 	  Samsung Exynos4 (Cortex-A9) SoC based systems
- 
--- 
-2.17.1
+Best regards,
+Krzysztof
 
