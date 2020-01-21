@@ -6,50 +6,50 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6438C2D0CE
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jan 2020 19:59:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41080C2D0CE
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jan 2020 19:59:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1A4D217F4
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jan 2020 19:59:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13F31217F4
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Jan 2020 19:59:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579636767;
-	bh=E7/VCyBFhCbz5FGCj9d8OMTv1zgCqlkuq6Vg9ZHEQpA=;
+	s=default; t=1579636787;
+	bh=/mFATCCA7erNK/jjMjd5cjkzWafbp7nQlD26OrGdpz4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=BPIWBQGAmpdgbLY817R8AAruBFk73U+FOSPtUWzHalH4Nbx09QKpSix8Ryeflvsb7
-	 WzCuN/OCUSmnof4Oa0TG0Enqi249CDNd+JENQgwEAtxuKPUU7Q70QDxxLjqrp1caYg
-	 8qtjW0/9d7WzMQoXk3Fd6iHpdABoHUMfcAroUlBk=
+	b=TW7P0Al7z8dLDqPmtVlTZUHYFxpqfl+9e/FALGR/uuRJuPWM7OdlQR1vB8zJvIxg2
+	 LUmCX+LMRLuRdGxKdWSX0eZvtJvxbS17Gz6kCNAqnUam9zWRI3hTxqBP6OeVYL00KD
+	 RW+3tS7BwPvvMWHuzJlUdbakcxNYqfK6i+DUZVS0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727523AbgAUT71 (ORCPT
+        id S1727383AbgAUT7q (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 21 Jan 2020 14:59:27 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:33866 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727350AbgAUT71 (ORCPT
+        Tue, 21 Jan 2020 14:59:46 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:44562 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727350AbgAUT7q (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 21 Jan 2020 14:59:27 -0500
-Received: by mail-ed1-f67.google.com with SMTP id l8so4336189edw.1;
-        Tue, 21 Jan 2020 11:59:25 -0800 (PST)
+        Tue, 21 Jan 2020 14:59:46 -0500
+Received: by mail-ed1-f65.google.com with SMTP id bx28so4254035edb.11;
+        Tue, 21 Jan 2020 11:59:45 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yLP2mrDM4GzvFszqzHvSuZS42R+DLtGroTOxaZ4xrnA=;
-        b=OtccDkpbgxKsPNIJesVARemnG9HHHmKD5ubxyasWPhVWSIe1uDoPSm0HecUO0CQV2H
-         esVxcd0FRtR36D49JASKAkvZx+dS4TcELkFLzg/ni4Djj9GTP8EEvjtbdY2VbTDiY40D
-         cACHzcYPBLBH/flI1puzmOi0g2sPFaRn59Q8Az0/2+Uz5k8rdYuiR3IwajGns271IrZx
-         P3Wdxs2IRPxfW1iogBR/+NExxYyeBMiCypGorLCfOmAXgfV1yiXx2g1rUBdG1/UZNZ46
-         I4hxdjmu2LqIaql65ym7zviUb+Dhvah19nyrSDEJWqugh+tWV8ykWajswgr3WXG/jR2L
-         VbGA==
-X-Gm-Message-State: APjAAAX/dWRyL2EXjmk4b0Gf24UC6WvGMU1fkxY8NU+f//1ESUML+qK3
-        jof7pw02PH2nU69DYh/3Hdg=
-X-Google-Smtp-Source: APXvYqx8qpPI7rbjj7PMeTabytp7AQsKM7Q19VB32tG5zAWX+KB8OyA/6QmSuzDcmfSZD5PHOZ0eMA==
-X-Received: by 2002:a17:906:cccf:: with SMTP id ot15mr6127734ejb.7.1579636765312;
-        Tue, 21 Jan 2020 11:59:25 -0800 (PST)
+        bh=EfnQ+XKYizwj9MPIAzRJtjIVqLk9CK3TPy4MQG1Zm3w=;
+        b=UgOCiTwIms6pYn4sFVJpTUXO7eEDdEI3ViBfgq+upU+fq2EApjZ15UaqE6503CPsnZ
+         VxzJflR7mduRULDIzf1ydrxHssbV0HZUgEA3CSzDmW8j5I9RX4oCBEAivee2Xk6eXeid
+         WybECVmtaEM6m5G+htbQdRc7P0br3MpAQ/a+GDYAgUj06YMy4UnAIl38GxI9/i/aKlPX
+         tsUppiYVb+gJs/kCqjNPdKd4ixyD8idYQ/gtfuMoTx1B/S70pS+a7JqlCiquB+7UzVHD
+         /xNTin4eNaZVx3/Uom1oCAxV7Wkvg+0iE57n++ndirOiyObiD4VCtYSFoBIEY4q8sl8W
+         EO+g==
+X-Gm-Message-State: APjAAAUpoGg1yfDWmwS/a7YlYOP3KZMSmz6Eyc/Y5NvA2kHTynG6CMFm
+        TagywbZ4SSSi5Y4oyNbc5/4=
+X-Google-Smtp-Source: APXvYqzLcCMV+S8XTliS6yB7SbvmW3d8ogdAc/uE6vbbr8i0gZpt+AiMsTun+gNhCzCvuBwSoVimZA==
+X-Received: by 2002:a17:906:8593:: with SMTP id v19mr5983038ejx.377.1579636784558;
+        Tue, 21 Jan 2020 11:59:44 -0800 (PST)
 Received: from kozik-lap ([194.230.155.229])
-        by smtp.googlemail.com with ESMTPSA id ay8sm1258847ejb.6.2020.01.21.11.59.24
+        by smtp.googlemail.com with ESMTPSA id u21sm1511345edv.43.2020.01.21.11.59.43
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 21 Jan 2020 11:59:24 -0800 (PST)
-Date:   Tue, 21 Jan 2020 20:59:22 +0100
+        Tue, 21 Jan 2020 11:59:43 -0800 (PST)
+Date:   Tue, 21 Jan 2020 20:59:41 +0100
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>,
@@ -57,30 +57,37 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Kukjin Kim <kgene@kernel.org>,
         linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 19/20] ARM: s3c64xx: Drop unneeded select of TIMER_OF
-Message-ID: <20200121195922.GB24380@kozik-lap>
+Subject: Re: [PATCH 10/20] ARM: exynos: Drop unneeded select of
+ MIGHT_HAVE_CACHE_L2X0
+Message-ID: <20200121195941.GC24380@kozik-lap>
 References: <20200121103413.1337-1-geert+renesas@glider.be>
  <20200121103722.1781-1-geert+renesas@glider.be>
- <20200121103722.1781-19-geert+renesas@glider.be>
+ <20200121103722.1781-10-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200121103722.1781-19-geert+renesas@glider.be>
+In-Reply-To: <20200121103722.1781-10-geert+renesas@glider.be>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 11:37:21AM +0100, Geert Uytterhoeven wrote:
-> Support for Samsung S3C64XX systems depends on ARCH_MULTI_V6, and thus
-> on ARCH_MULTIPLATFORM.
-> As the latter selects TIMER_OF, there is no need for MACH_S3C64XX_DT to
-> select TIMER_OF.
+On Tue, Jan 21, 2020 at 11:37:12AM +0100, Geert Uytterhoeven wrote:
+> Support for Samsung Exynos SoCs depends on ARCH_MULTI_V7, which selects
+> ARCH_MULTI_V6_V7.
+> As the latter selects MIGHT_HAVE_CACHE_L2X0, there is no need for
+> ARCH_EXYNOS4 to select MIGHT_HAVE_CACHE_L2X0.
 > 
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > Cc: Kukjin Kim <kgene@kernel.org>
 > Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: linux-samsung-soc@vger.kernel.org
+> ---
+> All patches in this series are independent of each other.
+> Cover letter at https://lore.kernel.org/r/20200121103413.1337-1-geert+renesas@glider.be
+> 
+>  arch/arm/mach-exynos/Kconfig | 1 -
 
 Thanks, applied.
 
