@@ -2,71 +2,71 @@ Return-Path: <SRS0=l8CY=3M=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C12EC33CB6
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jan 2020 09:24:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A34C33CB6
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jan 2020 11:34:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 674BB2087E
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jan 2020 09:24:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFE0224655
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jan 2020 11:34:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1579779281;
+	bh=+r90l2uoL8NnqDDDJFW1ex4a2VbKEX/hPb2DVnWyXY0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=L9Zgs9Hyprc4j9+dE92EKPGLYXD23CRZ/wZYee16QSuPX4+TTFmaGC4OWJEVM5pqS
+	 aJc68NcbCy6+rd+I2QSW0LsDDCn7rom39FDOiMRCIEjwOovRRm7BafbEFudB5qw0Dh
+	 kLZ9sBYAwJGW9tjUwiVVBY4I7bs6cYFpiHNWj1Dk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726231AbgAWJYF (ORCPT
+        id S1728921AbgAWLel (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 23 Jan 2020 04:24:05 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:36280 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727141AbgAWJYE (ORCPT
+        Thu, 23 Jan 2020 06:34:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47442 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726771AbgAWLel (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 23 Jan 2020 04:24:04 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1iuYiV-0007Nd-Vi; Thu, 23 Jan 2020 09:24:00 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Kukjin Kim <kgene@kernel.org>,
+        Thu, 23 Jan 2020 06:34:41 -0500
+Received: from localhost (unknown [106.200.244.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0CA9624673;
+        Thu, 23 Jan 2020 11:34:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579779280;
+        bh=+r90l2uoL8NnqDDDJFW1ex4a2VbKEX/hPb2DVnWyXY0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vJ1SVFv9DOSPiRZtXwZIPhq0Rw5NPM2/pVNyzyhS66BsJJ3WGck/cTi+sXjxHaoJY
+         uXpCgDT5pdbV5BaRbg1p6sudwV1JxvMsOtnUvwdOMs4oDeD93lhaPSFpnNGKMr3Xvc
+         NqpGjG6/oKCxJkqOb8X/Z7/UbrMQt3QiUGYiCeAA=
+Date:   Thu, 23 Jan 2020 17:04:36 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vkoul@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] dmaengine: fix spelling mistake "to" -> "too"
-Date:   Thu, 23 Jan 2020 09:23:59 +0000
-Message-Id: <20200123092359.10714-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.24.0
+        linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: s3c24xx-dma: fix spelling mistake "to" ->
+ "too"
+Message-ID: <20200123113436.GX2841@vkoul-mobl>
+References: <20200122235237.2830344-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200122235237.2830344-1-colin.king@canonical.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 22-01-20, 23:52, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a spelling mistake in a dev_err message. Fix it.
 
-There is a spelling mistake in a dev_err message. Fix it.
+Applied, thanks
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/dma/s3c24xx-dma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/dma/s3c24xx-dma.c b/drivers/dma/s3c24xx-dma.c
-index 1ed5dc1f597c..26fa863a709e 100644
---- a/drivers/dma/s3c24xx-dma.c
-+++ b/drivers/dma/s3c24xx-dma.c
-@@ -826,7 +826,7 @@ static struct dma_async_tx_descriptor *s3c24xx_dma_prep_memcpy(
- 			len, s3cchan->name);
- 
- 	if ((len & S3C24XX_DCON_TC_MASK) != len) {
--		dev_err(&s3cdma->pdev->dev, "memcpy size %zu to large\n", len);
-+		dev_err(&s3cdma->pdev->dev, "memcpy size %zu too large\n", len);
- 		return NULL;
- 	}
- 
 -- 
-2.24.0
-
+~Vinod
