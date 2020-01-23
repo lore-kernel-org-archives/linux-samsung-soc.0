@@ -2,204 +2,105 @@ Return-Path: <SRS0=l8CY=3M=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D396C33CB6
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jan 2020 14:53:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B82AC2D0DB
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jan 2020 20:41:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A77721835
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jan 2020 14:53:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ob6VQ1S8"
+	by mail.kernel.org (Postfix) with ESMTP id 1C848246B1
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jan 2020 20:41:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728731AbgAWOxd (ORCPT
+        id S1729427AbgAWUlr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 23 Jan 2020 09:53:33 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:44756 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729031AbgAWOxd (ORCPT
+        Thu, 23 Jan 2020 15:41:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45678 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729012AbgAWUjo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 23 Jan 2020 09:53:33 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200123145332euoutp025e0c20781f853c32ba5d196bc3ec31d6~si7zXeF_51717817178euoutp025
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jan 2020 14:53:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200123145332euoutp025e0c20781f853c32ba5d196bc3ec31d6~si7zXeF_51717817178euoutp025
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1579791212;
-        bh=SyUER5XtPQaR5PqGkKYS+jSgkqDS6pK5BSu+qlUCJYk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ob6VQ1S8rJ7P4DYyTZEhL8EbgqXdkUtf9eulBuV1UkPNLymD6YuDQhhrE1GyAOOhi
-         L4EampRN1MQgYk1gz4RLthi3ijJhKLVk0TA6EqjBo/vglcY8RCdypnyF45WIsC3XAi
-         aka7tMtwdTgcr6D7uWaUEpsH9YkHiIz+bRlA/ma8=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200123145332eucas1p2606cd936f36ce1f56049ab637b69a2d2~si7zKRhYA1403614036eucas1p2b;
-        Thu, 23 Jan 2020 14:53:32 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 2F.C5.60679.C63B92E5; Thu, 23
-        Jan 2020 14:53:32 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200123145331eucas1p29464e7f22e1e775cc8c4fc1e330f8eee~si7y1Gz1K1422014220eucas1p2c;
-        Thu, 23 Jan 2020 14:53:31 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200123145331eusmtrp10bcd5d98a5e5ae8e69a9052e3740b3f5~si7y0aCZB2757127571eusmtrp1T;
-        Thu, 23 Jan 2020 14:53:31 +0000 (GMT)
-X-AuditID: cbfec7f4-0e5ff7000001ed07-14-5e29b36cd0a8
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id EA.43.07950.B63B92E5; Thu, 23
-        Jan 2020 14:53:31 +0000 (GMT)
-Received: from AMDC3218.digital.local (unknown [106.120.51.18]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200123145331eusmtip2fe5b4288716d44cd5b7278e98aabf150~si7yHF-tL1688616886eusmtip2Y;
-        Thu, 23 Jan 2020 14:53:31 +0000 (GMT)
-From:   Kamil Konieczny <k.konieczny@samsung.com>
-To:     k.konieczny@samsung.com
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        Thu, 23 Jan 2020 15:39:44 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A42B421D7D;
+        Thu, 23 Jan 2020 20:39:43 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.93)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1iujGQ-000mUV-Io; Thu, 23 Jan 2020 15:39:42 -0500
+Message-Id: <20200123203942.460742840@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Thu, 23 Jan 2020 15:39:31 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org,
+        linux-rt-users <linux-rt-users@vger.kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Carsten Emde <C.Emde@osadl.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        John Kacur <jkacur@redhat.com>,
+        Julia Cartwright <julia@ni.com>,
+        Daniel Wagner <wagi@monom.org>,
+        Tom Zanussi <zanussi@kernel.org>,
+        Benjamin Rouxel <benjamin.rouxel@uva.nl>,
         Kukjin Kim <kgene@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: [PATCH 2/3] PM / devfreq: exynos-bus: prepare for change in load
- calc in exynos-nocp
-Date:   Thu, 23 Jan 2020 15:53:12 +0100
-Message-Id: <20200123145313.27539-3-k.konieczny@samsung.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200123145313.27539-1-k.konieczny@samsung.com>
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH RT 01/30] i2c: exynos5: Remove IRQF_ONESHOT
+References: <20200123203930.646725253@goodmis.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOKsWRmVeSWpSXmKPExsWy7djPc7o5mzXjDCbc5bDYOGM9q8X1L89Z
-        LRZ8msFq0f/4NbPF+fMb2C3ONr1ht7i8aw6bxefeI4wWM87vY7JYe+Quu8XtxhVsDtwem1Z1
-        snn0bVnF6PF5k1wAcxSXTUpqTmZZapG+XQJXxsWO2cwF/0Qq9qxYwdjAOE2wi5GTQ0LAROLC
-        wk2MILaQwApGiTtTEroYuYDsL4wSy299YIRwPjNKvN7yjA2mY83WM2wQieWMEv9ndrHCtWz8
-        +5UdpIpNQF/i4NmTLCC2iIC0ROeiiUwgNrNAF7PE+a+mILawQLzEuxltzCA2i4CqxLfWXWB3
-        8ArYSOyaP5UZYpu8xOzG02CbOQVsJaY+WMgGUSMocXLmExaImfISzVtnQ9VPZ5f4/tkYwnaR
-        uHvgFQuELSzx6vgWdghbRuL05B6oeLnE04V97CAPSAi0MEo8aP8IlbCWuHPuF9AyDqAFmhLr
-        d+lDhB0l3q2bxQISlhDgk7jxVhDiBD6JSdumM0OEeSU62oQgqlUlnp/qYYKwpSW6/q9jhbA9
-        JHZ9+8k+gVFxFpJnZiF5ZhbC3gWMzKsYxVNLi3PTU4uN8lLL9YoTc4tL89L1kvNzNzECk8/p
-        f8e/7GDc9SfpEKMAB6MSD69Er2acEGtiWXFl7iFGCQ5mJRFexjCgEG9KYmVValF+fFFpTmrx
-        IUZpDhYlcV7jRS9jhQTSE0tSs1NTC1KLYLJMHJxSDYzmj3Pqol9P3R3tap138dAELqZ7Fd/q
-        5eY8mvtkU5v/J7tqoR/dP0/P+5trwMi06NeVSTOn8JV3zomVuqixRyRwXe3znVXX3vCyzOhV
-        ex8T8Gud6enU7G9vddbyHb82gXnTzTf5ZQmf55sc1k44wukWKulpePxWSM/D/hMabWLLwsp2
-        iHR8tFqvxFKckWioxVxUnAgAARTEyjoDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBIsWRmVeSWpSXmKPExsVy+t/xe7rZmzXjDB6e0bXYOGM9q8X1L89Z
-        LRZ8msFq0f/4NbPF+fMb2C3ONr1ht7i8aw6bxefeI4wWM87vY7JYe+Quu8XtxhVsDtwem1Z1
-        snn0bVnF6PF5k1wAc5SeTVF+aUmqQkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6dTUpq
-        TmZZapG+XYJexsWO2cwF/0Qq9qxYwdjAOE2wi5GTQ0LARGLN1jNsXYxcHEICSxkljh2ZxwSR
-        kJZoPL0ayhaW+HOtC6roE6PE0+m3WUASbAL6EgfPngSzRYAaOhdNZAIpYhaYxCyx58UzNpCE
-        sECsxL33f8BsFgFViW+tuxhBbF4BG4ld86cyQ2yQl5jdeBqshlPAVmLqg4VgthBQzeddx1kh
-        6gUlTs58AraMGai+eets5gmMArOQpGYhSS1gZFrFKJJaWpybnltspFecmFtcmpeul5yfu4kR
-        GCvbjv3csoOx613wIUYBDkYlHl6JXs04IdbEsuLK3EOMEhzMSiK8jGFAId6UxMqq1KL8+KLS
-        nNTiQ4ymQE9MZJYSTc4HxnFeSbyhqaG5haWhubG5sZmFkjhvh8DBGCGB9MSS1OzU1ILUIpg+
-        Jg5OqQbGs8cebX/EEiNz5d2K2p+Me004xRO5tKb8s1sfzsM/nfv2yftz3cN95sZu9f/Fbbz3
-        D0ORJ8OxjxIqPU9kWhaFtHXJOFlNlDhwZuqK5oJvTgdLYoMXaDUzX2Pd0nx9wgSPj0msZyKn
-        GxbP8We/9Xbqju+ZtwKzE3iqdaM81Jyv3J0rPJ1FTe2GEktxRqKhFnNRcSIAZZdxJqsCAAA=
-X-CMS-MailID: 20200123145331eucas1p29464e7f22e1e775cc8c4fc1e330f8eee
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200123145331eucas1p29464e7f22e1e775cc8c4fc1e330f8eee
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200123145331eucas1p29464e7f22e1e775cc8c4fc1e330f8eee
-References: <20200123145313.27539-1-k.konieczny@samsung.com>
-        <CGME20200123145331eucas1p29464e7f22e1e775cc8c4fc1e330f8eee@eucas1p2.samsung.com>
+Content-Type: text/plain; charset=ISO-8859-15
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add time to struct exynos_bus and time and current frequency to
-struct devfreq_event_data. This will allow to calculate load and
-max bandwidth in exynos-nocp driver.
+4.19.94-rt39-rc2 stable review patch.
+If anyone has any objections, please let me know.
 
-Signed-off-by: Kamil Konieczny <k.konieczny@samsung.com>
+------------------
+
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+
+[ Upstream commit 4b217df0ab3f7910c96e42091cc7d9f221d05f01 ]
+
+The drivers sets IRQF_ONESHOT and passes only a primary handler. The IRQ
+is masked while the primary is handler is invoked independently of
+IRQF_ONESHOT.
+With IRQF_ONESHOT the core code will not force-thread the interrupt and
+this is probably not intended. I *assume* that the original author copied
+the IRQ registration from another driver which passed a primary and
+secondary handler and removed the secondary handler but keeping the
+ONESHOT flag.
+
+Remove IRQF_ONESHOT.
+
+Reported-by: Benjamin Rouxel <benjamin.rouxel@uva.nl>
+Tested-by: Benjamin Rouxel <benjamin.rouxel@uva.nl>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- drivers/devfreq/exynos-bus.c  | 21 ++++++++++++++++++++-
- include/linux/devfreq-event.h |  4 ++++
- 2 files changed, 24 insertions(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-exynos5.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-index 8fa8eb541373..f04ce5b84e75 100644
---- a/drivers/devfreq/exynos-bus.c
-+++ b/drivers/devfreq/exynos-bus.c
-@@ -14,6 +14,7 @@
- #include <linux/devfreq-event.h>
- #include <linux/device.h>
- #include <linux/export.h>
-+#include <linux/jiffies.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/pm_opp.h>
-@@ -31,6 +32,7 @@ struct exynos_bus {
- 	struct mutex lock;
+diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+index c1ce2299a76e..5c57ecf4b79e 100644
+--- a/drivers/i2c/busses/i2c-exynos5.c
++++ b/drivers/i2c/busses/i2c-exynos5.c
+@@ -800,9 +800,7 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
+ 	}
  
- 	unsigned long curr_freq;
-+	unsigned long prev_time;
- 
- 	struct opp_table *opp_table;
- 	struct clk *clk;
-@@ -57,7 +59,22 @@ static int exynos_bus_##ops(struct exynos_bus *bus)		\
- }
- exynos_bus_ops_edev(enable_edev);
- exynos_bus_ops_edev(disable_edev);
--exynos_bus_ops_edev(set_event);
-+
-+static int exynos_bus_set_event(struct exynos_bus *bus)
-+{
-+	int i, ret;
-+
-+	bus->prev_time = jiffies;
-+	for (i = 0; i < bus->edev_count; i++) {
-+		if (!bus->edev[i])
-+			continue;
-+		ret = devfreq_event_set_event(bus->edev[i]);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
- 
- static int exynos_bus_get_event(struct exynos_bus *bus,
- 				struct devfreq_event_data *edata)
-@@ -66,6 +83,8 @@ static int exynos_bus_get_event(struct exynos_bus *bus,
- 	unsigned long load_count = 0, total_count = 0;
- 	int i, ret = 0;
- 
-+	event_data.curr_freq = bus->curr_freq;
-+	event_data.prev_time = bus->prev_time;
- 	for (i = 0; i < bus->edev_count; i++) {
- 		if (!bus->edev[i])
- 			continue;
-diff --git a/include/linux/devfreq-event.h b/include/linux/devfreq-event.h
-index f14f17f8cb7f..b57ccfcb775b 100644
---- a/include/linux/devfreq-event.h
-+++ b/include/linux/devfreq-event.h
-@@ -41,12 +41,16 @@ struct devfreq_event_dev {
-  *		  each count may represent a clock cycle, a time unit
-  *		  (ns/us/...), or anything the device driver wants.
-  *		  Generally, utilization is load_count / total_count.
-+ * @prev_time	: jiffies for interval calculations with polling.
-+ * @curr_freq	: current frequency for calculating max bandwidth.
-  *
-  * This structure contains the data of devfreq-event device for polling period.
-  */
- struct devfreq_event_data {
- 	unsigned long load_count;
- 	unsigned long total_count;
-+	unsigned long prev_time;
-+	unsigned long curr_freq;
- };
- 
- /**
+ 	ret = devm_request_irq(&pdev->dev, i2c->irq, exynos5_i2c_irq,
+-				IRQF_NO_SUSPEND | IRQF_ONESHOT,
+-				dev_name(&pdev->dev), i2c);
+-
++			       IRQF_NO_SUSPEND, dev_name(&pdev->dev), i2c);
+ 	if (ret != 0) {
+ 		dev_err(&pdev->dev, "cannot request HS-I2C IRQ %d\n", i2c->irq);
+ 		goto err_clk;
 -- 
-2.25.0
+2.24.1
+
 
