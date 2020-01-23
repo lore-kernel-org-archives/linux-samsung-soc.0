@@ -2,87 +2,111 @@ Return-Path: <SRS0=l8CY=3M=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F20DBC32771
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jan 2020 01:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C198EC33CB6
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jan 2020 04:07:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C63C824676
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jan 2020 01:01:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90A5C24676
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jan 2020 04:07:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1579752431;
+	bh=Ljk4aNTIh5qaY+LhyrDRlPXS83l3MsxY6wI4fyIxdgs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ZhydZkPUXy1sr/pC76ysLc7ULKdXwgzZwOjfYbsaAIoiSTaG14uZXGUqqpRIgTC3t
+	 xLNoQUqt6gHXfqd1BqXy8njnE/eKtCtbcC6Ycyq/8spIg+sr4tbtrl8FVmBiZTtndr
+	 uO3YIVDb1FHS19mx0t5HAlUqLFh0ffk+Qd7JKOiM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726207AbgAWBBn (ORCPT
+        id S1726054AbgAWEHL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 22 Jan 2020 20:01:43 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:52871 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbgAWBBm (ORCPT
+        Wed, 22 Jan 2020 23:07:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55694 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725989AbgAWEHK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 22 Jan 2020 20:01:42 -0500
-Received: from [82.43.126.140] (helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1iuQsI-00089p-FT; Thu, 23 Jan 2020 01:01:34 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Kukjin Kim <kgene@kernel.org>,
+        Wed, 22 Jan 2020 23:07:10 -0500
+Received: from localhost (unknown [106.200.244.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DFCAF2465A;
+        Thu, 23 Jan 2020 04:07:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579752429;
+        bh=Ljk4aNTIh5qaY+LhyrDRlPXS83l3MsxY6wI4fyIxdgs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gM30JBU2phcjbEoMCePoUQn2rPt1Ihug1K8uZwpGvusdGIx57rgswEklYC9QRH7YE
+         UBiWP7DuubGSSHNBvCqfhX2VwQbAKPZMoFWwV26JoB1mk4Yn/DQd7KdwfqiHkhNTfu
+         4Xz7wn+Yf7zMXBk6HSkObzgWO75i3AOtFxCO6hik=
+Date:   Thu, 23 Jan 2020 09:37:05 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>,
         Ralf Baechle <ralf@linux-mips.org>,
         "David S . Miller" <davem@davemloft.net>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-hams@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net/rose: fix spelling mistake "to" -> "too"
-Date:   Thu, 23 Jan 2020 01:01:33 +0000
-Message-Id: <20200123010133.2834467-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.24.0
+        linux-hams@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net/rose: fix spelling mistake "to" -> "too"
+Message-ID: <20200123040705.GT2841@vkoul-mobl>
+References: <20200123010133.2834467-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200123010133.2834467-1-colin.king@canonical.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi Colin,
 
-There is a spelling mistake in a printk message. Fix it.
+On 23-01-20, 01:01, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a spelling mistake in a printk message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/dma/s3c24xx-dma.c | 2 +-
+>  net/rose/af_rose.c        | 2 +-
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/dma/s3c24xx-dma.c | 2 +-
- net/rose/af_rose.c        | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Care to split the two..?
 
-diff --git a/drivers/dma/s3c24xx-dma.c b/drivers/dma/s3c24xx-dma.c
-index 8e14c72d03f0..63f1453ca250 100644
---- a/drivers/dma/s3c24xx-dma.c
-+++ b/drivers/dma/s3c24xx-dma.c
-@@ -826,7 +826,7 @@ static struct dma_async_tx_descriptor *s3c24xx_dma_prep_memcpy(
- 			len, s3cchan->name);
- 
- 	if ((len & S3C24XX_DCON_TC_MASK) != len) {
--		dev_err(&s3cdma->pdev->dev, "memcpy size %zu to large\n", len);
-+		dev_err(&s3cdma->pdev->dev, "memcpy size %zu too large\n", len);
- 		return NULL;
- 	}
- 
-diff --git a/net/rose/af_rose.c b/net/rose/af_rose.c
-index 46b8ff24020d..1e8eeb044b07 100644
---- a/net/rose/af_rose.c
-+++ b/net/rose/af_rose.c
-@@ -1475,7 +1475,7 @@ static int __init rose_proto_init(void)
- 	int rc;
- 
- 	if (rose_ndevs > 0x7FFFFFFF/sizeof(struct net_device *)) {
--		printk(KERN_ERR "ROSE: rose_proto_init - rose_ndevs parameter to large\n");
-+		printk(KERN_ERR "ROSE: rose_proto_init - rose_ndevs parameter too large\n");
- 		rc = -EINVAL;
- 		goto out;
- 	}
+Thanks
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/dma/s3c24xx-dma.c b/drivers/dma/s3c24xx-dma.c
+> index 8e14c72d03f0..63f1453ca250 100644
+> --- a/drivers/dma/s3c24xx-dma.c
+> +++ b/drivers/dma/s3c24xx-dma.c
+> @@ -826,7 +826,7 @@ static struct dma_async_tx_descriptor *s3c24xx_dma_prep_memcpy(
+>  			len, s3cchan->name);
+>  
+>  	if ((len & S3C24XX_DCON_TC_MASK) != len) {
+> -		dev_err(&s3cdma->pdev->dev, "memcpy size %zu to large\n", len);
+> +		dev_err(&s3cdma->pdev->dev, "memcpy size %zu too large\n", len);
+>  		return NULL;
+>  	}
+>  
+> diff --git a/net/rose/af_rose.c b/net/rose/af_rose.c
+> index 46b8ff24020d..1e8eeb044b07 100644
+> --- a/net/rose/af_rose.c
+> +++ b/net/rose/af_rose.c
+> @@ -1475,7 +1475,7 @@ static int __init rose_proto_init(void)
+>  	int rc;
+>  
+>  	if (rose_ndevs > 0x7FFFFFFF/sizeof(struct net_device *)) {
+> -		printk(KERN_ERR "ROSE: rose_proto_init - rose_ndevs parameter to large\n");
+> +		printk(KERN_ERR "ROSE: rose_proto_init - rose_ndevs parameter too large\n");
+>  		rc = -EINVAL;
+>  		goto out;
+>  	}
+> -- 
+> 2.24.0
+
 -- 
-2.24.0
-
+~Vinod
