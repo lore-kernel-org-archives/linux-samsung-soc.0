@@ -2,111 +2,196 @@ Return-Path: <SRS0=l8CY=3M=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C198EC33CB6
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jan 2020 04:07:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 974C7C2D0DB
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jan 2020 09:21:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90A5C24676
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jan 2020 04:07:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579752431;
-	bh=Ljk4aNTIh5qaY+LhyrDRlPXS83l3MsxY6wI4fyIxdgs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ZhydZkPUXy1sr/pC76ysLc7ULKdXwgzZwOjfYbsaAIoiSTaG14uZXGUqqpRIgTC3t
-	 xLNoQUqt6gHXfqd1BqXy8njnE/eKtCtbcC6Ycyq/8spIg+sr4tbtrl8FVmBiZTtndr
-	 uO3YIVDb1FHS19mx0t5HAlUqLFh0ffk+Qd7JKOiM=
+	by mail.kernel.org (Postfix) with ESMTP id 632CE2467E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Jan 2020 09:21:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aJkEKjQE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726054AbgAWEHL (ORCPT
+        id S1726260AbgAWJVT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 22 Jan 2020 23:07:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55694 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725989AbgAWEHK (ORCPT
+        Thu, 23 Jan 2020 04:21:19 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36441 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725785AbgAWJVT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 22 Jan 2020 23:07:10 -0500
-Received: from localhost (unknown [106.200.244.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DFCAF2465A;
-        Thu, 23 Jan 2020 04:07:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579752429;
-        bh=Ljk4aNTIh5qaY+LhyrDRlPXS83l3MsxY6wI4fyIxdgs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gM30JBU2phcjbEoMCePoUQn2rPt1Ihug1K8uZwpGvusdGIx57rgswEklYC9QRH7YE
-         UBiWP7DuubGSSHNBvCqfhX2VwQbAKPZMoFWwV26JoB1mk4Yn/DQd7KdwfqiHkhNTfu
-         4Xz7wn+Yf7zMXBk6HSkObzgWO75i3AOtFxCO6hik=
-Date:   Thu, 23 Jan 2020 09:37:05 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-hams@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net/rose: fix spelling mistake "to" -> "too"
-Message-ID: <20200123040705.GT2841@vkoul-mobl>
-References: <20200123010133.2834467-1-colin.king@canonical.com>
+        Thu, 23 Jan 2020 04:21:19 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p17so1712130wma.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jan 2020 01:21:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=xV3Uvkw8+OKQ7AftPuv/zmhYvZIHcGHcet0EaY1PAMc=;
+        b=aJkEKjQE3/f/64n6gImLdzT+UNKKttZ48omBh4KiBPym3GoXm8GSuH6mE22tAdBcGt
+         fuKc3sUcl6XicHo5fuIj6mBUcCYcT9xb3zmk3gh/AqpX7Bz8Am/n8Zg3N5YqqijEm4r3
+         3Gh5c4uAX1iWP83gsm+R4YH8IroSTl5LU1KciYpYAkCTgYrXiJydcrspHreSQ3rvPAEu
+         LTFBgVjaEX5MuhS0pM1rhr4seoyLYYDEyg/vYhpHSztOw9c/wevwr5AVb3FflLItnJPi
+         Fio1TVhDnVFjN1sibND3AWJbdWCZgfifdPWp7haO4tXLOq7GuMbU14zrsE+mfu6qO1lE
+         jHLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=xV3Uvkw8+OKQ7AftPuv/zmhYvZIHcGHcet0EaY1PAMc=;
+        b=GtMOQr5XtkFUbw1O/AbGKNjSkNriCXOyfPIesyPLBS7yyw/dVlecpjmTUP+Ge3lvNB
+         MOg2WZHbwBd5cxJkuDLv11zJmHF18IcHw30dSleslFnMiwqXYtzRr55BLdNlNP2DuG63
+         m4WZXGSvtVzfQeaXPaJ8Hp/i+6y4CbiLl7ngLyUBNCtTTqpK2ldd5LInb7/aORXglvG9
+         iEJr+rRzaflPkfH0FxISvcFOhxdjKH1P898dveqxw3ZmJO9BSQD7dm8OLSs3aGQRUlvc
+         9eYGz5EQAZlkg93WgMM8Zylp+kKeaOi7UhL13POU6e5dbHWX7UfvIUBQrvkbEziY+Z9u
+         KWNg==
+X-Gm-Message-State: APjAAAUhYE+ff2mrwrK93miZvkZMlcja8XPiO0X36MwvK3wXnsGnA8aO
+        wyriBHQt/ApcdMpDEX6I4mJKjQ==
+X-Google-Smtp-Source: APXvYqy1vlVz7qyejgOuFFbvGcEkpeTJ+lzK24Qpa4hx8aUH6pO5chF+TO3i/Jkl4gOAZG92tjBh0g==
+X-Received: by 2002:a1c:964f:: with SMTP id y76mr3044669wmd.62.1579771276425;
+        Thu, 23 Jan 2020 01:21:16 -0800 (PST)
+Received: from [10.44.66.8] ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id i11sm2316949wrs.10.2020.01.23.01.21.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 Jan 2020 01:21:15 -0800 (PST)
+Subject: Re: [PATCH v4 1/3] interconnect: Export of_icc_get_from_provider()
+To:     =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     cw00.choi@samsung.com, b.zolnierkie@samsung.com,
+        m.szyprowski@samsung.com, krzk@kernel.org
+References: <20200116144202.12116-1-a.swigon@samsung.com>
+ <CGME20200116144241eucas1p18dcf099873015e955d71d90712bbe9e0@eucas1p1.samsung.com>
+ <20200116144202.12116-2-a.swigon@samsung.com>
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+ KEmKjLDvB0pePJkdTw==
+Message-ID: <45e28d51-27db-2faa-d633-3a3d857ecdc9@linaro.org>
+Date:   Thu, 23 Jan 2020 11:21:13 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200123010133.2834467-1-colin.king@canonical.com>
+In-Reply-To: <20200116144202.12116-2-a.swigon@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Colin,
+Hi Artur,
 
-On 23-01-20, 01:01, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On 1/16/20 16:42, Artur Świgoń wrote:
+> This patch makes the above function public (for use in exynos-bus devfreq
+> driver).
 > 
-> There is a spelling mistake in a printk message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Artur Świgoń <a.swigon@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 > ---
->  drivers/dma/s3c24xx-dma.c | 2 +-
->  net/rose/af_rose.c        | 2 +-
-
-Care to split the two..?
-
-Thanks
->  2 files changed, 2 insertions(+), 2 deletions(-)
+>  drivers/interconnect/core.c           | 3 ++-
+>  include/linux/interconnect-provider.h | 6 ++++++
+>  2 files changed, 8 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/dma/s3c24xx-dma.c b/drivers/dma/s3c24xx-dma.c
-> index 8e14c72d03f0..63f1453ca250 100644
-> --- a/drivers/dma/s3c24xx-dma.c
-> +++ b/drivers/dma/s3c24xx-dma.c
-> @@ -826,7 +826,7 @@ static struct dma_async_tx_descriptor *s3c24xx_dma_prep_memcpy(
->  			len, s3cchan->name);
+> diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+> index f277e467156f..0be1764d3528 100644
+> --- a/drivers/interconnect/core.c
+> +++ b/drivers/interconnect/core.c
+> @@ -330,7 +330,7 @@ EXPORT_SYMBOL_GPL(of_icc_xlate_onecell);
+>   * Returns a valid pointer to struct icc_node on success or ERR_PTR()
+>   * on failure.
+>   */
+> -static struct icc_node *of_icc_get_from_provider(struct of_phandle_args *spec)
+> +struct icc_node *of_icc_get_from_provider(struct of_phandle_args *spec)
+>  {
+>  	struct icc_node *node = ERR_PTR(-EPROBE_DEFER);
+>  	struct icc_provider *provider;
+> @@ -349,6 +349,7 @@ static struct icc_node *of_icc_get_from_provider(struct of_phandle_args *spec)
 >  
->  	if ((len & S3C24XX_DCON_TC_MASK) != len) {
-> -		dev_err(&s3cdma->pdev->dev, "memcpy size %zu to large\n", len);
-> +		dev_err(&s3cdma->pdev->dev, "memcpy size %zu too large\n", len);
->  		return NULL;
->  	}
+>  	return node;
+>  }
+> +EXPORT_SYMBOL_GPL(of_icc_get_from_provider);
 >  
-> diff --git a/net/rose/af_rose.c b/net/rose/af_rose.c
-> index 46b8ff24020d..1e8eeb044b07 100644
-> --- a/net/rose/af_rose.c
-> +++ b/net/rose/af_rose.c
-> @@ -1475,7 +1475,7 @@ static int __init rose_proto_init(void)
->  	int rc;
+>  /**
+>   * of_icc_get() - get a path handle from a DT node based on name
+> diff --git a/include/linux/interconnect-provider.h b/include/linux/interconnect-provider.h
+> index 0c494534b4d3..cc965b8fab53 100644
+> --- a/include/linux/interconnect-provider.h
+> +++ b/include/linux/interconnect-provider.h
+> @@ -103,6 +103,7 @@ void icc_node_del(struct icc_node *node);
+>  int icc_nodes_remove(struct icc_provider *provider);
+>  int icc_provider_add(struct icc_provider *provider);
+>  int icc_provider_del(struct icc_provider *provider);
+> +struct icc_node *of_icc_get_from_provider(struct of_phandle_args *spec);
 >  
->  	if (rose_ndevs > 0x7FFFFFFF/sizeof(struct net_device *)) {
-> -		printk(KERN_ERR "ROSE: rose_proto_init - rose_ndevs parameter to large\n");
-> +		printk(KERN_ERR "ROSE: rose_proto_init - rose_ndevs parameter too large\n");
->  		rc = -EINVAL;
->  		goto out;
->  	}
-> -- 
-> 2.24.0
+>  #else
+>  
+> @@ -154,6 +155,11 @@ static inline int icc_provider_del(struct icc_provider *provider)
+>  	return -ENOTSUPP;
+>  }
+>  
+> +struct icc_node *of_icc_get_from_provider(struct of_phandle_args *spec)
 
--- 
-~Vinod
+Please make this static inline, as we may see a warning in some configurations:
+
+In file included from drivers/devfreq/exynos-bus.c:18:
+./include/linux/interconnect-provider.h:160:18: warning: no previous prototype
+for ‘of_icc_get_from_provider’ [-Wmissing-prototypes]
+  160 | struct icc_node *of_icc_get_from_provider(struct of_phandle_args *spec)
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~
+
+> +{
+> +	return ERR_PTR(-ENOTSUPP);
+> +}
+> +
+>  #endif /* CONFIG_INTERCONNECT */
+>  
+>  #endif /* __LINUX_INTERCONNECT_PROVIDER_H */
+> 
+
+Thanks,
+Georgi
