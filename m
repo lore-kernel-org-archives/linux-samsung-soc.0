@@ -2,140 +2,104 @@ Return-Path: <SRS0=uax/=3S=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6ED6C2D0DB
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jan 2020 16:37:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91B92C2D0DB
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jan 2020 18:29:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE36D20720
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jan 2020 16:37:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hig1v77V"
+	by mail.kernel.org (Postfix) with ESMTP id 69FFC20716
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jan 2020 18:29:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1580322563;
+	bh=wCqb2TVb1tPQ6Px9UNwI8Jlhg1oz5U7a9tFtQPBjlRE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=v+DzZpibjs5i1jPQW2RbeiIrhgK/ByvHvZO8bVKaJhfsyFYIrTBnwQTJ4DA9u/thS
+	 s0befwKbYOfxbbg+IbFklYdHrlqpR4hIYXfgeNWQgPpvBRPgUj5UppSfzf9DYCvpNn
+	 oroVfLvbjOUJVwTzUCYBun+hdolSGXqCIHLplA/k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726645AbgA2QhT (ORCPT
+        id S1726672AbgA2S3X (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 29 Jan 2020 11:37:19 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:58449 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726829AbgA2QhT (ORCPT
+        Wed, 29 Jan 2020 13:29:23 -0500
+Received: from mail-ed1-f52.google.com ([209.85.208.52]:41690 "EHLO
+        mail-ed1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726332AbgA2S3W (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Jan 2020 11:37:19 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200129163717euoutp029ad3412b5423b4e9f226650dd8f91527~uaOGhM8Z60988509885euoutp02L
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jan 2020 16:37:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200129163717euoutp029ad3412b5423b4e9f226650dd8f91527~uaOGhM8Z60988509885euoutp02L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1580315837;
-        bh=KeY3WJwxS26svuYCyhdWmC4Xh064zsq7ajjxMpsxEEY=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=hig1v77VNdOrTQii7vn/DnVPFjH0ltg9YrP/AQ93wjYlh6Ahzyf4kvCoyAeibuRrY
-         lTYiLROT/vfKaYAchz8KKdNft2c470uh0qCQDa/GXPGpdLyB+4Itva9qIY7nvYpm1h
-         ByK+OWBmUQPQBnfgOQmCjkXJAh0/Y3BwdPNtwYWU=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200129163717eucas1p10856e7078ae4d6c3f94897d5fdd9d3d7~uaOGQTeMD2907929079eucas1p1c;
-        Wed, 29 Jan 2020 16:37:17 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 13.73.60679.DB4B13E5; Wed, 29
-        Jan 2020 16:37:17 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200129163716eucas1p19550fcbfff81ca8586df28782399cff0~uaOF7qUwh2321823218eucas1p1D;
-        Wed, 29 Jan 2020 16:37:16 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200129163716eusmtrp1bbb1ab30361b81c4b3b03bf251ba770b~uaOF6-TxR2835328353eusmtrp1t;
-        Wed, 29 Jan 2020 16:37:16 +0000 (GMT)
-X-AuditID: cbfec7f4-0cbff7000001ed07-16-5e31b4bd9c0f
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 35.CB.07950.CB4B13E5; Wed, 29
-        Jan 2020 16:37:16 +0000 (GMT)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200129163716eusmtip16d0c8833c8a315eaae2e05c879a50810~uaOFczkby0593205932eusmtip1C;
-        Wed, 29 Jan 2020 16:37:16 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     dmaengine@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Vinod Koul <vkoul@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] dmaengine: Fix return value for dma_requrest_chan() in case
- of failure
-Date:   Wed, 29 Jan 2020 17:35:48 +0100
-Message-Id: <20200129163548.11096-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLIsWRmVeSWpSXmKPExsWy7djP87p7txjGGZy8xWVx5eIhJouNM9az
-        Wkx9+ITNYvXUv6wWc2dPYrQ4f34Du8XlXXPYLGac38dksfbIXXaLnXdOMDtweWz43MTmMfGs
-        rsemVZ1sHn1bVjF6fN4kF8AaxWWTkpqTWZZapG+XwJWx66lhwTSOirvHfrM0ML5g62Lk5JAQ
-        MJF41v2GuYuRi0NIYAWjRN+xmSwQzhdGiTmv30M5nxklrh5bANfS9HIXE0RiOaPErl8rmOFa
-        jjy9zwxSxSZgKNH1tgusQ0SgVmJVxy6wOLNAA5PE56n+ILawQKTE3qY2dhCbRUBVYseRA2D1
-        vAK2EjNnbWSF2CYvsXrDAbAFEgLP2SSunt4ClXCReLB1DtRJwhKvjm9hh7BlJE5P7mGBaGhm
-        lHh4bi07hNPDKHG5aQYjRJW1xJ1zv4C6OYBO0pRYv0sfIuwosXjuKUaQsIQAn8SNt4IQR/NJ
-        TNo2nRkizCvR0SYEUa0mMev4Ori1By9cYoawPSQunZ4AZgsJxErcfjKBbQKj3CyEXQsYGVcx
-        iqeWFuempxYb5aWW6xUn5haX5qXrJefnbmIEJorT/45/2cG460/SIUYBDkYlHl6JMsM4IdbE
-        suLK3EOMEhzMSiK8oq5AId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rzGi17GCgmkJ5akZqemFqQW
-        wWSZODilGhhdhL/GTAtxF5v4/K/hhyPncstO3bh63dXLSjH/7vZj3xc3JjnGfF7G7Koe9GH1
-        gfOVRw+dspLsdtTQ7e/fb23g8fOIue3Fo8xsnqwT5x29Z9K+JDZsyt+rdxadr/Sc2GCzce20
-        dVtz9SU6YwtXvA1ieufsdlSK3XvF+01iG7Sn+72cslkkMumjEktxRqKhFnNRcSIAebQx8hAD
-        AAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCLMWRmVeSWpSXmKPExsVy+t/xu7p7thjGGaydYGpx5eIhJouNM9az
-        Wkx9+ITNYvXUv6wWc2dPYrQ4f34Du8XlXXPYLGac38dksfbIXXaLnXdOMDtweWz43MTmMfGs
-        rsemVZ1sHn1bVjF6fN4kF8AapWdTlF9akqqQkV9cYqsUbWhhpGdoaaFnZGKpZ2hsHmtlZKqk
-        b2eTkpqTWZZapG+XoJex66lhwTSOirvHfrM0ML5g62Lk5JAQMJFoermLqYuRi0NIYCmjxKuO
-        BYwQCRmJk9MaWCFsYYk/17rYIIo+ARWd7AdLsAkYSnS9hUiICDQySnTfe8YO4jALtDBJzL/z
-        gwmkSlggXOLTkuPMIDaLgKrEjiMHwHbzCthKzJy1EWqFvMTqDQeYJzDyLGBkWMUoklpanJue
-        W2ykV5yYW1yal66XnJ+7iREYotuO/dyyg7HrXfAhRgEORiUeXokywzgh1sSy4srcQ4wSHMxK
-        IryirkAh3pTEyqrUovz4otKc1OJDjKZAyycyS4km5wPjJ68k3tDU0NzC0tDc2NzYzEJJnLdD
-        4GCMkEB6YklqdmpqQWoRTB8TB6dUA2PGtl0671uqJEQn3nGQ/DbnX8XqkOf3FGcGuc74ukmg
-        KGXntoOJ+uqpR19ena+4noXJ5UBxasfhROG+J3rJzi+3vPLtOhZke//iA8WNy5Te5zzf9b1D
-        0rWGs2qzRePJRSGiBw+oz+sv0TrNlPdigeoqmUeejzYVfFN+tzxLbNnGux5/VM/E5y9RYinO
-        SDTUYi4qTgQADVo8w2cCAAA=
-X-CMS-MailID: 20200129163716eucas1p19550fcbfff81ca8586df28782399cff0
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200129163716eucas1p19550fcbfff81ca8586df28782399cff0
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200129163716eucas1p19550fcbfff81ca8586df28782399cff0
-References: <CGME20200129163716eucas1p19550fcbfff81ca8586df28782399cff0@eucas1p1.samsung.com>
+        Wed, 29 Jan 2020 13:29:22 -0500
+Received: by mail-ed1-f52.google.com with SMTP id c26so788322eds.8
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jan 2020 10:29:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4qkJva2WsjlzXbLrXwOCyzngWVPfhRPEm+QIF0TxRCs=;
+        b=qWK3qM/RshZ2j4oe7PiXwpNKR7qP52y/UaaIacpB3T8qzFiwvtIRGXtzJWne94i+85
+         pbeVx50gVolZ1kJv/fBZO9YfU8C/VlfvMam0GvdWF85b7oDXRubMm9u/eg0OSv13wB4W
+         VvGPX4Y9nqtRQh8hfv/vVJdO7KgUoAepCWr2jHaNArLiHhOIQ7AmLs7oqnnUqjM2jMxO
+         iCucDpooiXZ/seaB3AWTabjHedWeIlJ0RUp8257frkp6d7t6XjropZj2jj30ezAg8xw6
+         m094hvEOpUdc90AsMlS3IR2N7lln4KYoRd9Elws+x/unWKdnHyDonnL7dgCf6ohClLMH
+         TX+w==
+X-Gm-Message-State: APjAAAVFA933CU/JQ17g5rWzDoX2/ddOIgtIWgnQarhW6ql3cOLtGBhj
+        HPcjt7eGeRN6sZ3Zc8Lp2Fc=
+X-Google-Smtp-Source: APXvYqz1/cdG+k42XUqB4QSIVvZhpddvdczacL56EyIVANpjoiUGIhsZmLCd2Gpp1rr/aNnryIFmnw==
+X-Received: by 2002:a17:906:3cea:: with SMTP id d10mr719187ejh.32.1580322561227;
+        Wed, 29 Jan 2020 10:29:21 -0800 (PST)
+Received: from kozik-lap ([194.230.155.229])
+        by smtp.googlemail.com with ESMTPSA id x2sm311343edi.95.2020.01.29.10.29.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 29 Jan 2020 10:29:20 -0800 (PST)
+Date:   Wed, 29 Jan 2020 19:29:18 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Kukjin Kim <kgene@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>,
+        kernel-build-reports@lists.linaro.org,
+        linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-arm-kernel@lists.infradead.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: next/master boot: 148 boots: 10 failed, 136 passed with 2
+ untried/unknown (next-20200129)
+Message-ID: <20200129182918.GA13626@kozik-lap>
+References: <5e31aaaa.1c69fb81.a7667.f187@mx.google.com>
+ <20200129161113.GE3928@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200129161113.GE3928@sirena.org.uk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Commit 71723a96b8b1 ("dmaengine: Create symlinks between DMA channels and
-slaves") changed the dma_request_chan() function flow in such a way that
-it always returns EPROBE_DEFER in case of channels that cannot be found.
-This break the operation of the devices which have optional DMA channels
-as it puts their drivers in endless deferred probe loop. Fix this by
-propagating the proper error value.
+On Wed, Jan 29, 2020 at 04:11:13PM +0000, Mark Brown wrote:
+> On Wed, Jan 29, 2020 at 07:54:18AM -0800, kernelci.org bot wrote:
+> 
+> Today's -next fails to boot on Odroid X2 and XU3 with exynos_defconfig
+> or multi_v7_defconfig with SMP=n.  It appears to get stuck in a loop
+> probing the I2S secondary DAI for some reason:
+> 
+> 12:07:05.997409  <6>[    6.421596] exynos-bus: new bus device registered: soc:bus_mscl ( 84000 KHz ~ 666000 KHz)
+> 12:07:05.997653  <4>[    6.429763] samsung-i2s 3830000.i2s-sec: DMA channels sourced from device 3830000.i2s
+> 12:07:06.006838  <4>[    6.439652] samsung-i2s 3830000.i2s-sec: DMA channels sourced from device 3830000.i2s
+> 12:07:06.015764  <4>[    6.448666] samsung-i2s 3830000.i2s-sec: DMA channels sourced from device 3830000.i2s
+> 
+> and so on ad infinitum.  Vanilla multi_v7_defconfig is fine and just
+> displays a saingle copy of that log message.  Full logs and other
+> details here:
+> 
+> 	https://kernelci.org/boot/id/5e3176467f121dbdef2824fc/
+> 	https://kernelci.org/boot/id/5e317b7322dcdaa3e5282500/
+> 	https://kernelci.org/boot/id/5e317c0f6bfd765fb42824f1/
+> 	https://kernelci.org/boot/id/5e317517be8559c7542824f1/
+> 
+> I don't *think* it's an audio issue as mainline seems fine and all the
+> ASoC changes have already landed in mainline for this merge window.
 
-Fixes: 71723a96b8b1 ("dmaengine: Create symlinks between DMA channels and slaves")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/dma/dmaengine.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for the report.
 
-diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
-index f3ef4edd4de1..27b64a665347 100644
---- a/drivers/dma/dmaengine.c
-+++ b/drivers/dma/dmaengine.c
-@@ -759,7 +759,7 @@ struct dma_chan *dma_request_chan(struct device *dev, const char *name)
- 	if (!IS_ERR_OR_NULL(chan))
- 		goto found;
- 
--	return ERR_PTR(-EPROBE_DEFER);
-+	return chan;
- 
- found:
- 	chan->slave = dev;
--- 
-2.17.1
+Marek spotted it as well and sent a patch
+
+Best regards,
+Krzysztof
 
