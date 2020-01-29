@@ -1,105 +1,103 @@
-Return-Path: <SRS0=6aQT=3Q=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=uax/=3S=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D2F2C2D0DB
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Jan 2020 21:55:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04AC1C2D0DB
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jan 2020 16:11:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CB9B24681
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Jan 2020 21:55:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCF3D2070E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jan 2020 16:11:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1580314279;
+	bh=86HYP6gC2YBJdh7b2uxXsNptfpB6EC1SPN8vJTnp1a8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=CUIgu4SViGssIR/9895Gkx+GtE1BWvtr6P3m/1kN6kHZNKaI79iHS5qEPOUd8+Nsd
+	 0Horn0RixlOxaI3NP72qWUKLPV6lhAyJzQxXU3lF6mDaxXxC+Zu8l7nmfRwuQhtuJ/
+	 iQ3XegzUmUCgc0GrJrgJlTj5DkEnn1DU617EqsEk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727067AbgA0Vzf (ORCPT
+        id S1726821AbgA2QLT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 27 Jan 2020 16:55:35 -0500
-Received: from foss.arm.com ([217.140.110.172]:49574 "EHLO foss.arm.com"
+        Wed, 29 Jan 2020 11:11:19 -0500
+Received: from foss.arm.com ([217.140.110.172]:43040 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726080AbgA0Vzf (ORCPT
+        id S1726564AbgA2QLT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 27 Jan 2020 16:55:35 -0500
+        Wed, 29 Jan 2020 11:11:19 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1DD1031B;
-        Mon, 27 Jan 2020 13:55:35 -0800 (PST)
-Received: from e123648.arm.com (unknown [10.37.12.150])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9E54B3F68E;
-        Mon, 27 Jan 2020 13:55:29 -0800 (PST)
-From:   lukasz.luba@arm.com
-To:     kgene@kernel.org, krzk@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org
-Cc:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        cw00.choi@samsung.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        b.zolnierkie@samsung.com, lukasz.luba@arm.com,
-        dietmar.eggemann@arm.com
-Subject: [PATCH 3/3] ARM: exynos_defconfig: Enable Energy Model framework
-Date:   Mon, 27 Jan 2020 21:54:53 +0000
-Message-Id: <20200127215453.15144-4-lukasz.luba@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200127215453.15144-1-lukasz.luba@arm.com>
-References: <20200127215453.15144-1-lukasz.luba@arm.com>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9897A328;
+        Wed, 29 Jan 2020 08:11:18 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 171023F52E;
+        Wed, 29 Jan 2020 08:11:17 -0800 (PST)
+Date:   Wed, 29 Jan 2020 16:11:13 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sangbeom Kim <sbkim73@samsung.com>
+Cc:     kernel-build-reports@lists.linaro.org,
+        linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: next/master boot: 148 boots: 10 failed, 136 passed with 2
+ untried/unknown (next-20200129)
+Message-ID: <20200129161113.GE3928@sirena.org.uk>
+References: <5e31aaaa.1c69fb81.a7667.f187@mx.google.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="qFgkTsE6LiHkLPZw"
+Content-Disposition: inline
+In-Reply-To: <5e31aaaa.1c69fb81.a7667.f187@mx.google.com>
+X-Cookie: Chocolate chip.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Lukasz Luba <lukasz.luba@arm.com>
 
-Enable the Energy Model (EM) brings possibility to use Energy Aware
-Scheduler (EAS). This compiles the EM but does not enable to run EAS in
-default. The EAS only works with SchedUtil - a CPUFreq governor which
-handles direct requests from the scheduler for the frequency change. Thus,
-to make EAS working in default, the SchedUtil governor should be
-configured as default CPUFreq governor. Although, the EAS might be enabled
-in runtime, when the EM is present for CPUs, the SchedUtil is compiled and
-then set as CPUFreq governor, i.e.:
+--qFgkTsE6LiHkLPZw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-echo schedutil > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-echo schedutil > /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
+On Wed, Jan 29, 2020 at 07:54:18AM -0800, kernelci.org bot wrote:
 
-To check if EAS is ready to work, the read output from the command below
-should show '1':
-cat /proc/sys/kernel/sched_energy_aware
+Today's -next fails to boot on Odroid X2 and XU3 with exynos_defconfig
+or multi_v7_defconfig with SMP=n.  It appears to get stuck in a loop
+probing the I2S secondary DAI for some reason:
 
-To disable EAS in runtime simply 'echo 0' to the file above.
+12:07:05.997409  <6>[    6.421596] exynos-bus: new bus device registered: soc:bus_mscl ( 84000 KHz ~ 666000 KHz)
+12:07:05.997653  <4>[    6.429763] samsung-i2s 3830000.i2s-sec: DMA channels sourced from device 3830000.i2s
+12:07:06.006838  <4>[    6.439652] samsung-i2s 3830000.i2s-sec: DMA channels sourced from device 3830000.i2s
+12:07:06.015764  <4>[    6.448666] samsung-i2s 3830000.i2s-sec: DMA channels sourced from device 3830000.i2s
 
-Some test results, which stress the scheduler on Odroid-XU3:
-hackbench -l 500 -s 4096
-With mainline code and with this patch set.
+and so on ad infinitum.  Vanilla multi_v7_defconfig is fine and just
+displays a saingle copy of that log message.  Full logs and other
+details here:
 
-The tests have been made with and without CONFIG_PROVE_LOCKING (PL)
-(which is set to =y in default exynos_defconfig)
+	https://kernelci.org/boot/id/5e3176467f121dbdef2824fc/
+	https://kernelci.org/boot/id/5e317b7322dcdaa3e5282500/
+	https://kernelci.org/boot/id/5e317c0f6bfd765fb42824f1/
+	https://kernelci.org/boot/id/5e317517be8559c7542824f1/
 
-		|		this patch set			| mainline
-		|-----------------------------------------------|---------------
-		| performance	| SchedUtil	| SchedUtil	| performance
-		| governor	| governor	| governor	| governor
-		|		| w/o EAS	| w/ EAS	|
-----------------|---------------|---------------|---------------|---------------
-hackbench w/ PL | 12.7s		| 11.7s		| 12.0s		| 13.0s - 12.2s
-hackbench w/o PL| 9.2s		| 8.1s		| 8.2s		| 9.2s - 8.4s
+I don't *think* it's an audio issue as mainline seems fine and all the
+ASoC changes have already landed in mainline for this merge window.
 
-Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
----
- arch/arm/configs/exynos_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+--qFgkTsE6LiHkLPZw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index 1db857056992..c0f8ecabc607 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -18,6 +18,7 @@ CONFIG_ZBOOT_ROM_BSS=0x0
- CONFIG_ARM_APPENDED_DTB=y
- CONFIG_ARM_ATAG_DTB_COMPAT=y
- CONFIG_CMDLINE="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC1,115200 init=/linuxrc mem=256M"
-+CONFIG_ENERGY_MODEL=y
- CONFIG_CPU_FREQ=y
- CONFIG_CPU_FREQ_STAT=y
- CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
--- 
-2.17.1
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4xrqAACgkQJNaLcl1U
+h9ATugf/ZQktKxJUE958PkbhFp8L06jo/MfX8fgEE6ntse19PBpXeuilaGQUAPJ7
+JMfQp+W9juAvCnOSh9WFvc1jzs+gVNS8KgxuPNVwNsFf2IrRRegGtC/WnnadBjJ1
+Ud/4su9USIquKP1QAI/6J/PayS06xyzkwWIiO9F7YqWHUQlS3sijE3rR2ik3NqRU
+Xelgon/8TonC//tBv6OSP3aX2y1US/l1P8fqtZBpQL/wz7ZBxuaWaK5Mk46ppSmk
+O2X9aooL11ie3Bo2erGOQomMcy8/i70DqCzGwCXdoay1BPENPNZ9mMTmCBrEvHfL
+amhYBa+Zwl2H9Gl09SNTzgjQY7b/Ow==
+=2GQU
+-----END PGP SIGNATURE-----
+
+--qFgkTsE6LiHkLPZw--
