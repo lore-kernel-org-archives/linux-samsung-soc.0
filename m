@@ -2,104 +2,119 @@ Return-Path: <SRS0=uax/=3S=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91B92C2D0DB
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jan 2020 18:29:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC3F5C2D0DB
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jan 2020 19:51:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69FFC20716
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jan 2020 18:29:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1580322563;
-	bh=wCqb2TVb1tPQ6Px9UNwI8Jlhg1oz5U7a9tFtQPBjlRE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=v+DzZpibjs5i1jPQW2RbeiIrhgK/ByvHvZO8bVKaJhfsyFYIrTBnwQTJ4DA9u/thS
-	 s0befwKbYOfxbbg+IbFklYdHrlqpR4hIYXfgeNWQgPpvBRPgUj5UppSfzf9DYCvpNn
-	 oroVfLvbjOUJVwTzUCYBun+hdolSGXqCIHLplA/k=
+	by mail.kernel.org (Postfix) with ESMTP id A700720702
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Jan 2020 19:51:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="i+SbOgfP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726672AbgA2S3X (ORCPT
+        id S1726332AbgA2TvS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 29 Jan 2020 13:29:23 -0500
-Received: from mail-ed1-f52.google.com ([209.85.208.52]:41690 "EHLO
-        mail-ed1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726332AbgA2S3W (ORCPT
+        Wed, 29 Jan 2020 14:51:18 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:52230 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726708AbgA2TvR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Jan 2020 13:29:22 -0500
-Received: by mail-ed1-f52.google.com with SMTP id c26so788322eds.8
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jan 2020 10:29:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4qkJva2WsjlzXbLrXwOCyzngWVPfhRPEm+QIF0TxRCs=;
-        b=qWK3qM/RshZ2j4oe7PiXwpNKR7qP52y/UaaIacpB3T8qzFiwvtIRGXtzJWne94i+85
-         pbeVx50gVolZ1kJv/fBZO9YfU8C/VlfvMam0GvdWF85b7oDXRubMm9u/eg0OSv13wB4W
-         VvGPX4Y9nqtRQh8hfv/vVJdO7KgUoAepCWr2jHaNArLiHhOIQ7AmLs7oqnnUqjM2jMxO
-         iCucDpooiXZ/seaB3AWTabjHedWeIlJ0RUp8257frkp6d7t6XjropZj2jj30ezAg8xw6
-         m094hvEOpUdc90AsMlS3IR2N7lln4KYoRd9Elws+x/unWKdnHyDonnL7dgCf6ohClLMH
-         TX+w==
-X-Gm-Message-State: APjAAAVFA933CU/JQ17g5rWzDoX2/ddOIgtIWgnQarhW6ql3cOLtGBhj
-        HPcjt7eGeRN6sZ3Zc8Lp2Fc=
-X-Google-Smtp-Source: APXvYqz1/cdG+k42XUqB4QSIVvZhpddvdczacL56EyIVANpjoiUGIhsZmLCd2Gpp1rr/aNnryIFmnw==
-X-Received: by 2002:a17:906:3cea:: with SMTP id d10mr719187ejh.32.1580322561227;
-        Wed, 29 Jan 2020 10:29:21 -0800 (PST)
-Received: from kozik-lap ([194.230.155.229])
-        by smtp.googlemail.com with ESMTPSA id x2sm311343edi.95.2020.01.29.10.29.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 Jan 2020 10:29:20 -0800 (PST)
-Date:   Wed, 29 Jan 2020 19:29:18 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Kukjin Kim <kgene@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>,
-        kernel-build-reports@lists.linaro.org,
-        linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-arm-kernel@lists.infradead.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: next/master boot: 148 boots: 10 failed, 136 passed with 2
- untried/unknown (next-20200129)
-Message-ID: <20200129182918.GA13626@kozik-lap>
-References: <5e31aaaa.1c69fb81.a7667.f187@mx.google.com>
- <20200129161113.GE3928@sirena.org.uk>
+        Wed, 29 Jan 2020 14:51:17 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00TJp1Lr078023;
+        Wed, 29 Jan 2020 13:51:01 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1580327461;
+        bh=rbB/lD7xEgzLxXwTLa3JpCV55iUJ31TPZ7JK+o77KyA=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=i+SbOgfPYo7oQJfA+Q3vNaHmk6uHqFgEJ28i3Fxt7pifIhEH2MdjGg/uPNV9NVRsc
+         zc+SHz4kE0B1WMghT0gX6uVeGbGIST4r+ydRgsHFPkxh1t/ew60x+KwLXY0RuCMcgK
+         BoyjKqrW1p9iPtwSYX4spV6syCAb1RVBuU8FVrVY=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00TJp1fk010922
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 29 Jan 2020 13:51:01 -0600
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 29
+ Jan 2020 13:51:01 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 29 Jan 2020 13:51:01 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00TJowTf087910;
+        Wed, 29 Jan 2020 13:50:59 -0600
+Subject: Re: [PATCH] dmaengine: Fix return value for dma_requrest_chan() in
+ case of failure
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        <dmaengine@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>
+CC:     Mark Brown <broonie@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Vinod Koul <vkoul@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+References: <CGME20200129163716eucas1p19550fcbfff81ca8586df28782399cff0@eucas1p1.samsung.com>
+ <20200129163548.11096-1-m.szyprowski@samsung.com>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <3d7a612a-851f-85f1-4207-531f5a87212a@ti.com>
+Date:   Wed, 29 Jan 2020 21:51:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200129161113.GE3928@sirena.org.uk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200129163548.11096-1-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jan 29, 2020 at 04:11:13PM +0000, Mark Brown wrote:
-> On Wed, Jan 29, 2020 at 07:54:18AM -0800, kernelci.org bot wrote:
-> 
-> Today's -next fails to boot on Odroid X2 and XU3 with exynos_defconfig
-> or multi_v7_defconfig with SMP=n.  It appears to get stuck in a loop
-> probing the I2S secondary DAI for some reason:
-> 
-> 12:07:05.997409  <6>[    6.421596] exynos-bus: new bus device registered: soc:bus_mscl ( 84000 KHz ~ 666000 KHz)
-> 12:07:05.997653  <4>[    6.429763] samsung-i2s 3830000.i2s-sec: DMA channels sourced from device 3830000.i2s
-> 12:07:06.006838  <4>[    6.439652] samsung-i2s 3830000.i2s-sec: DMA channels sourced from device 3830000.i2s
-> 12:07:06.015764  <4>[    6.448666] samsung-i2s 3830000.i2s-sec: DMA channels sourced from device 3830000.i2s
-> 
-> and so on ad infinitum.  Vanilla multi_v7_defconfig is fine and just
-> displays a saingle copy of that log message.  Full logs and other
-> details here:
-> 
-> 	https://kernelci.org/boot/id/5e3176467f121dbdef2824fc/
-> 	https://kernelci.org/boot/id/5e317b7322dcdaa3e5282500/
-> 	https://kernelci.org/boot/id/5e317c0f6bfd765fb42824f1/
-> 	https://kernelci.org/boot/id/5e317517be8559c7542824f1/
-> 
-> I don't *think* it's an audio issue as mainline seems fine and all the
-> ASoC changes have already landed in mainline for this merge window.
 
-Thanks for the report.
 
-Marek spotted it as well and sent a patch
+On 29/01/2020 18.35, Marek Szyprowski wrote:
+> Commit 71723a96b8b1 ("dmaengine: Create symlinks between DMA channels and
+> slaves") changed the dma_request_chan() function flow in such a way that
+> it always returns EPROBE_DEFER in case of channels that cannot be found.
+> This break the operation of the devices which have optional DMA channels
+> as it puts their drivers in endless deferred probe loop. Fix this by
+> propagating the proper error value.
+> 
+> Fixes: 71723a96b8b1 ("dmaengine: Create symlinks between DMA channels and slaves")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/dma/dmaengine.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
+> index f3ef4edd4de1..27b64a665347 100644
+> --- a/drivers/dma/dmaengine.c
+> +++ b/drivers/dma/dmaengine.c
+> @@ -759,7 +759,7 @@ struct dma_chan *dma_request_chan(struct device *dev, const char *name)
+>  	if (!IS_ERR_OR_NULL(chan))
+>  		goto found;
+>  
+> -	return ERR_PTR(-EPROBE_DEFER);
+> +	return chan;
 
-Best regards,
-Krzysztof
+It should be:
+return chan ? chan : ERR_PTR(-EPROBE_DEFER);
 
+dma_request_chan() should never return NULL, it either returns the
+dma_chan, or ERR_PTR().
+
+>  
+>  found:
+>  	chan->slave = dev;
+> 
+
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
