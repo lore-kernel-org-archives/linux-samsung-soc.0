@@ -2,233 +2,404 @@ Return-Path: <SRS0=wpAe=3T=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9155C33C9E
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jan 2020 12:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 863E4C35240
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jan 2020 12:42:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 552D6206D3
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jan 2020 12:40:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47A9F206D3
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jan 2020 12:42:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="G4V8TrrY"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PE8pXvAi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727139AbgA3MkE (ORCPT
+        id S1726980AbgA3Mmx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 30 Jan 2020 07:40:04 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:55191 "EHLO
+        Thu, 30 Jan 2020 07:42:53 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:56255 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727132AbgA3MkD (ORCPT
+        with ESMTP id S1726948AbgA3Mmx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 30 Jan 2020 07:40:03 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200130124001euoutp0249a826969c1c8fab41fe862835a88603~uqoOJoCZc0644906449euoutp02Q
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jan 2020 12:40:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200130124001euoutp0249a826969c1c8fab41fe862835a88603~uqoOJoCZc0644906449euoutp02Q
+        Thu, 30 Jan 2020 07:42:53 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200130124251euoutp02fe2dca0e7225f31830d9571b25a40bb0~uqqs2Cw8u0684306843euoutp02e
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jan 2020 12:42:51 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200130124251euoutp02fe2dca0e7225f31830d9571b25a40bb0~uqqs2Cw8u0684306843euoutp02e
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1580388001;
-        bh=Jzdor6fDyEnMsChZ027tOaitTynBCI6a43ngD1bmh0o=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=G4V8TrrYGDftuvmy7lSwk8OS7dmash8BRuSalwNmgm19XznE5UE9oI7Jn1sQJNrR+
-         TVrObNHktdSt6W8o0m8/lH3spkpk9ln1KCyZ3qh5mBJQnvhucyej9gtTPSNmgQ3R4F
-         W9eLq52Pf9z6dXeZZwsdMTMq705orMwTmr2luD80=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        s=mail20170921; t=1580388171;
+        bh=C2/gDuPh/YjMrhIA5Fi5BfCbgFyvnjBPSfOWNOLrtLQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=PE8pXvAil21HQuednyUO9bmhdHb0GlV1xrwy+1cJt7cIovJM2icUesFn/z6ZSP+Hz
+         nVm5AuNIz4ZSC9BVmRuAFzvRIySQUr4eJLMW6bAj+XRq96CH19WHwc2oTA8dc7n7N9
+         9wUD8nPtZws2ujhocRsutypBnBbbLvxEpJTh4n/c=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200130124000eucas1p1aa08fe80f3610b04dfecf70f6c348433~uqoN96rob1361413614eucas1p1-;
-        Thu, 30 Jan 2020 12:40:00 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id C6.69.61286.0AEC23E5; Thu, 30
-        Jan 2020 12:40:00 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200130124000eucas1p137943be0fe3e5e1eb45e705dc5c46431~uqoNuQkB42838028380eucas1p1g;
-        Thu, 30 Jan 2020 12:40:00 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200130124000eusmtrp29bd8676f25fb6eb1b0a30fbf98336b88~uqoNtltLd2643726437eusmtrp2W;
-        Thu, 30 Jan 2020 12:40:00 +0000 (GMT)
-X-AuditID: cbfec7f2-f0bff7000001ef66-63-5e32cea011e6
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 8B.EC.07950.0AEC23E5; Thu, 30
-        Jan 2020 12:40:00 +0000 (GMT)
-Received: from localhost (unknown [106.120.51.46]) by eusmtip1.samsung.com
+        20200130124251eucas1p1278a6ff8d17ec92d81d324786b6049ca~uqqsorbC-0694706947eucas1p1m;
+        Thu, 30 Jan 2020 12:42:51 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id E3.DF.60679.B4FC23E5; Thu, 30
+        Jan 2020 12:42:51 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200130124251eucas1p2046004a71a1a9ff4274a6d1d96e2c260~uqqsUzrLQ1244712447eucas1p25;
+        Thu, 30 Jan 2020 12:42:51 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200130124251eusmtrp105ee7c9b42a2afb3b7c4060ce748b448~uqqsUPuTd2256122561eusmtrp1H;
+        Thu, 30 Jan 2020 12:42:51 +0000 (GMT)
+X-AuditID: cbfec7f4-0cbff7000001ed07-e7-5e32cf4b00af
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 4C.2E.08375.A4FC23E5; Thu, 30
+        Jan 2020 12:42:50 +0000 (GMT)
+Received: from localhost (unknown [106.120.51.46]) by eusmtip2.samsung.com
         (KnoxPortal) with ESMTPA id
-        20200130124000eusmtip11b04f02223def1624a661e1cc2f980a8~uqoNjVG7W1920319203eusmtip1c;
-        Thu, 30 Jan 2020 12:40:00 +0000 (GMT)
+        20200130124250eusmtip261dbfe54d9ddf3a6aa884504c66b3de0~uqqsHrrF81635516355eusmtip2J;
+        Thu, 30 Jan 2020 12:42:50 +0000 (GMT)
 From:   =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
 To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
 Cc:     =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
-Subject: [RFC PATCH 0/4] boot/loader: Load kernel directly from firmware
-Date:   Thu, 30 Jan 2020 13:39:34 +0100
-Message-Id: <20200130123934.3900-1-l.stelmach@samsung.com>
+Subject: [RFC PATCH 1/4] scripts/dtc: update fdtget.c to upstream version
+ v1.4.7-57-gf267e674d145
+Date:   Thu, 30 Jan 2020 13:42:30 +0100
+Message-Id: <20200130124233.4006-1-l.stelmach@samsung.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200130123934.3900-1-l.stelmach@samsung.com>
 MIME-Version: 1.0
 Organization: Samsung R&D Institute Poland
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpileLIzCtJLcpLzFFi42LZduznOd0F54ziDPY8sbS4eWgFo8Wmx9dY
-        LS7vmsNmMeP8PiYHFo/NS+o9+rasYvT4vEkugDmKyyYlNSezLLVI3y6BK2N1y3nGgnn6FVs+
-        nGVvYJyp2sXIySEhYCLx9PYN1i5GLg4hgRWMEj/XTWCCcL4wSjTf+84I4XxmlLj8fwY7TMvs
-        u4ehEssZJS68PsQO4TxnlDi6ZzYLSBWbgKNE/9ITrCC2iEC2xOSPX5hAbGYBe4mJs/6zgdjC
-        Ah4S608/ArNZBFQldq/ax9zFyMHBK2Al8f5wMsQyeYnzvevAFvMKCEqcnPkEbDy/gJbEmqbr
-        LBAj5SWat85mBrlBQuAzm8S8/+dYIZpdJFZua2CEsIUlXh3fAvWBjMT/nfOZQHZJCNRLTJ5k
-        BtHbwyixbc4PFogaa4k7536xgdQwC2hKrN+lD1HuKNG2xAHC5JO48VYQ4gI+iUnbpjNDhHkl
-        OtqEIGaoSKzr3wM1T0qi99UKqFs8JP4tes84gVFxFpK/ZiH5ZRbC2gWMzKsYxVNLi3PTU4sN
-        81LL9YoTc4tL89L1kvNzNzECU8bpf8c/7WD8einpEKMAB6MSD6/HGaM4IdbEsuLK3EOMEhzM
-        SiK8oq6GcUK8KYmVValF+fFFpTmpxYcYpTlYlMR5jRe9jBUSSE8sSc1OTS1ILYLJMnFwSjUw
-        Cm//8f7NX49fByr5hV2//Nty2GjZ1Zzrdbbu32Nt38/QuS30cAvbWreqX8Z7Lmibzoo8XNv+
-        f1lPv96/r7cirhqceD4l8wXPUfslR433e2bPdT/THChX8S/6umHfHcuqFoN1kTzO6yoESoMN
-        LbhFj5xKeWv3Z6PfXIlD8va71xx+m/k427nphRJLcUaioRZzUXEiALtU5BsVAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNLMWRmVeSWpSXmKPExsVy+t/xu7oLzhnFGdz9rW5x89AKRotNj6+x
-        WlzeNYfNYsb5fUwOLB6bl9R79G1ZxejxeZNcAHOUnk1RfmlJqkJGfnGJrVK0oYWRnqGlhZ6R
-        iaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXsbqlvOMBfP0K7Z8OMvewDhTtYuRk0NCwERi9t3D
-        jF2MXBxCAksZJTac+craxcgBlJCSWDk3HaJGWOLPtS42iJqnjBIX/x9gA0mwCThK9C89wQpi
-        iwjkSlw7dJQdxGYWsJeYOOs/WI2wgIfE+tOPwGwWAVWJ3av2MYPM5xWwknh/OBlivrzE+d51
-        YK28AoISJ2c+YQEpYRZQl1g/TwgkzC+gJbGm6ToLxHR5ieats5knMArMQtIxC6FjFpKqBYzM
-        qxhFUkuLc9Nzi430ihNzi0vz0vWS83M3MQIDftuxn1t2MHa9Cz7EKMDBqMTD63HGKE6INbGs
-        uDL3EKMEB7OSCK+oq2GcEG9KYmVValF+fFFpTmrxIUZToG8mMkuJJucDozGvJN7Q1NDcwtLQ
-        3Njc2MxCSZy3Q+BgjJBAemJJanZqakFqEUwfEwenVAMjX/6JY+lNpY9dJ07e7JIx7bv7zf5Z
-        /9TfyR6Lipfp1XQq+TRTstDtRJbqsz9Kbp+erqpfL632cZuJ2UMDyeUyfx79Px0i73fE4P7l
-        hZHxNjLS7xm4QptZP5zTKD0cfaS38tIFrtda7sv8Doc9Slq5wjAj9Kbyhpo10U5J/Ozzrgpu
-        Ewz2rXunxFKckWioxVxUnAgAImLD3Y4CAAA=
-X-CMS-MailID: 20200130124000eucas1p137943be0fe3e5e1eb45e705dc5c46431
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmleLIzCtJLcpLzFFi42LZduzneV3v80ZxBjuPC1vcPLSC0WLT42us
+        Fpd3zWGzmHF+H5MDi8fmJfUefVtWMXp83iQXwBzFZZOSmpNZllqkb5fAlfGw9y5bwWHXijdn
+        25kbGA+bdTFyckgImEg8ePiHvYuRi0NIYAWjxNW+3YwQzhdGifmTlzOCVAkJfGaUmHgxCaZj
+        5p2HLBBFyxkl9v/fA9X+nFFi5b9+JpAqNgFHif6lJ1hBbBGBbInJH7+AxZkF7CUmzvrPBmIL
+        CyRLbG2fBFbDIqAq8WhFE1icV8BKovFeFxvENnmJ873r2EFsTgFriUNTFrJA1AhKnJz5BMzm
+        F9CSWNN0nQVivrxE89bZzCAHSQi0s0ucbOqHGuQisWlLOxOELSzx6vgWdghbRuL05B6gZg4g
+        u15i8iQziN4eRoltc36wQNRYS9w594sNpIZZQFNi/S59iLCjxJX2djaIVj6JG28FIU7gk5i0
+        bTozRJhXoqNNCKJaRWJd/x6ogVISva9WME5gVJqF5JlZSB6YhbBrASPzKkbx1NLi3PTUYqO8
+        1HK94sTc4tK8dL3k/NxNjMCkcfrf8S87GHf9STrEKMDBqMTD63HGKE6INbGsuDL3EKMEB7OS
+        CK+oq2GcEG9KYmVValF+fFFpTmrxIUZpDhYlcV7jRS9jhQTSE0tSs1NTC1KLYLJMHJxSDYyb
+        65bnKjE5+tRNWSVrHTKt+af3Hqabk/s55lxZsF175snkR9FfQ0VeHA656m9RxunJuf3X1abE
+        67MO1Qbf7Eh3c/3mUq5tv7brkTLP22/32usMaxuvHV96Sf9ERVB5m39q7ms/vRN1M36uubp0
+        x6RF+VXnNO02/vv5KmZximCVQeCJ99MW+39TYinOSDTUYi4qTgQA06wDwxYDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMIsWRmVeSWpSXmKPExsVy+t/xe7pe543iDDb+sbC4eWgFo8Wmx9dY
+        LS7vmsNmMeP8PiYHFo/NS+o9+rasYvT4vEkugDlKz6Yov7QkVSEjv7jEVina0MJIz9DSQs/I
+        xFLP0Ng81srIVEnfziYlNSezLLVI3y5BL+Nh7122gsOuFW/OtjM3MB4262Lk5JAQMJGYeech
+        SxcjF4eQwFJGifW7frB1MXIAJaQkVs5Nh6gRlvhzrYsNouYpo8SkW2vZQRJsAo4S/UtPsILY
+        IgK5EtcOHQWLMwvYS0yc9Z8NxBYWSJSYdvwWE4jNIqAq8WhFE1icV8BKovFeFxvEAnmJ873r
+        wHo5BawlDk1ZyAJygxBQzevd6hDlghInZz4BCzMLqEusnycEEuYX0JJY03SdBWKrvETz1tnM
+        ExiFZiHpmIXQMQtJ1QJG5lWMIqmlxbnpucWGesWJucWleel6yfm5mxiBEbLt2M/NOxgvbQw+
+        xCjAwajEw+txxihOiDWxrLgy9xCjBAezkgivqKthnBBvSmJlVWpRfnxRaU5q8SFGU6AvJzJL
+        iSbnA6M3ryTe0NTQ3MLS0NzY3NjMQkmct0PgYIyQQHpiSWp2ampBahFMHxMHp1QDo8//xKnR
+        YTVT8oVq87+cv8MddO/tZcMetfDIPu0tLVOWV/zRFlq+k+Nric9WjiCBrunvq/bMD7+j8/D5
+        7PM/Fz+Nlv7N/fLJJuuf4moK3dNFm4LDGH/dDvm0ltPio+D/880cim7rvnydzPd+m7Vtx1KZ
+        J5NkGa72i5uqCPefZJ04JWqrnOb8KiWW4oxEQy3mouJEAKKrU/ymAgAA
+X-CMS-MailID: 20200130124251eucas1p2046004a71a1a9ff4274a6d1d96e2c260
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200130124000eucas1p137943be0fe3e5e1eb45e705dc5c46431
+X-RootMTR: 20200130124251eucas1p2046004a71a1a9ff4274a6d1d96e2c260
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200130124000eucas1p137943be0fe3e5e1eb45e705dc5c46431
-References: <CGME20200130124000eucas1p137943be0fe3e5e1eb45e705dc5c46431@eucas1p1.samsung.com>
+X-CMS-RootMailID: 20200130124251eucas1p2046004a71a1a9ff4274a6d1d96e2c260
+References: <20200130123934.3900-1-l.stelmach@samsung.com>
+        <CGME20200130124251eucas1p2046004a71a1a9ff4274a6d1d96e2c260@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This patchset is a PoC showing, it is possible and advantageous to
-integrate platform setup code in the kernel tree instead of maintaining
-it in a separate bootloader project.
+Build and fdtget and add fdtget.c to the list of update source files.
 
-Bringing up a new ARM platform today requires developing the following
-pieces code in both bootloader and kernel:
+Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
+---
+ scripts/dtc/.gitignore           |   4 +
+ scripts/dtc/Makefile             |   5 ++
+ scripts/dtc/fdtget.c             | 125 ++++++++++++++++++-------------
+ scripts/dtc/update-dtc-source.sh |   4 +-
+ 4 files changed, 82 insertions(+), 56 deletions(-)
 
-+ platform setup (DRAM, minimal set of clocks and PMICs etc)
-  - minimal setup in bootloader
-  - full setup in kernel
-+ device drivers (storage, network interface, display)
-  - in both bootloader and kernel
-
-We've noticed that most code required in bootloader can be ported from
-Linux. This isn't, however, effortless. We also consider further
-maintenance of two copies of code an unnecessary burden. Making platform
-setup code a part of kernel source tree makes it possible to reuse existing
-Linux drivers in bootloading environment as well as to avoid creating
-and maintainig two different drivers for new devices.
-
-The following patches enables building Linux image that is loadable
-directly by Odroid XU4's firmware (bl2). The goal for such arrangement
-is to use Linux as a boot loader that later runs a full OS using kexec.
-
-Hardkernel, the vendor of Odroid XU4, provides signed, and thus,
-cumbersome to replace, platform setup code (bl1 and bl2). We decided not
-to replace them, but rather make the kernel loadable by the bl2 code by
-adding only a tiny amount of code to set up the consol. The kernel
-needs, however, to be small enough to be loaded succesfully (1 MiB).
-
-The patchset also provides hsinit (in tools/hsinit) userland program,
-which is a tiny init program that extracts designated archive to
-initramfs and executes /init. At the moment any initramfs image can be
-used at this stage.
-
-Although hsinit can be linked against glibc it makes little sense
-because together with the kernel it wont fit in 1 MiB. Instead it is
-recommended to link hsinit against musl libc. Install musl from your OS
-vendor or follow the upstream instructions. With musl available enter
-tools/hsinit and run the following commands.
-
---8<---------------cut here---------------start------------->8---
-wget -P vendor/ https://libarchive.org/downloads/libarchive-3.3.2.tar.gz
-wget -P vendor/ http://prdownloads.sourceforge.net/libpng/zlib-1.2.11.tar.gz
-
-./bootstrap
-
-MUSL_DIR=/usr/lib/arm-linux-musleabi/ \
-GCC_CROSS_DIR=/usr/lib/gcc-cross/arm-linux-gnueabi/8/ \
-CPPFLAGS='-nostdinc -isystem /usr/include/arm-linux-musleabi/' \
-CFLAGS='-mthumb -Os -ffunction-sections -fdata-sections' \
-LIBARCHIVE_CPP_FLAGS=-I/usr/include/arm-linux-musleabi/ \
-LIBARCHIVE_C_FLAGS=$CFLAGS \
-ZLIB_C_FLAGS=$CFLAGS \
-LDFLAGS="-nostdlib -L${MUSL_DIR}/ -L${GCC_CROSS_DIR}/ ${MUSL_DIR}/crt1.o  ${MUSL_DIR}/crti.o  ${GCC_CROSS_DIR}/crtbegin.o -Wl,--gc-sections -Wl,--start-group  ${GCC_CROSS_DIR}/libgcc.a  ${GCC_CROSS_DIR}/libgcc_eh.a -Wl,--end-group ${GCC_CROSS_DIR}/crtend.o  ${MUSL_DIR}/crtn.o -s"  \
-LIBS="-lc -lgcc" \
-./configure --enable-local-libraries --host=arm-linux-gnueabi --enable-static
-
-make
---8<---------------cut here---------------end--------------->8---
-
-To build bootImage file that is loadable by Odroid XU4's bl2 the following
-commands need to be issued (CROSS_COMPILE and ARCH ommited)
-
---8<---------------cut here---------------start------------->8---
-make odroidxu4_bootloader_defconfig
-make dtbs
-make bootImage
---8<---------------cut here---------------end--------------->8---
-
-The resulting arch/arm/boot/bootImage should be renamed to u-boot-mmc.bin and
-flashed onto an SD or eMMC card with sd_fusing scritp.
-
-
-
-
-Łukasz Stelmach (4):
-  scripts/dtc: update fdtget.c to upstream version v1.4.7-57-gf267e674d145
-  scripts: add get_console_base.pl
-  Add tools/hsinit
-  boot/loader: Enable building bootloader replacement for Odroid XU4
-
- arch/arm/Kconfig                              |   8 +
- arch/arm/Makefile                             |   8 +-
- arch/arm/boot/Makefile                        |  17 +
- arch/arm/boot/loader/Kconfig                  |  23 ++
- arch/arm/boot/loader/Makefile                 |  42 +++
- arch/arm/boot/loader/odroid-console.c         | 136 ++++++++
- arch/arm/boot/loader/odroid-crt0.S            |  40 +++
- arch/arm/boot/loader/piggy.S                  |  14 +
- arch/arm/boot/loader/vectors.S                | 112 +++++++
- arch/arm/boot/loader/vmlinux.lds              |  17 +
- .../configs/odroidxu4_bootloader_defconfig    | 127 ++++++++
- scripts/dtc/.gitignore                        |   4 +
- scripts/dtc/Makefile                          |   5 +
- scripts/dtc/fdtget.c                          | 125 ++++----
- scripts/dtc/update-dtc-source.sh              |   4 +-
- scripts/get_console_base.pl                   |  26 ++
- tools/hsinit/Makefile.am                      |  29 ++
- tools/hsinit/README.org                       |  56 ++++
- tools/hsinit/bootstrap                        |   7 +
- tools/hsinit/configure.ac                     | 128 ++++++++
- tools/hsinit/hsinit.c                         | 299 ++++++++++++++++++
- tools/hsinit/vendor/.gitignore                |   5 +
- tools/hsinit/vendor/SHA256SUMS                |   2 +
- 23 files changed, 1177 insertions(+), 57 deletions(-)
- create mode 100644 arch/arm/boot/loader/Kconfig
- create mode 100644 arch/arm/boot/loader/Makefile
- create mode 100644 arch/arm/boot/loader/odroid-console.c
- create mode 100644 arch/arm/boot/loader/odroid-crt0.S
- create mode 100644 arch/arm/boot/loader/piggy.S
- create mode 100644 arch/arm/boot/loader/vectors.S
- create mode 100644 arch/arm/boot/loader/vmlinux.lds
- create mode 100644 arch/arm/configs/odroidxu4_bootloader_defconfig
- create mode 100755 scripts/get_console_base.pl
- create mode 100644 tools/hsinit/Makefile.am
- create mode 100644 tools/hsinit/README.org
- create mode 100755 tools/hsinit/bootstrap
- create mode 100644 tools/hsinit/configure.ac
- create mode 100644 tools/hsinit/hsinit.c
- create mode 100644 tools/hsinit/vendor/.gitignore
- create mode 100644 tools/hsinit/vendor/SHA256SUMS
-
+diff --git scripts/dtc/.gitignore scripts/dtc/.gitignore
+index 2e6e60d64ede..80f6b50fdf77 100644
+--- scripts/dtc/.gitignore
++++ scripts/dtc/.gitignore
+@@ -1 +1,5 @@
+ dtc
++dtc-lexer.lex.c
++dtc-parser.tab.c
++dtc-parser.tab.h
++fdtget
+diff --git scripts/dtc/Makefile scripts/dtc/Makefile
+index b5a5b1c548c9..74322d8dac25 100644
+--- scripts/dtc/Makefile
++++ scripts/dtc/Makefile
+@@ -2,12 +2,15 @@
+ # scripts/dtc makefile
+ 
+ hostprogs-$(CONFIG_DTC) := dtc
++hostprogs-$(CONFIG_DTC) += fdtget
+ always		:= $(hostprogs-y)
+ 
+ dtc-objs	:= dtc.o flattree.o fstree.o data.o livetree.o treesource.o \
+ 		   srcpos.o checks.o util.o
+ dtc-objs	+= dtc-lexer.lex.o dtc-parser.tab.o
+ 
++fdtget-objs     := fdtget.o util.o
++
+ # Source files need to get at the userspace version of libfdt_env.h to compile
+ HOST_EXTRACFLAGS := -I $(srctree)/$(src)/libfdt
+ 
+@@ -26,5 +29,7 @@ endif
+ HOSTCFLAGS_dtc-lexer.lex.o := -I $(srctree)/$(src)
+ HOSTCFLAGS_dtc-parser.tab.o := -I $(srctree)/$(src)
+ 
++HOSTLDLIBS_fdtget := -L$(obj)/libfdt -lfdt -Wl,-rpath='$$ORIGIN/libfdt'
++
+ # dependencies on generated files need to be listed explicitly
+ $(obj)/dtc-lexer.lex.o: $(obj)/dtc-parser.tab.h
+diff --git scripts/dtc/fdtget.c scripts/dtc/fdtget.c
+index c922f82246c6..777582e2d45f 100644
+--- scripts/dtc/fdtget.c
++++ scripts/dtc/fdtget.c
+@@ -39,6 +39,37 @@ static void report_error(const char *where, int err)
+ 	fprintf(stderr, "Error at '%s': %s\n", where, fdt_strerror(err));
+ }
+ 
++/**
++ * Shows a list of cells in the requested format
++ *
++ * @param disp		Display information / options
++ * @param data		Data to display
++ * @param len		Maximum length of buffer
++ * @param size		Data size to use for display (e.g. 4 for 32-bit)
++ * @return 0 if ok, -1 on error
++ */
++static int show_cell_list(struct display_info *disp, const char *data, int len,
++			  int size)
++{
++	const uint8_t *p = (const uint8_t *)data;
++	char fmt[3];
++	int value;
++	int i;
++
++	fmt[0] = '%';
++	fmt[1] = disp->type ? disp->type : 'd';
++	fmt[2] = '\0';
++	for (i = 0; i < len; i += size, p += size) {
++		if (i)
++			printf(" ");
++		value = size == 4 ? fdt32_ld((const fdt32_t *)p) :
++			size == 2 ? (*p << 8) | p[1] : *p;
++		printf(fmt, value);
++	}
++
++	return 0;
++}
++
+ /**
+  * Displays data of a given length according to selected options
+  *
+@@ -52,12 +83,9 @@ static void report_error(const char *where, int err)
+  */
+ static int show_data(struct display_info *disp, const char *data, int len)
+ {
+-	int i, size;
+-	const uint8_t *p = (const uint8_t *)data;
++	int size;
+ 	const char *s;
+-	int value;
+ 	int is_string;
+-	char fmt[3];
+ 
+ 	/* no data, don't print */
+ 	if (len == 0)
+@@ -85,17 +113,8 @@ static int show_data(struct display_info *disp, const char *data, int len)
+ 				"selected data size\n");
+ 		return -1;
+ 	}
+-	fmt[0] = '%';
+-	fmt[1] = disp->type ? disp->type : 'd';
+-	fmt[2] = '\0';
+-	for (i = 0; i < len; i += size, p += size) {
+-		if (i)
+-			printf(" ");
+-		value = size == 4 ? fdt32_to_cpu(*(const uint32_t *)p) :
+-			size == 2 ? (*p << 8) | p[1] : *p;
+-		printf(fmt, value);
+-	}
+-	return 0;
++
++	return show_cell_list(disp, data, len, size);
+ }
+ 
+ /**
+@@ -107,7 +126,6 @@ static int show_data(struct display_info *disp, const char *data, int len)
+  */
+ static int list_properties(const void *blob, int node)
+ {
+-	const struct fdt_property *data;
+ 	const char *name;
+ 	int prop;
+ 
+@@ -116,8 +134,7 @@ static int list_properties(const void *blob, int node)
+ 		/* Stop silently when there are no more properties */
+ 		if (prop < 0)
+ 			return prop == -FDT_ERR_NOTFOUND ? 0 : prop;
+-		data = fdt_get_property_by_offset(blob, prop, NULL);
+-		name = fdt_string(blob, fdt32_to_cpu(data->nameoff));
++		fdt_getprop_by_offset(blob, prop, &name, NULL);
+ 		if (name)
+ 			puts(name);
+ 		prop = fdt_next_property_offset(blob, prop);
+@@ -231,7 +248,7 @@ static int show_data_for_item(const void *blob, struct display_info *disp,
+  * @param filename	Filename of blob file
+  * @param arg		List of arguments to process
+  * @param arg_count	Number of arguments
+- * @param return 0 if ok, -ve on error
++ * @return 0 if ok, -ve on error
+  */
+ static int do_fdtget(struct display_info *disp, const char *filename,
+ 		     char **arg, int arg_count, int args_per_step)
+@@ -240,7 +257,7 @@ static int do_fdtget(struct display_info *disp, const char *filename,
+ 	const char *prop;
+ 	int i, node;
+ 
+-	blob = utilfdt_read(filename);
++	blob = utilfdt_read(filename, NULL);
+ 	if (!blob)
+ 		return -1;
+ 
+@@ -252,44 +269,50 @@ static int do_fdtget(struct display_info *disp, const char *filename,
+ 				continue;
+ 			} else {
+ 				report_error(arg[i], node);
++				free(blob);
+ 				return -1;
+ 			}
+ 		}
+ 		prop = args_per_step == 1 ? NULL : arg[i + 1];
+ 
+-		if (show_data_for_item(blob, disp, node, prop))
++		if (show_data_for_item(blob, disp, node, prop)) {
++			free(blob);
+ 			return -1;
++		}
+ 	}
++
++	free(blob);
++
+ 	return 0;
+ }
+ 
+-static const char *usage_msg =
+-	"fdtget - read values from device tree\n"
+-	"\n"
+-	"Each value is printed on a new line.\n\n"
+-	"Usage:\n"
++/* Usage related data. */
++static const char usage_synopsis[] =
++	"read values from device tree\n"
+ 	"	fdtget <options> <dt file> [<node> <property>]...\n"
+ 	"	fdtget -p <options> <dt file> [<node> ]...\n"
+-	"Options:\n"
+-	"\t-t <type>\tType of data\n"
+-	"\t-p\t\tList properties for each node\n"
+-	"\t-l\t\tList subnodes for each node\n"
+-	"\t-d\t\tDefault value to display when the property is "
+-			"missing\n"
+-	"\t-h\t\tPrint this help\n\n"
++	"\n"
++	"Each value is printed on a new line.\n"
+ 	USAGE_TYPE_MSG;
+-
+-static void usage(const char *msg)
+-{
+-	if (msg)
+-		fprintf(stderr, "Error: %s\n\n", msg);
+-
+-	fprintf(stderr, "%s", usage_msg);
+-	exit(2);
+-}
++static const char usage_short_opts[] = "t:pld:" USAGE_COMMON_SHORT_OPTS;
++static struct option const usage_long_opts[] = {
++	{"type",              a_argument, NULL, 't'},
++	{"properties",       no_argument, NULL, 'p'},
++	{"list",             no_argument, NULL, 'l'},
++	{"default",           a_argument, NULL, 'd'},
++	USAGE_COMMON_LONG_OPTS,
++};
++static const char * const usage_opts_help[] = {
++	"Type of data",
++	"List properties for each node",
++	"List subnodes for each node",
++	"Default value to display when the property is missing",
++	USAGE_COMMON_OPTS_HELP
++};
+ 
+ int main(int argc, char *argv[])
+ {
++	int opt;
+ 	char *filename = NULL;
+ 	struct display_info disp;
+ 	int args_per_step = 2;
+@@ -298,20 +321,14 @@ int main(int argc, char *argv[])
+ 	memset(&disp, '\0', sizeof(disp));
+ 	disp.size = -1;
+ 	disp.mode = MODE_SHOW_VALUE;
+-	for (;;) {
+-		int c = getopt(argc, argv, "d:hlpt:");
+-		if (c == -1)
+-			break;
+-
+-		switch (c) {
+-		case 'h':
+-		case '?':
+-			usage(NULL);
++	while ((opt = util_getopt_long()) != EOF) {
++		switch (opt) {
++		case_USAGE_COMMON_FLAGS
+ 
+ 		case 't':
+ 			if (utilfdt_decode_type(optarg, &disp.type,
+ 					&disp.size))
+-				usage("Invalid type string");
++				usage("invalid type string");
+ 			break;
+ 
+ 		case 'p':
+@@ -333,7 +350,7 @@ int main(int argc, char *argv[])
+ 	if (optind < argc)
+ 		filename = argv[optind++];
+ 	if (!filename)
+-		usage("Missing filename");
++		usage("missing filename");
+ 
+ 	argv += optind;
+ 	argc -= optind;
+@@ -344,7 +361,7 @@ int main(int argc, char *argv[])
+ 
+ 	/* Check for node, property arguments */
+ 	if (args_per_step == 2 && (argc % 2))
+-		usage("Must have an even number of arguments");
++		usage("must have an even number of arguments");
+ 
+ 	if (do_fdtget(&disp, filename, argv, argc, args_per_step))
+ 		return 1;
+diff --git scripts/dtc/update-dtc-source.sh scripts/dtc/update-dtc-source.sh
+index 7dd29a0362b8..8db277546785 100755
+--- scripts/dtc/update-dtc-source.sh
++++ scripts/dtc/update-dtc-source.sh
+@@ -31,8 +31,8 @@ set -ev
+ DTC_UPSTREAM_PATH=`pwd`/../dtc
+ DTC_LINUX_PATH=`pwd`/scripts/dtc
+ 
+-DTC_SOURCE="checks.c data.c dtc.c dtc.h flattree.c fstree.c livetree.c srcpos.c \
+-		srcpos.h treesource.c util.c util.h version_gen.h yamltree.c Makefile.dtc \
++DTC_SOURCE="checks.c data.c dtc.c dtc.h fdtget.c flattree.c fstree.c livetree.c
++		srcpos.c srcpos.h treesource.c util.c util.h version_gen.h Makefile.dtc \
+ 		dtc-lexer.l dtc-parser.y"
+ LIBFDT_SOURCE="Makefile.libfdt fdt.c fdt.h fdt_addresses.c fdt_empty_tree.c \
+ 		fdt_overlay.c fdt_ro.c fdt_rw.c fdt_strerror.c fdt_sw.c \
 -- 
 2.20.1
 
