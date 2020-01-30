@@ -2,95 +2,76 @@ Return-Path: <SRS0=wpAe=3T=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 748B1C35240
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jan 2020 08:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2B04C33C9E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jan 2020 08:25:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54EC5214AF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jan 2020 08:19:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9B2C2082E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jan 2020 08:25:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1580372711;
+	bh=oLADHjwsZK/zmHyFtHVsSOYErltf5rGudZWVt9X53gQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=jyQy9LgYLjs62m0TDix5vPYPyLeZv8V/HYmiGtI5ImJ5h1lfr15D+1EhpVBL25RE2
+	 UXXSsO+ILWUfRH17EGxQeFsjWc+SRw1pHV3brF8vaG9Pn0+FvdHlk2Le1yzKc5gWnD
+	 vHoMwNLkXuKsNbhEKK3TqJVF/7bFPGw6bvDPx0lA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726902AbgA3ITH (ORCPT
+        id S1726865AbgA3IZI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 30 Jan 2020 03:19:07 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:35490 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726757AbgA3ITH (ORCPT
+        Thu, 30 Jan 2020 03:25:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54734 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726464AbgA3IZI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 30 Jan 2020 03:19:07 -0500
-Received: by mail-ot1-f66.google.com with SMTP id r16so2362980otd.2;
-        Thu, 30 Jan 2020 00:19:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=s3I41ZfIrOT79LBysL0u65vz33Hk4LOsapeDNAzlOAI=;
-        b=Q9ARLxDxhspwnHkBdQqVpmQx85unCWld7wiALi2zP6y3dXG3i3htU4YAtPQTkoao6N
-         lun8KzIKIuAmCDO5n1B3JMEAg1nYy/EBNNHmqFB6ENL/ZFPG2XSLRYqKSqkwAWvH7oWO
-         of7b8zcGM1W4uIzidabriQ1XJK1+Xpb4clnDV1WLQeOEoop4cFP1No+fQwrNHg8MiM2D
-         lc0qXwg3fsF6ULkSG/umuFLXZlldmS1T/GDdTf9eKXNPF0HifOIBZRdQdUUEgvbensOC
-         /NERPOKu7SIOSXNONnP130geuwLZUL+6g3opP6uJYek+xHNw1WtCkd7BWjBzudQZfVS/
-         4L1A==
-X-Gm-Message-State: APjAAAX66znWVg6pJmqT5Z8RnhjSX/AP6LkoecUQl8WXymfc0sDz406w
-        hznERwkDqOctm+nxwnjCsUZ7aC2Q6WATwOroHWA=
-X-Google-Smtp-Source: APXvYqwqmdaXGxYCmHJq4Z/tqKv+f7ulnVAfvZ/0q3dXE5eP+LWDnJSN+Cu5ZkUVt32Ur/IHm3qlurwn2y4v9rtXjm8=
-X-Received: by 2002:a9d:8f1:: with SMTP id 104mr2494065otf.107.1580372345508;
- Thu, 30 Jan 2020 00:19:05 -0800 (PST)
-MIME-Version: 1.0
-References: <CGME20200130070850eucas1p1a7a09e2bec2f6fe652f206b61a8a04ae@eucas1p1.samsung.com>
- <20200130070834.17537-1-m.szyprowski@samsung.com>
-In-Reply-To: <20200130070834.17537-1-m.szyprowski@samsung.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 30 Jan 2020 09:18:54 +0100
-Message-ID: <CAMuHMdWcNK_9RTaWRsEeOZ3k9=LduZOrSLcYHE8Ud1aYfZPUnA@mail.gmail.com>
-Subject: Re: [PATCH v2] dmaengine: Fix return value for dma_requrest_chan() in
- case of failure
+        Thu, 30 Jan 2020 03:25:08 -0500
+Received: from localhost (unknown [117.99.87.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2739206D5;
+        Thu, 30 Jan 2020 08:25:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580372707;
+        bh=oLADHjwsZK/zmHyFtHVsSOYErltf5rGudZWVt9X53gQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=P+qhIqJa76JfwK7WzQlywJzMe3cyG8N4B/5+L+1h7UrZwiDF+xemU8OYiAEEpbMSO
+         gWoo1Jn5IkfyJFb3w1k/JihqxhbvXbYnSXzCrOrE8NqUn2y9MkbB3wVUI9ZpO5MLGU
+         wcxyTiwbpXEqr49mtNa7oEi3kckbyOL8jL/H+f5g=
+Date:   Thu, 30 Jan 2020 13:55:03 +0530
+From:   Vinod Koul <vkoul@kernel.org>
 To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     dmaengine@vger.kernel.org,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+Cc:     dmaengine@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
         Mark Brown <broonie@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Vinod Koul <vkoul@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Peter Ujfalusi <peter.ujfalusi@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v2] dmaengine: Fix return value for dma_requrest_chan()
+ in case of failure
+Message-ID: <20200130082503.GD2841@vkoul-mobl>
+References: <CGME20200130070850eucas1p1a7a09e2bec2f6fe652f206b61a8a04ae@eucas1p1.samsung.com>
+ <20200130070834.17537-1-m.szyprowski@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200130070834.17537-1-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
-
-s/dma_requrest_chan/dma_request_chan/ in one-line summary.
-
-On Thu, Jan 30, 2020 at 8:08 AM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
+On 30-01-20, 08:08, Marek Szyprowski wrote:
 > Commit 71723a96b8b1 ("dmaengine: Create symlinks between DMA channels and
 > slaves") changed the dma_request_chan() function flow in such a way that
 > it always returns EPROBE_DEFER in case of channels that cannot be found.
 > This break the operation of the devices which have optional DMA channels
 > as it puts their drivers in endless deferred probe loop. Fix this by
 > propagating the proper error value.
->
-> Fixes: 71723a96b8b1 ("dmaengine: Create symlinks between DMA channels and slaves")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Sorry for breaking this, and thanks a lot for your fix!
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Fixed the title and Applied, thanks
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+~Vinod
