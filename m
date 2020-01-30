@@ -1,375 +1,190 @@
 Return-Path: <SRS0=wpAe=3T=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_DBL_ABUSE_MALW,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_DBL_ABUSE_MALW autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83FFCC33C9E
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jan 2020 12:47:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96DD9C33C9E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jan 2020 12:55:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2389D206D3
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jan 2020 12:47:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E1962083E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Jan 2020 12:55:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="TdKIu4x0"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Bu/0Np8d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727132AbgA3Mr2 (ORCPT
+        id S1726980AbgA3Mzc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 30 Jan 2020 07:47:28 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:55760 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726902AbgA3Mr2 (ORCPT
+        Thu, 30 Jan 2020 07:55:32 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:40453 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbgA3Mzc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 30 Jan 2020 07:47:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=d++GOLWtqSwAglIpfl/6MRXQSTfPsxh+M4oQnj5hels=; b=TdKIu4x0HJtQMJcRoldQ19Mkv
-        ghPXPnh6Dg4C5PpxojHSPcy0G8FmGGRFJRTkwfNUhoOJ2jSRroL1aqDQtE11mokcuQ5rZ+0cXkYx8
-        7bFN0r4+lTeBD/S9VmSOS+OcldZp6M1FTJ8AC6u1XcldFj0hZdYkXSgc1VEfy7TSOMnaCeCtsjlEv
-        bkbpq4emqO3qStzTVc6iZINZATBZ41VWEWaSXcpmt0bCbnGoSa2t4rIPr4WnGcZgpCKJfsla+P1w+
-        N+vKl5UhPPtoAycwh9p8ebS2u0QCfR/34wlDyWh7ZaNRiQ7BPTDRQsIGVwLLru/FrI+mkY35tsPNF
-        94FA7KHiw==;
-Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:33668)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1ix9EB-0003FY-U6; Thu, 30 Jan 2020 12:47:24 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1ix9EA-0004Om-L8; Thu, 30 Jan 2020 12:47:22 +0000
-Date:   Thu, 30 Jan 2020 12:47:22 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     =?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>
+        Thu, 30 Jan 2020 07:55:32 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200130125530euoutp0169780944e2ca95ab1c117262332cfc34~uq1wB6Kut0749907499euoutp01t;
+        Thu, 30 Jan 2020 12:55:30 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200130125530euoutp0169780944e2ca95ab1c117262332cfc34~uq1wB6Kut0749907499euoutp01t
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1580388930;
+        bh=FbzOWLJBcSv34oJT8B2hSKDVEoNugCLHrx4OSVScfl4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Bu/0Np8dJVJcNpemMf7EwO1cNtYXlBab5dnQxE/PjGHsDWmp3IBQ35t1C+0ov6ebq
+         DCEYWjbqExnuxE04daFl51kO9bozNTecK8w5ktR0zk1svExYFfaKBS/45PfJSBok0S
+         3X1RhxKwBh/2TCM/KUDSob0btcErtCt+beAB//IY=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200130125530eucas1p1e5ca5f154e51606f56c82c4ba65261b6~uq1v5Iwly0140001400eucas1p1r;
+        Thu, 30 Jan 2020 12:55:30 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 80.C1.60679.242D23E5; Thu, 30
+        Jan 2020 12:55:30 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200130125530eucas1p282d9749764c3a5c21c85c829d372b650~uq1vi_saz0591005910eucas1p2n;
+        Thu, 30 Jan 2020 12:55:30 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200130125530eusmtrp15a2ba543f607c10570774f791f035d15~uq1viX7Ft3069330693eusmtrp1c;
+        Thu, 30 Jan 2020 12:55:30 +0000 (GMT)
+X-AuditID: cbfec7f4-0cbff7000001ed07-89-5e32d2425547
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id C5.FE.07950.242D23E5; Thu, 30
+        Jan 2020 12:55:30 +0000 (GMT)
+Received: from localhost (unknown [106.120.51.46]) by eusmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200130125530eusmtip21958aa4041acd7cfb574c706c35fd45f~uq1vVIcN72233122331eusmtip23;
+        Thu, 30 Jan 2020 12:55:30 +0000 (GMT)
+From:   =?utf-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
 Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: Re: [RFC PATCH 1/4] scripts/dtc: update fdtget.c to upstream version
- v1.4.7-57-gf267e674d145
-Message-ID: <20200130124722.GJ25745@shell.armlinux.org.uk>
-References: <20200130123934.3900-1-l.stelmach@samsung.com>
- <CGME20200130124251eucas1p2046004a71a1a9ff4274a6d1d96e2c260@eucas1p2.samsung.com>
- <20200130124233.4006-1-l.stelmach@samsung.com>
+Subject: Re: [RFC PATCH 1/4] scripts/dtc: update fdtget.c to upstream
+ version v1.4.7-57-gf267e674d145
+Date:   Thu, 30 Jan 2020 13:55:00 +0100
+In-Reply-To: <20200130124722.GJ25745@shell.armlinux.org.uk> (Russell King's
+        message of "Thu, 30 Jan 2020 12:47:22 +0000")
+Message-ID: <874kwdayu3.fsf%l.stelmach@samsung.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200130124233.4006-1-l.stelmach@samsung.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
+        protocol="application/pgp-signature"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOKsWRmVeSWpSXmKPExsWy7djP87pOl4ziDI5f1bLY9Pgaq8XlXXPY
+        LGac38dkcWjqXkYHFo/L1y4ye2xeUu/xeZNcAHMUl01Kak5mWWqRvl0CV8bbqS8ZC16LVNzb
+        38bWwPhRsIuRk0NCwERiwsnJbF2MXBxCAisYJe4+fQrlfGGUaL+2E8r5zChx4OZMJpiWGwue
+        QCWWM0osPbiWESQhJPCcUWLKZ1UQm03AXqL/yD6WLkYODhEBK4kLPRogYWaBHIlLH+eBlQsL
+        pEvsu/qBCaSERUBVYmIXWJhToFpi0r8rYDavgLHEr/ddzCC2qIClxJYX99kh4oISJ2c+YYEY
+        mSsx8/wbRpBzJATmsUusffMX6k4Xidd3bjJD2MISr45vYYewZSROT+4BO01CoF5i8iQziN4e
+        Roltc36wQNRYS9w594sNwnaU2Nc4kw2ink/ixltBiL18EpO2TWeGCPNKdLQJQVSrSKzr3wM1
+        RUqi99UKRgjbQ+Lx863MkFDrY5T4fOkH2wRGhVlI3pmF5J1ZQGOZBTQl1u/ShwhrSyxb+JoZ
+        wraVWLfuPcsCRtZVjOKppcW56anFRnmp5XrFibnFpXnpesn5uZsYgUnm9L/jX3Yw7vqTdIhR
+        gINRiYfX44xRnBBrYllxZe4hRhWgSY82rL7AKMWSl5+XqiTCK+pqGCfEm5JYWZValB9fVJqT
+        WnyIUZqDRUmc13jRy1ghgfTEktTs1NSC1CKYLBMHp1QD46p1Hct7v0ibLV/CFJzKUTbFm2vK
+        8h15++YWzVyhwThrW4pqyS3dcz4uxz5O+izW9i9IjvP9/93sXVP/3DhWcFZE79XEPYbyKdm/
+        jAU4Enlq5muHbxR8vHmfz/SlWtEGiteNd3HanDVws02SdLsstnWR7AJu36dGn/tfv9vAsrWl
+        +nXgyr35SkosxRmJhlrMRcWJAAy8aAw6AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHIsWRmVeSWpSXmKPExsVy+t/xe7pOl4ziDHo+C1psenyN1eLyrjls
+        FjPO72OyODR1L6MDi8flaxeZPTYvqff4vEkugDlKz6Yov7QkVSEjv7jEVina0MJIz9DSQs/I
+        xFLP0Ng81srIVEnfziYlNSezLLVI3y5BL+Pt1JeMBa9FKu7tb2NrYPwo2MXIySEhYCJxY8ET
+        NhBbSGApo8TmSd5djBxAcSmJlXPTIUqEJf5c6wIq4QIqecoocf/9H7B6NgF7if4j+1hA6kUE
+        rCQu9GiAhJkFsiW2/VzECmILC6RKXF6wkh1ivJXE3zdbmEDKWQRUJSZ2MYKEOQWqJSb9uwJm
+        8woYS/x638UMYosKWEpseXGfHSIuKHFy5hMWmPFfVz9nnsAoMAtJahaS1CygDcwCmhLrd+lD
+        hLUlli18zQxh20qsW/eeZQEj6ypGkdTS4tz03GIjveLE3OLSvHS95PzcTYzA+Nh27OeWHYxd
+        74IPMQpwMCrx8HqcMYoTYk0sK67MPcSoAjTm0YbVFxilWPLy81KVRHhFXQ3jhHhTEiurUovy
+        44tKc1KLDzGaAr05kVlKNDkfGNN5JfGGpobmFpaG5sbmxmYWSuK8HQIHY4QE0hNLUrNTUwtS
+        i2D6mDg4pRoY7TUOKLvuOzuhQND4juY/q3KpOoNi4QfNhal2140lmbpm3/beXNEtvP+SSeRV
+        Y33u11e2cR1x3rA0Pczy/fTG9QfrFvCFhMVGC5Rp1fBZLF6idzb0sNyWZaw6ssmTdr999v7U
+        tQ2Rxc9yM6Z8m5SXdK6n8vG7gExe3p2FHxu+JNSvYE2y9lFTYinOSDTUYi4qTgQAa+uTtbEC
+        AAA=
+X-CMS-MailID: 20200130125530eucas1p282d9749764c3a5c21c85c829d372b650
+X-Msg-Generator: CA
+X-RootMTR: 20200130125530eucas1p282d9749764c3a5c21c85c829d372b650
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200130125530eucas1p282d9749764c3a5c21c85c829d372b650
+References: <20200130124722.GJ25745@shell.armlinux.org.uk>
+        <CGME20200130125530eucas1p282d9749764c3a5c21c85c829d372b650@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jan 30, 2020 at 01:42:30PM +0100, Łukasz Stelmach wrote:
-> Build and fdtget and add fdtget.c to the list of update source files.
-> 
-> Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
-> ---
->  scripts/dtc/.gitignore           |   4 +
->  scripts/dtc/Makefile             |   5 ++
->  scripts/dtc/fdtget.c             | 125 ++++++++++++++++++-------------
->  scripts/dtc/update-dtc-source.sh |   4 +-
->  4 files changed, 82 insertions(+), 56 deletions(-)
-> 
-> diff --git scripts/dtc/.gitignore scripts/dtc/.gitignore
-> index 2e6e60d64ede..80f6b50fdf77 100644
-> --- scripts/dtc/.gitignore
-> +++ scripts/dtc/.gitignore
-> @@ -1 +1,5 @@
->  dtc
-> +dtc-lexer.lex.c
-> +dtc-parser.tab.c
-> +dtc-parser.tab.h
-> +fdtget
-> diff --git scripts/dtc/Makefile scripts/dtc/Makefile
-> index b5a5b1c548c9..74322d8dac25 100644
-> --- scripts/dtc/Makefile
-> +++ scripts/dtc/Makefile
-> @@ -2,12 +2,15 @@
->  # scripts/dtc makefile
->  
->  hostprogs-$(CONFIG_DTC) := dtc
-> +hostprogs-$(CONFIG_DTC) += fdtget
->  always		:= $(hostprogs-y)
->  
->  dtc-objs	:= dtc.o flattree.o fstree.o data.o livetree.o treesource.o \
->  		   srcpos.o checks.o util.o
->  dtc-objs	+= dtc-lexer.lex.o dtc-parser.tab.o
->  
-> +fdtget-objs     := fdtget.o util.o
-> +
->  # Source files need to get at the userspace version of libfdt_env.h to compile
->  HOST_EXTRACFLAGS := -I $(srctree)/$(src)/libfdt
->  
-> @@ -26,5 +29,7 @@ endif
->  HOSTCFLAGS_dtc-lexer.lex.o := -I $(srctree)/$(src)
->  HOSTCFLAGS_dtc-parser.tab.o := -I $(srctree)/$(src)
->  
-> +HOSTLDLIBS_fdtget := -L$(obj)/libfdt -lfdt -Wl,-rpath='$$ORIGIN/libfdt'
-> +
->  # dependencies on generated files need to be listed explicitly
->  $(obj)/dtc-lexer.lex.o: $(obj)/dtc-parser.tab.h
-> diff --git scripts/dtc/fdtget.c scripts/dtc/fdtget.c
-> index c922f82246c6..777582e2d45f 100644
-> --- scripts/dtc/fdtget.c
-> +++ scripts/dtc/fdtget.c
-> @@ -39,6 +39,37 @@ static void report_error(const char *where, int err)
->  	fprintf(stderr, "Error at '%s': %s\n", where, fdt_strerror(err));
->  }
->  
-> +/**
-> + * Shows a list of cells in the requested format
-> + *
-> + * @param disp		Display information / options
-> + * @param data		Data to display
-> + * @param len		Maximum length of buffer
-> + * @param size		Data size to use for display (e.g. 4 for 32-bit)
-> + * @return 0 if ok, -1 on error
-> + */
-> +static int show_cell_list(struct display_info *disp, const char *data, int len,
-> +			  int size)
-> +{
-> +	const uint8_t *p = (const uint8_t *)data;
-> +	char fmt[3];
-> +	int value;
-> +	int i;
-> +
-> +	fmt[0] = '%';
-> +	fmt[1] = disp->type ? disp->type : 'd';
-> +	fmt[2] = '\0';
-> +	for (i = 0; i < len; i += size, p += size) {
-> +		if (i)
-> +			printf(" ");
-> +		value = size == 4 ? fdt32_ld((const fdt32_t *)p) :
-> +			size == 2 ? (*p << 8) | p[1] : *p;
-> +		printf(fmt, value);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  /**
->   * Displays data of a given length according to selected options
->   *
-> @@ -52,12 +83,9 @@ static void report_error(const char *where, int err)
->   */
->  static int show_data(struct display_info *disp, const char *data, int len)
->  {
-> -	int i, size;
-> -	const uint8_t *p = (const uint8_t *)data;
-> +	int size;
->  	const char *s;
-> -	int value;
->  	int is_string;
-> -	char fmt[3];
->  
->  	/* no data, don't print */
->  	if (len == 0)
-> @@ -85,17 +113,8 @@ static int show_data(struct display_info *disp, const char *data, int len)
->  				"selected data size\n");
->  		return -1;
->  	}
-> -	fmt[0] = '%';
-> -	fmt[1] = disp->type ? disp->type : 'd';
-> -	fmt[2] = '\0';
-> -	for (i = 0; i < len; i += size, p += size) {
-> -		if (i)
-> -			printf(" ");
-> -		value = size == 4 ? fdt32_to_cpu(*(const uint32_t *)p) :
-> -			size == 2 ? (*p << 8) | p[1] : *p;
-> -		printf(fmt, value);
-> -	}
-> -	return 0;
-> +
-> +	return show_cell_list(disp, data, len, size);
->  }
->  
->  /**
-> @@ -107,7 +126,6 @@ static int show_data(struct display_info *disp, const char *data, int len)
->   */
->  static int list_properties(const void *blob, int node)
->  {
-> -	const struct fdt_property *data;
->  	const char *name;
->  	int prop;
->  
-> @@ -116,8 +134,7 @@ static int list_properties(const void *blob, int node)
->  		/* Stop silently when there are no more properties */
->  		if (prop < 0)
->  			return prop == -FDT_ERR_NOTFOUND ? 0 : prop;
-> -		data = fdt_get_property_by_offset(blob, prop, NULL);
-> -		name = fdt_string(blob, fdt32_to_cpu(data->nameoff));
-> +		fdt_getprop_by_offset(blob, prop, &name, NULL);
->  		if (name)
->  			puts(name);
->  		prop = fdt_next_property_offset(blob, prop);
-> @@ -231,7 +248,7 @@ static int show_data_for_item(const void *blob, struct display_info *disp,
->   * @param filename	Filename of blob file
->   * @param arg		List of arguments to process
->   * @param arg_count	Number of arguments
-> - * @param return 0 if ok, -ve on error
-> + * @return 0 if ok, -ve on error
->   */
->  static int do_fdtget(struct display_info *disp, const char *filename,
->  		     char **arg, int arg_count, int args_per_step)
-> @@ -240,7 +257,7 @@ static int do_fdtget(struct display_info *disp, const char *filename,
->  	const char *prop;
->  	int i, node;
->  
-> -	blob = utilfdt_read(filename);
-> +	blob = utilfdt_read(filename, NULL);
->  	if (!blob)
->  		return -1;
->  
-> @@ -252,44 +269,50 @@ static int do_fdtget(struct display_info *disp, const char *filename,
->  				continue;
->  			} else {
->  				report_error(arg[i], node);
-> +				free(blob);
->  				return -1;
->  			}
->  		}
->  		prop = args_per_step == 1 ? NULL : arg[i + 1];
->  
-> -		if (show_data_for_item(blob, disp, node, prop))
-> +		if (show_data_for_item(blob, disp, node, prop)) {
-> +			free(blob);
->  			return -1;
-> +		}
->  	}
-> +
-> +	free(blob);
-> +
->  	return 0;
->  }
->  
-> -static const char *usage_msg =
-> -	"fdtget - read values from device tree\n"
-> -	"\n"
-> -	"Each value is printed on a new line.\n\n"
-> -	"Usage:\n"
-> +/* Usage related data. */
-> +static const char usage_synopsis[] =
-> +	"read values from device tree\n"
->  	"	fdtget <options> <dt file> [<node> <property>]...\n"
->  	"	fdtget -p <options> <dt file> [<node> ]...\n"
-> -	"Options:\n"
-> -	"\t-t <type>\tType of data\n"
-> -	"\t-p\t\tList properties for each node\n"
-> -	"\t-l\t\tList subnodes for each node\n"
-> -	"\t-d\t\tDefault value to display when the property is "
-> -			"missing\n"
-> -	"\t-h\t\tPrint this help\n\n"
-> +	"\n"
-> +	"Each value is printed on a new line.\n"
->  	USAGE_TYPE_MSG;
-> -
-> -static void usage(const char *msg)
-> -{
-> -	if (msg)
-> -		fprintf(stderr, "Error: %s\n\n", msg);
-> -
-> -	fprintf(stderr, "%s", usage_msg);
-> -	exit(2);
-> -}
-> +static const char usage_short_opts[] = "t:pld:" USAGE_COMMON_SHORT_OPTS;
-> +static struct option const usage_long_opts[] = {
-> +	{"type",              a_argument, NULL, 't'},
-> +	{"properties",       no_argument, NULL, 'p'},
-> +	{"list",             no_argument, NULL, 'l'},
-> +	{"default",           a_argument, NULL, 'd'},
-> +	USAGE_COMMON_LONG_OPTS,
-> +};
-> +static const char * const usage_opts_help[] = {
-> +	"Type of data",
-> +	"List properties for each node",
-> +	"List subnodes for each node",
-> +	"Default value to display when the property is missing",
-> +	USAGE_COMMON_OPTS_HELP
-> +};
->  
->  int main(int argc, char *argv[])
->  {
-> +	int opt;
->  	char *filename = NULL;
->  	struct display_info disp;
->  	int args_per_step = 2;
-> @@ -298,20 +321,14 @@ int main(int argc, char *argv[])
->  	memset(&disp, '\0', sizeof(disp));
->  	disp.size = -1;
->  	disp.mode = MODE_SHOW_VALUE;
-> -	for (;;) {
-> -		int c = getopt(argc, argv, "d:hlpt:");
-> -		if (c == -1)
-> -			break;
-> -
-> -		switch (c) {
-> -		case 'h':
-> -		case '?':
-> -			usage(NULL);
-> +	while ((opt = util_getopt_long()) != EOF) {
-> +		switch (opt) {
-> +		case_USAGE_COMMON_FLAGS
->  
->  		case 't':
->  			if (utilfdt_decode_type(optarg, &disp.type,
->  					&disp.size))
-> -				usage("Invalid type string");
-> +				usage("invalid type string");
->  			break;
->  
->  		case 'p':
-> @@ -333,7 +350,7 @@ int main(int argc, char *argv[])
->  	if (optind < argc)
->  		filename = argv[optind++];
->  	if (!filename)
-> -		usage("Missing filename");
-> +		usage("missing filename");
->  
->  	argv += optind;
->  	argc -= optind;
-> @@ -344,7 +361,7 @@ int main(int argc, char *argv[])
->  
->  	/* Check for node, property arguments */
->  	if (args_per_step == 2 && (argc % 2))
-> -		usage("Must have an even number of arguments");
-> +		usage("must have an even number of arguments");
->  
->  	if (do_fdtget(&disp, filename, argv, argc, args_per_step))
->  		return 1;
-> diff --git scripts/dtc/update-dtc-source.sh scripts/dtc/update-dtc-source.sh
-> index 7dd29a0362b8..8db277546785 100755
-> --- scripts/dtc/update-dtc-source.sh
-> +++ scripts/dtc/update-dtc-source.sh
-> @@ -31,8 +31,8 @@ set -ev
->  DTC_UPSTREAM_PATH=`pwd`/../dtc
->  DTC_LINUX_PATH=`pwd`/scripts/dtc
->  
-> -DTC_SOURCE="checks.c data.c dtc.c dtc.h flattree.c fstree.c livetree.c srcpos.c \
-> -		srcpos.h treesource.c util.c util.h version_gen.h yamltree.c Makefile.dtc \
-> +DTC_SOURCE="checks.c data.c dtc.c dtc.h fdtget.c flattree.c fstree.c livetree.c
-> +		srcpos.c srcpos.h treesource.c util.c util.h version_gen.h Makefile.dtc \
+--=-=-=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-This looks like you're dropping yamltree.c.  Is that intentional?
+It was <2020-01-30 czw 12:47>, when Russell King - ARM Linux admin wrote:
+> On Thu, Jan 30, 2020 at 01:42:30PM +0100, =C5=81ukasz Stelmach wrote:
+>> Build and fdtget and add fdtget.c to the list of update source files.
+>>=20
+>> Signed-off-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
+>> ---
+>>  scripts/dtc/.gitignore           |   4 +
+>>  scripts/dtc/Makefile             |   5 ++
+>>  scripts/dtc/fdtget.c             | 125 ++++++++++++++++++-------------
+>>  scripts/dtc/update-dtc-source.sh |   4 +-
+>>  4 files changed, 82 insertions(+), 56 deletions(-)
+>>=20
 
->  		dtc-lexer.l dtc-parser.y"
->  LIBFDT_SOURCE="Makefile.libfdt fdt.c fdt.h fdt_addresses.c fdt_empty_tree.c \
->  		fdt_overlay.c fdt_ro.c fdt_rw.c fdt_strerror.c fdt_sw.c \
-> -- 
-> 2.20.1
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+[...]
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+>> diff --git scripts/dtc/update-dtc-source.sh scripts/dtc/update-dtc-sourc=
+e.sh
+>> index 7dd29a0362b8..8db277546785 100755
+>> --- scripts/dtc/update-dtc-source.sh
+>> +++ scripts/dtc/update-dtc-source.sh
+>> @@ -31,8 +31,8 @@ set -ev
+>>  DTC_UPSTREAM_PATH=3D`pwd`/../dtc
+>>  DTC_LINUX_PATH=3D`pwd`/scripts/dtc
+>>=20=20
+>> -DTC_SOURCE=3D"checks.c data.c dtc.c dtc.h flattree.c fstree.c livetree.=
+c srcpos.c \
+>> -		srcpos.h treesource.c util.c util.h version_gen.h yamltree.c Makefile=
+.dtc \
+>> +DTC_SOURCE=3D"checks.c data.c dtc.c dtc.h fdtget.c flattree.c fstree.c =
+livetree.c
+>> +		srcpos.c srcpos.h treesource.c util.c util.h version_gen.h Makefile.d=
+tc \
+>
+> This looks like you're dropping yamltree.c.  Is that intentional?
+>
+
+Not it isn't. Thanks. Fixed.
+
+>>  		dtc-lexer.l dtc-parser.y"
+>>  LIBFDT_SOURCE=3D"Makefile.libfdt fdt.c fdt.h fdt_addresses.c fdt_empty_=
+tree.c \
+>>  		fdt_overlay.c fdt_ro.c fdt_rw.c fdt_strerror.c fdt_sw.c \
+>> --=20
+>> 2.20.1
+>>=20
+>>=20
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> https://protect2.fireeye.com/url?k=3Dc03cfed5-9df03751-c03d759a-0cc47aa8=
+f5ba-45d60c6701b8fc7a&u=3Dhttp://lists.infradead.org/mailman/listinfo/linux=
+-arm-kernel
+
+=2D-=20
+=C5=81ukasz Stelmach
+Samsung R&D Institute Poland
+Samsung Electronics
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEXpuyqjq9kGEVr9UQsK4enJilgBAFAl4y0iQACgkQsK4enJil
+gBA9RQf/SNe+aQyxvKSVvcF48oJ+R39y5dG1jtl3Rkp+moKLHvcE4LjFbK7igxGz
+3wf0i6ByANZcS2xZkxK7wQTRIk3wl9Tjug93SxckMKGKyUthZ+n7jdaivDmmnoO1
+efkgfbxC12/Q37C+G1cAafgRctD0mb1cabPlVQAw90bG9GaPzzpDpR7FnSsThcba
+H6Mw56FEwdKvo+Os5tw8ePwMUNtT4O1UJjsEeTw21DTwClKuZUdaaJ3ktPFGVYcY
+x/Xt9cHvOLZjozJuJhgvmeu0TfMwp4BeUX9qYq2W3l7dSMJdBnomOLR8n6T1WAW5
+85YBsvT6R9YZeAvmvYiG320HY0+Dgw==
+=Kodj
+-----END PGP SIGNATURE-----
+--=-=-=--
