@@ -2,113 +2,126 @@ Return-Path: <SRS0=nK2D=3U=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E76A8C33CB2
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 31 Jan 2020 11:50:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2027C33CB2
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 31 Jan 2020 12:47:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C686E206F0
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 31 Jan 2020 11:50:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4541214D8
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 31 Jan 2020 12:47:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1580474873;
+	bh=zUVGVuT/slEg9NfW81Qpk5tDo3UxUZ/3h0IpAViw9gg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=o3pXVzvlHpBs66SXFY6JoWoGl9d1WBY7SPUTP+/CIRnBe5KVeWsTGCY/pcsT9CIxX
+	 2Gen3KQY4sL8fJ/IZOHH3mW1MbvUv6clybsFF/8T4w1NrpkJm/ZFpDhQKbX01EQirC
+	 ZXGWdBEpjrf/Tpt5RxSYcoJFVuJaw84tU8G/EMsc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728532AbgAaLuX (ORCPT
+        id S1728582AbgAaMrx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 31 Jan 2020 06:50:23 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:55694 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728535AbgAaLuW (ORCPT
+        Fri, 31 Jan 2020 07:47:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51936 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728580AbgAaMrx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 31 Jan 2020 06:50:22 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: andrzej.p)
-        with ESMTPSA id 9992D28A964
-Subject: Re: [PATCH] ARM: dts: exynos: Fix broken reboot on some Odroid
- U2/X2/U3 boards
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-References: <CGME20200131103734eucas1p2ee9005c0d984a40a158367786ad457bb@eucas1p2.samsung.com>
- <20200131103709.15763-1-m.szyprowski@samsung.com>
- <CAJKOXPc9mWcwmD_zF5t3Lz5c5-pexnQZV2H7ohnwg9NnYkm45A@mail.gmail.com>
-From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Message-ID: <dd2417a5-400a-cfd5-8f55-bd83d9590deb@collabora.com>
-Date:   Fri, 31 Jan 2020 12:50:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Fri, 31 Jan 2020 07:47:53 -0500
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55550214D8;
+        Fri, 31 Jan 2020 12:47:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580474872;
+        bh=zUVGVuT/slEg9NfW81Qpk5tDo3UxUZ/3h0IpAViw9gg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=OqwJM7IGkbZ1uFh4KlR7ZdMt6WePCl41DIjNCy1y4wOuwRwRQUGX7XERZg0fW1Awl
+         qzMPoAuqd4Tdrblb8yRQXWayPt3MO7nM89SYL5LYCRdYTItn37u0VDFMJArjgZWRMs
+         g5cjHy5Zu+RMHjS4iItbIy1ktzcDsNUCSeZH8yzU=
+Received: by mail-lj1-f177.google.com with SMTP id x7so7000300ljc.1;
+        Fri, 31 Jan 2020 04:47:52 -0800 (PST)
+X-Gm-Message-State: APjAAAUqphwe3HRNS4pc+jhGV6WABrC3l79V3ygZUmBJOOdxucFL7W4N
+        v3v0fHb1u3vF4yoOtmCL3BdQlIYydBF7MiXfTu8=
+X-Google-Smtp-Source: APXvYqz9+Y6RQt0gt8PATpeqqazsTkQ4mtFx4O+38Nhe+xGu6lufag13gYVF/5Mi0zj+NjLUD5c9sYtx8skheC/3Qe8=
+X-Received: by 2002:a2e:9c85:: with SMTP id x5mr5970504lji.50.1580474870430;
+ Fri, 31 Jan 2020 04:47:50 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAJKOXPc9mWcwmD_zF5t3Lz5c5-pexnQZV2H7ohnwg9NnYkm45A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20200127215453.15144-1-lukasz.luba@arm.com> <20200127215453.15144-2-lukasz.luba@arm.com>
+In-Reply-To: <20200127215453.15144-2-lukasz.luba@arm.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Fri, 31 Jan 2020 13:47:39 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPedRc3ag6DDUAXSbHk8JcAZbug5HSss9wb8YyLkP7MLaw@mail.gmail.com>
+Message-ID: <CAJKOXPedRc3ag6DDUAXSbHk8JcAZbug5HSss9wb8YyLkP7MLaw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ARM: exynos_defconfig: Enable SCHED_MC
+To:     lukasz.luba@arm.com
+Cc:     kgene@kernel.org, linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        Chanwoo Choi <cw00.choi@samsung.com>, robh+dt@kernel.org,
+        mark.rutland@arm.com,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
+        <b.zolnierkie@samsung.com>, dietmar.eggemann@arm.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+On Mon, 27 Jan 2020 at 22:55, <lukasz.luba@arm.com> wrote:
+>
+> From: Lukasz Luba <lukasz.luba@arm.com>
+>
+> Since the 'capacities-dmips-mhz' are present in the CPU nodes, make use of
+> this knowledge in smarter decisions during scheduling.
+>
+> The values in 'capacities-dmips-mhz' are normilized, this means that i.e.
+> when CPU0's capacities-dmips-mhz=100 and CPU1's 'capacities-dmips-mhz'=50,
+> cpu0 is twice fast as CPU1, at the same frequency. The proper hirarchy
+> in sched_domain topology could exploit the SoC architecture advantages
+> like big.LITTLE.
 
-Thank you for the patch,
+I do not quite get how this is related to rationale behind changing defconfig...
 
-W dniu 31.01.2020 o 12:20, Krzysztof Kozlowski pisze:
-> On Fri, 31 Jan 2020 at 11:37, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->>
->> The bootloader on Odroid U2/X2/U3 boards configures main ARM clock to
->> 1GHz. During the system shutdown procedure Linux kernel selects so called
->> 'suspend-opp' for the CPU cores, what means that ARM clock is set to
->> 800MHz and the CPU supply voltage is adjusted to that value. PMIC
->> configuration is preserved during the board reboot. Later when the
->> bootloader tries to enter the 1GHz mode, the voltage value configured by
->> the kernel might be not high enough for the CPU to operate stable. This
->> depends on the individual physical properties of each SoC (usually it is
->> related to the production series) and varies between the boards.
->> Typically most of the Odroid U3 boards work fine, while most of the U2
->> and X2 hangs during the reboot.
->>
->> This commit switches suspend-opp to 1GHz for the Odroid U2/X2/U3 boards,
->> what finally fixes this issue.
->>
+> Enabling the SCHED_MC will create two levels in
+> sched_domain hierarchy, which might be observed in:
 
-I added a "reboot" command to my bashrc and tested on v5.5
-on an Odroid U2. Without the patch applied it hangs on the first or the
-second reboot. With the patch applied it has been continuously running
-without problems for over an hour, with each cycle taking ~30s, so it's
-been well over 100 reboot cycles and still no problem. With that
-in mind you can add my
+This is looks more convincing... but still what is the need? To work with EAS?
 
-Tested-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+> grep . /proc/sys/kernel/sched_domain/cpu*/domain*/{name,flags}
+> /proc/sys/kernel/sched_domain/cpu0/domain0/name:MC
+> /proc/sys/kernel/sched_domain/cpu0/domain1/name:DIE
+> ...
+> /proc/sys/kernel/sched_domain/cpu0/domain0/flags:575
+> /proc/sys/kernel/sched_domain/cpu0/domain1/flags:4223
 
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>   arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 9 +++++++++
->>   1 file changed, 9 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->> index ea55f377d17c..0126587c7fab 100644
->> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->> @@ -534,6 +534,15 @@
->>          cap-mmc-highspeed;
->>   };
->>
->> +&cpu0_opp_table {
->> +       opp-1000000000 {
->> +               opp-suspend;
->> +       };
->> +       opp-800000000 {
->> +               /delete-property/opp-suspend;
->> +       };
->> +};
-> 
-> Looks good, thanks! I'll take it after merge window.
-> However if there is a resend, please put it after &cpu0 label.
-> Otherwise, I'll reshuffle it while applying.
-> 
-> Best regards,
-> Krzysztof
-> 
+Not related to defconfig change and not visible after this commit.
 
+Best regards,
+Krzysztof
+
+>
+> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
+> ---
+>  arch/arm/configs/exynos_defconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+> index e7e4bb5ad8d5..1db857056992 100644
+> --- a/arch/arm/configs/exynos_defconfig
+> +++ b/arch/arm/configs/exynos_defconfig
+> @@ -8,6 +8,7 @@ CONFIG_PERF_EVENTS=y
+>  CONFIG_ARCH_EXYNOS=y
+>  CONFIG_CPU_ICACHE_MISMATCH_WORKAROUND=y
+>  CONFIG_SMP=y
+> +CONFIG_SCHED_MC=y
+>  CONFIG_BIG_LITTLE=y
+>  CONFIG_NR_CPUS=8
+>  CONFIG_HIGHMEM=y
+> --
+> 2.17.1
+>
