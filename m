@@ -1,108 +1,109 @@
-Return-Path: <SRS0=IoW1=3X=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=bs9j=3Y=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58516C33CAC
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Feb 2020 12:18:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0BA1C3524A
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 Feb 2020 07:32:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5F542082E
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  3 Feb 2020 12:18:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 694232166E
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  4 Feb 2020 07:32:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kOsyjS85"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qYYs4TVj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727916AbgBCMS5 (ORCPT
+        id S1726566AbgBDHcF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 3 Feb 2020 07:18:57 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:35724 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727747AbgBCMS4 (ORCPT
+        Tue, 4 Feb 2020 02:32:05 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:55831 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726371AbgBDHcE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 3 Feb 2020 07:18:56 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200203121854euoutp02ce7927f918f75d739bef73473ad2b6ec~v467hMfeG0186401864euoutp02q
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  3 Feb 2020 12:18:54 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200203121854euoutp02ce7927f918f75d739bef73473ad2b6ec~v467hMfeG0186401864euoutp02q
+        Tue, 4 Feb 2020 02:32:04 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200204073203euoutp019f8f575c75bb517350789f21f5b93253~wIpweCfwU0733607336euoutp01B
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  4 Feb 2020 07:32:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200204073203euoutp019f8f575c75bb517350789f21f5b93253~wIpweCfwU0733607336euoutp01B
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1580732334;
-        bh=nVHc7TNUpkm72Mun7ZmXUnvu4a84X6jq4GG/T7+SKzk=;
+        s=mail20170921; t=1580801523;
+        bh=bc89vh6v/2gyMbPBdgQPiR0QMlp+/pxJ93nah1o2SvU=;
         h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=kOsyjS85rLNrGx47rgfsWViavL7eQRfgZfOW3MDr44iIhex7fCnl+NgI4OYrJuEpd
-         xcjnErqARhQZUuInNJR14pHio4n/Oi2QG6crlmtC8MI2FE2oJCJPg1cae/DmXP+E1K
-         zqDl3BRJ+BMHKviJnhmJl8xY41Tz46DoK4/nlySk=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        b=qYYs4TVjHfDwTeF9EJYxsqSnObDMf5yzX9HaISsLCKOuhsT0zUR2olQbn5e8MTm64
+         JbPsHVPAybfa+z+XohZrKeWWTjvWhCUe77Cqxo4cmf6LyJ5EUVRLQwgo1lsVRASi7n
+         pZfGUl/NA1/jqrfz2cQlJd7aVHUZlZ4lyQp8Gnpo=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200203121854eucas1p2a78af2c53f1afd13bfd3ba7ed83a7e07~v467WQ3WP0539105391eucas1p2p;
-        Mon,  3 Feb 2020 12:18:54 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id A5.F4.61286.EAF083E5; Mon,  3
-        Feb 2020 12:18:54 +0000 (GMT)
+        20200204073202eucas1p2c327e30f68a2dc92a5863c688cfe1799~wIpwPBAlF3126831268eucas1p2J;
+        Tue,  4 Feb 2020 07:32:02 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 5A.C8.60698.2FD193E5; Tue,  4
+        Feb 2020 07:32:02 +0000 (GMT)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200203121853eucas1p12ff6f2623c024dffd68fca8c3e619d03~v466XF1-P0343703437eucas1p1W;
-        Mon,  3 Feb 2020 12:18:53 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200204073202eucas1p217d2eb45ea16e6d854e1ad4639ca0447~wIpv3yLvz2806028060eucas1p2X;
+        Tue,  4 Feb 2020 07:32:02 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200203121853eusmtrp12eaa68abc80a5e7653730f3f73b2f603~v466WcCVx2323823238eusmtrp1C;
-        Mon,  3 Feb 2020 12:18:53 +0000 (GMT)
-X-AuditID: cbfec7f2-ef1ff7000001ef66-62-5e380fae6763
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id F0.3B.08375.DAF083E5; Mon,  3
-        Feb 2020 12:18:53 +0000 (GMT)
+        20200204073202eusmtrp10b4b559b7a9c768fcd06bafda7668fed~wIpv3Hh811155711557eusmtrp1S;
+        Tue,  4 Feb 2020 07:32:02 +0000 (GMT)
+X-AuditID: cbfec7f5-a0fff7000001ed1a-53-5e391df2a6c6
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id F0.55.07950.2FD193E5; Tue,  4
+        Feb 2020 07:32:02 +0000 (GMT)
 Received: from [106.120.51.15] (unknown [106.120.51.15]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200203121852eusmtip1a34c24fcedeedadc0f7cea192d2648de~v4654QfDA3085730857eusmtip1T;
-        Mon,  3 Feb 2020 12:18:52 +0000 (GMT)
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200204073201eusmtip2bb0c0e02f8c0d67ba410c50b522710d7~wIpvXX09E0785207852eusmtip2M;
+        Tue,  4 Feb 2020 07:32:01 +0000 (GMT)
 Subject: Re: [PATCH v5] platform: cros_ec: Query EC protocol version if EC
  transitions between RO/RW
-To:     Enric Balletbo Serra <eballetbo@gmail.com>
-Cc:     Yicheng Li <yichengli@chromium.org>,
+To:     Yicheng Li <yichengli@google.com>
+Cc:     Enric Balletbo Serra <eballetbo@gmail.com>,
+        Yicheng Li <yichengli@chromium.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Benson Leung <bleung@chromium.org>,
         Gwendal Grignou <gwendal@chromium.org>,
         Tomasz Figa <tfiga@chromium.org>,
         Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <093ac3c3-204f-3f85-af0f-ac5b17512708@samsung.com>
-Date:   Mon, 3 Feb 2020 13:18:51 +0100
+Message-ID: <504e98c1-224e-8311-cef1-328d62393643@samsung.com>
+Date:   Tue, 4 Feb 2020 08:32:01 +0100
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
         Thunderbird/68.4.2
 MIME-Version: 1.0
-In-Reply-To: <CAFqH_5307FZ2njAhAUJ011usvfiuBZ9cd10yNRLVPuMZNHWD4w@mail.gmail.com>
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAB8_tbG-9ntKe3NoMfiDEZsYqbM4U5mK24JNHeikzxG9bkuvGg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEKsWRmVeSWpSXmKPExsWy7djPc7rr+C3iDF5f5bOY/uQyi8WF3yvZ
-        LGYvPspicXnXHDaLGef3MVl8bv3HZjH3+B12B3aP2Q0XWTx2zrrL7vF5k1wAcxSXTUpqTmZZ
-        apG+XQJXxumNOxkLXvBULNl8ka2BcT9XFyMnh4SAicTbD0vZuxi5OIQEVjBK3Jt0gRnC+cIo
-        0d2+AMr5zCjxte0PK0zLl7aNjBCJ5YwSx77fZoJw3jJKNDU9YgGpEhZIk/i37DdQOweHiICe
-        xOd7QiA1zALfGSXaGyYygtSwCRhKdL3tYgOxeQXsJM68gtjAIqAicfXUQrA5ogKxEmeOfWeF
-        qBGUODnzCVicUyBQ4t7iBnYQm1lAXmL72znMELa4xK0n88EOkhBYxi6x7vEXqLNdJJ5sO8QG
-        YQtLvDq+hR3ClpE4PbmHBaKhmVHi4bm17BBOD6PE5aYZjBBV1hJ3zv1iA3mHWUBTYv0ufYiw
-        o8SWO+9ZQMISAnwSN94KQhzBJzFp23RmiDCvREebEES1msSs4+vg1h68cIl5AqPSLCSvzULy
-        ziwk78xC2LuAkWUVo3hqaXFuemqxYV5quV5xYm5xaV66XnJ+7iZGYMo5/e/4px2MXy8lHWIU
-        4GBU4uGd8dAsTog1say4MvcQowQHs5IIb52VaZwQb0piZVVqUX58UWlOavEhRmkOFiVxXuNF
-        L2OFBNITS1KzU1MLUotgskwcnFINjPor0+K2f79+3yB+2uoJt3ocXL45JJT6L1q767vBxDfS
-        3DF/qzffvHJs6xShYtmS+UciH1+7N0ElPFjwSJbT55McsTMsp7PmRGzW2lXMoSv3q/Khx9E5
-        a9w29U/zV9TbZrlpTmX9nyXp0zWe8K3sfPQ68MX76YVi7bomXSzpF9pdzjo95zy4L1GJpTgj
-        0VCLuag4EQDCRRxRNQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCIsWRmVeSWpSXmKPExsVy+t/xu7pr+S3iDC6+57CY/uQyi8WF3yvZ
-        LGYvPspicXnXHDaLGef3MVl8bv3HZjH3+B12B3aP2Q0XWTx2zrrL7vF5k1wAc5SeTVF+aUmq
-        QkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6dTUpqTmZZapG+XYJexumNOxkLXvBULNl8
-        ka2BcT9XFyMnh4SAicSXto2MXYxcHEICSxklHv8+zwyRkJE4Oa2BFcIWlvhzrYsNoug1o8Su
-        RyAdnBzCAmkS/5b9Bmrg4BAR0JP4fE8IpIZZ4DujxOLvH5khGjqZJPZ2HQebxCZgKNH1FmQS
-        JwevgJ3EmVd/wOIsAioSV08tZAGxRQViJY5tb2OHqBGUODnzCVicUyBQ4t7iBrA4s4CZxLzN
-        D5khbHmJ7W/nQNniEreezGeawCg0C0n7LCQts5C0zELSsoCRZRWjSGppcW56brGhXnFibnFp
-        Xrpecn7uJkZgjG079nPzDsZLG4MPMQpwMCrx8M54aBYnxJpYVlyZe4hRgoNZSYS3zso0Tog3
-        JbGyKrUoP76oNCe1+BCjKdBzE5mlRJPzgfGfVxJvaGpobmFpaG5sbmxmoSTO2yFwMEZIID2x
-        JDU7NbUgtQimj4mDU6qBsbGtOLrX4EB15fG4uaU/n2nYrHn+9N3Z21J3vDzWNj2QVLGPKupZ
-        dODyjBeeLD8aFdnztZ6vyV6S5bPPdlWO3D/ri+kJxyvLY0SuaZbM4vA2ZbNktggJCHf0798w
-        682Jucxt26p/p8Yx7NA2mXDj4Q/pH+9+2jvyzT0joGlyK4936oT+grO2SizFGYmGWsxFxYkA
-        6uSMW8cCAAA=
-X-CMS-MailID: 20200203121853eucas1p12ff6f2623c024dffd68fca8c3e619d03
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNKsWRmVeSWpSXmKPExsWy7djP87qfZC3jDP7N0LOY/uQyi8WF3yvZ
+        LGYvPspicXnXHDaLGef3MVl8bv3HZjH3+B12i9WPL7I5cHjMbrjI4rFz1l12jwWbSj0+b5IL
+        YInisklJzcksSy3St0vgynja1M5eMIG/YuZywQbGf9xdjJwcEgImEo92d7N3MXJxCAmsYJRY
+        +nUqI4TzhVGi4XQ3M4TzmVHi88I5rDAt7y49hapazijx4NIOFgjnLaPErT9zWECqhAXSJP4t
+        +80MYosIqEp0L73OBlLELLCYSeL83T+MIAk2AUOJrrddbCA2r4CdxNWGN2A2i4CKxJKW+ewg
+        tqhArMSZY99ZIWoEJU7OfAK2gFMgUOLJOohlzALyEs1bZzND2OISt57MZwJZJiGwiV1i4otj
+        jBB3u0isePcQ6gdhiVfHt7BD2DISpyf3sEA0NDNKPDy3lh3C6WGUuNw0A6rbWuLOuV9A53EA
+        rdCUWL9LHyLsKLHlznsWkLCEAJ/EjbeCEEfwSUzaNp0ZIswr0dEmBFGtJjHr+Dq4tQcvXGKe
+        wKg0C8lrs5C8MwvJO7MQ9i5gZFnFKJ5aWpybnlpsnJdarlecmFtcmpeul5yfu4kRmIRO/zv+
+        dQfjvj9JhxgFOBiVeHg1HC3ihFgTy4orcw8xSnAwK4nw1lmZxgnxpiRWVqUW5ccXleakFh9i
+        lOZgURLnNV70MlZIID2xJDU7NbUgtQgmy8TBKdXAOOnU/9nLPA5xaJ5JCeFfeMX29w3vqjJn
+        1lSDwx/+t9zYmHGH2db1Vj777rfup75/NQ8pWLgz8/NXft8k0SCfF1nR8U8VHqnuWBIkEmBd
+        nN9kGjxDdumfyYf8nH66HHmmersgw1Bn0i628ExPJbd79UW5N+evLQtwDdrecCvkTGZa+e3U
+        paXmSizFGYmGWsxFxYkAKkQHLD4DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDIsWRmVeSWpSXmKPExsVy+t/xe7qfZC3jDOZsELeY/uQyi8WF3yvZ
+        LGYvPspicXnXHDaLGef3MVl8bv3HZjH3+B12i9WPL7I5cHjMbrjI4rFz1l12jwWbSj0+b5IL
+        YInSsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcksSy3St0vQy3ja
+        1M5eMIG/YuZywQbGf9xdjJwcEgImEu8uPWXsYuTiEBJYyihxu+cLO0RCRuLktAZWCFtY4s+1
+        LjaIoteMEneu32MDSQgLpEn8W/abGcQWEVCV6F56HayIWWApk8SfNVfBioQEWpklrvREgths
+        AoYSXW+7wOK8AnYSVxvegNksAioSS1rmg20WFYiVOLa9jR2iRlDi5MwnLCA2p0CgxJN1c8Bs
+        ZgEziXmbHzJD2PISzVtnQ9niEreezGeawCg0C0n7LCQts5C0zELSsoCRZRWjSGppcW56brGR
+        XnFibnFpXrpecn7uJkZgzG079nPLDsaud8GHGAU4GJV4eDUcLeKEWBPLiitzDzFKcDArifDW
+        WZnGCfGmJFZWpRblxxeV5qQWH2I0BXpuIrOUaHI+MB3klcQbmhqaW1gamhubG5tZKInzdggc
+        jBESSE8sSc1OTS1ILYLpY+LglGpgZGdqe7zmzGcn/TUhQccOTU40TRY84iu9c8WUha+Uy/Kk
+        tiw6uGR+wdmt2xekJa/ft1r++c2M91e4nlrP/Kri+u3lEyudA16spz9vqTvmyLjZw6s75NWy
+        3HZn02lTWn7vs5Ga2a5y7P+366un/WlJui+45aTs00UX1PWDXX44pxTG3Q4M7Zi184kSS3FG
+        oqEWc1FxIgC9iJaDzwIAAA==
+X-CMS-MailID: 20200204073202eucas1p217d2eb45ea16e6d854e1ad4639ca0447
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-RootMTR: 20200131073925eucas1p25bde5452aaa821435367dbfa9904a476
@@ -113,41 +114,60 @@ References: <CGME20200131073925eucas1p25bde5452aaa821435367dbfa9904a476@eucas1p2
         <20200107220640.834-1-yichengli@chromium.org>
         <5bbca1db-d99b-9adc-b623-8f5ae1b1bb86@samsung.com>
         <CAFqH_5307FZ2njAhAUJ011usvfiuBZ9cd10yNRLVPuMZNHWD4w@mail.gmail.com>
+        <093ac3c3-204f-3f85-af0f-ac5b17512708@samsung.com>
+        <CAB8_tbG-9ntKe3NoMfiDEZsYqbM4U5mK24JNHeikzxG9bkuvGg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Enric
+Hi
 
-On 03.02.2020 10:33, Enric Balletbo Serra wrote:
-> Missatge de Marek Szyprowski <m.szyprowski@samsung.com> del dia dv.,
-> 31 de gen. 2020 a les 8:41:
->> On 07.01.2020 23:06, Yicheng Li wrote:
->>> RO and RW of EC may have different EC protocol version. If EC transitions
->>> between RO and RW, but AP does not reboot (this is true for fingerprint
->>> microcontroller / cros_fp, but not true for main ec / cros_ec), the AP
->>> still uses the protocol version queried before transition, which can
->>> cause problems. In the case of fingerprint microcontroller, this causes
->>> AP to send the wrong version of EC_CMD_GET_NEXT_EVENT to RO in the
->>> interrupt handler, which in turn prevents RO to clear the interrupt
->>> line to AP, in an infinite loop.
->>>
->>> Once an EC_HOST_EVENT_INTERFACE_READY is received, we know that there
->>> might have been a transition between RO and RW, so re-query the protocol.
->>>
->>> Change-Id: I49a51cc10d22a4ab9e75204a4c0c8819d5b3d282
->>> Signed-off-by: Yicheng Li <yichengli@chromium.org>
->> This patch landed recently in linux-next as commit
->> 241a69ae8ea8e2defec751fe55dac1287aa044b8. Sadly, it causes following
->> kernel oops on any key press on Samsung Exynos-based Chromebooks (Snow,
->> Peach-Pit and Peach-Pi):
-> Many thanks for report the issue, we will take a look ASAP and revert
-> this commit meanwhile.
+On 04.02.2020 00:00, Yicheng Li wrote:
+> Hi Enric and Marek,
+>
+> Those Samsung Chromebooks (Snow, Peach-Pit and Peach-Pi) do not 
+> support mkbp events, thus we should not do this "ready event handling" 
+> for them.
+> Below is my fix, I also sent the entire thing as a v6 in a separate 
+> email. Thanks!
+>
+> diff --git a/drivers/platform/chrome/cros_ec.c 
+> b/drivers/platform/chrome/cros_ec.c
+> index 38ec1fb409a5..f16804db805b 100644
+> --- a/drivers/platform/chrome/cros_ec.c
+> +++ b/drivers/platform/chrome/cros_ec.c
+> @@ -218,12 +218,17 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+>                 dev_dbg(ec_dev->dev, "Error %d clearing sleep event to 
+> ec",
+>                         err);
+>
+> -       /* Register the notifier for EC_HOST_EVENT_INTERFACE_READY 
+> event. */
+> -       ec_dev->notifier_ready.notifier_call = cros_ec_ready_event;
+> -       err = blocking_notifier_chain_register(&ec_dev->event_notifier,
+> -  &ec_dev->notifier_ready);
+> -       if (err)
+> -               return err;
+> +       if (ec_dev->mkbp_event_supported) {
+> +               /*
+> +                * Register the notifier for EC_HOST_EVENT_INTERFACE_READY
+> +                * event.
+> +                */
+> +               ec_dev->notifier_ready.notifier_call = 
+> cros_ec_ready_event;
+> +               err = blocking_notifier_chain_register(
+> +                       &ec_dev->event_notifier, &ec_dev->notifier_ready);
+> +               if (err)
+> +                       return err;
+> +       }
+>
+>         dev_info(dev, "Chrome EC device registered\n");
+>
+I confirm that this patch fixes the issue on Samsung Exynos-based 
+Chromebooks (Snow, Peach-Pit and Peach-Pi).
 
-Simply removing the BUG_ON() from cros_ec_get_host_event() function 
-fixes the issue, but I don't know the protocol details to judge if this 
-is the correct way of fixing it.
+ > ...
 
 Best regards
 -- 
