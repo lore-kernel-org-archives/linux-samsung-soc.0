@@ -1,101 +1,129 @@
-Return-Path: <SRS0=U6Q9=32=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=xDOP=33=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76F92C3F68F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Feb 2020 14:15:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C58AC2D0B1
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 Feb 2020 07:07:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4974F214AF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  6 Feb 2020 14:15:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1E0A20838
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 Feb 2020 07:07:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sEetgeKv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727986AbgBFOPs (ORCPT
+        id S1726738AbgBGHHE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 6 Feb 2020 09:15:48 -0500
-Received: from foss.arm.com ([217.140.110.172]:59140 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727481AbgBFOPs (ORCPT
+        Fri, 7 Feb 2020 02:07:04 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:40584 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726130AbgBGHHE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 6 Feb 2020 09:15:48 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CA60E30E;
-        Thu,  6 Feb 2020 06:15:47 -0800 (PST)
-Received: from [10.37.12.48] (unknown [10.37.12.48])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9B1CF3F52E;
-        Thu,  6 Feb 2020 06:15:44 -0800 (PST)
-Subject: Re: [PATCH 3/3] ARM: exynos_defconfig: Enable Energy Model framework
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     kgene@kernel.org, linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        Chanwoo Choi <cw00.choi@samsung.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com,
-        =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= 
-        <b.zolnierkie@samsung.com>, dietmar.eggemann@arm.com
-References: <20200127215453.15144-1-lukasz.luba@arm.com>
- <20200127215453.15144-4-lukasz.luba@arm.com>
- <CAJKOXPeA=_3zPx6Aq3CAUi7JsXr9AigWGWCTNWo_jkm=oVWe_g@mail.gmail.com>
- <db3f2554-288d-81ab-2373-1447367ba673@arm.com>
- <20200131204118.GA27284@kozik-lap>
- <c54e252d-dc55-5fa3-f97f-643d7efbfdc1@arm.com>
- <CAJKOXPfTjdtNMx=+dPVcQ53RiXx0y-r=KXBRhzA4jS77SHxciQ@mail.gmail.com>
-From:   Lukasz Luba <lukasz.luba@arm.com>
-Message-ID: <f304f978-be07-7944-e47e-e5eaac9cb907@arm.com>
-Date:   Thu, 6 Feb 2020 14:15:42 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <CAJKOXPfTjdtNMx=+dPVcQ53RiXx0y-r=KXBRhzA4jS77SHxciQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 7 Feb 2020 02:07:04 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200207070702euoutp01554e60d5e32b056110adea814e64c2ba~xDPxUdV-r0759807598euoutp01S
+        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Feb 2020 07:07:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200207070702euoutp01554e60d5e32b056110adea814e64c2ba~xDPxUdV-r0759807598euoutp01S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1581059222;
+        bh=2XVmTi7MvAKEIBVHNlJKT2g1VeCyuBW7a1g9FJGZX/g=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=sEetgeKvvTbNXPegkuBTKIUjLy+jkh7g3+LHwiiwIz0b3wsSo6hosY2a7bz5CW82f
+         ajEvl11wg/85PE3HifHFShzbZnGRKW1QHYVNfQqT/NIX7MPefdx6PmTBG33ZVX9TDt
+         pIKF+1OMMHJtnYXez1G+9BX/jsGiqed60AB3Em8Y=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200207070701eucas1p1bfe30ee84ce8d906804bae1ad61b09f0~xDPw9p8eE2945429454eucas1p1D;
+        Fri,  7 Feb 2020 07:07:01 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id DD.AB.60698.59C0D3E5; Fri,  7
+        Feb 2020 07:07:01 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200207070701eucas1p2d6422d731f031ee66737683b54085ac7~xDPwotC6_2965429654eucas1p28;
+        Fri,  7 Feb 2020 07:07:01 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200207070701eusmtrp2f8f8a9c82c9af838fe57937792831e0e~xDPwoIQhv3034730347eusmtrp2D;
+        Fri,  7 Feb 2020 07:07:01 +0000 (GMT)
+X-AuditID: cbfec7f5-a0fff7000001ed1a-ec-5e3d0c95d9d4
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 21.DD.08375.59C0D3E5; Fri,  7
+        Feb 2020 07:07:01 +0000 (GMT)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200207070700eusmtip180c73adadb1b89532ec3db2bdeaf7af9~xDPwQtecO1760517605eusmtip1E;
+        Fri,  7 Feb 2020 07:07:00 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] soc: samsung: chipid: Fix return value on non-Exynos
+ platforms
+Date:   Fri,  7 Feb 2020 08:05:52 +0100
+Message-Id: <20200207070552.26986-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrNIsWRmVeSWpSXmKPExsWy7djP87pTeWzjDH6sUbPYOGM9q8X58xvY
+        LT73HmG0mHF+H5PF2iN32R1YPTat6mTz6NuyitHj8ya5AOYoLpuU1JzMstQifbsErozFJ3az
+        FDxmrfjRntrA+Jmli5GTQ0LAROLhv3usXYxcHEICKxglGrp62SCcL4wS8+YuY4ZwPjNKnF+y
+        jBGmpf/AMUaIxHJGiSeb3zPBtfxsncoKUsUmYCjR9baLDcQWEbCXuP1kGTtIEbNAH6PE9b1z
+        mUESwgKBEn/2rAayOThYBFQlvu+XAgnzCthK9H75DnWgvMTqDQfAzpAQ2MEmcWfRM2aIhIvE
+        nwNL2SBsYYlXx7ewQ9gyEv93zmeCaGhmlHh4bi07hNPDKHG5aQbUE9YSd879YgPZzCygKbF+
+        lz5E2FHiZ0sPK0hYQoBP4sZbQZAwM5A5adt0Zogwr0RHmxBEtZrErOPr4NYevHAJ6jQPicOH
+        l4DdLyQQK3Fn4Tn2CYxysxB2LWBkXMUonlpanJueWmycl1quV5yYW1yal66XnJ+7iREY5af/
+        Hf+6g3Hfn6RDjAIcjEo8vAmONnFCrIllxZW5hxglOJiVRHjP61vGCfGmJFZWpRblxxeV5qQW
+        H2KU5mBREuc1XvQyVkggPbEkNTs1tSC1CCbLxMEp1cAYcz3j5+pPSuuVbbZ5li58dG5971e1
+        GYofY7SDj+2/KWJUEPEn+uCXvGPCT/j3bZC1ed2ScVdA2uCP5tbZKqcNJESMw/w3VNvmBJyw
+        bPCZv7tXwnyCb5DsbBvzU1FHlgQXJfDfD2tlmPDjstvK3oSOzRectVSWLcrlcayQ5f7/1Ppu
+        p8bCYwFKLMUZiYZazEXFiQD6gZa57gIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrALMWRmVeSWpSXmKPExsVy+t/xu7pTeWzjDHrXCFtsnLGe1eL8+Q3s
+        Fp97jzBazDi/j8li7ZG77A6sHptWdbJ59G1ZxejxeZNcAHOUnk1RfmlJqkJGfnGJrVK0oYWR
+        nqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXsbiE7tZCh6zVvxoT21g/MzSxcjJISFg
+        ItF/4BhjFyMXh5DAUkaJw0u+skEkZCROTmtghbCFJf5c62KDKPrEKPFs2iQmkASbgKFE19su
+        sAYRAUeJFzs/s4MUMQtMYJQ43zkDLCEs4C+x8/5moEkcHCwCqhLf90uBhHkFbCV6v3yHukJe
+        YvWGA8wTGHkWMDKsYhRJLS3OTc8tNtQrTswtLs1L10vOz93ECAytbcd+bt7BeGlj8CFGAQ5G
+        JR7eBEebOCHWxLLiytxDjBIczEoivOf1LeOEeFMSK6tSi/Lji0pzUosPMZoC7Z7ILCWanA8M
+        +7ySeENTQ3MLS0NzY3NjMwslcd4OgYMxQgLpiSWp2ampBalFMH1MHJxSDYxiXcoWdouN0uO4
+        TgruefdG5GBi/fQzCn+PKG1+XKmzieMyz+b1p5V95ZJye3YEMYkfnK2h3sLkvbTzzavfvjdU
+        RLad/7NtUtI8dxvBb/ZHWVwe/e15/drqZ9LJY394lyVvONj8wLJ4o6DbqeKXbPMFZ6tURfln
+        cvzkLbnz9VFljhgDf73L7W9KLMUZiYZazEXFiQBiWM6IQwIAAA==
+X-CMS-MailID: 20200207070701eucas1p2d6422d731f031ee66737683b54085ac7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200207070701eucas1p2d6422d731f031ee66737683b54085ac7
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200207070701eucas1p2d6422d731f031ee66737683b54085ac7
+References: <CGME20200207070701eucas1p2d6422d731f031ee66737683b54085ac7@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Correct the probe return value to -ENODEV on non-Exynos platforms.
 
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/soc/samsung/exynos-chipid.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 2/6/20 12:59 PM, Krzysztof Kozlowski wrote:
-> On Wed, 5 Feb 2020 at 13:49, Lukasz Luba <lukasz.luba@arm.com> wrote:
->>>> As mentioned in response to patch 1/3. The fist patch would create MC
->>>> domain, something different than Energy Model or EAS. The decisions in
->>>> the scheduler would be different.
->>>>
->>>> I can merge 1/3 and 3/3 if you like, though.
->>>
->>> I understand now that their independent. Still, they are part of one
->>> goal to tune the scheduler for Exynos platform. Splitting these looks
->>> too much, like enabling multiple drivers one after another.
->>>
->>> However if you provide numbers for each of cases (before patches, multi
->>> core scheduler, energy model with DTS), then I see benefit of splitting
->>> it.  Each commit would have its own rationale.  I am not sure if it is
->>> worth such investigation - that's just defconfig... distros might ignore
->>> it anyway.
->>
->> Good point, and I agree that it would require more investigation, for
->> which unfortunately I don't have currently spare cycles.
->>
->> Should I merge patch 1/3 and 3/3 and send the v2 with a cover letter
->> which would have the test results?
-> 
-> Yes, let's do this way.
+diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+index 2dad4961a80b..8d4d05086906 100644
+--- a/drivers/soc/samsung/exynos-chipid.c
++++ b/drivers/soc/samsung/exynos-chipid.c
+@@ -59,7 +59,7 @@ static int __init exynos_chipid_early_init(void)
+ 	syscon = of_find_compatible_node(NULL, NULL,
+ 					 "samsung,exynos4210-chipid");
+ 	if (!syscon)
+-		return ENODEV;
++		return -ENODEV;
+ 
+ 	regmap = device_node_to_regmap(syscon);
+ 	of_node_put(syscon);
+-- 
+2.17.1
 
-Thank you, I will send the v2 then.
-
-Regards,
-Lukasz
-
-> 
-> Thanks for working on this!
-> 
-> Best regards,
-> Krzysztof
-> 
