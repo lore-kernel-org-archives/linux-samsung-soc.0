@@ -1,129 +1,110 @@
-Return-Path: <SRS0=xDOP=33=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=czo+=36=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C58AC2D0B1
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 Feb 2020 07:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6B39C352A3
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Feb 2020 10:51:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1E0A20838
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  7 Feb 2020 07:07:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDFF820863
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Feb 2020 10:51:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sEetgeKv"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ftHzx5eO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726738AbgBGHHE (ORCPT
+        id S1727051AbgBJKvT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 7 Feb 2020 02:07:04 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:40584 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbgBGHHE (ORCPT
+        Mon, 10 Feb 2020 05:51:19 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:34106 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726950AbgBJKvT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 7 Feb 2020 02:07:04 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200207070702euoutp01554e60d5e32b056110adea814e64c2ba~xDPxUdV-r0759807598euoutp01S
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Feb 2020 07:07:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200207070702euoutp01554e60d5e32b056110adea814e64c2ba~xDPxUdV-r0759807598euoutp01S
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1581059222;
-        bh=2XVmTi7MvAKEIBVHNlJKT2g1VeCyuBW7a1g9FJGZX/g=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=sEetgeKvvTbNXPegkuBTKIUjLy+jkh7g3+LHwiiwIz0b3wsSo6hosY2a7bz5CW82f
-         ajEvl11wg/85PE3HifHFShzbZnGRKW1QHYVNfQqT/NIX7MPefdx6PmTBG33ZVX9TDt
-         pIKF+1OMMHJtnYXez1G+9BX/jsGiqed60AB3Em8Y=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200207070701eucas1p1bfe30ee84ce8d906804bae1ad61b09f0~xDPw9p8eE2945429454eucas1p1D;
-        Fri,  7 Feb 2020 07:07:01 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id DD.AB.60698.59C0D3E5; Fri,  7
-        Feb 2020 07:07:01 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200207070701eucas1p2d6422d731f031ee66737683b54085ac7~xDPwotC6_2965429654eucas1p28;
-        Fri,  7 Feb 2020 07:07:01 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200207070701eusmtrp2f8f8a9c82c9af838fe57937792831e0e~xDPwoIQhv3034730347eusmtrp2D;
-        Fri,  7 Feb 2020 07:07:01 +0000 (GMT)
-X-AuditID: cbfec7f5-a0fff7000001ed1a-ec-5e3d0c95d9d4
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 21.DD.08375.59C0D3E5; Fri,  7
-        Feb 2020 07:07:01 +0000 (GMT)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200207070700eusmtip180c73adadb1b89532ec3db2bdeaf7af9~xDPwQtecO1760517605eusmtip1E;
-        Fri,  7 Feb 2020 07:07:00 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mon, 10 Feb 2020 05:51:19 -0500
+Received: by mail-pg1-f193.google.com with SMTP id j4so3732303pgi.1;
+        Mon, 10 Feb 2020 02:51:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OBq9Wxg3rNYXND45mTJejeBW0qaZ9nSsHbegXEcF9x8=;
+        b=ftHzx5eOWQlGm3C8QeR2uhQzu038c0/X4JMnx1G1weCDZyndLaC4dlIKZWqnduq5Uc
+         LxWeF9fi0gEqhJt2JHg5epLlDP4wXfiVwj6vfLY61P4yOF4ruv9k0pIMn9QtHEQBwF9i
+         dcIYqGe4+US5qAXNWHAepmlmdNq5X6V6gB8x+vrJMKC0x31J7eNxOsN1daGCeEwK5byY
+         XMUtRxktldY4sZtm0En9e8ebFIv9z2c+AM6nJTCQBuAthHoUQda0szwe6Ev6z7jNPtVQ
+         8xo7cjOp1pv3XHLEeeZtfQzo15lR/3a3mzyWlmuRV/Tiq9pvqeIoYWtdhz4tyLYZ7gNG
+         Nluw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OBq9Wxg3rNYXND45mTJejeBW0qaZ9nSsHbegXEcF9x8=;
+        b=RlWV2lpPvUtKFAKC/Gbovw97zoxxe0xK/3QskN21ZPHh0c98uvgKYe2iK/kRFvmqpp
+         2uZqwReq1quw4sgjMuQt8KoKn4A1nPuRDEVj7DtBlD4YM0IC0bw2GL7A6lVwDOmw/Rqu
+         8+yDwofeBQPjq7hToAJyk/qjUvhbAFOkMYEydtz5iZMxQIJ63Qg237/zAupAyVqQEuX7
+         OQe3xQ8CvzbwQJSY1GRPv/TeLd+IQcZ8rkI8lYpEN1vqjHk0DEdUqO7hSj+U9lanbFzq
+         JNXhds/5HBQMIGT7KRS27VMPqoy1QJmCBFySxzhf6Xvo53w/bgCoeo7vcrzQUjIb4jtv
+         8B1g==
+X-Gm-Message-State: APjAAAWK0+ToapaflRWHPqOn6mtF1dDldCJ+6knvl3cAT2UMsuVOA1Jq
+        4wlV4WPy3bKEZVv2MzA+zgOnHFQO
+X-Google-Smtp-Source: APXvYqxeRF90/zEsikUD4SUJJypsMyD4WZjz/yht4sgsIdjSjQZ284ZxUvHiyWkJHvuqABcIpJscGA==
+X-Received: by 2002:aa7:9546:: with SMTP id w6mr608003pfq.66.1581331878197;
+        Mon, 10 Feb 2020 02:51:18 -0800 (PST)
+Received: from localhost.localdomain ([45.114.62.33])
+        by smtp.gmail.com with ESMTPSA id g18sm12104833pfi.80.2020.02.10.02.51.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Feb 2020 02:51:17 -0800 (PST)
+From:   Anand Moon <linux.amoon@gmail.com>
+To:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Felipe Balbi <balbi@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] soc: samsung: chipid: Fix return value on non-Exynos
- platforms
-Date:   Fri,  7 Feb 2020 08:05:52 +0100
-Message-Id: <20200207070552.26986-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrNIsWRmVeSWpSXmKPExsWy7djP87pTeWzjDH6sUbPYOGM9q8X58xvY
-        LT73HmG0mHF+H5PF2iN32R1YPTat6mTz6NuyitHj8ya5AOYoLpuU1JzMstQifbsErozFJ3az
-        FDxmrfjRntrA+Jmli5GTQ0LAROLhv3usXYxcHEICKxglGrp62SCcL4wS8+YuY4ZwPjNKnF+y
-        jBGmpf/AMUaIxHJGiSeb3zPBtfxsncoKUsUmYCjR9baLDcQWEbCXuP1kGTtIEbNAH6PE9b1z
-        mUESwgKBEn/2rAayOThYBFQlvu+XAgnzCthK9H75DnWgvMTqDQfAzpAQ2MEmcWfRM2aIhIvE
-        nwNL2SBsYYlXx7ewQ9gyEv93zmeCaGhmlHh4bi07hNPDKHG5aQbUE9YSd879YgPZzCygKbF+
-        lz5E2FHiZ0sPK0hYQoBP4sZbQZAwM5A5adt0Zogwr0RHmxBEtZrErOPr4NYevHAJ6jQPicOH
-        l4DdLyQQK3Fn4Tn2CYxysxB2LWBkXMUonlpanJueWmycl1quV5yYW1yal66XnJ+7iREY5af/
-        Hf+6g3Hfn6RDjAIcjEo8vAmONnFCrIllxZW5hxglOJiVRHjP61vGCfGmJFZWpRblxxeV5qQW
-        H2KU5mBREuc1XvQyVkggPbEkNTs1tSC1CCbLxMEp1cAYcz3j5+pPSuuVbbZ5li58dG5971e1
-        GYofY7SDj+2/KWJUEPEn+uCXvGPCT/j3bZC1ed2ScVdA2uCP5tbZKqcNJESMw/w3VNvmBJyw
-        bPCZv7tXwnyCb5DsbBvzU1FHlgQXJfDfD2tlmPDjstvK3oSOzRectVSWLcrlcayQ5f7/1Ppu
-        p8bCYwFKLMUZiYZazEXFiQD6gZa57gIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrALMWRmVeSWpSXmKPExsVy+t/xu7pTeWzjDHrXCFtsnLGe1eL8+Q3s
-        Fp97jzBazDi/j8li7ZG77A6sHptWdbJ59G1ZxejxeZNcAHOUnk1RfmlJqkJGfnGJrVK0oYWR
-        nqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXsbiE7tZCh6zVvxoT21g/MzSxcjJISFg
-        ItF/4BhjFyMXh5DAUkaJw0u+skEkZCROTmtghbCFJf5c62KDKPrEKPFs2iQmkASbgKFE19su
-        sAYRAUeJFzs/s4MUMQtMYJQ43zkDLCEs4C+x8/5moEkcHCwCqhLf90uBhHkFbCV6v3yHukJe
-        YvWGA8wTGHkWMDKsYhRJLS3OTc8tNtQrTswtLs1L10vOz93ECAytbcd+bt7BeGlj8CFGAQ5G
-        JR7eBEebOCHWxLLiytxDjBIczEoivOf1LeOEeFMSK6tSi/Lji0pzUosPMZoC7Z7ILCWanA8M
-        +7ySeENTQ3MLS0NzY3NjMwslcd4OgYMxQgLpiSWp2ampBalFMH1MHJxSDYxiXcoWdouN0uO4
-        TgruefdG5GBi/fQzCn+PKG1+XKmzieMyz+b1p5V95ZJye3YEMYkfnK2h3sLkvbTzzavfvjdU
-        RLad/7NtUtI8dxvBb/ZHWVwe/e15/drqZ9LJY394lyVvONj8wLJ4o6DbqeKXbPMFZ6tURfln
-        cvzkLbnz9VFljhgDf73L7W9KLMUZiYZazEXFiQBiWM6IQwIAAA==
-X-CMS-MailID: 20200207070701eucas1p2d6422d731f031ee66737683b54085ac7
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200207070701eucas1p2d6422d731f031ee66737683b54085ac7
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200207070701eucas1p2d6422d731f031ee66737683b54085ac7
-References: <CGME20200207070701eucas1p2d6422d731f031ee66737683b54085ac7@eucas1p2.samsung.com>
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCHv3 0/3] Add support for suspend clk for Exynos5422 SoC
+Date:   Mon, 10 Feb 2020 10:51:05 +0000
+Message-Id: <20200210105108.1128-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.25.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Correct the probe return value to -ENODEV on non-Exynos platforms.
+Long time ago I tried to add suspend clk for dwc3 phy
+which was wrong appoch, see below.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/soc/samsung/exynos-chipid.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[0] https://lore.kernel.org/patchwork/patch/837635/
+[1] https://lore.kernel.org/patchwork/patch/837636/
 
-diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
-index 2dad4961a80b..8d4d05086906 100644
---- a/drivers/soc/samsung/exynos-chipid.c
-+++ b/drivers/soc/samsung/exynos-chipid.c
-@@ -59,7 +59,7 @@ static int __init exynos_chipid_early_init(void)
- 	syscon = of_find_compatible_node(NULL, NULL,
- 					 "samsung,exynos4210-chipid");
- 	if (!syscon)
--		return ENODEV;
-+		return -ENODEV;
- 
- 	regmap = device_node_to_regmap(syscon);
- 	of_node_put(syscon);
+This patch series tries to enable suspend clk using 
+exynos dwc3 driver, for this I have added new 
+compatible string "samsung,exynos5420-dwusb3"
+so that we could add new suspend clk in addition
+to the core clk. exynos dwc3 driver will help
+enable/disable these clk.
+
+-Anand
+
+Anand Moon (3):
+  devicetree: bindings: exynos: Add new compatible for Exynos5420 dwc3
+    clocks support
+  ARM: dts: exynos: Add missing usbdrd3 suspend clk
+  usb: dwc3: exynos: Add support for Exynos5422 suspend clk
+
+ Documentation/devicetree/bindings/usb/exynos-usb.txt | 4 +++-
+ arch/arm/boot/dts/exynos5420.dtsi                    | 8 ++++----
+ arch/arm/boot/dts/exynos54xx.dtsi                    | 4 ++--
+ drivers/usb/dwc3/dwc3-exynos.c                       | 9 +++++++++
+ 4 files changed, 18 insertions(+), 7 deletions(-)
+
 -- 
-2.17.1
+2.25.0
 
