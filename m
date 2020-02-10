@@ -2,55 +2,54 @@ Return-Path: <SRS0=czo+=36=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91B10C352A4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Feb 2020 18:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A5F3C35254
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Feb 2020 19:02:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6401C20873
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Feb 2020 18:55:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6853C2080C
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 10 Feb 2020 19:02:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581360907;
-	bh=6pgtcQndcROYmWBHJTcegWLxUbTrUDy+hULdIFfEwTw=;
+	s=default; t=1581361331;
+	bh=HQvf9C9JUKRMovsbBiBUc6zfyh56zjlGJgXiSmdc+e8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=uAy0JjfiX9NvQXx6BZKCSZ4TOKTT2r8LLH2knL8WLOV4B5xq1zpeAgQWuBSJYMnb6
-	 4q83XWWIaimPkh9/HArglf3nJ7oyRJlNYOPQUY7BoxQZTAvAzEilPE1Fw7oNaBoNPV
-	 +wtLc8lQC4V6Uz7RTv8lRUf42jG3Nc+Ihi4gKUsY=
+	b=XcAJg2zwRYe+FaHadKGoeHC/wr7pF0Dow3vCcR3bdRGLFimjt0v1hpA5Z7K+sl3Yz
+	 pxCv2uwy9GuL+qeSTu//MmH70kIOYnpVR9CGcDeyps0tn6du+tFbwcCQAkd30KBOli
+	 aTNNjGaCjyb8zk+/+Yph+zX614xoXk+ucPiXmWZw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727481AbgBJSzD (ORCPT
+        id S1726896AbgBJTCL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 10 Feb 2020 13:55:03 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:40278 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727434AbgBJSzD (ORCPT
+        Mon, 10 Feb 2020 14:02:11 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:38831 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726831AbgBJTCL (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 10 Feb 2020 13:55:03 -0500
-Received: by mail-ed1-f65.google.com with SMTP id p3so1575211edx.7;
-        Mon, 10 Feb 2020 10:55:02 -0800 (PST)
+        Mon, 10 Feb 2020 14:02:11 -0500
+Received: by mail-ed1-f68.google.com with SMTP id p23so1617696edr.5;
+        Mon, 10 Feb 2020 11:02:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Jlkep5BMgERBHRiRFRjnqMtZPt75n7yCPDHspM4Vr4s=;
-        b=pEvR8ABTtQkrO9u6pVgAlLHW7KBW3peH1uZYJ2eqTKxZ7Tj9nedUCZoATzhRnostW7
-         PloRMJ5o9wcPZcJXjgPNKdbuky18rMhsSGVmFO8owtO5mFJgCsZFYisCdC2a6oOSkYBR
-         JkrT4YL2WjB/6zdE6xNLDf3hMxGM7PTaJQ+uLpuSFBK/r1W+sQrbHSEiA556+//b836t
-         zkQHNc1Bzt1A6syHSrSDc5qBNMip1Om8XdpActNsX1mSFIrVmzDpHI4cWsJTG33dq98C
-         ZceSe3ZscFFJ2G6+Ke53h4hNBPtL13Ntu0OdAmTDtQx4GqNy1QrkELIgsf+YYq7D4zcw
-         xteQ==
-X-Gm-Message-State: APjAAAWptcotSWc9c73ehDLs8lMSVydvighn6UcGldlIxYcFQzrXJUE5
-        f9OAg4YzH/KBJfapeDs6ddY=
-X-Google-Smtp-Source: APXvYqw0gOeAueOeG/UOMWpy/5re47tSz7mLAaISIcnPIQ/kq1PJH7gsUfZZce4d+I4k2uUUDYoxfQ==
-X-Received: by 2002:a05:6402:14d6:: with SMTP id f22mr2415351edx.59.1581360901336;
-        Mon, 10 Feb 2020 10:55:01 -0800 (PST)
+        bh=9cf+4qQjBnlkEW/EJTW7h2vLgsgp1JMVDelx9bM1U3Q=;
+        b=ZtS11vuHhd0zOId95mWyRGX3HsEJ7ltYzXkSSgCuBn0Es8gycoJ6/gspYeBXcrP+iN
+         G5Uzbye3SktOKnpVOeGPe5aAPB1Q8Y5XibaC0+TOzdDrfVShiVmIOCT5ICk8jL0oFexM
+         yGzNMsuJtwOi49ejM1zzN9QKmm2FHAkFBgVkwQOv3uH5d11XRkzfKafOtGvHj/Ja8K/2
+         rzt97/QRbSGWGLtF7ZKzoz7wsWatC7cPPJGZ16I8Gse63rZ3719lgiaH07IzH2qZM7MC
+         pRWcbnxLh4TqOJ749e+c2t34Tz28qPvRlch3hCmsA3P1ZFEK5eVGePEdRiQVxJwx4K1y
+         jWsA==
+X-Gm-Message-State: APjAAAXHz9ZYlXnsIAucY+va5Sn3LNzGmHM3JH+v+KCektru3WvmWQuK
+        ZkH9TnyCcIX1xDxwroSkTWYE8JuB6QY=
+X-Google-Smtp-Source: APXvYqwg0KeN1+Nwj6pBAd2zwMoQwpurX7DGIJkYt84IeruJJh8EyS0rccVKqJspTu7bUwyIu3L+rg==
+X-Received: by 2002:aa7:df04:: with SMTP id c4mr2519354edy.385.1581361328652;
+        Mon, 10 Feb 2020 11:02:08 -0800 (PST)
 Received: from kozik-lap ([194.230.155.125])
-        by smtp.googlemail.com with ESMTPSA id j21sm74756eds.8.2020.02.10.10.54.59
+        by smtp.googlemail.com with ESMTPSA id r23sm74834edp.15.2020.02.10.11.02.06
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Feb 2020 10:55:00 -0800 (PST)
-Date:   Mon, 10 Feb 2020 19:54:58 +0100
+        Mon, 10 Feb 2020 11:02:07 -0800 (PST)
+Date:   Mon, 10 Feb 2020 20:02:05 +0100
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Anand Moon <linux.amoon@gmail.com>
 Cc:     Linux USB Mailing List <linux-usb@vger.kernel.org>,
@@ -64,100 +63,74 @@ Cc:     Linux USB Mailing List <linux-usb@vger.kernel.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         linux-samsung-soc@vger.kernel.org,
         Linux Kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCHv3 2/3] ARM: dts: exynos: Add missing usbdrd3 suspend clk
-Message-ID: <20200210185458.GA16433@kozik-lap>
+Subject: Re: [PATCHv3 0/3] Add support for suspend clk for Exynos5422 SoC
+Message-ID: <20200210190205.GB16433@kozik-lap>
 References: <20200210105108.1128-1-linux.amoon@gmail.com>
- <20200210105108.1128-3-linux.amoon@gmail.com>
- <20200210135008.GA2163@pi3>
- <CANAwSgT9_8JhjyN9yfZ6=AUE7kVhrrTwdK1KFQLwxuNSYyBKKA@mail.gmail.com>
+ <20200210135612.GB2163@pi3>
+ <CANAwSgT9aq123H-pO2u6iN2E8towsWUFcWDsA9TbVqP30j=10w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CANAwSgT9_8JhjyN9yfZ6=AUE7kVhrrTwdK1KFQLwxuNSYyBKKA@mail.gmail.com>
+In-Reply-To: <CANAwSgT9aq123H-pO2u6iN2E8towsWUFcWDsA9TbVqP30j=10w@mail.gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 10:43:45PM +0530, Anand Moon wrote:
+On Mon, Feb 10, 2020 at 10:38:52PM +0530, Anand Moon wrote:
 > Hi Krzysztof,
+> 
+> On Mon, 10 Feb 2020 at 19:26, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >
+> > On Mon, Feb 10, 2020 at 10:51:05AM +0000, Anand Moon wrote:
+> > > Long time ago I tried to add suspend clk for dwc3 phy
+> > > which was wrong appoch, see below.
+> > >
+> > > [0] https://lore.kernel.org/patchwork/patch/837635/
+> > > [1] https://lore.kernel.org/patchwork/patch/837636/
+> > >
+> >
 > 
 > Thanks for your review comments.
 > 
-> On Mon, 10 Feb 2020 at 19:20, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >
-> > On Mon, Feb 10, 2020 at 10:51:07AM +0000, Anand Moon wrote:
-> > > This patch adds new combatible strings for USBDRD3
-> > > for adding missing suspend clk, exynos5422 usbdrd3
-> > > support two clk USBD300 and SCLK_USBD300, so add missing
-> > > suspemd_clk for Exynos542x DWC3 nodes.
-> > >
-> > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > > ---
-> > >  arch/arm/boot/dts/exynos5420.dtsi | 8 ++++----
-> > >  arch/arm/boot/dts/exynos54xx.dtsi | 4 ++--
-> > >  2 files changed, 6 insertions(+), 6 deletions(-)
-> > >
-> > > diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> > > index b672080e7469..bd505256a223 100644
-> > > --- a/arch/arm/boot/dts/exynos5420.dtsi
-> > > +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> > > @@ -1372,8 +1372,8 @@ &trng {
-> > >  };
-> > >
-> > >  &usbdrd3_0 {
-> > > -     clocks = <&clock CLK_USBD300>;
-> > > -     clock-names = "usbdrd30";
-> > > +     clocks = <&clock CLK_USBD300>, <&clock CLK_SCLK_USBD300>;
-> > > +     clock-names = "usbdrd30", "usbdrd30_susp_clk";
-> > >  };
-> > >
-> > >  &usbdrd_phy0 {
-> > > @@ -1383,8 +1383,8 @@ &usbdrd_phy0 {
-> > >  };
-> > >
-> > >  &usbdrd3_1 {
-> > > -     clocks = <&clock CLK_USBD301>;
-> > > -     clock-names = "usbdrd30";
-> > > +     clocks = <&clock CLK_USBD301>, <&clock CLK_SCLK_USBD301>;
-> > > +     clock-names = "usbdrd30", "usbdrd30_susp_clk";
-> > >  };
-> > >
-> > >  &usbdrd_dwc3_1 {
-> > > diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
-> > > index 8aa5117e58ce..0aac6255de5d 100644
-> > > --- a/arch/arm/boot/dts/exynos54xx.dtsi
-> > > +++ b/arch/arm/boot/dts/exynos54xx.dtsi
-> > > @@ -143,7 +143,7 @@ hsi2c_7: i2c@12cd0000 {
-> > >               };
-> > >
-> > >               usbdrd3_0: usb3-0 {
-> > > -                     compatible = "samsung,exynos5250-dwusb3";
-> > > +                     compatible = "samsung,exynos5420-dwusb3";
-> > >                       #address-cells = <1>;
-> > >                       #size-cells = <1>;
-> > >                       ranges;
-> > > @@ -165,7 +165,7 @@ usbdrd_phy0: phy@12100000 {
-> > >               };
-> > >
-> > >               usbdrd3_1: usb3-1 {
-> > > -                     compatible = "samsung,exynos5250-dwusb3";
-> > > +                     compatible = "samsung,exynos5420-dwusb3";
-> >
-> > This affects also Exynos5410 but you do not add new clock there.
+> > You ignored parts of my review from these previous patches. I asked for
+> > describing WHY are you doing this and WHAT problem are you trying to
+> > solve. I asked for this multiple times. Unfortunately I cannot find the
+> > answers to my questions in this patchset...
 > >
 > > Best regards,
 > > Krzysztof
-> >
 > 
-> Ok I will update this Exynos5410 dts.
+> I dont know how to resolve this issue, but I want to re-post
+> some of my changes back for review. let me try again.
 > 
-> Is samsung,exynos54xx-dwusb3 is valid compatible string
-> for both the SoC.
+> My future goal is to add #power-domain for FSYS and FSYS2
+> which I am trying to resolve some issue.
+> Also add run-time power management for USB3 drivers.
 
-The compatible should not be wildcard so keep it as
-samsung,exynos5420-dwusb3.
+You can start by describing why FSYS and FSYS2 power domains cannot be
+added right now. Maybe this patchset allows this later?
+
+> 
+> Here is the clk diagram for FSYS clk as per Exynos5422 user manual.
+> [0] https://imgur.com/gallery/zAiBoyh
+> 
+> As per the USB 3.0 Architecture T I.
+> 
+> 2.13.1 PHY Power Management
+> The SS PHY has power states P0, P1, P2, and P3, corresponding to the
+> SS LPM states of U0, U1, U2,and U3. In the P3 state,SS PHY does not drive
+> the default functional clock,instead, the *susp_clk* is used in its place.
+> 
+> So enable the suspend clk help control the power management
+> states for the DWC3 controller.
+
+That's too vague because clock usually cannot "help"... The wording is
+wrong and the actual problem is not described.
+
+I could guess from your description and driver behavior that SCLK has to
+be on during USB DRD suspend.
 
 Best regards,
 Krzysztof
