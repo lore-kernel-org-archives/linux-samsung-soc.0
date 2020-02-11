@@ -2,269 +2,320 @@ Return-Path: <SRS0=DwAf=37=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F1DC352A3
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Feb 2020 14:06:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3762AC352A3
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Feb 2020 15:00:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79D8320870
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Feb 2020 14:06:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 040FB20675
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Feb 2020 15:00:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729979AbgBKOF4 (ORCPT
+        id S1728745AbgBKPAS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 11 Feb 2020 09:05:56 -0500
-Received: from mga09.intel.com ([134.134.136.24]:1887 "EHLO mga09.intel.com"
+        Tue, 11 Feb 2020 10:00:18 -0500
+Received: from mga03.intel.com ([134.134.136.65]:48803 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728865AbgBKOF4 (ORCPT
+        id S1728073AbgBKPAS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 11 Feb 2020 09:05:56 -0500
+        Tue, 11 Feb 2020 10:00:18 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 06:05:55 -0800
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 07:00:17 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
-   d="scan'208";a="405945809"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
-  by orsmga005.jf.intel.com with ESMTP; 11 Feb 2020 06:05:52 -0800
-Subject: Re: [RFT PATCH] xhci: Fix memory leak when caching protocol extended
- capability PSI tables
+   d="scan'208";a="280953217"
+Received: from mattu-haswell.fi.intel.com ([10.237.72.170])
+  by FMSMGA003.fm.intel.com with ESMTP; 11 Feb 2020 07:00:14 -0800
 From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
+To:     gregkh@linuxfoundation.org, m.szyprowski@samsung.com
 Cc:     pmenzel@molgen.mpg.de, mika.westerberg@linux.intel.com,
         linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-References: <572bea6f-06d4-938a-802e-93386acf59d9@linux.intel.com>
- <20200108151730.21022-1-mathias.nyman@linux.intel.com>
- <CGME20200211105613eucas1p27cac4202c4287a5967b2ed988779d523@eucas1p2.samsung.com>
- <089285ab-7041-49bb-54ea-c73b25f96f48@samsung.com>
- <20200211122316.GG1856500@kroah.com>
- <9d314940-086e-d9a7-88e2-88447cd1c67d@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mathias.nyman@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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 fiD/
-Message-ID: <20d0559f-8d0f-42f5-5ebf-7f658a172161@linux.intel.com>
-Date:   Tue, 11 Feb 2020 16:08:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        linux-samsung-soc@vger.kernel.org, krzk@kernel.org,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        stable <stable@vger.kernel.org>
+Subject: [RFT PATCH v2] xhci: Fix memory leak when caching protocol extended capability PSI tables
+Date:   Tue, 11 Feb 2020 17:01:58 +0200
+Message-Id: <20200211150158.14475-1-mathias.nyman@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20d0559f-8d0f-42f5-5ebf-7f658a172161@linux.intel.com>
+References: <20d0559f-8d0f-42f5-5ebf-7f658a172161@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <9d314940-086e-d9a7-88e2-88447cd1c67d@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 11.2.2020 14.29, Mathias Nyman wrote:
-> On 11.2.2020 14.23, Greg KH wrote:
->> On Tue, Feb 11, 2020 at 11:56:12AM +0100, Marek Szyprowski wrote:
->>> Hi
->>>
->>> On 08.01.2020 16:17, Mathias Nyman wrote:
->>>> xhci driver assumed that xHC controllers have at most one custom
->>>> supported speed table (PSI) for all usb 3.x ports.
->>>> Memory was allocated for one PSI table under the xhci hub structure.
->>>>
->>>> Turns out this is not the case, some controllers have a separate
->>>> "supported protocol capability" entry with a PSI table for each port.
->>>> This means each usb3 port can in theory support different custom speeds.
->>>>
->>>> To solve this cache all supported protocol capabilities with their PSI
->>>> tables in an array, and add pointers to the xhci port structure so that
->>>> every port points to its capability entry in the array.
->>>>
->>>> When creating the SuperSpeedPlus USB Device Capability BOS descriptor
->>>> for the xhci USB 3.1 roothub we for now will use only data from the
->>>> first USB 3.1 capable protocol capability entry in the array.
->>>> This could be improved later, this patch focuses resolving
->>>> the memory leak.
->>>>
->>>> Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
->>>> Reported-by: Sajja Venkateswara Rao <VenkateswaraRao.Sajja@amd.com>
->>>> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
->>>
->>> This patch landed in today's linux-next (20200211) and causes NULL 
->>> pointer dereference during second suspend/resume cycle on Samsung 
->>> Exynos5422-based (arm 32bit) Odroid XU3lite board:
->>>
->>> # time rtcwake -s10 -mmem
->>> rtcwake: wakeup from "mem" using /dev/rtc0 at Tue Feb 11 10:51:43 2020
->>> PM: suspend entry (deep)
->>> Filesystems sync: 0.012 seconds
->>> Freezing user space processes ... (elapsed 0.010 seconds) done.
->>> OOM killer disabled.
->>> Freezing remaining freezable tasks ... (elapsed 0.002 seconds) done.
->>> smsc95xx 1-1.1:1.0 eth0: entering SUSPEND2 mode
->>> wake enabled for irq 153
->>> wake enabled for irq 158
->>> samsung-pinctrl 13400000.pinctrl: Setting external wakeup interrupt 
->>> mask: 0xffffffe7
->>> Disabling non-boot CPUs ...
->>> IRQ 51: no longer affine to CPU1
->>> IRQ 52: no longer affine to CPU2
->>> s3c2410-wdt 101d0000.watchdog: watchdog disabled
->>> wake disabled for irq 158
->>> usb usb1: root hub lost power or was reset
->>> usb usb2: root hub lost power or was reset
->>> wake disabled for irq 153
->>> exynos-tmu 10060000.tmu: More trip points than supported by this TMU.
->>> exynos-tmu 10060000.tmu: 2 trip points should be configured in polling mode.
->>> exynos-tmu 10064000.tmu: More trip points than supported by this TMU.
->>> exynos-tmu 10064000.tmu: 2 trip points should be configured in polling mode.
->>> exynos-tmu 10068000.tmu: More trip points than supported by this TMU.
->>> exynos-tmu 10068000.tmu: 2 trip points should be configured in polling mode.
->>> exynos-tmu 1006c000.tmu: More trip points than supported by this TMU.
->>> exynos-tmu 1006c000.tmu: 2 trip points should be configured in polling mode.
->>> exynos-tmu 100a0000.tmu: More trip points than supported by this TMU.
->>> exynos-tmu 100a0000.tmu: 6 trip points should be configured in polling mode.
->>> usb usb3: root hub lost power or was reset
->>> s3c-rtc 101e0000.rtc: rtc disabled, re-enabling
->>> usb usb4: root hub lost power or was reset
->>> xhci-hcd xhci-hcd.8.auto: No ports on the roothubs?
->>> PM: dpm_run_callback(): platform_pm_resume+0x0/0x44 returns -12
->>> PM: Device xhci-hcd.8.auto failed to resume async: error -12
->>> hub 3-0:1.0: hub_ext_port_status failed (err = -32)
->>> hub 4-0:1.0: hub_ext_port_status failed (err = -32)
->>> usb 1-1: reset high-speed USB device number 2 using exynos-ehci
->>> usb 1-1.1: reset high-speed USB device number 3 using exynos-ehci
->>> OOM killer enabled.
->>> Restarting tasks ... done.
->>>
->>> real    0m11.890s
->>> user    0m0.001s
->>> sys     0m0.679s
->>> root@target:~# PM: suspend exit
->>> mmc_host mmc0: Bus speed (slot 0) = 50000000Hz (slot req 400000Hz, 
->>> actual 396825HZ div = 63)
->>> mmc_host mmc0: Bus speed (slot 0) = 200000000Hz (slot req 200000000Hz, 
->>> actual 200000000HZ div = 0)
->>> mmc_host mmc0: Bus speed (slot 0) = 50000000Hz (slot req 52000000Hz, 
->>> actual 50000000HZ div = 0)
->>> mmc_host mmc0: Bus speed (slot 0) = 400000000Hz (slot req 200000000Hz, 
->>> actual 200000000HZ div = 1)
->>> smsc95xx 1-1.1:1.0 eth0: link up, 100Mbps, full-duplex, lpa 0xC1E1
->>>
->>> root@target:~#
->>> root@target:~# time rtcwake -s10 -mmem[   35.451572] vdd_ldo12: disabling
->>>
->>> rtcwake: wakeup from "mem" using /dev/rtc0 at Tue Feb 11 10:52:02 2020
->>> PM: suspend entry (deep)
->>> Filesystems sync: 0.004 seconds
->>> Freezing user space processes ... (elapsed 0.006 seconds) done.
->>> OOM killer disabled.
->>> Freezing remaining freezable tasks ... (elapsed 0.070 seconds) done.
->>> hub 4-0:1.0: hub_ext_port_status failed (err = -32)
->>> hub 3-0:1.0: hub_ext_port_status failed (err = -32)
->>> 8<--- cut here ---
->>> Unable to handle kernel NULL pointer dereference at virtual address 00000014
->>> pgd = 4c26b54b
->>> [00000014] *pgd=00000000
->>> Internal error: Oops: 17 [#1] PREEMPT SMP ARM
->>> Modules linked in:
->>> CPU: 3 PID: 1468 Comm: kworker/u16:23 Not tainted 
->>> 5.6.0-rc1-next-20200211 #268
->>> Hardware name: Samsung Exynos (Flattened Device Tree)
->>> Workqueue: events_unbound async_run_entry_fn
->>> PC is at xhci_suspend+0x12c/0x520
->>> LR is at 0xa6aa9898
->>> pc : [<c0724c90>]    lr : [<a6aa9898>]    psr: 60000093
->>> sp : ec401df8  ip : 0000001a  fp : c12e7864
->>> r10: 00000000  r9 : ecfb87b0  r8 : ecfb8220
->>> r7 : 00000000  r6 : 00000000  r5 : 00000004  r4 : ecfb81f0
->>> r3 : 00007d00  r2 : 00000001  r1 : 00000001  r0 : 00000000
->>> Flags: nZCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment none
->>> Control: 10c5387d  Table: 6bd4006a  DAC: 00000051
->>> Process kworker/u16:23 (pid: 1468, stack limit = 0x6e4b6fba)
->>> Stack: (0xec401df8 to 0xec402000)
->>> ...
->>> [<c0724c90>] (xhci_suspend) from [<c061b4f4>] (dpm_run_callback+0xb4/0x3fc)
->>> [<c061b4f4>] (dpm_run_callback) from [<c061bd5c>] 
->>> (__device_suspend+0x134/0x7e8)
->>> [<c061bd5c>] (__device_suspend) from [<c061c42c>] (async_suspend+0x1c/0x94)
->>> [<c061c42c>] (async_suspend) from [<c0154bd0>] 
->>> (async_run_entry_fn+0x48/0x1b8)
->>> [<c0154bd0>] (async_run_entry_fn) from [<c0149b38>] 
->>> (process_one_work+0x230/0x7bc)
->>> [<c0149b38>] (process_one_work) from [<c014a108>] (worker_thread+0x44/0x524)
->>> [<c014a108>] (worker_thread) from [<c01511fc>] (kthread+0x130/0x164)
->>> [<c01511fc>] (kthread) from [<c01010b4>] (ret_from_fork+0x14/0x20)
->>> Exception stack(0xec401fb0 to 0xec401ff8)
->>> ...
->>> ---[ end trace c72caf6487666442 ]---
->>> note: kworker/u16:23[1468] exited with preempt_count 1
->>>
->>> Reverting it fixes the NULL pointer issue. I can provide more 
->>> information or do some other tests. Just let me know what will help to 
->>> fix it.
->>>
->>>  > ...
->>
->> Ugh.  Mathias, should I just revert this for now?
->>
-> 
-> Yes, revert it.
-> 
-> This looks very odd, after second resume, and losing power driver
-> can't find any port at all.
-> 
-> Marek, do you still get the "xhci-hcd xhci-hcd.8.auto: No ports on the roothubs?"
-> message on second resume after reverting the patch?
-> 
+xhci driver assumed that xHC controllers have at most one custom
+supported speed table (PSI) for all usb 3.x ports.
+Memory was allocated for one PSI table under the xhci hub structure.
 
-Ok, I think I got it. 
-Patch doesn't set xhci->num_port_caps to 0 in xhci_mem_cleanup().
+Turns out this is not the case, some controllers have a separate
+"supported protocol capability" entry with a PSI table for each port.
+This means each usb3 roothub port can in theory support different custom
+speeds.
 
-Adding new ports will fail when we reinitialize xhci manually, like in this
-exynos case where xhci loses power in suspend/resume cycle.  
+To solve this, cache all supported protocol capabilities with their PSI
+tables in an array, and add pointers to the xhci port structure so that
+every port points to its capability entry in the array.
 
-I'll post a new version soon
+When creating the SuperSpeedPlus USB Device Capability BOS descriptor
+for the xhci USB 3.1 roothub we for now will use only data from the
+first USB 3.1 capable protocol capability entry in the array.
+This could be improved later, this patch focuses resolving
+the memory leak.
 
--Mathias
+Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
+Reported-by: Sajja Venkateswara Rao <VenkateswaraRao.Sajja@amd.com>
+Fixes: 47189098f8be ("xhci: parse xhci protocol speed ID list for usb 3.1 usage")
+Cc: stable <stable@vger.kernel.org> # v4.4+
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+---
+
+Changes since v1:
+
+- Clear xhci->num_port_caps in xhci_mem_cleanup()
+  Otherwise we fail to add new ports and cause NULL pointer dereference at
+  manual xhci re-initialization. This can happen at resume if host lost power
+  during suspend.
+---
+ drivers/usb/host/xhci-hub.c | 25 +++++++++++-----
+ drivers/usb/host/xhci-mem.c | 59 +++++++++++++++++++++++--------------
+ drivers/usb/host/xhci.h     | 14 +++++++--
+ 3 files changed, 65 insertions(+), 33 deletions(-)
+
+diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
+index 7a3a29e5e9d2..af92b2576fe9 100644
+--- a/drivers/usb/host/xhci-hub.c
++++ b/drivers/usb/host/xhci-hub.c
+@@ -55,6 +55,7 @@ static u8 usb_bos_descriptor [] = {
+ static int xhci_create_usb3_bos_desc(struct xhci_hcd *xhci, char *buf,
+ 				     u16 wLength)
+ {
++	struct xhci_port_cap *port_cap = NULL;
+ 	int i, ssa_count;
+ 	u32 temp;
+ 	u16 desc_size, ssp_cap_size, ssa_size = 0;
+@@ -64,16 +65,24 @@ static int xhci_create_usb3_bos_desc(struct xhci_hcd *xhci, char *buf,
+ 	ssp_cap_size = sizeof(usb_bos_descriptor) - desc_size;
  
+ 	/* does xhci support USB 3.1 Enhanced SuperSpeed */
+-	if (xhci->usb3_rhub.min_rev >= 0x01) {
++	for (i = 0; i < xhci->num_port_caps; i++) {
++		if (xhci->port_caps[i].maj_rev == 0x03 &&
++		    xhci->port_caps[i].min_rev >= 0x01) {
++			usb3_1 = true;
++			port_cap = &xhci->port_caps[i];
++			break;
++		}
++	}
++
++	if (usb3_1) {
+ 		/* does xhci provide a PSI table for SSA speed attributes? */
+-		if (xhci->usb3_rhub.psi_count) {
++		if (port_cap->psi_count) {
+ 			/* two SSA entries for each unique PSI ID, RX and TX */
+-			ssa_count = xhci->usb3_rhub.psi_uid_count * 2;
++			ssa_count = port_cap->psi_uid_count * 2;
+ 			ssa_size = ssa_count * sizeof(u32);
+ 			ssp_cap_size -= 16; /* skip copying the default SSA */
+ 		}
+ 		desc_size += ssp_cap_size;
+-		usb3_1 = true;
+ 	}
+ 	memcpy(buf, &usb_bos_descriptor, min(desc_size, wLength));
+ 
+@@ -99,7 +108,7 @@ static int xhci_create_usb3_bos_desc(struct xhci_hcd *xhci, char *buf,
+ 	}
+ 
+ 	/* If PSI table exists, add the custom speed attributes from it */
+-	if (usb3_1 && xhci->usb3_rhub.psi_count) {
++	if (usb3_1 && port_cap->psi_count) {
+ 		u32 ssp_cap_base, bm_attrib, psi, psi_mant, psi_exp;
+ 		int offset;
+ 
+@@ -111,7 +120,7 @@ static int xhci_create_usb3_bos_desc(struct xhci_hcd *xhci, char *buf,
+ 
+ 		/* attribute count SSAC bits 4:0 and ID count SSIC bits 8:5 */
+ 		bm_attrib = (ssa_count - 1) & 0x1f;
+-		bm_attrib |= (xhci->usb3_rhub.psi_uid_count - 1) << 5;
++		bm_attrib |= (port_cap->psi_uid_count - 1) << 5;
+ 		put_unaligned_le32(bm_attrib, &buf[ssp_cap_base + 4]);
+ 
+ 		if (wLength < desc_size + ssa_size)
+@@ -124,8 +133,8 @@ static int xhci_create_usb3_bos_desc(struct xhci_hcd *xhci, char *buf,
+ 		 * USB 3.1 requires two SSA entries (RX and TX) for every link
+ 		 */
+ 		offset = desc_size;
+-		for (i = 0; i < xhci->usb3_rhub.psi_count; i++) {
+-			psi = xhci->usb3_rhub.psi[i];
++		for (i = 0; i < port_cap->psi_count; i++) {
++			psi = port_cap->psi[i];
+ 			psi &= ~USB_SSP_SUBLINK_SPEED_RSVD;
+ 			psi_exp = XHCI_EXT_PORT_PSIE(psi);
+ 			psi_mant = XHCI_EXT_PORT_PSIM(psi);
+diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
+index 0e2701649369..884c601bfa15 100644
+--- a/drivers/usb/host/xhci-mem.c
++++ b/drivers/usb/host/xhci-mem.c
+@@ -1915,17 +1915,17 @@ void xhci_mem_cleanup(struct xhci_hcd *xhci)
+ 	xhci->usb3_rhub.num_ports = 0;
+ 	xhci->num_active_eps = 0;
+ 	kfree(xhci->usb2_rhub.ports);
+-	kfree(xhci->usb2_rhub.psi);
+ 	kfree(xhci->usb3_rhub.ports);
+-	kfree(xhci->usb3_rhub.psi);
+ 	kfree(xhci->hw_ports);
+ 	kfree(xhci->rh_bw);
+ 	kfree(xhci->ext_caps);
++	for (i = 0; i < xhci->num_port_caps; i++)
++		kfree(xhci->port_caps[i].psi);
++	kfree(xhci->port_caps);
++	xhci->num_port_caps = 0;
+ 
+ 	xhci->usb2_rhub.ports = NULL;
+-	xhci->usb2_rhub.psi = NULL;
+ 	xhci->usb3_rhub.ports = NULL;
+-	xhci->usb3_rhub.psi = NULL;
+ 	xhci->hw_ports = NULL;
+ 	xhci->rh_bw = NULL;
+ 	xhci->ext_caps = NULL;
+@@ -2126,6 +2126,7 @@ static void xhci_add_in_port(struct xhci_hcd *xhci, unsigned int num_ports,
+ 	u8 major_revision, minor_revision;
+ 	struct xhci_hub *rhub;
+ 	struct device *dev = xhci_to_hcd(xhci)->self.sysdev;
++	struct xhci_port_cap *port_cap;
+ 
+ 	temp = readl(addr);
+ 	major_revision = XHCI_EXT_PORT_MAJOR(temp);
+@@ -2160,31 +2161,39 @@ static void xhci_add_in_port(struct xhci_hcd *xhci, unsigned int num_ports,
+ 		/* WTF? "Valid values are ‘1’ to MaxPorts" */
+ 		return;
+ 
+-	rhub->psi_count = XHCI_EXT_PORT_PSIC(temp);
+-	if (rhub->psi_count) {
+-		rhub->psi = kcalloc_node(rhub->psi_count, sizeof(*rhub->psi),
+-				    GFP_KERNEL, dev_to_node(dev));
+-		if (!rhub->psi)
+-			rhub->psi_count = 0;
++	port_cap = &xhci->port_caps[xhci->num_port_caps++];
++	if (xhci->num_port_caps > max_caps)
++		return;
++
++	port_cap->maj_rev = major_revision;
++	port_cap->min_rev = minor_revision;
++	port_cap->psi_count = XHCI_EXT_PORT_PSIC(temp);
++
++	if (port_cap->psi_count) {
++		port_cap->psi = kcalloc_node(port_cap->psi_count,
++					     sizeof(*port_cap->psi),
++					     GFP_KERNEL, dev_to_node(dev));
++		if (!port_cap->psi)
++			port_cap->psi_count = 0;
+ 
+-		rhub->psi_uid_count++;
+-		for (i = 0; i < rhub->psi_count; i++) {
+-			rhub->psi[i] = readl(addr + 4 + i);
++		port_cap->psi_uid_count++;
++		for (i = 0; i < port_cap->psi_count; i++) {
++			port_cap->psi[i] = readl(addr + 4 + i);
+ 
+ 			/* count unique ID values, two consecutive entries can
+ 			 * have the same ID if link is assymetric
+ 			 */
+-			if (i && (XHCI_EXT_PORT_PSIV(rhub->psi[i]) !=
+-				  XHCI_EXT_PORT_PSIV(rhub->psi[i - 1])))
+-				rhub->psi_uid_count++;
++			if (i && (XHCI_EXT_PORT_PSIV(port_cap->psi[i]) !=
++				  XHCI_EXT_PORT_PSIV(port_cap->psi[i - 1])))
++				port_cap->psi_uid_count++;
+ 
+ 			xhci_dbg(xhci, "PSIV:%d PSIE:%d PLT:%d PFD:%d LP:%d PSIM:%d\n",
+-				  XHCI_EXT_PORT_PSIV(rhub->psi[i]),
+-				  XHCI_EXT_PORT_PSIE(rhub->psi[i]),
+-				  XHCI_EXT_PORT_PLT(rhub->psi[i]),
+-				  XHCI_EXT_PORT_PFD(rhub->psi[i]),
+-				  XHCI_EXT_PORT_LP(rhub->psi[i]),
+-				  XHCI_EXT_PORT_PSIM(rhub->psi[i]));
++				  XHCI_EXT_PORT_PSIV(port_cap->psi[i]),
++				  XHCI_EXT_PORT_PSIE(port_cap->psi[i]),
++				  XHCI_EXT_PORT_PLT(port_cap->psi[i]),
++				  XHCI_EXT_PORT_PFD(port_cap->psi[i]),
++				  XHCI_EXT_PORT_LP(port_cap->psi[i]),
++				  XHCI_EXT_PORT_PSIM(port_cap->psi[i]));
+ 		}
+ 	}
+ 	/* cache usb2 port capabilities */
+@@ -2219,6 +2228,7 @@ static void xhci_add_in_port(struct xhci_hcd *xhci, unsigned int num_ports,
+ 			continue;
+ 		}
+ 		hw_port->rhub = rhub;
++		hw_port->port_cap = port_cap;
+ 		rhub->num_ports++;
+ 	}
+ 	/* FIXME: Should we disable ports not in the Extended Capabilities? */
+@@ -2309,6 +2319,11 @@ static int xhci_setup_port_arrays(struct xhci_hcd *xhci, gfp_t flags)
+ 	if (!xhci->ext_caps)
+ 		return -ENOMEM;
+ 
++	xhci->port_caps = kcalloc_node(cap_count, sizeof(*xhci->port_caps),
++				flags, dev_to_node(dev));
++	if (!xhci->port_caps)
++		return -ENOMEM;
++
+ 	offset = cap_start;
+ 
+ 	while (offset) {
+diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+index 13d8838cd552..3ecee10fdcdc 100644
+--- a/drivers/usb/host/xhci.h
++++ b/drivers/usb/host/xhci.h
+@@ -1702,12 +1702,20 @@ struct xhci_bus_state {
+  * Intel Lynx Point LP xHCI host.
+  */
+ #define	XHCI_MAX_REXIT_TIMEOUT_MS	20
++struct xhci_port_cap {
++	u32			*psi;	/* array of protocol speed ID entries */
++	u8			psi_count;
++	u8			psi_uid_count;
++	u8			maj_rev;
++	u8			min_rev;
++};
+ 
+ struct xhci_port {
+ 	__le32 __iomem		*addr;
+ 	int			hw_portnum;
+ 	int			hcd_portnum;
+ 	struct xhci_hub		*rhub;
++	struct xhci_port_cap	*port_cap;
+ };
+ 
+ struct xhci_hub {
+@@ -1719,9 +1727,6 @@ struct xhci_hub {
+ 	/* supported prococol extended capabiliy values */
+ 	u8			maj_rev;
+ 	u8			min_rev;
+-	u32			*psi;	/* array of protocol speed ID entries */
+-	u8			psi_count;
+-	u8			psi_uid_count;
+ };
+ 
+ /* There is one xhci_hcd structure per controller */
+@@ -1880,6 +1885,9 @@ struct xhci_hcd {
+ 	/* cached usb2 extened protocol capabilites */
+ 	u32                     *ext_caps;
+ 	unsigned int            num_ext_caps;
++	/* cached extended protocol port capabilities */
++	struct xhci_port_cap	*port_caps;
++	unsigned int		num_port_caps;
+ 	/* Compliance Mode Recovery Data */
+ 	struct timer_list	comp_mode_recovery_timer;
+ 	u32			port_status_u0;
+-- 
+2.17.1
 
