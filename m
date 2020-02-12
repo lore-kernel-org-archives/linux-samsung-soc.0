@@ -2,108 +2,71 @@ Return-Path: <SRS0=4gi6=4A=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB0AFC2BA83
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 12 Feb 2020 17:51:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13597C352A4
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 12 Feb 2020 23:38:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C258A2168B
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 12 Feb 2020 17:51:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC6D920578
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 12 Feb 2020 23:38:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581529914;
-	bh=CxkrovGv+VwPpjoOAvZm2PqQCvnr5Wtoftc21B0UHTk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=uXFAq9h3b50vm/HY7X9DdwXr++izQITgtggpo5EuI8UoG8zgZj91QaVz/Pfllv+GK
-	 Ru6mAPnvNuz17PxhZGHF10o0igJL52b2L+Anjvv5gNRltk2D9eaokVocyEKW3AMEjH
-	 WyL0pv2+31Tkl1iSxVaewyfCVENrEvrmN2n0c2P4=
+	s=default; t=1581550732;
+	bh=SagTHuxEwnio4j42XiH0Rt3krAe38n1UYehH5PgY31k=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=GsjCk2/paGHJK+yS8KcYUoSEM5qqxsrrOcquosXdy61BJGWyFaOpeicpKSoFUV8vx
+	 1y/1mFsOhWLGceBKObY//rSY1+jeJyGWTLiF6Bs6lvwNm4rCEw0wXrzBWvenZWoQJf
+	 8RFf9VrWJCxaX4X3OVaXDdsVvQMSPvzReqRPYkDM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbgBLRvy (ORCPT
+        id S1729103AbgBLXiu (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 12 Feb 2020 12:51:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43212 "EHLO mail.kernel.org"
+        Wed, 12 Feb 2020 18:38:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727279AbgBLRvy (ORCPT
+        id S1727117AbgBLXit (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 12 Feb 2020 12:51:54 -0500
-Received: from localhost (unknown [104.132.1.104])
+        Wed, 12 Feb 2020 18:38:49 -0500
+Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A0CA20714;
-        Wed, 12 Feb 2020 17:51:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 284F020578;
+        Wed, 12 Feb 2020 23:38:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581529912;
-        bh=CxkrovGv+VwPpjoOAvZm2PqQCvnr5Wtoftc21B0UHTk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fGVjNz4UWtFx6kGkl2XTfCOEiXyadq7bMWbG9TozLizytoCWomtQAEQscEVeIMQMw
-         MGcQLCU/Dvfia1A7iBwQv7rqwg69C4diPpEAHbFLQnkAL0RBpxCTfthen+NscnNRZy
-         2xNscEhefreq/0xFrJqZPllN3C/gI7Qx7PBjzY1c=
-Date:   Wed, 12 Feb 2020 09:51:51 -0800
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Mathias Nyman <mathias.nyman@linux.intel.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>, pmenzel@molgen.mpg.de,
-        mika.westerberg@linux.intel.com, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        krzk@kernel.org, stable <stable@vger.kernel.org>
-Subject: Re: [RFT PATCH v2] xhci: Fix memory leak when caching protocol
- extended capability PSI tables
-Message-ID: <20200212175151.GA1872825@kroah.com>
-References: <20d0559f-8d0f-42f5-5ebf-7f658a172161@linux.intel.com>
- <CGME20200211150022eucas1p1774275707908e4ee455291a793da308a@eucas1p1.samsung.com>
- <20200211150158.14475-1-mathias.nyman@linux.intel.com>
- <da2d0387-47f8-e047-0ff8-d971072f9f89@samsung.com>
- <20200211161316.GA1914687@kroah.com>
- <a6eedbbf-ce9f-b9c8-beee-a9c941051aeb@linux.intel.com>
+        s=default; t=1581550729;
+        bh=SagTHuxEwnio4j42XiH0Rt3krAe38n1UYehH5PgY31k=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=YPEObhMFSwfNdyQqb/mJEF2rN37HkVHxltxyOpKOv9MP09LT1ZxqXtsCfdgZfoxhq
+         2hjZk6Si5PVpKissE7zvdsA30Bq1tsJPJN9/XOGVXkMCMImFZtklBrjiiEe7Y2sZBc
+         GICzONDqLpV+MXWxkbtiKBKQ64lJu4SMKpnJvd8I=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a6eedbbf-ce9f-b9c8-beee-a9c941051aeb@linux.intel.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200121233349.28627-1-pakki001@umn.edu>
+References: <20200121233349.28627-1-pakki001@umn.edu>
+Subject: Re: [PATCH] clk: samsung: Remove redundant check in samsung_cmu_register_one
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     kjlu@umn.edu, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     pakki001@umn.edu
+Date:   Wed, 12 Feb 2020 15:38:48 -0800
+Message-ID: <158155072841.184098.6053108532542917536@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 11:01:52AM +0200, Mathias Nyman wrote:
-> On 11.2.2020 18.13, Greg KH wrote:
-> > On Tue, Feb 11, 2020 at 04:12:40PM +0100, Marek Szyprowski wrote:
-> >> Hi Mathias,
-> >>
-> >> On 11.02.2020 16:01, Mathias Nyman wrote:
-> >>> xhci driver assumed that xHC controllers have at most one custom
-> >>> supported speed table (PSI) for all usb 3.x ports.
-> >>> Memory was allocated for one PSI table under the xhci hub structure.
-> >>>
-> >>> Turns out this is not the case, some controllers have a separate
-> >>> "supported protocol capability" entry with a PSI table for each port.
-> >>> This means each usb3 roothub port can in theory support different custom
-> >>> speeds.
-> >>>
-> >>> To solve this, cache all supported protocol capabilities with their PSI
-> >>> tables in an array, and add pointers to the xhci port structure so that
-> >>> every port points to its capability entry in the array.
-> >>>
-> >>> When creating the SuperSpeedPlus USB Device Capability BOS descriptor
-> >>> for the xhci USB 3.1 roothub we for now will use only data from the
-> >>> first USB 3.1 capable protocol capability entry in the array.
-> >>> This could be improved later, this patch focuses resolving
-> >>> the memory leak.
-> >>>
-> >>> Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
-> >>> Reported-by: Sajja Venkateswara Rao <VenkateswaraRao.Sajja@amd.com>
-> >>> Fixes: 47189098f8be ("xhci: parse xhci protocol speed ID list for usb 3.1 usage")
-> >>> Cc: stable <stable@vger.kernel.org> # v4.4+
-> >>> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-> >>
-> >> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > 
-> > Nice!
-> > 
-> > Should I revert the first and then apply this?
-> > 
-> 
-> Yes, please
+Quoting Aditya Pakki (2020-01-21 15:33:49)
+> Consistent with other instances of samsung_clk_init, the check
+> if ctx is NULL is redundant. The function currently does not
+> return NULL.
+>=20
+> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+> ---
 
-Now done, thanks.
-
-greg k-h
+Applied to clk-next
