@@ -2,159 +2,108 @@ Return-Path: <SRS0=4gi6=4A=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A12C3B186
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 12 Feb 2020 12:03:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB0AFC2BA83
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 12 Feb 2020 17:51:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AED82082F
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 12 Feb 2020 12:03:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Njhl2GcV"
+	by mail.kernel.org (Postfix) with ESMTP id C258A2168B
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 12 Feb 2020 17:51:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1581529914;
+	bh=CxkrovGv+VwPpjoOAvZm2PqQCvnr5Wtoftc21B0UHTk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=uXFAq9h3b50vm/HY7X9DdwXr++izQITgtggpo5EuI8UoG8zgZj91QaVz/Pfllv+GK
+	 Ru6mAPnvNuz17PxhZGHF10o0igJL52b2L+Anjvv5gNRltk2D9eaokVocyEKW3AMEjH
+	 WyL0pv2+31Tkl1iSxVaewyfCVENrEvrmN2n0c2P4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727772AbgBLMC4 (ORCPT
+        id S1727600AbgBLRvy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 12 Feb 2020 07:02:56 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43848 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725874AbgBLMCz (ORCPT
+        Wed, 12 Feb 2020 12:51:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43212 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727279AbgBLRvy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 12 Feb 2020 07:02:55 -0500
-Received: by mail-pl1-f193.google.com with SMTP id p11so882776plq.10;
-        Wed, 12 Feb 2020 04:02:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=+lhmtQt1MVJK9xZ3yWPAuyRhB8dwTQ3KGnqmxzt5Q64=;
-        b=Njhl2GcVJc85MuxAsuYnc/S2wze/BWKiMAvdqffntHs1o6/InzecM9NGs5pCU9Rhcu
-         1DD11eCLN7L3R4KppLqpxlRSVoJ2h9C1dhYEnO4IQJMpQUCUQyhLNpyzPmOWV6uFEBtH
-         KuV320ccttcx1BmuFJAchRLFgwH3MPagNR2QD2fE7b2kWYUOq6SJb6JEnpiEkJL7idDJ
-         2ml2WoZE0x3rIyGX/iV8GVFe5g8nBHfszUvjMhrbSczzBDE4NLbnDLNMpSNhC9TtC3y6
-         hKWQRG4uvr6GUl9Y5+x8/sOGESLZp8RLziKUcZEuRXclRPYY7mYnRAj9dFFLb6GiYIMg
-         CqSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=+lhmtQt1MVJK9xZ3yWPAuyRhB8dwTQ3KGnqmxzt5Q64=;
-        b=WKx5ZKniE/c1XrVDhf8rU1u+e/bPsrpeua0E0SRVVzRYS6FlIgxOJpwpMTg4xuf9Tj
-         wr5P8vdd/6O6LkUzG+yb8kZ/8uqOtxRH0NcD9+xCt6ZPiphAGvrN5Uiq7+NTvagCnUUO
-         40Um5LAhto2BxLWKv4O74YUnQavI4b22eEn2o9wnRFcuY5Dce96inirikKJLFsZpq9Xe
-         xJo9ZE60nb+NgZBBp2c2T4gv5fm312GSk+KHcicAGc/RZ9WmwxcvWH1iQrJxL1rE7Tw/
-         pyXV36JGZtiX+hB5m6oSW3ELkWmKCewOTINSSxrkVr8gPCKMgV8vOLALHfPRSysXN7l/
-         UlOw==
-X-Gm-Message-State: APjAAAVaHSCDgs27CZFui/w3l1vqfFqxHoJZ4LCwZ9wc/khKhf2I+RXJ
-        +Io7xYnySWIB+/ImTGkNy68=
-X-Google-Smtp-Source: APXvYqz3C0yH5yZi/l7Q3ooh8TD32j/hTW5czgjHDD02KEGHyP31uaTXQZ7QFwE6beVDPezR+R95WQ==
-X-Received: by 2002:a17:902:8a91:: with SMTP id p17mr7548772plo.75.1581508974861;
-        Wed, 12 Feb 2020 04:02:54 -0800 (PST)
-Received: from localhost.localdomain ([45.114.62.33])
-        by smtp.gmail.com with ESMTPSA id b24sm682448pfo.84.2020.02.12.04.02.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2020 04:02:53 -0800 (PST)
-From:   Anand Moon <linux.amoon@gmail.com>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCHv1 2/2] clk: samsung: exynos542x: Move FSYS2 subsystem clocks to its sub-CMU
-Date:   Wed, 12 Feb 2020 12:02:37 +0000
-Message-Id: <20200212120237.1332-3-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200212120237.1332-1-linux.amoon@gmail.com>
-References: <20200212120237.1332-1-linux.amoon@gmail.com>
+        Wed, 12 Feb 2020 12:51:54 -0500
+Received: from localhost (unknown [104.132.1.104])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A0CA20714;
+        Wed, 12 Feb 2020 17:51:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581529912;
+        bh=CxkrovGv+VwPpjoOAvZm2PqQCvnr5Wtoftc21B0UHTk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fGVjNz4UWtFx6kGkl2XTfCOEiXyadq7bMWbG9TozLizytoCWomtQAEQscEVeIMQMw
+         MGcQLCU/Dvfia1A7iBwQv7rqwg69C4diPpEAHbFLQnkAL0RBpxCTfthen+NscnNRZy
+         2xNscEhefreq/0xFrJqZPllN3C/gI7Qx7PBjzY1c=
+Date:   Wed, 12 Feb 2020 09:51:51 -0800
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>, pmenzel@molgen.mpg.de,
+        mika.westerberg@linux.intel.com, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        krzk@kernel.org, stable <stable@vger.kernel.org>
+Subject: Re: [RFT PATCH v2] xhci: Fix memory leak when caching protocol
+ extended capability PSI tables
+Message-ID: <20200212175151.GA1872825@kroah.com>
+References: <20d0559f-8d0f-42f5-5ebf-7f658a172161@linux.intel.com>
+ <CGME20200211150022eucas1p1774275707908e4ee455291a793da308a@eucas1p1.samsung.com>
+ <20200211150158.14475-1-mathias.nyman@linux.intel.com>
+ <da2d0387-47f8-e047-0ff8-d971072f9f89@samsung.com>
+ <20200211161316.GA1914687@kroah.com>
+ <a6eedbbf-ce9f-b9c8-beee-a9c941051aeb@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a6eedbbf-ce9f-b9c8-beee-a9c941051aeb@linux.intel.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Move FSYS2 clk setting to sub-CMU block to support power domain on/off
-sequences for mmc driver.
+On Wed, Feb 12, 2020 at 11:01:52AM +0200, Mathias Nyman wrote:
+> On 11.2.2020 18.13, Greg KH wrote:
+> > On Tue, Feb 11, 2020 at 04:12:40PM +0100, Marek Szyprowski wrote:
+> >> Hi Mathias,
+> >>
+> >> On 11.02.2020 16:01, Mathias Nyman wrote:
+> >>> xhci driver assumed that xHC controllers have at most one custom
+> >>> supported speed table (PSI) for all usb 3.x ports.
+> >>> Memory was allocated for one PSI table under the xhci hub structure.
+> >>>
+> >>> Turns out this is not the case, some controllers have a separate
+> >>> "supported protocol capability" entry with a PSI table for each port.
+> >>> This means each usb3 roothub port can in theory support different custom
+> >>> speeds.
+> >>>
+> >>> To solve this, cache all supported protocol capabilities with their PSI
+> >>> tables in an array, and add pointers to the xhci port structure so that
+> >>> every port points to its capability entry in the array.
+> >>>
+> >>> When creating the SuperSpeedPlus USB Device Capability BOS descriptor
+> >>> for the xhci USB 3.1 roothub we for now will use only data from the
+> >>> first USB 3.1 capable protocol capability entry in the array.
+> >>> This could be improved later, this patch focuses resolving
+> >>> the memory leak.
+> >>>
+> >>> Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
+> >>> Reported-by: Sajja Venkateswara Rao <VenkateswaraRao.Sajja@amd.com>
+> >>> Fixes: 47189098f8be ("xhci: parse xhci protocol speed ID list for usb 3.1 usage")
+> >>> Cc: stable <stable@vger.kernel.org> # v4.4+
+> >>> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+> >>
+> >> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > 
+> > Nice!
+> > 
+> > Should I revert the first and then apply this?
+> > 
+> 
+> Yes, please
 
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-Note: This patch might be missing some more setting
-as suspend/resume feature is broken.
-I could not resolve this issue at my end, any input or
-suggetion to improve this code.
----
- drivers/clk/samsung/clk-exynos5420.c | 24 +++++++++++++++++++++---
- 1 file changed, 21 insertions(+), 3 deletions(-)
+Now done, thanks.
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index c9e5a1fb6653..3597e8d62445 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -1035,9 +1035,6 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
- 	GATE(CLK_PDMA1, "pdma1", "aclk200_fsys", GATE_BUS_FSYS0, 2, 0, 0),
- 	GATE(CLK_UFS, "ufs", "aclk200_fsys2", GATE_BUS_FSYS0, 3, 0, 0),
- 	GATE(CLK_RTIC, "rtic", "aclk200_fsys", GATE_IP_FSYS, 9, 0, 0),
--	GATE(CLK_MMC0, "mmc0", "aclk200_fsys2", GATE_IP_FSYS, 12, 0, 0),
--	GATE(CLK_MMC1, "mmc1", "aclk200_fsys2", GATE_IP_FSYS, 13, 0, 0),
--	GATE(CLK_MMC2, "mmc2", "aclk200_fsys2", GATE_IP_FSYS, 14, 0, 0),
- 	GATE(CLK_SROMC, "sromc", "aclk200_fsys2",
- 			GATE_IP_FSYS, 17, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_USBH20, "usbh20", "aclk200_fsys", GATE_IP_FSYS, 18, 0, 0),
-@@ -1258,6 +1255,17 @@ static struct exynos5_subcmu_reg_dump exynos5x_gsc_suspend_regs[] = {
- 	{ DIV2_RATIO0, 0, 0x30 },	/* DIV dout_gscl_blk_300 */
- };
- 
-+static const struct samsung_gate_clock exynos5x_fsys2_gate_clks[] __initconst = {
-+	GATE(CLK_MMC0, "mmc0", "aclk200_fsys2", GATE_IP_FSYS, 12, 0, 0),
-+	GATE(CLK_MMC1, "mmc1", "aclk200_fsys2", GATE_IP_FSYS, 13, 0, 0),
-+	GATE(CLK_MMC2, "mmc2", "aclk200_fsys2", GATE_IP_FSYS, 14, 0, 0),
-+};
-+
-+static struct exynos5_subcmu_reg_dump exynos5x_fsys2_suspend_regs[] = {
-+	{ GATE_IP_FSYS, 0xff, 0xff },   /* FSYS gates */
-+	{ SRC_TOP3, 0, BIT(12) },       /* MUX_ACLK_200_FSYS2_SEL */
-+};
-+
- static const struct samsung_gate_clock exynos5x_g3d_gate_clks[] __initconst = {
- 	GATE(CLK_G3D, "g3d", "mout_user_aclk_g3d", GATE_IP_G3D, 9,
- 	     CLK_SET_RATE_PARENT, 0),
-@@ -1376,12 +1384,21 @@ static const struct exynos5_subcmu_info exynos5800_mau_subcmu = {
- 	.pd_name	= "MAU",
- };
- 
-+static const struct exynos5_subcmu_info exynos5x_fsys2_subcmu = {
-+	.gate_clks	= exynos5x_fsys2_gate_clks,
-+	.nr_gate_clks	= ARRAY_SIZE(exynos5x_fsys2_gate_clks),
-+	.suspend_regs	= exynos5x_fsys2_suspend_regs,
-+	.nr_suspend_regs = ARRAY_SIZE(exynos5x_fsys2_suspend_regs),
-+	.pd_name	= "FSYS2",
-+};
-+
- static const struct exynos5_subcmu_info *exynos5x_subcmus[] = {
- 	&exynos5x_disp_subcmu,
- 	&exynos5x_gsc_subcmu,
- 	&exynos5x_g3d_subcmu,
- 	&exynos5x_mfc_subcmu,
- 	&exynos5x_mscl_subcmu,
-+	&exynos5x_fsys2_subcmu,
- };
- 
- static const struct exynos5_subcmu_info *exynos5800_subcmus[] = {
-@@ -1391,6 +1408,7 @@ static const struct exynos5_subcmu_info *exynos5800_subcmus[] = {
- 	&exynos5x_mfc_subcmu,
- 	&exynos5x_mscl_subcmu,
- 	&exynos5800_mau_subcmu,
-+	&exynos5x_fsys2_subcmu,
- };
- 
- static const struct samsung_pll_rate_table exynos5420_pll2550x_24mhz_tbl[] __initconst = {
--- 
-2.25.0
-
+greg k-h
