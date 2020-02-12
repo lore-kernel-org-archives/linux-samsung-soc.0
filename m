@@ -1,104 +1,450 @@
-Return-Path: <SRS0=DwAf=37=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=4gi6=4A=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FF8DC3F68F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Feb 2020 16:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBEEFC3B188
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 12 Feb 2020 08:01:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38D8520873
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 11 Feb 2020 16:13:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581437602;
-	bh=mpthMPkNTmBrSE6fyhf8FwsYXxQ+Fb0JRMAAkISpmgU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=bvLwJC7E7zgBhGgGjZXKWrIpGC/gJjKTEe6OkyBiGNt7TDLDIvlgJUeMGoCzRcxM0
-	 2XfU9II6LyxJwTq5769HfzrxsrnsCj7HIEfX0in7ZRBWzQMYsU++T7s1fnAPzw1ehY
-	 38HC51lc0Z4SbAotXYrOgbaH0iR+MahfKU95X+Yo=
+	by mail.kernel.org (Postfix) with ESMTP id B212221569
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 12 Feb 2020 08:01:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V6idpjeW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729706AbgBKQNS (ORCPT
+        id S1728451AbgBLIBk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 11 Feb 2020 11:13:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50338 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729390AbgBKQNS (ORCPT
+        Wed, 12 Feb 2020 03:01:40 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42554 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728192AbgBLIBj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 11 Feb 2020 11:13:18 -0500
-Received: from localhost (unknown [104.133.9.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6BE232070A;
-        Tue, 11 Feb 2020 16:13:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581437597;
-        bh=mpthMPkNTmBrSE6fyhf8FwsYXxQ+Fb0JRMAAkISpmgU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jWiiqI+7RyyCw3hJoQhHNZTg2/M9zQnl8+zLXrDAe1n2XkHIKE5YO/a8mQGkpMhu5
-         KCScjHxyJHCCgMF0uw8fDyTmr9OOpQtdCrbZx5GL2ySWQun19bECNPXzreriYToGS2
-         zqVoav8R35mGJ7cw9diNyL4HDwYgvZITLVdbLaco=
-Date:   Tue, 11 Feb 2020 08:13:16 -0800
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Mathias Nyman <mathias.nyman@linux.intel.com>,
-        pmenzel@molgen.mpg.de, mika.westerberg@linux.intel.com,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, krzk@kernel.org,
-        stable <stable@vger.kernel.org>
-Subject: Re: [RFT PATCH v2] xhci: Fix memory leak when caching protocol
- extended capability PSI tables
-Message-ID: <20200211161316.GA1914687@kroah.com>
-References: <20d0559f-8d0f-42f5-5ebf-7f658a172161@linux.intel.com>
- <CGME20200211150022eucas1p1774275707908e4ee455291a793da308a@eucas1p1.samsung.com>
- <20200211150158.14475-1-mathias.nyman@linux.intel.com>
- <da2d0387-47f8-e047-0ff8-d971072f9f89@samsung.com>
+        Wed, 12 Feb 2020 03:01:39 -0500
+Received: by mail-pg1-f196.google.com with SMTP id w21so775333pgl.9;
+        Wed, 12 Feb 2020 00:01:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=bp8GhH+lTv01Fj7emi77JJtm4UgQcmSv8y6hx+7VcaM=;
+        b=V6idpjeWbkdm3Yg9WsocEttNBMzG2tMCV7v/Jnkbmv4/1mib46u42IMshvuecDSvSf
+         2yOmAMxdZpFwtzksCp1LV9a3YGgQlOoUP4SbVF+wPlttoXbtqwM0I49vJS6ae4t0YZF1
+         Z1uqi8KJ6Zau4OUy3+MsydCGC1VDnR6pplZNzS6f5PRm/C7QdWLR2luKNrgUgfxoDk00
+         Mnu2M8v5Q4cbGSnXBDWZkPnqq5qDT+Uq/KETlGpkpqsS+EHPorvjMlK0D/WxcBdtvtHj
+         +3x7nastEvjNOZhinDexpYlJjaguSs0t0W2LcIkvRDpoWHUMgRtitGbR6FzUIg40eRn+
+         GkmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=bp8GhH+lTv01Fj7emi77JJtm4UgQcmSv8y6hx+7VcaM=;
+        b=RCEvu7U76hZJV/D/9vjpEivy1lmS2sfrFFs0amsbU/62wgHGhkhLalNo8jgBIADBtG
+         ZghR4ut9oFVXtjivYiLlje45KRt8UrEnPvTZjRth9gamxuXCFpAZ+lGwdLundn1SIwEn
+         90Q5oUhYCqk0UzUScYJY0cOyrPZs0XNZxBG3wdcZZ0xWSr741YUpzmh9GwDD9N3/HWeW
+         H/QaASLIJgX4Gi3GbZww2xbK7jSDZrNXOXyMymbVhnf1YciMGeOkFb83Ta5OiMv7uG/k
+         JYJVEM2mKwPmN8SMmK8PLn/tmsPVMsDxm88yNYCAbBrBgAow1fV0wJqDAWUorb8aC/x0
+         CMXA==
+X-Gm-Message-State: APjAAAWeprDwh2oFIfchdwIeAi9PlD8yX7dS6vnqX8NxjmGBcyoW+Gti
+        7qV1g+1wwvubQER3Nwyb788utl1I
+X-Google-Smtp-Source: APXvYqxnV3nb/q4uy+L2rUWwz9UZlvNCyFsUzxgcQG4BajmKp/4rH+WqeHW/QL79FLpx5lTeAmqV6A==
+X-Received: by 2002:a63:8f5c:: with SMTP id r28mr7323021pgn.351.1581494497731;
+        Wed, 12 Feb 2020 00:01:37 -0800 (PST)
+Received: from localhost ([106.51.21.91])
+        by smtp.gmail.com with ESMTPSA id t63sm7164236pfb.70.2020.02.12.00.01.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Feb 2020 00:01:37 -0800 (PST)
+Date:   Wed, 12 Feb 2020 13:31:35 +0530
+From:   afzal mohammed <afzal.mohd.ma@gmail.com>
+To:     linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, x86@kernel.org,
+        linux-sh@vger.kernel.org, linux-s390@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-parisc@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-ia64@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-c6x-dev@linux-c6x.org, linux-omap@vger.kernel.org,
+        linux-alpha@vger.kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Michal Marek <michal.lkml@markovi.net>
+Subject: [PATCH 00/18] genirq: Remove setup_irq()
+Message-ID: <cover.1581478323.git.afzal.mohd.ma@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <da2d0387-47f8-e047-0ff8-d971072f9f89@samsung.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 04:12:40PM +0100, Marek Szyprowski wrote:
-> Hi Mathias,
-> 
-> On 11.02.2020 16:01, Mathias Nyman wrote:
-> > xhci driver assumed that xHC controllers have at most one custom
-> > supported speed table (PSI) for all usb 3.x ports.
-> > Memory was allocated for one PSI table under the xhci hub structure.
-> >
-> > Turns out this is not the case, some controllers have a separate
-> > "supported protocol capability" entry with a PSI table for each port.
-> > This means each usb3 roothub port can in theory support different custom
-> > speeds.
-> >
-> > To solve this, cache all supported protocol capabilities with their PSI
-> > tables in an array, and add pointers to the xhci port structure so that
-> > every port points to its capability entry in the array.
-> >
-> > When creating the SuperSpeedPlus USB Device Capability BOS descriptor
-> > for the xhci USB 3.1 roothub we for now will use only data from the
-> > first USB 3.1 capable protocol capability entry in the array.
-> > This could be improved later, this patch focuses resolving
-> > the memory leak.
-> >
-> > Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
-> > Reported-by: Sajja Venkateswara Rao <VenkateswaraRao.Sajja@amd.com>
-> > Fixes: 47189098f8be ("xhci: parse xhci protocol speed ID list for usb 3.1 usage")
-> > Cc: stable <stable@vger.kernel.org> # v4.4+
-> > Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-> 
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+While trying to understand internals of irq handling, came across a
+thread [1] in which tglx was referring to avoid usage of setup_irq().
+Existing callers of setup_irq() reached mostly via 'init_IRQ()' &
+'time_init()', while memory allocators are ready by 'mm_init()'.
 
-Nice!
+Hence instances of setup_irq() is replaced by request_irq() &
+setup_irq() (along with remove_irq()) definition deleted in the last
+patch.
 
-Should I revert the first and then apply this?
+Seldom remove_irq() usage has been observed coupled with setup_irq(),
+wherever that has been found, it too has been replaced by free_irq().
 
-thanks,
+Build & boot tested on ARM & x86_64 platforms (ensured that on the
+machines used for testing there was an existing setup_irq()
+invocation occuring at runtime)
 
-greg k-h
+Much of the changes were created using Coccinelle with an intention
+to learn it. spatch command was directly run w/ semantic patch below.
+But not everything could be automated.
+
+Searching with 'git grep -n '\Wsetup_irq('' & avoiding the irrelevant
+ones, 153 invocation's of setup_irq() were found. 112 could be replaced
+w/ cocci, of which in a few files some desired hunks were missing or
+not as expected, these were fixed up manually. Also the remaining 41
+had to be done manually.
+
+Although cocci could replace 112, because of line continue not
+happening at paranthesis for request_irq(), around 80 had to be
+manually aligned in the request_irq() statement. Problem was with my
+below cocci snippet,
+
+- setup_irq(E1,&act);
++ if (request_irq(E1,f_handler,f_flags,f_name,f_dev_id))
++ 	pr_err("request_irq() on %s failed\n", f_name);
+
+Instead of the above, if below is used, line continue happens exactly
+at paranthesis, but it lacks addition of printing on request_irq()
+failure where existing setup_irq() failure was not doing it.
+
+- setup_irq(E1,&act)
++ request_irq(E1,f_handler,f_flags,f_name,f_dev_id)
+
+Above had an additional advantage of replacing instances of
+if (setup_irq()) & BUG(setup_irq()), but luckily those instances were
+very few.
+
+So though many changes could be automated, there are a considerable
+amount of manual changes, please review carefully especially mips &
+alpha.
+
+Usage of setup_percpu_irq() is untouched w/ this series.
+
+There are 2 checkpatch warning about usage of BUG() [which was already
+there w/ setup_irq()], they are left as is as it seems appropriate for
+tick timer interrupt.
+
+[1] https://lkml.kernel.org/r/alpine.DEB.2.20.1710191609480.1971@nanos
+
+--->8---
+
+@r1@
+identifier ret;
+@@
+
+(
+setup_irq(...);
+|
+ret = setup_irq(...);
+)
+
+
+@r2 depends on r1@
+identifier act;
+@@
+
+static struct irqaction act = {
+};
+
+@r11 depends on r2@
+identifier r2.act;
+identifier f_handler;
+@@
+
+(
+- act.handler = f_handler;
+|
+static struct irqaction act = {
+ .handler = f_handler,
+};
+)
+
+@r12 depends on r2@
+identifier r2.act;
+expression f_name;
+@@
+
+(
+- act.name = f_name;
+|
+static struct irqaction act = {
+ .name = f_name,
+};
+)
+
+@r15 depends on r2@
+identifier r2.act;
+expression f_dev_id;
+@@
+
+(
+- act.dev_id = f_dev_id;
+|
+static struct irqaction act = {
+ .dev_id = f_dev_id,
+};
+)
+
+@r16 depends on r2@
+identifier r2.act;
+expression f_flags;
+@@
+
+(
+- act.flags = f_flags;
+|
+static struct irqaction act = {
+ .flags = f_flags,
+};
+)
+
+@r21 depends on r2@
+identifier r2.act;
+@@
+
+- static struct irqaction act = {
+- ...
+- };
+
+@r22 depends on r2 && r11 && r12 && r15 && r16@
+identifier r2.act;
+identifier r11.f_handler;
+expression r12.f_name;
+expression r15.f_dev_id;
+expression r16.f_flags;
+expression E1;
+identifier ret;
+@@
+
+(
+- setup_irq(E1,&act);
++ if (request_irq(E1,f_handler,f_flags,f_name,f_dev_id))
++ 	pr_err("request_irq() on %s failed\n", f_name);
+|
+- ret = setup_irq(E1,&act);
++ ret = request_irq(E1,f_handler,f_flags,f_name,f_dev_id);
+)
+
+@r23 depends on r2 && r11 && r12 && !r15 && r16@
+identifier r2.act;
+identifier r11.f_handler;
+expression r12.f_name;
+expression r16.f_flags;
+expression E1;
+identifier ret;
+@@
+
+(
+- setup_irq(E1,&act);
++ if (request_irq(E1,f_handler,f_flags,f_name,NULL))
++ 	pr_err("request_irq() on %s failed\n", f_name);
+|
+- ret = setup_irq(E1,&act);
++ ret = request_irq(E1,f_handler,f_flags,f_name,NULL);
+)
+
+@r24 depends on r2 && r11 && r12 && r15 && !r16@
+identifier r2.act;
+identifier r11.f_handler;
+expression r12.f_name;
+expression r15.f_dev_id;
+expression E1;
+identifier ret;
+@@
+
+(
+- setup_irq(E1,&act);
++ if (request_irq(E1,f_handler,0,f_name,f_dev_id))
++ 	pr_err("request_irq() on %s failed\n", f_name);
+|
+- ret = setup_irq(E1,&act);
++ ret = request_irq(E1,f_handler,0,f_name,f_dev_id);
+)
+
+@r25 depends on r2 && r11 && r12 && !r15 && !r16@
+identifier r2.act;
+identifier r11.f_handler;
+expression r12.f_name;
+expression E1;
+identifier ret;
+@@
+
+(
+- setup_irq(E1,&act);
++ if (request_irq(E1,f_handler,0,f_name,NULL))
++ 	pr_err("request_irq() on %s failed\n", f_name);
+|
+- ret = setup_irq(E1,&act);
++ ret = request_irq(E1,f_handler,0,f_name,NULL);
+)
+
+--->8---
+
+afzal mohammed (18):
+  alpha: replace setup_irq() by request_irq()
+  ARM: replace setup_irq() by request_irq()
+  c6x: replace setup_irq() by request_irq()
+  hexagon: replace setup_irq() by request_irq()
+  ia64: replace setup_irq() by request_irq()
+  m68k: Replace setup_irq() by request_irq()
+  microblaze: Replace setup_irq() by request_irq()
+  MIPS: Replace setup_irq() by request_irq()
+  parisc: Replace setup_irq() by request_irq()
+  powerpc: Replace setup_irq() by request_irq()
+  s390: replace setup_irq() by request_irq()
+  sh: replace setup_irq() by request_irq()
+  unicore32: replace setup_irq() by request_irq()
+  x86: Replace setup_irq() by request_irq()
+  xtensa: replace setup_irq() by request_irq()
+  clocksource: Replace setup_irq() by request_irq()
+  irqchip: Replace setup_irq() by request_irq()
+  genirq: Remove setup_irq() and remove_irq()
+
+ arch/alpha/kernel/irq_alpha.c                 | 29 ++-------
+ arch/alpha/kernel/irq_i8259.c                 |  8 +--
+ arch/alpha/kernel/irq_impl.h                  |  7 +--
+ arch/alpha/kernel/irq_pyxis.c                 |  3 +-
+ arch/alpha/kernel/sys_alcor.c                 |  3 +-
+ arch/alpha/kernel/sys_cabriolet.c             |  3 +-
+ arch/alpha/kernel/sys_eb64p.c                 |  3 +-
+ arch/alpha/kernel/sys_marvel.c                |  2 +-
+ arch/alpha/kernel/sys_miata.c                 |  6 +-
+ arch/alpha/kernel/sys_ruffian.c               |  3 +-
+ arch/alpha/kernel/sys_rx164.c                 |  3 +-
+ arch/alpha/kernel/sys_sx164.c                 |  3 +-
+ arch/alpha/kernel/sys_wildfire.c              |  7 +--
+ arch/alpha/kernel/time.c                      |  6 +-
+ arch/arm/mach-cns3xxx/core.c                  | 10 +---
+ arch/arm/mach-ebsa110/core.c                  | 10 +---
+ arch/arm/mach-ep93xx/timer-ep93xx.c           | 12 ++--
+ arch/arm/mach-footbridge/dc21285-timer.c      | 11 +---
+ arch/arm/mach-footbridge/isa-irq.c            |  8 +--
+ arch/arm/mach-footbridge/isa-timer.c          | 11 +---
+ arch/arm/mach-iop32x/time.c                   | 12 ++--
+ arch/arm/mach-mmp/time.c                      | 11 +---
+ arch/arm/mach-omap1/pm.c                      | 22 ++++---
+ arch/arm/mach-omap1/time.c                    | 10 +---
+ arch/arm/mach-omap1/timer32k.c                | 10 +---
+ arch/arm/mach-omap2/timer.c                   | 11 +---
+ arch/arm/mach-rpc/time.c                      |  8 +--
+ arch/arm/mach-spear/time.c                    |  9 +--
+ arch/arm/plat-orion/time.c                    | 10 +---
+ arch/c6x/platforms/timer64.c                  | 11 +---
+ arch/hexagon/kernel/smp.c                     | 17 +++---
+ arch/hexagon/kernel/time.c                    | 11 +---
+ arch/ia64/kernel/irq_ia64.c                   | 42 +++++--------
+ arch/ia64/kernel/mca.c                        | 51 +++++-----------
+ arch/m68k/68000/timers.c                      |  9 +--
+ arch/m68k/coldfire/pit.c                      |  9 +--
+ arch/m68k/coldfire/sltimers.c                 | 19 ++----
+ arch/m68k/coldfire/timers.c                   | 19 ++----
+ arch/microblaze/kernel/timer.c                | 10 +---
+ arch/mips/alchemy/common/time.c               | 11 +---
+ arch/mips/ar7/irq.c                           | 18 +++---
+ arch/mips/ath25/ar2315.c                      |  9 +--
+ arch/mips/ath25/ar5312.c                      |  9 +--
+ arch/mips/bcm63xx/irq.c                       | 38 +++++-------
+ arch/mips/cobalt/irq.c                        | 14 ++---
+ arch/mips/dec/setup.c                         | 59 ++++++++-----------
+ arch/mips/emma/markeins/irq.c                 | 20 +++----
+ arch/mips/include/asm/sni.h                   |  2 +-
+ arch/mips/jazz/irq.c                          | 12 +---
+ arch/mips/kernel/cevt-bcm1480.c               | 11 +---
+ arch/mips/kernel/cevt-ds1287.c                |  9 +--
+ arch/mips/kernel/cevt-gt641xx.c               |  9 +--
+ arch/mips/kernel/cevt-r4k.c                   |  4 +-
+ arch/mips/kernel/cevt-sb1250.c                | 11 +---
+ arch/mips/kernel/cevt-txx9.c                  | 11 +---
+ arch/mips/kernel/i8253.c                      | 10 +---
+ arch/mips/kernel/rtlx-mt.c                    |  8 +--
+ arch/mips/kernel/smp.c                        | 33 ++++-------
+ arch/mips/lasat/interrupt.c                   | 10 +---
+ arch/mips/loongson2ef/common/bonito-irq.c     |  9 +--
+ .../loongson2ef/common/cs5536/cs5536_mfgpt.c  | 10 +---
+ arch/mips/loongson2ef/fuloong-2e/irq.c        | 14 ++---
+ arch/mips/loongson2ef/lemote-2f/irq.c         | 20 ++-----
+ arch/mips/loongson32/common/irq.c             | 21 ++++---
+ arch/mips/loongson32/common/time.c            | 12 ++--
+ arch/mips/loongson64/hpet.c                   | 10 +---
+ arch/mips/mti-malta/malta-int.c               | 10 +---
+ arch/mips/netlogic/xlr/fmn.c                  |  9 +--
+ arch/mips/pmcs-msp71xx/msp_irq.c              | 28 ++++-----
+ arch/mips/pmcs-msp71xx/msp_smp.c              | 22 ++-----
+ arch/mips/pmcs-msp71xx/msp_time.c             |  7 ++-
+ arch/mips/ralink/cevt-rt3352.c                | 17 +++---
+ arch/mips/sgi-ip22/ip22-eisa.c                |  8 +--
+ arch/mips/sgi-ip22/ip22-int.c                 | 49 +++++----------
+ arch/mips/sgi-ip32/ip32-irq.c                 | 18 ++----
+ arch/mips/sni/a20r.c                          |  4 +-
+ arch/mips/sni/irq.c                           |  8 +--
+ arch/mips/sni/pcit.c                          |  8 ++-
+ arch/mips/sni/rm200.c                         | 23 +++-----
+ arch/mips/sni/time.c                          | 10 +---
+ arch/mips/vr41xx/common/irq.c                 |  9 +--
+ arch/parisc/kernel/irq.c                      | 21 ++-----
+ arch/powerpc/platforms/85xx/mpc85xx_cds.c     | 10 +---
+ arch/powerpc/platforms/8xx/cpm1.c             |  9 +--
+ arch/powerpc/platforms/8xx/m8xx_setup.c       |  9 +--
+ arch/powerpc/platforms/chrp/setup.c           | 14 ++---
+ arch/powerpc/platforms/powermac/pic.c         | 31 ++++------
+ arch/powerpc/platforms/powermac/smp.c         |  9 +--
+ arch/s390/kernel/irq.c                        |  8 +--
+ arch/sh/boards/mach-cayman/irq.c              | 18 ++----
+ arch/sh/drivers/dma/dma-pvr2.c                |  9 +--
+ arch/unicore32/kernel/time.c                  | 11 +---
+ arch/x86/kernel/irqinit.c                     | 18 +++---
+ arch/x86/kernel/time.c                        | 10 +---
+ arch/xtensa/kernel/smp.c                      |  8 +--
+ arch/xtensa/kernel/time.c                     | 10 +---
+ drivers/clocksource/bcm2835_timer.c           |  8 +--
+ drivers/clocksource/bcm_kona_timer.c          | 10 +---
+ drivers/clocksource/dw_apb_timer.c            | 11 +---
+ drivers/clocksource/exynos_mct.c              | 12 ++--
+ drivers/clocksource/mxs_timer.c               | 10 +---
+ drivers/clocksource/nomadik-mtu.c             | 11 +---
+ drivers/clocksource/samsung_pwm_timer.c       | 12 ++--
+ drivers/clocksource/timer-atlas7.c            | 50 ++++++++--------
+ drivers/clocksource/timer-cs5535.c            | 10 +---
+ drivers/clocksource/timer-efm32.c             | 10 +---
+ drivers/clocksource/timer-fsl-ftm.c           | 10 +---
+ drivers/clocksource/timer-imx-gpt.c           | 10 +---
+ drivers/clocksource/timer-integrator-ap.c     | 11 +---
+ drivers/clocksource/timer-meson6.c            | 11 +---
+ drivers/clocksource/timer-orion.c             |  9 +--
+ drivers/clocksource/timer-prima2.c            | 11 +---
+ drivers/clocksource/timer-pxa.c               | 10 +---
+ drivers/clocksource/timer-sp804.c             | 11 +---
+ drivers/clocksource/timer-u300.c              |  9 +--
+ drivers/clocksource/timer-vf-pit.c            | 10 +---
+ drivers/clocksource/timer-vt8500.c            | 11 +---
+ drivers/clocksource/timer-zevio.c             | 13 ++--
+ drivers/irqchip/irq-i8259.c                   |  9 +--
+ drivers/irqchip/irq-ingenic.c                 | 11 ++--
+ drivers/parisc/eisa.c                         |  8 +--
+ drivers/s390/cio/airq.c                       |  8 +--
+ drivers/s390/cio/cio.c                        |  8 +--
+ include/linux/dw_apb_timer.h                  |  1 -
+ include/linux/irq.h                           |  2 -
+ kernel/irq/manage.c                           | 44 --------------
+ 126 files changed, 528 insertions(+), 1111 deletions(-)
+
+
+base-commit: v5.6-rc1
+-- 
+2.24.1
+
