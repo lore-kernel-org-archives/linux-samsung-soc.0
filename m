@@ -2,102 +2,104 @@ Return-Path: <SRS0=N0pO=4B=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 607E7C2BA83
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Feb 2020 15:15:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B160C3B189
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Feb 2020 15:43:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30BF4218AC
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Feb 2020 15:15:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B3E520661
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Feb 2020 15:43:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581606942;
-	bh=Wa++UXcaTTd5txMUfjV4DpYjH7laEO8r+6+IdRw6vgI=;
+	s=default; t=1581608607;
+	bh=VB61Cnre32YZs17GqjOvsXq0m51tzpaI4sAI2/jxhPw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=rThsmJhuhTT2oTHuqIrykoMfUv5SsCCiE7LfNY0JGt5PxRczd2JeO9/7TYMCPfbZK
-	 jHIOEsgNXomK112hknTG7nowFsUaoEy1TfUT+I3Mwz5oosYSO9Pna87FcE7CdKEMa0
-	 /do2TCb5WQrLmdYNEXUC0cmS4YOBXGPbObcnfwRg=
+	b=XqViCgPZ4xwleUVPMv60mF/Kg0UuXWVPf3e+33skgqC7Cs3OkWSKMksvDKOz9U4dg
+	 5IwBE2tNNB0j6mqBgjY0GaoKIu2bHk7Nc8PYpS6mq69PVJV+B+jAUqj+iy6Tc4WArd
+	 twqYwQR+MTvu09dsX1BUlrDvSAtFNJCT+HzTMX00=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727347AbgBMPPl (ORCPT
+        id S2387755AbgBMPn0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 13 Feb 2020 10:15:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43040 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727163AbgBMPPl (ORCPT
+        Thu, 13 Feb 2020 10:43:26 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:44807 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727707AbgBMPnU (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:15:41 -0500
-Received: from localhost (unknown [104.132.1.104])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96BF52168B;
-        Thu, 13 Feb 2020 15:15:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581606940;
-        bh=Wa++UXcaTTd5txMUfjV4DpYjH7laEO8r+6+IdRw6vgI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IEpcxp4lr9mfOTEf/UXaZC9RMhgaF5/9q12kkMKiAmaXVNh6WvFdMJK5DiwLt5606
-         G84NAY+qL7U6t/CKytpJs+OW3H7nf0YQMyvRMj9GdvYe83NEpYjRBUZ8lx0+j7RONy
-         2PI4tt316/V1A8wV0aaN4DNtSeWU/nlTrqmzDxqA=
-Date:   Thu, 13 Feb 2020 07:15:40 -0800
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     Sasha Levin <sashal@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        linux- stable <stable@vger.kernel.org>,
-        lkft-triage@lists.linaro.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, linux-samsung-soc@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, agross@kernel.org
-Subject: Re: stable-rc 5.4: arm64 make dtbs failed
-Message-ID: <20200213151540.GA3502153@kroah.com>
-References: <CA+G9fYsxGkwOQYhuxwOZMwJi=1v4qc+cZ8PZgV6MczFNjo84HQ@mail.gmail.com>
+        Thu, 13 Feb 2020 10:43:20 -0500
+Received: by mail-ed1-f67.google.com with SMTP id g19so7309976eds.11;
+        Thu, 13 Feb 2020 07:43:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xWjlmZnVBt/ZlK8vapzAQmz9T3RLkyLlYRSHtgLmYd4=;
+        b=CzVCjzh+FuyLd7kL9fHAM6HRWMCvbGLuy7tvQittfhNBsrvqkFhGl6KgQ5tZ/XHVRF
+         HzNqMi5hUxJ933xS2w0oPK0P8yhpl+z4E9+4s17hzVt9HHHlux49i8ES/aaensIlKhs0
+         6jYGbOCkFjtIuUZiuXJLY5A7J3FNXm1kEcPPkI42XF99GfmyRLCKtmIBlrw3rdhCj0Pi
+         6OQIkDwFcJ33Jsx6EF4xAhKX6W3nNlmuVRSpYpxjuSFRnTengdFqMrncA9FrWDxITuBg
+         5kyS2mSAaT0qzZgX1eW/+I372xPPrJFiwVKoHULommFOlPsbNmC1VIP6tyNCoZH/wjiW
+         wJtA==
+X-Gm-Message-State: APjAAAWEaGsk8ekv2+QI2i/4BWG9nbNEpROqM8sI0EKLSf2NcG3spr6E
+        63om7lV5GmPlYQhi0DdJDL4=
+X-Google-Smtp-Source: APXvYqxC6vfH1GEp1GXd5aDVxuhj2SoNdVlypepsj2HdRdhqBL5BWW5qSOnvNylv+AF9dT1OutTu0w==
+X-Received: by 2002:a50:9b03:: with SMTP id o3mr16345398edi.371.1581608597930;
+        Thu, 13 Feb 2020 07:43:17 -0800 (PST)
+Received: from kozik-lap ([194.230.155.125])
+        by smtp.googlemail.com with ESMTPSA id w18sm293112eja.57.2020.02.13.07.43.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Feb 2020 07:43:17 -0800 (PST)
+Date:   Thu, 13 Feb 2020 16:43:14 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Anand Moon <linux.amoon@gmail.com>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCHv1 0/2] Add FSYS2 power domain for MMC driver
+Message-ID: <20200213154314.GA7215@kozik-lap>
+References: <20200212120237.1332-1-linux.amoon@gmail.com>
+ <20200213101744.GA11087@kozik-lap>
+ <CANAwSgR+PFiE0=FEhDY__FDx+470pe0OsbUXcSG64JDuG++ccQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CA+G9fYsxGkwOQYhuxwOZMwJi=1v4qc+cZ8PZgV6MczFNjo84HQ@mail.gmail.com>
+In-Reply-To: <CANAwSgR+PFiE0=FEhDY__FDx+470pe0OsbUXcSG64JDuG++ccQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 08:38:07PM +0530, Naresh Kamboju wrote:
-> # make -sk KBUILD_BUILD_USER=TuxBuild -C/linux ARCH=arm64
-> CROSS_COMPILE=aarch64-linux-gnu- HOSTCC=gcc CC="sccache
-> aarch64-linux-gnu-gcc" O=build dtbs
+On Thu, Feb 13, 2020 at 06:58:51PM +0530, Anand Moon wrote:
+> hi Krzysztof,
 > 
-> 
-> ../arch/arm64/boot/dts/exynos/exynos5433.dtsi:254.3-29: Warning
-> (reg_format): /gpu@14ac0000:reg: property has invalid length (8 bytes)
-> (#address-cells == 2, #size-cells == 2)
-> arch/arm64/boot/dts/exynos/exynos5433-tm2.dtb: Warning
-> (pci_device_bus_num): Failed prerequisite 'reg_format'
-> arch/arm64/boot/dts/exynos/exynos5433-tm2.dtb: Warning (i2c_bus_reg):
-> Failed prerequisite 'reg_format'
-> arch/arm64/boot/dts/exynos/exynos5433-tm2.dtb: Warning (spi_bus_reg):
-> Failed prerequisite 'reg_format'
-> ../arch/arm64/boot/dts/exynos/exynos5433.dtsi:254.3-29: Warning
-> (reg_format): /gpu@14ac0000:reg: property has invalid length (8 bytes)
-> (#address-cells == 2, #size-cells == 2)
-> arch/arm64/boot/dts/exynos/exynos5433-tm2e.dtb: Warning
-> (pci_device_bus_num): Failed prerequisite 'reg_format'
-> arch/arm64/boot/dts/exynos/exynos5433-tm2e.dtb: Warning (i2c_bus_reg):
-> Failed prerequisite 'reg_format'
-> arch/arm64/boot/dts/exynos/exynos5433-tm2e.dtb: Warning (spi_bus_reg):
-> Failed prerequisite 'reg_format'
-> ../arch/arm64/boot/dts/exynos/exynos7.dtsi:83.3-29: Warning
-> (reg_format): /gpu@14ac0000:reg: property has invalid length (8 bytes)
-> (#address-cells == 2, #size-cells == 2)
-> arch/arm64/boot/dts/exynos/exynos7-espresso.dtb: Warning
-> (pci_device_bus_num): Failed prerequisite 'reg_format'
-> arch/arm64/boot/dts/exynos/exynos7-espresso.dtb: Warning
-> (i2c_bus_reg): Failed prerequisite 'reg_format'
-> arch/arm64/boot/dts/exynos/exynos7-espresso.dtb: Warning
-> (spi_bus_reg): Failed prerequisite 'reg_format'
-> ../arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi:10.10-13.4: ERROR
-> (path_references): /aliases: Reference to non-existent node or label
-> "blsp1_uart3"
+> On Thu, 13 Feb 2020 at 15:47, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >
+> > On Wed, Feb 12, 2020 at 12:02:35PM +0000, Anand Moon wrote:
+> > > This patches add the power domain for MMC driver,
+> > > but somehow the suspend/resume feature is broken
+> > > so any input on how to fix this.
+> >
+> > I think S2R was working on XU3-family after Marek's fixes, so you mean
+> > that these patches break it?
+> >
+> Yes I my testing mmc driver failed to come up after suspend.
 
-Thanks for the notice, I'll go drop the offending patch.
+Patches breaking systems should be clearly marked as work in progress,
+e.g.  by using RFC instead of PATCH in the title.
 
-greg k-h
+This patchset cannot be applied.
+
+You probably have to figure out some missing dependencies, e.g. in
+clocks/power domains/pinctrl.
+
+Best regards,
+Krzysztof
+
