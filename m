@@ -2,104 +2,142 @@ Return-Path: <SRS0=N0pO=4B=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4FC4C2BA83
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Feb 2020 10:17:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BD81C2BA83
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Feb 2020 13:29:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABC58217F4
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Feb 2020 10:17:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581589074;
-	bh=Z/qL3ylKFYdg16whtoypNjvTxzPPacyDkajEC6emP34=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=JjiEoY0NrL4xjnvySrHT+4OsuFVOp952HBK4zFDX4PWdzovZCKjoB8Am2PqbIbrv8
-	 0pCCh4wcynQyouEf3iTBSpAJyl2yQjSgF9ybsBTyyrjrJi2xwlsB/jGvjlJ5CBez+L
-	 x6C1M+bbZ6XfHKRaJgoYW1j/nsWtSQyGZoocDDx8=
+	by mail.kernel.org (Postfix) with ESMTP id 13FF424670
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Feb 2020 13:29:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qDPTDEy3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729657AbgBMKRv (ORCPT
+        id S1729901AbgBMN3E (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 13 Feb 2020 05:17:51 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:35656 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729428AbgBMKRv (ORCPT
+        Thu, 13 Feb 2020 08:29:04 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:36765 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729588AbgBMN3E (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 13 Feb 2020 05:17:51 -0500
-Received: by mail-ed1-f65.google.com with SMTP id f8so6160652edv.2;
-        Thu, 13 Feb 2020 02:17:49 -0800 (PST)
+        Thu, 13 Feb 2020 08:29:04 -0500
+Received: by mail-il1-f193.google.com with SMTP id b15so4965045iln.3;
+        Thu, 13 Feb 2020 05:29:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yfE2W5LQkoH0UQl9XbqZm7z7YZPx+sJdXqj0cViMT9Y=;
+        b=qDPTDEy3Wwk4R4THsiNOjtlrg7zGYl9R2KtnB0Vy98kGWf8Mhue5K04gGadiYjOhJA
+         OECkjl7zgSyVTM5gbskiMbTETf+UpRizBu2GA90YYSh00wtnIubUwZNgzlLyxqv322Nt
+         2O4mOsjv3IVl5zqbDSjloBWSQzh/bXytjQEREZD1k1BtwrCRwdKPHywgcR/kymjYz59I
+         mB1xQVs4tye3cty8HbTxBWFkIilCgdhCURMlPWiJaeR6bR5PO3GCSLb2zqbTt5BJv3Dp
+         +Ednjlh1F9uwLcHkarMO30YaCVIN2e+VuOjGcWVFhpclKZrMSP6uuyRaTcFcRftXeUCz
+         BdFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RRIEPdo2GBfjmyVoBn6+vY/7+N02sDl5h1yeWIDZHL4=;
-        b=fE25IgnWH4kDnTlwGuqsrZtGTaN/VV/ZsLaOw5OmU1gQnN1vs826Vk9rkTMNPNv0lE
-         acjCiaoGZNhOun5ELMnCsKPE7dKtbHAIh4pnrLdRRrjBnfm8/uRyuRrzrvXmGq5Ownvs
-         dWR1eg4PoG7mCYv5rzatii2WqnBckT45J7bYbLXajTvwrkkHWTsitwXp+pzuMa2WsbbH
-         FuWzQnBOpXarn+xn4I/5TyKY6CJLlwTnsvSmXqcP5oA0L3UtbNRXEkLCZ80pHX/yh/QE
-         KsbuzpNc+hatvcAyX0I8k8ghOXhxm9UIsuGa7lFLQq3XFKWCFz89zPX7o8jOdiHdGrHH
-         ovGQ==
-X-Gm-Message-State: APjAAAXEqSAuWstI4x6zz1V6a/tmD9AceNmmJsPOD5AJy0Ydc+8WzSMi
-        F0mulTklYNG8LUje1IfbVtk=
-X-Google-Smtp-Source: APXvYqzJPEBHGEKtNpeIz/sbcpHCr12wSxQrNRMVB1G8sc2hvXl2J7zmFFF7vRMRvXQXSbI6JC33dg==
-X-Received: by 2002:a05:6402:1426:: with SMTP id c6mr7748047edx.49.1581589068803;
-        Thu, 13 Feb 2020 02:17:48 -0800 (PST)
-Received: from kozik-lap ([194.230.155.125])
-        by smtp.googlemail.com with ESMTPSA id k11sm158564edr.38.2020.02.13.02.17.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Feb 2020 02:17:48 -0800 (PST)
-Date:   Thu, 13 Feb 2020 11:17:44 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Anand Moon <linux.amoon@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yfE2W5LQkoH0UQl9XbqZm7z7YZPx+sJdXqj0cViMT9Y=;
+        b=tRBtgux72wOdWQ1xpKox7kyk9mAWBzo8/izwxkRwcCoPtXRoc9m+/uyEPQlMoJQUWD
+         qOlhW2u72qzU9xeUx7abYVMxpI4hYjQwwRUHOZKH3hNQf5PeR9GxwfKDyzhJRRhADSjq
+         fj7i/9BSQrCkXlVcijnhB8q1YRDoyP0VR0uT6SmUmJplH0kkj+8PY2JPsJ3vnH1HT2gr
+         as0P4DLnJmE9EiU0DBR6tCH+6l1C4gYkZfqfTtDXGLpxcNjf+2iwoDc2+WVgFDaV8zwB
+         shXCDRwaRmvedrXfLoPQ+C7n7sulR+v0YHPJbyPjQVTmlSXQ61S3GFSiL8WoM4PX7Nzl
+         pIiw==
+X-Gm-Message-State: APjAAAVN3xWlbBAszULQOMgcJD0jdkjmzyJaxISgdHBOPO18U7VEEXYx
+        w5vnHFp6n80CL50sTzw9njx5pxhh8ike7sYgx/A=
+X-Google-Smtp-Source: APXvYqyZADe9aFJTPHWo+2m+qnyTFGMvRJstebqLC899Zq0rrvQgRDaG+VSSVPANdZD+NvJ4x3Rs9wqKM+CNDfEx+4Y=
+X-Received: by 2002:a92:5d92:: with SMTP id e18mr15908939ilg.75.1581600543378;
+ Thu, 13 Feb 2020 05:29:03 -0800 (PST)
+MIME-Version: 1.0
+References: <20200212120237.1332-1-linux.amoon@gmail.com> <20200213101744.GA11087@kozik-lap>
+In-Reply-To: <20200213101744.GA11087@kozik-lap>
+From:   Anand Moon <linux.amoon@gmail.com>
+Date:   Thu, 13 Feb 2020 18:58:51 +0530
+Message-ID: <CANAwSgR+PFiE0=FEhDY__FDx+470pe0OsbUXcSG64JDuG++ccQ@mail.gmail.com>
+Subject: Re: [PATCHv1 0/2] Add FSYS2 power domain for MMC driver
+To:     Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCHv1 0/2] Add FSYS2 power domain for MMC driver
-Message-ID: <20200213101744.GA11087@kozik-lap>
-References: <20200212120237.1332-1-linux.amoon@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200212120237.1332-1-linux.amoon@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 12:02:35PM +0000, Anand Moon wrote:
-> This patches add the power domain for MMC driver,
-> but somehow the suspend/resume feature is broken
-> so any input on how to fix this.
+hi Krzysztof,
 
-I think S2R was working on XU3-family after Marek's fixes, so you mean
-that these patches break it?
+On Thu, 13 Feb 2020 at 15:47, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On Wed, Feb 12, 2020 at 12:02:35PM +0000, Anand Moon wrote:
+> > This patches add the power domain for MMC driver,
+> > but somehow the suspend/resume feature is broken
+> > so any input on how to fix this.
+>
+> I think S2R was working on XU3-family after Marek's fixes, so you mean
+> that these patches break it?
+>
+Yes I my testing mmc driver failed to come up after suspend.
 
-Best regards,
-Krzysztof
+But I see below in power domain, Just to confirm.
+#  cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
+domain                          status          slaves
+    /device                                             runtime status
+----------------------------------------------------------------------
+CAM                             off-0
+FSYS2                           on
+    /devices/platform/soc/10010000.clock-controller/exynos5-subcmu.6.auto
+ active
+    /devices/platform/soc/12200000.mmc                  active
+    /devices/platform/soc/12220000.mmc                  active
 
+# powerdebug -d
+FSYS2:
+current_state: on
+active_time: 29016991 ms
+total_idle_time: 4037 ms
+Idle States:
+             State            Time
+             S0               4037
+Devices:
+         /devices/platform/soc/10010000.clock-controller/exynos5-subcmu.6.auto
+         /devices/platform/soc/12200000.mmc
+         /devices/platform/soc/12220000.mmc
 
-> 
-> Also on similar lines I tried to add power domain
-> FSYS for usb3 and usb2 nodes but this time
-> it failed to load the kernel, so how can I reslove
-> this issue.
-> 
-> -Anand
-> 
-> Anand Moon (2):
->   ARM: dts: exynos: Add FSYS2 power domain to Exynos542x
->   clk: samsung: exynos542x: Move FSYS2 subsystem clocks to its sub-CMU
-> 
->  arch/arm/boot/dts/exynos5420.dtsi    | 10 ++++++++++
->  drivers/clk/samsung/clk-exynos5420.c | 24 +++++++++++++++++++++---
->  2 files changed, 31 insertions(+), 3 deletions(-)
-> 
-> -- 
-> 2.25.0
-> 
+> Best regards,
+> Krzysztof
+>
+>
+
+-Anand
+
+> >
+> > Also on similar lines I tried to add power domain
+> > FSYS for usb3 and usb2 nodes but this time
+> > it failed to load the kernel, so how can I reslove
+> > this issue.
+> >
+> > -Anand
+> >
+> > Anand Moon (2):
+> >   ARM: dts: exynos: Add FSYS2 power domain to Exynos542x
+> >   clk: samsung: exynos542x: Move FSYS2 subsystem clocks to its sub-CMU
+> >
+> >  arch/arm/boot/dts/exynos5420.dtsi    | 10 ++++++++++
+> >  drivers/clk/samsung/clk-exynos5420.c | 24 +++++++++++++++++++++---
+> >  2 files changed, 31 insertions(+), 3 deletions(-)
+> >
+> > --
+> > 2.25.0
+> >
