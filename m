@@ -2,126 +2,117 @@ Return-Path: <SRS0=N0pO=4B=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B6CEC2BA83
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Feb 2020 13:33:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E71C3B18B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Feb 2020 15:08:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E62E218AC
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Feb 2020 13:33:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E27E0218AC
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 13 Feb 2020 15:08:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="IDJOQ47i"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JZeUUNWM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729966AbgBMNdx (ORCPT
+        id S1726937AbgBMPIY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 13 Feb 2020 08:33:53 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:7181 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729674AbgBMNdw (ORCPT
+        Thu, 13 Feb 2020 10:08:24 -0500
+Received: from mail-lj1-f178.google.com ([209.85.208.178]:39777 "EHLO
+        mail-lj1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727458AbgBMPIY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 13 Feb 2020 08:33:52 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e4550230000>; Thu, 13 Feb 2020 05:33:23 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 13 Feb 2020 05:33:52 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 13 Feb 2020 05:33:52 -0800
-Received: from [10.21.133.51] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 13 Feb
- 2020 13:33:49 +0000
-Subject: Re: [RFT PATCH v2] xhci: Fix memory leak when caching protocol
- extended capability PSI tables
-To:     Mathias Nyman <mathias.nyman@linux.intel.com>,
-        <gregkh@linuxfoundation.org>, <m.szyprowski@samsung.com>
-CC:     <pmenzel@molgen.mpg.de>, <mika.westerberg@linux.intel.com>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>, <krzk@kernel.org>,
-        stable <stable@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-References: <20d0559f-8d0f-42f5-5ebf-7f658a172161@linux.intel.com>
- <20200211150158.14475-1-mathias.nyman@linux.intel.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <f42f7f73-48e7-74ad-2524-2514f29490cb@nvidia.com>
-Date:   Thu, 13 Feb 2020 13:33:47 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Thu, 13 Feb 2020 10:08:24 -0500
+Received: by mail-lj1-f178.google.com with SMTP id o15so6987463ljg.6
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Feb 2020 07:08:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=ee3GiJH577lg4OY0wM/xXf9Ee0smp8wTuy1Kt6Kxyhw=;
+        b=JZeUUNWM13eWdOmRSQp9k9sdhZx/TJEin/ByaULHziiBPHEmI9T9Zsvx8lwaVyoPO/
+         VaSNqryIHsoUv0qdIVghhaHGZ5YE4Kn2ZXOPDTM7rGSH45GGa2TMRaQ0ki5CESdszK5v
+         wUhBgb44im56N11L5k3kBh++rCK9jS7WF6Y8PcZXyhRHmJGxisA/JTxAxYFoOoRPNxh4
+         tq5RCfRDdLpgwBfaHR/ERAJg+aaC2UPpVRNqUZGO6Ji36L95jzDNk8v2kH5dCan3Af/u
+         ppUINnczbX/08gkNp9fdHeOeycatSjfOOSCmBz/X0Sg3Wgb/3j1LqVVH/C+Wid5Gpbh3
+         +oVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=ee3GiJH577lg4OY0wM/xXf9Ee0smp8wTuy1Kt6Kxyhw=;
+        b=RkjdtCOEbdr3FHbPYTN9h6y9GeriSwKsigxWGNyLzlrRMoKIsk8nIYTRAvyMKPfbFU
+         o6rFxTvNpE7h2b0MgFUrETqZe9PoATV/IUGCWxrZefGDvGzqZcHiLZocxwY4WJ5cEQtD
+         V6VjUukSxPpNy2Q3XrR9kOtGWtpCWJmTz1lPOt3kRtFbkrR5j6v4N3yLMmnzxu9nTeSd
+         eVoEvlN7qSguqNF79hrD1YvUEp9ONGl2wJ+tRUtk1zECW7MNUeu3S9IJmnZuxxwdYYwc
+         STMCF60p9A9MNNxLxxdV+oPuw6U9OO+98DP8jfFBYZ86WhsB0aIcei1byKPPFhONnAmW
+         HY3g==
+X-Gm-Message-State: APjAAAVVr1ace7hQrRzfiCwGslu2G5bJf8Gdb2UB1DvSIsErHDN35TXq
+        mR5r+6XxB7wofYJ3BY0u24fSRNDL/IPsRD6V73AW9A==
+X-Google-Smtp-Source: APXvYqwViHloSrWiho2QMtHCGc3xN17HyL+4UdJATCgdO7LA+fzGLegBLXjGlZU44h+dsmkp0buMYHBKj+IWlY4aVHo=
+X-Received: by 2002:a2e:e12:: with SMTP id 18mr11682234ljo.123.1581606500827;
+ Thu, 13 Feb 2020 07:08:20 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200211150158.14475-1-mathias.nyman@linux.intel.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1581600803; bh=Q/1g/+E1KxLXh/a5BE04ZQbja/0YRrFg7JgCT2PQy6g=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=IDJOQ47i/JoBb4NZDQO6MgrrTUF+1N6pMfcfklm8/ibMblWaIjTOSVjBOyl4zkY+f
-         xPEAXXzEyUSQjnSf+sdtxp/wzkC0CBxN194RNiD8yKgxjwRnlx60E9znf0dznEavY2
-         P0noIUPp3usvtUaVnXItReSRgC1MM0ij9KPlYExuyEUW7qx5aSRBVx084WC4Hi7/8S
-         VZ/c464qrPvFg7WwdzzKcLZscrk8uM+27RMvd8o9kJkvKZwRA7VUEBVCVqyA6cDEjY
-         h5mAVoBYdZUfvQQf+o/X0vBdAffWsWjRKS/fezaN4amef782Qs0rmj7Tp4XNl2vbj4
-         zF5xVV+NAcQbQ==
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Thu, 13 Feb 2020 20:38:07 +0530
+Message-ID: <CA+G9fYsxGkwOQYhuxwOZMwJi=1v4qc+cZ8PZgV6MczFNjo84HQ@mail.gmail.com>
+Subject: stable-rc 5.4: arm64 make dtbs failed
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        linux- stable <stable@vger.kernel.org>,
+        lkft-triage@lists.linaro.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-samsung-soc@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, agross@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-
-On 11/02/2020 15:01, Mathias Nyman wrote:
-> xhci driver assumed that xHC controllers have at most one custom
-> supported speed table (PSI) for all usb 3.x ports.
-> Memory was allocated for one PSI table under the xhci hub structure.
-> 
-> Turns out this is not the case, some controllers have a separate
-> "supported protocol capability" entry with a PSI table for each port.
-> This means each usb3 roothub port can in theory support different custom
-> speeds.
-> 
-> To solve this, cache all supported protocol capabilities with their PSI
-> tables in an array, and add pointers to the xhci port structure so that
-> every port points to its capability entry in the array.
-> 
-> When creating the SuperSpeedPlus USB Device Capability BOS descriptor
-> for the xhci USB 3.1 roothub we for now will use only data from the
-> first USB 3.1 capable protocol capability entry in the array.
-> This could be improved later, this patch focuses resolving
-> the memory leak.
-> 
-> Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
-> Reported-by: Sajja Venkateswara Rao <VenkateswaraRao.Sajja@amd.com>
-> Fixes: 47189098f8be ("xhci: parse xhci protocol speed ID list for usb 3.1 usage")
-> Cc: stable <stable@vger.kernel.org> # v4.4+
-> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+# make -sk KBUILD_BUILD_USER=TuxBuild -C/linux ARCH=arm64
+CROSS_COMPILE=aarch64-linux-gnu- HOSTCC=gcc CC="sccache
+aarch64-linux-gnu-gcc" O=build dtbs
 
 
-Since next-20200211, we have been observing a regression exiting suspend
-on our Tegra124 Jetson TK1 board. Bisect is pointing to this commit and
-reverting on top of -next fixes the problem.
+../arch/arm64/boot/dts/exynos/exynos5433.dtsi:254.3-29: Warning
+(reg_format): /gpu@14ac0000:reg: property has invalid length (8 bytes)
+(#address-cells == 2, #size-cells == 2)
+arch/arm64/boot/dts/exynos/exynos5433-tm2.dtb: Warning
+(pci_device_bus_num): Failed prerequisite 'reg_format'
+arch/arm64/boot/dts/exynos/exynos5433-tm2.dtb: Warning (i2c_bus_reg):
+Failed prerequisite 'reg_format'
+arch/arm64/boot/dts/exynos/exynos5433-tm2.dtb: Warning (spi_bus_reg):
+Failed prerequisite 'reg_format'
+../arch/arm64/boot/dts/exynos/exynos5433.dtsi:254.3-29: Warning
+(reg_format): /gpu@14ac0000:reg: property has invalid length (8 bytes)
+(#address-cells == 2, #size-cells == 2)
+arch/arm64/boot/dts/exynos/exynos5433-tm2e.dtb: Warning
+(pci_device_bus_num): Failed prerequisite 'reg_format'
+arch/arm64/boot/dts/exynos/exynos5433-tm2e.dtb: Warning (i2c_bus_reg):
+Failed prerequisite 'reg_format'
+arch/arm64/boot/dts/exynos/exynos5433-tm2e.dtb: Warning (spi_bus_reg):
+Failed prerequisite 'reg_format'
+../arch/arm64/boot/dts/exynos/exynos7.dtsi:83.3-29: Warning
+(reg_format): /gpu@14ac0000:reg: property has invalid length (8 bytes)
+(#address-cells == 2, #size-cells == 2)
+arch/arm64/boot/dts/exynos/exynos7-espresso.dtb: Warning
+(pci_device_bus_num): Failed prerequisite 'reg_format'
+arch/arm64/boot/dts/exynos/exynos7-espresso.dtb: Warning
+(i2c_bus_reg): Failed prerequisite 'reg_format'
+arch/arm64/boot/dts/exynos/exynos7-espresso.dtb: Warning
+(spi_bus_reg): Failed prerequisite 'reg_format'
+../arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi:10.10-13.4: ERROR
+(path_references): /aliases: Reference to non-existent node or label
+"blsp1_uart3"
 
-On exiting suspend, I am seeing the following ...
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[3]: *** [scripts/Makefile.lib:299:
+arch/arm64/boot/dts/qcom/msm8998-mtp.dtb] Error 2
 
-[   56.216793] tegra-xusb 70090000.usb: Firmware already loaded, Falcon state 0x20
-[   56.216834] usb usb3: root hub lost power or was reset
-[   56.216837] usb usb4: root hub lost power or was reset
-[   56.217760] tegra-xusb 70090000.usb: No ports on the roothubs?
-[   56.218257] tegra-xusb 70090000.usb: failed to resume XHCI: -12
-[   56.218299] PM: dpm_run_callback(): platform_pm_resume+0x0/0x40 returns -12
-[   56.218312] PM: Device 70090000.usb failed to resume: error -12
-[   56.334366] hub 4-0:1.0: hub_ext_port_status failed (err = -32)
-[   56.334368] hub 3-0:1.0: hub_ext_port_status failed (err = -32)
-
-Let me know if you have any thoughts on this.
-
-Cheers
-Jon
+ref:
+https://gitlab.com/Linaro/lkft/kernel-runs/-/jobs/435619179
 
 -- 
-nvpublic
+Linaro LKFT
+https://lkft.linaro.org
