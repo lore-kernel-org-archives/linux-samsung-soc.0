@@ -2,158 +2,134 @@ Return-Path: <SRS0=NsXs=4C=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9E5AC2BA83
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Feb 2020 07:45:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3461FC2BA83
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Feb 2020 08:22:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D08720873
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Feb 2020 07:45:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F17A524654
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 14 Feb 2020 08:22:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1581668576;
+	bh=CAUDYOHAxpzgSk4dH9LzDgYMj7W1GehoHR0osfY9APc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=1wk0rRSm3GL7he3JEBuzyKrlk4jDuVSrsOIIt9YfKq3DaVOZ8SVcz4RM1Ipgbpfan
+	 la/uMhH64oI/zS0MPNdV2jJgiMsDT/SiazAlvh3jIzXwrbFAPG3pczRsI9UsB5nni+
+	 +TAWVZYgV/38Ltf7PWHGCUdoloW9MmSgscueiLLU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728791AbgBNHpj (ORCPT
+        id S1728422AbgBNIWz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 14 Feb 2020 02:45:39 -0500
-Received: from mga09.intel.com ([134.134.136.24]:55938 "EHLO mga09.intel.com"
+        Fri, 14 Feb 2020 03:22:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725897AbgBNHpi (ORCPT
+        id S1726173AbgBNIWz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 14 Feb 2020 02:45:38 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2020 23:45:38 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,439,1574150400"; 
-   d="scan'208";a="406913159"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
-  by orsmga005.jf.intel.com with ESMTP; 13 Feb 2020 23:45:35 -0800
-Subject: Re: [RFT PATCH v2] xhci: Fix memory leak when caching protocol
- extended capability PSI tables
-To:     Jon Hunter <jonathanh@nvidia.com>, gregkh@linuxfoundation.org,
-        m.szyprowski@samsung.com
-Cc:     pmenzel@molgen.mpg.de, mika.westerberg@linux.intel.com,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, krzk@kernel.org,
-        stable <stable@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-References: <20d0559f-8d0f-42f5-5ebf-7f658a172161@linux.intel.com>
- <20200211150158.14475-1-mathias.nyman@linux.intel.com>
- <f42f7f73-48e7-74ad-2524-2514f29490cb@nvidia.com>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mathias.nyman@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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 fiD/
-Message-ID: <0f871a8f-aa96-4684-1d9c-a18c6edfb62f@linux.intel.com>
-Date:   Fri, 14 Feb 2020 09:47:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Fri, 14 Feb 2020 03:22:55 -0500
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 20B2920873;
+        Fri, 14 Feb 2020 08:22:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581668574;
+        bh=CAUDYOHAxpzgSk4dH9LzDgYMj7W1GehoHR0osfY9APc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Uk6/mwLUR5W3/ud1sldmbeb45MCd1Fl1CKUbldrD04IuPHH/ZLbl0ppw0R9yZv9i3
+         MYqeaD/5+8egtscadO1SPGl/hZpVw1cY2a51NMNUShHbEwXuB+xJCTyuTSZT50As+W
+         UIn6gudlpV7virbsQwzApZbRkQ4X2GpOfTmh0J8s=
+Received: by mail-lf1-f47.google.com with SMTP id 9so6167767lfq.10;
+        Fri, 14 Feb 2020 00:22:54 -0800 (PST)
+X-Gm-Message-State: APjAAAVnV8Yl5Acq7FO76omW5xjrxrgJQbYQ0y0cvXstucjEZE4toDv5
+        StjkevlJyZDv2Kpil0DbWF+HU/h8cjioxfdYEjk=
+X-Google-Smtp-Source: APXvYqygz595VZtIB1bmK9QpUmp9Hrm9Q60QrKMX39CEshybGg+QqX1q6wv8aokUdidPVihrSFK5z3hncXqLvwv2OHU=
+X-Received: by 2002:a19:becc:: with SMTP id o195mr1090646lff.17.1581668572226;
+ Fri, 14 Feb 2020 00:22:52 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <f42f7f73-48e7-74ad-2524-2514f29490cb@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <CGME20200213180724eucas1p1bb96993e9d0300cddf348d5d442f43aa@eucas1p1.samsung.com>
+ <20200213172130.GA13395@embeddedor> <546155af-e766-1d13-013d-b8b073e262b5@samsung.com>
+In-Reply-To: <546155af-e766-1d13-013d-b8b073e262b5@samsung.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Fri, 14 Feb 2020 09:22:40 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPeCF7be5xNO3uMmrJ1VC4MK61RxxhuAve6zi56rR1TZ=A@mail.gmail.com>
+Message-ID: <CAJKOXPeCF7be5xNO3uMmrJ1VC4MK61RxxhuAve6zi56rR1TZ=A@mail.gmail.com>
+Subject: Re: [PATCH] crypto: s5p-sss - Replace zero-length array with
+ flexible-array member
+To:     Kamil Konieczny <k.konieczny@samsung.com>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 13.2.2020 15.33, Jon Hunter wrote:
-> 
-> On 11/02/2020 15:01, Mathias Nyman wrote:
->> xhci driver assumed that xHC controllers have at most one custom
->> supported speed table (PSI) for all usb 3.x ports.
->> Memory was allocated for one PSI table under the xhci hub structure.
->>
->> Turns out this is not the case, some controllers have a separate
->> "supported protocol capability" entry with a PSI table for each port.
->> This means each usb3 roothub port can in theory support different custom
->> speeds.
->>
->> To solve this, cache all supported protocol capabilities with their PSI
->> tables in an array, and add pointers to the xhci port structure so that
->> every port points to its capability entry in the array.
->>
->> When creating the SuperSpeedPlus USB Device Capability BOS descriptor
->> for the xhci USB 3.1 roothub we for now will use only data from the
->> first USB 3.1 capable protocol capability entry in the array.
->> This could be improved later, this patch focuses resolving
->> the memory leak.
->>
->> Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
->> Reported-by: Sajja Venkateswara Rao <VenkateswaraRao.Sajja@amd.com>
->> Fixes: 47189098f8be ("xhci: parse xhci protocol speed ID list for usb 3.1 usage")
->> Cc: stable <stable@vger.kernel.org> # v4.4+
->> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-> 
-> 
-> Since next-20200211, we have been observing a regression exiting suspend
-> on our Tegra124 Jetson TK1 board. Bisect is pointing to this commit and
-> reverting on top of -next fixes the problem.
-> 
-> On exiting suspend, I am seeing the following ...
-> 
-> [   56.216793] tegra-xusb 70090000.usb: Firmware already loaded, Falcon state 0x20
-> [   56.216834] usb usb3: root hub lost power or was reset
-> [   56.216837] usb usb4: root hub lost power or was reset
-> [   56.217760] tegra-xusb 70090000.usb: No ports on the roothubs?
-> [   56.218257] tegra-xusb 70090000.usb: failed to resume XHCI: -12
-> [   56.218299] PM: dpm_run_callback(): platform_pm_resume+0x0/0x40 returns -12
-> [   56.218312] PM: Device 70090000.usb failed to resume: error -12
-> [   56.334366] hub 4-0:1.0: hub_ext_port_status failed (err = -32)
-> [   56.334368] hub 3-0:1.0: hub_ext_port_status failed (err = -32)
-> 
-> Let me know if you have any thoughts on this.
-> 
-> Cheers
-> Jon
+On Fri, 14 Feb 2020 at 08:09, Kamil Konieczny <k.konieczny@samsung.com> wrote:
+>
+> On 13.02.2020 18:21, Gustavo A. R. Silva wrote:
+> > The current codebase makes use of the zero-length array language
+> > extension to the C90 standard, but the preferred mechanism to declare
+> > variable-length types such as these ones is a flexible array member[1][2],
+> > introduced in C99:
+> >
+> > struct foo {
+> >         int stuff;
+> >         struct boo array[];
+> > };
+> >
+> > By making use of the mechanism above, we will get a compiler warning
+> > in case the flexible array does not occur last in the structure, which
+> > will help us prevent some kind of undefined behavior bugs from being
+> > inadvertently introduced[3] to the codebase from now on.
+> >
+> > Also, notice that, dynamic memory allocations won't be affected by
+> > this change:
+> >
+> > "Flexible array members have incomplete type, and so the sizeof operator
+> > may not be applied. As a quirk of the original implementation of
+> > zero-length arrays, sizeof evaluates to zero."[1]
+> >
+> > This issue was found with the help of Coccinelle.
+> >
+> > [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+> > [2] https://protect2.fireeye.com/url?k=7fbec6f4-22720d30-7fbf4dbb-0cc47a314e9a-2a4d03985644c7ed&u=https://github.com/KSPP/linux/issues/21
+> > [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+> >
+> > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> > ---
+> >  drivers/crypto/s5p-sss.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
+> > index d66e20a2f54c..2a16800d2579 100644
+> > --- a/drivers/crypto/s5p-sss.c
+> > +++ b/drivers/crypto/s5p-sss.c
+> > @@ -369,7 +369,7 @@ struct s5p_hash_reqctx {
+> >       bool                    error;
+> >
+> >       u32                     bufcnt;
+> > -     u8                      buffer[0];
+> > +     u8                      buffer[];
+> >  };
+> >
+> >  /**
+> >
+>
+> Looks good to me.
+>
+> Acked-by: Kamil Konieczny <k.konieczny@samsung.com>
 
-This was an issue with the first version, and should be fixed in the second.
+Why not making it simple/obvious u8 *buffer? Or fixed length (BUFLEN length)?
 
-next-20200211 has the faulty version, 
-next-20200213 is fixed, reverted first version and applied second.
-
-Does next-20200213 work for you?
-
--Mathias
+Best regards,
+Krzysztof
