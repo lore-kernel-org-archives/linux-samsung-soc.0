@@ -2,148 +2,86 @@ Return-Path: <SRS0=v6hi=4H=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72CAAC3404D
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Feb 2020 11:23:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DA2AC34047
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Feb 2020 17:29:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55BA421D56
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Feb 2020 11:23:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AA6020801
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Feb 2020 17:29:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1582133369;
+	bh=X7LrmsVCbQEZZqRYiS0djzoxf0rvvxZ7gTb2Ap3JVmM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=nthItTCC1Klvpf99imNtuLu2LomAwwIviFy46cwCNen8b+2JmyM67/e2x59NM1yAd
+	 3K917SK6Tr6WE6lpDppkir5fUhly4Snw7mPBIuYRSuUFrWwSueQlzz7D1ns10LvkH9
+	 EZJXqMWk05o2nu3tWivq01HuanPiRuVkONwW3RXw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726840AbgBSLXJ (ORCPT
+        id S1726558AbgBSR32 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 19 Feb 2020 06:23:09 -0500
-Received: from foss.arm.com ([217.140.110.172]:46812 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726484AbgBSLXJ (ORCPT
+        Wed, 19 Feb 2020 12:29:28 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:46663 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726518AbgBSR32 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 19 Feb 2020 06:23:09 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 12F8231B;
-        Wed, 19 Feb 2020 03:23:09 -0800 (PST)
-Received: from [10.37.12.28] (unknown [10.37.12.28])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 13CF43F6CF;
-        Wed, 19 Feb 2020 03:23:05 -0800 (PST)
-Subject: Re: [PATCH 1/2] ARM: dts: exynos: Add dynamic-power-coefficient to
- Exynos5422 CPUs
-To:     kgene@kernel.org, krzk@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org
-Cc:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        cw00.choi@samsung.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        b.zolnierkie@samsung.com, dietmar.eggemann@arm.com
-References: <20200219095828.8063-1-lukasz.luba@arm.com>
- <20200219095828.8063-2-lukasz.luba@arm.com>
-From:   Lukasz Luba <lukasz.luba@arm.com>
-Message-ID: <d545fe0f-3af2-4d37-ab44-c78fba350029@arm.com>
-Date:   Wed, 19 Feb 2020 11:23:04 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Wed, 19 Feb 2020 12:29:28 -0500
+Received: by mail-ed1-f65.google.com with SMTP id p14so21950100edy.13
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Feb 2020 09:29:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+7p/FlfxHrbOLw+VfcV5E1tVO+N3N2d/5wgHcY5A5L4=;
+        b=J+OgubV8XGs4B8LLMPLn7VD2cAPwhFFMX6b8ojM5E7Rd4nCy2dBXKnaj8opKNyjSOD
+         HRC6JJ6EkSDiQa+9vWO8QTQ1+CDEByiQyOaqUQvVpR+ZpRCh8x5rUOKTyF6o8G8cxLXG
+         HCJ0jAqIPwElzAZo9j4M2jIR8PY6Fr4EgF4HUQUSMWFKjE+mKnPPVla1cNj5+XB1Y7AN
+         qLESTJz3eTV96SRFwWLHgfPKpV7gCqQkPlDOxcwrakPsJjQXa5t7/NWH/0HYKvSHPmHA
+         g/7K0SE4Q3R+38ltcxHKjJUPofwzW7IVg2m4fqtJvYLS1ziuAAl6hLjkGpicfHgn8yiT
+         Onxg==
+X-Gm-Message-State: APjAAAXZ4c8+xcFUQ+q1loujgv15iEeVuxdy1IQBMgJqyJXO07C7XahF
+        dPfqCiEdSWjW5isTnfzLq7s=
+X-Google-Smtp-Source: APXvYqxcDRT6VTfqWfOq8GJcYkNpfYTvd5IJC/uads1s5AnRP8y/X0F6JNUfqs3pmH8A+IiYHyDFJA==
+X-Received: by 2002:aa7:d2cf:: with SMTP id k15mr23917785edr.299.1582133366888;
+        Wed, 19 Feb 2020 09:29:26 -0800 (PST)
+Received: from kozik-lap ([194.230.155.125])
+        by smtp.googlemail.com with ESMTPSA id f25sm5742edt.73.2020.02.19.09.29.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Feb 2020 09:29:26 -0800 (PST)
+Date:   Wed, 19 Feb 2020 18:29:22 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-samsung-soc@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] ARM: exynos_defconfig: Enable SquashFS and increase RAM
+ block device size
+Message-ID: <20200219172922.GA31106@kozik-lap>
+References: <CGME20200218074310eucas1p288fe322bfadcff6025aadf7b6d51ffc2@eucas1p2.samsung.com>
+ <20200218074306.16824-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20200219095828.8063-2-lukasz.luba@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200218074306.16824-1-m.szyprowski@samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-My apologizes for the mistake in the subject. It should be
-"PATCH v2 1/2" (mistake in script arguments while sending).
-The same applies to the second patch, should be  "PATCH v2 2/2".
-
-Regards,
-Lukasz
-
-On 2/19/20 9:58 AM, lukasz.luba@arm.com wrote:
-> From: Lukasz Luba <lukasz.luba@arm.com>
+On Tue, Feb 18, 2020 at 08:43:06AM +0100, Marek Szyprowski wrote:
+> All modules built from exynos_defconfig occupy about 55M, so enable
+> squashfs filesystem support and increase default ram block device size
+> to 32M to enable deploying them on initrd. Such initrd, using squashfs
+> requires at least 24M.
 > 
-> To use Energy Aware Scheduler (EAS) the Energy Model (EM) should be
-> registered for CPUs. Add dynamic-power-coefficient into CPU nodes which
-> let CPUFreq subsystem register the EM structures. This will increase
-> energy efficiency of big.LITTLE platforms.
-> 
-> The 'dynamic-power-coefficient' values have been obtained experimenting
-> with different workloads. The power measurements taken from big CPU
-> Cluster and LITTLE CPU Cluster has been compared with official documents
-> and synthetic workloads estimations. The effective power ratio between
-> Cortex-A7 and Cortex-A15 CPUs (~3x) is also aligned with documentation.
-> 
-> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->   arch/arm/boot/dts/exynos5422-cpus.dtsi | 8 ++++++++
->   1 file changed, 8 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5422-cpus.dtsi b/arch/arm/boot/dts/exynos5422-cpus.dtsi
-> index 1b8605cf2407..4b641b9b8179 100644
-> --- a/arch/arm/boot/dts/exynos5422-cpus.dtsi
-> +++ b/arch/arm/boot/dts/exynos5422-cpus.dtsi
-> @@ -31,6 +31,7 @@
->   			operating-points-v2 = <&cluster_a7_opp_table>;
->   			#cooling-cells = <2>; /* min followed by max */
->   			capacity-dmips-mhz = <539>;
-> +			dynamic-power-coefficient = <90>;
->   		};
->   
->   		cpu1: cpu@101 {
-> @@ -43,6 +44,7 @@
->   			operating-points-v2 = <&cluster_a7_opp_table>;
->   			#cooling-cells = <2>; /* min followed by max */
->   			capacity-dmips-mhz = <539>;
-> +			dynamic-power-coefficient = <90>;
->   		};
->   
->   		cpu2: cpu@102 {
-> @@ -55,6 +57,7 @@
->   			operating-points-v2 = <&cluster_a7_opp_table>;
->   			#cooling-cells = <2>; /* min followed by max */
->   			capacity-dmips-mhz = <539>;
-> +			dynamic-power-coefficient = <90>;
->   		};
->   
->   		cpu3: cpu@103 {
-> @@ -67,6 +70,7 @@
->   			operating-points-v2 = <&cluster_a7_opp_table>;
->   			#cooling-cells = <2>; /* min followed by max */
->   			capacity-dmips-mhz = <539>;
-> +			dynamic-power-coefficient = <90>;
->   		};
->   
->   		cpu4: cpu@0 {
-> @@ -79,6 +83,7 @@
->   			operating-points-v2 = <&cluster_a15_opp_table>;
->   			#cooling-cells = <2>; /* min followed by max */
->   			capacity-dmips-mhz = <1024>;
-> +			dynamic-power-coefficient = <310>;
->   		};
->   
->   		cpu5: cpu@1 {
-> @@ -91,6 +96,7 @@
->   			operating-points-v2 = <&cluster_a15_opp_table>;
->   			#cooling-cells = <2>; /* min followed by max */
->   			capacity-dmips-mhz = <1024>;
-> +			dynamic-power-coefficient = <310>;
->   		};
->   
->   		cpu6: cpu@2 {
-> @@ -103,6 +109,7 @@
->   			operating-points-v2 = <&cluster_a15_opp_table>;
->   			#cooling-cells = <2>; /* min followed by max */
->   			capacity-dmips-mhz = <1024>;
-> +			dynamic-power-coefficient = <310>;
->   		};
->   
->   		cpu7: cpu@3 {
-> @@ -115,6 +122,7 @@
->   			operating-points-v2 = <&cluster_a15_opp_table>;
->   			#cooling-cells = <2>; /* min followed by max */
->   			capacity-dmips-mhz = <1024>;
-> +			dynamic-power-coefficient = <310>;
->   		};
->   	};
->   };
-> 
+>  arch/arm/configs/exynos_defconfig | 3 ++-
+
+Thanks, applied.
+
+Best regards,
+Krzysztof
+
