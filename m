@@ -1,125 +1,138 @@
-Return-Path: <SRS0=a64Z=4G=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=v6hi=4H=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40E73C3403D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Feb 2020 14:03:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 535FDC34050
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Feb 2020 09:59:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F2D821D56
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 18 Feb 2020 14:03:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1582034610;
-	bh=WDPWzQ9h06fO5BvQ/cXq3ZJUz8r0IeTu9pkb16Fh47I=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=zv3djrJZs41UAVG/R24PQEo8le9Rz4a5gtoyJ3wOJzWfIQwKqClJlBJ8+XbUAn26P
-	 7ou1V28IXM+Cb0gZoVxz3PSl4mMYV+hm3DJx5eDiKRCkxDyMUPkUzTJN75ARcta/Lz
-	 XLHXhSaKpO6tOlzQ4uPItq7ANQezly2ZrCWrJqGw=
+	by mail.kernel.org (Postfix) with ESMTP id 3655521D56
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 19 Feb 2020 09:59:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726692AbgBROD3 (ORCPT
+        id S1726677AbgBSJ7F (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 18 Feb 2020 09:03:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49390 "EHLO mail.kernel.org"
+        Wed, 19 Feb 2020 04:59:05 -0500
+Received: from foss.arm.com ([217.140.110.172]:45050 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726571AbgBROD3 (ORCPT
+        id S1726453AbgBSJ7E (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 18 Feb 2020 09:03:29 -0500
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF93521D56;
-        Tue, 18 Feb 2020 14:03:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582034608;
-        bh=WDPWzQ9h06fO5BvQ/cXq3ZJUz8r0IeTu9pkb16Fh47I=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=oY5ZNRvQUQobu6kwPBPXoeC4/aFklIPIxJEKQEkk5wrPQbRZpOGXG0U4gmWYVbgtT
-         QtWPNy+TOXKQk5xZK2/a1f2C63V1n+33kEeDkBtOEswxONkG7TxrnewcMK1qJR7tqz
-         pwWOx6TCOCeNyx1NyJvhUQip4UA0gxC8KgQBoYrA=
-Received: by mail-lj1-f177.google.com with SMTP id q8so23022913ljj.11;
-        Tue, 18 Feb 2020 06:03:27 -0800 (PST)
-X-Gm-Message-State: APjAAAVK0TQeFKpiBD0WJhohrLEVvIw8Z4utm2aYtIdwIFI5kXdU9/Em
-        Vu5eVhWOhxPVhxbTR7MGGfXkUUMf/m0ux9zFbX4=
-X-Google-Smtp-Source: APXvYqyu3tqs7d1o1hFLIjDMvfhUSPaiuzZqw9hBKx+J7cxJ471R62AqtfhLJ1T448/LUKRaWkGxI1cFe0kSw+ndYy8=
-X-Received: by 2002:a2e:9c85:: with SMTP id x5mr13224473lji.50.1582034605913;
- Tue, 18 Feb 2020 06:03:25 -0800 (PST)
-MIME-Version: 1.0
-References: <CA+G9fYsxGkwOQYhuxwOZMwJi=1v4qc+cZ8PZgV6MczFNjo84HQ@mail.gmail.com>
- <20200213151540.GA3502153@kroah.com>
-In-Reply-To: <20200213151540.GA3502153@kroah.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Tue, 18 Feb 2020 15:03:14 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPew3gu8=vTPUZB7mk5L08WRdWWYcJQtkG3YgohzDhRkVA@mail.gmail.com>
-Message-ID: <CAJKOXPew3gu8=vTPUZB7mk5L08WRdWWYcJQtkG3YgohzDhRkVA@mail.gmail.com>
-Subject: Re: stable-rc 5.4: arm64 make dtbs failed
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        linux- stable <stable@vger.kernel.org>,
-        lkft-triage@lists.linaro.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, agross@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 19 Feb 2020 04:59:04 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2728EFEC;
+        Wed, 19 Feb 2020 01:59:04 -0800 (PST)
+Received: from e123648.arm.com (unknown [10.37.12.28])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A9F373F6CF;
+        Wed, 19 Feb 2020 01:59:00 -0800 (PST)
+From:   lukasz.luba@arm.com
+To:     kgene@kernel.org, krzk@kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        cw00.choi@samsung.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        b.zolnierkie@samsung.com, lukasz.luba@arm.com,
+        dietmar.eggemann@arm.com
+Subject: [PATCH 1/2] ARM: dts: exynos: Add dynamic-power-coefficient to Exynos5422 CPUs
+Date:   Wed, 19 Feb 2020 09:58:27 +0000
+Message-Id: <20200219095828.8063-2-lukasz.luba@arm.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200219095828.8063-1-lukasz.luba@arm.com>
+References: <20200219095828.8063-1-lukasz.luba@arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 13 Feb 2020 at 16:16, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Thu, Feb 13, 2020 at 08:38:07PM +0530, Naresh Kamboju wrote:
-> > # make -sk KBUILD_BUILD_USER=TuxBuild -C/linux ARCH=arm64
-> > CROSS_COMPILE=aarch64-linux-gnu- HOSTCC=gcc CC="sccache
-> > aarch64-linux-gnu-gcc" O=build dtbs
-> >
-> >
-> > ../arch/arm64/boot/dts/exynos/exynos5433.dtsi:254.3-29: Warning
-> > (reg_format): /gpu@14ac0000:reg: property has invalid length (8 bytes)
-> > (#address-cells == 2, #size-cells == 2)
-> > arch/arm64/boot/dts/exynos/exynos5433-tm2.dtb: Warning
-> > (pci_device_bus_num): Failed prerequisite 'reg_format'
-> > arch/arm64/boot/dts/exynos/exynos5433-tm2.dtb: Warning (i2c_bus_reg):
-> > Failed prerequisite 'reg_format'
-> > arch/arm64/boot/dts/exynos/exynos5433-tm2.dtb: Warning (spi_bus_reg):
-> > Failed prerequisite 'reg_format'
-> > ../arch/arm64/boot/dts/exynos/exynos5433.dtsi:254.3-29: Warning
-> > (reg_format): /gpu@14ac0000:reg: property has invalid length (8 bytes)
-> > (#address-cells == 2, #size-cells == 2)
-> > arch/arm64/boot/dts/exynos/exynos5433-tm2e.dtb: Warning
-> > (pci_device_bus_num): Failed prerequisite 'reg_format'
-> > arch/arm64/boot/dts/exynos/exynos5433-tm2e.dtb: Warning (i2c_bus_reg):
-> > Failed prerequisite 'reg_format'
-> > arch/arm64/boot/dts/exynos/exynos5433-tm2e.dtb: Warning (spi_bus_reg):
-> > Failed prerequisite 'reg_format'
-> > ../arch/arm64/boot/dts/exynos/exynos7.dtsi:83.3-29: Warning
-> > (reg_format): /gpu@14ac0000:reg: property has invalid length (8 bytes)
-> > (#address-cells == 2, #size-cells == 2)
-> > arch/arm64/boot/dts/exynos/exynos7-espresso.dtb: Warning
-> > (pci_device_bus_num): Failed prerequisite 'reg_format'
-> > arch/arm64/boot/dts/exynos/exynos7-espresso.dtb: Warning
-> > (i2c_bus_reg): Failed prerequisite 'reg_format'
-> > arch/arm64/boot/dts/exynos/exynos7-espresso.dtb: Warning
-> > (spi_bus_reg): Failed prerequisite 'reg_format'
-> > ../arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi:10.10-13.4: ERROR
-> > (path_references): /aliases: Reference to non-existent node or label
-> > "blsp1_uart3"
->
-> Thanks for the notice, I'll go drop the offending patch.
+From: Lukasz Luba <lukasz.luba@arm.com>
 
-The backport is needed but the prerequisites are missing for v5.3 and newer:
-   Cc: <stable@vger.kernel.org> # 5.3.x: 72ddcf6aa224 arm64: dts:
-exynos: Move GPU under /soc node for Exynos5433
-   Cc: <stable@vger.kernel.org> # 5.3.x: ede87c3a2bdb arm64: dts:
-exynos: Move GPU under /soc node for Exynos7
+To use Energy Aware Scheduler (EAS) the Energy Model (EM) should be
+registered for CPUs. Add dynamic-power-coefficient into CPU nodes which
+let CPUFreq subsystem register the EM structures. This will increase
+energy efficiency of big.LITTLE platforms.
 
-Best regards,
-Krzysztof
+The 'dynamic-power-coefficient' values have been obtained experimenting
+with different workloads. The power measurements taken from big CPU
+Cluster and LITTLE CPU Cluster has been compared with official documents
+and synthetic workloads estimations. The effective power ratio between
+Cortex-A7 and Cortex-A15 CPUs (~3x) is also aligned with documentation.
+
+Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
+---
+ arch/arm/boot/dts/exynos5422-cpus.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5422-cpus.dtsi b/arch/arm/boot/dts/exynos5422-cpus.dtsi
+index 1b8605cf2407..4b641b9b8179 100644
+--- a/arch/arm/boot/dts/exynos5422-cpus.dtsi
++++ b/arch/arm/boot/dts/exynos5422-cpus.dtsi
+@@ -31,6 +31,7 @@
+ 			operating-points-v2 = <&cluster_a7_opp_table>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 			capacity-dmips-mhz = <539>;
++			dynamic-power-coefficient = <90>;
+ 		};
+ 
+ 		cpu1: cpu@101 {
+@@ -43,6 +44,7 @@
+ 			operating-points-v2 = <&cluster_a7_opp_table>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 			capacity-dmips-mhz = <539>;
++			dynamic-power-coefficient = <90>;
+ 		};
+ 
+ 		cpu2: cpu@102 {
+@@ -55,6 +57,7 @@
+ 			operating-points-v2 = <&cluster_a7_opp_table>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 			capacity-dmips-mhz = <539>;
++			dynamic-power-coefficient = <90>;
+ 		};
+ 
+ 		cpu3: cpu@103 {
+@@ -67,6 +70,7 @@
+ 			operating-points-v2 = <&cluster_a7_opp_table>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 			capacity-dmips-mhz = <539>;
++			dynamic-power-coefficient = <90>;
+ 		};
+ 
+ 		cpu4: cpu@0 {
+@@ -79,6 +83,7 @@
+ 			operating-points-v2 = <&cluster_a15_opp_table>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 			capacity-dmips-mhz = <1024>;
++			dynamic-power-coefficient = <310>;
+ 		};
+ 
+ 		cpu5: cpu@1 {
+@@ -91,6 +96,7 @@
+ 			operating-points-v2 = <&cluster_a15_opp_table>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 			capacity-dmips-mhz = <1024>;
++			dynamic-power-coefficient = <310>;
+ 		};
+ 
+ 		cpu6: cpu@2 {
+@@ -103,6 +109,7 @@
+ 			operating-points-v2 = <&cluster_a15_opp_table>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 			capacity-dmips-mhz = <1024>;
++			dynamic-power-coefficient = <310>;
+ 		};
+ 
+ 		cpu7: cpu@3 {
+@@ -115,6 +122,7 @@
+ 			operating-points-v2 = <&cluster_a15_opp_table>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 			capacity-dmips-mhz = <1024>;
++			dynamic-power-coefficient = <310>;
+ 		};
+ 	};
+ };
+-- 
+2.17.1
+
