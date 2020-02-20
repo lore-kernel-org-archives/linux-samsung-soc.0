@@ -2,117 +2,140 @@ Return-Path: <SRS0=Yoj7=4I=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E979C11D05
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Feb 2020 14:48:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03441C11D0C
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Feb 2020 18:00:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F10C24656
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Feb 2020 14:48:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MqqtgYfS"
+	by mail.kernel.org (Postfix) with ESMTP id CE99F2467A
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Feb 2020 18:00:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1582221648;
+	bh=mWtgtFWAoWaJEiv18O1INel2Oq4nWzK1Yo0KUp9+Xok=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Ll/hkX4blHQtPs9uJF6PLWb8JB6JrnXxmHoigbSThJMGJg8k09oahl2ZkT+mY2AJJ
+	 Q4XFpigYoYcEcMTFiMh6c9AtNKTE9BI/SNFPbDL/8hjOt4kKRtpWR7F3LTy8rOd5is
+	 owVwNJlAAa0c0LJEWmAooNM3nJohm6jAsXrjSCCw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728134AbgBTOsn (ORCPT
+        id S1728747AbgBTSAs (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 20 Feb 2020 09:48:43 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36348 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727553AbgBTOsn (ORCPT
+        Thu, 20 Feb 2020 13:00:48 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:37413 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728354AbgBTSAs (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 20 Feb 2020 09:48:43 -0500
-Received: by mail-lj1-f193.google.com with SMTP id r19so4531238ljg.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Feb 2020 06:48:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VFsELfj9kJG75Pqbvz1ocn9qZImBer1nJRUwC4Q7bZY=;
-        b=MqqtgYfSSn3FHYbEg13WQb6BWeq4sbtryqg6cZPsn20u3rxkq6YEFBDAKvqJIFORbm
-         M1po1MNlQg90SORMlvuRTXHTALEgnixnZsrP1s5lpXbugJqoEfSx8o58UyRkAkmMVOJp
-         x+L3zNQohho2+EaJBd3pH+v8U8eiBJ1NTeZ6h9zMcQVEmoCiIdBjGjNBO8Pz95ppvPQ6
-         2tvTxNVaFFK5eyU6Onxv+Ad+n9MLSmCgPJ0u1C4VA1ZLT5alsQXwfPHcF+esY0xcjqP0
-         eTgvVT9GXk3/30zrL57T+5kp/4Np5rJTR2vAbph1f77RDtWaR3Oncv7yRHXuVt2MPSVY
-         oSaQ==
+        Thu, 20 Feb 2020 13:00:48 -0500
+Received: by mail-ed1-f67.google.com with SMTP id t7so23155375edr.4;
+        Thu, 20 Feb 2020 10:00:45 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VFsELfj9kJG75Pqbvz1ocn9qZImBer1nJRUwC4Q7bZY=;
-        b=lUUBNH+9P7aBhzHPBvpTeCCsvKlIjMOOl9n/hoLJ8wlW/7q4mMbt2IX5Pkgd3GPiy9
-         5jKjDgrDTN/1d8RwTGo6bYEK+YVrDBunSyWUAdcVobLlQ0cWYXxekvCzuFIzdEOvStGf
-         7UnJObvVI6j9ObCuLoDR6E2WFz0ocBq+r5r0K2JQmgDXOR5hzBDAtL0upva+TavYpGck
-         RQERXy9f8yPnFFwnaY6gEJmBCpCqldOZtV1YC90bkd75frH9bKISpRRDtcNHhnuZ/DWR
-         7366N39r5ZSYTSkO48NDAyyEnl9uxyteqHTai8YI8tlEmMLIPc8q3MbbBY7Lvl16+zLY
-         pHmg==
-X-Gm-Message-State: APjAAAWpIp3iUEocEnJ4Z1PQdb5si1JnQjfjehrNWCSyHbAWCkM0yLQ3
-        sJKImBIhLGU6Vxa3CCeGreg7GHSd9EZeOdiTFcLo8A==
-X-Google-Smtp-Source: APXvYqzC9uvcXVQUMEqfFBmLgRYjVN2yaUx+FWOP5lrFQgxOH/VrI5JSlJHy+5NkZQj0tvezfPvYss2NMoiD7aj8evk=
-X-Received: by 2002:a2e:81c3:: with SMTP id s3mr18661030ljg.168.1582210121456;
- Thu, 20 Feb 2020 06:48:41 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JuWavBe6OXyRFy5qql3DEFdCwPYGMywA79SDbY508v4=;
+        b=ZAdsux1lXeRKDT//oS/PZRqYIHiJBgSn720SlCyHD31cakfxNNnwcbjAnmt8DLPe98
+         FVZy7RaYvo+l1arPYoZlddPxxsz1WK5LKUN2zDkJNIHV5rxePheJYa1Cc5ByyfK7JuCJ
+         4P/xqSYQt69fjd4gxXflBBtRlXGEYBcs55Tx0Low7nZG9alOXHxsvmS6MwIdeVM1LRbV
+         4/pGqOhBOT3PtEYtR1UPSHqZ3WW2LF+MFhP+O7U/cFrjNZoCIbALdSzeyj/zHah7Yhf4
+         8CTCaW5qVrbM/ARBCR5WB9j8Mn07QkE8LqNFqpzkYAZvP9vD1/lITos88bggs3ZgVNgt
+         Huew==
+X-Gm-Message-State: APjAAAXGja9/sJJlc4zfEyN/mysWkzReY4K1FTiiDomhFpXTw1WetHui
+        liyAhRf2Fg18ucACDyWwGNo=
+X-Google-Smtp-Source: APXvYqwN5Yx4Jc42BqpycwqSM0vNnKWMTJp0qMmgsdSQ1M3eTaby6XleOAjAIb1VUKWVgqrdjO6gCg==
+X-Received: by 2002:a17:906:19c8:: with SMTP id h8mr31704573ejd.250.1582221644629;
+        Thu, 20 Feb 2020 10:00:44 -0800 (PST)
+Received: from kozik-lap ([194.230.155.125])
+        by smtp.googlemail.com with ESMTPSA id yh21sm14798ejb.62.2020.02.20.10.00.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Feb 2020 10:00:43 -0800 (PST)
+Date:   Thu, 20 Feb 2020 19:00:40 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Lukasz Luba <lukasz.luba@arm.com>
+Cc:     linux-kernel@vger.kernel.org, kgene@kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, myungjoo.ham@samsung.com,
+        kyungmin.park@samsung.com, cw00.choi@samsung.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, b.zolnierkie@samsung.com,
+        dietmar.eggemann@arm.com
+Subject: Re: [RESEND PATCH v2 0/2] Enable Odroid-XU3/4 to use Energy Model
+ and Energy Aware Scheduler
+Message-ID: <20200220180040.GA8338@kozik-lap>
+References: <20200220095636.29469-1-lukasz.luba@arm.com>
 MIME-Version: 1.0
-References: <cover.1581478323.git.afzal.mohd.ma@gmail.com> <109d17402bc75ed186a2e151dfda1edf05463b5a.1581478324.git.afzal.mohd.ma@gmail.com>
-In-Reply-To: <109d17402bc75ed186a2e151dfda1edf05463b5a.1581478324.git.afzal.mohd.ma@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 20 Feb 2020 15:48:30 +0100
-Message-ID: <CACRpkda-k26bWR9EJMMPDz0S4xy3QW_+uABdmPRbaKPD0b4qfA@mail.gmail.com>
-Subject: Re: [PATCH 16/18] clocksource: Replace setup_irq() by request_irq()
-To:     afzal mohammed <afzal.mohd.ma@gmail.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Barry Song <baohua@kernel.org>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Tony Prisk <linux@prisktech.co.nz>,
-        Allison Randal <allison@lohutok.net>,
-        Enrico Weigelt <info@metux.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200220095636.29469-1-lukasz.luba@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 9:05 AM afzal mohammed <afzal.mohd.ma@gmail.com> wrote:
+On Thu, Feb 20, 2020 at 09:56:34AM +0000, Lukasz Luba wrote:
+> Hi all,
+> 
+> This is just a resend, now with proper v2 in the patches subject.
+> 
+> The Odroid-XU4/3 is a decent and easy accessible ARM big.LITTLE platform,
+> which might be used for research and development.
+> 
+> This small patch set provides possibility to run Energy Aware Scheduler (EAS)
+> on Odroid-XU4/3 and experiment with it. 
+> 
+> The patch 1/2 provides 'dynamic-power-coefficient' in CPU DT nodes, which is
+> then used by the Energy Model (EM).
+> The patch 2/2 enables SCHED_MC (which adds another level in scheduling domains)
+> and enables EM making EAS possible to run (when schedutil is set as a CPUFreq
+> governor).
+> 
+> 1. Test results
+> 
+> Two types of different tests have been executed. The first is energy test
+> case showing impact on energy consumption of this patch set. It is using a
+> synthetic set of tasks (rt-app based). The second is the performance test
+> case which is using hackbench (less time to complete is better).
+> In both tests schedutil has been used as cpufreq governor. In all tests
+> PROVE_LOCKING has not been compiled into the kernels.
+> 
+> 1.1 Energy test case
+> 
+> 10 iterations of 24 periodic rt-app tasks (16ms period, 10% duty-cycle)
+> with energy measurement. The cpufreq governor - schedutil. Unit is Joules.
+> The energy is calculated based on hwmon0 and hwmon3 power1_input.
+> The goal is to save energy, lower is better.
+> 
+> +-----------+-----------------+------------------------+
+> |           | Without patches | With patches           |
+> +-----------+--------+--------+----------------+-------+
+> | benchmark |  Mean  | RSD*   | Mean           | RSD*  |
+> +-----------+--------+--------+----------------+-------+
+> | 24 rt-app |  21.56 |  1.37% |  19.85 (-9.2%) | 0.92% |
+> |    tasks  |        |        |                |       |
+> +-----------+--------+--------+----------------+-------+
+> 
+> 1.2 Performance test case
+> 
+> 10 consecutive iterations of hackbench (hackbench -l 500 -s 4096),
+> no delay between two successive executions.
+> The cpufreq governor - schedutil. Units in seconds.
+> The goal is to see not regression, lower completion time is better.
+> 
+> +-----------+-----------------+------------------------+
+> |           | Without patches | With patches           |
+> +-----------+--------+--------+----------------+-------+
+> | benchmark | Mean   | RSD*   | Mean           | RSD*  |
+> +-----------+--------+--------+----------------+-------+
+> | hackbench |  8.15  | 2.86%  |  7.95 (-2.5%)  | 0.60% |
+> +-----------+--------+--------+----------------+-------+
+> 
+> *RSD: Relative Standard Deviation (std dev / mean)
 
-> request_irq() is preferred over setup_irq(). Existing callers of
-> setup_irq() reached mostly via 'init_IRQ()' & 'time_init()', while
-> memory allocators are ready by 'mm_init()'.
->
-> Per tglx[1], setup_irq() existed in olden days when allocators were not
-> ready by the time early interrupts were initialized.
->
-> Hence replace setup_irq() by request_irq().
->
-> Seldom remove_irq() usage has been observed coupled with setup_irq(),
-> wherever that has been found, it too has been replaced by free_irq().
->
-> [1] https://lkml.kernel.org/r/alpine.DEB.2.20.1710191609480.1971@nanos
->
-> Signed-off-by: afzal mohammed <afzal.mohd.ma@gmail.com>
+Nice measurements!
 
-This makes the kernel a better place.
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Applied both, thank you.
 
-Yours,
-Linus Walleij
+Best regards,
+Krzysztof
+
