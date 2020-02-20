@@ -2,84 +2,100 @@ Return-Path: <SRS0=Yoj7=4I=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22B02C11D07
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Feb 2020 09:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE493C11D05
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Feb 2020 10:26:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFFB52468A
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Feb 2020 09:57:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9814424672
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Feb 2020 10:26:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1582194398;
+	bh=knx4Hgx/CQsPzc3qhbTlsEci9Vu+cNKPN13+ZBa+OjQ=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=bfDosJt8QbiX8qlCj2CHKqkac9GXqHE4+lgMtgadolwRosKTqTeaGYu51g7HG8gXo
+	 4j4dhjJ6m+y8asqqFJybD1RcNIMPwuDY0yMDK0Jt2istYGio1hSxKJoCTSFeuFedZM
+	 8S/Gh4/zCjAkAzsau0+0YdIL/2mLluRSNxz2x+a0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727273AbgBTJ5D (ORCPT
+        id S1726801AbgBTK0f (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 20 Feb 2020 04:57:03 -0500
-Received: from foss.arm.com ([217.140.110.172]:39232 "EHLO foss.arm.com"
+        Thu, 20 Feb 2020 05:26:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38442 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726771AbgBTJ5D (ORCPT
+        id S1726799AbgBTK0f (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 20 Feb 2020 04:57:03 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8236930E;
-        Thu, 20 Feb 2020 01:57:02 -0800 (PST)
-Received: from e123648.arm.com (unknown [10.37.12.146])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C7E613F703;
-        Thu, 20 Feb 2020 01:56:58 -0800 (PST)
-From:   Lukasz Luba <lukasz.luba@arm.com>
-To:     linux-kernel@vger.kernel.org, kgene@kernel.org, krzk@kernel.org,
+        Thu, 20 Feb 2020 05:26:35 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 697D520801;
+        Thu, 20 Feb 2020 10:26:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582194394;
+        bh=knx4Hgx/CQsPzc3qhbTlsEci9Vu+cNKPN13+ZBa+OjQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=UOkzX+M1c99UqqKhr4svRsN2562BewZJrAgnDGHKFxyYpMgahf65G5FLB+rRp5Srm
+         gu4l6KVq2RwkcZUHoZ6vad/HAQDJgsExrDkfKkK/PVTnVblWvV1eJNaoXffS7ux3Ip
+         BWoNhfyknyu8zo/cAQdaAXpC9SEEOE8Y2RjIPcBc=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-serial@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Donghoon Yu <hoony.yu@samsung.com>,
+        Hyunki Koo <kkoos00@naver.com>,
+        HYUN-KI KOO <hyunki00.koo@samsung.com>,
+        Shinbeom Choi <sbeom.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Jiri Slaby <jslaby@suse.com>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Cc:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        cw00.choi@samsung.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        b.zolnierkie@samsung.com, lukasz.luba@arm.com,
-        dietmar.eggemann@arm.com
-Subject: [RESEND PATCH v2 2/2] ARM: exynos_defconfig: Enable SCHED_MC and ENERGY_MODEL
-Date:   Thu, 20 Feb 2020 09:56:36 +0000
-Message-Id: <20200220095636.29469-3-lukasz.luba@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200220095636.29469-1-lukasz.luba@arm.com>
-References: <20200220095636.29469-1-lukasz.luba@arm.com>
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] tty: serial: samsung_tty: build it for any platform
+Date:   Thu, 20 Feb 2020 11:26:27 +0100
+Message-Id: <20200220102628.3371996-1-gregkh@linuxfoundation.org>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The Energy Model (EM) is needed to run Energy Aware Scheduler (EAS).
-Enable ENERGY_MODEL to make that happen. This will increase energy
-efficiency of the big.LITTLE platform by smart decisions in scheduling
-tasks in non-heavy workloads.
+There is no need to tie this driver to only a specific SoC, or compile
+test, so remove that dependancy from the Kconfig rules.
 
-Add SCHED_MC in order to create another level in scheduling domains: 'MC'.
-This improves scheduler's decisions on platforms with CPU clusters, such
-as big.LITTLE.
-
-Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Donghoon Yu <hoony.yu@samsung.com>
+Cc: Hyunki Koo <kkoos00@naver.com>
+Cc: HYUN-KI KOO <hyunki00.koo@samsung.com>
+Cc: Shinbeom Choi <sbeom.choi@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Jiri Slaby <jslaby@suse.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-serial@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/configs/exynos_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/tty/serial/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index c8e0c14092e8..90d376eb333b 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -8,6 +8,7 @@ CONFIG_PERF_EVENTS=y
- CONFIG_ARCH_EXYNOS=y
- CONFIG_CPU_ICACHE_MISMATCH_WORKAROUND=y
- CONFIG_SMP=y
-+CONFIG_SCHED_MC=y
- CONFIG_BIG_LITTLE=y
- CONFIG_NR_CPUS=8
- CONFIG_HIGHMEM=y
-@@ -17,6 +18,7 @@ CONFIG_ZBOOT_ROM_BSS=0x0
- CONFIG_ARM_APPENDED_DTB=y
- CONFIG_ARM_ATAG_DTB_COMPAT=y
- CONFIG_CMDLINE="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC1,115200 init=/linuxrc mem=256M"
-+CONFIG_ENERGY_MODEL=y
- CONFIG_CPU_FREQ=y
- CONFIG_CPU_FREQ_STAT=y
- CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index 52eaac21ff9f..a310bd22f1e2 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -237,7 +237,6 @@ config SERIAL_CLPS711X_CONSOLE
+ 
+ config SERIAL_SAMSUNG
+ 	tristate "Samsung SoC serial support"
+-	depends on PLAT_SAMSUNG || ARCH_EXYNOS || COMPILE_TEST
+ 	select SERIAL_CORE
+ 	help
+ 	  Support for the on-chip UARTs on the Samsung S3C24XX series CPUs,
+
+base-commit: 11a48a5a18c63fd7621bb050228cebf13566e4d8
 -- 
-2.17.1
+2.25.1
 
