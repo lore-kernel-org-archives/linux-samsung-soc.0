@@ -2,135 +2,175 @@ Return-Path: <SRS0=Yoj7=4I=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E89EC11D05
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Feb 2020 12:07:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD634C11D07
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Feb 2020 12:13:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECE9B24676
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Feb 2020 12:07:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8556B24672
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Feb 2020 12:13:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="DadcEyzh"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sDy3vdnF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727393AbgBTMHR (ORCPT
+        id S1727709AbgBTMNf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 20 Feb 2020 07:07:17 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:35538 "EHLO
+        Thu, 20 Feb 2020 07:13:35 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:38120 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727233AbgBTMHR (ORCPT
+        with ESMTP id S1726959AbgBTMNf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 20 Feb 2020 07:07:17 -0500
+        Thu, 20 Feb 2020 07:13:35 -0500
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200220120712euoutp02cde676305a3ffd6e3b5ac21dfc204dc4~1GukqqSlr3166131661euoutp024
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Feb 2020 12:07:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200220120712euoutp02cde676305a3ffd6e3b5ac21dfc204dc4~1GukqqSlr3166131661euoutp024
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200220121333euoutp02fbfb7b5c1cd8d41d8a3c35107eb8d3e3~1G0HZ3L-f0267002670euoutp02T
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Feb 2020 12:13:33 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200220121333euoutp02fbfb7b5c1cd8d41d8a3c35107eb8d3e3~1G0HZ3L-f0267002670euoutp02T
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1582200432;
-        bh=hkx6DgbqTnvBPvF0imgPKHXt1K+ZrMslVa2DNLpq8VU=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=DadcEyzhMdXkRXPpXnP8TuSDGZR7+dR3r8M98i2Hyrih4/w9M5gU9LVoMfFNvaHbK
-         xm8/eZ3GXQst0TslKw7sNDxk+atO3Oy1eajyPaFYhfCJE29Zdbx/31cHD5TKU0HQL+
-         Rin3ri9E25ysPHIwPD+JJwq4xHTm9tIaQX6FtBhU=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200220120712eucas1p11cf2aee6b05d393727274f6d2ce8cc56~1GukQuwJh1315513155eucas1p1t;
-        Thu, 20 Feb 2020 12:07:12 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 08.A3.60679.0767E4E5; Thu, 20
-        Feb 2020 12:07:12 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200220120711eucas1p1f3ac819081ece4847b17c10c005dfa42~1Guj3QtCc2397823978eucas1p1L;
-        Thu, 20 Feb 2020 12:07:11 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200220120711eusmtrp236ccf401cf92156fd2bfe8acbde1ff2d~1Guj2n-bY2094520945eusmtrp2m;
-        Thu, 20 Feb 2020 12:07:11 +0000 (GMT)
-X-AuditID: cbfec7f4-0e5ff7000001ed07-4a-5e4e76709a9e
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 23.53.08375.F667E4E5; Thu, 20
-        Feb 2020 12:07:11 +0000 (GMT)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200220120711eusmtip2b8fe826edcfc8e5319b15ce0b9b43158~1GujbG3dL1206312063eusmtip2-;
-        Thu, 20 Feb 2020 12:07:11 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH] drm/panel: ld9040: add MODULE_DEVICE_TABLE with SPI IDs
-Date:   Thu, 20 Feb 2020 13:07:00 +0100
-Message-Id: <20200220120700.12257-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPIsWRmVeSWpSXmKPExsWy7djP87oFZX5xBndmi1rcWneO1WLjjPWs
-        Fle+vmezmHF+H5PF2iN32S1W/NzKaPFz1zwWB3aPnbPusnvc7z7O5LFk2lU2j74tqxg9Pm+S
-        C2CN4rJJSc3JLEst0rdL4MpYOe0lS8EG9oqbp2ewNTAuZeti5OSQEDCRWPL6M1MXIxeHkMAK
-        Rome7v+MEM4XRomWli6ozGdGiUmrv8O1nO2aBFW1nFHi7cKjzHAtXZ0zwarYBAwlut52gdki
-        Am4STYdnsoIUMQvcYpRo3/0BLCEs4CHxqGUeK4jNIqAqcWXabxYQm1fAVmLJj01Q6+QlVm84
-        ALZBQuA6m8TsW5vYIRIuEpu+noOyhSVeHd8CZctI/N85nwmioZlR4uG5tewQTg+jxOWmGYwQ
-        VdYSd879AlrBAXSTpsT6XfogpoSAo0Tb5SoIk0/ixltBkGJmIHPStunMEGFeiY42IYgZahKz
-        jq+D23rwwiVmCNtDYsGsDWDlQgKxEk1tLBMY5WYhbFrAyLiKUTy1tDg3PbXYKC+1XK84Mbe4
-        NC9dLzk/dxMjMBmc/nf8yw7GXX+SDjEKcDAq8fB+UPeNE2JNLCuuzD3EKMHBrCTCq8bjFyfE
-        m5JYWZValB9fVJqTWnyIUZqDRUmc13jRy1ghgfTEktTs1NSC1CKYLBMHp1QDY8h53bDzYgl3
-        um+sNJNcYVO0Wuem3ME7W29aaxw9fzUn0cfj++rPk8VeCZ8UODZ534vVe6t7stacurUvXOvK
-        1XteWhyb48KZri60sXVtEn/2fNGCB573mKbZM0zZbJ16OOjSk0dJHydkBbgsze+NVfNg8Xpd
-        yyy2Sd3FITSs3u5Qvqx2zKsSNiWW4oxEQy3mouJEANDktIgCAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGLMWRmVeSWpSXmKPExsVy+t/xe7r5ZX5xBnufW1rcWneO1WLjjPWs
-        Fle+vmezmHF+H5PF2iN32S1W/NzKaPFz1zwWB3aPnbPusnvc7z7O5LFk2lU2j74tqxg9Pm+S
-        C2CN0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL0MtY
-        Oe0lS8EG9oqbp2ewNTAuZeti5OSQEDCRONs1ibGLkYtDSGApo8SndQcYIRIyEienNbBC2MIS
-        f651sUEUfWKU2LtrJVgRm4ChRNfbLrBJIgIeEs3fjrODFDEL3GOUeDqjlxkkIQyUeNQyD2wS
-        i4CqxJVpv1lAbF4BW4klPzZBnSEvsXrDAeYJjDwLGBlWMYqklhbnpucWG+oVJ+YWl+al6yXn
-        525iBIbhtmM/N+9gvLQx+BCjAAejEg/vB3XfOCHWxLLiytxDjBIczEoivGo8fnFCvCmJlVWp
-        RfnxRaU5qcWHGE2Blk9klhJNzgfGSF5JvKGpobmFpaG5sbmxmYWSOG+HwMEYIYH0xJLU7NTU
-        gtQimD4mDk6pBsY+rsoQ3zhtm21V1Q8LtD3+TC7Y8f02SzOvhr1I6vTpcuutp3Rd+VL3vztv
-        d9H2S/J3rh42LZ6lvuBd2dKPmXqZa38KTNbdaKQk6d12g33nVN61X31n2dpenufCp9l5NNqv
-        83bzYqP5Czmnz6uYzVJful/waf3ijULvoo/cl5PPCzbadSlDd4oSS3FGoqEWc1FxIgDJ3sQ4
-        WQIAAA==
-X-CMS-MailID: 20200220120711eucas1p1f3ac819081ece4847b17c10c005dfa42
+        s=mail20170921; t=1582200813;
+        bh=jbhbpKYjDeqrLPWjm1vmGVy9BoHZVLnyWdbkNfaXZTQ=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=sDy3vdnFN6O56yjqBY3lNKFIfGglNvADaiRVy316f10kjiglzCbOHwgBIlqqfXk/M
+         DjBfHLEf/wfSE5mwFnBR8qiYKFw2QhZ2wmfHXogP2k2j8ord10iSPvUjFPyyBwpUJK
+         XJUjT6RFpnWKM8s3wp2lTSRZ/QnW/tky0vQh5fG4=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200220121333eucas1p25d43d5adcb67438871c86131e9ca8baa~1G0HONc_g1263412634eucas1p26;
+        Thu, 20 Feb 2020 12:13:33 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id E9.41.61286.DE77E4E5; Thu, 20
+        Feb 2020 12:13:33 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200220121333eucas1p26befa95831b44a793822b4f07b37d2cc~1G0Gu2tl91263412634eucas1p25;
+        Thu, 20 Feb 2020 12:13:33 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200220121332eusmtrp17e6497b117259e170fe6f21a26e02f62~1G0GuF32d1809718097eusmtrp18;
+        Thu, 20 Feb 2020 12:13:32 +0000 (GMT)
+X-AuditID: cbfec7f2-f0bff7000001ef66-c7-5e4e77ed90e4
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 2D.A1.07950.CE77E4E5; Thu, 20
+        Feb 2020 12:13:32 +0000 (GMT)
+Received: from [106.120.51.71] (unknown [106.120.51.71]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200220121332eusmtip1c0fffcda8ed75f7501a0d9eaa212ecd5~1G0GIKYLq2023820238eusmtip1p;
+        Thu, 20 Feb 2020 12:13:32 +0000 (GMT)
+Subject: Re: [PATCH 1/2] tty: serial: samsung_tty: build it for any platform
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-serial@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
+        Donghoon Yu <hoony.yu@samsung.com>,
+        Hyunki Koo <kkoos00@naver.com>,
+        HYUN-KI KOO <hyunki00.koo@samsung.com>,
+        Shinbeom Choi <sbeom.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Message-ID: <b04ad319-9986-c357-ad37-937bbb06bc02@samsung.com>
+Date:   Thu, 20 Feb 2020 13:13:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20200220102628.3371996-1-gregkh@linuxfoundation.org>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLKsWRmVeSWpSXmKPExsWy7djPc7pvy/3iDA4+lbJoXryezeL42tes
+        FquW3mC2mLLhA5NF/+PXzBadO6+yWpw/v4HdYtPja6wWl3fNYbOYcX4fk8WZxb3sFm39Dxgd
+        eDw2repk89g/dw27x+Yl9R590xoYPfq2rGL0WL/lKovH501yAexRXDYpqTmZZalF+nYJXBn/
+        OpuZCjbzVbzbupOtgfEfdxcjJ4eEgInEuufHGLsYuTiEBFYwShzrvcsO4XxhlHiz+y2U85lR
+        4t+hhewwLddmNjKB2EICyxkljh/ihyh6yygx9+AmsISwgI/EtGe32EBsEQFjif6zs8AmMQt0
+        Mkuc/viLESTBJmAlMbF9FZjNK2An0XKwAWwDi4CqREPvRFYQW1QgQuLTg8OsEDWCEidnPmHp
+        YuTg4BRwkrhxVBokzCwgLnHryXwmCFteYvvbOcwguyQEXrJLTHx/hAniaheJRV82sEHYwhKv
+        jm+B+kZG4vTkHhaIhnWMEn87XkB1b2eUWD75H1SHtcSdc7/YQDYzC2hKrN+lDxF2lNi27zRY
+        WEKAT+LGW0GII/gkJm2bzgwR5pXoaBOCqFaT2LAM5gQZia6dK5knMCrNQvLZLCTvzELyziyE
+        vQsYWVYxiqeWFuempxYb5qWW6xUn5haX5qXrJefnbmIEJrLT/45/2sH49VLSIUYBDkYlHt4P
+        6r5xQqyJZcWVuYcYJTiYlUR41Xj84oR4UxIrq1KL8uOLSnNSiw8xSnOwKInzGi96GSskkJ5Y
+        kpqdmlqQWgSTZeLglGpg7OM0chY4teWwvKXnC/GlpYxaege+Tyy/M9FUaCuji8qe0EyndzXC
+        m818nrPzBmc0fbu5X9bg6MeTk47cX8p80mLfdRuxecW/as5+dPU8FO/ewPdnvdM5vsbb375f
+        9eu5/ZBjfrLT3qhT28qynq26HH8zi0/3/+y8u1xdGyN+3Vp8UvX/0sXiwkosxRmJhlrMRcWJ
+        AG00gb1gAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLIsWRmVeSWpSXmKPExsVy+t/xu7pvyv3iDI59sbRoXryezeL42tes
+        FquW3mC2mLLhA5NF/+PXzBadO6+yWpw/v4HdYtPja6wWl3fNYbOYcX4fk8WZxb3sFm39Dxgd
+        eDw2repk89g/dw27x+Yl9R590xoYPfq2rGL0WL/lKovH501yAexRejZF+aUlqQoZ+cUltkrR
+        hhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehn/OpuZCjbzVbzbupOtgfEfdxcj
+        J4eEgInEtZmNTF2MXBxCAksZJR43f2TpYuQASshIHF9fBlEjLPHnWhcbiC0k8JpRYv73NBBb
+        WMBHYtqzW2BxEQFjif6zs9hB5jALdDNL3Hx1ggWiwVFi98fDzCA2m4CVxMT2VYwgNq+AnUTL
+        wQZ2EJtFQFWioXciK4gtKhAhcXjHLKgaQYmTM5+A3cMp4CRx46g0SJhZQF3iz7xLzBC2uMSt
+        J/OZIGx5ie1v5zBPYBSahaR7FpKWWUhaZiFpWcDIsopRJLW0ODc9t9hIrzgxt7g0L10vOT93
+        EyMwarcd+7llB2PXu+BDjAIcjEo8vDNUfeOEWBPLiitzDzFKcDArifCq8fjFCfGmJFZWpRbl
+        xxeV5qQWH2I0BfptIrOUaHI+MKHklcQbmhqaW1gamhubG5tZKInzdggcjBESSE8sSc1OTS1I
+        LYLpY+LglGpgLI+ctuBH5Xo5PmcHfcm27HjuhD9TrzR+tuFn0VtxYBKr36K+9VcZjVaVB89/
+        qXs4oKS/2+DfU4eWePeE+R4hSaJFU7KDXxde2Fi8WdkyuXhzGe+nF9nCN7X78rI3ypSy+dl+
+        6V2RJNbPbM5z3K5Poe/2lttfX9o/WuduyJoRmXTzl0eM0iMlluKMREMt5qLiRAAQf94G8AIA
+        AA==
+X-CMS-MailID: 20200220121333eucas1p26befa95831b44a793822b4f07b37d2cc
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200220120711eucas1p1f3ac819081ece4847b17c10c005dfa42
+X-RootMTR: 20200220121333eucas1p26befa95831b44a793822b4f07b37d2cc
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200220120711eucas1p1f3ac819081ece4847b17c10c005dfa42
-References: <CGME20200220120711eucas1p1f3ac819081ece4847b17c10c005dfa42@eucas1p1.samsung.com>
+X-CMS-RootMailID: 20200220121333eucas1p26befa95831b44a793822b4f07b37d2cc
+References: <20200220102628.3371996-1-gregkh@linuxfoundation.org>
+        <CGME20200220121333eucas1p26befa95831b44a793822b4f07b37d2cc@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add proper MODULE_DEVICE_TABLE structure with SPI IDs to allow proper
-creation of SPI modalias string and fix autoloading module for this driver.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/gpu/drm/panel/panel-samsung-ld9040.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Hi Greg,
 
-diff --git a/drivers/gpu/drm/panel/panel-samsung-ld9040.c b/drivers/gpu/drm/panel/panel-samsung-ld9040.c
-index 3c52f15f7a1c..9bb2e8c7934a 100644
---- a/drivers/gpu/drm/panel/panel-samsung-ld9040.c
-+++ b/drivers/gpu/drm/panel/panel-samsung-ld9040.c
-@@ -373,6 +373,12 @@ static const struct of_device_id ld9040_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, ld9040_of_match);
- 
-+static const struct spi_device_id ld9040_ids[] = {
-+	{ "ld9040", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(spi, ld9040_ids);
-+
- static struct spi_driver ld9040_driver = {
- 	.probe = ld9040_probe,
- 	.remove = ld9040_remove,
--- 
-2.17.1
+On 2/20/20 11:26 AM, Greg Kroah-Hartman wrote:
+> There is no need to tie this driver to only a specific SoC, or compile
+> test, so remove that dependancy from the Kconfig rules.
 
+samsung_tty driver is hardware specific driver so why should we
+build it for any platform?
+
+This change seems to defeat the whole purpose behind COMPILE_TEST
+config option (which allows us to build hardware-specific drivers
+without needlessly presenting the user with tons of non-relevant
+config options).
+
+Please explain this change some more, are you planing to remove
+COMPILE_TEST config option?
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Donghoon Yu <hoony.yu@samsung.com>
+> Cc: Hyunki Koo <kkoos00@naver.com>
+> Cc: HYUN-KI KOO <hyunki00.koo@samsung.com>
+> Cc: Shinbeom Choi <sbeom.choi@samsung.com>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Jiri Slaby <jslaby@suse.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-serial@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  drivers/tty/serial/Kconfig | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+> index 52eaac21ff9f..a310bd22f1e2 100644
+> --- a/drivers/tty/serial/Kconfig
+> +++ b/drivers/tty/serial/Kconfig
+> @@ -237,7 +237,6 @@ config SERIAL_CLPS711X_CONSOLE
+>  
+>  config SERIAL_SAMSUNG
+>  	tristate "Samsung SoC serial support"
+> -	depends on PLAT_SAMSUNG || ARCH_EXYNOS || COMPILE_TEST
+>  	select SERIAL_CORE
+>  	help
+>  	  Support for the on-chip UARTs on the Samsung S3C24XX series CPUs,
+> 
+> base-commit: 11a48a5a18c63fd7621bb050228cebf13566e4d8
