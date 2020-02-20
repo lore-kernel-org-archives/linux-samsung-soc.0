@@ -2,56 +2,47 @@ Return-Path: <SRS0=Yoj7=4I=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 889F3C11D04
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Feb 2020 10:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4016DC11D04
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Feb 2020 11:09:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52E502465D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Feb 2020 10:55:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F157C2465D
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Feb 2020 11:09:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1582196146;
-	bh=Bhb5LRnwS7YgwDxN7dUuDX9Fvm/FplN0eLSm0hQ19yE=;
+	s=default; t=1582196979;
+	bh=5jznYIffxvU6eZSgRtNjQDXxHiq8x9que/YSIcqNoO4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=wU7x2Y2m8inW7zFMIyeq+RgMOGsdCN4pzfwcdbkb3MvJXZuWbNDGAi8knZHl5OwLv
-	 HEmLGbiNgN2i2hLXRd4gQ02+87QV4AKyU3ftzdRN6I65rkfdva5LJuV1adjfp0QeVU
-	 TyNJLTGtpFJwKoUZq3gYQ8ABhXhHhGy5pvPvHH5k=
+	b=L5DIt1oQh8PlbGPkBVQ/IEmL21y/VXpPMOm6KiItLRSMPhOAhiyV1/yEDY16dHF2T
+	 SXCWtbj7GV9wVSNngvIx0Nx+zl2O7KknlZVnmfJCfZ0rAYnTa7Swk6x/hpEoSYS9NA
+	 i/WPDwKVx0SPnD7PqvCy/oX0ozqM5KI0pHzTLggU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbgBTKzq (ORCPT
+        id S1726700AbgBTLJi (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 20 Feb 2020 05:55:46 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:38879 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726501AbgBTKzp (ORCPT
+        Thu, 20 Feb 2020 06:09:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48878 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726501AbgBTLJi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 20 Feb 2020 05:55:45 -0500
-Received: by mail-ed1-f66.google.com with SMTP id p23so33159067edr.5;
-        Thu, 20 Feb 2020 02:55:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=HxC4605+KVWJsNCk5tm1pp2NBu/lLGZBF0ln8nNCRHI=;
-        b=RUdAChxRR6JCADu4AxQT9usfuHUJxQuZ+gwXMMpYPBjS3lVZJDfUXwuny/Ln+7wSyf
-         OEuLGH+SQSoVtLjGeOB9F4SVVsgRuvC51DbxwJM+msOrRFucqAzuX8bL69qqIu+8obOA
-         C0K5zm66MpuuEPe/KEZJXYqpaoHwzPB0FZbTnSOc2wClcWr6ZUFtfeLf3PJYMfZ9eAiR
-         j2Y431SYLjNPbDhI7aLQ8cGLFrrBqlQVKsbD7Ix6n9Z+7ybZjJhXjiXqQV5J8s03B3RU
-         pMr4LF1KesQMr3CeJRQtPXkw9aThugHJPq+d5Rlw/1m/roK4bMonn4eO8jASAifCGtua
-         ZECQ==
-X-Gm-Message-State: APjAAAVeRpNaz9iBkUVZXKScaUZDKjdqXRWcmgGvRDIOD0fGv2LP5hi3
-        W50yvirnRHSci5VdKGs9uuQ=
-X-Google-Smtp-Source: APXvYqzTLPh931RWB799Q6pryHxossHIt8rBOWsQX0wPKNGao+iaWcMDnUGW9wCQFJALFke4UzixDQ==
-X-Received: by 2002:a17:906:4089:: with SMTP id u9mr29314401ejj.184.1582196143675;
-        Thu, 20 Feb 2020 02:55:43 -0800 (PST)
-Received: from pi3 ([194.230.155.125])
-        by smtp.googlemail.com with ESMTPSA id cb20sm84735edb.1.2020.02.20.02.55.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2020 02:55:43 -0800 (PST)
-Date:   Thu, 20 Feb 2020 11:55:41 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        Thu, 20 Feb 2020 06:09:38 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C722024654;
+        Thu, 20 Feb 2020 11:09:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582196977;
+        bh=5jznYIffxvU6eZSgRtNjQDXxHiq8x9que/YSIcqNoO4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HnQATuvonnFZRK8jNgZHTiyoH2pbNcWyCMPwZlxxY0d+PlUlNftiRhrnDM8c/m3he
+         bA+vX8Z+3LGvDvrnOgBIw0C9VyjpbpqYkPJ+sUJCrEJFapbygLBeuS4cf/jgYeeJ2W
+         Hzom6XFfHM6e+Qt2Szygw+IeF9/RooxD5rwKLWm0=
+Date:   Thu, 20 Feb 2020 12:09:34 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     linux-serial@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
         Donghoon Yu <hoony.yu@samsung.com>,
         Hyunki Koo <kkoos00@naver.com>,
@@ -61,41 +52,43 @@ Cc:     linux-serial@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 2/2] tty: serial: samsung_tty: remove SERIAL_SAMSUNG_DEBUG
-Message-ID: <20200220105541.GB24587@pi3>
+Message-ID: <20200220110934.GA3374196@kroah.com>
 References: <20200220102628.3371996-1-gregkh@linuxfoundation.org>
  <20200220102628.3371996-2-gregkh@linuxfoundation.org>
+ <20200220105541.GB24587@pi3>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200220102628.3371996-2-gregkh@linuxfoundation.org>
+In-Reply-To: <20200220105541.GB24587@pi3>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 11:26:28AM +0100, Greg Kroah-Hartman wrote:
-> Since a05025d0ce72 ("tty: serial: samsung_tty: use standard debugging
-> macros") this configuration option is not used at all, so remove it from
-> the Kconfig file.
+On Thu, Feb 20, 2020 at 11:55:41AM +0100, Krzysztof Kozlowski wrote:
+> On Thu, Feb 20, 2020 at 11:26:28AM +0100, Greg Kroah-Hartman wrote:
+> > Since a05025d0ce72 ("tty: serial: samsung_tty: use standard debugging
+> > macros") this configuration option is not used at all, so remove it from
+> > the Kconfig file.
+> > 
+> > Cc: Kukjin Kim <kgene@kernel.org>
+> > Cc: Donghoon Yu <hoony.yu@samsung.com>
+> > Cc: Hyunki Koo <kkoos00@naver.com>
+> > Cc: HYUN-KI KOO <hyunki00.koo@samsung.com>
+> > Cc: Shinbeom Choi <sbeom.choi@samsung.com>
+> > Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> > Cc: Jiri Slaby <jslaby@suse.com>
+> > Cc: linux-arm-kernel@lists.infradead.org
+> > Cc: linux-samsung-soc@vger.kernel.org
+> > Cc: linux-serial@vger.kernel.org
+> > Cc: linux-kernel@vger.kernel.org
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > ---
+> >  drivers/tty/serial/Kconfig | 9 ---------
+> >  1 file changed, 9 deletions(-)
 > 
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Donghoon Yu <hoony.yu@samsung.com>
-> Cc: Hyunki Koo <kkoos00@naver.com>
-> Cc: HYUN-KI KOO <hyunki00.koo@samsung.com>
-> Cc: Shinbeom Choi <sbeom.choi@samsung.com>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Jiri Slaby <jslaby@suse.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-serial@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  drivers/tty/serial/Kconfig | 9 ---------
->  1 file changed, 9 deletions(-)
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Thanks for the quick review of both of these!
 
-Best regards,
-Krzysztof
-
+greg k-h
