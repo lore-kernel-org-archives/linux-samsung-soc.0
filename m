@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB1A0C11D04
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Feb 2020 12:30:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E31DC11D05
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Feb 2020 12:59:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61E2524656
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Feb 2020 12:30:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C72A924672
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Feb 2020 12:59:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="SrMwNnls"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ttI43cW5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727992AbgBTMaZ (ORCPT
+        id S1726959AbgBTM7C (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 20 Feb 2020 07:30:25 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:44286 "EHLO
+        Thu, 20 Feb 2020 07:59:02 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:55272 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727553AbgBTMaY (ORCPT
+        with ESMTP id S1727705AbgBTM7C (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 20 Feb 2020 07:30:24 -0500
+        Thu, 20 Feb 2020 07:59:02 -0500
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200220123023euoutp02fa651643276ecc1f0f61d18042cc6ba4~1HCzqZIm31520915209euoutp02O
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Feb 2020 12:30:23 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200220123023euoutp02fa651643276ecc1f0f61d18042cc6ba4~1HCzqZIm31520915209euoutp02O
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200220125900euoutp026f1ea4ed33c40ecbe89021312f5c3c2e~1HbzJmADK3243332433euoutp02-
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Feb 2020 12:59:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200220125900euoutp026f1ea4ed33c40ecbe89021312f5c3c2e~1HbzJmADK3243332433euoutp02-
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1582201823;
-        bh=p5CpTRZbsYtK0QYL0iltTMJJUAAyPjK8ae5FCrxPunI=;
+        s=mail20170921; t=1582203540;
+        bh=tZrGDaCqzHWhmHLZdoo3aAV9VY8K36ZSu/4KWQRAcjs=;
         h=From:To:Cc:Subject:Date:References:From;
-        b=SrMwNnlsIJoZyXQfNu8LgEOHF+lcLe1OIHDR7zm3uOlJ/gFFyI7RiyT8gfJZ2TtSg
-         8UEd1cFly0PN+6C3/dTl0xyTWuUGUaS5+dVygBquIjtBHkE8DRdO/bUjXJJtEGZq4D
-         ZOpAuhtjSqvXQYOxMECBylLfvo+el6Y8fESL0X7M=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200220123023eucas1p2f100ff0bbda584a91c58756d7be9bd29~1HCzcMg3f1885918859eucas1p2O;
-        Thu, 20 Feb 2020 12:30:23 +0000 (GMT)
+        b=ttI43cW539949HGhwbTKCjVs2cniZWb4UKn0xRrZ+BbD/gyNFXRUmi1lhHDAAmNZL
+         ex3atI91oyjuhHe5kmYsJZ4DGW82f41WFPKGEr080Lvn25bqstvFOwnhfaIr5v42aT
+         Hok7a2kw42NDRkKzL/ZLNT+lQ4Ete8+OgE/wWKYU=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200220125900eucas1p108d93fb5b79f1f8a380ff03955e297c2~1Hby6-IkA0194901949eucas1p1g;
+        Thu, 20 Feb 2020 12:59:00 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id F4.A3.61286.EDB7E4E5; Thu, 20
-        Feb 2020 12:30:23 +0000 (GMT)
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 24.1B.60698.4928E4E5; Thu, 20
+        Feb 2020 12:59:00 +0000 (GMT)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200220123022eucas1p21d015e2880680ae1c16e4b2a1d0ebb18~1HCzFR1jy0175401754eucas1p2l;
-        Thu, 20 Feb 2020 12:30:22 +0000 (GMT)
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200220125900eucas1p11f6e56f11c8fcf25acf28b082107c89d~1HbydkUQY0196101961eucas1p1R;
+        Thu, 20 Feb 2020 12:59:00 +0000 (GMT)
 Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200220123022eusmtrp1e2bd3573e6b7837c03c3d570b76627d9~1HCzEsiyG2842728427eusmtrp1H;
-        Thu, 20 Feb 2020 12:30:22 +0000 (GMT)
-X-AuditID: cbfec7f2-ef1ff7000001ef66-80-5e4e7bde8f07
+        20200220125900eusmtrp1297724b237974fd3dd718825160ddbdd~1Hbyc0Ua61290212902eusmtrp1Y;
+        Thu, 20 Feb 2020 12:59:00 +0000 (GMT)
+X-AuditID: cbfec7f5-a29ff7000001ed1a-0c-5e4e82945ae5
 Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id BD.D3.07950.EDB7E4E5; Thu, 20
-        Feb 2020 12:30:22 +0000 (GMT)
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 78.87.07950.3928E4E5; Thu, 20
+        Feb 2020 12:58:59 +0000 (GMT)
 Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
         eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200220123022eusmtip155bf8d78f81beb88588fc75f1eb07143~1HCyphCju2555725557eusmtip1B;
-        Thu, 20 Feb 2020 12:30:22 +0000 (GMT)
+        20200220125859eusmtip1db2444ebb034b0a9c6ee0a8cc550e663~1HbyBB1IH1117411174eusmtip1U;
+        Thu, 20 Feb 2020 12:58:59 +0000 (GMT)
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
 To:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
@@ -64,106 +64,139 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Seung-Woo Kim <sw0312.kim@samsung.com>,
         Inki Dae <inki.dae@samsung.com>,
         Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH] drm/exynos: dsi: fix workaround for the legacy clock name
-Date:   Thu, 20 Feb 2020 13:30:12 +0100
-Message-Id: <20200220123012.19179-1-m.szyprowski@samsung.com>
+Subject: [PATCH] drm/exynos: hdmi: don't leak enable HDMI_EN regulator if
+ probe fails
+Date:   Thu, 20 Feb 2020 13:57:26 +0100
+Message-Id: <20200220125726.19442-1-m.szyprowski@samsung.com>
 X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKIsWRmVeSWpSXmKPExsWy7djPc7r3q/3iDJ4cY7K4te4cq8XGGetZ
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCIsWRmVeSWpSXmKPExsWy7djPc7pTmvziDE6uFrO4te4cq8XGGetZ
         La58fc9mMen+BBaLGef3MVmsPXKX3WLG5JdsDuwe97uPM3n0bVnF6PF5k1wAcxSXTUpqTmZZ
-        apG+XQJXRs/uC2wFj8Urnlz+y9bAuEuki5GTQ0LARGLhrvNsXYxcHEICKxgl7k5/ygjhfGGU
-        uPS9AyrzmVHiyKJjbDAti1+sYoZILAdK/N6N0PLw20YmkCo2AUOJrrddYB0iAm4STYdnsoIU
-        MQtcZ5T49mMRO0hCWMBL4sqiq0AJDg4WAVWJdZfjQUxeAVuJ/7f0IZbJS6zecABsmYTACTaJ
-        t+evs0MkXCSWHvoKdZGwxKvjW6DiMhKnJ/ewQDQ0Ax10bi07hNPDKHG5aQYjRJW1xJ1zv9hA
-        tjELaEqs3wW1zVHi5cHrLCBhCQE+iRtvBUHCzEDmpG3TmSHCvBIdbUIQ1WoSs46vg1t78MIl
-        ZgjbQ6KndRY4GIQEYiWefnrHNoFRbhbCrgWMjKsYxVNLi3PTU4sN81LL9YoTc4tL89L1kvNz
-        NzECI//0v+OfdjB+vZR0iFGAg1GJh/eDum+cEGtiWXFl7iFGCQ5mJRFeNR6/OCHelMTKqtSi
-        /Pii0pzU4kOM0hwsSuK8xotexgoJpCeWpGanphakFsFkmTg4pRoYJ2Qv/9Zz6aBEd+T3DTYu
-        4iICl+9u2PJAt9h77e7GdZonbqXn/HtrLXz4fcy5RId2lePOqsvOf16Wenubu+H3rotc+vP8
-        C70jfvA9/Ptmzo/cl6En40W38ywpsD950GrHg0yvTrWtJ489mloa+Gn20k97Vm35XrAsWei5
-        g9IMr3eL2pv7NqZ3BSqxFGckGmoxFxUnAgDDZjXk+AIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFLMWRmVeSWpSXmKPExsVy+t/xu7r3qv3iDA7PVbe4te4cq8XGGetZ
+        apG+XQJXxs7266wFbfIV1zsbWRsYv0l1MXJySAiYSCzZPosVxBYSWMEosXVBBIT9hVHi18SQ
+        LkYuIPszo8T3Y7cZYRpendzCDpFYzijx8dxiNggHqGPPk4tsIFVsAoYSXW+7wGwRATeJpsMz
+        WUGKmAWuM0p8+7GIHSQhLBAucaFhKVARBweLgKpEy3ZTkDCvgC3Qhi9sENvkJVZvOMAM0ish
+        cIBNYlP7fRaIhIvE/pY+JghbWOLV8S3sELaMxOnJPSwQDc2MEg/PrWWHcHoYJS43zYB6wlri
+        zrlfYJuZBTQl1u/Shwg7Sqx/2MwMEpYQ4JO48VYQJMwMZE7aNh0qzCvR0SYEUa0mMev4Ori1
+        By9cYoawPSSeXnvMDAnGWInN+1rYJjDKzULYtYCRcRWjeGppcW56arFxXmq5XnFibnFpXrpe
+        cn7uJkZg3J/+d/zrDsZ9f5IOMQpwMCrx8FY0+MUJsSaWFVfmHmKU4GBWEuFV4wEK8aYkVlal
+        FuXHF5XmpBYfYpTmYFES5zVe9DJWSCA9sSQ1OzW1ILUIJsvEwSnVwDjhf3+TePA2ra3L9m1K
+        5Lii+zf2umjE/pp1Dv/c66NOy/TJ+0bOW7Bc3+dm0UOTl/rHzvisWyGc7i6mpyk16bpl5Plr
+        M/7W3mBoZ65wsX0jcvOv3tzdwa/a9DY52U1c9l5ZxOuU3JWIKW/anyZP5l47tfe+W9jNu0xp
+        u1IreXadN3yldn9TEJ8SS3FGoqEWc1FxIgDdfMl59wIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFLMWRmVeSWpSXmKPExsVy+t/xu7qTm/ziDDYet7K4te4cq8XGGetZ
         La58fc9mMen+BBaLGef3MVmsPXKX3WLG5JdsDuwe97uPM3n0bVnF6PF5k1wAc5SeTVF+aUmq
-        QkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6dTUpqTmZZapG+XYJeRs/uC2wFj8Urnlz+
-        y9bAuEuki5GTQ0LARGLxi1XMXYxcHEICSxklZtzeywSRkJE4Oa2BFcIWlvhzrYsNougTo8Sb
-        Gb1sIAk2AUOJrrddYLaIgIdE87fj7CBFzAK3GSWWfpjHApIQFvCSuLLoKtAkDg4WAVWJdZfj
-        QUxeAVuJ/7f0IebLS6zecIB5AiPPAkaGVYwiqaXFuem5xUZ6xYm5xaV56XrJ+bmbGIHhtu3Y
-        zy07GLveBR9iFOBgVOLhnaHqGyfEmlhWXJl7iFGCg1lJhFeNxy9OiDclsbIqtSg/vqg0J7X4
-        EKMp0OqJzFKiyfnAWMgriTc0NTS3sDQ0NzY3NrNQEuftEDgYIySQnliSmp2aWpBaBNPHxMEp
-        1cBoXr+7Vsb2t+Oyxf+Wb+IrN1jQODuAy8nZ8MCc1s5OduVHBj/lnu498OnZEqnJh/03Jjbf
-        /PDmF+es45Jm0+QX9cb8f3Q4tvmVgcbTRbMMGwXYjzL4nuDP29Pi+pJhhkCgfODTKk7Z9Y+m
-        x/6a+Spi+xYLheKCD+LecjkiNQuir7hu15PmTNuuxFKckWioxVxUnAgAAzj1gE0CAAA=
-X-CMS-MailID: 20200220123022eucas1p21d015e2880680ae1c16e4b2a1d0ebb18
+        QkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6dTUpqTmZZapG+XYJexs7266wFbfIV1zsb
+        WRsYv0l1MXJySAiYSLw6uYW9i5GLQ0hgKaPEpkWNbBAJGYmT0xpYIWxhiT/Xutggij4xSpzY
+        /Z4JJMEmYCjR9bYLrEFEwEOi+dtxsEnMArcZJZZ+mMfSxcjBISwQKvHjXiyIySKgKtGy3RSk
+        nFfAFmjxF6hd8hKrNxxgnsDIs4CRYRWjSGppcW56brGRXnFibnFpXrpecn7uJkZguG079nPL
+        Dsaud8GHGAU4GJV4eCsa/OKEWBPLiitzDzFKcDArifCq8QCFeFMSK6tSi/Lji0pzUosPMZoC
+        7Z7ILCWanA+MhbySeENTQ3MLS0NzY3NjMwslcd4OgYMxQgLpiSWp2ampBalFMH1MHJxSDYyp
+        WvfD39pVdDWlVfsuCODNXybXdCfSdw37j2Pvfwvn7jzxz9zN77hSSm7gTzHW25VPGgP+G/Fc
+        yglJFohq9LzGYaOb1Nj/SDLEWUm54SLbVvf+Hq1DGdszWfWSd1VKX1juuFJU9aiTf/HvJ2Jq
+        jHxXnjw/wMzvXisVWVYU80eKy8PJQNRCiaU4I9FQi7moOBEAuXyN400CAAA=
+X-CMS-MailID: 20200220125900eucas1p11f6e56f11c8fcf25acf28b082107c89d
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200220123022eucas1p21d015e2880680ae1c16e4b2a1d0ebb18
+X-RootMTR: 20200220125900eucas1p11f6e56f11c8fcf25acf28b082107c89d
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200220123022eucas1p21d015e2880680ae1c16e4b2a1d0ebb18
-References: <CGME20200220123022eucas1p21d015e2880680ae1c16e4b2a1d0ebb18@eucas1p2.samsung.com>
+X-CMS-RootMailID: 20200220125900eucas1p11f6e56f11c8fcf25acf28b082107c89d
+References: <CGME20200220125900eucas1p11f6e56f11c8fcf25acf28b082107c89d@eucas1p1.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Writing to the built-in strings arrays doesn't work if driver is loaded
-as kernel module. This is also considered as a bad pattern. Fix this by
-adding a call to clk_get() with legacy clock name. This fixes following
-kernel oops if driver is loaded as module:
+Move enabling and disabling HDMI_EN optional regulator to probe() function
+to keep track on the regulator status. This fixes following warning if
+probe() fails (for example when I2C DDC adapter cannot be yet gathered
+due to the missing driver). This fixes following warning observed on
+Arndale5250 board with multi_v7_defconfig:
 
-Unable to handle kernel paging request at virtual address bf047978
- pgd = (ptrval)
- [bf047978] *pgd=59344811, *pte=5903c6df, *ppte=5903c65f
- Internal error: Oops: 80f [#1] SMP ARM
- Modules linked in: mc exynosdrm(+) analogix_dp rtc_s3c exynos_ppmu i2c_gpio
- CPU: 1 PID: 212 Comm: systemd-udevd Not tainted 5.6.0-rc2-next-20200219 #326
- videodev: Linux video capture interface: v2.00
- Hardware name: Samsung Exynos (Flattened Device Tree)
- PC is at exynos_dsi_probe+0x1f0/0x384 [exynosdrm]
- LR is at exynos_dsi_probe+0x1dc/0x384 [exynosdrm]
- ...
- Process systemd-udevd (pid: 212, stack limit = 0x(ptrval))
- ...
- [<bf03cf14>] (exynos_dsi_probe [exynosdrm]) from [<c09b1ca0>] (platform_drv_probe+0x6c/0xa4)
- [<c09b1ca0>] (platform_drv_probe) from [<c09afcb8>] (really_probe+0x210/0x350)
- [<c09afcb8>] (really_probe) from [<c09aff74>] (driver_probe_device+0x60/0x1a0)
- [<c09aff74>] (driver_probe_device) from [<c09b0254>] (device_driver_attach+0x58/0x60)
- [<c09b0254>] (device_driver_attach) from [<c09b02dc>] (__driver_attach+0x80/0xbc)
- [<c09b02dc>] (__driver_attach) from [<c09ade00>] (bus_for_each_dev+0x68/0xb4)
- [<c09ade00>] (bus_for_each_dev) from [<c09aefd8>] (bus_add_driver+0x130/0x1e8)
- [<c09aefd8>] (bus_add_driver) from [<c09b0d64>] (driver_register+0x78/0x110)
- [<c09b0d64>] (driver_register) from [<bf038558>] (exynos_drm_init+0xe8/0x11c [exynosdrm])
- [<bf038558>] (exynos_drm_init [exynosdrm]) from [<c0302fa8>] (do_one_initcall+0x50/0x220)
- [<c0302fa8>] (do_one_initcall) from [<c03dd02c>] (do_init_module+0x60/0x210)
- [<c03dd02c>] (do_init_module) from [<c03dbf44>] (load_module+0x1c0c/0x2310)
- [<c03dbf44>] (load_module) from [<c03dc85c>] (sys_finit_module+0xac/0xbc)
- [<c03dc85c>] (sys_finit_module) from [<c0301000>] (ret_fast_syscall+0x0/0x54)
- Exception stack(0xd979bfa8 to 0xd979bff0)
- ...
- ---[ end trace db16efe05faab470 ]---
+[drm] Failed to get ddc i2c adapter by node
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 214 at drivers/regulator/core.c:2051 _regulator_put+0x16c/0x184
+Modules linked in: ...
+CPU: 0 PID: 214 Comm: systemd-udevd Not tainted 5.6.0-rc2-next-20200219-00040-g38af1dfafdbb #7570
+Hardware name: Samsung Exynos (Flattened Device Tree)
+[<c0312258>] (unwind_backtrace) from [<c030cc10>] (show_stack+0x10/0x14)
+[<c030cc10>] (show_stack) from [<c0f0d3a0>] (dump_stack+0xcc/0xe0)
+[<c0f0d3a0>] (dump_stack) from [<c0346a58>] (__warn+0xe0/0xf8)
+[<c0346a58>] (__warn) from [<c0346b20>] (warn_slowpath_fmt+0xb0/0xb8)
+[<c0346b20>] (warn_slowpath_fmt) from [<c0893f58>] (_regulator_put+0x16c/0x184)
+[<c0893f58>] (_regulator_put) from [<c0893f8c>] (regulator_put+0x1c/0x2c)
+[<c0893f8c>] (regulator_put) from [<c09b2664>] (release_nodes+0x17c/0x200)
+[<c09b2664>] (release_nodes) from [<c09aebe8>] (really_probe+0x10c/0x350)
+[<c09aebe8>] (really_probe) from [<c09aefa8>] (driver_probe_device+0x60/0x1a0)
+[<c09aefa8>] (driver_probe_device) from [<c09af288>] (device_driver_attach+0x58/0x60)
+[<c09af288>] (device_driver_attach) from [<c09af310>] (__driver_attach+0x80/0xbc)
+[<c09af310>] (__driver_attach) from [<c09ace34>] (bus_for_each_dev+0x68/0xb4)
+[<c09ace34>] (bus_for_each_dev) from [<c09ae00c>] (bus_add_driver+0x130/0x1e8)
+[<c09ae00c>] (bus_add_driver) from [<c09afd98>] (driver_register+0x78/0x110)
+[<c09afd98>] (driver_register) from [<bf139558>] (exynos_drm_init+0xe8/0x11c [exynosdrm])
+[<bf139558>] (exynos_drm_init [exynosdrm]) from [<c0302fa8>] (do_one_initcall+0x50/0x220)
+[<c0302fa8>] (do_one_initcall) from [<c03dc02c>] (do_init_module+0x60/0x210)
+[<c03dc02c>] (do_init_module) from [<c03daf44>] (load_module+0x1c0c/0x2310)
+[<c03daf44>] (load_module) from [<c03db85c>] (sys_finit_module+0xac/0xbc)
+[<c03db85c>] (sys_finit_module) from [<c0301000>] (ret_fast_syscall+0x0/0x54)
+Exception stack(0xecca3fa8 to 0xecca3ff0)
+...
+---[ end trace 276c91214635905c ]---
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 33628d85edad..08a8ce3f499c 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1787,9 +1787,10 @@ static int exynos_dsi_probe(struct platform_device *pdev)
- 		dsi->clks[i] = devm_clk_get(dev, clk_names[i]);
- 		if (IS_ERR(dsi->clks[i])) {
- 			if (strcmp(clk_names[i], "sclk_mipi") == 0) {
--				strcpy(clk_names[i], OLD_SCLK_MIPI_CLK_NAME);
--				i--;
--				continue;
-+				dsi->clks[i] = devm_clk_get(dev,
-+							OLD_SCLK_MIPI_CLK_NAME);
-+				if (!IS_ERR(dsi->clks[i]))
-+					continue;
- 			}
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 9ff921f43a93..f141916eade6 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -1805,18 +1805,10 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
  
- 			dev_info(dev, "failed to get the clock: %s\n",
+ 	hdata->reg_hdmi_en = devm_regulator_get_optional(dev, "hdmi-en");
+ 
+-	if (PTR_ERR(hdata->reg_hdmi_en) != -ENODEV) {
++	if (PTR_ERR(hdata->reg_hdmi_en) != -ENODEV)
+ 		if (IS_ERR(hdata->reg_hdmi_en))
+ 			return PTR_ERR(hdata->reg_hdmi_en);
+ 
+-		ret = regulator_enable(hdata->reg_hdmi_en);
+-		if (ret) {
+-			DRM_DEV_ERROR(dev,
+-				      "failed to enable hdmi-en regulator\n");
+-			return ret;
+-		}
+-	}
+-
+ 	return hdmi_bridge_init(hdata);
+ }
+ 
+@@ -2023,6 +2015,15 @@ static int hdmi_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	if (!IS_ERR(hdata->reg_hdmi_en)) {
++		ret = regulator_enable(hdata->reg_hdmi_en);
++		if (ret) {
++			DRM_DEV_ERROR(dev,
++			      "failed to enable hdmi-en regulator\n");
++			goto err_hdmiphy;
++		}
++	}
++
+ 	pm_runtime_enable(dev);
+ 
+ 	audio_infoframe = &hdata->audio.infoframe;
+@@ -2047,7 +2048,8 @@ static int hdmi_probe(struct platform_device *pdev)
+ 
+ err_rpm_disable:
+ 	pm_runtime_disable(dev);
+-
++	if (!IS_ERR(hdata->reg_hdmi_en))
++		regulator_disable(hdata->reg_hdmi_en);
+ err_hdmiphy:
+ 	if (hdata->hdmiphy_port)
+ 		put_device(&hdata->hdmiphy_port->dev);
 -- 
 2.17.1
 
