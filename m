@@ -2,170 +2,117 @@ Return-Path: <SRS0=Yoj7=4I=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39703C11D0A
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Feb 2020 14:28:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E979C11D05
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Feb 2020 14:48:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 128B5207FD
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Feb 2020 14:28:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F10C24656
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 20 Feb 2020 14:48:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="C4j0aNN2"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MqqtgYfS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727915AbgBTO2S (ORCPT
+        id S1728134AbgBTOsn (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 20 Feb 2020 09:28:18 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:44847 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727088AbgBTO2S (ORCPT
+        Thu, 20 Feb 2020 09:48:43 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36348 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727553AbgBTOsn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 20 Feb 2020 09:28:18 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200220142817euoutp01282d9ccb13a5ee22c951613727a6d742~1Ipvmo8m-1863218632euoutp01W
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Feb 2020 14:28:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200220142817euoutp01282d9ccb13a5ee22c951613727a6d742~1Ipvmo8m-1863218632euoutp01W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1582208897;
-        bh=FAP1Z/d8BDDBSfjJbi8KubLgk4AXWqgCXjZlBEOPwQM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C4j0aNN2IfSNJx0M9YjuauQVCotvSI6wEB6RNUNAuGquub9h063mMMqgfwKQdnPfF
-         iCtbGsXCH6PKWER/LbSjySBjGeZqRZphH4m9CwUU9jm2K2/EDIFCO7HCZkQe74w2RJ
-         ZG4sMTuzS7f39am2mxw/6hEcCvIgUWgBDunUoNlc=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200220142816eucas1p174c9a34b7c8e7195ba78d8744c89ac2e~1IpvactDy2802428024eucas1p1_;
-        Thu, 20 Feb 2020 14:28:16 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id C8.66.61286.0879E4E5; Thu, 20
-        Feb 2020 14:28:16 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200220142816eucas1p2469c4e011e192517b492c0203443234f~1Ipu8cbYt0164801648eucas1p2M;
-        Thu, 20 Feb 2020 14:28:16 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200220142816eusmtrp2b3194e4279b238856c164e5d87824211~1Ipu74yRG3236932369eusmtrp2G;
-        Thu, 20 Feb 2020 14:28:16 +0000 (GMT)
-X-AuditID: cbfec7f2-f0bff7000001ef66-1b-5e4e9780822c
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id D3.27.08375.0879E4E5; Thu, 20
-        Feb 2020 14:28:16 +0000 (GMT)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200220142816eusmtip1bfdfcde4e8aaddc2a1f2f8068e4d6298~1IpuowBHQ2791327913eusmtip11;
-        Thu, 20 Feb 2020 14:28:16 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Thu, 20 Feb 2020 09:48:43 -0500
+Received: by mail-lj1-f193.google.com with SMTP id r19so4531238ljg.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Feb 2020 06:48:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VFsELfj9kJG75Pqbvz1ocn9qZImBer1nJRUwC4Q7bZY=;
+        b=MqqtgYfSSn3FHYbEg13WQb6BWeq4sbtryqg6cZPsn20u3rxkq6YEFBDAKvqJIFORbm
+         M1po1MNlQg90SORMlvuRTXHTALEgnixnZsrP1s5lpXbugJqoEfSx8o58UyRkAkmMVOJp
+         x+L3zNQohho2+EaJBd3pH+v8U8eiBJ1NTeZ6h9zMcQVEmoCiIdBjGjNBO8Pz95ppvPQ6
+         2tvTxNVaFFK5eyU6Onxv+Ad+n9MLSmCgPJ0u1C4VA1ZLT5alsQXwfPHcF+esY0xcjqP0
+         eTgvVT9GXk3/30zrL57T+5kp/4Np5rJTR2vAbph1f77RDtWaR3Oncv7yRHXuVt2MPSVY
+         oSaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VFsELfj9kJG75Pqbvz1ocn9qZImBer1nJRUwC4Q7bZY=;
+        b=lUUBNH+9P7aBhzHPBvpTeCCsvKlIjMOOl9n/hoLJ8wlW/7q4mMbt2IX5Pkgd3GPiy9
+         5jKjDgrDTN/1d8RwTGo6bYEK+YVrDBunSyWUAdcVobLlQ0cWYXxekvCzuFIzdEOvStGf
+         7UnJObvVI6j9ObCuLoDR6E2WFz0ocBq+r5r0K2JQmgDXOR5hzBDAtL0upva+TavYpGck
+         RQERXy9f8yPnFFwnaY6gEJmBCpCqldOZtV1YC90bkd75frH9bKISpRRDtcNHhnuZ/DWR
+         7366N39r5ZSYTSkO48NDAyyEnl9uxyteqHTai8YI8tlEmMLIPc8q3MbbBY7Lvl16+zLY
+         pHmg==
+X-Gm-Message-State: APjAAAWpIp3iUEocEnJ4Z1PQdb5si1JnQjfjehrNWCSyHbAWCkM0yLQ3
+        sJKImBIhLGU6Vxa3CCeGreg7GHSd9EZeOdiTFcLo8A==
+X-Google-Smtp-Source: APXvYqzC9uvcXVQUMEqfFBmLgRYjVN2yaUx+FWOP5lrFQgxOH/VrI5JSlJHy+5NkZQj0tvezfPvYss2NMoiD7aj8evk=
+X-Received: by 2002:a2e:81c3:: with SMTP id s3mr18661030ljg.168.1582210121456;
+ Thu, 20 Feb 2020 06:48:41 -0800 (PST)
+MIME-Version: 1.0
+References: <cover.1581478323.git.afzal.mohd.ma@gmail.com> <109d17402bc75ed186a2e151dfda1edf05463b5a.1581478324.git.afzal.mohd.ma@gmail.com>
+In-Reply-To: <109d17402bc75ed186a2e151dfda1edf05463b5a.1581478324.git.afzal.mohd.ma@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 20 Feb 2020 15:48:30 +0100
+Message-ID: <CACRpkda-k26bWR9EJMMPDz0S4xy3QW_+uABdmPRbaKPD0b4qfA@mail.gmail.com>
+Subject: Re: [PATCH 16/18] clocksource: Replace setup_irq() by request_irq()
+To:     afzal mohammed <afzal.mohd.ma@gmail.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 2/2] ARM: dts: exynos: Make fixed regulators always-on on
- Arndale5250
-Date:   Thu, 20 Feb 2020 15:28:06 +0100
-Message-Id: <20200220142806.19340-2-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200220142806.19340-1-m.szyprowski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKIsWRmVeSWpSXmKPExsWy7djPc7oN0/3iDBqP6FlsnLGe1eL8+Q3s
-        FjPO72OyWHvkLrsDi8emVZ1sHn1bVjF6fN4kF8AcxWWTkpqTWZZapG+XwJVxbvs11oITvBU/
-        V79laWC8ydXFyMkhIWAicWDZf/YuRi4OIYEVjBKzFj9jgXC+MEpcmLCDCcL5zCjxY+FzFpiW
-        I5MaoBLLGSXWTD+A0PLq0CNWkCo2AUOJrrddbCC2iICqxOe2BWBLmAX6GCWu753LDJIQFgiX
-        uL7+H5jNAlS0+th0sGZeAVuJ/TcPM0Ksk5dYveEAWA2ngJ3Ev2PbGUEGSQgcYZP4Oncu1E0u
-        Ek3PLzJB2MISr45vYYewZST+75zPBNHQzCjx8Nxadginh1HictMMqBXWEnfO/QK6lQPoPk2J
-        9bv0IcKOEpevnmYCCUsI8EnceCsIEmYGMidtm84MEeaV6GgTgqhWk5h1fB3c2oMXLjFD2B4S
-        S3btggbXRGA4/m1gmcAoPwth2QJGxlWM4qmlxbnpqcWGeanlesWJucWleel6yfm5mxiBkX/6
-        3/FPOxi/Xko6xCjAwajEw1vR4BcnxJpYVlyZe4hRgoNZSYRXjQcoxJuSWFmVWpQfX1Sak1p8
-        iFGag0VJnNd40ctYIYH0xJLU7NTUgtQimCwTB6dUA2Pc83YlE6sz9xS3aevMenYsXvikyg+O
-        8slSJzondD5tjv/NriTkrxo559SivF7O9jVSnY2mJc/3FTRe+LhWY/cPwXfpVY8ftUx+dSGU
-        McC7mC9ix1XWzsW57Hf3W6qdC9tfX8XEPNvtQNCWtub9PuEHprLc8n30zPWpksz2s4bbtp5e
-        IvvWsE+JpTgj0VCLuag4EQDhPiIb+AIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKLMWRmVeSWpSXmKPExsVy+t/xu7oN0/3iDG58FrDYOGM9q8X58xvY
-        LWac38dksfbIXXYHFo9NqzrZPPq2rGL0+LxJLoA5Ss+mKL+0JFUhI7+4xFYp2tDCSM/Q0kLP
-        yMRSz9DYPNbKyFRJ384mJTUnsyy1SN8uQS/j3PZrrAUneCt+rn7L0sB4k6uLkZNDQsBE4sik
-        BqYuRi4OIYGljBLL3/9ghUjISJyc1gBlC0v8udbFBlH0iVFi7dIzjCAJNgFDia63IAlODhEB
-        VYnPbQvYQYqYBSYwSpzvnAGWEBYIlTjXPA2sgQWoaPWx6WBTeQVsJfbfPMwIsUFeYvWGA8wg
-        NqeAncS/Y9vB4kJANdvmvGSawMi3gJFhFaNIamlxbnpusaFecWJucWleul5yfu4mRmAQbjv2
-        c/MOxksbgw8xCnAwKvHwVjT4xQmxJpYVV+YeYpTgYFYS4VXjAQrxpiRWVqUW5ccXleakFh9i
-        NAU6aiKzlGhyPjBC8kriDU0NzS0sDc2NzY3NLJTEeTsEDsYICaQnlqRmp6YWpBbB9DFxcEo1
-        MMb6Pdv5jb3ticHChqoAUcMV2lFxwo5HlMtC4xVUH3FFRzvaP/rQ+rZa+P/0NVPYHUQnZJfl
-        i+03WppkYJBn9C7k4T6PkvZlPmet0quC5zxskMyc5/UgJ5XfiPeCvVZt+S67d7Me/D+44NyZ
-        jXyXTOxDTPZM2MQbvulsnFqQuJpnm8urD8+0lFiKMxINtZiLihMB5RRvTVgCAAA=
-X-CMS-MailID: 20200220142816eucas1p2469c4e011e192517b492c0203443234f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200220142816eucas1p2469c4e011e192517b492c0203443234f
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200220142816eucas1p2469c4e011e192517b492c0203443234f
-References: <20200220142806.19340-1-m.szyprowski@samsung.com>
-        <CGME20200220142816eucas1p2469c4e011e192517b492c0203443234f@eucas1p2.samsung.com>
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Barry Song <baohua@kernel.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Tony Prisk <linux@prisktech.co.nz>,
+        Allison Randal <allison@lohutok.net>,
+        Enrico Weigelt <info@metux.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The fixed regulators defined for Arndale5250 boards have no control lines,
-so mark them as 'always-on' to better describe the hardware and also kill
-the strange messages like 'MAIN_DC: disabling' after boot.
+On Wed, Feb 12, 2020 at 9:05 AM afzal mohammed <afzal.mohd.ma@gmail.com> wrote:
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/boot/dts/exynos5250-arndale.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
+> request_irq() is preferred over setup_irq(). Existing callers of
+> setup_irq() reached mostly via 'init_IRQ()' & 'time_init()', while
+> memory allocators are ready by 'mm_init()'.
+>
+> Per tglx[1], setup_irq() existed in olden days when allocators were not
+> ready by the time early interrupts were initialized.
+>
+> Hence replace setup_irq() by request_irq().
+>
+> Seldom remove_irq() usage has been observed coupled with setup_irq(),
+> wherever that has been found, it too has been replaced by free_irq().
+>
+> [1] https://lkml.kernel.org/r/alpine.DEB.2.20.1710191609480.1971@nanos
+>
+> Signed-off-by: afzal mohammed <afzal.mohd.ma@gmail.com>
 
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index bff24c61212b..6904091d4837 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -93,6 +93,7 @@
- 			compatible = "regulator-fixed";
- 			reg = <0>;
- 			regulator-name = "MAIN_DC";
-+			regulator-always-on;
- 		};
- 
- 		mmc_reg: regulator@1 {
-@@ -101,12 +102,14 @@
- 			regulator-name = "VDD_MMC";
- 			regulator-min-microvolt = <2800000>;
- 			regulator-max-microvolt = <2800000>;
-+			regulator-always-on;
- 		};
- 
- 		reg_hdmi_en: regulator@2 {
- 			compatible = "regulator-fixed";
- 			reg = <2>;
- 			regulator-name = "hdmi-en";
-+			regulator-always-on;
- 		};
- 
- 		vcc_1v2_reg: regulator@3 {
-@@ -115,6 +118,7 @@
- 			regulator-name = "VCC_1V2";
- 			regulator-min-microvolt = <1200000>;
- 			regulator-max-microvolt = <1200000>;
-+			regulator-always-on;
- 		};
- 
- 		vcc_1v8_reg: regulator@4 {
-@@ -123,6 +127,7 @@
- 			regulator-name = "VCC_1V8";
- 			regulator-min-microvolt = <1800000>;
- 			regulator-max-microvolt = <1800000>;
-+			regulator-always-on;
- 		};
- 
- 		vcc_3v3_reg: regulator@5 {
-@@ -131,6 +136,7 @@
- 			regulator-name = "VCC_3V3";
- 			regulator-min-microvolt = <3300000>;
- 			regulator-max-microvolt = <3300000>;
-+			regulator-always-on;
- 		};
- 	};
- 
--- 
-2.17.1
+This makes the kernel a better place.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
+Yours,
+Linus Walleij
