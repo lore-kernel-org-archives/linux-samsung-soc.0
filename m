@@ -1,132 +1,89 @@
-Return-Path: <SRS0=AA53=4J=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=ie0h=4K=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+X-Spam-Status: No, score=-10.3 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBDE9C35646
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Feb 2020 10:33:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8B2FC35669
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Feb 2020 01:43:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA56624670
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 21 Feb 2020 10:33:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADB20206EF
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Feb 2020 01:43:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727686AbgBUKdA (ORCPT
+        id S1727946AbgBVBni (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 21 Feb 2020 05:33:00 -0500
-Received: from foss.arm.com ([217.140.110.172]:36156 "EHLO foss.arm.com"
+        Fri, 21 Feb 2020 20:43:38 -0500
+Received: from helcar.hmeau.com ([216.24.177.18]:52288 "EHLO fornost.hmeau.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726976AbgBUKc7 (ORCPT
+        id S1727723AbgBVBni (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 21 Feb 2020 05:32:59 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4350131B;
-        Fri, 21 Feb 2020 02:32:59 -0800 (PST)
-Received: from [10.37.12.243] (unknown [10.37.12.243])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 21EB53F68F;
-        Fri, 21 Feb 2020 02:32:55 -0800 (PST)
-Subject: Re: [RESEND PATCH v2 0/2] Enable Odroid-XU3/4 to use Energy Model and
- Energy Aware Scheduler
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kgene@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, myungjoo.ham@samsung.com,
-        kyungmin.park@samsung.com, cw00.choi@samsung.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, b.zolnierkie@samsung.com,
-        dietmar.eggemann@arm.com
-References: <20200220095636.29469-1-lukasz.luba@arm.com>
- <20200220180040.GA8338@kozik-lap>
-From:   Lukasz Luba <lukasz.luba@arm.com>
-Message-ID: <597f1475-754c-d77a-b599-0fa07d8ee948@arm.com>
-Date:   Fri, 21 Feb 2020 10:32:53 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Fri, 21 Feb 2020 20:43:38 -0500
+Received: from gwarestrin.me.apana.org.au ([192.168.0.7] helo=gwarestrin.arnor.me.apana.org.au)
+        by fornost.hmeau.com with smtp (Exim 4.89 #2 (Debian))
+        id 1j5Jp9-00032f-IU; Sat, 22 Feb 2020 12:43:20 +1100
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Sat, 22 Feb 2020 12:43:19 +1100
+Date:   Sat, 22 Feb 2020 12:43:19 +1100
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Kamil Konieczny <k.konieczny@samsung.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: s5p-sss - Replace zero-length array with
+ flexible-array member
+Message-ID: <20200222014319.GH19028@gondor.apana.org.au>
+References: <20200213172130.GA13395@embeddedor>
 MIME-Version: 1.0
-In-Reply-To: <20200220180040.GA8338@kozik-lap>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200213172130.GA13395@embeddedor>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
-
-On 2/20/20 6:00 PM, Krzysztof Kozlowski wrote:
-> On Thu, Feb 20, 2020 at 09:56:34AM +0000, Lukasz Luba wrote:
->> Hi all,
->>
->> This is just a resend, now with proper v2 in the patches subject.
->>
->> The Odroid-XU4/3 is a decent and easy accessible ARM big.LITTLE platform,
->> which might be used for research and development.
->>
->> This small patch set provides possibility to run Energy Aware Scheduler (EAS)
->> on Odroid-XU4/3 and experiment with it.
->>
->> The patch 1/2 provides 'dynamic-power-coefficient' in CPU DT nodes, which is
->> then used by the Energy Model (EM).
->> The patch 2/2 enables SCHED_MC (which adds another level in scheduling domains)
->> and enables EM making EAS possible to run (when schedutil is set as a CPUFreq
->> governor).
->>
->> 1. Test results
->>
->> Two types of different tests have been executed. The first is energy test
->> case showing impact on energy consumption of this patch set. It is using a
->> synthetic set of tasks (rt-app based). The second is the performance test
->> case which is using hackbench (less time to complete is better).
->> In both tests schedutil has been used as cpufreq governor. In all tests
->> PROVE_LOCKING has not been compiled into the kernels.
->>
->> 1.1 Energy test case
->>
->> 10 iterations of 24 periodic rt-app tasks (16ms period, 10% duty-cycle)
->> with energy measurement. The cpufreq governor - schedutil. Unit is Joules.
->> The energy is calculated based on hwmon0 and hwmon3 power1_input.
->> The goal is to save energy, lower is better.
->>
->> +-----------+-----------------+------------------------+
->> |           | Without patches | With patches           |
->> +-----------+--------+--------+----------------+-------+
->> | benchmark |  Mean  | RSD*   | Mean           | RSD*  |
->> +-----------+--------+--------+----------------+-------+
->> | 24 rt-app |  21.56 |  1.37% |  19.85 (-9.2%) | 0.92% |
->> |    tasks  |        |        |                |       |
->> +-----------+--------+--------+----------------+-------+
->>
->> 1.2 Performance test case
->>
->> 10 consecutive iterations of hackbench (hackbench -l 500 -s 4096),
->> no delay between two successive executions.
->> The cpufreq governor - schedutil. Units in seconds.
->> The goal is to see not regression, lower completion time is better.
->>
->> +-----------+-----------------+------------------------+
->> |           | Without patches | With patches           |
->> +-----------+--------+--------+----------------+-------+
->> | benchmark | Mean   | RSD*   | Mean           | RSD*  |
->> +-----------+--------+--------+----------------+-------+
->> | hackbench |  8.15  | 2.86%  |  7.95 (-2.5%)  | 0.60% |
->> +-----------+--------+--------+----------------+-------+
->>
->> *RSD: Relative Standard Deviation (std dev / mean)
+On Thu, Feb 13, 2020 at 11:21:30AM -0600, Gustavo A. R. Silva wrote:
+> The current codebase makes use of the zero-length array language
+> extension to the C90 standard, but the preferred mechanism to declare
+> variable-length types such as these ones is a flexible array member[1][2],
+> introduced in C99:
 > 
-> Nice measurements!
-
-Glad to hear that.
-
+> struct foo {
+>         int stuff;
+>         struct boo array[];
+> };
 > 
-> Applied both, thank you.
+> By making use of the mechanism above, we will get a compiler warning
+> in case the flexible array does not occur last in the structure, which
+> will help us prevent some kind of undefined behavior bugs from being
+> inadvertently introduced[3] to the codebase from now on.
 > 
-> Best regards,
-> Krzysztof
+> Also, notice that, dynamic memory allocations won't be affected by
+> this change:
 > 
+> "Flexible array members have incomplete type, and so the sizeof operator
+> may not be applied. As a quirk of the original implementation of
+> zero-length arrays, sizeof evaluates to zero."[1]
+> 
+> This issue was found with the help of Coccinelle.
+> 
+> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+> [2] https://github.com/KSPP/linux/issues/21
+> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/crypto/s5p-sss.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thank you for applying this.
-
-Regards,
-Lukasz
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
