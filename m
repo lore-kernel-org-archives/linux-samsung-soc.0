@@ -2,88 +2,65 @@ Return-Path: <SRS0=ie0h=4K=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8B2FC35669
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Feb 2020 01:43:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 996EEC35671
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Feb 2020 12:18:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADB20206EF
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Feb 2020 01:43:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66BC8206EF
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 22 Feb 2020 12:18:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727946AbgBVBni (ORCPT
+        id S1726883AbgBVMSB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 21 Feb 2020 20:43:38 -0500
-Received: from helcar.hmeau.com ([216.24.177.18]:52288 "EHLO fornost.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727723AbgBVBni (ORCPT
+        Sat, 22 Feb 2020 07:18:01 -0500
+Received: from asavdk3.altibox.net ([109.247.116.14]:55012 "EHLO
+        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726763AbgBVMSA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 21 Feb 2020 20:43:38 -0500
-Received: from gwarestrin.me.apana.org.au ([192.168.0.7] helo=gwarestrin.arnor.me.apana.org.au)
-        by fornost.hmeau.com with smtp (Exim 4.89 #2 (Debian))
-        id 1j5Jp9-00032f-IU; Sat, 22 Feb 2020 12:43:20 +1100
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Sat, 22 Feb 2020 12:43:19 +1100
-Date:   Sat, 22 Feb 2020 12:43:19 +1100
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Kamil Konieczny <k.konieczny@samsung.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: s5p-sss - Replace zero-length array with
- flexible-array member
-Message-ID: <20200222014319.GH19028@gondor.apana.org.au>
-References: <20200213172130.GA13395@embeddedor>
+        Sat, 22 Feb 2020 07:18:00 -0500
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk3.altibox.net (Postfix) with ESMTPS id 6770D2008C;
+        Sat, 22 Feb 2020 13:17:58 +0100 (CET)
+Date:   Sat, 22 Feb 2020 13:17:56 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH] drm/panel: ld9040: add MODULE_DEVICE_TABLE with SPI IDs
+Message-ID: <20200222121756.GC28287@ravnborg.org>
+References: <CGME20200220120711eucas1p1f3ac819081ece4847b17c10c005dfa42@eucas1p1.samsung.com>
+ <20200220120700.12257-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200213172130.GA13395@embeddedor>
+In-Reply-To: <20200220120700.12257-1-m.szyprowski@samsung.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=eMA9ckh1 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=hD80L64hAAAA:8
+        a=zzRaUB44imW1Si3-isMA:9 a=CjuIK1q_8ugA:10
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 11:21:30AM -0600, Gustavo A. R. Silva wrote:
-> The current codebase makes use of the zero-length array language
-> extension to the C90 standard, but the preferred mechanism to declare
-> variable-length types such as these ones is a flexible array member[1][2],
-> introduced in C99:
-> 
-> struct foo {
->         int stuff;
->         struct boo array[];
-> };
-> 
-> By making use of the mechanism above, we will get a compiler warning
-> in case the flexible array does not occur last in the structure, which
-> will help us prevent some kind of undefined behavior bugs from being
-> inadvertently introduced[3] to the codebase from now on.
-> 
-> Also, notice that, dynamic memory allocations won't be affected by
-> this change:
-> 
-> "Flexible array members have incomplete type, and so the sizeof operator
-> may not be applied. As a quirk of the original implementation of
-> zero-length arrays, sizeof evaluates to zero."[1]
-> 
-> This issue was found with the help of Coccinelle.
-> 
-> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-> [2] https://github.com/KSPP/linux/issues/21
-> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/crypto/s5p-sss.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Marek.
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+On Thu, Feb 20, 2020 at 01:07:00PM +0100, Marek Szyprowski wrote:
+> Add proper MODULE_DEVICE_TABLE structure with SPI IDs to allow proper
+> creation of SPI modalias string and fix autoloading module for this driver.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+Thanks,
+
+applied to drm-misc-next.
+
+	Sam
