@@ -2,139 +2,271 @@ Return-Path: <SRS0=sMVI=4N=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AAC0C35DF5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 25 Feb 2020 07:52:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 266BCC35DFB
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 25 Feb 2020 08:51:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2ABB2082F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 25 Feb 2020 07:52:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iEITAgIl"
+	by mail.kernel.org (Postfix) with ESMTP id E2F8E21D7E
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 25 Feb 2020 08:51:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729624AbgBYHwB (ORCPT
+        id S1729834AbgBYIvx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 25 Feb 2020 02:52:01 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:55022 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729589AbgBYHwA (ORCPT
+        Tue, 25 Feb 2020 03:51:53 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:46386 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729205AbgBYIvx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 25 Feb 2020 02:52:00 -0500
-Received: by mail-pj1-f65.google.com with SMTP id dw13so891078pjb.4;
-        Mon, 24 Feb 2020 23:51:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=T1LnGLoBaV2TTPUF6toPUaaqUjCR3lePLHm0eYLmXyU=;
-        b=iEITAgIl00kyXUWSBKvpCYdnRJXBwyc+KUDYeJYmABzTDgw3gcRNZBbg8LlnJz/oNX
-         v8YYzG1FvT8RwvFlEPaC+A1kXJd/owZ7a+ucuUQ6OtLBcpN3As8Clp6EahNILoAjLLYL
-         QJdwLi7cthjDRR+Sc+AmJ76XAMdAwNQJHg6Q12G20zFoNhffXATJn4PtI6qlYuIisw20
-         fHDE340iO7iweLR3SccBAnIXnD4bG5lWttzj9AE4RlRsqH+6EeznJ6uDGhmOas6WMXIK
-         0T99p1wIA1w8NTUrngcs5PxIklGlUbgiXe328C+qNmbbhTW7hZtkkXPAOpnXlA/iajxO
-         H0RA==
+        Tue, 25 Feb 2020 03:51:53 -0500
+Received: by mail-lj1-f193.google.com with SMTP id x14so13060855ljd.13;
+        Tue, 25 Feb 2020 00:51:51 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=T1LnGLoBaV2TTPUF6toPUaaqUjCR3lePLHm0eYLmXyU=;
-        b=H4b+KqLhGJ9ASW5rLFfQe6wx1OGriGTWvrmQHUy+yNuMRngbZSY5EX6i02BXJA+1x9
-         PQzVKL0zD1abckSHuoR8fSsVE0e0p7HZJLNnqLVOsnYUUXM34RChr2bt+r9ukxixQq24
-         w+opFE2fKXucJ+aCmUEU4/e4gjPS9X4XqA60OcdX7U6pZJqX/srYuzWkoMDUh7pAph1+
-         rvG5fzc4Cv3WkSizDv19tFIyJVx8SPzhS5qsoFqJ9PTLVkiLhPb6E9gPKuoa4pe9pXmj
-         nuoU+A9eYwn2aqkcXEksrLqduxKeyU0CbIY8RnCzKC7p0YaI8eyg3J6yGZQf3QnXfAcp
-         2MgA==
-X-Gm-Message-State: APjAAAU2CbJ0L5fXdQUMQEvXACcNuxFHhDVUfLiHuRhOQuG8zkzKKiap
-        qeOrdzxS1ZM38wQEzoKUUQM=
-X-Google-Smtp-Source: APXvYqx+5pXqKxI4ULLR6ATgJX5fTRooYMW74dM+2ZDktjJeVYsoT2ZTDKe76IT+s1v84AUfEpO83g==
-X-Received: by 2002:a17:902:7c07:: with SMTP id x7mr3617020pll.232.1582617118595;
-        Mon, 24 Feb 2020 23:51:58 -0800 (PST)
-Received: from localhost ([106.51.232.35])
-        by smtp.gmail.com with ESMTPSA id w189sm15983184pfw.157.2020.02.24.23.51.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Feb 2020 23:51:58 -0800 (PST)
-Date:   Tue, 25 Feb 2020 13:21:55 +0530
-From:   afzal mohammed <afzal.mohd.ma@gmail.com>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@lists.01.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Barry Song <baohua@kernel.org>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tony Prisk <linux@prisktech.co.nz>,
-        Allison Randal <allison@lohutok.net>,
-        Enrico Weigelt <info@metux.net>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=Kvje0WIw7KFHi5eXdBrKsbSHw9Uloy6b5E6xrY+Sd2Y=;
+        b=lRZUa9Kb6gO9KF75mdpX7XpLp+8KEQbH5WR5dCLu1CfYrlcEVvM8YADmF8ZWof/2dP
+         10Ah5WEbHcUsbdrJdYciM/+1l7OwzEy5yXTPvSolOkqcBQx5hUex9Cj63dYsdxeLT2eM
+         IL4FZ46crP4nSXLU8sSgNyR2ORpn1LQq6ktr2rQ/o2h4ObbkzkvodxeGAbVDDckVqPj9
+         FD67Wxq2Qd4gvVx8e48XY6k6CpEMNXQTx00/CsRuLglyBGqH88kOPumcgDDikGhP0VR0
+         CNu3/eGaBHunSG5YFFeLLsPe3xH+KTafSFcr0MKScRGztTJydOT1InngEtDeBldVJbOV
+         dDtw==
+X-Gm-Message-State: APjAAAXwk55lA7FELf0qPU7ACsTgQompkxs8b4cy4FpOT9zlind2r+iQ
+        FFCY0PhZibYwf8qqGaSmU6U=
+X-Google-Smtp-Source: APXvYqz7uZdBXFV64Wz9Uhk6CHJuqHjdgYBSYtnPSe438XEGhZW7urMt4TKhbEmaDjed40LoEOMtSQ==
+X-Received: by 2002:a2e:9d0f:: with SMTP id t15mr32683526lji.171.1582620710301;
+        Tue, 25 Feb 2020 00:51:50 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id q10sm7408725ljj.60.2020.02.25.00.51.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2020 00:51:49 -0800 (PST)
+Date:   Tue, 25 Feb 2020 10:51:36 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Subject: Re: [PATCH v2 16/18] clocksource: Replace setup_irq() by
- request_irq()
-Message-ID: <20200225075155.GA6735@afzalpc>
-References: <4e565e7afa2f2a0ed89774d0a1597649173b1746.1582471508.git.afzal.mohd.ma@gmail.com>
- <202002251058.U8V8FHji%lkp@intel.com>
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Andrei Stefanescu <andrei.stefanescu@microchip.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Sangbeom Kim <sbkim73@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        linux-pm@vger.kernel.org, patches@opensource.cirrus.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Markus Laine <markus.laine@fi.rohmeurope.com>,
+        Mikko Mutanen <mikko.mutanen@fi.rohmeurope.com>
+Subject: [PATCH v4 0/9] Support ROHM BD99954 charger IC
+Message-ID: <cover.1582617178.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202002251058.U8V8FHji%lkp@intel.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Support ROHM BD99954 Battery Management IC
 
-On Tue, Feb 25, 2020 at 10:52:55AM +0800, kbuild test robot wrote:
+ROHM BD99954 is a Battery Management IC for 1-4 cell Lithium-Ion
+secondary battery. BD99954 is intended to be used in space-constraint
+equipment such as Low profile Notebook PC, Tablets and other
+applications.
 
-> Thank you for the patch! Yet something to improve:
+Series extracts a "linear ranges" helper out of the regulator
+framework. Linear ranges helper is intended to help converting
+real-world values to register values when conversion is linear. I
+suspect this is useful also for power subsystem and possibly for clk.
 
-And thanks for the report, i will try to improve :)
+This version of series introduces new battry DT binding entries and
+adds the parsing in power_supply_get_battery_info().
 
-> [auto build test ERROR on tip/timers/core]
-> [also build test ERROR on arm-soc/for-next powerpc/next linus/master v5.6-rc3 next-20200221]
-> [if your patch is applied to the wrong git tree, please drop us a note to help
-> improve the system. BTW, we also suggest to use '--base' option to specify the
-> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+Please note that regulator drivers have been compile tested (but not
+linked) after patch 5.
 
-i did use --base option w/ git format-patch, though the output of it
-was rigged to indicate a human understandable start point that can be
-parsed by the script as well.
+Please also note that only the BD71847 based regulator testing has
+been performed after the patch 6 - all testing is highly appreciated.
 
-In cover letter, there was "base-commit: v5.6-rc1", test robot cannot
-make use of that information ?, since my thought was that your script
-would create a branch with any valid start point following
-"base-commit:"
+Changelog v4:
+ generic:
+   - rebase and drop RFC.
+ DT-bindings:
+   - add I2C node address-cells and size-cells to fix yaml check errors
+   - uncomment multipleOf:
+ bd70528:
+   - add patch which renames driver internal linear_range struct to
+     avoid collision when regulator/driver.h (which gets included from
+     rohm generic header) introduces the linear_range struct.
+ regulators:
+   - rebase to v5.6-rc2 and convert also the two newly introduced
+     drivers to use linear_range struct instead of
+     regulator_linear_range.
+ linear_ranges:
+   - Fix kerneldoc.
 
->    drivers/clocksource/timer-prima2.c: In function 'sirfsoc_prima2_timer_init':
-> >> drivers/clocksource/timer-prima2.c:213:2: error: 'sirfsoc_timer_irq' undeclared (first use in this function); did you mean 'sirfsoc_timer_read'?
->      sirfsoc_timer_irq.irq = irq_of_parse_and_map(np, 0);
->      ^~~~~~~~~~~~~~~~~
->      sirfsoc_timer_read
->    drivers/clocksource/timer-prima2.c:213:2: note: each undeclared identifier is reported only once for each function it appears in
+Changelog RFC-v3:
+ DT-bindings:
+   - fix the BD99954 binding (the *-microvolt Vs. *-microvolts issue is
+     still there. Not sure which one is correct)
+   - renabe tricklecharge-* binding to trickle-charge-* as suggested by
+     Rob.
+ - drop the linear-ranges helper which was written for BD70528 and
+   extract the linear-range code from regulator framework instead.
+ - refactor regulator framework to utilize extracted linear-ranges
+   code.
+ - change the struct regulator_linear_range to linear_range from
+   regulator drivers.
+ - refactor BD70528 to use regulator framework originated
+   linear-ranges code.
+ - change BD99954 to use linear-ranges code from regulator framework
 
-Does the robot keep the log of patches that are successfully built ?,
-w/ v1, i did not receive similar report, and tried to find if test
-robot has successfully built v1, but couldn't find out.
+Changelog RFC-v2:
+ DT-bindings:
+   - Used the battery parameters described in battery.txt
+   - Added few new parameters to battery.txt
+   - Added ASCII art charging profile chart for BD99954 to explain
+     states and limits.
+ Linear ranges:
+   - Fixed division by zero error from linear-ranges code if step 0 is
+     used.
+ Power-supply core:
+   - Added parsing of new battery parameters.
+ BD99954 driver:
+   - converted to use battery parameters from battery node
+   - Added step 0 ranges for reg values which do not change voltage
+   - added dt-node to psy-config
 
-Regards
-afzal
+Patch 1:
+	DT binding docs for the new battery parameters
+Patch 2:
+	BD99954 charger DT binding docs
+Patch 3:
+	Linear ranges helpers
+Patch 4:
+	Rename driver internal struct linear_range from bd70528-power
+Patch 5:
+	Rename struct regulator_linear_range to struct linear_range and
+	convert regulator drivers to use renamed struct
+Patch 6:
+	Use linear-ranges helpers in regulator framework
+Patch 7:
+	Use linear-ranges helpers in bd70528 driver
+Patch 8:
+	Parsing of new battery parameters
+Patch 9:
+	ROHM BD99954 charger IC driver
+
+---
+
+Matti Vaittinen (9):
+  dt-bindings: battery: add new battery parameters
+  dt_bindings: ROHM BD99954 Charger
+  drivers: base: add linear ranges helpers
+  power: supply: bd70528: rename linear_range to avoid collision
+  regulator: rename regulator_linear_range to linear_range
+  regulator: use linear_ranges helper
+  power: supply: bd70528: use linear ranges
+  power: supply: add battery parameters
+  power: supply: Support ROHM bd99954 charger
+
+ .../bindings/power/supply/battery.txt         |    6 +
+ .../bindings/power/supply/rohm,bd9995x.yaml   |  155 +++
+ drivers/base/Kconfig                          |    3 +
+ drivers/base/Makefile                         |    1 +
+ drivers/base/linear_ranges.c                  |  246 ++++
+ drivers/power/supply/Kconfig                  |   11 +
+ drivers/power/supply/Makefile                 |    1 +
+ drivers/power/supply/bd70528-charger.c        |  140 +-
+ drivers/power/supply/bd99954-charger.c        | 1171 +++++++++++++++++
+ drivers/power/supply/power_supply_core.c      |    8 +
+ drivers/regulator/88pg86x.c                   |    4 +-
+ drivers/regulator/88pm800-regulator.c         |    4 +-
+ drivers/regulator/Kconfig                     |    1 +
+ drivers/regulator/act8865-regulator.c         |    4 +-
+ drivers/regulator/act8945a-regulator.c        |    2 +-
+ drivers/regulator/arizona-ldo1.c              |    2 +-
+ drivers/regulator/arizona-micsupp.c           |    4 +-
+ drivers/regulator/as3711-regulator.c          |    6 +-
+ drivers/regulator/as3722-regulator.c          |    4 +-
+ drivers/regulator/axp20x-regulator.c          |   16 +-
+ drivers/regulator/bcm590xx-regulator.c        |    8 +-
+ drivers/regulator/bd70528-regulator.c         |    8 +-
+ drivers/regulator/bd71828-regulator.c         |   10 +-
+ drivers/regulator/bd718x7-regulator.c         |   26 +-
+ drivers/regulator/da903x.c                    |    2 +-
+ drivers/regulator/helpers.c                   |  130 +-
+ drivers/regulator/hi6421-regulator.c          |    4 +-
+ drivers/regulator/lochnagar-regulator.c       |    4 +-
+ drivers/regulator/lp873x-regulator.c          |    4 +-
+ drivers/regulator/lp87565-regulator.c         |    2 +-
+ drivers/regulator/lp8788-buck.c               |    2 +-
+ drivers/regulator/max77650-regulator.c        |    2 +-
+ drivers/regulator/mcp16502.c                  |    4 +-
+ drivers/regulator/mp8859.c                    |    2 +-
+ drivers/regulator/mt6323-regulator.c          |    6 +-
+ drivers/regulator/mt6358-regulator.c          |    8 +-
+ drivers/regulator/mt6380-regulator.c          |    6 +-
+ drivers/regulator/mt6397-regulator.c          |    6 +-
+ drivers/regulator/palmas-regulator.c          |    4 +-
+ drivers/regulator/qcom-rpmh-regulator.c       |    2 +-
+ drivers/regulator/qcom_rpm-regulator.c        |   14 +-
+ drivers/regulator/qcom_smd-regulator.c        |   70 +-
+ drivers/regulator/rk808-regulator.c           |   10 +-
+ drivers/regulator/s2mps11.c                   |   14 +-
+ drivers/regulator/sky81452-regulator.c        |    2 +-
+ drivers/regulator/stpmic1_regulator.c         |   18 +-
+ drivers/regulator/tps65086-regulator.c        |   10 +-
+ drivers/regulator/tps65217-regulator.c        |    4 +-
+ drivers/regulator/tps65218-regulator.c        |    6 +-
+ drivers/regulator/tps65912-regulator.c        |    4 +-
+ drivers/regulator/twl-regulator.c             |    4 +-
+ drivers/regulator/twl6030-regulator.c         |    2 +-
+ drivers/regulator/wm831x-dcdc.c               |    2 +-
+ drivers/regulator/wm831x-ldo.c                |    4 +-
+ drivers/regulator/wm8350-regulator.c          |    2 +-
+ drivers/regulator/wm8400-regulator.c          |    2 +-
+ include/linux/linear_range.h                  |   48 +
+ include/linux/power/bd99954-charger.h         | 1075 +++++++++++++++
+ include/linux/power_supply.h                  |    4 +
+ include/linux/regulator/driver.h              |   27 +-
+ 60 files changed, 3007 insertions(+), 344 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/power/supply/rohm,bd9995x.yaml
+ create mode 100644 drivers/base/linear_ranges.c
+ create mode 100644 drivers/power/supply/bd99954-charger.c
+ create mode 100644 include/linux/linear_range.h
+ create mode 100644 include/linux/power/bd99954-charger.h
+
+
+base-commit 11a48a5a18c6 ("Linux 5.6-rc2")
+-- 
+2.21.0
+
+
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =] 
