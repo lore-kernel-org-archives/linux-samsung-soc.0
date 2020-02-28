@@ -2,224 +2,133 @@ Return-Path: <SRS0=V4sZ=4Q=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 066CDC3F2D1
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Feb 2020 12:00:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3888FC3F2CD
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Feb 2020 14:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3190246AC
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Feb 2020 12:00:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2DE1246A8
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Feb 2020 14:55:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="EN08DauY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726378AbgB1MAQ (ORCPT
+        id S1726805AbgB1OzS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 28 Feb 2020 07:00:16 -0500
-Received: from foss.arm.com ([217.140.110.172]:37134 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726287AbgB1MAQ (ORCPT
+        Fri, 28 Feb 2020 09:55:18 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:59444 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726788AbgB1OzS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 28 Feb 2020 07:00:16 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1CCC04B2;
-        Fri, 28 Feb 2020 04:00:15 -0800 (PST)
-Received: from [10.37.12.207] (unknown [10.37.12.207])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AE33C3F7B4;
-        Fri, 28 Feb 2020 04:00:11 -0800 (PST)
-Subject: Re: [RESEND PATCH v2 0/2] Enable Odroid-XU3/4 to use Energy Model and
- Energy Aware Scheduler
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kgene@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, myungjoo.ham@samsung.com,
-        kyungmin.park@samsung.com, cw00.choi@samsung.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, b.zolnierkie@samsung.com,
-        dietmar.eggemann@arm.com
-References: <20200220095636.29469-1-lukasz.luba@arm.com>
- <20200220180040.GA8338@kozik-lap>
- <CGME20200221103307eucas1p2bc51b3b5d6d0a9739ab97cdd39078505@eucas1p2.samsung.com>
- <597f1475-754c-d77a-b599-0fa07d8ee948@arm.com>
- <fb6961ce-846e-3c26-5227-6327c6d511f6@samsung.com>
-From:   Lukasz Luba <lukasz.luba@arm.com>
-Message-ID: <b2823ea1-a782-1024-bcc0-c1aba9a84fc3@arm.com>
-Date:   Fri, 28 Feb 2020 12:00:09 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <fb6961ce-846e-3c26-5227-6327c6d511f6@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Fri, 28 Feb 2020 09:55:18 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200228145516euoutp0191e8ed1cb6fa7a3b43c078833fe9a71d~3mLmPpWqF1022410224euoutp010
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Feb 2020 14:55:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200228145516euoutp0191e8ed1cb6fa7a3b43c078833fe9a71d~3mLmPpWqF1022410224euoutp010
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1582901716;
+        bh=PTKZSn+P1tJgveSJbvDp4Ja8+SjDXQKy8OZnr66O2wM=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=EN08DauYbSa2RvHQNI/JsPNcGukcFEi7Z6ANCW+Uj8orO7xt0Qwq6U3vF7LG6pzol
+         lT4GLreiEuVrG4HPkOWixEo1qHhH95AwyBUzfyh4ei0frQNll+1LuhwPFUZ9bENqOo
+         iRP/DKEELSBgV8KVlOqtBE9536+40E07HJzFwMFw=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200228145516eucas1p1b129c66290c848a5014a0d97bf872732~3mLl8XqxW2666026660eucas1p1s;
+        Fri, 28 Feb 2020 14:55:16 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 6F.81.60679.4D9295E5; Fri, 28
+        Feb 2020 14:55:16 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200228145516eucas1p229d1500f0b4025699a1aab5e2d33423c~3mLlmoZpk2874828748eucas1p24;
+        Fri, 28 Feb 2020 14:55:16 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200228145516eusmtrp2f405307ab35bca2dac271e971925ac72~3mLlmETX81364013640eusmtrp2G;
+        Fri, 28 Feb 2020 14:55:16 +0000 (GMT)
+X-AuditID: cbfec7f4-0cbff7000001ed07-a2-5e5929d4964b
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 94.2C.08375.3D9295E5; Fri, 28
+        Feb 2020 14:55:16 +0000 (GMT)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200228145515eusmtip20bd7a422be1afa55f1cc78357f9ed526~3mLlPrHnD0071100711eusmtip2h;
+        Fri, 28 Feb 2020 14:55:15 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marian Mihailescu <mihailescu2m@gmail.com>
+Subject: [PATCH 1/2] ARM: dts: exynos: Fix G3D power domain supply on Odroid
+ XU3/XU4/HC1 boards
+Date:   Fri, 28 Feb 2020 15:55:01 +0100
+Message-Id: <20200228145502.8316-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPIsWRmVeSWpSXmKPExsWy7djPc7pXNCPjDE7tEbfYOGM9q8X58xvY
+        LWac38dksfbIXXaL9dN+sjqweuycdZfdY9OqTjaPvi2rGD0+b5ILYInisklJzcksSy3St0vg
+        yjj6JK/gIkfFi74+lgbGuexdjJwcEgImEh++bWPqYuTiEBJYwSgxvWMJM0hCSOALo8Sb33oQ
+        ic+MEs3HlrLCdDSdfcMCkVjOKPH9xAk2uI5p70pBbDYBQ4mut11gcREBVYnPbQvYQRqYBfYw
+        Slx+fRAsISyQKLFk91xGEJsFqGj77iVgG3gFbCTOTF8NdZ+8xOoNB5hBmiUE9rBJfJt4AeoM
+        F4neTxeZIGxhiVfHt0A1yEj83zmfCaKhmVHi4bm17BBOD9DqphmMEFXWEnfO/QI6gwPoJk2J
+        9bv0IcKOEnNmbmcCCUsI8EnceCsIEmYGMidtm84MEeaV6GgTgqhWk5h1fB3c2oMXLjFD2B4S
+        dxv+sUACJVZi/cYLrBMY5WYh7FrAyLiKUTy1tDg3PbXYKC+1XK84Mbe4NC9dLzk/dxMjMNpP
+        /zv+ZQfjrj9JhxgFOBiVeHgPMETGCbEmlhVX5h5ilOBgVhLh3fg1NE6INyWxsiq1KD++qDQn
+        tfgQozQHi5I4r/Gil7FCAumJJanZqakFqUUwWSYOTqkGxr4G2z1mrXMLZFzuZembzL6n0rn4
+        r7LbwuyqDXLCXVmnfE/t0j48a9baR/dWHfd1/tCmvChJjNMktJ5jK9+kY+uzK7yfXVh/PFDb
+        O/vElQ/GSybrKp6c4yjlmbNA9f6iq/tnbitv1Tto5cE+P+L8n4NJtsXH9y7ar/lMrU3v9//k
+        pMu5R97nbFdiKc5INNRiLipOBACWoAEj8gIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGLMWRmVeSWpSXmKPExsVy+t/xe7pXNCPjDPqfM1psnLGe1eL8+Q3s
+        FjPO72OyWHvkLrvF+mk/WR1YPXbOusvusWlVJ5tH35ZVjB6fN8kFsETp2RTll5akKmTkF5fY
+        KkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp2yXoZRx9kldwkaPiRV8fSwPjXPYu
+        Rk4OCQETiaazb1i6GLk4hASWMkqs2LMBKiEjcXJaAyuELSzx51oXG0TRJ0aJ/V1bGUESbAKG
+        El1vQRKcHCICqhKf2xawgxQxC+xjlJjYtQWsW1ggXmLa9xfMIDYLUNH23UvA4rwCNhJnpq+G
+        2iYvsXrDAeYJjDwLGBlWMYqklhbnpucWG+oVJ+YWl+al6yXn525iBIbZtmM/N+9gvLQx+BCj
+        AAejEg/vAYbIOCHWxLLiytxDjBIczEoivBu/hsYJ8aYkVlalFuXHF5XmpBYfYjQFWj6RWUo0
+        OR8YA3kl8YamhuYWlobmxubGZhZK4rwdAgdjhATSE0tSs1NTC1KLYPqYODilGhgVF/6/Zmba
+        bfSMJ2+OM/fOyly5hS17JwRmbFy1MsEseE7W3BMeD2fdOfst5s+j+kWSe2bfsz44ZT7Dxv3n
+        vtZ+0pnX+Flzl06PSk7nxV4fncB989hVuvOv7Pq+q0LSae/8VBvJyt7jX6InZtRH/HokVcsT
+        fCHxrVbu+iKpx0cblvB/WSFUpPZAiaU4I9FQi7moOBEAL8CMWEkCAAA=
+X-CMS-MailID: 20200228145516eucas1p229d1500f0b4025699a1aab5e2d33423c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200228145516eucas1p229d1500f0b4025699a1aab5e2d33423c
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200228145516eucas1p229d1500f0b4025699a1aab5e2d33423c
+References: <CGME20200228145516eucas1p229d1500f0b4025699a1aab5e2d33423c@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+G3D power domain in Exynos5422 SoC is supplied from VDD_G3D. Besides the
+main GPU MALI module it also contains the power domain control logic and
+clocks. Turning the VDD_G3D power supply off causes the power domain to
+fail to operate properly and breaks for example system suspend/resume.
+GPU should use VDD_G3D supply mainly to control the DVFS.
 
-On 2/28/20 10:59 AM, Marek Szyprowski wrote:
-> Hi Lukasz
-> 
-> On 21.02.2020 11:32, Lukasz Luba wrote:
->> On 2/20/20 6:00 PM, Krzysztof Kozlowski wrote:
->>> On Thu, Feb 20, 2020 at 09:56:34AM +0000, Lukasz Luba wrote:
->>>> This is just a resend, now with proper v2 in the patches subject.
->>>>
->>>> The Odroid-XU4/3 is a decent and easy accessible ARM big.LITTLE
->>>> platform,
->>>> which might be used for research and development.
->>>>
->>>> This small patch set provides possibility to run Energy Aware
->>>> Scheduler (EAS)
->>>> on Odroid-XU4/3 and experiment with it.
->>>>
->>>> The patch 1/2 provides 'dynamic-power-coefficient' in CPU DT nodes,
->>>> which is
->>>> then used by the Energy Model (EM).
->>>> The patch 2/2 enables SCHED_MC (which adds another level in
->>>> scheduling domains)
->>>> and enables EM making EAS possible to run (when schedutil is set as
->>>> a CPUFreq
->>>> governor).
->>>>
->>>> 1. Test results
->>>>
->>>> Two types of different tests have been executed. The first is energy
->>>> test
->>>> case showing impact on energy consumption of this patch set. It is
->>>> using a
->>>> synthetic set of tasks (rt-app based). The second is the performance
->>>> test
->>>> case which is using hackbench (less time to complete is better).
->>>> In both tests schedutil has been used as cpufreq governor. In all tests
->>>> PROVE_LOCKING has not been compiled into the kernels.
->>>>
->>>> 1.1 Energy test case
->>>>
->>>> 10 iterations of 24 periodic rt-app tasks (16ms period, 10% duty-cycle)
->>>> with energy measurement. The cpufreq governor - schedutil. Unit is
->>>> Joules.
->>>> The energy is calculated based on hwmon0 and hwmon3 power1_input.
->>>> The goal is to save energy, lower is better.
->>>>
->>>> +-----------+-----------------+------------------------+
->>>> |           | Without patches | With patches           |
->>>> +-----------+--------+--------+----------------+-------+
->>>> | benchmark |  Mean  | RSD*   | Mean           | RSD*  |
->>>> +-----------+--------+--------+----------------+-------+
->>>> | 24 rt-app |  21.56 |  1.37% |  19.85 (-9.2%) | 0.92% |
->>>> |    tasks  |        |        |                |       |
->>>> +-----------+--------+--------+----------------+-------+
->>>>
->>>> 1.2 Performance test case
->>>>
->>>> 10 consecutive iterations of hackbench (hackbench -l 500 -s 4096),
->>>> no delay between two successive executions.
->>>> The cpufreq governor - schedutil. Units in seconds.
->>>> The goal is to see not regression, lower completion time is better.
->>>>
->>>> +-----------+-----------------+------------------------+
->>>> |           | Without patches | With patches           |
->>>> +-----------+--------+--------+----------------+-------+
->>>> | benchmark | Mean   | RSD*   | Mean           | RSD*  |
->>>> +-----------+--------+--------+----------------+-------+
->>>> | hackbench |  8.15  | 2.86%  |  7.95 (-2.5%)  | 0.60% |
->>>> +-----------+--------+--------+----------------+-------+
->>>>
->>>> *RSD: Relative Standard Deviation (std dev / mean)
->>>
->>> Nice measurements!
->>
->> Glad to hear that.
->>
->>>
->>> Applied both, thank you.
->>>
->>
->> Thank you for applying this.
-> 
-> 
-> After applying the patches I see the following warnings during boot (XU4):
-> 
-> energy_model: pd0: hertz/watts ratio non-monotonically decreasing:
-> em_cap_state 1 >= em_cap_state0
-> energy_model: pd0: hertz/watts ratio non-monotonically decreasing:
-> em_cap_state 3 >= em_cap_state2
-> energy_model: pd0: hertz/watts ratio non-monotonically decreasing:
-> em_cap_state 4 >= em_cap_state3
-> energy_model: pd0: hertz/watts ratio non-monotonically decreasing:
-> em_cap_state 5 >= em_cap_state4
-> energy_model: pd0: hertz/watts ratio non-monotonically decreasing:
-> em_cap_state 8 >= em_cap_state7
-> energy_model: pd0: hertz/watts ratio non-monotonically decreasing:
-> em_cap_state 10 >= em_cap_state9
-> energy_model: pd0: hertz/watts ratio non-monotonically decreasing:
-> em_cap_state 11 >= em_cap_state10
-> energy_model: pd4: hertz/watts ratio non-monotonically decreasing:
-> em_cap_state 1 >= em_cap_state0
-> energy_model: pd4: hertz/watts ratio non-monotonically decreasing:
-> em_cap_state 2 >= em_cap_state1
-> energy_model: pd4: hertz/watts ratio non-monotonically decreasing:
-> em_cap_state 3 >= em_cap_state2
-> energy_model: pd4: hertz/watts ratio non-monotonically decreasing:
-> em_cap_state 4 >= em_cap_state3
-> energy_model: pd4: hertz/watts ratio non-monotonically decreasing:
-> em_cap_state 5 >= em_cap_state4
-> energy_model: pd4: hertz/watts ratio non-monotonically decreasing:
-> em_cap_state 6 >= em_cap_state5
-> energy_model: pd4: hertz/watts ratio non-monotonically decreasing:
-> em_cap_state 8 >= em_cap_state7
-> energy_model: pd4: hertz/watts ratio non-monotonically decreasing:
-> em_cap_state 9 >= em_cap_state8
-> energy_model: pd4: hertz/watts ratio non-monotonically decreasing:
-> em_cap_state 10 >= em_cap_state9
-> energy_model: pd4: hertz/watts ratio non-monotonically decreasing:
-> em_cap_state 13 >= em_cap_state12
-> energy_model: pd4: hertz/watts ratio non-monotonically decreasing:
-> em_cap_state 15 >= em_cap_state14
-> energy_model: pd4: hertz/watts ratio non-monotonically decreasing:
-> em_cap_state 16 >= em_cap_state15
-> 
-> Is it okay?
+Fixes: 1a5a85c56402 ("ARM: dts: exynos: Add Mali/GPU node on Exynos5420 and enable it on Odroid XU3/4")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-It shouldn't harm the EAS but it might be used by thermal, especially
-those OPPs from the top. Like in your case in step_wise (IIRC the DT
-settings).
-But removing some of these from the bottom, would be good.
-It would lower the Energy Model complexity, which is:
-nr_perf_domain * (nr_cpus + nr_OPPs) [1] (in Odroid XU4 is ~80 IIRC)
+diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+index 5cf1aed20490..ab27ff8bc3dc 100644
+--- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+@@ -901,6 +901,7 @@
+ 				regulator-min-microvolt = <800000>;
+ 				regulator-max-microvolt = <1400000>;
+ 				regulator-boot-on;
++				regulator-always-on;
+ 
+ 				regulator-state-mem {
+ 					regulator-off-in-suspend;
+-- 
+2.17.1
 
-smaller OPP number is better.
-
-Douglas is working on a patch set which could skip non-efficient OPPs
-(the OPPs which have the same voltage but different frequency).
-Although, we don't know the numbers how much it could save energy - when
-we use the fastest frequency for the set of OPPs with the same voltage,
-comparing to the slowest (theoretically entering idle earlier) .
-The discussion is ongoing here [2].
-
-Regarding the print message. It's not a bug in the platform so in
-my opinion we shouldn't use 'pr_warn' in this case.
-It's going to be changed to just debug level print. I have this
-change in the new Energy Model. It is in last point in changelog v3 [3]
-and the change which does this is in patch 1/4:
---------------------------------------------->8------------------
--			pr_warn("pd%d: hertz/watts ratio non-monotonically decreasing: 
-em_cap_state %d >= em_cap_state%d\n",
--					cpu, i, i - 1);
-+			dev_dbg(dev, "EM: hertz/watts ratio non-monotonically decreasing: 
-em_perf_state %d >= em_perf_state%d\n",
-+					i, i - 1);
-
---------------------------------------8<------------------------
-
-
-Regards,
-Lukasz
-
-[1] 
-https://elixir.bootlin.com/linux/latest/source/kernel/sched/topology.c#L397
-[2] https://lkml.org/lkml/2020/1/22/1169
-[3] https://lkml.org/lkml/2020/2/21/1910
