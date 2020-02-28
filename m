@@ -2,106 +2,265 @@ Return-Path: <SRS0=V4sZ=4Q=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBEDCC3F2D2
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Feb 2020 10:06:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FF99C3F2D2
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Feb 2020 10:11:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4025246A0
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Feb 2020 10:06:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 275EF246A8
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Feb 2020 10:11:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=verdurent-com.20150623.gappssmtp.com header.i=@verdurent-com.20150623.gappssmtp.com header.b="PzeYbRw+"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WfbUv6mP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726778AbgB1KGe (ORCPT
+        id S1726413AbgB1KL0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 28 Feb 2020 05:06:34 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:43010 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726400AbgB1KGe (ORCPT
+        Fri, 28 Feb 2020 05:11:26 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:59005 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726400AbgB1KL0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 28 Feb 2020 05:06:34 -0500
-Received: by mail-vs1-f66.google.com with SMTP id 7so1564240vsr.10
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Feb 2020 02:06:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=InyvFyZ/5bxCUOynjC6lpv2Fa6LG6T5vC6/2VR0weU4=;
-        b=PzeYbRw+1d4tOTIvVmv8WOwZUT7ugbzZaN4HN095qyoN60ncxY+KxLJ8CGXgVLtywZ
-         PzRRzd/Boh5BxVT39etHcbM/GVLwHGA/pQu/6qYEnkTyIFJat3gpBDHil+GfSjDlw+Ay
-         aoJJq++pc+C1M/2qjZU5snzG5JOccINZQy1w8m0FAiQIZ7OJQgxFofSAIQ33bRVM1A7u
-         BnHntdL/PwHIRGerTeue8Og1XlpoAC1B6ugfIIdOT0+QjYRp6nZwJBAjg5h9CJnqFGqZ
-         1OM8YHno56hD+I5HrsNOFAw6k/r+dvKDG4Ns9huXjUdfzR2u3lBvDX5S2RHQ825XsXLb
-         OwKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=InyvFyZ/5bxCUOynjC6lpv2Fa6LG6T5vC6/2VR0weU4=;
-        b=t5LhKY78Z91RWgFnPZGB/bHV0h/gwHOnm3pEwmCBCQkXd/ctLsimOVMqjS/9H986Rg
-         jnpVSE6F9KJ6OCl4B1QOGZCuTBIzNhyfAPsQWihLpFWUB5LCJuP8d4kJeg9L+bCF4qby
-         cES3yWRh7xMbiVlWNZe5x6JGgky+Vzk0yTP6OU1LLOFVV28v64XsrqrQ+PyLjtoNAg+e
-         44e2DVQVsMXse3pAUJ1965pqPjqFrSJWnVgKohQTB7BaqhxLxhD0z5zqVWc9EwJtVoB/
-         81vZw7qqibEfjaks1ENtI6yGvR+epcwbpBmtbITO+fVFq6oHBkpY6lSnzhPGvKFsIHMG
-         2GJA==
-X-Gm-Message-State: ANhLgQ1A6q4GzNCJ/SjmC465sveXJihoaSukadsQSkYBnJ4AX0oIURPE
-        1ejdgl2AABgl6WgA7D2299mdDMJGSb2YHrxAfPINFg==
-X-Google-Smtp-Source: ADFU+vuZA1XQ4xbgMSEaWxgfM1zO76KhScqpXifMj+FzO5W8iDdZrT7Cbt3IZqF0CejkSumiQMSUNEHOKy8Pgn+JJ6Q=
-X-Received: by 2002:a05:6102:535:: with SMTP id m21mr1937391vsa.95.1582884391664;
- Fri, 28 Feb 2020 02:06:31 -0800 (PST)
-MIME-Version: 1.0
-References: <CGME20200228092342eucas1p1ead44fbfd9ab57c02ffa588ca9acb97a@eucas1p1.samsung.com>
- <20200228092331.21548-1-m.szyprowski@samsung.com>
-In-Reply-To: <20200228092331.21548-1-m.szyprowski@samsung.com>
-From:   Amit Kucheria <amit.kucheria@verdurent.com>
-Date:   Fri, 28 Feb 2020 15:36:20 +0530
-Message-ID: <CAHLCerN7aV82NTAoPT-ukNBJifySqSxfRogXP6ByMmJiV6nuCA@mail.gmail.com>
-Subject: Re: [PATCH] thermal: exynos: Silence warning during deferred probe
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Linux PM list <linux-pm@vger.kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
+        Fri, 28 Feb 2020 05:11:26 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200228101125euoutp02ce40f3c7c2c2b0a528b7740575e23ef8~3iTwQU_Ly0699006990euoutp02w
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Feb 2020 10:11:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200228101125euoutp02ce40f3c7c2c2b0a528b7740575e23ef8~3iTwQU_Ly0699006990euoutp02w
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1582884685;
+        bh=qXgsjsboVQ3KoL/APoH04DnowWVrJC0A074eRmXaqiQ=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=WfbUv6mPoi4uaWslcY2tZdvlC8DUBDprcoJ4sxFkHAlkYiVI40P0ZI33K5Z5laiCA
+         GnGsIJooiYdGCF5zvQu9LHbQfPyRQnV414zBQRbsuWcred3W4uA7Wr4kBeVSGFuJ2Z
+         JiM7VzQBIZmtbgr5Z+RdfkGSoQueIO3ofGwr96Po=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200228101124eucas1p2fe0d7377ad010f6bc54d4f112e1655f3~3iTv6V5WU1789217892eucas1p2U;
+        Fri, 28 Feb 2020 10:11:24 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 53.D7.61286.C47E85E5; Fri, 28
+        Feb 2020 10:11:24 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200228101124eucas1p1f6ab761a38f4a953a4eeed89859fcf4a~3iTvqLPaP0825308253eucas1p1Y;
+        Fri, 28 Feb 2020 10:11:24 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200228101124eusmtrp2f7994aa63a62057ccde3df306880a96b~3iTvpiRm83025730257eusmtrp2d;
+        Fri, 28 Feb 2020 10:11:24 +0000 (GMT)
+X-AuditID: cbfec7f2-ef1ff7000001ef66-c7-5e58e74c576a
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 09.D4.08375.C47E85E5; Fri, 28
+        Feb 2020 10:11:24 +0000 (GMT)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200228101123eusmtip1b6759ec8e7496638f32ccc847b4a6c6d~3iTvM-CFS3187831878eusmtip1D;
+        Fri, 28 Feb 2020 10:11:23 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Sangbeom Kim <sbkim73@samsung.com>,
+        Mark Brown <broonie@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH v2] ASoC: samsung: Silence warnings during deferred probe
+Date:   Fri, 28 Feb 2020 11:11:20 +0100
+Message-Id: <20200228101120.28819-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOIsWRmVeSWpSXmKPExsWy7djPc7o+zyPiDG5/0LS4cvEQk8XUh0/Y
+        LM6f38BuMeP8PiaLtUfuslscftPOanFxxRcmB3aPDZ+b2Dw2repk8+jbsorR4/MmuQCWKC6b
+        lNSczLLUIn27BK6MVYv/MBdM0K3oeXaNrYHxu2oXIyeHhICJxLMTB1i6GLk4hARWMEr8vtHG
+        BpIQEvjCKNF2TwYi8ZlRYm7XUXaYjtltb1khEssZJQ6/vscM13FiegCIzSZgKNH1tgtskoiA
+        k8TMOe/ZQBqYBc4wSlz8183UxcjBISzgKdE9wQGkhkVAVWJHF0iYk4NXwFbi1fP3zBDL5CVW
+        bzjADNIrIXCZTWLzxw9QV7hI3JpygAnCFpZ4dXwLVFxG4v/O+UwQDc2MEg/PrWWHcHoYJS43
+        zWCEqLKWuHPuFxvIFcwCmhLrd+mDmBICjhJv78VDmHwSN94KghQzA5mTtk1nhgjzSnS0CUHM
+        UJOYdXwd3NaDFy5BlXhIzNwkDAmRWIl1l54wTmCUm4WwaQEj4ypG8dTS4tz01GLDvNRyveLE
+        3OLSvHS95PzcTYzA6D/97/inHYxfLyUdYhTgYFTi4V2wIzxOiDWxrLgy9xCjBAezkgjvxq+h
+        cUK8KYmVValF+fFFpTmpxYcYpTlYlMR5jRe9jBUSSE8sSc1OTS1ILYLJMnFwSjUwRjCz153X
+        jD/mtuHtMZH21YurLzqLsjrc+3Zuy+/95X+iZ32Otd99Zc4yyTlin5cWHE05pDmva6Ws+7PM
+        9xy5OgrG259cZIwWZje6fmynJY+d9u4amb3p8+1Yla8+sXm9MWRaoff7diYZmyPVgbumL2X3
+        era/mGXR7q+su2eJL/08m20eV4rvXSWW4oxEQy3mouJEAM86DGb6AgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrALMWRmVeSWpSXmKPExsVy+t/xu7o+zyPiDHZMkrC4cvEQk8XUh0/Y
+        LM6f38BuMeP8PiaLtUfuslscftPOanFxxRcmB3aPDZ+b2Dw2repk8+jbsorR4/MmuQCWKD2b
+        ovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27BL2MVYv/MBdM
+        0K3oeXaNrYHxu2oXIyeHhICJxOy2t6xdjFwcQgJLGSVaZ29jgkjISJyc1sAKYQtL/LnWxQZR
+        9IlR4tPFL2wgCTYBQ4mut11gtoiAi8SXzj3MIEXMAhcYJZZe2c3excjBISzgKdE9wQGkhkVA
+        VWJHVzfYAl4BW4lXz98zQyyQl1i94QDzBEaeBYwMqxhFUkuLc9Nziw31ihNzi0vz0vWS83M3
+        MQJDb9uxn5t3MF7aGHyIUYCDUYmHd8GO8Dgh1sSy4srcQ4wSHMxKIrwbv4bGCfGmJFZWpRbl
+        xxeV5qQWH2I0BVo+kVlKNDkfGBd5JfGGpobmFpaG5sbmxmYWSuK8HQIHY4QE0hNLUrNTUwtS
+        i2D6mDg4pRoY9QLOzPbaaOF4/Kb5TO8bW4v31ek8Lyp+kVsl2VD0euPmu4y+TmtShJMWvc/W
+        fZ/YuXLRjr7/itrTT7Ptrdcp/C8Q3vk5Y+viSo34Q91726bMXnzu0gnOfd9fXvS33K5jYdDG
+        ZtX62HxSofip1TXeBzerTz3gKsf57on+9qhfcRcObOhct3z2DSWW4oxEQy3mouJEAEXAMLJT
+        AgAA
+X-CMS-MailID: 20200228101124eucas1p1f6ab761a38f4a953a4eeed89859fcf4a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200228101124eucas1p1f6ab761a38f4a953a4eeed89859fcf4a
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200228101124eucas1p1f6ab761a38f4a953a4eeed89859fcf4a
+References: <CGME20200228101124eucas1p1f6ab761a38f4a953a4eeed89859fcf4a@eucas1p1.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Feb 28, 2020 at 2:53 PM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
->
-> Don't confuse user with meaningless warning about the failure of
-> registering sensors in case of deferred probe.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Don't confuse user with meaningless warning about the failure in getting
+resources and registering card in case of deferred probe.
 
-Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ sound/soc/samsung/arndale.c        | 4 +++-
+ sound/soc/samsung/littlemill.c     | 2 +-
+ sound/soc/samsung/lowland.c        | 2 +-
+ sound/soc/samsung/odroid.c         | 4 +++-
+ sound/soc/samsung/smdk_wm8994.c    | 2 +-
+ sound/soc/samsung/smdk_wm8994pcm.c | 2 +-
+ sound/soc/samsung/snow.c           | 4 +++-
+ sound/soc/samsung/speyside.c       | 2 +-
+ sound/soc/samsung/tm2_wm5110.c     | 3 ++-
+ sound/soc/samsung/tobermory.c      | 2 +-
+ 10 files changed, 17 insertions(+), 10 deletions(-)
 
-> ---
->  drivers/thermal/samsung/exynos_tmu.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> index fd4a17812f33..e9a90bc23b11 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -1094,7 +1094,9 @@ static int exynos_tmu_probe(struct platform_device *pdev)
->                                                     &exynos_sensor_ops);
->         if (IS_ERR(data->tzd)) {
->                 ret = PTR_ERR(data->tzd);
-> -               dev_err(&pdev->dev, "Failed to register sensor: %d\n", ret);
-> +               if (ret != -EPROBE_DEFER)
-> +                       dev_err(&pdev->dev, "Failed to register sensor: %d\n",
-> +                               ret);
->                 goto err_sclk;
->         }
->
-> --
-> 2.17.1
->
+diff --git a/sound/soc/samsung/arndale.c b/sound/soc/samsung/arndale.c
+index d64602950cbd..6e6d67d6e0ab 100644
+--- a/sound/soc/samsung/arndale.c
++++ b/sound/soc/samsung/arndale.c
+@@ -174,7 +174,9 @@ static int arndale_audio_probe(struct platform_device *pdev)
+ 
+ 	ret = devm_snd_soc_register_card(card->dev, card);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "snd_soc_register_card() failed: %d\n", ret);
++		if (ret != -EPROBE_DEFER)
++			dev_err(&pdev->dev,
++				"snd_soc_register_card() failed: %d\n", ret);
+ 		goto err_put_of_nodes;
+ 	}
+ 	return 0;
+diff --git a/sound/soc/samsung/littlemill.c b/sound/soc/samsung/littlemill.c
+index 59904f44118b..2f2f83a8c23a 100644
+--- a/sound/soc/samsung/littlemill.c
++++ b/sound/soc/samsung/littlemill.c
+@@ -325,7 +325,7 @@ static int littlemill_probe(struct platform_device *pdev)
+ 	card->dev = &pdev->dev;
+ 
+ 	ret = devm_snd_soc_register_card(&pdev->dev, card);
+-	if (ret)
++	if (ret && ret != -EPROBE_DEFER)
+ 		dev_err(&pdev->dev, "snd_soc_register_card() failed: %d\n",
+ 			ret);
+ 
+diff --git a/sound/soc/samsung/lowland.c b/sound/soc/samsung/lowland.c
+index 098eefc764db..fcc7897ee7d0 100644
+--- a/sound/soc/samsung/lowland.c
++++ b/sound/soc/samsung/lowland.c
+@@ -183,7 +183,7 @@ static int lowland_probe(struct platform_device *pdev)
+ 	card->dev = &pdev->dev;
+ 
+ 	ret = devm_snd_soc_register_card(&pdev->dev, card);
+-	if (ret)
++	if (ret && ret != -EPROBE_DEFER)
+ 		dev_err(&pdev->dev, "snd_soc_register_card() failed: %d\n",
+ 			ret);
+ 
+diff --git a/sound/soc/samsung/odroid.c b/sound/soc/samsung/odroid.c
+index f0f5fa9c27d3..30c7e1bc2a30 100644
+--- a/sound/soc/samsung/odroid.c
++++ b/sound/soc/samsung/odroid.c
+@@ -311,7 +311,9 @@ static int odroid_audio_probe(struct platform_device *pdev)
+ 
+ 	ret = devm_snd_soc_register_card(dev, card);
+ 	if (ret < 0) {
+-		dev_err(dev, "snd_soc_register_card() failed: %d\n", ret);
++		if (ret != -EPROBE_DEFER)
++			dev_err(dev, "snd_soc_register_card() failed: %d\n",
++				ret);
+ 		goto err_put_clk_i2s;
+ 	}
+ 
+diff --git a/sound/soc/samsung/smdk_wm8994.c b/sound/soc/samsung/smdk_wm8994.c
+index 28f8be000aa1..8fa5f6b387ad 100644
+--- a/sound/soc/samsung/smdk_wm8994.c
++++ b/sound/soc/samsung/smdk_wm8994.c
+@@ -178,7 +178,7 @@ static int smdk_audio_probe(struct platform_device *pdev)
+ 
+ 	ret = devm_snd_soc_register_card(&pdev->dev, card);
+ 
+-	if (ret)
++	if (ret && ret != -EPROBE_DEFER)
+ 		dev_err(&pdev->dev, "snd_soc_register_card() failed:%d\n", ret);
+ 
+ 	return ret;
+diff --git a/sound/soc/samsung/smdk_wm8994pcm.c b/sound/soc/samsung/smdk_wm8994pcm.c
+index 2e3dc7320c62..6e44f7927852 100644
+--- a/sound/soc/samsung/smdk_wm8994pcm.c
++++ b/sound/soc/samsung/smdk_wm8994pcm.c
+@@ -118,7 +118,7 @@ static int snd_smdk_probe(struct platform_device *pdev)
+ 
+ 	smdk_pcm.dev = &pdev->dev;
+ 	ret = devm_snd_soc_register_card(&pdev->dev, &smdk_pcm);
+-	if (ret)
++	if (ret && ret != -EPROBE_DEFER)
+ 		dev_err(&pdev->dev, "snd_soc_register_card failed %d\n", ret);
+ 
+ 	return ret;
+diff --git a/sound/soc/samsung/snow.c b/sound/soc/samsung/snow.c
+index f075aae9561a..bebcf0a4d608 100644
+--- a/sound/soc/samsung/snow.c
++++ b/sound/soc/samsung/snow.c
+@@ -216,7 +216,9 @@ static int snow_probe(struct platform_device *pdev)
+ 
+ 	ret = devm_snd_soc_register_card(dev, card);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n", ret);
++		if (ret != -EPROBE_DEFER)
++			dev_err(&pdev->dev,
++				"snd_soc_register_card failed (%d)\n", ret);
+ 		return ret;
+ 	}
+ 
+diff --git a/sound/soc/samsung/speyside.c b/sound/soc/samsung/speyside.c
+index ea0d1ec67f01..8f175f204eb7 100644
+--- a/sound/soc/samsung/speyside.c
++++ b/sound/soc/samsung/speyside.c
+@@ -330,7 +330,7 @@ static int speyside_probe(struct platform_device *pdev)
+ 	card->dev = &pdev->dev;
+ 
+ 	ret = devm_snd_soc_register_card(&pdev->dev, card);
+-	if (ret)
++	if (ret && ret != -EPROBE_DEFER)
+ 		dev_err(&pdev->dev, "snd_soc_register_card() failed: %d\n",
+ 			ret);
+ 
+diff --git a/sound/soc/samsung/tm2_wm5110.c b/sound/soc/samsung/tm2_wm5110.c
+index 10ff14b856f2..043a287728b3 100644
+--- a/sound/soc/samsung/tm2_wm5110.c
++++ b/sound/soc/samsung/tm2_wm5110.c
+@@ -611,7 +611,8 @@ static int tm2_probe(struct platform_device *pdev)
+ 
+ 	ret = devm_snd_soc_register_card(dev, card);
+ 	if (ret < 0) {
+-		dev_err(dev, "Failed to register card: %d\n", ret);
++		if (ret != -EPROBE_DEFER)
++			dev_err(dev, "Failed to register card: %d\n", ret);
+ 		goto dai_node_put;
+ 	}
+ 
+diff --git a/sound/soc/samsung/tobermory.c b/sound/soc/samsung/tobermory.c
+index fdce28cc26c4..1aa3fdb4b152 100644
+--- a/sound/soc/samsung/tobermory.c
++++ b/sound/soc/samsung/tobermory.c
+@@ -229,7 +229,7 @@ static int tobermory_probe(struct platform_device *pdev)
+ 	card->dev = &pdev->dev;
+ 
+ 	ret = devm_snd_soc_register_card(&pdev->dev, card);
+-	if (ret)
++	if (ret && ret != -EPROBE_DEFER)
+ 		dev_err(&pdev->dev, "snd_soc_register_card() failed: %d\n",
+ 			ret);
+ 
+-- 
+2.17.1
+
