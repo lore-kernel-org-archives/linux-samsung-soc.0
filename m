@@ -6,77 +6,79 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E675EC3F2D1
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Feb 2020 11:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B711C3F2D2
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Feb 2020 11:33:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B770F246A0
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Feb 2020 11:32:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A725246AA
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 28 Feb 2020 11:33:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1582889561;
-	bh=gu1SuBtHeFdUQHflwuQTPr6nCTcIGtS0alysZTaXvFo=;
+	s=default; t=1582889599;
+	bh=ErF8KMAmkhXLP9vDIH6/pp8p/iaawQAH1UW9Eef5lFk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Kwt0bful+YU7d1NtYhrkaIop2RPV7IG7BlvhMythKsUzTBfZGqKk7Fh4CFfko4mSr
-	 CpmYrFe8BgWb0qpQmwBcSosD2gKm2ZvOxBE1OZDuf46Lr5qqdKDSQzzz1eA3cEnNUb
-	 Hbc3hrBgdfGX+Kxd1ItF6S0WJ5o8ElmhqwCaPO+Q=
+	b=xFu+F1ouEJm+dIGr8gey5vc5MyYnu4qygfbBRhTmENOR9NypwEVzdJDXn3MxLd0kF
+	 kAgb3yveq2nT+ybqjb/Dr2fdyIMSwagJ1hEel00wg2xch0jn3mVt/TiatfZIunQPWL
+	 Zk27bTM1foMqm8bpuFaOJzckAqsvQmTrQMJM7h50=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726063AbgB1Lcl (ORCPT
+        id S1725769AbgB1LdT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 28 Feb 2020 06:32:41 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:45182 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725827AbgB1Lcl (ORCPT
+        Fri, 28 Feb 2020 06:33:19 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:33454 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725933AbgB1LdS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 28 Feb 2020 06:32:41 -0500
-Received: by mail-ed1-f68.google.com with SMTP id h62so1024979edd.12;
-        Fri, 28 Feb 2020 03:32:39 -0800 (PST)
+        Fri, 28 Feb 2020 06:33:18 -0500
+Received: by mail-ed1-f66.google.com with SMTP id c62so1446088edf.0;
+        Fri, 28 Feb 2020 03:33:18 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=WwHkn00+dJyzFl79Z3wZZ7U758NGAlMAHel80SC1KKA=;
-        b=b5m9ZcSvlAVgIprC8rZGqDdUCBk9Y9I0v0o0ZBhHknGPOf/Y3498RouFvDQQ6cBrq6
-         aT1zn1dzyDz9Nq3nSr64lkv3BlE5cQ94LKH3FXUM8rIgXh3GOup+iU4+XTO5Zlrd3O3i
-         ebOjg2EzvNAFLzIHDFiU3sLiXrGR/7le9gMCW7CwS0At43ihKnnfHrU29pF1Wr8GnygL
-         F2z3ikmYt1NCuDnx6WRZGJDwMqzKH1+fWdsNPTP1MUJqVcbn5Kovu9qiuhZEs79XnVlx
-         wLwZDpjPtRAA6EpjNdOEpxRMCKMc69+uTTAi82K+MUm+4kDxKY5CHWDxbO+jrAvattiO
-         CxhQ==
-X-Gm-Message-State: APjAAAXqcO96NjUQbDa0QnOfuo6IvIflw6FcR6pzdnCbNSRLy1zOIWX3
-        Q6ivJZMQaphnu2wKojo2mGu6FqAgEKw=
-X-Google-Smtp-Source: APXvYqyld2+YaUioJrINN5LT/V2YT0770Evql77F4sX6YZe/MzPiF6b7LkLpyKcRgbsFkNJalUHZ/Q==
-X-Received: by 2002:a17:906:5c10:: with SMTP id e16mr3651279ejq.10.1582889559109;
-        Fri, 28 Feb 2020 03:32:39 -0800 (PST)
+        bh=nnPLD2kwXHtOQ0PS3CP4V1/yZI3WoezcfPgFUZcg6R4=;
+        b=KF2kxJza+AkIGArL3ACdkNQp+bRjWFAIdwHP0aJK+NYDV18pW1OK6shGOegXiwYHTJ
+         EVjFRFwJ9kI+UHcRBwrC16Jk4EnWw37n6/cuImqD6Ziq0TZz4sAFKH7TZEV817dSB9ci
+         8EHDgW4iC2b6zuatm3/H7da+1alQ+qjjisS1IqLamBUx+hMM7DVe+e2jvdhnhnEd10Ii
+         HHDyf+4aLN4ONeMHrxWRSmX1A/veLEt5K9zrJ3tWEcZCCdjXT0/0nvTyE8VnmH2A5TLC
+         nH5fgqZoFOq+UJMF1E0FEnzMqH5QCW/8Eu/Y3b+7SgzNQdUZhhd+4Tuhd5OwfNFJz62i
+         4efw==
+X-Gm-Message-State: APjAAAWLSwNCvt7TnkohkgtyQhV7EZjufiFzW3hTXO2ANJzUM8G9+spu
+        M/aVlRulgFpwfSZxrYWcneg=
+X-Google-Smtp-Source: APXvYqzx46SGHanL4lMm5q8SuA/FB6FbkYrdqwJkUQducRP6B+eYR5HKx0olozo5cmyHe8LviKHDjg==
+X-Received: by 2002:a17:906:ccc2:: with SMTP id ot2mr3674182ejb.194.1582889597424;
+        Fri, 28 Feb 2020 03:33:17 -0800 (PST)
 Received: from pi3 ([194.230.155.125])
-        by smtp.googlemail.com with ESMTPSA id r23sm531736edp.15.2020.02.28.03.32.38
+        by smtp.googlemail.com with ESMTPSA id x13sm353864ejs.27.2020.02.28.03.33.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2020 03:32:38 -0800 (PST)
-Date:   Fri, 28 Feb 2020 12:32:36 +0100
+        Fri, 28 Feb 2020 03:33:16 -0800 (PST)
+Date:   Fri, 28 Feb 2020 12:33:14 +0100
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Minas Harutyunyan <hminas@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] usb: dwc2: Silence warning about supplies during
- deferred probe
-Message-ID: <20200228113236.GD9458@pi3>
-References: <CGME20200228092607eucas1p20faf7fdabdf52586f18e8781e371f04d@eucas1p2.samsung.com>
- <20200228092557.31429-1-m.szyprowski@samsung.com>
+Cc:     linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Subject: Re: [PATCH] iio: adc: exynos: Silence warning about regulators
+ during deferred probe
+Message-ID: <20200228113314.GE9458@pi3>
+References: <CGME20200228092134eucas1p226ebb0e76f2a6c82b62489ae3a0379bd@eucas1p2.samsung.com>
+ <20200228092121.15918-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200228092557.31429-1-m.szyprowski@samsung.com>
+In-Reply-To: <20200228092121.15918-1-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Feb 28, 2020 at 10:25:57AM +0100, Marek Szyprowski wrote:
+On Fri, Feb 28, 2020 at 10:21:21AM +0100, Marek Szyprowski wrote:
 > Don't confuse user with meaningless warning about the failure in getting
-> supplies in case of deferred probe.
+> regulators in case of deferred probe.
 > 
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->  drivers/usb/dwc2/platform.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  drivers/iio/adc/exynos_adc.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 
 Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
