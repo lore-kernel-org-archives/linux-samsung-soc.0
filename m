@@ -2,90 +2,121 @@ Return-Path: <SRS0=rNWl=4S=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 531A9C3F2CE
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  1 Mar 2020 12:03:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35797C3F2D1
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  1 Mar 2020 21:20:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AFFF21D56
-	for <linux-samsung-soc@archiver.kernel.org>; Sun,  1 Mar 2020 12:03:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1583064216;
-	bh=Q7jbPDNZgrKgJqA2TRrzbQMV2xFoOgaC5H2v+Xd25Pk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=zudpxHmtTpN2LhvuK/Q4SmCdBsjtMcgVbyhKHb1FUhX426oVo10og4FvW6mVNpo3i
-	 kkRJH7DIjYaCqZdPdzaHYxhQHbtKHJhF7tkgaN/S0ct6c7iZT7f73QYoPffYmAh9yU
-	 7JDvOyC1b/kb+bn4kJjKRpVipZm8KrmUIenpz13w=
+	by mail.kernel.org (Postfix) with ESMTP id 0BCF1246BB
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  1 Mar 2020 21:20:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s4Zf2t2M"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725887AbgCAMDf (ORCPT
+        id S1726658AbgCAVUf (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 1 Mar 2020 07:03:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41900 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725787AbgCAMDf (ORCPT
+        Sun, 1 Mar 2020 16:20:35 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39308 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726366AbgCAVUf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 1 Mar 2020 07:03:35 -0500
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77D852087F;
-        Sun,  1 Mar 2020 12:03:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583064215;
-        bh=Q7jbPDNZgrKgJqA2TRrzbQMV2xFoOgaC5H2v+Xd25Pk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=YPf5GoxYfXGOa7gIlX4E9hXX/HME9aX4ooqhLOMMRal/lpTbPIE7egItfYvxnrGFB
-         WrrAdWUN4TrlBs3QkNkspWvvhWr5/680dlhfCsbKkGqF9B2/NNpR9ZHEpoG3V5kG1m
-         0JQIRlsRtDk00sotwa5k1tW0GFUKM1B/s8ppuD34=
-Date:   Sun, 1 Mar 2020 12:03:30 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Subject: Re: [PATCH] iio: adc: exynos: Silence warning about regulators
- during deferred probe
-Message-ID: <20200301120330.3553b6e5@archlinux>
-In-Reply-To: <20200228113314.GE9458@pi3>
-References: <CGME20200228092134eucas1p226ebb0e76f2a6c82b62489ae3a0379bd@eucas1p2.samsung.com>
-        <20200228092121.15918-1-m.szyprowski@samsung.com>
-        <20200228113314.GE9458@pi3>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sun, 1 Mar 2020 16:20:35 -0500
+Received: by mail-pf1-f196.google.com with SMTP id l7so4533834pff.6;
+        Sun, 01 Mar 2020 13:20:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qSE/dLT1/R1TdrIzig5uAH8kZs4aY53Q6FYuH0pUIUk=;
+        b=s4Zf2t2MMt9IzcUlDUUfEqdmZpcN4tLZUAGpHUJ8zKnuw1EVVfQ/JHirIAIlRMDawn
+         mMlMZpbX43B8oPQcTf2btArXgRnDiqq+DzJuv2xdZVpvgt6CiNwX9cMAxo0M6fMhSzqw
+         VswjwJh0v9+r/QO+YVllvuLOTRrLMnv7gelQF7Jnz3POAYwTS+Lxr0/JSUuj9+pLEsvd
+         OqPl/JewYqSoYQnnLR62c2/gNsY083N8DGDMLGBLKLCf4H0aoU05qDUaSc9puM60YrHg
+         u574RD/o+Bvr7HayNpYrmG6x1BbHMGrkVcR8YuxySJSF9wb5dEBilqhpZd9jhEtILqul
+         tGqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qSE/dLT1/R1TdrIzig5uAH8kZs4aY53Q6FYuH0pUIUk=;
+        b=kSnqqRAxRrzJbl1p6ZJTDvABFDBfLgohcC6hHeJRs5lmRHBHHYX3gGvVLwY/W7CXqC
+         q7amGyOXbt6eTDkAoBZhx4QayWiIIVu5WIhz3ZoDtRJ4E5DRcMJq/SL4vzQgMj+2oWL3
+         nnn9Tr72xutEraIIMryGL3vgSjufDN6Ol/BAc59hlrz0WYDUu1+V/YSu77YZdgWu9AmE
+         UKQDqZjSVEHco+wacBMuPCo9KJ/jLSmyNS+21lHT95RFgd3M5uXS5Q8HmcQMz+6spKvj
+         ETot+6fWw5YXly3T+KfOWF4WopMdMvU1q/yL4ca+iTM76VSSND/EDSr3yjc420bcWFHQ
+         I2nw==
+X-Gm-Message-State: APjAAAVWNGPJehhyqlpstK3XEnFUsz1p4d4aJZ8vBPsagBJo62iVuFSu
+        3OII1CFF5YhJ51XqolI7QgOc/XSE
+X-Google-Smtp-Source: APXvYqym95seeMXORpjNvDAtUfGgiQZ4H2PTVGNx06uulZYbhJD58loKpNqvBWcfDllmtRSV3tT+kw==
+X-Received: by 2002:a62:d408:: with SMTP id a8mr14201601pfh.99.1583097633454;
+        Sun, 01 Mar 2020 13:20:33 -0800 (PST)
+Received: from localhost.localdomain ([103.51.74.208])
+        by smtp.gmail.com with ESMTPSA id u19sm4547686pgf.11.2020.03.01.13.20.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Mar 2020 13:20:32 -0800 (PST)
+From:   Anand Moon <linux.amoon@gmail.com>
+To:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCHv2 0/3] Add support for suspend clk for Exynos5422 SoC
+Date:   Sun,  1 Mar 2020 21:20:15 +0000
+Message-Id: <20200301212019.2248-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, 28 Feb 2020 12:33:14 +0100
-Krzysztof Kozlowski <krzk@kernel.org> wrote:
+Seried build and tested on linux next-20200228.
 
-> On Fri, Feb 28, 2020 at 10:21:21AM +0100, Marek Szyprowski wrote:
-> > Don't confuse user with meaningless warning about the failure in getting
-> > regulators in case of deferred probe.
-> > 
-> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > ---
-> >  drivers/iio/adc/exynos_adc.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)  
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+This patch series tries to enable suspend clk using
+exynos dwc3 driver, for this I have added new
+compatible string "samsung,exynos5420-dwusb3"
+so that we could add new suspend clk in addition
+to the core clk. exynos dwc3 driver will help
+enable/disable these clk.
 
-Applied to the togreg branch of iio.git and pushed out
-as testing for the autobuilders to play with it.
+This series PatchV2.
+--Added the clk names for exynos5420 compatible.
+--Added missing support for Exyno5410 SoC suspend clock.
+--Update the commit message to support suspend clk usages.
 
-Thanks,
+---
+Long time ago I tried to add suspend clk for dwc3 phy
+which was wrong appoch, see below.
 
-Jonathan
+[0] https://lore.kernel.org/patchwork/patch/837635/
+[1] https://lore.kernel.org/patchwork/patch/837636/
 
-> 
-> Best regards,
-> Krzysztof
-> 
+Previous changes V3 (It was send with wrong Patch version)
+[2] https://patchwork.kernel.org/cover/11373043/
+
+-Anand
+
+Anand Moon (3):
+  devicetree: bindings: exynos: Add new compatible for Exynos5420 dwc3
+    clocks support
+  ARM: dts: exynos: Add missing usbdrd3 suspend clk
+  usb: dwc3: exynos: Add support for Exynos5422 suspend clk
+
+ Documentation/devicetree/bindings/usb/exynos-usb.txt | 5 ++++-
+ arch/arm/boot/dts/exynos5410.dtsi                    | 8 ++++----
+ arch/arm/boot/dts/exynos5420.dtsi                    | 8 ++++----
+ arch/arm/boot/dts/exynos54xx.dtsi                    | 4 ++--
+ drivers/usb/dwc3/dwc3-exynos.c                       | 9 +++++++++
+ 5 files changed, 23 insertions(+), 11 deletions(-)
+
+-- 
+2.25.1
 
