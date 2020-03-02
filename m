@@ -2,144 +2,347 @@ Return-Path: <SRS0=h/HI=4T=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C1AC3F2D2
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Mar 2020 05:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E175C3F2D7
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Mar 2020 14:26:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8619246B6
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Mar 2020 05:21:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDF7221775
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  2 Mar 2020 14:26:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fh2lr15G"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rDTN3crx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725781AbgCBFVf (ORCPT
+        id S1727053AbgCBO0e (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 2 Mar 2020 00:21:35 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:57478 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725773AbgCBFVe (ORCPT
+        Mon, 2 Mar 2020 09:26:34 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:54481 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727032AbgCBO0e (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 2 Mar 2020 00:21:34 -0500
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200302052132epoutp03645c7c6c78ef16090560ae48d1a9128a~4ZSg1fgW40052200522epoutp03J
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Mar 2020 05:21:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200302052132epoutp03645c7c6c78ef16090560ae48d1a9128a~4ZSg1fgW40052200522epoutp03J
+        Mon, 2 Mar 2020 09:26:34 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200302142627euoutp0183eb5a29cc0baae79b0c5913447a18c0~4guSvyFAr1320113201euoutp01z
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Mar 2020 14:26:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200302142627euoutp0183eb5a29cc0baae79b0c5913447a18c0~4guSvyFAr1320113201euoutp01z
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1583126492;
-        bh=46U7FU8gZqtWA3A/O3G8YSmsPVOISmwZ93BWStiusDo=;
+        s=mail20170921; t=1583159187;
+        bh=FCqoYEJcXWnvha6Z3JswL0lmTOgpCoa7lCnTWgtZMW8=;
         h=From:To:Cc:Subject:Date:References:From;
-        b=fh2lr15GPGDIvOHw0mABhefnfErn3EWm/7q3K9m++pPH/crfnvMfLDoVpYJvPY5RU
-         kFQay9n55gRp48BroI+rNfriNZvy6ju3YRry+2uZOTKCQOWg2dQ6pxVV7b6OkDWgDR
-         6DN0FF9ETBG908gH+5ZlZJaNjh2F9EuT5uXXHVkc=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200302052132epcas1p2faf1c9648f2f45967e1150ede67501c4~4ZSgrnnuO1418414184epcas1p2M;
-        Mon,  2 Mar 2020 05:21:32 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.152]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 48W7m95QvQzMqYkq; Mon,  2 Mar
-        2020 05:21:29 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        73.3F.48019.7D79C5E5; Mon,  2 Mar 2020 14:21:27 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200302052126epcas1p21d95dcf8a7e458a2332f0532cc2f6e3e~4ZSbQKrkC1172211722epcas1p2T;
-        Mon,  2 Mar 2020 05:21:26 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200302052126epsmtrp17b372e373e82f0798dab0a384e6506a3~4ZSbPTtfr1145811458epsmtrp11;
-        Mon,  2 Mar 2020 05:21:26 +0000 (GMT)
-X-AuditID: b6c32a38-23fff7000001bb93-a0-5e5c97d74cd3
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        03.D4.06569.6D79C5E5; Mon,  2 Mar 2020 14:21:26 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.113.221.211]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200302052126epsmtip2a547560c39c86dc5d6cd0f31c4de63fa~4ZSbCr3-Z1188611886epsmtip2O;
-        Mon,  2 Mar 2020 05:21:26 +0000 (GMT)
-From:   Inki Dae <inki.dae@samsung.com>
-To:     airlied@linux.ie
-Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Subject: [GIT PULL] exynos-drm-fixes
-Date:   Mon,  2 Mar 2020 14:25:52 +0900
-Message-Id: <1583126752-30477-1-git-send-email-inki.dae@samsung.com>
-X-Mailer: git-send-email 2.7.4
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPKsWRmVeSWpSXmKPExsWy7bCmru716TFxBufeMFv0njvJZHHl63s2
-        ixnn9zE5MHts//aA1eN+93Emj8+b5AKYo7JtMlITU1KLFFLzkvNTMvPSbZW8g+Od403NDAx1
-        DS0tzJUU8hJzU22VXHwCdN0yc4AWKSmUJeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIK
-        LAv0ihNzi0vz0vWS83OtDA0MjEyBChOyM47MO8ZWMJGnYu+HbpYGxl6uLkYODgkBE4m9txK7
-        GLk4hAR2MEps3PCXGcL5xChx4fBRdgjnG6NE26JTQA4nWEfz8rmsEIm9jBL3Ti9ng3C+MEos
-        f9rMBlLFJqAqMXHFfTBbREBE4viyv2A2s4CbxJ+lZ1lAdgsLqEgcmMgHEmYBKt+4qQGshFfA
-        RWLLmkPMEMvkJG6e6wQ7SULgJqvElb43UFe4SHyZdpgRwhaWeHV8C1RcSuJlfxs7REMzo8TE
-        GaeZIJwORom7j6+zQFQZS+xfOpkJ5ApmAU2J9bv0IcKKEjt/z2WEOJRP4t3XHlZIIPFKdLQJ
-        QZQoSRy7eANqr4TEhSUT2SBsD4mrSyEhJCQQK/Gjs5FxAqPsLIQFCxgZVzGKpRYU56anFhsW
-        mCDH0iZGcOLRstjBuOeczyFGAQ5GJR7eHc+j44RYE8uKK3MPMUpwMCuJ8PpyAoV4UxIrq1KL
-        8uOLSnNSiw8xmgKDbyKzlGhyPjAp5pXEG5oaGRsbW5gYmpkaGiqJ8z6M1IwTEkhPLEnNTk0t
-        SC2C6WPi4JRqYNSzWsh/xEHlvU6pbtW0yZ9LTt4+phv6sp/1v0xTaFrl+ykcX/ds289i9ES/
-        eq9uw+kvQk1Kye+mcD69OSXsZVAf31k/R8vudDaGZRrHPy00yDH+5D61SKxhUQan0+J4Jdt7
-        C+yYDaUCY7TUGRxkm6I8zbefzazY/vr2bBYZ7ZBJ+an151KPKLEUZyQaajEXFScCAE9c/shS
-        AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFJMWRmVeSWpSXmKPExsWy7bCSvO616TFxBvf3Clr0njvJZHHl63s2
-        ixnn9zE5MHts//aA1eN+93Emj8+b5AKYo7hsUlJzMstSi/TtErgyjsw7xlYwkadi74dulgbG
-        Xq4uRk4OCQETieblc1m7GLk4hAR2M0pc+rOKqYuRAyghIbFlKweEKSxx+HAxSLmQwCdGiSXr
-        jUBsNgFViYkr7rOB2CICIhLHl/0Fs5kFPCTe71nNDtIqLKAicWAiH0iYBah846YGsBJeAReJ
-        LWsOMUNcICdx81wn8wRGngWMDKsYJVMLinPTc4sNC4zyUsv1ihNzi0vz0vWS83M3MYJDQEtr
-        B+OJE/GHGAU4GJV4eHc8j44TYk0sK67MPcQowcGsJMLrywkU4k1JrKxKLcqPLyrNSS0+xCjN
-        waIkziuffyxSSCA9sSQ1OzW1ILUIJsvEwSnVwKjxa+PbIFbXmIkppsKHZJUdTOaXJmg+uGzQ
-        vTlDMUUyuEC9QXrft1smyq/eChUXfGFdFC30aqlzKWPT+qnLOM/s8H1RrvPzwqSLZ4/rMtYc
-        nzRV3k9D+2ND4J0vFyWPyBVJPX4zoyCxmmf5nEuibNeOvNWUfunb132J63rTzg33rjI5yz09
-        fV6JpTgj0VCLuag4EQAas55s/QEAAA==
-X-CMS-MailID: 20200302052126epcas1p21d95dcf8a7e458a2332f0532cc2f6e3e
+        b=rDTN3crx0HVwi9INFOpuLCVsA8M0WdDiCJLU+npd/3811rfjHNupCnaGPNY07kKFh
+         dfTezCVOGQpMUbjYCl6ORPGf8/9z5J4tZO6KDgBPV3IHFbvwsQTxhMkwx1rNod18S3
+         hFaiflnkiW+HCk74Lt6K7NA6Mpg0Bo3B5RiMHqvc=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200302142627eucas1p2d7e14105a14172b32f8329188e83ba7a~4guSdGvzb0112601126eucas1p2d;
+        Mon,  2 Mar 2020 14:26:27 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 31.D3.60679.3971D5E5; Mon,  2
+        Mar 2020 14:26:27 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200302142626eucas1p25b7aec18264b1483fab9cceb86989aa8~4guSDepPD2743227432eucas1p2u;
+        Mon,  2 Mar 2020 14:26:26 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200302142626eusmtrp2ac9c995f2f4ff5ba97b49fd36ef7d86a~4guSCuacg1646016460eusmtrp2c;
+        Mon,  2 Mar 2020 14:26:26 +0000 (GMT)
+X-AuditID: cbfec7f4-0cbff7000001ed07-82-5e5d1793293e
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 81.C4.07950.2971D5E5; Mon,  2
+        Mar 2020 14:26:26 +0000 (GMT)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200302142626eusmtip1d93770a14923d6a1571de74b07f4d3e4~4guROo6By0637906379eusmtip1X;
+        Mon,  2 Mar 2020 14:26:26 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>
+Subject: [PATCH] drm/bridge: analogix_dp: Split bind() into probe() and real
+ bind()
+Date:   Mon,  2 Mar 2020 15:26:15 +0100
+Message-Id: <20200302142615.14947-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEKsWRmVeSWpSXmKPExsWy7djPc7qTxWPjDL7uELO4te4cq8XGGetZ
+        La58fc9m8f/Ra1aLuZNqLSbdn8BicfX7S2aLFV9mslucfHOVxaJz4hJ2i08P/jNbzDi/j8li
+        7ZG77BaH+qItZkx+yebA7/H+Riu7x85Zd9k9ZnfMZPU4MeESk8f97uNMHpuX1Hv8nbWfxaNv
+        yypGjwO9k1k8tl+bx+zxeZNcAHcUl01Kak5mWWqRvl0CV8acC8fYCnrtK+avPcfWwPjAtIuR
+        k0NCwESia8tF1i5GLg4hgRWMEsueHWKBcL4wSuzsPsgO4XxmlPg8Yxs7TMuVzw+YQGwhgeWM
+        En+mqMF1TNj2khkkwSZgKNH1tosNxBYRyJH41PGGEaSIWaCVReJz41qwScICoRI7zr4HK2IR
+        UJU4d+ci2FReAVuJz1+PskFsk5dYveEAM0izhMAudomON9cYIRIuEjeuTWeFsIUlXh3fAnWe
+        jMT/nfOZIBqaGSUenlvLDuH0MEpcbpoB1W0tcefcL6AVHEA3aUqs36UPYkoIOEp87fWGMPkk
+        brwVBClmBjInbZvODBHmlehoE4KYoSYx6/g6uK0HL1xihrA9JO6cXMEMCaBYieW3L7JOYJSb
+        hbBqASPjKkbx1NLi3PTUYqO81HK94sTc4tK8dL3k/NxNjMCUdPrf8S87GHf9STrEKMDBqMTD
+        G8AcGyfEmlhWXJl7iFGCg1lJhNeXMzpOiDclsbIqtSg/vqg0J7X4EKM0B4uSOK/xopexQgLp
+        iSWp2ampBalFMFkmDk6pBkZ2DdNlbEmV1oyswU2O6UvVmmdnn9Fo3X2OR70q7tMH9biEdf+b
+        lk7Ysz7Z3/7/Ku0KDR5dVX3tjxkVG6/nWopmGCa8clqpMnHOw6wDLR3TRLzvO/zb59X0Kq5w
+        +ZU/F5tapY49/Vsp9t9U/OOTnWbcz0V+XS08up9xW1Y0qzvDnja/gzGv0pVYijMSDbWYi4oT
+        Aa7ydrtFAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgkeLIzCtJLcpLzFFi42I5/e/4Xd1J4rFxBlPmmVvcWneO1WLjjPWs
+        Fle+vmez+P/oNavF3Em1FpPuT2CxuPr9JbPFii8z2S1OvrnKYtE5cQm7xacH/5ktZpzfx2Sx
+        9shddotDfdEWMya/ZHPg93h/o5XdY+esu+wesztmsnqcmHCJyeN+93Emj81L6j3+ztrP4tG3
+        ZRWjx4HeySwe26/NY/b4vEkugDtKz6Yov7QkVSEjv7jEVina0MJIz9DSQs/IxFLP0Ng81srI
+        VEnfziYlNSezLLVI3y5BL2POhWNsBb32FfPXnmNrYHxg2sXIySEhYCJx5fMDJhBbSGApo8TT
+        PbUQcRmJk9MaWCFsYYk/17rYuhi5gGo+MUosn/8KLMEmYCjR9RYkwckhIpAn8fBwJxNIEbNA
+        L4tE++cTYAlhgWCJjv1fWUBsFgFViXN3LoJt4xWwlfj89SgbxAZ5idUbDjBPYORZwMiwilEk
+        tbQ4Nz232EivODG3uDQvXS85P3cTIzAWth37uWUHY9e74EOMAhyMSjy8Pxhi44RYE8uKK3MP
+        MUpwMCuJ8PpyRscJ8aYkVlalFuXHF5XmpBYfYjQFWj6RWUo0OR8Yp3kl8YamhuYWlobmxubG
+        ZhZK4rwdAgdjhATSE0tSs1NTC1KLYPqYODilGhjzRFu6b/3+oP2lyXafze+qqlMb/WO8dm5v
+        +mzM+T2tyVm+3DkltWG64bSLyy89EFisLDV9ndPGkEMl65iivdZ+msXZ235Def8q/zMynM93
+        eh5JPP1Pu7D1H9NWObYJB66/92z7/WNiZhGLprTREbkbgU25PzNymNOtpG+u5bhQrP/q18va
+        U9FKLMUZiYZazEXFiQAxIk4JmwIAAA==
+X-CMS-MailID: 20200302142626eucas1p25b7aec18264b1483fab9cceb86989aa8
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200302052126epcas1p21d95dcf8a7e458a2332f0532cc2f6e3e
-References: <CGME20200302052126epcas1p21d95dcf8a7e458a2332f0532cc2f6e3e@epcas1p2.samsung.com>
+X-RootMTR: 20200302142626eucas1p25b7aec18264b1483fab9cceb86989aa8
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200302142626eucas1p25b7aec18264b1483fab9cceb86989aa8
+References: <CGME20200302142626eucas1p25b7aec18264b1483fab9cceb86989aa8@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Dave,
+Analogix_dp driver acquires all its resources in ->bind() callback, what
+is a bit against the driver component based approach, where driver
+initialization is split into probe(), where all resources are gathered, and
+bind(), where objects are created and compound driver is initialized.
+Extract resource related operations to analogix_dp_probe() and
+analogix_dp_remove() and call them before/after registration of the device
+components from the main Exynos and Rockchip DP drivers.
 
-   Just three fixups - fix a kernel oops and regulator warning
-   at booting time, and correct to print out an error message.
+This fixes multiple tries of DRM compound driver bind() when example when
+DP PHY driver is not yet loaded/probed():
 
-   Please kindly let me know if there is any problem.
+[drm] Exynos DRM: using 14400000.fimd device for DMA mapping operations
+exynos-drm exynos-drm: bound 14400000.fimd (ops fimd_component_ops [exynosdrm])
+exynos-drm exynos-drm: bound 14450000.mixer (ops mixer_component_ops [exynosdrm])
+exynos-dp 145b0000.dp-controller: no DP phy configured
+exynos-drm exynos-drm: failed to bind 145b0000.dp-controller (ops exynos_dp_ops [exynosdrm]): -517
+exynos-drm exynos-drm: master bind failed: -517
+...
+[drm] Exynos DRM: using 14400000.fimd device for DMA mapping operations
+exynos-drm exynos-drm: bound 14400000.fimd (ops hdmi_enable [exynosdrm])
+exynos-drm exynos-drm: bound 14450000.mixer (ops hdmi_enable [exynosdrm])
+exynos-drm exynos-drm: bound 145b0000.dp-controller (ops hdmi_enable [exynosdrm])
+exynos-drm exynos-drm: bound 14530000.hdmi (ops hdmi_enable [exynosdrm])
+[drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+Console: switching to colour frame buffer device 170x48
+exynos-drm exynos-drm: fb0: exynosdrmfb frame buffer device
+[drm] Initialized exynos 1.1.0 20180330 for exynos-drm on minor 1
+...
 
-Thanks,
-Inki Dae
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ .../drm/bridge/analogix/analogix_dp_core.c    | 33 ++++++++++++-------
+ drivers/gpu/drm/exynos/exynos_dp.c            | 15 ++++++---
+ .../gpu/drm/rockchip/analogix_dp-rockchip.c   | 15 +++++----
+ include/drm/bridge/analogix_dp.h              |  5 +--
+ 4 files changed, 44 insertions(+), 24 deletions(-)
 
-The following changes since commit f091bf39700dd086ab244c823f389556fed0c513:
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index dfb59a5fefea..a89a03b66bf2 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -1646,8 +1646,7 @@ static ssize_t analogix_dpaux_transfer(struct drm_dp_aux *aux,
+ }
+ 
+ struct analogix_dp_device *
+-analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
+-		 struct analogix_dp_plat_data *plat_data)
++analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct analogix_dp_device *dp;
+@@ -1750,22 +1749,30 @@ analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
+ 					irq_flags, "analogix-dp", dp);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to request irq\n");
+-		goto err_disable_pm_runtime;
++		return ERR_PTR(ret);
+ 	}
+ 	disable_irq(dp->irq);
+ 
++	return dp;
++}
++EXPORT_SYMBOL_GPL(analogix_dp_probe);
++
++int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
++{
++	int ret;
++
+ 	dp->drm_dev = drm_dev;
+ 	dp->encoder = dp->plat_data->encoder;
+ 
+ 	dp->aux.name = "DP-AUX";
+ 	dp->aux.transfer = analogix_dpaux_transfer;
+-	dp->aux.dev = &pdev->dev;
++	dp->aux.dev = dp->dev;
+ 
+ 	ret = drm_dp_aux_register(&dp->aux);
+ 	if (ret)
+-		return ERR_PTR(ret);
++		return ret;
+ 
+-	pm_runtime_enable(dev);
++	pm_runtime_enable(dp->dev);
+ 
+ 	ret = analogix_dp_create_bridge(drm_dev, dp);
+ 	if (ret) {
+@@ -1773,13 +1780,12 @@ analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
+ 		goto err_disable_pm_runtime;
+ 	}
+ 
+-	return dp;
++	return 0;
+ 
+ err_disable_pm_runtime:
++	pm_runtime_disable(dp->dev);
+ 
+-	pm_runtime_disable(dev);
+-
+-	return ERR_PTR(ret);
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(analogix_dp_bind);
+ 
+@@ -1796,10 +1802,15 @@ void analogix_dp_unbind(struct analogix_dp_device *dp)
+ 
+ 	drm_dp_aux_unregister(&dp->aux);
+ 	pm_runtime_disable(dp->dev);
+-	clk_disable_unprepare(dp->clock);
+ }
+ EXPORT_SYMBOL_GPL(analogix_dp_unbind);
+ 
++void analogix_dp_remove(struct analogix_dp_device *dp)
++{
++	clk_disable_unprepare(dp->clock);
++}
++EXPORT_SYMBOL_GPL(analogix_dp_remove);
++
+ #ifdef CONFIG_PM
+ int analogix_dp_suspend(struct analogix_dp_device *dp)
+ {
+diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
+index 4785885c0f4f..558b78e8cc32 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp.c
++++ b/drivers/gpu/drm/exynos/exynos_dp.c
+@@ -184,13 +184,11 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
+ 
+ 	dp->plat_data.encoder = encoder;
+ 
+-	dp->adp = analogix_dp_bind(dev, dp->drm_dev, &dp->plat_data);
+-	if (IS_ERR(dp->adp)) {
++	ret = analogix_dp_bind(dp->adp, dp->drm_dev);
++	if (ret)
+ 		dp->encoder.funcs->destroy(&dp->encoder);
+-		return PTR_ERR(dp->adp);
+-	}
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static void exynos_dp_unbind(struct device *dev, struct device *master,
+@@ -250,12 +248,19 @@ static int exynos_dp_probe(struct platform_device *pdev)
+ 	dp->ptn_bridge = bridge;
+ 
+ out:
++	dp->adp = analogix_dp_probe(dev, &dp->plat_data);
++	if (IS_ERR(dp->adp))
++		return PTR_ERR(dp->adp);
++
+ 	return component_add(&pdev->dev, &exynos_dp_ops);
+ }
+ 
+ static int exynos_dp_remove(struct platform_device *pdev)
+ {
++	struct exynos_dp_device *dp = platform_get_drvdata(pdev);
++
+ 	component_del(&pdev->dev, &exynos_dp_ops);
++	analogix_dp_remove(dp->adp);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+index f38f5e113c6b..b85cf2582864 100644
+--- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
++++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+@@ -349,11 +349,9 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
+ 	dp->plat_data.power_off = rockchip_dp_powerdown;
+ 	dp->plat_data.get_modes = rockchip_dp_get_modes;
+ 
+-	dp->adp = analogix_dp_bind(dev, dp->drm_dev, &dp->plat_data);
+-	if (IS_ERR(dp->adp)) {
+-		ret = PTR_ERR(dp->adp);
++	ret = analogix_dp_bind(dp->adp, drm_dev);
++	if (ret)
+ 		goto err_cleanup_encoder;
+-	}
+ 
+ 	return 0;
+ err_cleanup_encoder:
+@@ -368,8 +366,6 @@ static void rockchip_dp_unbind(struct device *dev, struct device *master,
+ 
+ 	analogix_dp_unbind(dp->adp);
+ 	dp->encoder.funcs->destroy(&dp->encoder);
+-
+-	dp->adp = ERR_PTR(-ENODEV);
+ }
+ 
+ static const struct component_ops rockchip_dp_component_ops = {
+@@ -402,12 +398,19 @@ static int rockchip_dp_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, dp);
+ 
++	dp->adp = analogix_dp_probe(dev, &dp->plat_data);
++	if (IS_ERR(dp->adp))
++		return PTR_ERR(dp->adp);
++
+ 	return component_add(dev, &rockchip_dp_component_ops);
+ }
+ 
+ static int rockchip_dp_remove(struct platform_device *pdev)
+ {
++	struct rockchip_dp_device *dp = platform_get_drvdata(pdev);
++
+ 	component_del(&pdev->dev, &rockchip_dp_component_ops);
++	analogix_dp_remove(dp->adp);
+ 
+ 	return 0;
+ }
+diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
+index 7aa2f93da49c..b0dcc07334a1 100644
+--- a/include/drm/bridge/analogix_dp.h
++++ b/include/drm/bridge/analogix_dp.h
+@@ -42,9 +42,10 @@ int analogix_dp_resume(struct analogix_dp_device *dp);
+ int analogix_dp_suspend(struct analogix_dp_device *dp);
+ 
+ struct analogix_dp_device *
+-analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
+-		 struct analogix_dp_plat_data *plat_data);
++analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data);
++int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev);
+ void analogix_dp_unbind(struct analogix_dp_device *dp);
++void analogix_dp_remove(struct analogix_dp_device *dp);
+ 
+ int analogix_dp_start_crc(struct drm_connector *connector);
+ int analogix_dp_stop_crc(struct drm_connector *connector);
+-- 
+2.17.1
 
-  Merge tag 'drm-intel-fixes-2020-02-27' of git://anongit.freedesktop.org/drm/drm-intel into drm-fixes (2020-02-28 12:40:49 +1000)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-fixes-for-v5.6-rc5
-
-for you to fetch changes up to 3b6a9b19ab652efac7ad4c392add6f1235019568:
-
-  drm/exynos: hdmi: don't leak enable HDMI_EN regulator if probe fails (2020-03-02 13:02:41 +0900)
-
-----------------------------------------------------------------
-Three fixups
-- fix a kernel oops problem in case that driver is loaded as module.
-- fix a regulator warning issue when I2C DDC adapter cannot be gathered.
-- print out an error message only in error case excepting -EPROBE_DEFER.
-
-----------------------------------------------------------------
-Marek Szyprowski (3):
-      drm/exynos: dsi: propagate error value and silence meaningless warning
-      drm/exynos: dsi: fix workaround for the legacy clock name
-      drm/exynos: hdmi: don't leak enable HDMI_EN regulator if probe fails
-
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 12 +++++++-----
- drivers/gpu/drm/exynos/exynos_hdmi.c    | 22 ++++++++++++----------
- 2 files changed, 19 insertions(+), 15 deletions(-)
