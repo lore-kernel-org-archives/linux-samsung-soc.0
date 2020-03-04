@@ -2,151 +2,183 @@ Return-Path: <SRS0=Zj0N=4V=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3080DC3F2D8
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Mar 2020 17:53:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B3A7C3F2D1
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Mar 2020 22:01:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 043DE24654
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Mar 2020 17:53:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b4vLwWcB"
+	by mail.kernel.org (Postfix) with ESMTP id E916520716
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  4 Mar 2020 22:01:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729976AbgCDRxq (ORCPT
+        id S2388410AbgCDWBB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 4 Mar 2020 12:53:46 -0500
-Received: from mail-il1-f169.google.com ([209.85.166.169]:41720 "EHLO
-        mail-il1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729749AbgCDRxp (ORCPT
+        Wed, 4 Mar 2020 17:01:01 -0500
+Received: from foss.arm.com ([217.140.110.172]:40268 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388407AbgCDWBB (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 4 Mar 2020 12:53:45 -0500
-Received: by mail-il1-f169.google.com with SMTP id q13so2564293ile.8;
-        Wed, 04 Mar 2020 09:53:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=e2CTmEA524fnfnIjgrSUvig7hPGvXP3F6DwJJOx39LI=;
-        b=b4vLwWcBSQXoiv6P8h/9NTqnrSaaKGKKSUSlQrjuIYE3ksV8RhUyWlmIn36T8haYV1
-         ujkMaWlZGJlstIt1iyiLp2XkLO6kOIm3vLs0PWcEXCjxskD8Eo5lmCfWs0KAb/11UkMf
-         y7lRWBza6jh0/w67GDG4MfC327lyS79ML3TzVxQyDnTf2L+hZvLvtEjctkY52PDq/RTv
-         jLi+UJUoIfJ9OCePABvaDJZiqRTE4yPB8Q/sX67aX35RxjUk+fvDYrLAlPtffDwO4ZYn
-         ioUPtv+vawQQZmFc8AdyhG/lFWjyr3RGbJt7B3X3VBD4cFUUGO/3QkQ1Doj3+IcG+RVY
-         lzDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=e2CTmEA524fnfnIjgrSUvig7hPGvXP3F6DwJJOx39LI=;
-        b=jbUMh8udfkPL2hmt0UaeYpM+1hEZOsqsNn7iYs7hyGospybiSWJkKNEVLSEWXpH+5r
-         2euQRfFRBUQP8VB/IIuizyqMTdK08nQeZ584xny6tnlel6ExzgelEr/hP0lVNFYlLQOk
-         cjmosNB6e5yzX4DfvWYfwwTzWv+Z3Tir05qLDYK8ED6wyo+pM+HLKAeAs1ghR3sGs7Kh
-         +Wp/QQunXxhTvp7k2WAEpXgCibh2urhp+besy5CKPxTxhFN7ICQ2tdsvp1WbTD7SRi1I
-         vDi+RhkulVjvwDycXBK444rmJ6sOPh/D1h+xe0n+xVQNkkjiZ/SP0wuyvrL3pAwmKE9s
-         wvFA==
-X-Gm-Message-State: ANhLgQ0MmgJCnQi50IYt5oHIKDTgY5AMaHett4SZ9JX4/gOsSksySiaK
-        MdQf06ol+ce2yyuMXW9oNiULbqAeTAWypodoscA=
-X-Google-Smtp-Source: ADFU+vsBrHpXk15htEhvGqXBvj6J95qHvJwp3T2Xq2b0NCaHDpAkmt2tXm3mV3JSmzToPkbpwxRA03OaJtQhF5VwZWw=
-X-Received: by 2002:a92:3a55:: with SMTP id h82mr3860438ila.75.1583344424195;
- Wed, 04 Mar 2020 09:53:44 -0800 (PST)
-MIME-Version: 1.0
-References: <20200301212019.2248-1-linux.amoon@gmail.com> <20200304081151.GA17560@pi3>
-In-Reply-To: <20200304081151.GA17560@pi3>
-From:   Anand Moon <linux.amoon@gmail.com>
-Date:   Wed, 4 Mar 2020 23:23:33 +0530
-Message-ID: <CANAwSgS11Bo=KhbspY1w=8qpSjjN8ed81s71zBB9AGczBe=wTA@mail.gmail.com>
-Subject: Re: [PATCHv2 0/3] Add support for suspend clk for Exynos5422 SoC
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Linux USB Mailing List <linux-usb@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 4 Mar 2020 17:01:01 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 56EA41FB;
+        Wed,  4 Mar 2020 14:01:00 -0800 (PST)
+Received: from e123648.arm.com (unknown [10.37.12.115])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 20A3E3F6CF;
+        Wed,  4 Mar 2020 14:00:54 -0800 (PST)
+From:   Lukasz Luba <lukasz.luba@arm.com>
+To:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        airlied@linux.ie, daniel@ffwll.ch, kgene@kernel.org,
+        krzk@kernel.org, b.zolnierkie@samsung.com, a.hajda@samsung.com,
+        Dietmar.Eggemann@arm.com, lukasz.luba@arm.com
+Subject: [PATCH] drm/exynos: Fix memory leak and release IOMMU mapping structures
+Date:   Wed,  4 Mar 2020 22:00:22 +0000
+Message-Id: <20200304220022.8003-1-lukasz.luba@arm.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+There is a memory leak which left some objects not freed. The reference
+counter of mapping: 'mapping->kref' was 2 when calling
+arm_iommu_detach_device(), so the release_iommu_mapping() won't be called.
+Since the old mapping structure is not going to be used any more (because
+it is detached and new one attached), call arm_iommu_release_mapping()
+to trigger cleanup.
 
-On Wed, 4 Mar 2020 at 13:41, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On Sun, Mar 01, 2020 at 09:20:15PM +0000, Anand Moon wrote:
-> > Seried build and tested on linux next-20200228.
-> >
-> > This patch series tries to enable suspend clk using
-> > exynos dwc3 driver, for this I have added new
-> > compatible string "samsung,exynos5420-dwusb3"
-> > so that we could add new suspend clk in addition
-> > to the core clk. exynos dwc3 driver will help
-> > enable/disable these clk.
->
-> That's not entirely correct. You enable there SCLK which is a "special
-> clock", not a "suspend clock". You use word "suspend: in multiple places
-> in commits making an impression that it is about some suspend clock...
-> no, there is no suspend clock.
->
-Ok
+Found using kmemleak detector, the output:
 
-> There is however a clock which driver calls suspend_clk (but it is just
-> some name) and it is being enabled for entire lifetime of device (so
-> also during suspend). AFAIU, this is not needed for Exynos5422 but I am
-> not sure. So please convince me...
->
+unreferenced object 0xc2137640 (size 64):
+  comm "swapper/0", pid 1, jiffies 4294937900 (age 3127.400s)
+  hex dump (first 32 bytes):
+    50 a3 14 c2 80 a2 14 c2 01 00 00 00 20 00 00 00  P........... ...
+    00 10 00 00 00 80 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<3acd268d>] arch_setup_dma_ops+0x4c/0x104
+    [<9f7d2cce>] of_dma_configure+0x19c/0x3a4
+    [<ba07704b>] really_probe+0xb0/0x47c
+    [<4f510e4f>] driver_probe_device+0x78/0x1c4
+    [<7481a0cf>] device_driver_attach+0x58/0x60
+    [<0ff8f5c1>] __driver_attach+0xb8/0x158
+    [<86006144>] bus_for_each_dev+0x74/0xb4
+    [<10159dca>] bus_add_driver+0x1c0/0x200
+    [<8a265265>] driver_register+0x74/0x108
+    [<e0f3451a>] exynos_drm_init+0xb0/0x134
+    [<db3fc7ba>] do_one_initcall+0x90/0x458
+    [<6da35917>] kernel_init_freeable+0x188/0x200
+    [<db3f74d4>] kernel_init+0x8/0x110
+    [<1f3cddf9>] ret_from_fork+0x14/0x20
+    [<8cd12507>] 0x0
+unreferenced object 0xc214a280 (size 128):
+  comm "swapper/0", pid 1, jiffies 4294937900 (age 3127.400s)
+  hex dump (first 32 bytes):
+    00 a0 ec ed 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<3acd268d>] arch_setup_dma_ops+0x4c/0x104
+    [<9f7d2cce>] of_dma_configure+0x19c/0x3a4
+    [<ba07704b>] really_probe+0xb0/0x47c
+    [<4f510e4f>] driver_probe_device+0x78/0x1c4
+    [<7481a0cf>] device_driver_attach+0x58/0x60
+    [<0ff8f5c1>] __driver_attach+0xb8/0x158
+    [<86006144>] bus_for_each_dev+0x74/0xb4
+    [<10159dca>] bus_add_driver+0x1c0/0x200
+    [<8a265265>] driver_register+0x74/0x108
+    [<e0f3451a>] exynos_drm_init+0xb0/0x134
+    [<db3fc7ba>] do_one_initcall+0x90/0x458
+    [<6da35917>] kernel_init_freeable+0x188/0x200
+    [<db3f74d4>] kernel_init+0x8/0x110
+    [<1f3cddf9>] ret_from_fork+0x14/0x20
+    [<8cd12507>] 0x0
+unreferenced object 0xedeca000 (size 4096):
+  comm "swapper/0", pid 1, jiffies 4294937900 (age 3127.400s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<3acd268d>] arch_setup_dma_ops+0x4c/0x104
+    [<9f7d2cce>] of_dma_configure+0x19c/0x3a4
+    [<ba07704b>] really_probe+0xb0/0x47c
+    [<4f510e4f>] driver_probe_device+0x78/0x1c4
+    [<7481a0cf>] device_driver_attach+0x58/0x60
+    [<0ff8f5c1>] __driver_attach+0xb8/0x158
+    [<86006144>] bus_for_each_dev+0x74/0xb4
+    [<10159dca>] bus_add_driver+0x1c0/0x200
+    [<8a265265>] driver_register+0x74/0x108
+    [<e0f3451a>] exynos_drm_init+0xb0/0x134
+    [<db3fc7ba>] do_one_initcall+0x90/0x458
+    [<6da35917>] kernel_init_freeable+0x188/0x200
+    [<db3f74d4>] kernel_init+0x8/0x110
+    [<1f3cddf9>] ret_from_fork+0x14/0x20
+    [<8cd12507>] 0x0
+unreferenced object 0xc214a300 (size 128):
+  comm "swapper/0", pid 1, jiffies 4294937900 (age 3127.400s)
+  hex dump (first 32 bytes):
+    00 a3 14 c2 00 a3 14 c2 00 40 18 c2 00 80 18 c2  .........@......
+    02 00 02 00 ad 4e ad de ff ff ff ff ff ff ff ff  .....N..........
+  backtrace:
+    [<08cbd8bc>] iommu_domain_alloc+0x24/0x50
+    [<b835abee>] arm_iommu_create_mapping+0xe4/0x134
+    [<3acd268d>] arch_setup_dma_ops+0x4c/0x104
+    [<9f7d2cce>] of_dma_configure+0x19c/0x3a4
+    [<ba07704b>] really_probe+0xb0/0x47c
+    [<4f510e4f>] driver_probe_device+0x78/0x1c4
+    [<7481a0cf>] device_driver_attach+0x58/0x60
+    [<0ff8f5c1>] __driver_attach+0xb8/0x158
+    [<86006144>] bus_for_each_dev+0x74/0xb4
+    [<10159dca>] bus_add_driver+0x1c0/0x200
+    [<8a265265>] driver_register+0x74/0x108
+    [<e0f3451a>] exynos_drm_init+0xb0/0x134
+    [<db3fc7ba>] do_one_initcall+0x90/0x458
+    [<6da35917>] kernel_init_freeable+0x188/0x200
+    [<db3f74d4>] kernel_init+0x8/0x110
+    [<1f3cddf9>] ret_from_fork+0x14/0x20
 
-Yep you are absolutely correct. Yes all the CLK_SLK* are call special clk's
+Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
+---
 
-Earlier I had share the FSYS clk diagram for Exynos5422
-[0] https://imgur.com/gallery/zAiBoyh
-from the diagram I mapped the naming terminology.
+Hi all,
 
-CLKMUX_USBDRD300 --->CLKDIV_USBDRD300 ---> SCLK_USBDRD300 (48 MHz)
----> USBDRD30_0 (SUSPEND_CLK)
-                                   |
-                                   |--->CLKDIV_USBPHY300--->
-SCLK_USBPHY300 (48 MHZ) ---> USBDRD30_PHY_0 (USB30_SCLK_100M |
-USB20_PICO_CLKCORE)
+I have discovered this issue on OdroidXU4 while running some stress tests
+for upcoming Energy Model. To reproduce it, kernel must be compiled with
+DEBUG_KMEMLEAK. When the boot has finished, type:
+# echo scan > /sys/kernel/debug/kmemleak
+# cat /sys/kernel/debug/kmemleak
+You should expect similar output to the one from the commit message.
 
-CLKMUX_USBDRD301 --->CLKDIV_USBDRD301 ---> SCLK_USBDRD301 (48 MHz)
----> USBDRD30_1 (SUSPEND_CLK)
-                                   |
-                                   |--->CLKDIV_USBPHY301--->
-SCLK_USBPHY301 (48 MHZ) ---> USBDRD30_PHY_1 (USB30_SCLK_100M)
+I don't know if it should go via stable tree as well. I can resend with CC
+stable, if there is a need.
 
-SCLK_USBDRD300      USBDRD30_0             operating clock to 24 MHz
-SCLK_USBDRD301      USBDRD30_PHY_0    operating clock to 24 MHz
-SCLK_USBPHY300      USBPHY30_0             operating clock to 24 MHz
-SCLK_USBPHY301      USBDRD30_PHY_1    operating clock to 24 Mhz
+Regards,
+Lukasz Luba
 
-> However I have still the same questions:
-> 1. What problem are you trying to solve here?
-> 2. Why this is needed?
+ drivers/gpu/drm/exynos/exynos_drm_dma.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-I am trying to get the USB clk to get enabled for FSYS power domain
-to working efficiently.
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dma.c b/drivers/gpu/drm/exynos/exynos_drm_dma.c
+index 9ebc02768847..45f209ec107f 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dma.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dma.c
+@@ -74,8 +74,13 @@ static int drm_iommu_attach_device(struct drm_device *drm_dev,
+ 		return ret;
+ 
+ 	if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)) {
+-		if (to_dma_iommu_mapping(subdrv_dev))
++		struct dma_iommu_mapping *mapping =
++					to_dma_iommu_mapping(subdrv_dev);
++
++		if (mapping) {
+ 			arm_iommu_detach_device(subdrv_dev);
++			arm_iommu_release_mapping(mapping);
++		}
+ 
+ 		ret = arm_iommu_attach_device(subdrv_dev, priv->mapping);
+ 	} else if (IS_ENABLED(CONFIG_IOMMU_DMA)) {
+-- 
+2.17.1
 
-> 3. What is fixed with this patch?
-
-Currently locally I tried to enable the FSYS power domain for USB 3.0 / USB 2.0.
-but it's not working as expected, need future study.
-
-*Note:* For now plz discard these patches.
-When I get the FSYS power domain to work correctly.
-I will link with those patch which will be better for testing.
-
--Anand
-
->
-> Best regards,
-> Krzysztof
->
