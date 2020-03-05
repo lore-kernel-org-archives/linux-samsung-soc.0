@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FB1FC3F2D9
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Mar 2020 16:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87F9BC3F2D2
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Mar 2020 16:00:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB1952465D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Mar 2020 16:00:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A81520848
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Mar 2020 16:00:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727279AbgCEQAZ (ORCPT
+        id S1725938AbgCEQA2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Mar 2020 11:00:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58046 "EHLO mx2.suse.de"
+        Thu, 5 Mar 2020 11:00:28 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58218 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726273AbgCEQAY (ORCPT
+        id S1726563AbgCEQA2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Mar 2020 11:00:24 -0500
+        Thu, 5 Mar 2020 11:00:28 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 87920AC84;
-        Thu,  5 Mar 2020 16:00:22 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 631B5AC84;
+        Thu,  5 Mar 2020 16:00:25 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     airlied@linux.ie, daniel@ffwll.ch, sam@ravnborg.org,
         abrodkin@synopsys.com, bbrezillon@kernel.org,
@@ -51,9 +51,9 @@ Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH 20/22] drm/vkms: Use simple encoder
-Date:   Thu,  5 Mar 2020 16:59:48 +0100
-Message-Id: <20200305155950.2705-21-tzimmermann@suse.de>
+Subject: [PATCH 22/22] drm/zte: Use simple encoder
+Date:   Thu,  5 Mar 2020 16:59:50 +0100
+Message-Id: <20200305155950.2705-23-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200305155950.2705-1-tzimmermann@suse.de>
 References: <20200305155950.2705-1-tzimmermann@suse.de>
@@ -64,47 +64,115 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The vkms driver uses an empty implementation for its encoder. Replace
+The zte driver uses empty implementations for its encoders. Replace
 the code with the generic simple encoder.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/vkms/vkms_output.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/zte/zx_hdmi.c  | 8 ++------
+ drivers/gpu/drm/zte/zx_tvenc.c | 8 ++------
+ drivers/gpu/drm/zte/zx_vga.c   | 8 ++------
+ 3 files changed, 6 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
-index fb1941a6522c..85afb77e97f0 100644
---- a/drivers/gpu/drm/vkms/vkms_output.c
-+++ b/drivers/gpu/drm/vkms/vkms_output.c
-@@ -3,6 +3,7 @@
- #include "vkms_drv.h"
- #include <drm/drm_atomic_helper.h>
+diff --git a/drivers/gpu/drm/zte/zx_hdmi.c b/drivers/gpu/drm/zte/zx_hdmi.c
+index b98a1420dcd3..76a16d997a23 100644
+--- a/drivers/gpu/drm/zte/zx_hdmi.c
++++ b/drivers/gpu/drm/zte/zx_hdmi.c
+@@ -20,6 +20,7 @@
+ #include <drm/drm_of.h>
  #include <drm/drm_probe_helper.h>
+ #include <drm/drm_print.h>
 +#include <drm/drm_simple_kms_helper.h>
  
- static void vkms_connector_destroy(struct drm_connector *connector)
- {
-@@ -17,10 +18,6 @@ static const struct drm_connector_funcs vkms_connector_funcs = {
- 	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+ #include <sound/hdmi-codec.h>
+ 
+@@ -254,10 +255,6 @@ static const struct drm_encoder_helper_funcs zx_hdmi_encoder_helper_funcs = {
+ 	.mode_set = zx_hdmi_encoder_mode_set,
  };
  
--static const struct drm_encoder_funcs vkms_encoder_funcs = {
+-static const struct drm_encoder_funcs zx_hdmi_encoder_funcs = {
 -	.destroy = drm_encoder_cleanup,
 -};
 -
- static int vkms_conn_get_modes(struct drm_connector *connector)
+ static int zx_hdmi_connector_get_modes(struct drm_connector *connector)
  {
- 	int count;
-@@ -70,8 +67,7 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
+ 	struct zx_hdmi *hdmi = to_zx_hdmi(connector);
+@@ -313,8 +310,7 @@ static int zx_hdmi_register(struct drm_device *drm, struct zx_hdmi *hdmi)
  
- 	drm_connector_helper_add(connector, &vkms_conn_helper_funcs);
+ 	encoder->possible_crtcs = VOU_CRTC_MASK;
  
--	ret = drm_encoder_init(dev, encoder, &vkms_encoder_funcs,
--			       DRM_MODE_ENCODER_VIRTUAL, NULL);
-+	ret = drm_simple_encoder_init(dev, encoder, DRM_MODE_ENCODER_VIRTUAL);
+-	drm_encoder_init(drm, encoder, &zx_hdmi_encoder_funcs,
+-			 DRM_MODE_ENCODER_TMDS, NULL);
++	drm_simple_encoder_init(drm, encoder, DRM_MODE_ENCODER_TMDS);
+ 	drm_encoder_helper_add(encoder, &zx_hdmi_encoder_helper_funcs);
+ 
+ 	hdmi->connector.polled = DRM_CONNECTOR_POLL_HPD;
+diff --git a/drivers/gpu/drm/zte/zx_tvenc.c b/drivers/gpu/drm/zte/zx_tvenc.c
+index c598b7daf1f1..d8a89ba383bc 100644
+--- a/drivers/gpu/drm/zte/zx_tvenc.c
++++ b/drivers/gpu/drm/zte/zx_tvenc.c
+@@ -14,6 +14,7 @@
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_print.h>
+ #include <drm/drm_probe_helper.h>
++#include <drm/drm_simple_kms_helper.h>
+ 
+ #include "zx_drm_drv.h"
+ #include "zx_tvenc_regs.h"
+@@ -218,10 +219,6 @@ static const struct drm_encoder_helper_funcs zx_tvenc_encoder_helper_funcs = {
+ 	.mode_set = zx_tvenc_encoder_mode_set,
+ };
+ 
+-static const struct drm_encoder_funcs zx_tvenc_encoder_funcs = {
+-	.destroy = drm_encoder_cleanup,
+-};
+-
+ static int zx_tvenc_connector_get_modes(struct drm_connector *connector)
+ {
+ 	struct zx_tvenc *tvenc = to_zx_tvenc(connector);
+@@ -285,8 +282,7 @@ static int zx_tvenc_register(struct drm_device *drm, struct zx_tvenc *tvenc)
+ 	 */
+ 	encoder->possible_crtcs = BIT(1);
+ 
+-	drm_encoder_init(drm, encoder, &zx_tvenc_encoder_funcs,
+-			 DRM_MODE_ENCODER_TVDAC, NULL);
++	drm_simple_encoder_init(drm, encoder, DRM_MODE_ENCODER_TVDAC);
+ 	drm_encoder_helper_add(encoder, &zx_tvenc_encoder_helper_funcs);
+ 
+ 	connector->interlace_allowed = true;
+diff --git a/drivers/gpu/drm/zte/zx_vga.c b/drivers/gpu/drm/zte/zx_vga.c
+index c4fa3bbaba78..a7ed7f5ca837 100644
+--- a/drivers/gpu/drm/zte/zx_vga.c
++++ b/drivers/gpu/drm/zte/zx_vga.c
+@@ -14,6 +14,7 @@
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_print.h>
+ #include <drm/drm_probe_helper.h>
++#include <drm/drm_simple_kms_helper.h>
+ 
+ #include "zx_drm_drv.h"
+ #include "zx_vga_regs.h"
+@@ -72,10 +73,6 @@ static const struct drm_encoder_helper_funcs zx_vga_encoder_helper_funcs = {
+ 	.disable = zx_vga_encoder_disable,
+ };
+ 
+-static const struct drm_encoder_funcs zx_vga_encoder_funcs = {
+-	.destroy = drm_encoder_cleanup,
+-};
+-
+ static int zx_vga_connector_get_modes(struct drm_connector *connector)
+ {
+ 	struct zx_vga *vga = to_zx_vga(connector);
+@@ -154,8 +151,7 @@ static int zx_vga_register(struct drm_device *drm, struct zx_vga *vga)
+ 
+ 	encoder->possible_crtcs = VOU_CRTC_MASK;
+ 
+-	ret = drm_encoder_init(drm, encoder, &zx_vga_encoder_funcs,
+-			       DRM_MODE_ENCODER_DAC, NULL);
++	ret = drm_simple_encoder_init(drm, encoder, DRM_MODE_ENCODER_DAC);
  	if (ret) {
- 		DRM_ERROR("Failed to init encoder\n");
- 		goto err_encoder;
+ 		DRM_DEV_ERROR(dev, "failed to init encoder: %d\n", ret);
+ 		return ret;
 -- 
 2.25.1
 
