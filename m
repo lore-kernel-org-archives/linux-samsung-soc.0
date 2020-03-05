@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03421C3F2D7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F00DC3F2D8
 	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Mar 2020 15:59:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8DB22072D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Mar 2020 15:59:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 819132146E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Mar 2020 15:59:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726563AbgCEP75 (ORCPT
+        id S1725974AbgCEP76 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Mar 2020 10:59:57 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56378 "EHLO mx2.suse.de"
+        Thu, 5 Mar 2020 10:59:58 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56394 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726009AbgCEP75 (ORCPT
+        id S1726211AbgCEP76 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Mar 2020 10:59:57 -0500
+        Thu, 5 Mar 2020 10:59:58 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id C5756AD43;
-        Thu,  5 Mar 2020 15:59:54 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 382EFAC84;
+        Thu,  5 Mar 2020 15:59:56 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     airlied@linux.ie, daniel@ffwll.ch, sam@ravnborg.org,
         abrodkin@synopsys.com, bbrezillon@kernel.org,
@@ -51,9 +51,9 @@ Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH 01/22] drm/arc: Use simple encoder
-Date:   Thu,  5 Mar 2020 16:59:29 +0100
-Message-Id: <20200305155950.2705-2-tzimmermann@suse.de>
+Subject: [PATCH 02/22] drm/atmel-hlcdc: Use simple encoder
+Date:   Thu,  5 Mar 2020 16:59:30 +0100
+Message-Id: <20200305155950.2705-3-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200305155950.2705-1-tzimmermann@suse.de>
 References: <20200305155950.2705-1-tzimmermann@suse.de>
@@ -64,77 +64,50 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The arc driver uses empty implementations for its encoders. Replace
-the code with the generic simple encoder.
+The atmel-hlcdc driver uses an empty implementation for its encoder.
+Replace the code with the generic simple encoder.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/arc/arcpgu_hdmi.c | 10 +++-------
- drivers/gpu/drm/arc/arcpgu_sim.c  |  8 ++------
- 2 files changed, 5 insertions(+), 13 deletions(-)
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/arc/arcpgu_hdmi.c b/drivers/gpu/drm/arc/arcpgu_hdmi.c
-index 52839934f2fb..780911765e2e 100644
---- a/drivers/gpu/drm/arc/arcpgu_hdmi.c
-+++ b/drivers/gpu/drm/arc/arcpgu_hdmi.c
-@@ -7,15 +7,12 @@
+diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
+index e2019fe97fff..43bc709e3523 100644
+--- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
++++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
+@@ -11,9 +11,10 @@
+ #include <linux/media-bus-format.h>
+ #include <linux/of_graph.h>
  
- #include <drm/drm_bridge.h>
- #include <drm/drm_crtc.h>
--#include <drm/drm_encoder.h>
- #include <drm/drm_device.h>
-+#include <drm/drm_encoder.h>
++#include <drm/drm_bridge.h>
+ #include <drm/drm_encoder.h>
+ #include <drm/drm_of.h>
+-#include <drm/drm_bridge.h>
 +#include <drm/drm_simple_kms_helper.h>
  
- #include "arcpgu.h"
+ #include "atmel_hlcdc_dc.h"
  
--static struct drm_encoder_funcs arcpgu_drm_encoder_funcs = {
--	.destroy = drm_encoder_cleanup,
--};
--
- int arcpgu_drm_hdmi_init(struct drm_device *drm, struct device_node *np)
- {
- 	struct drm_encoder *encoder;
-@@ -34,8 +31,7 @@ int arcpgu_drm_hdmi_init(struct drm_device *drm, struct device_node *np)
- 
- 	encoder->possible_crtcs = 1;
- 	encoder->possible_clones = 0;
--	ret = drm_encoder_init(drm, encoder, &arcpgu_drm_encoder_funcs,
--			       DRM_MODE_ENCODER_TMDS, NULL);
-+	ret = drm_simple_encoder_init(drm, encoder, DRM_MODE_ENCODER_TMDS);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/gpu/drm/arc/arcpgu_sim.c b/drivers/gpu/drm/arc/arcpgu_sim.c
-index 37d961668dfe..66ca2c26e339 100644
---- a/drivers/gpu/drm/arc/arcpgu_sim.c
-+++ b/drivers/gpu/drm/arc/arcpgu_sim.c
-@@ -8,6 +8,7 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_device.h>
- #include <drm/drm_probe_helper.h>
-+#include <drm/drm_simple_kms_helper.h>
- 
- #include "arcpgu.h"
- 
-@@ -50,10 +51,6 @@ static const struct drm_connector_funcs arcpgu_drm_connector_funcs = {
- 	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+@@ -22,10 +23,6 @@ struct atmel_hlcdc_rgb_output {
+ 	int bus_fmt;
  };
  
--static struct drm_encoder_funcs arcpgu_drm_encoder_funcs = {
+-static const struct drm_encoder_funcs atmel_hlcdc_panel_encoder_funcs = {
 -	.destroy = drm_encoder_cleanup,
 -};
 -
- int arcpgu_drm_sim_init(struct drm_device *drm, struct device_node *np)
+ static struct atmel_hlcdc_rgb_output *
+ atmel_hlcdc_encoder_to_rgb_output(struct drm_encoder *encoder)
  {
- 	struct arcpgu_drm_connector *arcpgu_connector;
-@@ -68,8 +65,7 @@ int arcpgu_drm_sim_init(struct drm_device *drm, struct device_node *np)
- 	encoder->possible_crtcs = 1;
- 	encoder->possible_clones = 0;
+@@ -98,9 +95,8 @@ static int atmel_hlcdc_attach_endpoint(struct drm_device *dev, int endpoint)
+ 		return -EINVAL;
+ 	}
  
--	ret = drm_encoder_init(drm, encoder, &arcpgu_drm_encoder_funcs,
--			       DRM_MODE_ENCODER_VIRTUAL, NULL);
-+	ret = drm_simple_encoder_init(drm, encoder, DRM_MODE_ENCODER_VIRTUAL);
+-	ret = drm_encoder_init(dev, &output->encoder,
+-			       &atmel_hlcdc_panel_encoder_funcs,
+-			       DRM_MODE_ENCODER_NONE, NULL);
++	ret = drm_simple_encoder_init(dev, &output->encoder,
++				      DRM_MODE_ENCODER_NONE);
  	if (ret)
  		return ret;
  
