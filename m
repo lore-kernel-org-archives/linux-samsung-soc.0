@@ -2,437 +2,497 @@ Return-Path: <SRS0=g11O=4W=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAB68C3F2D1
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Mar 2020 10:08:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE1EDC3F2D7
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Mar 2020 10:50:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6F0C20848
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Mar 2020 10:08:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6777E21741
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Mar 2020 10:50:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KcDduG/k"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726048AbgCEKII (ORCPT
+        id S1726992AbgCEKuo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Mar 2020 05:08:08 -0500
-Received: from foss.arm.com ([217.140.110.172]:46690 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725946AbgCEKII (ORCPT
+        Thu, 5 Mar 2020 05:50:44 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:58102 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725903AbgCEKum (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Mar 2020 05:08:08 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C18A031B;
-        Thu,  5 Mar 2020 02:08:06 -0800 (PST)
-Received: from [10.37.12.115] (unknown [10.37.12.115])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E3BEE3F6C4;
-        Thu,  5 Mar 2020 02:08:04 -0800 (PST)
-Subject: Re: [PATCH] drm/exynos: Fix cleanup of IOMMU related objects
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Andrzej Hajda <a.hajda@samsung.com>
-References: <CGME20200302142822eucas1p1749e7cd54ad0b8657b753a8b720ccba2@eucas1p1.samsung.com>
- <20200302142709.15007-1-m.szyprowski@samsung.com>
-From:   Lukasz Luba <lukasz.luba@arm.com>
-Message-ID: <dd5c8562-48a4-c6f8-219d-51c2e02740f6@arm.com>
-Date:   Thu, 5 Mar 2020 10:08:03 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Thu, 5 Mar 2020 05:50:42 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200305105039euoutp0172e8fef66022b512614c7ffde2d81e53~5Ytu1X0gp2047920479euoutp01X
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Mar 2020 10:50:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200305105039euoutp0172e8fef66022b512614c7ffde2d81e53~5Ytu1X0gp2047920479euoutp01X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1583405439;
+        bh=m2DocWs0W8JqOXw8iNUMgfIuTJQ+ltmeE/y33yJH1qs=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=KcDduG/kOvuxBhySV9SHyMz1eOgP2RAYE/ltX9Lo3X9bzncqqUwEyODcQUCgmdi48
+         HSUGztdpFcX+tAXDFrB1V7uOi2Qzj2fe2c2RQ71a1KmSC9slWCp0OK1iTAhkvm67D2
+         bMWgnHQ0RXSQ7ttdlOnSCi9OnpjI+eM5dxyYAPtQ=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200305105039eucas1p203880c199ebd7fe505b7150d6e920c93~5YtuXpg0X2482924829eucas1p2g;
+        Thu,  5 Mar 2020 10:50:39 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 38.08.60698.F79D06E5; Thu,  5
+        Mar 2020 10:50:39 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200305105038eucas1p1bad0e1bd4b12a28e05ecd14615b31af2~5YttzfQdF0864108641eucas1p1X;
+        Thu,  5 Mar 2020 10:50:38 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200305105038eusmtrp2293aebd793446f18650cf15100b6f18e~5YttyeWWO3251632516eusmtrp2W;
+        Thu,  5 Mar 2020 10:50:38 +0000 (GMT)
+X-AuditID: cbfec7f5-a29ff7000001ed1a-ac-5e60d97fabb7
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id D3.C9.07950.E79D06E5; Thu,  5
+        Mar 2020 10:50:38 +0000 (GMT)
+Received: from [106.120.51.15] (unknown [106.120.51.15]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200305105038eusmtip28725bfdfc615a30a4d6530520ef8c01e~5YttLinjx1192311923eusmtip2b;
+        Thu,  5 Mar 2020 10:50:37 +0000 (GMT)
+Subject: Re: [PATCH] Default enable RCU list lockdep debugging with
+ PROVE_RCU
+To:     madhuparnabhowmik10@gmail.com, paulmck@kernel.org,
+        josh@joshtriplett.org, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+        joel@joelfernandes.org
+Cc:     linux-kernel@vger.kernel.org, Amol Grover <frextrite@gmail.com>,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <59f5554c-3343-7bf6-d7d8-bba53710afae@samsung.com>
+Date:   Thu, 5 Mar 2020 11:50:37 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20200302142709.15007-1-m.szyprowski@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20200228092451.10455-1-madhuparnabhowmik10@gmail.com>
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOKsWRmVeSWpSXmKPExsWy7djP87r1NxPiDDqm81tsnLGe1WLRl1Ns
+        FlPX7mayWNagavF/Qb7F+fMb2C0u75rDZvG59wijxYzz+5gs+nZ9YrbYfPYMs8WnJd9YLPZ1
+        PGBy4PVYevoNm8fOWXfZPVr23WL3WPjpK6vHrde2HptWdbJ59G1ZxejxeZNcAEcUl01Kak5m
+        WWqRvl0CV8bu8z9ZCm40MFbMnfaNrYFxRUEXIyeHhICJxMRtS1m7GLk4hARWMEps6NzNCOF8
+        YZRY/eMcE4TzmVFi04mHjDAtzTdnQVUtZ5T4cq+dHcJ5yyjRMmEBUIaDQ1jAX2LCEhuQuIjA
+        VkaJuX+/gI1iFpjGJPFwzXuwUWwChhJdb7vYQGxeATuJizd/sYLYLAIqEhPaP4HFRQViJWav
+        PMwCUSMocXLmEzCbU8BZYv/TlWD1zALyEs1bZzND2OISt57MB1smIfCRXeLfpm5WkIskBFwk
+        jszngXhBWOLV8S3sELaMxP+dMPXNjBIPz61lh3B6GCUuN82Aetpa4s65X2wgg5gFNCXW79KH
+        CDtKzJv5lBFiPp/EjbeCEDfwSUzaNp0ZIswr0dEmBFGtJjHr+Dq4tQcvXGKewKg0C8lns5B8
+        MwvJN7MQ9i5gZFnFKJ5aWpybnlpsnJdarlecmFtcmpeul5yfu4kRmNxO/zv+dQfjvj9JhxgF
+        OBiVeHhfTI2PE2JNLCuuzD3EKMHBrCTCK2wKFOJNSaysSi3Kjy8qzUktPsQozcGiJM5rvOhl
+        rJBAemJJanZqakFqEUyWiYNTqoHRu/X/X8b9N/fduKvD+jYu78ICgese7ZIMp4wKr3m9r+o2
+        0Pm/54+L2IywngdBvxl88tY8eVJwYoX1/VOTJswSvff4v2Jph1Plq9rUq3Xn/N+lcKS6blSo
+        F9V5amwgVbnhI/eqZvb8ENegjKq/B0SthKSEpK5H7sifaaSU+e5FvO4xfs4TklpKLMUZiYZa
+        zEXFiQD3/lIdagMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJIsWRmVeSWpSXmKPExsVy+t/xe7p1NxPiDHruKlpsnLGe1WLRl1Ns
+        FlPX7mayWNagavF/Qb7F+fMb2C0u75rDZvG59wijxYzz+5gs+nZ9YrbYfPYMs8WnJd9YLPZ1
+        PGBy4PVYevoNm8fOWXfZPVr23WL3WPjpK6vHrde2HptWdbJ59G1ZxejxeZNcAEeUnk1RfmlJ
+        qkJGfnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXsbu8z9ZCm40MFbM
+        nfaNrYFxRUEXIyeHhICJRPPNWYxdjFwcQgJLGSW+PDnLApGQkTg5rYEVwhaW+HOtiw2i6DWj
+        xMlnJ9lAEsICvhJXz/1jAUmICGxllHh/8jNYgllgBpPEpT+qILaQgJPEpF9TwCaxCRhKdL3t
+        AqvhFbCTuHjzF1icRUBFYkL7J7C4qECsxI2ZHUwQNYISJ2c+AbuIU8BZYv/TlawQ880k5m1+
+        yAxhy0s0b50NZYtL3Hoyn2kCo9AsJO2zkLTMQtIyC0nLAkaWVYwiqaXFuem5xUZ6xYm5xaV5
+        6XrJ+bmbGIHRvO3Yzy07GLveBR9iFOBgVOLhXWCeECfEmlhWXJl7iFGCg1lJhFfYND5OiDcl
+        sbIqtSg/vqg0J7X4EKMp0HMTmaVEk/OBiSavJN7Q1NDcwtLQ3Njc2MxCSZy3Q+BgjJBAemJJ
+        anZqakFqEUwfEwenVANjqq7vRG2VxNI32xI9duyWOdQV1jNFsu/QR5c5vb3SPS9sFAzu+7Zt
+        mfTvbJfojVmz76i/jvyf+tROY0W12pVY3QXJm30PyOlkTGl/0f9q2yKrCe+4l+ZHcJe7JMu6
+        fn4lHjVh3ZGgjFMv62pn/D8cPlFAfLWf/cklyc66nKpli+cnzVpbzH9FiaU4I9FQi7moOBEA
+        naMhBfwCAAA=
+X-CMS-MailID: 20200305105038eucas1p1bad0e1bd4b12a28e05ecd14615b31af2
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200305105038eucas1p1bad0e1bd4b12a28e05ecd14615b31af2
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200305105038eucas1p1bad0e1bd4b12a28e05ecd14615b31af2
+References: <20200228092451.10455-1-madhuparnabhowmik10@gmail.com>
+        <CGME20200305105038eucas1p1bad0e1bd4b12a28e05ecd14615b31af2@eucas1p1.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+Dear All,
 
-On 3/2/20 2:27 PM, Marek Szyprowski wrote:
-> Store the IOMMU mapping created by device core of each Exynos DRM
-> sub-device and restore it when Exynos DRM driver is unbound. This fixes
-> IOMMU initialization failure for the second time when deferred probe is
-> triggered from the bind() callback of master's compound DRM driver.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+On 28.02.2020 10:24, madhuparnabhowmik10@gmail.com wrote:
+> From: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+>
+> This patch default enables CONFIG_PROVE_RCU_LIST option with
+> CONFIG_PROVE_RCU for RCU list lockdep debugging.
+>
+> With this change, RCU list lockdep debugging will be default
+> enabled in CONFIG_PROVE_RCU=y kernels.
+>
+> Most of the RCU users (in core kernel/, drivers/, and net/
+> subsystem) have already been modified to include lockdep
+> expressions hence RCU list debugging can be enabled by
+> default.
+>
+> However, there are still chances of enountering
+> false-positive lockdep splats because not everything is converted,
+> in case RCU list primitives are used in non-RCU read-side critical
+> section but under the protection of a lock. It would be okay to
+> have a few false-positives, as long as bugs are identified, since this
+> patch only affects debugging kernels.
+>
+> Co-developed-by: Amol Grover <frextrite@gmail.com>
+> Signed-off-by: Amol Grover <frextrite@gmail.com>
+> Signed-off-by: Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+
+This patch landed in today's linux-next (20200305) as commit 
+c9af03c14bfdfd21515e556c3a90ffe2aadc964d. It causes the following kernel 
+warning during system suspend/resume cycle on all ARM 32bit Samsung 
+Exynos-based boards (kernel compiled from exynos_defconfig):
+
+# rtcwake -s 10 -m mem
+rtcwake: wakeup from "mem" using /dev/rtc0 at Sat Jan  1 00:01:13 2000
+PM: suspend entry (deep)
+Filesystems sync: 0.008 seconds
+Freezing user space processes ... (elapsed 0.003 seconds) done.
+OOM killer disabled.
+Freezing remaining freezable tasks ... (elapsed 0.013 seconds) done.
+printk: Suspending console(s) (use no_console_suspend to debug)
+
+=============================
+WARNING: suspicious RCU usage
+5.6.0-rc1-00177-gc9af03c14bfd #7728 Not tainted
+-----------------------------
+drivers/base/power/main.c:326 RCU-list traversed in non-reader section!!
+
+other info that might help us debug this:
 
 
-Attaching back the old mapping looks good. The problem with leakage
-is also no longer reported (you can add it to the commit message).
+rcu_scheduler_active = 2, debug_locks = 1
+5 locks held by rtcwake/1452:
+  #0: edba7270 (sb_writers#7){.+.+}, at: vfs_write+0x16c/0x180
+  #1: ece71f44 (&of->mutex){+.+.}, at: kernfs_fop_write+0xd0/0x228
+  #2: eda72008 (kn->count#98){.+.+}, at: kernfs_fop_write+0xd8/0x228
+  #3: c121223c (system_transition_mutex){+.+.}, at: pm_suspend+0xc0/0x480
+  #4: c1285d98 (device_links_srcu){....}, at: 
+device_links_read_lock+0x0/0x50
 
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+stack backtrace:
+CPU: 7 PID: 1452 Comm: rtcwake Not tainted 5.6.0-rc1-00177-gc9af03c14bfd 
+#7728
+Hardware name: Samsung Exynos (Flattened Device Tree)
+[<c0112710>] (unwind_backtrace) from [<c010e1f4>] (show_stack+0x10/0x14)
+[<c010e1f4>] (show_stack) from [<c0b5c50c>] (dump_stack+0xb4/0xe0)
+[<c0b5c50c>] (dump_stack) from [<c061ea2c>] 
+(dpm_wait_for_subordinate+0xf4/0xfc)
+[<c061ea2c>] (dpm_wait_for_subordinate) from [<c061f578>] 
+(__device_suspend+0x20/0x838)
+[<c061f578>] (__device_suspend) from [<c0622e1c>] (dpm_suspend+0x188/0x57c)
+[<c0622e1c>] (dpm_suspend) from [<c0623bfc>] (dpm_suspend_start+0x98/0xa0)
+[<c0623bfc>] (dpm_suspend_start) from [<c0197e20>] 
+(suspend_devices_and_enter+0xec/0xc74)
+[<c0197e20>] (suspend_devices_and_enter) from [<c0198da0>] 
+(pm_suspend+0x3f8/0x480)
+[<c0198da0>] (pm_suspend) from [<c019696c>] (state_store+0x6c/0xc8)
+[<c019696c>] (state_store) from [<c0356c78>] (kernfs_fop_write+0x10c/0x228)
+[<c0356c78>] (kernfs_fop_write) from [<c02b52c8>] (__vfs_write+0x30/0x1d0)
+[<c02b52c8>] (__vfs_write) from [<c02b8264>] (vfs_write+0xa4/0x180)
+[<c02b8264>] (vfs_write) from [<c02b84c0>] (ksys_write+0x60/0xd8)
+[<c02b84c0>] (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
+Exception stack(0xeac89fa8 to 0xeac89ff0)
+9fa0:                   00000004 0002b440 00000004 0002b440 00000004 
+00000000
+9fc0: 00000004 0002b440 000291b0 00000004 0002b440 00000004 be980bfc 
+00028160
+9fe0: 0000006c be980ac8 b6eae000 b6f0b634
 
-Regards,
-Lukasz
+=============================
+WARNING: suspicious RCU usage
+5.6.0-rc1-00177-gc9af03c14bfd #7728 Not tainted
+-----------------------------
+drivers/base/power/main.c:1698 RCU-list traversed in non-reader section!!
+
+other info that might help us debug this:
+
+
+rcu_scheduler_active = 2, debug_locks = 1
+6 locks held by rtcwake/1452:
+  #0: edba7270 (sb_writers#7){.+.+}, at: vfs_write+0x16c/0x180
+  #1: ece71f44 (&of->mutex){+.+.}, at: kernfs_fop_write+0xd0/0x228
+  #2: eda72008 (kn->count#98){.+.+}, at: kernfs_fop_write+0xd8/0x228
+  #3: c121223c (system_transition_mutex){+.+.}, at: pm_suspend+0xc0/0x480
+  #4: ebecd984 (&dev->mutex){....}, at: __device_suspend+0xf8/0x838
+  #5: c1285d98 (device_links_srcu){....}, at: 
+device_links_read_lock+0x0/0x50
+
+stack backtrace:
+CPU: 7 PID: 1452 Comm: rtcwake Not tainted 5.6.0-rc1-00177-gc9af03c14bfd 
+#7728
+Hardware name: Samsung Exynos (Flattened Device Tree)
+[<c0112710>] (unwind_backtrace) from [<c010e1f4>] (show_stack+0x10/0x14)
+[<c010e1f4>] (show_stack) from [<c0b5c50c>] (dump_stack+0xb4/0xe0)
+[<c0b5c50c>] (dump_stack) from [<c061f8bc>] (__device_suspend+0x364/0x838)
+[<c061f8bc>] (__device_suspend) from [<c0622e1c>] (dpm_suspend+0x188/0x57c)
+[<c0622e1c>] (dpm_suspend) from [<c0623bfc>] (dpm_suspend_start+0x98/0xa0)
+[<c0623bfc>] (dpm_suspend_start) from [<c0197e20>] 
+(suspend_devices_and_enter+0xec/0xc74)
+[<c0197e20>] (suspend_devices_and_enter) from [<c0198da0>] 
+(pm_suspend+0x3f8/0x480)
+[<c0198da0>] (pm_suspend) from [<c019696c>] (state_store+0x6c/0xc8)
+[<c019696c>] (state_store) from [<c0356c78>] (kernfs_fop_write+0x10c/0x228)
+[<c0356c78>] (kernfs_fop_write) from [<c02b52c8>] (__vfs_write+0x30/0x1d0)
+[<c02b52c8>] (__vfs_write) from [<c02b8264>] (vfs_write+0xa4/0x180)
+[<c02b8264>] (vfs_write) from [<c02b84c0>] (ksys_write+0x60/0xd8)
+[<c02b84c0>] (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
+Exception stack(0xeac89fa8 to 0xeac89ff0)
+9fa0:                   00000004 0002b440 00000004 0002b440 00000004 
+00000000
+9fc0: 00000004 0002b440 000291b0 00000004 0002b440 00000004 be980bfc 
+00028160
+9fe0: 0000006c be980ac8 b6eae000 b6f0b634
+wake enabled for irq 160
+wake enabled for irq 164
+samsung-pinctrl 13400000.pinctrl: Setting external wakeup interrupt 
+mask: 0xffffffe7
+
+=============================
+WARNING: suspicious RCU usage
+5.6.0-rc1-00177-gc9af03c14bfd #7728 Not tainted
+-----------------------------
+drivers/base/power/wakeup.c:408 RCU-list traversed in non-reader section!!
+
+other info that might help us debug this:
+
+
+rcu_scheduler_active = 2, debug_locks = 1
+5 locks held by rtcwake/1452:
+  #0: edba7270 (sb_writers#7){.+.+}, at: vfs_write+0x16c/0x180
+  #1: ece71f44 (&of->mutex){+.+.}, at: kernfs_fop_write+0xd0/0x228
+  #2: eda72008 (kn->count#98){.+.+}, at: kernfs_fop_write+0xd8/0x228
+  #3: c121223c (system_transition_mutex){+.+.}, at: pm_suspend+0xc0/0x480
+  #4: c128722c (wakeup_srcu){....}, at: 
+device_wakeup_arm_wake_irqs+0x0/0x124
+
+stack backtrace:
+CPU: 5 PID: 1452 Comm: rtcwake Not tainted 5.6.0-rc1-00177-gc9af03c14bfd 
+#7728
+Hardware name: Samsung Exynos (Flattened Device Tree)
+[<c0112710>] (unwind_backtrace) from [<c010e1f4>] (show_stack+0x10/0x14)
+[<c010e1f4>] (show_stack) from [<c0b5c50c>] (dump_stack+0xb4/0xe0)
+[<c0b5c50c>] (dump_stack) from [<c0625740>] 
+(device_wakeup_arm_wake_irqs+0xdc/0x124)
+[<c0625740>] (device_wakeup_arm_wake_irqs) from [<c0622120>] 
+(dpm_suspend_noirq+0x1c/0x5a0)
+[<c0622120>] (dpm_suspend_noirq) from [<c019805c>] 
+(suspend_devices_and_enter+0x328/0xc74)
+[<c019805c>] (suspend_devices_and_enter) from [<c0198da0>] 
+(pm_suspend+0x3f8/0x480)
+[<c0198da0>] (pm_suspend) from [<c019696c>] (state_store+0x6c/0xc8)
+[<c019696c>] (state_store) from [<c0356c78>] (kernfs_fop_write+0x10c/0x228)
+[<c0356c78>] (kernfs_fop_write) from [<c02b52c8>] (__vfs_write+0x30/0x1d0)
+[<c02b52c8>] (__vfs_write) from [<c02b8264>] (vfs_write+0xa4/0x180)
+[<c02b8264>] (vfs_write) from [<c02b84c0>] (ksys_write+0x60/0xd8)
+[<c02b84c0>] (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
+Exception stack(0xeac89fa8 to 0xeac89ff0)
+9fa0:                   00000004 0002b440 00000004 0002b440 00000004 
+00000000
+9fc0: 00000004 0002b440 000291b0 00000004 0002b440 00000004 be980bfc 
+00028160
+9fe0: 0000006c be980ac8 b6eae000 b6f0b634
+
+=============================
+WARNING: suspicious RCU usage
+5.6.0-rc1-00177-gc9af03c14bfd #7728 Not tainted
+-----------------------------
+drivers/base/power/main.c:1238 RCU-list traversed in non-reader section!!
+
+other info that might help us debug this:
+
+
+rcu_scheduler_active = 2, debug_locks = 1
+5 locks held by rtcwake/1452:
+  #0: edba7270 (sb_writers#7){.+.+}, at: vfs_write+0x16c/0x180
+  #1: ece71f44 (&of->mutex){+.+.}, at: kernfs_fop_write+0xd0/0x228
+  #2: eda72008 (kn->count#98){.+.+}, at: kernfs_fop_write+0xd8/0x228
+  #3: c121223c (system_transition_mutex){+.+.}, at: pm_suspend+0xc0/0x480
+  #4: c1285d98 (device_links_srcu){....}, at: 
+device_links_read_lock+0x0/0x50
+
+stack backtrace:
+CPU: 5 PID: 1452 Comm: rtcwake Not tainted 5.6.0-rc1-00177-gc9af03c14bfd 
+#7728
+Hardware name: Samsung Exynos (Flattened Device Tree)
+[<c0112710>] (unwind_backtrace) from [<c010e1f4>] (show_stack+0x10/0x14)
+[<c010e1f4>] (show_stack) from [<c0b5c50c>] (dump_stack+0xb4/0xe0)
+[<c0b5c50c>] (dump_stack) from [<c06202d4>] 
+(__device_suspend_noirq+0x234/0x304)
+[<c06202d4>] (__device_suspend_noirq) from [<c0622284>] 
+(dpm_suspend_noirq+0x180/0x5a0)
+[<c0622284>] (dpm_suspend_noirq) from [<c019805c>] 
+(suspend_devices_and_enter+0x328/0xc74)
+[<c019805c>] (suspend_devices_and_enter) from [<c0198da0>] 
+(pm_suspend+0x3f8/0x480)
+[<c0198da0>] (pm_suspend) from [<c019696c>] (state_store+0x6c/0xc8)
+[<c019696c>] (state_store) from [<c0356c78>] (kernfs_fop_write+0x10c/0x228)
+[<c0356c78>] (kernfs_fop_write) from [<c02b52c8>] (__vfs_write+0x30/0x1d0)
+[<c02b52c8>] (__vfs_write) from [<c02b8264>] (vfs_write+0xa4/0x180)
+[<c02b8264>] (vfs_write) from [<c02b84c0>] (ksys_write+0x60/0xd8)
+[<c02b84c0>] (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
+Exception stack(0xeac89fa8 to 0xeac89ff0)
+9fa0:                   00000004 0002b440 00000004 0002b440 00000004 
+00000000
+9fc0: 00000004 0002b440 000291b0 00000004 0002b440 00000004 be980bfc 
+00028160
+9fe0: 0000006c be980ac8 b6eae000 b6f0b634
+Disabling non-boot CPUs ...
+IRQ 51: no longer affine to CPU1
+IRQ 52: no longer affine to CPU2
+IRQ 53: no longer affine to CPU3
+IRQ 54: no longer affine to CPU4
+IRQ 55: no longer affine to CPU5
+IRQ 56: no longer affine to CPU6
+IRQ 57: no longer affine to CPU7
+Enabling non-boot CPUs ...
+CPU1 is up
+CPU2 is up
+CPU3 is up
+CPU4: detected I-Cache line size mismatch, workaround enabled
+CPU4 is up
+CPU5: detected I-Cache line size mismatch, workaround enabled
+CPU5 is up
+CPU6: detected I-Cache line size mismatch, workaround enabled
+CPU6 is up
+CPU7: detected I-Cache line size mismatch, workaround enabled
+CPU7 is up
+
+=============================
+WARNING: suspicious RCU usage
+5.6.0-rc1-00177-gc9af03c14bfd #7728 Not tainted
+-----------------------------
+drivers/base/power/main.c:269 RCU-list traversed in non-reader section!!
+
+other info that might help us debug this:
+
+
+rcu_scheduler_active = 2, debug_locks = 1
+5 locks held by rtcwake/1452:
+  #0: edba7270 (sb_writers#7){.+.+}, at: vfs_write+0x16c/0x180
+  #1: ece71f44 (&of->mutex){+.+.}, at: kernfs_fop_write+0xd0/0x228
+  #2: eda72008 (kn->count#98){.+.+}, at: kernfs_fop_write+0xd8/0x228
+  #3: c121223c (system_transition_mutex){+.+.}, at: pm_suspend+0xc0/0x480
+  #4: c1285d98 (device_links_srcu){....}, at: 
+device_links_read_lock+0x0/0x50
+
+stack backtrace:
+CPU: 0 PID: 1452 Comm: rtcwake Not tainted 5.6.0-rc1-00177-gc9af03c14bfd 
+#7728
+Hardware name: Samsung Exynos (Flattened Device Tree)
+[<c0112710>] (unwind_backtrace) from [<c010e1f4>] (show_stack+0x10/0x14)
+[<c010e1f4>] (show_stack) from [<c0b5c50c>] (dump_stack+0xb4/0xe0)
+[<c0b5c50c>] (dump_stack) from [<c061ebf0>] 
+(dpm_wait_for_superior+0x114/0x12c)
+[<c061ebf0>] (dpm_wait_for_superior) from [<c061fe98>] 
+(device_resume_noirq+0x74/0x238)
+[<c061fe98>] (device_resume_noirq) from [<c0620a34>] 
+(dpm_resume_noirq+0x160/0x53c)
+[<c0620a34>] (dpm_resume_noirq) from [<c01983c8>] 
+(suspend_devices_and_enter+0x694/0xc74)
+[<c01983c8>] (suspend_devices_and_enter) from [<c0198da0>] 
+(pm_suspend+0x3f8/0x480)
+[<c0198da0>] (pm_suspend) from [<c019696c>] (state_store+0x6c/0xc8)
+[<c019696c>] (state_store) from [<c0356c78>] (kernfs_fop_write+0x10c/0x228)
+[<c0356c78>] (kernfs_fop_write) from [<c02b52c8>] (__vfs_write+0x30/0x1d0)
+[<c02b52c8>] (__vfs_write) from [<c02b8264>] (vfs_write+0xa4/0x180)
+[<c02b8264>] (vfs_write) from [<c02b84c0>] (ksys_write+0x60/0xd8)
+[<c02b84c0>] (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
+Exception stack(0xeac89fa8 to 0xeac89ff0)
+9fa0:                   00000004 0002b440 00000004 0002b440 00000004 
+00000000
+9fc0: 00000004 0002b440 000291b0 00000004 0002b440 00000004 be980bfc 
+00028160
+9fe0: 0000006c be980ac8 b6eae000 b6f0b634
+s3c-i2c 12c80000.i2c: slave address 0x00
+s3c-i2c 12c80000.i2c: bus frequency set to 65 KHz
+
+=============================
+WARNING: suspicious RCU usage
+5.6.0-rc1-00177-gc9af03c14bfd #7728 Not tainted
+-----------------------------
+drivers/base/power/wakeup.c:424 RCU-list traversed in non-reader section!!
+
+other info that might help us debug this:
+
+
+rcu_scheduler_active = 2, debug_locks = 1
+5 locks held by rtcwake/1452:
+  #0: edba7270 (sb_writers#7){.+.+}, at: vfs_write+0x16c/0x180
+  #1: ece71f44 (&of->mutex){+.+.}, at: kernfs_fop_write+0xd0/0x228
+  #2: eda72008 (kn->count#98){.+.+}, at: kernfs_fop_write+0xd8/0x228
+  #3: c121223c (system_transition_mutex){+.+.}, at: pm_suspend+0xc0/0x480
+  #4: c128722c (wakeup_srcu){....}, at: 
+device_wakeup_disarm_wake_irqs+0x0/0x124
+
+stack backtrace:
+CPU: 0 PID: 1452 Comm: rtcwake Not tainted 5.6.0-rc1-00177-gc9af03c14bfd 
+#7728
+Hardware name: Samsung Exynos (Flattened Device Tree)
+[<c0112710>] (unwind_backtrace) from [<c010e1f4>] (show_stack+0x10/0x14)
+[<c010e1f4>] (show_stack) from [<c0b5c50c>] (dump_stack+0xb4/0xe0)
+[<c0b5c50c>] (dump_stack) from [<c0625864>] 
+(device_wakeup_disarm_wake_irqs+0xdc/0x124)
+[<c0625864>] (device_wakeup_disarm_wake_irqs) from [<c0620b84>] 
+(dpm_resume_noirq+0x2b0/0x53c)
+[<c0620b84>] (dpm_resume_noirq) from [<c01983c8>] 
+(suspend_devices_and_enter+0x694/0xc74)
+[<c01983c8>] (suspend_devices_and_enter) from [<c0198da0>] 
+(pm_suspend+0x3f8/0x480)
+[<c0198da0>] (pm_suspend) from [<c019696c>] (state_store+0x6c/0xc8)
+[<c019696c>] (state_store) from [<c0356c78>] (kernfs_fop_write+0x10c/0x228)
+[<c0356c78>] (kernfs_fop_write) from [<c02b52c8>] (__vfs_write+0x30/0x1d0)
+[<c02b52c8>] (__vfs_write) from [<c02b8264>] (vfs_write+0xa4/0x180)
+[<c02b8264>] (vfs_write) from [<c02b84c0>] (ksys_write+0x60/0xd8)
+[<c02b84c0>] (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
+Exception stack(0xeac89fa8 to 0xeac89ff0)
+9fa0:                   00000004 0002b440 00000004 0002b440 00000004 
+00000000
+9fc0: 00000004 0002b440 000291b0 00000004 0002b440 00000004 be980bfc 
+00028160
+9fe0: 0000006c be980ac8 b6eae000 b6f0b634
+
+I can help debugging this issue.
 
 > ---
->   drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  5 +++--
->   drivers/gpu/drm/exynos/exynos7_drm_decon.c    |  5 +++--
->   drivers/gpu/drm/exynos/exynos_drm_dma.c       | 22 +++++++++++--------
->   drivers/gpu/drm/exynos/exynos_drm_drv.h       |  6 +++--
->   drivers/gpu/drm/exynos/exynos_drm_fimc.c      |  5 +++--
->   drivers/gpu/drm/exynos/exynos_drm_fimd.c      |  5 +++--
->   drivers/gpu/drm/exynos/exynos_drm_g2d.c       |  5 +++--
->   drivers/gpu/drm/exynos/exynos_drm_gsc.c       |  5 +++--
->   drivers/gpu/drm/exynos/exynos_drm_rotator.c   |  5 +++--
->   drivers/gpu/drm/exynos/exynos_drm_scaler.c    |  6 +++--
->   drivers/gpu/drm/exynos/exynos_mixer.c         |  7 ++++--
->   11 files changed, 47 insertions(+), 29 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-> index 8428ae12dfa5..1f79bc2a881e 100644
-> --- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-> +++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-> @@ -55,6 +55,7 @@ static const char * const decon_clks_name[] = {
->   struct decon_context {
->   	struct device			*dev;
->   	struct drm_device		*drm_dev;
-> +	void				*dma_priv;
->   	struct exynos_drm_crtc		*crtc;
->   	struct exynos_drm_plane		planes[WINDOWS_NR];
->   	struct exynos_drm_plane_config	configs[WINDOWS_NR];
-> @@ -644,7 +645,7 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
+>   kernel/rcu/Kconfig.debug | 11 +++--------
+>   1 file changed, 3 insertions(+), 8 deletions(-)
+>
+> diff --git a/kernel/rcu/Kconfig.debug b/kernel/rcu/Kconfig.debug
+> index 4aa02eee8f6c..ec4bb6c09048 100644
+> --- a/kernel/rcu/Kconfig.debug
+> +++ b/kernel/rcu/Kconfig.debug
+> @@ -9,15 +9,10 @@ config PROVE_RCU
+>   	def_bool PROVE_LOCKING
 >   
->   	decon_clear_channels(ctx->crtc);
+>   config PROVE_RCU_LIST
+> -	bool "RCU list lockdep debugging"
+> -	depends on PROVE_RCU && RCU_EXPERT
+> -	default n
+> +	def_bool PROVE_RCU
+>   	help
+> -	  Enable RCU lockdep checking for list usages. By default it is
+> -	  turned off since there are several list RCU users that still
+> -	  need to be converted to pass a lockdep expression. To prevent
+> -	  false-positive splats, we keep it default disabled but once all
+> -	  users are converted, we can remove this config option.
+> +	  Enable RCU lockdep checking for list usages. It is default
+> +	  enabled with CONFIG_PROVE_RCU.
 >   
-> -	return exynos_drm_register_dma(drm_dev, dev);
-> +	return exynos_drm_register_dma(drm_dev, dev, &ctx->dma_priv);
->   }
->   
->   static void decon_unbind(struct device *dev, struct device *master, void *data)
-> @@ -654,7 +655,7 @@ static void decon_unbind(struct device *dev, struct device *master, void *data)
->   	decon_atomic_disable(ctx->crtc);
->   
->   	/* detach this sub driver from iommu mapping if supported. */
-> -	exynos_drm_unregister_dma(ctx->drm_dev, ctx->dev);
-> +	exynos_drm_unregister_dma(ctx->drm_dev, ctx->dev, &ctx->dma_priv);
->   }
->   
->   static const struct component_ops decon_component_ops = {
-> diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-> index ff59c641fa80..1eed3327999f 100644
-> --- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-> +++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-> @@ -40,6 +40,7 @@
->   struct decon_context {
->   	struct device			*dev;
->   	struct drm_device		*drm_dev;
-> +	void				*dma_priv;
->   	struct exynos_drm_crtc		*crtc;
->   	struct exynos_drm_plane		planes[WINDOWS_NR];
->   	struct exynos_drm_plane_config	configs[WINDOWS_NR];
-> @@ -127,13 +128,13 @@ static int decon_ctx_initialize(struct decon_context *ctx,
->   
->   	decon_clear_channels(ctx->crtc);
->   
-> -	return exynos_drm_register_dma(drm_dev, ctx->dev);
-> +	return exynos_drm_register_dma(drm_dev, ctx->dev, &ctx->dma_priv);
->   }
->   
->   static void decon_ctx_remove(struct decon_context *ctx)
->   {
->   	/* detach this sub driver from iommu mapping if supported. */
-> -	exynos_drm_unregister_dma(ctx->drm_dev, ctx->dev);
-> +	exynos_drm_unregister_dma(ctx->drm_dev, ctx->dev, &ctx->dma_priv);
->   }
->   
->   static u32 decon_calc_clkdiv(struct decon_context *ctx,
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dma.c b/drivers/gpu/drm/exynos/exynos_drm_dma.c
-> index 9ebc02768847..482bec7756fa 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dma.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dma.c
-> @@ -58,7 +58,7 @@ static inline void clear_dma_max_seg_size(struct device *dev)
->    * mapping.
->    */
->   static int drm_iommu_attach_device(struct drm_device *drm_dev,
-> -				struct device *subdrv_dev)
-> +				struct device *subdrv_dev, void **dma_priv)
->   {
->   	struct exynos_drm_private *priv = drm_dev->dev_private;
->   	int ret;
-> @@ -74,7 +74,8 @@ static int drm_iommu_attach_device(struct drm_device *drm_dev,
->   		return ret;
->   
->   	if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)) {
-> -		if (to_dma_iommu_mapping(subdrv_dev))
-> +		*dma_priv = to_dma_iommu_mapping(subdrv_dev);
-> +		if (*dma_priv)
->   			arm_iommu_detach_device(subdrv_dev);
->   
->   		ret = arm_iommu_attach_device(subdrv_dev, priv->mapping);
-> @@ -98,19 +99,21 @@ static int drm_iommu_attach_device(struct drm_device *drm_dev,
->    * mapping
->    */
->   static void drm_iommu_detach_device(struct drm_device *drm_dev,
-> -				struct device *subdrv_dev)
-> +				    struct device *subdrv_dev, void **dma_priv)
->   {
->   	struct exynos_drm_private *priv = drm_dev->dev_private;
->   
-> -	if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU))
-> +	if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)) {
->   		arm_iommu_detach_device(subdrv_dev);
-> -	else if (IS_ENABLED(CONFIG_IOMMU_DMA))
-> +		arm_iommu_attach_device(subdrv_dev, *dma_priv);
-> +	} else if (IS_ENABLED(CONFIG_IOMMU_DMA))
->   		iommu_detach_device(priv->mapping, subdrv_dev);
->   
->   	clear_dma_max_seg_size(subdrv_dev);
->   }
->   
-> -int exynos_drm_register_dma(struct drm_device *drm, struct device *dev)
-> +int exynos_drm_register_dma(struct drm_device *drm, struct device *dev,
-> +			    void **dma_priv)
->   {
->   	struct exynos_drm_private *priv = drm->dev_private;
->   
-> @@ -137,13 +140,14 @@ int exynos_drm_register_dma(struct drm_device *drm, struct device *dev)
->   		priv->mapping = mapping;
->   	}
->   
-> -	return drm_iommu_attach_device(drm, dev);
-> +	return drm_iommu_attach_device(drm, dev, dma_priv);
->   }
->   
-> -void exynos_drm_unregister_dma(struct drm_device *drm, struct device *dev)
-> +void exynos_drm_unregister_dma(struct drm_device *drm, struct device *dev,
-> +			       void **dma_priv)
->   {
->   	if (IS_ENABLED(CONFIG_EXYNOS_IOMMU))
-> -		drm_iommu_detach_device(drm, dev);
-> +		drm_iommu_detach_device(drm, dev, dma_priv);
->   }
->   
->   void exynos_drm_cleanup_dma(struct drm_device *drm)
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> index d4d21d8cfb90..6ae9056e7a18 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> @@ -223,8 +223,10 @@ static inline bool is_drm_iommu_supported(struct drm_device *drm_dev)
->   	return priv->mapping ? true : false;
->   }
->   
-> -int exynos_drm_register_dma(struct drm_device *drm, struct device *dev);
-> -void exynos_drm_unregister_dma(struct drm_device *drm, struct device *dev);
-> +int exynos_drm_register_dma(struct drm_device *drm, struct device *dev,
-> +			    void **dma_priv);
-> +void exynos_drm_unregister_dma(struct drm_device *drm, struct device *dev,
-> +			       void **dma_priv);
->   void exynos_drm_cleanup_dma(struct drm_device *drm);
->   
->   #ifdef CONFIG_DRM_EXYNOS_DPI
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> index 8ea2e1d77802..29ab8be8604c 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> @@ -97,6 +97,7 @@ struct fimc_scaler {
->   struct fimc_context {
->   	struct exynos_drm_ipp ipp;
->   	struct drm_device *drm_dev;
-> +	void		*dma_priv;
->   	struct device	*dev;
->   	struct exynos_drm_ipp_task	*task;
->   	struct exynos_drm_ipp_formats	*formats;
-> @@ -1133,7 +1134,7 @@ static int fimc_bind(struct device *dev, struct device *master, void *data)
->   
->   	ctx->drm_dev = drm_dev;
->   	ipp->drm_dev = drm_dev;
-> -	exynos_drm_register_dma(drm_dev, dev);
-> +	exynos_drm_register_dma(drm_dev, dev, &ctx->dma_priv);
->   
->   	exynos_drm_ipp_register(dev, ipp, &ipp_funcs,
->   			DRM_EXYNOS_IPP_CAP_CROP | DRM_EXYNOS_IPP_CAP_ROTATE |
-> @@ -1153,7 +1154,7 @@ static void fimc_unbind(struct device *dev, struct device *master,
->   	struct exynos_drm_ipp *ipp = &ctx->ipp;
->   
->   	exynos_drm_ipp_unregister(dev, ipp);
-> -	exynos_drm_unregister_dma(drm_dev, dev);
-> +	exynos_drm_unregister_dma(drm_dev, dev, &ctx->dma_priv);
->   }
->   
->   static const struct component_ops fimc_component_ops = {
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> index 21aec38702fc..bb67cad8371f 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> @@ -167,6 +167,7 @@ static struct fimd_driver_data exynos5420_fimd_driver_data = {
->   struct fimd_context {
->   	struct device			*dev;
->   	struct drm_device		*drm_dev;
-> +	void				*dma_priv;
->   	struct exynos_drm_crtc		*crtc;
->   	struct exynos_drm_plane		planes[WINDOWS_NR];
->   	struct exynos_drm_plane_config	configs[WINDOWS_NR];
-> @@ -1090,7 +1091,7 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
->   	if (is_drm_iommu_supported(drm_dev))
->   		fimd_clear_channels(ctx->crtc);
->   
-> -	return exynos_drm_register_dma(drm_dev, dev);
-> +	return exynos_drm_register_dma(drm_dev, dev, &ctx->dma_priv);
->   }
->   
->   static void fimd_unbind(struct device *dev, struct device *master,
-> @@ -1100,7 +1101,7 @@ static void fimd_unbind(struct device *dev, struct device *master,
->   
->   	fimd_atomic_disable(ctx->crtc);
->   
-> -	exynos_drm_unregister_dma(ctx->drm_dev, ctx->dev);
-> +	exynos_drm_unregister_dma(ctx->drm_dev, ctx->dev, &ctx->dma_priv);
->   
->   	if (ctx->encoder)
->   		exynos_dpi_remove(ctx->encoder);
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> index 2a3382d43bc9..fcee33a43aca 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> @@ -232,6 +232,7 @@ struct g2d_runqueue_node {
->   
->   struct g2d_data {
->   	struct device			*dev;
-> +	void				*dma_priv;
->   	struct clk			*gate_clk;
->   	void __iomem			*regs;
->   	int				irq;
-> @@ -1409,7 +1410,7 @@ static int g2d_bind(struct device *dev, struct device *master, void *data)
->   		return ret;
->   	}
->   
-> -	ret = exynos_drm_register_dma(drm_dev, dev);
-> +	ret = exynos_drm_register_dma(drm_dev, dev, &g2d->dma_priv);
->   	if (ret < 0) {
->   		dev_err(dev, "failed to enable iommu.\n");
->   		g2d_fini_cmdlist(g2d);
-> @@ -1434,7 +1435,7 @@ static void g2d_unbind(struct device *dev, struct device *master, void *data)
->   	priv->g2d_dev = NULL;
->   
->   	cancel_work_sync(&g2d->runqueue_work);
-> -	exynos_drm_unregister_dma(g2d->drm_dev, dev);
-> +	exynos_drm_unregister_dma(g2d->drm_dev, dev, &g2d->dma_priv);
->   }
->   
->   static const struct component_ops g2d_component_ops = {
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> index 88b6fcaa20be..45e9aee8366a 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> @@ -97,6 +97,7 @@ struct gsc_scaler {
->   struct gsc_context {
->   	struct exynos_drm_ipp ipp;
->   	struct drm_device *drm_dev;
-> +	void		*dma_priv;
->   	struct device	*dev;
->   	struct exynos_drm_ipp_task	*task;
->   	struct exynos_drm_ipp_formats	*formats;
-> @@ -1169,7 +1170,7 @@ static int gsc_bind(struct device *dev, struct device *master, void *data)
->   
->   	ctx->drm_dev = drm_dev;
->   	ctx->drm_dev = drm_dev;
-> -	exynos_drm_register_dma(drm_dev, dev);
-> +	exynos_drm_register_dma(drm_dev, dev, &ctx->dma_priv);
->   
->   	exynos_drm_ipp_register(dev, ipp, &ipp_funcs,
->   			DRM_EXYNOS_IPP_CAP_CROP | DRM_EXYNOS_IPP_CAP_ROTATE |
-> @@ -1189,7 +1190,7 @@ static void gsc_unbind(struct device *dev, struct device *master,
->   	struct exynos_drm_ipp *ipp = &ctx->ipp;
->   
->   	exynos_drm_ipp_unregister(dev, ipp);
-> -	exynos_drm_unregister_dma(drm_dev, dev);
-> +	exynos_drm_unregister_dma(drm_dev, dev, &ctx->dma_priv);
->   }
->   
->   static const struct component_ops gsc_component_ops = {
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_rotator.c b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-> index b98482990d1a..dafa87b82052 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-> @@ -56,6 +56,7 @@ struct rot_variant {
->   struct rot_context {
->   	struct exynos_drm_ipp ipp;
->   	struct drm_device *drm_dev;
-> +	void		*dma_priv;
->   	struct device	*dev;
->   	void __iomem	*regs;
->   	struct clk	*clock;
-> @@ -243,7 +244,7 @@ static int rotator_bind(struct device *dev, struct device *master, void *data)
->   
->   	rot->drm_dev = drm_dev;
->   	ipp->drm_dev = drm_dev;
-> -	exynos_drm_register_dma(drm_dev, dev);
-> +	exynos_drm_register_dma(drm_dev, dev, &rot->dma_priv);
->   
->   	exynos_drm_ipp_register(dev, ipp, &ipp_funcs,
->   			   DRM_EXYNOS_IPP_CAP_CROP | DRM_EXYNOS_IPP_CAP_ROTATE,
-> @@ -261,7 +262,7 @@ static void rotator_unbind(struct device *dev, struct device *master,
->   	struct exynos_drm_ipp *ipp = &rot->ipp;
->   
->   	exynos_drm_ipp_unregister(dev, ipp);
-> -	exynos_drm_unregister_dma(rot->drm_dev, rot->dev);
-> +	exynos_drm_unregister_dma(rot->drm_dev, rot->dev, &rot->dma_priv);
->   }
->   
->   static const struct component_ops rotator_component_ops = {
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_scaler.c b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
-> index 497973e9b2c5..93c43c8d914e 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_scaler.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
-> @@ -39,6 +39,7 @@ struct scaler_data {
->   struct scaler_context {
->   	struct exynos_drm_ipp		ipp;
->   	struct drm_device		*drm_dev;
-> +	void				*dma_priv;
->   	struct device			*dev;
->   	void __iomem			*regs;
->   	struct clk			*clock[SCALER_MAX_CLK];
-> @@ -450,7 +451,7 @@ static int scaler_bind(struct device *dev, struct device *master, void *data)
->   
->   	scaler->drm_dev = drm_dev;
->   	ipp->drm_dev = drm_dev;
-> -	exynos_drm_register_dma(drm_dev, dev);
-> +	exynos_drm_register_dma(drm_dev, dev, &scaler->dma_priv);
->   
->   	exynos_drm_ipp_register(dev, ipp, &ipp_funcs,
->   			DRM_EXYNOS_IPP_CAP_CROP | DRM_EXYNOS_IPP_CAP_ROTATE |
-> @@ -470,7 +471,8 @@ static void scaler_unbind(struct device *dev, struct device *master,
->   	struct exynos_drm_ipp *ipp = &scaler->ipp;
->   
->   	exynos_drm_ipp_unregister(dev, ipp);
-> -	exynos_drm_unregister_dma(scaler->drm_dev, scaler->dev);
-> +	exynos_drm_unregister_dma(scaler->drm_dev, scaler->dev,
-> +				  &scaler->dma_priv);
->   }
->   
->   static const struct component_ops scaler_component_ops = {
-> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-> index 38ae9c32feef..21b726baedea 100644
-> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
-> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-> @@ -94,6 +94,7 @@ struct mixer_context {
->   	struct platform_device *pdev;
->   	struct device		*dev;
->   	struct drm_device	*drm_dev;
-> +	void			*dma_priv;
->   	struct exynos_drm_crtc	*crtc;
->   	struct exynos_drm_plane	planes[MIXER_WIN_NR];
->   	unsigned long		flags;
-> @@ -894,12 +895,14 @@ static int mixer_initialize(struct mixer_context *mixer_ctx,
->   		}
->   	}
->   
-> -	return exynos_drm_register_dma(drm_dev, mixer_ctx->dev);
-> +	return exynos_drm_register_dma(drm_dev, mixer_ctx->dev,
-> +				       &mixer_ctx->dma_priv);
->   }
->   
->   static void mixer_ctx_remove(struct mixer_context *mixer_ctx)
->   {
-> -	exynos_drm_unregister_dma(mixer_ctx->drm_dev, mixer_ctx->dev);
-> +	exynos_drm_unregister_dma(mixer_ctx->drm_dev, mixer_ctx->dev,
-> +				  &mixer_ctx->dma_priv);
->   }
->   
->   static int mixer_enable_vblank(struct exynos_drm_crtc *crtc)
-> 
+>   config TORTURE_TEST
+>   	tristate
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
