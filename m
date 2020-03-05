@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78334C3F2D7
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Mar 2020 16:00:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4350BC3F2DA
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Mar 2020 16:00:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58B862146E
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Mar 2020 16:00:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25A0E2146E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Mar 2020 16:00:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727071AbgCEQAE (ORCPT
+        id S1726897AbgCEQAE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
         Thu, 5 Mar 2020 11:00:04 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56426 "EHLO mx2.suse.de"
+Received: from mx2.suse.de ([195.135.220.15]:56406 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727018AbgCEQAD (ORCPT
+        id S1726915AbgCEQAE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Mar 2020 11:00:03 -0500
+        Thu, 5 Mar 2020 11:00:04 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 1F57BAC84;
-        Thu,  5 Mar 2020 16:00:02 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 98883ABCF;
+        Thu,  5 Mar 2020 16:00:03 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     airlied@linux.ie, daniel@ffwll.ch, sam@ravnborg.org,
         abrodkin@synopsys.com, bbrezillon@kernel.org,
@@ -51,9 +51,9 @@ Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH 06/22] drm/hisilicon/kirin: Use simple encoder
-Date:   Thu,  5 Mar 2020 16:59:34 +0100
-Message-Id: <20200305155950.2705-7-tzimmermann@suse.de>
+Subject: [PATCH 07/22] drm/i2c/tda998x: Use simple encoder
+Date:   Thu,  5 Mar 2020 16:59:35 +0100
+Message-Id: <20200305155950.2705-8-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200305155950.2705-1-tzimmermann@suse.de>
 References: <20200305155950.2705-1-tzimmermann@suse.de>
@@ -64,47 +64,53 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The kirin driver uses an empty implementation for its encoder. Replace
+The tda998x driver uses an empty implementation for its encoder. Replace
 the code with the generic simple encoder.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/i2c/tda998x_drv.c | 14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c b/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c
-index f31068d74b18..08c1ab542c03 100644
---- a/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c
-+++ b/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c
-@@ -25,6 +25,7 @@
+diff --git a/drivers/gpu/drm/i2c/tda998x_drv.c b/drivers/gpu/drm/i2c/tda998x_drv.c
+index c3332209f27a..0e1a90f70ec0 100644
+--- a/drivers/gpu/drm/i2c/tda998x_drv.c
++++ b/drivers/gpu/drm/i2c/tda998x_drv.c
+@@ -19,6 +19,7 @@
  #include <drm/drm_of.h>
  #include <drm/drm_print.h>
  #include <drm/drm_probe_helper.h>
 +#include <drm/drm_simple_kms_helper.h>
+ #include <drm/i2c/tda998x.h>
  
- #include "dw_dsi_reg.h"
+ #include <media/cec-notifier.h>
+@@ -1997,15 +1998,6 @@ static int tda998x_create(struct device *dev)
  
-@@ -696,10 +697,6 @@ static const struct drm_encoder_helper_funcs dw_encoder_helper_funcs = {
- 	.disable	= dsi_encoder_disable
- };
+ /* DRM encoder functions */
  
--static const struct drm_encoder_funcs dw_encoder_funcs = {
--	.destroy = drm_encoder_cleanup,
+-static void tda998x_encoder_destroy(struct drm_encoder *encoder)
+-{
+-	drm_encoder_cleanup(encoder);
+-}
+-
+-static const struct drm_encoder_funcs tda998x_encoder_funcs = {
+-	.destroy = tda998x_encoder_destroy,
 -};
 -
- static int dw_drm_encoder_init(struct device *dev,
- 			       struct drm_device *drm_dev,
- 			       struct drm_encoder *encoder)
-@@ -713,8 +710,7 @@ static int dw_drm_encoder_init(struct device *dev,
- 	}
+ static int tda998x_encoder_init(struct device *dev, struct drm_device *drm)
+ {
+ 	struct tda998x_priv *priv = dev_get_drvdata(dev);
+@@ -2023,8 +2015,8 @@ static int tda998x_encoder_init(struct device *dev, struct drm_device *drm)
  
- 	encoder->possible_crtcs = crtc_mask;
--	ret = drm_encoder_init(drm_dev, encoder, &dw_encoder_funcs,
--			       DRM_MODE_ENCODER_DSI, NULL);
-+	ret = drm_simple_encoder_init(drm_dev, encoder, DRM_MODE_ENCODER_DSI);
- 	if (ret) {
- 		DRM_ERROR("failed to init dsi encoder\n");
- 		return ret;
+ 	priv->encoder.possible_crtcs = crtcs;
+ 
+-	ret = drm_encoder_init(drm, &priv->encoder, &tda998x_encoder_funcs,
+-			       DRM_MODE_ENCODER_TMDS, NULL);
++	ret = drm_simple_encoder_init(drm, &priv->encoder,
++				      DRM_MODE_ENCODER_TMDS);
+ 	if (ret)
+ 		goto err_encoder;
+ 
 -- 
 2.25.1
 
