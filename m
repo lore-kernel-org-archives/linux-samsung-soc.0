@@ -2,255 +2,413 @@ Return-Path: <SRS0=g11O=4W=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDC8BC3F2D1
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Mar 2020 08:13:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B103C3F2D7
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Mar 2020 09:07:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B6A42073D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Mar 2020 08:13:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qGsJ6hng"
+	by mail.kernel.org (Postfix) with ESMTP id 368F92146E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Mar 2020 09:07:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725866AbgCEINt (ORCPT
+        id S1725816AbgCEJHA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Mar 2020 03:13:49 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:39023 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725816AbgCEINs (ORCPT
+        Thu, 5 Mar 2020 04:07:00 -0500
+Received: from lucky1.263xmail.com ([211.157.147.134]:45248 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725903AbgCEJHA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Mar 2020 03:13:48 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200305081345euoutp02017f9779b2f05a144ff43d0ca75f2915~5WkvLhE2W2001220012euoutp02Q
-        for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Mar 2020 08:13:45 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200305081345euoutp02017f9779b2f05a144ff43d0ca75f2915~5WkvLhE2W2001220012euoutp02Q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1583396025;
-        bh=8GwUKEqPb511dY0B/HRym3VyWGWahe4WeolVX4eTbo8=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=qGsJ6hngmvQJuYUrHWBNzA1XhVq6UKJ0GvB2BVPD0czKz30cwKGfi4FlqrQ+pZfOG
-         EwK2T9H7M8a3Phd23ZSBM+Ln2t8vrsHFUByb0KuHjYiVGwMhNiiwDM3j9PljmCcZ83
-         11uKHsuGC/Q7z6CAOrmye7DgKhdwkaXuKFwTCbi8=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200305081345eucas1p13fe9d222088f4cd58b0186e08b06fc86~5Wku-S6rR1265412654eucas1p1P;
-        Thu,  5 Mar 2020 08:13:45 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id E7.6C.60698.9B4B06E5; Thu,  5
-        Mar 2020 08:13:45 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200305081344eucas1p210aadafaa9d38b58c2f1b06b7b8544ec~5WkunS-fA2347923479eucas1p2y;
-        Thu,  5 Mar 2020 08:13:44 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200305081344eusmtrp28c189d2d69397b778eb2c901fc43c2e4~5WkumsxMc3101531015eusmtrp2u;
-        Thu,  5 Mar 2020 08:13:44 +0000 (GMT)
-X-AuditID: cbfec7f5-a0fff7000001ed1a-77-5e60b4b9ac57
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 91.9F.07950.8B4B06E5; Thu,  5
-        Mar 2020 08:13:44 +0000 (GMT)
-Received: from [106.120.51.15] (unknown [106.120.51.15]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200305081344eusmtip21ed1ba3d09382b43068bf9856d10bc95~5WkuL4OVc1057510575eusmtip2k;
-        Thu,  5 Mar 2020 08:13:44 +0000 (GMT)
-Subject: Re: [PATCH] drm/exynos: Fix cleanup of IOMMU related objects
-To:     Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Thu, 5 Mar 2020 04:07:00 -0500
+Received: from localhost (unknown [192.168.167.13])
+        by lucky1.263xmail.com (Postfix) with ESMTP id B75046E056;
+        Thu,  5 Mar 2020 17:03:47 +0800 (CST)
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-SKE-CHECKED: 1
+X-ABS-CHECKED: 1
+Received: from [172.16.12.218] (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P3521T140169560696576S1583399027447008_;
+        Thu, 05 Mar 2020 17:03:48 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <e63ddaba80fa9adc495f49092d9fce9b>
+X-RL-SENDER: andy.yan@rock-chips.com
+X-SENDER: yxj@rock-chips.com
+X-LOGIN-NAME: andy.yan@rock-chips.com
+X-FST-TO: laurent.pinchart@ideasonboard.com
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+X-System-Flag: 0
+Subject: =?UTF-8?Q?Re=3a_=5bPATCH=5d_drm/bridge=3a_analogix=5fdp=3a_Split_bi?=
+ =?UTF-8?B?bmQoKSBpbnRvIHByb2JlKCkgYW5kIHJlYWwgYmluZCgp44CQ6K+35rOo5oSP77yM?=
+ =?UTF-8?B?6YKu5Lu255SxbGludXgtcm9ja2NoaXAtYm91bmNlcythbmR5Lnlhbj1yb2NrLWNo?=
+ =?UTF-8?B?aXBzLmNvbUBsaXN0cy5pbmZyYWRlYWQub3Jn5Luj5Y+R44CR?=
+To:     Andrzej Hajda <a.hajda@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org
+Cc:     Jernej Skrabec <jernej.skrabec@siol.net>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
         Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Andrzej Hajda <a.hajda@samsung.com>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <3939a892-5d30-9647-30aa-81e3c9244c4f@samsung.com>
-Date:   Thu, 5 Mar 2020 09:13:44 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.5.0
+        Sandy Huang <hjc@rock-chips.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+References: <CGME20200302142626eucas1p25b7aec18264b1483fab9cceb86989aa8@eucas1p2.samsung.com>
+ <20200302142615.14947-1-m.szyprowski@samsung.com>
+ <30f64c8f-2a12-46c2-e5eb-505bbb2088ed@samsung.com>
+From:   Andy Yan <andy.yan@rock-chips.com>
+Message-ID: <331b5d65-f619-ff84-d4e7-55d2257a90c5@rock-chips.com>
+Date:   Thu, 5 Mar 2020 17:03:46 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <d392e79f-7209-d7f6-0f1a-3d3d6e4c4473@samsung.com>
+In-Reply-To: <30f64c8f-2a12-46c2-e5eb-505bbb2088ed@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNKsWRmVeSWpSXmKPExsWy7djPc7o7tyTEGZzYKWxxa905VouNM9az
-        Wlz5+p7NYtL9CSwWM87vY7KYMfklmwObx/3u40wefVtWMXp83iQXwBzFZZOSmpNZllqkb5fA
-        lfF6wSbmgvWGFZ2XljE2MJ7W6GLk5JAQMJF4duoQaxcjF4eQwApGiV/TLzFDOF8YJZqe/4TK
-        fGaUOLDuACtMy5cP6xkhEssZJdatfcUO4bxllNg5+Q47SJWwgKvE2e7nzCC2iECmxIEn0xlB
-        bGaBdkaJtcfjQWw2AUOJrrddbF2MHBy8AnYSnXMLQMIsAioSy049YgGxRQViJWavPAxm8woI
-        Spyc+YQFpJxTwF5i/ZR4iInyEs1bZzND2OISt57MZwI5R0JgEbvEr0f/WCCOdpFo/byXCcIW
-        lnh1fAs7hC0j8X8nTEMzo8TDc2vZIZweRonLTTMYIaqsJe6c+wV2KLOApsT6XfoQYUeJ3o+X
-        2EHCEgJ8EjfeCkIcwScxadt0Zogwr0RHmxBEtZrErOPr4NYevHCJeQKj0iwkn81C8s4sJO/M
-        Qti7gJFlFaN4amlxbnpqsXFearlecWJucWleul5yfu4mRmCSOf3v+NcdjPv+JB1iFOBgVOLh
-        fTE1Pk6INbGsuDL3EKMEB7OSCK+wKVCINyWxsiq1KD++qDQntfgQozQHi5I4r/Gil7FCAumJ
-        JanZqakFqUUwWSYOTqkGxlKeya5dp7c69Ok4sCfEKokFxJk6vDqyaME91jrFnS0zYv3ml659
-        +GD16rSCvSohe31PlzdVeW9ZM0Fo9UlmfXUjziOGs4TtvwR9dRE//VDn6Vn5Z/MTd31NVWaw
-        Zeg4t19A7tFuVs53MVOSzeZxCn0Q5WOtz9WQKeS/ljqVb//D/XvmXlxSqcRSnJFoqMVcVJwI
-        AJYM31AuAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLIsWRmVeSWpSXmKPExsVy+t/xe7o7tiTEGWz+ZGlxa905VouNM9az
-        Wlz5+p7NYtL9CSwWM87vY7KYMfklmwObx/3u40wefVtWMXp83iQXwBylZ1OUX1qSqpCRX1xi
-        qxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OSmpNZllqkb5egl/F6wSbmgvWGFZ2XljE2MJ7W
-        6GLk5JAQMJH48mE9I4gtJLCUUWLqBTeIuIzEyWkNrBC2sMSfa11sXYxcQDWvGSVObesGaxAW
-        cJU42/2cGcQWEciUeNm8nhmkiFmgnVHiyL4OdoiOY4wSLTMWglWxCRhKdL0FGcXBwStgJ9E5
-        twAkzCKgIrHs1CMWEFtUIFbixswOJhCbV0BQ4uTMJywg5ZwC9hLrp8SDhJkFzCTmbX7IDGHL
-        SzRvnQ1li0vcejKfaQKj0Cwk3bOQtMxC0jILScsCRpZVjCKppcW56bnFRnrFibnFpXnpesn5
-        uZsYgVG17djPLTsYu94FH2IU4GBU4uFdYJ4QJ8SaWFZcmXuIUYKDWUmEV9g0Pk6INyWxsiq1
-        KD++qDQntfgQoynQbxOZpUST84ERn1cSb2hqaG5haWhubG5sZqEkztshcDBGSCA9sSQ1OzW1
-        ILUIpo+Jg1OqgTHb8puzXmq1TNFdfwXN2uYtm7WKAk59vah+oPONx/xFP/Y5Kd47/SPg7uWJ
-        J8P+8mo13dyWmiVgkRzbq3n9b9WssM81h96lu+8Ri8t+/+ehxNW1cvXnr9u5SXjdqJl9lY9Z
-        Ir/auuHs6sAd/deq6z59VZDPft5z0MK76N1FwdoY87nqaq07XiixFGckGmoxFxUnAgDCfwP5
-        wAIAAA==
-X-CMS-MailID: 20200305081344eucas1p210aadafaa9d38b58c2f1b06b7b8544ec
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200302142822eucas1p1749e7cd54ad0b8657b753a8b720ccba2
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200302142822eucas1p1749e7cd54ad0b8657b753a8b720ccba2
-References: <CGME20200302142822eucas1p1749e7cd54ad0b8657b753a8b720ccba2@eucas1p1.samsung.com>
-        <20200302142709.15007-1-m.szyprowski@samsung.com>
-        <d392e79f-7209-d7f6-0f1a-3d3d6e4c4473@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Inki,
 
-On 05.03.2020 09:01, Inki Dae wrote:
-> Hi Marek,
->
-> 20. 3. 2. 오후 11:27에 Marek Szyprowski 이(가) 쓴 글:
->> Store the IOMMU mapping created by device core of each Exynos DRM
->> sub-device and restore it when Exynos DRM driver is unbound. This fixes
->> IOMMU initialization failure for the second time when deferred probe is
->> triggered from the bind() callback of master's compound DRM driver.
+Hi:
+
+I tested it on a rk3399 board, but the eDP was broken after this patch 
+applied:
+
+
+[    0.891873] registered taskstats version 1
+[    0.892243] Loading compiled-in X.509 certificates
+[    0.929147] rockchip-dp ff970000.edp: no DP phy configured
+[    0.931676] random: fast init done
+[    0.932594] rockchip-drm display-subsystem: bound ff900000.vop (ops 
+vop_component_ops)
+[    0.934117] rockchip-drm display-subsystem: bound ff970000.edp (ops 
+rockchip_dp_component_ops)
+[    0.934878] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+[    0.935459] [drm] No driver support for vblank timestamp query.
+[    0.956708] mmc0: new HS400 MMC card at address 0001
+[    0.958261] mmcblk0: mmc0:0001 AWPD3R 14.6 GiB
+[    0.958952] mmcblk0boot0: mmc0:0001 AWPD3R partition 1 4.00 MiB
+[    0.959804] mmcblk0boot1: mmc0:0001 AWPD3R partition 2 4.00 MiB
+[    0.960540] mmcblk0rpmb: mmc0:0001 AWPD3R partition 3 4.00 MiB, 
+chardev (242:0)
+[    0.965428] rockchip-dp ff970000.edp: AUX CH error happened: 0x7 (1)
+[    0.966228] rockchip-dp ff970000.edp: AUX CH error happened: 0x7 (1)
+[    0.967025] rockchip-dp ff970000.edp: AUX CH error happened: 0x7 (1)
+[    0.967104]  mmcblk0: p1 p2 p3 p4 p5
+[    0.967823] rockchip-dp ff970000.edp: AUX CH error happened: 0x7 (1)
+[    0.968620] rockchip-dp ff970000.edp: AUX CH error happened: 0x7 (1)
+[    0.969417] rockchip-dp ff970000.edp: AUX CH error happened: 0x7 (1)
+[    0.970216] rockchip-dp ff970000.edp: AUX CH error happened: 0x7 (1)
+[    0.971012] rockchip-dp ff970000.edp: AUX CH error happened: 0x7 (1)
+[    0.971811] rockchip-dp ff970000.edp: AUX CH error happened: 0x7 (1)
+[    0.972608] rockchip-dp ff970000.edp: AUX CH error happened: 0x7 (1)
+[    0.973404] rockchip-dp ff970000.edp: AUX CH error happened: 0x7 (1)
+[    0.974201] rockchip-dp ff970000.edp: AUX CH error happened: 0x7 (1)
+[    0.974998] rockchip-dp ff970000.edp: AUX CH error happened: 0x7 (1)
+[    0.975799] rockchip-dp ff970000.edp: AUX CH error happened: 0x7 (1)
+[    0.976596] rockchip-dp ff970000.edp: AUX CH error happened: 0x7 (1)
+[    0.977393] rockchip-dp ff970000.edp: AUX CH error happened: 0x7 (1)
+[    0.978189] rockchip-dp ff970000.edp: AUX CH error happened: 0x7 (1)
+[    0.978986] rockchip-dp ff970000.edp: AUX CH error happened: 0x7 (1)
+[    0.979786] rockchip-dp ff970000.edp: AUX CH error happened: 0x7 (1)
+[    0.980584] rockchip-dp ff970000.edp: AUX CH error happened: 0x7 (1)
+
+
+Before this patch :
+
+
+[    0.877707] 9pnet: Installing 9P2000 support
+[    0.878156] Key type dns_resolver registered
+[    0.879188] registered taskstats version 1
+[    0.879558] Loading compiled-in X.509 certificates
+[    0.918227] rockchip-drm display-subsystem: bound ff900000.vop (ops 
+vop_component_ops)
+[    0.918965] rockchip-dp ff970000.edp: no DP phy configured
+[    0.921003] rockchip-drm display-subsystem: bound ff970000.edp (ops 
+rockchip_dp_component_ops)
+[    0.921766] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+[    0.922347] [drm] No driver support for vblank timestamp query.
+[    0.922620] random: fast init done
+[    0.944772] mmc0: new HS400 MMC card at address 0001
+[    0.946330] mmcblk0: mmc0:0001 AWPD3R 14.6 GiB
+[    0.947022] mmcblk0boot0: mmc0:0001 AWPD3R partition 1 4.00 MiB
+[    0.947835] mmcblk0boot1: mmc0:0001 AWPD3R partition 2 4.00 MiB
+[    0.948706] mmcblk0rpmb: mmc0:0001 AWPD3R partition 3 4.00 MiB, 
+chardev (242:0)
+[    0.948928] [drm] vop_crtc_atomic_enable
+[    0.954614]  mmcblk0: p1 p2 p3 p4 p5
+[    1.061071] Console: switching to colour frame buffer device 192x128
+[    1.095819] rockchip-drm display-subsystem: fb0: rockchipdrmfb frame 
+buffer device
+[    1.098090] [drm] Initialized rockchip 1.0.0 20140818 for 
+display-subsystem on minor 0
+[    1.100342] hctosys: unable to open rtc device (rtc0)
+75,1          Bot
+
+On 3/3/20 8:38 PM, Andrzej Hajda wrote:
+> On 02.03.2020 15:26, Marek Szyprowski wrote:
+>> Analogix_dp driver acquires all its resources in ->bind() callback, what
+>> is a bit against the driver component based approach, where driver
+>> initialization is split into probe(), where all resources are gathered, and
+>> bind(), where objects are created and compound driver is initialized.
+>> Extract resource related operations to analogix_dp_probe() and
+>> analogix_dp_remove() and call them before/after registration of the device
+>> components from the main Exynos and Rockchip DP drivers.
+>>
+>> This fixes multiple tries of DRM compound driver bind() when example when
+>> DP PHY driver is not yet loaded/probed():
+>>
+>> [drm] Exynos DRM: using 14400000.fimd device for DMA mapping operations
+>> exynos-drm exynos-drm: bound 14400000.fimd (ops fimd_component_ops [exynosdrm])
+>> exynos-drm exynos-drm: bound 14450000.mixer (ops mixer_component_ops [exynosdrm])
+>> exynos-dp 145b0000.dp-controller: no DP phy configured
+>> exynos-drm exynos-drm: failed to bind 145b0000.dp-controller (ops exynos_dp_ops [exynosdrm]): -517
+>> exynos-drm exynos-drm: master bind failed: -517
+>> ...
+>> [drm] Exynos DRM: using 14400000.fimd device for DMA mapping operations
+>> exynos-drm exynos-drm: bound 14400000.fimd (ops hdmi_enable [exynosdrm])
+>> exynos-drm exynos-drm: bound 14450000.mixer (ops hdmi_enable [exynosdrm])
+>> exynos-drm exynos-drm: bound 145b0000.dp-controller (ops hdmi_enable [exynosdrm])
+>> exynos-drm exynos-drm: bound 14530000.hdmi (ops hdmi_enable [exynosdrm])
+>> [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+>> Console: switching to colour frame buffer device 170x48
+>> exynos-drm exynos-drm: fb0: exynosdrmfb frame buffer device
+>> [drm] Initialized exynos 1.1.0 20180330 for exynos-drm on minor 1
+>> ...
 >>
 >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>
+> I hope someone with rockchip will test the patch.
+>
+> I am little bit worried about power/resource management:
+>
+> 1. dp->clock enabled in probe.
+>
+> 2. pm_runtime enabled in bind.
+>
+> Both seems to me too early, but it could be hw issue and should be
+> addressed in separate patches if possible.
+>
+>
+> As I understand the patch tries to split things without changing order
+> of calls, so for me it is OK:
+>
+>
+> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+>
+>   --
+>
+> Regards
+> Andrzej
+>
 >> ---
->>   drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  5 +++--
->>   drivers/gpu/drm/exynos/exynos7_drm_decon.c    |  5 +++--
->>   drivers/gpu/drm/exynos/exynos_drm_dma.c       | 22 +++++++++++--------
->>   drivers/gpu/drm/exynos/exynos_drm_drv.h       |  6 +++--
->>   drivers/gpu/drm/exynos/exynos_drm_fimc.c      |  5 +++--
->>   drivers/gpu/drm/exynos/exynos_drm_fimd.c      |  5 +++--
->>   drivers/gpu/drm/exynos/exynos_drm_g2d.c       |  5 +++--
->>   drivers/gpu/drm/exynos/exynos_drm_gsc.c       |  5 +++--
->>   drivers/gpu/drm/exynos/exynos_drm_rotator.c   |  5 +++--
->>   drivers/gpu/drm/exynos/exynos_drm_scaler.c    |  6 +++--
->>   drivers/gpu/drm/exynos/exynos_mixer.c         |  7 ++++--
->>   11 files changed, 47 insertions(+), 29 deletions(-)
+>>   .../drm/bridge/analogix/analogix_dp_core.c    | 33 ++++++++++++-------
+>>   drivers/gpu/drm/exynos/exynos_dp.c            | 15 ++++++---
+>>   .../gpu/drm/rockchip/analogix_dp-rockchip.c   | 15 +++++----
+>>   include/drm/bridge/analogix_dp.h              |  5 +--
+>>   4 files changed, 44 insertions(+), 24 deletions(-)
 >>
->> diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
->> index 8428ae12dfa5..1f79bc2a881e 100644
->> --- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
->> +++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
->> @@ -55,6 +55,7 @@ static const char * const decon_clks_name[] = {
->>   struct decon_context {
->>   	struct device			*dev;
->>   	struct drm_device		*drm_dev;
->> +	void				*dma_priv;
->>   	struct exynos_drm_crtc		*crtc;
->>   	struct exynos_drm_plane		planes[WINDOWS_NR];
->>   	struct exynos_drm_plane_config	configs[WINDOWS_NR];
->> @@ -644,7 +645,7 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
->>   
->>   	decon_clear_channels(ctx->crtc);
->>   
->> -	return exynos_drm_register_dma(drm_dev, dev);
->> +	return exynos_drm_register_dma(drm_dev, dev, &ctx->dma_priv);
+>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> index dfb59a5fefea..a89a03b66bf2 100644
+>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> @@ -1646,8 +1646,7 @@ static ssize_t analogix_dpaux_transfer(struct drm_dp_aux *aux,
 >>   }
 >>   
->>   static void decon_unbind(struct device *dev, struct device *master, void *data)
->> @@ -654,7 +655,7 @@ static void decon_unbind(struct device *dev, struct device *master, void *data)
->>   	decon_atomic_disable(ctx->crtc);
->>   
->>   	/* detach this sub driver from iommu mapping if supported. */
->> -	exynos_drm_unregister_dma(ctx->drm_dev, ctx->dev);
->> +	exynos_drm_unregister_dma(ctx->drm_dev, ctx->dev, &ctx->dma_priv);
->>   }
->>   
->>   static const struct component_ops decon_component_ops = {
->> diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
->> index ff59c641fa80..1eed3327999f 100644
->> --- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
->> +++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
->> @@ -40,6 +40,7 @@
->>   struct decon_context {
->>   	struct device			*dev;
->>   	struct drm_device		*drm_dev;
->> +	void				*dma_priv;
->>   	struct exynos_drm_crtc		*crtc;
->>   	struct exynos_drm_plane		planes[WINDOWS_NR];
->>   	struct exynos_drm_plane_config	configs[WINDOWS_NR];
->> @@ -127,13 +128,13 @@ static int decon_ctx_initialize(struct decon_context *ctx,
->>   
->>   	decon_clear_channels(ctx->crtc);
->>   
->> -	return exynos_drm_register_dma(drm_dev, ctx->dev);
->> +	return exynos_drm_register_dma(drm_dev, ctx->dev, &ctx->dma_priv);
->>   }
->>   
->>   static void decon_ctx_remove(struct decon_context *ctx)
+>>   struct analogix_dp_device *
+>> -analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
+>> -		 struct analogix_dp_plat_data *plat_data)
+>> +analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data)
 >>   {
->>   	/* detach this sub driver from iommu mapping if supported. */
->> -	exynos_drm_unregister_dma(ctx->drm_dev, ctx->dev);
->> +	exynos_drm_unregister_dma(ctx->drm_dev, ctx->dev, &ctx->dma_priv);
+>>   	struct platform_device *pdev = to_platform_device(dev);
+>>   	struct analogix_dp_device *dp;
+>> @@ -1750,22 +1749,30 @@ analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
+>>   					irq_flags, "analogix-dp", dp);
+>>   	if (ret) {
+>>   		dev_err(&pdev->dev, "failed to request irq\n");
+>> -		goto err_disable_pm_runtime;
+>> +		return ERR_PTR(ret);
+>>   	}
+>>   	disable_irq(dp->irq);
+>>   
+>> +	return dp;
+>> +}
+>> +EXPORT_SYMBOL_GPL(analogix_dp_probe);
+>> +
+>> +int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
+>> +{
+>> +	int ret;
+>> +
+>>   	dp->drm_dev = drm_dev;
+>>   	dp->encoder = dp->plat_data->encoder;
+>>   
+>>   	dp->aux.name = "DP-AUX";
+>>   	dp->aux.transfer = analogix_dpaux_transfer;
+>> -	dp->aux.dev = &pdev->dev;
+>> +	dp->aux.dev = dp->dev;
+>>   
+>>   	ret = drm_dp_aux_register(&dp->aux);
+>>   	if (ret)
+>> -		return ERR_PTR(ret);
+>> +		return ret;
+>>   
+>> -	pm_runtime_enable(dev);
+>> +	pm_runtime_enable(dp->dev);
+>>   
+>>   	ret = analogix_dp_create_bridge(drm_dev, dp);
+>>   	if (ret) {
+>> @@ -1773,13 +1780,12 @@ analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
+>>   		goto err_disable_pm_runtime;
+>>   	}
+>>   
+>> -	return dp;
+>> +	return 0;
+>>   
+>>   err_disable_pm_runtime:
+>> +	pm_runtime_disable(dp->dev);
+>>   
+>> -	pm_runtime_disable(dev);
+>> -
+>> -	return ERR_PTR(ret);
+>> +	return ret;
+>>   }
+>>   EXPORT_SYMBOL_GPL(analogix_dp_bind);
+>>   
+>> @@ -1796,10 +1802,15 @@ void analogix_dp_unbind(struct analogix_dp_device *dp)
+>>   
+>>   	drm_dp_aux_unregister(&dp->aux);
+>>   	pm_runtime_disable(dp->dev);
+>> -	clk_disable_unprepare(dp->clock);
+>>   }
+>>   EXPORT_SYMBOL_GPL(analogix_dp_unbind);
+>>   
+>> +void analogix_dp_remove(struct analogix_dp_device *dp)
+>> +{
+>> +	clk_disable_unprepare(dp->clock);
+>> +}
+>> +EXPORT_SYMBOL_GPL(analogix_dp_remove);
+>> +
+>>   #ifdef CONFIG_PM
+>>   int analogix_dp_suspend(struct analogix_dp_device *dp)
+>>   {
+>> diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
+>> index 4785885c0f4f..558b78e8cc32 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_dp.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_dp.c
+>> @@ -184,13 +184,11 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
+>>   
+>>   	dp->plat_data.encoder = encoder;
+>>   
+>> -	dp->adp = analogix_dp_bind(dev, dp->drm_dev, &dp->plat_data);
+>> -	if (IS_ERR(dp->adp)) {
+>> +	ret = analogix_dp_bind(dp->adp, dp->drm_dev);
+>> +	if (ret)
+>>   		dp->encoder.funcs->destroy(&dp->encoder);
+>> -		return PTR_ERR(dp->adp);
+>> -	}
+>>   
+>> -	return 0;
+>> +	return ret;
 >>   }
 >>   
->>   static u32 decon_calc_clkdiv(struct decon_context *ctx,
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dma.c b/drivers/gpu/drm/exynos/exynos_drm_dma.c
->> index 9ebc02768847..482bec7756fa 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_dma.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_dma.c
->> @@ -58,7 +58,7 @@ static inline void clear_dma_max_seg_size(struct device *dev)
->>    * mapping.
->>    */
->>   static int drm_iommu_attach_device(struct drm_device *drm_dev,
->> -				struct device *subdrv_dev)
->> +				struct device *subdrv_dev, void **dma_priv)
+>>   static void exynos_dp_unbind(struct device *dev, struct device *master,
+>> @@ -250,12 +248,19 @@ static int exynos_dp_probe(struct platform_device *pdev)
+>>   	dp->ptn_bridge = bridge;
+>>   
+>>   out:
+>> +	dp->adp = analogix_dp_probe(dev, &dp->plat_data);
+>> +	if (IS_ERR(dp->adp))
+>> +		return PTR_ERR(dp->adp);
+>> +
+>>   	return component_add(&pdev->dev, &exynos_dp_ops);
+>>   }
+>>   
+>>   static int exynos_dp_remove(struct platform_device *pdev)
 >>   {
->>   	struct exynos_drm_private *priv = drm_dev->dev_private;
->>   	int ret;
->> @@ -74,7 +74,8 @@ static int drm_iommu_attach_device(struct drm_device *drm_dev,
->>   		return ret;
+>> +	struct exynos_dp_device *dp = platform_get_drvdata(pdev);
+>> +
+>>   	component_del(&pdev->dev, &exynos_dp_ops);
+>> +	analogix_dp_remove(dp->adp);
 >>   
->>   	if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)) {
->> -		if (to_dma_iommu_mapping(subdrv_dev))
->> +		*dma_priv = to_dma_iommu_mapping(subdrv_dev);
->> +		if (*dma_priv)
->>   			arm_iommu_detach_device(subdrv_dev);
+>>   	return 0;
+>>   }
+>> diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+>> index f38f5e113c6b..b85cf2582864 100644
+>> --- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+>> +++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+>> @@ -349,11 +349,9 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
+>>   	dp->plat_data.power_off = rockchip_dp_powerdown;
+>>   	dp->plat_data.get_modes = rockchip_dp_get_modes;
 >>   
->>   		ret = arm_iommu_attach_device(subdrv_dev, priv->mapping);
->> @@ -98,19 +99,21 @@ static int drm_iommu_attach_device(struct drm_device *drm_dev,
->>    * mapping
->>    */
->>   static void drm_iommu_detach_device(struct drm_device *drm_dev,
->> -				struct device *subdrv_dev)
->> +				    struct device *subdrv_dev, void **dma_priv)
+>> -	dp->adp = analogix_dp_bind(dev, dp->drm_dev, &dp->plat_data);
+>> -	if (IS_ERR(dp->adp)) {
+>> -		ret = PTR_ERR(dp->adp);
+>> +	ret = analogix_dp_bind(dp->adp, drm_dev);
+>> +	if (ret)
+>>   		goto err_cleanup_encoder;
+>> -	}
+>>   
+>>   	return 0;
+>>   err_cleanup_encoder:
+>> @@ -368,8 +366,6 @@ static void rockchip_dp_unbind(struct device *dev, struct device *master,
+>>   
+>>   	analogix_dp_unbind(dp->adp);
+>>   	dp->encoder.funcs->destroy(&dp->encoder);
+>> -
+>> -	dp->adp = ERR_PTR(-ENODEV);
+>>   }
+>>   
+>>   static const struct component_ops rockchip_dp_component_ops = {
+>> @@ -402,12 +398,19 @@ static int rockchip_dp_probe(struct platform_device *pdev)
+>>   
+>>   	platform_set_drvdata(pdev, dp);
+>>   
+>> +	dp->adp = analogix_dp_probe(dev, &dp->plat_data);
+>> +	if (IS_ERR(dp->adp))
+>> +		return PTR_ERR(dp->adp);
+>> +
+>>   	return component_add(dev, &rockchip_dp_component_ops);
+>>   }
+>>   
+>>   static int rockchip_dp_remove(struct platform_device *pdev)
 >>   {
->>   	struct exynos_drm_private *priv = drm_dev->dev_private;
+>> +	struct rockchip_dp_device *dp = platform_get_drvdata(pdev);
+>> +
+>>   	component_del(&pdev->dev, &rockchip_dp_component_ops);
+>> +	analogix_dp_remove(dp->adp);
 >>   
->> -	if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU))
->> +	if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)) {
->>   		arm_iommu_detach_device(subdrv_dev);
->> -	else if (IS_ENABLED(CONFIG_IOMMU_DMA))
->> +		arm_iommu_attach_device(subdrv_dev, *dma_priv);
-> I don't see why arm_iommu_attach_device function should be called again at drm_iommu_detach_device function.
-> I think it should be no problem without arm_iommu_attach_device call.
+>>   	return 0;
+>>   }
+>> diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
+>> index 7aa2f93da49c..b0dcc07334a1 100644
+>> --- a/include/drm/bridge/analogix_dp.h
+>> +++ b/include/drm/bridge/analogix_dp.h
+>> @@ -42,9 +42,10 @@ int analogix_dp_resume(struct analogix_dp_device *dp);
+>>   int analogix_dp_suspend(struct analogix_dp_device *dp);
+>>   
+>>   struct analogix_dp_device *
+>> -analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
+>> -		 struct analogix_dp_plat_data *plat_data);
+>> +analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data);
+>> +int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev);
+>>   void analogix_dp_unbind(struct analogix_dp_device *dp);
+>> +void analogix_dp_remove(struct analogix_dp_device *dp);
+>>   
+>>   int analogix_dp_start_crc(struct drm_connector *connector);
+>>   int analogix_dp_stop_crc(struct drm_connector *connector);
+>
+>
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
 
-If device is not attached again to the mapping created by the DMA 
-framework, it will be later considered as a device without IOMMU.
-
-> If there is any problem without arm_iommu_attach_device function call then maybe getting wrong somewhere but not here.
-
-The problem will be during the second initialization of Exynos DRM, 
-mainly if the first initialization is interrupted by deferred probe. 
-This issue would be also visible when Exynos DRM is compiled as module 
-and loaded, removed and loaded again. Sadly, due to some circular 
-dependencies, this is not yet possible without the hacks.
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
 
