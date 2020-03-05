@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC1FC3F2D2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4DA4C3F2D7
 	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Mar 2020 16:00:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34CBA21775
+	by mail.kernel.org (Postfix) with ESMTP id 88A6D21744
 	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Mar 2020 16:00:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727193AbgCEQAW (ORCPT
+        id S1726676AbgCEQAX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Mar 2020 11:00:22 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57838 "EHLO mx2.suse.de"
+        Thu, 5 Mar 2020 11:00:23 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57918 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726676AbgCEQAW (ORCPT
+        id S1726273AbgCEQAX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Mar 2020 11:00:22 -0500
+        Thu, 5 Mar 2020 11:00:23 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 91D5FB0C6;
-        Thu,  5 Mar 2020 16:00:19 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 147DDB12C;
+        Thu,  5 Mar 2020 16:00:21 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     airlied@linux.ie, daniel@ffwll.ch, sam@ravnborg.org,
         abrodkin@synopsys.com, bbrezillon@kernel.org,
@@ -51,9 +51,9 @@ Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH 18/22] drm/vc4: Use simple encoder
-Date:   Thu,  5 Mar 2020 16:59:46 +0100
-Message-Id: <20200305155950.2705-19-tzimmermann@suse.de>
+Subject: [PATCH 19/22] drm/virtgpu: Use simple encoder
+Date:   Thu,  5 Mar 2020 16:59:47 +0100
+Message-Id: <20200305155950.2705-20-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200305155950.2705-1-tzimmermann@suse.de>
 References: <20200305155950.2705-1-tzimmermann@suse.de>
@@ -64,186 +64,47 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The vc4 driver uses empty implementations for its encoders. Replace
+The virtgpu driver uses an empty implementation for its encoder. Replace
 the code with the generic simple encoder.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/vc4/vc4_dpi.c  |  8 ++------
- drivers/gpu/drm/vc4/vc4_dsi.c  | 15 +++------------
- drivers/gpu/drm/vc4/vc4_hdmi.c | 17 ++++-------------
- drivers/gpu/drm/vc4/vc4_vec.c  |  8 ++------
- 4 files changed, 11 insertions(+), 37 deletions(-)
+ drivers/gpu/drm/virtio/virtgpu_display.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/vc4/vc4_dpi.c b/drivers/gpu/drm/vc4/vc4_dpi.c
-index 6dfede03396e..a90f2545baee 100644
---- a/drivers/gpu/drm/vc4/vc4_dpi.c
-+++ b/drivers/gpu/drm/vc4/vc4_dpi.c
-@@ -17,6 +17,7 @@
- #include <drm/drm_of.h>
- #include <drm/drm_panel.h>
+diff --git a/drivers/gpu/drm/virtio/virtgpu_display.c b/drivers/gpu/drm/virtio/virtgpu_display.c
+index 2b7e6ae65546..cc7fd957a307 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_display.c
++++ b/drivers/gpu/drm/virtio/virtgpu_display.c
+@@ -30,6 +30,7 @@
+ #include <drm/drm_fourcc.h>
+ #include <drm/drm_gem_framebuffer_helper.h>
  #include <drm/drm_probe_helper.h>
 +#include <drm/drm_simple_kms_helper.h>
- #include <linux/clk.h>
- #include <linux/component.h>
- #include <linux/of_graph.h>
-@@ -114,10 +115,6 @@ static const struct debugfs_reg32 dpi_regs[] = {
- 	VC4_REG32(DPI_ID),
+ 
+ #include "virtgpu_drv.h"
+ 
+@@ -240,10 +241,6 @@ static const struct drm_connector_funcs virtio_gpu_connector_funcs = {
+ 	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
  };
  
--static const struct drm_encoder_funcs vc4_dpi_encoder_funcs = {
+-static const struct drm_encoder_funcs virtio_gpu_enc_funcs = {
 -	.destroy = drm_encoder_cleanup,
 -};
 -
- static void vc4_dpi_encoder_disable(struct drm_encoder *encoder)
+ static int vgdev_output_init(struct virtio_gpu_device *vgdev, int index)
  {
- 	struct vc4_dpi_encoder *vc4_encoder = to_vc4_dpi_encoder(encoder);
-@@ -309,8 +306,7 @@ static int vc4_dpi_bind(struct device *dev, struct device *master, void *data)
- 	if (ret)
- 		DRM_ERROR("Failed to turn on core clock: %d\n", ret);
+ 	struct drm_device *dev = vgdev->ddev;
+@@ -276,8 +273,7 @@ static int vgdev_output_init(struct virtio_gpu_device *vgdev, int index)
+ 	if (vgdev->has_edid)
+ 		drm_connector_attach_edid_property(connector);
  
--	drm_encoder_init(drm, dpi->encoder, &vc4_dpi_encoder_funcs,
--			 DRM_MODE_ENCODER_DPI, NULL);
-+	drm_simple_encoder_init(drm, dpi->encoder, DRM_MODE_ENCODER_DPI);
- 	drm_encoder_helper_add(dpi->encoder, &vc4_dpi_encoder_helper_funcs);
+-	drm_encoder_init(dev, encoder, &virtio_gpu_enc_funcs,
+-			 DRM_MODE_ENCODER_VIRTUAL, NULL);
++	drm_simple_encoder_init(dev, encoder, DRM_MODE_ENCODER_VIRTUAL);
+ 	drm_encoder_helper_add(encoder, &virtio_gpu_enc_helper_funcs);
+ 	encoder->possible_crtcs = 1 << index;
  
- 	ret = vc4_dpi_init_bridge(dpi);
-diff --git a/drivers/gpu/drm/vc4/vc4_dsi.c b/drivers/gpu/drm/vc4/vc4_dsi.c
-index d99b1d526651..eaf276978ee7 100644
---- a/drivers/gpu/drm/vc4/vc4_dsi.c
-+++ b/drivers/gpu/drm/vc4/vc4_dsi.c
-@@ -37,6 +37,7 @@
- #include <drm/drm_of.h>
- #include <drm/drm_panel.h>
- #include <drm/drm_probe_helper.h>
-+#include <drm/drm_simple_kms_helper.h>
- 
- #include "vc4_drv.h"
- #include "vc4_regs.h"
-@@ -652,15 +653,6 @@ static const struct debugfs_reg32 dsi1_regs[] = {
- 	VC4_REG32(DSI1_ID),
- };
- 
--static void vc4_dsi_encoder_destroy(struct drm_encoder *encoder)
--{
--	drm_encoder_cleanup(encoder);
--}
--
--static const struct drm_encoder_funcs vc4_dsi_encoder_funcs = {
--	.destroy = vc4_dsi_encoder_destroy,
--};
--
- static void vc4_dsi_latch_ulps(struct vc4_dsi *dsi, bool latch)
- {
- 	u32 afec0 = DSI_PORT_READ(PHY_AFEC0);
-@@ -1615,8 +1607,7 @@ static int vc4_dsi_bind(struct device *dev, struct device *master, void *data)
- 	if (dsi->port == 1)
- 		vc4->dsi1 = dsi;
- 
--	drm_encoder_init(drm, dsi->encoder, &vc4_dsi_encoder_funcs,
--			 DRM_MODE_ENCODER_DSI, NULL);
-+	drm_simple_encoder_init(drm, dsi->encoder, DRM_MODE_ENCODER_DSI);
- 	drm_encoder_helper_add(dsi->encoder, &vc4_dsi_encoder_helper_funcs);
- 
- 	ret = drm_bridge_attach(dsi->encoder, dsi->bridge, NULL, 0);
-@@ -1656,7 +1647,7 @@ static void vc4_dsi_unbind(struct device *dev, struct device *master,
- 	 * normally.
- 	 */
- 	list_splice_init(&dsi->bridge_chain, &dsi->encoder->bridge_chain);
--	vc4_dsi_encoder_destroy(dsi->encoder);
-+	drm_encoder_cleanup(dsi->encoder);
- 
- 	if (dsi->port == 1)
- 		vc4->dsi1 = NULL;
-diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-index cea18dc15f77..8f956156eb8e 100644
---- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-+++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-@@ -34,6 +34,7 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_edid.h>
- #include <drm/drm_probe_helper.h>
-+#include <drm/drm_simple_kms_helper.h>
- #include <linux/clk.h>
- #include <linux/component.h>
- #include <linux/i2c.h>
-@@ -306,15 +307,6 @@ static struct drm_connector *vc4_hdmi_connector_init(struct drm_device *dev,
- 	return connector;
- }
- 
--static void vc4_hdmi_encoder_destroy(struct drm_encoder *encoder)
--{
--	drm_encoder_cleanup(encoder);
--}
--
--static const struct drm_encoder_funcs vc4_hdmi_encoder_funcs = {
--	.destroy = vc4_hdmi_encoder_destroy,
--};
--
- static int vc4_hdmi_stop_packet(struct drm_encoder *encoder,
- 				enum hdmi_infoframe_type type)
- {
-@@ -1394,8 +1386,7 @@ static int vc4_hdmi_bind(struct device *dev, struct device *master, void *data)
- 	}
- 	pm_runtime_enable(dev);
- 
--	drm_encoder_init(drm, hdmi->encoder, &vc4_hdmi_encoder_funcs,
--			 DRM_MODE_ENCODER_TMDS, NULL);
-+	drm_simple_encoder_init(drm, hdmi->encoder, DRM_MODE_ENCODER_TMDS);
- 	drm_encoder_helper_add(hdmi->encoder, &vc4_hdmi_encoder_helper_funcs);
- 
- 	hdmi->connector =
-@@ -1453,7 +1444,7 @@ static int vc4_hdmi_bind(struct device *dev, struct device *master, void *data)
- 	vc4_hdmi_connector_destroy(hdmi->connector);
- #endif
- err_destroy_encoder:
--	vc4_hdmi_encoder_destroy(hdmi->encoder);
-+	drm_encoder_cleanup(hdmi->encoder);
- err_unprepare_hsm:
- 	clk_disable_unprepare(hdmi->hsm_clock);
- 	pm_runtime_disable(dev);
-@@ -1472,7 +1463,7 @@ static void vc4_hdmi_unbind(struct device *dev, struct device *master,
- 
- 	cec_unregister_adapter(hdmi->cec_adap);
- 	vc4_hdmi_connector_destroy(hdmi->connector);
--	vc4_hdmi_encoder_destroy(hdmi->encoder);
-+	drm_encoder_cleanup(hdmi->encoder);
- 
- 	clk_disable_unprepare(hdmi->hsm_clock);
- 	pm_runtime_disable(dev);
-diff --git a/drivers/gpu/drm/vc4/vc4_vec.c b/drivers/gpu/drm/vc4/vc4_vec.c
-index 7402bc768664..bd5b8eb58b18 100644
---- a/drivers/gpu/drm/vc4/vc4_vec.c
-+++ b/drivers/gpu/drm/vc4/vc4_vec.c
-@@ -17,6 +17,7 @@
- #include <drm/drm_edid.h>
- #include <drm/drm_panel.h>
- #include <drm/drm_probe_helper.h>
-+#include <drm/drm_simple_kms_helper.h>
- #include <linux/clk.h>
- #include <linux/component.h>
- #include <linux/of_graph.h>
-@@ -374,10 +375,6 @@ static struct drm_connector *vc4_vec_connector_init(struct drm_device *dev,
- 	return connector;
- }
- 
--static const struct drm_encoder_funcs vc4_vec_encoder_funcs = {
--	.destroy = drm_encoder_cleanup,
--};
--
- static void vc4_vec_encoder_disable(struct drm_encoder *encoder)
- {
- 	struct vc4_vec_encoder *vc4_vec_encoder = to_vc4_vec_encoder(encoder);
-@@ -566,8 +563,7 @@ static int vc4_vec_bind(struct device *dev, struct device *master, void *data)
- 
- 	pm_runtime_enable(dev);
- 
--	drm_encoder_init(drm, vec->encoder, &vc4_vec_encoder_funcs,
--			 DRM_MODE_ENCODER_TVDAC, NULL);
-+	drm_simple_encoder_init(drm, vec->encoder, DRM_MODE_ENCODER_TVDAC);
- 	drm_encoder_helper_add(vec->encoder, &vc4_vec_encoder_helper_funcs);
- 
- 	vec->connector = vc4_vec_connector_init(drm, vec);
 -- 
 2.25.1
 
