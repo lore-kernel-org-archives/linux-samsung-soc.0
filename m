@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46493C3F2D8
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Mar 2020 16:00:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93746C3F2D7
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Mar 2020 16:00:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28B652072D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Mar 2020 16:00:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 754FD20848
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  5 Mar 2020 16:00:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727143AbgCEQAI (ORCPT
+        id S1727176AbgCEQAK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 5 Mar 2020 11:00:08 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56984 "EHLO mx2.suse.de"
+        Thu, 5 Mar 2020 11:00:10 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57072 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726769AbgCEQAI (ORCPT
+        id S1726915AbgCEQAJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 5 Mar 2020 11:00:08 -0500
+        Thu, 5 Mar 2020 11:00:09 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 659B6ABCF;
-        Thu,  5 Mar 2020 16:00:06 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id DD7EFAC84;
+        Thu,  5 Mar 2020 16:00:07 +0000 (UTC)
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     airlied@linux.ie, daniel@ffwll.ch, sam@ravnborg.org,
         abrodkin@synopsys.com, bbrezillon@kernel.org,
@@ -51,9 +51,9 @@ Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH 09/22] drm/ingenic: Use simple encoder
-Date:   Thu,  5 Mar 2020 16:59:37 +0100
-Message-Id: <20200305155950.2705-10-tzimmermann@suse.de>
+Subject: [PATCH 10/22] drm/mediatek: Use simple encoder
+Date:   Thu,  5 Mar 2020 16:59:38 +0100
+Message-Id: <20200305155950.2705-11-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200305155950.2705-1-tzimmermann@suse.de>
 References: <20200305155950.2705-1-tzimmermann@suse.de>
@@ -64,47 +64,92 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The ingenic driver uses an empty implementation for its encoder. Replace
+The mediatak driver uses empty implementations for its encoders. Replace
 the code with the generic simple encoder.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/gpu/drm/ingenic/ingenic-drm.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_dpi.c | 14 +++-----------
+ drivers/gpu/drm/mediatek/mtk_dsi.c | 14 +++-----------
+ 2 files changed, 6 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/gpu/drm/ingenic/ingenic-drm.c b/drivers/gpu/drm/ingenic/ingenic-drm.c
-index 9dfe7cb530e1..9f7983a97392 100644
---- a/drivers/gpu/drm/ingenic/ingenic-drm.c
-+++ b/drivers/gpu/drm/ingenic/ingenic-drm.c
-@@ -28,6 +28,7 @@
- #include <drm/drm_plane.h>
- #include <drm/drm_plane_helper.h>
- #include <drm/drm_probe_helper.h>
+diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
+index 14fbe1c09ce9..9c90c58e5acd 100644
+--- a/drivers/gpu/drm/mediatek/mtk_dpi.c
++++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
+@@ -20,6 +20,7 @@
+ #include <drm/drm_bridge.h>
+ #include <drm/drm_crtc.h>
+ #include <drm/drm_of.h>
 +#include <drm/drm_simple_kms_helper.h>
- #include <drm/drm_vblank.h>
  
- #define JZ_REG_LCD_CFG				0x00
-@@ -592,10 +593,6 @@ static const struct drm_mode_config_funcs ingenic_drm_mode_config_funcs = {
- 	.atomic_commit		= drm_atomic_helper_commit,
- };
+ #include "mtk_dpi_regs.h"
+ #include "mtk_drm_ddp_comp.h"
+@@ -509,15 +510,6 @@ static int mtk_dpi_set_display_mode(struct mtk_dpi *dpi,
+ 	return 0;
+ }
  
--static const struct drm_encoder_funcs ingenic_drm_encoder_funcs = {
--	.destroy		= drm_encoder_cleanup,
+-static void mtk_dpi_encoder_destroy(struct drm_encoder *encoder)
+-{
+-	drm_encoder_cleanup(encoder);
+-}
+-
+-static const struct drm_encoder_funcs mtk_dpi_encoder_funcs = {
+-	.destroy = mtk_dpi_encoder_destroy,
 -};
 -
- static void ingenic_drm_free_dma_hwdesc(void *d)
- {
- 	struct ingenic_drm *priv = d;
-@@ -730,8 +727,8 @@ static int ingenic_drm_probe(struct platform_device *pdev)
- 	drm_encoder_helper_add(&priv->encoder,
- 			       &ingenic_drm_encoder_helper_funcs);
+ static bool mtk_dpi_encoder_mode_fixup(struct drm_encoder *encoder,
+ 				       const struct drm_display_mode *mode,
+ 				       struct drm_display_mode *adjusted_mode)
+@@ -596,8 +588,8 @@ static int mtk_dpi_bind(struct device *dev, struct device *master, void *data)
+ 		return ret;
+ 	}
  
--	ret = drm_encoder_init(drm, &priv->encoder, &ingenic_drm_encoder_funcs,
--			       DRM_MODE_ENCODER_DPI, NULL);
-+	ret = drm_simple_encoder_init(drm, &priv->encoder,
-+				      DRM_MODE_ENCODER_DPI);
+-	ret = drm_encoder_init(drm_dev, &dpi->encoder, &mtk_dpi_encoder_funcs,
+-			       DRM_MODE_ENCODER_TMDS, NULL);
++	ret = drm_simple_encoder_init(drm_dev, &dpi->encoder,
++				      DRM_MODE_ENCODER_TMDS);
  	if (ret) {
- 		dev_err(dev, "Failed to init encoder: %i", ret);
+ 		dev_err(dev, "Failed to initialize decoder: %d\n", ret);
+ 		goto err_unregister;
+diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
+index 0ede69830a9d..a9a25087112f 100644
+--- a/drivers/gpu/drm/mediatek/mtk_dsi.c
++++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
+@@ -22,6 +22,7 @@
+ #include <drm/drm_panel.h>
+ #include <drm/drm_print.h>
+ #include <drm/drm_probe_helper.h>
++#include <drm/drm_simple_kms_helper.h>
+ 
+ #include "mtk_drm_ddp_comp.h"
+ 
+@@ -787,15 +788,6 @@ static void mtk_output_dsi_disable(struct mtk_dsi *dsi)
+ 	dsi->enabled = false;
+ }
+ 
+-static void mtk_dsi_encoder_destroy(struct drm_encoder *encoder)
+-{
+-	drm_encoder_cleanup(encoder);
+-}
+-
+-static const struct drm_encoder_funcs mtk_dsi_encoder_funcs = {
+-	.destroy = mtk_dsi_encoder_destroy,
+-};
+-
+ static bool mtk_dsi_encoder_mode_fixup(struct drm_encoder *encoder,
+ 				       const struct drm_display_mode *mode,
+ 				       struct drm_display_mode *adjusted_mode)
+@@ -888,8 +880,8 @@ static int mtk_dsi_create_conn_enc(struct drm_device *drm, struct mtk_dsi *dsi)
+ {
+ 	int ret;
+ 
+-	ret = drm_encoder_init(drm, &dsi->encoder, &mtk_dsi_encoder_funcs,
+-			       DRM_MODE_ENCODER_DSI, NULL);
++	ret = drm_simple_encoder_init(drm, &dsi->encoder,
++				      DRM_MODE_ENCODER_DSI);
+ 	if (ret) {
+ 		DRM_ERROR("Failed to encoder init to drm\n");
  		return ret;
 -- 
 2.25.1
