@@ -2,320 +2,193 @@ Return-Path: <SRS0=V4Vk=4X=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E62C10F25
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Mar 2020 15:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D31CAC10DCE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Mar 2020 16:06:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B52282073D
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Mar 2020 15:19:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1C70217F4
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Mar 2020 16:06:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BTufL9BT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726462AbgCFPTJ (ORCPT
+        id S1726788AbgCFQGM (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 6 Mar 2020 10:19:09 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44192 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725873AbgCFPTJ (ORCPT
+        Fri, 6 Mar 2020 11:06:12 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:46804 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726299AbgCFQGM (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 6 Mar 2020 10:19:09 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 7BF3BAF55;
-        Fri,  6 Mar 2020 15:19:03 +0000 (UTC)
-Subject: Re: [PATCH 00/22] drm: Convert drivers to drm_simple_encoder_init()
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     hamohammed.sa@gmail.com, alexandre.belloni@bootlin.com,
-        airlied@linux.ie, linux@armlinux.org.uk, paul@crapouillou.net,
-        thierry.reding@gmail.com, krzk@kernel.org, sam@ravnborg.org,
-        sebastian.reichel@collabora.com, linux-samsung-soc@vger.kernel.org,
-        jy0922.shim@samsung.com, hjc@rock-chips.com, abrodkin@synopsys.com,
-        kong.kongxinwei@hisilicon.com, jonathanh@nvidia.com,
-        xinliang.liu@linaro.org, ludovic.desroches@microchip.com,
-        kgene@kernel.org, linux-imx@nxp.com,
-        linux-rockchip@lists.infradead.org,
-        virtualization@lists.linux-foundation.org,
-        linux-tegra@vger.kernel.org, puck.chen@hisilicon.com,
-        s.hauer@pengutronix.de, alison.wang@nxp.com, jsarha@ti.com,
-        matthias.bgg@gmail.com, wens@csie.org, kernel@pengutronix.de,
-        jernej.skrabec@siol.net, rodrigosiqueiramelo@gmail.com,
-        tomi.valkeinen@ti.com, bbrezillon@kernel.org, jingoohan1@gmail.com,
-        dri-devel@lists.freedesktop.org, sw0312.kim@samsung.com,
-        nicolas.ferre@microchip.com, kyungmin.park@samsung.com,
-        kieran.bingham+renesas@ideasonboard.com, zourongrong@gmail.com,
-        linux-mediatek@lists.infradead.org, shawnguo@kernel.org,
-        kraxel@redhat.com
+        Fri, 6 Mar 2020 11:06:12 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 026G2XQU121936;
+        Fri, 6 Mar 2020 10:02:33 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1583510553;
+        bh=LhFq71hWS6db1JXV2cLF2eSG5HHX8s0+6x10uspH48c=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=BTufL9BT7osNdKLL5ijwsQhScInkG0/lYrdj2x0+IEFmFmbGJ37BCg4pEl4QlurEl
+         tEelh14JB7idOKeGwjg0W+6MmB9XZcfB5Ju5DxLchdJi+U4HXGkz30ahOdhXr971hH
+         FmX3s5sUymzVepG+HO4HN6r2IWuNOohcdEJxgtyE=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 026G2Xnw050324
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 6 Mar 2020 10:02:33 -0600
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 6 Mar
+ 2020 10:02:32 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 6 Mar 2020 10:02:32 -0600
+Received: from [10.1.3.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 026G2FjH073322;
+        Fri, 6 Mar 2020 10:02:17 -0600
+Subject: Re: [PATCH 16/22] drm/tidss: Use simple encoder
+To:     Thomas Zimmermann <tzimmermann@suse.de>, <airlied@linux.ie>,
+        <daniel@ffwll.ch>, <sam@ravnborg.org>, <abrodkin@synopsys.com>,
+        <bbrezillon@kernel.org>, <nicolas.ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <ludovic.desroches@microchip.com>,
+        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+        <jingoohan1@gmail.com>, <inki.dae@samsung.com>,
+        <jy0922.shim@samsung.com>, <sw0312.kim@samsung.com>,
+        <kyungmin.park@samsung.com>, <kgene@kernel.org>, <krzk@kernel.org>,
+        <stefan@agner.ch>, <alison.wang@nxp.com>,
+        <patrik.r.jakobsson@gmail.com>, <xinliang.liu@linaro.org>,
+        <zourongrong@gmail.com>, <john.stultz@linaro.org>,
+        <kong.kongxinwei@hisilicon.com>, <puck.chen@hisilicon.com>,
+        <linux@armlinux.org.uk>, <p.zabel@pengutronix.de>,
+        <shawnguo@kernel.org>, <s.hauer@pengutronix.de>,
+        <kernel@pengutronix.de>, <festevam@gmail.com>, <linux-imx@nxp.com>,
+        <paul@crapouillou.net>, <ck.hu@mediatek.com>,
+        <matthias.bgg@gmail.com>, <laurent.pinchart@ideasonboard.com>,
+        <kieran.bingham+renesas@ideasonboard.com>, <hjc@rock-chips.com>,
+        <heiko@sntech.de>, <wens@csie.org>, <jernej.skrabec@siol.net>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <tomi.valkeinen@ti.com>, <eric@anholt.net>, <kraxel@redhat.com>,
+        <rodrigosiqueiramelo@gmail.com>, <hamohammed.sa@gmail.com>,
+        <sebastian.reichel@collabora.com>
+CC:     <dri-devel@lists.freedesktop.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-tegra@vger.kernel.org>,
+        <virtualization@lists.linux-foundation.org>
 References: <20200305155950.2705-1-tzimmermann@suse.de>
- <20200306142212.GF4878@pendragon.ideasonboard.com>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- mQENBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAG0J1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPokBVAQTAQgAPhYh
- BHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJbOdLgAhsDBQkDwmcABQsJCAcCBhUKCQgLAgQWAgMB
- Ah4BAheAAAoJEGgNwR1TC3ojR80H/jH+vYavwQ+TvO8ksXL9JQWc3IFSiGpuSVXLCdg62AmR
- irxW+qCwNncNQyb9rd30gzdectSkPWL3KSqEResBe24IbA5/jSkPweJasgXtfhuyoeCJ6PXo
- clQQGKIoFIAEv1s8l0ggPZswvCinegl1diyJXUXmdEJRTWYAtxn/atut1o6Giv6D2qmYbXN7
- mneMC5MzlLaJKUtoH7U/IjVw1sx2qtxAZGKVm4RZxPnMCp9E1MAr5t4dP5gJCIiqsdrVqI6i
- KupZstMxstPU//azmz7ZWWxT0JzgJqZSvPYx/SATeexTYBP47YFyri4jnsty2ErS91E6H8os
- Bv6pnSn7eAq5AQ0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRH
- UE9eosYbT6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgT
- RjP+qbU63Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+R
- dhgATnWWGKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zb
- ehDda8lvhFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r
- 12+lqdsAEQEAAYkBPAQYAQgAJhYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJbOdLgAhsMBQkD
- wmcAAAoJEGgNwR1TC3ojpfcIAInwP5OlcEKokTnHCiDTz4Ony4GnHRP2fXATQZCKxmu4AJY2
- h9ifw9Nf2TjCZ6AMvC3thAN0rFDj55N9l4s1CpaDo4J+0fkrHuyNacnT206CeJV1E7NYntxU
- n+LSiRrOdywn6erjxRi9EYTVLCHcDhBEjKmFZfg4AM4GZMWX1lg0+eHbd5oL1as28WvvI/uI
- aMyV8RbyXot1r/8QLlWldU3NrTF5p7TMU2y3ZH2mf5suSKHAMtbE4jKJ8ZHFOo3GhLgjVrBW
- HE9JXO08xKkgD+w6v83+nomsEuf6C6LYrqY/tsZvyEX6zN8CtirPdPWu/VXNRYAl/lat7lSI
- 3H26qrE=
-Message-ID: <bccc380a-8925-81a7-34fe-5a1744a766d0@suse.de>
-Date:   Fri, 6 Mar 2020 16:18:52 +0100
+ <20200305155950.2705-17-tzimmermann@suse.de>
+From:   Jyri Sarha <jsarha@ti.com>
+Autocrypt: addr=jsarha@ti.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <15f51fa1-d3c3-3381-4d0b-a54ee9f21e1a@ti.com>
+Date:   Fri, 6 Mar 2020 18:02:15 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200306142212.GF4878@pendragon.ideasonboard.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="zLjI9bAGFBvHKwEMe397vRdtLj3HUCSWe"
+In-Reply-To: <20200305155950.2705-17-tzimmermann@suse.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---zLjI9bAGFBvHKwEMe397vRdtLj3HUCSWe
-Content-Type: multipart/mixed; boundary="7ZEUhC7vXaHUKdhpsAsTVaSFl7q2PnfOJ";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: hamohammed.sa@gmail.com, alexandre.belloni@bootlin.com, airlied@linux.ie,
- linux@armlinux.org.uk, paul@crapouillou.net, thierry.reding@gmail.com,
- krzk@kernel.org, sam@ravnborg.org, sebastian.reichel@collabora.com,
- linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
- hjc@rock-chips.com, abrodkin@synopsys.com, kong.kongxinwei@hisilicon.com,
- jonathanh@nvidia.com, xinliang.liu@linaro.org,
- ludovic.desroches@microchip.com, kgene@kernel.org, linux-imx@nxp.com,
- linux-rockchip@lists.infradead.org,
- virtualization@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
- puck.chen@hisilicon.com, s.hauer@pengutronix.de, alison.wang@nxp.com,
- jsarha@ti.com, matthias.bgg@gmail.com, wens@csie.org, kernel@pengutronix.de,
- jernej.skrabec@siol.net, rodrigosiqueiramelo@gmail.com,
- tomi.valkeinen@ti.com, bbrezillon@kernel.org, jingoohan1@gmail.com,
- dri-devel@lists.freedesktop.org, sw0312.kim@samsung.com,
- nicolas.ferre@microchip.com, kyungmin.park@samsung.com,
- kieran.bingham+renesas@ideasonboard.com, zourongrong@gmail.com,
- linux-mediatek@lists.infradead.org, shawnguo@kernel.org, kraxel@redhat.com
-Message-ID: <bccc380a-8925-81a7-34fe-5a1744a766d0@suse.de>
-Subject: Re: [PATCH 00/22] drm: Convert drivers to drm_simple_encoder_init()
-References: <20200305155950.2705-1-tzimmermann@suse.de>
- <20200306142212.GF4878@pendragon.ideasonboard.com>
-In-Reply-To: <20200306142212.GF4878@pendragon.ideasonboard.com>
+On 05/03/2020 17:59, Thomas Zimmermann wrote:
+> The tidss driver uses an empty implementation for its encoder. Replace
+> the code with the generic simple encoder.
+> 
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 
---7ZEUhC7vXaHUKdhpsAsTVaSFl7q2PnfOJ
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Jyri Sarha <jsarha@ti.com>
 
-Hi Laurent
-
-Am 06.03.20 um 15:22 schrieb Laurent Pinchart:
-> Hi Thomas,
->=20
-> Thank you for the patch.
->=20
-> On Thu, Mar 05, 2020 at 04:59:28PM +0100, Thomas Zimmermann wrote:
->> A call to drm_simple_encoder_init() initializes an encoder without
->> further functionality. It only provides the destroy callback to
->> cleanup the encoder's state. Only few drivers implement more
->> sophisticated encoders than that. Most drivers implement such a
->> simple encoder and can use drm_simple_encoder_init() instead.
->>
->> The patchset converts drivers where the encoder's instance is
->> embedded in a larger data structure. The driver releases the
->> memory during cleanup. Each patch replaces drm_encoder_init() with
->> drm_simple_encoder_init() and removes the (now unused) driver's
->> encoder functions.
->>
->> While the patchset is fairly large, the indiviual patches are self-
->> contained and can be merged independently from each other. The
->> simple-encoder functionality is currently in drm-misc-next, where
->> these patches could go as well.
->=20
-> I've reviewed the whole series, including verifying that the few
-> instances of struct drm_encoder_funcs that were not declared const were=
-
-> not modified somewhere to add more function pointers.
->=20
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-Thanks for the detailed review.
-
->=20
-> for all the patches.
->=20
-> However, I'd like to note that drm_simple_encoder_init() is a bit of a
-> misnommer here. Several of the encoders in those drivers to implement
-> additional functionality. They just expose them through
-> drm_encoder_helper_funcs, not drm_encoder_funcs.
-
-True. It's called 'simple encoder' for the lack of a better name. It's
-part of the simple KMS helpers, so the name's at least consistent. OTOH
-I always find drm_simple_display_pipe a bad name.
-
-We can still rename the simple-encoder function without much effort. I'm
-open for suggestions.
-
-Best regards
-Thomas
-
->=20
->> Future directions: There's another common case where the driver
->> calls kzalloc() plus drm_encoder_init(). Such drivers are not
->> handled by this patchset. The plan here is to use a simple encoder
->> with either managed memory allocation (once it's merged), or embed
->> the encoder in a larger data structure and drop kzalloc() entirely.
->=20
-> I think an even more interesting future enhancement would be to add
-> encoder support to the newly added drm_bridge_connector_init(), for
-> drivers that are fully based on bridges and don't implement any encoder=
-
-> operation, neither through drm_encoder_funcs nor through
-> drm_encoder_helper_funcs.
->=20
->> The patchset has been compile-tested on x86-64, aarch64 and arm.
->>
->> Thomas Zimmermann (22):
->>   drm/arc: Use simple encoder
->>   drm/atmel-hlcdc: Use simple encoder
->>   drm/exynos: Use simple encoder
->>   drm/fsl-dcu: Use simple encoder
->>   drm/gma500: Use simple encoder
->>   drm/hisilicon/kirin: Use simple encoder
->>   drm/i2c/tda998x: Use simple encoder
->>   drm/imx: Use simple encoder
->>   drm/ingenic: Use simple encoder
->>   drm/mediatek: Use simple encoder
->>   drm/rcar-du: Use simple encoder
->>   drm/rockchip: Use simple encoder
->>   drm/shmobile: Use simple encoder
->>   drm/sun4i: Use simple encoder
->>   drm/tegra: Use simple encoder
->>   drm/tidss: Use simple encoder
->>   drm/tilcdc: Use simple encoder
->>   drm/vc4: Use simple encoder
->>   drm/virtgpu: Use simple encoder
->>   drm/vkms: Use simple encoder
->>   drm/writeback: Use simple encoder
->>   drm/zte: Use simple encoder
->>
->>  drivers/gpu/drm/arc/arcpgu_hdmi.c              | 10 +++-------
->>  drivers/gpu/drm/arc/arcpgu_sim.c               |  8 ++------
->>  .../gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c   | 12 ++++--------
->>  drivers/gpu/drm/drm_writeback.c                | 10 +++-------
->>  drivers/gpu/drm/exynos/exynos_dp.c             |  8 ++------
->>  drivers/gpu/drm/exynos/exynos_drm_dpi.c        |  8 ++------
->>  drivers/gpu/drm/exynos/exynos_drm_dsi.c        |  8 ++------
->>  drivers/gpu/drm/exynos/exynos_drm_vidi.c       |  8 ++------
->>  drivers/gpu/drm/exynos/exynos_hdmi.c           |  8 ++------
->>  drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c      | 14 +++-----------
->>  drivers/gpu/drm/gma500/cdv_intel_crt.c         | 14 +++-----------
->>  drivers/gpu/drm/gma500/cdv_intel_dp.c          | 16 +++-------------
->>  drivers/gpu/drm/gma500/cdv_intel_hdmi.c        |  4 ++--
->>  drivers/gpu/drm/gma500/cdv_intel_lvds.c        | 17 +++--------------=
-
->>  drivers/gpu/drm/gma500/mdfld_dsi_dpi.c         |  7 +++----
->>  drivers/gpu/drm/gma500/mdfld_output.h          |  1 -
->>  drivers/gpu/drm/gma500/mdfld_tmd_vid.c         |  6 ------
->>  drivers/gpu/drm/gma500/mdfld_tpo_vid.c         |  6 ------
->>  drivers/gpu/drm/gma500/oaktrail_hdmi.c         | 14 ++------------
->>  drivers/gpu/drm/gma500/oaktrail_lvds.c         |  5 +++--
->>  drivers/gpu/drm/gma500/psb_intel_drv.h         |  1 -
->>  drivers/gpu/drm/gma500/psb_intel_lvds.c        | 18 +++--------------=
--
->>  drivers/gpu/drm/gma500/tc35876x-dsi-lvds.c     |  5 -----
->>  drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c   |  8 ++------
->>  drivers/gpu/drm/i2c/tda998x_drv.c              | 14 +++-----------
->>  drivers/gpu/drm/imx/dw_hdmi-imx.c              |  8 ++------
->>  drivers/gpu/drm/imx/imx-drm-core.c             |  6 ------
->>  drivers/gpu/drm/imx/imx-drm.h                  |  1 -
->>  drivers/gpu/drm/imx/imx-ldb.c                  |  8 ++------
->>  drivers/gpu/drm/imx/imx-tve.c                  |  8 ++------
->>  drivers/gpu/drm/imx/parallel-display.c         |  8 ++------
->>  drivers/gpu/drm/ingenic/ingenic-drm.c          |  9 +++------
->>  drivers/gpu/drm/mediatek/mtk_dpi.c             | 14 +++-----------
->>  drivers/gpu/drm/mediatek/mtk_dsi.c             | 14 +++-----------
->>  drivers/gpu/drm/rcar-du/rcar_du_encoder.c      | 14 +++-----------
->>  .../gpu/drm/rockchip/analogix_dp-rockchip.c    |  9 +++------
->>  drivers/gpu/drm/rockchip/cdn-dp-core.c         |  9 +++------
->>  .../gpu/drm/rockchip/dw-mipi-dsi-rockchip.c    |  8 ++------
->>  drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c    |  8 ++------
->>  drivers/gpu/drm/rockchip/inno_hdmi.c           |  8 ++------
->>  drivers/gpu/drm/rockchip/rk3066_hdmi.c         |  8 ++------
->>  drivers/gpu/drm/rockchip/rockchip_lvds.c       | 10 +++-------
->>  drivers/gpu/drm/rockchip/rockchip_rgb.c        |  8 ++------
->>  drivers/gpu/drm/shmobile/shmob_drm_crtc.c      | 14 +++-----------
->>  drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c         | 12 +++---------
->>  drivers/gpu/drm/sun4i/sun4i_lvds.c             | 12 +++---------
->>  drivers/gpu/drm/sun4i/sun4i_rgb.c              | 17 +++--------------=
-
->>  drivers/gpu/drm/sun4i/sun4i_tv.c               | 17 +++--------------=
-
->>  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c         | 12 +++---------
->>  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c          |  8 ++------
->>  drivers/gpu/drm/tegra/drm.h                    |  2 --
->>  drivers/gpu/drm/tegra/dsi.c                    | 10 +++-------
->>  drivers/gpu/drm/tegra/hdmi.c                   |  9 +++------
->>  drivers/gpu/drm/tegra/output.c                 |  6 +-----
->>  drivers/gpu/drm/tegra/rgb.c                    |  8 ++------
->>  drivers/gpu/drm/tegra/sor.c                    |  8 ++------
->>  drivers/gpu/drm/tidss/tidss_encoder.c          | 10 +++-------
->>  drivers/gpu/drm/tilcdc/tilcdc_external.c       | 10 +++-------
->>  drivers/gpu/drm/tilcdc/tilcdc_panel.c          |  8 ++------
->>  drivers/gpu/drm/vc4/vc4_dpi.c                  |  8 ++------
->>  drivers/gpu/drm/vc4/vc4_dsi.c                  | 15 +++------------
->>  drivers/gpu/drm/vc4/vc4_hdmi.c                 | 17 ++++-------------=
-
->>  drivers/gpu/drm/vc4/vc4_vec.c                  |  8 ++------
->>  drivers/gpu/drm/virtio/virtgpu_display.c       |  8 ++------
->>  drivers/gpu/drm/vkms/vkms_output.c             |  8 ++------
->>  drivers/gpu/drm/zte/zx_hdmi.c                  |  8 ++------
->>  drivers/gpu/drm/zte/zx_tvenc.c                 |  8 ++------
->>  drivers/gpu/drm/zte/zx_vga.c                   |  8 ++------
->>  68 files changed, 151 insertions(+), 488 deletions(-)
->=20
-
---=20
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-(HRB 36809, AG N=C3=BCrnberg)
-Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
+> ---
+>  drivers/gpu/drm/tidss/tidss_encoder.c | 10 +++-------
+>  1 file changed, 3 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/tidss/tidss_encoder.c b/drivers/gpu/drm/tidss/tidss_encoder.c
+> index 83785b0a66a9..4c0558286f5e 100644
+> --- a/drivers/gpu/drm/tidss/tidss_encoder.c
+> +++ b/drivers/gpu/drm/tidss/tidss_encoder.c
+> @@ -8,8 +8,9 @@
+>  
+>  #include <drm/drm_crtc.h>
+>  #include <drm/drm_crtc_helper.h>
+> -#include <drm/drm_panel.h>
+>  #include <drm/drm_of.h>
+> +#include <drm/drm_panel.h>
+> +#include <drm/drm_simple_kms_helper.h>
+>  
+>  #include "tidss_crtc.h"
+>  #include "tidss_drv.h"
+> @@ -59,10 +60,6 @@ static const struct drm_encoder_helper_funcs encoder_helper_funcs = {
+>  	.atomic_check = tidss_encoder_atomic_check,
+>  };
+>  
+> -static const struct drm_encoder_funcs encoder_funcs = {
+> -	.destroy = drm_encoder_cleanup,
+> -};
+> -
+>  struct drm_encoder *tidss_encoder_create(struct tidss_device *tidss,
+>  					 u32 encoder_type, u32 possible_crtcs)
+>  {
+> @@ -75,8 +72,7 @@ struct drm_encoder *tidss_encoder_create(struct tidss_device *tidss,
+>  
+>  	enc->possible_crtcs = possible_crtcs;
+>  
+> -	ret = drm_encoder_init(&tidss->ddev, enc, &encoder_funcs,
+> -			       encoder_type, NULL);
+> +	ret = drm_simple_encoder_init(&tidss->ddev, enc, encoder_type);
+>  	if (ret < 0)
+>  		return ERR_PTR(ret);
+>  
+> 
 
 
---7ZEUhC7vXaHUKdhpsAsTVaSFl7q2PnfOJ--
-
---zLjI9bAGFBvHKwEMe397vRdtLj3HUCSWe
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl5iadwACgkQaA3BHVML
-eiO0kQf+MIM+f6/DNKocn671bllssFCEGKWrX1wgTabB1iiRSL7ARnr03xMcYvzP
-Ik/PoetXfawz8fIw2Xm6VeEHT6+62AY3l/GmWWi0BlHNfpAvSwLnmgBT95Rkqxhl
-fVnkuw/R9c25A/WZMABTJ05EJhytBN4Iu42F+J6x2Jy+SpBNNETqwpvVPYL45Ou9
-4QUL5Rj+xtwAzce+WOLqcL+LQmYDDrLlwOIS884Xfi4B6o8aSh9L2m2SJPCR1U6n
-mdKcRZk/ztKJrkm/udvjRymVO/VT/ai9N4v6KNJ+dI6ko2jJZHrEpMDYdyGR840X
-Y2HKoexIUwvdHV/Qy7ihnx7889lJNQ==
-=LTju
------END PGP SIGNATURE-----
-
---zLjI9bAGFBvHKwEMe397vRdtLj3HUCSWe--
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
