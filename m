@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-7.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D595C3F2D9
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Mar 2020 06:17:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4AB9C3F2D6
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Mar 2020 07:31:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D54F22072A
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Mar 2020 06:17:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8790B2084E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Mar 2020 07:31:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725908AbgCFGR1 (ORCPT
+        id S1725905AbgCFHbE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 6 Mar 2020 01:17:27 -0500
-Received: from mga14.intel.com ([192.55.52.115]:12160 "EHLO mga14.intel.com"
+        Fri, 6 Mar 2020 02:31:04 -0500
+Received: from mga14.intel.com ([192.55.52.115]:17338 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725867AbgCFGR0 (ORCPT
+        id S1725901AbgCFHbE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 6 Mar 2020 01:17:26 -0500
+        Fri, 6 Mar 2020 02:31:04 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Mar 2020 22:17:23 -0800
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Mar 2020 23:31:01 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,521,1574150400"; 
-   d="gz'50?scan'50,208,50";a="275424251"
+   d="gz'50?scan'50,208,50";a="440034140"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga002.fm.intel.com with ESMTP; 05 Mar 2020 22:17:11 -0800
+  by fmsmga005.fm.intel.com with ESMTP; 05 Mar 2020 23:30:49 -0800
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1jA6II-000J5f-Lb; Fri, 06 Mar 2020 14:17:10 +0800
-Date:   Fri, 6 Mar 2020 14:16:48 +0800
+        id 1jA7RY-0009sd-CE; Fri, 06 Mar 2020 15:30:48 +0800
+Date:   Fri, 6 Mar 2020 15:30:39 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     Thomas Zimmermann <tzimmermann@suse.de>
 Cc:     kbuild-all@lists.01.org, clang-built-linux@googlegroups.com,
@@ -64,13 +64,13 @@ Cc:     kbuild-all@lists.01.org, clang-built-linux@googlegroups.com,
         linux-mediatek@lists.infradead.org,
         Thomas Zimmermann <tzimmermann@suse.de>,
         linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 06/22] drm/hisilicon/kirin: Use simple encoder
-Message-ID: <202003061415.76jjt0tz%lkp@intel.com>
-References: <20200305155950.2705-7-tzimmermann@suse.de>
+Subject: Re: [PATCH 07/22] drm/i2c/tda998x: Use simple encoder
+Message-ID: <202003061520.1jjrNWVL%lkp@intel.com>
+References: <20200305155950.2705-8-tzimmermann@suse.de>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="2oS5YaxWCcQjTEyO"
+Content-Type: multipart/mixed; boundary="HcAYCG3uE/tztfnV"
 Content-Disposition: inline
-In-Reply-To: <20200305155950.2705-7-tzimmermann@suse.de>
+In-Reply-To: <20200305155950.2705-8-tzimmermann@suse.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
@@ -78,7 +78,7 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
---2oS5YaxWCcQjTEyO
+--HcAYCG3uE/tztfnV
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -105,53 +105,63 @@ Reported-by: kbuild test robot <lkp@intel.com>
 
 All errors (new ones prefixed by >>):
 
->> drivers/gpu//drm/hisilicon/kirin/dw_drm_dsi.c:713:8: error: implicit declaration of function 'drm_simple_encoder_init' [-Werror,-Wimplicit-function-declaration]
-           ret = drm_simple_encoder_init(drm_dev, encoder, DRM_MODE_ENCODER_DSI);
+>> drivers/gpu/drm/i2c/tda998x_drv.c:2018:8: error: implicit declaration of function 'drm_simple_encoder_init' [-Werror,-Wimplicit-function-declaration]
+           ret = drm_simple_encoder_init(drm, &priv->encoder,
                  ^
-   drivers/gpu//drm/hisilicon/kirin/dw_drm_dsi.c:713:8: note: did you mean 'drm_i2c_encoder_init'?
-   include/drm/drm_encoder_slave.h:104:5: note: 'drm_i2c_encoder_init' declared here
-   int drm_i2c_encoder_init(struct drm_device *dev,
+   drivers/gpu/drm/i2c/tda998x_drv.c:2018:8: note: did you mean 'drm_encoder_init'?
+   include/drm/drm_encoder.h:189:5: note: 'drm_encoder_init' declared here
+   int drm_encoder_init(struct drm_device *dev,
        ^
    1 error generated.
 
-vim +/drm_simple_encoder_init +713 drivers/gpu//drm/hisilicon/kirin/dw_drm_dsi.c
+vim +/drm_simple_encoder_init +2018 drivers/gpu/drm/i2c/tda998x_drv.c
 
-   699	
-   700	static int dw_drm_encoder_init(struct device *dev,
-   701				       struct drm_device *drm_dev,
-   702				       struct drm_encoder *encoder)
-   703	{
-   704		int ret;
-   705		u32 crtc_mask = drm_of_find_possible_crtcs(drm_dev, dev->of_node);
-   706	
-   707		if (!crtc_mask) {
-   708			DRM_ERROR("failed to find crtc mask\n");
-   709			return -EINVAL;
-   710		}
-   711	
-   712		encoder->possible_crtcs = crtc_mask;
- > 713		ret = drm_simple_encoder_init(drm_dev, encoder, DRM_MODE_ENCODER_DSI);
-   714		if (ret) {
-   715			DRM_ERROR("failed to init dsi encoder\n");
-   716			return ret;
-   717		}
-   718	
-   719		drm_encoder_helper_add(encoder, &dw_encoder_helper_funcs);
-   720	
-   721		return 0;
-   722	}
-   723	
+  2000	
+  2001	static int tda998x_encoder_init(struct device *dev, struct drm_device *drm)
+  2002	{
+  2003		struct tda998x_priv *priv = dev_get_drvdata(dev);
+  2004		u32 crtcs = 0;
+  2005		int ret;
+  2006	
+  2007		if (dev->of_node)
+  2008			crtcs = drm_of_find_possible_crtcs(drm, dev->of_node);
+  2009	
+  2010		/* If no CRTCs were found, fall back to our old behaviour */
+  2011		if (crtcs == 0) {
+  2012			dev_warn(dev, "Falling back to first CRTC\n");
+  2013			crtcs = 1 << 0;
+  2014		}
+  2015	
+  2016		priv->encoder.possible_crtcs = crtcs;
+  2017	
+> 2018		ret = drm_simple_encoder_init(drm, &priv->encoder,
+  2019					      DRM_MODE_ENCODER_TMDS);
+  2020		if (ret)
+  2021			goto err_encoder;
+  2022	
+  2023		ret = drm_bridge_attach(&priv->encoder, &priv->bridge, NULL, 0);
+  2024		if (ret)
+  2025			goto err_bridge;
+  2026	
+  2027		return 0;
+  2028	
+  2029	err_bridge:
+  2030		drm_encoder_cleanup(&priv->encoder);
+  2031	err_encoder:
+  2032		return ret;
+  2033	}
+  2034	
 
 ---
 0-DAY CI Kernel Test Service, Intel Corporation
 https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
 
---2oS5YaxWCcQjTEyO
+--HcAYCG3uE/tztfnV
 Content-Type: application/gzip
 Content-Disposition: attachment; filename=".config.gz"
 Content-Transfer-Encoding: base64
 
-H4sICAnmYV4AAy5jb25maWcAnDzJdhu3svv7FTzJJlnE4SRKue9oAaLRJMKeDKBJSps+tEQ5
+H4sICJ71YV4AAy5jb25maWcAnDzJdhu3svv7FTzJJlnE4SRKue9oAaLRJMKeDKBJSps+tEQ5
 etHgS0lO/Pe3CugBQKMVv5eTOGZVYS7UjP7xXz+OyNvr8+Ph9f7m8PDwbfT5+HQ8HV6Pt6O7
 +4fj/4yifJTlasQirj4AcXL/9Pb3r4fT42I+Ovuw+DD+5XQzH22Op6fjw4g+P93df36D5vfP
 T//68V/w748AfPwCPZ3+Pbp5ODx9Hn09nl4APZpMPow/jEc/fb5//fevv8Kfj/en0/Pp14eH
@@ -1037,4 +1047,4 @@ wEsOxceLESa/id2aruo8uus6I6nVCGZjw48uHHM8QwbZzQuGMAlwFnpPC3dt0zCPQREdGSiV
 JnKkP+4j6IYhKfDbHY5PTBmnIxwBO5QvgDFHP4J2gUOstpUMAQ0ZKIjQj7lHJbkVu6suF/4H
 +SLxE204AwA=
 
---2oS5YaxWCcQjTEyO--
+--HcAYCG3uE/tztfnV--
