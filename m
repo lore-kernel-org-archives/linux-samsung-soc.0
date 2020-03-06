@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4AB9C3F2D6
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Mar 2020 07:31:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09B45C10F00
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Mar 2020 08:45:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8790B2084E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Mar 2020 07:31:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B39D72073D
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Mar 2020 08:44:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725905AbgCFHbE (ORCPT
+        id S1725908AbgCFIo7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 6 Mar 2020 02:31:04 -0500
-Received: from mga14.intel.com ([192.55.52.115]:17338 "EHLO mga14.intel.com"
+        Fri, 6 Mar 2020 03:44:59 -0500
+Received: from mga11.intel.com ([192.55.52.93]:44387 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725901AbgCFHbE (ORCPT
+        id S1725905AbgCFIo7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 6 Mar 2020 02:31:04 -0500
+        Fri, 6 Mar 2020 03:44:59 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Mar 2020 23:31:01 -0800
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Mar 2020 00:44:56 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,521,1574150400"; 
-   d="gz'50?scan'50,208,50";a="440034140"
+   d="gz'50?scan'50,208,50";a="387765576"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga005.fm.intel.com with ESMTP; 05 Mar 2020 23:30:49 -0800
+  by orsmga004.jf.intel.com with ESMTP; 06 Mar 2020 00:44:41 -0800
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1jA7RY-0009sd-CE; Fri, 06 Mar 2020 15:30:48 +0800
-Date:   Fri, 6 Mar 2020 15:30:39 +0800
+        id 1jA8b2-000BIL-TT; Fri, 06 Mar 2020 16:44:40 +0800
+Date:   Fri, 6 Mar 2020 16:43:56 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     Thomas Zimmermann <tzimmermann@suse.de>
 Cc:     kbuild-all@lists.01.org, clang-built-linux@googlegroups.com,
@@ -64,13 +64,13 @@ Cc:     kbuild-all@lists.01.org, clang-built-linux@googlegroups.com,
         linux-mediatek@lists.infradead.org,
         Thomas Zimmermann <tzimmermann@suse.de>,
         linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 07/22] drm/i2c/tda998x: Use simple encoder
-Message-ID: <202003061520.1jjrNWVL%lkp@intel.com>
-References: <20200305155950.2705-8-tzimmermann@suse.de>
+Subject: Re: [PATCH 11/22] drm/rcar-du: Use simple encoder
+Message-ID: <202003061653.3JdtRzW2%lkp@intel.com>
+References: <20200305155950.2705-12-tzimmermann@suse.de>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="HcAYCG3uE/tztfnV"
+Content-Type: multipart/mixed; boundary="cWoXeonUoKmBZSoM"
 Content-Disposition: inline
-In-Reply-To: <20200305155950.2705-8-tzimmermann@suse.de>
+In-Reply-To: <20200305155950.2705-12-tzimmermann@suse.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
@@ -78,7 +78,7 @@ List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
---HcAYCG3uE/tztfnV
+--cWoXeonUoKmBZSoM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -87,8 +87,7 @@ Hi Thomas,
 I love your patch! Yet something to improve:
 
 [auto build test ERROR on next-20200305]
-[also build test ERROR on v5.6-rc4]
-[cannot apply to rockchip/for-next shawnguo/for-next sunxi/sunxi/for-next tegra/for-next linus/master v5.6-rc4 v5.6-rc3 v5.6-rc2]
+[cannot apply to rockchip/for-next shawnguo/for-next sunxi/sunxi/for-next tegra/for-next linus/master v5.6-rc4 v5.6-rc3 v5.6-rc2 v5.6-rc4]
 [if your patch is applied to the wrong git tree, please drop us a note to help
 improve the system. BTW, we also suggest to use '--base' option to specify the
 base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
@@ -105,63 +104,90 @@ Reported-by: kbuild test robot <lkp@intel.com>
 
 All errors (new ones prefixed by >>):
 
->> drivers/gpu/drm/i2c/tda998x_drv.c:2018:8: error: implicit declaration of function 'drm_simple_encoder_init' [-Werror,-Wimplicit-function-declaration]
-           ret = drm_simple_encoder_init(drm, &priv->encoder,
+>> drivers/gpu//drm/rcar-du/rcar_du_encoder.c:107:8: error: implicit declaration of function 'drm_simple_encoder_init' [-Werror,-Wimplicit-function-declaration]
+           ret = drm_simple_encoder_init(rcdu->ddev, encoder,
                  ^
-   drivers/gpu/drm/i2c/tda998x_drv.c:2018:8: note: did you mean 'drm_encoder_init'?
+   drivers/gpu//drm/rcar-du/rcar_du_encoder.c:107:8: note: did you mean 'drm_encoder_init'?
    include/drm/drm_encoder.h:189:5: note: 'drm_encoder_init' declared here
    int drm_encoder_init(struct drm_device *dev,
        ^
    1 error generated.
 
-vim +/drm_simple_encoder_init +2018 drivers/gpu/drm/i2c/tda998x_drv.c
+vim +/drm_simple_encoder_init +107 drivers/gpu//drm/rcar-du/rcar_du_encoder.c
 
-  2000	
-  2001	static int tda998x_encoder_init(struct device *dev, struct drm_device *drm)
-  2002	{
-  2003		struct tda998x_priv *priv = dev_get_drvdata(dev);
-  2004		u32 crtcs = 0;
-  2005		int ret;
-  2006	
-  2007		if (dev->of_node)
-  2008			crtcs = drm_of_find_possible_crtcs(drm, dev->of_node);
-  2009	
-  2010		/* If no CRTCs were found, fall back to our old behaviour */
-  2011		if (crtcs == 0) {
-  2012			dev_warn(dev, "Falling back to first CRTC\n");
-  2013			crtcs = 1 << 0;
-  2014		}
-  2015	
-  2016		priv->encoder.possible_crtcs = crtcs;
-  2017	
-> 2018		ret = drm_simple_encoder_init(drm, &priv->encoder,
-  2019					      DRM_MODE_ENCODER_TMDS);
-  2020		if (ret)
-  2021			goto err_encoder;
-  2022	
-  2023		ret = drm_bridge_attach(&priv->encoder, &priv->bridge, NULL, 0);
-  2024		if (ret)
-  2025			goto err_bridge;
-  2026	
-  2027		return 0;
-  2028	
-  2029	err_bridge:
-  2030		drm_encoder_cleanup(&priv->encoder);
-  2031	err_encoder:
-  2032		return ret;
-  2033	}
-  2034	
+    46	
+    47	int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+    48				 enum rcar_du_output output,
+    49				 struct device_node *enc_node)
+    50	{
+    51		struct rcar_du_encoder *renc;
+    52		struct drm_encoder *encoder;
+    53		struct drm_bridge *bridge;
+    54		int ret;
+    55	
+    56		renc = devm_kzalloc(rcdu->dev, sizeof(*renc), GFP_KERNEL);
+    57		if (renc == NULL)
+    58			return -ENOMEM;
+    59	
+    60		rcdu->encoders[output] = renc;
+    61		renc->output = output;
+    62		encoder = rcar_encoder_to_drm_encoder(renc);
+    63	
+    64		dev_dbg(rcdu->dev, "initializing encoder %pOF for output %u\n",
+    65			enc_node, output);
+    66	
+    67		/*
+    68		 * Locate the DRM bridge from the DT node. For the DPAD outputs, if the
+    69		 * DT node has a single port, assume that it describes a panel and
+    70		 * create a panel bridge.
+    71		 */
+    72		if ((output == RCAR_DU_OUTPUT_DPAD0 ||
+    73		     output == RCAR_DU_OUTPUT_DPAD1) &&
+    74		    rcar_du_encoder_count_ports(enc_node) == 1) {
+    75			struct drm_panel *panel = of_drm_find_panel(enc_node);
+    76	
+    77			if (IS_ERR(panel)) {
+    78				ret = PTR_ERR(panel);
+    79				goto done;
+    80			}
+    81	
+    82			bridge = devm_drm_panel_bridge_add_typed(rcdu->dev, panel,
+    83								 DRM_MODE_CONNECTOR_DPI);
+    84			if (IS_ERR(bridge)) {
+    85				ret = PTR_ERR(bridge);
+    86				goto done;
+    87			}
+    88		} else {
+    89			bridge = of_drm_find_bridge(enc_node);
+    90			if (!bridge) {
+    91				ret = -EPROBE_DEFER;
+    92				goto done;
+    93			}
+    94		}
+    95	
+    96		/*
+    97		 * On Gen3 skip the LVDS1 output if the LVDS1 encoder is used as a
+    98		 * companion for LVDS0 in dual-link mode.
+    99		 */
+   100		if (rcdu->info->gen >= 3 && output == RCAR_DU_OUTPUT_LVDS1) {
+   101			if (rcar_lvds_dual_link(bridge)) {
+   102				ret = -ENOLINK;
+   103				goto done;
+   104			}
+   105		}
+   106	
+ > 107		ret = drm_simple_encoder_init(rcdu->ddev, encoder,
 
 ---
 0-DAY CI Kernel Test Service, Intel Corporation
 https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
 
---HcAYCG3uE/tztfnV
+--cWoXeonUoKmBZSoM
 Content-Type: application/gzip
 Content-Disposition: attachment; filename=".config.gz"
 Content-Transfer-Encoding: base64
 
-H4sICJ71YV4AAy5jb25maWcAnDzJdhu3svv7FTzJJlnE4SRKue9oAaLRJMKeDKBJSps+tEQ5
+H4sICFAFYl4AAy5jb25maWcAnDzJdhu3svv7FTzJJlnE4SRKue9oAaLRJMKeDKBJSps+tEQ5
 etHgS0lO/Pe3CugBQKMVv5eTOGZVYS7UjP7xXz+OyNvr8+Ph9f7m8PDwbfT5+HQ8HV6Pt6O7
 +4fj/4yifJTlasQirj4AcXL/9Pb3r4fT42I+Ovuw+DD+5XQzH22Op6fjw4g+P93df36D5vfP
 T//68V/w748AfPwCPZ3+Pbp5ODx9Hn09nl4APZpMPow/jEc/fb5//fevv8Kfj/en0/Pp14eH
@@ -1047,4 +1073,4 @@ wEsOxceLESa/id2aruo8uus6I6nVCGZjw48uHHM8QwbZzQuGMAlwFnpPC3dt0zCPQREdGSiV
 JnKkP+4j6IYhKfDbHY5PTBmnIxwBO5QvgDFHP4J2gUOstpUMAQ0ZKIjQj7lHJbkVu6suF/4H
 +SLxE204AwA=
 
---HcAYCG3uE/tztfnV--
+--cWoXeonUoKmBZSoM--
