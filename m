@@ -2,225 +2,159 @@ Return-Path: <SRS0=V4Vk=4X=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67869C10DCE
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Mar 2020 16:08:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C41D0C10F00
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Mar 2020 21:18:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B6E22073B
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Mar 2020 16:08:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="W2pFEVlp"
+	by mail.kernel.org (Postfix) with ESMTP id A2EB420714
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  6 Mar 2020 21:18:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727076AbgCFQI2 (ORCPT
+        id S1726259AbgCFVSV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 6 Mar 2020 11:08:28 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:57352 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726140AbgCFQI2 (ORCPT
+        Fri, 6 Mar 2020 16:18:21 -0500
+Received: from asavdk3.altibox.net ([109.247.116.14]:36050 "EHLO
+        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726185AbgCFVSV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 6 Mar 2020 11:08:28 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 026G3XiS123652;
-        Fri, 6 Mar 2020 10:03:33 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1583510613;
-        bh=F0zq4XKL8IcfIlkd0ZCG9r5itazNCHFXTC/e8qEav30=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=W2pFEVlpGyjacU2G/NcNB0qfUKqcl0pU0f3k5dLwIkN8oybL680kQB93w6MdIRvNS
-         XXS2ah+Pa4ym9qZVA59/tvUs7zMgMLT2zSJuY5rcevSwGOR3rqnIBNJdgX9hIGhoCG
-         T+h8OLO+FO+sopsiYd2N8nYj5LhRU0BzhEIfmi2Q=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 026G3W6h125657;
-        Fri, 6 Mar 2020 10:03:32 -0600
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 6 Mar
- 2020 10:03:32 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 6 Mar 2020 10:03:32 -0600
-Received: from [10.1.3.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 026G3I8l042449;
-        Fri, 6 Mar 2020 10:03:19 -0600
-Subject: Re: [PATCH 17/22] drm/tilcdc: Use simple encoder
-To:     Thomas Zimmermann <tzimmermann@suse.de>, <airlied@linux.ie>,
-        <daniel@ffwll.ch>, <sam@ravnborg.org>, <abrodkin@synopsys.com>,
-        <bbrezillon@kernel.org>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <ludovic.desroches@microchip.com>,
-        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-        <jingoohan1@gmail.com>, <inki.dae@samsung.com>,
-        <jy0922.shim@samsung.com>, <sw0312.kim@samsung.com>,
-        <kyungmin.park@samsung.com>, <kgene@kernel.org>, <krzk@kernel.org>,
-        <stefan@agner.ch>, <alison.wang@nxp.com>,
-        <patrik.r.jakobsson@gmail.com>, <xinliang.liu@linaro.org>,
-        <zourongrong@gmail.com>, <john.stultz@linaro.org>,
-        <kong.kongxinwei@hisilicon.com>, <puck.chen@hisilicon.com>,
-        <linux@armlinux.org.uk>, <p.zabel@pengutronix.de>,
-        <shawnguo@kernel.org>, <s.hauer@pengutronix.de>,
-        <kernel@pengutronix.de>, <festevam@gmail.com>, <linux-imx@nxp.com>,
-        <paul@crapouillou.net>, <ck.hu@mediatek.com>,
-        <matthias.bgg@gmail.com>, <laurent.pinchart@ideasonboard.com>,
-        <kieran.bingham+renesas@ideasonboard.com>, <hjc@rock-chips.com>,
-        <heiko@sntech.de>, <wens@csie.org>, <jernej.skrabec@siol.net>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <tomi.valkeinen@ti.com>, <eric@anholt.net>, <kraxel@redhat.com>,
-        <rodrigosiqueiramelo@gmail.com>, <hamohammed.sa@gmail.com>,
-        <sebastian.reichel@collabora.com>
-CC:     <dri-devel@lists.freedesktop.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-tegra@vger.kernel.org>,
-        <virtualization@lists.linux-foundation.org>
+        Fri, 6 Mar 2020 16:18:21 -0500
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk3.altibox.net (Postfix) with ESMTPS id 92F132001E;
+        Fri,  6 Mar 2020 22:18:04 +0100 (CET)
+Date:   Fri, 6 Mar 2020 22:18:03 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     airlied@linux.ie, daniel@ffwll.ch, abrodkin@synopsys.com,
+        bbrezillon@kernel.org, nicolas.ferre@microchip.com,
+        alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        jingoohan1@gmail.com, inki.dae@samsung.com,
+        jy0922.shim@samsung.com, sw0312.kim@samsung.com,
+        kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org,
+        stefan@agner.ch, alison.wang@nxp.com, patrik.r.jakobsson@gmail.com,
+        xinliang.liu@linaro.org, zourongrong@gmail.com,
+        john.stultz@linaro.org, kong.kongxinwei@hisilicon.com,
+        puck.chen@hisilicon.com, linux@armlinux.org.uk,
+        p.zabel@pengutronix.de, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, paul@crapouillou.net, ck.hu@mediatek.com,
+        matthias.bgg@gmail.com, laurent.pinchart@ideasonboard.com,
+        kieran.bingham+renesas@ideasonboard.com, hjc@rock-chips.com,
+        heiko@sntech.de, wens@csie.org, jernej.skrabec@siol.net,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, jsarha@ti.com,
+        tomi.valkeinen@ti.com, eric@anholt.net, kraxel@redhat.com,
+        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
+        sebastian.reichel@collabora.com, dri-devel@lists.freedesktop.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH 01/22] drm/arc: Use simple encoder
+Message-ID: <20200306211802.GA17369@ravnborg.org>
 References: <20200305155950.2705-1-tzimmermann@suse.de>
- <20200305155950.2705-18-tzimmermann@suse.de>
-From:   Jyri Sarha <jsarha@ti.com>
-Autocrypt: addr=jsarha@ti.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <d4b7313e-3b5e-0659-fb2a-32a969a80081@ti.com>
-Date:   Fri, 6 Mar 2020 18:03:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+ <20200305155950.2705-2-tzimmermann@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <20200305155950.2705-18-tzimmermann@suse.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200305155950.2705-2-tzimmermann@suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=eMA9ckh1 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=7gkXJVJtAAAA:8
+        a=rqCPFu_3IIfdMowE660A:9 a=CjuIK1q_8ugA:10 a=E9Po1WZjFZOl8hwRPBS3:22
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 05/03/2020 17:59, Thomas Zimmermann wrote:
-> The tilcdc driver uses empty implementations for its encoders. Replace
+On Thu, Mar 05, 2020 at 04:59:29PM +0100, Thomas Zimmermann wrote:
+> The arc driver uses empty implementations for its encoders. Replace
 > the code with the generic simple encoder.
+
+We should , as a follow-up patch, embed the encoder in
+arcgpu_drm_private.
+Then we drop the kzalloc() and avoid that life-time challenge.
+
+This patch looks good for what it does.
+
+Acked-by: Sam Ravnborg <sam@ravnborg.org>
+
 > 
 > Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-Acked-by: Jyri Sarha <jsarha@ti.com>
-
 > ---
->  drivers/gpu/drm/tilcdc/tilcdc_external.c | 10 +++-------
->  drivers/gpu/drm/tilcdc/tilcdc_panel.c    |  8 ++------
+>  drivers/gpu/drm/arc/arcpgu_hdmi.c | 10 +++-------
+>  drivers/gpu/drm/arc/arcpgu_sim.c  |  8 ++------
 >  2 files changed, 5 insertions(+), 13 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/tilcdc/tilcdc_external.c b/drivers/gpu/drm/tilcdc/tilcdc_external.c
-> index 28b7f703236e..b177525588c1 100644
-> --- a/drivers/gpu/drm/tilcdc/tilcdc_external.c
-> +++ b/drivers/gpu/drm/tilcdc/tilcdc_external.c
-> @@ -10,6 +10,7 @@
->  #include <drm/drm_atomic_helper.h>
+> diff --git a/drivers/gpu/drm/arc/arcpgu_hdmi.c b/drivers/gpu/drm/arc/arcpgu_hdmi.c
+> index 52839934f2fb..780911765e2e 100644
+> --- a/drivers/gpu/drm/arc/arcpgu_hdmi.c
+> +++ b/drivers/gpu/drm/arc/arcpgu_hdmi.c
+> @@ -7,15 +7,12 @@
+>  
 >  #include <drm/drm_bridge.h>
->  #include <drm/drm_of.h>
+>  #include <drm/drm_crtc.h>
+> -#include <drm/drm_encoder.h>
+>  #include <drm/drm_device.h>
+> +#include <drm/drm_encoder.h>
 > +#include <drm/drm_simple_kms_helper.h>
 >  
->  #include "tilcdc_drv.h"
->  #include "tilcdc_external.h"
-> @@ -83,10 +84,6 @@ int tilcdc_add_component_encoder(struct drm_device *ddev)
->  	return 0;
->  }
+>  #include "arcpgu.h"
 >  
-> -static const struct drm_encoder_funcs tilcdc_external_encoder_funcs = {
-> -	.destroy	= drm_encoder_cleanup,
+> -static struct drm_encoder_funcs arcpgu_drm_encoder_funcs = {
+> -	.destroy = drm_encoder_cleanup,
 > -};
 > -
->  static
->  int tilcdc_attach_bridge(struct drm_device *ddev, struct drm_bridge *bridge)
+>  int arcpgu_drm_hdmi_init(struct drm_device *drm, struct device_node *np)
 >  {
-> @@ -131,9 +128,8 @@ int tilcdc_attach_external_device(struct drm_device *ddev)
->  	if (!priv->external_encoder)
->  		return -ENOMEM;
+>  	struct drm_encoder *encoder;
+> @@ -34,8 +31,7 @@ int arcpgu_drm_hdmi_init(struct drm_device *drm, struct device_node *np)
 >  
-> -	ret = drm_encoder_init(ddev, priv->external_encoder,
-> -			       &tilcdc_external_encoder_funcs,
-> -			       DRM_MODE_ENCODER_NONE, NULL);
-> +	ret = drm_simple_encoder_init(ddev, priv->external_encoder,
-> +				      DRM_MODE_ENCODER_NONE);
->  	if (ret) {
->  		dev_err(ddev->dev, "drm_encoder_init() failed %d\n", ret);
+>  	encoder->possible_crtcs = 1;
+>  	encoder->possible_clones = 0;
+> -	ret = drm_encoder_init(drm, encoder, &arcpgu_drm_encoder_funcs,
+> -			       DRM_MODE_ENCODER_TMDS, NULL);
+> +	ret = drm_simple_encoder_init(drm, encoder, DRM_MODE_ENCODER_TMDS);
+>  	if (ret)
 >  		return ret;
-> diff --git a/drivers/gpu/drm/tilcdc/tilcdc_panel.c b/drivers/gpu/drm/tilcdc/tilcdc_panel.c
-> index 5584e656b857..12823d60c4e8 100644
-> --- a/drivers/gpu/drm/tilcdc/tilcdc_panel.c
-> +++ b/drivers/gpu/drm/tilcdc/tilcdc_panel.c
-> @@ -16,6 +16,7 @@
->  #include <drm/drm_connector.h>
->  #include <drm/drm_modeset_helper_vtables.h>
+>  
+> diff --git a/drivers/gpu/drm/arc/arcpgu_sim.c b/drivers/gpu/drm/arc/arcpgu_sim.c
+> index 37d961668dfe..66ca2c26e339 100644
+> --- a/drivers/gpu/drm/arc/arcpgu_sim.c
+> +++ b/drivers/gpu/drm/arc/arcpgu_sim.c
+> @@ -8,6 +8,7 @@
+>  #include <drm/drm_atomic_helper.h>
+>  #include <drm/drm_device.h>
 >  #include <drm/drm_probe_helper.h>
 > +#include <drm/drm_simple_kms_helper.h>
 >  
->  #include "tilcdc_drv.h"
->  #include "tilcdc_panel.h"
-> @@ -74,10 +75,6 @@ static void panel_encoder_mode_set(struct drm_encoder *encoder,
->  	/* nothing needed */
->  }
+>  #include "arcpgu.h"
 >  
-> -static const struct drm_encoder_funcs panel_encoder_funcs = {
-> -		.destroy        = drm_encoder_cleanup,
+> @@ -50,10 +51,6 @@ static const struct drm_connector_funcs arcpgu_drm_connector_funcs = {
+>  	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+>  };
+>  
+> -static struct drm_encoder_funcs arcpgu_drm_encoder_funcs = {
+> -	.destroy = drm_encoder_cleanup,
 > -};
 > -
->  static const struct drm_encoder_helper_funcs panel_encoder_helper_funcs = {
->  		.dpms           = panel_encoder_dpms,
->  		.prepare        = panel_encoder_prepare,
-> @@ -102,8 +99,7 @@ static struct drm_encoder *panel_encoder_create(struct drm_device *dev,
->  	encoder = &panel_encoder->base;
+>  int arcpgu_drm_sim_init(struct drm_device *drm, struct device_node *np)
+>  {
+>  	struct arcpgu_drm_connector *arcpgu_connector;
+> @@ -68,8 +65,7 @@ int arcpgu_drm_sim_init(struct drm_device *drm, struct device_node *np)
 >  	encoder->possible_crtcs = 1;
+>  	encoder->possible_clones = 0;
 >  
-> -	ret = drm_encoder_init(dev, encoder, &panel_encoder_funcs,
-> -			DRM_MODE_ENCODER_LVDS, NULL);
-> +	ret = drm_simple_encoder_init(dev, encoder, DRM_MODE_ENCODER_LVDS);
->  	if (ret < 0)
->  		goto fail;
+> -	ret = drm_encoder_init(drm, encoder, &arcpgu_drm_encoder_funcs,
+> -			       DRM_MODE_ENCODER_VIRTUAL, NULL);
+> +	ret = drm_simple_encoder_init(drm, encoder, DRM_MODE_ENCODER_VIRTUAL);
+>  	if (ret)
+>  		return ret;
 >  
-> 
-
-
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> -- 
+> 2.25.1
