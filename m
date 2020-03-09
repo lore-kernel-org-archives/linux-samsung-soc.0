@@ -2,158 +2,103 @@ Return-Path: <SRS0=xY/3=42=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84B5FC10F29
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Mar 2020 08:40:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1B6FC10F27
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Mar 2020 08:41:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59AD720828
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Mar 2020 08:40:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CxWtsmQP"
+	by mail.kernel.org (Postfix) with ESMTP id 9A87D2083E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Mar 2020 08:41:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726415AbgCIIkg (ORCPT
+        id S1726475AbgCIIlG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 9 Mar 2020 04:40:36 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:55780 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725956AbgCIIkf (ORCPT
+        Mon, 9 Mar 2020 04:41:06 -0400
+Received: from foss.arm.com ([217.140.110.172]:49128 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726450AbgCIIlG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 9 Mar 2020 04:40:35 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200309084033euoutp02c76a095894a2f58675712130714b361c~6lhRyf96u3038630386euoutp02Z
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Mar 2020 08:40:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200309084033euoutp02c76a095894a2f58675712130714b361c~6lhRyf96u3038630386euoutp02Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1583743233;
-        bh=NGg3GV4wcJ669e6wjVEE564nwN09ctwPFgrI9ZV8yyE=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=CxWtsmQPu9ntXhxQS25QJ2cugGopEu9SsHUlX0JDGvqj9p8TsN4mGusIOkYCMCc50
-         11597v15hnuLrF7FwJ8wEOFkJiKFdSMdSnKBemoEq0XZ1G62BcfF1QtU/4lioNk5S3
-         g9mdpPhIaCheo7Io6UYZ2Gvoz8S5WMejlUpg4Klk=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200309084033eucas1p1940610d27375f391fb1db13a02e8a1ba~6lhRnPdsR1711217112eucas1p1Z;
-        Mon,  9 Mar 2020 08:40:33 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id A5.D1.60698.101066E5; Mon,  9
-        Mar 2020 08:40:33 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200309084032eucas1p24c1602c831e38195b9f939c3f343607c~6lhRFBkmH2702927029eucas1p2B;
-        Mon,  9 Mar 2020 08:40:32 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200309084032eusmtrp1f84aa979348266420d702d9fef809c73~6lhRDu_gL2157121571eusmtrp1E;
-        Mon,  9 Mar 2020 08:40:32 +0000 (GMT)
-X-AuditID: cbfec7f5-a0fff7000001ed1a-b5-5e6601014b38
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 41.F9.08375.001066E5; Mon,  9
-        Mar 2020 08:40:32 +0000 (GMT)
-Received: from [106.120.51.74] (unknown [106.120.51.74]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200309084032eusmtip20aa3b7f1792aaeef80aa9f24847f1668~6lhQutZ4Y0673306733eusmtip2P;
-        Mon,  9 Mar 2020 08:40:32 +0000 (GMT)
-Subject: Re: [PATCH] ARM: dts: exynos: Fix polarity of the LCD SPI bus on
- UniversalC210 board
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mon, 9 Mar 2020 04:41:06 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9BEA11FB;
+        Mon,  9 Mar 2020 01:41:05 -0700 (PDT)
+Received: from [10.37.12.74] (unknown [10.37.12.74])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 454DD3F6CF;
+        Mon,  9 Mar 2020 01:41:02 -0700 (PDT)
+Subject: Re: [PATCH] drm/exynos: Fix memory leak and release IOMMU mapping
+ structures
+To:     Inki Dae <inki.dae@samsung.com>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        stable@vger.kernel.org
-From:   Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <39ad90c3-0ad1-ad7f-5002-52eb2440dd38@samsung.com>
-Date:   Mon, 9 Mar 2020 09:40:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
-        Thunderbird/68.4.1
+Cc:     jy0922.shim@samsung.com, sw0312.kim@samsung.com,
+        kyungmin.park@samsung.com, airlied@linux.ie, daniel@ffwll.ch,
+        kgene@kernel.org, krzk@kernel.org, b.zolnierkie@samsung.com,
+        a.hajda@samsung.com, Dietmar.Eggemann@arm.com
+References: <CGME20200304220104epcas1p2d65f8ab31df6aa5373787b695b14f8ff@epcas1p2.samsung.com>
+ <20200304220022.8003-1-lukasz.luba@arm.com>
+ <c69c1163-a75b-6667-1979-f3aa356dc0b4@samsung.com>
+From:   Lukasz Luba <lukasz.luba@arm.com>
+Message-ID: <7962c9f2-e85d-9f9b-f442-c4a5b387ca44@arm.com>
+Date:   Mon, 9 Mar 2020 08:41:00 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20200304143726.15826-1-m.szyprowski@samsung.com>
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <c69c1163-a75b-6667-1979-f3aa356dc0b4@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprGKsWRmVeSWpSXmKPExsWy7djP87qMjGlxBn3POS02zljPanH+/AZ2
-        ixnn9zFZrD1yl91iwcZHjA6sHptWdbJ59G1ZxejxeZNcAHMUl01Kak5mWWqRvl0CV8ai9ifM
-        Bde5K56ua2JtYNzK2cXIySEhYCLx/NwMVhBbSGAFo8TN9UxdjFxA9hdGieam9+wQzmdGifvX
-        2tlhOm6sbWOGSCxnlNh86iyU85ZR4vXuU2wgVcIC8RJvF20G6xARCJG4//QF2A5mgUqJ6dum
-        soDYbAKaEn833wSr5xWwk5jYuJ0JxGYRUJH4cugkM4gtKhAhMW37P0aIGkGJkzOfgPVyAtW/
-        eXeNHWKmvETz1tnMELa4xK0n88F+kBCYzC4xa+8+FoizXSR+321jgrCFJV4d3wL1jozE6ck9
-        UDX1EvdXtDBDNHcwSmzdsJMZImEtcefcL6BLOYA2aEqs36UPEXaU+HK7mRkkLCHAJ3HjrSDE
-        DXwSk7ZNhwrzSnS0CUFUK0rcP7sVaqC4xNILX9kmMCrNQvLZLCTfzELyzSyEvQsYWVYxiqeW
-        FuempxYb56WW6xUn5haX5qXrJefnbmIEppbT/45/3cG470/SIUYBDkYlHt4H8qlxQqyJZcWV
-        uYcYJTiYlUR4G7WS44R4UxIrq1KL8uOLSnNSiw8xSnOwKInzGi96GSskkJ5YkpqdmlqQWgST
-        ZeLglGpgnNX9JP7kgneb3qo8v/os8fuTVvvE7t+foy2n/zmQwavjevqZ1aqmvg+h104VVvAk
-        LxFZqXIutH+BYTjDc7cnU/JOGMqJFgedif/duXffFzdDWRZBgw3bZ7lcCDyh0dQnnbNvT+n2
-        qB/O7/b4LTjqGnTrsHuRgqf9GQnDdjbZFYv4XgWf15cVU2Ipzkg01GIuKk4EAE3nSJIpAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJIsWRmVeSWpSXmKPExsVy+t/xe7oMjGlxBmeva1lsnLGe1eL8+Q3s
-        FjPO72OyWHvkLrvFgo2PGB1YPTat6mTz6NuyitHj8ya5AOYoPZui/NKSVIWM/OISW6VoQwsj
-        PUNLCz0jE0s9Q2PzWCsjUyV9O5uU1JzMstQifbsEvYxF7U+YC65zVzxd18TawLiVs4uRk0NC
-        wETixto25i5GLg4hgaWMEgsPLGGDSIhL7J7/lhnCFpb4c62LDaLoNaPEq1drmUASwgLxEm8X
-        bWbvYuTgEBEIkVj4Xg8kzCxQKbF+ykQmiPqJjBI9U5vAhrIJaEr83XwTzOYVsJOY2LgdbA6L
-        gIrEl0MnwZaJCkRIPJ7YzghRIyhxcuYTFhCbE6j+zbtr7BAL1CX+zLvEDGHLSzRvnQ1li0vc
-        ejKfaQKj0Cwk7bOQtMxC0jILScsCRpZVjCKppcW56bnFhnrFibnFpXnpesn5uZsYgdG07djP
-        zTsYL20MPsQowMGoxMP7QD41Tog1say4MvcQowQHs5IIb6NWcpwQb0piZVVqUX58UWlOavEh
-        RlOg5yYyS4km5wMjPa8k3tDU0NzC0tDc2NzYzEJJnLdD4GCMkEB6YklqdmpqQWoRTB8TB6dU
-        A+NE1hcrfl5OUJj4coXCy37dppMxtlqvz3Gxd25+ekPnygLL1+ZPMnw19zzcbODyh60jzevE
-        +Ui9pNeMXtcr5vJoWSaqeX6XKV7Zmrckpim59EaahFH+vRlszZsilvWr/bVdVXCsXrI1a4Il
-        e0zLosBDrwymRH498WdydqNx8sOkhzrtSyM/symxFGckGmoxFxUnAgC4fvEUvAIAAA==
-X-CMS-MailID: 20200309084032eucas1p24c1602c831e38195b9f939c3f343607c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200304143756eucas1p1557bba245d3b9878cd2adc970e6d58f6
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200304143756eucas1p1557bba245d3b9878cd2adc970e6d58f6
-References: <CGME20200304143756eucas1p1557bba245d3b9878cd2adc970e6d58f6@eucas1p1.samsung.com>
-        <20200304143726.15826-1-m.szyprowski@samsung.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 04.03.2020 15:37, Marek Szyprowski wrote:
-> Recent changes in the SPI core and the SPI-GPIO driver revealed that the
-> GPIO lines for the LD9040 LCD controller on the UniversalC210 board are
-> defined incorrectly. Fix the polarity for those lines to match the old
-> behavior and hardware requirements to fix LCD panel operation with
-> recent kernels.
->
-> CC: stable@vger.kernel.org # 5.0+
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Hi Inki,
 
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+On 3/9/20 12:45 AM, Inki Dae wrote:
+> Hi Lukasz,
+> 
+> 20. 3. 5. 오전 7:00에 Lukasz Luba 이(가) 쓴 글:
+>> There is a memory leak which left some objects not freed. The reference
+>> counter of mapping: 'mapping->kref' was 2 when calling
+>> arm_iommu_detach_device(), so the release_iommu_mapping() won't be called.
+>> Since the old mapping structure is not going to be used any more (because
+>> it is detached and new one attached), call arm_iommu_release_mapping()
+>> to trigger cleanup.
+>>
+>> Found using kmemleak detector, the output:
+>>
 
+[snip]
 
- --
-Regards
-Andrzej
+>>
+>> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
+>> ---
+>>
+>> Hi all,
+>>
+>> I have discovered this issue on OdroidXU4 while running some stress tests
+>> for upcoming Energy Model. To reproduce it, kernel must be compiled with
+>> DEBUG_KMEMLEAK. When the boot has finished, type:
+>> # echo scan > /sys/kernel/debug/kmemleak
+>> # cat /sys/kernel/debug/kmemleak
+>> You should expect similar output to the one from the commit message.
+>>
+>> I don't know if it should go via stable tree as well. I can resend with CC
+>> stable, if there is a need.
+> 
+> Thanks for fixup. BTW, as you commented on Marek's patch thread, with Marek's patch the memory leak will be solved.
+> Do you want Marek to rework his patch on top of your patch or are you ok me to pick up only Marek's one?
 
-> ---
->  arch/arm/boot/dts/exynos4210-universal_c210.dts | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-> index a1bdf7830a87..9dda6bdb9253 100644
-> --- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-> +++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-> @@ -115,7 +115,7 @@
->  		gpio-sck = <&gpy3 1 GPIO_ACTIVE_HIGH>;
->  		gpio-mosi = <&gpy3 3 GPIO_ACTIVE_HIGH>;
->  		num-chipselects = <1>;
-> -		cs-gpios = <&gpy4 3 GPIO_ACTIVE_HIGH>;
-> +		cs-gpios = <&gpy4 3 GPIO_ACTIVE_LOW>;
->  
->  		lcd@0 {
->  			compatible = "samsung,ld9040";
-> @@ -124,8 +124,6 @@
->  			vci-supply = <&ldo17_reg>;
->  			reset-gpios = <&gpy4 5 GPIO_ACTIVE_HIGH>;
->  			spi-max-frequency = <1200000>;
-> -			spi-cpol;
-> -			spi-cpha;
->  			power-on-delay = <10>;
->  			reset-delay = <10>;
->  			panel-width-mm = <90>;
+Please drop this one and apply only Marek's patch, it fixes the issue.
+I didn't know that he was working on similar stuff.
 
+> 
+> Marek's patch is conflicted with your one.
+> 
+> Thanks,
+> Inki Dae
 
+Regards,
+Lukasz
