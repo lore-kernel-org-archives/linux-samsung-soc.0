@@ -2,206 +2,111 @@ Return-Path: <SRS0=xY/3=42=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16797C10F27
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Mar 2020 16:23:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6262AC18E5A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Mar 2020 18:09:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D968E2253D
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Mar 2020 16:23:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mMmigeNk"
+	by mail.kernel.org (Postfix) with ESMTP id 400CC24649
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Mar 2020 18:09:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1583777363;
+	bh=q/wjPXk98Iav4DIzjZvnbTdu8x7vxATKPEjPDGTAstU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=cicle+VH11mY7iJFTdye95PC8ssoIk4my+MWInU9Cdrrl2Zo0ACaVonU2sjHOsqne
+	 RqsZq1jIrLiEYusetQr5HzAvEk2umVz7DV2t9Ink/KPdJp1blyfLhJo99gUcnjrFuP
+	 kj1on5Cd+U5n6lyT5wfo6GEph87+yo4gRKxQMaAo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726922AbgCIQXe (ORCPT
+        id S1727360AbgCISJW (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 9 Mar 2020 12:23:34 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:38535 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726804AbgCIQXe (ORCPT
+        Mon, 9 Mar 2020 14:09:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57512 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726169AbgCISJW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 9 Mar 2020 12:23:34 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200309162332euoutp0296ee7a5fbe01f38e118db8bc204bc424~6r1hAsHx91396513965euoutp02J
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Mar 2020 16:23:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200309162332euoutp0296ee7a5fbe01f38e118db8bc204bc424~6r1hAsHx91396513965euoutp02J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1583771012;
-        bh=mVaSzErXXr6NkeK167F1lomH4Gm8JqQhQ+aVHg2/4o8=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=mMmigeNknFMFtAV13UVky5lBOLNbmelucHrz+0NJhlJPELLZggyQssSJ8Xxbfjwhi
-         hjy7kTh/RXLEpWJA6F8XJOFd7g8toZtp30n+TIO1Rsz4gdf/DWH9NFwi+IyLP04CRx
-         z2/rnOBp4Gz6TlaCy6zMkYczNZ6RG7OY96OhIGw0=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200309162332eucas1p2bae9eb1d7c08ded75beb0d3730f212d6~6r1gq3ZkH1251512515eucas1p2g;
-        Mon,  9 Mar 2020 16:23:32 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id DA.C2.61286.48D666E5; Mon,  9
-        Mar 2020 16:23:32 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200309162331eucas1p206c78f3ed49cccd2f401980b158654ab~6r1gW2pe-1255312553eucas1p2o;
-        Mon,  9 Mar 2020 16:23:31 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200309162331eusmtrp2298c3dcb041eef344c24c03f4d890f10~6r1gWKkqI3143831438eusmtrp2I;
-        Mon,  9 Mar 2020 16:23:31 +0000 (GMT)
-X-AuditID: cbfec7f2-ef1ff7000001ef66-96-5e666d849f15
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 51.FC.07950.38D666E5; Mon,  9
-        Mar 2020 16:23:31 +0000 (GMT)
-Received: from [106.120.51.71] (unknown [106.120.51.71]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200309162331eusmtip1e47cac4268bd201db6e9c36373ef8856~6r1f3cI341492714927eusmtip12;
-        Mon,  9 Mar 2020 16:23:31 +0000 (GMT)
-Subject: Re: [PATCH] Revert
- "tty: serial: samsung_tty: build it for any platform"
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Jiri Slaby <jslaby@suse.com>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Message-ID: <6ec29c9d-4a59-77fc-6cb4-38b86d62d22f@samsung.com>
-Date:   Mon, 9 Mar 2020 17:23:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.8.0
+        Mon, 9 Mar 2020 14:09:22 -0400
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7E7221D56;
+        Mon,  9 Mar 2020 18:09:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583777362;
+        bh=q/wjPXk98Iav4DIzjZvnbTdu8x7vxATKPEjPDGTAstU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=O0byU8BWB9cTxwxKIR/DT94PYb319NA2pgXCuq7JymyjeUEqpeHPxcZhvkFj03d0T
+         AlYoQ2UZVYhSRJulzdi9jqLP1etTJ/Gc1UgjK5YNvGJpXW8Xnj8cL87r7jrIQFYQ7U
+         19cissDSZ1NcIQqSLSi3q5IU6gchoZ3YEl6GKsfM=
+Received: by mail-lj1-f171.google.com with SMTP id 19so8166256ljj.7;
+        Mon, 09 Mar 2020 11:09:21 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ3nPY0bgPBwhMoY2n3wr7G+hMLDaWNTWnKOjzF3XmQUPNL70RKd
+        O8RuWbLAqGJJASJkgRBf+p/xgGsFJMzhTaWKaWI=
+X-Google-Smtp-Source: ADFU+vvJrwQAU7B4C8WmaH5AG9yytmZyVjiXSOkfnxp+sxppR9FpJ79hvOp43uNlfDtqH3N8AKoOz0WSuAzAqXGka5Q=
+X-Received: by 2002:a2e:9356:: with SMTP id m22mr9698465ljh.201.1583777359739;
+ Mon, 09 Mar 2020 11:09:19 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200306130314.GA3778623@kroah.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUhTYRiGeXfOzjlai7dp+KRWMCIy0LSsDpVhILZ+GQQlZeqyk0puyo5a
-        +qPsA51CmlMpZ2a10mWlY4qmqdEmWvlVlhYmJPiBZiNTS3JpeTxK/rve+7lvnvuBlyHkbVJ3
-        JlaTyGk1qjgF5UzWtPzu8r6mPhvuO+Ag2Tl9C82O9DVK2KvGSorNN09I2JzBcYIdrhqUsF1d
-        Zpq1DPZK2VtdTRK23XidZt98nKICVykds3qktJRnUkqrTYeUL4qf0MqqB5eUH15dkSorq3tI
-        5ZRl4xHmhPP+M1xcbDKn3X4g0jmm3/GUSviy/kJFTlgaGnHNQk4MYH/ov5tGZyFnRo5NCEwv
-        66XiYxpBkSmTFFxyPIXgqnnzcmKks5gQTWUI5od1hGiyL5gmQgR2wUdBP2eTCOyKI6F52kgJ
-        AQLPSKCn5jMSBhTeC7kZ5Ysswwcge/TPwjaGIfFmqDZ5CfI6HAqTAzapaFkLrwuHFgs5YT+o
-        NFsWmcBu0DdUIhF5E9Taby+WAzxGQ07Ne0psHQQPa+tokV3ga2v1EnvC3zohLAQqEMzpRpfS
-        tQjK8uaX0vugv3OWEtoR2Asq67eL8kFoKPxNCzLgNfDJvlYssQb0NTcJUZaBLl0uureAudRM
-        La/NqntE3EAKw4rTDCvOMaw4x/B/711EliM3LolXR3O8n4Y778Or1HySJtonKl5tQQtfrG2+
-        dfIZ+tl92oowgxSrZTHeZ8PlUlUyn6K2ImAIhavs8raocLnsjColldPGR2iT4jjeijwYUuEm
-        23l/7JQcR6sSuXMcl8Bpl6cSxsk9DTWtM/fn9myKSJ9qCHwcUtbxw7+gPKyxMGB/tuMQb5zt
-        oNvHjaVlu96S777d6Z5pj325p+DkbcOE7vvuoDl9QLTNmuGZGpp43MnUYnqkmW4t8ShKe55i
-        ts00/DIG74joPfbL3nduQ2P3vaats0d0zXZL30Uu7ylUSPOD93k7ug/7Kkg+RuW3jdDyqn8P
-        Zu1sXgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDIsWRmVeSWpSXmKPExsVy+t/xu7rNuWlxBuvmGVr8nXSM3eLZrb1M
-        Fs2L17NZTNnwgcmi//FrZounmx8zWZw/v4HdYtPja6wWM87vY7I4s7iX3eLU9c9sDtwev39N
-        YvTYtKqTzePQ4Q5Gj/1z17B7bF5S73HlRBOrx/otV1k8Pm+SC+CI0rMpyi8tSVXIyC8usVWK
-        NrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL0Mu483stW8F9yYp1/TENjM9Euhg5
-        OSQETCSenZvL3MXIxSEksJRRYs7qN6xdjBxACRmJ4+vLIGqEJf5c62IDsYUEXjNKPPvKC1Ii
-        LBAsceaHFkhYRCBB4kbHVCaQMcwCP5kkFj6ewwo1k0li/Z/fYM1sAlYSE9tXMYLYvAJ2En0v
-        /rCADGIRUJHYskITJCwqECFxeMcsqBJBiZMzn7CA2JwChhLrN2wCs5kF1CX+zLvEDGGLS9x6
-        Mp8JwpaX2P52DvMERqFZSNpnIWmZhaRlFpKWBYwsqxhFUkuLc9Nzi430ihNzi0vz0vWS83M3
-        MQJjdtuxn1t2MHa9Cz7EKMDBqMTDK6CdFifEmlhWXJl7iFGCg1lJhLdRKzlOiDclsbIqtSg/
-        vqg0J7X4EKMp0G8TmaVEk/OB6SSvJN7Q1NDcwtLQ3Njc2MxCSZy3Q+BgjJBAemJJanZqakFq
-        EUwfEwenVAPjmj1O5tuMyx0Z5Hk29nyNSn0WsNbsYoDlhNqQI5wC8zgTlNnnqJYe9D20gMG1
-        jKHD2qJxXvjnSysOK9Xqv7a4vSj6xpWW/VdvnJ+xvP/QSZ45pSEdetWG/A/ik3Zv6oh5fdjg
-        oGzyjIXZmx++mHP85UUvSWbBCUnTVR/W3FjK/GXSH9kvv7rWKbEUZyQaajEXFScCAIf8/0fv
-        AgAA
-X-CMS-MailID: 20200309162331eucas1p206c78f3ed49cccd2f401980b158654ab
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200306130320eucas1p18bda7b5cdf613e1a811bda6eb99a5847
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200306130320eucas1p18bda7b5cdf613e1a811bda6eb99a5847
 References: <20200306102301.16870-1-geert+renesas@glider.be>
-        <20200306103652.GA3634389@kroah.com>
-        <CAMuHMdUy8RjkY+0gBv-=mpcuamNQgB=k4rvNsiaj2s4uUDc5UA@mail.gmail.com>
-        <CGME20200306130320eucas1p18bda7b5cdf613e1a811bda6eb99a5847@eucas1p1.samsung.com>
-        <20200306130314.GA3778623@kroah.com>
+In-Reply-To: <20200306102301.16870-1-geert+renesas@glider.be>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Mon, 9 Mar 2020 19:09:07 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPeknZDrA7cXbznvrcCoV4hFfaUAtd6mzHO+dbepkzueQw@mail.gmail.com>
+Message-ID: <CAJKOXPeknZDrA7cXbznvrcCoV4hFfaUAtd6mzHO+dbepkzueQw@mail.gmail.com>
+Subject: Re: [PATCH] Revert "tty: serial: samsung_tty: build it for any platform"
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, Kukjin Kim <kgene@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-arm-kernel@lists.infradead.org, --cc@rox.of.borg,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+.On Fri, 6 Mar 2020 at 11:23, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
+> This reverts commit 175b558d0efb8b4f33aa7bd2c1b5389b912d3019.
+>
+> When the user configures a kernel without support for Samsung SoCs, it
+> makes no sense to ask the user about enabling "Samsung SoC serial
+> support", as Samsung serial ports can only be found on Samsung SoCs.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/tty/serial/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>
 
-On 3/6/20 2:03 PM, Greg Kroah-Hartman wrote:
-> On Fri, Mar 06, 2020 at 01:53:01PM +0100, Geert Uytterhoeven wrote:
->> Hi Greg,
->>
->> On Fri, Mar 6, 2020 at 1:29 PM Greg Kroah-Hartman
->> <gregkh@linuxfoundation.org> wrote:
->>> On Fri, Mar 06, 2020 at 11:23:01AM +0100, Geert Uytterhoeven wrote:
->>>> This reverts commit 175b558d0efb8b4f33aa7bd2c1b5389b912d3019.
->>>>
->>>> When the user configures a kernel without support for Samsung SoCs, it
->>>> makes no sense to ask the user about enabling "Samsung SoC serial
->>>> support", as Samsung serial ports can only be found on Samsung SoCs.
->>>>
->>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>>> ---
->>>>  drivers/tty/serial/Kconfig | 1 +
->>>>  1 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
->>>> index 880b962015302dca..932ad51099deae7d 100644
->>>> --- a/drivers/tty/serial/Kconfig
->>>> +++ b/drivers/tty/serial/Kconfig
->>>> @@ -237,6 +237,7 @@ config SERIAL_CLPS711X_CONSOLE
->>>>
->>>>  config SERIAL_SAMSUNG
->>>>       tristate "Samsung SoC serial support"
->>>> +     depends on PLAT_SAMSUNG || ARCH_EXYNOS || COMPILE_TEST
->>>>       select SERIAL_CORE
->>>>       help
->>>>         Support for the on-chip UARTs on the Samsung S3C24XX series CPUs,
->>>
->>> {sigh}
+Discussion about removal and then re-adding of PLAT_SAMSUNG and
+ARCH_EXYNOS dependencies remind me [1]: "[RFC] Input: tm2-touchkey -
+add hardware dependency".
 
-[...]
+In both cases the driver is clearly only for Samsung SoC or even for
+particular device, although one could argue that touchscreen could be
+reused while re-usage of serial IP of SoC is highly unlikely. My
+understanding, maybe not correct, of "depends on" syntax is a kernel
+source code, building or running dependency. I do not see it as a
+hardware dependency. Although Samsung S3C/Exynos serial driver will
+not exist outside of Samsung SoC, there is no kernel dependency.
+Unless I missed something...
 
->> Dropping those dependencies is similar to always having a simple PCI
->> core without any host PCI bridges, dropping "depends on PCI" from all
->> PCI drivers, and building an all*config kernel for your old i386 that
->> predates PCI (you can replace PCI by ACPI to modernize the example).
->>
->> What am I missing?!?
-> 
-> "depends on PCI" describes the hardware bus that a driver depends on.
-> 
-> PLAT_FOO is just trying to somehow classify that this type of driver
-> only shows up on this vendor's devices.  It is not defining the hardware
-> at all.  We try to always describe functionality of hardware, not try to
-> declare specific vendor's hardware choices, right?
-> 
-> PLAT_FOO is interesting, but given that a specific driver is really not
-> tied to that platform logically, only by virtue that no one else might
-> not happen to have that hardware, it seems odd to have that.
+I understand and agree with concerns mentioned in [1] and in the
+thread here, that removal of this "depends on" makes life of
+distributions and generic users more difficult. To solve this problem
+I was thinking about adding weaker type of dependency. A hint about
+hardware dependency. Something like the "imply" is for "select". This
+did not happen, therefore I still stand on my understanding of
+"depends on" thus I gave positive feedback to Greg's patch.
 
-Your particular patch is not about removing PLAT_FOO dependency but
-about removing actual architecture/platform specific dependencies.
+It is a pity though that Greg's patch was applied so fast while
+discussion was still on going...
 
-Please look at your patch and note that in addition to removing
-PLAT_SAMSUNG dependency (even ignoring for a moment that it can be
-replaced by a few ARCH_* dependencies and PLAT_SAMSUNG was used only
-because it was shorter) has also removed ARCH_EXYNOS dependency.
-
-How do you explain this?
-
-> Yes, asking lots of questions is tough, but we passed that problem so
-> long ago.  Are we now trying to add PLAT_FOO entries to all hardware
-> drivers in order to make this type of selection easier?  I thought we
-
-We are not going to add anything because for the vast majority of
-the drivers the needed entries are already there:
-
-$ find drivers/ -name 'Kconfig*'|xargs cat|grep "depends on"|grep ARCH_|wc -l
-1310
-
-> were just doing that by providing defconfig files to make the initial
-> selection saner.
+[1] https://patchwork.kernel.org/patch/9695769/
 
 Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Krzysztof
