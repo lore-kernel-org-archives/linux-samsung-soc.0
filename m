@@ -1,176 +1,119 @@
-Return-Path: <SRS0=w2mC=4Y=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=xY/3=42=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE245C10F26
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  7 Mar 2020 21:26:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31DF7C10DCE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Mar 2020 00:22:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B30892070A
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  7 Mar 2020 21:26:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84EA4206D5
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Mar 2020 00:22:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M71CdT3p"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hWRYtEbo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726174AbgCGV0o (ORCPT
+        id S1726558AbgCIAWc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 7 Mar 2020 16:26:44 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37848 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726109AbgCGV0n (ORCPT
+        Sun, 8 Mar 2020 20:22:32 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:62037 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726556AbgCIAWb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 7 Mar 2020 16:26:43 -0500
-Received: by mail-wm1-f68.google.com with SMTP id a141so5959005wme.2;
-        Sat, 07 Mar 2020 13:26:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=m54yusBm2cfQsoltNlzGG1VPYD+rTsr8fme02T2RWJo=;
-        b=M71CdT3pKiL4MOUxpOTCC9cb5csI3HOZ8mgRcpGlMenO5UGzj9rMsZsQUDGINqN7ai
-         qp/Ja8b4xD5XejP/PDULEeQ0c1tiKqaKvUrdzIwAhsFxW5y8JYlkqJnSDXf10hv1bTJ5
-         JJYaRPIwJdyvDe/XlpWfYWtLp+rtvg8rVWnSWovr5qTDJ+fdOzmmzvqNHyxS3qIyfbvc
-         nXuSBzmwqQ9RC2RLPTYQzXxah/e6Y2eiDFjaOz8BLm6x1OW4oSLKZmo3kWnUS43dDsK0
-         hBJRQH8+2uYatuDwuvyuGuTMWz3JpLkb/Bbcit+80ODCMOT9orwHB9gz0kGorZSqKlFj
-         fU3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=m54yusBm2cfQsoltNlzGG1VPYD+rTsr8fme02T2RWJo=;
-        b=MQfp976bfv3yvzBN74IA1IXo9AThfuTbzK1ifhC1OAcPZ+L1djKfQzBuXuzEk4PMgh
-         TWqS+M0+hjDxL7VCFgdDl+L3UPCOQtZKCJrwlNBPJ9lKkOox9cxkg1GBQS1C1KWbt+Oz
-         mSZfOvrnOroYfx7WiHvXjZOryAQ8yA2nDBz3hpW8/0nDsRc8vZwfCctTNLLkLnKGHRJW
-         d/SQi49NjYcYByidaRjFPRD63u1I5hLBIKb7qXyWb65dPsqpGK7MphhKpJgTYxOaB5db
-         iMElkcePED1oasLNE5c+GpJ1Ibrta9fjbCqQCvCaj+UlpBCaUxwad6g8Y+ub6NttPOTa
-         SlMA==
-X-Gm-Message-State: ANhLgQ2jnufizpGyDgSJHbTd8+5l35nlZm2mEf4kSn0rkCmiwGa8WHjA
-        XmwbhCeshB2X6eUoM6onkyg=
-X-Google-Smtp-Source: ADFU+vuFRDbTDEZuAuP/pYTCz4YndzHJ2xraWWIfqBFPUHje29O19k4OuY+NKvZGNki8YYnvjAmg6A==
-X-Received: by 2002:a7b:c082:: with SMTP id r2mr1205378wmh.177.1583616399836;
-        Sat, 07 Mar 2020 13:26:39 -0800 (PST)
-Received: from ziggy.stardust ([213.195.113.243])
-        by smtp.gmail.com with ESMTPSA id a7sm18221033wmb.0.2020.03.07.13.26.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Mar 2020 13:26:38 -0800 (PST)
-Subject: Re: [PATCH 10/22] drm/mediatek: Use simple encoder
-To:     Thomas Zimmermann <tzimmermann@suse.de>, airlied@linux.ie,
-        daniel@ffwll.ch, sam@ravnborg.org, abrodkin@synopsys.com,
-        bbrezillon@kernel.org, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        jingoohan1@gmail.com, inki.dae@samsung.com,
-        jy0922.shim@samsung.com, sw0312.kim@samsung.com,
-        kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org,
-        stefan@agner.ch, alison.wang@nxp.com, patrik.r.jakobsson@gmail.com,
-        xinliang.liu@linaro.org, zourongrong@gmail.com,
-        john.stultz@linaro.org, kong.kongxinwei@hisilicon.com,
-        puck.chen@hisilicon.com, linux@armlinux.org.uk,
-        p.zabel@pengutronix.de, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, paul@crapouillou.net, ck.hu@mediatek.com,
-        laurent.pinchart@ideasonboard.com,
-        kieran.bingham+renesas@ideasonboard.com, hjc@rock-chips.com,
-        heiko@sntech.de, wens@csie.org, jernej.skrabec@siol.net,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, jsarha@ti.com,
-        tomi.valkeinen@ti.com, eric@anholt.net, kraxel@redhat.com,
-        rodrigosiqueiramelo@gmail.com, hamohammed.sa@gmail.com,
-        sebastian.reichel@collabora.com
-Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-References: <20200305155950.2705-1-tzimmermann@suse.de>
- <20200305155950.2705-11-tzimmermann@suse.de>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <31d07a60-e7fd-0631-5132-64609af5fcd8@gmail.com>
-Date:   Sat, 7 Mar 2020 22:26:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Sun, 8 Mar 2020 20:22:31 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200309002228epoutp02243a13aaad36b7b42277fb6f933efca5~6euZSmUv92969329693epoutp02L
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Mar 2020 00:22:28 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200309002228epoutp02243a13aaad36b7b42277fb6f933efca5~6euZSmUv92969329693epoutp02L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1583713348;
+        bh=DPRGiObdu5DpGG4HCjdMPVIuIdkoGD+I4f1nVNHdBmI=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=hWRYtEboF2jKRn/ZSwmFqU9AfeXf2b7kDw3AtOgllUyGjQxi3fohvKGXo5qNkhMTl
+         2cjEmaXWGmSnSFtpvb4S0Vqq85PsblnM76zt49aIMphct5vN/BJnYTx7v9JUd5WY+X
+         m3e7pZQ/PPZ/plAFIQdLG0YZ0IWh3Xq7OL5FENTg=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200309002228epcas1p17107922a74248ae2d3f30d79c5284642~6euY-6e1n1651816518epcas1p17;
+        Mon,  9 Mar 2020 00:22:28 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.152]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 48bJns1VwDzMqYkh; Mon,  9 Mar
+        2020 00:22:25 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        4A.04.48019.14C856E5; Mon,  9 Mar 2020 09:22:25 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200309002224epcas1p2354c5b8d38d142a6e114394cd5250ab9~6euVsX8I33131731317epcas1p2M;
+        Mon,  9 Mar 2020 00:22:24 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200309002224epsmtrp1c72242519ddb51b817d9b60aefc7422d~6euVrtzpS1493714937epsmtrp1d;
+        Mon,  9 Mar 2020 00:22:24 +0000 (GMT)
+X-AuditID: b6c32a38-257ff7000001bb93-a5-5e658c417361
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        77.FD.06569.04C856E5; Mon,  9 Mar 2020 09:22:24 +0900 (KST)
+Received: from [10.113.221.211] (unknown [10.113.221.211]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200309002224epsmtip1442e3586a5e3bfaee3564baf7a48111e~6euVfd24l2172821728epsmtip1P;
+        Mon,  9 Mar 2020 00:22:24 +0000 (GMT)
+Subject: Re: [PATCH] drm/exynos: Fix cleanup of IOMMU related objects
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>
+From:   Inki Dae <inki.dae@samsung.com>
+Message-ID: <0aae03a3-6321-0c72-be24-cdd7ae7b4e45@samsung.com>
+Date:   Mon, 9 Mar 2020 09:26:52 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20200305155950.2705-11-tzimmermann@suse.de>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <3939a892-5d30-9647-30aa-81e3c9244c4f@samsung.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SWUwTURSGczvtdABrroPgCW4wwgNVsGMpjgvuS4081PjiklAn5VoI3dJp
+        UfRBlAgEiEqISa3ihltQQA0YXNAIBjQqLrjFhEVACMZIopbEJWrb0cjbd27+c//z33sYij1M
+        xzG5Dg9xO0QbR0cqr7Ul61KWV5AsXcu9KOFtfadKuOJrUAkvAqO04HtyWyHU3etWC76qEXoZ
+        bewt71AYDzTWIuOXqzNM1Ja8xTlEzCbueOKwOLNzHdYMbv1G80qzIV3Hp/ALhPlcvEO0kwxu
+        VaYpZU2uLejLxeeLNm/wyCRKEjd3yWK30+sh8TlOyZPBEVe2zbXAlSqJdsnrsKZanPaFvE43
+        zxAUbsvLaa/dR7t69Dsvt51WFKIH2jIUwQBOg9vVP6gyFMmwuBlB2fEOtVx8RlAz2k2HVCwe
+        QxBoT/zXUVbSopBFLQhunnutlItRBGNVA6qQKhqvhsflw1SIJ2MvVP9uV4eYwiUI6jrMIaZx
+        ElRe6A07aPASOLE/EGYlToSxmidBB4aJwZvgYUCUJZPgwZFBZYgj8FLoPx9QyFdOgbeDJ/7y
+        TChqOkrJgz6i4fmdbTKvgs7+PiRzNHzoaFTLHAcjB4vDiQEXIaj0PVTIRSmC7oHXSlmlhztn
+        q8IDUTgZGm7MlY8T4PqPaiQbT4RPgQpVSAJYA6XFrCzhoP3Zm7++AE/PVNIyG6FmqFx1CCX4
+        x0Xzj4vjHxfH/9/4JFLWoljikuxWIvGutPGffRWFV1IrNKNbnZmtCDOIm6Dpm0myWJWYLxXY
+        WxEwFDdZs1dryWI12WLBLuJ2mt1eG5FakSH48JVUXIzFGVxwh8fMG+bp9XohjU838Dw3RfNu
+        c3IWi62ih+QR4iLuf30KJiKuEHH76zekTJ1j2DOaWJXArtg6W4d/ahvWpa3vonuQuXv4e3NB
+        26lG66KpFS/WLLxiUvWov236lVTykXo66/i397EO/8uhab+2N5Fby+/3vlqru/S1sCiJRVFN
+        w7HGo9jmLi49dOrYAYvlwu5pQ2MjXfX9UdEjvo2m6RfTuZs77lrbojillCPyWsotiX8AkS4Z
+        I6gDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKLMWRmVeSWpSXmKPExsWy7bCSnK5DT2qcwf/ZGha31p1jtdg4Yz2r
+        xZWv79ksZpzfx2Sx9shddosZk1+yObB53O8+zuTRt2UVo8fnTXIBzFFcNimpOZllqUX6dglc
+        GcdWNbEV3DOu2HB4EVMD40mtLkZODgkBE4mu9r1MXYxcHEICuxkl5j2Yw9LFyAGUkJDYspUD
+        whSWOHy4GKLkLaPE6iXXWUF6hQVcJc52P2cGsUUESiVe9d9nBCliFmhnlDiyr4MdouM3o8TJ
+        l43sIFVsAqoSE1fcZwOxeQXsJOa3fgWzWQRUJL4tPs8EYosKREg8336DEaJGUOLkzCcsIDan
+        gL3Eo+VfwWqYBdQl/sy7xAxhi0vcejIfKi4v0bx1NvMERqFZSNpnIWmZhaRlFpKWBYwsqxgl
+        UwuKc9Nziw0LjPJSy/WKE3OLS/PS9ZLzczcxgiNDS2sH44kT8YcYBTgYlXh4H8inxgmxJpYV
+        V+YeYpTgYFYS4W3USo4T4k1JrKxKLcqPLyrNSS0+xCjNwaIkziuffyxSSCA9sSQ1OzW1ILUI
+        JsvEwSnVwJjR0mlnuvzy8475U/0Odc17aLPbyjZTYaGmmI57Wv/sNdklbdNCMy9E2E1KtBFu
+        83lUo1rAn92yP3aDXsgGm5v1Ny0jlJVf3Vl8QWdzzYmDvuZ99QeuzbBoZji+gXOSR1gYu9kD
+        HR2ZbMv5269sWvyvhv0VF5fJyg2mGZcqGpMZjux/JL7onhJLcUaioRZzUXEiAGPnhWGIAgAA
+X-CMS-MailID: 20200309002224epcas1p2354c5b8d38d142a6e114394cd5250ab9
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200302142822eucas1p1749e7cd54ad0b8657b753a8b720ccba2
+References: <CGME20200302142822eucas1p1749e7cd54ad0b8657b753a8b720ccba2@eucas1p1.samsung.com>
+        <20200302142709.15007-1-m.szyprowski@samsung.com>
+        <d392e79f-7209-d7f6-0f1a-3d3d6e4c4473@samsung.com>
+        <3939a892-5d30-9647-30aa-81e3c9244c4f@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
@@ -178,95 +121,147 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
 
-On 05/03/2020 16:59, Thomas Zimmermann wrote:
-> The mediatak driver uses empty implementations for its encoders. Replace
-> the code with the generic simple encoder.
+20. 3. 5. 오후 5:13에 Marek Szyprowski 이(가) 쓴 글:
+> Hi Inki,
 > 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-
-> ---
->  drivers/gpu/drm/mediatek/mtk_dpi.c | 14 +++-----------
->  drivers/gpu/drm/mediatek/mtk_dsi.c | 14 +++-----------
->  2 files changed, 6 insertions(+), 22 deletions(-)
+> On 05.03.2020 09:01, Inki Dae wrote:
+>> Hi Marek,
+>>
+>> 20. 3. 2. 오후 11:27에 Marek Szyprowski 이(가) 쓴 글:
+>>> Store the IOMMU mapping created by device core of each Exynos DRM
+>>> sub-device and restore it when Exynos DRM driver is unbound. This fixes
+>>> IOMMU initialization failure for the second time when deferred probe is
+>>> triggered from the bind() callback of master's compound DRM driver.
+>>>
+>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>> ---
+>>>   drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  5 +++--
+>>>   drivers/gpu/drm/exynos/exynos7_drm_decon.c    |  5 +++--
+>>>   drivers/gpu/drm/exynos/exynos_drm_dma.c       | 22 +++++++++++--------
+>>>   drivers/gpu/drm/exynos/exynos_drm_drv.h       |  6 +++--
+>>>   drivers/gpu/drm/exynos/exynos_drm_fimc.c      |  5 +++--
+>>>   drivers/gpu/drm/exynos/exynos_drm_fimd.c      |  5 +++--
+>>>   drivers/gpu/drm/exynos/exynos_drm_g2d.c       |  5 +++--
+>>>   drivers/gpu/drm/exynos/exynos_drm_gsc.c       |  5 +++--
+>>>   drivers/gpu/drm/exynos/exynos_drm_rotator.c   |  5 +++--
+>>>   drivers/gpu/drm/exynos/exynos_drm_scaler.c    |  6 +++--
+>>>   drivers/gpu/drm/exynos/exynos_mixer.c         |  7 ++++--
+>>>   11 files changed, 47 insertions(+), 29 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+>>> index 8428ae12dfa5..1f79bc2a881e 100644
+>>> --- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+>>> +++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+>>> @@ -55,6 +55,7 @@ static const char * const decon_clks_name[] = {
+>>>   struct decon_context {
+>>>   	struct device			*dev;
+>>>   	struct drm_device		*drm_dev;
+>>> +	void				*dma_priv;
+>>>   	struct exynos_drm_crtc		*crtc;
+>>>   	struct exynos_drm_plane		planes[WINDOWS_NR];
+>>>   	struct exynos_drm_plane_config	configs[WINDOWS_NR];
+>>> @@ -644,7 +645,7 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
+>>>   
+>>>   	decon_clear_channels(ctx->crtc);
+>>>   
+>>> -	return exynos_drm_register_dma(drm_dev, dev);
+>>> +	return exynos_drm_register_dma(drm_dev, dev, &ctx->dma_priv);
+>>>   }
+>>>   
+>>>   static void decon_unbind(struct device *dev, struct device *master, void *data)
+>>> @@ -654,7 +655,7 @@ static void decon_unbind(struct device *dev, struct device *master, void *data)
+>>>   	decon_atomic_disable(ctx->crtc);
+>>>   
+>>>   	/* detach this sub driver from iommu mapping if supported. */
+>>> -	exynos_drm_unregister_dma(ctx->drm_dev, ctx->dev);
+>>> +	exynos_drm_unregister_dma(ctx->drm_dev, ctx->dev, &ctx->dma_priv);
+>>>   }
+>>>   
+>>>   static const struct component_ops decon_component_ops = {
+>>> diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+>>> index ff59c641fa80..1eed3327999f 100644
+>>> --- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+>>> +++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+>>> @@ -40,6 +40,7 @@
+>>>   struct decon_context {
+>>>   	struct device			*dev;
+>>>   	struct drm_device		*drm_dev;
+>>> +	void				*dma_priv;
+>>>   	struct exynos_drm_crtc		*crtc;
+>>>   	struct exynos_drm_plane		planes[WINDOWS_NR];
+>>>   	struct exynos_drm_plane_config	configs[WINDOWS_NR];
+>>> @@ -127,13 +128,13 @@ static int decon_ctx_initialize(struct decon_context *ctx,
+>>>   
+>>>   	decon_clear_channels(ctx->crtc);
+>>>   
+>>> -	return exynos_drm_register_dma(drm_dev, ctx->dev);
+>>> +	return exynos_drm_register_dma(drm_dev, ctx->dev, &ctx->dma_priv);
+>>>   }
+>>>   
+>>>   static void decon_ctx_remove(struct decon_context *ctx)
+>>>   {
+>>>   	/* detach this sub driver from iommu mapping if supported. */
+>>> -	exynos_drm_unregister_dma(ctx->drm_dev, ctx->dev);
+>>> +	exynos_drm_unregister_dma(ctx->drm_dev, ctx->dev, &ctx->dma_priv);
+>>>   }
+>>>   
+>>>   static u32 decon_calc_clkdiv(struct decon_context *ctx,
+>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dma.c b/drivers/gpu/drm/exynos/exynos_drm_dma.c
+>>> index 9ebc02768847..482bec7756fa 100644
+>>> --- a/drivers/gpu/drm/exynos/exynos_drm_dma.c
+>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_dma.c
+>>> @@ -58,7 +58,7 @@ static inline void clear_dma_max_seg_size(struct device *dev)
+>>>    * mapping.
+>>>    */
+>>>   static int drm_iommu_attach_device(struct drm_device *drm_dev,
+>>> -				struct device *subdrv_dev)
+>>> +				struct device *subdrv_dev, void **dma_priv)
+>>>   {
+>>>   	struct exynos_drm_private *priv = drm_dev->dev_private;
+>>>   	int ret;
+>>> @@ -74,7 +74,8 @@ static int drm_iommu_attach_device(struct drm_device *drm_dev,
+>>>   		return ret;
+>>>   
+>>>   	if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)) {
+>>> -		if (to_dma_iommu_mapping(subdrv_dev))
+>>> +		*dma_priv = to_dma_iommu_mapping(subdrv_dev);
+>>> +		if (*dma_priv)
+>>>   			arm_iommu_detach_device(subdrv_dev);
+>>>   
+>>>   		ret = arm_iommu_attach_device(subdrv_dev, priv->mapping);
+>>> @@ -98,19 +99,21 @@ static int drm_iommu_attach_device(struct drm_device *drm_dev,
+>>>    * mapping
+>>>    */
+>>>   static void drm_iommu_detach_device(struct drm_device *drm_dev,
+>>> -				struct device *subdrv_dev)
+>>> +				    struct device *subdrv_dev, void **dma_priv)
+>>>   {
+>>>   	struct exynos_drm_private *priv = drm_dev->dev_private;
+>>>   
+>>> -	if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU))
+>>> +	if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)) {
+>>>   		arm_iommu_detach_device(subdrv_dev);
+>>> -	else if (IS_ENABLED(CONFIG_IOMMU_DMA))
+>>> +		arm_iommu_attach_device(subdrv_dev, *dma_priv);
+>> I don't see why arm_iommu_attach_device function should be called again at drm_iommu_detach_device function.
+>> I think it should be no problem without arm_iommu_attach_device call.
 > 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
-> index 14fbe1c09ce9..9c90c58e5acd 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_dpi.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
-> @@ -20,6 +20,7 @@
->  #include <drm/drm_bridge.h>
->  #include <drm/drm_crtc.h>
->  #include <drm/drm_of.h>
-> +#include <drm/drm_simple_kms_helper.h>
->  
->  #include "mtk_dpi_regs.h"
->  #include "mtk_drm_ddp_comp.h"
-> @@ -509,15 +510,6 @@ static int mtk_dpi_set_display_mode(struct mtk_dpi *dpi,
->  	return 0;
->  }
->  
-> -static void mtk_dpi_encoder_destroy(struct drm_encoder *encoder)
-> -{
-> -	drm_encoder_cleanup(encoder);
-> -}
-> -
-> -static const struct drm_encoder_funcs mtk_dpi_encoder_funcs = {
-> -	.destroy = mtk_dpi_encoder_destroy,
-> -};
-> -
->  static bool mtk_dpi_encoder_mode_fixup(struct drm_encoder *encoder,
->  				       const struct drm_display_mode *mode,
->  				       struct drm_display_mode *adjusted_mode)
-> @@ -596,8 +588,8 @@ static int mtk_dpi_bind(struct device *dev, struct device *master, void *data)
->  		return ret;
->  	}
->  
-> -	ret = drm_encoder_init(drm_dev, &dpi->encoder, &mtk_dpi_encoder_funcs,
-> -			       DRM_MODE_ENCODER_TMDS, NULL);
-> +	ret = drm_simple_encoder_init(drm_dev, &dpi->encoder,
-> +				      DRM_MODE_ENCODER_TMDS);
->  	if (ret) {
->  		dev_err(dev, "Failed to initialize decoder: %d\n", ret);
->  		goto err_unregister;
-> diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-> index 0ede69830a9d..a9a25087112f 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-> @@ -22,6 +22,7 @@
->  #include <drm/drm_panel.h>
->  #include <drm/drm_print.h>
->  #include <drm/drm_probe_helper.h>
-> +#include <drm/drm_simple_kms_helper.h>
->  
->  #include "mtk_drm_ddp_comp.h"
->  
-> @@ -787,15 +788,6 @@ static void mtk_output_dsi_disable(struct mtk_dsi *dsi)
->  	dsi->enabled = false;
->  }
->  
-> -static void mtk_dsi_encoder_destroy(struct drm_encoder *encoder)
-> -{
-> -	drm_encoder_cleanup(encoder);
-> -}
-> -
-> -static const struct drm_encoder_funcs mtk_dsi_encoder_funcs = {
-> -	.destroy = mtk_dsi_encoder_destroy,
-> -};
-> -
->  static bool mtk_dsi_encoder_mode_fixup(struct drm_encoder *encoder,
->  				       const struct drm_display_mode *mode,
->  				       struct drm_display_mode *adjusted_mode)
-> @@ -888,8 +880,8 @@ static int mtk_dsi_create_conn_enc(struct drm_device *drm, struct mtk_dsi *dsi)
->  {
->  	int ret;
->  
-> -	ret = drm_encoder_init(drm, &dsi->encoder, &mtk_dsi_encoder_funcs,
-> -			       DRM_MODE_ENCODER_DSI, NULL);
-> +	ret = drm_simple_encoder_init(drm, &dsi->encoder,
-> +				      DRM_MODE_ENCODER_DSI);
->  	if (ret) {
->  		DRM_ERROR("Failed to encoder init to drm\n");
->  		return ret;
+> If device is not attached again to the mapping created by the DMA 
+> framework, it will be later considered as a device without IOMMU.
+> 
+>> If there is any problem without arm_iommu_attach_device function call then maybe getting wrong somewhere but not here.
+> 
+> The problem will be during the second initialization of Exynos DRM, 
+> mainly if the first initialization is interrupted by deferred probe. 
+> This issue would be also visible when Exynos DRM is compiled as module 
+> and loaded, removed and loaded again. Sadly, due to some circular 
+> dependencies, this is not yet possible without the hacks.
+
+Could you add above your comments on the code so that other developers can understand why the hacks should be used here?
+
+Thanks,
+Inki Dae
+
+> 
+> Best regards
 > 
