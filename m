@@ -2,273 +2,265 @@ Return-Path: <SRS0=xY/3=42=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E9D0C10DCE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Mar 2020 00:41:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20537C10F29
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Mar 2020 07:24:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF5ED2072A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Mar 2020 00:41:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="U1S9abl/"
+	by mail.kernel.org (Postfix) with ESMTP id E50F720828
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  9 Mar 2020 07:24:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726656AbgCIAlE (ORCPT
+        id S1725942AbgCIHYZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 8 Mar 2020 20:41:04 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:58183 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726598AbgCIAlE (ORCPT
+        Mon, 9 Mar 2020 03:24:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36192 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725796AbgCIHYZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 8 Mar 2020 20:41:04 -0400
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200309004101epoutp01afefadf0330980b72ca80241992625f8~6e_lwjY_o1983319833epoutp01v
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Mar 2020 00:41:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200309004101epoutp01afefadf0330980b72ca80241992625f8~6e_lwjY_o1983319833epoutp01v
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1583714461;
-        bh=XZ9yoeNX+hkQonqKUDRvDFm0GYq1xg16IKUz5yY2Agg=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=U1S9abl/M9uAQuxA6mcrhyCxx1h/ZmK/61fJjbAwYswoYazXmoHm+wSwYqARcha9q
-         Y893G1zvo0uvUHMzDqc7d59P43x2UpizXiai+9CLPg/TWhP6jXezBPE84u0c6/de/t
-         JQyGy7esVyZSy+fnvVi5L5Xfe2epwsKhHYpYckGU=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20200309004100epcas1p3e13fae332c5d0350ab3e4b092091110e~6e_k6cll71944319443epcas1p3h;
-        Mon,  9 Mar 2020 00:41:00 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.153]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 48bKCF5TBfzMqYkZ; Mon,  9 Mar
-        2020 00:40:57 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        6B.7A.48019.890956E5; Mon,  9 Mar 2020 09:40:56 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200309004056epcas1p264978098770f6a81ea6d7a9c1c1df256~6e_hACnr33000430004epcas1p2g;
-        Mon,  9 Mar 2020 00:40:56 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200309004056epsmtrp1720d241cefb1d59063b2a4f3468e626e~6e_g-JLgC2492024920epsmtrp1F;
-        Mon,  9 Mar 2020 00:40:56 +0000 (GMT)
-X-AuditID: b6c32a38-23fff7000001bb93-71-5e659098584f
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        5D.FD.10238.890956E5; Mon,  9 Mar 2020 09:40:56 +0900 (KST)
-Received: from [10.113.221.211] (unknown [10.113.221.211]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200309004056epsmtip22b2048432a3af7077f66fa5ae195b41e~6e_gqbYL42713127131epsmtip2d;
-        Mon,  9 Mar 2020 00:40:56 +0000 (GMT)
-Subject: Re: [PATCH] drm/exynos: Fix memory leak and release IOMMU mapping
- structures
-To:     Lukasz Luba <lukasz.luba@arm.com>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     jy0922.shim@samsung.com, sw0312.kim@samsung.com,
-        kyungmin.park@samsung.com, airlied@linux.ie, daniel@ffwll.ch,
-        kgene@kernel.org, krzk@kernel.org, b.zolnierkie@samsung.com,
-        a.hajda@samsung.com, Dietmar.Eggemann@arm.com
-From:   Inki Dae <inki.dae@samsung.com>
-Message-ID: <c69c1163-a75b-6667-1979-f3aa356dc0b4@samsung.com>
-Date:   Mon, 9 Mar 2020 09:45:24 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.9.0
+        Mon, 9 Mar 2020 03:24:25 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 998B8B19E;
+        Mon,  9 Mar 2020 07:24:19 +0000 (UTC)
+Subject: Re: [PATCH 00/22] drm: Convert drivers to drm_simple_encoder_init()
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     ludovic.desroches@microchip.com, hamohammed.sa@gmail.com,
+        alexandre.belloni@bootlin.com, airlied@linux.ie,
+        dri-devel@lists.freedesktop.org, linux@armlinux.org.uk,
+        paul@crapouillou.net, linux-tegra@vger.kernel.org,
+        thierry.reding@gmail.com,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
+        hjc@rock-chips.com, abrodkin@synopsys.com,
+        sebastian.reichel@collabora.com, krzk@kernel.org,
+        jonathanh@nvidia.com, linux-rockchip@lists.infradead.org,
+        wens@csie.org, tomi.valkeinen@ti.com, linux-imx@nxp.com,
+        xinliang.liu@linaro.org, kong.kongxinwei@hisilicon.com,
+        puck.chen@hisilicon.com, s.hauer@pengutronix.de,
+        alison.wang@nxp.com, jsarha@ti.com,
+        linux-mediatek@lists.infradead.org, matthias.bgg@gmail.com,
+        virtualization@lists.linux-foundation.org, jernej.skrabec@siol.net,
+        rodrigosiqueiramelo@gmail.com, bbrezillon@kernel.org,
+        jingoohan1@gmail.com, sw0312.kim@samsung.com,
+        nicolas.ferre@microchip.com, kyungmin.park@samsung.com,
+        kieran.bingham+renesas@ideasonboard.com, kgene@kernel.org,
+        kernel@pengutronix.de, zourongrong@gmail.com, shawnguo@kernel.org,
+        kraxel@redhat.com
+References: <20200305155950.2705-1-tzimmermann@suse.de>
+ <20200306142212.GF4878@pendragon.ideasonboard.com>
+ <bccc380a-8925-81a7-34fe-5a1744a766d0@suse.de>
+ <20200307200813.GA15363@ravnborg.org>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ mQENBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAG0J1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPokBVAQTAQgAPhYh
+ BHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJbOdLgAhsDBQkDwmcABQsJCAcCBhUKCQgLAgQWAgMB
+ Ah4BAheAAAoJEGgNwR1TC3ojR80H/jH+vYavwQ+TvO8ksXL9JQWc3IFSiGpuSVXLCdg62AmR
+ irxW+qCwNncNQyb9rd30gzdectSkPWL3KSqEResBe24IbA5/jSkPweJasgXtfhuyoeCJ6PXo
+ clQQGKIoFIAEv1s8l0ggPZswvCinegl1diyJXUXmdEJRTWYAtxn/atut1o6Giv6D2qmYbXN7
+ mneMC5MzlLaJKUtoH7U/IjVw1sx2qtxAZGKVm4RZxPnMCp9E1MAr5t4dP5gJCIiqsdrVqI6i
+ KupZstMxstPU//azmz7ZWWxT0JzgJqZSvPYx/SATeexTYBP47YFyri4jnsty2ErS91E6H8os
+ Bv6pnSn7eAq5AQ0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRH
+ UE9eosYbT6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgT
+ RjP+qbU63Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+R
+ dhgATnWWGKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zb
+ ehDda8lvhFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r
+ 12+lqdsAEQEAAYkBPAQYAQgAJhYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJbOdLgAhsMBQkD
+ wmcAAAoJEGgNwR1TC3ojpfcIAInwP5OlcEKokTnHCiDTz4Ony4GnHRP2fXATQZCKxmu4AJY2
+ h9ifw9Nf2TjCZ6AMvC3thAN0rFDj55N9l4s1CpaDo4J+0fkrHuyNacnT206CeJV1E7NYntxU
+ n+LSiRrOdywn6erjxRi9EYTVLCHcDhBEjKmFZfg4AM4GZMWX1lg0+eHbd5oL1as28WvvI/uI
+ aMyV8RbyXot1r/8QLlWldU3NrTF5p7TMU2y3ZH2mf5suSKHAMtbE4jKJ8ZHFOo3GhLgjVrBW
+ HE9JXO08xKkgD+w6v83+nomsEuf6C6LYrqY/tsZvyEX6zN8CtirPdPWu/VXNRYAl/lat7lSI
+ 3H26qrE=
+Message-ID: <f2db1418-5c97-dcef-667e-715d838dd42b@suse.de>
+Date:   Mon, 9 Mar 2020 08:24:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20200304220022.8003-1-lukasz.luba@arm.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Tf0wTZxjOd3e9HsTOWxF50yUCly2mJNiepfrpKNkyt5yZ2UiWbW4m1Ev5
-        AoT22vQKG+oyhMUodoMOY7rCNk0YQ8KmVAUlMBQTGRp+zZ9xU1A0E5mSaGAubba1PZfx3/O8
-        3/PmfZ73+z6ONv7GmrgKJUD8iuwW2HSm55zZmh9uIiXWjvtmfOPHMR3+fGyEwt3hozr8T0+I
-        xveaTtL48sI8i+/fmmRw48wcjcfHj+nxaN0fehyduarDl/paWRwe/4nCh+s+0+Nw8yz7ynKp
-        65suJA0sHmKkaOc+VupdnNZJU/uHKel426fSFyc6kfQkuqqY+7CysJzIpcSfQxSXt7RCKXMI
-        b77jfM1pX2cV88UNeL2Qo8ge4hA2bSnOf6PCnTAv5FTL7qpEqVhWVcFSVOj3VgVITrlXDTgE
-        4it1+zb41qiyR61Syta4vJ6NotW61p4Qbq8snwvW074+8eP4dJ2uFv26ugFxHPAFcHwwuwGl
-        c0b+FIL2eJzWyGMEwSsxSiOLCOb7DqAGlJbq6J6L6bWDAQRHgpdZjcwjODbSRiVVGfz7cObW
-        n6mDFXw3gutdp1GS0PwMgn3Rg0xSxfIvQahjik1iA18EU8PfpzDDvwgPwhN00mEmvxUuLsia
-        5HkY+eoukyyn8RjafxGTZZrPght3v6U0nA31J1tSGYDv0cOFnqeUZnsTBEPtrIYz4MHwCb2G
-        TTDbuEevNdQjCIUvUhrZi+DmzDVGU9lg8LtmKjmZ5s1wtM+ilXPhdOxrpE1+Dh4tBHXaVg2w
-        d49RkwhwfvL6s9UBTLSFnnmQYHI2zjSh3MiSaJEleSJL8kT+H3wIMZ1oJfGpnjKiir6Cpdcd
-        RamXnYdPof6xLUOI55CwzDCdTUqMOrlarfEMIeBoYYVhd56rxGgolWt2EL/X6a9yE3UI2ROL
-        D9GmTJc38U+UgFO0r7XZbLhAXGcXRSHLcPsDc4mRL5MDpJIQH/H/10dxaaZa9HLwrKu/d3mx
-        bZv3yO+R/R07c2OWuPOF1idPW5TRhzXNm69lZGWeO3vhbcdul6/3LUuWeDC4K65O+He4Y04O
-        Br9c3Hj49VhL/MzqmLly9Pyl9Q/vCNtfze7+ZFg80Fpk/msVpFf/YNm22fSectORW2ud+3nn
-        u393NO4q7B+4+lF0a6HAqOWymEf7Vflf7AsHAu8DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFIsWRmVeSWpSXmKPExsWy7bCSvO6MCalxBrPn8lncWneO1aL33Ekm
-        i40z1rNa/N82kdni6YStzBZXvr5ns3hx7yKLRf/j18wW589vYLc42/SG3WLT42usFpd3zWGz
-        mHF+H5PFwqYWdosZk1+yOfB7rJm3htFj77cFLB6bVnWyeWz/9oDV4373cSaPzUvqPfq2rGL0
-        +LxJLoAjissmJTUnsyy1SN8ugSvjdU8zc8Euw4o/D5pYGxhvq3cxcnJICJhIbHz9m72LkYtD
-        SGA3o8SzU7eAHA6ghITElq0cEKawxOHDxRAlbxklrj9rYgHpFRYIlzhw7zsbSEJEYCOjxPzz
-        K1hAHGaBx4wSzVvOMkO0dDNKrJnRzQbSwiagKjFxxX0wm1fATuL+8eVgNouAisSrGReYQWxR
-        gQiJ59tvMELUCEqcnPmEBeQMTgELiWWXDEHCzALqEn/mXWKGsMUlbj2ZzwRhy0s0b53NPIFR
-        aBaS7llIWmYhaZmFpGUBI8sqRsnUguLc9NxiwwLDvNRyveLE3OLSvHS95PzcTYzgGNXS3MF4
-        eUn8IUYBDkYlHt4H8qlxQqyJZcWVuYcYJTiYlUR4G7WS44R4UxIrq1KL8uOLSnNSiw8xSnOw
-        KInzPs07FikkkJ5YkpqdmlqQWgSTZeLglGpg1FgpPOPbvr+LGniqVa8+mGpvN02l2ezbqtdy
-        /A98P8WXyjsE7DxgXPWXgaOnNzrB5+bhbd+qc/ol2XWCf71sf5LKOF+8229fSiKHxSwTTa20
-        f7ul2vVnnGwX/25/LNU5tYG3ff35x3ufJdvqXos5Xbhc73mFhcBW0ZSn3ZkfWU/xnzdpn/tT
-        iaU4I9FQi7moOBEA86vmLM0CAAA=
-X-CMS-MailID: 20200309004056epcas1p264978098770f6a81ea6d7a9c1c1df256
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200304220104epcas1p2d65f8ab31df6aa5373787b695b14f8ff
-References: <CGME20200304220104epcas1p2d65f8ab31df6aa5373787b695b14f8ff@epcas1p2.samsung.com>
-        <20200304220022.8003-1-lukasz.luba@arm.com>
+In-Reply-To: <20200307200813.GA15363@ravnborg.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="0o1gLC99UZ6MblS6ftokgGpAQCE791IVd"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Lukasz,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--0o1gLC99UZ6MblS6ftokgGpAQCE791IVd
+Content-Type: multipart/mixed; boundary="kHuwg0qrcMYaHYPq8aj4tX3yyCOu5dGOV";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: ludovic.desroches@microchip.com, hamohammed.sa@gmail.com,
+ alexandre.belloni@bootlin.com, airlied@linux.ie,
+ dri-devel@lists.freedesktop.org, linux@armlinux.org.uk,
+ paul@crapouillou.net, linux-tegra@vger.kernel.org, thierry.reding@gmail.com,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
+ hjc@rock-chips.com, abrodkin@synopsys.com, sebastian.reichel@collabora.com,
+ krzk@kernel.org, jonathanh@nvidia.com, linux-rockchip@lists.infradead.org,
+ wens@csie.org, tomi.valkeinen@ti.com, linux-imx@nxp.com,
+ xinliang.liu@linaro.org, kong.kongxinwei@hisilicon.com,
+ puck.chen@hisilicon.com, s.hauer@pengutronix.de, alison.wang@nxp.com,
+ jsarha@ti.com, linux-mediatek@lists.infradead.org, matthias.bgg@gmail.com,
+ virtualization@lists.linux-foundation.org, jernej.skrabec@siol.net,
+ rodrigosiqueiramelo@gmail.com, bbrezillon@kernel.org, jingoohan1@gmail.com,
+ sw0312.kim@samsung.com, nicolas.ferre@microchip.com,
+ kyungmin.park@samsung.com, kieran.bingham+renesas@ideasonboard.com,
+ kgene@kernel.org, kernel@pengutronix.de, zourongrong@gmail.com,
+ shawnguo@kernel.org, kraxel@redhat.com
+Message-ID: <f2db1418-5c97-dcef-667e-715d838dd42b@suse.de>
+Subject: Re: [PATCH 00/22] drm: Convert drivers to drm_simple_encoder_init()
+References: <20200305155950.2705-1-tzimmermann@suse.de>
+ <20200306142212.GF4878@pendragon.ideasonboard.com>
+ <bccc380a-8925-81a7-34fe-5a1744a766d0@suse.de>
+ <20200307200813.GA15363@ravnborg.org>
+In-Reply-To: <20200307200813.GA15363@ravnborg.org>
 
-20. 3. 5. 오전 7:00에 Lukasz Luba 이(가) 쓴 글:
-> There is a memory leak which left some objects not freed. The reference
-> counter of mapping: 'mapping->kref' was 2 when calling
-> arm_iommu_detach_device(), so the release_iommu_mapping() won't be called.
-> Since the old mapping structure is not going to be used any more (because
-> it is detached and new one attached), call arm_iommu_release_mapping()
-> to trigger cleanup.
-> 
-> Found using kmemleak detector, the output:
-> 
-> unreferenced object 0xc2137640 (size 64):
->   comm "swapper/0", pid 1, jiffies 4294937900 (age 3127.400s)
->   hex dump (first 32 bytes):
->     50 a3 14 c2 80 a2 14 c2 01 00 00 00 20 00 00 00  P........... ...
->     00 10 00 00 00 80 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<3acd268d>] arch_setup_dma_ops+0x4c/0x104
->     [<9f7d2cce>] of_dma_configure+0x19c/0x3a4
->     [<ba07704b>] really_probe+0xb0/0x47c
->     [<4f510e4f>] driver_probe_device+0x78/0x1c4
->     [<7481a0cf>] device_driver_attach+0x58/0x60
->     [<0ff8f5c1>] __driver_attach+0xb8/0x158
->     [<86006144>] bus_for_each_dev+0x74/0xb4
->     [<10159dca>] bus_add_driver+0x1c0/0x200
->     [<8a265265>] driver_register+0x74/0x108
->     [<e0f3451a>] exynos_drm_init+0xb0/0x134
->     [<db3fc7ba>] do_one_initcall+0x90/0x458
->     [<6da35917>] kernel_init_freeable+0x188/0x200
->     [<db3f74d4>] kernel_init+0x8/0x110
->     [<1f3cddf9>] ret_from_fork+0x14/0x20
->     [<8cd12507>] 0x0
-> unreferenced object 0xc214a280 (size 128):
->   comm "swapper/0", pid 1, jiffies 4294937900 (age 3127.400s)
->   hex dump (first 32 bytes):
->     00 a0 ec ed 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<3acd268d>] arch_setup_dma_ops+0x4c/0x104
->     [<9f7d2cce>] of_dma_configure+0x19c/0x3a4
->     [<ba07704b>] really_probe+0xb0/0x47c
->     [<4f510e4f>] driver_probe_device+0x78/0x1c4
->     [<7481a0cf>] device_driver_attach+0x58/0x60
->     [<0ff8f5c1>] __driver_attach+0xb8/0x158
->     [<86006144>] bus_for_each_dev+0x74/0xb4
->     [<10159dca>] bus_add_driver+0x1c0/0x200
->     [<8a265265>] driver_register+0x74/0x108
->     [<e0f3451a>] exynos_drm_init+0xb0/0x134
->     [<db3fc7ba>] do_one_initcall+0x90/0x458
->     [<6da35917>] kernel_init_freeable+0x188/0x200
->     [<db3f74d4>] kernel_init+0x8/0x110
->     [<1f3cddf9>] ret_from_fork+0x14/0x20
->     [<8cd12507>] 0x0
-> unreferenced object 0xedeca000 (size 4096):
->   comm "swapper/0", pid 1, jiffies 4294937900 (age 3127.400s)
->   hex dump (first 32 bytes):
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<3acd268d>] arch_setup_dma_ops+0x4c/0x104
->     [<9f7d2cce>] of_dma_configure+0x19c/0x3a4
->     [<ba07704b>] really_probe+0xb0/0x47c
->     [<4f510e4f>] driver_probe_device+0x78/0x1c4
->     [<7481a0cf>] device_driver_attach+0x58/0x60
->     [<0ff8f5c1>] __driver_attach+0xb8/0x158
->     [<86006144>] bus_for_each_dev+0x74/0xb4
->     [<10159dca>] bus_add_driver+0x1c0/0x200
->     [<8a265265>] driver_register+0x74/0x108
->     [<e0f3451a>] exynos_drm_init+0xb0/0x134
->     [<db3fc7ba>] do_one_initcall+0x90/0x458
->     [<6da35917>] kernel_init_freeable+0x188/0x200
->     [<db3f74d4>] kernel_init+0x8/0x110
->     [<1f3cddf9>] ret_from_fork+0x14/0x20
->     [<8cd12507>] 0x0
-> unreferenced object 0xc214a300 (size 128):
->   comm "swapper/0", pid 1, jiffies 4294937900 (age 3127.400s)
->   hex dump (first 32 bytes):
->     00 a3 14 c2 00 a3 14 c2 00 40 18 c2 00 80 18 c2  .........@......
->     02 00 02 00 ad 4e ad de ff ff ff ff ff ff ff ff  .....N..........
->   backtrace:
->     [<08cbd8bc>] iommu_domain_alloc+0x24/0x50
->     [<b835abee>] arm_iommu_create_mapping+0xe4/0x134
->     [<3acd268d>] arch_setup_dma_ops+0x4c/0x104
->     [<9f7d2cce>] of_dma_configure+0x19c/0x3a4
->     [<ba07704b>] really_probe+0xb0/0x47c
->     [<4f510e4f>] driver_probe_device+0x78/0x1c4
->     [<7481a0cf>] device_driver_attach+0x58/0x60
->     [<0ff8f5c1>] __driver_attach+0xb8/0x158
->     [<86006144>] bus_for_each_dev+0x74/0xb4
->     [<10159dca>] bus_add_driver+0x1c0/0x200
->     [<8a265265>] driver_register+0x74/0x108
->     [<e0f3451a>] exynos_drm_init+0xb0/0x134
->     [<db3fc7ba>] do_one_initcall+0x90/0x458
->     [<6da35917>] kernel_init_freeable+0x188/0x200
->     [<db3f74d4>] kernel_init+0x8/0x110
->     [<1f3cddf9>] ret_from_fork+0x14/0x20
-> 
-> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
-> ---
-> 
-> Hi all,
-> 
-> I have discovered this issue on OdroidXU4 while running some stress tests
-> for upcoming Energy Model. To reproduce it, kernel must be compiled with
-> DEBUG_KMEMLEAK. When the boot has finished, type:
-> # echo scan > /sys/kernel/debug/kmemleak
-> # cat /sys/kernel/debug/kmemleak
-> You should expect similar output to the one from the commit message.
-> 
-> I don't know if it should go via stable tree as well. I can resend with CC
-> stable, if there is a need.
+--kHuwg0qrcMYaHYPq8aj4tX3yyCOu5dGOV
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for fixup. BTW, as you commented on Marek's patch thread, with Marek's patch the memory leak will be solved.
-Do you want Marek to rework his patch on top of your patch or are you ok me to pick up only Marek's one?
+Hi Sam
 
-Marek's patch is conflicted with your one.
+Am 07.03.20 um 21:08 schrieb Sam Ravnborg:
+> Hi Thomas.
+>=20
+> On Fri, Mar 06, 2020 at 04:18:52PM +0100, Thomas Zimmermann wrote:
+>> Hi Laurent
+>>
+>> Am 06.03.20 um 15:22 schrieb Laurent Pinchart:
+>>> Hi Thomas,
+>>>
+>>> Thank you for the patch.
+>>>
+>>> On Thu, Mar 05, 2020 at 04:59:28PM +0100, Thomas Zimmermann wrote:
+>>>> A call to drm_simple_encoder_init() initializes an encoder without
+>>>> further functionality. It only provides the destroy callback to
+>>>> cleanup the encoder's state. Only few drivers implement more
+>>>> sophisticated encoders than that. Most drivers implement such a
+>>>> simple encoder and can use drm_simple_encoder_init() instead.
+>>>>
+>>>> The patchset converts drivers where the encoder's instance is
+>>>> embedded in a larger data structure. The driver releases the
+>>>> memory during cleanup. Each patch replaces drm_encoder_init() with
+>>>> drm_simple_encoder_init() and removes the (now unused) driver's
+>>>> encoder functions.
+>>>>
+>>>> While the patchset is fairly large, the indiviual patches are self-
+>>>> contained and can be merged independently from each other. The
+>>>> simple-encoder functionality is currently in drm-misc-next, where
+>>>> these patches could go as well.
+>>>
+>>> I've reviewed the whole series, including verifying that the few
+>>> instances of struct drm_encoder_funcs that were not declared const we=
+re
+>>> not modified somewhere to add more function pointers.
+>>>
+>>> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>>
+>> Thanks for the detailed review.
+>>
+>>>
+>>> for all the patches.
+>>>
+>>> However, I'd like to note that drm_simple_encoder_init() is a bit of =
+a
+>>> misnommer here. Several of the encoders in those drivers to implement=
 
-Thanks,
-Inki Dae
+>>> additional functionality. They just expose them through
+>>> drm_encoder_helper_funcs, not drm_encoder_funcs.
+>>
+>> True. It's called 'simple encoder' for the lack of a better name. It's=
 
-> 
-> Regards,
-> Lukasz Luba
-> 
->  drivers/gpu/drm/exynos/exynos_drm_dma.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dma.c b/drivers/gpu/drm/exynos/exynos_drm_dma.c
-> index 9ebc02768847..45f209ec107f 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dma.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dma.c
-> @@ -74,8 +74,13 @@ static int drm_iommu_attach_device(struct drm_device *drm_dev,
->  		return ret;
->  
->  	if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)) {
-> -		if (to_dma_iommu_mapping(subdrv_dev))
-> +		struct dma_iommu_mapping *mapping =
-> +					to_dma_iommu_mapping(subdrv_dev);
-> +
-> +		if (mapping) {
->  			arm_iommu_detach_device(subdrv_dev);
-> +			arm_iommu_release_mapping(mapping);
-> +		}
->  
->  		ret = arm_iommu_attach_device(subdrv_dev, priv->mapping);
->  	} else if (IS_ENABLED(CONFIG_IOMMU_DMA)) {
-> 
+>> part of the simple KMS helpers, so the name's at least consistent. OTO=
+H
+>> I always find drm_simple_display_pipe a bad name.
+>>
+>> We can still rename the simple-encoder function without much effort. I=
+'m
+>> open for suggestions.
+>=20
+> IMO this does not belong in drm_simple_kms - but in drm_encoder.
+> This only occurs to me after looking a bit more on the patches,
+> you would have loved to get this feedback earlier.
+
+Well, the simple-encoder functionality used to be located in the encoder
+code, but Daniel mentioned this is more of a helper and asked me to move
+it out of the core. [1] So it ended up with the simple-KMS helpers.
+
+Best regards
+Thomas
+
+[1] https://patchwork.freedesktop.org/patch/352370/?series=3D73130&rev=3D=
+1
+
+>=20
+> Most users do not need their owm drm_encoder_funcs definition,
+> and would be happy with the default as provided by drm_simple_*
+>=20
+> As the cleanup is handled automatically when the drm device
+> is teared down (in mode_config_rest()) I considered if we could here
+> use the drmm_ namespace - but that felt wrong.
+>=20
+> My proposal is the following:
+> - Move the implementation to drm_encoder.c
+> - Name it drm_encoder_init_nofuncs()
+>=20
+> The patches posted in this thread would be a little simpler
+> as they would loose the added include file.
+> And the three drivers using the current infrastructure would need a
+> small update.
+>=20
+> I you decide to keep the current approach where the
+> functions are in drm_simple_* then the full series is:
+> Acked-by: Sam Ravnborg <sam@ravnborg.org>
+>=20
+> But I think moving it to drm_encoder.c would be the approach that would=
+
+> make it simpler to understand/follow. So that get my (biased) vote.
+>=20
+> 	Sam
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>=20
+
+--=20
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+(HRB 36809, AG N=C3=BCrnberg)
+Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
+
+
+--kHuwg0qrcMYaHYPq8aj4tX3yyCOu5dGOV--
+
+--0o1gLC99UZ6MblS6ftokgGpAQCE791IVd
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl5l7xwACgkQaA3BHVML
+eiNvogf/X7mT5FK9zeyGvttt382VuO7LI5DPLmioQNnsCV8djdNkvDMa1QgoizMR
++rBcr2HpJvGPYJADgdIjElZ1PdBbA2uy3fD18UsA9J3We6dLqWwFJGd63FiVgUEk
+3cz68wtYxo/158n1EKjdjRZLNrqmUpY7eIH8l5HmHzJiZA2BuxYNLPiasnn8/4fx
+ZIueyDVkit4t0o+1uDVUp1IngcCZDbvnRr9AimBHcNCHKdeGw2HO2NvIzeUpagqO
+0IR+FSMP2smmgs9rFvfxw+VeoL6yUnijkjohOH6eVrKrSWdmxIabreAxdLZDY0w+
+sjNbM1FRdpTDm3H4Q3wBBcwxp06Hcw==
+=AsaC
+-----END PGP SIGNATURE-----
+
+--0o1gLC99UZ6MblS6ftokgGpAQCE791IVd--
