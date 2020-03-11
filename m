@@ -1,198 +1,152 @@
-Return-Path: <SRS0=2oIG=43=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=zhUZ=44=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9DF4C1975A
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Mar 2020 19:49:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE63C10DCE
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Mar 2020 00:34:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CC5D21655
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 10 Mar 2020 19:49:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3983C222D9
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Mar 2020 00:34:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QxA1mfJN"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="q+cVZhIj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727610AbgCJTtu (ORCPT
+        id S1727828AbgCKAeH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 10 Mar 2020 15:49:50 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:36940 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726545AbgCJTtt (ORCPT
+        Tue, 10 Mar 2020 20:34:07 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:38554 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727591AbgCKAeH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 10 Mar 2020 15:49:49 -0400
-Received: by mail-pl1-f196.google.com with SMTP id f16so3710759plj.4;
-        Tue, 10 Mar 2020 12:49:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=z9ZKe9DPK55G94wFxazjpOuNWkVTtqx7CppQ9HO6NqY=;
-        b=QxA1mfJNuNo101umOeAqQ1YfnCfKPylu4nJIhD8ICZb+kA1lQjLgkrzbxjk25h9SQr
-         pZ5PkAaIlTsqDsvLkgZqL3tlvvp1XW9cPNAyB78bh/rEsJurcqd5DWeG30lDAWmR39Ad
-         uW7KbxfzTH4jlBTd0WHwYTYPNKorO5VQDSD4WM6EKOJZ9tIt3gq3Lq/jWHo2sQ/r/y+A
-         DhW3HSUJ0GFiNByu57by+d8FfdQSqK2BDl3J4+4tGoo0iMBayPuPQlUu9G4ljDYR0c3S
-         VZV0FovHyoTyzy2UMcwIU/SDGBlzJh2RwIVQYo9kTDPW0n2g3u8GRg7K4BwXTRIaLJrj
-         rgnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=z9ZKe9DPK55G94wFxazjpOuNWkVTtqx7CppQ9HO6NqY=;
-        b=ozCrQqrN4rAO42l8Q7jg0MTW7TFwwswtHOoIrpk0TbOO/9R2jjsp44FGpeoX98vAkD
-         k7a2Rm+xFur1et9prLkU1YbXAK/bFwUiWlD9Ouegj49qXTQQLrxPLhGZPsHjYDRL/z1/
-         8EPEoqckzebsIQb3SB5TW6HwugohFMvf1TSj/mQkOFs6LJGau4dEz1YKR23VtN3t1Oz/
-         U+M4NhKcUhDsNhsUtSwFIRXQ+x5Sjqd0CWrHKSParN8H3qRfVRIG79N/lJMLZHZU+a/b
-         7g7QrS57hGJ+msSSKLTM3Dt+DcgOWvgfnAslvtNlojeY5gIjCB5pVlayNH0WD3d9JysD
-         1oRQ==
-X-Gm-Message-State: ANhLgQ3SuP0am/RHAy1YkmPHyAhcF7k/i2SA2cvOiuvLr6/VijVn6EAO
-        AwYiZ+VpH7fwKSncboSSnuICXkNi
-X-Google-Smtp-Source: ADFU+vttShOB0et+FIE14Un1vRU7k4VYoJ6iz35zEx98edQYoJE8W2h24Jqu/B/zyrxKywi6Kqvs+A==
-X-Received: by 2002:a17:902:9b95:: with SMTP id y21mr8418083plp.101.1583869788247;
-        Tue, 10 Mar 2020 12:49:48 -0700 (PDT)
-Received: from localhost.localdomain ([45.114.62.228])
-        by smtp.gmail.com with ESMTPSA id d19sm3784490pfd.82.2020.03.10.12.49.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 12:49:47 -0700 (PDT)
-From:   Anand Moon <linux.amoon@gmail.com>
-To:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCHv3 5/5] clk: samsung: exynos542x: Move FSYS subsystem clocks to its sub-CMU
-Date:   Tue, 10 Mar 2020 19:48:54 +0000
-Message-Id: <20200310194854.831-6-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310194854.831-1-linux.amoon@gmail.com>
-References: <20200310194854.831-1-linux.amoon@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 10 Mar 2020 20:34:07 -0400
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200311003405epoutp0124e55066a8821da54c0cc28a0829e963~7GLGgYwZE0601906019epoutp01j
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Mar 2020 00:34:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200311003405epoutp0124e55066a8821da54c0cc28a0829e963~7GLGgYwZE0601906019epoutp01j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1583886845;
+        bh=SJhHYdb4HD6muQ5skN/10+jz0ytLe+XplpCRuk1Tdeg=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=q+cVZhIjSoRcExaS6K8hsu+Nwe7gA1oumbYqKzVOHuX9mfzPi65KT4OpvuntMr/DW
+         6yaIjQ6jlNB2HKyh1HJdLSFZGUF6j/mkKgWzLmADV2B4OjuuAlMpCTQlxFSkkwcDNw
+         cyCBzxaRq+4XPq8QIjQ9rnb/z+6oUANkf2CgVDUw=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20200311003404epcas1p377f17916d4820ebc89775ffaaac4863a~7GLGSSzqy0623306233epcas1p33;
+        Wed, 11 Mar 2020 00:34:04 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.156]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 48cXyL41fNzMqYkw; Wed, 11 Mar
+        2020 00:34:02 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F1.E2.48498.9F1386E5; Wed, 11 Mar 2020 09:34:01 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20200311003400epcas1p4abc726dd30ed24c85f0a7dba9f85caf5~7GLCi1kSC1438414384epcas1p4v;
+        Wed, 11 Mar 2020 00:34:00 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200311003400epsmtrp17251a97e0c41b2b040a9454899dc4604~7GLCh9yKD2458824588epsmtrp1W;
+        Wed, 11 Mar 2020 00:34:00 +0000 (GMT)
+X-AuditID: b6c32a36-a55ff7000001bd72-1e-5e6831f9d39e
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        FD.BF.06569.8F1386E5; Wed, 11 Mar 2020 09:34:00 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.113.221.211]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200311003400epsmtip2d90f94e16a3272c2a6a1ea67af2aa563~7GLCY2X_B0196101961epsmtip21;
+        Wed, 11 Mar 2020 00:34:00 +0000 (GMT)
+From:   Inki Dae <inki.dae@samsung.com>
+To:     airlied@linux.ie
+Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Subject: [GIT PULL v2] exynos-drm-fixes
+Date:   Wed, 11 Mar 2020 09:38:29 +0900
+Message-Id: <1583887109-4148-1-git-send-email-inki.dae@samsung.com>
+X-Mailer: git-send-email 2.7.4
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIKsWRmVeSWpSXmKPExsWy7bCmge5Pw4w4g493RC16z51ksrjy9T2b
+        xYzz+5gcmD22f3vA6nG/+ziTx+dNcgHMUdk2GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6
+        hpYW5koKeYm5qbZKLj4Bum6ZOUCLlBTKEnNKgUIBicXFSvp2NkX5pSWpChn5xSW2SqkFKTkF
+        lgV6xYm5xaV56XrJ+blWhgYGRqZAhQnZGdMnr2QqeMZbMX/OGuYGxo3cXYycHBICJhLXLl1i
+        7mLk4hAS2MEoce/6DCYI5xOjxN4z56Ey3xglXr17wQrTsnjze6jEXkaJZyenMEI4XxglNs5/
+        AlbFJqAqMXHFfTYQW0RAROL4sr9gNrOAm8SfpWdZQGxhAXWJ2xf7wOpZgOr/TrgNFucVcJZY
+        fu8bM8Q2OYmb5zrBtkkIXGWVOPO2ixEi4SKx/spJFghbWOLV8S3sELaUxMv+NnaIhmZGiYkz
+        TjNBOB2MEncfX4fqMJbYv3QyUIID6CRNifW79CHCihI7f89lhLiUT+Ld1x5WkBIJAV6JjjYh
+        iBIliWMXb0DdICFxYclENgjbQ+L4pkVgRwsJxErMXfqIfQKj7CyEBQsYGVcxiqUWFOempxYb
+        Fhghx9MmRnDy0TLbwbjonM8hRgEORiUe3hd16XFCrIllxZW5hxglOJiVRHjj5YFCvCmJlVWp
+        RfnxRaU5qcWHGE2BwTeRWUo0OR+YGPNK4g1NjYyNjS1MDM1MDQ2VxHkfRmrGCQmkJ5akZqem
+        FqQWwfQxcXBKNTBaTTxUnF1pLdjPvuDSRvXVTQuMH2bfm5tyy2PO3vM/3D9UPtc15z2ctPv1
+        5r9tLRGOkRo/omY8Wv+7JNL08w+2YtEAWek5V3/F/I6/vVuJYfcfVruyC/sjeDQWGxzqENB+
+        8YDRTeacxs4tQeePntixfD+rvnCcW/kyNvUo60OaMu1hS4tYtO4psRRnJBpqMRcVJwIAIjar
+        2VQDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDJMWRmVeSWpSXmKPExsWy7bCSvO4Pw4w4g+5ZBha9504yWVz5+p7N
+        Ysb5fUwOzB7bvz1g9bjffZzJ4/MmuQDmKC6blNSczLLUIn27BK6M6ZNXMhU8462YP2cNcwPj
+        Ru4uRk4OCQETicWb3zN3MXJxCAnsZpT4t+kmkMMBlJCQ2LKVA8IUljh8uBii5BOjxIErK5lA
+        etkEVCUmrrjPBmKLCIhIHF/2F8xmFvCQeL9nNTuILSygLnH7Yh8riM0CVP93wm0WEJtXwFli
+        +b1vzBA3yEncPNfJPIGRZwEjwypGydSC4tz03GLDAqO81HK94sTc4tK8dL3k/NxNjOAw0NLa
+        wXjiRPwhRgEORiUe3hd16XFCrIllxZW5hxglOJiVRHjj5YFCvCmJlVWpRfnxRaU5qcWHGKU5
+        WJTEeeXzj0UKCaQnlqRmp6YWpBbBZJk4OKUaGMPV6j9cefjz2d9jv8LmSjk/5fx0/pxgwDmL
+        O61uMtGRH7evM1M6l6QybSKvwrKbM7ddF1HoeiOzvCi/aVmEUd/nL+2fDS9P0axWXMk1pWKP
+        vZmLvJevUJ31mwUzv/zycP57g/O5QeXyIOlnmpmHbPss4kWP7bnrxGC7N6iidIrwBtPJV4UE
+        y5VYijMSDbWYi4oTASUG8S3/AQAA
+X-CMS-MailID: 20200311003400epcas1p4abc726dd30ed24c85f0a7dba9f85caf5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200311003400epcas1p4abc726dd30ed24c85f0a7dba9f85caf5
+References: <CGME20200311003400epcas1p4abc726dd30ed24c85f0a7dba9f85caf5@epcas1p4.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-FSYS power domain support usbdrd3, pdma and usb2 power gaiting,
-hence move FSYS clk setting to sub-CMU block to support power domain
-on/off sequences for device nodes.
+Hi Dave,
 
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-New patch in the series
----
- drivers/clk/samsung/clk-exynos5420.c | 45 +++++++++++++++++++++-------
- 1 file changed, 34 insertions(+), 11 deletions(-)
+   Just one fixup to IOMMU initialization failure and memory leak
+   detected by kmemleak detector.
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index c9e5a1fb6653..6c4c47dfcdce 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -859,12 +859,6 @@ static const struct samsung_div_clock exynos5x_div_clks[] __initconst = {
- 	DIV(0, "dout_maudio0", "mout_maudio0", DIV_MAU, 20, 4),
- 	DIV(0, "dout_maupcm0", "dout_maudio0", DIV_MAU, 24, 8),
- 
--	/* USB3.0 */
--	DIV(0, "dout_usbphy301", "mout_usbd301", DIV_FSYS0, 12, 4),
--	DIV(0, "dout_usbphy300", "mout_usbd300", DIV_FSYS0, 16, 4),
--	DIV(0, "dout_usbd301", "mout_usbd301", DIV_FSYS0, 20, 4),
--	DIV(0, "dout_usbd300", "mout_usbd300", DIV_FSYS0, 24, 4),
--
- 	/* MMC */
- 	DIV(0, "dout_mmc0", "mout_mmc0", DIV_FSYS1, 0, 10),
- 	DIV(0, "dout_mmc1", "mout_mmc1", DIV_FSYS1, 10, 10),
-@@ -1031,8 +1025,6 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
- 
- 	/* FSYS Block */
- 	GATE(CLK_TSI, "tsi", "aclk200_fsys", GATE_BUS_FSYS0, 0, 0, 0),
--	GATE(CLK_PDMA0, "pdma0", "aclk200_fsys", GATE_BUS_FSYS0, 1, 0, 0),
--	GATE(CLK_PDMA1, "pdma1", "aclk200_fsys", GATE_BUS_FSYS0, 2, 0, 0),
- 	GATE(CLK_UFS, "ufs", "aclk200_fsys2", GATE_BUS_FSYS0, 3, 0, 0),
- 	GATE(CLK_RTIC, "rtic", "aclk200_fsys", GATE_IP_FSYS, 9, 0, 0),
- 	GATE(CLK_MMC0, "mmc0", "aclk200_fsys2", GATE_IP_FSYS, 12, 0, 0),
-@@ -1040,9 +1032,6 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
- 	GATE(CLK_MMC2, "mmc2", "aclk200_fsys2", GATE_IP_FSYS, 14, 0, 0),
- 	GATE(CLK_SROMC, "sromc", "aclk200_fsys2",
- 			GATE_IP_FSYS, 17, CLK_IGNORE_UNUSED, 0),
--	GATE(CLK_USBH20, "usbh20", "aclk200_fsys", GATE_IP_FSYS, 18, 0, 0),
--	GATE(CLK_USBD300, "usbd300", "aclk200_fsys", GATE_IP_FSYS, 19, 0, 0),
--	GATE(CLK_USBD301, "usbd301", "aclk200_fsys", GATE_IP_FSYS, 20, 0, 0),
- 	GATE(CLK_SCLK_UNIPRO, "sclk_unipro", "dout_unipro",
- 			SRC_MASK_FSYS, 24, CLK_SET_RATE_PARENT, 0),
- 
-@@ -1258,6 +1247,28 @@ static struct exynos5_subcmu_reg_dump exynos5x_gsc_suspend_regs[] = {
- 	{ DIV2_RATIO0, 0, 0x30 },	/* DIV dout_gscl_blk_300 */
- };
- 
-+/* USB3.0 */
-+static const struct samsung_div_clock exynos5x_fsys_div_clks[] __initconst = {
-+	DIV(0, "dout_usbphy301", "mout_usbd301", DIV_FSYS0, 12, 4),
-+	DIV(0, "dout_usbphy300", "mout_usbd300", DIV_FSYS0, 16, 4),
-+	DIV(0, "dout_usbd301", "mout_usbd301", DIV_FSYS0, 20, 4),
-+	DIV(0, "dout_usbd300", "mout_usbd300", DIV_FSYS0, 24, 4),
-+};
-+
-+static const struct samsung_gate_clock exynos5x_fsys_gate_clks[] __initconst = {
-+	GATE(CLK_PDMA0, "pdma0", "aclk200_fsys", GATE_BUS_FSYS0, 1, 0, 0),
-+	GATE(CLK_PDMA1, "pdma1", "aclk200_fsys", GATE_BUS_FSYS0, 2, 0, 0),
-+	GATE(CLK_USBH20, "usbh20", "aclk200_fsys", GATE_IP_FSYS, 18, 0, 0),
-+	GATE(CLK_USBD300, "usbd300", "aclk200_fsys", GATE_IP_FSYS, 19, 0, 0),
-+	GATE(CLK_USBD301, "usbd301", "aclk200_fsys", GATE_IP_FSYS, 20, 0, 0),
-+};
-+
-+static struct exynos5_subcmu_reg_dump exynos5x_fsys_suspend_regs[] = {
-+	{ GATE_IP_FSYS, 0xffffffff, 0xffffffff }, /* FSYS gates */
-+	{ SRC_TOP3, 0, BIT(24) },                 /* SW_MUX_PCLK_200_FSYS_SEL */
-+	{ SRC_TOP3, 0, BIT(28) },                 /* SW_MUX_ACLK_200_FSYS_SEL */
-+};
-+
- static const struct samsung_gate_clock exynos5x_g3d_gate_clks[] __initconst = {
- 	GATE(CLK_G3D, "g3d", "mout_user_aclk_g3d", GATE_IP_G3D, 9,
- 	     CLK_SET_RATE_PARENT, 0),
-@@ -1376,12 +1387,23 @@ static const struct exynos5_subcmu_info exynos5800_mau_subcmu = {
- 	.pd_name	= "MAU",
- };
- 
-+static const struct exynos5_subcmu_info exynos5x_fsys_subcmu = {
-+	.div_clks       = exynos5x_fsys_div_clks,
-+	.nr_div_clks    = ARRAY_SIZE(exynos5x_fsys_div_clks),
-+	.gate_clks	= exynos5x_fsys_gate_clks,
-+	.nr_gate_clks	= ARRAY_SIZE(exynos5x_fsys_gate_clks),
-+	.suspend_regs	= exynos5x_fsys_suspend_regs,
-+	.nr_suspend_regs = ARRAY_SIZE(exynos5x_fsys_suspend_regs),
-+	.pd_name	= "FSYS",
-+};
-+
- static const struct exynos5_subcmu_info *exynos5x_subcmus[] = {
- 	&exynos5x_disp_subcmu,
- 	&exynos5x_gsc_subcmu,
- 	&exynos5x_g3d_subcmu,
- 	&exynos5x_mfc_subcmu,
- 	&exynos5x_mscl_subcmu,
-+	&exynos5x_fsys_subcmu,
- };
- 
- static const struct exynos5_subcmu_info *exynos5800_subcmus[] = {
-@@ -1391,6 +1413,7 @@ static const struct exynos5_subcmu_info *exynos5800_subcmus[] = {
- 	&exynos5x_mfc_subcmu,
- 	&exynos5x_mscl_subcmu,
- 	&exynos5800_mau_subcmu,
-+	&exynos5x_fsys_subcmu,
- };
- 
- static const struct samsung_pll_rate_table exynos5420_pll2550x_24mhz_tbl[] __initconst = {
--- 
-2.25.1
+   Please kindly let me know if there is any problem.
 
+Thanks,
+Inki Dae
+
+
+The following changes since commit 513dc792d6060d5ef572e43852683097a8420f56:
+
+  vgacon: Fix a UAF in vgacon_invert_region (2020-03-06 21:06:34 +0100)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-fixes-for-v5.6-rc5-v2
+
+for you to fetch changes up to 07dc3678bacc2a75b1900febea7d996a31f178a2:
+
+  drm/exynos: Fix cleanup of IOMMU related objects (2020-03-10 13:25:18 +0900)
+
+----------------------------------------------------------------
+Fix IOMMU initialization failure when Exynos DRM driver is rebound,
+and also fix memory leak to iommu mapping object, which was
+detected by kmemleak detector.
+
+----------------------------------------------------------------
+Marek Szyprowski (1):
+      drm/exynos: Fix cleanup of IOMMU related objects
+
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  5 +++--
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c    |  5 +++--
+ drivers/gpu/drm/exynos/exynos_drm_dma.c       | 28 ++++++++++++++++++---------
+ drivers/gpu/drm/exynos/exynos_drm_drv.h       |  6 ++++--
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c      |  5 +++--
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c      |  5 +++--
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c       |  5 +++--
+ drivers/gpu/drm/exynos/exynos_drm_gsc.c       |  5 +++--
+ drivers/gpu/drm/exynos/exynos_drm_rotator.c   |  5 +++--
+ drivers/gpu/drm/exynos/exynos_drm_scaler.c    |  6 ++++--
+ drivers/gpu/drm/exynos/exynos_mixer.c         |  7 +++++--
+ 11 files changed, 53 insertions(+), 29 deletions(-)
