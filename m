@@ -1,212 +1,130 @@
-Return-Path: <SRS0=zhUZ=44=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=z6PS=45=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B8CBC18E5C
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Mar 2020 14:43:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A60C10DCE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Mar 2020 06:48:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3CC1206EB
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 11 Mar 2020 14:42:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1583937779;
-	bh=eovpXTvyVWEK9XWNC0b/YZgHbmJESrWMQgqo7YJfDec=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ucBEwYpPIF/rWpVpBeP9bVp33eFFVebOSFl9Gv80BOl1RuqDhTsIHizeRCDQhQORK
-	 qAK8Efli66IIZlAjitOEb+fV8v5m/2EiFOCX4yQII8Pd2RoeaBzbCmCZXxvCA0JCcw
-	 FiRdnh62JlfdsAv/L5Uea4mmyUqmUslqhibZXI4Q=
+	by mail.kernel.org (Postfix) with ESMTP id 8FA7120578
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Mar 2020 06:48:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CHn2t8Gp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729783AbgCKOm5 (ORCPT
+        id S2387889AbgCLGsc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 11 Mar 2020 10:42:57 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:43443 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729057AbgCKOm5 (ORCPT
+        Thu, 12 Mar 2020 02:48:32 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45572 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387845AbgCLGsb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 11 Mar 2020 10:42:57 -0400
-Received: by mail-ed1-f66.google.com with SMTP id dc19so3133763edb.10;
-        Wed, 11 Mar 2020 07:42:55 -0700 (PDT)
+        Thu, 12 Mar 2020 02:48:31 -0400
+Received: by mail-pf1-f196.google.com with SMTP id 2so2746498pfg.12;
+        Wed, 11 Mar 2020 23:48:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=lxjxhXNAD3AGywNMl8H5owtCRspegZReTpVXsaoFlvM=;
+        b=CHn2t8Gp6E99syTcM5Av0LZWL8jbCoQ5jap7ar2l6fwwQ94ld29tvZ2SQaDyM2UU8G
+         PW/TBP58I1SL36LotuxvC8sTUJ6ISHI1Ks+kH0bK09zP46a4aZ3tE9av/ya27yUt8qbU
+         XoE7fVdMiU85mCK52RFMbR+nutYGYwxFK1LezC6Hd/PY6kJseH+I6HfBPlAaAtROTs/P
+         VTtY/fhkw+1KfQ6s0fqwH3xjOPJE9GLWoYvrPtTJkhSTE0waj6AkPoJPOO+8yybr6HG9
+         j5zWZWCdxKJE7YczJZnE4y4AJE04ML1XF5ToDQYzB6fERP0UIHA9gpvlQ4Os0pnmcpIt
+         8dYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gKDUe9P2YUubturUxI0TRyVNid6URk2e+Ed9FtxvxKk=;
-        b=EMKmZ/MrgEuNGsTb/Ze9rt1U9+lWeztu9hI+HH0of+sRAzH/ExlqFbOIRZFSxC4ADK
-         5X/26f6R0Z/iTcCYTGKuGtP2nlbh4uQE27kLyGUwGHCD3jgSs3vXN7JQHlOpGJ8PvKBK
-         WfPgkD8gcbIKMi9IN3+NCDIBuDyPVbjA9c0GIzrV/aMUB6I/1ri7oKrc75+WBo6cr0wI
-         o5ID2MMultN8P9BStIBS4wxYgcFg9edOD1Rdv1sM6CUM5bZXJ46B7Xjs1ZdBbUyY/orQ
-         vAyryO2dUh1BIfRe/cIKRLd1XpjnA0BhOkuZTP3IfrsMvh+uB+boHC0YO6AFo69jRXBx
-         VZBg==
-X-Gm-Message-State: ANhLgQ2P/ulINIycY42dj86NuoBy33Ie2susWmo+v93rpw6wYCUPbnls
-        j3LiPI1ua4HqGDo/+cPH7QA=
-X-Google-Smtp-Source: ADFU+vuaPy05McHUkVwSVh+g/+/nj6uRC/r0ZhsuPI7+uwkM3c7CJcwerQSzNIOD7sx8YKwslv43/w==
-X-Received: by 2002:aa7:d45a:: with SMTP id q26mr3263099edr.350.1583937774579;
-        Wed, 11 Mar 2020 07:42:54 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.125])
-        by smtp.googlemail.com with ESMTPSA id p4sm607572eju.57.2020.03.11.07.42.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 Mar 2020 07:42:51 -0700 (PDT)
-Date:   Wed, 11 Mar 2020 15:42:48 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Anand Moon <linux.amoon@gmail.com>
-Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCHv3 5/5] clk: samsung: exynos542x: Move FSYS subsystem
- clocks to its sub-CMU
-Message-ID: <20200311144248.GA4455@kozik-lap>
-References: <20200310194854.831-1-linux.amoon@gmail.com>
- <20200310194854.831-6-linux.amoon@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200310194854.831-6-linux.amoon@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=lxjxhXNAD3AGywNMl8H5owtCRspegZReTpVXsaoFlvM=;
+        b=cX69dMX3iX6B8Lsd/yd0OowhrVkEPBmljeJe6d9JmkBbI8SbTNtG2UgkGkQrhpzDOp
+         7m1o6MJYcRrh6R9sn9BlPVXGCu86h6iZQ9HKQjxtK7qnhNHSHW+ITQaa1l2AqJKx2AXK
+         +qsT52AroragheehdEqSxI2uYNOEiMGEEx23N2WzYjX0sEZYeZ0e6G8n5ynxPAHSqeMs
+         79nFOKV2WZZLjLRdSAf5WOrXNihx4i7jtqw1jI9ErQ2uebSLlWJ/biE+5dw2+7guxvET
+         gyCTGnLixFhYPINg4hHmzImooxsRZJAq7fjfmOIXdaVXT8W0TzS5A1AvezyrcP5MVFWZ
+         CyMA==
+X-Gm-Message-State: ANhLgQ3reQ5Dp9UCkD8BWUecQxhwmX01TKrMUsElLHx2cySejbi7SrRT
+        QCHH5z2t1AluUJo+yOHmPjM=
+X-Google-Smtp-Source: ADFU+vsZyABanN90ZhdifavscU6wtE4scsZ3AAJ8cEf7mvO9vLvMg7a4MP11N/8+VsKLJKB7fS7zqg==
+X-Received: by 2002:a63:4282:: with SMTP id p124mr6575179pga.59.1583995710764;
+        Wed, 11 Mar 2020 23:48:30 -0700 (PDT)
+Received: from localhost.localdomain ([106.51.232.35])
+        by smtp.gmail.com with ESMTPSA id z20sm23429783pge.62.2020.03.11.23.48.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Mar 2020 23:48:30 -0700 (PDT)
+From:   afzal mohammed <afzal.mohd.ma@gmail.com>
+To:     daniel.lezcano@linaro.org
+Cc:     afzal.mohd.ma@gmail.com, allison@lohutok.net, baohua@kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, f.fainelli@gmail.com,
+        festevam@gmail.com, gregkh@linuxfoundation.org, info@metux.net,
+        kernel@pengutronix.de, kgene@kernel.org, khilman@baylibre.com,
+        krzk@kernel.org, kstewart@linuxfoundation.org,
+        linus.walleij@linaro.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux@prisktech.co.nz, nsaenzjulienne@suse.de, rjui@broadcom.com,
+        s.hauer@pengutronix.de, sbranden@broadcom.com, shawnguo@kernel.org,
+        tglx@linutronix.de, u.kleine-koenig@pengutronix.de
+Subject: [PATCH v4] clocksource/drivers/timer-cs5535: request irq with non-NULL dev_id
+Date:   Thu, 12 Mar 2020 12:18:17 +0530
+Message-Id: <20200312064817.19000-1-afzal.mohd.ma@gmail.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <e47ba222-bf4e-d13c-fbd3-6e7952097188@linaro.org>
+References: <e47ba222-bf4e-d13c-fbd3-6e7952097188@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 07:48:54PM +0000, Anand Moon wrote:
-> FSYS power domain support usbdrd3, pdma and usb2 power gaiting,
-> hence move FSYS clk setting to sub-CMU block to support power domain
-> on/off sequences for device nodes.
-> 
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
-> New patch in the series
-> ---
->  drivers/clk/samsung/clk-exynos5420.c | 45 +++++++++++++++++++++-------
->  1 file changed, 34 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index c9e5a1fb6653..6c4c47dfcdce 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -859,12 +859,6 @@ static const struct samsung_div_clock exynos5x_div_clks[] __initconst = {
->  	DIV(0, "dout_maudio0", "mout_maudio0", DIV_MAU, 20, 4),
->  	DIV(0, "dout_maupcm0", "dout_maudio0", DIV_MAU, 24, 8),
->  
-> -	/* USB3.0 */
-> -	DIV(0, "dout_usbphy301", "mout_usbd301", DIV_FSYS0, 12, 4),
-> -	DIV(0, "dout_usbphy300", "mout_usbd300", DIV_FSYS0, 16, 4),
-> -	DIV(0, "dout_usbd301", "mout_usbd301", DIV_FSYS0, 20, 4),
-> -	DIV(0, "dout_usbd300", "mout_usbd300", DIV_FSYS0, 24, 4),
+Recently all usages of setup_irq() was replaced by request_irq().
+request_irq() does a few sanity checks that were not done in
+setup_irq(), if they fail irq registration will fail. One of the check
+is to ensure that non-NULL dev_id is passed in the case of shared irq.
 
-According to clock diagram these are still in CMU TOP, not FSYS.
+Fix it by passing non-NULL dev_id while registering the shared irq.
 
-> -
->  	/* MMC */
->  	DIV(0, "dout_mmc0", "mout_mmc0", DIV_FSYS1, 0, 10),
->  	DIV(0, "dout_mmc1", "mout_mmc1", DIV_FSYS1, 10, 10),
-> @@ -1031,8 +1025,6 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
-/>  
->  	/* FSYS Block */
->  	GATE(CLK_TSI, "tsi", "aclk200_fsys", GATE_BUS_FSYS0, 0, 0, 0),
-> -	GATE(CLK_PDMA0, "pdma0", "aclk200_fsys", GATE_BUS_FSYS0, 1, 0, 0),
-> -	GATE(CLK_PDMA1, "pdma1", "aclk200_fsys", GATE_BUS_FSYS0, 2, 0, 0),
->  	GATE(CLK_UFS, "ufs", "aclk200_fsys2", GATE_BUS_FSYS0, 3, 0, 0),
->  	GATE(CLK_RTIC, "rtic", "aclk200_fsys", GATE_IP_FSYS, 9, 0, 0),
->  	GATE(CLK_MMC0, "mmc0", "aclk200_fsys2", GATE_IP_FSYS, 12, 0, 0),
-> @@ -1040,9 +1032,6 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
->  	GATE(CLK_MMC2, "mmc2", "aclk200_fsys2", GATE_IP_FSYS, 14, 0, 0),
->  	GATE(CLK_SROMC, "sromc", "aclk200_fsys2",
->  			GATE_IP_FSYS, 17, CLK_IGNORE_UNUSED, 0),
-> -	GATE(CLK_USBH20, "usbh20", "aclk200_fsys", GATE_IP_FSYS, 18, 0, 0),
-> -	GATE(CLK_USBD300, "usbd300", "aclk200_fsys", GATE_IP_FSYS, 19, 0, 0),
-> -	GATE(CLK_USBD301, "usbd301", "aclk200_fsys", GATE_IP_FSYS, 20, 0, 0),
->  	GATE(CLK_SCLK_UNIPRO, "sclk_unipro", "dout_unipro",
->  			SRC_MASK_FSYS, 24, CLK_SET_RATE_PARENT, 0),
->  
-> @@ -1258,6 +1247,28 @@ static struct exynos5_subcmu_reg_dump exynos5x_gsc_suspend_regs[] = {
->  	{ DIV2_RATIO0, 0, 0x30 },	/* DIV dout_gscl_blk_300 */
->  };
->  
-> +/* USB3.0 */
-> +static const struct samsung_div_clock exynos5x_fsys_div_clks[] __initconst = {
-> +	DIV(0, "dout_usbphy301", "mout_usbd301", DIV_FSYS0, 12, 4),
-> +	DIV(0, "dout_usbphy300", "mout_usbd300", DIV_FSYS0, 16, 4),
-> +	DIV(0, "dout_usbd301", "mout_usbd301", DIV_FSYS0, 20, 4),
-> +	DIV(0, "dout_usbd300", "mout_usbd300", DIV_FSYS0, 24, 4),
-> +};
-> +
-> +static const struct samsung_gate_clock exynos5x_fsys_gate_clks[] __initconst = {
-> +	GATE(CLK_PDMA0, "pdma0", "aclk200_fsys", GATE_BUS_FSYS0, 1, 0, 0),
-> +	GATE(CLK_PDMA1, "pdma1", "aclk200_fsys", GATE_BUS_FSYS0, 2, 0, 0),
-> +	GATE(CLK_USBH20, "usbh20", "aclk200_fsys", GATE_IP_FSYS, 18, 0, 0),
-> +	GATE(CLK_USBD300, "usbd300", "aclk200_fsys", GATE_IP_FSYS, 19, 0, 0),
-> +	GATE(CLK_USBD301, "usbd301", "aclk200_fsys", GATE_IP_FSYS, 20, 0, 0),
-> +};
-> +
-> +static struct exynos5_subcmu_reg_dump exynos5x_fsys_suspend_regs[] = {
-> +	{ GATE_IP_FSYS, 0xffffffff, 0xffffffff }, /* FSYS gates */
+Fixes: cc2550b421aa ("clocksource: Replace setup_irq() by request_irq()")
+Signed-off-by: afzal mohammed <afzal.mohd.ma@gmail.com>
+---
 
-This looks wrong. GATE_IP_FSYS has fields also for FSYS2 clocks which
-you are not suspending. They do not belong to this CMU.
+Hi Daniel,
 
-Don't you need to save also parts of GATE_BUS_FSYS0?
+i have assumed that you would not rebase your drivers/next tree & put the
+SHA-id in Fixes tag.
 
-> +	{ SRC_TOP3, 0, BIT(24) },                 /* SW_MUX_PCLK_200_FSYS_SEL */
-> +	{ SRC_TOP3, 0, BIT(28) },                 /* SW_MUX_ACLK_200_FSYS_SEL */
+Regards
+afzal
 
-Name of clocks from the driver please, not from datasheet. Look at other
-examples.
+ drivers/clocksource/timer-cs5535.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/clocksource/timer-cs5535.c b/drivers/clocksource/timer-cs5535.c
+index 51ea0509fb25..d47acfe848ae 100644
+--- a/drivers/clocksource/timer-cs5535.c
++++ b/drivers/clocksource/timer-cs5535.c
+@@ -133,6 +133,7 @@ static irqreturn_t mfgpt_tick(int irq, void *dev_id)
+ 
+ static int __init cs5535_mfgpt_init(void)
+ {
++	unsigned long flags = IRQF_NOBALANCING | IRQF_TIMER | IRQF_SHARED;
+ 	struct cs5535_mfgpt_timer *timer;
+ 	int ret;
+ 	uint16_t val;
+@@ -152,9 +153,7 @@ static int __init cs5535_mfgpt_init(void)
+ 	}
+ 
+ 	/* And register it with the kernel */
+-	ret = request_irq(timer_irq, mfgpt_tick,
+-			  IRQF_NOBALANCING | IRQF_TIMER | IRQF_SHARED,
+-			  DRV_NAME, NULL);
++	ret = request_irq(timer_irq, mfgpt_tick, flags, DRV_NAME, timer);
+ 	if (ret) {
+ 		printk(KERN_ERR DRV_NAME ": Unable to set up the interrupt.\n");
+ 		goto err_irq;
+-- 
+2.18.0
 
-
-> +};
-> +
->  static const struct samsung_gate_clock exynos5x_g3d_gate_clks[] __initconst = {
->  	GATE(CLK_G3D, "g3d", "mout_user_aclk_g3d", GATE_IP_G3D, 9,
->  	     CLK_SET_RATE_PARENT, 0),
-> @@ -1376,12 +1387,23 @@ static const struct exynos5_subcmu_info exynos5800_mau_subcmu = {
->  	.pd_name	= "MAU",
->  };
->  
-> +static const struct exynos5_subcmu_info exynos5x_fsys_subcmu = {
-> +	.div_clks       = exynos5x_fsys_div_clks,
-> +	.nr_div_clks    = ARRAY_SIZE(exynos5x_fsys_div_clks),
-> +	.gate_clks	= exynos5x_fsys_gate_clks,
-> +	.nr_gate_clks	= ARRAY_SIZE(exynos5x_fsys_gate_clks),
-> +	.suspend_regs	= exynos5x_fsys_suspend_regs,
-> +	.nr_suspend_regs = ARRAY_SIZE(exynos5x_fsys_suspend_regs),
-> +	.pd_name	= "FSYS",
-> +};
-> +
->  static const struct exynos5_subcmu_info *exynos5x_subcmus[] = {
->  	&exynos5x_disp_subcmu,
->  	&exynos5x_gsc_subcmu,
->  	&exynos5x_g3d_subcmu,
->  	&exynos5x_mfc_subcmu,
->  	&exynos5x_mscl_subcmu,
-> +	&exynos5x_fsys_subcmu,
->  };
->  
->  static const struct exynos5_subcmu_info *exynos5800_subcmus[] = {
-> @@ -1391,6 +1413,7 @@ static const struct exynos5_subcmu_info *exynos5800_subcmus[] = {
->  	&exynos5x_mfc_subcmu,
->  	&exynos5x_mscl_subcmu,
->  	&exynos5800_mau_subcmu,
-> +	&exynos5x_fsys_subcmu,
->  };
->  
->  static const struct samsung_pll_rate_table exynos5420_pll2550x_24mhz_tbl[] __initconst = {
-> -- 
-> 2.25.1
-> 
