@@ -2,63 +2,64 @@ Return-Path: <SRS0=z6PS=45=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A60C10DCE
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Mar 2020 06:48:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 044C3C10DCE
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Mar 2020 07:10:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FA7120578
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Mar 2020 06:48:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E249B206B1
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 12 Mar 2020 07:10:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CHn2t8Gp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HEivLkFS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387889AbgCLGsc (ORCPT
+        id S2387831AbgCLHKK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 12 Mar 2020 02:48:32 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45572 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387845AbgCLGsb (ORCPT
+        Thu, 12 Mar 2020 03:10:10 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45846 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387767AbgCLHKK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 12 Mar 2020 02:48:31 -0400
-Received: by mail-pf1-f196.google.com with SMTP id 2so2746498pfg.12;
-        Wed, 11 Mar 2020 23:48:31 -0700 (PDT)
+        Thu, 12 Mar 2020 03:10:10 -0400
+Received: by mail-pf1-f195.google.com with SMTP id 2so2775039pfg.12;
+        Thu, 12 Mar 2020 00:10:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=lxjxhXNAD3AGywNMl8H5owtCRspegZReTpVXsaoFlvM=;
-        b=CHn2t8Gp6E99syTcM5Av0LZWL8jbCoQ5jap7ar2l6fwwQ94ld29tvZ2SQaDyM2UU8G
-         PW/TBP58I1SL36LotuxvC8sTUJ6ISHI1Ks+kH0bK09zP46a4aZ3tE9av/ya27yUt8qbU
-         XoE7fVdMiU85mCK52RFMbR+nutYGYwxFK1LezC6Hd/PY6kJseH+I6HfBPlAaAtROTs/P
-         VTtY/fhkw+1KfQ6s0fqwH3xjOPJE9GLWoYvrPtTJkhSTE0waj6AkPoJPOO+8yybr6HG9
-         j5zWZWCdxKJE7YczJZnE4y4AJE04ML1XF5ToDQYzB6fERP0UIHA9gpvlQ4Os0pnmcpIt
-         8dYw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ljw1ounoCZTVG+RnME8ZEWoXQjwz4MM2v65DKn4hE/c=;
+        b=HEivLkFSubwB666Df2bxBcldTFyNFCcVeJlLB4IE3SXpNB+MYnRL5cmEKoaGnwdB6R
+         5AkNJPZ5rOOl23MD0YeEH7MvuVXq+VUPa+LrQsLriASOMMX5Go6dFIBbdLm5rAZH83h2
+         bp61TPv78yl6qw4W8Jeoc5NykErt4zo36Q2R4CvHHG0RjhQMTbtzqGz4EfuvYbv0/ZpM
+         mGihoQP12Xn1+VwAqI/55fLE2YrIdLOyQuwqp7cbfbK57RF5s4prOe726uWlLI4vbnkA
+         pZva6NJCRNH0hh8E6KdFBMwmwEBiVnLai38PfkOW5sm0Xok0E4jguOiTrXGJ/V1n3TsC
+         OjcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=lxjxhXNAD3AGywNMl8H5owtCRspegZReTpVXsaoFlvM=;
-        b=cX69dMX3iX6B8Lsd/yd0OowhrVkEPBmljeJe6d9JmkBbI8SbTNtG2UgkGkQrhpzDOp
-         7m1o6MJYcRrh6R9sn9BlPVXGCu86h6iZQ9HKQjxtK7qnhNHSHW+ITQaa1l2AqJKx2AXK
-         +qsT52AroragheehdEqSxI2uYNOEiMGEEx23N2WzYjX0sEZYeZ0e6G8n5ynxPAHSqeMs
-         79nFOKV2WZZLjLRdSAf5WOrXNihx4i7jtqw1jI9ErQ2uebSLlWJ/biE+5dw2+7guxvET
-         gyCTGnLixFhYPINg4hHmzImooxsRZJAq7fjfmOIXdaVXT8W0TzS5A1AvezyrcP5MVFWZ
-         CyMA==
-X-Gm-Message-State: ANhLgQ3reQ5Dp9UCkD8BWUecQxhwmX01TKrMUsElLHx2cySejbi7SrRT
-        QCHH5z2t1AluUJo+yOHmPjM=
-X-Google-Smtp-Source: ADFU+vsZyABanN90ZhdifavscU6wtE4scsZ3AAJ8cEf7mvO9vLvMg7a4MP11N/8+VsKLJKB7fS7zqg==
-X-Received: by 2002:a63:4282:: with SMTP id p124mr6575179pga.59.1583995710764;
-        Wed, 11 Mar 2020 23:48:30 -0700 (PDT)
-Received: from localhost.localdomain ([106.51.232.35])
-        by smtp.gmail.com with ESMTPSA id z20sm23429783pge.62.2020.03.11.23.48.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 23:48:30 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ljw1ounoCZTVG+RnME8ZEWoXQjwz4MM2v65DKn4hE/c=;
+        b=WPS+n7j5nl8Ib9lfl9XJfWI8BG0AcXdPsbFBmWnkh5tJro8AS2/5GFX02KhoAEkPYe
+         L98ZVjsYguW7cHJCpksZNoTo67a6hwRCtUsJzd/Dqmm+D+3+xralUlfTC7J4bXibKTXz
+         R+pcrSOFJb/ZCcIaoM374JM1yxu0Nyd6LP1bx7BAQdgdCFLWRtTV9El6Ct8tAEMhTBQ6
+         38NuXs5YfwYb5jniUFMi1ldLUPSkySxCXXzdQLkHJ9NyYkPUFtK8y2xL0dipQTnGeOLO
+         VzumR0iV7O+LjyZESrN1K0rACToGzxbdIOBwEWcY+MSKbBhgWZkHmWt1w126b12ub9Ll
+         YO+g==
+X-Gm-Message-State: ANhLgQ1Tz+wB1uL3amKlh78vCbXV3Rof+5DomcgaKHphPjo2YChQ1jEO
+        ZjYs6p29kJojsuW3iEUiGXo=
+X-Google-Smtp-Source: ADFU+vsa8Kf3tsY8FS7mPDY4biE2SeexdcM7YCIk/K/oVtDeAHxnIOxoQhr5MChQiCBGU9DYXPmQ4g==
+X-Received: by 2002:a63:f44d:: with SMTP id p13mr6613839pgk.113.1583997009092;
+        Thu, 12 Mar 2020 00:10:09 -0700 (PDT)
+Received: from localhost ([106.51.232.35])
+        by smtp.gmail.com with ESMTPSA id 134sm627049pfy.27.2020.03.12.00.10.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 12 Mar 2020 00:10:08 -0700 (PDT)
+Date:   Thu, 12 Mar 2020 12:40:06 +0530
 From:   afzal mohammed <afzal.mohd.ma@gmail.com>
 To:     daniel.lezcano@linaro.org
-Cc:     afzal.mohd.ma@gmail.com, allison@lohutok.net, baohua@kernel.org,
+Cc:     allison@lohutok.net, baohua@kernel.org,
         bcm-kernel-feedback-list@broadcom.com, f.fainelli@gmail.com,
         festevam@gmail.com, gregkh@linuxfoundation.org, info@metux.net,
         kernel@pengutronix.de, kgene@kernel.org, khilman@baylibre.com,
@@ -69,62 +70,24 @@ Cc:     afzal.mohd.ma@gmail.com, allison@lohutok.net, baohua@kernel.org,
         linux@prisktech.co.nz, nsaenzjulienne@suse.de, rjui@broadcom.com,
         s.hauer@pengutronix.de, sbranden@broadcom.com, shawnguo@kernel.org,
         tglx@linutronix.de, u.kleine-koenig@pengutronix.de
-Subject: [PATCH v4] clocksource/drivers/timer-cs5535: request irq with non-NULL dev_id
-Date:   Thu, 12 Mar 2020 12:18:17 +0530
-Message-Id: <20200312064817.19000-1-afzal.mohd.ma@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <e47ba222-bf4e-d13c-fbd3-6e7952097188@linaro.org>
+Subject: Re: [PATCH v4] clocksource/drivers/timer-cs5535: request irq with
+ non-NULL dev_id
+Message-ID: <20200312071006.GA5415@afzalpc>
 References: <e47ba222-bf4e-d13c-fbd3-6e7952097188@linaro.org>
+ <20200312064817.19000-1-afzal.mohd.ma@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200312064817.19000-1-afzal.mohd.ma@gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Recently all usages of setup_irq() was replaced by request_irq().
-request_irq() does a few sanity checks that were not done in
-setup_irq(), if they fail irq registration will fail. One of the check
-is to ensure that non-NULL dev_id is passed in the case of shared irq.
-
-Fix it by passing non-NULL dev_id while registering the shared irq.
-
-Fixes: cc2550b421aa ("clocksource: Replace setup_irq() by request_irq()")
-Signed-off-by: afzal mohammed <afzal.mohd.ma@gmail.com>
----
-
-Hi Daniel,
-
-i have assumed that you would not rebase your drivers/next tree & put the
-SHA-id in Fixes tag.
+subject was not supposed to have version info, happened by mistake, this
+is an incremental patch on top of v3 that has been applied to the
+timers/drivers/next branch.
 
 Regards
 afzal
-
- drivers/clocksource/timer-cs5535.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clocksource/timer-cs5535.c b/drivers/clocksource/timer-cs5535.c
-index 51ea0509fb25..d47acfe848ae 100644
---- a/drivers/clocksource/timer-cs5535.c
-+++ b/drivers/clocksource/timer-cs5535.c
-@@ -133,6 +133,7 @@ static irqreturn_t mfgpt_tick(int irq, void *dev_id)
- 
- static int __init cs5535_mfgpt_init(void)
- {
-+	unsigned long flags = IRQF_NOBALANCING | IRQF_TIMER | IRQF_SHARED;
- 	struct cs5535_mfgpt_timer *timer;
- 	int ret;
- 	uint16_t val;
-@@ -152,9 +153,7 @@ static int __init cs5535_mfgpt_init(void)
- 	}
- 
- 	/* And register it with the kernel */
--	ret = request_irq(timer_irq, mfgpt_tick,
--			  IRQF_NOBALANCING | IRQF_TIMER | IRQF_SHARED,
--			  DRV_NAME, NULL);
-+	ret = request_irq(timer_irq, mfgpt_tick, flags, DRV_NAME, timer);
- 	if (ret) {
- 		printk(KERN_ERR DRV_NAME ": Unable to set up the interrupt.\n");
- 		goto err_irq;
--- 
-2.18.0
-
