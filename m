@@ -2,179 +2,253 @@ Return-Path: <SRS0=8CFD=46=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14FABC2BB1D
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Mar 2020 15:24:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD969C4CECE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Mar 2020 20:18:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D44CB2074B
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Mar 2020 15:24:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9BB320637
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Mar 2020 20:18:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dY23mrXe"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a14X4w4d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbgCMPYQ (ORCPT
+        id S1727389AbgCMUSA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 13 Mar 2020 11:24:16 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:36367 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726873AbgCMPYQ (ORCPT
+        Fri, 13 Mar 2020 16:18:00 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:44199 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726480AbgCMUR7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 13 Mar 2020 11:24:16 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200313152414euoutp01347d0d56e3d9eff14c206d3556a84300~75m4FiD0x0140401404euoutp01s
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Mar 2020 15:24:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200313152414euoutp01347d0d56e3d9eff14c206d3556a84300~75m4FiD0x0140401404euoutp01s
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1584113054;
-        bh=aWYruqPImE2yRmXAc06ncHutY2ccoXbCh2dVKoEvLqE=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=dY23mrXeK+TjyGvUcklE9Xu4poah7S023VJU5+YECWUVljGdZrmogd+vabxJLXkHd
-         IgFsIpLOtlDdtq8WiclaYSdToTdFylChYOZCQeUc/ihSc6B8q6++24B8K6/bFnIpZS
-         YAon+tfZ0GeKIMupnHwy6ZC0U3Q70KrwuEZrKtas=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200313152413eucas1p228ff0292a076a20865747d2f7b92dfed~75m3zUxlM0602106021eucas1p2K;
-        Fri, 13 Mar 2020 15:24:13 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id F9.09.61286.D95AB6E5; Fri, 13
-        Mar 2020 15:24:13 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200313152413eucas1p2f4d16175542741285150966a2e2ad151~75m3YCfU50602106021eucas1p2G;
-        Fri, 13 Mar 2020 15:24:13 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200313152413eusmtrp17e6cfb72f3f5b7d25ebafa902dd67a9d~75m3UcAv20468004680eusmtrp1G;
-        Fri, 13 Mar 2020 15:24:13 +0000 (GMT)
-X-AuditID: cbfec7f2-ef1ff7000001ef66-3b-5e6ba59dde66
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 56.FC.08375.D95AB6E5; Fri, 13
-        Mar 2020 15:24:13 +0000 (GMT)
-Received: from [106.120.51.15] (unknown [106.120.51.15]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200313152412eusmtip2c36baa481c0ed00df010fc32f765ac86~75m22hhje1905919059eusmtip2N;
-        Fri, 13 Mar 2020 15:24:12 +0000 (GMT)
-Subject: Re: [PATCH 2/2] ARM: DTS: Add devicetree file for the Galaxy S2
-To:     Paul Cercueil <paul@crapouillou.net>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stenkin Evgeniy <stenkinevgeniy@gmail.com>,
+        Fri, 13 Mar 2020 16:17:59 -0400
+Received: by mail-lj1-f194.google.com with SMTP id a10so11923452ljp.11;
+        Fri, 13 Mar 2020 13:17:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Y58XOkdziIOagbDJXaKPopb+GQlU9fbifw4eoZN3YIE=;
+        b=a14X4w4dS2yd7C/5VPno7i/nBzVNU5gbbv+Tld50flDKi1V2uj3T8h6/bqF56ixDIQ
+         epKRKteT7A80miLVVtDJi3lvb36JcaGYtUskmmoOqNaKJ1NhtEhyu2O2EAotEBWp0vT9
+         9WxVBWDQZ3NOOOAnPnqFuwOoluVvfMrLSDkuPaw9WDbIK4blcU2ifQesuPyClX4FAKEs
+         20CzvQQtSPOunxFWzyZAUq7Nt6KJj/ysnwxZsxhMBttkKp2bVYBC7zh8lFkV6nWVsRnn
+         cvQoH0PplvOPvD0k55tWiSo15BFZN0+ND6QYMNzWUr48SkzrTsb7gci8hvbjgK5znBXe
+         sG+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=Y58XOkdziIOagbDJXaKPopb+GQlU9fbifw4eoZN3YIE=;
+        b=b1S8OWwHl9bhA8o0xauH56HGsd7Vc9BhfA9iDkjhxJi1RgkWIIKv6fkuEpC9UiGSEU
+         FYkJqAWtCoUfhfE1/dNhNp/etsRs2JbgDOJb+uJN+gvCCE2CnzBTKMf9AhIoBI+C+ATd
+         0JMqgwC22+iHSSOfh/57Ry2JnGoCx7DoS11NiXrqkllF8a62bsfIXiSdWO+3CbKm5YWq
+         lubH6x4hx+qRSCL7dEX0dktGKJl8qoIXQZPmtlDbA1tndXHM9d/3TpP1ncq/TogiJJ4d
+         PCBaCXPUdqVi/CXfcvW1tO8T6vpsZTMW2OwnpVhJAu8dfuxsxCDTKmZHfiqslrP7Qm2C
+         o8Gg==
+X-Gm-Message-State: ANhLgQ3DD2Fxev5+mP/Plhbc1RnCYMSbDTGTq7uIEZ0vQQ4PQWqEledy
+        vrdI+CKQX1q2K/qIHcERkaw=
+X-Google-Smtp-Source: ADFU+vuuP8eLGHs61Pn00F6kfLCzZYEGZpi+HoTitf53XYXkeT4pF7N73LFSnuUIomov7m47p3b2kA==
+X-Received: by 2002:a05:651c:1047:: with SMTP id x7mr6683206ljm.246.1584130676487;
+        Fri, 13 Mar 2020 13:17:56 -0700 (PDT)
+Received: from saturn.lan (18.158-248-194.customer.lyse.net. [158.248.194.18])
+        by smtp.gmail.com with ESMTPSA id v10sm30774074lfb.61.2020.03.13.13.17.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Mar 2020 13:17:55 -0700 (PDT)
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Thomas Zimmermann <tzimmermann@suse.de>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        amd-gfx@lists.freedesktop.org,
+        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Dave Airlie <airlied@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Emil Velikov <emil.velikov@collabora.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Jose Roberto de Souza <jose.souza@intel.com>,
+        linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <fbc3b48c-9f99-5ce2-0a7b-3d879588ab4c@samsung.com>
-Date:   Fri, 13 Mar 2020 16:24:12 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.5.0
+        linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-tegra@vger.kernel.org,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        virtualization@lists.linux-foundation.org
+Subject: [PATCH v1 0/3] drm: drm_encoder_init() => drm_encoder_init_funcs()
+Date:   Fri, 13 Mar 2020 21:17:41 +0100
+Message-Id: <20200313201744.19773-1-sam@ravnborg.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <1584110014.3.1@crapouillou.net>
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDKsWRmVeSWpSXmKPExsWy7djPc7pzl2bHGcx8amgx/8g5Vov+x6+Z
-        Lc6f38BusenxNVaLy7vmsFnMOL+PyWLp9YtMFv2LL7FYtO49wm4xZclMdgcujzXz1jB6rL7U
-        zuaxc9Zddo9NqzrZPDYvqff4vEkugC2KyyYlNSezLLVI3y6BK+NC+xKmgnN8Fd8/9LI2ML7i
-        7mLk4JAQMJF4NCe4i5GLQ0hgBaPEspvvmCGcL4wSz3sPQzmfGSW+tExn6mLkBOs4/vw/C0Ri
-        OaPE4WnzWCGct4wS71rvs4HMFRbwkNj/PBmkQUQgUOL0hNesIDazwFwmievbTEBsNgFDia63
-        XWDlvAJ2EgevWYKEWQRUJWZv3soMYosKxErMXnmYBcTmFRCUODnzCZjNKaArceZMKzPESHmJ
-        5q2zoWxxiVtP5jOBnCMhcIld4tGU42wQR7tIrL3TwA5hC0u8Or4FypaROD25hwWioZlR4uG5
-        tewQTg+jxOWmGYwQVdYSd879AruUWUBTYv0ufYiwo8TF3umMkHDkk7jxVhDiCD6JSdumM0OE
-        eSU62oQgqtUkZh1fB7f24IVLzBMYlWYheW0WkndmIXlnFsLeBYwsqxjFU0uLc9NTiw3zUsv1
-        ihNzi0vz0vWS83M3MQLT1Ol/xz/tYPx6KekQowAHoxIPb0RqdpwQa2JZcWXuIUYJDmYlEd6O
-        GqAQb0piZVVqUX58UWlOavEhRmkOFiVxXuNFL2OFBNITS1KzU1MLUotgskwcnFINjGkHP4k+
-        PfXZOfDtC6Hmye/UdUpFX3z7Ye716HJfgcOch7f8ndeVXQsweNj8zOoOY7qloLR80qLHkxp1
-        D1sEGWSXlvP8+DN928k72uLu79cU35Kte+4851/EP5OCB+ISL+7GJfO6C585l+YfaTDh78vc
-        qgpnjdsn7H2fSVfnX/p5e+LKz/ejA5RYijMSDbWYi4oTAYjqyBFPAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrAIsWRmVeSWpSXmKPExsVy+t/xe7pzl2bHGaw5w28x/8g5Vov+x6+Z
-        Lc6f38BusenxNVaLy7vmsFnMOL+PyWLp9YtMFv2LL7FYtO49wm4xZclMdgcujzXz1jB6rL7U
-        zuaxc9Zddo9NqzrZPDYvqff4vEkugC1Kz6Yov7QkVSEjv7jEVina0MJIz9DSQs/IxFLP0Ng8
-        1srIVEnfziYlNSezLLVI3y5BL+NC+xKmgnN8Fd8/9LI2ML7i7mLk5JAQMJE4/vw/SxcjF4eQ
-        wFJGiVXzF7BAJGQkTk5rYIWwhSX+XOtigyh6zSjRcqqFuYuRg0NYwENi//NkkBoRgUCJLf83
-        gdUwC8xnkpj06h0zRMMfRoljn94yg1SxCRhKdL0FmcTBwStgJ3HwmiVImEVAVWL25q1gJaIC
-        sRI3ZnYwgdi8AoISJ2c+ATuIU0BX4syZVrAaZgEziXmbH0LZ8hLNW2dD2eISt57MZ5rAKDQL
-        SfssJC2zkLTMQtKygJFlFaNIamlxbnpusaFecWJucWleul5yfu4mRmBsbjv2c/MOxksbgw8x
-        CnAwKvHwRqRmxwmxJpYVV+YeYpTgYFYS4e2oAQrxpiRWVqUW5ccXleakFh9iNAV6biKzlGhy
-        PjBt5JXEG5oamltYGpobmxubWSiJ83YIHIwREkhPLEnNTk0tSC2C6WPi4JRqYBTe/0NrfUry
-        pHd9k7NPyvJq3DKTbJux1U3j3XENpq686Mb1Qea/dE7dfLgi+XNh2p8VCsUfnrTv7/HYv+/z
-        0cpZ9++9WZAQ7qTnW5dXOdug/k/o2kX/vafcYNJ9OHH6La3QhdkOXBMLVzhlvc7rWPYy/KLv
-        pJDeU7VzzGTsvgrGaX7JrVlTLaHEUpyRaKjFXFScCADoGegu4wIAAA==
-X-CMS-MailID: 20200313152413eucas1p2f4d16175542741285150966a2e2ad151
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200313143349eucas1p22d40f6966299ffdf132f0f2e488e8c11
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200313143349eucas1p22d40f6966299ffdf132f0f2e488e8c11
-References: <20200312153411.13535-1-paul@crapouillou.net>
-        <20200312153411.13535-2-paul@crapouillou.net> <20200313090011.GB7416@pi3>
-        <CGME20200313143349eucas1p22d40f6966299ffdf132f0f2e488e8c11@eucas1p2.samsung.com>
-        <1584110014.3.1@crapouillou.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Paul,
+Thomas Zimmermann had made a nice patch-set that introduced
+drm_simple_encoder_init() which is already present in drm-misc-next.
 
-On 13.03.2020 15:33, Paul Cercueil wrote:
-> Hi Krzysztof,
->
->
-> Le ven., mars 13, 2020 at 10:00, Krzysztof Kozlowski <krzk@kernel.org> 
-> a écrit :
->> On Thu, Mar 12, 2020 at 04:34:11PM +0100, Paul Cercueil wrote:
->>>  From: Stenkin Evgeniy <stenkinevgeniy@gmail.com>
->>>
->>>  Add devicetree file for the Exynos 4210 based Galaxy S2 (i9100 
->>> version).
+While looking at this it was suddenly obvious to me that
+this was functionalty that really should be included in drm_encoder.c
+The case where the core could handle the callback is pretty
+common and not part of the simple pipe line.
 
- > [...]
+So after some dialog on dri-devel the conclusion was to go for
+a change like this:
 
->  +
->>>  +
->>>  +    memory@40000000 {
->>>  +        device_type = "memory";
->>>  +        reg = <0x40000000 0x40000000>;
->>>  +    };
->>>  +
->>
->> You do not have a chosen node, at least for stdout serial selection.
->> Probably you should have one... bootargs I guess could come from
->> bootloader.
->
-> Problem is, I have no idea which UART is available via the USB jig :)
+    drm_encoder_init_funcs() for all users that specified a
+    drm_encoder_funcs to extend the functionality.
 
-See exynos4210-trats.dts and exynos4210-universal_c210.dts, they are 
-similar to i9100 and share a lots. They all use serial2 for debug UART 
-via USB jig.
+    drm_encoder_init() for all users that did not
+    need to extend the basic functionality with
+    drm_encoder_funcs.
 
->>>  +    vemmc_reg: regulator-0 {
->>>  +        compatible = "regulator-fixed";
->>>  +        regulator-name = "VMEM_VDD_2.8V";
->>>  +        regulator-min-microvolt = <2800000>;
->>>  +        regulator-max-microvolt = <2800000>;
->>>  +        gpio = <&gpk0 2 GPIO_ACTIVE_HIGH>;
->>>  +        enable-active-high;
->>
->> This looks like a stub/fake regulator. Probably it shoould be replaced
->> with proper regulator coming from PMIC (few seems to be missing there).
->>
->> I don't have the schematics so I cannot judge... I see Trats has the
->> same.
->>
->> Marek, mayybe you know, is it really a separate regulator?
+A similar approach with a _funcs() prefix is used elsewhere in drm/
 
-Trats has the same regulator and according to the schematic it is 
-supplied from VBAT and controlled via eMMC_EN GPIO pin.
+This required a rename of the existing users, and
+a follow-up patch that moves drm_simple_encoder_init()
+to drm_encoder.c
 
-> > [...]
+Patches 3 in this set demonstrate the use of drm_encoder_init().
+There are many more drivers that can be converted as Thomas
+has already demonstrated.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+This is all based on work done by Thomas Zimmermann,
+I just wanted to implement my suggestion so
+we could select the best way forward.
+
+Note: Daniel Vetter has hinted the approach implemented
+here smelled like middle-layer.
+IMO this is not so, it is just a way to handle cleanup
+for the simple cases.
+
+	Sam
+
+
+Sam Ravnborg (3):
+      drm: drm_encoder_init() => drm_encoder_init_funcs()
+      drm: drm_simple_encoder_init() => drm_encoder_init()
+      drm/atmel-hlcdc: Use drm_encoder_init()
+
+ drivers/gpu/drm/amd/amdgpu/dce_v10_0.c             | 28 ++++++-------
+ drivers/gpu/drm/amd/amdgpu/dce_v11_0.c             | 28 ++++++-------
+ drivers/gpu/drm/amd/amdgpu/dce_v6_0.c              | 28 ++++++-------
+ drivers/gpu/drm/amd/amdgpu/dce_v8_0.c              | 28 ++++++-------
+ drivers/gpu/drm/amd/amdgpu/dce_virtual.c           |  4 +-
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  | 10 ++---
+ .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    | 10 ++---
+ drivers/gpu/drm/arc/arcpgu_hdmi.c                  |  4 +-
+ drivers/gpu/drm/arc/arcpgu_sim.c                   |  4 +-
+ drivers/gpu/drm/ast/ast_mode.c                     |  3 +-
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c   |  8 +---
+ drivers/gpu/drm/drm_encoder.c                      | 49 +++++++++++++++++++---
+ drivers/gpu/drm/drm_encoder_slave.c                |  2 +-
+ drivers/gpu/drm/drm_simple_kms_helper.c            | 45 +-------------------
+ drivers/gpu/drm/drm_writeback.c                    |  6 +--
+ drivers/gpu/drm/exynos/exynos_dp.c                 |  4 +-
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c            |  4 +-
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c            |  4 +-
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c           |  4 +-
+ drivers/gpu/drm/exynos/exynos_hdmi.c               |  4 +-
+ drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c          |  4 +-
+ drivers/gpu/drm/gma500/cdv_intel_crt.c             |  5 ++-
+ drivers/gpu/drm/gma500/cdv_intel_dp.c              |  4 +-
+ drivers/gpu/drm/gma500/cdv_intel_hdmi.c            |  4 +-
+ drivers/gpu/drm/gma500/cdv_intel_lvds.c            |  6 +--
+ drivers/gpu/drm/gma500/mdfld_dsi_dpi.c             |  7 ++--
+ drivers/gpu/drm/gma500/oaktrail_hdmi.c             |  6 +--
+ drivers/gpu/drm/gma500/oaktrail_lvds.c             |  4 +-
+ drivers/gpu/drm/gma500/psb_intel_lvds.c            |  6 +--
+ drivers/gpu/drm/gma500/psb_intel_sdvo.c            |  4 +-
+ drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c   |  4 +-
+ drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c       |  4 +-
+ drivers/gpu/drm/i2c/tda998x_drv.c                  |  5 ++-
+ drivers/gpu/drm/i915/display/icl_dsi.c             |  4 +-
+ drivers/gpu/drm/i915/display/intel_crt.c           |  5 ++-
+ drivers/gpu/drm/i915/display/intel_ddi.c           |  6 ++-
+ drivers/gpu/drm/i915/display/intel_dp.c            |  6 +--
+ drivers/gpu/drm/i915/display/intel_dp_mst.c        |  6 ++-
+ drivers/gpu/drm/i915/display/intel_dvo.c           |  6 +--
+ drivers/gpu/drm/i915/display/intel_hdmi.c          |  6 +--
+ drivers/gpu/drm/i915/display/intel_lvds.c          |  4 +-
+ drivers/gpu/drm/i915/display/intel_sdvo.c          |  6 +--
+ drivers/gpu/drm/i915/display/intel_tv.c            |  4 +-
+ drivers/gpu/drm/i915/display/vlv_dsi.c             |  5 ++-
+ drivers/gpu/drm/imx/dw_hdmi-imx.c                  |  4 +-
+ drivers/gpu/drm/imx/imx-ldb.c                      |  4 +-
+ drivers/gpu/drm/imx/imx-tve.c                      |  4 +-
+ drivers/gpu/drm/imx/parallel-display.c             |  4 +-
+ drivers/gpu/drm/ingenic/ingenic-drm.c              |  5 ++-
+ drivers/gpu/drm/mediatek/mtk_dpi.c                 |  5 ++-
+ drivers/gpu/drm/mediatek/mtk_dsi.c                 |  4 +-
+ drivers/gpu/drm/meson/meson_dw_hdmi.c              |  5 ++-
+ drivers/gpu/drm/meson/meson_venc_cvbs.c            |  5 ++-
+ drivers/gpu/drm/mgag200/mgag200_mode.c             |  7 +---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c        |  4 +-
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c   |  4 +-
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_dtv_encoder.c   |  4 +-
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c  |  4 +-
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_encoder.c       |  3 +-
+ drivers/gpu/drm/nouveau/dispnv04/dac.c             |  4 +-
+ drivers/gpu/drm/nouveau/dispnv04/dfp.c             |  3 +-
+ drivers/gpu/drm/nouveau/dispnv04/tvnv04.c          |  4 +-
+ drivers/gpu/drm/nouveau/dispnv04/tvnv17.c          |  4 +-
+ drivers/gpu/drm/nouveau/dispnv50/disp.c            | 16 +++----
+ drivers/gpu/drm/omapdrm/omap_encoder.c             |  4 +-
+ drivers/gpu/drm/qxl/qxl_display.c                  |  7 +---
+ drivers/gpu/drm/radeon/atombios_encoders.c         | 40 +++++++++---------
+ drivers/gpu/drm/radeon/radeon_dp_mst.c             |  4 +-
+ drivers/gpu/drm/radeon/radeon_legacy_encoders.c    | 20 ++++-----
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.c          |  4 +-
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    |  5 ++-
+ drivers/gpu/drm/rockchip/cdn-dp-core.c             |  4 +-
+ drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c    |  5 ++-
+ drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c        |  4 +-
+ drivers/gpu/drm/rockchip/inno_hdmi.c               |  4 +-
+ drivers/gpu/drm/rockchip/rk3066_hdmi.c             |  4 +-
+ drivers/gpu/drm/rockchip/rockchip_lvds.c           |  5 ++-
+ drivers/gpu/drm/rockchip/rockchip_rgb.c            |  5 ++-
+ drivers/gpu/drm/shmobile/shmob_drm_crtc.c          |  4 +-
+ drivers/gpu/drm/sti/sti_tvout.c                    | 16 +++----
+ drivers/gpu/drm/stm/ltdc.c                         |  4 +-
+ drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c             | 10 ++---
+ drivers/gpu/drm/sun4i/sun4i_lvds.c                 | 10 ++---
+ drivers/gpu/drm/sun4i/sun4i_rgb.c                  | 10 ++---
+ drivers/gpu/drm/sun4i/sun4i_tv.c                   | 10 ++---
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c             | 10 ++---
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c              |  4 +-
+ drivers/gpu/drm/tegra/dsi.c                        |  6 +--
+ drivers/gpu/drm/tegra/hdmi.c                       |  5 ++-
+ drivers/gpu/drm/tegra/rgb.c                        |  4 +-
+ drivers/gpu/drm/tegra/sor.c                        |  4 +-
+ drivers/gpu/drm/tidss/tidss_encoder.c              |  4 +-
+ drivers/gpu/drm/tilcdc/tilcdc_external.c           |  8 ++--
+ drivers/gpu/drm/tilcdc/tilcdc_panel.c              |  4 +-
+ drivers/gpu/drm/vboxvideo/vbox_mode.c              |  4 +-
+ drivers/gpu/drm/vc4/vc4_dpi.c                      |  4 +-
+ drivers/gpu/drm/vc4/vc4_dsi.c                      |  4 +-
+ drivers/gpu/drm/vc4/vc4_hdmi.c                     |  4 +-
+ drivers/gpu/drm/vc4/vc4_vec.c                      |  4 +-
+ drivers/gpu/drm/virtio/virtgpu_display.c           |  4 +-
+ drivers/gpu/drm/vkms/vkms_output.c                 |  4 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_ldu.c                |  4 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c               |  5 ++-
+ drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c               |  4 +-
+ drivers/gpu/drm/zte/zx_hdmi.c                      |  4 +-
+ drivers/gpu/drm/zte/zx_tvenc.c                     |  4 +-
+ drivers/gpu/drm/zte/zx_vga.c                       |  4 +-
+ include/drm/drm_encoder.h                          |  9 ++--
+ include/drm/drm_simple_kms_helper.h                |  4 --
+ 109 files changed, 394 insertions(+), 395 deletions(-)
+
 
