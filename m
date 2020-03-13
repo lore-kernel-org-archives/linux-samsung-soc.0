@@ -4,53 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC2D6C5ACBF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Mar 2020 14:29:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC17C10DCE
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Mar 2020 14:33:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73415206B7
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Mar 2020 14:29:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1486C206E9
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 13 Mar 2020 14:33:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="xJj1XKlk"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="fnypYpam"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726569AbgCMO3V (ORCPT
+        id S1726528AbgCMOdn (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 13 Mar 2020 10:29:21 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:58090 "EHLO
+        Fri, 13 Mar 2020 10:33:43 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:33030 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726406AbgCMO3V (ORCPT
+        with ESMTP id S1726406AbgCMOdn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 13 Mar 2020 10:29:21 -0400
+        Fri, 13 Mar 2020 10:33:43 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1584109757; h=from:from:sender:reply-to:subject:subject:date:date:
+        s=mail; t=1584110020; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:mime-version:
          content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=yluvy+oLK/mrZ+pqw8vA+3dPmN1/Nxps4KWhVcfC/vQ=;
-        b=xJj1XKlkAbHvqn6vOgSnUuFyTlDAjyvyQ2ad5iddHZpaxWQxv+9X+Fi+WZSzHZUQDJmv5b
-        1M30wNaaDfcZLzpjPMI3Mr7H8+7AjTyfhDJQraUhLmTt/OCvXCwN49MAOT0IzhLN7hFIaL
-        lDR7QAK8G2J1yZyMclJ48kNevz2WO8I=
-Date:   Fri, 13 Mar 2020 15:29:10 +0100
+        bh=wSuvYRs2+kOMRbKVk2MsXJmEnZAEsDSj7YJQdXCqPZs=;
+        b=fnypYpamxOOB89qg+eCvr7e75TOyNH8acica++zrm6NppStlFNseotqOLofhdyaJmOagQg
+        hCnkct/RcXmi7syCZBSzBFDWZ8N36gRbi2rUpT6Fmr+BVLw9IuL2uUqcJkfzKIgPvww0lV
+        XlJm62VLkdtBOngtE+pFkvsLKBItXqI=
+Date:   Fri, 13 Mar 2020 15:33:34 +0100
 From:   Paul Cercueil <paul@crapouillou.net>
 Subject: Re: [PATCH 2/2] ARM: DTS: Add devicetree file for the Galaxy S2
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Stenkin Evgeniy <stenkinevgeniy@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Message-Id: <1584109750.3.0@crapouillou.net>
-In-Reply-To: <222f90d6-effa-6ddd-f525-34516314b0e2@samsung.com>
+Message-Id: <1584110014.3.1@crapouillou.net>
+In-Reply-To: <20200313090011.GB7416@pi3>
 References: <20200312153411.13535-1-paul@crapouillou.net>
-        <CGME20200312153430eucas1p21948620c871efdc5edbff18a0e075d07@eucas1p2.samsung.com>
-        <20200312153411.13535-2-paul@crapouillou.net>
-        <222f90d6-effa-6ddd-f525-34516314b0e2@samsung.com>
+        <20200312153411.13535-2-paul@crapouillou.net> <20200313090011.GB7416@pi3>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Transfer-Encoding: quoted-printable
@@ -59,39 +57,46 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+Hi Krzysztof,
 
 
-Le ven., mars 13, 2020 at 09:03, Marek Szyprowski=20
-<m.szyprowski@samsung.com> a =E9crit :
->=20
-> On 12.03.2020 16:34, Paul Cercueil wrote:
+Le ven., mars 13, 2020 at 10:00, Krzysztof Kozlowski <krzk@kernel.org>=20
+a =E9crit :
+> On Thu, Mar 12, 2020 at 04:34:11PM +0100, Paul Cercueil wrote:
 >>  From: Stenkin Evgeniy <stenkinevgeniy@gmail.com>
 >>=20
 >>  Add devicetree file for the Exynos 4210 based Galaxy S2 (i9100=20
 >> version).
+>=20
+> Thanks for the patch!
+>=20
+> It is an GT-I9100.
+>=20
+> +Cc Marek (I have few questions further)
+>=20
+>=20
 >>=20
 >>  Signed-off-by: Stenkin Evgeniy <stenkinevgeniy@gmail.com>
 >>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 >>  ---
->>    arch/arm/boot/dts/Makefile             |   1 +
->>    arch/arm/boot/dts/exynos4210-i9100.dts | 816=20
+>>   arch/arm/boot/dts/Makefile             |   1 +
+>>   arch/arm/boot/dts/exynos4210-i9100.dts | 816=20
 >> +++++++++++++++++++++++++
->>    2 files changed, 817 insertions(+)
->>    create mode 100644 arch/arm/boot/dts/exynos4210-i9100.dts
+>>   2 files changed, 817 insertions(+)
+>>   create mode 100644 arch/arm/boot/dts/exynos4210-i9100.dts
 >>=20
 >>  diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
 >>  index d6546d2676b9..522436d30690 100644
 >>  --- a/arch/arm/boot/dts/Makefile
 >>  +++ b/arch/arm/boot/dts/Makefile
 >>  @@ -181,6 +181,7 @@ dtb-$(CONFIG_ARCH_EXYNOS3) +=3D \
->>    	exynos3250-monk.dtb \
->>    	exynos3250-rinato.dtb
->>    dtb-$(CONFIG_ARCH_EXYNOS4) +=3D \
+>>   	exynos3250-monk.dtb \
+>>   	exynos3250-rinato.dtb
+>>   dtb-$(CONFIG_ARCH_EXYNOS4) +=3D \
 >>  +	exynos4210-i9100.dtb \
->>    	exynos4210-origen.dtb \
->>    	exynos4210-smdkv310.dtb \
->>    	exynos4210-trats.dtb \
+>>   	exynos4210-origen.dtb \
+>>   	exynos4210-smdkv310.dtb \
+>>   	exynos4210-trats.dtb \
 >>  diff --git a/arch/arm/boot/dts/exynos4210-i9100.dts=20
 >> b/arch/arm/boot/dts/exynos4210-i9100.dts
 >>  new file mode 100644
@@ -102,6 +107,9 @@ Le ven., mars 13, 2020 at 09:03, Marek Szyprowski=20
 >>  +// SPDX-License-Identifier: GPL-2.0
 >>  +/*
 >>  + * Samsung's Exynos4210 based Galaxy S2 (i9100 version) device tree
+>=20
+> Ditto
+>=20
 >>  + *
 >>  + * Copyright (c) 2012 Samsung Electronics Co., Ltd.
 >>  + *		http://www.samsung.com
@@ -111,6 +119,9 @@ Le ven., mars 13, 2020 at 09:03, Marek Szyprowski=20
 >>  + * Device tree source file for Samsung's Galaxy S2 smartphone=20
 >> (i9100 version),
 >>  + * which is based on Samsung's Exynos4210 SoC.
+>=20
+> Duplicated description, you mentioned it before.
+>=20
 >>  + */
 >>  +
 >>  +/dts-v1/;
@@ -122,8 +133,20 @@ Le ven., mars 13, 2020 at 09:03, Marek Szyprowski=20
 >>  +
 >>  +/ {
 >>  +	model =3D "Samsung Galaxy S2 (i9100)";
+>=20
+> GT-I9100
+>=20
 >>  +	compatible =3D "samsung,i9100", "samsung,exynos4210",=20
 >> "samsung,exynos4";
+>=20
+> I think it shares a lot with Trats board...
+>=20
+> Marek, how similar these
+> designs are? Maybe it is worth to split some parts and make common=20
+> part?
+
+I can try to do it, but it'll be only by comparing the devicetree files.
+
 >>  +
 >>  +
 >>  +	memory@40000000 {
@@ -131,6 +154,13 @@ Le ven., mars 13, 2020 at 09:03, Marek Szyprowski=20
 >>  +		reg =3D <0x40000000 0x40000000>;
 >>  +	};
 >>  +
+>=20
+> You do not have a chosen node, at least for stdout serial selection.
+> Probably you should have one... bootargs I guess could come from
+> bootloader.
+
+Problem is, I have no idea which UART is available via the USB jig :)
+
 >>  +	vemmc_reg: regulator-0 {
 >>  +		compatible =3D "regulator-fixed";
 >>  +		regulator-name =3D "VMEM_VDD_2.8V";
@@ -138,6 +168,16 @@ Le ven., mars 13, 2020 at 09:03, Marek Szyprowski=20
 >>  +		regulator-max-microvolt =3D <2800000>;
 >>  +		gpio =3D <&gpk0 2 GPIO_ACTIVE_HIGH>;
 >>  +		enable-active-high;
+>=20
+> This looks like a stub/fake regulator. Probably it shoould be replaced
+> with proper regulator coming from PMIC (few seems to be missing=20
+> there).
+>=20
+> I don't have the schematics so I cannot judge... I see Trats has the
+> same.
+>=20
+> Marek, mayybe you know, is it really a separate regulator?
+>=20
 >>  +	};
 >>  +
 >>  +	tsp_reg: regulator-1 {
@@ -150,6 +190,11 @@ Le ven., mars 13, 2020 at 09:03, Marek Szyprowski=20
 >>  +		enable-active-high;
 >>  +		regulator-boot-on;
 >>  +		regulator-always-on;
+>=20
+> always-on and boot-on should not be needed. You have a consumer for=20
+> this
+> regulator.
+>=20
 >>  +	};
 >>  +
 >>  +	cam_af_28v_reg: regulator-3 {
@@ -227,6 +272,9 @@ Le ven., mars 13, 2020 at 09:03, Marek Szyprowski=20
 >>  +	};
 >>  +
 >>  +	i2c_max17042_fuel: i2c-gpio-3 {
+>=20
+> i2c-gpio-3 -> i2c-gpio
+>=20
 >>  +		compatible =3D "i2c-gpio";
 >>  +		#address-cells =3D <1>;
 >>  +		#size-cells =3D <0>;
@@ -240,6 +288,9 @@ Le ven., mars 13, 2020 at 09:03, Marek Szyprowski=20
 >>  +
 >>  +			interrupt-parent =3D <&gpx2>;
 >>  +			interrupts =3D <3 2>;
+>=20
+> s/2/IRQ_TYPE_EDGE_FALLING/
+>=20
 >>  +
 >>  +			pinctrl-0 =3D <&max17042_fuel_irq>;
 >>  +			pinctrl-names =3D "default";
@@ -248,6 +299,9 @@ Le ven., mars 13, 2020 at 09:03, Marek Szyprowski=20
 >>  +			maxim,over-heat-temp =3D <700>;
 >>  +			maxim,over-volt =3D <4500>;
 >>  +
+>=20
+> Remove empty line.
+>=20
 >>  +		};
 >>  +	};
 >>  +
@@ -258,19 +312,6 @@ Le ven., mars 13, 2020 at 09:03, Marek Szyprowski=20
 >>  +
 >>  +		num-chipselects =3D <1>;
 >>  +		cs-gpios =3D <&gpy4 3 GPIO_ACTIVE_HIGH>;
-> LD9040 CS is active low, so this board needs probably the same fix a
-> Universal C210 board: https://patchwork.kernel.org/patch/11420231/ Are
-> you sure it really works now with v5.6-rcX kernels? Or you just got=20
-> the
-> panel working only because the bootloader enabled it?
-
-Sorry but the fix looks bogus to me. The spi-gpio driver calls=20
-gpiod_set_value(0) when the CS is going *active*, and=20
-gpiod_set_value(1) when the CS is going *inactive*. If you use the=20
-GPIO_ACTIVE_LOW flag, the levels are inverted, and the CS is high when=20
-active, which is the opposite of what you want.
-
-
 >>  +		sck-gpios =3D <&gpy3 1 GPIO_ACTIVE_HIGH>;
 >>  +		mosi-gpios =3D <&gpy3 3 GPIO_ACTIVE_HIGH>;
 >>  +
@@ -421,20 +462,20 @@ active, which is the opposite of what you want.
 >>  +	status =3D "okay";
 >>  +
 >>  +	dr_mode =3D "otg";
-> The the host mode really works with DWC2? Afair the host mode worked
-> only when it was rerouted by PHY to the EHCI (at least on=20
-> UniversalC210
-> board, which is very similar to GS2).
-
-I have to say that I didn't try OTG / host, but it does work fine in=20
-gadget mode.
-I can change it to dr_mode =3D "peripheral" for now, if you prefer.
-
 >>  +	vusb_d-supply =3D <&vusb_reg>;
 >>  +	vusb_a-supply =3D <&vusbdac_reg>;
 >>  +};
 >>  +
 >>  +&ehci {
+>=20
+> Order the phandle/nodes in alphabetical order, please. So:
+>=20
+> &ehci ...
+> &hsoth ...
+> &i2c ...
+>=20
+> etc.
+>=20
 >>  +	status =3D "okay";
 >>  +
 >>  +	port@0 {
@@ -449,18 +490,10 @@ I can change it to dr_mode =3D "peripheral" for now, if you prefer.
 >>  +		status =3D "okay";
 >>  +	};
 >>  +};
->=20
-> This is the old, obsolete exynos-ehci binding. Please remove 'port'
-> nodes and use standard USB phy bindings like it has been done in the
-> following patch: https://patchwork.kernel.org/patch/11060465/
-
-Will do.
-
-> BTW, do you really need all 3 phys/ports?
-
-No idea!
-
 >>  +
+>=20
+> Double empty line.
+>=20
 >>  +
 >>  +&i2c_3 {
 >>  +	status =3D "okay";
@@ -561,6 +594,9 @@ No idea!
 >>  +				regulator-always-on;
 >>  +
 >>  +			};
+>=20
+> Add empty line.
+>=20
 >>  +			valive_reg: LDO2 {
 >>  +				regulator-name =3D "VALIVE_1.1V_C210";
 >>  +				regulator-min-microvolt =3D <1100000>;
@@ -743,12 +779,21 @@ No idea!
 >>  +				regulator-always-on;
 >>  +			};
 >>  +
+>=20
+> Empty line, not needed.
+>=20
 >>  +		};
 >>  +
+>=20
+> Empty line, not needed.
+>=20
 >>  +	};
 >>  +};
 >>  +
 >>  +
+>=20
+> Empty line, not needed. Please fix them in all places.
+>=20
 >>  +&gpu {
 >>  +	status =3D "okay";
 >>  +
@@ -757,6 +802,9 @@ No idea!
 >>  +	regulator-microsecs-delay =3D <50>;
 >>  +};
 >>  +
+>=20
+> and more...
+>=20
 >>  +
 >>  +&sdhci_0 {
 >>  +	status =3D "okay";
@@ -781,196 +829,17 @@ No idea!
 >>  +};
 >>  +
 >>  +&ehci {
->>  +	port@0 {
->>  +		status =3D "okay";
->>  +	};
->>  +
->>  +	port@1 {
->>  +		status =3D "okay";
->>  +	};
->>  +
->>  +	port@2 {
->>  +		status =3D "okay";
->>  +	};
->>  +
->>  +};
 >=20
-> This is duplicated 'ehci' node, probable an artifact from the earlier
-> rebase. Please remove it.
+> Duplicated.
+>=20
+> Best regards,
+> Krzysztof
 
-Right, didn't even notice it.
-
-Will remove it and send a V2.
+For all other comments: ACK, will fix this mess in V2.
 
 Cheers,
 -Paul
 
->>  +
->>  +
->>  +&sdhci_3 {
->>  +	status =3D "okay";
->>  +
->>  +	#address-cells =3D <1>;
->>  +	#size-cells =3D <0>;
->>  +
->>  +	non-removable;
->>  +	bus-width =3D <4>;
->>  +	mmc-pwrseq =3D <&wlan_pwrseq>;
->>  +	vmmc-supply =3D <&vtf_reg>;
->>  +
->>  +	pinctrl-names =3D "default";
->>  +	pinctrl-0 =3D <&sd3_clk>, <&sd3_cmd>, <&sd3_bus4>;
->>  +
->>  +	brcmf: wifi@1 {
->>  +		compatible =3D "brcm,bcm4330-fmac";
->>  +		reg =3D <1>;
->>  +
->>  +		interrupt-parent =3D <&gpx2>;
->>  +		interrupts =3D <5 IRQ_TYPE_LEVEL_HIGH>;
->>  +		interrupt-names =3D "host-wake";
->>  +	};
->>  +};
->>  +
->>  +
->>  +&serial_0 {
->>  +	status =3D "okay";
->>  +
->>  +	pinctrl-names =3D "default";
->>  +	pinctrl-0 =3D <&bt_en>, <&bt_res>, <&uart0_data>, <&uart0_fctl>;
->>  +
->>  +	bluetooth {
->>  +		compatible =3D "brcm,bcm4330-bt";
->>  +
->>  +		shutdown-gpios =3D <&gpl0 4 GPIO_ACTIVE_HIGH>;
->>  +		reset-gpios =3D <&gpl1 0 GPIO_ACTIVE_HIGH>;
->>  +		device-wakeup-gpios =3D <&gpx3 1 GPIO_ACTIVE_HIGH>;
->>  +		host-wakeup-gpios =3D <&gpx2 6 GPIO_ACTIVE_HIGH>;
->>  +	};
->>  +};
->>  +
->>  +&serial_1 {
->>  +	status =3D "okay";
->>  +};
->>  +
->>  +&serial_2 {
->>  +	status =3D "okay";
->>  +};
->>  +
->>  +&serial_3 {
->>  +	status =3D "okay";
->>  +};
->>  +
->>  +&tmu {
->>  +	status =3D "okay";
->>  +};
->>  +
->>  +
->>  +&pinctrl_0 {
->>  +	pinctrl-names =3D "default";
->>  +	pinctrl-0 =3D <&sleep0>;
->>  +
->>  +
->>  +	sleep0: sleep-states {
->>  +		gpa0-0 {
->>  +			samsung,pins =3D "gpa0-0";
->>  +			samsung,pin-con-pdn =3D <EXYNOS_PIN_PDN_INPUT>;
->>  +			samsung,pin-pud-pdn =3D <EXYNOS_PIN_PULL_NONE>;
->>  +		};
->>  +
->>  +		gpa0-1 {
->>  +			samsung,pins =3D "gpa0-1";
->>  +			samsung,pin-con-pdn =3D <EXYNOS_PIN_PDN_OUT0>;
->>  +			samsung,pin-pud-pdn =3D <EXYNOS_PIN_PULL_NONE>;
->>  +		};
->>  +
->>  +		gpa0-2 {
->>  +			samsung,pins =3D "gpa0-2";
->>  +			samsung,pin-con-pdn =3D <EXYNOS_PIN_PDN_INPUT>;
->>  +			samsung,pin-pud-pdn =3D <EXYNOS_PIN_PULL_NONE>;
->>  +		};
->>  +
->>  +		gpa0-3 {
->>  +			samsung,pins =3D "gpa0-3";
->>  +			samsung,pin-con-pdn =3D <EXYNOS_PIN_PDN_OUT1>;
->>  +			samsung,pin-pud-pdn =3D <EXYNOS_PIN_PULL_NONE>;
->>  +		};
->>  +	};
->>  +};
->>  +
->>  +&pinctrl_1 {
->>  +	mhl_int: mhl-int {
->>  +		samsung,pins =3D "gpf3-5";
->>  +		samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
->>  +	};
->>  +
->>  +	i2c_mhl_bus: i2c-mhl-bus {
->>  +		samsung,pins =3D "gpf0-4", "gpf0-6";
->>  +		samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
->>  +		samsung,pin-pud =3D <EXYNOS_PIN_PULL_DOWN>;
->>  +		samsung,pin-drv =3D <EXYNOS4_PIN_DRV_LV1>;
->>  +	};
->>  +
->>  +	usb_sel: usb-sel {
->>  +		samsung,pins =3D "gpl0-6";
->>  +		samsung,pin-function =3D <EXYNOS_PIN_FUNC_OUTPUT>;
->>  +		samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
->>  +		samsung,pin-drv =3D <EXYNOS4_PIN_DRV_LV1>;
->>  +		samsung,pin-val =3D <0>;
->>  +	};
->>  +
->>  +	bt_en: bt-en {
->>  +		samsung,pins =3D "gpl0-4";
->>  +		samsung,pin-function =3D <EXYNOS_PIN_FUNC_OUTPUT>;
->>  +		samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
->>  +		samsung,pin-drv =3D <EXYNOS4_PIN_DRV_LV4>;
->>  +		samsung,pin-val =3D <0>;
->>  +	};
->>  +
->>  +	bt_res: bt-res {
->>  +		samsung,pins =3D "gpl1-0";
->>  +		samsung,pin-function =3D <EXYNOS_PIN_FUNC_OUTPUT>;
->>  +		samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
->>  +		samsung,pin-drv =3D <EXYNOS4_PIN_DRV_LV4>;
->>  +		samsung,pin-val =3D <0>;
->>  +	};
->>  +
->>  +
->>  +	otg_gp: otg-gp {
->>  +		samsung,pins =3D "gpx3-3";
->>  +		samsung,pin-function =3D <EXYNOS_PIN_FUNC_OUTPUT>;
->>  +		samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
->>  +		samsung,pin-drv =3D <EXYNOS4_PIN_DRV_LV1>;
->>  +		samsung,pin-val =3D <0>;
->>  +	};
->>  +
->>  +	mag_mhl_gpio: mag-mhl-gpio {
->>  +		samsung,pins =3D "gpd0-2";
->>  +		samsung,pin-function =3D <EXYNOS_PIN_FUNC_3>;
->>  +		samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
->>  +	};
->>  +
->>  +
->>  +	max8997_irq: max8997-irq {
->>  +		samsung,pins =3D "gpx0-7";
->>  +		samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
->>  +	};
->>  +
->>  +	max17042_fuel_irq: max17042-fuel-irq {
->>  +		samsung,pins =3D "gpx2-3";
->>  +		samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
->>  +	};
->>  +
->>  +	tsp224_irq: tsp224-irq {
->>  +		samsung,pins =3D "gpx0-4";
->>  +		samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
->>  +	};
->>  +};
->=20
-> Best regards
-> --
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
->=20
 
 =
 
