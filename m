@@ -1,82 +1,136 @@
-Return-Path: <SRS0=XTxf=47=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=/MoH=5A=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D662C10DCE
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 14 Mar 2020 01:17:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5288C1975A
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 15 Mar 2020 01:57:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6740E2074F
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 14 Mar 2020 01:17:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDD7F2077D
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 15 Mar 2020 01:57:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584148656;
-	bh=+OILuvouBCX8uMF/DlchLPyrx1JavU6/eR/UOXvuv8c=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=JbGrZz1PQHLhdh5XzAVbYYtPc9PzFdVRUFzOMhVBqIXo8i2z4Vj3zKtFqX0VWJGY4
-	 X9oDj2MXeZDF1T9xBIGZIGpINEJpOOYbph2a4pv5NznNEmXlJkXCDGpjuAj5OoD7gO
-	 L1g4U5g69VmDPjTrYh+Lr5OXgsop/tPoA2Pcy3Y4=
+	s=default; t=1584237456;
+	bh=kUhXL8zRFnTVcIoGdYzfNylNNcopx+FRHAwLNVrfF0U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=I3kX02+aY+/kIPpNJJxZfU93F4nqvpKntsFUchvmxLld3xGDbZH0CRGO3J+R8re68
+	 q0JXrfnQuWWMhMXlVNq7lj/yxCbocZEQ3EfFgNVgH9Il9N3Px1hw1I3OGr9UGp9sRa
+	 v+rZ/1bKcIHD4NqTt6JzEI1seZFhLkglHdzn0oSM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727912AbgCNBRc (ORCPT
+        id S1727460AbgCOB5c (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 13 Mar 2020 21:17:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59302 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726591AbgCNBRc (ORCPT
+        Sat, 14 Mar 2020 21:57:32 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:34683 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726853AbgCOB5c (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 13 Mar 2020 21:17:32 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A13DC2074A;
-        Sat, 14 Mar 2020 01:17:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584148651;
-        bh=+OILuvouBCX8uMF/DlchLPyrx1JavU6/eR/UOXvuv8c=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=R7xvdtknuSkmlj0jrBNdhaBIycSQ2z7QKYLKtuKhx4O87Qcm/sNM8vE+OeWqk5IlB
-         Zz74RpD+G7TgqxXlffwyX6UUf506YN4U+yRzn0iS+3a8CELbDkU83dsKnanJHrok9c
-         fZimPWbrxN9BfUoGqhYBr+IUC3iseze8NpNOD/YQ=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1d569e023b6cb7b8d0da8d1bcccd92e97fe436c8.1583896348.git.joe@perches.com>
-References: <cover.1583896344.git.joe@perches.com> <1d569e023b6cb7b8d0da8d1bcccd92e97fe436c8.1583896348.git.joe@perches.com>
-Subject: Re: [PATCH -next 010/491] ARM/SAMSUNG EXYNOS ARM ARCHITECTURES: Use fallthrough;
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Joe Perches <joe@perches.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sat, 14 Mar 2020 21:57:32 -0400
+Received: by mail-ed1-f67.google.com with SMTP id i24so13489883eds.1;
+        Sat, 14 Mar 2020 18:57:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IGvteHNkCAAe9RzBu1B2j4q+4lEY8L8k3NmOvCcX8OE=;
+        b=KhwANvBcrTq2q2W5HVumXxXVfw3LRtfnYku9FMQ1suJpsKfm1z2FlTffMfi3FsbB/z
+         IVMP/udmVbpgTjKW5cNUjWgiV1tKC8kDYSO0gLZpwjEWBWrION7WTmd0TM8EJEgQOH8Z
+         eTNelbIFbn3OAHSNgYbM8h0d7qMMar0Bl4C/Siv215MIThh7Rb/Hf0UciLgjp0hufgBs
+         MnR1vOy4s76cXpYBYvMXauY51h/rWdykIJmS97Fx3tj838dCUXZmEtIBBj0R4eAOSpVR
+         EBiUdAe2DM/dJPL/nSR1jjY9CpXC1ER/ag4dJbFKldpE8HvCU6JNzqH4ubhvlpC7RmUQ
+         G6SA==
+X-Gm-Message-State: ANhLgQ2UywbPP/WnWS3yPZBN1VwWm8GBWPebJYVOudtwHeZJK9YCOcaC
+        R5m0GQ0kZ9ASWJ39wq6Xl9I4uG1JtWA=
+X-Google-Smtp-Source: ADFU+vvqta4B+r9p/W0zTELooOA9Cc7fWz4UD77LqxM6UYcl+Sd+u1u4HEDyOkSEfBTCw7OTPTESnQ==
+X-Received: by 2002:a50:d657:: with SMTP id c23mr19074934edj.18.1584210014117;
+        Sat, 14 Mar 2020 11:20:14 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.125])
+        by smtp.googlemail.com with ESMTPSA id n6sm2172656ejy.23.2020.03.14.11.20.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 14 Mar 2020 11:20:13 -0700 (PDT)
+Date:   Sat, 14 Mar 2020 19:20:10 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Anand Moon <linux.amoon@gmail.com>
+Cc:     Linux USB Mailing List <linux-usb@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Kukjin Kim <kgene@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Felipe Balbi <balbi@kernel.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>
-Date:   Fri, 13 Mar 2020 18:17:30 -0700
-Message-ID: <158414865091.164562.17682025008359421835@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCHv3 2/5] ARM: dts: exynos: Add missing usbdrd3 suspend clk
+Message-ID: <20200314182010.GB17580@kozik-lap>
+References: <20200310194854.831-1-linux.amoon@gmail.com>
+ <20200310194854.831-3-linux.amoon@gmail.com>
+ <CANAwSgR4fJK0uVANv-x-=iSL_hAKD8kvazACUsY9Meu5xonuqQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CANAwSgR4fJK0uVANv-x-=iSL_hAKD8kvazACUsY9Meu5xonuqQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Quoting Joe Perches (2020-03-10 21:51:24)
-> Convert the various uses of fallthrough comments to fallthrough;
->=20
-> Done via script
-> Link: https://lore.kernel.org/lkml/b56602fcf79f849e733e7b521bb0e17895d390=
-fa.1582230379.git.joe.com/
->=20
+On Sat, Mar 14, 2020 at 07:02:33PM +0530, Anand Moon wrote:
+> Hi Krzysztof,
+> 
+> On Wed, 11 Mar 2020 at 01:19, Anand Moon <linux.amoon@gmail.com> wrote:
+> >
+> > Add new compatible strings for USBDRD3 for adding missing
+> > suspend clk, exynos5422 usbdrd3 support two clk USBD300 and
+> > SCLK_USBD300, so add missing suspemd_clk for Exynos542x DWC3 nodes.
+> >
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> 
+> My assumption based on the FSYS clock source diagram below was bit wrong.
+> [0] https://imgur.com/gallery/zAiBoyh
+> 
+> And again re-looking into the driver source code, it turn out their
+> are *6 clock*
+> Here is the correct mapping as per the Exynos5420 clock driver.
+> 
+> USB-(phy@12100000)
+> |___________________CLK_SCLK_USBD300
+> |___________________CLK_SCLK_USBPHY300
+> 
+> USB-(phy@12500000)
+> |___________________CLK_SCLK_USBD301
+> |___________________CLK_SCLK_USBPHY301
+> 
+> USB-(dwc3@12000000)
+> |___________________CLK_USBD300
+> USB-(dwc3@12400000)
+> |___________________CLK_USBD301
+> 
+> Note: As per Exynos 5422 user manual, There are some more USB CLK
+> configuration missing in GATE_IP_FSYS. So we could enable another dwc3 clk,
+> If needed I would like too add this missing clk code and enable this
+> clk for dwc3 driver.
+> 
+> For some reason we already use CLK_USBD300 and CLK_USBD301
+> for PHY nodes, which lead to this confusion. So we need to update PHY clock
+> CLK_USBD300 with CLK_SCLK_USBD300 and clock CLK_USBD301 with CLK_SCLK_USBD301.
+> 
+> Please share your thought on linking PHY nodes above and add new DWC3 clock
+> and enable this clock.
 
-This link doesn't work for me. It leads to a redirect for=20
+The real clock topology of Exynos5422 is not properly reflected in the
+kernel. However cleaning this up is quite big task.
 
-https://lore.kernel.org/lkml/b56602fcf79f849e733e7b521bb0e17895d390fa.15822=
-30379.git.joe@perches.com/
 
->  drivers/clk/samsung/clk-s3c2443.c | 2 +-
+Best regards,
+Krzysztof
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
