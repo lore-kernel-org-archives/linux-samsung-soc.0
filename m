@@ -2,117 +2,125 @@ Return-Path: <SRS0=/MoH=5A=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F56C2BB1D
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 15 Mar 2020 09:25:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A16C10DCE
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 15 Mar 2020 09:28:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FC77206E9
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 15 Mar 2020 09:25:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vp92DRfD"
+	by mail.kernel.org (Postfix) with ESMTP id 69E0B206B1
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 15 Mar 2020 09:28:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1584264494;
+	bh=k0MY7Bqf584jeU9PbEpBAMYhk0hnAtxUjrOw1PNGQHQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:List-ID:From;
+	b=jog69PCQtdsDejy8jpmMhVRus/8hXdk6hlnBnEKnnCDYg2+RSh5WILhZqCT6CyQ/P
+	 7CRLMgSebqEd9swuilNhFMC7+dTVheAccQ3u8gGf0Fu8s6wjcWDDwa5pQseRNzv/G2
+	 av+3LyAGPnpCI9y5zAOYpoQH8a1cxVC8hQR0veHI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728102AbgCOJZb (ORCPT
+        id S1728065AbgCOJ2O (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 15 Mar 2020 05:25:31 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:43712 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728065AbgCOJZa (ORCPT
+        Sun, 15 Mar 2020 05:28:14 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:39287 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726521AbgCOJ2N (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 15 Mar 2020 05:25:30 -0400
-Received: by mail-il1-f195.google.com with SMTP id d14so12956503ilq.10;
-        Sun, 15 Mar 2020 02:25:29 -0700 (PDT)
+        Sun, 15 Mar 2020 05:28:13 -0400
+Received: by mail-lj1-f193.google.com with SMTP id f10so15240062ljn.6;
+        Sun, 15 Mar 2020 02:28:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eDLn6hcaUGXN1ifnm89fP3KORlDlYvpz0bkA0oBIYGM=;
-        b=Vp92DRfDmGLIM/NPFDj32KHbGd5+v54Y8Qx53JAOAD18STaqvCL7NqF8E/KfcDTr1N
-         RTh37uMH8CGBwXi7s3YU7A9AqUdrD6fmecuUReY3uJ5yex7vhm+o2hnTXMKjuFBsXo8J
-         FRimVp9eYRS/Og97n7VrlGVV9giH2n3V/9MUXWgW6I3wwjkOIFXXfG78J9tNal3iQrA3
-         gO1CPPERPk/E+tzgHAp8X6rm6y76Q8xQ5fK5NSKoqHMy3CoWgMdhVBy0f55UMQT2l9Yo
-         PjFoGSXUOecROOqHn58hc8Ztnv48FZYFeTL64uCDFp58FTA2TSs3iokQUVSnB3mnnWY+
-         nyaw==
+        h=sender:from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=k0MY7Bqf584jeU9PbEpBAMYhk0hnAtxUjrOw1PNGQHQ=;
+        b=Sx43VyZaq2psJT9xqIVidcHL3h96etCE7IVZacPBNdfwm1ykQfiCokV3MGbXASTucf
+         d9kaMtFyylnFJ3xX2f/J5w5/35NG6F+ZeaHxZt0Sadpwbvume2jt3NPzVZ9g1cZY/HBB
+         rtH5q3SMNBhds3/yLS4ny21+ruxPDH1i4tqAPqBqVirMMOW3+4LThDiAs5+MjWMBad8o
+         isY3i/ywS97tlSH3hzgOD+3FKgzGiewOx+CByrS6E4BnVmKrNfa+ajysQa3xBErDNr5s
+         SL0FywuSsdV1EfufhjaE/34EnTd1G0IhAj99w3QVYlYPsSzIEcmT+NIGFV2Xqbujl+gh
+         0qOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eDLn6hcaUGXN1ifnm89fP3KORlDlYvpz0bkA0oBIYGM=;
-        b=JzzcXQjSt1PiPSI277ANzrOxaWzBw8yXSgve7kyUdTFlXWUXO/+OAJvzlZmGkuxHHQ
-         ibSsqUYObdJYFpsPshMn5OFjqbYaWYLdr6T6KsTre++kN9OkDsKoH2U05lkP62z1PjBk
-         jqTtV88GU8chciFlXcqjaminV1rDIgglzut0+fxV9jCzEyi1XOyFJzL7ZMEjkMx8YEFh
-         4Ym6Pqs7FtO6h9gVSg/QHpagYE6hjeAA2FBZs1x6sTSdzKne5Qeq9f6CsCWpub8KFIbI
-         K02rz5lCAcfXGDzHybJXF6AjeWZoVu1c0TjYzCAs7NMkAa6+QfzdfnRFMBVPJhzIKn7Y
-         ia+w==
-X-Gm-Message-State: ANhLgQ2zJ5ujUn//8LzGY7Hs4R1Add0w68Q68f4kX0tP49vsvCby03qT
-        Q4qfoyn5s39SosV6h30FOiRoLdTrDoap0xipwBQ=
-X-Google-Smtp-Source: ADFU+vu2O/lxp6WbokN0oJhMae6LPLe+vhCCs071Xl1gPKo6khFDdWen7oB+9dJAe4A09kgfcbJwwxr26vMrqKvBJwk=
-X-Received: by 2002:a92:d843:: with SMTP id h3mr8319415ilq.246.1584264329583;
- Sun, 15 Mar 2020 02:25:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200310194854.831-1-linux.amoon@gmail.com> <20200310194854.831-2-linux.amoon@gmail.com>
- <87lfo2f0k9.fsf@kernel.org>
-In-Reply-To: <87lfo2f0k9.fsf@kernel.org>
-From:   Anand Moon <linux.amoon@gmail.com>
-Date:   Sun, 15 Mar 2020 14:55:19 +0530
-Message-ID: <CANAwSgQgLm623szgs5Lba-NQKySiGw5fRfjyxjfdfHxQxhri7g@mail.gmail.com>
-Subject: Re: [PATCHv3 1/5] devicetree: bindings: exynos: Add new compatible
- for Exynos5420 dwc3 clocks support
-To:     Felipe Balbi <balbi@kernel.org>
-Cc:     Linux USB Mailing List <linux-usb@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :date:message-id:mime-version;
+        bh=k0MY7Bqf584jeU9PbEpBAMYhk0hnAtxUjrOw1PNGQHQ=;
+        b=SElnOu5HNOA+9Ll4XI3x56EDoIFrynVoxC0B87OxlUPYiCGxMXdDNORlpP8XxlalHT
+         EDQ3yFqtBpW32Rg3qMisGGKZQIbc+ZUCzfAmG2dD38z2fWoNPmul9zCaWjJEkV8luBej
+         S4g/ZF0ZRPFukxGxYwPWwQE8+0hbZ9jwS2/6nX8p77BubfolF2dZXlhyZRlOENWh3NId
+         oUr1LOox/zm20zI4vfYnCZnSrfyp9n/k/Kznt7oRVZDX+9V/CvdkxLoSaF/2Uw3S8x4D
+         iJAxRw9QV11mdJb7A0aA+7XxMmGFYEf6e91lysJURKsXSF0dlCpSqmFi/Qk25NXyrG8p
+         UV1Q==
+X-Gm-Message-State: ANhLgQ2ymQQZm4teb/j4SHTGWYSL9fR3sYYZPGszDdtwYxyuDiWhrBfi
+        k8sZTQRAEIXZqaxebDBJLFdTM7jt2E8cyA==
+X-Google-Smtp-Source: ADFU+vvXjsjBwXRjg6blDRN9dWbFmFP0x6cQKEKKsY3Lzbg80fvZNanN8fszf7hNtH4/g9dBOm89Jw==
+X-Received: by 2002:a2e:891a:: with SMTP id d26mr12762955lji.182.1584264490463;
+        Sun, 15 Mar 2020 02:28:10 -0700 (PDT)
+Received: from saruman (88-113-215-213.elisa-laajakaista.fi. [88.113.215.213])
+        by smtp.gmail.com with ESMTPSA id f23sm1708531lja.42.2020.03.15.02.28.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 15 Mar 2020 02:28:09 -0700 (PDT)
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Anand Moon <linux.amoon@gmail.com>, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 1/3] devicetree: bindings: exynos: Add new compatible for Exynos5420 dwc3 clocks support
+In-Reply-To: <20200301212019.2248-2-linux.amoon@gmail.com>
+References: <20200301212019.2248-1-linux.amoon@gmail.com> <20200301212019.2248-2-linux.amoon@gmail.com>
+Date:   Sun, 15 Mar 2020 11:28:05 +0200
+Message-ID: <871rpuezmi.fsf@kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Felipe,
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 15 Mar 2020 at 14:37, Felipe Balbi <balbi@kernel.org> wrote:
->
->
-> Hi,
->
-> Anand Moon <linux.amoon@gmail.com> writes:
->
-> > Add the new compatible string for Exynos5422 DWC3 to support
-> > enable/disable of core and suspend clk by DWC3 driver.
-> > Also updated the clock names for compatible samsung,exynos5420-dwusb3.
-> >
-> > Acked-by: Rob Herring <robh@kernel.org>
-> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->
-> What is the dependency here?
->
-> checking file Documentation/devicetree/bindings/usb/exynos-usb.txt
-> Hunk #2 FAILED at 84.
-> 1 out of 2 hunks FAILED
->
-> Applying on top of v5.6-rc5
->
-> --
-> balbi
+Anand Moon <linux.amoon@gmail.com> writes:
 
-These patch were made on top linux next-20200306,
-And with new updates in the clk driver configuration.
-I will update these patchs later, plz drop these changes for now.
+> This patch adds the new compatible string for Exynos5422 DWC3
+> to support enable/disable of core and suspend clk by DWC3 driver.
+> Also updated the clock names for compatible samsung,exynos5420-dwusb3.
+>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 
--Anand
+doesn't apply:
+
+checking file Documentation/devicetree/bindings/usb/exynos-usb.txt
+Hunk #2 FAILED at 84.
+1 out of 2 hunks FAILED
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl5t9SUACgkQzL64meEa
+mQYm8xAA3I2/YauH6uYkFBQvDNCN3vk3Y9Nd7A0OQ7+zhusbeqhl93In7+YgQ+3r
+gvXux2DHyL121EUbI7Fj398cescSm4FBgnhlVx8qhKQFn85vPBWtCjI8vvS+PIxn
+S6+emDEeVhj0FF8mfuVV844SqIrz7UcIg9hS9PMsrZLvh31cFbgJhAKhR84ak4lr
+jku+TUy2tf9ZJr8DU8DUH8dRWccCRZJ+RXFyNAfaMZ3aNJuI6CS5bGTp1LBL4alh
+i4G3NgBIk4JStBxezp3AZuJ5yYz3yHcgk2paMSKiuZoLJ+12KiLwxIlY70Mo984P
+8XI9oP6xVTreGY1KGR3I819s4qAjCley7q1/2eFiO2i7B4JMbn4724lExPUpEaPy
+qBtoiOmN4cYBPaF75RGCJEZmgM/+yt/CQHWEowEQRHSaoQ6iqUBmyOjZhAh03fA3
+8Bg6Mfs2cJXntvjNSLneHTzbOXbh1F57UCh+cWJNk7QOag/O95kd5N4IZJ55CWD6
+BnAc4yMsl9aOGNLYqwX173WqeOUHm7r6MQ+vXxp24ZlBT0Z9x9OfPmN6BGXPXJyA
+OFgkjJacY7L6pTWhVMPDReQ0SkXpTvqBZVGxYaxAROVPg/+Do71j8tiUwESQg19A
+1k/AH25xxfy/4OvcBqCwpphqRwzxuOvc6/+NEwXFiBY+oJdTnQ4=
+=uud3
+-----END PGP SIGNATURE-----
+--=-=-=--
