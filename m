@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89B2CC10DCE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Mar 2020 02:36:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AA84C5ACBF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Mar 2020 02:36:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60879206EB
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Mar 2020 02:36:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31D4B206EB
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Mar 2020 02:36:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584326167;
-	bh=+ugl1LPMDQjGW+NcOl45tiFNhxlRBG/P+8q7FHmK50Q=;
+	s=default; t=1584326185;
+	bh=DAzNytEKYVDkkCaQNm7J4s7xcEx2wTe7yrYfQJXX7+Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zshl8HFF6MT59nGIBP1eVmO6cmvw8w04fC/vRg/FlOs8zi/erFCnwQDhfjmXlXh2h
-	 w1d7/Mlg1kpk3RQ2lIJiTXJXKSChZYFQEXClczahV71efci/oV8qYk9am4RI6YaEKl
-	 1ouxEEgseRKZXs1X6/yyIXgbGyn5amb16PlNgDnM=
+	b=f3o0G13Gvjpx9Mk8WVk86CnZRwlcCbaE0UXRQJkkAnl+52zc5oU8wsyHNXNAgJ370
+	 LKKqZMKDtsI1DL1uxXGqAZGEUzeyhSd4lRQu52huXBjI/o0Tv7X6LWDAincJSoqc/+
+	 76eI/gqnlT/UYm5D+G4gKUElVMHg5MjX5mo4j3HA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729604AbgCPCgG (ORCPT
+        id S1730257AbgCPCfs (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 15 Mar 2020 22:36:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40876 "EHLO mail.kernel.org"
+        Sun, 15 Mar 2020 22:35:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40514 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729712AbgCPCf4 (ORCPT
+        id S1729586AbgCPCfr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 15 Mar 2020 22:35:56 -0400
+        Sun, 15 Mar 2020 22:35:47 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 11FBD206BE;
-        Mon, 16 Mar 2020 02:35:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 46AC320739;
+        Mon, 16 Mar 2020 02:35:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584326156;
-        bh=+ugl1LPMDQjGW+NcOl45tiFNhxlRBG/P+8q7FHmK50Q=;
+        s=default; t=1584326146;
+        bh=DAzNytEKYVDkkCaQNm7J4s7xcEx2wTe7yrYfQJXX7+Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ltA4EhWPpk7SLduvSFmQEtDLUO7enwnCKerTEtqLZxowFfbcEbQ7kTJ1CKYMzMZjx
-         FCj730D6Ikus9JUzzcLMeZtSj9ltNwyq6P2yzeggdNMQcgqOS3BkT0xVcvJ00nmx1r
-         24WjIAsfZKEPJgJePMEWkZpdYS3nNa4qbYdEaUa8=
+        b=tRQCsIvpaAcy9268wB7HdS9Lh4R7JxEarnmqQi9YMfk87pHThOEcgdJKGULgqcSAl
+         XwaTRb8krKW74cw9DLq7xgOAf0yHb6hcGvLUQ5ZodWzwmCHlb9rfz8lgiOaWBenXpE
+         q5F5PS/WkiObAwFxTiQsy8MXdz+g5VoDY9Zv2Vnw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
@@ -49,12 +49,12 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 6/7] drm/exynos: dsi: fix workaround for the legacy clock name
-Date:   Sun, 15 Mar 2020 22:35:46 -0400
-Message-Id: <20200316023548.2347-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 6/7] drm/exynos: dsi: fix workaround for the legacy clock name
+Date:   Sun, 15 Mar 2020 22:35:37 -0400
+Message-Id: <20200316023538.2232-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200316023548.2347-1-sashal@kernel.org>
-References: <20200316023548.2347-1-sashal@kernel.org>
+In-Reply-To: <20200316023538.2232-1-sashal@kernel.org>
+References: <20200316023538.2232-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -113,10 +113,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 1ee0b70472fd8..77ff3eed65d62 100644
+index 5e202af7fbf53..2b6c04acb24f5 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1914,9 +1914,10 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+@@ -1790,9 +1790,10 @@ static int exynos_dsi_probe(struct platform_device *pdev)
  		dsi->clks[i] = devm_clk_get(dev, clk_names[i]);
  		if (IS_ERR(dsi->clks[i])) {
  			if (strcmp(clk_names[i], "sclk_mipi") == 0) {
