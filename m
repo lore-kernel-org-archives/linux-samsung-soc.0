@@ -2,160 +2,100 @@ Return-Path: <SRS0=jGgw=5B=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12308C10DCE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Mar 2020 01:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 512BAC5ACBF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Mar 2020 02:34:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CC9020674
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Mar 2020 01:04:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HXeeCx9Y"
+	by mail.kernel.org (Postfix) with ESMTP id 1A7BC20736
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Mar 2020 02:34:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1584326072;
+	bh=bX0nVfN/TeCkwAQSkAb92VURqb0P0SUE2xUDDSS2voo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=t+2KiqRS9PiKs5CxbFuI/G3wrsxHdSlWa7l1ZJF+eBqWwooPXdVyv2TyzWE0//uYs
+	 YbBrIO45k+arZVAE/6UyCW26NmWWsW8YUrquLjvdtPaQCh0CH1hrxrt+HSnYqLHFLW
+	 5+tC9VqEpgwOSTIZRuSTf5PBSnkrdgyULzi60xT0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729371AbgCPBEy (ORCPT
+        id S1729871AbgCPCeb (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 15 Mar 2020 21:04:54 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:32530 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729319AbgCPBEy (ORCPT
+        Sun, 15 Mar 2020 22:34:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38038 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729869AbgCPCea (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 15 Mar 2020 21:04:54 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200316010450epoutp03201371c0b3d961aeb6bf039ea9d4f63a~8o0YhEZMO1352713527epoutp03G
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Mar 2020 01:04:50 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200316010450epoutp03201371c0b3d961aeb6bf039ea9d4f63a~8o0YhEZMO1352713527epoutp03G
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1584320690;
-        bh=HwhpcH1Wgb6cRKyT3zCXEk0XyA2XROaQct1qZ62tPqk=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=HXeeCx9YUILoqDFxtqv1VRKAW1PxNH/jGoXvq6v833vIfmAFiS5TPxXTSDYS4mK7C
-         Q/LdZRCRiqvMgSHz+1Q4GIs3AVS9DeMpMatHpDeS0yrkHLT//khUTuv4EEFQsitLzJ
-         oilkG9Y63thAMAYvEkJkQlSdSXRXhVn5nMuunmL0=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200316010450epcas1p2c54911c0d4480b61501db29f37a7731d~8o0YOTEHb1982019820epcas1p2K;
-        Mon, 16 Mar 2020 01:04:50 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.154]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 48gdPW0LBczMqYkj; Mon, 16 Mar
-        2020 01:04:47 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        63.B3.04074.BA0DE6E5; Mon, 16 Mar 2020 10:04:43 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20200316010443epcas1p33627ec18d70b980b7a5c943de8cfa07d~8o0RvO4Bl1042510425epcas1p3i;
-        Mon, 16 Mar 2020 01:04:43 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200316010443epsmtrp11b02a751c320248b02cef03005016049~8o0RuoYam2938029380epsmtrp1Q;
-        Mon, 16 Mar 2020 01:04:43 +0000 (GMT)
-X-AuditID: b6c32a39-58bff70000000fea-a1-5e6ed0ab35c9
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        4E.FF.04158.BA0DE6E5; Mon, 16 Mar 2020 10:04:43 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.113.221.211]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200316010443epsmtip120d86e92784c8ea045d5fc650742ad2c~8o0Rl-g1d0278702787epsmtip1y;
-        Mon, 16 Mar 2020 01:04:43 +0000 (GMT)
-From:   Inki Dae <inki.dae@samsung.com>
-To:     airlied@linux.ie
-Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Subject: [GIT PULL] exynos-drm-next
-Date:   Mon, 16 Mar 2020 10:09:17 +0900
-Message-Id: <1584320957-9442-1-git-send-email-inki.dae@samsung.com>
-X-Mailer: git-send-email 2.7.4
+        Sun, 15 Mar 2020 22:34:30 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 771022073C;
+        Mon, 16 Mar 2020 02:34:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584326070;
+        bh=bX0nVfN/TeCkwAQSkAb92VURqb0P0SUE2xUDDSS2voo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=DlnpqUlZENCF7LVmTE87Fb/lF65BqqXWNfxKBtNczYVjmJCYZSkbdYvcF/J0m4Ysh
+         WezhBIj4FR01F70Z3haslf1ba9Jd/nQaTLuOh9LRA+Pw4pxGi9xn7Z2cS44rES//6w
+         GZI6bPqquP+PUAaVzA+OZLUjYd34QGdQ3adPSjvc=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Inki Dae <inki.dae@samsung.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 16/35] drm/exynos: dsi: propagate error value and silence meaningless warning
+Date:   Sun, 15 Mar 2020 22:33:52 -0400
+Message-Id: <20200316023411.1263-16-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200316023411.1263-1-sashal@kernel.org>
+References: <20200316023411.1263-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrAKsWRmVeSWpSXmKPExsWy7bCmvu7qC3lxBsc+q1j0njvJZHHl63s2
-        ixnn9zE5MHts//aA1eN+93Emj8+b5AKYo7JtMlITU1KLFFLzkvNTMvPSbZW8g+Od403NDAx1
-        DS0tzJUU8hJzU22VXHwCdN0yc4AWKSmUJeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIK
-        LAv0ihNzi0vz0vWS83OtDA0MjEyBChOyM+5cfctesE6w4uI5rwbGbXxdjJwcEgImEg+W7mfs
-        YuTiEBLYwSjRsHQrG4TziVFi7aYD7BDON0aJF/PfMsO0LHz+nBUisZdR4uLOk8wQzhdGiZ07
-        nzGBVLEJqEpMXHGfDcQWERCROL7sL5jNLOAm8WfpWRYQW1hAWWL39X2sIDYLUP3WNbcYQWxe
-        AWeJrncQtoSAnMTNc53MEHFBiZMzn7BAzJGXaN46G2yxhEAHm8Tkhp0sEA0uEhMevWSCsIUl
-        Xh3fwg5hS0m87G9jh2hoZpSYOOM0E1Q3o8Tdx9ehuo0l9i+dDJTgAFqhKbF+lz5EWFFi5++5
-        jBCb+STefe1hBSmREOCV6GgTgihRkjh28QbU0RISF5ZMZIOwPSTmP9gPdo+QQKzEgUPXWSYw
-        ys9C8s8sJP/MQli8gJF5FaNYakFxbnpqsWGBKXK0bmIEpzYtyx2Mx875HGIU4GBU4uGVSMuL
-        E2JNLCuuzD3EKMHBrCTC21GTHSfEm5JYWZValB9fVJqTWnyI0RQY3BOZpUST84FpN68k3tDU
-        yNjY2MLE0MzU0FBJnHfq9Zw4IYH0xJLU7NTUgtQimD4mDk6pBsazZtWn3bjKrnz9phr/LvB/
-        zouZLuaPZa/+9n1kLnOpfurnKnWl0ujA+k92D1yLNtv/q9oWySt6staeveP7mu8te7c7tj17
-        EOOaJDc9rL+Vc1nfF66Q6SqMO/4VHXv6YQ/Py3yTlNLWBv5ZRjP1rjsu+NBkW+t7PFxH503D
-        feFNE/o+GiqZNSuxFGckGmoxFxUnAgBQ5rPmgwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrILMWRmVeSWpSXmKPExsWy7bCSnO7qC3lxBs87uC16z51ksrjy9T2b
-        xYzz+5gcmD22f3vA6nG/+ziTx+dNcgHMUVw2Kak5mWWpRfp2CVwZd66+ZS9YJ1hx8ZxXA+M2
-        vi5GTg4JAROJhc+fs3YxcnEICexmlPi3pJWpi5EDKCEhsWUrB4QpLHH4cDFEySdGib7Vl1lB
-        etkEVCUmrrjPBmKLCIhIHF/2F8xmFvCQeL9nNTuILSygLLH7+j6wehag+q1rbjGC2LwCzhJd
-        7yBsCQE5iZvnOpkh4oISJ2c+YQHZyyygLrF+nhDESHmJ5q2zmScw8s9CUjULoWoWkqoFjMyr
-        GCVTC4pz03OLDQuM8lLL9YoTc4tL89L1kvNzNzGCA1JLawfjiRPxhxgFOBiVeHgl0vLihFgT
-        y4orcw8xSnAwK4nwdtRkxwnxpiRWVqUW5ccXleakFh9ilOZgURLnlc8/FikkkJ5YkpqdmlqQ
-        WgSTZeLglGpgdEvyabo5neWK5rozLEq3y1zWrZ5yl4GH5d3Gtgu359724DXJPrrvE/tbpWdb
-        tm89mhvcJ7wm24YjdtPWKw6Jf+3bFyxYr6rEO99DL+zjsUwbY6fu/cuyHvr5xlWvOe+8v55h
-        z4/g1TOm+4p7vFbhaBJb8+LeoabiODG1dEfdrEscTFaXz17pU2Ipzkg01GIuKk4EADd5eFJE
-        AgAA
-X-CMS-MailID: 20200316010443epcas1p33627ec18d70b980b7a5c943de8cfa07d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200316010443epcas1p33627ec18d70b980b7a5c943de8cfa07d
-References: <CGME20200316010443epcas1p33627ec18d70b980b7a5c943de8cfa07d@epcas1p3.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-	Just two cleanups - one is to mask encoder bitmask using
-	drm_encoder_mask(), and other is to use mode->clock
-	instead of calculating it again.
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-	Please kindly let me know if there is any problem.
+[ Upstream commit 0a9d1e3f3f038785ebc72d53f1c409d07f6b4ff5 ]
 
-Thanks,
-Inki Dae
+Properly propagate error value from devm_regulator_bulk_get() and don't
+confuse user with meaningless warning about failure in getting regulators
+in case of deferred probe.
 
-The following changes since commit 69ddce0970d9d1de63bed9c24eefa0814db29a5a:
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-  Merge tag 'amd-drm-next-5.7-2020-03-10' of git://people.freedesktop.org/~agd5f/linux into drm-next (2020-03-13 09:09:11 +1000)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 6926cee91b367..2767408c4750e 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1750,8 +1750,9 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(dsi->supplies),
+ 				      dsi->supplies);
+ 	if (ret) {
+-		dev_info(dev, "failed to get regulators: %d\n", ret);
+-		return -EPROBE_DEFER;
++		if (ret != -EPROBE_DEFER)
++			dev_info(dev, "failed to get regulators: %d\n", ret);
++		return ret;
+ 	}
+ 
+ 	dsi->clks = devm_kcalloc(dev,
+-- 
+2.20.1
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-for-v5.7
-
-for you to fetch changes up to 0c9a609ca444298e438ee9c6daaf53c14277f1ad:
-
-  drm/exynos: Use mode->clock instead of reverse calculating it from the vrefresh (2020-03-16 09:50:28 +0900)
-
-----------------------------------------------------------------
-Two cleanups
-. Replace the hand rolled encoder bitmask thing with drm_encoder_mask()
-. Use mode->clock instead of reverse calculating it from the vrefresh
-
-----------------------------------------------------------------
-Inki Dae (1):
-      Merge tag 'exynos-drm-fixes-for-v5.6-rc5-v2' of git://git.kernel.org/.../daeinki/drm-exynos into exynos-drm-next
-
-Marek Szyprowski (1):
-      drm/exynos: Fix cleanup of IOMMU related objects
-
-Ville Syrjälä (2):
-      drm/exynos: Use drm_encoder_mask()
-      drm/exynos: Use mode->clock instead of reverse calculating it from the vrefresh
-
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  5 +++--
- drivers/gpu/drm/exynos/exynos7_drm_decon.c    |  7 ++++---
- drivers/gpu/drm/exynos/exynos_drm_dma.c       | 28 ++++++++++++++++++---------
- drivers/gpu/drm/exynos/exynos_drm_drv.c       |  5 ++---
- drivers/gpu/drm/exynos/exynos_drm_drv.h       |  6 ++++--
- drivers/gpu/drm/exynos/exynos_drm_fimc.c      |  5 +++--
- drivers/gpu/drm/exynos/exynos_drm_fimd.c      |  5 +++--
- drivers/gpu/drm/exynos/exynos_drm_g2d.c       |  5 +++--
- drivers/gpu/drm/exynos/exynos_drm_gsc.c       |  5 +++--
- drivers/gpu/drm/exynos/exynos_drm_rotator.c   |  5 +++--
- drivers/gpu/drm/exynos/exynos_drm_scaler.c    |  6 ++++--
- drivers/gpu/drm/exynos/exynos_mixer.c         |  7 +++++--
- 12 files changed, 56 insertions(+), 33 deletions(-)
