@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87E4AC10DCE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Mar 2020 02:39:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20810C10DCE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Mar 2020 02:41:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DB9C205C9
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Mar 2020 02:39:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAE52206EB
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Mar 2020 02:41:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584326363;
-	bh=kj8Aiz461xZA+wkG7vkjclbH830EtJcUQuSZSLkNXdc=;
+	s=default; t=1584326482;
+	bh=s2rFdOl3aT69qdT0TYXPhW8yEmrIvhPkYwNwwsXfbxU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0wkBy8TW916LhiwfIwghn47y4g1zpIou/FdJjInNy5fHUUNecjZSF5mdKQXLaC1s4
-	 TXfcxZ2BDM+hA91b/D2Lvtw6Q+7sinUQ5C0z37558pgtpBo7oeRZDa1NaK8MnAt8OK
-	 4lz/k7IFjpBQ39j4oIMdiX0z73yqHdJeRvUBjXE0=
+	b=IZ0ZsnUeWSl4reHYu+1fI2uwzu8NYP3ykkFgngQzlnsZG6tRLogDTOOM+hK12EyHg
+	 N9B/Xy/fs0CaUGvYJ3SRGUQWsFT1MLuyV/sC3FMyCcAHdBzbAVy9eSxMJAv9ebxevc
+	 xM4/9w3Isn+49S/+X4U6d+bKaHd60/t0dLhctLpA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729906AbgCPCjH (ORCPT
+        id S1729627AbgCPClR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 15 Mar 2020 22:39:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38118 "EHLO mail.kernel.org"
+        Sun, 15 Mar 2020 22:41:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36622 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729888AbgCPCed (ORCPT
+        id S1729613AbgCPCdp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 15 Mar 2020 22:34:33 -0400
+        Sun, 15 Mar 2020 22:33:45 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1775E20726;
-        Mon, 16 Mar 2020 02:34:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8849B20738;
+        Mon, 16 Mar 2020 02:33:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584326073;
-        bh=kj8Aiz461xZA+wkG7vkjclbH830EtJcUQuSZSLkNXdc=;
+        s=default; t=1584326024;
+        bh=s2rFdOl3aT69qdT0TYXPhW8yEmrIvhPkYwNwwsXfbxU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bpeOtpZW2pXTbmGBYPAibgopo2wgX4WP+GXgQetmq8hREdvDEiqLCT5b/hkI63lGr
-         G5JednNdkG5BWn1jtK580aqwdAR02f61b3b6Xd+UxMvZW4fpn/t3xv6uLkYTcKOZ34
-         ryDyYXJwiKm7flpcCOz8iA2lD09yhAl0uYjsv5sQ=
+        b=wYLieVFoC0xXbiIQQhBe0EIsHcoEKL1xi4GKzn1V6n1blz4ovb8ONu4SMP7dJsDY7
+         htKt8AJnEBXc9e3gwzviOTnFde+TQMJSJs8kSyC0enpGSifQHtlr4wyiKqdD4osu5Q
+         9QewKkqFH9IqmyK1CEf01ZxTFXrhQtdPDBTEOvYc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
@@ -49,12 +49,12 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 18/35] drm/exynos: hdmi: don't leak enable HDMI_EN regulator if probe fails
-Date:   Sun, 15 Mar 2020 22:33:54 -0400
-Message-Id: <20200316023411.1263-18-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.5 20/41] drm/exynos: hdmi: don't leak enable HDMI_EN regulator if probe fails
+Date:   Sun, 15 Mar 2020 22:32:58 -0400
+Message-Id: <20200316023319.749-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200316023411.1263-1-sashal@kernel.org>
-References: <20200316023411.1263-1-sashal@kernel.org>
+In-Reply-To: <20200316023319.749-1-sashal@kernel.org>
+References: <20200316023319.749-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -113,10 +113,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 12 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 09aa73c0f2add..0073a2b3b80a2 100644
+index 48159d5d22144..d85e15e816e99 100644
 --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
 +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -1802,18 +1802,10 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
+@@ -1803,18 +1803,10 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
  
  	hdata->reg_hdmi_en = devm_regulator_get_optional(dev, "hdmi-en");
  
@@ -136,7 +136,7 @@ index 09aa73c0f2add..0073a2b3b80a2 100644
  	return hdmi_bridge_init(hdata);
  }
  
-@@ -2020,6 +2012,15 @@ static int hdmi_probe(struct platform_device *pdev)
+@@ -2021,6 +2013,15 @@ static int hdmi_probe(struct platform_device *pdev)
  		}
  	}
  
@@ -152,7 +152,7 @@ index 09aa73c0f2add..0073a2b3b80a2 100644
  	pm_runtime_enable(dev);
  
  	audio_infoframe = &hdata->audio.infoframe;
-@@ -2044,7 +2045,8 @@ static int hdmi_probe(struct platform_device *pdev)
+@@ -2045,7 +2046,8 @@ static int hdmi_probe(struct platform_device *pdev)
  
  err_rpm_disable:
  	pm_runtime_disable(dev);
