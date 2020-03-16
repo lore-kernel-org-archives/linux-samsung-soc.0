@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34C41C10DCE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Mar 2020 02:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2722C10F29
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Mar 2020 02:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFE52206BE
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Mar 2020 02:36:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F68F2072A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 16 Mar 2020 02:37:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584326194;
-	bh=/o1Xr498tkQFQ/oFiaM4/uN7/67/7a1kWePFN3V31LI=;
+	s=default; t=1584326225;
+	bh=hcFVzkbMZ5T5KVnuAu+sozg4JHN3abbJHwxGfbqguWo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FaQwzvvNREoCBfpr40kBrQCzStAmGsvYphklSZucRqjMSC8w7jlqaeTyNQrSSn65T
-	 Vkzn3HHMY5T8JYs1TOcfOIG7XQNwX/3cEwSi5U6XH4bt4/xgJ9avSPOMwrBIArw1vI
-	 XX6ztfkU5FmXI8nJHdNcNOHGC4+aNN54NDSdBXYo=
+	b=hx5JSKj5JZFhBbOicZdHNuz4OAqFmnQEqGbDNmTWgdwLyZ+HKBw3xF+NUO/s3lHxV
+	 o2pR4bNp538QMpFCLWaSNbD0+D5CGkskve5D+Y1TEyKxWt4+PDzBK4RohGKk5uLzYx
+	 fZdOk0eMOgJTH20jeYkHw5yeLAVl+JQvnDQSQUbI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729478AbgCPCga (ORCPT
+        id S1730174AbgCPCfa (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 15 Mar 2020 22:36:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40476 "EHLO mail.kernel.org"
+        Sun, 15 Mar 2020 22:35:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729826AbgCPCfp (ORCPT
+        id S1730166AbgCPCf3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 15 Mar 2020 22:35:45 -0400
+        Sun, 15 Mar 2020 22:35:29 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFB4B20722;
-        Mon, 16 Mar 2020 02:35:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93BAF20739;
+        Mon, 16 Mar 2020 02:35:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584326144;
-        bh=/o1Xr498tkQFQ/oFiaM4/uN7/67/7a1kWePFN3V31LI=;
+        s=default; t=1584326128;
+        bh=hcFVzkbMZ5T5KVnuAu+sozg4JHN3abbJHwxGfbqguWo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZTKIIRepsoM2vN8rGanJIGrb3iTku26rQqbA7d5JbUPf+k/ydpyAm0zjsZo+4v9jz
-         /9wtLoK6hY7+N5VEDZQJwmAm7Ila+JiWdYT+K9eNd6PHhXwtBOS2VY+T0cKaZ/1/To
-         k4C/yPGq80ieWIskh8x3HSuk1czNOsjKjGbmpkvU=
+        b=P6ZqLGPbMwz4QBnNsA5rUtq9/Fdz2VnYX0P/wQboCuVbBWoTIlnTrtdtRmqWBm3Ye
+         oYlHJKiS9GQLvvVIEJ3CnrH2/A0fyDofRAGIbcyEkC9xNDmCzaEpgdnwaoGwE/nOEF
+         ctCwm2lK8hlJxYDqJUfEfGNtah2UiBccvhfC1uCI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
@@ -49,12 +49,12 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 5/7] drm/exynos: dsi: propagate error value and silence meaningless warning
-Date:   Sun, 15 Mar 2020 22:35:36 -0400
-Message-Id: <20200316023538.2232-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 07/15] drm/exynos: dsi: propagate error value and silence meaningless warning
+Date:   Sun, 15 Mar 2020 22:35:11 -0400
+Message-Id: <20200316023519.2050-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200316023538.2232-1-sashal@kernel.org>
-References: <20200316023538.2232-1-sashal@kernel.org>
+In-Reply-To: <20200316023519.2050-1-sashal@kernel.org>
+References: <20200316023519.2050-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -81,10 +81,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index e07cb1fe48604..5e202af7fbf53 100644
+index 7904ffa9abfb9..aef18f807e383 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1775,8 +1775,9 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+@@ -1739,8 +1739,9 @@ static int exynos_dsi_probe(struct platform_device *pdev)
  	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(dsi->supplies),
  				      dsi->supplies);
  	if (ret) {
