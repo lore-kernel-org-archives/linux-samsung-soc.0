@@ -2,756 +2,276 @@ Return-Path: <SRS0=f9pd=5D=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9CF6C5ACDC
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 18 Mar 2020 11:18:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF89C5ACD7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 18 Mar 2020 11:47:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7298120774
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 18 Mar 2020 11:18:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lUO5S2am"
+	by mail.kernel.org (Postfix) with ESMTP id 898E420772
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 18 Mar 2020 11:47:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726733AbgCRLSb (ORCPT
+        id S1726821AbgCRLrP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 18 Mar 2020 07:18:31 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:46629 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727805AbgCRLSL (ORCPT
+        Wed, 18 Mar 2020 07:47:15 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:35619 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726586AbgCRLrO (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 18 Mar 2020 07:18:11 -0400
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200318111808epoutp01819311048cbbfae01daa44a06a5ca8bb~9Yeb597We2380423804epoutp01Z
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Mar 2020 11:18:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200318111808epoutp01819311048cbbfae01daa44a06a5ca8bb~9Yeb597We2380423804epoutp01Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1584530288;
-        bh=kG1e97Sd9ZBaPTbCrvQ/xh0qQ3JVnmN4mvo4WDtAKL0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lUO5S2ampTgOKhC+rRKg+Jd/rWOPzKJJqxoMUd3T24NYP3xm+FgtSjvDa6NnQuqZ5
-         THGhHGtB2LbS9shi4LR/FLktjtyxyP6qh/9/w+zYP4Vedho7BpVpGCnBlgTEONP0lw
-         HIq4g9OGmCnWDZHlIybnwBQmS9ahQ3yTF3Hqh1N4=
-Received: from epsmges5p1new.samsung.com (unknown [182.195.42.73]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20200318111808epcas5p140c991c51f6f411fcd4f15e11c266e75~9YebZPHEu2459224592epcas5p1G;
-        Wed, 18 Mar 2020 11:18:08 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B6.4C.04782.F63027E5; Wed, 18 Mar 2020 20:18:07 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20200318111807epcas5p3ad71546260a4bdc7470f6daff8d8bf40~9YebHzdag1553915539epcas5p33;
-        Wed, 18 Mar 2020 11:18:07 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200318111807epsmtrp23a0f2031872a6ec5d906b6f3d00470ae~9YebG_VX13123531235epsmtrp2_;
-        Wed, 18 Mar 2020 11:18:07 +0000 (GMT)
-X-AuditID: b6c32a49-8b3ff700000012ae-f4-5e72036f7292
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C0.3D.04024.F63027E5; Wed, 18 Mar 2020 20:18:07 +0900 (KST)
-Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
-        [107.108.73.139]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200318111805epsmtip24d98ca0f729c3ef3170717539055f5dc~9YeZQ5Ymk0728107281epsmtip2k;
-        Wed, 18 Mar 2020 11:18:05 +0000 (GMT)
-From:   Alim Akhtar <alim.akhtar@samsung.com>
-To:     robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-scsi@vger.kernel.org
-Cc:     krzk@kernel.org, avri.altman@wdc.com, martin.petersen@oracle.com,
-        kwmad.kim@samsung.com, stanley.chu@mediatek.com,
-        cang@codeaurora.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [PATCH v2 2/5] phy: samsung-ufs: add UFS PHY driver for samsung SoC
-Date:   Wed, 18 Mar 2020 16:41:41 +0530
-Message-Id: <20200318111144.39525-3-alim.akhtar@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200318111144.39525-1-alim.akhtar@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA0WSeUiTcRjH+72X74azl2n0pJT2gh1W2rLgtewCqbcQCqL+CFmtelmhbmtz
-        dpJGXjknWlFhXmTn1JQ1rVbWnHN2gKs8OsiS1LIkLc0uK2N7i/77/L7Hw8PDj8blRWQwvUuT
-        Iug1qiSWkhL1TbMj5mlxvXJ+zeUlXHdpPcW9+95BccM1F0iuzNVKcg/78ijO46n1457ZmgnO
-        2tNJcm32Yoo77bmNcaYn1ynuYstvjMtscPlx5+ueoRUBfFu+GeOtlqMUf/VcGp9x7w7Bf+p7
-        TvD5NgviW55ew/gR6zQ+22HC1ks2S2N3CEm7UgV91LKt0p33S0aRrv0k2vvRfYVIR0WHcpGE
-        BmYhZA3U+OUiKS1nbiIY7a0kxMcwgjM36pA3JWe+IPhp5nMR7Wt43AtEuQFB5mtBzGdgUJXX
-        iHkNipkDXadsPg5i1sPjoUbKG8KZuxicPvEC9xqBTDyMme75mGDCodI84GMZEwsPqg9j4nqh
-        UFnr8OkSZin86spE3kHAjFBgt40hMRQHLzvqKJED4X2LzU/kYBgZbKDErRMhzx4tygfhfKmb
-        EHk5ONqLCW8EZ2ZDjT3KK+NMAJjHejGxKYOcLLmYDocjgx1/myFQaDKRIvPw6rAZF+9QgMBS
-        foYsQFOL/k8tR8iCpgg6Q7JaMCzSKTTCnkiDKtlg1Kgjt2uTrcj3YyLWXEdFrfFOxNCI9ZfR
-        tTqlnFSlGvYlOxHQOBskq9itVcplO1T79gt67Ra9MUkwOFEITbCTZcfIjgQ5o1alCImCoBP0
-        /1yMlgSno1NVt6a3a6Vv+pvnpn37EfCufNWSs5amR+vUA7HsB4eSxQs/hzW1Ojtd0Zq2r1B3
-        PGtTgsMYmt0bk8ZKZhrTF4eV9Lg23h2/UT/s7xzqnqHwBLZpJ3Hd/aA+UFYSY32rdeesXV39
-        VjmrImxlxoRLG5pbFNOfTxyP81+0LSxi6pd+ljDsVCkicL1B9Qe+yUI2LQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrNLMWRmVeSWpSXmKPExsWy7bCSvG4+c1GcwYQudYsH87axWbz8eZXN
-        4tP6ZawW84+cY7W48LSHzeL8+Q3sFje3HGWx2PT4GqvF5V1z2CxmnN/HZNF9fQebxfLj/5gs
-        WvceYbdYuvUmowOfx+W+XiaPTas62Tw2L6n3aDm5n8Xj49NbLB59W1Yxehy/sZ3J4/MmOY/2
-        A91MAZxRXDYpqTmZZalF+nYJXBmn5n5lLLgyjbHiw7F1LA2Ms+q6GDk4JARMJM4fM+pi5OIQ
-        EtjNKHHi/XymLkZOoLi0xPWNE9ghbGGJlf+es0MUNTFJPFi7nBkkwSagLXF3+hawBhGBIIl7
-        a9ayghQxC1xhkrh35zkjSEJYwEfid/dJsAYWAVWJ1b2vwWxeARuJ02sbobbJS6zecAAszilg
-        K/H3bitYrxBQzbHJv1gmMPItYGRYxSiZWlCcm55bbFhgmJdarlecmFtcmpeul5yfu4kRHORa
-        mjsYLy+JP8QowMGoxMObsKkgTog1say4MvcQowQHs5II7+LC/Dgh3pTEyqrUovz4otKc1OJD
-        jNIcLErivE/zjkUKCaQnlqRmp6YWpBbBZJk4OKUaGHkcoo4EvToc1fyiQk3+54xf9V9sfwo+
-        1M9QZPWxSlmu/3ideZ5QXbXe5pn/onVWZ+eyzbWKSp+za4JVcfc8/yl3tb6qLqv98VmZa1qX
-        yY2mRbouWfc3H6wr5dy2P1XynvgP/tt1r7KrZ3473L/2T0JBz3nWd+fyH0ku9526d8n5Ct/r
-        QsvmmSuxFGckGmoxFxUnAgCQsUUqbgIAAA==
-X-CMS-MailID: 20200318111807epcas5p3ad71546260a4bdc7470f6daff8d8bf40
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20200318111807epcas5p3ad71546260a4bdc7470f6daff8d8bf40
-References: <20200318111144.39525-1-alim.akhtar@samsung.com>
-        <CGME20200318111807epcas5p3ad71546260a4bdc7470f6daff8d8bf40@epcas5p3.samsung.com>
+        Wed, 18 Mar 2020 07:47:14 -0400
+Received: by mail-lj1-f196.google.com with SMTP id u12so26654823ljo.2;
+        Wed, 18 Mar 2020 04:47:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=Ab62Ifr6mdslEB8rNbBB2lyNK3id75uGbHTExJNuy2w=;
+        b=WG7AWvba1m7Bgi1xcFdbl9adYRZCezs4c7DEgzNGW4Ppp2gDney3qMECnpjEZ9ouxM
+         H44BiKKv1kIO4kfADVzWZi6BduIc0jvKC8b4hicZhkHaLJiY3Fjs8X/c2NyBO6VYzuMs
+         bNAikGIt0AS87EG3EXjKtpxq7KRQJ+BpUaJ+C9fwUfNf3/W5ys711vd3oRnzq/t+oEnm
+         /E14y0WDrXxJMSoFgn2SCrrQPhKB47PfagMsM63ovR6CpZB57ZqSKqHF3+wujuUqaoAy
+         reLYY0rhC5SEdNbKgZp4r8kRy/KC/dT+b43fXhl4vUF5hRbW6Djf7rWc4FWKYRpyEc5F
+         jU6g==
+X-Gm-Message-State: ANhLgQ2Bgm+5Xag58FsRI6ScpPCrXL6mbfHpff+LaAU5a4y2M4Jql4zR
+        7sYjBIqs2YQVPpGtX+TX1uM=
+X-Google-Smtp-Source: ADFU+vsjikg6Y2a5KjS3oadSfQozrw8fRFUY0OAeRSoGQxPf78q4+DaqJVZpkfQhudkt2r3G0F7+Xg==
+X-Received: by 2002:a2e:240e:: with SMTP id k14mr2152030ljk.228.1584532030161;
+        Wed, 18 Mar 2020 04:47:10 -0700 (PDT)
+Received: from localhost.localdomain (dc7t7ryyyyyyyyyyyyybt-3.rev.dnainternet.fi. [2001:14ba:16e1:b700::3])
+        by smtp.gmail.com with ESMTPSA id 8sm17094lfy.21.2020.03.18.04.47.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Mar 2020 04:47:09 -0700 (PDT)
+Date:   Wed, 18 Mar 2020 13:47:01 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Andrei Stefanescu <andrei.stefanescu@microchip.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Sangbeom Kim <sbkim73@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        linux-pm@vger.kernel.org, patches@opensource.cirrus.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Markus Laine <markus.laine@fi.rohmeurope.com>,
+        Mikko Mutanen <mikko.mutanen@fi.rohmeurope.com>
+Subject: [PATCH v5 0/9] Support ROHM BD99954 charger IC
+Message-ID: <cover.1584468798.git.matti.vaittinen@fi.rohmeurope.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This patch introduces Samsung UFS PHY driver. This driver
-supports to deal with phy calibration and power control
-according to UFS host driver's behavior.
+Support ROHM BD99954 Battery Management IC
 
-Reviewed-by: Kiwoong Kim <kwmad.kim@samsung.com>
-Signed-off-by: Seungwon Jeon <essuuj@gmail.com>
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>
+ROHM BD99954 is a Battery Management IC for 1-4 cell Lithium-Ion
+secondary battery. BD99954 is intended to be used in space-constraint
+equipment such as Low profile Notebook PC, Tablets and other
+applications.
+
+Series extracts a "linear ranges" helper out of the regulator
+framework. Linear ranges helper is intended to help converting
+real-world values to register values when conversion is linear. I
+suspect this is useful also for power subsystem and possibly for clk.
+
+This version of series introduces new battry DT binding entries and
+adds the parsing in power_supply_get_battery_info().
+
+Changelog v5:
+ generic:
+   - rebased on top of 5.6-rc6.
+ DT-bindings:
+   - Dropped -charger extension from compatible and removed wildcard x.
+ regulators:
+   - squashed the regulator changes in one patch.
+ power-supply KConfig:
+   - fixed indentiation
+   - dropped unnecessary 'default N' from BD99954.
+
+Changelog v4:
+ generic:
+   - rebase and drop RFC.
+ DT-bindings:
+   - add I2C node address-cells and size-cells to fix yaml check errors
+   - uncomment multipleOf:
+ bd70528:
+   - add patch which renames driver internal linear_range struct to
+     avoid collision when regulator/driver.h (which gets included from
+     rohm generic header) introduces the linear_range struct.
+ regulators:
+   - rebase to v5.6-rc2 and convert also the two newly introduced
+     drivers to use linear_range struct instead of
+     regulator_linear_range.
+ linear_ranges:
+   - Fix kerneldoc.
+
+Changelog RFC-v3:
+ DT-bindings:
+   - fix the BD99954 binding (the *-microvolt Vs. *-microvolts issue is
+     still there. Not sure which one is correct)
+   - renabe tricklecharge-* binding to trickle-charge-* as suggested by
+     Rob.
+ - drop the linear-ranges helper which was written for BD70528 and
+   extract the linear-range code from regulator framework instead.
+ - refactor regulator framework to utilize extracted linear-ranges
+   code.
+ - change the struct regulator_linear_range to linear_range from
+   regulator drivers.
+ - refactor BD70528 to use regulator framework originated
+   linear-ranges code.
+ - change BD99954 to use linear-ranges code from regulator framework
+
+Changelog RFC-v2:
+ DT-bindings:
+   - Used the battery parameters described in battery.txt
+   - Added few new parameters to battery.txt
+   - Added ASCII art charging profile chart for BD99954 to explain
+     states and limits.
+ Linear ranges:
+   - Fixed division by zero error from linear-ranges code if step 0 is
+     used.
+ Power-supply core:
+   - Added parsing of new battery parameters.
+ BD99954 driver:
+   - converted to use battery parameters from battery node
+   - Added step 0 ranges for reg values which do not change voltage
+   - added dt-node to psy-config
+
+Patch 1:
+	DT binding docs for the new battery parameters
+Patch 2:
+	BD99954 charger DT binding docs
+Patch 3:
+	Linear ranges helpers
+Patch 4:
+	Rename driver internal struct linear_range from bd70528-power
+Patch 5:
+	Use linear-ranges helpers in regulator framework and
+	convert regulator drivers to use new linear_range struct.
+Patch 6:
+	Use linear-ranges helpers in bd70528 driver
+Patch 7:
+	Parsing of new battery parameters
+Patch 8:
+	ROHM BD99954 charger IC driver
+Patch 9:
+	Fix Kconfig help text indentiation for other entries as well.
+
 ---
- drivers/phy/samsung/Kconfig           |   9 +
- drivers/phy/samsung/Makefile          |   1 +
- drivers/phy/samsung/phy-exynos7-ufs.h |  85 +++++++
- drivers/phy/samsung/phy-samsung-ufs.c | 311 ++++++++++++++++++++++++++
- drivers/phy/samsung/phy-samsung-ufs.h | 100 +++++++++
- include/linux/phy/phy-samsung-ufs.h   |  70 ++++++
- 6 files changed, 576 insertions(+)
- create mode 100644 drivers/phy/samsung/phy-exynos7-ufs.h
- create mode 100644 drivers/phy/samsung/phy-samsung-ufs.c
- create mode 100644 drivers/phy/samsung/phy-samsung-ufs.h
- create mode 100644 include/linux/phy/phy-samsung-ufs.h
 
-diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
-index 9e483d1fdaf2..fc1e3c17f842 100644
---- a/drivers/phy/samsung/Kconfig
-+++ b/drivers/phy/samsung/Kconfig
-@@ -29,6 +29,15 @@ config PHY_EXYNOS_PCIE
- 	  Enable PCIe PHY support for Exynos SoC series.
- 	  This driver provides PHY interface for Exynos PCIe controller.
- 
-+config PHY_SAMSUNG_UFS
-+	tristate "SAMSUNG SoC series UFS PHY driver"
-+	depends on OF && (ARCH_EXYNOS || COMPILE_TEST)
-+	select GENERIC_PHY
-+	help
-+	  Enable this to support the Samsung UFS PHY driver for
-+	  Samsung SoCs. This driver provides the interface for UFS
-+	  host controller to do PHY related programming.
-+
- config PHY_SAMSUNG_USB2
- 	tristate "Samsung USB 2.0 PHY driver"
- 	depends on HAS_IOMEM
-diff --git a/drivers/phy/samsung/Makefile b/drivers/phy/samsung/Makefile
-index db9b1aa0de6e..3959100fe8a2 100644
---- a/drivers/phy/samsung/Makefile
-+++ b/drivers/phy/samsung/Makefile
-@@ -2,6 +2,7 @@
- obj-$(CONFIG_PHY_EXYNOS_DP_VIDEO)	+= phy-exynos-dp-video.o
- obj-$(CONFIG_PHY_EXYNOS_MIPI_VIDEO)	+= phy-exynos-mipi-video.o
- obj-$(CONFIG_PHY_EXYNOS_PCIE)		+= phy-exynos-pcie.o
-+obj-$(CONFIG_PHY_SAMSUNG_UFS)		+= phy-samsung-ufs.o
- obj-$(CONFIG_PHY_SAMSUNG_USB2)		+= phy-exynos-usb2.o
- phy-exynos-usb2-y			+= phy-samsung-usb2.o
- phy-exynos-usb2-$(CONFIG_PHY_EXYNOS4210_USB2)	+= phy-exynos4210-usb2.o
-diff --git a/drivers/phy/samsung/phy-exynos7-ufs.h b/drivers/phy/samsung/phy-exynos7-ufs.h
-new file mode 100644
-index 000000000000..da981c1ac040
---- /dev/null
-+++ b/drivers/phy/samsung/phy-exynos7-ufs.h
-@@ -0,0 +1,85 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * UFS PHY driver data for Samsung EXYNOS7 SoC
-+ *
-+ * Copyright (C) 2015 Samsung Electronics Co., Ltd.
-+ */
-+#ifndef _PHY_EXYNOS7_UFS_H_
-+#define _PHY_EXYNOS7_UFS_H_
-+
-+#include "phy-samsung-ufs.h"
-+
-+#define EXYNOS7_EMBEDDED_COMBO_PHY_CTRL	0x720
-+#define EXYNOS7_EMBEDDED_COMBO_PHY_CTRL_MASK	0x1
-+#define EXYNOS7_EMBEDDED_COMBO_PHY_CTRL_EN	BIT(0)
-+
-+/* Calibration for phy initialization */
-+static const struct samsung_ufs_phy_cfg exynos7_pre_init_cfg[] = {
-+	PHY_COMN_REG_CFG(0x00f, 0xfa, PWR_MODE_ANY),
-+	PHY_COMN_REG_CFG(0x010, 0x82, PWR_MODE_ANY),
-+	PHY_COMN_REG_CFG(0x011, 0x1e, PWR_MODE_ANY),
-+	PHY_COMN_REG_CFG(0x017, 0x84, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG(0x035, 0x58, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG(0x036, 0x32, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG(0x037, 0x40, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG(0x03b, 0x83, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG(0x042, 0x88, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG(0x043, 0xa6, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG(0x048, 0x74, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG(0x04c, 0x5b, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG(0x04d, 0x83, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG(0x05c, 0x14, PWR_MODE_ANY),
-+	END_UFS_PHY_CFG
-+};
-+
-+static const struct samsung_ufs_phy_cfg exynos7_post_init_cfg[] = {
-+	END_UFS_PHY_CFG
-+};
-+
-+/* Calibration for HS mode series A/B */
-+static const struct samsung_ufs_phy_cfg exynos7_pre_pwr_hs_cfg[] = {
-+	PHY_COMN_REG_CFG(0x00f, 0xfa, PWR_MODE_HS_ANY),
-+	PHY_COMN_REG_CFG(0x010, 0x82, PWR_MODE_HS_ANY),
-+	PHY_COMN_REG_CFG(0x011, 0x1e, PWR_MODE_HS_ANY),
-+	/* Setting order: 1st(0x16, 2nd(0x15) */
-+	PHY_COMN_REG_CFG(0x016, 0xff, PWR_MODE_HS_ANY),
-+	PHY_COMN_REG_CFG(0x015, 0x80, PWR_MODE_HS_ANY),
-+	PHY_COMN_REG_CFG(0x017, 0x94, PWR_MODE_HS_ANY),
-+	PHY_TRSV_REG_CFG(0x036, 0x32, PWR_MODE_HS_ANY),
-+	PHY_TRSV_REG_CFG(0x037, 0x43, PWR_MODE_HS_ANY),
-+	PHY_TRSV_REG_CFG(0x038, 0x3f, PWR_MODE_HS_ANY),
-+	PHY_TRSV_REG_CFG(0x042, 0x88, PWR_MODE_HS_G2_SER_A),
-+	PHY_TRSV_REG_CFG(0x042, 0xbb, PWR_MODE_HS_G2_SER_B),
-+	PHY_TRSV_REG_CFG(0x043, 0xa6, PWR_MODE_HS_ANY),
-+	PHY_TRSV_REG_CFG(0x048, 0x74, PWR_MODE_HS_ANY),
-+	PHY_TRSV_REG_CFG(0x034, 0x35, PWR_MODE_HS_G2_SER_A),
-+	PHY_TRSV_REG_CFG(0x034, 0x36, PWR_MODE_HS_G2_SER_B),
-+	PHY_TRSV_REG_CFG(0x035, 0x5b, PWR_MODE_HS_G2_SER_A),
-+	PHY_TRSV_REG_CFG(0x035, 0x5c, PWR_MODE_HS_G2_SER_B),
-+	END_UFS_PHY_CFG
-+};
-+
-+/* Calibration for HS mode series A/B atfer PMC */
-+static const struct samsung_ufs_phy_cfg exynos7_post_pwr_hs_cfg[] = {
-+	PHY_COMN_REG_CFG(0x015, 0x00, PWR_MODE_HS_ANY),
-+	PHY_TRSV_REG_CFG(0x04d, 0x83, PWR_MODE_HS_ANY),
-+	END_UFS_PHY_CFG
-+};
-+
-+static const struct samsung_ufs_phy_cfg *exynos7_ufs_phy_cfgs[CFG_TAG_MAX] = {
-+	[CFG_PRE_INIT]		= exynos7_pre_init_cfg,
-+	[CFG_POST_INIT]		= exynos7_post_init_cfg,
-+	[CFG_PRE_PWR_HS]	= exynos7_pre_pwr_hs_cfg,
-+	[CFG_POST_PWR_HS]	= exynos7_post_pwr_hs_cfg,
-+};
-+
-+static struct samsung_ufs_phy_drvdata exynos7_ufs_phy = {
-+	.cfg = exynos7_ufs_phy_cfgs,
-+	.isol = {
-+		.offset = EXYNOS7_EMBEDDED_COMBO_PHY_CTRL,
-+		.mask = EXYNOS7_EMBEDDED_COMBO_PHY_CTRL_MASK,
-+		.en = EXYNOS7_EMBEDDED_COMBO_PHY_CTRL_EN,
-+	},
-+};
-+
-+#endif /* _PHY_EXYNOS7_UFS_H_ */
-diff --git a/drivers/phy/samsung/phy-samsung-ufs.c b/drivers/phy/samsung/phy-samsung-ufs.c
-new file mode 100644
-index 000000000000..2d5db24de49b
---- /dev/null
-+++ b/drivers/phy/samsung/phy-samsung-ufs.c
-@@ -0,0 +1,311 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * UFS PHY driver for Samsung SoC
-+ *
-+ * Copyright (C) 2015 Samsung Electronics Co., Ltd.
-+ * Author: Seungwon Jeon <essuuj@gmail.com>
-+ * Author: Alim Akhtar <alim.akhtar@samsung.com>
-+ *
-+ */
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/of.h>
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/phy/phy.h>
-+#include <linux/phy/phy-samsung-ufs.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include "phy-samsung-ufs.h"
-+
-+#define for_each_phy_lane(phy, i) \
-+	for (i = 0; i < (phy)->lane_cnt; i++)
-+#define for_each_phy_cfg(cfg) \
-+	for (; (cfg)->id; (cfg)++)
-+
-+#define PHY_DEF_LANE_CNT	1
-+
-+static void samsung_ufs_phy_config(struct samsung_ufs_phy *phy,
-+			const struct samsung_ufs_phy_cfg *cfg, u8 lane)
-+{
-+	enum {LANE_0, LANE_1}; /* lane index */
-+
-+	switch (lane) {
-+	case LANE_0:
-+		writel(cfg->val, (phy)->reg_pma + cfg->off_0);
-+		break;
-+	case LANE_1:
-+		if (cfg->id == PHY_TRSV_BLK)
-+			writel(cfg->val, (phy)->reg_pma + cfg->off_1);
-+		break;
-+	}
-+}
-+
-+int samsung_ufs_phy_wait_for_lock_acq(struct phy *phy)
-+{
-+	struct samsung_ufs_phy *ufs_phy = get_samsung_ufs_phy(phy);
-+	const unsigned int timeout_us = 100000;
-+	const unsigned int sleep_us = 10;
-+	u32 val;
-+	int err;
-+
-+	err = readl_poll_timeout(
-+			ufs_phy->reg_pma + PHY_APB_ADDR(PHY_PLL_LOCK_STATUS),
-+			val, (val & PHY_PLL_LOCK_BIT), sleep_us, timeout_us);
-+	if (err) {
-+		dev_err(ufs_phy->dev,
-+			"failed to get phy pll lock acquisition %d\n", err);
-+		goto out;
-+	}
-+
-+	err = readl_poll_timeout(
-+			ufs_phy->reg_pma + PHY_APB_ADDR(PHY_CDR_LOCK_STATUS),
-+			val, (val & PHY_CDR_LOCK_BIT), sleep_us, timeout_us);
-+	if (err) {
-+		dev_err(ufs_phy->dev,
-+			"failed to get phy cdr lock acquisition %d\n", err);
-+		goto out;
-+	}
-+
-+out:
-+	return err;
-+}
-+
-+int samsung_ufs_phy_calibrate(struct phy *phy)
-+{
-+	struct samsung_ufs_phy *ufs_phy = get_samsung_ufs_phy(phy);
-+	struct samsung_ufs_phy_cfg **cfgs = ufs_phy->cfg;
-+	const struct samsung_ufs_phy_cfg *cfg;
-+	int i;
-+	int err = 0;
-+
-+	if (unlikely(ufs_phy->ufs_phy_state < CFG_PRE_INIT ||
-+		     ufs_phy->ufs_phy_state >= CFG_TAG_MAX)) {
-+		dev_err(ufs_phy->dev, "invalid phy config index %d\n",
-+							ufs_phy->ufs_phy_state);
-+		return -EINVAL;
-+	}
-+
-+	if (ufs_phy->is_pre_init)
-+		ufs_phy->is_pre_init = false;
-+	if (ufs_phy->is_post_init) {
-+		ufs_phy->is_post_init = false;
-+		ufs_phy->ufs_phy_state = CFG_POST_INIT;
-+	}
-+	if (ufs_phy->is_pre_pmc) {
-+		ufs_phy->is_pre_pmc = false;
-+		ufs_phy->ufs_phy_state = CFG_PRE_PWR_HS;
-+	}
-+	if (ufs_phy->is_post_pmc) {
-+		ufs_phy->is_post_pmc = false;
-+		ufs_phy->ufs_phy_state = CFG_POST_PWR_HS;
-+	}
-+
-+	switch (ufs_phy->ufs_phy_state) {
-+	case CFG_PRE_INIT:
-+		ufs_phy->is_post_init = true;
-+		break;
-+	case CFG_POST_INIT:
-+		ufs_phy->is_pre_pmc = true;
-+		break;
-+	case CFG_PRE_PWR_HS:
-+		ufs_phy->is_post_pmc = true;
-+		break;
-+	case CFG_POST_PWR_HS:
-+		break;
-+	default:
-+		dev_err(ufs_phy->dev, "wrong state for phy calibration\n");
-+	}
-+
-+	cfg = cfgs[ufs_phy->ufs_phy_state];
-+	if (!cfg)
-+		goto out;
-+
-+	for_each_phy_cfg(cfg) {
-+		for_each_phy_lane(ufs_phy, i) {
-+			samsung_ufs_phy_config(ufs_phy, cfg, i);
-+		}
-+	}
-+
-+	if (ufs_phy->ufs_phy_state == CFG_POST_PWR_HS)
-+		err = samsung_ufs_phy_wait_for_lock_acq(phy);
-+out:
-+	return err;
-+}
-+
-+static int samsung_ufs_phy_clks_init(struct samsung_ufs_phy *phy)
-+{
-+	struct clk *child, *parent;
-+
-+	child = devm_clk_get(phy->dev, "ref_clk");
-+	if (IS_ERR(child))
-+		dev_err(phy->dev, "failed to get ref_clk clock\n");
-+	else
-+		phy->ref_clk = child;
-+
-+	parent = devm_clk_get(phy->dev, "ref_clk_parent");
-+	if (IS_ERR(parent))
-+		dev_err(phy->dev, "failed to get ref_clk_parent clock\n");
-+	else
-+		phy->ref_clk_parent = parent;
-+
-+	return clk_set_parent(child, parent);
-+}
-+
-+static int samsung_ufs_phy_init(struct phy *phy)
-+{
-+	struct samsung_ufs_phy *_phy = get_samsung_ufs_phy(phy);
-+
-+	_phy->lane_cnt = phy->attrs.bus_width;
-+	_phy->ufs_phy_state = CFG_PRE_INIT;
-+
-+	_phy->is_pre_init = true;
-+	_phy->is_post_init = false;
-+	_phy->is_pre_pmc = false;
-+	_phy->is_post_pmc = false;
-+
-+	samsung_ufs_phy_clks_init(_phy);
-+
-+	samsung_ufs_phy_calibrate(phy);
-+
-+	return 0;
-+}
-+
-+static int samsung_ufs_phy_power_on(struct phy *phy)
-+{
-+	struct samsung_ufs_phy *_phy = get_samsung_ufs_phy(phy);
-+	int ret;
-+
-+	ret = clk_prepare_enable(_phy->ref_clk);
-+	if (ret) {
-+		dev_err(_phy->dev, "%s: ref_clk enable failed %d\n",
-+				__func__, ret);
-+		return ret;
-+	}
-+
-+	samsung_ufs_phy_ctrl_isol(_phy, false);
-+	return 0;
-+}
-+
-+static int samsung_ufs_phy_power_off(struct phy *phy)
-+{
-+	struct samsung_ufs_phy *_phy = get_samsung_ufs_phy(phy);
-+
-+	samsung_ufs_phy_ctrl_isol(_phy, true);
-+	clk_disable_unprepare(_phy->ref_clk);
-+	return 0;
-+}
-+
-+static int samsung_ufs_phy_set_mode(struct phy *generic_phy,
-+					enum phy_mode mode, int submode)
-+{
-+	struct samsung_ufs_phy *_phy = get_samsung_ufs_phy(generic_phy);
-+
-+	_phy->mode = PHY_MODE_INVALID;
-+
-+	if (mode > 0)
-+		_phy->mode = mode;
-+
-+	return 0;
-+}
-+
-+static struct phy_ops samsung_ufs_phy_ops = {
-+	.init		= samsung_ufs_phy_init,
-+	.power_on	= samsung_ufs_phy_power_on,
-+	.power_off	= samsung_ufs_phy_power_off,
-+	.calibrate	= samsung_ufs_phy_calibrate,
-+	.set_mode	= samsung_ufs_phy_set_mode,
-+}
-+;
-+static const struct of_device_id samsung_ufs_phy_match[];
-+
-+static int samsung_ufs_phy_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct resource *res;
-+	const struct of_device_id *match;
-+	struct samsung_ufs_phy *phy;
-+	struct phy *gen_phy;
-+	struct phy_provider *phy_provider;
-+	const struct samsung_ufs_phy_drvdata *drvdata;
-+	int err = 0;
-+
-+	match = of_match_node(samsung_ufs_phy_match, dev->of_node);
-+	if (!match) {
-+		err = -EINVAL;
-+		dev_err(dev, "failed to get match_node\n");
-+		goto out;
-+	}
-+
-+	phy = devm_kzalloc(dev, sizeof(*phy), GFP_KERNEL);
-+	if (!phy) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "phy-pma");
-+	phy->reg_pma = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(phy->reg_pma)) {
-+		err = PTR_ERR(phy->reg_pma);
-+		goto out;
-+	}
-+
-+	phy->reg_pmu = syscon_regmap_lookup_by_phandle(
-+				dev->of_node, "samsung,pmu-syscon");
-+	if (IS_ERR(phy->reg_pmu)) {
-+		err = PTR_ERR(phy->reg_pmu);
-+		dev_err(dev, "failed syscon remap for pmu\n");
-+		goto out;
-+	}
-+
-+	gen_phy = devm_phy_create(dev, NULL, &samsung_ufs_phy_ops);
-+	if (IS_ERR(gen_phy)) {
-+		err = PTR_ERR(gen_phy);
-+		dev_err(dev, "failed to create PHY for ufs-phy\n");
-+		goto out;
-+	}
-+
-+	drvdata = match->data;
-+	phy->dev = dev;
-+	phy->drvdata = drvdata;
-+	phy->cfg = (struct samsung_ufs_phy_cfg **)drvdata->cfg;
-+	phy->isol = &drvdata->isol;
-+	phy->lane_cnt = PHY_DEF_LANE_CNT;
-+
-+	phy_set_drvdata(gen_phy, phy);
-+
-+	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-+	if (IS_ERR(phy_provider)) {
-+		err = PTR_ERR(phy_provider);
-+		dev_err(dev, "failed to register phy-provider\n");
-+		goto out;
-+	}
-+out:
-+	return err;
-+}
-+
-+static const struct of_device_id samsung_ufs_phy_match[] = {
-+	{
-+		.compatible = "samsung,exynos7-ufs-phy",
-+		.data = &exynos7_ufs_phy,
-+	},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, samsung_ufs_phy_match);
-+
-+static struct platform_driver samsung_ufs_phy_driver = {
-+	.probe  = samsung_ufs_phy_probe,
-+	.driver = {
-+		.name = "samsung-ufs-phy",
-+		.of_match_table = samsung_ufs_phy_match,
-+	},
-+};
-+module_platform_driver(samsung_ufs_phy_driver);
-+MODULE_DESCRIPTION("Samsung SoC UFS PHY Driver");
-+MODULE_AUTHOR("Seungwon Jeon <essuuj@gmail.com>");
-+MODULE_AUTHOR("Alim Akhtar <alim.akhtar@samsung.com>");
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/phy/samsung/phy-samsung-ufs.h b/drivers/phy/samsung/phy-samsung-ufs.h
-new file mode 100644
-index 000000000000..d0ae2b416b2b
---- /dev/null
-+++ b/drivers/phy/samsung/phy-samsung-ufs.h
-@@ -0,0 +1,100 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * UFS PHY driver for Samsung EXYNOS SoC
-+ *
-+ * Copyright (C) 2015 Samsung Electronics Co., Ltd.
-+ * Author: Seungwon Jeon <essuuj@gmail.com>
-+ * Author: Alim Akhtar <alim.akhtar@samsung.com>
-+ *
-+ */
-+#ifndef _PHY_SAMSUNG_UFS_
-+#define _PHY_SAMSUNG_UFS_
-+
-+#define PHY_COMN_BLK	1
-+#define PHY_TRSV_BLK	2
-+#define END_UFS_PHY_CFG { 0 }
-+#define PHY_TRSV_CH_OFFSET	0x30
-+#define PHY_APB_ADDR(off)	((off) << 2)
-+
-+#define PHY_COMN_REG_CFG(o, v, d) {	\
-+	.off_0 = PHY_APB_ADDR((o)),	\
-+	.off_1 = 0,		\
-+	.val = (v),		\
-+	.desc = (d),		\
-+	.id = PHY_COMN_BLK,	\
-+}
-+
-+#define PHY_TRSV_REG_CFG(o, v, d) {	\
-+	.off_0 = PHY_APB_ADDR((o)),	\
-+	.off_1 = PHY_APB_ADDR((o) + PHY_TRSV_CH_OFFSET),	\
-+	.val = (v),		\
-+	.desc = (d),		\
-+	.id = PHY_TRSV_BLK,	\
-+}
-+
-+/* UFS PHY registers */
-+#define PHY_PLL_LOCK_STATUS	0x1e
-+#define PHY_CDR_LOCK_STATUS	0x5e
-+
-+#define PHY_PLL_LOCK_BIT	BIT(5)
-+#define PHY_CDR_LOCK_BIT	BIT(4)
-+
-+/* PHY calibration point/state */
-+enum {
-+	CFG_PRE_INIT,
-+	CFG_POST_INIT,
-+	CFG_PRE_PWR_HS,
-+	CFG_POST_PWR_HS,
-+	CFG_TAG_MAX,
-+};
-+
-+struct samsung_ufs_phy_cfg {
-+	u32 off_0;
-+	u32 off_1;
-+	u32 val;
-+	u8 desc;
-+	u8 id;
-+};
-+
-+struct samsung_ufs_phy_drvdata {
-+	const struct samsung_ufs_phy_cfg **cfg;
-+	struct pmu_isol {
-+		u32 offset;
-+		u32 mask;
-+		u32 en;
-+	} isol;
-+};
-+
-+struct samsung_ufs_phy {
-+	struct device *dev;
-+	void __iomem *reg_pma;
-+	struct regmap *reg_pmu;
-+	struct clk *ref_clk;
-+	struct clk *ref_clk_parent;
-+	const struct samsung_ufs_phy_drvdata *drvdata;
-+	struct samsung_ufs_phy_cfg **cfg;
-+	const struct pmu_isol *isol;
-+	u8 lane_cnt;
-+	int ufs_phy_state;
-+	enum phy_mode mode;
-+	bool is_pre_init;
-+	bool is_post_init;
-+	bool is_pre_pmc;
-+	bool is_post_pmc;
-+};
-+
-+static inline struct samsung_ufs_phy *get_samsung_ufs_phy(struct phy *phy)
-+{
-+	return (struct samsung_ufs_phy *)phy_get_drvdata(phy);
-+}
-+
-+static inline void samsung_ufs_phy_ctrl_isol(
-+		struct samsung_ufs_phy *phy, u32 isol)
-+{
-+	regmap_update_bits(phy->reg_pmu, phy->isol->offset,
-+			phy->isol->mask, isol ? 0 : phy->isol->en);
-+}
-+
-+#include "phy-exynos7-ufs.h"
-+
-+#endif /* _PHY_SAMSUNG_UFS_ */
-diff --git a/include/linux/phy/phy-samsung-ufs.h b/include/linux/phy/phy-samsung-ufs.h
-new file mode 100644
-index 000000000000..1def56207f5d
---- /dev/null
-+++ b/include/linux/phy/phy-samsung-ufs.h
-@@ -0,0 +1,70 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * phy-samsung-ufs.h - Header file for the UFS PHY of Samsung SoC
-+ *
-+ * Copyright (C) 2015 Samsung Electronics Co., Ltd.
-+ * Author: Seungwon Jeon <essuuj@gmail.com>
-+ * Author: Alim Akhtar <alim.akhtar@samsung.com>
-+ *
-+ */
-+
-+#ifndef _PHY_EXYNOS_UFS_H_
-+#define _PHY_EXYNOS_UFS_H_
-+
-+#include "phy.h"
-+
-+/* description for PHY calibration */
-+enum {
-+	/* applicable to any */
-+	PWR_DESC_ANY	= 0,
-+	/* mode */
-+	PWR_DESC_PWM	= 1,
-+	PWR_DESC_HS	= 2,
-+	/* series */
-+	PWR_DESC_SER_A	= 1,
-+	PWR_DESC_SER_B	= 2,
-+	/* gear */
-+	PWR_DESC_G1	= 1,
-+	PWR_DESC_G2	= 2,
-+	PWR_DESC_G3	= 3,
-+	PWR_DESC_G4	= 4,
-+	PWR_DESC_G5	= 5,
-+	PWR_DESC_G6	= 6,
-+	PWR_DESC_G7	= 7,
-+	/* field mask */
-+	MD_MASK		= 0x3,
-+	SR_MASK		= 0x3,
-+	GR_MASK		= 0x7,
-+};
-+
-+#define PWR_MODE(g, s, m)	((((g) & GR_MASK) << 4) |\
-+				 (((s) & SR_MASK) << 2) | ((m) & MD_MASK))
-+#define PWR_MODE_HS(g, s)	((((g) & GR_MASK) << 4) |\
-+				 (((s) & SR_MASK) << 2) | PWR_DESC_HS)
-+#define PWR_MODE_HS_G1_ANY	PWR_MODE_HS(PWR_DESC_G1, PWR_DESC_ANY)
-+#define PWR_MODE_HS_G1_SER_A	PWR_MODE_HS(PWR_DESC_G1, PWR_DESC_SER_A)
-+#define PWR_MODE_HS_G1_SER_B	PWR_MODE_HS(PWR_DESC_G1, PWR_DESC_SER_B)
-+#define PWR_MODE_HS_G2_ANY	PWR_MODE_HS(PWR_DESC_G2, PWR_DESC_ANY)
-+#define PWR_MODE_HS_G2_SER_A	PWR_MODE_HS(PWR_DESC_G2, PWR_DESC_SER_A)
-+#define PWR_MODE_HS_G2_SER_B	PWR_MODE_HS(PWR_DESC_G2, PWR_DESC_SER_B)
-+#define PWR_MODE_HS_G3_ANY	PWR_MODE_HS(PWR_DESC_G3, PWR_DESC_ANY)
-+#define PWR_MODE_HS_G3_SER_A	PWR_MODE_HS(PWR_DESC_G3, PWR_DESC_SER_A)
-+#define PWR_MODE_HS_G3_SER_B	PWR_MODE_HS(PWR_DESC_G3, PWR_DESC_SER_B)
-+#define PWR_MODE_HS_ANY		PWR_MODE(PWR_DESC_ANY,\
-+					 PWR_DESC_ANY, PWR_DESC_HS)
-+#define PWR_MODE_PWM_ANY	PWR_MODE(PWR_DESC_ANY,\
-+					 PWR_DESC_ANY, PWR_DESC_PWM)
-+#define PWR_MODE_ANY		PWR_MODE(PWR_DESC_ANY,\
-+					 PWR_DESC_ANY, PWR_DESC_ANY)
-+#define IS_PWR_MODE_HS(d)	(((d) & MD_MASK) == PWR_DESC_HS)
-+#define IS_PWR_MODE_PWM(d)	(((d) & MD_MASK) == PWR_DESC_PWM)
-+#define IS_PWR_MODE_ANY(d)	((d) == PWR_MODE_ANY)
-+#define IS_PWR_MODE_HS_ANY(d)	((d) == PWR_MODE_HS_ANY)
-+#define COMP_PWR_MODE(a, b)		((a) == (b))
-+#define COMP_PWR_MODE_GEAR(a, b)	((((a) >> 4) & GR_MASK) == \
-+					 (((b) >> 4) & GR_MASK))
-+#define COMP_PWR_MODE_SER(a, b)		((((a) >> 2) & SR_MASK) == \
-+					 (((b) >> 2) & SR_MASK))
-+#define COMP_PWR_MODE_MD(a, b)		(((a) & MD_MASK) == ((b) & MD_MASK))
-+
-+#endif /* _PHY_EXYNOS_UFS_H_ */
+Matti Vaittinen (9):
+  dt-bindings: battery: add new battery parameters
+  dt_bindings: ROHM BD99954 Charger
+  drivers: base: add linear ranges helpers
+  power: supply: bd70528: rename linear_range to avoid collision
+  regulator: use linear_ranges helper
+  power: supply: bd70528: use linear ranges
+  power: supply: add battery parameters
+  power: supply: Support ROHM bd99954 charger
+  power: supply: Fix Kconfig help text indentiation
+
+ .../bindings/power/supply/battery.txt         |    6 +
+ .../bindings/power/supply/rohm,bd99954.yaml   |  155 +++
+ drivers/base/Kconfig                          |    3 +
+ drivers/base/Makefile                         |    1 +
+ drivers/base/linear_ranges.c                  |  246 ++++
+ drivers/power/supply/Kconfig                  |   34 +-
+ drivers/power/supply/Makefile                 |    1 +
+ drivers/power/supply/bd70528-charger.c        |  140 +-
+ drivers/power/supply/bd99954-charger.c        | 1171 +++++++++++++++++
+ drivers/power/supply/power_supply_core.c      |    8 +
+ drivers/regulator/88pg86x.c                   |    4 +-
+ drivers/regulator/88pm800-regulator.c         |    4 +-
+ drivers/regulator/Kconfig                     |    1 +
+ drivers/regulator/act8865-regulator.c         |    4 +-
+ drivers/regulator/act8945a-regulator.c        |    2 +-
+ drivers/regulator/arizona-ldo1.c              |    2 +-
+ drivers/regulator/arizona-micsupp.c           |    4 +-
+ drivers/regulator/as3711-regulator.c          |    6 +-
+ drivers/regulator/as3722-regulator.c          |    4 +-
+ drivers/regulator/axp20x-regulator.c          |   16 +-
+ drivers/regulator/bcm590xx-regulator.c        |    8 +-
+ drivers/regulator/bd70528-regulator.c         |    8 +-
+ drivers/regulator/bd71828-regulator.c         |   10 +-
+ drivers/regulator/bd718x7-regulator.c         |   26 +-
+ drivers/regulator/da903x.c                    |    2 +-
+ drivers/regulator/helpers.c                   |  130 +-
+ drivers/regulator/hi6421-regulator.c          |    4 +-
+ drivers/regulator/lochnagar-regulator.c       |    4 +-
+ drivers/regulator/lp873x-regulator.c          |    4 +-
+ drivers/regulator/lp87565-regulator.c         |    2 +-
+ drivers/regulator/lp8788-buck.c               |    2 +-
+ drivers/regulator/max77650-regulator.c        |    2 +-
+ drivers/regulator/mcp16502.c                  |    4 +-
+ drivers/regulator/mp8859.c                    |    2 +-
+ drivers/regulator/mt6323-regulator.c          |    6 +-
+ drivers/regulator/mt6358-regulator.c          |    8 +-
+ drivers/regulator/mt6380-regulator.c          |    6 +-
+ drivers/regulator/mt6397-regulator.c          |    6 +-
+ drivers/regulator/palmas-regulator.c          |    4 +-
+ drivers/regulator/qcom-rpmh-regulator.c       |    2 +-
+ drivers/regulator/qcom_rpm-regulator.c        |   14 +-
+ drivers/regulator/qcom_smd-regulator.c        |   70 +-
+ drivers/regulator/rk808-regulator.c           |   10 +-
+ drivers/regulator/s2mps11.c                   |   14 +-
+ drivers/regulator/sky81452-regulator.c        |    2 +-
+ drivers/regulator/stpmic1_regulator.c         |   18 +-
+ drivers/regulator/tps65086-regulator.c        |   10 +-
+ drivers/regulator/tps65217-regulator.c        |    4 +-
+ drivers/regulator/tps65218-regulator.c        |    6 +-
+ drivers/regulator/tps65912-regulator.c        |    4 +-
+ drivers/regulator/twl-regulator.c             |    4 +-
+ drivers/regulator/twl6030-regulator.c         |    2 +-
+ drivers/regulator/wm831x-dcdc.c               |    2 +-
+ drivers/regulator/wm831x-ldo.c                |    4 +-
+ drivers/regulator/wm8350-regulator.c          |    2 +-
+ drivers/regulator/wm8400-regulator.c          |    2 +-
+ include/linux/linear_range.h                  |   48 +
+ include/linux/power/bd99954-charger.h         | 1075 +++++++++++++++
+ include/linux/power_supply.h                  |    4 +
+ include/linux/regulator/driver.h              |   27 +-
+ 60 files changed, 3018 insertions(+), 356 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/power/supply/rohm,bd99954.yaml
+ create mode 100644 drivers/base/linear_ranges.c
+ create mode 100644 drivers/power/supply/bd99954-charger.c
+ create mode 100644 include/linux/linear_range.h
+ create mode 100644 include/linux/power/bd99954-charger.h
+
+
+base-commit: fb33c6510d55 ("Linux 5.6-rc6")
 -- 
-2.17.1
+2.21.0
 
+
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =] 
