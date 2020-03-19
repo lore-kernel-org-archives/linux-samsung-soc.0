@@ -2,126 +2,94 @@ Return-Path: <SRS0=ZP+L=5E=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43603C43332
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Mar 2020 17:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03FE7C4332D
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Mar 2020 17:12:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25B13208D6
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Mar 2020 17:05:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC69D207FC
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 19 Mar 2020 17:12:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1584637937;
+	bh=fxN4CnnOD6y03mHmAA5C+hhbqj2uKF+4bj47hgkFoVY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=BLJLCnjQaniTxFTP37plV5Cwc1qDlOZdnJLownYwThve+MyurqOj2Oon8X5fGPn/F
+	 1RrFWZXE92n7gj/WJyF34LdFMClk2lWfbJVbz2ybSXx60Cdmoscnneufu1VzXAiftR
+	 k0GWs1gcFWGPfmiyarBvHtGN1Rdc7a8cBsZsDPJk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbgCSRFd (ORCPT
+        id S1728105AbgCSRMR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 19 Mar 2020 13:05:33 -0400
-Received: from asavdk3.altibox.net ([109.247.116.14]:41048 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727252AbgCSRFd (ORCPT
+        Thu, 19 Mar 2020 13:12:17 -0400
+Received: from mail-il1-f196.google.com ([209.85.166.196]:41727 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727235AbgCSRMR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 19 Mar 2020 13:05:33 -0400
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk3.altibox.net (Postfix) with ESMTPS id 1AAD32002D;
-        Thu, 19 Mar 2020 18:05:24 +0100 (CET)
-Date:   Thu, 19 Mar 2020 18:05:22 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Thomas Zimmermann <tzimmermann@suse.de>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Thu, 19 Mar 2020 13:12:17 -0400
+Received: by mail-il1-f196.google.com with SMTP id l14so2938868ilj.8;
+        Thu, 19 Mar 2020 10:12:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FuFy53dKsb2fck0JMwy1FXmxdDEmegXgO4r2caNX4Qo=;
+        b=OLXIkvGw3tJqvUSlP6ONTJRWwZsrZTNqk6ywd2Tc1yN0IxBF7yPsMAPHoxyxnikmlD
+         k6HUvjjsy+ZkZLJD/b/5D/ZzNc2TvhBMIqPGkum6U+N2BpqJaYO2YWCiIXX8t2quYGOZ
+         B9l6Ooq3OXIT5mWeiBFzXRAZvXlNl4duwAsxPjXtlWE+mcTA9u9K7PHudhoHCPNWUvQk
+         Uofse2osD0WeUNHdtFcNgXl3faKzC/zItp01dVoSzU8RozIq7eZagGJxGRSYoxCIVztg
+         cqZyoJ1C9aPVJhzITLFfDlk64GzLy/eosDZ+tufTTuO0+bveW6C9TH7gDlPeFlOMdsMw
+         X/Yw==
+X-Gm-Message-State: ANhLgQ2pOWvmbDrF3UeMe3/SuzDmSDS2L73F8j6RUvKLw0eKEwhOaF96
+        aPj8YMdX62qvCUId6tzDgw==
+X-Google-Smtp-Source: ADFU+vs/qjBgZCguu4PgrA7kda0SwMTPsdT6I/2Mcj/b7bYNjpINO1LuIXtpzuRHB/7LUhmdIByVUQ==
+X-Received: by 2002:a92:35db:: with SMTP id c88mr4010676ilf.187.1584637934049;
+        Thu, 19 Mar 2020 10:12:14 -0700 (PDT)
+Received: from rob-hp-laptop ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id y8sm937166iot.14.2020.03.19.10.12.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Mar 2020 10:12:13 -0700 (PDT)
+Received: (nullmailer pid 16694 invoked by uid 1000);
+        Thu, 19 Mar 2020 17:12:10 -0000
+Date:   Thu, 19 Mar 2020 11:12:10 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Alim Akhtar <alim.akhtar@samsung.com>
+Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-scsi@vger.kernel.org, krzk@kernel.org, avri.altman@wdc.com,
+        martin.petersen@oracle.com, kwmad.kim@samsung.com,
+        stanley.chu@mediatek.com, cang@codeaurora.org,
         linux-samsung-soc@vger.kernel.org,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Jose Roberto de Souza <jose.souza@intel.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-mediatek@lists.infradead.org,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        linux-amlogic@lists.infradead.org, linux-tegra@vger.kernel.org,
-        Dave Airlie <airlied@redhat.com>,
-        amd-gfx@lists.freedesktop.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        Emil Velikov <emil.velikov@collabora.com>
-Subject: Re: [PATCH v1 0/3] drm: drm_encoder_init() =>
- drm_encoder_init_funcs()
-Message-ID: <20200319170522.GA29213@ravnborg.org>
-References: <20200313201744.19773-1-sam@ravnborg.org>
- <20200319141954.GA25036@ravnborg.org>
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH v2 1/5] dt-bindings: phy: Document Samsung UFS PHY
+ bindings
+Message-ID: <20200319171210.GA14990@bogus>
+References: <20200318111144.39525-1-alim.akhtar@samsung.com>
+ <CGME20200318111805epcas5p3e68724d923a07ddd80a45e3316292940@epcas5p3.samsung.com>
+ <20200318111144.39525-2-alim.akhtar@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200319141954.GA25036@ravnborg.org>
+In-Reply-To: <20200318111144.39525-2-alim.akhtar@samsung.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=eMA9ckh1 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=e5mUnYsNAAAA:8
-        a=9MVmhzcSsuuJt3ktV8oA:9 a=CjuIK1q_8ugA:10 a=Vxmtnl_E_bksehYqCbjh:22
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 03:19:54PM +0100, Sam Ravnborg wrote:
-> On Fri, Mar 13, 2020 at 09:17:41PM +0100, Sam Ravnborg wrote:
-> > Thomas Zimmermann had made a nice patch-set that introduced
-> > drm_simple_encoder_init() which is already present in drm-misc-next.
-> > 
-> > While looking at this it was suddenly obvious to me that
-> > this was functionalty that really should be included in drm_encoder.c
-> > The case where the core could handle the callback is pretty
-> > common and not part of the simple pipe line.
-> > 
-> > So after some dialog on dri-devel the conclusion was to go for
-> > a change like this:
-> > 
-> >     drm_encoder_init_funcs() for all users that specified a
-> >     drm_encoder_funcs to extend the functionality.
-> > 
-> >     drm_encoder_init() for all users that did not
-> >     need to extend the basic functionality with
-> >     drm_encoder_funcs.
-> > 
-> > A similar approach with a _funcs() prefix is used elsewhere in drm/
-> > 
-> > This required a rename of the existing users, and
-> > a follow-up patch that moves drm_simple_encoder_init()
-> > to drm_encoder.c
-> > 
-> > Patches 3 in this set demonstrate the use of drm_encoder_init().
-> > There are many more drivers that can be converted as Thomas
-> > has already demonstrated.
-> > 
-> > This is all based on work done by Thomas Zimmermann,
-> > I just wanted to implement my suggestion so
-> > we could select the best way forward.
-> > 
-> > Note: Daniel Vetter has hinted the approach implemented
-> > here smelled like middle-layer.
-> > IMO this is not so, it is just a way to handle cleanup
-> > for the simple cases.
+On Wed, 18 Mar 2020 16:41:40 +0530, Alim Akhtar wrote:
+> This patch documents Samsung UFS PHY device tree bindings
 > 
-> We discussed this patch-set briefly on irc.
-Just to clarify, we in this context was Daniel Vetter & me.
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  .../bindings/phy/samsung,ufs-phy.yaml         | 62 +++++++++++++++++++
+>  1 file changed, 62 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
+> 
 
-	Sam
+My bot found errors running 'make dt_binding_check' on your patch:
 
-> With the upcoming drmm_ changes and such this is bad timing..
-> And in the end this may be pointless code-chrunch.
-> 
-> Patch-set shelfed for now - may re-visit it later.
-> 
-> 	Sam
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/phy/samsung,ufs-phy.example.dt.yaml: example-0: 'ufs-phy@0x15571800' does not match any of the regexes: '.*-names$', '.*-supply$', '^#.*-cells$', '^#[a-zA-Z0-9,+\\-._]{0,63}$', '^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,63}$', '^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,63}@[0-9a-fA-F]+(,[0-9a-fA-F]+)*$', '^__.*__$', 'pinctrl-[0-9]+'
+
+See https://patchwork.ozlabs.org/patch/1257427
+Please check and re-submit.
