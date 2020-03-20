@@ -2,115 +2,96 @@ Return-Path: <SRS0=xxvY=5F=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FDC7C4332E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Mar 2020 07:06:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60CC8C4332B
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Mar 2020 09:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 303242078B
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Mar 2020 07:06:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 240A920757
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Mar 2020 09:42:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1584697364;
+	bh=7tFoy/VAjQZPN4VRdJT/bRBm3mCQ/k56NSZkCc37syI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=F1ljrci8IW7G4nGKUv4XLflS9q4zrsm6nlNjTDwpepVqy2R6v8z63HkZai1FJjuik
+	 CPLWDEHqXQcDsTGYongPQlsY7ryOj2FS84vcA79l03+ys+nOqRIyXNgZa0oxZZgMk7
+	 BHYGvA8AXCDP3+lgxcCJEbqqaD7aYxaiCOfPaqqc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726778AbgCTHGi (ORCPT
+        id S1726778AbgCTJmn (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 20 Mar 2020 03:06:38 -0400
-Received: from mga03.intel.com ([134.134.136.65]:51858 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726614AbgCTHGi (ORCPT
+        Fri, 20 Mar 2020 05:42:43 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:46154 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726690AbgCTJmn (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 20 Mar 2020 03:06:38 -0400
-IronPort-SDR: /5RtDVa0fYimAIkILgAmXLIfuYv+MFFR4M6jlQ+8+VBUrSF1TeQEqKe72sp7jkBrTpzO0mTS9D
- MbZWMivTYT3w==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 00:06:37 -0700
-IronPort-SDR: qQTFLsdf6C7DljdvIuIQN6Y1afZcxjIFlDqm5oREhf3SQKLv3Q8zMsPRwvvsQ2xfMB1iJdT5ye
- 7yUiw7Egm94Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,283,1580803200"; 
-   d="scan'208";a="356328149"
-Received: from sxu27-mobl2.ccr.corp.intel.com (HELO [10.254.214.109]) ([10.254.214.109])
-  by fmsmga001.fm.intel.com with ESMTP; 20 Mar 2020 00:06:26 -0700
-Cc:     baolu.lu@linux.intel.com,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
+        Fri, 20 Mar 2020 05:42:43 -0400
+Received: by mail-ed1-f65.google.com with SMTP id ca19so6329884edb.13;
+        Fri, 20 Mar 2020 02:42:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Uw3wiA4XeWZolh1RPXWdN7r53j8eX1MbrQwMp9+W42I=;
+        b=ddcAflNcaRhRoefO9tYt0CoC0Lp1qdAM0WcRIK+lvP9ThVacFJOebztUQlMFUas1yA
+         ZP69eLlTsWCzbUiDp/u6lhA5WzDDWg0v3NwWuhrnkhfmNypcrGCg17kpW/fJ1QId7/xp
+         KPL9jkNOxSTYSm89/kiF668vn7YjZcj8eDrvW2a3FizrkQkGtwVeIZNID6wORLDMfOXj
+         PzA5U+tOHXlbgyQMU/bZXEG3x3Wvu/3nHxWiJ8dCqXrrafBV3mMb8gmD8hJAk19mG1H5
+         xx/0MYW3tjmOq+d8Ucu+9yFU8dZBX/NadxnFUVnzLQ9M9L3+JO3OhWdBLy9Ln0FoZTkQ
+         /jvQ==
+X-Gm-Message-State: ANhLgQ3Nj+9yk8fDlMVmWVQna8cPB/98WYmu69t0v7flje0Wra+/4OBR
+        m3OBo2GZAY3BNow8942hM+o=
+X-Google-Smtp-Source: ADFU+vvsdpCNQuAuqnydlRyT9uYaTSVC3y6hyyG9AUkhW3Gml3Uvhp0Evu01XfV356gRQDmWS8eRtg==
+X-Received: by 2002:aa7:c9cb:: with SMTP id i11mr7183183edt.320.1584697360968;
+        Fri, 20 Mar 2020 02:42:40 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.125])
+        by smtp.googlemail.com with ESMTPSA id p7sm298473ejr.62.2020.03.20.02.42.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 20 Mar 2020 02:42:40 -0700 (PDT)
+Date:   Fri, 20 Mar 2020 10:42:38 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Kukjin Kim <kgene@kernel.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Julien Grall <julien.grall@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Stenkin Evgeniy <stenkinevgeniy@gmail.com>,
+        Jonas Heinrich <onny@project-insanity.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org
-Subject: Re: [PATCH 3/8] iommu/vt-d: Remove IOVA handling code from
- non-dma_ops path
-To:     Tom Murphy <murphyt7@tcd.ie>, iommu@lists.linux-foundation.org
-References: <20191221150402.13868-1-murphyt7@tcd.ie>
- <20191221150402.13868-4-murphyt7@tcd.ie>
- <CALQxJuuue2MCF+xAAAcWCW=301HHZ9yWBmYV-K-ubCxO4s5eqQ@mail.gmail.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <46bf21e2-bb3e-1c1e-8dae-2c5bd8c5274f@linux.intel.com>
-Date:   Fri, 20 Mar 2020 15:06:24 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: arm/samsung: Add compatible string
+ for the Galaxy S2
+Message-ID: <20200320094238.GA12976@kozik-lap>
+References: <20200319173411.20607-1-paul@crapouillou.net>
 MIME-Version: 1.0
-In-Reply-To: <CALQxJuuue2MCF+xAAAcWCW=301HHZ9yWBmYV-K-ubCxO4s5eqQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200319173411.20607-1-paul@crapouillou.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 2020/3/20 14:30, Tom Murphy wrote:
-> Could we merge patch 1-3 from this series? it just cleans up weird
-> code and merging these patches will cover some of the work needed to
-> move the intel iommu driver to the dma-iommu api in the future.
+On Thu, Mar 19, 2020 at 06:34:10PM +0100, Paul Cercueil wrote:
+> Add compatible string for the Samsung Galaxy S2 (i9100 version), which
+> is an Exynos 4210 based device.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+> 
+> Notes:
+>     v2: Move compatible string so that the list is sorted in alphabetical order
+>     
+>     v3: No change
+> 
+>  .../devicetree/bindings/arm/samsung/samsung-boards.yaml          | 1 +
 
-Can you please take a look at this patch series?
-
-https://lkml.org/lkml/2020/3/13/1162
-
-It probably makes this series easier.
+Thanks, applied.
 
 Best regards,
-baolu
+Krzysztof
 
-> 
-> On Sat, 21 Dec 2019 at 07:04, Tom Murphy<murphyt7@tcd.ie>  wrote:
->> Remove all IOVA handling code from the non-dma_ops path in the intel
->> iommu driver.
->>
->> There's no need for the non-dma_ops path to keep track of IOVAs. The
->> whole point of the non-dma_ops path is that it allows the IOVAs to be
->> handled separately. The IOVA handling code removed in this patch is
->> pointless.
->>
->> Signed-off-by: Tom Murphy<murphyt7@tcd.ie>
