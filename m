@@ -2,730 +2,182 @@ Return-Path: <SRS0=xxvY=5F=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BDAFC4332D
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Mar 2020 05:40:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA69FC4332B
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Mar 2020 06:28:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13E392072D
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Mar 2020 05:40:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A551C20663
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Mar 2020 06:28:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UJvSiixh"
+	dkim=pass (2048-bit key) header.d=tcd-ie.20150623.gappssmtp.com header.i=@tcd-ie.20150623.gappssmtp.com header.b="mlwq4CYA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726767AbgCTFkm (ORCPT
+        id S1726602AbgCTG2W (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 20 Mar 2020 01:40:42 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:37374 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726030AbgCTFkm (ORCPT
+        Fri, 20 Mar 2020 02:28:22 -0400
+Received: from mail-il1-f194.google.com ([209.85.166.194]:44950 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726654AbgCTG2W (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 20 Mar 2020 01:40:42 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 02K5eLG9085515;
-        Fri, 20 Mar 2020 00:40:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1584682821;
-        bh=0dnUpSotF2hy8zT3Dli546diQihumsQ/QGUFMSLB48Q=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=UJvSiixhWGlQ4gV6OFIetLmePUqNWMg3BeWnbTHfkktrJtfhhhrazqkOIO6ntAhgy
-         D7UDN6uS/jtOUiOK/ffXRR62886R3ORW7y5E6iZUK0wtbPNVWS/kFifefn04S72jyw
-         X+8+DyqJhnHhMGdPjbt0wId0kb+wGZdIWpsnCh1E=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 02K5eLMV098156
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 20 Mar 2020 00:40:21 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 20
- Mar 2020 00:40:21 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 20 Mar 2020 00:40:21 -0500
-Received: from [10.250.133.193] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 02K5eFFZ110704;
-        Fri, 20 Mar 2020 00:40:16 -0500
-Subject: Re: [PATCH v3 2/5] phy: samsung-ufs: add UFS PHY driver for samsung
- SoC
-To:     Alim Akhtar <alim.akhtar@samsung.com>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-scsi@vger.kernel.org>
-CC:     <krzk@kernel.org>, <avri.altman@wdc.com>,
-        <martin.petersen@oracle.com>, <kwmad.kim@samsung.com>,
-        <stanley.chu@mediatek.com>, <cang@codeaurora.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20200319150031.11024-1-alim.akhtar@samsung.com>
- <CGME20200319150705epcas5p4fd8301d8edf95454a3234a12a835d7ec@epcas5p4.samsung.com>
- <20200319150031.11024-3-alim.akhtar@samsung.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <65bce485-6070-aa09-00b5-0822e85466f4@ti.com>
-Date:   Fri, 20 Mar 2020 11:10:15 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Fri, 20 Mar 2020 02:28:22 -0400
+Received: by mail-il1-f194.google.com with SMTP id j69so4557296ila.11
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Mar 2020 23:28:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tcd-ie.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=iNXs70iQMmbCeWom+A/Tg16i/IbQyXAZI0Q/ppb6028=;
+        b=mlwq4CYA+23qP9sIb47R10WlCGq2DIeqg0u1nZRI7nIlEwzdaBM16J0diAb1hlohhx
+         6DmTCrAETojeuHxXASGkurUqmDfwjHRaPO4za7UkVii+FhFKjU1p/Uh7mi3KFwpjPhsb
+         iUmifGiws8WLlb2N+d2f8DAIA3I+MwtdSl7QMUdRy6dZmidqOFzKWaoRrSqr4hGVvYFe
+         lxvu2QhZ23+aceqTRPs5AhP4qiprkvMy5v6UfWHtbzwVFjivSqy8raQEj8IKp649aRSz
+         OzRNio30MUjHUatFuFBVrSm+4Q22qFcnN1y399wmFgi4y40WUSo1BlDO9PO4lb7z5YMG
+         C1tA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=iNXs70iQMmbCeWom+A/Tg16i/IbQyXAZI0Q/ppb6028=;
+        b=QhppcJWO949aSYhpWyY5j9lpPgBhvuvMqV2JLq0yEoxV0hkmCu5UHBXnFn3wNLnR94
+         laOtIvYFoGf/YK/LCZBhQysiPUi59KSD5Fj0pbZn7gH9wF4TzL1FCGCcKBfwrIwQE7rA
+         CiebX+N9Q6beoGeyFJywAvhn2Ym9Q9ufFBzJddwYMpJHvd71e45lrRcLRFFG1YGJxEYY
+         HB4c0ij3uXB+oRDw1N241NKqz+mk+S190LNxFBTyvM39x2lvLOuqVyoFdMGSR0YN30NO
+         kqYI8++pFpa/+x2LNdoDq7ghKp/+wRvhSgD5YEg3Z2HdlzlxpWhbG6FEU5P3ccjl2D7Q
+         7IKA==
+X-Gm-Message-State: ANhLgQ07MzXN9GfpBWsQZdWz8nU4v0OCiQhdcagS/JMPdiv1LfUaIcAr
+        AvUmuX5SikY59WkzMztO6PctIPXg62vEdOy1I7X8LA==
+X-Google-Smtp-Source: ADFU+vu5z05Ntsthh3MN1VmTHwq3rO5otoJoIS27t3cZsZdixT+HOBtJfxy3n0Krurf+ZkaYNXqDSZk62sBvXeLV7BQ=
+X-Received: by 2002:a92:41c7:: with SMTP id o190mr6554977ila.11.1584685701013;
+ Thu, 19 Mar 2020 23:28:21 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200319150031.11024-3-alim.akhtar@samsung.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20191221150402.13868-1-murphyt7@tcd.ie> <87blrzwcn8.fsf@intel.com>
+ <432d306c-fe9f-75b2-f0f7-27698f1467ad@arm.com> <87o8vzuv4i.fsf@intel.com>
+In-Reply-To: <87o8vzuv4i.fsf@intel.com>
+From:   Tom Murphy <murphyt7@tcd.ie>
+Date:   Thu, 19 Mar 2020 23:28:09 -0700
+Message-ID: <CALQxJuujCe7TsqkbfusPnzef2SApDBNPa7wj=U4ozDJWCoBHOg@mail.gmail.com>
+Subject: Re: [PATCH 0/8] Convert the intel iommu driver to the dma-iommu api
+To:     Jani Nikula <jani.nikula@linux.intel.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        iommu@lists.linux-foundation.org,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Julien Grall <julien.grall@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Alim,
+Any news on this? Is there anyone who wants to try and fix this possible bu=
+g?
 
-On 3/19/2020 8:30 PM, Alim Akhtar wrote:
-> This patch introduces Samsung UFS PHY driver. This driver
-> supports to deal with phy calibration and power control
-> according to UFS host driver's behavior.
-> 
-> Reviewed-by: Kiwoong Kim <kwmad.kim@samsung.com>
-> Signed-off-by: Seungwon Jeon <essuuj@gmail.com>
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> Cc: Kishon Vijay Abraham I <kishon@ti.com>
-> ---
->  drivers/phy/samsung/Kconfig           |   9 +
->  drivers/phy/samsung/Makefile          |   1 +
->  drivers/phy/samsung/phy-exynos7-ufs.h |  85 +++++++
->  drivers/phy/samsung/phy-samsung-ufs.c | 311 ++++++++++++++++++++++++++
->  drivers/phy/samsung/phy-samsung-ufs.h | 100 +++++++++
->  include/linux/phy/phy-samsung-ufs.h   |  70 ++++++
-
-Why is this added in include directory? will it be used by controller driver?
-
-Thanks
-Kishon
->  6 files changed, 576 insertions(+)
->  create mode 100644 drivers/phy/samsung/phy-exynos7-ufs.h
->  create mode 100644 drivers/phy/samsung/phy-samsung-ufs.c
->  create mode 100644 drivers/phy/samsung/phy-samsung-ufs.h
->  create mode 100644 include/linux/phy/phy-samsung-ufs.h
-> 
-> diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
-> index 9e483d1fdaf2..fc1e3c17f842 100644
-> --- a/drivers/phy/samsung/Kconfig
-> +++ b/drivers/phy/samsung/Kconfig
-> @@ -29,6 +29,15 @@ config PHY_EXYNOS_PCIE
->  	  Enable PCIe PHY support for Exynos SoC series.
->  	  This driver provides PHY interface for Exynos PCIe controller.
->  
-> +config PHY_SAMSUNG_UFS
-> +	tristate "SAMSUNG SoC series UFS PHY driver"
-> +	depends on OF && (ARCH_EXYNOS || COMPILE_TEST)
-> +	select GENERIC_PHY
-> +	help
-> +	  Enable this to support the Samsung UFS PHY driver for
-> +	  Samsung SoCs. This driver provides the interface for UFS
-> +	  host controller to do PHY related programming.
-> +
->  config PHY_SAMSUNG_USB2
->  	tristate "Samsung USB 2.0 PHY driver"
->  	depends on HAS_IOMEM
-> diff --git a/drivers/phy/samsung/Makefile b/drivers/phy/samsung/Makefile
-> index db9b1aa0de6e..3959100fe8a2 100644
-> --- a/drivers/phy/samsung/Makefile
-> +++ b/drivers/phy/samsung/Makefile
-> @@ -2,6 +2,7 @@
->  obj-$(CONFIG_PHY_EXYNOS_DP_VIDEO)	+= phy-exynos-dp-video.o
->  obj-$(CONFIG_PHY_EXYNOS_MIPI_VIDEO)	+= phy-exynos-mipi-video.o
->  obj-$(CONFIG_PHY_EXYNOS_PCIE)		+= phy-exynos-pcie.o
-> +obj-$(CONFIG_PHY_SAMSUNG_UFS)		+= phy-samsung-ufs.o
->  obj-$(CONFIG_PHY_SAMSUNG_USB2)		+= phy-exynos-usb2.o
->  phy-exynos-usb2-y			+= phy-samsung-usb2.o
->  phy-exynos-usb2-$(CONFIG_PHY_EXYNOS4210_USB2)	+= phy-exynos4210-usb2.o
-> diff --git a/drivers/phy/samsung/phy-exynos7-ufs.h b/drivers/phy/samsung/phy-exynos7-ufs.h
-> new file mode 100644
-> index 000000000000..da981c1ac040
-> --- /dev/null
-> +++ b/drivers/phy/samsung/phy-exynos7-ufs.h
-> @@ -0,0 +1,85 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * UFS PHY driver data for Samsung EXYNOS7 SoC
-> + *
-> + * Copyright (C) 2015 Samsung Electronics Co., Ltd.
-> + */
-> +#ifndef _PHY_EXYNOS7_UFS_H_
-> +#define _PHY_EXYNOS7_UFS_H_
-> +
-> +#include "phy-samsung-ufs.h"
-> +
-> +#define EXYNOS7_EMBEDDED_COMBO_PHY_CTRL	0x720
-> +#define EXYNOS7_EMBEDDED_COMBO_PHY_CTRL_MASK	0x1
-> +#define EXYNOS7_EMBEDDED_COMBO_PHY_CTRL_EN	BIT(0)
-> +
-> +/* Calibration for phy initialization */
-> +static const struct samsung_ufs_phy_cfg exynos7_pre_init_cfg[] = {
-> +	PHY_COMN_REG_CFG(0x00f, 0xfa, PWR_MODE_ANY),
-> +	PHY_COMN_REG_CFG(0x010, 0x82, PWR_MODE_ANY),
-> +	PHY_COMN_REG_CFG(0x011, 0x1e, PWR_MODE_ANY),
-> +	PHY_COMN_REG_CFG(0x017, 0x84, PWR_MODE_ANY),
-> +	PHY_TRSV_REG_CFG(0x035, 0x58, PWR_MODE_ANY),
-> +	PHY_TRSV_REG_CFG(0x036, 0x32, PWR_MODE_ANY),
-> +	PHY_TRSV_REG_CFG(0x037, 0x40, PWR_MODE_ANY),
-> +	PHY_TRSV_REG_CFG(0x03b, 0x83, PWR_MODE_ANY),
-> +	PHY_TRSV_REG_CFG(0x042, 0x88, PWR_MODE_ANY),
-> +	PHY_TRSV_REG_CFG(0x043, 0xa6, PWR_MODE_ANY),
-> +	PHY_TRSV_REG_CFG(0x048, 0x74, PWR_MODE_ANY),
-> +	PHY_TRSV_REG_CFG(0x04c, 0x5b, PWR_MODE_ANY),
-> +	PHY_TRSV_REG_CFG(0x04d, 0x83, PWR_MODE_ANY),
-> +	PHY_TRSV_REG_CFG(0x05c, 0x14, PWR_MODE_ANY),
-> +	END_UFS_PHY_CFG
-> +};
-> +
-> +static const struct samsung_ufs_phy_cfg exynos7_post_init_cfg[] = {
-> +	END_UFS_PHY_CFG
-> +};
-> +
-> +/* Calibration for HS mode series A/B */
-> +static const struct samsung_ufs_phy_cfg exynos7_pre_pwr_hs_cfg[] = {
-> +	PHY_COMN_REG_CFG(0x00f, 0xfa, PWR_MODE_HS_ANY),
-> +	PHY_COMN_REG_CFG(0x010, 0x82, PWR_MODE_HS_ANY),
-> +	PHY_COMN_REG_CFG(0x011, 0x1e, PWR_MODE_HS_ANY),
-> +	/* Setting order: 1st(0x16, 2nd(0x15) */
-> +	PHY_COMN_REG_CFG(0x016, 0xff, PWR_MODE_HS_ANY),
-> +	PHY_COMN_REG_CFG(0x015, 0x80, PWR_MODE_HS_ANY),
-> +	PHY_COMN_REG_CFG(0x017, 0x94, PWR_MODE_HS_ANY),
-> +	PHY_TRSV_REG_CFG(0x036, 0x32, PWR_MODE_HS_ANY),
-> +	PHY_TRSV_REG_CFG(0x037, 0x43, PWR_MODE_HS_ANY),
-> +	PHY_TRSV_REG_CFG(0x038, 0x3f, PWR_MODE_HS_ANY),
-> +	PHY_TRSV_REG_CFG(0x042, 0x88, PWR_MODE_HS_G2_SER_A),
-> +	PHY_TRSV_REG_CFG(0x042, 0xbb, PWR_MODE_HS_G2_SER_B),
-> +	PHY_TRSV_REG_CFG(0x043, 0xa6, PWR_MODE_HS_ANY),
-> +	PHY_TRSV_REG_CFG(0x048, 0x74, PWR_MODE_HS_ANY),
-> +	PHY_TRSV_REG_CFG(0x034, 0x35, PWR_MODE_HS_G2_SER_A),
-> +	PHY_TRSV_REG_CFG(0x034, 0x36, PWR_MODE_HS_G2_SER_B),
-> +	PHY_TRSV_REG_CFG(0x035, 0x5b, PWR_MODE_HS_G2_SER_A),
-> +	PHY_TRSV_REG_CFG(0x035, 0x5c, PWR_MODE_HS_G2_SER_B),
-> +	END_UFS_PHY_CFG
-> +};
-> +
-> +/* Calibration for HS mode series A/B atfer PMC */
-> +static const struct samsung_ufs_phy_cfg exynos7_post_pwr_hs_cfg[] = {
-> +	PHY_COMN_REG_CFG(0x015, 0x00, PWR_MODE_HS_ANY),
-> +	PHY_TRSV_REG_CFG(0x04d, 0x83, PWR_MODE_HS_ANY),
-> +	END_UFS_PHY_CFG
-> +};
-> +
-> +static const struct samsung_ufs_phy_cfg *exynos7_ufs_phy_cfgs[CFG_TAG_MAX] = {
-> +	[CFG_PRE_INIT]		= exynos7_pre_init_cfg,
-> +	[CFG_POST_INIT]		= exynos7_post_init_cfg,
-> +	[CFG_PRE_PWR_HS]	= exynos7_pre_pwr_hs_cfg,
-> +	[CFG_POST_PWR_HS]	= exynos7_post_pwr_hs_cfg,
-> +};
-> +
-> +static struct samsung_ufs_phy_drvdata exynos7_ufs_phy = {
-> +	.cfg = exynos7_ufs_phy_cfgs,
-> +	.isol = {
-> +		.offset = EXYNOS7_EMBEDDED_COMBO_PHY_CTRL,
-> +		.mask = EXYNOS7_EMBEDDED_COMBO_PHY_CTRL_MASK,
-> +		.en = EXYNOS7_EMBEDDED_COMBO_PHY_CTRL_EN,
-> +	},
-> +};
-> +
-> +#endif /* _PHY_EXYNOS7_UFS_H_ */
-> diff --git a/drivers/phy/samsung/phy-samsung-ufs.c b/drivers/phy/samsung/phy-samsung-ufs.c
-> new file mode 100644
-> index 000000000000..2d5db24de49b
-> --- /dev/null
-> +++ b/drivers/phy/samsung/phy-samsung-ufs.c
-> @@ -0,0 +1,311 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * UFS PHY driver for Samsung SoC
-> + *
-> + * Copyright (C) 2015 Samsung Electronics Co., Ltd.
-> + * Author: Seungwon Jeon <essuuj@gmail.com>
-> + * Author: Alim Akhtar <alim.akhtar@samsung.com>
-> + *
-> + */
-> +#include <linux/clk.h>
-> +#include <linux/delay.h>
-> +#include <linux/err.h>
-> +#include <linux/of.h>
-> +#include <linux/io.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/module.h>
-> +#include <linux/phy/phy.h>
-> +#include <linux/phy/phy-samsung-ufs.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +
-> +#include "phy-samsung-ufs.h"
-> +
-> +#define for_each_phy_lane(phy, i) \
-> +	for (i = 0; i < (phy)->lane_cnt; i++)
-> +#define for_each_phy_cfg(cfg) \
-> +	for (; (cfg)->id; (cfg)++)
-> +
-> +#define PHY_DEF_LANE_CNT	1
-> +
-> +static void samsung_ufs_phy_config(struct samsung_ufs_phy *phy,
-> +			const struct samsung_ufs_phy_cfg *cfg, u8 lane)
-> +{
-> +	enum {LANE_0, LANE_1}; /* lane index */
-> +
-> +	switch (lane) {
-> +	case LANE_0:
-> +		writel(cfg->val, (phy)->reg_pma + cfg->off_0);
-> +		break;
-> +	case LANE_1:
-> +		if (cfg->id == PHY_TRSV_BLK)
-> +			writel(cfg->val, (phy)->reg_pma + cfg->off_1);
-> +		break;
-> +	}
-> +}
-> +
-> +int samsung_ufs_phy_wait_for_lock_acq(struct phy *phy)
-> +{
-> +	struct samsung_ufs_phy *ufs_phy = get_samsung_ufs_phy(phy);
-> +	const unsigned int timeout_us = 100000;
-> +	const unsigned int sleep_us = 10;
-> +	u32 val;
-> +	int err;
-> +
-> +	err = readl_poll_timeout(
-> +			ufs_phy->reg_pma + PHY_APB_ADDR(PHY_PLL_LOCK_STATUS),
-> +			val, (val & PHY_PLL_LOCK_BIT), sleep_us, timeout_us);
-> +	if (err) {
-> +		dev_err(ufs_phy->dev,
-> +			"failed to get phy pll lock acquisition %d\n", err);
-> +		goto out;
-> +	}
-> +
-> +	err = readl_poll_timeout(
-> +			ufs_phy->reg_pma + PHY_APB_ADDR(PHY_CDR_LOCK_STATUS),
-> +			val, (val & PHY_CDR_LOCK_BIT), sleep_us, timeout_us);
-> +	if (err) {
-> +		dev_err(ufs_phy->dev,
-> +			"failed to get phy cdr lock acquisition %d\n", err);
-> +		goto out;
-> +	}
-> +
-> +out:
-> +	return err;
-> +}
-> +
-> +int samsung_ufs_phy_calibrate(struct phy *phy)
-> +{
-> +	struct samsung_ufs_phy *ufs_phy = get_samsung_ufs_phy(phy);
-> +	struct samsung_ufs_phy_cfg **cfgs = ufs_phy->cfg;
-> +	const struct samsung_ufs_phy_cfg *cfg;
-> +	int i;
-> +	int err = 0;
-> +
-> +	if (unlikely(ufs_phy->ufs_phy_state < CFG_PRE_INIT ||
-> +		     ufs_phy->ufs_phy_state >= CFG_TAG_MAX)) {
-> +		dev_err(ufs_phy->dev, "invalid phy config index %d\n",
-> +							ufs_phy->ufs_phy_state);
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (ufs_phy->is_pre_init)
-> +		ufs_phy->is_pre_init = false;
-> +	if (ufs_phy->is_post_init) {
-> +		ufs_phy->is_post_init = false;
-> +		ufs_phy->ufs_phy_state = CFG_POST_INIT;
-> +	}
-> +	if (ufs_phy->is_pre_pmc) {
-> +		ufs_phy->is_pre_pmc = false;
-> +		ufs_phy->ufs_phy_state = CFG_PRE_PWR_HS;
-> +	}
-> +	if (ufs_phy->is_post_pmc) {
-> +		ufs_phy->is_post_pmc = false;
-> +		ufs_phy->ufs_phy_state = CFG_POST_PWR_HS;
-> +	}
-> +
-> +	switch (ufs_phy->ufs_phy_state) {
-> +	case CFG_PRE_INIT:
-> +		ufs_phy->is_post_init = true;
-> +		break;
-> +	case CFG_POST_INIT:
-> +		ufs_phy->is_pre_pmc = true;
-> +		break;
-> +	case CFG_PRE_PWR_HS:
-> +		ufs_phy->is_post_pmc = true;
-> +		break;
-> +	case CFG_POST_PWR_HS:
-> +		break;
-> +	default:
-> +		dev_err(ufs_phy->dev, "wrong state for phy calibration\n");
-> +	}
-> +
-> +	cfg = cfgs[ufs_phy->ufs_phy_state];
-> +	if (!cfg)
-> +		goto out;
-> +
-> +	for_each_phy_cfg(cfg) {
-> +		for_each_phy_lane(ufs_phy, i) {
-> +			samsung_ufs_phy_config(ufs_phy, cfg, i);
-> +		}
-> +	}
-> +
-> +	if (ufs_phy->ufs_phy_state == CFG_POST_PWR_HS)
-> +		err = samsung_ufs_phy_wait_for_lock_acq(phy);
-> +out:
-> +	return err;
-> +}
-> +
-> +static int samsung_ufs_phy_clks_init(struct samsung_ufs_phy *phy)
-> +{
-> +	struct clk *child, *parent;
-> +
-> +	child = devm_clk_get(phy->dev, "ref_clk");
-> +	if (IS_ERR(child))
-> +		dev_err(phy->dev, "failed to get ref_clk clock\n");
-> +	else
-> +		phy->ref_clk = child;
-> +
-> +	parent = devm_clk_get(phy->dev, "ref_clk_parent");
-> +	if (IS_ERR(parent))
-> +		dev_err(phy->dev, "failed to get ref_clk_parent clock\n");
-> +	else
-> +		phy->ref_clk_parent = parent;
-> +
-> +	return clk_set_parent(child, parent);
-> +}
-> +
-> +static int samsung_ufs_phy_init(struct phy *phy)
-> +{
-> +	struct samsung_ufs_phy *_phy = get_samsung_ufs_phy(phy);
-> +
-> +	_phy->lane_cnt = phy->attrs.bus_width;
-> +	_phy->ufs_phy_state = CFG_PRE_INIT;
-> +
-> +	_phy->is_pre_init = true;
-> +	_phy->is_post_init = false;
-> +	_phy->is_pre_pmc = false;
-> +	_phy->is_post_pmc = false;
-> +
-> +	samsung_ufs_phy_clks_init(_phy);
-> +
-> +	samsung_ufs_phy_calibrate(phy);
-> +
-> +	return 0;
-> +}
-> +
-> +static int samsung_ufs_phy_power_on(struct phy *phy)
-> +{
-> +	struct samsung_ufs_phy *_phy = get_samsung_ufs_phy(phy);
-> +	int ret;
-> +
-> +	ret = clk_prepare_enable(_phy->ref_clk);
-> +	if (ret) {
-> +		dev_err(_phy->dev, "%s: ref_clk enable failed %d\n",
-> +				__func__, ret);
-> +		return ret;
-> +	}
-> +
-> +	samsung_ufs_phy_ctrl_isol(_phy, false);
-> +	return 0;
-> +}
-> +
-> +static int samsung_ufs_phy_power_off(struct phy *phy)
-> +{
-> +	struct samsung_ufs_phy *_phy = get_samsung_ufs_phy(phy);
-> +
-> +	samsung_ufs_phy_ctrl_isol(_phy, true);
-> +	clk_disable_unprepare(_phy->ref_clk);
-> +	return 0;
-> +}
-> +
-> +static int samsung_ufs_phy_set_mode(struct phy *generic_phy,
-> +					enum phy_mode mode, int submode)
-> +{
-> +	struct samsung_ufs_phy *_phy = get_samsung_ufs_phy(generic_phy);
-> +
-> +	_phy->mode = PHY_MODE_INVALID;
-> +
-> +	if (mode > 0)
-> +		_phy->mode = mode;
-> +
-> +	return 0;
-> +}
-> +
-> +static struct phy_ops samsung_ufs_phy_ops = {
-> +	.init		= samsung_ufs_phy_init,
-> +	.power_on	= samsung_ufs_phy_power_on,
-> +	.power_off	= samsung_ufs_phy_power_off,
-> +	.calibrate	= samsung_ufs_phy_calibrate,
-> +	.set_mode	= samsung_ufs_phy_set_mode,
-> +}
-> +;
-> +static const struct of_device_id samsung_ufs_phy_match[];
-> +
-> +static int samsung_ufs_phy_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct resource *res;
-> +	const struct of_device_id *match;
-> +	struct samsung_ufs_phy *phy;
-> +	struct phy *gen_phy;
-> +	struct phy_provider *phy_provider;
-> +	const struct samsung_ufs_phy_drvdata *drvdata;
-> +	int err = 0;
-> +
-> +	match = of_match_node(samsung_ufs_phy_match, dev->of_node);
-> +	if (!match) {
-> +		err = -EINVAL;
-> +		dev_err(dev, "failed to get match_node\n");
-> +		goto out;
-> +	}
-> +
-> +	phy = devm_kzalloc(dev, sizeof(*phy), GFP_KERNEL);
-> +	if (!phy) {
-> +		err = -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "phy-pma");
-> +	phy->reg_pma = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(phy->reg_pma)) {
-> +		err = PTR_ERR(phy->reg_pma);
-> +		goto out;
-> +	}
-> +
-> +	phy->reg_pmu = syscon_regmap_lookup_by_phandle(
-> +				dev->of_node, "samsung,pmu-syscon");
-> +	if (IS_ERR(phy->reg_pmu)) {
-> +		err = PTR_ERR(phy->reg_pmu);
-> +		dev_err(dev, "failed syscon remap for pmu\n");
-> +		goto out;
-> +	}
-> +
-> +	gen_phy = devm_phy_create(dev, NULL, &samsung_ufs_phy_ops);
-> +	if (IS_ERR(gen_phy)) {
-> +		err = PTR_ERR(gen_phy);
-> +		dev_err(dev, "failed to create PHY for ufs-phy\n");
-> +		goto out;
-> +	}
-> +
-> +	drvdata = match->data;
-> +	phy->dev = dev;
-> +	phy->drvdata = drvdata;
-> +	phy->cfg = (struct samsung_ufs_phy_cfg **)drvdata->cfg;
-> +	phy->isol = &drvdata->isol;
-> +	phy->lane_cnt = PHY_DEF_LANE_CNT;
-> +
-> +	phy_set_drvdata(gen_phy, phy);
-> +
-> +	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-> +	if (IS_ERR(phy_provider)) {
-> +		err = PTR_ERR(phy_provider);
-> +		dev_err(dev, "failed to register phy-provider\n");
-> +		goto out;
-> +	}
-> +out:
-> +	return err;
-> +}
-> +
-> +static const struct of_device_id samsung_ufs_phy_match[] = {
-> +	{
-> +		.compatible = "samsung,exynos7-ufs-phy",
-> +		.data = &exynos7_ufs_phy,
-> +	},
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, samsung_ufs_phy_match);
-> +
-> +static struct platform_driver samsung_ufs_phy_driver = {
-> +	.probe  = samsung_ufs_phy_probe,
-> +	.driver = {
-> +		.name = "samsung-ufs-phy",
-> +		.of_match_table = samsung_ufs_phy_match,
-> +	},
-> +};
-> +module_platform_driver(samsung_ufs_phy_driver);
-> +MODULE_DESCRIPTION("Samsung SoC UFS PHY Driver");
-> +MODULE_AUTHOR("Seungwon Jeon <essuuj@gmail.com>");
-> +MODULE_AUTHOR("Alim Akhtar <alim.akhtar@samsung.com>");
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/phy/samsung/phy-samsung-ufs.h b/drivers/phy/samsung/phy-samsung-ufs.h
-> new file mode 100644
-> index 000000000000..d0ae2b416b2b
-> --- /dev/null
-> +++ b/drivers/phy/samsung/phy-samsung-ufs.h
-> @@ -0,0 +1,100 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * UFS PHY driver for Samsung EXYNOS SoC
-> + *
-> + * Copyright (C) 2015 Samsung Electronics Co., Ltd.
-> + * Author: Seungwon Jeon <essuuj@gmail.com>
-> + * Author: Alim Akhtar <alim.akhtar@samsung.com>
-> + *
-> + */
-> +#ifndef _PHY_SAMSUNG_UFS_
-> +#define _PHY_SAMSUNG_UFS_
-> +
-> +#define PHY_COMN_BLK	1
-> +#define PHY_TRSV_BLK	2
-> +#define END_UFS_PHY_CFG { 0 }
-> +#define PHY_TRSV_CH_OFFSET	0x30
-> +#define PHY_APB_ADDR(off)	((off) << 2)
-> +
-> +#define PHY_COMN_REG_CFG(o, v, d) {	\
-> +	.off_0 = PHY_APB_ADDR((o)),	\
-> +	.off_1 = 0,		\
-> +	.val = (v),		\
-> +	.desc = (d),		\
-> +	.id = PHY_COMN_BLK,	\
-> +}
-> +
-> +#define PHY_TRSV_REG_CFG(o, v, d) {	\
-> +	.off_0 = PHY_APB_ADDR((o)),	\
-> +	.off_1 = PHY_APB_ADDR((o) + PHY_TRSV_CH_OFFSET),	\
-> +	.val = (v),		\
-> +	.desc = (d),		\
-> +	.id = PHY_TRSV_BLK,	\
-> +}
-> +
-> +/* UFS PHY registers */
-> +#define PHY_PLL_LOCK_STATUS	0x1e
-> +#define PHY_CDR_LOCK_STATUS	0x5e
-> +
-> +#define PHY_PLL_LOCK_BIT	BIT(5)
-> +#define PHY_CDR_LOCK_BIT	BIT(4)
-> +
-> +/* PHY calibration point/state */
-> +enum {
-> +	CFG_PRE_INIT,
-> +	CFG_POST_INIT,
-> +	CFG_PRE_PWR_HS,
-> +	CFG_POST_PWR_HS,
-> +	CFG_TAG_MAX,
-> +};
-> +
-> +struct samsung_ufs_phy_cfg {
-> +	u32 off_0;
-> +	u32 off_1;
-> +	u32 val;
-> +	u8 desc;
-> +	u8 id;
-> +};
-> +
-> +struct samsung_ufs_phy_drvdata {
-> +	const struct samsung_ufs_phy_cfg **cfg;
-> +	struct pmu_isol {
-> +		u32 offset;
-> +		u32 mask;
-> +		u32 en;
-> +	} isol;
-> +};
-> +
-> +struct samsung_ufs_phy {
-> +	struct device *dev;
-> +	void __iomem *reg_pma;
-> +	struct regmap *reg_pmu;
-> +	struct clk *ref_clk;
-> +	struct clk *ref_clk_parent;
-> +	const struct samsung_ufs_phy_drvdata *drvdata;
-> +	struct samsung_ufs_phy_cfg **cfg;
-> +	const struct pmu_isol *isol;
-> +	u8 lane_cnt;
-> +	int ufs_phy_state;
-> +	enum phy_mode mode;
-> +	bool is_pre_init;
-> +	bool is_post_init;
-> +	bool is_pre_pmc;
-> +	bool is_post_pmc;
-> +};
-> +
-> +static inline struct samsung_ufs_phy *get_samsung_ufs_phy(struct phy *phy)
-> +{
-> +	return (struct samsung_ufs_phy *)phy_get_drvdata(phy);
-> +}
-> +
-> +static inline void samsung_ufs_phy_ctrl_isol(
-> +		struct samsung_ufs_phy *phy, u32 isol)
-> +{
-> +	regmap_update_bits(phy->reg_pmu, phy->isol->offset,
-> +			phy->isol->mask, isol ? 0 : phy->isol->en);
-> +}
-> +
-> +#include "phy-exynos7-ufs.h"
-> +
-> +#endif /* _PHY_SAMSUNG_UFS_ */
-> diff --git a/include/linux/phy/phy-samsung-ufs.h b/include/linux/phy/phy-samsung-ufs.h
-> new file mode 100644
-> index 000000000000..1def56207f5d
-> --- /dev/null
-> +++ b/include/linux/phy/phy-samsung-ufs.h
-> @@ -0,0 +1,70 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * phy-samsung-ufs.h - Header file for the UFS PHY of Samsung SoC
-> + *
-> + * Copyright (C) 2015 Samsung Electronics Co., Ltd.
-> + * Author: Seungwon Jeon <essuuj@gmail.com>
-> + * Author: Alim Akhtar <alim.akhtar@samsung.com>
-> + *
-> + */
-> +
-> +#ifndef _PHY_EXYNOS_UFS_H_
-> +#define _PHY_EXYNOS_UFS_H_
-> +
-> +#include "phy.h"
-> +
-> +/* description for PHY calibration */
-> +enum {
-> +	/* applicable to any */
-> +	PWR_DESC_ANY	= 0,
-> +	/* mode */
-> +	PWR_DESC_PWM	= 1,
-> +	PWR_DESC_HS	= 2,
-> +	/* series */
-> +	PWR_DESC_SER_A	= 1,
-> +	PWR_DESC_SER_B	= 2,
-> +	/* gear */
-> +	PWR_DESC_G1	= 1,
-> +	PWR_DESC_G2	= 2,
-> +	PWR_DESC_G3	= 3,
-> +	PWR_DESC_G4	= 4,
-> +	PWR_DESC_G5	= 5,
-> +	PWR_DESC_G6	= 6,
-> +	PWR_DESC_G7	= 7,
-> +	/* field mask */
-> +	MD_MASK		= 0x3,
-> +	SR_MASK		= 0x3,
-> +	GR_MASK		= 0x7,
-> +};
-> +
-> +#define PWR_MODE(g, s, m)	((((g) & GR_MASK) << 4) |\
-> +				 (((s) & SR_MASK) << 2) | ((m) & MD_MASK))
-> +#define PWR_MODE_HS(g, s)	((((g) & GR_MASK) << 4) |\
-> +				 (((s) & SR_MASK) << 2) | PWR_DESC_HS)
-> +#define PWR_MODE_HS_G1_ANY	PWR_MODE_HS(PWR_DESC_G1, PWR_DESC_ANY)
-> +#define PWR_MODE_HS_G1_SER_A	PWR_MODE_HS(PWR_DESC_G1, PWR_DESC_SER_A)
-> +#define PWR_MODE_HS_G1_SER_B	PWR_MODE_HS(PWR_DESC_G1, PWR_DESC_SER_B)
-> +#define PWR_MODE_HS_G2_ANY	PWR_MODE_HS(PWR_DESC_G2, PWR_DESC_ANY)
-> +#define PWR_MODE_HS_G2_SER_A	PWR_MODE_HS(PWR_DESC_G2, PWR_DESC_SER_A)
-> +#define PWR_MODE_HS_G2_SER_B	PWR_MODE_HS(PWR_DESC_G2, PWR_DESC_SER_B)
-> +#define PWR_MODE_HS_G3_ANY	PWR_MODE_HS(PWR_DESC_G3, PWR_DESC_ANY)
-> +#define PWR_MODE_HS_G3_SER_A	PWR_MODE_HS(PWR_DESC_G3, PWR_DESC_SER_A)
-> +#define PWR_MODE_HS_G3_SER_B	PWR_MODE_HS(PWR_DESC_G3, PWR_DESC_SER_B)
-> +#define PWR_MODE_HS_ANY		PWR_MODE(PWR_DESC_ANY,\
-> +					 PWR_DESC_ANY, PWR_DESC_HS)
-> +#define PWR_MODE_PWM_ANY	PWR_MODE(PWR_DESC_ANY,\
-> +					 PWR_DESC_ANY, PWR_DESC_PWM)
-> +#define PWR_MODE_ANY		PWR_MODE(PWR_DESC_ANY,\
-> +					 PWR_DESC_ANY, PWR_DESC_ANY)
-> +#define IS_PWR_MODE_HS(d)	(((d) & MD_MASK) == PWR_DESC_HS)
-> +#define IS_PWR_MODE_PWM(d)	(((d) & MD_MASK) == PWR_DESC_PWM)
-> +#define IS_PWR_MODE_ANY(d)	((d) == PWR_MODE_ANY)
-> +#define IS_PWR_MODE_HS_ANY(d)	((d) == PWR_MODE_HS_ANY)
-> +#define COMP_PWR_MODE(a, b)		((a) == (b))
-> +#define COMP_PWR_MODE_GEAR(a, b)	((((a) >> 4) & GR_MASK) == \
-> +					 (((b) >> 4) & GR_MASK))
-> +#define COMP_PWR_MODE_SER(a, b)		((((a) >> 2) & SR_MASK) == \
-> +					 (((b) >> 2) & SR_MASK))
-> +#define COMP_PWR_MODE_MD(a, b)		(((a) & MD_MASK) == ((b) & MD_MASK))
-> +
-> +#endif /* _PHY_EXYNOS_UFS_H_ */
-> 
+On Mon, 23 Dec 2019 at 03:41, Jani Nikula <jani.nikula@linux.intel.com> wro=
+te:
+>
+> On Mon, 23 Dec 2019, Robin Murphy <robin.murphy@arm.com> wrote:
+> > On 2019-12-23 10:37 am, Jani Nikula wrote:
+> >> On Sat, 21 Dec 2019, Tom Murphy <murphyt7@tcd.ie> wrote:
+> >>> This patchset converts the intel iommu driver to the dma-iommu api.
+> >>>
+> >>> While converting the driver I exposed a bug in the intel i915 driver
+> >>> which causes a huge amount of artifacts on the screen of my
+> >>> laptop. You can see a picture of it here:
+> >>> https://github.com/pippy360/kernelPatches/blob/master/IMG_20191219_22=
+5922.jpg
+> >>>
+> >>> This issue is most likely in the i915 driver and is most likely cause=
+d
+> >>> by the driver not respecting the return value of the
+> >>> dma_map_ops::map_sg function. You can see the driver ignoring the
+> >>> return value here:
+> >>> https://github.com/torvalds/linux/blob/7e0165b2f1a912a06e381e91f0f4e4=
+95f4ac3736/drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c#L51
+> >>>
+> >>> Previously this didn=E2=80=99t cause issues because the intel map_sg =
+always
+> >>> returned the same number of elements as the input scatter gather list
+> >>> but with the change to this dma-iommu api this is no longer the
+> >>> case. I wasn=E2=80=99t able to track the bug down to a specific line =
+of code
+> >>> unfortunately.
+> >>>
+> >>> Could someone from the intel team look at this?
+> >>
+> >> Let me get this straight. There is current API that on success always
+> >> returns the same number of elements as the input scatter gather
+> >> list. You propose to change the API so that this is no longer the case=
+?
+> >
+> > No, the API for dma_map_sg() has always been that it may return fewer
+> > DMA segments than nents - see Documentation/DMA-API.txt (and otherwise,
+> > the return value would surely be a simple success/fail condition).
+> > Relying on a particular implementation behaviour has never been strictl=
+y
+> > correct, even if it does happen to be a very common behaviour.
+> >
+> >> A quick check of various dma_map_sg() calls in the kernel seems to
+> >> indicate checking for 0 for errors and then ignoring the non-zero retu=
+rn
+> >> is a common pattern. Are you sure it's okay to make the change you're
+> >> proposing?
+> >
+> > Various code uses tricks like just iterating the mapped list until the
+> > first segment with zero sg_dma_len(). Others may well simply have bugs.
+>
+> Thanks for the clarification.
+>
+> BR,
+> Jani.
+>
+> >
+> > Robin.
+> >
+> >> Anyway, due to the time of year and all, I'd like to ask you to file a
+> >> bug against i915 at [1] so this is not forgotten, and please let's not
+> >> merge the changes before this is resolved.
+> >>
+> >>
+> >> Thanks,
+> >> Jani.
+> >>
+> >>
+> >> [1] https://gitlab.freedesktop.org/drm/intel/issues/new
+> >>
+> >>
+>
+> --
+> Jani Nikula, Intel Open Source Graphics Center
