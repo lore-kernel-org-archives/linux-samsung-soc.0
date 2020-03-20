@@ -2,115 +2,177 @@ Return-Path: <SRS0=xxvY=5F=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D52A1C4332D
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Mar 2020 09:43:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FC62C43333
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Mar 2020 10:02:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FEBE20757
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Mar 2020 09:43:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D6B020781
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 20 Mar 2020 10:02:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584697425;
-	bh=XgJ6mYaAppCgRYjA/6tqfDP4UMl9ct8CnZlN4qm/aa8=;
+	s=default; t=1584698578;
+	bh=tAagerYt8beIuUrN7d/g4MUF0Cj/cXQBUpXKUuT2zho=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=jC9mJcRi+VqW+5eiW1juuYrrdJXM/h81IP1uBooqv7IlKb0e2c5mOhddlyi8p6azJ
-	 YZjEBj2LRXY0vS1qHL2v8MO3Q8p1BXy3B+ilJqgJ5aZoYy/8FdHOrsxojJvoS5T7TY
-	 Y1VS7XQDzCrUgW800llVbzrZ9Tl/8t+ejAOW5cD0=
+	b=wWlyftgEd7Uj4BnkjPCfzvy2GuUizge9W5VRpf0xc8OV+Ad7IhYHO4smVJcl4E3PJ
+	 E+lIEpY/x6tmMRYnF1zxJlzEFqX9Lxa1bfdb2exhkmRSVFpBqZxglG1Wh+XtUGt4L3
+	 qaYs3q2YvIm1VXRM89P94wf0hletB97f+uV4r5yw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727066AbgCTJnp (ORCPT
+        id S1727047AbgCTKCz (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 20 Mar 2020 05:43:45 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:46308 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726602AbgCTJno (ORCPT
+        Fri, 20 Mar 2020 06:02:55 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:38406 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726527AbgCTKCy (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 20 Mar 2020 05:43:44 -0400
-Received: by mail-ed1-f65.google.com with SMTP id ca19so6332829edb.13;
-        Fri, 20 Mar 2020 02:43:43 -0700 (PDT)
+        Fri, 20 Mar 2020 06:02:54 -0400
+Received: by mail-ed1-f66.google.com with SMTP id h5so6445707edn.5;
+        Fri, 20 Mar 2020 03:02:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Mk3s5g9LU/2LF49QpiOVlm1YQB1p4hRZiB2SBGyS1Rg=;
-        b=Pbgfx54PPi9NoEhsX4ycbEiDT1W+9FwFAFEZdXPWVtB0Z6RH1uO2sK29izWPzzQHS5
-         AnZ93H6Yn9Hc4pv/8qrlKDEEgGRdOZyzzdrSSnT8oZy1pErYJPsUNdGQIfclD1uMaDtm
-         DGcAZXkUo+J1TqsZfMlYYtvULRvyu1/f8TFFYWc1r6stt4qRDA6GHHhiZE0cxL8WP9vu
-         /BEgEkwYUB7yv1hos18g9LD1ruATAYBOXIbBJiMoSLQptg+YTiKE9oPmf7Me4rSdX/of
-         uc5FigKlJqxkx5ehHhOF5EndLO4hkzqE51nuUhKf/O/6O7URSoxSxC6cecOmf80P9OEI
-         7aIg==
-X-Gm-Message-State: ANhLgQ0KbgVbFbpEzCQXo0g+gUE4SJ1nSk9pSLCifu3RT5dQ2pqwX/An
-        iRQ8L8EP89xImKHtGNxtTzU=
-X-Google-Smtp-Source: ADFU+vvfbrYk4IAPU07kklFqUnr/Dobh6VAeD25kkWfv6Ll1pmLkppDs5xtDBx4Uf6lrXVFxzavLJg==
-X-Received: by 2002:a50:f743:: with SMTP id j3mr6992962edn.22.1584697422721;
-        Fri, 20 Mar 2020 02:43:42 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.125])
-        by smtp.googlemail.com with ESMTPSA id b26sm316874eje.18.2020.03.20.02.43.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 20 Mar 2020 02:43:42 -0700 (PDT)
-Date:   Fri, 20 Mar 2020 10:43:39 +0100
+         :mime-version:content-disposition:in-reply-to;
+        bh=yKhEFD0HDc489I3cxzxcRx7nCJ4icJCiGjR0lWOPd2k=;
+        b=m0yWlKwpPPS1pBzUL5NnkA5mvuLbPIDdPqWMwWiDARWIoLNWkrc7SIYeRA+xASdqMC
+         KxCWT1RUD9yR+r5rzYrf4ZaxO1JMtYsYT2rrAohor/ptAzgmtvW4+8WlngVxGhhN+MdT
+         Fh+llBMH0889nhVKUbx+xTZiK2/I2BZ2EqnLSvBT5XliZVDAzKQxl1jZp6keYHBnV3XE
+         DvuVC/c9xRZTb2HKs5JJLZc7wY8vrP3F+S6rtRuJCZ1BZAJFUEmrcF8dJRJiHkSpvFFp
+         NHFLabftPUjMyH54qtF7YYAUnqgE11mPpCFrJMMXISZedAK42TcEPotSCk+UjnQZJt9O
+         +IBw==
+X-Gm-Message-State: ANhLgQ1IZts2jDJQKOKJ2qcCw7VAIZzOMMMJyg2Zb6FfZlVF+ZVvFFF/
+        Z1UJm4df8341Wdyvbjs+2qk=
+X-Google-Smtp-Source: ADFU+vtTJo8GuuHT33eJ8VISdzNZK+dw+AG9XHRSiOF+v3/TwxvILo+kc3y2aVtBOdqG/TC06c4U9g==
+X-Received: by 2002:a17:906:80d5:: with SMTP id a21mr7612042ejx.240.1584698571643;
+        Fri, 20 Mar 2020 03:02:51 -0700 (PDT)
+Received: from pi3 ([194.230.155.125])
+        by smtp.googlemail.com with ESMTPSA id e16sm319824ejx.53.2020.03.20.03.02.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Mar 2020 03:02:50 -0700 (PDT)
+Date:   Fri, 20 Mar 2020 11:02:43 +0100
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
+To:     Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+Cc:     devicetree@vger.kernel.org, linux-pwm@vger.kernel.org,
+        Paul Barker <pbarker@konsulko.com>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Igor Opaniuk <igor.opaniuk@toradex.com>,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        David Lechner <david@lechnology.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Peter Rosin <peda@axentia.se>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stenkin Evgeniy <stenkinevgeniy@gmail.com>,
-        Jonas Heinrich <onny@project-insanity.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] ARM: DTS: Add devicetree file for the Galaxy S2
-Message-ID: <20200320094339.GB12976@kozik-lap>
-References: <20200319173411.20607-1-paul@crapouillou.net>
- <20200319173411.20607-2-paul@crapouillou.net>
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Sekhar Nori <nsekhar@ti.com>, Shawn Guo <shawnguo@kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Tony Lindgren <tony@atomide.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [RFC PATCH 7/7] arm: dts: pwm: replace polarity constant with
+ macro
+Message-ID: <20200320100243.GA16931@pi3>
+References: <20200317123231.2843297-1-oleksandr.suvorov@toradex.com>
+ <20200317123231.2843297-8-oleksandr.suvorov@toradex.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200319173411.20607-2-paul@crapouillou.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200317123231.2843297-8-oleksandr.suvorov@toradex.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 06:34:11PM +0100, Paul Cercueil wrote:
-> From: Stenkin Evgeniy <stenkinevgeniy@gmail.com>
+On Tue, Mar 17, 2020 at 02:32:31PM +0200, Oleksandr Suvorov wrote:
+> There is the PWM_POLARITY_NORMAL defined and describled in
+> <dt-bindings/pwm/pwm.h> and used by pwm drivers.
 > 
-> Add devicetree file for the Exynos 4210 based Galaxy S2 (i9100 version).
+> This patch converts all '0' constant in pwms parameters into
+> PWM_POLARITY_NORMAL.
 > 
-> Signed-off-by: Stenkin Evgeniy <stenkinevgeniy@gmail.com>
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Replace with sed regexp:
+> 's/(pwms = <&[a-zA-Z_0-9]+ [0-9]+ [0-9]+) 0>/\1 PWM_POLARITY_NORMAL>/'
+> 
+> Then:
+> - included pwm.h in some dts/dtsi to fix building errors about undefined
+>   symbols.
+> - fixed the patman warnings about the code format;
+> 
+> Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
 > ---
 > 
-> Notes:
->     v2: - Change i9100 to GT-I9100
->         - Remove redundant description in header
->     	- Add chosen node with stdout-path
->     	- Rename regulator nodes since there was no regulator-2
->     	- Rename i2c-gpio-3 to i2c-gpio
->     	- Use IRQ_TYPE_EDGE_FALLING instead of hardcoded '2'
->         - Remove spi-cpol, spi-cpha as they glitch the LCD panel
->     	- Make CS gpio active-low
->     	- Update ehci node to add 'phys' instead of ports
->     	- Remove duplicated ehci node
->     	- Reorder nodes to appear in alphabetical order
->     	- Remove useless newlines
->     	- Remove regulator provided to touchscreen node since it does not expect any
->     
->     v3: - Change CPU regulator name to VARM_1.2V_C210 as in the datasheet
->         - Remove unused gpios for the max8997 pmic
->         - Remove redundant interrupts/interrupt-parent for max8997 pmic
-> 
->  arch/arm/boot/dts/Makefile             |   1 +
->  arch/arm/boot/dts/exynos4210-i9100.dts | 768 +++++++++++++++++++++++++
->  2 files changed, 769 insertions(+)
+>  arch/arm/boot/dts/am335x-cm-t335.dts               | 2 +-
+>  arch/arm/boot/dts/am335x-evm.dts                   | 2 +-
+>  arch/arm/boot/dts/am3517-evm.dts                   | 2 +-
+>  arch/arm/boot/dts/at91-dvk_su60_somc_lcm.dtsi      | 2 +-
+>  arch/arm/boot/dts/at91-kizbox2-common.dtsi         | 6 +++---
+>  arch/arm/boot/dts/at91-kizbox3_common.dtsi         | 8 ++++----
+>  arch/arm/boot/dts/at91-kizboxmini-common.dtsi      | 6 +++---
+>  arch/arm/boot/dts/at91-nattis-2-natte-2.dts        | 2 +-
+>  arch/arm/boot/dts/at91-sama5d4_ma5d4evk.dts        | 2 +-
+>  arch/arm/boot/dts/at91sam9n12ek.dts                | 2 +-
+>  arch/arm/boot/dts/at91sam9x5dm.dtsi                | 2 +-
+>  arch/arm/boot/dts/berlin2cd-google-chromecast.dts  | 4 ++--
+>  arch/arm/boot/dts/da850-evm.dts                    | 2 +-
+>  arch/arm/boot/dts/da850-lego-ev3.dts               | 4 ++--
+>  arch/arm/boot/dts/exynos4412-midas.dtsi            | 2 +-
+>  arch/arm/boot/dts/exynos4412-odroidu3.dts          | 2 +-
+>  arch/arm/boot/dts/exynos5250-snow-common.dtsi      | 2 +-
+>  arch/arm/boot/dts/exynos5410-odroidxu.dts          | 2 +-
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts         | 2 +-
+>  arch/arm/boot/dts/exynos5422-odroidhc1.dts         | 2 +-
+>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 2 +-
+>  arch/arm/boot/dts/exynos5422-odroidxu4.dts         | 2 +-
+>  arch/arm/boot/dts/exynos54xx-odroidxu-leds.dtsi    | 4 ++--
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts          | 2 +-
+>  arch/arm/boot/dts/imx53-tx53-x13x.dts              | 5 +++--
+>  arch/arm/boot/dts/imx6dl-tx6dl-comtft.dts          | 2 +-
+>  arch/arm/boot/dts/imx6q-display5.dtsi              | 2 +-
+>  arch/arm/boot/dts/imx6q-tx6q-1010-comtft.dts       | 2 +-
+>  arch/arm/boot/dts/imx6q-tx6q-1020-comtft.dts       | 2 +-
+>  arch/arm/boot/dts/imx6qdl-tx6-lvds.dtsi            | 4 ++--
+>  arch/arm/boot/dts/imx7-colibri.dtsi                | 4 +++-
+>  arch/arm/boot/dts/imx7d-nitrogen7.dts              | 3 ++-
+>  arch/arm/boot/dts/imx7d-pico.dtsi                  | 3 ++-
+>  arch/arm/boot/dts/imx7d-sdb.dts                    | 3 ++-
+>  arch/arm/boot/dts/imx7ulp-evk.dts                  | 3 ++-
+>  arch/arm/boot/dts/iwg20d-q7-common.dtsi            | 2 +-
+>  arch/arm/boot/dts/logicpd-torpedo-baseboard.dtsi   | 2 +-
+>  arch/arm/boot/dts/meson8b-ec100.dts                | 4 ++--
+>  arch/arm/boot/dts/meson8b-mxq.dts                  | 4 ++--
+>  arch/arm/boot/dts/meson8b-odroidc1.dts             | 4 ++--
+>  arch/arm/boot/dts/motorola-mapphone-common.dtsi    | 3 ++-
+>  arch/arm/boot/dts/omap3-gta04.dtsi                 | 2 +-
+>  arch/arm/boot/dts/omap3-n900.dts                   | 2 +-
+>  arch/arm/boot/dts/rk3288-veyron-edp.dtsi           | 2 +-
+>  arch/arm/boot/dts/rk3288-veyron.dtsi               | 2 +-
+>  arch/arm/boot/dts/rv1108-evb.dts                   | 2 +-
+>  arch/arm/boot/dts/s3c6410-mini6410.dts             | 2 +-
+>  arch/arm/boot/dts/s5pv210-aries.dtsi               | 2 +-
+>  arch/arm/boot/dts/s5pv210-smdkv210.dts             | 2 +-
 
-Thanks, applied to dt-late. I already sent a pull request so this might
-need to wait till next cycle. In such case I will carry this over merge
-window.
+For Exynos/S3C/S5P:
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Best regards,
 Krzysztof
-
