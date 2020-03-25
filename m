@@ -2,86 +2,161 @@ Return-Path: <SRS0=gVe6=5K=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD22C1975A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Mar 2020 10:38:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBD4FC54FD8
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Mar 2020 16:04:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD20620775
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Mar 2020 10:38:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7FA520772
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 25 Mar 2020 16:04:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1585132729;
-	bh=lLPYj3tstQ31DLYlKDDc8Fji8FRm44KGvzvTsDQLLaI=;
-	h=Date:From:List-Id:To:Cc:Subject:References:In-Reply-To:List-ID:
-	 From;
-	b=N+y79d0nIy8yBHtThRhH+krA1tju4oi0rWo0bZ9tPfaj/mLi0nJLy0nzwi4AFV/DZ
-	 yQ/M0ey/WcOn5/UVeU9UwLWP+DZO0c+TEIL5vjHV3bd3UvGQJwb2YaSEIGZkR74wqc
-	 f/rGBsElXx16H6G8arT6jz9yG5y0jN1QmJ1Cxq70=
+	s=default; t=1585152244;
+	bh=/YZy1j5dX52QBA68q9SViv2y+oiaFKA4xv2QbEhOZA4=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=x0kD8/bP7TTuBDOBLaq3QmrQmxfeZ4g6re0pQyA2nmoHHIRXQaI9EMzCn3SH9cU4g
+	 nB3SzW7m7WNzyo7iTMZKuMovuj/nDLfZJCtTpGfZr+fmNOLpkL7WFrmEyZbSGsmIIu
+	 5HXpqGtIm14+CpBrTF0JnyiWm+VRDMpnrDCv7hlE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727559AbgCYKit (ORCPT
+        id S1727912AbgCYQEC (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 25 Mar 2020 06:38:49 -0400
-Received: from mail-ed1-f49.google.com ([209.85.208.49]:33375 "EHLO
-        mail-ed1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727137AbgCYKit (ORCPT
+        Wed, 25 Mar 2020 12:04:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53260 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727846AbgCYQEC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 25 Mar 2020 06:38:49 -0400
-Received: by mail-ed1-f49.google.com with SMTP id z65so1747529ede.0;
-        Wed, 25 Mar 2020 03:38:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rChnKt/buGlg4oMgDuHolFkSTfOBDmB/aUQmKVJ+Bu8=;
-        b=HhzmmvPuo5WJNnfepT5Eqp4epSpOdFhdzED5w1oFTf0ml4B6wMvxyaaTFCjlQCKq2Y
-         1O1iXBJvBTMtdrp6WvI3UFDr2Y0k3VJ3EO7tcipi6Uw/MFkM3+gxf0i74927eNksgYZW
-         ljm+esdiul2QmTNABfQhrsijs5kZ95J5n+5RGbq+Dw1wjwPChmZE57ZwpR58xMcaeT9r
-         QQp4F4b4FjR14709P6C4ep0HaWcalAZWpO+qAgBvRAG9sMcJXxzmEi2l/0IODn6IAUrq
-         FSYRpIqVHeJaEmehDzmzz+pzJRK9HWnJYsbCLYE3lr5VTT85EdYnTxzgp2oSzQ93Lwun
-         TzOw==
-X-Gm-Message-State: ANhLgQ01Vk8lmGZR0mROPMGnqBqe+ZSu+zS8VdxOuvYP7bxTPF5AhiH/
-        UfWKO2W89JWZuAt928KdQbs=
-X-Google-Smtp-Source: ADFU+vu6wOHo0Oo5RedHizV/zMZxQCP2qEaIJff3a9ZAD1Wu4ZYA7zr+gdDKh5A2BskBFG1jRYSWGw==
-X-Received: by 2002:aa7:c610:: with SMTP id h16mr2228662edq.348.1585132727057;
-        Wed, 25 Mar 2020 03:38:47 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.125])
-        by smtp.googlemail.com with ESMTPSA id s7sm1458659edr.15.2020.03.25.03.38.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Mar 2020 03:38:46 -0700 (PDT)
-Date:   Wed, 25 Mar 2020 11:38:43 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-List-Id: <soc.lore.kernel.org>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        arm@kernel.org, soc@kernel.org
-Cc:     Kukjin Kim <kgene@kernel.org>,
+        Wed, 25 Mar 2020 12:04:02 -0400
+Received: from mail.kernel.org (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ECC0D2077D;
+        Wed, 25 Mar 2020 16:04:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585152241;
+        bh=/YZy1j5dX52QBA68q9SViv2y+oiaFKA4xv2QbEhOZA4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ClsJ9UYWBbp4Uz4XmfRkQk92n+yf7yV4SxCYgHSBdz2Gh7Th6OlxpUqO2W7f8mo7V
+         CPGOZ727NTJiTNbIckIlIOuODwoyzR/WuJelJpvDnv2xK5QMhbfh2GkmVrv1W5SpT5
+         3V8zz02wGsvYVpYQuFHE8jvZpGviVt2iGFpo0qH4=
+Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
+        (envelope-from <mchehab@kernel.org>)
+        id 1jH8Va-003MJ8-K9; Wed, 25 Mar 2020 17:03:58 +0100
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Linux Media Mailing List <linux-media@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Helen Koike <helen.koike@collabora.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Yong Deng <yong.deng@magewell.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Yong Zhi <yong.zhi@intel.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Fabio Estevam <festevam@gmail.com>,
+        Hyun Kwon <hyun.kwon@xilinx.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Heungjun Kim <riverful.kim@samsung.com>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL 0/3] ARM: exynos: Pull for v5.7
-Message-ID: <20200325103843.GA17099@kozik-lap>
-References: <20200316175652.5604-1-krzk@kernel.org>
+        Maxime Ripard <mripard@kernel.org>, devel@driverdev.osuosl.org,
+        Bingbu Cao <bingbu.cao@intel.com>,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tian Shu Qiu <tian.shu.qiu@intel.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: [PATCH 0/4]  media Kconfig reorg - part 2
+Date:   Wed, 25 Mar 2020 17:03:53 +0100
+Message-Id: <cover.1585151701.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200316175652.5604-1-krzk@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 06:56:49PM +0100, Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> One patch for drivers at the end of these series. I also sent a fixes patch separately.
-> 
-> As you asked, I updated the Google Docs with Exynos entries.
+That's the second part of media Kconfig changes. The entire series is
+at:
 
-Hi Arnd and Olof,
+	https://git.linuxtv.org/mchehab/experimental.git/log/?h=media-kconfig
 
-Any comments on this pull request?
+It addresses some issues I noticed when reviewing the series, and do
+some changes on how things will be displayed.
 
-Best regards,
-Krzysztof
+It also simplify dependencencies on media-controller-dependent drivers,
+by auto-selecting the needed deps.
+
+It should be noticed that the media controller may also optionally
+selected for several other drivers, so there is still a prompt to allow
+manually enabling it, in the case it was not auto-selected.
+
+PS.: While not needed anymore, because all dependent drivers auto
+select, at least for now, I opted to keep the prompt for:
+
+- VIDEO_V4L2_SUBDEV_API
+
+  The rationale is that there are a few drivers that can optionally depend
+  on it (like tvp5150). So, better to keep the dependency, in order to be
+  able to test those drivers with and without the option.
+
+- MEDIA_CONTROLLER_REQUEST_API
+
+  The rationale is that there are some warnings at the Request API, and
+  it would be good to keep it, at least while drivers are on staging.
+
+Mauro Carvalho Chehab (4):
+  media: dvb-core: Kconfig: default to use dynamic minors
+  media: Kconfig files: use select for V4L2 subdevs and MC
+  media: i2c/Kconfig: reorganize items there
+  media: Kconfig: don't use visible for device type select
+
+ drivers/media/Kconfig                         |  25 +-
+ drivers/media/dvb-core/Kconfig                |   1 +
+ drivers/media/i2c/Kconfig                     | 406 +++++++++++-------
+ drivers/media/i2c/et8ek8/Kconfig              |   4 +-
+ drivers/media/i2c/m5mols/Kconfig              |   5 +-
+ drivers/media/i2c/smiapp/Kconfig              |   5 +-
+ drivers/media/pci/cobalt/Kconfig              |   4 +-
+ drivers/media/pci/intel/ipu3/Kconfig          |   4 +-
+ drivers/media/pci/sta2x11/Kconfig             |   6 +-
+ drivers/media/platform/Kconfig                |  28 +-
+ drivers/media/platform/am437x/Kconfig         |   4 +-
+ drivers/media/platform/atmel/Kconfig          |   4 +-
+ drivers/media/platform/cadence/Kconfig        |   8 +-
+ drivers/media/platform/exynos4-is/Kconfig     |   5 +-
+ drivers/media/platform/rcar-vin/Kconfig       |   8 +-
+ .../media/platform/sunxi/sun4i-csi/Kconfig    |   4 +-
+ .../media/platform/sunxi/sun6i-csi/Kconfig    |   4 +-
+ drivers/media/platform/xilinx/Kconfig         |   4 +-
+ drivers/media/spi/Kconfig                     |   4 +-
+ drivers/media/test_drivers/vimc/Kconfig       |   4 +-
+ drivers/staging/media/hantro/Kconfig          |   5 +-
+ drivers/staging/media/imx/Kconfig             |   5 +-
+ drivers/staging/media/ipu3/Kconfig            |   3 +-
+ drivers/staging/media/omap4iss/Kconfig        |   4 +-
+ drivers/staging/media/rkisp1/Kconfig          |   4 +-
+ drivers/staging/media/sunxi/cedrus/Kconfig    |   5 +-
+ 26 files changed, 349 insertions(+), 214 deletions(-)
+
+-- 
+2.25.1
+
 
