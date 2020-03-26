@@ -7,169 +7,161 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B1D6C2D0EE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9691C2D0E9
 	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Mar 2020 09:46:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CEFF2070A
+	by mail.kernel.org (Postfix) with ESMTP id 6DA76207FF
 	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Mar 2020 09:46:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KrwNnvcW"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tPXjkuYH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727699AbgCZJqk (ORCPT
+        id S1727822AbgCZJql (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 26 Mar 2020 05:46:40 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:46908 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727936AbgCZJqh (ORCPT
+        Thu, 26 Mar 2020 05:46:41 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:40655 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727773AbgCZJqg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 26 Mar 2020 05:46:37 -0400
+        Thu, 26 Mar 2020 05:46:36 -0400
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200326094636euoutp019b8334210a00aa4da08c067c01037261~-0Yyyf_rj1254312543euoutp01S
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Mar 2020 09:46:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200326094636euoutp019b8334210a00aa4da08c067c01037261~-0Yyyf_rj1254312543euoutp01S
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200326094635euoutp02cbb250b81c7ab8017889b3f12286bbc1~-0Yyc1KhI2181021810euoutp02f
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Mar 2020 09:46:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200326094635euoutp02cbb250b81c7ab8017889b3f12286bbc1~-0Yyc1KhI2181021810euoutp02f
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1585215996;
-        bh=mNxRng0nxQRP6ltbIhzZVQFx69cxiNpPeKQgpJCHQVM=;
+        s=mail20170921; t=1585215995;
+        bh=Tp4f9EC9cHcL0ZJMQbVOcXwJ6LX3NpDz4ACJoQ6/Fkw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KrwNnvcW5skaqDi5wBC+IxGE17bQUQMPGuXrI9Rr8PUBrK/ZKkao9SFXE5Dipif82
-         bBtDvaSgE0p93dAm6sKmdlcuZbmSRGyCkN2HSwZXArdoHHPskvMM/WufZCxLcQZ23H
-         LBf19k5CkXvTUpDbHZvyaMupgTmqCdt5BhnAVLug=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        b=tPXjkuYHkdl2guUdSHjyFNoMC3cnwmV0ldwN6V90C3WZmUceTj6Mx38rI22SkvMf8
+         Hk1hOdAi/NOpCB8kWq3tlIhrdEHfeaUcRcagdoEMnh6VxdsFemyj5BLUF0WZeOkZgz
+         s3fhBr53KWFznSh2QYvXP5QjPIlzK1u7ZILFCB1U=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200326094635eucas1p139afbb3d89ce60054038b6572f00ba89~-0Yyh4BYI2968629686eucas1p1u;
+        20200326094635eucas1p111acc091182615b57a6fc0599629f005~-0YyLWGaB0331003310eucas1p1R;
         Thu, 26 Mar 2020 09:46:35 +0000 (GMT)
 Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id EB.AD.60698.BF97C7E5; Thu, 26
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 01.4C.61286.BF97C7E5; Thu, 26
         Mar 2020 09:46:35 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200326094635eucas1p17fbc47aecd9be9df10daacf091bc52be~-0YyPkMig2968629686eucas1p1t;
-        Thu, 26 Mar 2020 09:46:35 +0000 (GMT)
+        20200326094634eucas1p1d02b6124a500b7bac6a9702d93915c42~-0YxxRKCE2168621686eucas1p1y;
+        Thu, 26 Mar 2020 09:46:34 +0000 (GMT)
 Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200326094635eusmtrp19b6d69db1f63d89775827c2b77e13e2d~-0YyPCCMw3171231712eusmtrp1R;
-        Thu, 26 Mar 2020 09:46:35 +0000 (GMT)
-X-AuditID: cbfec7f5-a0fff7000001ed1a-9f-5e7c79fbc306
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200326094634eusmtrp2bfa763138a2e896e7f060ab162c99278~-0YxwuLjQ0813208132eusmtrp2G;
+        Thu, 26 Mar 2020 09:46:34 +0000 (GMT)
+X-AuditID: cbfec7f2-f0bff7000001ef66-ed-5e7c79fbdbf7
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 9C.C2.07950.BF97C7E5; Thu, 26
-        Mar 2020 09:46:35 +0000 (GMT)
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 2B.C2.07950.AF97C7E5; Thu, 26
+        Mar 2020 09:46:34 +0000 (GMT)
 Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
         eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200326094635eusmtip2635410a411be82e976ddb0289c334430~-0Yx_Nw7n2360323603eusmtip2j;
-        Thu, 26 Mar 2020 09:46:35 +0000 (GMT)
+        20200326094634eusmtip2bc75d0473f1175ebcbb8c4aaa2e0a764~-0YxbZdlq2643126431eusmtip2W;
+        Thu, 26 Mar 2020 09:46:34 +0000 (GMT)
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
 To:     linux-samsung-soc@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 3/4] ARM: dts: exynos: Enable WLAN support for the Rinato
- board
-Date:   Thu, 26 Mar 2020 10:46:25 +0100
-Message-Id: <20200326094626.28308-4-m.szyprowski@samsung.com>
+Subject: [PATCH 1/4] ARM: dts: exynos: Enable WLAN support for the
+ UniversalC210 board
+Date:   Thu, 26 Mar 2020 10:46:23 +0100
+Message-Id: <20200326094626.28308-2-m.szyprowski@samsung.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200326094626.28308-1-m.szyprowski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOIsWRmVeSWpSXmKPExsWy7djP87q/K2viDFpn61tsnLGe1eL6l+es
-        FufPb2C3mHF+H5PF2iN32R1YPTat6mTz6NuyitHj8ya5AOYoLpuU1JzMstQifbsErowPEzez
-        FXzlqZh8qYW1gfE4VxcjJ4eEgIlE84NPTF2MXBxCAisYJV58ec8C4XxhlFj77iMzhPOZUeL3
-        ng/sMC2HH/RBJZYzSryf2MAK1zKt5wgLSBWbgKFE19suNhBbREBV4nPbAnaQImaBbYwSW3of
-        MIMkhAUCJS6tPQOU4OBgASpqnuMNYvIK2Eq8PccBsUxeYvWGA2DVnAJ2EounfQM7T0LgMpvE
-        6pN/WCCKXCQO/NvDCmELS7w6vgXqUhmJ05N7oBqaGSUenlvLDuH0MEpcbprBCFFlLXHn3C82
-        kM3MApoS63fpQ4QdJXoXnGYGCUsI8EnceCsIEmYGMidtmw4V5pXoaBOCqFaTmHV8Hdzagxcu
-        QZV4SHTNlYMEz0RGif+dy9gnMMrPQti1gJFxFaN4amlxbnpqsXFearlecWJucWleul5yfu4m
-        RmD0n/53/OsOxn1/kg4xCnAwKvHwRphXxwmxJpYVV+YeYpTgYFYS4X0aWRMnxJuSWFmVWpQf
-        X1Sak1p8iFGag0VJnNd40ctYIYH0xJLU7NTUgtQimCwTB6dUA2PJLKl185g+Ck2u3W2/25+L
-        W6Fvi6SqvKrt+4gNnl8LDz5a9Ie1eeaHlPe/uJvmm0oGLnVaGsMg2fgxOEXh3uptZ8L4vx/e
-        /VnoXdK26OuqQi1N3v/M3rMHJL7fsPzs+bKD+qvPtFlf+uMlsN2pMPbpkbkNmqJGUUfnRQRq
-        bhd8rJQ8Y/aFmdlKLMUZiYZazEXFiQDx8PPV+gIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBLMWRmVeSWpSXmKPExsVy+t/xe7q/K2viDK48lrHYOGM9q8X1L89Z
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJIsWRmVeSWpSXmKPExsWy7djP87q/K2viDNY/F7fYOGM9q8X1L89Z
+        Lc6f38BuMeP8PiaLtUfusjuwemxa1cnm0bdlFaPH501yAcxRXDYpqTmZZalF+nYJXBmTp/1h
+        Lujiqdi96iNbA+Nnji5GTg4JAROJRfsnsHYxcnEICaxglPj/+RIzhPOFUeLp2n9QzmdGiW+v
+        P7DBtHxp+M8EkVjOKLG1aS0jXMv/O83MIFVsAoYSXW+7wDpEBFQlPrctYAcpYhbYxiixpfcB
+        WJGwQITEqTUnWEBsFqCiGYvWsIPYvAK2EotevGWEWCcvsXrDAbB6TgE7icXTvrGADJIQuMwm
+        cfHQFqibXCQO3ZwB1SAs8er4FnYIW0bi/875TBANzYwSD8+tZYdwehglLjfBdFhL3Dn3C2gS
+        B9B9mhLrd+lDhB0ldjR0M4GEJQT4JG68FQQJMwOZk7ZNZ4YI80p0tAlBVKtJzDq+Dm7twQuX
+        mCFsD4m5Z9aALRISmMgocfWo1wRG+VkIuxYwMq5iFE8tLc5NTy02zEst1ytOzC0uzUvXS87P
+        3cQITACn/x3/tIPx66WkQ4wCHIxKPLwbLKvjhFgTy4orcw8xSnAwK4nwPo2siRPiTUmsrEot
+        yo8vKs1JLT7EKM3BoiTOa7zoZayQQHpiSWp2ampBahFMlomDU6qBUXy1Yu18eeOWv8JdZQ+z
+        7I71PGLZPk3g0+OzWhfXfxN8FSg1+1KmZ/3V1QJ67Bf5ws69b4iXT2LduXP6BolZ7h8XSEvO
+        XP/p36VmrgB2L5lrkpzxMYrHVparPDu8Kj770q3JnM3bJ/o4lJ2Te8hop/TtuQ7fy//T9TuM
+        7+ROZbqowRZ94DFThhJLcUaioRZzUXEiAJXKF/L8AgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJLMWRmVeSWpSXmKPExsVy+t/xe7q/KmviDCZPNrPYOGM9q8X1L89Z
         Lc6f38BuMeP8PiaLtUfusjuwemxa1cnm0bdlFaPH501yAcxRejZF+aUlqQoZ+cUltkrRhhZG
-        eoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehkfJm5mK/jKUzH5UgtrA+Nxri5GTg4J
-        AROJww/6mLsYuTiEBJYySvx9vZEFIiEjcXJaAyuELSzx51oXG0TRJ0aJ3c8ugRWxCRhKdL0F
-        SXByiAioSnxuW8AOUsQssINRYsuOt2DdwgL+EofOdAHZHBwsQEXNc7xBTF4BW4m35zgg5stL
-        rN5wgBnE5hSwk1g87RvYeCGgko0PHzJPYORbwMiwilEktbQ4Nz232EivODG3uDQvXS85P3cT
-        IzAUtx37uWUHY9e74EOMAhyMSjy8Gyyr44RYE8uKK3MPMUpwMCuJ8D6NrIkT4k1JrKxKLcqP
-        LyrNSS0+xGgKdNJEZinR5HxgnOSVxBuaGppbWBqaG5sbm1koifN2CByMERJITyxJzU5NLUgt
-        gulj4uCUamA02GHHuanDINJwZcXF9+UtRlvP/uicaxyVs80ypNt63dnZU3XDHv1da/K8pvjA
-        motGHk+mKJgufn9OuDhxYdIZzvNuf3pVdzkJz2sMOS25KY4vvNy94LFk2Y65kouEf+RpiD2e
-        v+vnag/3co41V/92zJANyb9VdW5ff5jg4qh61rtPkzemuHoosRRnJBpqMRcVJwIAeiJSCFsC
-        AAA=
-X-CMS-MailID: 20200326094635eucas1p17fbc47aecd9be9df10daacf091bc52be
+        eoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehmTp/1hLujiqdi96iNbA+Nnji5GTg4J
+        AROJLw3/mboYuTiEBJYySqxbMocZIiEjcXJaAyuELSzx51oXG4gtJPCJUeLflGgQm03AUKLr
+        LURcREBV4nPbAnaQQcwCOxgltux4C9YsLBAm8WfvTDCbBahoxqI17CA2r4CtxKIXbxkhFshL
+        rN5wAGwxp4CdxOJp31ggltlKbHz4kHkCI98CRoZVjCKppcW56bnFRnrFibnFpXnpesn5uZsY
+        gcG47djPLTsYu94FH2IU4GBU4uHdYFkdJ8SaWFZcmXuIUYKDWUmE92lkTZwQb0piZVVqUX58
+        UWlOavEhRlOgoyYyS4km5wMjJa8k3tDU0NzC0tDc2NzYzEJJnLdD4GCMkEB6YklqdmpqQWoR
+        TB8TB6dUA2NuyoT9hinnZ711D9rHofvl9WONtKqshC8sYS9WP3i6QfzR9kmdFcWXelxSOM3+
+        JGzw23DDb09g217VrOcBjVd6/LyE28ymls08Y/bJbs50eZd199Oy46bvyk31mnvFTVm+QH7a
+        8VUdLTZHtvU+rF3x6XNpccgRxp/PArZLbpWLXF+tOedM0DklluKMREMt5qLiRAACD7KvXAIA
+        AA==
+X-CMS-MailID: 20200326094634eucas1p1d02b6124a500b7bac6a9702d93915c42
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200326094635eucas1p17fbc47aecd9be9df10daacf091bc52be
+X-RootMTR: 20200326094634eucas1p1d02b6124a500b7bac6a9702d93915c42
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200326094635eucas1p17fbc47aecd9be9df10daacf091bc52be
+X-CMS-RootMailID: 20200326094634eucas1p1d02b6124a500b7bac6a9702d93915c42
 References: <20200326094626.28308-1-m.szyprowski@samsung.com>
-        <CGME20200326094635eucas1p17fbc47aecd9be9df10daacf091bc52be@eucas1p1.samsung.com>
+        <CGME20200326094634eucas1p1d02b6124a500b7bac6a9702d93915c42@eucas1p1.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add a node for BCM43342A SDIO chip on MSHC bus #1 and the required MMC
-power sequence node for the Exynos3250-based Rinato board.
+Add a node for BCM4330/2 SDIO chip on SDHCI bus #3 and the required MMC
+power sequence node for the Exynos4210-based UniversalC210 board.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- arch/arm/boot/dts/exynos3250-rinato.dts | 36 +++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ .../boot/dts/exynos4210-universal_c210.dts    | 28 +++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
-index 03f214089fd4..86fedccf277c 100644
---- a/arch/arm/boot/dts/exynos3250-rinato.dts
-+++ b/arch/arm/boot/dts/exynos3250-rinato.dts
+diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+index 9dda6bdb9253..c78423a2d10f 100644
+--- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
++++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
 @@ -50,6 +50,11 @@
- 		};
+ 		enable-active-high;
  	};
  
-+	wlan_pwrseq: mshc1-pwrseq {
++	wlan_pwrseq: sdhci3-pwrseq {
 +		compatible = "mmc-pwrseq-simple";
-+		reset-gpios = <&gpe0 4 GPIO_ACTIVE_LOW>;
++		reset-gpios = <&gpe3 1 GPIO_ACTIVE_LOW>;
 +	};
 +
- 	i2c_max77836: i2c-gpio-0 {
- 		compatible = "i2c-gpio";
- 		gpios = <&gpd0 2 GPIO_ACTIVE_HIGH>, <&gpd0 3 GPIO_ACTIVE_HIGH>;
-@@ -625,6 +630,37 @@
+ 	gpio-keys {
+ 		compatible = "gpio-keys";
+ 
+@@ -563,6 +568,29 @@
  	status = "okay";
  };
  
-+&mshc_1 {
-+	status = "okay";
++&sdhci_3 {
++        status = "okay";
 +
-+	#address-cells = <1>;
-+	#size-cells = <0>;
++        #address-cells = <1>;
++        #size-cells = <0>;
 +
-+	broken-cd;
-+	non-removable;
-+	cap-sd-highspeed;
-+	cap-sdio-irq;
-+	keep-power-in-suspend;
-+	card-detect-delay = <200>;
-+	samsung,dw-mshc-ciu-div = <1>;
-+	samsung,dw-mshc-sdr-timing = <0 1>;
-+	samsung,dw-mshc-ddr-timing = <1 2>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd1_clk &sd1_cmd &sd1_bus1 &sd1_bus4>;
-+	bus-width = <4>;
++        non-removable;
++        bus-width = <4>;
++        mmc-pwrseq = <&wlan_pwrseq>;
++        vmmc-supply = <&ldo5_reg>;
 +
-+	mmc-pwrseq = <&wlan_pwrseq>;
++        pinctrl-names = "default";
++        pinctrl-0 = <&sd3_clk>, <&sd3_cmd>, <&sd3_bus4>;
 +
-+	brcmf: wifi@1 {
-+		compatible = "brcm,bcm4334-fmac";
-+		reg = <1>;
-+
-+		interrupt-parent = <&gpx1>;
-+		interrupts = <1 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "host-wake";
-+	};
++        brcmf: wifi@1 {
++                compatible = "brcm,bcm4330-fmac";
++                reg = <1>;
++                interrupt-parent = <&gpx2>;
++                interrupts = <5 IRQ_TYPE_LEVEL_HIGH>;
++                interrupt-names = "host-wake";
++        };
 +};
 +
  &serial_0 {
- 	assigned-clocks = <&cmu CLK_SCLK_UART0>;
- 	assigned-clock-rates = <100000000>;
+ 	status = "okay";
+ 	/delete-property/dmas;
 -- 
 2.17.1
 
