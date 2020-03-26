@@ -2,40 +2,46 @@ Return-Path: <SRS0=zaGS=5L=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4064C2D0E8
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Mar 2020 10:13:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB6BDC2D0E5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Mar 2020 12:51:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69BF72077D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Mar 2020 10:13:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="SGXSWNzJ"
+	by mail.kernel.org (Postfix) with ESMTP id 859D42077D
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Mar 2020 12:51:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1585227087;
+	bh=zIulOGTEwdI3hssRscSNydLZe2G+oeZ2jtg11vXXxa0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=kHfhzVsp6GYtg/3axnKh0FJki5njMTaq8CHwEV2mTXQcdFstk3LGv/6TnubW+koEi
+	 /sjyKu8DXuyFiTek4PV/4StJlItsYql65jL5eosRCx0GOM/lZc4od9TFE1M0HXCFfU
+	 i5Wu+RJGOcWLfYoCV4oWi+4X23imnfRMXgTKvDKE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727661AbgCZKNk (ORCPT
+        id S1728150AbgCZMv1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 26 Mar 2020 06:13:40 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:57018 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726298AbgCZKNk (ORCPT
+        Thu, 26 Mar 2020 08:51:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50458 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728065AbgCZMv0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 26 Mar 2020 06:13:40 -0400
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id DA1FF2DC;
-        Thu, 26 Mar 2020 11:13:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1585217617;
-        bh=Ph6XOD3yl1HjeWfouB+OXNPerwxf190pXAsdWrIlQzA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SGXSWNzJk1R9eALqvJBwCFcxdASplyWDLeMJLJU6IKRg4fRnBE4pc4L/BzqSKZKa7
-         ogRY+dUDucCSEqi7Ln649U6ke3ED5EGsYjfCCZK5b5u+jOLyrAzidKa7yCLiXjNZrL
-         zp2UuUPdQwWLSI+mUReY8ICrS8hG0ridS6gPshSE=
-Date:   Thu, 26 Mar 2020 12:13:33 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+        Thu, 26 Mar 2020 08:51:26 -0400
+Received: from coco.lan (ip5f5ad4d8.dynamic.kabel-deutschland.de [95.90.212.216])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6461B2073E;
+        Thu, 26 Mar 2020 12:51:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585227085;
+        bh=zIulOGTEwdI3hssRscSNydLZe2G+oeZ2jtg11vXXxa0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=WpMbSseODo1E92lj7T40pAB2Wh74HRlkBa1JdDpsvagBvVQHLFLhCwDBinmDbKLLi
+         i1Ta5Atlrk9FKaPsD49ihgxy3OqThb8sItMvY4phyKyO/8Zd0NGMZTqn73rwFxHAgo
+         u2EV2sNSSV/qsPGJEVtONh5Uv2/xemv6KIEaDi7k=
+Date:   Thu, 26 Mar 2020 13:51:13 +0100
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc:     Helen Koike <helen.koike@collabora.com>,
         Linux Media Mailing List <linux-media@vger.kernel.org>,
         Ezequiel Garcia <ezequiel@collabora.com>,
@@ -71,221 +77,119 @@ Cc:     Helen Koike <helen.koike@collabora.com>,
         Steve Longerbeam <slongerbeam@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Tian Shu Qiu <tian.shu.qiu@intel.com>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+        Niklas =?UTF-8?B?U8O2ZGVybHVuZA==?= 
+        <niklas.soderlund@ragnatech.se>
 Subject: Re: [PATCH 0/4] media Kconfig reorg - part 2
-Message-ID: <20200326101333.GH20581@pendragon.ideasonboard.com>
+Message-ID: <20200326135113.73c257ba@coco.lan>
+In-Reply-To: <20200326101333.GH20581@pendragon.ideasonboard.com>
 References: <cover.1585151701.git.mchehab+huawei@kernel.org>
- <6fadc6ea-8512-03ba-da30-43c64d7562f6@collabora.com>
- <20200325223820.1c74aed3@coco.lan>
- <20200325221343.GW19171@pendragon.ideasonboard.com>
- <20200326092832.069a4d17@coco.lan>
+        <6fadc6ea-8512-03ba-da30-43c64d7562f6@collabora.com>
+        <20200325223820.1c74aed3@coco.lan>
+        <20200325221343.GW19171@pendragon.ideasonboard.com>
+        <20200326092832.069a4d17@coco.lan>
+        <20200326101333.GH20581@pendragon.ideasonboard.com>
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200326092832.069a4d17@coco.lan>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Mauro,
+Em Thu, 26 Mar 2020 12:13:33 +0200
+Laurent Pinchart <laurent.pinchart@ideasonboard.com> escreveu:
 
-On Thu, Mar 26, 2020 at 09:28:32AM +0100, Mauro Carvalho Chehab wrote:
-> Em Thu, 26 Mar 2020 00:13:43 +0200 Laurent Pinchart escreveu:
-> > On Wed, Mar 25, 2020 at 10:38:20PM +0100, Mauro Carvalho Chehab wrote:
-> > > Em Wed, 25 Mar 2020 16:36:31 -0300 Helen Koike escreveu:  
-> > > > On 3/25/20 1:03 PM, Mauro Carvalho Chehab wrote:  
-> > > > > That's the second part of media Kconfig changes. The entire series is
-> > > > > at:
-> > > > > 
-> > > > > 	https://git.linuxtv.org/mchehab/experimental.git/log/?h=media-kconfig    
-> > > > 
-> > > > I made a quick experiment (using this branch) with someone who works with the kernel for his master degree, but doesn't have much experience in kernel development in general.
-> > > > I asked him to enable Vimc (from default configs, where multimedia starts disabled).
-> > > > He knows that Vimc is a virtual camera driver, and this is how he behaved:
-> > > > 
-> > > > === Start of experiment:
-> > > > 
-> > > > * He pressed '/' and searched for vimc to see the location path.
-> > > > * Then he enabled "Multimedia support" and went straight to "Media drivers" (which just shows USB and PCI).
-> > > > * He went back to "Multimedia support", entered "Media device types" and enabled "Test drivers".
-> > > > * He went back to "Media drivers" again and didn't find Vimc (nothing changed in this menu).
-> > > > * He seemed a bit lost, going back and forth in the menus a couple of times.
-> > > > * Then he pressed '/' again to search for vimc and see the location path, and he realized that there
-> > > > should be an option called "V4L test drivers" under "Media drivers" that is not showing up.
-> > > > * He went back to "Media device types" again and start re-reading the options.
-> > > > * He selected "Cameras and video grabbers" ant went back to "Media drivers".
-> > > > * He sees "V4L test drivers", selects it, and enter this menu.
-> > > > * He selects "Virtual Media Controller Driver".
-> > > > 
-> > > > I asked his impressions, and he mentioned that he thought that enabling just "Test drivers" would be enough, without need
-> > > > to combine "Test drivers" with "Cameras and video grabbers".
-> > > > He also asked me why virtual drivers should be hidden, and he mentioned that the word "Virtual" in front would be enough.
-> > > > 
-> > > > Then I showed him he could have disabled the option "Filter devices by their types" to see everything at one (which he didn't
-> > > > realized by himself until that moment, nor tried it out to see what would happen).
-> > > > 
-> > > > He mentioned that hiding is nice, because it shows less options, but not very nice to search for something.
-> > > > He also mentioned that if he had understood the filter mechanism from the start, he would have disabled "Filter devices by their types" sooner.  
-> > > 
-> > > That's easy to solve: all it needs is to add something similar
-> > > to this at drivers/media/Kconfig:
-> > > 
-> > > 	+	comment "Drivers are filtered by MEDIA_SUPPORT_FILTER"
-> > > 	+		visible if MEDIA_SUPPORT_FILTER
-> > > 	+
-> > > 	+	comment "All available drivers are shown below"
-> > > 	+		visible if !MEDIA_SUPPORT_FILTER
-> > > 	+
-> > > 	menu "Media drivers"
-> > > 
-> > > 	source "drivers/media/usb/Kconfig"
-> > >   
-> > > > === End of experiment
-> > > > 
-> > > > This was just one experiment from one person, I'll see if I can get some other people from lkcamp.dev group to also check
-> > > > and send us their impressions. I think it would be nice to get more data about user experience, from people that are not used to
-> > > > kernel development (kernel dev newbies for instance).
-> > > > 
-> > > > Just another remark from me:
-> > > > 
-> > > > From the default config, "Media drivers" shows USB and PCI,   
-> > > 
-> > > Well, assuming that there are 2 billion computers, 1% with Linux
-> > > installed, and 10% of them have a media device (camera or TV),
-> > > we have about 2 millions of people running Linux. That excludes
-> > > Android and Embedded devices, where people usually don't touch.
-> > > 
-> > > During an entire year, there are about 4000 of Kernel developers 
-> > > that has at least one patch accepted upstream (this number
-> > > includes developers for Android and other SoCs). Also, the 
-> > > number of Kernel developers submitting patches upstream for the
-> > > media subsystem is around 20-40 people along an year.  
+> > > I'm not sure to follow you. Are you implying that this patch series,
+> > > which Helen has tested against a real user, not an experienced kernel
+> > > hacker, may make the configuration options more difficult for kernel
+> > > hackers, but improves the situation for users ?  
 > > 
-> > $ git log --since 2019-01-01 --until 2020-01-01 --no-merges -- drivers/media/ | grep '^Author: ' | sort | uniq -c | wc -l   
-> > 215
-> > 
-> > There's some duplication of e-mail addresses, but it's still roughly an
-> > order or magnitude bigger (and it's not counting staging, headers or
-> > documentation).
-> > 
-> > > So, about 99,9998% of the users using the media subsystems aren't
-> > > Kernel hackers. I bet that almost all of those will either need
-> > > to enable USB or a PCI driver.  
-> > 
-> > And the extremely vast majority of these will never enable a kernel
-> > option because they will never compile a kernel. They don't even know
-> > what a kernel is :-)
-> > 
-> > > Granted, 99,9998% seems too optimistic, but, assuming that this
-> > > would reduce to something like 80% (e. g. only 200 users
-> > > would ever try to build a media driver, with is a *very conservative*
-> > > number) this is still a lot more than the number of media Kernel
-> > > developers.
-> > > 
-> > > Also, a Kernel hacker will sooner or later find a way to enable it.
-> > > A normal user may find it a lot more trickier and will very likely
-> > > require more support, if the menus are too technical and the
-> > > default options are wrong.  
-> > 
-> > I'm not sure to follow you. Are you implying that this patch series,
-> > which Helen has tested against a real user, not an experienced kernel
-> > hacker, may make the configuration options more difficult for kernel
-> > hackers, but improves the situation for users ?
+> > Come on, it is not harder for Kernel hackers. It is just different than
+> > what it used to be before the changes.  
 > 
-> Come on, it is not harder for Kernel hackers. It is just different than
-> what it used to be before the changes.
+> Sorry, I didn't meant to say it would be more complex for me (I mostly
+> don't use menuconfig anyway, I edit the .config file manually :-)), but
+> I was reading your e-mail as implying that, and was wondering if it was
+> me misreading it.
 
-Sorry, I didn't meant to say it would be more complex for me (I mostly
-don't use menuconfig anyway, I edit the .config file manually :-)), but
-I was reading your e-mail as implying that, and was wondering if it was
-me misreading it.
+So, the new design will be less complex for you, as some dependencies were
+changed to be automatically set when a driver is selected (media controller
+and V4L2 subdev APIs) ;-)
 
-> At the above experience, at the
-> very first time this Kernel hacker looked on it, it was able to figure
-> out how to enable the driver. I bet that, if you now repeat the experiment
-> with the same guy, he would be able to enable another driver a lot quicker.
 > 
-> My view is that, with the option of either enable or disable the
-> filtering mechanism, it will be easier for everybody:
-> 
-> - Distro maintainers for PCs can just disable platform and
->   test drivers, and keep the other drivers enabled;
-> 
-> - An experienced Kernel hacker will disable the filter and select
->   the needed drivers directly.
-> 
-> - An user wanting to test a driver with new patches (or a new driver)
->   use the filters to select the USB driver he needs (probably using the
->   media_tree.git, in order to see only the media options).
-
-My personal view is that this makes things more complex, and more
-complexity usually means less clarity. If we want to be serious about
-the usability of our Kconfig menu, we should get real users involved in
-the design, at least by testing it on them, and getting feedback.
-Otherwise we'll just be a bunch of kernel developers sitting in our
-ivory tower thinking we know better than our users what is good for
-them.
-
-> > > -
-> > > 
-> > > Even with that, based on your small experiment (of someone from the
-> > > area), I suspect that, if you had asked him to enable, for example,
-> > > em28xx or dvbsky (with are some of the most popular drivers
-> > > those days), he would be able to enable it a lot faster.  
+> > At the above experience, at the
+> > very first time this Kernel hacker looked on it, it was able to figure
+> > out how to enable the driver. I bet that, if you now repeat the experiment
+> > with the same guy, he would be able to enable another driver a lot quicker.
 > > 
-> > This is the *only* real piece of evidence we have, let's not assume we
-> > know better.
+> > My view is that, with the option of either enable or disable the
+> > filtering mechanism, it will be easier for everybody:
 > > 
-> > > > and selecting those doesn't do anything, and people can even think
-> > > > that, if they want to enable an USB device, just enabling the USB option there is enough (which is not), since no drivers
-> > > > shows up.  
-> > > 
-> > > It is hard to comment on individual experiments. In the past, our
-> > > Kconfig system were like that: written for technical people with
-> > > background on computer engineering and some experience building the
-> > > Kernel.
-> > > 
-> > > E.g. people that knows that "/" activates a search mechanism at
-> > > the Kernel building system.
-> > > 
-> > > We usually had to spend *a lot of time* both on IRC and on e-mail
-> > > explaining people that just want to have their card supported,
-> > > how to do that. After the reorg (with added those more user-faced
-> > > interfaces), the number of people with problems reduced a lot.  
+> > - Distro maintainers for PCs can just disable platform and
+> >   test drivers, and keep the other drivers enabled;
 > > 
-> > Don't you think that could come mainly from better support for media
-> > devices in distributions ?
+> > - An experienced Kernel hacker will disable the filter and select
+> >   the needed drivers directly.
 > > 
-> > > Btw, if one tries to compile from media-build (with lots of users
-> > > do), this is even more relevant.  
-> > 
-> > Can you quantify "lots of users" ?
+> > - An user wanting to test a driver with new patches (or a new driver)
+> >   use the filters to select the USB driver he needs (probably using the
+> >   media_tree.git, in order to see only the media options).  
 > 
-> Enough to make us to decide that re-working the Kconfig menus and 
-> add the MEDIA_SUPPORT_* and MEDIA_SUBDRV_AUTOSELECT would worth the
-> efforts.
-> 
-> Guess what? The efforts were fully paid, as it reduced a lot the
-> amount of time we had to weekly spend helping people to build their
-> Kernels in order to test support for their new hardware.
-> 
-> It also helped a lot to set the right Kconfig options on distros.
-> I did my contributions on that time by improving Fedora and on RHEL,
-> making their build rely on MEDIA_SUPPORT_* and MEDIA_SUBDRV_AUTOSELECT.
-> 
-> See, for some random distro maintainer, new Kconfig symbols pops up
-> every time. Enabling all of them is usually a very bad idea. So, a
-> filtering mechanism that would, for example, hide test and skeleton
-> drivers to be built is a very nice feat, as it means a lot less
-> symbols for them to study and decide whether such new options should
-> be enabled or not
+> My personal view is that this makes things more complex, and more
+> complexity usually means less clarity. If we want to be serious about
+> the usability of our Kconfig menu, we should get real users involved in
+> the design, at least by testing it on them, and getting feedback.
+> Otherwise we'll just be a bunch of kernel developers sitting in our
+> ivory tower thinking we know better than our users what is good for
+> them.
 
-The fact that test drivers are not shipped by some distros is annoying
-for developers ;-) But that's a very small minority, and out of topic.
+The entire thing started by a proposal to change, in a way that it
+would be make things easier for m2m developers but harder for
+normal users.
 
--- 
-Regards,
+My proposal is to keep both behaviors, with a menu that would
+allow switching between those two different behaviors. 
 
-Laurent Pinchart
+So, it should make both groups happy :-)
+
+Not much complexity added. It is the other way around: I took the
+time to do several Kconfig cleanups, in order to make the Kconfig 
+files cleaner and better organized (both internally and visually).
+
+-
+
+I don't object getting feedback from real users, but if we're
+willing to use such feedback in a consistent way, we need to have
+a group of people that could statistically represent the diversity
+that we have with the people which builds their own kernels.
+
+> > See, for some random distro maintainer, new Kconfig symbols pops up
+> > every time. Enabling all of them is usually a very bad idea. So, a
+> > filtering mechanism that would, for example, hide test and skeleton
+> > drivers to be built is a very nice feat, as it means a lot less
+> > symbols for them to study and decide whether such new options should
+> > be enabled or not  
+> 
+> The fact that test drivers are not shipped by some distros is annoying
+> for developers ;-) But that's a very small minority, and out of topic.
+
+Yes, agreed. Things could be easier for us if we could ask people
+to use a test driver when reporting certain bugs.
+
+On the other hand, having a test driver shipped by default together
+with a production Kernel don't make any sense for most usages. It
+would just make the Kernel package bigger and would never be used
+by the vast majority of users. It would also mean more work for
+security people that would be trying to do OS hardening.
+
+Well, Fedora has a kernel-debug Kernel, meant to be used
+when someone finds an issue on production and may require extra stuff
+to debug the Kernel. IMHO, it makes a lot of sense to have those test 
+drivers shipped there (perhaps packaged in separate, like on a 
+kernel-debug-media-test rpm).
+
+
+
+Thanks,
+Mauro
