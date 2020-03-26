@@ -2,148 +2,290 @@ Return-Path: <SRS0=zaGS=5L=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4966BC2D0E7
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Mar 2020 09:46:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4064C2D0E8
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Mar 2020 10:13:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 120762078B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Mar 2020 09:46:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69BF72077D
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Mar 2020 10:13:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tKiSiIWM"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="SGXSWNzJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727729AbgCZJqk (ORCPT
+        id S1727661AbgCZKNk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 26 Mar 2020 05:46:40 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:40666 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727699AbgCZJqh (ORCPT
+        Thu, 26 Mar 2020 06:13:40 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:57018 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726298AbgCZKNk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 26 Mar 2020 05:46:37 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200326094636euoutp029d6537c7e749db4467ffe9329e57da0e~-0YzIDbq42204122041euoutp02F
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Mar 2020 09:46:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200326094636euoutp029d6537c7e749db4467ffe9329e57da0e~-0YzIDbq42204122041euoutp02F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1585215996;
-        bh=IYiPnFMVdj4AWZmUuJdjjsmxDZuQgtEqdhTjOCvlzjo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tKiSiIWMmF3hs+dhsXnv+qmH/9QbpaJsj0IsasSFPP9lvn0jACKUGmLnKqoOaQutw
-         6wFOfKOdvqTXDW6ETOYgAgxD5tdXVM9+x4Uw27szrcHz/qy3J0wqp3TZ0Tk6QK6lWc
-         n8YUx5CLymi0jLQD9ro2jaTtrAm+AxE6Z8zI3G84=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200326094636eucas1p1da5e1f49a47c6e7c7957d90fb8153a22~-0Yy5ra4v2968629686eucas1p1w;
-        Thu, 26 Mar 2020 09:46:36 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 7C.AD.60698.CF97C7E5; Thu, 26
-        Mar 2020 09:46:36 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200326094635eucas1p2fab15692c98fc148388a6922dc0d121f~-0YykETzh2482724827eucas1p2Y;
-        Thu, 26 Mar 2020 09:46:35 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200326094635eusmtrp142f54d389a9ef2fed4ed467c186fcfe8~-0Yyji22A3171231712eusmtrp1T;
-        Thu, 26 Mar 2020 09:46:35 +0000 (GMT)
-X-AuditID: cbfec7f5-a0fff7000001ed1a-a1-5e7c79fc46a7
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 4D.C2.07950.BF97C7E5; Thu, 26
-        Mar 2020 09:46:35 +0000 (GMT)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200326094635eusmtip2d32d4001e2b355299012ad4c5a19cf62~-0YyQoKJZ2636726367eusmtip2r;
-        Thu, 26 Mar 2020 09:46:35 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Thu, 26 Mar 2020 06:13:40 -0400
+Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id DA1FF2DC;
+        Thu, 26 Mar 2020 11:13:36 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1585217617;
+        bh=Ph6XOD3yl1HjeWfouB+OXNPerwxf190pXAsdWrIlQzA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SGXSWNzJk1R9eALqvJBwCFcxdASplyWDLeMJLJU6IKRg4fRnBE4pc4L/BzqSKZKa7
+         ogRY+dUDucCSEqi7Ln649U6ke3ED5EGsYjfCCZK5b5u+jOLyrAzidKa7yCLiXjNZrL
+         zp2UuUPdQwWLSI+mUReY8ICrS8hG0ridS6gPshSE=
+Date:   Thu, 26 Mar 2020 12:13:33 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Helen Koike <helen.koike@collabora.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Yong Deng <yong.deng@magewell.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Yong Zhi <yong.zhi@intel.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Fabio Estevam <festevam@gmail.com>,
+        Hyun Kwon <hyun.kwon@xilinx.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 4/4] ARM: exynos_defconfig: Compile MAC80211/CFG80211 as
- modules
-Date:   Thu, 26 Mar 2020 10:46:26 +0100
-Message-Id: <20200326094626.28308-5-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200326094626.28308-1-m.szyprowski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJIsWRmVeSWpSXmKPExsWy7djP87p/KmviDL7/YrPYOGM9q8X1L89Z
-        Lc6f38BuMeP8PiaLtUfusjuwemxa1cnm0bdlFaPH501yAcxRXDYpqTmZZalF+nYJXBnN/5vZ
-        C+ZyVWxc/J6tgfEpRxcjJ4eEgInEr3vz2LsYuTiEBFYwSszeuYcRwvnCKNGw4BhU5jOjxOe/
-        r9hgWs4tWwiVWM4oMfnjTFaQBFjLhTUsIDabgKFE19susAYRAVWJz20LwBqYBbYxSmzpfcAM
-        khAWCJJY+/UCWAMLUNGUl11gg3gFbCVunz7DDLFNXmL1hgNgNqeAncTiad9YQAZJCJxhk/j3
-        fQ9UkYvEl6kPoc4Tlnh1fAs7hC0jcXpyD1RDM6PEw3Nr2SGcHkaJy00zGCGqrCXunPsF1M0B
-        dJ+mxPpd+hBhR4n1e6axgoQlBPgkbrwVBAkzA5mTtk1nhgjzSnS0CUFUq0nMOr4Obu3BC5eg
-        TvOQOPHuBhMktCYySvScWcE2gVF+FsKyBYyMqxjFU0uLc9NTi43zUsv1ihNzi0vz0vWS83M3
-        MQITwOl/x7/uYNz3J+kQowAHoxIPb4R5dZwQa2JZcWXuIUYJDmYlEd6nkTVxQrwpiZVVqUX5
-        8UWlOanFhxilOViUxHmNF72MFRJITyxJzU5NLUgtgskycXBKNTBePf7nW+/VuI8bJ3QsiOJy
-        f11zqnzvp71Hqx7WRK2Mdp6gm//62LvNBdtU/Dn3cX23Yas6OGHa3tWuR59q9XX9ll3YX/HA
-        hq9/buNCvRfulmKnVhTP1hM5PdMn/t2EesZzzpZLdyxpuXtRSUD8cunuFCaPGYte2YdEbFJa
-        ppprOyucc9u21z5RSizFGYmGWsxFxYkAhOgCIfwCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFLMWRmVeSWpSXmKPExsVy+t/xe7q/K2viDA6e0LfYOGM9q8X1L89Z
-        Lc6f38BuMeP8PiaLtUfusjuwemxa1cnm0bdlFaPH501yAcxRejZF+aUlqQoZ+cUltkrRhhZG
-        eoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehnN/5vZC+ZyVWxc/J6tgfEpRxcjJ4eE
-        gInEuWUL2bsYuTiEBJYyStx78JEZIiEjcXJaAyuELSzx51oXG0TRJ0aJjVf+giXYBAwlut6C
-        JDg5RARUJT63LQCbxCywg1Fiy463YEXCAgESB9seg9ksQEVTXnaB2bwCthK3T5+B2iYvsXrD
-        ATCbU8BOYvG0bywgthBQzcaHD5knMPItYGRYxSiSWlqcm55bbKRXnJhbXJqXrpecn7uJERiO
-        24793LKDsetd8CFGAQ5GJR7eDZbVcUKsiWXFlbmHGCU4mJVEeJ9G1sQJ8aYkVlalFuXHF5Xm
-        pBYfYjQFOmois5Rocj4wVvJK4g1NDc0tLA3Njc2NzSyUxHk7BA7GCAmkJ5akZqemFqQWwfQx
-        cXBKNTCW+B3X0Hgf+UXs/oalU+7oG76x0I1dkjmpdPWB1QnT46+Eafxa7MDj/X6aqtx3p4Cj
-        XdxJbyNyAx6ceJce5fvklJm78WvZ799YHmW5nV5b4GtrqL448iTzz3UPRDJyTH++qzkb3Ge8
-        3Xyrodi0KMNJxQ9vTDictWbL5zMnQ6WdeVVrruXfd+dUYinOSDTUYi4qTgQAgNt+Jl0CAAA=
-X-CMS-MailID: 20200326094635eucas1p2fab15692c98fc148388a6922dc0d121f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200326094635eucas1p2fab15692c98fc148388a6922dc0d121f
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200326094635eucas1p2fab15692c98fc148388a6922dc0d121f
-References: <20200326094626.28308-1-m.szyprowski@samsung.com>
-        <CGME20200326094635eucas1p2fab15692c98fc148388a6922dc0d121f@eucas1p2.samsung.com>
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Heungjun Kim <riverful.kim@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Maxime Ripard <mripard@kernel.org>, devel@driverdev.osuosl.org,
+        Bingbu Cao <bingbu.cao@intel.com>,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tian Shu Qiu <tian.shu.qiu@intel.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Subject: Re: [PATCH 0/4] media Kconfig reorg - part 2
+Message-ID: <20200326101333.GH20581@pendragon.ideasonboard.com>
+References: <cover.1585151701.git.mchehab+huawei@kernel.org>
+ <6fadc6ea-8512-03ba-da30-43c64d7562f6@collabora.com>
+ <20200325223820.1c74aed3@coco.lan>
+ <20200325221343.GW19171@pendragon.ideasonboard.com>
+ <20200326092832.069a4d17@coco.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200326092832.069a4d17@coco.lan>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-MAC80211/CFG80211 framework requires loading regulatory.db from
-/lib/firmware directory, so it makes very little sense to have it
-built-in. Change it to be built as modules to let it properly load the
-needed firmware/db files. As a side effect of this change, the size of
-the compressed modules on SquashFS increased significantly from 27MiB
-to 38MiB, so increase the size of BLK_DEV_RAM to allow the modules to
-fit into it.
+Hi Mauro,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/configs/exynos_defconfig | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On Thu, Mar 26, 2020 at 09:28:32AM +0100, Mauro Carvalho Chehab wrote:
+> Em Thu, 26 Mar 2020 00:13:43 +0200 Laurent Pinchart escreveu:
+> > On Wed, Mar 25, 2020 at 10:38:20PM +0100, Mauro Carvalho Chehab wrote:
+> > > Em Wed, 25 Mar 2020 16:36:31 -0300 Helen Koike escreveu:  
+> > > > On 3/25/20 1:03 PM, Mauro Carvalho Chehab wrote:  
+> > > > > That's the second part of media Kconfig changes. The entire series is
+> > > > > at:
+> > > > > 
+> > > > > 	https://git.linuxtv.org/mchehab/experimental.git/log/?h=media-kconfig    
+> > > > 
+> > > > I made a quick experiment (using this branch) with someone who works with the kernel for his master degree, but doesn't have much experience in kernel development in general.
+> > > > I asked him to enable Vimc (from default configs, where multimedia starts disabled).
+> > > > He knows that Vimc is a virtual camera driver, and this is how he behaved:
+> > > > 
+> > > > === Start of experiment:
+> > > > 
+> > > > * He pressed '/' and searched for vimc to see the location path.
+> > > > * Then he enabled "Multimedia support" and went straight to "Media drivers" (which just shows USB and PCI).
+> > > > * He went back to "Multimedia support", entered "Media device types" and enabled "Test drivers".
+> > > > * He went back to "Media drivers" again and didn't find Vimc (nothing changed in this menu).
+> > > > * He seemed a bit lost, going back and forth in the menus a couple of times.
+> > > > * Then he pressed '/' again to search for vimc and see the location path, and he realized that there
+> > > > should be an option called "V4L test drivers" under "Media drivers" that is not showing up.
+> > > > * He went back to "Media device types" again and start re-reading the options.
+> > > > * He selected "Cameras and video grabbers" ant went back to "Media drivers".
+> > > > * He sees "V4L test drivers", selects it, and enter this menu.
+> > > > * He selects "Virtual Media Controller Driver".
+> > > > 
+> > > > I asked his impressions, and he mentioned that he thought that enabling just "Test drivers" would be enough, without need
+> > > > to combine "Test drivers" with "Cameras and video grabbers".
+> > > > He also asked me why virtual drivers should be hidden, and he mentioned that the word "Virtual" in front would be enough.
+> > > > 
+> > > > Then I showed him he could have disabled the option "Filter devices by their types" to see everything at one (which he didn't
+> > > > realized by himself until that moment, nor tried it out to see what would happen).
+> > > > 
+> > > > He mentioned that hiding is nice, because it shows less options, but not very nice to search for something.
+> > > > He also mentioned that if he had understood the filter mechanism from the start, he would have disabled "Filter devices by their types" sooner.  
+> > > 
+> > > That's easy to solve: all it needs is to add something similar
+> > > to this at drivers/media/Kconfig:
+> > > 
+> > > 	+	comment "Drivers are filtered by MEDIA_SUPPORT_FILTER"
+> > > 	+		visible if MEDIA_SUPPORT_FILTER
+> > > 	+
+> > > 	+	comment "All available drivers are shown below"
+> > > 	+		visible if !MEDIA_SUPPORT_FILTER
+> > > 	+
+> > > 	menu "Media drivers"
+> > > 
+> > > 	source "drivers/media/usb/Kconfig"
+> > >   
+> > > > === End of experiment
+> > > > 
+> > > > This was just one experiment from one person, I'll see if I can get some other people from lkcamp.dev group to also check
+> > > > and send us their impressions. I think it would be nice to get more data about user experience, from people that are not used to
+> > > > kernel development (kernel dev newbies for instance).
+> > > > 
+> > > > Just another remark from me:
+> > > > 
+> > > > From the default config, "Media drivers" shows USB and PCI,   
+> > > 
+> > > Well, assuming that there are 2 billion computers, 1% with Linux
+> > > installed, and 10% of them have a media device (camera or TV),
+> > > we have about 2 millions of people running Linux. That excludes
+> > > Android and Embedded devices, where people usually don't touch.
+> > > 
+> > > During an entire year, there are about 4000 of Kernel developers 
+> > > that has at least one patch accepted upstream (this number
+> > > includes developers for Android and other SoCs). Also, the 
+> > > number of Kernel developers submitting patches upstream for the
+> > > media subsystem is around 20-40 people along an year.  
+> > 
+> > $ git log --since 2019-01-01 --until 2020-01-01 --no-merges -- drivers/media/ | grep '^Author: ' | sort | uniq -c | wc -l   
+> > 215
+> > 
+> > There's some duplication of e-mail addresses, but it's still roughly an
+> > order or magnitude bigger (and it's not counting staging, headers or
+> > documentation).
+> > 
+> > > So, about 99,9998% of the users using the media subsystems aren't
+> > > Kernel hackers. I bet that almost all of those will either need
+> > > to enable USB or a PCI driver.  
+> > 
+> > And the extremely vast majority of these will never enable a kernel
+> > option because they will never compile a kernel. They don't even know
+> > what a kernel is :-)
+> > 
+> > > Granted, 99,9998% seems too optimistic, but, assuming that this
+> > > would reduce to something like 80% (e. g. only 200 users
+> > > would ever try to build a media driver, with is a *very conservative*
+> > > number) this is still a lot more than the number of media Kernel
+> > > developers.
+> > > 
+> > > Also, a Kernel hacker will sooner or later find a way to enable it.
+> > > A normal user may find it a lot more trickier and will very likely
+> > > require more support, if the menus are too technical and the
+> > > default options are wrong.  
+> > 
+> > I'm not sure to follow you. Are you implying that this patch series,
+> > which Helen has tested against a real user, not an experienced kernel
+> > hacker, may make the configuration options more difficult for kernel
+> > hackers, but improves the situation for users ?
+> 
+> Come on, it is not harder for Kernel hackers. It is just different than
+> what it used to be before the changes.
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index 1ea2f87533ef..1bbbc677f0e3 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -79,8 +79,8 @@ CONFIG_BT_HCIVHCI=m
- CONFIG_BT_MRVL=m
- CONFIG_BT_MRVL_SDIO=m
- CONFIG_BT_ATH3K=m
--CONFIG_CFG80211=y
--CONFIG_MAC80211=y
-+CONFIG_CFG80211=m
-+CONFIG_MAC80211=m
- CONFIG_MAC80211_LEDS=y
- CONFIG_NFC=y
- CONFIG_NFC_DIGITAL=m
-@@ -95,7 +95,7 @@ CONFIG_DEVTMPFS_MOUNT=y
- CONFIG_BLK_DEV_LOOP=y
- CONFIG_BLK_DEV_CRYPTOLOOP=y
- CONFIG_BLK_DEV_RAM=y
--CONFIG_BLK_DEV_RAM_SIZE=32768
-+CONFIG_BLK_DEV_RAM_SIZE=65536
- CONFIG_SCSI=y
- CONFIG_BLK_DEV_SD=y
- CONFIG_CHR_DEV_SG=y
+Sorry, I didn't meant to say it would be more complex for me (I mostly
+don't use menuconfig anyway, I edit the .config file manually :-)), but
+I was reading your e-mail as implying that, and was wondering if it was
+me misreading it.
+
+> At the above experience, at the
+> very first time this Kernel hacker looked on it, it was able to figure
+> out how to enable the driver. I bet that, if you now repeat the experiment
+> with the same guy, he would be able to enable another driver a lot quicker.
+> 
+> My view is that, with the option of either enable or disable the
+> filtering mechanism, it will be easier for everybody:
+> 
+> - Distro maintainers for PCs can just disable platform and
+>   test drivers, and keep the other drivers enabled;
+> 
+> - An experienced Kernel hacker will disable the filter and select
+>   the needed drivers directly.
+> 
+> - An user wanting to test a driver with new patches (or a new driver)
+>   use the filters to select the USB driver he needs (probably using the
+>   media_tree.git, in order to see only the media options).
+
+My personal view is that this makes things more complex, and more
+complexity usually means less clarity. If we want to be serious about
+the usability of our Kconfig menu, we should get real users involved in
+the design, at least by testing it on them, and getting feedback.
+Otherwise we'll just be a bunch of kernel developers sitting in our
+ivory tower thinking we know better than our users what is good for
+them.
+
+> > > -
+> > > 
+> > > Even with that, based on your small experiment (of someone from the
+> > > area), I suspect that, if you had asked him to enable, for example,
+> > > em28xx or dvbsky (with are some of the most popular drivers
+> > > those days), he would be able to enable it a lot faster.  
+> > 
+> > This is the *only* real piece of evidence we have, let's not assume we
+> > know better.
+> > 
+> > > > and selecting those doesn't do anything, and people can even think
+> > > > that, if they want to enable an USB device, just enabling the USB option there is enough (which is not), since no drivers
+> > > > shows up.  
+> > > 
+> > > It is hard to comment on individual experiments. In the past, our
+> > > Kconfig system were like that: written for technical people with
+> > > background on computer engineering and some experience building the
+> > > Kernel.
+> > > 
+> > > E.g. people that knows that "/" activates a search mechanism at
+> > > the Kernel building system.
+> > > 
+> > > We usually had to spend *a lot of time* both on IRC and on e-mail
+> > > explaining people that just want to have their card supported,
+> > > how to do that. After the reorg (with added those more user-faced
+> > > interfaces), the number of people with problems reduced a lot.  
+> > 
+> > Don't you think that could come mainly from better support for media
+> > devices in distributions ?
+> > 
+> > > Btw, if one tries to compile from media-build (with lots of users
+> > > do), this is even more relevant.  
+> > 
+> > Can you quantify "lots of users" ?
+> 
+> Enough to make us to decide that re-working the Kconfig menus and 
+> add the MEDIA_SUPPORT_* and MEDIA_SUBDRV_AUTOSELECT would worth the
+> efforts.
+> 
+> Guess what? The efforts were fully paid, as it reduced a lot the
+> amount of time we had to weekly spend helping people to build their
+> Kernels in order to test support for their new hardware.
+> 
+> It also helped a lot to set the right Kconfig options on distros.
+> I did my contributions on that time by improving Fedora and on RHEL,
+> making their build rely on MEDIA_SUPPORT_* and MEDIA_SUBDRV_AUTOSELECT.
+> 
+> See, for some random distro maintainer, new Kconfig symbols pops up
+> every time. Enabling all of them is usually a very bad idea. So, a
+> filtering mechanism that would, for example, hide test and skeleton
+> drivers to be built is a very nice feat, as it means a lot less
+> symbols for them to study and decide whether such new options should
+> be enabled or not
+
+The fact that test drivers are not shipped by some distros is annoying
+for developers ;-) But that's a very small minority, and out of topic.
+
 -- 
-2.17.1
+Regards,
 
+Laurent Pinchart
