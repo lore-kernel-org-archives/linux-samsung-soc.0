@@ -2,194 +2,140 @@ Return-Path: <SRS0=zaGS=5L=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB6BDC2D0E5
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Mar 2020 12:51:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF6CC2D0E8
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Mar 2020 14:20:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 859D42077D
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Mar 2020 12:51:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1585227087;
-	bh=zIulOGTEwdI3hssRscSNydLZe2G+oeZ2jtg11vXXxa0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=kHfhzVsp6GYtg/3axnKh0FJki5njMTaq8CHwEV2mTXQcdFstk3LGv/6TnubW+koEi
-	 /sjyKu8DXuyFiTek4PV/4StJlItsYql65jL5eosRCx0GOM/lZc4od9TFE1M0HXCFfU
-	 i5Wu+RJGOcWLfYoCV4oWi+4X23imnfRMXgTKvDKE=
+	by mail.kernel.org (Postfix) with ESMTP id C806F2073E
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 26 Mar 2020 14:20:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="RSjjvNrS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728150AbgCZMv1 (ORCPT
+        id S1726496AbgCZOUv (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 26 Mar 2020 08:51:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50458 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728065AbgCZMv0 (ORCPT
+        Thu, 26 Mar 2020 10:20:51 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:51092 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726270AbgCZOUv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 26 Mar 2020 08:51:26 -0400
-Received: from coco.lan (ip5f5ad4d8.dynamic.kabel-deutschland.de [95.90.212.216])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6461B2073E;
-        Thu, 26 Mar 2020 12:51:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585227085;
-        bh=zIulOGTEwdI3hssRscSNydLZe2G+oeZ2jtg11vXXxa0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=WpMbSseODo1E92lj7T40pAB2Wh74HRlkBa1JdDpsvagBvVQHLFLhCwDBinmDbKLLi
-         i1Ta5Atlrk9FKaPsD49ihgxy3OqThb8sItMvY4phyKyO/8Zd0NGMZTqn73rwFxHAgo
-         u2EV2sNSSV/qsPGJEVtONh5Uv2/xemv6KIEaDi7k=
-Date:   Thu, 26 Mar 2020 13:51:13 +0100
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Helen Koike <helen.koike@collabora.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Yong Deng <yong.deng@magewell.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Yong Zhi <yong.zhi@intel.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Fabio Estevam <festevam@gmail.com>,
-        Hyun Kwon <hyun.kwon@xilinx.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Thu, 26 Mar 2020 10:20:51 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200326142049euoutp025021d36da773524debe5ed0f4eb3224b~-4IN6kPU80431604316euoutp02r
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Mar 2020 14:20:49 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200326142049euoutp025021d36da773524debe5ed0f4eb3224b~-4IN6kPU80431604316euoutp02r
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1585232449;
+        bh=hN+ecJpsrRK3zq7EWx6C58RKWjYp+sw4rItIRnqYql0=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=RSjjvNrS7KQ0rjpAOlLm4UftVa+ue/hKs8GSiA9AqFLcoX52heS8QS98h6Id1YA6S
+         ExfceU9a2nhi+8dQLlLY08QaagkjpCDRE5/AFXdOST5pYWhbnzhWuT58xB/rH7aLVK
+         IMb88zQql8wTEi46wxFvOs2hzE7RuwllsSaCeAk4=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200326142048eucas1p259edb440d4f80ef2d312b8eed1e5c216~-4INmW0GC2148121481eucas1p2x;
+        Thu, 26 Mar 2020 14:20:48 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 77.CB.60679.04ABC7E5; Thu, 26
+        Mar 2020 14:20:48 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200326142048eucas1p29aee56575f8b530fc2d83860f6185d6b~-4INRoN6T1889018890eucas1p26;
+        Thu, 26 Mar 2020 14:20:48 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200326142048eusmtrp17a0ff825e37f4d6d09b6ce41e1db0cfe~-4INQ-KlH2054620546eusmtrp1V;
+        Thu, 26 Mar 2020 14:20:48 +0000 (GMT)
+X-AuditID: cbfec7f4-0cbff7000001ed07-cc-5e7cba40b760
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id D9.0D.07950.04ABC7E5; Thu, 26
+        Mar 2020 14:20:48 +0000 (GMT)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200326142048eusmtip27bef788e9fa098047b75c944c9e1b1f8~-4IM_IRwd0712907129eusmtip2y;
+        Thu, 26 Mar 2020 14:20:48 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Heungjun Kim <riverful.kim@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Maxime Ripard <mripard@kernel.org>, devel@driverdev.osuosl.org,
-        Bingbu Cao <bingbu.cao@intel.com>,
-        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tian Shu Qiu <tian.shu.qiu@intel.com>,
-        Niklas =?UTF-8?B?U8O2ZGVybHVuZA==?= 
-        <niklas.soderlund@ragnatech.se>
-Subject: Re: [PATCH 0/4] media Kconfig reorg - part 2
-Message-ID: <20200326135113.73c257ba@coco.lan>
-In-Reply-To: <20200326101333.GH20581@pendragon.ideasonboard.com>
-References: <cover.1585151701.git.mchehab+huawei@kernel.org>
-        <6fadc6ea-8512-03ba-da30-43c64d7562f6@collabora.com>
-        <20200325223820.1c74aed3@coco.lan>
-        <20200325221343.GW19171@pendragon.ideasonboard.com>
-        <20200326092832.069a4d17@coco.lan>
-        <20200326101333.GH20581@pendragon.ideasonboard.com>
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Simon Shields <simon@lineageos.org>, stable@vger.kernel.org
+Subject: [PATCH] ARM: dts: exynos: Fix GPIO polarity for thr GalaxyS3
+ CM36651 sensor's bus
+Date:   Thu, 26 Mar 2020 15:20:37 +0100
+Message-Id: <20200326142037.20418-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKIsWRmVeSWpSXmKPExsWy7djP87oOu2riDL6v0LPYOGM9q8X58xvY
+        LWac38dksfbIXXaLLWdus1ks2PiI0YHNY9OqTjaPlvWb2Dz6tqxi9Pi8SS6AJYrLJiU1J7Ms
+        tUjfLoEr49zmiawFN7krTr55wNLA+I6zi5GTQ0LARGLHqi6mLkYuDiGBFYwSt169YYZwvjBK
+        7Pk2ixHC+cwocaPtGDNMy8V5t6FaljNKfF5ynBWuZUXnfhaQKjYBQ4mut11sILaIgKrE57YF
+        7CA2s8BZRokPFyRBbGGBGIlbh6aD1bMA1Xw4f4QRxOYVsJX4smwXC8Q2eYnVGw6A3SQhcIRN
+        YuaMx4wQCReJ3d3noWxhiVfHt7BD2DISpyf3sEA0NDNKPDy3lh3C6WGUuNw0A6rDWuLOuV9A
+        53EAnaQpsX6XPkTYUeJL12sWkLCEAJ/EjbeCEEfzSUzaNp0ZIswr0dEmBFGtJjHr+Dq4tQcv
+        XIIq8ZBYtiUBJCwkECvxfMsllgmMcrMQVi1gZFzFKJ5aWpybnlpslJdarlecmFtcmpeul5yf
+        u4kRGPmn/x3/soNx15+kQ4wCHIxKPLwaLTVxQqyJZcWVuYcYJTiYlUR4n0YChXhTEiurUovy
+        44tKc1KLDzFKc7AoifMaL3oZKySQnliSmp2aWpBaBJNl4uCUamAsN1M4dzCqO3BKQoz52X2z
+        lP1Zdj+efFfuheWD+H+sQte3Xjy+f3Ka//V16WdWXrQ/3b6qZM2rT3an615JBK7e8bdR3e7l
+        3sJTj+Yq83FfX7XOomXPM7kZRn8VPr5wDfjt8rYrPG27wRd+0+sGjRqrOafenGZSK/80YKUM
+        X4tLkfG3z3+W796vq8RSnJFoqMVcVJwIAN1fkbD4AgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDLMWRmVeSWpSXmKPExsVy+t/xe7oOu2riDBZul7bYOGM9q8X58xvY
+        LWac38dksfbIXXaLLWdus1ks2PiI0YHNY9OqTjaPlvWb2Dz6tqxi9Pi8SS6AJUrPpii/tCRV
+        ISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzWyshUSd/OJiU1J7MstUjfLkEv49zmiawFN7krTr55
+        wNLA+I6zi5GTQ0LAROLivNtMXYxcHEICSxklnn67zQqRkJE4Oa0ByhaW+HOtiw2i6BOjxMG9
+        X1hAEmwChhJdb0ESnBwiAqoSn9sWsIMUMQtcZJT407sdrFtYIEriYNt5sCIWoKIP548wgti8
+        ArYSX5btYoHYIC+xesMB5gmMPAsYGVYxiqSWFuem5xYb6RUn5haX5qXrJefnbmIEhty2Yz+3
+        7GDsehd8iFGAg1GJh1ejpSZOiDWxrLgy9xCjBAezkgjv00igEG9KYmVValF+fFFpTmrxIUZT
+        oOUTmaVEk/OB8ZBXEm9oamhuYWlobmxubGahJM7bIXAwRkggPbEkNTs1tSC1CKaPiYNTqoHx
+        wp8Lu+vXRaat1ja8eXDx3YVNrboFVkmPJvkw1zB4a+zb8WvzgwLZYpWFjW8MPb5Z7n+s2+hn
+        Fuk1I3JmbP5Pvh/WjX0Wzyr/7HFLtA5UeaQ/lUEtvzb7C6OvofXFGyfWnRRkPO8cMe+MvN0f
+        hcpkgyduR7rcpMTsOB/NFDXZ4ba4lzUmTlmJpTgj0VCLuag4EQAuOa+zTwIAAA==
+X-CMS-MailID: 20200326142048eucas1p29aee56575f8b530fc2d83860f6185d6b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200326142048eucas1p29aee56575f8b530fc2d83860f6185d6b
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200326142048eucas1p29aee56575f8b530fc2d83860f6185d6b
+References: <CGME20200326142048eucas1p29aee56575f8b530fc2d83860f6185d6b@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Em Thu, 26 Mar 2020 12:13:33 +0200
-Laurent Pinchart <laurent.pinchart@ideasonboard.com> escreveu:
+GPIO lines for the CM36651 sensor I2C bus use the normal not the inverted
+polarity. This bug has been there since adding the CM36651 sensor by
+commit 85cb4e0bd2294, but went unnoticed because the "i2c-gpio" driver
+ignored the GPIO polarity specified in the device-tree.
 
-> > > I'm not sure to follow you. Are you implying that this patch series,
-> > > which Helen has tested against a real user, not an experienced kernel
-> > > hacker, may make the configuration options more difficult for kernel
-> > > hackers, but improves the situation for users ?  
-> > 
-> > Come on, it is not harder for Kernel hackers. It is just different than
-> > what it used to be before the changes.  
-> 
-> Sorry, I didn't meant to say it would be more complex for me (I mostly
-> don't use menuconfig anyway, I edit the .config file manually :-)), but
-> I was reading your e-mail as implying that, and was wondering if it was
-> me misreading it.
+The recent conversion of "i2c-gpio" driver to the new, descriptor based
+GPIO API, automatically made it the DT-specified polarity aware, what
+broke the CM36651 sensor operation.
 
-So, the new design will be less complex for you, as some dependencies were
-changed to be automatically set when a driver is selected (media controller
-and V4L2 subdev APIs) ;-)
+Fixes: c769eaf7a85d ("ARM: dts: exynos: Split Trats2 DTS in preparation for Midas boards")
+Fixes: c10d3290cbde ("ARM: dts: Use GPIO constants for flags cells in exynos4412 boards")
+Fixes: 85cb4e0bd229 ("ARM: dts: add cm36651 light/proximity sensor node for exynos4412-trats2")
+CC: stable@vger.kernel.org # 4.16+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> > At the above experience, at the
-> > very first time this Kernel hacker looked on it, it was able to figure
-> > out how to enable the driver. I bet that, if you now repeat the experiment
-> > with the same guy, he would be able to enable another driver a lot quicker.
-> > 
-> > My view is that, with the option of either enable or disable the
-> > filtering mechanism, it will be easier for everybody:
-> > 
-> > - Distro maintainers for PCs can just disable platform and
-> >   test drivers, and keep the other drivers enabled;
-> > 
-> > - An experienced Kernel hacker will disable the filter and select
-> >   the needed drivers directly.
-> > 
-> > - An user wanting to test a driver with new patches (or a new driver)
-> >   use the filters to select the USB driver he needs (probably using the
-> >   media_tree.git, in order to see only the media options).  
-> 
-> My personal view is that this makes things more complex, and more
-> complexity usually means less clarity. If we want to be serious about
-> the usability of our Kconfig menu, we should get real users involved in
-> the design, at least by testing it on them, and getting feedback.
-> Otherwise we'll just be a bunch of kernel developers sitting in our
-> ivory tower thinking we know better than our users what is good for
-> them.
+diff --git a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
+index 44f97546dd0a..f910aa924bfb 100644
+--- a/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
++++ b/arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi
+@@ -68,7 +68,7 @@
+ 
+ 	i2c_cm36651: i2c-gpio-2 {
+ 		compatible = "i2c-gpio";
+-		gpios = <&gpf0 0 GPIO_ACTIVE_LOW>, <&gpf0 1 GPIO_ACTIVE_LOW>;
++		gpios = <&gpf0 0 GPIO_ACTIVE_HIGH>, <&gpf0 1 GPIO_ACTIVE_HIGH>;
+ 		i2c-gpio,delay-us = <2>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-- 
+2.17.1
 
-The entire thing started by a proposal to change, in a way that it
-would be make things easier for m2m developers but harder for
-normal users.
-
-My proposal is to keep both behaviors, with a menu that would
-allow switching between those two different behaviors. 
-
-So, it should make both groups happy :-)
-
-Not much complexity added. It is the other way around: I took the
-time to do several Kconfig cleanups, in order to make the Kconfig 
-files cleaner and better organized (both internally and visually).
-
--
-
-I don't object getting feedback from real users, but if we're
-willing to use such feedback in a consistent way, we need to have
-a group of people that could statistically represent the diversity
-that we have with the people which builds their own kernels.
-
-> > See, for some random distro maintainer, new Kconfig symbols pops up
-> > every time. Enabling all of them is usually a very bad idea. So, a
-> > filtering mechanism that would, for example, hide test and skeleton
-> > drivers to be built is a very nice feat, as it means a lot less
-> > symbols for them to study and decide whether such new options should
-> > be enabled or not  
-> 
-> The fact that test drivers are not shipped by some distros is annoying
-> for developers ;-) But that's a very small minority, and out of topic.
-
-Yes, agreed. Things could be easier for us if we could ask people
-to use a test driver when reporting certain bugs.
-
-On the other hand, having a test driver shipped by default together
-with a production Kernel don't make any sense for most usages. It
-would just make the Kernel package bigger and would never be used
-by the vast majority of users. It would also mean more work for
-security people that would be trying to do OS hardening.
-
-Well, Fedora has a kernel-debug Kernel, meant to be used
-when someone finds an issue on production and may require extra stuff
-to debug the Kernel. IMHO, it makes a lot of sense to have those test 
-drivers shipped there (perhaps packaged in separate, like on a 
-kernel-debug-media-test rpm).
-
-
-
-Thanks,
-Mauro
