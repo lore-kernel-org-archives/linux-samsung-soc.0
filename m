@@ -2,117 +2,153 @@ Return-Path: <SRS0=2lPF=5M=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FBF3C43331
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Mar 2020 14:16:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4337BC2D0ED
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Mar 2020 16:08:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61FAE20658
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Mar 2020 14:16:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15CBB2073E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Mar 2020 16:08:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="inBI3zIM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="an6bUaMW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726739AbgC0OQP (ORCPT
+        id S1727707AbgC0QIZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 27 Mar 2020 10:16:15 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39024 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727115AbgC0OQO (ORCPT
+        Fri, 27 Mar 2020 12:08:25 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41063 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727354AbgC0QIY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 27 Mar 2020 10:16:14 -0400
-Received: by mail-wr1-f66.google.com with SMTP id p10so11589431wrt.6;
-        Fri, 27 Mar 2020 07:16:12 -0700 (PDT)
+        Fri, 27 Mar 2020 12:08:24 -0400
+Received: by mail-pg1-f193.google.com with SMTP id b1so4774996pgm.8;
+        Fri, 27 Mar 2020 09:08:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9wNt2gai8dRVSKQAlV2TOplqX3mifpAWTobUqLn101c=;
-        b=inBI3zIMOQoWlxqDdeGv06GRSPaAjKkg26RelATkUJiHTcP9LZQnSO/ULU1nW/atKk
-         GKf6/AVfYIuDEf5LyNTh33Tp39tDTnVLptNWdPYKqdZR9wn6MHdCwLJaIGX4oKWqUIUQ
-         /J0Sq4xc09A5xL4LU1ZpBdePsC1fztREX3HVdk7Y6dBuDQ34vFmYc8s8v4v09jI6Cb1k
-         c735gWJCGxyrXyhVtCL0BVi9Q/t9Q2jcXKwDZZrU6N6oS0DhJS8EOvpFdzvjJ3OvqvMe
-         xv8OKLs9MFOkQLrsj7FElzDPCHR4BuBZiWvpsmhGIro1hJKXXmCLsDfS/GPcN9NMsQlJ
-         H/9g==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=v3WW2gICCRcfa0oGxmZ+LfSQn5AikLIQ+ZRnRYdwUfA=;
+        b=an6bUaMWa/gge8dt35mNz51d8Pj8Aa/qVvKR0POiYMe4zuNsTFMbWsDqtJpu8Vfgps
+         HodQ817xNYHI9SLLHcYrsshSCnFQVPdRz5miPel3a6dQh30+182sG4GpKzSYGg0Moaql
+         oICMZDkEloRd8GN1T9OAdis5YEzicvSdRi2cwTkeLqxIisdfp6u4WrF2upjoOm0b/Nqv
+         xJs9hkC3swEZG36oeWhAa8kBkb2p598PAhHmrKt9TC86LDUy19H7w13AsSWaFeOMFBw1
+         1kiJmtgBbfIhYEZfNNWHTKYdN5NFa73OW2vgKUh7ekKVHy/s1yLOWQQExWS6RBTI4i5f
+         lubA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9wNt2gai8dRVSKQAlV2TOplqX3mifpAWTobUqLn101c=;
-        b=Y5aYPCSCC4waSpz7OZPzd6NquDjL/BBNYXLvd8nJlQ1feD0VSQNKfyXyYRWO2WcJw5
-         QgX9zw+JxS9JvbObXM86hUYiR06HECKh/2QxVkQmD9NjPt8tOrOLWb1O64n4S/R6f66I
-         O0eTRoM8BbRJhGdcvktJByVRH6CDfqvi5tZis8kCEXgF2kSToS42YU5un0P5GBQnfh/e
-         dVnIO5TGtJgbgeJ7S0UKoY7klKzSBRGaa7p41KVKFSZHos1eUNHlC5hXdLZuxsICeMhr
-         C50Y1ZWdMl6DwZ+CRXhgdKER5qQmOtrT2SMB0Up5yWmTP9PhIjXcmFmEE6lXgT67uQFT
-         uSUA==
-X-Gm-Message-State: ANhLgQ0+A9EGT1iA7gQoQvmu2dRljZRHlP/i3zByAbcNQ8HhkU2rUZgj
-        kWiLJ+WpkJSBEXAwA2Zd7Sxjl1/8TKSqSIZo/5s=
-X-Google-Smtp-Source: ADFU+vv/Vh/Usi3RX7zJFDIxkoX6XlRPz6qGaxO2o50FKhqyLTNRGqCUFnkaHDBaoZdAfcbG/1I2SUpXx72SUWSdNGo=
-X-Received: by 2002:a5d:6187:: with SMTP id j7mr15924936wru.419.1585318572316;
- Fri, 27 Mar 2020 07:16:12 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=v3WW2gICCRcfa0oGxmZ+LfSQn5AikLIQ+ZRnRYdwUfA=;
+        b=K61t+aL22V7z1zCxdy92iLEGfcUUfCcui1nXRjhlhBoF1i5bSiZeUHJHo9tj8E3hl7
+         LkfP1UHq6zAWyukKSnmDoWQTb2yZrra+7+orFlf/8phatZvSEc7pQjNcOeAdyBTCb1y6
+         IhuKSgp++nxg6di5pN8GCuKkAZhlw9fp7Td3Lqfr5w+nMRQdLyxPHMKR29SWvVUjhJ8u
+         KM5b+m29XY3GGJbeEYgD0GcJ292B3HsiMUi15O2xGS7FQMVnNnCv5TnoJeHcfiL/xGDE
+         AvNCTKvVXOnoWxUGyLgLhfXf1T5W5Vt6svfYf4q1S3rQ8N8kaoK9bCv7okpY4oL/5JOk
+         3qgw==
+X-Gm-Message-State: ANhLgQ3vw/FfWuBbGxGGxSE2ZiBjUx8kOAWKqaEKYZYl9EBGZhw3jGAy
+        sz3DwZrD1BEUqvJS4J1F57A=
+X-Google-Smtp-Source: ADFU+vs5xl4PN9llzz39JwJNhgmk9dgWBu5u30cb77PT2OtFyYrOeXBrJPUM82BlUm8kk65OLbcqNQ==
+X-Received: by 2002:aa7:947d:: with SMTP id t29mr14654589pfq.184.1585325301244;
+        Fri, 27 Mar 2020 09:08:21 -0700 (PDT)
+Received: from localhost ([49.207.55.57])
+        by smtp.gmail.com with ESMTPSA id v185sm4391917pfv.32.2020.03.27.09.08.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 27 Mar 2020 09:08:20 -0700 (PDT)
+Date:   Fri, 27 Mar 2020 21:38:18 +0530
+From:   afzal mohammed <afzal.mohd.ma@gmail.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, x86@kernel.org,
+        linux-sh@vger.kernel.org, linux-s390@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-parisc@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-ia64@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-c6x-dev@linux-c6x.org, linux-omap@vger.kernel.org,
+        linux-alpha@vger.kernel.org
+Subject: [PATCH 0/6] Kill setup_irq()
+Message-ID: <cover.1585320721.git.afzal.mohd.ma@gmail.com>
+References: <20200321174303.GA7930@afzalpc>
 MIME-Version: 1.0
-References: <CGME20200327082453eucas1p15b2371b61f653031408f319cc6d13893@eucas1p1.samsung.com>
- <20200327082446.18480-1-m.szyprowski@samsung.com> <CABnpCuDySf89HL2AksMB2fOcVCci+1zgB9r8zjRdpCAH3GWhPA@mail.gmail.com>
- <64025801-10f0-9f28-17b2-2c04d4308ac5@samsung.com> <CABnpCuBUEO6V=hwzHkUEKK5KDXC=ovPrTHyb9zFYrj0KaHHdww@mail.gmail.com>
-In-Reply-To: <CABnpCuBUEO6V=hwzHkUEKK5KDXC=ovPrTHyb9zFYrj0KaHHdww@mail.gmail.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Fri, 27 Mar 2020 10:16:01 -0400
-Message-ID: <CADnq5_N65tF-b772uJ2E72=Er8JeeX9UZ34PVGqssprHCMGF1g@mail.gmail.com>
-Subject: Re: [PATCH] drm/prime: fix extracting of the DMA addresses from a scatterlist
-To:     Shane Francis <bigbeeshane@gmail.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        David Airlie <airlied@linux.ie>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "for 3.8" <stable@vger.kernel.org>,
-        "Michael J . Ruhl" <michael.j.ruhl@intel.com>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Alex Deucher <alexander.deucher@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200321174303.GA7930@afzalpc>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Mar 27, 2020 at 6:25 AM Shane Francis <bigbeeshane@gmail.com> wrote:
->
-> Hello Marek,
->
-> On Fri, Mar 27, 2020 at 9:00 AM Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
-> > > I have tested the above patch against my original issues with amdgpu
-> > > and radeon drivers and everything is still working as expected.
-> > >
-> > > Sorry I missed this in my original patches.
-> >
-> > No problem. Thanks for testing!
-> >
-> > Best regards
-> > --
-> > Marek Szyprowski, PhD
-> > Samsung R&D Institute Poland
-> >
-> Just a thought.
->
-> Would it be worth adding some comments to the code to explain why this
-> is needed, reading
-> the thread around my original patches and the DMA-API documentation it
-> is not instantly
-> clear why you would be mapping the pages in this way.
->
-> Would probably prevent someone in the future making the same mistake I
-> did while updating
-> this code.
+Hi Thomas,
 
-With a comment similar to the commit messaged added to this function,
-this patch is:
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+As compared to the situation mentioned earlier[1], now powerpc patch is
+also in -next, and the pending ARM patches has been picked up by ARM SoC
+maintainers today and is expected to show up in next -next. All other
+subsytem patches has been picked by relevant maintainers & are already
+in -next except alpha, c6x, hexagon, unicore32 & sh.
 
-Thanks!
+As it is the case, i am sending you patches for the above 5
+architecture's plus the core removal patch.
 
-Alex
+Status of 5 arch's:
+-------------------
+alpha:		received ack from Matt Turner, build test success
+c6x:		did receive ack from Mark Salter in v1, the final
+		 version (v3) was with minor changes, hence removed his
+		 ack & cc'ed him, build test success
+hexagon:	build test success
+unicore32:	couldn't get toolchain from kernel.org, 0day test robot
+		 or Segher's buildall
+sh:		To compile the relevant changes sh64 compiler is
+		 required, couldn't get it from above mentioned 3
+		 sources.
+
+Note 1: sh toolchain is available, but that will not make the
+ relevant changes compile as it has dependency of 64bit arch toolchain,
+ did try a Kconfig hack to make it compile w/ 32bit sh toolchain, but it
+ failed due to other reasons (unknown operands), so gave up on that.
+Note 2: hexagon final image creation fails even w/o my patch, but it
+ has been ensured that w/ my changes relevant object files are getting
+ built  w/o warnings.
+
+Regards
+afzal
+
+[1] https://lkml.kernel.org/r/20200321172626.GA6323@afzalpc
+
+afzal mohammed (6):
+  alpha: Replace setup_irq() by request_irq()
+  c6x: replace setup_irq() by request_irq()
+  hexagon: replace setup_irq() by request_irq()
+  sh: replace setup_irq() by request_irq()
+  unicore32: replace setup_irq() by request_irq()
+  genirq: Remove setup_irq() and remove_irq()
+
+ arch/alpha/kernel/irq_alpha.c     | 29 ++++----------------
+ arch/alpha/kernel/irq_i8259.c     |  8 ++----
+ arch/alpha/kernel/irq_impl.h      |  7 +----
+ arch/alpha/kernel/irq_pyxis.c     |  3 ++-
+ arch/alpha/kernel/sys_alcor.c     |  3 ++-
+ arch/alpha/kernel/sys_cabriolet.c |  3 ++-
+ arch/alpha/kernel/sys_eb64p.c     |  3 ++-
+ arch/alpha/kernel/sys_marvel.c    |  2 +-
+ arch/alpha/kernel/sys_miata.c     |  6 +++--
+ arch/alpha/kernel/sys_ruffian.c   |  3 ++-
+ arch/alpha/kernel/sys_rx164.c     |  3 ++-
+ arch/alpha/kernel/sys_sx164.c     |  3 ++-
+ arch/alpha/kernel/sys_wildfire.c  |  7 ++---
+ arch/alpha/kernel/time.c          |  6 ++---
+ arch/c6x/platforms/timer64.c      | 11 +++-----
+ arch/hexagon/kernel/smp.c         | 22 ++++++++--------
+ arch/hexagon/kernel/time.c        | 11 +++-----
+ arch/sh/boards/mach-cayman/irq.c  | 18 +++++--------
+ arch/sh/drivers/dma/dma-pvr2.c    |  9 +++----
+ arch/unicore32/kernel/time.c      | 11 +++-----
+ include/linux/irq.h               |  2 --
+ kernel/irq/manage.c               | 44 -------------------------------
+ 22 files changed, 60 insertions(+), 154 deletions(-)
+
+-- 
+2.25.1
+
