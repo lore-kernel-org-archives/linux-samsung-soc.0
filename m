@@ -2,86 +2,95 @@ Return-Path: <SRS0=2lPF=5M=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82208C2D0E5
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Mar 2020 10:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E6E1C43331
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Mar 2020 11:51:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E99020578
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Mar 2020 10:52:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1585306353;
-	bh=93Pwaz9SIlqJweuRJawhjoibW5Urj4AUs+FXkyF7wvQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=zPbzkc7rIdjmnrCMxKQv2OVLLWkJpdzzhWr7iniaqsQTcDlRJOLV2JxNkolSVxOzo
-	 iiucpc2znLE/e0rre+euGWvgwQITCLMogosWF+4zDfkzQD6dVNtk8CbWNQcYs6r8AG
-	 BHmE8pQBaFAxMcURvqTtIvB+ZR7hsISenliqIt48=
+	by mail.kernel.org (Postfix) with ESMTP id 6FB8720857
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Mar 2020 11:51:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="EAtLibjW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726515AbgC0Kwd (ORCPT
+        id S1727263AbgC0LvJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 27 Mar 2020 06:52:33 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:38324 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726284AbgC0Kwc (ORCPT
+        Fri, 27 Mar 2020 07:51:09 -0400
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:28752 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726165AbgC0LvJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 27 Mar 2020 06:52:32 -0400
-Received: by mail-ed1-f66.google.com with SMTP id e5so10507261edq.5
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Mar 2020 03:52:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pPL3DbKSqHR4is6xqUQRzPhANHzl+P261m4uftHQCSs=;
-        b=Yg8VuNjWEC5Ocfdp1ly5ICgm85rIYa08A8Yedd9YRpy243lsc5Zb/3D83turDVWlrt
-         6SXB2DqB0LQSXq9MFGOwgkLXSAc6hHCNly+w6JTGwNXpX92lH1wWAITMArZ+pZY347eA
-         zvNcamzy+ln5hT21Yg9zFdbeRAS5utu13c7MZOr4Uw8C1tYyCWM7b+OhfY3Iq55s0bW9
-         AcuIASjhwocd9RrC72yoZVZwueOKnyfOFIVAwqvuwv2jBMrckO6yfSYRw/DImOnoSAvf
-         KUwVWvj6+ZK1b5x9zx6mmvCjiD7mOVYK0pmLL9OjjASIHroQHvZMsq5DV6CETsCP07/P
-         k6Ow==
-X-Gm-Message-State: ANhLgQ00akxOeGgQFr5WC0RYBlpA36yny8eLFpDmcdM4pPoorCiGsl04
-        92G71nTi3sIUWl5Kdv0iWAk=
-X-Google-Smtp-Source: ADFU+vtMyan7cfGZzCK49xRjLfr5wfuajs7G7qfhS25x5WVa9mJ081jy6DYz+kA7JaeYzh63OVr4vA==
-X-Received: by 2002:a17:907:2143:: with SMTP id rk3mr4222601ejb.50.1585306349281;
-        Fri, 27 Mar 2020 03:52:29 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.125])
-        by smtp.googlemail.com with ESMTPSA id i26sm809488edx.23.2020.03.27.03.52.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 27 Mar 2020 03:52:28 -0700 (PDT)
-Date:   Fri, 27 Mar 2020 11:52:26 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-samsung-soc@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 2/2] ARM: exynos_defconfig: enable serial bus and BCM
- HCIUART drivers
-Message-ID: <20200327105226.GB7233@kozik-lap>
-References: <20200326083524.19577-1-m.szyprowski@samsung.com>
- <CGME20200326083531eucas1p166688e4a513fd919e92dd14d65c715fe@eucas1p1.samsung.com>
- <20200326083524.19577-2-m.szyprowski@samsung.com>
+        Fri, 27 Mar 2020 07:51:09 -0400
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02RBn6Bc018997;
+        Fri, 27 Mar 2020 06:50:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=PODMain02222019;
+ bh=U2zt+3OMfjozGKH48uShfLBqCKXb8nbcSzxsYJ1OIE0=;
+ b=EAtLibjW2kZz6gWc9mlRfVmjcJql4GnQsUPTKPZ7u4CRLalnjOogshY3Lpbbwp6ElxlD
+ 3/jO8CA9zcma2snlb8Soq8l7xKLLIEUiv2DYNTS/ChFfa0Yc/ssHy4IvUmm58w2DtV7+
+ 6yDlDczvIdEsc+nlz/pqmExSWfjE/mY6JMCsFIe+02B9VDYFoG5TwJgeWTn5Y6vGs7oG
+ BCoBadW5zdwZLbsgM/Y9PFL3x5n9w0978SGweH3YLPO+/gr96Gr1rV4fNxZCRWOP29fL
+ SvcVWnMm/gn3EXcDI9XmAvwcF3fJzW8YYgTytafJ4sRMJDLrGaZExiUEqGJ9WSJhNdCo kw== 
+Authentication-Results: ppops.net;
+        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from ediex02.ad.cirrus.com ([87.246.76.36])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2ywgb2k57b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Fri, 27 Mar 2020 06:50:49 -0500
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Fri, 27 Mar
+ 2020 11:50:47 +0000
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
+ Transport; Fri, 27 Mar 2020 11:50:47 +0000
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id EF5542A1;
+        Fri, 27 Mar 2020 11:50:46 +0000 (UTC)
+Date:   Fri, 27 Mar 2020 11:50:46 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+CC:     <linux-i2c@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        <patches@opensource.cirrus.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] ARM: mach-s3c64xx: convert to use
+ i2c_new_client_device()
+Message-ID: <20200327115046.GB5096@ediswmail.ad.cirrus.com>
+References: <20200326211014.13591-1-wsa+renesas@sang-engineering.com>
+ <20200326211014.13591-2-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20200326083524.19577-2-m.szyprowski@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200326211014.13591-2-wsa+renesas@sang-engineering.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-SPF-Result: fail
+X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
+ ip4:5.172.152.52 -all
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0
+ impostorscore=0 phishscore=0 lowpriorityscore=0 priorityscore=1501
+ suspectscore=0 bulkscore=0 adultscore=0 mlxlogscore=783 clxscore=1011
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003270108
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 09:35:24AM +0100, Marek Szyprowski wrote:
-> Enable serial bus and BCM HCIUART Bluetooth drivers available on the
-> Exynos3250-based Rinato board.
+On Thu, Mar 26, 2020 at 10:10:14PM +0100, Wolfram Sang wrote:
+> Move away from the deprecated API and remove printing a stale 'ret'
+> value.
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > ---
->  arch/arm/configs/exynos_defconfig | 2 ++
 
-Thanks, applied (also late, might miss this merge window).
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-Best regards,
-Krzysztof
-
+Thanks,
+Charles
