@@ -2,111 +2,85 @@ Return-Path: <SRS0=2lPF=5M=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF342C43331
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Mar 2020 10:25:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74755C2D0E8
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Mar 2020 10:47:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3D2920717
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Mar 2020 10:25:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VixHdO8H"
+	by mail.kernel.org (Postfix) with ESMTP id 496FA20714
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Mar 2020 10:47:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1585306021;
+	bh=MT1TLWklI9cGdgUcpsKkQl9N8Ze6APkw2JgPXXRkw6M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=rRlqYu23VxCRH5bAdmRORjbeJFfwZFvBDDL+qh48prH2MVblgCVVIbXV9S4stbYYx
+	 ALkLgyoqNMF1ajIITloLSiXNJT5Yimx7sdlN8jnkH8qP56vJrwQwUflbw1Nkl91eFf
+	 xfWmxEBELw/gppSeYlePnwZdBJdvjU89deMSRpXA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726165AbgC0KZQ (ORCPT
+        id S1727254AbgC0KrA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 27 Mar 2020 06:25:16 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:41714 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726149AbgC0KZQ (ORCPT
+        Fri, 27 Mar 2020 06:47:00 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:42472 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726333AbgC0KrA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 27 Mar 2020 06:25:16 -0400
-Received: by mail-io1-f68.google.com with SMTP id y24so9234075ioa.8;
-        Fri, 27 Mar 2020 03:25:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+DtgW0asTVLRmsP/wkgDLG5KuILtoelQrHJyD4vPRGk=;
-        b=VixHdO8Hw9jXt84SnnDFMGQQjN+nZh5xzNUbbN5TwxzAF/tN0b966nHiajtCMIUjRe
-         QPrW8LgWJCh/qCTIWcBul+nq3pGxjVd7qN3hBNLBZYo3Y9nAKcG7/MJZNbYiZUsWgWqj
-         0dKw5nHWGX5HMroQsYECsSA9OoFyjOYNaPcNTtb9/7Yp9p075eTwNb0T24TdH6CBlI+8
-         ZPKuxCQ7llQkFU+Qcwl26aLr8yUREpdsDvFvrAbnBPcXWG9hjM82ZqZ5DF6d+w+Q6OyV
-         N0VWSHaOOhgSSsYHaOaRx7NnFfDkTSADaPM1dlNEZdjVBsM+oX7z0luWXoaNI4VKban+
-         abfg==
+        Fri, 27 Mar 2020 06:47:00 -0400
+Received: by mail-ed1-f65.google.com with SMTP id cw6so9755282edb.9
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Mar 2020 03:47:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+DtgW0asTVLRmsP/wkgDLG5KuILtoelQrHJyD4vPRGk=;
-        b=rgCNTVcUQr2YTAfqWw7ntT5ENjipNOnwhSgCXFCvLw9cXGOVTJ0UuYB213P6RTY4mQ
-         DFVCb9gqr/pmOr17Li6GGsj7KuSsFVweHOGTJHx7xvLVkpOaIc3WHHdYQsk8jZ4Oo2kY
-         /ciVc6LqlYdVwFSuqSZJHXk2DptlwhYyNPPqzCTsqK002bH92TJkx3Z5yGP/a6LbHM+6
-         83b34FlBQ/1xTA6tFgIVfEBnhM/u1uFvFztOAA/0+c2trwoY6u4FkT3TLYcJHH9XRRSs
-         Yg/JbPz9bUhrYi0SqsBtwvoj1RpU779om/OtR6mJIdTAWEBUyWghMzkJ8NzO6HkNGthS
-         tQKw==
-X-Gm-Message-State: ANhLgQ0b6fRG3YEeK8aXeWGRYcs4jsJ4xkK/Epm8bMZhJTTfTBvs5w2D
-        /I9KSqmlTFsLJ5kM5pkfPb+rx5oAvB0kYsQgMbo=
-X-Google-Smtp-Source: ADFU+vvlcRTv5JovTHQ7RzXH0cra/ZdGkjZHlnblRSUuAxnLXSZ5BrZueQ9HJCBkcc1dc3kUFDm7yiF7dseHsA+NeRA=
-X-Received: by 2002:a6b:c916:: with SMTP id z22mr12020083iof.138.1585304714741;
- Fri, 27 Mar 2020 03:25:14 -0700 (PDT)
-MIME-Version: 1.0
-References: <CGME20200327082453eucas1p15b2371b61f653031408f319cc6d13893@eucas1p1.samsung.com>
- <20200327082446.18480-1-m.szyprowski@samsung.com> <CABnpCuDySf89HL2AksMB2fOcVCci+1zgB9r8zjRdpCAH3GWhPA@mail.gmail.com>
- <64025801-10f0-9f28-17b2-2c04d4308ac5@samsung.com>
-In-Reply-To: <64025801-10f0-9f28-17b2-2c04d4308ac5@samsung.com>
-From:   Shane Francis <bigbeeshane@gmail.com>
-Date:   Fri, 27 Mar 2020 10:25:04 +0000
-Message-ID: <CABnpCuBUEO6V=hwzHkUEKK5KDXC=ovPrTHyb9zFYrj0KaHHdww@mail.gmail.com>
-Subject: Re: [PATCH] drm/prime: fix extracting of the DMA addresses from a scatterlist
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PLGk8xpVlq6jprbGmxdPWoYeK18WktU86NZ+qSkaFFw=;
+        b=EeGMG3Uv6t5etczFc0h+GQePpFfeL0fGLgsZZNTbWrUA/XuggGkZWCrI5YsM4wwfTQ
+         x6KSkJLGTPpSMLH7C7Sk6sQk+SF4LyfAKBOHw2KSZTSGXw5NgN+zMj+deVFvzoTsqzem
+         OfO+7gRiDgbTz7i+iQWTuhhd0KfBxvwmcjDP9mkzDZ2Vm7i8QO4E5657zRDqyJH6kA6F
+         2O3TcG3mz/j8C1EuWR7qdPLAdFRQO5PbVD1+IZF1RWlhkcF8uS64BWJBzy8q0YnNUL+t
+         Gz4Chw7C5NOzqxh6CudvIx0o6Gfj3nD9SZgddawa0xuwOaB/9zstLRDDIs2Ba/yy2/Vl
+         BmFQ==
+X-Gm-Message-State: ANhLgQ2RSy4H4BiqXJy86W8Qt3ZB/8rAFBBdNs4IALMHkAp+0sTYyO7K
+        leiNIYtJDebTR4+RjagyAo2mhtB/
+X-Google-Smtp-Source: ADFU+vv1WThX9e1IXSvqpQG3F9ssBYs71qwOQzP+WHXPlRQrPST4gdvdgJ6B/7G9C55MBNppJz/07A==
+X-Received: by 2002:a17:906:6844:: with SMTP id a4mr11902417ejs.248.1585306019438;
+        Fri, 27 Mar 2020 03:46:59 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.125])
+        by smtp.googlemail.com with ESMTPSA id v17sm796994edb.27.2020.03.27.03.46.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 27 Mar 2020 03:46:58 -0700 (PDT)
+Date:   Fri, 27 Mar 2020 11:46:56 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Maling list - DRI developers <dri-devel@lists.freedesktop.org>,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        "Michael J . Ruhl" <michael.j.ruhl@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     linux-samsung-soc@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 1/2] ARM: dts: exynos: Enable Bluetooth support for
+ Rinato board
+Message-ID: <20200327104656.GA7233@kozik-lap>
+References: <CGME20200326083528eucas1p2f2e265f3776e4d34116f36b68d07731c@eucas1p2.samsung.com>
+ <20200326083524.19577-1-m.szyprowski@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200326083524.19577-1-m.szyprowski@samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hello Marek,
+On Thu, Mar 26, 2020 at 09:35:23AM +0100, Marek Szyprowski wrote:
+> Add a node for the BCM43342A Bluetooth chip on the serial bus #0 on
+> the Exynos3250-based Rinato board.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos3250-rinato.dts | 9 +++++++++
 
-On Fri, Mar 27, 2020 at 9:00 AM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> > I have tested the above patch against my original issues with amdgpu
-> > and radeon drivers and everything is still working as expected.
-> >
-> > Sorry I missed this in my original patches.
->
-> No problem. Thanks for testing!
->
-> Best regards
-> --
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
->
-Just a thought.
+Thanks, applied for late push (might miss this merge window).
 
-Would it be worth adding some comments to the code to explain why this
-is needed, reading
-the thread around my original patches and the DMA-API documentation it
-is not instantly
-clear why you would be mapping the pages in this way.
+Best regards,
+Krzysztof
 
-Would probably prevent someone in the future making the same mistake I
-did while updating
-this code.
-
-Regards,
-
-Shane Francis
