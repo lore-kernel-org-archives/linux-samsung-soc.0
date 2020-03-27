@@ -2,153 +2,194 @@ Return-Path: <SRS0=2lPF=5M=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4337BC2D0ED
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Mar 2020 16:08:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98EE8C2D0EF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Mar 2020 16:23:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15CBB2073E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Mar 2020 16:08:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69C932073E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 27 Mar 2020 16:23:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="an6bUaMW"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qlHuu19z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727707AbgC0QIZ (ORCPT
+        id S1726333AbgC0QXe (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 27 Mar 2020 12:08:25 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41063 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727354AbgC0QIY (ORCPT
+        Fri, 27 Mar 2020 12:23:34 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:39434 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727652AbgC0QXe (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 27 Mar 2020 12:08:24 -0400
-Received: by mail-pg1-f193.google.com with SMTP id b1so4774996pgm.8;
-        Fri, 27 Mar 2020 09:08:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=v3WW2gICCRcfa0oGxmZ+LfSQn5AikLIQ+ZRnRYdwUfA=;
-        b=an6bUaMWa/gge8dt35mNz51d8Pj8Aa/qVvKR0POiYMe4zuNsTFMbWsDqtJpu8Vfgps
-         HodQ817xNYHI9SLLHcYrsshSCnFQVPdRz5miPel3a6dQh30+182sG4GpKzSYGg0Moaql
-         oICMZDkEloRd8GN1T9OAdis5YEzicvSdRi2cwTkeLqxIisdfp6u4WrF2upjoOm0b/Nqv
-         xJs9hkC3swEZG36oeWhAa8kBkb2p598PAhHmrKt9TC86LDUy19H7w13AsSWaFeOMFBw1
-         1kiJmtgBbfIhYEZfNNWHTKYdN5NFa73OW2vgKUh7ekKVHy/s1yLOWQQExWS6RBTI4i5f
-         lubA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=v3WW2gICCRcfa0oGxmZ+LfSQn5AikLIQ+ZRnRYdwUfA=;
-        b=K61t+aL22V7z1zCxdy92iLEGfcUUfCcui1nXRjhlhBoF1i5bSiZeUHJHo9tj8E3hl7
-         LkfP1UHq6zAWyukKSnmDoWQTb2yZrra+7+orFlf/8phatZvSEc7pQjNcOeAdyBTCb1y6
-         IhuKSgp++nxg6di5pN8GCuKkAZhlw9fp7Td3Lqfr5w+nMRQdLyxPHMKR29SWvVUjhJ8u
-         KM5b+m29XY3GGJbeEYgD0GcJ292B3HsiMUi15O2xGS7FQMVnNnCv5TnoJeHcfiL/xGDE
-         AvNCTKvVXOnoWxUGyLgLhfXf1T5W5Vt6svfYf4q1S3rQ8N8kaoK9bCv7okpY4oL/5JOk
-         3qgw==
-X-Gm-Message-State: ANhLgQ3vw/FfWuBbGxGGxSE2ZiBjUx8kOAWKqaEKYZYl9EBGZhw3jGAy
-        sz3DwZrD1BEUqvJS4J1F57A=
-X-Google-Smtp-Source: ADFU+vs5xl4PN9llzz39JwJNhgmk9dgWBu5u30cb77PT2OtFyYrOeXBrJPUM82BlUm8kk65OLbcqNQ==
-X-Received: by 2002:aa7:947d:: with SMTP id t29mr14654589pfq.184.1585325301244;
-        Fri, 27 Mar 2020 09:08:21 -0700 (PDT)
-Received: from localhost ([49.207.55.57])
-        by smtp.gmail.com with ESMTPSA id v185sm4391917pfv.32.2020.03.27.09.08.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 27 Mar 2020 09:08:20 -0700 (PDT)
-Date:   Fri, 27 Mar 2020 21:38:18 +0530
-From:   afzal mohammed <afzal.mohd.ma@gmail.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, x86@kernel.org,
-        linux-sh@vger.kernel.org, linux-s390@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-parisc@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-ia64@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-c6x-dev@linux-c6x.org, linux-omap@vger.kernel.org,
-        linux-alpha@vger.kernel.org
-Subject: [PATCH 0/6] Kill setup_irq()
-Message-ID: <cover.1585320721.git.afzal.mohd.ma@gmail.com>
-References: <20200321174303.GA7930@afzalpc>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200321174303.GA7930@afzalpc>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Fri, 27 Mar 2020 12:23:34 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200327162331euoutp01227583e028d665f2d7076d577a6585ef~ANcpEpfdj2521825218euoutp01c
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Mar 2020 16:23:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200327162331euoutp01227583e028d665f2d7076d577a6585ef~ANcpEpfdj2521825218euoutp01c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1585326211;
+        bh=FNcGHf3TErelyQyr0Jn7U9qXzR3Cb8ZHEa9kuu5TYeA=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=qlHuu19zdZeIrsu0DMoKtCl0dHgdmwwydb48UMvM0E89/FHlQVLAuFaI3ocz+MH2w
+         huiwP0UImKHgwcTuwZgoHZVTbnx2AfGdWhzams0LXzvKh91WZBjzTk3Bq32BnhLCfu
+         C/JwW3JWgUH0JO/GoEMhgmDfIC32SnKCPOJ624v4=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200327162330eucas1p248c9d4d771ddacebcd39c77c7d91e700~ANcoFYz_K3181231812eucas1p28;
+        Fri, 27 Mar 2020 16:23:30 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id CD.5D.60679.2882E7E5; Fri, 27
+        Mar 2020 16:23:30 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200327162330eucas1p1b0413e0e9887aa76d3048f86d2166dcd~ANcnkxzW12015620156eucas1p1X;
+        Fri, 27 Mar 2020 16:23:30 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200327162330eusmtrp1e3c051d09a2f3de797a2bf04d0500afc~ANcnj_tgS2160721607eusmtrp1_;
+        Fri, 27 Mar 2020 16:23:30 +0000 (GMT)
+X-AuditID: cbfec7f4-0cbff7000001ed07-b5-5e7e2882d3d4
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 86.9A.08375.1882E7E5; Fri, 27
+        Mar 2020 16:23:29 +0000 (GMT)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200327162329eusmtip29f9109aa332277093a721501edfa2888~ANcm1vZUK2356123561eusmtip27;
+        Fri, 27 Mar 2020 16:23:29 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        stable@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Shane Francis <bigbeeshane@gmail.com>,
+        "Michael J . Ruhl" <michael.j.ruhl@intel.com>
+Subject: [PATCH v2] drm/prime: fix extracting of the DMA addresses from a
+ scatterlist
+Date:   Fri, 27 Mar 2020 17:21:26 +0100
+Message-Id: <20200327162126.29705-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA0VSa0hTURzn3Neu5ux6FTpUGM7sbWZFnOhpFNwkwj5JgsulNw2dxpaWZuVm
+        SWqJ2kNZIZtmvjJzrpkzrS1rDElLrSx6TXpZSc10pGS1eVd9+z35/Q8cGmcbydn0/tSDvCJV
+        liKhvAnj/YneUPWiY9IVFlUQOtNjw9CFF+0kai5vIpGqrQhDv40lOBoY/0qhftMlCpX3dmKo
+        seulCOkcNwj0sHUJysu/QiJt8xBAhi8l5GZf7mTfFMV1OLUE16Z5KeKqbg1jnL4+n+JanW9I
+        rsK2i3tdaMW4IkM94Fq6j3Df9YFRM2K81yfwKfszeEXYxjjvpIomO3bgpv/h9nMfyRxgmlkA
+        vGjIrIbvy2rIAuBNs0wtgG+6TB4yBqDurtpDvgPY26/G/lZM5l+UYNQA+GDKif2rDJZ8AO4U
+        xYTDgpECV0pEBzD7YDXujuBMLw5fvTWL3BF/JhoWT6gpNyaYEFioqyXcWMxsgJUVpZ6xebDh
+        +p3pMmT0InhX5RQJxlao/zEABOwPP1kNHn0u7D57mhAKuQDaexpFAjkNYL+63NNYB1/0TLqm
+        addNi2GTKUyQI2DzI8e0DBlfODji55ZxFyw1luGCLIan8lghvQBqrNf+zZof9uEC5qCuI3/6
+        XSwTCx8bCvFiEKj5v6UFoB7M4tOV8kReuTKVP7RcKZMr01MTl8enyfXA9Ym6f1nHbgLTz70W
+        wNBA4iOufXxUypKyDGWm3AIgjUsCxO92Z0tZcYIsM4tXpO1RpKfwSguYQxOSWeJVlcOxLJMo
+        O8gn8/wBXvHXxWiv2TkAtmi2VGWs9dEu++wrX9q6+rZ8vE76pCbi25rjk0EDtlA02u+4eC96
+        047yXMqhCXk6yZ2wRmwLrMxvqo7sgmHPk6PyTgR3DhntuXxyZK3K+XvUnOGXVh1blxlraxjM
+        YofPy19bbCuvDmcn7bQ/i5cOxc2/vD0mqCO4Z6ERZeUgCaFMkoUvwRVK2R8afjKsQAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmkeLIzCtJLcpLzFFi42I5/e/4Pd1Gjbo4g/lPrC16z51ksph2Zzer
+        xcYZ61ktGnf2MVn83zaR2eLK1/dsFpd3zWGzmHF+H5PF2iN32S0WftzKYnFhu5ZFW+cyVosF
+        Gx8xWmx5M5HVgc+j9dJfNo+93xaweOycdZfdY/Gel0wem1Z1snls//aA1WPeyUCP+93HmTz6
+        tqxi9Nh8utrj8ya5AO4oPZui/NKSVIWM/OISW6VoQwsjPUNLCz0jE0s9Q2PzWCsjUyV9O5uU
+        1JzMstQifbsEvYx56x8yFewQrtg95QVrA+Mu/i5GTg4JAROJXQf/sXUxcnEICSxllNh6cxcj
+        REJG4uS0BlYIW1jiz7UuqKJPjBLtP9aBJdgEDCW63oIkODlEBDIk2idOZQaxmQWuM0sc/1cG
+        YgsLhEpM/TUJbCiLgKpE98IVLCA2r4CtxKJ5k5ggFshLrN5wgHkCI88CRoZVjCKppcW56bnF
+        hnrFibnFpXnpesn5uZsYgRGw7djPzTsYL20MPsQowMGoxMO74mptnBBrYllxZe4hRgkOZiUR
+        3qeRNXFCvCmJlVWpRfnxRaU5qcWHGE2Blk9klhJNzgdGZ15JvKGpobmFpaG5sbmxmYWSOG+H
+        wMEYIYH0xJLU7NTUgtQimD4mDk6pBkb+3PQfrksrrqzf5hCTwP/pyMfC+zOljruGC3Jv2pNg
+        xC0an70g8eU0Q986+ejcCXE663ecUu6x/+liuTGxd698Xa4Ux/z1zMf8RRX2qLE2//0v3aSV
+        WF/0ecXxdeanpZfrz1js9lVC2K/G6sneWU7bn/490LIhbaHJ9ZOPWzMUsvaaTTX//1mJpTgj
+        0VCLuag4EQCez0qLlgIAAA==
+X-CMS-MailID: 20200327162330eucas1p1b0413e0e9887aa76d3048f86d2166dcd
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200327162330eucas1p1b0413e0e9887aa76d3048f86d2166dcd
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200327162330eucas1p1b0413e0e9887aa76d3048f86d2166dcd
+References: <CGME20200327162330eucas1p1b0413e0e9887aa76d3048f86d2166dcd@eucas1p1.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Thomas,
+Scatterlist elements contains both pages and DMA addresses, but one
+should not assume 1:1 relation between them. The sg->length is the size
+of the physical memory chunk described by the sg->page, while
+sg_dma_len(sg) is the size of the DMA (IO virtual) chunk described by
+the sg_dma_address(sg).
 
-As compared to the situation mentioned earlier[1], now powerpc patch is
-also in -next, and the pending ARM patches has been picked up by ARM SoC
-maintainers today and is expected to show up in next -next. All other
-subsytem patches has been picked by relevant maintainers & are already
-in -next except alpha, c6x, hexagon, unicore32 & sh.
+The proper way of extracting both: pages and DMA addresses of the whole
+buffer described by a scatterlist it to iterate independently over the
+sg->pages/sg->length and sg_dma_address(sg)/sg_dma_len(sg) entries.
 
-As it is the case, i am sending you patches for the above 5
-architecture's plus the core removal patch.
+Fixes: 42e67b479eab ("drm/prime: use dma length macro when mapping sg")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+---
+ drivers/gpu/drm/drm_prime.c | 37 +++++++++++++++++++++++++------------
+ 1 file changed, 25 insertions(+), 12 deletions(-)
 
-Status of 5 arch's:
--------------------
-alpha:		received ack from Matt Turner, build test success
-c6x:		did receive ack from Mark Salter in v1, the final
-		 version (v3) was with minor changes, hence removed his
-		 ack & cc'ed him, build test success
-hexagon:	build test success
-unicore32:	couldn't get toolchain from kernel.org, 0day test robot
-		 or Segher's buildall
-sh:		To compile the relevant changes sh64 compiler is
-		 required, couldn't get it from above mentioned 3
-		 sources.
-
-Note 1: sh toolchain is available, but that will not make the
- relevant changes compile as it has dependency of 64bit arch toolchain,
- did try a Kconfig hack to make it compile w/ 32bit sh toolchain, but it
- failed due to other reasons (unknown operands), so gave up on that.
-Note 2: hexagon final image creation fails even w/o my patch, but it
- has been ensured that w/ my changes relevant object files are getting
- built  w/o warnings.
-
-Regards
-afzal
-
-[1] https://lkml.kernel.org/r/20200321172626.GA6323@afzalpc
-
-afzal mohammed (6):
-  alpha: Replace setup_irq() by request_irq()
-  c6x: replace setup_irq() by request_irq()
-  hexagon: replace setup_irq() by request_irq()
-  sh: replace setup_irq() by request_irq()
-  unicore32: replace setup_irq() by request_irq()
-  genirq: Remove setup_irq() and remove_irq()
-
- arch/alpha/kernel/irq_alpha.c     | 29 ++++----------------
- arch/alpha/kernel/irq_i8259.c     |  8 ++----
- arch/alpha/kernel/irq_impl.h      |  7 +----
- arch/alpha/kernel/irq_pyxis.c     |  3 ++-
- arch/alpha/kernel/sys_alcor.c     |  3 ++-
- arch/alpha/kernel/sys_cabriolet.c |  3 ++-
- arch/alpha/kernel/sys_eb64p.c     |  3 ++-
- arch/alpha/kernel/sys_marvel.c    |  2 +-
- arch/alpha/kernel/sys_miata.c     |  6 +++--
- arch/alpha/kernel/sys_ruffian.c   |  3 ++-
- arch/alpha/kernel/sys_rx164.c     |  3 ++-
- arch/alpha/kernel/sys_sx164.c     |  3 ++-
- arch/alpha/kernel/sys_wildfire.c  |  7 ++---
- arch/alpha/kernel/time.c          |  6 ++---
- arch/c6x/platforms/timer64.c      | 11 +++-----
- arch/hexagon/kernel/smp.c         | 22 ++++++++--------
- arch/hexagon/kernel/time.c        | 11 +++-----
- arch/sh/boards/mach-cayman/irq.c  | 18 +++++--------
- arch/sh/drivers/dma/dma-pvr2.c    |  9 +++----
- arch/unicore32/kernel/time.c      | 11 +++-----
- include/linux/irq.h               |  2 --
- kernel/irq/manage.c               | 44 -------------------------------
- 22 files changed, 60 insertions(+), 154 deletions(-)
-
+diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
+index 1de2cde2277c..282774e469ac 100644
+--- a/drivers/gpu/drm/drm_prime.c
++++ b/drivers/gpu/drm/drm_prime.c
+@@ -962,27 +962,40 @@ int drm_prime_sg_to_page_addr_arrays(struct sg_table *sgt, struct page **pages,
+ 	unsigned count;
+ 	struct scatterlist *sg;
+ 	struct page *page;
+-	u32 len, index;
++	u32 page_len, page_index;
+ 	dma_addr_t addr;
++	u32 dma_len, dma_index;
+ 
+-	index = 0;
++	/*
++	 * Scatterlist elements contains both pages and DMA addresses, but
++	 * one shoud not assume 1:1 relation between them. The sg->length is
++	 * the size of the physical memory chunk described by the sg->page,
++	 * while sg_dma_len(sg) is the size of the DMA (IO virtual) chunk
++	 * described by the sg_dma_address(sg).
++	 */
++	page_index = 0;
++	dma_index = 0;
+ 	for_each_sg(sgt->sgl, sg, sgt->nents, count) {
+-		len = sg_dma_len(sg);
++		page_len = sg->length;
+ 		page = sg_page(sg);
++		dma_len = sg_dma_len(sg);
+ 		addr = sg_dma_address(sg);
+ 
+-		while (len > 0) {
+-			if (WARN_ON(index >= max_entries))
++		while (pages && page_len > 0) {
++			if (WARN_ON(page_index >= max_entries))
+ 				return -1;
+-			if (pages)
+-				pages[index] = page;
+-			if (addrs)
+-				addrs[index] = addr;
+-
++			pages[page_index] = page;
+ 			page++;
++			page_len -= PAGE_SIZE;
++			page_index++;
++		}
++		while (addrs && dma_len > 0) {
++			if (WARN_ON(dma_index >= max_entries))
++				return -1;
++			addrs[dma_index] = addr;
+ 			addr += PAGE_SIZE;
+-			len -= PAGE_SIZE;
+-			index++;
++			dma_len -= PAGE_SIZE;
++			dma_index++;
+ 		}
+ 	}
+ 	return 0;
 -- 
-2.25.1
+2.17.1
 
