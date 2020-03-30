@@ -2,187 +2,169 @@ Return-Path: <SRS0=4EAH=5P=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BB2DC2D0E5
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Mar 2020 13:10:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7E0EC2D0EC
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Mar 2020 13:46:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 096DF20733
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Mar 2020 13:10:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B544620776
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Mar 2020 13:46:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730159AbgC3NKS (ORCPT
+        id S1728365AbgC3NqN convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 30 Mar 2020 09:10:18 -0400
-Received: from foss.arm.com ([217.140.110.172]:53246 "EHLO foss.arm.com"
+        Mon, 30 Mar 2020 09:46:13 -0400
+Received: from mga02.intel.com ([134.134.136.20]:43753 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729862AbgC3NKS (ORCPT
+        id S1728065AbgC3NqN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 30 Mar 2020 09:10:18 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6FF9A30E;
-        Mon, 30 Mar 2020 06:10:17 -0700 (PDT)
-Received: from [10.57.60.204] (unknown [10.57.60.204])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 96CE83F71E;
-        Mon, 30 Mar 2020 06:10:15 -0700 (PDT)
-Subject: Re: [PATCH v2] drm/prime: fix extracting of the DMA addresses from a
- scatterlist
+        Mon, 30 Mar 2020 09:46:13 -0400
+IronPort-SDR: NSlZJLyDft1JvgpDj5EfvA4sTcRyFL7dUMjd00CgTPNrKxIJB7QW4bHAJX+pwME93GyNiLPKli
+ tAVV/EKY43eQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2020 06:46:11 -0700
+IronPort-SDR: c1V9JLhuvFlsnYYTIOb0W1i6yN2yoUTXzsVk+OcUNlMJBYhWG4stV7fnTWJ3U4CvNyCLXacXW7
+ a/E6qORb0d6g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,324,1580803200"; 
+   d="scan'208";a="241619267"
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by fmsmga008.fm.intel.com with ESMTP; 30 Mar 2020 06:46:11 -0700
+Received: from fmsmsx115.amr.corp.intel.com (10.18.116.19) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Mon, 30 Mar 2020 06:46:11 -0700
+Received: from fmsmsx107.amr.corp.intel.com ([169.254.6.38]) by
+ fmsmsx115.amr.corp.intel.com ([169.254.4.81]) with mapi id 14.03.0439.000;
+ Mon, 30 Mar 2020 06:46:11 -0700
+From:   "Ruhl, Michael J" <michael.j.ruhl@intel.com>
 To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        "Ruhl, Michael J" <michael.j.ruhl@intel.com>,
         "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
         "linux-samsung-soc@vger.kernel.org" 
         <linux-samsung-soc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+CC:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         David Airlie <airlied@linux.ie>,
         Shane Francis <bigbeeshane@gmail.com>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>,
         Thomas Zimmermann <tzimmermann@suse.de>,
         Alex Deucher <alexander.deucher@amd.com>
+Subject: RE: [PATCH v2] drm/prime: fix extracting of the DMA addresses from
+ a scatterlist
+Thread-Topic: [PATCH v2] drm/prime: fix extracting of the DMA addresses from
+ a scatterlist
+Thread-Index: AQHWBFQRvRx+hOOiski5ycfWmHv7TahcuvpggAMSJICAAVxq4A==
+Date:   Mon, 30 Mar 2020 13:46:10 +0000
+Message-ID: <14063C7AD467DE4B82DEDB5C278E8663FFFC0C0E@fmsmsx107.amr.corp.intel.com>
 References: <CGME20200327162330eucas1p1b0413e0e9887aa76d3048f86d2166dcd@eucas1p1.samsung.com>
  <20200327162126.29705-1-m.szyprowski@samsung.com>
  <14063C7AD467DE4B82DEDB5C278E8663FFFBFCE1@fmsmsx107.amr.corp.intel.com>
  <8a09916d-5413-f9a8-bafa-2d8f0b8f892f@samsung.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <95fe655b-e68e-bea4-e8ea-3c4abc3021e7@arm.com>
-Date:   Mon, 30 Mar 2020 14:10:14 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
-MIME-Version: 1.0
 In-Reply-To: <8a09916d-5413-f9a8-bafa-2d8f0b8f892f@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.1.200.108]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 2020-03-29 10:55 am, Marek Szyprowski wrote:
-> Hi Michael,
-> 
-> On 2020-03-27 19:31, Ruhl, Michael J wrote:
->>> -----Original Message-----
->>> From: Marek Szyprowski <m.szyprowski@samsung.com>
->>> Sent: Friday, March 27, 2020 12:21 PM
->>> To: dri-devel@lists.freedesktop.org; linux-samsung-soc@vger.kernel.org;
->>> linux-kernel@vger.kernel.org
->>> Cc: Marek Szyprowski <m.szyprowski@samsung.com>;
->>> stable@vger.kernel.org; Bartlomiej Zolnierkiewicz
->>> <b.zolnierkie@samsung.com>; Maarten Lankhorst
->>> <maarten.lankhorst@linux.intel.com>; Maxime Ripard
->>> <mripard@kernel.org>; Thomas Zimmermann <tzimmermann@suse.de>;
->>> David Airlie <airlied@linux.ie>; Daniel Vetter <daniel@ffwll.ch>; Alex Deucher
->>> <alexander.deucher@amd.com>; Shane Francis <bigbeeshane@gmail.com>;
->>> Ruhl, Michael J <michael.j.ruhl@intel.com>
->>> Subject: [PATCH v2] drm/prime: fix extracting of the DMA addresses from a
->>> scatterlist
->>>
->>> Scatterlist elements contains both pages and DMA addresses, but one
->>> should not assume 1:1 relation between them. The sg->length is the size
->>> of the physical memory chunk described by the sg->page, while
->>> sg_dma_len(sg) is the size of the DMA (IO virtual) chunk described by
->>> the sg_dma_address(sg).
->>>
->>> The proper way of extracting both: pages and DMA addresses of the whole
->>> buffer described by a scatterlist it to iterate independently over the
->>> sg->pages/sg->length and sg_dma_address(sg)/sg_dma_len(sg) entries.
->>>
->>> Fixes: 42e67b479eab ("drm/prime: use dma length macro when mapping sg")
->>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
->>> ---
->>> drivers/gpu/drm/drm_prime.c | 37 +++++++++++++++++++++++++-----------
->>> -
->>> 1 file changed, 25 insertions(+), 12 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
->>> index 1de2cde2277c..282774e469ac 100644
->>> --- a/drivers/gpu/drm/drm_prime.c
->>> +++ b/drivers/gpu/drm/drm_prime.c
->>> @@ -962,27 +962,40 @@ int drm_prime_sg_to_page_addr_arrays(struct
->>> sg_table *sgt, struct page **pages,
->>> 	unsigned count;
->>> 	struct scatterlist *sg;
->>> 	struct page *page;
->>> -	u32 len, index;
->>> +	u32 page_len, page_index;
->>> 	dma_addr_t addr;
->>> +	u32 dma_len, dma_index;
->>>
->>> -	index = 0;
->>> +	/*
->>> +	 * Scatterlist elements contains both pages and DMA addresses, but
->>> +	 * one shoud not assume 1:1 relation between them. The sg->length
->>> is
->>> +	 * the size of the physical memory chunk described by the sg->page,
->>> +	 * while sg_dma_len(sg) is the size of the DMA (IO virtual) chunk
->>> +	 * described by the sg_dma_address(sg).
->>> +	 */
+>-----Original Message-----
+>From: dri-devel <dri-devel-bounces@lists.freedesktop.org> On Behalf Of
+>Marek Szyprowski
+>Sent: Sunday, March 29, 2020 5:56 AM
+>To: Ruhl, Michael J <michael.j.ruhl@intel.com>; dri-
+>devel@lists.freedesktop.org; linux-samsung-soc@vger.kernel.org; linux-
+>kernel@vger.kernel.org
+>Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>; David Airlie
+><airlied@linux.ie>; Shane Francis <bigbeeshane@gmail.com>;
+>stable@vger.kernel.org; Thomas Zimmermann <tzimmermann@suse.de>;
+>Alex Deucher <alexander.deucher@amd.com>
+>Subject: Re: [PATCH v2] drm/prime: fix extracting of the DMA addresses from
+>a scatterlist
+>
+>Hi Michael,
+>
+
+<snip>
+
 >> Is there an example of what the scatterlist would look like in this case?
-> 
-> DMA framework or IOMMU is allowed to join consecutive chunks while
-> mapping if such operation is supported by the hw. Here is the example:
-> 
-> Lets assume that we have a scatterlist with 4 4KiB pages of the physical
-> addresses: 0x12000000, 0x13011000, 0x13012000, 0x11011000. The total
-> size of the buffer is 16KiB. After mapping this scatterlist to a device
-> behind an IOMMU it may end up as a contiguous buffer in the DMA (IOVA)
-> address space. at 0xf0010000. The scatterlist will look like this:
-> 
-> sg[0].page = 0x12000000
-> sg[0].len = 4096
-> sg[0].dma_addr = 0xf0010000
-> sg[0].dma_len = 16384
-> sg[1].page = 0x13011000
-> sg[1].len = 4096
-> sg[1].dma_addr = 0
-> sg[1].dma_len = 0
-> sg[2].page = 0x13012000
-> sg[2].len = 4096
-> sg[2].dma_addr = 0
-> sg[2].dma_len = 0
-> sg[3].page = 0x11011000
-> sg[3].len = 4096
-> sg[3].dma_addr = 0
-> sg[3].dma_len = 0
-> 
-> (I've intentionally wrote page as physical address to make it easier to
-> understand, in real SGs it is stored a struct page pointer).
-> 
+>
+>DMA framework or IOMMU is allowed to join consecutive chunks while
+>mapping if such operation is supported by the hw. Here is the example:
+>
+>Lets assume that we have a scatterlist with 4 4KiB pages of the physical
+>addresses: 0x12000000, 0x13011000, 0x13012000, 0x11011000. The total
+>size of the buffer is 16KiB. After mapping this scatterlist to a device
+>behind an IOMMU it may end up as a contiguous buffer in the DMA (IOVA)
+>address space. at 0xf0010000. The scatterlist will look like this:
+>
+>sg[0].page = 0x12000000
+>sg[0].len = 4096
+>sg[0].dma_addr = 0xf0010000
+>sg[0].dma_len = 16384
+>sg[1].page = 0x13011000
+>sg[1].len = 4096
+>sg[1].dma_addr = 0
+>sg[1].dma_len = 0
+>sg[2].page = 0x13012000
+>sg[2].len = 4096
+>sg[2].dma_addr = 0
+>sg[2].dma_len = 0
+>sg[3].page = 0x11011000
+>sg[3].len = 4096
+>sg[3].dma_addr = 0
+>sg[3].dma_len = 0
+>
+>(I've intentionally wrote page as physical address to make it easier to
+>understand, in real SGs it is stored a struct page pointer).
+>
 >> Does each SG entry always have the page and dma info? or could you have
->> entries that have page information only, and entries that have dma info only?
-> When SG is not mapped yet it contains only the ->pages and ->len
-> entries. I'm not aware of the SGs with the DMA information only, but in
-> theory it might be possible to have such.
+>> entries that have page information only, and entries that have dma info
+>only?
+>When SG is not mapped yet it contains only the ->pages and ->len
+>entries. I'm not aware of the SGs with the DMA information only, but in
+>theory it might be possible to have such.
 >> If the same entry has different size info (page_len = PAGE_SIZE,
->> dma_len = 4 * PAGE_SIZE?), are we guaranteed that the arrays (page and addrs) have
+>> dma_len = 4 * PAGE_SIZE?), are we guaranteed that the arrays (page and
+>addrs) have
 >> been sized correctly?
-> 
-> There are always no more DMA related entries than the phys pages. If
-> there is 1:1 mapping between physical memory and DMA (IOVA) space, then
-> each SG entry will have len == dma_len, and dma_addr will be describing
-> the same as page entry. DMA mapping framework is allowed only to join
-> entries while mapping to DMA (IOVA).
+>
+>There are always no more DMA related entries than the phys pages. If
+>there is 1:1 mapping between physical memory and DMA (IOVA) space, then
+>each SG entry will have len == dma_len, and dma_addr will be describing
+>the same as page entry. DMA mapping framework is allowed only to join
+>entries while mapping to DMA (IOVA).
+>
+>> Just trying to get my head wrapped around this.
+>
+>Sure, I hope my explanation helps a bit.
 
-Nit: even in a 1:1 mapping, merging would still be permitted (subject to 
-dma_parms constraints) during a bounce-buffer copy, or if the caller 
-simply generates a naive list like so:
+That is a great example!  Thank you very much for the explanation.
 
-sg[0].page = 0x12000000
-sg[0].len = 4096
-sg[1].page = 0x12001000
-sg[1].len = 4096
+I was somehow seeing it as the dma side getting split and extended (rather
+than consolidated) into more possible entries.  This clarifies the issue for me.
 
-dma_map_sg() =>
+Thanks!
 
-sg[0].dma_addr = 0x12000000
-sg[0].dma_len = 8192
-sg[1].dma_addr = 0
-sg[1].dma_len = 0
+Mike
 
-I'm not sure that any non-IOMMU DMA API implementations actually take 
-advantage of this, but they are *allowed* to ;)
-
-Robin.
+>Best regards
+>--
+>Marek Szyprowski, PhD
+>Samsung R&D Institute Poland
+>
+>_______________________________________________
+>dri-devel mailing list
+>dri-devel@lists.freedesktop.org
+>https://lists.freedesktop.org/mailman/listinfo/dri-devel
