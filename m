@@ -1,170 +1,156 @@
-Return-Path: <SRS0=4EAH=5P=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=1DvK=5Q=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7E0EC2D0EC
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Mar 2020 13:46:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9059CC2D0E8
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 31 Mar 2020 05:36:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B544620776
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 30 Mar 2020 13:46:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BD62206EB
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 31 Mar 2020 05:36:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="K7EEWQFS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728365AbgC3NqN convert rfc822-to-8bit (ORCPT
+        id S1726461AbgCaFgp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 30 Mar 2020 09:46:13 -0400
-Received: from mga02.intel.com ([134.134.136.20]:43753 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728065AbgC3NqN (ORCPT
+        Tue, 31 Mar 2020 01:36:45 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:34062 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726001AbgCaFgo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 30 Mar 2020 09:46:13 -0400
-IronPort-SDR: NSlZJLyDft1JvgpDj5EfvA4sTcRyFL7dUMjd00CgTPNrKxIJB7QW4bHAJX+pwME93GyNiLPKli
- tAVV/EKY43eQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2020 06:46:11 -0700
-IronPort-SDR: c1V9JLhuvFlsnYYTIOb0W1i6yN2yoUTXzsVk+OcUNlMJBYhWG4stV7fnTWJ3U4CvNyCLXacXW7
- a/E6qORb0d6g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,324,1580803200"; 
-   d="scan'208";a="241619267"
-Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
-  by fmsmga008.fm.intel.com with ESMTP; 30 Mar 2020 06:46:11 -0700
-Received: from fmsmsx115.amr.corp.intel.com (10.18.116.19) by
- FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Mon, 30 Mar 2020 06:46:11 -0700
-Received: from fmsmsx107.amr.corp.intel.com ([169.254.6.38]) by
- fmsmsx115.amr.corp.intel.com ([169.254.4.81]) with mapi id 14.03.0439.000;
- Mon, 30 Mar 2020 06:46:11 -0700
-From:   "Ruhl, Michael J" <michael.j.ruhl@intel.com>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        David Airlie <airlied@linux.ie>,
-        Shane Francis <bigbeeshane@gmail.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: RE: [PATCH v2] drm/prime: fix extracting of the DMA addresses from
- a scatterlist
-Thread-Topic: [PATCH v2] drm/prime: fix extracting of the DMA addresses from
- a scatterlist
-Thread-Index: AQHWBFQRvRx+hOOiski5ycfWmHv7TahcuvpggAMSJICAAVxq4A==
-Date:   Mon, 30 Mar 2020 13:46:10 +0000
-Message-ID: <14063C7AD467DE4B82DEDB5C278E8663FFFC0C0E@fmsmsx107.amr.corp.intel.com>
-References: <CGME20200327162330eucas1p1b0413e0e9887aa76d3048f86d2166dcd@eucas1p1.samsung.com>
- <20200327162126.29705-1-m.szyprowski@samsung.com>
- <14063C7AD467DE4B82DEDB5C278E8663FFFBFCE1@fmsmsx107.amr.corp.intel.com>
- <8a09916d-5413-f9a8-bafa-2d8f0b8f892f@samsung.com>
-In-Reply-To: <8a09916d-5413-f9a8-bafa-2d8f0b8f892f@samsung.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.1.200.108]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 31 Mar 2020 01:36:44 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200331053642euoutp011cbed87e4513d45651cd2b541743845f~BTNCgziFe2811828118euoutp01U
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 31 Mar 2020 05:36:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200331053642euoutp011cbed87e4513d45651cd2b541743845f~BTNCgziFe2811828118euoutp01U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1585633002;
+        bh=BborsbrEshHe2Rc0bJAjGGKeyQdcyjyJSDh2GBoOQTg=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=K7EEWQFSCYWoWFa9NqlCJVH/n5zFsO4jukOXTgJWh4m0kbQxl7CodchZT4hHzuXfV
+         TIVH0/ssM8ZiW0Xs7Kr8U2dXL0tpK4Ts6l4MlJVqiSs6hGsXLGoYFgyYMSg2OzHGeB
+         12OrwJVq+nbzpPajWF2agfkJ2Maxs1vjdmg2eVCU=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200331053642eucas1p11652b7fc88dd370d61f32d6e325adc60~BTNCUw5QU2605026050eucas1p1E;
+        Tue, 31 Mar 2020 05:36:42 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 31.4E.60679.AE6D28E5; Tue, 31
+        Mar 2020 06:36:42 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200331053642eucas1p195aa5bdef38639d877278494003abfd8~BTNB-7Dep0811408114eucas1p1l;
+        Tue, 31 Mar 2020 05:36:42 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200331053642eusmtrp1dce61997d1e2c2b797a2c6593b025a9b~BTNB-QtTD1690716907eusmtrp1N;
+        Tue, 31 Mar 2020 05:36:42 +0000 (GMT)
+X-AuditID: cbfec7f4-0e5ff7000001ed07-c9-5e82d6ea4f07
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 78.88.07950.AE6D28E5; Tue, 31
+        Mar 2020 06:36:42 +0100 (BST)
+Received: from [106.210.88.143] (unknown [106.210.88.143]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200331053641eusmtip2b065b823f6a40381f00957d61277d241~BTNBbxNE71887318873eusmtip2E;
+        Tue, 31 Mar 2020 05:36:41 +0000 (GMT)
+Subject: Re: [PATCH 2/2] ARM: DTS: Add devicetree file for the Galaxy S2
+To:     Paul Cercueil <paul@crapouillou.net>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Stenkin Evgeniy <stenkinevgeniy@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <6c549058-00f9-8526-a272-48c538166ccf@samsung.com>
+Date:   Tue, 31 Mar 2020 07:36:39 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.6.0
 MIME-Version: 1.0
+In-Reply-To: <D6.31.03891.A6F227E5@epmailinsp8.samsung.com>
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDKsWRmVeSWpSXmKPExsWy7djP87qvrjXFGdyfL2sx/8g5Vov+x6+Z
+        Lc6f38BusenxNVaLy7vmsFnMOL+PyWLp9YtMFv2LL7FYtO49wm4xZclMdgcujzXz1jB6rL7U
+        zuaxc9Zddo9NqzrZPDYvqff4vEkugC2KyyYlNSezLLVI3y6BK2Ne+0e2gt2cFffmfmRqYPzM
+        3sXIySEhYCKxt3M6axcjF4eQwApGiY/TPrBDOF8YJZ7v3M0E4XxmlNh/czYTTMvReXugqpYz
+        Srxun84I4bxnlGi6cJ+ti5GDQ1jAQ2L/82SQBhGBQInTE16zgtjMAnOZJK5vMwGx2QQMJbre
+        drGB2LwCdhI3jnWA3cQioCrx/NwXsLioQIzExcP9rBA1ghInZz5hARnPKWAtceg8P8RIeYnm
+        rbOZIWxxiVtP5oMdLSFwjl3i+dHjLBBHu0hMbv3ACmELS7w6vgXqfxmJ05N7WCAamhklHp5b
+        yw7h9DBKXG6awQhRZS1x59wvsMeYBTQl1u/SBzElBBwl3t6UgDD5JG68FYS4gU9i0rbpzBBh
+        XomONiGIGWoSs46vg9t68MIl5gmMSrOQPDYLyTezkHwzC2HtAkaWVYziqaXFuempxUZ5qeV6
+        xYm5xaV56XrJ+bmbGIFp6vS/4192MO76k3SIUYCDUYmH98HVxjgh1sSy4srcQ4wSHMxKIrxs
+        /g1xQrwpiZVVqUX58UWlOanFhxilOViUxHmNF72MFRJITyxJzU5NLUgtgskycXBKNTCqnD5x
+        49wH9pCoCewszjJOTwxfzE+Wl3rzWdTS1MPRMP00+/t9KZLvhdtm/7w4bWul0+bFct/+RYfM
+        2eHbdTjkx/8rcZMCujp9vvLKrAme4q+n7qYtkJYpmewdEvj9wMv/wo2fil6d9Vc/NFt/t4ee
+        orFise8i/ht8ob/lZgvm9lWemnPimbgSS3FGoqEWc1FxIgCAEmwGTwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPIsWRmVeSWpSXmKPExsVy+t/xe7qvrjXFGexez24x/8g5Vov+x6+Z
+        Lc6f38BusenxNVaLy7vmsFnMOL+PyWLp9YtMFv2LL7FYtO49wm4xZclMdgcujzXz1jB6rL7U
+        zuaxc9Zddo9NqzrZPDYvqff4vEkugC1Kz6Yov7QkVSEjv7jEVina0MJIz9DSQs/IxFLP0Ng8
+        1srIVEnfziYlNSezLLVI3y5BL2Ne+0e2gt2cFffmfmRqYPzM3sXIySEhYCJxdN4eMFtIYCmj
+        RNtlWYi4jMTJaQ2sELawxJ9rXWxdjFxANW8ZJe7t2czSxcjBISzgIbH/eTJIjYhAoMSW/5vA
+        apgF5jNJTHr1jhmioYtJov3/ZbBJbAKGEl1vQSZxcvAK2EncONYBtplFQFXi+bkvYHFRgRiJ
+        n3u6WCBqBCVOznwCtoxTwFri0Hl+kDCzgJnEvM0PmSFseYnmrbOhbHGJW0/mM01gFJqFpHsW
+        kpZZSFpmIWlZwMiyilEktbQ4Nz232EivODG3uDQvXS85P3cTIzAytx37uWUHY9e74EOMAhyM
+        Sjy8D642xgmxJpYVV+YeYpTgYFYS4WXzb4gT4k1JrKxKLcqPLyrNSS0+xGgK9NtEZinR5Hxg
+        0sgriTc0NTS3sDQ0NzY3NrNQEuftEDgYIySQnliSmp2aWpBaBNPHxMEp1cBYu01h/pRHVqLP
+        NiqosJ+7tjshv9TKLciz9Xf/5YZna/6vaJj88MLpN8vmTEoy4S7+kKHzb+2a3M/CJ1Zyz97x
+        zD6Z43Sfv+QpGYXm92HzllVWLtc7/EP/b3lea/Wyc95u9WbH1jB5Tjz69lTiSt+dH5rKLdQc
+        52ptM7A4sb7zue2MT05f+vZ9VWIpzkg01GIuKk4EANAxl6viAgAA
+X-CMS-MailID: 20200331053642eucas1p195aa5bdef38639d877278494003abfd8
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200318142549eucas1p1793027850923ebad20b4691cba676671
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200318142549eucas1p1793027850923ebad20b4691cba676671
+References: <20200312153411.13535-1-paul@crapouillou.net>
+        <20200312153411.13535-2-paul@crapouillou.net> <20200313090011.GB7416@pi3>
+        <CGME20200318142549eucas1p1793027850923ebad20b4691cba676671@eucas1p1.samsung.com>
+        <D6.31.03891.A6F227E5@epmailinsp8.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
->-----Original Message-----
->From: dri-devel <dri-devel-bounces@lists.freedesktop.org> On Behalf Of
->Marek Szyprowski
->Sent: Sunday, March 29, 2020 5:56 AM
->To: Ruhl, Michael J <michael.j.ruhl@intel.com>; dri-
->devel@lists.freedesktop.org; linux-samsung-soc@vger.kernel.org; linux-
->kernel@vger.kernel.org
->Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>; David Airlie
-><airlied@linux.ie>; Shane Francis <bigbeeshane@gmail.com>;
->stable@vger.kernel.org; Thomas Zimmermann <tzimmermann@suse.de>;
->Alex Deucher <alexander.deucher@amd.com>
->Subject: Re: [PATCH v2] drm/prime: fix extracting of the DMA addresses from
->a scatterlist
->
->Hi Michael,
->
+Hi Paul,
 
-<snip>
+On 2020-03-18 15:25, Paul Cercueil wrote:
+>>>  +    };
+>>>  +
+>>>  +    tsp_reg: regulator-1 {
+>>>  +        compatible = "regulator-fixed";
+>>>  +        regulator-name = "TSP_FIXED_VOLTAGES";
+>>>  +        regulator-min-microvolt = <3300000>;
+>>>  +        regulator-max-microvolt = <3300000>;
+>>>  +        gpio = <&gpl0 3 GPIO_ACTIVE_HIGH>;
+>>>  +        startup-delay-us = <70000>;
+>>>  +        enable-active-high;
+>>>  +        regulator-boot-on;
+>>>  +        regulator-always-on;
+>>
+>> always-on and boot-on should not be needed. You have a consumer for this
+>> regulator.
+>
+> About this: the touchscreen driver does not use a regulator, so I 
+> believe that's why these properties were here.
+>
+> I sent patches upstream to address the issue: 
+> https://lkml.org/lkml/2020/3/15/94
+>
+> I believe this means I cannot merge the i9100 devicetree until it is 
+> acked.
 
->> Is there an example of what the scatterlist would look like in this case?
->
->DMA framework or IOMMU is allowed to join consecutive chunks while
->mapping if such operation is supported by the hw. Here is the example:
->
->Lets assume that we have a scatterlist with 4 4KiB pages of the physical
->addresses: 0x12000000, 0x13011000, 0x13012000, 0x11011000. The total
->size of the buffer is 16KiB. After mapping this scatterlist to a device
->behind an IOMMU it may end up as a contiguous buffer in the DMA (IOVA)
->address space. at 0xf0010000. The scatterlist will look like this:
->
->sg[0].page = 0x12000000
->sg[0].len = 4096
->sg[0].dma_addr = 0xf0010000
->sg[0].dma_len = 16384
->sg[1].page = 0x13011000
->sg[1].len = 4096
->sg[1].dma_addr = 0
->sg[1].dma_len = 0
->sg[2].page = 0x13012000
->sg[2].len = 4096
->sg[2].dma_addr = 0
->sg[2].dma_len = 0
->sg[3].page = 0x11011000
->sg[3].len = 4096
->sg[3].dma_addr = 0
->sg[3].dma_len = 0
->
->(I've intentionally wrote page as physical address to make it easier to
->understand, in real SGs it is stored a struct page pointer).
->
->> Does each SG entry always have the page and dma info? or could you have
->> entries that have page information only, and entries that have dma info
->only?
->When SG is not mapped yet it contains only the ->pages and ->len
->entries. I'm not aware of the SGs with the DMA information only, but in
->theory it might be possible to have such.
->> If the same entry has different size info (page_len = PAGE_SIZE,
->> dma_len = 4 * PAGE_SIZE?), are we guaranteed that the arrays (page and
->addrs) have
->> been sized correctly?
->
->There are always no more DMA related entries than the phys pages. If
->there is 1:1 mapping between physical memory and DMA (IOVA) space, then
->each SG entry will have len == dma_len, and dma_addr will be describing
->the same as page entry. DMA mapping framework is allowed only to join
->entries while mapping to DMA (IOVA).
->
->> Just trying to get my head wrapped around this.
->
->Sure, I hope my explanation helps a bit.
+One more information - similar change has been already posted, but it 
+looks it got lost then: https://patchwork.kernel.org/patch/10550903/
 
-That is a great example!  Thank you very much for the explanation.
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-I was somehow seeing it as the dma side getting split and extended (rather
-than consolidated) into more possible entries.  This clarifies the issue for me.
-
-Thanks!
-
-Mike
-
->Best regards
->--
->Marek Szyprowski, PhD
->Samsung R&D Institute Poland
->
->_______________________________________________
->dri-devel mailing list
->dri-devel@lists.freedesktop.org
->https://lists.freedesktop.org/mailman/listinfo/dri-devel
