@@ -2,155 +2,243 @@ Return-Path: <SRS0=1DvK=5Q=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9059CC2D0E8
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 31 Mar 2020 05:36:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E64C2D0F3
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 31 Mar 2020 09:20:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BD62206EB
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 31 Mar 2020 05:36:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="K7EEWQFS"
+	by mail.kernel.org (Postfix) with ESMTP id 81B3B20675
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 31 Mar 2020 09:20:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726461AbgCaFgp (ORCPT
+        id S1730638AbgCaJUp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 31 Mar 2020 01:36:45 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:34062 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726001AbgCaFgo (ORCPT
+        Tue, 31 Mar 2020 05:20:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40342 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730568AbgCaJUk (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 31 Mar 2020 01:36:44 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200331053642euoutp011cbed87e4513d45651cd2b541743845f~BTNCgziFe2811828118euoutp01U
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 31 Mar 2020 05:36:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200331053642euoutp011cbed87e4513d45651cd2b541743845f~BTNCgziFe2811828118euoutp01U
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1585633002;
-        bh=BborsbrEshHe2Rc0bJAjGGKeyQdcyjyJSDh2GBoOQTg=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=K7EEWQFSCYWoWFa9NqlCJVH/n5zFsO4jukOXTgJWh4m0kbQxl7CodchZT4hHzuXfV
-         TIVH0/ssM8ZiW0Xs7Kr8U2dXL0tpK4Ts6l4MlJVqiSs6hGsXLGoYFgyYMSg2OzHGeB
-         12OrwJVq+nbzpPajWF2agfkJ2Maxs1vjdmg2eVCU=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200331053642eucas1p11652b7fc88dd370d61f32d6e325adc60~BTNCUw5QU2605026050eucas1p1E;
-        Tue, 31 Mar 2020 05:36:42 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 31.4E.60679.AE6D28E5; Tue, 31
-        Mar 2020 06:36:42 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200331053642eucas1p195aa5bdef38639d877278494003abfd8~BTNB-7Dep0811408114eucas1p1l;
-        Tue, 31 Mar 2020 05:36:42 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200331053642eusmtrp1dce61997d1e2c2b797a2c6593b025a9b~BTNB-QtTD1690716907eusmtrp1N;
-        Tue, 31 Mar 2020 05:36:42 +0000 (GMT)
-X-AuditID: cbfec7f4-0e5ff7000001ed07-c9-5e82d6ea4f07
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 78.88.07950.AE6D28E5; Tue, 31
-        Mar 2020 06:36:42 +0100 (BST)
-Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200331053641eusmtip2b065b823f6a40381f00957d61277d241~BTNBbxNE71887318873eusmtip2E;
-        Tue, 31 Mar 2020 05:36:41 +0000 (GMT)
-Subject: Re: [PATCH 2/2] ARM: DTS: Add devicetree file for the Galaxy S2
-To:     Paul Cercueil <paul@crapouillou.net>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stenkin Evgeniy <stenkinevgeniy@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <6c549058-00f9-8526-a272-48c538166ccf@samsung.com>
-Date:   Tue, 31 Mar 2020 07:36:39 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.6.0
+        Tue, 31 Mar 2020 05:20:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 72CB5AEF7;
+        Tue, 31 Mar 2020 09:20:37 +0000 (UTC)
+Subject: Re: [PATCH 20/22] drm/vkms: Use simple encoder
+To:     Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Cc:     airlied@linux.ie, daniel@ffwll.ch, sam@ravnborg.org,
+        abrodkin@synopsys.com, bbrezillon@kernel.org,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        ludovic.desroches@microchip.com, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, jingoohan1@gmail.com, inki.dae@samsung.com,
+        jy0922.shim@samsung.com, sw0312.kim@samsung.com,
+        kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org,
+        stefan@agner.ch, alison.wang@nxp.com, patrik.r.jakobsson@gmail.com,
+        xinliang.liu@linaro.org, zourongrong@gmail.com,
+        john.stultz@linaro.org, kong.kongxinwei@hisilicon.com,
+        puck.chen@hisilicon.com, linux@armlinux.org.uk,
+        p.zabel@pengutronix.de, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, paul@crapouillou.net, ck.hu@mediatek.com,
+        matthias.bgg@gmail.com, laurent.pinchart@ideasonboard.com,
+        kieran.bingham+renesas@ideasonboard.com, hjc@rock-chips.com,
+        heiko@sntech.de, wens@csie.org, jernej.skrabec@siol.net,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, jsarha@ti.com,
+        tomi.valkeinen@ti.com, eric@anholt.net, kraxel@redhat.com,
+        hamohammed.sa@gmail.com, sebastian.reichel@collabora.com,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+References: <20200305155950.2705-1-tzimmermann@suse.de>
+ <20200305155950.2705-21-tzimmermann@suse.de>
+ <20200324115905.dp5jqzbmvhbmk2rn@smtp.gmail.com>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ mQENBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAG0J1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPokBVAQTAQgAPhYh
+ BHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJbOdLgAhsDBQkDwmcABQsJCAcCBhUKCQgLAgQWAgMB
+ Ah4BAheAAAoJEGgNwR1TC3ojR80H/jH+vYavwQ+TvO8ksXL9JQWc3IFSiGpuSVXLCdg62AmR
+ irxW+qCwNncNQyb9rd30gzdectSkPWL3KSqEResBe24IbA5/jSkPweJasgXtfhuyoeCJ6PXo
+ clQQGKIoFIAEv1s8l0ggPZswvCinegl1diyJXUXmdEJRTWYAtxn/atut1o6Giv6D2qmYbXN7
+ mneMC5MzlLaJKUtoH7U/IjVw1sx2qtxAZGKVm4RZxPnMCp9E1MAr5t4dP5gJCIiqsdrVqI6i
+ KupZstMxstPU//azmz7ZWWxT0JzgJqZSvPYx/SATeexTYBP47YFyri4jnsty2ErS91E6H8os
+ Bv6pnSn7eAq5AQ0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRH
+ UE9eosYbT6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgT
+ RjP+qbU63Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+R
+ dhgATnWWGKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zb
+ ehDda8lvhFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r
+ 12+lqdsAEQEAAYkBPAQYAQgAJhYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJbOdLgAhsMBQkD
+ wmcAAAoJEGgNwR1TC3ojpfcIAInwP5OlcEKokTnHCiDTz4Ony4GnHRP2fXATQZCKxmu4AJY2
+ h9ifw9Nf2TjCZ6AMvC3thAN0rFDj55N9l4s1CpaDo4J+0fkrHuyNacnT206CeJV1E7NYntxU
+ n+LSiRrOdywn6erjxRi9EYTVLCHcDhBEjKmFZfg4AM4GZMWX1lg0+eHbd5oL1as28WvvI/uI
+ aMyV8RbyXot1r/8QLlWldU3NrTF5p7TMU2y3ZH2mf5suSKHAMtbE4jKJ8ZHFOo3GhLgjVrBW
+ HE9JXO08xKkgD+w6v83+nomsEuf6C6LYrqY/tsZvyEX6zN8CtirPdPWu/VXNRYAl/lat7lSI
+ 3H26qrE=
+Message-ID: <eef912e5-7ab4-f8bb-6ea9-47db1c05312b@suse.de>
+Date:   Tue, 31 Mar 2020 11:20:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-In-Reply-To: <D6.31.03891.A6F227E5@epmailinsp8.samsung.com>
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDKsWRmVeSWpSXmKPExsWy7djP87qvrjXFGdyfL2sx/8g5Vov+x6+Z
-        Lc6f38BusenxNVaLy7vmsFnMOL+PyWLp9YtMFv2LL7FYtO49wm4xZclMdgcujzXz1jB6rL7U
-        zuaxc9Zddo9NqzrZPDYvqff4vEkugC2KyyYlNSezLLVI3y6BK2Ne+0e2gt2cFffmfmRqYPzM
-        3sXIySEhYCKxt3M6axcjF4eQwApGiY/TPrBDOF8YJZ7v3M0E4XxmlNh/czYTTMvReXugqpYz
-        Srxun84I4bxnlGi6cJ+ti5GDQ1jAQ2L/82SQBhGBQInTE16zgtjMAnOZJK5vMwGx2QQMJbre
-        drGB2LwCdhI3jnWA3cQioCrx/NwXsLioQIzExcP9rBA1ghInZz5hARnPKWAtceg8P8RIeYnm
-        rbOZIWxxiVtP5oMdLSFwjl3i+dHjLBBHu0hMbv3ACmELS7w6vgXqfxmJ05N7WCAamhklHp5b
-        yw7h9DBKXG6awQhRZS1x59wvsMeYBTQl1u/SBzElBBwl3t6UgDD5JG68FYS4gU9i0rbpzBBh
-        XomONiGIGWoSs46vg9t68MIl5gmMSrOQPDYLyTezkHwzC2HtAkaWVYziqaXFuempxUZ5qeV6
-        xYm5xaV56XrJ+bmbGIFp6vS/4192MO76k3SIUYCDUYmH98HVxjgh1sSy4srcQ4wSHMxKIrxs
-        /g1xQrwpiZVVqUX58UWlOanFhxilOViUxHmNF72MFRJITyxJzU5NLUgtgskycXBKNTCqnD5x
-        49wH9pCoCewszjJOTwxfzE+Wl3rzWdTS1MPRMP00+/t9KZLvhdtm/7w4bWul0+bFct/+RYfM
-        2eHbdTjkx/8rcZMCujp9vvLKrAme4q+n7qYtkJYpmewdEvj9wMv/wo2fil6d9Vc/NFt/t4ee
-        orFise8i/ht8ob/lZgvm9lWemnPimbgSS3FGoqEWc1FxIgCAEmwGTwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPIsWRmVeSWpSXmKPExsVy+t/xe7qvrjXFGexez24x/8g5Vov+x6+Z
-        Lc6f38BusenxNVaLy7vmsFnMOL+PyWLp9YtMFv2LL7FYtO49wm4xZclMdgcujzXz1jB6rL7U
-        zuaxc9Zddo9NqzrZPDYvqff4vEkugC1Kz6Yov7QkVSEjv7jEVina0MJIz9DSQs/IxFLP0Ng8
-        1srIVEnfziYlNSezLLVI3y5BL2Ne+0e2gt2cFffmfmRqYPzM3sXIySEhYCJxdN4eMFtIYCmj
-        RNtlWYi4jMTJaQ2sELawxJ9rXWxdjFxANW8ZJe7t2czSxcjBISzgIbH/eTJIjYhAoMSW/5vA
-        apgF5jNJTHr1jhmioYtJov3/ZbBJbAKGEl1vQSZxcvAK2EncONYBtplFQFXi+bkvYHFRgRiJ
-        n3u6WCBqBCVOznwCtoxTwFri0Hl+kDCzgJnEvM0PmSFseYnmrbOhbHGJW0/mM01gFJqFpHsW
-        kpZZSFpmIWlZwMiyilEktbQ4Nz232EivODG3uDQvXS85P3cTIzAytx37uWUHY9e74EOMAhyM
-        Sjy8D642xgmxJpYVV+YeYpTgYFYS4WXzb4gT4k1JrKxKLcqPLyrNSS0+xGgK9NtEZinR5Hxg
-        0sgriTc0NTS3sDQ0NzY3NrNQEuftEDgYIySQnliSmp2aWpBaBNPHxMEp1cBYu01h/pRHVqLP
-        NiqosJ+7tjshv9TKLciz9Xf/5YZna/6vaJj88MLpN8vmTEoy4S7+kKHzb+2a3M/CJ1Zyz97x
-        zD6Z43Sfv+QpGYXm92HzllVWLtc7/EP/b3lea/Wyc95u9WbH1jB5Tjz69lTiSt+dH5rKLdQc
-        52ptM7A4sb7zue2MT05f+vZ9VWIpzkg01GIuKk4EANAxl6viAgAA
-X-CMS-MailID: 20200331053642eucas1p195aa5bdef38639d877278494003abfd8
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200318142549eucas1p1793027850923ebad20b4691cba676671
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200318142549eucas1p1793027850923ebad20b4691cba676671
-References: <20200312153411.13535-1-paul@crapouillou.net>
-        <20200312153411.13535-2-paul@crapouillou.net> <20200313090011.GB7416@pi3>
-        <CGME20200318142549eucas1p1793027850923ebad20b4691cba676671@eucas1p1.samsung.com>
-        <D6.31.03891.A6F227E5@epmailinsp8.samsung.com>
+In-Reply-To: <20200324115905.dp5jqzbmvhbmk2rn@smtp.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="7lVXjZmTpLLkTKch5Y4I1GCt7Pec0fulW"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Paul,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--7lVXjZmTpLLkTKch5Y4I1GCt7Pec0fulW
+Content-Type: multipart/mixed; boundary="q11qeQog61ztY5ZBs8aYmUz8BfkF0OSCB";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Cc: airlied@linux.ie, daniel@ffwll.ch, sam@ravnborg.org,
+ abrodkin@synopsys.com, bbrezillon@kernel.org, nicolas.ferre@microchip.com,
+ alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, jingoohan1@gmail.com,
+ inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com,
+ kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org,
+ stefan@agner.ch, alison.wang@nxp.com, patrik.r.jakobsson@gmail.com,
+ xinliang.liu@linaro.org, zourongrong@gmail.com, john.stultz@linaro.org,
+ kong.kongxinwei@hisilicon.com, puck.chen@hisilicon.com,
+ linux@armlinux.org.uk, p.zabel@pengutronix.de, shawnguo@kernel.org,
+ s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+ linux-imx@nxp.com, paul@crapouillou.net, ck.hu@mediatek.com,
+ matthias.bgg@gmail.com, laurent.pinchart@ideasonboard.com,
+ kieran.bingham+renesas@ideasonboard.com, hjc@rock-chips.com,
+ heiko@sntech.de, wens@csie.org, jernej.skrabec@siol.net,
+ thierry.reding@gmail.com, jonathanh@nvidia.com, jsarha@ti.com,
+ tomi.valkeinen@ti.com, eric@anholt.net, kraxel@redhat.com,
+ hamohammed.sa@gmail.com, sebastian.reichel@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-tegra@vger.kernel.org, virtualization@lists.linux-foundation.org
+Message-ID: <eef912e5-7ab4-f8bb-6ea9-47db1c05312b@suse.de>
+Subject: Re: [PATCH 20/22] drm/vkms: Use simple encoder
+References: <20200305155950.2705-1-tzimmermann@suse.de>
+ <20200305155950.2705-21-tzimmermann@suse.de>
+ <20200324115905.dp5jqzbmvhbmk2rn@smtp.gmail.com>
+In-Reply-To: <20200324115905.dp5jqzbmvhbmk2rn@smtp.gmail.com>
 
-On 2020-03-18 15:25, Paul Cercueil wrote:
->>>  +    };
->>>  +
->>>  +    tsp_reg: regulator-1 {
->>>  +        compatible = "regulator-fixed";
->>>  +        regulator-name = "TSP_FIXED_VOLTAGES";
->>>  +        regulator-min-microvolt = <3300000>;
->>>  +        regulator-max-microvolt = <3300000>;
->>>  +        gpio = <&gpl0 3 GPIO_ACTIVE_HIGH>;
->>>  +        startup-delay-us = <70000>;
->>>  +        enable-active-high;
->>>  +        regulator-boot-on;
->>>  +        regulator-always-on;
->>
->> always-on and boot-on should not be needed. You have a consumer for this
->> regulator.
->
-> About this: the touchscreen driver does not use a regulator, so I 
-> believe that's why these properties were here.
->
-> I sent patches upstream to address the issue: 
-> https://lkml.org/lkml/2020/3/15/94
->
-> I believe this means I cannot merge the i9100 devicetree until it is 
-> acked.
+--q11qeQog61ztY5ZBs8aYmUz8BfkF0OSCB
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-One more information - similar change has been already posted, but it 
-looks it got lost then: https://patchwork.kernel.org/patch/10550903/
+Hi
+
+Am 24.03.20 um 12:59 schrieb Rodrigo Siqueira:
+> Hi Thomas,
+>=20
+> First of all, thanks for your patch!
+>=20
+> I applied all your series, compiled it, and when I tried
+> `make INSTALL_MOD_PATH=3D/PATH/ modules_instal` I got the following
+> message:
+>=20
+>  depmod: ERROR: Cycle detected: drm_kms_helper -> drm -> drm_kms_helper=
+
+>  depmod: ERROR: Found 2 modules in dependency cycles!
+>  make: *** [Makefile:1317: _modinst_post] Error 1
+>=20
+> I cleaned up my local files and tried again, but I got the same error;
+> If I just use `drm-misc-next` everything is fine.  Did I miss something=
+?
+
+I didn't change any module dependencies. Does it happen without this
+patches?
 
 Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Thomas
 
+>=20
+> Thanks
+>=20
+> On 03/05, Thomas Zimmermann wrote:
+>> The vkms driver uses an empty implementation for its encoder. Replace
+>> the code with the generic simple encoder.
+>>
+>> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+>> ---
+>>  drivers/gpu/drm/vkms/vkms_output.c | 8 ++------
+>>  1 file changed, 2 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms=
+/vkms_output.c
+>> index fb1941a6522c..85afb77e97f0 100644
+>> --- a/drivers/gpu/drm/vkms/vkms_output.c
+>> +++ b/drivers/gpu/drm/vkms/vkms_output.c
+>> @@ -3,6 +3,7 @@
+>>  #include "vkms_drv.h"
+>>  #include <drm/drm_atomic_helper.h>
+>>  #include <drm/drm_probe_helper.h>
+>> +#include <drm/drm_simple_kms_helper.h>
+>> =20
+>>  static void vkms_connector_destroy(struct drm_connector *connector)
+>>  {
+>> @@ -17,10 +18,6 @@ static const struct drm_connector_funcs vkms_connec=
+tor_funcs =3D {
+>>  	.atomic_destroy_state =3D drm_atomic_helper_connector_destroy_state,=
+
+>>  };
+>> =20
+>> -static const struct drm_encoder_funcs vkms_encoder_funcs =3D {
+>> -	.destroy =3D drm_encoder_cleanup,
+>> -};
+>> -
+>>  static int vkms_conn_get_modes(struct drm_connector *connector)
+>>  {
+>>  	int count;
+>> @@ -70,8 +67,7 @@ int vkms_output_init(struct vkms_device *vkmsdev, in=
+t index)
+>> =20
+>>  	drm_connector_helper_add(connector, &vkms_conn_helper_funcs);
+>> =20
+>> -	ret =3D drm_encoder_init(dev, encoder, &vkms_encoder_funcs,
+>> -			       DRM_MODE_ENCODER_VIRTUAL, NULL);
+>> +	ret =3D drm_simple_encoder_init(dev, encoder, DRM_MODE_ENCODER_VIRTU=
+AL);
+>>  	if (ret) {
+>>  		DRM_ERROR("Failed to init encoder\n");
+>>  		goto err_encoder;
+>> --=20
+>> 2.25.1
+>>
+>=20
+
+--=20
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5, 90409 N=FCrnberg, Germany
+(HRB 36809, AG N=FCrnberg)
+Gesch=E4ftsf=FChrer: Felix Imend=F6rffer
+
+
+--q11qeQog61ztY5ZBs8aYmUz8BfkF0OSCB--
+
+--7lVXjZmTpLLkTKch5Y4I1GCt7Pec0fulW
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl6DC2IACgkQaA3BHVML
+eiPLVgf/ZsAHhwHhc6AopeQ3Jo5QFB+n+OZPi4AH9wfFrisYkvbEt6RhbDd4VCb0
+mvTi97EzYLGovrH11SYIE+INA07OTuQbKOKVxoB9UfXzFRuD8OeK3l0yHmVCKZzv
+/vU4cB7QBbS4dt//B9KlgxfQvq1T/bTPfZZbmf6ozduo9I3bR8xOj2V433wGdkQi
+0fjSzQ4WuFrfLv2Zn/D70oxZbm81vsBMWkq1jy/b/5iUDU6W7uHxQemiYMvtMBO2
+XwtBSX2PWyAaG43mW0QcdvhLOEgnNc62t5v78P9MRFsC7Fd/F7PkahlwCkPSFEgx
+71iw2TEYpRvkMO33t6TI5x6xofZO9g==
+=Yoq6
+-----END PGP SIGNATURE-----
+
+--7lVXjZmTpLLkTKch5Y4I1GCt7Pec0fulW--
