@@ -2,196 +2,148 @@ Return-Path: <SRS0=JIJd=5R=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA1EC2D0E7
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Apr 2020 10:42:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEE2AC2D0E7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Apr 2020 11:01:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41BFC2080C
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Apr 2020 10:42:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A679620857
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Apr 2020 11:01:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AxuVWVF0"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ONdjM18a"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732205AbgDAKmY (ORCPT
+        id S1732150AbgDALBQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 1 Apr 2020 06:42:24 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:43174 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726974AbgDAKmS (ORCPT
+        Wed, 1 Apr 2020 07:01:16 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:60672 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732026AbgDALBP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Apr 2020 06:42:18 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200401104216euoutp018f6a8a4c231d644293146173fc205e7c~BrBHd-QQn1003410034euoutp01O
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  1 Apr 2020 10:42:16 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200401104216euoutp018f6a8a4c231d644293146173fc205e7c~BrBHd-QQn1003410034euoutp01O
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1585737736;
-        bh=oyvVweq5rCiDPBSGX/iNsRaVRSr4YFX/8gSUUJ9l9Q0=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=AxuVWVF0aHtmon6aJeXK7ikknqCLJFP71oL2tIJDSM2Xl0BiG0Oxo9Ig5hSooloyE
-         ou6QmNw5gZ484ePL6tlD/EFugTZ3jOa4wkidl8aF76GdP4VASWoyz293BN05hYOEYl
-         pUnYNBNR6ouQSge3fSzAtRMQIQ+Jf/5a8OJjzvbI=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200401104216eucas1p28a74dac22aa3c201c6eb96e34a4a16de~BrBHIgWHA1417914179eucas1p2g;
-        Wed,  1 Apr 2020 10:42:16 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 5E.AD.61286.800748E5; Wed,  1
-        Apr 2020 11:42:16 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200401104215eucas1p158e002d4deb038641d6afd1e3c32e645~BrBGrmoak2926129261eucas1p1z;
-        Wed,  1 Apr 2020 10:42:15 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200401104215eusmtrp20567d4a5acd37bf9460647f0ff72b5bf~BrBGq4j901756017560eusmtrp2L;
-        Wed,  1 Apr 2020 10:42:15 +0000 (GMT)
-X-AuditID: cbfec7f2-f0bff7000001ef66-30-5e84700831fd
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id C3.97.08375.700748E5; Wed,  1
-        Apr 2020 11:42:15 +0100 (BST)
-Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200401104215eusmtip2b90557b660a45ba9b36077a5153523b8~BrBGCvaM_2190421904eusmtip2O;
-        Wed,  1 Apr 2020 10:42:14 +0000 (GMT)
-Subject: Re: [PATCH 2/2] ARM: DTS: Add devicetree file for the Galaxy S2
-To:     =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Paul Cercueil <paul@crapouillou.net>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, mark.rutland@arm.com,
-        Stenkin Evgeniy <stenkinevgeniy@gmail.com>,
+        Wed, 1 Apr 2020 07:01:15 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 031Aqijs155882;
+        Wed, 1 Apr 2020 11:00:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=k/zLhrZsADjqzq+3QwgvoWL1MmcxznVBM92vxIE2puw=;
+ b=ONdjM18avmW5dE+LLNFwYJoAAf8ZcTTxtrswiZj9Chf4Ukg35sdE5LaQNyZPIdnF57su
+ rNKvBN5B8oAGEUdJBq6uMPAyIVRYctUKe+0FKp7+7y/tFbqasY/4kTGVUJKvY2yHN9j1
+ DozpO8Yibrjf7wtChKBzlmYDAipeGswqfWSUMN2qQuUwtppVwbg3mft5tX5fQimrTV1I
+ Hzl6BEm73VTbikMd7HxqnIabVego5iqh4N/YbE0oPL0pjj5FFAw2/8ilVAQrRGjreYAv
+ 1Vuek17GiklF0NZBBKNvbUMVAyhDY12/j938imRsUalvfbg0PRDnkQvrExOJvQb6Ozll Kg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 303aqhn75f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 01 Apr 2020 11:00:18 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 031Ar08g045201;
+        Wed, 1 Apr 2020 11:00:18 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 304sjk0hsg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 01 Apr 2020 11:00:17 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 031B07RP031187;
+        Wed, 1 Apr 2020 11:00:07 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 01 Apr 2020 04:00:06 -0700
+Date:   Wed, 1 Apr 2020 13:59:49 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Helen Koike <helen.koike@collabora.com>
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pavel Machek <pavel@ucw.cz>, devel@driverdev.osuosl.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Bingbu Cao <bingbu.cao@intel.com>,
+        Tian Shu Qiu <tian.shu.qiu@intel.com>,
+        Yong Zhi <yong.zhi@intel.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Maxime Ripard <mripard@kernel.org>,
+        Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>,
+        Yong Deng <yong.deng@magewell.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <ba6ecdaf-35cf-6d97-47ad-5e9e7af292a5@samsung.com>
-Date:   Wed, 1 Apr 2020 12:42:14 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.6.0
+        Hyun Kwon <hyun.kwon@xilinx.com>,
+        Heungjun Kim <riverful.kim@samsung.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH 0/4] media Kconfig reorg - part 2
+Message-ID: <20200401105949.GB2001@kadam>
+References: <cover.1585151701.git.mchehab+huawei@kernel.org>
+ <6fadc6ea-8512-03ba-da30-43c64d7562f6@collabora.com>
 MIME-Version: 1.0
-In-Reply-To: <8a77ca985214cb0058e4defe4dcaa27a79eafacc.camel@gmail.com>
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0gUYRSG+3ZmZ0Zz43M1PFkULCEYqFn+GEpEU3MpKI36UXlpcwevq7br
-        NYjMNS0zFY3UVVJKU7wV62XVylCXTItVV/KG/ogVQ8vEVFAJy3Gw/Pec873nvO+BjyGk3WJH
-        JioukVPHKWJllDXZ9mHd5MIkZIYen26m2QqjSczmW74T7ODga5rVW0bF7EhnOcWWDHaJ2Oqx
-        YRGb/8JMsmt9eQR7/52RZp9UldLee+UNzxqQvN6cTck7dNO0XF/3kJI3V92VL+sPB1LXrD2V
-        XGxUMqd287phHfm2Lp9MMB9IbTcYROmo3D4HWTGAPWCkoB7lIGtGimsRGAfmKaFYQTDdvkEI
-        xTKCRsuqeGdkcUBL8yzFNQiahjwE0SKCnxbTlohh7LAc3n8L5zX2OBq0m4/EvIbABhFol7q2
-        hynsDjkLORSvl2AvMOVd5dskPgq9RW0Uz/txMAz35m/7SrAt9JfOkDxb4QCoNnzZXkPgI6Bt
-        LSMEdoDJmQoR7wV4kob64RJSCO0HhQW1lMB2MN/XQgt8CP507AxoEXw1NdJCkYtgJKMECarT
-        MGXa2E5KYGd41enGI2AfWJgAAffB+IKtkGEfFLYVE0JbAg+ypMIOJ9D1Nf1z7R4yEwVIptt1
-        mW7XNbpd1+j+21Yisg45cEkaVQSncY/jUlw1CpUmKS7CNTxepUdbH+vTZt+vdrRqvtmDMINk
-        NpLUyMxQqViRrElT9SBgCJm9pMxvqyVRKtJuc+r4MHVSLKfpQQcZUuYgOfl8LkSKIxSJXAzH
-        JXDqnVcRY+WYjvZ4ZTn5pwQ2V6+4nC/6fSost3QMZxeNO59NGfXNyPP5eGHOu17ZH8SsnbHZ
-        8FyTym9NaYcSK4uzVCO65eiApYErrcE1JmXY9RMFonvGde+YcSJLdu7xy0sJviFPDXem3lQt
-        oujyJcY/PDPIHJQ7K76o//wjb6JmymnCO2y2ZfKyjNREKtyPEWqN4i8c5ZHUVAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCIsWRmVeSWpSXmKPExsVy+t/xe7rsBS1xBhcuqVvMP3KO1aL/8Wtm
-        i/PnN7BbbHp8jdXi8q45bBYzzu9jslh6/SKTRf/iSywWP473MVu07j3CbjFlyUx2B26PNfPW
-        MHqsvtTO5rFz1l12j02rOtk8Ni+p9/i8SS6ALUrPpii/tCRVISO/uMRWKdrQwkjP0NJCz8jE
-        Us/Q2DzWyshUSd/OJiU1J7MstUjfLkEvY8+qfpaCS5IVO7ZvZ2pgnCPSxcjJISFgIvH+VDM7
-        iC0ksJRR4sERQYi4jMTJaQ2sELawxJ9rXWxdjFxANW8ZJSY+m87YxcjBISzgIbH/eTJIjYhA
-        lsSO59+ZQGqYBbYzSazdtI4ZouEMi8SdvrfMIFVsAoYSXW9BJnFw8ArYSZzriwQJswioSBye
-        vI0NxBYViJH4uaeLBcTmFRCUODnzCZjNKeAusXT7VbBDmQXMJOZtfsgMYctLNG+dDWWLS9x6
-        Mp9pAqPQLCTts5C0zELSMgtJywJGllWMIqmlxbnpucWGesWJucWleel6yfm5mxiBMbrt2M/N
-        OxgvbQw+xCjAwajEw1uR0RInxJpYVlyZe4hRgoNZSYR3tgtQiDclsbIqtSg/vqg0J7X4EKMp
-        0HMTmaVEk/OB6SOvJN7Q1NDcwtLQ3Njc2MxCSZy3Q+BgjJBAemJJanZqakFqEUwfEwenVAOj
-        qsuJ56dr8sULTy09PjNP7OfmOx7fzzVe0rRL//Hmn+8vseVXPvwv3zKfKyeqavoSaeuy4sBv
-        X/1u8kp9jOXdoZ2XITY19NG6VyV6UsWhjErHi7dPvDgl/aTpO/1PXf3zPicHV9aI3u4zVfNw
-        /LLoooHPzSL2lDKPmVozbCoql3WaLG19HHVIiaU4I9FQi7moOBEAS0wsk+cCAAA=
-X-CMS-MailID: 20200401104215eucas1p158e002d4deb038641d6afd1e3c32e645
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200318142549eucas1p1793027850923ebad20b4691cba676671
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200318142549eucas1p1793027850923ebad20b4691cba676671
-References: <20200312153411.13535-1-paul@crapouillou.net>
-        <20200312153411.13535-2-paul@crapouillou.net> <20200313090011.GB7416@pi3>
-        <CGME20200318142549eucas1p1793027850923ebad20b4691cba676671@eucas1p1.samsung.com>
-        <D6.31.03891.A6F227E5@epmailinsp8.samsung.com>
-        <6c549058-00f9-8526-a272-48c538166ccf@samsung.com>
-        <X7728Q.UX8A28S31JO92@crapouillou.net>
-        <6ca59c1b-2676-e69d-e4eb-4667a81d155f@samsung.com>
-        <d9fe575926342b355f76e1f38fef62f0d7d38075.camel@gmail.com>
-        <da888000-52b6-b0c6-76ac-8fc535d07a5d@samsung.com>
-        <8a77ca985214cb0058e4defe4dcaa27a79eafacc.camel@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6fadc6ea-8512-03ba-da30-43c64d7562f6@collabora.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9577 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0 mlxscore=0
+ malwarescore=0 phishscore=0 suspectscore=0 mlxlogscore=999 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004010100
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9577 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0 clxscore=1011
+ malwarescore=0 impostorscore=0 mlxlogscore=999 spamscore=0 mlxscore=0
+ priorityscore=1501 lowpriorityscore=0 adultscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004010100
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Paweł,
+On Wed, Mar 25, 2020 at 04:36:31PM -0300, Helen Koike wrote:
+> Hello,
+> 
+> On 3/25/20 1:03 PM, Mauro Carvalho Chehab wrote:
+> > That's the second part of media Kconfig changes. The entire series is
+> > at:
+> > 
+> > 	https://git.linuxtv.org/mchehab/experimental.git/log/?h=media-kconfig
+> 
+> I made a quick experiment (using this branch) with someone who works
+> with the kernel for his master degree, but doesn't have much experience in kernel development in general.
+> I asked him to enable Vimc (from default configs, where multimedia starts disabled).
 
-On 2020-03-31 21:50, Paweł Chmiel wrote:
-> On Tue, 2020-03-31 at 21:29 +0200, Marek Szyprowski wrote:
->> On 2020-03-31 17:29, Paweł Chmiel wrote:
->>> On Tue, 2020-03-31 at 15:55 +0200, Marek Szyprowski wrote:
->>>> On 2020-03-31 15:09, Paul Cercueil wrote:
->>>>> Le mar. 31 mars 2020 à 7:36, Marek Szyprowski
->>>>> <m.szyprowski@samsung.com> a écrit :
->>>>>> On 2020-03-18 15:25, Paul Cercueil wrote:
->>>>>>>>>     +    };
->>>>>>>>>     +
->>>>>>>>>     +    tsp_reg: regulator-1 {
->>>>>>>>>     +        compatible = "regulator-fixed";
->>>>>>>>>     +        regulator-name = "TSP_FIXED_VOLTAGES";
->>>>>>>>>     +        regulator-min-microvolt = <3300000>;
->>>>>>>>>     +        regulator-max-microvolt = <3300000>;
->>>>>>>>>     +        gpio = <&gpl0 3 GPIO_ACTIVE_HIGH>;
->>>>>>>>>     +        startup-delay-us = <70000>;
->>>>>>>>>     +        enable-active-high;
->>>>>>>>>     +        regulator-boot-on;
->>>>>>>>>     +        regulator-always-on;
->>>>>>>>    always-on and boot-on should not be needed. You have a consumer
->>>>>>>> for this
->>>>>>>>    regulator.
->>>>>>>    About this: the touchscreen driver does not use a regulator, so I
->>>>>>>    believe that's why these properties were here.
->>>>>>>
->>>>>>>    I sent patches upstream to address the issue:
->>>>>>>    https://protect2.fireeye.com/url?k=e8aedc29-b53072b3-e8af5766-0cc47a336fae-759579fd576d8382&u=https://lkml.org/lkml/2020/3/15/94
->>>>>>>
->>>>>>>
->>>>>>>    I believe this means I cannot merge the i9100 devicetree until it is
->>>>>>>    acked.
->>>>>> One more information - similar change has been already posted, but it
->>>>>> looks it got lost then: https://patchwork.kernel.org/patch/10550903/
->>>>> I was aware of this patch, but didn't know it was sent upstream.
->>>>>
->>>>> This other patch uses two regulators, vdd/avdd but doesn't give any
->>>>> reason why.
->>>>>
->>>> I've checked the UniversalC210 schematic, which uses the same
->>>> touchscreen chip. There are 2 supplies to the touchscreen chip: 2.8V VDD
->>>> and 3.3V AVDD. Both are enabled by the same GPIO pin though. There is
->>>> however no reset GPIO pin there.
->>> Hi
->>> Don't remember now how it worked on Galaxy S1, but it looks like it has
->>> the same setup - two regulators enabled by one GPIO pin.
->> It is quite common for the regulators to share the enable GPIO line, so
->> this is not an issue. Regulator framework supports such configuration
->> for ages. I'm curious about the reset GPIO line, which were made
->> mandatory for the regulators control in your patch. I didn't find it on
->> any schematic of the devices with this touch screen, but I don't have a
->> schematic of the Galaxy S1. IMHO the reset signal is simply derived from
->> the supply regulators with some simple circuit, but I don't have
->> schematic of that part.
-> Hi
-> Regarding this change - it was suggested during review of v1 version of
-> those patches. It's first reply here
-> https://patchwork.kernel.org/patch/10524007/
+The whole config system is really outdated.
 
-Well, I know that this has been requested in v1 review, but I thought 
-that you have tested v3 of your patch on I9000, thus I was curious about 
-that reset GPIO line.
+It should be that this task was done with a command like "kconfig enable
+vimc".  It would ask necessary questions and pull in the dependencies
+automatically.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Twenty years ago it made sense to go through the menus and select things
+one by one.  Does anyone really start from defconfig any more?  Surely
+everyone starts with a known working config and just enables specific
+options.
+
+I started to hack together some code to create a kconfig program to
+enable and disable options.  The problem is that all library code
+assumes we want to display menus so it was a lot of work and I gave up.
+
+regards,
+dan carpenter
 
