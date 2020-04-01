@@ -1,162 +1,244 @@
-Return-Path: <SRS0=1DvK=5Q=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=JIJd=5R=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CA76C43331
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 31 Mar 2020 19:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 233EEC43331
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Apr 2020 07:17:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9FEC2080C
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 31 Mar 2020 19:50:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZgLTHTqL"
+	by mail.kernel.org (Postfix) with ESMTP id E7C59206F5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Apr 2020 07:17:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726947AbgCaTuZ (ORCPT
+        id S1731850AbgDAHRa (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 31 Mar 2020 15:50:25 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:38777 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726411AbgCaTuZ (ORCPT
+        Wed, 1 Apr 2020 03:17:30 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36626 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731680AbgDAHRa (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 31 Mar 2020 15:50:25 -0400
-Received: by mail-lj1-f195.google.com with SMTP id w1so23293677ljh.5;
-        Tue, 31 Mar 2020 12:50:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=X256ALwK5y07kseIZ6IR1HB5ThpSSuN2SFQNhjFvy0E=;
-        b=ZgLTHTqLQ4cgNG/+c5jZkvDccdqSN0bOVAuoPDGOfNKVrsD6RXGajLVSY5WXytSsiR
-         BUnkmWiqT20BpsHIjY0msUWB5RywR0/ts0548l0fcNiSEtchz8r3sqQG4vW8jTtpY7vX
-         E9LOJnkfWBR6Gs8c2mNdD1uZbCDs26EAJL1vBBDHme2HHBZpWiuqtTtSIE6YogCVk3fn
-         KZofGL8JdFhSUrbl2H1yIZ4TRY9FJu52UvDaOVqByshWmbmlxm2IQvB2aqU1vQNZa2VQ
-         btuZpcdF6coy8RLyh2Yf7PKAsFSOq+Z6mhzzMOos6v8P1fDLJX/Ql2nRFft886DPI4CU
-         S41Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=X256ALwK5y07kseIZ6IR1HB5ThpSSuN2SFQNhjFvy0E=;
-        b=FVl2zxGXZoiGG4BDXYlaVHH5EKl/8MjzLo7GM+vVhrttlWhRdkQQJN0DFTAjKr6Agb
-         w1otK/01hUfk1X33paz5G1IxrY57HqWa4Vh/mH2j+Xi0JfhRO7QSZ/6gdaFvuxBVVmWm
-         iYkXPs1PQIrVN8fm+0ZT4eUKwLWRSI0yESeZLU3mQzJrhxJq9Vh64QGw6EvG0lbVoovg
-         EZLFcnZhuqxPiyN5mQ5hQ8iuYsD9zprI9fhDB7DeBc41ftGcDTqILEvMFTRbxYVfEzdn
-         YTZXkp+/vh6tWiJqPPXDAZE9pzOWuOdhhCYRFvBu0qt1JXSYPsERIQdVjGH6qiOUWJof
-         DEBw==
-X-Gm-Message-State: AGi0PuZh4uU4Qz6yMHCoa+ep0LnPn2Y5ULx+7s5OFZ0HKT2Qx7M5Rc8a
-        KAQcp/4OvDexbW+ePg0AhYk=
-X-Google-Smtp-Source: APiQypIkX62G++r/IinoOQmvz0Wce1CkF4mtiU3Y6aDWipfkDEXstwXUqy+bH2vDScHB5Pjp4MGk2w==
-X-Received: by 2002:a2e:96c4:: with SMTP id d4mr3383250ljj.19.1585684221896;
-        Tue, 31 Mar 2020 12:50:21 -0700 (PDT)
-Received: from pablo-laptop ([2a02:a315:5445:5300:a576:7878:f185:517a])
-        by smtp.googlemail.com with ESMTPSA id o21sm9242407ljg.71.2020.03.31.12.50.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2020 12:50:21 -0700 (PDT)
-Message-ID: <8a77ca985214cb0058e4defe4dcaa27a79eafacc.camel@gmail.com>
-Subject: Re: [PATCH 2/2] ARM: DTS: Add devicetree file for the Galaxy S2
-From:   =?UTF-8?Q?Pawe=C5=82?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Paul Cercueil <paul@crapouillou.net>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, mark.rutland@arm.com,
-        Stenkin Evgeniy <stenkinevgeniy@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 31 Mar 2020 21:50:19 +0200
-In-Reply-To: <da888000-52b6-b0c6-76ac-8fc535d07a5d@samsung.com>
-References: <20200312153411.13535-1-paul@crapouillou.net>
-         <20200312153411.13535-2-paul@crapouillou.net> <20200313090011.GB7416@pi3>
-         <CGME20200318142549eucas1p1793027850923ebad20b4691cba676671@eucas1p1.samsung.com>
-         <D6.31.03891.A6F227E5@epmailinsp8.samsung.com>
-         <6c549058-00f9-8526-a272-48c538166ccf@samsung.com>
-         <X7728Q.UX8A28S31JO92@crapouillou.net>
-         <6ca59c1b-2676-e69d-e4eb-4667a81d155f@samsung.com>
-         <d9fe575926342b355f76e1f38fef62f0d7d38075.camel@gmail.com>
-         <da888000-52b6-b0c6-76ac-8fc535d07a5d@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.1-2 
+        Wed, 1 Apr 2020 03:17:30 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id D0132AB3D;
+        Wed,  1 Apr 2020 07:17:25 +0000 (UTC)
+Subject: Re: [PATCH 20/22] drm/vkms: Use simple encoder
+To:     Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Cc:     hamohammed.sa@gmail.com, alexandre.belloni@bootlin.com,
+        airlied@linux.ie, linux@armlinux.org.uk, paul@crapouillou.net,
+        thierry.reding@gmail.com, krzk@kernel.org, sam@ravnborg.org,
+        sebastian.reichel@collabora.com, linux-samsung-soc@vger.kernel.org,
+        jy0922.shim@samsung.com, hjc@rock-chips.com, abrodkin@synopsys.com,
+        kong.kongxinwei@hisilicon.com, jonathanh@nvidia.com,
+        xinliang.liu@linaro.org, ludovic.desroches@microchip.com,
+        kgene@kernel.org, linux-imx@nxp.com,
+        linux-rockchip@lists.infradead.org,
+        virtualization@lists.linux-foundation.org,
+        linux-tegra@vger.kernel.org, puck.chen@hisilicon.com,
+        s.hauer@pengutronix.de, alison.wang@nxp.com, jsarha@ti.com,
+        matthias.bgg@gmail.com, wens@csie.org, kernel@pengutronix.de,
+        jernej.skrabec@siol.net, kraxel@redhat.com, tomi.valkeinen@ti.com,
+        bbrezillon@kernel.org, jingoohan1@gmail.com,
+        dri-devel@lists.freedesktop.org, sw0312.kim@samsung.com,
+        nicolas.ferre@microchip.com, kyungmin.park@samsung.com,
+        kieran.bingham+renesas@ideasonboard.com, zourongrong@gmail.com,
+        linux-mediatek@lists.infradead.org, shawnguo@kernel.org,
+        laurent.pinchart@ideasonboard.com
+References: <20200305155950.2705-1-tzimmermann@suse.de>
+ <20200305155950.2705-21-tzimmermann@suse.de>
+ <20200324115905.dp5jqzbmvhbmk2rn@smtp.gmail.com>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ mQENBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAG0J1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPokBVAQTAQgAPhYh
+ BHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJbOdLgAhsDBQkDwmcABQsJCAcCBhUKCQgLAgQWAgMB
+ Ah4BAheAAAoJEGgNwR1TC3ojR80H/jH+vYavwQ+TvO8ksXL9JQWc3IFSiGpuSVXLCdg62AmR
+ irxW+qCwNncNQyb9rd30gzdectSkPWL3KSqEResBe24IbA5/jSkPweJasgXtfhuyoeCJ6PXo
+ clQQGKIoFIAEv1s8l0ggPZswvCinegl1diyJXUXmdEJRTWYAtxn/atut1o6Giv6D2qmYbXN7
+ mneMC5MzlLaJKUtoH7U/IjVw1sx2qtxAZGKVm4RZxPnMCp9E1MAr5t4dP5gJCIiqsdrVqI6i
+ KupZstMxstPU//azmz7ZWWxT0JzgJqZSvPYx/SATeexTYBP47YFyri4jnsty2ErS91E6H8os
+ Bv6pnSn7eAq5AQ0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRH
+ UE9eosYbT6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgT
+ RjP+qbU63Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+R
+ dhgATnWWGKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zb
+ ehDda8lvhFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r
+ 12+lqdsAEQEAAYkBPAQYAQgAJhYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJbOdLgAhsMBQkD
+ wmcAAAoJEGgNwR1TC3ojpfcIAInwP5OlcEKokTnHCiDTz4Ony4GnHRP2fXATQZCKxmu4AJY2
+ h9ifw9Nf2TjCZ6AMvC3thAN0rFDj55N9l4s1CpaDo4J+0fkrHuyNacnT206CeJV1E7NYntxU
+ n+LSiRrOdywn6erjxRi9EYTVLCHcDhBEjKmFZfg4AM4GZMWX1lg0+eHbd5oL1as28WvvI/uI
+ aMyV8RbyXot1r/8QLlWldU3NrTF5p7TMU2y3ZH2mf5suSKHAMtbE4jKJ8ZHFOo3GhLgjVrBW
+ HE9JXO08xKkgD+w6v83+nomsEuf6C6LYrqY/tsZvyEX6zN8CtirPdPWu/VXNRYAl/lat7lSI
+ 3H26qrE=
+Message-ID: <3c8c9567-2eca-55a7-072e-5d5c9517ba7d@suse.de>
+Date:   Wed, 1 Apr 2020 09:17:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200324115905.dp5jqzbmvhbmk2rn@smtp.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="POql06Hk2VcpYBHcwhf1TtupB5WQ7dTFU"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, 2020-03-31 at 21:29 +0200, Marek Szyprowski wrote:
-> Hi
-> 
-> On 2020-03-31 17:29, Paweł Chmiel wrote:
-> > On Tue, 2020-03-31 at 15:55 +0200, Marek Szyprowski wrote:
-> > > Hi Paul,
-> > > 
-> > > On 2020-03-31 15:09, Paul Cercueil wrote:
-> > > > Cc: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> > > > 
-> > > > Hi Marek,
-> > > > 
-> > > > Le mar. 31 mars 2020 à 7:36, Marek Szyprowski
-> > > > <m.szyprowski@samsung.com> a écrit :
-> > > > > Hi Paul,
-> > > > > 
-> > > > > On 2020-03-18 15:25, Paul Cercueil wrote:
-> > > > > > > >    +    };
-> > > > > > > >    +
-> > > > > > > >    +    tsp_reg: regulator-1 {
-> > > > > > > >    +        compatible = "regulator-fixed";
-> > > > > > > >    +        regulator-name = "TSP_FIXED_VOLTAGES";
-> > > > > > > >    +        regulator-min-microvolt = <3300000>;
-> > > > > > > >    +        regulator-max-microvolt = <3300000>;
-> > > > > > > >    +        gpio = <&gpl0 3 GPIO_ACTIVE_HIGH>;
-> > > > > > > >    +        startup-delay-us = <70000>;
-> > > > > > > >    +        enable-active-high;
-> > > > > > > >    +        regulator-boot-on;
-> > > > > > > >    +        regulator-always-on;
-> > > > > > >   always-on and boot-on should not be needed. You have a consumer
-> > > > > > > for this
-> > > > > > >   regulator.
-> > > > > >   About this: the touchscreen driver does not use a regulator, so I
-> > > > > >   believe that's why these properties were here.
-> > > > > > 
-> > > > > >   I sent patches upstream to address the issue:
-> > > > > >   https://protect2.fireeye.com/url?k=e8aedc29-b53072b3-e8af5766-0cc47a336fae-759579fd576d8382&u=https://lkml.org/lkml/2020/3/15/94
-> > > > > > 
-> > > > > > 
-> > > > > >   I believe this means I cannot merge the i9100 devicetree until it is
-> > > > > >   acked.
-> > > > > One more information - similar change has been already posted, but it
-> > > > > looks it got lost then: https://patchwork.kernel.org/patch/10550903/
-> > > > I was aware of this patch, but didn't know it was sent upstream.
-> > > > 
-> > > > This other patch uses two regulators, vdd/avdd but doesn't give any
-> > > > reason why.
-> > > > 
-> > > I've checked the UniversalC210 schematic, which uses the same
-> > > touchscreen chip. There are 2 supplies to the touchscreen chip: 2.8V VDD
-> > > and 3.3V AVDD. Both are enabled by the same GPIO pin though. There is
-> > > however no reset GPIO pin there.
-> > Hi
-> > Don't remember now how it worked on Galaxy S1, but it looks like it has
-> > the same setup - two regulators enabled by one GPIO pin.
-> 
-> It is quite common for the regulators to share the enable GPIO line, so 
-> this is not an issue. Regulator framework supports such configuration 
-> for ages. I'm curious about the reset GPIO line, which were made 
-> mandatory for the regulators control in your patch. I didn't find it on 
-> any schematic of the devices with this touch screen, but I don't have a 
-> schematic of the Galaxy S1. IMHO the reset signal is simply derived from 
-> the supply regulators with some simple circuit, but I don't have 
-> schematic of that part.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--POql06Hk2VcpYBHcwhf1TtupB5WQ7dTFU
+Content-Type: multipart/mixed; boundary="1z7j8ob092evHfaOe3VHZ65Kyw81DNEUf";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Cc: hamohammed.sa@gmail.com, alexandre.belloni@bootlin.com, airlied@linux.ie,
+ linux@armlinux.org.uk, paul@crapouillou.net, thierry.reding@gmail.com,
+ krzk@kernel.org, sam@ravnborg.org, sebastian.reichel@collabora.com,
+ linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
+ hjc@rock-chips.com, abrodkin@synopsys.com, kong.kongxinwei@hisilicon.com,
+ jonathanh@nvidia.com, xinliang.liu@linaro.org,
+ ludovic.desroches@microchip.com, kgene@kernel.org, linux-imx@nxp.com,
+ linux-rockchip@lists.infradead.org,
+ virtualization@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
+ puck.chen@hisilicon.com, s.hauer@pengutronix.de, alison.wang@nxp.com,
+ jsarha@ti.com, matthias.bgg@gmail.com, wens@csie.org, kernel@pengutronix.de,
+ jernej.skrabec@siol.net, kraxel@redhat.com, tomi.valkeinen@ti.com,
+ bbrezillon@kernel.org, jingoohan1@gmail.com,
+ dri-devel@lists.freedesktop.org, sw0312.kim@samsung.com,
+ nicolas.ferre@microchip.com, kyungmin.park@samsung.com,
+ kieran.bingham+renesas@ideasonboard.com, zourongrong@gmail.com,
+ linux-mediatek@lists.infradead.org, shawnguo@kernel.org,
+ laurent.pinchart@ideasonboard.com
+Message-ID: <3c8c9567-2eca-55a7-072e-5d5c9517ba7d@suse.de>
+Subject: Re: [PATCH 20/22] drm/vkms: Use simple encoder
+References: <20200305155950.2705-1-tzimmermann@suse.de>
+ <20200305155950.2705-21-tzimmermann@suse.de>
+ <20200324115905.dp5jqzbmvhbmk2rn@smtp.gmail.com>
+In-Reply-To: <20200324115905.dp5jqzbmvhbmk2rn@smtp.gmail.com>
+
+--1z7j8ob092evHfaOe3VHZ65Kyw81DNEUf
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+
 Hi
-Regarding this change - it was suggested during review of v1 version of
-those patches. It's first reply here 
-https://patchwork.kernel.org/patch/10524007/
 
-> 
-> Best regards
+Am 24.03.20 um 12:59 schrieb Rodrigo Siqueira:
+> Hi Thomas,
+>=20
+> First of all, thanks for your patch!
+>=20
+> I applied all your series, compiled it, and when I tried
+> `make INSTALL_MOD_PATH=3D/PATH/ modules_instal` I got the following
+> message:
+>=20
+>  depmod: ERROR: Cycle detected: drm_kms_helper -> drm -> drm_kms_helper=
 
+>  depmod: ERROR: Found 2 modules in dependency cycles!
+>  make: *** [Makefile:1317: _modinst_post] Error 1
+>=20
+> I cleaned up my local files and tried again, but I got the same error;
+> If I just use `drm-misc-next` everything is fine.  Did I miss something=
+?
+
+I figured out that this problem is caused by the patch for the writeback
+encoder, which is located in the DRM core. I'll drop the patch. Thanks
+for testing!
+
+Best regards
+Thomas
+
+>=20
+> Thanks
+>=20
+> On 03/05, Thomas Zimmermann wrote:
+>> The vkms driver uses an empty implementation for its encoder. Replace
+>> the code with the generic simple encoder.
+>>
+>> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+>> ---
+>>  drivers/gpu/drm/vkms/vkms_output.c | 8 ++------
+>>  1 file changed, 2 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms=
+/vkms_output.c
+>> index fb1941a6522c..85afb77e97f0 100644
+>> --- a/drivers/gpu/drm/vkms/vkms_output.c
+>> +++ b/drivers/gpu/drm/vkms/vkms_output.c
+>> @@ -3,6 +3,7 @@
+>>  #include "vkms_drv.h"
+>>  #include <drm/drm_atomic_helper.h>
+>>  #include <drm/drm_probe_helper.h>
+>> +#include <drm/drm_simple_kms_helper.h>
+>> =20
+>>  static void vkms_connector_destroy(struct drm_connector *connector)
+>>  {
+>> @@ -17,10 +18,6 @@ static const struct drm_connector_funcs vkms_connec=
+tor_funcs =3D {
+>>  	.atomic_destroy_state =3D drm_atomic_helper_connector_destroy_state,=
+
+>>  };
+>> =20
+>> -static const struct drm_encoder_funcs vkms_encoder_funcs =3D {
+>> -	.destroy =3D drm_encoder_cleanup,
+>> -};
+>> -
+>>  static int vkms_conn_get_modes(struct drm_connector *connector)
+>>  {
+>>  	int count;
+>> @@ -70,8 +67,7 @@ int vkms_output_init(struct vkms_device *vkmsdev, in=
+t index)
+>> =20
+>>  	drm_connector_helper_add(connector, &vkms_conn_helper_funcs);
+>> =20
+>> -	ret =3D drm_encoder_init(dev, encoder, &vkms_encoder_funcs,
+>> -			       DRM_MODE_ENCODER_VIRTUAL, NULL);
+>> +	ret =3D drm_simple_encoder_init(dev, encoder, DRM_MODE_ENCODER_VIRTU=
+AL);
+>>  	if (ret) {
+>>  		DRM_ERROR("Failed to init encoder\n");
+>>  		goto err_encoder;
+>> --=20
+>> 2.25.1
+>>
+>=20
+>=20
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>=20
+
+--=20
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5, 90409 N=FCrnberg, Germany
+(HRB 36809, AG N=FCrnberg)
+Gesch=E4ftsf=FChrer: Felix Imend=F6rffer
+
+
+--1z7j8ob092evHfaOe3VHZ65Kyw81DNEUf--
+
+--POql06Hk2VcpYBHcwhf1TtupB5WQ7dTFU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl6EQAMACgkQaA3BHVML
+eiMuBAgAj5UES4iSvgdvGXsxU7JelWDRvIin40v50Ya1mepztavcMF/QTOeQUs60
+90Kgxj2ohhObilKOzxm70RxWHHGRrMK0BMLE+Rwm3TpTZJ+s1Fojn484ZLBnu3hr
+gWp05xuYFrQ/1GtsHStjvUB8ADDEVqnvf2ZomnKZWikHIYl5uCHzW6iumQwBzD/b
+Sh76yaJjOWgjnisEpmCbCQPvN6I21dIM2aH11JFvn0S56vUdylZC7EeLjtjrV3nm
+ix90pnKiwhpohP8Kho+t46VgGEUhDvObTrjNocgBpjdCdbUqINtFh362oJRGeoF/
+Af05YTLOMakHmAB5r4RrZQVsdxYn8A==
+=IKy5
+-----END PGP SIGNATURE-----
+
+--POql06Hk2VcpYBHcwhf1TtupB5WQ7dTFU--
