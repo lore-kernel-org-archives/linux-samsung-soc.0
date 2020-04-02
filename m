@@ -1,120 +1,144 @@
-Return-Path: <SRS0=JIJd=5R=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=E05A=5S=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 466F4C2D0F0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Apr 2020 16:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F79C18E5B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Apr 2020 09:28:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECD7A206E9
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  1 Apr 2020 16:54:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="tT8N+coB"
+	by mail.kernel.org (Postfix) with ESMTP id 6DC712073B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Apr 2020 09:28:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1585819681;
+	bh=J7RWyOxaAGre4b4DdTI7i7aOZrxrkooqXFQyOQ4KOsY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=WFzj5i/6jDOW0c1lrj7rrzapT3bnSf96MwXeDyDZdR9/2hsShjG1sfaw4rtzZIt86
+	 s0TyRohW2n+cSNDydhE6i75n/eYThp1IfoMl3j80cm4OmbxKI+FpEYoIw+HaYVqaXH
+	 nGn23oVJXCKBsVjpJhA1/Gt3ULnPK1nCHbY5PS6A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388272AbgDAQyA (ORCPT
+        id S2387716AbgDBJ2A (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 1 Apr 2020 12:54:00 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:60014 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388271AbgDAQbM (ORCPT
+        Thu, 2 Apr 2020 05:28:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48560 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725965AbgDBJ2A (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:31:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=tp5LnUbTw56wHyeSPmfUWY8H/MgTJs6JAtDGyeNVTzc=; b=tT8N+coBdBtUClsXB6A4SoeJZ
-        hwlRmpnvuLLQSa/T0TnqqrvLH/3DFotSNFVmlrTgyuPyJWsTzc7J7rvDQmCHQePT2kqi/TW2iEcj5
-        6/SJxWwR805Zf7N0TdPtnwWqeneYvKYjC/uPyeirSmOZAqVlWlFlWi9DkJgHv6Rcogd7aqsXgpuPZ
-        0h2ij+q4rAVPqas/VGjPuxuuHCVEEHSEojiIeCk6nGtoLjqdYIJNrmnt8jaBSUYmberLkrqYshzAh
-        npGj/8O0mvkybocAtlGF1CZ1kS7uwJKcHUriIQJfG4BkHDN0tOTzuFY7+pLT+ELJH+KawSG9NihKD
-        9Ds2ZDuAA==;
-Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:60886)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1jJgGc-0006uC-Kf; Wed, 01 Apr 2020 17:31:02 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1jJgGb-0000pz-Ge; Wed, 01 Apr 2020 17:31:01 +0100
-Date:   Wed, 1 Apr 2020 17:31:01 +0100
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Guillaume Tucker <guillaume.tucker@collabora.com>
-Cc:     Kukjin Kim <kgene@kernel.org>,
+        Thu, 2 Apr 2020 05:28:00 -0400
+Received: from coco.lan (ip5f5ad4d8.dynamic.kabel-deutschland.de [95.90.212.216])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 549A4206D3;
+        Thu,  2 Apr 2020 09:27:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585819679;
+        bh=J7RWyOxaAGre4b4DdTI7i7aOZrxrkooqXFQyOQ4KOsY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=B1DZr68ChWCITpuRnRBqBRzDSD79fRF1eAmBOzvVfh1ZuzY/ux6jiR79aVLi2tOFe
+         gjFMQy69GpienXO8q+G6gNoOoriqO9E3NxUHxiqwhL7cG2IRMyrQAJ/3qA81DSw5ur
+         lxsFptASA8ewYAjY+LqZyk0fwAo2xOP5axd8ePV8=
+Date:   Thu, 2 Apr 2020 11:27:47 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Helen Koike <helen.koike@collabora.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Pavel Machek <pavel@ucw.cz>, devel@driverdev.osuosl.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Bingbu Cao <bingbu.cao@intel.com>,
+        Tian Shu Qiu <tian.shu.qiu@intel.com>,
+        Yong Zhi <yong.zhi@intel.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Maxime Ripard <mripard@kernel.org>,
+        Niklas =?UTF-8?B?U8O2ZGVybHVuZA==?= 
+        <niklas.soderlund@ragnatech.se>,
+        Yong Deng <yong.deng@magewell.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [PATCH] ARM: exynos: update l2c_aux_mask to fix alert message
-Message-ID: <20200401163101.GV25745@shell.armlinux.org.uk>
-References: <b29f34870380093e6268c11d3033033d6def61b7.1585756648.git.guillaume.tucker@collabora.com>
+        Hyun Kwon <hyun.kwon@xilinx.com>,
+        Heungjun Kim <riverful.kim@samsung.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH 0/4] media Kconfig reorg - part 2
+Message-ID: <20200402112747.57dd1cfe@coco.lan>
+In-Reply-To: <20200401105949.GB2001@kadam>
+References: <cover.1585151701.git.mchehab+huawei@kernel.org>
+ <6fadc6ea-8512-03ba-da30-43c64d7562f6@collabora.com>
+ <20200401105949.GB2001@kadam>
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b29f34870380093e6268c11d3033033d6def61b7.1585756648.git.guillaume.tucker@collabora.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Apr 01, 2020 at 05:08:03PM +0100, Guillaume Tucker wrote:
-> Allow setting the number of cycles for RAM reads in the pl310 cache
-> controller L2 auxiliary control register mask (bits 0-2) since it
-> needs to be changed in software.  This only affects exynos4210 and
-> exynos4412 as they use the pl310 cache controller.
-> 
-> With the mask used until now, the following warnings were generated,
-> the 2nd one being a pr_alert():
-> 
->   L2C: platform modifies aux control register: 0x02070000 -> 0x3e470001
->   L2C: platform provided aux values permit register corruption.
-> 
-> This latency cycles value has always been set in software in spite of
-> the warnings.  Keep it this way but clear the alert message about
-> register corruption to acknowledge it is a valid thing to do.
+Em Wed, 1 Apr 2020 13:59:49 +0300
+Dan Carpenter <dan.carpenter@oracle.com> escreveu:
 
-This is telling you that you are doing something you should not be
-doing.  The L2C controller should be configured by board firmware
-first and foremost, because if, for example, u-boot makes use of the
-L2 cache, or any other pre-main kernel code (in other words,
-decompressor) the setup of the L2 controller will be wrong.
+> On Wed, Mar 25, 2020 at 04:36:31PM -0300, Helen Koike wrote:
+> > Hello,
+> > 
+> > On 3/25/20 1:03 PM, Mauro Carvalho Chehab wrote:  
+> > > That's the second part of media Kconfig changes. The entire series is
+> > > at:
+> > > 
+> > > 	https://git.linuxtv.org/mchehab/experimental.git/log/?h=media-kconfig  
+> > 
+> > I made a quick experiment (using this branch) with someone who works
+> > with the kernel for his master degree, but doesn't have much experience in kernel development in general.
+> > I asked him to enable Vimc (from default configs, where multimedia starts disabled).  
+> 
+> The whole config system is really outdated.
 
-So, NAK.
+Agreed. 
 
-> 
-> Tested on exynos4412-odroid-x2.
-> 
-> Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
-> Reported-by: "kernelci.org bot" <bot@kernelci.org>
-> ---
->  arch/arm/mach-exynos/exynos.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-> index 7a8d1555db40..ed1bba49210d 100644
-> --- a/arch/arm/mach-exynos/exynos.c
-> +++ b/arch/arm/mach-exynos/exynos.c
-> @@ -194,7 +194,7 @@ static void __init exynos_dt_fixup(void)
->  
->  DT_MACHINE_START(EXYNOS_DT, "Samsung Exynos (Flattened Device Tree)")
->  	.l2c_aux_val	= 0x3c400001,
-> -	.l2c_aux_mask	= 0xc20fffff,
-> +	.l2c_aux_mask	= 0xc20ffff8,
->  	.smp		= smp_ops(exynos_smp_ops),
->  	.map_io		= exynos_init_io,
->  	.init_early	= exynos_firmware_init,
-> -- 
-> 2.20.1
-> 
-> 
+Btw, when compiled against Qt 5.14, "make xconfig" is currently
+broken. I'm sending in a few some fixup patches for it.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 10.2Mbps down 587kbps up
+> It should be that this task was done with a command like "kconfig enable
+> vimc".  It would ask necessary questions and pull in the dependencies
+> automatically.
+
+Yes. That's something that it is missing for a long time. There were
+some efforts to add a SAT solver at the Kernel that could be used for
+that, but I dunno what's current status.
+
+> Twenty years ago it made sense to go through the menus and select things
+> one by one.  Does anyone really start from defconfig any more?  Surely
+> everyone starts with a known working config and just enables specific
+> options.
+
+Yeah, that's my feeling too.
+
+> I started to hack together some code to create a kconfig program to
+> enable and disable options.  The problem is that all library code
+> assumes we want to display menus so it was a lot of work and I gave up.
+
+:-(
+
+Thanks,
+Mauro
