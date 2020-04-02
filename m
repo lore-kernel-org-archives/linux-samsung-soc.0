@@ -2,145 +2,217 @@ Return-Path: <SRS0=E05A=5S=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50A92C43331
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Apr 2020 13:11:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68FB6C43331
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Apr 2020 13:59:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1855B206E9
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Apr 2020 13:11:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="GfXyZcO3"
+	by mail.kernel.org (Postfix) with ESMTP id 39B2A2073B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Apr 2020 13:59:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1585835949;
+	bh=zLtl1hegVDZ3JX8jSfCefGzoiajaEZQuyWHnbec+81Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=gX9t/G5ZVUeX6vof14DfFB6NZ4mJAWADFIaT+xfx4q+TyAzmh+iOiCSZVjuGAZxNk
+	 nPjwWk42fSQKlMU8lf/QXFy4fZaR5kkp0cXACXRiLotECp5xoiv0030lem/6keEql9
+	 frqOS9QotvP95x+9hF//SKfLsmMQ+Ds5aJaEuPtM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388322AbgDBNLr (ORCPT
+        id S1732784AbgDBN7I (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 2 Apr 2020 09:11:47 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:45202 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732262AbgDBNLr (ORCPT
+        Thu, 2 Apr 2020 09:59:08 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:43246 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726425AbgDBN7I (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 2 Apr 2020 09:11:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=neWmpBaTCRzgvC5RnHDeEfc0nV2vBJLslYFOXDTjpJk=; b=GfXyZcO31CeVTBTHHUjISz2Ra
-        1/sk9nlEYINhahrMXRnJtAmOi+G9s+/5oL4lZEq28ZOhN/plLQpoklP53VIs73rSrcgMzvjESrQeD
-        rgieyxpA50KCE7oIbhMZpFKY3hevMHDxSgQvM1AtsHaaX0VzJVpMCNXi+Xh8NVjlAPIED4rWJ2Ypx
-        PU8XVxxQFN69FxfXJLUc/1KcTIt/bPPH+Fmt10GdUv/CQuutOKv8nKvyNYn04CrMhDEfasjdZ+WU0
-        1bpaIluTJrrCicy+RXmjeUWbNRXvOIwOfIiXDOOBYTLwA7+tI0Fi0CN0MWdqI6CnaMPahTWwLEuE1
-        lbVJtjkpg==;
-Received: from shell.armlinux.org.uk ([2002:4e20:1eda:1:5054:ff:fe00:4ec]:40558)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1jJzdH-0003Nj-RU; Thu, 02 Apr 2020 14:11:44 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1jJzdH-0001ij-A8; Thu, 02 Apr 2020 14:11:43 +0100
-Date:   Thu, 2 Apr 2020 14:11:43 +0100
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Guillaume Tucker <guillaume.tucker@collabora.com>
-Cc:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>, kernel@collabora.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM: exynos: update l2c_aux_mask to fix alert message
-Message-ID: <20200402131143.GZ25745@shell.armlinux.org.uk>
-References: <b29f34870380093e6268c11d3033033d6def61b7.1585756648.git.guillaume.tucker@collabora.com>
- <20200401163101.GV25745@shell.armlinux.org.uk>
- <35c7cf4b-e6b8-43aa-d934-4a1c2e738372@collabora.com>
- <20200402130352.GY25745@shell.armlinux.org.uk>
+        Thu, 2 Apr 2020 09:59:08 -0400
+Received: by mail-ed1-f68.google.com with SMTP id bd14so4194573edb.10;
+        Thu, 02 Apr 2020 06:59:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FG8YtufMkodYHyo0Cjo7XgVdXtJaBvxft8gScddvk0g=;
+        b=ThlE/KS6IKCoIdco9q/pUBh+wOA83+dJLOQs7W96QFXkvvgaCV6MVVnu4E+0VIkDRU
+         /gerC+nDONN2gzUAMaMfz6vt0h94oKwIzuw9Ltu56wx33WZtoIJ4tvMZTNFJXTOlqiiz
+         5FLS5x4Hqd9O2FgPv1RA6s0GI/wQKBHxeD9blyN8xTWU2J7Iqs5tJA1l/RPqhSwA+Xdq
+         hW0YZzzFPsMuwirBO4CMa0O1oBxzCq+oX06SeAfavVOvmhL98Kqvwq/Iy1y7jY+PerZU
+         4U+dxBAdc+XCkZPb9LkL8HQ/SQ7TKW8R03GTsG1LJEHQXAvGfa3PXp2LYDhmXqz6Ko/q
+         MRDA==
+X-Gm-Message-State: AGi0PuZ0B3VPW4ghvVSqnd7Tjw/rwY1uLZg4lwwLZ7OLGTxygWvVwgyO
+        sl26luubx9HqFEVCZPXKWVs=
+X-Google-Smtp-Source: APiQypJZiYA4+kO7+JETns8DlnM+JC+pL4k5yzrzry0SWjVI/A+wLBOeGJc99+87ubrsog7lCOCCkw==
+X-Received: by 2002:a50:af85:: with SMTP id h5mr3071705edd.300.1585835945843;
+        Thu, 02 Apr 2020 06:59:05 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.125])
+        by smtp.googlemail.com with ESMTPSA id n18sm950462edv.93.2020.04.02.06.59.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 02 Apr 2020 06:59:05 -0700 (PDT)
+Date:   Thu, 2 Apr 2020 15:59:03 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Hyunki Koo <hyunki00.koo@samsung.com>
+Cc:     gregkh@linuxfoundation.org, Kukjin Kim <kgene@kernel.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] tty: samsung_tty: 32-bit access for TX/RX hold
+ registers
+Message-ID: <20200402135903.GA14861@kozik-lap>
+References: <20200401082721.19431-1-hyunki00.koo@samsung.com>
+ <CGME20200402110609epcas2p4a5ec1fb3a5eaa3b12c20cfc2060162f3@epcas2p4.samsung.com>
+ <20200402110430.31156-1-hyunki00.koo@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200402130352.GY25745@shell.armlinux.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200402110430.31156-1-hyunki00.koo@samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Apr 02, 2020 at 02:03:52PM +0100, Russell King - ARM Linux admin wrote:
-> On Thu, Apr 02, 2020 at 01:13:24PM +0100, Guillaume Tucker wrote:
-> > On 01/04/2020 17:31, Russell King - ARM Linux admin wrote:
-> > > On Wed, Apr 01, 2020 at 05:08:03PM +0100, Guillaume Tucker wrote:
-> > >> Allow setting the number of cycles for RAM reads in the pl310 cache
-> > >> controller L2 auxiliary control register mask (bits 0-2) since it
-> > >> needs to be changed in software.  This only affects exynos4210 and
-> > >> exynos4412 as they use the pl310 cache controller.
-> > >>
-> > >> With the mask used until now, the following warnings were generated,
-> > >> the 2nd one being a pr_alert():
-> > >>
-> > >>   L2C: platform modifies aux control register: 0x02070000 -> 0x3e470001
-> > >>   L2C: platform provided aux values permit register corruption.
-> > >>
-> > >> This latency cycles value has always been set in software in spite of
-> > >> the warnings.  Keep it this way but clear the alert message about
-> > >> register corruption to acknowledge it is a valid thing to do.
-> > > 
-> > > This is telling you that you are doing something you should not be
-> > > doing.  The L2C controller should be configured by board firmware
-> > > first and foremost, because if, for example, u-boot makes use of the
-> > > L2 cache, or any other pre-main kernel code (in other words,
-> > > decompressor) the setup of the L2 controller will be wrong.
-> > > 
-> > > So, NAK.
-> > 
-> > OK thanks, I guess I misinterpreted the meaning of the error
-> > message.  It's really saying that the register value was not the
-> > right one before the kernel tried to change it.  Next step for me
-> > is to look into U-Boot.
+On Thu, Apr 02, 2020 at 08:04:29PM +0900, Hyunki Koo wrote:
+> Support 32-bit access for the TX/RX hold registers UTXH and URXH.
 > 
-> The message "L2C: platform provided aux values permit register
-> corruption." means that bits are set in both the mask and the value
-> fields.  Since the new value is calculated as:
+> This is required for some newer SoCs.
 > 
-> 	old = register value;
-> 	new = old & mask;
-> 	new |= val;
+> Signed-off-by: Hyunki Koo <hyunki00.koo@samsung.com>
+> ---
+>  drivers/tty/serial/samsung_tty.c | 78 +++++++++++++++++++++++++++++++++-------
+>  1 file changed, 66 insertions(+), 12 deletions(-)
 > 
-> If bits are set in both "mask" and "val" for a multi-bit field, the
-> value ending up in the field may not be what is intended.  Consider
-> a 5-bit field set initially to 10101, and the requested value is
-> 01000 with a mask of 11111.  What you end up with is not 01000, but
-> 11101.  Hence, register corruption.  It is not possible to easily
-> tell whether the mask and values refer to a multi-bit field or not,
-> so the mere fact that bits are set in both issues the alert.
-> 
-> The message "L2C: platform modifies aux control register ..." means
-> that you're trying to modify the value of the auxiliary control
-> register, which brings with it the problems I stated in my previous
-> email; platform configuration of the L2C must be done by firmware and
-> not the kernel for the reasons I've set out.
+> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+> index 73f951d65b93..826d8c5846a6 100644
+> --- a/drivers/tty/serial/samsung_tty.c
+> +++ b/drivers/tty/serial/samsung_tty.c
+> @@ -154,12 +154,47 @@ struct s3c24xx_uart_port {
+>  #define portaddrl(port, reg) \
+>  	((unsigned long *)(unsigned long)((port)->membase + (reg)))
+>  
+> -#define rd_regb(port, reg) (readb_relaxed(portaddr(port, reg)))
+> +static unsigned int rd_reg(struct uart_port *port, int reg)
+> +{
+> +	switch (port->iotype) {
+> +	case UPIO_MEM:
+> +		return readb_relaxed(portaddr(port, reg));
+> +	case UPIO_MEM32:
+> +		return readl_relaxed(portaddr(port, reg));
+> +	default:
+> +		return 0;
+> +	}
+> +	return 0;
+> +}
+> +
+>  #define rd_regl(port, reg) (readl_relaxed(portaddr(port, reg)))
+>  
+> -#define wr_regb(port, reg, val) writeb_relaxed(val, portaddr(port, reg))
+> +static void wr_reg(struct uart_port *port, int reg, int val)
+> +{
+> +	switch (port->iotype) {
+> +	case UPIO_MEM:
+> +		writeb_relaxed(val, portaddr(port, reg));
+> +		break;
+> +	case UPIO_MEM32:
+> +		writel_relaxed(val, portaddr(port, reg));
+> +		break;
+> +	}
+> +}
+> +
+>  #define wr_regl(port, reg, val) writel_relaxed(val, portaddr(port, reg))
+>  
+> +static void write_buf(struct uart_port *port, int reg, int val)
+> +{
+> +	switch (port->iotype) {
+> +	case UPIO_MEM:
+> +		writeb(val, portaddr(port, reg));
+> +		break;
+> +	case UPIO_MEM32:
+> +		writel(val, portaddr(port, reg));
+> +		break;
+> +	}
+> +}
+> +
+>  /* Byte-order aware bit setting/clearing functions. */
+>  
+>  static inline void s3c24xx_set_bit(struct uart_port *port, int idx,
+> @@ -714,7 +749,7 @@ static void s3c24xx_serial_rx_drain_fifo(struct s3c24xx_uart_port *ourport)
+>  		fifocnt--;
+>  
+>  		uerstat = rd_regl(port, S3C2410_UERSTAT);
+> -		ch = rd_regb(port, S3C2410_URXH);
+> +		ch = rd_reg(port, S3C2410_URXH);
+>  
+>  		if (port->flags & UPF_CONS_FLOW) {
+>  			int txe = s3c24xx_serial_txempty_nofifo(port);
+> @@ -826,7 +861,7 @@ static irqreturn_t s3c24xx_serial_tx_chars(int irq, void *id)
+>  	}
+>  
+>  	if (port->x_char) {
+> -		wr_regb(port, S3C2410_UTXH, port->x_char);
+> +		wr_reg(port, S3C2410_UTXH, port->x_char);
+>  		port->icount.tx++;
+>  		port->x_char = 0;
+>  		goto out;
+> @@ -852,7 +887,7 @@ static irqreturn_t s3c24xx_serial_tx_chars(int irq, void *id)
+>  		if (rd_regl(port, S3C2410_UFSTAT) & ourport->info->tx_fifofull)
+>  			break;
+>  
+> -		wr_regb(port, S3C2410_UTXH, xmit->buf[xmit->tail]);
+> +		wr_reg(port, S3C2410_UTXH, xmit->buf[xmit->tail]);
+>  		xmit->tail = (xmit->tail + 1) & (UART_XMIT_SIZE - 1);
+>  		port->icount.tx++;
+>  		count--;
+> @@ -916,7 +951,7 @@ static unsigned int s3c24xx_serial_tx_empty(struct uart_port *port)
+>  /* no modem control lines */
+>  static unsigned int s3c24xx_serial_get_mctrl(struct uart_port *port)
+>  {
+> -	unsigned int umstat = rd_regb(port, S3C2410_UMSTAT);
+> +	unsigned int umstat = rd_reg(port, S3C2410_UMSTAT);
+>  
+>  	if (umstat & S3C2410_UMSTAT_CTS)
+>  		return TIOCM_CAR | TIOCM_DSR | TIOCM_CTS;
+> @@ -1974,7 +2009,7 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
+>  	struct device_node *np = pdev->dev.of_node;
+>  	struct s3c24xx_uart_port *ourport;
+>  	int index = probe_index;
+> -	int ret;
+> +	int ret, prop = 0;
+>  
+>  	if (np) {
+>  		ret = of_alias_get_id(np, "serial");
+> @@ -2000,10 +2035,29 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
+>  			dev_get_platdata(&pdev->dev) :
+>  			ourport->drv_data->def_cfg;
+>  
+> -	if (np)
+> +	if (np) {
+>  		of_property_read_u32(np,
+>  			"samsung,uart-fifosize", &ourport->port.fifosize);
+>  
+> +		if (of_property_read_u32(np, "reg-io-width", &prop) == 0) {
+> +			switch (prop) {
+> +			case 1:
+> +				ourport->port.iotype = UPIO_MEM;
+> +				break;
+> +			case 4:
+> +				ourport->port.iotype = UPIO_MEM32;
+> +				break;
+> +			default:
+> +				dev_warn(&pdev->dev, "unsupported reg-io-width (%d)\n",
+> +						prop);
+> +				ret = -EINVAL;
+> +				break;
+> +			}
+> +		} else {
+> +			ourport->port.iotype = UPIO_MEM;
+> +		}
+> +	}
 
-Actually, looking at the values there:
+I think this still breaks all non-DT platforms (e.g. s3c).
 
-        .l2c_aux_val    = 0x3c400001,
--       .l2c_aux_mask   = 0xc20fffff,
-+       .l2c_aux_mask   = 0xc20ffff8,
+Best regards,
+Krzysztof
 
-Bit 0 is L310_AUX_CTRL_FULL_LINE_ZERO feature bit, which platforms have
-no business fiddling with - it is a Cortex-A9/L2C310 specific feature
-that needs both ends to be configured correctly to work.  The L2C code
-knows this and will deal with it.  So, .l2c_aux_val should drop setting
-bit 0.
-
-It's also setting L310_AUX_CTRL_NS_LOCKDOWN, which the kernel already
-deals with - this bit should be dropped as well.
-
-It's clearing L310_AUX_CTRL_CACHE_REPLACE_RR - this should be setup by
-firmware.
-
-For the prefetching, I thought there were DT properties for that.
-Please look at that, and see whether you can eliminate most of the
-.l2c_aux_val field set bits, and the .l2c_aux_mask clear bits.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 10.2Mbps down 587kbps up
