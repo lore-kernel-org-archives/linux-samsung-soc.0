@@ -2,217 +2,97 @@ Return-Path: <SRS0=E05A=5S=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68FB6C43331
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Apr 2020 13:59:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7B25C2BA12
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Apr 2020 15:03:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39B2A2073B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Apr 2020 13:59:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1585835949;
-	bh=zLtl1hegVDZ3JX8jSfCefGzoiajaEZQuyWHnbec+81Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=gX9t/G5ZVUeX6vof14DfFB6NZ4mJAWADFIaT+xfx4q+TyAzmh+iOiCSZVjuGAZxNk
-	 nPjwWk42fSQKlMU8lf/QXFy4fZaR5kkp0cXACXRiLotECp5xoiv0030lem/6keEql9
-	 frqOS9QotvP95x+9hF//SKfLsmMQ+Ds5aJaEuPtM=
+	by mail.kernel.org (Postfix) with ESMTP id 99AFA2078C
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  2 Apr 2020 15:03:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="rPgl4ClI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732784AbgDBN7I (ORCPT
+        id S2388887AbgDBPDg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 2 Apr 2020 09:59:08 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43246 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726425AbgDBN7I (ORCPT
+        Thu, 2 Apr 2020 11:03:36 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:17979 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389108AbgDBPDf (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 2 Apr 2020 09:59:08 -0400
-Received: by mail-ed1-f68.google.com with SMTP id bd14so4194573edb.10;
-        Thu, 02 Apr 2020 06:59:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FG8YtufMkodYHyo0Cjo7XgVdXtJaBvxft8gScddvk0g=;
-        b=ThlE/KS6IKCoIdco9q/pUBh+wOA83+dJLOQs7W96QFXkvvgaCV6MVVnu4E+0VIkDRU
-         /gerC+nDONN2gzUAMaMfz6vt0h94oKwIzuw9Ltu56wx33WZtoIJ4tvMZTNFJXTOlqiiz
-         5FLS5x4Hqd9O2FgPv1RA6s0GI/wQKBHxeD9blyN8xTWU2J7Iqs5tJA1l/RPqhSwA+Xdq
-         hW0YZzzFPsMuwirBO4CMa0O1oBxzCq+oX06SeAfavVOvmhL98Kqvwq/Iy1y7jY+PerZU
-         4U+dxBAdc+XCkZPb9LkL8HQ/SQ7TKW8R03GTsG1LJEHQXAvGfa3PXp2LYDhmXqz6Ko/q
-         MRDA==
-X-Gm-Message-State: AGi0PuZ0B3VPW4ghvVSqnd7Tjw/rwY1uLZg4lwwLZ7OLGTxygWvVwgyO
-        sl26luubx9HqFEVCZPXKWVs=
-X-Google-Smtp-Source: APiQypJZiYA4+kO7+JETns8DlnM+JC+pL4k5yzrzry0SWjVI/A+wLBOeGJc99+87ubrsog7lCOCCkw==
-X-Received: by 2002:a50:af85:: with SMTP id h5mr3071705edd.300.1585835945843;
-        Thu, 02 Apr 2020 06:59:05 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.125])
-        by smtp.googlemail.com with ESMTPSA id n18sm950462edv.93.2020.04.02.06.59.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 02 Apr 2020 06:59:05 -0700 (PDT)
-Date:   Thu, 2 Apr 2020 15:59:03 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Hyunki Koo <hyunki00.koo@samsung.com>
-Cc:     gregkh@linuxfoundation.org, Kukjin Kim <kgene@kernel.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tty: samsung_tty: 32-bit access for TX/RX hold
- registers
-Message-ID: <20200402135903.GA14861@kozik-lap>
-References: <20200401082721.19431-1-hyunki00.koo@samsung.com>
- <CGME20200402110609epcas2p4a5ec1fb3a5eaa3b12c20cfc2060162f3@epcas2p4.samsung.com>
- <20200402110430.31156-1-hyunki00.koo@samsung.com>
+        Thu, 2 Apr 2020 11:03:35 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1585839815; h=Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Message-ID: Date: Subject: In-Reply-To: References: Cc:
+ To: From: Reply-To: Sender;
+ bh=MFdcBokfw79s+7lRCHgLw9NzMSmYZr6xzGhOl6ZSO68=; b=rPgl4ClIY1h+4+n7Qnv7DW7zcymXIvMfiNRuRjCvmvGDdaTdLSHKy3RFFy+gPThiUWOsN/aa
+ h4MJZ+iGFnCO2VRmQR+ZZ18e/rDLqU+N4UQLA29mlspeiOtg+UJjwb1ZpWuUD6lJEmjXBgvm
+ bEDXGVyQGPzmQR4H5uCaBM5RBqY=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyJhY2Q3MCIsICJsaW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtlcm5lbC5vcmciLCAiYmU5ZTRhIl0=
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e85fec5.7f860c730110-smtp-out-n01;
+ Thu, 02 Apr 2020 15:03:33 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 5C71DC433F2; Thu,  2 Apr 2020 15:03:31 +0000 (UTC)
+Received: from BCAIN (104-54-226-75.lightspeed.austtx.sbcglobal.net [104.54.226.75])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bcain)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 866DFC43636;
+        Thu,  2 Apr 2020 15:03:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 866DFC43636
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=bcain@codeaurora.org
+Reply-To: <bcain@codeaurora.org>
+From:   "Brian Cain" <bcain@codeaurora.org>
+To:     "'afzal mohammed'" <afzal.mohd.ma@gmail.com>
+Cc:     "'Thomas Gleixner'" <tglx@linutronix.de>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <x86@kernel.org>,
+        <linux-sh@vger.kernel.org>, <linux-s390@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <linux-parisc@vger.kernel.org>,
+        <linux-mips@vger.kernel.org>, <linux-m68k@lists.linux-m68k.org>,
+        <linux-ia64@vger.kernel.org>, <linux-hexagon@vger.kernel.org>,
+        <linux-c6x-dev@linux-c6x.org>, <linux-omap@vger.kernel.org>,
+        <linux-alpha@vger.kernel.org>
+References: <20200321174303.GA7930@afzalpc> <cover.1585320721.git.afzal.mohd.ma@gmail.com> <059b01d604ab$637355b0$2a5a0110$@codeaurora.org> <20200328073253.GA5250@afzalpc>
+In-Reply-To: <20200328073253.GA5250@afzalpc>
+Subject: RE: [PATCH 0/6] Kill setup_irq()
+Date:   Thu, 2 Apr 2020 10:03:28 -0500
+Message-ID: <0fc601d608ff$df0ea550$9d2beff0$@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200402110430.31156-1-hyunki00.koo@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain;
+        charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-us
+Thread-Index: AQH+2owB65JuA03jeOLwO39OK5TmSwJQWNztApEZe3IB1U/c2KfelGEA
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Apr 02, 2020 at 08:04:29PM +0900, Hyunki Koo wrote:
-> Support 32-bit access for the TX/RX hold registers UTXH and URXH.
+> -----Original Message-----
+> From: linux-hexagon-owner@vger.kernel.org <linux-hexagon-
+> owner@vger.kernel.org> On Behalf Of afzal mohammed
+...
+> On Fri, Mar 27, 2020 at 09:48:38PM -0500, Brian Cain wrote:
 > 
-> This is required for some newer SoCs.
+> > > Note 2: hexagon final image creation fails even w/o my patch
 > 
-> Signed-off-by: Hyunki Koo <hyunki00.koo@samsung.com>
-> ---
->  drivers/tty/serial/samsung_tty.c | 78 +++++++++++++++++++++++++++++++++-------
->  1 file changed, 66 insertions(+), 12 deletions(-)
+> > 	What's the nature of the failure in "Note 2"?
 > 
-> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-> index 73f951d65b93..826d8c5846a6 100644
-> --- a/drivers/tty/serial/samsung_tty.c
-> +++ b/drivers/tty/serial/samsung_tty.c
-> @@ -154,12 +154,47 @@ struct s3c24xx_uart_port {
->  #define portaddrl(port, reg) \
->  	((unsigned long *)(unsigned long)((port)->membase + (reg)))
->  
-> -#define rd_regb(port, reg) (readb_relaxed(portaddr(port, reg)))
-> +static unsigned int rd_reg(struct uart_port *port, int reg)
-> +{
-> +	switch (port->iotype) {
-> +	case UPIO_MEM:
-> +		return readb_relaxed(portaddr(port, reg));
-> +	case UPIO_MEM32:
-> +		return readl_relaxed(portaddr(port, reg));
-> +	default:
-> +		return 0;
-> +	}
-> +	return 0;
-> +}
-> +
->  #define rd_regl(port, reg) (readl_relaxed(portaddr(port, reg)))
->  
-> -#define wr_regb(port, reg, val) writeb_relaxed(val, portaddr(port, reg))
-> +static void wr_reg(struct uart_port *port, int reg, int val)
-> +{
-> +	switch (port->iotype) {
-> +	case UPIO_MEM:
-> +		writeb_relaxed(val, portaddr(port, reg));
-> +		break;
-> +	case UPIO_MEM32:
-> +		writel_relaxed(val, portaddr(port, reg));
-> +		break;
-> +	}
-> +}
-> +
->  #define wr_regl(port, reg, val) writel_relaxed(val, portaddr(port, reg))
->  
-> +static void write_buf(struct uart_port *port, int reg, int val)
-> +{
-> +	switch (port->iotype) {
-> +	case UPIO_MEM:
-> +		writeb(val, portaddr(port, reg));
-> +		break;
-> +	case UPIO_MEM32:
-> +		writel(val, portaddr(port, reg));
-> +		break;
-> +	}
-> +}
-> +
->  /* Byte-order aware bit setting/clearing functions. */
->  
->  static inline void s3c24xx_set_bit(struct uart_port *port, int idx,
-> @@ -714,7 +749,7 @@ static void s3c24xx_serial_rx_drain_fifo(struct s3c24xx_uart_port *ourport)
->  		fifocnt--;
->  
->  		uerstat = rd_regl(port, S3C2410_UERSTAT);
-> -		ch = rd_regb(port, S3C2410_URXH);
-> +		ch = rd_reg(port, S3C2410_URXH);
->  
->  		if (port->flags & UPF_CONS_FLOW) {
->  			int txe = s3c24xx_serial_txempty_nofifo(port);
-> @@ -826,7 +861,7 @@ static irqreturn_t s3c24xx_serial_tx_chars(int irq, void *id)
->  	}
->  
->  	if (port->x_char) {
-> -		wr_regb(port, S3C2410_UTXH, port->x_char);
-> +		wr_reg(port, S3C2410_UTXH, port->x_char);
->  		port->icount.tx++;
->  		port->x_char = 0;
->  		goto out;
-> @@ -852,7 +887,7 @@ static irqreturn_t s3c24xx_serial_tx_chars(int irq, void *id)
->  		if (rd_regl(port, S3C2410_UFSTAT) & ourport->info->tx_fifofull)
->  			break;
->  
-> -		wr_regb(port, S3C2410_UTXH, xmit->buf[xmit->tail]);
-> +		wr_reg(port, S3C2410_UTXH, xmit->buf[xmit->tail]);
->  		xmit->tail = (xmit->tail + 1) & (UART_XMIT_SIZE - 1);
->  		port->icount.tx++;
->  		count--;
-> @@ -916,7 +951,7 @@ static unsigned int s3c24xx_serial_tx_empty(struct uart_port *port)
->  /* no modem control lines */
->  static unsigned int s3c24xx_serial_get_mctrl(struct uart_port *port)
->  {
-> -	unsigned int umstat = rd_regb(port, S3C2410_UMSTAT);
-> +	unsigned int umstat = rd_reg(port, S3C2410_UMSTAT);
->  
->  	if (umstat & S3C2410_UMSTAT_CTS)
->  		return TIOCM_CAR | TIOCM_DSR | TIOCM_CTS;
-> @@ -1974,7 +2009,7 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
->  	struct device_node *np = pdev->dev.of_node;
->  	struct s3c24xx_uart_port *ourport;
->  	int index = probe_index;
-> -	int ret;
-> +	int ret, prop = 0;
->  
->  	if (np) {
->  		ret = of_alias_get_id(np, "serial");
-> @@ -2000,10 +2035,29 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
->  			dev_get_platdata(&pdev->dev) :
->  			ourport->drv_data->def_cfg;
->  
-> -	if (np)
-> +	if (np) {
->  		of_property_read_u32(np,
->  			"samsung,uart-fifosize", &ourport->port.fifosize);
->  
-> +		if (of_property_read_u32(np, "reg-io-width", &prop) == 0) {
-> +			switch (prop) {
-> +			case 1:
-> +				ourport->port.iotype = UPIO_MEM;
-> +				break;
-> +			case 4:
-> +				ourport->port.iotype = UPIO_MEM32;
-> +				break;
-> +			default:
-> +				dev_warn(&pdev->dev, "unsupported reg-io-width (%d)\n",
-> +						prop);
-> +				ret = -EINVAL;
-> +				break;
-> +			}
-> +		} else {
-> +			ourport->port.iotype = UPIO_MEM;
-> +		}
-> +	}
+> drivers/base/firmware_loader/main.o: In function `fw_is_builtin_firmware':
+> /devel/src/kernel6/drivers/base/firmware_loader/main.c:132:(.text+0xc8):
+> relocation truncated to fit: R_HEX_16_X against symbol
+`__start_builtin_fw'
+> defined in .modinfo section in .tmp_vmlinux1
+> Makefile:1077: recipe for target 'vmlinux' failed
+> make: *** [vmlinux] Error 1
 
-I think this still breaks all non-DT platforms (e.g. s3c).
+Thanks for reporting it -- I will make a patch to fix it.
 
-Best regards,
-Krzysztof
-
+-Brian
