@@ -2,104 +2,82 @@ Return-Path: <SRS0=s2bu=5W=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 998F6C2BA2B
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Apr 2020 10:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEDD5C2BA1E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Apr 2020 10:46:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AFE6206C3
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Apr 2020 10:34:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0EFA206F8
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  6 Apr 2020 10:46:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586169281;
-	bh=Dy6A1BPjkxsEMEbPvIlsLup/B7+8hLbcJYcf6pY6yZk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=MPhE+shhCpK6NVZAlpAwly52oHXyyWrt1HybrvrqLV68sjASyfqBbsRaVgZ0t2uxB
-	 dSkL9GVD6ExNfwdyXaJgi6ynlcAKsqMuXUjBzrqIZKZQANs75DHt5gJem6lexRX4e2
-	 ZWgMt3uSqyjpoRouT96dnyUh3l/BKPHDx96zTPQ8=
+	s=default; t=1586169976;
+	bh=D6gBRmYTc+zgGLpuMuzRFYrYH7t/9Cv2c9BLVW0I8ow=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=VYBTOnhfNig+qZPu2iqKYZKBp32gKUvHIcuN+nnr8vqqGqrtg92RHBQ6hkGU3dGVB
+	 BNGShFINo1fkcrTMYdOdONBc18RhjkIxK2tXK4h/7IpSeLM2pgrq+IwhQCsS23d3Gs
+	 3Jxth1ZpH4FOHH+46mN7QuRZOWAnwecYHhQPjIn8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726873AbgDFKei (ORCPT
+        id S1727074AbgDFKqN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 6 Apr 2020 06:34:38 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:42828 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726858AbgDFKeh (ORCPT
+        Mon, 6 Apr 2020 06:46:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34504 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726841AbgDFKqN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 6 Apr 2020 06:34:37 -0400
-Received: by mail-ed1-f67.google.com with SMTP id cw6so18548866edb.9;
-        Mon, 06 Apr 2020 03:34:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GCDV/KSvNbnbn8FBlMojoXonpi0B/XmPXkgkMx9qThM=;
-        b=Ox2HwkChMa6hQqSwnXfPzTmw9Ncg/625Hs8H+8iCVuLf15ykN0RFT+4g8iDCv3wVUw
-         1Zhph8NRyNZ/wTNovQLNN7gTn1O+Y9iCm1lqIcZVeYFLitLgNx5cDotZBqs315UXkrMl
-         NX30UUU+y5oTYlsv2PChuvKW1ZI4mYkWjYqgPETC8xePY60jPJQbY8LU4Ziyb59gqQR3
-         t1vcmNcm2npd5+9Ljj9B3PohOOc6Kj0Go6BI53Ic5TdNhicJ1k/vLmQW0mLBGIZe6Syk
-         ZZfLS1bp6b1DSEbLAA78XgYZjRudvLI7BuYfqFrtrKF02GW9nXVeJQuRQ2YTOxB8Qfe1
-         0nfw==
-X-Gm-Message-State: AGi0PubMkBg1b/fCOV20n6xiM8QaXnq49Pxa6An4u7RtC3P5hMzUI5wv
-        TjPkfwyqA+OZ4VuX5L/ZfrY=
-X-Google-Smtp-Source: APiQypL+eEKtkUOFf2EjtwdZr1+7NBkU7zGNKIK4C1nCqA7ypoV3kzmuidwmBCJ4nftZsbAUPe55Cw==
-X-Received: by 2002:aa7:d042:: with SMTP id n2mr18050403edo.374.1586169275172;
-        Mon, 06 Apr 2020 03:34:35 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.125])
-        by smtp.googlemail.com with ESMTPSA id f13sm2407349edn.50.2020.04.06.03.34.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 Apr 2020 03:34:34 -0700 (PDT)
-Date:   Mon, 6 Apr 2020 12:34:32 +0200
+        Mon, 6 Apr 2020 06:46:13 -0400
+Received: from kozik-lap.mshome.net (unknown [194.230.155.125])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A5F1206F8;
+        Mon,  6 Apr 2020 10:46:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1586169972;
+        bh=D6gBRmYTc+zgGLpuMuzRFYrYH7t/9Cv2c9BLVW0I8ow=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Lky6uMxo8GOtvEwgYMihpkD9LH/hRP9Cu73Mr4//sukdV5kERMpAUiMBLp527kAr1
+         SCVVZXY3OAMZiLKAzABBf6qHURcCRwtP+Hp/rUPfvKA85LbbzFQsS284bcJBGxtoqQ
+         5K1K9Q27SLoFXuR7eiGBrkFZpmAdG2ZLuXfFahMg=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Hyunki Koo <hyunki00.koo@samsung.com>
-Cc:     gregkh@linuxfoundation.org, Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>, Jiri Slaby <jslaby@suse.com>,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v5 2/2] tty: samsung_tty: 32-bit access for TX/RX hold
- registers
-Message-ID: <20200406103432.GA16798@kozik-lap>
-References: <20200401082721.19431-1-hyunki00.koo@samsung.com>
- <CGME20200406103158epcas2p2aaf3ef769a232dc28c04cb4ae91373bd@epcas2p2.samsung.com>
- <20200406103127.17105-1-hyunki00.koo@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200406103127.17105-1-hyunki00.koo@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+To:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Hyunki Koo <hyunki00.koo@samsung.com>
+Subject: [PATCH] dt-bindings: memory-controllers: exynos-srom: Remove unneeded type for reg-io-width
+Date:   Mon,  6 Apr 2020 12:45:54 +0200
+Message-Id: <20200406104554.29773-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Apr 06, 2020 at 07:31:25PM +0900, Hyunki Koo wrote:
-> Support 32-bit access for the TX/RX hold registers UTXH and URXH.
-> 
-> This is required for some newer SoCs.
-> 
-> Signed-off-by: Hyunki Koo <hyunki00.koo@samsung.com>
-> ---
-> v2: 
-> line 954 : change rd_regl to rd_reg in for backward compatibility.
-> line 2031: Add init value for ourport->port.iotype  to UPIO_MEM 
-> v3:
-> line 2031: remove redundant init value  for ourport->port.iotype 
-> v4:
-> correct variable types and change misleading function name
-> v5:
-> add dt-binding and go as first patch in this series.
-> 
-> ---
->  drivers/tty/serial/samsung_tty.c | 76 +++++++++++++++++++++++++++++++++-------
->  1 file changed, 64 insertions(+), 12 deletions(-)
+'reg-io-width' property is an enum so there is no need to specify its
+type.
 
-For me it is fine, although Greg wanted the write functions to be
-consistent with read around default case.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ .../devicetree/bindings/memory-controllers/exynos-srom.yaml   | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
+diff --git a/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
+index cdfe3f7f0ea9..1250087b4ee6 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
++++ b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
+@@ -51,9 +51,7 @@ patternProperties:
+         maxItems: 1
+ 
+       reg-io-width:
+-        allOf:
+-          - $ref: /schemas/types.yaml#/definitions/uint32
+-          - enum: [1, 2]
++        enum: [1, 2]
+         description:
+           Data width in bytes (1 or 2). If omitted, default of 1 is used.
+ 
+-- 
+2.17.1
 
-Best regards,
-Krzysztof
