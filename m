@@ -1,32 +1,32 @@
-Return-Path: <SRS0=8yO7=5Y=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=3TWU=5Z=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC50C2BA1A
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Apr 2020 19:11:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C1AC2BB55
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Apr 2020 11:46:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9912620A8B
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  8 Apr 2020 19:11:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 402B520771
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  9 Apr 2020 11:46:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729058AbgDHTLQ (ORCPT
+        id S1726579AbgDILq1 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 8 Apr 2020 15:11:16 -0400
-Received: from 8bytes.org ([81.169.241.247]:58700 "EHLO theia.8bytes.org"
+        Thu, 9 Apr 2020 07:46:27 -0400
+Received: from 8bytes.org ([81.169.241.247]:58840 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728255AbgDHTLP (ORCPT
+        id S1726082AbgDILq0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 8 Apr 2020 15:11:15 -0400
+        Thu, 9 Apr 2020 07:46:26 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 2738E2B6; Wed,  8 Apr 2020 21:11:13 +0200 (CEST)
-Date:   Wed, 8 Apr 2020 21:11:11 +0200
+        id 60A51398; Thu,  9 Apr 2020 13:46:25 +0200 (CEST)
+Date:   Thu, 9 Apr 2020 13:46:20 +0200
 From:   Joerg Roedel <joro@8bytes.org>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Will Deacon <will@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
         Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         David Woodhouse <dwmw2@infradead.org>,
@@ -47,274 +47,365 @@ Cc:     Will Deacon <will@kernel.org>,
         linux-tegra@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         Joerg Roedel <jroedel@suse.de>
-Subject: Re: [RFC PATCH 17/34] iommu/arm-smmu: Store device instead of group
- in arm_smmu_s2cr
-Message-ID: <20200408191111.GA6342@8bytes.org>
+Subject: [PATCH] iommu/exynos: Get rid of 'struct exynos_iommu_owner'
+ exynos_iommu_owner
+Message-ID: <20200409114620.GA16298@8bytes.org>
 References: <20200407183742.4344-1-joro@8bytes.org>
- <20200407183742.4344-18-joro@8bytes.org>
- <98c10a41-d223-e375-9742-b6471c3dc33c@arm.com>
- <20200408143707.GK3103@8bytes.org>
- <f8b541c2-9271-fc48-dde6-166a2ed6679f@arm.com>
+ <CGME20200407184501eucas1p25407bc96e4345df406cf6ba061ae6a82@eucas1p2.samsung.com>
+ <20200407183742.4344-32-joro@8bytes.org>
+ <449e7f16-e719-9617-ec92-63b82c0bc33f@samsung.com>
+ <f59b0bb3-8c08-9cc9-bb1a-e69b7b226f60@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f8b541c2-9271-fc48-dde6-166a2ed6679f@arm.com>
+In-Reply-To: <f59b0bb3-8c08-9cc9-bb1a-e69b7b226f60@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Apr 08, 2020 at 04:07:33PM +0100, Robin Murphy wrote:
-> On 2020-04-08 3:37 pm, Joerg Roedel wrote:
-> Isn't that exactly what I suggested? :)
+Hi Marek,
 
-Okay, I dropped this patch and updated the next one.
+I had some more thoughts and discussions with Robin about how to make
+this work with the Exynos driver. The result is the patch below, can you
+please test it and report back? Even better if you can fix up any
+breakage it might cause :)
 
-> I don't recall for sure, but knowing me, that bit of group bookkeeping is
-> only where it currently is because it cheekily saves iterating the IDs a
-> second time. I don't think there's any technical reason.
-
-I leave it up to you to make any changes on that :)
-
-Updated patch below. I also noticed that I deleted too much from
-arm-smmu-v3 in the previous version, fixed that too.
-
-From a1d2821235a6c26b668b47ec0e84ad0316524406 Mon Sep 17 00:00:00 2001
+From 60a288509baa34df6a0bf437c977925a0a617c72 Mon Sep 17 00:00:00 2001
 From: Joerg Roedel <jroedel@suse.de>
-Date: Mon, 30 Mar 2020 17:39:04 +0200
-Subject: [PATCH] iommu/arm-smmu: Convert to probe/release_device() call-backs
+Date: Thu, 9 Apr 2020 13:38:18 +0200
+Subject: [PATCH] iommu/exynos: Get rid of 'struct exynos_iommu_owner'
 
-Convert the arm-smmu and arm-smmu-v3 drivers to use the probe_device() and
-release_device() call-backs of iommu_ops, so that the iommu core code does the
-group and sysfs setup.
+Remove 'struct exynos_iommu_owner' and replace it with a single-linked
+list of 'struct sysmmu_drvdata'. The first item in the list acts as a
+replacement for the previous exynos_iommu_owner structure. The
+iommu_device member of the first list item is reported to the IOMMU
+core code for the master device.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- drivers/iommu/arm-smmu-v3.c | 38 ++++++++++--------------------------
- drivers/iommu/arm-smmu.c    | 39 ++++++++++++++-----------------------
- 2 files changed, 25 insertions(+), 52 deletions(-)
+ drivers/iommu/exynos-iommu.c | 155 ++++++++++++++++++++---------------
+ 1 file changed, 88 insertions(+), 67 deletions(-)
 
-diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index 82508730feb7..42e1ee7e5197 100644
---- a/drivers/iommu/arm-smmu-v3.c
-+++ b/drivers/iommu/arm-smmu-v3.c
-@@ -2914,27 +2914,26 @@ static bool arm_smmu_sid_in_range(struct arm_smmu_device *smmu, u32 sid)
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index 186ff5cc975c..e70eb360093f 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -225,18 +225,6 @@ static const struct sysmmu_fault_info sysmmu_v5_faults[] = {
+ 	{ 20, REG_V5_FAULT_AW_VA, "AW SECURITY PROTECTION", IOMMU_FAULT_WRITE },
+ };
  
- static struct iommu_ops arm_smmu_ops;
- 
--static int arm_smmu_add_device(struct device *dev)
-+static struct iommu_device *arm_smmu_probe_device(struct device *dev)
- {
- 	int i, ret;
- 	struct arm_smmu_device *smmu;
- 	struct arm_smmu_master *master;
- 	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
--	struct iommu_group *group;
- 
- 	if (!fwspec || fwspec->ops != &arm_smmu_ops)
--		return -ENODEV;
-+		return ERR_PTR(-ENODEV);
- 
- 	if (WARN_ON_ONCE(dev_iommu_priv_get(dev)))
--		return -EBUSY;
-+		return ERR_PTR(-EBUSY);
- 
- 	smmu = arm_smmu_get_by_fwnode(fwspec->iommu_fwnode);
- 	if (!smmu)
--		return -ENODEV;
-+		return ERR_PTR(-ENODEV);
- 
- 	master = kzalloc(sizeof(*master), GFP_KERNEL);
- 	if (!master)
--		return -ENOMEM;
-+		return ERR_PTR(-ENOMEM);
- 
- 	master->dev = dev;
- 	master->smmu = smmu;
-@@ -2975,30 +2974,15 @@ static int arm_smmu_add_device(struct device *dev)
- 		master->ssid_bits = min_t(u8, master->ssid_bits,
- 					  CTXDESC_LINEAR_CDMAX);
- 
--	ret = iommu_device_link(&smmu->iommu, dev);
--	if (ret)
--		goto err_disable_pasid;
-+	return &smmu->iommu;
- 
--	group = iommu_group_get_for_dev(dev);
--	if (IS_ERR(group)) {
--		ret = PTR_ERR(group);
--		goto err_unlink;
--	}
+-/*
+- * This structure is attached to dev.archdata.iommu of the master device
+- * on device add, contains a list of SYSMMU controllers defined by device tree,
+- * which are bound to given master device. It is usually referenced by 'owner'
+- * pointer.
+-*/
+-struct exynos_iommu_owner {
+-	struct list_head controllers;	/* list of sysmmu_drvdata.owner_node */
+-	struct iommu_domain *domain;	/* domain this device is attached */
+-	struct mutex rpm_lock;		/* for runtime pm of all sysmmus */
+-};
 -
--	iommu_group_put(group);
--	return 0;
--
--err_unlink:
--	iommu_device_unlink(&smmu->iommu, dev);
--err_disable_pasid:
--	arm_smmu_disable_pasid(master);
- err_free_master:
- 	kfree(master);
- 	dev_iommu_priv_set(dev, NULL);
--	return ret;
-+	return ERR_PTR(ret);
- }
+ /*
+  * This structure exynos specific generalization of struct iommu_domain.
+  * It contains list of SYSMMU controllers from all master devices, which has
+@@ -271,13 +259,23 @@ struct sysmmu_drvdata {
+ 	bool active;			/* current status */
+ 	struct exynos_iommu_domain *domain; /* domain we belong to */
+ 	struct list_head domain_node;	/* node for domain clients list */
+-	struct list_head owner_node;	/* node for owner controllers list */
++	struct sysmmu_drvdata *next;	/* Single-linked list to group SMMUs for
++					   one master. NULL means not in any
++					   list, ERR_PTR(-ENODEV) means end of
++					   list */
++	struct mutex rpm_lock;		/* for runtime pm of all sysmmus */
+ 	phys_addr_t pgtable;		/* assigned page table structure */
+ 	unsigned int version;		/* our version */
  
--static void arm_smmu_remove_device(struct device *dev)
-+static void arm_smmu_release_device(struct device *dev)
- {
- 	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
- 	struct arm_smmu_master *master;
-@@ -3010,8 +2994,6 @@ static void arm_smmu_remove_device(struct device *dev)
- 	master = dev_iommu_priv_get(dev);
- 	smmu = master->smmu;
- 	arm_smmu_detach_dev(master);
--	iommu_group_remove_device(dev);
--	iommu_device_unlink(&smmu->iommu, dev);
- 	arm_smmu_disable_pasid(master);
- 	kfree(master);
- 	iommu_fwspec_free(dev);
-@@ -3138,8 +3120,8 @@ static struct iommu_ops arm_smmu_ops = {
- 	.flush_iotlb_all	= arm_smmu_flush_iotlb_all,
- 	.iotlb_sync		= arm_smmu_iotlb_sync,
- 	.iova_to_phys		= arm_smmu_iova_to_phys,
--	.add_device		= arm_smmu_add_device,
--	.remove_device		= arm_smmu_remove_device,
-+	.probe_device		= arm_smmu_probe_device,
-+	.release_device		= arm_smmu_release_device,
- 	.device_group		= arm_smmu_device_group,
- 	.domain_get_attr	= arm_smmu_domain_get_attr,
- 	.domain_set_attr	= arm_smmu_domain_set_attr,
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index a6a5796e9c41..e622f4e33379 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -220,7 +220,7 @@ static int arm_smmu_register_legacy_master(struct device *dev,
-  * With the legacy DT binding in play, we have no guarantees about
-  * probe order, but then we're also not doing default domains, so we can
-  * delay setting bus ops until we're sure every possible SMMU is ready,
-- * and that way ensure that no add_device() calls get missed.
-+ * and that way ensure that no probe_device() calls get missed.
-  */
- static int arm_smmu_legacy_bus_init(void)
- {
-@@ -1062,7 +1062,6 @@ static int arm_smmu_master_alloc_smes(struct device *dev)
- 	struct arm_smmu_master_cfg *cfg = dev_iommu_priv_get(dev);
- 	struct arm_smmu_device *smmu = cfg->smmu;
- 	struct arm_smmu_smr *smrs = smmu->smrs;
--	struct iommu_group *group;
- 	int i, idx, ret;
+ 	struct iommu_device iommu;	/* IOMMU core handle */
+ };
  
- 	mutex_lock(&smmu->stream_map_mutex);
-@@ -1090,18 +1089,9 @@ static int arm_smmu_master_alloc_smes(struct device *dev)
- 		cfg->smendx[i] = (s16)idx;
++/* Helper to iterate over all SYSMMUs for a given platform device */
++#define for_each_sysmmu(dev, drvdata)			\
++	for (drvdata = (dev)->archdata.iommu;		\
++	     drvdata != ERR_PTR(-ENODEV);		\
++	     drvdata = drvdata->next)
++
+ static struct exynos_iommu_domain *to_exynos_domain(struct iommu_domain *dom)
+ {
+ 	return container_of(dom, struct exynos_iommu_domain, domain);
+@@ -624,6 +622,8 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
+ 
+ 	data->sysmmu = dev;
+ 	spin_lock_init(&data->lock);
++	data->next = NULL;
++	mutex_init(&data->rpm_lock);
+ 
+ 	ret = iommu_device_sysfs_add(&data->iommu, &pdev->dev, NULL,
+ 				     dev_name(data->sysmmu));
+@@ -668,17 +668,20 @@ static int __maybe_unused exynos_sysmmu_suspend(struct device *dev)
+ {
+ 	struct sysmmu_drvdata *data = dev_get_drvdata(dev);
+ 	struct device *master = data->master;
++	struct sysmmu_drvdata *master_data;
+ 
+-	if (master) {
+-		struct exynos_iommu_owner *owner = master->archdata.iommu;
++	if (!master)
++		return 0;
+ 
+-		mutex_lock(&owner->rpm_lock);
+-		if (data->domain) {
+-			dev_dbg(data->sysmmu, "saving state\n");
+-			__sysmmu_disable(data);
+-		}
+-		mutex_unlock(&owner->rpm_lock);
++	master_data = master->archdata.iommu;
++
++	mutex_lock(&master_data->rpm_lock);
++	if (data->domain) {
++		dev_dbg(data->sysmmu, "saving state\n");
++		__sysmmu_disable(data);
  	}
- 
--	group = iommu_group_get_for_dev(dev);
--	if (IS_ERR(group)) {
--		ret = PTR_ERR(group);
--		goto out_err;
--	}
--	iommu_group_put(group);
--
- 	/* It worked! Now, poke the actual hardware */
--	for_each_cfg_sme(cfg, fwspec, i, idx) {
-+	for_each_cfg_sme(cfg, fwspec, i, idx)
- 		arm_smmu_write_sme(smmu, idx);
--		smmu->s2crs[idx].group = group;
--	}
- 
- 	mutex_unlock(&smmu->stream_map_mutex);
++	mutex_unlock(&master_data->rpm_lock);
++
  	return 0;
-@@ -1172,7 +1162,7 @@ static int arm_smmu_attach_dev(struct iommu_domain *domain, struct device *dev)
- 
- 	/*
- 	 * FIXME: The arch/arm DMA API code tries to attach devices to its own
--	 * domains between of_xlate() and add_device() - we have no way to cope
-+	 * domains between of_xlate() and probe_device() - we have no way to cope
- 	 * with that, so until ARM gets converted to rely on groups and default
- 	 * domains, just say no (but more politely than by dereferencing NULL).
- 	 * This should be at least a WARN_ON once that's sorted.
-@@ -1382,7 +1372,7 @@ struct arm_smmu_device *arm_smmu_get_by_fwnode(struct fwnode_handle *fwnode)
- 	return dev ? dev_get_drvdata(dev) : NULL;
  }
  
--static int arm_smmu_add_device(struct device *dev)
-+static struct iommu_device *arm_smmu_probe_device(struct device *dev)
+@@ -686,17 +689,20 @@ static int __maybe_unused exynos_sysmmu_resume(struct device *dev)
  {
- 	struct arm_smmu_device *smmu = NULL;
- 	struct arm_smmu_master_cfg *cfg;
-@@ -1403,7 +1393,7 @@ static int arm_smmu_add_device(struct device *dev)
- 	} else if (fwspec && fwspec->ops == &arm_smmu_ops) {
- 		smmu = arm_smmu_get_by_fwnode(fwspec->iommu_fwnode);
- 	} else {
--		return -ENODEV;
-+		return ERR_PTR(-ENODEV);
+ 	struct sysmmu_drvdata *data = dev_get_drvdata(dev);
+ 	struct device *master = data->master;
++	struct sysmmu_drvdata *master_data;
+ 
+-	if (master) {
+-		struct exynos_iommu_owner *owner = master->archdata.iommu;
++	if (!master)
++		return 0;
+ 
+-		mutex_lock(&owner->rpm_lock);
+-		if (data->domain) {
+-			dev_dbg(data->sysmmu, "restoring state\n");
+-			__sysmmu_enable(data);
+-		}
+-		mutex_unlock(&owner->rpm_lock);
++	master_data = master->archdata.iommu;
++
++	mutex_lock(&master_data->rpm_lock);
++	if (data->domain) {
++		dev_dbg(data->sysmmu, "restoring state\n");
++		__sysmmu_enable(data);
  	}
- 
- 	ret = -EINVAL;
-@@ -1444,21 +1434,19 @@ static int arm_smmu_add_device(struct device *dev)
- 	if (ret)
- 		goto out_cfg_free;
- 
--	iommu_device_link(&smmu->iommu, dev);
--
- 	device_link_add(dev, smmu->dev,
- 			DL_FLAG_PM_RUNTIME | DL_FLAG_AUTOREMOVE_SUPPLIER);
- 
--	return 0;
-+	return &smmu->iommu;
- 
- out_cfg_free:
- 	kfree(cfg);
- out_free:
- 	iommu_fwspec_free(dev);
--	return ret;
-+	return ERR_PTR(ret);
++	mutex_unlock(&master_data->rpm_lock);
++
+ 	return 0;
  }
  
--static void arm_smmu_remove_device(struct device *dev)
-+static void arm_smmu_release_device(struct device *dev)
+@@ -834,21 +840,21 @@ static void exynos_iommu_domain_free(struct iommu_domain *iommu_domain)
+ 	kfree(domain);
+ }
+ 
+-static void exynos_iommu_detach_device(struct iommu_domain *iommu_domain,
+-				    struct device *dev)
++static void __exynos_iommu_detach_device(struct exynos_iommu_domain *domain,
++					 struct device *dev)
  {
- 	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
- 	struct arm_smmu_master_cfg *cfg;
-@@ -1475,13 +1463,11 @@ static void arm_smmu_remove_device(struct device *dev)
- 	if (ret < 0)
+-	struct exynos_iommu_owner *owner = dev->archdata.iommu;
+-	struct exynos_iommu_domain *domain = to_exynos_domain(iommu_domain);
+ 	phys_addr_t pagetable = virt_to_phys(domain->pgtable);
+-	struct sysmmu_drvdata *data, *next;
++	struct sysmmu_drvdata *dev_data, *data, *next;
+ 	unsigned long flags;
+ 
+-	if (!has_sysmmu(dev) || owner->domain != iommu_domain)
++	dev_data = dev->archdata.iommu;
++
++	if (!has_sysmmu(dev) || dev_data->domain != domain)
  		return;
  
--	iommu_device_unlink(&smmu->iommu, dev);
- 	arm_smmu_master_free_smes(cfg, fwspec);
+-	mutex_lock(&owner->rpm_lock);
++	mutex_lock(&dev_data->rpm_lock);
  
- 	arm_smmu_rpm_put(smmu);
+-	list_for_each_entry(data, &owner->controllers, owner_node) {
++	for_each_sysmmu(dev, data) {
+ 		pm_runtime_get_noresume(data->sysmmu);
+ 		if (pm_runtime_active(data->sysmmu))
+ 			__sysmmu_disable(data);
+@@ -863,51 +869,59 @@ static void exynos_iommu_detach_device(struct iommu_domain *iommu_domain,
+ 		list_del_init(&data->domain_node);
+ 		spin_unlock(&data->lock);
+ 	}
+-	owner->domain = NULL;
+ 	spin_unlock_irqrestore(&domain->lock, flags);
  
- 	dev_iommu_priv_set(dev, NULL);
--	iommu_group_remove_device(dev);
- 	kfree(cfg);
- 	iommu_fwspec_free(dev);
+-	mutex_unlock(&owner->rpm_lock);
++	mutex_unlock(&dev_data->rpm_lock);
+ 
+ 	dev_dbg(dev, "%s: Detached IOMMU with pgtable %pa\n", __func__,
+ 		&pagetable);
  }
-@@ -1512,6 +1498,11 @@ static struct iommu_group *arm_smmu_device_group(struct device *dev)
- 	else
- 		group = generic_device_group(dev);
  
-+	/* Remember group for faster lookups */
-+	if (!IS_ERR(group))
-+		for_each_cfg_sme(cfg, fwspec, i, idx)
-+			smmu->s2crs[idx].group = group;
++static void exynos_iommu_detach_device(struct iommu_domain *iommu_domain,
++				       struct device *dev)
++{
++	struct exynos_iommu_domain *domain = to_exynos_domain(iommu_domain);
 +
- 	return group;
++	__exynos_iommu_detach_device(domain, dev);
++}
++
+ static int exynos_iommu_attach_device(struct iommu_domain *iommu_domain,
+ 				   struct device *dev)
+ {
+-	struct exynos_iommu_owner *owner = dev->archdata.iommu;
+ 	struct exynos_iommu_domain *domain = to_exynos_domain(iommu_domain);
+-	struct sysmmu_drvdata *data;
++	struct sysmmu_drvdata *dev_data, *data;
+ 	phys_addr_t pagetable = virt_to_phys(domain->pgtable);
+ 	unsigned long flags;
+ 
+ 	if (!has_sysmmu(dev))
+ 		return -ENODEV;
+ 
+-	if (owner->domain)
+-		exynos_iommu_detach_device(owner->domain, dev);
++	dev_data = dev->archdata.iommu;
+ 
+-	mutex_lock(&owner->rpm_lock);
++	if (dev_data->domain)
++		__exynos_iommu_detach_device(dev_data->domain, dev);
++
++	mutex_lock(&dev_data->rpm_lock);
+ 
+ 	spin_lock_irqsave(&domain->lock, flags);
+-	list_for_each_entry(data, &owner->controllers, owner_node) {
++	for_each_sysmmu(dev, data) {
+ 		spin_lock(&data->lock);
+ 		data->pgtable = pagetable;
+ 		data->domain = domain;
+ 		list_add_tail(&data->domain_node, &domain->clients);
+ 		spin_unlock(&data->lock);
+ 	}
+-	owner->domain = iommu_domain;
+ 	spin_unlock_irqrestore(&domain->lock, flags);
+ 
+-	list_for_each_entry(data, &owner->controllers, owner_node) {
++
++	for_each_sysmmu(dev, data) {
+ 		pm_runtime_get_noresume(data->sysmmu);
+ 		if (pm_runtime_active(data->sysmmu))
+ 			__sysmmu_enable(data);
+ 		pm_runtime_put(data->sysmmu);
+ 	}
+ 
+-	mutex_unlock(&owner->rpm_lock);
++	mutex_unlock(&dev_data->rpm_lock);
+ 
+ 	dev_dbg(dev, "%s: Attached IOMMU with pgtable %pa\n", __func__,
+ 		&pagetable);
+@@ -1237,7 +1251,6 @@ static phys_addr_t exynos_iommu_iova_to_phys(struct iommu_domain *iommu_domain,
+ 
+ static int exynos_iommu_add_device(struct device *dev)
+ {
+-	struct exynos_iommu_owner *owner = dev->archdata.iommu;
+ 	struct sysmmu_drvdata *data;
+ 	struct iommu_group *group;
+ 
+@@ -1249,7 +1262,7 @@ static int exynos_iommu_add_device(struct device *dev)
+ 	if (IS_ERR(group))
+ 		return PTR_ERR(group);
+ 
+-	list_for_each_entry(data, &owner->controllers, owner_node) {
++	for_each_sysmmu(dev, data) {
+ 		/*
+ 		 * SYSMMU will be runtime activated via device link
+ 		 * (dependency) to its master device, so there are no
+@@ -1261,37 +1274,39 @@ static int exynos_iommu_add_device(struct device *dev)
+ 	}
+ 	iommu_group_put(group);
+ 
++	data = dev->archdata.iommu;
++	iommu_device_link(&data->iommu, dev);
++
+ 	return 0;
  }
  
-@@ -1628,8 +1619,8 @@ static struct iommu_ops arm_smmu_ops = {
- 	.flush_iotlb_all	= arm_smmu_flush_iotlb_all,
- 	.iotlb_sync		= arm_smmu_iotlb_sync,
- 	.iova_to_phys		= arm_smmu_iova_to_phys,
--	.add_device		= arm_smmu_add_device,
--	.remove_device		= arm_smmu_remove_device,
-+	.probe_device		= arm_smmu_probe_device,
-+	.release_device		= arm_smmu_release_device,
- 	.device_group		= arm_smmu_device_group,
- 	.domain_get_attr	= arm_smmu_domain_get_attr,
- 	.domain_set_attr	= arm_smmu_domain_set_attr,
+ static void exynos_iommu_remove_device(struct device *dev)
+ {
+-	struct exynos_iommu_owner *owner = dev->archdata.iommu;
+-	struct sysmmu_drvdata *data;
++	struct sysmmu_drvdata *data = dev->archdata.iommu;
+ 
+ 	if (!has_sysmmu(dev))
+ 		return;
+ 
+-	if (owner->domain) {
++	if (data->domain) {
+ 		struct iommu_group *group = iommu_group_get(dev);
+ 
+ 		if (group) {
+-			WARN_ON(owner->domain !=
++			WARN_ON(&data->domain->domain !=
+ 				iommu_group_default_domain(group));
+-			exynos_iommu_detach_device(owner->domain, dev);
++			__exynos_iommu_detach_device(data->domain, dev);
+ 			iommu_group_put(group);
+ 		}
+ 	}
++	iommu_device_unlink(&data->iommu, dev);
+ 	iommu_group_remove_device(dev);
+ 
+-	list_for_each_entry(data, &owner->controllers, owner_node)
++	for_each_sysmmu(dev, data)
+ 		device_link_del(data->link);
+ }
+ 
+ static int exynos_iommu_of_xlate(struct device *dev,
+ 				 struct of_phandle_args *spec)
+ {
+-	struct exynos_iommu_owner *owner = dev->archdata.iommu;
+ 	struct platform_device *sysmmu = of_find_device_by_node(spec->np);
+ 	struct sysmmu_drvdata *data, *entry;
+ 
+@@ -1302,22 +1317,28 @@ static int exynos_iommu_of_xlate(struct device *dev,
+ 	if (!data)
+ 		return -ENODEV;
+ 
+-	if (!owner) {
+-		owner = kzalloc(sizeof(*owner), GFP_KERNEL);
+-		if (!owner)
+-			return -ENOMEM;
++	data->master = dev;
+ 
+-		INIT_LIST_HEAD(&owner->controllers);
+-		mutex_init(&owner->rpm_lock);
+-		dev->archdata.iommu = owner;
++	if (!dev->archdata.iommu) {
++		WARN_ON(data->next != NULL);
++
++		/* SYSMMU list is empty - add drvdata and return */
++		data->next = ERR_PTR(-ENODEV);
++		dev->archdata.iommu = data;
++
++		return 0;
+ 	}
+ 
+-	list_for_each_entry(entry, &owner->controllers, owner_node)
++	/* Check if SYSMMU is already in the list */
++	for_each_sysmmu(dev, entry)
+ 		if (entry == data)
+ 			return 0;
+ 
+-	list_add_tail(&data->owner_node, &owner->controllers);
+-	data->master = dev;
++	/* Not in the list yet */
++	WARN_ON(data->next != NULL);
++	entry = dev->archdata.iommu;
++	data->next  = entry->next;
++	entry->next = data;
+ 
+ 	return 0;
+ }
 -- 
 2.25.1
 
