@@ -1,387 +1,266 @@
-Return-Path: <SRS0=y4wE=52=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=syLe=53=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB7BC2BB55
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Apr 2020 10:39:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3299C352BE
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 11 Apr 2020 12:34:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F78A20673
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 10 Apr 2020 10:39:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 765C720CC7
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 11 Apr 2020 12:34:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kSCLQRnH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OlXurp1n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726181AbgDJKjo (ORCPT
+        id S1726188AbgDKMd5 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 10 Apr 2020 06:39:44 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:40681 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725991AbgDJKjo (ORCPT
+        Sat, 11 Apr 2020 08:33:57 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37452 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726162AbgDKMd5 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 10 Apr 2020 06:39:44 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200410103942euoutp0203fb93058b909e22daee3989dc7e9106~EbycAD4a41261912619euoutp02z
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Apr 2020 10:39:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200410103942euoutp0203fb93058b909e22daee3989dc7e9106~EbycAD4a41261912619euoutp02z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1586515182;
-        bh=thvDiT/eQi5V7MIlmJv3g6iQX+aqMmt4n/u9ZPubS4c=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=kSCLQRnHWPBQrv24Sn/+HMp/SYedN033MzBFLllbmXUDVpcypOwoOhDnPoMblx7dB
-         X/I3Hnj+8MLNrk9g9mBrXLBocZns2qp8JMTPJa8UfK6DyFHkPYEZ7nsBZ0ZNjiYTq0
-         LxyQdgBYfhbkc00NFompivbyGmb3VxiHUmN06h1Q=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200410103940eucas1p1d1dab09988aaf6dca4cb656f4f51a88e~EbybAcSSv1417814178eucas1p1J;
-        Fri, 10 Apr 2020 10:39:40 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 57.5D.60698.CEC409E5; Fri, 10
-        Apr 2020 11:39:40 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200410103940eucas1p19192e0681adebd0f5fa447146af93c09~EbyafAxHX3201932019eucas1p10;
-        Fri, 10 Apr 2020 10:39:40 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200410103940eusmtrp2e107babbe90369aaa7156b0ba01f2c38~EbyaeDJzm1000210002eusmtrp2I;
-        Fri, 10 Apr 2020 10:39:40 +0000 (GMT)
-X-AuditID: cbfec7f5-a29ff7000001ed1a-ea-5e904cec0dfd
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 34.23.08375.CEC409E5; Fri, 10
-        Apr 2020 11:39:40 +0100 (BST)
-Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200410103939eusmtip1661ef8561a6aa99d569da66438857c18~EbyZRbR__2130221302eusmtip1D;
-        Fri, 10 Apr 2020 10:39:39 +0000 (GMT)
-Subject: Re: [RFC PATCH 33/34] iommu: Remove add_device()/remove_device()
- code-paths
-To:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Joerg Roedel <jroedel@suse.de>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <1a88547f-ac90-825e-e529-a56c2c4e0391@samsung.com>
-Date:   Fri, 10 Apr 2020 12:39:38 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.7.0
-MIME-Version: 1.0
-In-Reply-To: <20200407183742.4344-34-joro@8bytes.org>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTcRjtt9/d3XU0u83KD4uKRUFFpizhBwupKLpQfxj0hqyVN4t81Ka9
-        obFZqKXOZKm3Wlsvyx6aq0wJbVqJSmoaskQz08pyaj6i1MqcV8v/zjnfOXzng4/Bylzaj9kf
-        FcProrQRKlpOPX45ULXEvd4cGpCTH0SqWoco4kh9RJPK4i6KpN5Ow6TA3U6T4Q8dUmIr1hDD
-        nRopiROuUiThYq6MpFVclpCU1g5MqqtHaGrxKxmpK7xEkzrTa0R63w9jYrabMMmoLpKQhH6B
-        JsY4Nfls/4mJ81ublAwUWimS9cpKk7jGoBV+XJvTKuHuWu8izvmhhOYKhCYZ57i1iMvLTqC5
-        xvqnNGct38A5rp/i0lxZiEsyddFcfr0Vc47KE1xf3uwQ7+3y5WF8xP7DvG5p8C75vm8Nvfig
-        TXP0t+s0MqBC/0TkxQC7DOyWIWkikjNK9haChB6jRCT9CIrSW8YmfQgaPw+h8UjF2wtIHGQh
-        MGdnjkW6EViEGtrj8mE3g7nVNeqaxv6gwPbiEfYQzLokcLM7T+Zx0WwgJHYmjiYUbDBkNn8c
-        MTEMxc6HJNMKD5zO7oD0+o2iYyqUZ7ZRHtmLDYKO95RHxuwcyO+8hEXsCw1tV0b7AOtmwNlj
-        lIqtV8P1P6WUiH3ga9lDmYhnwXDBeMCEoKXqnkwk5xDUGTPGbtZAY9Ug7dmM2YWQU7hUlFfC
-        +Rb7aCFgvcHVOVUs4Q3nH6djUVZA/Bml6F4AQtn9f2udNbXYjFTChMuECecIE84R/u+1ISob
-        +fKx+shwXq+O4o/467WR+tiocP890ZF5aOSPK/+UfX+Cin7tLkEsg1STFfGSlFClVHtYfyyy
-        BAGDVdMU64xJoUpFmPbYcV4XvVMXG8HrS9BMhlL5KtRXv+xQsuHaGP4Azx/kdeNTCePlZ0Db
-        ZvgsLvWqtiQfHd71ybaGP9M8sLF9uazUZfnY9E713DnXp72nIuak2iTETDlr3vR666QAi3xV
-        WPxWe3nYpJTaT5NvP7M942y+xr0GQ78mMEjHyN7UHXogj84ouhHgSO8dDJmnHlzgnrK4b21z
-        /IN26Ra7u1aq7DpwWbO2pyX59zUVpd+nDVyEdXrtX2r/zjjDAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTYRjG+3bOjkdrcZqaH2YXBv2R1Ow45z7LTCLoRBGaUJDpnHpQyW2y
-        s3UlWqmRE3OysFq1lilesrKN8kqyQRddZprJiqTljAq1e9DoYtMV7L/n5Xl+78sLD4kJHfxo
-        skilZTUqRbGICMNdfx6MrZnabsxe21weiR57f+LIXnObQK7eDziqaTZhqHPqHYFmxif5yNq7
-        HumvPeGjMnMdjioutIUgU/8lHqr2TmJocNA/1vQOhKCnXRcJ9LR0CKAvnhkMGa+UYujc4F0e
-        qvhmJtCJMgl6e+UHhhyfJvjI12XBUeOAhUBlL6Wp0cyEw8JjWi2tgHGMOwmm0zwWwtibYhlb
-        SwXBvBztIRhLXzpjrz/GmNyNgKkq/UAw7aMWjLG7jjBfbcvSFu4RJ2vUOi27olDNaTeIMmkU
-        L6aTkDg+IUlMS2RZ6+KloriU5Hy2uGg/q4lLyREXfnrxBSuxrj/4210O9KBLbAChJKQSYP/z
-        WmAAYaSQagDwwkcbL2DEwL5aPT+gw+GvUQMRCE0DaHg0gc8a4dQuaPS65+gI6icO693dxKyB
-        UW4evNe4OEDYALz6vGKOICgaGqYNcyEBlQLPv3qDGQBJ4tRKWFWaOisjqSxYNrQqkFgE+87P
-        3iLJUEoKJz14YHsitNhfYwG9HLZPX/yno+CLics8IxCag2hzEGIOQsxBiBXgLSCC1XHKAiVH
-        izmFktOpCsR5aqUN+Otz577P3gGGb2U4AUUC0QLB2nnV2UK+Yj93SOkEkMREEYJtJ6qyhYJ8
-        xaHDrEYt1+iKWc4JpP7ParDoyDy1v4wqrZyW0jKURMskMkkiEkUJTlGOvUKqQKFl97FsCav5
-        z/HI0Gg9qE5THGh7OONTmeWflw5KC1VncjZddzfdLMm2vz9Zb/MlblQuyR1uO+n53uE4Wq9f
-        kL56pHaTq7KoPyO8Af2qs9uKz/Yk9t3Y1i1/sFtobNv4FjelTFU+03u2do+fzk/bMpJbNSTf
-        kdkTY5gnSUgu2tmw2bpqRHPcd8A53zuW5eJEOFeooGMxDaf4C7eSUfRUAwAA
-X-CMS-MailID: 20200410103940eucas1p19192e0681adebd0f5fa447146af93c09
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200407183806eucas1p2cf45fbce5a43a6b4fe3a623b28da0606
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200407183806eucas1p2cf45fbce5a43a6b4fe3a623b28da0606
-References: <20200407183742.4344-1-joro@8bytes.org>
-        <CGME20200407183806eucas1p2cf45fbce5a43a6b4fe3a623b28da0606@eucas1p2.samsung.com>
-        <20200407183742.4344-34-joro@8bytes.org>
+        Sat, 11 Apr 2020 08:33:57 -0400
+Received: by mail-pg1-f196.google.com with SMTP id r4so2178498pgg.4;
+        Sat, 11 Apr 2020 05:33:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=gnw6hlk+JnnAj87CuNrSUZ8DpMu9l57IOqgjCT7NThc=;
+        b=OlXurp1nngb6HV4qIscQm7g3d0p0GHvxpPFx5XmNz6FphwmcqtVOvbJBJaUTQHE1Lf
+         aSAVsCp0taW7akeQXksXaqdHBo8w73aR4UboLqylyMevhhxVawvgdiZQrKaY1BoxcUeD
+         93QgubJL/IMPalI3IM80fbK/kP9GyN5BSNtO1MhIQzusYDtkYeVj2o9+kAFMvIMWi3mP
+         eUME8ICdRmwHesJo9jjaNpB8CosoVSRJeZSHo94RMzCjDmeO9o6YFEcnd3jjiDysWpiv
+         GbvEoOA6G/2BZBkE4KXzpM1fngOgiVQK5Uwg5fP/7+e1FVwq/TFFJQpUc9QuZukSevpq
+         22lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=gnw6hlk+JnnAj87CuNrSUZ8DpMu9l57IOqgjCT7NThc=;
+        b=Q9rUBoL09iEa3ln1me4Lu/sIoszd3q4jxsv78Z9cT6u42vBaEjckM3DuKAvErDXIl7
+         TxxBZ83RAfYa6tegDZBrhSs7eH+17SQsqRSOIkuM4FbuCluL0SryI96ZwJDTmXBAk1YN
+         kDf0l+bkeaya3ZnN5VRinKylg+YT5lPvPSAhPGSJ/mIovc88nD5X4nBVXotg82z+uUmg
+         jHXwbx6aFDRZ6Haye/8H25f5omN0o74mk8AlbnXL8dnCqlxD9/N4Q4I9mtBsCecdPBCO
+         t1W1h67TLb7vTYAG1t+z4+5fJd1A3CsQpFacn4v7C4D2PMH9jdZhI65h+zUh2MwWm/V7
+         ELyA==
+X-Gm-Message-State: AGi0PubP2IWnwtbIrQ2Sgmaq7/+WxnlywOP5gQJ7IBWZM6Lq1wfd0Nn/
+        O425v+qg53futdHRxBDj77M=
+X-Google-Smtp-Source: APiQypK2cswsg3hnhBKAvsRfSomdnFscjCEBqO7552MoYZ5KejiCel1V/HmXMy8r6dIYqIUL8aAtmQ==
+X-Received: by 2002:a65:6449:: with SMTP id s9mr8439430pgv.97.1586608435226;
+        Sat, 11 Apr 2020 05:33:55 -0700 (PDT)
+Received: from localhost.localdomain ([211.243.117.64])
+        by smtp.gmail.com with ESMTPSA id g2sm4117641pfh.193.2020.04.11.05.33.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 Apr 2020 05:33:54 -0700 (PDT)
+From:   Hyunki Koo <hyunki00.koo@gmail.com>
+To:     gregkh@linuxfoundation.org, robh+dt@kernel.org, krzk@kernel.org
+Cc:     Hyunki Koo <hyunki00.koo@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, Jiri Slaby <jslaby@suse.com>,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v7 2/2] Support 32-bit access for the TX/RX hold registers UTXH and URXH.
+Date:   Sat, 11 Apr 2020 21:33:24 +0900
+Message-Id: <20200411123325.30501-1-hyunki00.koo@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Joerg
+From: Hyunki Koo <hyunki00.koo@samsung.com>
 
-On 07.04.2020 20:37, Joerg Roedel wrote:
-> From: Joerg Roedel <jroedel@suse.de>
->
-> All drivers are converted to use the probe/release_device()
-> call-backs, so the add_device/remove_device() pointers are unused and
-> the code using them can be removed.
->
-> Signed-off-by: Joerg Roedel <jroedel@suse.de>
-> ---
->   drivers/iommu/iommu.c | 145 ++++++++----------------------------------
->   include/linux/iommu.h |   4 --
->   2 files changed, 27 insertions(+), 122 deletions(-)
->
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index cf25c1e48830..d9032f9d597c 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -220,7 +220,7 @@ static int __iommu_probe_device(struct device *dev, struct list_head *group_list
->   	return ret;
->   }
->   
-> -static int __iommu_probe_device_helper(struct device *dev)
-> +int iommu_probe_device(struct device *dev)
->   {
->   	const struct iommu_ops *ops = dev->bus->iommu_ops;
->   	struct iommu_group *group;
-> @@ -264,70 +264,17 @@ static int __iommu_probe_device_helper(struct device *dev)
->   
->   }
->   
-> -int iommu_probe_device(struct device *dev)
-> +void iommu_release_device(struct device *dev)
->   {
->   	const struct iommu_ops *ops = dev->bus->iommu_ops;
-> -	struct iommu_group *group;
-> -	int ret;
-> -
-> -	WARN_ON(dev->iommu_group);
-> -
-> -	if (!ops)
-> -		return -EINVAL;
-> -
-> -	if (!dev_iommu_get(dev))
-> -		return -ENOMEM;
-> -
-> -	if (!try_module_get(ops->owner)) {
-> -		ret = -EINVAL;
-> -		goto err_free_dev_param;
-> -	}
-> -
-> -	if (ops->probe_device)
-> -		return __iommu_probe_device_helper(dev);
-> -
-> -	ret = ops->add_device(dev);
-> -	if (ret)
-> -		goto err_module_put;
->   
-> -	group = iommu_group_get(dev);
-> -	iommu_create_device_direct_mappings(group, dev);
-> -	iommu_group_put(group);
-> -
-> -	if (ops->probe_finalize)
-> -		ops->probe_finalize(dev);
-> -
-> -	return 0;
-> -
-> -err_module_put:
-> -	module_put(ops->owner);
-> -err_free_dev_param:
-> -	dev_iommu_free(dev);
-> -	return ret;
-> -}
-> -
-> -static void __iommu_release_device(struct device *dev)
-> -{
-> -	const struct iommu_ops *ops = dev->bus->iommu_ops;
-> +	if (!dev->iommu)
-> +		return;
->   
->   	iommu_device_unlink(dev->iommu->iommu_dev, dev);
-> -
->   	iommu_group_remove_device(dev);
->   
->   	ops->release_device(dev);
-> -}
-> -
-> -void iommu_release_device(struct device *dev)
-> -{
-> -	const struct iommu_ops *ops = dev->bus->iommu_ops;
-> -
-> -	if (!dev->iommu)
-> -		return;
-> -
-> -	if (ops->release_device)
-> -		__iommu_release_device(dev);
-> -	else if (dev->iommu_group)
-> -		ops->remove_device(dev);
->   
->   	module_put(ops->owner);
->   	dev_iommu_free(dev);
-> @@ -1560,23 +1507,6 @@ struct iommu_group *iommu_group_get_for_dev(struct device *dev)
->   	if (ret)
->   		goto out_put_group;
->   
-> -	/*
-> -	 * Try to allocate a default domain - needs support from the
-> -	 * IOMMU driver. There are still some drivers which don't support
-> -	 * default domains, so the return value is not yet checked. Only
-> -	 * allocate the domain here when the driver still has the
-> -	 * add_device/remove_device call-backs implemented.
-> -	 */
-> -	if (!ops->probe_device) {
-> -		iommu_alloc_default_domain(dev);
-> -
-> -		if (group->default_domain)
-> -			ret = __iommu_attach_device(group->default_domain, dev);
-> -
-> -		if (ret)
-> -			goto out_put_group;
-> -	}
-> -
->   	return group;
->   
->   out_put_group:
-> @@ -1591,21 +1521,6 @@ struct iommu_domain *iommu_group_default_domain(struct iommu_group *group)
->   	return group->default_domain;
->   }
->   
-> -static int add_iommu_group(struct device *dev, void *data)
-> -{
-> -	int ret = iommu_probe_device(dev);
-> -
-> -	/*
-> -	 * We ignore -ENODEV errors for now, as they just mean that the
-> -	 * device is not translated by an IOMMU. We still care about
-> -	 * other errors and fail to initialize when they happen.
-> -	 */
-> -	if (ret == -ENODEV)
-> -		ret = 0;
-> -
-> -	return ret;
-> -}
-> -
->   static int probe_iommu_group(struct device *dev, void *data)
->   {
->   	const struct iommu_ops *ops = dev->bus->iommu_ops;
-> @@ -1789,45 +1704,39 @@ static int iommu_group_create_direct_mappings(struct iommu_group *group)
->   
->   int bus_iommu_probe(struct bus_type *bus)
->   {
-> -	const struct iommu_ops *ops = bus->iommu_ops;
-> +	struct iommu_group *group, *next;
-> +	LIST_HEAD(group_list);
->   	int ret;
->   
-> -	if (ops->probe_device) {
-> -		struct iommu_group *group, *next;
-> -		LIST_HEAD(group_list);
-> -
-> -		/*
-> -		 * This code-path does not allocate the default domain when
-> -		 * creating the iommu group, so do it after the groups are
-> -		 * created.
-> -		 */
-> -		ret = bus_for_each_dev(bus, NULL, &group_list, probe_iommu_group);
-> -		if (ret)
-> -			return ret;
-> +	/*
-> +	 * This code-path does not allocate the default domain when
-> +	 * creating the iommu group, so do it after the groups are
-> +	 * created.
-> +	 */
-> +	ret = bus_for_each_dev(bus, NULL, &group_list, probe_iommu_group);
-> +	if (ret)
-> +		return ret;
->   
-> -		list_for_each_entry_safe(group, next, &group_list, entry) {
-> -			/* Remove item from the list */
-> -			list_del_init(&group->entry);
-> +	list_for_each_entry_safe(group, next, &group_list, entry) {
-> +		/* Remove item from the list */
-> +		list_del_init(&group->entry);
->   
-> -			mutex_lock(&group->mutex);
-> +		mutex_lock(&group->mutex);
->   
-> -			/* Try to allocate default domain */
-> -			probe_alloc_default_domain(bus, group);
-> +		/* Try to allocate default domain */
-> +		probe_alloc_default_domain(bus, group);
->   
-> -			if (!group->default_domain)
-> -				continue;
-> +		if (!group->default_domain)
-> +			continue;
+This is required for some newer SoCs.
 
-It doesn't look straight from the above diff, but this continue leaks 
-group->lock taken.
+Signed-off-by: Hyunki Koo <hyunki00.koo@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Tested on Odroid HC1 (Exynos5422):
+Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+v2: 
+line 954 : change rd_regl to rd_reg in for backward compatibility.
+line 2031: Add init value for ourport->port.iotype  to UPIO_MEM 
+v3:
+line 2031: remove redundant init value  for ourport->port.iotype 
+v4:
+correct variable types and change misleading function name
+v5:
+add dt-binding and go as first patch in this series.
+v6:
+no change in this patch, only chaged in [PATCH v6 1/2]
+v7:
+add reviewed by and tested by
+---
+ drivers/tty/serial/samsung_tty.c | 76 +++++++++++++++++++++++++++-----
+ 1 file changed, 64 insertions(+), 12 deletions(-)
 
->   
-> -			iommu_group_create_direct_mappings(group);
-> +		iommu_group_create_direct_mappings(group);
->   
-> -			ret = __iommu_group_dma_attach(group);
-> +		ret = __iommu_group_dma_attach(group);
->   
-> -			mutex_unlock(&group->mutex);
-> +		mutex_unlock(&group->mutex);
->   
-> -			if (ret)
-> -				break;
-> -		}
-> -	} else {
-> -		ret = bus_for_each_dev(bus, NULL, NULL, add_iommu_group);
-> +		if (ret)
-> +			break;
->   	}
->   
->   	return ret;
-> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> index fea1622408ad..dd076366383f 100644
-> --- a/include/linux/iommu.h
-> +++ b/include/linux/iommu.h
-> @@ -223,8 +223,6 @@ struct iommu_iotlb_gather {
->    * @iotlb_sync: Flush all queued ranges from the hardware TLBs and empty flush
->    *            queue
->    * @iova_to_phys: translate iova to physical address
-> - * @add_device: add device to iommu grouping
-> - * @remove_device: remove device from iommu grouping
->    * @probe_device: Add device to iommu driver handling
->    * @release_device: Remove device from iommu driver handling
->    * @probe_finalize: Do final setup work after the device is added to an IOMMU
-> @@ -277,8 +275,6 @@ struct iommu_ops {
->   	void (*iotlb_sync)(struct iommu_domain *domain,
->   			   struct iommu_iotlb_gather *iotlb_gather);
->   	phys_addr_t (*iova_to_phys)(struct iommu_domain *domain, dma_addr_t iova);
-> -	int (*add_device)(struct device *dev);
-> -	void (*remove_device)(struct device *dev);
->   	struct iommu_device *(*probe_device)(struct device *dev);
->   	void (*release_device)(struct device *dev);
->   	void (*probe_finalize)(struct device *dev);
-
-Best regards
+diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+index 73f951d65b93..bdf1d4d12cb1 100644
+--- a/drivers/tty/serial/samsung_tty.c
++++ b/drivers/tty/serial/samsung_tty.c
+@@ -154,12 +154,47 @@ struct s3c24xx_uart_port {
+ #define portaddrl(port, reg) \
+ 	((unsigned long *)(unsigned long)((port)->membase + (reg)))
+ 
+-#define rd_regb(port, reg) (readb_relaxed(portaddr(port, reg)))
++static u32 rd_reg(struct uart_port *port, u32 reg)
++{
++	switch (port->iotype) {
++	case UPIO_MEM:
++		return readb_relaxed(portaddr(port, reg));
++	case UPIO_MEM32:
++		return readl_relaxed(portaddr(port, reg));
++	default:
++		return 0;
++	}
++	return 0;
++}
++
+ #define rd_regl(port, reg) (readl_relaxed(portaddr(port, reg)))
+ 
+-#define wr_regb(port, reg, val) writeb_relaxed(val, portaddr(port, reg))
++static void wr_reg(struct uart_port *port, u32 reg, u32 val)
++{
++	switch (port->iotype) {
++	case UPIO_MEM:
++		writeb_relaxed(val, portaddr(port, reg));
++		break;
++	case UPIO_MEM32:
++		writel_relaxed(val, portaddr(port, reg));
++		break;
++	}
++}
++
+ #define wr_regl(port, reg, val) writel_relaxed(val, portaddr(port, reg))
+ 
++static void wr_reg_barrier(struct uart_port *port, u32 reg, u32 val)
++{
++	switch (port->iotype) {
++	case UPIO_MEM:
++		writeb(val, portaddr(port, reg));
++		break;
++	case UPIO_MEM32:
++		writel(val, portaddr(port, reg));
++		break;
++	}
++}
++
+ /* Byte-order aware bit setting/clearing functions. */
+ 
+ static inline void s3c24xx_set_bit(struct uart_port *port, int idx,
+@@ -714,7 +749,7 @@ static void s3c24xx_serial_rx_drain_fifo(struct s3c24xx_uart_port *ourport)
+ 		fifocnt--;
+ 
+ 		uerstat = rd_regl(port, S3C2410_UERSTAT);
+-		ch = rd_regb(port, S3C2410_URXH);
++		ch = rd_reg(port, S3C2410_URXH);
+ 
+ 		if (port->flags & UPF_CONS_FLOW) {
+ 			int txe = s3c24xx_serial_txempty_nofifo(port);
+@@ -826,7 +861,7 @@ static irqreturn_t s3c24xx_serial_tx_chars(int irq, void *id)
+ 	}
+ 
+ 	if (port->x_char) {
+-		wr_regb(port, S3C2410_UTXH, port->x_char);
++		wr_reg(port, S3C2410_UTXH, port->x_char);
+ 		port->icount.tx++;
+ 		port->x_char = 0;
+ 		goto out;
+@@ -852,7 +887,7 @@ static irqreturn_t s3c24xx_serial_tx_chars(int irq, void *id)
+ 		if (rd_regl(port, S3C2410_UFSTAT) & ourport->info->tx_fifofull)
+ 			break;
+ 
+-		wr_regb(port, S3C2410_UTXH, xmit->buf[xmit->tail]);
++		wr_reg(port, S3C2410_UTXH, xmit->buf[xmit->tail]);
+ 		xmit->tail = (xmit->tail + 1) & (UART_XMIT_SIZE - 1);
+ 		port->icount.tx++;
+ 		count--;
+@@ -916,7 +951,7 @@ static unsigned int s3c24xx_serial_tx_empty(struct uart_port *port)
+ /* no modem control lines */
+ static unsigned int s3c24xx_serial_get_mctrl(struct uart_port *port)
+ {
+-	unsigned int umstat = rd_regb(port, S3C2410_UMSTAT);
++	unsigned int umstat = rd_reg(port, S3C2410_UMSTAT);
+ 
+ 	if (umstat & S3C2410_UMSTAT_CTS)
+ 		return TIOCM_CAR | TIOCM_DSR | TIOCM_CTS;
+@@ -1974,7 +2009,7 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct s3c24xx_uart_port *ourport;
+ 	int index = probe_index;
+-	int ret;
++	int ret, prop = 0;
+ 
+ 	if (np) {
+ 		ret = of_alias_get_id(np, "serial");
+@@ -2000,10 +2035,27 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
+ 			dev_get_platdata(&pdev->dev) :
+ 			ourport->drv_data->def_cfg;
+ 
+-	if (np)
++	if (np) {
+ 		of_property_read_u32(np,
+ 			"samsung,uart-fifosize", &ourport->port.fifosize);
+ 
++		if (of_property_read_u32(np, "reg-io-width", &prop) == 0) {
++			switch (prop) {
++			case 1:
++				ourport->port.iotype = UPIO_MEM;
++				break;
++			case 4:
++				ourport->port.iotype = UPIO_MEM32;
++				break;
++			default:
++				dev_warn(&pdev->dev, "unsupported reg-io-width (%d)\n",
++						prop);
++				ret = -EINVAL;
++				break;
++			}
++		}
++	}
++
+ 	if (ourport->drv_data->fifosize[index])
+ 		ourport->port.fifosize = ourport->drv_data->fifosize[index];
+ 	else if (ourport->info->fifosize)
+@@ -2185,7 +2237,7 @@ static int s3c24xx_serial_get_poll_char(struct uart_port *port)
+ 	if (s3c24xx_serial_rx_fifocnt(ourport, ufstat) == 0)
+ 		return NO_POLL_CHAR;
+ 
+-	return rd_regb(port, S3C2410_URXH);
++	return rd_reg(port, S3C2410_URXH);
+ }
+ 
+ static void s3c24xx_serial_put_poll_char(struct uart_port *port,
+@@ -2200,7 +2252,7 @@ static void s3c24xx_serial_put_poll_char(struct uart_port *port,
+ 
+ 	while (!s3c24xx_serial_console_txrdy(port, ufcon))
+ 		cpu_relax();
+-	wr_regb(port, S3C2410_UTXH, c);
++	wr_reg(port, S3C2410_UTXH, c);
+ }
+ 
+ #endif /* CONFIG_CONSOLE_POLL */
+@@ -2212,7 +2264,7 @@ s3c24xx_serial_console_putchar(struct uart_port *port, int ch)
+ 
+ 	while (!s3c24xx_serial_console_txrdy(port, ufcon))
+ 		cpu_relax();
+-	wr_regb(port, S3C2410_UTXH, ch);
++	wr_reg(port, S3C2410_UTXH, ch);
+ }
+ 
+ static void
+@@ -2612,7 +2664,7 @@ static void samsung_early_putc(struct uart_port *port, int c)
+ 	else
+ 		samsung_early_busyuart(port);
+ 
+-	writeb(c, port->membase + S3C2410_UTXH);
++	wr_reg_barrier(port, S3C2410_UTXH, c);
+ }
+ 
+ static void samsung_early_write(struct console *con, const char *s,
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.17.1
 
