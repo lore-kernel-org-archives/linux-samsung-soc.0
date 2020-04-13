@@ -2,147 +2,436 @@ Return-Path: <SRS0=7GIH=55=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45573C2BB86
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Apr 2020 10:49:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD00DC352BE
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Apr 2020 13:36:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2564A20692
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Apr 2020 10:49:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="ChXLd26k";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="szvMWsA7"
+	by mail.kernel.org (Postfix) with ESMTP id A2ACF2075E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Apr 2020 13:36:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728263AbgDMKtU (ORCPT
+        id S1730050AbgDMNgn (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 13 Apr 2020 06:49:20 -0400
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:2842 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728011AbgDMKtT (ORCPT
+        Mon, 13 Apr 2020 09:36:43 -0400
+Received: from foss.arm.com ([217.140.110.172]:41592 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729900AbgDMNgl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 13 Apr 2020 06:49:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1586774959; x=1618310959;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=cXrBHSYwDJETMu57qlB6ZWhmCg2C/tC6KLvHIrTHt28=;
-  b=ChXLd26khKDTJYmY+dqelL93yrjRCXPOPk3PHDiKFqM725RPGb/uMF2E
-   yqvxqJNlkyOMVN5jayPOOoGcqQcu8xEHOEgTCpit6W+xnVesGajHb4xDH
-   b/a16nMdm3uWUJY7tAbA4H4lwxqY7l6j4Lb8llVraQRKzaPQBH38ph6zr
-   mBrO20O34KeJsDUVkQpM4p8bMH67kxVIkDdyYx0PYHKqiRWOKAH3XVbfC
-   V74LVdrWZuP5mykuuvLiu76tQ9TcoGeK8xN+LXJkPK9whwoV7fJM7ArA4
-   BkQm57kf6Ja6Fauil+QOtiSr8I9AeamXJ3mNU7AnOoc62Nc6FweFpPm42
-   w==;
-IronPort-SDR: Z3Ly5NLTpWqOoFV4uT9YabvDY6+rPWbaqLwZwYiUgvC1k4dQMQKJ3td73IffE0ROnakv//Lmdl
- bLpMBTZt+/wLe9ZmWSHh7RrcZL/odXELLbByKkxfLjrZK3wkVuyOXLTGNSfKYh1U7wvOTkxAi3
- 7Zcpk3auo1k1YcijHVQP5abvYv5wFFabUguqx5P8L+1s+zzGmIGVsceATgvYTrDABaB6+rCoDW
- lYGtmqxZ3SxWBVVZa4Tsp7tH6BZk2d4nhuJjcZgjksv7LS50BCe4JIYl3/YRKkKasxrVAf33L9
- JJY=
-X-IronPort-AV: E=Sophos;i="5.72,378,1580745600"; 
-   d="scan'208";a="135212751"
-Received: from mail-bn8nam11lp2177.outbound.protection.outlook.com (HELO NAM11-BN8-obe.outbound.protection.outlook.com) ([104.47.58.177])
-  by ob1.hgst.iphmx.com with ESMTP; 13 Apr 2020 18:49:17 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=il3Jje+njS2uki92Upoy287eivMhprkDffkdlfHPFlQKQMwHCb11gTybjsuAqAxgZFuejiMar1HOq+iiBTjooTbbmpy1X1ZDaNlqdVrvbnt4lRnLAD79BXGdTcvWv7Qrct/zgxPqvNX++GAfepz3q+7AyBocI2it8mCrJiRJKCJycEKIhgB+dZUYm67DPeQCk95ZZmbDrIkuWSvnViWPb2HXbttmJG2qzeQ6suy9fyYw0ovxFzG9lJ+nXclM81ZKENEIA2fEb53N6n+3/JqGeE9ZOXT7DslUrUCtf5/Tn09p+6+3pDxopPq2aKdclCPM9eCwxCqstiYTPdu+cd4EhQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cXrBHSYwDJETMu57qlB6ZWhmCg2C/tC6KLvHIrTHt28=;
- b=ERlJ+dedtyzhMSq2/fvkM14ThEysUtzWzCUEIRlw1Ab6L9qy3x9agKXRnJyWv+8JKZBKvxzesc6SD1av8UkSEy4N1b2h5EeG2hp4e6QRtdSxq1jN+X0iZxb4sWE4Ry2B1IaJS5pcY9qBkkJFBsSip7mwr4bwPeEHRUFYsr8V82QC6PPIEZZF7e7t4hfST1YgGQ8G3XRm8jq3xKbClxe7i9o51cck3c4Kdk1ZI1QUklNYXwn4X+Kyuz+QKYZpszUPpkZo0rvuuZgJSzUck2J+2QPv3eKVMfv4LI76BXx/LjfDxWXTtVliCHJ/1rDsoadoEraJSiQWvM+MuKBoIufwbQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cXrBHSYwDJETMu57qlB6ZWhmCg2C/tC6KLvHIrTHt28=;
- b=szvMWsA7BgY9R5AYlv1WlLvHqzCCf2fbBVy/p+knVE2+2u9VCg8uNVgHAxcB/foskBo22BnsB1ZUBUaC0FAf4nSvyu7nMT/BDrujFX0bFKwq+OIbqfL6RxUg4u/05dA9usMjeXAGJwlkpDTBbGeSPuny5lPr1bbQoNkbz5JDQkI=
-Received: from SN6PR04MB4640.namprd04.prod.outlook.com (2603:10b6:805:a4::19)
- by SN6PR04MB4015.namprd04.prod.outlook.com (2603:10b6:805:3f::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2900.24; Mon, 13 Apr
- 2020 10:49:16 +0000
-Received: from SN6PR04MB4640.namprd04.prod.outlook.com
- ([fe80::3877:5e49:6cdd:c8b]) by SN6PR04MB4640.namprd04.prod.outlook.com
- ([fe80::3877:5e49:6cdd:c8b%5]) with mapi id 15.20.2900.028; Mon, 13 Apr 2020
- 10:49:16 +0000
-From:   Avri Altman <Avri.Altman@wdc.com>
-To:     Alim Akhtar <alim.akhtar@samsung.com>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
-CC:     "krzk@kernel.org" <krzk@kernel.org>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "kwmad.kim@samsung.com" <kwmad.kim@samsung.com>,
-        "stanley.chu@mediatek.com" <stanley.chu@mediatek.com>,
-        "cang@codeaurora.org" <cang@codeaurora.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Seungwon Jeon <essuuj@gmail.com>
-Subject: RE: [PATCH v5 4/5] scsi: ufs-exynos: add UFS host support for Exynos
- SoCs
-Thread-Topic: [PATCH v5 4/5] scsi: ufs-exynos: add UFS host support for Exynos
- SoCs
-Thread-Index: AQHWEJ3tZZYUB/0KkkO5PNiaFbmGc6h24Mtw
-Date:   Mon, 13 Apr 2020 10:49:15 +0000
-Message-ID: <SN6PR04MB46402903F25BF57C2EA3DAC1FCDD0@SN6PR04MB4640.namprd04.prod.outlook.com>
-References: <20200412073159.37747-1-alim.akhtar@samsung.com>
-        <CGME20200412074218epcas5p3ef7973c8a47533a15a359b069da8003c@epcas5p3.samsung.com>
- <20200412073159.37747-5-alim.akhtar@samsung.com>
-In-Reply-To: <20200412073159.37747-5-alim.akhtar@samsung.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Avri.Altman@wdc.com; 
-x-originating-ip: [77.138.4.172]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 61c28761-1ab0-40ef-befc-08d7df984fbb
-x-ms-traffictypediagnostic: SN6PR04MB4015:
-x-microsoft-antispam-prvs: <SN6PR04MB401523E4836EC814F97122FDFCDD0@SN6PR04MB4015.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:483;
-x-forefront-prvs: 037291602B
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR04MB4640.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10019020)(6029001)(4636009)(366004)(136003)(396003)(39860400002)(376002)(346002)(66476007)(66446008)(64756008)(66946007)(6506007)(76116006)(478600001)(186003)(66556008)(54906003)(316002)(110136005)(4744005)(7696005)(71200400001)(52536014)(5660300002)(86362001)(4326008)(26005)(7416002)(33656002)(55016002)(9686003)(8676002)(2906002)(8936002)(81156014);DIR:OUT;SFP:1102;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 2vrURz5+rrDaRkHSrIZO5ICagq0Fxrtzfp2tykPkx77j/ssGLQDd4aDjVM95jyDhouFpU0RaMbWdPX9eFyTncKgO+eOCJmoZF+KNhhO6jrKR01mO+vYBWxMkrNcT2HtoRtMIm+80c7XRJ/RdOuEIn/CieygGMtJcZlo4/IHqpo7PWSM2GpYY72YBXcHnLUru4xHvzydOF3EdX+C9yc2HptKoWeEAq36BiKbhraXV/Y7EB8XlEx3eIV/LRWfJDP3XFHpVgF5/KpYGvcPCooFCwSsHqSVPiWXjlJCzPsU2gs921/LjGVPPpRGEDcj4AHXdeHPmTkX9watOKjh4ogoMs+omSm/HzGY0PAURH7HO9pXZyV8wDJAzeEx14iQZMvQOP1EVhxmVg8f1Q+tsakufV2A1bdz90YBZsie75qdBbMSNfHz+xVHtj5/AzvTONXo+
-x-ms-exchange-antispam-messagedata: eE6Ly8ehoz/lXwhvwM/vv3tNaiUPoKPVxDFSejQQovTxTpG9ikeexDi3qymJBt0mSLzUcmfy0oaX92DmrUgEOFT0DBEq0eXL9Vk95TdjU0zDv0qAc/eXJQx4rm5gy0yho5U1h/4vbLbhTqW+1iCajQ==
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 61c28761-1ab0-40ef-befc-08d7df984fbb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Apr 2020 10:49:16.0772
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: UajJMu34pmO1JwiFlT1lqG2UvTymXKtPLyGpggj9+FhRfEwUyem7MvZGJYLNK7xbV98VTb7SU4E5zRys+KZmFg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB4015
+        Mon, 13 Apr 2020 09:36:41 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C912431B;
+        Mon, 13 Apr 2020 06:36:39 -0700 (PDT)
+Received: from ssg-dev-vb.arm.com (unknown [10.57.58.121])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BFCA13F68F;
+        Mon, 13 Apr 2020 06:36:27 -0700 (PDT)
+From:   Hadar Gat <hadar.gat@arm.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>, JC Kuo <jckuo@nvidia.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Cc:     Gilad Ben-Yossef <gilad@benyossef.com>,
+        Ofir Drang <ofir.drang@arm.com>, Hadar Gat <hadar.gat@arm.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        dmaengine@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, linux-iio@vger.kernel.org,
+        linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-omap@vger.kernel.org, linux-mtd@lists.infradead.org,
+        netdev@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH] of_device: removed #include that caused a recursion in included headers
+Date:   Mon, 13 Apr 2020 16:35:53 +0300
+Message-Id: <1586784960-22692-1-git-send-email-hadar.gat@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-PiANCj4gVGhpcyBwYXRjaCBpbnRyb2R1Y2VzIEV4eW5vcyBVRlMgaG9zdCBjb250cm9sbGVyIGRy
-aXZlciwNCj4gd2hpY2ggbWFpbmx5IGhhbmRsZXMgdmVuZG9yLXNwZWNpZmljIG9wZXJhdGlvbnMg
-aW5jbHVkaW5nDQo+IGxpbmsgc3RhcnR1cCwgcG93ZXIgbW9kZSBjaGFuZ2UgYW5kIGhpYmVybmF0
-aW9uL3VuaGliZXJuYXRpb24uDQo+IA0KPiBSZXBvcnRlZC1ieToga2J1aWxkIHRlc3Qgcm9ib3Qg
-PGxrcEBpbnRlbC5jb20+DQo+IFJlcG9ydGVkLWJ5OiBKdWxpYSBMYXdhbGwgPGp1bGlhLmxhd2Fs
-bEBsaXA2LmZyPg0KPiBbcm9ib3Q6IGRyaXZlcnMvc2NzaS91ZnMvdWZzLWV4eW5vcy5jOjkzMTo4
-LTEwOg0KPiAgV0FSTklORzogcG9zc2libGUgY29uZGl0aW9uIHdpdGggbm8gZWZmZWN0IChpZiA9
-PSBlbHNlKQ0KPiBdDQo+IFJldmlld2VkLWJ5OiBLaXdvb25nIEtpbSA8a3dtYWQua2ltQHNhbXN1
-bmcuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBTZXVuZ3dvbiBKZW9uIDxlc3N1dWpAZ21haWwuY29t
-Pg0KPiBTaWduZWQtb2ZmLWJ5OiBBbGltIEFraHRhciA8YWxpbS5ha2h0YXJAc2Ftc3VuZy5jb20+
-DQo+IFRlc3RlZC1ieTogUGF3ZcWCIENobWllbCA8cGF3ZWwubWlrb2xhai5jaG1pZWxAZ21haWwu
-Y29tPg0KUmV2aWV3ZWQtYnk6IEF2cmkgQWx0bWFuIDxhdnJpLmFsdG1hbkB3ZGMuY29tPg0KDQo=
+Both of_platform.h and of_device.h were included each other.
+In of_device.h, removed unneeded #include to of_platform.h
+and added include to of_platform.h in the files that needs it.
+
+Signed-off-by: Hadar Gat <hadar.gat@arm.com>
+---
+ drivers/base/platform.c                           | 1 +
+ drivers/bus/vexpress-config.c                     | 1 +
+ drivers/dma/at_hdmac.c                            | 1 +
+ drivers/dma/stm32-dmamux.c                        | 1 +
+ drivers/dma/ti/dma-crossbar.c                     | 1 +
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c             | 1 +
+ drivers/gpu/drm/msm/hdmi/hdmi.c                   | 1 +
+ drivers/gpu/drm/msm/msm_drv.c                     | 1 +
+ drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c   | 1 +
+ drivers/gpu/drm/sun4i/sun4i_tcon.c                | 1 +
+ drivers/iio/adc/stm32-adc-core.c                  | 1 +
+ drivers/iio/adc/stm32-dfsdm-adc.c                 | 1 +
+ drivers/iio/adc/stm32-dfsdm-core.c                | 1 +
+ drivers/iommu/tegra-smmu.c                        | 1 +
+ drivers/memory/atmel-ebi.c                        | 1 +
+ drivers/mfd/palmas.c                              | 1 +
+ drivers/mfd/ssbi.c                                | 1 +
+ drivers/mtd/nand/raw/omap2.c                      | 1 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 1 +
+ drivers/net/ethernet/ti/cpsw.c                    | 1 +
+ drivers/phy/tegra/xusb.c                          | 1 +
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c         | 1 +
+ drivers/soc/samsung/exynos-pmu.c                  | 1 +
+ drivers/soc/sunxi/sunxi_sram.c                    | 1 +
+ include/linux/of_device.h                         | 2 --
+ lib/genalloc.c                                    | 1 +
+ 26 files changed, 25 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 5255550..f549274b 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -12,6 +12,7 @@
+ #include <linux/string.h>
+ #include <linux/platform_device.h>
+ #include <linux/of_device.h>
++#include <linux/of_platform.h>
+ #include <linux/of_irq.h>
+ #include <linux/module.h>
+ #include <linux/init.h>
+diff --git a/drivers/bus/vexpress-config.c b/drivers/bus/vexpress-config.c
+index ff70575..12b8b0b 100644
+--- a/drivers/bus/vexpress-config.c
++++ b/drivers/bus/vexpress-config.c
+@@ -8,6 +8,7 @@
+ #include <linux/init.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
++#include <linux/of_platform.h>
+ #include <linux/vexpress.h>
+ 
+ 
+diff --git a/drivers/dma/at_hdmac.c b/drivers/dma/at_hdmac.c
+index 672c73b..51337b4 100644
+--- a/drivers/dma/at_hdmac.c
++++ b/drivers/dma/at_hdmac.c
+@@ -20,6 +20,7 @@
+ #include <linux/slab.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
++#include <linux/of_platform.h>
+ #include <linux/of_dma.h>
+ 
+ #include "at_hdmac_regs.h"
+diff --git a/drivers/dma/stm32-dmamux.c b/drivers/dma/stm32-dmamux.c
+index 3c89bd3..74695b9 100644
+--- a/drivers/dma/stm32-dmamux.c
++++ b/drivers/dma/stm32-dmamux.c
+@@ -16,6 +16,7 @@
+ #include <linux/init.h>
+ #include <linux/module.h>
+ #include <linux/of_device.h>
++#include <linux/of_platform.h>
+ #include <linux/of_dma.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/reset.h>
+diff --git a/drivers/dma/ti/dma-crossbar.c b/drivers/dma/ti/dma-crossbar.c
+index f255056..10c6d23 100644
+--- a/drivers/dma/ti/dma-crossbar.c
++++ b/drivers/dma/ti/dma-crossbar.c
+@@ -10,6 +10,7 @@
+ #include <linux/io.h>
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
++#include <linux/of_platform.h>
+ #include <linux/of_dma.h>
+ 
+ #define TI_XBAR_DRA7		0
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+index c4e71ab..f523254 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+@@ -6,6 +6,7 @@
+ #include <linux/interconnect.h>
+ #include <linux/pm_domain.h>
+ #include <linux/pm_opp.h>
++#include <linux/of_platform.h>
+ #include <soc/qcom/cmd-db.h>
+ 
+ #include "a6xx_gpu.h"
+diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.c b/drivers/gpu/drm/msm/hdmi/hdmi.c
+index 737453b..5034d40 100644
+--- a/drivers/gpu/drm/msm/hdmi/hdmi.c
++++ b/drivers/gpu/drm/msm/hdmi/hdmi.c
+@@ -7,6 +7,7 @@
+ 
+ #include <linux/of_irq.h>
+ #include <linux/of_gpio.h>
++#include <linux/of_platform.h>
+ 
+ #include <sound/hdmi-codec.h>
+ #include "hdmi.h"
+diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
+index 29295de..ddc9e85 100644
+--- a/drivers/gpu/drm/msm/msm_drv.c
++++ b/drivers/gpu/drm/msm/msm_drv.c
+@@ -8,6 +8,7 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/kthread.h>
+ #include <linux/uaccess.h>
++#include <linux/of_platform.h>
+ #include <uapi/linux/sched/types.h>
+ 
+ #include <drm/drm_drv.h>
+diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+index 6e1270e..d038bae 100644
+--- a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
++++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+@@ -12,6 +12,7 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+ #include <linux/of_device.h>
++#include <linux/of_platform.h>
+ #include <linux/phy/phy.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 624437b..aa35757 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -11,6 +11,7 @@
+ #include <linux/module.h>
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
++#include <linux/of_platform.h>
+ #include <linux/of_irq.h>
+ #include <linux/regmap.h>
+ #include <linux/reset.h>
+diff --git a/drivers/iio/adc/stm32-adc-core.c b/drivers/iio/adc/stm32-adc-core.c
+index 2df88d2..3dc3453 100644
+--- a/drivers/iio/adc/stm32-adc-core.c
++++ b/drivers/iio/adc/stm32-adc-core.c
+@@ -17,6 +17,7 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+ #include <linux/of_device.h>
++#include <linux/of_platform.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
+ #include <linux/regulator/consumer.h>
+diff --git a/drivers/iio/adc/stm32-dfsdm-adc.c b/drivers/iio/adc/stm32-dfsdm-adc.c
+index 76a60d9..e83848cb 100644
+--- a/drivers/iio/adc/stm32-dfsdm-adc.c
++++ b/drivers/iio/adc/stm32-dfsdm-adc.c
+@@ -20,6 +20,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/module.h>
+ #include <linux/of_device.h>
++#include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/slab.h>
+diff --git a/drivers/iio/adc/stm32-dfsdm-core.c b/drivers/iio/adc/stm32-dfsdm-core.c
+index 26e2011..f6a53ab 100644
+--- a/drivers/iio/adc/stm32-dfsdm-core.c
++++ b/drivers/iio/adc/stm32-dfsdm-core.c
+@@ -12,6 +12,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/module.h>
+ #include <linux/of_device.h>
++#include <linux/of_platform.h>
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index 63a147b..3797caa 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -10,6 +10,7 @@
+ #include <linux/kernel.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
++#include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ #include <linux/dma-mapping.h>
+diff --git a/drivers/memory/atmel-ebi.c b/drivers/memory/atmel-ebi.c
+index 14386d0..272b1a8 100644
+--- a/drivers/memory/atmel-ebi.c
++++ b/drivers/memory/atmel-ebi.c
+@@ -13,6 +13,7 @@
+ #include <linux/mfd/syscon/atmel-smc.h>
+ #include <linux/init.h>
+ #include <linux/of_device.h>
++#include <linux/of_platform.h>
+ #include <linux/regmap.h>
+ #include <soc/at91/atmel-sfr.h>
+ 
+diff --git a/drivers/mfd/palmas.c b/drivers/mfd/palmas.c
+index f5b3fa9..cca44bc 100644
+--- a/drivers/mfd/palmas.c
++++ b/drivers/mfd/palmas.c
+@@ -19,6 +19,7 @@
+ #include <linux/mfd/core.h>
+ #include <linux/mfd/palmas.h>
+ #include <linux/of_device.h>
++#include <linux/of_platform.h>
+ 
+ static const struct regmap_config palmas_regmap_config[PALMAS_NUM_CLIENTS] = {
+ 	{
+diff --git a/drivers/mfd/ssbi.c b/drivers/mfd/ssbi.c
+index 94f60df..72cd45a 100644
+--- a/drivers/mfd/ssbi.c
++++ b/drivers/mfd/ssbi.c
+@@ -20,6 +20,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
++#include <linux/of_platform.h>
+ 
+ /* SSBI 2.0 controller registers */
+ #define SSBI2_CMD			0x0008
+diff --git a/drivers/mtd/nand/raw/omap2.c b/drivers/mtd/nand/raw/omap2.c
+index ad77c11..d851ec7 100644
+--- a/drivers/mtd/nand/raw/omap2.c
++++ b/drivers/mtd/nand/raw/omap2.c
+@@ -22,6 +22,7 @@
+ #include <linux/slab.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
++#include <linux/of_platform.h>
+ 
+ #include <linux/mtd/nand_bch.h>
+ #include <linux/platform_data/elm.h>
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+index 58e0511..d704d57 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+@@ -12,6 +12,7 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+ #include <linux/of_device.h>
++#include <linux/of_platform.h>
+ #include <linux/of_mdio.h>
+ #include <linux/of_net.h>
+ #include <linux/phy.h>
+diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
+index c2c5bf8..6932945 100644
+--- a/drivers/net/ethernet/ti/cpsw.c
++++ b/drivers/net/ethernet/ti/cpsw.c
+@@ -28,6 +28,7 @@
+ #include <linux/of_mdio.h>
+ #include <linux/of_net.h>
+ #include <linux/of_device.h>
++#include <linux/of_platform.h>
+ #include <linux/if_vlan.h>
+ #include <linux/kmemleak.h>
+ #include <linux/sys_soc.h>
+diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+index de4a46f..0eac1b8 100644
+--- a/drivers/phy/tegra/xusb.c
++++ b/drivers/phy/tegra/xusb.c
+@@ -9,6 +9,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
++#include <linux/of_platform.h>
+ #include <linux/phy/phy.h>
+ #include <linux/phy/tegra/xusb.h>
+ #include <linux/platform_device.h>
+diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+index 95f864d..d61ee59 100644
+--- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
++++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+@@ -19,6 +19,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/slab.h>
+ #include <linux/of_device.h>
++#include <linux/of_platform.h>
+ #include <linux/of_address.h>
+ #include <linux/bitops.h>
+ #include <linux/pinctrl/machine.h>
+diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
+index 17304fa..25129b0 100644
+--- a/drivers/soc/samsung/exynos-pmu.c
++++ b/drivers/soc/samsung/exynos-pmu.c
+@@ -8,6 +8,7 @@
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
++#include <linux/of_platform.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/platform_device.h>
+ #include <linux/delay.h>
+diff --git a/drivers/soc/sunxi/sunxi_sram.c b/drivers/soc/sunxi/sunxi_sram.c
+index 1b0d50f..423cec3 100644
+--- a/drivers/soc/sunxi/sunxi_sram.c
++++ b/drivers/soc/sunxi/sunxi_sram.c
+@@ -16,6 +16,7 @@
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
++#include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ 
+diff --git a/include/linux/of_device.h b/include/linux/of_device.h
+index 8d31e39..752999b 100644
+--- a/include/linux/of_device.h
++++ b/include/linux/of_device.h
+@@ -4,8 +4,6 @@
+ 
+ #include <linux/cpu.h>
+ #include <linux/platform_device.h>
+-#include <linux/of_platform.h> /* temporary until merge */
+-
+ #include <linux/of.h>
+ #include <linux/mod_devicetable.h>
+ 
+diff --git a/lib/genalloc.c b/lib/genalloc.c
+index 7f1244b..08e21eeb 100644
+--- a/lib/genalloc.c
++++ b/lib/genalloc.c
+@@ -33,6 +33,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/genalloc.h>
+ #include <linux/of_device.h>
++#include <linux/of_platform.h>
+ #include <linux/vmalloc.h>
+ 
+ static inline size_t chunk_size(const struct gen_pool_chunk *chunk)
+-- 
+2.7.4
+
