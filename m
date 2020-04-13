@@ -6,85 +6,85 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47520C2BA19
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Apr 2020 10:11:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03BD8C2BA19
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Apr 2020 10:22:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 120C4206E9
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Apr 2020 10:11:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D12D720737
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Apr 2020 10:22:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586772694;
-	bh=nzrj3q/99RKMEWoPxPrj8vKy1qxl7ogMiqqlHfIgacA=;
+	s=default; t=1586773367;
+	bh=uCLr/wgg9dTUgceH6Vt4E6E8wKl3FA2s/+JVsf4L1CA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=klT/5XHHvyl62CB5Rpbhipy3AC54ajg20JoKgUDmutdZl73QBp5pma0UH7FpaFryN
-	 ciClCh1Rm+xY1sUmEWXSrkJvG8WBk0vrDOWFv8b6rARasTGbhI2/QMm6hfw4KkLzcQ
-	 hvRPOSCBE4DdPqZTezqNy8I3jFA6InfDY2hPxsdk=
+	b=1VisByR6rAyHmF+rS/4i8gduezLHAp5+Vdvtzg1GYdVW3RGKxv3gqvx3vpggAvO5e
+	 SMNSWkj5JmjLN3n0oqi1qjpHtVF2H3BpYAEvIntJt4Kw2B/YWM+Y7LuBZGYBt/J/om
+	 4e876Cv6PsAZV2gqBipFDCjBFhdAps0yc1PkrzlE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728327AbgDMKLd (ORCPT
+        id S1727914AbgDMKWr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 13 Apr 2020 06:11:33 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:36614 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728075AbgDMKLc (ORCPT
+        Mon, 13 Apr 2020 06:22:47 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:39572 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727813AbgDMKWq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 13 Apr 2020 06:11:32 -0400
-Received: by mail-ed1-f65.google.com with SMTP id i7so11349490edq.3;
-        Mon, 13 Apr 2020 03:11:30 -0700 (PDT)
+        Mon, 13 Apr 2020 06:22:46 -0400
+Received: by mail-ed1-f68.google.com with SMTP id a43so11386019edf.6
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Apr 2020 03:22:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IHzUNdwPsTQhqLll3sOK8O3xrvJdBlinyJZ6YxNwq5s=;
-        b=EQY2aTx9QZvn4hJbu8mvjayyvAl2zm1DV5RIyc+0eSB7YtkzKGD+3yq8EBkExqJRfC
-         cNa3Bvq2oP6c1RYsmbxZqno06TGcD876gAyiW3kkTVlI8zTARvb85T23jnI/uoDpb/6J
-         5LaVUJ6hVAkD3x3yJxyVui/7Cy5Dk06fEZsj4cKEPZ37YkGiqmY8C77mdqt//wiMQn5g
-         FMJpjqyFUr6HBdGFFjtoMD3sOqU1FGdGnjwafaRAmYFGG/OFD+vgAP2TV2nCziB2BApL
-         HCC3/9FpxxemsVpaYlACn+xh8fhbeCZBtUBf9o9mfCn8+Sc9WGmqY1jLwDgQ8idcG5cc
-         6ggA==
-X-Gm-Message-State: AGi0PuZlOxa39PVrwLnPR162rsr9V7Zesv/TSyDyJXUFdAxR2BW0wt8q
-        Yi7ttTXpTGbbFRKWxVkj75i2SD4R
-X-Google-Smtp-Source: APiQypLbUzeNvAIZR67vxpLwZzQRg3r3rXpBNYhH+Po0Qp1noxa7A8r1ABhf2bhfL8AcuoH9Rr3W4g==
-X-Received: by 2002:a05:6402:1383:: with SMTP id b3mr15439537edv.217.1586772689922;
-        Mon, 13 Apr 2020 03:11:29 -0700 (PDT)
+        bh=pwP7u9356HICdul3WrwgiXNRZ4gU042dmpG5p2MC8XQ=;
+        b=aEGGABy4W54liAFExrx8AaZZ5rgW7Wwg7zSQOT7wteH/LFGm610la5CmtqiWjXqnpR
+         yMj1lyS/+iW+j7hjDpa+eZWUAQfWMt7I51WFf8nIwGNcVovtd0Y+8p6lgqGSqZ91/8fD
+         f4slpJjnrebCnJ8QGJkEhJOSZrq8jJJXuYAxkcEPFK0Y77KPzU2r1WRa5W4xHEltgZBi
+         a4n+znUDlxzvx8yhI1vYfU1G6bKOlDyCFZgPBkghJlGDEI5Kr9LpiSJYx+txa+k6A6Jb
+         xbjIvNZW0wgGchi0PfmiJ5GfKwlGNPUDVLIT+tC4PiuzTRfrgEnphlGThyRygS7CZGBZ
+         VG6w==
+X-Gm-Message-State: AGi0PubdA3KieHiW8D1Y7Bpf8hSoS8FN3k1bQdt/oMfr0yUUnmA1wZ/e
+        kte6IsvC3IsAC/kTBQLHxCA=
+X-Google-Smtp-Source: APiQypIfsUADGKnbBAqg35sP83ncJl1d9WOPpPOHKuet5wfuvuHw9IjS5BxeVSb6KiwuXxgBiAX8zA==
+X-Received: by 2002:aa7:d786:: with SMTP id s6mr15256424edq.306.1586773364805;
+        Mon, 13 Apr 2020 03:22:44 -0700 (PDT)
 Received: from kozik-lap ([194.230.155.125])
-        by smtp.googlemail.com with ESMTPSA id g2sm1307883edm.77.2020.04.13.03.11.28
+        by smtp.googlemail.com with ESMTPSA id j14sm1578587ejy.72.2020.04.13.03.22.43
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 13 Apr 2020 03:11:29 -0700 (PDT)
-Date:   Mon, 13 Apr 2020 12:11:27 +0200
+        Mon, 13 Apr 2020 03:22:43 -0700 (PDT)
+Date:   Mon, 13 Apr 2020 12:22:41 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Jonathan Bakker <xc-racer2@live.ca>
-Cc:     tomasz.figa@gmail.com, s.nawrocki@samsung.com,
-        linus.walleij@linaro.org, kgene@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: samsung: Correct setting of eint wakeup mask on
- s5pv210
-Message-ID: <20200413101127.GA10535@kozik-lap>
-References: <BYAPR10MB3479E878C547053C6B952E01A3C40@BYAPR10MB3479.namprd10.prod.outlook.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-samsung-soc@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 4/4] ARM: exynos_defconfig: Compile MAC80211/CFG80211 as
+ modules
+Message-ID: <20200413102241.GB10535@kozik-lap>
+References: <20200326094626.28308-1-m.szyprowski@samsung.com>
+ <CGME20200326094635eucas1p2fab15692c98fc148388a6922dc0d121f@eucas1p2.samsung.com>
+ <20200326094626.28308-5-m.szyprowski@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <BYAPR10MB3479E878C547053C6B952E01A3C40@BYAPR10MB3479.namprd10.prod.outlook.com>
+In-Reply-To: <20200326094626.28308-5-m.szyprowski@samsung.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sat, Apr 04, 2020 at 10:08:49AM -0700, Jonathan Bakker wrote:
-> Commit a8be2af0218c ("pinctrl: samsung: Write external wakeup interrupt
-> mask") started writing the eint wakeup mask from the pinctrl driver.
-> Unfortunately, it made the assumption that the private retention data
-> was always a regmap while in the case of s5pv210 it is a raw pointer
-> to the clock base (as the eint wakeup mask not in the PMU as with newer
-> Exynos platforms).
+On Thu, Mar 26, 2020 at 10:46:26AM +0100, Marek Szyprowski wrote:
+> MAC80211/CFG80211 framework requires loading regulatory.db from
+> /lib/firmware directory, so it makes very little sense to have it
+> built-in. Change it to be built as modules to let it properly load the
+> needed firmware/db files. As a side effect of this change, the size of
+> the compressed modules on SquashFS increased significantly from 27MiB
+> to 38MiB, so increase the size of BLK_DEV_RAM to allow the modules to
+> fit into it.
 > 
-> Fixes: a8be2af0218c ("pinctrl: samsung: Write external wakeup interrupt mask")
-> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->  drivers/pinctrl/samsung/pinctrl-exynos.c | 73 ++++++++++++++++--------
+>  arch/arm/configs/exynos_defconfig | 6 +++---
 
-Thanks, applied (with Cc-stable tag).
+Thanks, applied.
 
 Best regards,
 Krzysztof
