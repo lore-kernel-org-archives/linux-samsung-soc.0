@@ -1,154 +1,91 @@
-Return-Path: <SRS0=++RP=54=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=7GIH=55=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE6D0C352BE
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 12 Apr 2020 16:33:32 +0000 (UTC)
-X-Greylist: delayed 204 seconds by postgrey-1.34 at mail.kernel.org; Sun, 12 Apr 2020 16:33:32 UTC
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Y1Ic/brO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F0F6206A1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-samsung-soc-owner@vger.kernel.org
-Received: from vger.kernel.org (unknown [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F0F6206A1
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 12 Apr 2020 16:33:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47520C2BA19
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Apr 2020 10:11:34 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 120C4206E9
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 13 Apr 2020 10:11:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1586772694;
+	bh=nzrj3q/99RKMEWoPxPrj8vKy1qxl7ogMiqqlHfIgacA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=klT/5XHHvyl62CB5Rpbhipy3AC54ajg20JoKgUDmutdZl73QBp5pma0UH7FpaFryN
+	 ciClCh1Rm+xY1sUmEWXSrkJvG8WBk0vrDOWFv8b6rARasTGbhI2/QMm6hfw4KkLzcQ
+	 hvRPOSCBE4DdPqZTezqNy8I3jFA6InfDY2hPxsdk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727194AbgDLQaH (ORCPT
+        id S1728327AbgDMKLd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 12 Apr 2020 12:30:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.18]:52240 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727181AbgDLQaG (ORCPT
+        Mon, 13 Apr 2020 06:11:33 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:36614 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728075AbgDMKLc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 12 Apr 2020 12:30:06 -0400
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A8F2C0A3BF7
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Apr 2020 09:25:05 -0700 (PDT)
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200412162501epoutp03952975f204bf87ebf9a3aadc205e7a33~FHygx1Ugc1383313833epoutp03g
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Apr 2020 16:25:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200412162501epoutp03952975f204bf87ebf9a3aadc205e7a33~FHygx1Ugc1383313833epoutp03g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1586708701;
-        bh=7gehAhvPd0bQ/3Pb49DoC4efoIHtTlTiKUVA2ybcyCc=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=Y1Ic/brO5Q4p1E7KdT+B4Pt8Ikb4MRKjswj3wN12wAQlD5iuqviWPm86R/AoLOVHb
-         TlfYDEcNomw75Z6tK5s38u0QvQ4iKm8e7Dr9B8zu3U61Mihrl6679WlpQ4K9r9cIOa
-         Ez9b1hEUZc+TIfs3FHQ/+XiT4964B0wxmdx8ve8Y=
-Received: from epsmges5p2new.samsung.com (unknown [182.195.42.74]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20200412162500epcas5p348d02863b15b9d63e3ca730d2ae126b3~FHygIYJOc2939929399epcas5p3p;
-        Sun, 12 Apr 2020 16:25:00 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        41.91.04778.CD0439E5; Mon, 13 Apr 2020 01:25:00 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200412162459epcas5p299fae74f80ad5ec2f68a9df865b4bff2~FHye6aPd-2705227052epcas5p2k;
-        Sun, 12 Apr 2020 16:24:59 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200412162459epsmtrp1f6f67211c3b49863ed1db785630a8cf8~FHye2ymy70693706937epsmtrp1s;
-        Sun, 12 Apr 2020 16:24:59 +0000 (GMT)
-X-AuditID: b6c32a4a-353ff700000012aa-fc-5e9340dc000e
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        DB.15.04024.AD0439E5; Mon, 13 Apr 2020 01:24:59 +0900 (KST)
-Received: from alimakhtar02 (unknown [107.108.234.165]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200412162455epsmtip2882de67d478a270b552da62c75357cad~FHybmFtyD2101821018epsmtip27;
-        Sun, 12 Apr 2020 16:24:55 +0000 (GMT)
-From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Christoph Hellwig'" <hch@infradead.org>
-Cc:     <robh@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-scsi@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
-        <martin.petersen@oracle.com>, <linux-kernel@vger.kernel.org>,
-        <krzk@kernel.org>, <kwmad.kim@samsung.com>, <avri.altman@wdc.com>,
-        <cang@codeaurora.org>, "'Seungwon Jeon'" <essuuj@gmail.com>,
-        <stanley.chu@mediatek.com>, <linux-arm-kernel@lists.infradead.org>
-In-Reply-To: <20200412080947.GA6524@infradead.org>
-Subject: RE: [PATCH v5 4/5] scsi: ufs-exynos: add UFS host support for
- Exynos SoCs
-Date:   Sun, 12 Apr 2020 21:54:53 +0530
-Message-ID: <000001d610e6$e8b11450$ba133cf0$@samsung.com>
+        Mon, 13 Apr 2020 06:11:32 -0400
+Received: by mail-ed1-f65.google.com with SMTP id i7so11349490edq.3;
+        Mon, 13 Apr 2020 03:11:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IHzUNdwPsTQhqLll3sOK8O3xrvJdBlinyJZ6YxNwq5s=;
+        b=EQY2aTx9QZvn4hJbu8mvjayyvAl2zm1DV5RIyc+0eSB7YtkzKGD+3yq8EBkExqJRfC
+         cNa3Bvq2oP6c1RYsmbxZqno06TGcD876gAyiW3kkTVlI8zTARvb85T23jnI/uoDpb/6J
+         5LaVUJ6hVAkD3x3yJxyVui/7Cy5Dk06fEZsj4cKEPZ37YkGiqmY8C77mdqt//wiMQn5g
+         FMJpjqyFUr6HBdGFFjtoMD3sOqU1FGdGnjwafaRAmYFGG/OFD+vgAP2TV2nCziB2BApL
+         HCC3/9FpxxemsVpaYlACn+xh8fhbeCZBtUBf9o9mfCn8+Sc9WGmqY1jLwDgQ8idcG5cc
+         6ggA==
+X-Gm-Message-State: AGi0PuZlOxa39PVrwLnPR162rsr9V7Zesv/TSyDyJXUFdAxR2BW0wt8q
+        Yi7ttTXpTGbbFRKWxVkj75i2SD4R
+X-Google-Smtp-Source: APiQypLbUzeNvAIZR67vxpLwZzQRg3r3rXpBNYhH+Po0Qp1noxa7A8r1ABhf2bhfL8AcuoH9Rr3W4g==
+X-Received: by 2002:a05:6402:1383:: with SMTP id b3mr15439537edv.217.1586772689922;
+        Mon, 13 Apr 2020 03:11:29 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.125])
+        by smtp.googlemail.com with ESMTPSA id g2sm1307883edm.77.2020.04.13.03.11.28
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 13 Apr 2020 03:11:29 -0700 (PDT)
+Date:   Mon, 13 Apr 2020 12:11:27 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Jonathan Bakker <xc-racer2@live.ca>
+Cc:     tomasz.figa@gmail.com, s.nawrocki@samsung.com,
+        linus.walleij@linaro.org, kgene@kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: samsung: Correct setting of eint wakeup mask on
+ s5pv210
+Message-ID: <20200413101127.GA10535@kozik-lap>
+References: <BYAPR10MB3479E878C547053C6B952E01A3C40@BYAPR10MB3479.namprd10.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHr+Y8xYXIsvNQeqORDaXjXFCUqCgIAvgGXAbEacNoBTCAGf6gh6cLQ
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTYRTvu69dR7PbLDzN6DGQcmClGd2ih4TEpYIK6o8ispUXHzmV3dQS
-        I+lhti0fJZFDNDNn2sOaVsss17KVmlq+ykeaNkt7CCpIYlRud5L//c45v8c5Hx+Nyz+TCjoy
-        5hivjVFHKykp8fCF33L/7uDLB1cVGhTs0EQbxY6WmUg2v6aRZIvf3sDY+szrGNvUdE/CdlS8
-        JFjz53aSbanMpdirTc8wVv/eQrHFr/5g7N8qi4QtetCBgj25lvSLGPfY+FHCld9UcebSCxRX
-        fuMUd7a2muBGBjoJLr2iFHFj5kXcease2yXdL90QxkdHJvDalZsOSSOG345jcWkex0c/eaag
-        9xId8qCBCYJqSwbSISktZ54gsPb0uItRBNkTJZiTJWfGETS9WzitsN7vokTSUwS2kkfu4geC
-        IV2Ny5di/MFSmEo58bwp3FAw6LLFmdM4/DbnuEgeTCDcLrEhJ/Zi9kB1d+uUgKYJxhdGHa62
-        jFkHFvs5QsRzoTbH4cI4sxge/czFxY2WwMSAiRSztkLv86tujje8nDDgzlxgbBLIrjMTTn9g
-        QsCkOylqveDbqwr3WyhgKCNVIlKOgqFytdhOhqI8OyHizWBtzXW54IwflFWuFJM84eKkAxOV
-        MkhLlYtsXzgz3OZW+kCWXk+KmIPqwX4iEy01zrjLOOMu44z9jf/DriGiFC3g4wRNOC+siQuM
-        4RNXCGqNEB8TvuJIrMaMXF9Ptc2CTI07bIihkXK2zNqedVBOqhOEExobAhpXzpM5EqdasjD1
-        iSReGxuqjY/mBRvyoQmlt+wS2XZAzoSrj/FHeT6O105PMdpDkYJMezYmPwjaYiorff1V26+S
-        To6U1EfVDXw3DG/wb46X5H/xvKvI3fJ1+MPIsiu3euz2fSHZswbG7hT1betbG5IfED45Od6F
-        Og1EfU2dI287tTvpcF2WLjR0772dsxmVPXE++eZT5+uGZk1B/lO5XvDKvPtrzpqqqN71OweD
-        pfKo9eNKQohQB6hwraD+Bza284Z2AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGIsWRmVeSWpSXmKPExsWy7bCSvO5th8lxBqd3MVm8/HmVzeLT+mWs
-        FvOPnGO1WH5hCZPF6QmLmCzOn9/AbnFzy1EWi02Pr7FaXN41h81ixvl9TBbd13ewWSw//o/J
-        4v+eHewWS7feZHTg87jc18vksXPWXXaPzSu0PDat6mTz2Lyk3qPl5H4Wj49Pb7F49G1Zxejx
-        eZOcR/uBbqYArigum5TUnMyy1CJ9uwSujHcXvjEVdHBWfHrA18B4nb2LkZNDQsBE4sDG22wg
-        tpDAbkaJw+0VEHFpiesbJ0DVCEus/PecHaLmFaPEnasJIDabgK7EjsVtYL0iQPbZhS8Yuxi5
-        OJgFJjBLnLg3kwXEERJ4yiixYcsnZpAqTgEjiTUrDzGC2MICQRL/ex4CdXNwsAioSnx6Ahbm
-        FbCU2HGslQXCFpQ4OfMJC0gJs4CeRNtGsBJmAXmJ7W/nMEPcpiDx8+kyVogb3CTuH5zBAlEj
-        LnH0Zw/zBEbhWUgmzUKYNAvJpFlIOhYwsqxilEwtKM5Nzy02LDDMSy3XK07MLS7NS9dLzs/d
-        xAiOXS3NHYyXl8QfYhTgYFTi4T1wbWKcEGtiWXFl7iFGCQ5mJRHeJ+VAId6UxMqq1KL8+KLS
-        nNTiQ4zSHCxK4rxP845FCgmkJ5akZqemFqQWwWSZODilGhjjLI4/DDJ4/fx+71uPrxdKTry+
-        oR15o8K2KoJ7zarXsxyO37eamMz77fcM3vApC97uXe9UOPml720BrVnH7+sWPTh8enmh8MVr
-        GzOrpfaxTW+rllsr9e/uk5YJy7Xfuv9ZGdbNJCGwflGhjIrNv5OMXtd7n3F8rvFcmDBL38mE
-        YUrtg41hHzesVGIpzkg01GIuKk4EAORK9mLZAgAA
-X-CMS-MailID: 20200412162459epcas5p299fae74f80ad5ec2f68a9df865b4bff2
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20200412074218epcas5p3ef7973c8a47533a15a359b069da8003c
-References: <20200412073159.37747-1-alim.akhtar@samsung.com>
-        <CGME20200412074218epcas5p3ef7973c8a47533a15a359b069da8003c@epcas5p3.samsung.com>
-        <20200412073159.37747-5-alim.akhtar@samsung.com>
-        <20200412080947.GA6524@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <BYAPR10MB3479E878C547053C6B952E01A3C40@BYAPR10MB3479.namprd10.prod.outlook.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hello Christoph,
+On Sat, Apr 04, 2020 at 10:08:49AM -0700, Jonathan Bakker wrote:
+> Commit a8be2af0218c ("pinctrl: samsung: Write external wakeup interrupt
+> mask") started writing the eint wakeup mask from the pinctrl driver.
+> Unfortunately, it made the assumption that the private retention data
+> was always a regmap while in the case of s5pv210 it is a raw pointer
+> to the clock base (as the eint wakeup mask not in the PMU as with newer
+> Exynos platforms).
+> 
+> Fixes: a8be2af0218c ("pinctrl: samsung: Write external wakeup interrupt mask")
+> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+> ---
+>  drivers/pinctrl/samsung/pinctrl-exynos.c | 73 ++++++++++++++++--------
 
-> -----Original Message-----
-> From: Christoph Hellwig <hch@infradead.org>
-> Sent: 12 April 2020 13:40
-> To: Alim Akhtar <alim.akhtar@samsung.com>
-> Cc: robh@kernel.org; devicetree@vger.kernel.org;
-linux-scsi@vger.kernel.org;
-> linux-samsung-soc@vger.kernel.org; martin.petersen@oracle.com; linux-
-> kernel@vger.kernel.org; krzk@kernel.org; kwmad.kim@samsung.com;
-> avri.altman@wdc.com; cang@codeaurora.org; Seungwon Jeon
-> <essuuj@gmail.com>; stanley.chu@mediatek.com; linux-arm-
-> kernel@lists.infradead.org
-> Subject: Re: [PATCH v5 4/5] scsi: ufs-exynos: add UFS host support for
-Exynos
-> SoCs
-> 
-> On Sun, Apr 12, 2020 at 01:01:58PM +0530, Alim Akhtar wrote:
-> > This patch introduces Exynos UFS host controller driver, which mainly
-> > handles vendor-specific operations including link startup, power mode
-> > change and hibernation/unhibernation.
-> 
-> So this doesn't actually require the various removed or not added quirks
-after
-> all?
-This driver is actual consumer of those quirks, so those are still needed.
-On Martin's 5.7/scsi-queue need to revert " 492001990f64 scsi: ufshcd:
-remove unused quirks"
+Thanks, applied (with Cc-stable tag).
+
+Best regards,
+Krzysztof
 
