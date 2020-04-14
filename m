@@ -7,22 +7,22 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49083C2BA19
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:16:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D3EC2BA19
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:16:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2EA1F206A2
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:16:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E146120768
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:16:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502935AbgDNNQN (ORCPT
+        id S2502925AbgDNNQM (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 14 Apr 2020 09:16:13 -0400
-Received: from 8bytes.org ([81.169.241.247]:35508 "EHLO theia.8bytes.org"
+        Tue, 14 Apr 2020 09:16:12 -0400
+Received: from 8bytes.org ([81.169.241.247]:35298 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2502907AbgDNNQJ (ORCPT
+        id S2502895AbgDNNQF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Apr 2020 09:16:09 -0400
+        Tue, 14 Apr 2020 09:16:05 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 12DC670B; Tue, 14 Apr 2020 15:15:55 +0200 (CEST)
+        id D711A672; Tue, 14 Apr 2020 15:15:54 +0200 (CEST)
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
         Robin Murphy <robin.murphy@arm.com>,
@@ -47,9 +47,9 @@ Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         linux-tegra@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH v2 24/33] iommu/qcom: Convert to probe/release_device() call-backs
-Date:   Tue, 14 Apr 2020 15:15:33 +0200
-Message-Id: <20200414131542.25608-25-joro@8bytes.org>
+Subject: [PATCH v2 18/33] iommu/pamu: Convert to probe/release_device() call-backs
+Date:   Tue, 14 Apr 2020 15:15:27 +0200
+Message-Id: <20200414131542.25608-19-joro@8bytes.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200414131542.25608-1-joro@8bytes.org>
 References: <20200414131542.25608-1-joro@8bytes.org>
@@ -60,79 +60,59 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Convert the QCOM IOMMU driver to use the probe_device() and
+Convert the PAMU IOMMU driver to use the probe_device() and
 release_device() call-backs of iommu_ops, so that the iommu core code
 does the group and sysfs setup.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- drivers/iommu/qcom_iommu.c | 24 +++++++-----------------
- 1 file changed, 7 insertions(+), 17 deletions(-)
+ drivers/iommu/fsl_pamu_domain.c | 22 +++++-----------------
+ 1 file changed, 5 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/iommu/qcom_iommu.c b/drivers/iommu/qcom_iommu.c
-index 0e2a96467767..054e476ebd49 100644
---- a/drivers/iommu/qcom_iommu.c
-+++ b/drivers/iommu/qcom_iommu.c
-@@ -524,14 +524,13 @@ static bool qcom_iommu_capable(enum iommu_cap cap)
- 	}
+diff --git a/drivers/iommu/fsl_pamu_domain.c b/drivers/iommu/fsl_pamu_domain.c
+index 06828e2698d5..928d37771ece 100644
+--- a/drivers/iommu/fsl_pamu_domain.c
++++ b/drivers/iommu/fsl_pamu_domain.c
+@@ -1016,25 +1016,13 @@ static struct iommu_group *fsl_pamu_device_group(struct device *dev)
+ 	return group;
  }
  
--static int qcom_iommu_add_device(struct device *dev)
-+static struct iommu_device *qcom_iommu_probe_device(struct device *dev)
+-static int fsl_pamu_add_device(struct device *dev)
++static struct iommu_device *fsl_pamu_probe_device(struct device *dev)
  {
- 	struct qcom_iommu_dev *qcom_iommu = to_iommu(dev);
 -	struct iommu_group *group;
- 	struct device_link *link;
- 
- 	if (!qcom_iommu)
--		return -ENODEV;
-+		return ERR_PTR(-ENODEV);
- 
- 	/*
- 	 * Establish the link between iommu and master, so that the
-@@ -542,28 +541,19 @@ static int qcom_iommu_add_device(struct device *dev)
- 	if (!link) {
- 		dev_err(qcom_iommu->dev, "Unable to create device link between %s and %s\n",
- 			dev_name(qcom_iommu->dev), dev_name(dev));
--		return -ENODEV;
-+		return ERR_PTR(-ENODEV);
- 	}
- 
+-
 -	group = iommu_group_get_for_dev(dev);
 -	if (IS_ERR(group))
 -		return PTR_ERR(group);
 -
 -	iommu_group_put(group);
--	iommu_device_link(&qcom_iommu->iommu, dev);
+-
+-	iommu_device_link(&pamu_iommu, dev);
 -
 -	return 0;
-+	return &qcom_iommu->iommu;
++	return &pamu_iommu;
  }
  
--static void qcom_iommu_remove_device(struct device *dev)
-+static void qcom_iommu_release_device(struct device *dev)
+-static void fsl_pamu_remove_device(struct device *dev)
++static void fsl_pamu_release_device(struct device *dev)
  {
- 	struct qcom_iommu_dev *qcom_iommu = to_iommu(dev);
- 
- 	if (!qcom_iommu)
- 		return;
- 
--	iommu_device_unlink(&qcom_iommu->iommu, dev);
+-	iommu_device_unlink(&pamu_iommu, dev);
 -	iommu_group_remove_device(dev);
- 	iommu_fwspec_free(dev);
  }
  
-@@ -619,8 +609,8 @@ static const struct iommu_ops qcom_iommu_ops = {
- 	.flush_iotlb_all = qcom_iommu_flush_iotlb_all,
- 	.iotlb_sync	= qcom_iommu_iotlb_sync,
- 	.iova_to_phys	= qcom_iommu_iova_to_phys,
--	.add_device	= qcom_iommu_add_device,
--	.remove_device	= qcom_iommu_remove_device,
-+	.probe_device	= qcom_iommu_probe_device,
-+	.release_device	= qcom_iommu_release_device,
- 	.device_group	= generic_device_group,
- 	.of_xlate	= qcom_iommu_of_xlate,
- 	.pgsize_bitmap	= SZ_4K | SZ_64K | SZ_1M | SZ_16M,
+ static const struct iommu_ops fsl_pamu_ops = {
+@@ -1048,8 +1036,8 @@ static const struct iommu_ops fsl_pamu_ops = {
+ 	.iova_to_phys	= fsl_pamu_iova_to_phys,
+ 	.domain_set_attr = fsl_pamu_set_domain_attr,
+ 	.domain_get_attr = fsl_pamu_get_domain_attr,
+-	.add_device	= fsl_pamu_add_device,
+-	.remove_device	= fsl_pamu_remove_device,
++	.probe_device	= fsl_pamu_probe_device,
++	.release_device	= fsl_pamu_release_device,
+ 	.device_group   = fsl_pamu_device_group,
+ };
+ 
 -- 
 2.17.1
 
