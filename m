@@ -7,22 +7,22 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21AA7C2BA19
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEFC2C2BBC7
 	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:23:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0BD242063A
+	by mail.kernel.org (Postfix) with ESMTP id CEC7A2063A
 	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:23:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440156AbgDNNXc (ORCPT
+        id S2440146AbgDNNX3 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 14 Apr 2020 09:23:32 -0400
-Received: from 8bytes.org ([81.169.241.247]:35050 "EHLO theia.8bytes.org"
+        Tue, 14 Apr 2020 09:23:29 -0400
+Received: from 8bytes.org ([81.169.241.247]:35236 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2502884AbgDNNQD (ORCPT
+        id S2502890AbgDNNQE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Apr 2020 09:16:03 -0400
+        Tue, 14 Apr 2020 09:16:04 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 1B5634DB; Tue, 14 Apr 2020 15:15:53 +0200 (CEST)
+        id D28195D8; Tue, 14 Apr 2020 15:15:53 +0200 (CEST)
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
         Robin Murphy <robin.murphy@arm.com>,
@@ -47,9 +47,9 @@ Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         linux-tegra@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH v2 09/33] iommu: Keep a list of allocated groups in __iommu_probe_device()
-Date:   Tue, 14 Apr 2020 15:15:18 +0200
-Message-Id: <20200414131542.25608-10-joro@8bytes.org>
+Subject: [PATCH v2 13/33] iommu: Export bus_iommu_probe() and make is safe for re-probing
+Date:   Tue, 14 Apr 2020 15:15:22 +0200
+Message-Id: <20200414131542.25608-14-joro@8bytes.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200414131542.25608-1-joro@8bytes.org>
 References: <20200414131542.25608-1-joro@8bytes.org>
@@ -60,62 +60,52 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-This is needed to defer default_domain allocation for new IOMMU groups
-until all devices have been added to the group.
+Add a check to the bus_iommu_probe() call-path to make sure it ignores
+devices which have already been successfully probed. Then export the
+bus_iommu_probe() function so it can be used by IOMMU drivers.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- drivers/iommu/iommu.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/iommu/iommu.c | 6 +++++-
+ include/linux/iommu.h | 1 +
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 7a385c18e1a5..18eb3623bd00 100644
+index 834a45da0ed0..a2ff95424044 100644
 --- a/drivers/iommu/iommu.c
 +++ b/drivers/iommu/iommu.c
-@@ -44,6 +44,7 @@ struct iommu_group {
- 	int id;
- 	struct iommu_domain *default_domain;
- 	struct iommu_domain *domain;
-+	struct list_head entry;
- };
+@@ -1615,6 +1615,10 @@ static int probe_iommu_group(struct device *dev, void *data)
+ 	if (!dev_iommu_get(dev))
+ 		return -ENOMEM;
  
- struct group_device {
-@@ -184,7 +185,7 @@ static void dev_iommu_free(struct device *dev)
- 	dev->iommu = NULL;
++	/* Device is probed already if in a group */
++	if (iommu_group_get(dev) != NULL)
++		return 0;
++
+ 	if (!try_module_get(ops->owner)) {
+ 		ret = -EINVAL;
+ 		goto err_free_dev_iommu;
+@@ -1783,7 +1787,7 @@ static int iommu_group_create_direct_mappings(struct iommu_group *group)
+ 					  iommu_do_create_direct_mappings);
  }
  
--static int __iommu_probe_device(struct device *dev)
-+static int __iommu_probe_device(struct device *dev, struct list_head *group_list)
+-static int bus_iommu_probe(struct bus_type *bus)
++int bus_iommu_probe(struct bus_type *bus)
  {
- 	const struct iommu_ops *ops = dev->bus->iommu_ops;
- 	struct iommu_device *iommu_dev;
-@@ -204,6 +205,9 @@ static int __iommu_probe_device(struct device *dev)
- 	}
- 	iommu_group_put(group);
+ 	const struct iommu_ops *ops = bus->iommu_ops;
+ 	int ret;
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index 30170d191e5e..fea1622408ad 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -445,6 +445,7 @@ static inline void iommu_iotlb_gather_init(struct iommu_iotlb_gather *gather)
+ #define IOMMU_GROUP_NOTIFY_UNBOUND_DRIVER	6 /* Post Driver unbind */
  
-+	if (group_list && !group->default_domain && list_empty(&group->entry))
-+		list_add_tail(&group->entry, group_list);
-+
- 	iommu_device_link(iommu_dev, dev);
- 
- 	return 0;
-@@ -234,7 +238,7 @@ int iommu_probe_device(struct device *dev)
- 	if (ops->probe_device) {
- 		struct iommu_group *group;
- 
--		ret = __iommu_probe_device(dev);
-+		ret = __iommu_probe_device(dev, NULL);
- 
- 		/*
- 		 * Try to allocate a default domain - needs support from the
-@@ -567,6 +571,7 @@ struct iommu_group *iommu_group_alloc(void)
- 	group->kobj.kset = iommu_group_kset;
- 	mutex_init(&group->mutex);
- 	INIT_LIST_HEAD(&group->devices);
-+	INIT_LIST_HEAD(&group->entry);
- 	BLOCKING_INIT_NOTIFIER_HEAD(&group->notifier);
- 
- 	ret = ida_simple_get(&iommu_group_ida, 0, 0, GFP_KERNEL);
+ extern int bus_set_iommu(struct bus_type *bus, const struct iommu_ops *ops);
++extern int bus_iommu_probe(struct bus_type *bus);
+ extern bool iommu_present(struct bus_type *bus);
+ extern bool iommu_capable(struct bus_type *bus, enum iommu_cap cap);
+ extern struct iommu_domain *iommu_domain_alloc(struct bus_type *bus);
 -- 
 2.17.1
 
