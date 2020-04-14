@@ -2,31 +2,34 @@ Return-Path: <SRS0=kFJz=56=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B52C2BBC7
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:20:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 662CFC2BA19
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:20:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2314E2076D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:20:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40E8B20732
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:20:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503062AbgDNNTx (ORCPT
+        id S1731402AbgDNNUk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 14 Apr 2020 09:19:53 -0400
-Received: from 8bytes.org ([81.169.241.247]:35334 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2502896AbgDNNQG (ORCPT
+        Tue, 14 Apr 2020 09:20:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55888 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731120AbgDNNUd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Apr 2020 09:16:06 -0400
+        Tue, 14 Apr 2020 09:20:33 -0400
+X-Greylist: delayed 277 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 14 Apr 2020 06:20:32 PDT
+Received: from theia.8bytes.org (8bytes.org [IPv6:2a01:238:4383:600:38bc:a715:4b6d:a889])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED76DC061A0C;
+        Tue, 14 Apr 2020 06:20:32 -0700 (PDT)
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 49BD8694; Tue, 14 Apr 2020 15:15:55 +0200 (CEST)
+        id 340BE45B; Tue, 14 Apr 2020 15:20:31 +0200 (CEST)
+Date:   Tue, 14 Apr 2020 15:20:29 +0200
 From:   Joerg Roedel <joro@8bytes.org>
-To:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
         Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         David Woodhouse <dwmw2@infradead.org>,
@@ -39,130 +42,48 @@ To:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
         Gerald Schaefer <gerald.schaefer@de.ibm.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-mediatek@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
         linux-tegra@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH v2 20/33] iommu/virtio: Convert to probe/release_device() call-backs
-Date:   Tue, 14 Apr 2020 15:15:29 +0200
-Message-Id: <20200414131542.25608-21-joro@8bytes.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200414131542.25608-1-joro@8bytes.org>
-References: <20200414131542.25608-1-joro@8bytes.org>
+Subject: Re: [PATCH] iommu/exynos: Get rid of 'struct exynos_iommu_owner'
+ exynos_iommu_owner
+Message-ID: <20200414132029.GB14731@8bytes.org>
+References: <20200407183742.4344-1-joro@8bytes.org>
+ <CGME20200407184501eucas1p25407bc96e4345df406cf6ba061ae6a82@eucas1p2.samsung.com>
+ <20200407183742.4344-32-joro@8bytes.org>
+ <449e7f16-e719-9617-ec92-63b82c0bc33f@samsung.com>
+ <f59b0bb3-8c08-9cc9-bb1a-e69b7b226f60@samsung.com>
+ <20200409114620.GA16298@8bytes.org>
+ <40af831b-d00c-0cf9-0a06-e60c048a9ab8@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <40af831b-d00c-0cf9-0a06-e60c048a9ab8@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Joerg Roedel <jroedel@suse.de>
+On Thu, Apr 09, 2020 at 03:58:00PM +0200, Marek Szyprowski wrote:
+> I've checked and it works fine on top of 
+> ff68eb23308e6538ec7864c83d39540f423bbe90. However I'm not a fan of 
+> removing this 'owner' structure. It gave a nice abstraction for the all 
+> SYSMMU controllers for the given device (although most devices in the 
+> system have only one SYSMMU). Why this structure is a problem for your 
+> rework?
 
-Convert the VirtIO IOMMU driver to use the probe_device() and
-release_device() call-backs of iommu_ops, so that the iommu core code
-does the group and sysfs setup.
+Okay, the structure itself is not a problem, I just thought it is not
+really necessary. But to keep things simple I've taken another approach
+for v2 of this series: Just use the first SYSMMU of the controllers list
+to link the device and the IOMMU. When the owner structure exists there
+is always one entry in this list, so that should work fine.
 
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
----
- drivers/iommu/virtio-iommu.c | 41 +++++++++---------------------------
- 1 file changed, 10 insertions(+), 31 deletions(-)
+Regards,
 
-diff --git a/drivers/iommu/virtio-iommu.c b/drivers/iommu/virtio-iommu.c
-index d5cac4f46ca5..bda300c2a438 100644
---- a/drivers/iommu/virtio-iommu.c
-+++ b/drivers/iommu/virtio-iommu.c
-@@ -865,24 +865,23 @@ static struct viommu_dev *viommu_get_by_fwnode(struct fwnode_handle *fwnode)
- 	return dev ? dev_to_virtio(dev)->priv : NULL;
- }
- 
--static int viommu_add_device(struct device *dev)
-+static struct iommu_device *viommu_probe_device(struct device *dev)
- {
- 	int ret;
--	struct iommu_group *group;
- 	struct viommu_endpoint *vdev;
- 	struct viommu_dev *viommu = NULL;
- 	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
- 
- 	if (!fwspec || fwspec->ops != &viommu_ops)
--		return -ENODEV;
-+		return ERR_PTR(-ENODEV);
- 
- 	viommu = viommu_get_by_fwnode(fwspec->iommu_fwnode);
- 	if (!viommu)
--		return -ENODEV;
-+		return ERR_PTR(-ENODEV);
- 
- 	vdev = kzalloc(sizeof(*vdev), GFP_KERNEL);
- 	if (!vdev)
--		return -ENOMEM;
-+		return ERR_PTR(-ENOMEM);
- 
- 	vdev->dev = dev;
- 	vdev->viommu = viommu;
-@@ -896,45 +895,25 @@ static int viommu_add_device(struct device *dev)
- 			goto err_free_dev;
- 	}
- 
--	ret = iommu_device_link(&viommu->iommu, dev);
--	if (ret)
--		goto err_free_dev;
-+	return &viommu->iommu;
- 
--	/*
--	 * Last step creates a default domain and attaches to it. Everything
--	 * must be ready.
--	 */
--	group = iommu_group_get_for_dev(dev);
--	if (IS_ERR(group)) {
--		ret = PTR_ERR(group);
--		goto err_unlink_dev;
--	}
--
--	iommu_group_put(group);
--
--	return PTR_ERR_OR_ZERO(group);
--
--err_unlink_dev:
--	iommu_device_unlink(&viommu->iommu, dev);
- err_free_dev:
- 	generic_iommu_put_resv_regions(dev, &vdev->resv_regions);
- 	kfree(vdev);
- 
--	return ret;
-+	return ERR_PTR(ret);
- }
- 
--static void viommu_remove_device(struct device *dev)
-+static void viommu_release_device(struct device *dev)
- {
--	struct viommu_endpoint *vdev;
- 	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
-+	struct viommu_endpoint *vdev;
- 
- 	if (!fwspec || fwspec->ops != &viommu_ops)
- 		return;
- 
- 	vdev = dev_iommu_priv_get(dev);
- 
--	iommu_group_remove_device(dev);
--	iommu_device_unlink(&vdev->viommu->iommu, dev);
- 	generic_iommu_put_resv_regions(dev, &vdev->resv_regions);
- 	kfree(vdev);
- }
-@@ -960,8 +939,8 @@ static struct iommu_ops viommu_ops = {
- 	.unmap			= viommu_unmap,
- 	.iova_to_phys		= viommu_iova_to_phys,
- 	.iotlb_sync		= viommu_iotlb_sync,
--	.add_device		= viommu_add_device,
--	.remove_device		= viommu_remove_device,
-+	.probe_device		= viommu_probe_device,
-+	.release_device		= viommu_release_device,
- 	.device_group		= viommu_device_group,
- 	.get_resv_regions	= viommu_get_resv_regions,
- 	.put_resv_regions	= generic_iommu_put_resv_regions,
--- 
-2.17.1
+	Joerg
 
