@@ -6,22 +6,22 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1F05C2BBC7
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:16:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DCACC2BB86
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:16:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 982CC2063A
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:16:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13A392075E
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:16:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502928AbgDNNQM (ORCPT
+        id S2502940AbgDNNQO (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 14 Apr 2020 09:16:12 -0400
-Received: from 8bytes.org ([81.169.241.247]:35510 "EHLO theia.8bytes.org"
+        Tue, 14 Apr 2020 09:16:14 -0400
+Received: from 8bytes.org ([81.169.241.247]:35234 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2502908AbgDNNQK (ORCPT
+        id S2502917AbgDNNQK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Tue, 14 Apr 2020 09:16:10 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 7D810695; Tue, 14 Apr 2020 15:15:55 +0200 (CEST)
+        id E6E79984; Tue, 14 Apr 2020 15:15:57 +0200 (CEST)
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
         Robin Murphy <robin.murphy@arm.com>,
@@ -46,9 +46,9 @@ Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         linux-tegra@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH v2 21/33] iommu/msm: Convert to probe/release_device() call-backs
-Date:   Tue, 14 Apr 2020 15:15:30 +0200
-Message-Id: <20200414131542.25608-22-joro@8bytes.org>
+Subject: [PATCH v2 33/33] iommu: Unexport iommu_group_get_for_dev()
+Date:   Tue, 14 Apr 2020 15:15:42 +0200
+Message-Id: <20200414131542.25608-34-joro@8bytes.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200414131542.25608-1-joro@8bytes.org>
 References: <20200414131542.25608-1-joro@8bytes.org>
@@ -59,79 +59,56 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Convert the MSM IOMMU driver to use the probe_device() and
-release_device() call-backs of iommu_ops, so that the iommu core code
-does the group and sysfs setup.
+The function is now only used in IOMMU core code and shouldn't be used
+outside of it anyway, so remove the export for it.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- drivers/iommu/msm_iommu.c | 34 +++++++---------------------------
- 1 file changed, 7 insertions(+), 27 deletions(-)
+ drivers/iommu/iommu.c | 4 ++--
+ include/linux/iommu.h | 1 -
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/iommu/msm_iommu.c b/drivers/iommu/msm_iommu.c
-index 94a6df1bddd6..10cd4db0710a 100644
---- a/drivers/iommu/msm_iommu.c
-+++ b/drivers/iommu/msm_iommu.c
-@@ -388,43 +388,23 @@ static struct msm_iommu_dev *find_iommu_for_dev(struct device *dev)
- 	return ret;
- }
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index 9a7120746b8e..e9413732c61e 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -91,6 +91,7 @@ static void __iommu_detach_group(struct iommu_domain *domain,
+ 				 struct iommu_group *group);
+ static int iommu_create_device_direct_mappings(struct iommu_group *group,
+ 					       struct device *dev);
++static struct iommu_group *iommu_group_get_for_dev(struct device *dev);
  
--static int msm_iommu_add_device(struct device *dev)
-+static struct iommu_device *msm_iommu_probe_device(struct device *dev)
+ #define IOMMU_GROUP_ATTR(_name, _mode, _show, _store)		\
+ struct iommu_group_attribute iommu_group_attr_##_name =		\
+@@ -1483,7 +1484,7 @@ static int iommu_alloc_default_domain(struct device *dev)
+  * to the returned IOMMU group, which will already include the provided
+  * device.  The reference should be released with iommu_group_put().
+  */
+-struct iommu_group *iommu_group_get_for_dev(struct device *dev)
++static struct iommu_group *iommu_group_get_for_dev(struct device *dev)
  {
- 	struct msm_iommu_dev *iommu;
--	struct iommu_group *group;
- 	unsigned long flags;
+ 	const struct iommu_ops *ops = dev->bus->iommu_ops;
+ 	struct iommu_group *group;
+@@ -1514,7 +1515,6 @@ struct iommu_group *iommu_group_get_for_dev(struct device *dev)
  
- 	spin_lock_irqsave(&msm_iommu_lock, flags);
- 	iommu = find_iommu_for_dev(dev);
- 	spin_unlock_irqrestore(&msm_iommu_lock, flags);
- 
--	if (iommu)
--		iommu_device_link(&iommu->iommu, dev);
--	else
--		return -ENODEV;
--
--	group = iommu_group_get_for_dev(dev);
--	if (IS_ERR(group))
--		return PTR_ERR(group);
--
--	iommu_group_put(group);
-+	if (!iommu)
-+		return ERR_PTR(-ENODEV);
- 
--	return 0;
-+	return &iommu->iommu;
+ 	return ERR_PTR(ret);
  }
+-EXPORT_SYMBOL(iommu_group_get_for_dev);
  
--static void msm_iommu_remove_device(struct device *dev)
-+static void msm_iommu_release_device(struct device *dev)
+ struct iommu_domain *iommu_group_default_domain(struct iommu_group *group)
  {
--	struct msm_iommu_dev *iommu;
--	unsigned long flags;
--
--	spin_lock_irqsave(&msm_iommu_lock, flags);
--	iommu = find_iommu_for_dev(dev);
--	spin_unlock_irqrestore(&msm_iommu_lock, flags);
--
--	if (iommu)
--		iommu_device_unlink(&iommu->iommu, dev);
--
--	iommu_group_remove_device(dev);
- }
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index dd076366383f..7cfd2dddb49d 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -527,7 +527,6 @@ extern int iommu_page_response(struct device *dev,
+ 			       struct iommu_page_response *msg);
  
- static int msm_iommu_attach_dev(struct iommu_domain *domain, struct device *dev)
-@@ -708,8 +688,8 @@ static struct iommu_ops msm_iommu_ops = {
- 	 */
- 	.iotlb_sync = NULL,
- 	.iova_to_phys = msm_iommu_iova_to_phys,
--	.add_device = msm_iommu_add_device,
--	.remove_device = msm_iommu_remove_device,
-+	.probe_device = msm_iommu_probe_device,
-+	.release_device = msm_iommu_release_device,
- 	.device_group = generic_device_group,
- 	.pgsize_bitmap = MSM_IOMMU_PGSIZES,
- 	.of_xlate = qcom_iommu_of_xlate,
+ extern int iommu_group_id(struct iommu_group *group);
+-extern struct iommu_group *iommu_group_get_for_dev(struct device *dev);
+ extern struct iommu_domain *iommu_group_default_domain(struct iommu_group *);
+ 
+ extern int iommu_domain_get_attr(struct iommu_domain *domain, enum iommu_attr,
 -- 
 2.17.1
 
