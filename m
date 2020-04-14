@@ -4,24 +4,24 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C5CEC2BB86
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:16:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1F05C2BBC7
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:16:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 048E62084D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:16:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 982CC2063A
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:16:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502875AbgDNNQA (ORCPT
+        id S2502928AbgDNNQM (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 14 Apr 2020 09:16:00 -0400
-Received: from 8bytes.org ([81.169.241.247]:34698 "EHLO theia.8bytes.org"
+        Tue, 14 Apr 2020 09:16:12 -0400
+Received: from 8bytes.org ([81.169.241.247]:35510 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730960AbgDNNP5 (ORCPT
+        id S2502908AbgDNNQK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Apr 2020 09:15:57 -0400
+        Tue, 14 Apr 2020 09:16:10 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id B35903A2; Tue, 14 Apr 2020 15:15:51 +0200 (CEST)
+        id 7D810695; Tue, 14 Apr 2020 15:15:55 +0200 (CEST)
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
         Robin Murphy <robin.murphy@arm.com>,
@@ -45,11 +45,10 @@ Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
         linux-tegra@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
         Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH v2 02/33] iommu: Add def_domain_type() callback in iommu_ops
-Date:   Tue, 14 Apr 2020 15:15:11 +0200
-Message-Id: <20200414131542.25608-3-joro@8bytes.org>
+Subject: [PATCH v2 21/33] iommu/msm: Convert to probe/release_device() call-backs
+Date:   Tue, 14 Apr 2020 15:15:30 +0200
+Message-Id: <20200414131542.25608-22-joro@8bytes.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200414131542.25608-1-joro@8bytes.org>
 References: <20200414131542.25608-1-joro@8bytes.org>
@@ -58,100 +57,81 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+From: Joerg Roedel <jroedel@suse.de>
 
-Some devices are reqired to use a specific type (identity or dma)
-of default domain when they are used with a vendor iommu. When the
-system level default domain type is different from it, the vendor
-iommu driver has to request a new default domain with
-iommu_request_dma_domain_for_dev() and iommu_request_dm_for_dev()
-in the add_dev() callback. Unfortunately, these two helpers only
-work when the group hasn't been assigned to any other devices,
-hence, some vendor iommu driver has to use a private domain if
-it fails to request a new default one.
+Convert the MSM IOMMU driver to use the probe_device() and
+release_device() call-backs of iommu_ops, so that the iommu core code
+does the group and sysfs setup.
 
-This adds def_domain_type() callback in the iommu_ops, so that
-any special requirement of default domain for a device could be
-aware by the iommu generic layer.
-
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-[ jroedel@suse.de: Added iommu_get_def_domain_type() function and use
-                   it to allocate the default domain ]
-Co-developed-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- drivers/iommu/iommu.c | 20 +++++++++++++++++---
- include/linux/iommu.h |  6 ++++++
- 2 files changed, 23 insertions(+), 3 deletions(-)
+ drivers/iommu/msm_iommu.c | 34 +++++++---------------------------
+ 1 file changed, 7 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index bfe011760ed1..5877abd9b693 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -1361,21 +1361,35 @@ struct iommu_group *fsl_mc_device_group(struct device *dev)
+diff --git a/drivers/iommu/msm_iommu.c b/drivers/iommu/msm_iommu.c
+index 94a6df1bddd6..10cd4db0710a 100644
+--- a/drivers/iommu/msm_iommu.c
++++ b/drivers/iommu/msm_iommu.c
+@@ -388,43 +388,23 @@ static struct msm_iommu_dev *find_iommu_for_dev(struct device *dev)
+ 	return ret;
  }
- EXPORT_SYMBOL_GPL(fsl_mc_device_group);
  
-+static int iommu_get_def_domain_type(struct device *dev)
-+{
-+	const struct iommu_ops *ops = dev->bus->iommu_ops;
-+	unsigned int type = 0;
-+
-+	if (ops->def_domain_type)
-+		type = ops->def_domain_type(dev);
-+
-+	return (type == 0) ? iommu_def_domain_type : type;
-+}
-+
- static int iommu_alloc_default_domain(struct device *dev,
- 				      struct iommu_group *group)
+-static int msm_iommu_add_device(struct device *dev)
++static struct iommu_device *msm_iommu_probe_device(struct device *dev)
  {
- 	struct iommu_domain *dom;
-+	unsigned int type;
+ 	struct msm_iommu_dev *iommu;
+-	struct iommu_group *group;
+ 	unsigned long flags;
  
- 	if (group->default_domain)
- 		return 0;
+ 	spin_lock_irqsave(&msm_iommu_lock, flags);
+ 	iommu = find_iommu_for_dev(dev);
+ 	spin_unlock_irqrestore(&msm_iommu_lock, flags);
  
--	dom = __iommu_domain_alloc(dev->bus, iommu_def_domain_type);
--	if (!dom && iommu_def_domain_type != IOMMU_DOMAIN_DMA) {
-+	type = iommu_get_def_domain_type(dev);
-+
-+	dom = __iommu_domain_alloc(dev->bus, type);
-+	if (!dom && type != IOMMU_DOMAIN_DMA) {
- 		dom = __iommu_domain_alloc(dev->bus, IOMMU_DOMAIN_DMA);
- 		if (dom) {
- 			dev_warn(dev,
- 				 "failed to allocate default IOMMU domain of type %u; falling back to IOMMU_DOMAIN_DMA",
--				 iommu_def_domain_type);
-+				 type);
- 		}
- 	}
+-	if (iommu)
+-		iommu_device_link(&iommu->iommu, dev);
+-	else
+-		return -ENODEV;
+-
+-	group = iommu_group_get_for_dev(dev);
+-	if (IS_ERR(group))
+-		return PTR_ERR(group);
+-
+-	iommu_group_put(group);
++	if (!iommu)
++		return ERR_PTR(-ENODEV);
  
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index 7ef8b0bda695..1f027b07e499 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -248,6 +248,10 @@ struct iommu_iotlb_gather {
-  * @cache_invalidate: invalidate translation caches
-  * @sva_bind_gpasid: bind guest pasid and mm
-  * @sva_unbind_gpasid: unbind guest pasid and mm
-+ * @def_domain_type: device default domain type, return value:
-+ *		- IOMMU_DOMAIN_IDENTITY: must use an identity domain
-+ *		- IOMMU_DOMAIN_DMA: must use a dma domain
-+ *		- 0: use the default setting
-  * @pgsize_bitmap: bitmap of all possible supported page sizes
-  * @owner: Driver module providing these ops
-  */
-@@ -318,6 +322,8 @@ struct iommu_ops {
+-	return 0;
++	return &iommu->iommu;
+ }
  
- 	int (*sva_unbind_gpasid)(struct device *dev, int pasid);
+-static void msm_iommu_remove_device(struct device *dev)
++static void msm_iommu_release_device(struct device *dev)
+ {
+-	struct msm_iommu_dev *iommu;
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&msm_iommu_lock, flags);
+-	iommu = find_iommu_for_dev(dev);
+-	spin_unlock_irqrestore(&msm_iommu_lock, flags);
+-
+-	if (iommu)
+-		iommu_device_unlink(&iommu->iommu, dev);
+-
+-	iommu_group_remove_device(dev);
+ }
  
-+	int (*def_domain_type)(struct device *dev);
-+
- 	unsigned long pgsize_bitmap;
- 	struct module *owner;
- };
+ static int msm_iommu_attach_dev(struct iommu_domain *domain, struct device *dev)
+@@ -708,8 +688,8 @@ static struct iommu_ops msm_iommu_ops = {
+ 	 */
+ 	.iotlb_sync = NULL,
+ 	.iova_to_phys = msm_iommu_iova_to_phys,
+-	.add_device = msm_iommu_add_device,
+-	.remove_device = msm_iommu_remove_device,
++	.probe_device = msm_iommu_probe_device,
++	.release_device = msm_iommu_release_device,
+ 	.device_group = generic_device_group,
+ 	.pgsize_bitmap = MSM_IOMMU_PGSIZES,
+ 	.of_xlate = qcom_iommu_of_xlate,
 -- 
 2.17.1
 
