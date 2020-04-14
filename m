@@ -7,22 +7,22 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AB08C2BA19
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:22:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09753C2BA19
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:23:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12B012075E
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:22:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4C1A2075E
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:23:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731435AbgDNNWt (ORCPT
+        id S1731494AbgDNNXF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 14 Apr 2020 09:22:49 -0400
-Received: from 8bytes.org ([81.169.241.247]:35234 "EHLO theia.8bytes.org"
+        Tue, 14 Apr 2020 09:23:05 -0400
+Received: from 8bytes.org ([81.169.241.247]:34942 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2502889AbgDNNQF (ORCPT
+        id S2502892AbgDNNQF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Tue, 14 Apr 2020 09:16:05 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 9D76E50C; Tue, 14 Apr 2020 15:15:53 +0200 (CEST)
+        id 74494642; Tue, 14 Apr 2020 15:15:54 +0200 (CEST)
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
         Robin Murphy <robin.murphy@arm.com>,
@@ -47,9 +47,9 @@ Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         linux-tegra@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH v2 12/33] iommu: Move iommu_group_create_direct_mappings() out of iommu_group_add_device()
-Date:   Tue, 14 Apr 2020 15:15:21 +0200
-Message-Id: <20200414131542.25608-13-joro@8bytes.org>
+Subject: [PATCH v2 16/33] iommu/vt-d: Convert to probe/release_device() call-backs
+Date:   Tue, 14 Apr 2020 15:15:25 +0200
+Message-Id: <20200414131542.25608-17-joro@8bytes.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200414131542.25608-1-joro@8bytes.org>
 References: <20200414131542.25608-1-joro@8bytes.org>
@@ -60,131 +60,124 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-After the previous changes the iommu group may not have a default
-domain when iommu_group_add_device() is called. With no default domain
-iommu_group_create_direct_mappings() will do nothing and no direct
-mappings will be created.
-
-Rename iommu_group_create_direct_mappings() to
-iommu_create_device_direct_mappings() to better reflect that the
-function creates direct mappings only for one device and not for all
-devices in the group. Then move the call to the places where a default
-domain actually exists.
+Convert the Intel IOMMU driver to use the probe_device() and
+release_device() call-backs of iommu_ops, so that the iommu core code
+does the group and sysfs setup.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- drivers/iommu/iommu.c | 35 ++++++++++++++++++++++++++++++-----
- 1 file changed, 30 insertions(+), 5 deletions(-)
+ drivers/iommu/intel-iommu.c | 67 ++++---------------------------------
+ 1 file changed, 6 insertions(+), 61 deletions(-)
 
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 7de0e29db333..834a45da0ed0 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -89,6 +89,8 @@ static int __iommu_attach_group(struct iommu_domain *domain,
- 				struct iommu_group *group);
- static void __iommu_detach_group(struct iommu_domain *domain,
- 				 struct iommu_group *group);
-+static int iommu_create_device_direct_mappings(struct iommu_group *group,
-+					       struct device *dev);
- 
- #define IOMMU_GROUP_ATTR(_name, _mode, _show, _store)		\
- struct iommu_group_attribute iommu_group_attr_##_name =		\
-@@ -243,6 +245,8 @@ static int __iommu_probe_device_helper(struct device *dev)
- 	if (group->default_domain)
- 		ret = __iommu_attach_device(group->default_domain, dev);
- 
-+	iommu_create_device_direct_mappings(group, dev);
-+
- 	iommu_group_put(group);
- 
- 	if (ret)
-@@ -263,6 +267,7 @@ static int __iommu_probe_device_helper(struct device *dev)
- int iommu_probe_device(struct device *dev)
- {
- 	const struct iommu_ops *ops = dev->bus->iommu_ops;
-+	struct iommu_group *group;
- 	int ret;
- 
- 	WARN_ON(dev->iommu_group);
-@@ -285,6 +290,10 @@ int iommu_probe_device(struct device *dev)
- 	if (ret)
- 		goto err_module_put;
- 
-+	group = iommu_group_get(dev);
-+	iommu_create_device_direct_mappings(group, dev);
-+	iommu_group_put(group);
-+
- 	if (ops->probe_finalize)
- 		ops->probe_finalize(dev);
- 
-@@ -736,8 +745,8 @@ int iommu_group_set_name(struct iommu_group *group, const char *name)
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index b9f905a55dda..b906727f5b85 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -5781,78 +5781,27 @@ static bool intel_iommu_capable(enum iommu_cap cap)
+ 	return false;
  }
- EXPORT_SYMBOL_GPL(iommu_group_set_name);
  
--static int iommu_group_create_direct_mappings(struct iommu_group *group,
--					      struct device *dev)
-+static int iommu_create_device_direct_mappings(struct iommu_group *group,
-+					       struct device *dev)
+-static int intel_iommu_add_device(struct device *dev)
++static struct iommu_device *intel_iommu_probe_device(struct device *dev)
  {
- 	struct iommu_domain *domain = group->default_domain;
- 	struct iommu_resv_region *entry;
-@@ -841,8 +850,6 @@ int iommu_group_add_device(struct iommu_group *group, struct device *dev)
+-	struct dmar_domain *dmar_domain;
+-	struct iommu_domain *domain;
+ 	struct intel_iommu *iommu;
+-	struct iommu_group *group;
+ 	u8 bus, devfn;
+-	int ret;
  
- 	dev->iommu_group = group;
- 
--	iommu_group_create_direct_mappings(group, dev);
+ 	iommu = device_to_iommu(dev, &bus, &devfn);
+ 	if (!iommu)
+-		return -ENODEV;
 -
- 	mutex_lock(&group->mutex);
- 	list_add_tail(&device->list, &group->devices);
- 	if (group->domain)
-@@ -1736,6 +1743,7 @@ static void probe_alloc_default_domain(struct bus_type *bus,
- 		gtype.type = iommu_def_domain_type;
+-	iommu_device_link(&iommu->iommu, dev);
++		return ERR_PTR(-ENODEV);
  
- 	iommu_group_alloc_default_domain(bus, group, gtype.type);
-+
+ 	if (translation_pre_enabled(iommu))
+ 		dev->archdata.iommu = DEFER_DEVICE_DOMAIN_INFO;
+ 
+-	group = iommu_group_get_for_dev(dev);
+-
+-	if (IS_ERR(group)) {
+-		ret = PTR_ERR(group);
+-		goto unlink;
+-	}
+-
+-	iommu_group_put(group);
+-
+-	domain = iommu_get_domain_for_dev(dev);
+-	dmar_domain = to_dmar_domain(domain);
+-	if (domain->type == IOMMU_DOMAIN_DMA) {
+-		if (device_def_domain_type(dev) == IOMMU_DOMAIN_IDENTITY) {
+-			ret = iommu_request_dm_for_dev(dev);
+-			if (ret) {
+-				dmar_remove_one_dev_info(dev);
+-				dmar_domain->flags |= DOMAIN_FLAG_LOSE_CHILDREN;
+-				domain_add_dev_info(si_domain, dev);
+-				dev_info(dev,
+-					 "Device uses a private identity domain.\n");
+-			}
+-		}
+-	} else {
+-		if (device_def_domain_type(dev) == IOMMU_DOMAIN_DMA) {
+-			ret = iommu_request_dma_domain_for_dev(dev);
+-			if (ret) {
+-				dmar_remove_one_dev_info(dev);
+-				dmar_domain->flags |= DOMAIN_FLAG_LOSE_CHILDREN;
+-				if (!get_private_domain_for_dev(dev)) {
+-					dev_warn(dev,
+-						 "Failed to get a private domain.\n");
+-					ret = -ENOMEM;
+-					goto unlink;
+-				}
+-
+-				dev_info(dev,
+-					 "Device uses a private dma domain.\n");
+-			}
+-		}
+-	}
+-
+ 	if (device_needs_bounce(dev)) {
+ 		dev_info(dev, "Use Intel IOMMU bounce page dma_ops\n");
+ 		set_dma_ops(dev, &bounce_dma_ops);
+ 	}
+ 
+-	return 0;
+-
+-unlink:
+-	iommu_device_unlink(&iommu->iommu, dev);
+-	return ret;
++	return &iommu->iommu;
  }
  
- static int iommu_group_do_dma_attach(struct device *dev, void *data)
-@@ -1760,6 +1768,21 @@ static int __iommu_group_dma_attach(struct iommu_group *group)
- 					  iommu_group_do_dma_attach);
- }
- 
-+static int iommu_do_create_direct_mappings(struct device *dev, void *data)
-+{
-+	struct iommu_group *group = data;
-+
-+	iommu_create_device_direct_mappings(group, dev);
-+
-+	return 0;
-+}
-+
-+static int iommu_group_create_direct_mappings(struct iommu_group *group)
-+{
-+	return __iommu_group_for_each_dev(group, group,
-+					  iommu_do_create_direct_mappings);
-+}
-+
- static int bus_iommu_probe(struct bus_type *bus)
+-static void intel_iommu_remove_device(struct device *dev)
++static void intel_iommu_release_device(struct device *dev)
  {
- 	const struct iommu_ops *ops = bus->iommu_ops;
-@@ -1792,6 +1815,8 @@ static int bus_iommu_probe(struct bus_type *bus)
- 				continue;
- 			}
+ 	struct intel_iommu *iommu;
+ 	u8 bus, devfn;
+@@ -5863,10 +5812,6 @@ static void intel_iommu_remove_device(struct device *dev)
  
-+			iommu_group_create_direct_mappings(group);
-+
- 			ret = __iommu_group_dma_attach(group);
+ 	dmar_remove_one_dev_info(dev);
  
- 			mutex_unlock(&group->mutex);
-@@ -2632,7 +2657,7 @@ request_default_domain_for_dev(struct device *dev, unsigned long type)
- 		iommu_domain_free(group->default_domain);
- 	group->default_domain = domain;
- 
--	iommu_group_create_direct_mappings(group, dev);
-+	iommu_create_device_direct_mappings(group, dev);
- 
- 	dev_info(dev, "Using iommu %s mapping\n",
- 		 type == IOMMU_DOMAIN_DMA ? "dma" : "direct");
+-	iommu_group_remove_device(dev);
+-
+-	iommu_device_unlink(&iommu->iommu, dev);
+-
+ 	if (device_needs_bounce(dev))
+ 		set_dma_ops(dev, NULL);
+ }
+@@ -6198,8 +6143,8 @@ const struct iommu_ops intel_iommu_ops = {
+ 	.map			= intel_iommu_map,
+ 	.unmap			= intel_iommu_unmap,
+ 	.iova_to_phys		= intel_iommu_iova_to_phys,
+-	.add_device		= intel_iommu_add_device,
+-	.remove_device		= intel_iommu_remove_device,
++	.probe_device		= intel_iommu_probe_device,
++	.release_device		= intel_iommu_release_device,
+ 	.get_resv_regions	= intel_iommu_get_resv_regions,
+ 	.put_resv_regions	= generic_iommu_put_resv_regions,
+ 	.apply_resv_region	= intel_iommu_apply_resv_region,
 -- 
 2.17.1
 
