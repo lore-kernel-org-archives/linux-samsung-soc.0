@@ -2,105 +2,85 @@ Return-Path: <SRS0=kFJz=56=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9506EC3815B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 15:28:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F14E3C2BB1D
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 23:13:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E1E3206D5
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 15:28:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B96D62054F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 23:13:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1586905990;
+	bh=sy+Whlg2RCdb35wEFhj/BGmcgA87Vhsr6L2apXyQFl4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Iz+/6dV3ieRqtz2s4JpFLMB9jI+K5HMz0raUJF32AKeXNCXgTQIdqC4mQuPgUrdlD
+	 UlnuMJFsmKL4/L5EwNsjQSGkQC0qBj73xLkZWdU362r6y5QEB7hVEKJoBQQY8q9oIw
+	 5ol9oJvicFbyGmrgbFOHSlNmWvDuoH87Niq2efYE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440399AbgDNP2B (ORCPT
+        id S1733181AbgDNXNK (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 14 Apr 2020 11:28:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47510 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729746AbgDNP14 (ORCPT
+        Tue, 14 Apr 2020 19:13:10 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:43764 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729358AbgDNXNJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Apr 2020 11:27:56 -0400
-Received: from theia.8bytes.org (8bytes.org [IPv6:2a01:238:4383:600:38bc:a715:4b6d:a889])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3409CC061A0C;
-        Tue, 14 Apr 2020 08:27:56 -0700 (PDT)
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 3493E2A4; Tue, 14 Apr 2020 17:27:54 +0200 (CEST)
-Date:   Tue, 14 Apr 2020 17:27:52 +0200
-From:   "joro@8bytes.org" <joro@8bytes.org>
-To:     "Derrick, Jonathan" <jonathan.derrick@intel.com>
-Cc:     "heiko@sntech.de" <heiko@sntech.de>,
-        "kgene@kernel.org" <kgene@kernel.org>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>,
-        "baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "jean-philippe@linaro.org" <jean-philippe@linaro.org>,
-        "krzk@kernel.org" <krzk@kernel.org>,
-        "robdclark@gmail.com" <robdclark@gmail.com>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        "gerald.schaefer@de.ibm.com" <gerald.schaefer@de.ibm.com>,
-        "agross@kernel.org" <agross@kernel.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-rockchip@lists.infradead.org" 
-        <linux-rockchip@lists.infradead.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "jroedel@suse.de" <jroedel@suse.de>
-Subject: Re: [RFC PATCH 11/34] iommu: Split off default domain allocation
- from group assignment
-Message-ID: <20200414152752.GC14731@8bytes.org>
-References: <20200407183742.4344-1-joro@8bytes.org>
- <20200407183742.4344-12-joro@8bytes.org>
- <6a801ff9e6471bda7c6f510dfa2ba7e7c35cb559.camel@intel.com>
+        Tue, 14 Apr 2020 19:13:09 -0400
+Received: by mail-oi1-f196.google.com with SMTP id j16so11979822oih.10;
+        Tue, 14 Apr 2020 16:13:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VvYN+POzUP/HxZIW68dFGmEkR5GANu8XsXmHkqwh3r4=;
+        b=LuYvRXYeP411lHfgR4fLTUPU7Og85b7wQxEkF2BBtbTvlzLrtELtbYrXQ0IwZQ1J2o
+         6vhiT5fDDdNlnVLNr+/DU3LgmscXOzpPiHDXL+oRf/95CZey2gmLM651cchi+GHUAxmI
+         brIgLwKhPZkR8dfeI47chcH18/I/VYav0iVOUqPf/QQy4LSDI6pGaABXfEK1kdUeOsGI
+         /VQqbNMwhYPFg4O3NmLPpwQaTEi2PNJHEBp0W13QXisQsda464B95Ezhc1U5hRod9cgQ
+         xitniWvRx5odmlTfrdFBgb1yD6OY877KFoF8V0Ji56liLQCsmYdOp4bl4OSzlJACvC35
+         IZMA==
+X-Gm-Message-State: AGi0PubKXB/F40v1Z6NJLiQswXheK3goSsq678YJXWy2IsAFbqZXdxcz
+        I8utuO3hCf7WTBU4tc1FzQ==
+X-Google-Smtp-Source: APiQypK61RTHR9kuSvlYPwIECBbuocsSAp6KyPuha5OGWWkV7afY5lGlf+sLaVr7JcOhZjc7RQrgHw==
+X-Received: by 2002:aca:403:: with SMTP id 3mr12694157oie.166.1586905989246;
+        Tue, 14 Apr 2020 16:13:09 -0700 (PDT)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id i7sm5911183otl.12.2020.04.14.16.13.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Apr 2020 16:13:08 -0700 (PDT)
+Received: (nullmailer pid 9163 invoked by uid 1000);
+        Tue, 14 Apr 2020 23:13:06 -0000
+Date:   Tue, 14 Apr 2020 18:13:06 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hyunki Koo <hyunki00.koo@samsung.com>
+Subject: Re: [PATCH] dt-bindings: memory-controllers: exynos-srom: Remove
+ unneeded type for reg-io-width
+Message-ID: <20200414231306.GA9106@bogus>
+References: <20200406104554.29773-1-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6a801ff9e6471bda7c6f510dfa2ba7e7c35cb559.camel@intel.com>
+In-Reply-To: <20200406104554.29773-1-krzk@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Jonathan,
-
-On Mon, Apr 13, 2020 at 10:10:50PM +0000, Derrick, Jonathan wrote:
-> I had to add the following for initial VMD support. The new PCIe domain
-> added on VMD endpoint probe didn't have the dev_iommu member set on the
-> VMD subdevices, which I'm guessing is due to probe_iommu_group already
-> having been run on the VMD endpoint's group prior to those subdevices
-> being added.
+On Mon,  6 Apr 2020 12:45:54 +0200, Krzysztof Kozlowski wrote:
+> 'reg-io-width' property is an enum so there is no need to specify its
+> type.
 > 
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index 8a5e1ac328dd..ac1e4fb9bf48 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -1577,6 +1577,9 @@ static int iommu_bus_notifier(struct notifier_block *nb,
->         if (action == BUS_NOTIFY_ADD_DEVICE) {
->                 int ret;
->  
-> +               if (!dev_iommu_get(dev))
-> +                       return -ENOMEM;
-> +
->                 ret = iommu_probe_device(dev);
->                 return (ret) ? NOTIFY_DONE : NOTIFY_OK;
->         } else if (action == BUS_NOTIFY_REMOVED_DEVICE) {
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  .../devicetree/bindings/memory-controllers/exynos-srom.yaml   | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
 
-Right, thanks for catching this. The hotplug path does not allocate the
-dev->iommu structure yet. I'll have to figure out if the above patch
-adds it at the right place, but I'll fix it in the next version.
+Applied, thanks.
 
-Thanks again,
-
-	Joerg
+Rob
