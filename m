@@ -7,22 +7,22 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FADEC352B6
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:21:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F5BEC2BA19
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:21:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A7C120768
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:21:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0915F2064A
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:21:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730760AbgDNNTw (ORCPT
+        id S1731293AbgDNNVl (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 14 Apr 2020 09:19:52 -0400
-Received: from 8bytes.org ([81.169.241.247]:35236 "EHLO theia.8bytes.org"
+        Tue, 14 Apr 2020 09:21:41 -0400
+Received: from 8bytes.org ([81.169.241.247]:35386 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2502906AbgDNNQH (ORCPT
+        id S2502900AbgDNNQG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Apr 2020 09:16:07 -0400
+        Tue, 14 Apr 2020 09:16:06 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 470097E3; Tue, 14 Apr 2020 15:15:57 +0200 (CEST)
+        id B127F6A7; Tue, 14 Apr 2020 15:15:55 +0200 (CEST)
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
         Robin Murphy <robin.murphy@arm.com>,
@@ -47,9 +47,9 @@ Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         linux-tegra@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH v2 30/33] iommu/exynos: Use first SYSMMU in controllers list for IOMMU core
-Date:   Tue, 14 Apr 2020 15:15:39 +0200
-Message-Id: <20200414131542.25608-31-joro@8bytes.org>
+Subject: [PATCH v2 22/33] iommu/mediatek: Convert to probe/release_device() call-backs
+Date:   Tue, 14 Apr 2020 15:15:31 +0200
+Message-Id: <20200414131542.25608-23-joro@8bytes.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200414131542.25608-1-joro@8bytes.org>
 References: <20200414131542.25608-1-joro@8bytes.org>
@@ -60,43 +60,73 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-On Exynos platforms there can be more than one SYSMMU (IOMMU) for one
-DMA master device. Since the IOMMU core code expects only one hardware
-IOMMU, use the first SYSMMU in the list.
+Convert the Mediatek IOMMU driver to use the probe_device() and
+release_device() call-backs of iommu_ops, so that the iommu core code
+does the group and sysfs setup.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- drivers/iommu/exynos-iommu.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/iommu/mtk_iommu.c | 24 ++++++------------------
+ 1 file changed, 6 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 186ff5cc975c..09cdd163560a 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -1261,6 +1261,11 @@ static int exynos_iommu_add_device(struct device *dev)
- 	}
- 	iommu_group_put(group);
- 
-+	/* There is always at least one entry, see exynos_iommu_of_xlate() */
-+	data = list_first_entry(&owner->controllers,
-+				struct sysmmu_drvdata, owner_node);
-+	iommu_device_link(&data->iommu, dev);
-+
- 	return 0;
+diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
+index 5f4d6df59cf6..2be96f1cdbd2 100644
+--- a/drivers/iommu/mtk_iommu.c
++++ b/drivers/iommu/mtk_iommu.c
+@@ -441,38 +441,26 @@ static phys_addr_t mtk_iommu_iova_to_phys(struct iommu_domain *domain,
+ 	return pa;
  }
  
-@@ -1286,6 +1291,11 @@ static void exynos_iommu_remove_device(struct device *dev)
+-static int mtk_iommu_add_device(struct device *dev)
++static struct iommu_device *mtk_iommu_probe_device(struct device *dev)
+ {
+ 	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+ 	struct mtk_iommu_data *data;
+-	struct iommu_group *group;
  
- 	list_for_each_entry(data, &owner->controllers, owner_node)
- 		device_link_del(data->link);
-+
-+	/* There is always at least one entry, see exynos_iommu_of_xlate() */
-+	data = list_first_entry(&owner->controllers,
-+				struct sysmmu_drvdata, owner_node);
-+	iommu_device_unlink(&data->iommu, dev);
+ 	if (!fwspec || fwspec->ops != &mtk_iommu_ops)
+-		return -ENODEV; /* Not a iommu client device */
++		return ERR_PTR(-ENODEV); /* Not a iommu client device */
+ 
+ 	data = dev_iommu_priv_get(dev);
+-	iommu_device_link(&data->iommu, dev);
+ 
+-	group = iommu_group_get_for_dev(dev);
+-	if (IS_ERR(group))
+-		return PTR_ERR(group);
+-
+-	iommu_group_put(group);
+-	return 0;
++	return &data->iommu;
  }
  
- static int exynos_iommu_of_xlate(struct device *dev,
+-static void mtk_iommu_remove_device(struct device *dev)
++static void mtk_iommu_release_device(struct device *dev)
+ {
+ 	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+-	struct mtk_iommu_data *data;
+ 
+ 	if (!fwspec || fwspec->ops != &mtk_iommu_ops)
+ 		return;
+ 
+-	data = dev_iommu_priv_get(dev);
+-	iommu_device_unlink(&data->iommu, dev);
+-
+-	iommu_group_remove_device(dev);
+ 	iommu_fwspec_free(dev);
+ }
+ 
+@@ -526,8 +514,8 @@ static const struct iommu_ops mtk_iommu_ops = {
+ 	.flush_iotlb_all = mtk_iommu_flush_iotlb_all,
+ 	.iotlb_sync	= mtk_iommu_iotlb_sync,
+ 	.iova_to_phys	= mtk_iommu_iova_to_phys,
+-	.add_device	= mtk_iommu_add_device,
+-	.remove_device	= mtk_iommu_remove_device,
++	.probe_device	= mtk_iommu_probe_device,
++	.release_device	= mtk_iommu_release_device,
+ 	.device_group	= mtk_iommu_device_group,
+ 	.of_xlate	= mtk_iommu_of_xlate,
+ 	.pgsize_bitmap	= SZ_4K | SZ_64K | SZ_1M | SZ_16M,
 -- 
 2.17.1
 
