@@ -2,30 +2,31 @@ Return-Path: <SRS0=kFJz=56=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA30C2BA19
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:17:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB2CC2BB86
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:17:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A24E72076D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:17:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92B7F2075E
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 13:17:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503007AbgDNNRc (ORCPT
+        id S2502913AbgDNNQJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 14 Apr 2020 09:17:32 -0400
-Received: from 8bytes.org ([81.169.241.247]:35566 "EHLO theia.8bytes.org"
+        Tue, 14 Apr 2020 09:16:09 -0400
+Received: from 8bytes.org ([81.169.241.247]:34802 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2502999AbgDNNRa (ORCPT
+        id S2502888AbgDNNQE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Apr 2020 09:17:30 -0400
+        Tue, 14 Apr 2020 09:16:04 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 7CE0145B; Tue, 14 Apr 2020 15:17:26 +0200 (CEST)
-Date:   Tue, 14 Apr 2020 15:17:24 +0200
+        id 82D75596; Tue, 14 Apr 2020 15:15:53 +0200 (CEST)
 From:   Joerg Roedel <joro@8bytes.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+To:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
         Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         David Woodhouse <dwmw2@infradead.org>,
@@ -38,42 +39,237 @@ Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
         Gerald Schaefer <gerald.schaefer@de.ibm.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-mediatek@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
         linux-tegra@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         Joerg Roedel <jroedel@suse.de>
-Subject: Re: [RFC PATCH 33/34] iommu: Remove add_device()/remove_device()
- code-paths
-Message-ID: <20200414131724.GA14731@8bytes.org>
-References: <20200407183742.4344-1-joro@8bytes.org>
- <CGME20200407183806eucas1p2cf45fbce5a43a6b4fe3a623b28da0606@eucas1p2.samsung.com>
- <20200407183742.4344-34-joro@8bytes.org>
- <1a88547f-ac90-825e-e529-a56c2c4e0391@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1a88547f-ac90-825e-e529-a56c2c4e0391@samsung.com>
+Subject: [PATCH v2 11/33] iommu: Split off default domain allocation from group assignment
+Date:   Tue, 14 Apr 2020 15:15:20 +0200
+Message-Id: <20200414131542.25608-12-joro@8bytes.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200414131542.25608-1-joro@8bytes.org>
+References: <20200414131542.25608-1-joro@8bytes.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+From: Joerg Roedel <jroedel@suse.de>
 
-On Fri, Apr 10, 2020 at 12:39:38PM +0200, Marek Szyprowski wrote:
-> > +		if (!group->default_domain)
-> > +			continue;
-> 
-> It doesn't look straight from the above diff, but this continue leaks 
-> group->lock taken.
+When a bus is initialized with iommu-ops, all devices on the bus are
+scanned and iommu-groups are allocated for them, and each groups will
+also get a default domain allocated.
 
-You are right, thanks for the review! I fixed it in v2.
+Until now this happened as soon as the group was created and the first
+device added to it. When other devices with different default domain
+requirements were added to the group later on, the default domain was
+re-allocated, if possible.
 
-Regards,
+This resulted in some back and forth and unnecessary allocations, so
+change the flow to defer default domain allocation until all devices
+have been added to their respective IOMMU groups.
 
-	Joerg
+The default domains are allocated for newly allocated groups after
+each device on the bus is handled and was probed by the IOMMU driver.
+
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+---
+ drivers/iommu/iommu.c | 154 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 151 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index 8be047a4808f..7de0e29db333 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -199,7 +199,7 @@ static int __iommu_probe_device(struct device *dev, struct list_head *group_list
+ 	dev->iommu->iommu_dev = iommu_dev;
+ 
+ 	group = iommu_group_get_for_dev(dev);
+-	if (!IS_ERR(group)) {
++	if (IS_ERR(group)) {
+ 		ret = PTR_ERR(group);
+ 		goto out_release;
+ 	}
+@@ -1599,6 +1599,37 @@ static int add_iommu_group(struct device *dev, void *data)
+ 	return ret;
+ }
+ 
++static int probe_iommu_group(struct device *dev, void *data)
++{
++	const struct iommu_ops *ops = dev->bus->iommu_ops;
++	struct list_head *group_list = data;
++	int ret;
++
++	if (!dev_iommu_get(dev))
++		return -ENOMEM;
++
++	if (!try_module_get(ops->owner)) {
++		ret = -EINVAL;
++		goto err_free_dev_iommu;
++	}
++
++	ret = __iommu_probe_device(dev, group_list);
++	if (ret)
++		goto err_module_put;
++
++	return 0;
++
++err_module_put:
++	module_put(ops->owner);
++err_free_dev_iommu:
++	dev_iommu_free(dev);
++
++	if (ret == -ENODEV)
++		ret = 0;
++
++	return ret;
++}
++
+ static int remove_iommu_group(struct device *dev, void *data)
+ {
+ 	iommu_release_device(dev);
+@@ -1658,10 +1689,127 @@ static int iommu_bus_notifier(struct notifier_block *nb,
+ 	return 0;
+ }
+ 
++struct __group_domain_type {
++	struct device *dev;
++	unsigned int type;
++};
++
++static int probe_get_default_domain_type(struct device *dev, void *data)
++{
++	const struct iommu_ops *ops = dev->bus->iommu_ops;
++	struct __group_domain_type *gtype = data;
++	unsigned int type = 0;
++
++	if (ops->def_domain_type)
++		type = ops->def_domain_type(dev);
++
++	if (type) {
++		if (gtype->type && gtype->type != type) {
++			dev_warn(dev, "Device needs domain type %s, but device %s in the same iommu group requires type %s - using default\n",
++				 iommu_domain_type_str(type),
++				 dev_name(gtype->dev),
++				 iommu_domain_type_str(gtype->type));
++			gtype->type = 0;
++		}
++
++		if (!gtype->dev) {
++			gtype->dev  = dev;
++			gtype->type = type;
++		}
++	}
++
++	return 0;
++}
++
++static void probe_alloc_default_domain(struct bus_type *bus,
++				       struct iommu_group *group)
++{
++	struct __group_domain_type gtype;
++
++	memset(&gtype, 0, sizeof(gtype));
++
++	/* Ask for default domain requirements of all devices in the group */
++	__iommu_group_for_each_dev(group, &gtype,
++				   probe_get_default_domain_type);
++
++	if (!gtype.type)
++		gtype.type = iommu_def_domain_type;
++
++	iommu_group_alloc_default_domain(bus, group, gtype.type);
++}
++
++static int iommu_group_do_dma_attach(struct device *dev, void *data)
++{
++	struct iommu_domain *domain = data;
++	const struct iommu_ops *ops;
++	int ret;
++
++	ret = __iommu_attach_device(domain, dev);
++
++	ops = domain->ops;
++
++	if (ret == 0 && ops->probe_finalize)
++		ops->probe_finalize(dev);
++
++	return ret;
++}
++
++static int __iommu_group_dma_attach(struct iommu_group *group)
++{
++	return __iommu_group_for_each_dev(group, group->default_domain,
++					  iommu_group_do_dma_attach);
++}
++
++static int bus_iommu_probe(struct bus_type *bus)
++{
++	const struct iommu_ops *ops = bus->iommu_ops;
++	int ret;
++
++	if (ops->probe_device) {
++		struct iommu_group *group, *next;
++		LIST_HEAD(group_list);
++
++		/*
++		 * This code-path does not allocate the default domain when
++		 * creating the iommu group, so do it after the groups are
++		 * created.
++		 */
++		ret = bus_for_each_dev(bus, NULL, &group_list, probe_iommu_group);
++		if (ret)
++			return ret;
++
++		list_for_each_entry_safe(group, next, &group_list, entry) {
++			/* Remove item from the list */
++			list_del_init(&group->entry);
++
++			mutex_lock(&group->mutex);
++
++			/* Try to allocate default domain */
++			probe_alloc_default_domain(bus, group);
++
++			if (!group->default_domain) {
++				mutex_unlock(&group->mutex);
++				continue;
++			}
++
++			ret = __iommu_group_dma_attach(group);
++
++			mutex_unlock(&group->mutex);
++
++			if (ret)
++				break;
++		}
++	} else {
++		ret = bus_for_each_dev(bus, NULL, NULL, add_iommu_group);
++	}
++
++	return ret;
++}
++
+ static int iommu_bus_init(struct bus_type *bus, const struct iommu_ops *ops)
+ {
+-	int err;
+ 	struct notifier_block *nb;
++	int err;
+ 
+ 	nb = kzalloc(sizeof(struct notifier_block), GFP_KERNEL);
+ 	if (!nb)
+@@ -1673,7 +1821,7 @@ static int iommu_bus_init(struct bus_type *bus, const struct iommu_ops *ops)
+ 	if (err)
+ 		goto out_free;
+ 
+-	err = bus_for_each_dev(bus, NULL, NULL, add_iommu_group);
++	err = bus_iommu_probe(bus);
+ 	if (err)
+ 		goto out_err;
+ 
+-- 
+2.17.1
 
