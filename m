@@ -1,86 +1,110 @@
-Return-Path: <SRS0=kFJz=56=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=JKgt=57=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F14E3C2BB1D
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 23:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 609DEC3815B
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Apr 2020 06:10:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B96D62054F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 14 Apr 2020 23:13:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586905990;
-	bh=sy+Whlg2RCdb35wEFhj/BGmcgA87Vhsr6L2apXyQFl4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Iz+/6dV3ieRqtz2s4JpFLMB9jI+K5HMz0raUJF32AKeXNCXgTQIdqC4mQuPgUrdlD
-	 UlnuMJFsmKL4/L5EwNsjQSGkQC0qBj73xLkZWdU362r6y5QEB7hVEKJoBQQY8q9oIw
-	 5ol9oJvicFbyGmrgbFOHSlNmWvDuoH87Niq2efYE=
+	by mail.kernel.org (Postfix) with ESMTP id 4567F20737
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Apr 2020 06:10:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733181AbgDNXNK (ORCPT
+        id S2393479AbgDOGKX (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 14 Apr 2020 19:13:10 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:43764 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729358AbgDNXNJ (ORCPT
+        Wed, 15 Apr 2020 02:10:23 -0400
+Received: from mga06.intel.com ([134.134.136.31]:20146 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731298AbgDOGKV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 14 Apr 2020 19:13:09 -0400
-Received: by mail-oi1-f196.google.com with SMTP id j16so11979822oih.10;
-        Tue, 14 Apr 2020 16:13:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VvYN+POzUP/HxZIW68dFGmEkR5GANu8XsXmHkqwh3r4=;
-        b=LuYvRXYeP411lHfgR4fLTUPU7Og85b7wQxEkF2BBtbTvlzLrtELtbYrXQ0IwZQ1J2o
-         6vhiT5fDDdNlnVLNr+/DU3LgmscXOzpPiHDXL+oRf/95CZey2gmLM651cchi+GHUAxmI
-         brIgLwKhPZkR8dfeI47chcH18/I/VYav0iVOUqPf/QQy4LSDI6pGaABXfEK1kdUeOsGI
-         /VQqbNMwhYPFg4O3NmLPpwQaTEi2PNJHEBp0W13QXisQsda464B95Ezhc1U5hRod9cgQ
-         xitniWvRx5odmlTfrdFBgb1yD6OY877KFoF8V0Ji56liLQCsmYdOp4bl4OSzlJACvC35
-         IZMA==
-X-Gm-Message-State: AGi0PubKXB/F40v1Z6NJLiQswXheK3goSsq678YJXWy2IsAFbqZXdxcz
-        I8utuO3hCf7WTBU4tc1FzQ==
-X-Google-Smtp-Source: APiQypK61RTHR9kuSvlYPwIECBbuocsSAp6KyPuha5OGWWkV7afY5lGlf+sLaVr7JcOhZjc7RQrgHw==
-X-Received: by 2002:aca:403:: with SMTP id 3mr12694157oie.166.1586905989246;
-        Tue, 14 Apr 2020 16:13:09 -0700 (PDT)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id i7sm5911183otl.12.2020.04.14.16.13.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Apr 2020 16:13:08 -0700 (PDT)
-Received: (nullmailer pid 9163 invoked by uid 1000);
-        Tue, 14 Apr 2020 23:13:06 -0000
-Date:   Tue, 14 Apr 2020 18:13:06 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hyunki Koo <hyunki00.koo@samsung.com>
-Subject: Re: [PATCH] dt-bindings: memory-controllers: exynos-srom: Remove
- unneeded type for reg-io-width
-Message-ID: <20200414231306.GA9106@bogus>
-References: <20200406104554.29773-1-krzk@kernel.org>
+        Wed, 15 Apr 2020 02:10:21 -0400
+IronPort-SDR: dSuo3T3idle2qp5g+E3kGD33taojMR5EGDQKBaIbqVU7adnzVZJrO+9LVCrq+NBX8DHqhmJUnm
+ iP7yDhogvvhQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2020 23:10:10 -0700
+IronPort-SDR: Xrzeker15iDL0GxYgNylnyNCcgOHg/5LrDmSleRIXI69KwIrj67IOyQN42jm1/hyg4yAT+vZ4w
+ my6GtVMJbzjQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,385,1580803200"; 
+   d="scan'208";a="363586963"
+Received: from blu2-mobl3.ccr.corp.intel.com (HELO [10.254.210.208]) ([10.254.210.208])
+  by fmsmga001.fm.intel.com with ESMTP; 14 Apr 2020 23:10:04 -0700
+Cc:     baolu.lu@linux.intel.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Joerg Roedel <jroedel@suse.de>
+Subject: Re: [PATCH v2 13/33] iommu: Export bus_iommu_probe() and make is safe
+ for re-probing
+To:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>
+References: <20200414131542.25608-1-joro@8bytes.org>
+ <20200414131542.25608-14-joro@8bytes.org>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <1853992c-47a6-3724-812c-a52558c13732@linux.intel.com>
+Date:   Wed, 15 Apr 2020 14:10:03 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200406104554.29773-1-krzk@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200414131542.25608-14-joro@8bytes.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon,  6 Apr 2020 12:45:54 +0200, Krzysztof Kozlowski wrote:
-> 'reg-io-width' property is an enum so there is no need to specify its
-> type.
+On 2020/4/14 21:15, Joerg Roedel wrote:
+> From: Joerg Roedel <jroedel@suse.de>
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Add a check to the bus_iommu_probe() call-path to make sure it ignores
+> devices which have already been successfully probed. Then export the
+> bus_iommu_probe() function so it can be used by IOMMU drivers.
+> 
+> Signed-off-by: Joerg Roedel <jroedel@suse.de>
 > ---
->  .../devicetree/bindings/memory-controllers/exynos-srom.yaml   | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+>   drivers/iommu/iommu.c | 6 +++++-
+>   include/linux/iommu.h | 1 +
+>   2 files changed, 6 insertions(+), 1 deletion(-)
 > 
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index 834a45da0ed0..a2ff95424044 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -1615,6 +1615,10 @@ static int probe_iommu_group(struct device *dev, void *data)
+>   	if (!dev_iommu_get(dev))
+>   		return -ENOMEM;
+>   
+> +	/* Device is probed already if in a group */
+> +	if (iommu_group_get(dev) != NULL)
 
-Applied, thanks.
+Same as
+	if (iommu_group_get(dev))
+?
 
-Rob
+By the way, do we need to put the group if device has already been
+probed?
+
+Best regards,
+baolu
