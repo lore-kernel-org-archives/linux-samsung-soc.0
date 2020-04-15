@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 780D1C38A2B
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Apr 2020 08:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE3DC38A2B
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Apr 2020 08:47:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 57D28206F9
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Apr 2020 08:47:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D938820775
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Apr 2020 08:47:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="LXvvBdoN"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="mfdqffzQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2895034AbgDOIra (ORCPT
+        id S2894985AbgDOIrr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 15 Apr 2020 04:47:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42062 "EHLO
+        Wed, 15 Apr 2020 04:47:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2895025AbgDOIrY (ORCPT
+        by vger.kernel.org with ESMTP id S2895030AbgDOIr1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 15 Apr 2020 04:47:24 -0400
-Received: from mo6-p04-ob.smtp.rzone.de (mo6-p04-ob.smtp.rzone.de [IPv6:2a01:238:20a:202:5304::8])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 694AAC061A0F;
-        Wed, 15 Apr 2020 01:47:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1586940441;
+        Wed, 15 Apr 2020 04:47:27 -0400
+Received: from mo6-p04-ob.smtp.rzone.de (mo6-p04-ob.smtp.rzone.de [IPv6:2a01:238:20a:202:5304::11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABD65C061A0E;
+        Wed, 15 Apr 2020 01:47:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1586940445;
         s=strato-dkim-0002; d=goldelico.com;
         h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=j2lzjrB8duHEXBgNG8DmHoZUIFs1qULEA2767Fb3VsM=;
-        b=LXvvBdoNViJ8Us52B9kE2TSmPcVNLbbaCVED5oSltukdgzrxtVyLonGhEZGCABqNpA
-        vI+1hBHyD2DGPE+wR7loReT5UR8s+1fhl7F+NY7aXL4VbxZ+Hx3cv9wg4oKcALconiSn
-        ok/tNCdFL63vKGO4hFGdwtX5z3qPqk9YX/E6zTme2uGkn/fz5+E03th6CzmZfRh6tOkF
-        e2Jclex89iIr54Y9gZA8cpWx9bnmGseEpGJZoAaUOwDT3qes+Kf/cYjLXZpnym+x/IKU
-        x6WNt3F7dQzIrriq6+V7WoBk0NC55IOOt0gCrKp8jF4YoRO0dDPjAjwmh1/WdIeC1+cK
-        W0/Q==
+        bh=fsIHgrJ2055pXXkZWP5JYdd7EoHmHevxMLsBqOhoJOE=;
+        b=mfdqffzQq8aZqvWK6ya+VIbZ0K9XGhd4X9HSzVvQ7g1i2csW0ctyTLDBHYp8I3GgWb
+        qrdjDfijCuZ9ANUzm5d/Hr8P51v2i08ODjBtKYFLPZQaXwQMVNaiTA0MhKwgln6m/UrT
+        FUGCCBXeVnDuD5VhCOevqMuJMjFTnbb3MC5t0axX39NFghXAV2fqN0g/4LRK1V0h+dWq
+        GBEUPv8jSInX/9+uDvbFtuCRF9DbquTZHM3Xo4NiNq8aNpKTR+Xv9SK4PBww6Xd5P08n
+        JorLDBnmEtJuIOhS2R95z4H4+6rC5xvv9tPu18cT8PiezblztcaPKLbrlIVT9U1eh+Or
+        6+wg==
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1OAA2UNf2M7O2CKN9ej"
 X-RZG-CLASS-ID: mo00
 Received: from iMac.fritz.box
         by smtp.strato.de (RZmta 46.4.0 DYNA|AUTH)
-        with ESMTPSA id 6028a2w3F8ZQ0It
+        with ESMTPSA id 6028a2w3F8ZT0Ix
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
         (Client did not present a certificate);
-        Wed, 15 Apr 2020 10:35:26 +0200 (CEST)
+        Wed, 15 Apr 2020 10:35:29 +0200 (CEST)
 From:   "H. Nikolaus Schaller" <hns@goldelico.com>
 To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         Rob Herring <robh+dt@kernel.org>,
@@ -66,10 +66,10 @@ Cc:     Philipp Rossak <embed3d@gmail.com>,
         kernel@pyra-handheld.com, linux-mips@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org,
-        "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v6 07/12] ARM: DTS: omap5: add sgx gpu child node
-Date:   Wed, 15 Apr 2020 10:35:14 +0200
-Message-Id: <004611c9660943759b635a87484932869927cf74.1586939718.git.hns@goldelico.com>
+        "H . Nikolaus Schaller" <hns@goldelico.com>
+Subject: [PATCH v6 11/12] ARM: dts: sun8i: a83t: add sgx gpu child node
+Date:   Wed, 15 Apr 2020 10:35:18 +0200
+Message-Id: <acc240eb8ccc2040dd90577f2e4bf429434583a1.1586939718.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1586939718.git.hns@goldelico.com>
 References: <cover.1586939718.git.hns@goldelico.com>
@@ -80,43 +80,45 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-and add interrupt.
+From: Philipp Rossak <embed3d@gmail.com>
 
-Tested-by: H. Nikolaus Schaller <hns@goldelico.com> # Pyra-Handheld.
+We are adding the devicetree binding for the PVR-SGX-544-115 gpu.
+
+This driver is currently under development in the openpvrsgx-devgroup.
+Right now the full binding is not figured out, so we provide here a
+placeholder. It will be completed as soon as there is a demo available.
+
+The currently used binding that is used during development is more
+complete and was already verifyed by loading the kernelmodule successful.
+
+Signed-off-by: Philipp Rossak <embed3d@gmail.com>
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- arch/arm/boot/dts/omap5.dtsi | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/arch/arm/boot/dts/omap5.dtsi b/arch/arm/boot/dts/omap5.dtsi
-index 2ac7f021c284..1cf41664fd00 100644
---- a/arch/arm/boot/dts/omap5.dtsi
-+++ b/arch/arm/boot/dts/omap5.dtsi
-@@ -270,7 +270,7 @@ sata: sata@4a141100 {
- 			ports-implemented = <0x1>;
+diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+index 655404d6d3a3..bfb900622bf6 100644
+--- a/arch/arm/boot/dts/sun8i-a83t.dtsi
++++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
+@@ -1192,6 +1192,17 @@ ths: thermal-sensor@1f04000 {
+ 			nvmem-cell-names = "calibration";
+ 			#thermal-sensor-cells = <1>;
  		};
++
++		gpu: gpu@1c400000 {
++			compatible = "allwinner,sun8i-a83t-sgx544-115",
++				     "img,sgx544-115", "img,sgx544";
++			reg = <0x01c40000 0x10000>;
++			/*
++			 * This node is currently a placeholder for the gpu.
++			 * This will be completed when a full demonstration
++			 * of the openpvrsgx driver is available for this board.
++			 */
++		};
+ 	};
  
--		target-module@56000000 {
-+		sgx_module: target-module@56000000 {
- 			compatible = "ti,sysc-omap4", "ti,sysc";
- 			reg = <0x5600fe00 0x4>,
- 			      <0x5600fe10 0x4>;
-@@ -287,10 +287,11 @@ target-module@56000000 {
- 			#size-cells = <1>;
- 			ranges = <0 0x56000000 0x2000000>;
- 
--			/*
--			 * Closed source PowerVR driver, no child device
--			 * binding or driver in mainline
--			 */
-+			gpu: gpu@0 {
-+				compatible = "ti,omap5-sgx544-116", "img,sgx544-116", "img,sgx544";
-+				reg = <0x0 0x10000>;
-+				interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
-+			};
- 		};
- 
- 		target-module@58000000 {
+ 	thermal-zones {
 -- 
 2.25.1
 
