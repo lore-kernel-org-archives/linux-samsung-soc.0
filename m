@@ -2,92 +2,230 @@ Return-Path: <SRS0=JKgt=57=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3278DC3815B
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Apr 2020 06:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 882CBC3815B
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Apr 2020 08:38:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 110E5206F9
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Apr 2020 06:36:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6786120656
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Apr 2020 08:38:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="QLknKDK3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393571AbgDOGgk (ORCPT
+        id S2894698AbgDOIib (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 15 Apr 2020 02:36:40 -0400
-Received: from mga12.intel.com ([192.55.52.136]:33899 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393565AbgDOGg0 (ORCPT
+        Wed, 15 Apr 2020 04:38:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40656 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2894689AbgDOIi0 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 15 Apr 2020 02:36:26 -0400
-IronPort-SDR: AxuWUswikhaQHgE9NbIcR4k/XrGOsrf6O51f7y6KnLBDatEdq7L/s6mXCiIN7CYhFGXmkAv9JF
- Q8gfGjalKhfg==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2020 23:36:26 -0700
-IronPort-SDR: e6xHGQuPW0GE2LEJRgwBaaQuNwmEtvc/TZ2WPBNJCcxxDlhT3Yrpnh18pXIf/KDAcMJ1v7zZbH
- nGNmd7m4gNaQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,386,1580803200"; 
-   d="scan'208";a="363591408"
-Received: from blu2-mobl3.ccr.corp.intel.com (HELO [10.254.210.208]) ([10.254.210.208])
-  by fmsmga001.fm.intel.com with ESMTP; 14 Apr 2020 23:36:20 -0700
-Cc:     baolu.lu@linux.intel.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Joerg Roedel <jroedel@suse.de>
-Subject: Re: [PATCH v2 07/33] iommu: Add probe_device() and remove_device()
- call-backs
-To:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
+        Wed, 15 Apr 2020 04:38:26 -0400
+Received: from mo6-p02-ob.smtp.rzone.de (mo6-p02-ob.smtp.rzone.de [IPv6:2a01:238:20a:202:5302::12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5997CC061A41;
+        Wed, 15 Apr 2020 01:38:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1586939903;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=gHzxZHsGJIjzLCfNxfA2uNhMWdRyM/UbwoNGCYKWho8=;
+        b=QLknKDK3hfJJM14njG3MD3/Cus1576b34wXOowNcV+McMULk7YRSEO7x6A/DTSiBi1
+        R5Vrb5oB5XvSa+ThqpZXNVLjQ6bL6CLE66APZPCCK5pN56xKl8EITyVDc8r0m3kJm5/F
+        ELyVefP8Zfd7YV02wH3imth1qw0WI9VBtmCB7f9BCfWiudJihaMOYPu2Ca1kPTeseIGI
+        BbVtw4fCMwajNHySbQeh24PYXNnnqj3GvxBzFdV5UZsjmFWPALkdrs8DikuUR7Zz181i
+        xpK1eojVRRYiWJZqj6Y+dBVlAIGNiifNBqBbZaY59aW0IopHLT9mpiQmmic91OmWQSEa
+        nKOw==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1OAA2UNf2M7O2CKN9ej"
+X-RZG-CLASS-ID: mo00
+Received: from iMac.fritz.box
+        by smtp.strato.de (RZmta 46.4.0 DYNA|AUTH)
+        with ESMTPSA id 6028a2w3F8ZL0Ii
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Wed, 15 Apr 2020 10:35:21 +0200 (CEST)
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        James Hogan <jhogan@kernel.org>, Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>
-References: <20200414131542.25608-1-joro@8bytes.org>
- <20200414131542.25608-8-joro@8bytes.org>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <0ad37581-b464-30ac-c503-4c0daaf43867@linux.intel.com>
-Date:   Wed, 15 Apr 2020 14:36:20 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc:     Philipp Rossak <embed3d@gmail.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        openpvrsgx-devgroup@letux.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com, linux-mips@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: [PATCH v6 01/12] dt-bindings: add img,pvrsgx.yaml for Imagination GPUs
+Date:   Wed, 15 Apr 2020 10:35:08 +0200
+Message-Id: <06fb6569259bb9183d0a0d0fe70ec4f3033b8aab.1586939718.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1586939718.git.hns@goldelico.com>
+References: <cover.1586939718.git.hns@goldelico.com>
 MIME-Version: 1.0
-In-Reply-To: <20200414131542.25608-8-joro@8bytes.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 2020/4/14 21:15, Joerg Roedel wrote:
-> From: Joerg Roedel<jroedel@suse.de>
-> 
-> Add call-backs to 'struct iommu_ops' as an alternative to the
-> add_device() and remove_device() call-backs, which will be removed when
-> all drivers are converted.
-> 
-> The new call-backs will not setupt IOMMU groups and domains anymore,
-> so also add a probe_finalize() call-back where the IOMMU driver can do
-> per-device setup work which require the device to be set up with a
-> group and a domain.
+The Imagination PVR/SGX GPU is part of several SoC from
+multiple vendors, e.g. TI OMAP, Ingenic JZ4780, Intel Poulsbo,
+Allwinner A83 and others.
 
-The subject is inaccurate. probe_device() and release_device() are
-added to replace the add and remove pair.
+With this binding, we describe how the SGX processor is
+interfaced to the SoC (registers, interrupt etc.).
 
-Best regards,
-baolu
+In most cases, Clock, Reset and power management is handled
+by a parent node or elsewhere (e.g. code in the driver).
+
+Tested by make dt_binding_check dtbs_check
+
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+---
+ .../devicetree/bindings/gpu/img,pvrsgx.yaml   | 122 ++++++++++++++++++
+ 1 file changed, 122 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpu/img,pvrsgx.yaml
+
+diff --git a/Documentation/devicetree/bindings/gpu/img,pvrsgx.yaml b/Documentation/devicetree/bindings/gpu/img,pvrsgx.yaml
+new file mode 100644
+index 000000000000..e3a4208dfab1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpu/img,pvrsgx.yaml
+@@ -0,0 +1,122 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpu/img,pvrsgx.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Imagination PVR/SGX GPU
++
++maintainers:
++  - H. Nikolaus Schaller <hns@goldelico.com>
++
++description: |+
++  This binding describes the Imagination SGX5 series of 3D accelerators which
++  are found in several different SoC like TI OMAP, Sitara, Ingenic JZ4780,
++  Allwinner A83, and Intel Poulsbo and CedarView and more.
++
++  For an extensive list see: https://en.wikipedia.org/wiki/PowerVR#Implementations
++
++  The SGX node is usually a child node of some DT node belonging to the SoC
++  which handles clocks, reset and general address space mapping of the SGX
++  register area.
++
++properties:
++  compatible:
++    oneOf:
++      - description: SGX530-121 based SoC
++        items:
++          - enum:
++            - ti,omap3-sgx530-121 # BeagleBoard A/B/C, OpenPandora 600MHz and similar
++          - const: img,sgx530-121
++          - const: img,sgx530
++
++      - description: SGX530-125 based SoC
++        items:
++          - enum:
++            - ti,am3352-sgx530-125 # BeagleBone Black
++            - ti,am3517-sgx530-125
++            - ti,am4-sgx530-125
++            - ti,omap3-sgx530-125 # BeagleBoard XM, GTA04, OpenPandora 1GHz and similar
++            - ti,ti81xx-sgx530-125
++          - const: ti,omap3-sgx530-125
++          - const: img,sgx530-125
++          - const: img,sgx530
++
++      - description: SGX535-116 based SoC
++        items:
++          - const: intel,poulsbo-gma500-sgx535 # Atom Z5xx
++          - const: img,sgx535-116
++          - const: img,sgx535
++
++      - description: SGX540-116 based SoC
++        items:
++          - const: intel,medfield-gma-sgx540 # Atom Z24xx
++          - const: img,sgx540-116
++          - const: img,sgx540
++
++      - description: SGX540-120 based SoC
++        items:
++          - enum:
++            - samsung,s5pv210-sgx540-120
++            - ti,omap4-sgx540-120 # Pandaboard, Pandaboard ES and similar
++          - const: img,sgx540-120
++          - const: img,sgx540
++
++      - description: SGX540-130 based SoC
++        items:
++          - enum:
++            - ingenic,jz4780-sgx540-130 # CI20
++          - const: img,sgx540-130
++          - const: img,sgx540
++
++      - description: SGX544-112 based SoC
++        items:
++          - const: "ti,omap4470-sgx544-112
++          - const: img,sgx544-112
++          - const: img,sgx544
++
++      - description: SGX544-115 based SoC
++        items:
++          - enum:
++            - allwinner,sun8i-a31-sgx544-115
++            - allwinner,sun8i-a31s-sgx544-115
++            - allwinner,sun8i-a83t-sgx544-115 # Banana-Pi-M3 (Allwinner A83T) and similar
++          - const: img,sgx544-115
++          - const: img,sgx544
++
++      - description: SGX544-116 based SoC
++        items:
++          - enum:
++            - ti,dra7-sgx544-116 # DRA7
++            - ti,omap5-sgx544-116 # OMAP5 UEVM, Pyra Handheld and similar
++          - const: img,sgx544-116
++          - const: img,sgx544
++
++      - description: SGX545 based SoC
++        items:
++          - const: intel,cedarview-gma3600-sgx545 # Atom N2600, D2500
++          - const: img,sgx545-116
++          - const: img,sgx545
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++
++examples:
++  - |+
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    gpu: gpu@fe00 {
++      compatible = "ti,omap5-sgx544-116", "img,sgx544-116", "img,sgx544";
++      reg = <0xfe00 0x200>;
++      interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
++    };
++
++...
+-- 
+2.25.1
+
