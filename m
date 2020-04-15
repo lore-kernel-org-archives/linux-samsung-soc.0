@@ -2,163 +2,183 @@ Return-Path: <SRS0=JKgt=57=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84324C38A2B
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Apr 2020 09:51:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEDB8C2BB55
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Apr 2020 10:11:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5CFE920936
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Apr 2020 09:51:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586944305;
-	bh=yizjy06EFNp5cBRnjnt/vw5ztC1lUh6kH2Srmve5Xz4=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=QZwdHy4VB7TzMLT89bTVqwwAbPiX0giOgbWDba23ku6XPqkpb+h2L0PNfx8Q9h/9c
-	 HT+xv3cyDZQiO1gTH/PLtqbD2OVUdYNhNKbZu9oeHTD/A3jblGks3LWDMypbP/zcUT
-	 eRwmeMXQeB2W7VrkD6tQ5J4vHQgMPm/WNDpU/dWU=
+	by mail.kernel.org (Postfix) with ESMTP id 9881620784
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Apr 2020 10:11:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="Ov/r13gv";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XCrhzL/X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2896001AbgDOJvn (ORCPT
+        id S2896224AbgDOKKU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 15 Apr 2020 05:51:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46384 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2895866AbgDOJtc (ORCPT
+        Wed, 15 Apr 2020 06:10:20 -0400
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:54639 "EHLO
+        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2896152AbgDOKKQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 15 Apr 2020 05:49:32 -0400
-Received: from mail.kernel.org (ip5f5ad4d8.dynamic.kabel-deutschland.de [95.90.212.216])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8FA2A20787;
-        Wed, 15 Apr 2020 09:49:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586944170;
-        bh=yizjy06EFNp5cBRnjnt/vw5ztC1lUh6kH2Srmve5Xz4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=mCVRVeomnk5S/oi2XnljzCL2xsQ1gBCMMsztZkTP9KUqX43To/iI3te5vBDh2Pmut
-         pGyl4op/golVPrevUKXmTLZVu3tP329A3BTzxPFVfznOKt3WrH+InGID7OnYUo+t0L
-         +eYo48tZ3T+EIKNwLtRTeKn8OP8xrl2haxsbA3yQ=
-Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
-        (envelope-from <mchehab@kernel.org>)
-        id 1jOefg-006WIH-02; Wed, 15 Apr 2020 11:49:28 +0200
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Linux Media Mailing List <linux-media@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Ettore Chimenti <ek5.chimenti@gmail.com>,
+        Wed, 15 Apr 2020 06:10:16 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 62196580375;
+        Wed, 15 Apr 2020 06:10:13 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Wed, 15 Apr 2020 06:10:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=tiwnh7t3J9dCc6nvhOkiy49H6Ti
+        N6hjDJXDgkFXp10U=; b=Ov/r13gv/FzeqiK7EXa2MVeWNvbtGoln8v1lZeNVTDo
+        d/OBMcFNmf93rYl1dCE1+t8hxGIcBvwQn1digYa/muGYf7q0QPqzHkNxIrfTvAC5
+        tOh+VmGGScNRPukR67X3s70Aaxb+m3l57KrJbUGZjPSpm1PHG5zaKEypCDS6Jzbf
+        zcaXRlSFpb60fySXUEgbzV1gECrM87+2LNevWftl3sL0+W9p8Fhjx6MAEda4JGxo
+        2jXL2xrhs95ybDu2qfjPAvTQtYXUljlb0vtPswczOxmkqAcFgD3JwLc6TChCwIum
+        37fgD3VAhGbEFg2XQa1P7XfklKkVnMWkJL3YUqsc2TA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=tiwnh7
+        t3J9dCc6nvhOkiy49H6TiN6hjDJXDgkFXp10U=; b=XCrhzL/Xe6ze4BgUhH61Sd
+        8T4PZhQ5yllJD1PxNmKHkEWWP7xApPJG12ii/tljCURwuQeB1KjLvAxx6b8wXcqW
+        9Gy47bQoLliDjRVR8/t7x3NnG4zsZ/cAnTOIBxhdc7KXJYLVYeNbWtzbieH2hiyw
+        uPfCPPkRVoe+KFOvDrqzuE9uWqtGmHABy6xIM6h1jKLLKVelBWk9s11yjmRJVI6Y
+        OcNkemPNftLCWhOaoPV3gFTaab8hRa+0Vd+EfjQyZbjY4u4sMOfWF+eKkHljqP1c
+        9lM0B58UTX/I6NxoBLvbWMCYCs4aRH8IBRUxJOC5ewLgoFDHglS80fZvTNbdRmFQ
+        ==
+X-ME-Sender: <xms:gt2WXnImK0S9xi3AqSCkzOFDvgdNet3Kkr6Vn01_cxH_u_hDqsKq2w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrfeefgddugecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucfkphepledtrd
+    ekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
+    fhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:gt2WXoiiH3RLarjfPLHQ89zKsXtEVIU2fDv1eDj90V1IMXnSM3kd3A>
+    <xmx:gt2WXnDb4Hsh0ws82UIxfQqGZt0NnEmLFSogaEeqXcPk7GvYkVBJ2Q>
+    <xmx:gt2WXq535ML7IV_YSCHAHCRK2WpKKG6MhBYv3IlvKdn-hD4R3r3gCg>
+    <xmx:hd2WXrM1KZACbLXcsL4KatHHzZI3aT0OIxW_WxpKcDuk9zkIasNyaw>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id D579F3280066;
+        Wed, 15 Apr 2020 06:10:09 -0400 (EDT)
+Date:   Wed, 15 Apr 2020 12:10:08 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        James Hogan <jhogan@kernel.org>, Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Philipp Rossak <embed3d@gmail.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        openpvrsgx-devgroup@letux.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com, linux-mips@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 0/4] Move CEC drivers and menu to be out of MEDIA_SUPPORT
-Date:   Wed, 15 Apr 2020 11:49:23 +0200
-Message-Id: <cover.1586944045.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.25.2
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v6 00/12] ARM/MIPS: DTS: add child nodes describing the
+ PVRSGX GPU present in some OMAP SoC and JZ4780 (and many more)
+Message-ID: <20200415101008.zxzxca2vlfsefpdv@gilmour.lan>
+References: <cover.1586939718.git.hns@goldelico.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="spbhycqlgpxqdc65"
+Content-Disposition: inline
+In-Reply-To: <cover.1586939718.git.hns@goldelico.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The CEC_CORE doesn't depend on MEDIA_SUPPORT. So, it doesn't make
-much sense to keep it under its menu.
 
-This series move it to be just after RC support. As a side effect, now
-dependencies like PCI and USB are now selected, making easier to
-enable CEC drivers.
+--spbhycqlgpxqdc65
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Mauro Carvalho Chehab (4):
-  media: cec: move the core to a separate directory
-  media: place CEC menu before MEDIA_SUPPORT
-  media: move CEC platform drivers to a separate directory
-  media: move CEC USB drivers to a separate directory
+Hi,
 
- drivers/media/Kconfig                         |  30 +----
- drivers/media/cec/Kconfig                     |  25 ++++
- drivers/media/cec/Makefile                    |  16 +--
- drivers/media/cec/core/Makefile               |  16 +++
- drivers/media/cec/{ => core}/cec-adap.c       |   0
- drivers/media/cec/{ => core}/cec-api.c        |   0
- drivers/media/cec/{ => core}/cec-core.c       |   0
- drivers/media/cec/{ => core}/cec-notifier.c   |   0
- .../media/cec/{ => core}/cec-pin-error-inj.c  |   0
- drivers/media/cec/{ => core}/cec-pin-priv.h   |   0
- drivers/media/cec/{ => core}/cec-pin.c        |   0
- drivers/media/cec/{ => core}/cec-priv.h       |   0
- drivers/media/cec/platform/Kconfig            | 121 ++++++++++++++++++
- drivers/media/cec/platform/Makefile           |  11 ++
- .../{ => cec}/platform/cec-gpio/Makefile      |   0
- .../{ => cec}/platform/cec-gpio/cec-gpio.c    |   0
- .../s5p-cec => cec/platform/s5p}/Makefile     |   0
- .../platform/s5p}/exynos_hdmi_cec.h           |   0
- .../platform/s5p}/exynos_hdmi_cecctrl.c       |   0
- .../s5p-cec => cec/platform/s5p}/regs-cec.h   |   0
- .../s5p-cec => cec/platform/s5p}/s5p_cec.c    |   0
- .../s5p-cec => cec/platform/s5p}/s5p_cec.h    |   0
- .../seco-cec => cec/platform/seco}/Makefile   |   0
- .../seco-cec => cec/platform/seco}/seco-cec.c |   0
- .../seco-cec => cec/platform/seco}/seco-cec.h |   0
- .../sti/cec => cec/platform/sti}/Makefile     |   0
- .../sti/cec => cec/platform/sti}/stih-cec.c   |   0
- .../tegra-cec => cec/platform/tegra}/Makefile |   0
- .../platform/tegra}/tegra_cec.c               |   0
- .../platform/tegra}/tegra_cec.h               |   0
- drivers/media/cec/usb/Kconfig                 |   6 +
- drivers/media/cec/usb/Makefile                |   6 +
- .../pulse8-cec => cec/usb/pulse8}/Kconfig     |   3 +-
- .../pulse8-cec => cec/usb/pulse8}/Makefile    |   0
- .../usb/pulse8}/pulse8-cec.c                  |   0
- .../usb/rainshadow}/Kconfig                   |   3 +-
- .../usb/rainshadow}/Makefile                  |   0
- .../usb/rainshadow}/rainshadow-cec.c          |   0
- drivers/media/platform/Kconfig                | 121 ------------------
- drivers/media/platform/Makefile               |   8 --
- drivers/media/usb/Kconfig                     |   6 -
- drivers/media/usb/Makefile                    |   2 -
- 42 files changed, 192 insertions(+), 182 deletions(-)
- create mode 100644 drivers/media/cec/core/Makefile
- rename drivers/media/cec/{ => core}/cec-adap.c (100%)
- rename drivers/media/cec/{ => core}/cec-api.c (100%)
- rename drivers/media/cec/{ => core}/cec-core.c (100%)
- rename drivers/media/cec/{ => core}/cec-notifier.c (100%)
- rename drivers/media/cec/{ => core}/cec-pin-error-inj.c (100%)
- rename drivers/media/cec/{ => core}/cec-pin-priv.h (100%)
- rename drivers/media/cec/{ => core}/cec-pin.c (100%)
- rename drivers/media/cec/{ => core}/cec-priv.h (100%)
- create mode 100644 drivers/media/cec/platform/Kconfig
- create mode 100644 drivers/media/cec/platform/Makefile
- rename drivers/media/{ => cec}/platform/cec-gpio/Makefile (100%)
- rename drivers/media/{ => cec}/platform/cec-gpio/cec-gpio.c (100%)
- rename drivers/media/{platform/s5p-cec => cec/platform/s5p}/Makefile (100%)
- rename drivers/media/{platform/s5p-cec => cec/platform/s5p}/exynos_hdmi_cec.h (100%)
- rename drivers/media/{platform/s5p-cec => cec/platform/s5p}/exynos_hdmi_cecctrl.c (100%)
- rename drivers/media/{platform/s5p-cec => cec/platform/s5p}/regs-cec.h (100%)
- rename drivers/media/{platform/s5p-cec => cec/platform/s5p}/s5p_cec.c (100%)
- rename drivers/media/{platform/s5p-cec => cec/platform/s5p}/s5p_cec.h (100%)
- rename drivers/media/{platform/seco-cec => cec/platform/seco}/Makefile (100%)
- rename drivers/media/{platform/seco-cec => cec/platform/seco}/seco-cec.c (100%)
- rename drivers/media/{platform/seco-cec => cec/platform/seco}/seco-cec.h (100%)
- rename drivers/media/{platform/sti/cec => cec/platform/sti}/Makefile (100%)
- rename drivers/media/{platform/sti/cec => cec/platform/sti}/stih-cec.c (100%)
- rename drivers/media/{platform/tegra-cec => cec/platform/tegra}/Makefile (100%)
- rename drivers/media/{platform/tegra-cec => cec/platform/tegra}/tegra_cec.c (100%)
- rename drivers/media/{platform/tegra-cec => cec/platform/tegra}/tegra_cec.h (100%)
- create mode 100644 drivers/media/cec/usb/Kconfig
- create mode 100644 drivers/media/cec/usb/Makefile
- rename drivers/media/{usb/pulse8-cec => cec/usb/pulse8}/Kconfig (91%)
- rename drivers/media/{usb/pulse8-cec => cec/usb/pulse8}/Makefile (100%)
- rename drivers/media/{usb/pulse8-cec => cec/usb/pulse8}/pulse8-cec.c (100%)
- rename drivers/media/{usb/rainshadow-cec => cec/usb/rainshadow}/Kconfig (92%)
- rename drivers/media/{usb/rainshadow-cec => cec/usb/rainshadow}/Makefile (100%)
- rename drivers/media/{usb/rainshadow-cec => cec/usb/rainshadow}/rainshadow-cec.c (100%)
+On Wed, Apr 15, 2020 at 10:35:07AM +0200, H. Nikolaus Schaller wrote:
+> * rebased to v5.7-rc1
+> * added DTS for for a31, a31s, a83t - by Philipp Rossak <embed3d@gmail.com>
+> * added DTS for "samsung,s5pv210-sgx540-120" - by Jonathan Bakker <xc-racer2@live.ca>
+> * bindings.yaml fixes:
+>   - added a31, a31
+>   - fixes for omap4470
+>   - jz4780 contains an sgx540-130 and not -120
+>   - a83t contains an sgx544-115 and not -116
+>   - removed "additionalProperties: false" because some SoC may need additional properties
+>
+> PATCH V5 2020-03-29 19:38:32:
+> * reworked YAML bindings to pass dt_binding_check and be better grouped
+> * rename all nodes to "gpu: gpu@<address>"
+> * removed "img,sgx5" from example - suggested by Rob Herring <robh+dt@kernel.org>
+>
+> PATCH V4 2019-12-17 19:02:11:
+> * MIPS: DTS: jz4780: removed "img,sgx5" from bindings
+> * YAML bindings: updated according to suggestions by Rob Herring
+> * MIPS: DTS: jz4780: insert-sorted gpu node by register address - suggested by Paul Cercueil
+>
+> PATCH V3 2019-11-24 12:40:33:
+> * reworked YAML format with help by Rob Herring
+> * removed .txt binding document
+> * change compatible "ti,am335x-sgx" to "ti,am3352-sgx" - suggested by Tony Lindgren
+>
+> PATCH V2 2019-11-07 12:06:17:
+> * tried to convert bindings to YAML format - suggested by Rob Herring
+> * added JZ4780 DTS node (proven to load the driver)
+> * removed timer and img,cores properties until we know we really need them - suggested by Rob Herring
+>
+> PATCH V1 2019-10-18 20:46:35:
+>
+> This patch series defines child nodes for the SGX5xx interface inside
+> different SoC so that a driver can be found and probed by the
+> compatible strings and can retrieve information about the SGX revision
+> that is included in a specific SoC. It also defines the interrupt number
+> to be used by the SGX driver.
+>
+> There is currently no mainline driver for these GPUs, but a project
+> [1] is ongoing with the goal to get the open-source part as provided
+> by TI/IMG and others into drivers/gpu/drm/pvrsgx.
 
--- 
-2.25.2
+Just a heads up, DRM requires an open-source user-space, so if your
+plan is to move the open-source kernel driver while using the
+closed-source library (as that page seem to suggest), that might
+change a few things.
 
+> The kernel modules built from this project have successfully
+> demonstrated to work with the DTS definitions from this patch set on
+> AM335x BeagleBone Black, DM3730 and OMAP5 Pyra and Droid 4. They
+> partially work on OMAP3530 and PandaBoard ES but that is likely a
+> problem in the kernel driver or the (non-free) user-space libraries
+> and binaries.
+>
+> Wotk for JZ4780 (CI20 board) is in progress and there is potential
+> to extend this work to e.g. BananaPi-M3 (A83) and some Intel Poulsbo
+> and CedarView devices.
 
+If it's not been tested on any Allwinner board yet, I'll leave it
+aside until it's been properly shown to work.
+
+Maxime
+
+--spbhycqlgpxqdc65
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXpbdgAAKCRDj7w1vZxhR
+xfFrAP93okt+UedPkk9I3Q8d4NjjJQupvTn5SXqE9t4DNT4cOAD/UrA0Qy0Kn9Tr
+R9ol+rlZA6+bkgWLM1ddBT4uVccQmQw=
+=uJBG
+-----END PGP SIGNATURE-----
+
+--spbhycqlgpxqdc65--
