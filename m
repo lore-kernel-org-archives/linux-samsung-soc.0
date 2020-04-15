@@ -6,85 +6,86 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14C76C3815B
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Apr 2020 12:52:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE20C38A29
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Apr 2020 12:54:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC87C206D5
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Apr 2020 12:52:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF425206D5
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 15 Apr 2020 12:54:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="zNM1ymuF"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="gHiMFG6J"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S370539AbgDOMwk (ORCPT
+        id S370629AbgDOMye (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 15 Apr 2020 08:52:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41114 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2897471AbgDOLmf (ORCPT
+        Wed, 15 Apr 2020 08:54:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52234 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S370627AbgDOMyZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 15 Apr 2020 07:42:35 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF3B1C061A0F
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Apr 2020 04:42:33 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id r26so18631319wmh.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Apr 2020 04:42:33 -0700 (PDT)
+        Wed, 15 Apr 2020 08:54:25 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21EBAC061A0E
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Apr 2020 05:54:25 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id x4so17319675wmj.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Apr 2020 05:54:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:autocrypt:organization:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=S9NmSo8JYusTYBPeXCjsDWvSr0H2P83LYIrI2dFlh/o=;
-        b=zNM1ymuF/t/0wgYH9aMRGQkUWrK9g2ZV1f01utn3MAoaHPXu0+sQAs8JGAaXdhLFF4
-         0HDDTjeC9CDQsrFfa+3MqHr7Swm1azNj4QJtJn16j4vcD7dxjG8BCVk3eKcRVwiUrast
-         XAOsF0ZjrCWdri1OlRj8CnwAz/o5ZUYoRWKnYvRzTS/Mxd0lbQ8o21sQwL4DBHidb84T
-         +s3Y4N0YobXh9JjWm8DyKkmcNrOugM2ty7HTjrTU3JN08Niyh/gab/zmKERLvTfM8nxm
-         Wrj3LQnO8kAoQF5Wac1LLQKMOGlxU9rSY/ZcoSPfIUu34OvPf72gGPmADOBWeB+GZSfm
-         8f0Q==
+        bh=gMusnBiq0kgTDrpsrPDkgFe/p/9TlpUBGWfRPHTqHeY=;
+        b=gHiMFG6JrTjZo9dkSdah4baL1TKY6zn8dgqqjhx9KlClWT65Kta6zhWHlcNm7Q9N2/
+         AjW2VSTjJtR26Jb9jbjMCcXyTFqlPmicw9xIKD/GX6XIOGOkchdhS4pl3rH+vg5s4gw5
+         AYq6Y8XKrfaSAK4bYNekAHsbIO65aLIiWZA76sSA7kf4A+1ABc9e4y63ObGstHMjiAP4
+         OHHwoq5r4qBtEe5ttjDUKYre1VfXxAFIBPoJ1t6tljCaRVyBt/sVxsbjuoPs+b03IGPR
+         vCk7S/Df1FerRG27MEQ3YFhFF+fpnbiajjvheTSLGCKPjqraV9VLiu8TuCrXrUyO0OaZ
+         fgKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=S9NmSo8JYusTYBPeXCjsDWvSr0H2P83LYIrI2dFlh/o=;
-        b=FHBnt4UAGxd2OLe1FvkVUy+Gr39xcf8Nebbg8QETtgsThGm3E4oGZDA1Y8WfuTHOX4
-         AKKoSBQC9uMJcGNxU1lPD8GR1NgNcF3O62lRx2dKbq9SE284ZF2ipeB5GEvmXSc7PCne
-         4a5hyH7ehLkN82O6hYNBGBY2iWtnsPozXqI+MorayJGUhzkJw0f/ncsK2siFlxoKxACS
-         xsuNqhe0Vnf74Y+maUI6+Fn1caYTtVkM2VaxGrnLtVIiXapB4/nDs9uS98xqwGrQPIWn
-         AmIn5x1ODGpD4ySHgLQYYAqAee06o4tt5yNjGHNLMWbMdkZM2gA+LekUZLtWEoZCKdW/
-         uHtQ==
-X-Gm-Message-State: AGi0PuaMIVyXaF9uOs3oszXxkzkOSsKEeoc5Xm1lJgDfKsrE4pndJcXv
-        zR790TYh2jvhPJOemEbItW1OXA==
-X-Google-Smtp-Source: APiQypJGD+q2Ft/TJmt8VvCj6kbcQkafuaJGUYJfC46bS2nB9371SIyp/JhQIRWLDtAlLmkxSPO70Q==
-X-Received: by 2002:a1c:ded4:: with SMTP id v203mr4852590wmg.106.1586950952051;
-        Wed, 15 Apr 2020 04:42:32 -0700 (PDT)
+        bh=gMusnBiq0kgTDrpsrPDkgFe/p/9TlpUBGWfRPHTqHeY=;
+        b=n99LkbNyVuoTfv2dAmwteED0y5XD1vaGeUATansEpgjLW4j7Q393gMmv2JULBtrCU2
+         uc6pbLXgqM11s4fPLJSQmTUKQlzz6p1H0NW8X9xTybWvln1krnWWP5V42lwCQ3T/FVjb
+         r3cklX5MlfoffDm5N7NTZrL/tj8o2Okn3WlHDendQbwXBq63zcu9iuNs3/oD6XIrohFe
+         9N7ihjhMUnIY7b9W3xVPTPPWnFuDEzjZBgvtvxM+jOb/08gZWtGyHg+pUmqSZC0M+7oY
+         t9qQ07ienojFppSFALqn8nvA6AZJ3ErD4M+X8Ih6tTN+Cqmj06juqChzlbJgtHJY073X
+         XA/w==
+X-Gm-Message-State: AGi0PuYmDuHsNl/9yVYdhBESMama7aASOQBRDmF9WYuVMq92M+VeourO
+        NFPrh3q9wg2gLZ7igwo8lYguIA==
+X-Google-Smtp-Source: APiQypLMKBGPhfHLyqMorjw7AJr8PA6vGRu8xG+UF78Eg7uanluyeFylavuUVqpQLJKBeGIwXi+r6w==
+X-Received: by 2002:a1c:4956:: with SMTP id w83mr4958282wma.43.1586955263636;
+        Wed, 15 Apr 2020 05:54:23 -0700 (PDT)
 Received: from ?IPv6:2a01:e35:2ec0:82b0:39cc:a07:8b48:cc56? ([2a01:e35:2ec0:82b0:39cc:a07:8b48:cc56])
-        by smtp.gmail.com with ESMTPSA id n6sm21746253wmc.28.2020.04.15.04.42.28
+        by smtp.gmail.com with ESMTPSA id x18sm21955582wmi.29.2020.04.15.05.54.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Apr 2020 04:42:31 -0700 (PDT)
-Subject: Re: [PATCH v2 0/6] Move CEC drivers and menu to be out of
- MEDIA_SUPPORT
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>
-Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Kukjin Kim <kgene@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Benson Leung <bleung@chromium.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Wed, 15 Apr 2020 05:54:22 -0700 (PDT)
+Subject: Re: [PATCH v6 01/12] dt-bindings: add img, pvrsgx.yaml for
+ Imagination GPUs
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Maxime Ripard <maxime@cerno.tech>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        James Hogan <jhogan@kernel.org>,
+        dri-devel@lists.freedesktop.org, linux-mips@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>,
+        linux-samsung-soc@vger.kernel.org, letux-kernel@openphoenux.org,
+        Paul Burton <paulburton@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Ettore Chimenti <ek5.chimenti@gmail.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        linux-amlogic@lists.infradead.org,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-tegra@vger.kernel.org,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Tony Lindgren <tony@atomide.com>, Chen-Yu Tsai <wens@csie.org>,
+        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
+        =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-omap@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>
-References: <cover.1586946605.git.mchehab+huawei@kernel.org>
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Philipp Rossak <embed3d@gmail.com>,
+        openpvrsgx-devgroup@letux.org, linux-kernel@vger.kernel.org,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Daniel Vetter <daniel@ffwll.ch>, kernel@pyra-handheld.com
+References: <cover.1586939718.git.hns@goldelico.com>
+ <06fb6569259bb9183d0a0d0fe70ec4f3033b8aab.1586939718.git.hns@goldelico.com>
+ <20200415101251.o3wi5t6xvf56xmhq@gilmour.lan>
+ <72919514-0657-4B71-902F-3E775E528F64@goldelico.com>
 From:   Neil Armstrong <narmstrong@baylibre.com>
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -136,12 +137,12 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  zR8QplXA5kogS4kLe/7/JmlDMO8Zgm9vKLHSUeesLOrjdZ59EcjldNNBszRZQgEhwaarfz46
  BSwxi7g3Mu7u5kUByanqHyA=
 Organization: Baylibre
-Message-ID: <bcee4bd5-33f7-daad-f06c-78516c4ae29d@baylibre.com>
-Date:   Wed, 15 Apr 2020 13:42:27 +0200
+Message-ID: <f4fdca8a-d18c-a8d2-7f51-d1ebbbab3647@baylibre.com>
+Date:   Wed, 15 Apr 2020 14:54:18 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <cover.1586946605.git.mchehab+huawei@kernel.org>
+In-Reply-To: <72919514-0657-4B71-902F-3E775E528F64@goldelico.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -150,138 +151,46 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 15/04/2020 12:31, Mauro Carvalho Chehab wrote:
-> The CEC_CORE doesn't depend on MEDIA_SUPPORT. So, it doesn't make
-> much sense to keep it under its menu.
-> 
-> This series move it to be just after RC support. As a side effect, now
-> dependencies like PCI and USB are now selected, making easier to
-> enable CEC drivers.
-> 
-> - v2:
->   - move more CEC drivers from platform/
->   - rename kconfig options to be more coherent
-> 
-> Mauro Carvalho Chehab (6):
->   media: cec: move the core to a separate directory
->   media: place CEC menu before MEDIA_SUPPORT
->   media: move CEC platform drivers to a separate directory
->   media: move CEC USB drivers to a separate directory
->   media: cec: rename CEC platform drivers config options
->   media: cec: rename USB config options
-> 
->  arch/arm/configs/exynos_defconfig             |   2 +-
->  arch/arm/configs/multi_v7_defconfig           |   2 +-
->  drivers/media/Kconfig                         |  30 +----
->  drivers/media/cec/Kconfig                     |  25 ++++
->  drivers/media/cec/Makefile                    |  16 +--
->  drivers/media/cec/core/Makefile               |  16 +++
->  drivers/media/cec/{ => core}/cec-adap.c       |   0
->  drivers/media/cec/{ => core}/cec-api.c        |   0
->  drivers/media/cec/{ => core}/cec-core.c       |   0
->  drivers/media/cec/{ => core}/cec-notifier.c   |   0
->  .../media/cec/{ => core}/cec-pin-error-inj.c  |   0
->  drivers/media/cec/{ => core}/cec-pin-priv.h   |   0
->  drivers/media/cec/{ => core}/cec-pin.c        |   0
->  drivers/media/cec/{ => core}/cec-priv.h       |   0
->  drivers/media/cec/platform/Kconfig            | 121 +++++++++++++++++
->  drivers/media/cec/platform/Makefile           |  14 ++
->  .../{ => cec}/platform/cec-gpio/Makefile      |   0
->  .../{ => cec}/platform/cec-gpio/cec-gpio.c    |   0
->  drivers/media/cec/platform/cros-ec/Makefile   |   2 +
->  .../platform/cros-ec}/cros-ec-cec.c           |   0
->  drivers/media/cec/platform/meson/Makefile     |   3 +
->  .../{ => cec}/platform/meson/ao-cec-g12a.c    |   0
->  .../media/{ => cec}/platform/meson/ao-cec.c   |   0
->  .../s5p-cec => cec/platform/s5p}/Makefile     |   2 +-
->  .../platform/s5p}/exynos_hdmi_cec.h           |   0
->  .../platform/s5p}/exynos_hdmi_cecctrl.c       |   0
->  .../s5p-cec => cec/platform/s5p}/regs-cec.h   |   0
->  .../s5p-cec => cec/platform/s5p}/s5p_cec.c    |   0
->  .../s5p-cec => cec/platform/s5p}/s5p_cec.h    |   0
->  drivers/media/cec/platform/seco/Makefile      |   2 +
->  .../seco-cec => cec/platform/seco}/seco-cec.c |   2 +-
->  .../seco-cec => cec/platform/seco}/seco-cec.h |   0
->  drivers/media/cec/platform/sti/Makefile       |   2 +
->  .../sti/cec => cec/platform/sti}/stih-cec.c   |   0
->  drivers/media/cec/platform/stm32/Makefile     |   2 +
->  .../{ => cec}/platform/stm32/stm32-cec.c      |   0
->  drivers/media/cec/platform/tegra/Makefile     |   2 +
->  .../platform/tegra}/tegra_cec.c               |   0
->  .../platform/tegra}/tegra_cec.h               |   0
->  drivers/media/cec/usb/Kconfig                 |   6 +
->  drivers/media/cec/usb/Makefile                |   6 +
->  .../pulse8-cec => cec/usb/pulse8}/Kconfig     |   5 +-
->  drivers/media/cec/usb/pulse8/Makefile         |   2 +
->  .../usb/pulse8}/pulse8-cec.c                  |   0
->  .../usb/rainshadow}/Kconfig                   |   5 +-
->  drivers/media/cec/usb/rainshadow/Makefile     |   2 +
->  .../usb/rainshadow}/rainshadow-cec.c          |   0
->  drivers/media/platform/Kconfig                | 125 ------------------
->  drivers/media/platform/Makefile               |  12 --
->  drivers/media/platform/cros-ec-cec/Makefile   |   2 -
->  drivers/media/platform/meson/Makefile         |   3 -
->  drivers/media/platform/seco-cec/Makefile      |   2 -
->  drivers/media/platform/sti/cec/Makefile       |   2 -
->  drivers/media/platform/stm32/Makefile         |   1 -
->  drivers/media/platform/tegra-cec/Makefile     |   2 -
->  drivers/media/usb/Kconfig                     |   6 -
->  drivers/media/usb/Makefile                    |   2 -
->  drivers/media/usb/pulse8-cec/Makefile         |   2 -
->  drivers/media/usb/rainshadow-cec/Makefile     |   2 -
->  59 files changed, 218 insertions(+), 212 deletions(-)
->  create mode 100644 drivers/media/cec/core/Makefile
->  rename drivers/media/cec/{ => core}/cec-adap.c (100%)
->  rename drivers/media/cec/{ => core}/cec-api.c (100%)
->  rename drivers/media/cec/{ => core}/cec-core.c (100%)
->  rename drivers/media/cec/{ => core}/cec-notifier.c (100%)
->  rename drivers/media/cec/{ => core}/cec-pin-error-inj.c (100%)
->  rename drivers/media/cec/{ => core}/cec-pin-priv.h (100%)
->  rename drivers/media/cec/{ => core}/cec-pin.c (100%)
->  rename drivers/media/cec/{ => core}/cec-priv.h (100%)
->  create mode 100644 drivers/media/cec/platform/Kconfig
->  create mode 100644 drivers/media/cec/platform/Makefile
->  rename drivers/media/{ => cec}/platform/cec-gpio/Makefile (100%)
->  rename drivers/media/{ => cec}/platform/cec-gpio/cec-gpio.c (100%)
->  create mode 100644 drivers/media/cec/platform/cros-ec/Makefile
->  rename drivers/media/{platform/cros-ec-cec => cec/platform/cros-ec}/cros-ec-cec.c (100%)
->  create mode 100644 drivers/media/cec/platform/meson/Makefile
->  rename drivers/media/{ => cec}/platform/meson/ao-cec-g12a.c (100%)
->  rename drivers/media/{ => cec}/platform/meson/ao-cec.c (100%)
->  rename drivers/media/{platform/s5p-cec => cec/platform/s5p}/Makefile (63%)
->  rename drivers/media/{platform/s5p-cec => cec/platform/s5p}/exynos_hdmi_cec.h (100%)
->  rename drivers/media/{platform/s5p-cec => cec/platform/s5p}/exynos_hdmi_cecctrl.c (100%)
->  rename drivers/media/{platform/s5p-cec => cec/platform/s5p}/regs-cec.h (100%)
->  rename drivers/media/{platform/s5p-cec => cec/platform/s5p}/s5p_cec.c (100%)
->  rename drivers/media/{platform/s5p-cec => cec/platform/s5p}/s5p_cec.h (100%)
->  create mode 100644 drivers/media/cec/platform/seco/Makefile
->  rename drivers/media/{platform/seco-cec => cec/platform/seco}/seco-cec.c (99%)
->  rename drivers/media/{platform/seco-cec => cec/platform/seco}/seco-cec.h (100%)
->  create mode 100644 drivers/media/cec/platform/sti/Makefile
->  rename drivers/media/{platform/sti/cec => cec/platform/sti}/stih-cec.c (100%)
->  create mode 100644 drivers/media/cec/platform/stm32/Makefile
->  rename drivers/media/{ => cec}/platform/stm32/stm32-cec.c (100%)
->  create mode 100644 drivers/media/cec/platform/tegra/Makefile
->  rename drivers/media/{platform/tegra-cec => cec/platform/tegra}/tegra_cec.c (100%)
->  rename drivers/media/{platform/tegra-cec => cec/platform/tegra}/tegra_cec.h (100%)
->  create mode 100644 drivers/media/cec/usb/Kconfig
->  create mode 100644 drivers/media/cec/usb/Makefile
->  rename drivers/media/{usb/pulse8-cec => cec/usb/pulse8}/Kconfig (86%)
->  create mode 100644 drivers/media/cec/usb/pulse8/Makefile
->  rename drivers/media/{usb/pulse8-cec => cec/usb/pulse8}/pulse8-cec.c (100%)
->  rename drivers/media/{usb/rainshadow-cec => cec/usb/rainshadow}/Kconfig (85%)
->  create mode 100644 drivers/media/cec/usb/rainshadow/Makefile
->  rename drivers/media/{usb/rainshadow-cec => cec/usb/rainshadow}/rainshadow-cec.c (100%)
->  delete mode 100644 drivers/media/platform/cros-ec-cec/Makefile
->  delete mode 100644 drivers/media/platform/meson/Makefile
->  delete mode 100644 drivers/media/platform/seco-cec/Makefile
->  delete mode 100644 drivers/media/platform/sti/cec/Makefile
->  delete mode 100644 drivers/media/platform/tegra-cec/Makefile
->  delete mode 100644 drivers/media/usb/pulse8-cec/Makefile
->  delete mode 100644 drivers/media/usb/rainshadow-cec/Makefile
-> 
+Hi,
 
-For meson CEC drivers and cros-ec-cec:
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+On 15/04/2020 14:43, H. Nikolaus Schaller wrote:
+> 
+>> Am 15.04.2020 um 12:12 schrieb Maxime Ripard <maxime@cerno.tech>:
+>>
+>> Hi,
+>>
+>> On Wed, Apr 15, 2020 at 10:35:08AM +0200, H. Nikolaus Schaller wrote:
+>>> The Imagination PVR/SGX GPU is part of several SoC from
+>>> multiple vendors, e.g. TI OMAP, Ingenic JZ4780, Intel Poulsbo,
+>>> Allwinner A83 and others.
+>>>
+>>> With this binding, we describe how the SGX processor is
+>>> interfaced to the SoC (registers, interrupt etc.).
+>>>
+>>> In most cases, Clock, Reset and power management is handled
+>>> by a parent node or elsewhere (e.g. code in the driver).
+>>
+>> Wouldn't the "code in the driver" still require the clock / reset /
+>> power domain to be set in the DT?
+> 
+> Well, some SoC seem to use existing clocks and have no reset.
+> Or, although not recommended, they may have the io-address range
+> hard-coded.
+
+The possible clocks and resets should be added, even if optional.
+
+Please look at the arm utgard, midgard and bifrost bindings.
 
 Neil
+
+> 
+> BR,
+> Nikolaus
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
+
