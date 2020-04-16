@@ -2,115 +2,108 @@ Return-Path: <SRS0=z7tY=6A=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 726DFC2BB85
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Apr 2020 08:56:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A6DC2D0EF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Apr 2020 09:46:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E21D20784
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Apr 2020 08:56:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1587027386;
-	bh=hrWU6kk9Sm5Qu65G34Lh8AIxzgETA/uQZLe/0g/hvbI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=nRLulEAEadZ0b1t9nMld2/Lnd2QUHtvOwIfKBwhdbgVYp9C1Fe/8Kzc6dDlyESON/
-	 cPisOj/yw/QEwkeSthj3RdrO73nT88Ol6Ln5FgKqbr9o66uvDK+SkFztyNEgQeh8vo
-	 vkvnr11XEKSQJW6rjIVsnBdwUPxyi0CAPnoARPeg=
+	by mail.kernel.org (Postfix) with ESMTP id B013621D7A
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Apr 2020 09:46:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503052AbgDPI4V (ORCPT
+        id S2504030AbgDPJqx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Apr 2020 04:56:21 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:46861 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502720AbgDPIvD (ORCPT
+        Thu, 16 Apr 2020 05:46:53 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:42084 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2504172AbgDPJqt (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Apr 2020 04:51:03 -0400
-Received: by mail-ed1-f67.google.com with SMTP id w4so7902927edv.13;
-        Thu, 16 Apr 2020 01:51:00 -0700 (PDT)
+        Thu, 16 Apr 2020 05:46:49 -0400
+Received: by mail-ot1-f65.google.com with SMTP id m18so2530127otq.9;
+        Thu, 16 Apr 2020 02:46:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=612iSfEdCExrydRb4c/BtgR5OtI+RlzyNcwVt1HFejQ=;
-        b=BNN1dm8BnF20ZEVRVraemvq1X1zndJl0bV3Sz8GJRusVtvnKGfe1jIrl//7n+DdVxr
-         O5W1vwiHhm9sUxMY9Uka9BiarY9vwI5p2k4I8pLkyLNYjoCBtuAj4TqErl8r4nkM7+kM
-         QnXgj9GKwGZbV2YIPKanYlLxMOA1D6je6ff9AEz4IEctQlSnf60/WoFYD/1AB20GmGT6
-         ugdpNdsHoG6TF6OI9dv/DSoB2gGGr2RF4eFycnzDp3LjXd0o188XNu7vR4efKiKUSABj
-         ciKsQAgDnFOQhTR7AuZjjdZCjxJr5OHOBZ3egy3hTu7n0HBQYE6aDESG9F4gS/sAjm0m
-         nDwA==
-X-Gm-Message-State: AGi0PuYJx7kh5qnDyfwANOKUjdd7WqM5uzgC9EM5towOsx+JcA4YiIJW
-        CHJQWR/Wl+BFtcrel7sAk4E=
-X-Google-Smtp-Source: APiQypLBJohNWBf8al3U6Nm7wdqmu7TVhKtwUuNuYqABpoxhkFpKFPfFew2b9nU4yPhd8D2/wycwag==
-X-Received: by 2002:aa7:d1d6:: with SMTP id g22mr7466242edp.36.1587027059468;
-        Thu, 16 Apr 2020 01:50:59 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.125])
-        by smtp.googlemail.com with ESMTPSA id b15sm2495600edn.69.2020.04.16.01.50.54
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 16 Apr 2020 01:50:58 -0700 (PDT)
-Date:   Thu, 16 Apr 2020 10:50:49 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Jonathan Bakker <xc-racer2@live.ca>
-Cc:     "H. Nikolaus Schaller" <hns@goldelico.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paulburton@kernel.org>,
-        James Hogan <jhogan@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Philipp Rossak <embed3d@gmail.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-omap@vger.kernel.org, openpvrsgx-devgroup@letux.org,
-        letux-kernel@openphoenux.org, kernel@pyra-handheld.com,
-        linux-mips@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>
-Subject: Re: [PATCH v6 08/12] arm: dts: s5pv210: Add G3D node
-Message-ID: <20200416085049.GA7193@kozik-lap>
-References: <cover.1586939718.git.hns@goldelico.com>
- <b6733f80546bf3e6b3799f716b9c8e0f407de03d.1586939718.git.hns@goldelico.com>
- <CAJKOXPcb9KWNAem-CAx_zCS+sZoEHYc0J8x0nk1xjY9hD4-M4w@mail.gmail.com>
- <AB9B8741-CFF7-414D-9489-D381B539538D@goldelico.com>
- <BN6PR04MB0660640B15550F75C8CCD4DEA3DB0@BN6PR04MB0660.namprd04.prod.outlook.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RM/nTDzMiJT/jjtvKRl0rtdDn36SiM29khhvLS3Fy9U=;
+        b=Xccck0PlJztAKzkOSS8HtUFqxL1IblHjJXccTmztJ0vL0ZAKoUxiptOtLUQQ/47P0X
+         FFjXZgHOu+GQ3OUTwKRERci9fnF2M6M4ztzkjQHC+SKl8l948nSFRcIfgUoM5Db9NqVB
+         9182lSVlbXYnMtZ2TUe2e3l33hZ/LW+DedQiIIOv636gRoOyskpMDdAOMMtAmr6OIMdY
+         GSQWa4IrDsOlh9iopemdCLMrsuqCj2RA84KJj22hOXJTwYPZ3FrYn2j1ma2lWE92w1Dp
+         jNY7JyXABwnH7zMbg44B8dP7DUx3rjv4jZYxScLVI3TD1eJwIgBOz3JPKsmtkW3S7wOD
+         wJ2w==
+X-Gm-Message-State: AGi0PuYF9yaPBC+PfS6B3fT7Dvi90QoRNgOGYna65I3FF73VVWeK9Vtw
+        ssmgGtFC3dAoEOeJr8jAm0PDv+xvE61mV88kvYE=
+X-Google-Smtp-Source: APiQypIl3DcyhF0BNQx8p7xql+qmz/EnqLfrFLnv69mUOw78OJnDaQgEns2mc5nF+ZGDxENyc+UKCUv1ihzy5/CmGB4=
+X-Received: by 2002:a9d:6299:: with SMTP id x25mr20179548otk.107.1587030408635;
+ Thu, 16 Apr 2020 02:46:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <BN6PR04MB0660640B15550F75C8CCD4DEA3DB0@BN6PR04MB0660.namprd04.prod.outlook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <cover.1586946605.git.mchehab+huawei@kernel.org> <221ac8f88034bb55c7029c162c0273eccd6b6480.1586946605.git.mchehab+huawei@kernel.org>
+In-Reply-To: <221ac8f88034bb55c7029c162c0273eccd6b6480.1586946605.git.mchehab+huawei@kernel.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 16 Apr 2020 11:46:37 +0200
+Message-ID: <CAMuHMdXuq0SVUUE3gN5sF2pPaHfhQXX8JsXaR6+qXdnBXVikHg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/6] media: move CEC platform drivers to a separate directory
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        Ettore Chimenti <ek5.chimenti@gmail.com>,
+        Benson Leung <bleung@chromium.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Apr 15, 2020 at 11:17:16AM -0700, Jonathan Bakker wrote:
- 
-> >>
-> >>> +
-> >>> +                       assigned-clocks = <&clocks MOUT_G3D>, <&clocks DOUT_G3D>;
-> >>> +                       assigned-clock-rates = <0>, <66700000>;
-> >>> +                       assigned-clock-parents = <&clocks MOUT_MPLL>;
-> >>
-> >> Probably this should have status disabled because you do not set
-> >> regulator supply.
-> 
-> I don't believe there is a regulator on s5pv210, if there is, then it is a
-> fixed regulator with no control on both s5pv210 devices that I have.
-> 
-> The vendor driver did use the regulator framework for its power domain
-> implementation, but that definitely shouldn't be upstreamed.
+Hi Mauro,
 
-Starting with Exynos4210 usually they have separate regulator from PMIC
-but maybe S5Pv210 indeed is different.  Leave it then without it.
+On Wed, Apr 15, 2020 at 12:32 PM Mauro Carvalho Chehab
+<mchehab+huawei@kernel.org> wrote:
+> As CEC support doesn't depend on MEDIA_SUPPORT, let's
+> place the platform drivers outside the media menu.
 
-Best regards,
-Krzysztof
+Thanks for your patch!
 
+> As a side effect, instead of depends on PCI, seco driver
+> can select it (and DMI).
+
+I don't think that's a good idea, as it suddenly enables selecting all PCI
+drivers on platforms that do not have PCI.
+
+    WARNING: unmet direct dependencies detected for PCI
+      Depends on [n]: HAVE_PCI [=n]
+      Selected by [m]:
+      - CEC_SECO [=m] && MEDIA_CEC_SUPPORT [=y] && (X86 || IA64 ||
+COMPILE_TEST [=y])
+
+However, it already exposed some bugs that were hidden by PCI=n ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
