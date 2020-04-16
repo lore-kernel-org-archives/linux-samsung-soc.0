@@ -2,239 +2,105 @@ Return-Path: <SRS0=z7tY=6A=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95EA7C2BB85
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Apr 2020 11:49:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D76EBC2BB55
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Apr 2020 14:03:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6F05520656
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Apr 2020 11:49:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="SfpxavV1"
+	by mail.kernel.org (Postfix) with ESMTP id B2E77217D8
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Apr 2020 14:03:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1587045807;
+	bh=lERJmzbwc5ScyG8KTnuTzGkoZ1Fds8erwGnk4BHFhws=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=feCLdN+h0hU3DJCD6wHVHnlnxKnrdErGA0pRrFwR5uKCTQQL3MkJ9JgrHuOElcZrb
+	 caP8qmShu6Y6yD0ghGEzrcyry0kpFln7DbxRUNeeX1n51RH4xwama9MUV5IzNXucN2
+	 DkmM+cQ0Ct6DzP45aShOqSaIktiJV6kcwoePDsOY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2506665AbgDPLtR (ORCPT
+        id S2388529AbgDPODU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Apr 2020 07:49:17 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:42212 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2506574AbgDPLsy (ORCPT
+        Thu, 16 Apr 2020 10:03:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50498 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732703AbgDPOCx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Apr 2020 07:48:54 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200416114849euoutp02c35f67b0c300606a96d0852c2dcc6c5e~GSmgL-_WO3089730897euoutp02C
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Apr 2020 11:48:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200416114849euoutp02c35f67b0c300606a96d0852c2dcc6c5e~GSmgL-_WO3089730897euoutp02C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1587037729;
-        bh=LtJiapRZh1Ea64p7LdbSiBgjXuP3s8Uvyni6NX+lMbI=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=SfpxavV1P9cZ5c5nOEaxfLj3RP0aNc+JtZ78ozQRM6iQ8N5LhcGpunGHkJbVpbOcc
-         cFP0TuQ0jDXD8WXLRECz/pQT8/mqxu4vrqfMMQebCW6zADsKklQwPTFV21OF0agVdu
-         VlGyEqiRvBW+JFL5Zv2Nk0X68sk/DgU6ksOXm9QQ=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200416114848eucas1p22ab13090a3fe7b4992627149d2e5ac90~GSmfuxvu60903309033eucas1p28;
-        Thu, 16 Apr 2020 11:48:48 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 8B.5A.60679.026489E5; Thu, 16
-        Apr 2020 12:48:48 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200416114848eucas1p26436783dd625463955ec0d8fc9bb6e09~GSmfQuTS71105311053eucas1p2p;
-        Thu, 16 Apr 2020 11:48:48 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200416114848eusmtrp2def4490817dd88b069636a889ccc2aa7~GSmfPshja1089610896eusmtrp2L;
-        Thu, 16 Apr 2020 11:48:48 +0000 (GMT)
-X-AuditID: cbfec7f4-0cbff7000001ed07-0c-5e9846205236
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 41.C0.07950.026489E5; Thu, 16
-        Apr 2020 12:48:48 +0100 (BST)
-Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200416114847eusmtip140b27105c59b66ea3210be2b8bb787db~GSmd8phLs0505005050eusmtip1R;
-        Thu, 16 Apr 2020 11:48:46 +0000 (GMT)
-Subject: Re: [PATCH v2 00/33] iommu: Move iommu_group setup to IOMMU core
- code
-To:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <551c48b8-3268-6034-2dc6-cec3dbbec250@samsung.com>
-Date:   Thu, 16 Apr 2020 13:48:46 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.7.0
+        Thu, 16 Apr 2020 10:02:53 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E4CA22247;
+        Thu, 16 Apr 2020 14:02:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1587045772;
+        bh=lERJmzbwc5ScyG8KTnuTzGkoZ1Fds8erwGnk4BHFhws=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ntKugfcpsklKuYMeG5MOV6czGfk8XQoFoBzDuOP0gdFmtDAT/0/cd7WdooVN+Mfqj
+         HZ3W+QJIADrTLeTCtREHWt5DOKAq/G3y1jeSjuBnV6t2l8MN3tCJmgY1A+KrScYZw6
+         TFXvZDdoY7pmzFrTWkh48CI8SJiB7mNk4TLHEgQU=
+Date:   Thu, 16 Apr 2020 15:56:18 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Hyunki Koo <hyunki00.koo@gmail.com>
+Cc:     robh+dt@kernel.org, krzk@kernel.org,
+        Hyunki Koo <hyunki00.koo@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, Jiri Slaby <jslaby@suse.com>,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v7 2/2] Support 32-bit access for the TX/RX hold
+ registers UTXH and URXH.
+Message-ID: <20200416135618.GA1295013@kroah.com>
+References: <20200411123325.30501-1-hyunki00.koo@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200414131542.25608-1-joro@8bytes.org>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTYRjG+XaOZ2fW5HMVvlp0GRQVZhcTPjKyoOIQVHYhKrBa7WiSW7Kj
-        lhVkbV1cV5NwTVtm0bSbpmkqlmiY1NKtVhahZLnuzsTZxS4ut5Plf8/7fL+H93nhYynFJSaM
-        TdSm8DqtKknJBNIV9/rs08YvNm2YYdVHkeaOnzQpyypniK22iyZZRdkUqep8zxDv608BJL82
-        mmRccQQQg7mAJpm5JVJyouMTRez2AZVV2yQlzuo8hjj1jxDpafdS5OR5PUVM9jsSktlrZsh+
-        QyR5d/47Req6XQGkr9pCE2uThSGG1qj5oZyrziLhrlquIq7udT3DVZnbpFxZ4VSu9HImw7W2
-        1DCc5f4KruziXi77uRVxx/RdDHerxUJxntKxsfL1gXPVfFJiGq+bPm9T4NbvPZV0cueEnQXv
-        8iQZyBNmRDIW8GwoNJymjSiQVeBCBDUP8xhx6EVwz2hifJQCexAUH9s9mHjpLJGIkBWB3tT3
-        F/qM4LZH4dMjcCw4zvZTPmgk/kZDfkO5f6BwpQS+Nr1BPorBM8HoNvrTcjwPbG3H/ZrGE8HV
-        kTEQYNlROA5yWlaLSDDcP+OifbYMR8GzU+t8NoXHwS13HiXqEHjhOucvB9jFgje3SiK2XggV
-        XYeQqEfAx8abUlGPAW/VYECP4FXzNak4HEXg3G/6m4iG1uYfjG8zhadAcfV00V4Amcfdfhtw
-        EDx3B4slguBURQ4l2nI4fFAh0pPA3Hj939o6x2PqJFKah1xmHnKOecg55v978xF9GYXwqYIm
-        gRdmafkdEYJKI6RqEyK2bNeUooHfa+tv7K1E1b821yPMIuVw+aYY0wZFgCpNSNfUI2Ap5Uh5
-        UNSAJVer0nfxuu0bdalJvFCPRrO0MkQeWfAhToETVCn8Np5P5nWDrxJWFpaBlqEDb7qLDPPV
-        0omlZ7Jr5qwrXrL8rSdtSvcq57C1i8rVX9vu2qJXdkesyYlL7my3hYZXLt1bNM7xpD94TU/z
-        B2tFfGs6p1k9rTDu6Z5IY/yNlAvxk5MTr8Rc/1hQtm+3Vx1+4rfkiPSbUMJs+xK+0Y3Xygwy
-        +4MLsQ3h2gZ3jGOHR0kLW1Uzp1I6QfUHpZO/gLkDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SXUhTYRzGeXfOjmfS4ji/XiX8mHhR0HSb09c+LLuQI0gYQyFLa+lJK7fZ
-        ziYZUSu9mKPyq0ynrBJLLS/MVdMpyiRKMTORLEOx3MrCHKG7KIxscwa7+/E8v+eFF/4kJujn
-        RpJnVFpGo1KUColAfPzvq/ndMRlNBYnrE2HojWMdR5a6ZwQaH3bhqK6rAUP9P74RaGNxmYvu
-        De9F+sdvuajK1Iaj6paeAFTjWMbQ5KSH6oYnAtC0rZVA05VTAK1+2sBQ7f1KDDVNDnFQtdtE
-        oGtVUrR0/xeG7D+dXPTbZsZRx4SZQFVzsoMRtNNu5tDd5m5A2xdHCLrfNB9AWzp30b2Pqgl6
-        bmaQoM1jR2hL+xW64UMHoG9UugjaOmPG6LXeqGx+nmifRq3TMjElala7X3hMjCQicSoSSZJS
-        RWJpSv4eiUyYkLaviCk9U85oEtJOikp+rfbhZT9iL7QttXL0YC3SCHgkpJLgwnQPxwgCSQH1
-        AMCvyxaur9gBxxr1WxwM/8wYCZ+0AmBnswPzFsHUYWh/+AR4ixBqHYftHwY2LYzq48DVhheb
-        loAyAPj3e6yXCUoMjSvep3gkn0qD4/M3Nxmn4qHToff4JBlK5cOqqZ0+JQiONTtxb8yjZPB9
-        /VFvjFHJ0Gz5jPk4GlpXWrc4HH503uXUAoHJb23ym5j8Jia/yT2APwIhjI5VFitZiYhVKFmd
-        qlhUqFb2As/ZPH/5+2kfMLrkI4AigXAb/+SBpgIBV1HOVihHACQxYQh/u8wT8YsUFRcZjfqE
-        RlfKsCNA5vlaHRYZWqj2HKFKe0IsE6egVHGKNEWajIThfANlPy6gihVa5hzDlDGa/zsOyYvU
-        g5brVrTDVfGV/qI7dDuvKH8+fiEqYiDXFpr9OrvJmvVe3uEuD7rTUnJpNi19tswuz0nN2bC8
-        G1L2R0d/mijkz6VLqbOLo39yTxska6EPVjtiDVfjglhbTafz1uVTe89nxv18OEoMLqMG13pW
-        zeucRNSu6eJdzOh0yzPr3X1hjUKcLVGId2EaVvEPnvogHEwDAAA=
-X-CMS-MailID: 20200416114848eucas1p26436783dd625463955ec0d8fc9bb6e09
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200414131600eucas1p16f1ff6aedb780eb795a770dc08e5dec5
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200414131600eucas1p16f1ff6aedb780eb795a770dc08e5dec5
-References: <CGME20200414131600eucas1p16f1ff6aedb780eb795a770dc08e5dec5@eucas1p1.samsung.com>
-        <20200414131542.25608-1-joro@8bytes.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200411123325.30501-1-hyunki00.koo@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Joerg,
+On Sat, Apr 11, 2020 at 09:33:24PM +0900, Hyunki Koo wrote:
+> From: Hyunki Koo <hyunki00.koo@samsung.com>
+> 
+> This is required for some newer SoCs.
+> 
+> Signed-off-by: Hyunki Koo <hyunki00.koo@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Tested on Odroid HC1 (Exynos5422):
+> Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+> v2: 
+> line 954 : change rd_regl to rd_reg in for backward compatibility.
+> line 2031: Add init value for ourport->port.iotype  to UPIO_MEM 
+> v3:
+> line 2031: remove redundant init value  for ourport->port.iotype 
+> v4:
+> correct variable types and change misleading function name
+> v5:
+> add dt-binding and go as first patch in this series.
+> v6:
+> no change in this patch, only chaged in [PATCH v6 1/2]
+> v7:
+> add reviewed by and tested by
+> ---
 
-On 14.04.2020 15:15, Joerg Roedel wrote:
-> here is the second version of this patch-set. The first version with
-> some more introductory text can be found here:
->
-> 	https://lore.kernel.org/lkml/20200407183742.4344-1-joro@8bytes.org/
->
-> Changes v1->v2:
->
-> 	* Rebased to v5.7-rc1
->
-> 	* Re-wrote the arm-smmu changes as suggested by Robin Murphy
->
-> 	* Re-worked the Exynos patches to hopefully not break the
-> 	  driver anymore
+Your subject line changed for this and patch 2 :(
 
-Thanks for this rework. This version is much better. Works fine on 
-various Exynos-based boards (ARM and ARM64).
+Also, I asked you to split this patch up better in the past, you seem to
+have ignored that :(
 
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+First patch would be to create the new functions and use them, with no
+functional change to the code as-is.  A second patch would add the new
+binding, and a third patch would be to add the new functionality.
 
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com> (for Exynos and 
-core changes)
+And you need to describe all of this very well in your changelog, the
+one sentence here is not sufficient at all.
 
-> 	* Fixed a missing mutex_unlock() reported by Marek Szyprowski,
-> 	  thanks for that.
->
-> There is also a git-branch available with these patches applied:
->
-> 	https://git.kernel.org/pub/scm/linux/kernel/git/joro/linux.git/log/?h=iommu-probe-device-v2
->
-> Please review.
->
-> Thanks,
->
-> 	Joerg
->
-> Joerg Roedel (32):
->    iommu: Move default domain allocation to separate function
->    iommu/amd: Implement iommu_ops->def_domain_type call-back
->    iommu/vt-d: Wire up iommu_ops->def_domain_type
->    iommu/amd: Remove dma_mask check from check_device()
->    iommu/amd: Return -ENODEV in add_device when device is not handled by
->      IOMMU
->    iommu: Add probe_device() and remove_device() call-backs
->    iommu: Move default domain allocation to iommu_probe_device()
->    iommu: Keep a list of allocated groups in __iommu_probe_device()
->    iommu: Move new probe_device path to separate function
->    iommu: Split off default domain allocation from group assignment
->    iommu: Move iommu_group_create_direct_mappings() out of
->      iommu_group_add_device()
->    iommu: Export bus_iommu_probe() and make is safe for re-probing
->    iommu/amd: Remove dev_data->passthrough
->    iommu/amd: Convert to probe/release_device() call-backs
->    iommu/vt-d: Convert to probe/release_device() call-backs
->    iommu/arm-smmu: Convert to probe/release_device() call-backs
->    iommu/pamu: Convert to probe/release_device() call-backs
->    iommu/s390: Convert to probe/release_device() call-backs
->    iommu/virtio: Convert to probe/release_device() call-backs
->    iommu/msm: Convert to probe/release_device() call-backs
->    iommu/mediatek: Convert to probe/release_device() call-backs
->    iommu/mediatek-v1 Convert to probe/release_device() call-backs
->    iommu/qcom: Convert to probe/release_device() call-backs
->    iommu/rockchip: Convert to probe/release_device() call-backs
->    iommu/tegra: Convert to probe/release_device() call-backs
->    iommu/renesas: Convert to probe/release_device() call-backs
->    iommu/omap: Remove orphan_dev tracking
->    iommu/omap: Convert to probe/release_device() call-backs
->    iommu/exynos: Use first SYSMMU in controllers list for IOMMU core
->    iommu/exynos: Convert to probe/release_device() call-backs
->    iommu: Remove add_device()/remove_device() code-paths
->    iommu: Unexport iommu_group_get_for_dev()
->
-> Sai Praneeth Prakhya (1):
->    iommu: Add def_domain_type() callback in iommu_ops
->
->   drivers/iommu/amd_iommu.c       |  97 ++++----
->   drivers/iommu/amd_iommu_types.h |   1 -
->   drivers/iommu/arm-smmu-v3.c     |  38 +--
->   drivers/iommu/arm-smmu.c        |  39 ++--
->   drivers/iommu/exynos-iommu.c    |  24 +-
->   drivers/iommu/fsl_pamu_domain.c |  22 +-
->   drivers/iommu/intel-iommu.c     |  68 +-----
->   drivers/iommu/iommu.c           | 393 +++++++++++++++++++++++++-------
->   drivers/iommu/ipmmu-vmsa.c      |  60 ++---
->   drivers/iommu/msm_iommu.c       |  34 +--
->   drivers/iommu/mtk_iommu.c       |  24 +-
->   drivers/iommu/mtk_iommu_v1.c    |  50 ++--
->   drivers/iommu/omap-iommu.c      |  99 ++------
->   drivers/iommu/qcom_iommu.c      |  24 +-
->   drivers/iommu/rockchip-iommu.c  |  26 +--
->   drivers/iommu/s390-iommu.c      |  22 +-
->   drivers/iommu/tegra-gart.c      |  24 +-
->   drivers/iommu/tegra-smmu.c      |  31 +--
->   drivers/iommu/virtio-iommu.c    |  41 +---
->   include/linux/iommu.h           |  21 +-
->   20 files changed, 533 insertions(+), 605 deletions(-)
->
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Please fix this all up and resend.
 
+thanks,
+
+greg k-h
