@@ -2,301 +2,172 @@ Return-Path: <SRS0=ld0E=6B=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A43E2C3815B
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Apr 2020 10:25:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04652C38A29
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Apr 2020 12:05:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B9CE221EA
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Apr 2020 10:25:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8BAD2083E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Apr 2020 12:05:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="wFPCXDM9";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AhWcqSBk"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BVuAnuM1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729290AbgDQKZP (ORCPT
+        id S1727890AbgDQMFJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 17 Apr 2020 06:25:15 -0400
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:33327 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726207AbgDQKZM (ORCPT
+        Fri, 17 Apr 2020 08:05:09 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:10157 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727780AbgDQMFI (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 17 Apr 2020 06:25:12 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 745C958044A;
-        Fri, 17 Apr 2020 06:25:09 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Fri, 17 Apr 2020 06:25:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=6Fjyjvm8YMRLuu1BmCR24WjceIi
-        +YAIylzDdqTQnb3g=; b=wFPCXDM9IltWfPw0iWL5vGXhLWQwfrvIxIJ5jtqH5LP
-        iNYeF3dY1CbSLg8g63cxYe7g7OJrsLBzRTEV+CM7JGa0yjbulxBtPRDSQ7dvGn4K
-        Y20sHZhdRUBJXsE5BnNBRASZtt8Lt2js0NSTOCFn/TCPG9VYO+c3kj4ykbR2HxV5
-        FhPGRUT4sRAXTH5D/OtzTvAgS/rl8rGzjv5TMcdTR2+SZ2brDNijvCrJ/BMY6TXN
-        5A4D+0eIeQKvvPQ42e9SSDm78Pytcy3PFCuJUYsrkFjTgeTaD863wMI+ZBy4ezeB
-        +SG/SdXTccNJcWgTsLGSNRcmJIN0CRbG/fM5Xl7AsMg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=6Fjyjv
-        m8YMRLuu1BmCR24WjceIi+YAIylzDdqTQnb3g=; b=AhWcqSBkWGz1YpKq4MYJZo
-        a8nVeBhj8xS8Buguy6hDjd6IBa78G/FiJgIAbZIgu5KDP7HiVEJi2TidZxs+5gLF
-        Y6BnyqZ1NuYsU22cO5nD8JhddlpqDW97r7w7/Adw+THs+MkqCOXtezggmHoa2awd
-        vDWtHFMlTEXbzz8uaU0xPOXmnd4a/lieArch2a+dUpKV4uWJHD8+aZkrKFscMGhX
-        45iIyT/IS3zXi12CGaaCxtCDmmmGnp7DUXhmW+AF7XEwBCk/0k6gixXN+eR+W0/C
-        9h69MyD3jfgO9mdKsK6eUWr+HmMMGPxPtTuqVYUkFJqh+PwAMd/VMpbPFAY/8/7w
-        ==
-X-ME-Sender: <xms:_4OZXosKlW7Ziqa003eVVSDn-106QkPYgwtuzwnZBYp4KK8ICSRULg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrfeejgddvkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucfkphepledtrd
-    ekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
-    fhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:_4OZXsmQMbKzP6LsNMhzeUAWwm3Cj8oobZnq-LaWcg3Uk5z4DvDVkQ>
-    <xmx:_4OZXmK4VR4Xxb523QGjyKeiCfxgYgl0IPU2KNe2NVn5i5Y1QLo2tg>
-    <xmx:_4OZXk5436EodZEHPNEmPz7zqYFElXz76kJkCO0Qf2PbPpL6S_dq7A>
-    <xmx:BYSZXntJ4j6vhjl9_WHrQ3dw04z48QodLpsvUEblcIDFocYkKxBhLg>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 48A393280066;
-        Fri, 17 Apr 2020 06:25:03 -0400 (EDT)
-Date:   Fri, 17 Apr 2020 12:25:00 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        James Hogan <jhogan@kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-mips@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>,
-        linux-samsung-soc@vger.kernel.org, letux-kernel@openphoenux.org,
-        Paul Burton <paulburton@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Tony Lindgren <tony@atomide.com>, Chen-Yu Tsai <wens@csie.org>,
-        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
-        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Philipp Rossak <embed3d@gmail.com>,
-        openpvrsgx-devgroup@letux.org, linux-kernel@vger.kernel.org,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Daniel Vetter <daniel@ffwll.ch>, kernel@pyra-handheld.com
-Subject: Re: [PATCH v6 01/12] dt-bindings: add img, pvrsgx.yaml for
- Imagination GPUs
-Message-ID: <20200417102500.erayf6quenp3cvn3@gilmour.lan>
-References: <cover.1586939718.git.hns@goldelico.com>
- <06fb6569259bb9183d0a0d0fe70ec4f3033b8aab.1586939718.git.hns@goldelico.com>
- <20200415101251.o3wi5t6xvf56xmhq@gilmour.lan>
- <72919514-0657-4B71-902F-3E775E528F64@goldelico.com>
- <f4fdca8a-d18c-a8d2-7f51-d1ebbbab3647@baylibre.com>
- <535CAEBE-F43E-4BFC-B989-612C81F0D7EF@goldelico.com>
- <20200415142124.yzfh6mtqq7cdq22e@gilmour.lan>
- <DC0A2DE2-3D77-46F8-8DE1-55050FDACC9B@goldelico.com>
- <20200415162151.rwym4ioqz27migfn@gilmour.lan>
- <45F411C0-150B-4FBA-A0E1-B863B3F36DF6@goldelico.com>
+        Fri, 17 Apr 2020 08:05:08 -0400
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200417120505epoutp046e9d6475d4f8580e19c1a7f43181f1ed~Gmd-ltzo13239132391epoutp042
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Apr 2020 12:05:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200417120505epoutp046e9d6475d4f8580e19c1a7f43181f1ed~Gmd-ltzo13239132391epoutp042
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1587125105;
+        bh=dJcYkDnyAjd95+ohk9nQ0Dw6y/yaqHsf5/2UJiMepdc=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=BVuAnuM1mQf3WXaoZ/lgtlHItBeqQpkaRSb7gqtpDA5LgsnyyrO/iQ4ihYngX44zg
+         qwIa4wu8HLKEW0KBmSvq4vT5D8A/P5CAJ+My0t9PgXWT+EeroHccYADjDDQElbRtS8
+         PfNyvRzaeUirAsal6mUpySJthFz4JJ9kKFknujH8=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+        20200417120505epcas2p42d385e6dc7da6ca2a4b235ca4b4c252f~Gmd-Mrf2n2738827388epcas2p4X;
+        Fri, 17 Apr 2020 12:05:05 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.40.188]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 493ZXb130lzMqYlp; Fri, 17 Apr
+        2020 12:05:03 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        53.EE.04393.F6B999E5; Fri, 17 Apr 2020 21:05:03 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200417120502epcas2p2415cf80227a45ac7607c7df3de0058fc~Gmd87Fo9A0201902019epcas2p2A;
+        Fri, 17 Apr 2020 12:05:02 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200417120502epsmtrp247085cffd8a424296475f9724ea02ce8~Gmd83jC0w1819518195epsmtrp2F;
+        Fri, 17 Apr 2020 12:05:02 +0000 (GMT)
+X-AuditID: b6c32a47-667ff70000001129-9f-5e999b6f6c97
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        2B.49.04024.E6B999E5; Fri, 17 Apr 2020 21:05:02 +0900 (KST)
+Received: from KORCO004660 (unknown [12.36.165.196]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200417120502epsmtip233466db146fde9b7bc8b0ccc287e8101~Gmd8rXXZ01642516425epsmtip2i;
+        Fri, 17 Apr 2020 12:05:02 +0000 (GMT)
+From:   "Hyunki Koo" <hyunki00.koo@samsung.com>
+To:     "'Greg KH'" <gregkh@linuxfoundation.org>,
+        "'Hyunki Koo'" <hyunki00.koo@gmail.com>
+Cc:     <robh+dt@kernel.org>, <krzk@kernel.org>,
+        "'Kukjin Kim'" <kgene@kernel.org>,
+        "'Jiri Slaby'" <jslaby@suse.com>, <linux-serial@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>
+In-Reply-To: <20200416135618.GA1295013@kroah.com>
+Subject: RE: [PATCH v7 2/2] Support 32-bit access for the TX/RX hold
+ registers UTXH and URXH.
+Date:   Fri, 17 Apr 2020 21:05:02 +0900
+Message-ID: <001501d614b0$6cab3ed0$4601bc70$@samsung.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2cdcxbvig57yd3pf"
-Content-Disposition: inline
-In-Reply-To: <45F411C0-150B-4FBA-A0E1-B863B3F36DF6@goldelico.com>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQFi1K+6yj7qBWyiWiQvcgMo5OZtFgIiWQf+Anfu/XipPuQQEA==
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA02TWUwTURSGvZ12ZlCqY2U5VmPquCRg0BZsHVSMK9ZoDOqDxBjqBCZAnC7p
+        FBV9UCibijuJMrgCoiEqWgoCCkSoUROFEAVFQ8IixiXuCkEj2HYw8vad5b9nufeSmKoBV5Op
+        Fgdnt7A8jY+XVzeHMRHWosIEbWkrwVzwtCgYZ0kFzrRnfsaZgptfZMyxvg8Y09p6k2BcfR0K
+        5mndWZw509ogYx6XHCGY7HoPsXyCsVbsIoyu8oO4sfHcNcJYWbrfWOFulxu/u2bE4dv4pSkc
+        m8TZNZwl0ZqUakmOoddvMa0y6Q1aXYQumllEayysmYuhV2+Ii4hN5b3t0ZpdLJ/mdcWxgkAv
+        WLbUbk1zcJoUq+CIoTlbEm/T6WzzBdYspFmS5ydazYt1Wm2k3pu5g09p+vUV2boC94yM9KID
+        aDDgEAoggVoIR347iUNoPKmiahAcvlKskIxvCHpu1cklYwDBYP5n2T9JV0YfJgXqEfzIOimT
+        jHcIXt3Pwn1ZOBUBT0te+xVB1Fa4O+z0M0aVyKCqd6aPAygddD9sVPh4CmWC7ILrhI/l1Bz4
+        6TztZyUVDd2lbZjEk+FR4Wu5dM48KLv0AZM60sBQf5lCqrUSyls+juYEQdHBHH+nQOUS4D7q
+        QZJgNTg78nGJp8D7B25CYjV8/1Q/6t8PDTknCEmcj2DoS79CCkSB+CbXexDprRAGFXULfAjU
+        LPC8HK07EfKa/xCSWwl5OSpJOBduDLwdXeJ0uNZfRxxHtDhmMnHMZOKYCcT/tS4ieTkK4WyC
+        OZkTIm1RY2/bhfxvN3xtDapu2dCEKBLRgcq8o4UJKgW7S0g3NyEgMTpIeS/W61Imsel7ObvV
+        ZE/jOaEJ6b2LP4GpgxOt3p9gcZh0+kiDQRutZ/SGSIYOVbomdG5XUcmsg9vJcTbO/k8nIwPU
+        B9CtzW29scNtxt2nTrnPhL6xW8KLK7+lFy/quTrpz+XA4TVFzttxNcYY8ZmHJ5c46rPK7k27
+        mJ25Ilc2yMdf2Pjxzt7qaeyz0EcFs1+8ddeOiyfYnOOV69p7nkyFzPP65+PuVtZeHagJUTNV
+        /anWPZ3BvzaJ+zpk3RnN65obgy8ZxC20XEhhdeGYXWD/AvbPdJfRAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFIsWRmVeSWpSXmKPExsWy7bCSvG7e7JlxBksXqljMP3KO1aJ58Xo2
+        i6tN79kspmz4wGTR//g1s8X58xvYLTY9vsZqcXnXHDaLGef3MVmcWdzLbtG69wi7A7fHzll3
+        2T02repk89g/dw27x+Yl9R7rt1xl8fi8SS6ALYrLJiU1J7MstUjfLoErY/vzaewFV3gqzh7r
+        ZmxgfMPZxcjJISFgInG38TFzFyMXh5DAbkaJs1cvskMkZCQmvFjCDGELS9xvOcIKUfScUeLz
+        tqVgRWwCuhKXFz9hArFFBMIlFpw7BlbELLCaSeL75OVsEB2bGCVOL1/LClLFKWAo8eDEfjBb
+        WCBW4uXzNrBuFgFVia/N08Gm8gpYSjxYcpEZwhaUODnzCQuIzSygLdH7sJURxl628DXUeQoS
+        P58uY4W4wkli1bm3UPUiErM725gnMArPQjJqFpJRs5CMmoWkZQEjyypGydSC4tz03GLDAsO8
+        1HK94sTc4tK8dL3k/NxNjOAY1NLcwXh5SfwhRgEORiUeXoOemXFCrIllxZW5hxglOJiVRHgP
+        ugGFeFMSK6tSi/Lji0pzUosPMUpzsCiJ8z7NOxYpJJCeWJKanZpakFoEk2Xi4JRqYIx9d+za
+        o8sdStdWZmpt8cnb/8KE1a4uzPVJc/OMlKb5R1fsWZq8QsHXdrfq/fk2DwydZ24rCrz+QUGF
+        td5O/sWNReFPc6rCTuQlfkxZNjeU5++OlTHpRQZK5+xae00+MTOICU2ckh/+Y1rmK+2eju0L
+        Mjb8K1TQeHbHP+phcFBb1uy48INKvUosxRmJhlrMRcWJAEHlfJ69AgAA
+X-CMS-MailID: 20200417120502epcas2p2415cf80227a45ac7607c7df3de0058fc
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200416140255epcas2p2bf81ac129b7471eb1fe40e545dbd796d
+References: <20200411123325.30501-1-hyunki00.koo@gmail.com>
+        <CGME20200416140255epcas2p2bf81ac129b7471eb1fe40e545dbd796d@epcas2p2.samsung.com>
+        <20200416135618.GA1295013@kroah.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-
---2cdcxbvig57yd3pf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Wed, Apr 15, 2020 at 06:42:18PM +0200, H. Nikolaus Schaller wrote:
-> > Am 15.04.2020 um 18:21 schrieb Maxime Ripard <maxime@cerno.tech>:
-> >=20
-> > On Wed, Apr 15, 2020 at 05:09:45PM +0200, H. Nikolaus Schaller wrote:
-> >> Hi Maxime,
-> >>=20
-> >> Hm. Yes. We know that there likely are clocks and maybe reset
-> >> but for some SoC this seems to be undocumented and the reset
-> >> line the VHDL of the sgx gpu provides may be permanently tied
-> >> to "inactive".
-> >>=20
-> >> So if clocks are optional and not provided, a driver simply can assume
-> >> they are enabled somewhere else and does not have to care about. If
-> >> they are specified, the driver can enable/disable them.
-> >=20
-> > Except that at the hardware level, the clock is always going to be
-> > there. You can't control it, but it's there.
+On Thu, Apr 16, 2020 at 10:56:24PM +0900, Greg KH wrote:
+> On Sat, Apr 11, 2020 at 09:33:24PM +0900, Hyunki Koo wrote:
+> > From: Hyunki Koo <hyunki00.koo=40samsung.com>
+> >
+> > This is required for some newer SoCs.
+> >
+> > Signed-off-by: Hyunki Koo <hyunki00.koo=40samsung.com>
+> > Reviewed-by: Krzysztof Kozlowski <krzk=40kernel.org> Tested on Odroid
+> > HC1 (Exynos5422):
+> > Tested-by: Krzysztof Kozlowski <krzk=40kernel.org>
+> > ---
+> > v2:
+> > line 954 : change rd_regl to rd_reg in for backward compatibility.
+> > line 2031: Add init value for ourport->port.iotype  to UPIO_MEM
+> > v3:
+> > line 2031: remove redundant init value  for ourport->port.iotype
+> > v4:
+> > correct variable types and change misleading function name
+> > v5:
+> > add dt-binding and go as first patch in this series.
+> > v6:
+> > no change in this patch, only chaged in =5BPATCH v6 1/2=5D
+> > v7:
+> > add reviewed by and tested by
+> > ---
 >=20
-> Sure, we can deduce that from general hardware design knowledge.
-> But not every detail must be described in DT. Only the important
-> ones.
+> Your subject line changed for this and patch 2 :(
 >=20
-> >>> If OMAP is too much of a pain, you can also make
-> >>> a separate binding for it, and a generic one for the rest of us.
-> >>=20
-> >> No, omap isn't any pain at all.
-> >>=20
-> >> The pain is that some other SoC are most easily defined by clocks in
-> >> the gpu node which the omap doesn't need to explicitly specify.
-> >>=20
-> >> I would expect a much bigger nightmare if we split this into two
-> >> bindings variants.
-> >>=20
-> >>> I'd say that it's pretty unlikely that the clocks, interrupts (and
-> >>> even regulators) are optional. It might be fixed on some SoCs, but
-> >>> that's up to the DT to express that using fixed clocks / regulators,
-> >>> not the GPU binding itself.
-> >>=20
-> >> omap already has these defined them not to be part of the GPU binding.
-> >> The reason seems to be that this needs special clock gating control
-> >> especially for idle states which is beyond simple clock-enable.
-> >>=20
-> >> This sysc target-module@56000000 node is already merged and therefore
-> >> we are only adding the gpu child node. Without defining clocks.
-> >>=20
-> >> For example:
-> >>=20
-> >> 		sgx_module: target-module@56000000 {
-> >> 			compatible =3D "ti,sysc-omap4", "ti,sysc";
-> >> 			reg =3D <0x5600fe00 0x4>,
-> >> 			      <0x5600fe10 0x4>;
-> >> 			reg-names =3D "rev", "sysc";
-> >> 			ti,sysc-midle =3D <SYSC_IDLE_FORCE>,
-> >> 					<SYSC_IDLE_NO>,
-> >> 					<SYSC_IDLE_SMART>;
-> >> 			ti,sysc-sidle =3D <SYSC_IDLE_FORCE>,
-> >> 					<SYSC_IDLE_NO>,
-> >> 					<SYSC_IDLE_SMART>;
-> >> 			clocks =3D <&gpu_clkctrl OMAP5_GPU_CLKCTRL 0>;
-> >> 			clock-names =3D "fck";
-> >> 			#address-cells =3D <1>;
-> >> 			#size-cells =3D <1>;
-> >> 			ranges =3D <0 0x56000000 0x2000000>;
-> >>=20
-> >> 			gpu: gpu@0 {
-> >> 				compatible =3D "ti,omap5-sgx544-116", "img,sgx544-116", "img,sgx54=
-4";
-> >> 				reg =3D <0x0 0x10000>;
-> >> 				interrupts =3D <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
-> >> 			};
-> >> 		};
-> >>=20
-> >> The jz4780 example will like this:
-> >>=20
-> >> 	gpu: gpu@13040000 {
-> >> 		compatible =3D "ingenic,jz4780-sgx540-130", "img,sgx540-130", "img,s=
-gx540";
-> >> 		reg =3D <0x13040000 0x4000>;
-> >>=20
-> >> 		clocks =3D <&cgu JZ4780_CLK_GPU>;
-> >> 		clock-names =3D "gpu";
-> >>=20
-> >> 		interrupt-parent =3D <&intc>;
-> >> 		interrupts =3D <63>;
-> >> 	};
-> >>=20
-> >> So the question is which one is "generic for the rest of us"?
-> >=20
-> > I'd say the latter.
+> Also, I asked you to split this patch up better in the past, you seem to =
+have
+> ignored that :(
 >=20
-> Why?
+> First patch would be to create the new functions and use them, with no
+> functional change to the code as-is.  A second patch would add the new
+> binding, and a third patch would be to add the new functionality.
 >=20
-> TI SoC seem to be the broadest number of available users
-> of sgx5xx in the past and nowadays. Others are more the exception.
-
-And maybe TI has some complicated stuff around the GPU that others don't ha=
-ve?
-If I look quickly at the Allwinner stuff, I see nothing looking alike in the
-SoC, so making the binding like that for everyone just because TI did somet=
-hing
-doesn't really make much sense.
-
-> > If your clock is optional, then you define it but don't mandate
-> > it. Not documenting it will only result in a mess where everyone will
-> > put some clock into it, possibly with different semantics each and
-> > every time.
+> And you need to describe all of this very well in your changelog, the one
+> sentence here is not sufficient at all.
 >=20
-> So you mean that we should require a dummy clock for the omap gpu node
-> or did I misunderstand that?
->
-> Well, yes there is of course a clock connection between the
-> omap target-module and the sgx but it is IMHO pointless to
-> describe it because it can't and does not need to be controlled
-> separately.
+> Please fix this all up and resend.
 >=20
-> As said the target-module is already accepted and upstream and my
-> proposal is to get the gpu node described there. There is simply
-> no need for a clocks node for the omap.
-
-There is no need for a clocks property *currently* *on the OMAP*.
-
-> What I also assume is that developers of DTS know what they do.
-> So the risk that there is different semantics is IMHO very low.
-
-Well, they know what they do if you document the binding. Let's say I have =
-two
-clocks now on my SoC, and you just document that you want a clocks property,
-with a generic name in clock-names like "gpu".
-
-> If you agree I can add the clocks/clock-names property as an
-> optional property. This should solve omap and all others.
-
-With the above example, what clock should I put in there? In which order? T=
-his
-isn't some random example pulled out of nowhere. The Allwinner A31 has (at
-least) 4 clocks for the GPU, 1 reset line and 1 regulator, so I can only as=
-sume
-that the GPU actually needs at least that amount to be properly integrated =
-into
-an SoC.
-
-This has nothing to do with being dumb or smart.
-
-> > This has nothing to do with the binding being complete. And if you use
-> > a binding like this one, you'll be severely limited when you'll want
-> > to implement things like DVFS.
+> thanks,
 >=20
-> Now you have unhooked me... Nobody seems to know if and how DVFS can be
-> applied to SGX. IMHO we should bake small bread first and get initial
-> support into mainline.
+> greg k-h
 
-On the software side, yes, of course. But the discussion here doesn't have =
-much
-to do with software support, this is about the hardware. No matter if you e=
-nable
-DVFS or not, you'll have those resources connected to the GPU.
+Sorry I missed your comment in V4, I will split and update the patch and re=
+-send.
 
-And if you want to enable the strict minimum in DT for now and expand it la=
-ter
-as the software gains support for more stuff, then you'll have to deal with=
- the
-minimal stuff in software later-on to keep the backward compatibility.
-
-But given that the current state on the Allwinner SoCs (at least) is that y=
-ou
-can't even read a register, it might be a good idea to delay the introducti=
-on of
-that binding until you have something that works to avoid drowning under the
-number of special cases to deal with backward compatibility.
-
-Maxime
-
---2cdcxbvig57yd3pf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXpmD/AAKCRDj7w1vZxhR
-xS+DAQD1ud+4u/Gtzw+YK29b+79bwdplPbylCn4JhitPCi+ezgEAgOxiTpYRh+GB
-1bgxLBKhqARErScbQPmvn22AzLAomAY=
-=Hsz5
------END PGP SIGNATURE-----
-
---2cdcxbvig57yd3pf--
