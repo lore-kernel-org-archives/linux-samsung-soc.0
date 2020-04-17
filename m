@@ -1,123 +1,122 @@
-Return-Path: <SRS0=z7tY=6A=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=ld0E=6B=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F25C2BA2B
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Apr 2020 20:42:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2996C2BA2B
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Apr 2020 01:03:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7487C221F4
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 16 Apr 2020 20:42:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1587069743;
-	bh=ESlwOvz35Ein/xZEcTEu3CokgsYuWQqOyfvZUaVNrYU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=j/GAfQ1F7myGEHwZD+rbLkn0BYm4s0qC/4KQsUns3h6kgPoc08mO0spfGp+apGNlY
-	 DG5nOPUIHV4YKK8t7r42tDzSkoyV9579mD1YHXoc0jA5ZFcOkxlGkpjz7s7KKg133w
-	 nYfGzLqD/m7WM3x6R+9dFqj3uOMkEffPJgVUAd8g=
+	by mail.kernel.org (Postfix) with ESMTP id CD2672087E
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Apr 2020 01:03:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="FrdtkA3N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbgDPUmU (ORCPT
+        id S1728127AbgDQBDp (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 16 Apr 2020 16:42:20 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:41470 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731844AbgDPUmB (ORCPT
+        Thu, 16 Apr 2020 21:03:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51474 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728378AbgDQBDp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 16 Apr 2020 16:42:01 -0400
-Received: by mail-ot1-f68.google.com with SMTP id c3so153569otp.8;
-        Thu, 16 Apr 2020 13:42:00 -0700 (PDT)
+        Thu, 16 Apr 2020 21:03:45 -0400
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD508C061A10
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Apr 2020 18:03:44 -0700 (PDT)
+Received: by mail-pl1-x643.google.com with SMTP id ay1so333468plb.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Apr 2020 18:03:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=0ZL5DKQEN5tIRYMA9bsAF7qYyxlNKGNuVSjiADQ9SPk=;
+        b=FrdtkA3N/A0B10cQBR1BRxqf+/pg1uBkd6DO7lHtdKgOqGpk1/7USrxTk4rdlzJ0Pn
+         oQGe7ba6HSEplsOy6ec3K4H8Fpx1j9/0meJ+gk7xvdUqFq7CDtsNxsMJzjX3kGdDbbz8
+         GCSySEUU8oXzqHDM2sby4knjcPLSSaIgNvaO9PtWZWWefGILL8HPrNXdIlKHYq2YILWZ
+         AMHiZb/IAXXMBCtRYZZ2S6R7t7InyUg113cLru837l9P5It247de3hDzpXYYYkdzsiNW
+         l3eKB2Wxab5vn9CTNWz5BkklF52xIUVdN24g+AL8C9OhFHLjLh5Ls1ropaQnpLD31b3o
+         DqaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=anW0cTk2V2JJay0BG4lZbAZX39UmWgVy33oQofhYL+o=;
-        b=TrOIgi/Psi9lHEQb0p80KCPztg6udz4+rr0XyCa8Wkt57hera+PoysMJRclxDiM/7t
-         tCUFQiKwFGtZFk80IsqoxTrrcKd3YsUVaKvd0io//86RBx7n0MgbwjXTEc/HorcO3N+1
-         DsXgZjF2jNj7U0ZTHpTulxAHeKStOIRo4atSFMyMw7q8XarNxhspS4czCwzi9VgTL1UC
-         FaH4zzO2AbA3QrHhKiO2rDseQbzJ60KIHsWCC5ECKMtBKG2oqUBb+KpSWfFyvgZL2OC/
-         K9k/7P4X3YN8FJXAid1NOJn1DFJHpR4c3pJxYfuky4mWsPRn2ORllT7NvbWEqkcz9+EN
-         ODcQ==
-X-Gm-Message-State: AGi0PuZzUWvCP681alK6PrRPA81k8SRaaWAKc8BzuZhL+W1YFJIFBTK6
-        sk6bY7VySAvn4HXqL0KCDg==
-X-Google-Smtp-Source: APiQypLW3db/YOgTAVu/J1ZAay4EFYrxFtuax8O/ijjNSMUub8dIEYBEUvJBFYL72MQmqT4sac6WuA==
-X-Received: by 2002:a9d:6644:: with SMTP id q4mr39174otm.229.1587069719796;
-        Thu, 16 Apr 2020 13:41:59 -0700 (PDT)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id s13sm8064384oov.28.2020.04.16.13.41.58
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=0ZL5DKQEN5tIRYMA9bsAF7qYyxlNKGNuVSjiADQ9SPk=;
+        b=kyjOycXybxPca29t0HUHRH2mst3aNwJfShkf1HrTYa97sXPPOM2qc/ekQqIbxRDz5x
+         BDOk75SVfe031tdIAFGeGzCfw2eT5TLXUiJ3g1Dj19iLt4CSTWap3RbOiM648HtDqHhq
+         RzyMQs42KxmVsarKaKspGTzq/kO0cjbpmzNtrLPdwHsJIgxIaJBWdIemxlEa7qSNjB2v
+         8NImLeAIS+o42U90SwsuKrg9rRTeD12rVQi3fdOWROwsoaFX/zYV93NbSQXHAuSHfRL+
+         tkNdS+BG2hG3oaiFGQcYxzRiLxlCmd4NR9WuUcT/3+uU1YYhY3Tg4OaJSvnoUjAXGd2o
+         nGQw==
+X-Gm-Message-State: AGi0PuatCiwVM8JZMV+qVAFbPfCpzBJ6e4dDNzT5fDGQqSVkw0z/z0cW
+        LE2ACB3OzWpp9kc6kxZI8/j7FQ==
+X-Google-Smtp-Source: APiQypKfJXVVs8nt0ABNaLviRVVB2FF8oWh5BJ43V1JXuqqLWnC3nHs+J6exlmUfG8/Dws2LqNNTtg==
+X-Received: by 2002:a17:902:fe09:: with SMTP id g9mr366208plj.171.1587085424144;
+        Thu, 16 Apr 2020 18:03:44 -0700 (PDT)
+Received: from limbo.local (host-160.218-14-119.dynamic.totalbb.net.tw. [119.14.218.160])
+        by smtp.gmail.com with ESMTPSA id u8sm16518026pgl.19.2020.04.16.18.03.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Apr 2020 13:41:59 -0700 (PDT)
-Received: (nullmailer pid 13530 invoked by uid 1000);
-        Thu, 16 Apr 2020 20:41:58 -0000
-Date:   Thu, 16 Apr 2020 15:41:58 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Philipp Rossak <embed3d@gmail.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        openpvrsgx-devgroup@letux.org, letux-kernel@openphoenux.org,
-        kernel@pyra-handheld.com, linux-mips@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: Re: [PATCH v6 01/12] dt-bindings: add img,pvrsgx.yaml for
- Imagination GPUs
-Message-ID: <20200416204158.GA1006@bogus>
-References: <cover.1586939718.git.hns@goldelico.com>
- <06fb6569259bb9183d0a0d0fe70ec4f3033b8aab.1586939718.git.hns@goldelico.com>
+        Thu, 16 Apr 2020 18:03:43 -0700 (PDT)
+From:   Daniel Drake <drake@endlessm.com>
+To:     joro@8bytes.org
+Cc:     agross@kernel.org, baolu.lu@linux.intel.com,
+        bjorn.andersson@linaro.org, dwmw2@infradead.org,
+        gerald.schaefer@de.ibm.com, heiko@sntech.de,
+        iommu@lists.linux-foundation.org, jean-philippe@linaro.org,
+        jonathanh@nvidia.com, kgene@kernel.org, krzk@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        m.szyprowski@samsung.com, matthias.bgg@gmail.com,
+        robdclark@gmail.com, robin.murphy@arm.com,
+        thierry.reding@gmail.com,
+        virtualization@lists.linux-foundation.org, will@kernel.org,
+        jonathan.derrick@intel.com
+Subject: Re: [PATCH v2 00/33] iommu: Move iommu_group setup to IOMMU core code
+Date:   Fri, 17 Apr 2020 09:03:35 +0800
+Message-Id: <20200417010335.31739-1-drake@endlessm.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200414131542.25608-1-joro@8bytes.org>
+References: <20200414131542.25608-1-joro@8bytes.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <06fb6569259bb9183d0a0d0fe70ec4f3033b8aab.1586939718.git.hns@goldelico.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, 15 Apr 2020 10:35:08 +0200, "H. Nikolaus Schaller" wrote:
-> The Imagination PVR/SGX GPU is part of several SoC from
-> multiple vendors, e.g. TI OMAP, Ingenic JZ4780, Intel Poulsbo,
-> Allwinner A83 and others.
+Hi Joerg,
+
+> Hi,
 > 
-> With this binding, we describe how the SGX processor is
-> interfaced to the SoC (registers, interrupt etc.).
+> here is the second version of this patch-set. The first version with
+> some more introductory text can be found here:
 > 
-> In most cases, Clock, Reset and power management is handled
-> by a parent node or elsewhere (e.g. code in the driver).
-> 
-> Tested by make dt_binding_check dtbs_check
-> 
-> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-> ---
->  .../devicetree/bindings/gpu/img,pvrsgx.yaml   | 122 ++++++++++++++++++
->  1 file changed, 122 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpu/img,pvrsgx.yaml
-> 
+> 	https://lore.kernel.org/lkml/20200407183742.4344-1-joro@8bytes.org/
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Thanks for the continued improvements in this area!
 
-Documentation/devicetree/bindings/gpu/img,pvrsgx.yaml:  while parsing a block mapping
-  in "<unicode string>", line 74, column 13
-did not find expected key
-  in "<unicode string>", line 117, column 21
-Documentation/devicetree/bindings/Makefile:12: recipe for target 'Documentation/devicetree/bindings/gpu/img,pvrsgx.example.dts' failed
-make[1]: *** [Documentation/devicetree/bindings/gpu/img,pvrsgx.example.dts] Error 1
-make[1]: *** Waiting for unfinished jobs....
-Makefile:1264: recipe for target 'dt_binding_check' failed
-make: *** [dt_binding_check] Error 2
+I may have spotted a problem with setups like VMD.
 
-See https://patchwork.ozlabs.org/patch/1270997
+The core PCI bus is set up during early boot.
+Then, for the PCI bus, we reach iommu_bus_init() -> bus_iommu_probe().
+In there, we call probe_iommu_group() -> dev_iommu_get() for each PCI
+device, which allocates dev->iommu in each case. So far so good.
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure dt-schema is up to date:
+The problem is that this is the last time that we'll call dev_iommu_get().
+If any PCI bus devices get added after this point, they do not get passed
+to dev_iommu_get().
 
-pip3 install git+https://github.com/devicetree-org/dt-schema.git@master --upgrade
+So when the vmd module gets loaded later, and creates more PCI devices,
+we end up in iommu_bus_notifier() -> iommu_probe_device()
+-> __iommu_probe_device() which does:
 
-Please check and re-submit.
+	dev->iommu->iommu_dev = iommu_dev;
+
+dev->iommu-> is a NULL dereference because dev_iommu_get() was never
+called for this new device.
+
+Daniel
+
