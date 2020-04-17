@@ -2,172 +2,181 @@ Return-Path: <SRS0=ld0E=6B=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04652C38A29
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Apr 2020 12:05:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B764BC38A29
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Apr 2020 12:09:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D8BAD2083E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Apr 2020 12:05:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9820D208E4
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 17 Apr 2020 12:09:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BVuAnuM1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a0P/bUJk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727890AbgDQMFJ (ORCPT
+        id S1728242AbgDQMJL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 17 Apr 2020 08:05:09 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:10157 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727780AbgDQMFI (ORCPT
+        Fri, 17 Apr 2020 08:09:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41682 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726050AbgDQMJK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 17 Apr 2020 08:05:08 -0400
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200417120505epoutp046e9d6475d4f8580e19c1a7f43181f1ed~Gmd-ltzo13239132391epoutp042
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Apr 2020 12:05:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200417120505epoutp046e9d6475d4f8580e19c1a7f43181f1ed~Gmd-ltzo13239132391epoutp042
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1587125105;
-        bh=dJcYkDnyAjd95+ohk9nQ0Dw6y/yaqHsf5/2UJiMepdc=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=BVuAnuM1mQf3WXaoZ/lgtlHItBeqQpkaRSb7gqtpDA5LgsnyyrO/iQ4ihYngX44zg
-         qwIa4wu8HLKEW0KBmSvq4vT5D8A/P5CAJ+My0t9PgXWT+EeroHccYADjDDQElbRtS8
-         PfNyvRzaeUirAsal6mUpySJthFz4JJ9kKFknujH8=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-        20200417120505epcas2p42d385e6dc7da6ca2a4b235ca4b4c252f~Gmd-Mrf2n2738827388epcas2p4X;
-        Fri, 17 Apr 2020 12:05:05 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.40.188]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 493ZXb130lzMqYlp; Fri, 17 Apr
-        2020 12:05:03 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        53.EE.04393.F6B999E5; Fri, 17 Apr 2020 21:05:03 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200417120502epcas2p2415cf80227a45ac7607c7df3de0058fc~Gmd87Fo9A0201902019epcas2p2A;
-        Fri, 17 Apr 2020 12:05:02 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200417120502epsmtrp247085cffd8a424296475f9724ea02ce8~Gmd83jC0w1819518195epsmtrp2F;
-        Fri, 17 Apr 2020 12:05:02 +0000 (GMT)
-X-AuditID: b6c32a47-667ff70000001129-9f-5e999b6f6c97
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        2B.49.04024.E6B999E5; Fri, 17 Apr 2020 21:05:02 +0900 (KST)
-Received: from KORCO004660 (unknown [12.36.165.196]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20200417120502epsmtip233466db146fde9b7bc8b0ccc287e8101~Gmd8rXXZ01642516425epsmtip2i;
-        Fri, 17 Apr 2020 12:05:02 +0000 (GMT)
-From:   "Hyunki Koo" <hyunki00.koo@samsung.com>
-To:     "'Greg KH'" <gregkh@linuxfoundation.org>,
-        "'Hyunki Koo'" <hyunki00.koo@gmail.com>
-Cc:     <robh+dt@kernel.org>, <krzk@kernel.org>,
-        "'Kukjin Kim'" <kgene@kernel.org>,
-        "'Jiri Slaby'" <jslaby@suse.com>, <linux-serial@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>
-In-Reply-To: <20200416135618.GA1295013@kroah.com>
-Subject: RE: [PATCH v7 2/2] Support 32-bit access for the TX/RX hold
- registers UTXH and URXH.
-Date:   Fri, 17 Apr 2020 21:05:02 +0900
-Message-ID: <001501d614b0$6cab3ed0$4601bc70$@samsung.com>
+        Fri, 17 Apr 2020 08:09:10 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5691FC061A0C;
+        Fri, 17 Apr 2020 05:09:10 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id g13so735011wrb.8;
+        Fri, 17 Apr 2020 05:09:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YQmfy5glSWEhJacmHQcBoh0P5gI+y1xLhn/MI5MwRqk=;
+        b=a0P/bUJk6o4KfMmFecVMQRsWuelunj5M3QJxQxTu6to4WAQob5LfbxChfRH0a6dwDj
+         iNR57ygB8uH7UURrRNzWkQ8vspIJVqgol9MkvvXSz/cm+AnLhC+uKmwA3jpvuOobCcgc
+         KON4uK1f+5Y1OLIVlTxIEEI3ASLbbuSLQ3NiS2NUfo5xrqJo/Q5iMZpWAjtWhx5/M0KN
+         hRvTCofOnBp3OUfJMfth7Ov6eIlNj9MXG1acK/G7uyIUgNEBLcPBcKJ+tIH80fWO6DuJ
+         rWftpSBDDApCaJzKHUzzK+sJRq2rmfLKHntuqUrJ3fCT5oPSY1tJwYLhRQuZIlZ5M9eF
+         pKXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YQmfy5glSWEhJacmHQcBoh0P5gI+y1xLhn/MI5MwRqk=;
+        b=E0jQAW5jFcsLuO3Hg8mEupkZ/V5Xa8y+1nLFnLV7EQ956stA2UWwNA8ycnAbGKSHhP
+         VlXRfAfp9V3OvD3/exmMPk0JEgFicxP3JEer8tOCTVbzcBFuCWLagwr4Z9xgjrb5N8M3
+         1PNjOAsF9EK2fHQrsir63OexZwywIog0+0RPqP2LEo9HDX4CotBaqhZSkmaCoE/ndqNe
+         M78Wub7ZXfnK6q4zoB0a27xly9wkDCHNl1kc8tr04f/7p1UUhBbuDheh92zrgQrtIFsp
+         oFWgiAsFTWZB0WHV2T2+WsLcnD15pDGKZcy8/H84gJXYBQsMCTAtkmIxIaiFsrWLcDgE
+         IXTg==
+X-Gm-Message-State: AGi0PubSyIoywME9o6jFMSwgY2F6mPzfqNOTgUVxMtkrlSiRreaLCBAi
+        F1vDnI4CZFw6/Wg72vd05YNg6GIP
+X-Google-Smtp-Source: APiQypJw9RvOMBiofKtDCRe+QcAA+eB/l83Q4b2jSf0HWRF7CviGAUhDoTYoDphSTR+uEnZgPspyVA==
+X-Received: by 2002:a5d:4485:: with SMTP id j5mr3343798wrq.427.1587125348648;
+        Fri, 17 Apr 2020 05:09:08 -0700 (PDT)
+Received: from ?IPv6:2a02:810d:340:2e50:14a4:6f21:1f15:2088? ([2a02:810d:340:2e50:14a4:6f21:1f15:2088])
+        by smtp.gmail.com with ESMTPSA id n2sm10823975wrq.74.2020.04.17.05.09.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Apr 2020 05:09:08 -0700 (PDT)
+Subject: Re: [PATCH v6 00/12] ARM/MIPS: DTS: add child nodes describing the
+ PVRSGX GPU present in some OMAP SoC and JZ4780 (and many more)
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Maxime Ripard <maxime@cerno.tech>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        James Hogan <jhogan@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        OpenPVRSGX Linux Driver Group <openpvrsgx-devgroup@letux.org>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com,
+        linux-mips@vger.kernel.org,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc@vger.kernel.org
+References: <cover.1586939718.git.hns@goldelico.com>
+ <20200415101008.zxzxca2vlfsefpdv@gilmour.lan>
+ <2E3401F1-A106-4396-8FE6-51CAB72926A4@goldelico.com>
+ <20200415130233.rgn7xrtwqicptke2@gilmour.lan>
+ <C589D06E-435E-4316-AD0A-8498325039E3@goldelico.com>
+From:   Philipp Rossak <embed3d@gmail.com>
+Message-ID: <10969e64-fe1f-d692-4984-4ba916bd2161@gmail.com>
+Date:   Fri, 17 Apr 2020 14:09:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQFi1K+6yj7qBWyiWiQvcgMo5OZtFgIiWQf+Anfu/XipPuQQEA==
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA02TWUwTURSGvZ12ZlCqY2U5VmPquCRg0BZsHVSMK9ZoDOqDxBjqBCZAnC7p
-        FBV9UCibijuJMrgCoiEqWgoCCkSoUROFEAVFQ8IixiXuCkEj2HYw8vad5b9nufeSmKoBV5Op
-        Fgdnt7A8jY+XVzeHMRHWosIEbWkrwVzwtCgYZ0kFzrRnfsaZgptfZMyxvg8Y09p6k2BcfR0K
-        5mndWZw509ogYx6XHCGY7HoPsXyCsVbsIoyu8oO4sfHcNcJYWbrfWOFulxu/u2bE4dv4pSkc
-        m8TZNZwl0ZqUakmOoddvMa0y6Q1aXYQumllEayysmYuhV2+Ii4hN5b3t0ZpdLJ/mdcWxgkAv
-        WLbUbk1zcJoUq+CIoTlbEm/T6WzzBdYspFmS5ydazYt1Wm2k3pu5g09p+vUV2boC94yM9KID
-        aDDgEAoggVoIR347iUNoPKmiahAcvlKskIxvCHpu1cklYwDBYP5n2T9JV0YfJgXqEfzIOimT
-        jHcIXt3Pwn1ZOBUBT0te+xVB1Fa4O+z0M0aVyKCqd6aPAygddD9sVPh4CmWC7ILrhI/l1Bz4
-        6TztZyUVDd2lbZjEk+FR4Wu5dM48KLv0AZM60sBQf5lCqrUSyls+juYEQdHBHH+nQOUS4D7q
-        QZJgNTg78nGJp8D7B25CYjV8/1Q/6t8PDTknCEmcj2DoS79CCkSB+CbXexDprRAGFXULfAjU
-        LPC8HK07EfKa/xCSWwl5OSpJOBduDLwdXeJ0uNZfRxxHtDhmMnHMZOKYCcT/tS4ieTkK4WyC
-        OZkTIm1RY2/bhfxvN3xtDapu2dCEKBLRgcq8o4UJKgW7S0g3NyEgMTpIeS/W61Imsel7ObvV
-        ZE/jOaEJ6b2LP4GpgxOt3p9gcZh0+kiDQRutZ/SGSIYOVbomdG5XUcmsg9vJcTbO/k8nIwPU
-        B9CtzW29scNtxt2nTrnPhL6xW8KLK7+lFy/quTrpz+XA4TVFzttxNcYY8ZmHJ5c46rPK7k27
-        mJ25Ilc2yMdf2Pjxzt7qaeyz0EcFs1+8ddeOiyfYnOOV69p7nkyFzPP65+PuVtZeHagJUTNV
-        /anWPZ3BvzaJ+zpk3RnN65obgy8ZxC20XEhhdeGYXWD/AvbPdJfRAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFIsWRmVeSWpSXmKPExsWy7bCSvG7e7JlxBksXqljMP3KO1aJ58Xo2
-        i6tN79kspmz4wGTR//g1s8X58xvYLTY9vsZqcXnXHDaLGef3MVmcWdzLbtG69wi7A7fHzll3
-        2T02repk89g/dw27x+Yl9R7rt1xl8fi8SS6ALYrLJiU1J7MstUjfLoErY/vzaewFV3gqzh7r
-        ZmxgfMPZxcjJISFgInG38TFzFyMXh5DAbkaJs1cvskMkZCQmvFjCDGELS9xvOcIKUfScUeLz
-        tqVgRWwCuhKXFz9hArFFBMIlFpw7BlbELLCaSeL75OVsEB2bGCVOL1/LClLFKWAo8eDEfjBb
-        WCBW4uXzNrBuFgFVia/N08Gm8gpYSjxYcpEZwhaUODnzCQuIzSygLdH7sJURxl628DXUeQoS
-        P58uY4W4wkli1bm3UPUiErM725gnMArPQjJqFpJRs5CMmoWkZQEjyypGydSC4tz03GLDAsO8
-        1HK94sTc4tK8dL3k/NxNjOAY1NLcwXh5SfwhRgEORiUeXoOemXFCrIllxZW5hxglOJiVRHgP
-        ugGFeFMSK6tSi/Lji0pzUosPMUpzsCiJ8z7NOxYpJJCeWJKanZpakFoEk2Xi4JRqYIx9d+za
-        o8sdStdWZmpt8cnb/8KE1a4uzPVJc/OMlKb5R1fsWZq8QsHXdrfq/fk2DwydZ24rCrz+QUGF
-        td5O/sWNReFPc6rCTuQlfkxZNjeU5++OlTHpRQZK5+xae00+MTOICU2ckh/+Y1rmK+2eju0L
-        Mjb8K1TQeHbHP+phcFBb1uy48INKvUosxRmJhlrMRcWJAEHlfJ69AgAA
-X-CMS-MailID: 20200417120502epcas2p2415cf80227a45ac7607c7df3de0058fc
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200416140255epcas2p2bf81ac129b7471eb1fe40e545dbd796d
-References: <20200411123325.30501-1-hyunki00.koo@gmail.com>
-        <CGME20200416140255epcas2p2bf81ac129b7471eb1fe40e545dbd796d@epcas2p2.samsung.com>
-        <20200416135618.GA1295013@kroah.com>
+In-Reply-To: <C589D06E-435E-4316-AD0A-8498325039E3@goldelico.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, Apr 16, 2020 at 10:56:24PM +0900, Greg KH wrote:
-> On Sat, Apr 11, 2020 at 09:33:24PM +0900, Hyunki Koo wrote:
-> > From: Hyunki Koo <hyunki00.koo=40samsung.com>
-> >
-> > This is required for some newer SoCs.
-> >
-> > Signed-off-by: Hyunki Koo <hyunki00.koo=40samsung.com>
-> > Reviewed-by: Krzysztof Kozlowski <krzk=40kernel.org> Tested on Odroid
-> > HC1 (Exynos5422):
-> > Tested-by: Krzysztof Kozlowski <krzk=40kernel.org>
-> > ---
-> > v2:
-> > line 954 : change rd_regl to rd_reg in for backward compatibility.
-> > line 2031: Add init value for ourport->port.iotype  to UPIO_MEM
-> > v3:
-> > line 2031: remove redundant init value  for ourport->port.iotype
-> > v4:
-> > correct variable types and change misleading function name
-> > v5:
-> > add dt-binding and go as first patch in this series.
-> > v6:
-> > no change in this patch, only chaged in =5BPATCH v6 1/2=5D
-> > v7:
-> > add reviewed by and tested by
-> > ---
->=20
-> Your subject line changed for this and patch 2 :(
->=20
-> Also, I asked you to split this patch up better in the past, you seem to =
-have
-> ignored that :(
->=20
-> First patch would be to create the new functions and use them, with no
-> functional change to the code as-is.  A second patch would add the new
-> binding, and a third patch would be to add the new functionality.
->=20
-> And you need to describe all of this very well in your changelog, the one
-> sentence here is not sufficient at all.
->=20
-> Please fix this all up and resend.
->=20
-> thanks,
->=20
-> greg k-h
+Hi all,
 
-Sorry I missed your comment in V4, I will split and update the patch and re=
--send.
+On 15.04.20 15:04, H. Nikolaus Schaller wrote:
+> 
+>> Am 15.04.2020 um 15:02 schrieb Maxime Ripard <maxime@cerno.tech>:
+>>
+>> On Wed, Apr 15, 2020 at 02:41:52PM +0200, H. Nikolaus Schaller wrote:
+>>>>> The kernel modules built from this project have successfully
+>>>>> demonstrated to work with the DTS definitions from this patch set on
+>>>>> AM335x BeagleBone Black, DM3730 and OMAP5 Pyra and Droid 4. They
+>>>>> partially work on OMAP3530 and PandaBoard ES but that is likely a
+>>>>> problem in the kernel driver or the (non-free) user-space libraries
+>>>>> and binaries.
+>>>>>
+>>>>> Wotk for JZ4780 (CI20 board) is in progress and there is potential
+>>>>> to extend this work to e.g. BananaPi-M3 (A83) and some Intel Poulsbo
+>>>>> and CedarView devices.
+>>>>
+>>>> If it's not been tested on any Allwinner board yet, I'll leave it
+>>>> aside until it's been properly shown to work.
+>>>
+>>> Phillip has tested something on a83.
+>>
+Yes I'm currently working on the a83t demo. The kernel module is loading 
+correctly and the clocks, interrupts and resets seems to be working 
+correctly.
 
+I'm currently working on getting the users space driver working with the 
+kernel driver. This is hopefully done soon.
+
+>> I'm a bit skeptical on that one since it doesn't even list the
+>> interrupts connected to the GPU that the binding mandates.
+> 
+> I think he left it out for a future update.
+> But best he comments himself.
+
+I'm currently working on those bindings. They are now 90% done, but they 
+are not finished till now. Currently there is some mainline support 
+missing to add the full binding. The A83T and also the A31/A31s have a 
+GPU Power Off Gating Register in the R_PRCM module, that is not 
+supported right now in Mainline. The Register need to be written when 
+the GPU is powered on and off.
+
+@Maxime: I totally agree on your point that a demo needs to be provided 
+before the related DTS patches should be provided. That's the reason why 
+I added the gpu placeholder patches.
+Do you have an idea how a driver for the R_PRCM stuff can look like? I'm 
+not that experienced with the clock driver framework.
+
+The big question is right now how to proceed with the A83T and A31s 
+patches. I see there three options, which one do you prefer?:
+
+1. Provide now placeholder patches and send new patches, if everything 
+is clear and other things are mainlined
+2. Provide now patches as complete as possible and provide later patches 
+to complete them when the R_PRCM things are mainlined
+3. Leave them out, till the related work is mainlined and the bindings 
+are final.
+
+
+Since this GPU IP core is very flexible and the SOC manufactures can 
+configure it on their needs, I think the binding will extend in the 
+future. For example the SGX544 GPU is available in different 
+configurations: there is a SGX544 core and SGX544MPx core. The x stands 
+for the count of the USSE (Universal Scalable Shader Engine) cores. For 
+example the GPU in the A83T is a MP1 and the A31/A31s a MP2.
+In addition to that some of the GPU's have also a 2D engine.
+There might be even more differences in the GPU's that we don't know 
+right now and should be described in the Devicetree, but that's a 
+different topic that we should keep in mind.
+
+Cheers
+Philipp
