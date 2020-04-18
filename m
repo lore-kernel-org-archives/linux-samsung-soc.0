@@ -2,168 +2,237 @@ Return-Path: <SRS0=QXMK=6C=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37E74C3A5A9
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 18 Apr 2020 16:04:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 602D5C3A5A0
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 18 Apr 2020 23:03:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 172C9221F7
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 18 Apr 2020 16:04:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39C7A21BE5
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 18 Apr 2020 23:03:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="beu4al1M";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="kN+5Dcur"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sPjMwQZP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726459AbgDRQEw (ORCPT
+        id S1725964AbgDRXDF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 18 Apr 2020 12:04:52 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:64361 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726356AbgDRQEw (ORCPT
+        Sat, 18 Apr 2020 19:03:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53218 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725804AbgDRXDD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 18 Apr 2020 12:04:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1587225891; x=1618761891;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=VT9asYG9+dpl6wZ6GecFzcx6XD7ODddghu32tuHgovk=;
-  b=beu4al1MNKRuM6UktQZKtS/KGBMaEwpoWNZVevMuCzq+quxhTjI7nUlA
-   JnhpzIBnfNvFZ73GEZRNmkxHr7DrfNTQ4JiXOWDfpCIXDu5sGx++L8u4a
-   OBlaOQ5KNIEjjhCctugycKLmwkp0dcfbKZHmy3dO9f/E60744251f0xCa
-   UxH4+TmZ8QJpKo+edNs+EfemVBJGwPACP7bR0xcXlAXHooWcR8Tt7lfhm
-   4t1SUaioJI405rMGyKDCOgunRzOHV4wqczPi/SBXtqovowh3BSvqkZqkp
-   L1OqJ2Y2d4BDm0TUDbMBQtecHS+XzyLFFC2wA9xCD47/JAipn332K9Xnq
-   w==;
-IronPort-SDR: NHwlOT3JApH8Oj4w6TaxWTHp3pHGgLe/ha12+IyFLE/1pZBvhkXnegCLj8Hfz/Ws1VrmCll5ba
- +7574xOH/7lpHYlpVk/L7/VFlwLv+A2gtLAR3HDyqoat6a70kDdGhOgeDGerIk4sWOHn8OYRH4
- QXh8XtZRquEMSp5f55V98ccTjTj6asb08b5IDbdrqBC8w+FRItcq9uXf+T+fxUushIOzjSNW47
- /0wUoFjJcL58DgIiotMyLLr+yHsVYq0TXQFym4qaSZSE+0kxLdKUgFovgRbbhQQQFYXeaz0J5P
- EZE=
-X-IronPort-AV: E=Sophos;i="5.72,399,1580745600"; 
-   d="scan'208";a="139967679"
-Received: from mail-dm6nam10lp2101.outbound.protection.outlook.com (HELO NAM10-DM6-obe.outbound.protection.outlook.com) ([104.47.58.101])
-  by ob1.hgst.iphmx.com with ESMTP; 19 Apr 2020 00:04:49 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DeoJ/awOp584n7EWGviWtoP9oF6kNebsFTHnEmpHsrqhfRheZgmHtN7AUFFRCxpshUTBdFAOy7iCvaTR0rv1tk4GQv0U4J3x9MvY6e8wLuVNyLKRL/gOVPODYFVrLPlH22SXfhlsypR5pYZPxGlbsTb7HmrosE0crs2KtRIAeHQiwNLi/tk1ZGpqJM/puQSHDM5Qb5JHQWudmtdNseOFJ8C3/8ILaPiT+c6fgH3uQzdnkQQmHrFicwLVxnAUz8UTHdgNLsUBPbEy/ilBSrgSr4bBYwcRkYzWhv4sKtvgfaUoqaS5Y2cxffLj56WL09FjRDRMSZAFZySROVb+Bjfg9g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VT9asYG9+dpl6wZ6GecFzcx6XD7ODddghu32tuHgovk=;
- b=gQHe+SREPkIWl14NLtWZfcXNX3BRKw1C9s2NiGEFwQonjwgBLKwy8YKeBlbdqfC4JhxMTg0U5VozctWbQevesNww9hl5Um7e35BeF4LAmTEZiMhIkJqo1fre30vBdMcz+yEhHK02OV3FSPlURZHiXZmiToW9jIPXIalHR5++czIeVnjVmuwfDeqqE+XzkYbcbjqSuIUrjBUO/Ab8GWhUk+Zlawm3Dnl19GyCFaamC6scM27A2Mk1SMADjzNhzMwBAOIBaAl5VihMVptDAAEbi4dfKD2xJcyIxPG+0mWBplg4AQTT9Pf7bQ8rJHgiCnf1QlM8vvBSaX46JNsE3wWV1w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+        Sat, 18 Apr 2020 19:03:03 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93409C061A0C;
+        Sat, 18 Apr 2020 16:03:03 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id a81so7034442wmf.5;
+        Sat, 18 Apr 2020 16:03:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VT9asYG9+dpl6wZ6GecFzcx6XD7ODddghu32tuHgovk=;
- b=kN+5Dcur3fqON7CBYFGtXnNIUus4zo5YoRQ9JYCCfDQn/CBTLmXoeXn0UPkq63FVK723O6btvhZ4owMC/Rgc41VX26bMUHxeBN41GbxSs7NkFr5ElbRrGhkoU3wVFXwEMpTtaHx0Vf1tvAcjEK3EiPiSrxVKK1v/Iw9jGD5eqM0=
-Received: from SN6PR04MB4640.namprd04.prod.outlook.com (2603:10b6:805:a4::19)
- by SN6PR04MB5134.namprd04.prod.outlook.com (2603:10b6:805:90::29) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2921.26; Sat, 18 Apr
- 2020 16:04:47 +0000
-Received: from SN6PR04MB4640.namprd04.prod.outlook.com
- ([fe80::3877:5e49:6cdd:c8b]) by SN6PR04MB4640.namprd04.prod.outlook.com
- ([fe80::3877:5e49:6cdd:c8b%5]) with mapi id 15.20.2921.027; Sat, 18 Apr 2020
- 16:04:47 +0000
-From:   Avri Altman <Avri.Altman@wdc.com>
-To:     Alim Akhtar <alim.akhtar@samsung.com>,
-        "robh@kernel.org" <robh@kernel.org>
-CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "krzk@kernel.org" <krzk@kernel.org>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "kwmad.kim@samsung.com" <kwmad.kim@samsung.com>,
-        "stanley.chu@mediatek.com" <stanley.chu@mediatek.com>,
-        "cang@codeaurora.org" <cang@codeaurora.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v6 0/10] exynos-ufs: Add support for UFS HCI
-Thread-Topic: [PATCH v6 0/10] exynos-ufs: Add support for UFS HCI
-Thread-Index: AQHWFONyboJhjuJWAki6eibLTJAA36h+0jPwgAAI5ICAAC8qUIAAAdbg
-Date:   Sat, 18 Apr 2020 16:04:47 +0000
-Message-ID: <SN6PR04MB4640E907A9A8F0709D4417D9FCD60@SN6PR04MB4640.namprd04.prod.outlook.com>
-References: <CGME20200417181006epcas5p269f8c4b94e60962a0b0318ef64a65364@epcas5p2.samsung.com>
-        <20200417175944.47189-1-alim.akhtar@samsung.com>
-        <SN6PR04MB46402211952BC3D427AADA00FCD60@SN6PR04MB4640.namprd04.prod.outlook.com>
- <002a01d61582$72250990$566f1cb0$@samsung.com>
- <SN6PR04MB464066C386886C45202E6107FCD60@SN6PR04MB4640.namprd04.prod.outlook.com>
-In-Reply-To: <SN6PR04MB464066C386886C45202E6107FCD60@SN6PR04MB4640.namprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Avri.Altman@wdc.com; 
-x-originating-ip: [77.138.4.172]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 997d5c93-dfa0-4882-7fa0-08d7e3b237eb
-x-ms-traffictypediagnostic: SN6PR04MB5134:
-x-microsoft-antispam-prvs: <SN6PR04MB513446D58F7CAE1564A3B968FCD60@SN6PR04MB5134.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-forefront-prvs: 0377802854
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR04MB4640.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10019020)(4636009)(346002)(396003)(39860400002)(366004)(376002)(136003)(71200400001)(66556008)(66476007)(66946007)(8936002)(64756008)(76116006)(66446008)(7416002)(186003)(5660300002)(2906002)(81156014)(8676002)(316002)(33656002)(54906003)(9686003)(55016002)(7696005)(110136005)(6506007)(53546011)(26005)(4326008)(2940100002)(478600001)(52536014)(86362001);DIR:OUT;SFP:1102;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 3C+FMcceb1gQgWt54cm3x4dSpeZXao8FInPPhV2uI4pAhwKl6KmNXAyvov8CYlFP+txppBzYH/ro3XmAaZKgEA274kZf1EFykp+Q7JpUN60dUY12RJNVxjrwmG1kvwgAxV2VBkP6RbhkrliArtOgcsHtkXjjL46DxBSOkxpk4aCgf/BHl6dnbJ8ktSpq3+ym4APGr9FXetBCuCD2ZEoqJlXcBu9d5+zpVoJLvrcNIXf9A4+QL0NeJqTi/ib5c6Zth9oCtIYpwX4RZQmfhLoJdNkzXYmXrYpTzHyR8yPaLmy2IUxzAn9KEeUNnhpJBJ/VJ7M4iVcSg/mxhH/V3Srd2CqydtwbqI0myy7aClmiiMrhCnWjvhOvkxS+upVKyLnSi8m0ZAk5xfAuICD2nctVSPIayGxGfV7S/eievx+7EXBlLBbjFrxKGw4Wfpq8Ivf/
-x-ms-exchange-antispam-messagedata: Uf14vXdhiL71Ou1fr1epUb4mYXxm2zZ2BkXsmfcohqKYUBfAaQloQSteQ7RuW4/rmmeqj4OnxWO0b+skJPGCWvuiKksLzVA0a8R9Lxc+QY7SET7vU+TnXTbA3t6EK4rGXLwPyb/vN3EXwGNxqipftg==
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YxE3j3NIn1PoG9VELum1qGBU2eSWHDyuQMMYU6AQHhI=;
+        b=sPjMwQZPf8EtRgmX9wyO26jKftktwCwkj1YHzEvKKwUgseGwdo27mZQtlOljPQ0Uky
+         d3b7oLY6RlVZjGMEbr5iyqbcIoQaCuiGoJ/1Wkaf2uaDXeXE4kXWe84GM4hHFn8oX+bq
+         ZQbNmJBZLb7Pt1mK8jWi/T9kXH0/JHnrODY4eNYRbpdGOBQhL3yhJysqP43RST4n9bw7
+         c+tHv5v3Ikhq2oK5iLt1pxgHTy+O2pZg9fAC/v0Eu+L0K74rWpv7/DHBmRvjwqDDDblo
+         6zjRvHmpttTIIm2aMTM+WuQKsyK2H8O1kzGzRvMrHVimUFbJecuTMVUFngmsonN1sKBM
+         PqTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YxE3j3NIn1PoG9VELum1qGBU2eSWHDyuQMMYU6AQHhI=;
+        b=Y1xDRb1vzR7WVaVRUE9FlJRSfw1j4SOW0gq3O2RosLu8pXNPsT9kZvF/hMJAeIPfT/
+         TFv4PQeX4ddWVzcGRZQVS9AV/xfaNJNeaiXK9wlSLkOqMv//CcAH/liBAjctpa+UPxkS
+         vEIbmzfuMasczMXmGd4HMWvqrw/louJlK2oHW4oQ55x2FYrKOkvE9bAFRVdMQpMXPSSD
+         jeNAzcTXiUyNzXeQPcrLfcX8yHerMV6ldfX7Jb2fhG+6jci6MsjGwl29O73GiV2k7HYE
+         6hq+mElDV9LQnkJ+K78t/jXlM10EuKaLjVqn5gJIy8KbVDMjK0E/ZVLaK01IE2DAxwXW
+         5Vxw==
+X-Gm-Message-State: AGi0PubMW+EzGxoVvp6UwXAAMklHdsfgpNqPod9Mg++2AUBg3DGlJ5Zo
+        oyLTjssTnIa8tW0FnN6Au0O3kjpz
+X-Google-Smtp-Source: APiQypIO6mkIJ9hjSrjzSJzBpVZvH5H7mcYgD03oI7sRFKNXXQ0RN49LPX1QPLO3qyvMOa0viArMAw==
+X-Received: by 2002:a1c:66d5:: with SMTP id a204mr10170935wmc.69.1587250982011;
+        Sat, 18 Apr 2020 16:03:02 -0700 (PDT)
+Received: from ?IPv6:2a02:810d:340:2e50:e521:8087:8b5d:7bae? ([2a02:810d:340:2e50:e521:8087:8b5d:7bae])
+        by smtp.gmail.com with ESMTPSA id p10sm36735344wrm.6.2020.04.18.16.03.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 18 Apr 2020 16:03:01 -0700 (PDT)
+Subject: Re: [PATCH v6 01/12] dt-bindings: add img, pvrsgx.yaml for
+ Imagination GPUs
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Maxime Ripard <maxime@cerno.tech>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        James Hogan <jhogan@kernel.org>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        linux-mips@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
+        linux-samsung-soc@vger.kernel.org,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Tony Lindgren <tony@atomide.com>, Chen-Yu Tsai <wens@csie.org>,
+        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
+        =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        openpvrsgx-devgroup@letux.org, linux-kernel@vger.kernel.org,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Daniel Vetter <daniel@ffwll.ch>, kernel@pyra-handheld.com
+References: <cover.1586939718.git.hns@goldelico.com>
+ <06fb6569259bb9183d0a0d0fe70ec4f3033b8aab.1586939718.git.hns@goldelico.com>
+ <20200415101251.o3wi5t6xvf56xmhq@gilmour.lan>
+ <72919514-0657-4B71-902F-3E775E528F64@goldelico.com>
+ <f4fdca8a-d18c-a8d2-7f51-d1ebbbab3647@baylibre.com>
+ <535CAEBE-F43E-4BFC-B989-612C81F0D7EF@goldelico.com>
+ <20200415142124.yzfh6mtqq7cdq22e@gilmour.lan>
+ <DC0A2DE2-3D77-46F8-8DE1-55050FDACC9B@goldelico.com>
+ <20200415162151.rwym4ioqz27migfn@gilmour.lan>
+ <45F411C0-150B-4FBA-A0E1-B863B3F36DF6@goldelico.com>
+ <20200417102500.erayf6quenp3cvn3@gilmour.lan>
+ <C8816F10-8773-4ECD-B42D-6EEF642476EB@goldelico.com>
+From:   Philipp Rossak <embed3d@gmail.com>
+Message-ID: <9f33a2ae-2825-bc2d-6e3b-c09a5d226e81@gmail.com>
+Date:   Sun, 19 Apr 2020 01:02:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 997d5c93-dfa0-4882-7fa0-08d7e3b237eb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Apr 2020 16:04:47.7379
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 012jZ+GclxiUjX3XM06snxtoXaFAp5gIL/2UVdYbyKroVrSShzJiU2/Kzn74lSO+3awfmozj4I2AXUT4FjJiPw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB5134
+In-Reply-To: <C8816F10-8773-4ECD-B42D-6EEF642476EB@goldelico.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQXZyaSBBbHRtYW4NCj4g
-U2VudDogU2F0dXJkYXksIEFwcmlsIDE4LCAyMDIwIDc6MDAgUE0NCj4gVG86IEFsaW0gQWtodGFy
-IDxhbGltLmFraHRhckBzYW1zdW5nLmNvbT47IHJvYmhAa2VybmVsLm9yZw0KPiBDYzogZGV2aWNl
-dHJlZUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LXNjc2lAdmdlci5rZXJuZWwub3JnOw0KPiBrcnpr
-QGtlcm5lbC5vcmc7IG1hcnRpbi5wZXRlcnNlbkBvcmFjbGUuY29tOyBrd21hZC5raW1Ac2Ftc3Vu
-Zy5jb207DQo+IHN0YW5sZXkuY2h1QG1lZGlhdGVrLmNvbTsgY2FuZ0Bjb2RlYXVyb3JhLm9yZzsg
-bGludXgtc2Ftc3VuZy0NCj4gc29jQHZnZXIua2VybmVsLm9yZzsgbGludXgtYXJtLWtlcm5lbEBs
-aXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC0NCj4ga2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiBT
-dWJqZWN0OiBSRTogW1BBVENIIHY2IDAvMTBdIGV4eW5vcy11ZnM6IEFkZCBzdXBwb3J0IGZvciBV
-RlMgSENJDQo+IA0KPiA+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPiA+IEZyb206
-IEF2cmkgQWx0bWFuIDxBdnJpLkFsdG1hbkB3ZGMuY29tPg0KPiA+ID4gU2VudDogMTggQXByaWwg
-MjAyMCAxODowOQ0KPiA+ID4gVG86IEFsaW0gQWtodGFyIDxhbGltLmFraHRhckBzYW1zdW5nLmNv
-bT47IHJvYmhAa2VybmVsLm9yZw0KPiA+ID4gQ2M6IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3Jn
-OyBsaW51eC1zY3NpQHZnZXIua2VybmVsLm9yZzsNCj4gPiBrcnprQGtlcm5lbC5vcmc7DQo+ID4g
-PiBtYXJ0aW4ucGV0ZXJzZW5Ab3JhY2xlLmNvbTsga3dtYWQua2ltQHNhbXN1bmcuY29tOw0KPiA+
-ID4gc3RhbmxleS5jaHVAbWVkaWF0ZWsuY29tOyBjYW5nQGNvZGVhdXJvcmEub3JnOyBsaW51eC1z
-YW1zdW5nLQ0KPiA+ID4gc29jQHZnZXIua2VybmVsLm9yZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0
-cy5pbmZyYWRlYWQub3JnOyBsaW51eC0NCj4gPiA+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4g
-PiA+IFN1YmplY3Q6IFJFOiBbUEFUQ0ggdjYgMC8xMF0gZXh5bm9zLXVmczogQWRkIHN1cHBvcnQg
-Zm9yIFVGUyBIQ0kNCj4gPiA+DQo+ID4gPg0KPiA+ID4gPg0KPiA+ID4gPiBUaGlzIHBhdGNoLXNl
-dCBpbnRyb2R1Y2VzIFVGUyAoVW5pdmVyc2FsIEZsYXNoIFN0b3JhZ2UpIGhvc3QNCj4gPiA+ID4g
-Y29udHJvbGxlciBzdXBwb3J0IGZvciBTYW1zdW5nIGZhbWlseSBTb0MuIE1vc3RseSwgaXQgY29u
-c2lzdHMgb2YgVUZTDQo+ID4gPiA+IFBIWSBhbmQgaG9zdCBzcGVjaWZpYyBkcml2ZXIuDQo+ID4g
-PiA+DQo+ID4gPiA+IC0gQ2hhbmdlcyBzaW5jZSB2NToNCj4gPiA+ID4gKiByZS1pbnRyb2R1Y2Ug
-dmFyaW91cyBxdWlja3Mgd2hpY2ggd2FzIHJlbW92ZWQgYmVjYXVzZSBvZiBubyBkcml2ZXINCj4g
-PiA+ID4gKiBjb25zdW1lciBvZiB0aG9zZSBxdWlya3MsIGluaXRpYWwgNCBwYXRjaGVzIGRvZXMg
-dGhlIHNhbWUuDQo+ID4gPiBZb3UgZm9yZ290IHRvIGFkZCB0aG9zZSBxdWlya3MgdG8gdWZzX2Zp
-eHVwcy4NCj4gPg0KPiA+IHVmc19maXh1cHMgYXJlIGZvciB1ZnMgX19kZXZpY2VfXyByZWxhdGVk
-IHF1aXJrcywgd2hhdCBJIGhhdmUgcG9zdGVkIGFyZSBhbGwNCj4gPiBob3N0IGNvbnRyb2xsZXIg
-cXVpcmtzLg0KPiBSaWdodC4NCj4gU28gd2hhdCBJIGFtIHNheWluZyBpcyB0aGF0IEkgYW0gbWlz
-c2luZyB0aGUgaGJhLT5xdWlya3MgfD0NCj4gVUZTSENJX1FVSVJLXzxuZXctcXVpcms+DQo+IElu
-IHVmcy1leHlub3MuYyBmb3IgZWFjaCBvbmUgb2YgdGhlIG5ldyBxdWlya3MuDQpPaCwgYnV0IHlv
-dSBhZGQgdGhvc2UgaW4gcGF0Y2ggIzkgLSANCk9rLiAgR290IGl0LiAgU29ycnkgYWJvdXQgdGhl
-IGNvbmZ1c2lvbi4NCg0KVGhhbmtzLA0KQXZyaQ0KDQo=
+Hi Nikolaus,
+Hi Maxime,
+
+>>> TI SoC seem to be the broadest number of available users
+>>> of sgx5xx in the past and nowadays. Others are more the exception.
+>>
+>> And maybe TI has some complicated stuff around the GPU that others don't have?
+> 
+> Looks so.
+
+I can only agree on this.
+
+> 
+>>
+>>> What I also assume is that developers of DTS know what they do.
+>>> So the risk that there is different semantics is IMHO very low.
+>>
+>> Well, they know what they do if you document the binding. Let's say I have two
+>> clocks now on my SoC, and you just document that you want a clocks property,
+>> with a generic name in clock-names like "gpu".
+> 
+> Yes, that is what I want to propose for v7:
+> 
+>    clocks:
+>      maxItems: 1
+> 
+>    clock-names:
+>      maxItems: 1
+>      items:
+>        - const: gpu
+> 
+>>
+>>> If you agree I can add the clocks/clock-names property as an
+>>> optional property. This should solve omap and all others.
+>>
+>> With the above example, what clock should I put in there? In which order? This
+>> isn't some random example pulled out of nowhere. The Allwinner A31 has (at
+>> least) 4 clocks for the GPU, 1 reset line and 1 regulator, so I can only assume
+>> that the GPU actually needs at least that amount to be properly integrated into
+>> an SoC.
+> 
+> Ah, now I understand your motivation: you have access and experience with
+> the A31 and you know that our proposal doesn't fit to it.
+> 
+>  From what I know from your description is that the A31 is quite special with
+> 4 GPU clocks... Are they all really for the GPU or 3 of them for the interface
+> logic (like on OMAP which separates between "functional clocks" and "interface
+> clocks")? Or are there 4 groups of GPU cores with a separate clock for each one?
+> 
+> So what would be your proposal for the A31 DT?
+> 
+> Then I get a chance to compare DT snippets and try to make a mixture for
+> the bindings.
+> 
+
+This is my current binding for the A83T, the A31 looks similar but there 
+is still something missing, since some parts are not mainlined yet:
+
+sun8i-a83t.dtsi:
+gpu: gpu@1c400000 {
+	compatible = "allwinner,sun8i-a83t-sgx544-115",
+		     "img,sgx544-115", "img,sgx544";
+	reg = <0x01c40000 0x10000>;
+	interrupts = <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>;
+	clocks = <&ccu CLK_BUS_GPU>, <&ccu CLK_GPU_CORE>,
+		 <&ccu CLK_GPU_MEMORY>, <&ccu CLK_GPU_HYD>;
+	clock-names = "bus", "core", "memory", "hyd";
+
+	resets = <&ccu RST_BUS_GPU>;
+};
+
+sun8i-a83t-bananapi-m3.dts:
+&gpu {
+	gpu-supply = <&reg_dcdc4>;
+};
+
+
+> 
+>> But given that the current state on the Allwinner SoCs (at least) is that you
+>> can't even read a register, it might be a good idea to delay the introduction of
+>> that binding until you have something that works to avoid drowning under the
+>> number of special cases to deal with backward compatibility.
+> 
+
+Maxime is right. Even if you enable the regulator, write 0x0 to the GPU 
+Power Off Gating Register, deassert the reset and enable the clocks you 
+are not able to read the register.
+You must first run: pvrsrvctl --no-module --start (user space binaries) 
+to access registers otherwise the system will stuck with the following 
+message when accessing them:
+
+./devmem2 0x01C40024
+/dev/mem opened.
+
+> Philipp has something minimal working on the A83 which works with the proposed
+> binding and enabled him to read out the sgx revision register.
+> 
+This is not correct. In the other mail I talked about my reference 
+system. This is an old 3.4.39 kernel, modified by allwinner to run on 
+their SOC's which don't use the common kernel techniques. So it's very 
+hacky, but they got the gpu running. I'm using this system for 
+comparison, to read out registers and for reverse engineering.
+
+My current kernel module behaves similar like the reference design, but 
+right now I'm not able to run "pvrsrvctl --no-module --start" without 
+errors. So the initialization never get's finalized and I see the issue 
+described above.
+
+> So if you are a specialist for the A31 SGX, please make a proposal for a binding
+> that covers all the A31 needs and all other SoC we know. Or define a separate
+> bindings for the A31.
+
+The A31 and the A31s have some additional clocks mentioned in their 
+datasheet (@ System Control Register/SRAM Controler). Those are not 
+available in the A83T datasheet, but might be there since the memory map 
+looks similar and allwinner might use the same userspace binaries for 
+their devices.
+
+ From the knowledge I gained the last 3 days, we should delay the 
+patches for the A83T, A31 and A31s.
+The idea of the placeholder patches was to show that from this binding 
+also other devices could benefit.
+
+Cheers,
+Philipp
