@@ -2,139 +2,202 @@ Return-Path: <SRS0=JmD3=6E=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7416DC3A5A0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Apr 2020 07:14:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61A87C54FCF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Apr 2020 07:38:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5398A21473
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Apr 2020 07:14:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AE0C2078C
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Apr 2020 07:38:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="gtoPqYCt";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="IDokG2/5"
+	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="YynSS5+9";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HLp4uB1T"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726353AbgDTHOe (ORCPT
+        id S1725886AbgDTHit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Apr 2020 03:14:34 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:63860 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725815AbgDTHOd (ORCPT
+        Mon, 20 Apr 2020 03:38:49 -0400
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:38743 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725773AbgDTHis (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Apr 2020 03:14:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1587366872; x=1618902872;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=KwU7xueAau9D+GU6TFQHWns+Dngy6h6T5a39ygBn5WE=;
-  b=gtoPqYCtd2Tsy2jHywZAvWH6Lz1Wq7kf3Ejl9IG69hUGxYOTbVDZzCwx
-   N6KOOuA5nE1bA2Nq/mYwF4wAKv1d5ijEPC7VHFxWvv5Rjg1r4GHiPM7gm
-   Son2a60o9TWaxiEys0GaKZUajsPh9CJLeJtrPD5X1FgwrUBnvXPdspDZ1
-   bBV2mFh9zoVL1KCG2N75YN+IMykPAU2bwMox2sZ1hbQArn7wtGV9J3lpo
-   909016hprSNkemfY+VEAEo9SDsnrV91eIKyIqbzxd7FnXFMusY51x/z5K
-   1iyEYMKcmeEeesceT2/w+Yn1AdHPrK+2hzd1KeIW9tvuVIQdcWLIQ7FYR
-   g==;
-IronPort-SDR: iHu8Qrvlhi6TppXa4/5HgckMMUuErJFlteZnfI2dsSdWkixVgEnPctKBgX2qqx3pbE6TVHSuk9
- pTz1RMglhQvI+F1/kJZK5ChVCOD8LEZDhcEBke1v0ZbN2vrYGUNPueLVPJM+2KWOSZph/eene4
- hgRGgUh/lfTK1E63uiUDY5TaRcFWesjwEjMXFN8jNAUQ2T6lKQT/vcdjk0Zs+NGVl60Pvm0Soj
- 9dNctr1p2znfar6SKSvnEJ/dbLqMqeK8y8oyktG93ukXPDn+XwUYVqrzJVTP2hj6bKIRxoYzOD
- tP8=
-X-IronPort-AV: E=Sophos;i="5.72,406,1580745600"; 
-   d="scan'208";a="140044046"
-Received: from mail-dm6nam10lp2106.outbound.protection.outlook.com (HELO NAM10-DM6-obe.outbound.protection.outlook.com) ([104.47.58.106])
-  by ob1.hgst.iphmx.com with ESMTP; 20 Apr 2020 15:14:31 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=E/T/+zOGmkIIRzDGakv+uBc/TDirFP7HYEBa9RdO65N94vymWWyXJPF9CH8XV2bc4ABrdj25Hr9C8LlMqN4btjOuYX797/o8ANERR4qfweknAX014vDGQZBOS5kTmkmrhxAKyz+cJ1FdO22MVAaSj8Bl7ij353k7AhNJzkEdjHs+Zab3xQ8xXADJY7LZrtzJ2ntMhsxi1pSIvRavcZwAXDNf+CV0P2Tpc1jP5clU1Y0k66WFiHWaXFZYFfTWyD9+ZYrw7WbITPLZkxBpiJclqFqSVKduJQ6HVYkBf/V+KKG5v0nCTs19YEuJwaWH0+X3h90lWWF2oWR5nNZQyqNRLQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KwU7xueAau9D+GU6TFQHWns+Dngy6h6T5a39ygBn5WE=;
- b=jdZFQuxwtSkHUo6Cql5AGLJONR0g4mNT1QMk8jlGRwh/A8oylob86IuXS3YLX+mZhmdzUuKKvhM+WVQ6nLeahKmUV7jIJDL6mK6xt4S5ylkqAfHHcTheQLRv9B1mBh3Q1/GONLDUMviAh6Q7xCB3jLUx3Gn90pfbho0dVjc2w6lBg0E0LYeTT1igD8pmlqhilD9EX+E2RZYt/ek4yMsuocU6JXDdfjJOfEzMc2kbhM/n+KIbjxfkg/l1N+tiBbNp4XtEtpvI5xtDJ98UXvTXHpjcbIySaF1CngMKZUM6iUGnWnbjwo/9z4O0tRjJDcUEj8t9ynSTw9H4BItIiFFEjg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KwU7xueAau9D+GU6TFQHWns+Dngy6h6T5a39ygBn5WE=;
- b=IDokG2/5j8EL4dKdnQOZWiq4HkHzdjOWqXtyntKy+q66m2bebmx75sJev4zd4z42XXVbLmOFVyzY5k60dqcZSoGplKABuu6X8pqaYKJGK3W4EWcwRg/z2hF+s/xKQRy6qXFyyKb0WeBtl4ehW5tQ1l8InIql2iH/c+x8O617lS0=
-Received: from SN6PR04MB4640.namprd04.prod.outlook.com (2603:10b6:805:a4::19)
- by SN6PR04MB5216.namprd04.prod.outlook.com (2603:10b6:805:f7::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2921.29; Mon, 20 Apr
- 2020 07:14:29 +0000
-Received: from SN6PR04MB4640.namprd04.prod.outlook.com
- ([fe80::3877:5e49:6cdd:c8b]) by SN6PR04MB4640.namprd04.prod.outlook.com
- ([fe80::3877:5e49:6cdd:c8b%5]) with mapi id 15.20.2921.027; Mon, 20 Apr 2020
- 07:14:29 +0000
-From:   Avri Altman <Avri.Altman@wdc.com>
-To:     Alim Akhtar <alim.akhtar@samsung.com>,
-        "robh@kernel.org" <robh@kernel.org>
-CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "krzk@kernel.org" <krzk@kernel.org>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "kwmad.kim@samsung.com" <kwmad.kim@samsung.com>,
-        "stanley.chu@mediatek.com" <stanley.chu@mediatek.com>,
-        "cang@codeaurora.org" <cang@codeaurora.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v6 03/10] scsi: ufs: add quirk to enable host controller
- without hce
-Thread-Topic: [PATCH v6 03/10] scsi: ufs: add quirk to enable host controller
- without hce
-Thread-Index: AQHWFON2F3tEHGSKoUec1wnTuJZOw6iBnIZw
-Date:   Mon, 20 Apr 2020 07:14:29 +0000
-Message-ID: <SN6PR04MB46403B55EB956336690B0C66FCD40@SN6PR04MB4640.namprd04.prod.outlook.com>
-References: <20200417175944.47189-1-alim.akhtar@samsung.com>
-        <CGME20200417181012epcas5p2004ac8f0d793abd4d58c096ff490da68@epcas5p2.samsung.com>
- <20200417175944.47189-4-alim.akhtar@samsung.com>
-In-Reply-To: <20200417175944.47189-4-alim.akhtar@samsung.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Avri.Altman@wdc.com; 
-x-originating-ip: [212.25.79.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 3463cdf6-b593-4b35-e11f-08d7e4fa7799
-x-ms-traffictypediagnostic: SN6PR04MB5216:
-x-microsoft-antispam-prvs: <SN6PR04MB5216D064E09B63E65677511BFCD40@SN6PR04MB5216.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:400;
-x-forefront-prvs: 03793408BA
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR04MB4640.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10019020)(4636009)(39860400002)(396003)(136003)(346002)(366004)(376002)(54906003)(2906002)(71200400001)(4326008)(110136005)(7416002)(316002)(55016002)(5660300002)(186003)(8676002)(81156014)(66946007)(76116006)(66476007)(66556008)(64756008)(66446008)(86362001)(9686003)(7696005)(558084003)(52536014)(26005)(6506007)(478600001)(33656002)(8936002);DIR:OUT;SFP:1102;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: imFiLJQLrq6/+8Ob3ol70vuoq2+bwySpC/nMzYbARCfJrfc/lpjAuJzwPqwQYi48juk2vTzW4bj57VLhJs2EkRqjSmoJuaobx9g97st1jWRY8QG6Gc+kpIVF24Km6wyeoXao+n3IWlmov4po2FZI1HRpC5XFkWwteBLbNHLDblJsx+D6DhTyf1mJxsL5ppXNX+cafTveUrZcS63t04YpTAcO63dBySpx+sf1BsCK1FaHWGbut4I8T0eQRsFNM+cGWDlPD9/3kia70vkDIkVfllEHbiOMPgQo1R3I6q5E3W6d23Szal/ADSmDhzrP13ulS/1gGs7bfbJh7AEIQiU/GJEIkTX5YK2kWPHhiEwNt1ybYV9TdNkyDaHlE6SaJAwxFxI6DALw4VhY2QiyQnZQMnd4XNPD41pzJiC5fJQW74GWgpxotwNZWNtarXRuAXZL
-x-ms-exchange-antispam-messagedata: XdXdP1NyAWF5duhh4xXjAN9VLtPzzhfzgVZDV0J7RbkRIY7zPd0sKiUR52hfattfnulev8J99COSPwdm6a+ECEyvk77PfLW3k++SMB/YIV2UZVhILlWWaqVEjqDFQcz8iNvfb65c69VIqaLPEuXxuw==
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 20 Apr 2020 03:38:48 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id C558658021E;
+        Mon, 20 Apr 2020 03:38:46 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Mon, 20 Apr 2020 03:38:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=5Sw64u1dSQy+/AZPUD2ocyiGqku
+        gbFqYdfvxed0EDRY=; b=YynSS5+9xuhmRiG56G7GdbYPCW8jO8KOD4IoTjNhpnV
+        TXKPXqmua83B8ei57HL3DaYlRJtfUMcPxYtn08/hp3mXUdF2d25A/1X3KKbAkRlK
+        ghitZz0zjSvzOfK/R2z0rKR1g5H4w904f+KY6Jqs1ZRt+O1pAwUEoNgsFaBAFrI9
+        58LgC7+dI3pGibuVGwzVop5UyctI++7yP9IwO5IwhmwOfBE8U1/d9CdNS/s/KbUS
+        3gW79VGBNMpAwFOG7/O+ptXcq4Qfkbt50JVeeKk5Nq9o+DrjpD5KaKA9K47176hS
+        R0/LMSSildCA/fbL0E+dhzbGYYYMY9tEtqMlg3hek2w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=5Sw64u
+        1dSQy+/AZPUD2ocyiGqkugbFqYdfvxed0EDRY=; b=HLp4uB1Tle4K92shgr1Z4o
+        I6IqDdPkOLErhagBFdX0SF7qQYacnanlpFk3AnPXZjZNzAX2Trij5GpfMMfK4oXY
+        0u/0BGBFXezH6WZfumh/kyWtXSARqqBRhQiU+h1HDBav7AUTmGgBgGp+HuFQZZ8L
+        OSuKN0+yXX5SHYcom3W2ZsRh+SkdTZWTWq9EuA1FR/Uv5nHrXv6v57k+Au2MM441
+        wB1yetUvg9Wy0v9RFu3TbmxS+IboXoiUwyoYuba+stcj46e9q68I1duMo9hIGMfx
+        NGLcimcFtLWubDIovljxJYdAd+6CIjyfSceHn47wJ6TxfjZr2nf0jFog8A9MYQbw
+        ==
+X-ME-Sender: <xms:hFGdXqSLF4RpRYkTefunXLy68Ah9GyhS0RKRLmpBwtI_hJTAszptjw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrgedvgdduvddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecukfhppeeltd
+    drkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
+    lhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:hFGdXuS5lZijoMyt14sVshcQo6T4aTzHUJEVa3IzCfMJcuGJjNB-pA>
+    <xmx:hFGdXgP06PsbO8XuzzC0aJZhlbh5ZY10dnOrooV5_FkdXCbT0y5ztQ>
+    <xmx:hFGdXn2rcXlRRicCiP5MqsSec5lFGRnU2audJYs15o6DDLkM4mq0eQ>
+    <xmx:hlGdXtusGVYKKvBUw4w6T_rD-GJekUI0m6eZa8s1_ntY-dlevIq47A>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 5B36A3280069;
+        Mon, 20 Apr 2020 03:38:44 -0400 (EDT)
+Date:   Mon, 20 Apr 2020 09:38:42 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Philipp Rossak <embed3d@gmail.com>
+Cc:     "H. Nikolaus Schaller" <hns@goldelico.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        James Hogan <jhogan@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        OpenPVRSGX Linux Driver Group <openpvrsgx-devgroup@letux.org>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com,
+        linux-mips@vger.kernel.org,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v6 00/12] ARM/MIPS: DTS: add child nodes describing the
+ PVRSGX GPU present in some OMAP SoC and JZ4780 (and many more)
+Message-ID: <20200420073842.nx4xb3zqvu23arkc@gilmour.lan>
+References: <cover.1586939718.git.hns@goldelico.com>
+ <20200415101008.zxzxca2vlfsefpdv@gilmour.lan>
+ <2E3401F1-A106-4396-8FE6-51CAB72926A4@goldelico.com>
+ <20200415130233.rgn7xrtwqicptke2@gilmour.lan>
+ <C589D06E-435E-4316-AD0A-8498325039E3@goldelico.com>
+ <10969e64-fe1f-d692-4984-4ba916bd2161@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3463cdf6-b593-4b35-e11f-08d7e4fa7799
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Apr 2020 07:14:29.4635
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: /QQT87oP9Bs6Jl1I5kIp1pFJaovHZxJXliFuLBQLpaj4W/5l9ywHiYZ7gFOq6Lh7tcByGtxn1GFdnk0l9TF70w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB5216
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="nd4xfztpubexblrg"
+Content-Disposition: inline
+In-Reply-To: <10969e64-fe1f-d692-4984-4ba916bd2161@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-PiANCj4gU29tZSBob3N0IGNvbnRyb2xsZXJzIGRvbid0IHN1cHBvcnQgaG9zdCBjb250cm9sbGVy
-IGVuYWJsZSB2aWEgSENFLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogU2V1bmd3b24gSmVvbiA8ZXNz
-dXVqQGdtYWlsLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogQWxpbSBBa2h0YXIgPGFsaW0uYWtodGFy
-QHNhbXN1bmcuY29tPg0KUmV2aWV3ZWQtYnk6IEF2cmkgQWx0bWFuIDxhdnJpLmFsdG1hbkB3ZGMu
-Y29tPg0KDQo=
+
+--nd4xfztpubexblrg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Fri, Apr 17, 2020 at 02:09:06PM +0200, Philipp Rossak wrote:
+> > > I'm a bit skeptical on that one since it doesn't even list the
+> > > interrupts connected to the GPU that the binding mandates.
+> >=20
+> > I think he left it out for a future update.
+> > But best he comments himself.
+>=20
+> I'm currently working on those bindings. They are now 90% done, but they =
+are
+> not finished till now. Currently there is some mainline support missing to
+> add the full binding. The A83T and also the A31/A31s have a GPU Power Off
+> Gating Register in the R_PRCM module, that is not supported right now in
+> Mainline. The Register need to be written when the GPU is powered on and
+> off.
+>=20
+> @Maxime: I totally agree on your point that a demo needs to be provided
+> before the related DTS patches should be provided. That's the reason why I
+> added the gpu placeholder patches.
+> Do you have an idea how a driver for the R_PRCM stuff can look like? I'm =
+not
+> that experienced with the clock driver framework.
+
+It looks like a power-domain to me, so you'd rather plug that into the genpd
+framework.
+
+> The big question is right now how to proceed with the A83T and A31s patch=
+es.
+> I see there three options, which one do you prefer?:
+>=20
+> 1. Provide now placeholder patches and send new patches, if everything is
+> clear and other things are mainlined
+> 2. Provide now patches as complete as possible and provide later patches =
+to
+> complete them when the R_PRCM things are mainlined
+> 3. Leave them out, till the related work is mainlined and the bindings are
+> final.
+
+Like I said, the DT *has* to be backward-compatible, so for any DT patch th=
+at
+you are asking to be merged, you should be prepared to support it indefinit=
+ely
+and be able to run from it, and you won't be able to change the bindings la=
+ter
+on.
+
+> Since this GPU IP core is very flexible and the SOC manufactures can
+> configure it on their needs, I think the binding will extend in the futur=
+e.
+> For example the SGX544 GPU is available in different configurations: there
+> is a SGX544 core and SGX544MPx core. The x stands for the count of the US=
+SE
+> (Universal Scalable Shader Engine) cores. For example the GPU in the A83T=
+ is
+> a MP1 and the A31/A31s a MP2.
+
+Mali is in the same situation and it didn't cause much trouble.
+
+> In addition to that some of the GPU's have also a 2D engine.
+
+In the same memory region, running from the same interrupts, or is it a
+completely separate IP that happens to be sold by the same vendor?
+
+> There might be even more differences in the GPU's that we don't know right
+> now and should be described in the Devicetree, but that's a different top=
+ic
+> that we should keep in mind.
+
+Like I said, it's not a completely different topic.
+
+Maxime
+
+--nd4xfztpubexblrg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXp1RggAKCRDj7w1vZxhR
+xUoGAQD6t2KhRl/JXPpcbOq2qYAidBLKV4Lqvkk8MmRHUxeoNQEAt6SP6CIMrrfb
+nDX66jY4FpmurrYXbFF39NVW4Y9HWw8=
+=Wz+7
+-----END PGP SIGNATURE-----
+
+--nd4xfztpubexblrg--
