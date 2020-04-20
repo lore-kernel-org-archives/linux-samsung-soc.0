@@ -2,381 +2,139 @@ Return-Path: <SRS0=JmD3=6E=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60942C54FCF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Apr 2020 08:04:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 467ACC3815B
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Apr 2020 08:14:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3187220BED
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Apr 2020 08:04:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B38C20BED
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 20 Apr 2020 08:14:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="uALPsmZO";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UKlU/dT4"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="GeNar70d";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="Gs8BDLk8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726105AbgDTIE0 (ORCPT
+        id S1726081AbgDTIOF (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 20 Apr 2020 04:04:26 -0400
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:48945 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725815AbgDTIE0 (ORCPT
+        Mon, 20 Apr 2020 04:14:05 -0400
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:27566 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725773AbgDTIOF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 20 Apr 2020 04:04:26 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 108DD5801A8;
-        Mon, 20 Apr 2020 04:04:24 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Mon, 20 Apr 2020 04:04:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=0Kri24qKAtWKY81qyS0zWGtZ64i
-        rmvGC+WYSK93rMfU=; b=uALPsmZOaL0+f9UGIFeDjKt7qZmxxJR6GHwe/TvucIz
-        EBWImZ6U5oR2N0RoVF/3lDypQCEMP2rU85cvncJvwDasOPRQvFz+4eU12vj95Nw3
-        FrvOSz7Bl5VEmz6HlLrVrfLVT5woporD6IP7KTaqtYxeoZw84tckDvAK0QfJPUHu
-        aGmAdku18KmmavhMaxhLw6Z0DhpmWDe8WwcTHAdXfyDUQ2UhhaRtgGl2Kp87ep9g
-        ki3u1KeoDvY/fiinb5plU7vIY1BHy5K/cVg0VSwM84qnuTo+ogwABrHoLgg089zT
-        KRmM2n7BRq5wVSwZkDZ4b6r7oq/6wQuZZX+bY2pAb+A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=0Kri24
-        qKAtWKY81qyS0zWGtZ64irmvGC+WYSK93rMfU=; b=UKlU/dT4kJV1PCUHF4y69K
-        MWQMUQ3zJZjqsJ0cTi6Wmm7/E1Y4/l7ltphvIfLATz+M7mc46M+XihWWSDhnuAih
-        2R0U5JTW65FTDhWbHOjv1Qeov1SSUKiRCRINA29obUgEBNvm5/N42nKpK14qVett
-        4GMCqrHGfFa4r4FPqZGkg8xz7mn5KWeARoa2FmzlCpGdrVWSDt/vLmnp8D5IZIRt
-        oBVzvPOVN8mue/BLiDqcoziYCrWoz+YQ6CJ2tWWnb9GCTcTzR8NGKr6iaAA5Pt0b
-        IEmQZCxBkCWEh9f6zyI/+cdaoG0tPxN6PSDVL32BINxFMj6082FwODKPkpkAgI4A
-        ==
-X-ME-Sender: <xms:hVedXqMbFkvO3ic8WAiafn6japGnvzEIWJWReMNVoK3MaH6yU8uFgA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrgedvgdduvdejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecukfhppeeltd
-    drkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
-    lhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:hVedXtMrp0rp5d0lgGi9cHC9PcZoa524HbdAb-JoxdXd9kgfnWeppA>
-    <xmx:hVedXsQnvBzNAoYSMtPG8GgZ347HXehCqQ9LK-dbP3tRW-wXls8b-w>
-    <xmx:hVedXvAPhveWFxl6rMOWBiAviDwqYPO4iQtKeT3suORemteqWt6u7Q>
-    <xmx:iFedXmEMIYxgUKcD1L7itKa2KN6E-Ix-reU6GeCwaMRn_E9s9aedNQ>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id C1214328006A;
-        Mon, 20 Apr 2020 04:04:20 -0400 (EDT)
-Date:   Mon, 20 Apr 2020 10:04:19 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        James Hogan <jhogan@kernel.org>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        linux-mips@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
-        linux-samsung-soc@vger.kernel.org,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>,
-        Paul Burton <paulburton@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Tony Lindgren <tony@atomide.com>, Chen-Yu Tsai <wens@csie.org>,
-        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
-        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Philipp Rossak <embed3d@gmail.com>,
-        openpvrsgx-devgroup@letux.org, linux-kernel@vger.kernel.org,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Daniel Vetter <daniel@ffwll.ch>, kernel@pyra-handheld.com
-Subject: Re: [PATCH v6 01/12] dt-bindings: add img, pvrsgx.yaml for
- Imagination GPUs
-Message-ID: <20200420080419.yrucgndz6pblgedm@gilmour.lan>
-References: <20200415101251.o3wi5t6xvf56xmhq@gilmour.lan>
- <72919514-0657-4B71-902F-3E775E528F64@goldelico.com>
- <f4fdca8a-d18c-a8d2-7f51-d1ebbbab3647@baylibre.com>
- <535CAEBE-F43E-4BFC-B989-612C81F0D7EF@goldelico.com>
- <20200415142124.yzfh6mtqq7cdq22e@gilmour.lan>
- <DC0A2DE2-3D77-46F8-8DE1-55050FDACC9B@goldelico.com>
- <20200415162151.rwym4ioqz27migfn@gilmour.lan>
- <45F411C0-150B-4FBA-A0E1-B863B3F36DF6@goldelico.com>
- <20200417102500.erayf6quenp3cvn3@gilmour.lan>
- <C8816F10-8773-4ECD-B42D-6EEF642476EB@goldelico.com>
+        Mon, 20 Apr 2020 04:14:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1587370444; x=1618906444;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=OgOvId5r7wzFPz4kD5E2QEgvcp+IDu1mpc/Y6eMKG3w=;
+  b=GeNar70dRGFUSI/xiAKtipgV/7hsakoM5wwU6vFdlYjr57oyzUUHKjvU
+   RUh7VZOwKkAaTIFz+8ZZxzmtQVT8OJ3fl/hMZ7UCs/r+PRRDpK5weJF2H
+   1ZlGINCw4STTq1l96KMcVK7DnrdRLRkxz/0JXCzcTGM8Zv2k11B4nQuKa
+   CdLVTAGp1/wlVNQ0jxM8OKc8GzN10s5gLK29T0tIN1vAzhq7OvIEN2r+B
+   3vJHcQjPkJFffZn07SIeHLUIHw1FvifR44qv6OogOb5FgPsfeq/eWFluz
+   gSVrtJ4oU+5fvGd+ii0n9PD4HCH5swPQrbHDkXicFJoWLEV2F8Pgc7bX5
+   w==;
+IronPort-SDR: pAJg5BR0hDDLuqXvr42wIoGjAfibe6ZOSBjuehaOr1gPWs/lGZNPCV+UPMRbZYdjDJ3a9qZXMX
+ UBjv+/Pu61lSymehFEmJTNLwDsUz5CPkIJlJH2PT1S7CWaYGYqSTlIeKy6Ng49KHI6rOMPa61I
+ Xy347gV1RG8Uqwv3tfPcYesfmcyfGBMHA3HQWjFjoHDuXjtYTGd5X6cg8HZA9Hs7SLvDre6dNu
+ //QJRxCdb16mJ6qR4hOGBUWreKBiP/KPekNOr9iY8E6nAlvQ2yeRi/CcL+7Q4Ysr9qa2p3P6AR
+ ilA=
+X-IronPort-AV: E=Sophos;i="5.72,406,1580745600"; 
+   d="scan'208";a="137123042"
+Received: from mail-mw2nam10lp2107.outbound.protection.outlook.com (HELO NAM10-MW2-obe.outbound.protection.outlook.com) ([104.47.55.107])
+  by ob1.hgst.iphmx.com with ESMTP; 20 Apr 2020 16:14:02 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=PjRCvEKOoNOXB5Xcmps535mW3tvWgrs2z9K4ymVfhFl/ks3RcY5RrZ6T49WjYqgQ1j7AU4aCqRlCBJtQVyQJLlDzFMqyAaPB3l2e1m8eeXezTI/75b9Ryb4supnNjOKLR4jJ+H6pSZTBqFokaDqoWqTToC5pp9yWdUGejMZwh32WMvTlsAMo1cvsou1MBbfZQdR2c2RmIrn3pydhb2TaMOLPybtnVBUVjfFfUmC8iGvNFI346RjKyjMMyjbeVL2HEJETbWap584qGBkA/mQhyNZjwm/LyMJ7UjkgU0e6RXM7nZ2G5DdwVykeAKjqO0QU7GsYNHrxIV9+dfTLx1/VGw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OgOvId5r7wzFPz4kD5E2QEgvcp+IDu1mpc/Y6eMKG3w=;
+ b=jHZOMJ2B1fOk2lFQxIc0ObiJXUHb41Sp2I4Z7Tk4X8FK0imVxvmTknf6uYLqxidwIXtjQJieKs4P+Wzj8xD6I0JsU+kUbTZa+djslPckjy3iqg9tvaumgGbXvXi84i4Fn8PSBHzZqXpWom6VuwCxCmiGPDgO9zarus7uXNawxQSeGN/vXQFwyrH+v2aiTkOEgYdMovoWoOXr4jIi0u5vPv6k9RvJ5i8vgWKB4vtUBSdKfQbZPSRwwkP4JwqA1bVt4La+sX4CqpqZ3hN7nt1+OwHY+WbNnnf1q6Tjj5zZP6R5ixhVoNERuNSBLt2wmL82tRTJNUaxpscygYZeKH3khA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OgOvId5r7wzFPz4kD5E2QEgvcp+IDu1mpc/Y6eMKG3w=;
+ b=Gs8BDLk8t1P8eGy+QqROA6NA2ThpXLvzZC7UkMREHJaW26wl9o4VD0I9TrwwUJ/pWEIjoD94k/cb7sAL79SbVQbAdnjzEU4CB99hJi0eqLBoEoKklwzeYyhuYfC6FXXNTUrSkcPGXdVfEkmGFDM5ok5/VOhPO332YRH+a5ccLFE=
+Received: from SN6PR04MB4640.namprd04.prod.outlook.com (2603:10b6:805:a4::19)
+ by SN6PR04MB3919.namprd04.prod.outlook.com (2603:10b6:805:4a::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2921.29; Mon, 20 Apr
+ 2020 08:14:00 +0000
+Received: from SN6PR04MB4640.namprd04.prod.outlook.com
+ ([fe80::3877:5e49:6cdd:c8b]) by SN6PR04MB4640.namprd04.prod.outlook.com
+ ([fe80::3877:5e49:6cdd:c8b%5]) with mapi id 15.20.2921.027; Mon, 20 Apr 2020
+ 08:14:00 +0000
+From:   Avri Altman <Avri.Altman@wdc.com>
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
+        "robh@kernel.org" <robh@kernel.org>
+CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "kwmad.kim@samsung.com" <kwmad.kim@samsung.com>,
+        "stanley.chu@mediatek.com" <stanley.chu@mediatek.com>,
+        "cang@codeaurora.org" <cang@codeaurora.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v6 04/10] scsi: ufs: introduce UFSHCD_QUIRK_PRDT_BYTE_GRAN
+ quirk
+Thread-Topic: [PATCH v6 04/10] scsi: ufs: introduce
+ UFSHCD_QUIRK_PRDT_BYTE_GRAN quirk
+Thread-Index: AQHWFON3oXMw2fFRh0ylLEswVoKPnKiBrVGw
+Date:   Mon, 20 Apr 2020 08:13:59 +0000
+Message-ID: <SN6PR04MB4640E9D18F9FB283B6458A90FCD40@SN6PR04MB4640.namprd04.prod.outlook.com>
+References: <20200417175944.47189-1-alim.akhtar@samsung.com>
+        <CGME20200417181014epcas5p1343bc81fb246133cc332d3fc7a394c15@epcas5p1.samsung.com>
+ <20200417175944.47189-5-alim.akhtar@samsung.com>
+In-Reply-To: <20200417175944.47189-5-alim.akhtar@samsung.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Avri.Altman@wdc.com; 
+x-originating-ip: [212.25.79.133]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: f0b4cded-a6e2-4582-1fa4-08d7e502c7e0
+x-ms-traffictypediagnostic: SN6PR04MB3919:
+x-microsoft-antispam-prvs: <SN6PR04MB3919B483AEDE69C59C0C978CFCD40@SN6PR04MB3919.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:843;
+x-forefront-prvs: 03793408BA
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR04MB4640.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10019020)(4636009)(136003)(39860400002)(396003)(366004)(376002)(346002)(8676002)(316002)(478600001)(81156014)(54906003)(110136005)(2906002)(33656002)(7696005)(5660300002)(55016002)(8936002)(86362001)(4326008)(66556008)(64756008)(66446008)(7416002)(76116006)(66476007)(186003)(66946007)(558084003)(6506007)(26005)(9686003)(71200400001)(52536014);DIR:OUT;SFP:1102;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: uNh93VgnoXCymn4S2/CbMjW0cjgo2RLRJtUa0fzYduko7RRvLf2hRjwwxZQm90BNBQ5CThQxyWrywQXd1il/5q3pz3b+AXwx3mFXjUZDOgLFZXV3xzkaCsupufMdFVg1Nt/0wy5bHYAWEk3GOYIMtU5e4a9L+cR56G10DLxoztyIzAs7WSjG8MadQJ1Nw4wVgXfeguKUyLtzXuB4ukt4lQQBWnCT7e9gSObWNi7AjGyFcHAPi/+O3t+/xdX+NviHswqh4y4IZMGynEGdgEvDRwjh8SVdZtU/hX9gooQNmQICZjq6xSA5xkGlCk3LLQTe8MpFBfNvFxF81ILPtsqUhq75f2l6S3qFxYPfgXp7Tej1YXp5yYy4B/e1NPmgIu79uVUu4wRBrbCtNvc3OelwVOdNwV1vhg6EEW4O78dTkgIGasUotkEZkKCKEWr6xUsZ
+x-ms-exchange-antispam-messagedata: 2sR4ZJxfmnvtQMIU8cXXyOzFD5hK7YhN7F2089ab5W+3FOD9RqngiH8x/G9EHvGjrwgqcKY1ajbKoDRkwEtU9xhlpfQQM3TzbRMBBiZ7rPWc9VS48BUUwcjxASYte0Z8zWO2wfMk8EAEL3plXR4K2A==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="n2wbqupykynsjuri"
-Content-Disposition: inline
-In-Reply-To: <C8816F10-8773-4ECD-B42D-6EEF642476EB@goldelico.com>
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f0b4cded-a6e2-4582-1fa4-08d7e502c7e0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Apr 2020 08:14:00.0505
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: s6fWgUQW+XJBYsZ10ixRJvJvZzdcpNcHaHdjVyx+e94NZzEawrLp01Z6ZozMMfHJBL1/0UmUJn8Hu080E8RB3g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB3919
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-
---n2wbqupykynsjuri
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Apr 17, 2020 at 02:15:44PM +0200, H. Nikolaus Schaller wrote:
-> > Am 17.04.2020 um 12:25 schrieb Maxime Ripard <maxime@cerno.tech>:
-> > On Wed, Apr 15, 2020 at 06:42:18PM +0200, H. Nikolaus Schaller wrote:
-> >>> Am 15.04.2020 um 18:21 schrieb Maxime Ripard <maxime@cerno.tech>:
-> >>>=20
-> >>> On Wed, Apr 15, 2020 at 05:09:45PM +0200, H. Nikolaus Schaller wrote:
-> >>>> Hi Maxime,
-> >>>>=20
-> >>>> Hm. Yes. We know that there likely are clocks and maybe reset
-> >>>> but for some SoC this seems to be undocumented and the reset
-> >>>> line the VHDL of the sgx gpu provides may be permanently tied
-> >>>> to "inactive".
-> >>>>=20
-> >>>> So if clocks are optional and not provided, a driver simply can assu=
-me
-> >>>> they are enabled somewhere else and does not have to care about. If
-> >>>> they are specified, the driver can enable/disable them.
-> >>>=20
-> >>> Except that at the hardware level, the clock is always going to be
-> >>> there. You can't control it, but it's there.
-> >>=20
-> >> Sure, we can deduce that from general hardware design knowledge.
-> >> But not every detail must be described in DT. Only the important
-> >> ones.
-> >>=20
-> >>>>> If OMAP is too much of a pain, you can also make
-> >>>>> a separate binding for it, and a generic one for the rest of us.
-> >>>>=20
-> >>>> No, omap isn't any pain at all.
-> >>>>=20
-> >>>> The pain is that some other SoC are most easily defined by clocks in
-> >>>> the gpu node which the omap doesn't need to explicitly specify.
-> >>>>=20
-> >>>> I would expect a much bigger nightmare if we split this into two
-> >>>> bindings variants.
-> >>>>=20
-> >>>>> I'd say that it's pretty unlikely that the clocks, interrupts (and
-> >>>>> even regulators) are optional. It might be fixed on some SoCs, but
-> >>>>> that's up to the DT to express that using fixed clocks / regulators,
-> >>>>> not the GPU binding itself.
-> >>>>=20
-> >>>> omap already has these defined them not to be part of the GPU bindin=
-g.
-> >>>> The reason seems to be that this needs special clock gating control
-> >>>> especially for idle states which is beyond simple clock-enable.
-> >>>>=20
-> >>>> This sysc target-module@56000000 node is already merged and therefore
-> >>>> we are only adding the gpu child node. Without defining clocks.
-> >>>>=20
-> >>>> For example:
-> >>>>=20
-> >>>> 		sgx_module: target-module@56000000 {
-> >>>> 			compatible =3D "ti,sysc-omap4", "ti,sysc";
-> >>>> 			reg =3D <0x5600fe00 0x4>,
-> >>>> 			      <0x5600fe10 0x4>;
-> >>>> 			reg-names =3D "rev", "sysc";
-> >>>> 			ti,sysc-midle =3D <SYSC_IDLE_FORCE>,
-> >>>> 					<SYSC_IDLE_NO>,
-> >>>> 					<SYSC_IDLE_SMART>;
-> >>>> 			ti,sysc-sidle =3D <SYSC_IDLE_FORCE>,
-> >>>> 					<SYSC_IDLE_NO>,
-> >>>> 					<SYSC_IDLE_SMART>;
-> >>>> 			clocks =3D <&gpu_clkctrl OMAP5_GPU_CLKCTRL 0>;
-> >>>> 			clock-names =3D "fck";
-> >>>> 			#address-cells =3D <1>;
-> >>>> 			#size-cells =3D <1>;
-> >>>> 			ranges =3D <0 0x56000000 0x2000000>;
-> >>>>=20
-> >>>> 			gpu: gpu@0 {
-> >>>> 				compatible =3D "ti,omap5-sgx544-116", "img,sgx544-116", "img,sgx=
-544";
-> >>>> 				reg =3D <0x0 0x10000>;
-> >>>> 				interrupts =3D <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
-> >>>> 			};
-> >>>> 		};
-> >>>>=20
-> >>>> The jz4780 example will like this:
-> >>>>=20
-> >>>> 	gpu: gpu@13040000 {
-> >>>> 		compatible =3D "ingenic,jz4780-sgx540-130", "img,sgx540-130", "img=
-,sgx540";
-> >>>> 		reg =3D <0x13040000 0x4000>;
-> >>>>=20
-> >>>> 		clocks =3D <&cgu JZ4780_CLK_GPU>;
-> >>>> 		clock-names =3D "gpu";
-> >>>>=20
-> >>>> 		interrupt-parent =3D <&intc>;
-> >>>> 		interrupts =3D <63>;
-> >>>> 	};
-> >>>>=20
-> >>>> So the question is which one is "generic for the rest of us"?
-> >>>=20
-> >>> I'd say the latter.
-> >>=20
-> >> Why?
-> >>=20
-> >> TI SoC seem to be the broadest number of available users
-> >> of sgx5xx in the past and nowadays. Others are more the exception.
-> >=20
-> > And maybe TI has some complicated stuff around the GPU that others don'=
-t have?
->=20
-> Looks so.
->=20
-> > If I look quickly at the Allwinner stuff, I see nothing looking alike i=
-n the
-> > SoC, so making the binding like that for everyone just because TI did s=
-omething
-> > doesn't really make much sense.
->=20
-> That is why I propose to make the clocks optional. This solves both
-> cases in a simple and neat way.
->=20
-> >=20
-> >>> If your clock is optional, then you define it but don't mandate
-> >>> it. Not documenting it will only result in a mess where everyone will
-> >>> put some clock into it, possibly with different semantics each and
-> >>> every time.
-> >>=20
-> >> So you mean that we should require a dummy clock for the omap gpu node
-> >> or did I misunderstand that?
-> >>=20
-> >> Well, yes there is of course a clock connection between the
-> >> omap target-module and the sgx but it is IMHO pointless to
-> >> describe it because it can't and does not need to be controlled
-> >> separately.
-> >>=20
-> >> As said the target-module is already accepted and upstream and my
-> >> proposal is to get the gpu node described there. There is simply
-> >> no need for a clocks node for the omap.
-> >=20
-> > There is no need for a clocks property *currently* *on the OMAP*.
->=20
-> Yes. But why "currently"? Do you think the OMAPs we already have
-> defined and tested will change?
-
-Like I said, DVFS is likely to be one in the future.
-
-> >> What I also assume is that developers of DTS know what they do.
-> >> So the risk that there is different semantics is IMHO very low.
-> >=20
-> > Well, they know what they do if you document the binding. Let's say I h=
-ave two
-> > clocks now on my SoC, and you just document that you want a clocks prop=
-erty,
-> > with a generic name in clock-names like "gpu".
->=20
-> Yes, that is what I want to propose for v7:
->=20
->   clocks:
->     maxItems: 1
->=20
->   clock-names:
->     maxItems: 1
->     items:
->       - const: gpu
-
-If you document what the "gpu" clock is supposed to be.
-
-Is it the clock for the bus (clocking the register part of the GPU), the cl=
-ock
-for the GPU cores? Something else?
-
-> >> If you agree I can add the clocks/clock-names property as an
-> >> optional property. This should solve omap and all others.
-> >=20
-> > With the above example, what clock should I put in there? In which orde=
-r? This
-> > isn't some random example pulled out of nowhere. The Allwinner A31 has =
-(at
-> > least) 4 clocks for the GPU, 1 reset line and 1 regulator, so I can onl=
-y assume
-> > that the GPU actually needs at least that amount to be properly integra=
-ted into
-> > an SoC.
->=20
-> Ah, now I understand your motivation: you have access and experience with
-> the A31 and you know that our proposal doesn't fit to it.
-
-Not only the A31. If you don't document what your expectations are for a ge=
-neric
-component like that, every SoC will assume that your GPU clock is something
-different and you won't be able to make any sense of it in your driver.
-
-> From what I know from your description is that the A31 is quite special w=
-ith
-> 4 GPU clocks... Are they all really for the GPU or 3 of them for the inte=
-rface
-> logic (like on OMAP which separates between "functional clocks" and "inte=
-rface
-> clocks")? Or are there 4 groups of GPU cores with a separate clock for ea=
-ch one?
-
-1 is the equivalent of the interface clock, the others seem to be for the
-functional clocks.
-
-> So what would be your proposal for the A31 DT?
->=20
-> Then I get a chance to compare DT snippets and try to make a mixture for
-> the bindings.
-
-You'd have to know the GPU to do that, and I don't.
-
-> >>> This has nothing to do with the binding being complete. And if you use
-> >>> a binding like this one, you'll be severely limited when you'll want
-> >>> to implement things like DVFS.
-> >>=20
-> >> Now you have unhooked me... Nobody seems to know if and how DVFS can be
-> >> applied to SGX. IMHO we should bake small bread first and get initial
-> >> support into mainline.
-> >=20
-> > On the software side, yes, of course. But the discussion here doesn't h=
-ave much
-> > to do with software support, this is about the hardware. No matter if y=
-ou enable
-> > DVFS or not, you'll have those resources connected to the GPU.
-> >=20
-> > And if you want to enable the strict minimum in DT for now and expand i=
-t later
-> > as the software gains support for more stuff, then you'll have to deal =
-with the
-> > minimal stuff in software later-on to keep the backward compatibility.
->=20
-> That is IMHO common practise everywhere. Sometimes you even have to adapt
-> years old DT to new limitations of the drivers (this happened recently for
-> combination of SPI and GPIO).
-
-To some extent, yes. But those old bindings that turn out to be wrong at le=
-ast
-contain most infos about the hardware, even though it's incomplete or flawe=
-d.
-Your proposal doesn't.
-
-> And you can still write two different drivers for a single bindings docum=
-ent
-> or use the .data field of the compatibility table. And I think clocks and=
- regulators
-> can also be referenced by name if they are not defined in DT. This is not=
- a
-> "single variety" style, but a potential solution.
->=20
-> What I want to say: there are many roads to Rome.
-
-What I want to say is: all the roads you listed above are going to be painf=
-ul.
-Take your time, have a generic driver running from your generic binding you=
- want
-to introduce on all the SoCs you want to support, and *then* start this
-discussion again.
-
-Maxime
-
---n2wbqupykynsjuri
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXp1XgwAKCRDj7w1vZxhR
-xYvmAP9KHUdB4quNWFa7siduKh9jQCUA3ovI+3VM4p8xzh0qPgEA+ZPetkVI8hGE
-xuIp0fgwWj1NWw9tW+3i+1pkI4J16Ag=
-=zM/B
------END PGP SIGNATURE-----
-
---n2wbqupykynsjuri--
+IA0KPiANCj4gU29tZSBVRlMgaG9zdCBjb250cm9sbGVycyBtYXkgdGhpbmsgZ3JhbnVsYXJpdGll
+cyBvZiBQUkRUIGxlbmd0aCBhbmQNCj4gb2Zmc2V0IGFzIGJ5dGVzLCBub3QgZG91YmxlIHdvcmRz
+Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogS2l3b29uZyBLaW0gPGt3bWFkLmtpbUBzYW1zdW5nLmNv
+bT4NCj4gU2lnbmVkLW9mZi1ieTogQWxpbSBBa2h0YXIgPGFsaW0uYWtodGFyQHNhbXN1bmcuY29t
+Pg0KUmV2aWV3ZWQtYnk6IEF2cmkgQWx0bWFuIDxhdnJpLmFsdG1hbkB3ZGMuY29tPg0K
