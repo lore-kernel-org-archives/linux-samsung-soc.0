@@ -2,204 +2,168 @@ Return-Path: <SRS0=0l+h=6F=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 514EDC54FCC
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Apr 2020 16:57:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A33BC55183
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Apr 2020 17:30:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 312F92070B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Apr 2020 16:57:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDC2A2072D
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Apr 2020 17:30:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OoQpa52k"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="OkjAAXU/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729570AbgDUQ5A (ORCPT
+        id S1729203AbgDURaV (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 21 Apr 2020 12:57:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43238 "EHLO
+        Tue, 21 Apr 2020 13:30:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729626AbgDUQ46 (ORCPT
+        by vger.kernel.org with ESMTP id S1726043AbgDURaV (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 21 Apr 2020 12:56:58 -0400
-Received: from mail-ua1-x943.google.com (mail-ua1-x943.google.com [IPv6:2607:f8b0:4864:20::943])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 941D7C061A41;
-        Tue, 21 Apr 2020 09:56:58 -0700 (PDT)
-Received: by mail-ua1-x943.google.com with SMTP id v24so5331446uak.0;
-        Tue, 21 Apr 2020 09:56:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+roaZY0aQq5IerWYrtAtqtTIyLi3/oukkignYdqQ2gM=;
-        b=OoQpa52k6Fd4P7opyBenigG8zgeRF6Am+UbnctENdxTHpjt3uX/wsSqtr+hw2usoNW
-         +wzlwcoFKjhAphlxohZZ7wpwF5Qrc9fV8XHooELQipt2XAUOhINX8t+af9K/NAe/1ouI
-         9B5rYdBhepuERj8H1W00szQjqhiZ71Zijh3deNhrAUcIYTzkpt3TrImmmRojGpU7e4I5
-         dlqQFXd3nIKJ1xY2u/LfU+WMZ3ldnJh6TD+T0KVTo0n8k6aPAK9y7J8ulWGGHuYr6+/U
-         +AeUSSRpOYhzyNyrNpH11Hnjn80OeP68bBoIu46OSmWBeuBfK0PCUDwO6ffn01bzJe6L
-         Z6kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+roaZY0aQq5IerWYrtAtqtTIyLi3/oukkignYdqQ2gM=;
-        b=ZMHPaVMc0e54MdxNEz/TU58/sgorpLt0Umfqmfnc7GMvJst+Kz7bFnydjn+f02zXhh
-         polU8T7NuUOyIlK1VXmrMFTJKrANbMue+VDI5WjFgMsshZvee2YMGHy14GRTeb/Kptmj
-         qxz+6seBgK/yauFNegb7vZpRIJYQ3PMI4ek1/FENCLrlhebNQ6c6q5ebVASSUP/SPIlA
-         nS7EYXPgeYDc/dE7ITxu+ak0oTDByfJ9LcUMKPQNRaj4Gs/K9OlVMtcYF1URofKD3fT8
-         6h6d3Y3p4C0d/YXyqb7myqWJkDAYSgDVMgNHlJq9pvnk0bY2jnDG5QqnnozSZFYKmqzr
-         uEJw==
-X-Gm-Message-State: AGi0Pua2E7QoLUScFQvx6vdM4/UELyE6aY8HINm9HZy7RwU0Srx2Z4EO
-        63kTv8KXcskxT6Mt7gGQGxPFH+PEhDmL3fEDa7o=
-X-Google-Smtp-Source: APiQypIpbVZ62pOPQuT8rk9YlJ0othDRtz8/TGgGxaOQSXcQd4x9m2DNm9aXz3E3Sig+Sy4/vsuBK0ISisEBtxdsnGY=
-X-Received: by 2002:ab0:7298:: with SMTP id w24mr13269756uao.95.1587488217689;
- Tue, 21 Apr 2020 09:56:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <CGME20200417181022epcas5p1f83138da6e76ff0917de88e913ef8e32@epcas5p1.samsung.com>
- <20200417175944.47189-1-alim.akhtar@samsung.com> <20200417175944.47189-9-alim.akhtar@samsung.com>
-In-Reply-To: <20200417175944.47189-9-alim.akhtar@samsung.com>
-From:   Alim Akhtar <alim.akhtar@gmail.com>
-Date:   Tue, 21 Apr 2020 22:26:21 +0530
-Message-ID: <CAGOxZ52mQ=H5DR7nWJY3RMBuJMr9SXERukJs1UK_Wr1XHP9TZg@mail.gmail.com>
-Subject: Re: [PATCH v6 08/10] dt-bindings: ufs: Add DT binding documentation
- for ufs
-To:     Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     robh <robh@kernel.org>, devicetree@vger.kernel.org,
-        linux-scsi@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-        Avri Altman <avri.altman@wdc.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Kiwoong Kim <kwmad.kim@samsung.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Can Guo <cang@codeaurora.org>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 21 Apr 2020 13:30:21 -0400
+Received: from mo6-p02-ob.smtp.rzone.de (mo6-p02-ob.smtp.rzone.de [IPv6:2a01:238:20a:202:5302::8])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DADE8C0610D5;
+        Tue, 21 Apr 2020 10:30:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1587490214;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=HikqoAbRox/lVm/oJtuVUkcBJdcoi2Fs9oSIyzhVSWA=;
+        b=OkjAAXU/dMQV2Gnohhxbvz1AdkHU3RKU/1TDZp5Rx92yl6b93QxrT8UR4Na+dAi43e
+        nkJorWREU+Ufh07M2579vYYM36/GTSdreA2NjHelDQhMThvpuw5WS2KZIZ02wylE+W1j
+        4jOErVK/Os3EJRaO7FhSMbdCMHISKZAroE0LwbcbIbCYTX90/aVsOULA3haoLMDd5ylA
+        +KFfAFQTZJ+RpmKSaHq0eIMToLxtr2ShAr9piDw3ULmvVraWbobB4yKTi8Aefs9PfbfL
+        jdJ/fFi2pqT/XbxxI2hJjExBCzZXCUMTe187W/g/wF/NFIkQ8bR7OuldFHFfMkCZWNTG
+        hsyg==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw9iZeHmAiw43oXkQ="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 46.5.0 DYNA|AUTH)
+        with ESMTPSA id g06d2dw3LHTXJfm
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+        (Client did not present a certificate);
+        Tue, 21 Apr 2020 19:29:33 +0200 (CEST)
+Subject: Re: [PATCH v6 00/12] ARM/MIPS: DTS: add child nodes describing the PVRSGX GPU present in some OMAP SoC and JZ4780 (and many more)
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Content-Type: text/plain; charset=us-ascii
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20200421141543.GU37466@atomide.com>
+Date:   Tue, 21 Apr 2020 19:29:32 +0200
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?utf-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        James Hogan <jhogan@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        OpenPVRSGX Linux Driver Group <openpvrsgx-devgroup@letux.org>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com,
+        linux-mips@vger.kernel.org,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D9D4D057-A73D-485F-898D-5C05E89C16B7@goldelico.com>
+References: <cover.1586939718.git.hns@goldelico.com> <20200415101008.zxzxca2vlfsefpdv@gilmour.lan> <2E3401F1-A106-4396-8FE6-51CAB72926A4@goldelico.com> <20200415130233.rgn7xrtwqicptke2@gilmour.lan> <C589D06E-435E-4316-AD0A-8498325039E3@goldelico.com> <10969e64-fe1f-d692-4984-4ba916bd2161@gmail.com> <20200420073842.nx4xb3zqvu23arkc@gilmour.lan> <b5a06c19-7a3e-bcb8-5ae3-76901b9c6c35@gmail.com> <20200421112129.zjmkmzo3aftksgka@gilmour.lan> <20200421141543.GU37466@atomide.com>
+To:     Tony Lindgren <tony@atomide.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Philipp Rossak <embed3d@gmail.com>,
+        Jonathan Bakker <xc-racer2@live.ca>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Rob
-Request to comment on this dt-bindings documentation.
-Thanks
 
-On Fri, Apr 17, 2020 at 11:41 PM Alim Akhtar <alim.akhtar@samsung.com> wrote:
->
-> This patch adds DT binding for samsung ufs hci
->
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  .../bindings/ufs/samsung,exynos-ufs.yaml      | 93 +++++++++++++++++++
->  1 file changed, 93 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
->
-> diff --git a/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-> new file mode 100644
-> index 000000000000..954338b7f37d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-> @@ -0,0 +1,93 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/ufs/samsung,exynos-ufs.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung SoC series UFS host controller Device Tree Bindings
-> +
-> +maintainers:
-> +  - Alim Akhtar <alim.akhtar@samsung.com>
-> +
-> +description: |
-> +  Each Samsung UFS host controller instance should have its own node.
-> +  This binding define Samsung specific binding other then what is used
-> +  in the common ufshcd bindings
-> +  [1] Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-> +
-> +properties:
-> +
-> +  compatible:
-> +    enum:
-> +      - samsung,exynos7-ufs
-> +
-> +  reg:
-> +    items:
-> +     - description: HCI register
-> +     - description: vendor specific register
-> +     - description: unipro register
-> +     - description: UFS protector register
-> +
-> +  reg-names:
-> +    items:
-> +      - const: hci
-> +      - const: vs_hci
-> +      - const: unipro
-> +      - const: ufsp
-> +
-> +  clocks:
-> +    maxItems: 2
-> +    items:
-> +      - description: ufs link core clock
-> +      - description: unipro main clock
-> +
-> +  clock-names:
-> +    maxItems: 2
-> +    items:
-> +      - const: core_clk
-> +      - const: sclk_unipro_main
-> +
-> +  interrupts:
-> +    items:
-> +      - description: interrupt signal for various ufshc status
-> +
-> +  phys:
-> +    maxItems: 1
-> +    description:
-> +      phandle of the ufs phy node
-> +
-> +  phy-names:
-> +      const: ufs-phy
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - phys
-> +  - phy-names
-> +  - clocks
-> +  - clock-names
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/clock/exynos7-clk.h>
-> +
-> +    ufs: ufs@15570000 {
-> +       compatible = "samsung,exynos7-ufs";
-> +       reg = <0x15570000 0x100>,
-> +             <0x15570100 0x100>,
-> +             <0x15571000 0x200>,
-> +             <0x15572000 0x300>;
-> +       reg-names = "hci", "vs_hci", "unipro", "ufsp";
-> +       interrupts = <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>;
-> +       clocks = <&clock_fsys1 ACLK_UFS20_LINK>,
-> +                <&clock_fsys1 SCLK_UFSUNIPRO20_USER>;
-> +       clock-names = "core_clk", "sclk_unipro_main";
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&ufs_rst_n &ufs_refclk_out>;
-> +       pclk-freq-avail-range = <70000000 133000000>;
-> +       phys = <&ufs_phy>;
-> +       phy-names = "ufs-phy";
-> +    };
-> +...
-> --
-> 2.17.1
->
+> Am 21.04.2020 um 16:15 schrieb Tony Lindgren <tony@atomide.com>:
+>=20
+> * Maxime Ripard <maxime@cerno.tech> [200421 11:22]:
+>> On Tue, Apr 21, 2020 at 11:57:33AM +0200, Philipp Rossak wrote:
+>>> I had a look on genpd and I'm not really sure if that fits.
+>>>=20
+>>> It is basically some bit that verify that the clocks should be =
+enabled or
+>>> disabled.
+>>=20
+>> No, it can do much more than that. It's a framework to control the =
+SoCs power
+>> domains, so clocks might be a part of it, but most of the time it's =
+going to be
+>> about powering up a particular device.
+>=20
+> Note that on omaps there are actually SoC module specific registers.
+
+Ah, I see. This is of course a difference that the TI glue logic has
+its own registers in the same address range as the sgx and this can't
+be easily handled by a common sgx driver.
+
+This indeed seems to be unique with omap.
+
+> And there can be multiple devices within a single target module on
+> omaps. So the extra dts node and device is justified there.
+>=20
+> For other SoCs, the SGX clocks are probably best handled directly
+> in pvr-drv.c PM runtime functions unless a custom hardware wrapper
+> with SoC specific registers exists.
+
+That is why we need to evaluate what the better strategy is.
+
+So we have
+a) omap which has a custom wrapper around the sgx
+b) others without, i.e. an empty (or pass-through) wrapper
+
+Which one do we make the "standard" and which one the "exception"?
+What are good reasons for either one?
 
 
--- 
-Regards,
-Alim
+I am currently in strong favour of a) being standard because it
+makes the pvr-drv.c simpler and really generic (independent of
+wrapping into any SoC).
+
+This will likely avoid problems if we find more SoC with yet another
+scheme how the SGX clocks are wrapped.
+
+It also allows to handle different number of clocks (A31 seems to
+need 4, Samsung, A83 and JZ4780 one) without changing the sgx bindings
+or making big lists of conditionals. This variance would be handled
+outside the sgx core bindings and driver.
+
+So instead of an img+omap.yaml and an img+a81.yaml and an img+a31.yaml
+etc. we have a single img,pvrsgx.yaml and individual wrappers (the omap
+one already exists as bindings/bus/ti-sysc.txt).
+
+The only drawback is that we need this "pass-through" wrapper in DTS
+and driver code to handle clocks, power etc.
+
+
+The second best solution in my view is to make b) the standard
+and allow the clock(s) to be optional to cover the omap case.
+And conditionals are added to properly describe the variance of
+how the sgx is wrapped/integrated.
+
+
+IMHO this is a decision which can not be easily revised later.
+It is an architectural decision. So we should base it on strategic
+goals.
+
+>=20
+>=20
+> Regards,
+>=20
+> Tony
+>=20
+
+BR and thanks for clarification,
+Nikolaus
+
