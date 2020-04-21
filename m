@@ -2,222 +2,197 @@ Return-Path: <SRS0=0l+h=6F=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BF00C2BA19
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Apr 2020 06:01:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0C41C2BA19
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Apr 2020 06:42:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D6D0C2076C
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Apr 2020 06:01:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81CE6218AC
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 21 Apr 2020 06:42:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="vQmfxwM1"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="I0VikbBL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726462AbgDUGB2 (ORCPT
+        id S1725940AbgDUGmx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 21 Apr 2020 02:01:28 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:15103 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725904AbgDUGB2 (ORCPT
+        Tue, 21 Apr 2020 02:42:53 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:60707 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725831AbgDUGmw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 21 Apr 2020 02:01:28 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1587448888; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=UHhQSl23mVF75ah5gdbC88+420hzwfoQQOGiSxbyQmw=;
- b=vQmfxwM1+Zq2btBHmmnWzsFr+x5C0a9mWxCGnyDrBCM5kuChYhZKbn79WGDoynsQpGBq7bwz
- w+r8Zuh8qfoi3kqK0MKZKQHvrpn/wR1rLuPq5SIvc8HT+Y7g7bQPHCUauPcsklfVwb+bdzIx
- C45u6Aq15ekP2yjmNXpUeqERJpc=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyJhY2Q3MCIsICJsaW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtlcm5lbC5vcmciLCAiYmU5ZTRhIl0=
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e9e8c0b.7fe7ea7eadc0-smtp-out-n02;
- Tue, 21 Apr 2020 06:00:43 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 43ADEC433F2; Tue, 21 Apr 2020 06:00:42 +0000 (UTC)
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: cang)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C8284C433D2;
-        Tue, 21 Apr 2020 06:00:41 +0000 (UTC)
+        Tue, 21 Apr 2020 02:42:52 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200421064249epoutp020c36ad3116abb00dcc67a78db62fd6d9~HwpwteD932430924309epoutp02a
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Apr 2020 06:42:49 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200421064249epoutp020c36ad3116abb00dcc67a78db62fd6d9~HwpwteD932430924309epoutp02a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1587451369;
+        bh=ti6gy7+fppWdn9AAqbqwoO6SZ6gbjPALBm9P8FNcdSY=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=I0VikbBLc6SQptRvTsW12jjM5zv3BJ+vYKlVm8SW9nmsjV2pl5x8D7Qq9svy6jJyP
+         y7eD9BAwDEihjKoLsPedWhOUwdQEBZqUQ5LnWdlS1xCX5eFxwP7OglZr2WtC15huRr
+         yh0CNJdKfjIuw5ei9FFKqYAyzQwUkNS/6z1xt4sI=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20200421064249epcas1p4b28273e1834409f7c6e285daf35c2412~HwpwSr8-B1394813948epcas1p4_;
+        Tue, 21 Apr 2020 06:42:49 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.158]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 495vBt3FRVzMqYlv; Tue, 21 Apr
+        2020 06:42:46 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B7.ED.04744.CD59E9E5; Tue, 21 Apr 2020 15:42:36 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20200421064236epcas1p4a1e03e246b97b8e01c7923d3dd82396d~HwpkMFoIz0594905949epcas1p4n;
+        Tue, 21 Apr 2020 06:42:36 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200421064236epsmtrp12299f2592f44a20442326e0b292a7862~HwpkKznP41349313493epsmtrp1y;
+        Tue, 21 Apr 2020 06:42:36 +0000 (GMT)
+X-AuditID: b6c32a38-253ff70000001288-94-5e9e95dca6c2
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        C3.21.04024.CD59E9E5; Tue, 21 Apr 2020 15:42:36 +0900 (KST)
+Received: from [10.113.221.211] (unknown [10.113.221.211]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200421064235epsmtip25a8e4bf1d9357f0efad5d1b8996f0ffa~Hwpj6sA7I2936729367epsmtip2s;
+        Tue, 21 Apr 2020 06:42:35 +0000 (GMT)
+Subject: Re: [PATCH 1/3] drm/exynos: gem: Remove dead-code
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>
+From:   Inki Dae <inki.dae@samsung.com>
+Message-ID: <1412c14b-02d3-5334-8916-887f69b431c7@samsung.com>
+Date:   Tue, 21 Apr 2020 15:47:31 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 21 Apr 2020 14:00:41 +0800
-From:   Can Guo <cang@codeaurora.org>
-To:     Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     robh@kernel.org, devicetree@vger.kernel.org,
-        linux-scsi@vger.kernel.org, krzk@kernel.org, avri.altman@wdc.com,
-        martin.petersen@oracle.com, kwmad.kim@samsung.com,
-        stanley.chu@mediatek.com, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 03/10] scsi: ufs: add quirk to enable host controller
- without hce
-In-Reply-To: <f03a005a77a96d337aa5d532c534577e@codeaurora.org>
-References: <20200417175944.47189-1-alim.akhtar@samsung.com>
- <CGME20200417181012epcas5p2004ac8f0d793abd4d58c096ff490da68@epcas5p2.samsung.com>
- <20200417175944.47189-4-alim.akhtar@samsung.com>
- <f03a005a77a96d337aa5d532c534577e@codeaurora.org>
-Message-ID: <4c262b2a842d1a517248c101896e15ff@codeaurora.org>
-X-Sender: cang@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+In-Reply-To: <20200407134256.9129-2-m.szyprowski@samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKJsWRmVeSWpSXmKPExsWy7bCmru6dqfPiDN5MMre4te4cq8XGGetZ
+        La58fc9mMeP8PiaLtUfuslvMmPySzYHN4373cSaPvi2rGD0+b5ILYI7KtslITUxJLVJIzUvO
+        T8nMS7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wB2qukUJaYUwoUCkgsLlbSt7Mp
+        yi8tSVXIyC8usVVKLUjJKbAs0CtOzC0uzUvXS87PtTI0MDAyBSpMyM64d/sjU0GveMWlqdPY
+        GxiXC3cxcnJICJhIfFv6kxnEFhLYwSgx5WgMhP2JUeLmAt4uRi4g+xujxKPeJUwwDUuX/GWC
+        SOxllHhy+ScLhPOeUWLit1MsIFXCAlYS6++9YwWxRQRKJeb+P8YOYjMLtDNKrD0eD2KzCahK
+        TFxxnw3E5hWwk7g9fS6YzQIU71x9DmgDB4eoQITE6a+JECWCEidnPgEbzylgK3H7zWFGiJHi
+        EreezGeCsOUlmrfOZga5R0LgDJvEjFnP2SGudpGYdWA1C4QtLPHq+BaouJTEy/42doiGZqAH
+        ZpxmgnA6GCXuPr4O1WEssX/pZLCLmAU0Jdbv0ocIK0rs/D0X6go+iXdfe1hBSiQEeCU62oQg
+        SpQkjl28wQhhS0hcWDKRDcL2kNjV3cY+gVFxFpLfZiH5ZxaSf2YhLF7AyLKKUSy1oDg3PbXY
+        sMAEObI3MYKTpJbFDsY953wOMQpwMCrx8G4QmxcnxJpYVlyZe4hRgoNZSYTXQgsoxJuSWFmV
+        WpQfX1Sak1p8iNEUGPITmaVEk/OBCTyvJN7Q1MjY2NjCxNDM1NBQSZx36vWcOCGB9MSS1OzU
+        1ILUIpg+Jg5OqQbGatHZie61p1Xzizpuaa1yu+SZ4mEk8qp+BoPSlTW/+Tn8wrJNFU5bPRCx
+        rjEN4yjc+3nPvPBphxfNOrb3Rqnmmn0MRhn8Td8miiucYp3IGy7FVn5t9zVGqaW39mTx5x9R
+        evbWS/Ds32e/D05wF7/2dQbvYduGmSd+Rnf9C96fubv45/X2D9MdlViKMxINtZiLihMBarJ5
+        z6gDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKLMWRmVeSWpSXmKPExsWy7bCSvO6dqfPiDLZ2cljcWneO1WLjjPWs
+        Fle+vmezmHF+H5PF2iN32S1mTH7J5sDmcb/7OJNH35ZVjB6fN8kFMEdx2aSk5mSWpRbp2yVw
+        Zdy7/ZGpoFe84tLUaewNjMuFuxg5OSQETCSWLvnL1MXIxSEksJtRYs/bV4xdjBxACQmJLVs5
+        IExhicOHiyFK3jJKHJj0lQmkV1jASmL9vXesILaIQKnEq/77jCBFzALtjBJH9nWwQ3QcZpS4
+        c2QdO0gVm4CqxMQV99lAbF4BO4nb0+eC2SxA8c7V58CmigpESDzffoMRokZQ4uTMJywgNqeA
+        rcTtN4fB4swC6hJ/5l1ihrDFJW49mc8EYctLNG+dzTyBUWgWkvZZSFpmIWmZhaRlASPLKkbJ
+        1ILi3PTcYsMCw7zUcr3ixNzi0rx0veT83E2M4MjQ0tzBeHlJ/CFGAQ5GJR7eDWLz4oRYE8uK
+        K3MPMUpwMCuJ8FpoAYV4UxIrq1KL8uOLSnNSiw8xSnOwKInzPs07FikkkJ5YkpqdmlqQWgST
+        ZeLglGpg5DhX5ZW1xbFt91Pvn36fdG8+j/1wKTrh6g/TxSs2hedM8Pywv7A97dA+qWeiac5W
+        e3a9tXSI1jBamLP3sdg/3xSF84ZpX39pSTpU5Lr+NKy+9NJrW4ZaRZ3yNa60pI0uv/YbX05f
+        fJ/lQPeF6sgHJd2tLSJ/rBbzLKi1CzptqL3fJrdU4nm7EktxRqKhFnNRcSIAQd6QIYgCAAA=
+X-CMS-MailID: 20200421064236epcas1p4a1e03e246b97b8e01c7923d3dd82396d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200407134313eucas1p1a86ed9bd35c8f1eb88a09c32fb949335
+References: <20200407134256.9129-1-m.szyprowski@samsung.com>
+        <CGME20200407134313eucas1p1a86ed9bd35c8f1eb88a09c32fb949335@eucas1p1.samsung.com>
+        <20200407134256.9129-2-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 2020-04-21 13:59, Can Guo wrote:
-> On 2020-04-18 01:59, Alim Akhtar wrote:
->> Some host controllers don't support host controller enable via HCE.
->> 
->> Signed-off-by: Seungwon Jeon <essuuj@gmail.com>
->> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> 
-> They are back again finally...
-> 
-> Reviewd-by: Can Guo <cang@codeaurora.org>
 
-Reviewed-by: Can Guo <cang@codeaurora.org>
+
+20. 4. 7. 오후 10:42에 Marek Szyprowski 이(가) 쓴 글:
+> The ExynosDRM page fault handler is never used, drm_gem_mmap()
+> always calls exynos_drm_gem_mmap() function, which perform
+> complete mapping for the given virtual address-space area.
+
+Right, never used. Picked it up.
+
+Thanks,
+Inki Dae
 
 > 
->> ---
->>  drivers/scsi/ufs/ufshcd.c | 76 
->> +++++++++++++++++++++++++++++++++++++--
->>  drivers/scsi/ufs/ufshcd.h |  6 ++++
->>  2 files changed, 80 insertions(+), 2 deletions(-)
->> 
->> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
->> index 0e9704da58bd..ee30ed6cc805 100644
->> --- a/drivers/scsi/ufs/ufshcd.c
->> +++ b/drivers/scsi/ufs/ufshcd.c
->> @@ -3534,6 +3534,52 @@ static int ufshcd_dme_link_startup(struct 
->> ufs_hba *hba)
->>  			"dme-link-startup: error code %d\n", ret);
->>  	return ret;
->>  }
->> +/**
->> + * ufshcd_dme_reset - UIC command for DME_RESET
->> + * @hba: per adapter instance
->> + *
->> + * DME_RESET command is issued in order to reset UniPro stack.
->> + * This function now deal with cold reset.
->> + *
->> + * Returns 0 on success, non-zero value on failure
->> + */
->> +static int ufshcd_dme_reset(struct ufs_hba *hba)
->> +{
->> +	struct uic_command uic_cmd = {0};
->> +	int ret;
->> +
->> +	uic_cmd.command = UIC_CMD_DME_RESET;
->> +
->> +	ret = ufshcd_send_uic_cmd(hba, &uic_cmd);
->> +	if (ret)
->> +		dev_err(hba->dev,
->> +			"dme-reset: error code %d\n", ret);
->> +
->> +	return ret;
->> +}
->> +
->> +/**
->> + * ufshcd_dme_enable - UIC command for DME_ENABLE
->> + * @hba: per adapter instance
->> + *
->> + * DME_ENABLE command is issued in order to enable UniPro stack.
->> + *
->> + * Returns 0 on success, non-zero value on failure
->> + */
->> +static int ufshcd_dme_enable(struct ufs_hba *hba)
->> +{
->> +	struct uic_command uic_cmd = {0};
->> +	int ret;
->> +
->> +	uic_cmd.command = UIC_CMD_DME_ENABLE;
->> +
->> +	ret = ufshcd_send_uic_cmd(hba, &uic_cmd);
->> +	if (ret)
->> +		dev_err(hba->dev,
->> +			"dme-reset: error code %d\n", ret);
->> +
->> +	return ret;
->> +}
->> 
->>  static inline void ufshcd_add_delay_before_dme_cmd(struct ufs_hba 
->> *hba)
->>  {
->> @@ -4251,7 +4297,7 @@ static inline void ufshcd_hba_stop(struct
->> ufs_hba *hba, bool can_sleep)
->>  }
->> 
->>  /**
->> - * ufshcd_hba_enable - initialize the controller
->> + * ufshcd_hba_execute_hce - initialize the controller
->>   * @hba: per adapter instance
->>   *
->>   * The controller resets itself and controller firmware 
->> initialization
->> @@ -4260,7 +4306,7 @@ static inline void ufshcd_hba_stop(struct
->> ufs_hba *hba, bool can_sleep)
->>   *
->>   * Returns 0 on success, non-zero value on failure
->>   */
->> -int ufshcd_hba_enable(struct ufs_hba *hba)
->> +static int ufshcd_hba_execute_hce(struct ufs_hba *hba)
->>  {
->>  	int retry;
->> 
->> @@ -4308,6 +4354,32 @@ int ufshcd_hba_enable(struct ufs_hba *hba)
->> 
->>  	return 0;
->>  }
->> +
->> +int ufshcd_hba_enable(struct ufs_hba *hba)
->> +{
->> +	int ret;
->> +
->> +	if (hba->quirks & UFSHCI_QUIRK_BROKEN_HCE) {
->> +		ufshcd_set_link_off(hba);
->> +		ufshcd_vops_hce_enable_notify(hba, PRE_CHANGE);
->> +
->> +		/* enable UIC related interrupts */
->> +		ufshcd_enable_intr(hba, UFSHCD_UIC_MASK);
->> +		ret = ufshcd_dme_reset(hba);
->> +		if (!ret) {
->> +			ret = ufshcd_dme_enable(hba);
->> +			if (!ret)
->> +				ufshcd_vops_hce_enable_notify(hba, POST_CHANGE);
->> +			if (ret)
->> +				dev_err(hba->dev,
->> +					"Host controller enable failed with non-hce\n");
->> +		}
->> +	} else {
->> +		ret = ufshcd_hba_execute_hce(hba);
->> +	}
->> +
->> +	return ret;
->> +}
->>  EXPORT_SYMBOL_GPL(ufshcd_hba_enable);
->> 
->>  static int ufshcd_disable_tx_lcc(struct ufs_hba *hba, bool peer)
->> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
->> index 53096642f9a8..f8d08cb9caf7 100644
->> --- a/drivers/scsi/ufs/ufshcd.h
->> +++ b/drivers/scsi/ufs/ufshcd.h
->> @@ -529,6 +529,12 @@ enum ufshcd_quirks {
->>  	 * that the interrupt aggregation timer and counter are reset by 
->> s/w.
->>  	 */
->>  	UFSHCI_QUIRK_SKIP_RESET_INTR_AGGR		= 1 << 7,
->> +
->> +	/*
->> +	 * This quirks needs to be enabled if host controller cannot be
->> +	 * enabled via HCE register.
->> +	 */
->> +	UFSHCI_QUIRK_BROKEN_HCE				= 1 << 8,
->>  };
->> 
->>  enum ufshcd_caps {
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c |  1 -
+>  drivers/gpu/drm/exynos/exynos_drm_gem.c | 20 --------------------
+>  drivers/gpu/drm/exynos/exynos_drm_gem.h |  3 ---
+>  3 files changed, 24 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> index 57defeb44522..dbd80f1e4c78 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> @@ -76,7 +76,6 @@ static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
+>  }
+>  
+>  static const struct vm_operations_struct exynos_drm_gem_vm_ops = {
+> -	.fault = exynos_drm_gem_fault,
+>  	.open = drm_gem_vm_open,
+>  	.close = drm_gem_vm_close,
+>  };
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> index d734d9d51762..40514d3dcf60 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> @@ -381,26 +381,6 @@ int exynos_drm_gem_dumb_create(struct drm_file *file_priv,
+>  	return 0;
+>  }
+>  
+> -vm_fault_t exynos_drm_gem_fault(struct vm_fault *vmf)
+> -{
+> -	struct vm_area_struct *vma = vmf->vma;
+> -	struct drm_gem_object *obj = vma->vm_private_data;
+> -	struct exynos_drm_gem *exynos_gem = to_exynos_gem(obj);
+> -	unsigned long pfn;
+> -	pgoff_t page_offset;
+> -
+> -	page_offset = (vmf->address - vma->vm_start) >> PAGE_SHIFT;
+> -
+> -	if (page_offset >= (exynos_gem->size >> PAGE_SHIFT)) {
+> -		DRM_ERROR("invalid page offset\n");
+> -		return VM_FAULT_SIGBUS;
+> -	}
+> -
+> -	pfn = page_to_pfn(exynos_gem->pages[page_offset]);
+> -	return vmf_insert_mixed(vma, vmf->address,
+> -			__pfn_to_pfn_t(pfn, PFN_DEV));
+> -}
+> -
+>  static int exynos_drm_gem_mmap_obj(struct drm_gem_object *obj,
+>  				   struct vm_area_struct *vma)
+>  {
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.h b/drivers/gpu/drm/exynos/exynos_drm_gem.h
+> index 42ec67bc262d..f00044c0b688 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.h
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.h
+> @@ -101,9 +101,6 @@ int exynos_drm_gem_dumb_create(struct drm_file *file_priv,
+>  			       struct drm_device *dev,
+>  			       struct drm_mode_create_dumb *args);
+>  
+> -/* page fault handler and mmap fault address(virtual) to physical memory. */
+> -vm_fault_t exynos_drm_gem_fault(struct vm_fault *vmf);
+> -
+>  /* set vm_flags and we can change the vm attribute to other one at here. */
+>  int exynos_drm_gem_mmap(struct file *filp, struct vm_area_struct *vma);
+>  
+> 
