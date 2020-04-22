@@ -2,189 +2,213 @@ Return-Path: <SRS0=PHE5=6G=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64A62C55185
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 22 Apr 2020 11:41:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A872C5518C
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 22 Apr 2020 15:13:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3895F2082E
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 22 Apr 2020 11:41:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 030BA2082E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 22 Apr 2020 15:13:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="eJBDy+WA"
+	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="tbwhr2e9";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bse4Moqz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725968AbgDVLlO (ORCPT
+        id S1726144AbgDVPNj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 22 Apr 2020 07:41:14 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:35024 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725961AbgDVLlN (ORCPT
+        Wed, 22 Apr 2020 11:13:39 -0400
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:40675 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725779AbgDVPNi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 22 Apr 2020 07:41:13 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200422114111euoutp01318c1ab249b50b32bcab4deae8934951~IIXjGoBju1321313213euoutp01l
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Apr 2020 11:41:11 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200422114111euoutp01318c1ab249b50b32bcab4deae8934951~IIXjGoBju1321313213euoutp01l
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1587555671;
-        bh=jySS9kmEQ6ZJogXBh5srjxo4f8GGmavoMRc37EuQxhE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eJBDy+WAGeUuhHxNHSpnu0z+PWhuy3JFN0lI62hQJC8mdd/AZWyVTmFwQhVgK9h6Y
-         DxkGKsnm/x9GZZNFh21OTy1L/5vQAG+DZINoL5ain8gmrnIDF9ndv3OjHFr/8UIx1C
-         yUgDsRhH+HmRQv/UPAfwGu+5loUSxk+LBsXvYPKw=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200422114110eucas1p2e0fd93fb3efef7553644ac5646bb74c1~IIXivXvGR0670106701eucas1p2r;
-        Wed, 22 Apr 2020 11:41:10 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 30.A0.60698.65D20AE5; Wed, 22
-        Apr 2020 12:41:10 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200422114110eucas1p2ef6b94864d6ad44af66855a9cb003a96~IIXiY5T9Q1480914809eucas1p2L;
-        Wed, 22 Apr 2020 11:41:10 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200422114110eusmtrp29f0e076f47320fb56d076bb7585f124a~IIXiYOID33169431694eusmtrp26;
-        Wed, 22 Apr 2020 11:41:10 +0000 (GMT)
-X-AuditID: cbfec7f5-a29ff7000001ed1a-16-5ea02d568b51
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 14.6C.08375.65D20AE5; Wed, 22
-        Apr 2020 12:41:10 +0100 (BST)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200422114110eusmtip293bb2ff4707d1546c39d676132259cf1~IIXh8eWIH2390223902eusmtip2j;
-        Wed, 22 Apr 2020 11:41:09 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v2 2/3] drm/exynos: gem: rework scatter-list contiguity
- check on prime import
-Date:   Wed, 22 Apr 2020 13:40:59 +0200
-Message-Id: <20200422114059.29477-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <4cfed490-e45c-e559-bfa3-c616e3c00029@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrEIsWRmVeSWpSXmKPExsWy7djPc7phugviDG49NLS4te4cq8XGGetZ
-        La58fc9mMen+BBaLGef3MVmsPXKX3WLG5JdsDuwe97uPM3n0bVnF6PF5k1wAcxSXTUpqTmZZ
-        apG+XQJXxstVW5kK/gtV/P37gq2BcQJ/FyMnh4SAicScG0uZuxi5OIQEVjBKTHz5kxHC+cIo
-        8W3XdhYI5zOjxIVV51hhWj4cfMAEkVjOKNG64i8bXMudz9vBqtgEDCW63naxgdgiAm4STYdn
-        soIUMQtcB5r7YxF7FyMHh7BAvMSiNe4gNSwCqhKL5q9kAwnzCthKHHiQA7FMXmL1hgPMIDan
-        gL3EwbbjYOdJCDxmkzjQdpsNoshF4uqss1C2sMSr41vYIWwZif875zNBNDQzSjw8t5Ydwulh
-        lLjcNIMRospa4s65X2CbmQU0Jdbv0ocIO0qc2fCFCSQsIcAnceOtIEiYGcictG06M0SYV6Kj
-        TQiiWk1i1vF1cGsPXrjEDGF7SBy90AMNxUmMEtNeTGCcwCg/C2HZAkbGVYziqaXFuempxcZ5
-        qeV6xYm5xaV56XrJ+bmbGIEp4fS/4193MO77k3SIUYCDUYmHN0JxQZwQa2JZcWXuIUYJDmYl
-        Ed4ND+fFCfGmJFZWpRblxxeV5qQWH2KU5mBREuc1XvQyVkggPbEkNTs1tSC1CCbLxMEp1cDI
-        YiJ943RlotXZW8KLW9u+On7coGmbFy0ifvG2W1qGNPvsgOedxytDm66/FpW6mzf/Kqe4468f
-        U2tXtqc8eTDVvfAt16k9LJt9deZdO3HkdNoE4x/e7Lobj3p/61b7v/5QYZjQ1erLSnKys+XM
-        uP7XOZh6xN60m8WiVs+Vfc34kJjjt+6b8XVKLMUZiYZazEXFiQB6MOYpBQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrELMWRmVeSWpSXmKPExsVy+t/xe7phugviDK41SVncWneO1WLjjPWs
-        Fle+vmezmHR/AovFjPP7mCzWHrnLbjFj8ks2B3aP+93HmTz6tqxi9Pi8SS6AOUrPpii/tCRV
-        ISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzWyshUSd/OJiU1J7MstUjfLkEv4+WqrUwF/4Uq/v59
-        wdbAOIG/i5GTQ0LAROLDwQdMXYxcHEICSxklnl5aygiRkJE4Oa2BFcIWlvhzrYsNougTo8TS
-        CW/YQBJsAoYSXW+7wGwRAQ+J5m/H2UGKmAVuAxV9mMcCkhAWiJU41ncZbBKLgKrEovkrgRo4
-        OHgFbCUOPMiBWCAvsXrDAWYQm1PAXuJg23FGkBIhATuJg63uExj5FjAyrGIUSS0tzk3PLTbU
-        K07MLS7NS9dLzs/dxAgMz23Hfm7ewXhpY/AhRgEORiUe3gjFBXFCrIllxZW5hxglOJiVRHg3
-        PJwXJ8SbklhZlVqUH19UmpNafIjRFOikicxSosn5wNjJK4k3NDU0t7A0NDc2NzazUBLn7RA4
-        GCMkkJ5YkpqdmlqQWgTTx8TBKdXAGCF6k2GyB/PtegOnKYfqekLnrtfv/PQnMmyvrtDZNTna
-        7TdEHqTM+tncISy3x4VjRZD7b7N3BgmpfycJdn0JWJW++dX+ioYLqgxn/Sy8f62dlyP6NKXu
-        98N7XCV5yw5oTTwvd+OKXf4STvk7P8s9nT6eeJ0wbd7WI/WcIdx1Iuf220jmid+6q8RSnJFo
-        qMVcVJwIANyT+/tlAgAA
-X-CMS-MailID: 20200422114110eucas1p2ef6b94864d6ad44af66855a9cb003a96
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200422114110eucas1p2ef6b94864d6ad44af66855a9cb003a96
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200422114110eucas1p2ef6b94864d6ad44af66855a9cb003a96
-References: <4cfed490-e45c-e559-bfa3-c616e3c00029@samsung.com>
-        <CGME20200422114110eucas1p2ef6b94864d6ad44af66855a9cb003a96@eucas1p2.samsung.com>
+        Wed, 22 Apr 2020 11:13:38 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 91DD65800DD;
+        Wed, 22 Apr 2020 11:13:36 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Wed, 22 Apr 2020 11:13:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=/ftWw9tHlitciumaaug4a1Czrh7
+        36GE3jEJuWgmD3SY=; b=tbwhr2e9IectRyCHdVrQk9XLSpGKO6zc9jdte3x5eKI
+        sy8rt00KrKw5fVcnWrZz6/Vg/BfNuEhQyZwrlAXZNp/4BLSPEhyHMJrev0eiWq9T
+        PGDheS8Aj9EaKjnj2Rj8abBAktYTjqE3jI+E+JPO0Ef3HjnK+qarV8do007cCviK
+        AqBIbW/exkVD7DfQbAmUZAeH+dHfZgRYLkLddFp+1tNhexzgvILBhSpzgQYUxJMp
+        i0Pk5VGK42WWdThariqK+N3mhnRLknIwjhTWzGNdmp+onIo4tAD/2B0i6IE4tW17
+        r4eTEIpARnksJO0lhIrwzomO8Zq/VLJ8MGTkYFE7DGw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=/ftWw9
+        tHlitciumaaug4a1Czrh736GE3jEJuWgmD3SY=; b=bse4Moqzfl9bRZmpeMKwID
+        +adLbBq6TvV7yZkdrsx4H5E6vrYt6vRuT4wmbdHsIwgoZJ2/49MLuCpgJNu7OegP
+        JF6KaANRzn80w0ye3onNFi2jElrQmMu14F3UcUdoBI8XMWWup4zdqsqLAKYLDOGr
+        34YnDDLkzz6s6/rmKzgk1NbXHNjCiQwN8CJa0zZW30Vixn7wiV31o7eH4AbM5mQi
+        3RI1mPho3FdOAqAE2JCqcLcX41rPEbvQrYAX68V9w2kdHmZI2Fy0xC3gvWip6DjT
+        27HC/zTnnYCvHO7L4XCH+Pc0IqmRdinX3cFmc9K1UZUCxEZiE2cmbP5E9hsXjf6A
+        ==
+X-ME-Sender: <xms:Gl-gXghEoq-o-n5nwsG1IKrj0JWzudlgpH6yLlXPty2TyAoB68C_8g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrgeejgdejlecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucfkphepledtrd
+    ekledrieekrdejieenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhl
+    fhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:Gl-gXsQHg22AOERE85yCpjhFXTKZXMp9oVSpayV_m_ygC_0sXGwKfA>
+    <xmx:Gl-gXutctsLbbOSAuoWkag-wuB64l7CIOa8b_-hySmQE9JfsQIgtgg>
+    <xmx:Gl-gXkn1vTZZxkYuwLgB-85wA1D7KCrx7wMTwtD3jCFuYHOUaWUVyg>
+    <xmx:IF-gXggCCQFHcUcvNnWqcdFSVFP7l3urmIa4aTlNEv39JTfX-8TrxQ>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id E8B423280068;
+        Wed, 22 Apr 2020 11:13:29 -0400 (EDT)
+Date:   Wed, 22 Apr 2020 17:13:28 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     Tony Lindgren <tony@atomide.com>,
+        Philipp Rossak <embed3d@gmail.com>,
+        Jonathan Bakker <xc-racer2@live.ca>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        James Hogan <jhogan@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        OpenPVRSGX Linux Driver Group <openpvrsgx-devgroup@letux.org>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com,
+        linux-mips@vger.kernel.org,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v6 00/12] ARM/MIPS: DTS: add child nodes describing the
+ PVRSGX GPU present in some OMAP SoC and JZ4780 (and many more)
+Message-ID: <20200422151328.2oyqz7gqkbunmd6o@gilmour.lan>
+References: <20200415130233.rgn7xrtwqicptke2@gilmour.lan>
+ <C589D06E-435E-4316-AD0A-8498325039E3@goldelico.com>
+ <10969e64-fe1f-d692-4984-4ba916bd2161@gmail.com>
+ <20200420073842.nx4xb3zqvu23arkc@gilmour.lan>
+ <b5a06c19-7a3e-bcb8-5ae3-76901b9c6c35@gmail.com>
+ <20200421112129.zjmkmzo3aftksgka@gilmour.lan>
+ <20200421141543.GU37466@atomide.com>
+ <D9D4D057-A73D-485F-898D-5C05E89C16B7@goldelico.com>
+ <20200422065859.quy6ane5v7vsy5tf@gilmour.lan>
+ <1AA57A0C-48E6-49BB-BB9A-2AAFFB371BCD@goldelico.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rleqzgonq2kd6jcq"
+Content-Disposition: inline
+In-Reply-To: <1AA57A0C-48E6-49BB-BB9A-2AAFFB371BCD@goldelico.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Explicitly check if the imported buffer has been mapped as contiguous in
-the DMA address space, what is required by all Exynos DRM CRTC drivers.
-While touching this, set buffer flags depending on the availability of
-the IOMMU.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-v2:
-- reworked a check for sgt->nents
-- added a comment about a scatter-list contiguity check
-- removed additional 'return ERR_PTR(-EINVAL)' accidentaly left after debugging
----
- drivers/gpu/drm/exynos/exynos_drm_gem.c | 42 ++++++++++++++++++++++++---------
- 1 file changed, 31 insertions(+), 11 deletions(-)
+--rleqzgonq2kd6jcq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-index 40514d3..f136efb 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-@@ -458,6 +458,29 @@ struct drm_gem_object *
- 	int npages;
- 	int ret;
- 
-+	if (sgt->nents < 1)
-+		return ERR_PTR(-EINVAL);
-+
-+	/*
-+	 * Check if the provided buffer has been mapped as contiguous
-+	 * into DMA address space.
-+	 */
-+	if (sgt->nents > 1) {
-+		dma_addr_t next_addr = sg_dma_address(sgt->sgl);
-+		struct scatterlist *s;
-+		unsigned int i;
-+
-+		for_each_sg(sgt->sgl, s, sgt->nents, i) {
-+			if (!sg_dma_len(s))
-+				break;
-+			if (sg_dma_address(s) != next_addr) {
-+				DRM_ERROR("buffer chunks must be mapped contiguously");
-+				return ERR_PTR(-EINVAL);
-+			}
-+			next_addr = sg_dma_address(s) + sg_dma_len(s);
-+		}
-+	}
-+
- 	exynos_gem = exynos_drm_gem_init(dev, attach->dmabuf->size);
- 	if (IS_ERR(exynos_gem)) {
- 		ret = PTR_ERR(exynos_gem);
-@@ -480,18 +503,15 @@ struct drm_gem_object *
- 
- 	exynos_gem->sgt = sgt;
- 
--	if (sgt->nents == 1) {
--		/* always physically continuous memory if sgt->nents is 1. */
--		exynos_gem->flags |= EXYNOS_BO_CONTIG;
--	} else {
--		/*
--		 * this case could be CONTIG or NONCONTIG type but for now
--		 * sets NONCONTIG.
--		 * TODO. we have to find a way that exporter can notify
--		 * the type of its own buffer to importer.
--		 */
-+	/*
-+	 * Buffer has been mapped as contiguous into DMA address space,
-+	 * but if there is IOMMU, it can be either CONTIG or NONCONTIG.
-+	 * We assume a simplified logic below:
-+	 */
-+	if (is_drm_iommu_supported(dev))
- 		exynos_gem->flags |= EXYNOS_BO_NONCONTIG;
--	}
-+	else
-+		exynos_gem->flags |= EXYNOS_BO_CONTIG;
- 
- 	return &exynos_gem->base;
- 
--- 
-1.9.1
+On Wed, Apr 22, 2020 at 09:10:57AM +0200, H. Nikolaus Schaller wrote:
+> > Am 22.04.2020 um 08:58 schrieb Maxime Ripard <maxime@cerno.tech>:
+> >=20
+> > On Tue, Apr 21, 2020 at 07:29:32PM +0200, H. Nikolaus Schaller wrote:
+> >>=20
+> >>> Am 21.04.2020 um 16:15 schrieb Tony Lindgren <tony@atomide.com>:
+> >>>=20
+> >>> * Maxime Ripard <maxime@cerno.tech> [200421 11:22]:
+> >>>> On Tue, Apr 21, 2020 at 11:57:33AM +0200, Philipp Rossak wrote:
+> >>>>> I had a look on genpd and I'm not really sure if that fits.
+> >>>>>=20
+> >>>>> It is basically some bit that verify that the clocks should be enab=
+led or
+> >>>>> disabled.
+> >>>>=20
+> >>>> No, it can do much more than that. It's a framework to control the S=
+oCs power
+> >>>> domains, so clocks might be a part of it, but most of the time it's =
+going to be
+> >>>> about powering up a particular device.
+> >>>=20
+> >>> Note that on omaps there are actually SoC module specific registers.
+> >>=20
+> >> Ah, I see. This is of course a difference that the TI glue logic has
+> >> its own registers in the same address range as the sgx and this can't
+> >> be easily handled by a common sgx driver.
+> >>=20
+> >> This indeed seems to be unique with omap.
+> >>=20
+> >>> And there can be multiple devices within a single target module on
+> >>> omaps. So the extra dts node and device is justified there.
+> >>>=20
+> >>> For other SoCs, the SGX clocks are probably best handled directly
+> >>> in pvr-drv.c PM runtime functions unless a custom hardware wrapper
+> >>> with SoC specific registers exists.
+> >>=20
+> >> That is why we need to evaluate what the better strategy is.
+> >>=20
+> >> So we have
+> >> a) omap which has a custom wrapper around the sgx
+> >> b) others without, i.e. an empty (or pass-through) wrapper
+> >>=20
+> >> Which one do we make the "standard" and which one the "exception"?
+> >> What are good reasons for either one?
+> >>=20
+> >>=20
+> >> I am currently in strong favour of a) being standard because it
+> >> makes the pvr-drv.c simpler and really generic (independent of
+> >> wrapping into any SoC).
+> >>=20
+> >> This will likely avoid problems if we find more SoC with yet another
+> >> scheme how the SGX clocks are wrapped.
+> >>=20
+> >> It also allows to handle different number of clocks (A31 seems to
+> >> need 4, Samsung, A83 and JZ4780 one) without changing the sgx bindings
+> >> or making big lists of conditionals. This variance would be handled
+> >> outside the sgx core bindings and driver.
+> >=20
+> > I disagree. Every other GPU binding and driver is handling that just fi=
+ne, and
+> > the SGX is not special in any case here.
+>=20
+> Can you please better explain this? With example or a description
+> or a proposal?
 
+I can't, I don't have any knowledge about this GPU.
+
+> I simply do not have your experience with "every other GPU" as you have.
+> And I admit that I can't read from your statement what we should do
+> to bring this topic forward.
+>=20
+> So please make a proposal how it should be in your view.
+
+If you need some inspiration, I guess you could look at the mali and vivante
+bindings once you have an idea of what the GPU needs across the SoCs it's
+integrated in.
+
+Maxime
+
+--rleqzgonq2kd6jcq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHQEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXqBfGAAKCRDj7w1vZxhR
+xVRsAPYpkPvaPx/Gv4bZtD3Q7LlR8I4ICX5CAiGURBKX85mvAQCaSeZMVEC2ANUR
+ZQ5hvxKQcP4oYw7VwmIsM46WtpHQDg==
+=lYBS
+-----END PGP SIGNATURE-----
+
+--rleqzgonq2kd6jcq--
