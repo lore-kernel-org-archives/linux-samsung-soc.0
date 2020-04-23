@@ -2,55 +2,71 @@ Return-Path: <SRS0=6ftd=6H=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA41EC55193
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Apr 2020 15:46:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE2ABC54FCB
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Apr 2020 20:36:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CACF220781
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Apr 2020 15:46:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88BEE20784
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 23 Apr 2020 20:36:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="DrKJ9fNz"
+	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="Fn2d1x+/";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="X5O3GV4K"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729231AbgDWPqo (ORCPT
+        id S1726056AbgDWUgy (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 23 Apr 2020 11:46:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55922 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729176AbgDWPqo (ORCPT
+        Thu, 23 Apr 2020 16:36:54 -0400
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:59747 "EHLO
+        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725877AbgDWUgx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 23 Apr 2020 11:46:44 -0400
-Received: from mo6-p02-ob.smtp.rzone.de (mo6-p02-ob.smtp.rzone.de [IPv6:2a01:238:20a:202:5302::9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F720C09B040;
-        Thu, 23 Apr 2020 08:46:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1587656801;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=ybxxfVp12h/EJrmfUJdRJSGTmKH3W7lZYEApLFlERWY=;
-        b=DrKJ9fNz8WxLH/lxvzqH+AMSam9tu2FhRn1b+DxbazOFoXyS93+afrGgpwefT4t6QC
-        /4k7b51LsSANcN/xVgHDnGc9MzXErXxCPQeHuiElt1upkXq+nvKp9tSqjV5+k1mBfxS3
-        gAkvjEQjZJNlc0Yw5yj/hGkMx2dR3nhn+e4WqxPIVEcRt6S9melWvYcV+2h+8m47DJTF
-        K+utEk2anK6Ms4Lb8UzV2Zj3a1+UkWzb9yq/ZlLTRil6UF5EXzHTWRMjAccLpfo3BT1D
-        qJ7BmeYa+eOlmSQs2uTl6iNBaTpywNCpLK63P2AacOcUu0H5TmLKFwDnMPpJpV6cP8ls
-        aO1A==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBp5hRw/qOxWRk4dCysOfl5tOw33QtdTbGcCRJGxnkq3ByzlXOnoXby"
-X-RZG-CLASS-ID: mo00
-Received: from [IPv6:2001:16b8:2692:1500:61a3:e550:2224:7950]
-        by smtp.strato.de (RZmta 46.6.2 AUTH)
-        with ESMTPSA id R0acebw3NFjv7lw
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-        (Client did not present a certificate);
-        Thu, 23 Apr 2020 17:45:57 +0200 (CEST)
-Subject: Re: [PATCH v6 00/12] ARM/MIPS: DTS: add child nodes describing the PVRSGX GPU present in some OMAP SoC and JZ4780 (and many more)
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Content-Type: text/plain; charset=us-ascii
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <43688597-4b99-8f4d-9ad5-548ddff07f52@baylibre.com>
-Date:   Thu, 23 Apr 2020 17:45:55 +0200
-Cc:     Maxime Ripard <maxime@cerno.tech>,
+        Thu, 23 Apr 2020 16:36:53 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 4725158030B;
+        Thu, 23 Apr 2020 16:36:49 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Thu, 23 Apr 2020 16:36:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=Iubs+KISuHQ9VGeGg+cCp2xJSoU
+        PuYVrphsLXiw5SFg=; b=Fn2d1x+/36iC3PGOTy5Cp2hHxpxTsbZXqEhCoWSU6fC
+        Bh2uGjm8NzjGSIGOhUdI6jIFnaNlWlK/KNK0SO5YgDVKAzn9T8T4ClUJFkXWcI/L
+        SrSHQwn+ywvkFIfMqeLT0tGOBnOJCf3GhECZDwsJXcOOkFJEZ5PO3Hg2TEHxt0Ji
+        XXCiuCgBhfrNpF+Q4qgbmo0zisCBtKA1VkhzWKnI3UD+PuwtHOjrTI/5OtSrja0W
+        0xNGXCJ8ebZmLgh5iBcj0TUAG6xzsfP58vDHg4dtrP2Je050KddpO2V/+DEw4INi
+        HTrBFJ8cS/EHw4cjf9yqCM3mqKMdTGT34HW7z+GoIEQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=Iubs+K
+        ISuHQ9VGeGg+cCp2xJSoUPuYVrphsLXiw5SFg=; b=X5O3GV4KFSkNBZXwi0gXe/
+        Az/rwjNsPXRiOZeR/DIobQrkLfux9vKSBPW2Q7Wch/uG7VG9fPmUEU8Kyi30iPJx
+        6rZFq866Z4AieJ/VQuUcLR0mV0pZLLxlv3ciLBDB/NhY/AvDjNVAvMjJxXjdCS6K
+        u41z1fKpjs0erRbydhTf6J8lDzfZB7FSCFB8idsmUzAcZtLjWHuo6bbN3Dpzw+lv
+        Xc1y1zz0vGYrNGmVPq0/4/8tCV+p/V1vxI12KqIjNELt9KhmHqpZLjuh1WSuMbeZ
+        mWk/VcSn4C4MRsWk0RVAApy8MoL8ZK52EhiDYG9eBvoyLIChI6lqSRyqMDdlQG7g
+        ==
+X-ME-Sender: <xms:XfyhXtOzOOFFqaB2EmGtuUz4AXihlYYhfPH3NPly7o2BbKivw_911Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrgeelgdduudejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecukfhppeeltd
+    drkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
+    lhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:XfyhXkMYXTgP_dAi3mHrR2OLJMQgltfV-ZrcUbSZbYi-eyL9XqlWvQ>
+    <xmx:XfyhXnRz3tzFqWtdmt2KW_Iy-oRzKWX5FUFdLIFvNbNly0q4eowTmw>
+    <xmx:XfyhXuBpYPyCR1QitUY5OuM1TQtkKBdD8mz-YseHbvORsD3x-nC7Qg>
+    <xmx:YfyhXklTjVJsrJRboZpeYnKPAGn0Xr4Sox5XlaeG8MS2WPQdNjQpdg>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id CD893328005E;
+        Thu, 23 Apr 2020 16:36:44 -0400 (EDT)
+Date:   Thu, 23 Apr 2020 22:36:42 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Tony Lindgren <tony@atomide.com>,
         James Hogan <jhogan@kernel.org>,
@@ -74,77 +90,110 @@ Cc:     Maxime Ripard <maxime@cerno.tech>,
         OpenPVRSGX Linux Driver Group <openpvrsgx-devgroup@letux.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Ralf Baechle <ralf@linux-mips.org>,
-        =?utf-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
         kernel@pyra-handheld.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <71F2F964-32C7-41E6-8F1A-A73161EA1BB3@goldelico.com>
-References: <20200415130233.rgn7xrtwqicptke2@gilmour.lan> <C589D06E-435E-4316-AD0A-8498325039E3@goldelico.com> <10969e64-fe1f-d692-4984-4ba916bd2161@gmail.com> <20200420073842.nx4xb3zqvu23arkc@gilmour.lan> <b5a06c19-7a3e-bcb8-5ae3-76901b9c6c35@gmail.com> <20200421112129.zjmkmzo3aftksgka@gilmour.lan> <20200421141543.GU37466@atomide.com> <D9D4D057-A73D-485F-898D-5C05E89C16B7@goldelico.com> <20200422065859.quy6ane5v7vsy5tf@gilmour.lan> <1AA57A0C-48E6-49BB-BB9A-2AAFFB371BCD@goldelico.com> <20200422151328.2oyqz7gqkbunmd6o@gilmour.lan> <07923B6C-4CCD-4B81-A98F-E19C43412A89@goldelico.com> <43688597-4b99-8f4d-9ad5-548ddff07f52@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-X-Mailer: Apple Mail (2.3124)
+Subject: Re: [PATCH v6 00/12] ARM/MIPS: DTS: add child nodes describing the
+ PVRSGX GPU present in some OMAP SoC and JZ4780 (and many more)
+Message-ID: <20200423203642.35ms4aarnv65tfp5@gilmour.lan>
+References: <b5a06c19-7a3e-bcb8-5ae3-76901b9c6c35@gmail.com>
+ <20200421112129.zjmkmzo3aftksgka@gilmour.lan>
+ <20200421141543.GU37466@atomide.com>
+ <D9D4D057-A73D-485F-898D-5C05E89C16B7@goldelico.com>
+ <20200422065859.quy6ane5v7vsy5tf@gilmour.lan>
+ <1AA57A0C-48E6-49BB-BB9A-2AAFFB371BCD@goldelico.com>
+ <20200422151328.2oyqz7gqkbunmd6o@gilmour.lan>
+ <07923B6C-4CCD-4B81-A98F-E19C43412A89@goldelico.com>
+ <43688597-4b99-8f4d-9ad5-548ddff07f52@baylibre.com>
+ <71F2F964-32C7-41E6-8F1A-A73161EA1BB3@goldelico.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="goo77pyirkr5psgn"
+Content-Disposition: inline
+In-Reply-To: <71F2F964-32C7-41E6-8F1A-A73161EA1BB3@goldelico.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Neil,
 
-> Am 23.04.2020 um 17:00 schrieb Neil Armstrong =
-<narmstrong@baylibre.com>:
->> One thing we can learn is that "core" seems to be a de facto standard=20=
+--goo77pyirkr5psgn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> for the core clock-name. An alternative "gpu" is used by =
-nvidia,gk20a.txt.
+On Thu, Apr 23, 2020 at 05:45:55PM +0200, H. Nikolaus Schaller wrote:
+> > Am 23.04.2020 um 17:00 schrieb Neil Armstrong <narmstrong@baylibre.com>:
+> >> One thing we can learn is that "core" seems to be a de facto standard=
+=20
+> >> for the core clock-name. An alternative "gpu" is used by nvidia,gk20a.=
+txt.
+> >=20
+> > Usually IPs needs a few clocks:
+> > - pclk or apb or reg: the clock clocking the "slave" bus to serve the r=
+egisters
+> > - axi or bus or ahb: the bus clocking the the "master" bus to get data =
+=66rom system memory
+> > - core: the actual clock feeding the GPU logic
 >=20
-> Usually IPs needs a few clocks:
-> - pclk or apb or reg: the clock clocking the "slave" bus to serve the =
-registers
-> - axi or bus or ahb: the bus clocking the the "master" bus to get data =
-from system memory
-> - core: the actual clock feeding the GPU logic
-
-And the sgx544 seems to have two such clocks.
-
-> Sometimes you have a single clock for slave and master bus.
+> And the sgx544 seems to have two such clocks.
 >=20
-> But you can also have separate clocks for shader cores, .. this =
-depends on the IP and it's architecture.
-> The IP can also have memories with separate clocks, etc...
-
-Indeed.
-
-> But all these clocks can be source by an unique clock on a SoC, but =
-different on another
-> SoC, this is why it's important to list them all, even optional.
+> > Sometimes you have a single clock for slave and master bus.
+> >=20
+> > But you can also have separate clocks for shader cores, .. this depends=
+ on the IP and it's architecture.
+> > The IP can also have memories with separate clocks, etc...
 >=20
-> You'll certainly have at least a reset signal, and a power domain, =
-these should exist and be optional.
+> Indeed.
+>=20
+> > But all these clocks can be source by an unique clock on a SoC, but dif=
+ferent on another
+> > SoC, this is why it's important to list them all, even optional.
+> >=20
+> > You'll certainly have at least a reset signal, and a power domain, thes=
+e should exist and be optional.
+>=20
+> Well, they exist only as hints in block diagrams of some SoC data
+> sheets (so we do not know if they represent the imagination
+> definitions) and the current driver code doesn't make use of it. Still
+> the gpu core works.
+>=20
+> So I do not see any urgent need to add a complete list to the bindings
+> now.
+>=20
+> Unless some special SoC integration makes use of them. Then it is IMHO
+> easier to extend the bindings by a follow-up patch than now thinking
+> about all potential options and bloating the bindings with things we
+> (the open source community) doesn't and can't know.
+>=20
+> My goal is to keep the bindings as minimalistic as possible. And reset
+> lines and power domains are (at least for those we have in the works)
+> not needed to make working systems.
+>=20
+> Therefore, for clocks I also would start with a minimalistic approach
+> for a single optional GPU core clock and leave out reset and power
+> completely.
 
-Well, they exist only as hints in block diagrams of some SoC data sheets
-(so we do not know if they represent the imagination definitions) and =
-the
-current driver code doesn't make use of it. Still the gpu core works.
+Like I said above, the DT is considered an ABI and you'll have to
+maintain backward compatibility (ie, newer kernel running with older
+DT). Therefore, you won't be able to require a new clock, reset or
+power-domain later on for example.
 
-So I do not see any urgent need to add a complete list to the bindings =
-now.
+I guess the question I'm really asking is: since you don't really know
+how the hardware is integrated at the moment, why should we have that
+discussion *now*. It's really not suprising that you don't know yet, so
+I'm not sure why we need to rush in the bindings.
 
-Unless some special SoC integration makes use of them. Then it is IMHO =
-easier
-to extend the bindings by a follow-up patch than now thinking about all
-potential options and bloating the bindings with things we (the open =
-source
-community) doesn't and can't know.
+Maxime
 
-My goal is to keep the bindings as minimalistic as possible. And reset =
-lines
-and power domains are (at least for those we have in the works) not =
-needed
-to make working systems.
+--goo77pyirkr5psgn
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Therefore, for clocks I also would start with a minimalistic approach =
-for
-a single optional GPU core clock and leave out reset and power =
-completely.
+-----BEGIN PGP SIGNATURE-----
 
-BR and thanks,
-Nikolaus
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXqH8WgAKCRDj7w1vZxhR
+xevnAQDosUT6nmUX0+zNQOj7IKsbVGpyycJhdLX1FoaJiEMTHgD/SWTr0aPp/w2C
+TCfnfiPupaeG8u9JV8QMCk/a58o6Xw8=
+=ygqv
+-----END PGP SIGNATURE-----
 
+--goo77pyirkr5psgn--
