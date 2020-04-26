@@ -5,58 +5,58 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
 	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F1CEC55185
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Apr 2020 02:27:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E70C55186
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Apr 2020 02:28:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 67AD820724
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Apr 2020 02:27:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A6E12072B
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Apr 2020 02:28:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726445AbgDZC16 (ORCPT
+        id S1726360AbgDZC1i (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 25 Apr 2020 22:27:58 -0400
-Received: from mail-dm6nam11olkn2060.outbound.protection.outlook.com ([40.92.19.60]:61408
-        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
+        Sat, 25 Apr 2020 22:27:38 -0400
+Received: from mail-bn8nam11olkn2045.outbound.protection.outlook.com ([40.92.20.45]:43072
+        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726384AbgDZC1n (ORCPT
+        id S1726343AbgDZC1g (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 25 Apr 2020 22:27:43 -0400
+        Sat, 25 Apr 2020 22:27:36 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DnyE5OEa2o2IsX3caMVKGKHx8Q35P9pdZtocUlsce85/0o6RxHMNXfWypSqWMR3joc+Wwlcl0FOx8dCgmooNwEYqxAljCkvwmpRtiQnlVApR44xM/ZIZBVGjeVbn4IPYMVRVXB1TUiHFyGyBj7jhkmwP7CgGJqbSMSA6VGG67rDm7D+7LdswiWX1HgZueplLIyoOr/lff2RAVkAmEEmPl8b/5uWY8dgcQSjMEZj18lELkAN2icROlFLDTsN5qEbiltgSk8dyaaFTwQoKdXBSAVio/27aCSdPdPyjYR+Unkbe/viF2D3I1VHXNXWvYRfzwo9j+/nT245beWtCdQbx1g==
+ b=KSHIo/jH9y2S/VxnqmJnzwPnblcK0Ub3bx37En+HHgV8dFfI4lOmM0g6pbp+Mr71xP1L0ZvAbMja5StPX33NIHvPIBUqIZYyo9k4n6uIpEq+iJlcsIz3reWHbVikULwk2wA3+ExItaBnGcHMs1NdkkRZ0UVi31NLBtgdNnKlpjcbw4tr7lkIYC/2Qsrl299/RivkEW0h6SM96pPaS+2zFWfiL77NznllDyiu4KBPvJSOF0Dz3xjnQVxMCximtF55tt3cCv1/pQodLIPeJHYa5f8zU8q9sMZFbnrbGlf1iCM8hE33PdnUEj1y8bIzHEofUcBNoHLPBein2f9+XO38NQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iprQQdz+psQamFkQQrl+dOwSlPAsEpGAalGcxR2NGF0=;
- b=RnFvdwLt+nNcLhZSDHgKh1j/yCg35qd9YyoOMjfdKak641KqJy8hlTaTv62PsKKx/AM/QCcNDwwtpYZaygiy5XMgUsQRLdH3JwaN+nd9Qx5cR6NFJVr0GTUlXjoDWwYE/+traY87qjcu6UC/CcRQMBk1/JyE8fSMAvZYc0T/EGzbrG3uC9ywfM3tu0msHWDbx5RTeIzVeHqYBEXoIOkljxhk3LDTnfTUQUJ4aGLc1l5e/IxeYNfhUdLSlOp4QTmUK6ClqsgncghuM2jKruJNBQohMUh6JrBsn1B/fu1FMSwrnmfhtM2MCWwizUJ0Y83Lk5hwCCOg0zytXxLYBle6NQ==
+ bh=gyhMmAuLLKz3Txu/D7fRrp8L5HG/2Hcsxc3Ddx0+cyU=;
+ b=HeDI9fYpz7QYITnvPzEFc7NSIaSVJ8z/vhkAM5JU16r6vmkj84aqDwEnvVoDormNfZDxBzGkbY0tHjE8gVRzou+mVNX6PzGEhBDMMUzxLbDJJ8+aSWvDJF39vsRs/Pyt3JdDOefsfQDsYgCtNqCwB0hjpHnl0dByEoXH6+dXVY/mKwbKvzjQtaYWSjnoU2Sr6ULXnST0bIvoIAucu8ZAVuBbwvQuV7nV8VW18YwLPKZbViKcuFTZ8Ti3JlNWwMoOXtSCLMwRVkBKQnin6DB+iz433BaXNYtMdeDjR62GgXKymxZZJpWOGpi9f7CSNINsCYjTBQQE1OJJ6siP/GB/1Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=live.ca; dmarc=pass action=none header.from=live.ca; dkim=pass
  header.d=live.ca; arc=none
 Received: from DM6NAM11FT041.eop-nam11.prod.protection.outlook.com
- (2a01:111:e400:fc4d::47) by
- DM6NAM11HT190.eop-nam11.prod.protection.outlook.com (2a01:111:e400:fc4d::182)
+ (2a01:111:e400:fc4d::46) by
+ DM6NAM11HT124.eop-nam11.prod.protection.outlook.com (2a01:111:e400:fc4d::163)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2937.15; Sun, 26 Apr
- 2020 02:27:41 +0000
+ 2020 02:27:34 +0000
 Received: from BN6PR04MB0660.namprd04.prod.outlook.com
  (2a01:111:e400:fc4d::4a) by DM6NAM11FT041.mail.protection.outlook.com
  (2a01:111:e400:fc4d::98) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2937.15 via Frontend
- Transport; Sun, 26 Apr 2020 02:27:41 +0000
-X-IncomingTopHeaderMarker: OriginalChecksum:57D8C8884E97E8FE8297DBF0D73B69E6002A00C14852BA063C16024718656113;UpperCasedChecksum:51447C4D015754B58BDAB4BEEEE3AB8D9383D5D7B8B42C43C02529953DAB7A07;SizeAsReceived:7872;Count:50
+ Transport; Sun, 26 Apr 2020 02:27:34 +0000
+X-IncomingTopHeaderMarker: OriginalChecksum:05EA9E6AB9C491620B9E8440C0337F428FBBFF41D5E8FD18B75C421E32E09B6D;UpperCasedChecksum:BF3F6747AA1159EE60BBBE289AF474DCF082DB893E89179191E39FD0215DE8B5;SizeAsReceived:7885;Count:50
 Received: from BN6PR04MB0660.namprd04.prod.outlook.com
  ([fe80::ad10:4127:4bc8:76fc]) by BN6PR04MB0660.namprd04.prod.outlook.com
  ([fe80::ad10:4127:4bc8:76fc%6]) with mapi id 15.20.2937.020; Sun, 26 Apr 2020
- 02:27:41 +0000
+ 02:27:34 +0000
 From:   Jonathan Bakker <xc-racer2@live.ca>
 To:     kyungmin.park@samsung.com, s.nawrocki@samsung.com,
         mchehab@kernel.org, kgene@kernel.org, krzk@kernel.org,
         linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Jonathan Bakker <xc-racer2@live.ca>
-Subject: [PATCH 09/11] media: exynos4-is: Remove unused struct member input_index
-Date:   Sat, 25 Apr 2020 19:26:48 -0700
-Message-ID: <BN6PR04MB0660C45D4EA577F9D5BD6434A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
+Subject: [PATCH 06/11] media: exynos4-is: Properly set JPEG options when not using CSIS
+Date:   Sat, 25 Apr 2020 19:26:45 -0700
+Message-ID: <BN6PR04MB06606F63C7ACE765B57331A1A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200426022650.10355-1-xc-racer2@live.ca>
 References: <20200426022650.10355-1-xc-racer2@live.ca>
@@ -65,63 +65,70 @@ Content-Type:   text/plain; charset=US-ASCII
 X-ClientProxiedBy: MWHPR17CA0086.namprd17.prod.outlook.com
  (2603:10b6:300:c2::24) To BN6PR04MB0660.namprd04.prod.outlook.com
  (2603:10b6:404:d9::21)
-X-Microsoft-Original-Message-ID: <20200426022650.10355-10-xc-racer2@live.ca>
+X-Microsoft-Original-Message-ID: <20200426022650.10355-7-xc-racer2@live.ca>
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from jon-hp-6570b.telus (2001:569:fb67:7300:9f89:4b96:de0b:cd14) by MWHPR17CA0086.namprd17.prod.outlook.com (2603:10b6:300:c2::24) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2937.13 via Frontend Transport; Sun, 26 Apr 2020 02:27:39 +0000
+Received: from jon-hp-6570b.telus (2001:569:fb67:7300:9f89:4b96:de0b:cd14) by MWHPR17CA0086.namprd17.prod.outlook.com (2603:10b6:300:c2::24) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2937.13 via Frontend Transport; Sun, 26 Apr 2020 02:27:32 +0000
 X-Mailer: git-send-email 2.20.1
-X-Microsoft-Original-Message-ID: <20200426022650.10355-10-xc-racer2@live.ca>
-X-TMN:  [Yb/+40pJkmK9k6MFb5LIWqyQPzAiG99ExrCIB5cRWplWefTrxcoOl01aliaXnh1/]
+X-Microsoft-Original-Message-ID: <20200426022650.10355-7-xc-racer2@live.ca>
+X-TMN:  [P/je1eLt+p1HKCaiMUepc/soCEinAVv6a8+4tZTQTLViEbXGVfMnPX5sd3d8/mfE]
 X-MS-PublicTrafficType: Email
 X-IncomingHeaderCount: 50
 X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-Correlation-Id: 421b692f-a82c-481b-5a17-08d7e98964df
-X-MS-TrafficTypeDiagnostic: DM6NAM11HT190:
+X-MS-Office365-Filtering-Correlation-Id: 4b54d78b-a75b-4b14-cde1-08d7e98960b2
+X-MS-TrafficTypeDiagnostic: DM6NAM11HT124:
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: fmUhbSNWniBEZd5Ie92EGI9/1wtpHUGlaIN83wEq8XzxhGp8N/CRP2FqNV5/tGyPjbrzLQKCjuE9iLlxotSO/4iW9ds4rY10VJ0l4paW19DBFXvuOwz3OXPLd0qs5TqnYWv4alM8lAKYLbKBLkY6/pcyEj+g+OO+sLzMJVGUHGIfqViTmGuoiqnWwygXG6h16poyFsC/+z/i18sCrt2JEw==
+X-Microsoft-Antispam-Message-Info: rPJyK6oYs6gdQIo5y4it0w4/+286hequcDxCOdFnFv/ccdKmDuhVwnkpTxPatWouEaMo/Orm4wzr/Y32+U4NwLQC34FEv7TEKwRszaHaZ3+mJW2OPjw23Ys3m/I+MoKWOIvK75jfSRqiUehDnHAOCHxfijC9lj8il2g+xN5ZliEx38bOqxRx7JOvi6TdSf42fOuoPItXuzVspIMO3cha2Q==
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:0;SRV:;IPV:NLI;SFV:NSPM;H:BN6PR04MB0660.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:;DIR:OUT;SFP:1901;
-X-MS-Exchange-AntiSpam-MessageData: pIezLZspUIKRD0NMKnN1MrQhJk52JnKPKBOlMCkNpwcWm4XHdxfI+FlPBIeOBmKeuzooIgJXbAE9nxP/6EvA6S8YIurXKL4h/v3jgmG0y3Q1/A9MG7YbKTO3RZGdfXDPNBefR/KHnc2j5lQMJBCPf/kunKlxS/eGLsCbJ2tXK/iJTE0e+gX6IkLQMcYG4J2h4PDwMlJJTVIT4XC4okMmag==
+X-MS-Exchange-AntiSpam-MessageData: LVOqoE7YPwnT7loVg6+q3OeLhrSPA0dizyuDbQ9OTRNQxzTnQtVARg9curgpXdg6wXfTlc3Ols5sEuK3mqsyrifPV8wS4pHM4BdYUXTPWUSS+b92Z0nRRxrNnbKJnmHuM1FkCTMR3/eATWOQwyCL4J7lssa3FDNwa5bmegzYKPmERSz9OkR3jnyVb5qxFw3ZfoGQ2ubZ163kdSt0ErPNsA==
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 421b692f-a82c-481b-5a17-08d7e98964df
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Apr 2020 02:27:41.2563
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4b54d78b-a75b-4b14-cde1-08d7e98960b2
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Apr 2020 02:27:34.1615
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
 X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
 X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6NAM11HT190
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6NAM11HT124
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This is no longer used since the conversion to DT
+Commit ee7160e57c98 ("[media] s5p-fimc: Add support for JPEG capture")
+added support for JPEG capture, but missed setting a register when the
+CSIS device wasn't in use.
 
 Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
 ---
- drivers/media/platform/exynos4-is/fimc-core.h | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/media/platform/exynos4-is/fimc-reg.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-core.h b/drivers/media/platform/exynos4-is/fimc-core.h
-index 31f81bcb8483..e4a56232907a 100644
---- a/drivers/media/platform/exynos4-is/fimc-core.h
-+++ b/drivers/media/platform/exynos4-is/fimc-core.h
-@@ -296,7 +296,6 @@ struct fimc_m2m_device {
-  * @buf_index: index for managing the output DMA buffers
-  * @frame_count: the frame counter for statistics
-  * @reqbufs_count: the number of buffers requested in REQBUFS ioctl
-- * @input_index: input (camera sensor) index
-  * @input: capture input type, grp_id of the attached subdev
-  * @user_subdev_api: true if subdevs are not configured by the host driver
-  */
-@@ -317,7 +316,6 @@ struct fimc_vid_cap {
- 	unsigned int			frame_count;
- 	unsigned int			reqbufs_count;
- 	bool				streaming;
--	int				input_index;
- 	u32				input;
- 	bool				user_subdev_api;
- };
+diff --git a/drivers/media/platform/exynos4-is/fimc-reg.c b/drivers/media/platform/exynos4-is/fimc-reg.c
+index 5ce2bdebd424..269a98fca1e8 100644
+--- a/drivers/media/platform/exynos4-is/fimc-reg.c
++++ b/drivers/media/platform/exynos4-is/fimc-reg.c
+@@ -606,6 +606,11 @@ int fimc_hw_set_camera_source(struct fimc_dev *fimc,
+ 	switch (source->fimc_bus_type) {
+ 	case FIMC_BUS_TYPE_ITU_601:
+ 	case FIMC_BUS_TYPE_ITU_656:
++		if (fimc_fmt_is_user_defined(f->fmt->color)) {
++			cfg |= FIMC_REG_CISRCFMT_ITU601_8BIT;
++			break;
++		}
++
+ 		for (i = 0; i < ARRAY_SIZE(pix_desc); i++) {
+ 			if (vc->ci_fmt.code == pix_desc[i].pixelcode) {
+ 				cfg = pix_desc[i].cisrcfmt;
+@@ -707,6 +712,8 @@ int fimc_hw_set_camera_type(struct fimc_dev *fimc,
+ 	case FIMC_BUS_TYPE_ITU_601...FIMC_BUS_TYPE_ITU_656:
+ 		if (source->mux_id == 0) /* ITU-A, ITU-B: 0, 1 */
+ 			cfg |= FIMC_REG_CIGCTRL_SELCAM_ITU_A;
++		if (vid_cap->ci_fmt.code == MEDIA_BUS_FMT_JPEG_1X8)
++			cfg |= FIMC_REG_CIGCTRL_CAM_JPEG;
+ 		break;
+ 	case FIMC_BUS_TYPE_LCD_WRITEBACK_A:
+ 		cfg |= FIMC_REG_CIGCTRL_CAMIF_SELWB;
 -- 
 2.20.1
 
