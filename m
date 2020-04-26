@@ -7,184 +7,129 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
 	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A286C54FCB
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Apr 2020 18:37:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC41AC54FCB
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Apr 2020 18:37:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 55D7B214D8
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Apr 2020 18:37:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E25020A8B
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Apr 2020 18:37:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726405AbgDZSgl (ORCPT
+        id S1726502AbgDZShI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 26 Apr 2020 14:36:41 -0400
-Received: from mail-co1nam11olkn2035.outbound.protection.outlook.com ([40.92.18.35]:10112
+        Sun, 26 Apr 2020 14:37:08 -0400
+Received: from mail-co1nam11olkn2039.outbound.protection.outlook.com ([40.92.18.39]:41807
         "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726398AbgDZSgl (ORCPT
+        id S1726409AbgDZSgm (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 26 Apr 2020 14:36:41 -0400
+        Sun, 26 Apr 2020 14:36:42 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PvqjvSQo9eYJbRnQKSyVz+lPVH/YneWv2bEKDGUh/FK1XC06u9Qmj+xwP9ShJiZvHSW0RPMK9xY/ir8qXl+SYCmrBVj80zbqMMCdwuratH2mBi2dWCs1sxQLlYrGpxGWxHYhc2646QB3D1cseV1n4S8BTM36hPub4wi9e6iXwnZtvJTE7QsnadPUqoxmWXPyGQiRQfvq+63nDvkmnWCDqsBqW4K9+O2BTGAg2rBYAp/ysQr4LbzXTjUfxK/wUA3Op/RdfbNmOdxiWg9Wu/jehfhsT1SUsHayYJ/KWc1iZ4zMRY7yKojUWdOl9jk8JCbBuyRNlDoeVjHpuQFisvTHYg==
+ b=bmUQePHa302rqBAWeQAwp1OIsKGVS2twnUdn5vhBnbS9kPNvoPIwWrf/1EWpdhoEzbU6YFunKTGWfPJ4IAR1tLhIUkWpnGjEm4RRcm6kuSBZz8eEQ3OxhOuzPxp8ipn6/IzUHRPR621VUeGvk2ajW15k6SLVkIqz137F1VLyjGlyuBSiOZ9GnffnAIBnP6d1gGEYQQNAmLY4ILaA1L9V7cm9zil94BglLsynCRlzrx4UXaJvXJcUyyojRAo8hJcJLObFNxSEx1V3mEdxHfJhVf02nnzhg0BwXRYP++JEb9Xz8+cYkKm86nHwfV1sVL5IdatlQFrvZIUTYVJilUTwNA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3ANvzOSC6QBgJ3h9QyuwoRjD/dFEnablZURsNl5Ry/Q=;
- b=JzgV5ee8298hARcMEBBxNlkmfckXj+DU8ljumAsnnWLMJywVbdUmNClHVxTFPf0geY+Lf/EcvA+G+jmAnNXMdOOmFLfp0D9Zyfo1WxS3NG90L5j4OyMsL5f8toGLH8Z2/4AjEfV3iPQfGljnRqXPXywCIq6L8418bv20Nh8V+zfLpCMBqbqM2Ad1gNJwgWGWc/OTNyF26bS5tkSAF/RkPKv41bDwFWjaeRXjWPZeqcrQNnV7xlUuYO5uKCrPXtEpASJgrPvFcuQ9v8SjgMGCnSu50nt6eP4yfY8NljhVcBQtgXA6XKPiBbwrrKWjDhthttPkuZuTlAADhFEFM/R4aQ==
+ bh=VGNu/3xbaNpxsSVgC38hQUUTNLQvJatNnd7VJDjZmo8=;
+ b=kAwGX+rZ1gAWckNQzLhaHDNXRRPNaoqkXMp/H7Jvty2jCMKplfRdBkHq7nwoxHZ/68d/3ve6cH5XcEZmPMBArLBYDuPAdO99mQS7/JmSiA5/CdJWn5TPhcZvH8+4VPkhVfHQQW/1CN8Q8Eyywyl0ozSFbj1xc9VBuReEKaR4yauTYhmGg6IURBMDFABH076BZvPb/QOk5S1rQmHyIFOggJw2v54Y/t6BgHyNjgNZj7QV6HEMR/juo8CnIRauWgPC9q05jHp2sBMSIa31xyzCcBJLVHqZHNIyhVauhBqkSifbJW/+pvuDKlvSgkXghrh/mDW07riKfZd+qhbAJ+peDQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=live.ca; dmarc=pass action=none header.from=live.ca; dkim=pass
  header.d=live.ca; arc=none
 Received: from CO1NAM11FT036.eop-nam11.prod.protection.outlook.com
- (2a01:111:e400:3861::44) by
- CO1NAM11HT181.eop-nam11.prod.protection.outlook.com (2a01:111:e400:3861::187)
+ (2a01:111:e400:3861::43) by
+ CO1NAM11HT216.eop-nam11.prod.protection.outlook.com (2a01:111:e400:3861::194)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2937.15; Sun, 26 Apr
- 2020 18:36:39 +0000
+ 2020 18:36:41 +0000
 Received: from BN6PR04MB0660.namprd04.prod.outlook.com
  (2a01:111:e400:3861::41) by CO1NAM11FT036.mail.protection.outlook.com
  (2a01:111:e400:3861::124) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2937.15 via Frontend
- Transport; Sun, 26 Apr 2020 18:36:39 +0000
-X-IncomingTopHeaderMarker: OriginalChecksum:4034047005717F4C81398863669A381DADEF24AE78B70DF6F03E6C1B3BB9044B;UpperCasedChecksum:E332E393AF75C0DE442CEDA33790EFF753C373611BD052E64E8DB0F9E72704B4;SizeAsReceived:9048;Count:50
+ Transport; Sun, 26 Apr 2020 18:36:41 +0000
+X-IncomingTopHeaderMarker: OriginalChecksum:0FAA18BFDF6FEF50702D1810A579857AC1D3B97FC5E888D4DD16731D088FF30B;UpperCasedChecksum:94698D7E4028FF6EDA7CE0C44A1CEE41E6917A84E305466176DECDF2D878ED5A;SizeAsReceived:7817;Count:50
 Received: from BN6PR04MB0660.namprd04.prod.outlook.com
  ([fe80::ad10:4127:4bc8:76fc]) by BN6PR04MB0660.namprd04.prod.outlook.com
  ([fe80::ad10:4127:4bc8:76fc%6]) with mapi id 15.20.2937.020; Sun, 26 Apr 2020
- 18:36:39 +0000
+ 18:36:41 +0000
 From:   Jonathan Bakker <xc-racer2@live.ca>
 To:     kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Jonathan Bakker <xc-racer2@live.ca>
-Subject: [PATCH 07/13] arm: dts: s5pv210: galaxys: Add si470x fmradio
-Date:   Sun, 26 Apr 2020 11:35:58 -0700
-Message-ID: <BN6PR04MB0660205C8F173BF98B4D0DC1A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
+Cc:     Jonathan Bakker <xc-racer2@live.ca>
+Subject: [PATCH 08/13] arm: dts: s5pv210: aries: Disable pull for vibrator ena GPIO
+Date:   Sun, 26 Apr 2020 11:35:59 -0700
+Message-ID: <BN6PR04MB06608D9568CCAD70636186E4A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200426183604.28494-1-xc-racer2@live.ca>
 References: <20200426183604.28494-1-xc-racer2@live.ca>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
 X-ClientProxiedBy: CO2PR05CA0096.namprd05.prod.outlook.com
  (2603:10b6:104:1::22) To BN6PR04MB0660.namprd04.prod.outlook.com
  (2603:10b6:404:d9::21)
-X-Microsoft-Original-Message-ID: <20200426183604.28494-8-xc-racer2@live.ca>
+X-Microsoft-Original-Message-ID: <20200426183604.28494-9-xc-racer2@live.ca>
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from jon-hp-6570b.telus (2001:569:fb67:7300:9f89:4b96:de0b:cd14) by CO2PR05CA0096.namprd05.prod.outlook.com (2603:10b6:104:1::22) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2958.7 via Frontend Transport; Sun, 26 Apr 2020 18:36:37 +0000
+Received: from jon-hp-6570b.telus (2001:569:fb67:7300:9f89:4b96:de0b:cd14) by CO2PR05CA0096.namprd05.prod.outlook.com (2603:10b6:104:1::22) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2958.7 via Frontend Transport; Sun, 26 Apr 2020 18:36:39 +0000
 X-Mailer: git-send-email 2.20.1
-X-Microsoft-Original-Message-ID: <20200426183604.28494-8-xc-racer2@live.ca>
-X-TMN:  [7JOn8Uv2lYGIafiOEz7enJgYbAB8vFX0wgp8CpG+glcKUP7lRvolmQTR72Xnh63E]
+X-Microsoft-Original-Message-ID: <20200426183604.28494-9-xc-racer2@live.ca>
+X-TMN:  [eL/F/hsHCqqUua+uKmFk550XRqm0dZAYKLj5vRIBTGBKZ+oIY6U7YS+U/JMR3aqh]
 X-MS-PublicTrafficType: Email
 X-IncomingHeaderCount: 50
 X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-Correlation-Id: ecc70036-b410-49b1-e922-08d7ea10c1c2
-X-MS-TrafficTypeDiagnostic: CO1NAM11HT181:
+X-MS-Office365-Filtering-Correlation-Id: 350e0e33-029d-4bc0-741d-08d7ea10c2b1
+X-MS-TrafficTypeDiagnostic: CO1NAM11HT216:
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: htBOo5DI70WIXqNQAbGASwvQOVlFlA9rGHxiDIh9kTdiNPsZfxUXBGpSbJnULAixd9xaJ3z1fFLmiHHOe6qb4iT1DBSUdaK3MATGCYynIdcM1UDcKiELFgULRAEXGIlmwIK7Izi13GrEmt53Z+yl9syVf+vBv+6Gnd3oJa4LUFchJsdZ7YjNvDEi3BJhvp5IMR48KvtrTO6ZgQrr48NbGA==
+X-Microsoft-Antispam-Message-Info: G1ynnP0il1ar7GiZTSBJjovVRK7t3MCkFr8u6BuObsn+Hqj6efBmcRnebmhMGjoXN+irHSiRLHrCV5b9MRAg9H9wX4Q945I4opdjfMpU3Qmo3I5sA8FL49SiyeOuk6cjMAXchN9dJTeO2ylRXLmJJ4mds7aLg63t7/BaPMF2+7idVM59zy5lfBG8gp4ia4gfCUzXlbeI90VjSNfrj+4L9g==
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:0;SRV:;IPV:NLI;SFV:NSPM;H:BN6PR04MB0660.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:;DIR:OUT;SFP:1901;
-X-MS-Exchange-AntiSpam-MessageData: +8XU+TalfQQ99O3Kn5SgSfEtBScItEvMXVHXv/z65E3aK+5KCqwZi3eN5NzuLP6Q58hu1iZo9tRRmlXAQrS7G7fWzZuiTx/7zmmbm7DZbD91t6wQ/HvIeUplfjRc9eA3lYzSZkyizb1LQEkA44gD/Veeh6VHw2unf0zyJzb+wnr6iE530WvAo2l50oGzw0amYqDDHK6iPmFcGpFtiJFnZA==
+X-MS-Exchange-AntiSpam-MessageData: JcEHELp7K/VZt5WCr8t7lYl8nlOfql8QlszdlcOx78QyRZyK5jC0fHIm7q8b0TlffFEBq0px4Acj5emlYmWzPnWbFEVDVsscRhNW8Nx3bHGE0VFYHTPeN79otJXGvpar5yqQ6hRDTGS0N2dwiB+Q7imNSyK6E/XngHrEHmC9YhFy2iIUf2admG2qtRKvF0jwDysAzH6VZt0sz13yZqETPQ==
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ecc70036-b410-49b1-e922-08d7ea10c1c2
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Apr 2020 18:36:39.2794
+X-MS-Exchange-CrossTenant-Network-Message-Id: 350e0e33-029d-4bc0-741d-08d7ea10c2b1
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Apr 2020 18:36:40.9757
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
 X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
 X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1NAM11HT181
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1NAM11HT216
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+The enable GPIO for the fixed vibrator regulator shouldn't be
+pulled in one direction or the other.
 
-Add support for the Silicon Labs si4709 fmradio, which can be found
-on Galaxy S GT-i9000 (but not most other Galaxy S variants).
-
-Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
 ---
- arch/arm/boot/dts/s5pv210-aries.dtsi  |  2 +-
- arch/arm/boot/dts/s5pv210-galaxys.dts | 47 +++++++++++++++++++++++++++
- 2 files changed, 48 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/s5pv210-aries.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/arch/arm/boot/dts/s5pv210-aries.dtsi b/arch/arm/boot/dts/s5pv210-aries.dtsi
-index ef966d13d83d..12575d64aa06 100644
+index 12575d64aa06..f30bdcb9c083 100644
 --- a/arch/arm/boot/dts/s5pv210-aries.dtsi
 +++ b/arch/arm/boot/dts/s5pv210-aries.dtsi
-@@ -11,7 +11,7 @@
- / {
- 	compatible = "samsung,aries", "samsung,s5pv210";
- 
--	aliases {
-+	aliases: aliases {
- 		i2c4 = &i2c_sound;
- 		i2c5 = &i2c_accel;
- 		i2c6 = &i2c_pmic;
-diff --git a/arch/arm/boot/dts/s5pv210-galaxys.dts b/arch/arm/boot/dts/s5pv210-galaxys.dts
-index 2eff1e66a2a5..f5c13eb8ae71 100644
---- a/arch/arm/boot/dts/s5pv210-galaxys.dts
-+++ b/arch/arm/boot/dts/s5pv210-galaxys.dts
-@@ -49,12 +49,59 @@
- 			wakeup-source;
- 		};
- 	};
-+
-+	i2c_fmradio: i2c-gpio-8 {
-+		compatible = "i2c-gpio";
-+		sda-gpios = <&gpd1 2 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		scl-gpios = <&gpd1 3 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		i2c-gpio,delay-us = <2>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
+@@ -52,6 +52,9 @@
+ 		regulator-name = "vibrator-en";
+ 		enable-active-high;
+ 		gpio = <&gpj1 1 GPIO_ACTIVE_HIGH>;
 +
 +		pinctrl-names = "default";
-+		pinctrl-0 = <&fm_i2c_pins>;
-+
-+		fmradio@10 {
-+			compatible = "silabs,si470x";
-+			reg = <0x10>;
-+			interrupt-parent = <&gpj2>;
-+			interrupts = <4 IRQ_TYPE_EDGE_FALLING>;
-+			reset-gpios = <&gpj2 5 GPIO_ACTIVE_HIGH>;
-+
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&fm_irq &fm_rst>;
-+		};
-+	};
-+};
-+
-+&aliases {
-+	i2c8 = &i2c_fmradio;
- };
++		pinctr-0 = <&vibrator_ena>;
+ 	};
  
- &pinctrl0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sleep_cfg>;
+ 	touchkey_vdd: regulator-fixed-1 {
+@@ -642,6 +645,12 @@
+ 		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
+ 	};
  
-+	fm_i2c_pins: fm-i2c-pins {
-+		samsung,pins = "gpd1-2", "gpd1-3";
++	vibrator_ena: vibrator-ena {
++		samsung,pins = "gpj1-1";
 +		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
 +		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
 +	};
 +
-+	fm_irq: fm-irq {
-+		samsung,pins = "gpj2-4";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
-+		samsung,pin-pud = <S3C64XX_PIN_PULL_UP>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
-+
-+	fm_rst: fm-rst {
-+		samsung,pins = "gpj2-5";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-+		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
-+
- 	massmemory_en: massmemory-en {
- 		samsung,pins = "gpj2-7";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
+ 	touchkey_i2c_pins: touchkey-i2c-pins {
+ 		samsung,pins = "gpj3-0", "gpj3-1";
+ 		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
 -- 
 2.20.1
 
