@@ -2,190 +2,266 @@ Return-Path: <SRS0=zHfB=6K=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=FORGED_MUA_MOZILLA,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5769DC55194
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Apr 2020 14:57:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80185C54FCB
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Apr 2020 15:54:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 406BA2078E
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Apr 2020 14:57:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 614D02074F
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Apr 2020 15:54:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CXgp4Y+q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726157AbgDZO5W (ORCPT
+        id S1726157AbgDZPyw (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 26 Apr 2020 10:57:22 -0400
-Received: from mail-bn8nam11olkn2035.outbound.protection.outlook.com ([40.92.20.35]:6657
-        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726152AbgDZO5W (ORCPT
+        Sun, 26 Apr 2020 11:54:52 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:16404 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726155AbgDZPyv (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 26 Apr 2020 10:57:22 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ay5aXiPmGAU6gIRc5Fw8oYXPk6MUvy9D8u6NdUxVEVZYoEQoGdfTaySDVZZ3ItQchb8oMYnChTW9wG1ZjKCQOigUwSVNZz70mpFeBjxsxFv9grdwgMPC/cc41emNEDSa0LTsBcZgpnhZKWKTS7k6AXEftHkTF1Ex5DnMbfrZSqZ5LYsyfHXurW1MJLk6kKm/fAL/2ku7AZtcW/Ga/ANPudN6eo0zRl/otG4o/V11glnJDyd9xZbQYrk1aeeoBXPd47CBMTIYYg1XA6i/YybDGQFOI4bRZiox09WCLmKYqZT2DqrylPEmsmEaNUTIffm+poV5/BMhQr2BhwYtiN6U8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rCl3rY0wkUejQntKOCRLgSoEtSbDA20DEt0Lp6EAeQw=;
- b=XcydcxaB3GWWwBg0qhKGybdwe+RfKugK7++6EZoTXxit5PUP2Tka24Vf1SyXeIZTcly1u6ywzx9j47jCjranR1d6s/UdgvsHW6GR6Yfjik8Xq1GW5dodHLJicGnN9vU+1/zziYx307tz/zzHOkTQz6gr6xsL17mUiR4RUgM0Zx0EsG15vEBhGQKXKVjsTd4tsMPG245r1gI9J94S/ADWrm5DFl/aaTA4wSJpeZfAJNbkts/msCXwF2XJH69Jl7vfVDKbzI485GpRQoZDp7ZRXCF3EqHl6CCIaCAe3u0Ejs8swsvxDKfa4TtCY3uWDF56z32l2G0tl7KSHIB6gRSyOQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=live.ca; dmarc=pass action=none header.from=live.ca; dkim=pass
- header.d=live.ca; arc=none
-Received: from CO1NAM11FT032.eop-nam11.prod.protection.outlook.com
- (2a01:111:e400:3861::47) by
- CO1NAM11HT148.eop-nam11.prod.protection.outlook.com (2a01:111:e400:3861::275)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2937.15; Sun, 26 Apr
- 2020 14:57:17 +0000
-Received: from BN6PR04MB0660.namprd04.prod.outlook.com
- (2a01:111:e400:3861::4d) by CO1NAM11FT032.mail.protection.outlook.com
- (2a01:111:e400:3861::218) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2937.15 via Frontend
- Transport; Sun, 26 Apr 2020 14:57:17 +0000
-X-IncomingTopHeaderMarker: OriginalChecksum:E81CF6BFCFE073454522CA0EAAF72EEBFDD4626B33AA54E33244858FAA4E44A9;UpperCasedChecksum:B59FE0D74AE6107E11CB223A88241A401D292CCDCAC3F731F6A2F9AC6F7CB0FE;SizeAsReceived:9919;Count:50
-Received: from BN6PR04MB0660.namprd04.prod.outlook.com
- ([fe80::ad10:4127:4bc8:76fc]) by BN6PR04MB0660.namprd04.prod.outlook.com
- ([fe80::ad10:4127:4bc8:76fc%6]) with mapi id 15.20.2937.020; Sun, 26 Apr 2020
- 14:57:17 +0000
-Subject: Re: [PATCH v7 08/12] arm: dts: s5pv210: Add node for SGX 540
-To:     Paul Cercueil <paul@crapouillou.net>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paulburton@kernel.org>,
-        James Hogan <jhogan@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Philipp Rossak <embed3d@gmail.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        openpvrsgx-devgroup@letux.org, letux-kernel@openphoenux.org,
-        kernel@pyra-handheld.com, linux-mips@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-References: <cover.1587760454.git.hns@goldelico.com>
- <3fd18c747426e15fd1f3500b9c4adce2db9ddd0c.1587760454.git.hns@goldelico.com>
- <NYBE9Q.YH08US7A7DC3@crapouillou.net>
-From:   Jonathan Bakker <xc-racer2@live.ca>
-Message-ID: <BN6PR04MB0660A180D2069848E5C03D7EA3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
-Date:   Sun, 26 Apr 2020 07:57:12 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
-In-Reply-To: <NYBE9Q.YH08US7A7DC3@crapouillou.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: CO2PR05CA0059.namprd05.prod.outlook.com
- (2603:10b6:102:2::27) To BN6PR04MB0660.namprd04.prod.outlook.com
- (2603:10b6:404:d9::21)
-X-Microsoft-Original-Message-ID: <c7fba899-d520-559f-d14c-1d92f629329e@live.ca>
+        Sun, 26 Apr 2020 11:54:51 -0400
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200426155446epoutp0108d6f431aad3bb367bccb4986222a6e8~JaaGBtZ5C0180601806epoutp01B
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Apr 2020 15:54:46 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200426155446epoutp0108d6f431aad3bb367bccb4986222a6e8~JaaGBtZ5C0180601806epoutp01B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1587916486;
+        bh=ayTtcD8jBSxoZnaUehKS7YmNzBMMmlbCJaXAqNqdFw4=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=CXgp4Y+q3okb7H9Grvud3rDwANFZ4Ii7J3c+34vI4VMd3cSwnKrVvQiTKdXDDS3u/
+         f6PvyFsGevtWGg3pjoglQ8sgze7Ovy3fhhTwGpF5FlZJ3rFWXVHRsME6NmmYoP0mHG
+         mpzoKqWk98DMs2lLWS0Up3tJyXR9X64dUZP6P9FQ=
+Received: from epsmges5p2new.samsung.com (unknown [182.195.42.74]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20200426155445epcas5p266d05e625b8553b75733f2739b6803bd~JaaFHu8Ly1668516685epcas5p2f;
+        Sun, 26 Apr 2020 15:54:45 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        81.5F.10083.4CEA5AE5; Mon, 27 Apr 2020 00:54:45 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200426155444epcas5p160e8dbd5387e9e850a7bea6f157cd33e~JaaEstjrR1766617666epcas5p1m;
+        Sun, 26 Apr 2020 15:54:44 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200426155444epsmtrp2f4e38028e6914e0fc02c8a24e673ee82~JaaEr5-vM1929019290epsmtrp2E;
+        Sun, 26 Apr 2020 15:54:44 +0000 (GMT)
+X-AuditID: b6c32a4a-88dff70000002763-55-5ea5aec47912
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F1.EB.25866.4CEA5AE5; Mon, 27 Apr 2020 00:54:44 +0900 (KST)
+Received: from alimakhtar02 (unknown [107.108.234.165]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200426155441epsmtip23336a1144606adeff21350f99aef3eb1~JaaBvkxLp0981409814epsmtip2G;
+        Sun, 26 Apr 2020 15:54:41 +0000 (GMT)
+From:   "Alim Akhtar" <alim.akhtar@samsung.com>
+To:     "'Avri Altman'" <Avri.Altman@wdc.com>,
+        "'Kiwoong Kim'" <kwmad.kim@samsung.com>, <robh@kernel.org>,
+        <cpgs@samsung.com>
+Cc:     <devicetree@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <krzk@kernel.org>, <martin.petersen@oracle.com>,
+        <cang@codeaurora.org>, <linux-samsung-soc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+In-Reply-To: <SN6PR04MB464022365ECC9F5565030147FCD50@SN6PR04MB4640.namprd04.prod.outlook.com>
+Subject: RE: [PATCH v6 05/10] scsi: ufs: add quirk to fix abnormal ocs fatal
+ error
+Date:   Sun, 26 Apr 2020 21:24:39 +0530
+Message-ID: <000001d61be3$00e656f0$02b304d0$@samsung.com>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [IPv6:2001:569:fb67:7300:9f89:4b96:de0b:cd14] (2001:569:fb67:7300:9f89:4b96:de0b:cd14) by CO2PR05CA0059.namprd05.prod.outlook.com (2603:10b6:102:2::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2958.12 via Frontend Transport; Sun, 26 Apr 2020 14:57:14 +0000
-X-Microsoft-Original-Message-ID: <c7fba899-d520-559f-d14c-1d92f629329e@live.ca>
-X-TMN:  [OmgafuzCUqVRB2i/C6FSFbGQe5x8huTGu/6RGTYJ87Y/NFFW81q0f1xbGex4LyHn]
-X-MS-PublicTrafficType: Email
-X-IncomingHeaderCount: 50
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-Correlation-Id: cbade908-3c53-44a5-a6de-08d7e9f21cd1
-X-MS-TrafficTypeDiagnostic: CO1NAM11HT148:
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: QwTfGRGC0v5LCTZiqw648BnLUPKmgF4piL5vYUxxnRbFF3jRYYLJaiiCpWhoMoXyun1bOoXNLWVAufhHYJdce/SE0dKQZD9b+gEu1+6CRnw86wcRbtWcpD2FEWg37aNVZWOPo4o/0GXz8vBkYzW0CD47dOBdvOuxcO8Tnayi23egP0iSstBHimHh8antuNuFgNGybBGfDQzllIG4jKC04Q==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:0;SRV:;IPV:NLI;SFV:NSPM;H:BN6PR04MB0660.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:;DIR:OUT;SFP:1901;
-X-MS-Exchange-AntiSpam-MessageData: 8808OTabogw8sV0VMpFUQqObuTnPvfdGv11P400fYeD1iMYdPEq4G/dgFkf3NmGGEEbDa05lFeFmKjbQM3b5L96FQ5G2pK/UROup5LS7M9B2DgKscxJaRp7dNO3Vs1bYl1PB7cvDahfb/2GF9jEYWhElQxuXGrx3RBRkjC+ffFTTcYivf2OhXZrGotJ99khwYRshb5dW/r/Vh1L0XgUPvQ==
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cbade908-3c53-44a5-a6de-08d7e9f21cd1
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Apr 2020 14:57:17.5591
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1NAM11HT148
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJQDPill8kAmUENoj8JBCZ49rLenQIFk/WPAcfxkaoBmLD4pwI/njykAykf0ROnQTP84A==
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDKsWRmVeSWpSXmKPExsWy7bCmhu7RdUvjDHZ7Wbz8eZXN4tP6ZawW
+        Lw9pWsw/co7V4vz5DewWN7ccZbHY9Pgaq8XlXXPYLGac38dk0X19B5vF8uP/mCz+79nB7sDj
+        cbmvl8lj06pONo/NS+o9Pj69xeLRt2UVo8fnTXIe7Qe6mQLYo7hsUlJzMstSi/TtErgy/l/h
+        KjihWfF65zOmBsbj8l2MnBwSAiYSLxdOZO1i5OIQEtjNKHFuw0JGCOcTo8SGKz+ZIZzPjBIz
+        Oh6zwbTM7Z8NVbWLUWLbhCtQzhtGiWlHNjGDVLEJ6ErsWNwG1iEiUC2xpm0SO0gRs8BPRokn
+        v5+CFXEKxErs71/ACGILC4RIXP/2lAXEZhFQlWiauBsszitgKTHlwiIoW1Di5MwnYDXMAtoS
+        yxa+ZoY4SUHi59NlrBDLwiRavk5nhKgRlzj6swfsBwmBExwSS2ZcYoFocJGY3nOWEcIWlnh1
+        fAs7hC0l8fndXqCrOYDsbImeXcYQ4RqJpfOOQbXaSxy4MocFpIRZQFNi/S59iDCvRMPG3+wQ
+        a/kken8/YYKYwivR0SYEUaIq0fzuKtQUaYmJ3d2sExiVZiF5bBaSx2YheWAWwrIFjCyrGCVT
+        C4pz01OLTQuM8lLL9YoTc4tL89L1kvNzNzGC05iW1w7GZed8DjEKcDAq8fB2pC6JE2JNLCuu
+        zD3EKMHBrCTCG1OyKE6INyWxsiq1KD++qDQntfgQozQHi5I47yTWqzFCAumJJanZqakFqUUw
+        WSYOTqkGxoWtizoi1jw/r/Yp7NLpo01aws9KNO75me8L3DK9d+lD+28eCb/Ohk9JfKKqvNqJ
+        9af9ZsOjW9+k2DdNeXXh/LY1jUrRP3Y9mXohf7Zqi9SFS2qFM9ucL8yNNv/emTF1/YyYxuQZ
+        +ap+P5X7tghq2vzXcAxzuT93yrlz7zRuzT7KnzF5WXhYzwIlluKMREMt5qLiRAB4TW5lXwMA
+        AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCIsWRmVeSWpSXmKPExsWy7bCSvO6RdUvjDPY+kbF4+fMqm8Wn9ctY
+        LV4e0rSYf+Qcq8X58xvYLW5uOcpisenxNVaLy7vmsFnMOL+PyaL7+g42i+XH/zFZ/N+zg92B
+        x+NyXy+Tx6ZVnWwem5fUe3x8eovFo2/LKkaPz5vkPNoPdDMFsEdx2aSk5mSWpRbp2yVwZXw4
+        38FY8FajYvNC4QbGR3JdjJwcEgImEnP7ZzN2MXJxCAnsYJRouvaRHSIhLXF94wQoW1hi5b/n
+        7BBFrxglWmcvZwJJsAnoSuxY3MYGYosI1Eu0XlvOClLELNDIJLHgRD8rREc/s8TNuXtZQao4
+        BWIl9vcvANrHwSEsECQx7XQ4SJhFQFWiaeJuRhCbV8BSYsqFRVC2oMTJmU9YQGxmAW2Jpzef
+        wtnLFr5mhrhOQeLn02WsEEeESbR8nc4IUSMucfRnD/MERuFZSEbNQjJqFpJRs5C0LGBkWcUo
+        mVpQnJueW2xYYJSXWq5XnJhbXJqXrpecn7uJERyRWlo7GPes+qB3iJGJg/EQowQHs5IIb0zJ
+        ojgh3pTEyqrUovz4otKc1OJDjNIcLErivF9nLYwTEkhPLEnNTk0tSC2CyTJxcEo1MDGa+i5Y
+        edZgzYn6VAaun1MXfdZrLdA0dHfkUmnQ+Xn8IJfkTg6t0FuxM2bsNrGecPKXecn2oxmSnCwr
+        dPdwZDzrurEys3HigsPlaXf5TzRHv3r7hG1JquL5p4a+TzfGvUx5cjTGlMlv5YqrnGbzzu2+
+        dKrPS4ir0rutesvN9c+U1zV84tJssJl1Kr355mfVJ3HrPtw5zJXju6PBadn+bceyg5s4p2y/
+        8f7SkjVss9acNdPn+uEpxhLB8WLp8vVpFy+nN6cqVu5+I51e5ei3Uq24s/b1uhe5spxt6cWf
+        i1lPRR+b8HsF0wImmTsbzwU6LZmt0WHkyntR4Uuh+c7sGjW39ilfnutyZ6pnztRb6KbEUpyR
+        aKjFXFScCAAgZ4voNwMAAA==
+X-CMS-MailID: 20200426155444epcas5p160e8dbd5387e9e850a7bea6f157cd33e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-CPGSPASS: Y
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20200417181016epcas5p2ee7ac86d743ceee9076690dc5b1e2f08
+References: <20200417175944.47189-1-alim.akhtar@samsung.com>
+        <CGME20200417181016epcas5p2ee7ac86d743ceee9076690dc5b1e2f08@epcas5p2.samsung.com>
+        <20200417175944.47189-6-alim.akhtar@samsung.com>
+        <SN6PR04MB46408CF4DD05DB9B48DFE412FCD40@SN6PR04MB4640.namprd04.prod.outlook.com>
+        <062001d617b1$af5f0aa0$0e1d1fe0$@samsung.com>
+        <SN6PR04MB464022365ECC9F5565030147FCD50@SN6PR04MB4640.namprd04.prod.outlook.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Paul,
+Hi Avri
 
-On 2020-04-26 5:56 a.m., Paul Cercueil wrote:
-> 
-> 
-> Le ven. 24 avril 2020 à 22:34, H. Nikolaus Schaller <hns@goldelico.com> a écrit :
->> From: Jonathan Bakker <xc-racer2@live.ca>
->>
->> All s5pv210 devices have a PowerVR SGX 540 (revision 120) attached.
->>
->> There is no external regulator for it so it can be enabled by default.
->>
->> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
->> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
->> ---
->>  arch/arm/boot/dts/s5pv210.dtsi | 13 +++++++++++++
->>  1 file changed, 13 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/s5pv210.dtsi b/arch/arm/boot/dts/s5pv210.dtsi
->> index 2ad642f51fd9..abbdda205c1b 100644
->> --- a/arch/arm/boot/dts/s5pv210.dtsi
->> +++ b/arch/arm/boot/dts/s5pv210.dtsi
->> @@ -512,6 +512,19 @@ vic3: interrupt-controller@f2300000 {
->>              #interrupt-cells = <1>;
->>          };
->>
->> +        gpu: gpu@f3000000 {
->> +            compatible = "samsung,s5pv210-sgx540-120";
->> +            reg = <0xf3000000 0x10000>;
->> +            interrupt-parent = <&vic2>;
->> +            interrupts = <10>;
->> +            clock-names = "core";
->> +            clocks = <&clocks CLK_G3D>;
->> +
->> +            assigned-clocks = <&clocks MOUT_G3D>, <&clocks DOUT_G3D>;
->> +            assigned-clock-rates = <0>, <66700000>;
->> +            assigned-clock-parents = <&clocks MOUT_MPLL>;
-> 
-> What are these clocks for, and why are they reparented / reclocked?
-> 
-> Shouldn't they be passed to 'clocks' as well?
-> 
-> -Paul
-> 
+> -----Original Message-----
+> From: Avri Altman <Avri.Altman=40wdc.com>
+> Sent: 21 April 2020 17:37
+> To: Kiwoong Kim <kwmad.kim=40samsung.com>; 'Alim Akhtar'
+> <alim.akhtar=40samsung.com>; robh=40kernel.org; cpgs=40samsung.com
+> Cc: devicetree=40vger.kernel.org; linux-scsi=40vger.kernel.org; krzk=40ke=
+rnel.org;
+> martin.petersen=40oracle.com; cang=40codeaurora.org; linux-samsung-
+> soc=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-
+> kernel=40vger.kernel.org
+> Subject: RE: =5BPATCH v6 05/10=5D scsi: ufs: add quirk to fix abnormal oc=
+s fatal error
+>=20
+> >
+> > > -----Original Message-----
+> > > From: Avri Altman <Avri.Altman=40wdc.com>
+> > > Sent: Monday, April 20, 2020 5:56 PM
+> > > To: Alim Akhtar <alim.akhtar=40samsung.com>; robh=40kernel.org
+> > > Cc: devicetree=40vger.kernel.org; linux-scsi=40vger.kernel.org;
+> > > krzk=40kernel.org; martin.petersen=40oracle.com;
+> > kwmad.kim=40samsung.com;
+> > > stanley.chu=40mediatek.com; cang=40codeaurora.org; linux-samsung-
+> > > soc=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-
+> > > kernel=40vger.kernel.org
+> > > Subject: RE: =5BPATCH v6 05/10=5D scsi: ufs: add quirk to fix abnorma=
+l
+> > > ocs fatal error
+> > >
+> > > >
+> > > > From: Kiwoong Kim <kwmad.kim=40samsung.com>
+> > > >
+> > > > Some architectures determines if fatal error for OCS occurrs to
+> > > > check status in response upiu. This patch
+> > > Typo - occurs
+> > >
+> > > > is to prevent from reporting command results with that.
+> > > >
+> > > > Signed-off-by: Kiwoong Kim <kwmad.kim=40samsung.com>
+> > > > Signed-off-by: Alim Akhtar <alim.akhtar=40samsung.com>
+> > > > ---
+> > > >  drivers/scsi/ufs/ufshcd.c =7C 6 ++++++  drivers/scsi/ufs/ufshcd.h =
+=7C
+> > > > 6 ++++++
+> > > >  2 files changed, 12 insertions(+)
+> > > >
+> > > > diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> > > > index b32fcedcdcb9..8c07caff0a5c 100644
+> > > > --- a/drivers/scsi/ufs/ufshcd.c
+> > > > +++ b/drivers/scsi/ufs/ufshcd.c
+> > > > =40=40 -4794,6 +4794,12 =40=40 ufshcd_transfer_rsp_status(struct uf=
+s_hba
+> > *hba,
+> > > > struct ufshcd_lrb *lrbp)
+> > > >         /* overall command status of utrd */
+> > > >         ocs =3D ufshcd_get_tr_ocs(lrbp);
+> > > >
+> > > > +       if (hba->quirks & UFSHCD_QUIRK_BROKEN_OCS_FATAL_ERROR) =7B
+> > > > +               if (be32_to_cpu(lrbp->ucd_rsp_ptr->header.dword_1) =
+&
+> > > > +                                       MASK_RSP_UPIU_RESULT)
+> > > > +                       ocs =3D OCS_SUCCESS;
+> > > > +       =7D
+> > > > +
+> > > Not sure that I follow what this quirk is all about.
+> > > Your code overrides ocs by open coding ufshcd_get_rsp_upiu_result.
+> > >
+> > > Normally OCS is in utp transfer req descriptor, dword 2, bits 0..7.
+> > > My understanding from your description, is that some fatal error
+> > > might occur, But the host controller does not report it, and it
+> > > still needs to be checked in the response upiu.
+> > > Evidently you are not doing so.
+> > > Please elaborate your description.
+> > >
+> > > P.S.
+> > > The ocs is being evaluated in device management commands as well,
+> > > Isn't this something you need to attend?
+> > >
+> > > Thanks,
+> > > Avri
+> > >
+> > > >         switch (ocs) =7B
+> > > >         case OCS_SUCCESS:
+> > > >                 result =3D ufshcd_get_req_rsp(lrbp->ucd_rsp_ptr);
+> > > > diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+> > > > index a9b9ace9fc72..e1d09c2c4302 100644
+> > > > --- a/drivers/scsi/ufs/ufshcd.h
+> > > > +++ b/drivers/scsi/ufs/ufshcd.h
+> > > > =40=40 -541,6 +541,12 =40=40 enum ufshcd_quirks =7B
+> > > >          * resolution of the values of PRDTO and PRDTL in UTRD as b=
+yte.
+> > > >          */
+> > > >         UFSHCD_QUIRK_PRDT_BYTE_GRAN                     =3D 1 << 9,
+> > > > +
+> > > > +       /*
+> > > > +        * This quirk needs to be enabled if the host controller re=
+ports
+> > > > +        * OCS FATAL ERROR with device error through sense data
+> > > > +        */
+> > > > +       UFSHCD_QUIRK_BROKEN_OCS_FATAL_ERROR             =3D 1 << 10=
+,
+> > > >  =7D;
+> > > >
+> > > >  enum ufshcd_caps =7B
+> > > > --
+> > > > 2.17.1
+> > Avri
+> >
+> > As specified in the spec, OCS isn't supposed to refer to the contents
+> > of RESPONSE UPIU.
+> > But, Exynos host behaves like that in some cases, e.g. a value of
+> > 'state' in is isn't GOOD(00h).
+> OK.
+> I still think that you might consider rewording your commit, explaining t=
+his quirk
+> better.
+> Specifically you might not want to say =22if fatal...=22 because fatal co=
+de (0x7) is just
+> one error code out of many.
+> Also you might want to use ufshcd_get_rsp_upiu_result() in the quirk body
+> instead of open coding it.
+>=20
+> >
+> > For QUERY RESPONSE, its offset, i.e. =22 dword_1=22 is reserved, so
+> > currently no impact, I think.
+> > But if you feel another condition is necessary to identify if this
+> > request is QUERY REQEUST or not, we can add more.
+> No need, as long as you are ok with whatever ufshcd_get_tr_ocs() returns =
+in
+> ufshcd_wait_for_dev_cmd().
+>=20
+I will update the commit message to make it clear in the next version of th=
+e patch set.
 
-The G3D clock system can have multiple parents, and for stable operation
-it's recommended to use the MPLL clock as the parent (which in turn
-is actually a mux as well).  MOUT_G3D is simply the mux for CLK_G3D
-(SGX core clock), DOUT_G3D is the divider.  DOUT_G3D could equally be CLK_G3D
-(and probably should be, for readability) as CLK_G3D is simply the gate and
-DOUT_G3D is the divider for it.
+> Thanks,
+> Avri
+>=20
+> >
+> > Thanks
 
-The SGX clock layout on S5PV210 looks something like this:
 
-        MOUT_MPLL -----------> MOUT_G3D ---> DOUT_G3D  ---> CLK_G3D
-(selectable parent clock)      (mux)    ---> (divider) ---> (gate)
-
-This is fairly common for older Samsung SoCs, eg having a look at
-arch/arm/boot/dts/exynos4210-universal_c210.dts you can see that
-the FIMC clocks are parented to MPLL and have a rate set.
-
->> +        };
->> +
->>          fimd: fimd@f8000000 {
->>              compatible = "samsung,s5pv210-fimd";
->>              interrupt-parent = <&vic2>;
->> -- 
->> 2.25.1
->>
-> 
-> 
-
-Thanks,
-Jonathan
