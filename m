@@ -7,57 +7,56 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
 	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84577C55185
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Apr 2020 02:27:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39165C55185
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Apr 2020 02:27:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6731920706
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Apr 2020 02:27:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D14A20706
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Apr 2020 02:27:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726142AbgDZC1Z (ORCPT
+        id S1726303AbgDZC1c (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 25 Apr 2020 22:27:25 -0400
-Received: from mail-co1nam11olkn2044.outbound.protection.outlook.com ([40.92.18.44]:27936
-        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
+        Sat, 25 Apr 2020 22:27:32 -0400
+Received: from mail-bn8nam11olkn2093.outbound.protection.outlook.com ([40.92.20.93]:20992
+        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726087AbgDZC1Z (ORCPT
+        id S1726238AbgDZC1a (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 25 Apr 2020 22:27:25 -0400
+        Sat, 25 Apr 2020 22:27:30 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OWnsiCdyUzytcX4GrNtUcJGoqKvBfpgtEk2pnqi7BaoNP3nmS3fkEX5MDuBIjbuaVPHMEAyvhl/Uth4a/KstFh64/rPmv15mthsieqv3B1dpuTDG4pAUiPNvNgTnYj5yvkMs9/uK2Me54jAzg9b4j9zE4+z+jYdCNagsNLjVCnigEoWQ9xp2CdiTOJoaUusZhME96onu1P9cwJNgvSltan8E61rTzbDX1NPsCbLSDYC3Oj1podH9xuCSQCQNMKrKqltRT03d2qV5Q5cNZdd2dL1WqB1Zp+AWF796Sc1E3wkksYkub1jQysT8EUblZqHRVhdBe7bdKfUk9doC0ADmJw==
+ b=j1ALIYNR+r8L3zoBeHOsIpIWiMnGgf+a+JL/JsXfViXEJ+iuVCeKRB1SwljqfGWn4YgC3mDZ4wxjA7qBlCpy8eaHKRJNMkylg5lDSaI58ZbOqF1drMFdTMaHXJjB23DRuEqoSe+YndM4/ofIJz4LUHwwUv3HYKyrj0snEGJdBLtXeLoGHkVmQvDLu3U40pP3tm0Uj4wuY8V9yggGC+eGq6fQSwOJphMbvSSwz4TjX8cMoM7Q0Tp5TZMz2c5FxuST58wDseHy/Zhe5sG1OlDWYZtJfVjgrzgIcRBU3kCfgp2vfwm1wId/QtRd8cvWe59XcuyHQ7bDHb0C7jlfBQeNmQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nSs294RsueSv8t3XwPH3w3458B4RooPL11xssljNUYU=;
- b=n4lcOn3kuCv6iSvKC/VR9tTWBwqv7wzNb3sf8Hlb4qFyCk36RWC5zFp/LPwgE8YU7nr6/V3RA+jbSKuNREuKw0YxJe5aejOeNvpb3Co/FBq9Qbr3wGyQSvZbIDoWzV/pK3nWjfmM4hbc2ghYlF5m/hAen23U2s/l5GBiQhqFB3ZCo/jnWKHYng0Rufxl6Fd+c+DZn0f6BbuiERuNebEtj7JWSB7mFO0WDwIBH9NBky302gtOm8VG/9EwlcEXI/Et5XoXmBobQgW8kPC5V85rLeqmBOj+kxqjHRF4fuMS2zSOUgzKAceGNaqvLyK1bBDgevUEFMZVsx3NSt6xS07qPw==
+ bh=FYG5JsFEnKGMhf5ZzJYDTjU+1+CCTZQpGobakOJ7jmo=;
+ b=GLIK7LabzbH7wZ7xO80fW2ofB/iNzq3f96Gq9tBWqZ4rfjZ1bwbsOWW5i5+yldZDoZjc4kdkZkJjmqVrHS/JRwvFvFk5mTrKcxOtkHWpAHlJOmP5/8GlY//rQKWa8B4Yqf0ImfKdBVvYyjIsKsKQvaHxvYsAsuWOQEkIfxgkctrZTWux+1DiXR5WSfCyqDtT/SpT4yz5iYBdFJv2T6S9Drq7iSIq/71Vj8x24/h5E8JqYMLjwBGguNePt82b+7IIMJn76F66iXrGsjYHmMqeU6vknuJka8pceOPLL1Opgn3v6uWczdXFjHjIdC+NkN8LV8kpXeAPAVMXzlDL1M1R8g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=live.ca; dmarc=pass action=none header.from=live.ca; dkim=pass
  header.d=live.ca; arc=none
 Received: from DM6NAM11FT041.eop-nam11.prod.protection.outlook.com
- (2a01:111:e400:fc4d::51) by
- DM6NAM11HT254.eop-nam11.prod.protection.outlook.com (2a01:111:e400:fc4d::152)
+ (2a01:111:e400:fc4d::4c) by
+ DM6NAM11HT126.eop-nam11.prod.protection.outlook.com (2a01:111:e400:fc4d::118)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2937.15; Sun, 26 Apr
- 2020 02:27:23 +0000
+ 2020 02:27:28 +0000
 Received: from BN6PR04MB0660.namprd04.prod.outlook.com
  (2a01:111:e400:fc4d::4a) by DM6NAM11FT041.mail.protection.outlook.com
  (2a01:111:e400:fc4d::98) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2937.15 via Frontend
- Transport; Sun, 26 Apr 2020 02:27:23 +0000
-X-IncomingTopHeaderMarker: OriginalChecksum:531B31765C167240FADAD33C2444280293575C44E3AA2CD8BEB47D2BFD6B721D;UpperCasedChecksum:382035105F016C51E8D78BD7EC922D9068D323520BD471630FCE1EAC17CCE74A;SizeAsReceived:7956;Count:50
+ Transport; Sun, 26 Apr 2020 02:27:28 +0000
+X-IncomingTopHeaderMarker: OriginalChecksum:AC5484BF1987E13A74F66DD3E8908075B8B61AB457AB9B28C727C2D99AA19FC5;UpperCasedChecksum:83C8C5955D66DF4B1DC3C6FC8278CD46458A2C85D4AA7DA9BDD2226F39D46E35;SizeAsReceived:7885;Count:50
 Received: from BN6PR04MB0660.namprd04.prod.outlook.com
  ([fe80::ad10:4127:4bc8:76fc]) by BN6PR04MB0660.namprd04.prod.outlook.com
  ([fe80::ad10:4127:4bc8:76fc%6]) with mapi id 15.20.2937.020; Sun, 26 Apr 2020
- 02:27:23 +0000
+ 02:27:28 +0000
 From:   Jonathan Bakker <xc-racer2@live.ca>
 To:     kyungmin.park@samsung.com, s.nawrocki@samsung.com,
         mchehab@kernel.org, kgene@kernel.org, krzk@kernel.org,
         linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
-        Jonathan Bakker <xc-racer2@live.ca>
-Subject: [PATCH 02/11] media: exynos4-is: Request syscon only if ISP writeback is present
-Date:   Sat, 25 Apr 2020 19:26:41 -0700
-Message-ID: <BN6PR04MB066006C199A43996C0502B62A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
+Cc:     Jonathan Bakker <xc-racer2@live.ca>
+Subject: [PATCH 04/11] media: exynos4-is: Correct missing entity function initialization
+Date:   Sat, 25 Apr 2020 19:26:43 -0700
+Message-ID: <BN6PR04MB0660E680A4F69E3037D87E70A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200426022650.10355-1-xc-racer2@live.ca>
 References: <20200426022650.10355-1-xc-racer2@live.ca>
@@ -66,67 +65,70 @@ Content-Type:   text/plain; charset=US-ASCII
 X-ClientProxiedBy: MWHPR17CA0086.namprd17.prod.outlook.com
  (2603:10b6:300:c2::24) To BN6PR04MB0660.namprd04.prod.outlook.com
  (2603:10b6:404:d9::21)
-X-Microsoft-Original-Message-ID: <20200426022650.10355-3-xc-racer2@live.ca>
+X-Microsoft-Original-Message-ID: <20200426022650.10355-5-xc-racer2@live.ca>
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from jon-hp-6570b.telus (2001:569:fb67:7300:9f89:4b96:de0b:cd14) by MWHPR17CA0086.namprd17.prod.outlook.com (2603:10b6:300:c2::24) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2937.13 via Frontend Transport; Sun, 26 Apr 2020 02:27:21 +0000
+Received: from jon-hp-6570b.telus (2001:569:fb67:7300:9f89:4b96:de0b:cd14) by MWHPR17CA0086.namprd17.prod.outlook.com (2603:10b6:300:c2::24) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2937.13 via Frontend Transport; Sun, 26 Apr 2020 02:27:26 +0000
 X-Mailer: git-send-email 2.20.1
-X-Microsoft-Original-Message-ID: <20200426022650.10355-3-xc-racer2@live.ca>
-X-TMN:  [G7Cs4MM2yrwsmarBCCekGBrr73zkLHuucpIt+RpKrepKcQy9fHU6tvmtkdp/Egxy]
+X-Microsoft-Original-Message-ID: <20200426022650.10355-5-xc-racer2@live.ca>
+X-TMN:  [hRAG4lJvWdX2ftofBKqA5ojw10PlQXUww80CuFNlK02D21XLeKC5mo/gnIL4TrCE]
 X-MS-PublicTrafficType: Email
 X-IncomingHeaderCount: 50
 X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-Correlation-Id: 420a6fac-6952-46ad-b221-08d7e9895a36
-X-MS-TrafficTypeDiagnostic: DM6NAM11HT254:
+X-MS-Office365-Filtering-Correlation-Id: b3c4ea0f-a617-4209-7d31-08d7e9895d1e
+X-MS-TrafficTypeDiagnostic: DM6NAM11HT126:
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 62/GSOfmLqQflkz9FXkbq35CipkjOYlc3CZH+XRgYPrm6oww5IzK4mosSsg0CXttynvgXLNjU8P0z4wVXEhK8YsfSG2f9VNg/yGFQl35G4CLLIxyTi403shc8/c0YGej4BBpUGwmK/gq5XzNOdv20RJrFByllTk3xVsaY//DH0k/Rz0jV5qHY9OUQzQgSZRI9V5a9aokLNXb/t5phKv26g==
+X-Microsoft-Antispam-Message-Info: 28Xpl/YAbCbNsTBrMreqyfWwZCbZHrVopMs1nhOBcTmtfya01JWVLPAK6jHO448V9O3/klxZBV4d5qzBXhrJ0IzOXPnRf54bwF7C9wSpFRngwQnx5I1HBqmxENYkVcM7kK/pkRbciTWoyaqPQH1UQGYvOYv3X77zdbKK2PMXdI3xZBnKmYS25DrGLfEenVNn3n/2cx79eXnNTQfJWUfMdQ==
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:0;SRV:;IPV:NLI;SFV:NSPM;H:BN6PR04MB0660.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:;DIR:OUT;SFP:1901;
-X-MS-Exchange-AntiSpam-MessageData: wG+zfM+P8LZZQwjk07Bk/6RaKDXdAHoL2zfQl5j13+CT1itEhCarHPg6NjoB9/7qLoIKZS0eTeEhnEr2lrSoQF1M1UMTasjHkcsBWfCMlhA0Ehpfmol4TkJYOG/RTaVNmRRZz4PpptP4WuMWiFosJZJc9quo+r3Ly/pNm3GsRuYJrmEbNAD3gOKyGl9CdCyHbNuFLziLBu1PO7DAkIUzGA==
+X-MS-Exchange-AntiSpam-MessageData: L+8NB0yY7Pao1UE57PQFZOZpcVI1AuBBqK6/1e2BIPNbbWXa+v2T74w7CreMppbgR/kpe6RoV2FZHw/XpPFhR7RAur9GCVKF4F2m0cbfVxoZG5aCMX+rH9VXjviXURQqZfuJ3ECFpXAx9BPihvNCv9GubyU4C7gk3G9qyTUjEns+atuqjU7GUd0PSfuXEZjhu3f1NE2mMxhzF/lrH6GWtw==
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 420a6fac-6952-46ad-b221-08d7e9895a36
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Apr 2020 02:27:23.3808
+X-MS-Exchange-CrossTenant-Network-Message-Id: b3c4ea0f-a617-4209-7d31-08d7e9895d1e
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Apr 2020 02:27:28.1894
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
 X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
 X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6NAM11HT254
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6NAM11HT126
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Tomasz Figa <tomasz.figa@gmail.com>
+Commit bae4500399c4 ("[media] exynos4-is: Add missing entity function
+initialization") tried to suppress the warnings such as
 
-On FIMC variants which don't have writeback channel, there is no need to
-access system registers. This patch makes the driver request sysreg
-regmap conditionally depending on whether writeback is supported.
+s5p-fimc-md camera: Entity type for entity FIMC.0 was not initialized!
 
-Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+However, this didn't work in all cases.  Correct this by calling the set
+function earlier.
+
+Fixes: bae4500399c4 ("exynos4-is: Add missing entity function initialization")
 Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
 ---
- drivers/media/platform/exynos4-is/fimc-core.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/media/platform/exynos4-is/fimc-capture.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-core.c b/drivers/media/platform/exynos4-is/fimc-core.c
-index 2258f3bfc929..08d1f39a914c 100644
---- a/drivers/media/platform/exynos4-is/fimc-core.c
-+++ b/drivers/media/platform/exynos4-is/fimc-core.c
-@@ -954,9 +954,11 @@ static int fimc_probe(struct platform_device *pdev)
- 	spin_lock_init(&fimc->slock);
- 	mutex_init(&fimc->lock);
+diff --git a/drivers/media/platform/exynos4-is/fimc-capture.c b/drivers/media/platform/exynos4-is/fimc-capture.c
+index 705f182330ca..86c233e2f2c9 100644
+--- a/drivers/media/platform/exynos4-is/fimc-capture.c
++++ b/drivers/media/platform/exynos4-is/fimc-capture.c
+@@ -1799,7 +1799,6 @@ static int fimc_register_capture_device(struct fimc_dev *fimc,
+ 	vid_cap->wb_fmt.code = fmt->mbus_code;
  
--	fimc->sysreg = fimc_get_sysreg_regmap(dev->of_node);
--	if (IS_ERR(fimc->sysreg))
--		return PTR_ERR(fimc->sysreg);
-+	if (fimc->variant->has_isp_wb) {
-+		fimc->sysreg = fimc_get_sysreg_regmap(dev->of_node);
-+		if (IS_ERR(fimc->sysreg))
-+			return PTR_ERR(fimc->sysreg);
-+	}
+ 	vid_cap->vd_pad.flags = MEDIA_PAD_FL_SINK;
+-	vfd->entity.function = MEDIA_ENT_F_PROC_VIDEO_SCALER;
+ 	ret = media_entity_pads_init(&vfd->entity, 1, &vid_cap->vd_pad);
+ 	if (ret)
+ 		goto err_free_ctx;
+@@ -1898,6 +1897,7 @@ int fimc_initialize_capture_subdev(struct fimc_dev *fimc)
+ 		return ret;
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	fimc->regs = devm_ioremap_resource(dev, res);
+ 	sd->entity.ops = &fimc_sd_media_ops;
++	sd->entity.function = MEDIA_ENT_F_PROC_VIDEO_SCALER;
+ 	sd->internal_ops = &fimc_capture_sd_internal_ops;
+ 	v4l2_set_subdevdata(sd, fimc);
+ 	return 0;
 -- 
 2.20.1
 
