@@ -2,192 +2,133 @@ Return-Path: <SRS0=zHfB=6K=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E56C7C884
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Apr 2020 17:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C9B8C54FCB
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Apr 2020 18:36:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 82C0F2168B
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Apr 2020 17:43:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="U715yx+2"
+	by mail.kernel.org (Postfix) with ESMTP id 8A22C2080C
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 26 Apr 2020 18:36:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726517AbgDZRm5 (ORCPT
+        id S1726162AbgDZSg0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 26 Apr 2020 13:42:57 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:24987 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726202AbgDZRmI (ORCPT
+        Sun, 26 Apr 2020 14:36:26 -0400
+Received: from mail-co1nam11olkn2090.outbound.protection.outlook.com ([40.92.18.90]:50529
+        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726152AbgDZSgY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 26 Apr 2020 13:42:08 -0400
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200426174204epoutp04e93b02c33feef0fca1d76a69fb6c79f5~Jb3yN_wsv0667206672epoutp04H
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Apr 2020 17:42:04 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200426174204epoutp04e93b02c33feef0fca1d76a69fb6c79f5~Jb3yN_wsv0667206672epoutp04H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1587922924;
-        bh=REDnVcehytGFohWFIdceGOQoq0NYsHqjhqVHZueRjjo=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=U715yx+2rDXp2YVrPm/LSLdyYonxAEm5sLOhYkYhhJtvLTObIyKYHxwWfBQkzNnMg
-         O9ictBUtA0E79n6tXN+XhXIBS0WEbXyi+S3NG5j4/aLIfCWFh7ZNmvofta7D9UO0vL
-         +Obkqwkvg1irqnMgTu2tIvBaYTC3Zwt7J8ASK8nA=
-Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20200426174203epcas5p3da9f71dfac05b2c99f1d8827c278c7a4~Jb3xihXZr2887628876epcas5p3z;
-        Sun, 26 Apr 2020 17:42:03 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        68.DE.04736.BE7C5AE5; Mon, 27 Apr 2020 02:42:03 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20200426174202epcas5p30e4ebe79a1de0138562219ecd7ea2e18~Jb3wuy0jx0554805548epcas5p3E;
-        Sun, 26 Apr 2020 17:42:02 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200426174202epsmtrp108fd8253b838b394d005ab0b9eaba636~Jb3wt-NJb0798907989epsmtrp1P;
-        Sun, 26 Apr 2020 17:42:02 +0000 (GMT)
-X-AuditID: b6c32a4b-ae3ff70000001280-f5-5ea5c7eb8d06
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        03.DC.25866.AE7C5AE5; Mon, 27 Apr 2020 02:42:02 +0900 (KST)
-Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
-        [107.108.73.139]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200426174200epsmtip12b54082fb55a9eba7c9445ad3d12d472~Jb3uytLih2626126261epsmtip1g;
-        Sun, 26 Apr 2020 17:42:00 +0000 (GMT)
-From:   Alim Akhtar <alim.akhtar@samsung.com>
-To:     robh@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-scsi@vger.kernel.org,
-        krzk@kernel.org, avri.altman@wdc.com, martin.petersen@oracle.com,
-        kwmad.kim@samsung.com, stanley.chu@mediatek.com,
-        cang@codeaurora.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH v7 00/10] exynos-ufs: Add support for UFS HCI
-Date:   Sun, 26 Apr 2020 23:00:14 +0530
-Message-Id: <20200426173024.63069-1-alim.akhtar@samsung.com>
-X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
+        Sun, 26 Apr 2020 14:36:24 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fXfpgTx6eoYSig8AdwWtrRglv+VW88LnPco7F42ZixUK5KhzWhckObBHmOP2l/5zGNyjWQAqzYITg4PZD0lQ2u+Y58zm5/LtVAM9OB2Xj6asyZxt96GZOLYzmXukC3mAqS29mbV7v7nTP7Gp4s3qvn/fLmN2MKPXJEmS0U1vvTve0FSG3h9lk6L0hHK6OAjNh2HP9wzD5Cs5SxJbV4lC8gx2LOSv2Ov9BO0AwRKOVr3mq3vSJmu9KIE/lNgitHfty6NvSOAuo10Nj9JZWSkhotnEuxv3ZbwD98JQgpeyaD+ikjsXjmB+Yyteut90927nlbfSocyJ2AoqZu3HfelPjA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HcywinMjnpK4WOAZSBfupWLquL2Wu01bkRh8en6RQlY=;
+ b=mVHr3SpDnBGadjvyILQysWRM6q1ScCL733GTxiK5koeoqV1TlVppX3ZXCCubaD7orndjT4UPIYE46iczixqfZTPLuRsUDfLTOMJtpJs0eEN4C6VJHkpPCdztifzoIrYVnKC0RQTS/qlSaW7NgJAcvVW3ThSQ4fH0kB35SN4aio8KLu257Q3dfUFfnGv5SxDMdAwmEgZFTBpBaOEONXgoiYWlGSPj9f2ocUmTJiAgIDnbf+UHmtX0vW9drluVuUbdT/ijJBcRKekaMovg0CuUYReUGn+SiUgYfcVMgLZ6gGfZyXbcI424gvdmvo/jpThgKphdJgIIMUPUledZH3R6yA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=live.ca; dmarc=pass action=none header.from=live.ca; dkim=pass
+ header.d=live.ca; arc=none
+Received: from CO1NAM11FT036.eop-nam11.prod.protection.outlook.com
+ (2a01:111:e400:3861::52) by
+ CO1NAM11HT181.eop-nam11.prod.protection.outlook.com (2a01:111:e400:3861::187)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2937.15; Sun, 26 Apr
+ 2020 18:36:22 +0000
+Received: from BN6PR04MB0660.namprd04.prod.outlook.com
+ (2a01:111:e400:3861::41) by CO1NAM11FT036.mail.protection.outlook.com
+ (2a01:111:e400:3861::124) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2937.15 via Frontend
+ Transport; Sun, 26 Apr 2020 18:36:22 +0000
+X-IncomingTopHeaderMarker: OriginalChecksum:BC40BD68623AE0CAE03B66BE37DE60BD39DDAB0164AE5E88A9B9D58EBA0C884F;UpperCasedChecksum:AC097712BB4445F4C74B189E03600CEB382BAAAECEC94F527DA420040C148F25;SizeAsReceived:8857;Count:48
+Received: from BN6PR04MB0660.namprd04.prod.outlook.com
+ ([fe80::ad10:4127:4bc8:76fc]) by BN6PR04MB0660.namprd04.prod.outlook.com
+ ([fe80::ad10:4127:4bc8:76fc%6]) with mapi id 15.20.2937.020; Sun, 26 Apr 2020
+ 18:36:22 +0000
+From:   Jonathan Bakker <xc-racer2@live.ca>
+To:     kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Jonathan Bakker <xc-racer2@live.ca>
+Subject: [PATCH 00/13] S5PV210 and Aries DTS improvements
+Date:   Sun, 26 Apr 2020 11:35:51 -0700
+Message-ID: <BN6PR04MB06601A5656CF70A4DCA7998BA3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
+X-Mailer: git-send-email 2.20.1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SfyyUcRze9/11Lzl7O1afTtFuo6iokb02KWPr3fSHtVrNuLrlHebn7vxI
-        y1LMr0NUS7iw1mVosXN0TqvzI0aiEtJms1walRalLJG7l+W/5/N5nufzPH98aFyiI6V0TEIy
-        r0xQxMkoW6K1y33Pgc+9WvlBY6GMnaxqpdiZpRGKnW98QLLV3YMkOzTUJGLH9c8JVjc1SrLD
-        Rg3F3hl6irHqMQPF1vauYOzqE4OI1baMo2Nibri4CON09fkU13z/Cpfd94zgvn98T3DF+nrE
-        LeicuVyTGgulw2z9I/m4mFRe6RVw3jZ6tNKAJVVJL5oaGkSZqNSxANnQwPjAtewpUQGypSVM
-        OwJTzyhmISTMPIKVFSeBWECgbs8nNhzmD5WkQBgRaAsWcWHIxqBjTE1ZVBSzDybK9NZTjowD
-        dC/mIAvGmXcYTNYFW7ADcwSKb9+yagjGFeb081avmPGHn2/6SSHNBRqaTLiw3wp95WZCuOMC
-        WS2V1mBg7tLw6GsnJhiC4VdN7XpVB5jt1YsELIWZ6zlrmF7DsVBo9BbWl0Fb1bMuPwqmtxrC
-        IsEZd2g0eglR9lD0x4wJTjHk5UgEtStkzY2sO52gVK1eb8xBz+AL0iKXMBFg/hFUgpwrNvWv
-        2NS/4n9WDcLr0Q4+SRUfxasOJ3kn8GmeKkW8KiUhyvNCYrwOWT/JI8SAdIMnOhFDI5mdmH6s
-        lUtIRaoqPb4TAY3LHMXhyffkEnGkIv0Sr0w8p0yJ41WdyIkmZNvFN8iRcAkTpUjmY3k+iVdu
-        sBhtI81EeZqbw80lyw/7y4pOTy6dcit/WZmerPbLk0udc+uml+e9Chuq5WMBeOA4RE47DXRh
-        LZzjQNvs3LfA/GaRn2Y1JnPE/DduW1PYyVnD2NVPvuYzLZrRtl0Zr1777Pwd0c6GdkSc3W+e
-        ytDv9R1ww5tDBgoq0qiJYJvjdva7g7YsfJERqmjFIQ9cqVL8A45nnW1FAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrILMWRmVeSWpSXmKPExsWy7bCSnO6r40vjDHrfq1o8mLeNzeLlz6ts
-        Fp/WL2O1mH/kHKvF+fMb2C1ubjnKYrHp8TVWi8u75rBZzDi/j8mi+/oONovlx/8xWfzfs4Pd
-        YunWm4wOvB6X+3qZPDat6mTz2Lyk3qPl5H4Wj49Pb7F49G1ZxejxeZOcR/uBbqYAjigum5TU
-        nMyy1CJ9uwSujGuzdzAVzJOqOLB6NXsD40SRLkZODgkBE4knj2azdjFycQgJ7GCUeDPpACtE
-        Qlri+sYJ7BC2sMTKf8/ZIYqamCQ2v50ClmAT0Ja4O30LE4gtAlR05FsbI4jNLPCMSeLUw1IQ
-        W1jAVqJv2hSwGhYBVYl3Wz6xgdi8AjYSXy+dglomL7F6wwFmiLigxMmZT1i6GDmA5qhLrJ8n
-        BDFSXqJ562zmCYz8s5BUzUKomoWkagEj8ypGydSC4tz03GLDAqO81HK94sTc4tK8dL3k/NxN
-        jOBY0dLawbhn1Qe9Q4xMHIyHGCU4mJVEeGNKFsUJ8aYkVlalFuXHF5XmpBYfYpTmYFES5/06
-        a2GckEB6YklqdmpqQWoRTJaJg1OqgclnOaPDFrcDgRNmbHKd/8j3xkflb9oXDug0hn5tmmho
-        z9UQYme5fhaXZJKg/69OF7eTnHf+ZBzz9rxp+jZ61Y4rLyab9yue8r167PHuItPZsrnbfm6U
-        UGDPLhQ4c+rICR0/vZ//Ob7909St8yzkNFOaMPXTB6HJWtk864rUcoKPPrFeNj13c9Ns1sSF
-        2ZyiH8onTF0n7qp2UkxMfvPSfoa7/+7FB9QHH2T+VnH9/dUg/npmkfYKj8wFxlYXrAofbAxL
-        uNBtLqjn9jj+QO51bqmoFbWpLn16OiEbZpduOP/ZOmDho/2rfzh8dg8r55oamMqlpB+3WkS2
-        bE3+C9u+5/cfWl0zNhYKP7al45jwDCWW4oxEQy3mouJEAJpKkS4EAwAA
-X-CMS-MailID: 20200426174202epcas5p30e4ebe79a1de0138562219ecd7ea2e18
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20200426174202epcas5p30e4ebe79a1de0138562219ecd7ea2e18
-References: <CGME20200426174202epcas5p30e4ebe79a1de0138562219ecd7ea2e18@epcas5p3.samsung.com>
+X-ClientProxiedBy: CO2PR05CA0096.namprd05.prod.outlook.com
+ (2603:10b6:104:1::22) To BN6PR04MB0660.namprd04.prod.outlook.com
+ (2603:10b6:404:d9::21)
+X-Microsoft-Original-Message-ID: <20200426183604.28494-1-xc-racer2@live.ca>
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from jon-hp-6570b.telus (2001:569:fb67:7300:9f89:4b96:de0b:cd14) by CO2PR05CA0096.namprd05.prod.outlook.com (2603:10b6:104:1::22) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2958.7 via Frontend Transport; Sun, 26 Apr 2020 18:36:21 +0000
+X-Mailer: git-send-email 2.20.1
+X-Microsoft-Original-Message-ID: <20200426183604.28494-1-xc-racer2@live.ca>
+X-TMN:  [to+dQak2XqC2/BclHWaTlL3bVr/gudmUyPMTla7ew7w760pgdr6TSrLXDCmm4UpO]
+X-MS-PublicTrafficType: Email
+X-IncomingHeaderCount: 48
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-Correlation-Id: 0d886b55-8270-455d-55b7-08d7ea10b7da
+X-MS-TrafficTypeDiagnostic: CO1NAM11HT181:
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: HkmFbZUAr1PPdd4EVEilzJQPyUkaVCpE5u+/6eduu/TCyvHSKK4dpl45XkPM+QLHfNtKmiXyJTUvl9LdiJDswKGPiiWJQaajOWYpi4ibHDQe1t8R0LI4ZwgW0LwLoS9IQO/MOTB66Fkr5BphwbVB7wNV544ev14lNbwSnM4GCpuh1B0HF5JPO6SL7nMXXBQO+CkcALVO8G7sMS5VvbvjHA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:0;SRV:;IPV:NLI;SFV:NSPM;H:BN6PR04MB0660.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:;DIR:OUT;SFP:1901;
+X-MS-Exchange-AntiSpam-MessageData: DZmapemEEuu6DxSF5zpn6ec6IzjqIgYWFlZpjFL+ZQB4vqBI6e5L28hj3WCVyPe1WIm/aw4nOU4g9IRdKNXfryjp0loYE3pFCK6pbTVpSNs42XTVkGW9F2TJ6yIt5oqFjsCOwRt274wWpUIjICGGZYrhw5cl+tsANYR0Iz2NJyycg3Q6y097a5yW5Lbkf8lo8HfAkDzu8r+gg/FM2XSPXA==
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0d886b55-8270-455d-55b7-08d7ea10b7da
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Apr 2020 18:36:22.5188
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1NAM11HT181
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This patch-set introduces UFS (Universal Flash Storage) host controller support
-for Samsung family SoC. Mostly, it consists of UFS PHY and host specific driver.
+This patchset makes several improvements to Aries devices which are
+based on S5PV210.  Several pulls on GPIOs were incorrect/not specified,
+sleep GPIO configurations have been added, and more devices have been
+added.
 
-- Changes since v6:
-* Addressed review comments from Avri and Christoph
-* Added Reviewed-by tags of Avri and Can on various patches
+Touching the common S5PV210 DTSI are the addition of the ADC node
+as well as fixes to the FIMC definitions and a sleep GPIO helper
+added.
 
-- Changes since v5:
-* re-introduce various quicks which was removed because of no driver
-* consumer of those quirks, initial 4 patches does the same.
-* Added Reviewed-by tags
-* rebased on top of v5.7-rc1
-* included Kiwoong's patch in this series, which this driver needs
+The patches have been tested on both a GT-i9000 as well as an
+SGH-T959P and both can now suspend/resume properly.
 
-- Changes since v4:
-* Addressed review comments from Avir and Rob 
-* Minor improvment on the ufs phy and ufshc drivers
-* Added Tested-by from Pawel
-* Change UFS binding to DT schema format
+Jonathan Bakker (12):
+  arm: dts: s5pv210: Add helper define for sleep gpio config
+  arm: dts: s5pv210: fascinate4g: Add sleep GPIO configuration
+  arm: dts: s5pv210: galaxys: Add sleep GPIO configuration
+  arm: dts: s5pv210: aries: Set keep-power-in-suspend for SDHCI1
+  arm: dts: s5pv210: aries: Disable pulls on GPIO i2c adapters
+  arm: dts: s5pv210: aries: Add support for more devices
+  arm: dts: s5pv210: aries: Disable pull for vibrator ena GPIO
+  arm: dts: s5pv210: Add an ADC node
+  arm: dts: s5pv210: aries: Enable ADC node
+  arm: dts: s5pv210: Assign clocks to MMC devices
+  arm: dts: s5pv210: Correct FIMC definitions
+  arm: dts: s5pv210: aries: Set MAX8998 GPIO pulls
 
+Paweł Chmiel (1):
+  arm: dts: s5pv210: galaxys: Add si470x fmradio
 
-- Changes since v3:
-* Addressed Kishon's and Avir's review comments
-* fixed make dt_binding_check error as pointed by Rob 
+ arch/arm/boot/dts/s5pv210-aries.dtsi      | 349 ++++++++++++++++++++--
+ arch/arm/boot/dts/s5pv210-fascinate4g.dts | 248 +++++++++++++++
+ arch/arm/boot/dts/s5pv210-galaxys.dts     | 291 ++++++++++++++++++
+ arch/arm/boot/dts/s5pv210-pinctrl.dtsi    |   7 +
+ arch/arm/boot/dts/s5pv210.dtsi            |  25 +-
+ 5 files changed, 891 insertions(+), 29 deletions(-)
 
-- Changes since v2:
-* fixed build warning by kbuild test robot 
-* Added Reported-by tags
-
-- Changes since v1:
-* fixed make dt_binding_check error as pointed by Rob
-* Addressed Krzysztof's review comments
-* Added Reviewed-by tags
-
-Note: This series is based on Linux-5.7-rc1 (commit: 8f3d9f354286)
-*** BLURB HERE ***
-
-Alim Akhtar (9):
-  scsi: ufs: add quirk to fix mishandling utrlclr/utmrlclr
-  scsi: ufs: add quirk to disallow reset of interrupt aggregation
-  scsi: ufs: add quirk to enable host controller without hce
-  scsi: ufs: introduce UFSHCD_QUIRK_PRDT_BYTE_GRAN quirk
-  dt-bindings: phy: Document Samsung UFS PHY bindings
-  phy: samsung-ufs: add UFS PHY driver for samsung SoC
-  dt-bindings: ufs: Add DT binding documentation for ufs
-  scsi: ufs-exynos: add UFS host support for Exynos SoCs
-  arm64: dts: Add node for ufs exynos7
-
-Kiwoong Kim (1):
-  scsi: ufs: add quirk to fix abnormal ocs fatal error
-
- .../bindings/phy/samsung,ufs-phy.yaml         |   74 +
- .../bindings/ufs/samsung,exynos-ufs.yaml      |   93 ++
- .../boot/dts/exynos/exynos7-espresso.dts      |    4 +
- arch/arm64/boot/dts/exynos/exynos7.dtsi       |   44 +-
- drivers/phy/samsung/Kconfig                   |    9 +
- drivers/phy/samsung/Makefile                  |    1 +
- drivers/phy/samsung/phy-exynos7-ufs.h         |   85 ++
- drivers/phy/samsung/phy-samsung-ufs.c         |  369 +++++
- drivers/phy/samsung/phy-samsung-ufs.h         |  142 ++
- drivers/scsi/ufs/Kconfig                      |   12 +
- drivers/scsi/ufs/Makefile                     |    1 +
- drivers/scsi/ufs/ufs-exynos.c                 | 1289 +++++++++++++++++
- drivers/scsi/ufs/ufs-exynos.h                 |  284 ++++
- drivers/scsi/ufs/ufshcd.c                     |  126 +-
- drivers/scsi/ufs/ufshcd.h                     |   29 +
- drivers/scsi/ufs/unipro.h                     |   33 +
- 16 files changed, 2581 insertions(+), 14 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
- create mode 100644 Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
- create mode 100644 drivers/phy/samsung/phy-exynos7-ufs.h
- create mode 100644 drivers/phy/samsung/phy-samsung-ufs.c
- create mode 100644 drivers/phy/samsung/phy-samsung-ufs.h
- create mode 100644 drivers/scsi/ufs/ufs-exynos.c
- create mode 100644 drivers/scsi/ufs/ufs-exynos.h
-
-
-base-commit: 8f3d9f354286745c751374f5f1fcafee6b3f3136
 -- 
-2.17.1
+2.20.1
 
