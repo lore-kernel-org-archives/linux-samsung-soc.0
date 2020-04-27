@@ -2,110 +2,153 @@ Return-Path: <SRS0=laiD=6L=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF53AC54FD0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Apr 2020 12:40:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18FEAC7C7E1
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Apr 2020 15:46:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A9DC220575
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Apr 2020 12:40:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aqWwwtgq"
+	by mail.kernel.org (Postfix) with ESMTP id E5810206D4
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 27 Apr 2020 15:46:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1588002387;
+	bh=4WKuEEu6AV9S5LHgPyiAwgQEIkDIj7vq5rk7Tvuxgio=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=he2llUwAR3uSD0UZ5toInmhz96zz3cSoMn1dnp9uM+4q/r0SmVAdUFis+9v0VyiiQ
+	 MZgtBugeNV7/orI4TlkKhZktJWgwT1VOFjSfyEgn402p0GpQGGvWm48t3Se6KiyX/U
+	 NRmc90k3kt1Hb0T09qdK/JGbRvAs7hzKUhVoUwxM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726390AbgD0Mke (ORCPT
+        id S1727771AbgD0PqY convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 27 Apr 2020 08:40:34 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:33422 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726721AbgD0Mke (ORCPT
+        Mon, 27 Apr 2020 11:46:24 -0400
+Received: from mail-ej1-f68.google.com ([209.85.218.68]:42580 "EHLO
+        mail-ej1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726539AbgD0PqY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 27 Apr 2020 08:40:34 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 03RCeKGd125471;
-        Mon, 27 Apr 2020 07:40:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1587991220;
-        bh=QmZqYVuJhQpW5Co25n8i1nFbhw4FdWBDF8vcXnV1ylo=;
-        h=Subject:To:References:From:Date:In-Reply-To;
-        b=aqWwwtgq9GgYesv+T+gPxuEjNsQbwnv+4X5z77RLPfhWAVs+MJs4rF9XNnTGrNFIv
-         Msak3ATjQa0gBX/wrRUGupH0dQjWgVkGlZVRKUmGg7IbCZdut+DUcNu62Wqxx7Pdk9
-         q7+VnAchFIrao2AjzXGIFcqeFs17tmFSzkjOtq68=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 03RCeKuU114941
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 27 Apr 2020 07:40:20 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Mon, 27
- Apr 2020 07:40:20 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Mon, 27 Apr 2020 07:40:19 -0500
-Received: from [10.250.233.85] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03RCeH4I088463;
-        Mon, 27 Apr 2020 07:40:18 -0500
-Subject: Re: [PATCH] phy: samsung: s5pv210-usb2: Add delay after reset
-To:     Jonathan Bakker <xc-racer2@live.ca>,
-        <linux-kernel@vger.kernel.org>, <s.nawrocki@samsung.com>,
-        <kamil@wypas.org>, <krzk@kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>
-References: <BN6PR04MB06605D52502816E500683553A3D10@BN6PR04MB0660.namprd04.prod.outlook.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <979ae7cd-2648-c516-1465-3a1507d5fefb@ti.com>
-Date:   Mon, 27 Apr 2020 18:10:17 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Mon, 27 Apr 2020 11:46:24 -0400
+Received: by mail-ej1-f68.google.com with SMTP id pg17so14477745ejb.9;
+        Mon, 27 Apr 2020 08:46:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=vN8ZtTEMOm40Zgoqr2j2go1H/JlhYwioxL2VoPsyXMo=;
+        b=cTxh2TAcHuZX30NEGByeXRxLV/yCkaoG+WLOckufPxWBnuYBAhDbkhQ5M8GynJgIwu
+         dgIWjI21OAwfJjP4dN9FRBTZgHoZORDAXNUBEhxskYf5SLItKg/f/uDyrB3PtNv/Uavu
+         Yj0foPRbTyYUMxvBL+UiLKZkXGrINEFS46KZUCQE3rbfcX8vsLrkQb3vlM+1agiuFJ8C
+         dLx3f3/fY4GW2vZlR4USC9jaY/eNjnA/cfrB+4047NZpqmHViB6338VM6e5E2o8hEMNI
+         8pfW2pN13ATQCjqxcGOpeOb6dYJpaWeBR3xMYdC3r4wqaUBH+/d3n7GgSSXgoRcSHWCn
+         EeBA==
+X-Gm-Message-State: AGi0PuZ0/uWdnyqjT+DE+fTlNibCpkq1PLiGM0pX4hTjt2jYIXseadgb
+        CeAiosruEjlY9RrY8US9wYQ=
+X-Google-Smtp-Source: APiQypJaGHIqdott9ULGc1vIvIC2hB4wMVjvSOJwybdeeq2XFdtUhgVC8YxEO2xmFZWEXRWg3+ZkRg==
+X-Received: by 2002:a17:906:3713:: with SMTP id d19mr19332049ejc.111.1588002380871;
+        Mon, 27 Apr 2020 08:46:20 -0700 (PDT)
+Received: from pi3 ([194.230.155.237])
+        by smtp.googlemail.com with ESMTPSA id v14sm1947180edx.67.2020.04.27.08.46.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Apr 2020 08:46:20 -0700 (PDT)
+Date:   Mon, 27 Apr 2020 17:46:17 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Jonathan Bakker <xc-racer2@live.ca>
+Cc:     Paul Cercueil <paul@crapouillou.net>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        James Hogan <jhogan@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Philipp Rossak <embed3d@gmail.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        openpvrsgx-devgroup@letux.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com, linux-mips@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v7 08/12] arm: dts: s5pv210: Add node for SGX 540
+Message-ID: <20200427154617.GA1798@pi3>
+References: <cover.1587760454.git.hns@goldelico.com>
+ <3fd18c747426e15fd1f3500b9c4adce2db9ddd0c.1587760454.git.hns@goldelico.com>
+ <NYBE9Q.YH08US7A7DC3@crapouillou.net>
+ <BN6PR04MB0660A180D2069848E5C03D7EA3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <BN6PR04MB06605D52502816E500683553A3D10@BN6PR04MB0660.namprd04.prod.outlook.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <BN6PR04MB0660A180D2069848E5C03D7EA3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Jonathan,
-
-On 4/25/2020 11:06 PM, Jonathan Bakker wrote:
-> The USB phy takes some time to reset, so make sure we give it to it. The
-> delay length was taken from the 4x12 phy driver.
+On Sun, Apr 26, 2020 at 07:57:12AM -0700, Jonathan Bakker wrote:
+> Hi Paul,
 > 
-> This manifested in issues with the DWC2 driver since commit fe369e1826b3
-> ("usb: dwc2: Make dwc2_readl/writel functions endianness-agnostic.")
-> where the endianness check would read the DWC ID as 0 due to the phy still
-> resetting, resulting in the wrong endian mode being chosen.
+> On 2020-04-26 5:56 a.m., Paul Cercueil wrote:
+> > 
+> > 
+> > Le ven. 24 avril 2020 à 22:34, H. Nikolaus Schaller <hns@goldelico.com> a écrit :
+> >> From: Jonathan Bakker <xc-racer2@live.ca>
+> >>
+> >> All s5pv210 devices have a PowerVR SGX 540 (revision 120) attached.
+> >>
+> >> There is no external regulator for it so it can be enabled by default.
+> >>
+> >> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+> >> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+> >> ---
+> >>  arch/arm/boot/dts/s5pv210.dtsi | 13 +++++++++++++
+> >>  1 file changed, 13 insertions(+)
+> >>
+> >> diff --git a/arch/arm/boot/dts/s5pv210.dtsi b/arch/arm/boot/dts/s5pv210.dtsi
+> >> index 2ad642f51fd9..abbdda205c1b 100644
+> >> --- a/arch/arm/boot/dts/s5pv210.dtsi
+> >> +++ b/arch/arm/boot/dts/s5pv210.dtsi
+> >> @@ -512,6 +512,19 @@ vic3: interrupt-controller@f2300000 {
+> >>              #interrupt-cells = <1>;
+> >>          };
+> >>
+> >> +        gpu: gpu@f3000000 {
+> >> +            compatible = "samsung,s5pv210-sgx540-120";
+
+This should not pass the bindings check because you missed last
+compatibles.
+
+> >> +            reg = <0xf3000000 0x10000>;
+> >> +            interrupt-parent = <&vic2>;
+> >> +            interrupts = <10>;
+> >> +            clock-names = "core";
+> >> +            clocks = <&clocks CLK_G3D>;
+> >> +
+> >> +            assigned-clocks = <&clocks MOUT_G3D>, <&clocks DOUT_G3D>;
+> >> +            assigned-clock-rates = <0>, <66700000>;
+> >> +            assigned-clock-parents = <&clocks MOUT_MPLL>;
+> > 
+> > What are these clocks for, and why are they reparented / reclocked?
+> > 
+> > Shouldn't they be passed to 'clocks' as well?
+> > 
+> > -Paul
+> > 
 > 
-> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
-> ---
->  drivers/phy/samsung/phy-s5pv210-usb2.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/phy/samsung/phy-s5pv210-usb2.c b/drivers/phy/samsung/phy-s5pv210-usb2.c
-> index 56a5083fe6f9..32be62e49804 100644
-> --- a/drivers/phy/samsung/phy-s5pv210-usb2.c
-> +++ b/drivers/phy/samsung/phy-s5pv210-usb2.c
-> @@ -139,6 +139,10 @@ static void s5pv210_phy_pwr(struct samsung_usb2_phy_instance *inst, bool on)
->  		udelay(10);
->  		rst &= ~rstbits;
->  		writel(rst, drv->reg_phy + S5PV210_UPHYRST);
-> +		/* The following delay is necessary for the reset sequence to be
-> +		 * completed
-> +		 */
-> +		udelay(80);
+> The G3D clock system can have multiple parents, and for stable operation
+> it's recommended to use the MPLL clock as the parent (which in turn
+> is actually a mux as well).  MOUT_G3D is simply the mux for CLK_G3D
+> (SGX core clock), DOUT_G3D is the divider.  DOUT_G3D could equally be CLK_G3D
+> (and probably should be, for readability) as CLK_G3D is simply the gate and
+> DOUT_G3D is the divider for it.
 
-Please fix the following checkpatch check error.
-CHECK: usleep_range is preferred over udelay; see
-Documentation/timers/timers-howto.rst
-#151: FILE: drivers/phy/samsung/phy-s5pv210-usb2.c:145:
-+               udelay(80);
+Good point, it should be CLK_G3D instead of DOUT.  Can you fix this as
+well?
 
-total: 0 errors, 0 warnings, 1 checks, 10 lines checked
-
-Thanks
-Kishon
+Best regards,
+Krzysztof
