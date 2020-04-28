@@ -8,195 +8,276 @@ X-Spam-Status: No, score=-6.4 required=3.0 tests=FORGED_MUA_MOZILLA,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25661C83004
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Apr 2020 22:58:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E68DC83000
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Apr 2020 23:33:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 119CD2083B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Apr 2020 22:58:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CBF420737
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Apr 2020 23:33:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726279AbgD1W6P (ORCPT
+        id S1726353AbgD1XdE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 28 Apr 2020 18:58:15 -0400
-Received: from mail-dm6nam10olkn2022.outbound.protection.outlook.com ([40.92.41.22]:57792
+        Tue, 28 Apr 2020 19:33:04 -0400
+Received: from mail-dm6nam10olkn2050.outbound.protection.outlook.com ([40.92.41.50]:15705
         "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725934AbgD1W6P (ORCPT
+        id S1726181AbgD1XdD (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 28 Apr 2020 18:58:15 -0400
+        Tue, 28 Apr 2020 19:33:03 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dH4OalpptlhlKSBkjvdbN4KZvamuU0+zjqlKIoQ2+zXwzHYaU+zo/+P1vaLoAQqJ4lgpWbB7LCTD32URDk34NheeUOla9GIzo58E4x8IKWn7zyyDGkmUHqU+xZXaCQlGghZp18BBvLxbcrccoUWUwrcYQcVl7wKdGMe+YdlXmdSebBT1uKrg0zxcb9Clowu/FJjWgxfSxJZmUNQCQlVp7RGPLvIQSxthaTMpF20zYS697LXxMJflN5JKlf6Gz9YwZlG/1T8zufMctEW3QcoLjhMv9gf1Yj1CoWkRnp/UMniFrc3XgrzJdIBqv4w0Lq9u820tDWx/bsxUsx8iqSSsQA==
+ b=h8eqUuq1gn79QO2jbX/txYXTnyphDqvJEW0Wi+YjTBjSyx8jXMxtaLxVJrJqWY8CEBNO6w62xcd8G0r/v5Mek83fg81lclj6c2oOIQ0xP4lY1B8x26wkPs3R2/AxTzYXOCr2wSHz/DJahsjaVt8Nywc8o2fUcCEu9hxagN5oZeNPR3RGRz6M9RroF7mhprAxs9fr6nSybddlLiL72X/g9myc0Ml06o1q+HBrAKRmchMiMG5XzQv8rGN+Xg7zf8iYT1KZGFPmRAFIafm7os2Zbqq+NbkkuH2IbBsIEEkKRq3xqleqpm4fxRy5MqdJdQ+8aKF9oRzQjkh8Z5ncKDCJNA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MuaIE8TgI8eeUG5HV45zullZYlfZTfh5z+WzEAXePtY=;
- b=CIYuZMhb+xwGuItEubHM6hBQ4Y0g8275Yw/I424BkGXAsWOzZwPuA21PZM4pWz9pvU1vuG+eCiPYJEhqsryBr8WinXtqHr3QzQOUhs5IuH2u2yO52uiR8qF7t/WZup8JesmrkqcIkaoBVBFtPOyvlKPc1dLvq6Sv+soIKJssA4laP7fW2Xix3nNjqDKdNdnkWg+42+FlWhTBo5HkT7Oq0YQ2Cqdqi4aW/t8g/xaPcG36EBcn9zr/mkGiKlJEbW+7qnBr5afjwSmGo6fdL7/u9R/1h4tp1oz4O+HS6uy9lzyIsJNxT5zmkzOXzE+zE8+BNirk8cE7zpiHpJ4SgmBTyg==
+ bh=2Zg3O2l8L0fVqBf9ngqboroh8jJ/adoLezWfK4t5jH8=;
+ b=HqtxYAaDYRTEYv43A38YT75+sUiTCRonWTqYGVgWzTjfaOrO1T1FbJ/am4KhDs1Xu0iKDSkKMTMojJHnSKKFHb3uzTPjDQ8yS9l3Rsw0tKAzFHNRvVeYtVIKokkSKEefH2mVOUs5UI+SmS/AKjEQBWAraT1J5JIo8LEw14jsCRQO+67XVhCkBoR1K0HTbVwyDiFkXmFymlebCMk2APkfd1Yc+000+wVqQOwDMCNvL3JJ4tGJJRoj7bqdNM8LY3ftNCBLUKVRBqQIgn3qIudz1h21XJuAZw3X8+mbjjVvQJ++4pA/xQST376EdtiptLCUi6Ij2r5i6vmLlCh3t9b5CA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=live.ca; dmarc=pass action=none header.from=live.ca; dkim=pass
  header.d=live.ca; arc=none
-Received: from DM6NAM10FT053.eop-nam10.prod.protection.outlook.com
- (2a01:111:e400:7e86::45) by
- DM6NAM10HT010.eop-nam10.prod.protection.outlook.com (2a01:111:e400:7e86::83)
+Received: from DM6NAM10FT005.eop-nam10.prod.protection.outlook.com
+ (2a01:111:e400:7e86::47) by
+ DM6NAM10HT067.eop-nam10.prod.protection.outlook.com (2a01:111:e400:7e86::233)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2937.15; Tue, 28 Apr
- 2020 22:58:11 +0000
+ 2020 23:33:01 +0000
 Received: from BN6PR04MB0660.namprd04.prod.outlook.com
- (2a01:111:e400:7e86::4f) by DM6NAM10FT053.mail.protection.outlook.com
- (2a01:111:e400:7e86::442) with Microsoft SMTP Server (version=TLS1_2,
+ (2a01:111:e400:7e86::4c) by DM6NAM10FT005.mail.protection.outlook.com
+ (2a01:111:e400:7e86::87) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2937.15 via Frontend
- Transport; Tue, 28 Apr 2020 22:58:11 +0000
-X-IncomingTopHeaderMarker: OriginalChecksum:9DD91C560F719B6A0FD0859D0B9EB727363D20AB69F890889C2A5E39D02BC068;UpperCasedChecksum:C40B9486CA0DDFBB9B19B9961A7974577A1BE048E67E179F3A60565C4A004CED;SizeAsReceived:10167;Count:50
+ Transport; Tue, 28 Apr 2020 23:33:01 +0000
+X-IncomingTopHeaderMarker: OriginalChecksum:4C4BFC1E138AF698EC9B74CB087DB01D929962F2314EDE3F00C46125092DE321;UpperCasedChecksum:203ABE6D764C7B541D71C37161A2EB21880CF28E9A587BC16C39A7BCA3067930;SizeAsReceived:9245;Count:50
 Received: from BN6PR04MB0660.namprd04.prod.outlook.com
  ([fe80::ad10:4127:4bc8:76fc]) by BN6PR04MB0660.namprd04.prod.outlook.com
  ([fe80::ad10:4127:4bc8:76fc%6]) with mapi id 15.20.2937.023; Tue, 28 Apr 2020
- 22:58:11 +0000
-Subject: Re: [PATCH v7 08/12] arm: dts: s5pv210: Add node for SGX 540
-From:   Jonathan Bakker <xc-racer2@live.ca>
+ 23:33:01 +0000
+Subject: Re: [PATCH 06/13] arm: dts: s5pv210: aries: Add support for more
+ devices
 To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Paul Cercueil <paul@crapouillou.net>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paulburton@kernel.org>,
-        James Hogan <jhogan@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Philipp Rossak <embed3d@gmail.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        openpvrsgx-devgroup@letux.org, letux-kernel@openphoenux.org,
-        kernel@pyra-handheld.com, linux-mips@vger.kernel.org,
+Cc:     kgene@kernel.org, robh+dt@kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-References: <cover.1587760454.git.hns@goldelico.com>
- <3fd18c747426e15fd1f3500b9c4adce2db9ddd0c.1587760454.git.hns@goldelico.com>
- <NYBE9Q.YH08US7A7DC3@crapouillou.net>
- <BN6PR04MB0660A180D2069848E5C03D7EA3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
- <20200427154617.GA1798@pi3>
- <BN6PR04MB06605F014024061C894AFBA4A3AC0@BN6PR04MB0660.namprd04.prod.outlook.com>
-Message-ID: <BN6PR04MB0660044B5B1D45BE4CBCD2AAA3AC0@BN6PR04MB0660.namprd04.prod.outlook.com>
-Date:   Tue, 28 Apr 2020 15:58:03 -0700
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+References: <20200426183604.28494-1-xc-racer2@live.ca>
+ <BN6PR04MB0660563639D091548BFCCFF2A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
+ <20200428102026.GB23963@kozik-lap>
+From:   Jonathan Bakker <xc-racer2@live.ca>
+Message-ID: <BN6PR04MB0660776A38353DBDF0E2E3F9A3AC0@BN6PR04MB0660.namprd04.prod.outlook.com>
+Date:   Tue, 28 Apr 2020 16:32:56 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.5.0
-In-Reply-To: <BN6PR04MB06605F014024061C894AFBA4A3AC0@BN6PR04MB0660.namprd04.prod.outlook.com>
+In-Reply-To: <20200428102026.GB23963@kozik-lap>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MWHPR1701CA0020.namprd17.prod.outlook.com
- (2603:10b6:301:14::30) To BN6PR04MB0660.namprd04.prod.outlook.com
+X-ClientProxiedBy: MWHPR11CA0041.namprd11.prod.outlook.com
+ (2603:10b6:300:115::27) To BN6PR04MB0660.namprd04.prod.outlook.com
  (2603:10b6:404:d9::21)
-X-Microsoft-Original-Message-ID: <f4d70bab-caba-8700-00aa-010384f053e2@live.ca>
+X-Microsoft-Original-Message-ID: <2fcf0fb1-9a47-d481-4285-a894858e54ae@live.ca>
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [IPv6:2001:569:fb67:7300:9f89:4b96:de0b:cd14] (2001:569:fb67:7300:9f89:4b96:de0b:cd14) by MWHPR1701CA0020.namprd17.prod.outlook.com (2603:10b6:301:14::30) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2958.19 via Frontend Transport; Tue, 28 Apr 2020 22:58:06 +0000
-X-Microsoft-Original-Message-ID: <f4d70bab-caba-8700-00aa-010384f053e2@live.ca>
-X-TMN:  [p5xCICxpvEcF+C5bcn3IY6/23cHHsfWLGQe5HxJm1+AAXApmKRg140W6WwoNl3IS]
+Received: from [IPv6:2001:569:fb67:7300:9f89:4b96:de0b:cd14] (2001:569:fb67:7300:9f89:4b96:de0b:cd14) by MWHPR11CA0041.namprd11.prod.outlook.com (2603:10b6:300:115::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2937.13 via Frontend Transport; Tue, 28 Apr 2020 23:32:59 +0000
+X-Microsoft-Original-Message-ID: <2fcf0fb1-9a47-d481-4285-a894858e54ae@live.ca>
+X-TMN:  [9vG9gbXJ2RZlfiyMEIrXeVQDYngTwG4wO7h96rawItU0gFaCpX8McFh59mHeLYGH]
 X-MS-PublicTrafficType: Email
 X-IncomingHeaderCount: 50
 X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-Correlation-Id: 9f8a5563-8f46-468c-edd6-08d7ebc7a02f
-X-MS-TrafficTypeDiagnostic: DM6NAM10HT010:
+X-MS-Office365-Filtering-Correlation-Id: 3ad98ce3-6ada-4509-75cd-08d7ebcc7d60
+X-MS-TrafficTypeDiagnostic: DM6NAM10HT067:
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Eu6+DJDb/VXQQhT1KQyJeLAlptyYlZo/0nlf3oPLCHod9hzxJfrhd+tN5qcfmT7gYUsFmIbDt3JXi0dg+KmPHIK812Vz864xR/+SnPw6AlAHXKmnVC2PyxrhzDKdsXp6uVVEXXcYzI/BR2TCh7kFG9zx9cgrVDX+ZlmCCZfI+UwZFroiWr7qRKhycdzA9AheuLe4DYxk+4fi2x7z/I5iBQ==
+X-Microsoft-Antispam-Message-Info: MmDDFUt7wttFgZwz7MtFVy9qcqFBtdzbVa4RvNlnG/z33w0t15URo43dhWdt0heKlwngIE+OHRN2DSjLZO63387KzfmgpvBsCd6DarntjR2X4E8UAVRqz8CSlB+vp6ugpmo1aZpXi+ldpZOSSoD9ra3AapUbb+hrR9dK9pBYyhXnX75l2iv8AK8Gsq18WJQQ+alIOuvAZfFyxreHOmCbCA==
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:0;SRV:;IPV:NLI;SFV:NSPM;H:BN6PR04MB0660.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:;DIR:OUT;SFP:1901;
-X-MS-Exchange-AntiSpam-MessageData: jcwqMPeBOgdjmQA0oMP6IpFxptHmfDaomCReXOB2Xj68q1dz2VvhXXz4M2Uj+NaKxE86mtQV5Dl5AD7n6nMInqZuBpyZw3wu8FB380euZHZzI71vmdADajZdObPM2fFdAqbEtMkfds9ldDO3ul3irkcaxUq4cgZuIQI6qdt9B6Rq9eYvTGzJoES2/nw7P6ruYwvNsv8uD/0bs8zhdJSZ8Q==
+X-MS-Exchange-AntiSpam-MessageData: txiL8uXO9f/42y7dMy5bxmC9WSddtjzo753nNlpH7VFQgSrY6hdyrInghmdJ8OOChZIaDL3kMSgFTiL+e3Qyde8dDGDl7dG/+pPOjZC+i4AhBpzW3c9+VAlvRQhV3ydJtCqUhylBDmvnwWgeFierHM3tnNSpR4FzwZLh8OVgjiiO5f7s4Mo+pOjoy+TBi84CPKxG+1GwOcanPFn6pEYj1A==
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9f8a5563-8f46-468c-edd6-08d7ebc7a02f
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2020 22:58:11.8237
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3ad98ce3-6ada-4509-75cd-08d7ebcc7d60
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2020 23:33:00.9482
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
 X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
 X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6NAM10HT010
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6NAM10HT067
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi all,
+Hi Krzysztof,
 
-On 2020-04-28 2:39 p.m., Jonathan Bakker wrote:
-> Hi Krzysztof,
+On 2020-04-28 3:20 a.m., Krzysztof Kozlowski wrote:
+> On Sun, Apr 26, 2020 at 11:35:57AM -0700, Jonathan Bakker wrote:
+>> Add support for following devices:
+>>   - touchkeys connected over i2c-gpio
+>>   - s6e63m0 panel connected over spi-gpio
+>>   - fsa9480 microusb switch over i2c-gpio
+>>   - wm8994 over i2c-gpio (no machine driver yet)
+>>   - all common i2c-gpio devices
 > 
-> On 2020-04-27 8:46 a.m., Krzysztof Kozlowski wrote:
->> On Sun, Apr 26, 2020 at 07:57:12AM -0700, Jonathan Bakker wrote:
->>> Hi Paul,
->>>
->>> On 2020-04-26 5:56 a.m., Paul Cercueil wrote:
->>>>
->>>>
->>>> Le ven. 24 avril 2020 à 22:34, H. Nikolaus Schaller <hns@goldelico.com> a écrit :
->>>>> From: Jonathan Bakker <xc-racer2@live.ca>
->>>>>
->>>>> All s5pv210 devices have a PowerVR SGX 540 (revision 120) attached.
->>>>>
->>>>> There is no external regulator for it so it can be enabled by default.
->>>>>
->>>>> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
->>>>> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
->>>>> ---
->>>>>  arch/arm/boot/dts/s5pv210.dtsi | 13 +++++++++++++
->>>>>  1 file changed, 13 insertions(+)
->>>>>
->>>>> diff --git a/arch/arm/boot/dts/s5pv210.dtsi b/arch/arm/boot/dts/s5pv210.dtsi
->>>>> index 2ad642f51fd9..abbdda205c1b 100644
->>>>> --- a/arch/arm/boot/dts/s5pv210.dtsi
->>>>> +++ b/arch/arm/boot/dts/s5pv210.dtsi
->>>>> @@ -512,6 +512,19 @@ vic3: interrupt-controller@f2300000 {
->>>>>              #interrupt-cells = <1>;
->>>>>          };
->>>>>
->>>>> +        gpu: gpu@f3000000 {
->>>>> +            compatible = "samsung,s5pv210-sgx540-120";
+> Please split it per functionality, e.g.:
+> 1. Add sound,
+> 2. Add panel,
+> 3. Add touchkeys (unless part of panel),
+> 4. The remaining i2c-gpio devices without bindings could go as one.
+
+Ok, will do.
+
+> 
 >>
->> This should not pass the bindings check because you missed last
->> compatibles.
+>> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+>> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+>> ---
+>>  arch/arm/boot/dts/s5pv210-aries.dtsi      | 282 ++++++++++++++++++++--
+>>  arch/arm/boot/dts/s5pv210-fascinate4g.dts |   6 +
+>>  2 files changed, 270 insertions(+), 18 deletions(-)
 >>
+>> diff --git a/arch/arm/boot/dts/s5pv210-aries.dtsi b/arch/arm/boot/dts/s5pv210-aries.dtsi
+>> index f83df426f2b6..ef966d13d83d 100644
+>> --- a/arch/arm/boot/dts/s5pv210-aries.dtsi
+>> +++ b/arch/arm/boot/dts/s5pv210-aries.dtsi
+>> @@ -12,8 +12,14 @@
+>>  	compatible = "samsung,aries", "samsung,s5pv210";
+>>  
+>>  	aliases {
+>> +		i2c4 = &i2c_sound;
+>> +		i2c5 = &i2c_accel;
+>>  		i2c6 = &i2c_pmic;
+>> +		i2c7 = &i2c_musb;
+>>  		i2c9 = &i2c_fuel;
+>> +		i2c10 = &i2c_touchkey;
+>> +		i2c11 = &i2c_prox;
+>> +		i2c12 = &i2c_magnetometer;
+>>  	};
+>>  
+>>  	memory@30000000 {
+>> @@ -48,6 +54,18 @@
+>>  		gpio = <&gpj1 1 GPIO_ACTIVE_HIGH>;
+>>  	};
+>>  
+>> +	touchkey_vdd: regulator-fixed-1 {
+>> +		compatible = "regulator-fixed";
+>> +		regulator-name = "VTOUCH_3.3V";
+>> +		regulator-min-microvolt = <3300000>;
+>> +		regulator-max-microvolt = <3300000>;
+>> +		enable-active-high;
+>> +		gpio = <&gpj3 2 GPIO_ACTIVE_HIGH>;
+>> +
+>> +		pinctrl-names = "default";
+>> +		pinctrl-0 = <&touchkey_vdd_ena>;
+>> +	};
+>> +
+>>  	wifi_pwrseq: wifi-pwrseq {
+>>  		compatible = "mmc-pwrseq-simple";
+>>  		reset-gpios = <&gpg1 2 GPIO_ACTIVE_LOW>;
+>> @@ -57,7 +75,69 @@
+>>  		power-off-delay-us = <500>;
+>>  	};
+>>  
+>> -	i2c_pmic: i2c-gpio-0 {
+>> +	i2c_sound: i2c-gpio-0 {
+>> +		compatible = "i2c-gpio";
+>> +		sda-gpios = <&mp05 3 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+>> +		scl-gpios = <&mp05 2 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+>> +		i2c-gpio,delay-us = <2>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +
+>> +		pinctrl-names = "default";
+>> +		pinctrl-0 = <&sound_i2c_pins>;
+>> +
+>> +		wm8994: wm8994@1a {
+>> +			compatible = "wlf,wm8994";
+>> +			reg = <0x1a>;
+>> +
+>> +			#sound-dai-cells = <0>;
+>> +
+>> +			gpio-controller;
+>> +			#gpio-cells = <2>;
+>> +
+>> +			clocks = <&clocks MOUT_CLKOUT>;
+>> +			clock-names = "MCLK1";
+>> +
+>> +			AVDD2-supply = <&buck3_reg>;
+>> +			DBVDD-supply = <&buck3_reg>;
 > 
-> Thanks for pointing that out, I'll add it and make sure it passes the bindings check.
-> 
->>>>> +            reg = <0xf3000000 0x10000>;
->>>>> +            interrupt-parent = <&vic2>;
->>>>> +            interrupts = <10>;
->>>>> +            clock-names = "core";
->>>>> +            clocks = <&clocks CLK_G3D>;
->>>>> +
->>>>> +            assigned-clocks = <&clocks MOUT_G3D>, <&clocks DOUT_G3D>;
->>>>> +            assigned-clock-rates = <0>, <66700000>;
->>>>> +            assigned-clock-parents = <&clocks MOUT_MPLL>;
->>>>
->>>> What are these clocks for, and why are they reparented / reclocked?
->>>>
->>>> Shouldn't they be passed to 'clocks' as well?
->>>>
->>>> -Paul
->>>>
->>>
->>> The G3D clock system can have multiple parents, and for stable operation
->>> it's recommended to use the MPLL clock as the parent (which in turn
->>> is actually a mux as well).  MOUT_G3D is simply the mux for CLK_G3D
->>> (SGX core clock), DOUT_G3D is the divider.  DOUT_G3D could equally be CLK_G3D
->>> (and probably should be, for readability) as CLK_G3D is simply the gate and
->>> DOUT_G3D is the divider for it.
->>
->> Good point, it should be CLK_G3D instead of DOUT.  Can you fix this as
->> well?
-> 
-> Yep, will do.  Nikolaus, I'll send you an updated patch to include.
+> No such supply, check the bindings.
 > 
 
-How are assigned-clocks handled in the yaml DT schema?  When running make dtbs_check,
-I end up with messages such as
+Well, it may not be in the bindings, but the driver definitely requires it :) See drivers/mfd/wm8994-core.c
 
-arch/arm/boot/dts/s5pv210-aquila.dt.yaml: gpu@f3000000: 'assigned-clock-parents', 'assigned-clock-rates', 'assigned-clocks' do not match any of the regexes: 'pinctrl-[0-9]+'
+What's the best way of dealing with this situation?
 
-Do they need to explicitly be listed as valid entries?
+>> +			CPVDD-supply = <&buck3_reg>;
+>> +			SPKVDD1-supply = <&buck3_reg>;
+>> +			SPKVDD2-supply = <&buck3_reg>;
+>> +
+>> +			wlf,gpio-cfg = <0xa101 0x8100 0x0100 0x0100 0x8100
+>> +					0xa101 0x0100 0x8100 0x0100 0x0100
+>> +					0x0100>;
+>> +
+>> +			wlf,ldo1ena = <&gpf3 4 GPIO_ACTIVE_HIGH>;
+>> +			wlf,ldo2ena = <&gpf3 4 GPIO_ACTIVE_HIGH>;
+>> +
+>> +			wlf,lineout1-se;
+>> +			wlf,lineout2-se;
+>> +
+>> +			assigned-clocks = <&clocks MOUT_CLKOUT>;
+>> +			assigned-clock-rates = <0>;
+>> +			assigned-clock-parents = <&xusbxti>;
+>> +
+>> +			pinctrl-names = "default";
+>> +			pinctrl-0 = <&codec_ldo>;
+>> +		};
+>> +	};
+>> +
+>> +	i2c_accel: i2c-gpio-1 {
+>> +		compatible = "i2c-gpio";
+>> +		sda-gpios = <&gpj3 6 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+>> +		scl-gpios = <&gpj3 7 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+>> +		i2c-gpio,delay-us = <2>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +
+>> +		pinctrl-names = "default";
+>> +		pinctrl-0 = <&accel_i2c_pins>;
+>> +
+>> +		/* bma023 accelerometer, no mainline binding */
+> 
+> status disabled ... unless you need it for user-space I2C tools?
+> 
+
+Nope, but wanted to add them all in due to adding the si4709 in galaxys.  I was having
+issues with accidentally overwriting previously named nodes (ie having i2c-gpio-0 in
+both the common dtsi and the device specific dts) so I wanted to get the numbers
+nailed down.
+
+
+
+<snip>
+
+>>  
+>>  &pwm {
+>> diff --git a/arch/arm/boot/dts/s5pv210-fascinate4g.dts b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
+>> index 94dcb9b64b9a..42e6e2de197d 100644
+>> --- a/arch/arm/boot/dts/s5pv210-fascinate4g.dts
+>> +++ b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
+>> @@ -278,3 +278,9 @@
+>>  		PIN_SLP(mp07-7, INPUT, DOWN);
+>>  	};
+>>  };
+>> +
+>> +&wm8994 {
+>> +	/* GPIO3 (BCLK2) and GPIO4 (LRCLK2) as outputs */
+>> +	wlf,gpio-cfg = <0xa101 0x8100 0x8100 0x8100 0x8100 0xa101
+>> +		0x0100 0x8100 0x0100 0x0100 0x0100>;
+> 
+> Indent the line till opening <.
+
+Will do.
+
+> 
+> Best regards,
+> Krzysztof
+> 
+
 
 Thanks,
 Jonathan
