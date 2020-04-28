@@ -2,100 +2,99 @@ Return-Path: <SRS0=m6pc=6M=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=FORGED_MUA_MOZILLA,
+X-Spam-Status: No, score=-5.6 required=3.0 tests=FORGED_MUA_MOZILLA,
 	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E68DC83000
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Apr 2020 23:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C951FC83000
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Apr 2020 23:49:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CBF420737
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Apr 2020 23:33:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A41A2076A
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Apr 2020 23:49:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726353AbgD1XdE (ORCPT
+        id S1726401AbgD1Xts (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 28 Apr 2020 19:33:04 -0400
-Received: from mail-dm6nam10olkn2050.outbound.protection.outlook.com ([40.92.41.50]:15705
-        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        Tue, 28 Apr 2020 19:49:48 -0400
+Received: from mail-co1nam11olkn2030.outbound.protection.outlook.com ([40.92.18.30]:56289
+        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726181AbgD1XdD (ORCPT
+        id S1726042AbgD1Xtr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 28 Apr 2020 19:33:03 -0400
+        Tue, 28 Apr 2020 19:49:47 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=h8eqUuq1gn79QO2jbX/txYXTnyphDqvJEW0Wi+YjTBjSyx8jXMxtaLxVJrJqWY8CEBNO6w62xcd8G0r/v5Mek83fg81lclj6c2oOIQ0xP4lY1B8x26wkPs3R2/AxTzYXOCr2wSHz/DJahsjaVt8Nywc8o2fUcCEu9hxagN5oZeNPR3RGRz6M9RroF7mhprAxs9fr6nSybddlLiL72X/g9myc0Ml06o1q+HBrAKRmchMiMG5XzQv8rGN+Xg7zf8iYT1KZGFPmRAFIafm7os2Zbqq+NbkkuH2IbBsIEEkKRq3xqleqpm4fxRy5MqdJdQ+8aKF9oRzQjkh8Z5ncKDCJNA==
+ b=NCpnuG92b/4TXsAzJg383vLjb/UNNne1WmQ1KgFnbYAoFvakFSqcTba7/wPvgRPU+kuKLNUSyLZDWkREmF9lYuvUTvy6gQ4HgNcUkTI3ftgUi6CZDPENiTcoRbLnOirJiBxIVfrpDSVGBqyUF0uBspUNuIuUqlFHuCLRf+Nk7F09E9231OgpdH2oUs2qrA4UqTdvmJE82nbQB2yUS/hRD+fDT4BKVtf7J8wBNLn4vF4IXCBaAQnVnFS5Dbn9I+w2eDjkbrXH8InVsvvtciX74/j4jBX+a8L2r999kEXVUWGZ1Svr5HlMqhG8c4QVW/BrNn+p9I9lWww4hjdBtO7B0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2Zg3O2l8L0fVqBf9ngqboroh8jJ/adoLezWfK4t5jH8=;
- b=HqtxYAaDYRTEYv43A38YT75+sUiTCRonWTqYGVgWzTjfaOrO1T1FbJ/am4KhDs1Xu0iKDSkKMTMojJHnSKKFHb3uzTPjDQ8yS9l3Rsw0tKAzFHNRvVeYtVIKokkSKEefH2mVOUs5UI+SmS/AKjEQBWAraT1J5JIo8LEw14jsCRQO+67XVhCkBoR1K0HTbVwyDiFkXmFymlebCMk2APkfd1Yc+000+wVqQOwDMCNvL3JJ4tGJJRoj7bqdNM8LY3ftNCBLUKVRBqQIgn3qIudz1h21XJuAZw3X8+mbjjVvQJ++4pA/xQST376EdtiptLCUi6Ij2r5i6vmLlCh3t9b5CA==
+ bh=7o2b4VOkqLcT8Z37/4J4wISDZ/GXzpWzfr4qlYl9VAM=;
+ b=TvuQ6OdHP6hkeeoUTLL6hPNyzL+2CSQ1Mzeqw8QsUQgDxGb+pJCU+rlB8Bd9kAIcR+et92YvW3Jz2hbzu9KUSA4rrUe+rX5Qd8gN7hwOlM24jS2lDumHXeL1Un/IfliZZBXXvblJ1oWBjOqg7aPyTt4lDAKgVrxlnTZUs7xUBnltLnSw6uHOPBlaFxawAF5TPE8xVm6tDh4vLT7yC26Z5plx5kxfM+o7WZhgAVKmOHHta4AqICMBz6wg+sW+P04mHLpVXzoSZ6Ew4fhU+XRe4At168EL5G77fo0Qx7ieC3QolWulqpM5pa10nctcLfxa9kTsBoBvMu6nW1hGy7xkyg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=live.ca; dmarc=pass action=none header.from=live.ca; dkim=pass
  header.d=live.ca; arc=none
-Received: from DM6NAM10FT005.eop-nam10.prod.protection.outlook.com
- (2a01:111:e400:7e86::47) by
- DM6NAM10HT067.eop-nam10.prod.protection.outlook.com (2a01:111:e400:7e86::233)
+Received: from CO1NAM11FT035.eop-nam11.prod.protection.outlook.com
+ (2a01:111:e400:3861::49) by
+ CO1NAM11HT136.eop-nam11.prod.protection.outlook.com (2a01:111:e400:3861::330)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2937.15; Tue, 28 Apr
- 2020 23:33:01 +0000
+ 2020 23:49:44 +0000
 Received: from BN6PR04MB0660.namprd04.prod.outlook.com
- (2a01:111:e400:7e86::4c) by DM6NAM10FT005.mail.protection.outlook.com
- (2a01:111:e400:7e86::87) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2937.15 via Frontend
- Transport; Tue, 28 Apr 2020 23:33:01 +0000
-X-IncomingTopHeaderMarker: OriginalChecksum:4C4BFC1E138AF698EC9B74CB087DB01D929962F2314EDE3F00C46125092DE321;UpperCasedChecksum:203ABE6D764C7B541D71C37161A2EB21880CF28E9A587BC16C39A7BCA3067930;SizeAsReceived:9245;Count:50
+ (2a01:111:e400:3861::4d) by CO1NAM11FT035.mail.protection.outlook.com
+ (2a01:111:e400:3861::292) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2958.19 via Frontend
+ Transport; Tue, 28 Apr 2020 23:49:44 +0000
+X-IncomingTopHeaderMarker: OriginalChecksum:C12EF5187D361EFD1EB31559DCB06F2DB769488FFA1C4A24ADD8F4E82E63E26D;UpperCasedChecksum:2CF29841EE3EFB20F02EEB309A3157F140C85DE9B5A33AA07DC9EA996E993811;SizeAsReceived:9168;Count:50
 Received: from BN6PR04MB0660.namprd04.prod.outlook.com
  ([fe80::ad10:4127:4bc8:76fc]) by BN6PR04MB0660.namprd04.prod.outlook.com
  ([fe80::ad10:4127:4bc8:76fc%6]) with mapi id 15.20.2937.023; Tue, 28 Apr 2020
- 23:33:01 +0000
-Subject: Re: [PATCH 06/13] arm: dts: s5pv210: aries: Add support for more
- devices
+ 23:49:40 +0000
+Subject: Re: [PATCH 02/13] arm: dts: s5pv210: fascinate4g: Add sleep GPIO
+ configuration
 To:     Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     kgene@kernel.org, robh+dt@kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+        linux-kernel@vger.kernel.org
 References: <20200426183604.28494-1-xc-racer2@live.ca>
- <BN6PR04MB0660563639D091548BFCCFF2A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
- <20200428102026.GB23963@kozik-lap>
+ <BN6PR04MB0660532FF97089208CCEEB2AA3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
+ <20200428100244.GA23963@kozik-lap>
 From:   Jonathan Bakker <xc-racer2@live.ca>
-Message-ID: <BN6PR04MB0660776A38353DBDF0E2E3F9A3AC0@BN6PR04MB0660.namprd04.prod.outlook.com>
-Date:   Tue, 28 Apr 2020 16:32:56 -0700
+Message-ID: <BN6PR04MB06605BE9E1559751E083B4E4A3AC0@BN6PR04MB0660.namprd04.prod.outlook.com>
+Date:   Tue, 28 Apr 2020 16:49:36 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.5.0
-In-Reply-To: <20200428102026.GB23963@kozik-lap>
+In-Reply-To: <20200428100244.GA23963@kozik-lap>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MWHPR11CA0041.namprd11.prod.outlook.com
- (2603:10b6:300:115::27) To BN6PR04MB0660.namprd04.prod.outlook.com
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MWHPR20CA0022.namprd20.prod.outlook.com
+ (2603:10b6:300:13d::32) To BN6PR04MB0660.namprd04.prod.outlook.com
  (2603:10b6:404:d9::21)
-X-Microsoft-Original-Message-ID: <2fcf0fb1-9a47-d481-4285-a894858e54ae@live.ca>
+X-Microsoft-Original-Message-ID: <f7e0d6ca-5c5e-5865-7aa0-105bec9799d8@live.ca>
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [IPv6:2001:569:fb67:7300:9f89:4b96:de0b:cd14] (2001:569:fb67:7300:9f89:4b96:de0b:cd14) by MWHPR11CA0041.namprd11.prod.outlook.com (2603:10b6:300:115::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2937.13 via Frontend Transport; Tue, 28 Apr 2020 23:32:59 +0000
-X-Microsoft-Original-Message-ID: <2fcf0fb1-9a47-d481-4285-a894858e54ae@live.ca>
-X-TMN:  [9vG9gbXJ2RZlfiyMEIrXeVQDYngTwG4wO7h96rawItU0gFaCpX8McFh59mHeLYGH]
+Received: from [IPv6:2001:569:fb67:7300:9f89:4b96:de0b:cd14] (2001:569:fb67:7300:9f89:4b96:de0b:cd14) by MWHPR20CA0022.namprd20.prod.outlook.com (2603:10b6:300:13d::32) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2958.19 via Frontend Transport; Tue, 28 Apr 2020 23:49:39 +0000
+X-Microsoft-Original-Message-ID: <f7e0d6ca-5c5e-5865-7aa0-105bec9799d8@live.ca>
+X-TMN:  [urxjVJmIoHa3wwJ+XOyxKQ2Ug8VtqWSjlFzV2QePtD5/pyVmwnRcmQ5yxF4WUN+O]
 X-MS-PublicTrafficType: Email
 X-IncomingHeaderCount: 50
 X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-Correlation-Id: 3ad98ce3-6ada-4509-75cd-08d7ebcc7d60
-X-MS-TrafficTypeDiagnostic: DM6NAM10HT067:
+X-MS-Office365-Filtering-Correlation-Id: 1e061ef5-4c7f-4618-dbde-08d7ebced12c
+X-MS-TrafficTypeDiagnostic: CO1NAM11HT136:
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: MmDDFUt7wttFgZwz7MtFVy9qcqFBtdzbVa4RvNlnG/z33w0t15URo43dhWdt0heKlwngIE+OHRN2DSjLZO63387KzfmgpvBsCd6DarntjR2X4E8UAVRqz8CSlB+vp6ugpmo1aZpXi+ldpZOSSoD9ra3AapUbb+hrR9dK9pBYyhXnX75l2iv8AK8Gsq18WJQQ+alIOuvAZfFyxreHOmCbCA==
+X-Microsoft-Antispam-Message-Info: XQhSjac/clKMJB0hJ8kLDiuA5OsD6rcBE9cIkoJDLu3VjmqqFqBn+AHzENkuTQw27Bq6F5e8nAgsrXW9IMhOsLQhhpidfsUjnX6nBRP7wK1Og0tJnLIRjV1qv8TLP6DkH5roLTedvb5W4mGvHNW6ABrxzgsaxYQx+cRPiqbaMV+lOgl/HauyzcfjQylR/9ab1he63hLPsq8ChXwQ21B13Q==
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:0;SRV:;IPV:NLI;SFV:NSPM;H:BN6PR04MB0660.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:;DIR:OUT;SFP:1901;
-X-MS-Exchange-AntiSpam-MessageData: txiL8uXO9f/42y7dMy5bxmC9WSddtjzo753nNlpH7VFQgSrY6hdyrInghmdJ8OOChZIaDL3kMSgFTiL+e3Qyde8dDGDl7dG/+pPOjZC+i4AhBpzW3c9+VAlvRQhV3ydJtCqUhylBDmvnwWgeFierHM3tnNSpR4FzwZLh8OVgjiiO5f7s4Mo+pOjoy+TBi84CPKxG+1GwOcanPFn6pEYj1A==
+X-MS-Exchange-AntiSpam-MessageData: spED9M2pDCHmVrPNLg4X4PE0pFnGJByvR/1V7EZZIV2SeBfZzI7BkG78WWWeOfH6E+x7BIsqZ23qUZOULMmuVnEb5cKHibA+iuKdxu5bFJgZBTyuTz43aYsH0mrpGcjMHaZHI9sCQ9q8Ws9JNJLFy1kosKoFjjms5SwMVy39lkLgBrWfdD7Yyb2g0DlXfO45nfVW+Wih0hbhZlA34i7YWA==
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3ad98ce3-6ada-4509-75cd-08d7ebcc7d60
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2020 23:33:00.9482
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e061ef5-4c7f-4618-dbde-08d7ebced12c
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2020 23:49:40.5131
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
 X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
 X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6NAM10HT067
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1NAM11HT136
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
@@ -103,181 +102,299 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 Hi Krzysztof,
 
-On 2020-04-28 3:20 a.m., Krzysztof Kozlowski wrote:
-> On Sun, Apr 26, 2020 at 11:35:57AM -0700, Jonathan Bakker wrote:
->> Add support for following devices:
->>   - touchkeys connected over i2c-gpio
->>   - s6e63m0 panel connected over spi-gpio
->>   - fsa9480 microusb switch over i2c-gpio
->>   - wm8994 over i2c-gpio (no machine driver yet)
->>   - all common i2c-gpio devices
-> 
-> Please split it per functionality, e.g.:
-> 1. Add sound,
-> 2. Add panel,
-> 3. Add touchkeys (unless part of panel),
-> 4. The remaining i2c-gpio devices without bindings could go as one.
-
-Ok, will do.
-
-> 
+On 2020-04-28 3:02 a.m., Krzysztof Kozlowski wrote:
+> On Sun, Apr 26, 2020 at 11:35:53AM -0700, Jonathan Bakker wrote:
+>> In order to minimize leakage current during sleep, set a config
+>> for sleep GPIOs.
 >>
 >> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
->> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 >> ---
->>  arch/arm/boot/dts/s5pv210-aries.dtsi      | 282 ++++++++++++++++++++--
->>  arch/arm/boot/dts/s5pv210-fascinate4g.dts |   6 +
->>  2 files changed, 270 insertions(+), 18 deletions(-)
+>>  arch/arm/boot/dts/s5pv210-fascinate4g.dts | 242 ++++++++++++++++++++++
+>>  1 file changed, 242 insertions(+)
 >>
->> diff --git a/arch/arm/boot/dts/s5pv210-aries.dtsi b/arch/arm/boot/dts/s5pv210-aries.dtsi
->> index f83df426f2b6..ef966d13d83d 100644
->> --- a/arch/arm/boot/dts/s5pv210-aries.dtsi
->> +++ b/arch/arm/boot/dts/s5pv210-aries.dtsi
->> @@ -12,8 +12,14 @@
->>  	compatible = "samsung,aries", "samsung,s5pv210";
->>  
->>  	aliases {
->> +		i2c4 = &i2c_sound;
->> +		i2c5 = &i2c_accel;
->>  		i2c6 = &i2c_pmic;
->> +		i2c7 = &i2c_musb;
->>  		i2c9 = &i2c_fuel;
->> +		i2c10 = &i2c_touchkey;
->> +		i2c11 = &i2c_prox;
->> +		i2c12 = &i2c_magnetometer;
->>  	};
->>  
->>  	memory@30000000 {
->> @@ -48,6 +54,18 @@
->>  		gpio = <&gpj1 1 GPIO_ACTIVE_HIGH>;
->>  	};
->>  
->> +	touchkey_vdd: regulator-fixed-1 {
->> +		compatible = "regulator-fixed";
->> +		regulator-name = "VTOUCH_3.3V";
->> +		regulator-min-microvolt = <3300000>;
->> +		regulator-max-microvolt = <3300000>;
->> +		enable-active-high;
->> +		gpio = <&gpj3 2 GPIO_ACTIVE_HIGH>;
->> +
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&touchkey_vdd_ena>;
->> +	};
->> +
->>  	wifi_pwrseq: wifi-pwrseq {
->>  		compatible = "mmc-pwrseq-simple";
->>  		reset-gpios = <&gpg1 2 GPIO_ACTIVE_LOW>;
->> @@ -57,7 +75,69 @@
->>  		power-off-delay-us = <500>;
->>  	};
->>  
->> -	i2c_pmic: i2c-gpio-0 {
->> +	i2c_sound: i2c-gpio-0 {
->> +		compatible = "i2c-gpio";
->> +		sda-gpios = <&mp05 3 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
->> +		scl-gpios = <&mp05 2 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
->> +		i2c-gpio,delay-us = <2>;
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&sound_i2c_pins>;
->> +
->> +		wm8994: wm8994@1a {
->> +			compatible = "wlf,wm8994";
->> +			reg = <0x1a>;
->> +
->> +			#sound-dai-cells = <0>;
->> +
->> +			gpio-controller;
->> +			#gpio-cells = <2>;
->> +
->> +			clocks = <&clocks MOUT_CLKOUT>;
->> +			clock-names = "MCLK1";
->> +
->> +			AVDD2-supply = <&buck3_reg>;
->> +			DBVDD-supply = <&buck3_reg>;
-> 
-> No such supply, check the bindings.
-> 
-
-Well, it may not be in the bindings, but the driver definitely requires it :) See drivers/mfd/wm8994-core.c
-
-What's the best way of dealing with this situation?
-
->> +			CPVDD-supply = <&buck3_reg>;
->> +			SPKVDD1-supply = <&buck3_reg>;
->> +			SPKVDD2-supply = <&buck3_reg>;
->> +
->> +			wlf,gpio-cfg = <0xa101 0x8100 0x0100 0x0100 0x8100
->> +					0xa101 0x0100 0x8100 0x0100 0x0100
->> +					0x0100>;
->> +
->> +			wlf,ldo1ena = <&gpf3 4 GPIO_ACTIVE_HIGH>;
->> +			wlf,ldo2ena = <&gpf3 4 GPIO_ACTIVE_HIGH>;
->> +
->> +			wlf,lineout1-se;
->> +			wlf,lineout2-se;
->> +
->> +			assigned-clocks = <&clocks MOUT_CLKOUT>;
->> +			assigned-clock-rates = <0>;
->> +			assigned-clock-parents = <&xusbxti>;
->> +
->> +			pinctrl-names = "default";
->> +			pinctrl-0 = <&codec_ldo>;
->> +		};
->> +	};
->> +
->> +	i2c_accel: i2c-gpio-1 {
->> +		compatible = "i2c-gpio";
->> +		sda-gpios = <&gpj3 6 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
->> +		scl-gpios = <&gpj3 7 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
->> +		i2c-gpio,delay-us = <2>;
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&accel_i2c_pins>;
->> +
->> +		/* bma023 accelerometer, no mainline binding */
-> 
-> status disabled ... unless you need it for user-space I2C tools?
-> 
-
-Nope, but wanted to add them all in due to adding the si4709 in galaxys.  I was having
-issues with accidentally overwriting previously named nodes (ie having i2c-gpio-0 in
-both the common dtsi and the device specific dts) so I wanted to get the numbers
-nailed down.
-
-
-
-<snip>
-
->>  
->>  &pwm {
 >> diff --git a/arch/arm/boot/dts/s5pv210-fascinate4g.dts b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
->> index 94dcb9b64b9a..42e6e2de197d 100644
+>> index 07a8d9bbe5b8..94dcb9b64b9a 100644
 >> --- a/arch/arm/boot/dts/s5pv210-fascinate4g.dts
 >> +++ b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
->> @@ -278,3 +278,9 @@
->>  		PIN_SLP(mp07-7, INPUT, DOWN);
+>> @@ -36,3 +36,245 @@
+>>  		};
 >>  	};
 >>  };
 >> +
->> +&wm8994 {
->> +	/* GPIO3 (BCLK2) and GPIO4 (LRCLK2) as outputs */
->> +	wlf,gpio-cfg = <0xa101 0x8100 0x8100 0x8100 0x8100 0xa101
->> +		0x0100 0x8100 0x0100 0x0100 0x0100>;
+>> +&pinctrl0 {
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&sleep_cfg>;
+>> +
+>> +	sleep_cfg: sleep-cfg {
+>> +		PIN_SLP(gpa0-0, PREV, NONE);
+>> +		PIN_SLP(gpa0-1, PREV, NONE);
+>> +		PIN_SLP(gpa0-2, PREV, NONE);
+>> +		PIN_SLP(gpa0-3, OUT1, NONE);
 > 
-> Indent the line till opening <.
+> I would be happy to see some reasoning why certain pins have disabled
+> pull down (e.g. they are not connected or you use the same configuration
+> as running one) and why you set them as output.
+> 
 
-Will do.
+Mostly it's copied from the vendor kernel configuration.  Without schematics, I can
+only guess what's actually there.  I can go through and note what each pin appears
+to be used for if you'd like.
+
+>> +		PIN_SLP(gpa0-4, PREV, NONE);
+>> +		PIN_SLP(gpa0-5, PREV, NONE);
+>> +		PIN_SLP(gpa0-6, PREV, NONE);
+>> +		PIN_SLP(gpa0-7, PREV, NONE);
+>> +
+>> +		PIN_SLP(gpa1-0, INPUT, DOWN);
+>> +		PIN_SLP(gpa1-1, OUT0, NONE);
+>> +		PIN_SLP(gpa1-2, INPUT, DOWN);
+>> +		PIN_SLP(gpa1-3, OUT0, NONE);
+>> +
+>> +		PIN_SLP(gpb-0, OUT0, NONE);
+>> +		PIN_SLP(gpb-1, OUT1, NONE);
+>> +		PIN_SLP(gpb-2, OUT0, NONE);
+>> +		PIN_SLP(gpb-3, PREV, NONE);
+>> +		PIN_SLP(gpb-4, INPUT, NONE);
+>> +		PIN_SLP(gpb-5, PREV, NONE);
+>> +		PIN_SLP(gpb-6, INPUT, DOWN);
+>> +		PIN_SLP(gpb-7, OUT0, NONE);
+>> +
+>> +		PIN_SLP(gpc0-0, OUT0, NONE);
+>> +		PIN_SLP(gpc0-1, INPUT, DOWN);
+>> +		PIN_SLP(gpc0-2, OUT0, NONE);
+>> +		PIN_SLP(gpc0-3, INPUT, DOWN);
+>> +		PIN_SLP(gpc0-4, OUT0, NONE);
+>> +
+>> +		PIN_SLP(gpc1-0, INPUT, DOWN);
+>> +		PIN_SLP(gpc1-1, INPUT, DOWN);
+>> +		PIN_SLP(gpc1-2, INPUT, DOWN);
+>> +		PIN_SLP(gpc1-3, INPUT, DOWN);
+>> +		PIN_SLP(gpc1-4, INPUT, DOWN);
+>> +
+>> +		PIN_SLP(gpd0-0, INPUT, DOWN);
+>> +		PIN_SLP(gpd0-1, OUT0, NONE);
+>> +		PIN_SLP(gpd0-2, INPUT, DOWN);
+>> +		PIN_SLP(gpd0-3, INPUT, DOWN);
+>> +
+>> +		PIN_SLP(gpd1-0, INPUT, NONE);
+>> +		PIN_SLP(gpd1-1, INPUT, NONE);
+>> +		PIN_SLP(gpd1-2, INPUT, DOWN);
+>> +		PIN_SLP(gpd1-3, INPUT, DOWN);
+>> +		PIN_SLP(gpd1-4, INPUT, DOWN);
+>> +		PIN_SLP(gpd1-5, INPUT, DOWN);
+>> +
+>> +		PIN_SLP(gpe0-0, INPUT, DOWN);
+>> +		PIN_SLP(gpe0-1, INPUT, DOWN);
+>> +		PIN_SLP(gpe0-2, INPUT, DOWN);
+>> +		PIN_SLP(gpe0-3, INPUT, DOWN);
+>> +		PIN_SLP(gpe0-4, INPUT, DOWN);
+>> +		PIN_SLP(gpe0-5, INPUT, DOWN);
+>> +		PIN_SLP(gpe0-6, INPUT, DOWN);
+>> +		PIN_SLP(gpe0-7, INPUT, DOWN);
+>> +
+>> +		PIN_SLP(gpe1-0, INPUT, DOWN);
+>> +		PIN_SLP(gpe1-1, INPUT, DOWN);
+>> +		PIN_SLP(gpe1-2, INPUT, DOWN);
+>> +		PIN_SLP(gpe1-3, OUT0, NONE);
+>> +		PIN_SLP(gpe1-4, INPUT, DOWN);
+>> +
+>> +		PIN_SLP(gpf0-0, OUT0, NONE);
+>> +		PIN_SLP(gpf0-1, OUT0, NONE);
+>> +		PIN_SLP(gpf0-2, OUT0, NONE);
+>> +		PIN_SLP(gpf0-3, OUT0, NONE);
+>> +		PIN_SLP(gpf0-4, OUT0, NONE);
+>> +		PIN_SLP(gpf0-5, OUT0, NONE);
+>> +		PIN_SLP(gpf0-6, OUT0, NONE);
+>> +		PIN_SLP(gpf0-7, OUT0, NONE);
+>> +
+>> +		PIN_SLP(gpf1-0, OUT0, NONE);
+>> +		PIN_SLP(gpf1-1, OUT0, NONE);
+>> +		PIN_SLP(gpf1-2, OUT0, NONE);
+>> +		PIN_SLP(gpf1-3, OUT0, NONE);
+>> +		PIN_SLP(gpf1-4, OUT0, NONE);
+>> +		PIN_SLP(gpf1-5, OUT0, NONE);
+>> +		PIN_SLP(gpf1-6, OUT0, NONE);
+>> +		PIN_SLP(gpf1-7, OUT0, NONE);
+>> +
+>> +		PIN_SLP(gpf2-0, OUT0, NONE);
+>> +		PIN_SLP(gpf2-1, OUT0, NONE);
+>> +		PIN_SLP(gpf2-2, OUT0, NONE);
+>> +		PIN_SLP(gpf2-3, OUT0, NONE);
+>> +		PIN_SLP(gpf2-4, OUT0, NONE);
+>> +		PIN_SLP(gpf2-5, OUT0, NONE);
+>> +		PIN_SLP(gpf2-6, OUT0, NONE);
+>> +		PIN_SLP(gpf2-7, OUT0, NONE);
+>> +
+>> +		PIN_SLP(gpf3-0, OUT0, NONE);
+>> +		PIN_SLP(gpf3-1, OUT0, NONE);
+>> +		PIN_SLP(gpf3-2, OUT0, NONE);
+>> +		PIN_SLP(gpf3-3, OUT0, NONE);
+>> +		PIN_SLP(gpf3-4, PREV, NONE);
+>> +		PIN_SLP(gpf3-5, INPUT, DOWN);
+>> +
+>> +		PIN_SLP(gpg0-0, INPUT, DOWN);
+>> +		PIN_SLP(gpg0-1, INPUT, DOWN);
+>> +		PIN_SLP(gpg0-2, INPUT, NONE);
+>> +		PIN_SLP(gpg0-3, INPUT, DOWN);
+>> +		PIN_SLP(gpg0-4, INPUT, DOWN);
+>> +		PIN_SLP(gpg0-5, INPUT, DOWN);
+>> +		PIN_SLP(gpg0-6, INPUT, DOWN);
+>> +
+>> +		PIN_SLP(gpg1-0, OUT0, NONE);
+>> +		PIN_SLP(gpg1-1, OUT1, NONE);
+>> +		PIN_SLP(gpg1-2, PREV, NONE);
+>> +		PIN_SLP(gpg1-3, OUT1, NONE);
+>> +		PIN_SLP(gpg1-4, OUT1, NONE);
+>> +		PIN_SLP(gpg1-5, OUT1, NONE);
+>> +		PIN_SLP(gpg1-6, OUT1, NONE);
+>> +
+>> +		PIN_SLP(gpg2-0, OUT0, NONE);
+>> +		PIN_SLP(gpg2-1, OUT0, NONE);
+>> +		PIN_SLP(gpg2-2, INPUT, NONE);
+>> +		PIN_SLP(gpg2-3, OUT0, NONE);
+>> +		PIN_SLP(gpg2-4, OUT0, NONE);
+>> +		PIN_SLP(gpg2-5, OUT0, NONE);
+>> +		PIN_SLP(gpg2-6, OUT0, NONE);
+>> +
+>> +		PIN_SLP(gpg3-0, PREV, UP);
+>> +		PIN_SLP(gpg3-1, PREV, UP);
+>> +		PIN_SLP(gpg3-2, INPUT, NONE);
+>> +		PIN_SLP(gpg3-3, INPUT, DOWN);
+>> +		PIN_SLP(gpg3-4, OUT0, NONE);
+>> +		PIN_SLP(gpg3-5, OUT0, NONE);
+>> +		PIN_SLP(gpg3-6, INPUT, DOWN);
+>> +
+>> +		PIN_SLP(gpi-0, PREV, NONE);
+> 
+> No such name. Did you mean gpgi?
+> 
+> 
+
+The node in s5pv210-pinctrl.dtsi is called "gpgi", but the i2s0_bus config
+in that file uses just "gpi".  drivers/pinctrl/samsung/pinctrl-exynos-arm.c also
+notes it just as "gpi".  I think the node should probably be renamed.
+
+>> +		PIN_SLP(gpi-1, INPUT, DOWN);
+>> +		PIN_SLP(gpi-2, PREV, NONE);
+>> +		PIN_SLP(gpi-3, PREV, NONE);
+>> +		PIN_SLP(gpi-4, PREV, NONE);
+>> +		PIN_SLP(gpi-5, INPUT, DOWN);
+>> +		PIN_SLP(gpi-6, INPUT, DOWN);
+>> +
+>> +		PIN_SLP(gpj0-0, INPUT, NONE);
+>> +		PIN_SLP(gpj0-1, INPUT, NONE);
+>> +		PIN_SLP(gpj0-2, INPUT, NONE);
+>> +		PIN_SLP(gpj0-3, INPUT, NONE);
+>> +		PIN_SLP(gpj0-4, INPUT, NONE);
+>> +		PIN_SLP(gpj0-5, INPUT, DOWN);
+>> +		PIN_SLP(gpj0-6, OUT0, NONE);
+>> +		PIN_SLP(gpj0-7, INPUT, NONE);
+>> +
+>> +		PIN_SLP(gpj1-0, OUT1, NONE);
+>> +		PIN_SLP(gpj1-1, OUT0, NONE);
+>> +		PIN_SLP(gpj1-2, INPUT, DOWN);
+>> +		PIN_SLP(gpj1-3, PREV, NONE);
+>> +		PIN_SLP(gpj1-4, PREV, NONE);
+>> +		PIN_SLP(gpj1-5, OUT0, NONE);
+>> +
+>> +		PIN_SLP(gpj2-0, INPUT, DOWN);
+>> +		PIN_SLP(gpj2-1, INPUT, DOWN);
+>> +		PIN_SLP(gpj2-2, OUT0, NONE);
+>> +		PIN_SLP(gpj2-3, INPUT, DOWN);
+>> +		PIN_SLP(gpj2-4, INPUT, DOWN);
+>> +		PIN_SLP(gpj2-5, PREV, NONE);
+>> +		PIN_SLP(gpj2-6, PREV, NONE);
+>> +		PIN_SLP(gpj2-7, INPUT, DOWN);
+>> +
+>> +		PIN_SLP(gpj3-0, INPUT, NONE);
+>> +		PIN_SLP(gpj3-1, INPUT, NONE);
+>> +		PIN_SLP(gpj3-2, OUT0, NONE);
+>> +		PIN_SLP(gpj3-3, INPUT, DOWN);
+>> +		PIN_SLP(gpj3-4, INPUT, NONE);
+>> +		PIN_SLP(gpj3-5, INPUT, NONE);
+>> +		PIN_SLP(gpj3-6, INPUT, NONE);
+>> +		PIN_SLP(gpj3-7, INPUT, NONE);
+>> +
+>> +		PIN_SLP(gpj4-0, INPUT, NONE);
+>> +		PIN_SLP(gpj4-1, INPUT, DOWN);
+>> +		PIN_SLP(gpj4-2, PREV, NONE);
+>> +		PIN_SLP(gpj4-3, INPUT, NONE);
+>> +		PIN_SLP(gpj4-4, INPUT, DOWN);
+>> +
+>> +		PIN_SLP(mp01-0, OUT1, NONE);
+>> +		PIN_SLP(mp01-1, OUT0, NONE);
+>> +		PIN_SLP(mp01-2, INPUT, DOWN);
+>> +		PIN_SLP(mp01-3, INPUT, DOWN);
+>> +		PIN_SLP(mp01-4, OUT1, NONE);
+>> +		PIN_SLP(mp01-5, INPUT, DOWN);
+>> +		PIN_SLP(mp01-6, INPUT, DOWN);
+>> +		PIN_SLP(mp01-7, INPUT, DOWN);
+>> +
+>> +		PIN_SLP(mp02-0, INPUT, DOWN);
+>> +		PIN_SLP(mp02-1, INPUT, DOWN);
+>> +		PIN_SLP(mp02-2, INPUT, NONE);
+>> +		PIN_SLP(mp02-3, INPUT, DOWN);
+>> +
+>> +		PIN_SLP(mp03-0, INPUT, DOWN);
+>> +		PIN_SLP(mp03-1, INPUT, DOWN);
+>> +		PIN_SLP(mp03-2, OUT1, NONE);
+>> +		PIN_SLP(mp03-3, OUT0, NONE);
+>> +		PIN_SLP(mp03-4, INPUT, NONE);
+>> +		PIN_SLP(mp03-5, OUT0, NONE);
+>> +		PIN_SLP(mp03-6, INPUT, DOWN);
+>> +		PIN_SLP(mp03-7, INPUT, DOWN);
+>> +
+>> +		PIN_SLP(mp04-0, INPUT, DOWN);
+>> +		PIN_SLP(mp04-1, OUT0, NONE);
+>> +		PIN_SLP(mp04-2, INPUT, DOWN);
+>> +		PIN_SLP(mp04-3, OUT0, NONE);
+>> +		PIN_SLP(mp04-4, INPUT, DOWN);
+>> +		PIN_SLP(mp04-5, INPUT, DOWN);
+>> +		PIN_SLP(mp04-6, OUT0, NONE);
+>> +		PIN_SLP(mp04-7, INPUT, DOWN);
+>> +
+>> +		PIN_SLP(mp05-0, INPUT, NONE);
+>> +		PIN_SLP(mp05-1, INPUT, NONE);
+>> +		PIN_SLP(mp05-2, INPUT, NONE);
+>> +		PIN_SLP(mp05-3, INPUT, NONE);
+>> +		PIN_SLP(mp05-4, INPUT, DOWN);
+>> +		PIN_SLP(mp05-5, OUT0, NONE);
+>> +		PIN_SLP(mp05-6, INPUT, DOWN);
+>> +		PIN_SLP(mp05-7, PREV, NONE);
+>> +
+>> +		PIN_SLP(mp06-0, INPUT, DOWN);
+>> +		PIN_SLP(mp06-1, INPUT, DOWN);
+>> +		PIN_SLP(mp06-2, INPUT, DOWN);
+>> +		PIN_SLP(mp06-3, INPUT, DOWN);
+>> +		PIN_SLP(mp06-4, INPUT, DOWN);
+>> +		PIN_SLP(mp06-5, INPUT, DOWN);
+>> +		PIN_SLP(mp06-6, INPUT, DOWN);
+>> +		PIN_SLP(mp06-7, INPUT, DOWN);
+>> +
+>> +		PIN_SLP(mp07-0, INPUT, DOWN);
+>> +		PIN_SLP(mp07-1, INPUT, DOWN);
+>> +		PIN_SLP(mp07-2, INPUT, DOWN);
+>> +		PIN_SLP(mp07-3, INPUT, DOWN);
+>> +		PIN_SLP(mp07-4, INPUT, DOWN);
+>> +		PIN_SLP(mp07-5, INPUT, DOWN);
+>> +		PIN_SLP(mp07-6, INPUT, DOWN);
+>> +		PIN_SLP(mp07-7, INPUT, DOWN);
+>> +	};
+> 
+> What about gphX?
+
+The gphX pins are in the alive area and don't have power down configs, they retain their
+state over suspend.  Therefore the samsung,pin-con-pdn and samsung,pin-pud-pdn properties
+have no effect (they're analogous to the gpxX pins in later Samsung SoCs).
 
 > 
 > Best regards,
 > Krzysztof
 > 
-
+>> +};
+>> -- 
+>> 2.20.1
+>>
 
 Thanks,
 Jonathan
