@@ -2,133 +2,112 @@ Return-Path: <SRS0=m6pc=6M=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96989C83004
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Apr 2020 10:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F415C83000
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Apr 2020 10:38:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 781DA20737
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Apr 2020 10:33:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 476BD206A1
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Apr 2020 10:38:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1588069986;
-	bh=1clsmZJegjw8HaJ5Njou1QrUs1up4U7zJZaJATRxhWg=;
+	s=default; t=1588070310;
+	bh=yDonmdUzWYPcb8/jEh5I01BK7PHfuq8AcsBy6JJlYd8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=vDt8z+rDXHqmyhPI85/lbDuBxmE25e5/GXFS/gXTCgF3UaJqndKWJ9p29d7Itody2
-	 EYt/n6VpFOSgrZNRnqPXdnX41/Dq95jdfhqZQtmEarFaBB6K8HPVomgl3diR7Ewa9c
-	 0UpIG1iUKYhVBbztpJGkdGJG1gF0HlEAOxt08OQ8=
+	b=R9iXc0lG8Xevb3+j/sF5I6RVEfHnqZ8xT9tUZy7Cs9A1YLg4Gbf0wBiHcYkAWEgfJ
+	 PKrDo/5E1n0M4vY4Ae7r9BFH9Vf0jWp79Yv4mz+fMrkDIs/7Tt59oZzfZh7QO9mjlK
+	 c3r5QepsdjZkz/Q2SB6Qovi2WtZLQnjsY8Z+WHT0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726328AbgD1KdD (ORCPT
+        id S1726401AbgD1Ki3 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 28 Apr 2020 06:33:03 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40428 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbgD1KdD (ORCPT
+        Tue, 28 Apr 2020 06:38:29 -0400
+Received: from mail-ej1-f66.google.com ([209.85.218.66]:44216 "EHLO
+        mail-ej1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726335AbgD1Ki3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 28 Apr 2020 06:33:03 -0400
-Received: by mail-ed1-f67.google.com with SMTP id d16so15981718edq.7;
-        Tue, 28 Apr 2020 03:33:01 -0700 (PDT)
+        Tue, 28 Apr 2020 06:38:29 -0400
+Received: by mail-ej1-f66.google.com with SMTP id n4so16817321ejs.11;
+        Tue, 28 Apr 2020 03:38:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3D2uMdzrOa8rVE8whnBxczkr3C+t2CoAy11SOmQRQD8=;
-        b=kh3V/Sxb1F3U5B/AIL8eVXrxlqactmu1bnT5rW0GEI5Pwrn2Dh6It6uWRyqcgU0gI/
-         kZ2cORojJ+JsDTVypsfrncIisZn30OVc0HujLiQLcpOEU0gnvq2Nz7Dm+4qzU7LbviK6
-         OnUQCGRnUyuOZrvOjT9P3XDIkqwGDz4/4cUPHjRZKH7pKK8K+Lv8lG/w4J4Z9n5hFck2
-         mk3lGPUfzq4C/92ILFs4KB9SD5F+YKaPmrCYts37vBZ5FyVTESeDD8137CWwxB6s6pik
-         bxlzVcmTclEuoEUae7C9Q2c1Z82ROLAMbi42JNe2YD6935Fixutis3+2I9coT10RQqV4
-         YMsQ==
-X-Gm-Message-State: AGi0PuaWKtZvbuU7GBFHeBfBJcpKajovRiSVvVAhcWMLAeZPK66ulR2V
-        wucibn4iUEYi4lfJf7gxUFE=
-X-Google-Smtp-Source: APiQypKul1M9hkner9c2dBAchlt9cSNlRgYLaNiYw2GS2Dty7nUnjKL4Mbse6v9dCx57cSCvUOLYIA==
-X-Received: by 2002:a50:951c:: with SMTP id u28mr21259827eda.310.1588069980922;
-        Tue, 28 Apr 2020 03:33:00 -0700 (PDT)
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=QS4c9ls6yzOR+yRWTJD8hrerOuMZYga2B1YWCy646HU=;
+        b=KPn0OiwONCQAwz5nUHDNOtVYJUiP7T9EjuXuyU5OAT0SJr5aFbkPYGsFKQm9fFPd1D
+         SAiVyHSpoQpTafHX6qb17fXrOxhyQHc0A7rnzNGiGgEbR3PPA1vQD4FMxlbt3AgEpA5Z
+         hsrhJCTvIaXOY7UuOVuWJfdkoteTswYfZj3u57IyLUWX0epZ8N/2cw21tS8f88qpvInp
+         YbafhK1gt9aDdbn95dxcingmQ40tcw8AKZ4bdPTxz6FJrLbqEPTXnb3lKFQrihoTALsM
+         xREsri6LKRqLRMThykghGZeApI7fDVhpYy3K+B0FZMcxg+DwZWFwdTjYHiVmbBkU1/dt
+         Kjfg==
+X-Gm-Message-State: AGi0PubJQ62f/YH7OSktw42V91KPfyfsH99uR+4K21ClgExUidc5N5yR
+        LKsmlJame39289198ZfaV+Q=
+X-Google-Smtp-Source: APiQypIJTK4SUmp8jTM+oNe7+uJOVbtyCyJrubIWc/QoIsByKo+wNj3JnrX0SttughUGYKSrljqd1w==
+X-Received: by 2002:a17:906:9706:: with SMTP id k6mr24724371ejx.103.1588070307272;
+        Tue, 28 Apr 2020 03:38:27 -0700 (PDT)
 Received: from kozik-lap ([194.230.155.237])
-        by smtp.googlemail.com with ESMTPSA id ce18sm414140ejb.61.2020.04.28.03.32.47
+        by smtp.googlemail.com with ESMTPSA id qo12sm411994ejb.14.2020.04.28.03.38.26
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 28 Apr 2020 03:33:00 -0700 (PDT)
-Date:   Tue, 28 Apr 2020 12:32:27 +0200
+        Tue, 28 Apr 2020 03:38:26 -0700 (PDT)
+Date:   Tue, 28 Apr 2020 12:38:24 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Jonathan Bakker <xc-racer2@live.ca>
 Cc:     kgene@kernel.org, robh+dt@kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 12/13] arm: dts: s5pv210: Correct FIMC definitions
-Message-ID: <20200428103227.GE23963@kozik-lap>
-References: <20200426183604.28494-1-xc-racer2@live.ca>
- <BN6PR04MB0660823C87DE000BCDF36C3AA3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
+Subject: Re: [PATCH 00/13] S5PV210 and Aries DTS improvements
+Message-ID: <20200428103824.GF23963@kozik-lap>
+References: <BN6PR04MB06601A5656CF70A4DCA7998BA3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <BN6PR04MB0660823C87DE000BCDF36C3AA3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <BN6PR04MB06601A5656CF70A4DCA7998BA3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Sun, Apr 26, 2020 at 11:36:03AM -0700, Jonathan Bakker wrote:
-> The extended mainscaler is only available on FIMC1 and there
-> are minimum pixel alignments that differ from the default.
-> Additionally, the cam-if interface is available on all three
-> while FIMC2 has no rotators.  The lcd-wb interface is supported
-> on FIMC1.
+On Sun, Apr 26, 2020 at 11:35:51AM -0700, Jonathan Bakker wrote:
+> This patchset makes several improvements to Aries devices which are
+> based on S5PV210.  Several pulls on GPIOs were incorrect/not specified,
+> sleep GPIO configurations have been added, and more devices have been
+> added.
 > 
-> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
-> ---
->  arch/arm/boot/dts/s5pv210.dtsi | 13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
+> Touching the common S5PV210 DTSI are the addition of the ADC node
+> as well as fixes to the FIMC definitions and a sleep GPIO helper
+> added.
 > 
-> diff --git a/arch/arm/boot/dts/s5pv210.dtsi b/arch/arm/boot/dts/s5pv210.dtsi
-> index b3b6ad2889f9..3cbf6c05f42a 100644
-> --- a/arch/arm/boot/dts/s5pv210.dtsi
-> +++ b/arch/arm/boot/dts/s5pv210.dtsi
-> @@ -626,7 +626,7 @@
->  				clock-names = "fimc",
->  						"sclk_fimc";
->  				samsung,pix-limits = <4224 8192 1920 4224>;
-> -				samsung,mainscaler-ext;
-> +				samsung,min-pix-alignment = <16 8>;
->  				samsung,cam-if;
->  			};
->  
-> @@ -639,9 +639,11 @@
->  						<&clocks SCLK_FIMC1>;
->  				clock-names = "fimc",
->  						"sclk_fimc";
-> -				samsung,pix-limits = <4224 8192 1920 4224>;
->  				samsung,mainscaler-ext;
-> +				samsung,min-pix-alignment = <1 1>;
-> +				samsung,pix-limits = <4224 8192 1920 4224>;
+> The patches have been tested on both a GT-i9000 as well as an
+> SGH-T959P and both can now suspend/resume properly.
+> 
+> Jonathan Bakker (12):
+>   arm: dts: s5pv210: Add helper define for sleep gpio config
+>   arm: dts: s5pv210: fascinate4g: Add sleep GPIO configuration
+>   arm: dts: s5pv210: galaxys: Add sleep GPIO configuration
+>   arm: dts: s5pv210: aries: Set keep-power-in-suspend for SDHCI1
+>   arm: dts: s5pv210: aries: Disable pulls on GPIO i2c adapters
+>   arm: dts: s5pv210: aries: Add support for more devices
+>   arm: dts: s5pv210: aries: Disable pull for vibrator ena GPIO
+>   arm: dts: s5pv210: Add an ADC node
+>   arm: dts: s5pv210: aries: Enable ADC node
+>   arm: dts: s5pv210: Assign clocks to MMC devices
+>   arm: dts: s5pv210: Correct FIMC definitions
+>   arm: dts: s5pv210: aries: Set MAX8998 GPIO pulls
+> 
+> Paweł Chmiel (1):
+>   arm: dts: s5pv210: galaxys: Add si470x fmradio
 
-The line just moved around. I guess this was not intended?
+Thanks for the patches, nice work!
+
+I commented on some of them. The other look good but I will wait with
+applying for v2. When resending everything, change the subject of each
+patch to match subsystem, so:
+	ARM: dts: s5pv210:
 
 Best regards,
 Krzysztof
 
->  				samsung,cam-if;
-> +				samsung,lcd-wb;
->  			};
->  
->  			fimc2: fimc@fb400000 {
-> @@ -653,9 +655,10 @@
->  						<&clocks SCLK_FIMC2>;
->  				clock-names = "fimc",
->  						"sclk_fimc";
-> -				samsung,pix-limits = <4224 8192 1920 4224>;
-> -				samsung,mainscaler-ext;
-> -				samsung,lcd-wb;
-> +				samsung,pix-limits = <1920 8192 1280 1920>;
-> +				samsung,min-pix-alignment = <16 8>;
-> +				samsung,rotators = <0>;
-> +				samsung,cam-if;
->  			};
->  		};
->  
-> -- 
-> 2.20.1
-> 
