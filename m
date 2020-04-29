@@ -7,22 +7,22 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECB70C8300B
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Apr 2020 13:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F031AC8300C
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Apr 2020 13:39:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CBB5921835
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Apr 2020 13:39:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB9AD2087E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Apr 2020 13:39:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728388AbgD2Njj (ORCPT
+        id S1727985AbgD2Nhs (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 29 Apr 2020 09:39:39 -0400
-Received: from 8bytes.org ([81.169.241.247]:40068 "EHLO theia.8bytes.org"
+        Wed, 29 Apr 2020 09:37:48 -0400
+Received: from 8bytes.org ([81.169.241.247]:39788 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727977AbgD2Nht (ORCPT
+        id S1727944AbgD2Nhr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Apr 2020 09:37:49 -0400
+        Wed, 29 Apr 2020 09:37:47 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id A7E6EEC0; Wed, 29 Apr 2020 15:37:38 +0200 (CEST)
+        id BBE82BFC; Wed, 29 Apr 2020 15:37:37 +0200 (CEST)
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
         Robin Murphy <robin.murphy@arm.com>,
@@ -48,9 +48,9 @@ Cc:     Daniel Drake <drake@endlessm.com>, jonathan.derrick@intel.com,
         linux-tegra@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH v3 18/34] iommu/pamu: Convert to probe/release_device() call-backs
-Date:   Wed, 29 Apr 2020 15:36:56 +0200
-Message-Id: <20200429133712.31431-19-joro@8bytes.org>
+Subject: [PATCH v3 13/34] iommu: Export bus_iommu_probe() and make is safe for re-probing
+Date:   Wed, 29 Apr 2020 15:36:51 +0200
+Message-Id: <20200429133712.31431-14-joro@8bytes.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200429133712.31431-1-joro@8bytes.org>
 References: <20200429133712.31431-1-joro@8bytes.org>
@@ -61,59 +61,63 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Convert the PAMU IOMMU driver to use the probe_device() and
-release_device() call-backs of iommu_ops, so that the iommu core code
-does the group and sysfs setup.
+Add a check to the bus_iommu_probe() call-path to make sure it ignores
+devices which have already been successfully probed. Then export the
+bus_iommu_probe() function so it can be used by IOMMU drivers.
 
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- drivers/iommu/fsl_pamu_domain.c | 22 +++++-----------------
- 1 file changed, 5 insertions(+), 17 deletions(-)
+ drivers/iommu/iommu.c | 10 +++++++++-
+ include/linux/iommu.h |  1 +
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/fsl_pamu_domain.c b/drivers/iommu/fsl_pamu_domain.c
-index 06828e2698d5..928d37771ece 100644
---- a/drivers/iommu/fsl_pamu_domain.c
-+++ b/drivers/iommu/fsl_pamu_domain.c
-@@ -1016,25 +1016,13 @@ static struct iommu_group *fsl_pamu_device_group(struct device *dev)
- 	return group;
- }
- 
--static int fsl_pamu_add_device(struct device *dev)
-+static struct iommu_device *fsl_pamu_probe_device(struct device *dev)
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index 834a45da0ed0..397fd4fd0c32 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -1610,11 +1610,19 @@ static int probe_iommu_group(struct device *dev, void *data)
  {
--	struct iommu_group *group;
--
--	group = iommu_group_get_for_dev(dev);
--	if (IS_ERR(group))
--		return PTR_ERR(group);
--
--	iommu_group_put(group);
--
--	iommu_device_link(&pamu_iommu, dev);
--
--	return 0;
-+	return &pamu_iommu;
+ 	const struct iommu_ops *ops = dev->bus->iommu_ops;
+ 	struct list_head *group_list = data;
++	struct iommu_group *group;
+ 	int ret;
+ 
+ 	if (!dev_iommu_get(dev))
+ 		return -ENOMEM;
+ 
++	/* Device is probed already if in a group */
++	group = iommu_group_get(dev);
++	if (group) {
++		iommu_group_put(group);
++		return 0;
++	}
++
+ 	if (!try_module_get(ops->owner)) {
+ 		ret = -EINVAL;
+ 		goto err_free_dev_iommu;
+@@ -1783,7 +1791,7 @@ static int iommu_group_create_direct_mappings(struct iommu_group *group)
+ 					  iommu_do_create_direct_mappings);
  }
  
--static void fsl_pamu_remove_device(struct device *dev)
-+static void fsl_pamu_release_device(struct device *dev)
+-static int bus_iommu_probe(struct bus_type *bus)
++int bus_iommu_probe(struct bus_type *bus)
  {
--	iommu_device_unlink(&pamu_iommu, dev);
--	iommu_group_remove_device(dev);
- }
+ 	const struct iommu_ops *ops = bus->iommu_ops;
+ 	int ret;
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index 30170d191e5e..fea1622408ad 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -445,6 +445,7 @@ static inline void iommu_iotlb_gather_init(struct iommu_iotlb_gather *gather)
+ #define IOMMU_GROUP_NOTIFY_UNBOUND_DRIVER	6 /* Post Driver unbind */
  
- static const struct iommu_ops fsl_pamu_ops = {
-@@ -1048,8 +1036,8 @@ static const struct iommu_ops fsl_pamu_ops = {
- 	.iova_to_phys	= fsl_pamu_iova_to_phys,
- 	.domain_set_attr = fsl_pamu_set_domain_attr,
- 	.domain_get_attr = fsl_pamu_get_domain_attr,
--	.add_device	= fsl_pamu_add_device,
--	.remove_device	= fsl_pamu_remove_device,
-+	.probe_device	= fsl_pamu_probe_device,
-+	.release_device	= fsl_pamu_release_device,
- 	.device_group   = fsl_pamu_device_group,
- };
- 
+ extern int bus_set_iommu(struct bus_type *bus, const struct iommu_ops *ops);
++extern int bus_iommu_probe(struct bus_type *bus);
+ extern bool iommu_present(struct bus_type *bus);
+ extern bool iommu_capable(struct bus_type *bus, enum iommu_cap cap);
+ extern struct iommu_domain *iommu_domain_alloc(struct bus_type *bus);
 -- 
 2.17.1
 
