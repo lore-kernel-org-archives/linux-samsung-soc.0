@@ -2,160 +2,248 @@ Return-Path: <SRS0=VJhJ=6N=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFB44C83009
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Apr 2020 13:41:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4214AC83009
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Apr 2020 13:46:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB6BB206D6
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Apr 2020 13:41:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B4252087E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Apr 2020 13:46:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZkAWiLQh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728115AbgD2NlE (ORCPT
+        id S1726904AbgD2NqJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 29 Apr 2020 09:41:04 -0400
-Received: from 8bytes.org ([81.169.241.247]:39570 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727871AbgD2Nhj (ORCPT
+        Wed, 29 Apr 2020 09:46:09 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:34791 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726862AbgD2NqJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Apr 2020 09:37:39 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 84C5C434; Wed, 29 Apr 2020 15:37:35 +0200 (CEST)
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Wed, 29 Apr 2020 09:46:09 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200429134606euoutp02df0fbd577e61cde45fad0cadce5410bd~KTlnqDwoz2145121451euoutp02a
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Apr 2020 13:46:06 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200429134606euoutp02df0fbd577e61cde45fad0cadce5410bd~KTlnqDwoz2145121451euoutp02a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1588167966;
+        bh=Iyco25skS+A3h6ng3DI6hlhHVx9kpvQeKmuPfKWu37g=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=ZkAWiLQhlRgOrcf2V4tPAY18tuujz7jKvS17wCcrzd84Oy/itLeoWMZx/B2tUYfWg
+         cioi5BrT6MizQAxWBNX7yR/PmITZIkVj1QQUK+tPJK3jJ1j5eFgzzgxMkaA0zxlHvN
+         yh3atvex4TZsjyTtUGVD6yRURQT9+v8h/81rlzZI=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200429134606eucas1p24180fbfd8776b6122330b148962defc2~KTlnL1UHq2629526295eucas1p2m;
+        Wed, 29 Apr 2020 13:46:06 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 2F.E8.60698.E1589AE5; Wed, 29
+        Apr 2020 14:46:06 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200429134605eucas1p2bd601082e7a6b8c8fdbe79c83972e2e3~KTlmwvxog3187231872eucas1p2R;
+        Wed, 29 Apr 2020 13:46:05 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200429134605eusmtrp1c165f577e5c9259ed853dbf82fccb3fa~KTlmv2G5v2400824008eusmtrp1a;
+        Wed, 29 Apr 2020 13:46:05 +0000 (GMT)
+X-AuditID: cbfec7f5-a0fff7000001ed1a-f3-5ea9851e4daa
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id BB.50.07950.D1589AE5; Wed, 29
+        Apr 2020 14:46:05 +0100 (BST)
+Received: from [106.210.88.143] (unknown [106.210.88.143]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200429134604eusmtip23ead9bd52f9ed1b14da857e90b79928d~KTllgCQvv0786307863eusmtip2J;
+        Wed, 29 Apr 2020 13:46:04 +0000 (GMT)
+Subject: Re: [PATCH v3 1/3] driver core: Revert default
+ driver_deferred_probe_timeout value to 0
+To:     John Stultz <john.stultz@linaro.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Rob Herring <robh@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Robin Murphy <robin.murphy@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>
-Cc:     Daniel Drake <drake@endlessm.com>, jonathan.derrick@intel.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH v3 02/34] iommu: Add def_domain_type() callback in iommu_ops
-Date:   Wed, 29 Apr 2020 15:36:40 +0200
-Message-Id: <20200429133712.31431-3-joro@8bytes.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200429133712.31431-1-joro@8bytes.org>
-References: <20200429133712.31431-1-joro@8bytes.org>
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Basil Eljuse <Basil.Eljuse@arm.com>,
+        Ferry Toth <fntoth@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        netdev <netdev@vger.kernel.org>, linux-pm@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <9e0501b5-c8c8-bc44-51e7-4bde2844b912@samsung.com>
+Date:   Wed, 29 Apr 2020 15:46:04 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.7.0
+MIME-Version: 1.0
+In-Reply-To: <20200422203245.83244-2-john.stultz@linaro.org>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0xbZRjH8547xOJZQXmEDWOZRImMEfzwJrKLiZITDZGh2QeToUVOuJem
+        5SIaEaHDcQIIRQM0rNwUhHBJoKFAuEgxVGjpcERUhMQRhkLAC8iwVN12djbHlze///P8n/yf
+        J3k5Ut3NhHAZujzRoNNmaxh/amjG64kKu9yVfPo3E4WXP/URuKq0nsCbNdMI/2ueYXHZ4uc0
+        /uzGOoObrt21/G2dZvDG8jiBy9r7Gez2ReGFoWoaL5Rv0XhxtInBe1VfI9xwbYLAy7uP4pmW
+        x7HbdZ3Gt8eGWTz1xzqNO+eGKbw/LsnPHnMehB5rDxJ8h2Yk2Lp+JIQRyyorDHRXMMLK0hgj
+        lC91E4Jj+goSrLMXhMmrPaxg8x0wwi13LSXYvvuYEvYGwhID3vSPSxWzMwpEQ/TZt/3Tq9sk
+        Vl8S/m6ltIFKUMkJCflxwD8Pk6ZmJCF/Ts1/iWBzsINVxF8IOg4/uS/2EOx/U088GLGZnYzS
+        6ETQ6F28L35HcPWrUlJ2BfIp4PS6aJmD+Neg9mCGlk0kb2aht1NpMHwMSDsSI7OKPwvbB9Z7
+        ERT/NPTPfUtJiOMe4y9B/dIbiuUYzDauUzL78XGwIrUimUn+SbDvNJEKB8PyejMhZwH/Kwcu
+        60eUsvZLMGpqoBUOhC2njVX4OLjqKilloAzBDU8vq4hKBIulDUhxvQArnkNG3ojkn4X+0Wil
+        /CIMLuwiuQx8APywc0xZIgDMQ/WkUlbBlXK14o4Ai7Pv/9iphetkDdJYjpxmOXKO5cg5loe5
+        LYjqRsFivjEnTTTG6sTCU0ZtjjFfl3bqndycAXT3B7v+c+4Po4l/UhyI55DmEVVNWleymtYW
+        GItyHAg4UhOkWkvvSFarUrVF74mG3LcM+dmi0YFCOUoTrIpt27yk5tO0eWKWKOpFw4MuwfmF
+        lCB9e7rXux15IvPcrCdhPmv1dPTFILve3t5X59N3JVarbjlOnmkufuqXCyOJWWdKX+n1uf8M
+        DZx/vSq0yL1y2G5X6RI8P1dkDrblPfPch++vfhHSsZYdQ0/sR6zZ538qMhlujsbmLr36sml3
+        4/vwD4rz4pm41puBSQOFT+iT4ssbg3MLNJQxXRsTSRqM2jt3ZGKZvQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFKsWRmVeSWpSXmKPExsVy+t/xe7qyrSvjDO51q1ncmvKbyaK3aTqT
+        xcsJhxkt/k46xm7RfHkJq8XUh0/YLOacb2Gx+DHvMJvFs1t7mSyaF69nszjzW9fiwrY+VosL
+        ba9YLS7vmsNm8bn3CKPFjPP7mCxufeK3OLZAzOLM6UusFv/37GC3OPjhCavF8lM7WCy+7u0C
+        EZ/ZHCQ81sxbw+jx+9ckRo8tK28yeeycdZfdY9OqTjaPO9f2sHm0XVvF5HHocAejx7yTgR77
+        565h99jy+zubx7czE1k8tlxtZ/H4vEkugC9Kz6Yov7QkVSEjv7jEVina0MJIz9DSQs/IxFLP
+        0Ng81srIVEnfziYlNSezLLVI3y5BL6NvURd7QYNyRU/XM8YGxgbZLkZODgkBE4ktk46zdTFy
+        cQgJLGWUmHjgOjtEQkbi5LQGVghbWOLPtS6ooreMErf/r2UESQgLJEkc/3kaqIiDQ0TAV2Lz
+        TyeQGmaBGewSs/+8YAOpERLIlWj6OY0FxGYTMJToetsFFucVsJN4830eE4jNIqAqsf7URRaQ
+        OaICsRItFzUhSgQlTs58AtbKKWAjcadrIdhaZgEziXmbHzJD2PIS29/OgbLFJW49mc80gVFo
+        FpL2WUhaZiFpmYWkZQEjyypGkdTS4tz03GIjveLE3OLSvHS95PzcTYzAdLPt2M8tOxi73gUf
+        YhTgYFTi4Z2QvjJOiDWxrLgy9xCjBAezkgjvo4xlcUK8KYmVValF+fFFpTmpxYcYTYF+m8gs
+        JZqcD0yFeSXxhqaG5haWhubG5sZmFkrivB0CB2OEBNITS1KzU1MLUotg+pg4OKUaGGu4Nv4/
+        e7N6vcTiiD2c8XvKPFy+5ybfnNfaoq1yfyn7U5nf7SkrjxzhLVqm9KVPSUWA+8PBT5ns+VIM
+        jxVbVfdNXTM/6ZiQQIPo5fuxrzZMOKBboxXVmVGQ3WWs5FNh3WDLd27qm36nqGPrSw6mi+6t
+        03ZaYlarNGHuSa9mCes1fC3SK4KfKrEUZyQaajEXFScCAGmkurZNAwAA
+X-CMS-MailID: 20200429134605eucas1p2bd601082e7a6b8c8fdbe79c83972e2e3
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200429134605eucas1p2bd601082e7a6b8c8fdbe79c83972e2e3
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200429134605eucas1p2bd601082e7a6b8c8fdbe79c83972e2e3
+References: <20200422203245.83244-1-john.stultz@linaro.org>
+        <20200422203245.83244-2-john.stultz@linaro.org>
+        <CGME20200429134605eucas1p2bd601082e7a6b8c8fdbe79c83972e2e3@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Hi John,
 
-Some devices are reqired to use a specific type (identity or dma)
-of default domain when they are used with a vendor iommu. When the
-system level default domain type is different from it, the vendor
-iommu driver has to request a new default domain with
-iommu_request_dma_domain_for_dev() and iommu_request_dm_for_dev()
-in the add_dev() callback. Unfortunately, these two helpers only
-work when the group hasn't been assigned to any other devices,
-hence, some vendor iommu driver has to use a private domain if
-it fails to request a new default one.
+On 22.04.2020 22:32, John Stultz wrote:
+> This patch addresses a regression in 5.7-rc1+
+>
+> In commit c8c43cee29f6 ("driver core: Fix
+> driver_deferred_probe_check_state() logic"), we both cleaned up
+> the logic and also set the default driver_deferred_probe_timeout
+> value to 30 seconds to allow for drivers that are missing
+> dependencies to have some time so that the dependency may be
+> loaded from userland after initcalls_done is set.
+>
+> However, Yoshihiro Shimoda reported that on his device that
+> expects to have unmet dependencies (due to "optional links" in
+> its devicetree), was failing to mount the NFS root.
+>
+> In digging further, it seemed the problem was that while the
+> device properly probes after waiting 30 seconds for any missing
+> modules to load, the ip_auto_config() had already failed,
+> resulting in NFS to fail. This was due to ip_auto_config()
+> calling wait_for_device_probe() which doesn't wait for the
+> driver_deferred_probe_timeout to fire.
+>
+> Fixing that issue is possible, but could also introduce 30
+> second delays in bootups for users who don't have any
+> missing dependencies, which is not ideal.
+>
+> So I think the best solution to avoid any regressions is to
+> revert back to a default timeout value of zero, and allow
+> systems that need to utilize the timeout in order for userland
+> to load any modules that supply misisng dependencies in the dts
+> to specify the timeout length via the exiting documented boot
+> argument.
+>
+> Thanks to Geert for chasing down that ip_auto_config was why NFS
+> was failing in this case!
+>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>
+> Cc: Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Cc: Sudeep Holla <sudeep.holla@arm.com>
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Cc: Naresh Kamboju <naresh.kamboju@linaro.org>
+> Cc: Basil Eljuse <Basil.Eljuse@arm.com>
+> Cc: Ferry Toth <fntoth@gmail.com>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Anders Roxell <anders.roxell@linaro.org>
+> Cc: netdev <netdev@vger.kernel.org>
+> Cc: linux-pm@vger.kernel.org
+> Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Fixes: c8c43cee29f6 ("driver core: Fix driver_deferred_probe_check_state() logic")
+> Signed-off-by: John Stultz <john.stultz@linaro.org>
 
-This adds def_domain_type() callback in the iommu_ops, so that
-any special requirement of default domain for a device could be
-aware by the iommu generic layer.
+Please also revert dca0b44957e5 "regulator: Use 
+driver_deferred_probe_timeout for regulator_init_complete_work" then, 
+because now with the default 0 timeout some regulators gets disabled 
+during boot, before their supplies gets instantiated.
 
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-[ jroedel@suse.de: Added iommu_get_def_domain_type() function and use
-                   it to allocate the default domain ]
-Co-developed-by: Joerg Roedel <jroedel@suse.de>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
----
- drivers/iommu/iommu.c | 20 +++++++++++++++++---
- include/linux/iommu.h |  6 ++++++
- 2 files changed, 23 insertions(+), 3 deletions(-)
+This patch broke booting of Samsung Exynos5800-based Peach-Pi Chromeboot 
+with the default multi_v7_defconfig.
 
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index bfe011760ed1..5877abd9b693 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -1361,21 +1361,35 @@ struct iommu_group *fsl_mc_device_group(struct device *dev)
- }
- EXPORT_SYMBOL_GPL(fsl_mc_device_group);
- 
-+static int iommu_get_def_domain_type(struct device *dev)
-+{
-+	const struct iommu_ops *ops = dev->bus->iommu_ops;
-+	unsigned int type = 0;
-+
-+	if (ops->def_domain_type)
-+		type = ops->def_domain_type(dev);
-+
-+	return (type == 0) ? iommu_def_domain_type : type;
-+}
-+
- static int iommu_alloc_default_domain(struct device *dev,
- 				      struct iommu_group *group)
- {
- 	struct iommu_domain *dom;
-+	unsigned int type;
- 
- 	if (group->default_domain)
- 		return 0;
- 
--	dom = __iommu_domain_alloc(dev->bus, iommu_def_domain_type);
--	if (!dom && iommu_def_domain_type != IOMMU_DOMAIN_DMA) {
-+	type = iommu_get_def_domain_type(dev);
-+
-+	dom = __iommu_domain_alloc(dev->bus, type);
-+	if (!dom && type != IOMMU_DOMAIN_DMA) {
- 		dom = __iommu_domain_alloc(dev->bus, IOMMU_DOMAIN_DMA);
- 		if (dom) {
- 			dev_warn(dev,
- 				 "failed to allocate default IOMMU domain of type %u; falling back to IOMMU_DOMAIN_DMA",
--				 iommu_def_domain_type);
-+				 type);
- 		}
- 	}
- 
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index 7ef8b0bda695..1f027b07e499 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -248,6 +248,10 @@ struct iommu_iotlb_gather {
-  * @cache_invalidate: invalidate translation caches
-  * @sva_bind_gpasid: bind guest pasid and mm
-  * @sva_unbind_gpasid: unbind guest pasid and mm
-+ * @def_domain_type: device default domain type, return value:
-+ *		- IOMMU_DOMAIN_IDENTITY: must use an identity domain
-+ *		- IOMMU_DOMAIN_DMA: must use a dma domain
-+ *		- 0: use the default setting
-  * @pgsize_bitmap: bitmap of all possible supported page sizes
-  * @owner: Driver module providing these ops
-  */
-@@ -318,6 +322,8 @@ struct iommu_ops {
- 
- 	int (*sva_unbind_gpasid)(struct device *dev, int pasid);
- 
-+	int (*def_domain_type)(struct device *dev);
-+
- 	unsigned long pgsize_bitmap;
- 	struct module *owner;
- };
+> ---
+>   drivers/base/dd.c | 13 ++-----------
+>   1 file changed, 2 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> index 06ec0e851fa1..908ae4d7805e 100644
+> --- a/drivers/base/dd.c
+> +++ b/drivers/base/dd.c
+> @@ -224,16 +224,7 @@ static int deferred_devs_show(struct seq_file *s, void *data)
+>   }
+>   DEFINE_SHOW_ATTRIBUTE(deferred_devs);
+>   
+> -#ifdef CONFIG_MODULES
+> -/*
+> - * In the case of modules, set the default probe timeout to
+> - * 30 seconds to give userland some time to load needed modules
+> - */
+> -int driver_deferred_probe_timeout = 30;
+> -#else
+> -/* In the case of !modules, no probe timeout needed */
+> -int driver_deferred_probe_timeout = -1;
+> -#endif
+> +int driver_deferred_probe_timeout;
+>   EXPORT_SYMBOL_GPL(driver_deferred_probe_timeout);
+>   
+>   static int __init deferred_probe_timeout_setup(char *str)
+> @@ -266,7 +257,7 @@ int driver_deferred_probe_check_state(struct device *dev)
+>   		return -ENODEV;
+>   	}
+>   
+> -	if (!driver_deferred_probe_timeout) {
+> +	if (!driver_deferred_probe_timeout && initcalls_done) {
+>   		dev_WARN(dev, "deferred probe timeout, ignoring dependency");
+>   		return -ETIMEDOUT;
+>   	}
+
+Best regards
 -- 
-2.17.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
