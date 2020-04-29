@@ -1,400 +1,231 @@
-Return-Path: <SRS0=m6pc=6M=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=VJhJ=6N=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=FORGED_MUA_MOZILLA,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C951FC83000
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Apr 2020 23:49:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED05CC83008
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Apr 2020 08:47:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A41A2076A
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 28 Apr 2020 23:49:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C89652082E
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Apr 2020 08:47:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="mDylNO0I";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="E2GG4Ytp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726401AbgD1Xts (ORCPT
+        id S1726519AbgD2Ird (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 28 Apr 2020 19:49:48 -0400
-Received: from mail-co1nam11olkn2030.outbound.protection.outlook.com ([40.92.18.30]:56289
-        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726042AbgD1Xtr (ORCPT
+        Wed, 29 Apr 2020 04:47:33 -0400
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:60171 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726345AbgD2Irc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 28 Apr 2020 19:49:47 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NCpnuG92b/4TXsAzJg383vLjb/UNNne1WmQ1KgFnbYAoFvakFSqcTba7/wPvgRPU+kuKLNUSyLZDWkREmF9lYuvUTvy6gQ4HgNcUkTI3ftgUi6CZDPENiTcoRbLnOirJiBxIVfrpDSVGBqyUF0uBspUNuIuUqlFHuCLRf+Nk7F09E9231OgpdH2oUs2qrA4UqTdvmJE82nbQB2yUS/hRD+fDT4BKVtf7J8wBNLn4vF4IXCBaAQnVnFS5Dbn9I+w2eDjkbrXH8InVsvvtciX74/j4jBX+a8L2r999kEXVUWGZ1Svr5HlMqhG8c4QVW/BrNn+p9I9lWww4hjdBtO7B0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7o2b4VOkqLcT8Z37/4J4wISDZ/GXzpWzfr4qlYl9VAM=;
- b=TvuQ6OdHP6hkeeoUTLL6hPNyzL+2CSQ1Mzeqw8QsUQgDxGb+pJCU+rlB8Bd9kAIcR+et92YvW3Jz2hbzu9KUSA4rrUe+rX5Qd8gN7hwOlM24jS2lDumHXeL1Un/IfliZZBXXvblJ1oWBjOqg7aPyTt4lDAKgVrxlnTZUs7xUBnltLnSw6uHOPBlaFxawAF5TPE8xVm6tDh4vLT7yC26Z5plx5kxfM+o7WZhgAVKmOHHta4AqICMBz6wg+sW+P04mHLpVXzoSZ6Ew4fhU+XRe4At168EL5G77fo0Qx7ieC3QolWulqpM5pa10nctcLfxa9kTsBoBvMu6nW1hGy7xkyg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=live.ca; dmarc=pass action=none header.from=live.ca; dkim=pass
- header.d=live.ca; arc=none
-Received: from CO1NAM11FT035.eop-nam11.prod.protection.outlook.com
- (2a01:111:e400:3861::49) by
- CO1NAM11HT136.eop-nam11.prod.protection.outlook.com (2a01:111:e400:3861::330)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2937.15; Tue, 28 Apr
- 2020 23:49:44 +0000
-Received: from BN6PR04MB0660.namprd04.prod.outlook.com
- (2a01:111:e400:3861::4d) by CO1NAM11FT035.mail.protection.outlook.com
- (2a01:111:e400:3861::292) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2958.19 via Frontend
- Transport; Tue, 28 Apr 2020 23:49:44 +0000
-X-IncomingTopHeaderMarker: OriginalChecksum:C12EF5187D361EFD1EB31559DCB06F2DB769488FFA1C4A24ADD8F4E82E63E26D;UpperCasedChecksum:2CF29841EE3EFB20F02EEB309A3157F140C85DE9B5A33AA07DC9EA996E993811;SizeAsReceived:9168;Count:50
-Received: from BN6PR04MB0660.namprd04.prod.outlook.com
- ([fe80::ad10:4127:4bc8:76fc]) by BN6PR04MB0660.namprd04.prod.outlook.com
- ([fe80::ad10:4127:4bc8:76fc%6]) with mapi id 15.20.2937.023; Tue, 28 Apr 2020
- 23:49:40 +0000
-Subject: Re: [PATCH 02/13] arm: dts: s5pv210: fascinate4g: Add sleep GPIO
- configuration
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     kgene@kernel.org, robh+dt@kernel.org,
+        Wed, 29 Apr 2020 04:47:32 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 9AB75580104;
+        Wed, 29 Apr 2020 04:47:30 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Wed, 29 Apr 2020 04:47:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=+x1hnvO451DFLw58Xq3iUsbF2Jz
+        alXMCx3P3fGnFW08=; b=mDylNO0ImdJQcBjcJhxqGwZ0gLH65YlOxSjvQREEP3f
+        4qGYzmConM9HkJufYMjsnhf4/U5f/nMYa7Y4bpNHEPZRGxnLHIjQiWjERglE53zA
+        oKMD/cPGAwRaPGqCJ5/SiN46qyNsjQGFSvMny9nDQB6IkO1SJfBgD9EdtiaVDZ7d
+        A/0pbA75VQ1czsx3Ud3zZ0Ct1tM7dRs5LdgkX5nrL4wlzG5WiI+zMV3YRbG6e9lU
+        EfEjiSIOEGi0F1dFrhGkZzyaX9IhNnWJBcdmGy3kakaIYmrgYV2DTu3hhEr3UJ+B
+        5cyi95cQhZgjntybSHnjxI/ELKDeyPR6wO+DmEdIyNQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=+x1hnv
+        O451DFLw58Xq3iUsbF2JzalXMCx3P3fGnFW08=; b=E2GG4YtpPx9b335eVlOleh
+        Vf8483NTNxzjs95yfN4uRYnvVs2tiKuUvRyMMVSInBLyjh+qMlQ0dVtjSwJbsDUK
+        WQWtSA+Bwb1TRuouQ6Rb6pdXfGYF71YpiWoLMMd4B0/gUi2rfcg5JorfqN0JJssQ
+        b5NszxFBVjt1AJHxC1DJ+KMryBcTxX33yCPmx9xaU+gujbvcPTEUhLLXynjJE6yy
+        miqhu3mWUKdKBcCgKILcyM6xOfgqmO5G1ZTnt75gOcYXtIUlupWdCgLceHSTqR8Q
+        BUigUlYpBZcCXoJnGIlSKCLjDvyVjMLksV6GI/iUupM/vJJdPxnutvDdSf42SJBQ
+        ==
+X-ME-Sender: <xms:HT-pXhpN54g-6aCMfmUe-4DMD6dWLtA3usgSR6go2S5ER7rxsPhAww>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrieefgddtkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesghdtreertddtudenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucfkphepledtrd
+    ekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
+    fhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:HT-pXrVffufAEMQkyDUZKoQp7m4gU6WDQH-928szCVw6XspkjR09Bw>
+    <xmx:HT-pXkD0RZGaxlLx-cC-xX6d0cZb-LFHZKS3nww8to01I-3FCcWuVg>
+    <xmx:HT-pXuTBDDqX0KhTqh3gFz8BYE7BbY0XahpKNhyToXMGSNRpH-Z_Jw>
+    <xmx:Ij-pXvat0UK807ynw6DTDs5CBzCYKJ5Cy3QP0hnPHBSOnNjslvCryA>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id D9FE03280066;
+        Wed, 29 Apr 2020 04:47:24 -0400 (EDT)
+Date:   Wed, 29 Apr 2020 10:47:23 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Jonathan Bakker <xc-racer2@live.ca>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        James Hogan <jhogan@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Philipp Rossak <embed3d@gmail.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        openpvrsgx-devgroup@letux.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com, linux-mips@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200426183604.28494-1-xc-racer2@live.ca>
- <BN6PR04MB0660532FF97089208CCEEB2AA3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
- <20200428100244.GA23963@kozik-lap>
-From:   Jonathan Bakker <xc-racer2@live.ca>
-Message-ID: <BN6PR04MB06605BE9E1559751E083B4E4A3AC0@BN6PR04MB0660.namprd04.prod.outlook.com>
-Date:   Tue, 28 Apr 2020 16:49:36 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
-In-Reply-To: <20200428100244.GA23963@kozik-lap>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MWHPR20CA0022.namprd20.prod.outlook.com
- (2603:10b6:300:13d::32) To BN6PR04MB0660.namprd04.prod.outlook.com
- (2603:10b6:404:d9::21)
-X-Microsoft-Original-Message-ID: <f7e0d6ca-5c5e-5865-7aa0-105bec9799d8@live.ca>
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v7 08/12] arm: dts: s5pv210: Add node for SGX 540
+Message-ID: <20200429084723.jxybvsakniinvivt@gilmour.lan>
+References: <cover.1587760454.git.hns@goldelico.com>
+ <3fd18c747426e15fd1f3500b9c4adce2db9ddd0c.1587760454.git.hns@goldelico.com>
+ <NYBE9Q.YH08US7A7DC3@crapouillou.net>
+ <BN6PR04MB0660A180D2069848E5C03D7EA3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
+ <20200427154617.GA1798@pi3>
+ <BN6PR04MB06605F014024061C894AFBA4A3AC0@BN6PR04MB0660.namprd04.prod.outlook.com>
+ <BN6PR04MB0660044B5B1D45BE4CBCD2AAA3AC0@BN6PR04MB0660.namprd04.prod.outlook.com>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [IPv6:2001:569:fb67:7300:9f89:4b96:de0b:cd14] (2001:569:fb67:7300:9f89:4b96:de0b:cd14) by MWHPR20CA0022.namprd20.prod.outlook.com (2603:10b6:300:13d::32) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2958.19 via Frontend Transport; Tue, 28 Apr 2020 23:49:39 +0000
-X-Microsoft-Original-Message-ID: <f7e0d6ca-5c5e-5865-7aa0-105bec9799d8@live.ca>
-X-TMN:  [urxjVJmIoHa3wwJ+XOyxKQ2Ug8VtqWSjlFzV2QePtD5/pyVmwnRcmQ5yxF4WUN+O]
-X-MS-PublicTrafficType: Email
-X-IncomingHeaderCount: 50
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-Correlation-Id: 1e061ef5-4c7f-4618-dbde-08d7ebced12c
-X-MS-TrafficTypeDiagnostic: CO1NAM11HT136:
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: XQhSjac/clKMJB0hJ8kLDiuA5OsD6rcBE9cIkoJDLu3VjmqqFqBn+AHzENkuTQw27Bq6F5e8nAgsrXW9IMhOsLQhhpidfsUjnX6nBRP7wK1Og0tJnLIRjV1qv8TLP6DkH5roLTedvb5W4mGvHNW6ABrxzgsaxYQx+cRPiqbaMV+lOgl/HauyzcfjQylR/9ab1he63hLPsq8ChXwQ21B13Q==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:0;SRV:;IPV:NLI;SFV:NSPM;H:BN6PR04MB0660.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:;DIR:OUT;SFP:1901;
-X-MS-Exchange-AntiSpam-MessageData: spED9M2pDCHmVrPNLg4X4PE0pFnGJByvR/1V7EZZIV2SeBfZzI7BkG78WWWeOfH6E+x7BIsqZ23qUZOULMmuVnEb5cKHibA+iuKdxu5bFJgZBTyuTz43aYsH0mrpGcjMHaZHI9sCQ9q8Ws9JNJLFy1kosKoFjjms5SwMVy39lkLgBrWfdD7Yyb2g0DlXfO45nfVW+Wih0hbhZlA34i7YWA==
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e061ef5-4c7f-4618-dbde-08d7ebced12c
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2020 23:49:40.5131
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1NAM11HT136
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="u22eiu3zouiknukx"
+Content-Disposition: inline
+In-Reply-To: <BN6PR04MB0660044B5B1D45BE4CBCD2AAA3AC0@BN6PR04MB0660.namprd04.prod.outlook.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
 
-On 2020-04-28 3:02 a.m., Krzysztof Kozlowski wrote:
-> On Sun, Apr 26, 2020 at 11:35:53AM -0700, Jonathan Bakker wrote:
->> In order to minimize leakage current during sleep, set a config
->> for sleep GPIOs.
->>
->> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
->> ---
->>  arch/arm/boot/dts/s5pv210-fascinate4g.dts | 242 ++++++++++++++++++++++
->>  1 file changed, 242 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/s5pv210-fascinate4g.dts b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
->> index 07a8d9bbe5b8..94dcb9b64b9a 100644
->> --- a/arch/arm/boot/dts/s5pv210-fascinate4g.dts
->> +++ b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
->> @@ -36,3 +36,245 @@
->>  		};
->>  	};
->>  };
->> +
->> +&pinctrl0 {
->> +	pinctrl-names = "default";
->> +	pinctrl-0 = <&sleep_cfg>;
->> +
->> +	sleep_cfg: sleep-cfg {
->> +		PIN_SLP(gpa0-0, PREV, NONE);
->> +		PIN_SLP(gpa0-1, PREV, NONE);
->> +		PIN_SLP(gpa0-2, PREV, NONE);
->> +		PIN_SLP(gpa0-3, OUT1, NONE);
-> 
-> I would be happy to see some reasoning why certain pins have disabled
-> pull down (e.g. they are not connected or you use the same configuration
-> as running one) and why you set them as output.
-> 
+--u22eiu3zouiknukx
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Mostly it's copied from the vendor kernel configuration.  Without schematics, I can
-only guess what's actually there.  I can go through and note what each pin appears
-to be used for if you'd like.
+Hi,
 
->> +		PIN_SLP(gpa0-4, PREV, NONE);
->> +		PIN_SLP(gpa0-5, PREV, NONE);
->> +		PIN_SLP(gpa0-6, PREV, NONE);
->> +		PIN_SLP(gpa0-7, PREV, NONE);
->> +
->> +		PIN_SLP(gpa1-0, INPUT, DOWN);
->> +		PIN_SLP(gpa1-1, OUT0, NONE);
->> +		PIN_SLP(gpa1-2, INPUT, DOWN);
->> +		PIN_SLP(gpa1-3, OUT0, NONE);
->> +
->> +		PIN_SLP(gpb-0, OUT0, NONE);
->> +		PIN_SLP(gpb-1, OUT1, NONE);
->> +		PIN_SLP(gpb-2, OUT0, NONE);
->> +		PIN_SLP(gpb-3, PREV, NONE);
->> +		PIN_SLP(gpb-4, INPUT, NONE);
->> +		PIN_SLP(gpb-5, PREV, NONE);
->> +		PIN_SLP(gpb-6, INPUT, DOWN);
->> +		PIN_SLP(gpb-7, OUT0, NONE);
->> +
->> +		PIN_SLP(gpc0-0, OUT0, NONE);
->> +		PIN_SLP(gpc0-1, INPUT, DOWN);
->> +		PIN_SLP(gpc0-2, OUT0, NONE);
->> +		PIN_SLP(gpc0-3, INPUT, DOWN);
->> +		PIN_SLP(gpc0-4, OUT0, NONE);
->> +
->> +		PIN_SLP(gpc1-0, INPUT, DOWN);
->> +		PIN_SLP(gpc1-1, INPUT, DOWN);
->> +		PIN_SLP(gpc1-2, INPUT, DOWN);
->> +		PIN_SLP(gpc1-3, INPUT, DOWN);
->> +		PIN_SLP(gpc1-4, INPUT, DOWN);
->> +
->> +		PIN_SLP(gpd0-0, INPUT, DOWN);
->> +		PIN_SLP(gpd0-1, OUT0, NONE);
->> +		PIN_SLP(gpd0-2, INPUT, DOWN);
->> +		PIN_SLP(gpd0-3, INPUT, DOWN);
->> +
->> +		PIN_SLP(gpd1-0, INPUT, NONE);
->> +		PIN_SLP(gpd1-1, INPUT, NONE);
->> +		PIN_SLP(gpd1-2, INPUT, DOWN);
->> +		PIN_SLP(gpd1-3, INPUT, DOWN);
->> +		PIN_SLP(gpd1-4, INPUT, DOWN);
->> +		PIN_SLP(gpd1-5, INPUT, DOWN);
->> +
->> +		PIN_SLP(gpe0-0, INPUT, DOWN);
->> +		PIN_SLP(gpe0-1, INPUT, DOWN);
->> +		PIN_SLP(gpe0-2, INPUT, DOWN);
->> +		PIN_SLP(gpe0-3, INPUT, DOWN);
->> +		PIN_SLP(gpe0-4, INPUT, DOWN);
->> +		PIN_SLP(gpe0-5, INPUT, DOWN);
->> +		PIN_SLP(gpe0-6, INPUT, DOWN);
->> +		PIN_SLP(gpe0-7, INPUT, DOWN);
->> +
->> +		PIN_SLP(gpe1-0, INPUT, DOWN);
->> +		PIN_SLP(gpe1-1, INPUT, DOWN);
->> +		PIN_SLP(gpe1-2, INPUT, DOWN);
->> +		PIN_SLP(gpe1-3, OUT0, NONE);
->> +		PIN_SLP(gpe1-4, INPUT, DOWN);
->> +
->> +		PIN_SLP(gpf0-0, OUT0, NONE);
->> +		PIN_SLP(gpf0-1, OUT0, NONE);
->> +		PIN_SLP(gpf0-2, OUT0, NONE);
->> +		PIN_SLP(gpf0-3, OUT0, NONE);
->> +		PIN_SLP(gpf0-4, OUT0, NONE);
->> +		PIN_SLP(gpf0-5, OUT0, NONE);
->> +		PIN_SLP(gpf0-6, OUT0, NONE);
->> +		PIN_SLP(gpf0-7, OUT0, NONE);
->> +
->> +		PIN_SLP(gpf1-0, OUT0, NONE);
->> +		PIN_SLP(gpf1-1, OUT0, NONE);
->> +		PIN_SLP(gpf1-2, OUT0, NONE);
->> +		PIN_SLP(gpf1-3, OUT0, NONE);
->> +		PIN_SLP(gpf1-4, OUT0, NONE);
->> +		PIN_SLP(gpf1-5, OUT0, NONE);
->> +		PIN_SLP(gpf1-6, OUT0, NONE);
->> +		PIN_SLP(gpf1-7, OUT0, NONE);
->> +
->> +		PIN_SLP(gpf2-0, OUT0, NONE);
->> +		PIN_SLP(gpf2-1, OUT0, NONE);
->> +		PIN_SLP(gpf2-2, OUT0, NONE);
->> +		PIN_SLP(gpf2-3, OUT0, NONE);
->> +		PIN_SLP(gpf2-4, OUT0, NONE);
->> +		PIN_SLP(gpf2-5, OUT0, NONE);
->> +		PIN_SLP(gpf2-6, OUT0, NONE);
->> +		PIN_SLP(gpf2-7, OUT0, NONE);
->> +
->> +		PIN_SLP(gpf3-0, OUT0, NONE);
->> +		PIN_SLP(gpf3-1, OUT0, NONE);
->> +		PIN_SLP(gpf3-2, OUT0, NONE);
->> +		PIN_SLP(gpf3-3, OUT0, NONE);
->> +		PIN_SLP(gpf3-4, PREV, NONE);
->> +		PIN_SLP(gpf3-5, INPUT, DOWN);
->> +
->> +		PIN_SLP(gpg0-0, INPUT, DOWN);
->> +		PIN_SLP(gpg0-1, INPUT, DOWN);
->> +		PIN_SLP(gpg0-2, INPUT, NONE);
->> +		PIN_SLP(gpg0-3, INPUT, DOWN);
->> +		PIN_SLP(gpg0-4, INPUT, DOWN);
->> +		PIN_SLP(gpg0-5, INPUT, DOWN);
->> +		PIN_SLP(gpg0-6, INPUT, DOWN);
->> +
->> +		PIN_SLP(gpg1-0, OUT0, NONE);
->> +		PIN_SLP(gpg1-1, OUT1, NONE);
->> +		PIN_SLP(gpg1-2, PREV, NONE);
->> +		PIN_SLP(gpg1-3, OUT1, NONE);
->> +		PIN_SLP(gpg1-4, OUT1, NONE);
->> +		PIN_SLP(gpg1-5, OUT1, NONE);
->> +		PIN_SLP(gpg1-6, OUT1, NONE);
->> +
->> +		PIN_SLP(gpg2-0, OUT0, NONE);
->> +		PIN_SLP(gpg2-1, OUT0, NONE);
->> +		PIN_SLP(gpg2-2, INPUT, NONE);
->> +		PIN_SLP(gpg2-3, OUT0, NONE);
->> +		PIN_SLP(gpg2-4, OUT0, NONE);
->> +		PIN_SLP(gpg2-5, OUT0, NONE);
->> +		PIN_SLP(gpg2-6, OUT0, NONE);
->> +
->> +		PIN_SLP(gpg3-0, PREV, UP);
->> +		PIN_SLP(gpg3-1, PREV, UP);
->> +		PIN_SLP(gpg3-2, INPUT, NONE);
->> +		PIN_SLP(gpg3-3, INPUT, DOWN);
->> +		PIN_SLP(gpg3-4, OUT0, NONE);
->> +		PIN_SLP(gpg3-5, OUT0, NONE);
->> +		PIN_SLP(gpg3-6, INPUT, DOWN);
->> +
->> +		PIN_SLP(gpi-0, PREV, NONE);
-> 
-> No such name. Did you mean gpgi?
-> 
-> 
+On Tue, Apr 28, 2020 at 03:58:03PM -0700, Jonathan Bakker wrote:
+> On 2020-04-28 2:39 p.m., Jonathan Bakker wrote:
+> > On 2020-04-27 8:46 a.m., Krzysztof Kozlowski wrote:
+> >> On Sun, Apr 26, 2020 at 07:57:12AM -0700, Jonathan Bakker wrote:
+> >>> Hi Paul,
+> >>>
+> >>> On 2020-04-26 5:56 a.m., Paul Cercueil wrote:
+> >>>>
+> >>>>
+> >>>> Le ven. 24 avril 2020 =E0 22:34, H. Nikolaus Schaller <hns@goldelico=
+=2Ecom> a =E9crit :
+> >>>>> From: Jonathan Bakker <xc-racer2@live.ca>
+> >>>>>
+> >>>>> All s5pv210 devices have a PowerVR SGX 540 (revision 120) attached.
+> >>>>>
+> >>>>> There is no external regulator for it so it can be enabled by defau=
+lt.
+> >>>>>
+> >>>>> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+> >>>>> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+> >>>>> ---
+> >>>>> =A0arch/arm/boot/dts/s5pv210.dtsi | 13 +++++++++++++
+> >>>>> =A01 file changed, 13 insertions(+)
+> >>>>>
+> >>>>> diff --git a/arch/arm/boot/dts/s5pv210.dtsi b/arch/arm/boot/dts/s5p=
+v210.dtsi
+> >>>>> index 2ad642f51fd9..abbdda205c1b 100644
+> >>>>> --- a/arch/arm/boot/dts/s5pv210.dtsi
+> >>>>> +++ b/arch/arm/boot/dts/s5pv210.dtsi
+> >>>>> @@ -512,6 +512,19 @@ vic3: interrupt-controller@f2300000 {
+> >>>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 #interrupt-cells =3D <1>;
+> >>>>> =A0=A0=A0=A0=A0=A0=A0=A0 };
+> >>>>>
+> >>>>> +=A0=A0=A0=A0=A0=A0=A0 gpu: gpu@f3000000 {
+> >>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 compatible =3D "samsung,s5pv210-=
+sgx540-120";
+> >>
+> >> This should not pass the bindings check because you missed last
+> >> compatibles.
+> >>
+> >=20
+> > Thanks for pointing that out, I'll add it and make sure it passes the b=
+indings check.
+> >=20
+> >>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reg =3D <0xf3000000 0x10000>;
+> >>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 interrupt-parent =3D <&vic2>;
+> >>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 interrupts =3D <10>;
+> >>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 clock-names =3D "core";
+> >>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 clocks =3D <&clocks CLK_G3D>;
+> >>>>> +
+> >>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 assigned-clocks =3D <&clocks MOU=
+T_G3D>, <&clocks DOUT_G3D>;
+> >>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 assigned-clock-rates =3D <0>, <6=
+6700000>;
+> >>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 assigned-clock-parents =3D <&clo=
+cks MOUT_MPLL>;
+> >>>>
+> >>>> What are these clocks for, and why are they reparented / reclocked?
+> >>>>
+> >>>> Shouldn't they be passed to 'clocks' as well?
+> >>>>
+> >>>> -Paul
+> >>>>
+> >>>
+> >>> The G3D clock system can have multiple parents, and for stable operat=
+ion
+> >>> it's recommended to use the MPLL clock as the parent (which in turn
+> >>> is actually a mux as well).  MOUT_G3D is simply the mux for CLK_G3D
+> >>> (SGX core clock), DOUT_G3D is the divider.  DOUT_G3D could equally be=
+ CLK_G3D
+> >>> (and probably should be, for readability) as CLK_G3D is simply the ga=
+te and
+> >>> DOUT_G3D is the divider for it.
+> >>
+> >> Good point, it should be CLK_G3D instead of DOUT.  Can you fix this as
+> >> well?
+> >=20
+> > Yep, will do.  Nikolaus, I'll send you an updated patch to include.
+> >=20
+>=20
+> How are assigned-clocks handled in the yaml DT schema?  When running make=
+ dtbs_check,
+> I end up with messages such as
+>=20
+> arch/arm/boot/dts/s5pv210-aquila.dt.yaml: gpu@f3000000: 'assigned-clock-p=
+arents', 'assigned-clock-rates', 'assigned-clocks' do not match any of the =
+regexes: 'pinctrl-[0-9]+'
+>=20
+> Do they need to explicitly be listed as valid entries?
 
-The node in s5pv210-pinctrl.dtsi is called "gpgi", but the i2s0_bus config
-in that file uses just "gpi".  drivers/pinctrl/samsung/pinctrl-exynos-arm.c also
-notes it just as "gpi".  I think the node should probably be renamed.
+If you have additionalProperties set to false, yes. But you should really
+consider not using them in the first place, since they provide no guarantee=
+ on
+whether the setup you did in the DT will remain during the life of the syst=
+em.
 
->> +		PIN_SLP(gpi-1, INPUT, DOWN);
->> +		PIN_SLP(gpi-2, PREV, NONE);
->> +		PIN_SLP(gpi-3, PREV, NONE);
->> +		PIN_SLP(gpi-4, PREV, NONE);
->> +		PIN_SLP(gpi-5, INPUT, DOWN);
->> +		PIN_SLP(gpi-6, INPUT, DOWN);
->> +
->> +		PIN_SLP(gpj0-0, INPUT, NONE);
->> +		PIN_SLP(gpj0-1, INPUT, NONE);
->> +		PIN_SLP(gpj0-2, INPUT, NONE);
->> +		PIN_SLP(gpj0-3, INPUT, NONE);
->> +		PIN_SLP(gpj0-4, INPUT, NONE);
->> +		PIN_SLP(gpj0-5, INPUT, DOWN);
->> +		PIN_SLP(gpj0-6, OUT0, NONE);
->> +		PIN_SLP(gpj0-7, INPUT, NONE);
->> +
->> +		PIN_SLP(gpj1-0, OUT1, NONE);
->> +		PIN_SLP(gpj1-1, OUT0, NONE);
->> +		PIN_SLP(gpj1-2, INPUT, DOWN);
->> +		PIN_SLP(gpj1-3, PREV, NONE);
->> +		PIN_SLP(gpj1-4, PREV, NONE);
->> +		PIN_SLP(gpj1-5, OUT0, NONE);
->> +
->> +		PIN_SLP(gpj2-0, INPUT, DOWN);
->> +		PIN_SLP(gpj2-1, INPUT, DOWN);
->> +		PIN_SLP(gpj2-2, OUT0, NONE);
->> +		PIN_SLP(gpj2-3, INPUT, DOWN);
->> +		PIN_SLP(gpj2-4, INPUT, DOWN);
->> +		PIN_SLP(gpj2-5, PREV, NONE);
->> +		PIN_SLP(gpj2-6, PREV, NONE);
->> +		PIN_SLP(gpj2-7, INPUT, DOWN);
->> +
->> +		PIN_SLP(gpj3-0, INPUT, NONE);
->> +		PIN_SLP(gpj3-1, INPUT, NONE);
->> +		PIN_SLP(gpj3-2, OUT0, NONE);
->> +		PIN_SLP(gpj3-3, INPUT, DOWN);
->> +		PIN_SLP(gpj3-4, INPUT, NONE);
->> +		PIN_SLP(gpj3-5, INPUT, NONE);
->> +		PIN_SLP(gpj3-6, INPUT, NONE);
->> +		PIN_SLP(gpj3-7, INPUT, NONE);
->> +
->> +		PIN_SLP(gpj4-0, INPUT, NONE);
->> +		PIN_SLP(gpj4-1, INPUT, DOWN);
->> +		PIN_SLP(gpj4-2, PREV, NONE);
->> +		PIN_SLP(gpj4-3, INPUT, NONE);
->> +		PIN_SLP(gpj4-4, INPUT, DOWN);
->> +
->> +		PIN_SLP(mp01-0, OUT1, NONE);
->> +		PIN_SLP(mp01-1, OUT0, NONE);
->> +		PIN_SLP(mp01-2, INPUT, DOWN);
->> +		PIN_SLP(mp01-3, INPUT, DOWN);
->> +		PIN_SLP(mp01-4, OUT1, NONE);
->> +		PIN_SLP(mp01-5, INPUT, DOWN);
->> +		PIN_SLP(mp01-6, INPUT, DOWN);
->> +		PIN_SLP(mp01-7, INPUT, DOWN);
->> +
->> +		PIN_SLP(mp02-0, INPUT, DOWN);
->> +		PIN_SLP(mp02-1, INPUT, DOWN);
->> +		PIN_SLP(mp02-2, INPUT, NONE);
->> +		PIN_SLP(mp02-3, INPUT, DOWN);
->> +
->> +		PIN_SLP(mp03-0, INPUT, DOWN);
->> +		PIN_SLP(mp03-1, INPUT, DOWN);
->> +		PIN_SLP(mp03-2, OUT1, NONE);
->> +		PIN_SLP(mp03-3, OUT0, NONE);
->> +		PIN_SLP(mp03-4, INPUT, NONE);
->> +		PIN_SLP(mp03-5, OUT0, NONE);
->> +		PIN_SLP(mp03-6, INPUT, DOWN);
->> +		PIN_SLP(mp03-7, INPUT, DOWN);
->> +
->> +		PIN_SLP(mp04-0, INPUT, DOWN);
->> +		PIN_SLP(mp04-1, OUT0, NONE);
->> +		PIN_SLP(mp04-2, INPUT, DOWN);
->> +		PIN_SLP(mp04-3, OUT0, NONE);
->> +		PIN_SLP(mp04-4, INPUT, DOWN);
->> +		PIN_SLP(mp04-5, INPUT, DOWN);
->> +		PIN_SLP(mp04-6, OUT0, NONE);
->> +		PIN_SLP(mp04-7, INPUT, DOWN);
->> +
->> +		PIN_SLP(mp05-0, INPUT, NONE);
->> +		PIN_SLP(mp05-1, INPUT, NONE);
->> +		PIN_SLP(mp05-2, INPUT, NONE);
->> +		PIN_SLP(mp05-3, INPUT, NONE);
->> +		PIN_SLP(mp05-4, INPUT, DOWN);
->> +		PIN_SLP(mp05-5, OUT0, NONE);
->> +		PIN_SLP(mp05-6, INPUT, DOWN);
->> +		PIN_SLP(mp05-7, PREV, NONE);
->> +
->> +		PIN_SLP(mp06-0, INPUT, DOWN);
->> +		PIN_SLP(mp06-1, INPUT, DOWN);
->> +		PIN_SLP(mp06-2, INPUT, DOWN);
->> +		PIN_SLP(mp06-3, INPUT, DOWN);
->> +		PIN_SLP(mp06-4, INPUT, DOWN);
->> +		PIN_SLP(mp06-5, INPUT, DOWN);
->> +		PIN_SLP(mp06-6, INPUT, DOWN);
->> +		PIN_SLP(mp06-7, INPUT, DOWN);
->> +
->> +		PIN_SLP(mp07-0, INPUT, DOWN);
->> +		PIN_SLP(mp07-1, INPUT, DOWN);
->> +		PIN_SLP(mp07-2, INPUT, DOWN);
->> +		PIN_SLP(mp07-3, INPUT, DOWN);
->> +		PIN_SLP(mp07-4, INPUT, DOWN);
->> +		PIN_SLP(mp07-5, INPUT, DOWN);
->> +		PIN_SLP(mp07-6, INPUT, DOWN);
->> +		PIN_SLP(mp07-7, INPUT, DOWN);
->> +	};
-> 
-> What about gphX?
+I'm not sure why it's needed on that SoC in particular, but this should be =
+fixed
+in the driver itself (either the clock or the GPU driver).
 
-The gphX pins are in the alive area and don't have power down configs, they retain their
-state over suspend.  Therefore the samsung,pin-con-pdn and samsung,pin-pud-pdn properties
-have no effect (they're analogous to the gpxX pins in later Samsung SoCs).
+Maxime
 
-> 
-> Best regards,
-> Krzysztof
-> 
->> +};
->> -- 
->> 2.20.1
->>
+--u22eiu3zouiknukx
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Jonathan
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXqk/GwAKCRDj7w1vZxhR
+xR+OAP9zSq/md3bxfVKk4er7ZI7jk8/dQzTxgBO3mo3r+wRqmwEAy6d+UHyzeb5t
+qZLq2zIdK45SI8CMqYcGeBsbBQ1iVAc=
+=VCha
+-----END PGP SIGNATURE-----
+
+--u22eiu3zouiknukx--
