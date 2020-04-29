@@ -2,116 +2,105 @@ Return-Path: <SRS0=VJhJ=6N=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C685CC83004
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Apr 2020 16:57:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA63C83004
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Apr 2020 23:58:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A5AB820B80
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Apr 2020 16:57:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SKEgniF1"
+	by mail.kernel.org (Postfix) with ESMTP id 4C0D7206D9
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Apr 2020 23:58:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726689AbgD2Q47 (ORCPT
+        id S1727073AbgD2X6Z (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 29 Apr 2020 12:56:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56290 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727062AbgD2Q47 (ORCPT
+        Wed, 29 Apr 2020 19:58:25 -0400
+Received: from mga12.intel.com ([192.55.52.136]:35004 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726481AbgD2X6Z (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Apr 2020 12:56:59 -0400
-Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 454A0C035495
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Apr 2020 09:56:58 -0700 (PDT)
-Received: by mail-oi1-x242.google.com with SMTP id 19so2413095oiy.8
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Apr 2020 09:56:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jS410y1rm5OfNNRCCW0JAfor+cQs9RvCO91EhwcQ5qM=;
-        b=SKEgniF11L1lsRsuok+38sxpcfheThEexuS7GTd0xZtTs01ku+ZWsyxgA+TYnf15xR
-         Vnfl7IsYVhPLLkA5uNu7Zv0xrwtAGz2JCrm+/RzruMRFfOHOSVKpCWQ/d0OifaRObJT5
-         4nxzQGPIoqRMiIlbx1JwzrRt7GrtyGMf0GKtxHc8g5ib5NVQAO9cB2voK5LQslsq8YLi
-         jCJUlMr4swyHEuJ6y5bMN13lB2g6uOM1qk7EOLv0Rl5pzz7nairt2NamL3XXrpwV3kxw
-         eQf0OmqYiXJnbW3D0j+hsYlNtUHomr6inPNZEAFtr0pmcRtmlLL9aGRrZZE3DADZjLcu
-         qAhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jS410y1rm5OfNNRCCW0JAfor+cQs9RvCO91EhwcQ5qM=;
-        b=P7/GQ8haFv8RtzOf51iqdOaKx1Xm9TYBkwGH/TpYyarMfPoazVwcPLYpCzX3ldiRWj
-         Z1kIDQZvmFD9mZn9PehCDS7/GeYM/l1Do/RsJg3i9xfjn0/td68RUQZFVz/pVrHZAqNd
-         j/G8/LXvUB7f8kwp8VrbqZXcx4NkjRybroIyfoO5gSQGhOBWJTn6lWiuxzEHzlPx8L/W
-         zyf16DXskUxLfYrE7Hg5yYT+pJ092OG1P+Ku61iWj6jfVwDlIstDNZQXhAsuvvwDzW0a
-         T4tCQpR/zTfYhSLEj1p+MNP445eCG7QNRlzwTGTWyZjm30NdP7cX/oUPH9RxFw7y3oJJ
-         qj1g==
-X-Gm-Message-State: AGi0PubLeqqi0TjeKC0XoyCxNL8tDIdBPqcOUZe9/kilCMvdalxF4wjC
-        spnQiBvgwQvq17bP9mZzL7mGQW8aVHK1cIDvpsgizw==
-X-Google-Smtp-Source: APiQypJWdOOaCWqMgIakohtvjOfQJ6gmQBDUoadsUDsa2Bq+T8SAlu8GGSFWb6qJ+xMUCMYQoyebcVqFRBAhUNOLfwA=
-X-Received: by 2002:aca:c311:: with SMTP id t17mr2202051oif.169.1588179417419;
- Wed, 29 Apr 2020 09:56:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200422203245.83244-1-john.stultz@linaro.org>
- <20200422203245.83244-2-john.stultz@linaro.org> <CGME20200429134605eucas1p2bd601082e7a6b8c8fdbe79c83972e2e3@eucas1p2.samsung.com>
- <9e0501b5-c8c8-bc44-51e7-4bde2844b912@samsung.com> <20200429135228.GL4201@sirena.org.uk>
-In-Reply-To: <20200429135228.GL4201@sirena.org.uk>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Wed, 29 Apr 2020 09:56:44 -0700
-Message-ID: <CALAqxLWD95Ls53d+Mh2K=hn7HtTDqy2nG-APSdmwYajrw1q61Q@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] driver core: Revert default driver_deferred_probe_timeout
- value to 0
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Rob Herring <robh@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wed, 29 Apr 2020 19:58:25 -0400
+IronPort-SDR: AsD6ZoeBBQmL0IOMPrRNKGtTnT1bXi3tfIuxtgBJdKtce4eyR2zhrT83V+eTg/Y7C1EHuMVeUX
+ KqKKVC+MWVeA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2020 16:58:25 -0700
+IronPort-SDR: jB3X6OfrFEd5jL85tzJQ7Kivv2gZUnM+5dHl+h4S2HlmkJN7B4gQQLNvquQI6pSZuDssxpDugH
+ dzAsxaFwPNPA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,333,1583222400"; 
+   d="scan'208";a="293374327"
+Received: from chenw5-mobl1.ccr.corp.intel.com (HELO [10.254.209.112]) ([10.254.209.112])
+  by fmsmga002.fm.intel.com with ESMTP; 29 Apr 2020 16:58:19 -0700
+Cc:     baolu.lu@linux.intel.com, Daniel Drake <drake@endlessm.com>,
+        jonathan.derrick@intel.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Joerg Roedel <jroedel@suse.de>
+Subject: Re: [PATCH v3 04/34] iommu/vt-d: Wire up iommu_ops->def_domain_type
+To:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
         Robin Murphy <robin.murphy@arm.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Basil Eljuse <Basil.Eljuse@arm.com>,
-        Ferry Toth <fntoth@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        netdev <netdev@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>
+References: <20200429133712.31431-1-joro@8bytes.org>
+ <20200429133712.31431-5-joro@8bytes.org>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <b091a9e0-4bbb-2cd9-861e-e958bc691f73@linux.intel.com>
+Date:   Thu, 30 Apr 2020 07:58:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+In-Reply-To: <20200429133712.31431-5-joro@8bytes.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Apr 29, 2020 at 6:52 AM Mark Brown <broonie@kernel.org> wrote:
-> On Wed, Apr 29, 2020 at 03:46:04PM +0200, Marek Szyprowski wrote:
-> > On 22.04.2020 22:32, John Stultz wrote:
->
-> > > Fixes: c8c43cee29f6 ("driver core: Fix driver_deferred_probe_check_state() logic")
-> > > Signed-off-by: John Stultz <john.stultz@linaro.org>
->
-> > Please also revert dca0b44957e5 "regulator: Use
-> > driver_deferred_probe_timeout for regulator_init_complete_work" then,
-> > because now with the default 0 timeout some regulators gets disabled
-> > during boot, before their supplies gets instantiated.
->
-> Yes, please - I requested this when the revert was originally proposed :(
+On 2020/4/29 21:36, Joerg Roedel wrote:
+> From: Joerg Roedel <jroedel@suse.de>
+> 
+> The Intel VT-d driver already has a matching function to determine the
+> default domain type for a device. Wire it up in intel_iommu_ops.
+> 
+> Signed-off-by: Joerg Roedel <jroedel@suse.de>
 
-Oh, my apologies. I misunderstood what you were suggesting earlier.
-Sorry for being thick headed.
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
 
-I'll spin up a revert here shortly.
+Best regards,
+baolu
 
-thanks
--john
+> ---
+>   drivers/iommu/intel-iommu.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+> index ef0a5246700e..b9f905a55dda 100644
+> --- a/drivers/iommu/intel-iommu.c
+> +++ b/drivers/iommu/intel-iommu.c
+> @@ -6209,6 +6209,7 @@ const struct iommu_ops intel_iommu_ops = {
+>   	.dev_enable_feat	= intel_iommu_dev_enable_feat,
+>   	.dev_disable_feat	= intel_iommu_dev_disable_feat,
+>   	.is_attach_deferred	= intel_iommu_is_attach_deferred,
+> +	.def_domain_type	= device_def_domain_type,
+>   	.pgsize_bitmap		= INTEL_IOMMU_PGSIZES,
+>   };
+>   
+> 
