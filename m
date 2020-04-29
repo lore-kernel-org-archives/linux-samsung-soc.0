@@ -7,22 +7,22 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC4DC8300E
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Apr 2020 13:38:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B62CC83009
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Apr 2020 13:38:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6556920B80
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Apr 2020 13:38:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6658720B80
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Apr 2020 13:38:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728064AbgD2Nhx (ORCPT
+        id S1728051AbgD2Nhx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
         Wed, 29 Apr 2020 09:37:53 -0400
-Received: from 8bytes.org ([81.169.241.247]:39874 "EHLO theia.8bytes.org"
+Received: from 8bytes.org ([81.169.241.247]:40040 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728032AbgD2Nhw (ORCPT
+        id S1728025AbgD2Nhw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
         Wed, 29 Apr 2020 09:37:52 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 7A310F07; Wed, 29 Apr 2020 15:37:40 +0200 (CEST)
+        id 16EEAF04; Wed, 29 Apr 2020 15:37:40 +0200 (CEST)
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
         Robin Murphy <robin.murphy@arm.com>,
@@ -48,9 +48,9 @@ Cc:     Daniel Drake <drake@endlessm.com>, jonathan.derrick@intel.com,
         linux-tegra@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH v3 27/34] iommu/renesas: Convert to probe/release_device() call-backs
-Date:   Wed, 29 Apr 2020 15:37:05 +0200
-Message-Id: <20200429133712.31431-28-joro@8bytes.org>
+Subject: [PATCH v3 25/34] iommu/rockchip: Convert to probe/release_device() call-backs
+Date:   Wed, 29 Apr 2020 15:37:03 +0200
+Message-Id: <20200429133712.31431-26-joro@8bytes.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200429133712.31431-1-joro@8bytes.org>
 References: <20200429133712.31431-1-joro@8bytes.org>
@@ -61,123 +61,76 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Convert the Renesas IOMMU driver to use the probe_device() and
+Convert the Rockchip IOMMU driver to use the probe_device() and
 release_device() call-backs of iommu_ops, so that the iommu core code
 does the group and sysfs setup.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- drivers/iommu/ipmmu-vmsa.c | 60 +++++++++++++-------------------------
- 1 file changed, 20 insertions(+), 40 deletions(-)
+ drivers/iommu/rockchip-iommu.c | 26 +++++++-------------------
+ 1 file changed, 7 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 310cf09feea3..fb7e702dee23 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -805,24 +805,8 @@ static int ipmmu_of_xlate(struct device *dev,
- static int ipmmu_init_arm_mapping(struct device *dev)
- {
- 	struct ipmmu_vmsa_device *mmu = to_ipmmu(dev);
--	struct iommu_group *group;
- 	int ret;
- 
--	/* Create a device group and add the device to it. */
--	group = iommu_group_alloc();
--	if (IS_ERR(group)) {
--		dev_err(dev, "Failed to allocate IOMMU group\n");
--		return PTR_ERR(group);
--	}
--
--	ret = iommu_group_add_device(group, dev);
--	iommu_group_put(group);
--
--	if (ret < 0) {
--		dev_err(dev, "Failed to add device to IPMMU group\n");
--		return ret;
--	}
--
- 	/*
- 	 * Create the ARM mapping, used by the ARM DMA mapping core to allocate
- 	 * VAs. This will allocate a corresponding IOMMU domain.
-@@ -856,48 +840,39 @@ static int ipmmu_init_arm_mapping(struct device *dev)
- 	return 0;
- 
- error:
--	iommu_group_remove_device(dev);
- 	if (mmu->mapping)
- 		arm_iommu_release_mapping(mmu->mapping);
- 
- 	return ret;
+diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
+index b33cdd5aad81..d25c2486ca07 100644
+--- a/drivers/iommu/rockchip-iommu.c
++++ b/drivers/iommu/rockchip-iommu.c
+@@ -1054,40 +1054,28 @@ static void rk_iommu_domain_free(struct iommu_domain *domain)
+ 	kfree(rk_domain);
  }
  
--static int ipmmu_add_device(struct device *dev)
-+static struct iommu_device *ipmmu_probe_device(struct device *dev)
+-static int rk_iommu_add_device(struct device *dev)
++static struct iommu_device *rk_iommu_probe_device(struct device *dev)
  {
- 	struct ipmmu_vmsa_device *mmu = to_ipmmu(dev);
 -	struct iommu_group *group;
--	int ret;
+-	struct rk_iommu *iommu;
+ 	struct rk_iommudata *data;
++	struct rk_iommu *iommu;
  
- 	/*
- 	 * Only let through devices that have been verified in xlate()
- 	 */
- 	if (!mmu)
+ 	data = dev->archdata.iommu;
+ 	if (!data)
 -		return -ENODEV;
 +		return ERR_PTR(-ENODEV);
  
--	if (IS_ENABLED(CONFIG_ARM) && !IS_ENABLED(CONFIG_IOMMU_DMA)) {
--		ret = ipmmu_init_arm_mapping(dev);
--		if (ret)
--			return ret;
--	} else {
--		group = iommu_group_get_for_dev(dev);
--		if (IS_ERR(group))
--			return PTR_ERR(group);
-+	return &mmu->iommu;
-+}
+ 	iommu = rk_iommu_from_dev(dev);
  
--		iommu_group_put(group);
--	}
-+static void ipmmu_probe_finalize(struct device *dev)
-+{
-+	int ret = 0;
+-	group = iommu_group_get_for_dev(dev);
+-	if (IS_ERR(group))
+-		return PTR_ERR(group);
+-	iommu_group_put(group);
+-
+-	iommu_device_link(&iommu->iommu, dev);
+ 	data->link = device_link_add(dev, iommu->dev,
+ 				     DL_FLAG_STATELESS | DL_FLAG_PM_RUNTIME);
  
--	iommu_device_link(&mmu->iommu, dev);
 -	return 0;
-+	if (IS_ENABLED(CONFIG_ARM) && !IS_ENABLED(CONFIG_IOMMU_DMA))
-+		ret = ipmmu_init_arm_mapping(dev);
-+
-+	if (ret)
-+		dev_err(dev, "Can't create IOMMU mapping - DMA-OPS will not work\n");
++	return &iommu->iommu;
  }
  
--static void ipmmu_remove_device(struct device *dev)
-+static void ipmmu_release_device(struct device *dev)
+-static void rk_iommu_remove_device(struct device *dev)
++static void rk_iommu_release_device(struct device *dev)
  {
--	struct ipmmu_vmsa_device *mmu = to_ipmmu(dev);
+-	struct rk_iommu *iommu;
+ 	struct rk_iommudata *data = dev->archdata.iommu;
+ 
+-	iommu = rk_iommu_from_dev(dev);
 -
--	iommu_device_unlink(&mmu->iommu, dev);
- 	arm_iommu_detach_device(dev);
+ 	device_link_del(data->link);
+-	iommu_device_unlink(&iommu->iommu, dev);
 -	iommu_group_remove_device(dev);
  }
  
- static struct iommu_group *ipmmu_find_group(struct device *dev)
-@@ -925,9 +900,14 @@ static const struct iommu_ops ipmmu_ops = {
- 	.flush_iotlb_all = ipmmu_flush_iotlb_all,
- 	.iotlb_sync = ipmmu_iotlb_sync,
- 	.iova_to_phys = ipmmu_iova_to_phys,
--	.add_device = ipmmu_add_device,
--	.remove_device = ipmmu_remove_device,
-+	.probe_device = ipmmu_probe_device,
-+	.release_device = ipmmu_release_device,
-+	.probe_finalize = ipmmu_probe_finalize,
-+#if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
-+	.device_group = generic_device_group,
-+#else
- 	.device_group = ipmmu_find_group,
-+#endif
- 	.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K,
- 	.of_xlate = ipmmu_of_xlate,
- };
+ static struct iommu_group *rk_iommu_device_group(struct device *dev)
+@@ -1126,8 +1114,8 @@ static const struct iommu_ops rk_iommu_ops = {
+ 	.detach_dev = rk_iommu_detach_device,
+ 	.map = rk_iommu_map,
+ 	.unmap = rk_iommu_unmap,
+-	.add_device = rk_iommu_add_device,
+-	.remove_device = rk_iommu_remove_device,
++	.probe_device = rk_iommu_probe_device,
++	.release_device = rk_iommu_release_device,
+ 	.iova_to_phys = rk_iommu_iova_to_phys,
+ 	.device_group = rk_iommu_device_group,
+ 	.pgsize_bitmap = RK_IOMMU_PGSIZE_BITMAP,
 -- 
 2.17.1
 
