@@ -2,181 +2,191 @@ Return-Path: <SRS0=VJhJ=6N=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D10F8C83004
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Apr 2020 12:27:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A186C83003
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Apr 2020 13:37:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A4767218AC
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Apr 2020 12:27:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="Y7SJJo7s"
+	by mail.kernel.org (Postfix) with ESMTP id E5F86206D6
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 29 Apr 2020 13:37:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbgD2M1J (ORCPT
+        id S1727962AbgD2Nhq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 29 Apr 2020 08:27:09 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:35684 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726524AbgD2M1I (ORCPT
+        Wed, 29 Apr 2020 09:37:46 -0400
+Received: from 8bytes.org ([81.169.241.247]:39874 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727929AbgD2Nhq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 29 Apr 2020 08:27:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1588163225; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=UB85kJRWkAnE/ldP2rd2WB1otm7LsPHBG/QdCMbeTtw=;
-        b=Y7SJJo7sZnaAuNIPATy0AiHIaWVsd2iyJrs83ZKmUFLR4e0sPDVaCrXhPJh3FdwWeKj5+B
-        ymuqI/fKXp9dnLKIal7QsfsqkUT5AoaSpooZL4M9yoymur1N6pMByU7yw/6mHtmHFpYRn4
-        m+cKuE3cU7bSMeleVwTgsV9u39AqbSE=
-Date:   Wed, 29 Apr 2020 14:26:46 +0200
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v7 08/12] arm: dts: s5pv210: Add node for SGX 540
-To:     Jonathan Bakker <xc-racer2@live.ca>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?iso-8859-1?q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paulburton@kernel.org>,
-        James Hogan <jhogan@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Philipp Rossak <embed3d@gmail.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        openpvrsgx-devgroup@letux.org, letux-kernel@openphoenux.org,
-        kernel@pyra-handheld.com, linux-mips@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Message-Id: <MKUJ9Q.OQG3OJ6IYGUE3@crapouillou.net>
-In-Reply-To: <BN6PR04MB0660044B5B1D45BE4CBCD2AAA3AC0@BN6PR04MB0660.namprd04.prod.outlook.com>
-References: <cover.1587760454.git.hns@goldelico.com>
-        <3fd18c747426e15fd1f3500b9c4adce2db9ddd0c.1587760454.git.hns@goldelico.com>
-        <NYBE9Q.YH08US7A7DC3@crapouillou.net>
-        <BN6PR04MB0660A180D2069848E5C03D7EA3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
-        <20200427154617.GA1798@pi3>
-        <BN6PR04MB06605F014024061C894AFBA4A3AC0@BN6PR04MB0660.namprd04.prod.outlook.com>
-        <BN6PR04MB0660044B5B1D45BE4CBCD2AAA3AC0@BN6PR04MB0660.namprd04.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+        Wed, 29 Apr 2020 09:37:46 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 85A05CD1; Wed, 29 Apr 2020 15:37:37 +0200 (CEST)
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>
+Cc:     Daniel Drake <drake@endlessm.com>, jonathan.derrick@intel.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH v3 12/34] iommu: Move iommu_group_create_direct_mappings() out of iommu_group_add_device()
+Date:   Wed, 29 Apr 2020 15:36:50 +0200
+Message-Id: <20200429133712.31431-13-joro@8bytes.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200429133712.31431-1-joro@8bytes.org>
+References: <20200429133712.31431-1-joro@8bytes.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Jonathan,
+From: Joerg Roedel <jroedel@suse.de>
 
-Le mar. 28 avril 2020 =E0 15:58, Jonathan Bakker <xc-racer2@live.ca> a=20
-=E9crit :
-> Hi all,
->=20
-> On 2020-04-28 2:39 p.m., Jonathan Bakker wrote:
->>  Hi Krzysztof,
->>=20
->>  On 2020-04-27 8:46 a.m., Krzysztof Kozlowski wrote:
->>>  On Sun, Apr 26, 2020 at 07:57:12AM -0700, Jonathan Bakker wrote:
->>>>  Hi Paul,
->>>>=20
->>>>  On 2020-04-26 5:56 a.m., Paul Cercueil wrote:
->>>>>=20
->>>>>=20
->>>>>  Le ven. 24 avril 2020 =E0 22:34, H. Nikolaus Schaller=20
->>>>> <hns@goldelico.com> a =E9crit :
->>>>>>  From: Jonathan Bakker <xc-racer2@live.ca>
->>>>>>=20
->>>>>>  All s5pv210 devices have a PowerVR SGX 540 (revision 120)=20
->>>>>> attached.
->>>>>>=20
->>>>>>  There is no external regulator for it so it can be enabled by=20
->>>>>> default.
->>>>>>=20
->>>>>>  Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
->>>>>>  Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
->>>>>>  ---
->>>>>>   arch/arm/boot/dts/s5pv210.dtsi | 13 +++++++++++++
->>>>>>   1 file changed, 13 insertions(+)
->>>>>>=20
->>>>>>  diff --git a/arch/arm/boot/dts/s5pv210.dtsi=20
->>>>>> b/arch/arm/boot/dts/s5pv210.dtsi
->>>>>>  index 2ad642f51fd9..abbdda205c1b 100644
->>>>>>  --- a/arch/arm/boot/dts/s5pv210.dtsi
->>>>>>  +++ b/arch/arm/boot/dts/s5pv210.dtsi
->>>>>>  @@ -512,6 +512,19 @@ vic3: interrupt-controller@f2300000 {
->>>>>>               #interrupt-cells =3D <1>;
->>>>>>           };
->>>>>>=20
->>>>>>  +        gpu: gpu@f3000000 {
->>>>>>  +            compatible =3D "samsung,s5pv210-sgx540-120";
->>>=20
->>>  This should not pass the bindings check because you missed last
->>>  compatibles.
->>>=20
->>=20
->>  Thanks for pointing that out, I'll add it and make sure it passes=20
->> the bindings check.
->>=20
->>>>>>  +            reg =3D <0xf3000000 0x10000>;
->>>>>>  +            interrupt-parent =3D <&vic2>;
->>>>>>  +            interrupts =3D <10>;
->>>>>>  +            clock-names =3D "core";
->>>>>>  +            clocks =3D <&clocks CLK_G3D>;
->>>>>>  +
->>>>>>  +            assigned-clocks =3D <&clocks MOUT_G3D>, <&clocks=20
->>>>>> DOUT_G3D>;
->>>>>>  +            assigned-clock-rates =3D <0>, <66700000>;
->>>>>>  +            assigned-clock-parents =3D <&clocks MOUT_MPLL>;
->>>>>=20
->>>>>  What are these clocks for, and why are they reparented /=20
->>>>> reclocked?
->>>>>=20
->>>>>  Shouldn't they be passed to 'clocks' as well?
->>>>>=20
->>>>>  -Paul
->>>>>=20
->>>>=20
->>>>  The G3D clock system can have multiple parents, and for stable=20
->>>> operation
->>>>  it's recommended to use the MPLL clock as the parent (which in=20
->>>> turn
->>>>  is actually a mux as well).  MOUT_G3D is simply the mux for=20
->>>> CLK_G3D
->>>>  (SGX core clock), DOUT_G3D is the divider.  DOUT_G3D could=20
->>>> equally be CLK_G3D
->>>>  (and probably should be, for readability) as CLK_G3D is simply=20
->>>> the gate and
->>>>  DOUT_G3D is the divider for it.
->>>=20
->>>  Good point, it should be CLK_G3D instead of DOUT.  Can you fix=20
->>> this as
->>>  well?
->>=20
->>  Yep, will do.  Nikolaus, I'll send you an updated patch to include.
->>=20
->=20
-> How are assigned-clocks handled in the yaml DT schema?  When running=20
-> make dtbs_check,
-> I end up with messages such as
->=20
-> arch/arm/boot/dts/s5pv210-aquila.dt.yaml: gpu@f3000000:=20
-> 'assigned-clock-parents', 'assigned-clock-rates', 'assigned-clocks'=20
-> do not match any of the regexes: 'pinctrl-[0-9]+'
->=20
-> Do they need to explicitly be listed as valid entries?
+After the previous changes the iommu group may not have a default
+domain when iommu_group_add_device() is called. With no default domain
+iommu_group_create_direct_mappings() will do nothing and no direct
+mappings will be created.
 
-The assigned-* can also be moved inside the node of the clocks=20
-provider. I would say it makes more sense to have them there.
+Rename iommu_group_create_direct_mappings() to
+iommu_create_device_direct_mappings() to better reflect that the
+function creates direct mappings only for one device and not for all
+devices in the group. Then move the call to the places where a default
+domain actually exists.
 
--Paul
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+---
+ drivers/iommu/iommu.c | 35 ++++++++++++++++++++++++++++++-----
+ 1 file changed, 30 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index 7de0e29db333..834a45da0ed0 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -89,6 +89,8 @@ static int __iommu_attach_group(struct iommu_domain *domain,
+ 				struct iommu_group *group);
+ static void __iommu_detach_group(struct iommu_domain *domain,
+ 				 struct iommu_group *group);
++static int iommu_create_device_direct_mappings(struct iommu_group *group,
++					       struct device *dev);
+ 
+ #define IOMMU_GROUP_ATTR(_name, _mode, _show, _store)		\
+ struct iommu_group_attribute iommu_group_attr_##_name =		\
+@@ -243,6 +245,8 @@ static int __iommu_probe_device_helper(struct device *dev)
+ 	if (group->default_domain)
+ 		ret = __iommu_attach_device(group->default_domain, dev);
+ 
++	iommu_create_device_direct_mappings(group, dev);
++
+ 	iommu_group_put(group);
+ 
+ 	if (ret)
+@@ -263,6 +267,7 @@ static int __iommu_probe_device_helper(struct device *dev)
+ int iommu_probe_device(struct device *dev)
+ {
+ 	const struct iommu_ops *ops = dev->bus->iommu_ops;
++	struct iommu_group *group;
+ 	int ret;
+ 
+ 	WARN_ON(dev->iommu_group);
+@@ -285,6 +290,10 @@ int iommu_probe_device(struct device *dev)
+ 	if (ret)
+ 		goto err_module_put;
+ 
++	group = iommu_group_get(dev);
++	iommu_create_device_direct_mappings(group, dev);
++	iommu_group_put(group);
++
+ 	if (ops->probe_finalize)
+ 		ops->probe_finalize(dev);
+ 
+@@ -736,8 +745,8 @@ int iommu_group_set_name(struct iommu_group *group, const char *name)
+ }
+ EXPORT_SYMBOL_GPL(iommu_group_set_name);
+ 
+-static int iommu_group_create_direct_mappings(struct iommu_group *group,
+-					      struct device *dev)
++static int iommu_create_device_direct_mappings(struct iommu_group *group,
++					       struct device *dev)
+ {
+ 	struct iommu_domain *domain = group->default_domain;
+ 	struct iommu_resv_region *entry;
+@@ -841,8 +850,6 @@ int iommu_group_add_device(struct iommu_group *group, struct device *dev)
+ 
+ 	dev->iommu_group = group;
+ 
+-	iommu_group_create_direct_mappings(group, dev);
+-
+ 	mutex_lock(&group->mutex);
+ 	list_add_tail(&device->list, &group->devices);
+ 	if (group->domain)
+@@ -1736,6 +1743,7 @@ static void probe_alloc_default_domain(struct bus_type *bus,
+ 		gtype.type = iommu_def_domain_type;
+ 
+ 	iommu_group_alloc_default_domain(bus, group, gtype.type);
++
+ }
+ 
+ static int iommu_group_do_dma_attach(struct device *dev, void *data)
+@@ -1760,6 +1768,21 @@ static int __iommu_group_dma_attach(struct iommu_group *group)
+ 					  iommu_group_do_dma_attach);
+ }
+ 
++static int iommu_do_create_direct_mappings(struct device *dev, void *data)
++{
++	struct iommu_group *group = data;
++
++	iommu_create_device_direct_mappings(group, dev);
++
++	return 0;
++}
++
++static int iommu_group_create_direct_mappings(struct iommu_group *group)
++{
++	return __iommu_group_for_each_dev(group, group,
++					  iommu_do_create_direct_mappings);
++}
++
+ static int bus_iommu_probe(struct bus_type *bus)
+ {
+ 	const struct iommu_ops *ops = bus->iommu_ops;
+@@ -1792,6 +1815,8 @@ static int bus_iommu_probe(struct bus_type *bus)
+ 				continue;
+ 			}
+ 
++			iommu_group_create_direct_mappings(group);
++
+ 			ret = __iommu_group_dma_attach(group);
+ 
+ 			mutex_unlock(&group->mutex);
+@@ -2632,7 +2657,7 @@ request_default_domain_for_dev(struct device *dev, unsigned long type)
+ 		iommu_domain_free(group->default_domain);
+ 	group->default_domain = domain;
+ 
+-	iommu_group_create_direct_mappings(group, dev);
++	iommu_create_device_direct_mappings(group, dev);
+ 
+ 	dev_info(dev, "Using iommu %s mapping\n",
+ 		 type == IOMMU_DOMAIN_DMA ? "dma" : "direct");
+-- 
+2.17.1
 
