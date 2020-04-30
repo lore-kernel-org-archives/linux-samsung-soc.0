@@ -2,59 +2,59 @@ Return-Path: <SRS0=cU2u=6O=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E13B9C47247
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Apr 2020 14:08:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9036DC4724C
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Apr 2020 14:12:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B6911206D9
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Apr 2020 14:08:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C19B2076D
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 30 Apr 2020 14:12:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1588255692;
-	bh=r2EjWEVUPezkNE5CyIxnKq1/Poy/iWkkjjfp4PKowvA=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=fcgLl57aQZd+2Ca9lrc+wNEhL2hGe0hJziolyPGB7gDg00fg2Pc91VXs0/pMHVLmk
-	 Oq13HtxIhSEe3Z1MDAO2UFLAuiNhzTE/2lj7+L/DSS8/k0bVv1zepv/peZrisJnPTZ
-	 8xqvrBiQ8uAu91hAeKH/iKOvQ/kRUlkLE+G9VQvA=
+	s=default; t=1588255952;
+	bh=j7EesqpJdFMIiohM4Zu86JeArWKo8byoEHxcvBmIFJs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=jpHcD6H47rs7tH8uUJmzU83l4wKu/6m7/ovdFrk5EhPO5QsmDNyLL86MNquEl9c9Y
+	 Ms8UfcZLnLwftHCNyQIE2tTSoTZeRp85uUFAoYSQ6sEer1kvMVhERHyoGRi0v9Gl0R
+	 darBmjikW+UKQvfLbt8d46MPaLWzF8QgUcDDImKw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728370AbgD3NwX (ORCPT
+        id S1727891AbgD3NvG (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 30 Apr 2020 09:52:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33274 "EHLO mail.kernel.org"
+        Thu, 30 Apr 2020 09:51:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728359AbgD3NwW (ORCPT
+        id S1727878AbgD3NvF (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 30 Apr 2020 09:52:22 -0400
+        Thu, 30 Apr 2020 09:51:05 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB13220873;
-        Thu, 30 Apr 2020 13:52:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE44120873;
+        Thu, 30 Apr 2020 13:51:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1588254740;
-        bh=r2EjWEVUPezkNE5CyIxnKq1/Poy/iWkkjjfp4PKowvA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Ldzs+/sa3HaFDnbxRwBTC7b7qp7tI2rorGr1ub5AnOC8qyFuB/Ms5Ih+h/+1Ac7jE
-         KRJ0BP/HGu21UUWpTsxtdFrfoUJCaZS2MWr668wdb1T5Cg5jQ+2BE3oTSsqnAyoMWH
-         CuRMJIQgCRcKzMxzUELU3suXpG/33F7zZn8US7r0=
+        s=default; t=1588254664;
+        bh=j7EesqpJdFMIiohM4Zu86JeArWKo8byoEHxcvBmIFJs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=HRBWvn2SU5htasFxi1UM7LtEFOkn8Wa2dca9nph9ekjzsLKnACh/JSgog1kP2qsAO
+         DPN0tXGA8wNV5OZ6bs5ZJTs+ky59j5YrizkZdENcviIjidXbyvhb3cuAZXoD8tlC74
+         6yFsxExFP0oX0+mxx+EZqXRn1aOKagxTsDd5MTsY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 01/57] drm/bridge: analogix_dp: Split bind() into probe() and real bind()
-Date:   Thu, 30 Apr 2020 09:51:22 -0400
-Message-Id: <20200430135218.20372-1-sashal@kernel.org>
+        linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: [PATCH AUTOSEL 5.6 17/79] ASoC: samsung: s3c24xx-i2s: Fix build after removal of DAI suspend/resume
+Date:   Thu, 30 Apr 2020 09:49:41 -0400
+Message-Id: <20200430135043.19851-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200430135043.19851-1-sashal@kernel.org>
+References: <20200430135043.19851-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -63,328 +63,186 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 
-[ Upstream commit 83a196773b8bc6702f49df1eddc848180e350340 ]
+[ Upstream commit ec21bdc6dd16d74b3674ef1fd12ae8e4e7418603 ]
 
-Analogix_dp driver acquires all its resources in the ->bind() callback,
-what is a bit against the component driver based approach, where the
-driver initialization is split into a probe(), where all resources are
-gathered, and a bind(), where all objects are created and a compound
-driver is initialized.
+Commit 450312b640f9 ("ASoC: soc-core: remove DAI suspend/resume")
+removed the DAI side suspend/resume hooks and switched entirely to
+component suspend/resume.  However the Samsung SoC s3c-i2s-v2 driver was
+not updated.
 
-Extract all the resource related operations to analogix_dp_probe() and
-analogix_dp_remove(), then call them before/after registration of the
-device components from the main Exynos DP and Rockchip DP drivers. Also
-move the plat_data initialization to the probe() to make it available for
-the analogix_dp_probe() function.
+Move the suspend/resume hooks from s3c-i2s-v2.c to s3c2412-i2s.c while
+changing dai to component which allows to keep the struct
+snd_soc_component_driver const.
 
-This fixes the multiple calls to the bind() of the DRM compound driver
-when the DP PHY driver is not yet loaded/probed:
+This fixes build errors:
 
-[drm] Exynos DRM: using 14400000.fimd device for DMA mapping operations
-exynos-drm exynos-drm: bound 14400000.fimd (ops fimd_component_ops [exynosdrm])
-exynos-drm exynos-drm: bound 14450000.mixer (ops mixer_component_ops [exynosdrm])
-exynos-dp 145b0000.dp-controller: no DP phy configured
-exynos-drm exynos-drm: failed to bind 145b0000.dp-controller (ops exynos_dp_ops [exynosdrm]): -517
-exynos-drm exynos-drm: master bind failed: -517
-...
-[drm] Exynos DRM: using 14400000.fimd device for DMA mapping operations
-exynos-drm exynos-drm: bound 14400000.fimd (ops hdmi_enable [exynosdrm])
-exynos-drm exynos-drm: bound 14450000.mixer (ops hdmi_enable [exynosdrm])
-exynos-drm exynos-drm: bound 145b0000.dp-controller (ops hdmi_enable [exynosdrm])
-exynos-drm exynos-drm: bound 14530000.hdmi (ops hdmi_enable [exynosdrm])
-[drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
-Console: switching to colour frame buffer device 170x48
-exynos-drm exynos-drm: fb0: exynosdrmfb frame buffer device
-[drm] Initialized exynos 1.1.0 20180330 for exynos-drm on minor 1
-...
+    sound/soc/samsung/s3c-i2s-v2.c: In function ‘s3c_i2sv2_register_component’:
+    sound/soc/samsung/s3c-i2s-v2.c:730:9: error: ‘struct snd_soc_dai_driver’ has no member named ‘suspend’
+      dai_drv->suspend = s3c2412_i2s_suspend;
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Acked-by: Andy Yan <andy.yan@rock-chips.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20200310103427.26048-1-m.szyprowski@samsung.com
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 450312b640f9 ("ASoC: soc-core: remove DAI suspend/resume")
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Link: https://lore.kernel.org/r/20200413124548.28197-1-krzk@kernel.org
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../drm/bridge/analogix/analogix_dp_core.c    | 33 +++++++++++------
- drivers/gpu/drm/exynos/exynos_dp.c            | 29 ++++++++-------
- .../gpu/drm/rockchip/analogix_dp-rockchip.c   | 36 ++++++++++---------
- include/drm/bridge/analogix_dp.h              |  5 +--
- 4 files changed, 61 insertions(+), 42 deletions(-)
+ sound/soc/samsung/s3c-i2s-v2.c  | 57 ---------------------------------
+ sound/soc/samsung/s3c2412-i2s.c | 56 ++++++++++++++++++++++++++++++++
+ 2 files changed, 56 insertions(+), 57 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 22885dceaa177..1f26890a8da6e 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1635,8 +1635,7 @@ static ssize_t analogix_dpaux_transfer(struct drm_dp_aux *aux,
+diff --git a/sound/soc/samsung/s3c-i2s-v2.c b/sound/soc/samsung/s3c-i2s-v2.c
+index 593be1b668d64..b3e12d6a78a19 100644
+--- a/sound/soc/samsung/s3c-i2s-v2.c
++++ b/sound/soc/samsung/s3c-i2s-v2.c
+@@ -656,60 +656,6 @@ void s3c_i2sv2_cleanup(struct snd_soc_dai *dai,
  }
+ EXPORT_SYMBOL_GPL(s3c_i2sv2_cleanup);
  
- struct analogix_dp_device *
--analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
--		 struct analogix_dp_plat_data *plat_data)
-+analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct analogix_dp_device *dp;
-@@ -1739,22 +1738,30 @@ analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
- 					irq_flags, "analogix-dp", dp);
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed to request irq\n");
--		goto err_disable_pm_runtime;
-+		return ERR_PTR(ret);
- 	}
- 	disable_irq(dp->irq);
- 
-+	return dp;
-+}
-+EXPORT_SYMBOL_GPL(analogix_dp_probe);
-+
-+int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
-+{
-+	int ret;
-+
- 	dp->drm_dev = drm_dev;
- 	dp->encoder = dp->plat_data->encoder;
- 
- 	dp->aux.name = "DP-AUX";
- 	dp->aux.transfer = analogix_dpaux_transfer;
--	dp->aux.dev = &pdev->dev;
-+	dp->aux.dev = dp->dev;
- 
- 	ret = drm_dp_aux_register(&dp->aux);
- 	if (ret)
--		return ERR_PTR(ret);
-+		return ret;
- 
--	pm_runtime_enable(dev);
-+	pm_runtime_enable(dp->dev);
- 
- 	ret = analogix_dp_create_bridge(drm_dev, dp);
- 	if (ret) {
-@@ -1762,13 +1769,12 @@ analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
- 		goto err_disable_pm_runtime;
- 	}
- 
--	return dp;
-+	return 0;
- 
- err_disable_pm_runtime:
-+	pm_runtime_disable(dp->dev);
- 
--	pm_runtime_disable(dev);
+-#ifdef CONFIG_PM
+-static int s3c2412_i2s_suspend(struct snd_soc_dai *dai)
+-{
+-	struct s3c_i2sv2_info *i2s = to_info(dai);
+-	u32 iismod;
 -
--	return ERR_PTR(ret);
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(analogix_dp_bind);
- 
-@@ -1785,10 +1791,15 @@ void analogix_dp_unbind(struct analogix_dp_device *dp)
- 
- 	drm_dp_aux_unregister(&dp->aux);
- 	pm_runtime_disable(dp->dev);
--	clk_disable_unprepare(dp->clock);
- }
- EXPORT_SYMBOL_GPL(analogix_dp_unbind);
- 
-+void analogix_dp_remove(struct analogix_dp_device *dp)
-+{
-+	clk_disable_unprepare(dp->clock);
-+}
-+EXPORT_SYMBOL_GPL(analogix_dp_remove);
-+
- #ifdef CONFIG_PM
- int analogix_dp_suspend(struct analogix_dp_device *dp)
- {
-diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
-index 3a0f0ba8c63a0..e0cfae744afc9 100644
---- a/drivers/gpu/drm/exynos/exynos_dp.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp.c
-@@ -158,15 +158,8 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
- 	struct drm_device *drm_dev = data;
- 	int ret;
- 
--	dp->dev = dev;
- 	dp->drm_dev = drm_dev;
- 
--	dp->plat_data.dev_type = EXYNOS_DP;
--	dp->plat_data.power_on_start = exynos_dp_poweron;
--	dp->plat_data.power_off = exynos_dp_poweroff;
--	dp->plat_data.attach = exynos_dp_bridge_attach;
--	dp->plat_data.get_modes = exynos_dp_get_modes;
+-	if (dai->active) {
+-		i2s->suspend_iismod = readl(i2s->regs + S3C2412_IISMOD);
+-		i2s->suspend_iiscon = readl(i2s->regs + S3C2412_IISCON);
+-		i2s->suspend_iispsr = readl(i2s->regs + S3C2412_IISPSR);
 -
- 	if (!dp->plat_data.panel && !dp->ptn_bridge) {
- 		ret = exynos_dp_dt_parse_panel(dp);
- 		if (ret)
-@@ -184,13 +177,11 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
- 
- 	dp->plat_data.encoder = encoder;
- 
--	dp->adp = analogix_dp_bind(dev, dp->drm_dev, &dp->plat_data);
--	if (IS_ERR(dp->adp)) {
-+	ret = analogix_dp_bind(dp->adp, dp->drm_dev);
-+	if (ret)
- 		dp->encoder.funcs->destroy(&dp->encoder);
--		return PTR_ERR(dp->adp);
+-		/* some basic suspend checks */
+-
+-		iismod = readl(i2s->regs + S3C2412_IISMOD);
+-
+-		if (iismod & S3C2412_IISCON_RXDMA_ACTIVE)
+-			pr_warn("%s: RXDMA active?\n", __func__);
+-
+-		if (iismod & S3C2412_IISCON_TXDMA_ACTIVE)
+-			pr_warn("%s: TXDMA active?\n", __func__);
+-
+-		if (iismod & S3C2412_IISCON_IIS_ACTIVE)
+-			pr_warn("%s: IIS active\n", __func__);
 -	}
- 
+-
 -	return 0;
-+	return ret;
- }
- 
- static void exynos_dp_unbind(struct device *dev, struct device *master,
-@@ -221,6 +212,7 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 	if (!dp)
- 		return -ENOMEM;
- 
-+	dp->dev = dev;
- 	/*
- 	 * We just use the drvdata until driver run into component
- 	 * add function, and then we would set drvdata to null, so
-@@ -246,16 +238,29 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 
- 	/* The remote port can be either a panel or a bridge */
- 	dp->plat_data.panel = panel;
-+	dp->plat_data.dev_type = EXYNOS_DP;
-+	dp->plat_data.power_on_start = exynos_dp_poweron;
-+	dp->plat_data.power_off = exynos_dp_poweroff;
-+	dp->plat_data.attach = exynos_dp_bridge_attach;
-+	dp->plat_data.get_modes = exynos_dp_get_modes;
- 	dp->plat_data.skip_connector = !!bridge;
-+
- 	dp->ptn_bridge = bridge;
- 
- out:
-+	dp->adp = analogix_dp_probe(dev, &dp->plat_data);
-+	if (IS_ERR(dp->adp))
-+		return PTR_ERR(dp->adp);
-+
- 	return component_add(&pdev->dev, &exynos_dp_ops);
- }
- 
- static int exynos_dp_remove(struct platform_device *pdev)
- {
-+	struct exynos_dp_device *dp = platform_get_drvdata(pdev);
-+
- 	component_del(&pdev->dev, &exynos_dp_ops);
-+	analogix_dp_remove(dp->adp);
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index f38f5e113c6b3..ce98c08aa8b44 100644
---- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -325,15 +325,9 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
- 			    void *data)
- {
- 	struct rockchip_dp_device *dp = dev_get_drvdata(dev);
--	const struct rockchip_dp_chip_data *dp_data;
- 	struct drm_device *drm_dev = data;
- 	int ret;
- 
--	dp_data = of_device_get_match_data(dev);
--	if (!dp_data)
--		return -ENODEV;
+-}
 -
--	dp->data = dp_data;
- 	dp->drm_dev = drm_dev;
- 
- 	ret = rockchip_dp_drm_create_encoder(dp);
-@@ -344,16 +338,9 @@ static int rockchip_dp_bind(struct device *dev, struct device *master,
- 
- 	dp->plat_data.encoder = &dp->encoder;
- 
--	dp->plat_data.dev_type = dp->data->chip_type;
--	dp->plat_data.power_on_start = rockchip_dp_poweron_start;
--	dp->plat_data.power_off = rockchip_dp_powerdown;
--	dp->plat_data.get_modes = rockchip_dp_get_modes;
+-static int s3c2412_i2s_resume(struct snd_soc_dai *dai)
+-{
+-	struct s3c_i2sv2_info *i2s = to_info(dai);
 -
--	dp->adp = analogix_dp_bind(dev, dp->drm_dev, &dp->plat_data);
--	if (IS_ERR(dp->adp)) {
--		ret = PTR_ERR(dp->adp);
-+	ret = analogix_dp_bind(dp->adp, drm_dev);
-+	if (ret)
- 		goto err_cleanup_encoder;
+-	pr_info("dai_active %d, IISMOD %08x, IISCON %08x\n",
+-		dai->active, i2s->suspend_iismod, i2s->suspend_iiscon);
+-
+-	if (dai->active) {
+-		writel(i2s->suspend_iiscon, i2s->regs + S3C2412_IISCON);
+-		writel(i2s->suspend_iismod, i2s->regs + S3C2412_IISMOD);
+-		writel(i2s->suspend_iispsr, i2s->regs + S3C2412_IISPSR);
+-
+-		writel(S3C2412_IISFIC_RXFLUSH | S3C2412_IISFIC_TXFLUSH,
+-		       i2s->regs + S3C2412_IISFIC);
+-
+-		ndelay(250);
+-		writel(0x0, i2s->regs + S3C2412_IISFIC);
 -	}
- 
- 	return 0;
- err_cleanup_encoder:
-@@ -368,8 +355,6 @@ static void rockchip_dp_unbind(struct device *dev, struct device *master,
- 
- 	analogix_dp_unbind(dp->adp);
- 	dp->encoder.funcs->destroy(&dp->encoder);
 -
--	dp->adp = ERR_PTR(-ENODEV);
+-	return 0;
+-}
+-#else
+-#define s3c2412_i2s_suspend NULL
+-#define s3c2412_i2s_resume  NULL
+-#endif
+-
+ int s3c_i2sv2_register_component(struct device *dev, int id,
+ 			   const struct snd_soc_component_driver *cmp_drv,
+ 			   struct snd_soc_dai_driver *dai_drv)
+@@ -727,9 +673,6 @@ int s3c_i2sv2_register_component(struct device *dev, int id,
+ 	if (!ops->delay)
+ 		ops->delay = s3c2412_i2s_delay;
+ 
+-	dai_drv->suspend = s3c2412_i2s_suspend;
+-	dai_drv->resume = s3c2412_i2s_resume;
+-
+ 	return devm_snd_soc_register_component(dev, cmp_drv, dai_drv, 1);
  }
- 
- static const struct component_ops rockchip_dp_component_ops = {
-@@ -380,10 +365,15 @@ static const struct component_ops rockchip_dp_component_ops = {
- static int rockchip_dp_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-+	const struct rockchip_dp_chip_data *dp_data;
- 	struct drm_panel *panel = NULL;
- 	struct rockchip_dp_device *dp;
- 	int ret;
- 
-+	dp_data = of_device_get_match_data(dev);
-+	if (!dp_data)
-+		return -ENODEV;
-+
- 	ret = drm_of_find_panel_or_bridge(dev->of_node, 1, 0, &panel, NULL);
- 	if (ret < 0)
- 		return ret;
-@@ -394,7 +384,12 @@ static int rockchip_dp_probe(struct platform_device *pdev)
- 
- 	dp->dev = dev;
- 	dp->adp = ERR_PTR(-ENODEV);
-+	dp->data = dp_data;
- 	dp->plat_data.panel = panel;
-+	dp->plat_data.dev_type = dp->data->chip_type;
-+	dp->plat_data.power_on_start = rockchip_dp_poweron_start;
-+	dp->plat_data.power_off = rockchip_dp_powerdown;
-+	dp->plat_data.get_modes = rockchip_dp_get_modes;
- 
- 	ret = rockchip_dp_of_probe(dp);
- 	if (ret < 0)
-@@ -402,12 +397,19 @@ static int rockchip_dp_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, dp);
- 
-+	dp->adp = analogix_dp_probe(dev, &dp->plat_data);
-+	if (IS_ERR(dp->adp))
-+		return PTR_ERR(dp->adp);
-+
- 	return component_add(dev, &rockchip_dp_component_ops);
- }
- 
- static int rockchip_dp_remove(struct platform_device *pdev)
- {
-+	struct rockchip_dp_device *dp = platform_get_drvdata(pdev);
-+
- 	component_del(&pdev->dev, &rockchip_dp_component_ops);
-+	analogix_dp_remove(dp->adp);
- 
+ EXPORT_SYMBOL_GPL(s3c_i2sv2_register_component);
+diff --git a/sound/soc/samsung/s3c2412-i2s.c b/sound/soc/samsung/s3c2412-i2s.c
+index 787a3f6e9f242..b35d828c1cfe9 100644
+--- a/sound/soc/samsung/s3c2412-i2s.c
++++ b/sound/soc/samsung/s3c2412-i2s.c
+@@ -117,6 +117,60 @@ static int s3c2412_i2s_hw_params(struct snd_pcm_substream *substream,
  	return 0;
  }
-diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
-index 7aa2f93da49ca..b0dcc07334a1e 100644
---- a/include/drm/bridge/analogix_dp.h
-+++ b/include/drm/bridge/analogix_dp.h
-@@ -42,9 +42,10 @@ int analogix_dp_resume(struct analogix_dp_device *dp);
- int analogix_dp_suspend(struct analogix_dp_device *dp);
  
- struct analogix_dp_device *
--analogix_dp_bind(struct device *dev, struct drm_device *drm_dev,
--		 struct analogix_dp_plat_data *plat_data);
-+analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data);
-+int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev);
- void analogix_dp_unbind(struct analogix_dp_device *dp);
-+void analogix_dp_remove(struct analogix_dp_device *dp);
++#ifdef CONFIG_PM
++static int s3c2412_i2s_suspend(struct snd_soc_component *component)
++{
++	struct s3c_i2sv2_info *i2s = snd_soc_component_get_drvdata(component);
++	u32 iismod;
++
++	if (component->active) {
++		i2s->suspend_iismod = readl(i2s->regs + S3C2412_IISMOD);
++		i2s->suspend_iiscon = readl(i2s->regs + S3C2412_IISCON);
++		i2s->suspend_iispsr = readl(i2s->regs + S3C2412_IISPSR);
++
++		/* some basic suspend checks */
++
++		iismod = readl(i2s->regs + S3C2412_IISMOD);
++
++		if (iismod & S3C2412_IISCON_RXDMA_ACTIVE)
++			pr_warn("%s: RXDMA active?\n", __func__);
++
++		if (iismod & S3C2412_IISCON_TXDMA_ACTIVE)
++			pr_warn("%s: TXDMA active?\n", __func__);
++
++		if (iismod & S3C2412_IISCON_IIS_ACTIVE)
++			pr_warn("%s: IIS active\n", __func__);
++	}
++
++	return 0;
++}
++
++static int s3c2412_i2s_resume(struct snd_soc_component *component)
++{
++	struct s3c_i2sv2_info *i2s = snd_soc_component_get_drvdata(component);
++
++	pr_info("component_active %d, IISMOD %08x, IISCON %08x\n",
++		component->active, i2s->suspend_iismod, i2s->suspend_iiscon);
++
++	if (component->active) {
++		writel(i2s->suspend_iiscon, i2s->regs + S3C2412_IISCON);
++		writel(i2s->suspend_iismod, i2s->regs + S3C2412_IISMOD);
++		writel(i2s->suspend_iispsr, i2s->regs + S3C2412_IISPSR);
++
++		writel(S3C2412_IISFIC_RXFLUSH | S3C2412_IISFIC_TXFLUSH,
++		       i2s->regs + S3C2412_IISFIC);
++
++		ndelay(250);
++		writel(0x0, i2s->regs + S3C2412_IISFIC);
++	}
++
++	return 0;
++}
++#else
++#define s3c2412_i2s_suspend NULL
++#define s3c2412_i2s_resume  NULL
++#endif
++
+ #define S3C2412_I2S_RATES \
+ 	(SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_11025 | SNDRV_PCM_RATE_16000 | \
+ 	SNDRV_PCM_RATE_22050 | SNDRV_PCM_RATE_32000 | SNDRV_PCM_RATE_44100 | \
+@@ -146,6 +200,8 @@ static struct snd_soc_dai_driver s3c2412_i2s_dai = {
  
- int analogix_dp_start_crc(struct drm_connector *connector);
- int analogix_dp_stop_crc(struct drm_connector *connector);
+ static const struct snd_soc_component_driver s3c2412_i2s_component = {
+ 	.name		= "s3c2412-i2s",
++	.suspend	= s3c2412_i2s_suspend,
++	.resume		= s3c2412_i2s_resume,
+ };
+ 
+ static int s3c2412_iis_dev_probe(struct platform_device *pdev)
 -- 
 2.20.1
 
