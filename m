@@ -7,28 +7,28 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
 	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D015C47254
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 May 2020 23:51:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFEE5C47258
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 May 2020 23:51:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2503421835
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 May 2020 23:51:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C484F21835
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 May 2020 23:51:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728068AbgEAXvj (ORCPT
+        id S1728102AbgEAXvm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 1 May 2020 19:51:39 -0400
-Received: from mail-dm6nam12olkn2012.outbound.protection.outlook.com ([40.92.22.12]:6312
+        Fri, 1 May 2020 19:51:42 -0400
+Received: from mail-dm6nam12olkn2052.outbound.protection.outlook.com ([40.92.22.52]:41440
         "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728035AbgEAXvh (ORCPT
+        id S1728078AbgEAXvl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 1 May 2020 19:51:37 -0400
+        Fri, 1 May 2020 19:51:41 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=l+7mpwR3Dz9XZqPOeyNF8sj9Fx8TV9O+CQsmJH6gfUKmNwYUCbs5eFKq3uP+avb8ygqwyGhb2sdxEOqTposAeqc29+30DP0TAtlx+1HReBAw+7s+TaGJ+eddkMo4rW2OsBk1LiMZ19dK77zWswOZ0wM7M+bCIQ5SsPu1B81LFebf0nMDfVtjahCsQiOhEu/aMDGJwiISr9yoXzC6pZJF5Xv9W176oXrrBGuLf5/BKX5zSBeF5VlTkeL+yzCKUbHVreoFHZtsXgmBsU+vqjL794hWUZgFD1iRFz68/G7cdmYQc24Ms8tcuq2ipKnKvbe9lwuIiVa1/5X2g+A3+U/x/Q==
+ b=D7n7Lf5ZakJX2GtI0n6fdMzi2F/HPHaimjuHM1TKguI/9uCqHEOplejPmKghlLLqHN4f4MjZR0iVnMhDlBseKYOW5E+B8+5IW7/2Wxr6XTpdVSeK7fpyZt5KIIizLj2XvvoEThq0kf9wSlfdhYGbzNj6TXGrS+dnwgSXW4sGO+g8IFcRSsdfDMeuujZNPa4ex6ksRQO24VML+sz3SyuSqa4l/EdNcihc2wwqKRY+Kmo0jUVkXj2/d/qKzKDo1adKMjw5HCrDl7LhvxoJwShbVKLYyUuDYJCH9TSIxwS5Pkt0BavuWMuceRM80DMFV9xmc14Jmb/aUse1knN7oLmsSQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HHr/7WE+ogxMYf6hOleP7yRxnD2ewDqzINWt5DLoNN0=;
- b=jagqkHRoZS/a4VMt3gthgzlgScaqe0b7IxcgPav1/Am32XTEZzEC1zc6BRPVBzkAKmo5T/YI9WVz3v7UBXeA3rgXSHUhnJCv3jWdmgZGuqE211+6+TpTatiVd86FmJ9vZo991OUAVFbYyGmhcDPvC1Hi/A8hb8NjGca9iKS2ckBLVly54eCUR+jTUzNnVEnS9REqsJRS7wlnwbRV0MucDCtHhNJPM17C+7wMZMh2GbGODHGskI7I7v8Vd+sjsu2Bzem1XYNGYF5Swxre901esXvF4GC3+Fwt+NX/LlDcCeMBaV/oQLlWjyx8QxmiTEqeh+jyFdufFZBuCfKOflxpow==
+ bh=30FnPkQg6MgHAbbFYq87y7gvAN61SyA8Xl8JPg7VkOY=;
+ b=JRE0JMLJRz9Rg1uSiryPWD1EZf7Uu1cJJbZTOBE8GgeUUM2en2xEbSr7DmdGbcwnUtXBMDFppYH6F/AOMjh9c7ddX5dAMLUuxh+zggUfy/E6JxTSNQg9vyTZxCr3YzgHNvtknqtQ2ViivUCg7oBBpJe7QoeFEw8sFXRvMITPfFxbqQoL/ohCWGkeQLc4RV4LyiUV9fySNYMxEsEiNhUwlry6buSW0l1gKCQXpOtKCtRNf8InI7ApqmMIkbWvHC6sHJPNu4EJTRyXMctlVyr39fiRLsduCdceM3HobywBI3Agw9Pq7VidwRLoXfCVDh26hdzC2HSpD0PAB8UqJLarqw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=live.ca; dmarc=pass action=none header.from=live.ca; dkim=pass
  header.d=live.ca; arc=none
@@ -37,26 +37,26 @@ Received: from DM6NAM12FT056.eop-nam12.prod.protection.outlook.com
  DM6NAM12HT116.eop-nam12.prod.protection.outlook.com (2a01:111:e400:fc64::100)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2921.12; Fri, 1 May
- 2020 23:51:31 +0000
+ 2020 23:51:39 +0000
 Received: from BN6PR04MB0660.namprd04.prod.outlook.com
  (2a01:111:e400:fc64::46) by DM6NAM12FT056.mail.protection.outlook.com
  (2a01:111:e400:fc64::460) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2921.12 via Frontend
- Transport; Fri, 1 May 2020 23:51:31 +0000
-X-IncomingTopHeaderMarker: OriginalChecksum:BB0B0C1DB8AEBFAA843D4AE8F07C9D8C7461EECAAA9752D14FDEFECCE4E0E420;UpperCasedChecksum:C954E615F3E602F33734112D3921A2CAA2C0D90BD761C2D7962D51EF442691F9;SizeAsReceived:7870;Count:50
+ Transport; Fri, 1 May 2020 23:51:39 +0000
+X-IncomingTopHeaderMarker: OriginalChecksum:AAB324946AA5C1EBD9434508F358AA077D7074415FE73BA7917102E560B8AE74;UpperCasedChecksum:663DFCD72C8516DD1BBF132ECEAB848832FA9617645C1D1EB46B7ADDA33D836C;SizeAsReceived:7857;Count:50
 Received: from BN6PR04MB0660.namprd04.prod.outlook.com
  ([fe80::ad10:4127:4bc8:76fc]) by BN6PR04MB0660.namprd04.prod.outlook.com
  ([fe80::ad10:4127:4bc8:76fc%6]) with mapi id 15.20.2958.027; Fri, 1 May 2020
- 23:51:31 +0000
+ 23:51:39 +0000
 From:   Jonathan Bakker <xc-racer2@live.ca>
 To:     kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     Jonathan Bakker <xc-racer2@live.ca>
-Subject: [PATCH v2 12/18] ARM: dts: s5pv210: Disable pull for vibrator ena GPIO on aries
-Date:   Fri,  1 May 2020 16:50:13 -0700
-Message-ID: <BN6PR04MB0660C61E15452E1BC3B717EFA3AB0@BN6PR04MB0660.namprd04.prod.outlook.com>
+Subject: [PATCH v2 17/18] ARM: dts: s5pv210: Set MAX8998 GPIO pulls on aries
+Date:   Fri,  1 May 2020 16:50:18 -0700
+Message-ID: <BN6PR04MB06605369BD22EC1C110587FEA3AB0@BN6PR04MB0660.namprd04.prod.outlook.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200501235019.24022-1-xc-racer2@live.ca>
 References: <20200426183604.28494-1-xc-racer2@live.ca>
@@ -66,25 +66,25 @@ Content-Type:   text/plain; charset=US-ASCII
 X-ClientProxiedBy: MWHPR17CA0058.namprd17.prod.outlook.com
  (2603:10b6:300:93::20) To BN6PR04MB0660.namprd04.prod.outlook.com
  (2603:10b6:404:d9::21)
-X-Microsoft-Original-Message-ID: <20200501235019.24022-13-xc-racer2@live.ca>
+X-Microsoft-Original-Message-ID: <20200501235019.24022-18-xc-racer2@live.ca>
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from jon-hp-6570b.telus (2001:569:fb68:9c00:8067:f823:1e15:7520) by MWHPR17CA0058.namprd17.prod.outlook.com (2603:10b6:300:93::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2958.20 via Frontend Transport; Fri, 1 May 2020 23:51:29 +0000
+Received: from jon-hp-6570b.telus (2001:569:fb68:9c00:8067:f823:1e15:7520) by MWHPR17CA0058.namprd17.prod.outlook.com (2603:10b6:300:93::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2958.20 via Frontend Transport; Fri, 1 May 2020 23:51:38 +0000
 X-Mailer: git-send-email 2.20.1
-X-Microsoft-Original-Message-ID: <20200501235019.24022-13-xc-racer2@live.ca>
-X-TMN:  [Ap+UONHn8F2u6LkEOl2UEuF5QkdNG0obwAG7GIzp5WYfAubwZIxWGHB3AwAKV9ek]
+X-Microsoft-Original-Message-ID: <20200501235019.24022-18-xc-racer2@live.ca>
+X-TMN:  [MVlAceRo7UQK6MuBisHS/Zu7Di8HvT1aOJnZyko44z2ZAYO4NwHYSkImlEU86drv]
 X-MS-PublicTrafficType: Email
 X-IncomingHeaderCount: 50
 X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-Correlation-Id: e447f098-a8e0-42b1-5bc1-08d7ee2a926b
+X-MS-Office365-Filtering-Correlation-Id: f1984402-c916-45e0-7be2-08d7ee2a975d
 X-MS-TrafficTypeDiagnostic: DM6NAM12HT116:
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 2P3mp3BGD5+VhNwXH5G4HGb7mTqCzW5KJY8iuVXhzFG6eKItaRG24rQFV1q6cAdJSB348nPYdJCUpYlQGQemEDQlprIvicX7lPiPUPD4Hck8OdFZLnXqNg+PFF0bkNX1J1ofPwr6CBNtFnnxg4HcjaLV45cmz9g45amJYai9WZGOWJr9VJ9Am0cNLZYWr7c8a+Cy7dH3c1MPu9Q8zhwA1Q==
+X-Microsoft-Antispam-Message-Info: UszKo8/PRi6Ldlwg2/VXCVu1XtMhz5qy6IvS8kRa6+kZbXIj0aMSrUcaG/4aSWtMTxQFQB4kZCGRfs9bBO5no0+UPtlY1ciqxxlfrkTDQSGA4H20GGM/SJmk31fDwIUamDwTpMuOunQvd4edJmKx3ORFSQKx9n1gQmIrujrqUfMAXLBZgKo8uE7BhLvOpKGKK+0ydlNJMnREmjAr87SH9g==
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:0;SRV:;IPV:NLI;SFV:NSPM;H:BN6PR04MB0660.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:;DIR:OUT;SFP:1901;
-X-MS-Exchange-AntiSpam-MessageData: wipelDvCqo7yGVKpRfaHAAKklbQr7d5WLvr63GrkOgyfvFE15E5msnAk1eFUEotq2oslgspyhxju2YityBFndXpCWoGWRITgcgHFV77M+o01SS6n0WRIXALrNjBFBT//fv9s5r1Yfivdnknt+xLL9mIah5a03OreqPW2e9cumx5uOADbbjZnBAhWGzfnRQRMlG+s9JyXzdqBpdU4DbhiqA==
+X-MS-Exchange-AntiSpam-MessageData: lD1teSLpFnVRuwbc5ySzad+2XtKmnS4bSJZuFr14Ny9s+i04yfHGqmDMvO8RpgzkROdgdXz6LXDdv0LjFqoLZItL5uzf1AzSWxRjLrVulgN9TlZrxBvI8P26LKGnpGXZXo1WxteryZnY1ICjIoBNvGajEddTyNDWpkStgoPRBkYn0ySXzospUkNE5doHCkESU+dUcW/DqSN12BcDmNQ77w==
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e447f098-a8e0-42b1-5bc1-08d7ee2a926b
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 May 2020 23:51:31.3799
+X-MS-Exchange-CrossTenant-Network-Message-Id: f1984402-c916-45e0-7be2-08d7ee2a975d
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 May 2020 23:51:39.5626
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
@@ -96,41 +96,51 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The enable GPIO for the fixed vibrator regulator shouldn't be
-pulled in one direction or the other.
+Make sure that the GPIOs are configured correctly
+for the interrupt (otherwise it won't fire) and disable the
+pulls on the DVS GPIOs which are outputs.
 
 Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
 ---
- arch/arm/boot/dts/s5pv210-aries.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm/boot/dts/s5pv210-aries.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
 diff --git a/arch/arm/boot/dts/s5pv210-aries.dtsi b/arch/arm/boot/dts/s5pv210-aries.dtsi
-index 0fa3de3c985d..945259aa5d55 100644
+index 0bd65401ec65..cf858029292e 100644
 --- a/arch/arm/boot/dts/s5pv210-aries.dtsi
 +++ b/arch/arm/boot/dts/s5pv210-aries.dtsi
-@@ -52,6 +52,9 @@
- 		regulator-name = "vibrator-en";
- 		enable-active-high;
- 		gpio = <&gpj1 1 GPIO_ACTIVE_HIGH>;
+@@ -169,6 +169,9 @@
+ 			max8998,pmic-buck2-dvs-gpio = <&gph0 5 GPIO_ACTIVE_HIGH>;
+ 			max8998,pmic-buck2-dvs-voltage = <1100000>, <1000000>;
+ 
++			pinctrl-names = "default";
++			pinctrl-0 = <&pmic_dvs_pins &pmic_irq>;
 +
-+		pinctrl-names = "default";
-+		pinctr-0 = <&vibrator_ena>;
+ 			regulators {
+ 				ldo2_reg: LDO2 {
+ 					regulator-name = "VALIVE_1.2V";
+@@ -617,6 +620,21 @@
+ 		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
  	};
  
- 	touchkey_vdd: regulator-fixed-1 {
-@@ -656,6 +659,12 @@
- 		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
- 	};
- 
-+	vibrator_ena: vibrator-ena {
-+		samsung,pins = "gpj1-1";
++	pmic_dvs_pins: pmic-dvs-pins {
++		samsung,pins = "gph0-3", "gph0-4", "gph0-5";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
++		samsung,pin-val = <0>;
++	};
++
++	pmic_irq: pmic-irq {
++		samsung,pins = "gph0-7";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_F>;
 +		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
 +		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
 +	};
 +
- 	touchkey_i2c_pins: touchkey-i2c-pins {
- 		samsung,pins = "gpj3-0", "gpj3-1";
- 		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
+ 	wifi_host_wake: wifi-host-wake {
+ 		samsung,pins = "gph2-4";
+ 		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
 -- 
 2.20.1
 
