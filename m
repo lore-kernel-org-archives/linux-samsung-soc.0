@@ -2,374 +2,236 @@ Return-Path: <SRS0=+28V=6P=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 070E5C4724C
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 May 2020 13:10:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C77FC47253
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 May 2020 13:31:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C7A802166E
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 May 2020 13:10:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2853C24955
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 May 2020 13:31:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1588338626;
-	bh=mcU/IikkRge5NkNieidxRKyqEH7XEBPM8EXLuSoAJOM=;
+	s=default; t=1588339871;
+	bh=eq9VzjTggIjZwyzJnYSvtCpci3J6H7Qooauqn2L2Q+I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=u6VuKu0GMyrIeDhvfvC5ppFzwV9D9DJ90PIvUXqlechI/zwQkXERH1lrnDhYpt6Uj
-	 SZxZbRzsQvirsMH0MCMeSw7fQeN+U18Ejhj2JcRNWfK5Ojv63l7sy2nhlJDZ9ZU1dG
-	 4KJUQZaVb9mfJX5Nl0Iam4oJq+EfJOzmmYGADZpw=
+	b=bbl3eTVx/SLkLenlrAQTcnKoWjraWzIkbZ4YxWIuFranzdQBT6XNSHa0v+qRUwLP2
+	 QrwGJjVfPSPF75UYWELJhHlhgdNdzE6yKSbBqZlUbt+mtuMVPkFvLVBUi+e7nVAY5p
+	 KyZCS1SdtsY1XDDJ2pPz0+PpE7iT0slEMJedDD/8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728821AbgEANK0 (ORCPT
+        id S1730089AbgEANbK convert rfc822-to-8bit (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 1 May 2020 09:10:26 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:45397 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728815AbgEANK0 (ORCPT
+        Fri, 1 May 2020 09:31:10 -0400
+Received: from mail-ej1-f65.google.com ([209.85.218.65]:38934 "EHLO
+        mail-ej1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730080AbgEANbH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 1 May 2020 09:10:26 -0400
-Received: by mail-ed1-f65.google.com with SMTP id f12so7189402edn.12;
-        Fri, 01 May 2020 06:10:22 -0700 (PDT)
+        Fri, 1 May 2020 09:31:07 -0400
+Received: by mail-ej1-f65.google.com with SMTP id s3so7483120eji.6;
+        Fri, 01 May 2020 06:31:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6Yg1SL1X0Nyl9McRXFdcaYuSFdnUnZQ7o/sDqSIRDtA=;
-        b=swIBo6iceVbnPPKxuTHSunypi9QzoL1Itv2BrT7IZ3iwbIlIf08qZ6xeNmTY/mWMBa
-         6AD5BIULb7N9p9ap/f1O/09mvJGKNCzkw3JymiLvgYa+47JEZKOgsqgvea4HCmXwi8Bl
-         sED5GAENwqy0p4VeXXnze6pd/y7Z86o6BnichqBQjgQqzb1y1SuRDfoVmolEaaqChVpT
-         1Qy2D6u4lVuSK7cGOx8e5YMUKYlyWg408kn1/UxMTaWpTwX4cpsMDmVMyzKCZmTEj6lj
-         meu6CEBp7fnvmzpvTOZXJqIxo1frazeAVVNdq2Oo4UiGVIUr+Y8RvKP3BRa/Sej7Mkne
-         7l0Q==
-X-Gm-Message-State: AGi0PuZHQc1z0hlCWiWmZ643+fuVZ2z6OaoCl9cI4xUSKxDmLqqDPYyc
-        /RDM2SXT2xyps34PBXOlPPg=
-X-Google-Smtp-Source: APiQypIi4/og4/HNrNIMTQ1xvfHSFwknvjONOuAhvP17Fjm8GXDXhsQF1IJtEimfQoCgQEfjxvh/+g==
-X-Received: by 2002:aa7:cf16:: with SMTP id a22mr3390029edy.77.1588338621396;
-        Fri, 01 May 2020 06:10:21 -0700 (PDT)
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=OvExKVABn65NYbhAsLzBIznCBsp6S8fN5fVcOGh1uUs=;
+        b=K2NA6sZ/RcTB+yqUhPhaqpL4nkmTl8T0fAV0/4EeetYfNGkW0lBxRmQ3Lc7GXN8Oy6
+         LCi1QIm6gXs1ombVdE8RyIYDssMotNK+pLMShOkXBJZwLFiYO7MGDJQm0c5H3M1dbxXW
+         N/hLCmyBmvCXry8TTJNrOifvmpalXsN619wLCdSXM1O+t31jtD5sgnMLfopQQqlUfa9Q
+         5e/hij9hKiITu9VZBp9aVvSsNHzTyNxZIKouDSJb7Wh7LcIG2sRAM+hWgP8LkioB1lyB
+         1zMpfhCQF+gl+wnVtoRGr45VjnVBvsLKRl0eXF8X1XkV3C5CTo4E0ffWy34Nj8XSLaQZ
+         EhBA==
+X-Gm-Message-State: AGi0Puac48fzC0NOiwdnhB3R2yA+v6GMjhFvLShPGBnyGFmom41SAWBD
+        h/uQX1pL0PecYsJivcEAsjWOaexb
+X-Google-Smtp-Source: APiQypKISGOX7qOFt8o4ShYMxr/Bdy48MbYE+T4EfJCwSM93IitpN69Eij32vrIU58PdDpQhnaRZ/Q==
+X-Received: by 2002:a17:906:f0d9:: with SMTP id dk25mr3113128ejb.266.1588339864014;
+        Fri, 01 May 2020 06:31:04 -0700 (PDT)
 Received: from kozik-lap ([194.230.155.237])
-        by smtp.googlemail.com with ESMTPSA id b13sm402093eje.13.2020.05.01.06.10.19
+        by smtp.googlemail.com with ESMTPSA id u13sm304929edi.82.2020.05.01.06.31.02
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 01 May 2020 06:10:20 -0700 (PDT)
-Date:   Fri, 1 May 2020 15:10:18 +0200
+        Fri, 01 May 2020 06:31:03 -0700 (PDT)
+Date:   Fri, 1 May 2020 15:31:00 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Jonathan Bakker <xc-racer2@live.ca>
 Cc:     kgene@kernel.org, robh+dt@kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/13] arm: dts: s5pv210: fascinate4g: Add sleep GPIO
- configuration
-Message-ID: <20200501131018.GA5154@kozik-lap>
+        linux-kernel@vger.kernel.org,
+        =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Subject: Re: [PATCH 06/13] arm: dts: s5pv210: aries: Add support for more
+ devices
+Message-ID: <20200501133100.GB5154@kozik-lap>
 References: <20200426183604.28494-1-xc-racer2@live.ca>
- <BN6PR04MB0660532FF97089208CCEEB2AA3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
- <20200428100244.GA23963@kozik-lap>
- <BN6PR04MB06605BE9E1559751E083B4E4A3AC0@BN6PR04MB0660.namprd04.prod.outlook.com>
+ <BN6PR04MB0660563639D091548BFCCFF2A3AE0@BN6PR04MB0660.namprd04.prod.outlook.com>
+ <20200428102026.GB23963@kozik-lap>
+ <BN6PR04MB0660776A38353DBDF0E2E3F9A3AC0@BN6PR04MB0660.namprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <BN6PR04MB06605BE9E1559751E083B4E4A3AC0@BN6PR04MB0660.namprd04.prod.outlook.com>
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <BN6PR04MB0660776A38353DBDF0E2E3F9A3AC0@BN6PR04MB0660.namprd04.prod.outlook.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, Apr 28, 2020 at 04:49:36PM -0700, Jonathan Bakker wrote:
+On Tue, Apr 28, 2020 at 04:32:56PM -0700, Jonathan Bakker wrote:
 > Hi Krzysztof,
 > 
-> On 2020-04-28 3:02 a.m., Krzysztof Kozlowski wrote:
-> > On Sun, Apr 26, 2020 at 11:35:53AM -0700, Jonathan Bakker wrote:
-> >> In order to minimize leakage current during sleep, set a config
-> >> for sleep GPIOs.
+> On 2020-04-28 3:20 a.m., Krzysztof Kozlowski wrote:
+> > On Sun, Apr 26, 2020 at 11:35:57AM -0700, Jonathan Bakker wrote:
+> >> Add support for following devices:
+> >>   - touchkeys connected over i2c-gpio
+> >>   - s6e63m0 panel connected over spi-gpio
+> >>   - fsa9480 microusb switch over i2c-gpio
+> >>   - wm8994 over i2c-gpio (no machine driver yet)
+> >>   - all common i2c-gpio devices
+> > 
+> > Please split it per functionality, e.g.:
+> > 1. Add sound,
+> > 2. Add panel,
+> > 3. Add touchkeys (unless part of panel),
+> > 4. The remaining i2c-gpio devices without bindings could go as one.
+> 
+> Ok, will do.
+> 
+> > 
 > >>
 > >> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+> >> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 > >> ---
-> >>  arch/arm/boot/dts/s5pv210-fascinate4g.dts | 242 ++++++++++++++++++++++
-> >>  1 file changed, 242 insertions(+)
+> >>  arch/arm/boot/dts/s5pv210-aries.dtsi      | 282 ++++++++++++++++++++--
+> >>  arch/arm/boot/dts/s5pv210-fascinate4g.dts |   6 +
+> >>  2 files changed, 270 insertions(+), 18 deletions(-)
 > >>
-> >> diff --git a/arch/arm/boot/dts/s5pv210-fascinate4g.dts b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
-> >> index 07a8d9bbe5b8..94dcb9b64b9a 100644
-> >> --- a/arch/arm/boot/dts/s5pv210-fascinate4g.dts
-> >> +++ b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
-> >> @@ -36,3 +36,245 @@
-> >>  		};
+> >> diff --git a/arch/arm/boot/dts/s5pv210-aries.dtsi b/arch/arm/boot/dts/s5pv210-aries.dtsi
+> >> index f83df426f2b6..ef966d13d83d 100644
+> >> --- a/arch/arm/boot/dts/s5pv210-aries.dtsi
+> >> +++ b/arch/arm/boot/dts/s5pv210-aries.dtsi
+> >> @@ -12,8 +12,14 @@
+> >>  	compatible = "samsung,aries", "samsung,s5pv210";
+> >>  
+> >>  	aliases {
+> >> +		i2c4 = &i2c_sound;
+> >> +		i2c5 = &i2c_accel;
+> >>  		i2c6 = &i2c_pmic;
+> >> +		i2c7 = &i2c_musb;
+> >>  		i2c9 = &i2c_fuel;
+> >> +		i2c10 = &i2c_touchkey;
+> >> +		i2c11 = &i2c_prox;
+> >> +		i2c12 = &i2c_magnetometer;
 > >>  	};
-> >>  };
+> >>  
+> >>  	memory@30000000 {
+> >> @@ -48,6 +54,18 @@
+> >>  		gpio = <&gpj1 1 GPIO_ACTIVE_HIGH>;
+> >>  	};
+> >>  
+> >> +	touchkey_vdd: regulator-fixed-1 {
+> >> +		compatible = "regulator-fixed";
+> >> +		regulator-name = "VTOUCH_3.3V";
+> >> +		regulator-min-microvolt = <3300000>;
+> >> +		regulator-max-microvolt = <3300000>;
+> >> +		enable-active-high;
+> >> +		gpio = <&gpj3 2 GPIO_ACTIVE_HIGH>;
 > >> +
-> >> +&pinctrl0 {
-> >> +	pinctrl-names = "default";
-> >> +	pinctrl-0 = <&sleep_cfg>;
-> >> +
-> >> +	sleep_cfg: sleep-cfg {
-> >> +		PIN_SLP(gpa0-0, PREV, NONE);
-> >> +		PIN_SLP(gpa0-1, PREV, NONE);
-> >> +		PIN_SLP(gpa0-2, PREV, NONE);
-> >> +		PIN_SLP(gpa0-3, OUT1, NONE);
-> > 
-> > I would be happy to see some reasoning why certain pins have disabled
-> > pull down (e.g. they are not connected or you use the same configuration
-> > as running one) and why you set them as output.
-> > 
-> 
-> Mostly it's copied from the vendor kernel configuration.  Without schematics, I can
-> only guess what's actually there.  I can go through and note what each pin appears
-> to be used for if you'd like.
-
-Then please mention that it is based on vendor kernel vx.y for product
-ABC.  In such case it will be enough.
-
-> 
-> >> +		PIN_SLP(gpa0-4, PREV, NONE);
-> >> +		PIN_SLP(gpa0-5, PREV, NONE);
-> >> +		PIN_SLP(gpa0-6, PREV, NONE);
-> >> +		PIN_SLP(gpa0-7, PREV, NONE);
-> >> +
-> >> +		PIN_SLP(gpa1-0, INPUT, DOWN);
-> >> +		PIN_SLP(gpa1-1, OUT0, NONE);
-> >> +		PIN_SLP(gpa1-2, INPUT, DOWN);
-> >> +		PIN_SLP(gpa1-3, OUT0, NONE);
-> >> +
-> >> +		PIN_SLP(gpb-0, OUT0, NONE);
-> >> +		PIN_SLP(gpb-1, OUT1, NONE);
-> >> +		PIN_SLP(gpb-2, OUT0, NONE);
-> >> +		PIN_SLP(gpb-3, PREV, NONE);
-> >> +		PIN_SLP(gpb-4, INPUT, NONE);
-> >> +		PIN_SLP(gpb-5, PREV, NONE);
-> >> +		PIN_SLP(gpb-6, INPUT, DOWN);
-> >> +		PIN_SLP(gpb-7, OUT0, NONE);
-> >> +
-> >> +		PIN_SLP(gpc0-0, OUT0, NONE);
-> >> +		PIN_SLP(gpc0-1, INPUT, DOWN);
-> >> +		PIN_SLP(gpc0-2, OUT0, NONE);
-> >> +		PIN_SLP(gpc0-3, INPUT, DOWN);
-> >> +		PIN_SLP(gpc0-4, OUT0, NONE);
-> >> +
-> >> +		PIN_SLP(gpc1-0, INPUT, DOWN);
-> >> +		PIN_SLP(gpc1-1, INPUT, DOWN);
-> >> +		PIN_SLP(gpc1-2, INPUT, DOWN);
-> >> +		PIN_SLP(gpc1-3, INPUT, DOWN);
-> >> +		PIN_SLP(gpc1-4, INPUT, DOWN);
-> >> +
-> >> +		PIN_SLP(gpd0-0, INPUT, DOWN);
-> >> +		PIN_SLP(gpd0-1, OUT0, NONE);
-> >> +		PIN_SLP(gpd0-2, INPUT, DOWN);
-> >> +		PIN_SLP(gpd0-3, INPUT, DOWN);
-> >> +
-> >> +		PIN_SLP(gpd1-0, INPUT, NONE);
-> >> +		PIN_SLP(gpd1-1, INPUT, NONE);
-> >> +		PIN_SLP(gpd1-2, INPUT, DOWN);
-> >> +		PIN_SLP(gpd1-3, INPUT, DOWN);
-> >> +		PIN_SLP(gpd1-4, INPUT, DOWN);
-> >> +		PIN_SLP(gpd1-5, INPUT, DOWN);
-> >> +
-> >> +		PIN_SLP(gpe0-0, INPUT, DOWN);
-> >> +		PIN_SLP(gpe0-1, INPUT, DOWN);
-> >> +		PIN_SLP(gpe0-2, INPUT, DOWN);
-> >> +		PIN_SLP(gpe0-3, INPUT, DOWN);
-> >> +		PIN_SLP(gpe0-4, INPUT, DOWN);
-> >> +		PIN_SLP(gpe0-5, INPUT, DOWN);
-> >> +		PIN_SLP(gpe0-6, INPUT, DOWN);
-> >> +		PIN_SLP(gpe0-7, INPUT, DOWN);
-> >> +
-> >> +		PIN_SLP(gpe1-0, INPUT, DOWN);
-> >> +		PIN_SLP(gpe1-1, INPUT, DOWN);
-> >> +		PIN_SLP(gpe1-2, INPUT, DOWN);
-> >> +		PIN_SLP(gpe1-3, OUT0, NONE);
-> >> +		PIN_SLP(gpe1-4, INPUT, DOWN);
-> >> +
-> >> +		PIN_SLP(gpf0-0, OUT0, NONE);
-> >> +		PIN_SLP(gpf0-1, OUT0, NONE);
-> >> +		PIN_SLP(gpf0-2, OUT0, NONE);
-> >> +		PIN_SLP(gpf0-3, OUT0, NONE);
-> >> +		PIN_SLP(gpf0-4, OUT0, NONE);
-> >> +		PIN_SLP(gpf0-5, OUT0, NONE);
-> >> +		PIN_SLP(gpf0-6, OUT0, NONE);
-> >> +		PIN_SLP(gpf0-7, OUT0, NONE);
-> >> +
-> >> +		PIN_SLP(gpf1-0, OUT0, NONE);
-> >> +		PIN_SLP(gpf1-1, OUT0, NONE);
-> >> +		PIN_SLP(gpf1-2, OUT0, NONE);
-> >> +		PIN_SLP(gpf1-3, OUT0, NONE);
-> >> +		PIN_SLP(gpf1-4, OUT0, NONE);
-> >> +		PIN_SLP(gpf1-5, OUT0, NONE);
-> >> +		PIN_SLP(gpf1-6, OUT0, NONE);
-> >> +		PIN_SLP(gpf1-7, OUT0, NONE);
-> >> +
-> >> +		PIN_SLP(gpf2-0, OUT0, NONE);
-> >> +		PIN_SLP(gpf2-1, OUT0, NONE);
-> >> +		PIN_SLP(gpf2-2, OUT0, NONE);
-> >> +		PIN_SLP(gpf2-3, OUT0, NONE);
-> >> +		PIN_SLP(gpf2-4, OUT0, NONE);
-> >> +		PIN_SLP(gpf2-5, OUT0, NONE);
-> >> +		PIN_SLP(gpf2-6, OUT0, NONE);
-> >> +		PIN_SLP(gpf2-7, OUT0, NONE);
-> >> +
-> >> +		PIN_SLP(gpf3-0, OUT0, NONE);
-> >> +		PIN_SLP(gpf3-1, OUT0, NONE);
-> >> +		PIN_SLP(gpf3-2, OUT0, NONE);
-> >> +		PIN_SLP(gpf3-3, OUT0, NONE);
-> >> +		PIN_SLP(gpf3-4, PREV, NONE);
-> >> +		PIN_SLP(gpf3-5, INPUT, DOWN);
-> >> +
-> >> +		PIN_SLP(gpg0-0, INPUT, DOWN);
-> >> +		PIN_SLP(gpg0-1, INPUT, DOWN);
-> >> +		PIN_SLP(gpg0-2, INPUT, NONE);
-> >> +		PIN_SLP(gpg0-3, INPUT, DOWN);
-> >> +		PIN_SLP(gpg0-4, INPUT, DOWN);
-> >> +		PIN_SLP(gpg0-5, INPUT, DOWN);
-> >> +		PIN_SLP(gpg0-6, INPUT, DOWN);
-> >> +
-> >> +		PIN_SLP(gpg1-0, OUT0, NONE);
-> >> +		PIN_SLP(gpg1-1, OUT1, NONE);
-> >> +		PIN_SLP(gpg1-2, PREV, NONE);
-> >> +		PIN_SLP(gpg1-3, OUT1, NONE);
-> >> +		PIN_SLP(gpg1-4, OUT1, NONE);
-> >> +		PIN_SLP(gpg1-5, OUT1, NONE);
-> >> +		PIN_SLP(gpg1-6, OUT1, NONE);
-> >> +
-> >> +		PIN_SLP(gpg2-0, OUT0, NONE);
-> >> +		PIN_SLP(gpg2-1, OUT0, NONE);
-> >> +		PIN_SLP(gpg2-2, INPUT, NONE);
-> >> +		PIN_SLP(gpg2-3, OUT0, NONE);
-> >> +		PIN_SLP(gpg2-4, OUT0, NONE);
-> >> +		PIN_SLP(gpg2-5, OUT0, NONE);
-> >> +		PIN_SLP(gpg2-6, OUT0, NONE);
-> >> +
-> >> +		PIN_SLP(gpg3-0, PREV, UP);
-> >> +		PIN_SLP(gpg3-1, PREV, UP);
-> >> +		PIN_SLP(gpg3-2, INPUT, NONE);
-> >> +		PIN_SLP(gpg3-3, INPUT, DOWN);
-> >> +		PIN_SLP(gpg3-4, OUT0, NONE);
-> >> +		PIN_SLP(gpg3-5, OUT0, NONE);
-> >> +		PIN_SLP(gpg3-6, INPUT, DOWN);
-> >> +
-> >> +		PIN_SLP(gpi-0, PREV, NONE);
-> > 
-> > No such name. Did you mean gpgi?
-> > 
-> > 
-> 
-> The node in s5pv210-pinctrl.dtsi is called "gpgi", but the i2s0_bus config
-> in that file uses just "gpi".  drivers/pinctrl/samsung/pinctrl-exynos-arm.c also
-> notes it just as "gpi".  I think the node should probably be renamed.
-> 
-
-Good point. Will you send a fix for gpgi->gpi?
-
-> >> +		PIN_SLP(gpi-1, INPUT, DOWN);
-> >> +		PIN_SLP(gpi-2, PREV, NONE);
-> >> +		PIN_SLP(gpi-3, PREV, NONE);
-> >> +		PIN_SLP(gpi-4, PREV, NONE);
-> >> +		PIN_SLP(gpi-5, INPUT, DOWN);
-> >> +		PIN_SLP(gpi-6, INPUT, DOWN);
-> >> +
-> >> +		PIN_SLP(gpj0-0, INPUT, NONE);
-> >> +		PIN_SLP(gpj0-1, INPUT, NONE);
-> >> +		PIN_SLP(gpj0-2, INPUT, NONE);
-> >> +		PIN_SLP(gpj0-3, INPUT, NONE);
-> >> +		PIN_SLP(gpj0-4, INPUT, NONE);
-> >> +		PIN_SLP(gpj0-5, INPUT, DOWN);
-> >> +		PIN_SLP(gpj0-6, OUT0, NONE);
-> >> +		PIN_SLP(gpj0-7, INPUT, NONE);
-> >> +
-> >> +		PIN_SLP(gpj1-0, OUT1, NONE);
-> >> +		PIN_SLP(gpj1-1, OUT0, NONE);
-> >> +		PIN_SLP(gpj1-2, INPUT, DOWN);
-> >> +		PIN_SLP(gpj1-3, PREV, NONE);
-> >> +		PIN_SLP(gpj1-4, PREV, NONE);
-> >> +		PIN_SLP(gpj1-5, OUT0, NONE);
-> >> +
-> >> +		PIN_SLP(gpj2-0, INPUT, DOWN);
-> >> +		PIN_SLP(gpj2-1, INPUT, DOWN);
-> >> +		PIN_SLP(gpj2-2, OUT0, NONE);
-> >> +		PIN_SLP(gpj2-3, INPUT, DOWN);
-> >> +		PIN_SLP(gpj2-4, INPUT, DOWN);
-> >> +		PIN_SLP(gpj2-5, PREV, NONE);
-> >> +		PIN_SLP(gpj2-6, PREV, NONE);
-> >> +		PIN_SLP(gpj2-7, INPUT, DOWN);
-> >> +
-> >> +		PIN_SLP(gpj3-0, INPUT, NONE);
-> >> +		PIN_SLP(gpj3-1, INPUT, NONE);
-> >> +		PIN_SLP(gpj3-2, OUT0, NONE);
-> >> +		PIN_SLP(gpj3-3, INPUT, DOWN);
-> >> +		PIN_SLP(gpj3-4, INPUT, NONE);
-> >> +		PIN_SLP(gpj3-5, INPUT, NONE);
-> >> +		PIN_SLP(gpj3-6, INPUT, NONE);
-> >> +		PIN_SLP(gpj3-7, INPUT, NONE);
-> >> +
-> >> +		PIN_SLP(gpj4-0, INPUT, NONE);
-> >> +		PIN_SLP(gpj4-1, INPUT, DOWN);
-> >> +		PIN_SLP(gpj4-2, PREV, NONE);
-> >> +		PIN_SLP(gpj4-3, INPUT, NONE);
-> >> +		PIN_SLP(gpj4-4, INPUT, DOWN);
-> >> +
-> >> +		PIN_SLP(mp01-0, OUT1, NONE);
-> >> +		PIN_SLP(mp01-1, OUT0, NONE);
-> >> +		PIN_SLP(mp01-2, INPUT, DOWN);
-> >> +		PIN_SLP(mp01-3, INPUT, DOWN);
-> >> +		PIN_SLP(mp01-4, OUT1, NONE);
-> >> +		PIN_SLP(mp01-5, INPUT, DOWN);
-> >> +		PIN_SLP(mp01-6, INPUT, DOWN);
-> >> +		PIN_SLP(mp01-7, INPUT, DOWN);
-> >> +
-> >> +		PIN_SLP(mp02-0, INPUT, DOWN);
-> >> +		PIN_SLP(mp02-1, INPUT, DOWN);
-> >> +		PIN_SLP(mp02-2, INPUT, NONE);
-> >> +		PIN_SLP(mp02-3, INPUT, DOWN);
-> >> +
-> >> +		PIN_SLP(mp03-0, INPUT, DOWN);
-> >> +		PIN_SLP(mp03-1, INPUT, DOWN);
-> >> +		PIN_SLP(mp03-2, OUT1, NONE);
-> >> +		PIN_SLP(mp03-3, OUT0, NONE);
-> >> +		PIN_SLP(mp03-4, INPUT, NONE);
-> >> +		PIN_SLP(mp03-5, OUT0, NONE);
-> >> +		PIN_SLP(mp03-6, INPUT, DOWN);
-> >> +		PIN_SLP(mp03-7, INPUT, DOWN);
-> >> +
-> >> +		PIN_SLP(mp04-0, INPUT, DOWN);
-> >> +		PIN_SLP(mp04-1, OUT0, NONE);
-> >> +		PIN_SLP(mp04-2, INPUT, DOWN);
-> >> +		PIN_SLP(mp04-3, OUT0, NONE);
-> >> +		PIN_SLP(mp04-4, INPUT, DOWN);
-> >> +		PIN_SLP(mp04-5, INPUT, DOWN);
-> >> +		PIN_SLP(mp04-6, OUT0, NONE);
-> >> +		PIN_SLP(mp04-7, INPUT, DOWN);
-> >> +
-> >> +		PIN_SLP(mp05-0, INPUT, NONE);
-> >> +		PIN_SLP(mp05-1, INPUT, NONE);
-> >> +		PIN_SLP(mp05-2, INPUT, NONE);
-> >> +		PIN_SLP(mp05-3, INPUT, NONE);
-> >> +		PIN_SLP(mp05-4, INPUT, DOWN);
-> >> +		PIN_SLP(mp05-5, OUT0, NONE);
-> >> +		PIN_SLP(mp05-6, INPUT, DOWN);
-> >> +		PIN_SLP(mp05-7, PREV, NONE);
-> >> +
-> >> +		PIN_SLP(mp06-0, INPUT, DOWN);
-> >> +		PIN_SLP(mp06-1, INPUT, DOWN);
-> >> +		PIN_SLP(mp06-2, INPUT, DOWN);
-> >> +		PIN_SLP(mp06-3, INPUT, DOWN);
-> >> +		PIN_SLP(mp06-4, INPUT, DOWN);
-> >> +		PIN_SLP(mp06-5, INPUT, DOWN);
-> >> +		PIN_SLP(mp06-6, INPUT, DOWN);
-> >> +		PIN_SLP(mp06-7, INPUT, DOWN);
-> >> +
-> >> +		PIN_SLP(mp07-0, INPUT, DOWN);
-> >> +		PIN_SLP(mp07-1, INPUT, DOWN);
-> >> +		PIN_SLP(mp07-2, INPUT, DOWN);
-> >> +		PIN_SLP(mp07-3, INPUT, DOWN);
-> >> +		PIN_SLP(mp07-4, INPUT, DOWN);
-> >> +		PIN_SLP(mp07-5, INPUT, DOWN);
-> >> +		PIN_SLP(mp07-6, INPUT, DOWN);
-> >> +		PIN_SLP(mp07-7, INPUT, DOWN);
+> >> +		pinctrl-names = "default";
+> >> +		pinctrl-0 = <&touchkey_vdd_ena>;
 > >> +	};
+> >> +
+> >>  	wifi_pwrseq: wifi-pwrseq {
+> >>  		compatible = "mmc-pwrseq-simple";
+> >>  		reset-gpios = <&gpg1 2 GPIO_ACTIVE_LOW>;
+> >> @@ -57,7 +75,69 @@
+> >>  		power-off-delay-us = <500>;
+> >>  	};
+> >>  
+> >> -	i2c_pmic: i2c-gpio-0 {
+> >> +	i2c_sound: i2c-gpio-0 {
+> >> +		compatible = "i2c-gpio";
+> >> +		sda-gpios = <&mp05 3 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+> >> +		scl-gpios = <&mp05 2 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+> >> +		i2c-gpio,delay-us = <2>;
+> >> +		#address-cells = <1>;
+> >> +		#size-cells = <0>;
+> >> +
+> >> +		pinctrl-names = "default";
+> >> +		pinctrl-0 = <&sound_i2c_pins>;
+> >> +
+> >> +		wm8994: wm8994@1a {
+> >> +			compatible = "wlf,wm8994";
+> >> +			reg = <0x1a>;
+> >> +
+> >> +			#sound-dai-cells = <0>;
+> >> +
+> >> +			gpio-controller;
+> >> +			#gpio-cells = <2>;
+> >> +
+> >> +			clocks = <&clocks MOUT_CLKOUT>;
+> >> +			clock-names = "MCLK1";
+> >> +
+> >> +			AVDD2-supply = <&buck3_reg>;
+> >> +			DBVDD-supply = <&buck3_reg>;
 > > 
-> > What about gphX?
+> > No such supply, check the bindings.
+> > 
 > 
-> The gphX pins are in the alive area and don't have power down configs, they retain their
-> state over suspend.  Therefore the samsung,pin-con-pdn and samsung,pin-pud-pdn properties
-> have no effect (they're analogous to the gpxX pins in later Samsung SoCs).
+> Well, it may not be in the bindings, but the driver definitely requires it :) See drivers/mfd/wm8994-core.c
+> 
+> What's the best way of dealing with this situation?
 
-Ah, good, thanks.
+I'll send a patch fixing the bindings. However don't you miss the
+AVDD1-supply in such case? Driver should report error.
+
+> 
+> >> +			CPVDD-supply = <&buck3_reg>;
+> >> +			SPKVDD1-supply = <&buck3_reg>;
+> >> +			SPKVDD2-supply = <&buck3_reg>;
+> >> +
+> >> +			wlf,gpio-cfg = <0xa101 0x8100 0x0100 0x0100 0x8100
+> >> +					0xa101 0x0100 0x8100 0x0100 0x0100
+> >> +					0x0100>;
+> >> +
+> >> +			wlf,ldo1ena = <&gpf3 4 GPIO_ACTIVE_HIGH>;
+> >> +			wlf,ldo2ena = <&gpf3 4 GPIO_ACTIVE_HIGH>;
+> >> +
+> >> +			wlf,lineout1-se;
+> >> +			wlf,lineout2-se;
+> >> +
+> >> +			assigned-clocks = <&clocks MOUT_CLKOUT>;
+> >> +			assigned-clock-rates = <0>;
+> >> +			assigned-clock-parents = <&xusbxti>;
+> >> +
+> >> +			pinctrl-names = "default";
+> >> +			pinctrl-0 = <&codec_ldo>;
+> >> +		};
+> >> +	};
+> >> +
+> >> +	i2c_accel: i2c-gpio-1 {
+> >> +		compatible = "i2c-gpio";
+> >> +		sda-gpios = <&gpj3 6 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+> >> +		scl-gpios = <&gpj3 7 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+> >> +		i2c-gpio,delay-us = <2>;
+> >> +		#address-cells = <1>;
+> >> +		#size-cells = <0>;
+> >> +
+> >> +		pinctrl-names = "default";
+> >> +		pinctrl-0 = <&accel_i2c_pins>;
+> >> +
+> >> +		/* bma023 accelerometer, no mainline binding */
+> > 
+> > status disabled ... unless you need it for user-space I2C tools?
+> > 
+> 
+> Nope, but wanted to add them all in due to adding the si4709 in galaxys.  I was having
+> issues with accidentally overwriting previously named nodes (ie having i2c-gpio-0 in
+> both the common dtsi and the device specific dts) so I wanted to get the numbers
+> nailed down.
+
+So add them with status disabled. This will document the HW without
+enabling empty I2C GPIO bus.
 
 Best regards,
 Krzysztof
