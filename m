@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
 	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0806DC47254
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 May 2020 23:51:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 025BBC47259
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 May 2020 23:51:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DCA7321973
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 May 2020 23:51:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7D8B21775
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 May 2020 23:51:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727901AbgEAXvW (ORCPT
+        id S1726486AbgEAXvb (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 1 May 2020 19:51:22 -0400
-Received: from mail-mw2nam12olkn2019.outbound.protection.outlook.com ([40.92.23.19]:6017
-        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
+        Fri, 1 May 2020 19:51:31 -0400
+Received: from mail-dm6nam12olkn2095.outbound.protection.outlook.com ([40.92.22.95]:16121
+        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727882AbgEAXvV (ORCPT
+        id S1727963AbgEAXva (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 1 May 2020 19:51:21 -0400
+        Fri, 1 May 2020 19:51:30 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ilqrxcHAG3ObH+bUEAkysNQ+bJcsQqzvx1MESB/QMLldHCwcF9J2Zy9rXdG/VqTkjV4q2yVpVfFZnWnW9Oc9Y0R99/gTOibnx3l/JxGcy5mBZnTjFj2ETAh7/mHhIU7s8maA19vGgVzrDheQ1pCFlWELrNxyHgQhwSyQLKjHuRNomScorQ2A80r6palzVwPXSF/RrmUuD0EZScAKPWscjsdLFTUMtjB0x9PBhtLesFb+gmkJ9JIp00/FWTjK6unYYxE/8QdW39Hbp8taFGDW5hXRrx29WRXYtppdeISVcFAVulD9E5PAuOMsXpuN+80CrIYZ3UGyGeaW8TdzT0jBSA==
+ b=lMB9AyTJVYlZZwXN1BCn1Bdx5mvBUdZKoLA/LwEGXB5MicmbAzMHw9IlXPjX/pG2hcNa0rEkkNvVTioHEInyZUTLXQsz8erlVRgJoevOZHXHLQTvopQClk/bAcSHynw+Q5QCaGgN4ldyJaL39i6pUpLJwYygTTQkzfRm6GfaitSq+978HqTAKG3noUM7OaA6X3gnOgGRWG2Ed7GOCFbXAYoTitV0kxUzAgSnEjo1SVUwICUK1FjX3UkoaEjsi5PgSxJL75Kryy7vfJ0zj8gy70dt0kI42KnrKVrialuiBvU/QEW/V/RWOZHMVTwvoRTuH5/6GH9aMnHUznJvSWig+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zN3YzdF/wnL3hIWhRkaPqBP6Y72JqMDzTT6ZdUZZ9Yg=;
- b=g25t73o7qUTR5CLwKo8xIKn/q/3HQZ8qeYHxzBTZ57Mg9ddjb7GX8DnFRkkWG93Vtu5NCSlfwciyumIkUlCd/h0KbrpdWJh240MxvF4+kQIRwWMiZwYN7Lskm8lb4JCDLUko+eEOD2VRhBj41igGBe/lH8W5H61pFtVGmXM1Gf5jEu2yE1KfX0O5LHYIAnC6k18Xxlvd3wOUeGlQCyOe8s131eioSzESc170mQoYj4VD7ZIa70dg3uicLIzNfB27DEIMNN8nrRtNkZdJciCTZR0Tt3uqKITHdvuC2hfTsbZReSfRFIgK85JLURvbzNEAKaS5HPWdtDoVI/MBX8I0dQ==
+ bh=3MDUkQ2dTjod1xk/8rLC43jTcn9lJdoxoad9bhahzOw=;
+ b=dO8l+87pRbo3jh1/MuGYaNNj4EI3BXVCj6kPTpVud8Q1FdSUN5wjUefTu1aIOgnbkSMiz4mbTh7sOF7h1KYy7pk/L2W5VBRuYToWMJharGW/mKUQVsg3BGYV1PSOW3D4UmCxdec8jJ6C51pIb1Cb1VEDduev7jMmxCrANbksCQF0zNDCDaryoezZ7gmqYmQl57SfwCQMcmSS7Cop58TXMj0Ghj0jA3mqY1945O8LsR9S+YmWTUJKmd4cPr8R8+QzFTWD/VwPRcGL3tjUDLZik4xk+l/kyR1213t1+M8fq2WqYdZg/5Hc4oZyXvsUi3LjZwOODtLYTmgC9XKmBKD1zQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=live.ca; dmarc=pass action=none header.from=live.ca; dkim=pass
  header.d=live.ca; arc=none
 Received: from DM6NAM12FT056.eop-nam12.prod.protection.outlook.com
- (2a01:111:e400:fc64::4e) by
- DM6NAM12HT060.eop-nam12.prod.protection.outlook.com (2a01:111:e400:fc64::330)
+ (2a01:111:e400:fc64::46) by
+ DM6NAM12HT200.eop-nam12.prod.protection.outlook.com (2a01:111:e400:fc64::74)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2921.12; Fri, 1 May
- 2020 23:51:19 +0000
+ 2020 23:51:27 +0000
 Received: from BN6PR04MB0660.namprd04.prod.outlook.com
  (2a01:111:e400:fc64::46) by DM6NAM12FT056.mail.protection.outlook.com
  (2a01:111:e400:fc64::460) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2921.12 via Frontend
- Transport; Fri, 1 May 2020 23:51:19 +0000
-X-IncomingTopHeaderMarker: OriginalChecksum:F9A6FAC4135DB7D3EFC5D4E6FD5CB615C64EFE7A67FB28DBBEC03EE591223747;UpperCasedChecksum:84B3296D3FE7AEFDF5DB67E334A66B5E2F46CFCA8DCADD5E1E4DF6E6006BC0AD;SizeAsReceived:7885;Count:50
+ Transport; Fri, 1 May 2020 23:51:27 +0000
+X-IncomingTopHeaderMarker: OriginalChecksum:7B8FB2A95B641A94B2893361021141BA26A1A074922B8EF1389B40ED794C0699;UpperCasedChecksum:9CFC7257941493FD6A1F2557DC4F7F6BD660A071B6583183981E4773F8BA7602;SizeAsReceived:7866;Count:50
 Received: from BN6PR04MB0660.namprd04.prod.outlook.com
  ([fe80::ad10:4127:4bc8:76fc]) by BN6PR04MB0660.namprd04.prod.outlook.com
  ([fe80::ad10:4127:4bc8:76fc%6]) with mapi id 15.20.2958.027; Fri, 1 May 2020
- 23:51:19 +0000
+ 23:51:27 +0000
 From:   Jonathan Bakker <xc-racer2@live.ca>
 To:     kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     Jonathan Bakker <xc-racer2@live.ca>
-Subject: [PATCH v2 05/18] ARM: dts: s5pv210: Disable pulls on GPIO i2c adapters for aries
-Date:   Fri,  1 May 2020 16:50:06 -0700
-Message-ID: <BN6PR04MB0660E1E4A8C8E1D40E79B802A3AB0@BN6PR04MB0660.namprd04.prod.outlook.com>
+Subject: [PATCH v2 10/18] ARM: dts: s5pv210: Add remaining i2c-gpio adapters to aries
+Date:   Fri,  1 May 2020 16:50:11 -0700
+Message-ID: <BN6PR04MB0660BC97F0946E50B75309E7A3AB0@BN6PR04MB0660.namprd04.prod.outlook.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200501235019.24022-1-xc-racer2@live.ca>
 References: <20200426183604.28494-1-xc-racer2@live.ca>
@@ -66,87 +66,164 @@ Content-Type:   text/plain; charset=US-ASCII
 X-ClientProxiedBy: MWHPR17CA0058.namprd17.prod.outlook.com
  (2603:10b6:300:93::20) To BN6PR04MB0660.namprd04.prod.outlook.com
  (2603:10b6:404:d9::21)
-X-Microsoft-Original-Message-ID: <20200501235019.24022-6-xc-racer2@live.ca>
+X-Microsoft-Original-Message-ID: <20200501235019.24022-11-xc-racer2@live.ca>
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from jon-hp-6570b.telus (2001:569:fb68:9c00:8067:f823:1e15:7520) by MWHPR17CA0058.namprd17.prod.outlook.com (2603:10b6:300:93::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2958.20 via Frontend Transport; Fri, 1 May 2020 23:51:18 +0000
+Received: from jon-hp-6570b.telus (2001:569:fb68:9c00:8067:f823:1e15:7520) by MWHPR17CA0058.namprd17.prod.outlook.com (2603:10b6:300:93::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2958.20 via Frontend Transport; Fri, 1 May 2020 23:51:26 +0000
 X-Mailer: git-send-email 2.20.1
-X-Microsoft-Original-Message-ID: <20200501235019.24022-6-xc-racer2@live.ca>
-X-TMN:  [BiGxoyyM4ex80fMTrx6Ee1dRiIp+DWjTlw/ZqxFbeJeKURDQVdnlBx50Vpvj6SI0]
+X-Microsoft-Original-Message-ID: <20200501235019.24022-11-xc-racer2@live.ca>
+X-TMN:  [WIqVT9i6m7B9rblWchqbVR9EmRyruzCkXD2rRB2oEDeEFSqI29EzXZYx8WLqsbUj]
 X-MS-PublicTrafficType: Email
 X-IncomingHeaderCount: 50
 X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-Correlation-Id: 3848cf1f-1312-46b1-36f3-08d7ee2a8b77
-X-MS-TrafficTypeDiagnostic: DM6NAM12HT060:
+X-MS-Office365-Filtering-Correlation-Id: 597a8baa-984a-4610-6a67-08d7ee2a9034
+X-MS-TrafficTypeDiagnostic: DM6NAM12HT200:
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: FWRdJ1le3zTs3Y2FO61VMSUqLrPFUKLqZr+ljde0xlA+inHsyZTk1/y7eAs3ZmhjsxSX5cLMgsAfwnuYfZiDhwnTEOtWv+WRRX9HLvegctQTD4pn+8lMQLgvPeqAk4cTzYF1mW0AkmcEH3LvXtGXdAA9uuibS6N5d1f+Ivupay3po7+Tx3Hkd4QMglIom6unG6zXwsjrOJDnxFofShFoQA==
+X-Microsoft-Antispam-Message-Info: o9xYEOsxatyo7CuQMQP57iwnEaaJpsk4k3h2hV3c77Y1FKOZKSGxIdD7mc6wMdPekrRLaQDJM+JlAuj6tahb93oSt2PlnsQeQZqvEFwmILPEHVX7FK9IdEZ26rQCTkCF8KBSr4SAhzHPbY3/H1SJSH/xUwQxOyJIW9nEiyMO/d0l2b4LflTzHBKm8VlagpGQLETLYuKDL5O1VFKyGsVnWg==
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:0;SRV:;IPV:NLI;SFV:NSPM;H:BN6PR04MB0660.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:;DIR:OUT;SFP:1901;
-X-MS-Exchange-AntiSpam-MessageData: it/qooU8roBlAP9MAzTaWeAY46P3WdaSMVNKwtjbDQzk8/DhJ+si41pS+tWSkT2ORTsJdXy4Rnm//gpuMpyeW2mo3OioMJrptxFqnc8dx8RfGvs4xjTzd6adeXKfajc3j/D6dC7XC59pDUQk1kqLxWZwT8+xz89dKCALuQB2OhqPpQ33+VdsriZ+/g4vV8DIEEfICNM5JzrpBzaCysST4A==
+X-MS-Exchange-AntiSpam-MessageData: RFo0M/d/YpnhJGZiSbymtdxVy7w+aTYtInu/6WrTrNr83o/La3vAkZM6cW1ICakYWe+IDrB9WRT+3FI2VNXKB8fvlZ9sjGhag9Yl9OmuUn7iXrOcdbn5Md+VlRnq6PmuPm7/OSzqr292KdE1CmeBEclTlFKf2OhgDtHOyBKrKa5Hb+5zZvESvqULuj5SuL28kz3B8BbpD1lhIYJxyi3t1Q==
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3848cf1f-1312-46b1-36f3-08d7ee2a8b77
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 May 2020 23:51:19.6695
+X-MS-Exchange-CrossTenant-Network-Message-Id: 597a8baa-984a-4610-6a67-08d7ee2a9034
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 May 2020 23:51:27.6633
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
 X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
 X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6NAM12HT060
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6NAM12HT200
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The bitbanged GPIO i2c adapters have external pull-ups attached
-so the internal pulls should be disabled for lower power usage.
+The remaining i2c-gpio adapters that are common to all aries boards
+have devices without mainline bindings attachted to them.  Add them
+here for documentation.
 
 Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
 ---
- arch/arm/boot/dts/s5pv210-aries.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/arm/boot/dts/s5pv210-aries.dtsi | 69 ++++++++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
 
 diff --git a/arch/arm/boot/dts/s5pv210-aries.dtsi b/arch/arm/boot/dts/s5pv210-aries.dtsi
-index d419b77201f7..f83df426f2b6 100644
+index 046366d58aa0..a3748705dce8 100644
 --- a/arch/arm/boot/dts/s5pv210-aries.dtsi
 +++ b/arch/arm/boot/dts/s5pv210-aries.dtsi
-@@ -65,6 +65,9 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+@@ -13,10 +13,13 @@
  
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pmic_i2c_pins>;
-+
- 		pmic@66 {
- 			compatible = "maxim,max8998";
- 			reg = <0x66>;
-@@ -314,6 +317,9 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+ 	aliases {
+ 		i2c4 = &i2c_sound;
++		i2c5 = &i2c_accel;
+ 		i2c6 = &i2c_pmic;
+ 		i2c7 = &i2c_musb;
+ 		i2c9 = &i2c_fuel;
+ 		i2c10 = &i2c_touchkey;
++		i2c11 = &i2c_prox;
++		i2c12 = &i2c_magnetometer;
+ 	};
  
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&fg_i2c_pins>;
+ 	memory@30000000 {
+@@ -120,6 +123,22 @@
+ 		};
+ 	};
+ 
++	i2c_accel: i2c-gpio-1 {
++		compatible = "i2c-gpio";
++		sda-gpios = <&gpj3 6 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		scl-gpios = <&gpj3 7 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		i2c-gpio,delay-us = <2>;
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
- 		fuelgauge@36 {
- 			compatible = "maxim,max17040";
- 			interrupt-parent = <&vic0>;
-@@ -438,6 +444,18 @@
++		pinctrl-names = "default";
++		pinctrl-0 = <&accel_i2c_pins>;
++
++		status = "disabled";
++
++		/* bma023 accelerometer, no mainline binding */
++	};
++
+ 	i2c_pmic: i2c-gpio-2 {
+ 		compatible = "i2c-gpio";
+ 		sda-gpios = <&gpj4 0 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+@@ -435,6 +454,38 @@
+ 		};
+ 	};
+ 
++	i2c_prox: i2c-gpio-6 {
++		compatible = "i2c-gpio";
++		sda-gpios = <&gpg2 2 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		scl-gpios = <&gpg0 2 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		i2c-gpio,delay-us = <2>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&prox_i2c_pins>;
++
++		status = "disabled";
++
++		/* Sharp gp2a prox/light sensor, incomplete mainline binding */
++	};
++
++	i2c_magnetometer: i2c-gpio-7 {
++		compatible = "i2c-gpio";
++		sda-gpios = <&gpj0 1 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		scl-gpios = <&gpj0 0 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		i2c-gpio,delay-us = <2>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&magnetometer_i2c_pins>;
++
++		status = "disabled";
++
++		/* Yamaha yas529 magnetometer, no mainline binding */
++	};
++
+ 	vibrator: pwm-vibrator {
+ 		compatible = "pwm-vibrator";
+ 		pwms = <&pwm 1 44642 0>;
+@@ -546,6 +597,12 @@
  		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
+ 	};
+ 
++	prox_i2c_pins: gp2a-i2c-pins {
++		samsung,pins = "gpg0-2", "gpg2-2";
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
++	};
++
+ 	wlan_gpio_rst: wlan-gpio-rst {
+ 		samsung,pins = "gpg1-2";
+ 		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
+@@ -586,6 +643,12 @@
+ 		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
+ 	};
+ 
++	magnetometer_i2c_pins: yas529-i2c-pins {
++		samsung,pins = "gpj0-0", "gpj0-1";
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
++	};
++
+ 	ts_irq: ts-irq {
+ 		samsung,pins = "gpj0-5";
+ 		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
+@@ -611,6 +674,12 @@
  		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
  	};
-+
-+	pmic_i2c_pins: pmic-i2c-pins {
-+		samsung,pins = "gpj4-0", "gpj4-3";
-+		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
-+
-+	fg_i2c_pins: fg-i2c-pins {
-+		samsung,pins = "mp05-0", "mp05-1";
-+		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
- };
  
- &pwm {
++	accel_i2c_pins: accel-i2c-pins {
++		samsung,pins = "gpj3-6", "gpj3-7";
++		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
++	};
++
+ 	pmic_i2c_pins: pmic-i2c-pins {
+ 		samsung,pins = "gpj4-0", "gpj4-3";
+ 		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
 -- 
 2.20.1
 
