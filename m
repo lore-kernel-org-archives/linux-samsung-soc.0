@@ -1,127 +1,344 @@
-Return-Path: <SRS0=+28V=6P=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=iZpl=6Q=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D52BBC47259
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 May 2020 23:52:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DFDEC3A5A9
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  2 May 2020 20:27:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BDC3B2184D
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  1 May 2020 23:52:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D94B20757
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  2 May 2020 20:27:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="H5jdrky2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726681AbgEAXvQ (ORCPT
+        id S1728485AbgEBU1V (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 1 May 2020 19:51:16 -0400
-Received: from mail-mw2nam12olkn2107.outbound.protection.outlook.com ([40.92.23.107]:11778
-        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726562AbgEAXvP (ORCPT
+        Sat, 2 May 2020 16:27:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57328 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728484AbgEBU1U (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 1 May 2020 19:51:15 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=I639gnG1KE1bUR0cxSLdpZ+fxlf4O4TmkNgclvzpbK2+Ck3VjZFLaRHw+/jD4gO0wv2ReXFM6vu+Zkj71SME18lD8mItOr365luN3Lrq9evhVg9tSPqUuvC04sjPguKACK5FHGhy0jNpTkvmRi5kBkKqUDxUqMu1iTQ+NojjaepJ8giJDideyuWFMRH8Wo9JeFXHIjGbHLZzCJvtDR9zrC2NbtkawadXGPvv9x3Bq+DghjY2zeGl/JyrUonXQdOhy6BDImYNvwpOSjYXlOokarIc+4JaJRmSiRVs8xr6dS4FIPnkPwvbyKaUUJaeVR96EDQpv22bIqSN8Ybb+HTsUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CQPOA1QD9GTVHUlU+BUHXvxBpBudTQ+4UbWWmc0Qg+M=;
- b=Dyhg6tFQR7XIyx+ZclR5PJ+JEd3EivA2WYUgYKc1076HpY75GDXl+u0N087Sh+aT2AkpMsR0dk5aGgbpERjKcThRUVgu7Nar7a6/Jbfr/TVAWNZr6FFASRFjrwlFDKYE/LkaaQUQkauKrc5OBiEwW4rureK4cc4Yl64bhCbBDaMS5Ge0dloTMiOOWUfW+Kxo42b1O2KALCRmOqZ/Cf8krXelkycTmrWtG4pDDydlR9VLLCieWACB0IG0fdvKOUI+zLnyQncPXleUiYhtTxpQT+ZCkhxLuQfoQ707/ybL37FWwpbMt0tg5W6zd2/uzZb2oxJmO0uTrf8TXATbU0aUoA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=live.ca; dmarc=pass action=none header.from=live.ca; dkim=pass
- header.d=live.ca; arc=none
-Received: from DM6NAM12FT056.eop-nam12.prod.protection.outlook.com
- (2a01:111:e400:fc64::49) by
- DM6NAM12HT168.eop-nam12.prod.protection.outlook.com (2a01:111:e400:fc64::131)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2921.12; Fri, 1 May
- 2020 23:51:13 +0000
-Received: from BN6PR04MB0660.namprd04.prod.outlook.com
- (2a01:111:e400:fc64::46) by DM6NAM12FT056.mail.protection.outlook.com
- (2a01:111:e400:fc64::460) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2921.12 via Frontend
- Transport; Fri, 1 May 2020 23:51:13 +0000
-X-IncomingTopHeaderMarker: OriginalChecksum:1365E61CB772CCAB1694D4B7488D5CE67D868E2AA1B95A8E57CA286429737748;UpperCasedChecksum:2E3433D890EE56A4368986C1AD1CF85DD99A31F933CA35E321977A5028A45848;SizeAsReceived:7855;Count:50
-Received: from BN6PR04MB0660.namprd04.prod.outlook.com
- ([fe80::ad10:4127:4bc8:76fc]) by BN6PR04MB0660.namprd04.prod.outlook.com
- ([fe80::ad10:4127:4bc8:76fc%6]) with mapi id 15.20.2958.027; Fri, 1 May 2020
- 23:51:13 +0000
-From:   Jonathan Bakker <xc-racer2@live.ca>
-To:     kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org,
+        Sat, 2 May 2020 16:27:20 -0400
+Received: from mo6-p02-ob.smtp.rzone.de (mo6-p02-ob.smtp.rzone.de [IPv6:2a01:238:20a:202:5302::11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA4C7C061A0C;
+        Sat,  2 May 2020 13:27:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1588451233;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=aFutSXBhxdQGsI0cADyst3RpMgduPhgX/DjMd6AXC1k=;
+        b=H5jdrky2qJyx1+QkrkqmAYLfbnfO4X7xCtXRG+96UKYprfyHW/oN+Ce1+B1el09HlI
+        +BgBPgJLxtM3It1i0NhSnVDjdIhdIk5DujTxyFjCmYLAdkcbz/3DsK5XO7tt3thFq+oM
+        s6TLrV7KNzmVfJmW+UGAWAcTSzuMcx+d7MI1nWygLxGlj640fIEstSd/PSUw2iEnsdw/
+        OE7fMzoyELYzzBdYKO9IkYhxXt7Q03Des0KId3XjZig+9zmPuKq1hVL+2IE6ztBB1zVA
+        OHj316zd5s8zmmM9lVU9mxZ5QpBceec2nYOPwZYCCoCXuNZ7E/leIG6i65SgYghhfWOk
+        320Q==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj5Qpw97WFDlSVXA4OCWU="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 46.6.2 DYNA|AUTH)
+        with ESMTPSA id R0acebw42KQTesh
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+        (Client did not present a certificate);
+        Sat, 2 May 2020 22:26:29 +0200 (CEST)
+Subject: Re: [PATCH v7 01/12] dt-bindings: add img,pvrsgx.yaml for Imagination GPUs
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Content-Type: text/plain; charset=iso-8859-1
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <NMCE9Q.LWG45P20NBVJ@crapouillou.net>
+Date:   Sat, 2 May 2020 22:26:29 +0200
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?iso-8859-1?Q?Beno=EEt_Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        James Hogan <jhogan@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Jonathan Bakker <xc-racer2@live.ca>,
+        Philipp Rossak <embed3d@gmail.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        openpvrsgx-devgroup@letux.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com, linux-mips@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Jonathan Bakker <xc-racer2@live.ca>
-Subject: [PATCH v2 01/18] ARM: dts: s5pv210: Add helper define for sleep gpio config
-Date:   Fri,  1 May 2020 16:50:02 -0700
-Message-ID: <BN6PR04MB0660BFEF9B4A618BBA90AD10A3AB0@BN6PR04MB0660.namprd04.prod.outlook.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200501235019.24022-1-xc-racer2@live.ca>
-References: <20200426183604.28494-1-xc-racer2@live.ca>
- <20200501235019.24022-1-xc-racer2@live.ca>
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ClientProxiedBy: MWHPR17CA0058.namprd17.prod.outlook.com
- (2603:10b6:300:93::20) To BN6PR04MB0660.namprd04.prod.outlook.com
- (2603:10b6:404:d9::21)
-X-Microsoft-Original-Message-ID: <20200501235019.24022-2-xc-racer2@live.ca>
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from jon-hp-6570b.telus (2001:569:fb68:9c00:8067:f823:1e15:7520) by MWHPR17CA0058.namprd17.prod.outlook.com (2603:10b6:300:93::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2958.20 via Frontend Transport; Fri, 1 May 2020 23:51:11 +0000
-X-Mailer: git-send-email 2.20.1
-X-Microsoft-Original-Message-ID: <20200501235019.24022-2-xc-racer2@live.ca>
-X-TMN:  [5ErvH9+B7c99eb+NHFblKfuuucl9T/Q/VcoitdFfIUIIlu1Bzt3MiCDnuZUxvBAi]
-X-MS-PublicTrafficType: Email
-X-IncomingHeaderCount: 50
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-Correlation-Id: d1fa2f23-81e2-44f3-2e63-08d7ee2a876a
-X-MS-TrafficTypeDiagnostic: DM6NAM12HT168:
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: OscV43Ds18JhVX9Aeq1gZ7Gtbqm4XjN9kcs1XjkwcT0Ue7D9ubHHw/aOwCL7/GOZOYKYSFIYgCHjwcuwsu4oC5PUUpBpuRJ/X9D6RnYAh3bl+rz7bsAsZaO8QWFrlOZpGaITZ4EHey9rVZqR1gz8eVMlu/cQQQinNdeh0YD9x693OalQx6RuhGf4haeya0anY1hi/AXWOGgcBu3XMr4q3Q==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:0;SRV:;IPV:NLI;SFV:NSPM;H:BN6PR04MB0660.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:;DIR:OUT;SFP:1901;
-X-MS-Exchange-AntiSpam-MessageData: hfhD4BdXrA9R281TbuIqXSXgBWDwdMxYP4PvbSAjObW0ELOOhLYDeX594MroBCWB9v9NY9mcL6bAmvEh7L6FqXr7ZtKFrJIa9DG5hbgVT9qbrkcKDV8Wgu630v8gh54dVxsinn141rRo44BfzCdb3bzvtb7NdjjTJf5/fkG9x4LRZ7ABMGvy+lT2NAa3y3ZMGp/87Ft5pqdhPm4Vp8xY7g==
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d1fa2f23-81e2-44f3-2e63-08d7ee2a876a
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 May 2020 23:51:13.1131
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6NAM12HT168
+        linux-samsung-soc@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <28138EC0-0FA5-4F97-B528-3442BF087C7A@goldelico.com>
+References: <cover.1587760454.git.hns@goldelico.com> <3a451e360fed84bc40287678b4d6be13821cfbc0.1587760454.git.hns@goldelico.com> <NMCE9Q.LWG45P20NBVJ@crapouillou.net>
+To:     Paul Cercueil <paul@crapouillou.net>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-To simplify writing of sleep gpio configs, add a common helper
-similar to what is present for other Samsung CPUs.
+Hi Paul,
 
-Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
----
- arch/arm/boot/dts/s5pv210-pinctrl.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+> Am 26.04.2020 um 15:11 schrieb Paul Cercueil <paul@crapouillou.net>:
+>=20
+> Hi Nikolaus,
+>=20
+> Le ven. 24 avril 2020 =E0 22:34, H. Nikolaus Schaller =
+<hns@goldelico.com> a =E9crit :
+>> The Imagination PVR/SGX GPU is part of several SoC from
+>> multiple vendors, e.g. TI OMAP, Ingenic JZ4780, Intel Poulsbo,
+>> Allwinner A83 and others.
+>> With this binding, we describe how the SGX processor is
+>> interfaced to the SoC (registers and interrupt).
+>> The interface also consists of clocks, reset, power but
+>> information from data sheets is vague and some SoC integrators
+>> (TI) deciced to use a PRCM wrapper (ti,sysc) which does
+>> all clock, reset and power-management through registers
+>> outside of the sgx register block.
+>> Therefore all these properties are optional.
+>> Tested by make dt_binding_check
+>> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+>> ---
+>> .../devicetree/bindings/gpu/img,pvrsgx.yaml   | 150 =
+++++++++++++++++++
+>> 1 file changed, 150 insertions(+)
+>> create mode 100644 =
+Documentation/devicetree/bindings/gpu/img,pvrsgx.yaml
+>> diff --git a/Documentation/devicetree/bindings/gpu/img,pvrsgx.yaml =
+b/Documentation/devicetree/bindings/gpu/img,pvrsgx.yaml
+>> new file mode 100644
+>> index 000000000000..33a9c4c6e784
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/gpu/img,pvrsgx.yaml
+>> @@ -0,0 +1,150 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/gpu/img,pvrsgx.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Imagination PVR/SGX GPU
+>> +
+>> +maintainers:
+>> +  - H. Nikolaus Schaller <hns@goldelico.com>
+>> +
+>> +description: |+
+>> +  This binding describes the Imagination SGX5 series of 3D =
+accelerators which
+>> +  are found in several different SoC like TI OMAP, Sitara, Ingenic =
+JZ4780,
+>> +  Allwinner A83, and Intel Poulsbo and CedarView and more.
+>> +
+>> +  For an extensive list see: =
+https://en.wikipedia.org/wiki/PowerVR#Implementations
+>> +
+>> +  The SGX node is usually a child node of some DT node belonging to =
+the SoC
+>> +  which handles clocks, reset and general address space mapping of =
+the SGX
+>> +  register area. If not, an optional clock can be specified here.
+>> +
+>> +properties:
+>> +  $nodename:
+>> +    pattern: '^gpu@[a-f0-9]+$'
+>> +  compatible:
+>> +    oneOf:
+>> +      - description: SGX530-121 based SoC
+>> +        items:
+>> +          - enum:
+>> +            - ti,omap3-sgx530-121 # BeagleBoard A/B/C, OpenPandora =
+600MHz and similar
+>> +          - const: img,sgx530-121
+>> +          - const: img,sgx530
+>> +
+>> +      - description: SGX530-125 based SoC
+>> +        items:
+>> +          - enum:
+>> +            - ti,am3352-sgx530-125 # BeagleBone Black
+>> +            - ti,am3517-sgx530-125
+>> +            - ti,am4-sgx530-125
+>> +            - ti,omap3-sgx530-125 # BeagleBoard XM, GTA04, =
+OpenPandora 1GHz and similar
+>> +            - ti,ti81xx-sgx530-125
+>> +          - const: ti,omap3-sgx530-125
+>> +          - const: img,sgx530-125
+>> +          - const: img,sgx530
+>> +
+>> +      - description: SGX535-116 based SoC
+>> +        items:
+>> +          - const: intel,poulsbo-gma500-sgx535 # Atom Z5xx
+>> +          - const: img,sgx535-116
+>> +          - const: img,sgx535
+>> +
+>> +      - description: SGX540-116 based SoC
+>> +        items:
+>> +          - const: intel,medfield-gma-sgx540 # Atom Z24xx
+>> +          - const: img,sgx540-116
+>> +          - const: img,sgx540
+>> +
+>> +      - description: SGX540-120 based SoC
+>> +        items:
+>> +          - enum:
+>> +            - samsung,s5pv210-sgx540-120
+>> +            - ti,omap4-sgx540-120 # Pandaboard, Pandaboard ES and =
+similar
+>> +          - const: img,sgx540-120
+>> +          - const: img,sgx540
+>> +
+>> +      - description: SGX540-130 based SoC
+>> +        items:
+>> +          - enum:
+>> +            - ingenic,jz4780-sgx540-130 # CI20
+>> +          - const: img,sgx540-130
+>> +          - const: img,sgx540
+>> +
+>> +      - description: SGX544-112 based SoC
+>> +        items:
+>> +          - const: ti,omap4470-sgx544-112
+>> +          - const: img,sgx544-112
+>> +          - const: img,sgx544
+>> +
+>> +      - description: SGX544-115 based SoC
+>> +        items:
+>> +          - enum:
+>> +            - allwinner,sun8i-a31-sgx544-115
+>> +            - allwinner,sun8i-a31s-sgx544-115
+>> +            - allwinner,sun8i-a83t-sgx544-115 # Banana-Pi-M3 =
+(Allwinner A83T) and similar
+>> +          - const: img,sgx544-115
+>> +          - const: img,sgx544
+>> +
+>> +      - description: SGX544-116 based SoC
+>> +        items:
+>> +          - enum:
+>> +            - ti,dra7-sgx544-116 # DRA7
+>> +            - ti,omap5-sgx544-116 # OMAP5 UEVM, Pyra Handheld and =
+similar
+>> +          - const: img,sgx544-116
+>> +          - const: img,sgx544
+>> +
+>> +      - description: SGX545 based SoC
+>> +        items:
+>> +          - const: intel,cedarview-gma3600-sgx545 # Atom N2600, =
+D2500
+>> +          - const: img,sgx545-116
+>> +          - const: img,sgx545
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  interrupts:
+>> +    maxItems: 1
+>> +
+>> +  interrupt-names:
+>> +    maxItems: 1
+>> +    items:
+>> +      - const: sgx
+>> +
+>> +  clocks:
+>> +    maxItems: 4
+>> +
+>> +  clock-names:
+>> +    maxItems: 4
+>> +    items:
+>> +      - const: core
+>> +      - const: sys
+>> +      - const: mem
+>> +      - const: hyd
+>> +
+>> +  sgx-supply: true
+>> +
+>> +  power-domains:
+>> +    maxItems: 1
+>> +
+>> +  resets:
+>> +    maxItems: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - interrupts
+>=20
+> By not making 'clocks' required you make it possible to create broken =
+bindings; according to your schema, a GPU node without a 'clocks' for =
+the JZ4780 would be perfectly valid.
 
-diff --git a/arch/arm/boot/dts/s5pv210-pinctrl.dtsi b/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
-index 7f0c9d447871..609f323d0805 100644
---- a/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
-@@ -18,6 +18,13 @@
- 
- #include <dt-bindings/pinctrl/samsung.h>
- 
-+#define PIN_SLP(_pin, _mode, _pull)					\
-+	_pin {								\
-+		samsung,pins = #_pin;					\
-+		samsung,pin-con-pdn = <EXYNOS_PIN_PDN_ ##_mode>;	\
-+		samsung,pin-pud-pdn = <S3C64XX_PIN_PULL_ ##_pull>;	\
-+	}
-+
- &pinctrl0 {
- 	gpa0: gpa0 {
- 		gpio-controller;
--- 
-2.20.1
+Yes. But it will never pass a test with real hardware. So it can't be =
+omitted anyways.
+
+On a more general thought, this argument holds for any optional =
+property. So it is not specific to clocks. Since the reg address values =
+are also never specified you can still create broken bindings. Or by =
+connecting the wrong clock. So the ways to create broken bindings are =
+numerous.
+
+I also assume that SGX integrators are not beginners and do you think =
+they need to find out through a make dt_binding_check dtbs_check that =
+they should define a clock? based on *assumptions* we do without having =
+access to all systems?
+
+IMHO the bindings documentation is a documentation. So it needs to be =
+helpful but not perfect. Formalizing all corner cases in a bindings =
+document (just because we can since .yaml was introduced) is IMHO =
+overkill.
+
+In times before the introduction of more formal .yaml I think we would =
+not even have considered this for a comment in the bindings.txt.
+
+> It's possible to forbid the presence of the 'clocks' property on some =
+implementations, and require it on others.
+
+To be precise we have to specify the exact number of clocks (between 0 =
+and 4) for every architecture.
+
+This also contradicts my dream to get rid of the architecture specific =
+components in the long run. My dream (because I can't tell how it can be =
+done) is that we can one day develop something which just needs =
+compatible =3D img,530 or imp,540 or img,544. Then we can't make the =
+number clocks depend on the implementation any more.
+
+> See how it's done for instance on =
+Documentation/devicetree/bindings/serial/samsung_uart.yaml.
+
+Yes I know the design pattern, but I wonder if such a move makes the =
+whole thing even less maintainable.
+
+Assume we have finished DTS for some SoC. Then these DTS have been =
+tested on real hardware and are working. Clocks are there where needed =
+and missing where not. We may now forbid or not forbid them for some =
+implementations in the bindings.yaml but the result of dtbs_check won't =
+change! Because they are tested and working and the bindings.yaml has =
+been adapted to the result. So we have just duplicated something for no =
+practical benefit.
+
+Next, assume there is coming support for more and more new SoC. Then, =
+developers not only have to figure out which clocks they need in the DTS =
+but they also have to add a patch to the implementation specific part of =
+the bindings.yaml to clearly define exactly the same what they already =
+have written into their .dts (the clocks are either there for the =
+of_node or they are not). So again the rules are for no benefit, since a =
+new SoC is introduced exactly once. And tested if it works. And if it is =
+there, it will stay as it is. It is just work for maintainers to review =
+that patch as well.
+
+It boils down to the question if we need to formalize the rule how a =
+working DTS was derived. Or just have a working DTS and not formalize =
+everything.
+
+So IMHO carrying along such a detail (forbid clocks on some =
+architectures) is nice to have (and fun to learn the .yaml thing) but =
+not of benefit for anyone. Not for the DTS developer nor for the =
+maintainers nor for the users of a Linux kernel. "Keep it simple" is =
+always a good rule for maintainability.
+
+In summary I don't see a good reason to follow this in v8. But you could =
+add it by a separate patch later if the DTS have been reviewed and =
+agreed.
+
+BR and thanks,
+Nikolaus
 
