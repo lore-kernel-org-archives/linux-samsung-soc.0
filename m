@@ -2,126 +2,190 @@ Return-Path: <SRS0=lutg=6S=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D603C3A5A9
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 May 2020 15:15:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AD01C47254
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 May 2020 23:35:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D46C2073B
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 May 2020 15:15:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1588605316;
-	bh=5Yi6sD4kXCyHEvHQC8xe5qp9xZ1wfoODAUheiqjGCOY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ANS10iB2aIJ9DRnpxxUUjLjZJ+YVfUDOtH/o8xEou8oVd1nwt+2iYpNG1HWeaA9Sr
-	 sg9nkyz7yVCZKVB8Awjt+HXc2+LJYKohKAqR5P3JSnbXinWReh3Mj9bOjRDjOL79du
-	 q+uOF0lKOSU+VXTt81vUcIq28OoNdv7UWKXn6Lvw=
+	by mail.kernel.org (Postfix) with ESMTP id 10148206A4
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  4 May 2020 23:35:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729350AbgEDPPN convert rfc822-to-8bit (ORCPT
+        id S1728271AbgEDXfP (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 4 May 2020 11:15:13 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:35083 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726509AbgEDPPN (ORCPT
+        Mon, 4 May 2020 19:35:15 -0400
+Received: from smtprelay0057.hostedemail.com ([216.40.44.57]:36100 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728092AbgEDXfP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 4 May 2020 11:15:13 -0400
-Received: by mail-ed1-f65.google.com with SMTP id a8so13846076edv.2;
-        Mon, 04 May 2020 08:15:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=LCc+eYdO3tX3LkVF95rDTpEk+HBT/KELfuXGkU4VVhM=;
-        b=p604soKS+8HyOzeDutcUjBGXG/4TW8PCYxm8/RbCdYKZARwQ3H1/LDcbJqu26/8Bij
-         DZhbYmG1kmloHI9mhAA1o11sEHyl8yoD9GYUcz8T1nT0vPKY9bweMBC6LIO5qJcR60qv
-         fuPzni36o4tuyA7qPThu/xAZ8fomrym1Mb1VQpohSF0Sk5GnVWZP4dn56a7uu5FUY9Xi
-         Tnqmvd/2rvS4m+Bi/Pmr43W/MqIAFs020zP8RqIz0KzGFQGmSRJ1SCjGTgsHiYBxLvO3
-         GqiaYAdOhH08z9DrallzIo/D4/koS+fCeYC1xP/qaxUZw/GdtcisiP6hTTt5isU00mcx
-         Q32A==
-X-Gm-Message-State: AGi0PuZnZSR1ryp56Feia1H74AyZxpCxbX1SCq3MOT6lfBgsCQitXjHC
-        QvRihXAhtEB8oPyohOnLpOAO6uM/
-X-Google-Smtp-Source: APiQypLgL0BNupES2fskOUM21pKl/rDCVu+OP0SF7FJCBNEdF6HBSjXWjjho1YvOBX3WBlLXsQtV9g==
-X-Received: by 2002:a05:6402:22a6:: with SMTP id cx6mr14498532edb.277.1588605310748;
-        Mon, 04 May 2020 08:15:10 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.237])
-        by smtp.googlemail.com with ESMTPSA id 10sm1488687ejt.80.2020.05.04.08.15.09
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 04 May 2020 08:15:10 -0700 (PDT)
-Date:   Mon, 4 May 2020 17:15:08 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Jonathan Bakker <xc-racer2@live.ca>
-Cc:     kgene@kernel.org, robh+dt@kernel.org,
+        Mon, 4 May 2020 19:35:15 -0400
+X-Greylist: delayed 371 seconds by postgrey-1.27 at vger.kernel.org; Mon, 04 May 2020 19:35:14 EDT
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave03.hostedemail.com (Postfix) with ESMTP id 411321802562C;
+        Mon,  4 May 2020 23:29:04 +0000 (UTC)
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 8294D1822384F;
+        Mon,  4 May 2020 23:29:02 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: burst33_88fb33cf02246
+X-Filterd-Recvd-Size: 5410
+Received: from XPS-9350.home (unknown [47.151.136.130])
+        (Authenticated sender: joe@perches.com)
+        by omf04.hostedemail.com (Postfix) with ESMTPA;
+        Mon,  4 May 2020 23:29:01 +0000 (UTC)
+Message-ID: <b1cf967015c5beafa475aaa30d8e21a58caff870.camel@perches.com>
+Subject: [trivial PATCH] video: fbdev: Use IS_BUILTIN
+From:   Joe Perches <joe@perches.com>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/18] S5PV210 and Aries DTS improvements
-Message-ID: <20200504151508.GA3205@kozik-lap>
-References: <20200426183604.28494-1-xc-racer2@live.ca>
- <BN6PR04MB066033FD7FF6E5C37747C7A2A3AB0@BN6PR04MB0660.namprd04.prod.outlook.com>
+        linux-samsung-soc@vger.kernel.org
+Date:   Mon, 04 May 2020 16:29:00 -0700
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.36.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <BN6PR04MB066033FD7FF6E5C37747C7A2A3AB0@BN6PR04MB0660.namprd04.prod.outlook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, May 01, 2020 at 04:50:01PM -0700, Jonathan Bakker wrote:
-> This patchset makes several improvements to Aries devices which are
-> based on S5PV210.  Several pulls on GPIOs were incorrect/not specified,
-> sleep GPIO configurations have been added, and more devices have been
-> added.
-> 
-> Touching the common S5PV210 DTSI are the addition of the ADC node
-> as well as fixes to the FIMC definitions and a sleep GPIO helper
-> added.  The GPI gpio node name has been corrected.
-> 
-> The patches have been tested on both a GT-i9000 as well as an
-> SGH-T959P and both can now suspend/resume properly.
-> 
-> Changes from v1:
-> - Correct ADC node name to match reg
-> - Restore removed regulator suspend state
-> - Split commit adding support for new devices into separate commits
->   for each device
-> - Add note where sleep gpio cfgs come from
-> - Ensure subject of all patches matches subsystem
-> - Add patch correcting GPI node name
-> 
-> 
-> Jonathan Bakker (17):
->   ARM: dts: s5pv210: Add helper define for sleep gpio config
->   ARM: dts: s5pv210: Add sleep GPIO configuration for fascinate4g
->   ARM: dts: s5pv210: Add sleep GPIO configuration for galaxys
->   ARM: dts: s5pv210: Set keep-power-in-suspend for SDHCI1 on aries
->   ARM: dts: s5pv210: Disable pulls on GPIO i2c adapters for aries
->   ARM: dts: s5pv210: Add WM8994 support to aries boards
->   ARM: dts: s5pv210: Add FSA9480 support to Aries boards
->   ARM: dts: s5pv210: Add touchkey support to aries boards
->   ARM: dts: s5pv210: Add panel support to aries boards
->   ARM: dts: s5pv210: Add remaining i2c-gpio adapters to aries
->   ARM: dts: s5pv210: Disable pull for vibrator ena GPIO on aries
->   ARM: dts: s5pv210: Add an ADC node
->   ARM: dts: s5pv210: Enable ADC on aries boards
->   ARM: dts: s5pv210: Assign clocks to MMC devices on aries
->   ARM: dts: s5pv210: Correct FIMC definitions
->   ARM: dts: s5pv210: Set MAX8998 GPIO pulls on aries
->   ARM: dts: s5pv210: Correct gpi gpio node name
-> 
-> Paweł Chmiel (1):
->   ARM: dts: s5pv210: Add si470x fmradio to galaxys
->
+IS_BUILTIN can be use to replace various initializations
+like #if CONFIG_<FOO> int val = 1; #else int val = 0; #endif
+so do so.
 
-Nice job!
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ drivers/video/fbdev/aty/aty128fb.c     | 6 +-----
+ drivers/video/fbdev/aty/atyfb_base.c   | 7 +------
+ drivers/video/fbdev/aty/radeon_base.c  | 6 +-----
+ drivers/video/fbdev/nvidia/nvidia.c    | 6 +-----
+ drivers/video/fbdev/omap/omapfb_main.c | 6 +-----
+ drivers/video/fbdev/riva/fbdev.c       | 6 +-----
+ drivers/video/fbdev/s3c2410fb.c        | 6 +-----
+ 7 files changed, 7 insertions(+), 36 deletions(-)
 
-Thanks, I applied entire set.
+diff --git a/drivers/video/fbdev/aty/aty128fb.c b/drivers/video/fbdev/aty/aty128fb.c
+index d05d4195acad..6fae6ad6cb77 100644
+--- a/drivers/video/fbdev/aty/aty128fb.c
++++ b/drivers/video/fbdev/aty/aty128fb.c
+@@ -384,11 +384,7 @@ static int default_lcd_on = 1;
+ static bool mtrr = true;
+ 
+ #ifdef CONFIG_FB_ATY128_BACKLIGHT
+-#ifdef CONFIG_PMAC_BACKLIGHT
+-static int backlight = 1;
+-#else
+-static int backlight = 0;
+-#endif
++static int backlight = IS_BUILTIN(CONFIG_PMAC_BACKLIGHT);
+ #endif
+ 
+ /* PLL constants */
+diff --git a/drivers/video/fbdev/aty/atyfb_base.c b/drivers/video/fbdev/aty/atyfb_base.c
+index 49d192869cf5..23a29d61c2a2 100644
+--- a/drivers/video/fbdev/aty/atyfb_base.c
++++ b/drivers/video/fbdev/aty/atyfb_base.c
+@@ -317,12 +317,7 @@ static int mclk;
+ static int xclk;
+ static int comp_sync = -1;
+ static char *mode;
+-
+-#ifdef CONFIG_PMAC_BACKLIGHT
+-static int backlight = 1;
+-#else
+-static int backlight = 0;
+-#endif
++static int backlight = IS_BUILTIN(CONFIG_PMAC_BACKLIGHT);
+ 
+ #ifdef CONFIG_PPC
+ static int default_vmode = VMODE_CHOOSE;
+diff --git a/drivers/video/fbdev/aty/radeon_base.c b/drivers/video/fbdev/aty/radeon_base.c
+index e116a3f9ad56..3fe509cb9b87 100644
+--- a/drivers/video/fbdev/aty/radeon_base.c
++++ b/drivers/video/fbdev/aty/radeon_base.c
+@@ -269,11 +269,7 @@ static bool force_measure_pll = 0;
+ static bool nomtrr = 0;
+ static bool force_sleep;
+ static bool ignore_devlist;
+-#ifdef CONFIG_PMAC_BACKLIGHT
+-static int backlight = 1;
+-#else
+-static int backlight = 0;
+-#endif
++static int backlight = IS_BUILTIN(CONFIG_PMAC_BACKLIGHT);
+ 
+ /* Note about this function: we have some rare cases where we must not schedule,
+  * this typically happen with our special "wake up early" hook which allows us to
+diff --git a/drivers/video/fbdev/nvidia/nvidia.c b/drivers/video/fbdev/nvidia/nvidia.c
+index c24de9107958..c6820e21875d 100644
+--- a/drivers/video/fbdev/nvidia/nvidia.c
++++ b/drivers/video/fbdev/nvidia/nvidia.c
+@@ -74,11 +74,7 @@ static int vram = 0;
+ static int bpp = 8;
+ static int reverse_i2c;
+ static bool nomtrr = false;
+-#ifdef CONFIG_PMAC_BACKLIGHT
+-static int backlight = 1;
+-#else
+-static int backlight = 0;
+-#endif
++static int backlight = IS_BUILTIN(CONFIG_PMAC_BACKLIGHT);
+ 
+ static char *mode_option = NULL;
+ 
+diff --git a/drivers/video/fbdev/omap/omapfb_main.c b/drivers/video/fbdev/omap/omapfb_main.c
+index 1a9d6242916e..0cbcc74fa943 100644
+--- a/drivers/video/fbdev/omap/omapfb_main.c
++++ b/drivers/video/fbdev/omap/omapfb_main.c
+@@ -34,11 +34,7 @@ static unsigned long	def_vyres;
+ static unsigned int	def_rotate;
+ static unsigned int	def_mirror;
+ 
+-#ifdef CONFIG_FB_OMAP_MANUAL_UPDATE
+-static bool		manual_update = 1;
+-#else
+-static bool		manual_update;
+-#endif
++static bool	manual_update = IS_BUILTIN(CONFIG_FB_OMAP_MANUAL_UPDATE);
+ 
+ static struct platform_device	*fbdev_pdev;
+ static struct lcd_panel		*fbdev_panel;
+diff --git a/drivers/video/fbdev/riva/fbdev.c b/drivers/video/fbdev/riva/fbdev.c
+index 764ec3285e62..9b3493846f4d 100644
+--- a/drivers/video/fbdev/riva/fbdev.c
++++ b/drivers/video/fbdev/riva/fbdev.c
+@@ -202,11 +202,7 @@ static int flatpanel = -1; /* Autodetect later */
+ static int forceCRTC = -1;
+ static bool noaccel  = 0;
+ static bool nomtrr = 0;
+-#ifdef CONFIG_PMAC_BACKLIGHT
+-static int backlight = 1;
+-#else
+-static int backlight = 0;
+-#endif
++static int backlight = IS_BUILTIN(CONFIG_PMAC_BACKLIGHT);
+ 
+ static char *mode_option = NULL;
+ static bool strictmode       = 0;
+diff --git a/drivers/video/fbdev/s3c2410fb.c b/drivers/video/fbdev/s3c2410fb.c
+index 2fb15a540167..6f8fa501583f 100644
+--- a/drivers/video/fbdev/s3c2410fb.c
++++ b/drivers/video/fbdev/s3c2410fb.c
+@@ -44,11 +44,7 @@
+ #include "s3c2410fb.h"
+ 
+ /* Debugging stuff */
+-#ifdef CONFIG_FB_S3C2410_DEBUG
+-static int debug	= 1;
+-#else
+-static int debug;
+-#endif
++static int debug = IS_BUILTIN(CONFIG_FB_S3C2410_DEBUG);
+ 
+ #define dprintk(msg...) \
+ do { \
 
-Best regards,
-Krzysztof
 
