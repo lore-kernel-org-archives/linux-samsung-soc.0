@@ -2,64 +2,32 @@ Return-Path: <SRS0=0Uiv=6W=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B8E4C38A2A
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 May 2020 07:08:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BAD8C38A2A
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 May 2020 07:52:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EAC6E208CA
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 May 2020 07:08:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="CEhHuPS/"
+	by mail.kernel.org (Postfix) with ESMTP id 468F920CC7
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 May 2020 07:52:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbgEHHIm (ORCPT
+        id S1726048AbgEHHwY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 8 May 2020 03:08:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35758 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726036AbgEHHIm (ORCPT
+        Fri, 8 May 2020 03:52:24 -0400
+Received: from asavdk4.altibox.net ([109.247.116.15]:48958 "EHLO
+        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726036AbgEHHwY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 8 May 2020 03:08:42 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D09FC05BD43
-        for <linux-samsung-soc@vger.kernel.org>; Fri,  8 May 2020 00:08:41 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id h9so611463wrt.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 May 2020 00:08:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=DmTzp+J4aS4CxYYhCILNVwYfVehwX/dqCJCx5jKGlEM=;
-        b=CEhHuPS/Sdlv7SlOF1Hc4wrg/jxQ0bfVMANuWCZjoRc8dNc/HsdgEoZO7HGBHXwoaf
-         ruEIoF3gHK5AY6lSz66A+ROgs5JDNmxQyX5jJA9tVa0h0eLsOpexhZTVa8lNea46FiWB
-         /GPsBiQ9zAcTAkVD8gFbnjr8OjE1EkxiL9eto=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to;
-        bh=DmTzp+J4aS4CxYYhCILNVwYfVehwX/dqCJCx5jKGlEM=;
-        b=ocA6oB2lmEH1R3OKWb1tcXcl7CttOq+4Qa61wd8AATe3r8F97hsJly7g/ot1Xjiop7
-         X5Gx9G+wNUmo5TcW6j/vwNKs0VV2KDKbO22+CAWT6s+6inzqTPn5aj0gGNHQU11ZRl9j
-         1plYvkOgqZb/1aJ/WFuzy6SfG3r8pHFXGIzS/FVCrtx+/3ffPs39sFBRA5YN3WaOhNAG
-         U9NCnkRcGbxbb8984pftz93jJv4fYfWVPemVHZY01xQBWytjzYplEo0Ix7rv5dSMmp5K
-         XZJEWFWa8lO9OM4AYQYYqZRHGjnPkN9qTiOA81Bw75r9RcycWLxr9bCAAHyCciSQl8/K
-         Qwhw==
-X-Gm-Message-State: AGi0PuYh4MfKSwT4LemB1/LdkgDX3AslvKDEDwtq9CaRUSQQVv1qNyM5
-        hSPWNTCDwfLbgYqGaV9QVVHs4w==
-X-Google-Smtp-Source: APiQypIdXHZDbCY1mjOHI7A02KN/NFXcXdx0OSG3FPCPhGoilD6eSlbRaDrFn+uMA+JdV38nVB2Qsw==
-X-Received: by 2002:adf:e791:: with SMTP id n17mr1265834wrm.217.1588921720359;
-        Fri, 08 May 2020 00:08:40 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id s24sm12302509wmj.28.2020.05.08.00.08.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 May 2020 00:08:39 -0700 (PDT)
-Date:   Fri, 8 May 2020 09:08:37 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Colin King <colin.king@canonical.com>
+        Fri, 8 May 2020 03:52:24 -0400
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk4.altibox.net (Postfix) with ESMTPS id 7451980503;
+        Fri,  8 May 2020 09:52:17 +0200 (CEST)
+Date:   Fri, 8 May 2020 09:52:10 +0200
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Bernard <bernard@vivo.com>
 Cc:     Inki Dae <inki.dae@samsung.com>,
         Joonyoung Shim <jy0922.shim@samsung.com>,
         Seung-Woo Kim <sw0312.kim@samsung.com>,
@@ -69,67 +37,97 @@ Cc:     Inki Dae <inki.dae@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/exynos: remove redundant initialization to variable
- 'start'
-Message-ID: <20200508070837.GF1383626@phenom.ffwll.local>
-Mail-Followup-To: Colin King <colin.king@canonical.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200507202237.64350-1-colin.king@canonical.com>
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        opensource.kernel@vivo.com
+Subject: Re: [PATCH] drm/exynos: remove no need devm_kfree in probe [re-send,
+ welcome any comments]
+Message-ID: <20200508075210.GA8789@ravnborg.org>
+References: <AMkACAAICCLCcgaekrYcyKoA.1.1588769343436.Hmail.bernard@vivo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200507202237.64350-1-colin.king@canonical.com>
-X-Operating-System: Linux phenom 5.4.0-4-amd64 
+In-Reply-To: <AMkACAAICCLCcgaekrYcyKoA.1.1588769343436.Hmail.bernard@vivo.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=MOBOZvRl c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=kj9zAlcOel0A:10 a=1WtWmnkvAAAA:8 a=7gkXJVJtAAAA:8 a=e5mUnYsNAAAA:8
+        a=BHcMzYUn60HY1PDIBp0A:9 a=CjuIK1q_8ugA:10 a=-_UHfarfsM-RsASml2Jt:22
+        a=E9Po1WZjFZOl8hwRPBS3:22 a=Vxmtnl_E_bksehYqCbjh:22
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, May 07, 2020 at 09:22:37PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable 'start' is being initialized with a value that is never read
-> and it is being updated later with a new value.  The initialization is
-> redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Hi Bernard.
 
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+On Wed, May 06, 2020 at 08:49:03PM +0800, Bernard wrote:
+> Remove no need devm_kfree in probe.
+> The change is to make the code a bit more readable
+> 
+> Signed-off-by: Bernard Zhao <bernard@vivo.com>
+
+Could you take a closer look and fix similar patterns
+in the rest of the driver?
+For example in exynos_dpi_probe()
+
+Is would be nice to only have to review for this
+type of changes once, so one patch-set is preferred
+over single patches over time.
+
+You can add:
+Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+
+to this patch when you re-send a new series.
+
+Thanks,
+	Sam
 
 > ---
->  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/gpu/drm/exynos/exynos_drm_dpi.c | 10 +++-------
+>  1 file changed, 3 insertions(+), 7 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> index 902938d2568f..b0b9cb1ec18f 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> @@ -1150,7 +1150,7 @@ static bool exynos_dsi_transfer_finish(struct exynos_dsi *dsi)
->  {
->  	struct exynos_dsi_transfer *xfer;
->  	unsigned long flags;
-> -	bool start = true;
-> +	bool start;
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+> index 43fa0f26c052..e06f7d7a6695 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+> @@ -181,10 +181,8 @@ static int exynos_dpi_parse_dt(struct exynos_dpi *ctx)
+>  			return -ENOMEM;
 >  
->  	spin_lock_irqsave(&dsi->transfer_lock, flags);
+>  		ret = of_get_videomode(dn, vm, 0);
+> -		if (ret < 0) {
+> -			devm_kfree(dev, vm);
+> +		if (ret < 0)
+>  			return ret;
+> -		}
 >  
+>  		ctx->vm = vm;
+>  
+> @@ -233,10 +231,8 @@ struct drm_encoder *exynos_dpi_probe(struct device *dev)
+>  	ctx->dev = dev;
+>  
+>  	ret = exynos_dpi_parse_dt(ctx);
+> -	if (ret < 0) {
+> -		devm_kfree(dev, ctx);
+> -		return NULL;
+> -	}
+> +	if (ret < 0)
+> +		return ERR_PTR(ret);
+>  
+>  	if (ctx->panel_node) {
+>  		ctx->panel = of_drm_find_panel(ctx->panel_node);
 > -- 
-> 2.25.1
+> 2.26.2
 > 
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+> 
+> [re-send, welcome any comments]
+> Regards,
+> Bernard
+> 
+> 
+> 
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
