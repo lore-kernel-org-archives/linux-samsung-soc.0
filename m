@@ -2,32 +2,32 @@ Return-Path: <SRS0=0Uiv=6W=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BAD8C38A2A
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 May 2020 07:52:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD3FC38A2A
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 May 2020 08:45:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 468F920CC7
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 May 2020 07:52:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2878207DD
+	for <linux-samsung-soc@archiver.kernel.org>; Fri,  8 May 2020 08:45:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726048AbgEHHwY (ORCPT
+        id S1726873AbgEHIpB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 8 May 2020 03:52:24 -0400
-Received: from asavdk4.altibox.net ([109.247.116.15]:48958 "EHLO
-        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726036AbgEHHwY (ORCPT
+        Fri, 8 May 2020 04:45:01 -0400
+Received: from m176150.mail.qiye.163.com ([59.111.176.150]:33173 "EHLO
+        m176150.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727071AbgEHIo4 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 8 May 2020 03:52:24 -0400
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk4.altibox.net (Postfix) with ESMTPS id 7451980503;
-        Fri,  8 May 2020 09:52:17 +0200 (CEST)
-Date:   Fri, 8 May 2020 09:52:10 +0200
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Bernard <bernard@vivo.com>
+        Fri, 8 May 2020 04:44:56 -0400
+Received: from vivo.com (wm-10.qy.internal [127.0.0.1])
+        by m176150.mail.qiye.163.com (Hmail) with ESMTP id 4293E1A3189;
+        Fri,  8 May 2020 16:44:20 +0800 (CST)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+Message-ID: <AEMAEgD6CFDEXGkP4OWX94rO.3.1588927460255.Hmail.bernard@vivo.com>
+To:     Sam Ravnborg <sam@ravnborg.org>
 Cc:     Inki Dae <inki.dae@samsung.com>,
         Joonyoung Shim <jy0922.shim@samsung.com>,
         Seung-Woo Kim <sw0312.kim@samsung.com>,
@@ -39,95 +39,71 @@ Cc:     Inki Dae <inki.dae@samsung.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         opensource.kernel@vivo.com
-Subject: Re: [PATCH] drm/exynos: remove no need devm_kfree in probe [re-send,
- welcome any comments]
-Message-ID: <20200508075210.GA8789@ravnborg.org>
-References: <AMkACAAICCLCcgaekrYcyKoA.1.1588769343436.Hmail.bernard@vivo.com>
+Subject: =?UTF-8?B?UmU6UmU6IFtQQVRDSF0gZHJtL2V4eW5vczogcmVtb3ZlIG5vIG5lZWQgZGV2bV9rZnJlZSBpbiBwcm9iZSBbcmUtc2VuZCwgd2VsY29tZSBhbnkgY29tbWVudHNd?=
+X-Priority: 3
+X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2016-163.com
+X-Originating-IP: 157.0.31.122
+In-Reply-To: <20200508075210.GA8789@ravnborg.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AMkACAAICCLCcgaekrYcyKoA.1.1588769343436.Hmail.bernard@vivo.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=MOBOZvRl c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=kj9zAlcOel0A:10 a=1WtWmnkvAAAA:8 a=7gkXJVJtAAAA:8 a=e5mUnYsNAAAA:8
-        a=BHcMzYUn60HY1PDIBp0A:9 a=CjuIK1q_8ugA:10 a=-_UHfarfsM-RsASml2Jt:22
-        a=E9Po1WZjFZOl8hwRPBS3:22 a=Vxmtnl_E_bksehYqCbjh:22
+Received: from bernard@vivo.com( [157.0.31.122) ] by ajax-webmail ( [127.0.0.1] ) ; Fri, 8 May 2020 16:44:20 +0800 (GMT+08:00)
+From:   Bernard <bernard@vivo.com>
+Date:   Fri, 8 May 2020 16:44:20 +0800 (GMT+08:00)
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZSFVNQk1LS0tLQkJKQ0lKSFlXWShZQU
+        hPN1dZLVlBSVdZCQ4XHghZQVk1NCk2OjckKS43PlkG
+X-HM-Sender-Digest: e1kJHlYWEh9ZQUhMTU5ITkNJTUJKN1dZDB4ZWUEPCQ4eV1kSHx4VD1lB
+        WUc6PjY6Phw*TTg9Pz4jPBArTzQsI0JPCTRVSFVKTkNDQklMT01OSE1JVTMWGhIXVRkeCRUaCR87
+        DRINFFUYFBZFWVdZEgtZQVlKTkxVS1VISlVKSUlZV1kIAVlBTUlPSjcG
+X-HM-Tid: 0a71f374f3bc93b4kuws4293e1a3189
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Bernard.
-
-On Wed, May 06, 2020 at 08:49:03PM +0800, Bernard wrote:
-> Remove no need devm_kfree in probe.
-> The change is to make the code a bit more readable
-> 
-> Signed-off-by: Bernard Zhao <bernard@vivo.com>
-
-Could you take a closer look and fix similar patterns
-in the rest of the driver?
-For example in exynos_dpi_probe()
-
-Is would be nice to only have to review for this
-type of changes once, so one patch-set is preferred
-over single patches over time.
-
-You can add:
-Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
-
-to this patch when you re-send a new series.
-
-Thanks,
-	Sam
-
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_dpi.c | 10 +++-------
->  1 file changed, 3 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-> index 43fa0f26c052..e06f7d7a6695 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-> @@ -181,10 +181,8 @@ static int exynos_dpi_parse_dt(struct exynos_dpi *ctx)
->  			return -ENOMEM;
->  
->  		ret = of_get_videomode(dn, vm, 0);
-> -		if (ret < 0) {
-> -			devm_kfree(dev, vm);
-> +		if (ret < 0)
->  			return ret;
-> -		}
->  
->  		ctx->vm = vm;
->  
-> @@ -233,10 +231,8 @@ struct drm_encoder *exynos_dpi_probe(struct device *dev)
->  	ctx->dev = dev;
->  
->  	ret = exynos_dpi_parse_dt(ctx);
-> -	if (ret < 0) {
-> -		devm_kfree(dev, ctx);
-> -		return NULL;
-> -	}
-> +	if (ret < 0)
-> +		return ERR_PTR(ret);
->  
->  	if (ctx->panel_node) {
->  		ctx->panel = of_drm_find_panel(ctx->panel_node);
-> -- 
-> 2.26.2
-> 
-> 
-> [re-send, welcome any comments]
-> Regards,
-> Bernard
-> 
-> 
-> 
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+CgpGcm9tOiBTYW0gUmF2bmJvcmcgPHNhbUByYXZuYm9yZy5vcmc+CkRhdGU6IDIwMjAtMDUtMDgg
+MTU6NTI6MTAKVG86ICBCZXJuYXJkIDxiZXJuYXJkQHZpdm8uY29tPgpDYzogIElua2kgRGFlIDxp
+bmtpLmRhZUBzYW1zdW5nLmNvbT4sSm9vbnlvdW5nIFNoaW0gPGp5MDkyMi5zaGltQHNhbXN1bmcu
+Y29tPixTZXVuZy1Xb28gS2ltIDxzdzAzMTIua2ltQHNhbXN1bmcuY29tPixLeXVuZ21pbiBQYXJr
+IDxreXVuZ21pbi5wYXJrQHNhbXN1bmcuY29tPixEYXZpZCBBaXJsaWUgPGFpcmxpZWRAbGludXgu
+aWU+LERhbmllbCBWZXR0ZXIgPGRhbmllbEBmZndsbC5jaD4sS3VramluIEtpbSA8a2dlbmVAa2Vy
+bmVsLm9yZz4sS3J6eXN6dG9mIEtvemxvd3NraSA8a3J6a0BrZXJuZWwub3JnPixkcmktZGV2ZWxA
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnLGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9y
+ZyxsaW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtlcm5lbC5vcmcsbGludXgta2VybmVsQHZnZXIua2Vy
+bmVsLm9yZyxvcGVuc291cmNlLmtlcm5lbEB2aXZvLmNvbQpTdWJqZWN0OiBSZTogW1BBVENIXSBk
+cm0vZXh5bm9zOiByZW1vdmUgbm8gbmVlZCBkZXZtX2tmcmVlIGluIHByb2JlIFtyZS1zZW5kLCB3
+ZWxjb21lIGFueSBjb21tZW50c10+SGkgQmVybmFyZC4KPgo+T24gV2VkLCBNYXkgMDYsIDIwMjAg
+YXQgMDg6NDk6MDNQTSArMDgwMCwgQmVybmFyZCB3cm90ZToKPj4gUmVtb3ZlIG5vIG5lZWQgZGV2
+bV9rZnJlZSBpbiBwcm9iZS4KPj4gVGhlIGNoYW5nZSBpcyB0byBtYWtlIHRoZSBjb2RlIGEgYml0
+IG1vcmUgcmVhZGFibGUKPj4gCj4+IFNpZ25lZC1vZmYtYnk6IEJlcm5hcmQgWmhhbyA8YmVybmFy
+ZEB2aXZvLmNvbT4KPgo+Q291bGQgeW91IHRha2UgYSBjbG9zZXIgbG9vayBhbmQgZml4IHNpbWls
+YXIgcGF0dGVybnMKPmluIHRoZSByZXN0IG9mIHRoZSBkcml2ZXI/Cj5Gb3IgZXhhbXBsZSBpbiBl
+eHlub3NfZHBpX3Byb2JlKCkKPgo+SXMgd291bGQgYmUgbmljZSB0byBvbmx5IGhhdmUgdG8gcmV2
+aWV3IGZvciB0aGlzCj50eXBlIG9mIGNoYW5nZXMgb25jZSwgc28gb25lIHBhdGNoLXNldCBpcyBw
+cmVmZXJyZWQKPm92ZXIgc2luZ2xlIHBhdGNoZXMgb3ZlciB0aW1lLgo+Cj5Zb3UgY2FuIGFkZDoK
+PlJldmlld2VkLWJ5OiBTYW0gUmF2bmJvcmcgPHNhbUByYXZuYm9yZy5vcmc+Cj4KPnRvIHRoaXMg
+cGF0Y2ggd2hlbiB5b3UgcmUtc2VuZCBhIG5ldyBzZXJpZXMuCj4KPlRoYW5rcywKPglTYW0KCkhp
+ClN1cmUsIHRoaXMgaXMgYWxzbyBhIGdvb2QgY2hhbmNlIGZvciBtZSB0byBsZWFybiB0aGlzIGNv
+ZGUuCkkgd2lsbCByZS1jaGVjayB0aGlzIHBhcnQgb2YgdGhlIGV4eW5vcyBkcml2ZXIgY29kZSB0
+byBzZWUgCmlmIHRoZXJlIGFyZSBzaW1pbGFyIHBhdHRlcm5zLCBhbmQgdGhlbiByZS1zZW5kIGEg
+cGF0Y2ggc2VyaWVzLgoKUmVnYXJkcywKQmVybmFyZAoKPj4gLS0tCj4+ICBkcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcm1fZHBpLmMgfCAxMCArKystLS0tLS0tCj4+ICAxIGZpbGUgY2hh
+bmdlZCwgMyBpbnNlcnRpb25zKCspLCA3IGRlbGV0aW9ucygtKQo+PiAKPj4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcGkuYyBiL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9kcGkuYwo+PiBpbmRleCA0M2ZhMGYyNmMwNTIuLmUwNmY3ZDdh
+NjY5NSAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rw
+aS5jCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcGkuYwo+PiBA
+QCAtMTgxLDEwICsxODEsOCBAQCBzdGF0aWMgaW50IGV4eW5vc19kcGlfcGFyc2VfZHQoc3RydWN0
+IGV4eW5vc19kcGkgKmN0eCkKPj4gIAkJCXJldHVybiAtRU5PTUVNOwo+PiAgCj4+ICAJCXJldCA9
+IG9mX2dldF92aWRlb21vZGUoZG4sIHZtLCAwKTsKPj4gLQkJaWYgKHJldCA8IDApIHsKPj4gLQkJ
+CWRldm1fa2ZyZWUoZGV2LCB2bSk7Cj4+ICsJCWlmIChyZXQgPCAwKQo+PiAgCQkJcmV0dXJuIHJl
+dDsKPj4gLQkJfQo+PiAgCj4+ICAJCWN0eC0+dm0gPSB2bTsKPj4gIAo+PiBAQCAtMjMzLDEwICsy
+MzEsOCBAQCBzdHJ1Y3QgZHJtX2VuY29kZXIgKmV4eW5vc19kcGlfcHJvYmUoc3RydWN0IGRldmlj
+ZSAqZGV2KQo+PiAgCWN0eC0+ZGV2ID0gZGV2Owo+PiAgCj4+ICAJcmV0ID0gZXh5bm9zX2RwaV9w
+YXJzZV9kdChjdHgpOwo+PiAtCWlmIChyZXQgPCAwKSB7Cj4+IC0JCWRldm1fa2ZyZWUoZGV2LCBj
+dHgpOwo+PiAtCQlyZXR1cm4gTlVMTDsKPj4gLQl9Cj4+ICsJaWYgKHJldCA8IDApCj4+ICsJCXJl
+dHVybiBFUlJfUFRSKHJldCk7Cj4+ICAKPj4gIAlpZiAoY3R4LT5wYW5lbF9ub2RlKSB7Cj4+ICAJ
+CWN0eC0+cGFuZWwgPSBvZl9kcm1fZmluZF9wYW5lbChjdHgtPnBhbmVsX25vZGUpOwo+PiAtLSAK
+Pj4gMi4yNi4yCj4+IAo+PiAKPj4gW3JlLXNlbmQsIHdlbGNvbWUgYW55IGNvbW1lbnRzXQo+PiBS
+ZWdhcmRzLAo+PiBCZXJuYXJkCj4+IAo+PiAKPj4gCj4+IAo+PiBfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+PiBkcmktZGV2ZWwgbWFpbGluZyBsaXN0Cj4+
+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPj4gaHR0cHM6Ly9saXN0cy5mcmVlZGVz
+a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwKDQoNCg==
