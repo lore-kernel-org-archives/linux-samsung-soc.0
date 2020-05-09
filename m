@@ -2,135 +2,272 @@ Return-Path: <SRS0=K2PA=6X=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=FORGED_MUA_MOZILLA,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3408C38A2A
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  9 May 2020 01:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F9FBC38A2A
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  9 May 2020 02:37:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C09C0216FD
-	for <linux-samsung-soc@archiver.kernel.org>; Sat,  9 May 2020 01:34:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24846217BA
+	for <linux-samsung-soc@archiver.kernel.org>; Sat,  9 May 2020 02:37:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727878AbgEIBes (ORCPT
+        id S1728385AbgEIChk (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 8 May 2020 21:34:48 -0400
-Received: from mail-mw2nam12olkn2060.outbound.protection.outlook.com ([40.92.23.60]:10433
-        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
+        Fri, 8 May 2020 22:37:40 -0400
+Received: from mail-dm6nam11olkn2084.outbound.protection.outlook.com ([40.92.19.84]:17632
+        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727828AbgEIBer (ORCPT
+        id S1728158AbgEIChj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 8 May 2020 21:34:47 -0400
+        Fri, 8 May 2020 22:37:39 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fxAt6Yw3a29xPbXCUIsYdXRk6+e7v+cGmZ/HjG1MQRm90Qw0f4jDLLxPsCzc2btto6evkEMWWlycdSelN5yMXhsSRiue/rvTQ4+17C0lyencFn2z4EOfTj0XhEptbe/h7alIN/mGo07vyHr7bVkcniicOTGIu+dTi3kfNLBOcGetWZRiJjZ4RVrLQsvx9CZ9IDIuPqaH8R3jXqbkVzKCu6MXNdc7ZlHld+hRRZFEvqw3NSPfZZgbJn9maqHSQwhAEibtwqqNkg9aA2C38j45HsDX/g+w4dLY5zCowBLOizKhmA6yJcLCEzvnfkx2PyAVnhOICva56pANf3+ge0iP/g==
+ b=Qop7r4dDOgYUVmTbJwII6DdtftSorhFFuiMqC0sfTpxJTrjiv9V8GmbEdOpmNpgxOUhi1SrSI1h9kB5AmvHnNtcIOFIPGUbA71fbFo9keqTDfLBpCb62LJtwY+mp84XPSN/OQarnvBrK3MG1PneIqnGjWDEOgMSkXWS2scGh/nw3gxY5obEDQ2Chbk+Zr16+u7mfIB6y0RHB/KFT2/7O4+yzqZa9fLa82UZc+YAuk/37JCOL1WI73yMZ7AfVhUpn6kuWPgySXGIYOgkTyj96Z72+atlEvf4A+4k+Cljhc5jQLBBk+vhaVvtwZvgGi6/LwVibRpwMeYPwrtlWbz0NCQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zg0OsvzlU1eLMvS0vAoFzf9f4nkJrus+FNqiK+LOu2I=;
- b=Xnc79Th8Cj+D6eh6Iv2z+22qULBstWjonQ6ShBeGpxY1gbm4LLU8XebPkvQUVg/r7/EhGY5ldLWZv1dvMmGwzUUqe1sbr3HxyzPWFTxFaw/eV8uWF77LM7/Sf2wVYoJqzEbsfDaL81TN/y4F1HYVSdYEByjsQYu63mVzXTBL765xj437Hb3giebRq0Gs/OhMOM50DabHS5ct3VIaae6QCxugStItk0uK+aXJDC2hgRgUqp8EEbtOs+mW3lWL+6TfGx8zdOLbGtEed9iBn5t3mihALBLwDfUyU0BPkLn1Nmj9owKZg3/pYmj2ua1Q14hXyKqD2PC9bMJ7rPuYjLhDPw==
+ bh=miA1couZQiucnkU9saWAEWwpHCl0lTsdVbGlpqLLT7w=;
+ b=oNkc9oqvv0jK/I03bDK0yKKDmpxbBxdldep7Loanb5xz2qYSRHJbwGA901eWcbIcAcbJNMEsbYALymqLttn48dSCe2HmnGTLw4ICRd+ttVcZcjki2SzQY1sTd7tOJrK6ui+IPXuusWLEAhjSIuZM3TZyqSnw+cx+MJzAjah2fiJQfx2d2bNkvsYC40aNe6Sj5+VHR7AXEcMqNG7lSnenBAHbs1dhKnYKBMTPKiws+NrTToyDLf2gnJis2K/63Ycf5vm18nO+6MTfQ+g12jF7Pv8pxRfgkRaAO4FUaQuFQ7GomSPclKQpV8qIaDkP/wmYWn0U0sUwpb+Un0R9aN+Thg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=live.ca; dmarc=pass action=none header.from=live.ca; dkim=pass
  header.d=live.ca; arc=none
-Received: from BN8NAM12FT019.eop-nam12.prod.protection.outlook.com
- (2a01:111:e400:fc66::51) by
- BN8NAM12HT197.eop-nam12.prod.protection.outlook.com (2a01:111:e400:fc66::385)
+Received: from CO1NAM11FT009.eop-nam11.prod.protection.outlook.com
+ (2a01:111:e400:3861::44) by
+ CO1NAM11HT021.eop-nam11.prod.protection.outlook.com (2a01:111:e400:3861::265)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3000.11; Sat, 9 May
- 2020 01:34:44 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2979.27; Sat, 9 May
+ 2020 02:37:35 +0000
 Received: from BN6PR04MB0660.namprd04.prod.outlook.com
- (2a01:111:e400:fc66::49) by BN8NAM12FT019.mail.protection.outlook.com
- (2a01:111:e400:fc66::416) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3000.11 via Frontend
- Transport; Sat, 9 May 2020 01:34:44 +0000
-X-IncomingTopHeaderMarker: OriginalChecksum:D3D0BD23F8AD38415164C897CD7B9247A5EB6F568E4DEB138FB449DB98DEBD0E;UpperCasedChecksum:059D37F2A3F4A1A387B49EDA450D39FF8E59769650961E57C50C8618236AF017;SizeAsReceived:7738;Count:48
+ (2a01:111:e400:3861::45) by CO1NAM11FT009.mail.protection.outlook.com
+ (2a01:111:e400:3861::317) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2979.27 via Frontend
+ Transport; Sat, 9 May 2020 02:37:35 +0000
+X-IncomingTopHeaderMarker: OriginalChecksum:34C15B2C35B2784D102B3EBF50D381EA374E3F55A6B6407F86147F5EF2BE5EC0;UpperCasedChecksum:867142346C9EE753EF98CF937DBFD7593B66403849989B4AF008794EE37C9658;SizeAsReceived:9134;Count:49
 Received: from BN6PR04MB0660.namprd04.prod.outlook.com
  ([fe80::ad10:4127:4bc8:76fc]) by BN6PR04MB0660.namprd04.prod.outlook.com
  ([fe80::ad10:4127:4bc8:76fc%6]) with mapi id 15.20.2979.033; Sat, 9 May 2020
- 01:34:44 +0000
+ 02:37:35 +0000
+Subject: Re: [PATCH] phy: samsung: s5pv210-usb2: Add delay after reset
 From:   Jonathan Bakker <xc-racer2@live.ca>
-To:     kgene@kernel.org, krzk@kernel.org, gregkh@linuxfoundation.org,
-        jslaby@suse.com, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Jonathan Bakker <xc-racer2@live.ca>
-Subject: [PATCH] tty: serial: samsung: Correct clock selection logic
-Date:   Fri,  8 May 2020 18:34:33 -0700
-Message-ID: <BN6PR04MB06604E63833EA41837EBF77BA3A30@BN6PR04MB0660.namprd04.prod.outlook.com>
-X-Mailer: git-send-email 2.20.1
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ClientProxiedBy: CO2PR04CA0007.namprd04.prod.outlook.com
- (2603:10b6:102:1::17) To BN6PR04MB0660.namprd04.prod.outlook.com
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        linux-kernel@vger.kernel.org, s.nawrocki@samsung.com,
+        kamil@wypas.org, krzk@kernel.org, linux-samsung-soc@vger.kernel.org
+References: <BN6PR04MB06605D52502816E500683553A3D10@BN6PR04MB0660.namprd04.prod.outlook.com>
+ <979ae7cd-2648-c516-1465-3a1507d5fefb@ti.com>
+ <f8e8aa73-15bb-9bbd-d983-cba12528ba01@live.ca>
+Message-ID: <BN6PR04MB0660BFD80EEDC022EB1EA757A3A30@BN6PR04MB0660.namprd04.prod.outlook.com>
+Date:   Fri, 8 May 2020 19:37:33 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
+In-Reply-To: <f8e8aa73-15bb-9bbd-d983-cba12528ba01@live.ca>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MWHPR22CA0054.namprd22.prod.outlook.com
+ (2603:10b6:300:12a::16) To BN6PR04MB0660.namprd04.prod.outlook.com
  (2603:10b6:404:d9::21)
-X-Microsoft-Original-Message-ID: <20200509013433.23152-1-xc-racer2@live.ca>
+X-Microsoft-Original-Message-ID: <687ff76a-a233-684e-9ebe-2cf7742cbcd8@live.ca>
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from jon-hp-6570b.telus (2001:569:fb68:9c00:8067:f823:1e15:7520) by CO2PR04CA0007.namprd04.prod.outlook.com (2603:10b6:102:1::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2979.28 via Frontend Transport; Sat, 9 May 2020 01:34:43 +0000
-X-Mailer: git-send-email 2.20.1
-X-Microsoft-Original-Message-ID: <20200509013433.23152-1-xc-racer2@live.ca>
-X-TMN:  [NN/Ci17XNAwKoNPXso5hxFZpP2g50cHt4TsXayU35974VRbh31XZ/ItSSL84vS+8]
+Received: from [IPv6:2001:569:fb68:9c00:8067:f823:1e15:7520] (2001:569:fb68:9c00:8067:f823:1e15:7520) by MWHPR22CA0054.namprd22.prod.outlook.com (2603:10b6:300:12a::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2979.29 via Frontend Transport; Sat, 9 May 2020 02:37:34 +0000
+X-Microsoft-Original-Message-ID: <687ff76a-a233-684e-9ebe-2cf7742cbcd8@live.ca>
+X-TMN:  [lCnU9cw9uxs/00hb6ME6Db5e5nyzfPJ15l+zpPVH6KRXoUjK397EOucr1UEGgF+v]
 X-MS-PublicTrafficType: Email
-X-IncomingHeaderCount: 48
+X-IncomingHeaderCount: 49
 X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-Correlation-Id: 78b3340d-b96b-452d-59f6-08d7f3b926bc
-X-MS-TrafficTypeDiagnostic: BN8NAM12HT197:
+X-MS-Office365-Filtering-Correlation-Id: 8498a09c-4b45-4d22-302d-08d7f3c1ee89
+X-MS-TrafficTypeDiagnostic: CO1NAM11HT021:
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: S+Pmf+7X1j1nLgegg525J2+23iYcy2bhoHxH+EkC2ENEuS36A+dHlaKl+L/r2a5je2rG37sXbLxkR0w215OhBM0UKKp04P/s0wk3jwcy9hGo3M1Vge4l4nd5xjDKwqKhahvyoqrNBQ5M5b9dHXA4KfXbqT1bM1UOOpfNWTNeWOCOBshLsAXZlb9EYGUaOA76nZjJuun1WKmBTTQe2tW87Q==
+X-Microsoft-Antispam-Message-Info: HwnZWGp9rcI4xfhriWZMhu9yGASKwzVWLtSJ5Mlbu6Fp5zrQcwXYTAyZF93OYmVG7U3fB79EBuJJpytmNBQwH+AXyK/THehe0lO4mVQaGhoIeoB/SfTKT0GK70wBqvx5Bo2aVOwdDXA559d0xXBCg/3m+hs/QRlFBXTpIzWCnnKyciBpaLHzEqdqr4rQTcDXtJ2HCGjabMOgKkLwrHenVA==
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:0;SRV:;IPV:NLI;SFV:NSPM;H:BN6PR04MB0660.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:;DIR:OUT;SFP:1901;
-X-MS-Exchange-AntiSpam-MessageData: osNfQuONJHWs8koab4YCXiQIb3SnKhMK3W9431E2kJQRg+sFYCTBJJbSS+BrWYQwCVZN/+BEsywDEW5Bf/Dg8yq/4lOHipVOl0ZJ8eCrcWrH/z+zuzqateBKfPQLVNXhlFe9I6HHfFUumU3qoDh2nys89Ndyg6tH7szq/RW7yAf/LOn9UKRpv9xoLXr6AhG5E3eCcXnXno2nlNKa/mUQHw==
+X-MS-Exchange-AntiSpam-MessageData: ATCYN7Z7OfaPh+tmGMWeUOTug3utPZ7Q6MElwpS0Hm2Q1kllQVcBiGv0cIfIOx0Jb1FlrrXqUO7B02+d+XK2AmBnnNYNaSYl6A4YzKSpg48wNzda6pOkMQsdpFHG1OsycO19Ibuosx5340C7UlYGdXFc93M7t8TYv5mnx6Mbf8lWYoLnWbd6GJ3zSYgf4O10Blxqz+0V7jsHqAUqK9AoxA==
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 78b3340d-b96b-452d-59f6-08d7f3b926bc
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2020 01:34:44.6349
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8498a09c-4b45-4d22-302d-08d7f3c1ee89
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2020 02:37:35.6418
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
 X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
 X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8NAM12HT197
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1NAM11HT021
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Some variants of the samsung tty driver can pick which clock
-to use for their baud rate generation.  In the DT conversion,
-a default clock was selected to be used if a specific one wasn't
-assigned and then a comparison of which clock rate worked better
-was done.  Unfortunately, the comparison was implemented in such
-a way that only the default clock was ever actually compared.
-Fix this by iterating through all possible clocks, except when a
-specific clock has already been picked via clk_sel (which is
-only possible via board files).
+Hi Kishon,
 
-Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
----
- drivers/tty/serial/samsung_tty.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Is there anything else you (or someone else) needs from me?  I'd really appreciate getting USB working again on s5pv210 as without this patch it is entirely broken.
 
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index 73f951d65b93..9d2b4be44209 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -1281,14 +1281,14 @@ static unsigned int s3c24xx_serial_getclk(struct s3c24xx_uart_port *ourport,
- 	struct s3c24xx_uart_info *info = ourport->info;
- 	struct clk *clk;
- 	unsigned long rate;
--	unsigned int cnt, baud, quot, clk_sel, best_quot = 0;
-+	unsigned int cnt, baud, quot, best_quot = 0;
- 	char clkname[MAX_CLK_NAME_LENGTH];
- 	int calc_deviation, deviation = (1 << 30) - 1;
- 
--	clk_sel = (ourport->cfg->clk_sel) ? ourport->cfg->clk_sel :
--			ourport->info->def_clk_sel;
- 	for (cnt = 0; cnt < info->num_clks; cnt++) {
--		if (!(clk_sel & (1 << cnt)))
-+		/* Keep selected clock if provided */
-+		if (ourport->cfg->clk_sel &&
-+			!(ourport->cfg->clk_sel & (1 << cnt)))
- 			continue;
- 
- 		sprintf(clkname, "clk_uart_baud%d", cnt);
--- 
-2.20.1
+Thanks,
+Jonathan
 
+On 2020-04-28 2:50 p.m., Jonathan Bakker wrote:
+> Hi Kishon,
+> 
+> On 2020-04-27 5:40 a.m., Kishon Vijay Abraham I wrote:
+>> Hi Jonathan,
+>>
+>> On 4/25/2020 11:06 PM, Jonathan Bakker wrote:
+>>> The USB phy takes some time to reset, so make sure we give it to it. The
+>>> delay length was taken from the 4x12 phy driver.
+>>>
+>>> This manifested in issues with the DWC2 driver since commit fe369e1826b3
+>>> ("usb: dwc2: Make dwc2_readl/writel functions endianness-agnostic.")
+>>> where the endianness check would read the DWC ID as 0 due to the phy still
+>>> resetting, resulting in the wrong endian mode being chosen.
+>>>
+>>> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+>>> ---
+>>>  drivers/phy/samsung/phy-s5pv210-usb2.c | 4 ++++
+>>>  1 file changed, 4 insertions(+)
+>>>
+>>> diff --git a/drivers/phy/samsung/phy-s5pv210-usb2.c b/drivers/phy/samsung/phy-s5pv210-usb2.c
+>>> index 56a5083fe6f9..32be62e49804 100644
+>>> --- a/drivers/phy/samsung/phy-s5pv210-usb2.c
+>>> +++ b/drivers/phy/samsung/phy-s5pv210-usb2.c
+>>> @@ -139,6 +139,10 @@ static void s5pv210_phy_pwr(struct samsung_usb2_phy_instance *inst, bool on)
+>>>  		udelay(10);
+>>>  		rst &= ~rstbits;
+>>>  		writel(rst, drv->reg_phy + S5PV210_UPHYRST);
+>>> +		/* The following delay is necessary for the reset sequence to be
+>>> +		 * completed
+>>> +		 */
+>>> +		udelay(80);
+>>
+>> Please fix the following checkpatch check error.
+>> CHECK: usleep_range is preferred over udelay; see
+>> Documentation/timers/timers-howto.rst
+>> #151: FILE: drivers/phy/samsung/phy-s5pv210-usb2.c:145:
+>> +               udelay(80);
+>>
+>> total: 0 errors, 0 warnings, 1 checks, 10 lines checked
+> 
+> 
+> Unfortunately, this is an atomic code path (and hence why the other Samsung phy driver use udelay
+> in the same place). Changing to usleep_range brings up the following BUG:
+> 
+> BUG: scheduling while atomic: swapper/1/0x00000002
+> Modules linked in:
+> CPU: 0 PID: 1 Comm: swapper Not tainted 5.7.0-rc2-00001-gf9f8ac7cc48c-dirty #443
+> Hardware name: Samsung S5PC110/S5PV210-based board
+> [<c010c744>] (unwind_backtrace) from [<c010a114>] (show_stack+0x10/0x14)
+> [<c010a114>] (show_stack) from [<c0139f24>] (__schedule_bug+0x70/0x84)
+> [<c0139f24>] (__schedule_bug) from [<c073acc4>] (__schedule+0x38c/0x464)
+> [<c073acc4>] (__schedule) from [<c073ae3c>] (schedule+0xa0/0x138)
+> [<c073ae3c>] (schedule) from [<c073ee9c>] (schedule_hrtimeout_range_clock+0xd4/0x158)
+> [<c073ee9c>] (schedule_hrtimeout_range_clock) from [<c073ef38>] (schedule_hrtimeout_range+0x18/0x20)
+> [<c073ef38>] (schedule_hrtimeout_range) from [<c073e84c>] (usleep_range+0x68/0x8c)
+> [<c073e84c>] (usleep_range) from [<c03e2e50>] (s5pv210_power_on+0xbc/0xe4)
+> [<c03e2e50>] (s5pv210_power_on) from [<c03e2bf0>] (samsung_usb2_phy_power_on+0xec/0x16c)
+> [<c03e2bf0>] (samsung_usb2_phy_power_on) from [<c03e1e14>] (phy_power_on+0x8c/0xdc)
+> [<c03e1e14>] (phy_power_on) from [<c053ab4c>] (__dwc2_lowlevel_hw_enable+0xb8/0xcc)
+> [<c053ab4c>] (__dwc2_lowlevel_hw_enable) from [<c053ae80>] (dwc2_driver_probe+0x1e4/0x580)
+> [<c053ae80>] (dwc2_driver_probe) from [<c04b0e9c>] (platform_drv_probe+0x48/0x98)
+> [<c04b0e9c>] (platform_drv_probe) from [<c04af098>] (really_probe+0x1e0/0x344)
+> [<c04af098>] (really_probe) from [<c04af338>] (driver_probe_device+0x60/0x168)
+> [<c04af338>] (driver_probe_device) from [<c04af5e0>] (device_driver_attach+0x58/0x60)
+> [<c04af5e0>] (device_driver_attach) from [<c04af640>] (__driver_attach+0x58/0xcc)
+> [<c04af640>] (__driver_attach) from [<c04ad348>] (bus_for_each_dev+0x74/0xb4)
+> [<c04ad348>] (bus_for_each_dev) from [<c04ae510>] (bus_add_driver+0x1b4/0x1d4)
+> [<c04ae510>] (bus_add_driver) from [<c04afee0>] (driver_register+0x74/0x108)
+> [<c04afee0>] (driver_register) from [<c0101710>] (do_one_initcall+0x7c/0x1cc)
+> [<c0101710>] (do_one_initcall) from [<c0a00ed8>] (kernel_init_freeable+0x15c/0x1d4)
+> [<c0a00ed8>] (kernel_init_freeable) from [<c073a398>] (kernel_init+0x8/0x110)
+> [<c073a398>] (kernel_init) from [<c0100148>] (ret_from_fork+0x14/0x2c)
+> Exception stack(0xe745ffb0 to 0xe745fff8)
+> ffa0:                                     00000000 00000000 00000000 00000000
+> ffc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+> ffe0: 00000000 00000000 00000000 00000000 00000013 00000000
+> dwc2 ec000000.hsotg: dwc2_check_params: Invalid parameter besl=1
+> dwc2 ec000000.hsotg: dwc2_check_params: Invalid parameter g_np_tx_fifo_size=1024
+> dwc2 ec000000.hsotg: EPs: 16, dedicated fifos, 7808 entries in SPRAM
+> ------------[ cut here ]------------
+> kernel BUG at mm/vmalloc.c:2101!
+> Internal error: Oops - BUG: 0 [#1] PREEMPT ARM
+> Modules linked in:
+> CPU: 0 PID: 1 Comm: swapper Tainted: G        W         5.7.0-rc2-00001-gf9f8ac7cc48c-dirty #443
+> Hardware name: Samsung S5PC110/S5PV210-based board
+> PC is at __get_vm_area_node+0x174/0x178
+> LR is at 0xe745e000
+> pc : [<c01cf678>]    lr : [<e745e000>]    psr: 20000013
+> sp : e745fc60  ip : 001fff00  fp : 00000038
+> r10: e6cb9880  r9 : 00000001  r8 : c0161760
+> r7 : e6cb98c0  r6 : 00000cc0  r5 : 00000247  r4 : e7fd2800
+> r3 : e8800000  r2 : 00000010  r1 : ffffffff  r0 : 00001000
+> Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+> Control: 10c5387d  Table: 30004019  DAC: 00000051
+> Process swapper (pid: 1, stack limit = 0x(ptrval))
+> Stack: (0xe745fc60 to 0xe7460000)
+> fc60: ffffe000 c014d04c c09082c0 e7fd2800 00000247 e6cb98c0 e6cb98c0 c0161760
+> fc80: 00000000 c01cf788 ff800000 ffffffff 00000cc0 c0161760 e7fd2800 c0162be4
+> fca0: e7fd2800 00001000 00000247 c0162cd4 00000001 e7fd2800 00001000 00000247
+> fcc0: ffffffff c010e384 e757c810 c0b03008 00000cc0 e76f3c48 ffffffff c010e3e4
+> fce0: e745fd04 c0161760 00000001 e76f3c48 ffffffff c010e510 e7401c00 00000000
+> fd00: c0166698 00000000 e757c810 00001000 00000cc0 00000247 c0161760 00000001
+> fd20: 00000000 57579938 ffffe000 00000000 c0b03008 e757c810 00000008 00000cc0
+> fd40: 00000000 e76f3c48 c0a27830 c010e6a8 00000247 00000000 00000000 c0161760
+> fd60: c010e668 c0161760 00000000 c01e7e94 e76f3840 57579938 e6cbd1c0 00000cc0
+> fd80: 00000000 00000008 e757c810 e76f3c48 00000000 c016182c 00000000 00000010
+> fda0: e6cbd100 e76f3840 00000000 00000000 00000010 e757c810 c0b20994 c054176c
+> fdc0: 00000000 00000000 c0b03008 e757c800 00000000 c0b03008 e757c800 e757c810
+> fde0: e76f3840 c053afb0 00000080 e757a640 e76f3840 57579938 e757a600 57579938
+> fe00: e757c810 e757c810 00000000 c0b20994 00000000 00000000 c0b20994 c04b0e9c
+> fe20: c0b685f8 e757c810 c0b685fc 00000000 00000000 c04af098 e757c810 c0b20994
+> fe40: c0b20994 c04af5e8 00000000 000000a9 c0a27850 c04af338 c0a27850 c05d8e30
+> fe60: a0000013 e757c810 00000000 c0b20994 c04af5e8 00000000 000000a9 c0a27850
+> fe80: c0a27830 c04af5e0 00000000 c0b20994 e757c810 c04af640 e75705b0 c0b03008
+> fea0: c0b20994 c04ad348 000000a9 e743834c e75705b0 57579938 c0b1d920 c0b20994
+> fec0: e6cb2c00 c0b1d920 00000000 c04ae510 c083e4dc ffffe000 c0b20994 c0b20994
+> fee0: c0b03008 ffffe000 c0a1b950 c04afee0 c0b2fb80 c0b03008 ffffe000 c0101710
+> ff00: e74385d6 c0134194 c0984550 c0919800 00000000 00000006 00000006 c08cf26c
+> ff20: 00000000 c0b03008 c08d8c7c c08cf2e0 00000000 e74385bf 00000000 57579938
+> ff40: 00000000 c0b2fb80 00000007 57579938 c0b2fb80 c0a33094 c0984550 00000007
+> ff60: e7438540 c0a00ed8 00000006 00000006 00000000 c0a003f0 00000000 c0a003f0
+> ff80: 00000000 00000000 c073a390 00000000 00000000 00000000 00000000 00000000
+> ffa0: 00000000 c073a398 00000000 c0100148 00000000 00000000 00000000 00000000
+> ffc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+> ffe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
+> [<c01cf678>] (__get_vm_area_node) from [<c01cf788>] (get_vm_area_caller+0x48/0x50)
+> [<c01cf788>] (get_vm_area_caller) from [<c0162be4>] (__dma_common_pages_remap+0x1c/0x50)
+> [<c0162be4>] (__dma_common_pages_remap) from [<c0162cd4>] (dma_common_contiguous_remap+0x7c/0xbc)
+> [<c0162cd4>] (dma_common_contiguous_remap) from [<c010e384>] (__alloc_remap_buffer+0x50/0x88)
+> [<c010e384>] (__alloc_remap_buffer) from [<c010e3e4>] (remap_allocator_alloc+0x28/0x30)
+> [<c010e3e4>] (remap_allocator_alloc) from [<c010e510>] (__dma_alloc+0x124/0x240)
+> [<c010e510>] (__dma_alloc) from [<c010e6a8>] (arm_dma_alloc+0x40/0x48)
+> [<c010e6a8>] (arm_dma_alloc) from [<c0161760>] (dma_alloc_attrs+0x9c/0x110)
+> [<c0161760>] (dma_alloc_attrs) from [<c016182c>] (dmam_alloc_attrs+0x58/0x98)
+> [<c016182c>] (dmam_alloc_attrs) from [<c054176c>] (dwc2_gadget_init+0x31c/0x3fc)
+> [<c054176c>] (dwc2_gadget_init) from [<c053afb0>] (dwc2_driver_probe+0x314/0x580)
+> [<c053afb0>] (dwc2_driver_probe) from [<c04b0e9c>] (platform_drv_probe+0x48/0x98)
+> [<c04b0e9c>] (platform_drv_probe) from [<c04af098>] (really_probe+0x1e0/0x344)
+> [<c04af098>] (really_probe) from [<c04af338>] (driver_probe_device+0x60/0x168)
+> [<c04af338>] (driver_probe_device) from [<c04af5e0>] (device_driver_attach+0x58/0x60)
+> [<c04af5e0>] (device_driver_attach) from [<c04af640>] (__driver_attach+0x58/0xcc)
+> [<c04af640>] (__driver_attach) from [<c04ad348>] (bus_for_each_dev+0x74/0xb4)
+> [<c04ad348>] (bus_for_each_dev) from [<c04ae510>] (bus_add_driver+0x1b4/0x1d4)
+> [<c04ae510>] (bus_add_driver) from [<c04afee0>] (driver_register+0x74/0x108)
+> [<c04afee0>] (driver_register) from [<c0101710>] (do_one_initcall+0x7c/0x1cc)
+> [<c0101710>] (do_one_initcall) from [<c0a00ed8>] (kernel_init_freeable+0x15c/0x1d4)
+> [<c0a00ed8>] (kernel_init_freeable) from [<c073a398>] (kernel_init+0x8/0x110)
+> [<c073a398>] (kernel_init) from [<c0100148>] (ret_from_fork+0x14/0x2c)
+> Exception stack(0xe745ffb0 to 0xe745fff8)
+> ffa0:                                     00000000 00000000 00000000 00000000
+> ffc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+> ffe0: 00000000 00000000 00000000 00000000 00000013 00000000
+> Code: eb005d92 e1a00008 e28dd00c e8bd83f0 (e7f001f2) 
+> ---[ end trace 4ae52726a37c07c2 ]---
+> Kernel panic - not syncing: Fatal exception in interrupt
+> ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
+> 
+>>
+>> Thanks
+>> Kishon
+>>
+> 
+> 
+> Thanks,
+> Jonathan
+> 
