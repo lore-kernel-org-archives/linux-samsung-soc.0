@@ -2,123 +2,153 @@ Return-Path: <SRS0=3icv=6Y=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3258C54E49
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 10 May 2020 10:24:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBBACC54E8A
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 10 May 2020 15:48:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 748FA218AC
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 10 May 2020 10:24:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589106263;
-	bh=nyOHSQ2FNu3ylsodACsA1C8WkrdfFaSaWV5/EwOdWdQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=qbGS52O34WuIosxsgt27Z2N7oc6B3CIHUUe5Moyka/U/05x0PZsfkIVbfn9m/l/6S
-	 nkxlzuShTUyWsWUOLSlF8I28ZT3rrykkLZdxChKChUm1hs7QGNWA8DTUz6x/RnZ3OD
-	 jyi7nwh1TS90aPU6kobhmnqoN8mVZwH4516TUO24=
+	by mail.kernel.org (Postfix) with ESMTP id BE56020820
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 10 May 2020 15:48:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726630AbgEJKYX (ORCPT
+        id S1726104AbgEJPss (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 10 May 2020 06:24:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42536 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725994AbgEJKYW (ORCPT
+        Sun, 10 May 2020 11:48:48 -0400
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:60344 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728146AbgEJPsr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 10 May 2020 06:24:22 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE3AC207DD;
-        Sun, 10 May 2020 10:24:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589106262;
-        bh=nyOHSQ2FNu3ylsodACsA1C8WkrdfFaSaWV5/EwOdWdQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=u2svKgegrkGdy/DBfzCb4ftBgLueIc34lm0CABqR+jdB5hlYIySgw+kFP7S0Oi8OV
-         kQTG2r+jsWUV6OSmbNtdrq2ZsjNwUSmKizar78OCPGGbcZYGnK5/EmXhRyYGSNMijW
-         zBBsLo7rzXkkNA42IKXVSUxqSweYh4rl9sKxW/qI=
-Date:   Sun, 10 May 2020 11:24:17 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Jonathan Bakker <xc-racer2@live.ca>
-Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        kgene@kernel.org, krzk@kernel.org, cw00.choi@samsung.com,
-        kstewart@linuxfoundation.org, mpe@ellerman.id.au,
-        m.szyprowski@samsung.com, swboyd@chromium.org, tglx@linutronix.de,
-        linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: Add scaling support to exynos adc driver
-Message-ID: <20200510112417.1e54d66e@archlinux>
-In-Reply-To: <BN6PR04MB066058A68D6471E7F6AFCFF7A3A20@BN6PR04MB0660.namprd04.prod.outlook.com>
-References: <BN6PR04MB066058A68D6471E7F6AFCFF7A3A20@BN6PR04MB0660.namprd04.prod.outlook.com>
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sun, 10 May 2020 11:48:47 -0400
+Received: from localhost.localdomain ([92.148.185.155])
+        by mwinf5d69 with ME
+        id d3oc220073MbWjg033ocWy; Sun, 10 May 2020 17:48:44 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 10 May 2020 17:48:44 +0200
+X-ME-IP: 92.148.185.155
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        airlied@linux.ie, daniel@ffwll.ch, kgene@kernel.org,
+        krzk@kernel.org
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] drm/exynos: dsi: Remove bridge node reference in error handling path in probe function
+Date:   Sun, 10 May 2020 17:48:33 +0200
+Message-Id: <20200510154833.238320-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri,  8 May 2020 14:14:00 -0700
-Jonathan Bakker <xc-racer2@live.ca> wrote:
+'exynos_dsi_parse_dt()' takes a reference to 'dsi->in_bridge_node'.
+This must be released in the error handling path.
 
-> Currently the driver only exposes the raw counts.  As we
-> have the regulator voltage and the maximum value (stored in
-> the data mask), we can trivially produce a scaling fraction
-> of voltage / max value.
-> 
-> This assumes that the regulator voltage is in fact the max
-> voltage, which appears to be the case for all mainline dts
-> and cross referenced with the public Exynos4412 and S5PV210
-> datasheets.
-> 
-> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+This patch is similar to commit 70505c2ef94b ("drm/exynos: dsi: Remove bridge node reference in removal")
+which fixed the issue in the remove function.
 
-Seems reasonable to me. I'd like an exynos Ack though before applying.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+A Fixes tag could be required, but I've not been able to figure out which
+one to use.
 
-thanks,
+I think that moving 'exynos_dsi_parse_dt()' in the probe could simplify
+the error handling in the probe function. However, I don't know this code
+well enough to play this game. So better safe than sorry.
+So I've kept the logic in place and added goto everywhere. :(
+---
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 28 ++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 8 deletions(-)
 
-Jonathan
-
-
-> ---
->  drivers/iio/adc/exynos_adc.c | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-> index 22131a677445..9d29b56805cd 100644
-> --- a/drivers/iio/adc/exynos_adc.c
-> +++ b/drivers/iio/adc/exynos_adc.c
-> @@ -531,8 +531,19 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
->  	unsigned long timeout;
->  	int ret;
->  
-> -	if (mask != IIO_CHAN_INFO_RAW)
-> +	if (mask == IIO_CHAN_INFO_SCALE) {
-> +		ret = regulator_get_voltage(info->vdd);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		/* Regulator voltage is in uV, but need mV */
-> +		*val = ret / 1000;
-> +		*val2 = info->data->mask;
-> +
-> +		return IIO_VAL_FRACTIONAL;
-> +	} else if (mask != IIO_CHAN_INFO_RAW) {
->  		return -EINVAL;
-> +	}
->  
->  	mutex_lock(&indio_dev->mlock);
->  	reinit_completion(&info->completion);
-> @@ -683,6 +694,7 @@ static const struct iio_info exynos_adc_iio_info = {
->  	.channel = _index,				\
->  	.address = _index,				\
->  	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),	\
-> +	.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SCALE),	\
->  	.datasheet_name = _id,				\
->  }
->  
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 902938d2568f..2aa74c3dc733 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1770,14 +1770,17 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 	if (ret) {
+ 		if (ret != -EPROBE_DEFER)
+ 			dev_info(dev, "failed to get regulators: %d\n", ret);
+-		return ret;
++		goto err_put_in_bridge_node;
+ 	}
+ 
+ 	dsi->clks = devm_kcalloc(dev,
+ 			dsi->driver_data->num_clks, sizeof(*dsi->clks),
+ 			GFP_KERNEL);
+-	if (!dsi->clks)
+-		return -ENOMEM;
++	if (!dsi->clks) {
++		ret = -ENOMEM;
++		goto err_put_in_bridge_node;
++	}
++
+ 
+ 	for (i = 0; i < dsi->driver_data->num_clks; i++) {
+ 		dsi->clks[i] = devm_clk_get(dev, clk_names[i]);
+@@ -1791,7 +1794,8 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 
+ 			dev_info(dev, "failed to get the clock: %s\n",
+ 					clk_names[i]);
+-			return PTR_ERR(dsi->clks[i]);
++			ret = PTR_ERR(dsi->clks[i]);
++			goto err_put_in_bridge_node;
+ 		}
+ 	}
+ 
+@@ -1799,19 +1803,22 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 	dsi->reg_base = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(dsi->reg_base)) {
+ 		dev_err(dev, "failed to remap io region\n");
+-		return PTR_ERR(dsi->reg_base);
++		ret = PTR_ERR(dsi->reg_base);
++		goto err_put_in_bridge_node;
+ 	}
+ 
+ 	dsi->phy = devm_phy_get(dev, "dsim");
+ 	if (IS_ERR(dsi->phy)) {
+ 		dev_info(dev, "failed to get dsim phy\n");
+-		return PTR_ERR(dsi->phy);
++		ret = PTR_ERR(dsi->phy);
++		goto err_put_in_bridge_node;
+ 	}
+ 
+ 	dsi->irq = platform_get_irq(pdev, 0);
+ 	if (dsi->irq < 0) {
+ 		dev_err(dev, "failed to request dsi irq resource\n");
+-		return dsi->irq;
++		ret = dsi->irq;
++		goto err_put_in_bridge_node;
+ 	}
+ 
+ 	irq_set_status_flags(dsi->irq, IRQ_NOAUTOEN);
+@@ -1820,7 +1827,7 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 					dev_name(dev), dsi);
+ 	if (ret) {
+ 		dev_err(dev, "failed to request dsi irq\n");
+-		return ret;
++		goto err_put_in_bridge_node;
+ 	}
+ 
+ 	platform_set_drvdata(pdev, &dsi->encoder);
+@@ -1828,6 +1835,11 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 	pm_runtime_enable(dev);
+ 
+ 	return component_add(dev, &exynos_dsi_component_ops);
++
++err_put_in_bridge_node:
++	of_node_put(dsi->in_bridge_node);
++
++	return ret;
+ }
+ 
+ static int exynos_dsi_remove(struct platform_device *pdev)
+-- 
+2.25.1
 
