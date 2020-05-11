@@ -2,96 +2,111 @@ Return-Path: <SRS0=fajT=6Z=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19D59C38A2A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 May 2020 03:13:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FA8C54E8E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 May 2020 07:42:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EAE6C208CA
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 May 2020 03:13:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FWCfXFoF"
+	by mail.kernel.org (Postfix) with ESMTP id 41D5A208DB
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 May 2020 07:42:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1589182963;
+	bh=FJcK6HYgmWFsakci+77EzjxC0EBy2+zIQXMTQsRo66w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=2cNKjUSZDNNJ2W06vc0+ZclafolQjioQvaDj76k80tDqyYG0EDo+qLAhnNg2aUuZd
+	 +zRMPBSNqDSo0e7Mkf1UB4RKX92ESwrYTPvWSi3wFMhCGMS0ODoW6WZyYQfFaIIOfy
+	 0Dl32C6Laaw84ij6CYfuqP9b7lmQ2GSzASEqg25o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728367AbgEKDNO (ORCPT
+        id S1728501AbgEKHmj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 10 May 2020 23:13:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47362 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727094AbgEKDNN (ORCPT
+        Mon, 11 May 2020 03:42:39 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:34707 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725790AbgEKHmi (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 10 May 2020 23:13:13 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA8DFC061A0C;
-        Sun, 10 May 2020 20:13:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=F8LV7KfEX6gF+p15zdl3JPzohKhz2bL8kbvxawtZGio=; b=FWCfXFoFFMlrl2qXVyz9bKX5qq
-        yfPNsmn9pKW3iOtJsvq1PoluVfyc+J50fKQC6tVMFuUL3wXcb9RPM2T7Nc/mzQ703m4CU8AIwDRxA
-        JWsTaZC6iaQVCDWhxtpdbSVlt+zvEzlpZfA4UF1fVbt5vBhjNIJ6dhpapmbDorSfn8WJAqd/dK2mQ
-        H19SMBref3payLuB5/tvXB+hu9lRA3Utr+GWBbvYEN3YDL2AaNOjL7MQBahNFvp4ZzKdyrJ0USjJq
-        9H/uamPHOujNAgDpHH0zOMBPYySK13DrTWK+cWX1XA1379bFM2e4yDIO9f4PA7LOAO9xihoUN93x2
-        mbxX3ymA==;
-Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jXysN-0000Bd-BT; Mon, 11 May 2020 03:13:07 +0000
-Subject: Re: [PATCH v8 09/10] scsi: ufs-exynos: add UFS host support for
- Exynos SoCs
-To:     Alim Akhtar <alim.akhtar@samsung.com>, robh@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-scsi@vger.kernel.org,
-        krzk@kernel.org, avri.altman@wdc.com, martin.petersen@oracle.com,
-        kwmad.kim@samsung.com, stanley.chu@mediatek.com,
-        cang@codeaurora.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20200511020031.25730-1-alim.akhtar@samsung.com>
- <CGME20200511021409epcas5p3b78fe59669f13ffae481b57a944da675@epcas5p3.samsung.com>
- <20200511020031.25730-10-alim.akhtar@samsung.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <80a387eb-2325-caab-6754-6d94daeeabac@infradead.org>
-Date:   Sun, 10 May 2020 20:13:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Mon, 11 May 2020 03:42:38 -0400
+Received: by mail-ed1-f66.google.com with SMTP id g16so7092435eds.1;
+        Mon, 11 May 2020 00:42:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/gXH+5V1OhGf0lDZmtXQexZA4f2X1Oj6FaM9kDcTW/I=;
+        b=ZeZp81hwEkHzXkM14meH3JDyv90Ch65oWXzz64DzX9gOUkncpOVcllBjSqsOnoWNjo
+         Nk6Srr5SJ+7gJrD8Vf0q2FLACQlCl7bH6YJufWpssG+dx6juVRIYWi4I1z+PpET1lFnU
+         pXp6Q/4Jh/0niE1fgaXjFm8sXfXsRG7PxUi91riLjrHHtq5P8sazeoE+7rphMec2pKTO
+         E2aeCNsNEJnK5Jz7oI3oUC3NcBtlKBaFhOhb07wLCeDVUCgeHLXZlXbu5iqC8LLpWQ/J
+         ZtT7sMcUgAkUbVmRN9LISrqM+lCk9JKWPRHVXuDpwT+MjFfRNJPy+8nhnc12VZdW40we
+         uFVQ==
+X-Gm-Message-State: AGi0PuZCW9LGR9hHNFDQlDHwjmz0MR7Sp33CmhgVTe1GVze3F1XWu0Ho
+        lLRdAb6EkKEIi+Vs1v/xvy0=
+X-Google-Smtp-Source: APiQypKNXJxBqeWKUcQZCLy5hhnnh16d804wT763ceEEJlpi/zqQEfidD1ZPGObtTh2DAv0fOSjHSw==
+X-Received: by 2002:a05:6402:1d23:: with SMTP id dh3mr12214214edb.349.1589182956149;
+        Mon, 11 May 2020 00:42:36 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.237])
+        by smtp.googlemail.com with ESMTPSA id g20sm1194769ejb.41.2020.05.11.00.42.33
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 May 2020 00:42:35 -0700 (PDT)
+Date:   Mon, 11 May 2020 09:42:32 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Jonathan Bakker <xc-racer2@live.ca>, knaack.h@gmx.de,
+        lars@metafoo.de, pmeerw@pmeerw.net, kgene@kernel.org,
+        cw00.choi@samsung.com, kstewart@linuxfoundation.org,
+        mpe@ellerman.id.au, m.szyprowski@samsung.com, swboyd@chromium.org,
+        tglx@linutronix.de, linux-iio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: Add scaling support to exynos adc driver
+Message-ID: <20200511074232.GA7134@kozik-lap>
+References: <BN6PR04MB066058A68D6471E7F6AFCFF7A3A20@BN6PR04MB0660.namprd04.prod.outlook.com>
+ <20200510112417.1e54d66e@archlinux>
 MIME-Version: 1.0
-In-Reply-To: <20200511020031.25730-10-alim.akhtar@samsung.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20200510112417.1e54d66e@archlinux>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 5/10/20 7:00 PM, Alim Akhtar wrote:
-> diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
-> index e2005aeddc2d..cc7e29c8c24f 100644
-> --- a/drivers/scsi/ufs/Kconfig
-> +++ b/drivers/scsi/ufs/Kconfig
-> @@ -160,3 +160,15 @@ config SCSI_UFS_BSG
->  
->  	  Select this if you need a bsg device node for your UFS controller.
->  	  If unsure, say N.
-> +
-> +config SCSI_UFS_EXYNOS
-> +	bool "EXYNOS specific hooks to UFS controller platform driver"
-> +	depends on SCSI_UFSHCD_PLATFORM && ARCH_EXYNOS || COMPILE_TEST
-
-Since && has higher precedence than ||, I am thinking that this should be
-
-	depends on SCSI_UFSHCD_PLATFORM && (ARCH_EXYNOS || COMPILE_TEST)
-
-> +	select PHY_SAMSUNG_UFS
-> +	help
-> +	  This selects the EXYNOS specific additions to UFSHCD platform driver.
-> +	  UFS host on EXYNOS includes HCI and UNIPRO layer, and associates with
-> +	  UFS-PHY driver.
-> +
-> +	  Select this if you have UFS host controller on EXYNOS chipset.
-> +	  If unsure, say N.
+On Sun, May 10, 2020 at 11:24:17AM +0100, Jonathan Cameron wrote:
+> On Fri,  8 May 2020 14:14:00 -0700
+> Jonathan Bakker <xc-racer2@live.ca> wrote:
+> 
+> > Currently the driver only exposes the raw counts.  As we
+> > have the regulator voltage and the maximum value (stored in
+> > the data mask), we can trivially produce a scaling fraction
+> > of voltage / max value.
+> > 
+> > This assumes that the regulator voltage is in fact the max
+> > voltage, which appears to be the case for all mainline dts
+> > and cross referenced with the public Exynos4412 and S5PV210
+> > datasheets.
+> > 
+> > Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+> 
+> Seems reasonable to me. I'd like an exynos Ack though before applying.
 
 
--- 
-~Randy
+It's correct, at least with ARMv7 Exynos datasheets
 
+The few ARMv8 Exynos chips are silent about the voltage levels. The
+Exynos 7 DTS board in mainline kernel does not have regulator but it
+looks clearly like mistake.
+
+I think they behave the same, so for Exynos:
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Best regards,
+Krzysztof
+
+> thanks,
+> 
+> Jonathan
+> 
+> 
