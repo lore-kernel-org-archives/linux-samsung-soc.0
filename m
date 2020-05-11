@@ -2,91 +2,125 @@ Return-Path: <SRS0=fajT=6Z=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9E6BC47255
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 May 2020 08:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E40B3C47255
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 May 2020 10:08:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CAC3208DB
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 May 2020 08:34:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C25362082E
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 May 2020 10:08:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589186044;
-	bh=HK8Ij0xiNrB/Gl8FM5rFEArqdCz320rGYDH4m1F1yqo=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=lJiaHqnYG1sPUF1RaEIIqed3w2Gpp15540yUJ8O8OPtauztA+d+0ihoJOENZY8vKf
-	 3KdD/5UPnv9TQOdoA6pVnNry7YNO/GhExiz8hmVoo+HpHV3sCz0q5lOWYHvX/WYVOM
-	 JqvG7geKnze5i6/IISr73hnhCoCmWunnz6eWDZic=
+	s=default; t=1589191722;
+	bh=WtEq/1kpgVLewTDkwfFKbHjTtwrkAeHhRFFbWBnnn6I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=GBwFT/NeTjxP6ZRqfpLk5qysWrLQmGKkh5TIsQSw3Oj0rQ7T/AHh+NC484F7DY9Q2
+	 9u691/7ohklAeuCYBMBw/6032fNZWb7SHZ9MLL2tZlZQCY//XgoTB8QK+hbJPTKnb4
+	 11G50j9ugZP++JSprxUZ78hbfc64NCE/RfWlARlk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728638AbgEKIeE (ORCPT
+        id S1729211AbgEKKIm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 11 May 2020 04:34:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32810 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728344AbgEKIeE (ORCPT
+        Mon, 11 May 2020 06:08:42 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:42311 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725983AbgEKKIm (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 11 May 2020 04:34:04 -0400
-Received: from kozik-lap.mshome.net (unknown [194.230.155.237])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62D2120720;
-        Mon, 11 May 2020 08:34:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589186043;
-        bh=HK8Ij0xiNrB/Gl8FM5rFEArqdCz320rGYDH4m1F1yqo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=VaCZI3/hNdtc35fu2VhsYjcpUUQrspf1hVeygY0z3HbMsD0jF7bNNgLEbKdMOXshM
-         p0r/wmmO4EZRVgfAV6HDb9GVBnLgtYb3O8Z9hbnDSCSrGmzPd6gSF3P9wsqYIO7Olb
-         xdC0yU09Tsp0pZ4YNvsOR42tbAdYaqmlI0ePseOQ=
+        Mon, 11 May 2020 06:08:42 -0400
+Received: by mail-ed1-f65.google.com with SMTP id s10so7421038edy.9;
+        Mon, 11 May 2020 03:08:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ADM8r+B0dzyP5A/vqyNmonnjvaPcrODBmZPyMqMMxIs=;
+        b=qwcJ/U4lMnxfhStkH1TeBu1nnGL/VamUIPI6uUaTqGgUn0w7hZ4ovPOHFR7Ee0GRqh
+         8aum25vzSOgS6GWJhlNKm7Orn2BdSq7VcGYZJw0xddzStZylWAMXIjLcpa+Rykkf3lJq
+         z378MI3yjLb4rzqfQNtW4GcfjS/8giGCHfFfvtNCW+66oQ3y6ZRx18DR3MVHQBqiqask
+         Y2+c5G3KLnKqmkHlsSzjEl3GCCp6VPSZ1DIv0xSRvch+u5g0vneXHBWYsAxZGxSV1Ig2
+         zNST5BafTWPyc8Poy3r8rmc13QG5JpajmW8QOMz+s1ZVyxarri0pJxLzXL4ofao7mwZa
+         aP+w==
+X-Gm-Message-State: AGi0PuYSNg2M7CI1jFMj9Mwzy3wA7he6JUv1S+XD17eDhY8JNVMshxdO
+        7+D/kh9NsTDziCPzYuhLNUF8aXvK
+X-Google-Smtp-Source: APiQypIIjKKjypDAYbOFH4MiQWndpu/est9zg63nnHoe6ueUE/9p66tdn9yO2ilqbrvMJLoHMfCWHw==
+X-Received: by 2002:a05:6402:28e:: with SMTP id l14mr12321849edv.184.1589191719680;
+        Mon, 11 May 2020 03:08:39 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.237])
+        by smtp.googlemail.com with ESMTPSA id ga1sm1242231ejb.65.2020.05.11.03.08.38
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 May 2020 03:08:39 -0700 (PDT)
+Date:   Mon, 11 May 2020 12:08:36 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH] iio: adc: exynos: Simplify Exynos7-specific init
-Date:   Mon, 11 May 2020 10:33:48 +0200
-Message-Id: <20200511083348.7577-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
+To:     Jonathan Bakker <xc-racer2@live.ca>
+Cc:     kgene@kernel.org, gregkh@linuxfoundation.org, jslaby@suse.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tty: serial: samsung: Correct clock selection logic
+Message-ID: <20200511100836.GA16828@kozik-lap>
+References: <BN6PR04MB06604E63833EA41837EBF77BA3A30@BN6PR04MB0660.namprd04.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <BN6PR04MB06604E63833EA41837EBF77BA3A30@BN6PR04MB0660.namprd04.prod.outlook.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The Exynos7-specific code bits in ADC driver do not play with PHY:
-the field exynos_adc_data.needs_adc_phy is not set in exynos7_adc_data
-instance.  Therefore the initialization code does not have to check if
-it is true.
+On Fri, May 08, 2020 at 06:34:33PM -0700, Jonathan Bakker wrote:
+> Some variants of the samsung tty driver can pick which clock
+> to use for their baud rate generation.  In the DT conversion,
+> a default clock was selected to be used if a specific one wasn't
+> assigned and then a comparison of which clock rate worked better
+> was done.  Unfortunately, the comparison was implemented in such
+> a way that only the default clock was ever actually compared.
+> Fix this by iterating through all possible clocks, except when a
+> specific clock has already been picked via clk_sel (which is
+> only possible via board files).
+> 
+> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+> ---
+>  drivers/tty/serial/samsung_tty.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+> index 73f951d65b93..9d2b4be44209 100644
+> --- a/drivers/tty/serial/samsung_tty.c
+> +++ b/drivers/tty/serial/samsung_tty.c
+> @@ -1281,14 +1281,14 @@ static unsigned int s3c24xx_serial_getclk(struct s3c24xx_uart_port *ourport,
+>  	struct s3c24xx_uart_info *info = ourport->info;
+>  	struct clk *clk;
+>  	unsigned long rate;
+> -	unsigned int cnt, baud, quot, clk_sel, best_quot = 0;
+> +	unsigned int cnt, baud, quot, best_quot = 0;
+>  	char clkname[MAX_CLK_NAME_LENGTH];
+>  	int calc_deviation, deviation = (1 << 30) - 1;
+>  
+> -	clk_sel = (ourport->cfg->clk_sel) ? ourport->cfg->clk_sel :
+> -			ourport->info->def_clk_sel;
+>  	for (cnt = 0; cnt < info->num_clks; cnt++) {
+> -		if (!(clk_sel & (1 << cnt)))
+> +		/* Keep selected clock if provided */
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Makes sense and good catch.
 
----
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Only build tested.
----
- drivers/iio/adc/exynos_adc.c | 3 ---
- 1 file changed, 3 deletions(-)
+I wonder about the s3c24xx_serial_enable_baudclk() which has similar
+pattern - is there
+testing only def_clk_sel on purpose?
 
-diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-index 22131a677445..219c8eb32d16 100644
---- a/drivers/iio/adc/exynos_adc.c
-+++ b/drivers/iio/adc/exynos_adc.c
-@@ -449,9 +449,6 @@ static void exynos_adc_exynos7_init_hw(struct exynos_adc *info)
- {
- 	u32 con1, con2;
- 
--	if (info->data->needs_adc_phy)
--		regmap_write(info->pmu_map, info->data->phy_offset, 1);
--
- 	con1 = ADC_V2_CON1_SOFT_RESET;
- 	writel(con1, ADC_V2_CON1(info->regs));
- 
--- 
-2.17.1
+Best regards,
+Krzysztof
 
+> +		if (ourport->cfg->clk_sel &&
+> +			!(ourport->cfg->clk_sel & (1 << cnt)))
+>  			continue;
+>  
+>  		sprintf(clkname, "clk_uart_baud%d", cnt);
+> -- 
+> 2.20.1
+> 
