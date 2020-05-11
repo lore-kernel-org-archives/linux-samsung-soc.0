@@ -2,61 +2,61 @@ Return-Path: <SRS0=fajT=6Z=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D37C8C38A2A
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 May 2020 02:13:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39AF7C54E8B
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 May 2020 02:14:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A993A206D7
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 May 2020 02:13:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 109DA206D9
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 11 May 2020 02:14:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="SNQkpwmA"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="j/N0e4ZJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729328AbgEKCNw (ORCPT
+        id S1729431AbgEKCN7 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 10 May 2020 22:13:52 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:33764 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729220AbgEKCNv (ORCPT
+        Sun, 10 May 2020 22:13:59 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:52035 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729327AbgEKCN6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 10 May 2020 22:13:51 -0400
+        Sun, 10 May 2020 22:13:58 -0400
 Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200511021348epoutp049802fccddf6def6100497429ee8f1392~N14l3Ff-L1420614206epoutp04M
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 May 2020 02:13:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200511021348epoutp049802fccddf6def6100497429ee8f1392~N14l3Ff-L1420614206epoutp04M
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200511021355epoutp031dbed344b74c33c3905525de7fb32399~N14rzxK7f2197321973epoutp03j
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 May 2020 02:13:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200511021355epoutp031dbed344b74c33c3905525de7fb32399~N14rzxK7f2197321973epoutp03j
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1589163228;
-        bh=59ChBBALtCV0OHCYik7G7Vhyml1OCuFRXmuIWrOExQs=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=SNQkpwmA8V++2sFwgeiwUYAplzrpWGDeh3FQtrQ95hDh445591WF3QPQUlKAws0gw
-         APYRp8yiyD6S2QsOGQFfw2jllf/95y2mLsKOf2jWF75Z1GavwWc2Vt1ixo0W6mPjec
-         AH21QUntro08jLyciqFbwMMEnlngfVmzwzlVkOeY=
+        s=mail20170921; t=1589163235;
+        bh=kDIy4u6dKypJDeZVrGE9ZKceZgeyPXJh8PvB97xxnQM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=j/N0e4ZJOxdfce1QxDUkeKwgvZ82q3uEcyVKOoK5bCXp4FPaVxrQZzgvG3kZIbUGC
+         3OmCVzGH4B62qRf5V0AIcI2YxRIe0thmS6k4EWJLOeruyg6CLFebkCVniBhsaNNiBi
+         lSJrNS27Nhi0Ev8jWF7DCLzzhSls5GYcUXwfFPTA=
 Received: from epsmges5p2new.samsung.com (unknown [182.195.42.74]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-        20200511021348epcas5p23c5901997f4574164ff2f0a649e77a70~N14lXY3EI1832818328epcas5p2i;
-        Mon, 11 May 2020 02:13:48 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20200511021354epcas5p308719ba70e90ce1f09f9c4c5e63ca496~N14rXE55D1506415064epcas5p3D;
+        Mon, 11 May 2020 02:13:54 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
         epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A8.9E.23569.CD4B8BE5; Mon, 11 May 2020 11:13:48 +0900 (KST)
+        AC.9E.23569.2E4B8BE5; Mon, 11 May 2020 11:13:54 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200511021347epcas5p2ebef1a4c4aecac26dde73c5d0cc88455~N14kil1wW1832818328epcas5p2f;
-        Mon, 11 May 2020 02:13:47 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200511021354epcas5p1a3f7fe0cf17e7ecc586aaf29eb0d2d7f~N14rBqvJx1717517175epcas5p1N;
+        Mon, 11 May 2020 02:13:54 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
         epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200511021347epsmtrp2d1aac297e091258d60438fd021f27dda~N14khJ4Ej1467414674epsmtrp2L;
-        Mon, 11 May 2020 02:13:47 +0000 (GMT)
-X-AuditID: b6c32a4a-3c7ff70000005c11-dd-5eb8b4dc08b0
+        20200511021354epsmtrp257f1a9a5a4c6fbae7c643c380b6034a7~N14rAUzqM1467414674epsmtrp2Q;
+        Mon, 11 May 2020 02:13:54 +0000 (GMT)
+X-AuditID: b6c32a4a-3b1ff70000005c11-ee-5eb8b4e2123b
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C6.E6.18461.BD4B8BE5; Mon, 11 May 2020 11:13:47 +0900 (KST)
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        BF.54.25866.2E4B8BE5; Mon, 11 May 2020 11:13:54 +0900 (KST)
 Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
         [107.108.73.139]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200511021345epsmtip26537285c1e7c299a73d8e33304b6657d~N14if_74I3210532105epsmtip2i;
-        Mon, 11 May 2020 02:13:45 +0000 (GMT)
+        20200511021352epsmtip2002c8385977cb91f9bc2d00ec0aa7749~N14o8G-Gb0135501355epsmtip20;
+        Mon, 11 May 2020 02:13:52 +0000 (GMT)
 From:   Alim Akhtar <alim.akhtar@samsung.com>
 To:     robh@kernel.org
 Cc:     devicetree@vger.kernel.org, linux-scsi@vger.kernel.org,
@@ -65,136 +65,190 @@ Cc:     devicetree@vger.kernel.org, linux-scsi@vger.kernel.org,
         cang@codeaurora.org, linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH v8 00/10] exynos-ufs: Add support for UFS HCI
-Date:   Mon, 11 May 2020 07:30:21 +0530
-Message-Id: <20200511020031.25730-1-alim.akhtar@samsung.com>
+Subject: [PATCH v8 03/10] scsi: ufs: add quirk to enable host controller
+ without hce
+Date:   Mon, 11 May 2020 07:30:24 +0530
+Message-Id: <20200511020031.25730-4-alim.akhtar@samsung.com>
 X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGKsWRmVeSWpSXmKPExsWy7bCmpu6dLTviDFb1CFs8mLeNzeLlz6ts
+In-Reply-To: <20200511020031.25730-1-alim.akhtar@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpileLIzCtJLcpLzFFi42LZdlhTS/fRlh1xBu379SwezNvGZvHy51U2
+        i0/rl7FazD9yjtXi/PkN7BY3txxlsdj0+BqrxeVdc9gsZpzfx2TRfX0Hm8Xy4/+YLP7v2cFu
+        sXTrTUYHXo/Lfb1MHptWdbJ5bF5S79Fycj+Lx8ent1g8+rasYvT4vEnOo/1AN1MARxSXTUpq
+        TmZZapG+XQJXxqwXh9gKNshVNDV+YWpgPCXRxcjJISFgIrFv4ktWEFtIYDejxMNPfF2MXED2
+        J0aJyfO3sEI4nxklbv04xw7TcenVahaIxC5Gibs//rJDOC1MEufXnWEBqWIT0Ja4O30LE4gt
+        IiAsceRbGyOIzSxwg0niwUoXEFtYIEziybz9bF2MHBwsAqoS2/fmgYR5BWwk2i5/YYVYJi+x
+        esMBZhCbU8BWYlrDdrDFEgK9HBL/X/UxQxS5SPRse8sGYQtLvDq+BepSKYnP7/aCzZcQyJbo
+        2WUMEa6RWDrvGAuEbS9x4MocFpASZgFNifW79CGu5JPo/f2ECaKTV6KjTQiiWlWi+d1VqE5p
+        iYnd3VBXekisvH2cCRIKExgl2pa/ZpvAKDsLYeoCRsZVjJKpBcW56anFpgVGeanlesWJucWl
+        eel6yfm5mxjByUTLawfjwwcf9A4xMnEwHmKU4GBWEuFdnrsjTog3JbGyKrUoP76oNCe1+BCj
+        NAeLkjhvUuOWOCGB9MSS1OzU1ILUIpgsEwenVAPTEmMWl0WfHn9hvz7x+tWvfh1+c17zihrk
+        Fvefyd5qKDNR+9fyNS03Wjw2e508fMvdTuKqkHdVjRy3T9mbdCtGhs3lrMbmPZFP808/ZJsd
+        ffVBpH52rlKdbb3wQ9mc7VkaLN8cVghtE2XlK9t/Skmu9UedsOlZ9b/PPx9Jjdp4Tna94ozD
+        T2yDwyrvqeVpGScVmy1l5jYp+NnPaRBu61SiJ/rp7KTFpU3fNn25uVH/8ZfaPToz1a1W3fv4
+        lKFa3+XxgmPHLp3NlDbKkvm/4/u0puPzfna+LEnaHaRcdkO/44C7YOfTcxeY7hXEOk/XX99v
+        8otNUsrzt03K2tlCspyVJsd4Hz3pk73+WdPy3TIlluKMREMt5qLiRACudnnQlQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrELMWRmVeSWpSXmKPExsWy7bCSvO6jLTviDPqOSVg8mLeNzeLlz6ts
         Fp/WL2O1mH/kHKvF+fMb2C1ubjnKYrHp8TVWi8u75rBZzDi/j8mi+/oONovlx/8xWfzfs4Pd
         YunWm4wOvB6X+3qZPDat6mTz2Lyk3qPl5H4Wj49Pb7F49G1ZxejxeZOcR/uBbqYAjigum5TU
-        nMyy1CJ9uwSujFn7DrIWdEhXrG5cxN7A+Fiki5GTQ0LAROL97YusXYxcHEICuxklbncdYIJw
-        PjFKXHt5HirzjVHiU+NTJpiW47MnQ1XtZZTonfYJymlhkrh54BQjSBWbgLbE3elbwDpEBIQl
-        jnxrA4szC9xgkniw0gXEFhawleg69JUFxGYRUJX4tPc6excjBwevgI1E1y8NiGXyEqs3HGAG
-        sXkFBCVOznzCAjFGXqJ562xmkL0SAgs5JF5M+cMO0eAi8eT5WWYIW1ji1fEtUHEpic/v9rKB
-        zJcQyJbo2WUMEa6RWDrvGAuEbS9x4MocFpASZgFNifW79CFW8Un0/n7CBNHJK9HRJgRRrSrR
-        /O4qVKe0xMTublYI20Ni0vsvYHEhgViJ4xduM09glJuF5IFZSB6YhbBsASPzKkbJ1ILi3PTU
-        YtMCo7zUcr3ixNzi0rx0veT83E2M4KSk5bWD8eGDD3qHGJk4GA8xSnAwK4nwLs/dESfEm5JY
-        WZValB9fVJqTWnyIUZqDRUmcN6lxS5yQQHpiSWp2ampBahFMlomDU6qBSe6Wxn3nqNiNf934
-        eCVP3m+8oq32/fGz5qdqc7MiJ329eXm379n5+Tz/xN98k4tyPlnl7he01fWeoxej3o9PS8L8
-        zn74zzLN+e2LNStr7v+Ke/XDWlj8ievjPXo7Wj+KmUQHHXDlKz7l8WPJ97uMORdtRVRn6WWq
-        Fu2ffmJjPLd6VK7ZChcBufkHT/k135LOi//Ucrhtmp6QfDQnt+5lMS/V8EB7x/siW981xu1c
-        z9RUv6bs1QLzL7zvEzbuOPph4rHUC7oaKf+Ofe2ez/RJZ98r70yzkzMTuysPXY1iEHljd7DG
-        +pxYv06e7ZP2bU4t6av3fDTfmn9hOneAEctJHqUMUycDTwlhnl2qGz82KrEUZyQaajEXFScC
-        AJ+VZYm5AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrALMWRmVeSWpSXmKPExsWy7bCSvO7tLTviDGZPFLd4MG8bm8XLn1fZ
-        LD6tX8ZqMf/IOVaL8+c3sFvc3HKUxWLT42usFpd3zWGzmHF+H5NF9/UdbBbLj/9jsvi/Zwe7
-        xdKtNxkdeD0u9/UyeWxa1cnmsXlJvUfLyf0sHh+f3mLx6NuyitHj8yY5j/YD3UwBHFFcNimp
-        OZllqUX6dglcGbP2HWQt6JCuWN24iL2B8bFIFyMnh4SAicTx2ZOZuhi5OIQEdjNKLJjzmgUi
-        IS1xfeMEdghbWGLlv+fsEEVNTBJ35i0GS7AJaEvcnb6FCcQWASo68q2NEcRmFnjGJHHqYSmI
-        LSxgK9F16CvYUBYBVYlPe68D9XJw8ArYSHT90oCYLy+xesMBZhCbV0BQ4uTMJywgJcwC6hLr
-        5wlBTJSXaN46m3kCI/8sJFWzEKpmIalawMi8ilEytaA4Nz232LDAMC+1XK84Mbe4NC9dLzk/
-        dxMjOFK0NHcwbl/1Qe8QIxMH4yFGCQ5mJRHe5bk74oR4UxIrq1KL8uOLSnNSiw8xSnOwKInz
-        3ihcGCckkJ5YkpqdmlqQWgSTZeLglGpgspBh0g3f1pf1WfLZ4RgXMWc15TC972nhnxsM74rm
-        NDVq5ZakX9H/Zhf6h0Mu/NO+NXl3Fvb/3eBXero1Nd7779eUQ9Vcv/8ZNf2UTiu1OHK5+2L7
-        nz37tgkdfVC+wJLfcvkuH+EbhYVasjwnes2nnVrZr9+qsU25e8mEk6FJZ4RPttqVhRjUCqxT
-        W7pmRozfPPOVu/demb3rh7rtQ9te2bOCh9x6i3Y92vHl+8tFZqqrDlQ5tR+8tor/9wnOhf+K
-        +qWXn+CRfvF8Y5Kt4du/TrELp54QnTIxTnZTqv4bvQlfzpjrfedWPuj099dCm02zOvtZZNtq
-        Ps97d/ZIqNt8v8S50hUTUucefl997qzbNCWW4oxEQy3mouJEAN1kQxEDAwAA
-X-CMS-MailID: 20200511021347epcas5p2ebef1a4c4aecac26dde73c5d0cc88455
+        nMyy1CJ9uwSujFkvDrEVbJCraGr8wtTAeEqii5GTQ0LAROLSq9UsXYxcHEICOxglZkz+yA6R
+        kJa4vnEClC0ssfLfc3aIoiYmiSlzjjKCJNgEtCXuTt/CBGKLABUd+dYGFmcWeMYkcephKYgt
+        LBAisbZ7KXMXIwcHi4CqxPa9eSBhXgEbibbLX1gh5stLrN5wgBnE5hSwlZjWsJ0FxBYCqpmx
+        aTPrBEa+BYwMqxglUwuKc9Nziw0LjPJSy/WKE3OLS/PS9ZLzczcxgoNZS2sH455VH/QOMTJx
+        MB5ilOBgVhLhXZ67I06INyWxsiq1KD++qDQntfgQozQHi5I479dZC+OEBNITS1KzU1MLUotg
+        skwcnFINTG4Pv1z1vJl6h1fj+5zSJbWnex4ynDjV/tFz363Esy0teWtKFr74u3Hz16XnjBpW
+        fSifNDHCurZ91uflE4IeuCYrXlfLt1w8ge3PbEGzHemsG40WP9u8JSPli9YrqexfZpt/uFpM
+        y7zfXllfz2naErA6Jny5S1nHpdbLzYsOvvXVf/1lw/Kw6hdzpkmHvLaYwDsx509szSSrUKOl
+        3yTkOxZ4JTf/zzw97c3HjbJdYslzbYWMPEoYVnjaO9ziLz1dmT1Fbc+B7+INbZq+Ntfcy/0s
+        j+ekJu7UWOe59tylluUcVX1zDwkfvLNz3pq58y7K3rt1umSXflghoyWHHbvHtNlblWvXn5vZ
+        y7uSc0eF3AUlluKMREMt5qLiRAAK4Xpw1QIAAA==
+X-CMS-MailID: 20200511021354epcas5p1a3f7fe0cf17e7ecc586aaf29eb0d2d7f
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
-X-CMS-RootMailID: 20200511021347epcas5p2ebef1a4c4aecac26dde73c5d0cc88455
-References: <CGME20200511021347epcas5p2ebef1a4c4aecac26dde73c5d0cc88455@epcas5p2.samsung.com>
+X-CMS-RootMailID: 20200511021354epcas5p1a3f7fe0cf17e7ecc586aaf29eb0d2d7f
+References: <20200511020031.25730-1-alim.akhtar@samsung.com>
+        <CGME20200511021354epcas5p1a3f7fe0cf17e7ecc586aaf29eb0d2d7f@epcas5p1.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This patch-set introduces UFS (Universal Flash Storage) host controller support
-for Samsung family SoC. Mostly, it consists of UFS PHY and host specific driver.
+Some host controllers don't support host controller enable via HCE.
 
-- Changes since v7:
-* fixed review comments from Rob and Kishon
-* Addeded reviwed-by tags
-* rebased on top of v5.7-rc4
+Reviewed-by: Can Guo <cang@codeaurora.org>
+Reviewed-by: Avri Altman <avri.altman@wdc.com>
+Signed-off-by: Seungwon Jeon <essuuj@gmail.com>
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+---
+ drivers/scsi/ufs/ufshcd.c | 76 +++++++++++++++++++++++++++++++++++++--
+ drivers/scsi/ufs/ufshcd.h |  6 ++++
+ 2 files changed, 80 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 0e9704da58bd..ee30ed6cc805 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -3534,6 +3534,52 @@ static int ufshcd_dme_link_startup(struct ufs_hba *hba)
+ 			"dme-link-startup: error code %d\n", ret);
+ 	return ret;
+ }
++/**
++ * ufshcd_dme_reset - UIC command for DME_RESET
++ * @hba: per adapter instance
++ *
++ * DME_RESET command is issued in order to reset UniPro stack.
++ * This function now deal with cold reset.
++ *
++ * Returns 0 on success, non-zero value on failure
++ */
++static int ufshcd_dme_reset(struct ufs_hba *hba)
++{
++	struct uic_command uic_cmd = {0};
++	int ret;
++
++	uic_cmd.command = UIC_CMD_DME_RESET;
++
++	ret = ufshcd_send_uic_cmd(hba, &uic_cmd);
++	if (ret)
++		dev_err(hba->dev,
++			"dme-reset: error code %d\n", ret);
++
++	return ret;
++}
++
++/**
++ * ufshcd_dme_enable - UIC command for DME_ENABLE
++ * @hba: per adapter instance
++ *
++ * DME_ENABLE command is issued in order to enable UniPro stack.
++ *
++ * Returns 0 on success, non-zero value on failure
++ */
++static int ufshcd_dme_enable(struct ufs_hba *hba)
++{
++	struct uic_command uic_cmd = {0};
++	int ret;
++
++	uic_cmd.command = UIC_CMD_DME_ENABLE;
++
++	ret = ufshcd_send_uic_cmd(hba, &uic_cmd);
++	if (ret)
++		dev_err(hba->dev,
++			"dme-reset: error code %d\n", ret);
++
++	return ret;
++}
  
-- Changes since v6:
-* Addressed review comments from Avri and Christoph
-* Added Reviewed-by tags of Avri and Can on various patches
-
-- Changes since v5:
-* re-introduce various quicks which was removed because of no driver
-* consumer of those quirks, initial 4 patches does the same.
-* Added Reviewed-by tags
-* rebased on top of v5.7-rc1
-* included Kiwoong's patch in this series, which this driver needs
-
-- Changes since v4:
-* Addressed review comments from Avir and Rob 
-* Minor improvment on the ufs phy and ufshc drivers
-* Added Tested-by from Pawel
-* Change UFS binding to DT schema format
-
-
-- Changes since v3:
-* Addressed Kishon's and Avir's review comments
-* fixed make dt_binding_check error as pointed by Rob 
-
-- Changes since v2:
-* fixed build warning by kbuild test robot 
-* Added Reported-by tags
-
-- Changes since v1:
-* fixed make dt_binding_check error as pointed by Rob
-* Addressed Krzysztof's review comments
-* Added Reviewed-by tags
-
-Note: This series is based on Linux-5.7-rc4 (commit: 0e698dfa2822)
-
-Alim Akhtar (9):
-  scsi: ufs: add quirk to fix mishandling utrlclr/utmrlclr
-  scsi: ufs: add quirk to disallow reset of interrupt aggregation
-  scsi: ufs: add quirk to enable host controller without hce
-  scsi: ufs: introduce UFSHCD_QUIRK_PRDT_BYTE_GRAN quirk
-  dt-bindings: phy: Document Samsung UFS PHY bindings
-  phy: samsung-ufs: add UFS PHY driver for samsung SoC
-  dt-bindings: ufs: Add DT binding documentation for ufs
-  scsi: ufs-exynos: add UFS host support for Exynos SoCs
-  arm64: dts: Add node for ufs exynos7
-
-Kiwoong Kim (1):
-  scsi: ufs: add quirk to fix abnormal ocs fatal error
-
- .../bindings/phy/samsung,ufs-phy.yaml         |   75 +
- .../bindings/ufs/samsung,exynos-ufs.yaml      |   92 ++
- .../boot/dts/exynos/exynos7-espresso.dts      |    4 +
- arch/arm64/boot/dts/exynos/exynos7.dtsi       |   44 +-
- drivers/phy/samsung/Kconfig                   |    9 +
- drivers/phy/samsung/Makefile                  |    1 +
- drivers/phy/samsung/phy-exynos7-ufs.h         |   86 ++
- drivers/phy/samsung/phy-samsung-ufs.c         |  380 +++++
- drivers/phy/samsung/phy-samsung-ufs.h         |  143 ++
- drivers/scsi/ufs/Kconfig                      |   12 +
- drivers/scsi/ufs/Makefile                     |    1 +
- drivers/scsi/ufs/ufs-exynos.c                 | 1300 +++++++++++++++++
- drivers/scsi/ufs/ufs-exynos.h                 |  284 ++++
- drivers/scsi/ufs/ufshcd.c                     |  126 +-
- drivers/scsi/ufs/ufshcd.h                     |   29 +
- drivers/scsi/ufs/unipro.h                     |   33 +
- 16 files changed, 2605 insertions(+), 14 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
- create mode 100644 Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
- create mode 100644 drivers/phy/samsung/phy-exynos7-ufs.h
- create mode 100644 drivers/phy/samsung/phy-samsung-ufs.c
- create mode 100644 drivers/phy/samsung/phy-samsung-ufs.h
- create mode 100644 drivers/scsi/ufs/ufs-exynos.c
- create mode 100644 drivers/scsi/ufs/ufs-exynos.h
-
-
-base-commit: 0e698dfa282211e414076f9dc7e83c1c288314fd
+ static inline void ufshcd_add_delay_before_dme_cmd(struct ufs_hba *hba)
+ {
+@@ -4251,7 +4297,7 @@ static inline void ufshcd_hba_stop(struct ufs_hba *hba, bool can_sleep)
+ }
+ 
+ /**
+- * ufshcd_hba_enable - initialize the controller
++ * ufshcd_hba_execute_hce - initialize the controller
+  * @hba: per adapter instance
+  *
+  * The controller resets itself and controller firmware initialization
+@@ -4260,7 +4306,7 @@ static inline void ufshcd_hba_stop(struct ufs_hba *hba, bool can_sleep)
+  *
+  * Returns 0 on success, non-zero value on failure
+  */
+-int ufshcd_hba_enable(struct ufs_hba *hba)
++static int ufshcd_hba_execute_hce(struct ufs_hba *hba)
+ {
+ 	int retry;
+ 
+@@ -4308,6 +4354,32 @@ int ufshcd_hba_enable(struct ufs_hba *hba)
+ 
+ 	return 0;
+ }
++
++int ufshcd_hba_enable(struct ufs_hba *hba)
++{
++	int ret;
++
++	if (hba->quirks & UFSHCI_QUIRK_BROKEN_HCE) {
++		ufshcd_set_link_off(hba);
++		ufshcd_vops_hce_enable_notify(hba, PRE_CHANGE);
++
++		/* enable UIC related interrupts */
++		ufshcd_enable_intr(hba, UFSHCD_UIC_MASK);
++		ret = ufshcd_dme_reset(hba);
++		if (!ret) {
++			ret = ufshcd_dme_enable(hba);
++			if (!ret)
++				ufshcd_vops_hce_enable_notify(hba, POST_CHANGE);
++			if (ret)
++				dev_err(hba->dev,
++					"Host controller enable failed with non-hce\n");
++		}
++	} else {
++		ret = ufshcd_hba_execute_hce(hba);
++	}
++
++	return ret;
++}
+ EXPORT_SYMBOL_GPL(ufshcd_hba_enable);
+ 
+ static int ufshcd_disable_tx_lcc(struct ufs_hba *hba, bool peer)
+diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+index 53096642f9a8..f8d08cb9caf7 100644
+--- a/drivers/scsi/ufs/ufshcd.h
++++ b/drivers/scsi/ufs/ufshcd.h
+@@ -529,6 +529,12 @@ enum ufshcd_quirks {
+ 	 * that the interrupt aggregation timer and counter are reset by s/w.
+ 	 */
+ 	UFSHCI_QUIRK_SKIP_RESET_INTR_AGGR		= 1 << 7,
++
++	/*
++	 * This quirks needs to be enabled if host controller cannot be
++	 * enabled via HCE register.
++	 */
++	UFSHCI_QUIRK_BROKEN_HCE				= 1 << 8,
+ };
+ 
+ enum ufshcd_caps {
 -- 
 2.17.1
 
