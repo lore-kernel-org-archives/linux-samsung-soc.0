@@ -2,89 +2,90 @@ Return-Path: <SRS0=7Re4=62=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7705AC54E8B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 May 2020 06:50:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2792C54E4B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 May 2020 08:47:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 574FC208CA
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 May 2020 06:50:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589266231;
-	bh=lTIhgkgLP0hHM7ScFLiBRwL3GQ7PRb7fhu4G5yrO89I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=BRb8XOb+AaF3gjx9aO21porLAlvsV/R+gsx6Yy8+6GZ7j3Gpx6IXXEBNwBPj+rZcY
-	 h6oc0rLZrFa4pRgXSaP98ACtImsCrJm/QBp8C5oidr2Bf84wFkIehkF0jAGoGQL0vM
-	 dAGGVTfI+TKsGUPcKkk3nSbKCzULw7b0Qa1+grBg=
+	by mail.kernel.org (Postfix) with ESMTP id CF47B2078E
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 May 2020 08:47:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725823AbgELGu2 (ORCPT
+        id S1728525AbgELIrY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 12 May 2020 02:50:28 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:44658 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728525AbgELGu2 (ORCPT
+        Tue, 12 May 2020 04:47:24 -0400
+Received: from foss.arm.com ([217.140.110.172]:49504 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725776AbgELIrY (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 12 May 2020 02:50:28 -0400
-Received: by mail-ed1-f68.google.com with SMTP id r7so10169983edo.11;
-        Mon, 11 May 2020 23:50:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NGCmQRwn70jwSoE1rVBW7nYUdi0rleIM1+a6lKcmx6Y=;
-        b=BEdokAKhE09o17Ib6jqnZ1D20IGifvKr+19ie8b0UruQCQc+xIjqzQkyM4kcCT13eN
-         oI/jSf/zeHdoNJbci7Y300tG66KgzruR9ERSkOfY7d8G1an9HG6Fb2TFXZaq6Yz1lGSD
-         ZuwATDcs9xy8bi5JsK53SV7j6R6d8xACLzkl2GKUQ/7MnzO1030y4fjgl4jMs+Z7w32B
-         950h30X+VDrrpy+ErAhaA8Pg/n0mXLx9NychTPhxgwYZuEhSEqArw/eLxEP/HXAencrv
-         Hnc/0SJJ9unHS379ORlI2jvIdfPcYpkM0KF5D2pDc22K0+HJMxK2+cql4JcO9niF26o5
-         UAhw==
-X-Gm-Message-State: AGi0PuakzhgipJfP4AQ/0P62+mL+1AFF6hSqR2n3nnnR2xMkSFDp45p4
-        1ko83twTYsJMhPWv3/zgRns=
-X-Google-Smtp-Source: APiQypJRBoTPk3w4SSl5+ddox+FzeAD0bP+sdgUJjGYIvF+5BKJVf2SdadvJzdj8oe1Rhj3tuk/VMw==
-X-Received: by 2002:a50:eb0a:: with SMTP id y10mr16683538edp.312.1589266226225;
-        Mon, 11 May 2020 23:50:26 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.237])
-        by smtp.googlemail.com with ESMTPSA id m5sm1601440edq.71.2020.05.11.23.50.24
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 May 2020 23:50:25 -0700 (PDT)
-Date:   Tue, 12 May 2020 08:50:23 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Bernard Zhao <bernard@vivo.com>, Lukasz Luba <lukasz.luba@arm.com>
+        Tue, 12 May 2020 04:47:24 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B14F21FB;
+        Tue, 12 May 2020 01:47:23 -0700 (PDT)
+Received: from [10.37.12.83] (unknown [10.37.12.83])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A066F3F305;
+        Tue, 12 May 2020 01:47:21 -0700 (PDT)
+Subject: Re: [PATCH] memory/samsung: reduce unnecessary mutex lock area
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Bernard Zhao <bernard@vivo.com>
 Cc:     Kukjin Kim <kgene@kernel.org>, linux-pm@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         opensource.kernel@vivo.com
-Subject: Re: [PATCH] memory/samsung: reduce unnecessary mutex lock area
-Message-ID: <20200512065023.GA10741@kozik-lap>
 References: <20200508131338.32956-1-bernard@vivo.com>
+ <20200512065023.GA10741@kozik-lap>
+From:   Lukasz Luba <lukasz.luba@arm.com>
+Message-ID: <e762ce12-eff0-d3a5-f083-2b592921de59@arm.com>
+Date:   Tue, 12 May 2020 09:47:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200508131338.32956-1-bernard@vivo.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200512065023.GA10741@kozik-lap>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, May 08, 2020 at 06:13:38AM -0700, Bernard Zhao wrote:
-> Maybe dmc->df->lock is unnecessary to protect function
-> exynos5_dmc_perf_events_check(dmc). If we have to protect,
-> dmc->lock is more better and more effective.
-> Also, it seems not needed to protect "if (ret) & dev_warn"
-> branch.
+Hi Krzysztof,
+
+I am sorry, I was a bit busy recently.
+
+On 5/12/20 7:50 AM, Krzysztof Kozlowski wrote:
+> On Fri, May 08, 2020 at 06:13:38AM -0700, Bernard Zhao wrote:
+>> Maybe dmc->df->lock is unnecessary to protect function
+>> exynos5_dmc_perf_events_check(dmc). If we have to protect,
+>> dmc->lock is more better and more effective.
+>> Also, it seems not needed to protect "if (ret) & dev_warn"
+>> branch.
+>>
+>> Signed-off-by: Bernard Zhao <bernard@vivo.com>
+>> ---
+>>   drivers/memory/samsung/exynos5422-dmc.c | 6 ++----
+>>   1 file changed, 2 insertions(+), 4 deletions(-)
 > 
-> Signed-off-by: Bernard Zhao <bernard@vivo.com>
-> ---
->  drivers/memory/samsung/exynos5422-dmc.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+> I checked the concurrent accesses and it looks correct.
+> 
+> Lukasz, any review from your side?
 
-I checked the concurrent accesses and it looks correct.
+The lock from devfreq lock protects from a scenario when
+concurrent access from devfreq framework uses internal dmc fields 'load' 
+and 'total' (which are set to 'busy_time', 'total_time').
+The .get_dev_status can be called at any time (even due to thermal
+devfreq cooling action) and reads above fields.
+That's why the calculation of the new values inside dmc is protected.
 
-Lukasz, any review from your side?
+This patch should not be taken IMO. Maybe we can release lock before the
+if statement, just to speed-up.
 
-Best regards,
-Krzysztof
+Regards,
+Lukasz
+
+
+> 
+> Best regards,
+> Krzysztof
+> 
