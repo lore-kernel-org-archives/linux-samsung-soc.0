@@ -2,96 +2,118 @@ Return-Path: <SRS0=7Re4=62=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF32C54E8E
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 May 2020 09:20:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB0E3C54E4A
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 May 2020 09:23:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 148E120736
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 May 2020 09:20:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 917AC20714
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 12 May 2020 09:23:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728990AbgELJU1 (ORCPT
+        id S1726891AbgELJXI (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 12 May 2020 05:20:27 -0400
-Received: from m177129.mail.qiye.163.com ([123.58.177.129]:48820 "EHLO
-        m177129.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726891AbgELJU1 (ORCPT
+        Tue, 12 May 2020 05:23:08 -0400
+Received: from foss.arm.com ([217.140.110.172]:50852 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725889AbgELJXH (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 12 May 2020 05:20:27 -0400
-Received: from vivo.com (wm-2.qy.internal [127.0.0.1])
-        by m177129.mail.qiye.163.com (Hmail) with ESMTP id 641F05C3638;
-        Tue, 12 May 2020 17:19:50 +0800 (CST)
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-Message-ID: <AP*ABgAXCELISG6y0r8HaKrn.3.1589275190376.Hmail.bernard@vivo.com>
+        Tue, 12 May 2020 05:23:07 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F221A1045;
+        Tue, 12 May 2020 02:23:06 -0700 (PDT)
+Received: from [10.37.12.83] (unknown [10.37.12.83])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 65BAC3F305;
+        Tue, 12 May 2020 02:23:05 -0700 (PDT)
+Subject: Re: [PATCH] memory/samsung: reduce unnecessary mutex lock area
 To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Lukasz Luba <lukasz.luba@arm.com>, Kukjin Kim <kgene@kernel.org>,
+Cc:     Bernard Zhao <bernard@vivo.com>, Kukjin Kim <kgene@kernel.org>,
         linux-pm@vger.kernel.org,
         "linux-samsung-soc@vger.kernel.org" 
         <linux-samsung-soc@vger.kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         opensource.kernel@vivo.com
-Subject: =?UTF-8?B?UmU6UmU6IFtQQVRDSF0gbWVtb3J5L3NhbXN1bmc6IHJlZHVjZSB1bm5lY2Vzc2FyeSBtdXRleCBsb2NrIGFyZWE=?=
-X-Priority: 3
-X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2016-163.com
-X-Originating-IP: 157.0.31.122
-In-Reply-To: <CAJKOXPekrkyDf2TMCnX7Nvbdaj-JQwuyqrsurFM4moALqVx8Sw@mail.gmail.com>
+References: <20200508131338.32956-1-bernard@vivo.com>
+ <20200512065023.GA10741@kozik-lap>
+ <e762ce12-eff0-d3a5-f083-2b592921de59@arm.com>
+ <CAJKOXPekrkyDf2TMCnX7Nvbdaj-JQwuyqrsurFM4moALqVx8Sw@mail.gmail.com>
+From:   Lukasz Luba <lukasz.luba@arm.com>
+Message-ID: <fd463b97-6db7-f7ba-c4bd-5c709a4898c0@arm.com>
+Date:   Tue, 12 May 2020 10:23:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Received: from bernard@vivo.com( [157.0.31.122) ] by ajax-webmail ( [127.0.0.1] ) ; Tue, 12 May 2020 17:19:50 +0800 (GMT+08:00)
-From:   Bernard <bernard@vivo.com>
-Date:   Tue, 12 May 2020 17:19:50 +0800 (GMT+08:00)
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZSFVKQ0hLS0tLQ0xMSENLT1lXWShZQU
-        hPN1dZLVlBSVdZCQ4XHghZQVk1NCk2OjckKS43PlkG
-X-HM-Sender-Digest: e1kJHlYWEh9ZQUhMTElJSk9LTkNCN1dZDB4ZWUEPCQ4eV1kSHx4VD1lB
-        WUc6K1E6ORw6Izg#NzIoPE0CSwlDMxowCRVVSFVKTkNCSUxOSkJLT0NDVTMWGhIXVRkeCRUaCR87
-        DRINFFUYFBZFWVdZEgtZQVlKTkxVS1VISlVKSUlZV1kIAVlBTkhISjcG
-X-HM-Tid: 0a72082ee4906447kurs641f05c3638
+In-Reply-To: <CAJKOXPekrkyDf2TMCnX7Nvbdaj-JQwuyqrsurFM4moALqVx8Sw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-CkZyb206IEtyenlzenRvZiBLb3psb3dza2kgPGtyemtAa2VybmVsLm9yZz4KRGF0ZTogMjAyMC0w
-NS0xMiAxNzowNToyOApUbzogIEx1a2FzeiBMdWJhIDxsdWthc3oubHViYUBhcm0uY29tPgpDYzog
-IEJlcm5hcmQgWmhhbyA8YmVybmFyZEB2aXZvLmNvbT4sS3VramluIEtpbSA8a2dlbmVAa2VybmVs
-Lm9yZz4sbGludXgtcG1Admdlci5rZXJuZWwub3JnLCJsaW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtl
-cm5lbC5vcmciIDxsaW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtlcm5lbC5vcmc+LGxpbnV4LWFybS1r
-ZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZywibGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZyIg
-PGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc+LG9wZW5zb3VyY2Uua2VybmVsQHZpdm8uY29t
-ClN1YmplY3Q6IFJlOiBbUEFUQ0hdIG1lbW9yeS9zYW1zdW5nOiByZWR1Y2UgdW5uZWNlc3Nhcnkg
-bXV0ZXggbG9jayBhcmVhPk9uIFR1ZSwgMTIgTWF5IDIwMjAgYXQgMTA6NDcsIEx1a2FzeiBMdWJh
-IDxsdWthc3oubHViYUBhcm0uY29tPiB3cm90ZToKPj4KPj4gSGkgS3J6eXN6dG9mLAo+Pgo+PiBJ
-IGFtIHNvcnJ5LCBJIHdhcyBhIGJpdCBidXN5IHJlY2VudGx5Lgo+Pgo+PiBPbiA1LzEyLzIwIDc6
-NTAgQU0sIEtyenlzenRvZiBLb3psb3dza2kgd3JvdGU6Cj4+ID4gT24gRnJpLCBNYXkgMDgsIDIw
-MjAgYXQgMDY6MTM6MzhBTSAtMDcwMCwgQmVybmFyZCBaaGFvIHdyb3RlOgo+PiA+PiBNYXliZSBk
-bWMtPmRmLT5sb2NrIGlzIHVubmVjZXNzYXJ5IHRvIHByb3RlY3QgZnVuY3Rpb24KPj4gPj4gZXh5
-bm9zNV9kbWNfcGVyZl9ldmVudHNfY2hlY2soZG1jKS4gSWYgd2UgaGF2ZSB0byBwcm90ZWN0LAo+
-PiA+PiBkbWMtPmxvY2sgaXMgbW9yZSBiZXR0ZXIgYW5kIG1vcmUgZWZmZWN0aXZlLgo+PiA+PiBB
-bHNvLCBpdCBzZWVtcyBub3QgbmVlZGVkIHRvIHByb3RlY3QgImlmIChyZXQpICYgZGV2X3dhcm4i
-Cj4+ID4+IGJyYW5jaC4KPj4gPj4KPj4gPj4gU2lnbmVkLW9mZi1ieTogQmVybmFyZCBaaGFvIDxi
-ZXJuYXJkQHZpdm8uY29tPgo+PiA+PiAtLS0KPj4gPj4gICBkcml2ZXJzL21lbW9yeS9zYW1zdW5n
-L2V4eW5vczU0MjItZG1jLmMgfCA2ICsrLS0tLQo+PiA+PiAgIDEgZmlsZSBjaGFuZ2VkLCAyIGlu
-c2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pCj4+ID4KPj4gPiBJIGNoZWNrZWQgdGhlIGNvbmN1
-cnJlbnQgYWNjZXNzZXMgYW5kIGl0IGxvb2tzIGNvcnJlY3QuCj4+ID4KPj4gPiBMdWthc3osIGFu
-eSByZXZpZXcgZnJvbSB5b3VyIHNpZGU/Cj4+Cj4+IFRoZSBsb2NrIGZyb20gZGV2ZnJlcSBsb2Nr
-IHByb3RlY3RzIGZyb20gYSBzY2VuYXJpbyB3aGVuCj4+IGNvbmN1cnJlbnQgYWNjZXNzIGZyb20g
-ZGV2ZnJlcSBmcmFtZXdvcmsgdXNlcyBpbnRlcm5hbCBkbWMgZmllbGRzICdsb2FkJwo+PiBhbmQg
-J3RvdGFsJyAod2hpY2ggYXJlIHNldCB0byAnYnVzeV90aW1lJywgJ3RvdGFsX3RpbWUnKS4KPj4g
-VGhlIC5nZXRfZGV2X3N0YXR1cyBjYW4gYmUgY2FsbGVkIGF0IGFueSB0aW1lIChldmVuIGR1ZSB0
-byB0aGVybWFsCj4+IGRldmZyZXEgY29vbGluZyBhY3Rpb24pIGFuZCByZWFkcyBhYm92ZSBmaWVs
-ZHMuCj4+IFRoYXQncyB3aHkgdGhlIGNhbGN1bGF0aW9uIG9mIHRoZSBuZXcgdmFsdWVzIGluc2lk
-ZSBkbWMgaXMgcHJvdGVjdGVkLgo+Cj5JIGxvb2tlZCBhdCB0aGlzIHBhdGggKGdldF9kZXZfc3Rh
-dHVzKSBhbmQgY3VycmVudGx5IGluIGRldmZyZXEgaXQKPndpbGwgYmUgb25seSBjYWxsZWQgZnJv
-bSB1cGRhdGVfZGV2ZnJlcSgpIC0+IGdldF90YXJnZXRfZnJlcSgpLi4uIGF0Cj5sZWFzdCB3aGVu
-IGxvb2tpbmcgYXQgZGV2ZnJlcSBjb3JlIGFuZCBnb3Zlcm5vcnMuIE9uIHRoZSBvdGhlciBoYW5k
-Cj55b3UgYXJlIHJpZ2h0IHRoYXQgdGhpcyBpcyBwdWJsaWMgZnVuY3Rpb24gYW5kIHRoaXMgY2Fs
-bCBzY2VuYXJpbwo+bWlnaHQgY2hhbmdlLiBJdCBjb3VsZCBiZSBjYWxsZWQgZGlyZWN0bHkgZnJv
-bSBvdGhlciBwYXRocyBzb29uZXIgb3IKPmxhdGVyLgo+Cj4+IFRoaXMgcGF0Y2ggc2hvdWxkIG5v
-dCBiZSB0YWtlbiBJTU8uIE1heWJlIHdlIGNhbiByZWxlYXNlIGxvY2sgYmVmb3JlIHRoZQo+PiBp
-ZiBzdGF0ZW1lbnQsIGp1c3QgdG8gc3BlZWQtdXAuCj4KPlllcC4KPgo+QmVybmFyZCwgeW91IGNh
-biBzZW5kIGp1c3QgdGhpcyBwYXJ0IG9mIHRoZSBwYXRjaC4KPgoKU3VyZSwgSSB3aWxsIHJlc3Vi
-bWl0IGEgcGF0Y2ggaW4gdjIuCgpCZXN0IHJlZ2FyZHMsCkJlcm5hcmQKCj5CZXN0IHJlZ2FyZHMs
-Cj5Lcnp5c3p0b2YKDQoNCg==
+
+
+On 5/12/20 10:05 AM, Krzysztof Kozlowski wrote:
+> On Tue, 12 May 2020 at 10:47, Lukasz Luba <lukasz.luba@arm.com> wrote:
+>>
+>> Hi Krzysztof,
+>>
+>> I am sorry, I was a bit busy recently.
+>>
+>> On 5/12/20 7:50 AM, Krzysztof Kozlowski wrote:
+>>> On Fri, May 08, 2020 at 06:13:38AM -0700, Bernard Zhao wrote:
+>>>> Maybe dmc->df->lock is unnecessary to protect function
+>>>> exynos5_dmc_perf_events_check(dmc). If we have to protect,
+>>>> dmc->lock is more better and more effective.
+>>>> Also, it seems not needed to protect "if (ret) & dev_warn"
+>>>> branch.
+>>>>
+>>>> Signed-off-by: Bernard Zhao <bernard@vivo.com>
+>>>> ---
+>>>>    drivers/memory/samsung/exynos5422-dmc.c | 6 ++----
+>>>>    1 file changed, 2 insertions(+), 4 deletions(-)
+>>>
+>>> I checked the concurrent accesses and it looks correct.
+>>>
+>>> Lukasz, any review from your side?
+>>
+>> The lock from devfreq lock protects from a scenario when
+>> concurrent access from devfreq framework uses internal dmc fields 'load'
+>> and 'total' (which are set to 'busy_time', 'total_time').
+>> The .get_dev_status can be called at any time (even due to thermal
+>> devfreq cooling action) and reads above fields.
+>> That's why the calculation of the new values inside dmc is protected.
+> 
+> I looked at this path (get_dev_status) and currently in devfreq it
+> will be only called from update_devfreq() -> get_target_freq()... at
+> least when looking at devfreq core and governors. On the other hand
+> you are right that this is public function and this call scenario
+> might change. It could be called directly from other paths sooner or
+> later.
+
+Indeed, I am currently changing this while I am adding devfreq devices
+to the Energy Model.
+
+> 
+>> This patch should not be taken IMO. Maybe we can release lock before the
+>> if statement, just to speed-up.
+> 
+> Yep.
+> 
+> Bernard, you can send just this part of the patch.
+
+Thank you Bernard and please submit the patch v2.
+
+> 
+> Best regards,
+> Krzysztof
+> 
+
+Thank you Krzysztof for your time spent on this.
+
+
+Regards,
+Lukasz
