@@ -2,63 +2,52 @@ Return-Path: <SRS0=j0mq=64=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DD1DC433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 May 2020 19:08:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A90B7C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 May 2020 20:23:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EAD232065F
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 May 2020 19:07:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15F8320709
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 May 2020 20:23:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CClJ+Fyo"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="oM4UzZVa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730209AbgENTH4 (ORCPT
+        id S1727033AbgENUXb (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 14 May 2020 15:07:56 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:38637 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728732AbgENTHl (ORCPT
+        Thu, 14 May 2020 16:23:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34484 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726241AbgENUXb (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 14 May 2020 15:07:41 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200514190739euoutp02ee0de86b0124f93d09bd541e0d3764ba~O_ppOwJKl0871808718euoutp02g
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 May 2020 19:07:39 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200514190739euoutp02ee0de86b0124f93d09bd541e0d3764ba~O_ppOwJKl0871808718euoutp02g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1589483259;
-        bh=CXFOnCSMo4ZePs1sWzgaCbirikPXXnubVCNzMYCfGBA=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=CClJ+FyobMDurEP5yKu624eumo8GvTzP8ChA5fSE9+1wiFgNQuxpmx/E0ST0igXxj
-         tZTQkS+3D2KqSutEbtIgkxiaEehVWkcH1QEBLQOVRoAqu3qC7lpETQ7kQSOil5N3K3
-         auZIU4ZmlvR/Q39YBVCbiXzbOnifgxsOFsJ5Biu4=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200514190737eucas1p266af3c9f52a7fcb960981451ed8a6ed4~O_poBhODy0442904429eucas1p25;
-        Thu, 14 May 2020 19:07:37 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 41.A1.60679.9F69DBE5; Thu, 14
-        May 2020 20:07:37 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200514190737eucas1p18ccdddb185ea7611683a6859e17bc721~O_pniwfV-0234402344eucas1p1o;
-        Thu, 14 May 2020 19:07:37 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200514190737eusmtrp1dfac399447ada06f75e580787e9cef7f~O_pnh-Vnd2577025770eusmtrp1m;
-        Thu, 14 May 2020 19:07:37 +0000 (GMT)
-X-AuditID: cbfec7f4-0cbff7000001ed07-6a-5ebd96f9c12d
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id C8.32.08375.9F69DBE5; Thu, 14
-        May 2020 20:07:37 +0100 (BST)
-Received: from localhost (unknown [106.120.51.46]) by eusmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20200514190737eusmtip2b2b24273eb8b84ed3db9c7ab6359c5ef~O_pnXZPj81371813718eusmtip2A;
-        Thu, 14 May 2020 19:07:37 +0000 (GMT)
-From:   =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
-To:     Matt Mackall <mpm@selenic.com>,
+        Thu, 14 May 2020 16:23:31 -0400
+X-Greylist: delayed 162 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 14 May 2020 13:23:30 PDT
+Received: from mo6-p01-ob.smtp.rzone.de (mo6-p01-ob.smtp.rzone.de [IPv6:2a01:238:20a:202:5301::9])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEFFDC061A0C
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 May 2020 13:23:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1589487809;
+        s=strato-dkim-0002; d=chronox.de;
+        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=5qEHN9Aos9wJSmrSmHepYAI40f0iVUfr9ovzdP/JcuY=;
+        b=oM4UzZVan4ExOmLrZbWJoY+6M6SOvijGRGE8yAN2tUPd9YK6g+qQCtKmYrx2lXPgaJ
+        05KK4KLSFW4ejXEhXxcAJW6b80mbNJFpEesPDxPv7m3/3hG+oUPFz9Zao12lpmRVQ1Ja
+        WZHv9Gs8NvCjAmFkMs0tkU1q0MlcWPfnzjby/6E8opWNrYIOEEt59g4WJVmzTkUc9cXo
+        MYMtVThldwvkdvYE0U46fijhjdHlFpd1UMTr07AJ3d81Hn1kZOALznPuLbsSWwDlovYo
+        LRFfvC4WGIj5BZYzGQMqs/RuI9wYxx6JcBlvMPRhCiqiQPylfspxWSliVK1HM0UzNIJH
+        gc2g==
+X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9xmwdNnzGHXPaJfSc9C1S"
+X-RZG-CLASS-ID: mo00
+Received: from tauon.chronox.de
+        by smtp.strato.de (RZmta 46.6.2 DYNA|AUTH)
+        with ESMTPSA id u08bf3w4EKKQxtG
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Thu, 14 May 2020 22:20:26 +0200 (CEST)
+From:   Stephan Mueller <smueller@chronox.de>
+To:     =?utf-8?B?xYF1a2Fzeg==?= Stelmach <l.stelmach@samsung.com>
+Cc:     Matt Mackall <mpm@selenic.com>,
         Herbert Xu <herbert@gondor.apana.org.au>,
         Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -72,72 +61,44 @@ To:     Matt Mackall <mpm@selenic.com>,
         Matthias Brugger <mbrugger@suse.com>,
         Stefan Wahren <wahrenst@gmx.net>, linux-crypto@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
-Subject: [PATCH 0/2] Set the quality value for two HW RNGs
-Date:   Thu, 14 May 2020 21:07:32 +0200
-Message-Id: <20200514190734.32746-1-l.stelmach@samsung.com>
-X-Mailer: git-send-email 2.25.0
+        linux-samsung-soc@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 1/2] hwrng: iproc-rng200 - Set the quality value
+Date:   Thu, 14 May 2020 22:20:26 +0200
+Message-ID: <4493123.C11H8YMYNy@tauon.chronox.de>
+In-Reply-To: <20200514190734.32746-2-l.stelmach@samsung.com>
+References: <20200514190734.32746-1-l.stelmach@samsung.com> <CGME20200514190738eucas1p2695c0d8af064ee702209ca03696ef438@eucas1p2.samsung.com> <20200514190734.32746-2-l.stelmach@samsung.com>
 MIME-Version: 1.0
-Organization: Samsung R&D Institute Poland
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjm81x2sk4dp+DLiqJRQaZmF+OjMhKCTpRd6EdhZK06qeSNHc2K
-        SMtmac2NLVNnkWWheFttNnRpl5WuElslZWEl6TQ0FETJS/d51uXf8z2X93lf+BhC/pNSMPFJ
-        qYI6SZWgpH1JW/O4K2T8YmNMWIMxBH83NMvwrUIzhau1TSR25ZQReGLwkQxnlZppfK5/FtZ1
-        fyawy3VTht86yhG2dL+mcOeHcR/cZr9E40LXXR9cYnRTuMSWh3BPkZXGg5VuhJ2Pc4i1/vzX
-        CQPiTZ2tNF9vei/jSy33aN52fz5vqcih+XuXq2S89XoGn1dbgfi8vpuIN9e+IvlTT89Q/LBl
-        9lY22nf1ASEh/rCgXrxmr29c5UMrlWInj5zucNOZyEnkoikMcMshr671N/Zl5Fw5An1lPZIe
-        Iwh6y796lWEEdz92/Y3UVNd7hTIEo+OnvZFPCCxtLymPi+YiQXfjMeURAjgNBcYhPekRCC4d
-        NB/dkyZ/biU4uzJ9chHDkNx8yOyiPTTLrYKu3Aek1DYHik+2eHk/eFLknuRncEFQdardO3IO
-        ZN0untwIuBsM5A9ZaSm8DrKzc7yD/KHfWSuT8CxoMZ4nPb3AZYDRsELKnkdguzTm9a+Cd88m
-        aI+H4BaC2b5YoiOhorRfJkWnw5sBP2mF6WCwFRASzcLZbLnkngc1ugbvQAVo+8uRhHl4/vkn
-        pUdzTf8dZvrvGNO/3hJEVKBAIU1MjBXEpUlCeqioShTTkmJD9ycnWtDvb9nywzlSh+zf9jkQ
-        xyDlNDYsvzFGTqkOi0cTHQgYQhnAbjbfiZGzB1RHjwnq5D3qtARBdKCZDKkMZJdd69st52JV
-        qcIhQUgR1H9UH2aKIhOdCT/YtzZwYJHik13RsMO4IWvk6vYOw1hwcJrGb5NGGxFVE5ldVnd1
-        q+7LVPbkFs22qJ4m9oquVxsrLjB1VzVst7s7o2G2vr66g2XQkJYuu7MueqnjwkRPY24CET5t
-        fdtOfemLKwX7T4zSuzYebzconLZ9yRFBoe2GQsp6qyVCSYpxqiVBhFpU/QIQF34jkgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOIsWRmVeSWpSXmKPExsVy+t/xe7o/p+2NM7i8Xsji76Rj7BYbZ6xn
-        tVjbe5TF4nzncmaLX++OsFs0L17PZtH9Ssai//FrZovz5zewW9w8tILRYtPja6wW9+/9ZLK4
-        vGsOm8WM8/uYLBZMfsJqsWBbH6PF05mb2SzerX7CaHH8RCezg7DH71+TGD1m3T/L5rFz1l12
-        j8Wb9rN5bDug6rFpVSebx/65a9g9Ni+p9+jbsorRo+/lBkaP9Vuusng0nWpn9fi8SS6AN0rP
-        pii/tCRVISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzWyshUSd/OJiU1J7MstUjfLkEvY/XhzawF
-        u1gqWm4/YWtgPM7cxcjJISFgIrFu7U4gm4tDSGApo8TH5WdYuxg5gBJSEivnpkPUCEv8udbF
-        BlHzlFFiyeapYM1sAo4S/UtPsIIkRAQms0q82dPKBJJgFiiXaH34hBXEFhawkjj+qIEJZCiL
-        gKpEwyM2kDCvgLXEo66DLBAL5CVmN56GigtKnJz5hAWknFlAXWL9PCGQML+AlsSapussENPl
-        JZq3zmaewCgwC0nHLISOWUiqFjAyr2IUSS0tzk3PLTbUK07MLS7NS9dLzs/dxAiM9G3Hfm7e
-        wXhpY/AhRgEORiUeXoOpe+OEWBPLiitzDzFKcDArifD6rd8dJ8SbklhZlVqUH19UmpNafIjR
-        FOibicxSosn5wCSUVxJvaGpobmFpaG5sbmxmoSTO2yFwMEZIID2xJDU7NbUgtQimj4mDU6qB
-        ken00bNaRVM4Ft4Rm/W65OIyfjcRm+sbJ9w6m83yz8wpsi8+VXr3bkE1ffZfF+4/7rm5/saz
-        qbZeZbOXzF9/Jk7hi5zztlVbp/aYLVnlPanr386+tsU/73fMfmtV+9D/57bgfPnYeqWo9x/u
-        xXT57DSadqH6YE20V37ilxpfS6/6zl82vNEd3kosxRmJhlrMRcWJAG2FeAMKAwAA
-X-CMS-MailID: 20200514190737eucas1p18ccdddb185ea7611683a6859e17bc721
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200514190737eucas1p18ccdddb185ea7611683a6859e17bc721
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200514190737eucas1p18ccdddb185ea7611683a6859e17bc721
-References: <CGME20200514190737eucas1p18ccdddb185ea7611683a6859e17bc721@eucas1p1.samsung.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-The rng structure contains the quality field which tells how many bits
-of entropy can be obtained from 1024 bits read from a device. With the
-quality value set the hw_random framework starts a kernel thread to feed
-the entropy pool in the CRNG, which helps to initialize it quickly
-especially during boot.
+Am Donnerstag, 14. Mai 2020, 21:07:33 CEST schrieb =C5=81ukasz Stelmach:
 
-Łukasz Stelmach (2):
-  hwrng: iproc-rng200 - Set the quality value
-  hwrng: exynos - Set the quality value
+Hi =C5=81ukasz,
 
- drivers/char/hw_random/exynos-trng.c  | 1 +
- drivers/char/hw_random/iproc-rng200.c | 1 +
- 2 files changed, 2 insertions(+)
+> The value has been estimaded by obtainig 1024 chunks of data 128 bytes
+> (1024 bits) each from the generator and finding chunk with minimal
+> entropy using the ent(1) tool. The value was 6.327820 bits of entropy
+> in each 8 bits of data.
 
--- 
-2.25.0
+I am not sure we should use the ent tool to define the entropy level. Ent=20
+seems to use a very coarse entropy estimation.
+
+I would feel more comfortable when using other measures like SP800-90B whic=
+h=20
+even provides a tool for the analysis.
+
+I understand that entropy estimates, well, are estimates. But the ent data =
+is=20
+commonly not very conservative.
+
+[1] https://github.com/usnistgov/SP800-90B_EntropyAssessment
+
+Ciao
+Stephan
+
 
