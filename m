@@ -2,140 +2,154 @@ Return-Path: <SRS0=j0mq=64=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F276CC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 May 2020 10:08:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9936FC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 May 2020 19:07:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D3E26206DA
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 May 2020 10:08:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DFE82065F
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 May 2020 19:07:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZGcTyQwT"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="OuKiGx3+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725955AbgENKIQ (ORCPT
+        id S1729242AbgENTHo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 14 May 2020 06:08:16 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:52269 "EHLO
+        Thu, 14 May 2020 15:07:44 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:57881 "EHLO
         mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725925AbgENKIP (ORCPT
+        with ESMTP id S1730191AbgENTHm (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 14 May 2020 06:08:15 -0400
+        Thu, 14 May 2020 15:07:42 -0400
 Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200514100812euoutp01c191b11a089704e3f76f5b629f9ac6ed~O3Spyfr7G0661006610euoutp01q
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 May 2020 10:08:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200514100812euoutp01c191b11a089704e3f76f5b629f9ac6ed~O3Spyfr7G0661006610euoutp01q
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200514190740euoutp011dbb1fc03e98972092edde91c83324d2~O_pqQ8jha1498914989euoutp01D
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 May 2020 19:07:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200514190740euoutp011dbb1fc03e98972092edde91c83324d2~O_pqQ8jha1498914989euoutp01D
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1589450892;
-        bh=pyYr7Ewi8sGlBrwS6b6/m9DYGRvNNmkmK1alQSdWm+o=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=ZGcTyQwTG3eSIhs1Lbasehs3Ynx400YQ/m3vNZvYusLnf9FqMHENkX+OyK/E9iw2/
-         Qcl5WoTssbT7bsMbrXOctOkL1xSgFznFB79JKPnfdkCUkoQQiUL69x6R5RUNQKep9v
-         fT9t8n9N4RzGbUOqA/krnFDNNleTatDIuVaBCJbk=
+        s=mail20170921; t=1589483260;
+        bh=0ZTSEZCdZQmmB3Cuf4f7fDeYUffZn+GsVAdbdhxdQ5Q=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=OuKiGx3+2JiS7BvGECbc+jyku4zGJDdZ5m9YG4MSrDREE8kitFBoCiuKvlLcDxUH9
+         YnbokNDaW6Q0hzI2Dt9bpZzNBO1N0UyWvHpF+MRnADy0789en/GHNQVv1/PTX1sxbT
+         BrQB4/l8t1uFnMNAydoZU2919kid093HrwTW2Y3s=
 Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200514100812eucas1p249b633ebc2422de71176126186eaec4b~O3Spa9AlR2384123841eucas1p2Y;
-        Thu, 14 May 2020 10:08:12 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 48.A9.60698.C881DBE5; Thu, 14
-        May 2020 11:08:12 +0100 (BST)
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200514190739eucas1p128e1f360ca382919779973520cc2d026~O_ppzoPtB2658126581eucas1p1E;
+        Thu, 14 May 2020 19:07:39 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id D4.98.60698.BF69DBE5; Thu, 14
+        May 2020 20:07:39 +0100 (BST)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200514100812eucas1p1d42ad25e93858a4bc801049f93f58250~O3SpDWnyW2113921139eucas1p1u;
-        Thu, 14 May 2020 10:08:12 +0000 (GMT)
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200514190738eucas1p2695c0d8af064ee702209ca03696ef438~O_po-9KUX0444904449eucas1p2n;
+        Thu, 14 May 2020 19:07:38 +0000 (GMT)
 Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200514100812eusmtrp1448896cd90fbb65b5040f8a57da9a553~O3SpCpHks2324223242eusmtrp1Z;
-        Thu, 14 May 2020 10:08:12 +0000 (GMT)
-X-AuditID: cbfec7f5-a29ff7000001ed1a-55-5ebd188c4a6f
+        20200514190738eusmtrp1af5f742bc66af38419c76ed7d1f90ba7~O_po55Wqj2577025770eusmtrp1n;
+        Thu, 14 May 2020 19:07:38 +0000 (GMT)
+X-AuditID: cbfec7f5-a0fff7000001ed1a-b3-5ebd96fb75c4
 Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id C6.62.07950.C881DBE5; Thu, 14
-        May 2020 11:08:12 +0100 (BST)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200514100811eusmtip14ca3836435828a1f65de3288f87e479e~O3Sop6xwg1405014050eusmtip1p;
-        Thu, 14 May 2020 10:08:11 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH] drm/exynos: mixer: Fix enabling of the runtime power
- management
-Date:   Thu, 14 May 2020 12:08:12 +0200
-Message-Id: <20200514100812.17043-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMIsWRmVeSWpSXmKPExsWy7djP87o9EnvjDNZdl7G4te4cq8XGGetZ
-        La58fc9mMen+BBaLGef3MVmsPXKX3WLG5JdsDuwe97uPM3n0bVnF6PF5k1wAcxSXTUpqTmZZ
-        apG+XQJXxqYVKQX3OSquvnrO0sC4ib2LkZNDQsBEYvaXZSxdjFwcQgIrGCVuTrjICuF8YZTo
-        PPcCyvnMKHFg6zY2mJZJT9aygNhCAssZJZ5/TITrmLPtETNIgk3AUKLrbRdYg4iAm0TT4Zlg
-        k5gFrjNKfPuxCGy5sECQxKJlHWANLAKqEu9XnGXqYuTg4BWwlVj0LgRimbzE6g0HmCHsI2wS
-        sy/mQtguEs3vDjNC2MISr45vgfpHRuL05B6wfyQEmhklHp5byw7h9DBKXG6aAdVhLXHn3C82
-        kGXMApoS63fpQ4QdJdbPv8cIEpYQ4JO48VYQJMwMZE7aNp0ZIswr0dEmBFGtJjHr+Dq4tQcv
-        XII600PiesttVkj4xEq0dp1gmsAoNwth1wJGxlWM4qmlxbnpqcXGeanlesWJucWleel6yfm5
-        mxiBUX/63/GvOxj3/Uk6xCjAwajEw/vg+u44IdbEsuLK3EOMEhzMSiK8fuuBQrwpiZVVqUX5
-        8UWlOanFhxilOViUxHmNF72MFRJITyxJzU5NLUgtgskycXBKNTDuFqhctCjxstmTGT8e71WM
-        PB8X9JPP0NdnwmHr5tPPbWsz/Sakre/v+LZu4YdW8b6+xjUPHde9d4z9ZfNnEZO46tNrabvO
-        X+o69N88nuHdZt5mMwsTYzWxyZ07K5N1D29Zo3u5If7xcknj/1naYVv8lUs+S0hYb3I7xFpY
-        L8QV5rWR2XyWyHclluKMREMt5qLiRABDt4S19gIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJLMWRmVeSWpSXmKPExsVy+t/xu7o9EnvjDJ5NZba4te4cq8XGGetZ
-        La58fc9mMen+BBaLGef3MVmsPXKX3WLG5JdsDuwe97uPM3n0bVnF6PF5k1wAc5SeTVF+aUmq
-        QkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6dTUpqTmZZapG+XYJexqYVKQX3OSquvnrO
-        0sC4ib2LkZNDQsBEYtKTtSxdjFwcQgJLGSWaNs5khkjISJyc1sAKYQtL/LnWxQZiCwl8YpR4
-        MoEPxGYTMJToegsRFxHwkGj+dpwdZBCzwG1GiaUf5rGAJIQFAiQ+LTgBZrMIqEq8X3GWqYuR
-        g4NXwFZi0bsQiPnyEqs3HGCewMizgJFhFaNIamlxbnpusZFecWJucWleul5yfu4mRmCwbTv2
-        c8sOxq53wYcYBTgYlXh4LW7tjhNiTSwrrsw9xCjBwawkwuu3HijEm5JYWZValB9fVJqTWnyI
-        0RRo90RmKdHkfGAk5JXEG5oamltYGpobmxubWSiJ83YIHIwREkhPLEnNTk0tSC2C6WPi4JRq
-        YJSU2pFySILvUpbhwZjon9bL/rXf38YoE9+UL3aB51fCsvc/KwMvTI+6dMTipZKamfudGBM5
-        jivft8/K7+T6eC77po1JUkZH0P57CdZ8Vt97a+UaDjs1KnwT/WFq5zvv4I+CaBNHjYd/JV23
-        R/hqpgUu4IgQ0+zsNmO8ubSzrqFIZYpzQF68EktxRqKhFnNRcSIAVtJokkwCAAA=
-X-CMS-MailID: 20200514100812eucas1p1d42ad25e93858a4bc801049f93f58250
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id D4.BE.07950.AF69DBE5; Thu, 14
+        May 2020 20:07:38 +0100 (BST)
+Received: from localhost (unknown [106.120.51.46]) by eusmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200514190738eusmtip1e02e9ee08457f754ba2db3422c2673cc~O_pordu_C0350703507eusmtip1P;
+        Thu, 14 May 2020 19:07:38 +0000 (GMT)
+From:   =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+To:     Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Markus Elfring <elfring@users.sourceforge.net>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Stefan Wahren <wahrenst@gmx.net>, linux-crypto@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+Subject: [PATCH 1/2] hwrng: iproc-rng200 - Set the quality value
+Date:   Thu, 14 May 2020 21:07:33 +0200
+Message-Id: <20200514190734.32746-2-l.stelmach@samsung.com>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200514190734.32746-1-l.stelmach@samsung.com>
+MIME-Version: 1.0
+Organization: Samsung R&D Institute Poland
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SfUyMcRz363ntOD1d0Vde2o7mZVNZzX7mEGN7Zmb+sDGrOHp2opI7Hdm8
+        hd670qG6iqaoJR1355YoLVS0ujAulkLpzbJZjM5LunvO+O/z/X7eft/txxKyCcqfjYk/JKjj
+        lbFyWkJam8c7lv64WB8VYutdhH/lNTP4VoGRwjeyH5HYll5BYMenhww+XWakcebIHJzT95HA
+        NttNBr9qqkTY1PeSwr094x74eV0xjQtsDR64VN9P4VKrDuEPhWYaf7rej3BLazoR7sP/cOQh
+        3tDbTvN3DG8Yvsx0n+atjYG8qSqd5u+XVDO8ufwEr7NUIV43fBPxRssLkk9+kkrxY6Z5W6Q7
+        JIpoITZGK6iDV++S7L2m+0glXGaOPJ/IJE+ic3QG8mSBC4PfFrsLy7hKBA+uqDOQZBJ/QTDR
+        ncaIwxiCnqed1F/Hpc/lpEhUIMhPLXQPgwiGB+4gp4rm1kLO1VbKSfhyZynQf84lnQTBHYaz
+        7/pdUT5cOJhSslzlJBcI1okXrr2UWwm5BTnuugAoOtXm0nhyCrAPOTxEjTc8Lux3ZXpxS6A6
+        2e7OD4DTt4sIZzFwjSz0vi93X7oeUh70uLEPjLRYGBHPgTZ91qSZncQnQJ+3XPRmIbAWfydF
+        zUro7nDQTg3BLQZjXbC4Xgv6y88Y0Toduka9xSdMhzxrPiGupZCWIhPVC6Am55470B+yRypR
+        LpIb/jvG8N8Bhn9dpYioQn5CoiZOJWhC44XDQRplnCYxXhW050CcCU1+y7bfLV9rUcPP3U2I
+        Y5F8mjTkQn2UjFJqNUlxTQhYQu4r3Wy8GyWTRiuTjgrqAzvVibGCpgnNZkm5nzT0ynCkjFMp
+        Dwn7BSFBUP9lPVhP/5NIImjbZ6lqJAf5sW2lfrsGA1Z492yvauno5n5m79Z6Lnfsa1atmuGb
+        +nXqW7BET9Mlb7W/Gpg6f8dxa722Mm3oXp/C6/xo7aIOvXl0f1Kx15mwhog687bODPuxyKsz
+        jYEb13UhRe23rpCy3IxN+Wb53Cnzby30YRUlERvOkWvG/V/LSc1e5bIlhFqj/AOwdzj4kgMA
+        AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnleLIzCtJLcpLzFFi42I5/e/4Xd1f0/bGGcxYpW3xd9IxdouNM9az
+        WqztPcpicb5zObPFr3dH2C2aF69ns+h+JWPR//g1s8X58xvYLW4eWsFosenxNVaL+/d+Mllc
+        3jWHzWLG+X1MFgsmP2G1WLCtj9Hi6czNbBbvVj9htDh+opPZQdjj969JjB6z7p9l89g56y67
+        x+JN+9k8th1Q9di0qpPNY//cNewem5fUe/RtWcXo0fdyA6PH+i1XWTyaTrWzenzeJBfAG6Vn
+        U5RfWpKqkJFfXGKrFG1oYaRnaGmhZ2RiqWdobB5rZWSqpG9nk5Kak1mWWqRvl6CXsazvNWvB
+        fPaKy/+7WRoYJ7J1MXJySAiYSMz7uISli5GLQ0hgKaPEzi2ngBIcQAkpiZVz0yFqhCX+XOsC
+        qxcSeApU89MAxGYTcJToX3qCFaRXRGAyq8SbPa1MIAlmgXKJ1odPWEFsYQEHiU1tPWDNLAKq
+        Etv+XwWL8wpYS0yY0c8KsUBeYnbjabAaTgEbiesvfjFBLLOWuPNlLlS9oMTJmU9YQG5jFlCX
+        WD9PCCTML6AlsabpOgvEWnmJ5q2zmScwCs1C0jELoWMWkqoFjMyrGEVSS4tz03OLjfSKE3OL
+        S/PS9ZLzczcxAhPDtmM/t+xg7HoXfIhRgINRiYfXYOreOCHWxLLiytxDjBIczEoivH7rd8cJ
+        8aYkVlalFuXHF5XmpBYfYjQFenMis5Rocj4waeWVxBuaGppbWBqaG5sbm1koifN2CByMERJI
+        TyxJzU5NLUgtgulj4uCUamDc6Bnd/f4Rb9E2S0XxfoavT97lrJYWeJGavOdAdc+3T//EbX4r
+        9VfbL/mudnfGjQjz39v11dL3Fc68rXlzVpTNmhNbXp3gUbnf0fNthXi8zYL/n82+xF6X1Ant
+        zpssuejVnsMrInhTuZSfV802Ud0nz/I8pPGf8tfqzrwLTBOPlX6z3PlkU/0JJZbijERDLeai
+        4kQAVkcDliIDAAA=
+X-CMS-MailID: 20200514190738eucas1p2695c0d8af064ee702209ca03696ef438
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200514100812eucas1p1d42ad25e93858a4bc801049f93f58250
+X-RootMTR: 20200514190738eucas1p2695c0d8af064ee702209ca03696ef438
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200514100812eucas1p1d42ad25e93858a4bc801049f93f58250
-References: <CGME20200514100812eucas1p1d42ad25e93858a4bc801049f93f58250@eucas1p1.samsung.com>
+X-CMS-RootMailID: 20200514190738eucas1p2695c0d8af064ee702209ca03696ef438
+References: <20200514190734.32746-1-l.stelmach@samsung.com>
+        <CGME20200514190738eucas1p2695c0d8af064ee702209ca03696ef438@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Runtime power management is essential for the Exynos Mixer driver
-operation. It should be enabled before adding its DRM component, because
-in some cases (when deferred probe takes place due to the IOMMU
-availability) the DRM driver might be initialized directly from the
-Mixer's component_add() call, what results in starting the driver
-operation without enabling the runtime power management.
+The value has been estimaded by obtainig 1024 chunks of data 128 bytes
+(1024 bits) each from the generator and finding chunk with minimal
+entropy using the ent(1) tool. The value was 6.327820 bits of entropy
+in each 8 bits of data.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_mixer.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/char/hw_random/iproc-rng200.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index ffbf4a950f69..829d2ce7560d 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -1200,9 +1200,11 @@ static int mixer_probe(struct platform_device *pdev)
+diff --git a/drivers/char/hw_random/iproc-rng200.c b/drivers/char/hw_random/iproc-rng200.c
+index 32d9fe61a225..7eb02a23f744 100644
+--- a/drivers/char/hw_random/iproc-rng200.c
++++ b/drivers/char/hw_random/iproc-rng200.c
+@@ -199,6 +199,7 @@ static int iproc_rng200_probe(struct platform_device *pdev)
+ 	priv->rng.read = iproc_rng200_read,
+ 	priv->rng.init = iproc_rng200_init,
+ 	priv->rng.cleanup = iproc_rng200_cleanup,
++	priv->rng.quality = 800,
  
- 	platform_set_drvdata(pdev, ctx);
- 
-+	pm_runtime_enable(dev);
-+
- 	ret = component_add(&pdev->dev, &mixer_component_ops);
--	if (!ret)
--		pm_runtime_enable(dev);
-+	if (ret)
-+		pm_runtime_disable(dev);
- 
- 	return ret;
- }
+ 	/* Register driver */
+ 	ret = devm_hwrng_register(dev, &priv->rng);
 -- 
-2.17.1
+2.25.0
 
