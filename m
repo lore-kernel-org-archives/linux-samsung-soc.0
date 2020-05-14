@@ -2,175 +2,140 @@ Return-Path: <SRS0=j0mq=64=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14C22C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 May 2020 00:53:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F276CC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 May 2020 10:08:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2787120659
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 May 2020 00:53:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3E26206DA
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 14 May 2020 10:08:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="iq9bV2Mv"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZGcTyQwT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729439AbgENAxv (ORCPT
+        id S1725955AbgENKIQ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 13 May 2020 20:53:51 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:45789 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727033AbgENAw6 (ORCPT
+        Thu, 14 May 2020 06:08:16 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:52269 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725925AbgENKIP (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 13 May 2020 20:52:58 -0400
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200514005255epoutp018bdd42adbf9a18dc81fae215e07aba6a~Ovt0RwevN2952029520epoutp01r
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 May 2020 00:52:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200514005255epoutp018bdd42adbf9a18dc81fae215e07aba6a~Ovt0RwevN2952029520epoutp01r
+        Thu, 14 May 2020 06:08:15 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200514100812euoutp01c191b11a089704e3f76f5b629f9ac6ed~O3Spyfr7G0661006610euoutp01q
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 May 2020 10:08:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200514100812euoutp01c191b11a089704e3f76f5b629f9ac6ed~O3Spyfr7G0661006610euoutp01q
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1589417575;
-        bh=HK/1/VP5ov7EOoNpQ0X08DtlhI52O+2EyAZ3cTvlQkI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iq9bV2MvKBaOd4OJVeKR6lAshvSH27Q+7A3iAfWowsketrFby9TCRt2YUM7y7pdX1
-         Lmd1Spbxo4y04ptgTGF+RPLZd9v6j+1hmvOcudsVMFjAWJ2ljzx0hAv9iWeazxpTft
-         C5Jp5AD9GJtDGgeGrPkn2oWVnuw7NdVhBNMxIc0c=
-Received: from epsmges5p1new.samsung.com (unknown [182.195.42.73]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-        20200514005254epcas5p4e1a104efe68d28acdbb3e0768208a94e~OvtznjCWp1376013760epcas5p4-;
-        Thu, 14 May 2020 00:52:54 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        95.45.10010.6669CBE5; Thu, 14 May 2020 09:52:54 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200514005254epcas5p27e2ef61a6d7f595ff2eaf4ec65940cf6~OvtzOhf9E1337713377epcas5p2E;
-        Thu, 14 May 2020 00:52:54 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200514005254epsmtrp1fa7c612eaa29d07db168f66d1a091dae~OvtzNnQGq1028710287epsmtrp1j;
-        Thu, 14 May 2020 00:52:54 +0000 (GMT)
-X-AuditID: b6c32a49-71fff7000000271a-ee-5ebc9666ccf5
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        6C.C3.18461.5669CBE5; Thu, 14 May 2020 09:52:53 +0900 (KST)
-Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
-        [107.108.73.139]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200514005252epsmtip2f8c61bf224dc7b461d8ca8f6611a8818~OvtxTQi6n3205832058epsmtip2k;
-        Thu, 14 May 2020 00:52:51 +0000 (GMT)
-From:   Alim Akhtar <alim.akhtar@samsung.com>
-To:     robh@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-scsi@vger.kernel.org,
-        krzk@kernel.org, avri.altman@wdc.com, martin.petersen@oracle.com,
-        kwmad.kim@samsung.com, stanley.chu@mediatek.com,
-        cang@codeaurora.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH v9 01/10] scsi: ufs: add quirk to fix mishandling
- utrlclr/utmrlclr
-Date:   Thu, 14 May 2020 06:09:05 +0530
-Message-Id: <20200514003914.26052-2-alim.akhtar@samsung.com>
+        s=mail20170921; t=1589450892;
+        bh=pyYr7Ewi8sGlBrwS6b6/m9DYGRvNNmkmK1alQSdWm+o=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=ZGcTyQwTG3eSIhs1Lbasehs3Ynx400YQ/m3vNZvYusLnf9FqMHENkX+OyK/E9iw2/
+         Qcl5WoTssbT7bsMbrXOctOkL1xSgFznFB79JKPnfdkCUkoQQiUL69x6R5RUNQKep9v
+         fT9t8n9N4RzGbUOqA/krnFDNNleTatDIuVaBCJbk=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200514100812eucas1p249b633ebc2422de71176126186eaec4b~O3Spa9AlR2384123841eucas1p2Y;
+        Thu, 14 May 2020 10:08:12 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 48.A9.60698.C881DBE5; Thu, 14
+        May 2020 11:08:12 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200514100812eucas1p1d42ad25e93858a4bc801049f93f58250~O3SpDWnyW2113921139eucas1p1u;
+        Thu, 14 May 2020 10:08:12 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200514100812eusmtrp1448896cd90fbb65b5040f8a57da9a553~O3SpCpHks2324223242eusmtrp1Z;
+        Thu, 14 May 2020 10:08:12 +0000 (GMT)
+X-AuditID: cbfec7f5-a29ff7000001ed1a-55-5ebd188c4a6f
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id C6.62.07950.C881DBE5; Thu, 14
+        May 2020 11:08:12 +0100 (BST)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200514100811eusmtip14ca3836435828a1f65de3288f87e479e~O3Sop6xwg1405014050eusmtip1p;
+        Thu, 14 May 2020 10:08:11 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH] drm/exynos: mixer: Fix enabling of the runtime power
+ management
+Date:   Thu, 14 May 2020 12:08:12 +0200
+Message-Id: <20200514100812.17043-1-m.szyprowski@samsung.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200514003914.26052-1-alim.akhtar@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphleLIzCtJLcpLzFFi42LZdlhTUzdt2p44g8eHxC0ezNvGZvHy51U2
-        i0/rl7FazD9yjtXi/PkN7BY3txxlsdj0+BqrxeVdc9gsZpzfx2TRfX0Hm8Xy4/+YLP7v2cFu
-        sXTrTUYHXo/Lfb1MHptWdbJ5bF5S79Fycj+Lx8ent1g8+rasYvT4vEnOo/1AN1MARxSXTUpq
-        TmZZapG+XQJXxouja1gKdgtU7P9wnLmB8TVvFyMnh4SAicT/nUsZuxi5OIQEdjNKPLu6jxnC
-        +cQo8anjNRuE841R4uWKw0wwLWcvLYBq2cso8efUWSYIp4VJ4tG+VlaQKjYBbYm707eAdYgI
-        CEsc+dbGCGIzC9xgkniw0gXEFhYIkZi+/AALiM0ioCqxbd5SMJtXwEbi0btHzBDb5CVWbzgA
-        ZnMK2Eps+XKMFWSZhEAnh8SxKe/YIYpcgM6DWCwBtOzV8S1QcSmJl/1tQDYHkJ0t0bPLGCJc
-        I7F03jEWCNte4sCVOSwgJcwCmhLrd+lDnMkn0fv7CRNEJ69ER5sQRLWqRPO7q1Cd0hITu7uh
-        lnpIHJ7SAA25CYwSpzuWsk1glJ2FMHUBI+MqRsnUguLc9NRi0wLDvNRyveLE3OLSvHS95Pzc
-        TYzghKLluYPx7oMPeocYmTgYDzFKcDArifD6rd8dJ8SbklhZlVqUH19UmpNafIhRmoNFSZz3
-        dNqWOCGB9MSS1OzU1ILUIpgsEwenVANTSJnzMv5rL39Y3Mt0iLvRx/S56k3xjSSHrhmCTzep
-        WJ2tOt9iKMnLwf5Hd9/bgjmJL/fFnYsN/fJddLP5IQ0nrssbfn2R8vxs6v/4YsxzLpWUT+er
-        dX3XXqp508mrVOOz4XZbYI+2p//pZ1947glPZNnwM806SH4CT/BJ1867W42F65NmXvY3dD6p
-        tOPBwhCP2SyJlQ688yy+51fWM86ckSvNXvuHW3TupkzzXsuCKxc4by2Ka8iqP+Ip2X/E5KGY
-        90yPxOTYsobjCVuOTPnM1NjHdEh56eLfqqoKs+xt0lwSOLR/qMl1mAezzn1975Pa29T1Z380
-        5uhM2niK2/bm2eaPLVoPRIvjy2eHTVNiKc5INNRiLipOBACNXPbjlwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMLMWRmVeSWpSXmKPExsWy7bCSvG7qtD1xBscfWlo8mLeNzeLlz6ts
-        Fp/WL2O1mH/kHKvF+fMb2C1ubjnKYrHp8TVWi8u75rBZzDi/j8mi+/oONovlx/8xWfzfs4Pd
-        YunWm4wOvB6X+3qZPDat6mTz2Lyk3qPl5H4Wj49Pb7F49G1ZxejxeZOcR/uBbqYAjigum5TU
-        nMyy1CJ9uwSujBdH17AU7Bao2P/hOHMD42veLkZODgkBE4mzlxYwdjFycQgJ7GaUeLV6BjNE
-        Qlri+sYJ7BC2sMTKf8/ZIYqamCTOP1/KBJJgE9CWuDt9C5gtAlR05FsbI4jNLPCMSeLUw1IQ
-        W1ggSKKz8wPYIBYBVYlt85aygNi8AjYSj949glomL7F6wwEwm1PAVmLLl2OsILYQUM2yNcsY
-        JzDyLWBkWMUomVpQnJueW2xYYJiXWq5XnJhbXJqXrpecn7uJERzOWpo7GLev+qB3iJGJg/EQ
-        owQHs5IIr9/63XFCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeW8ULowTEkhPLEnNTk0tSC2CyTJx
-        cEo1MEU+O7ZK3TMjRdpH5+OTebG7TsqITjglXarYLNs1qXf95ccX9x7atVxyJRvD1udpddck
-        DFm1lu1PW9zU/m75opfzX4Z5qLzdXc3/WIMtY2/D6vt1N0zdX/XczSsIC/njvWr9Qk4Hhazv
-        UusYZuinv7cW21vvf+7ppyqlrO2yx7yfVNXbHXqUsWP+RaPjf/sVtCu4lbhCtgdNV9mXLhLp
-        /narxgVdC5EraR1FRzlPfMh4bPkn4sMXlwMLn592r5zJbLclNV7V5tZh31kbn0eINi+Y4jBd
-        ek35+iMVi2TyfH+KPvpm+FNhL++i3ktyLgzsISK1oTtCLAX4lm6Kelwf97TOWLZRNuBy1f2d
-        2zg2hCuxFGckGmoxFxUnAgD+I2701gIAAA==
-X-CMS-MailID: 20200514005254epcas5p27e2ef61a6d7f595ff2eaf4ec65940cf6
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMIsWRmVeSWpSXmKPExsWy7djP87o9EnvjDNZdl7G4te4cq8XGGetZ
+        La58fc9mMen+BBaLGef3MVmsPXKX3WLG5JdsDuwe97uPM3n0bVnF6PF5k1wAcxSXTUpqTmZZ
+        apG+XQJXxqYVKQX3OSquvnrO0sC4ib2LkZNDQsBEYvaXZSxdjFwcQgIrGCVuTrjICuF8YZTo
+        PPcCyvnMKHFg6zY2mJZJT9aygNhCAssZJZ5/TITrmLPtETNIgk3AUKLrbRdYg4iAm0TT4Zlg
+        k5gFrjNKfPuxCGy5sECQxKJlHWANLAKqEu9XnGXqYuTg4BWwlVj0LgRimbzE6g0HmCHsI2wS
+        sy/mQtguEs3vDjNC2MISr45vgfpHRuL05B6wfyQEmhklHp5byw7h9DBKXG6aAdVhLXHn3C82
+        kGXMApoS63fpQ4QdJdbPv8cIEpYQ4JO48VYQJMwMZE7aNp0ZIswr0dEmBFGtJjHr+Dq4tQcv
+        XII600PiesttVkj4xEq0dp1gmsAoNwth1wJGxlWM4qmlxbnpqcXGeanlesWJucWleel6yfm5
+        mxiBUX/63/GvOxj3/Uk6xCjAwajEw/vg+u44IdbEsuLK3EOMEhzMSiK8fuuBQrwpiZVVqUX5
+        8UWlOanFhxilOViUxHmNF72MFRJITyxJzU5NLUgtgskycXBKNTDuFqhctCjxstmTGT8e71WM
+        PB8X9JPP0NdnwmHr5tPPbWsz/Sakre/v+LZu4YdW8b6+xjUPHde9d4z9ZfNnEZO46tNrabvO
+        X+o69N88nuHdZt5mMwsTYzWxyZ07K5N1D29Zo3u5If7xcknj/1naYVv8lUs+S0hYb3I7xFpY
+        L8QV5rWR2XyWyHclluKMREMt5qLiRABDt4S19gIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJLMWRmVeSWpSXmKPExsVy+t/xu7o9EnvjDJ5NZba4te4cq8XGGetZ
+        La58fc9mMen+BBaLGef3MVmsPXKX3WLG5JdsDuwe97uPM3n0bVnF6PF5k1wAc5SeTVF+aUmq
+        QkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6dTUpqTmZZapG+XYJexqYVKQX3OSquvnrO
+        0sC4ib2LkZNDQsBEYtKTtSxdjFwcQgJLGSWaNs5khkjISJyc1sAKYQtL/LnWxQZiCwl8YpR4
+        MoEPxGYTMJToegsRFxHwkGj+dpwdZBCzwG1GiaUf5rGAJIQFAiQ+LTgBZrMIqEq8X3GWqYuR
+        g4NXwFZi0bsQiPnyEqs3HGCewMizgJFhFaNIamlxbnpusZFecWJucWleul5yfu4mRmCwbTv2
+        c8sOxq53wYcYBTgYlXh4LW7tjhNiTSwrrsw9xCjBwawkwuu3HijEm5JYWZValB9fVJqTWnyI
+        0RRo90RmKdHkfGAk5JXEG5oamltYGpobmxubWSiJ83YIHIwREkhPLEnNTk0tSC2C6WPi4JRq
+        YJSU2pFySILvUpbhwZjon9bL/rXf38YoE9+UL3aB51fCsvc/KwMvTI+6dMTipZKamfudGBM5
+        jivft8/K7+T6eC77po1JUkZH0P57CdZ8Vt97a+UaDjs1KnwT/WFq5zvv4I+CaBNHjYd/JV23
+        R/hqpgUu4IgQ0+zsNmO8ubSzrqFIZYpzQF68EktxRqKhFnNRcSIAVtJokkwCAAA=
+X-CMS-MailID: 20200514100812eucas1p1d42ad25e93858a4bc801049f93f58250
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20200514005254epcas5p27e2ef61a6d7f595ff2eaf4ec65940cf6
-References: <20200514003914.26052-1-alim.akhtar@samsung.com>
-        <CGME20200514005254epcas5p27e2ef61a6d7f595ff2eaf4ec65940cf6@epcas5p2.samsung.com>
+X-RootMTR: 20200514100812eucas1p1d42ad25e93858a4bc801049f93f58250
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200514100812eucas1p1d42ad25e93858a4bc801049f93f58250
+References: <CGME20200514100812eucas1p1d42ad25e93858a4bc801049f93f58250@eucas1p1.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-In the right behavior, setting the bit to '0' indicates clear and '1'
-indicates no change. If host controller handles this the other way,
-UFSHCI_QUIRK_BROKEN_REQ_LIST_CLR can be used.
+Runtime power management is essential for the Exynos Mixer driver
+operation. It should be enabled before adding its DRM component, because
+in some cases (when deferred probe takes place due to the IOMMU
+availability) the DRM driver might be initialized directly from the
+Mixer's component_add() call, what results in starting the driver
+operation without enabling the runtime power management.
 
-Reviewed-by: Can Guo <cang@codeaurora.org>
-Reviewed-by: Avri Altman <avri.altman@wdc.com>
-Signed-off-by: Seungwon Jeon <essuuj@gmail.com>
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/scsi/ufs/ufshcd.c | 11 +++++++++--
- drivers/scsi/ufs/ufshcd.h |  5 +++++
- 2 files changed, 14 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/exynos/exynos_mixer.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 698e8d20b4ba..3655b88fc862 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -645,7 +645,11 @@ static inline int ufshcd_get_tr_ocs(struct ufshcd_lrb *lrbp)
-  */
- static inline void ufshcd_utrl_clear(struct ufs_hba *hba, u32 pos)
- {
--	ufshcd_writel(hba, ~(1 << pos), REG_UTP_TRANSFER_REQ_LIST_CLEAR);
-+	if (hba->quirks & UFSHCI_QUIRK_BROKEN_REQ_LIST_CLR)
-+		ufshcd_writel(hba, (1 << pos), REG_UTP_TRANSFER_REQ_LIST_CLEAR);
-+	else
-+		ufshcd_writel(hba, ~(1 << pos),
-+				REG_UTP_TRANSFER_REQ_LIST_CLEAR);
- }
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index ffbf4a950f69..829d2ce7560d 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -1200,9 +1200,11 @@ static int mixer_probe(struct platform_device *pdev)
  
- /**
-@@ -655,7 +659,10 @@ static inline void ufshcd_utrl_clear(struct ufs_hba *hba, u32 pos)
-  */
- static inline void ufshcd_utmrl_clear(struct ufs_hba *hba, u32 pos)
- {
--	ufshcd_writel(hba, ~(1 << pos), REG_UTP_TASK_REQ_LIST_CLEAR);
-+	if (hba->quirks & UFSHCI_QUIRK_BROKEN_REQ_LIST_CLR)
-+		ufshcd_writel(hba, (1 << pos), REG_UTP_TASK_REQ_LIST_CLEAR);
-+	else
-+		ufshcd_writel(hba, ~(1 << pos), REG_UTP_TASK_REQ_LIST_CLEAR);
- }
+ 	platform_set_drvdata(pdev, ctx);
  
- /**
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index 6ffc08ad85f6..071f0edf3f64 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -518,6 +518,11 @@ enum ufshcd_quirks {
- 	 * ops (get_ufs_hci_version) to get the correct version.
- 	 */
- 	UFSHCD_QUIRK_BROKEN_UFS_HCI_VERSION		= 1 << 5,
++	pm_runtime_enable(dev);
 +
-+	/*
-+	 * Clear handling for transfer/task request list is just opposite.
-+	 */
-+	UFSHCI_QUIRK_BROKEN_REQ_LIST_CLR		= 1 << 6,
- };
+ 	ret = component_add(&pdev->dev, &mixer_component_ops);
+-	if (!ret)
+-		pm_runtime_enable(dev);
++	if (ret)
++		pm_runtime_disable(dev);
  
- enum ufshcd_caps {
+ 	return ret;
+ }
 -- 
 2.17.1
 
