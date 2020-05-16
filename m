@@ -2,126 +2,130 @@ Return-Path: <SRS0=Zwno=66=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE40CC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 16 May 2020 10:57:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C4C6C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 16 May 2020 16:38:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B923F20727
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 16 May 2020 10:57:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 614BB2076A
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 16 May 2020 16:38:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1589647081;
+	bh=pbJEkTsR5rZqT6w3UvXcgntFessnxR6qlEIS6uOhmmw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=NjqCRFCIiLnefhtyoZvYEw3pKB/RKF8O0He4JJgFHE11up1xe2rcnlhIF/ER5/CrE
+	 7bnMgAPMy2uCyfSJqtB5xrirCLXxkNQShVusO19oEPb6DxxCjWgRACgjCibXhhD3/0
+	 RxWq62M/m6ezhtnEeGYhzk7VmFNkuKe/YRJSoAfg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725853AbgEPK5r (ORCPT
+        id S1726250AbgEPQiB (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 16 May 2020 06:57:47 -0400
-Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:40792 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726170AbgEPK5q (ORCPT
+        Sat, 16 May 2020 12:38:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34654 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726233AbgEPQiA (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 16 May 2020 06:57:46 -0400
-Received: from localhost.localdomain ([93.22.148.0])
-        by mwinf5d14 with ME
-        id fNxd2200K00kvqt03Nxeb5; Sat, 16 May 2020 12:57:43 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 16 May 2020 12:57:43 +0200
-X-ME-IP: 93.22.148.0
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     inki.dae@samsung.com, jy0922.shim@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        airlied@linux.ie, daniel@ffwll.ch, kgene@kernel.org,
-        krzk@kernel.org
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2] drm/exynos: dsi: Remove bridge node reference in error handling path in probe function
-Date:   Sat, 16 May 2020 12:57:36 +0200
-Message-Id: <20200516105736.269669-1-christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.25.1
+        Sat, 16 May 2020 12:38:00 -0400
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98535206D4;
+        Sat, 16 May 2020 16:37:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1589647080;
+        bh=pbJEkTsR5rZqT6w3UvXcgntFessnxR6qlEIS6uOhmmw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=kY50VS7EwjdDATTzjCFc6sF9nBArlTI/SFSWXia74Y9iHa2Gxz0Zr0Jk+tqspo0TK
+         J9KB0jTDaRbI9YTxoyVJoYVY390OrgGd2LxGCMlzygLgY3nfkBaxIe1pW0SDf+wYmY
+         PXe00W/UTwuPNLRV7QOyyX3e97wd6p4o+BZYVcBM=
+Date:   Sat, 16 May 2020 17:37:55 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     "Alim Akhtar" <alim.akhtar@samsung.com>
+Cc:     "'Krzysztof Kozlowski'" <krzk@kernel.org>,
+        "'Hartmut Knaack'" <knaack.h@gmx.de>,
+        "'Lars-Peter Clausen'" <lars@metafoo.de>,
+        "'Peter Meerwald-Stadler'" <pmeerw@pmeerw.net>,
+        "'Kukjin Kim'" <kgene@kernel.org>, <linux-iio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] iio: adc: exynos: Simplify Exynos7-specific init
+Message-ID: <20200516173755.2b759618@archlinux>
+In-Reply-To: <037501d627b8$56f06870$04d13950$@samsung.com>
+References: <CGME20200511083406epcas5p18e835634e60f362dc408d73886aa5563@epcas5p1.samsung.com>
+        <20200511083348.7577-1-krzk@kernel.org>
+        <037501d627b8$56f06870$04d13950$@samsung.com>
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-'exynos_dsi_parse_dt()' takes a reference to 'dsi->in_bridge_node'.
-This must be released in the error handling path.
+On Mon, 11 May 2020 22:49:28 +0530
+"Alim Akhtar" <alim.akhtar@samsung.com> wrote:
 
-In order to do that, add an error handling path and move the
-'exynos_dsi_parse_dt()' call from the beginning to the end of the probe
-function to ease the error handling path.
-This function only sets some variables which are used only in the
-'transfer' function.
+> Hello Krzysztof,
+> Thanks for the patch.
+> 
+> > -----Original Message-----
+> > From: Krzysztof Kozlowski <krzk@kernel.org>
+> > Sent: 11 May 2020 14:04
+> > To: Jonathan Cameron <jic23@kernel.org>; Hartmut Knaack
+> > <knaack.h@gmx.de>; Lars-Peter Clausen <lars@metafoo.de>; Peter Meerwald-
+> > Stadler <pmeerw@pmeerw.net>; Kukjin Kim <kgene@kernel.org>; Krzysztof
+> > Kozlowski <krzk@kernel.org>; linux-iio@vger.kernel.org; linux-arm-
+> > kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-
+> > kernel@vger.kernel.org
+> > Cc: Alim Akhtar <alim.akhtar@samsung.com>
+> > Subject: [PATCH] iio: adc: exynos: Simplify Exynos7-specific init
+> > 
+> > The Exynos7-specific code bits in ADC driver do not play with PHY:
+> > the field exynos_adc_data.needs_adc_phy is not set in exynos7_adc_data
+> > instance.  Therefore the initialization code does not have to check if it  
+> is true.
+> > 
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> >   
+> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> Tested on exynos7-espresso board so,
+> Tested-by:  Alim Akhtar <alim.akhtar@samsung.com>
 
-The call chain is:
-   .transfer
-    --> exynos_dsi_host_transfer
-      --> exynos_dsi_init
-        --> exynos_dsi_enable_clock  (use burst_clk_rate and esc_clk_rate)
-          --> exynos_dsi_set_pll     (use pll_clk_rate)
+Applied to the togreg branch of iio.git and pushed out as testing for
+the autobuilders to play with it.
 
-While at it, also handle cases where 'component_add()' fails.
+Thanks,
 
-This patch is similar to commit 70505c2ef94b ("drm/exynos: dsi: Remove bridge node reference in removal")
-which fixed the issue in the remove function.
+Jonathan
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-A Fixes tag could be required, but I've not been able to figure out which
-one to use.
-
-v2: move around 'exynos_dsi_parse_dt' instead of adding many gotos
-    handle component_add failures
----
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 902938d2568f..a9d24402fabf 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1759,10 +1759,6 @@ static int exynos_dsi_probe(struct platform_device *pdev)
- 	dsi->dev = dev;
- 	dsi->driver_data = of_device_get_match_data(dev);
- 
--	ret = exynos_dsi_parse_dt(dsi);
--	if (ret)
--		return ret;
--
- 	dsi->supplies[0].supply = "vddcore";
- 	dsi->supplies[1].supply = "vddio";
- 	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(dsi->supplies),
-@@ -1823,11 +1819,25 @@ static int exynos_dsi_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	ret = exynos_dsi_parse_dt(dsi);
-+	if (ret)
-+		return ret;
-+
- 	platform_set_drvdata(pdev, &dsi->encoder);
- 
- 	pm_runtime_enable(dev);
- 
--	return component_add(dev, &exynos_dsi_component_ops);
-+	ret = component_add(dev, &exynos_dsi_component_ops);
-+	if (ret)
-+		goto err_disable_runtime;
-+
-+	return 0;
-+
-+err_disable_runtime:
-+	pm_runtime_disable(dev);
-+	of_node_put(dsi->in_bridge_node);
-+
-+	return ret;
- }
- 
- static int exynos_dsi_remove(struct platform_device *pdev)
--- 
-2.25.1
+> 
+> > ---
+> > 
+> > Only build tested.
+> > ---
+> >  drivers/iio/adc/exynos_adc.c | 3 ---
+> >  1 file changed, 3 deletions(-)
+> > 
+> > diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c  
+> index
+> > 22131a677445..219c8eb32d16 100644
+> > --- a/drivers/iio/adc/exynos_adc.c
+> > +++ b/drivers/iio/adc/exynos_adc.c
+> > @@ -449,9 +449,6 @@ static void exynos_adc_exynos7_init_hw(struct
+> > exynos_adc *info)  {
+> >  	u32 con1, con2;
+> > 
+> > -	if (info->data->needs_adc_phy)
+> > -		regmap_write(info->pmu_map, info->data->phy_offset, 1);
+> > -
+> >  	con1 = ADC_V2_CON1_SOFT_RESET;
+> >  	writel(con1, ADC_V2_CON1(info->regs));
+> > 
+> > --
+> > 2.17.1  
+> 
+> 
 
