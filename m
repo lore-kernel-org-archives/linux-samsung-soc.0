@@ -1,166 +1,127 @@
-Return-Path: <SRS0=UnNG=65=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=Zwno=66=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58673C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 May 2020 18:19:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE40CC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 16 May 2020 10:57:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 32768207C3
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 15 May 2020 18:19:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FmfAuVh4"
+	by mail.kernel.org (Postfix) with ESMTP id B923F20727
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 16 May 2020 10:57:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726304AbgEOSTR (ORCPT
+        id S1725853AbgEPK5r (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 15 May 2020 14:19:17 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:48896 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726170AbgEOSTR (ORCPT
+        Sat, 16 May 2020 06:57:47 -0400
+Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:40792 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726170AbgEPK5q (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 15 May 2020 14:19:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1589566755;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Fedn2inRka4QMAnXx9FxSm7/vZYS9uY++6sVEGlzAa0=;
-        b=FmfAuVh4QGkOpPgfhCFAuYt7jmv7Qagj1fzOAUyM01z8aAILrmmE7Ffn2dB4qTegdq1Shp
-        d/5G7ZCAVreovBNZmSD9zeIoqfER5+DTXru1T58BU9nfaNx7+GQTLlGXQU0xm81jmqojTk
-        ePaeUnUZj/WKqZMpPivCquDW6Q5eJEI=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-31-ydUSGqlNNYaYBHeGnyCDcA-1; Fri, 15 May 2020 14:19:13 -0400
-X-MC-Unique: ydUSGqlNNYaYBHeGnyCDcA-1
-Received: by mail-wm1-f72.google.com with SMTP id 23so1536984wma.8
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 May 2020 11:19:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Fedn2inRka4QMAnXx9FxSm7/vZYS9uY++6sVEGlzAa0=;
-        b=J7tYc8LyJCxC3mrFnGb4+8xJ5MLeDvN4rOOF+FrKytFhyOIsDUzdrT2JJGGfB+TjwL
-         TpZBJBoVzKu7OTIE29uy23r4rhaXldaMv/BAhdjJp726Nbi3+9wlFrfWpFSBz8l+YOcz
-         EmOww55kP0D/Lcxz71WByprgRPUrVwYwBxwsMcYNxSvR8kY7+usqWV/O/sCK8haBXZ2d
-         iXyaB2+fg7JDF1/M1GoX217Db98rPx9pjSGO8VSjQRlH1KJp1jATepeJB+7CtHZ8v/lD
-         jmivVLx+0fCxAe7GHW3ZwahEOUqdSTplSSMPIhvtrf7xYNdZz0JrW9XjWrtLyLOo9kbs
-         DDBA==
-X-Gm-Message-State: AOAM531xNLU89OFsOUBi/NWrk5Q5HXp+G4dh4JbB31wy7MihjIouCQjK
-        Q5cA6ITypwl09EZTLfjWuAtZJe8yxJjqzH2ZmydFt3zf6fZ4ILTgAdwNyctbtJeCr0nIaDCTTRM
-        Y3qc99AIzUAGKjHrn1K4Z2OyaExvM5+o=
-X-Received: by 2002:a1c:b406:: with SMTP id d6mr5299523wmf.89.1589566752687;
-        Fri, 15 May 2020 11:19:12 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwEhyZogIb52tbS8Sjh71yaPa5wKbVCzzV1bSu62tN2QyZWoHUXHTTKTerADtg5ez9J3v5UBw==
-X-Received: by 2002:a1c:b406:: with SMTP id d6mr5299458wmf.89.1589566752273;
-        Fri, 15 May 2020 11:19:12 -0700 (PDT)
-Received: from x1.localdomain (2001-1c00-0c0c-fe00-d2ea-f29d-118b-24dc.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:d2ea:f29d:118b:24dc])
-        by smtp.gmail.com with ESMTPSA id a15sm4604338wrw.56.2020.05.15.11.19.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 May 2020 11:19:11 -0700 (PDT)
-Subject: Re: [PATCHv2 0/7] Support inhibiting input devices
-To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        linux-input@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        patches@opensource.cirrus.com,
-        ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Barry Song <baohua@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Nick Dyer <nick@shmanahar.org>,
-        Ferruh Yigit <fery@cypress.com>,
-        Sangwon Jee <jeesw@melfas.com>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        kernel@collabora.com, Peter Hutterer <peter.hutterer@redhat.com>,
-        Benjamin Tissoires <btissoir@redhat.com>
-References: <20200506002746.GB89269@dtor-ws>
- <20200515164943.28480-1-andrzej.p@collabora.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <842b95bb-8391-5806-fe65-be64b02de122@redhat.com>
-Date:   Fri, 15 May 2020 20:19:10 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Sat, 16 May 2020 06:57:46 -0400
+Received: from localhost.localdomain ([93.22.148.0])
+        by mwinf5d14 with ME
+        id fNxd2200K00kvqt03Nxeb5; Sat, 16 May 2020 12:57:43 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 16 May 2020 12:57:43 +0200
+X-ME-IP: 93.22.148.0
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        airlied@linux.ie, daniel@ffwll.ch, kgene@kernel.org,
+        krzk@kernel.org
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2] drm/exynos: dsi: Remove bridge node reference in error handling path in probe function
+Date:   Sat, 16 May 2020 12:57:36 +0200
+Message-Id: <20200516105736.269669-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <20200515164943.28480-1-andrzej.p@collabora.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Andrezj,
+'exynos_dsi_parse_dt()' takes a reference to 'dsi->in_bridge_node'.
+This must be released in the error handling path.
 
-On 5/15/20 6:49 PM, Andrzej Pietrasiewicz wrote:
-> Userspace might want to implement a policy to temporarily disregard input
-> from certain devices, including not treating them as wakeup sources.
-> 
-> An example use case is a laptop, whose keyboard can be folded under the
-> screen to create tablet-like experience. The user then must hold the laptop
-> in such a way that it is difficult to avoid pressing the keyboard keys. It
-> is therefore desirable to temporarily disregard input from the keyboard,
-> until it is folded back. This obviously is a policy which should be kept
-> out of the kernel, but the kernel must provide suitable means to implement
-> such a policy.
+In order to do that, add an error handling path and move the
+'exynos_dsi_parse_dt()' call from the beginning to the end of the probe
+function to ease the error handling path.
+This function only sets some variables which are used only in the
+'transfer' function.
 
-Actually libinput already binds together (inside libinput) SW_TABLET_MODE
-generating evdev nodes and e.g. internal keyboards on devices with 360°
-hinges for this reason. libinput simply closes the /dev/input/event#
-node when folded and re-opens it when the keyboard should become active
-again. Thus not only suppresses events but allows e.g. touchpads to
-enter runtime suspend mode which saves power. Typically closing the
-/dev/input/event# node will also disable the device as wakeup source.
+The call chain is:
+   .transfer
+    --> exynos_dsi_host_transfer
+      --> exynos_dsi_init
+        --> exynos_dsi_enable_clock  (use burst_clk_rate and esc_clk_rate)
+          --> exynos_dsi_set_pll     (use pll_clk_rate)
 
-So I wonder what this series actually adds for functionality for
-userspace which can not already be achieved this way?
+While at it, also handle cases where 'component_add()' fails.
 
-I also noticed that you keep the device open (do not call the
-input_device's close callback) when inhibited and just throw away
-any events generated. This seems inefficient and may lead to
-the internal state getting out of sync. What if a key is pressed
-while inhibited and then the device is uninhibited while the key
-is still pressed?  Now the press event is lost and userspace
-querying the current state will see the pressed key as being
-released.
+This patch is similar to commit 70505c2ef94b ("drm/exynos: dsi: Remove bridge node reference in removal")
+which fixed the issue in the remove function.
 
-On top of this you add special inhibit and uninhibit callbacks
-and implement those for just a few devices. How do these differ
-from just closing the device and later opening it again ?
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+A Fixes tag could be required, but I've not been able to figure out which
+one to use.
 
-Also using a sysfs property for this is very weird given that the
-rest of the evdev interface is using ioctls for everything...
+v2: move around 'exynos_dsi_parse_dt' instead of adding many gotos
+    handle component_add failures
+---
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
-So all in all I see a lot of question marks here and I think we
-need to have a detailed discussion about what use-cases this
-series tries to enable before moving forward with this.
-
-Regards,
-
-Hans
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 902938d2568f..a9d24402fabf 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1759,10 +1759,6 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 	dsi->dev = dev;
+ 	dsi->driver_data = of_device_get_match_data(dev);
+ 
+-	ret = exynos_dsi_parse_dt(dsi);
+-	if (ret)
+-		return ret;
+-
+ 	dsi->supplies[0].supply = "vddcore";
+ 	dsi->supplies[1].supply = "vddio";
+ 	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(dsi->supplies),
+@@ -1823,11 +1819,25 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
++	ret = exynos_dsi_parse_dt(dsi);
++	if (ret)
++		return ret;
++
+ 	platform_set_drvdata(pdev, &dsi->encoder);
+ 
+ 	pm_runtime_enable(dev);
+ 
+-	return component_add(dev, &exynos_dsi_component_ops);
++	ret = component_add(dev, &exynos_dsi_component_ops);
++	if (ret)
++		goto err_disable_runtime;
++
++	return 0;
++
++err_disable_runtime:
++	pm_runtime_disable(dev);
++	of_node_put(dsi->in_bridge_node);
++
++	return ret;
+ }
+ 
+ static int exynos_dsi_remove(struct platform_device *pdev)
+-- 
+2.25.1
 
