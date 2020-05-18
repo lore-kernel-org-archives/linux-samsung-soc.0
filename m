@@ -2,232 +2,211 @@ Return-Path: <SRS0=E3A4=7A=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D891C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 May 2020 02:40:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F100C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 May 2020 04:58:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 19D82207F9
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 May 2020 02:40:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 672C82070A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 May 2020 04:58:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZsX2V0Mm"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MmZzi/fo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726821AbgERCkj (ORCPT
+        id S1726478AbgERE61 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 17 May 2020 22:40:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60034 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726786AbgERCki (ORCPT
+        Mon, 18 May 2020 00:58:27 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:37202 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726391AbgERE61 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 17 May 2020 22:40:38 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF9CCC061A0C;
-        Sun, 17 May 2020 19:40:38 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id f15so3616848plr.3;
-        Sun, 17 May 2020 19:40:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=BSi1j3B+LKlZ+pND+2uv+E9eGj8LmHGTLONT1ZbFAyQ=;
-        b=ZsX2V0MmYF50na3aWBoR7eEKTHYC85N+iEUm9lY7ZV2vIPvM4qWwRf72zMRcVvvsRh
-         6FZFoXlSmY2r/n9X2BPIIwfLai6WxwMqr1OTVRNfAemUrnsa37Ybe/vhnmPCoaQBQzTF
-         a8Urn+gvx4DtjuIDJ3qdIKQUzBrMQmUhk1KoD/DEIqbij9VU0XuKgoxtLfhptHBgejsN
-         VltvFqKeFPpM4dsoexRUH7OCeEUyXPEJyh3/264sXr7MGmGARRE7BhQ8+dkbTZC82gOY
-         V70cYtMgKVHywicpO1khfY8YK+4DAG+HcqiCgEbQKrwloC6qalMginFFw9T53WbDXm/W
-         cuow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=BSi1j3B+LKlZ+pND+2uv+E9eGj8LmHGTLONT1ZbFAyQ=;
-        b=fI+MxXNDtsM2rF3VYnEU34nrbwe52zc9xNLnfmhW7nIjJaJ7YHuyLLOKFr3Y1Fz6/z
-         n/g93SRhHs2igqMgKB1E7zJQZ2Pe/OkhgzI3I7ia7fpDaYlRJ1cMZP7p4PRSSg8foNnF
-         3f+lwNWXLMeAOKV5Va/8e1kkaRGKn8hcsmKItIIotbi+q2GHvvtHfVyk2oVkWAOk7eUz
-         iKXQ6VYt+BM9ZoMGnOTe5wceLIG6+/DlfOrjmwlbPR71SHDCXVbFXAZgciv9g/N33loi
-         nbac1MXfwEeZXiNFr7PPpeRyDDmMmevfaP9YbwNfJdifujCHflLFaZh0Wr4XgER9fwOm
-         3ziw==
-X-Gm-Message-State: AOAM530oD16JKJglyO42VoMw5EXX7nqZQ4+YDsqlWs75DXN+KbCgtmY7
-        3Ddx3/Fbhf31KnxYYUJkUM0=
-X-Google-Smtp-Source: ABdhPJw6+D0pVLHENKQEm5RucsG1mrNeCZaFYuYqbZFDLGhDKldJppMOzBpLcQebfqpE8BGs2bUiSg==
-X-Received: by 2002:a17:90b:3d4:: with SMTP id go20mr10710415pjb.208.1589769637579;
-        Sun, 17 May 2020 19:40:37 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3c2a:73a9:c2cf:7f45])
-        by smtp.gmail.com with ESMTPSA id a2sm7218540pfl.28.2020.05.17.19.40.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 May 2020 19:40:36 -0700 (PDT)
-Date:   Sun, 17 May 2020 19:40:34 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Peter Hutterer <peter.hutterer@who-t.net>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        linux-input@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        patches@opensource.cirrus.com,
-        ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Barry Song <baohua@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Nick Dyer <nick@shmanahar.org>,
-        Ferruh Yigit <fery@cypress.com>,
-        Sangwon Jee <jeesw@melfas.com>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        kernel@collabora.com, Peter Hutterer <peter.hutterer@redhat.com>,
-        Benjamin Tissoires <btissoir@redhat.com>
-Subject: Re: [PATCHv2 0/7] Support inhibiting input devices
-Message-ID: <20200518024034.GL89269@dtor-ws>
-References: <20200506002746.GB89269@dtor-ws>
- <20200515164943.28480-1-andrzej.p@collabora.com>
- <842b95bb-8391-5806-fe65-be64b02de122@redhat.com>
- <20200517225510.GA205823@koala>
+        Mon, 18 May 2020 00:58:27 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200518045823epoutp04735e519dc36e7fa373bfa71ae4254875~QBpSTeZxo1815318153epoutp04p
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 May 2020 04:58:23 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200518045823epoutp04735e519dc36e7fa373bfa71ae4254875~QBpSTeZxo1815318153epoutp04p
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1589777903;
+        bh=2vKXIIAYOJgXhTtQivWEVpWzLzbMQ4ucMNU0uUTwl/U=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=MmZzi/foElZN65Xwgb+7uAHNZDSVtBp7834w3bfhDGim/dXViessWyDHK0CzGsh8/
+         eAWpyge7LQPM3wc9BIpf48hE3w3ntiuJYP8o+NlrffMkjgATKu6vzgLElf+MFeYhsh
+         rArozyONz5XD2mZS6cT1sUV2Cm/JhboBV2wn/3m4=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200518045822epcas1p210f4b5c58774a0d81bf33380b4a9e7fe~QBpRn_InW2079620796epcas1p2P;
+        Mon, 18 May 2020 04:58:22 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.153]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 49QRbv2j2kzMqYkX; Mon, 18 May
+        2020 04:58:19 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        23.9D.04402.BE512CE5; Mon, 18 May 2020 13:58:19 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20200518045818epcas1p39ac7fcb92fd73391c1c3746c17e34b58~QBpN9eY0i3065630656epcas1p3x;
+        Mon, 18 May 2020 04:58:18 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200518045818epsmtrp1ba3d66b3ebbc2bea915377d691a1fd53~QBpN7x5dT1824518245epsmtrp13;
+        Mon, 18 May 2020 04:58:18 +0000 (GMT)
+X-AuditID: b6c32a35-753ff70000001132-eb-5ec215ebf79b
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        45.34.18461.AE512CE5; Mon, 18 May 2020 13:58:18 +0900 (KST)
+Received: from [10.113.221.211] (unknown [10.113.221.211]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200518045818epsmtip132883eeffa5658720ed2b7a889712bea~QBpNpdb3G0973109731epsmtip1k;
+        Mon, 18 May 2020 04:58:18 +0000 (GMT)
+Subject: Re: [PATCH v2] drm/exynos: dsi: Remove bridge node reference in
+ error handling path in probe function
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        jy0922.shim@samsung.com, sw0312.kim@samsung.com,
+        kyungmin.park@samsung.com, airlied@linux.ie, daniel@ffwll.ch,
+        kgene@kernel.org, krzk@kernel.org
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+From:   Inki Dae <inki.dae@samsung.com>
+Message-ID: <4555b0a8-b919-b5c1-cacb-1e6aec8a1aa8@samsung.com>
+Date:   Mon, 18 May 2020 14:03:38 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <20200516105736.269669-1-christophe.jaillet@wanadoo.fr>
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200517225510.GA205823@koala>
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TfUgUaRzmnZmdHaXtplXrh0HpHAUapqOuTZfGcUUNfYBQXGXgNqyTK+7H
+        MLMbeQRtdeeZ2tlixeppCVl4excrW9qHqGRRWaZGH9ZibbQSlZHZokVxHzsOcf73vM/z/N7n
+        93s/KNw4RCZTZQ6XKDsEG0PGE53X0jIzxpP6irM855K4I4P9GNdxtVnH/dvpxbkHUxMk9+rZ
+        PYLrCC3k6iLjODc01K7n7h58q+eCkUc67v6VJpLzDfVgnK/+Nfm9ge+ebiH4oP8wyV+cfq7j
+        wzU3Mf58637+twt+xEeDi/jo04CukCoqz7eKQokop4gOi7OkzFFawGzcYl5jNuVlsRnsSm4F
+        k+IQ7GIBs3ZTYca6MlusYyZlj2Bzx6hCQVGYzNX5stPtElOsTsVVwIhSiU1aKS1XBLvidpQu
+        tzjt37FZWdmmmHFXubU6/Ide+idxb03nOOFB7+lqFEcBnQuVt1tRNYqnjPQlBF1tTbgqGOkP
+        CEYez9WEaQS9wV91XysmPo9imtCNINx7TactJhC8H25AqiuBlqCr3zcjJNIDCAKtr2ZCcDqA
+        oObWx5kQkl4C3rYwqWIDvRq6a/v1KiZi/MB0e6yAopLo7XBnStAs86C/YYxQ6Th6LZyIbFNp
+        nF4AobFTmIYXw6GO33Gt0wcUfDptUe0Qs/sP8hqdAG9uXtBrOBle11Xq1c6APoTA67uDaYsq
+        BE8jI4TmyoHeM/WYuhFOp0HgSqZGp8LlL81Iy50L76ZqdVqWAaoqjZqFgRv3HiMNAwy3ekkN
+        8xC5fVJ/FKU2zhqscdY0jbOmafw/uAURfjRflBR7qaiwEjv7soNo5jGnmy6hY4Ob+hBNIWaO
+        YbjoarFRJ+xRKux9CCicSTTsiPYUGw0lQsVPouw0y26bqPQhU+zYvXhyksUZ+xoOl5k1Zefk
+        5HC5bJ6JZZkFhuMjtmIjXSq4xHJRlET5ax1GxSV70LK/j+1MH8119AQrF02u/2WfFyPSrQd2
+        dG0efPlNW0fFyKexorpvb5nzcn88fTR0dv+pxZ4vLc8z/SfWp11+U783GzX8vPHDuoTDu0OS
+        T3R2vrhYa7ellb/464emDQVPJgfCD+Wt/ubQ5lT3vvbJ6KOARx78c9XZqrbr+fHyUsvH0eh5
+        hlCsApuOy4rwHy7gdrXiAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIIsWRmVeSWpSXmKPExsWy7bCSnO4r0UNxBrPfGVv0njvJZLH14FxW
+        i//bJjJbXPn6ns3ixb2LLBZbb0lb9D9+zWxx/vwGdouzTW/YLTY9vsZqcXnXHDaLGef3MVnM
+        mPySzYHXY++3BSwem1Z1snls//aA1eN+93Emj81L6j36tqxi9Pi8Sc7j8931rAEcUVw2Kak5
+        mWWpRfp2CVwZXfdXshf8E6no3vaapYHxg0AXIyeHhICJxPtfd5i6GLk4hAR2M0os2/aYsYuR
+        AyghIbFlKweEKSxx+HAxRMlbRokp/xYzgfQKCxRI/F/7lhnEFhE4wygxdWMmSBGzwHpGiV1P
+        n7JDdExnlNj6fCpYB5uAqsTEFffZQGxeATuJvT0n2UFsFqD4mW8bGEFsUYEIiefbbzBC1AhK
+        nJz5hAXkCk4BF4lpj8NBwswC6hJ/5l1ihrDFJW49mc8EYctLNG+dzTyBUWgWku5ZSFpmIWmZ
+        haRlASPLKkbJ1ILi3PTcYsMCw7zUcr3ixNzi0rx0veT83E2M4FjU0tzBuH3VB71DjEwcjIcY
+        JTiYlUR4Iz/vixPiTUmsrEotyo8vKs1JLT7EKM3BoiTOe6NwYZyQQHpiSWp2ampBahFMlomD
+        U6qByWTLEt21OScOXl33pjZsbWBl7eylVh8fOPwSq7zkFTJv54obH2f93pn5oirqSZXC/0/C
+        aew56z31C/8Gphqs1+CXeRQWredXyqY7RyXl7/e0HuXlppKnt1/OOX/F0LlCTunBwYLW5Xzz
+        /RcHJT7PrVmRf01HuuR68PrX33qiD4m9PPBRP31mgoqRpNfSPxJb32yfU7DA4IK32MS1xzaJ
+        yQTk3WuKD+47ZLP5VNFrxh3fZJ/IsaUGZuXrb15v8c07//+drym7GQVnrMvff/ZBlsSc6VWT
+        qlWmHf3y1aeA9YNf7dXPXlX3Tv/6e9fydt7vFQ/q0kIX5/FdTj669PnJDiVhnkcTtjVNOTHr
+        nqnOqhQlluKMREMt5qLiRAAYCeXcNAMAAA==
+X-CMS-MailID: 20200518045818epcas1p39ac7fcb92fd73391c1c3746c17e34b58
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200516105750epcas1p2227417d4e2387a0f6aec4a96b1ba7ae4
+References: <CGME20200516105750epcas1p2227417d4e2387a0f6aec4a96b1ba7ae4@epcas1p2.samsung.com>
+        <20200516105736.269669-1-christophe.jaillet@wanadoo.fr>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Hans, Peter,
 
-On Mon, May 18, 2020 at 08:55:10AM +1000, Peter Hutterer wrote:
-> On Fri, May 15, 2020 at 08:19:10PM +0200, Hans de Goede wrote:
-> > Hi Andrezj,
-> > 
-> > On 5/15/20 6:49 PM, Andrzej Pietrasiewicz wrote:
-> > > Userspace might want to implement a policy to temporarily disregard input
-> > > from certain devices, including not treating them as wakeup sources.
-> > > 
-> > > An example use case is a laptop, whose keyboard can be folded under the
-> > > screen to create tablet-like experience. The user then must hold the laptop
-> > > in such a way that it is difficult to avoid pressing the keyboard keys. It
-> > > is therefore desirable to temporarily disregard input from the keyboard,
-> > > until it is folded back. This obviously is a policy which should be kept
-> > > out of the kernel, but the kernel must provide suitable means to implement
-> > > such a policy.
-> > 
-> > Actually libinput already binds together (inside libinput) SW_TABLET_MODE
-> > generating evdev nodes and e.g. internal keyboards on devices with 360�
-> > hinges for this reason. libinput simply closes the /dev/input/event#
-> > node when folded and re-opens it when the keyboard should become active
-> > again. Thus not only suppresses events but allows e.g. touchpads to
-> > enter runtime suspend mode which saves power. Typically closing the
-> > /dev/input/event# node will also disable the device as wakeup source.
-> > 
-> > So I wonder what this series actually adds for functionality for
-> > userspace which can not already be achieved this way?
-> 
-> Thanks Hans. To expand on this:
-> libinput has heuristics to guess which input devices (keyboards, touchpads)
-> are built-in ones. When the tablet mode switch is on, we disable these
-> devices internally (this is not visible to callers), and re-enable it again
-> later when the tablet mode switch is off again.
 
-I think that is great that libinput has tried solving this for the
-tablet mode, but unfortunately libinput only works for users of
-libinput, leaving cases such as:
+20. 5. 16. 오후 7:57에 Christophe JAILLET 이(가) 쓴 글:
+> 'exynos_dsi_parse_dt()' takes a reference to 'dsi->in_bridge_node'.
+> This must be released in the error handling path.
 
-1. In-kernel input handlers, such as SysRq, VT and others
-2. Systems that do not rely on libinput for userspace handing (Android,
-Chrome OS)
-3. Systems with policies that are more complex than tablet mode only.
+Picked it up.
 
-Because of libinput's inability to affect the kernel, and the presence
-of "always on" input handlers (sysrq, VT keyboard, potentially others),
-while libinput may control whether consumers receive events from certain
-input devices, it will not allow power savings that an explicit
-"inhibit" allows when coming from dedicated power policy manager.
-
-I think pushing policy decisions into a library, and trying to have all
-clients agree with it, is much harder and leaks unnecessary knowledge
-into quite a few layers. A dedicated power policy manager, that is not
-only responsible for input device, but power state of the system as a
-whole, is a very viable architecture.
+Thanks,
+Inki Dae
 
 > 
-> This is done for keyboards and touchpads atm (and I think pointing sticks)
-> and where the heuristics fail we have extra quirks in place. For example
-> the Lenovo Yogas tend to disable the keyboard mechanically in tablet mode
-> but buttons (e.g. volume keys) around the screen send events through the
-> same event node. So on those devices we don't disable the keyboard.
+> In order to do that, add an error handling path and move the
+> 'exynos_dsi_parse_dt()' call from the beginning to the end of the probe
+> function to ease the error handling path.
+> This function only sets some variables which are used only in the
+> 'transfer' function.
 > 
-> We've had this code for a few years now and the only changes to it have been
-> the various device quirks for devices that must not suspend the keyboard,
-> it's otherwise working as expected.
+> The call chain is:
+>    .transfer
+>     --> exynos_dsi_host_transfer
+>       --> exynos_dsi_init
+>         --> exynos_dsi_enable_clock  (use burst_clk_rate and esc_clk_rate)
+>           --> exynos_dsi_set_pll     (use pll_clk_rate)
 > 
-> If we ever have a device where we need to disable parts of the keyboard
-> only, we could address this with EVIOCSMASK but so far that hasn't been
-> necessary.
+> While at it, also handle cases where 'component_add()' fails.
 > 
-> I agree with Hans, right now I don't see the usefulness of this new sysfs
-> toggle. For it to be really useful you'd have to guarantee that it's
-> available for 100% of the devices and that's IMO unlikely to happen.
-
-The inhibiting of the events works for 100% of input devices, the power
-savings work for the ones that implement it. It is responsibility of
-folds shipping the systems to make sure drivers they use support inhibit
-if they believe it will help their battery life.
-
+> This patch is similar to commit 70505c2ef94b ("drm/exynos: dsi: Remove bridge node reference in removal")
+> which fixed the issue in the remove function.
 > 
-> Cheers,
->    Peter
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> A Fixes tag could be required, but I've not been able to figure out which
+> one to use.
 > 
-> > I also noticed that you keep the device open (do not call the
-> > input_device's close callback) when inhibited and just throw away
-> > any events generated. This seems inefficient and may lead to
-> > the internal state getting out of sync. What if a key is pressed
-> > while inhibited and then the device is uninhibited while the key
-> > is still pressed?  Now the press event is lost and userspace
-> > querying the current state will see the pressed key as being
-> > released.
-
-This is a good point. We should look into signalling that some events
-have been dropped (via EV_SYN/SYN_DROPPED) so that clients are aware of
-it.
-
-> > 
-> > On top of this you add special inhibit and uninhibit callbacks
-> > and implement those for just a few devices. How do these differ
-> > from just closing the device and later opening it again ?
-
-I believe majority will simply reuse open/close callbacks. In Chrome OS
-we have dedicated inhibit/uninhibit, but I would like to allow using
-open/close as alternatives.
-
-> > 
-> > Also using a sysfs property for this is very weird given that the
-> > rest of the evdev interface is using ioctls for everything...
-
-This is not evdev interface, it is at the level above evdev (so that it
-can affect all handlers, not only evdev). As such it is not bound by
-evdev interface.
-
-Thanks.
-
--- 
-Dmitry
+> v2: move around 'exynos_dsi_parse_dt' instead of adding many gotos
+>     handle component_add failures
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 20 +++++++++++++++-----
+>  1 file changed, 15 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> index 902938d2568f..a9d24402fabf 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> @@ -1759,10 +1759,6 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+>  	dsi->dev = dev;
+>  	dsi->driver_data = of_device_get_match_data(dev);
+>  
+> -	ret = exynos_dsi_parse_dt(dsi);
+> -	if (ret)
+> -		return ret;
+> -
+>  	dsi->supplies[0].supply = "vddcore";
+>  	dsi->supplies[1].supply = "vddio";
+>  	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(dsi->supplies),
+> @@ -1823,11 +1819,25 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> +	ret = exynos_dsi_parse_dt(dsi);
+> +	if (ret)
+> +		return ret;
+> +
+>  	platform_set_drvdata(pdev, &dsi->encoder);
+>  
+>  	pm_runtime_enable(dev);
+>  
+> -	return component_add(dev, &exynos_dsi_component_ops);
+> +	ret = component_add(dev, &exynos_dsi_component_ops);
+> +	if (ret)
+> +		goto err_disable_runtime;
+> +
+> +	return 0;
+> +
+> +err_disable_runtime:
+> +	pm_runtime_disable(dev);
+> +	of_node_put(dsi->in_bridge_node);
+> +
+> +	return ret;
+>  }
+>  
+>  static int exynos_dsi_remove(struct platform_device *pdev)
+> 
