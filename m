@@ -1,176 +1,143 @@
-Return-Path: <SRS0=E3A4=7A=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=rJke=7B=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F20FC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 May 2020 18:29:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C6AC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 May 2020 05:55:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E7BF7207C4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 18 May 2020 18:29:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VmATcE7E"
+	by mail.kernel.org (Postfix) with ESMTP id 0F638207D8
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 May 2020 05:55:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729838AbgERS3n (ORCPT
+        id S1726943AbgESFzT (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 18 May 2020 14:29:43 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:25795 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729260AbgERRl1 (ORCPT
+        Tue, 19 May 2020 01:55:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57396 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726794AbgESFzT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 18 May 2020 13:41:27 -0400
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200518174123epoutp01c2bfc8c28cb40ea3e0eb4eafb1687b08~QMDd03mIY3099530995epoutp01q
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 May 2020 17:41:23 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200518174123epoutp01c2bfc8c28cb40ea3e0eb4eafb1687b08~QMDd03mIY3099530995epoutp01q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1589823683;
-        bh=SJvqKP/iDeqX2YV6Q0c1S/r1bKd4wjPJEQwBKJ5VINg=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=VmATcE7EzbzcY1B5/ioEm96WjeulrU7tGA+eP6nRfh6VMDSlnNxPzfAMBFEu2fKWQ
-         gqjDi892sEsJPzdh8HHzYuc6rYKuvESqeJLlBkRVigM2pD6cTqAqLAJD6iYkPGhgxl
-         ytS+6iwy2Q+hPJCr6g6jmrJZW8sJAtZvSwHIBWmU=
-Received: from epsmges5p2new.samsung.com (unknown [182.195.42.74]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20200518174121epcas5p38e466287a78b4c98792b9905f52e503b~QMDcsQqxY1819018190epcas5p3j;
-        Mon, 18 May 2020 17:41:21 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A5.19.23569.1C8C2CE5; Tue, 19 May 2020 02:41:21 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200518174120epcas5p1fb5f832c7874a9d367eb9c9ea4e69d53~QMDbdakZB0533905339epcas5p1Z;
-        Mon, 18 May 2020 17:41:20 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200518174120epsmtrp2ee3087f08d21bb7d3fd24bd1d5550f5a~QMDbckrWw0707307073epsmtrp2L;
-        Mon, 18 May 2020 17:41:20 +0000 (GMT)
-X-AuditID: b6c32a4a-3b1ff70000005c11-52-5ec2c8c11014
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F6.2E.18461.0C8C2CE5; Tue, 19 May 2020 02:41:20 +0900 (KST)
-Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
-        [107.108.73.139]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200518174118epsmtip16ef36e2887700870b6687cebc78bf266~QMDZbPpKN0547805478epsmtip1C;
-        Mon, 18 May 2020 17:41:18 +0000 (GMT)
-From:   Tamseel Shams <m.shams@samsung.com>
-To:     inki.dae@samsung.com, jy0922.shim@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
-        airlied@linux.ie, daniel@ffwll.ch
-Cc:     dri-devel@lists.freedesktop.org,
+        Tue, 19 May 2020 01:55:19 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 9E321B040;
+        Tue, 19 May 2020 05:55:19 +0000 (UTC)
+Subject: Re: [PATCH v10 3/3] tty: samsung_tty: 32-bit access for TX/RX hold
+ registers
+To:     Hyunki Koo <hyunki00.koo@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shaik.ameer@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
-        Tamseel Shams <m.shams@samsung.com>
-Subject: [PATCH] drm/exynos: Remove dev_err() on platform_get_irq() failure
-Date:   Mon, 18 May 2020 22:57:08 +0530
-Message-Id: <20200518172708.48600-1-m.shams@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBIsWRmVeSWpSXmKPExsWy7bCmlu7BE4fiDN4eMLHoPXeSyeLBvG1s
-        Fv+3TWS2uPL1PZvFpPsTWCxe3LvIYnH+/AZ2i7NNb9gtNj2+xmpxedccNosZ5/cxWdxtXcxu
-        ceThbnaLGZNfsjnweez9toDFY9OqTjaP7d8esHrc7z7O5LF5Sb1H35ZVjB6fN8kFsEdx2aSk
-        5mSWpRbp2yVwZcx/t4Sl4JFgxeetK1kbGNv5uxg5OSQETCTWHlrD3MXIxSEksJtRYsKMOywQ
-        zidGiXU7PkNlvjFKrGjrZ4JpuXV+BiNEYi+jROuMLjYIp4VJ4tfc70BVHBxsApoSx89zg8RF
-        BDoZJXpu/2YFcZgFfjBKvFm5jhmkSFjAW+Lj9RqQqSwCqhIr/k5lBbF5BSwkHu17wAyxTV5i
-        9YYDYGdICHxllzh0DOYMF4k7169AFQlLvDq+hR3ClpL4/G4vG4SdLzF/3iqomgqJlRfeQNn2
-        EgeuzGEBuYEZ6ND1u/RBwswCfBK9v5+A3S8hwCvR0SYEUa0o8X93P9R0cYl3K6awQtgeEoe+
-        Hge7RkggVmLbu73sExhlZiEMXcDIuIpRMrWgODc9tdi0wCgvtVyvODG3uDQvXS85P3cTIzhx
-        aHntYHz44IPeIUYmDsZDjBIczEoivJGf98UJ8aYkVlalFuXHF5XmpBYfYpTmYFES501q3BIn
-        JJCeWJKanZpakFoEk2Xi4JRqYArs+rO9XUi1qnptpfz/m08ak33tZ7pXql8/GMJenTCl/17Z
-        oru7DCP3tSWuenagxlH/bYzeNSnL2syLGzTXs1maaRaw9k1fty6L9+Td+bwpfSd3P1h/6EmV
-        pfjXHPMNv5fz9s3dcYj13oct61h2n/5z+sebpYW6j7eFmoovfCHJwfPx9ORpJlPXOrvp/ftg
-        HRr71T4+5sZsvZ0KL9g8ypbk/uCxepArzLtzXWHxiw/qjQ+efDi95ueM/29q/5ROP60WsjWh
-        /OmL728OabBNVYtp1ovYe9jbhjHW2NQrRsnldu/kOwyT43/NvncnzdG4Y8cMTuZw9e+r8xvr
-        Jxfy/n5y8urJ1Tem/DY33y1+4w6vEktxRqKhFnNRcSIAKu+FYYsDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNLMWRmVeSWpSXmKPExsWy7bCSnO6BE4fiDN7cULToPXeSyeLBvG1s
-        Fv+3TWS2uPL1PZvFpPsTWCxe3LvIYnH+/AZ2i7NNb9gtNj2+xmpxedccNosZ5/cxWdxtXcxu
-        ceThbnaLGZNfsjnweez9toDFY9OqTjaP7d8esHrc7z7O5LF5Sb1H35ZVjB6fN8kFsEdx2aSk
-        5mSWpRbp2yVwZcx/t4Sl4JFgxeetK1kbGNv5uxg5OSQETCRunZ/B2MXIxSEksJtR4u35JiaI
-        hLjEtF/7GSFsYYmV/56zQxQ1MUmca9nJ0sXIwcEmoClx/Dw3SFxEYCKjxJz2VSwgDrNAA5PE
-        ipW/GUGKhAW8JT5erwEZxCKgKrHi71RWEJtXwELi0b4HzBAL5CVWbzjAPIGRZwEjwypGydSC
-        4tz03GLDAsO81HK94sTc4tK8dL3k/NxNjODw1NLcwbh91Qe9Q4xMHIyHGCU4mJVEeCM/74sT
-        4k1JrKxKLcqPLyrNSS0+xCjNwaIkznujcGGckEB6YklqdmpqQWoRTJaJg1OqgSl8rVx/qOgZ
-        2xNLHhYpGOT+OtVnNy+o/kCtyeepz+QOlZnat9+8oXJlsfzPby+b+X8InXFaviu1SmStFGc3
-        s8kF6Wf71nTUt+kVxMRP2PnWI2nvxtDyfCWL4uoZsT0cNRMOH1krUpDgZ2gY8SqTQVNbU2QD
-        s/vaGxftfe05JhiF+ssG3Ftoxy10vPjTAxemVmWdrj2RLbvvXq684B1Tcibkwd6l3gLxSh2v
-        xB6y1xROCVkxxbeZV0xJ/qVLaoWo9YMHGd9X1s6dO1s4P5W7f0mRlIuJxdQ3Lf5F3+5+srp2
-        v/qJrfe24kgWDbalerv/ugRGSCZLLZj9wcbv/FOxl5Fqie8TZXkr1p9cq39GiaU4I9FQi7mo
-        OBEAcBf7hL4CAAA=
-X-CMS-MailID: 20200518174120epcas5p1fb5f832c7874a9d367eb9c9ea4e69d53
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20200518174120epcas5p1fb5f832c7874a9d367eb9c9ea4e69d53
-References: <CGME20200518174120epcas5p1fb5f832c7874a9d367eb9c9ea4e69d53@epcas5p1.samsung.com>
+        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200506080242.18623-1-hyunki00.koo@samsung.com>
+ <CGME20200506080258epcas2p4f242fb66a2145f76b0e108014ee351fb@epcas2p4.samsung.com>
+ <20200506080242.18623-3-hyunki00.koo@samsung.com>
+From:   Jiri Slaby <jslaby@suse.cz>
+Autocrypt: addr=jslaby@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <1d84cbc4-7935-a7b6-aec2-2ce351f203cd@suse.cz>
+Date:   Tue, 19 May 2020 07:55:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
+MIME-Version: 1.0
+In-Reply-To: <20200506080242.18623-3-hyunki00.koo@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-platform_get_irq() will call dev_err() itself on failure,
-so there is no need for the driver to also do this.
-This is detected by coccinelle.
+On 06. 05. 20, 10:02, Hyunki Koo wrote:
+> Support 32-bit access for the TX/RX hold registers UTXH and URXH.
+> 
+> This is required for some newer SoCs.
+> 
+> Signed-off-by: Hyunki Koo <hyunki00.koo@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Tested on Odroid HC1 (Exynos5422):
+> Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/tty/serial/samsung_tty.c | 62 ++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 57 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+> index 326b0164609c..6ef614d8648c 100644
+> --- a/drivers/tty/serial/samsung_tty.c
+> +++ b/drivers/tty/serial/samsung_tty.c
+...
+> @@ -2000,10 +2023,27 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
+>  			dev_get_platdata(&pdev->dev) :
+>  			ourport->drv_data->def_cfg;
+>  
+> -	if (np)
+> +	if (np) {
+>  		of_property_read_u32(np,
+>  			"samsung,uart-fifosize", &ourport->port.fifosize);
+>  
+> +		if (of_property_read_u32(np, "reg-io-width", &prop) == 0) {
+> +			switch (prop) {
+> +			case 1:
+> +				ourport->port.iotype = UPIO_MEM;
+> +				break;
+> +			case 4:
+> +				ourport->port.iotype = UPIO_MEM32;
+> +				break;
+> +			default:
+> +				dev_warn(&pdev->dev, "unsupported reg-io-width (%d)\n",
+> +						prop);
+> +				ret = -EINVAL;
+> +				break;
 
-Signed-off-by: Tamseel Shams <m.shams@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_dsi.c     | 1 -
- drivers/gpu/drm/exynos/exynos_drm_g2d.c     | 1 -
- drivers/gpu/drm/exynos/exynos_drm_rotator.c | 1 -
- drivers/gpu/drm/exynos/exynos_drm_scaler.c  | 1 -
- 4 files changed, 4 deletions(-)
+This ret value is unused. Did you intend to return here?
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 902938d2568f..df2e14b19fbf 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1810,7 +1810,6 @@ static int exynos_dsi_probe(struct platform_device *pdev)
- 
- 	dsi->irq = platform_get_irq(pdev, 0);
- 	if (dsi->irq < 0) {
--		dev_err(dev, "failed to request dsi irq resource\n");
- 		return dsi->irq;
- 	}
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-index fcee33a43aca..03be31427181 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-@@ -1498,7 +1498,6 @@ static int g2d_probe(struct platform_device *pdev)
- 
- 	g2d->irq = platform_get_irq(pdev, 0);
- 	if (g2d->irq < 0) {
--		dev_err(dev, "failed to get irq\n");
- 		ret = g2d->irq;
- 		goto err_put_clk;
- 	}
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_rotator.c b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-index dafa87b82052..0edf7950a3fe 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-@@ -294,7 +294,6 @@ static int rotator_probe(struct platform_device *pdev)
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
--		dev_err(dev, "failed to get irq\n");
- 		return irq;
- 	}
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_scaler.c b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
-index 93c43c8d914e..4e33d5661eef 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_scaler.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
-@@ -503,7 +503,6 @@ static int scaler_probe(struct platform_device *pdev)
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
--		dev_err(dev, "failed to get irq\n");
- 		return irq;
- 	}
- 
+thanks,
 -- 
-2.17.1
-
+js
+suse labs
