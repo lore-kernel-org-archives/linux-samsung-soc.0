@@ -2,165 +2,193 @@ Return-Path: <SRS0=rJke=7B=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D361BC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 May 2020 10:27:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8946AC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 May 2020 10:32:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8995F207E8
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 May 2020 10:27:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5093820758
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 May 2020 10:32:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dIq7kzXJ"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="UVRs57Az"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728690AbgESK1H (ORCPT
+        id S1726880AbgESKce (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 19 May 2020 06:27:07 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:51184 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728677AbgESK1G (ORCPT
+        Tue, 19 May 2020 06:32:34 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:34647 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725911AbgESKce (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 19 May 2020 06:27:06 -0400
+        Tue, 19 May 2020 06:32:34 -0400
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200519102705euoutp01e97a9813fe9c913c8ee71c93d31691a5~QZxjltAr60727107271euoutp01R
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 May 2020 10:27:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200519102705euoutp01e97a9813fe9c913c8ee71c93d31691a5~QZxjltAr60727107271euoutp01R
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200519103232euoutp026e780c989514bfb9a64dae9dd47daa09~QZ2UgFeIO0486004860euoutp02J
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 May 2020 10:32:32 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200519103232euoutp026e780c989514bfb9a64dae9dd47daa09~QZ2UgFeIO0486004860euoutp02J
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1589884025;
-        bh=ZKT5i8ZwRi4zvF/m9X+xF/4p2k/qj6EshKkaUfn86Pk=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=dIq7kzXJkIAvCMDFS5aSniUeiibeKV4MlsHQSF6OvzNXEexrsLpQcsSp6rZ2WZGU8
-         8lnS2dElrrC1Ks6zaPozh24SmUVUgr8lmH/MI6u6Aq9qUC34cJgqgBGt+S3L2TSDh4
-         T3uJzlLCAJpD0Jr5k2qwZtVNv/QGvA8Rwy7OscgE=
+        s=mail20170921; t=1589884352;
+        bh=8aqTPyb+75966luDR2CZdhE8lWVOMDbEHkMTToW0Gdw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=UVRs57AznvQOXUgb5s5z3+UVfOW1EGUps9dAtKqHklAIhRbvcXm1nnwBYuzjJxOSP
+         qyJQ3uFLEJdjHLrurTC+epApaWtG+fLxQYXNsks3f3/2DVNZVak+B/ZZu+Ac9ghSk0
+         hLvuvaXwtP+RXnc/gT4WhD3iZlZ6AoEdv3oRTKbI=
 Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200519102704eucas1p275a5b9c6f67687f182de879503edcca1~QZxjZlrgR0280802808eucas1p2V;
-        Tue, 19 May 2020 10:27:04 +0000 (GMT)
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200519103232eucas1p194e62333f8c5f252d962d95915630bcb~QZ2UKu4ga1478214782eucas1p1m;
+        Tue, 19 May 2020 10:32:32 +0000 (GMT)
 Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 04.4F.60679.874B3CE5; Tue, 19
-        May 2020 11:27:04 +0100 (BST)
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 9E.10.60679.0C5B3CE5; Tue, 19
+        May 2020 11:32:32 +0100 (BST)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200519102704eucas1p1e1169d593154c4e3c4dc0d35282d5b39~QZxi90oHw3036330363eucas1p1m;
-        Tue, 19 May 2020 10:27:04 +0000 (GMT)
+        20200519103231eucas1p105f6b8b68a285536795e726a4e98bee9~QZ2TxWUkR1516315163eucas1p1p;
+        Tue, 19 May 2020 10:32:31 +0000 (GMT)
 Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200519102704eusmtrp1f3bb8e53d7387cd858978d96f38fdf15~QZxi9AD2v0347803478eusmtrp1i;
-        Tue, 19 May 2020 10:27:04 +0000 (GMT)
-X-AuditID: cbfec7f4-0e5ff7000001ed07-f7-5ec3b47848cb
+        20200519103231eusmtrp1db3cd1b337f0a47dd218d8a5924c6d3a~QZ2Twp9Dt0843608436eusmtrp16;
+        Tue, 19 May 2020 10:32:31 +0000 (GMT)
+X-AuditID: cbfec7f4-0e5ff7000001ed07-3f-5ec3b5c03e45
 Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id F3.8C.07950.874B3CE5; Tue, 19
-        May 2020 11:27:04 +0100 (BST)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id F6.4D.07950.FB5B3CE5; Tue, 19
+        May 2020 11:32:31 +0100 (BST)
+Received: from [106.210.88.143] (unknown [106.210.88.143]) by
         eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200519102703eusmtip2e76f0c0eceac89da6594c907f994bc2f~QZxigo_4G0281602816eusmtip2O;
-        Tue, 19 May 2020 10:27:03 +0000 (GMT)
+        20200519103231eusmtip25924103fd58f2427f9171da4f4a01fbd~QZ2TLBGAi0462804628eusmtip2k;
+        Tue, 19 May 2020 10:32:31 +0000 (GMT)
+Subject: Re: [PATCH v1 4/4] of: platform: Batch fwnode parsing when adding
+ all top level devices
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH] clk: samsung: exynos5433: Add IGNORE_UNUSED flag to
- sclk_i2s1
-Date:   Tue, 19 May 2020 12:26:52 +0200
-Message-Id: <20200519102652.10219-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFIsWRmVeSWpSXmKPExsWy7djP87oVWw7HGXx8ZGKxccZ6VovrX56z
-        Wpw/v4Hd4mPPPVaLGef3MVmsPXKX3eLftY0sFu1PXzI7cHhsWtXJ5tG3ZRWjx+dNcgHMUVw2
-        Kak5mWWpRfp2CVwZ/e3/mQp2C1bMXrCJqYGxjb+LkZNDQsBEYtusrawgtpDACkaJpuMmXYxc
-        QPYXRokFy8+zQzifGSVW9PSywXSc6pjABJFYzijx4885driWm3fXMoFUsQkYSnS97QLrEBFw
-        kPj86TUjSBGzQAuTxNPeNewgCWGBAIm7F/aBLWcRUJV4c2kCUAMHB6+ArcSO1kyIbfISqzcc
-        YAbplRA4wyZx6M5XRoiEi8TpKytZIWxhiVfHt7BD2DISpyf3sEA0NDNKPDy3lh3C6WGUuNw0
-        A6rbWuLOuV9g25gFNCXW79KHCDtKXFj/lB0kLCHAJ3HjrSBImBnInLRtOjNEmFeio00IolpN
-        YtbxdXBrD164xAxhe0hMbZ3MBgnTWIlj/ZcYJzDKzULYtYCRcRWjeGppcW56arFRXmq5XnFi
-        bnFpXrpecn7uJkZgCjj97/iXHYy7/iQdYhTgYFTi4U3IPxQnxJpYVlyZe4hRgoNZSYR3wgug
-        EG9KYmVValF+fFFpTmrxIUZpDhYlcV7jRS9jhQTSE0tSs1NTC1KLYLJMHJxSDYzt2g9/qGeW
-        r2rfxFk/Sb64yTPJ6t3d5z9v3t+/Q0G65Qr3lZkli0IPvus/r/vgXfZ26VcMhmncdT6Vbhyv
-        ygpPbN/2bX+vtlenb6pWwY/A6OUnL8cZ3X311cBkpqyf4IqZ/8xmJnF9io0MWJrxofrrxhn2
-        V2f9yrxvuvt9+Jbt1Tt3Pd5So2imxFKckWioxVxUnAgARuT2Iv0CAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPLMWRmVeSWpSXmKPExsVy+t/xe7oVWw7HGXQ1CVtsnLGe1eL6l+es
-        FufPb2C3+Nhzj9Vixvl9TBZrj9xlt/h3bSOLRfvTl8wOHB6bVnWyefRtWcXo8XmTXABzlJ5N
-        UX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpOZllqkb5dgl5Gf/t/poLd
-        ghWzF2xiamBs4+9i5OSQEDCRONUxgamLkYtDSGApo8T0J/eZIRIyEienNbBC2MISf651sUEU
-        fWKUOHD5IjtIgk3AUKLrLUiCk0NEwEniwbo3YHFmgQ4mifUfK0BsYQE/iWm9B8HiLAKqEm8u
-        TQCq5+DgFbCV2NGaCTFfXmL1hgPMExh5FjAyrGIUSS0tzk3PLTbSK07MLS7NS9dLzs/dxAgM
-        vG3Hfm7Zwdj1LvgQowAHoxIPb0L+oTgh1sSy4srcQ4wSHMxKIrwTXgCFeFMSK6tSi/Lji0pz
-        UosPMZoC7Z7ILCWanA+MirySeENTQ3MLS0NzY3NjMwslcd4OgYMxQgLpiSWp2ampBalFMH1M
-        HJxSDYxZOksl4n3Z2d+1PrQ9ISUc5KzN2re/bN7PmxWvG65Wn5n8O62IUea18rSOvuoAz03u
-        JnYbbN88OLEwnqe4o6CdzW7J0aArU5YteW+Q8viYjcrppO1ceW4Wjj4T31dOmZi42ffSxl/Z
-        /dX8ibvPmskxan86/L2dZ5HHnMe3PqfLqV+addfhq6QSS3FGoqEWc1FxIgB2EQJyUgIAAA==
-X-CMS-MailID: 20200519102704eucas1p1e1169d593154c4e3c4dc0d35282d5b39
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Len Brown <lenb@kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Ji Luo <ji.luo@nxp.com>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+Message-ID: <8dd9ecc2-0c61-49b7-d485-b169eb721712@samsung.com>
+Date:   Tue, 19 May 2020 12:32:30 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.8.0
+MIME-Version: 1.0
+In-Reply-To: <18332705-dd61-9a0e-d931-ae610c8fb600@samsung.com>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTcRjtt3t37505+bksv7QXi8qkLK3oRmFZCiNUhP4TNK95UdE52d3s
+        QYVmZQ1JyZY6NSWh0qzhNJ2GpisUGflI6KWJmrCK1ggNU7JyXi3/O98553sc+BhCYZf6MakZ
+        Ol6bwaUrKQ+yqWumb2fHk+fxu/PMUrbyRa+ULf36h2Jzq80UWzL8gmatzT5sy5iTYu+3FyB2
+        sLV8nu9rl7AVU0aCvdI27zDY5qgjnqqmp01SVYvpA62qsuhVltrrlOpZRR2tqv9mlagmLRti
+        6FiPQ0l8emoWr90VmuCRkl3jIjO/+Jwxu4x0NnJgA5IxgPeCo/G7xIA8GAV+gGBmLp8WiykE
+        n3/MEmIxicBRbyOWWoYKRhZd9xG4vhVSbkGBXQja6nYYEMOswokwfcvLTVM4GAxOw4LFBweC
+        5fVH0t1L4MskDJXeWRDkOBQqi9yCjCHxFnhg70JuvBrHgb26AYkeb+gpnVjwyPBhGCibot2Y
+        wBuh2VlOiNgX3k9ULuQBPE6D42Wf1H0Q4HCoGFCIAVbBl+5GWsTrwF6UT4r+XARjvY9oschH
+        MHipBImugzDcO0u5BxF4O5hbd4l0GDTkFJHifC946/QWb/CCm03FhEjL4drVxbVbwdT9+N/a
+        zv5XRCFSmpYlMy1LY1qWxvR/bxUia5EvrxfUybwQksGfDhI4taDPSA46pVFb0PyL2X93T1lR
+        669EG8IMUnrKEzS2eIWUyxLOqm0IGELpIy/8NE/Jk7iz53it5qRWn84LNuTPkEpf+Z67n+MU
+        OJnT8Wk8n8lrl1QJI/PLRoXJP/1vCCsnj24TnpjD5HlKijOE90QZnQ8ZMvbC6LG8yPdZz+tP
+        rKiaHo8eDx+I2LwpKqCdOp8Qva8M9Q+YWhreBB0/GTJaYyFG7lVNrinWlSUJaRp8um9oLuVA
+        lzmnM+y2itPNFKRbDfq9kWvfGY2SAMf2hhj5/oiOi0PW9UpSSOGCAwmtwP0FXJ+ck14DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPIsWRmVeSWpSXmKPExsVy+t/xe7r7tx6OM1jWo2kx/8g5VouZb/6z
+        WTQvXs9mMePOEXaLHdtFLHY+fMtmsXxfP6PF5V1zgOLn9zFZzP0yldmidS9QRdehv2wOPB7b
+        dm9j9dg56y67x4JNpR6bVnWyeeyfu4bdY+O7HUwenzfJBbBH6dkU5ZeWpCpk5BeX2CpFG1oY
+        6RlaWugZmVjqGRqbx1oZmSrp29mkpOZklqUW6dsl6GU0rHzPUvBKpGL9+6nsDYzPBboYOTkk
+        BEwkbvffY+9i5OIQEljKKPHo+XIWiISMxMlpDawQtrDEn2tdbBBFbxklfs85xdTFyMEhLJAk
+        8WCeJUgNm4ChRNdbkBpODhEBLYlN1x6zgNQzC7SxSByafxyq+QOTxOzNJ5hAqngF7CTmT34M
+        to1FQFVixeljjCC2qECsxOprrYwQNYISJ2c+AavhFLCXuDj7CzuIzSxgJjFv80NmCFteYvvb
+        OVC2uMStJ/OZJjAKzULSPgtJyywkLbOQtCxgZFnFKJJaWpybnltspFecmFtcmpeul5yfu4kR
+        GLnbjv3csoOx613wIUYBDkYlHt6E/ENxQqyJZcWVuYcYJTiYlUR4J7wACvGmJFZWpRblxxeV
+        5qQWH2I0BXpuIrOUaHI+MKnklcQbmhqaW1gamhubG5tZKInzdggcjBESSE8sSc1OTS1ILYLp
+        Y+LglGpg9LFxi3+awPd1gaBy+4RvLxrMTlR6f/ryhtnd8KhedOSjDxzhUQyFD0R+vrmUtC7/
+        VBXv5+qXi/Na93wtqrn5bZslk+KHX5bSQqyt0y4tdcyYef6Q3ZVnws+fbDPb0GBW9l/09rGq
+        xYckRXzl/TlOXvvWPTPo1xqmCZcvJkaJTYqtt58tPlfhrRJLcUaioRZzUXEiAGA0T7HyAgAA
+X-CMS-MailID: 20200519103231eucas1p105f6b8b68a285536795e726a4e98bee9
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200519102704eucas1p1e1169d593154c4e3c4dc0d35282d5b39
+X-RootMTR: 20200519062510eucas1p27bc59da66e1b77534855103a27f87452
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200519102704eucas1p1e1169d593154c4e3c4dc0d35282d5b39
-References: <CGME20200519102704eucas1p1e1169d593154c4e3c4dc0d35282d5b39@eucas1p1.samsung.com>
+X-CMS-RootMailID: 20200519062510eucas1p27bc59da66e1b77534855103a27f87452
+References: <20200515053500.215929-1-saravanak@google.com>
+        <CGME20200519062510eucas1p27bc59da66e1b77534855103a27f87452@eucas1p2.samsung.com>
+        <20200515053500.215929-5-saravanak@google.com>
+        <e0f9211d-9cf6-a12d-eb63-df06910920ed@samsung.com>
+        <CAGETcx_FOGgHdaNY8Dd-4rgT28U7_OHYeLsazbUE-1hyuatRSg@mail.gmail.com>
+        <18332705-dd61-9a0e-d931-ae610c8fb600@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Mark the SCLK clock for Exynos5433 I2S1 device with IGNORE_UNUSED flag to
-match its behaviour with SCLK clock for AUD_I2S (I2S0) device until
-a proper fix for Exynos I2S driver is ready.
+Hi
 
-This fixes the following synchronous abort issue revealed by the probe
-order change caused by the commit 93d2e4322aa ("of: platform: Batch fwnode
-parsing when adding all top level devices"):
+On 19.05.2020 09:11, Marek Szyprowski wrote:
+> On 19.05.2020 08:48, Saravana Kannan wrote:
+>> On Mon, May 18, 2020 at 11:25 PM Marek Szyprowski
+>> <m.szyprowski@samsung.com> wrote:
+>>> On 15.05.2020 07:35, Saravana Kannan wrote:
+>>>> The fw_devlink_pause() and fw_devlink_resume() APIs allow batching the
+>>>> parsing of the device tree nodes when a lot of devices are added. This
+>>>> will significantly cut down parsing time (as much a 1 second on some
+>>>> systems). So, use them when adding devices for all the top level 
+>>>> device
+>>>> tree nodes in a system.
+>>>>
+>>>> Signed-off-by: Saravana Kannan <saravanak@google.com>
+>>> This patch recently landed in linux-next 20200518. Sadly, it causes
+>>> regression on Samsung Exynos5433-based TM2e board:
+>>>
+>>> ...
+>>>
+>>> Both issues, the lack of DMA for SPI device and Synchronous abort in 
+>>> I2S
+>>> probe are new after applying this patch. I'm trying to investigate 
+>>> which
+>>> resources are missing and why. The latter issue means typically that 
+>>> the
+>>> registers for the given device has been accessed without enabling the
+>>> needed clocks or power domains.
+>> Did you try this copy-pasta fix that I sent later?
+>> https://lore.kernel.org/lkml/20200517173453.157703-1-saravanak@google.com/ 
+>>
+>>
+>> Not every system would need it (my test setup didn't), but it helps 
+>> some cases.
+>>
+>> If that fix doesn't help, then some tips for debugging the failing 
+>> drivers.
+>> What this pause/resume patch effectively (not explicitly) does is:
+>> 1. Doesn't immediately probe the devices as they are added in
+>> of_platform_default_populate_init()
+>> 2. Adds them in order to the deferred probe list.
+>> 3. Then kicks off deferred probe on them in the order they were added.
+>>
+>> These drivers are just not handling -EPROBE_DEFER correctly or
+>> assuming probe order and that's causing these issues.
+>>
+>> So, we can either fix that or you can try adding some code to flush
+>> the deferred probe workqueue at the end of fw_devlink_resume().
+>>
+>> Let me know how it goes.
+>
+> So far it looks that your patch revealed a hidden issue in exynos5433 
+> clocks configuration, because adding clk_ignore_unused parameter to 
+> kernel command line fixes the boot. I'm still investigating it, so 
+> probable you can ignore my regression report. I will let you know asap 
+> I finish checking it.
+>
+Okay, I confirm that the issue is in the Exynos I2S driver and 
+Exynos5433 clock provider. I've posted a quick workaround. I'm sorry for 
+the noise, your patch is fine.
 
-Internal error: synchronous external abort: 96000210 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 0 PID: 50 Comm: kworker/0:1 Not tainted 5.7.0-rc5+ #701
-Hardware name: Samsung TM2E board (DT)
-Workqueue: events deferred_probe_work_func
-pstate: 60000005 (nZCv daif -PAN -UAO)
-pc : samsung_i2s_probe+0x768/0x8f0
-lr : samsung_i2s_probe+0x688/0x8f0
-...
-Call trace:
- samsung_i2s_probe+0x768/0x8f0
- platform_drv_probe+0x50/0xa8
- really_probe+0x108/0x370
- driver_probe_device+0x54/0xb8
- __device_attach_driver+0x90/0xc0
- bus_for_each_drv+0x70/0xc8
- __device_attach+0xdc/0x140
- device_initial_probe+0x10/0x18
- bus_probe_device+0x94/0xa0
- deferred_probe_work_func+0x70/0xa8
- process_one_work+0x2a8/0x718
- worker_thread+0x48/0x470
- kthread+0x134/0x160
- ret_from_fork+0x10/0x1c
-Code: 17ffffaf d503201f f94086c0 91003000 (88dffc00)
----[ end trace ccf721c9400ddbd6 ]--- 
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos5433.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index ed159beab34e..a111fc29352c 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -1706,7 +1706,8 @@ static const struct samsung_gate_clock peric_gate_clks[] __initconst = {
- 	GATE(CLK_SCLK_PCM1, "sclk_pcm1", "sclk_pcm1_peric",
- 			ENABLE_SCLK_PERIC, 7, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_I2S1, "sclk_i2s1", "sclk_i2s1_peric",
--			ENABLE_SCLK_PERIC, 6, CLK_SET_RATE_PARENT, 0),
-+			ENABLE_SCLK_PERIC, 6,
-+			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_PERIC,
- 			5, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_PERIC,
+Best regards
 -- 
-2.17.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
