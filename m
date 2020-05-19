@@ -2,296 +2,165 @@ Return-Path: <SRS0=rJke=7B=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DACE2C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 May 2020 09:36:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D361BC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 May 2020 10:27:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B918C207D8
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 May 2020 09:36:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8995F207E8
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 May 2020 10:27:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UA+9/ui0"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dIq7kzXJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726333AbgESJgn (ORCPT
+        id S1728690AbgESK1H (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 19 May 2020 05:36:43 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:54055 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726674AbgESJgm (ORCPT
+        Tue, 19 May 2020 06:27:07 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:51184 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728677AbgESK1G (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 19 May 2020 05:36:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1589880999;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=zx1xwU2hx8pVoq/x6eR5o+QLPp4w7KqD0sx7jmQ5IaM=;
-        b=UA+9/ui00kvgZrOKF8coaVFZFutm5nUR/Ihwc7yH7BeI7l5ljsiFmU+p2fkQ5b2AGOunT4
-        Uw3o6y29yw3jw4aHHZjHtzSTygserRWfg4kV8S25tbUP29HgMXlVbuS+kPUj9eNkAmGDfn
-        pay4oJpYoAqxv/rc/q9h7tDrdz4DXgA=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-471-jSHIScbKMK2PxQaOOkvjzg-1; Tue, 19 May 2020 05:36:38 -0400
-X-MC-Unique: jSHIScbKMK2PxQaOOkvjzg-1
-Received: by mail-wm1-f72.google.com with SMTP id a67so1172287wme.6
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 May 2020 02:36:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zx1xwU2hx8pVoq/x6eR5o+QLPp4w7KqD0sx7jmQ5IaM=;
-        b=AdipCs4HU6cCRLci6rbA0zUVw+TUVY8CXCfFqTCGCt/6T0PCPXhpRLiqZ4uV1wv09D
-         wNzRP+IrKf4koGnEiDQH1l0C1em4tBHnDUVxP55NOYvJuJAhT4Q1wqi2o6IkIcE9708+
-         csr59wUasl/Iu3H2LUzvhbmyIoevqU/btOKmK261wQo0FAGbeyzrLOaxaauRAKKxa0o3
-         LN7WrLuUxGkY2iHjIyF/sEdWqBux6yKYA0TpwXlrQdq7bddRefTzR8Tx3GOODiwg+6oS
-         pktCHQo5KteItinaq5ppXCDRYMN+sz7P0aah7RJyWVCguZqlF5w1Z+VZr4N9N5ZIFoL2
-         gwAw==
-X-Gm-Message-State: AOAM530thKCBVZpk+AlA/PAC1nWfAbgKvd3TYKCFfVQD1+kAJXwQ46nx
-        j4WTPAAD8P1Pg+i6Evp6EDc2kFFfSrjM97phKzpvfkFz5JSLY8L+HFMyafeKTML5hexTFPgk/PZ
-        FCGL7U2TLWAaorTaNxFI7zhNAdMPJ1B4=
-X-Received: by 2002:a1c:444:: with SMTP id 65mr4608045wme.21.1589880996783;
-        Tue, 19 May 2020 02:36:36 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwqcjizbgXFRvjt4WsCNNW18OC7P3zc0FNfH6PxsI9rxtfI7F0v+PkL9hUz5wI4ZZq7PkCtaQ==
-X-Received: by 2002:a1c:444:: with SMTP id 65mr4608023wme.21.1589880996492;
-        Tue, 19 May 2020 02:36:36 -0700 (PDT)
-Received: from x1.localdomain (2001-1c00-0c0c-fe00-d2ea-f29d-118b-24dc.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:d2ea:f29d:118b:24dc])
-        by smtp.gmail.com with ESMTPSA id i6sm3566852wmb.41.2020.05.19.02.36.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 May 2020 02:36:35 -0700 (PDT)
-Subject: Re: [PATCHv2 0/7] Support inhibiting input devices
-To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        linux-input@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        patches@opensource.cirrus.com,
-        ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
+        Tue, 19 May 2020 06:27:06 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200519102705euoutp01e97a9813fe9c913c8ee71c93d31691a5~QZxjltAr60727107271euoutp01R
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 May 2020 10:27:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200519102705euoutp01e97a9813fe9c913c8ee71c93d31691a5~QZxjltAr60727107271euoutp01R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1589884025;
+        bh=ZKT5i8ZwRi4zvF/m9X+xF/4p2k/qj6EshKkaUfn86Pk=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=dIq7kzXJkIAvCMDFS5aSniUeiibeKV4MlsHQSF6OvzNXEexrsLpQcsSp6rZ2WZGU8
+         8lnS2dElrrC1Ks6zaPozh24SmUVUgr8lmH/MI6u6Aq9qUC34cJgqgBGt+S3L2TSDh4
+         T3uJzlLCAJpD0Jr5k2qwZtVNv/QGvA8Rwy7OscgE=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200519102704eucas1p275a5b9c6f67687f182de879503edcca1~QZxjZlrgR0280802808eucas1p2V;
+        Tue, 19 May 2020 10:27:04 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 04.4F.60679.874B3CE5; Tue, 19
+        May 2020 11:27:04 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200519102704eucas1p1e1169d593154c4e3c4dc0d35282d5b39~QZxi90oHw3036330363eucas1p1m;
+        Tue, 19 May 2020 10:27:04 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200519102704eusmtrp1f3bb8e53d7387cd858978d96f38fdf15~QZxi9AD2v0347803478eusmtrp1i;
+        Tue, 19 May 2020 10:27:04 +0000 (GMT)
+X-AuditID: cbfec7f4-0e5ff7000001ed07-f7-5ec3b47848cb
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id F3.8C.07950.874B3CE5; Tue, 19
+        May 2020 11:27:04 +0100 (BST)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200519102703eusmtip2e76f0c0eceac89da6594c907f994bc2f~QZxigo_4G0281602816eusmtip2O;
+        Tue, 19 May 2020 10:27:03 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Barry Song <baohua@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Nick Dyer <nick@shmanahar.org>,
-        Ferruh Yigit <fery@cypress.com>,
-        Sangwon Jee <jeesw@melfas.com>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        kernel@collabora.com, Peter Hutterer <peter.hutterer@redhat.com>,
-        Benjamin Tissoires <btissoir@redhat.com>
-References: <20200506002746.GB89269@dtor-ws>
- <20200515164943.28480-1-andrzej.p@collabora.com>
- <842b95bb-8391-5806-fe65-be64b02de122@redhat.com>
- <e6030957-97dc-5b04-7855-bc14a78164c8@collabora.com>
- <6d9921fc-5c2f-beda-4dcd-66d6970a22fe@redhat.com>
- <09679de4-75d3-1f29-ec5f-8d42c84273dd@collabora.com>
- <f674ba4f-bd83-0877-c730-5dc6ea09ae4b@redhat.com>
- <2d224833-3a7e-bc7c-af15-1f803f466697@collabora.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <aa2ce2ab-e5bc-9cb4-8b53-c1ef9348b646@redhat.com>
-Date:   Tue, 19 May 2020 11:36:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
-MIME-Version: 1.0
-In-Reply-To: <2d224833-3a7e-bc7c-af15-1f803f466697@collabora.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH] clk: samsung: exynos5433: Add IGNORE_UNUSED flag to
+ sclk_i2s1
+Date:   Tue, 19 May 2020 12:26:52 +0200
+Message-Id: <20200519102652.10219-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFIsWRmVeSWpSXmKPExsWy7djP87oVWw7HGXx8ZGKxccZ6VovrX56z
+        Wpw/v4Hd4mPPPVaLGef3MVmsPXKX3eLftY0sFu1PXzI7cHhsWtXJ5tG3ZRWjx+dNcgHMUVw2
+        Kak5mWWpRfp2CVwZ/e3/mQp2C1bMXrCJqYGxjb+LkZNDQsBEYtusrawgtpDACkaJpuMmXYxc
+        QPYXRokFy8+zQzifGSVW9PSywXSc6pjABJFYzijx4885driWm3fXMoFUsQkYSnS97QLrEBFw
+        kPj86TUjSBGzQAuTxNPeNewgCWGBAIm7F/aBLWcRUJV4c2kCUAMHB6+ArcSO1kyIbfISqzcc
+        YAbplRA4wyZx6M5XRoiEi8TpKytZIWxhiVfHt7BD2DISpyf3sEA0NDNKPDy3lh3C6WGUuNw0
+        A6rbWuLOuV9g25gFNCXW79KHCDtKXFj/lB0kLCHAJ3HjrSBImBnInLRtOjNEmFeio00IolpN
+        YtbxdXBrD164xAxhe0hMbZ3MBgnTWIlj/ZcYJzDKzULYtYCRcRWjeGppcW56arFRXmq5XnFi
+        bnFpXrpecn7uJkZgCjj97/iXHYy7/iQdYhTgYFTi4U3IPxQnxJpYVlyZe4hRgoNZSYR3wgug
+        EG9KYmVValF+fFFpTmrxIUZpDhYlcV7jRS9jhQTSE0tSs1NTC1KLYLJMHJxSDYzt2g9/qGeW
+        r2rfxFk/Sb64yTPJ6t3d5z9v3t+/Q0G65Qr3lZkli0IPvus/r/vgXfZ26VcMhmncdT6Vbhyv
+        ygpPbN/2bX+vtlenb6pWwY/A6OUnL8cZ3X311cBkpqyf4IqZ/8xmJnF9io0MWJrxofrrxhn2
+        V2f9yrxvuvt9+Jbt1Tt3Pd5So2imxFKckWioxVxUnAgARuT2Iv0CAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPLMWRmVeSWpSXmKPExsVy+t/xe7oVWw7HGXQ1CVtsnLGe1eL6l+es
+        FufPb2C3+Nhzj9Vixvl9TBZrj9xlt/h3bSOLRfvTl8wOHB6bVnWyefRtWcXo8XmTXABzlJ5N
+        UX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpOZllqkb5dgl5Gf/t/poLd
+        ghWzF2xiamBs4+9i5OSQEDCRONUxgamLkYtDSGApo8T0J/eZIRIyEienNbBC2MISf651sUEU
+        fWKUOHD5IjtIgk3AUKLrLUiCk0NEwEniwbo3YHFmgQ4mifUfK0BsYQE/iWm9B8HiLAKqEm8u
+        TQCq5+DgFbCV2NGaCTFfXmL1hgPMExh5FjAyrGIUSS0tzk3PLTbSK07MLS7NS9dLzs/dxAgM
+        vG3Hfm7Zwdj1LvgQowAHoxIPb0L+oTgh1sSy4srcQ4wSHMxKIrwTXgCFeFMSK6tSi/Lji0pz
+        UosPMZoC7Z7ILCWanA+MirySeENTQ3MLS0NzY3NjMwslcd4OgYMxQgLpiSWp2ampBalFMH1M
+        HJxSDYxZOksl4n3Z2d+1PrQ9ISUc5KzN2re/bN7PmxWvG65Wn5n8O62IUea18rSOvuoAz03u
+        JnYbbN88OLEwnqe4o6CdzW7J0aArU5YteW+Q8viYjcrppO1ceW4Wjj4T31dOmZi42ffSxl/Z
+        /dX8ibvPmskxan86/L2dZ5HHnMe3PqfLqV+addfhq6QSS3FGoqEWc1FxIgB2EQJyUgIAAA==
+X-CMS-MailID: 20200519102704eucas1p1e1169d593154c4e3c4dc0d35282d5b39
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200519102704eucas1p1e1169d593154c4e3c4dc0d35282d5b39
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200519102704eucas1p1e1169d593154c4e3c4dc0d35282d5b39
+References: <CGME20200519102704eucas1p1e1169d593154c4e3c4dc0d35282d5b39@eucas1p1.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Mark the SCLK clock for Exynos5433 I2S1 device with IGNORE_UNUSED flag to
+match its behaviour with SCLK clock for AUD_I2S (I2S0) device until
+a proper fix for Exynos I2S driver is ready.
 
-On 5/19/20 11:02 AM, Andrzej Pietrasiewicz wrote:
-> Hi Hans, Hi Dmitry,
-> 
-> W dniu 18.05.2020 o 16:23, Hans de Goede pisze:
->> Hi,
-> 
-> <snip>
-> 
->>>>>>
->>>>>> So I wonder what this series actually adds for functionality for
->>>>>> userspace which can not already be achieved this way?
->>>>>>
->>>>>> I also noticed that you keep the device open (do not call the
->>>>>> input_device's close callback) when inhibited and just throw away
->>>>>
->>>>> I'm not sure if I understand you correctly, it is called:
->>>>>
->>>>> +static inline void input_stop(struct input_dev *dev)
->>>>> +{
->>>>> +    if (dev->poller)
->>>>> +        input_dev_poller_stop(dev->poller);
->>>>> +    if (dev->close)
->>>>> +        dev->close(dev);
->>>>>                  ^^^^^^^^^^^^^^^^
->>>>> +static int input_inhibit(struct input_dev *dev)
->>>>> +{
->>>>> +    int ret = 0;
->>>>> +
->>>>> +    mutex_lock(&dev->mutex);
->>>>> +
->>>>> +    if (dev->inhibited)
->>>>> +        goto out;
->>>>> +
->>>>> +    if (dev->users) {
->>>>> +        if (dev->inhibit) {
->>>>> +            ret = dev->inhibit(dev);
->>>>> +            if (ret)
->>>>> +                goto out;
->>>>> +        }
->>>>> +        input_stop(dev);
->>>>>                  ^^^^^^^^^^^^^^^^
->>>>>
->>>>> It will not be called when dev->users is zero, but if it is zero,
->>>>> then nobody has opened the device yet so there is nothing to close.
->>>>
->>>> Ah, I missed that.
->>>>
->>>> So if the device implements the inhibit call back then on
->>>> inhibit it will get both the inhibit and close callback called?
->>>>
->>>
->>> That's right. And conversely, upon uninhibit open() and uninhibit()
->>> callbacks will be invoked. Please note that just as with open()/close(),
->>> providing inhibit()/uninhibit() is optional.
->>
->> Ack.
->>
->>>> And what happens if the last user goes away and the device
->>>> is not inhibited?
->>>
->>> close() is called as usually.
->>
->> But not inhibit, hmm, see below.
->>
->>>> I'm trying to understand here what the difference between the 2
->>>> is / what the goal of having a separate inhibit callback ?
->>>>
->>>
->>> Drivers have very different ideas about what it means to suspend/resume
->>> and open/close. The optional inhibit/uninhibit callbacks are meant for
->>> the drivers to know that it is this particular action going on.
->>
->> So the inhibit() callback triggers the "suspend" behavior ?
->> But shouldn't drivers which are capable of suspending the device
->> always do so on close() ?
->>
->> Since your current proposal also calls close() on inhibit() I
->> really see little difference between an inhibit() and the last
->> user of the device closing it and IMHO unless there is a good
->> reason to actually differentiate the 2 it would be better
->> to only stick with the existing close() and in cases where
->> that does not put the device in a low-power mode yet, fix
->> the existing close() callback to do the low-power mode
->> setting instead of adding a new callback.
->>
->>> For inhibit() there's one more argument: close() does not return a value,
->>> so its meaning is "do some last cleanup" and as such it is not allowed
->>> to fail - whatever its effect is, we must deem it successful. inhibit()
->>> does return a value and so it is allowed to fail.
->>
->> Well, we could make close() return an error and at least in the inhibit()
->> case propagate that to userspace. I wonder if userspace is going to
->> do anything useful with that error though...
->>
->> In my experience errors during cleanup/shutdown are best logged
->> (using dev_err) and otherwise ignored, so that we try to clean up
->> as much possible. Unless the very first step of the shutdown process
->> fails the device is going to be in some twilight zone state anyways
->> at this point we might as well try to cleanup as much as possible.
-> 
-> What you say makes sense to me.
-> @Dmitry?
-> 
->>
->>> All in all, it is up to the drivers to decide which callback they
->>> provide. Based on my work so far I would say that there are tens
->>> of simple cases where open() and close() are sufficient, out of total
->>> ~400 users of input_allocate_device():
->>>
->>> $ git grep "input_allocate_device(" | grep -v ^Documentation | \
->>> cut -f1 -d: | sort | uniq | wc
->>>      390     390   13496
->>
->> So can you explain a bit more about the cases where only having
->> open/close is not sufficient?  So far I have the feeling that
->> those are all we need and that we really do not need separate
->> [un]inhibit callbacks.
-> 
-> My primary concern was not being able to propagate inhibit() error
-> to userspace, and then if we have inhibit(), uninhibit() should be
-> there for completeness. If propagating the error to userspace can
-> be neglected then yes, it seems open/close should be sufficient,
-> even more because the real meaning of "open" is "prepare the device
-> for generating input events".
-> 
-> To validate the idea of not introducing inhibit()/uninhibit() callbacks
-> to implement device inhibiting/uninhibiting let's look at
-> drivers/input/mouse/elan_i2c_core.c (PATCH 7/7):
-> 
-> static int elan_inhibit(struct input_dev *input)
-> {
-> [...]
-> 
->      ret = mutex_lock_interruptible(&data->sysfs_mutex);
->      if (ret)
->          return ret;
-> 
->      disable_irq(client->irq);
-> 
->      ret = elan_disable_power(data);
->      if (ret)
->          enable_irq(client->irq);
-> [...]
-> }
-> 
-> First, close() does not exist in this driver. Of course this can be
-> fixed. Then it doesn't return a value. Then, if either taking the
-> mutex or disabling the power fails, the close() is still deemed
-> successful. Is it ok?
+This fixes the following synchronous abort issue revealed by the probe
+order change caused by the commit 93d2e4322aa ("of: platform: Batch fwnode
+parsing when adding all top level devices"):
 
-Note I also mentioned another solution for the error propagation,
-which would require a big "flag day" commit adding "return 0"
-to all existing close callbacks, but otherwise should work for your
-purposes:
+Internal error: synchronous external abort: 96000210 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 0 PID: 50 Comm: kworker/0:1 Not tainted 5.7.0-rc5+ #701
+Hardware name: Samsung TM2E board (DT)
+Workqueue: events deferred_probe_work_func
+pstate: 60000005 (nZCv daif -PAN -UAO)
+pc : samsung_i2s_probe+0x768/0x8f0
+lr : samsung_i2s_probe+0x688/0x8f0
+...
+Call trace:
+ samsung_i2s_probe+0x768/0x8f0
+ platform_drv_probe+0x50/0xa8
+ really_probe+0x108/0x370
+ driver_probe_device+0x54/0xb8
+ __device_attach_driver+0x90/0xc0
+ bus_for_each_drv+0x70/0xc8
+ __device_attach+0xdc/0x140
+ device_initial_probe+0x10/0x18
+ bus_probe_device+0x94/0xa0
+ deferred_probe_work_func+0x70/0xa8
+ process_one_work+0x2a8/0x718
+ worker_thread+0x48/0x470
+ kthread+0x134/0x160
+ ret_from_fork+0x10/0x1c
+Code: 17ffffaf d503201f f94086c0 91003000 (88dffc00)
+---[ end trace ccf721c9400ddbd6 ]--- 
 
- > Well, we could make close() return an error and at least in the inhibit()
- > case propagate that to userspace. I wonder if userspace is going to
- > do anything useful with that error though...
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5433.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-And I guess we could log an error that close failed in the old close() path
-where we cannot propagate the error.
-
-Also why the mutex_lock_interruptible() ?  If you change that to
-a normal mutex_lock() you loose one of the possible 2 error cases and
-I doubt anyone is going to do a CTRL-C of the process doing the
-inhibiting (or that that process starts a timer using a signal
-to ensure the inhibit does not take to long or some such).
-
-Regards,
-
-Hans
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index ed159beab34e..a111fc29352c 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -1706,7 +1706,8 @@ static const struct samsung_gate_clock peric_gate_clks[] __initconst = {
+ 	GATE(CLK_SCLK_PCM1, "sclk_pcm1", "sclk_pcm1_peric",
+ 			ENABLE_SCLK_PERIC, 7, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_I2S1, "sclk_i2s1", "sclk_i2s1_peric",
+-			ENABLE_SCLK_PERIC, 6, CLK_SET_RATE_PARENT, 0),
++			ENABLE_SCLK_PERIC, 6,
++			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_PERIC,
+ 			5, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_PERIC,
+-- 
+2.17.1
 
