@@ -2,158 +2,149 @@ Return-Path: <SRS0=rJke=7B=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18F99C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 May 2020 18:03:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42809C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 May 2020 21:26:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC9BD207E8
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 May 2020 18:03:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECF5B20758
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 May 2020 21:26:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O1wfisRu"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="l95Lbh8U"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729448AbgESSD1 (ORCPT
+        id S1727047AbgESV0U (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 19 May 2020 14:03:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33706 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726059AbgESSD0 (ORCPT
+        Tue, 19 May 2020 17:26:20 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:45530 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726658AbgESV0U (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 19 May 2020 14:03:26 -0400
-Received: from mail-ot1-x341.google.com (mail-ot1-x341.google.com [IPv6:2607:f8b0:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2638C08C5C0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 May 2020 11:03:26 -0700 (PDT)
-Received: by mail-ot1-x341.google.com with SMTP id d7so248161ote.6
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 May 2020 11:03:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mEF6JImDlZtl9dd5DwbZ+u4aD5H341Tlf4Pwdu0TU+o=;
-        b=O1wfisRulz9CoxDrv6qokmb34hMkANCg3EhTpEf3NEqJsA+ZmZJ07dbKmng/EfVA5D
-         nPT8mgLwfSarEywarGM6h7tCVITUVt6DRqsNgjllMir5/afeMJnLOgnY337B3AXwz9SM
-         Oqgm9lj4hVV5LnGx8wH/rUDprVWwc1s/cDChVMODcwiEvaLfzQGEhhbY16/Cg4wgngUm
-         ndYmyZYcCHsrOp+OB43ftulrbAR7pz1+EE7oaLNr5bVmm01rJ3rxaiza1wagWBVUHjIa
-         ivZDSdmBIw007YKAB/RKld1rA8gbmnVxP+OVzwaWng1zxA7ML9r4l0C7sDpccbFUdTfv
-         iImg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mEF6JImDlZtl9dd5DwbZ+u4aD5H341Tlf4Pwdu0TU+o=;
-        b=dfEUWSbXzJFiJ9ehPsDP7tnWVJqAZrR5qTBSKrhEfWG7W7BTMrshO/OwQbO+xYTvcR
-         8qyuZRJG2njuNrWyp0seKvUq9hxq7gslcsrLGeNav+BlFEGM5QqQuEBxQ91p7/bXEsYw
-         6hOPqRqD12Ee4pBygVxU7DGc/aX9F9h+e2BeFwlOy5WZz1KYxXJ0423Iosxd5LHJsCpG
-         fFXyFBPidXzvDii5KRPQGcMqGV86pf8CwrFs1X7g/YG/qZRqjGqZd8L3WJFUdadGAMQG
-         9AIvwQTQwid4PpdZpeyzwAdCcyOpCKr8x89YetGv9BcSlmMXzdCX9eG8NhVcrZPLxDtf
-         NUgQ==
-X-Gm-Message-State: AOAM530W0rqy02hWGLbxZ/juIDhYPArR4B9jbRdzybArcT8jPj6z0Zev
-        p8bedKZId15yE97+vVpW78oX57KS6oBs1wX6omBuMg==
-X-Google-Smtp-Source: ABdhPJxDZS36lbikLWNWNKsGTyaSjkhcXB1D0+SUJ5UbhDsdbvvhGykFD+NnS2G+8jChrXraoEPEk7x1IBlfu/Qlymg=
-X-Received: by 2002:a05:6830:1e45:: with SMTP id e5mr214825otj.236.1589911405140;
- Tue, 19 May 2020 11:03:25 -0700 (PDT)
+        Tue, 19 May 2020 17:26:20 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200519212619euoutp026660629e09647f79ae3314b71366bb2d~QixJDctu12168521685euoutp02F
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 May 2020 21:26:19 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200519212619euoutp026660629e09647f79ae3314b71366bb2d~QixJDctu12168521685euoutp02F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1589923579;
+        bh=1c7VGWvexy2eW95UqCglB2SCwEWKkXv1iIEzc8i/+A0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=l95Lbh8Uek6BIOdoOAGVVQNqUD6Ef/OpWdjsOfK035IpvHdN8Of8a/Ty9W7W39HzI
+         dfsfJIKUG7hiNaavmuE3XuDSZ93iEWz7kmQpjF7qARZ9bw3sqOsduvFcIJ2Ax9ULZT
+         fA8eXDfhZ2H5JPAj91e7OGq7qMGAVFHA5xVPJUNs=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200519212617eucas1p184ae7a3c1ceef4f3069943c69c8bbed0~QixIAgXno2659226592eucas1p1b;
+        Tue, 19 May 2020 21:26:17 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id A9.EB.60679.9FE44CE5; Tue, 19
+        May 2020 22:26:17 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200519212617eucas1p1b6e7af0ecb894896b165601fafd6abe8~QixHPs0gA2557025570eucas1p1W;
+        Tue, 19 May 2020 21:26:17 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200519212617eusmtrp292b562aade6f48110764323077d6f380~QixHO68Go1117911179eusmtrp2b;
+        Tue, 19 May 2020 21:26:17 +0000 (GMT)
+X-AuditID: cbfec7f4-0cbff7000001ed07-2d-5ec44ef94874
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 83.A7.08375.8FE44CE5; Tue, 19
+        May 2020 22:26:16 +0100 (BST)
+Received: from localhost (unknown [106.120.51.46]) by eusmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200519212616eusmtip13926f680a1fb9914bec1e3649925e7ca~QixHBwEZQ2033920339eusmtip1y;
+        Tue, 19 May 2020 21:26:16 +0000 (GMT)
+From:   =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+To:     Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Markus Elfring <elfring@users.sourceforge.net>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Stefan Wahren <wahrenst@gmx.net>, linux-crypto@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Stephan Mueller <smueller@chronox.de>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>
+Subject: [PATCH v2 0/2] Set the quality value for two HW RNGs
+Date:   Tue, 19 May 2020 23:25:50 +0200
+Message-Id: <20200519212552.11671-1-l.stelmach@samsung.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200514190734.32746-1-l.stelmach@samsung.com>
 MIME-Version: 1.0
-References: <20200515053500.215929-1-saravanak@google.com> <CGME20200519062510eucas1p27bc59da66e1b77534855103a27f87452@eucas1p2.samsung.com>
- <20200515053500.215929-5-saravanak@google.com> <e0f9211d-9cf6-a12d-eb63-df06910920ed@samsung.com>
- <CAGETcx_FOGgHdaNY8Dd-4rgT28U7_OHYeLsazbUE-1hyuatRSg@mail.gmail.com>
- <18332705-dd61-9a0e-d931-ae610c8fb600@samsung.com> <8dd9ecc2-0c61-49b7-d485-b169eb721712@samsung.com>
-In-Reply-To: <8dd9ecc2-0c61-49b7-d485-b169eb721712@samsung.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Tue, 19 May 2020 11:02:49 -0700
-Message-ID: <CAGETcx_VtJXCqih4ZadZ0dFVJwKOBEQnnrr9JxxmGNh7HX_vNQ@mail.gmail.com>
-Subject: Re: [PATCH v1 4/4] of: platform: Batch fwnode parsing when adding all
- top level devices
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Len Brown <lenb@kernel.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Ji Luo <ji.luo@nxp.com>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Organization: Samsung R&D Institute Poland
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTYRjG+3bOzjla0+OSejFLGmkYZXazD+xexOkfsaKgQGu107p4Y0vt
+        AhmTNJdupUQ1lbZUZsvrZitFU5ZpWamRZdFlXRaWZVgatnWfx6j/fu/7Pc/zfQ98DCHNooKY
+        PUn7eVWSPEFG+ZL2NnfnHHdMa3ykpi8S/8hvo3Ht2Woxrsy7QeKuHDOBPR9baZxZUk3hE/3B
+        WP/6PYG7umpo/NhRjrD19UMxdj53i/D9hiIKn+26JsLGApcYG+06hN+cs1H44yUXwqdvV5K4
+        /WYOsSKQ++bJR5zBeZfiPvf0iLh6wzOaK7E2U5y9JZSzWnIorrm4guZspRmcrs6CON27GsRV
+        1z0gOU1Htpgbsk6L9dvqu0TBJ+xJ41Vzl2333X3PXECnZIkPWM1PyKMom9QihgF2Idw5ptQi
+        X0bKliNwtZURwjCMwK1z0Frk82cYQpCZu+mvwfaJEzRmBIXuEloY+hCY7CaR10CxK0FfdlPs
+        5UC2SgwjZbyXCTYdjr10je4nskvB9sqEvEyyodA06BhlCRsNec/clJeBDYFs85VR9mGXQO9b
+        j0jQBMCtcy7Sy/7sLKjQ9JJCfghkXi4cbQBsNwPGERMhBK2BHJ1mLHQi9LfX0QIHw6/68yKh
+        WQYU5EcJ3lwE9qKvpKCJhqedHsqrIdhwqG6YK6xXQqlFP2b1g0cDAcIT/CDffoYQ1hI4niUV
+        1DOgSt84FhgEef3l6CSSGf4rY/ivgOHfXUZEWNBkPlWdqOTV85P49Ai1PFGdmqSM2JmcaEV/
+        fuftn+3DV1HD9x0OxDJINkES2Xg9XiqWp6kPJjoQMIQsUHLyrSNeKlHIDx7iVcnbVKkJvNqB
+        pjCkbLJkwYV3cVJWKd/P7+P5FF7191TE+AQdRYe3KAJP3SEWaQecMfhi2pueCVPHj3v+wrn4
+        iEJlLptWGZWwPiRuqLn2Rea+l0u7i8M29yyOcPetuYGDp5fSXKs+/QPBOK2Wtf57lU19w++b
+        TS21G2aGbWlctGtgVUd2bCxet7oxxEPvaunP7axq3zpbYbRtXP5Fq+mYVBzeGlU+KCPVu+Xz
+        ZhEqtfw3JclJQJkDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBKsWRmVeSWpSXmKPExsVy+t/xu7o//I7EGeycbmPxd9IxdouNM9az
+        WqztPcpicb5zObPFr3dH2C2aF69ns+h+JWPR//g1s8X58xvYLW4eWsFosenxNVaL+/d+Mllc
+        3jWHzWLG+X1MFgsmP2G1WLCtj9Hi6czNbBbvVj9htJh6ei2LxfETncwOIh6/f01i9Jh1/yyb
+        x6crV5g8ds66y+6xeNN+No9tB1Q9Nq3qZPPYP3cNu8fmJfUefVtWMXr0vdzA6LF+y1UWj6ZT
+        7awenzfJBfBF6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZmSrp29mkpOZklqUW
+        6dsl6GVcXD6ZvaCNtWLT8tssDYztLF2MHBwSAiYSmz96dDFycQgJLGWU2L/xGyNEXEpi5dz0
+        LkZOIFNY4s+1LjYQW0jgKaPE6++yIDabgKNE/9ITrCC9IgJ7WCV23+hkAkkwC5RLtD58wgpi
+        CwvYSmx+tJARxGYRUJXY++EQmM0rYC3Re/cnG8QCeYn25dvBbE4BG4nrL34xQSyzlrjzZS4r
+        RL2gxMmZT8BuZhZQl1g/TwgkzC+gJbGm6ToLxFp5ieats5knMArNQtIxC6FjFpKqBYzMqxhF
+        UkuLc9Nziw31ihNzi0vz0vWS83M3MQJTxbZjPzfvYLy0MfgQowAHoxIPr8Gew3FCrIllxZW5
+        hxglOJiVRHgnvDgUJ8SbklhZlVqUH19UmpNafIjRFOjNicxSosn5wDSWVxJvaGpobmFpaG5s
+        bmxmoSTO2yFwMEZIID2xJDU7NbUgtQimj4mDU6qBsSH2fXJgdk2TwvTAi483rZwp9crpHGOg
+        OEOfofxJyZn6vum/NeY37wtb/7LjDhPTcfVvSnY+6zUM/a5fTfuxkW1CqutGnV4rvyU+qx4v
+        fn87XeK2gW6U7ikHwc5Jio0rzlzQvd8pO/ninl1WyydJn7qtx79k0qvsd99+Tq0weMMfvTvH
+        93hkhBJLcUaioRZzUXEiACOC+cArAwAA
+X-CMS-MailID: 20200519212617eucas1p1b6e7af0ecb894896b165601fafd6abe8
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200519212617eucas1p1b6e7af0ecb894896b165601fafd6abe8
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200519212617eucas1p1b6e7af0ecb894896b165601fafd6abe8
+References: <20200514190734.32746-1-l.stelmach@samsung.com>
+        <CGME20200519212617eucas1p1b6e7af0ecb894896b165601fafd6abe8@eucas1p1.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue, May 19, 2020 at 3:32 AM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
->
-> Hi
->
-> On 19.05.2020 09:11, Marek Szyprowski wrote:
-> > On 19.05.2020 08:48, Saravana Kannan wrote:
-> >> On Mon, May 18, 2020 at 11:25 PM Marek Szyprowski
-> >> <m.szyprowski@samsung.com> wrote:
-> >>> On 15.05.2020 07:35, Saravana Kannan wrote:
-> >>>> The fw_devlink_pause() and fw_devlink_resume() APIs allow batching the
-> >>>> parsing of the device tree nodes when a lot of devices are added. This
-> >>>> will significantly cut down parsing time (as much a 1 second on some
-> >>>> systems). So, use them when adding devices for all the top level
-> >>>> device
-> >>>> tree nodes in a system.
-> >>>>
-> >>>> Signed-off-by: Saravana Kannan <saravanak@google.com>
-> >>> This patch recently landed in linux-next 20200518. Sadly, it causes
-> >>> regression on Samsung Exynos5433-based TM2e board:
-> >>>
-> >>> ...
-> >>>
-> >>> Both issues, the lack of DMA for SPI device and Synchronous abort in
-> >>> I2S
-> >>> probe are new after applying this patch. I'm trying to investigate
-> >>> which
-> >>> resources are missing and why. The latter issue means typically that
-> >>> the
-> >>> registers for the given device has been accessed without enabling the
-> >>> needed clocks or power domains.
-> >> Did you try this copy-pasta fix that I sent later?
-> >> https://lore.kernel.org/lkml/20200517173453.157703-1-saravanak@google.com/
-> >>
-> >>
-> >> Not every system would need it (my test setup didn't), but it helps
-> >> some cases.
-> >>
-> >> If that fix doesn't help, then some tips for debugging the failing
-> >> drivers.
-> >> What this pause/resume patch effectively (not explicitly) does is:
-> >> 1. Doesn't immediately probe the devices as they are added in
-> >> of_platform_default_populate_init()
-> >> 2. Adds them in order to the deferred probe list.
-> >> 3. Then kicks off deferred probe on them in the order they were added.
-> >>
-> >> These drivers are just not handling -EPROBE_DEFER correctly or
-> >> assuming probe order and that's causing these issues.
-> >>
-> >> So, we can either fix that or you can try adding some code to flush
-> >> the deferred probe workqueue at the end of fw_devlink_resume().
-> >>
-> >> Let me know how it goes.
-> >
-> > So far it looks that your patch revealed a hidden issue in exynos5433
-> > clocks configuration, because adding clk_ignore_unused parameter to
-> > kernel command line fixes the boot. I'm still investigating it, so
-> > probable you can ignore my regression report. I will let you know asap
-> > I finish checking it.
-> >
-> Okay, I confirm that the issue is in the Exynos I2S driver and
-> Exynos5433 clock provider. I've posted a quick workaround. I'm sorry for
-> the noise, your patch is fine.
+The rng structure contains the quality field which tells how many bits
+of entropy can be obtained from 1024 bits read from a device. With the
+quality value set the hw_random framework starts a kernel thread to feed
+the entropy pool in the CRNG, which helps to initialize it quickly
+especially during boot.
 
-Thanks for debugging and finding the real issue. I tried finding your
-patches, but couldn't. Can you point me to a lore.kernel.org link? I'm
-just curious to see what the issue was.
+Łukasz Stelmach (2):
+  hwrng: iproc-rng200 - Set the quality value
+  hwrng: exynos - Set the quality value
 
-I'm guessing you didn't need to pick up this one?
-https://lore.kernel.org/lkml/20200517173453.157703-1-saravanak@google.com/
+ drivers/char/hw_random/exynos-trng.c  | 1 +
+ drivers/char/hw_random/iproc-rng200.c | 1 +
+ 2 files changed, 2 insertions(+)
 
--Saravana
+v2:
+  - recalculated values using the SP800-90B_EntropyAssessment package
+-- 
+2.25.0
+
