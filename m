@@ -2,193 +2,192 @@ Return-Path: <SRS0=rJke=7B=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8946AC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 May 2020 10:32:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE61C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 May 2020 11:03:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5093820758
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 May 2020 10:32:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3758920758
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 May 2020 11:03:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="UVRs57Az"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="r0aU1FF0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbgESKce (ORCPT
+        id S1726595AbgESLD2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 19 May 2020 06:32:34 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:34647 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbgESKce (ORCPT
+        Tue, 19 May 2020 07:03:28 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:57361 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726347AbgESLD2 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 19 May 2020 06:32:34 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200519103232euoutp026e780c989514bfb9a64dae9dd47daa09~QZ2UgFeIO0486004860euoutp02J
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 May 2020 10:32:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200519103232euoutp026e780c989514bfb9a64dae9dd47daa09~QZ2UgFeIO0486004860euoutp02J
+        Tue, 19 May 2020 07:03:28 -0400
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200519110325epoutp018849b0ec1941065feee9fd5157886b2e~QaRRz4TOT0117001170epoutp01N
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 May 2020 11:03:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200519110325epoutp018849b0ec1941065feee9fd5157886b2e~QaRRz4TOT0117001170epoutp01N
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1589884352;
-        bh=8aqTPyb+75966luDR2CZdhE8lWVOMDbEHkMTToW0Gdw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=UVRs57AznvQOXUgb5s5z3+UVfOW1EGUps9dAtKqHklAIhRbvcXm1nnwBYuzjJxOSP
-         qyJQ3uFLEJdjHLrurTC+epApaWtG+fLxQYXNsks3f3/2DVNZVak+B/ZZu+Ac9ghSk0
-         hLvuvaXwtP+RXnc/gT4WhD3iZlZ6AoEdv3oRTKbI=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200519103232eucas1p194e62333f8c5f252d962d95915630bcb~QZ2UKu4ga1478214782eucas1p1m;
-        Tue, 19 May 2020 10:32:32 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 9E.10.60679.0C5B3CE5; Tue, 19
-        May 2020 11:32:32 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200519103231eucas1p105f6b8b68a285536795e726a4e98bee9~QZ2TxWUkR1516315163eucas1p1p;
-        Tue, 19 May 2020 10:32:31 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200519103231eusmtrp1db3cd1b337f0a47dd218d8a5924c6d3a~QZ2Twp9Dt0843608436eusmtrp16;
-        Tue, 19 May 2020 10:32:31 +0000 (GMT)
-X-AuditID: cbfec7f4-0e5ff7000001ed07-3f-5ec3b5c03e45
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id F6.4D.07950.FB5B3CE5; Tue, 19
-        May 2020 11:32:31 +0100 (BST)
-Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200519103231eusmtip25924103fd58f2427f9171da4f4a01fbd~QZ2TLBGAi0462804628eusmtip2k;
-        Tue, 19 May 2020 10:32:31 +0000 (GMT)
-Subject: Re: [PATCH v1 4/4] of: platform: Batch fwnode parsing when adding
- all top level devices
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Len Brown <lenb@kernel.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Ji Luo <ji.luo@nxp.com>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
-Message-ID: <8dd9ecc2-0c61-49b7-d485-b169eb721712@samsung.com>
-Date:   Tue, 19 May 2020 12:32:30 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.8.0
-MIME-Version: 1.0
-In-Reply-To: <18332705-dd61-9a0e-d931-ae610c8fb600@samsung.com>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTcRjtt3t37505+bksv7QXi8qkLK3oRmFZCiNUhP4TNK95UdE52d3s
-        QYVmZQ1JyZY6NSWh0qzhNJ2GpisUGflI6KWJmrCK1ggNU7JyXi3/O98553sc+BhCYZf6MakZ
-        Ol6bwaUrKQ+yqWumb2fHk+fxu/PMUrbyRa+ULf36h2Jzq80UWzL8gmatzT5sy5iTYu+3FyB2
-        sLV8nu9rl7AVU0aCvdI27zDY5qgjnqqmp01SVYvpA62qsuhVltrrlOpZRR2tqv9mlagmLRti
-        6FiPQ0l8emoWr90VmuCRkl3jIjO/+Jwxu4x0NnJgA5IxgPeCo/G7xIA8GAV+gGBmLp8WiykE
-        n3/MEmIxicBRbyOWWoYKRhZd9xG4vhVSbkGBXQja6nYYEMOswokwfcvLTVM4GAxOw4LFBweC
-        5fVH0t1L4MskDJXeWRDkOBQqi9yCjCHxFnhg70JuvBrHgb26AYkeb+gpnVjwyPBhGCibot2Y
-        wBuh2VlOiNgX3k9ULuQBPE6D42Wf1H0Q4HCoGFCIAVbBl+5GWsTrwF6UT4r+XARjvY9oschH
-        MHipBImugzDcO0u5BxF4O5hbd4l0GDTkFJHifC946/QWb/CCm03FhEjL4drVxbVbwdT9+N/a
-        zv5XRCFSmpYlMy1LY1qWxvR/bxUia5EvrxfUybwQksGfDhI4taDPSA46pVFb0PyL2X93T1lR
-        669EG8IMUnrKEzS2eIWUyxLOqm0IGELpIy/8NE/Jk7iz53it5qRWn84LNuTPkEpf+Z67n+MU
-        OJnT8Wk8n8lrl1QJI/PLRoXJP/1vCCsnj24TnpjD5HlKijOE90QZnQ8ZMvbC6LG8yPdZz+tP
-        rKiaHo8eDx+I2LwpKqCdOp8Qva8M9Q+YWhreBB0/GTJaYyFG7lVNrinWlSUJaRp8um9oLuVA
-        lzmnM+y2itPNFKRbDfq9kWvfGY2SAMf2hhj5/oiOi0PW9UpSSOGCAwmtwP0FXJ+ck14DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPIsWRmVeSWpSXmKPExsVy+t/xe7r7tx6OM1jWo2kx/8g5VouZb/6z
-        WTQvXs9mMePOEXaLHdtFLHY+fMtmsXxfP6PF5V1zgOLn9zFZzP0yldmidS9QRdehv2wOPB7b
-        dm9j9dg56y67x4JNpR6bVnWyeeyfu4bdY+O7HUwenzfJBbBH6dkU5ZeWpCpk5BeX2CpFG1oY
-        6RlaWugZmVjqGRqbx1oZmSrp29mkpOZklqUW6dsl6GU0rHzPUvBKpGL9+6nsDYzPBboYOTkk
-        BEwkbvffY+9i5OIQEljKKPHo+XIWiISMxMlpDawQtrDEn2tdbBBFbxklfs85xdTFyMEhLJAk
-        8WCeJUgNm4ChRNdbkBpODhEBLYlN1x6zgNQzC7SxSByafxyq+QOTxOzNJ5hAqngF7CTmT34M
-        to1FQFVixeljjCC2qECsxOprrYwQNYISJ2c+AavhFLCXuDj7CzuIzSxgJjFv80NmCFteYvvb
-        OVC2uMStJ/OZJjAKzULSPgtJyywkLbOQtCxgZFnFKJJaWpybnltspFecmFtcmpeul5yfu4kR
-        GLnbjv3csoOx613wIUYBDkYlHt6E/ENxQqyJZcWVuYcYJTiYlUR4J7wACvGmJFZWpRblxxeV
-        5qQWH2I0BXpuIrOUaHI+MKnklcQbmhqaW1gamhubG5tZKInzdggcjBESSE8sSc1OTS1ILYLp
-        Y+LglGpg9LFxi3+awPd1gaBy+4RvLxrMTlR6f/ryhtnd8KhedOSjDxzhUQyFD0R+vrmUtC7/
-        VBXv5+qXi/Na93wtqrn5bZslk+KHX5bSQqyt0y4tdcyYef6Q3ZVnws+fbDPb0GBW9l/09rGq
-        xYckRXzl/TlOXvvWPTPo1xqmCZcvJkaJTYqtt58tPlfhrRJLcUaioRZzUXEiAGA0T7HyAgAA
-X-CMS-MailID: 20200519103231eucas1p105f6b8b68a285536795e726a4e98bee9
+        s=mail20170921; t=1589886205;
+        bh=jtbuuFtZlbJS1Rib4iwMtJsZO8dvhf0tQbfEwjEMKcI=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=r0aU1FF0ID+FDY6bJ5F2bzazOjFTscHZ1V/wH2ctUFFrUcnQ6g1QDYi9L9CjWx4Dm
+         q7bsQeGW1T2SOzKBIKiPEiJgdY1Dces1Zn3fqvk7gOdcqmFVkY4YdPVbBxDv6CF0ll
+         8Cbrcn9+zF8EkfxHfznA0i96xXid7AX186o93TAA=
+Received: from epsmges5p2new.samsung.com (unknown [182.195.42.74]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20200519110323epcas5p36ea804ed6aebd41f27c2537c5a760db2~QaRQyYdyY2376823768epcas5p3L;
+        Tue, 19 May 2020 11:03:23 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        98.27.23569.BFCB3CE5; Tue, 19 May 2020 20:03:23 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200519110323epcas5p23b9472d505f5ba58d033fa468cb9969d~QaRQNMuVy2317723177epcas5p2k;
+        Tue, 19 May 2020 11:03:23 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200519110323epsmtrp276c59ad1c0e6fd16f337e1281a352759~QaRQMRz0R1333213332epsmtrp2Y;
+        Tue, 19 May 2020 11:03:23 +0000 (GMT)
+X-AuditID: b6c32a4a-3c7ff70000005c11-91-5ec3bcfbe0ce
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        0F.33.25866.BFCB3CE5; Tue, 19 May 2020 20:03:23 +0900 (KST)
+Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
+        [107.108.73.139]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200519110320epsmtip25e01f7118dfeee6021f3ae7e652d5047~QaRODaRmj1826618266epsmtip2o;
+        Tue, 19 May 2020 11:03:20 +0000 (GMT)
+From:   Tamseel Shams <m.shams@samsung.com>
+To:     inki.dae@samsung.com, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+        airlied@linux.ie, daniel@ffwll.ch
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shaik.ameer@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+        Tamseel Shams <m.shams@samsung.com>
+Subject: [PATCH v2] drm/exynos: Remove dev_err() on platform_get_irq()
+ failure
+Date:   Tue, 19 May 2020 16:19:04 +0530
+Message-Id: <20200519104904.59246-1-m.shams@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOIsWRmVeSWpSXmKPExsWy7bCmlu7vPYfjDE4sNLXoPXeSyeLBvG1s
+        Fv+3TWS2uPL1PZvFpPsTWCxe3LvIYnH+/AZ2i7NNb9gtNj2+xmpxedccNosZ5/cxWdxtXcxu
+        ceThbnaLGZNfsjnweez9toDFY9OqTjaP7d8esHrc7z7O5LF5Sb1H35ZVjB6fN8kFsEdx2aSk
+        5mSWpRbp2yVwZaz5+JqtYKFYxb1JR1kaGO8KdTFyckgImEis/TGXqYuRi0NIYDejxKFD71kg
+        nE+MEue/bGSDcD4zSqy+foUZpuXZny1gtpDALkaJR918EEUtTBIXL+8EaufgYBPQlDh+nhsk
+        LiLQySjRc/s3K4jDLPCDUeLNynVg3cICARIb92xnArFZBFQl+r+uYQWxeQUsJCbOuMUKsU1e
+        YvWGA8wgzRICP9klNvz/CZVwkTh0ZBUThC0s8er4FnYIW0ri87u9bBB2vsT8eaugzq6QWHnh
+        DZRtL3HgyhywS5mBLl2/Sx8kzCzAJ9H7+wkTSFhCgFeiow0aRooS/3f3Q00Xl3i3YgrUBR4S
+        X28vYwMpFxKIlVgxJ2ECo8wshJkLGBlXMUqmFhTnpqcWmxYY5aWW6xUn5haX5qXrJefnbmIE
+        pw0trx2MDx980DvEyMTBeIhRgoNZSYR3wotDcUK8KYmVValF+fFFpTmpxYcYpTlYlMR5kxq3
+        xAkJpCeWpGanphakFsFkmTg4pRqY9t30uOe8+uwNO3ntWRlrTx13UZrMwuq8+veFF2xfzJkK
+        2XxOzFqmO+Ph5tWFX02lCncZ5a9K7Bbb+Zqp4bahvJWZb8eUVc6z/nx5+k7gycmvSw9/UN48
+        NerYw52Z/+bXHPQ6frH25FWHpyJpyybPYZ639KjH03P7tya4B4t4l9W0in1OkIre11F+TZ6x
+        clKp+c1lasFpnxdmS2Uq7zSd9Yt/4hrRkx/SHs/M71eayrsu/HKlof3Jsn2vFI6tkpHjefJe
+        N+rosaVWs921tynF1fc82Kf4LXX97NV7JS/GJDZNCbj+iaHH4c3ZW1+DpZ63mOZk+c7MnHP5
+        iOiPebr8TAdd82Z9uJxYx+XUWrdM6aYSS3FGoqEWc1FxIgAbhtUCigMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNLMWRmVeSWpSXmKPExsWy7bCSvO7vPYfjDI5f4LHoPXeSyeLBvG1s
+        Fv+3TWS2uPL1PZvFpPsTWCxe3LvIYnH+/AZ2i7NNb9gtNj2+xmpxedccNosZ5/cxWdxtXcxu
+        ceThbnaLGZNfsjnweez9toDFY9OqTjaP7d8esHrc7z7O5LF5Sb1H35ZVjB6fN8kFsEdx2aSk
+        5mSWpRbp2yVwZaz5+JqtYKFYxb1JR1kaGO8KdTFyckgImEg8+7OFuYuRi0NIYAejxNU1G5gh
+        EuIS037tZ4SwhSVW/nvODlHUxCSx4OQmpi5GDg42AU2J4+e5QeIiAhMZJea0r2IBcZgFGpgk
+        Vqz8zQhSJCzgJzHvYCHIIBYBVYn+r2tYQWxeAQuJiTNusUIskJdYveEA8wRGngWMDKsYJVML
+        inPTc4sNC4zyUsv1ihNzi0vz0vWS83M3MYLDU0trB+OeVR/0DjEycTAeYpTgYFYS4Z3w4lCc
+        EG9KYmVValF+fFFpTmrxIUZpDhYlcd6vsxbGCQmkJ5akZqemFqQWwWSZODilGpgW7ThQKa7w
+        KO/Oq9NCSsbv7lfUsPhfn56m539wwp7DP6UWinn6vtvnvPqt5h0PhtxDSulfGza/85X7OYlN
+        4MbJv9HHdjzYuHnC/6nHrvHF/pN69CRNhHGXY9nqtiMsyVqh513jbW8anaxJ/f7V6tHZ1wY/
+        Oc9HpJ2e7n9u8Q7jeX+qljfvnPDQNLbZYMaBJeI3XqVz5WpMWLhbovSV4+lr593CFzfpcX/N
+        OLrw7K9ffW6nbB1+xBbliei823RzWWlH7fVSu5W6jp8+XHUpLV9ottWXWeJk+6sHqtfuvv/Q
+        aBtT/V7betNp8YaOpTP7vL02lAnNT/T+lcly8UFfil87j0ih6EnmsHjJ9tZZkjtjlViKMxIN
+        tZiLihMBcX9v1b4CAAA=
+X-CMS-MailID: 20200519110323epcas5p23b9472d505f5ba58d033fa468cb9969d
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200519062510eucas1p27bc59da66e1b77534855103a27f87452
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200519062510eucas1p27bc59da66e1b77534855103a27f87452
-References: <20200515053500.215929-1-saravanak@google.com>
-        <CGME20200519062510eucas1p27bc59da66e1b77534855103a27f87452@eucas1p2.samsung.com>
-        <20200515053500.215929-5-saravanak@google.com>
-        <e0f9211d-9cf6-a12d-eb63-df06910920ed@samsung.com>
-        <CAGETcx_FOGgHdaNY8Dd-4rgT28U7_OHYeLsazbUE-1hyuatRSg@mail.gmail.com>
-        <18332705-dd61-9a0e-d931-ae610c8fb600@samsung.com>
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20200519110323epcas5p23b9472d505f5ba58d033fa468cb9969d
+References: <CGME20200519110323epcas5p23b9472d505f5ba58d033fa468cb9969d@epcas5p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi
+platform_get_irq() will call dev_err() itself on failure,
+so there is no need for the driver to also do this.
+This is detected by coccinelle.
 
-On 19.05.2020 09:11, Marek Szyprowski wrote:
-> On 19.05.2020 08:48, Saravana Kannan wrote:
->> On Mon, May 18, 2020 at 11:25 PM Marek Szyprowski
->> <m.szyprowski@samsung.com> wrote:
->>> On 15.05.2020 07:35, Saravana Kannan wrote:
->>>> The fw_devlink_pause() and fw_devlink_resume() APIs allow batching the
->>>> parsing of the device tree nodes when a lot of devices are added. This
->>>> will significantly cut down parsing time (as much a 1 second on some
->>>> systems). So, use them when adding devices for all the top level 
->>>> device
->>>> tree nodes in a system.
->>>>
->>>> Signed-off-by: Saravana Kannan <saravanak@google.com>
->>> This patch recently landed in linux-next 20200518. Sadly, it causes
->>> regression on Samsung Exynos5433-based TM2e board:
->>>
->>> ...
->>>
->>> Both issues, the lack of DMA for SPI device and Synchronous abort in 
->>> I2S
->>> probe are new after applying this patch. I'm trying to investigate 
->>> which
->>> resources are missing and why. The latter issue means typically that 
->>> the
->>> registers for the given device has been accessed without enabling the
->>> needed clocks or power domains.
->> Did you try this copy-pasta fix that I sent later?
->> https://lore.kernel.org/lkml/20200517173453.157703-1-saravanak@google.com/ 
->>
->>
->> Not every system would need it (my test setup didn't), but it helps 
->> some cases.
->>
->> If that fix doesn't help, then some tips for debugging the failing 
->> drivers.
->> What this pause/resume patch effectively (not explicitly) does is:
->> 1. Doesn't immediately probe the devices as they are added in
->> of_platform_default_populate_init()
->> 2. Adds them in order to the deferred probe list.
->> 3. Then kicks off deferred probe on them in the order they were added.
->>
->> These drivers are just not handling -EPROBE_DEFER correctly or
->> assuming probe order and that's causing these issues.
->>
->> So, we can either fix that or you can try adding some code to flush
->> the deferred probe workqueue at the end of fw_devlink_resume().
->>
->> Let me know how it goes.
->
-> So far it looks that your patch revealed a hidden issue in exynos5433 
-> clocks configuration, because adding clk_ignore_unused parameter to 
-> kernel command line fixes the boot. I'm still investigating it, so 
-> probable you can ignore my regression report. I will let you know asap 
-> I finish checking it.
->
-Okay, I confirm that the issue is in the Exynos I2S driver and 
-Exynos5433 clock provider. I've posted a quick workaround. I'm sorry for 
-the noise, your patch is fine.
+Also removing unnecessary curly braces around if () statement.
 
-Best regards
+Signed-off-by: Tamseel Shams <m.shams@samsung.com>
+---
+Fixed review comment by joe@perches.com
+
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c     | 4 +---
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c     | 1 -
+ drivers/gpu/drm/exynos/exynos_drm_rotator.c | 4 +---
+ drivers/gpu/drm/exynos/exynos_drm_scaler.c  | 4 +---
+ 4 files changed, 3 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 902938d2568f..958e2c6a6702 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1809,10 +1809,8 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	dsi->irq = platform_get_irq(pdev, 0);
+-	if (dsi->irq < 0) {
+-		dev_err(dev, "failed to request dsi irq resource\n");
++	if (dsi->irq < 0)
+ 		return dsi->irq;
+-	}
+ 
+ 	irq_set_status_flags(dsi->irq, IRQ_NOAUTOEN);
+ 	ret = devm_request_threaded_irq(dev, dsi->irq, NULL,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+index fcee33a43aca..03be31427181 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+@@ -1498,7 +1498,6 @@ static int g2d_probe(struct platform_device *pdev)
+ 
+ 	g2d->irq = platform_get_irq(pdev, 0);
+ 	if (g2d->irq < 0) {
+-		dev_err(dev, "failed to get irq\n");
+ 		ret = g2d->irq;
+ 		goto err_put_clk;
+ 	}
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_rotator.c b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+index dafa87b82052..2d94afba031e 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_rotator.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+@@ -293,10 +293,8 @@ static int rotator_probe(struct platform_device *pdev)
+ 		return PTR_ERR(rot->regs);
+ 
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(dev, "failed to get irq\n");
++	if (irq < 0)
+ 		return irq;
+-	}
+ 
+ 	ret = devm_request_irq(dev, irq, rotator_irq_handler, 0, dev_name(dev),
+ 			       rot);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_scaler.c b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
+index 93c43c8d914e..ce1857138f89 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_scaler.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
+@@ -502,10 +502,8 @@ static int scaler_probe(struct platform_device *pdev)
+ 		return PTR_ERR(scaler->regs);
+ 
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(dev, "failed to get irq\n");
++	if (irq < 0)
+ 		return irq;
+-	}
+ 
+ 	ret = devm_request_threaded_irq(dev, irq, NULL,	scaler_irq_handler,
+ 					IRQF_ONESHOT, "drm_scaler", scaler);
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.17.1
 
