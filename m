@@ -2,142 +2,207 @@ Return-Path: <SRS0=rJke=7B=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C6AC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 May 2020 05:55:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4308BC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 May 2020 06:25:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F638207D8
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 May 2020 05:55:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F84E204EF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 19 May 2020 06:25:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IX/urPLJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbgESFzT (ORCPT
+        id S1728275AbgESGZN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 19 May 2020 01:55:19 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57396 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726794AbgESFzT (ORCPT
+        Tue, 19 May 2020 02:25:13 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:54407 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726859AbgESGZN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 19 May 2020 01:55:19 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 9E321B040;
-        Tue, 19 May 2020 05:55:19 +0000 (UTC)
-Subject: Re: [PATCH v10 3/3] tty: samsung_tty: 32-bit access for TX/RX hold
- registers
-To:     Hyunki Koo <hyunki00.koo@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        Tue, 19 May 2020 02:25:13 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200519062511euoutp02d5398db297c32561c64374872f19fdc3~QWeWXGsOp0409304093euoutp02T
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 May 2020 06:25:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200519062511euoutp02d5398db297c32561c64374872f19fdc3~QWeWXGsOp0409304093euoutp02T
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1589869511;
+        bh=0mW8JOdJHsUIuudHdYQY2xk3EpXB94vPBsb+CkQ0YLM=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=IX/urPLJunFGzHZ1iVPk2oI7Kx2ZKm5vTo63BWHGWiVzfjxS0jT8MTfM13gDlUriI
+         AcykNnFXg0hJBdbPIdF+0yn+r0zW83cUr3NpLelttrBhxe6ckpf0TMTDTrqVHDLD6q
+         PO4nEXgsOlhrBOCcQUGqGvpf0jkfv9Y62S3gmnbk=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200519062510eucas1p193d04a2ebe1b0ba231cc4cd1f5611e39~QWeWFaLvj2639226392eucas1p10;
+        Tue, 19 May 2020 06:25:10 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id B3.07.60679.6CB73CE5; Tue, 19
+        May 2020 07:25:10 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200519062510eucas1p27bc59da66e1b77534855103a27f87452~QWeVp_qk70674606746eucas1p27;
+        Tue, 19 May 2020 06:25:10 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200519062510eusmtrp25052833a9b71e6ec5b0b3efe1d020f32~QWeVpNDDJ2870828708eusmtrp2o;
+        Tue, 19 May 2020 06:25:10 +0000 (GMT)
+X-AuditID: cbfec7f4-0cbff7000001ed07-99-5ec37bc60e22
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 7F.89.08375.6CB73CE5; Tue, 19
+        May 2020 07:25:10 +0100 (BST)
+Received: from [106.210.88.143] (unknown [106.210.88.143]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200519062509eusmtip2ae416adb5fb901ac1d88051c545cd8c9~QWeU_A1_a1418614186eusmtip2S;
+        Tue, 19 May 2020 06:25:09 +0000 (GMT)
+Subject: Re: [PATCH v1 4/4] of: platform: Batch fwnode parsing when adding
+ all top level devices
+To:     Saravana Kannan <saravanak@google.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200506080242.18623-1-hyunki00.koo@samsung.com>
- <CGME20200506080258epcas2p4f242fb66a2145f76b0e108014ee351fb@epcas2p4.samsung.com>
- <20200506080242.18623-3-hyunki00.koo@samsung.com>
-From:   Jiri Slaby <jslaby@suse.cz>
-Autocrypt: addr=jslaby@suse.cz; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <1d84cbc4-7935-a7b6-aec2-2ce351f203cd@suse.cz>
-Date:   Tue, 19 May 2020 07:55:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Len Brown <lenb@kernel.org>
+Cc:     kernel-team@android.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+        Ji Luo <ji.luo@nxp.com>,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <e0f9211d-9cf6-a12d-eb63-df06910920ed@samsung.com>
+Date:   Tue, 19 May 2020 08:25:11 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.8.0
 MIME-Version: 1.0
-In-Reply-To: <20200506080242.18623-3-hyunki00.koo@samsung.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200515053500.215929-5-saravanak@google.com>
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHKsWRmVeSWpSXmKPExsWy7djPc7rHqg/HGXw9rWsx/8g5VouZb/6z
+        WTQvXs9mMePOEXaLHdtFLHY+fMtmsXxfP6PF5V1zgOLn9zFZzP0yldmidS9QRdehv2wOPB7b
+        dm9j9dg56y67x4JNpR6bVnWyeeyfu4bdY+O7HUwenzfJBbBHcdmkpOZklqUW6dslcGWsWPKF
+        teCiWMX3DRsZGxifCHUxcnJICJhIPFzzm62LkYtDSGAFo0Tb6RnMEM4XRomlz2YwQjifGSUe
+        ft7DCtMy+ctzqKrljBJbl51lh3DeM0ps71gKVMXBISyQJPF9Ch9IXETgA6PE49k3WEAcZoHj
+        jBIPps9iBBnFJmAo0fW2iw3E5hWwk7hw/CYziM0ioCqxaNVJsBpRgViJ04s3M0LUCEqcnPmE
+        BcTmFLCWeDhhD1gvs4C8RPPW2cwQtrjErSfzmUCWSQi8ZJd4++YZO8TdLhJHXzdA/SAs8er4
+        Fqi4jMT/nTANzUCPnlvLDuH0MEpcbprBCFFlLXHn3C82kN+YBTQl1u/Shwg7SmxunMwCEpYQ
+        4JO48VYQ4gg+iUnbpjNDhHklOtqgoa0mMev4Ori1By9cYp7AqDQLyWuzkLwzC8k7sxD2LmBk
+        WcUonlpanJueWmyUl1quV5yYW1yal66XnJ+7iRGYyk7/O/5lB+OuP0mHGAU4GJV4eBPyD8UJ
+        sSaWFVfmHmKU4GBWEuGd8AIoxJuSWFmVWpQfX1Sak1p8iFGag0VJnNd40ctYIYH0xJLU7NTU
+        gtQimCwTB6dUA2NUlEX3wxeLF50tq8n6c8ywa7YU39/5bpMdGf+f/zmhb/Etd+8zv3O/Pn3d
+        dGr3y5X26m3Nj0T0FJK7+jTs+JcUzLlbVVK+c3vL32jJkq7HHx+Hfg2cdNnkuv/hjBtp+TUG
+        HAsTZ0Sp+l153LG5gtFK+ditl2dSxKJVt+zn9o5J8K1dsk1DXU+JpTgj0VCLuag4EQCl9sCW
+        YQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHIsWRmVeSWpSXmKPExsVy+t/xe7rHqg/HGfxp5rWYf+Qcq8XMN//Z
+        LJoXr2ezmHHnCLvFju0iFjsfvmWzWL6vn9Hi8q45QPHz+5gs5n6ZymzRuheoouvQXzYHHo9t
+        u7exeuycdZfdY8GmUo9NqzrZPPbPXcPusfHdDiaPz5vkAtij9GyK8ktLUhUy8otLbJWiDS2M
+        9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DJWLPnCWnBRrOL7ho2MDYxPhLoYOTkk
+        BEwkJn95ztzFyMUhJLCUUeLxpNWMEAkZiZPTGlghbGGJP9e62CCK3jJK7Jr3h6WLkYNDWCBJ
+        4sE8S5C4iMAHRokP0+6wgjjMAicZJVadb2QEKRISyJbYedAAZBCbgKFE11uQQZwcvAJ2EheO
+        32QGsVkEVCUWrToJtlhUIFZi9bVWRogaQYmTM5+wgNicAtYSDyfsAetlFjCTmLf5ITOELS/R
+        vHU2lC0ucevJfKYJjEKzkLTPQtIyC0nLLCQtCxhZVjGKpJYW56bnFhvqFSfmFpfmpesl5+du
+        YgTG7bZjPzfvYLy0MfgQowAHoxIPb0L+oTgh1sSy4srcQ4wSHMxKIrwTXgCFeFMSK6tSi/Lj
+        i0pzUosPMZoCPTeRWUo0OR+YUvJK4g1NDc0tLA3Njc2NzSyUxHk7BA7GCAmkJ5akZqemFqQW
+        wfQxcXBKNTDWfnmwS3Wto3iR40bFYw/+1uzfcSd/5rXX1+98+8b5JMSpQ6nUyOmc40mt+x9S
+        tbSs7vifVU7I+K5e+1U0ZdV9g29xq7aLTZjGts2L+19rXarUzdW6831ZxG9s3FVmNW9N7+ag
+        s2eUrpulh2gJOx5dUFJhoW6c0avt6TJjuc2h/OuO9xYd8/BUYinOSDTUYi4qTgQAHOWNNvEC
+        AAA=
+X-CMS-MailID: 20200519062510eucas1p27bc59da66e1b77534855103a27f87452
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200519062510eucas1p27bc59da66e1b77534855103a27f87452
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200519062510eucas1p27bc59da66e1b77534855103a27f87452
+References: <20200515053500.215929-1-saravanak@google.com>
+        <20200515053500.215929-5-saravanak@google.com>
+        <CGME20200519062510eucas1p27bc59da66e1b77534855103a27f87452@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 06. 05. 20, 10:02, Hyunki Koo wrote:
-> Support 32-bit access for the TX/RX hold registers UTXH and URXH.
-> 
-> This is required for some newer SoCs.
-> 
-> Signed-off-by: Hyunki Koo <hyunki00.koo@samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Tested on Odroid HC1 (Exynos5422):
-> Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/tty/serial/samsung_tty.c | 62 ++++++++++++++++++++++++++++++++++++----
->  1 file changed, 57 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-> index 326b0164609c..6ef614d8648c 100644
-> --- a/drivers/tty/serial/samsung_tty.c
-> +++ b/drivers/tty/serial/samsung_tty.c
+Hi Saravana,
+
+On 15.05.2020 07:35, Saravana Kannan wrote:
+> The fw_devlink_pause() and fw_devlink_resume() APIs allow batching the
+> parsing of the device tree nodes when a lot of devices are added. This
+> will significantly cut down parsing time (as much a 1 second on some
+> systems). So, use them when adding devices for all the top level device
+> tree nodes in a system.
+>
+> Signed-off-by: Saravana Kannan <saravanak@google.com>
+
+This patch recently landed in linux-next 20200518. Sadly, it causes 
+regression on Samsung Exynos5433-based TM2e board:
+
+s3c64xx-spi 14d30000.spi: Failed to get RX DMA channel
+s3c64xx-spi 14d50000.spi: Failed to get RX DMA channel
+s3c64xx-spi 14d30000.spi: Failed to get RX DMA channel
+s3c64xx-spi 14d50000.spi: Failed to get RX DMA channel
+s3c64xx-spi 14d30000.spi: Failed to get RX DMA channel
+
+Internal error: synchronous external abort: 96000210 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 0 PID: 50 Comm: kworker/0:1 Not tainted 5.7.0-rc5+ #701
+Hardware name: Samsung TM2E board (DT)
+Workqueue: events deferred_probe_work_func
+pstate: 60000005 (nZCv daif -PAN -UAO)
+pc : samsung_i2s_probe+0x768/0x8f0
+lr : samsung_i2s_probe+0x688/0x8f0
 ...
-> @@ -2000,10 +2023,27 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
->  			dev_get_platdata(&pdev->dev) :
->  			ourport->drv_data->def_cfg;
->  
-> -	if (np)
-> +	if (np) {
->  		of_property_read_u32(np,
->  			"samsung,uart-fifosize", &ourport->port.fifosize);
->  
-> +		if (of_property_read_u32(np, "reg-io-width", &prop) == 0) {
-> +			switch (prop) {
-> +			case 1:
-> +				ourport->port.iotype = UPIO_MEM;
-> +				break;
-> +			case 4:
-> +				ourport->port.iotype = UPIO_MEM32;
-> +				break;
-> +			default:
-> +				dev_warn(&pdev->dev, "unsupported reg-io-width (%d)\n",
-> +						prop);
-> +				ret = -EINVAL;
-> +				break;
+Call trace:
+  samsung_i2s_probe+0x768/0x8f0
+  platform_drv_probe+0x50/0xa8
+  really_probe+0x108/0x370
+  driver_probe_device+0x54/0xb8
+  __device_attach_driver+0x90/0xc0
+  bus_for_each_drv+0x70/0xc8
+  __device_attach+0xdc/0x140
+  device_initial_probe+0x10/0x18
+  bus_probe_device+0x94/0xa0
+  deferred_probe_work_func+0x70/0xa8
+  process_one_work+0x2a8/0x718
+  worker_thread+0x48/0x470
+  kthread+0x134/0x160
+  ret_from_fork+0x10/0x1c
+Code: 17ffffaf d503201f f94086c0 91003000 (88dffc00)
+---[ end trace ccf721c9400ddbd6 ]---
+Kernel panic - not syncing: Fatal exception
+SMP: stopping secondary CPUs
+Kernel Offset: disabled
+CPU features: 0x090002,24006087
+Memory Limit: none
 
-This ret value is unused. Did you intend to return here?
+---[ end Kernel panic - not syncing: Fatal exception ]---
 
-thanks,
+Both issues, the lack of DMA for SPI device and Synchronous abort in I2S 
+probe are new after applying this patch. I'm trying to investigate which 
+resources are missing and why. The latter issue means typically that the 
+registers for the given device has been accessed without enabling the 
+needed clocks or power domains.
+
+> ---
+>   drivers/of/platform.c | 2 ++
+>   1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+> index 3371e4a06248..55d719347810 100644
+> --- a/drivers/of/platform.c
+> +++ b/drivers/of/platform.c
+> @@ -538,7 +538,9 @@ static int __init of_platform_default_populate_init(void)
+>   	}
+>   
+>   	/* Populate everything else. */
+> +	fw_devlink_pause();
+>   	of_platform_default_populate(NULL, NULL, NULL);
+> +	fw_devlink_resume();
+>   
+>   	return 0;
+>   }
+
+Best regards
 -- 
-js
-suse labs
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
