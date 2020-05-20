@@ -2,218 +2,179 @@ Return-Path: <SRS0=OkOd=7C=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B4FBC433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 May 2020 10:44:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CEE3C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 May 2020 11:06:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 21DB6207C4
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 May 2020 10:44:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2837207C4
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 20 May 2020 11:06:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lT0Mu8TQ"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MDzF9iOX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726720AbgETKox (ORCPT
+        id S1726435AbgETLGm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 20 May 2020 06:44:53 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:48308 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726224AbgETKow (ORCPT
+        Wed, 20 May 2020 07:06:42 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:38074 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726403AbgETLGl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 20 May 2020 06:44:52 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200520104449euoutp015d4f975969ddb3980840e7e9323d320c~QtqVaNobS2434624346euoutp01H;
-        Wed, 20 May 2020 10:44:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200520104449euoutp015d4f975969ddb3980840e7e9323d320c~QtqVaNobS2434624346euoutp01H
+        Wed, 20 May 2020 07:06:41 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200520110639euoutp0215688be20c625054e374fdf735fa4c9f~Qt9ZnlhfT1277812778euoutp020
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 May 2020 11:06:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200520110639euoutp0215688be20c625054e374fdf735fa4c9f~Qt9ZnlhfT1277812778euoutp020
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1589971489;
-        bh=6CPRq4ULqK4ssuhc8hx4tHsC9pvXqnG/nhCQu807Mtk=;
-        h=From:To:Cc:Subject:In-Reply-To:Date:References:From;
-        b=lT0Mu8TQU3QCwLx2oV5ASGQJ3uKAscQvHrBQSsj0MR4yRsBXvPJbfWuX43I87MgBk
-         m+sNlwdWS7YwHp+PLLu0XX4l7Te3dJvJAYDwAkgzIfrWT5a9H04jKLQFJkFL/OdiQC
-         QkSn31bItydkK67cFhQmVASPbWJWhjaEqQQ3HTxY=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200520104449eucas1p1f58225b60dd7909e0c145619450697ae~QtqVABDTY1237912379eucas1p19;
-        Wed, 20 May 2020 10:44:49 +0000 (GMT)
+        s=mail20170921; t=1589972799;
+        bh=XYYLvuirlx2iYlHmL4T+w8ygTONp7ydAWbttHA716H8=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=MDzF9iOX3FYUy5AVsZoOSc2dnCGzl7XHajIngaFU7j7StIRCrTTmpbnre58sf0oLv
+         ns2GgDBissE5K4gY/93i8/ghfWf0NMt2wFUlMvqONE4/QUQ4BiV1Du6EMuNpftdHdo
+         iF0jiK/A5qIp604eUbOH7ll/Vmt7ZKiwSYZXoVeA=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200520110639eucas1p2834bfb96b03bcf641a71a1963fcaad0a~Qt9Yys7z62609526095eucas1p2B;
+        Wed, 20 May 2020 11:06:39 +0000 (GMT)
 Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 95.24.60698.12A05CE5; Wed, 20
-        May 2020 11:44:49 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id B2.47.60679.E3F05CE5; Wed, 20
+        May 2020 12:06:38 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200520104448eucas1p122e9a8ed84d5276a1b796e10ef5e1964~QtqUjLTwx2400824008eucas1p19;
-        Wed, 20 May 2020 10:44:48 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200520104448eusmtrp288e8ca9495b3f2c380cd4d434cf8a5f3~QtqUiYFfW3067630676eusmtrp2T;
-        Wed, 20 May 2020 10:44:48 +0000 (GMT)
-X-AuditID: cbfec7f5-a0fff7000001ed1a-86-5ec50a2171d9
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id D7.F9.08375.02A05CE5; Wed, 20
-        May 2020 11:44:48 +0100 (BST)
-Received: from localhost (unknown [106.120.51.46]) by eusmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20200520104448eusmtip17a58f4a9cc7f66dd304079cdd8c37cee~QtqUYUA4n2150821508eusmtip1I;
-        Wed, 20 May 2020 10:44:48 +0000 (GMT)
-From:   Lukasz Stelmach <l.stelmach@samsung.com>
-To:     Stephan Mueller <smueller@chronox.de>
-Cc:     Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Markus Elfring <elfring@users.sourceforge.net>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Stefan Wahren <wahrenst@gmx.net>, linux-crypto@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v2 1/2] hwrng: iproc-rng200 - Set the quality value
-In-Reply-To: <15745285.MnsZKaK4VV@tauon.chronox.de> (Stephan Mueller's
-        message of "Wed, 20 May 2020 11:18:32 +0200")
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-Date:   Wed, 20 May 2020 12:44:33 +0200
-Message-ID: <dleftjh7wa3my6.fsf%l.stelmach@samsung.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
-        protocol="application/pgp-signature"
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SaUwTURDH87rb7dJYshTUERW1AY0aQcXoMx7RaHSJmEjCBzSxUnUDBFqg
-        BTwTDyKHCGLxoqJUMJSU07VWMF7BAy9Y5DB4olijtIp4JYp4tF1M+PabN/Of+c/k0YSyggqk
-        E3RpnF6nSVJRctJ+56cwa4r8tnr2icxR+LfxjgyfP1knxTX5t0ks5FoIPNh/S4Yzy+sonOec
-        gA+/cRFYEOplmH/zWIp7Xv6U4I7LJRQ+KVyTYHORQ4rN9gKE3xZfoHB/lQPhYw9qSNx8N5dY
-        5s/+GjQi1tTTQrFfOjslbKPphYwt569TrP1GCMtbcyn2+ulqGXvh3B62wGZFbEFfPWLrbF0k
-        u/9+tpT9yget890gX7yVS0rI4PRhS2Pl8VVl7SjFFbT90vmUvej1uIPIhwZmHvSbh6iDSE4r
-        mUoEfe1HSDH4huDcq4Hh4CuC7C4j+i9pK+GRmLAg4J2CRAzeIcgTPrklNE0xoVBTE+MRBDDT
-        oSu71DuDYFqlMHSqnfAk/JnVcLa7gvSwD5MBQ88+eHk0sxBs73tkHiaZEHj7ZMDLCmYBPBUc
-        EpH94F6xw1tPMFooFj54HQHjoMGa1Ut4TACzEu51Bomu/cHZbJOJPAH+NpZKxJI9UGScL0oP
-        IbCX/CDFmkXwvHWQEmuWwztBLaIvdH/0E6f6gtF+YniQAnKylKIwGGoPXxluEgj5zsrhs7HQ
-        97jFa0DJZCH4XplaiCabRuxiGrGLyd2VcB+u7nKY+DwTKs66CJGXQG3tJ9KMpFY0lks3aOM4
-        Q7iO2xZq0GgN6bq40C3JWh65f+yDP83fG9C1oc1NiKGRapSiu/GmWinVZBh2aJtQsLtTb31V
-        Gwokdck6ThWgKHzfpFYqtmp27OT0yZv06UmcoQmNp0nVWEV4Wd9GJROnSeMSOS6F0//PSmif
-        wL0IzEfuN+RUJ7jYdsuuSWPW9qyLy4ox2Q6Ydn9OSosK57tuqZ2tUyIS5047Gp8zvtq1bL11
-        TkzRltqo55acxNi2A8URl2Ijj/MKv/U/stOjLzZ2tKWuebhw36Or0asjQqpWqKc6LZoA5/a5
-        YRPTolc1TB/IPbNrZWT5itgbeeN8yZbMBSrSEK+ZM4PQGzT/AH+j0Fi5AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SW0iTYRjHe/cdNq3F25z1tkpkWFTWp99M9xoaQURfF0mHG8m0hn5o6DbZ
-        t83qotIubNN0GUEuLcvU0nQ6RcsO5kxnJ2ZmkoVZHig1LIwusuPmCLr78fz/z5//A4+EkF2m
-        FJLDOiNv0GmylHQg+eS3e3hjaGB3SmTXUCT+VdIjxk0XHBSuP9NNYo+lhsBzMw/F+FSlg8YF
-        Uytx8dg0gT2eRjF2jg1SeOTtdxF+0V5G4wue+yJccW6cwhWtRQBPlDbTeKZuHODzT+pJ7O61
-        EFuDuB9zJYCzjzyjudmBARF32z4s5iqdHTTX+mA156y10FxH+U0x13ztBFfUUgu4oslGwDla
-        XpJc3uN8ivvqDNm9eD8TZ9CbjHxohl4wxiuTWKxi2FjMqDbFMmyUOnmzKloZsSUujc86bOYN
-        EVsOMRl1V/tB9nTIkbam7JPg/XIrCJAguAn1lTmBFQRKZLAKoJs/u2krkHgFBbpRnu73BKGf
-        g1baxzI4AZDbbfJZaMig+vpE31gO16GX+ZdpXwwB2yn0pmCQ8glBcAe68qqa9HEANCPL0zGR
-        P0eF8q7bgI+DYSxq+Tgi9jEJV6OJoS/zLIVq9NozLvLzEvSodHw+h4CZ6FvdB8IGoP0/yf6f
-        ZPfWI7ydHO0R/nE4qr4yTfg5HjU0fCYrAFUL5LxJ0KZrBZYRNFrBpEtnUvVaJ/A+RGvP9+Zb
-        oL9pnwtACVAukkbe7UqRURqzcFTrAmHemNHGuj6gIHV6Ha+US20fXSkyaZrm6DHeoD9oMGXx
-        ggtEe+85SyiCU/XeV9MZD7LRrBrHsuoodVQMVi6TnoadB2QwXWPkM3k+mzf82xNJAhQnwaqm
-        uP6uXSZX2ackOVMaP6UgckpSy8y1l17ERe99vnTBtsUxk1mf9zRutazLkZOuDQNtaxZ+yVix
-        PeF4SEt7+EUn3HeiN4bdeel64WxebrG5YdrdE1M42xtlW6vMdSQasneJCn91zP3prAm7d27F
-        +VzHHRVIqAoZLep7Z3QkF5aHKkkhQ8OuJwyC5i8OYmq8MgMAAA==
-X-CMS-MailID: 20200520104448eucas1p122e9a8ed84d5276a1b796e10ef5e1964
+        20200520110638eucas1p1d92eb5d669f195d2124ce93d9789850e~Qt9YZ6kz-1950319503eucas1p1f;
+        Wed, 20 May 2020 11:06:38 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200520110638eusmtrp1d65230e218ad13ae5a7c1f38d9e6b407~Qt9YZTmke1958119581eusmtrp1Z;
+        Wed, 20 May 2020 11:06:38 +0000 (GMT)
+X-AuditID: cbfec7f4-0e5ff7000001ed07-30-5ec50f3ebc18
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id AB.DA.07950.E3F05CE5; Wed, 20
+        May 2020 12:06:38 +0100 (BST)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200520110638eusmtip2bf5f64479691f3d16221df354e7fb320~Qt9YBPsVo1552115521eusmtip2K;
+        Wed, 20 May 2020 11:06:38 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH] drm/exynos: Fix dma_parms allocation
+Date:   Wed, 20 May 2020 13:06:32 +0200
+Message-Id: <20200520110632.30780-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKIsWRmVeSWpSXmKPExsWy7djP87p2/EfjDNYfsLa4te4cq8XGGetZ
+        La58fc9mMen+BBaLGef3MVmsPXKX3WLG5JdsDuwe97uPM3n0bVnF6PF5k1wAcxSXTUpqTmZZ
+        apG+XQJXxtu9n9gKdglWTPl9mrGB8SZfFyMHh4SAicSDlYVdjFwcQgIrGCV+3T7GCuF8YZTY
+        3PgKyvnMKLGo/TVjFyMnWEd/9zM2iMRyRomVm/YzwbVsXbGSCaSKTcBQouttFxuILSLgJtF0
+        eCbYKGaB64wS334sYgdJCAuYSvRv+cQIcgiLgKrEnD/MIGFeAVuJYw3bmSG2yUus3nCAGaRX
+        QuAEm8TDmxegEi4Se9v/skHYwhKvjm9hh7BlJE5P7mGBaGhmlHh4bi07hNPDKHG5aQbUE9YS
+        d879YgPZzCygKbF+lz5E2FHi4bF/TJCQ4ZO48VYQJMwMZE7aNp0ZIswr0dEmBFGtJjHr+Dq4
+        tQcvXII6zUOidcZisEVCArESry5eZZrAKDcLYdcCRsZVjOKppcW56anFRnmp5XrFibnFpXnp
+        esn5uZsYgZF/+t/xLzsYd/1JOsQowMGoxMNrsOdwnBBrYllxZe4hRgkOZiUR3gkvDsUJ8aYk
+        VlalFuXHF5XmpBYfYpTmYFES5zVe9DJWSCA9sSQ1OzW1ILUIJsvEwSnVwLjJTCWtacm5E6fq
+        rbPXyiY/jQzZmZy/5+lktZWLCjycb5zKb/Eznmc3cZHm+X7+lxxrlbkLm7+m+5o3iFmu/R2z
+        T8JXku+vhE114marObfvfFzvyBGTEVDJ6a3ktWWSbdGS2+vFTnq+3/OYlX/JhJ0fsur+XNhu
+        pXjjzNxwxaATt7RK2peJuiixFGckGmoxFxUnAgDHz3aD+AIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNLMWRmVeSWpSXmKPExsVy+t/xe7p2/EfjDHa0KVvcWneO1WLjjPWs
+        Fle+vmezmHR/AovFjPP7mCzWHrnLbjFj8ks2B3aP+93HmTz6tqxi9Pi8SS6AOUrPpii/tCRV
+        ISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzWyshUSd/OJiU1J7MstUjfLkEv4+3eT2wFuwQrpvw+
+        zdjAeJOvi5GTQ0LARKK/+xlbFyMXh5DAUkaJrvvX2CESMhInpzWwQtjCEn+udUEVfWKU2Py6
+        kxEkwSZgKNH1FiTBySEi4CHR/O04O0gRs8BtRomlH+axgCSEBUwl+rd8Amrg4GARUJWY84cZ
+        JMwrYCtxrGE7M8QCeYnVGw4wT2DkWcDIsIpRJLW0ODc9t9hIrzgxt7g0L10vOT93EyMw4LYd
+        +7llB2PXu+BDjAIcjEo8vAZ7DscJsSaWFVfmHmKU4GBWEuGd8OJQnBBvSmJlVWpRfnxRaU5q
+        8SFGU6DdE5mlRJPzgdGQVxJvaGpobmFpaG5sbmxmoSTO2yFwMEZIID2xJDU7NbUgtQimj4mD
+        U6qBcUlP3EFh5XmH2TfdydM/V2cVWWW9v95Ahe3gWocYw9+RzVWyNRl7TYr+7dTx/pQ3cefR
+        BweV7LqmLFxpmNrRGrXS1WJa1wyzGZPc9PKfbQ3MjepVEKlk77w/dZELh2Hf+QnH9nLFezec
+        eMU4ZV9Yo7n6payrz3Z1J7zv35Av13bV67Bh99MAJZbijERDLeai4kQAfrfDJk4CAAA=
+X-CMS-MailID: 20200520110638eucas1p1d92eb5d669f195d2124ce93d9789850e
 X-Msg-Generator: CA
-X-RootMTR: 20200520104448eucas1p122e9a8ed84d5276a1b796e10ef5e1964
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200520110638eucas1p1d92eb5d669f195d2124ce93d9789850e
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20200520104448eucas1p122e9a8ed84d5276a1b796e10ef5e1964
-References: <15745285.MnsZKaK4VV@tauon.chronox.de>
-        <CGME20200520104448eucas1p122e9a8ed84d5276a1b796e10ef5e1964@eucas1p1.samsung.com>
+X-CMS-RootMailID: 20200520110638eucas1p1d92eb5d669f195d2124ce93d9789850e
+References: <CGME20200520110638eucas1p1d92eb5d669f195d2124ce93d9789850e@eucas1p1.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Since commit 9495b7e92f71 ("driver core: platform: Initialize dma_parms
+for platform devices") driver core handles allocation of the dma_parms
+structure for platform device, so there is no need to manually allocate
+nor free it.
 
-It was <2020-05-20 =C5=9Bro 11:18>, when Stephan Mueller wrote:
-> Am Mittwoch, 20. Mai 2020, 11:10:32 CEST schrieb Lukasz Stelmach:
->> It was <2020-05-20 =C5=9Bro 08:23>, when Stephan Mueller wrote:
->>> Am Dienstag, 19. Mai 2020, 23:25:51 CEST schrieb =C5=81ukasz Stelmach:
->>>> The value was estimaded with ea_iid[1] using on 10485760 bytes read
->>>> from the RNG via /dev/hwrng. The min-entropy value calculated using
->>>> the most common value estimate (NIST SP 800-90P[2], section 6.3.1)
->>>> was 7.964464.
->>>=20
->>> I am sorry, but I think I did not make myself clear: testing random
->>> numbers post-processing with the statistical tools does NOT give any
->>> idea about the entropy rate. Thus, all that was calculated is the
->>> proper implementation of the post-processing operation and not the
->>> actual noise source.
->>>=20
->>> What needs to happen is that we need access to raw, unconditioned
->>> data from the noise source that is analyzed with the statistical
->>> methods.
->>=20
->> I did understand you and I assure you the data I tested were obtained
->> directly from RNGs. As I pointed before[1], that is how /dev/hwrng
->> works[2].
->
-> I understand that /dev/hwrng pulls the data straight from the
-> hardware. But the data from the hardware usually is not obtained
-> straight from the noise source.
->
-> Typically you have a noise source (e.g. a ring oscillator) whose data
-> is digitized then fed into a compression function like an LFSR or a
-> hash. Then a cryptographic operation like a CBC-MAC, hash or even a
-> DRBG is applied to that data when the caller wants to have random
-> numbers.
+Reported-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_dma.c | 27 +--------------------------
+ 1 file changed, 1 insertion(+), 26 deletions(-)
 
-I do understand your point (but not entirely, see below). [opinion]
-However, I am really not sure that this is a "typical" setting for a HW
-RNG, at least not among RNGs supported by Linux. Otherwise there would
-be no hw_random framework and no rngd(8) which are suppsed to
-post-process imperfectly random data from HW. [/opinion]
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dma.c b/drivers/gpu/drm/exynos/exynos_drm_dma.c
+index 619f814..3d59800 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dma.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dma.c
+@@ -31,23 +31,6 @@
+ #define EXYNOS_DEV_ADDR_START	0x20000000
+ #define EXYNOS_DEV_ADDR_SIZE	0x40000000
+ 
+-static inline int configure_dma_max_seg_size(struct device *dev)
+-{
+-	if (!dev->dma_parms)
+-		dev->dma_parms = kzalloc(sizeof(*dev->dma_parms), GFP_KERNEL);
+-	if (!dev->dma_parms)
+-		return -ENOMEM;
+-
+-	dma_set_max_seg_size(dev, DMA_BIT_MASK(32));
+-	return 0;
+-}
+-
+-static inline void clear_dma_max_seg_size(struct device *dev)
+-{
+-	kfree(dev->dma_parms);
+-	dev->dma_parms = NULL;
+-}
+-
+ /*
+  * drm_iommu_attach_device- attach device to iommu mapping
+  *
+@@ -69,10 +52,7 @@ static int drm_iommu_attach_device(struct drm_device *drm_dev,
+ 		return -EINVAL;
+ 	}
+ 
+-	ret = configure_dma_max_seg_size(subdrv_dev);
+-	if (ret)
+-		return ret;
+-
++	dma_set_max_seg_size(subdrv_dev, DMA_BIT_MASK(32));
+ 	if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)) {
+ 		/*
+ 		 * Keep the original DMA mapping of the sub-device and
+@@ -89,9 +69,6 @@ static int drm_iommu_attach_device(struct drm_device *drm_dev,
+ 		ret = iommu_attach_device(priv->mapping, subdrv_dev);
+ 	}
+ 
+-	if (ret)
+-		clear_dma_max_seg_size(subdrv_dev);
+-
+ 	return 0;
+ }
+ 
+@@ -114,8 +91,6 @@ static void drm_iommu_detach_device(struct drm_device *drm_dev,
+ 		arm_iommu_attach_device(subdrv_dev, *dma_priv);
+ 	} else if (IS_ENABLED(CONFIG_IOMMU_DMA))
+ 		iommu_detach_device(priv->mapping, subdrv_dev);
+-
+-	clear_dma_max_seg_size(subdrv_dev);
+ }
+ 
+ int exynos_drm_register_dma(struct drm_device *drm, struct device *dev,
+-- 
+1.9.1
 
-> In order to estimate entropy, we need the raw unconditioned data from
-> the, say, ring oscillator and not from the (cryptographic) output
-> operation.
-
-Can you tell, why it matters in this case? If I understand correctly,
-the quality field describes not the randomness created by the noise
-generator but the one delivered by the driver to other software
-components.
-
-> That said, the illustrated example is typical for hardware RNGs. Yet
-> it is never guaranteed to work that way. Thus, if you can point to
-> architecture documentation of your specific hardware RNGs showing that
-> the data read from the hardware is pure unconditioned noise data, then
-> I have no objections to the patch.
-
-I can tell for sure that this is the case for exynos-trng[1]. There is a
-post-processor which I have forgotten about since writing the driver,
-because from the very beginning I didn't intend to use it. I knew there
-is the software framework for post-processing and simply didn't bother.
-
-With regards to iproc-rng200 I cannot be sure.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/drivers/char/hw_random/exynos-trng.c?h=3Dv5.6#n100
-
-Kind regards,
-=2D-=20
-=C5=81ukasz Stelmach
-Samsung R&D Institute Poland
-Samsung Electronics
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEXpuyqjq9kGEVr9UQsK4enJilgBAFAl7FChEACgkQsK4enJil
-gBCsvQgAhq2NdaCOe4RS5Cfyu6s7rYJIijngIdzcEg3V+VmN2vniWJYNobIUL8S6
-et4cCzQKSbxw/FgDCmZKpffRz7Md+98M4hpkWCfuhqhXj8kXV8e5Oa7QAyMo6H+s
-kpATmCe9Jkbx8K4ufD5bDnON6kv8dP1iJMOdkoiIN7F/HvTbuIgW33XoP+n8IU7o
-QRuNwK+C8IhgOppNU6fPYLUcBVtIvW4wplMc5mEZQNNIsRSPH7pNgK8X6BihA3eR
-j2BsGU3dv7tfVvVTV7EZ/k1lmFWwd3lusLirmrHly9Hodsfj4AWmLRorgnCBCM7D
-gGwIZrzGXyx9M54bg+LoADhurlMakQ==
-=CU9M
------END PGP SIGNATURE-----
---=-=-=--
