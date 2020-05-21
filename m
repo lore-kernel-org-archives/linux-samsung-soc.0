@@ -2,248 +2,172 @@ Return-Path: <SRS0=oUK7=7D=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.2 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52935C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 May 2020 11:01:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE7DC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 May 2020 12:28:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 24379206F6
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 May 2020 11:01:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1D792078B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 21 May 2020 12:28:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nJWaVzrj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728414AbgEULBh convert rfc822-to-8bit (ORCPT
+        id S1729052AbgEUM2v (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 21 May 2020 07:01:37 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:59361 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727864AbgEULBg (ORCPT
+        Thu, 21 May 2020 08:28:51 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:57918 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729043AbgEUM2u (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 21 May 2020 07:01:36 -0400
-Received: from [192.168.1.164] ([37.4.249.202]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MvrRB-1ijc7H3acR-00svlL; Thu, 21 May 2020 13:00:36 +0200
-Subject: Re: [PATCH v2 1/2] hwrng: iproc-rng200 - Set the quality value
-To:     =?UTF-8?Q?=c5=81ukasz_Stelmach?= <l.stelmach@samsung.com>,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Markus Elfring <elfring@users.sourceforge.net>,
-        Matthias Brugger <mbrugger@suse.com>,
-        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Thu, 21 May 2020 08:28:50 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200521122849euoutp02c3d0d1cc8d7b3ec28ae1e7d416f48632~RCuamT0ss0377303773euoutp02y
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 May 2020 12:28:49 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200521122849euoutp02c3d0d1cc8d7b3ec28ae1e7d416f48632~RCuamT0ss0377303773euoutp02y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1590064129;
+        bh=vBvGj6yVvqPmrnQJqKFzoHCAcWR8PLLPXDMQj5rAEsg=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=nJWaVzrjUOh1nB2E7nj/LpV+y+KTZsOXDrKNB7FPNwNyDOg0eGhPjohaSG44j21HU
+         HRfhMtUFVNCtAzujt3N1/quciUPlMttMP14te/XiyWqgV8XDrkA8H3CE0AcodQfpgf
+         g4zkG9kileN6GBPr4ebS0PqSsz1dzv5qz5fEGpvo=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200521122848eucas1p2348735369f4dbe70ad1a3a91b0eb796a~RCuaTU06z2596525965eucas1p2a;
+        Thu, 21 May 2020 12:28:48 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id D8.E3.61286.00476CE5; Thu, 21
+        May 2020 13:28:48 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200521122848eucas1p27ce74486ea2044cb0b942b2619426e21~RCuaCSnFA2363023630eucas1p2-;
+        Thu, 21 May 2020 12:28:48 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200521122848eusmtrp1459126053d931b29a3e895cac6282a50~RCuaBp_Nh2920829208eusmtrp1O;
+        Thu, 21 May 2020 12:28:48 +0000 (GMT)
+X-AuditID: cbfec7f2-ef1ff7000001ef66-ae-5ec67400d674
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id E4.8F.08375.00476CE5; Thu, 21
+        May 2020 13:28:48 +0100 (BST)
+Received: from AMDC3061.digital.local (unknown [106.120.51.75]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200521122848eusmtip23ca13617ce6c491920eb1698e3ac3651~RCuZjEaZP0357403574eusmtip2h;
+        Thu, 21 May 2020 12:28:48 +0000 (GMT)
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+To:     georgi.djakov@linaro.org
+Cc:     a.swigon@samsung.com, cw00.choi@samsung.com,
+        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
+        krzk@kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Stephan Mueller <smueller@chronox.de>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-References: <20200514190734.32746-1-l.stelmach@samsung.com>
- <20200519212552.11671-1-l.stelmach@samsung.com>
- <CGME20200519212619eucas1p22fa5d3db2521096dc4b79f6e53016d17@eucas1p2.samsung.com>
- <20200519212552.11671-2-l.stelmach@samsung.com>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-Autocrypt: addr=stefan.wahren@i2se.com; keydata=
- LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tClZlcnNpb246IEdudVBHIHYy
- CgptUUlOQkZ0NmdCTUJFQUN1Yi9wQmV2SHhidkplZnlaRzMySklObW4yYnNFUFgyNVY2ZmVq
- bXlZd21DR0tqRnRMCi9Eb1VNRVZIRHhDSjQ3Qk1YbzM0NGZIVjFDM0FudWRnTjFCZWhMb0J0
- TEh4bW5lQ3pnSDNLY1B0V1c3cHRqNEcKdEp2OUNRRFp5MjdTS29FUHh5YUk4Q0YweWdSeEpj
- NzJNOUk5d21zUFo1YlVIc0x1WVdNcVE3SmNSbVBzNkQ4ZwpCa2srOC95bmdFeU5FeHd4SnBS
- MXlsajVianhXREh5WVF2dUo1THpaS3VPOUxCM2xYVnNjNGJxWEVqYzZWRnVaCkZDQ2svc3lp
- by9ZaHNlOE4rUXN4N01RYWd6NHdLVWtRUWJmWGcxVnFrVG5BaXZYczQyVm5Ja211NWd6SXcv
- MHQKUkp2NTBGUmhIaHhweUtBSThCOG5oTjhRdng3TVZrUGM1dkRmZDN1R1lXNDdKUGhWUUJj
- VXdKd05rLzQ5RjllQQp2ZzJtdE1QRm5GT1JrV1VSdlArRzZGSmZtNitDdk92N1lmUDF1ZXdB
- aTRsbitKTzFnK2dqVklXbC9XSnB5MG5UCmlwZGZlSDlkSGtnU2lmUXVuWWN1Y2lzTXlvUmJG
- OTU1dENna0VZOUVNRWRZMXQ4aUdEaUNnWDZzNTBMSGJpM2sKNDUzdWFjcHhmUVhTYUF3UGtz
- bDhNa0NPc3YyZUVyNElOQ0hZUUR5WmljbEJ1dUNnOEVOYlI2QUdWdFpTUGNRYgplbnpTektS
- Wm9POUNhcUlEK2ZhdkxpQi9kaHptSEErOWJnSWhtWGZ2WFJMRFp6ZThwbzFkeXQzRTFzaFhp
- ZGRaClBBOE51SlZ6RUl0MmxtSTZWOHBaRHBuMjIxcmZLaml2UlFpYW9zNTRUZ1pqak1ZSTdu
- bko3ZTZ4endBUkFRQUIKdENCVGRHVm1ZVzRnVjJGb2NtVnVJRHgzWVdoeVpXNXpkRUJuYlhn
- dWJtVjBQb2tDTndRVEFRZ0FJUVVDWElkYwo0Z0liQXdVTENRZ0hBZ1lWQ0FrS0N3SUVGZ0lE
- QVFJZUFRSVhnQUFLQ1JDVWdld1BFWkR5MjFPVEQvOUdpWkxkCnRSWWNteVJKZ2x0aVFRekFp
- UWRjSUQ3OGxHb1dwL3grci92Y1U2YjZqdVl1ZVR3Z1Iwclc3djdsMklSQnlEN24KSEp4YSt0
- SVNvUVpCZ2hvbE1JZmI5TXRoR09KTENZNzdrL1FoQWhuMzJOR1prZWp3OXR6a3MvNDBtclpT
- VVQ4NApaeWJzUVhyTE0vSFI2VElJL0RlUEIwbktEM0ppcHBzMlVIUUQ5cUQySWpFd1NRUGxI
- akNPckVaaDQ1UFo3bTkrClo5M0x6aVRlc1dabFlRdUxpSndzNHJLcHRIVzFkL3dSZWxzaG1t
- NlFxY0wybDRDL2U0MGVEQjlncTRkU1poOVgKUEVZbGxpeU5RaDdhMkxTZHVtRTFyK2NTd0lq
- RS91ZHRSdmRPOWFLb0psT2JVSzVkTmpTUEg3d0tUYndkWGRZRApHUHdEaFhkNThOQXdyK1BY
- QmxQajB0STFMQ3ErTEJ4ZUt6aFdYK0dWcTlEb2pWanlVREV4Rk5Ga1h1b0M3ZzhtClY5VDB0
- ZUJpdVpSbm91WEt3VjJGcHRaT0hIN0JVRVd0a0t0aGgxZXRmT1dwaWdCemtVN2JQc2ZJWVQr
- cnk5dGIKMW9KK3Y0MVBOYXFaRW1QVXBKeHZmek5UN3Ayd01lRDdaajlmMHJ1YlJQdExBSjJR
- R2pyRkhzdVh3QU9xcHl6ZQoxOEVidHNZazBOMHp1SEVoY2orUEJJQmZoMFlJWWQ1MW9mNkdJ
- aU95UjlxMFhYdHBsVUo3VDIvSDF1UXFrWGxwCitnVzRWa2lmc2NJckl1eWZueFpXMTJlSXZq
- NnlicVdMN2FZS0dZbVQ2aUxDUGJIWXlZY2F5bDRFa0ZjckNGN0UKZTBXVC9zY1ZNaE8vNVgv
- SGFOQTVIQngvcjUycGdMY3Y0aTlNeExRbVUzUmxabUZ1SUZkaGFISmxiaUE4YzNSbApabUZ1
- TG5kaGFISmxia0JwTW5ObExtTnZiVDZKQWpnRUV3RUNBQ0lGQWx0NmdCTUNHd01HQ3drSUJ3
- TUNCaFVJCkFna0tDd1FXQWdNQkFoNEJBaGVBQUFvSkVKU0I3QThSa1BMYmpic1AvamdqYVNz
- NUh0bGtBSXZXUytGcm15N2MKaG5jT0F4TFRWL0Q2UkV3SU95R0poRkt3d29pck55UTJnOXZV
- YTNZQ1lDZjFmSjh3RWhhS09COWQwTHBNUm5MNApkRVQ4ZDgyMzhFL3BLK0hxTktpSXNKaHM2
- SnNLOFpnalZRR3JtbWZua0dyWisxdjBIQnV4ZGljZ0duUC9XdHVBClVsOGw2Mi9BTGJheXlq
- KzYxQ2xyc0V0UklhcU82N0xJWXdQaVBEUkkrWGlNek5pR3pIRi8xUTZHUjAyUkg2YTMKRjg5
- ejhhUHhjSGkxWnZDdDJ5a3o2VUVjaHpQMHI1Z3FGSisvTC9VcHU4ME1YaVk0djVlSWFCNTJn
- VlBnaXlNQQpsTDJkRHMxbUladm5yUkxSWTJ0YjNtQVlOa1Y1QjVJRFQzcGtXeTZrS281T0Nn
- SytZZFlPUjhGTloyb04ydDhPCnJLK1ZudGFLN01NU0tIbG1ZL3NPd3RSbEVoMU9CbXJjQ3dH
- d21wLzA1R2tSNDZmL0lzaFJWZUZPUmF3K0dBcXQKUDIrQ0ZhMkNOQS9JSG5aTm95aWtsRHpQ
- UUhVVUdzck5wcERyaFg5Sm1oQm1nMXYyeXdIMU5YdTFpRGZQMUJBdwpLZ29rdDVmNVVhUkY5
- c0FBNTN2V0V2YlVVTjllZXNGR0x6UFdkSkdRNWhwZC9WSDVJUXk5U0JyaC93SWNla3E1Cm4w
- a042cGJUSHhHRTUyU2kvTVZJa05UdURaM2FwbjJqbERaNHBPdHBCWEkydlAzYlBPK05pcUJa
- anNVM3R4TGkKV2R2MkZqeXp6NlhMUndlV1JZVkw1SGE2TER0eG9yMnZ1NlVQMDdwOXh6MXhS
- WmFPRFczb1lsSEZ6WXBhNFc1ZwpMSGIybEVrSXVVZlNjaWNHYmpqQXRDbFRkR1ZtWVc0Z1Yy
- Rm9jbVZ1SUR4emRHVm1ZVzR1ZDJGb2NtVnVRR2x1CkxYUmxZMmd1WTI5dFBva0NOd1FUQVFn
- QUlRVUNYSWRlaHdJYkF3VUxDUWdIQWdZVkNBa0tDd0lFRmdJREFRSWUKQVFJWGdBQUtDUkNV
- Z2V3UEVaRHkyeUhURC85VUY3UWxEa0d4elE3QWFDSTZOOTVpUWY4LzFvU1VhRE51Mlk2SQpL
- K0R6UXBiMVRiVE9yM1ZKd3dZOGEzT1d6NU5MU09MTVdlVnh0K29zTW1sUUlHdWJEM09EWko4
- aXpQbEcvSnJOCnQ1elNkbU41SUE1ZjNlc1dXUVZLdmdoWkFnVERxZHB2K1pIVzJFbXhuQUox
- dUxGWFhlUWQzVVpjQzVyMy9nL3YKU2FNbzl4ZWszSjVtTnVEbTcxbEVXc0FzL0JBY0ZjK3lu
- TGh4d0JXQld3c3Z3UjhiSHRKNURPTVd2YUt1RHNrcApJR0ZVZS9LYjJCK2pyYXZRM1RuNnMv
- SHFKTTBjZXhTSHo1cGUrMHNHdlArdDlKNzIzNEJGUXdlRkV4cmlleThVCkl4T3I0WEFiYWFi
- U3J5WW5VL3pWSDlVMWkyQUlRWk1XSkFldkN2VmdRL1UrTmVSaFh1ZGU5WVVtRE1EbzJzQjIK
- VkFGRUFxaUYyUVVIUEEybThhN0VPM3lmTDRyTWswaUh6TElLdmg2L3JIOFFDWThpM1h4VE5M
- OWlDTHpCV3UvTgpPbkNBYlMremx2TFphaVNNaDVFZnV4VHR2NFBsVmRFamY2MlArWkhJRDE2
- Z1VEd0VtYXpMQU1yeDY2NmpINWt1ClVDVFZ5bWJMMFR2Qis2TDZBUmw4QU55TTRBRG1rV2tw
- eU0yMmtDdUlTWUFFZlFSM3VXWFo5WWd4YVBNcWJWK3cKQnJoSmc0SGFONkM2eFRxR3YzcjRC
- MmFxYjc3L0NWb1JKMVo5Y3BIQ3dpT3pJYUFtdnl6UFU2TXhDRFhaOEZnWQpsVDR2MjNHNWlt
- SlAyemdYNXMrRjZBQ1VKOVVRUEQwdVRmK0o5RGEycitza2gvc1dPbloreWNvSE5CUXZvY1pF
- Ck5BSFFmN2tDRFFSYmVvQVRBUkFBMkhkMGZzRFZLNzJSTFNESGJ5ME9oZ0RjRGxWQk0yTSto
- WVlwTzNmWDFyKysKc2hpcVBLQ0hWQXNRNWJ4ZTdIbUppbUhhNEtLWXMya3YvbWx0L0NhdUNK
- Ly9wbWN5Y0JNN0d2d25Lem11WHp1QQpHbVZUWkM2V1I1TGtha0ZydEhPelZtc0VHcE52NVJj
- OWw2SFlGcExrYlNrVmk1U1BRWkp5K0VNZ01DRmdqclpmClZGNnlvdHdFMWFmN0hOdE1oTlBh
- TEROMW9VS0Y1aitSeVJnNWl3SnVDRGtuSGp3QlFWNHBndzIvNXZTOEE3WlEKdjJNYlcvVExF
- eXBLWGlmNzhJaGdBelh0RTJYck0xbi9vNlpINzFvUkZGS096NDJsRmR6ZHJTWDBZc3FYZ0hD
- WAo1Z0l0TGZxemoxcHNNYTlvMWVpTlRFbTFkVlFyVHFueXMwbDE4b2FsUk5zd1lsUW1uWUJ3
- cHdDa2FUSExNSHdLCmZHQmJvNWRMUEVzaHRWb3dJNm5zZ3FMVHlRSG1xSFlxVVpZSXBpZ21t
- QzNTd0JXWTFWNmZmVUVta3FwQUFDRW4KTDQvZ1Vnbjd5US81ZDBzZXFuQXEycFNCSE1VVW9D
- Y1R6RVFVV1ZraUR2M1JrN2hURm1oVHNNcTc4eHYyWFJzWApNUjZ5UWhTVFBGWkNZRFVFeEVs
- RXNTbzlGV0hXcjZ6SHlZY2M4cURMRnZHOUZQaG1RdVQyczlCbHg2Z0kzMjNHCm5FcTFsd1dQ
- SlZ6UDRqUWtKS0lBWHdGcHYrVzhDV0xxekRXT3ZkbHJEYVRhVk1zY0ZUZUg1VzZVcHJsNjVq
- cUYKUUdNcGNSR0NzOEdDVVcxM0gwSXlPdFF0d1dYQTRueStTTDgxcHZpQW1hU1hVOGxhS2FS
- dTkxVk9WYUY5ZjRzQQpFUUVBQVlrQ0h3UVlBUUlBQ1FVQ1czcUFFd0liREFBS0NSQ1VnZXdQ
- RVpEeTIrb1hELzljSEhSa0JaT2ZrbVNxCjE0U3Z4MDYyUHRVMEtWNDcwVFNucC9qV29ZSm5L
- SXczRzBtWElSZ3J0SDJkUHdwSWdWanNZeVJTVk1LbVNwdDUKWnJEZjlOdFRiTldnazhWb0xl
- WnpZRW8rSjNvUHFGclRNczNhWVl2N2U0K0pLNjk1WW5tUSttT0Q5bmlhOTE1dApyNUFaajk1
- VWZTVGx5VW15aWMxZDhvdnNmMWZQN1hDVVZSRmNSamZOZkRGMW9ML3BEZ01QNUdaMk93YVRl
- am15CkN1SGpNOElSMUNpYXZCcFlEbUJuVFlrN1B0aHk2YXRXdllsMGZ5L0NxYWpUS3N4Nytw
- OXh6aXU4WmZWWCtpS0IKQ2MrSGUrRURFZEdJRGh2TlovSVFIZk9CMlBVWFdHUytzOUZOVHhy
- L0E2bkxHWG5BOVk2dzkzaVBkWUl3eFM3SwpYTG9LSmVlMTBEamx6c1lzUmZsRk9XMFpPaVNp
- aElDWGlRVjF1cU02dHpGRzlndFJjaXVzNVVBdGhXYU8xT3dVClNDUW1mQ09tNGZ2TUlKSUE5
- cnh0b1M2T3FSUWNpRjNjcm1vMHJKQ3ROMmF3WmZnaThYRWlmN2Q2aGp2MEVLTTkKWFpvaUFa
- WVpEKy9pTG01VGFLV042b0dJdGkwVmpKdjhaWk9aT2ZDYjZ2cUZJa0pXK2FPdTRvclRMRk16
- MjhhbwpVM1F5V3BOQzhGRm1kWXNWdWE4czZnTjFOSWE2eTNxYS9aQjhiQS9pa3k1OUFFejRp
- RElScmdVek1FZzhBazdUCmZtMUtpWWVpVHRCRENvMjVCdlhqYnFzeXhrUUQxbmtSbTZGQVZ6
- RXVPUEllOEp1cVcyeEQ5aXhHWXZqVTVoa1IKZ0pwM2dQNWIrY25HM0xQcXF1UTJFNmdvS1VN
- TEFia0NEUVJiZmw5REFSQUFzRExjYStMbFAydm5mdEVHaHBjQQpCR1ZOUUVGbkdQckNhdVU2
- SGhOODA1V3RQVHRtc1JPdUp6cWdVVDBtcHFXSWZacTZzTXd5dkhLOVRzL0tIM0paClVWYlJD
- M3oyaDNLZmhIL0RhZjk1cGQ2bVBjL2g5dkYvT3kzK2VUV2hnR25QNmNBNWtsUitmTzFXaEc4
- VnJpWHYKck5lUkcyMHN6emplSG9jblNJY1Q1WHVaUjB1REhPaUd4T2l6MXNNUkZUR3h6R095
- MTlSOXJ2dTYzdGlJM2Q3dgpnYzc1T0NBZGtlQi9TZUNFbGFSdzBUZjdMWmJQampzRjI2M0JZ
- bk1mNGtrTkVLdnFXY1UyaWNNcCtxZXpqeW5CCnB2ZXVlMHJDVFFCWUFRbG9GQ1ZUR0hyV1dB
- NkQ0VzVPMkFmSWRJYzF1MUpDWnAyZjVMV1ZvVUZUVklyUW5RUVUKU0hDaWZyOU1aeExUdFBK
- ZFU1Mm9TUHczZGs0aExQOGlKSUx1dnYvYXZhakNzUVlIRXR3WXNiZUZaeGl1TGdscApBN1lj
- Sk5ObXBnQ3BNRDR3VWh2bEN0QUtOQlFXeXIyOTc2OThFUVRuNDZlQmVVNkttMkNpaFhrZ3dD
- eWY4ZXlLCkxFM3NYZXdhcTVrZ1pXdk5xNml1NXFZSVJCOXl3K2NYYzYwZE9aRE9scTkzWDVT
- QVJZemFvZXBrSHo0cmtMa1AKUG8rdENIeUhRUHNHblBYYzlXVDgwREM5Tm5KR2R2VWx5NXJk
- TUk0eHBaeWdlb2tqd293VlFsUFV1Y1M2TXluNwpmOHc4Y2dmQjdDMklBSWNEeDJwUC9IendY
- dmtDT1FOQTdtVjFsTTA4bitnVmtUcnpweGlwNURicTRDSW9ZeDJNCkpaVDhiR1JINlhqY1VE
- S2EwOVFoeVpzQUVRRUFBWWtFUkFRWUFRZ0FEd1VDVzM1ZlF3SWJBZ1VKQThKbkFBSXAKQ1JD
- VWdld1BFWkR5MjhGZElBUVpBUWdBQmdVQ1czNWZRd0FLQ1JCVnhETFBjVk1NamNkc0QvMFJo
- QXN1UVlPeQpyMTNCbDNOaFhrWUFaR3AyWkZER3VrZTdPU2tWOG9qT09UZFR5ei9jT1JHQ2J5
- ZEQrRGd2cUZ5VmRuT1hLZ08wCmxKbUd3ckdlTGRnZ0F2aDBpaHJwNU8wWVVKOWJCU1htR01t
- UVRZSC9BbUxUR2FkYnVqQ1dqNWZGVWtDeXd4aW0KSHV5MFBiMjRwelR2UzUwR1k1WStxSDBG
- SE5haWdka2tpV04zcnVnN0haRXUvQ3lsUFpqT1h6K0QxUVBNckV4dwo3ZC9NS2FiVis5YU5i
- UVlabGRJajk4UXd2VUYxS1N6YThqbFVJdnBoUnEyN0FUOGZER1lHUGZERU1nMmNCT2FlCkty
- N29uUXM0YjdhV082aWZEbHhRVHB6c3pvK0FuODA3Tk1TdFZFRmYrczNBaFZEM2U3bmY4SkJh
- dmJWckFlMGsKb20yNm96elBubnh6K2xxVlZ0dzZVazRYTUl6dGl4L0h3SFl3dUNuY1VYWndL
- MEkzeUFKd2pZd29vck9DaEozUwpFVWJKUVB0R3NneFJERXhWQkZlNk5MUC82MnhQOU82dGFj
- d09kYjBNbVAxYjM5cFJBVEM3YmdkMWxkVUxpNzVaCmxKckowL1NpVkVyb3FOWXk3OXRmbWdB
- WjJVeFptczlTckV5Nm85UVNmc24xYVh2K01QTDlKYUNHbWtQNnpiTFEKTm5kajBKY2FRbmtD
- MHZneWRPMUJtNk11OTZQOXVmbEtaY0FTNndtTE01SWRIT3lqTDg4d0h3anVjakFPQnRjdwpw
- MG9HVG5WT25Sc05ZU084VzhZWi9LZGJ1Nzg1ZGF6TXFKMmlOakFEdUJiZG02TjRqNUVkTW5r
- TG4wQklmUEpwCmRnbTR2bDJVcExqd1JHci9NM3dtbTVwdnMrNnVCN2hrL0ZKaUQvNGxsRU5Q
- NGVNMWg3U200aitWcTZOMSt6VEIKSVhKQWViSXFhc0RwNXlaUzdYcnk0STM2bjg1WEVZZkcw
- MWx0QXlob05WMkRPOFNJUlFwdWkydHErOVJQM1JLMQpKREJ4eEVKWTJFTzVKWjhNeGFQSFEw
- RFQwNWxSRmpLMkFsaGRFSXRqTGpwSjNmVW05c3FMeE1XeHpQNlV6M2lpCjJ1YTR1bnJ0Nk9D
- VHFRd2lqRi8zYlRXaXd2VkFBSG5NRlVpb1hzaEhhb2hWRGNWZm5lSU1mVjBiUUNYWWkzTnAK
- WTB2MFp3Y2lGSCtnU0M3cUQ2WE51aHBWR1NMNElpbGlGeS9TemNhSkV6QUhlTERTaFpQMkNX
- ZG5DNHZnbDM3dApocHg4aDU1WWhKbjZIU3VVelBnaGFLdFZCMmsrajdaZXlaK1NGeHA3SXVi
- SEN3TEhsUWhUNzVSd1EzaUF4S242CjBxajUxY1lUbnF4ZFpYVzZmSDNQa3VNellVNUdwcVIv
- MU9sNWMvd2ZJNmc2QW04eUtXLzBFVUx0K0tuNExGc1MKbTdZM201SDV2MTJVNkpCWXZWK3Ix
- M2paaW9zNEVFREU5M0Q1c05IMk1JeVJ6Q0RxMXpkZHQ0WHV5S0ZqUEtXMQo5aWJaRGZGVjdL
- dUNzdnVMMjNzQmMxc0NNb3ArRTFtVC9ReE9JQTZvRFQxTVFzdHdPVnVReURDdi9PdktTZ2Z6
- CjhGWEdMNkFQY2xqQ3FqOEFKaHhReXN4ZG9pUVA4bS92dStialdHR3Z4dzVzMWxncGlSRFRS
- VVBnY0pKTmFHWTIKVklEclpRaTROU2lOUTBOSWkrZGp1NGZOTW1DcFFxZzh0YkMzY0FhNnl3
- bTZvUUIxU0JobURYMmUxMWdSbGx1SQpPblRHUEUwSFRvM2w3MmxoYmc9PQo9cVpNVgotLS0t
- LUVORCBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCg==
-Message-ID: <573b2eff-3c74-90e9-50fa-644264d0a0e5@i2se.com>
-Date:   Thu, 21 May 2020 13:00:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v5 0/3] interconnect: Support Samsung Exynos use-case
+Date:   Thu, 21 May 2020 14:28:38 +0200
+Message-Id: <20200521122841.8867-1-s.nawrocki@samsung.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20200519212552.11671-2-l.stelmach@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Provags-ID: V03:K1:wSeZxaA80JDIXEos3QQhcoAX3+J60zcJMs5/9SF8aeESpoihHM5
- K1zl2yVkMdew5ncODcaXO5nG8OvKsnm4xfE1c8Rk5OYck1IxWKx+Fbq/xI2lAmW3S5u33VE
- gSkAJzsRhLL6MUe/tGKdhNX37cGLtmRTh4GbToEb3OQWW5tqNcruXW3MCSv18wmiLVjDtce
- B5UOZ5aWybKGpAFO8Mfug==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:RI1HL5WzdJw=:UZ/mpIT3Ode+hQtdaUDqGz
- cvhAwTDTPT2ebrRrDiGrkfLzApOzg2CCDpGsqq9lR3PaEFEmGGCQG4v1NtxxxficBiQN2wLQC
- rFY7lOl/EyzO26enSGe/Cs4i6cpbHcDFLyIJIrMCEcCfvdkJtlp2rZHgZaWGms4rPxs2y56nh
- yI05rD4r7YtMHzMq7yXcGBhx8VF0nmK/5e4K90c5y9iR6e2PEd+I/4LYYp0jEs7kRR8RSK0lc
- YHbwB6XCusQwfjKQqE3+OZTS6Vk+Jsk/Ub9sRutM1OTE+VkvX0C3/rZrho64qCKutYMrAsxaC
- SeTk3AUSAPR2Mb/eB7SJx2FNkPpqz4tE3BLsBx8IMsJ4Hzsi35pafBdByK+Lyfr0jS3I3WvM1
- CXSebQwuSRZDGNr8s+IbKJ2GFbxFRpNOL7qlcvQ8VHMKO/hQMUJWYhe50QOwJSVYRUUO6SaU9
- RFpTiTfAMsxclkBzlOtDblh68A05ArxR9P5+ngdZQi5J1fsmC9hd6RtrJCdN22KB1QGqvIrYF
- 9NWpxXMpoZTcf9ejAZ1v6X0INXwnJcHnw5MIZm9pX2ZqCMqkhlYtSM/ADlEWAI1OE7eKcu0e7
- +xm9EpBDRznP2LTRpz1A6Ypr+CUR0HMrZEBnheE5vYC6fTmtAqLBr6l9nqJSq38IM0LX/gEBD
- TI8PWSmT8mTumDfgzi2VCbthugWGf/s4Hk3ojWReD7j/LFgr21Xojl+aogHUzh1QopznZ9bK5
- 8RerdDBYEbwsAQLsRrxxPvtQ9T/bz7gTRa0rv9iA7FSFqM/jtgIlMZVgl4myqWFKW0Zv9XN6t
- DBz2Q0HnV9cKDeiKo5AnVPhyzeB1fYMFIBHrJG56b/OqYn9cnbVh7IH3govrQSeqF4rBges
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFKsWRmVeSWpSXmKPExsWy7djPc7oMJcfiDM6sM7S4P6+V0WLjjPWs
+        Fte/PGe1mL53E5vF+fMb2C0u75rDZvG59wijxYzz+5gs1h65y25x+E07qwOXx6ZVnWwed67t
+        YfPo27KK0ePzJrkAligum5TUnMyy1CJ9uwSujJWX3jEV3BKqWNrXxdjA+J2vi5GTQ0LAROL4
+        1QPsXYxcHEICKxgl7k36yAzhfGGU6N1yAcr5zCjxckMfK0zLv4MnoFqWM0rMuLKMEa7l453l
+        bCBVbAKGEr1H+xhBbBEBGYk9TZNYQYqYBZqYJG4u3sACkhAWcJVYuu8bO4jNIqAqce3OVzCb
+        V8BK4sHCW8wQ6+QlVm84wAwRF5Q4OfMJWC8zULx562yw+yQE5rFL7D97GqrBReLk+SVsELaw
+        xKvjW9ghbBmJ05N7WCAamhklenbfZodwJjBK3D++gBGiylrizrlfQN0cQCs0Jdbv0gcxJQQc
+        JZYtUoUw+SRuvBWEuIFPYtK26cwQYV6JjjYhiBkqEr9XTWeCsKUkup/8Z4GwPSQmrX0OtkdI
+        IFbi+O85LBMYFWYh+WwWks9mIZywgJF5FaN4amlxbnpqsWFearlecWJucWleul5yfu4mRmAK
+        Ov3v+KcdjF8vJR1iFOBgVOLhfZB8LE6INbGsuDL3EKMEB7OSCO9C/qNxQrwpiZVVqUX58UWl
+        OanFhxilOViUxHmNF72MFRJITyxJzU5NLUgtgskycXBKNTDWZc076fO1et8e3au6WsYH9qRX
+        Fa1Qtlr8oq/TWKvl0ZvZ7/Y8/+W6I/j1itVfW6OevEgUbci3Lqwu3dvtyv3407/2zsx9VoHf
+        Nk6vsdue8uJwoqTN9cqfagnzipYLeBiqF+xt4chJ6bjVZHs2njfRtPFzWoDaw/PXN0hLmUau
+        8VzUu1TvbKMSS3FGoqEWc1FxIgD5GryePQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCIsWRmVeSWpSXmKPExsVy+t/xe7oMJcfiDOZelbO4P6+V0WLjjPWs
+        Fte/PGe1mL53E5vF+fMb2C0u75rDZvG59wijxYzz+5gs1h65y25x+E07qwOXx6ZVnWwed67t
+        YfPo27KK0ePzJrkAlig9m6L80pJUhYz84hJbpWhDCyM9Q0sLPSMTSz1DY/NYKyNTJX07m5TU
+        nMyy1CJ9uwS9jJWX3jEV3BKqWNrXxdjA+J2vi5GTQ0LAROLfwRPsXYxcHEICSxkltl74B+Rw
+        ACWkJOa3KEHUCEv8udbFBmILCXxilNjzlRvEZhMwlOg92scIYosIyEjsaZrECjKHWaCHSeLM
+        5wXsIAlhAVeJpfu+gdksAqoS1+58BbN5BawkHiy8xQyxQF5i9YYDzBBxQYmTM5+wgNzALKAu
+        sX6eEEiYGaikeets5gmM/LOQVM1CqJqFpGoBI/MqRpHU0uLc9NxiQ73ixNzi0rx0veT83E2M
+        wBjZduzn5h2MlzYGH2IU4GBU4uF9kHwsTog1say4MvcQowQHs5II70L+o3FCvCmJlVWpRfnx
+        RaU5qcWHGE2BXpjILCWanA+M37ySeENTQ3MLS0NzY3NjMwslcd4OgYMxQgLpiSWp2ampBalF
+        MH1MHJxSDYzTb3zpW3798fvErIlxszctNN0hOXGyj/gNgzch5dKiR39t5jy8v6H3uG/CVIUP
+        gpcq1N5/OP33qvWmC8HHu27fdp6oZ9+9UnnF5ljumNkb/0+L3XEmT+Snf99129gLikfWms6R
+        fr/tbvKzNw46F6/fk7vIvTrp6c6eDX3cSb2CfTmL7+cdjpTZoMRSnJFoqMVcVJwIAFD+4fmn
+        AgAA
+X-CMS-MailID: 20200521122848eucas1p27ce74486ea2044cb0b942b2619426e21
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200521122848eucas1p27ce74486ea2044cb0b942b2619426e21
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200521122848eucas1p27ce74486ea2044cb0b942b2619426e21
+References: <CGME20200521122848eucas1p27ce74486ea2044cb0b942b2619426e21@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Lukasz,
+Hi All,
 
-Am 19.05.20 um 23:25 schrieb Łukasz Stelmach:
-> The value was estimaded with ea_iid[1] using on 10485760 bytes read from
-> the RNG via /dev/hwrng. The min-entropy value calculated using the most
-> common value estimate (NIST SP 800-90P[2], section 6.3.1) was 7.964464.
+This is a continuation of Artur's efforts to add interconnect and PM QoS
+support for Exynos SoCs. Previous version of the patch set can be found 
+at [1]. The only change comparing to v4 is an addition of missing 'static
+inline' qualifier to the of_icc_get_from_provider() function stub, i.e.
+addresing Georgi's review comments.
 
-could you please mention in the commit the used hardware
-implementation(s) of iproc-rng200 to get this quality?
+The patches have been tested on Odroid U3 (Exynos4412 SoC). 
 
-AFAIK there is still no public register description at least for the
-bcm2711. So is it safe to assume that the suggested quality applies to
-all possible configurations?
+Below is detailed description of the patch set as in v3.
 
-Thanks
-Stefan
+                              ---------
+Previously posted as a part of a larger RFC [2].
 
->
-> [1] https://github.com/usnistgov/SP800-90B_EntropyAssessment
-> [2] https://csrc.nist.gov/publications/detail/sp/800-90b/final
->
-> Signed-off-by: Łukasz Stelmach <l.stelmach@samsung.com>
-> ---
->  drivers/char/hw_random/iproc-rng200.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/char/hw_random/iproc-rng200.c b/drivers/char/hw_random/iproc-rng200.c
-> index 32d9fe61a225..95669ece050f 100644
-> --- a/drivers/char/hw_random/iproc-rng200.c
-> +++ b/drivers/char/hw_random/iproc-rng200.c
-> @@ -199,6 +199,7 @@ static int iproc_rng200_probe(struct platform_device *pdev)
->  	priv->rng.read = iproc_rng200_read,
->  	priv->rng.init = iproc_rng200_init,
->  	priv->rng.cleanup = iproc_rng200_cleanup,
-> +	priv->rng.quality = 1000,
->  
->  	/* Register driver */
->  	ret = devm_hwrng_register(dev, &priv->rng);
+The Exynos SoC family relies on the devfreq driver for frequency
+scaling. However, a means for programmatically enforcing QoS constraints
+(i.e., minimum frequency) for devices is required. A solution which uses 
+the interconnect framework to ensure QoS is currently being developed [2].
+
+The exynos-bus hierarchy is composed of multiple buses which are probed
+separately. Sometimes the DMC is even handled by a different driver.
+Since the exynos-bus driver is generic and supports multiple differing
+bus hierarchies, IDs for nodes (i.e. buses) are assigned dynamically. Due
+to an unspecified relative probing order, every bus registers its own
+interconnect provider.
+
+Rationale for each patch in this series:
+* Patch 01 (exporting of_icc_get_from_provider()) makes it easy to
+  retrieve the parent node from the DT (cf. patch 05 in [2]).
+* Patch 02 (allowing #interconnect-cells = <0>) allows to remove dummy
+  node IDs from the DT.
+* Patch 03 (allowing inter-provider node pairs) is necessary to make
+  such multi-provider hierarchy work. A new approach implemented in v3
+  ensures we will not cause regressions in any existing driver.
+
+---
+Changes since v3 (to patches in this series):
+* Improve commit messages.
+                              ---------
+
+[1] https://lore.kernel.org/linux-pm/20200116144202.12116-4-a.swigon@samsung.com/T
+[2] https://patchwork.kernel.org/patch/11305287/
+
+--
+Regards,
+Sylwester
+
+
+Artur Świgoń (3):
+  interconnect: Export of_icc_get_from_provider()
+  interconnect: Relax requirement in of_icc_get_from_provider()
+  interconnect: Allow inter-provider pairs to be configured
+
+ drivers/interconnect/core.c           | 16 ++++++++--------
+ include/linux/interconnect-provider.h |  8 ++++++++
+ 2 files changed, 16 insertions(+), 8 deletions(-)
+
+-- 
+2.7.4
 
