@@ -2,186 +2,122 @@ Return-Path: <SRS0=bPT2=7E=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69063C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 May 2020 15:36:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E00C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 May 2020 22:35:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 52E6F20C09
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 May 2020 15:36:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19C392065F
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 May 2020 22:35:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="BTy7Qzvi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730270AbgEVPgD (ORCPT
+        id S1731122AbgEVWfR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 22 May 2020 11:36:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35954 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727807AbgEVPgC (ORCPT
+        Fri, 22 May 2020 18:35:17 -0400
+Received: from mta-p6.oit.umn.edu ([134.84.196.206]:53010 "EHLO
+        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731029AbgEVWfR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 22 May 2020 11:36:02 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B397C061A0E;
-        Fri, 22 May 2020 08:36:02 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: andrzej.p)
-        with ESMTPSA id 7F0622A38F6
-Subject: Re: [PATCHv2 0/7] Support inhibiting input devices
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Peter Hutterer <peter.hutterer@who-t.net>
-Cc:     Hans de Goede <hdegoede@redhat.com>, linux-input@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        patches@opensource.cirrus.com,
-        ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Barry Song <baohua@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Nick Dyer <nick@shmanahar.org>,
-        Ferruh Yigit <fery@cypress.com>,
-        Sangwon Jee <jeesw@melfas.com>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        kernel@collabora.com, Peter Hutterer <peter.hutterer@redhat.com>,
-        Benjamin Tissoires <btissoir@redhat.com>
-References: <20200506002746.GB89269@dtor-ws>
- <20200515164943.28480-1-andrzej.p@collabora.com>
- <842b95bb-8391-5806-fe65-be64b02de122@redhat.com>
- <20200517225510.GA205823@koala> <20200518024034.GL89269@dtor-ws>
-From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Message-ID: <513f25c0-7125-c564-0090-052d626fe508@collabora.com>
-Date:   Fri, 22 May 2020 17:35:56 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Fri, 22 May 2020 18:35:17 -0400
+X-Greylist: delayed 972 seconds by postgrey-1.27 at vger.kernel.org; Fri, 22 May 2020 18:35:16 EDT
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p6.oit.umn.edu (Postfix) with ESMTP id 49TLVw1pHRz9vCBD
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 May 2020 22:19:04 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p6.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 4qWL6zdTp7vv for <linux-samsung-soc@vger.kernel.org>;
+        Fri, 22 May 2020 17:19:04 -0500 (CDT)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id 49TLVw07LRz9vC90
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 May 2020 17:19:04 -0500 (CDT)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mta-p6.oit.umn.edu 49TLVw07LRz9vC90
+DKIM-Filter: OpenDKIM Filter v2.11.0 mta-p6.oit.umn.edu 49TLVw07LRz9vC90
+Received: by mail-io1-f72.google.com with SMTP id a11so8280980ioq.13
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 May 2020 15:19:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xf86DUDR0KCytTZe0PoPEVKJWswyj76Qc8cwS/5pEd8=;
+        b=BTy7Qzvia67Px1tEvWTi8X/NeNB6jPnEST1ETVo7uBwyZ8Wkew6opFNFU8mNZzW21R
+         nNJWn2xhDpBNOD7j3Cqf8M9TKnEA2ESWSydG4JQQoGk92GLN4GiEptxM9qn653V3LfWm
+         zR5YMeRMAhWXAYm6MITvDwZequAwm9QG2kyc1w82icjZ3Epz/qAhABqHLh9SCu83Nnht
+         ky7cXtHlMl0IFuKy3ERdiQqKPI3GxOFe9PbIeujOsk/eetVdQFtkqjF1ZxhM5b0vv6QN
+         cCwKam8UCdajHSyeHNTBnSIWQJzPsZVO4AMp6WGTvZ2GS+ykM4DahQlwnrzZHGVYr66w
+         89MA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xf86DUDR0KCytTZe0PoPEVKJWswyj76Qc8cwS/5pEd8=;
+        b=p+KVItUfepzkOiIs6ga7RMdMJo5id8oLMzacVQFtkHZs8HKgRGtXQO7FHz7/EDIWu6
+         G12TOvipU+9Vilt+qTCctV7aLLxBRlWflP4EWNuPbkNvc1KabmcujEA65FsBrUi6//Jl
+         5UHq1KD7E8SK+b38AK3v/rtk/7EaRPOWn4K8zxTtJkdktkTIn2cRImwhTDkHP53fq6/+
+         24sY3xIJRz8tE7lIb0hTqddltxGewqbADeFgZd28m1luJ6ZtrB2ZEhOKIjOLCSlkBqVT
+         pVvjE9o1DrJZFifO+5DqD7sT4BBFlw4xAOfR/WH46VySocF9hSIxQIuSJtko4LhyCBWQ
+         DsbQ==
+X-Gm-Message-State: AOAM533qHBM6HQ13XA6K9847Rrnzz1EUx/pbqNgJtSXDHb7wKikPqCCj
+        GnIVHT2dH2H1sdmAIHjl1ZB9s8BDGNwZMUWJe+5CympoiFCJlE5mK2So7n2Y4LJGE4nbmtET9cb
+        gwIj+/v5G/SJI102IaWNk4rehOVCKxVynP6Q=
+X-Received: by 2002:a92:c7a4:: with SMTP id f4mr15370412ilk.44.1590185943580;
+        Fri, 22 May 2020 15:19:03 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJw+J0ruAKNhsdIwEN+ydT0VoCKGFWbQcj4ml3xYNL1KOfJyA/BR/ZbR8JROJoT/OQqoIenz1Q==
+X-Received: by 2002:a92:c7a4:: with SMTP id f4mr15370380ilk.44.1590185943240;
+        Fri, 22 May 2020 15:19:03 -0700 (PDT)
+Received: from qiushi.dtc.umn.edu (cs-kh5248-02-umh.cs.umn.edu. [128.101.106.4])
+        by smtp.gmail.com with ESMTPSA id 7sm4210431ion.52.2020.05.22.15.19.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 May 2020 15:19:02 -0700 (PDT)
+From:   wu000273@umn.edu
+To:     sylvester.nawrocki@gmail.com
+Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kjlu@umn.edu, wu000273@umn.edu
+Subject: [PATCH] media: s3c-camif: fix missing disable in tegra_adma_probe().
+Date:   Fri, 22 May 2020 17:18:55 -0500
+Message-Id: <20200522221855.7891-1-wu000273@umn.edu>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20200518024034.GL89269@dtor-ws>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Hans, hi Dmitry,
+From: Qiushi Wu <wu000273@umn.edu>
 
-W dniu 18.05.2020 o 04:40, Dmitry Torokhov pisze:
-> Hi Hans, Peter,
-> 
-> On Mon, May 18, 2020 at 08:55:10AM +1000, Peter Hutterer wrote:
->> On Fri, May 15, 2020 at 08:19:10PM +0200, Hans de Goede wrote:
->>> Hi Andrezj,
->>>
+"pm_runtime_enable()" was not handled by "pm_runtime_disable()"
+after a call of the function “pm_runtime_get_sync” failed.
+Thus move the jump target “err_pm” before calling pm_runtime_disable().
 
-<snip>
+Fixes: babde1c243b2 ("[media] V4L: Add driver for S3C24XX/S3C64XX SoC series camera interface")
+Signed-off-by: Qiushi Wu <wu000273@umn.edu>
+---
+ drivers/media/platform/s3c-camif/camif-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->>
->>> I also noticed that you keep the device open (do not call the
->>> input_device's close callback) when inhibited and just throw away
->>> any events generated. This seems inefficient and may lead to
->>> the internal state getting out of sync. What if a key is pressed
->>> while inhibited and then the device is uninhibited while the key
->>> is still pressed?  Now the press event is lost and userspace
->>> querying the current state will see the pressed key as being
->>> released.
-> 
-> This is a good point. We should look into signalling that some events
-> have been dropped (via EV_SYN/SYN_DROPPED) so that clients are aware of
-> it.
-> 
+diff --git a/drivers/media/platform/s3c-camif/camif-core.c b/drivers/media/platform/s3c-camif/camif-core.c
+index c6fbcd7036d6..12ee49638f44 100644
+--- a/drivers/media/platform/s3c-camif/camif-core.c
++++ b/drivers/media/platform/s3c-camif/camif-core.c
+@@ -500,8 +500,8 @@ static int s3c_camif_probe(struct platform_device *pdev)
+ 	camif_unregister_media_entities(camif);
+ err_alloc:
+ 	pm_runtime_put(dev);
+-	pm_runtime_disable(dev);
+ err_pm:
++	pm_runtime_disable(dev);
+ 	camif_clk_put(camif);
+ err_clk:
+ 	s3c_camif_unregister_subdev(camif);
+-- 
+2.17.1
 
-It seems to me that the situation Hans envisions is not possible,
-or will not be possible with a simple change. Let me explain.
-
-For a start, let's recall that the input core prevents consecutive
-events of the same kind (type _and_ code _and_ value) from being
-delivered to handlers. The decision is made in input_get_disposition().
-For EV_KEY it is:
-
-		if (is_event_supported(code, dev->keybit, KEY_MAX)) {
-
-			/* auto-repeat bypasses state updates */
-			if (value == 2) {
-				disposition = INPUT_PASS_TO_HANDLERS;
-				break;
-			}
-
-			if (!!test_bit(code, dev->key) != !!value) {
-
-				__change_bit(code, dev->key);
-				disposition = INPUT_PASS_TO_HANDLERS;
-			}
-		}
-
-Let's now focus on value != 2 (events other than auto-repeat).
-The disposition changes from the default INPUT_IGNORE_EVENT to
-INPUT_PASS_TO_HANDLERS only when the event in question changes
-the current state: either by releasing a pressed key, or by
-pressing a released key. Subsequent releases of a released key
-or subsequent presses of a pressed key will be ignored.
-
-What Hans points out is the possibility of uninhibiting a device
-while its key is pressed and then releasing the key. First of all,
-during inhibiting input_dev_release_keys() is called, so input_dev's
-internal state will be cleared of all pressed keys. Then the device
-- after being uninhibited - all of a sudden produces a key release
-event. It will be ignored as per the "subsequent releases of a
-released key" case, so the handlers will not be passed an unmatched
-key release event. Assuming that passing an unmatched key release
-event was Hans's concern, in this case it seems impossible.
-
-Now, the value of 2 (auto-repeat) needs some attention. There are two
-cases to consider: the device uses input core's software repeat or it
-uses its own (hardware) repeat.
-
-Let's consider the first case. The timer which generates auto-repeat
-is only started on a key press event and only stopped on a key release
-event. As such, if any auto-repeat was in progress when inhibiting
-happened, it must have been stopped as per input_dev_release_keys().
-Then the key is pressed and held after the device has been inhibited,
-and the device is being uninhibited. Since it uses software auto-repeat,
-no events will be reported by the device until the key is released,
-and, as explained above, the release event will be ignored.
-
-Let's consider the second case. The key is pressed and held after the
-device has been inhibited and the device is being uninhibited. The worst
-thing that can happen is unmatched key repeat events will start coming
-from the device. We must prevent them from reaching the handlers and
-ignore them instead. So I suggest something on the lines of:
-
-if (is_event_supported(code, dev->keybit, KEY_MAX)) {
-
-			/* auto-repeat bypasses state updates */
--			if (value == 2) {
-+			if (value == 2 && test_bit(code, dev->key)) {
-				disposition = INPUT_PASS_TO_HANDLERS;
-				break;
-			}
-
-The intended meaning is "ignore key repeat events if the key is not
-pressed".
-
-With this small change I believe it is not possible to have neither
-unmatched release nor unmatched repeat being delivered to handlers.
-
-Regards,
-
-Andrzej
