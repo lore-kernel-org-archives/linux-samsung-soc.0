@@ -2,107 +2,186 @@ Return-Path: <SRS0=bPT2=7E=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C4BC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 May 2020 14:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69063C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 May 2020 15:36:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 44FA4222E9
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 May 2020 14:20:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52E6F20C09
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 May 2020 15:36:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729922AbgEVOUc (ORCPT
+        id S1730270AbgEVPgD (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 22 May 2020 10:20:32 -0400
-Received: from sauhun.de ([88.99.104.3]:60976 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729771AbgEVOUc (ORCPT
+        Fri, 22 May 2020 11:36:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35954 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727807AbgEVPgC (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 22 May 2020 10:20:32 -0400
-Received: from localhost (p5486cea4.dip0.t-ipconnect.de [84.134.206.164])
-        by pokefinder.org (Postfix) with ESMTPSA id 9DD722C203F;
-        Fri, 22 May 2020 16:20:30 +0200 (CEST)
-Date:   Fri, 22 May 2020 16:20:29 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-pm@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bibby Hsieh <bibby.hsieh@mediatek.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        srv_heupstream@mediatek.com,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH] i2c: core: fix NULL pointer dereference in
- suspend/resume callbacks
-Message-ID: <20200522142029.GB5670@ninjato>
-References: <CGME20200522101524eucas1p1aeef4a054a80b5d822ed3dc4b16139d7@eucas1p1.samsung.com>
- <20200522101327.13456-1-m.szyprowski@samsung.com>
- <34736047-3fc8-385b-cdea-79b061deb7b4@samsung.com>
+        Fri, 22 May 2020 11:36:02 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B397C061A0E;
+        Fri, 22 May 2020 08:36:02 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: andrzej.p)
+        with ESMTPSA id 7F0622A38F6
+Subject: Re: [PATCHv2 0/7] Support inhibiting input devices
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Peter Hutterer <peter.hutterer@who-t.net>
+Cc:     Hans de Goede <hdegoede@redhat.com>, linux-input@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        patches@opensource.cirrus.com,
+        ibm-acpi-devel@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Barry Song <baohua@kernel.org>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Nick Dyer <nick@shmanahar.org>,
+        Ferruh Yigit <fery@cypress.com>,
+        Sangwon Jee <jeesw@melfas.com>,
+        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        kernel@collabora.com, Peter Hutterer <peter.hutterer@redhat.com>,
+        Benjamin Tissoires <btissoir@redhat.com>
+References: <20200506002746.GB89269@dtor-ws>
+ <20200515164943.28480-1-andrzej.p@collabora.com>
+ <842b95bb-8391-5806-fe65-be64b02de122@redhat.com>
+ <20200517225510.GA205823@koala> <20200518024034.GL89269@dtor-ws>
+From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Message-ID: <513f25c0-7125-c564-0090-052d626fe508@collabora.com>
+Date:   Fri, 22 May 2020 17:35:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="dTy3Mrz/UPE2dbVg"
-Content-Disposition: inline
-In-Reply-To: <34736047-3fc8-385b-cdea-79b061deb7b4@samsung.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200518024034.GL89269@dtor-ws>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+Hi Hans, hi Dmitry,
 
---dTy3Mrz/UPE2dbVg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+W dniu 18.05.2020 o 04:40, Dmitry Torokhov pisze:
+> Hi Hans, Peter,
+> 
+> On Mon, May 18, 2020 at 08:55:10AM +1000, Peter Hutterer wrote:
+>> On Fri, May 15, 2020 at 08:19:10PM +0200, Hans de Goede wrote:
+>>> Hi Andrezj,
+>>>
 
-On Fri, May 22, 2020 at 01:15:12PM +0200, Marek Szyprowski wrote:
-> Hi All,
->=20
-> On 22.05.2020 12:13, Marek Szyprowski wrote:
-> > Commit 6fe12cdbcfe3 ("i2c: core: support bus regulator controlling in
-> > adapter") added generic suspend and resume functions for i2c devices.
-> > Those functions unconditionally access an i2c_client structure assigned
-> > to the given i2c device. However, there exist i2c devices in the system
-> > without a valid i2c_client. Add the needed check before accessing the
-> > i2c_client.
->=20
-> Just one more comment. The devices without i2c_client structure are the=
-=20
-> i2c 'devices' associated with the respective i2c bus. They are visible=20
-> in /sys:
->=20
-> ls -l /sys/bus/i2c/devices/i2c-*
->=20
-> I wonder if this patch has been ever tested with system suspend/resume,=
-=20
-> as those devices are always available in the system...
+<snip>
 
-There was another issue with this patch. Although it is not clear yet,
-if the patch itself is the culprit or if it just unshadows something
-else, however, I am considering to just revert it until these issues are
-fixed.
+>>
+>>> I also noticed that you keep the device open (do not call the
+>>> input_device's close callback) when inhibited and just throw away
+>>> any events generated. This seems inefficient and may lead to
+>>> the internal state getting out of sync. What if a key is pressed
+>>> while inhibited and then the device is uninhibited while the key
+>>> is still pressed?  Now the press event is lost and userspace
+>>> querying the current state will see the pressed key as being
+>>> released.
+> 
+> This is a good point. We should look into signalling that some events
+> have been dropped (via EV_SYN/SYN_DROPPED) so that clients are aware of
+> it.
+> 
 
+It seems to me that the situation Hans envisions is not possible,
+or will not be possible with a simple change. Let me explain.
 
---dTy3Mrz/UPE2dbVg
-Content-Type: application/pgp-signature; name="signature.asc"
+For a start, let's recall that the input core prevents consecutive
+events of the same kind (type _and_ code _and_ value) from being
+delivered to handlers. The decision is made in input_get_disposition().
+For EV_KEY it is:
 
------BEGIN PGP SIGNATURE-----
+		if (is_event_supported(code, dev->keybit, KEY_MAX)) {
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl7H360ACgkQFA3kzBSg
-KbZxwA//XrAA5EoLsXd9wAeV/TJMdqTuVPon4p5jh8DNGzh32u175zocF6eFD/p+
-cAaHO/M1JoKGVIZp/emSN+9RVS3HoBCm682QsOGU0jlhKsYm7aWsNW8fD7wakPh0
-cWrJ/WlkGqlMxRdozW63mL7UtbPPxvceBFFLv5gI/uW1BJNRhf/cJZDdGwaDAST7
-U9NlWQGIheQUwOKVGI0qwfnqcNcZ719fNmBIvdsrKaoRXV4i0BRflXs+NRvtk7gB
-BxcRBtEv2NXHGlfYkAmB4qwZF171V/5/jLLaCkcEikibCKS+geCCDuSqiFwDfpJ8
-NMVmZSAm1PPopxkTknfum+eJZ4KVwQDhCCeeoUTmvdVNECzEkErDZagh2CPdusYQ
-4gPU0X2tMbHRzZZOZ44IogMvExRwsRUxppnpMjiMtYgZL4ayxpgSzfTy7F1i4puc
-YlJnwyT5xNl5bL0krBM8eXlQQP+QnIa7pxbmyST4DVI7voPgdhBR5xW1OU1baDqF
-l4CSM64EGSTUy+pEP6zlrrGNVFV4HDSc1dvbu8Bha62Wmr6GkmMrRKufzcDlzZzl
-gkXZkVgTellll1dPQPVWid+Zci8aJEIrmJmZRpTR7KbdXPiIn7xXjv/PtiS5om5u
-hM/kOcHV1seezhDUrRZANyfx+ClPCsjyz4uYjYlDCjZMkOwiPLg=
-=cMqr
------END PGP SIGNATURE-----
+			/* auto-repeat bypasses state updates */
+			if (value == 2) {
+				disposition = INPUT_PASS_TO_HANDLERS;
+				break;
+			}
 
---dTy3Mrz/UPE2dbVg--
+			if (!!test_bit(code, dev->key) != !!value) {
+
+				__change_bit(code, dev->key);
+				disposition = INPUT_PASS_TO_HANDLERS;
+			}
+		}
+
+Let's now focus on value != 2 (events other than auto-repeat).
+The disposition changes from the default INPUT_IGNORE_EVENT to
+INPUT_PASS_TO_HANDLERS only when the event in question changes
+the current state: either by releasing a pressed key, or by
+pressing a released key. Subsequent releases of a released key
+or subsequent presses of a pressed key will be ignored.
+
+What Hans points out is the possibility of uninhibiting a device
+while its key is pressed and then releasing the key. First of all,
+during inhibiting input_dev_release_keys() is called, so input_dev's
+internal state will be cleared of all pressed keys. Then the device
+- after being uninhibited - all of a sudden produces a key release
+event. It will be ignored as per the "subsequent releases of a
+released key" case, so the handlers will not be passed an unmatched
+key release event. Assuming that passing an unmatched key release
+event was Hans's concern, in this case it seems impossible.
+
+Now, the value of 2 (auto-repeat) needs some attention. There are two
+cases to consider: the device uses input core's software repeat or it
+uses its own (hardware) repeat.
+
+Let's consider the first case. The timer which generates auto-repeat
+is only started on a key press event and only stopped on a key release
+event. As such, if any auto-repeat was in progress when inhibiting
+happened, it must have been stopped as per input_dev_release_keys().
+Then the key is pressed and held after the device has been inhibited,
+and the device is being uninhibited. Since it uses software auto-repeat,
+no events will be reported by the device until the key is released,
+and, as explained above, the release event will be ignored.
+
+Let's consider the second case. The key is pressed and held after the
+device has been inhibited and the device is being uninhibited. The worst
+thing that can happen is unmatched key repeat events will start coming
+from the device. We must prevent them from reaching the handlers and
+ignore them instead. So I suggest something on the lines of:
+
+if (is_event_supported(code, dev->keybit, KEY_MAX)) {
+
+			/* auto-repeat bypasses state updates */
+-			if (value == 2) {
++			if (value == 2 && test_bit(code, dev->key)) {
+				disposition = INPUT_PASS_TO_HANDLERS;
+				break;
+			}
+
+The intended meaning is "ignore key repeat events if the key is not
+pressed".
+
+With this small change I believe it is not possible to have neither
+unmatched release nor unmatched repeat being delivered to handlers.
+
+Regards,
+
+Andrzej
