@@ -2,145 +2,107 @@ Return-Path: <SRS0=bPT2=7E=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A133C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 May 2020 11:16:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C4BC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 May 2020 14:20:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 120E0206B6
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 May 2020 11:16:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Un+f+jIU"
+	by mail.kernel.org (Postfix) with ESMTP id 44FA4222E9
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 May 2020 14:20:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729382AbgEVLPs (ORCPT
+        id S1729922AbgEVOUc (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 22 May 2020 07:15:48 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:51526 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729377AbgEVLPQ (ORCPT
+        Fri, 22 May 2020 10:20:32 -0400
+Received: from sauhun.de ([88.99.104.3]:60976 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729771AbgEVOUc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 22 May 2020 07:15:16 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200522111512euoutp01c8a7687acb45d2ec589ffeded34befba~RVXbuMGma1145611456euoutp01D
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 May 2020 11:15:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200522111512euoutp01c8a7687acb45d2ec589ffeded34befba~RVXbuMGma1145611456euoutp01D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1590146112;
-        bh=g7lofStAEXI4rDBNDclmyeYgluSumM2150lwAjjqFGM=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=Un+f+jIUmk8Z5599psC7Yb7eNknrtoyvtxiHz3/YuXympaCqIfxzfyDVLpFI/EzRZ
-         QliYDYN+TKL/RN29YC/d9n+Dt0IgE5ZpaNBqDqP3duySJ7VFllF14lzaKwPd2owl87
-         1u/5iuV8BzPloamQ+sxGSenMdjLt71hchHTIoNu0=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200522111512eucas1p23793e88546caa1e9bbd836fcfa32eedb~RVXbZe0le1441014410eucas1p2J;
-        Fri, 22 May 2020 11:15:12 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id F9.96.60698.044B7CE5; Fri, 22
-        May 2020 12:15:12 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200522111512eucas1p17edeeea548dd59170c84c49ec650bd8a~RVXbFw97l0775607756eucas1p1Z;
-        Fri, 22 May 2020 11:15:12 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200522111512eusmtrp27b43e87159fec26f306e1ffa4579c921~RVXbFEdvK1476214762eusmtrp2k;
-        Fri, 22 May 2020 11:15:12 +0000 (GMT)
-X-AuditID: cbfec7f5-a0fff7000001ed1a-fa-5ec7b440f52a
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 3D.92.07950.F34B7CE5; Fri, 22
-        May 2020 12:15:11 +0100 (BST)
-Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200522111511eusmtip1251a3e0431392af017466d40c4deba33~RVXadmGHQ2677026770eusmtip1W;
-        Fri, 22 May 2020 11:15:11 +0000 (GMT)
-Subject: Re: [PATCH] i2c: core: fix NULL pointer dereference in
- suspend/resume callbacks
-To:     linux-pm@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Wolfram Sang <wsa@the-dreams.de>,
+        Fri, 22 May 2020 10:20:32 -0400
+Received: from localhost (p5486cea4.dip0.t-ipconnect.de [84.134.206.164])
+        by pokefinder.org (Postfix) with ESMTPSA id 9DD722C203F;
+        Fri, 22 May 2020 16:20:30 +0200 (CEST)
+Date:   Fri, 22 May 2020 16:20:29 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-pm@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Bibby Hsieh <bibby.hsieh@mediatek.com>,
         Tomasz Figa <tfiga@chromium.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         srv_heupstream@mediatek.com,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         linux-samsung-soc@vger.kernel.org
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <34736047-3fc8-385b-cdea-79b061deb7b4@samsung.com>
-Date:   Fri, 22 May 2020 13:15:12 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.8.0
-MIME-Version: 1.0
-In-Reply-To: <20200522101327.13456-1-m.szyprowski@samsung.com>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUhTYRjl3b3eXYfT16n5tKJolGGQJhpe+xCVgkERkVEh6Fp5U8tN29Rl
-        IfmdrGw1DHVqZVGm5WdDS0JzTZdKfmaIWiBZoGRim0EfWs6r5b/znHOe9zkHXpoQvXAQ03HK
-        JFallMdLKAHZ2PGjZ3uI0RK1w/jBg6kvqnVgbGVdJFNcV0QyefM2xAw2l1KMNd+MmKLeFh5T
-        +F7EWHMWKKbytYEIEUhnhnP40pL0flKa3dlKSq8bq5C0s2uClFobNhymIgR7otn4uBRW5Rt8
-        UhCbYSkkE4eoC7daX5HpqMFBixxpwAEw0p9BapGAFuFHCD625iMtohcHGwIDj+OtCPJ6p4iV
-        BZO2nc8JFQjq+mwEN8wgeDM3SNm33XAEmGed7Qvu+DjYhkcpu4fAZTxoG5hBdoHCfqCd1lJ2
-        LMTB0P9Jx7NjEm+Br7pc0o49cCR033+KOI8rdBZPLPGOi/5fZQVLiQi8EZqmS5exJ4xM3FmK
-        DbiDDzfND3j2QID3QXY/cA3cYMpi5HN4Pfx5vuLPQjDeU83nhmsIBjOLEOfaDWM9P5eaEdgb
-        apt9OToUGubfEtz7zjA87cplcAZ9Y+EyLYS8XBHn9gKDpebf2ba+AeIGkhhWNTOsamNY1cbw
-        /+5dRFYhTzZZrYhh1f5KVuOjlivUycoYn9MJiga0+Ke6Fyxzz1DL71MmhGkkcRIyZzqiRA7y
-        FHWqwoSAJiTuwnKX9iiRMFqeepFVJchUyfGs2oTW0aTEU+h/bzJShGPkSew5lk1kVSsqj3YU
-        p6MCL75VH47FYfsfBycqdDUxcsUh2execU181eiVte/Kn5wN/7z5YGCKo/hy7CDrplwTMJ4G
-        wqA0vyZ+tm6niyyMNzk/9vBIp/Kq3mJgv/DaS445nTdfkh3VDAVpd5V/q7+t1M8cqJ5zzjyx
-        KQBrFgr0FZrvgcGhlS+js7yJrRkSUh0r99tGqNTyv1/9JB1PAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrAIsWRmVeSWpSXmKPExsVy+t/xu7r2W47HGRyYaWmxccZ6Vosvc0+x
-        WMzcMIPFouPvF0aLy7vmsFl87j3CaDHj/D4mi+l3hSw+t/5js1h5YhazA5fH+xut7B6zGy6y
-        eLSc3M/i0bdlFaPHyVNPWDw+b5ILYIvSsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaP
-        tTIyVdK3s0lJzcksSy3St0vQy2g8Pp2l4CpbxdT9h1kaGDexdjFyckgImEgc6jrK3sXIxSEk
-        sJRRYuGJC2wQCRmJk9MaoIqEJf5c6wKLCwm8ZZQ4sDEWxBYWiJKYfuAAO4gtIhAucfXca0YQ
-        m1lgPpNEx99siKETGSWmTP0PVsQmYCjR9RZiEK+AncTFp/1MIDaLgKrEu/42FhBbVCBWYvW1
-        VkaIGkGJkzOfgMU5gep/z53CDLHATGLe5odQtrzE9rdzoGxxiVtP5jNNYBSahaR9FpKWWUha
-        ZiFpWcDIsopRJLW0ODc9t9hIrzgxt7g0L10vOT93EyMwNrcd+7llB2PXu+BDjAIcjEo8vA+S
-        j8UJsSaWFVfmHmKU4GBWEuFdyH80Tog3JbGyKrUoP76oNCe1+BCjKdBzE5mlRJPzgWkjryTe
-        0NTQ3MLS0NzY3NjMQkmct0PgYIyQQHpiSWp2ampBahFMHxMHp1QD4z7jKDvFz/Fl6xUeO6lM
-        fvF169ll68SezjhTPue/XPD2Pa8XLpg4yeR6VauY35THxUpmMoV1nW+/nFttZ+QQe5xHsO2V
-        b6rQwZX3XmjGsrNnrjkxfYYgZ2GkY7Nos9VzX89zH4Xllou9iCt5+kw2admLpU1OpjybSyQz
-        OnJzTaov9e8q7mT3UmIpzkg01GIuKk4EAIlRpMnjAgAA
-X-CMS-MailID: 20200522111512eucas1p17edeeea548dd59170c84c49ec650bd8a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200522101524eucas1p1aeef4a054a80b5d822ed3dc4b16139d7
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200522101524eucas1p1aeef4a054a80b5d822ed3dc4b16139d7
+Subject: Re: [PATCH] i2c: core: fix NULL pointer dereference in
+ suspend/resume callbacks
+Message-ID: <20200522142029.GB5670@ninjato>
 References: <CGME20200522101524eucas1p1aeef4a054a80b5d822ed3dc4b16139d7@eucas1p1.samsung.com>
-        <20200522101327.13456-1-m.szyprowski@samsung.com>
+ <20200522101327.13456-1-m.szyprowski@samsung.com>
+ <34736047-3fc8-385b-cdea-79b061deb7b4@samsung.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="dTy3Mrz/UPE2dbVg"
+Content-Disposition: inline
+In-Reply-To: <34736047-3fc8-385b-cdea-79b061deb7b4@samsung.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi All,
 
-On 22.05.2020 12:13, Marek Szyprowski wrote:
-> Commit 6fe12cdbcfe3 ("i2c: core: support bus regulator controlling in
-> adapter") added generic suspend and resume functions for i2c devices.
-> Those functions unconditionally access an i2c_client structure assigned
-> to the given i2c device. However, there exist i2c devices in the system
-> without a valid i2c_client. Add the needed check before accessing the
-> i2c_client.
+--dTy3Mrz/UPE2dbVg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Just one more comment. The devices without i2c_client structure are the 
-i2c 'devices' associated with the respective i2c bus. They are visible 
-in /sys:
+On Fri, May 22, 2020 at 01:15:12PM +0200, Marek Szyprowski wrote:
+> Hi All,
+>=20
+> On 22.05.2020 12:13, Marek Szyprowski wrote:
+> > Commit 6fe12cdbcfe3 ("i2c: core: support bus regulator controlling in
+> > adapter") added generic suspend and resume functions for i2c devices.
+> > Those functions unconditionally access an i2c_client structure assigned
+> > to the given i2c device. However, there exist i2c devices in the system
+> > without a valid i2c_client. Add the needed check before accessing the
+> > i2c_client.
+>=20
+> Just one more comment. The devices without i2c_client structure are the=
+=20
+> i2c 'devices' associated with the respective i2c bus. They are visible=20
+> in /sys:
+>=20
+> ls -l /sys/bus/i2c/devices/i2c-*
+>=20
+> I wonder if this patch has been ever tested with system suspend/resume,=
+=20
+> as those devices are always available in the system...
 
-ls -l /sys/bus/i2c/devices/i2c-*
+There was another issue with this patch. Although it is not clear yet,
+if the patch itself is the culprit or if it just unshadows something
+else, however, I am considering to just revert it until these issues are
+fixed.
 
-I wonder if this patch has been ever tested with system suspend/resume, 
-as those devices are always available in the system...
 
-> ...
+--dTy3Mrz/UPE2dbVg
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl7H360ACgkQFA3kzBSg
+KbZxwA//XrAA5EoLsXd9wAeV/TJMdqTuVPon4p5jh8DNGzh32u175zocF6eFD/p+
+cAaHO/M1JoKGVIZp/emSN+9RVS3HoBCm682QsOGU0jlhKsYm7aWsNW8fD7wakPh0
+cWrJ/WlkGqlMxRdozW63mL7UtbPPxvceBFFLv5gI/uW1BJNRhf/cJZDdGwaDAST7
+U9NlWQGIheQUwOKVGI0qwfnqcNcZ719fNmBIvdsrKaoRXV4i0BRflXs+NRvtk7gB
+BxcRBtEv2NXHGlfYkAmB4qwZF171V/5/jLLaCkcEikibCKS+geCCDuSqiFwDfpJ8
+NMVmZSAm1PPopxkTknfum+eJZ4KVwQDhCCeeoUTmvdVNECzEkErDZagh2CPdusYQ
+4gPU0X2tMbHRzZZOZ44IogMvExRwsRUxppnpMjiMtYgZL4ayxpgSzfTy7F1i4puc
+YlJnwyT5xNl5bL0krBM8eXlQQP+QnIa7pxbmyST4DVI7voPgdhBR5xW1OU1baDqF
+l4CSM64EGSTUy+pEP6zlrrGNVFV4HDSc1dvbu8Bha62Wmr6GkmMrRKufzcDlzZzl
+gkXZkVgTellll1dPQPVWid+Zci8aJEIrmJmZRpTR7KbdXPiIn7xXjv/PtiS5om5u
+hM/kOcHV1seezhDUrRZANyfx+ClPCsjyz4uYjYlDCjZMkOwiPLg=
+=cMqr
+-----END PGP SIGNATURE-----
+
+--dTy3Mrz/UPE2dbVg--
