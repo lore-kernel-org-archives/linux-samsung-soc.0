@@ -1,123 +1,132 @@
-Return-Path: <SRS0=bPT2=7E=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=S67t=7F=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E00C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 May 2020 22:35:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84F88C433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 23 May 2020 11:50:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 19C392065F
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 22 May 2020 22:35:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6600420812
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 23 May 2020 11:50:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="BTy7Qzvi"
+	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="Zj4DEb1/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731122AbgEVWfR (ORCPT
+        id S2387781AbgEWLuj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 22 May 2020 18:35:17 -0400
-Received: from mta-p6.oit.umn.edu ([134.84.196.206]:53010 "EHLO
-        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731029AbgEVWfR (ORCPT
+        Sat, 23 May 2020 07:50:39 -0400
+Received: from mout.web.de ([212.227.15.14]:49343 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728749AbgEWLuj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 22 May 2020 18:35:17 -0400
-X-Greylist: delayed 972 seconds by postgrey-1.27 at vger.kernel.org; Fri, 22 May 2020 18:35:16 EDT
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p6.oit.umn.edu (Postfix) with ESMTP id 49TLVw1pHRz9vCBD
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 May 2020 22:19:04 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p6.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 4qWL6zdTp7vv for <linux-samsung-soc@vger.kernel.org>;
-        Fri, 22 May 2020 17:19:04 -0500 (CDT)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id 49TLVw07LRz9vC90
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 May 2020 17:19:04 -0500 (CDT)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mta-p6.oit.umn.edu 49TLVw07LRz9vC90
-DKIM-Filter: OpenDKIM Filter v2.11.0 mta-p6.oit.umn.edu 49TLVw07LRz9vC90
-Received: by mail-io1-f72.google.com with SMTP id a11so8280980ioq.13
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 May 2020 15:19:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xf86DUDR0KCytTZe0PoPEVKJWswyj76Qc8cwS/5pEd8=;
-        b=BTy7Qzvia67Px1tEvWTi8X/NeNB6jPnEST1ETVo7uBwyZ8Wkew6opFNFU8mNZzW21R
-         nNJWn2xhDpBNOD7j3Cqf8M9TKnEA2ESWSydG4JQQoGk92GLN4GiEptxM9qn653V3LfWm
-         zR5YMeRMAhWXAYm6MITvDwZequAwm9QG2kyc1w82icjZ3Epz/qAhABqHLh9SCu83Nnht
-         ky7cXtHlMl0IFuKy3ERdiQqKPI3GxOFe9PbIeujOsk/eetVdQFtkqjF1ZxhM5b0vv6QN
-         cCwKam8UCdajHSyeHNTBnSIWQJzPsZVO4AMp6WGTvZ2GS+ykM4DahQlwnrzZHGVYr66w
-         89MA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xf86DUDR0KCytTZe0PoPEVKJWswyj76Qc8cwS/5pEd8=;
-        b=p+KVItUfepzkOiIs6ga7RMdMJo5id8oLMzacVQFtkHZs8HKgRGtXQO7FHz7/EDIWu6
-         G12TOvipU+9Vilt+qTCctV7aLLxBRlWflP4EWNuPbkNvc1KabmcujEA65FsBrUi6//Jl
-         5UHq1KD7E8SK+b38AK3v/rtk/7EaRPOWn4K8zxTtJkdktkTIn2cRImwhTDkHP53fq6/+
-         24sY3xIJRz8tE7lIb0hTqddltxGewqbADeFgZd28m1luJ6ZtrB2ZEhOKIjOLCSlkBqVT
-         pVvjE9o1DrJZFifO+5DqD7sT4BBFlw4xAOfR/WH46VySocF9hSIxQIuSJtko4LhyCBWQ
-         DsbQ==
-X-Gm-Message-State: AOAM533qHBM6HQ13XA6K9847Rrnzz1EUx/pbqNgJtSXDHb7wKikPqCCj
-        GnIVHT2dH2H1sdmAIHjl1ZB9s8BDGNwZMUWJe+5CympoiFCJlE5mK2So7n2Y4LJGE4nbmtET9cb
-        gwIj+/v5G/SJI102IaWNk4rehOVCKxVynP6Q=
-X-Received: by 2002:a92:c7a4:: with SMTP id f4mr15370412ilk.44.1590185943580;
-        Fri, 22 May 2020 15:19:03 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw+J0ruAKNhsdIwEN+ydT0VoCKGFWbQcj4ml3xYNL1KOfJyA/BR/ZbR8JROJoT/OQqoIenz1Q==
-X-Received: by 2002:a92:c7a4:: with SMTP id f4mr15370380ilk.44.1590185943240;
-        Fri, 22 May 2020 15:19:03 -0700 (PDT)
-Received: from qiushi.dtc.umn.edu (cs-kh5248-02-umh.cs.umn.edu. [128.101.106.4])
-        by smtp.gmail.com with ESMTPSA id 7sm4210431ion.52.2020.05.22.15.19.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 May 2020 15:19:02 -0700 (PDT)
-From:   wu000273@umn.edu
-To:     sylvester.nawrocki@gmail.com
-Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kjlu@umn.edu, wu000273@umn.edu
-Subject: [PATCH] media: s3c-camif: fix missing disable in tegra_adma_probe().
-Date:   Fri, 22 May 2020 17:18:55 -0500
-Message-Id: <20200522221855.7891-1-wu000273@umn.edu>
-X-Mailer: git-send-email 2.17.1
+        Sat, 23 May 2020 07:50:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1590234627;
+        bh=8Gkj/3YjLEY7uQYXC/gpf96dAamqoYM4LMCHyUAX5RY=;
+        h=X-UI-Sender-Class:Cc:Subject:To:From:Date;
+        b=Zj4DEb1/RVGP/Wj5ZQj5ATP3WP2GOHIgGksqpj3SGoNqnXhlKx5UCzrNzzw5VXDUi
+         m1UbO0Bi0RE9Lx+e44wh3m9a1u3sX91CNa12NK7cNHfrvm6ir0gBSBFn9r8RPhuHfx
+         QYktNDfQ+/IqQklP5MvGzpmZfshA+3cEtB4yXgBc=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.131.52.63]) by smtp.web.de (mrweb001
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MXYjm-1jZpGn2QsA-00WVJq; Sat, 23
+ May 2020 13:50:27 +0200
+Cc:     linux-kernel@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH] media: s3c-camif: fix missing disable in
+ tegra_adma_probe()
+To:     Qiushi Wu <wu000273@umn.edu>, linux-media@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <373518bb-d89f-295f-3b4a-cb48e5861ad0@web.de>
+Date:   Sat, 23 May 2020 13:50:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:qHuVWPTWNX3AZTu8/gG7jruAPhTMJgGt3oVjuzhQhIvY+o2w7TS
+ XPAj/Zi15t7PlNfFI8o5VmvA23yDZip0EwRpPKghGKEUUwOfIgAzSO4H1kNukaBITrwdmEQ
+ Cu8d0L+sYixnr2A3JhliGaLM5vHNMg8zgFbPQ8t1ApHWr1QY0sZC0xTFRvyCTbDKBbD2h0p
+ 1m2UGR+zFRgoK1BsRuTmw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:UHu7T7gdkGk=:IXNcYSI6rURMpXCyGekRm/
+ KOqq9kH+JtRE9GXYATgkXmuR3lYkKHqYcBxbVTKsJqHQtEw7qquW5ME3lk37K6vXYXUKfj+Wu
+ In1pGX9Jb0e98ggF0u5gEiFTh4GMHrZTaoCc4DdLG221DwYPkb3k28PlcUlVvs5Yqdzpi9qam
+ 1R2DnQBj3UboompATK3yFmrZlbOim6m0xKG6kpUKmk3cq0hZlTXwDPyju5QNk+LRrCP+J2eL6
+ 3BbuH2hQm1LYiJjuRJx5w9Al6rcS1YU+dMDEsvBdDNi4/u4M6w+RjmLRygVqnDu0wGkpjYNlq
+ 42+sjopfT3/CZPodzx9UFS8g7TJdga7ySFkYbB/Hn+Eyhua27fKg/K/6wzkXLjbMsjOz0Yfvm
+ AcXiQMLEDQ6ou1CnyHmEL3ObHDqotoODIBFOV07mEXb2WmhhrnZ0uKzhoHButMIwuRQhRjkpR
+ fZkwKgtgpf0XOHTC59A2crhMJx6W3c0LkRUuJ6PB+xYfy/gNC9bv2hjQONPqkj4+BlMuLXy4b
+ tVcL2vEErEcPgHi3CY+5vAGdIjKfoP94/AH3Dj4ciVxl+MmniOnd5bhxr/4StL6YSwDgK/6Uf
+ C8sxyF+TifOnW93fBtnnzwi4VD+ULNYzB0j72UiLO6PXkz2GEkmLGiSBTLiY6lYy/6In1nxWI
+ YcwGZGzMpIpMlWChTvZF85MSIpO0X0fiPaDDvGg31nFOAnspMusp/l4ekTC/lzAKzJCuGS4pj
+ gTOsje+FO0MccaE/OTeccJGda4JYNIQjeOTEBOwUjxJ9yqppboVQKH/B9sNxqNwiLZI+jD/FG
+ iIn3359RuoU3DuCTRwgmrXZyCA+7145ZDz5+gAZYPBuWHpNYGp6xJVR20Dzx9YO4abBBWhAuc
+ oYcVcGqENF2aMH86cMUrCos7JvBAgMtadni9u44PolVopq7uMDxuMIkCZnzjh0lIYXXfeJoKT
+ fChlz3npuC4MWWx2HlW57bl1Rs+H49yRd31H+/1AgNj/9zknxv2hOz51Pyv/WvJJv/vAzJPZr
+ dxVPV9i0OOsoTohhgwGU4i6zWK4cdGMH991La9LiQh9yQnMu7tycvWAj8mr0Znj+VJT0hl6mP
+ WoTVgc/wdjFc9EY32DsiE9EACwT2PKan9M0IzufUEkTaZiuYbsdoDzUt5j2WGuTdAHIhJ9FQO
+ z4YWx7yptCCVtHiDoM51K+iSD+oOU5fYbkJnYC0U6I4LBFrHpj4LPqkENuNiejgTTCgjQ3ZwX
+ vZRuVHQv3eh2xS28S
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Qiushi Wu <wu000273@umn.edu>
+> "pm_runtime_enable()" was not handled by "pm_runtime_disable()"
+> after a call of the function =E2=80=9Cpm_runtime_get_sync=E2=80=9D faile=
+d.
 
-"pm_runtime_enable()" was not handled by "pm_runtime_disable()"
-after a call of the function “pm_runtime_get_sync” failed.
-Thus move the jump target “err_pm” before calling pm_runtime_disable().
+How do you think about to use typographic quotation characters
+in a consistent ways for the final commit message?
 
-Fixes: babde1c243b2 ("[media] V4L: Add driver for S3C24XX/S3C64XX SoC series camera interface")
-Signed-off-by: Qiushi Wu <wu000273@umn.edu>
----
- drivers/media/platform/s3c-camif/camif-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/s3c-camif/camif-core.c b/drivers/media/platform/s3c-camif/camif-core.c
-index c6fbcd7036d6..12ee49638f44 100644
---- a/drivers/media/platform/s3c-camif/camif-core.c
-+++ b/drivers/media/platform/s3c-camif/camif-core.c
-@@ -500,8 +500,8 @@ static int s3c_camif_probe(struct platform_device *pdev)
- 	camif_unregister_media_entities(camif);
- err_alloc:
- 	pm_runtime_put(dev);
--	pm_runtime_disable(dev);
- err_pm:
-+	pm_runtime_disable(dev);
- 	camif_clk_put(camif);
- err_clk:
- 	s3c_camif_unregister_subdev(camif);
--- 
-2.17.1
-
+Regards,
+Markus
