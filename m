@@ -2,131 +2,154 @@ Return-Path: <SRS0=S67t=7F=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84F88C433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 23 May 2020 11:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14466C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 23 May 2020 18:46:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6600420812
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 23 May 2020 11:50:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68808207F7
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 23 May 2020 18:46:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="Zj4DEb1/"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="kQ2Yw2kF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387781AbgEWLuj (ORCPT
+        id S1728246AbgEWSqx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 23 May 2020 07:50:39 -0400
-Received: from mout.web.de ([212.227.15.14]:49343 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728749AbgEWLuj (ORCPT
+        Sat, 23 May 2020 14:46:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34810 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726790AbgEWSqx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 23 May 2020 07:50:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1590234627;
-        bh=8Gkj/3YjLEY7uQYXC/gpf96dAamqoYM4LMCHyUAX5RY=;
-        h=X-UI-Sender-Class:Cc:Subject:To:From:Date;
-        b=Zj4DEb1/RVGP/Wj5ZQj5ATP3WP2GOHIgGksqpj3SGoNqnXhlKx5UCzrNzzw5VXDUi
-         m1UbO0Bi0RE9Lx+e44wh3m9a1u3sX91CNa12NK7cNHfrvm6ir0gBSBFn9r8RPhuHfx
-         QYktNDfQ+/IqQklP5MvGzpmZfshA+3cEtB4yXgBc=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.131.52.63]) by smtp.web.de (mrweb001
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0MXYjm-1jZpGn2QsA-00WVJq; Sat, 23
- May 2020 13:50:27 +0200
-Cc:     linux-kernel@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH] media: s3c-camif: fix missing disable in
- tegra_adma_probe()
-To:     Qiushi Wu <wu000273@umn.edu>, linux-media@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
- +v43YoGpDNyhgA0w9CEhuwfZrE91GocMtjLO67TAc2i2nxMc/FJRDI0OemO4VJ9RwID6ltwt
- mpVJgXGKkNJ1ey+QOXouzlErVvE2fRh+KXXN1Q7fSmTJlAW9XJYHS3BDHb0uRpymRSX3O+E2
- lA87C7R8qAigPDZi6Z7UmwIA83ZMKXQ5stA0lhPyYgQcM7fh7V4ZYhnR0I5/qkUoxKpqaYLp
- YHBczVP+Zx/zHOM0KQphOMbU7X3c1pmMruoe6ti9uZzqZSLsF+NKXFEPBS665tQr66HJvZvY
- GMDlntZFAZ6xQvCC1r3MGoxEC1tuEa24vPCC9RZ9wk2sY5Csbva0WwYv3WKRZZBv8eIhGMxs
- rcpeGShRFyZ/0BYO53wZAPV1pEhGLLxd8eLN/nEWjJE0ejakPC1H/mt5F+yQBJAzz9JzbToU
- 5jKLu0SugNI18MspJut8AiA1M44CIWrNHXvWsQ+nnBKHDHHYZu7MoXlOmB32ndsfPthR3GSv
- jN7YD4Ad724H8fhRijmC1+RpuSce7w2JLj5cYj4MlccmNb8YUxsE8brY2WkXQYS8Ivse39MX
- BE66MQN0r5DQ6oqgoJ4gHIVBUv/ZwgcmUNS5gQkNCFA0dWXznQARAQABtCZNYXJrdXMgRWxm
- cmluZyA8TWFya3VzLkVsZnJpbmdAd2ViLmRlPokCVAQTAQgAPhYhBHDP0hzibeXjwQ/ITuU9
- Figxg9azBQJYNvsQAhsjBQkJZgGABQsJCAcCBhUICQoLAgQWAgMBAh4BAheAAAoJEOU9Figx
- g9azcyMP/iVihZkZ4VyH3/wlV3nRiXvSreqg+pGPI3c8J6DjP9zvz7QHN35zWM++1yNek7Ar
- OVXwuKBo18ASlYzZPTFJZwQQdkZSV+atwIzG3US50ZZ4p7VyUuDuQQVVqFlaf6qZOkwHSnk+
- CeGxlDz1POSHY17VbJG2CzPuqMfgBtqIU1dODFLpFq4oIAwEOG6fxRa59qbsTLXxyw+PzRaR
- LIjVOit28raM83Efk07JKow8URb4u1n7k9RGAcnsM5/WMLRbDYjWTx0lJ2WO9zYwPgRykhn2
- sOyJVXk9xVESGTwEPbTtfHM+4x0n0gC6GzfTMvwvZ9G6xoM0S4/+lgbaaa9t5tT/PrsvJiob
- kfqDrPbmSwr2G5mHnSM9M7B+w8odjmQFOwAjfcxoVIHxC4Cl/GAAKsX3KNKTspCHR0Yag78w
- i8duH/eEd4tB8twcqCi3aCgWoIrhjNS0myusmuA89kAWFFW5z26qNCOefovCx8drdMXQfMYv
- g5lRk821ZCNBosfRUvcMXoY6lTwHLIDrEfkJQtjxfdTlWQdwr0mM5ye7vd83AManSQwutgpI
- q+wE8CNY2VN9xAlE7OhcmWXlnAw3MJLW863SXdGlnkA3N+U4BoKQSIToGuXARQ14IMNvfeKX
- NphLPpUUnUNdfxAHu/S3tPTc/E/oePbHo794dnEm57LuuQINBFg2+xABEADZg/T+4o5qj4cw
- nd0G5pFy7ACxk28mSrLuva9tyzqPgRZ2bdPiwNXJUvBg1es2u81urekeUvGvnERB/TKekp25
- 4wU3I2lEhIXj5NVdLc6eU5czZQs4YEZbu1U5iqhhZmKhlLrhLlZv2whLOXRlLwi4jAzXIZAu
- 76mT813jbczl2dwxFxcT8XRzk9+dwzNTdOg75683uinMgskiiul+dzd6sumdOhRZR7YBT+xC
- wzfykOgBKnzfFscMwKR0iuHNB+VdEnZw80XGZi4N1ku81DHxmo2HG3icg7CwO1ih2jx8ik0r
- riIyMhJrTXgR1hF6kQnX7p2mXe6K0s8tQFK0ZZmYpZuGYYsV05OvU8yqrRVL/GYvy4Xgplm3
- DuMuC7/A9/BfmxZVEPAS1gW6QQ8vSO4zf60zREKoSNYeiv+tURM2KOEj8tCMZN3k3sNASfoG
- fMvTvOjT0yzMbJsI1jwLwy5uA2JVdSLoWzBD8awZ2X/eCU9YDZeGuWmxzIHvkuMj8FfX8cK/
- 2m437UA877eqmcgiEy/3B7XeHUipOL83gjfq4ETzVmxVswkVvZvR6j2blQVr+MhCZPq83Ota
- xNB7QptPxJuNRZ49gtT6uQkyGI+2daXqkj/Mot5tKxNKtM1Vbr/3b+AEMA7qLz7QjhgGJcie
- qp4b0gELjY1Oe9dBAXMiDwARAQABiQI8BBgBCAAmFiEEcM/SHOJt5ePBD8hO5T0WKDGD1rMF
- Alg2+xACGwwFCQlmAYAACgkQ5T0WKDGD1rOYSw/+P6fYSZjTJDAl9XNfXRjRRyJSfaw6N1pA
- Ahuu0MIa3djFRuFCrAHUaaFZf5V2iW5xhGnrhDwE1Ksf7tlstSne/G0a+Ef7vhUyeTn6U/0m
- +/BrsCsBUXhqeNuraGUtaleatQijXfuemUwgB+mE3B0SobE601XLo6MYIhPh8MG32MKO5kOY
- hB5jzyor7WoN3ETVNQoGgMzPVWIRElwpcXr+yGoTLAOpG7nkAUBBj9n9TPpSdt/npfok9ZfL
- /Q+ranrxb2Cy4tvOPxeVfR58XveX85ICrW9VHPVq9sJf/a24bMm6+qEg1V/G7u/AM3fM8U2m
- tdrTqOrfxklZ7beppGKzC1/WLrcr072vrdiN0icyOHQlfWmaPv0pUnW3AwtiMYngT96BevfA
- qlwaymjPTvH+cTXScnbydfOQW8220JQwykUe+sHRZfAF5TS2YCkQvsyf7vIpSqo/ttDk4+xc
- Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
- x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
- pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-Message-ID: <373518bb-d89f-295f-3b4a-cb48e5861ad0@web.de>
-Date:   Sat, 23 May 2020 13:50:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Sat, 23 May 2020 14:46:53 -0400
+Received: from mo6-p02-ob.smtp.rzone.de (mo6-p02-ob.smtp.rzone.de [IPv6:2a01:238:20a:202:5302::4])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD0F6C061A0E;
+        Sat, 23 May 2020 11:46:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1590259611;
+        s=strato-dkim-0002; d=chronox.de;
+        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=EG0M3Hyxz4BV7j1+OKdBXWmu8BWCl4V9Gc3tOojvV2Y=;
+        b=kQ2Yw2kFPnXLOMaH6oTfMTnm9bEjkJwWchdpFEpCQ2XYC9cYpJr88PrZfKCqInSKiu
+        uoo7rDY7P1168eh/MyV+O3lcbDQbKb4GTKLPBPmMVvd5HOJKMphkm3GNQj8zC/yqw5Kh
+        5rEwSbfRWtR6IO2vwmYRIDIodsEYJ4lx80r8xiLXH528mawDTcDsq5k4xgn7yupaGojp
+        0VAloQ7VWS8iwpUYCk07gpnnxCW/zd+/KVZ0DYcsEngMz8js8ZYkmdUZ25lJGThjCeRv
+        CM6v23Nv9esdtb1Is/i5lAXqgdnDxiBLtMLLrzexhQ6z6H/IGQ8rLvzB1uDGIbweXmXu
+        0LHg==
+X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9xmwdNnzGHXPbJ/SdwHc="
+X-RZG-CLASS-ID: mo00
+Received: from positron.chronox.de
+        by smtp.strato.de (RZmta 46.7.0 DYNA|AUTH)
+        with ESMTPSA id k09005w4NIkQI1J
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Sat, 23 May 2020 20:46:26 +0200 (CEST)
+From:   Stephan =?ISO-8859-1?Q?M=FCller?= <smueller@chronox.de>
+To:     Stefan Wahren <stefan.wahren@i2se.com>,
+        Lukasz Stelmach <l.stelmach@samsung.com>
+Cc:     Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Markus Elfring <elfring@users.sourceforge.net>,
+        Matthias Brugger <mbrugger@suse.com>,
+        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v2 1/2] hwrng: iproc-rng200 - Set the quality value
+Date:   Sat, 23 May 2020 20:46:26 +0200
+Message-ID: <3080190.aeNJFYEL58@positron.chronox.de>
+In-Reply-To: <dleftjftbtyubp.fsf%l.stelmach@samsung.com>
+References: <573b2eff-3c74-90e9-50fa-644264d0a0e5@i2se.com> <CGME20200521191415eucas1p2d112a86171b23dcf255e7da53a56f4f3@eucas1p2.samsung.com> <dleftjftbtyubp.fsf%l.stelmach@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:qHuVWPTWNX3AZTu8/gG7jruAPhTMJgGt3oVjuzhQhIvY+o2w7TS
- XPAj/Zi15t7PlNfFI8o5VmvA23yDZip0EwRpPKghGKEUUwOfIgAzSO4H1kNukaBITrwdmEQ
- Cu8d0L+sYixnr2A3JhliGaLM5vHNMg8zgFbPQ8t1ApHWr1QY0sZC0xTFRvyCTbDKBbD2h0p
- 1m2UGR+zFRgoK1BsRuTmw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:UHu7T7gdkGk=:IXNcYSI6rURMpXCyGekRm/
- KOqq9kH+JtRE9GXYATgkXmuR3lYkKHqYcBxbVTKsJqHQtEw7qquW5ME3lk37K6vXYXUKfj+Wu
- In1pGX9Jb0e98ggF0u5gEiFTh4GMHrZTaoCc4DdLG221DwYPkb3k28PlcUlVvs5Yqdzpi9qam
- 1R2DnQBj3UboompATK3yFmrZlbOim6m0xKG6kpUKmk3cq0hZlTXwDPyju5QNk+LRrCP+J2eL6
- 3BbuH2hQm1LYiJjuRJx5w9Al6rcS1YU+dMDEsvBdDNi4/u4M6w+RjmLRygVqnDu0wGkpjYNlq
- 42+sjopfT3/CZPodzx9UFS8g7TJdga7ySFkYbB/Hn+Eyhua27fKg/K/6wzkXLjbMsjOz0Yfvm
- AcXiQMLEDQ6ou1CnyHmEL3ObHDqotoODIBFOV07mEXb2WmhhrnZ0uKzhoHButMIwuRQhRjkpR
- fZkwKgtgpf0XOHTC59A2crhMJx6W3c0LkRUuJ6PB+xYfy/gNC9bv2hjQONPqkj4+BlMuLXy4b
- tVcL2vEErEcPgHi3CY+5vAGdIjKfoP94/AH3Dj4ciVxl+MmniOnd5bhxr/4StL6YSwDgK/6Uf
- C8sxyF+TifOnW93fBtnnzwi4VD+ULNYzB0j72UiLO6PXkz2GEkmLGiSBTLiY6lYy/6In1nxWI
- YcwGZGzMpIpMlWChTvZF85MSIpO0X0fiPaDDvGg31nFOAnspMusp/l4ekTC/lzAKzJCuGS4pj
- gTOsje+FO0MccaE/OTeccJGda4JYNIQjeOTEBOwUjxJ9yqppboVQKH/B9sNxqNwiLZI+jD/FG
- iIn3359RuoU3DuCTRwgmrXZyCA+7145ZDz5+gAZYPBuWHpNYGp6xJVR20Dzx9YO4abBBWhAuc
- oYcVcGqENF2aMH86cMUrCos7JvBAgMtadni9u44PolVopq7uMDxuMIkCZnzjh0lIYXXfeJoKT
- fChlz3npuC4MWWx2HlW57bl1Rs+H49yRd31H+/1AgNj/9zknxv2hOz51Pyv/WvJJv/vAzJPZr
- dxVPV9i0OOsoTohhgwGU4i6zWK4cdGMH991La9LiQh9yQnMu7tycvWAj8mr0Znj+VJT0hl6mP
- WoTVgc/wdjFc9EY32DsiE9EACwT2PKan9M0IzufUEkTaZiuYbsdoDzUt5j2WGuTdAHIhJ9FQO
- z4YWx7yptCCVtHiDoM51K+iSD+oOU5fYbkJnYC0U6I4LBFrHpj4LPqkENuNiejgTTCgjQ3ZwX
- vZRuVHQv3eh2xS28S
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-> "pm_runtime_enable()" was not handled by "pm_runtime_disable()"
-> after a call of the function =E2=80=9Cpm_runtime_get_sync=E2=80=9D faile=
-d.
+Am Donnerstag, 21. Mai 2020, 21:14:02 CEST schrieb Lukasz Stelmach:
 
-How do you think about to use typographic quotation characters
-in a consistent ways for the final commit message?
+Hi Lukasz,
 
-Regards,
-Markus
+> It was <2020-05-21 czw 13:00>, when Stefan Wahren wrote:
+> > Hi Lukasz,
+> >=20
+> > Am 19.05.20 um 23:25 schrieb =C5=81ukasz Stelmach:
+> >> The value was estimaded with ea_iid[1] using on 10485760 bytes read fr=
+om
+> >> the RNG via /dev/hwrng. The min-entropy value calculated using the most
+> >> common value estimate (NIST SP 800-90P[2], section 6.3.1) was 7.964464.
+> >=20
+> > could you please mention in the commit the used hardware
+> > implementation(s) of iproc-rng200 to get this quality?
+> >=20
+> > AFAIK there is still no public register description at least for the
+> > bcm2711. So is it safe to assume that the suggested quality applies to
+> > all possible configurations?
+>=20
+> I've learnt that there is a post-processing unit in RNG200 that tests
+> the output of the noise generator and fills FIFO only with data that
+> passes FIPS tests. Unlike simmilar unit in Exynos, it cannot be disabled
+> or bypassed. Therefore, after Stephan Mueller's thorough explanations I
+> am considering dropping this patch in v3.
+
+If you would be more clear what that FIPS test is all about, we may be able=
+ to=20
+identify whether it affects the entropy behavior or not. E.g. if it is the=
+=20
+SP800-90B health test following SP880-90B section 4.4, this does not affect=
+=20
+entropy and you could apply your calculation.
+>=20
+> However, I stil am still not 100% convinced that it is impossible to
+> assign the quality a reasonable non-zero value in such case.
+>=20
+> > Thanks
+> > Stefan
+> >=20
+> >> [1]
+> >> https://protect2.fireeye.com/url?k=3Dda4735b2-87d99b28-da46befd-0cc47a=
+336f
+> >> ae-e1c21080bc6ab1e4&q=3D1&u=3Dhttps%3A%2F%2Fgithub.com%2Fusnistgov%2FS=
+P800-90
+> >> B_EntropyAssessment [2]
+> >> https://csrc.nist.gov/publications/detail/sp/800-90b/final
+> >>=20
+> >> Signed-off-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
+> >> ---
+> >>=20
+> >>  drivers/char/hw_random/iproc-rng200.c | 1 +
+> >>  1 file changed, 1 insertion(+)
+> >>=20
+> >> diff --git a/drivers/char/hw_random/iproc-rng200.c
+> >> b/drivers/char/hw_random/iproc-rng200.c index 32d9fe61a225..95669ece05=
+0f
+> >> 100644
+> >> --- a/drivers/char/hw_random/iproc-rng200.c
+> >> +++ b/drivers/char/hw_random/iproc-rng200.c
+> >> @@ -199,6 +199,7 @@ static int iproc_rng200_probe(struct platform_devi=
+ce
+> >> *pdev)>>=20
+> >>  	priv->rng.read =3D iproc_rng200_read,
+> >>  	priv->rng.init =3D iproc_rng200_init,
+> >>  	priv->rng.cleanup =3D iproc_rng200_cleanup,
+> >>=20
+> >> +	priv->rng.quality =3D 1000,
+> >>=20
+> >>  	/* Register driver */
+> >>  	ret =3D devm_hwrng_register(dev, &priv->rng);
+
+
+Ciao
+Stephan
+
+
