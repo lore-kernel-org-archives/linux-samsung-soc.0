@@ -2,84 +2,126 @@ Return-Path: <SRS0=EObp=7G=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B6B6C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 24 May 2020 03:34:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 577E2C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 24 May 2020 03:55:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6224F2076A
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 24 May 2020 03:34:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9026420878
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 24 May 2020 03:46:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="HYBVSsZz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388300AbgEXDeW (ORCPT
+        id S1728720AbgEXDq0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 23 May 2020 23:34:22 -0400
-Received: from spam.zju.edu.cn ([61.164.42.155]:55762 "EHLO zju.edu.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388290AbgEXDeV (ORCPT
+        Sat, 23 May 2020 23:46:26 -0400
+Received: from mta-p8.oit.umn.edu ([134.84.196.208]:51286 "EHLO
+        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728716AbgEXDqZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 23 May 2020 23:34:21 -0400
-Received: from localhost.localdomain (unknown [222.205.77.158])
-        by mail-app2 (Coremail) with SMTP id by_KCgCXlTAt68leaFLCAQ--.12977S4;
-        Sun, 24 May 2020 11:34:08 +0800 (CST)
-From:   Dinghao Liu <dinghao.liu@zju.edu.cn>
-To:     dinghao.liu@zju.edu.cn, kjlu@umn.edu
-Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: exynos4-is: Fix runtime PM imbalance in isp_video_open
-Date:   Sun, 24 May 2020 11:34:04 +0800
-Message-Id: <20200524033404.23227-1-dinghao.liu@zju.edu.cn>
+        Sat, 23 May 2020 23:46:25 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p8.oit.umn.edu (Postfix) with ESMTP id 49V5k75r01z9vYVk
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 24 May 2020 03:46:23 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p8.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Rk81rbsCvfTI for <linux-samsung-soc@vger.kernel.org>;
+        Sat, 23 May 2020 22:46:23 -0500 (CDT)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id 49V5k746Lcz9vYVK
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 23 May 2020 22:46:23 -0500 (CDT)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mta-p8.oit.umn.edu 49V5k746Lcz9vYVK
+DKIM-Filter: OpenDKIM Filter v2.11.0 mta-p8.oit.umn.edu 49V5k746Lcz9vYVK
+Received: by mail-il1-f200.google.com with SMTP id m7so12347594ill.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 23 May 2020 20:46:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=C2t9s0DwevmWJTHcbCKM1B0BY0FZ9/xbKiwLnDDABmQ=;
+        b=HYBVSsZzTUiOAKEBXh4AEyJQML8TgLiJb9gqAWCrDSXfFtOW/q43Mtbi5IjQ14Pk/i
+         L4T+ww0XRpfoU/gY+WudDS4BftM8K0WMe/0krvj+yu8cumuFDl5b9GhvvY2F6Q/jc7zu
+         BImcpoPVI4MH64fOmcq+L1gyWY3u2qjcAB6JPMw7vfQ4rAd03gkonh919/0DUhcWBHPU
+         ot1d711bIuAeEydfN6XWj6hzbuGSqtTx/nm8N71kvYmryyLkZYPEakoBKS1AgYo5BnDS
+         MtDF2QRLJGav9t3JiMleQ2vQ6FZmh4FJoY3+lPheGKDybUudeWHeVYOd5L/9K4+q73Zl
+         mvsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=C2t9s0DwevmWJTHcbCKM1B0BY0FZ9/xbKiwLnDDABmQ=;
+        b=Ubor8rDcglxgg75S+MLjWTie/k/zh3TjLYge56GTVi+b4YbkVLjXkfGOJ8nEKF9qjo
+         k4jOCPhDHbGQnYUyTtkzgOiPEo5fMkQz0HMe5hrPG+kHpAb4w6Xhmc2PABbPifNoObJ/
+         s9VwbcGWZdZ7tr1QzT79kcDyNwSywpzXV+oNJA64LvUDZzLrOBGPoh1+DceRiuOhvBhq
+         JNcA3KWINAdK22sA6GBrDfLEfWWwm1gJj9eryja+GyqovmHjYKGqWvjQfEiaWr4vvHTU
+         0J6J/F/q0oT3TgePXW5BtLezLsarBGKnKmbRkMfKSpcHH8NRPDHxiF7b4YV7us2RdYuy
+         z+yw==
+X-Gm-Message-State: AOAM5308WGYuFCBF3jNNex1gJcynI/7QgiUPZceNH9ObeEuCoAB9Jmce
+        A8/68j+/icvrvRAe5CI8I8/2oPfFaZaOaHt37t8Cb5rnHV0OK1ACbzz/aEhf4cEQYgNaXl+WEpz
+        9o3LlYvTkIAUQibx/Rys5qRy0xaACwCWUGWQ=
+X-Received: by 2002:a05:6e02:686:: with SMTP id o6mr19039609ils.280.1590291983126;
+        Sat, 23 May 2020 20:46:23 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwfyg+Rnu6GlHWCG/+kmbS/tsUTytjIAPq63m/9v6dt18hUHnlXMuVCjoAfpRscXHhLXbpoZw==
+X-Received: by 2002:a05:6e02:686:: with SMTP id o6mr19039595ils.280.1590291982781;
+        Sat, 23 May 2020 20:46:22 -0700 (PDT)
+Received: from qiushi.dtc.umn.edu (cs-kh5248-02-umh.cs.umn.edu. [128.101.106.4])
+        by smtp.gmail.com with ESMTPSA id j14sm5752392ioj.26.2020.05.23.20.46.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 23 May 2020 20:46:21 -0700 (PDT)
+From:   wu000273@umn.edu
+To:     sylvester.nawrocki@gmail.com
+Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kjlu@umn.edu, wu000273@umn.edu
+Subject: [PATCH V2] media: s3c-camif: fix missing disable in tegra_adma_probe().
+Date:   Sat, 23 May 2020 22:46:16 -0500
+Message-Id: <20200524034616.31625-1-wu000273@umn.edu>
 X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID: by_KCgCXlTAt68leaFLCAQ--.12977S4
-X-Coremail-Antispam: 1UD129KBjvdXoWrKrW7ZFW3Gr18JF1xWF4UArb_yoWfArb_Cr
-        1kXF1xXr1qqw4qqryjyFn8ZryxtrZ8Wwn5Ga1SqrW7t3yUAF4UJrWkZr93ur47XFsruFyD
-        JrZ8XF17Ar9xCjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUb-AFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AK
-        wVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20x
-        vE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E
-        87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c
-        8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_
-        Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwI
-        xGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc2xSY4AK
-        67AK6r48MxAIw28IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_GFWkJr1UJwCFx2IqxV
-        CFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r10
-        6r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxV
-        WUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG
-        6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr
-        0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JU-miiUUUUU=
-X-CM-SenderInfo: qrrzjiaqtzq6lmxovvfxof0/1tbiAgEJBlZdtORShQAVsV
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-pm_runtime_get_sync() increments the runtime PM usage counter even
-when it returns an error code. Thus a pairing decrement is needed on
-the error handling path to keep the counter balanced.
+From: Qiushi Wu <wu000273@umn.edu>
 
-Signed-off-by: Dinghao Liu <dinghao.liu@zju.edu.cn>
+"pm_runtime_enable()" was not handled by "pm_runtime_disable()"
+after a call of the function “pm_runtime_get_sync()” failed.
+Thus move the jump target “err_pm” before calling function 
+"calling pm_runtime_disable()".
+
+Fixes: babde1c243b2 ("[media] V4L: Add driver for S3C24XX/S3C64XX SoC series camera interface")
+Signed-off-by: Qiushi Wu <wu000273@umn.edu>
 ---
- drivers/media/platform/exynos4-is/fimc-isp-video.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-isp-video.c b/drivers/media/platform/exynos4-is/fimc-isp-video.c
-index 15f443fa7208..612b9872afc8 100644
---- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
-+++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
-@@ -293,6 +293,7 @@ static int isp_video_open(struct file *file)
- 	if (!ret)
- 		goto unlock;
- rel_fh:
-+	pm_runtime_put_noidle(&isp->pdev->dev);
- 	v4l2_fh_release(file);
- unlock:
- 	mutex_unlock(&isp->video_lock);
+V2: improving commit messages.
+
+---
+ drivers/media/platform/s3c-camif/camif-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/s3c-camif/camif-core.c b/drivers/media/platform/s3c-camif/camif-core.c
+index c6fbcd7036d6..12ee49638f44 100644
+--- a/drivers/media/platform/s3c-camif/camif-core.c
++++ b/drivers/media/platform/s3c-camif/camif-core.c
+@@ -500,8 +500,8 @@ static int s3c_camif_probe(struct platform_device *pdev)
+ 	camif_unregister_media_entities(camif);
+ err_alloc:
+ 	pm_runtime_put(dev);
+-	pm_runtime_disable(dev);
+ err_pm:
++	pm_runtime_disable(dev);
+ 	camif_clk_put(camif);
+ err_clk:
+ 	s3c_camif_unregister_subdev(camif);
 -- 
 2.17.1
 
