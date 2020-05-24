@@ -2,126 +2,156 @@ Return-Path: <SRS0=EObp=7G=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 577E2C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 24 May 2020 03:55:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F5B5C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 24 May 2020 09:03:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9026420878
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 24 May 2020 03:46:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E32D20787
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 24 May 2020 09:03:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="HYBVSsZz"
+	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="oOxzuO/5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728720AbgEXDq0 (ORCPT
+        id S1728374AbgEXJDN (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 23 May 2020 23:46:26 -0400
-Received: from mta-p8.oit.umn.edu ([134.84.196.208]:51286 "EHLO
-        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728716AbgEXDqZ (ORCPT
+        Sun, 24 May 2020 05:03:13 -0400
+Received: from mout.web.de ([212.227.17.12]:53647 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727848AbgEXJDN (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 23 May 2020 23:46:25 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p8.oit.umn.edu (Postfix) with ESMTP id 49V5k75r01z9vYVk
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 24 May 2020 03:46:23 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p8.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Rk81rbsCvfTI for <linux-samsung-soc@vger.kernel.org>;
-        Sat, 23 May 2020 22:46:23 -0500 (CDT)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id 49V5k746Lcz9vYVK
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 23 May 2020 22:46:23 -0500 (CDT)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mta-p8.oit.umn.edu 49V5k746Lcz9vYVK
-DKIM-Filter: OpenDKIM Filter v2.11.0 mta-p8.oit.umn.edu 49V5k746Lcz9vYVK
-Received: by mail-il1-f200.google.com with SMTP id m7so12347594ill.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 23 May 2020 20:46:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=C2t9s0DwevmWJTHcbCKM1B0BY0FZ9/xbKiwLnDDABmQ=;
-        b=HYBVSsZzTUiOAKEBXh4AEyJQML8TgLiJb9gqAWCrDSXfFtOW/q43Mtbi5IjQ14Pk/i
-         L4T+ww0XRpfoU/gY+WudDS4BftM8K0WMe/0krvj+yu8cumuFDl5b9GhvvY2F6Q/jc7zu
-         BImcpoPVI4MH64fOmcq+L1gyWY3u2qjcAB6JPMw7vfQ4rAd03gkonh919/0DUhcWBHPU
-         ot1d711bIuAeEydfN6XWj6hzbuGSqtTx/nm8N71kvYmryyLkZYPEakoBKS1AgYo5BnDS
-         MtDF2QRLJGav9t3JiMleQ2vQ6FZmh4FJoY3+lPheGKDybUudeWHeVYOd5L/9K4+q73Zl
-         mvsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=C2t9s0DwevmWJTHcbCKM1B0BY0FZ9/xbKiwLnDDABmQ=;
-        b=Ubor8rDcglxgg75S+MLjWTie/k/zh3TjLYge56GTVi+b4YbkVLjXkfGOJ8nEKF9qjo
-         k4jOCPhDHbGQnYUyTtkzgOiPEo5fMkQz0HMe5hrPG+kHpAb4w6Xhmc2PABbPifNoObJ/
-         s9VwbcGWZdZ7tr1QzT79kcDyNwSywpzXV+oNJA64LvUDZzLrOBGPoh1+DceRiuOhvBhq
-         JNcA3KWINAdK22sA6GBrDfLEfWWwm1gJj9eryja+GyqovmHjYKGqWvjQfEiaWr4vvHTU
-         0J6J/F/q0oT3TgePXW5BtLezLsarBGKnKmbRkMfKSpcHH8NRPDHxiF7b4YV7us2RdYuy
-         z+yw==
-X-Gm-Message-State: AOAM5308WGYuFCBF3jNNex1gJcynI/7QgiUPZceNH9ObeEuCoAB9Jmce
-        A8/68j+/icvrvRAe5CI8I8/2oPfFaZaOaHt37t8Cb5rnHV0OK1ACbzz/aEhf4cEQYgNaXl+WEpz
-        9o3LlYvTkIAUQibx/Rys5qRy0xaACwCWUGWQ=
-X-Received: by 2002:a05:6e02:686:: with SMTP id o6mr19039609ils.280.1590291983126;
-        Sat, 23 May 2020 20:46:23 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwfyg+Rnu6GlHWCG/+kmbS/tsUTytjIAPq63m/9v6dt18hUHnlXMuVCjoAfpRscXHhLXbpoZw==
-X-Received: by 2002:a05:6e02:686:: with SMTP id o6mr19039595ils.280.1590291982781;
-        Sat, 23 May 2020 20:46:22 -0700 (PDT)
-Received: from qiushi.dtc.umn.edu (cs-kh5248-02-umh.cs.umn.edu. [128.101.106.4])
-        by smtp.gmail.com with ESMTPSA id j14sm5752392ioj.26.2020.05.23.20.46.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 May 2020 20:46:21 -0700 (PDT)
-From:   wu000273@umn.edu
-To:     sylvester.nawrocki@gmail.com
-Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kjlu@umn.edu, wu000273@umn.edu
-Subject: [PATCH V2] media: s3c-camif: fix missing disable in tegra_adma_probe().
-Date:   Sat, 23 May 2020 22:46:16 -0500
-Message-Id: <20200524034616.31625-1-wu000273@umn.edu>
-X-Mailer: git-send-email 2.17.1
+        Sun, 24 May 2020 05:03:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1590310983;
+        bh=od4hcxQlASb+PVdW1il/SQ9XHYXs3Dyhw8hNrF3z4wU=;
+        h=X-UI-Sender-Class:Cc:Subject:From:To:Date;
+        b=oOxzuO/5IFmiiSkzQGiuGjghaM+ZVgEGUmo5yUpPuAy1yp5Ex2UVpEG3dI4bsV5Ei
+         O/2xiQmZLpjJ4rPzQq76UYJ4tx15DE7n4riZ2Bu6EVRM7lIR5qIeRn5BsvmZ6nMOKM
+         JMFTOvdJRxpsFCj15Pe2dWktjn9ETlGfpXLLq/0k=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.132.187.46]) by smtp.web.de (mrweb103
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0LoHcD-1j6AkI1rib-00gGya; Sun, 24
+ May 2020 11:03:03 +0200
+Cc:     linux-kernel@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH v2] media: s3c-camif: Fix missing disable in
+ tegra_adma_probe()
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+To:     Qiushi Wu <wu000273@umn.edu>, linux-media@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Message-ID: <e58de170-7c44-85b8-a1ac-158f35a0b14f@web.de>
+Date:   Sun, 24 May 2020 11:03:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:IBiTq9Old9TCIPOO1LEYxk2Y3XKOJKtmItU+3ASMnMbKCdQOW6m
+ IPIcYN5UICOdOttf/IE56Iai6XSpHL5+XrkPfJFCyW8E0I6aGC814shc7QgWeNny4oPae8w
+ srIkJFxLiwzbafF5JjNoc7GHH41/24V76X9Ed5jZQD1qG51jPCxmjLWlMnHS6VmN85H02Vr
+ hDliml6clLmB9tZx+dJzg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:4CyJbMVdQj8=:1ikMBp/Y+wTQONQA6rERUX
+ /dTvMZMzvjLHz7qD6fAOethfiUk0dUyLB16HrMh3MBGa+2ZeyKnvxVRp6+lnivDquTzNjoHnR
+ waaw0I/8I4W+DQFEvBZlwQM6rS7qjGQdGvGYfraaWCJEZV6CN+73FAN3sfbXV6+Q8AiLg9BPy
+ gpzeKtUcYLvlLoGFdd75fP8vo724Z4giyNBQpYquEOa3v7iNJAf4lvyLri0KtXNq9/pxpDh6k
+ hpZv4aSPdVr7tCe0BTq+fJl6PCPBcEJT8vm3uI6a0g/YZVooMYTCVbmacvtu0I13SF33NHpIr
+ I4nLHX8OTez+D2mosACnFGsaaiIKGvPJ99GVaJ9rbcZvjVD7Vyrwdp35vn1OMqiUaQDjZv1Kb
+ 5HMfpSC/nry7EM+TDax46bPKhqbf2G3dEviUn51i1YRmr0eCojGhwBwbJMcImA/yzNsr3AY3R
+ zHvxmOrN8wQHkPcnkB2lEZlemBKVMvZLkoS/nDPNHdcw7o4Wa3NJKD9qbGmOwcrf2XZPSvX4d
+ pyL1MCmi8z9TexM1xgBpWKP3qPf+IBWDTZxEG8eUeTQ1bdFluvjRaCUu5PpaHjBI/mgE9XeW3
+ pdPt2BQg2ZhpUgUiMrB02OB0FP0nv3wtxRxq8d2e/SKP4KSONIEyOp5p9NtGUC/Pysc4KQZ3h
+ /GfNTBpED+ecDPGwW+Hk29qP0W9Pvdqt/mXUI0xL6o8DeKRZSnLVJLcVrJ/YYA5L3Lmd0mfGo
+ rBKOdMmyBkEZ3oVcNbJtd80hmGtUk/lKLGyWCpSD/VBQx0VHRNdkD1md43mEdES05lZq+tDWS
+ cgCzdE/YM63RnXzSD3drfPhFQ4vm0cTpVzXpT0340hOjIJ0YEshRXaKX654ZJO/zYDbmjKzHk
+ h9A2JaXyJWXDV1HqT0OOGIdgXuisuZCG9q98GxPhJvb0apJPTx3St3iKJdtVG42e6BzyO1SAV
+ MZDH3a9PbbMB2QPMyFbeOVe6/tQKT6l+0P4mQfHCK1Q0+FcOYb/mNBm99zL/YudTR6IWqtDId
+ 2aFle2edPy/TjTvaldk519LS+a0aykJNI9hfHCz69gDa0fF8YlKWdyjHuEFqtsq0jY+M1i9OK
+ OVxkQwKMdLyhXm5vw64TtHzApiiPY9NBdnE7GIDC1TtsyHq1cqmreuNnffXssDGFPQW9SdRfC
+ 0x6qMS8NwUPdcrg1Lel3UnDVHeybYl/1wGok8iPo1xamzvCnHiR3ARmbXuFq45rKX0aQL1L5F
+ QERnhx12oYTSjj8iS
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Qiushi Wu <wu000273@umn.edu>
+> "pm_runtime_enable()" was not handled by "pm_runtime_disable()"
+> after a call of the function =E2=80=9Cpm_runtime_get_sync()=E2=80=9D fai=
+led.
+> Thus move the jump target =E2=80=9Cerr_pm=E2=80=9D before calling functi=
+on
+> "calling pm_runtime_disable()".
 
-"pm_runtime_enable()" was not handled by "pm_runtime_disable()"
-after a call of the function “pm_runtime_get_sync()” failed.
-Thus move the jump target “err_pm” before calling function 
-"calling pm_runtime_disable()".
+I find such a change description still improvable (also according to
+the shown combination of quotation characters).
 
-Fixes: babde1c243b2 ("[media] V4L: Add driver for S3C24XX/S3C64XX SoC series camera interface")
-Signed-off-by: Qiushi Wu <wu000273@umn.edu>
----
 
-V2: improving commit messages.
+> ---
+>
+> V2: improving commit messages.
 
----
- drivers/media/platform/s3c-camif/camif-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+You proposed a slightly different wording variant.
 
-diff --git a/drivers/media/platform/s3c-camif/camif-core.c b/drivers/media/platform/s3c-camif/camif-core.c
-index c6fbcd7036d6..12ee49638f44 100644
---- a/drivers/media/platform/s3c-camif/camif-core.c
-+++ b/drivers/media/platform/s3c-camif/camif-core.c
-@@ -500,8 +500,8 @@ static int s3c_camif_probe(struct platform_device *pdev)
- 	camif_unregister_media_entities(camif);
- err_alloc:
- 	pm_runtime_put(dev);
--	pm_runtime_disable(dev);
- err_pm:
-+	pm_runtime_disable(dev);
- 	camif_clk_put(camif);
- err_clk:
- 	s3c_camif_unregister_subdev(camif);
--- 
-2.17.1
 
+> ---
+>  drivers/media/platform/s3c-camif/camif-core.c | 2 +-
+
+I suggest to delete the triple dashes before this diffstat.
+
+
+I would find it nicer if you would put mail addresses from patch reviewers=
+ (like me)
+also directly into the message field =E2=80=9CCc=E2=80=9D.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?id=3Dcaffb99b6929f41a69edbb5aef=
+3a359bf45f3315#n515
+
+Regards,
+Markus
