@@ -1,155 +1,86 @@
-Return-Path: <SRS0=S67t=7F=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=EObp=7G=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14466C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 23 May 2020 18:46:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E5D6C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 24 May 2020 02:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 68808207F7
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 23 May 2020 18:46:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="kQ2Yw2kF"
+	by mail.kernel.org (Postfix) with ESMTP id 3B9782085B
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 24 May 2020 02:59:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728246AbgEWSqx (ORCPT
+        id S2388271AbgEXC7T (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 23 May 2020 14:46:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34810 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726790AbgEWSqx (ORCPT
+        Sat, 23 May 2020 22:59:19 -0400
+Received: from spam.zju.edu.cn ([61.164.42.155]:53900 "EHLO zju.edu.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388262AbgEXC7T (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 23 May 2020 14:46:53 -0400
-Received: from mo6-p02-ob.smtp.rzone.de (mo6-p02-ob.smtp.rzone.de [IPv6:2a01:238:20a:202:5302::4])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD0F6C061A0E;
-        Sat, 23 May 2020 11:46:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1590259611;
-        s=strato-dkim-0002; d=chronox.de;
-        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=EG0M3Hyxz4BV7j1+OKdBXWmu8BWCl4V9Gc3tOojvV2Y=;
-        b=kQ2Yw2kFPnXLOMaH6oTfMTnm9bEjkJwWchdpFEpCQ2XYC9cYpJr88PrZfKCqInSKiu
-        uoo7rDY7P1168eh/MyV+O3lcbDQbKb4GTKLPBPmMVvd5HOJKMphkm3GNQj8zC/yqw5Kh
-        5rEwSbfRWtR6IO2vwmYRIDIodsEYJ4lx80r8xiLXH528mawDTcDsq5k4xgn7yupaGojp
-        0VAloQ7VWS8iwpUYCk07gpnnxCW/zd+/KVZ0DYcsEngMz8js8ZYkmdUZ25lJGThjCeRv
-        CM6v23Nv9esdtb1Is/i5lAXqgdnDxiBLtMLLrzexhQ6z6H/IGQ8rLvzB1uDGIbweXmXu
-        0LHg==
-X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9xmwdNnzGHXPbJ/SdwHc="
-X-RZG-CLASS-ID: mo00
-Received: from positron.chronox.de
-        by smtp.strato.de (RZmta 46.7.0 DYNA|AUTH)
-        with ESMTPSA id k09005w4NIkQI1J
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Sat, 23 May 2020 20:46:26 +0200 (CEST)
-From:   Stephan =?ISO-8859-1?Q?M=FCller?= <smueller@chronox.de>
-To:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Lukasz Stelmach <l.stelmach@samsung.com>
-Cc:     Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
+        Sat, 23 May 2020 22:59:19 -0400
+Received: from localhost.localdomain (unknown [222.205.77.158])
+        by mail-app2 (Coremail) with SMTP id by_KCgDHrpH34sleOxHCAQ--.40350S4;
+        Sun, 24 May 2020 10:59:06 +0800 (CST)
+From:   Dinghao Liu <dinghao.liu@zju.edu.cn>
+To:     dinghao.liu@zju.edu.cn, kjlu@umn.edu
+Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Markus Elfring <elfring@users.sourceforge.net>,
-        Matthias Brugger <mbrugger@suse.com>,
-        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v2 1/2] hwrng: iproc-rng200 - Set the quality value
-Date:   Sat, 23 May 2020 20:46:26 +0200
-Message-ID: <3080190.aeNJFYEL58@positron.chronox.de>
-In-Reply-To: <dleftjftbtyubp.fsf%l.stelmach@samsung.com>
-References: <573b2eff-3c74-90e9-50fa-644264d0a0e5@i2se.com> <CGME20200521191415eucas1p2d112a86171b23dcf255e7da53a56f4f3@eucas1p2.samsung.com> <dleftjftbtyubp.fsf%l.stelmach@samsung.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: exynos4-is: Fix runtime PM imbalance in fimc_is_probe
+Date:   Sun, 24 May 2020 10:59:02 +0800
+Message-Id: <20200524025903.17219-1-dinghao.liu@zju.edu.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID: by_KCgDHrpH34sleOxHCAQ--.40350S4
+X-Coremail-Antispam: 1UD129KBjvdXoWrKrW7ZFW3Gr18JF1xZry8uFg_yoWftFX_Gr
+        15Xa1xWrnYgwsFq3yqyFnxurWIvFZ8uw4rGa1SqFy2vw48A3WUtrW0yr98Z347Gw42yFyU
+        ArZ0gF17Cr97CjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUb-AFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AK
+        wVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20x
+        vE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E
+        87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c
+        8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_
+        JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwI
+        xGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc2xSY4AK
+        67AK6r4UMxAIw28IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_GFWkJr1UJwCFx2IqxV
+        CFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r10
+        6r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxV
+        WUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG
+        6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr
+        0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUCg4hUUUUU=
+X-CM-SenderInfo: qrrzjiaqtzq6lmxovvfxof0/1tbiAgEJBlZdtORShQATsT
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Am Donnerstag, 21. Mai 2020, 21:14:02 CEST schrieb Lukasz Stelmach:
+pm_runtime_get_sync() increments the runtime PM usage counter even
+when it returns an error code. Thus a pairing decrement is needed on
+the error handling path to keep the counter balanced. For all error
+paths after pm_runtime_get_sync(), things are the same.
 
-Hi Lukasz,
+Signed-off-by: Dinghao Liu <dinghao.liu@zju.edu.cn>
+---
+ drivers/media/platform/exynos4-is/fimc-is.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> It was <2020-05-21 czw 13:00>, when Stefan Wahren wrote:
-> > Hi Lukasz,
-> >=20
-> > Am 19.05.20 um 23:25 schrieb =C5=81ukasz Stelmach:
-> >> The value was estimaded with ea_iid[1] using on 10485760 bytes read fr=
-om
-> >> the RNG via /dev/hwrng. The min-entropy value calculated using the most
-> >> common value estimate (NIST SP 800-90P[2], section 6.3.1) was 7.964464.
-> >=20
-> > could you please mention in the commit the used hardware
-> > implementation(s) of iproc-rng200 to get this quality?
-> >=20
-> > AFAIK there is still no public register description at least for the
-> > bcm2711. So is it safe to assume that the suggested quality applies to
-> > all possible configurations?
->=20
-> I've learnt that there is a post-processing unit in RNG200 that tests
-> the output of the noise generator and fills FIFO only with data that
-> passes FIPS tests. Unlike simmilar unit in Exynos, it cannot be disabled
-> or bypassed. Therefore, after Stephan Mueller's thorough explanations I
-> am considering dropping this patch in v3.
-
-If you would be more clear what that FIPS test is all about, we may be able=
- to=20
-identify whether it affects the entropy behavior or not. E.g. if it is the=
-=20
-SP800-90B health test following SP880-90B section 4.4, this does not affect=
-=20
-entropy and you could apply your calculation.
->=20
-> However, I stil am still not 100% convinced that it is impossible to
-> assign the quality a reasonable non-zero value in such case.
->=20
-> > Thanks
-> > Stefan
-> >=20
-> >> [1]
-> >> https://protect2.fireeye.com/url?k=3Dda4735b2-87d99b28-da46befd-0cc47a=
-336f
-> >> ae-e1c21080bc6ab1e4&q=3D1&u=3Dhttps%3A%2F%2Fgithub.com%2Fusnistgov%2FS=
-P800-90
-> >> B_EntropyAssessment [2]
-> >> https://csrc.nist.gov/publications/detail/sp/800-90b/final
-> >>=20
-> >> Signed-off-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
-> >> ---
-> >>=20
-> >>  drivers/char/hw_random/iproc-rng200.c | 1 +
-> >>  1 file changed, 1 insertion(+)
-> >>=20
-> >> diff --git a/drivers/char/hw_random/iproc-rng200.c
-> >> b/drivers/char/hw_random/iproc-rng200.c index 32d9fe61a225..95669ece05=
-0f
-> >> 100644
-> >> --- a/drivers/char/hw_random/iproc-rng200.c
-> >> +++ b/drivers/char/hw_random/iproc-rng200.c
-> >> @@ -199,6 +199,7 @@ static int iproc_rng200_probe(struct platform_devi=
-ce
-> >> *pdev)>>=20
-> >>  	priv->rng.read =3D iproc_rng200_read,
-> >>  	priv->rng.init =3D iproc_rng200_init,
-> >>  	priv->rng.cleanup =3D iproc_rng200_cleanup,
-> >>=20
-> >> +	priv->rng.quality =3D 1000,
-> >>=20
-> >>  	/* Register driver */
-> >>  	ret =3D devm_hwrng_register(dev, &priv->rng);
-
-
-Ciao
-Stephan
-
+diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
+index 64148b7e0d98..a474014f0a0f 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is.c
++++ b/drivers/media/platform/exynos4-is/fimc-is.c
+@@ -871,6 +871,7 @@ static int fimc_is_probe(struct platform_device *pdev)
+ err_sd:
+ 	fimc_is_unregister_subdevs(is);
+ err_pm:
++	pm_runtime_put_noidle(dev);
+ 	if (!pm_runtime_enabled(dev))
+ 		fimc_is_runtime_suspend(dev);
+ err_irq:
+-- 
+2.17.1
 
