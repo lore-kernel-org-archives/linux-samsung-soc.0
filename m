@@ -1,4 +1,4 @@
-Return-Path: <SRS0=EObp=7G=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=HOL2=7H=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -7,83 +7,71 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BBE2C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 24 May 2020 19:27:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F9EFC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 May 2020 08:38:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5D5DD2075F
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 24 May 2020 19:27:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DAB2207FB
+	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 May 2020 08:38:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590348445;
-	bh=FzOHq6c7QFOy1Q1Z7apPD+mOvKHo4MaeuHH98f8ZlGY=;
-	h=Subject:From:To:Cc:References:Date:In-Reply-To:List-ID:From;
-	b=HvLhAfr2hnU4wCZQl4kpBlJ6KE2xtQT+NbKJXdJPL0Ca3JX5LLFFWlwz0PukHaIbS
-	 NS+uL+6uya1CzWD987aZtEcAtoY5iLY3W/WHr2khTxkIya1ziSQ+4BCS4Iw2XYyFIC
-	 zKNI0doMZ0T0mql4VWE30vJz8nsFlOxmHbBdMNpA=
+	s=default; t=1590395891;
+	bh=Iu3Bf6K8xAknpcdpi+/p3IjPL1Y2521MLs3/DHEjTLU=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=VZL2O7HtB5Fwpn/CVm1GlKf+qbpnKV7auOvjZppDVywbPZoRHeovK0SRBwUXa22WK
+	 AcCNQljCDzFn/v1ULyR7tGOxFuNU2lGN0f5Tp1blMO6KN7ej/5gKnxP4OiRIzsMnbM
+	 lRtPuBxQYWC7kUI4dbrJvTjRbUPTo1cSs/F9TOP0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388186AbgEXT1Z (ORCPT
+        id S2388283AbgEYIiL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 24 May 2020 15:27:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55946 "EHLO mail.kernel.org"
+        Mon, 25 May 2020 04:38:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387992AbgEXT1Y (ORCPT
+        id S2387973AbgEYIiK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 24 May 2020 15:27:24 -0400
+        Mon, 25 May 2020 04:38:10 -0400
 Received: from [192.168.0.50] (89-70-52-201.dynamic.chello.pl [89.70.52.201])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1FEDD2075F;
-        Sun, 24 May 2020 19:27:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 79D292070A;
+        Mon, 25 May 2020 08:38:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590348444;
-        bh=FzOHq6c7QFOy1Q1Z7apPD+mOvKHo4MaeuHH98f8ZlGY=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=idep3C1p3bUspKEkJE9ZaG/Iyyx+xA2laeDujyI4XQGgtI/65qg8R1KQuPagXDGdP
-         miAPl5OSeZrcqJK0V1wZtER5GGrnQefy/1rZIzU1QqY0xfimi2aJNCpulZschSvS8x
-         OMvyuMEbgZiOcPc3swiHqO2vbjkNxKraXLiLwLGM=
-Subject: Re: [PATCH V2] media: s3c-camif: fix missing disable in
- tegra_adma_probe().
+        s=default; t=1590395890;
+        bh=Iu3Bf6K8xAknpcdpi+/p3IjPL1Y2521MLs3/DHEjTLU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Ivm7FSYUh2nqsjE+OblssRVQFhjQhZGa3VSt8396z3VYi0wiK1zj7mAPXIJMXcuR8
+         UVTL52rRVV9wpm1xhWmmPV9Ht4KgxcyKB4ybjIYrzTXalOCJHxFlZbTaASFYMiEwc6
+         2Hakkt6Vaz6YqU2RCoDO0ENXRZ8y8w9ZRqtFUa3o=
+Subject: Re: [PATCH] media: exynos4-is: Fix runtime PM imbalance in
+ fimc_is_probe
+To:     Dinghao Liu <dinghao.liu@zju.edu.cn>, kjlu@umn.edu
+Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200524025903.17219-1-dinghao.liu@zju.edu.cn>
 From:   Sylwester Nawrocki <snawrocki@kernel.org>
-To:     wu000273@umn.edu
-Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kjlu@umn.edu
-References: <20200524034616.31625-1-wu000273@umn.edu>
- <9b1cdd76-1fbf-c66b-a8e1-929ce2aba791@kernel.org>
-Message-ID: <1c635607-b3b1-decc-a395-5d0464a59e17@kernel.org>
-Date:   Sun, 24 May 2020 21:27:21 +0200
+Message-ID: <7c5931a5-4355-be85-d61d-908afc8f7a19@kernel.org>
+Date:   Mon, 25 May 2020 10:38:06 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <9b1cdd76-1fbf-c66b-a8e1-929ce2aba791@kernel.org>
+In-Reply-To: <20200524025903.17219-1-dinghao.liu@zju.edu.cn>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On 5/24/20 21:03, Sylwester Nawrocki wrote:
-> On 5/24/20 05:46, wu000273@umn.edu wrote:
->> From: Qiushi Wu <wu000273@umn.edu>
->>
->> "pm_runtime_enable()" was not handled by "pm_runtime_disable()"
->> after a call of the function “pm_runtime_get_sync()” failed.
->> Thus move the jump target “err_pm” before calling function
->> "calling pm_runtime_disable()".
->>
->> Fixes: babde1c243b2 ("[media] V4L: Add driver for S3C24XX/S3C64XX SoC 
->> series camera interface")
->> Signed-off-by: Qiushi Wu <wu000273@umn.edu>
->> ---
->>
->> V2: improving commit messages.
+On 5/24/20 04:59, Dinghao Liu wrote:
+> pm_runtime_get_sync() increments the runtime PM usage counter even
+> when it returns an error code. Thus a pairing decrement is needed on
+> the error handling path to keep the counter balanced. For all error
+> paths after pm_runtime_get_sync(), things are the same.
 > 
-> Thanks for the patch. It seems you have got typo in the subject line.
-> With tegra_adma_probe changed to s3c_camif_probe feel free to add:
-> 
-> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Dinghao Liu <dinghao.liu@zju.edu.cn>
 
-I just noticed this patch https://patchwork.linuxtv.org/patch/63976
-which includes your fix and handles one more issue. Thus it might be
-better to apply the patch from Dinghao Liu instead.
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
