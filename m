@@ -2,202 +2,83 @@ Return-Path: <SRS0=n3/p=7I=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E78EC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 May 2020 18:08:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A1A4C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 May 2020 22:00:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 23E2C2065F
-	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 May 2020 18:08:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1930F20888
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 May 2020 22:00:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590516528;
-	bh=imWs4ah6WzLsF7HUgbEz+ghYEeQx18mGuyl9PlBOMCU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=QoGbpgzTvD0m9tnUwcW25CQHOglZTTIapUiIxL5JCec3stQ77QSg0+gkS9KI/dQWi
-	 WSVJ8cy3+G5XW9QQcm8NyHfq5PtuOykKXZqII4oRW09w2DwiGsZ+HaDs5g3kBFplD2
-	 N+6dnPDu3c3OBmoaWCgGfQ1DFHXocpoSHjG1dgQo=
+	s=default; t=1590530405;
+	bh=6cCHzCbwHCPpK/GZfnV7kAAQqSjdl+f6abfQwYrX5lg=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=FXFLYXZBuH2bp/YQ0RVNefGkW0vIX/rhHdFzcNILlkrHX/TA/GR/M8kImzBNIG259
+	 ftmJ+oj3KCaRBiQ1rpJs/oFj6xDE2b7ZGg5pPg66NpzRMyCUh3uJBRpQiMjKzr39fK
+	 K3ymuW5mQGWC7cbEXAVxPfNDO/uTXIvLVCfoyYFc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728497AbgEZSIr (ORCPT
+        id S2391093AbgEZWAE (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 26 May 2020 14:08:47 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:39841 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728285AbgEZSIr (ORCPT
+        Tue, 26 May 2020 18:00:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47276 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391067AbgEZWAE (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 26 May 2020 14:08:47 -0400
-Received: by mail-io1-f65.google.com with SMTP id c8so2715548iob.6;
-        Tue, 26 May 2020 11:08:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ShRmryyfPituzUaTF9xqzITMDWyV5MMJxj9+4c5azDc=;
-        b=C9KvwuUFntPN9VrbKhVQfdEmBoI2rw0FpghH97V6yw5WLmTMue7Iob6YgwtUUfkRiw
-         3tXPuOehPOp57Of2WnEElaRiK/fHBWkuV5+lzJ2TNT6YwJaoY0OmSAnPASYsCP3ITQWf
-         iConQqnkMMzvXE0MNNWAGqHSaCl8bv/xJYPaoRZIxkD/lcYuNOTw4f9NfkgUdzCtiwi8
-         hhOPYxJIUhnU5HSPP5aKURMIWWCrGyrIgHRssH7e5+ZaDUvXF+QXz6kYzj0fi5LFVsGi
-         qdduB1650U4d0+P1kn3uEMeVnJI/EKq6RQuzbUuE2z6wswqaot9XQerAvhrLnbm/vt8E
-         k8NQ==
-X-Gm-Message-State: AOAM532IqvSsAgHSDp4oFfc8m2FOeiAWDkeVjlqiYtkilK7MHduLsYFU
-        MPGs4Z8vEbBx8YeppO5gNA==
-X-Google-Smtp-Source: ABdhPJw3FHEFautJYIk4tPlQQMhfWPm80jnVw4i0iIIULhGB0bIvWnQ4K1CyzKMAwU5hjhBOO6TKQA==
-X-Received: by 2002:a05:6602:134d:: with SMTP id i13mr18153812iov.50.1590516525215;
-        Tue, 26 May 2020 11:08:45 -0700 (PDT)
-Received: from xps15 ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id z13sm324592ilh.82.2020.05.26.11.08.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 May 2020 11:08:44 -0700 (PDT)
-Received: (nullmailer pid 91004 invoked by uid 1000);
-        Tue, 26 May 2020 18:08:43 -0000
-Date:   Tue, 26 May 2020 12:08:43 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     devicetree@vger.kernel.org, linux-scsi@vger.kernel.org,
-        krzk@kernel.org, avri.altman@wdc.com, martin.petersen@oracle.com,
-        kwmad.kim@samsung.com, stanley.chu@mediatek.com,
-        cang@codeaurora.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 08/10] dt-bindings: ufs: Add DT binding documentation
- for ufs
-Message-ID: <20200526180843.GA81537@bogus>
-References: <20200514003914.26052-1-alim.akhtar@samsung.com>
- <CGME20200514005309epcas5p3ccd2b44c1bf20634eea3e232d1c2b62e@epcas5p3.samsung.com>
- <20200514003914.26052-9-alim.akhtar@samsung.com>
+        Tue, 26 May 2020 18:00:04 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC9C020707;
+        Tue, 26 May 2020 22:00:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1590530403;
+        bh=6cCHzCbwHCPpK/GZfnV7kAAQqSjdl+f6abfQwYrX5lg=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=ygvQv6eUsPzv7KC/ucX1BmNr4o/u46EA5P9ZiUJKWqEa7omyNUuSTRjM8B50m+evE
+         iHIN2XiKJKsdcNxAZzk0c3QLDzAjKu3d7kpUtf6p958lNJ/Rj+493/UVChLoz1JGJA
+         i4FFVU3Ey5yt8EQVXzteWRsaxM9QrgbMmDKQ2pdE=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200514003914.26052-9-alim.akhtar@samsung.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <72d1868f-65c0-5dd7-b497-ebc5f78bc34b@samsung.com>
+References: <CGME20200519160043eucas1p11d34223ddaddaf00e136abacc9f351e1@eucas1p1.samsung.com> <72d1868f-65c0-5dd7-b497-ebc5f78bc34b@samsung.com>
+Subject: Re: [GIT PULL] clk/samsung updates for 5.8
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date:   Tue, 26 May 2020 15:00:03 -0700
+Message-ID: <159053040320.88029.2196365046324845080@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, May 14, 2020 at 06:09:12AM +0530, Alim Akhtar wrote:
-> This patch adds DT binding for samsung ufs hci
+Quoting Sylwester Nawrocki (2020-05-19 09:00:42)
+> Hi Stephen, Mike
+>=20
+> The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f31=
+36:
+>=20
+>   Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/=
+clk-v5.8-samsung
+>=20
+> for you to fetch changes up to 25bdae0f1c6609ceaf55fe6700654f0be2253d8e:
+>=20
+>   clk: samsung: exynos5433: Add IGNORE_UNUSED flag to sclk_i2s1 (2020-05-=
+19 16:58:42 +0200)
+>=20
+> ----------------------------------------------------------------
 
-Subject should indicate this is for Samsung in some way.
-
-> 
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  .../bindings/ufs/samsung,exynos-ufs.yaml      | 91 +++++++++++++++++++
->  1 file changed, 91 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-> new file mode 100644
-> index 000000000000..eaa64cc32d52
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-> @@ -0,0 +1,91 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/ufs/samsung,exynos-ufs.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung SoC series UFS host controller Device Tree Bindings
-> +
-> +maintainers:
-> +  - Alim Akhtar <alim.akhtar@samsung.com>
-> +
-> +description: |
-> +  Each Samsung UFS host controller instance should have its own node.
-> +  This binding define Samsung specific binding other then what is used
-> +  in the common ufshcd bindings
-> +  [1] Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-> +
-> +properties:
-> +
-> +  compatible:
-> +    enum:
-> +      - samsung,exynos7-ufs
-> +
-> +  reg:
-> +    items:
-> +     - description: HCI register
-> +     - description: vendor specific register
-> +     - description: unipro register
-> +     - description: UFS protector register
-> +
-> +  reg-names:
-> +    items:
-> +      - const: hci
-> +      - const: vs_hci
-> +      - const: unipro
-> +      - const: ufsp
-> +
-> +  clocks:
-> +    maxItems: 2
-
-maxItems is redundant.
-
-> +    items:
-> +      - description: ufs link core clock
-> +      - description: unipro main clock
-> +
-> +  clock-names:
-> +    maxItems: 2
-
-Here too.
-
-> +    items:
-> +      - const: core_clk
-> +      - const: sclk_unipro_main
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  phys:
-> +    maxItems: 1
-> +
-> +  phy-names:
-> +    maxItems: 1
-
-What's the name? (Though a name is kind of pointless when there is only 
-1.)
-
-With those fixed,
-
-Reviewed-by: Rob Herring <robh@kernel.org>
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - phys
-> +  - phy-names
-> +  - clocks
-> +  - clock-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/clock/exynos7-clk.h>
-> +
-> +    ufs: ufs@15570000 {
-> +       compatible = "samsung,exynos7-ufs";
-> +       reg = <0x15570000 0x100>,
-> +             <0x15570100 0x100>,
-> +             <0x15571000 0x200>,
-> +             <0x15572000 0x300>;
-> +       reg-names = "hci", "vs_hci", "unipro", "ufsp";
-> +       interrupts = <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>;
-> +       clocks = <&clock_fsys1 ACLK_UFS20_LINK>,
-> +                <&clock_fsys1 SCLK_UFSUNIPRO20_USER>;
-> +       clock-names = "core_clk", "sclk_unipro_main";
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&ufs_rst_n &ufs_refclk_out>;
-> +       phys = <&ufs_phy>;
-> +       phy-names = "ufs-phy";
-> +    };
-> +...
-> -- 
-> 2.17.1
-> 
+Thanks. Pulled into clk-next
