@@ -1,190 +1,203 @@
-Return-Path: <SRS0=HOL2=7H=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=n3/p=7I=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 600D0C433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 May 2020 14:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E78EC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 May 2020 18:08:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3672F20878
-	for <linux-samsung-soc@archiver.kernel.org>; Mon, 25 May 2020 14:30:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BOeyv6u9"
+	by mail.kernel.org (Postfix) with ESMTP id 23E2C2065F
+	for <linux-samsung-soc@archiver.kernel.org>; Tue, 26 May 2020 18:08:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1590516528;
+	bh=imWs4ah6WzLsF7HUgbEz+ghYEeQx18mGuyl9PlBOMCU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=QoGbpgzTvD0m9tnUwcW25CQHOglZTTIapUiIxL5JCec3stQ77QSg0+gkS9KI/dQWi
+	 WSVJ8cy3+G5XW9QQcm8NyHfq5PtuOykKXZqII4oRW09w2DwiGsZ+HaDs5g3kBFplD2
+	 N+6dnPDu3c3OBmoaWCgGfQ1DFHXocpoSHjG1dgQo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725819AbgEYOaE (ORCPT
+        id S1728497AbgEZSIr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 25 May 2020 10:30:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46476 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725809AbgEYOaE (ORCPT
+        Tue, 26 May 2020 14:08:47 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:39841 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728285AbgEZSIr (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 25 May 2020 10:30:04 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD54EC061A0E;
-        Mon, 25 May 2020 07:30:03 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id x1so20648999ejd.8;
-        Mon, 25 May 2020 07:30:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=yMh1OLCPJYxMT3dRwDh/Pc1pXHaCVXG/hZf91AhdVB4=;
-        b=BOeyv6u90esY242TIOVf8kZuHxZc7IiQ4MFI+Zqvwnzes9+xpAj9hLrHuSa2uyOBDF
-         Or68NuUhIgoEg6nrhjh+IEbnG9Whd1p5tJqEWeNdAT0ST3Osy+qsjbWYmUd9upYS+BdI
-         2qgI30mwbvOogfXDlMdztExw+nMndzWJd43DYd3kfgXSNP3MnD7GjZ0Xy8FkjRu7QqWk
-         VUSXBMCyKF/d2KTbv5eA+/8WowJnlaEfolsh1wtKblHmFhkOjXyGM9Yf7P7h8hbeuACF
-         hyKMECLKRaGsrNpU3R2oAklEG3KJhKdUdgKPm1XyKHn81exBNgBWveq1bY0yPJAdBZfJ
-         PuyA==
+        Tue, 26 May 2020 14:08:47 -0400
+Received: by mail-io1-f65.google.com with SMTP id c8so2715548iob.6;
+        Tue, 26 May 2020 11:08:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=yMh1OLCPJYxMT3dRwDh/Pc1pXHaCVXG/hZf91AhdVB4=;
-        b=qxD1Xddd72zLq/ZkJcZ5XRGNGtDfMHflZ96jbipnEr027zHorfkcHjLReZIfGgGdU3
-         BmaMwxmVGb0DwiiXeo6sJ6QQAVQyTD8fRwSX1QI/bPhWfaba93GjwN390Cxypsme5bB2
-         HqZ+4bJYOzby6snhmfAoqF1+DpeFgjdV3ZnbMc2+Fmh9R26ZaUDevUTNEj4ZtKYoa7M6
-         EtOldMPY8wsrwCva114JlxcNR2pkcO1VCkcfH03Hh2cQzxQp2rOpZWUoF0MMkpbRHXa/
-         ELNtweGZ9UM9YkSnc2bCgoO3Vm1JThr/ysi+Snogw8mTl40wUSs6kkGxzTAj2ftb47u3
-         SU1w==
-X-Gm-Message-State: AOAM530CffYyOzHyEYcjAtKg0QQZ9YuY/j898e55VCf9d86mAqGub+R5
-        kjMXkyAk5Z3H6Eg/BgG6nZk=
-X-Google-Smtp-Source: ABdhPJwpDfwq3VxDQ5PqHUh5/tPRWT5lYSDfIlEbnN3rH0SxoiirUlcrfg9jhMOb+eHRznUbsJQX/A==
-X-Received: by 2002:a17:906:c7cc:: with SMTP id dc12mr19635108ejb.263.1590417002325;
-        Mon, 25 May 2020 07:30:02 -0700 (PDT)
-Received: from felia.fritz.box ([2001:16b8:2dfa:6900:4b6:3b49:50f6:6c03])
-        by smtp.gmail.com with ESMTPSA id f10sm16642978edt.69.2020.05.25.07.30.00
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ShRmryyfPituzUaTF9xqzITMDWyV5MMJxj9+4c5azDc=;
+        b=C9KvwuUFntPN9VrbKhVQfdEmBoI2rw0FpghH97V6yw5WLmTMue7Iob6YgwtUUfkRiw
+         3tXPuOehPOp57Of2WnEElaRiK/fHBWkuV5+lzJ2TNT6YwJaoY0OmSAnPASYsCP3ITQWf
+         iConQqnkMMzvXE0MNNWAGqHSaCl8bv/xJYPaoRZIxkD/lcYuNOTw4f9NfkgUdzCtiwi8
+         hhOPYxJIUhnU5HSPP5aKURMIWWCrGyrIgHRssH7e5+ZaDUvXF+QXz6kYzj0fi5LFVsGi
+         qdduB1650U4d0+P1kn3uEMeVnJI/EKq6RQuzbUuE2z6wswqaot9XQerAvhrLnbm/vt8E
+         k8NQ==
+X-Gm-Message-State: AOAM532IqvSsAgHSDp4oFfc8m2FOeiAWDkeVjlqiYtkilK7MHduLsYFU
+        MPGs4Z8vEbBx8YeppO5gNA==
+X-Google-Smtp-Source: ABdhPJw3FHEFautJYIk4tPlQQMhfWPm80jnVw4i0iIIULhGB0bIvWnQ4K1CyzKMAwU5hjhBOO6TKQA==
+X-Received: by 2002:a05:6602:134d:: with SMTP id i13mr18153812iov.50.1590516525215;
+        Tue, 26 May 2020 11:08:45 -0700 (PDT)
+Received: from xps15 ([64.188.179.252])
+        by smtp.gmail.com with ESMTPSA id z13sm324592ilh.82.2020.05.26.11.08.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 May 2020 07:30:01 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc:     Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Ettore Chimenti <ek5.chimenti@gmail.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-tegra@vger.kernel.org, Joe Perches <joe@perches.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH SECOND RESEND] MAINTAINERS: adjust entries to moving CEC platform drivers
-Date:   Mon, 25 May 2020 16:29:46 +0200
-Message-Id: <20200525142946.8268-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 26 May 2020 11:08:44 -0700 (PDT)
+Received: (nullmailer pid 91004 invoked by uid 1000);
+        Tue, 26 May 2020 18:08:43 -0000
+Date:   Tue, 26 May 2020 12:08:43 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Alim Akhtar <alim.akhtar@samsung.com>
+Cc:     devicetree@vger.kernel.org, linux-scsi@vger.kernel.org,
+        krzk@kernel.org, avri.altman@wdc.com, martin.petersen@oracle.com,
+        kwmad.kim@samsung.com, stanley.chu@mediatek.com,
+        cang@codeaurora.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 08/10] dt-bindings: ufs: Add DT binding documentation
+ for ufs
+Message-ID: <20200526180843.GA81537@bogus>
+References: <20200514003914.26052-1-alim.akhtar@samsung.com>
+ <CGME20200514005309epcas5p3ccd2b44c1bf20634eea3e232d1c2b62e@epcas5p3.samsung.com>
+ <20200514003914.26052-9-alim.akhtar@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200514003914.26052-9-alim.akhtar@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Commit 4be5e8648b0c ("media: move CEC platform drivers to a separate
-directory") moved various files into a new directory structure, but did
-not adjust the entries in MAINTAINERS.
+On Thu, May 14, 2020 at 06:09:12AM +0530, Alim Akhtar wrote:
+> This patch adds DT binding for samsung ufs hci
 
-Since then, ./scripts/get_maintainer.pl --self-test=patterns complains:
+Subject should indicate this is for Samsung in some way.
 
-  warning: no file matches F: drivers/media/platform/s5p-cec/
-  warning: no file matches F: drivers/media/platform/tegra-cec/
-  warning: no file matches F: drivers/media/platform/cec-gpio/
-  warning: no file matches F: drivers/media/platform/meson/ao-cec-g12a.c
-  warning: no file matches F: drivers/media/platform/meson/ao-cec.c
-  warning: no file matches F: drivers/media/platform/seco-cec/seco-cec.c
-  warning: no file matches F: drivers/media/platform/seco-cec/seco-cec.h
-  warning: no file matches F: drivers/media/platform/sti/cec/
+> 
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  .../bindings/ufs/samsung,exynos-ufs.yaml      | 91 +++++++++++++++++++
+>  1 file changed, 91 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
+> new file mode 100644
+> index 000000000000..eaa64cc32d52
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
+> @@ -0,0 +1,91 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/ufs/samsung,exynos-ufs.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Samsung SoC series UFS host controller Device Tree Bindings
+> +
+> +maintainers:
+> +  - Alim Akhtar <alim.akhtar@samsung.com>
+> +
+> +description: |
+> +  Each Samsung UFS host controller instance should have its own node.
+> +  This binding define Samsung specific binding other then what is used
+> +  in the common ufshcd bindings
+> +  [1] Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+> +
+> +properties:
+> +
+> +  compatible:
+> +    enum:
+> +      - samsung,exynos7-ufs
+> +
+> +  reg:
+> +    items:
+> +     - description: HCI register
+> +     - description: vendor specific register
+> +     - description: unipro register
+> +     - description: UFS protector register
+> +
+> +  reg-names:
+> +    items:
+> +      - const: hci
+> +      - const: vs_hci
+> +      - const: unipro
+> +      - const: ufsp
+> +
+> +  clocks:
+> +    maxItems: 2
 
-Update the MAINTAINERS entries to the new file locations.
+maxItems is redundant.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Mauro, please pick this non-urgent minor clean-up patch on top of the
-CEC platform driver moves.
- 
-applies cleanly on next-20200417, next-20200505 and still on next-20200525
-for this second resend.
+> +    items:
+> +      - description: ufs link core clock
+> +      - description: unipro main clock
+> +
+> +  clock-names:
+> +    maxItems: 2
 
-v1 send here:
-https://lore.kernel.org/lkml/20200418093630.6149-1-lukas.bulwahn@gmail.com/
+Here too.
 
-v1 first resend here:
-https://lore.kernel.org/lkml/20200506050744.4779-1-lukas.bulwahn@gmail.com/
+> +    items:
+> +      - const: core_clk
+> +      - const: sclk_unipro_main
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  phys:
+> +    maxItems: 1
+> +
+> +  phy-names:
+> +    maxItems: 1
 
- MAINTAINERS | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+What's the name? (Though a name is kind of pointless when there is only 
+1.)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7a442b48f24b..bf5cb149101b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2403,7 +2403,7 @@ L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
- L:	linux-media@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/media/s5p-cec.txt
--F:	drivers/media/platform/s5p-cec/
-+F:	drivers/media/cec/platform/s5p/
- 
- ARM/SAMSUNG S5P SERIES JPEG CODEC SUPPORT
- M:	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>
-@@ -2548,7 +2548,7 @@ L:	linux-tegra@vger.kernel.org
- L:	linux-media@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/media/tegra-cec.txt
--F:	drivers/media/platform/tegra-cec/
-+F:	drivers/media/cec/platform/tegra/
- 
- ARM/TETON BGA MACHINE SUPPORT
- M:	"Mark F. Brown" <mark.brown314@gmail.com>
-@@ -3969,7 +3969,7 @@ S:	Supported
- W:	http://linuxtv.org
- T:	git git://linuxtv.org/media_tree.git
- F:	Documentation/devicetree/bindings/media/cec-gpio.txt
--F:	drivers/media/platform/cec-gpio/
-+F:	drivers/media/cec/platform/cec-gpio/
- 
- CELL BROADBAND ENGINE ARCHITECTURE
- M:	Arnd Bergmann <arnd@arndb.de>
-@@ -11146,8 +11146,7 @@ S:	Supported
- W:	http://linux-meson.com/
- T:	git git://linuxtv.org/media_tree.git
- F:	Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.yaml
--F:	drivers/media/platform/meson/ao-cec-g12a.c
--F:	drivers/media/platform/meson/ao-cec.c
-+F:	drivers/media/cec/platform/meson/
- 
- MESON NAND CONTROLLER DRIVER FOR AMLOGIC SOCS
- M:	Liang Yang <liang.yang@amlogic.com>
-@@ -15212,8 +15211,7 @@ F:	drivers/mmc/host/sdricoh_cs.c
- SECO BOARDS CEC DRIVER
- M:	Ettore Chimenti <ek5.chimenti@gmail.com>
- S:	Maintained
--F:	drivers/media/platform/seco-cec/seco-cec.c
--F:	drivers/media/platform/seco-cec/seco-cec.h
-+F:	drivers/media/cec/platform/seco/
- 
- SECURE COMPUTING
- M:	Kees Cook <keescook@chromium.org>
-@@ -16249,7 +16247,7 @@ STI CEC DRIVER
- M:	Benjamin Gaignard <benjamin.gaignard@linaro.org>
- S:	Maintained
- F:	Documentation/devicetree/bindings/media/stih-cec.txt
--F:	drivers/media/platform/sti/cec/
-+F:	drivers/media/cec/platform/sti/
- 
- STK1160 USB VIDEO CAPTURE DRIVER
- M:	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
--- 
-2.17.1
+With those fixed,
 
+Reviewed-by: Rob Herring <robh@kernel.org>
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - phys
+> +  - phy-names
+> +  - clocks
+> +  - clock-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/clock/exynos7-clk.h>
+> +
+> +    ufs: ufs@15570000 {
+> +       compatible = "samsung,exynos7-ufs";
+> +       reg = <0x15570000 0x100>,
+> +             <0x15570100 0x100>,
+> +             <0x15571000 0x200>,
+> +             <0x15572000 0x300>;
+> +       reg-names = "hci", "vs_hci", "unipro", "ufsp";
+> +       interrupts = <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>;
+> +       clocks = <&clock_fsys1 ACLK_UFS20_LINK>,
+> +                <&clock_fsys1 SCLK_UFSUNIPRO20_USER>;
+> +       clock-names = "core_clk", "sclk_unipro_main";
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&ufs_rst_n &ufs_refclk_out>;
+> +       phys = <&ufs_phy>;
+> +       phy-names = "ufs-phy";
+> +    };
+> +...
+> -- 
+> 2.17.1
+> 
