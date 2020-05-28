@@ -2,111 +2,145 @@ Return-Path: <SRS0=J4qy=7K=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5CCDC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 May 2020 06:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9D65C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 May 2020 08:15:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 832E2207BC
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 May 2020 06:42:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0FA020B80
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 May 2020 08:15:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FLxBZ9um"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="byU9RVrA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726891AbgE1Gl7 (ORCPT
+        id S1726803AbgE1IPm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 28 May 2020 02:41:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54124 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725836AbgE1Gl6 (ORCPT
+        Thu, 28 May 2020 04:15:42 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:54134 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726770AbgE1IPl (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 28 May 2020 02:41:58 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C823C05BD1E;
-        Wed, 27 May 2020 23:41:58 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id a13so11131946pls.8;
-        Wed, 27 May 2020 23:41:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xrBThDxeaj7xavtiCZsH7YWZDMSxeuAoxlObig/4N/I=;
-        b=FLxBZ9um2B2vEtPr7iWB8XrtkQjPngKLYYruLGsgNh0z4zcH/kRn+xf9BjeYNqgn6v
-         a1y8YeP8u9KYE8YO90AbBef2V2RHKBFt5Uht42QMif6yLUiSoBF96vNaq3O2mrjUecyY
-         7n1PFt5QAypRKHp3c0ajsBka1XeAjra/w41dwwD+ZJLvJoA6iDRzZu5rieTDtEBfc8OH
-         XK8eB+Hghu9vQMOaaO+1w5bUxee5WXmODQZsnsKZhcoVUJYU0lTWAJlmakfZzBsw9Qan
-         cQPV/i03z77q21dBx2XCO2Qg/wTl24x7aWlKON4pprcUxVi2JtpcDVn9aZOW5joX9rJl
-         PPDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xrBThDxeaj7xavtiCZsH7YWZDMSxeuAoxlObig/4N/I=;
-        b=O+X25ODh+OiQ0NUggTPO+dplbmElkFUgJUDy/NU4LMnL+iuWon2cQfwnWbdZcpaCjk
-         20Jk2U9u/YjEvkb5odO85d8yc8+GfNPd2pvhYbyscVTaSMjJMCEtVMRmhAjjbAufiEFK
-         Xsnk/7Gde3Quo5eBYZ585pJOk1KqG0emBGp4HueJQf5jJVicOIPd9ZgbB+4Kay/QtAUO
-         evRpmKDKtYYRyAsSmF3+MsZN6F/IqlUiItwUAOIq7HZ50i1r8IYYpB1QhjsJsJeDw8Hy
-         5amPqE3UE49yJWIfFyKTqHoBHVhD3y8Ef2mNPllbAis8UsmMkOVVzlldaSieAwmXLU51
-         Qwow==
-X-Gm-Message-State: AOAM532WQoHbl0/AdIqhywVQRP++ibdVcj/65i90N+PGMPu4CF5IDOx6
-        9YxRZEqddqXtKW9+6BJ4aGg=
-X-Google-Smtp-Source: ABdhPJxfyVJYCW6OXxyIdqotYbExAo0vhBiYRCbKzt47PRvIp3kO28WGI5wLHLxB+zAdla2Gy3EPbA==
-X-Received: by 2002:a17:902:9695:: with SMTP id n21mr2045679plp.137.1590648118126;
-        Wed, 27 May 2020 23:41:58 -0700 (PDT)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.gmail.com with ESMTPSA id h21sm4284633pjz.6.2020.05.27.23.41.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 May 2020 23:41:57 -0700 (PDT)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
+        Thu, 28 May 2020 04:15:41 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200528081540euoutp021957eb6d538f74618b138b3be665a4fd~TIyYiCim50903709037euoutp02Z
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 May 2020 08:15:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200528081540euoutp021957eb6d538f74618b138b3be665a4fd~TIyYiCim50903709037euoutp02Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1590653740;
+        bh=VQSszDtDziFjMdzYxKpIe08CqcC8Rb3rsogKDVBYqqY=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=byU9RVrA4y2BcN9B9TsUgK84yC7HIqa+Wsg0e1ht22UbKoyi4jn1iWZTaZnea3Zwh
+         LwN5Nk8YW0paxi4hhUfdJb5rwX4DO2qybN7PkZ3BdF9KP7peB61ugCO1PRVr5D4c50
+         7rzzGcKxtTKJ678tNADsijC7CE9/OZuhG5qQ/9FU=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200528081539eucas1p19c17e7b5fda209e51c069997997f8fe2~TIyYURA4N2917629176eucas1p1Z;
+        Thu, 28 May 2020 08:15:39 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id ED.87.61286.B237FCE5; Thu, 28
+        May 2020 09:15:39 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200528081539eucas1p1590e576d26ffd51cb860e6c6040fc437~TIyX7kr850059600596eucas1p1G;
+        Thu, 28 May 2020 08:15:39 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200528081539eusmtrp132cfd217b58fe5feda9ac6ff81582078~TIyX7Bfc70865708657eusmtrp10;
+        Thu, 28 May 2020 08:15:39 +0000 (GMT)
+X-AuditID: cbfec7f2-ef1ff7000001ef66-a4-5ecf732bf20d
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 56.BE.08375.B237FCE5; Thu, 28
+        May 2020 09:15:39 +0100 (BST)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200528081539eusmtip179453deef7ebc31b4d63f9585efda64f~TIyXlRFl42008620086eusmtip10;
+        Thu, 28 May 2020 08:15:39 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH v2] media: exynos4-is: Add missed check for pinctrl_lookup_state()
-Date:   Thu, 28 May 2020 14:41:47 +0800
-Message-Id: <20200528064147.547158-1-hslester96@gmail.com>
-X-Mailer: git-send-email 2.26.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] ARM: dts: exynos: Extend all Exynos5800 A15's OPPs with max
+ voltage data
+Date:   Thu, 28 May 2020 10:15:25 +0200
+Message-Id: <20200528081525.14858-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrBIsWRmVeSWpSXmKPExsWy7djPc7raxefjDDZP0rXYOGM9q8X58xvY
+        LWac38dksfbIXXYHFo9NqzrZPPq2rGL0+LxJLoA5issmJTUnsyy1SN8ugSvj+eL3TAVPuSoW
+        7djN1MD4iaOLkZNDQsBE4ubvdaxdjFwcQgIrGCUe/JzDBuF8YZQ4c/4FVOYzo8Svw9eYYFoe
+        np3IDJFYzijxbuFRVriWD1OOMIJUsQkYSnS97WIDsUUEVCU+ty1gByliFuhjlLi+dy4zSEJY
+        IFriRdcMdhCbBahofsNyVhCbV8BWoqHtCBvEOnmJ1RsOgK2TEFjDJnHx1E4WiISLxITrcxkh
+        bGGJV8e3sEPYMhKnJ/ewQDQ0M0o8PLeWHcLpYZS43DQDqsNa4s65X0ArOIBu0pRYv0sfIuwo
+        0f1rHiNIWEKAT+LGW0GQMDOQOWnbdGaIMK9ER5sQRLWaxKzj6+DWHrxwiRnC9pDY2rsQ7Ewh
+        gViJjwsmMU5glJuFsGsBI+MqRvHU0uLc9NRiw7zUcr3ixNzi0rx0veT83E2MwPg+/e/4px2M
+        Xy8lHWIU4GBU4uHt8DoXJ8SaWFZcmXuIUYKDWUmE1+ns6Tgh3pTEyqrUovz4otKc1OJDjNIc
+        LErivMaLXsYKCaQnlqRmp6YWpBbBZJk4OKUaGCNd5xU+OihyxSuMwUe/XbOoSmQSw10L46xV
+        Norv+gXFpjh2/fzzxT2c9bfRnkMvlaIa7SN/To/69LDr5QTemWtezpe1LH+VJVlc5BKsZ1B4
+        06Xo7rIq/qdSpU7BX6V9431dnqwubU/mdt14WHPezs9rC772+P8x3fFda23TL+sHnWIcUw/N
+        VmIpzkg01GIuKk4EAPESYOTrAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLLMWRmVeSWpSXmKPExsVy+t/xu7raxefjDI60iVhsnLGe1eL8+Q3s
+        FjPO72OyWHvkLrsDi8emVZ1sHn1bVjF6fN4kF8AcpWdTlF9akqqQkV9cYqsUbWhhpGdoaaFn
+        ZGKpZ2hsHmtlZKqkb2eTkpqTWZZapG+XoJfxfPF7poKnXBWLduxmamD8xNHFyMkhIWAi8fDs
+        ROYuRi4OIYGljBI9x86xQyRkJE5Oa2CFsIUl/lzrYoMo+sQocfHTIzaQBJuAoUTX2y4wW0RA
+        VeJz2wJ2kCJmgQmMEuc7Z4AlhAUiJWY2zWcCsVmAiuY3LAebyitgK9HQdoQNYoO8xOoNB5gn
+        MPIsYGRYxSiSWlqcm55bbKhXnJhbXJqXrpecn7uJERhU24793LyD8dLG4EOMAhyMSjy8Bh7n
+        4oRYE8uKK3MPMUpwMCuJ8DqdPR0nxJuSWFmVWpQfX1Sak1p8iNEUaPlEZinR5HxgwOeVxBua
+        GppbWBqaG5sbm1koifN2CByMERJITyxJzU5NLUgtgulj4uCUamB0uGvpLbbnSpzdtqNrX1t7
+        6Zwq2fX8Xs7V+2ziLkmxMhXzgjvfxjb35ydlzc+Qf3J1Um3/stictavSGdksVtTqzPXvW5Qr
+        fGw7U4NxG0vcf84bMRnMn/W5mrxZVJ4te9IeVaQrVVZ2bldFRu2k/8HzvtpckN6R8SBnGm+y
+        5IoKN+5djf1Jr5RYijMSDbWYi4oTASs+gB9AAgAA
+X-CMS-MailID: 20200528081539eucas1p1590e576d26ffd51cb860e6c6040fc437
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200528081539eucas1p1590e576d26ffd51cb860e6c6040fc437
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200528081539eucas1p1590e576d26ffd51cb860e6c6040fc437
+References: <CGME20200528081539eucas1p1590e576d26ffd51cb860e6c6040fc437@eucas1p1.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-fimc_md_get_pinctrl() misses a check for pinctrl_lookup_state().
-Add the missed check to fix it.
+On Exynos5422/5800 the regulator supply for the A15 cores ("vdd_arm") is
+coupled with the regulator supply for the SoC internal circuits
+("vdd_int"), thus all operating points that modify one of those supplies
+have to specify a triplet of the min/target/max values to properly work
+with regulator coupling.
 
-Fixes: 4163851f7b99 ("[media] s5p-fimc: Use pinctrl API for camera ports configuration]") 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Fixes: eaffc4de16c6 ("ARM: dts: exynos: Add missing CPU frequencies for Exynos5422/5800")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
-Changes in v2:
-  - Add fixes tag.
+ arch/arm/boot/dts/exynos5800.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- drivers/media/platform/exynos4-is/media-dev.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index 9aaf3b8060d5..9c31d950cddf 100644
---- a/drivers/media/platform/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -1270,6 +1270,9 @@ static int fimc_md_get_pinctrl(struct fimc_md *fmd)
- 
- 	pctl->state_idle = pinctrl_lookup_state(pctl->pinctrl,
- 					PINCTRL_STATE_IDLE);
-+	if (IS_ERR(pctl->state_idle))
-+		return PTR_ERR(pctl->state_idle);
-+
- 	return 0;
- }
- 
+diff --git a/arch/arm/boot/dts/exynos5800.dtsi b/arch/arm/boot/dts/exynos5800.dtsi
+index dfb99ab53c3e..526729dad53f 100644
+--- a/arch/arm/boot/dts/exynos5800.dtsi
++++ b/arch/arm/boot/dts/exynos5800.dtsi
+@@ -23,17 +23,17 @@
+ &cluster_a15_opp_table {
+ 	opp-2000000000 {
+ 		opp-hz = /bits/ 64 <2000000000>;
+-		opp-microvolt = <1312500>;
++		opp-microvolt = <1312500 1312500 1500000>;
+ 		clock-latency-ns = <140000>;
+ 	};
+ 	opp-1900000000 {
+ 		opp-hz = /bits/ 64 <1900000000>;
+-		opp-microvolt = <1262500>;
++		opp-microvolt = <1262500 1262500 1500000>;
+ 		clock-latency-ns = <140000>;
+ 	};
+ 	opp-1800000000 {
+ 		opp-hz = /bits/ 64 <1800000000>;
+-		opp-microvolt = <1237500>;
++		opp-microvolt = <1237500 1237500 1500000>;
+ 		clock-latency-ns = <140000>;
+ 	};
+ 	opp-1700000000 {
 -- 
-2.26.2
+2.17.1
 
