@@ -2,133 +2,157 @@ Return-Path: <SRS0=3jfO=7L=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E6CCC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 May 2020 00:24:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C00D5C433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 May 2020 05:45:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 24F4420897
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 May 2020 00:24:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AB58208B8
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 May 2020 05:45:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b="r/axjxYl"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pk00bMCq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437929AbgE2AY2 (ORCPT
+        id S1725795AbgE2FpL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 28 May 2020 20:24:28 -0400
-Received: from ts18-13.vcr.istar.ca ([204.191.154.188]:45220 "EHLO
-        ale.deltatee.com" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S2437659AbgE2AY1 (ORCPT
+        Fri, 29 May 2020 01:45:11 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:46233 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725601AbgE2FpK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 28 May 2020 20:24:27 -0400
-X-Greylist: delayed 1339 seconds by postgrey-1.27 at vger.kernel.org; Thu, 28 May 2020 20:24:25 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=deltatee.com; s=20200525; h=Subject:Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Sender:
-        Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-        :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=SHO6IGYEd6YDcItDhjnlUPf5s8OIRwKvgFq6kM1/DP0=; b=r/axjxYlIiDMYaBSzOJcmN4D8z
-        5nhVyK5+jkTuLY9r/DkIPGDqA4zBXW2lnj24/75M8PApunP8NH63l8JZKK4zOM+RkgNUjkh8Zu7L0
-        uAWAMjn96WqKiZuaMyo8cBfMY0aRwfiPej4ElwlF0HqAS+905dMVMngwIHFwJNhllq+TXuBP3naK4
-        /r6v4D4I21bAG2X4/zOYuy5cJVYuMqe8ZbDWBeVK1iPsKmEydsM4SFCoqrouhRTbQELtOXUOa1f+x
-        r0Injuuidql/AmLXAXcQzgEff4xFuOZ6W7hJhBwZm1rFF3QVErdj3XcX2phEoDBlDrcVSy7R3MomJ
-        Ro1gd+aA==;
-Received: from s0106602ad0811846.cg.shawcable.net ([68.147.191.165] helo=[192.168.0.12])
-        by ale.deltatee.com with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <logang@deltatee.com>)
-        id 1jeSSD-0001kd-5g; Thu, 28 May 2020 18:00:54 -0600
-To:     Tom Murphy <murphyt7@tcd.ie>, iommu@lists.linux-foundation.org
-Cc:     kvm@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-tegra@vger.kernel.org, Julien Grall <julien.grall@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Will Deacon <will@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+        Fri, 29 May 2020 01:45:10 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200529054508euoutp014603a4e06a483a4b52f75003e43837c5~TaYPVSzCj3116531165euoutp01M
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 May 2020 05:45:08 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200529054508euoutp014603a4e06a483a4b52f75003e43837c5~TaYPVSzCj3116531165euoutp01M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1590731108;
+        bh=PhYV4Ig7hxvvmf0mdrqx6bcTuMgVhMvwyNQLnIx936w=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=pk00bMCqaMz41c8y4EMFkOLaDj661V0DtzYjz31GCg2a/wTA6WnLVdcPYMSfexXF8
+         K5a/Alzdf+q9SdTz1R6Z4oI0lm3uQ1TUstKVaaGqlxS59s6i6XQVnsCC/A0sYiLRom
+         QLRbNq4odB+dG4+wSK9Itwy2okluOjtYHAcOjdhc=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200529054507eucas1p2bfa9e6bd17d79b2ad655cf9692828634~TaYO7KLFs2876028760eucas1p2R;
+        Fri, 29 May 2020 05:45:07 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 3B.38.60698.361A0DE5; Fri, 29
+        May 2020 06:45:07 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200529054507eucas1p25ab3a5fe0f76e766738143b46b2c6e87~TaYOcteCM0802308023eucas1p2v;
+        Fri, 29 May 2020 05:45:07 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200529054507eusmtrp1fd3b41be09d8c35f3d9b9148147bf8be~TaYOb6-tf0887308873eusmtrp1R;
+        Fri, 29 May 2020 05:45:07 +0000 (GMT)
+X-AuditID: cbfec7f5-a0fff7000001ed1a-95-5ed0a163fbf0
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 0E.FF.07950.361A0DE5; Fri, 29
+        May 2020 06:45:07 +0100 (BST)
+Received: from [106.210.88.143] (unknown [106.210.88.143]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200529054506eusmtip212b23ce8c28928465fcd087af254baf0~TaYNqnhVK2563425634eusmtip2K;
+        Fri, 29 May 2020 05:45:06 +0000 (GMT)
+Subject: Re: [PATCH] regulator: do not balance regulators without
+ constraints
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        Eric Auger <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        linux-mediatek@lists.infradead.org,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        virtualization@lists.linux-foundation.org,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>
-References: <20191221150402.13868-1-murphyt7@tcd.ie>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <465815ae-9292-f37a-59b9-03949cb68460@deltatee.com>
-Date:   Thu, 28 May 2020 18:00:44 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Viresh Kumar <viresh.kumar@linaro.org>, peron.clem@gmail.com,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        linux-samsung-soc@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <56e496bc-172f-d62f-5376-c8d734af6a51@samsung.com>
+Date:   Fri, 29 May 2020 07:45:06 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.8.1
 MIME-Version: 1.0
-In-Reply-To: <20191221150402.13868-1-murphyt7@tcd.ie>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200528134338.GD3606@sirena.org.uk>
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 68.147.191.165
-X-SA-Exim-Rcpt-To: baolu.lu@linux.intel.com, robin.murphy@arm.com, kgene@kernel.org, linux-kernel@vger.kernel.org, cohuck@redhat.com, dwmw2@infradead.org, gerald.schaefer@de.ibm.com, virtualization@lists.linux-foundation.org, tglx@linutronix.de, matthias.bgg@gmail.com, rodrigo.vivi@intel.com, linux-mediatek@lists.infradead.org, alex.williamson@redhat.com, eric.auger@redhat.com, intel-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, linux-s390@vger.kernel.org, linux-arm-kernel@lists.infradead.org, agross@kernel.org, linux-rockchip@lists.infradead.org, jonathanh@nvidia.com, krzk@kernel.org, maz@kernel.org, linux-samsung-soc@vger.kernel.org, jean-philippe@linaro.org, m.szyprowski@samsung.com, will@kernel.org, thierry.reding@gmail.com, julien.grall@arm.com, linux-tegra@vger.kernel.org, bjorn.andersson@linaro.org, dri-devel@lists.freedesktop.org, airlied@linux.ie, kvm@vger.kernel.org, iommu@lists.linux-foundation.org, murphyt7@tcd.ie
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH 0/8] Convert the intel iommu driver to the dma-iommu api
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjm2znbjquN41R8UStYJBSmLfvxWWJ3ONSPCqIi8LLq5KRpspOW
+        /SjNTJM17UZzaloSmem8YKnDJDVctdpKU8tLJRmWuG66pVmS2+niv+d5n+f53gsfRcjfCwOo
+        hKQjrDZJpVGIJOTdjinb8v3XnsWsyHQpca2hWogvDw2LcO/EiBDf/voOYbu9RozfFr8SYNeL
+        HAHuMheJ8Pi5Bwgb7C0CPDb5VID7r3aR+Im1U4hnempJnPPAReBaJ7OOZpqMg2KmruKsiBno
+        aRYxeb9WMPXd2SSjr69AjOVlg4AZr1u4ndoriTzAahJSWW1YVJxE3fvlkzj55rxj5nJ1Oir1
+        ykUUBfQqMDnVuUhCyelyBOXPuwU8mUBQWWQieTKOoL/yzazi5Uk4Szr+CDcRPMq0Ejz5jMCR
+        8U3sdvnQ22DolgG5sS+9GLq/3/MkCLqChKr8G0K3IKKVkOvIFbmxlI6CFwaHpwVJL4HnzVme
+        h/zoaNC9GSV4jzc8Khgm3diLXgm/bk96PAS9CBocRQSP/aFvuMSzBNBZFOgbBxE/9ybQ9w4K
+        eewDo5Z6MY+DwHpRR/KBTARDtioxT3QIuk4Z/qTXwIDth8h9M4JeCtXmML68HqbPZgn5U8rg
+        pcObH0IGF+5eIfiyFHLOyHl3MBgtpn9tW591EvlIYZyzmnHOOsY56xj/9y1FZAXyZ1O4xHiW
+        C09ij4ZyqkQuJSk+dP/hxDo0+/msMxZnI2r5ua8N0RRSzJfWFNhj5EJVKpeW2IaAIhS+0g1P
+        rTFy6QFV2nFWezhWm6JhuTYUSJEKf2n49Y/RcjpedYQ9xLLJrPavKqC8AtJRwYnXEdNNUZam
+        ntVpeXZZtr6PK/HdvOq9sT9kRLxg6+Wgg3fCdAk7L8lm2scu7SY1I2qQMUfx6uC1gkb/8zur
+        1staQjcOyO4rH5ftKzG1R7TbzX47NHu2hBBBHS6TeldxYSuW1yZnRILt9EO/D4WBZWzgycfV
+        fd7jcbH5o1OcguTUKuUyQsupfgOtJGNveAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBIsWRmVeSWpSXmKPExsVy+t/xe7rJCy/EGWyaK2qxccZ6VoupD5+w
+        WVz/8pzVYvXHx4wW589vYLd4MPcmk8W3Kx1MFpd3zWGz+Nx7hNFixvl9TBZvfpxlsrg97zKL
+        xZnTl1gt/l3byGLRceQbs8XGrx4OAh47Z91l99i0qpPN4861PWwe/X8NPLZcbWfx6NuyitHj
+        +I3tTB6fN8kFcETp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSW
+        pRbp2yXoZVz/8I69YDl3xa4VGQ2MCzi7GDk5JARMJL7OP8bSxcjFISSwlFHi8MZ+doiEjMTJ
+        aQ2sELawxJ9rXWwQRW8ZJdrWdTKDJIQFfCUaVzwBaxARUJa4+n0v2CRmgTUsEo0H70J17GSU
+        6N2wkg2kik3AUKLrbReYzStgJ3FlxlsmEJtFQFXi4p5WsEmiArES3Yt/sEPUCEqcnPmEBcTm
+        FDCS+LsaIs4sYCYxb/NDZghbXmL72zlQtrjErSfzmSYwCs1C0j4LScssJC2zkLQsYGRZxSiS
+        Wlqcm55bbKRXnJhbXJqXrpecn7uJERjr24793LKDsetd8CFGAQ5GJR7eDTPPxwmxJpYVV+Ye
+        YpTgYFYS4XU6ezpOiDclsbIqtSg/vqg0J7X4EKMp0HMTmaVEk/OBaSivJN7Q1NDcwtLQ3Njc
+        2MxCSZy3Q+BgjJBAemJJanZqakFqEUwfEwenVANj7sSQcy2ZWu83zQ85UbL8e9/6tsvr2v/r
+        JG9fu1qBhyVZPu1X7m6mr49EDosGnJhcJjF1w11B19+KUmeZcreEzO6oslo91e786YOqW5we
+        bdROfv51l1WhLfuH7mfhO5/IbF8XvHanmqVh6xWhW8pHVRtd62rKOK3WFW/ufOx6waL0xqat
+        p3euUWIpzkg01GIuKk4EAHc2PxoLAwAA
+X-CMS-MailID: 20200529054507eucas1p25ab3a5fe0f76e766738143b46b2c6e87
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200528131144eucas1p121b9151996fa3f780a5028f68c69d5ba
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200528131144eucas1p121b9151996fa3f780a5028f68c69d5ba
+References: <CGME20200528131144eucas1p121b9151996fa3f780a5028f68c69d5ba@eucas1p1.samsung.com>
+        <20200528131130.17984-1-m.szyprowski@samsung.com>
+        <20200528134338.GD3606@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Tom,
+Hi Mark,
 
-On 2019-12-21 8:03 a.m., Tom Murphy wrote:
-> This patchset converts the intel iommu driver to the dma-iommu api.
+On 28.05.2020 15:43, Mark Brown wrote:
+> On Thu, May 28, 2020 at 03:11:30PM +0200, Marek Szyprowski wrote:
+>> Balancing coupled regulators must wait until the clients for all of the
+>> coupled regualtors set their constraints, otherwise the balancing code
+>> might change the voltage of the not-yet-constrained regulator to the
+>> value below the bootloader-configured operation point, what might cause a
+>> system crash.
+> This forces every supply to have something which explicitly manages
+> voltages which means that if one of the coupled supplies doesn't really
+> care about the voltage (perhaps doesn't even have any explicit
+> consumers) and just needs to be within a certain range of another supply
+> then it'll end up restricting things needlessly.
+Frankly, that's exactly what we need for Exynos5422 case. If devfreq 
+driver is not enabled/compiled, we want to keep the "vdd_int" volatage 
+unchanged. This confirms me that we really need to have a custom coupler 
+for Exynos5422 case. It will solve such issues without adding hacks to 
+regulator core.
+> Saravana was trying to do some stuff with sync_state() which might be
+> interesting here although I have concerns with that approach too:
+>
+>     https://lore.kernel.org/lkml/20200527074057.246606-1-saravanak@google.com/
 
-Just wanted to note that I've rebased your series on recent kernels and
-have done some testing on my old Sandybridge machine (without the DO NOT
-MERGE patch) and have found no issues. I hope this can make progress
-soon and get merged soon. If you like you can add:
+This still doesn't solve the above mentioned case.
 
-Tested-By: Logan Gunthorpe <logang@deltatee.com>
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-> While converting the driver I exposed a bug in the intel i915 driver which causes a huge amount of artifacts on the screen of my laptop. You can see a picture of it here:
-> https://github.com/pippy360/kernelPatches/blob/master/IMG_20191219_225922.jpg
-> 
-> This issue is most likely in the i915 driver and is most likely caused by the driver not respecting the return value of the dma_map_ops::map_sg function. You can see the driver ignoring the return value here:
-> https://github.com/torvalds/linux/blob/7e0165b2f1a912a06e381e91f0f4e495f4ac3736/drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c#L51
-> 
-> Previously this didn’t cause issues because the intel map_sg always returned the same number of elements as the input scatter gather list but with the change to this dma-iommu api this is no longer the case. I wasn’t able to track the bug down to a specific line of code unfortunately.  
-
-I did some digging into this myself and while I don't have full patch, I
-think I traced it closer to the problem.
-
-Sadly, ignoring the number of nents returned by map_sg() is endemic to
-dma-buf users, but AMD's GPU driver seems to do the same thing,
-presumably without issues.
-
-Digging a bit further, I found that the i915 has an "innovative" way of
-iterating through SGLs, see [1]. I suspect if __sgt_iter is changed to
-increment with sg_dma_len() and return NULL when there is no length
-left, it may fix the issue.
-
-But, sorry, I don't really have the means or time to fix and test this
-myself.
-
-Thanks,
-
-Logan
-
-[1]
-https://elixir.bootlin.com/linux/v5.7-rc7/source/drivers/gpu/drm/i915/i915_scatterlist.h#L76
