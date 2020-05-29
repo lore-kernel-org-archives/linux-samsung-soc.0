@@ -2,92 +2,133 @@ Return-Path: <SRS0=3jfO=7L=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13969C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 May 2020 08:06:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CCEBC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 May 2020 10:16:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E6A73208A7
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 May 2020 08:06:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59CC02075A
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 May 2020 10:16:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590739574;
-	bh=lmmUdZavgSWWJI88lwNJQxEXBjg5ptFnhm41Nw8mR5M=;
+	s=default; t=1590747383;
+	bh=S4FW1mFhzacDYR6Eu/v6cF3Wv3v9bxdFZaT+hUnGvao=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=urQelwINa+9fh7dAHnySet+x4Hrlp5rBDibp+If2LzpXvs5f0oGj7QEe2MiXhd3tq
-	 MrOPvetGU//hkj4KvjRYUrG1zL8fiDXuKAfAWM7w5iCdf6L1SAiPVcmN30UhldfmOQ
-	 omTpnT0A3wD3wVg5OTa8t1xF+kjRvHK/mfF/vfvU=
+	b=Jq4Eymp/3PpneOv6dEugo4Deeke2r52lPe2DZkP+2Dd0CRQXpe4NKXzFpAvWFb43B
+	 w+rZ+TNxvYqOZAGfj+LdwAHFhVNik5NJBZ+EqcMPqxrT8b13xoCPxHUJsRCA+LD8Oy
+	 /OX+I3M4aYPrZxqGWQyGrT3XgarAkMviPuf9KM64=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726965AbgE2IF5 convert rfc822-to-8bit (ORCPT
+        id S1726861AbgE2KQU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 29 May 2020 04:05:57 -0400
-Received: from mail-ej1-f68.google.com ([209.85.218.68]:40359 "EHLO
-        mail-ej1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726350AbgE2IFw (ORCPT
+        Fri, 29 May 2020 06:16:20 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:45483 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725601AbgE2KQR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 29 May 2020 04:05:52 -0400
-Received: by mail-ej1-f68.google.com with SMTP id d7so1174691eja.7;
-        Fri, 29 May 2020 01:05:50 -0700 (PDT)
+        Fri, 29 May 2020 06:16:17 -0400
+Received: by mail-lj1-f196.google.com with SMTP id z18so1881456lji.12;
+        Fri, 29 May 2020 03:16:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=aH7E55+g7tLuSmdUOuHD3M6Gj2I7pkdvk/bOkBrFD9s=;
-        b=aWy44fvGPmS9kfAO8oyaixY+yxR8/9+ymtIlqTIto0oabqHOs4OnN4VEg6xq1aRoxt
-         BGZzvexS6uCfNHYvLr5DXa4hyKsXE26gKC12XB/xTxUj/VZQp1MNTFeAIWVAM9PehGUb
-         VsVs9P251HhU/KEIhHKmL4m3TPNNWHtXF0jRB8boy1Ox+lAgGPYNIHDNohaGHkz+qKkT
-         y687c6kyU/qsCAZz4EJ4F1+T4+8YdcMIZ1dM4a2KN4kQxXZQ7ILW0J6Ovki/lpxDL41L
-         QTNZ1HDW3ylo5gF/WzeZ4WZLMpeoltqaE8jWz152PnzcIgEoJ7NEywrwKmFKwcaKCnvl
-         i8yg==
-X-Gm-Message-State: AOAM532GvAE2AF08RPJ7RGrw0BajekcX3iK6rV2G9xFutgZ/gm9SHL3K
-        XBLCjlj/Pt70OW21UcZS8e8=
-X-Google-Smtp-Source: ABdhPJx+ramGOxadWDDPayrB2z7pr/lamG6HZzIkpX+Z0OBDsG27LJ9P+Xa/l75LOv7pVv0uNZiXIQ==
-X-Received: by 2002:a17:906:70ca:: with SMTP id g10mr6704592ejk.171.1590739550084;
-        Fri, 29 May 2020 01:05:50 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.118])
-        by smtp.googlemail.com with ESMTPSA id k90sm6207616edc.2.2020.05.29.01.05.48
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 29 May 2020 01:05:49 -0700 (PDT)
-Date:   Fri, 29 May 2020 10:05:46 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     robh@kernel.org, devicetree@vger.kernel.org,
-        linux-scsi@vger.kernel.org, avri.altman@wdc.com,
-        martin.petersen@oracle.com, kwmad.kim@samsung.com,
-        stanley.chu@mediatek.com, cang@codeaurora.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 10/10] arm64: dts: Add node for ufs exynos7
-Message-ID: <20200529080546.GB23221@kozik-lap>
-References: <20200528011658.71590-1-alim.akhtar@samsung.com>
- <CGME20200528013245epcas5p37851891649512882c7b1ffb5f903c506@epcas5p3.samsung.com>
- <20200528011658.71590-11-alim.akhtar@samsung.com>
+         :mime-version:content-disposition:in-reply-to;
+        bh=Qb23YrFge2bev6B+pdY5MYpRbBAt1YLbxMOSUywPdHk=;
+        b=cZaH0DKeLwkKayN1g+x2VJNhADXnu4nL0vSdS/b+fM2kg+16H4sXwqx6iK+z8ZyLeF
+         uPY2l26f1BPnMQft2ohw7um4HIFJRpj6OL3aQkyb1cFItrFXrXmSCdT5H7jC+TlyQwDm
+         ZjfpqLk5ryiZaCaBSoSaMAVOEfWBRMg2yP4zNFDPNLx1iDNny2k1ZgNw3mx02BIpRWVV
+         XKCXBojmkFewoirKEDwupB9EKXMiPWwfaXZg7aJUIaIrifa5ohS7rFYYTkMXQGo2J/z0
+         0CVzTu3Gp9kz3GXLKhI4Dir9VBMXpCVOy+TnoQHfJ7wUQFB5TvozI5lpt2meE0lEoBln
+         9m3A==
+X-Gm-Message-State: AOAM531MzDINtCgDtROORRtIEWc36Cnsd2TOl9Tl3yF03DFtuIwvi6f6
+        51KH4BmEL9ijvv2nF/RLdPs=
+X-Google-Smtp-Source: ABdhPJyb49lJcndlDqUtkrSajYOpqC0lpLBM00Du0tW1RABChW4sreguvSnQJV4+HR28+sDilaHYIw==
+X-Received: by 2002:a05:651c:39b:: with SMTP id e27mr3886282ljp.253.1590747373144;
+        Fri, 29 May 2020 03:16:13 -0700 (PDT)
+Received: from xi.terra (c-beaee455.07-184-6d6c6d4.bbcust.telenor.se. [85.228.174.190])
+        by smtp.gmail.com with ESMTPSA id h26sm2236339lja.0.2020.05.29.03.16.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 May 2020 03:16:12 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.93.0.4)
+        (envelope-from <johan@kernel.org>)
+        id 1jec3c-0004TR-D6; Fri, 29 May 2020 12:16:08 +0200
+Date:   Fri, 29 May 2020 12:16:08 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
+Cc:     bcm-kernel-feedback-list@broadcom.com, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-pm@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org, devel@driverdev.osuosl.org,
+        vilhelm.gray@gmail.com, syednwaris@gmail.com,
+        fabrice.gasnier@st.com, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@st.com, jic23@kernel.org, dan@dlrobertson.com,
+        jikos@kernel.org, srinivas.pandruvada@linux.intel.com,
+        linus.walleij@linaro.org, wens@csie.org, hdegoede@redhat.com,
+        rjui@broadcom.com, sbranden@broadcom.com, peda@axentia.se,
+        kgene@kernel.org, krzk@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, ak@it-klinger.de, paul@crapouillou.net,
+        milo.kim@ti.com, vz@mleia.com, slemieux.tyco@gmail.com,
+        khilman@baylibre.com, matthias.bgg@gmail.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, heiko@sntech.de, orsonzhai@gmail.com,
+        baolin.wang7@gmail.com, zhang.lyra@gmail.com, mripard@kernel.org,
+        tduszyns@gmail.com, rmfrfs@gmail.com, lorenzo.bianconi83@gmail.com,
+        ktsai@capellamicro.com, songqiang1304521@gmail.com,
+        tomislav.denis@avl.com, eajames@linux.ibm.com,
+        dmitry.torokhov@gmail.com, coproscefalo@gmail.com
+Subject: Re: [PATCH 4/5] iio: light: lm3533-als: remove explicit parent
+ assignment
+Message-ID: <20200529101608.GC19480@localhost>
+References: <20200522082208.383631-1-alexandru.ardelean@analog.com>
+ <20200522082208.383631-4-alexandru.ardelean@analog.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20200528011658.71590-11-alim.akhtar@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20200522082208.383631-4-alexandru.ardelean@analog.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, May 28, 2020 at 06:46:58AM +0530, Alim Akhtar wrote:
-> Adding dt node foe UFS and UFS-PHY for exynos7 SoC.
-> 
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> Tested-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+On Fri, May 22, 2020 at 11:22:07AM +0300, Alexandru Ardelean wrote:
+> This assignment is the more peculiar of the bunch as it assigns the parent
+> of the platform-device's device (i.e. pdev->dev.parent) as the IIO device's
+> parent.
+>
+> It's unclear whether this is intentional or not.
+> Hence it is in it's own patch.
+
+Yeah, we have a few mfd drivers whose child drivers registers their
+class devices directly under the parent mfd device rather than the
+corresponding child platform device.
+
+Since it's done consistently I think you need to update them all if you
+really want to change this. 
+
+And it may not be worth it since at least in theory someone could now be
+relying on this topology.
+
+> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
 > ---
->  .../boot/dts/exynos/exynos7-espresso.dts      |  4 ++
->  arch/arm64/boot/dts/exynos/exynos7.dtsi       | 43 ++++++++++++++++++-
+>  drivers/iio/light/lm3533-als.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/iio/light/lm3533-als.c b/drivers/iio/light/lm3533-als.c
+> index bc196c212881..0f380ec8d30c 100644
+> --- a/drivers/iio/light/lm3533-als.c
+> +++ b/drivers/iio/light/lm3533-als.c
+> @@ -852,7 +852,6 @@ static int lm3533_als_probe(struct platform_device *pdev)
+>  	indio_dev->channels = lm3533_als_channels;
+>  	indio_dev->num_channels = ARRAY_SIZE(lm3533_als_channels);
+>  	indio_dev->name = dev_name(&pdev->dev);
+> -	indio_dev->dev.parent = pdev->dev.parent;
+>  	indio_dev->modes = INDIO_DIRECT_MODE;
+>  
+>  	als = iio_priv(indio_dev);
 
-Thanks, applied to next/dt-late. It might miss this merge
-window and in such case I will keep it for v5.9 cycle.
-
-Best regards,
-Krzysztof
-
+Johan
