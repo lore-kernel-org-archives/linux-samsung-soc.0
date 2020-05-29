@@ -2,157 +2,89 @@ Return-Path: <SRS0=3jfO=7L=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C00D5C433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 May 2020 05:45:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 236CBC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 May 2020 08:05:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9AB58208B8
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 May 2020 05:45:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pk00bMCq"
+	by mail.kernel.org (Postfix) with ESMTP id F1FA5206F1
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 May 2020 08:05:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1590739501;
+	bh=CXDmOSPiPdG4zX4J3Vbr0gCqcRnUfoTHrT7Hx/IMVf0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=HX5VIh0lg2CZQY+wYT9EA3DE1M59/uZDVQdlqmheRWHoflLmF1c7ryHDFYNlPDgZu
+	 NfQZGwD98UASW0VLKkGM0DNN53ZnvjN7r8ykWtWWXUx0pJ7f3S93G/tU7KLfvMlyAN
+	 VVjoWPnWqX28D4Ik9PkMz/gi6xxAv0WLHXSW8+eA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725795AbgE2FpL (ORCPT
+        id S1726923AbgE2IFA (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 29 May 2020 01:45:11 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:46233 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725601AbgE2FpK (ORCPT
+        Fri, 29 May 2020 04:05:00 -0400
+Received: from mail-ej1-f68.google.com ([209.85.218.68]:39279 "EHLO
+        mail-ej1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725855AbgE2IE7 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 29 May 2020 01:45:10 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200529054508euoutp014603a4e06a483a4b52f75003e43837c5~TaYPVSzCj3116531165euoutp01M
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 May 2020 05:45:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200529054508euoutp014603a4e06a483a4b52f75003e43837c5~TaYPVSzCj3116531165euoutp01M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1590731108;
-        bh=PhYV4Ig7hxvvmf0mdrqx6bcTuMgVhMvwyNQLnIx936w=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=pk00bMCqaMz41c8y4EMFkOLaDj661V0DtzYjz31GCg2a/wTA6WnLVdcPYMSfexXF8
-         K5a/Alzdf+q9SdTz1R6Z4oI0lm3uQ1TUstKVaaGqlxS59s6i6XQVnsCC/A0sYiLRom
-         QLRbNq4odB+dG4+wSK9Itwy2okluOjtYHAcOjdhc=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200529054507eucas1p2bfa9e6bd17d79b2ad655cf9692828634~TaYO7KLFs2876028760eucas1p2R;
-        Fri, 29 May 2020 05:45:07 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 3B.38.60698.361A0DE5; Fri, 29
-        May 2020 06:45:07 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200529054507eucas1p25ab3a5fe0f76e766738143b46b2c6e87~TaYOcteCM0802308023eucas1p2v;
-        Fri, 29 May 2020 05:45:07 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200529054507eusmtrp1fd3b41be09d8c35f3d9b9148147bf8be~TaYOb6-tf0887308873eusmtrp1R;
-        Fri, 29 May 2020 05:45:07 +0000 (GMT)
-X-AuditID: cbfec7f5-a0fff7000001ed1a-95-5ed0a163fbf0
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 0E.FF.07950.361A0DE5; Fri, 29
-        May 2020 06:45:07 +0100 (BST)
-Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200529054506eusmtip212b23ce8c28928465fcd087af254baf0~TaYNqnhVK2563425634eusmtip2K;
-        Fri, 29 May 2020 05:45:06 +0000 (GMT)
-Subject: Re: [PATCH] regulator: do not balance regulators without
- constraints
-To:     Mark Brown <broonie@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>, peron.clem@gmail.com,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        linux-samsung-soc@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <56e496bc-172f-d62f-5376-c8d734af6a51@samsung.com>
-Date:   Fri, 29 May 2020 07:45:06 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.8.1
+        Fri, 29 May 2020 04:04:59 -0400
+Received: by mail-ej1-f68.google.com with SMTP id f7so1178500ejq.6
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 May 2020 01:04:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wZMyTkIlx/3txehUnEvjb/TU9K5BSXcc9XmAazKGJLM=;
+        b=O9vhFXcb+Y0BXAT6BEnb/DSiebG0EXQbXBiAZduBrEgIYsWuCfrLz+jOrojqYN+Ywo
+         gfE9JhzgtIJv79nugDQVKEgDSwts1H1jkqzq84Nve2m6YUsKqD+FHSiPFUa+J7kw8DDo
+         zxhvC4Z4Fe6fOPWyGe9dZXP/4ifpJ34wR/NLHu0zVDV0n6oPUjjIR/Poou3WmskdA0oz
+         3G3YJ5PLRLYiodWc7jq+LDO2Ce0teIrPlXs1CxHcadyunDfkrt5zNP1YQW38+173qxQo
+         9ET/lekxXM3HiNXzI/ZNAdi1VwmEJJ4rOfaJa2iZV99SHtFqDFBqtJNnHSgKvn0DFl/0
+         OzqQ==
+X-Gm-Message-State: AOAM5304HM38X9mfx3HgSYA2w6C1SOcDkXqDuRZtBcB7lKJJcBbxH8UB
+        nzwYAPrYIA3sWnlStDOnVX4=
+X-Google-Smtp-Source: ABdhPJyigOnQKqX/YvQNDiqV3XhjrdnRzu4KRLfl979qQTOnAKaTB0J9hzx3phgluTWH/Ww2t0VPuQ==
+X-Received: by 2002:a17:906:398:: with SMTP id b24mr6875555eja.44.1590739497416;
+        Fri, 29 May 2020 01:04:57 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.118])
+        by smtp.googlemail.com with ESMTPSA id af15sm6793233ejc.89.2020.05.29.01.04.56
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 29 May 2020 01:04:56 -0700 (PDT)
+Date:   Fri, 29 May 2020 10:04:54 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-samsung-soc@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] ARM: dts: exynos: Extend all Exynos5800 A15's OPPs with
+ max voltage data
+Message-ID: <20200529080454.GA23221@kozik-lap>
+References: <CGME20200528081539eucas1p1590e576d26ffd51cb860e6c6040fc437@eucas1p1.samsung.com>
+ <20200528081525.14858-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20200528134338.GD3606@sirena.org.uk>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjm2znbjquN41R8UStYJBSmLfvxWWJ3ONSPCqIi8LLq5KRpspOW
-        /SjNTJM17UZzaloSmem8YKnDJDVctdpKU8tLJRmWuG66pVmS2+niv+d5n+f53gsfRcjfCwOo
-        hKQjrDZJpVGIJOTdjinb8v3XnsWsyHQpca2hWogvDw2LcO/EiBDf/voOYbu9RozfFr8SYNeL
-        HAHuMheJ8Pi5Bwgb7C0CPDb5VID7r3aR+Im1U4hnempJnPPAReBaJ7OOZpqMg2KmruKsiBno
-        aRYxeb9WMPXd2SSjr69AjOVlg4AZr1u4ndoriTzAahJSWW1YVJxE3fvlkzj55rxj5nJ1Oir1
-        ykUUBfQqMDnVuUhCyelyBOXPuwU8mUBQWWQieTKOoL/yzazi5Uk4Szr+CDcRPMq0Ejz5jMCR
-        8U3sdvnQ22DolgG5sS+9GLq/3/MkCLqChKr8G0K3IKKVkOvIFbmxlI6CFwaHpwVJL4HnzVme
-        h/zoaNC9GSV4jzc8Khgm3diLXgm/bk96PAS9CBocRQSP/aFvuMSzBNBZFOgbBxE/9ybQ9w4K
-        eewDo5Z6MY+DwHpRR/KBTARDtioxT3QIuk4Z/qTXwIDth8h9M4JeCtXmML68HqbPZgn5U8rg
-        pcObH0IGF+5eIfiyFHLOyHl3MBgtpn9tW591EvlIYZyzmnHOOsY56xj/9y1FZAXyZ1O4xHiW
-        C09ij4ZyqkQuJSk+dP/hxDo0+/msMxZnI2r5ua8N0RRSzJfWFNhj5EJVKpeW2IaAIhS+0g1P
-        rTFy6QFV2nFWezhWm6JhuTYUSJEKf2n49Y/RcjpedYQ9xLLJrPavKqC8AtJRwYnXEdNNUZam
-        ntVpeXZZtr6PK/HdvOq9sT9kRLxg6+Wgg3fCdAk7L8lm2scu7SY1I2qQMUfx6uC1gkb/8zur
-        1staQjcOyO4rH5ftKzG1R7TbzX47NHu2hBBBHS6TeldxYSuW1yZnRILt9EO/D4WBZWzgycfV
-        fd7jcbH5o1OcguTUKuUyQsupfgOtJGNveAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBIsWRmVeSWpSXmKPExsVy+t/xe7rJCy/EGWyaK2qxccZ6VoupD5+w
-        WVz/8pzVYvXHx4wW589vYLd4MPcmk8W3Kx1MFpd3zWGz+Nx7hNFixvl9TBZvfpxlsrg97zKL
-        xZnTl1gt/l3byGLRceQbs8XGrx4OAh47Z91l99i0qpPN4861PWwe/X8NPLZcbWfx6NuyitHj
-        +I3tTB6fN8kFcETp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSW
-        pRbp2yXoZVz/8I69YDl3xa4VGQ2MCzi7GDk5JARMJL7OP8bSxcjFISSwlFHi8MZ+doiEjMTJ
-        aQ2sELawxJ9rXWwQRW8ZJdrWdTKDJIQFfCUaVzwBaxARUJa4+n0v2CRmgTUsEo0H70J17GSU
-        6N2wkg2kik3AUKLrbReYzStgJ3FlxlsmEJtFQFXi4p5WsEmiArES3Yt/sEPUCEqcnPmEBcTm
-        FDCS+LsaIs4sYCYxb/NDZghbXmL72zlQtrjErSfzmSYwCs1C0j4LScssJC2zkLQsYGRZxSiS
-        Wlqcm55bbKRXnJhbXJqXrpecn7uJERjr24793LKDsetd8CFGAQ5GJR7eDTPPxwmxJpYVV+Ye
-        YpTgYFYS4XU6ezpOiDclsbIqtSg/vqg0J7X4EKMp0HMTmaVEk/OBaSivJN7Q1NDcwtLQ3Njc
-        2MxCSZy3Q+BgjJBAemJJanZqakFqEUwfEwenVANj7sSQcy2ZWu83zQ85UbL8e9/6tsvr2v/r
-        JG9fu1qBhyVZPu1X7m6mr49EDosGnJhcJjF1w11B19+KUmeZcreEzO6oslo91e786YOqW5we
-        bdROfv51l1WhLfuH7mfhO5/IbF8XvHanmqVh6xWhW8pHVRtd62rKOK3WFW/ufOx6waL0xqat
-        p3euUWIpzkg01GIuKk4EAHc2PxoLAwAA
-X-CMS-MailID: 20200529054507eucas1p25ab3a5fe0f76e766738143b46b2c6e87
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200528131144eucas1p121b9151996fa3f780a5028f68c69d5ba
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200528131144eucas1p121b9151996fa3f780a5028f68c69d5ba
-References: <CGME20200528131144eucas1p121b9151996fa3f780a5028f68c69d5ba@eucas1p1.samsung.com>
-        <20200528131130.17984-1-m.szyprowski@samsung.com>
-        <20200528134338.GD3606@sirena.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200528081525.14858-1-m.szyprowski@samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Mark,
+On Thu, May 28, 2020 at 10:15:25AM +0200, Marek Szyprowski wrote:
+> On Exynos5422/5800 the regulator supply for the A15 cores ("vdd_arm") is
+> coupled with the regulator supply for the SoC internal circuits
+> ("vdd_int"), thus all operating points that modify one of those supplies
+> have to specify a triplet of the min/target/max values to properly work
+> with regulator coupling.
+> 
+> Fixes: eaffc4de16c6 ("ARM: dts: exynos: Add missing CPU frequencies for Exynos5422/5800")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5800.dtsi | 6 +++---
 
-On 28.05.2020 15:43, Mark Brown wrote:
-> On Thu, May 28, 2020 at 03:11:30PM +0200, Marek Szyprowski wrote:
->> Balancing coupled regulators must wait until the clients for all of the
->> coupled regualtors set their constraints, otherwise the balancing code
->> might change the voltage of the not-yet-constrained regulator to the
->> value below the bootloader-configured operation point, what might cause a
->> system crash.
-> This forces every supply to have something which explicitly manages
-> voltages which means that if one of the coupled supplies doesn't really
-> care about the voltage (perhaps doesn't even have any explicit
-> consumers) and just needs to be within a certain range of another supply
-> then it'll end up restricting things needlessly.
-Frankly, that's exactly what we need for Exynos5422 case. If devfreq 
-driver is not enabled/compiled, we want to keep the "vdd_int" volatage 
-unchanged. This confirms me that we really need to have a custom coupler 
-for Exynos5422 case. It will solve such issues without adding hacks to 
-regulator core.
-> Saravana was trying to do some stuff with sync_state() which might be
-> interesting here although I have concerns with that approach too:
->
->     https://lore.kernel.org/lkml/20200527074057.246606-1-saravanak@google.com/
+Thanks, applied with Cc-stable to next/dt-late. It might miss this merge
+window and in such case I will keep it for v5.9 cycle.
 
-This still doesn't solve the above mentioned case.
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Best regards,
+Krzysztof
 
