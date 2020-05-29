@@ -1,128 +1,134 @@
-Return-Path: <SRS0=J4qy=7K=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=3jfO=7L=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C656C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 May 2020 14:17:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E6CCC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 May 2020 00:24:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 040DC2084C
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 28 May 2020 14:17:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24F4420897
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 May 2020 00:24:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lFlx+Y5+"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b="r/axjxYl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391018AbgE1ORp (ORCPT
+        id S2437929AbgE2AY2 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 28 May 2020 10:17:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40152 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391021AbgE1ORT (ORCPT
+        Thu, 28 May 2020 20:24:28 -0400
+Received: from ts18-13.vcr.istar.ca ([204.191.154.188]:45220 "EHLO
+        ale.deltatee.com" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S2437659AbgE2AY1 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 28 May 2020 10:17:19 -0400
-Received: from mail-vk1-xa41.google.com (mail-vk1-xa41.google.com [IPv6:2607:f8b0:4864:20::a41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6A44C08C5C6
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 May 2020 07:17:19 -0700 (PDT)
-Received: by mail-vk1-xa41.google.com with SMTP id j28so6783218vkn.8
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 May 2020 07:17:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BuuJ1LHr7B0D8g7eMjAHiAe1fYFy/QuFchre+f7F2cI=;
-        b=lFlx+Y5+BUfKHtlP+elnq8ReiE97j9UIu82aEsFl8cz/Tp7zjdAMrb1MNJOECARaP4
-         vRqzP98sYOszXMdn5TOvKP+Zb/VRf5V1+LLlbF0YOocMCIBnB+qL46UiLuNaVagJiOLm
-         teFAdK0pIy+W/AFSR5OZsEWyFZa2vGrMCFm79jMy0gLLLKLBy43IvYtLnsrj7Go6tz8c
-         64xYqvZ+gZ1CMMsTy+AmuGVqlFmjTVCZk83fWrVPmwhknhiDYCJwdThEKVfktQ3NyvHh
-         NPZz85Uw+q36hEh1arPlO4A9HfZsT039Bk1VQdWrdJM61Pa423UhQ0o5gaJfRm4QHHzr
-         /Wsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BuuJ1LHr7B0D8g7eMjAHiAe1fYFy/QuFchre+f7F2cI=;
-        b=bRsxd1CdUBfwd5oQt9oxsQL8ZJuMJvZcPGAZl+l/gd6yYCNNhPi+LFyqJpAnKaXwVQ
-         LCd6RyoXzkNLkDpJBvuZKUUFNZ9mhzH3qtytsDrZaPNKB3K9vUCEiJ15Zvs+pVab6CsH
-         d0w1wc8T6md1mkcaUq4BuvOtbC2yvzQAZhtyJP0+FW+syKleMo+vuVMBoBxmPzwZdkFy
-         fX5/h8bmsbof87pZ+pg5m/EXWkwB4EpUS7HGgjDMNAEHWwzzIesffpob2smpVPJE3/Kc
-         B1Ry62HL+rIn58rlFBLFfL+mUF15/J0DUA8Gbr8DC1LSrqliTx75H34LDdqzM95Z8FiQ
-         FlwQ==
-X-Gm-Message-State: AOAM530uVdbr8qqSszBAJAowDUAjzOpXx9P+TuukvIf9Dka9lrT+8XQQ
-        oAE46bWClQTDIq7XX2Oz0HpDnZ5Bj486RfpOyqclsQ==
-X-Google-Smtp-Source: ABdhPJyFq0sy87bcDDV4B0w526F0rr56imrsl10NiW+RLPfH0tc0nFJzTbjhvpQLXbvgFrMuGv3blVrJBDS6GlwUgDI=
-X-Received: by 2002:ac5:cded:: with SMTP id v13mr2325192vkn.59.1590675438652;
- Thu, 28 May 2020 07:17:18 -0700 (PDT)
+        Thu, 28 May 2020 20:24:27 -0400
+X-Greylist: delayed 1339 seconds by postgrey-1.27 at vger.kernel.org; Thu, 28 May 2020 20:24:25 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=deltatee.com; s=20200525; h=Subject:Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Sender:
+        Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+        :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=SHO6IGYEd6YDcItDhjnlUPf5s8OIRwKvgFq6kM1/DP0=; b=r/axjxYlIiDMYaBSzOJcmN4D8z
+        5nhVyK5+jkTuLY9r/DkIPGDqA4zBXW2lnj24/75M8PApunP8NH63l8JZKK4zOM+RkgNUjkh8Zu7L0
+        uAWAMjn96WqKiZuaMyo8cBfMY0aRwfiPej4ElwlF0HqAS+905dMVMngwIHFwJNhllq+TXuBP3naK4
+        /r6v4D4I21bAG2X4/zOYuy5cJVYuMqe8ZbDWBeVK1iPsKmEydsM4SFCoqrouhRTbQELtOXUOa1f+x
+        r0Injuuidql/AmLXAXcQzgEff4xFuOZ6W7hJhBwZm1rFF3QVErdj3XcX2phEoDBlDrcVSy7R3MomJ
+        Ro1gd+aA==;
+Received: from s0106602ad0811846.cg.shawcable.net ([68.147.191.165] helo=[192.168.0.12])
+        by ale.deltatee.com with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <logang@deltatee.com>)
+        id 1jeSSD-0001kd-5g; Thu, 28 May 2020 18:00:54 -0600
+To:     Tom Murphy <murphyt7@tcd.ie>, iommu@lists.linux-foundation.org
+Cc:     kvm@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-tegra@vger.kernel.org, Julien Grall <julien.grall@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        linux-samsung-soc@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-rockchip@lists.infradead.org, Andy Gross <agross@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        Eric Auger <eric.auger@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        linux-mediatek@lists.infradead.org,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        virtualization@lists.linux-foundation.org,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Cornelia Huck <cohuck@redhat.com>,
+        linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>
+References: <20191221150402.13868-1-murphyt7@tcd.ie>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <465815ae-9292-f37a-59b9-03949cb68460@deltatee.com>
+Date:   Thu, 28 May 2020 18:00:44 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-References: <CGME20200528140337eucas1p2499a623f10d9bedf568f3a9bf55320f7@eucas1p2.samsung.com>
- <20200528140326.5215-1-m.szyprowski@samsung.com>
-In-Reply-To: <20200528140326.5215-1-m.szyprowski@samsung.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 28 May 2020 16:16:42 +0200
-Message-ID: <CAPDyKFqaD74m17ROncd8YA6bFY+m3ePX=jenSfVGq1K9E9zONQ@mail.gmail.com>
-Subject: Re: [PATCH] media: s5p-mfc: Properly handle dma_parms for the
- allocated devices
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191221150402.13868-1-murphyt7@tcd.ie>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 68.147.191.165
+X-SA-Exim-Rcpt-To: baolu.lu@linux.intel.com, robin.murphy@arm.com, kgene@kernel.org, linux-kernel@vger.kernel.org, cohuck@redhat.com, dwmw2@infradead.org, gerald.schaefer@de.ibm.com, virtualization@lists.linux-foundation.org, tglx@linutronix.de, matthias.bgg@gmail.com, rodrigo.vivi@intel.com, linux-mediatek@lists.infradead.org, alex.williamson@redhat.com, eric.auger@redhat.com, intel-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, linux-s390@vger.kernel.org, linux-arm-kernel@lists.infradead.org, agross@kernel.org, linux-rockchip@lists.infradead.org, jonathanh@nvidia.com, krzk@kernel.org, maz@kernel.org, linux-samsung-soc@vger.kernel.org, jean-philippe@linaro.org, m.szyprowski@samsung.com, will@kernel.org, thierry.reding@gmail.com, julien.grall@arm.com, linux-tegra@vger.kernel.org, bjorn.andersson@linaro.org, dri-devel@lists.freedesktop.org, airlied@linux.ie, kvm@vger.kernel.org, iommu@lists.linux-foundation.org, murphyt7@tcd.ie
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH 0/8] Convert the intel iommu driver to the dma-iommu api
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Thu, 28 May 2020 at 16:03, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->
-> Commit 9495b7e92f71 ("driver core: platform: Initialize dma_parms for
-> platform devices") in v5.7-rc5 added allocation of dma_parms structure to
-> all platform devices. Then vb2_dma_contig_set_max_seg_size() have been
-> changed not to allocate dma_parms structure and rely on the one allocated
-> by the device core. Lets allocate the needed structure also for the
-> devices created for the 2 MFC device memory ports.
->
-> Reported-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Fixes: 9495b7e92f71 ("driver core: platform: Initialize dma_parms for platform devices")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Hi Tom,
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+On 2019-12-21 8:03 a.m., Tom Murphy wrote:
+> This patchset converts the intel iommu driver to the dma-iommu api.
 
-Kind regards
-Uffe
+Just wanted to note that I've rebased your series on recent kernels and
+have done some testing on my old Sandybridge machine (without the DO NOT
+MERGE patch) and have found no issues. I hope this can make progress
+soon and get merged soon. If you like you can add:
 
-> ---
->  drivers/media/platform/s5p-mfc/s5p_mfc.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> index 5c2a23b953a4..eba2b9f040df 100644
-> --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> @@ -1089,6 +1089,10 @@ static struct device *s5p_mfc_alloc_memdev(struct device *dev,
->         child->coherent_dma_mask = dev->coherent_dma_mask;
->         child->dma_mask = dev->dma_mask;
->         child->release = s5p_mfc_memdev_release;
-> +       child->dma_parms = devm_kzalloc(dev, sizeof(*child->dma_parms),
-> +                                       GFP_KERNEL);
-> +       if (!child->dma_parms)
-> +               goto err;
->
->         /*
->          * The memdevs are not proper OF platform devices, so in order for them
-> @@ -1104,7 +1108,7 @@ static struct device *s5p_mfc_alloc_memdev(struct device *dev,
->                         return child;
->                 device_del(child);
->         }
-> -
-> +err:
->         put_device(child);
->         return NULL;
->  }
-> --
-> 2.17.1
->
+Tested-By: Logan Gunthorpe <logang@deltatee.com>
+
+> While converting the driver I exposed a bug in the intel i915 driver which causes a huge amount of artifacts on the screen of my laptop. You can see a picture of it here:
+> https://github.com/pippy360/kernelPatches/blob/master/IMG_20191219_225922.jpg
+> 
+> This issue is most likely in the i915 driver and is most likely caused by the driver not respecting the return value of the dma_map_ops::map_sg function. You can see the driver ignoring the return value here:
+> https://github.com/torvalds/linux/blob/7e0165b2f1a912a06e381e91f0f4e495f4ac3736/drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c#L51
+> 
+> Previously this didn’t cause issues because the intel map_sg always returned the same number of elements as the input scatter gather list but with the change to this dma-iommu api this is no longer the case. I wasn’t able to track the bug down to a specific line of code unfortunately.  
+
+I did some digging into this myself and while I don't have full patch, I
+think I traced it closer to the problem.
+
+Sadly, ignoring the number of nents returned by map_sg() is endemic to
+dma-buf users, but AMD's GPU driver seems to do the same thing,
+presumably without issues.
+
+Digging a bit further, I found that the i915 has an "innovative" way of
+iterating through SGLs, see [1]. I suspect if __sgt_iter is changed to
+increment with sg_dma_len() and return NULL when there is no length
+left, it may fix the issue.
+
+But, sorry, I don't really have the means or time to fix and test this
+myself.
+
+Thanks,
+
+Logan
+
+[1]
+https://elixir.bootlin.com/linux/v5.7-rc7/source/drivers/gpu/drm/i915/i915_scatterlist.h#L76
