@@ -6,46 +6,55 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB89C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 May 2020 16:58:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C6BEC433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 May 2020 17:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A024820814
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 May 2020 16:58:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EBE4207BC
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 May 2020 17:33:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590771513;
-	bh=X9EtO+jSwn5ip0cASm/U3/ohqZtcK6GSwCt+9vC2cy4=;
+	s=default; t=1590773625;
+	bh=z5JkNzmIE+RdJy6waG7+tlJhps7gYJ8N5inbXpoiBng=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=WQM/wIZBu8MU4uQY0n+1oGMbqyJM5UsCaIhxATSFnOYEyIXc67wP6cM+oMVpVS/bN
-	 uHlvS/2uQeFpDscsNhrk4xzJ+1kxxs0/cP6x5yZf9hCaEUAW6Dxw8yRwQQU6IsrEp8
-	 9gZQaFMbWBEIYEiAitMWYwn+7dCK+OBhAiBvnJCM=
+	b=rBln/ESTYPcBmdWXvpiNYEVnwZpLcAFMpr/Yx/0GkZUMtld+xy3QtVO6nNvOwDj/b
+	 ckAECaZ3KjMugRtGwK2pwNdmkq96E1zShUUAwWogVDOFT3Ryb+TDEBpGwNsOerzgGt
+	 QQ3FkeQ+RK4o7FW0GRu6KhiLEIPQ2mRtwI0qDLvQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725865AbgE2Q6d (ORCPT
+        id S1727889AbgE2Rdm (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 29 May 2020 12:58:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48938 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725601AbgE2Q6c (ORCPT
+        Fri, 29 May 2020 13:33:42 -0400
+Received: from mail-ej1-f68.google.com ([209.85.218.68]:37501 "EHLO
+        mail-ej1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726829AbgE2Rdj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 29 May 2020 12:58:32 -0400
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E96B2075A;
-        Fri, 29 May 2020 16:58:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590771512;
-        bh=X9EtO+jSwn5ip0cASm/U3/ohqZtcK6GSwCt+9vC2cy4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iISym5Us2DAtonwuWFKLN6dS9M6ONYc4yp3aKXrxPzDiktjhNHbynxkFhd+RWU3pB
-         hTFNRiF6ag5jKMab1KMU4zEPbplsYHvYQVN+giBaEJJ4hDQHlvM8DN7L5K398w7FdS
-         KaqeZ6r4oF8cFOlxamMQBjN6EcBhS9GqgtcuHSXU=
-Date:   Fri, 29 May 2020 17:58:27 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     linux-pm@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        Fri, 29 May 2020 13:33:39 -0400
+Received: by mail-ej1-f68.google.com with SMTP id mb16so2855500ejb.4;
+        Fri, 29 May 2020 10:33:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PszhtAwUwwlJ09xeuuN/pO1JWqOLkuSHz7sxH2UKeTE=;
+        b=ljsFLDKbFzxxve6rCp79GQeVuJbYjNaGeji8kKrEryqZ73+1u/UfggSaZXYH7s97uF
+         GZ3b4Xr9wEvOdMFssodcEEkkcpEm13WG6ftRy1EgKxV9wqM1XOIDU8xGVW4/YARnYriD
+         FTAxmBKWg9nm4HFIgwBHGwYJbC9NMHAnz12RTsoHl2BwY3KbUJOdGOR+tW5+1cPBif2z
+         bVhywxE/5z9CBTZ2gmePR0jGfdg4TwBLrNd4Wfp2XBg8v/A3+JJ+FhT0l+adp5X0kkZo
+         SyXgX/BGH22hF8Tv4W5/CctywlAjZVvySo9w8XD5O82VWO3GwtcnF0pWCYLra4C6aNnj
+         lwNQ==
+X-Gm-Message-State: AOAM532PHbbQ0pR1l3Aks1Gw3yN0E0LgYXCaDBNXD/G1zegrIvju2XRM
+        VzBP5paH0v48UMBa5vTKIfk=
+X-Google-Smtp-Source: ABdhPJyNrwdibGKDjwG2u2mVPxTu3VxK3FigRubMSp4DXgAyfIUx0rd177S7EUDIxfFpk+50i/9Q0Q==
+X-Received: by 2002:a17:906:ce36:: with SMTP id sd22mr8463743ejb.94.1590773615802;
+        Fri, 29 May 2020 10:33:35 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.118])
+        by smtp.googlemail.com with ESMTPSA id kt10sm3513669ejb.54.2020.05.29.10.33.34
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 29 May 2020 10:33:35 -0700 (PDT)
+Date:   Fri, 29 May 2020 19:33:32 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-pm@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+        linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Viresh Kumar <viresh.kumar@linaro.org>,
         Nishanth Menon <nm@ti.com>,
@@ -56,49 +65,34 @@ Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
         Rafael Wysocki <rjw@rjwysocki.net>,
         Vincent Guittot <vincent.guittot@linaro.org>
 Subject: Re: [PATCH 0/2] Fix regulators coupling for Exynos5800
-Message-ID: <20200529165827.GP4610@sirena.org.uk>
+Message-ID: <20200529173332.GA20540@kozik-lap>
 References: <CGME20200529124948eucas1p175379ead8afd1932f7b7ae61e35cf632@eucas1p1.samsung.com>
  <20200529124940.10675-1-m.szyprowski@samsung.com>
  <159077112408.28818.15178843458792850223.b4-ty@kernel.org>
+ <20200529165827.GP4610@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="+W7ryvxEk4RRyt+P"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <159077112408.28818.15178843458792850223.b4-ty@kernel.org>
-X-Cookie: The Killer Ducks are coming!!!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200529165827.GP4610@sirena.org.uk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
+On Fri, May 29, 2020 at 05:58:27PM +0100, Mark Brown wrote:
+> On Fri, May 29, 2020 at 05:52:15PM +0100, Mark Brown wrote:
+> 
+> > [1/1] regulator: extract voltage balancing code to the separate function
+> >       commit: 752db83a5dfd4fd3a0624b9ab440ed947fa003ca
+> 
+> Let me know if you need a pull request for this - I figured it was too
+> late to apply the second patch before the merge window with the cross
+> tree stuff.
 
---+W7ryvxEk4RRyt+P
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks, I think it will not be needed. I'll apply the second patch after
+the merge window.
 
-On Fri, May 29, 2020 at 05:52:15PM +0100, Mark Brown wrote:
+Best regards,
+Krzysztof
 
-> [1/1] regulator: extract voltage balancing code to the separate function
->       commit: 752db83a5dfd4fd3a0624b9ab440ed947fa003ca
-
-Let me know if you need a pull request for this - I figured it was too
-late to apply the second patch before the merge window with the cross
-tree stuff.
-
---+W7ryvxEk4RRyt+P
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl7RPzMACgkQJNaLcl1U
-h9B9jAf+MIaqrDJTZLjVTFB7PyoS1HONgnNh1HIsRXUgSMtlUU6SRDfmoo/KriEP
-QkiKgNLCc4QGuSA7ttP6FbmbWZRwbodiRfoXfC/fNpP2YOmde6657uOkkHgLRzUg
-gQtw3QVUfF3wIkYznk/n69PIutoQI22mvv1fq2unHolcVH6xNAh90yOV3pRl63jY
-J2AWs/iRn4l1fUUDXhpHf7er4sQr9boX/V5ak1Ab6GzC98y6KuAEurarGcwWW1PB
-KhD+yQQ1I4jJu4Ecr+mQTT3tX0jaUo3QBucaRbeQz6kRDF1siiOe5/mseEggXadT
-BJ/bSFFJl8wLDViz9zx/97IDlTZLZQ==
-=oyxQ
------END PGP SIGNATURE-----
-
---+W7ryvxEk4RRyt+P--
