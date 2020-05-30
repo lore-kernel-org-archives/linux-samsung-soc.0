@@ -1,232 +1,165 @@
-Return-Path: <SRS0=3jfO=7L=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=GTQ+=7M=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4BBBC433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 May 2020 22:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AACBC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 30 May 2020 23:58:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8670C20810
-	for <linux-samsung-soc@archiver.kernel.org>; Fri, 29 May 2020 22:16:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hM/wJ6JV"
+	by mail.kernel.org (Postfix) with ESMTP id 170E0207BB
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 30 May 2020 23:58:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1590883115;
+	bh=VUz6nHZXjZ/r4lCM+WBxybE+t4xw4kvQcisbJmoT/Dg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=u6atwT6KZUGb2h8LFTFqlmW+hg39kKMozBYp9m0wekLpcG9kE809JZ8rTbaMfEHmI
+	 RwWYwSVKjzx8OFpVC0zce4X7OLzdroSHMfBIPMBZCEhtRdA+gTfLBmQWB2LTe+feiN
+	 nwi36wNHdhues9Y0rSgSR7W40tEyAZZMbS7453iY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728293AbgE2WQi (ORCPT
+        id S1729517AbgE3X6e (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 29 May 2020 18:16:38 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:24254 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728355AbgE2WQf (ORCPT
+        Sat, 30 May 2020 19:58:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47124 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729385AbgE3X6e (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 29 May 2020 18:16:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1590790593;
-        h=from:from:reply-to:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:in-reply-to:in-reply-to:  references:references;
-        bh=RyWRgA39MpCS4B1s1Q6dcjnQ39Nmyes8pkIQMz0S9CE=;
-        b=hM/wJ6JVUUDwhnrL0yv/woINGhEOV+0iWkMenOdg+uSsTY0vQscG9A7Q1dDzsCuGIKaaIb
-        QvyfHG7AwVWVUOI0UvDELlVIVCSm75ixEMKko6FKWa5dGQILGNr+ZYne3NVHaCQ5lIBiHT
-        nerNautML8/EXyj7ueZ9p/SU/lTm8wE=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-508-O9WU4cVbPiuR8C3flvpe5A-1; Fri, 29 May 2020 18:16:26 -0400
-X-MC-Unique: O9WU4cVbPiuR8C3flvpe5A-1
-Received: by mail-qk1-f198.google.com with SMTP id d145so3046083qkg.22
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 May 2020 15:16:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to;
-        bh=RyWRgA39MpCS4B1s1Q6dcjnQ39Nmyes8pkIQMz0S9CE=;
-        b=CrSjpSs9V4UcBqOjvH7M0EEaCrJNG7yo2P9BEZe8iR+Xj+p4n0EA7DsqjaFJW8QPqr
-         0vOjG/OpH4M22NOvv1p54QIvVwrwsUEy4iiHOzYAclEFZ7BrnUM4PuohwYgrb+U2QWJY
-         /WW0IOzu5fg0ayKDAtuHCu5zAaA1mtNcZGRfpLwmJjkvqw3BCvagC8AP1w6YWGP29gCV
-         CkgdkxXzATJOfJC+i5dN0S3/e5VIhtwLb6QYkWcdx0td93g0gNKaH1dMqMEEHhCPUQCg
-         B8ED7E75DaTibLsSjIqoy4eNotME9W8M6enBEZMNdfq0cUiRJzTkrykb/icxJJdmaPWj
-         +OQA==
-X-Gm-Message-State: AOAM531qvqJuIEdVXc8rkwNeKJQXxgVw64WmqG1Z8rm949+JkU43w3nM
-        +5SjkvG8oRqBwbIjHCWWVezlq65z3DJecq6Lxysv9W+muT38jq31V2x5RJzJ4p4poQTDmNQewIn
-        T2tzTBx/YJ0VjmwTpGJVkE1JClcUgZvU=
-X-Received: by 2002:a37:6188:: with SMTP id v130mr4562282qkb.138.1590790585938;
-        Fri, 29 May 2020 15:16:25 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw51w0cnvYWh4WhXmhdM31BK730VJAQnizGJEPYNr8qH289FZOtd/33h3DF8AwAKbkwmoOGzg==
-X-Received: by 2002:a37:6188:: with SMTP id v130mr4562246qkb.138.1590790585671;
-        Fri, 29 May 2020 15:16:25 -0700 (PDT)
-Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
-        by smtp.gmail.com with ESMTPSA id w13sm8244813qkb.91.2020.05.29.15.16.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 May 2020 15:16:24 -0700 (PDT)
-Date:   Fri, 29 May 2020 15:16:23 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-rockchip@lists.infradead.org,
-        iommu@lists.linux-foundation.org,
-        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 00/33] iommu: Move iommu_group setup to IOMMU core code
-Message-ID: <20200529221623.qc6twmpzryh7nkvb@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mail-Followup-To: Joerg Roedel <joro@8bytes.org>,
-        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-rockchip@lists.infradead.org,
-        iommu@lists.linux-foundation.org,
-        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org
-References: <20200414131542.25608-1-joro@8bytes.org>
+        Sat, 30 May 2020 19:58:34 -0400
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E85EB207BB;
+        Sat, 30 May 2020 23:58:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1590883113;
+        bh=VUz6nHZXjZ/r4lCM+WBxybE+t4xw4kvQcisbJmoT/Dg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=18ho/PhYFDtcVEFFwa9kL4XMLHSHS3voxfTSEgSRGbxy+wrWU2KJ6VYRzamYa2M4c
+         oODZBCidDXttGIIH56KairuG4hGqUTBS3F5Tbg/TAihKM+8KqipnLdYGHacHH++erf
+         65sfhOv3W5JIIaGJXkt4EyX7DeBPsLOlDH0XR1Q8=
+Received: by mail-lj1-f175.google.com with SMTP id z13so3717104ljn.7;
+        Sat, 30 May 2020 16:58:32 -0700 (PDT)
+X-Gm-Message-State: AOAM532U2bpNgOUpzoMYijQNozyoIH9L4ivKsaIKZEfxFtBnKuCDnanG
+        WZGUleUzqJBgBquD8QU9C1V43lEFxTOoqhsnR8g=
+X-Google-Smtp-Source: ABdhPJzgSmF0+p11oPO+AZBR8CytQW5O5N8qZczqfnM6nRVQcCxJIot76Q2X9ANKtvk8r/cwbxtdchn2Ly+QLKlKomk=
+X-Received: by 2002:a05:651c:105a:: with SMTP id x26mr7446493ljm.159.1590883111232;
+ Sat, 30 May 2020 16:58:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20200414131542.25608-1-joro@8bytes.org>
+References: <CGME20200529163225eucas1p1cfb2233c869dcc3dab84b754bbce17b6@eucas1p1.samsung.com>
+ <20200529163200.18031-1-s.nawrocki@samsung.com> <20200529163200.18031-4-s.nawrocki@samsung.com>
+In-Reply-To: <20200529163200.18031-4-s.nawrocki@samsung.com>
+From:   Chanwoo Choi <chanwoo@kernel.org>
+Date:   Sun, 31 May 2020 08:57:54 +0900
+X-Gmail-Original-Message-ID: <CAGTfZH1KC=jpQ5GXNtEf1cn7+WqXJdqbbVKmpxr8Snh4GEy8bA@mail.gmail.com>
+Message-ID: <CAGTfZH1KC=jpQ5GXNtEf1cn7+WqXJdqbbVKmpxr8Snh4GEy8bA@mail.gmail.com>
+Subject: Re: [RFC PATCH v5 3/6] PM / devfreq: exynos-bus: Add registration of
+ interconnect child device
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     Georgi Djakov <georgi.djakov@linaro.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>, inki.dae@samsung.com,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue Apr 14 20, Joerg Roedel wrote:
->Hi,
+Hi Sylwester,
+
+On Sat, May 30, 2020 at 1:33 AM Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
 >
->here is the second version of this patch-set. The first version with
->some more introductory text can be found here:
+> This patch adds registration of a child platform device for the exynos
+> interconnect driver. It is assumed that the interconnect provider will
+> only be needed when #interconnect-cells property is present in the bus
+> DT node, hence the child device will be created only when such a property
+> is present.
 >
->	https://lore.kernel.org/lkml/20200407183742.4344-1-joro@8bytes.org/
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 >
->Changes v1->v2:
+> Changes for v5:
+>  - new patch.
+> ---
+>  drivers/devfreq/exynos-bus.c | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
 >
->	* Rebased to v5.7-rc1
+> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+> index 8fa8eb5..856e37d 100644
+> --- a/drivers/devfreq/exynos-bus.c
+> +++ b/drivers/devfreq/exynos-bus.c
+> @@ -24,6 +24,7 @@
 >
->	* Re-wrote the arm-smmu changes as suggested by Robin Murphy
+>  struct exynos_bus {
+>         struct device *dev;
+> +       struct platform_device *icc_pdev;
 >
->	* Re-worked the Exynos patches to hopefully not break the
->	  driver anymore
+>         struct devfreq *devfreq;
+>         struct devfreq_event_dev **edev;
+> @@ -156,6 +157,8 @@ static void exynos_bus_exit(struct device *dev)
+>         if (ret < 0)
+>                 dev_warn(dev, "failed to disable the devfreq-event devices\n");
 >
->	* Fixed a missing mutex_unlock() reported by Marek Szyprowski,
->	  thanks for that.
+> +       platform_device_unregister(bus->icc_pdev);
+> +
+>         dev_pm_opp_of_remove_table(dev);
+>         clk_disable_unprepare(bus->clk);
+>         if (bus->opp_table) {
+> @@ -168,6 +171,8 @@ static void exynos_bus_passive_exit(struct device *dev)
+>  {
+>         struct exynos_bus *bus = dev_get_drvdata(dev);
 >
->There is also a git-branch available with these patches applied:
+> +       platform_device_unregister(bus->icc_pdev);
+> +
+>         dev_pm_opp_of_remove_table(dev);
+>         clk_disable_unprepare(bus->clk);
+>  }
+> @@ -431,6 +436,18 @@ static int exynos_bus_probe(struct platform_device *pdev)
+>         if (ret < 0)
+>                 goto err;
 >
->	https://git.kernel.org/pub/scm/linux/kernel/git/joro/linux.git/log/?h=iommu-probe-device-v2
->
->Please review.
->
->Thanks,
->
->	Joerg
->
->Joerg Roedel (32):
->  iommu: Move default domain allocation to separate function
->  iommu/amd: Implement iommu_ops->def_domain_type call-back
->  iommu/vt-d: Wire up iommu_ops->def_domain_type
->  iommu/amd: Remove dma_mask check from check_device()
->  iommu/amd: Return -ENODEV in add_device when device is not handled by
->    IOMMU
->  iommu: Add probe_device() and remove_device() call-backs
->  iommu: Move default domain allocation to iommu_probe_device()
->  iommu: Keep a list of allocated groups in __iommu_probe_device()
->  iommu: Move new probe_device path to separate function
->  iommu: Split off default domain allocation from group assignment
->  iommu: Move iommu_group_create_direct_mappings() out of
->    iommu_group_add_device()
->  iommu: Export bus_iommu_probe() and make is safe for re-probing
->  iommu/amd: Remove dev_data->passthrough
->  iommu/amd: Convert to probe/release_device() call-backs
->  iommu/vt-d: Convert to probe/release_device() call-backs
->  iommu/arm-smmu: Convert to probe/release_device() call-backs
->  iommu/pamu: Convert to probe/release_device() call-backs
->  iommu/s390: Convert to probe/release_device() call-backs
->  iommu/virtio: Convert to probe/release_device() call-backs
->  iommu/msm: Convert to probe/release_device() call-backs
->  iommu/mediatek: Convert to probe/release_device() call-backs
->  iommu/mediatek-v1 Convert to probe/release_device() call-backs
->  iommu/qcom: Convert to probe/release_device() call-backs
->  iommu/rockchip: Convert to probe/release_device() call-backs
->  iommu/tegra: Convert to probe/release_device() call-backs
->  iommu/renesas: Convert to probe/release_device() call-backs
->  iommu/omap: Remove orphan_dev tracking
->  iommu/omap: Convert to probe/release_device() call-backs
->  iommu/exynos: Use first SYSMMU in controllers list for IOMMU core
->  iommu/exynos: Convert to probe/release_device() call-backs
->  iommu: Remove add_device()/remove_device() code-paths
->  iommu: Unexport iommu_group_get_for_dev()
->
->Sai Praneeth Prakhya (1):
->  iommu: Add def_domain_type() callback in iommu_ops
->
-> drivers/iommu/amd_iommu.c       |  97 ++++----
-> drivers/iommu/amd_iommu_types.h |   1 -
-> drivers/iommu/arm-smmu-v3.c     |  38 +--
-> drivers/iommu/arm-smmu.c        |  39 ++--
-> drivers/iommu/exynos-iommu.c    |  24 +-
-> drivers/iommu/fsl_pamu_domain.c |  22 +-
-> drivers/iommu/intel-iommu.c     |  68 +-----
-> drivers/iommu/iommu.c           | 393 +++++++++++++++++++++++++-------
-> drivers/iommu/ipmmu-vmsa.c      |  60 ++---
-> drivers/iommu/msm_iommu.c       |  34 +--
-> drivers/iommu/mtk_iommu.c       |  24 +-
-> drivers/iommu/mtk_iommu_v1.c    |  50 ++--
-> drivers/iommu/omap-iommu.c      |  99 ++------
-> drivers/iommu/qcom_iommu.c      |  24 +-
-> drivers/iommu/rockchip-iommu.c  |  26 +--
-> drivers/iommu/s390-iommu.c      |  22 +-
-> drivers/iommu/tegra-gart.c      |  24 +-
-> drivers/iommu/tegra-smmu.c      |  31 +--
-> drivers/iommu/virtio-iommu.c    |  41 +---
-> include/linux/iommu.h           |  21 +-
-> 20 files changed, 533 insertions(+), 605 deletions(-)
->
->-- 
->2.17.1
->
->_______________________________________________
->iommu mailing list
->iommu@lists.linux-foundation.org
->https://lists.linuxfoundation.org/mailman/listinfo/iommu
+> +       /* Create child platform device for the interconnect provider */
+> +       if (of_get_property(dev->of_node, "#interconnect-cells", NULL)) {
+> +                   bus->icc_pdev = platform_device_register_data(
+> +                                               dev, "exynos-generic-icc",
+> +                                               PLATFORM_DEVID_AUTO, NULL, 0);
+> +
+> +                   if (IS_ERR(bus->icc_pdev)) {
+> +                           ret = PTR_ERR(bus->icc_pdev);
+> +                           goto err;
+> +                   }
+> +       }
+> +
+>         max_state = bus->devfreq->profile->max_state;
+>         min_freq = (bus->devfreq->profile->freq_table[0] / 1000);
+>         max_freq = (bus->devfreq->profile->freq_table[max_state - 1] / 1000);
+> --
+> 2.7.4
 >
 
-Hi Joerg,
+It looks like very similar like the registering the interconnect
+device of imx-bus.c
+and I already reviewed and agreed this approach.
 
-With this patchset, I have an epyc system where if I boot with
-iommu=nopt and force a dump I will see some io page faults for a nic
-on the system. The vmcore is harvested and the system reboots. I
-haven't reproduced it on other systems yet, but without the patchset I
-don't see the io page faults during the kdump.
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Regards,
-Jerry
+nitpick: IMHO, I think that 'exynos-icc' is proper and simple without
+'generic' word.
+If we need to add new icc compatible int the future, we will add
+'exynosXXXX-icc' new compatible.
+But, I'm not forcing it. just opinion. Anyway, I agree this approach.
 
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
