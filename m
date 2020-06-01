@@ -2,271 +2,262 @@ Return-Path: <SRS0=E6Gx=7O=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F01BC433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Jun 2020 13:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 494D1C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Jun 2020 13:25:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DDF9A2074B
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Jun 2020 13:17:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AA302065C
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Jun 2020 13:25:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S/JfOFba"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="G6EVZ06p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725976AbgFANRQ (ORCPT
+        id S1727814AbgFANZg (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 1 Jun 2020 09:17:16 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:51475 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726073AbgFANRP (ORCPT
+        Mon, 1 Jun 2020 09:25:36 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:38284 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727826AbgFANZc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 1 Jun 2020 09:17:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1591017432;
-        h=from:from:reply-to:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:mime-version:mime-version:
-         content-type:content-type:in-reply-to:in-reply-to:  references:references;
-        bh=bTjB8qfrHTSFjfUbutxvl/qwCsz3nerFRx3HPBX7A6Q=;
-        b=S/JfOFbasRfNkNF9W59HtZI0O6axEa+LknXGz6r8HXoFLliGjE49Hh2h6eqA+X2J8PfOKG
-        jgBzq+ZXHmBfvrN9nJFU2s9QExokmWR60k4p3IHPmlm97W5Bzb2ltqxZpra5aVKL8BXvkP
-        rHnOyMuCHLRkjqInqgJ4efV23x+uYsw=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-462-DwZ_dJlCMWOzhXcWjhmD9w-1; Mon, 01 Jun 2020 09:17:06 -0400
-X-MC-Unique: DwZ_dJlCMWOzhXcWjhmD9w-1
-Received: by mail-qv1-f70.google.com with SMTP id z7so8577187qve.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Jun 2020 06:17:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:reply-to
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to;
-        bh=bTjB8qfrHTSFjfUbutxvl/qwCsz3nerFRx3HPBX7A6Q=;
-        b=RE3GDIiyodsOTa2kxuLWy8fcLaWG6qoOHuxKtJ8EfDQDGplvCa6VN/LtC5bsRYILWk
-         cJiP5JXQLXXfOf+Iugpgkh574woDHVU16KpFwbgQJmZyX1EIyNGSI/RKGYgxpKi457+2
-         IlwljiFAd0QgG5GxZORXBTER4kLKlRpis6yamIuHPiMi53hi/hUGeb1bfL+e5eghf3oy
-         /hSEmpL7HXzYPx3w8F+0YVnIy9gnP11ZVGVzXK+CFvOoxkjVx890ICVDNF4ovL4T2mBI
-         R13DzyQ6qrDqV9TN/Hh2zWC2KyLuUVQagGqWg5vQJC3n/069909tMSPskrSMiiZJkpGZ
-         66NA==
-X-Gm-Message-State: AOAM532zabWe3a+SCnmJeZomfiwC4tRRiPjBfAwNaudRCQ0Wmwco6qqA
-        jjgXU2wt9O+2iYflYJ8wkBKhoZwW2eEHdGtfR/JzOmpNZqvP+BPYYG6jF5KMPt6FIHi3G2oHNBX
-        jj1wjqnWL1/fgprPtM0zUm27sLbWRTRs=
-X-Received: by 2002:a0c:ee25:: with SMTP id l5mr20058572qvs.5.1591017425798;
-        Mon, 01 Jun 2020 06:17:05 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxfI03wn2xa5VbguB4ZgxB0Liv4dY32KsoEfpHfoc+ZEMln7Vo+khXJZaEY6bPHZ9c8b/Aysw==
-X-Received: by 2002:a0c:ee25:: with SMTP id l5mr20058438qvs.5.1591017424552;
-        Mon, 01 Jun 2020 06:17:04 -0700 (PDT)
-Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
-        by smtp.gmail.com with ESMTPSA id r77sm12075150qke.6.2020.06.01.06.17.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jun 2020 06:17:03 -0700 (PDT)
-Date:   Mon, 1 Jun 2020 06:17:02 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-rockchip@lists.infradead.org,
-        iommu@lists.linux-foundation.org,
-        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 00/33] iommu: Move iommu_group setup to IOMMU core code
-Message-ID: <20200601131702.4ksimsjvnsmo3mvn@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mail-Followup-To: Joerg Roedel <joro@8bytes.org>,
-        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-rockchip@lists.infradead.org,
-        iommu@lists.linux-foundation.org,
-        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org
-References: <20200414131542.25608-1-joro@8bytes.org>
- <20200529221623.qc6twmpzryh7nkvb@cantor>
- <20200601104240.7f5xhz7gooqhaq4n@cantor>
+        Mon, 1 Jun 2020 09:25:32 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200601132530euoutp01d0932dcc06f6118dcdd942709baa13ab~UbmDZwGat2438824388euoutp01y
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  1 Jun 2020 13:25:30 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200601132530euoutp01d0932dcc06f6118dcdd942709baa13ab~UbmDZwGat2438824388euoutp01y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1591017930;
+        bh=7MYfA7T1V2zf0ITQLbcPCa/EsxPMtj591hArtPdOjMw=;
+        h=From:Subject:To:Cc:Date:In-Reply-To:References:From;
+        b=G6EVZ06pRJJULZiV8S7AVTH/3ncNkfYaIcWhbeuLOLPrZWKG/W5wlpGKUIpMaRhjv
+         DAorg2ctcMO5q+9C4UknJo+QbLjloH9IPsSM6T/KU6ExB5ZFwwyBqzMHDGNhM6JJiu
+         SereMKlyB9KM9zu6Zen44NS+u1OuvrF1QVyCZ2kI=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200601132530eucas1p19a24e5bd23ad1d0190549ddb8bf39910~UbmDLs-Sf1285112851eucas1p1o;
+        Mon,  1 Jun 2020 13:25:30 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id AB.14.61286.AC105DE5; Mon,  1
+        Jun 2020 14:25:30 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200601132530eucas1p273e2fc07bcc82b5acdc6329853398e59~UbmC5ESkn2293122931eucas1p2i;
+        Mon,  1 Jun 2020 13:25:30 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200601132530eusmtrp2e22ef13b605eb5f0be3d4bec7968535b~UbmC4V9au1059710597eusmtrp2s;
+        Mon,  1 Jun 2020 13:25:30 +0000 (GMT)
+X-AuditID: cbfec7f2-ef1ff7000001ef66-d3-5ed501caf24b
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id DC.95.07950.9C105DE5; Mon,  1
+        Jun 2020 14:25:30 +0100 (BST)
+Received: from [106.120.51.71] (unknown [106.120.51.71]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200601132529eusmtip144ca8a4d65015ef72f79683e359a1e3b~UbmCifbJL1117511175eusmtip1Q;
+        Mon,  1 Jun 2020 13:25:29 +0000 (GMT)
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [trivial PATCH] video: fbdev: Use IS_BUILTIN
+To:     Joe Perches <joe@perches.com>
+Cc:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Message-ID: <465a04eb-cd2e-d0da-b667-584d297a0102@samsung.com>
+Date:   Mon, 1 Jun 2020 15:25:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20200601104240.7f5xhz7gooqhaq4n@cantor>
+In-Reply-To: <b1cf967015c5beafa475aaa30d8e21a58caff870.camel@perches.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjm2zmbR2l6nJovGqWjrMy0UT9WmqQUrH/1Q8ku2lFPOtqm7TjT
+        IrI/mQs1NVCXtfCSNnQuXU4NzBSc5TVviCQGmpuSWF4ItSwPZ5L/nve5fO/7wEdgoiq+DyFX
+        pdFqFaUQC1zwpq61/qOf0Gjssa55kXRkdVEgfTY1jUsbpsf40u68H3zpcGvZFleZj0tLBtp4
+        Z5xkU4+tPFlj5X3ZimEMky037L2AX3YJS6QV8nRaHRJ+3SX5Q2kRSv15MMPy/TmehTb8tMiZ
+        APIEvLDk87TIhRCRNQhqSysQN6wgyH2vdSjLCD4PTThtR+pHe504oRpBV8E3nBsWEGTn2DDW
+        JSBPQUG2AbHYgzwJje3mLRNBeJL+MGl2Y/0YaUVgLawUsB4hGQ761qeI9eDkfuh+48bSXuQl
+        WPrayecs7vCxdAZnsTN5Hppzh3ksxkhvmJjRO/A+sCyUYez7QBqdoD2rF3FXn4WKmgIBhz1g
+        3mp2tNkDf1v0PEcAwZ9HdkfagqC6aNORCIUv/esC9jqMPAz1rSEcHQG9g3M8lgbSFcYX3Lkj
+        XKGwqRjjaCE8eiji3AFgemUSbK/VtrzGniCxbkc13Y46uh11dP/3vkS4AXnTGkaZRDMSFX07
+        mKGUjEaVFJyQomxAW5+nZ9O61IxWh+I7EEkg8S6haWokVsSn0plMZQcCAhN7CiP7emJFwkQq
+        8w6tTolTaxQ004F8CVzsLTxePndNRCZRafRNmk6l1dsqj3D2yULyplpzQqQtetrIXO1VHAhO
+        jsuYDe9czifS5HWGmOK3ecFtxkN+R6Iy9YZoSaiOSIrqM95V577bsIetLeZEGKtKqJragSCb
+        l75k9+mYhf6l2R7/SI0hXj4fP24uDzzXb3OuM1gmLw7afX9f2bwxalH+urceIVEGPbCv3TIF
+        ZIhxJpmSBGJqhvoHW5fcpzgDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCIsWRmVeSWpSXmKPExsVy+t/xu7qnGK/GGfSZWlz5+p7NYvb9xywW
+        mx5fY7U40feB1eLyrjlAsSX9LBYzzu9jcmD3uN99nMlj85J6jy+rrjF7fN4kF8ASpWdTlF9a
+        kqqQkV9cYqsUbWhhpGdoaaFnZGKpZ2hsHmtlZKqkb2eTkpqTWZZapG+XoJdxcOZkxoKP6hXb
+        38xlaWD8rdDFyMkhIWAisf7qGXYQW0hgKaPE19tWXYwcQHEZiePryyBKhCX+XOti62LkAip5
+        zSixe+lVNpAEm4CVxMT2VYwgtrCApcTmA1tYQHpFBBQl7m7hB6lnFjjOKPHlxBZWiOY5jBI7
+        Xt0Aa+AVsJOYv2sKI0gDi4CKxImN/CBhUYEIicM7ZkGVCEqcnPmEBcTmFPCU2NF7mQnEZhZQ
+        l/gz7xIzhC0ucevJfKi4vMT2t3OYJzAKzULSPgtJyywkLbOQtCxgZFnFKJJaWpybnltspFec
+        mFtcmpeul5yfu4kRGGPbjv3csoOx613wIUYBDkYlHt4N96/ECbEmlhVX5h5ilOBgVhLhdTp7
+        Ok6INyWxsiq1KD++qDQntfgQoynQbxOZpUST84Hxn1cSb2hqaG5haWhubG5sZqEkztshcDBG
+        SCA9sSQ1OzW1ILUIpo+Jg1OqgXGK5b15//Vnf/2SrPblSUDGonXJ24J2b5/+1PRontf/lSI5
+        7peD39QvmcS2NkLLXWXC1BU6WxkfpFf3zX7pHlKsr3K/XcHqcuyjyG/Xp9xdelAj/XKmRBPr
+        NWUhHp3ykLMXImVvzj3EK1/nMbcuY3NFLW8c2+5tPrsrhdJPnOiIPjRDZ7v5mlolluKMREMt
+        5qLiRABw3u1dxwIAAA==
+X-CMS-MailID: 20200601132530eucas1p273e2fc07bcc82b5acdc6329853398e59
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200504232908eucas1p296927bc7c736ad924cefaea9a546459d
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200504232908eucas1p296927bc7c736ad924cefaea9a546459d
+References: <CGME20200504232908eucas1p296927bc7c736ad924cefaea9a546459d@eucas1p2.samsung.com>
+        <b1cf967015c5beafa475aaa30d8e21a58caff870.camel@perches.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon Jun 01 20, Jerry Snitselaar wrote:
->On Fri May 29 20, Jerry Snitselaar wrote:
->>On Tue Apr 14 20, Joerg Roedel wrote:
->>>Hi,
->>>
->>>here is the second version of this patch-set. The first version with
->>>some more introductory text can be found here:
->>>
->>>	https://lore.kernel.org/lkml/20200407183742.4344-1-joro@8bytes.org/
->>>
->>>Changes v1->v2:
->>>
->>>	* Rebased to v5.7-rc1
->>>
->>>	* Re-wrote the arm-smmu changes as suggested by Robin Murphy
->>>
->>>	* Re-worked the Exynos patches to hopefully not break the
->>>	  driver anymore
->>>
->>>	* Fixed a missing mutex_unlock() reported by Marek Szyprowski,
->>>	  thanks for that.
->>>
->>>There is also a git-branch available with these patches applied:
->>>
->>>	https://git.kernel.org/pub/scm/linux/kernel/git/joro/linux.git/log/?h=iommu-probe-device-v2
->>>
->>>Please review.
->>>
->>>Thanks,
->>>
->>>	Joerg
->>>
->>>Joerg Roedel (32):
->>>iommu: Move default domain allocation to separate function
->>>iommu/amd: Implement iommu_ops->def_domain_type call-back
->>>iommu/vt-d: Wire up iommu_ops->def_domain_type
->>>iommu/amd: Remove dma_mask check from check_device()
->>>iommu/amd: Return -ENODEV in add_device when device is not handled by
->>>  IOMMU
->>>iommu: Add probe_device() and remove_device() call-backs
->>>iommu: Move default domain allocation to iommu_probe_device()
->>>iommu: Keep a list of allocated groups in __iommu_probe_device()
->>>iommu: Move new probe_device path to separate function
->>>iommu: Split off default domain allocation from group assignment
->>>iommu: Move iommu_group_create_direct_mappings() out of
->>>  iommu_group_add_device()
->>>iommu: Export bus_iommu_probe() and make is safe for re-probing
->>>iommu/amd: Remove dev_data->passthrough
->>>iommu/amd: Convert to probe/release_device() call-backs
->>>iommu/vt-d: Convert to probe/release_device() call-backs
->>>iommu/arm-smmu: Convert to probe/release_device() call-backs
->>>iommu/pamu: Convert to probe/release_device() call-backs
->>>iommu/s390: Convert to probe/release_device() call-backs
->>>iommu/virtio: Convert to probe/release_device() call-backs
->>>iommu/msm: Convert to probe/release_device() call-backs
->>>iommu/mediatek: Convert to probe/release_device() call-backs
->>>iommu/mediatek-v1 Convert to probe/release_device() call-backs
->>>iommu/qcom: Convert to probe/release_device() call-backs
->>>iommu/rockchip: Convert to probe/release_device() call-backs
->>>iommu/tegra: Convert to probe/release_device() call-backs
->>>iommu/renesas: Convert to probe/release_device() call-backs
->>>iommu/omap: Remove orphan_dev tracking
->>>iommu/omap: Convert to probe/release_device() call-backs
->>>iommu/exynos: Use first SYSMMU in controllers list for IOMMU core
->>>iommu/exynos: Convert to probe/release_device() call-backs
->>>iommu: Remove add_device()/remove_device() code-paths
->>>iommu: Unexport iommu_group_get_for_dev()
->>>
->>>Sai Praneeth Prakhya (1):
->>>iommu: Add def_domain_type() callback in iommu_ops
->>>
->>>drivers/iommu/amd_iommu.c       |  97 ++++----
->>>drivers/iommu/amd_iommu_types.h |   1 -
->>>drivers/iommu/arm-smmu-v3.c     |  38 +--
->>>drivers/iommu/arm-smmu.c        |  39 ++--
->>>drivers/iommu/exynos-iommu.c    |  24 +-
->>>drivers/iommu/fsl_pamu_domain.c |  22 +-
->>>drivers/iommu/intel-iommu.c     |  68 +-----
->>>drivers/iommu/iommu.c           | 393 +++++++++++++++++++++++++-------
->>>drivers/iommu/ipmmu-vmsa.c      |  60 ++---
->>>drivers/iommu/msm_iommu.c       |  34 +--
->>>drivers/iommu/mtk_iommu.c       |  24 +-
->>>drivers/iommu/mtk_iommu_v1.c    |  50 ++--
->>>drivers/iommu/omap-iommu.c      |  99 ++------
->>>drivers/iommu/qcom_iommu.c      |  24 +-
->>>drivers/iommu/rockchip-iommu.c  |  26 +--
->>>drivers/iommu/s390-iommu.c      |  22 +-
->>>drivers/iommu/tegra-gart.c      |  24 +-
->>>drivers/iommu/tegra-smmu.c      |  31 +--
->>>drivers/iommu/virtio-iommu.c    |  41 +---
->>>include/linux/iommu.h           |  21 +-
->>>20 files changed, 533 insertions(+), 605 deletions(-)
->>>
->>>-- 
->>>2.17.1
->>>
->>>_______________________________________________
->>>iommu mailing list
->>>iommu@lists.linux-foundation.org
->>>https://lists.linuxfoundation.org/mailman/listinfo/iommu
->>>
->>
->>Hi Joerg,
->>
->>With this patchset, I have an epyc system where if I boot with
->>iommu=nopt and force a dump I will see some io page faults for a nic
->>on the system. The vmcore is harvested and the system reboots. I
->>haven't reproduced it on other systems yet, but without the patchset I
->>don't see the io page faults during the kdump.
->>
->>Regards,
->>Jerry
->
->I just hit an issue on a separate intel based system (kdump iommu=nopt),
->where it panics in during intel_iommu_attach_device, in is_aux_domain,
->due to device_domain_info being DEFER_DEVICE_DOMAIN_INFO. That doesn't
->get set to a valid address until the domain_add_dev_info call.
->
->Is it as simple as the following?
->
->diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
->index 29d3940847d3..f1bbeed46a4c 100644
->--- a/drivers/iommu/intel-iommu.c
->+++ b/drivers/iommu/intel-iommu.c
->@@ -5053,8 +5053,8 @@ is_aux_domain(struct device *dev, struct iommu_domain *domain)
-> {
->        struct device_domain_info *info = dev->archdata.iommu;
->-       return info && info->auxd_enabled &&
->-                       domain->type == IOMMU_DOMAIN_UNMANAGED;
->+       return info && info != DEFER_DEVICE_DOMAIN_INFO &&
->+               info->auxd_enabled && domain->type == IOMMU_DOMAIN_UNMANAGED;
-> }
-> static void auxiliary_link_device(struct dmar_domain *domain,
->
->
->Regards,
->Jerry
->
 
-With the patch, I avoid the panic, but I'm seeing an issue similar to the epyc system.
-I'm getting dmar faults from a couple of nics and the hp ilo. The addresses in question
-were in e820 reserved sections, but there aren't rmrr covering those addresses. The system
-manages to harvest the vmcore and reboot like the epyc. Without the patches I don't see
-the dmar faults. I needed to give this system back, but I'll try to poke at it some more
-in the next couple of days.
+On 5/5/20 1:29 AM, Joe Perches wrote:
+> IS_BUILTIN can be use to replace various initializations
+> like #if CONFIG_<FOO> int val = 1; #else int val = 0; #endif
+> so do so.
+> 
+> Signed-off-by: Joe Perches <joe@perches.com>
 
-Regards,
-Jerry
 
+Applied to drm-misc-next tree (patch should show up in v5.9), thanks.
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+> ---
+>  drivers/video/fbdev/aty/aty128fb.c     | 6 +-----
+>  drivers/video/fbdev/aty/atyfb_base.c   | 7 +------
+>  drivers/video/fbdev/aty/radeon_base.c  | 6 +-----
+>  drivers/video/fbdev/nvidia/nvidia.c    | 6 +-----
+>  drivers/video/fbdev/omap/omapfb_main.c | 6 +-----
+>  drivers/video/fbdev/riva/fbdev.c       | 6 +-----
+>  drivers/video/fbdev/s3c2410fb.c        | 6 +-----
+>  7 files changed, 7 insertions(+), 36 deletions(-)
+> 
+> diff --git a/drivers/video/fbdev/aty/aty128fb.c b/drivers/video/fbdev/aty/aty128fb.c
+> index d05d4195acad..6fae6ad6cb77 100644
+> --- a/drivers/video/fbdev/aty/aty128fb.c
+> +++ b/drivers/video/fbdev/aty/aty128fb.c
+> @@ -384,11 +384,7 @@ static int default_lcd_on = 1;
+>  static bool mtrr = true;
+>  
+>  #ifdef CONFIG_FB_ATY128_BACKLIGHT
+> -#ifdef CONFIG_PMAC_BACKLIGHT
+> -static int backlight = 1;
+> -#else
+> -static int backlight = 0;
+> -#endif
+> +static int backlight = IS_BUILTIN(CONFIG_PMAC_BACKLIGHT);
+>  #endif
+>  
+>  /* PLL constants */
+> diff --git a/drivers/video/fbdev/aty/atyfb_base.c b/drivers/video/fbdev/aty/atyfb_base.c
+> index 49d192869cf5..23a29d61c2a2 100644
+> --- a/drivers/video/fbdev/aty/atyfb_base.c
+> +++ b/drivers/video/fbdev/aty/atyfb_base.c
+> @@ -317,12 +317,7 @@ static int mclk;
+>  static int xclk;
+>  static int comp_sync = -1;
+>  static char *mode;
+> -
+> -#ifdef CONFIG_PMAC_BACKLIGHT
+> -static int backlight = 1;
+> -#else
+> -static int backlight = 0;
+> -#endif
+> +static int backlight = IS_BUILTIN(CONFIG_PMAC_BACKLIGHT);
+>  
+>  #ifdef CONFIG_PPC
+>  static int default_vmode = VMODE_CHOOSE;
+> diff --git a/drivers/video/fbdev/aty/radeon_base.c b/drivers/video/fbdev/aty/radeon_base.c
+> index e116a3f9ad56..3fe509cb9b87 100644
+> --- a/drivers/video/fbdev/aty/radeon_base.c
+> +++ b/drivers/video/fbdev/aty/radeon_base.c
+> @@ -269,11 +269,7 @@ static bool force_measure_pll = 0;
+>  static bool nomtrr = 0;
+>  static bool force_sleep;
+>  static bool ignore_devlist;
+> -#ifdef CONFIG_PMAC_BACKLIGHT
+> -static int backlight = 1;
+> -#else
+> -static int backlight = 0;
+> -#endif
+> +static int backlight = IS_BUILTIN(CONFIG_PMAC_BACKLIGHT);
+>  
+>  /* Note about this function: we have some rare cases where we must not schedule,
+>   * this typically happen with our special "wake up early" hook which allows us to
+> diff --git a/drivers/video/fbdev/nvidia/nvidia.c b/drivers/video/fbdev/nvidia/nvidia.c
+> index c24de9107958..c6820e21875d 100644
+> --- a/drivers/video/fbdev/nvidia/nvidia.c
+> +++ b/drivers/video/fbdev/nvidia/nvidia.c
+> @@ -74,11 +74,7 @@ static int vram = 0;
+>  static int bpp = 8;
+>  static int reverse_i2c;
+>  static bool nomtrr = false;
+> -#ifdef CONFIG_PMAC_BACKLIGHT
+> -static int backlight = 1;
+> -#else
+> -static int backlight = 0;
+> -#endif
+> +static int backlight = IS_BUILTIN(CONFIG_PMAC_BACKLIGHT);
+>  
+>  static char *mode_option = NULL;
+>  
+> diff --git a/drivers/video/fbdev/omap/omapfb_main.c b/drivers/video/fbdev/omap/omapfb_main.c
+> index 1a9d6242916e..0cbcc74fa943 100644
+> --- a/drivers/video/fbdev/omap/omapfb_main.c
+> +++ b/drivers/video/fbdev/omap/omapfb_main.c
+> @@ -34,11 +34,7 @@ static unsigned long	def_vyres;
+>  static unsigned int	def_rotate;
+>  static unsigned int	def_mirror;
+>  
+> -#ifdef CONFIG_FB_OMAP_MANUAL_UPDATE
+> -static bool		manual_update = 1;
+> -#else
+> -static bool		manual_update;
+> -#endif
+> +static bool	manual_update = IS_BUILTIN(CONFIG_FB_OMAP_MANUAL_UPDATE);
+>  
+>  static struct platform_device	*fbdev_pdev;
+>  static struct lcd_panel		*fbdev_panel;
+> diff --git a/drivers/video/fbdev/riva/fbdev.c b/drivers/video/fbdev/riva/fbdev.c
+> index 764ec3285e62..9b3493846f4d 100644
+> --- a/drivers/video/fbdev/riva/fbdev.c
+> +++ b/drivers/video/fbdev/riva/fbdev.c
+> @@ -202,11 +202,7 @@ static int flatpanel = -1; /* Autodetect later */
+>  static int forceCRTC = -1;
+>  static bool noaccel  = 0;
+>  static bool nomtrr = 0;
+> -#ifdef CONFIG_PMAC_BACKLIGHT
+> -static int backlight = 1;
+> -#else
+> -static int backlight = 0;
+> -#endif
+> +static int backlight = IS_BUILTIN(CONFIG_PMAC_BACKLIGHT);
+>  
+>  static char *mode_option = NULL;
+>  static bool strictmode       = 0;
+> diff --git a/drivers/video/fbdev/s3c2410fb.c b/drivers/video/fbdev/s3c2410fb.c
+> index 2fb15a540167..6f8fa501583f 100644
+> --- a/drivers/video/fbdev/s3c2410fb.c
+> +++ b/drivers/video/fbdev/s3c2410fb.c
+> @@ -44,11 +44,7 @@
+>  #include "s3c2410fb.h"
+>  
+>  /* Debugging stuff */
+> -#ifdef CONFIG_FB_S3C2410_DEBUG
+> -static int debug	= 1;
+> -#else
+> -static int debug;
+> -#endif
+> +static int debug = IS_BUILTIN(CONFIG_FB_S3C2410_DEBUG);
+>  
+>  #define dprintk(msg...) \
+>  do { \
+> 
