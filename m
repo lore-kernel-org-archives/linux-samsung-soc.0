@@ -2,262 +2,198 @@ Return-Path: <SRS0=E6Gx=7O=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 494D1C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Jun 2020 13:25:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DE18C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Jun 2020 17:05:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1AA302065C
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Jun 2020 13:25:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="G6EVZ06p"
+	by mail.kernel.org (Postfix) with ESMTP id F070B206E2
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Jun 2020 17:05:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727814AbgFANZg (ORCPT
+        id S1727994AbgFARFd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 1 Jun 2020 09:25:36 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:38284 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727826AbgFANZc (ORCPT
+        Mon, 1 Jun 2020 13:05:33 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:41044 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727803AbgFARFd (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 1 Jun 2020 09:25:32 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200601132530euoutp01d0932dcc06f6118dcdd942709baa13ab~UbmDZwGat2438824388euoutp01y
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  1 Jun 2020 13:25:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200601132530euoutp01d0932dcc06f6118dcdd942709baa13ab~UbmDZwGat2438824388euoutp01y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1591017930;
-        bh=7MYfA7T1V2zf0ITQLbcPCa/EsxPMtj591hArtPdOjMw=;
-        h=From:Subject:To:Cc:Date:In-Reply-To:References:From;
-        b=G6EVZ06pRJJULZiV8S7AVTH/3ncNkfYaIcWhbeuLOLPrZWKG/W5wlpGKUIpMaRhjv
-         DAorg2ctcMO5q+9C4UknJo+QbLjloH9IPsSM6T/KU6ExB5ZFwwyBqzMHDGNhM6JJiu
-         SereMKlyB9KM9zu6Zen44NS+u1OuvrF1QVyCZ2kI=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200601132530eucas1p19a24e5bd23ad1d0190549ddb8bf39910~UbmDLs-Sf1285112851eucas1p1o;
-        Mon,  1 Jun 2020 13:25:30 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id AB.14.61286.AC105DE5; Mon,  1
-        Jun 2020 14:25:30 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200601132530eucas1p273e2fc07bcc82b5acdc6329853398e59~UbmC5ESkn2293122931eucas1p2i;
-        Mon,  1 Jun 2020 13:25:30 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200601132530eusmtrp2e22ef13b605eb5f0be3d4bec7968535b~UbmC4V9au1059710597eusmtrp2s;
-        Mon,  1 Jun 2020 13:25:30 +0000 (GMT)
-X-AuditID: cbfec7f2-ef1ff7000001ef66-d3-5ed501caf24b
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id DC.95.07950.9C105DE5; Mon,  1
-        Jun 2020 14:25:30 +0100 (BST)
-Received: from [106.120.51.71] (unknown [106.120.51.71]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200601132529eusmtip144ca8a4d65015ef72f79683e359a1e3b~UbmCifbJL1117511175eusmtip1Q;
-        Mon,  1 Jun 2020 13:25:29 +0000 (GMT)
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [trivial PATCH] video: fbdev: Use IS_BUILTIN
-To:     Joe Perches <joe@perches.com>
-Cc:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Message-ID: <465a04eb-cd2e-d0da-b667-584d297a0102@samsung.com>
-Date:   Mon, 1 Jun 2020 15:25:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.8.0
+        Mon, 1 Jun 2020 13:05:33 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id B61BB2A23F8
+Received: by earth.universe (Postfix, from userid 1000)
+        id 4E7143C08C7; Mon,  1 Jun 2020 19:05:28 +0200 (CEST)
+Date:   Mon, 1 Jun 2020 19:05:28 +0200
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
+Subject: Re: [PATCHv1 00/19] Improve SBS battery support
+Message-ID: <20200601170528.r5w3aeijny3v5yx3@earth.universe>
+References: <20200513185615.508236-1-sebastian.reichel@collabora.com>
+ <CGME20200601104027eucas1p2b076ee860520d709e8178c41550653f7@eucas1p2.samsung.com>
+ <15933a91-dd89-1f94-c2f2-79be4395f4c1@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <b1cf967015c5beafa475aaa30d8e21a58caff870.camel@perches.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjm2zmbR2l6nJovGqWjrMy0UT9WmqQUrH/1Q8ku2lFPOtqm7TjT
-        IrI/mQs1NVCXtfCSNnQuXU4NzBSc5TVviCQGmpuSWF4ItSwPZ5L/nve5fO/7wEdgoiq+DyFX
-        pdFqFaUQC1zwpq61/qOf0Gjssa55kXRkdVEgfTY1jUsbpsf40u68H3zpcGvZFleZj0tLBtp4
-        Z5xkU4+tPFlj5X3ZimEMky037L2AX3YJS6QV8nRaHRJ+3SX5Q2kRSv15MMPy/TmehTb8tMiZ
-        APIEvLDk87TIhRCRNQhqSysQN6wgyH2vdSjLCD4PTThtR+pHe504oRpBV8E3nBsWEGTn2DDW
-        JSBPQUG2AbHYgzwJje3mLRNBeJL+MGl2Y/0YaUVgLawUsB4hGQ761qeI9eDkfuh+48bSXuQl
-        WPrayecs7vCxdAZnsTN5Hppzh3ksxkhvmJjRO/A+sCyUYez7QBqdoD2rF3FXn4WKmgIBhz1g
-        3mp2tNkDf1v0PEcAwZ9HdkfagqC6aNORCIUv/esC9jqMPAz1rSEcHQG9g3M8lgbSFcYX3Lkj
-        XKGwqRjjaCE8eiji3AFgemUSbK/VtrzGniCxbkc13Y46uh11dP/3vkS4AXnTGkaZRDMSFX07
-        mKGUjEaVFJyQomxAW5+nZ9O61IxWh+I7EEkg8S6haWokVsSn0plMZQcCAhN7CiP7emJFwkQq
-        8w6tTolTaxQ004F8CVzsLTxePndNRCZRafRNmk6l1dsqj3D2yULyplpzQqQtetrIXO1VHAhO
-        jsuYDe9czifS5HWGmOK3ecFtxkN+R6Iy9YZoSaiOSIrqM95V577bsIetLeZEGKtKqJragSCb
-        l75k9+mYhf6l2R7/SI0hXj4fP24uDzzXb3OuM1gmLw7afX9f2bwxalH+urceIVEGPbCv3TIF
-        ZIhxJpmSBGJqhvoHW5fcpzgDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCIsWRmVeSWpSXmKPExsVy+t/xu7qnGK/GGfSZWlz5+p7NYvb9xywW
-        mx5fY7U40feB1eLyrjlAsSX9LBYzzu9jcmD3uN99nMlj85J6jy+rrjF7fN4kF8ASpWdTlF9a
-        kqqQkV9cYqsUbWhhpGdoaaFnZGKpZ2hsHmtlZKqkb2eTkpqTWZZapG+XoJdxcOZkxoKP6hXb
-        38xlaWD8rdDFyMkhIWAisf7qGXYQW0hgKaPE19tWXYwcQHEZiePryyBKhCX+XOti62LkAip5
-        zSixe+lVNpAEm4CVxMT2VYwgtrCApcTmA1tYQHpFBBQl7m7hB6lnFjjOKPHlxBZWiOY5jBI7
-        Xt0Aa+AVsJOYv2sKI0gDi4CKxImN/CBhUYEIicM7ZkGVCEqcnPmEBcTmFPCU2NF7mQnEZhZQ
-        l/gz7xIzhC0ucevJfKi4vMT2t3OYJzAKzULSPgtJyywkLbOQtCxgZFnFKJJaWpybnltspFec
-        mFtcmpeul5yfu4kRGGPbjv3csoOx613wIUYBDkYlHt4N96/ECbEmlhVX5h5ilOBgVhLhdTp7
-        Ok6INyWxsiq1KD++qDQntfgQoynQbxOZpUST84Hxn1cSb2hqaG5haWhubG5sZqEkztshcDBG
-        SCA9sSQ1OzW1ILUIpo+Jg1OqgXGK5b15//Vnf/2SrPblSUDGonXJ24J2b5/+1PRontf/lSI5
-        7peD39QvmcS2NkLLXWXC1BU6WxkfpFf3zX7pHlKsr3K/XcHqcuyjyG/Xp9xdelAj/XKmRBPr
-        NWUhHp3ykLMXImVvzj3EK1/nMbcuY3NFLW8c2+5tPrsrhdJPnOiIPjRDZ7v5mlolluKMREMt
-        5qLiRABw3u1dxwIAAA==
-X-CMS-MailID: 20200601132530eucas1p273e2fc07bcc82b5acdc6329853398e59
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200504232908eucas1p296927bc7c736ad924cefaea9a546459d
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200504232908eucas1p296927bc7c736ad924cefaea9a546459d
-References: <CGME20200504232908eucas1p296927bc7c736ad924cefaea9a546459d@eucas1p2.samsung.com>
-        <b1cf967015c5beafa475aaa30d8e21a58caff870.camel@perches.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="pptq4mcmy2xywbfv"
+Content-Disposition: inline
+In-Reply-To: <15933a91-dd89-1f94-c2f2-79be4395f4c1@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 
-On 5/5/20 1:29 AM, Joe Perches wrote:
-> IS_BUILTIN can be use to replace various initializations
-> like #if CONFIG_<FOO> int val = 1; #else int val = 0; #endif
-> so do so.
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
+--pptq4mcmy2xywbfv
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Marek,
 
-Applied to drm-misc-next tree (patch should show up in v5.9), thanks.
+On Mon, Jun 01, 2020 at 12:40:27PM +0200, Marek Szyprowski wrote:
+> On 13.05.2020 20:55, Sebastian Reichel wrote:
+> > This patchset improves support for SBS compliant batteries. Due to
+> > the changes, the battery now exposes 32 power supply properties and
+> > (un)plugging it generates a backtrace containing the following message
+> > without the first patch in this series:
+> >
+> > ---------------------------
+> > WARNING: CPU: 0 PID: 20 at lib/kobject_uevent.c:659 add_uevent_var+0xd4=
+/0x104
+> > add_uevent_var: too many keys
+> > ---------------------------
+> >
+> > For references this is what an SBS battery status looks like after
+> > the patch series has been applied:
+> >
+> > cat /sys/class/power_supply/sbs-0-000b/uevent
+> > POWER_SUPPLY_NAME=3Dsbs-0-000b
+> > POWER_SUPPLY_TYPE=3DBattery
+> > POWER_SUPPLY_STATUS=3DDischarging
+> > POWER_SUPPLY_CAPACITY_LEVEL=3DNormal
+> > POWER_SUPPLY_HEALTH=3DGood
+> > POWER_SUPPLY_PRESENT=3D1
+> > POWER_SUPPLY_TECHNOLOGY=3DLi-ion
+> > POWER_SUPPLY_CYCLE_COUNT=3D12
+> > POWER_SUPPLY_VOLTAGE_NOW=3D11441000
+> > POWER_SUPPLY_CURRENT_NOW=3D-26000
+> > POWER_SUPPLY_CURRENT_AVG=3D-24000
+> > POWER_SUPPLY_CAPACITY=3D76
+> > POWER_SUPPLY_CAPACITY_ERROR_MARGIN=3D1
+> > POWER_SUPPLY_TEMP=3D198
+> > POWER_SUPPLY_TIME_TO_EMPTY_AVG=3D438600
+> > POWER_SUPPLY_TIME_TO_FULL_AVG=3D3932100
+> > POWER_SUPPLY_SERIAL_NUMBER=3D0000
+> > POWER_SUPPLY_VOLTAGE_MIN_DESIGN=3D10800000
+> > POWER_SUPPLY_VOLTAGE_MAX_DESIGN=3D10800000
+> > POWER_SUPPLY_ENERGY_NOW=3D31090000
+> > POWER_SUPPLY_ENERGY_FULL=3D42450000
+> > POWER_SUPPLY_ENERGY_FULL_DESIGN=3D41040000
+> > POWER_SUPPLY_CHARGE_NOW=3D2924000
+> > POWER_SUPPLY_CHARGE_FULL=3D3898000
+> > POWER_SUPPLY_CHARGE_FULL_DESIGN=3D3800000
+> > POWER_SUPPLY_CONSTANT_CHARGE_CURRENT_MAX=3D3000000
+> > POWER_SUPPLY_CONSTANT_CHARGE_VOLTAGE_MAX=3D12300000
+> > POWER_SUPPLY_MANUFACTURE_YEAR=3D2017
+> > POWER_SUPPLY_MANUFACTURE_MONTH=3D7
+> > POWER_SUPPLY_MANUFACTURE_DAY=3D3
+> > POWER_SUPPLY_MANUFACTURER=3DUR18650A
+> > POWER_SUPPLY_MODEL_NAME=3DGEHC
+>=20
+> This patch landed in linux-next dated 20200529. Sadly it causes a=20
+> regression on Samsung Exynos-based Chromebooks (Exynos5250 Snow,=20
+> Exynos5420 Peach-Pi and Exynos5800 Peach-Pit). System boots to=20
+> userspace, but then, when udev populates /dev, booting hangs:
+>=20
+> [=A0=A0=A0 4.435167] VFS: Mounted root (ext4 filesystem) readonly on devi=
+ce=20
+> 179:51.
+> [=A0=A0=A0 4.457477] devtmpfs: mounted
+> [=A0=A0=A0 4.460235] Freeing unused kernel memory: 1024K
+> [=A0=A0=A0 4.464022] Run /sbin/init as init process
+> INIT: version 2.88 booting
+> [info] Using makefile-style concurrent boot in runlevel S.
+> [=A0=A0=A0 5.102096] random: crng init done
+> [....] Starting the hotplug events dispatcher: systemd-udevdstarting=20
+> version 236
+> [ ok .
+> [....] Synthesizing the initial hotplug events...[ ok done.
+> [....] Waiting for /dev to be fully populated...[=A0=A0 34.409914]=20
+> TPS65090_RAILSDCDC1: disabling
+> [=A0=A0 34.412977] TPS65090_RAILSDCDC2: disabling
+> [=A0=A0 34.417021] TPS65090_RAILSDCDC3: disabling
+> [=A0=A0 34.423848] TPS65090_RAILSLDO1: disabling
+> [=A0=A0 34.429068] TPS65090_RAILSLDO2: disabling
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+:(
 
-> ---
->  drivers/video/fbdev/aty/aty128fb.c     | 6 +-----
->  drivers/video/fbdev/aty/atyfb_base.c   | 7 +------
->  drivers/video/fbdev/aty/radeon_base.c  | 6 +-----
->  drivers/video/fbdev/nvidia/nvidia.c    | 6 +-----
->  drivers/video/fbdev/omap/omapfb_main.c | 6 +-----
->  drivers/video/fbdev/riva/fbdev.c       | 6 +-----
->  drivers/video/fbdev/s3c2410fb.c        | 6 +-----
->  7 files changed, 7 insertions(+), 36 deletions(-)
-> 
-> diff --git a/drivers/video/fbdev/aty/aty128fb.c b/drivers/video/fbdev/aty/aty128fb.c
-> index d05d4195acad..6fae6ad6cb77 100644
-> --- a/drivers/video/fbdev/aty/aty128fb.c
-> +++ b/drivers/video/fbdev/aty/aty128fb.c
-> @@ -384,11 +384,7 @@ static int default_lcd_on = 1;
->  static bool mtrr = true;
->  
->  #ifdef CONFIG_FB_ATY128_BACKLIGHT
-> -#ifdef CONFIG_PMAC_BACKLIGHT
-> -static int backlight = 1;
-> -#else
-> -static int backlight = 0;
-> -#endif
-> +static int backlight = IS_BUILTIN(CONFIG_PMAC_BACKLIGHT);
->  #endif
->  
->  /* PLL constants */
-> diff --git a/drivers/video/fbdev/aty/atyfb_base.c b/drivers/video/fbdev/aty/atyfb_base.c
-> index 49d192869cf5..23a29d61c2a2 100644
-> --- a/drivers/video/fbdev/aty/atyfb_base.c
-> +++ b/drivers/video/fbdev/aty/atyfb_base.c
-> @@ -317,12 +317,7 @@ static int mclk;
->  static int xclk;
->  static int comp_sync = -1;
->  static char *mode;
-> -
-> -#ifdef CONFIG_PMAC_BACKLIGHT
-> -static int backlight = 1;
-> -#else
-> -static int backlight = 0;
-> -#endif
-> +static int backlight = IS_BUILTIN(CONFIG_PMAC_BACKLIGHT);
->  
->  #ifdef CONFIG_PPC
->  static int default_vmode = VMODE_CHOOSE;
-> diff --git a/drivers/video/fbdev/aty/radeon_base.c b/drivers/video/fbdev/aty/radeon_base.c
-> index e116a3f9ad56..3fe509cb9b87 100644
-> --- a/drivers/video/fbdev/aty/radeon_base.c
-> +++ b/drivers/video/fbdev/aty/radeon_base.c
-> @@ -269,11 +269,7 @@ static bool force_measure_pll = 0;
->  static bool nomtrr = 0;
->  static bool force_sleep;
->  static bool ignore_devlist;
-> -#ifdef CONFIG_PMAC_BACKLIGHT
-> -static int backlight = 1;
-> -#else
-> -static int backlight = 0;
-> -#endif
-> +static int backlight = IS_BUILTIN(CONFIG_PMAC_BACKLIGHT);
->  
->  /* Note about this function: we have some rare cases where we must not schedule,
->   * this typically happen with our special "wake up early" hook which allows us to
-> diff --git a/drivers/video/fbdev/nvidia/nvidia.c b/drivers/video/fbdev/nvidia/nvidia.c
-> index c24de9107958..c6820e21875d 100644
-> --- a/drivers/video/fbdev/nvidia/nvidia.c
-> +++ b/drivers/video/fbdev/nvidia/nvidia.c
-> @@ -74,11 +74,7 @@ static int vram = 0;
->  static int bpp = 8;
->  static int reverse_i2c;
->  static bool nomtrr = false;
-> -#ifdef CONFIG_PMAC_BACKLIGHT
-> -static int backlight = 1;
-> -#else
-> -static int backlight = 0;
-> -#endif
-> +static int backlight = IS_BUILTIN(CONFIG_PMAC_BACKLIGHT);
->  
->  static char *mode_option = NULL;
->  
-> diff --git a/drivers/video/fbdev/omap/omapfb_main.c b/drivers/video/fbdev/omap/omapfb_main.c
-> index 1a9d6242916e..0cbcc74fa943 100644
-> --- a/drivers/video/fbdev/omap/omapfb_main.c
-> +++ b/drivers/video/fbdev/omap/omapfb_main.c
-> @@ -34,11 +34,7 @@ static unsigned long	def_vyres;
->  static unsigned int	def_rotate;
->  static unsigned int	def_mirror;
->  
-> -#ifdef CONFIG_FB_OMAP_MANUAL_UPDATE
-> -static bool		manual_update = 1;
-> -#else
-> -static bool		manual_update;
-> -#endif
-> +static bool	manual_update = IS_BUILTIN(CONFIG_FB_OMAP_MANUAL_UPDATE);
->  
->  static struct platform_device	*fbdev_pdev;
->  static struct lcd_panel		*fbdev_panel;
-> diff --git a/drivers/video/fbdev/riva/fbdev.c b/drivers/video/fbdev/riva/fbdev.c
-> index 764ec3285e62..9b3493846f4d 100644
-> --- a/drivers/video/fbdev/riva/fbdev.c
-> +++ b/drivers/video/fbdev/riva/fbdev.c
-> @@ -202,11 +202,7 @@ static int flatpanel = -1; /* Autodetect later */
->  static int forceCRTC = -1;
->  static bool noaccel  = 0;
->  static bool nomtrr = 0;
-> -#ifdef CONFIG_PMAC_BACKLIGHT
-> -static int backlight = 1;
-> -#else
-> -static int backlight = 0;
-> -#endif
-> +static int backlight = IS_BUILTIN(CONFIG_PMAC_BACKLIGHT);
->  
->  static char *mode_option = NULL;
->  static bool strictmode       = 0;
-> diff --git a/drivers/video/fbdev/s3c2410fb.c b/drivers/video/fbdev/s3c2410fb.c
-> index 2fb15a540167..6f8fa501583f 100644
-> --- a/drivers/video/fbdev/s3c2410fb.c
-> +++ b/drivers/video/fbdev/s3c2410fb.c
-> @@ -44,11 +44,7 @@
->  #include "s3c2410fb.h"
->  
->  /* Debugging stuff */
-> -#ifdef CONFIG_FB_S3C2410_DEBUG
-> -static int debug	= 1;
-> -#else
-> -static int debug;
-> -#endif
-> +static int debug = IS_BUILTIN(CONFIG_FB_S3C2410_DEBUG);
->  
->  #define dprintk(msg...) \
->  do { \
-> 
+log does not look useful either.
+
+> Bisect between v5.7-rc1 and next-20200529 pointed me to the first bad=20
+> commit: [c4b12a2f3f3de670f6be5e96092a2cab0b877f1a] power: supply:=20
+> sbs-battery: simplify read_read_string_data.
+
+ok. I tested this on an to-be-upstreamed i.MX6 based system
+and arch/arm/boot/dts/imx53-ppd.dts. I think the difference
+is, that i2c-exynos5 does not expose I2C_FUNC_SMBUS_READ_BLOCK_DATA.
+I hoped all systems using SBS battery support this, but now
+I see I2C_FUNC_SMBUS_EMUL only supports writing block data.
+Looks like I need to add another patch implementing that
+using the old code with added PEC support.
+
+In any case that should only return -ENODEV for the property
+(and uevent), but not break boot. So something fishy is going
+on.
+
+> However reverting it in linux-next doesn't fix the issue, so the
+> next commits are also relevant to this issue.
+
+The next patch, which adds PEC support depends on the simplification
+of sbs_read_string_data. The old, open coded variant will result in
+PEC failure for string properties (which should not stop boot either
+of course). Can you try reverting both?
+
+If that helps I will revert those two instead of dropping the whole
+series for this merge window.
+
+> Let me know how can I help debugging it.
+
+I suspect, that this is userspace endlessly retrying reading the
+battery uevent when an error is returned. Could you check this?
+Should be easy to see by adding some printfs.
+
+That would mean a faulty battery could stall complete boot without
+a useful error message, which is bad and needs to be fixed.
+
+Sorry for the inconvience and thanks for your report,
+
+-- Sebastian
+
+--pptq4mcmy2xywbfv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl7VNVEACgkQ2O7X88g7
++prs4Q/+Oog/pqXDuQrwMX2D8/43npxQGz7VEb2GI/wiyim6Oq9Kw1XgTjJnUpfG
+adWleKQhPYlj07KHSC7ZibvRre4k0y1SCvfsHE2U5Twkgr1N77oyarxshhNuhR2n
+DqpLKb5iFq0k0uP6AIgUnBQBX597AY9OGzVDjTw7GuFMtjBtLLSl8p9sh1CfkL/s
+yhsVNwptOTcYZsHS+VeKrT7vtzJjwF0h8X01eKfUPBeMd1usKZOsQbkHjilObQ4g
+JQW04ozLEuEkMn8rqEJ127bHz8IPHYnXfxpPYMY5oA8XqZ3cRFsfTQKt7Yh/EzJH
+hIYmqc2MMjcshv9jpAyCW1blyy9gXhjOEjIXQGkGC/yvZw8EFw0oE5ve44LC2+uQ
+4t54P0Ae39O+ZO2l/z86EXDSuYzFWhGv48/Gn+xYUS4KPfs/SoqwVK6BP1XJCibA
+EkW6V0n8Jd1ee5jTQlApBTqzWoGSntoqP7LnHQeWdq+54JDAGY3Pfydq8HxaIM4+
+QvxfcGY6+Xc+SMuWFpMdBuVP+Z11Sq4rk8nA7LY546n/+E81eU7zFCOAnZfXewIH
+4s9xyNV8pjCvqIhsyiw5mLTxx5/ZNmJa5aqcZeh/sSScaOUl4PsoZvXo7ahDHJz6
+2PPUheRmlUz8fQXdlCrpDzcM/HH+wYMJiQTq13cQZ4WYY5XauZk=
+=s38G
+-----END PGP SIGNATURE-----
+
+--pptq4mcmy2xywbfv--
