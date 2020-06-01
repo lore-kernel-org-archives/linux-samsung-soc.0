@@ -1,168 +1,149 @@
-Return-Path: <SRS0=0Qh1=7N=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=E6Gx=7O=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84E77C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 31 May 2020 16:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDEC4C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Jun 2020 01:30:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C360206C3
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 31 May 2020 16:07:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6ECA20801
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Jun 2020 01:30:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="XeXA68G6"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VsFQ2Usp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728102AbgEaQHW (ORCPT
+        id S1726882AbgFABa6 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 31 May 2020 12:07:22 -0400
-Received: from mout.web.de ([212.227.15.3]:38077 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725912AbgEaQHV (ORCPT
+        Sun, 31 May 2020 21:30:58 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:46026 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726555AbgFABa6 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 31 May 2020 12:07:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1590941207;
-        bh=vOrM0uWQIJc26fYdgszEhsgU2uFU+0knpZn9MTMqFO0=;
-        h=X-UI-Sender-Class:Cc:Subject:To:From:Date;
-        b=XeXA68G6vpm5R91zxudgNtnAtcZrryh280aO1dJ5JVMZNBKFDC9OK9jgGSbd52LXa
-         woFTCYqrjR/219cJrZ2ZAD3pRwq7pszUG8x6wvYJOKvf07JiwQ5sTFiGx2xXNc40Kd
-         Op01eUQLmAavC3oa+IU3cBanCFevx/Wz25a1LSrg=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.131.19.10]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MPrLL-1jIW2e1uhH-00Mt9i; Sun, 31
- May 2020 18:06:47 +0200
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kangjie Lu <kjlu@umn.edu>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: [PATCH] media: exynos4-is: Fix runtime PM imbalance in
- isp_video_open()
-To:     Dinghao Liu <dinghao.liu@zju.edu.cn>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <3b8459ce-114b-f69a-b671-4f4cc0127fd6@web.de>
-Date:   Sun, 31 May 2020 18:06:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.1
+        Sun, 31 May 2020 21:30:58 -0400
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200601013054epoutp04841926fda9aaf2299b98d13ce876ed84~UR2IU0B660302803028epoutp04z
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  1 Jun 2020 01:30:54 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200601013054epoutp04841926fda9aaf2299b98d13ce876ed84~UR2IU0B660302803028epoutp04z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1590975054;
+        bh=JTwM6QCv9nPVaQSrpu86bU9wEvCr6ibtM4h10TLt4uM=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=VsFQ2UspCek1XSeIXT/n01b9JK7gOCSOzLHDYfRwkRMYme46mG+S7ZmcGCa2Wput/
+         zBdcIRIoRcJAh/F12jJv4HMAqzqOk/C07NbL+0hLsRCLLK5RpAVRnyUUc045H52VsO
+         cEcMKr70nzJbA4UISWxc7GjHVHg9zzQpqhpEwYjk=
+Received: from epsmges5p2new.samsung.com (unknown [182.195.42.74]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20200601013054epcas5p3e3b771e73d2063448fed84381c2c9c87~UR2Hysudi1677916779epcas5p3A;
+        Mon,  1 Jun 2020 01:30:54 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        21.B8.09703.E4A54DE5; Mon,  1 Jun 2020 10:30:54 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20200601013053epcas5p37291890b3a1a3b05f835824f942e1343~UR2G2jgC41677916779epcas5p3-;
+        Mon,  1 Jun 2020 01:30:53 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200601013053epsmtrp143ecd481342151a64371a0a0f20965f3~UR2G1FOKS0981709817epsmtrp1e;
+        Mon,  1 Jun 2020 01:30:53 +0000 (GMT)
+X-AuditID: b6c32a4a-4cbff700000025e7-af-5ed45a4edcf7
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        6C.F4.08382.D4A54DE5; Mon,  1 Jun 2020 10:30:53 +0900 (KST)
+Received: from alimakhtar02 (unknown [107.108.234.165]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200601013050epsmtip16ddfaaa880272854cac9badb2a61012c~UR2D-OdVi2353723537epsmtip1U;
+        Mon,  1 Jun 2020 01:30:50 +0000 (GMT)
+From:   "Alim Akhtar" <alim.akhtar@samsung.com>
+To:     "'Krzysztof Kozlowski'" <krzk@kernel.org>
+Cc:     <robh@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>, <avri.altman@wdc.com>,
+        <martin.petersen@oracle.com>, <kwmad.kim@samsung.com>,
+        <stanley.chu@mediatek.com>, <cang@codeaurora.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200529080546.GB23221@kozik-lap>
+Subject: RE: [PATCH v10 10/10] arm64: dts: Add node for ufs exynos7
+Date:   Mon, 1 Jun 2020 07:00:48 +0530
+Message-ID: <000001d637b4$49ff2ff0$ddfd8fd0$@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Iqb1YqZFmNyxXRJYB1dTeDkFbw3LpMXZQm7FMyRq8G+4hObAibP
- v3A5AoHvKkkibTT6HoVXfscrtcYJVKHzzvlBmGPN7kbX0uEyKoX7Yco2Ogo57axQsw/QFeW
- Ony4DSylZEe5b/I5LoIcHdtWKIH4Toe5rSX8G9pBTCGrsU9824wgsqv6D+Y8bnB/1mP0OiQ
- cJRLQpcVKtLNdyA+BaEfg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:eH/AxAQ0MPQ=:W+SF6UAcADoPQv+PS16g51
- GNENNi6yomYx8OcR2ouUJH3EZ7PEw4ZWOnSRy4mNQIPcP2ASJdOMcsL8rbCKRJjY0h7kKa1Ko
- XhXQheggZyUCvhs9BhjQhBgWfJGLBNLiMaZdAS4taF1sZcES1dFdYFhvH9FkBPQR5T8tIkVeS
- 4RzOasdS2MXxtGE5OotRPDYbZ6Qzi8OHtDEtkea0u/cmNAfUvKZjwLOVZ7zOlLRdzC7w0bjy3
- 7m7Ktao9/eYggiksmDPJxtjbB4+ZYQvJgldUPzxdrybtfXExQ0QRFRLybf6BoiQT2l2lm3Omr
- tllnm0XL3nJBhcdIWcG3/RCVJAndlOdN7Pl6wQ/qKV7dq/cRk/MV0U5HpKUuzLhls5AToxQqP
- Vp/3pVPeOrk5m4i6JjT0Lrlc9xxCftDxlvRJ/a20+m8tjhubwukkqMzdyGJkxnIX8Br3tCFB1
- JqwPJU6MypqcZAHWFw3HdVTm5X0wyfeFDr6/G5Q14ia776TaWHJmBfhF203rpjOBlw8VqGeYI
- KvoZEdfGf5tdHvQxMN009gbGwYjUO5JmRcHuRNVN9fwEBVgNz/wOv8VwhrA/++SOjLGzYZnyw
- eRuTYiBVH+5LYjsT63ZFkUGOUacpi/JTEq8O/vv0pmU7kYTU3KopiMMGfxMUcdj7AUPLw2+tw
- 1rU0XCB9pajtUAGT8vWzDRk5tJMlfWm2kKR3NhFyLN2IHlMpOUVCIp9mOOC1u2j0oVnhVHGBO
- vROP39sZIq6U6vGkNZWtprOw29+JduDPK7zjBZoMNy973FiBdfSeNUJOyfsltuHQUuZcgsXhq
- Arl/0qmU1OqwdcG09KoOoJ4ssyzEjqBiGG7Q+lh2Yw8L/9L57GwgIjsVw2Xx3tBJfEJsOgYpN
- xo9TO7l97Kg65ea7x0gnu6p9MRCHL0HqfXkx0RqaJyHynghsnbjYAZ5BYG+jbPgATJG6TCQBx
- j4dh3J0kCwBwHQOglxHRtwlCTNptezu79GeMvlNgHJk8aQHGsO4flDnxT5Y0CuPBK4rGOib7m
- bzkB778bJvwWUTMa0mR7elxxJoU9a0dp2cHa6fEUhrlfNIdusxN4Su+fD+V+67XX5FXDLUaHD
- juPAOsP5iEu7HfkrT5+cGcBiNd9tJSQoA8jvvpg95poOR9SZV4v3y6FNLmJ5b040socfGTF3/
- zfmwpHM8T+OW8CMMGOk5LnQFD3twl14aeM8HNQ3C5Y4zHQm5an0OCMrM7Vb926hEOBCCV4XBo
- rlzfiGrXpIxauARHL
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIpylB333LdzxFXBilpc4hv6O2l1ANHKSouAge4CJsBYqHLHqfmR7Iw
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGKsWRmVeSWpSXmKPExsWy7bCmlq5f1JU4g5vbRSxe/rzKZvFp/TJW
+        i/lHzrFanD+/gd3i5pajLBabHl9jtbi8aw6bxYzz+5gsuq/vYLNYfvwfk8X/PTvYLZZuvcno
+        wONxua+XyWPTqk42j81L6j1aTu5n8fj49BaLR9+WVYwenzfJebQf6GYK4IjisklJzcksSy3S
+        t0vgymhpTirYz1Vx7fgOxgbGE5xdjJwcEgImEn//3GXsYuTiEBLYzShx9PxnJgjnE6PEpGmf
+        WCGcb4wSz3/1s8C0TLo5lxkisZdR4vzVdywQzhtGiRV3TrOCVLEJ6ErsWNzGBmKLANmbbyxn
+        ByliFjjJJHGkr4cJJMEpoC/x6f82sCJhAWeJs8eegTWzCKhIzLv7BayGV8BS4vOrWywQtqDE
+        yZlPwGxmAW2JZQtfM0OcpCDx8+kyVohlbhIn/lxjgqgRlzj6swfsVAmBExwSrX/aGSEaXCTa
+        d3yF+kdY4tXxLewQtpTEy/42IJsDyM6W6NllDBGukVg67xhUub3EgStzWEBKmAU0Jdbv0odY
+        xSfR+/sJE0Qnr0RHmxBEtapE87urUJ3SEhO7u1khbA+JM2suME1gVJyF5LFZSB6bheSBWQjL
+        FjCyrGKUTC0ozk1PLTYtMMpLLdcrTswtLs1L10vOz93ECE5qWl47GB8++KB3iJGJg/EQowQH
+        s5II72T1S3FCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeZV+nIkTEkhPLEnNTk0tSC2CyTJxcEo1
+        MHk9blaVVxBbkvq180m2TU3+jY3XVtyfX1W4hnvlaeFa/qqdr/7IpP+cekRJjflSZrzhyp2p
+        R/eqCgrpbdaS/uCo5FL96+wiGcMp814seL+vdp2oipcl2+drrlcW1E/afKqBf5m7wb1u+c5I
+        n1e377BtTny78mHovPv/zG80i0/q3qMlfuZow6lr899bTPOZo2ttLXR/onRwE397MHN2bdek
+        M3OMhdkcarcI2ankXF95forfNrWTrCaejYVxcumcBQpO3Vv3Xexzniv4OHlv2ea6lL6mz1NN
+        ec9VhMWVb1rC0/z5pPXrXZ9v6tw2/uo/8/2j7DMNJxVNNBhDHTvX3br7csO2KY7G/w/GsBbH
+        zVNiKc5INNRiLipOBADHO5102QMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDIsWRmVeSWpSXmKPExsWy7bCSnK5v1JU4g1VPBC1e/rzKZvFp/TJW
+        i/lHzrFanD+/gd3i5pajLBabHl9jtbi8aw6bxYzz+5gsuq/vYLNYfvwfk8X/PTvYLZZuvcno
+        wONxua+XyWPTqk42j81L6j1aTu5n8fj49BaLR9+WVYwenzfJebQf6GYK4IjisklJzcksSy3S
+        t0vgylj8/RRzwSuOir17JrA3MG5g72Lk5JAQMJGYdHMucxcjF4eQwG5GiVMH5jFBJKQlrm+c
+        AFUkLLHy33N2iKJXQEX/N7CCJNgEdCV2LG5jA7FFgOzNN5aDFTELXGaS+LN0LSNEx2NGiXkf
+        NrCAVHEK6Et8+r8NrENYwFni7LFnYJNYBFQk5t39AraaV8BS4vOrWywQtqDEyZlPwGxmAW2J
+        pzefwtnLFr5mhjhPQeLn02WsEFe4SZz4c40JokZc4ujPHuYJjMKzkIyahWTULCSjZiFpWcDI
+        sopRMrWgODc9t9iwwDAvtVyvODG3uDQvXS85P3cTIzhCtTR3MG5f9UHvECMTB+MhRgkOZiUR
+        3snql+KEeFMSK6tSi/Lji0pzUosPMUpzsCiJ894oXBgnJJCeWJKanZpakFoEk2Xi4JRqYFo4
+        Z2rl7TXZh7Lbn+m2pTVWrDSblZBpcXtn+xb2Ww+dmVcdclxfFM3YXNnGPvHEV6+XceurvmQ8
+        nPph18O0X/m5bxd6Wd2pjD5Z4759vmiYoLCsfOEtjo/7k1jC9WZk9pkYRsTtYvu86ygjQ+7i
+        BZ3z3+sZlRco/D+0+C/L/I0XrpgKsygknXnVNHU7d9Xb/N+ezgxiQVcVew/9XWttl3YjOV0h
+        eFaH+0EzPi0j0W+mFgENCb6N7it9sprr7l4Se3Ax6Fuei/4lXbln1v/4ZCSXWs7yXDFhySy2
+        ogSbcy/Zw0UuXovVklL5e2cyt10xw+SCXyrLP6scn2ca1XxY43muUUPT61ccQZpXtq3dpsRS
+        nJFoqMVcVJwIAF9Aeww/AwAA
+X-CMS-MailID: 20200601013053epcas5p37291890b3a1a3b05f835824f942e1343
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20200528013245epcas5p37851891649512882c7b1ffb5f903c506
+References: <20200528011658.71590-1-alim.akhtar@samsung.com>
+        <CGME20200528013245epcas5p37851891649512882c7b1ffb5f903c506@epcas5p3.samsung.com>
+        <20200528011658.71590-11-alim.akhtar@samsung.com>
+        <20200529080546.GB23221@kozik-lap>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-> pm_runtime_get_sync() increments the runtime PM usage counter even
-> when it returns an error code. Thus a pairing decrement is needed on
-> the error handling path to keep the counter balanced.
-
-How do you think about a wording variant like the following?
-
-   Change description:
-   The PM runtime usage counter is incremented even if a call of
-   the function =E2=80=9Cpm_runtime_get_sync=E2=80=9D failed. Thus decreme=
-nt it also
-   in an error case so that the reference counting is kept consistent.
 
 
-Would you like to add the tag =E2=80=9CFixes=E2=80=9D to the commit messag=
-e?
-
-
-Can it make sense to combine the software adjustment with the
-update step =E2=80=9Cmedia: exynos4-is: Fix runtime PM imbalance in fimc_i=
-s_probe=E2=80=9D?
-https://lore.kernel.org/linux-arm-kernel/20200524025903.17219-1-dinghao.li=
-u@zju.edu.cn/
-https://lore.kernel.org/patchwork/patch/1246424/
-
-
-=E2=80=A6
-+++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
-@@ -293,6 +293,7 @@  static int isp_video_open(struct file *file)
- 	if (!ret)
- 		goto unlock;
- rel_fh:
-+	pm_runtime_put_noidle(&isp->pdev->dev);
- 	v4l2_fh_release(file);
- unlock:
-=E2=80=A6
-
-Is there a need to use a label like =E2=80=9Cput_pm=E2=80=9D?
-
-Regards,
-Markus
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: 29 May 2020 13:36
+> To: Alim Akhtar <alim.akhtar=40samsung.com>
+> Cc: robh=40kernel.org; devicetree=40vger.kernel.org; linux-scsi=40vger.ke=
+rnel.org;
+> avri.altman=40wdc.com; martin.petersen=40oracle.com;
+> kwmad.kim=40samsung.com; stanley.chu=40mediatek.com;
+> cang=40codeaurora.org; linux-samsung-soc=40vger.kernel.org; linux-arm-
+> kernel=40lists.infradead.org; linux-kernel=40vger.kernel.org
+> Subject: Re: =5BPATCH v10 10/10=5D arm64: dts: Add node for ufs exynos7
+>=20
+> On Thu, May 28, 2020 at 06:46:58AM +0530, Alim Akhtar wrote:
+> > Adding dt node foe UFS and UFS-PHY for exynos7 SoC.
+> >
+> > Signed-off-by: Alim Akhtar <alim.akhtar=40samsung.com>
+> > Tested-by: Pawe=C5=82=20Chmiel=20<pawel.mikolaj.chmiel=40gmail.com>=0D=
+=0A>=20>=20---=0D=0A>=20>=20=20.../boot/dts/exynos/exynos7-espresso.dts=20=
+=20=20=20=20=20=7C=20=204=20++=0D=0A>=20>=20=20arch/arm64/boot/dts/exynos/e=
+xynos7.dtsi=20=20=20=20=20=20=20=7C=2043=20++++++++++++++++++-=0D=0A>=20=0D=
+=0A>=20Thanks,=20applied=20to=20next/dt-late.=20It=20might=20miss=20this=20=
+merge=20window=20and=20in=20such=0D=0A>=20case=20I=20will=20keep=20it=20for=
+=20v5.9=20cycle.=0D=0AThanks=20Krzysztof.=0D=0A>=20=0D=0A>=20Best=20regards=
+,=0D=0A>=20Krzysztof=0D=0A=0D=0A=0D=0A
