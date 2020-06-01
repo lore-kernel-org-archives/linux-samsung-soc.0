@@ -5,258 +5,218 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 004A9C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Jun 2020 06:28:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E50ACC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Jun 2020 07:47:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CBC682074B
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Jun 2020 06:28:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDC7D20734
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  1 Jun 2020 07:47:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ApjbKjcU"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nbZuEJ/S"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726103AbgFAG2N (ORCPT
+        id S1725935AbgFAHrx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 1 Jun 2020 02:28:13 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:33122 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725946AbgFAG2M (ORCPT
+        Mon, 1 Jun 2020 03:47:53 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:33752 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725999AbgFAHrw (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 1 Jun 2020 02:28:12 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200601062811euoutp021fa1d6189e01ae1bdcb8465f6d545f57~UV5rvdoJW1913419134euoutp02Q
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  1 Jun 2020 06:28:11 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200601062811euoutp021fa1d6189e01ae1bdcb8465f6d545f57~UV5rvdoJW1913419134euoutp02Q
+        Mon, 1 Jun 2020 03:47:52 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200601074747epoutp02567e2b6345d5a418aadfd6be5f66f500~UW-MHXOIC2299822998epoutp021
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  1 Jun 2020 07:47:47 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200601074747epoutp02567e2b6345d5a418aadfd6be5f66f500~UW-MHXOIC2299822998epoutp021
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1590992891;
-        bh=FQG00QV5OxUCxh7dnJby8mkSl6gBbMS+/yygn2pYDU4=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=ApjbKjcUAYGUGiNHVWUZOSRwYBCPvMNi+aMuRHxd1uq4NyFPMTOHYwbwNurnhef2Q
-         EJs8YWQajTooZWmwV1y5FqJZkGsdfykYIIuvJgulnquvlJ/NEcF9PIACI1Q+1Ndbh5
-         hd3wG/iDNcR5fNIpps1+z2LcHwH1ZjI6DUdUYTmY=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200601062810eucas1p2a6f200be44d52c5206d3b5ce2fc0f949~UV5rNSKFV0985409854eucas1p2S;
-        Mon,  1 Jun 2020 06:28:10 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id DE.75.60698.AFF94DE5; Mon,  1
-        Jun 2020 07:28:10 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200601062810eucas1p15133a2af025fe51b04af79a3eccb28de~UV5quBZBj1846918469eucas1p1e;
-        Mon,  1 Jun 2020 06:28:10 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200601062810eusmtrp164b8f5155898f4777317b95ac46a96f5~UV5qtPDak1725617256eusmtrp1A;
-        Mon,  1 Jun 2020 06:28:10 +0000 (GMT)
-X-AuditID: cbfec7f5-a29ff7000001ed1a-36-5ed49ffa8c6f
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 88.49.07950.AFF94DE5; Mon,  1
-        Jun 2020 07:28:10 +0100 (BST)
-Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200601062809eusmtip2706e0e26a4e661f2bf01555cf714e7d1~UV5p8x2hF2192721927eusmtip2S;
-        Mon,  1 Jun 2020 06:28:09 +0000 (GMT)
-Subject: Re: [PATCH 2/2] soc: samsung: Add simple voltage coupler for
- Exynos5800
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>, peron.clem@gmail.com,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        linux-samsung-soc@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <57cf3a15-5d9b-7636-4c69-60742e8cfae6@samsung.com>
-Date:   Mon, 1 Jun 2020 08:28:09 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.8.1
+        s=mail20170921; t=1590997667;
+        bh=I1XJhVwGb1aiZhRqaZu6fK9WRM7TeK3+lRgg314FF/Y=;
+        h=From:Subject:To:Cc:Date:In-Reply-To:References:From;
+        b=nbZuEJ/Sm8QyqdVBbrMkxwBe9USsCEOHAks1+0aF4FuXKJXCKzYQFjDOvZNqWz1lO
+         nAxsVoyRJv9aZyvAxRP5flMFbEnmR6Yju1lbNBR0f9AB/R5PtqJnt37pLWomV9+2dI
+         vSYosxBpxnGw83oZKpOkXpJ9s+74p2dpXMqJjX/4=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20200601074746epcas1p40dafe27ac966d4d18bff15421d5b5dab~UW-LPUWeR1074810748epcas1p4S;
+        Mon,  1 Jun 2020 07:47:46 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.154]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 49b6hx4tFZzMqYkr; Mon,  1 Jun
+        2020 07:47:45 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        AA.1C.28581.1A2B4DE5; Mon,  1 Jun 2020 16:47:45 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200601074744epcas1p261de13984e22e1b95b32b51c86cedbab~UW-JHxyLo2653626536epcas1p25;
+        Mon,  1 Jun 2020 07:47:44 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200601074744epsmtrp25ccbb1d6aacc9e025449befbaa48a4fc~UW-JHACfy1541615416epsmtrp2B;
+        Mon,  1 Jun 2020 07:47:44 +0000 (GMT)
+X-AuditID: b6c32a38-2e3ff70000006fa5-ea-5ed4b2a15003
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        94.92.08382.0A2B4DE5; Mon,  1 Jun 2020 16:47:44 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200601074744epsmtip27344f96ffa2c1a08e2233ae2d4d2211a~UW-IzeW4z2383523835epsmtip2o;
+        Mon,  1 Jun 2020 07:47:44 +0000 (GMT)
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [RFC PATCH v5 6/6] drm: exynos: mixer: Add interconnect support
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        georgi.djakov@linaro.org, krzk@kernel.org
+Cc:     a.swigon@samsung.com, myungjoo.ham@samsung.com,
+        inki.dae@samsung.com, sw0312.kim@samsung.com,
+        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+Organization: Samsung Electronics
+Message-ID: <7e42706f-2e69-79a6-d138-f2aa5e800270@samsung.com>
+Date:   Mon, 1 Jun 2020 16:58:18 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-In-Reply-To: <20200529174314.GB20540@kozik-lap>
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20200529163200.18031-7-s.nawrocki@samsung.com>
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SbVBMYRj13nv37q2x5m2LnokyNglR+ZxXTBOTcX/4gf6YZlqWbmVUslv5
-        +tNoaEvkq1ErKhqS9DXVUqZJGStbLUUfSBobg0JTW1Ki3Vv075zznGfOc955OVr+UeLCHYiO
-        FdTRqkgFa89UPhk1rfyV/VLpW9q4jJRmFEtIeo+ZJe1DnyTk7sAHREymEil5f62TIsMvtRRp
-        rcpiyeDZx4hkmGoo0veziSJvrrcypNHYIiETbaUM0T4epkmphQ/A/ANdl5QvK0hm+bdtD1k+
-        7bcvX/4qieHPlRcg3tChp/jBMrcdXLD9plAh8kC8oPbx32sfMVqipWMKvI7m5N2kE1C9ewqy
-        4wCvhcKzTyQpyJ6T43wEreYfrEiGEFR3X6VFMoigIrePml6xXH425bqNIK+nBonkO4I/eQap
-        1eWId0Hm13HWip3wMmj/PWILoXEeA536U7YBi1dBSn/KJOY4GfaH9FvhVpnBi+F7d60tbS4O
-        gdTuL7QVy7ADNGSaGSu2wz5wdfynDdN4Iej7s2gRO8NrczZlzQKczMGLStPU2YFwIT+XFbEj
-        fDGUS0W8AIyXUhlxIRFBT/M9qUhSJ5/jZAYSXRvhbfMv26X0ZJ3iKh9R3gxfh5poqwx4DnT0
-        O4hHzIGLlVemZBloT8tF9xLQGYr+xT563kKfRwrdjGq6GXV0M+ro/ufmIKYAOQtxmqhwQbMm
-        WjjirVFFaeKiw733H4oqQ5O/zzhhsNxHNeP76hDmkGK2bGlLq1IuUcVrjkXVIeBohZNsS5NR
-        KZeFqo4dF9SH9qjjIgVNHZrPMQpn2Zobn0PkOFwVKxwUhBhBPT2lODuXBCRNbOgfflMUtJ48
-        3bbgzLzUQqWnFHuucHrmXntE61JtPuHN+o+NbEnfrvf7dNjB0bV3dd/WRZ/DKkY2b8KB/mFo
-        524PS0BSTPGpSN/cLq87A+sGqoJLOhM63TIs7wKMwvHEsSQv7y4omrXUQxXnru/l69O+Zb3w
-        K7frTQyiwja4KhhNhGrVclqtUf0Fwe9My3kDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBIsWRmVeSWpSXmKPExsVy+t/xe7q/5l+JM+jq4bLYOGM9q8XUh0/Y
-        LK5/ec5qsfrjY0aL8+c3sFs8mHuTyeLblQ4mi8u75rBZfO49wmgx4/w+Jos3P84yWdyed5nF
-        4szpS6wW/65tZLHoOPKN2WLjVw8HAY+ds+6ye2xa1cnmcefaHjaP/r8GHluutrN49G1Zxehx
-        /MZ2Jo/Pm+QCOKL0bIryS0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLL
-        Uov07RL0Mn5u6GAuWKVdsWDJYuYGxsPKXYycHBICJhJfp5xi62Lk4hASWMooMflaMxtEQkbi
-        5LQGVghbWOLPtS6ooreMEjvmTgErEhYIkpj5+g+YLSKgKXH973dWkCJmgWUsEjsWzGOG6HjF
-        KPHo9BFmkCo2AUOJrrcgozg4eAXsJKYuSwcJswioSLy/f4AJxBYViJXoXvyDHcTmFRCUODnz
-        CQuIzSmgLzH7zw8wm1nATGLe5ofMELa8xPa3c6BscYlbT+YzTWAUmoWkfRaSlllIWmYhaVnA
-        yLKKUSS1tDg3PbfYSK84Mbe4NC9dLzk/dxMjMNa3Hfu5ZQdj17vgQ4wCHIxKPLwXzl+OE2JN
-        LCuuzD3EKMHBrCTC63T2dJwQb0piZVVqUX58UWlOavEhRlOg5yYyS4km5wPTUF5JvKGpobmF
-        paG5sbmxmYWSOG+HwMEYIYH0xJLU7NTUgtQimD4mDk6pBkbHdvvypZoX309V3Oq2yE+ht82r
-        u3Tznf583Zt7DPUC7BYLaHGLr9y7j72qNPxC6+OPO+T5dhrK7NimNis4tyU4f67msc7GTOeC
-        894vLf5Vz7its2lDzNyoHWu5sqO/OXUYHXE2a31Xrvqc30f6UwL/60ofXc3SyemFGnt2+O/S
-        nK2u/UJ6hhJLcUaioRZzUXEiAHeFVgULAwAA
-X-CMS-MailID: 20200601062810eucas1p15133a2af025fe51b04af79a3eccb28de
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFJsWRmVeSWpSXmKPExsWy7bCmnu7CTVfiDG4+4rW4P6+V0WLjjPWs
+        Fle+vmezmL53E5vFpPsTWCzOn9/AbrHp8TVWi8u75rBZzDi/j8li7ZG77Ba3G1ewWRx+085q
+        MWPySzYHXo9NqzrZPO5c28Pmcb/7OJPH5iX1Hn1bVjF6fN4kF8AWlW2TkZqYklqkkJqXnJ+S
+        mZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA3SokkJZYk4pUCggsbhYSd/Opii/
+        tCRVISO/uMRWKbUgJafAskCvODG3uDQvXS85P9fK0MDAyBSoMCE7Y8ma82wFC6QqTrVeY25g
+        XC7axcjJISFgIjH3ehtrFyMXh5DADkaJ6VfnM0M4nxgl+v62sEM43xgldl9cxQzTsmHdVqiq
+        vYwST2fvYIFw3jNKfLh2AqyKTUBLYv+LG2wgtrCAj8TjM9eA4hwcIgIxEuvfRYDUMwssYpJY
+        O/03K0gNv4CixNUfjxlBbF4BO4nHm4+xgNgsAioSk3vWg9miAmESJ7e1QNUISpyc+YQFZCan
+        gI3E05clIGFmAXGJW0/mM0HY8hLNW2eDHSohcIZD4vrM12wQH7hIzP32lgnCFpZ4dXwLO4Qt
+        JfH53V6ommqJlSePsEE0dzBKbNl/gRUiYSyxf+lkJpDFzAKaEut36UOEFSV2/p7LCLGYT+Ld
+        1x5WkBIJAV6JjjYhiBJlicsP7kKtlZRY3N7JNoFRaRaSb2YheWEWkhdmISxbwMiyilEstaA4
+        Nz212LDABDm2NzGCE7GWxQ7GuW8/6B1iZOJgPMQowcGsJMI7Wf1SnBBvSmJlVWpRfnxRaU5q
+        8SFGU2D4TmSWEk3OB+aCvJJ4Q1MjY2NjCxNDM1NDQyVx3pNWF+KEBNITS1KzU1MLUotg+pg4
+        OKUamKrP3Uw4UzDDVj7wYNJT/QaJSWmtan66e7WmBn0U0Jmmd335h+fZ3C+KHxzR3TGTr0N5
+        yeMox3ATT7m4W79fVH/YLf0k4NfC0zVHdoTtKdmg8+W3eN2up/NbrG5+TT3EaK/2zcl1yvpF
+        K2yW7Fmgt+yhcHbMBWM+tqdZobuurX93/uO2j5q953gPMJyfJfXAVWJ7nUPzh38dl4+YPVy7
+        tWVav0OFZlWEWulyz7SS9sU5SgsVdsz5o7lCdYsc27Tv/7MqO9jTipjyzW+uCQyeu1rs1lbp
+        9AnMWne3fteWnmn9ewXPvlNaExY6sXus6L1k0TA16ITbKTf3jTe3hq96k1W0805o+dUC1tb0
+        oo1f3X8rsRRnJBpqMRcVJwIA+u6R300EAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCIsWRmVeSWpSXmKPExsWy7bCSvO6CTVfiDB7+EbG4P6+V0WLjjPWs
+        Fle+vmezmL53E5vFpPsTWCzOn9/AbrHp8TVWi8u75rBZzDi/j8li7ZG77Ba3G1ewWRx+085q
+        MWPySzYHXo9NqzrZPO5c28Pmcb/7OJPH5iX1Hn1bVjF6fN4kF8AWxWWTkpqTWZZapG+XwJWx
+        ZM15toIFUhWnWq8xNzAuF+1i5OSQEDCR2LBuK3MXIxeHkMBuRonvU34xQSQkJaZdPAqU4ACy
+        hSUOHy6GqHnLKPHnawsLSA2bgJbE/hc32EBsYQEficdnrjGD2CICMRKnJs8Cq2EWWMQk8aJJ
+        GaL5IKPEru+TwRr4BRQlrv54zAhi8wrYSTzefAysgUVARWJyz3owW1QgTGLnksdMEDWCEidn
+        PmEBOYhTwEbi6csSiPnqEn/mXWKGsMUlbj2ZzwRhy0s0b53NPIFReBaS7llIWmYhaZmFpGUB
+        I8sqRsnUguLc9NxiwwLDvNRyveLE3OLSvHS95PzcTYzgiNTS3MG4fdUHvUOMTByMhxglOJiV
+        RHgnq1+KE+JNSaysSi3Kjy8qzUktPsQozcGiJM57o3BhnJBAemJJanZqakFqEUyWiYNTqoFp
+        3bGMpY6KAjeXR85ocxW2thLtm6j3K9ro3KJVK/4c0EwSlevp+yhcf8u2IkHxb9HMyKjKrxPt
+        c2MSty6dta1ZxGbSWX2Fr6brGeQtsvZZ5PCv2Z0rf9Im076wd4LA8vQrWy8fcnrkt2jyL41m
+        /rN9lzds5/tob/pt8c3LW2efubmSV+XrLmvrqzmZfp1P9xms4QruZ85VXdgrOOP1uft955em
+        GMvnv7K/PrPp7dFH+95/ZD0QsfBn0F3mavXSr1FanvMKy7SMr7V9mPhz6tZPJYFRyTNf3v13
+        zTNH6rLTpKfK8WGniuZ8YWqI3PZj510hd3dvNe6Fe57tmlN/jFHT9Lq6loX55NViC5LfXLiw
+        SomlOCPRUIu5qDgRAGsy97Q3AwAA
+X-CMS-MailID: 20200601074744epcas1p261de13984e22e1b95b32b51c86cedbab
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200529124952eucas1p2565c598c3c0164b5dec6ed83e19148b8
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200529124952eucas1p2565c598c3c0164b5dec6ed83e19148b8
-References: <20200529124940.10675-1-m.szyprowski@samsung.com>
-        <CGME20200529124952eucas1p2565c598c3c0164b5dec6ed83e19148b8@eucas1p2.samsung.com>
-        <20200529124940.10675-3-m.szyprowski@samsung.com>
-        <20200529174314.GB20540@kozik-lap>
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200529163229eucas1p2ee6394f184e5eba12599559f8a621fde
+References: <20200529163200.18031-1-s.nawrocki@samsung.com>
+        <CGME20200529163229eucas1p2ee6394f184e5eba12599559f8a621fde@eucas1p2.samsung.com>
+        <20200529163200.18031-7-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
+Hi Sylwester,
 
-On 29.05.2020 19:43, Krzysztof Kozlowski wrote:
-> On Fri, May 29, 2020 at 02:49:40PM +0200, Marek Szyprowski wrote:
->> Add custom voltage regulator coupler for Exynos5800 SoCs, which require
->> coupling between "vdd_arm" and "vdd_int" regulators. This coupler ensures
->> that coupled regulators voltage balancing is done only when clients for
->> each regulator (cpufreq for "vdd_arm" and devfreq for "vdd_int") apply
->> their constraints, so the voltage values don't go beyond the
->> bootloader-selected operation point during the boot process. This also
->> ensures proper voltage balancing if any of those drivers is missing.
+On 5/30/20 1:32 AM, Sylwester Nawrocki wrote:
+> From: Marek Szyprowski <m.szyprowski@samsung.com>
+> 
+> This patch adds interconnect support to exynos-mixer. The mixer works
+> the same as before when CONFIG_INTERCONNECT is 'n'.
+> 
+> For proper operation of the video mixer block we need to ensure the
+> interconnect busses like DMC or LEFTBUS provide enough bandwidth so
+> as to avoid DMA buffer underruns in the mixer block. i.e we need to
+> prevent those busses from operating in low perfomance OPPs when
+> the mixer is running.
+> In this patch the bus bandwidth request is done through the interconnect
+> API, the bandiwidth value is calculated from selected DRM mode, i.e.
+> video plane width, height, refresh rate and pixel format.
+> 
+> Co-developed-by: Artur Świgoń <a.swigon@samsung.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> [s.nawrocki: renamed soc_path variable to icc_path, edited commit desc.]
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+> Changes for v5:
+>  - renamed soc_path variable to icc_path
+> ---
+>  drivers/gpu/drm/exynos/exynos_mixer.c | 73 ++++++++++++++++++++++++++++++++---
+>  1 file changed, 68 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+> index 21b726b..bdae683 100644
+> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/component.h>
+>  #include <linux/delay.h>
+>  #include <linux/i2c.h>
+> +#include <linux/interconnect.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/irq.h>
+>  #include <linux/kernel.h>
+> @@ -98,6 +99,7 @@ struct mixer_context {
+>  	struct exynos_drm_crtc	*crtc;
+>  	struct exynos_drm_plane	planes[MIXER_WIN_NR];
+>  	unsigned long		flags;
+> +	struct icc_path		*icc_path;
+>  
+>  	int			irq;
+>  	void __iomem		*mixer_regs;
+> @@ -934,6 +936,42 @@ static void mixer_disable_vblank(struct exynos_drm_crtc *crtc)
+>  	mixer_reg_writemask(mixer_ctx, MXR_INT_EN, 0, MXR_INT_EN_VSYNC);
+>  }
+>  
+> +static void mixer_set_memory_bandwidth(struct exynos_drm_crtc *crtc)
+> +{
+> +	struct drm_display_mode *mode = &crtc->base.state->adjusted_mode;
+> +	struct mixer_context *ctx = crtc->ctx;
+> +	unsigned long bw, bandwidth = 0;
+> +	u32 avg_bw, peak_bw;
+> +	int i, j, sub;
+> +
+> +	if (!ctx->icc_path)
+> +		return;
+> +
+> +	for (i = 0; i < MIXER_WIN_NR; i++) {
+> +		struct drm_plane *plane = &ctx->planes[i].base;
+> +		const struct drm_format_info *format;
+> +
+> +		if (plane->state && plane->state->crtc && plane->state->fb) {
+> +			format = plane->state->fb->format;
+> +			bw = mode->hdisplay * mode->vdisplay *
+> +							drm_mode_vrefresh(mode);
+> +			if (mode->flags & DRM_MODE_FLAG_INTERLACE)
+> +				bw /= 2;
+> +			for (j = 0; j < format->num_planes; j++) {
+> +				sub = j ? (format->vsub * format->hsub) : 1;
+> +				bandwidth += format->cpp[j] * bw / sub;
 
-I've intentionally didn't add any new properties nor bindings, because I 
-assume that the generic regulator coupling bindings fully describe what 
-is needed for Exynos5800 SoCs. This driver 'fixes' only the issue (or 
-lets it call undefined behavior) in the regulator core, which is fatal 
-for Exynos5800.
+First of all, I agree this approach.
 
-Please note that this "attach" callback is called only for the 
-regulators, which are marked as coupled, so for all existing board it 
-might be even enough to simply return 0 without any check. IMHO for all 
-existing Exynos5422/5800 the name-based check is enough. I can change it 
-to a check for particular DT path peculiar for Exynos5422/5800 (the 
-check if the given regulator mathes the phandle specificied in the 
-exynos-bus node for "wcore" or A15's CPU).
+Could you please add more detailed comments for understadning
+about this calculation? As you commented, it seems that
+the final bandwidth contains the width/height/refresh rate
+and pixel format. If you add one real example, it will be very helpful.
 
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>   arch/arm/mach-exynos/Kconfig                  |  1 +
->>   drivers/soc/samsung/Kconfig                   |  3 +
->>   drivers/soc/samsung/Makefile                  |  1 +
->>   .../soc/samsung/exynos-regulator-coupler.c    | 59 +++++++++++++++++++
->>   4 files changed, 64 insertions(+)
->>   create mode 100644 drivers/soc/samsung/exynos-regulator-coupler.c
->>
->> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
->> index 76838255b5fa..f185cd3d4c62 100644
->> --- a/arch/arm/mach-exynos/Kconfig
->> +++ b/arch/arm/mach-exynos/Kconfig
->> @@ -118,6 +118,7 @@ config SOC_EXYNOS5800
->>   	bool "Samsung EXYNOS5800"
->>   	default y
->>   	depends on SOC_EXYNOS5420
->> +	select EXYNOS_REGULATOR_COUPLER
->>   
->>   config EXYNOS_MCPM
->>   	bool
->> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
->> index c7a2003687c7..264185664594 100644
->> --- a/drivers/soc/samsung/Kconfig
->> +++ b/drivers/soc/samsung/Kconfig
->> @@ -37,4 +37,7 @@ config EXYNOS_PM_DOMAINS
->>   	bool "Exynos PM domains" if COMPILE_TEST
->>   	depends on PM_GENERIC_DOMAINS || COMPILE_TEST
->>   
->> +config EXYNOS_REGULATOR_COUPLER
->> +	bool "Exynos SoC Regulator Coupler" if COMPILE_TEST
->> +	depends on ARCH_EXYNOS || COMPILE_TEST
->>   endif
->> diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
->> index edd1d6ea064d..ecc3a32f6406 100644
->> --- a/drivers/soc/samsung/Makefile
->> +++ b/drivers/soc/samsung/Makefile
->> @@ -9,3 +9,4 @@ obj-$(CONFIG_EXYNOS_PMU)	+= exynos-pmu.o
->>   obj-$(CONFIG_EXYNOS_PMU_ARM_DRIVERS)	+= exynos3250-pmu.o exynos4-pmu.o \
->>   					exynos5250-pmu.o exynos5420-pmu.o
->>   obj-$(CONFIG_EXYNOS_PM_DOMAINS) += pm_domains.o
->> +obj-$(CONFIG_EXYNOS_REGULATOR_COUPLER) += exynos-regulator-coupler.o
->> diff --git a/drivers/soc/samsung/exynos-regulator-coupler.c b/drivers/soc/samsung/exynos-regulator-coupler.c
->> new file mode 100644
->> index 000000000000..54445918bd75
->> --- /dev/null
->> +++ b/drivers/soc/samsung/exynos-regulator-coupler.c
->> @@ -0,0 +1,59 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (c) 2020 Samsung Electronics Co., Ltd.
->> + *	      http://www.samsung.com/
->> + * Author: Marek Szyprowski <m.szyprowski@samsung.com>
->> + *
->> + * Samsung Exynos SoC voltage coupler
->> + */
->> +
->> +#include <linux/init.h>
->> +#include <linux/kernel.h>
->> +#include <linux/of.h>
->> +#include <linux/regulator/coupler.h>
->> +#include <linux/regulator/driver.h>
->> +
->> +static int exynos_coupler_balance_voltage(struct regulator_coupler *coupler,
->> +					  struct regulator_dev *rdev,
->> +					  suspend_state_t state)
->> +{
->> +	struct coupling_desc *c_desc = &rdev->coupling_desc;
->> +	int ret, cons_uV = 0, cons_max_uV = INT_MAX;
->> +	bool skip_coupled = false;
->> +
->> +	/* get coupled regulator constraints */
->> +	ret = regulator_check_consumers(c_desc->coupled_rdevs[1], &cons_uV,
->> +					&cons_max_uV, state);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	/* skip adjusting coupled regulator if it has no constraints set yet */
->> +	if (cons_uV == 0)
->> +		skip_coupled = true;
->> +
->> +	return regulator_do_balance_voltage(rdev, state, skip_coupled);
->> +}
->> +
->> +static int exynos_coupler_attach(struct regulator_coupler *coupler,
->> +				 struct regulator_dev *rdev)
->> +{
->> +	if (strcmp(rdev_get_name(rdev), "vdd_arm") == 0 ||
->> +	    strcmp(rdev_get_name(rdev), "vdd_int") == 0)
-> Thanks for the patch!
->
-> You hard-coded specific names of regulators existing
-> only in DTS. They do not come from any driver nor bindings, therefore
-> they could change making driver unusable. Someone could add a new DTS
-> with different names and expect this to work as well.
->
-> You need bindings for this. Something like:
-> Documentation/devicetree/bindings/regulator/nvidia,tegra-regulators-coupling.txt
-> But better in YAML, if possible.
->
-> Best regards,
-> Krzysztof
->
-Best regards
+
+(snip)
+
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
