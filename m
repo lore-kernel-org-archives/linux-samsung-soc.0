@@ -2,187 +2,240 @@ Return-Path: <SRS0=uTuj=7P=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4680DC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 Jun 2020 00:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F3D4C433E2
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 Jun 2020 00:40:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 223CF207BB
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 Jun 2020 00:02:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02B4B2065C
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 Jun 2020 00:40:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RzifqAMe"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="gJj9coh6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726007AbgFBACz (ORCPT
+        id S1725793AbgFBAkd (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 1 Jun 2020 20:02:55 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:21607 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726380AbgFBACy (ORCPT
+        Mon, 1 Jun 2020 20:40:33 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:56043 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725825AbgFBAkc (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 1 Jun 2020 20:02:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1591056172;
-        h=from:from:reply-to:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=WEgguSwsSBQsO87++CE0y1rNffa4jp9PI1ZebsV4DLs=;
-        b=RzifqAMeXIFN5+UkPRnJwsf9pnVdk+RfZjHRmjhEz69/rm5aIhkAZcz2ikBWANR0lSxpDV
-        WGH/VPyPU6GpfTogzMe3CCaBqCEI7cuMiRmzszbaroLkLlJE3aD8sbJgwKzyH/zo2P8ScO
-        gL8GoigSLnIIvHP1oo9P2PMuk1/+QcE=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-251-ep4EZTzxOoqreNpfrFXNGQ-1; Mon, 01 Jun 2020 20:02:39 -0400
-X-MC-Unique: ep4EZTzxOoqreNpfrFXNGQ-1
-Received: by mail-qv1-f69.google.com with SMTP id dt19so1811478qvb.5
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Jun 2020 17:02:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to;
-        bh=WEgguSwsSBQsO87++CE0y1rNffa4jp9PI1ZebsV4DLs=;
-        b=iEGVaYavfxIDEsKqkaA77Z7P28kWuQmpiGe/0QvArF+VUYz9eZTvfKMbSW+cCNYdcd
-         qVHcu4sboaqhSxemrwv/RqW5OA6fnckV9r69bTeHPGLJcW9msb8+gnKuOIjV6ydgd+Ua
-         gAXlDrHB2oG75UzLEly/tbFRCuRUxdp5oLhHd6tZszAGe9Cydb3oxmtiCkrfQg11iQME
-         WSRt5VtKaUFg1pggJO8QZCVTGRlVNEtf52PUrIN5Z4KILi57VKCESMLkJAVhoAdD6vdz
-         ppDQfh0VQsgO6yv7hMe4rxaeEyYhTWBNSs/QlYEuaYQqbtRbAauHqtQaJp2u61EO/h3E
-         emAQ==
-X-Gm-Message-State: AOAM533jCiDrs/mlnt9PdODU72+/8JerPvoslCjf7l+AyeRiLrj1A88+
-        r39zmm5CUfXbcc69xbP6rN+JM3U1vDKcZ00aCHydCPfxX2c+2qGgwhpyOXqFEteuWh/jXRc63HK
-        497duWDE4efczB7FB+BTJUcu3w4SVdgE=
-X-Received: by 2002:ac8:724c:: with SMTP id l12mr23746248qtp.259.1591056159433;
-        Mon, 01 Jun 2020 17:02:39 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwRFkXYMc6X8G+o56RMfYFp5n8699HmlGFcYOLIr9n0Jz/P369Z9v//wIL4kQ8Ioy89XjW8QQ==
-X-Received: by 2002:ac8:724c:: with SMTP id l12mr23746213qtp.259.1591056159140;
-        Mon, 01 Jun 2020 17:02:39 -0700 (PDT)
-Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
-        by smtp.gmail.com with ESMTPSA id t13sm852903qtc.77.2020.06.01.17.02.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jun 2020 17:02:37 -0700 (PDT)
-Date:   Mon, 1 Jun 2020 17:02:36 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
+        Mon, 1 Jun 2020 20:40:32 -0400
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200602004026epoutp02374efd41e74c1d220af3fe98c9276925~UkzWQnHEP1533115331epoutp02_
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  2 Jun 2020 00:40:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200602004026epoutp02374efd41e74c1d220af3fe98c9276925~UkzWQnHEP1533115331epoutp02_
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1591058426;
+        bh=l7Rt2o0kdGFSHg652UR00dk3txaeJfZo5NnrTQMvqxo=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=gJj9coh6awcsQkoqAELBkvQeXN2qULTHKxQIHoaQrBVnbOTyk6W4EbyYac+yraDQl
+         ZhTb5qeOTQTcD2cjR4ytbypdvA279sC5w+ntPLTKXbba6LF6zA/FkOOojEYGGX/2Es
+         WlE6Xbxh0Ox41zGg2WARmxiHpatzuWOhbEoG8PfE=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20200602004024epcas1p3b679346e48f5aa7e23e8400b1dd819c5~UkzUURw6t0448404484epcas1p31;
+        Tue,  2 Jun 2020 00:40:24 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.158]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 49bY9L3MNNzMqYl0; Tue,  2 Jun
+        2020 00:40:22 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        C6.29.18978.5FF95DE5; Tue,  2 Jun 2020 09:40:22 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20200602004019epcas1p47250832e03ece66e322e82a72c007a50~UkzPoLCtc1010210102epcas1p4Y;
+        Tue,  2 Jun 2020 00:40:19 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200602004019epsmtrp2e14e1aa156221eb93e89340e05c762fa~UkzPnLpqO3205032050epsmtrp2m;
+        Tue,  2 Jun 2020 00:40:19 +0000 (GMT)
+X-AuditID: b6c32a35-b8298a8000004a22-4d-5ed59ff551f9
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B8.D6.08382.3FF95DE5; Tue,  2 Jun 2020 09:40:19 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200602004019epsmtip1bb2424a547cb17f1ede6c058213b29ab~UkzPWeK8N1039010390epsmtip1W;
+        Tue,  2 Jun 2020 00:40:19 +0000 (GMT)
+Subject: Re: [RFC PATCH v5 3/6] PM / devfreq: exynos-bus: Add registration
+ of interconnect child device
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <chanwoo@kernel.org>
+Cc:     Georgi Djakov <georgi.djakov@linaro.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-rockchip@lists.infradead.org,
-        iommu@lists.linux-foundation.org,
-        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 00/33] iommu: Move iommu_group setup to IOMMU core code
-Message-ID: <20200602000236.j4m3jvluzdhjngdc@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mail-Followup-To: Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
+        =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>, inki.dae@samsung.com,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-rockchip@lists.infradead.org,
-        iommu@lists.linux-foundation.org,
-        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org
-References: <20200414131542.25608-1-joro@8bytes.org>
- <20200529221623.qc6twmpzryh7nkvb@cantor>
- <20200601104240.7f5xhz7gooqhaq4n@cantor>
- <47711845-98ee-95b8-aa95-423a36ed9741@linux.intel.com>
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <7a3840c7-fbfb-112e-46b6-97871da710e8@samsung.com>
+Date:   Tue, 2 Jun 2020 09:50:52 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <47711845-98ee-95b8-aa95-423a36ed9741@linux.intel.com>
+In-Reply-To: <8a977716-9e0e-5daf-fb22-32d943da42e5@samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNJsWRmVeSWpSXmKPExsWy7bCmvu63+VfjDCa/ZbK4P6+V0WLjjPWs
+        FhNvXGGxmH/kHKvFla/v2Sym793EZjHp/gQWi/PnN7BbbHp8jdXi8q45bBYzzu9jslh75C67
+        xe3GFWwWrXuPsFscftPOajFj8ks2BwGPTas62TzuXNvD5nG/+ziTx+Yl9R59W1YxenzeJBfA
+        FpVtk5GamJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr5OIToOuWmQN0t5JC
+        WWJOKVAoILG4WEnfzqYov7QkVSEjv7jEVim1ICWnwLJArzgxt7g0L10vOT/XytDAwMgUqDAh
+        O+PNm6tsBZ9kK9ofT2BrYFwo1sXIySEhYCLxqaefqYuRi0NIYAejxNxT91kgnE+MEscb9jFC
+        ON8YJR69W8kK0zL303R2iMReRontry9BOe8ZJeb/XsICUiUskClx/PQSdhBbRCBE4vWk52BF
+        zAJ/WSR2bp/ABJJgE9CS2P/iBhuIzS+gKHH1x2NGEJtXwE7i7uo7YHEWARWJC8dXg9WLCoRJ
+        nNzWAlUjKHFy5hOwZZwC9hLHljSCLWMWEJe49WQ+E4QtL7H97RxmkMUSAi84JLbe/gz1g4vE
+        zcvtzBC2sMSr41vYIWwpic/v9rJB2NUSK08eYYNo7mCU2LL/AlSzscT+pZOBNnAAbdCUWL9L
+        HyKsKLHz91xGiMV8Eu++9rCClEgI8Ep0tAlBlChLXH5wlwnClpRY3N7JNoFRaRaSd2YheWEW
+        khdmISxbwMiyilEstaA4Nz212LDAEDm+NzGCU7WW6Q7GiW8/6B1iZOJgPMQowcGsJMI7Wf1S
+        nBBvSmJlVWpRfnxRaU5q8SFGU2AAT2SWEk3OB2aLvJJ4Q1MjY2NjCxNDM1NDQyVxXnGZC3FC
+        AumJJanZqakFqUUwfUwcnFINTLbBh1+I7El+ds0187/OSh/nw4fTnV3isjb9M56ov/V06Tyt
+        /Srcjxe7PXp+SeSP3d7JJqW3Ds+52+V2hS9w0+WGD7H+HbudH17+s3dtRnXvtjcrY6dcWqUj
+        IMHYW9/afePmJRYePVMnEetNe2fabgqTZp9zU3aTd5HrjNlVDy6xPJwufWTrV2sn3Xml7IkL
+        Vx3Nmluz2bXP6R+X/Oy9wtXWW3e1MR1boXixoKNZR/anw/tTdalfGiPmPm96yi7j+m36Q7Hk
+        hTrPO5YIH44t3mQ0O2TK1T2X9zQUORT2udlZr8ytdandosoar3L5csys8/d/HNRS2Ww9zbtf
+        09Bni3b91kVnCk9fUJ2923CWjYQSS3FGoqEWc1FxIgABFdu7XgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Ra0hTYRyHec85OzuOZkdX+WpluqJQ0DKi3iJbkcgyk8CILNCWHW85nTte
+        us5kiTVTTEvXqC1rdpl0O167TMHNIrpYpmnlDSfpdGZoSh+Sao7Abw//3/N8+lO4Zy3hQyWn
+        ZTLKNFmqmBQQ9Raxb9CUoTN23Ztz3qhfnw/QY+1DHrrU3UEgg/UdD3VMT5CowsyRqLS/hEBt
+        bY/4iLN94qGPT6+RSNvWhKH71l4++pp3l0T5ZisfWRwFPKQts5PbaSlnukBKez49J6X9hS8x
+        aY0xV1pcawLSKc53L3lQsPUok5qczSjXbjssSHI4OknF5PLjBbYS8iyoXKIBbhSkN8DrkxV8
+        DRBQnvQzAL8XDvJcgzcs/9CKawD1j0XQYmFdzjiART063OmI6GRoPz/EczqL6H3wkT3I6eD0
+        HwKaLxeQrsCMwVl1NekMSDoQNo90z/FC2h92/rIBJwvpbbC3umfuTtCr4PuX1ZiTF9P74ROj
+        DXM5HvDV1SHCyW60BL4w5vGdjNNr4G99O+5iL/hlyIC5eAVsGL+GlwCRbl6um5fo5iW6eckN
+        QJiAN6Ng5YlyNkQRksbkBLMyOZuVlhgcny7nwNxjAwMaQYPpR3ALwCjQAiCFixcJy9a0x3oK
+        j8pOnGSU6XHKrFSGbQFLKULsJezOqIz1pBNlmcwxhlEwyv8rRrn5nMWyYnzdf87mZE8HDElU
+        vR91htUJGRHm28YZR1DnU35cs6S1URNadcTEQXXTer2ttMrv8CE8PWhHTeEMYuI4/YX6zbwJ
+        hzHibSjaI6uMMH8bjF4e9brIT7FK0hUQrg6LSvpyCn+x4OZbibAsJaFq1v/G7ZV2tnx4JFxt
+        1PRppx01Z7b+iB8sAltyJ1lVnSXX2/p8tH7ZncHuBdordTE7x6yjXSknjCP6i5FhIl2D6QEz
+        c7m1Xe1WSrhj0fYy+UpuuL0GnzyiqmWLBQfGbg2oKnw59Nl6XTWzb1Oke3x0TN/A6RzxQK1H
+        ZlXHRq+87F2i9+nS77sP5htSYqPu6cUEmyQLCcSVrOwvgP7u6UcDAAA=
+X-CMS-MailID: 20200602004019epcas1p47250832e03ece66e322e82a72c007a50
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200529163225eucas1p1cfb2233c869dcc3dab84b754bbce17b6
+References: <CGME20200529163225eucas1p1cfb2233c869dcc3dab84b754bbce17b6@eucas1p1.samsung.com>
+        <20200529163200.18031-1-s.nawrocki@samsung.com>
+        <20200529163200.18031-4-s.nawrocki@samsung.com>
+        <CAGTfZH1KC=jpQ5GXNtEf1cn7+WqXJdqbbVKmpxr8Snh4GEy8bA@mail.gmail.com>
+        <8a977716-9e0e-5daf-fb22-32d943da42e5@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue Jun 02 20, Lu Baolu wrote:
->Hi Jerry,
->
->On 6/1/20 6:42 PM, Jerry Snitselaar wrote:
->>>
->>>Hi Joerg,
->>>
->>>With this patchset, I have an epyc system where if I boot with
->>>iommu=nopt and force a dump I will see some io page faults for a nic
->>>on the system. The vmcore is harvested and the system reboots. I
->>>haven't reproduced it on other systems yet, but without the patchset I
->>>don't see the io page faults during the kdump.
->>>
->>>Regards,
->>>Jerry
->>
->>I just hit an issue on a separate intel based system (kdump iommu=nopt),
->>where it panics in during intel_iommu_attach_device, in is_aux_domain,
->>due to device_domain_info being DEFER_DEVICE_DOMAIN_INFO. That doesn't
->>get set to a valid address until the domain_add_dev_info call.
->>
->>Is it as simple as the following?
->
->I guess you won't hit this issue if you use iommu/next branch of Joerg's
->tree. We've changed to use a generic helper to retrieve the valid per
->device iommu data or NULL (if there's no).
->
->Best regards,
->baolu
->
+Hi Sylwester,
 
-Yeah, that will solve the panic. 
+On 6/1/20 7:04 PM, Sylwester Nawrocki wrote:
+> Cc: Rob, devicetree ML
+> 
+> On 31.05.2020 01:57, Chanwoo Choi wrote:
+>> On Sat, May 30, 2020 at 1:33 AM Sylwester Nawrocki
+>> <s.nawrocki@samsung.com> wrote:
+>>>
+>>> This patch adds registration of a child platform device for the exynos
+>>> interconnect driver. It is assumed that the interconnect provider will
+>>> only be needed when #interconnect-cells property is present in the bus
+>>> DT node, hence the child device will be created only when such a property
+>>> is present.
+>>>
+>>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>>>
+>>> Changes for v5:
+>>>  - new patch.
+>>> ---
+>>>  drivers/devfreq/exynos-bus.c | 17 +++++++++++++++++
+>>>  1 file changed, 17 insertions(+)
+>>>
+>>> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+>>> index 8fa8eb5..856e37d 100644
+>>> --- a/drivers/devfreq/exynos-bus.c
+>>> +++ b/drivers/devfreq/exynos-bus.c
+>>> @@ -24,6 +24,7 @@
+>>>
+>>>  struct exynos_bus {
+>>>         struct device *dev;
+>>> +       struct platform_device *icc_pdev;
+>>>
+>>>         struct devfreq *devfreq;
+>>>         struct devfreq_event_dev **edev;
+>>> @@ -156,6 +157,8 @@ static void exynos_bus_exit(struct device *dev)
+>>>         if (ret < 0)
+>>>                 dev_warn(dev, "failed to disable the devfreq-event devices\n");
+>>>
+>>> +       platform_device_unregister(bus->icc_pdev);
+>>> +
+>>>         dev_pm_opp_of_remove_table(dev);
+>>>         clk_disable_unprepare(bus->clk);
+>>>         if (bus->opp_table) {
+>>> @@ -168,6 +171,8 @@ static void exynos_bus_passive_exit(struct device *dev)
+>>>  {
+>>>         struct exynos_bus *bus = dev_get_drvdata(dev);
+>>>
+>>> +       platform_device_unregister(bus->icc_pdev);
+>>> +
+>>>         dev_pm_opp_of_remove_table(dev);
+>>>         clk_disable_unprepare(bus->clk);
+>>>  }
+>>> @@ -431,6 +436,18 @@ static int exynos_bus_probe(struct platform_device *pdev)
+>>>         if (ret < 0)
+>>>                 goto err;
+>>>
+>>> +       /* Create child platform device for the interconnect provider */
+>>> +       if (of_get_property(dev->of_node, "#interconnect-cells", NULL)) {
+>>> +                   bus->icc_pdev = platform_device_register_data(
+>>> +                                               dev, "exynos-generic-icc",
+>>> +                                               PLATFORM_DEVID_AUTO, NULL, 0);
+>>> +
+>>> +                   if (IS_ERR(bus->icc_pdev)) {
+>>> +                           ret = PTR_ERR(bus->icc_pdev);
+>>> +                           goto err;
+>>> +                   }
+>>> +       }
+>>> +
+>>>         max_state = bus->devfreq->profile->max_state;
+>>>         min_freq = (bus->devfreq->profile->freq_table[0] / 1000);
+>>>         max_freq = (bus->devfreq->profile->freq_table[max_state - 1] / 1000);
+>>> --
+>>> 2.7.4
+>>>
+>>
+>> It looks like very similar like the registering the interconnect
+>> device of imx-bus.c
+>> and I already reviewed and agreed this approach.
+>>
+>> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>
+>> nitpick: IMHO, I think that 'exynos-icc' is proper and simple without
+>> 'generic' word.
+>> If we need to add new icc compatible int the future, we will add
+>> 'exynosXXXX-icc' new compatible.
+>> But, I'm not forcing it. just opinion. Anyway, I agree this approach.
+> 
+> Thanks for review. I will change the name to exynos-icc in next version, 
+> as I commented at other patch, it is not part of any DT binding, 
+> it is just for device/driver matching between devfreq and interconnect.
 
->>
->>diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
->>index 29d3940847d3..f1bbeed46a4c 100644
->>--- a/drivers/iommu/intel-iommu.c
->>+++ b/drivers/iommu/intel-iommu.c
->>@@ -5053,8 +5053,8 @@ is_aux_domain(struct device *dev, struct 
->>iommu_domain *domain)
->>  {
->>         struct device_domain_info *info = dev->archdata.iommu;
->>
->>-       return info && info->auxd_enabled &&
->>-                       domain->type == IOMMU_DOMAIN_UNMANAGED;
->>+       return info && info != DEFER_DEVICE_DOMAIN_INFO &&
->>+               info->auxd_enabled && domain->type == 
->>IOMMU_DOMAIN_UNMANAGED;
->>  }
->>
->>  static void auxiliary_link_device(struct dmar_domain *domain,
->>
->>
->>Regards,
->>Jerry
->_______________________________________________
->iommu mailing list
->iommu@lists.linux-foundation.org
->https://lists.linuxfoundation.org/mailman/listinfo/iommu
+Thanks. I have not any objection to use either 'exynos-generic-icc' 
+or 'exynos-icc'. It is just my opinion. And on next version,
+please add linux-pm mailing list to Cc.
 
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
