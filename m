@@ -2,241 +2,98 @@ Return-Path: <SRS0=uTuj=7P=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EAC9C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 Jun 2020 13:09:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B8CFC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 Jun 2020 14:23:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DA1CF20674
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 Jun 2020 13:09:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JvH6xRRK"
+	by mail.kernel.org (Postfix) with ESMTP id 144EB2086A
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 Jun 2020 14:23:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726935AbgFBNJf (ORCPT
+        id S1727013AbgFBOXR (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 2 Jun 2020 09:09:35 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:41831 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727026AbgFBNJf (ORCPT
+        Tue, 2 Jun 2020 10:23:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58230 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbgFBOXQ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 2 Jun 2020 09:09:35 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200602130932euoutp02d91e06bf2dddf8b7baa24e6b2e3a2935~UvBZxQDS92400924009euoutp02U
-        for <linux-samsung-soc@vger.kernel.org>; Tue,  2 Jun 2020 13:09:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200602130932euoutp02d91e06bf2dddf8b7baa24e6b2e3a2935~UvBZxQDS92400924009euoutp02U
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1591103372;
-        bh=mqXQUJYme8sb1kqyyvm+dIEEXicHI1pNmMuhexl44FY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JvH6xRRKpNIE6J6Or813n+/x5J6SdAlVvNHoRWI5RMMBzWwoVWNuPT0TkluDE/rmI
-         e6BEh5ULO8rq082LoJv4lvmnDlD0He3ulRHg8jhtHuEZmmDs/yGmqviqFpFzF1iLjO
-         VJ1/gTj07mM2j/aexBkvBv0kaZAWZg/1cHLDD5oQ=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200602130932eucas1p2fd3291361188944610cbfe39dacb9167~UvBY89fm52884128841eucas1p24;
-        Tue,  2 Jun 2020 13:09:32 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 7E.29.60698.B8F46DE5; Tue,  2
-        Jun 2020 14:09:31 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200602130931eucas1p1cd784c8f692fa91dc566504543a927de~UvBYTXxxs1673516735eucas1p1S;
-        Tue,  2 Jun 2020 13:09:31 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200602130931eusmtrp1a44b6adeb42cbadf5c1397223ff4fca6~UvBYSlpQe0850308503eusmtrp1i;
-        Tue,  2 Jun 2020 13:09:31 +0000 (GMT)
-X-AuditID: cbfec7f5-a29ff7000001ed1a-47-5ed64f8ba37e
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 56.80.07950.B8F46DE5; Tue,  2
-        Jun 2020 14:09:31 +0100 (BST)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200602130930eusmtip2d4d6e6598c097b354cc224f2f84170fb~UvBXd9TTM2230822308eusmtip2v;
-        Tue,  2 Jun 2020 13:09:30 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Dmitry Osipenko <digetx@gmail.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Tue, 2 Jun 2020 10:23:16 -0400
+Received: from theia.8bytes.org (8bytes.org [IPv6:2a01:238:4383:600:38bc:a715:4b6d:a889])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D30DC08C5C0;
+        Tue,  2 Jun 2020 07:23:16 -0700 (PDT)
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 6498A2A6; Tue,  2 Jun 2020 16:23:14 +0200 (CEST)
+Date:   Tue, 2 Jun 2020 16:23:12 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Lu Baolu <baolu.lu@linux.intel.com>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>, peron.clem@gmail.com,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        linux-samsung-soc@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v2] soc: samsung: Add simple voltage coupler for Exynos5800
-Date:   Tue,  2 Jun 2020 15:02:11 +0200
-Message-Id: <20200602130211.2727-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <57cf3a15-5d9b-7636-4c69-60742e8cfae6@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA0VSa0hTYRjmO+fs7Dicnabki5nioKCbF+zHB4l28cepKPvjj4KWqw4qOpUt
-        S4XIDLxslqaYYiZiSl5Th7csw3Q0aupMa5nO0BJtlkHp7KJJbkfz3/O9z/PwPO/Lx5CyLpEX
-        E5twmVcnKOPltIRqf/F7cL8uwqII/JgXgltKmkS4aGqaxu8WZ0W4/vsnhM3mZjGevP+ewEtv
-        sgk80lVG44VbBoRLzM8I3GiYEOOvvwYIPF4+QuF+07AIr1paKJxtWCJxi507tJV7XDoh5vR1
-        OTRntTyluby/gVzr2yyKu91ahzjjaAfBLeh9TjNnJSGX+PjYK7w6IDRKErMy6plULU95mV1F
-        pyOrtxa5MMAegNwKO6FFEkbG1iB4p2+kHYSMXUTwYeKEQCwgeNKxTG44Rle7SIF4iGC2eGLT
-        kdEf6cA0GwTaeS3tEHmwNxC0VQwRDoJkl0nofu3nwO7sCZg1NYsdmGJ3wvsZnRNL2RDozB9H
-        Qpov1Df3OJNd2DC4Z9Q6uwL7SgxjfZ8pQRQOtm/zYgG7w5yxdR17g6kwlxIMNxFMDTaKhUcu
-        gpGMkvWIg2Ad/LPWlVmrtxuaugKE8WEoqS1zjoF1g9H5rcICblDQXkwKYylkZ8oE9S4oNT76
-        H/t8aHj9WhzUagvXr1WAoMlqQvnIt3QzrAKhOuTJJ2tU0bwmOIG/6q9RqjTJCdH+FxNVerT2
-        o0yrRnsnerZyoRexDJK7SgODLAqZSHlFk6rqRcCQcg/pkQGTQia9pExN49WJ59XJ8bymF21n
-        KLmnNLjSdk7GRisv83E8n8SrN1iCcfFKR6KMnPKMM67HHlQrJ4sX9pZf734TY/gZpoCatp4f
-        xDRtNERuqYro7sjKvGvv648NH9+m/1JkMy/uU8247bhDj7mXj1TdzR0MjRX3Re071bBkTrEd
-        9fMJHXjScNLe98GH15mHV3f7TqXDcVY31zzvV2StjGsNvRhcGh6vGEu79lhOaWKUQXtItUb5
-        D7BvGOhNAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDIsWRmVeSWpSXmKPExsVy+t/xe7rd/tfiDPruC1psnLGe1WLqwyds
-        Fte/PGe1WP3xMaPF+fMb2C0ezL3JZPHtSgeTxeVdc9gsPvceYbSYcX4fk8XaI3fZLd78OMtk
-        cXveZRaLM6cvsVr8u7aRxaLjyDdmi41fPRwEPXbOusvusWlVJ5vHnWt72Dz6/xp4bLnazuLR
-        t2UVo8fxG9uZPD5vkgvgiNKzKcovLUlVyMgvLrFVija0MNIztLTQMzKx1DM0No+1MjJV0rez
-        SUnNySxLLdK3S9DL+HNDvGCpUsXJjiVsDYx3ZLoYOTkkBEwkbvzbxdzFyMUhJLCUUWLajE+M
-        EAkZiZPTGlghbGGJP9e62CCKPjFKnPkyAayITcBQoustREJEoJVR4vzrVUwgDrNAK4vEgjur
-        mEGqhAW8JZ6f3sAOYrMIqErcfNYNZvMK2EjsmHAbap28xOoNB8DqOQXsJWYf7wIaxAG0zk7i
-        9weuCYx8CxgZVjGKpJYW56bnFhvpFSfmFpfmpesl5+duYgTGzLZjP7fsYOx6F3yIUYCDUYmH
-        18DwWpwQa2JZcWXuIUYJDmYlEV6ns6fjhHhTEiurUovy44tKc1KLDzGaAt00kVlKNDkfGM95
-        JfGGpobmFpaG5sbmxmYWSuK8HQIHY4QE0hNLUrNTUwtSi2D6mDg4pRoY9y088S6fp+f15bqQ
-        xqOclyQ4p6n7ulqLT3hg0/uhRPHMjTdvp7OeM5q55WyUH3/+EesD34Rvvn1oee/Zd/Z32zZx
-        hc/NSjGpO/7R/cQPb6VH+SKavBVan7qZOTqYGt8GLP666Mi6uMOZGatCzolbncy7ukxDfYuT
-        6P3lPBkvt6z9+CV58bQjc5RYijMSDbWYi4oTAdTZRnevAgAA
-X-CMS-MailID: 20200602130931eucas1p1cd784c8f692fa91dc566504543a927de
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200602130931eucas1p1cd784c8f692fa91dc566504543a927de
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200602130931eucas1p1cd784c8f692fa91dc566504543a927de
-References: <57cf3a15-5d9b-7636-4c69-60742e8cfae6@samsung.com>
-        <CGME20200602130931eucas1p1cd784c8f692fa91dc566504543a927de@eucas1p1.samsung.com>
+        David Woodhouse <dwmw2@infradead.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-rockchip@lists.infradead.org,
+        iommu@lists.linux-foundation.org,
+        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 00/33] iommu: Move iommu_group setup to IOMMU core code
+Message-ID: <20200602142312.GJ14598@8bytes.org>
+References: <20200414131542.25608-1-joro@8bytes.org>
+ <20200529221623.qc6twmpzryh7nkvb@cantor>
+ <20200601104240.7f5xhz7gooqhaq4n@cantor>
+ <47711845-98ee-95b8-aa95-423a36ed9741@linux.intel.com>
+ <20200602000236.j4m3jvluzdhjngdc@cantor>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200602000236.j4m3jvluzdhjngdc@cantor>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add a simple custom voltage regulator coupler for Exynos5800 SoCs, which
-require coupling between "vdd_arm" and "vdd_int" regulators. This coupler
-ensures that the voltage balancing for the coupled regulators is done
-only when clients for the each regulator apply their constraints, so the
-voltage values don't go beyond the bootloader-selected operation point
-during the boot process. This also ensures proper voltage balancing if
-any of the client driver is missing.
+Hi Jerry,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-v2:
-- removed dependency on the regulator names as pointed by krzk, now it
-  works with all coupled regulators. So far the coupling between the
-  regulators on Exynos5800 based boards is defined only between
-  "vdd_arm" and "vdd_int" supplies.
----
- arch/arm/mach-exynos/Kconfig                  |  1 +
- drivers/soc/samsung/Kconfig                   |  3 +
- drivers/soc/samsung/Makefile                  |  1 +
- .../soc/samsung/exynos-regulator-coupler.c    | 56 +++++++++++++++++++
- 4 files changed, 61 insertions(+)
- create mode 100644 drivers/soc/samsung/exynos-regulator-coupler.c
+On Mon, Jun 01, 2020 at 05:02:36PM -0700, Jerry Snitselaar wrote:
+> 
+> Yeah, that will solve the panic.
+>
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 76838255b5fa..f185cd3d4c62 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -118,6 +118,7 @@ config SOC_EXYNOS5800
- 	bool "Samsung EXYNOS5800"
- 	default y
- 	depends on SOC_EXYNOS5420
-+	select EXYNOS_REGULATOR_COUPLER
+If you still see the kdump faults, can you please try with the attached
+diff? I was not able to reproduce them in my setup.
+
+Regards,
+
+	Joerg
+
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index b5ea203f6c68..5a6d509f72b6 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -1680,8 +1680,12 @@ static void probe_alloc_default_domain(struct bus_type *bus,
+ static int iommu_group_do_dma_attach(struct device *dev, void *data)
+ {
+ 	struct iommu_domain *domain = data;
++	int ret = 0;
  
- config EXYNOS_MCPM
- 	bool
-diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
-index c7a2003687c7..264185664594 100644
---- a/drivers/soc/samsung/Kconfig
-+++ b/drivers/soc/samsung/Kconfig
-@@ -37,4 +37,7 @@ config EXYNOS_PM_DOMAINS
- 	bool "Exynos PM domains" if COMPILE_TEST
- 	depends on PM_GENERIC_DOMAINS || COMPILE_TEST
+-	return __iommu_attach_device(domain, dev);
++	if (!iommu_is_attach_deferred(group->domain, dev))
++		ret = __iommu_attach_device(group->domain, dev);
++
++	return ret;
+ }
  
-+config EXYNOS_REGULATOR_COUPLER
-+	bool "Exynos SoC Regulator Coupler" if COMPILE_TEST
-+	depends on ARCH_EXYNOS || COMPILE_TEST
- endif
-diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
-index edd1d6ea064d..ecc3a32f6406 100644
---- a/drivers/soc/samsung/Makefile
-+++ b/drivers/soc/samsung/Makefile
-@@ -9,3 +9,4 @@ obj-$(CONFIG_EXYNOS_PMU)	+= exynos-pmu.o
- obj-$(CONFIG_EXYNOS_PMU_ARM_DRIVERS)	+= exynos3250-pmu.o exynos4-pmu.o \
- 					exynos5250-pmu.o exynos5420-pmu.o
- obj-$(CONFIG_EXYNOS_PM_DOMAINS) += pm_domains.o
-+obj-$(CONFIG_EXYNOS_REGULATOR_COUPLER) += exynos-regulator-coupler.o
-diff --git a/drivers/soc/samsung/exynos-regulator-coupler.c b/drivers/soc/samsung/exynos-regulator-coupler.c
-new file mode 100644
-index 000000000000..370a0ce4de3a
---- /dev/null
-+++ b/drivers/soc/samsung/exynos-regulator-coupler.c
-@@ -0,0 +1,56 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2020 Samsung Electronics Co., Ltd.
-+ *	      http://www.samsung.com/
-+ * Author: Marek Szyprowski <m.szyprowski@samsung.com>
-+ *
-+ * Simple Samsung Exynos SoC voltage coupler. Ensures that all
-+ * clients set their constraints before balancing the voltages.
-+ */
-+
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/of.h>
-+#include <linux/regulator/coupler.h>
-+#include <linux/regulator/driver.h>
-+
-+static int exynos_coupler_balance_voltage(struct regulator_coupler *coupler,
-+					  struct regulator_dev *rdev,
-+					  suspend_state_t state)
-+{
-+	struct coupling_desc *c_desc = &rdev->coupling_desc;
-+	int ret, cons_uV = 0, cons_max_uV = INT_MAX;
-+	bool skip_coupled = false;
-+
-+	/* get coupled regulator constraints */
-+	ret = regulator_check_consumers(c_desc->coupled_rdevs[1], &cons_uV,
-+					&cons_max_uV, state);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* skip adjusting coupled regulator if it has no constraints set yet */
-+	if (cons_uV == 0)
-+		skip_coupled = true;
-+
-+	return regulator_do_balance_voltage(rdev, state, skip_coupled);
-+}
-+
-+static int exynos_coupler_attach(struct regulator_coupler *coupler,
-+				 struct regulator_dev *rdev)
-+{
-+	return 0;
-+}
-+
-+static struct regulator_coupler exynos_coupler = {
-+	.attach_regulator = exynos_coupler_attach,
-+	.balance_voltage  = exynos_coupler_balance_voltage,
-+};
-+
-+static int __init exynos_coupler_init(void)
-+{
-+	if (!of_machine_is_compatible("samsung,exynos5800"))
-+		return 0;
-+
-+	return regulator_coupler_register(&exynos_coupler);
-+}
-+arch_initcall(exynos_coupler_init);
--- 
-2.17.1
-
+ static int __iommu_group_dma_attach(struct iommu_group *group)
