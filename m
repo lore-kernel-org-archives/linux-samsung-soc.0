@@ -2,202 +2,206 @@ Return-Path: <SRS0=uTuj=7P=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37FE5C433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 Jun 2020 17:52:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFA47C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 Jun 2020 18:01:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 196E9206C3
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 Jun 2020 17:52:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lOt5bDJG"
+	by mail.kernel.org (Postfix) with ESMTP id C6D262074B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 Jun 2020 18:01:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727826AbgFBRwr (ORCPT
+        id S1726606AbgFBSBY (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 2 Jun 2020 13:52:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34288 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726977AbgFBRwq (ORCPT
+        Tue, 2 Jun 2020 14:01:24 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:55618 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726139AbgFBSBX (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 2 Jun 2020 13:52:46 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D32EC05BD1E;
-        Tue,  2 Jun 2020 10:52:46 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id nu7so1775788pjb.0;
-        Tue, 02 Jun 2020 10:52:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=DsDlTAN5nXx2eXeaYpyOizF6rp89+ZyQuZEoODyhpKQ=;
-        b=lOt5bDJGsfK9IyNxz3BNa4rLKdk08R28EoDJrT2TUNMLbDyn8CzBBmFfkFe6atRsGn
-         NQUzHizY/xR0tIwR/Fv6cLBvYq4vV4+Q1oNNa578UCAQkfJUbXwU0XvgRE6TIZ4K0ZVL
-         +IilnKMWHrYZbepwRYHoTr0hmJk9tLHnDUs3xNl11dsFboIB3dq7c9tD088BsqY9MbHi
-         +SPZDl667YmxpVexTZNqnhx5Pgecw0OPK+asacMRjWAHfk4LuN6hUAN5lYYRVMImMTkJ
-         rkLXt/cXLA5dp+fg8J/cStQdFtFGauWWiBHCKiftRfNn+KL8xQifFcVN5QzSVxpMF7pD
-         M3Aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=DsDlTAN5nXx2eXeaYpyOizF6rp89+ZyQuZEoODyhpKQ=;
-        b=U00ouh3hVq2L2Jg3vGDxYcJ3zFR8t1gZ/1wcxlxJMosennXQF06KuA8aV2GDal0kKw
-         PI8zuYGCq+38jHEPqoduIcAIzNv7ZgSWT0JiPQaNqd8IE3yCSuof5R3MOKsWZrXnFUcb
-         +BuSwa2SBstAAiEQX4fOx+c6kPuBC6YlYEVtlP7gkwrfDwuq6Iy9oszydufX5UFX2Wib
-         QDXxU2aG7tGj5t9yPFQJOyYKHy/eevoG/AV2CkZZJKZEOOOnrR2FC0Y/Vegt4/xzQQ39
-         TBJqc2eK+RaElAbOlbkt/Uy7Kg6nq0p8fSAY9cDg6oCc+F2fqxKZcG860AbZjVmFW94T
-         58rQ==
-X-Gm-Message-State: AOAM532E0h2YggFJI1IZzECHCLAvpM+tTerk7c5eG+fLDMmgZLtWdJkb
-        kjFsDHsW/uac2yU45Xqn18s=
-X-Google-Smtp-Source: ABdhPJw4j3qAh/n1rbRzh5j+Qh1ZpRvg/yNd1He12Pkb+W7uWkt4zY60I9IIhaoAP1YKs8H+3eduzw==
-X-Received: by 2002:a17:902:c411:: with SMTP id k17mr22524187plk.165.1591120365656;
-        Tue, 02 Jun 2020 10:52:45 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3c2a:73a9:c2cf:7f45])
-        by smtp.gmail.com with ESMTPSA id m9sm2909107pfo.200.2020.06.02.10.52.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jun 2020 10:52:44 -0700 (PDT)
-Date:   Tue, 2 Jun 2020 10:52:41 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>, linux-input@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        patches@opensource.cirrus.com,
-        ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Barry Song <baohua@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Nick Dyer <nick@shmanahar.org>,
-        Ferruh Yigit <fery@cypress.com>,
-        Sangwon Jee <jeesw@melfas.com>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        kernel@collabora.com, Peter Hutterer <peter.hutterer@redhat.com>,
-        Benjamin Tissoires <btissoir@redhat.com>
-Subject: Re: [PATCHv2 0/7] Support inhibiting input devices
-Message-ID: <20200602175241.GO89269@dtor-ws>
-References: <20200515164943.28480-1-andrzej.p@collabora.com>
- <842b95bb-8391-5806-fe65-be64b02de122@redhat.com>
- <e6030957-97dc-5b04-7855-bc14a78164c8@collabora.com>
- <6d9921fc-5c2f-beda-4dcd-66d6970a22fe@redhat.com>
- <09679de4-75d3-1f29-ec5f-8d42c84273dd@collabora.com>
- <f674ba4f-bd83-0877-c730-5dc6ea09ae4b@redhat.com>
- <2d224833-3a7e-bc7c-af15-1f803f466697@collabora.com>
- <aa2ce2ab-e5bc-9cb4-8b53-c1ef9348b646@redhat.com>
- <20200527063430.GJ89269@dtor-ws>
- <88f939cd-1518-d516-59f2-8f627a6a70d2@collabora.com>
+        Tue, 2 Jun 2020 14:01:23 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id 8B8B82A313C
+Received: by earth.universe (Postfix, from userid 1000)
+        id B1C343C08C7; Tue,  2 Jun 2020 20:01:19 +0200 (CEST)
+Date:   Tue, 2 Jun 2020 20:01:19 +0200
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
+Subject: Re: [PATCHv1 00/19] Improve SBS battery support
+Message-ID: <20200602180119.52izs7kd72u3kmr4@earth.universe>
+References: <20200513185615.508236-1-sebastian.reichel@collabora.com>
+ <CGME20200601104027eucas1p2b076ee860520d709e8178c41550653f7@eucas1p2.samsung.com>
+ <15933a91-dd89-1f94-c2f2-79be4395f4c1@samsung.com>
+ <20200601170528.r5w3aeijny3v5yx3@earth.universe>
+ <b3fd35de-1dd6-1ddc-7e57-2d9ab2860e81@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="qlcnxi6fqxf4bmqp"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <88f939cd-1518-d516-59f2-8f627a6a70d2@collabora.com>
+In-Reply-To: <b3fd35de-1dd6-1ddc-7e57-2d9ab2860e81@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Andrzej,
 
-On Tue, Jun 02, 2020 at 06:56:40PM +0200, Andrzej Pietrasiewicz wrote:
-> Hi Dmitry,
-> 
-> W dniu 27.05.2020 o 08:34, Dmitry Torokhov pisze:
-> > That said, I think the way we should handle inhibit/uninhibit, is that
-> > if we have the callback defined, then we call it, and only call open and
-> > close if uninhibit or inhibit are _not_ defined.
-> > 
-> 
-> If I understand you correctly you suggest to call either inhibit,
-> if provided or close, if inhibit is not provided, but not both,
-> that is, if both are provided then on the inhibit path only
-> inhibit is called. And, consequently, you suggest to call either
-> uninhibit or open, but not both. The rest of my mail makes this
-> assumption, so kindly confirm if I understand you correctly.
+--qlcnxi6fqxf4bmqp
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, that is correct. If a driver wants really fine-grained control, it
-will provide inhibit (or both inhibit and close), otherwise it will rely
-on close in place of inhibit.
+Hi,
 
-> 
-> In my opinion this idea will not work.
-> 
-> The first question is should we be able to inhibit a device
-> which is not opened? In my opinion we should, in order to be
-> able to inhibit a device in anticipation without needing to
-> open it first.
+On Tue, Jun 02, 2020 at 09:17:09AM +0200, Marek Szyprowski wrote:
+> Hi Sebastian,
+>=20
+> On 01.06.2020 19:05, Sebastian Reichel wrote:
+> > On Mon, Jun 01, 2020 at 12:40:27PM +0200, Marek Szyprowski wrote:
+> >> On 13.05.2020 20:55, Sebastian Reichel wrote:
+> >>> This patchset improves support for SBS compliant batteries. Due to
+> >>> the changes, the battery now exposes 32 power supply properties and
+> >>> (un)plugging it generates a backtrace containing the following message
+> >>> without the first patch in this series:
+> >>>
+> >>> ---------------------------
+> >>> WARNING: CPU: 0 PID: 20 at lib/kobject_uevent.c:659 add_uevent_var+0x=
+d4/0x104
+> >>> add_uevent_var: too many keys
+> >>> ---------------------------
+> >>>
+> >>> For references this is what an SBS battery status looks like after
+> >>> the patch series has been applied:
+> >>>
+> >>> cat /sys/class/power_supply/sbs-0-000b/uevent
+> >>> POWER_SUPPLY_NAME=3Dsbs-0-000b
+> >>> POWER_SUPPLY_TYPE=3DBattery
+> >>> POWER_SUPPLY_STATUS=3DDischarging
+> >>> POWER_SUPPLY_CAPACITY_LEVEL=3DNormal
+> >>> POWER_SUPPLY_HEALTH=3DGood
+> >>> POWER_SUPPLY_PRESENT=3D1
+> >>> POWER_SUPPLY_TECHNOLOGY=3DLi-ion
+> >>> POWER_SUPPLY_CYCLE_COUNT=3D12
+> >>> POWER_SUPPLY_VOLTAGE_NOW=3D11441000
+> >>> POWER_SUPPLY_CURRENT_NOW=3D-26000
+> >>> POWER_SUPPLY_CURRENT_AVG=3D-24000
+> >>> POWER_SUPPLY_CAPACITY=3D76
+> >>> POWER_SUPPLY_CAPACITY_ERROR_MARGIN=3D1
+> >>> POWER_SUPPLY_TEMP=3D198
+> >>> POWER_SUPPLY_TIME_TO_EMPTY_AVG=3D438600
+> >>> POWER_SUPPLY_TIME_TO_FULL_AVG=3D3932100
+> >>> POWER_SUPPLY_SERIAL_NUMBER=3D0000
+> >>> POWER_SUPPLY_VOLTAGE_MIN_DESIGN=3D10800000
+> >>> POWER_SUPPLY_VOLTAGE_MAX_DESIGN=3D10800000
+> >>> POWER_SUPPLY_ENERGY_NOW=3D31090000
+> >>> POWER_SUPPLY_ENERGY_FULL=3D42450000
+> >>> POWER_SUPPLY_ENERGY_FULL_DESIGN=3D41040000
+> >>> POWER_SUPPLY_CHARGE_NOW=3D2924000
+> >>> POWER_SUPPLY_CHARGE_FULL=3D3898000
+> >>> POWER_SUPPLY_CHARGE_FULL_DESIGN=3D3800000
+> >>> POWER_SUPPLY_CONSTANT_CHARGE_CURRENT_MAX=3D3000000
+> >>> POWER_SUPPLY_CONSTANT_CHARGE_VOLTAGE_MAX=3D12300000
+> >>> POWER_SUPPLY_MANUFACTURE_YEAR=3D2017
+> >>> POWER_SUPPLY_MANUFACTURE_MONTH=3D7
+> >>> POWER_SUPPLY_MANUFACTURE_DAY=3D3
+> >>> POWER_SUPPLY_MANUFACTURER=3DUR18650A
+> >>> POWER_SUPPLY_MODEL_NAME=3DGEHC
+> >> This patch landed in linux-next dated 20200529. Sadly it causes a
+> >> regression on Samsung Exynos-based Chromebooks (Exynos5250 Snow,
+> >> Exynos5420 Peach-Pi and Exynos5800 Peach-Pit). System boots to
+> >> userspace, but then, when udev populates /dev, booting hangs:
+> >>
+> >> [=A0=A0=A0 4.435167] VFS: Mounted root (ext4 filesystem) readonly on d=
+evice
+> >> 179:51.
+> >> [=A0=A0=A0 4.457477] devtmpfs: mounted
+> >> [=A0=A0=A0 4.460235] Freeing unused kernel memory: 1024K
+> >> [=A0=A0=A0 4.464022] Run /sbin/init as init process
+> >> INIT: version 2.88 booting
+> >> [info] Using makefile-style concurrent boot in runlevel S.
+> >> [=A0=A0=A0 5.102096] random: crng init done
+> >> [....] Starting the hotplug events dispatcher: systemd-udevdstarting
+> >> version 236
+> >> [ ok .
+> >> [....] Synthesizing the initial hotplug events...[ ok done.
+> >> [....] Waiting for /dev to be fully populated...[=A0=A0 34.409914]
+> >> TPS65090_RAILSDCDC1: disabling
+> >> [=A0=A0 34.412977] TPS65090_RAILSDCDC2: disabling
+> >> [=A0=A0 34.417021] TPS65090_RAILSDCDC3: disabling
+> >> [=A0=A0 34.423848] TPS65090_RAILSLDO1: disabling
+> >> [=A0=A0 34.429068] TPS65090_RAILSLDO2: disabling
+> > :(
+> >
+> > log does not look useful either.
+> >
+> >> Bisect between v5.7-rc1 and next-20200529 pointed me to the first bad
+> >> commit: [c4b12a2f3f3de670f6be5e96092a2cab0b877f1a] power: supply:
+> >> sbs-battery: simplify read_read_string_data.
+> > ok. I tested this on an to-be-upstreamed i.MX6 based system
+> > and arch/arm/boot/dts/imx53-ppd.dts. I think the difference
+> > is, that i2c-exynos5 does not expose I2C_FUNC_SMBUS_READ_BLOCK_DATA.
+> > I hoped all systems using SBS battery support this, but now
+> > I see I2C_FUNC_SMBUS_EMUL only supports writing block data.
+> > Looks like I need to add another patch implementing that
+> > using the old code with added PEC support.
+> >
+> > In any case that should only return -ENODEV for the property
+> > (and uevent), but not break boot. So something fishy is going
+> > on.
+> >
+> >> However reverting it in linux-next doesn't fix the issue, so the
+> >> next commits are also relevant to this issue.
+> > The next patch, which adds PEC support depends on the simplification
+> > of sbs_read_string_data. The old, open coded variant will result in
+> > PEC failure for string properties (which should not stop boot either
+> > of course). Can you try reverting both?
+> Indeed, reverting both (and fixing the conflict) restores proper boot.
 
-I agree.
+Ok, I pushed out a revert of those two patches. They should land in
+tomorrows linux-next release. Please test it.
 
-> 
-> Then what does opening (with input_open_device()) an inhibited
-> device mean? Should it succeed or should it fail?
+> > If that helps I will revert those two instead of dropping the whole
+> > series for this merge window.
+> >
+> >> Let me know how can I help debugging it.
+> > I suspect, that this is userspace endlessly retrying reading the
+> > battery uevent when an error is returned. Could you check this?
+> > Should be easy to see by adding some printfs.
+> I've added some debug messages in sbs_get_property() and it read the=20
+> same properties many times. However I've noticed that if I wait long=20
+> enough booting finally continues.
 
-It should succeed.
+So basically userspace slows down itself massively by trying to
+re-read uevent over and over when an error occurs. Does not seem
+like a sensible thing to do. I will have a look at this when I find
+some time.
 
-> If it is not
-> the first opening then effectively it boils down to increasing
-> device's and handle's counters, so we can allow it to succeed.
-> If, however, the device is being opened for the first time,
-> the ->open() method wants to be called, but that somehow
-> contradicts the device's inhibited state. So a logical thing
-> to do is to either fail input_open_device() or postpone ->open()
-> invocation to the moment of uninhibiting - and the latter is
-> what the patches in this series currently do.
-> 
-> Failing input_open_device() because of the inhibited state is
-> not the right thing to do. Let me explain. Suppose that a device
-> is already inhibited and then a new matching handler appears
-> in the system. Most handlers (apm-power.c, evbug.c, input-leds.c,
-> mac_hid.c, sysrq.c, vt/keyboard.c and rfkill/input.c) don't create
-> any character devices (only evdev.c, joydev.c and mousedev.c do),
-> so for them it makes no sense to delay calling input_open_device()
-> and it is called in handler's ->connect(). If input_open_device()
-> now fails, we have lost the only chance for this ->connect() to
-> succeed.
-> 
-> Summarizing, IMO the uninhibit path should be calling both
-> ->open() and ->uninhibit() (if provided), and conversely, the inhibit
-> path should be calling both ->inhibit() and ->close() (if provided).
+-- Sebastian
 
-So what you are trying to say is that you see inhibit as something that
-is done in addition to what happens in close. But what exactly do you
-want to do in inhibit, in addition to what close is doing?
+--qlcnxi6fqxf4bmqp
+Content-Type: application/pgp-signature; name="signature.asc"
 
-In my view, if we want to have a dedicated inhibit callback, then it
-will do everything that close does, they both are aware of each other
-and can sort out the state transitions between them. For drivers that do
-not have dedicated inhibit/uninhibit, we can use open and close
-handlers, and have input core sort out when each should be called. That
-means that we should not call dev->open() in input_open_device() when
-device is inhibited (and same for dev->close() in input_close_device).
-And when uninhibiting, we should not call dev->open() when there are no
-users for the device, and no dev->close() when inhibiting with no users.
+-----BEGIN PGP SIGNATURE-----
 
-Do you see any problems with this approach?
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl7Wk+gACgkQ2O7X88g7
++pqfvhAAp3vLZAMmY0nQI+gSiUH60RC3gWVLX3NlbuoLZwpCmB+UAacJhEje1Jae
+WxzoJZDMrk79M/LnJTwf2bUxFnOuGPVMh9agUNhpfx1gc6o97nBJhSISc9s46cDn
+AskAmFojgm6G129GmcGG6FE1+H7uHgseGqHevr0Czth04cYsz/z3IrpN/M4cp9AJ
+KqXw2ORkfXxZ8cbujffAsoW/SA0aBWMqRYpluNsukxwOAc4HZqIiaaSBsd9w94m7
+SZgr6NFPEvfg2MsZIlFl5KvadL/zdMu7mM48Bo6KiZ4ALsWlntOQfW+AYX6VDk+C
+Wzbd360Q8OyPVdZLQcUBjYvYRsFaFQh7iamGHHRzPIe2E0QEaJARyn4+db5pNptt
+o0I1FcSE+s3hbBHBAPj6y4u91Safun8m2xMAccqVNR0mQUpdR4+UFMU2gs/dv9U9
+0kzh5wB9c16g1BkQhy0u9aH604qXDRJ6EqDkjftsl8y7+7gxArUoSP+UgFUK3SuA
+C8MfpFmnZNvZt7tAIUvldKbpfogisfTYhbbs8BNUYJosAqJAcIOCYR9GRR/26I7Z
+POpxdn22sBpaKII78+ThvToqjx4A7IZ+P7La52HgUmsu1nWyYqeenAEIes4FJO3H
+KG2hOpN9+SrhIRiE/GZ+Yk9RCgDgK4RTM+bjiMe9lymoFn2ozIQ=
+=GTtY
+-----END PGP SIGNATURE-----
 
-Thanks.
-
--- 
-Dmitry
+--qlcnxi6fqxf4bmqp--
