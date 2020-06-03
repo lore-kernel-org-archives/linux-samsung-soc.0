@@ -2,182 +2,299 @@ Return-Path: <SRS0=67Nn=7Q=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67E68C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Jun 2020 10:47:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD764C433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Jun 2020 13:07:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 33AA82074B
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Jun 2020 10:47:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VDMS3VGe"
+	by mail.kernel.org (Postfix) with ESMTP id C5ADB20679
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Jun 2020 13:07:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725836AbgFCKq7 (ORCPT
+        id S1725937AbgFCNHi (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 3 Jun 2020 06:46:59 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:40485 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725828AbgFCKq7 (ORCPT
+        Wed, 3 Jun 2020 09:07:38 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:38064 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725854AbgFCNHh (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 3 Jun 2020 06:46:59 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200603104657euoutp027b6d60c960b5595b3aadf6e9655066cc~VAuL2TQk-1486414864euoutp025
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  3 Jun 2020 10:46:57 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200603104657euoutp027b6d60c960b5595b3aadf6e9655066cc~VAuL2TQk-1486414864euoutp025
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1591181217;
-        bh=QeaNTDUTzlUTLI1oIxDJsbmDenTFzau4DVEmt8Ns1T4=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=VDMS3VGeSGw7WAgJ2cWHvJjKjt8ej9RWJdAj7wCV9iATZceUrpsKh+g8C74+oAKbE
-         +N8KYdzTDZrSkmcMwHjAxdUZVdph3j7aHxVo3HVesCSiZjEy97WFDrlAM1VAn4b2N7
-         BPqxpt7vRh+Cq9nZEuqdY1zS/9FCf+24KBY/WR20=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200603104656eucas1p26ed57ac90988daa6c73cb6096a004040~VAuLcLc590162601626eucas1p2U;
-        Wed,  3 Jun 2020 10:46:56 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 9E.91.61286.0AF77DE5; Wed,  3
-        Jun 2020 11:46:56 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200603104656eucas1p2abeab3bd0fd82af8a10fd278a43a62d3~VAuLIv9Bn1324313243eucas1p2i;
-        Wed,  3 Jun 2020 10:46:56 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200603104656eusmtrp22e1726242e9fbaeb76d346d16adc67b1~VAuLILPRn0087900879eusmtrp2C;
-        Wed,  3 Jun 2020 10:46:56 +0000 (GMT)
-X-AuditID: cbfec7f2-f0bff7000001ef66-dd-5ed77fa0e0a7
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 30.AA.08375.0AF77DE5; Wed,  3
-        Jun 2020 11:46:56 +0100 (BST)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200603104655eusmtip182ed95cba35ec9f0c2827b1f625e6cb1~VAuKwrdIh1731517315eusmtip1S;
-        Wed,  3 Jun 2020 10:46:55 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Wed, 3 Jun 2020 09:07:37 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: andrzej.p)
+        with ESMTPSA id 6958A2A3C84
+Subject: Re: [PATCHv2 0/7] Support inhibiting input devices
+To:     Hans de Goede <hdegoede@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     linux-input@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        patches@opensource.cirrus.com,
+        ibm-acpi-devel@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] ARM: dts: exynos: Enable Bluetooth support for Artik5 board
-Date:   Wed,  3 Jun 2020 12:46:47 +0200
-Message-Id: <20200603104647.25958-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDIsWRmVeSWpSXmKPExsWy7djP87oL6q/HGVz7rWmxccZ6VovrX56z
-        Wpw/v4HdYsb5fUwWa4/cZXdg9di0qpPNo2/LKkaPz5vkApijuGxSUnMyy1KL9O0SuDKOnOxg
-        LbglUPFh+VLGBsZnvF2MnBwSAiYSLTceMXcxcnEICaxglHj34yIbhPOFUeLkne9MEM5nRol1
-        ++cww7R09f5khUgsZ5RY/useE1zLte+djCBVbAKGEl1vu9hAbBEBVYnPbQvYQYqYBbYxSmzp
-        fQA2SljAR+LTh+VgDSxAReeufmEBsXkFbCUOT90EtU5eYvWGA2AXSgjsYJOYdn03E0TCRWLn
-        tdcsELawxKvjW9ghbBmJ/zvnM0E0NDNKPDy3lh3C6WGUuNw0gxGiylrizrlfQPdxAN2kKbF+
-        lz5E2FFi5aHtjCBhCQE+iRtvBUHCzEDmpG3TmSHCvBIdbUIQ1WoSs46vg1t78MIlqJs9JJ68
-        2MUCUi4kECuxd5LrBEa5WQirFjAyrmIUTy0tzk1PLTbMSy3XK07MLS7NS9dLzs/dxAiM89P/
-        jn/awfj1UtIhRgEORiUeXoa663FCrIllxZW5hxglOJiVRHidzp6OE+JNSaysSi3Kjy8qzUkt
-        PsQozcGiJM5rvOhlrJBAemJJanZqakFqEUyWiYNTqoEx6U9TefdqdsPYByISqY1tbNP1OsSy
-        Ut03PJx5b/33Q6+OTm3ufqGSwmUjO0PLpXWD9IIjHXpqlf+Wu15T19s0h0PXeudZ/cWyv98G
-        8zBWvD/yaV3y+vmhRUES5jKbtKQartRcnXTs4mUbtlbrtPSJ3LKRGbWMtanq968ssLVnMLD9
-        cXyZ/wwlluKMREMt5qLiRAAgo7yy7wIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrELMWRmVeSWpSXmKPExsVy+t/xu7oL6q/HGayeJmixccZ6VovrX56z
-        Wpw/v4HdYsb5fUwWa4/cZXdg9di0qpPNo2/LKkaPz5vkApij9GyK8ktLUhUy8otLbJWiDS2M
-        9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DKOnOxgLbglUPFh+VLGBsZnvF2MnBwS
-        AiYSXb0/WbsYuTiEBJYySvTd28QGkZCRODmtgRXCFpb4c62LDaLoE6PExRfn2UESbAKGEl1v
-        u8AaRARUJT63LWAHKWIW2MEosWXHW7BuYQEfiU8fljOC2CxAReeufmEBsXkFbCUOT93EDLFB
-        XmL1hgPMExh5FjAyrGIUSS0tzk3PLTbUK07MLS7NS9dLzs/dxAgMr23Hfm7ewXhpY/AhRgEO
-        RiUeXoa663FCrIllxZW5hxglOJiVRHidzp6OE+JNSaysSi3Kjy8qzUktPsRoCrR8IrOUaHI+
-        MPTzSuINTQ3NLSwNzY3Njc0slMR5OwQOxggJpCeWpGanphakFsH0MXFwSjUwtot6Xq89s+PH
-        Kl33f3vnCl67wvWZ4ZuK+qPe14/5A7/t196X/ODu6m9qL9pW7Ujebu3Z+JlnvdTbQ3d8Dly4
-        8W+O/bsGTSlRL0sRntJPhxoeFq7LC/I6zBDd1bXyf/vyE5FrulmFF25l4Fs/syJbd2pK1KkV
-        a1NKhHIal77jDajuPHvpxv25B5VYijMSDbWYi4oTAVui5H1FAgAA
-X-CMS-MailID: 20200603104656eucas1p2abeab3bd0fd82af8a10fd278a43a62d3
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200603104656eucas1p2abeab3bd0fd82af8a10fd278a43a62d3
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200603104656eucas1p2abeab3bd0fd82af8a10fd278a43a62d3
-References: <CGME20200603104656eucas1p2abeab3bd0fd82af8a10fd278a43a62d3@eucas1p2.samsung.com>
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Barry Song <baohua@kernel.org>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Nick Dyer <nick@shmanahar.org>,
+        Ferruh Yigit <fery@cypress.com>,
+        Sangwon Jee <jeesw@melfas.com>,
+        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        kernel@collabora.com, Peter Hutterer <peter.hutterer@redhat.com>,
+        Benjamin Tissoires <btissoir@redhat.com>
+References: <20200515164943.28480-1-andrzej.p@collabora.com>
+ <842b95bb-8391-5806-fe65-be64b02de122@redhat.com>
+ <e6030957-97dc-5b04-7855-bc14a78164c8@collabora.com>
+ <6d9921fc-5c2f-beda-4dcd-66d6970a22fe@redhat.com>
+ <09679de4-75d3-1f29-ec5f-8d42c84273dd@collabora.com>
+ <f674ba4f-bd83-0877-c730-5dc6ea09ae4b@redhat.com>
+ <2d224833-3a7e-bc7c-af15-1f803f466697@collabora.com>
+ <aa2ce2ab-e5bc-9cb4-8b53-c1ef9348b646@redhat.com>
+ <20200527063430.GJ89269@dtor-ws>
+ <88f939cd-1518-d516-59f2-8f627a6a70d2@collabora.com>
+ <20200602175241.GO89269@dtor-ws>
+ <82e9f2ab-a16e-51ee-1413-bedf0122026a@collabora.com>
+ <8f97d2e1-497a-495d-bc82-f46dbeba440c@redhat.com>
+From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Message-ID: <fb5bee72-6a75-88aa-8157-75f07c491eeb@collabora.com>
+Date:   Wed, 3 Jun 2020 15:07:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
+MIME-Version: 1.0
+In-Reply-To: <8f97d2e1-497a-495d-bc82-f46dbeba440c@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Add a node for the BCM4354 Bluetooth chip on the serial bus #0 on
-the Exynos3250-based Artik5 boards.
+Hi Hans, hi Dmitry,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/boot/dts/exynos3250-artik5.dtsi | 41 ++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+W dniu 02.06.2020 o 22:19, Hans de Goede pisze:
+> Hi,
+> 
+> On 6/2/20 8:50 PM, Andrzej Pietrasiewicz wrote:
+>> Hi Dmitry,
+>>
+>> W dniu 02.06.2020 o 19:52, Dmitry Torokhov pisze:
+>>> Hi Andrzej,
+>>>
+>>> On Tue, Jun 02, 2020 at 06:56:40PM +0200, Andrzej Pietrasiewicz wrote:
+>>>> Hi Dmitry,
+>>>>
+>>>> W dniu 27.05.2020 o 08:34, Dmitry Torokhov pisze:
+>>>>> That said, I think the way we should handle inhibit/uninhibit, is that
+>>>>> if we have the callback defined, then we call it, and only call open and
+>>>>> close if uninhibit or inhibit are _not_ defined.
+>>>>>
+>>>>
+>>>> If I understand you correctly you suggest to call either inhibit,
+>>>> if provided or close, if inhibit is not provided, but not both,
+>>>> that is, if both are provided then on the inhibit path only
+>>>> inhibit is called. And, consequently, you suggest to call either
+>>>> uninhibit or open, but not both. The rest of my mail makes this
+>>>> assumption, so kindly confirm if I understand you correctly.
+>>>
+>>> Yes, that is correct. If a driver wants really fine-grained control, it
+>>> will provide inhibit (or both inhibit and close), otherwise it will rely
+>>> on close in place of inhibit.
+>>>
+>>>>
+>>>> In my opinion this idea will not work.
+>>>>
+>>>> The first question is should we be able to inhibit a device
+>>>> which is not opened? In my opinion we should, in order to be
+>>>> able to inhibit a device in anticipation without needing to
+>>>> open it first.
+>>>
+>>> I agree.
+>>>
+>>>>
+>>>> Then what does opening (with input_open_device()) an inhibited
+>>>> device mean? Should it succeed or should it fail?
+>>>
+>>> It should succeed.
+>>>
+>>>> If it is not
+>>>> the first opening then effectively it boils down to increasing
+>>>> device's and handle's counters, so we can allow it to succeed.
+>>>> If, however, the device is being opened for the first time,
+>>>> the ->open() method wants to be called, but that somehow
+>>>> contradicts the device's inhibited state. So a logical thing
+>>>> to do is to either fail input_open_device() or postpone ->open()
+>>>> invocation to the moment of uninhibiting - and the latter is
+>>>> what the patches in this series currently do.
+>>>>
+>>>> Failing input_open_device() because of the inhibited state is
+>>>> not the right thing to do. Let me explain. Suppose that a device
+>>>> is already inhibited and then a new matching handler appears
+>>>> in the system. Most handlers (apm-power.c, evbug.c, input-leds.c,
+>>>> mac_hid.c, sysrq.c, vt/keyboard.c and rfkill/input.c) don't create
+>>>> any character devices (only evdev.c, joydev.c and mousedev.c do),
+>>>> so for them it makes no sense to delay calling input_open_device()
+>>>> and it is called in handler's ->connect(). If input_open_device()
+>>>> now fails, we have lost the only chance for this ->connect() to
+>>>> succeed.
+>>>>
+>>>> Summarizing, IMO the uninhibit path should be calling both
+>>>> ->open() and ->uninhibit() (if provided), and conversely, the inhibit
+>>>> path should be calling both ->inhibit() and ->close() (if provided).
+>>>
+>>> So what you are trying to say is that you see inhibit as something that
+>>> is done in addition to what happens in close. But what exactly do you
+>>> want to do in inhibit, in addition to what close is doing?
+>>
+>> See below (*).
+>>
+>>>
+>>> In my view, if we want to have a dedicated inhibit callback, then it
+>>> will do everything that close does, they both are aware of each other
+>>> and can sort out the state transitions between them. For drivers that do
+>>> not have dedicated inhibit/uninhibit, we can use open and close
+>>> handlers, and have input core sort out when each should be called. That
+>>> means that we should not call dev->open() in input_open_device() when
+>>> device is inhibited (and same for dev->close() in input_close_device).
+>>> And when uninhibiting, we should not call dev->open() when there are no
+>>> users for the device, and no dev->close() when inhibiting with no users.
+>>>
+>>> Do you see any problems with this approach?
+>>
+>> My concern is that if e.g. both ->open() and ->uninhibit() are provided,
+>> then in certain circumstances ->open() won't be called:
+>>
+>> 1. users == 0
+>> 2. inhibit happens
+>> 3. input_open_device() happens, ->open() not called
+>> 4. uninhibit happens
+>> 5. as part of uninhibit ->uninhibit() is only called, but ->open() is not.
+>>
+>> They way I understand your answer is that we implicitly impose requirements
+>> on drivers which choose to implement e.g. both ->open() and ->uninhibit():
+>> in such a case ->uninhibit() should be doing exactly the same things as
+>> ->open() does. Which leads to a conclusion that in practice no drivers
+>> should choose to implement both, otherwise they must be aware that
+>> ->uninhibit() can be sometimes called instead of ->open(). Then ->open()
+>> becomes synonymous with ->uninhibit(), and ->close() with ->inhibit().
+>> Or, maybe, then ->inhibit() can be a superset of ->close() and
+>> ->uninhibit() a superset of ->open().
+>>
+>> If such an approach is ok with you, it is ok with me, too.
+>>
+>> (*)
+>> Calling both ->inhibit() and ->close() (if they are provided) allows
+>> drivers to go fancy and fail inhibiting (which is impossible using
+>> only ->close() as it does not return a value, but ->inhibit() by design
+>> does). Then ->uninhibit() is mostly for symmetry.
+> 
+> All the complications discussed above are exactly why I still
+> believe that there should be only open and close.
+> 
+> If error propagation on inhibit is considered as something
+> really important to have then we can make the input driver close
+> callback return an error (*), note I'm talking about the
+> driver close callback here, not the system call.
+> 
+> If the close callback is called for actually closing the fd
+> referring to the input node, then the new error return code
+> can be ignored, as we already do for errors on close atm
+> since the driver close callback returns void.
+> 
+> I still have not seen a very convincing argument for having
+> separate inhibit and close callbacks and as the messy discussion
+> above shows, having 2 such very similar yet subtly different
+> calls seems like a bad idea...
+> 
+> Regards,
+> 
+> Hans
+> 
+> 
+> *) This will require a flag day where "return 0" is added
+> to all current close handlers
+> 
 
-diff --git a/arch/arm/boot/dts/exynos3250-artik5.dtsi b/arch/arm/boot/dts/exynos3250-artik5.dtsi
-index b27a82072365..6c2f320be2f4 100644
---- a/arch/arm/boot/dts/exynos3250-artik5.dtsi
-+++ b/arch/arm/boot/dts/exynos3250-artik5.dtsi
-@@ -352,6 +352,14 @@
- };
- 
- &pinctrl_1 {
-+	bten: bten {
-+		samsung,pins ="gpx1-7";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
-+		samsung,pin-con-pdn = <EXYNOS_PIN_PDN_PREV>;
-+		samsung,pin-pud-pdn = <EXYNOS_PIN_PULL_DOWN>;
-+	};
-+
- 	wlanen: wlanen {
- 		samsung,pins = "gpx2-3";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-@@ -364,6 +372,22 @@
- 		samsung,pins = "gpx3-5";
- 		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
- 	};
-+
-+	bthostwake: bthostwake {
-+		samsung,pins = "gpx3-6";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-+		samsung,pin-con-pdn = <EXYNOS_PIN_PDN_INPUT>;
-+		samsung,pin-pud-pdn = <EXYNOS_PIN_PULL_NONE>;
-+	};
-+
-+	btwake: btwake {
-+		samsung,pins = "gpx3-7";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
-+		samsung,pin-con-pdn = <EXYNOS_PIN_PDN_OUT0>;
-+		samsung,pin-pud-pdn = <EXYNOS_PIN_PULL_DOWN>;
-+	};
- };
- 
- &rtc {
-@@ -372,6 +396,23 @@
- 	status = "okay";
- };
- 
-+&serial_0 {
-+	assigned-clocks = <&cmu CLK_SCLK_UART0>;
-+	assigned-clock-rates = <100000000>;
-+	status = "okay";
-+
-+	bluetooth {
-+		compatible = "brcm,bcm4330-bt";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&bten &btwake &bthostwake>;
-+		max-speed = <3000000>;
-+		shutdown-gpios = <&gpx1 7 GPIO_ACTIVE_HIGH>;
-+		device-wakeup-gpios = <&gpx3 7 GPIO_ACTIVE_HIGH>;
-+		host-wakeup-gpios = <&gpx3 6 GPIO_ACTIVE_HIGH>;
-+		clocks = <&s2mps14_osc S2MPS11_CLK_BT>;
-+	};
-+};
-+
- &tmu {
- 	status = "okay";
- };
--- 
-2.17.1
+I'm taking one step back and looking at the ->open() and ->close()
+driver callbacks. They are called from input_open_device() and
+input_close_device(), respectively:
 
+input_open_device():
+"This function should be called by input handlers when they
+want to start receive events from given input device."
+
+->open() callback:
+"this method is called when the very first user calls
+input_open_device(). The driver must prepare the device to start
+generating events (start polling thread, request an IRQ, submit
+URB, etc.)"
+
+input_close_device():
+"This function should be called by input handlers when they
+want to stop receive events from given input device."
+
+->close() callback:
+"this method is called when the very last user calls
+input_close_device()"
+
+It seems to me that the callback names do not reflect their
+purpose: their meaning is not to "open" or to "close" but to
+give drivers a chance to control when they start or stop
+providing events to the input core.
+
+What would you say about changing the callbacks' names?
+I'd envsion: ->provide_events() instead of ->open() and
+->stop_events() instead of ->close(). Of course drivers can
+exploit the fact of knowing that nobody wants any events
+from them and do whatever they consider appropriate, for
+example go into a low power mode - but the latter is beyond
+the scope of the input subsystem and is driver-specific.
+
+With such a naming change in mind let's consider inhibiting.
+We want to be able to control when to disregard events from
+a given device. It makes sense to do it at device level, otherwise
+such an operation would have to be invoked in all associated
+handlers (those that have an open handle associating them with
+the device in question). But of course we can do better than
+merely ignoring the events received: we can tell the drivers
+that we don't want any events from them, and later, at uninhibit
+time, tell them to start providing the events again. Conceptually,
+the two operations (provide or don't provide envents) are exactly
+the same thing we want to be happening at input_open_device() and
+input_close_device() time. To me, changing the names of
+->open() and ->close() exposes this fact very well.
+
+Consequently, ->inhibit() and ->uninhibit() won't be needed,
+and drivers which already implement ->provide_events() (formerly
+->open()) and ->stop_events() (formerly ->close()) will receive
+full inhibit/uninhibit support for free (subject to how well they
+implement ->provide_events()/->stop_events()). Unless we can come
+up with what the drivers might be doing on top of ->stop_events()
+and ->provide_events() when inhibiting/uninhibiting, but it seems
+to me we can't. Can we?
+
+Optionally ->close() (only the callback, not input_close_device())
+can be made return a value, just as Hans suggests. The value
+can be ignored in input_close_device() but used in input_inhibit().
+No strong opinion here, though. (btw it seems to me that
+input_inhibit() should be renamed to input_inhibit_device()).
+
+Regards,
+
+Andrzej
