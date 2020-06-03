@@ -2,29 +2,69 @@ Return-Path: <SRS0=67Nn=7Q=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD764C433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Jun 2020 13:07:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BAE7C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Jun 2020 17:38:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C5ADB20679
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Jun 2020 13:07:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD90A206A2
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Jun 2020 17:38:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F9UhnPI9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725937AbgFCNHi (ORCPT
+        id S1726148AbgFCRiL (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 3 Jun 2020 09:07:38 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:38064 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725854AbgFCNHh (ORCPT
+        Wed, 3 Jun 2020 13:38:11 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:46447 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726103AbgFCRiK (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 3 Jun 2020 09:07:37 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: andrzej.p)
-        with ESMTPSA id 6958A2A3C84
+        Wed, 3 Jun 2020 13:38:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1591205888;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=g4JdSAXlLTFOykR3a704n7KRgSRjVj4aOucsElPOq3c=;
+        b=F9UhnPI9GQH0SQx47IIc5LTN28jE7cM9wph1+9htNvdVAoZmlU2XYbErwpmYJehlDWAx9y
+        96fAxTn75Y/M6fA+7fhDgessAkf4k7iIpgsmn4Q1clizOBqQOr0VmPTVSfbetJJyZjBMKq
+        u1DGNDTCwxZSZZBKJdnpCKhle2GdnoU=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-211-86OunbwbNnKUE7adZGr2vg-1; Wed, 03 Jun 2020 13:38:06 -0400
+X-MC-Unique: 86OunbwbNnKUE7adZGr2vg-1
+Received: by mail-wr1-f71.google.com with SMTP id h6so1367842wrx.4
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 03 Jun 2020 10:38:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=g4JdSAXlLTFOykR3a704n7KRgSRjVj4aOucsElPOq3c=;
+        b=r8rfR9Ho6PACLhMBuSmVX6/HHVn0g+I5tPBQQ4XXYmH0p163MhesQG85ls8mDm55WU
+         7WMhXwajP7BSag8TNL/zaudbRr9J25+hnR0yuGmY3NOwEYfEe0D/mXgpv8WQpzSyziy1
+         MKgweFsZIyYoBywRh3hDGGHTwNaeQPKT0iGkQwyjC45skaqH+TtgHdT1g4PHdjlF7BxG
+         kT+Ji10PH+18EObo6ogKIS41iS14wjugmt67866IrLJZ7lihR8ryUtZsFK7KcVDJPNxZ
+         G4kN8hXq1qQPw30Sd9ZM4Rhd/FV2fV+dOIOfiQSehARyU/Q47vomkU/IYkNPoA1+EGyG
+         4cCQ==
+X-Gm-Message-State: AOAM5302gHSvdD6lfnHKBk7/yfMStwwQbMQFP60luI6xImH+aA1iPmow
+        FQcJSoqFS8V/qCHHZ1usZ/B5yc2VQXkfvzKlqn7RN2i0rHkTZbWup6VNj4t+JLJUytvYef/2W0g
+        WnX+8Axl74VMOXpYnm1V+upVxbjD5I3o=
+X-Received: by 2002:a7b:c385:: with SMTP id s5mr261298wmj.121.1591205885422;
+        Wed, 03 Jun 2020 10:38:05 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzLjq4IDRdqkukHBckHKOOOLiGmG+r2akHBeeZCOhLw2fV6SQWj3VXyhtQLJX0YNKizL01l8A==
+X-Received: by 2002:a7b:c385:: with SMTP id s5mr261254wmj.121.1591205885130;
+        Wed, 03 Jun 2020 10:38:05 -0700 (PDT)
+Received: from x1.localdomain (2001-1c00-0c0c-fe00-d2ea-f29d-118b-24dc.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:d2ea:f29d:118b:24dc])
+        by smtp.gmail.com with ESMTPSA id f11sm4390115wrj.2.2020.06.03.10.38.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Jun 2020 10:38:04 -0700 (PDT)
 Subject: Re: [PATCHv2 0/7] Support inhibiting input devices
-To:     Hans de Goede <hdegoede@redhat.com>,
+To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc:     linux-input@vger.kernel.org, linux-acpi@vger.kernel.org,
         linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -71,230 +111,112 @@ References: <20200515164943.28480-1-andrzej.p@collabora.com>
  <20200602175241.GO89269@dtor-ws>
  <82e9f2ab-a16e-51ee-1413-bedf0122026a@collabora.com>
  <8f97d2e1-497a-495d-bc82-f46dbeba440c@redhat.com>
-From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Message-ID: <fb5bee72-6a75-88aa-8157-75f07c491eeb@collabora.com>
-Date:   Wed, 3 Jun 2020 15:07:29 +0200
+ <fb5bee72-6a75-88aa-8157-75f07c491eeb@collabora.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <681abc14-ef0f-ff15-68ed-944b2f96bdaf@redhat.com>
+Date:   Wed, 3 Jun 2020 19:38:02 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.8.0
 MIME-Version: 1.0
-In-Reply-To: <8f97d2e1-497a-495d-bc82-f46dbeba440c@redhat.com>
+In-Reply-To: <fb5bee72-6a75-88aa-8157-75f07c491eeb@collabora.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Hans, hi Dmitry,
+Hi,
 
-W dniu 02.06.2020 o 22:19, Hans de Goede pisze:
-> Hi,
+On 6/3/20 3:07 PM, Andrzej Pietrasiewicz wrote:
+> Hi Hans, hi Dmitry,
+
+<snip>
+
+> I'm taking one step back and looking at the ->open() and ->close()
+> driver callbacks. They are called from input_open_device() and
+> input_close_device(), respectively:
 > 
-> On 6/2/20 8:50 PM, Andrzej Pietrasiewicz wrote:
->> Hi Dmitry,
->>
->> W dniu 02.06.2020 o 19:52, Dmitry Torokhov pisze:
->>> Hi Andrzej,
->>>
->>> On Tue, Jun 02, 2020 at 06:56:40PM +0200, Andrzej Pietrasiewicz wrote:
->>>> Hi Dmitry,
->>>>
->>>> W dniu 27.05.2020 o 08:34, Dmitry Torokhov pisze:
->>>>> That said, I think the way we should handle inhibit/uninhibit, is that
->>>>> if we have the callback defined, then we call it, and only call open and
->>>>> close if uninhibit or inhibit are _not_ defined.
->>>>>
->>>>
->>>> If I understand you correctly you suggest to call either inhibit,
->>>> if provided or close, if inhibit is not provided, but not both,
->>>> that is, if both are provided then on the inhibit path only
->>>> inhibit is called. And, consequently, you suggest to call either
->>>> uninhibit or open, but not both. The rest of my mail makes this
->>>> assumption, so kindly confirm if I understand you correctly.
->>>
->>> Yes, that is correct. If a driver wants really fine-grained control, it
->>> will provide inhibit (or both inhibit and close), otherwise it will rely
->>> on close in place of inhibit.
->>>
->>>>
->>>> In my opinion this idea will not work.
->>>>
->>>> The first question is should we be able to inhibit a device
->>>> which is not opened? In my opinion we should, in order to be
->>>> able to inhibit a device in anticipation without needing to
->>>> open it first.
->>>
->>> I agree.
->>>
->>>>
->>>> Then what does opening (with input_open_device()) an inhibited
->>>> device mean? Should it succeed or should it fail?
->>>
->>> It should succeed.
->>>
->>>> If it is not
->>>> the first opening then effectively it boils down to increasing
->>>> device's and handle's counters, so we can allow it to succeed.
->>>> If, however, the device is being opened for the first time,
->>>> the ->open() method wants to be called, but that somehow
->>>> contradicts the device's inhibited state. So a logical thing
->>>> to do is to either fail input_open_device() or postpone ->open()
->>>> invocation to the moment of uninhibiting - and the latter is
->>>> what the patches in this series currently do.
->>>>
->>>> Failing input_open_device() because of the inhibited state is
->>>> not the right thing to do. Let me explain. Suppose that a device
->>>> is already inhibited and then a new matching handler appears
->>>> in the system. Most handlers (apm-power.c, evbug.c, input-leds.c,
->>>> mac_hid.c, sysrq.c, vt/keyboard.c and rfkill/input.c) don't create
->>>> any character devices (only evdev.c, joydev.c and mousedev.c do),
->>>> so for them it makes no sense to delay calling input_open_device()
->>>> and it is called in handler's ->connect(). If input_open_device()
->>>> now fails, we have lost the only chance for this ->connect() to
->>>> succeed.
->>>>
->>>> Summarizing, IMO the uninhibit path should be calling both
->>>> ->open() and ->uninhibit() (if provided), and conversely, the inhibit
->>>> path should be calling both ->inhibit() and ->close() (if provided).
->>>
->>> So what you are trying to say is that you see inhibit as something that
->>> is done in addition to what happens in close. But what exactly do you
->>> want to do in inhibit, in addition to what close is doing?
->>
->> See below (*).
->>
->>>
->>> In my view, if we want to have a dedicated inhibit callback, then it
->>> will do everything that close does, they both are aware of each other
->>> and can sort out the state transitions between them. For drivers that do
->>> not have dedicated inhibit/uninhibit, we can use open and close
->>> handlers, and have input core sort out when each should be called. That
->>> means that we should not call dev->open() in input_open_device() when
->>> device is inhibited (and same for dev->close() in input_close_device).
->>> And when uninhibiting, we should not call dev->open() when there are no
->>> users for the device, and no dev->close() when inhibiting with no users.
->>>
->>> Do you see any problems with this approach?
->>
->> My concern is that if e.g. both ->open() and ->uninhibit() are provided,
->> then in certain circumstances ->open() won't be called:
->>
->> 1. users == 0
->> 2. inhibit happens
->> 3. input_open_device() happens, ->open() not called
->> 4. uninhibit happens
->> 5. as part of uninhibit ->uninhibit() is only called, but ->open() is not.
->>
->> They way I understand your answer is that we implicitly impose requirements
->> on drivers which choose to implement e.g. both ->open() and ->uninhibit():
->> in such a case ->uninhibit() should be doing exactly the same things as
->> ->open() does. Which leads to a conclusion that in practice no drivers
->> should choose to implement both, otherwise they must be aware that
->> ->uninhibit() can be sometimes called instead of ->open(). Then ->open()
->> becomes synonymous with ->uninhibit(), and ->close() with ->inhibit().
->> Or, maybe, then ->inhibit() can be a superset of ->close() and
->> ->uninhibit() a superset of ->open().
->>
->> If such an approach is ok with you, it is ok with me, too.
->>
->> (*)
->> Calling both ->inhibit() and ->close() (if they are provided) allows
->> drivers to go fancy and fail inhibiting (which is impossible using
->> only ->close() as it does not return a value, but ->inhibit() by design
->> does). Then ->uninhibit() is mostly for symmetry.
+> input_open_device():
+> "This function should be called by input handlers when they
+> want to start receive events from given input device."
 > 
-> All the complications discussed above are exactly why I still
-> believe that there should be only open and close.
+> ->open() callback:
+> "this method is called when the very first user calls
+> input_open_device(). The driver must prepare the device to start
+> generating events (start polling thread, request an IRQ, submit
+> URB, etc.)"
 > 
-> If error propagation on inhibit is considered as something
-> really important to have then we can make the input driver close
-> callback return an error (*), note I'm talking about the
-> driver close callback here, not the system call.
+> input_close_device():
+> "This function should be called by input handlers when they
+> want to stop receive events from given input device."
 > 
-> If the close callback is called for actually closing the fd
-> referring to the input node, then the new error return code
-> can be ignored, as we already do for errors on close atm
-> since the driver close callback returns void.
+> ->close() callback:
+> "this method is called when the very last user calls
+> input_close_device()"
 > 
-> I still have not seen a very convincing argument for having
-> separate inhibit and close callbacks and as the messy discussion
-> above shows, having 2 such very similar yet subtly different
-> calls seems like a bad idea...
+> It seems to me that the callback names do not reflect their
+> purpose: their meaning is not to "open" or to "close" but to
+> give drivers a chance to control when they start or stop
+> providing events to the input core.
 > 
-> Regards,
+> What would you say about changing the callbacks' names?
+> I'd envsion: ->provide_events() instead of ->open() and
+> ->stop_events() instead of ->close(). Of course drivers can
+> exploit the fact of knowing that nobody wants any events
+> from them and do whatever they consider appropriate, for
+> example go into a low power mode - but the latter is beyond
+> the scope of the input subsystem and is driver-specific.
+
+I don't have much of an opinion on changing the names,
+to me open/close have always means start/stop receiving
+events. This follows the everything is a file philosophy,
+e.g. you can also not really "open" a serial port,
+yet opening /dev/ttyS0 will activate the receive IRQ
+of the UART, etc. So maybe we just need to make the
+docs clearer rather then do the rename?  Doing the
+rename is certainly going to cause a lot of churn.
+
+Anyways as said, I don't have much of an opinion,
+so I'll leave commenting (more) on this to Dmitry.
+
+> With such a naming change in mind let's consider inhibiting.
+> We want to be able to control when to disregard events from
+> a given device. It makes sense to do it at device level, otherwise
+> such an operation would have to be invoked in all associated
+> handlers (those that have an open handle associating them with
+> the device in question). But of course we can do better than
+> merely ignoring the events received: we can tell the drivers
+> that we don't want any events from them, and later, at uninhibit
+> time, tell them to start providing the events again. Conceptually,
+> the two operations (provide or don't provide envents) are exactly
+> the same thing we want to be happening at input_open_device() and
+> input_close_device() time. To me, changing the names of
+> ->open() and ->close() exposes this fact very well.
 > 
-> Hans
-> 
-> 
-> *) This will require a flag day where "return 0" is added
-> to all current close handlers
-> 
+> Consequently, ->inhibit() and ->uninhibit() won't be needed,
+> and drivers which already implement ->provide_events() (formerly
+> ->open()) and ->stop_events() (formerly ->close()) will receive
+> full inhibit/uninhibit support for free (subject to how well they
+> implement ->provide_events()/->stop_events()). Unless we can come
+> up with what the drivers might be doing on top of ->stop_events()
+> and ->provide_events() when inhibiting/uninhibiting, but it seems
+> to me we can't. Can we?
 
-I'm taking one step back and looking at the ->open() and ->close()
-driver callbacks. They are called from input_open_device() and
-input_close_device(), respectively:
+Right. I'm happy that you've come to see that both on open/close
+and on inhibit/uninhibit we want to "start receiving events" and
+"stop receiving events", so that we only need one set of callbacks.
 
-input_open_device():
-"This function should be called by input handlers when they
-want to start receive events from given input device."
+> Optionally ->close() (only the callback, not input_close_device())
+> can be made return a value, just as Hans suggests. The value
+> can be ignored in input_close_device() but used in input_inhibit().
+> No strong opinion here, though. (btw it seems to me that
+> input_inhibit() should be renamed to input_inhibit_device()).
 
-->open() callback:
-"this method is called when the very first user calls
-input_open_device(). The driver must prepare the device to start
-generating events (start polling thread, request an IRQ, submit
-URB, etc.)"
-
-input_close_device():
-"This function should be called by input handlers when they
-want to stop receive events from given input device."
-
-->close() callback:
-"this method is called when the very last user calls
-input_close_device()"
-
-It seems to me that the callback names do not reflect their
-purpose: their meaning is not to "open" or to "close" but to
-give drivers a chance to control when they start or stop
-providing events to the input core.
-
-What would you say about changing the callbacks' names?
-I'd envsion: ->provide_events() instead of ->open() and
-->stop_events() instead of ->close(). Of course drivers can
-exploit the fact of knowing that nobody wants any events
-from them and do whatever they consider appropriate, for
-example go into a low power mode - but the latter is beyond
-the scope of the input subsystem and is driver-specific.
-
-With such a naming change in mind let's consider inhibiting.
-We want to be able to control when to disregard events from
-a given device. It makes sense to do it at device level, otherwise
-such an operation would have to be invoked in all associated
-handlers (those that have an open handle associating them with
-the device in question). But of course we can do better than
-merely ignoring the events received: we can tell the drivers
-that we don't want any events from them, and later, at uninhibit
-time, tell them to start providing the events again. Conceptually,
-the two operations (provide or don't provide envents) are exactly
-the same thing we want to be happening at input_open_device() and
-input_close_device() time. To me, changing the names of
-->open() and ->close() exposes this fact very well.
-
-Consequently, ->inhibit() and ->uninhibit() won't be needed,
-and drivers which already implement ->provide_events() (formerly
-->open()) and ->stop_events() (formerly ->close()) will receive
-full inhibit/uninhibit support for free (subject to how well they
-implement ->provide_events()/->stop_events()). Unless we can come
-up with what the drivers might be doing on top of ->stop_events()
-and ->provide_events() when inhibiting/uninhibiting, but it seems
-to me we can't. Can we?
-
-Optionally ->close() (only the callback, not input_close_device())
-can be made return a value, just as Hans suggests. The value
-can be ignored in input_close_device() but used in input_inhibit().
-No strong opinion here, though. (btw it seems to me that
-input_inhibit() should be renamed to input_inhibit_device()).
+Ack.
 
 Regards,
 
-Andrzej
+Hans
+
