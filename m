@@ -7,246 +7,512 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ABA5C433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Jun 2020 18:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 609E8C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Jun 2020 19:37:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 19DC42077D
-	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Jun 2020 18:49:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A92A20810
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Jun 2020 19:37:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LQj5gdjs"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VzWshBGT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725926AbgFCStk (ORCPT
+        id S1726181AbgFCThU (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 3 Jun 2020 14:49:40 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:42584 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725961AbgFCStk (ORCPT
+        Wed, 3 Jun 2020 15:37:20 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:31855 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726166AbgFCThT (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 3 Jun 2020 14:49:40 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20200603184938euoutp02ad2bf74433e0607e6f664d32fdd90ef9~VHTn07dIl2002720027euoutp02i
-        for <linux-samsung-soc@vger.kernel.org>; Wed,  3 Jun 2020 18:49:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20200603184938euoutp02ad2bf74433e0607e6f664d32fdd90ef9~VHTn07dIl2002720027euoutp02i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1591210178;
-        bh=YKIUkBl+i3nWmua71Tqp7CpD5PkjVjfibSNwRGPfGsg=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=LQj5gdjsRROIv657HcLTWwgLyaayR7fmN6EmqCfSxe9WSDRtbrMg//fso2uA/ubIR
-         QJbjipTMcDv0wQOVjFLQ8VZqgz73XvL/DhdO9gbQ6OS57pu5zsSfcwiRqM0cM/GGfL
-         U5CPJidj/oYrSml6nEPVNeBnn1XM37tmJrz1nxAw=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200603184937eucas1p2afab162e8479be72f2e25e827ee5798b~VHTnpgMZU2433624336eucas1p2W;
-        Wed,  3 Jun 2020 18:49:37 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 35.3F.60698.1C0F7DE5; Wed,  3
-        Jun 2020 19:49:37 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200603184937eucas1p20bd459cd754b6ccf28ae318740325e5d~VHTnPCk4E0047300473eucas1p20;
-        Wed,  3 Jun 2020 18:49:37 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200603184937eusmtrp2b93537329eba0628cf79ebfb05c8e63e~VHTnOZsUK0281802818eusmtrp2W;
-        Wed,  3 Jun 2020 18:49:37 +0000 (GMT)
-X-AuditID: cbfec7f5-a29ff7000001ed1a-1e-5ed7f0c137f0
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 96.A2.08375.1C0F7DE5; Wed,  3
-        Jun 2020 19:49:37 +0100 (BST)
-Received: from [106.210.88.143] (unknown [106.210.88.143]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200603184936eusmtip222e2e6b2fa1d5ee11d5d1128bf245253~VHTmm3Ta-0069500695eusmtip2-;
-        Wed,  3 Jun 2020 18:49:36 +0000 (GMT)
-Subject: Re: [PATCHv1 00/19] Improve SBS battery support
-To:     Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <a210e6e0-32db-98e9-f217-cec538407191@samsung.com>
-Date:   Wed, 3 Jun 2020 20:49:37 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.8.1
+        Wed, 3 Jun 2020 15:37:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1591213035;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=sj8DwrnZh85Ck6QTkl6G16Wo9om1OVn0LU/mlRGDKpI=;
+        b=VzWshBGTN/d0ov8VGrodTUpnA2gZavVFuWcEpHaXkT0iPPypE/szx/9i+uwXmlv9uveyQT
+        4+/PzYAzAoGlr1n7axd7MfAsvfvEZ7MogMQ7KHmpyPPtMIK5I/P/7jZPLB9LJ169WxDUJb
+        19BkT541dj68paGFhbB5kRU6D3LaJnc=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-92-Qo32Ad9FOTSMtkMLQZ9BoA-1; Wed, 03 Jun 2020 15:37:14 -0400
+X-MC-Unique: Qo32Ad9FOTSMtkMLQZ9BoA-1
+Received: by mail-wm1-f72.google.com with SMTP id 11so1095999wmj.6
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 03 Jun 2020 12:37:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=sj8DwrnZh85Ck6QTkl6G16Wo9om1OVn0LU/mlRGDKpI=;
+        b=QCgiJwmj+Xh+MoZ6EDI/BOWz3/ERIyY1rrLwDwdNgHyYXWDB0Oe+aFb7NU4S7vzktl
+         jDrBo+fnsSEjm4UPljS31UB3rtPyJE3teO1k14llv2g79HZsuLWH8nY2ZjQbYhPZNb3d
+         3LQVO7x6ukh/uIY0idvUwG3ZbnYQXl/TVdnq54W1zfEFr7LGYHlaHpWBltD6pmccYIZW
+         2bnYIuzkDZzvtXulEE/UlEsu71n50c7G530WvkBxZb+aAbyatpBynqcEww2fgRxx1tgA
+         PRI/V4al2WCPsubzlhiqK10bF9OCW6f45lAFM7mPTFLPic2W05Ln1fIrDJMqkwnpizDr
+         hGkw==
+X-Gm-Message-State: AOAM530yon090MLir2r4RwArI64/H3K0InMij+6tOhq4M8AtClw5pWPb
+        f4/9M88w6cI8X2YKCsRQNOzauaW0AsPe2tFh9IK0lH64DWuKoaiIkPmWs3kpuM+4xf3Za+/qDg/
+        Sz+xB/J9hBo9kKOewRDAUbhj4nHe8Qlw=
+X-Received: by 2002:a1c:5502:: with SMTP id j2mr712658wmb.56.1591213032616;
+        Wed, 03 Jun 2020 12:37:12 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxpOEMCf7lIDrWt8bkc/tbgg60nx+v5awVE0oDvn7V8736Lx9QAVjybI/3lYTsZ77kbwV2S3w==
+X-Received: by 2002:a1c:5502:: with SMTP id j2mr712619wmb.56.1591213032243;
+        Wed, 03 Jun 2020 12:37:12 -0700 (PDT)
+Received: from x1.localdomain (2001-1c00-0c0c-fe00-d2ea-f29d-118b-24dc.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:d2ea:f29d:118b:24dc])
+        by smtp.gmail.com with ESMTPSA id m129sm4585267wmf.2.2020.06.03.12.37.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Jun 2020 12:37:11 -0700 (PDT)
+Subject: Re: [PATCHv2 0/7] Support inhibiting input devices
+To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     linux-input@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        patches@opensource.cirrus.com,
+        ibm-acpi-devel@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Barry Song <baohua@kernel.org>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Nick Dyer <nick@shmanahar.org>,
+        Ferruh Yigit <fery@cypress.com>,
+        Sangwon Jee <jeesw@melfas.com>,
+        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        kernel@collabora.com, Peter Hutterer <peter.hutterer@redhat.com>,
+        Benjamin Tissoires <btissoir@redhat.com>
+References: <20200515164943.28480-1-andrzej.p@collabora.com>
+ <842b95bb-8391-5806-fe65-be64b02de122@redhat.com>
+ <e6030957-97dc-5b04-7855-bc14a78164c8@collabora.com>
+ <6d9921fc-5c2f-beda-4dcd-66d6970a22fe@redhat.com>
+ <09679de4-75d3-1f29-ec5f-8d42c84273dd@collabora.com>
+ <f674ba4f-bd83-0877-c730-5dc6ea09ae4b@redhat.com>
+ <2d224833-3a7e-bc7c-af15-1f803f466697@collabora.com>
+ <aa2ce2ab-e5bc-9cb4-8b53-c1ef9348b646@redhat.com>
+ <20200527063430.GJ89269@dtor-ws>
+ <88f939cd-1518-d516-59f2-8f627a6a70d2@collabora.com>
+ <20200602175241.GO89269@dtor-ws>
+ <82e9f2ab-a16e-51ee-1413-bedf0122026a@collabora.com>
+ <8f97d2e1-497a-495d-bc82-f46dbeba440c@redhat.com>
+ <fb5bee72-6a75-88aa-8157-75f07c491eeb@collabora.com>
+ <681abc14-ef0f-ff15-68ed-944b2f96bdaf@redhat.com>
+ <025361f4-5b1b-6669-ffa0-a6e8ad43940c@collabora.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <01b902dd-8841-e697-5ba7-96fa6b73c1cd@redhat.com>
+Date:   Wed, 3 Jun 2020 21:37:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-In-Reply-To: <20200602180119.52izs7kd72u3kmr4@earth.universe>
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <025361f4-5b1b-6669-ffa0-a6e8ad43940c@collabora.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHKsWRmVeSWpSXmKPExsWy7djPc7oHP1yPM1gzwcRi/pFzrBbNi9ez
-        WWw+18NqcXnXHDaLz71HGC1mnN/HZDH3y1Rmi9a9R9gt7r72c+D02HF3CaPHplWdbB77565h
-        9/i8SS6AJYrLJiU1J7MstUjfLoErY8mqeYwFv3Ur3szzbmBsVe9i5OSQEDCRWNfYzd7FyMUh
-        JLCCUeLA6jPMEM4XRokl096zQjifGSV+LzzHBtNyYkEDE0RiOaPEljmX2UESQgLvGSVW7/cA
-        sYUFLCS+LPoNFhcRMJc4cesmI0gDs8AqJok56/qZQRJsAoYSXW+7wKbyCthJ3F22hwnEZhFQ
-        kfhx6CKYLSoQK9Fz/xUzRI2gxMmZT1i6GDk4OAVsJV5dEAEJMwvISzRvnc0MYYtL3HoyH+w4
-        CYFd7BJ7f61igbjaReLKgy2sELawxKvjW9ghbBmJ/zthGpoZJR6eW8sO4fQwSlxumsEIUWUt
-        cefcLzaQzcwCmhLrd+lDhB0lJh7ezQwSlhDgk7jxVhDiCD6JSdumQ4V5JTrahCCq1SRmHV8H
-        t/bghUvMExiVZiH5bBaSd2YheWcWwt4FjCyrGMVTS4tz01OLjfNSy/WKE3OLS/PS9ZLzczcx
-        AlPR6X/Hv+5g3Pcn6RCjAAejEg8vQ931OCHWxLLiytxDjBIczEoivE5nT8cJ8aYkVlalFuXH
-        F5XmpBYfYpTmYFES5zVe9DJWSCA9sSQ1OzW1ILUIJsvEwSnVwMhjIV+Y/V4xSvfFmRsnijr2
-        /pKz73q6l39O1uTCe6kN678xLppXmuS/YqVNYH9NpvfJBa7KP749LAwOsE6ZcUU8iDe88aOI
-        xqUHdkwy8+a0S03WupPSriP+Lf3BTf48Vy6nmy8r+qS0ni6S1vZQXu6tmalxZ0drdOTxzJk5
-        6zOeV/7QMbAsUmIpzkg01GIuKk4EAOOgsaFBAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIIsWRmVeSWpSXmKPExsVy+t/xe7oHP1yPM7h9SMJi/pFzrBbNi9ez
-        WWw+18NqcXnXHDaLz71HGC1mnN/HZDH3y1Rmi9a9R9gt7r72c+D02HF3CaPHplWdbB77565h
-        9/i8SS6AJUrPpii/tCRVISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzWyshUSd/OJiU1J7MstUjf
-        LkEvY8mqeYwFv3Ur3szzbmBsVe9i5OSQEDCROLGggamLkYtDSGApo0TH3bvMEAkZiZPTGlgh
-        bGGJP9e62CCK3jJK/L72mR0kISxgIfFl0W8wW0TAXOLErZuMIEXMAquYJP4fW8EC0fGSSWJT
-        13qwsWwChhJdb0FGcXLwCthJ3F22hwnEZhFQkfhx6CKYLSoQK9G9+Ac7RI2gxMmZT4AGcXBw
-        CthKvLogAhJmFjCTmLf5ITOELS/RvHU2lC0ucevJfKYJjEKzkHTPQtIyC0nLLCQtCxhZVjGK
-        pJYW56bnFhvqFSfmFpfmpesl5+duYgRG37ZjPzfvYLy0MfgQowAHoxIPL0Pd9Tgh1sSy4src
-        Q4wSHMxKIrxOZ0/HCfGmJFZWpRblxxeV5qQWH2I0BfptIrOUaHI+MDHklcQbmhqaW1gamhub
-        G5tZKInzdggcjBESSE8sSc1OTS1ILYLpY+LglGpgbLy6beIMOYeImM9Xhf8uEiwQy3g/p3bX
-        oifr97vn78h6wrDt1Le9mptcl/WG3MvNW3P50wqOrrYj3npzCqS/hd1u2iKQdmW6XPiiPW2C
-        F+I4Tv7in7T0otCh+u1KvBmux9eJpe5qDOG6p6MxozXF58zph1fuBBxwkLhvuGBuSlmcs2y0
-        a+sBHSWW4oxEQy3mouJEACqcDyvUAgAA
-X-CMS-MailID: 20200603184937eucas1p20bd459cd754b6ccf28ae318740325e5d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200601104027eucas1p2b076ee860520d709e8178c41550653f7
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200601104027eucas1p2b076ee860520d709e8178c41550653f7
-References: <20200513185615.508236-1-sebastian.reichel@collabora.com>
-        <CGME20200601104027eucas1p2b076ee860520d709e8178c41550653f7@eucas1p2.samsung.com>
-        <15933a91-dd89-1f94-c2f2-79be4395f4c1@samsung.com>
-        <20200601170528.r5w3aeijny3v5yx3@earth.universe>
-        <b3fd35de-1dd6-1ddc-7e57-2d9ab2860e81@samsung.com>
-        <20200602180119.52izs7kd72u3kmr4@earth.universe>
+Content-Transfer-Encoding: 8bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Sebastian,
+Hi,
 
-On 02.06.2020 20:01, Sebastian Reichel wrote:
-> On Tue, Jun 02, 2020 at 09:17:09AM +0200, Marek Szyprowski wrote:
->> On 01.06.2020 19:05, Sebastian Reichel wrote:
->>> On Mon, Jun 01, 2020 at 12:40:27PM +0200, Marek Szyprowski wrote:
->>>> On 13.05.2020 20:55, Sebastian Reichel wrote:
->>>>> This patchset improves support for SBS compliant batteries. Due to
->>>>> the changes, the battery now exposes 32 power supply properties and
->>>>> (un)plugging it generates a backtrace containing the following message
->>>>> without the first patch in this series:
->>>>>
->>>>> ---------------------------
->>>>> WARNING: CPU: 0 PID: 20 at lib/kobject_uevent.c:659 add_uevent_var+0xd4/0x104
->>>>> add_uevent_var: too many keys
->>>>> ---------------------------
->>>>>
->>>>> For references this is what an SBS battery status looks like after
->>>>> the patch series has been applied:
->>>>>
->>>>> cat /sys/class/power_supply/sbs-0-000b/uevent
->>>>> POWER_SUPPLY_NAME=sbs-0-000b
->>>>> POWER_SUPPLY_TYPE=Battery
->>>>> POWER_SUPPLY_STATUS=Discharging
->>>>> POWER_SUPPLY_CAPACITY_LEVEL=Normal
->>>>> POWER_SUPPLY_HEALTH=Good
->>>>> POWER_SUPPLY_PRESENT=1
->>>>> POWER_SUPPLY_TECHNOLOGY=Li-ion
->>>>> POWER_SUPPLY_CYCLE_COUNT=12
->>>>> POWER_SUPPLY_VOLTAGE_NOW=11441000
->>>>> POWER_SUPPLY_CURRENT_NOW=-26000
->>>>> POWER_SUPPLY_CURRENT_AVG=-24000
->>>>> POWER_SUPPLY_CAPACITY=76
->>>>> POWER_SUPPLY_CAPACITY_ERROR_MARGIN=1
->>>>> POWER_SUPPLY_TEMP=198
->>>>> POWER_SUPPLY_TIME_TO_EMPTY_AVG=438600
->>>>> POWER_SUPPLY_TIME_TO_FULL_AVG=3932100
->>>>> POWER_SUPPLY_SERIAL_NUMBER=0000
->>>>> POWER_SUPPLY_VOLTAGE_MIN_DESIGN=10800000
->>>>> POWER_SUPPLY_VOLTAGE_MAX_DESIGN=10800000
->>>>> POWER_SUPPLY_ENERGY_NOW=31090000
->>>>> POWER_SUPPLY_ENERGY_FULL=42450000
->>>>> POWER_SUPPLY_ENERGY_FULL_DESIGN=41040000
->>>>> POWER_SUPPLY_CHARGE_NOW=2924000
->>>>> POWER_SUPPLY_CHARGE_FULL=3898000
->>>>> POWER_SUPPLY_CHARGE_FULL_DESIGN=3800000
->>>>> POWER_SUPPLY_CONSTANT_CHARGE_CURRENT_MAX=3000000
->>>>> POWER_SUPPLY_CONSTANT_CHARGE_VOLTAGE_MAX=12300000
->>>>> POWER_SUPPLY_MANUFACTURE_YEAR=2017
->>>>> POWER_SUPPLY_MANUFACTURE_MONTH=7
->>>>> POWER_SUPPLY_MANUFACTURE_DAY=3
->>>>> POWER_SUPPLY_MANUFACTURER=UR18650A
->>>>> POWER_SUPPLY_MODEL_NAME=GEHC
->>>> This patch landed in linux-next dated 20200529. Sadly it causes a
->>>> regression on Samsung Exynos-based Chromebooks (Exynos5250 Snow,
->>>> Exynos5420 Peach-Pi and Exynos5800 Peach-Pit). System boots to
->>>> userspace, but then, when udev populates /dev, booting hangs:
->>>>
->>>> [    4.435167] VFS: Mounted root (ext4 filesystem) readonly on device
->>>> 179:51.
->>>> [    4.457477] devtmpfs: mounted
->>>> [    4.460235] Freeing unused kernel memory: 1024K
->>>> [    4.464022] Run /sbin/init as init process
->>>> INIT: version 2.88 booting
->>>> [info] Using makefile-style concurrent boot in runlevel S.
->>>> [    5.102096] random: crng init done
->>>> [....] Starting the hotplug events dispatcher: systemd-udevdstarting
->>>> version 236
->>>> [ ok .
->>>> [....] Synthesizing the initial hotplug events...[ ok done.
->>>> [....] Waiting for /dev to be fully populated...[   34.409914]
->>>> TPS65090_RAILSDCDC1: disabling
->>>> [   34.412977] TPS65090_RAILSDCDC2: disabling
->>>> [   34.417021] TPS65090_RAILSDCDC3: disabling
->>>> [   34.423848] TPS65090_RAILSLDO1: disabling
->>>> [   34.429068] TPS65090_RAILSLDO2: disabling
->>> :(
+On 6/3/20 7:54 PM, Andrzej Pietrasiewicz wrote:
+> W dniu 03.06.2020 o 19:38, Hans de Goede pisze:
+>> Hi,
+>>
+>> On 6/3/20 3:07 PM, Andrzej Pietrasiewicz wrote:
+>>> Hi Hans, hi Dmitry,
+>>
+>> <snip>
+>>
+>>> I'm taking one step back and looking at the ->open() and ->close()
+>>> driver callbacks. They are called from input_open_device() and
+>>> input_close_device(), respectively:
 >>>
->>> log does not look useful either.
+>>> input_open_device():
+>>> "This function should be called by input handlers when they
+>>> want to start receive events from given input device."
 >>>
->>>> Bisect between v5.7-rc1 and next-20200529 pointed me to the first bad
->>>> commit: [c4b12a2f3f3de670f6be5e96092a2cab0b877f1a] power: supply:
->>>> sbs-battery: simplify read_read_string_data.
->>> ok. I tested this on an to-be-upstreamed i.MX6 based system
->>> and arch/arm/boot/dts/imx53-ppd.dts. I think the difference
->>> is, that i2c-exynos5 does not expose I2C_FUNC_SMBUS_READ_BLOCK_DATA.
->>> I hoped all systems using SBS battery support this, but now
->>> I see I2C_FUNC_SMBUS_EMUL only supports writing block data.
->>> Looks like I need to add another patch implementing that
->>> using the old code with added PEC support.
+>>> ->open() callback:
+>>> "this method is called when the very first user calls
+>>> input_open_device(). The driver must prepare the device to start
+>>> generating events (start polling thread, request an IRQ, submit
+>>> URB, etc.)"
 >>>
->>> In any case that should only return -ENODEV for the property
->>> (and uevent), but not break boot. So something fishy is going
->>> on.
+>>> input_close_device():
+>>> "This function should be called by input handlers when they
+>>> want to stop receive events from given input device."
 >>>
->>>> However reverting it in linux-next doesn't fix the issue, so the
->>>> next commits are also relevant to this issue.
->>> The next patch, which adds PEC support depends on the simplification
->>> of sbs_read_string_data. The old, open coded variant will result in
->>> PEC failure for string properties (which should not stop boot either
->>> of course). Can you try reverting both?
->> Indeed, reverting both (and fixing the conflict) restores proper boot.
-> Ok, I pushed out a revert of those two patches. They should land in
-> tomorrows linux-next release. Please test it.
-
-
-Today's linux-next (20200603) boots fine on the Samsung Exynos-based 
-Chromebooks. Let me know how if you need any help debugging the issues 
-to resurrect those patches.
-
-
->>> If that helps I will revert those two instead of dropping the whole
->>> series for this merge window.
+>>> ->close() callback:
+>>> "this method is called when the very last user calls
+>>> input_close_device()"
 >>>
->>>> Let me know how can I help debugging it.
->>> I suspect, that this is userspace endlessly retrying reading the
->>> battery uevent when an error is returned. Could you check this?
->>> Should be easy to see by adding some printfs.
->> I've added some debug messages in sbs_get_property() and it read the
->> same properties many times. However I've noticed that if I wait long
->> enough booting finally continues.
-> So basically userspace slows down itself massively by trying to
-> re-read uevent over and over when an error occurs. Does not seem
-> like a sensible thing to do. I will have a look at this when I find
-> some time.
+>>> It seems to me that the callback names do not reflect their
+>>> purpose: their meaning is not to "open" or to "close" but to
+>>> give drivers a chance to control when they start or stop
+>>> providing events to the input core.
+>>>
+>>> What would you say about changing the callbacks' names?
+>>> I'd envsion: ->provide_events() instead of ->open() and
+>>> ->stop_events() instead of ->close(). Of course drivers can
+>>> exploit the fact of knowing that nobody wants any events
+>>> from them and do whatever they consider appropriate, for
+>>> example go into a low power mode - but the latter is beyond
+>>> the scope of the input subsystem and is driver-specific.
+>>
+>> I don't have much of an opinion on changing the names,
+>> to me open/close have always means start/stop receiving
+>> events. This follows the everything is a file philosophy,
+>> e.g. you can also not really "open" a serial port,
+>> yet opening /dev/ttyS0 will activate the receive IRQ
+>> of the UART, etc. So maybe we just need to make the
+>> docs clearer rather then do the rename?  Doing the
+>> rename is certainly going to cause a lot of churn.
+> 
+> Right, I can see now that the suggestion to change names is
+> too far fetched. (I feel that release() would be better
+> than close(), though). But it exposes the message I wanted to
+> pass.
+> 
+>>
+>> Anyways as said, I don't have much of an opinion,
+>> so I'll leave commenting (more) on this to Dmitry.
+>>
+>>> With such a naming change in mind let's consider inhibiting.
+>>> We want to be able to control when to disregard events from
+>>> a given device. It makes sense to do it at device level, otherwise
+>>> such an operation would have to be invoked in all associated
+>>> handlers (those that have an open handle associating them with
+>>> the device in question). But of course we can do better than
+>>> merely ignoring the events received: we can tell the drivers
+>>> that we don't want any events from them, and later, at uninhibit
+>>> time, tell them to start providing the events again. Conceptually,
+>>> the two operations (provide or don't provide envents) are exactly
+>>> the same thing we want to be happening at input_open_device() and
+>>> input_close_device() time. To me, changing the names of
+>>> ->open() and ->close() exposes this fact very well.
+>>>
+>>> Consequently, ->inhibit() and ->uninhibit() won't be needed,
+>>> and drivers which already implement ->provide_events() (formerly
+>>> ->open()) and ->stop_events() (formerly ->close()) will receive
+>>> full inhibit/uninhibit support for free (subject to how well they
+>>> implement ->provide_events()/->stop_events()). Unless we can come
+>>> up with what the drivers might be doing on top of ->stop_events()
+>>> and ->provide_events() when inhibiting/uninhibiting, but it seems
+>>> to me we can't. Can we?
+>>
+>> Right. I'm happy that you've come to see that both on open/close
+>> and on inhibit/uninhibit we want to "start receiving events" and
+>> "stop receiving events", so that we only need one set of callbacks.
+>>
+> 
+> Yeah, that's my conclusion - at least on a conceptual level.
+> 
+> That said, what I can imagine is an existing driver (e.g. elan_i2c)
+> which does not implement neither open() nor close(), but does have
+> suspend() and resume(). Then it is maybe a bit easier to add inhibit()
+> and uninhibit() /they would be similar to suspend and resume/ instead
+> of open() and close(): If only open() and close() are possible, then
+> the probe function needs to be extended to "close" the device before it
+> gets registered, because from the moment it is registered it might be
+> opened right away.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+The probe only needs to "close" it if for some reason it
+starts directly sending events in most cases the driver
+must actively do something to get it to send events.
+
+So in most cases this should be pretty straight forward,
+as for having to do some init / power-on during probe
+and then power-off at the end of the probe. Yes sometimes
+something like that might be necessary.
+
+Looking at your suggested elan_i2c changes I think they
+look fine. I have the feeling that with some refactoring
+they can be made a bit cleaner (I did not look a the
+changes in too much detail) but overall I think they
+look ok.
+
+Note you may also want to look at using the runtime
+suspend framework for this, doing a pm_runtime_get_sync()
+in open() and then letting (runtime) suspend do the power
+off if you set a reasonable timeout for autosuspend after
+the last user is gone then that will also avoid an
+unnecessary suspend / resume cycle between probe()
+exiting and the first open() call and this avoids the
+need to do a poweroff() at the end of probe(), the
+runtime-pm framework will autosuspend the device after
+the timeout expires.
+
+Regards,
+
+Hans
+
+
+> And the device must be available earlier during the
+> course of probe to query some parameters through i2c:
+> 
+> +static int elan_reactivate(struct elan_tp_data *data)
+> +{
+> +    struct device *dev = &data->client->dev;
+> +    int ret;
+> +
+> +    ret = elan_enable_power(data);
+> +    if (ret)
+> +        dev_err(dev, "failed to restore power: %d\n", ret);
+> +
+> +    ret = elan_initialize(data);
+> +    if (ret)
+> +        dev_err(dev, "failed to re-initialize touchpad: %d\n", ret);
+> +
+> +    return ret;
+> +}
+> +
+> +static int elan_open(struct input_dev *input)
+> +{
+> +    struct elan_tp_data *data = input_get_drvdata(input);
+> +    struct i2c_client *client = data->client;
+> +    int ret;
+> +
+> +    dev_dbg(&client->dev, "uninhibiting\n");
+> +
+> +    ret = mutex_lock_interruptible(&data->sysfs_mutex);
+> +    if (ret)
+> +        return ret;
+> +
+> +    ret = elan_reactivate(data);
+> +    if (ret == 0)
+> +        enable_irq(client->irq);
+> +
+> +    mutex_unlock(&data->sysfs_mutex);
+> +
+> +    return ret;
+> +}
+> +
+> +static int elan_inhibit(struct input_dev *input)
+> +{
+> +    struct elan_tp_data *data = input_get_drvdata(input);
+> +    struct i2c_client *client = data->client;
+> +    int ret;
+> +
+> +    dev_dbg(&client->dev, "closing\n");
+> +
+> +    /*
+> +     * We are taking the mutex to make sure sysfs operations are
+> +     * complete before we attempt to bring the device into low[er]
+> +     * power mode.
+> +     */
+> +    ret = mutex_lock_interruptible(&data->sysfs_mutex);
+> +    if (ret)
+> +        return ret;
+> +
+> +    disable_irq(client->irq);
+> +
+> +    ret = elan_disable_power(data);
+> +    if (ret)
+> +        enable_irq(client->irq);
+> +
+> +    mutex_unlock(&data->sysfs_mutex);
+> +
+> +    return ret;
+> +}
+> +
+> +static void elan_close(struct input_dev *input)
+> +{
+> +    elan_inhibit(input);
+> +}
+> +
+>   static int elan_query_device_info(struct elan_tp_data *data)
+>   {
+>       int error;
+>       u16 ic_type;
+> 
+>       error = data->ops->get_version(data->client, false, &data->fw_version);
+>       if (error)
+>           return error;
+> 
+>       error = data->ops->get_checksum(data->client, false,
+>                       &data->fw_checksum);
+>       if (error)
+>           return error;
+> 
+>       error = data->ops->get_version(data->client, true, &data->iap_version);
+>       if (error)
+>           return error;
+> @@ -1071,34 +1141,36 @@ static int elan_setup_trackpoint_input_device(struct elan_tp_data *data)
+> 
+>   static int elan_setup_input_device(struct elan_tp_data *data)
+>   {
+>       struct device *dev = &data->client->dev;
+>       struct input_dev *input;
+>       unsigned int max_width = max(data->width_x, data->width_y);
+>       unsigned int min_width = min(data->width_x, data->width_y);
+>       int error;
+> 
+>       input = devm_input_allocate_device(dev);
+>       if (!input)
+>           return -ENOMEM;
+> 
+>       input->name = "Elan Touchpad";
+>       input->id.bustype = BUS_I2C;
+>       input->id.vendor = ELAN_VENDOR_ID;
+>       input->id.product = data->product_id;
+> +    input->open = elan_open;
+> +    input->close = elan_close;
+>       input_set_drvdata(input, data);
+> 
+>       error = input_mt_init_slots(input, ETP_MAX_FINGERS,
+>                       INPUT_MT_POINTER | INPUT_MT_DROP_UNUSED);
+>       if (error) {
+>           dev_err(dev, "failed to initialize MT slots: %d\n", error);
+>           return error;
+>       }
+> 
+>       __set_bit(EV_ABS, input->evbit);
+>       __set_bit(INPUT_PROP_POINTER, input->propbit);
+>       if (data->clickpad) {
+>           __set_bit(INPUT_PROP_BUTTONPAD, input->propbit);
+>       } else {
+>           __set_bit(BTN_RIGHT, input->keybit);
+>           if (data->middle_button)
+>               __set_bit(BTN_MIDDLE, input->keybit);
+> @@ -1253,34 +1325,40 @@ static int elan_probe(struct i2c_client *client,
+>       if (!irqflags)
+>           irqflags = IRQF_TRIGGER_FALLING;
+> 
+>       error = devm_request_threaded_irq(dev, client->irq, NULL, elan_isr,
+>                         irqflags | IRQF_ONESHOT,
+>                         client->name, data);
+>       if (error) {
+>           dev_err(dev, "cannot register irq=%d\n", client->irq);
+>           return error;
+>       }
+> 
+>       error = devm_device_add_groups(dev, elan_sysfs_groups);
+>       if (error) {
+>           dev_err(dev, "failed to create sysfs attributes: %d\n", error);
+>           return error;
+>       }
+> 
+> +    error = elan_inhibit(data->input);
+> +    if (error) {
+> +        dev_err(dev, "failed to inhibit input device before registering: %d\n", error);
+> +        return error;
+> +    }
+> +
+>       error = input_register_device(data->input);
+>       if (error) {
+>           dev_err(dev, "failed to register input device: %d\n", error);
+>           return error;
+>       }
+> 
+>       if (data->tp_input) {
+>           error = input_register_device(data->tp_input);
+>           if (error) {
+>               dev_err(&client->dev,
+>                   "failed to register TrackPoint input device: %d\n",
+>                   error);
+>               return error;
+>           }
+>       }
+> 
+>       /*
+> @@ -1294,72 +1372,71 @@ static int elan_probe(struct i2c_client *client,
+>   }
+> 
+>   static int __maybe_unused elan_suspend(struct device *dev)
+>   {
+>       struct i2c_client *client = to_i2c_client(dev);
+>       struct elan_tp_data *data = i2c_get_clientdata(client);
+>       int ret;
+> 
+>       /*
+>        * We are taking the mutex to make sure sysfs operations are
+>        * complete before we attempt to bring the device into low[er]
+>        * power mode.
+>        */
+>       ret = mutex_lock_interruptible(&data->sysfs_mutex);
+>       if (ret)
+>           return ret;
+> 
+> -    disable_irq(client->irq);
+> +    mutex_lock(&data->input->mutex);
+> +    if (input_device_enabled(data->input)) {
+> +        disable_irq(client->irq);
+> 
+> -    if (device_may_wakeup(dev)) {
+> -        ret = elan_sleep(data);
+> -        /* Enable wake from IRQ */
+> -        data->irq_wake = (enable_irq_wake(client->irq) == 0);
+> -    } else {
+> -        ret = elan_disable_power(data);
+> +        if (device_may_wakeup(dev)) {
+> +            ret = elan_sleep(data);
+> +            /* Enable wake from IRQ */
+> +            data->irq_wake = (enable_irq_wake(client->irq) == 0);
+> +        } else {
+> +            ret = elan_disable_power(data);
+> +        }
+>       }
+> +    mutex_unlock(&data->input->mutex);
+> 
+>       mutex_unlock(&data->sysfs_mutex);
+>       return ret;
+>   }
+> 
+>   static int __maybe_unused elan_resume(struct device *dev)
+>   {
+>       struct i2c_client *client = to_i2c_client(dev);
+>       struct elan_tp_data *data = i2c_get_clientdata(client);
+> -    int error;
+> +    int ret = 0;
+> 
+> -    if (device_may_wakeup(dev) && data->irq_wake) {
+> -        disable_irq_wake(client->irq);
+> -        data->irq_wake = false;
+> -    }
+> +    mutex_lock(&data->input->mutex);
+> +    if (input_device_enabled(data->input)) {
+> +        if (data->irq_wake) {
+> +            disable_irq_wake(client->irq);
+> +            data->irq_wake = false;
+> +        }
+> 
+> -    error = elan_enable_power(data);
+> -    if (error) {
+> -        dev_err(dev, "power up when resuming failed: %d\n", error);
+> -        goto err;
+> +        ret = elan_reactivate(data);
+> +        enable_irq(data->client->irq);
+>       }
+> +    mutex_unlock(&data->input->mutex);
+> 
+> -    error = elan_initialize(data);
+> -    if (error)
+> -        dev_err(dev, "initialize when resuming failed: %d\n", error);
+> -
+> -err:
+> -    enable_irq(data->client->irq);
+> -    return error;
+> +    return ret;
+>   }
+> 
+> Regards,
+> 
+> Andrzej
+> 
 
