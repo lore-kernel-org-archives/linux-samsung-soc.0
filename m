@@ -1,179 +1,100 @@
-Return-Path: <SRS0=uTuj=7P=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=67Nn=7Q=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A9EC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 Jun 2020 21:17:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B2E2C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Jun 2020 02:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8716B206C3
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  2 Jun 2020 21:17:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 449662072F
+	for <linux-samsung-soc@archiver.kernel.org>; Wed,  3 Jun 2020 02:33:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="apb7WPvj"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RmSTRVCp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726373AbgFBVR2 (ORCPT
+        id S1725881AbgFCCd4 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 2 Jun 2020 17:17:28 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:34513 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726174AbgFBVR0 (ORCPT
+        Tue, 2 Jun 2020 22:33:56 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:46580 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725789AbgFCCdz (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 2 Jun 2020 17:17:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1591132645;
-        h=from:from:reply-to:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:mime-version:mime-version:
-         content-type:content-type:in-reply-to:in-reply-to:  references:references;
-        bh=Ylu/HiOGtyIh3U7JFEU/kaSkFMIS4f2I77a/faIj58k=;
-        b=apb7WPvjn+ZpTogqKQgf9Q3eOWQwpMH0QjPyM1BP286Lp273Jz2xnmcrh9sgyocbVJ+kAY
-        ehOXabtgSFgqZkkPeyxZWPFSiIwQOGp31x+7Eui7MK33yC+VwO0C6GwjN2yu9klyEGjXmH
-        hRLyBBrzxCvoKZBP9/ZeYKm6NynvMX8=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-511-s9kSMUK2M9a-TbI9vElUXQ-1; Tue, 02 Jun 2020 17:17:19 -0400
-X-MC-Unique: s9kSMUK2M9a-TbI9vElUXQ-1
-Received: by mail-qk1-f197.google.com with SMTP id 16so12723789qka.15
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Jun 2020 14:17:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:reply-to
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to;
-        bh=Ylu/HiOGtyIh3U7JFEU/kaSkFMIS4f2I77a/faIj58k=;
-        b=r3F4cLiPdj/n1qXIE3St0bcRNyi9DYUd6jivnuiylsPjPP71kkNR9GluA+cd1m8uPD
-         fzU5kcE9rEbayUA2A+uQn9eOznvwuOsbZSU385JDmY7CYUsRC/FgI07BGtV8/0s/CcUA
-         6JbZZd7wo1YitnF67IRkiwuJMoii+HGKeUyZ72tDpcUYcFHe/oO6ZmAGZLUMUd0BncvT
-         eWLv+8I8kd8utGTzmBVUgLrlupnP7jd8CYdDS3ZCMB2KQicmQnBSY8ySApKfp123hBep
-         g/vsK5z0RfvxMs/ACwkQQXRQal0g9mQIBnSx3zqsIrm41SDIEZrrnN+SJEURQHmFRNkJ
-         tylQ==
-X-Gm-Message-State: AOAM531r99sw06bfZIAupYBfhIyLfnYSr7lz5BNOQNwkcBjmEE93kHWN
-        z3G2hU9pni8z4Nr6QTtTq0DYKfLrry8GIYUmL4a5Hfyn24JGm19mfB0vF4J2Hdcw1COM1w13ew9
-        svEdR05Y3AZBsS99OA+YuCsjopkrYneE=
-X-Received: by 2002:ad4:4572:: with SMTP id o18mr4280443qvu.228.1591132639420;
-        Tue, 02 Jun 2020 14:17:19 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyjUlzm0vhI6fKGjvvF8hVsaVisMes9o90lVEfQF4r2oAsbB6iugyCZPUzy6UK1t6uFVWKiBA==
-X-Received: by 2002:ad4:4572:: with SMTP id o18mr4280428qvu.228.1591132639109;
-        Tue, 02 Jun 2020 14:17:19 -0700 (PDT)
-Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
-        by smtp.gmail.com with ESMTPSA id l9sm3244877qki.90.2020.06.02.14.17.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jun 2020 14:17:18 -0700 (PDT)
-Date:   Tue, 2 Jun 2020 14:17:16 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Joerg Roedel <joro@8bytes.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-rockchip@lists.infradead.org,
-        iommu@lists.linux-foundation.org,
-        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 00/33] iommu: Move iommu_group setup to IOMMU core code
-Message-ID: <20200602211716.mcwacflxvh7kycya@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mail-Followup-To: Joerg Roedel <joro@8bytes.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>, Heiko Stuebner <heiko@sntech.de>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        linux-s390@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-rockchip@lists.infradead.org,
-        iommu@lists.linux-foundation.org,
-        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org
-References: <20200414131542.25608-1-joro@8bytes.org>
- <20200529221623.qc6twmpzryh7nkvb@cantor>
- <20200601104240.7f5xhz7gooqhaq4n@cantor>
- <47711845-98ee-95b8-aa95-423a36ed9741@linux.intel.com>
- <20200602000236.j4m3jvluzdhjngdc@cantor>
- <20200602142312.GJ14598@8bytes.org>
- <20200602163806.o5dpj2tpemwdzyiw@cantor>
+        Tue, 2 Jun 2020 22:33:55 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0532UMG6179593;
+        Wed, 3 Jun 2020 02:33:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=corp-2020-01-29;
+ bh=v7slq7nogbFdY6anIseYYqTNcMjCCgPFuaiWRrPlhd4=;
+ b=RmSTRVCplZZG7hH4oKzlD4CdgQl+lZtGOEJLWJHnap36bjgEKHpvZaDu4vvAIIwxQihv
+ Ap3PflK9V+4GeOmmd24D82FTptVwPlFegJelVgKVR58tBAQKsab0mhdyGVw0Zvu0gTpJ
+ HAsBbRmWeaq8rwD2U/jCkFSNWPjv4G6m+HqaWTOGhSNAiw+KLDqL+ThUKEXIPDr7DqZs
+ Yp3lwUG0yo5Ps6M6w1+fBVH2qJ/zZ2HAaFBPx6e9q7Q40OkruVPuHY2hReIjouYSEhPg
+ BGMatinBLLkYOWqDs9+5qO37OVp+Ic6ezu0GePQs5nGkHVOtR50qQ8go78Cchn2WWRNi qw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 31bewqxwcj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 03 Jun 2020 02:33:44 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0532S09m087088;
+        Wed, 3 Jun 2020 02:31:43 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 31dju2f0ah-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 03 Jun 2020 02:31:43 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0532VfJe032603;
+        Wed, 3 Jun 2020 02:31:42 GMT
+Received: from ca-mkp.ca.oracle.com (/10.156.108.201)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 02 Jun 2020 19:31:41 -0700
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+To:     robh@kernel.org, Alim Akhtar <alim.akhtar@samsung.com>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        krzk@kernel.org, linux-samsung-soc@vger.kernel.org,
+        avri.altman@wdc.com, stanley.chu@mediatek.com,
+        linux-scsi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        cang@codeaurora.org, devicetree@vger.kernel.org,
+        kwmad.kim@samsung.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 00/10] exynos-ufs: Add support for UFS HCI
+Date:   Tue,  2 Jun 2020 22:31:32 -0400
+Message-Id: <159114947915.26776.12485309894552696104.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200528011658.71590-1-alim.akhtar@samsung.com>
+References: <CGME20200528013223epcas5p2be85fa8803326b49a905fb7225992cad@epcas5p2.samsung.com> <20200528011658.71590-1-alim.akhtar@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20200602163806.o5dpj2tpemwdzyiw@cantor>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9640 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=943
+ phishscore=0 malwarescore=0 mlxscore=0 adultscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2006030017
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9640 signatures=668686
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 bulkscore=0
+ phishscore=0 suspectscore=0 impostorscore=0 cotscore=-2147483648
+ lowpriorityscore=0 mlxscore=0 adultscore=0 spamscore=0 mlxlogscore=984
+ malwarescore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2006030017
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Tue Jun 02 20, Jerry Snitselaar wrote:
->On Tue Jun 02 20, Joerg Roedel wrote:
->>Hi Jerry,
->>
->>On Mon, Jun 01, 2020 at 05:02:36PM -0700, Jerry Snitselaar wrote:
->>>
->>>Yeah, that will solve the panic.
->>>
->>
->>If you still see the kdump faults, can you please try with the attached
->>diff? I was not able to reproduce them in my setup.
->>
->>Regards,
->>
->>	Joerg
->>
->
->I have another hp proliant server now, and reproduced. I will have the
->patch below tested shortly. Minor change, I switched group->domain to
->domain since group isn't an argument, and *data being passed in comes
->from group->domain anyways.
->
+On Thu, 28 May 2020 06:46:48 +0530, Alim Akhtar wrote:
 
-Looks like it solves problem for both the epyc system, and the hp proliant
-server,
+> This patch-set introduces UFS (Universal Flash Storage) host
+> controller support for Samsung family SoC. Mostly, it consists of
+> UFS PHY and host specific driver.
+> [...]
 
->>diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
->>index b5ea203f6c68..5a6d509f72b6 100644
->>--- a/drivers/iommu/iommu.c
->>+++ b/drivers/iommu/iommu.c
->>@@ -1680,8 +1680,12 @@ static void probe_alloc_default_domain(struct bus_type *bus,
->>static int iommu_group_do_dma_attach(struct device *dev, void *data)
->>{
->>	struct iommu_domain *domain = data;
->>+	int ret = 0;
->>
->>-	return __iommu_attach_device(domain, dev);
->>+	if (!iommu_is_attach_deferred(group->domain, dev))
->>+		ret = __iommu_attach_device(group->domain, dev);
->>+
->>+	return ret;
->>}
->>
->>static int __iommu_group_dma_attach(struct iommu_group *group)
->>_______________________________________________
->>iommu mailing list
->>iommu@lists.linux-foundation.org
->>https://lists.linuxfoundation.org/mailman/listinfo/iommu
->>
+Applied [1,2,3,4,5,9] to 5.9/scsi-queue. The series won't show up in
+my public tree until shortly after -rc1 is released.
 
+Thanks!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
