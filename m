@@ -2,271 +2,191 @@ Return-Path: <SRS0=k+Bq=7R=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71258C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  4 Jun 2020 07:29:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB19C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  4 Jun 2020 13:28:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 440662072E
-	for <linux-samsung-soc@archiver.kernel.org>; Thu,  4 Jun 2020 07:29:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E046207F5
+	for <linux-samsung-soc@archiver.kernel.org>; Thu,  4 Jun 2020 13:28:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mSZGbtpd"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HTk9blkn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727839AbgFDH27 (ORCPT
+        id S1728583AbgFDN23 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 4 Jun 2020 03:28:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44624 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726246AbgFDH27 (ORCPT
+        Thu, 4 Jun 2020 09:28:29 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:46096 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728224AbgFDN22 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 4 Jun 2020 03:28:59 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 430E1C05BD1E;
-        Thu,  4 Jun 2020 00:28:59 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id jz3so778289pjb.0;
-        Thu, 04 Jun 2020 00:28:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=cO/oadY0dSYawTqKBBOtZELNdMv+BYwXLtOmaeKt1Sg=;
-        b=mSZGbtpdbn+bP4nMMb1tDxin4WAkP+gyVx0KGCmSbOIb2Zuo48tqPsbaZgZkX7wjUx
-         jV+dC6iU4rAWGaNMNS123cBBjbN3uCcsrVVNLRo+nMZIeV/9ANOLn8Ke6L7XFZ5kaBM/
-         z8qkBvmD7DtoCtFyd6eh/3t6LFAQMwqMnWpTRo/c+x8mTusmYLExEpR0cYqPGVBYDjLe
-         dSjkiPZtf8kQKjMPN8q+Q9BZFBcgrom4XSu9FrzdtDSMlsvZqEwG94OArztfsA7ZQ7Ni
-         mS+TfnhlkryWeFj1wtdJoqqqxt4uvNd9O1RqEh2uaT0skrLWcurMXwr1noiuEYqDlDJH
-         c1BA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=cO/oadY0dSYawTqKBBOtZELNdMv+BYwXLtOmaeKt1Sg=;
-        b=Zxs8EULPc1sQeXrNqIgvj97KoivmvMXPdDtn+jvafkfpR76zcusYguenPcZjP6s/8U
-         6Ji0ej3OxPLuKm0ulWfc0FimWjZOwR7T1F05upmyS5FsWirt2z6RO2Tf9FU0Clltgoza
-         5DltB8S4qyN0VpAwPBL7L3zdFtNyrXITiHjwweVslwfH4I9yjYxpQOiS5kbGdcQfCRPI
-         Kn6DWPFMYF+haEmsxDyAVirc10Bpbm4CCbIZYVompa/a/GtTbgO9Wltt8It7mxZbaA7l
-         xJo/n2oMgEioVtoQhvrDQ4G8Lar7VbKZRmhaP0EjLHuVjGcY29l8pA9oNjX2CS+TAptW
-         znHw==
-X-Gm-Message-State: AOAM533Qkc0HY7Srj1pRqTTBS63+o5ehgX41hcESZ3wC9ap2GDevC0GO
-        mf5YCVzbbZ25zhO2XJMenqA=
-X-Google-Smtp-Source: ABdhPJyqLLuYWne+m1xT0qat0v5Dz3JeDQ3IB/DdPJdnnpMfQKwnq1lCSPXxs5qp986I3SUYNwXRtg==
-X-Received: by 2002:a17:90a:fa95:: with SMTP id cu21mr4307120pjb.56.1591255738475;
-        Thu, 04 Jun 2020 00:28:58 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3c2a:73a9:c2cf:7f45])
-        by smtp.gmail.com with ESMTPSA id n189sm1657259pfn.108.2020.06.04.00.28.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jun 2020 00:28:57 -0700 (PDT)
-Date:   Thu, 4 Jun 2020 00:28:53 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        linux-input@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        patches@opensource.cirrus.com,
-        ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
+        Thu, 4 Jun 2020 09:28:28 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200604132826euoutp011b593765842119acd4c0055db5f67642~VWkeSF_Tx3090630906euoutp01q
+        for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Jun 2020 13:28:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200604132826euoutp011b593765842119acd4c0055db5f67642~VWkeSF_Tx3090630906euoutp01q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1591277306;
+        bh=rQhEujvdCub17kDRdV7XcRmQnjRGEuw4sAkltLJjWEw=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=HTk9blknIgpL+VgH1uxuvXmD2ue/AE+3wN1onWhwLukvAUTT89h7+ZO5QXCFgxykv
+         ueCAxBUg5XBupZYD3mMITxZ8M5U99O8VdGnH9REfKPEUwfu87Vb/qLDFxJBir+tMZA
+         RZQ9+lqGzp1eXlOfVgffi2pTiLhr4TPakdiGYTWQ=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200604132826eucas1p10ef27317919d02b41863129351f4f23f~VWkd5s9Da1331913319eucas1p14;
+        Thu,  4 Jun 2020 13:28:26 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 65.06.60698.AF6F8DE5; Thu,  4
+        Jun 2020 14:28:26 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200604132826eucas1p22f1d6e0121994e4579fca30f6b53e03b~VWkdo1G8U0300503005eucas1p2s;
+        Thu,  4 Jun 2020 13:28:26 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200604132826eusmtrp2aa584879f4bccf6009be867d2c23f547~VWkdn9nCt0897308973eusmtrp2C;
+        Thu,  4 Jun 2020 13:28:26 +0000 (GMT)
+X-AuditID: cbfec7f5-a0fff7000001ed1a-95-5ed8f6fa8a71
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 6E.75.08375.9F6F8DE5; Thu,  4
+        Jun 2020 14:28:26 +0100 (BST)
+Received: from [106.210.88.143] (unknown [106.210.88.143]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200604132825eusmtip203543a6a26b8a72a3973ba67c34eef2a~VWkcy6kGH1944419444eusmtip2L;
+        Thu,  4 Jun 2020 13:28:25 +0000 (GMT)
+Subject: Re: [PATCH v2] soc: samsung: Add simple voltage coupler for
+ Exynos5800
+To:     Dmitry Osipenko <digetx@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Barry Song <baohua@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Nick Dyer <nick@shmanahar.org>,
-        Ferruh Yigit <fery@cypress.com>,
-        Sangwon Jee <jeesw@melfas.com>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        kernel@collabora.com, Peter Hutterer <peter.hutterer@redhat.com>,
-        Benjamin Tissoires <btissoir@redhat.com>
-Subject: Re: [PATCHv2 0/7] Support inhibiting input devices
-Message-ID: <20200604072853.GP89269@dtor-ws>
-References: <aa2ce2ab-e5bc-9cb4-8b53-c1ef9348b646@redhat.com>
- <20200527063430.GJ89269@dtor-ws>
- <88f939cd-1518-d516-59f2-8f627a6a70d2@collabora.com>
- <20200602175241.GO89269@dtor-ws>
- <82e9f2ab-a16e-51ee-1413-bedf0122026a@collabora.com>
- <8f97d2e1-497a-495d-bc82-f46dbeba440c@redhat.com>
- <fb5bee72-6a75-88aa-8157-75f07c491eeb@collabora.com>
- <681abc14-ef0f-ff15-68ed-944b2f96bdaf@redhat.com>
- <025361f4-5b1b-6669-ffa0-a6e8ad43940c@collabora.com>
- <01b902dd-8841-e697-5ba7-96fa6b73c1cd@redhat.com>
+        Viresh Kumar <viresh.kumar@linaro.org>, peron.clem@gmail.com,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        linux-samsung-soc@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <3fffeb5b-85d5-7528-9edf-2a047d57e9a1@samsung.com>
+Date:   Thu, 4 Jun 2020 15:28:24 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        Thunderbird/68.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <4a5874c1-6b4e-2da5-4dd1-dd5537fe6de7@gmail.com>
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <01b902dd-8841-e697-5ba7-96fa6b73c1cd@redhat.com>
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHe3fOzo7DyXEqvmgZLcmyUodFh0orCTv1ITLtS6C18jAtb+yo
+        ZVCYls3hyoSVLksRK++35hWVadIILyuvywvmBUTRrKZmYppnp4vffs/z/J/L/+XFEfEE3wkP
+        j4qlFVGyCAkmRGve/ezav7JkCvGqUDuQlZnlfFIzNomRAwtTfLL42wQgjcYKAfn5+SceudSr
+        5JE9DdkYaVa3ATLT2MwjZ5c7eeTQix6U7Gjv5pNr/ZUoqWxbQsjKReo4QdVrRwRUVVEqRg33
+        N2LUo19elK7vAUo91BUBymCq5VHmKpdz+EXh0VA6IjyeVnj6XhaGGZPH+TFLjjc16y/RRFBi
+        pwJWOCQOQKVaz1cBIS4mCgCc1g1iXLAA4ELTMp9ViQkzgE1Zx1QAt3SoSiku/RrAxdlATj8P
+        YLI6B2MLdkQAbMmttUy1J+4CqEudQtgCQnQgsGzGiWWMkELVnMrSICJ84ePBfAHLKOEKR8x1
+        FnYggmHa6AzCaWzh+6xJlGUrwge++joPuJnbYXL1sz/zHeHgZA6Ps6bGYXGNC8cnoX4oBePY
+        Ds4YdAKOt8L1elYv3OBkAMe6SgVckAZgT1Im4FRH4HDXCsbaR4g9sLzBk0ufgJmF2Rj3KjbQ
+        NGfL3WADM2qeIlxaBJUpYk69C2oNZf/WtnzoRtKBRLvJmXaTG+0mN9r/e3MBWgQc6TgmUk4z
+        3lH0DQ9GFsnERck9rkZHVoGNr9e+ZlisA82rV1oBgQOJtcj00RQi5svimYTIVgBxRGIv8uts
+        DxGLQmUJt2hF9CVFXATNtAJnHJU4irzzpoPFhFwWS1+n6Rha8bfKw62cEkHYQGHzNX2Zh82+
+        C9WjmvNDhSqfgJ5JvyC3bUVBU6290reHdxCufaXS/BLG81TfPd7E3vtuX/zlgelJB33U3tbS
+        6CDnndqGupaz82diy11UT1YP/UD0uxMWHdxHTvv2Ao+5Jr0iK+NJo21wxYhmiyQ8LzVmCrO5
+        c9tz9fvgm3H/AgnKhMmk7oiCkf0GHlMq83YDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJIsWRmVeSWpSXmKPExsVy+t/xe7q/vt2IM/jexGSxccZ6VoupD5+w
+        WVz/8pzVYvXHx4wW589vYLd4MPcmk8W3Kx1MFpd3zWGz+Nx7hNFixvl9TBZvfpxlsrg97zKL
+        xZnTl1gt/l3byGLRceQbs8XGrx4OAh47Z91l99i0qpPN4861PWwe/X8NPLZcbWfx6NuyitHj
+        +I3tTB6fN8kFcETp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSW
+        pRbp2yXoZZxvfsRa8E28Yur/pSwNjGuEuxg5OCQETCS61np0MXJxCAksZZRYsWQpYxcjJ1Bc
+        RuLktAZWCFtY4s+1LjaIoreMEj37NzODJIQFAiUOLtjOCpIQEWhklJi1YRc7iMMscI5Z4viH
+        V1AtPxglLh59wwbSwiZgKNH1tgvM5hWwk5h4awk7iM0ioCJx9/MOMFtUIFaie/EPdogaQYmT
+        M5+wgNicArYSyz68B7uPWcBMYt7mh8wQtrxE89bZULa4xK0n85kmMArNQtI+C0nLLCQts5C0
+        LGBkWcUoklpanJueW2yoV5yYW1yal66XnJ+7iREY7duO/dy8g/HSxuBDjAIcjEo8vDcu3ogT
+        Yk0sK67MPcQowcGsJMLrdPZ0nBBvSmJlVWpRfnxRaU5q8SFGU6DnJjJLiSbnAxNRXkm8oamh
+        uYWlobmxubGZhZI4b4fAwRghgfTEktTs1NSC1CKYPiYOTqkGxphsOSuTZ1/a18999IzTpkIo
+        4PAcgYKpZZtEbF/UZWRpbSq5wl9dWbdu15kVC2aWaX56G80R8t/ZOnWj05mS2ylWa1ZPTNbV
+        Zpafu6jf56rstij7Z9IM4c07T6Tefn7I9My1Q8WcHQ8CVAR0+me21Mj9k9ih/IUj3SeMUSla
+        t6VMxelI0kt+JZbijERDLeai4kQAvii5hQwDAAA=
+X-CMS-MailID: 20200604132826eucas1p22f1d6e0121994e4579fca30f6b53e03b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200602130931eucas1p1cd784c8f692fa91dc566504543a927de
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200602130931eucas1p1cd784c8f692fa91dc566504543a927de
+References: <57cf3a15-5d9b-7636-4c69-60742e8cfae6@samsung.com>
+        <CGME20200602130931eucas1p1cd784c8f692fa91dc566504543a927de@eucas1p1.samsung.com>
+        <20200602130211.2727-1-m.szyprowski@samsung.com>
+        <4a5874c1-6b4e-2da5-4dd1-dd5537fe6de7@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Hans, Andrzej,
+Hi Dmitry,
 
-On Wed, Jun 03, 2020 at 09:37:10PM +0200, Hans de Goede wrote:
-> Hi,
-> 
-> On 6/3/20 7:54 PM, Andrzej Pietrasiewicz wrote:
-> > W dniu 03.06.2020 o�19:38, Hans de Goede pisze:
-> > > Hi,
-> > > 
-> > > On 6/3/20 3:07 PM, Andrzej Pietrasiewicz wrote:
-> > > > Hi Hans, hi Dmitry,
-> > > 
-> > > <snip>
-> > > 
-> > > > I'm taking one step back and looking at the ->open() and ->close()
-> > > > driver callbacks. They are called from input_open_device() and
-> > > > input_close_device(), respectively:
-> > > > 
-> > > > input_open_device():
-> > > > "This function should be called by input handlers when they
-> > > > want to start receive events from given input device."
-> > > > 
-> > > > ->open() callback:
-> > > > "this method is called when the very first user calls
-> > > > input_open_device(). The driver must prepare the device to start
-> > > > generating events (start polling thread, request an IRQ, submit
-> > > > URB, etc.)"
-> > > > 
-> > > > input_close_device():
-> > > > "This function should be called by input handlers when they
-> > > > want to stop receive events from given input device."
-> > > > 
-> > > > ->close() callback:
-> > > > "this method is called when the very last user calls
-> > > > input_close_device()"
-> > > > 
-> > > > It seems to me that the callback names do not reflect their
-> > > > purpose: their meaning is not to "open" or to "close" but to
-> > > > give drivers a chance to control when they start or stop
-> > > > providing events to the input core.
-> > > > 
-> > > > What would you say about changing the callbacks' names?
-> > > > I'd envsion: ->provide_events() instead of ->open() and
-> > > > ->stop_events() instead of ->close(). Of course drivers can
-> > > > exploit the fact of knowing that nobody wants any events
-> > > > from them and do whatever they consider appropriate, for
-> > > > example go into a low power mode - but the latter is beyond
-> > > > the scope of the input subsystem and is driver-specific.
-> > > 
-> > > I don't have much of an opinion on changing the names,
-> > > to me open/close have always means start/stop receiving
-> > > events. This follows the everything is a file philosophy,
-> > > e.g. you can also not really "open" a serial port,
-> > > yet opening /dev/ttyS0 will activate the receive IRQ
-> > > of the UART, etc. So maybe we just need to make the
-> > > docs clearer rather then do the rename?� Doing the
-> > > rename is certainly going to cause a lot of churn.
-> > 
-> > Right, I can see now that the suggestion to change names is
-> > too far fetched. (I feel that release() would be better
-> > than close(), though). But it exposes the message I wanted to
-> > pass.
+On 02.06.2020 17:15, Dmitry Osipenko wrote:
+> 02.06.2020 16:02, Marek Szyprowski пишет:
+>> Add a simple custom voltage regulator coupler for Exynos5800 SoCs, which
+>> require coupling between "vdd_arm" and "vdd_int" regulators. This coupler
+>> ensures that the voltage balancing for the coupled regulators is done
+>> only when clients for the each regulator apply their constraints, so the
+>> voltage values don't go beyond the bootloader-selected operation point
+>> during the boot process. This also ensures proper voltage balancing if
+>> any of the client driver is missing.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>   (...)
+> Hello Marek,
+>
+> Does this mean that you're going to allow to violate the coupling
+> constraints while coupled regulator has no consumers?
+>
+> I don't think that you may want to skip the coupled balancing ever.
+> Instead you may want to assume that the min-voltage constraint equals to
+> the current regulator's voltage while the coupled regulator has no
+> consumers.
+>
+> Yours variant of the balancer doesn't prevent the voltage dropping on
+> regulator's enabling while coupled regulator doesn't have active
+> consumers. This is the problem which we previously had once OPP code was
+> changed to enable regulator.
+>
+> Secondly, yours variant of the balancer also doesn't handle the case
+> where set_voltage() is invoked while one of the couples doesn't have
+> active consumers because voltage of this couple may drop more than
+> allowed on the voltage re-balancing.
+Indeed. I've focused on disabling balancing when there are no consumers 
+and I didn't notice that the max_spread might be violated in such case.
+> I'd suggest to simply change the regulator_get_optimal_voltage() to
+> limit the desired_min_uV to the current voltage if coupled regulator has
+> no consumers.
 
-release() usually means that the object is destroyedm, i.e this action,
-unlike close() is irrevocable.
+Right, this sounds like a best solution. I have an idea to try to add it 
+again to the core as a simple check: if regultor is boot_on, use current 
+voltage as min_uV until a consumer is registered. I've checked and this 
+approach fixes the issue. I will submit a patch in a few minutes.
 
-Let's leave the names as is, and adjust kerneldoc comments as needed.
+> I don't think that any of the today's upstream kernel coupled-regulator
+> users really need to support the case where a regulator couple is
+> allowed *not* to have active consumers, so for now it should be fine to
+> change the core code to accommodate the needs of the Exynos regulators
+> (IMO). We may get back to this later on once there will be a real need
+> support that case.
+>
+> Please also note that I'm assuming that each of the coupled regulators
+> doesn't have more than one consumer at a time in yours case (correct?),
+> because yours solution won't work well in a case of multiple consumers.
+> There is no universal solution for this bootstrapping problem yet.
 
-> > 
-> > > 
-> > > Anyways as said, I don't have much of an opinion,
-> > > so I'll leave commenting (more) on this to Dmitry.
-> > > 
-> > > > With such a naming change in mind let's consider inhibiting.
-> > > > We want to be able to control when to disregard events from
-> > > > a given device. It makes sense to do it at device level, otherwise
-> > > > such an operation would have to be invoked in all associated
-> > > > handlers (those that have an open handle associating them with
-> > > > the device in question). But of course we can do better than
-> > > > merely ignoring the events received: we can tell the drivers
-> > > > that we don't want any events from them, and later, at uninhibit
-> > > > time, tell them to start providing the events again. Conceptually,
-> > > > the two operations (provide or don't provide envents) are exactly
-> > > > the same thing we want to be happening at input_open_device() and
-> > > > input_close_device() time. To me, changing the names of
-> > > > ->open() and ->close() exposes this fact very well.
-> > > > 
-> > > > Consequently, ->inhibit() and ->uninhibit() won't be needed,
-> > > > and drivers which already implement ->provide_events() (formerly
-> > > > ->open()) and ->stop_events() (formerly ->close()) will receive
-> > > > full inhibit/uninhibit support for free (subject to how well they
-> > > > implement ->provide_events()/->stop_events()). Unless we can come
-> > > > up with what the drivers might be doing on top of ->stop_events()
-> > > > and ->provide_events() when inhibiting/uninhibiting, but it seems
-> > > > to me we can't. Can we?
-> > > 
-> > > Right. I'm happy that you've come to see that both on open/close
-> > > and on inhibit/uninhibit we want to "start receiving events" and
-> > > "stop receiving events", so that we only need one set of callbacks.
-> > > 
-> > 
-> > Yeah, that's my conclusion - at least on a conceptual level.
-> > 
-> > That said, what I can imagine is an existing driver (e.g. elan_i2c)
-> > which does not implement neither open() nor close(), but does have
-> > suspend() and resume(). Then it is maybe a bit easier to add inhibit()
-> > and uninhibit() /they would be similar to suspend and resume/ instead
-> > of open() and close(): If only open() and close() are possible, then
-> > the probe function needs to be extended to "close" the device before it
-> > gets registered, because from the moment it is registered it might be
-> > opened right away.
-> 
-> The probe only needs to "close" it if for some reason it
-> starts directly sending events in most cases the driver
-> must actively do something to get it to send events.
-> 
-> So in most cases this should be pretty straight forward,
-> as for having to do some init / power-on during probe
-> and then power-off at the end of the probe. Yes sometimes
-> something like that might be necessary.
-> 
-> Looking at your suggested elan_i2c changes I think they
-> look fine. I have the feeling that with some refactoring
-> they can be made a bit cleaner (I did not look a the
-> changes in too much detail) but overall I think they
-> look ok.
-> 
-> Note you may also want to look at using the runtime
-> suspend framework for this, doing a pm_runtime_get_sync()
-> in open() and then letting (runtime) suspend do the power
-> off if you set a reasonable timeout for autosuspend after
-> the last user is gone then that will also avoid an
-> unnecessary suspend / resume cycle between probe()
-> exiting and the first open() call and this avoids the
-> need to do a poweroff() at the end of probe(), the
-> runtime-pm framework will autosuspend the device after
-> the timeout expires.
+There are only a single consumers for each coupled regulator (cpufreq 
+for vdd_arm and devfreq for vdd_int).
 
-Yes, plugging into runtime PM would be nice, as as it currently stands
-the driver will be broken with regard to trying access sysfs for
-firmware update/calibration/etc if device happens to be inhibited.
-
-The version of the driver in Chrome OS tree is similarly broken, but
-because we control both kernel and the rest of the stack we know that we
-do not poke at sysfs when device is inhibited. It will not be acceptable
-for mainline (and that is one of reasons why elan_i2c does not have
-open/close methods at the moment).
-
-Thanks.
-
+Best regards
 -- 
-Dmitry
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
