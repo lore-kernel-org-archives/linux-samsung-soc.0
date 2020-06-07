@@ -1,44 +1,29 @@
-Return-Path: <SRS0=o4cQ=7S=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=+6yw=7U=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A12C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Jun 2020 19:50:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0B74C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  7 Jun 2020 20:24:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 90D1C2074B
-	for <linux-samsung-soc@archiver.kernel.org>; Fri,  5 Jun 2020 19:50:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="ZQGk/Wcm"
+	by mail.kernel.org (Postfix) with ESMTP id B3A0620775
+	for <linux-samsung-soc@archiver.kernel.org>; Sun,  7 Jun 2020 20:24:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728149AbgFETuI (ORCPT
+        id S1727771AbgFGUYS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Fri, 5 Jun 2020 15:50:08 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:41599 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727868AbgFETuH (ORCPT
+        Sun, 7 Jun 2020 16:24:18 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:53638 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726093AbgFGUYS (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Fri, 5 Jun 2020 15:50:07 -0400
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 49dtXG0LfBz4D;
-        Fri,  5 Jun 2020 21:49:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1591386603; bh=nw6ZPbzMEGEU3ympvmvF/EBnKh28J/TObnDHFEogcNM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZQGk/WcmQdG+yyITewmCzwmMOtBeMJF66LJXev36YPIF5HrC5ZHZ2yLz3vJylFOY2
-         WT3VOkjF3kAcjfTkMR4gxIzFUE/sY5FqXj8AFOnZJ4Tr6DOXWsqghWyoTnW+bmLd7W
-         jwf7lDWpwE9H61I5VhaqXwCJeCG+3Lg1TEqxk1KZ6vhl2INRouIoCb0udoubFJKGQI
-         IsEim/o9vF8TNZ0H+HPzCDx+zT08J5O7Oou9dsj0/dTuOSTcvd1399RdkvL5g6/Eot
-         j+wtjmvTFf8Ae7wTPa5xvRXyXIACc/X1FvT/PQI7a7lj4fzSUFS7z0POvlS/mwXhVU
-         JIdjeHtEOaibA==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.102.2 at mail
-Date:   Fri, 5 Jun 2020 21:49:48 +0200
-From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
+        Sun, 7 Jun 2020 16:24:18 -0400
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 44C241C0BD2; Sun,  7 Jun 2020 22:24:15 +0200 (CEST)
+Date:   Sun, 7 Jun 2020 22:24:14 +0200
+From:   Pavel Machek <pavel@ucw.cz>
 To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>
 Cc:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
@@ -75,71 +60,75 @@ Cc:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
         Peter Hutterer <peter.hutterer@redhat.com>,
         Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
         kernel@collabora.com
-Subject: Re: [PATCH v3 5/7] iio: adc: exynos: Use input_device_enabled()
-Message-ID: <20200605194948.GC9553@qmqm.qmqm.pl>
+Subject: Re: [PATCH v3 0/7] Support inhibiting input devices
+Message-ID: <20200607202414.GB13138@amd>
 References: <20200604072853.GP89269@dtor-ws>
  <20200605173335.13753-1-andrzej.p@collabora.com>
- <20200605173335.13753-6-andrzej.p@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="E39vaYmALEf/7YXx"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200605173335.13753-6-andrzej.p@collabora.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200605173335.13753-1-andrzej.p@collabora.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jun 05, 2020 at 07:33:33PM +0200, Andrzej Pietrasiewicz wrote:
-> A new helper is available, so use it. Inspecting 'users' member of
-> input_dev requires taking device's mutex.
-> 
-> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-> ---
->  drivers/iio/adc/exynos_adc.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-> index 22131a677445..294715bafe25 100644
-> --- a/drivers/iio/adc/exynos_adc.c
-> +++ b/drivers/iio/adc/exynos_adc.c
-> @@ -630,10 +630,13 @@ static irqreturn_t exynos_ts_isr(int irq, void *dev_id)
->  	struct exynos_adc *info = dev_id;
->  	struct iio_dev *dev = dev_get_drvdata(info->dev);
->  	u32 x, y;
-> -	bool pressed;
-> +	bool pressed, cont;
->  	int ret;
->  
-> -	while (info->input->users) {
-> +	mutex_lock(&info->input->mutex);
-> +	cont = input_device_enabled(info->input);
-> +	mutex_unlock(&info->input->mutex);
-> +	while (cont) {
->  		ret = exynos_read_s3c64xx_ts(dev, &x, &y);
->  		if (ret == -ETIMEDOUT)
->  			break;
-> @@ -651,6 +654,10 @@ static irqreturn_t exynos_ts_isr(int irq, void *dev_id)
->  		input_sync(info->input);
->  
->  		usleep_range(1000, 1100);
-> +
-> +		mutex_lock(&info->input->mutex);
-> +		cont = input_device_enabled(info->input);
-> +		mutex_unlock(&info->input->mutex);
->  	}
 
-The mutex doesn't really protect anything here, but I would nevertheless
-suggest this sequence instead:
+--E39vaYmALEf/7YXx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-lock()
-while (test) {
-	unlock()
-	...
-	lock()
-}
-unlock()
+On Fri 2020-06-05 19:33:28, Andrzej Pietrasiewicz wrote:
+> Userspace might want to implement a policy to temporarily disregard input
+> from certain devices.
 
-Best Regards,
-Micha³ Miros³aw
+Wow, you certainly cc a lot of lists.
+
+> An example use case is a convertible laptop, whose keyboard can be folded
+> under the screen to create tablet-like experience. The user then must hold
+> the laptop in such a way that it is difficult to avoid pressing the keybo=
+ard
+> keys. It is therefore desirable to temporarily disregard input from the
+> keyboard, until it is folded back. This obviously is a policy which should
+> be kept out of the kernel, but the kernel must provide suitable means to
+> implement such a policy.
+>=20
+> Due to interactions with suspend/resume, a helper has been added for driv=
+ers
+> to decide if the device is being used or not (PATCH 1/7) and it has been
+> applied to relevant drivers (PATCH 2,4,5,6/7).
+
+But is that a right way to implement it?
+
+We want this for cellphones, too -- touchscreen should be disabled
+while the device is locked in the pocket -- but we really want the
+touchscreen hardware to be powered down in that case (because it keeps
+SoC busy and eats a _lot_ of electricity).
+
+But simplistic "receive an event and then drop it if device is
+inhibited" does not allow that...
+
+Best regards,
+								Pavel
+							=09
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--E39vaYmALEf/7YXx
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl7dTO4ACgkQMOfwapXb+vKNuACgw3cpx7Z15Nm3EAs8yyTuu1RS
+DsYAn1yorcZKMbA2oKpOoVakbRalRIie
+=Dt1J
+-----END PGP SIGNATURE-----
+
+--E39vaYmALEf/7YXx--
