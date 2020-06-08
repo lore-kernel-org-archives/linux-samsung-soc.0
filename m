@@ -7,26 +7,26 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF48C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Jun 2020 11:23:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E1DEC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Jun 2020 11:23:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D20322078C
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Jun 2020 11:23:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75A5A2078B
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Jun 2020 11:23:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729694AbgFHLXZ (ORCPT
+        id S1729591AbgFHLW0 (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 8 Jun 2020 07:23:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41640 "EHLO
+        Mon, 8 Jun 2020 07:22:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729611AbgFHLWc (ORCPT
+        with ESMTP id S1729569AbgFHLWZ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 8 Jun 2020 07:22:32 -0400
+        Mon, 8 Jun 2020 07:22:25 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D17B2C08C5C2;
-        Mon,  8 Jun 2020 04:22:31 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 783C2C08C5C2;
+        Mon,  8 Jun 2020 04:22:25 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: andrzej.p)
-        with ESMTPSA id 9040A2A35C1
+        with ESMTPSA id 1E68B2A35BC
 From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
 To:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
@@ -64,9 +64,9 @@ Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
         Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
         kernel@collabora.com
-Subject: [PATCH v4 4/7] ACPI: button: Use input_device_enabled() helper
-Date:   Mon,  8 Jun 2020 13:22:08 +0200
-Message-Id: <20200608112211.12125-5-andrzej.p@collabora.com>
+Subject: [PATCH v4 1/7] Input: add input_device_enabled()
+Date:   Mon,  8 Jun 2020 13:22:05 +0200
+Message-Id: <20200608112211.12125-2-andrzej.p@collabora.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200608112211.12125-1-andrzej.p@collabora.com>
 References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
@@ -76,35 +76,48 @@ Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-A new helper is available, so use it.
+A helper function for drivers to decide if the device is used or not.
+A lockdep check is introduced as inspecting ->users should be done under
+input device's mutex.
 
 Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
 ---
- drivers/acpi/button.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/input/input.c | 8 ++++++++
+ include/linux/input.h | 2 ++
+ 2 files changed, 10 insertions(+)
 
-diff --git a/drivers/acpi/button.c b/drivers/acpi/button.c
-index ff7ab291f678..4deb2b48d03c 100644
---- a/drivers/acpi/button.c
-+++ b/drivers/acpi/button.c
-@@ -411,7 +411,7 @@ static void acpi_button_notify(struct acpi_device *device, u32 event)
- 		input = button->input;
- 		if (button->type == ACPI_BUTTON_TYPE_LID) {
- 			mutex_lock(&button->input->mutex);
--			users = button->input->users;
-+			users = input_device_enabled(button->input);
- 			mutex_unlock(&button->input->mutex);
- 			if (users)
- 				acpi_lid_update_state(device, true);
-@@ -460,7 +460,7 @@ static int acpi_button_resume(struct device *dev)
+diff --git a/drivers/input/input.c b/drivers/input/input.c
+index 3cfd2c18eebd..41377bfa142d 100644
+--- a/drivers/input/input.c
++++ b/drivers/input/input.c
+@@ -2127,6 +2127,14 @@ void input_enable_softrepeat(struct input_dev *dev, int delay, int period)
+ }
+ EXPORT_SYMBOL(input_enable_softrepeat);
  
- 	button->suspended = false;
- 	mutex_lock(&input->mutex);
--	if (button->type == ACPI_BUTTON_TYPE_LID && input->users) {
-+	if (button->type == ACPI_BUTTON_TYPE_LID && input_device_enabled(input)) {
- 		button->last_state = !!acpi_lid_evaluate_state(device);
- 		button->last_time = ktime_get();
- 		acpi_lid_initialize_state(device);
++bool input_device_enabled(struct input_dev *dev)
++{
++	lockdep_assert_held(&dev->mutex);
++
++	return dev->users > 0;
++}
++EXPORT_SYMBOL_GPL(input_device_enabled);
++
+ /**
+  * input_register_device - register device with input core
+  * @dev: device to be registered
+diff --git a/include/linux/input.h b/include/linux/input.h
+index 56f2fd32e609..eda4587dba67 100644
+--- a/include/linux/input.h
++++ b/include/linux/input.h
+@@ -502,6 +502,8 @@ bool input_match_device_id(const struct input_dev *dev,
+ 
+ void input_enable_softrepeat(struct input_dev *dev, int delay, int period);
+ 
++bool input_device_enabled(struct input_dev *dev);
++
+ extern struct class input_class;
+ 
+ /**
 -- 
 2.17.1
 
