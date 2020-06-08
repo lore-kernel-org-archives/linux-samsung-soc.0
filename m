@@ -2,38 +2,40 @@ Return-Path: <SRS0=mGOR=7V=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BCFBC433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Jun 2020 09:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B093CC433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Jun 2020 11:22:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 40456206A4
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Jun 2020 09:28:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DCCE2076A
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Jun 2020 11:22:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729176AbgFHJ2M (ORCPT
+        id S1729606AbgFHLWb (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 8 Jun 2020 05:28:12 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:32944 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728022AbgFHJ2L (ORCPT
+        Mon, 8 Jun 2020 07:22:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41634 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729569AbgFHLW3 (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 8 Jun 2020 05:28:11 -0400
+        Mon, 8 Jun 2020 07:22:29 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C355C08C5C2;
+        Mon,  8 Jun 2020 04:22:29 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: andrzej.p)
-        with ESMTPSA id CEE412A10C1
-Subject: Re: [PATCH v3 0/7] Support inhibiting input devices
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>
-Cc:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+        with ESMTPSA id 7A6772A35C7
+From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+To:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
         linux-tegra@vger.kernel.org, patches@opensource.cirrus.com,
         ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        platform-driver-x86@vger.kernel.org
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Len Brown <lenb@kernel.org>,
         Jonathan Cameron <jic23@kernel.org>,
         Hartmut Knaack <knaack.h@gmx.de>,
@@ -41,6 +43,7 @@ Cc:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
         Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
         Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
@@ -59,71 +62,50 @@ Cc:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
         Sangwon Jee <jeesw@melfas.com>,
         Peter Hutterer <peter.hutterer@redhat.com>,
         Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
         kernel@collabora.com
-References: <20200604072853.GP89269@dtor-ws>
- <20200605173335.13753-1-andrzej.p@collabora.com> <20200607202414.GB13138@amd>
- <20200608053737.GS89269@dtor-ws>
-From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Message-ID: <b1b282ed-ddea-fdd8-bf1a-3e918653f1e3@collabora.com>
-Date:   Mon, 8 Jun 2020 11:28:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
-MIME-Version: 1.0
-In-Reply-To: <20200608053737.GS89269@dtor-ws>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH v4 3/7] ACPI: button: Access input device's users under appropriate mutex
+Date:   Mon,  8 Jun 2020 13:22:07 +0200
+Message-Id: <20200608112211.12125-4-andrzej.p@collabora.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200608112211.12125-1-andrzej.p@collabora.com>
+References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
+ <20200608112211.12125-1-andrzej.p@collabora.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Pavel,
+Inspecting input device's 'users' member should be done under device's
+mutex, so add appropriate invocations.
 
-W dniu 08.06.2020 o 07:37, Dmitry Torokhov pisze:
-> On Sun, Jun 07, 2020 at 10:24:14PM +0200, Pavel Machek wrote:
->> On Fri 2020-06-05 19:33:28, Andrzej Pietrasiewicz wrote:
->>> Userspace might want to implement a policy to temporarily disregard input
->>> from certain devices.
->>
->> Wow, you certainly cc a lot of lists.
->>
->>> An example use case is a convertible laptop, whose keyboard can be folded
->>> under the screen to create tablet-like experience. The user then must hold
->>> the laptop in such a way that it is difficult to avoid pressing the keyboard
->>> keys. It is therefore desirable to temporarily disregard input from the
->>> keyboard, until it is folded back. This obviously is a policy which should
->>> be kept out of the kernel, but the kernel must provide suitable means to
->>> implement such a policy.
->>>
->>> Due to interactions with suspend/resume, a helper has been added for drivers
->>> to decide if the device is being used or not (PATCH 1/7) and it has been
->>> applied to relevant drivers (PATCH 2,4,5,6/7).
->>
->> But is that a right way to implement it?
->>
->> We want this for cellphones, too -- touchscreen should be disabled
->> while the device is locked in the pocket -- but we really want the
->> touchscreen hardware to be powered down in that case (because it keeps
->> SoC busy and eats a _lot_ of electricity).
->>
->> But simplistic "receive an event and then drop it if device is
->> inhibited" does not allow that...
-> 
-> I do not think you read the entirety of this patch series...
-> 
+Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+---
+ drivers/acpi/button.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Yeah, kindly read the whole thread. Long story short: Inhibiting _is_ about
-ignoring events from inhibited devices. Obviously we can do better than
-just that. Indeed, the open() and close() callbacks (which are called at
-uninhibiting/inhibiting) mean "start providing events" and "stop providing
-events", respectively. How that translates into driver operation is highly
-driver-specific and cannot be handled at the input subsystem level, but it
-is the place where power savings can be realized: whenever the driver knows
-that nobody wants events from it it can do whatever it considers appropriate,
-including transitioning the device into low power mode, for example using
-PM runtime.
+diff --git a/drivers/acpi/button.c b/drivers/acpi/button.c
+index 78cfc70cb320..ff7ab291f678 100644
+--- a/drivers/acpi/button.c
++++ b/drivers/acpi/button.c
+@@ -456,13 +456,16 @@ static int acpi_button_resume(struct device *dev)
+ {
+ 	struct acpi_device *device = to_acpi_device(dev);
+ 	struct acpi_button *button = acpi_driver_data(device);
++	struct input_dev *input = button->input;
+ 
+ 	button->suspended = false;
+-	if (button->type == ACPI_BUTTON_TYPE_LID && button->input->users) {
++	mutex_lock(&input->mutex);
++	if (button->type == ACPI_BUTTON_TYPE_LID && input->users) {
+ 		button->last_state = !!acpi_lid_evaluate_state(device);
+ 		button->last_time = ktime_get();
+ 		acpi_lid_initialize_state(device);
+ 	}
++	mutex_unlock(&input->mutex);
+ 	return 0;
+ }
+ #endif
+-- 
+2.17.1
 
-Regards,
-
-Andrzej
