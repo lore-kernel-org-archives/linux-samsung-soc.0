@@ -2,125 +2,147 @@ Return-Path: <SRS0=mGOR=7V=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E98BC433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Jun 2020 02:53:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC536C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Jun 2020 05:37:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2630207C3
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Jun 2020 02:53:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC3A12076C
+	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Jun 2020 05:37:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HuziIkI3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DITjcqep"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728931AbgFHCx2 (ORCPT
+        id S1728580AbgFHFhn (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sun, 7 Jun 2020 22:53:28 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:42790 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728065AbgFHCx1 (ORCPT
+        Mon, 8 Jun 2020 01:37:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44698 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726929AbgFHFhm (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sun, 7 Jun 2020 22:53:27 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0582qxNA090132;
-        Sun, 7 Jun 2020 21:52:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1591584779;
-        bh=dhAMeBt4kcAcqu7sDNT2ZR+MCN19NDKXPCvR8Kg/PyM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=HuziIkI3O+Uc/IRLX7VYCKHDJ1K5N5kJ1HYi8g8DLTM4j+xhrc8vSQ9O2P5z+4znC
-         Mi3z2C/W+5Tnz2ljlejhJmrf8J1TmOiFVsJrbJbeYmAvdHzwyogClErINglpnph1JT
-         2l3e67rBetMBW7H2o9qaZyHwV5m0zeAoKN70hHa4=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 0582qxhx112430
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 7 Jun 2020 21:52:59 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Sun, 7 Jun
- 2020 21:52:59 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Sun, 7 Jun 2020 21:52:59 -0500
-Received: from [10.250.233.85] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0582qs9R005834;
-        Sun, 7 Jun 2020 21:52:55 -0500
-Subject: Re: [PATCH v10 00/10] exynos-ufs: Add support for UFS HCI
-To:     Alim Akhtar <alim.akhtar@samsung.com>,
-        "'Martin K. Petersen'" <martin.petersen@oracle.com>,
-        <robh@kernel.org>
-CC:     <krzk@kernel.org>, <linux-samsung-soc@vger.kernel.org>,
-        <avri.altman@wdc.com>, <stanley.chu@mediatek.com>,
-        <linux-scsi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <cang@codeaurora.org>,
-        <devicetree@vger.kernel.org>, <kwmad.kim@samsung.com>,
-        <linux-kernel@vger.kernel.org>, "'Vinod Koul'" <vkoul@kernel.org>
-References: <CGME20200528013223epcas5p2be85fa8803326b49a905fb7225992cad@epcas5p2.samsung.com>
- <20200528011658.71590-1-alim.akhtar@samsung.com>
- <159114947915.26776.12485309894552696104.b4-ty@oracle.com>
- <013a01d63d3e$ecf404d0$c6dc0e70$@samsung.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <89b96bd0-a9a3-cdd8-dc67-1f9f49eef264@ti.com>
-Date:   Mon, 8 Jun 2020 08:22:54 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        Mon, 8 Jun 2020 01:37:42 -0400
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15A55C08C5C3;
+        Sun,  7 Jun 2020 22:37:42 -0700 (PDT)
+Received: by mail-pj1-x1043.google.com with SMTP id ne5so2810589pjb.5;
+        Sun, 07 Jun 2020 22:37:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=RTapcU6gK7wVagdpIBy1syxYRT4o5dx2x3mb/55IfwQ=;
+        b=DITjcqepAg/aiVMxe1Gh2awTCmo91vVu3S9mlVdU3hgfcPrStCTsiH/eLXmFFx4VRn
+         o+ChFk5Yofnb659Ehd5fQWdqZmVijpUVnFuGNuFhMOE72kvC1E3+mfpKEr/ZswrbVsJy
+         sipQ8XyZUaVEwcIfHzLeHoRReoDiJt10fqtwJ3c4BO29KFNyabOsxQSftZ67b+4X3i7i
+         XR9li74InWK9fBIdE0y17Jbyz8DsjgWa/+fMyP1yne5aCzj4UJD1nLwMXWmxvqe9Spvq
+         wc9P1vraN5a+3iQ96WNuaUdHrp7GU+r2Ij6WnopwS0BjnouSD1RBVYKA1uSNqvSLb6Py
+         s/Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=RTapcU6gK7wVagdpIBy1syxYRT4o5dx2x3mb/55IfwQ=;
+        b=mGHQBi0X0VUkABufhg1+Ev4KMP42P+k50fcovQFKnSKOF2ea/BrHawmIGd4egpI30r
+         a7juQPETJ3JbxVxWf7pdRiwVx52iHAiY39QupBk6wn3W/c2dspeFWGBc6v1knh7hYdAY
+         T4XewmmbvKlPz70DTG/zvpsnGxLtJoaKMXCMqiCyBiKHz1c+s6DcbS12cIJmv+Ngt9wq
+         Ci5vK26b7dreo4sMMpLKLt2qOMdwQZ9v+lwWlHHkOK8/7IdnA4dsVpgXGcg6x89IDxsM
+         IE7wg1o5PsYpKn/u7ULuF8Hqjap+oQweW7b0lf2/IZajDIjhEjcAEMaNJZXxjwnv6rV3
+         wnYg==
+X-Gm-Message-State: AOAM532mYJAlZHifT2eiitCzUn7x4pVBDH9g7t06sP0lLO7H4JzQxcyc
+        YgCQKVM09me4iG/znjO9RhU=
+X-Google-Smtp-Source: ABdhPJzN5CaIdVRcGxuqJwlU7nQJooHDxxicu9iq+KnTRKt689A3cjTNxnb8ofRVOYLQTpNcwc0RwQ==
+X-Received: by 2002:a17:90a:c283:: with SMTP id f3mr14534964pjt.166.1591594661380;
+        Sun, 07 Jun 2020 22:37:41 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3c2a:73a9:c2cf:7f45])
+        by smtp.gmail.com with ESMTPSA id k14sm4926474pgn.94.2020.06.07.22.37.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 Jun 2020 22:37:40 -0700 (PDT)
+Date:   Sun, 7 Jun 2020 22:37:37 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
+        linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-tegra@vger.kernel.org, patches@opensource.cirrus.com,
+        ibm-acpi-devel@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Barry Song <baohua@kernel.org>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Nick Dyer <nick@shmanahar.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Ferruh Yigit <fery@cypress.com>,
+        Sangwon Jee <jeesw@melfas.com>,
+        Peter Hutterer <peter.hutterer@redhat.com>,
+        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        kernel@collabora.com
+Subject: Re: [PATCH v3 0/7] Support inhibiting input devices
+Message-ID: <20200608053737.GS89269@dtor-ws>
+References: <20200604072853.GP89269@dtor-ws>
+ <20200605173335.13753-1-andrzej.p@collabora.com>
+ <20200607202414.GB13138@amd>
 MIME-Version: 1.0
-In-Reply-To: <013a01d63d3e$ecf404d0$c6dc0e70$@samsung.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200607202414.GB13138@amd>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Alim,
-
-On 6/8/2020 8:15 AM, Alim Akhtar wrote:
+On Sun, Jun 07, 2020 at 10:24:14PM +0200, Pavel Machek wrote:
+> On Fri 2020-06-05 19:33:28, Andrzej Pietrasiewicz wrote:
+> > Userspace might want to implement a policy to temporarily disregard input
+> > from certain devices.
 > 
+> Wow, you certainly cc a lot of lists.
 > 
->> -----Original Message-----
->> From: Martin K. Petersen <martin.petersen@oracle.com>
->> Sent: 03 June 2020 08:02
->> To: robh@kernel.org; Alim Akhtar <alim.akhtar@samsung.com>
->> Cc: Martin K . Petersen <martin.petersen@oracle.com>; krzk@kernel.org;
-> linux-
->> samsung-soc@vger.kernel.org; avri.altman@wdc.com;
->> stanley.chu@mediatek.com; linux-scsi@vger.kernel.org; linux-arm-
->> kernel@lists.infradead.org; cang@codeaurora.org;
-> devicetree@vger.kernel.org;
->> kwmad.kim@samsung.com; linux-kernel@vger.kernel.org
->> Subject: Re: [PATCH v10 00/10] exynos-ufs: Add support for UFS HCI
->>
->> On Thu, 28 May 2020 06:46:48 +0530, Alim Akhtar wrote:
->>
->>> This patch-set introduces UFS (Universal Flash Storage) host
->>> controller support for Samsung family SoC. Mostly, it consists of UFS
->>> PHY and host specific driver.
->>> [...]
->>
->> Applied [1,2,3,4,5,9] to 5.9/scsi-queue. The series won't show up in my
-> public
->> tree until shortly after -rc1 is released.
->>
-> Thanks Martin,
-> Hi Rob and Kishon/Vinod
-> Can you please pickup dt-bindings and PHY driver respectively?
-
-You might have CC'ed me only for the PHY patch. I don't have the dt-bindings in
-my inbox. Care to re-send what's missing again? This will be merged after -rc1
-is tagged.
-
-Thanks
-Kishon
-
+> > An example use case is a convertible laptop, whose keyboard can be folded
+> > under the screen to create tablet-like experience. The user then must hold
+> > the laptop in such a way that it is difficult to avoid pressing the keyboard
+> > keys. It is therefore desirable to temporarily disregard input from the
+> > keyboard, until it is folded back. This obviously is a policy which should
+> > be kept out of the kernel, but the kernel must provide suitable means to
+> > implement such a policy.
+> > 
+> > Due to interactions with suspend/resume, a helper has been added for drivers
+> > to decide if the device is being used or not (PATCH 1/7) and it has been
+> > applied to relevant drivers (PATCH 2,4,5,6/7).
 > 
->> Thanks!
->>
->> --
->> Martin K. Petersen	Oracle Linux Engineering
+> But is that a right way to implement it?
 > 
+> We want this for cellphones, too -- touchscreen should be disabled
+> while the device is locked in the pocket -- but we really want the
+> touchscreen hardware to be powered down in that case (because it keeps
+> SoC busy and eats a _lot_ of electricity).
+> 
+> But simplistic "receive an event and then drop it if device is
+> inhibited" does not allow that...
+
+I do not think you read the entirety of this patch series...
+
+Thanks.
+
+-- 
+Dmitry
