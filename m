@@ -2,165 +2,199 @@ Return-Path: <SRS0=kv95=7W=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C55FC433E1
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  9 Jun 2020 02:37:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA068C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  9 Jun 2020 08:23:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2050B2078B
-	for <linux-samsung-soc@archiver.kernel.org>; Tue,  9 Jun 2020 02:37:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9840020812
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  9 Jun 2020 08:23:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I9F+MzX3"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="DDtw0tA9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726973AbgFIChs (ORCPT
+        id S1728116AbgFIIXq (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 8 Jun 2020 22:37:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41866 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726970AbgFIChp (ORCPT
+        Tue, 9 Jun 2020 04:23:46 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:58739 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728105AbgFIIXo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 8 Jun 2020 22:37:45 -0400
-Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A284C08C5C2
-        for <linux-samsung-soc@vger.kernel.org>; Mon,  8 Jun 2020 19:37:43 -0700 (PDT)
-Received: by mail-ot1-x342.google.com with SMTP id 69so15421365otv.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Jun 2020 19:37:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gIREOCncp+kCLejh9A1JytrjVRseDJ9dDmzpsV7xNws=;
-        b=I9F+MzX3keiz7H+vq67DtBb3j76mL76MQZ+r9HgbdfDur2wVNf7HxaK0JjLFewpHIl
-         JEhC5yhS5eeZK9YbS3L3jGKgKUclvO6bqli/E4ozAVwZVdJgis0MsPi2Hgadsfexdkyc
-         GQTSjl2rMRA+2wxu7vGskuJxaXnulBsJwF/CHu4/mdeUno+caXYvieZFZA1/QyVtcSTt
-         ba+bxnnpUhC9mBSo7ZJyb9pprv1xeGOatgMlVbhKrztR3z14T4p1ND3KzH1BDo0e0g2K
-         M1AheK59avMkAVhIcd1aAvO6N3Spb+jYpTbN1OYYTIMGLhhtvRmDgj209cPg9F7OO+9B
-         IZZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gIREOCncp+kCLejh9A1JytrjVRseDJ9dDmzpsV7xNws=;
-        b=S2KlSTWMag0McksQqUhH9F+qABUsDfB8ZYuezmYK4kKyTOZduGdTRHNvGYhDAoD5Ky
-         yvBHkwysm+vujMJr5vBM56sSy7DeRR1Uyeqc41xI5tCNEwDxKQ900TpoKp0p2yB+GdVS
-         bWK/FMkuPobENi0hNJINECUkOgNea33VqgzPmmjvw5DBIN9N7AuCVEcGks3GhF7VAJj3
-         3YzJ5BfvVuuUssJ8jeqlAU10IJB/m2tiY132iYRbcVmI4obHbGlcBv9nxFFJfdR49MeY
-         2tpgBGD5Z3b9TEstqhXqogUvRp4fyMqE/3jGpszAETdEZVd7oSuEz1fwajUEi8cct1ah
-         bR9A==
-X-Gm-Message-State: AOAM533qcvMSSL6fUgc7nF9nBw3RnrmH/dmwDq8DF+k3lyppjz8mEx7z
-        fOrZhEJ0JT42mJ8a+aZP2RS9HAxcMlwOydyUReh8Xg==
-X-Google-Smtp-Source: ABdhPJyNcC5SuTdnFrtUT/J1vHIVd1tebb9cmCY1PZhbEnXealjVBrgi7u4Qxgwn4MSraDU9LrRx5Xm6eUPmfkqlABk=
-X-Received: by 2002:a9d:6048:: with SMTP id v8mr14796461otj.231.1591670262910;
- Mon, 08 Jun 2020 19:37:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <CGME20200605063729eucas1p288dd9d3acdb62cc86745cb6af5c31fc6@eucas1p2.samsung.com>
- <20200605063724.9030-1-m.szyprowski@samsung.com> <20200605102018.GA5413@sirena.org.uk>
- <2f0e021d-387a-4693-882d-aba66e20dd2b@samsung.com> <20200605155903.GI5413@sirena.org.uk>
-In-Reply-To: <20200605155903.GI5413@sirena.org.uk>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Mon, 8 Jun 2020 19:37:07 -0700
-Message-ID: <CAGETcx8asyFRz5LmU4LSMJuPWvcWdvi1GHAhQ85AWdd6jcmdiA@mail.gmail.com>
-Subject: Re: [PATCH] regulator: do not balance 'boot-on' coupled regulators
- without constraints
-To:     Mark Brown <broonie@kernel.org>
+        Tue, 9 Jun 2020 04:23:44 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200609082342euoutp014143bab597f3c9acf6207c0705549087~W0o0ydy521660516605euoutp01I
+        for <linux-samsung-soc@vger.kernel.org>; Tue,  9 Jun 2020 08:23:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200609082342euoutp014143bab597f3c9acf6207c0705549087~W0o0ydy521660516605euoutp01I
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1591691022;
+        bh=BGalV4SWoQktnTM1smyzt1YMdWYXcGcpHw/UIPU9QfY=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=DDtw0tA9I3zr0EpRkI94+4tgsN+oC4v+GjIsyjhL2qzhHNtQpyOkvQQWUkWwBSqhq
+         B+5GlI4STrhx09lViCvdqTSa4Eqa8xjp3dTWbM3/RBxYKgYVmjNW/TkfVlE5XKDAOo
+         FYO8Gz8B+iunAkkK6UhY1x5Gt+cgkSp37pfO1z/M=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200609082341eucas1p2c3a4166cdabbe42dffa2247274efd3aa~W0o0baGNz0783307833eucas1p2P;
+        Tue,  9 Jun 2020 08:23:41 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 08.72.60698.D074FDE5; Tue,  9
+        Jun 2020 09:23:41 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200609082341eucas1p2e24e71598af14d994520b79494e96b15~W0oz-h0we0586405864eucas1p22;
+        Tue,  9 Jun 2020 08:23:41 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200609082341eusmtrp13f3232debefbe006bf5db6b998b6c47d~W0oz_vRrt1700117001eusmtrp1H;
+        Tue,  9 Jun 2020 08:23:41 +0000 (GMT)
+X-AuditID: cbfec7f5-a29ff7000001ed1a-4d-5edf470d9af8
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id FB.74.08375.D074FDE5; Tue,  9
+        Jun 2020 09:23:41 +0100 (BST)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20200609082340eusmtip174a5d456d5afdee3c869087bc138ef55~W0ozjWR9q1237712377eusmtip1T;
+        Tue,  9 Jun 2020 08:23:40 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-gpio@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>, peron.clem@gmail.com,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Android Kernel Team <kernel-team@android.com>
-Content-Type: text/plain; charset="UTF-8"
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH] pinctrl: samsung: Use bank name as irqchip name
+Date:   Tue,  9 Jun 2020 10:23:29 +0200
+Message-Id: <20200609082329.10184-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBIsWRmVeSWpSXmKPExsWy7djPc7q87vfjDFaf1rXYOGM9q8X1L89Z
+        Lc6f38BuMeXPciaLzfP/MFrMOL+PyWLtkbvsFofftLNarNr1h9GB02PnrLvsHptWdbJ53Lm2
+        h82jb8sqRo/Pm+QCWKO4bFJSczLLUov07RK4Ms78ucxY8Fy84uX9lywNjA+Euhg5OSQETCRa
+        H01l6WLk4hASWMEosenvU2YI5wujxOQ3h5lAqoQEPjNKvHgmD9PxbuE7qI7lQPFTN1nhOia2
+        /mcGqWITMJToetvFBmKLCDhK/NywCqyIWWAbk8T5rkNACQ4OYQEHiasPGUFqWARUJe6v3AG2
+        jVfAVmLbimYWiG3yEqs3HAA7SULgOZvE08UXGSESLhIn2m+zQdjCEq+Ob2GHsGUkTk/uYYFo
+        aGaUeHhuLTuE08MocblpBlS3tcSdc7/ArmAW0JRYv0sfIuwo0f1zFztIWEKAT+LGW0GQMDOQ
+        OWnbdGaIMK9ERxs07NQkZh1fB7f24IVLzBC2h8TSp9fApggJxErMP1s/gVFuFsKqBYyMqxjF
+        U0uLc9NTi43zUsv1ihNzi0vz0vWS83M3MQLTw+l/x7/uYNz3J+kQowAHoxIP7w3xe3FCrIll
+        xZW5hxglOJiVRHidzp6OE+JNSaysSi3Kjy8qzUktPsQozcGiJM5rvOhlrJBAemJJanZqakFq
+        EUyWiYNTqoFx8/Zt5peq1r62bhL31xVUfuE1J9VZZbpz32fF63LKkcy1oYcWct7azRZvI1QQ
+        4OPsr/zo93aO5j7pVpv3RjV9ui2r1VylM+Mf9s3gtEgWWZsVfzKd81XMwcp3LP7dzn/Dfav6
+        1231n+oZktn3QVZwT+Ea0dYVRR/WtMximsbK4tcRVr7pjxJLcUaioRZzUXEiAGX6MMkLAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHLMWRmVeSWpSXmKPExsVy+t/xu7q87vfjDB4+E7TYOGM9q8X1L89Z
+        Lc6f38BuMeXPciaLzfP/MFrMOL+PyWLtkbvsFofftLNarNr1h9GB02PnrLvsHptWdbJ53Lm2
+        h82jb8sqRo/Pm+QCWKP0bIryS0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJS
+        czLLUov07RL0Ms78ucxY8Fy84uX9lywNjA+Euhg5OSQETCTeLXzH0sXIxSEksJRR4vCsGywQ
+        CRmJk9MaWCFsYYk/17rYQGwhgU+MEtP+moDYbAKGEl1vIeIiAs4SN17tBRvELLCLSaJlzWGg
+        BAeHsICDxNWHjCA1LAKqEvdX7mACsXkFbCW2rWiG2iUvsXrDAeYJjDwLGBlWMYqklhbnpucW
+        G+oVJ+YWl+al6yXn525iBIbltmM/N+9gvLQx+BCjAAejEg/vDfF7cUKsiWXFlbmHGCU4mJVE
+        eJ3Ono4T4k1JrKxKLcqPLyrNSS0+xGgKtHwis5Rocj4wZvJK4g1NDc0tLA3Njc2NzSyUxHk7
+        BA7GCAmkJ5akZqemFqQWwfQxcXBKNTB6Lyjyk1S5U5blbfd9yZKjp+bL3tc/kubZxFscn8Id
+        zCwSJHZzSc6ZX58vb6i1tptSWLapvera329MijsXTlwece/bvnMODur3G7Izha1amQzn9KWK
+        /LvxqVe8V23NiuyrabePrJ21pCU53/Ri7tZz1+NE7069tYjvSqOkYv0VXwmBMyvinsgosRRn
+        JBpqMRcVJwIAgt8GL2ECAAA=
+X-CMS-MailID: 20200609082341eucas1p2e24e71598af14d994520b79494e96b15
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200609082341eucas1p2e24e71598af14d994520b79494e96b15
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200609082341eucas1p2e24e71598af14d994520b79494e96b15
+References: <CGME20200609082341eucas1p2e24e71598af14d994520b79494e96b15@eucas1p2.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jun 5, 2020 at 8:59 AM Mark Brown <broonie@kernel.org> wrote:
->
-> On Fri, Jun 05, 2020 at 03:37:32PM +0200, Marek Szyprowski wrote:
-> > On 05.06.2020 12:20, Mark Brown wrote:
->
-> > > No, this is not what boot-on means at all.  It is there for cases where
-> > > we can't read the enable status from the hardware.  Trying to infer
-> > > *anything* about the runtime behaviour from it being present or absent
-> > > is very badly broken.
->
-> > Okay, what about the 'always-on' property? I don't think that we need
-> > another property for annotating this behavior, as in my opinion this is
->
-> No, that's just as disconnected from the need - we may as well do it
-> based on the regulator name being an odd number of characters.
->
-> > just an implementation issue on the Linux kernel and regulator
-> > framework. Alternatively I can drop the property check, but then it
-> > won't be possible to have a regulator without a consumer, which follows
-> > the other one (although we still don't have a real use case for it).
->
-> > If you don't like this idea at all, I will try to move this logic to the
-> > custom coupler again, although it would mean some code copying.
->
-> I think that's better TBH.
->
-> > > Saravana (CCed) was working on some patches which tried to deal with
-> > > some stuff around this for enables using the sync_state() callback.
-> > > Unfortunately there's quite a few problems with the current approach
-> > > (the biggest one from my point of view being that it's implemented so
-> > > that it requires every single consumer of every device on the PMIC to
-> > > come up but there's others at more of an implementation level).
->
-> > I'm not sure if we really need such complex solution for this...
->
-> So I think that the specific approach there is overly heavyweight and
-> restrictive but I do see the general use case here for something per
-> regulator providing we can avoid breaking anything that does actually
-> need to change the regulator state (eg, raising the voltage for
-> cpufreq).
+Use the bank name as the irqchip name. This name is later visible in
+/proc/interrupts, what makes it possible to easily identify each
+GPIO interrupt.
 
-The changes I propose won't prevent anything from asking for more
-power/energy (will always allow turning on stuff, increasing voltage,
-increasing current, etc). It'll only prevent reducing power lower than
-what was provided when the bootloader left stuff on. This shouldn't
-break most boards -- because any other consumer could be setting
-similar limits and things don't break then. But even if that's a
-concern, we can still default to a timeout behavior and then give
-folks the choice of disabling the timeout if they know all their
-devices will probe.
+/proc/interrupts before this patch:
+143:    0     exynos4210_wkup_irq_chip   7 Edge      hdmi
+144:    0     exynos4210_wkup_irq_chip   6 Level     wm8994
+145:    1     exynos4210_wkup_irq_chip   7 Edge      max77686-pmic, max77686-rtc
+146:    1     exynos_gpio_irq_chip   3 Edge      3-0048
 
-Btw, the patch series I sent fixes a lot of subtle use cases even with
-the timeout enabled. For example, in one hardware platform, a LDO is
-shared between camera, display, UFS and USB. The camera driver would
-probe first, enable the regulator, poll its HW and then disable the
-regulator. This causes the regulator to be disabled before display,
-UFS, and USB could probe and this caused hardware faults for those.
+/proc/interrupts after this patch:
+143:    0     gpx3   7 Edge      hdmi
+144:    0     gpx3   6 Level     wm8994
+145:    1     gpx0   7 Edge      max77686-pmic, max77686-rtc
+146:    1     gpm2   3 Edge      3-0048
 
-> Previously to the past week I'd only really heard about it
-> causing problems in the context of displays left on by the bootloader
-> glitching during boot but this is a concrete
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/pinctrl/samsung/pinctrl-exynos.c | 27 +++++++++++++++---------
+ 1 file changed, 17 insertions(+), 10 deletions(-)
 
-Ah, finally! I have examples of pretty much the same issue in some
-downstream kernels -- the CPU and memory shares rails with other
-hardware blocks and things fail if this isn't taken care of. Glad that
-someone else found an example for me in the upstream kernel.
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+index 84501c785473..1c87cf41602a 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -207,7 +207,7 @@ static void exynos_irq_release_resources(struct irq_data *irqd)
+ /*
+  * irq_chip for gpio interrupts.
+  */
+-static struct exynos_irq_chip exynos_gpio_irq_chip = {
++static const struct exynos_irq_chip exynos_gpio_irq_chip __initconst = {
+ 	.chip = {
+ 		.name = "exynos_gpio_irq_chip",
+ 		.irq_unmask = exynos_irq_unmask,
+@@ -313,7 +313,13 @@ int exynos_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
+ 			goto err_domains;
+ 		}
+ 
+-		bank->irq_chip = &exynos_gpio_irq_chip;
++		bank->irq_chip = kmemdup(&exynos_gpio_irq_chip,
++					 sizeof(*bank->irq_chip), GFP_KERNEL);
++		if (!bank->irq_chip) {
++			ret = -ENOMEM;
++			goto err_domains;
++		}
++		bank->irq_chip->chip.name = bank->name;
+ 	}
+ 
+ 	return 0;
+@@ -521,7 +527,7 @@ int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
+ 	struct samsung_pin_bank *bank;
+ 	struct exynos_weint_data *weint_data;
+ 	struct exynos_muxed_weint_data *muxed_data;
+-	struct exynos_irq_chip *irq_chip;
++	const struct exynos_irq_chip *irq_chip;
+ 	unsigned int muxed_banks = 0;
+ 	unsigned int i;
+ 	int idx, irq;
+@@ -531,12 +537,7 @@ int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
+ 
+ 		match = of_match_node(exynos_wkup_irq_ids, np);
+ 		if (match) {
+-			irq_chip = kmemdup(match->data,
+-				sizeof(*irq_chip), GFP_KERNEL);
+-			if (!irq_chip) {
+-				of_node_put(np);
+-				return -ENOMEM;
+-			}
++			irq_chip = match->data;
+ 			wkup_np = np;
+ 			break;
+ 		}
+@@ -557,7 +558,13 @@ int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
+ 			return -ENXIO;
+ 		}
+ 
+-		bank->irq_chip = irq_chip;
++		bank->irq_chip = kmemdup(irq_chip, sizeof(*irq_chip),
++					 GFP_KERNEL);
++		if (!bank->irq_chip) {
++			of_node_put(wkup_np);
++			return -ENOMEM;
++		}
++		bank->irq_chip->chip.name = bank->name;
+ 
+ 		if (!of_find_property(bank->of_node, "interrupts", NULL)) {
+ 			bank->eint_type = EINT_TYPE_WKUP_MUX;
+-- 
+2.17.1
 
-> use case and we already
-> have the infrastructure to track dependencies at the device model level
-> if we use it well.
-
-I'll send out a v3 series in a couple of days to address Mark's
-earlier comments and also add the voltage support to address Marek's
-case. We can take it from there.
-
--Saravana
