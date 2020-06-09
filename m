@@ -1,187 +1,166 @@
-Return-Path: <SRS0=mGOR=7V=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=kv95=7W=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D76C433E2
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Jun 2020 11:23:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C55FC433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  9 Jun 2020 02:37:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 04FFC206C3
-	for <linux-samsung-soc@archiver.kernel.org>; Mon,  8 Jun 2020 11:23:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2050B2078B
+	for <linux-samsung-soc@archiver.kernel.org>; Tue,  9 Jun 2020 02:37:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I9F+MzX3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729559AbgFHLWZ (ORCPT
+        id S1726973AbgFIChs (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Mon, 8 Jun 2020 07:22:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41618 "EHLO
+        Mon, 8 Jun 2020 22:37:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729437AbgFHLWY (ORCPT
+        with ESMTP id S1726970AbgFIChp (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Mon, 8 Jun 2020 07:22:24 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 413CBC08C5C2;
-        Mon,  8 Jun 2020 04:22:24 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: andrzej.p)
-        with ESMTPSA id EEEA02A35BA
-From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-To:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-tegra@vger.kernel.org, patches@opensource.cirrus.com,
-        ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Barry Song <baohua@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Nick Dyer <nick@shmanahar.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Ferruh Yigit <fery@cypress.com>,
-        Sangwon Jee <jeesw@melfas.com>,
-        Peter Hutterer <peter.hutterer@redhat.com>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        kernel@collabora.com
-Subject: [PATCH v4 0/7] Support inhibiting input devices
-Date:   Mon,  8 Jun 2020 13:22:04 +0200
-Message-Id: <20200608112211.12125-1-andrzej.p@collabora.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
-References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
+        Mon, 8 Jun 2020 22:37:45 -0400
+Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A284C08C5C2
+        for <linux-samsung-soc@vger.kernel.org>; Mon,  8 Jun 2020 19:37:43 -0700 (PDT)
+Received: by mail-ot1-x342.google.com with SMTP id 69so15421365otv.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Jun 2020 19:37:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gIREOCncp+kCLejh9A1JytrjVRseDJ9dDmzpsV7xNws=;
+        b=I9F+MzX3keiz7H+vq67DtBb3j76mL76MQZ+r9HgbdfDur2wVNf7HxaK0JjLFewpHIl
+         JEhC5yhS5eeZK9YbS3L3jGKgKUclvO6bqli/E4ozAVwZVdJgis0MsPi2Hgadsfexdkyc
+         GQTSjl2rMRA+2wxu7vGskuJxaXnulBsJwF/CHu4/mdeUno+caXYvieZFZA1/QyVtcSTt
+         ba+bxnnpUhC9mBSo7ZJyb9pprv1xeGOatgMlVbhKrztR3z14T4p1ND3KzH1BDo0e0g2K
+         M1AheK59avMkAVhIcd1aAvO6N3Spb+jYpTbN1OYYTIMGLhhtvRmDgj209cPg9F7OO+9B
+         IZZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gIREOCncp+kCLejh9A1JytrjVRseDJ9dDmzpsV7xNws=;
+        b=S2KlSTWMag0McksQqUhH9F+qABUsDfB8ZYuezmYK4kKyTOZduGdTRHNvGYhDAoD5Ky
+         yvBHkwysm+vujMJr5vBM56sSy7DeRR1Uyeqc41xI5tCNEwDxKQ900TpoKp0p2yB+GdVS
+         bWK/FMkuPobENi0hNJINECUkOgNea33VqgzPmmjvw5DBIN9N7AuCVEcGks3GhF7VAJj3
+         3YzJ5BfvVuuUssJ8jeqlAU10IJB/m2tiY132iYRbcVmI4obHbGlcBv9nxFFJfdR49MeY
+         2tpgBGD5Z3b9TEstqhXqogUvRp4fyMqE/3jGpszAETdEZVd7oSuEz1fwajUEi8cct1ah
+         bR9A==
+X-Gm-Message-State: AOAM533qcvMSSL6fUgc7nF9nBw3RnrmH/dmwDq8DF+k3lyppjz8mEx7z
+        fOrZhEJ0JT42mJ8a+aZP2RS9HAxcMlwOydyUReh8Xg==
+X-Google-Smtp-Source: ABdhPJyNcC5SuTdnFrtUT/J1vHIVd1tebb9cmCY1PZhbEnXealjVBrgi7u4Qxgwn4MSraDU9LrRx5Xm6eUPmfkqlABk=
+X-Received: by 2002:a9d:6048:: with SMTP id v8mr14796461otj.231.1591670262910;
+ Mon, 08 Jun 2020 19:37:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <CGME20200605063729eucas1p288dd9d3acdb62cc86745cb6af5c31fc6@eucas1p2.samsung.com>
+ <20200605063724.9030-1-m.szyprowski@samsung.com> <20200605102018.GA5413@sirena.org.uk>
+ <2f0e021d-387a-4693-882d-aba66e20dd2b@samsung.com> <20200605155903.GI5413@sirena.org.uk>
+In-Reply-To: <20200605155903.GI5413@sirena.org.uk>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Mon, 8 Jun 2020 19:37:07 -0700
+Message-ID: <CAGETcx8asyFRz5LmU4LSMJuPWvcWdvi1GHAhQ85AWdd6jcmdiA@mail.gmail.com>
+Subject: Re: [PATCH] regulator: do not balance 'boot-on' coupled regulators
+ without constraints
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>, peron.clem@gmail.com,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Android Kernel Team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-This is a quick respin of v3, with just two small changes, please see
-the changelog below.
+On Fri, Jun 5, 2020 at 8:59 AM Mark Brown <broonie@kernel.org> wrote:
+>
+> On Fri, Jun 05, 2020 at 03:37:32PM +0200, Marek Szyprowski wrote:
+> > On 05.06.2020 12:20, Mark Brown wrote:
+>
+> > > No, this is not what boot-on means at all.  It is there for cases where
+> > > we can't read the enable status from the hardware.  Trying to infer
+> > > *anything* about the runtime behaviour from it being present or absent
+> > > is very badly broken.
+>
+> > Okay, what about the 'always-on' property? I don't think that we need
+> > another property for annotating this behavior, as in my opinion this is
+>
+> No, that's just as disconnected from the need - we may as well do it
+> based on the regulator name being an odd number of characters.
+>
+> > just an implementation issue on the Linux kernel and regulator
+> > framework. Alternatively I can drop the property check, but then it
+> > won't be possible to have a regulator without a consumer, which follows
+> > the other one (although we still don't have a real use case for it).
+>
+> > If you don't like this idea at all, I will try to move this logic to the
+> > custom coupler again, although it would mean some code copying.
+>
+> I think that's better TBH.
+>
+> > > Saravana (CCed) was working on some patches which tried to deal with
+> > > some stuff around this for enables using the sync_state() callback.
+> > > Unfortunately there's quite a few problems with the current approach
+> > > (the biggest one from my point of view being that it's implemented so
+> > > that it requires every single consumer of every device on the PMIC to
+> > > come up but there's others at more of an implementation level).
+>
+> > I'm not sure if we really need such complex solution for this...
+>
+> So I think that the specific approach there is overly heavyweight and
+> restrictive but I do see the general use case here for something per
+> regulator providing we can avoid breaking anything that does actually
+> need to change the regulator state (eg, raising the voltage for
+> cpufreq).
 
-Userspace might want to implement a policy to temporarily disregard input
-from certain devices.
+The changes I propose won't prevent anything from asking for more
+power/energy (will always allow turning on stuff, increasing voltage,
+increasing current, etc). It'll only prevent reducing power lower than
+what was provided when the bootloader left stuff on. This shouldn't
+break most boards -- because any other consumer could be setting
+similar limits and things don't break then. But even if that's a
+concern, we can still default to a timeout behavior and then give
+folks the choice of disabling the timeout if they know all their
+devices will probe.
 
-An example use case is a convertible laptop, whose keyboard can be folded
-under the screen to create tablet-like experience. The user then must hold
-the laptop in such a way that it is difficult to avoid pressing the keyboard
-keys. It is therefore desirable to temporarily disregard input from the
-keyboard, until it is folded back. This obviously is a policy which should
-be kept out of the kernel, but the kernel must provide suitable means to
-implement such a policy.
+Btw, the patch series I sent fixes a lot of subtle use cases even with
+the timeout enabled. For example, in one hardware platform, a LDO is
+shared between camera, display, UFS and USB. The camera driver would
+probe first, enable the regulator, poll its HW and then disable the
+regulator. This causes the regulator to be disabled before display,
+UFS, and USB could probe and this caused hardware faults for those.
 
-Due to interactions with suspend/resume, a helper has been added for drivers
-to decide if the device is being used or not (PATCH 1/7) and it has been
-applied to relevant drivers (PATCH 2,4,5,6/7).
+> Previously to the past week I'd only really heard about it
+> causing problems in the context of displays left on by the bootloader
+> glitching during boot but this is a concrete
 
-PATCH 7/7 adds support for inhibiting input devices.
+Ah, finally! I have examples of pretty much the same issue in some
+downstream kernels -- the CPU and memory shares rails with other
+hardware blocks and things fail if this isn't taken care of. Glad that
+someone else found an example for me in the upstream kernel.
 
-This work is inspired by:
+> use case and we already
+> have the infrastructure to track dependencies at the device model level
+> if we use it well.
 
-https://chromium.googlesource.com/chromiumos/third_party/kernel/+/45c2d7bb398f74adfae0017e20b224152fde3822
+I'll send out a v3 series in a couple of days to address Mark's
+earlier comments and also add the voltage support to address Marek's
+case. We can take it from there.
 
-and
-
-https://chromium.googlesource.com/chromiumos/third_party/kernel/+/4ce0e8a3697edb8fd071110b3af65014512061c7
-
-In this respin the elan_i2c patch is dropped and converting it will be
-addressed later.
-
-v3..v4:
-- updated the comment in input_open_device() (Hans)
-- used more straightforward locking pattern in adc/exynos (Michał)
-
-v2..v3:
-- ignored autorepeat events in input_get_disposition() if a key is not
-pressed (Hans)
-- dropped inhibit()/uninhibit() driver callbacks (Hans)
-- split ACPI button patch into taking the lock and using the helper (Rafael)
-- dropped the elan_i2c conversion
-- fixed typos in exynos adc
-
-v1..v2:
-- added input_device_enabled() helper and used it in drivers (Dmitry)
-- the fact of open() and close() being called in inhibit/uninhibit paths has
-been emphasized in the commit message of PATCH 6/7 (Dmitry)
-
-Andrzej Pietrasiewicz (6):
-  Input: add input_device_enabled()
-  Input: use input_device_enabled()
-  ACPI: button: Access input device's users under appropriate mutex
-  ACPI: button: Use input_device_enabled() helper
-  iio: adc: exynos: Use input_device_enabled()
-  platform/x86: thinkpad_acpi: Use input_device_enabled()
-
-Patrik Fimml (1):
-  Input: Add "inhibited" property
-
- drivers/acpi/button.c                       |   7 +-
- drivers/iio/adc/exynos_adc.c                |   6 +-
- drivers/input/input.c                       | 125 ++++++++++++++++++--
- drivers/input/joystick/xpad.c               |   4 +-
- drivers/input/keyboard/ep93xx_keypad.c      |   2 +-
- drivers/input/keyboard/gpio_keys.c          |   4 +-
- drivers/input/keyboard/imx_keypad.c         |   4 +-
- drivers/input/keyboard/ipaq-micro-keys.c    |   2 +-
- drivers/input/keyboard/lpc32xx-keys.c       |   4 +-
- drivers/input/keyboard/pmic8xxx-keypad.c    |   4 +-
- drivers/input/keyboard/pxa27x_keypad.c      |   2 +-
- drivers/input/keyboard/samsung-keypad.c     |   4 +-
- drivers/input/keyboard/spear-keyboard.c     |   8 +-
- drivers/input/keyboard/st-keyscan.c         |   4 +-
- drivers/input/keyboard/tegra-kbc.c          |   4 +-
- drivers/input/misc/drv260x.c                |   4 +-
- drivers/input/misc/drv2665.c                |   4 +-
- drivers/input/misc/drv2667.c                |   4 +-
- drivers/input/misc/gp2ap002a00f.c           |   4 +-
- drivers/input/misc/kxtj9.c                  |   4 +-
- drivers/input/misc/sirfsoc-onkey.c          |   2 +-
- drivers/input/mouse/navpoint.c              |   4 +-
- drivers/input/touchscreen/ad7879.c          |   6 +-
- drivers/input/touchscreen/atmel_mxt_ts.c    |   4 +-
- drivers/input/touchscreen/auo-pixcir-ts.c   |   8 +-
- drivers/input/touchscreen/bu21029_ts.c      |   4 +-
- drivers/input/touchscreen/chipone_icn8318.c |   4 +-
- drivers/input/touchscreen/cyttsp_core.c     |   4 +-
- drivers/input/touchscreen/eeti_ts.c         |   4 +-
- drivers/input/touchscreen/ektf2127.c        |   4 +-
- drivers/input/touchscreen/imx6ul_tsc.c      |   4 +-
- drivers/input/touchscreen/ipaq-micro-ts.c   |   2 +-
- drivers/input/touchscreen/iqs5xx.c          |   4 +-
- drivers/input/touchscreen/lpc32xx_ts.c      |   4 +-
- drivers/input/touchscreen/melfas_mip4.c     |   4 +-
- drivers/input/touchscreen/mms114.c          |   6 +-
- drivers/input/touchscreen/pixcir_i2c_ts.c   |   8 +-
- drivers/input/touchscreen/ucb1400_ts.c      |   4 +-
- drivers/input/touchscreen/wm97xx-core.c     |  14 ++-
- drivers/input/touchscreen/zforce_ts.c       |   8 +-
- drivers/platform/x86/thinkpad_acpi.c        |   4 +-
- include/linux/input.h                       |  14 ++-
- 42 files changed, 228 insertions(+), 96 deletions(-)
-
-
-base-commit: 3d77e6a8804abcc0504c904bd6e5cdf3a5cf8162
--- 
-2.17.1
-
+-Saravana
