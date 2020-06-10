@@ -2,139 +2,108 @@ Return-Path: <SRS0=SgCN=7X=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6917C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Jun 2020 14:02:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13FBCC433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Jun 2020 14:02:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AEEC32078C
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Jun 2020 14:02:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7A69206F7
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Jun 2020 14:02:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591797724;
-	bh=n+8D0TYlDj+cFQK2/6Jnbw0ScLdbDUi1DWb5ezOhotg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=bESH/XY/yUZSiT6I5d65cvGdhsc56yXF+9OUdIYKcRzUbQ8aU2aToeRgEptUfrYEI
-	 9ubYviwPpHklUiGSAqUucM/maaOQURjHVPFY7L6ykRjPOb7qBfGjR3JrW62FRPQ3nm
-	 zyf72RY8i13JTzldso4Z4E/aF4nOt36pxIWhkqn0=
+	s=default; t=1591797764;
+	bh=PJeztmqH3Tm09iZIjMhIbxeolMu+TPv4gNgkyq7WC5o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=CFCpdABbT1tv2I8QHGp1T+XonoQp/zDEAtHmJRpVvV7YXtnCRll3FIGhufrpgl09H
+	 p9mmZWPN4uaHZPQaHhpe6rKoZkIpG4Cq+vCr2Bw7vRBwLwIWcb+EtPpPmZp9ZqHWJC
+	 ccUFtKWuSMT+XpZOqMOFRsMBV1Qrj9PU2/cjf1UE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729692AbgFJOB7 (ORCPT
+        id S1726770AbgFJOCo (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 10 Jun 2020 10:01:59 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:40605 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726616AbgFJOB6 (ORCPT
+        Wed, 10 Jun 2020 10:02:44 -0400
+Received: from mail-wm1-f47.google.com ([209.85.128.47]:40575 "EHLO
+        mail-wm1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726633AbgFJOCo (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 10 Jun 2020 10:01:58 -0400
-Received: by mail-oi1-f195.google.com with SMTP id t25so2125349oij.7;
-        Wed, 10 Jun 2020 07:01:57 -0700 (PDT)
+        Wed, 10 Jun 2020 10:02:44 -0400
+Received: by mail-wm1-f47.google.com with SMTP id r15so1942818wmh.5
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jun 2020 07:02:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Nl62HWLkcdUncszr4NfDCSNaITirf4yc7zsH9ph91Mg=;
-        b=Qjbj7mjG42s8fdutEj5DgbH6byB8n5MLqHfiKyUWonA4a4y0blxWJtnDLzm61eXgvX
-         mLI6wOslj9O2hMC9K3JJiF2g1JilrdLbDmQyY/lXExZR2rGaXg8UCmpo7pByP+0nolyy
-         61PhVJQqEjkADfxN9cB9UJwHd0JL2u5XmF4yjVg93zdP6y6L0rjns0serLkbaJ/5SRM0
-         wk22BBjC5FcF1MCmISFrUPflEJzRFmZupj5i5P+d/0AfvqLqua0w8+It2T3T7qcCkC9T
-         mkvvvAfwSmpqTRmqEEvuQPkPc6SGvKLfymN2zZvaCkhROeBHdRAC8lKWNjxsj00LlFJZ
-         GpgQ==
-X-Gm-Message-State: AOAM532vpbd+wgSf2RJM31KV9qcPmfPSI4tGBtoqTlHzlWjz8mmSpFSJ
-        7PMWSoJ8vX5sohvV7pQOH3bNRXyc7L127yKHnzM=
-X-Google-Smtp-Source: ABdhPJzorUjsiFcKJqkTkUHEOkzCM8G8rZoea2g27dOAzap4gGLrBRRziPbedIOP6/JlYUlFFWbvc+8f9RAYMPdl7zE=
-X-Received: by 2002:aca:ad88:: with SMTP id w130mr2656825oie.103.1591797717254;
- Wed, 10 Jun 2020 07:01:57 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IujImoAbQ1sAaWUW2WcFinOv2Z0Fty8ebYiABkjA+no=;
+        b=CPjuClVMPSYNEvHyxsmVkf+NVxUToxbR7JULPp/oMXO0N/i+1EfeBkf3+k7y5G0sDp
+         XQ7byNNlhiUUBBvZTkuIPxRL0MxU6ydwyr415oeaxCusvjomH2fV/u/YnsyZhWk1Dqtk
+         ovw80wAhbfbu8ZWbuFqDEyYmmE0rZbA3Jy3CQg8/wx440N8m5leMpTmYmYq3Q7A16tpV
+         0967GWQaqT7dmjMni+mlEG4mzlwGILANvUO15KOAXQ3LBhtXAvMGcKAa6siAvrWXumxw
+         ahfD6cn/u6U/aCOtLxwpltnVb9HM4gygrstRGBALucTlUnqGRFrARWfhUKPSWiFeuy8m
+         BtLA==
+X-Gm-Message-State: AOAM531ErdzDkEp+9+ID01PVcbJqjS4j8m+/QbAEKmaRhbVTxOhMv8Th
+        tbERyqUHYMCKKvrrYlfjkAI=
+X-Google-Smtp-Source: ABdhPJy/FmVO48dQenPbdGoVxcnueQ5Ezi+D2vzMinBNnA+mU8HjRhyzJL7bE37NlcZ/w62odOp2sg==
+X-Received: by 2002:a1c:7e02:: with SMTP id z2mr3469696wmc.116.1591797761339;
+        Wed, 10 Jun 2020 07:02:41 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.184])
+        by smtp.googlemail.com with ESMTPSA id h27sm9724893wrb.18.2020.06.10.07.02.39
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 10 Jun 2020 07:02:40 -0700 (PDT)
+Date:   Wed, 10 Jun 2020 16:02:38 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Lukasz Luba <lukasz.luba@arm.com>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        s.nawrocki@samsung.com
+Subject: Re: Question about Odroid XU4 cpuidle
+Message-ID: <20200610140238.GA31473@kozik-lap>
+References: <570c73f2-d9d8-4ae1-3caf-829547232e48@arm.com>
 MIME-Version: 1.0
-References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
- <20200608112211.12125-1-andrzej.p@collabora.com> <964ca07a-3da5-101f-7edf-64bdeec98a4b@redhat.com>
- <CAJZ5v0hB2ra2K=dd9ZjVyy1V2b1PmFHm79uDO2HtHU1D_4YUbw@mail.gmail.com>
- <6136f26c-e090-e025-af55-4c5f3a6aec92@collabora.com> <3e61c9c1-b211-da9f-c55b-b44eb6522f2a@redhat.com>
-In-Reply-To: <3e61c9c1-b211-da9f-c55b-b44eb6522f2a@redhat.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 10 Jun 2020 16:01:45 +0200
-Message-ID: <CAJZ5v0gVBzLpQqNrV-kzV84mLB86Gd6Ws63RwBKT=r1WgbeDSQ@mail.gmail.com>
-Subject: Re: [PATCH v4 0/7] Support inhibiting input devices
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-iio@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>,
-        linux-input@vger.kernel.org,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        patches@opensource.cirrus.com,
-        ibm-acpi-devel@lists.sourceforge.net,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Barry Song <baohua@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Nick Dyer <nick@shmanahar.org>,
-        Ferruh Yigit <fery@cypress.com>,
-        Sangwon Jee <jeesw@melfas.com>,
-        Peter Hutterer <peter.hutterer@redhat.com>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        Collabora Kernel ML <kernel@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <570c73f2-d9d8-4ae1-3caf-829547232e48@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jun 10, 2020 at 3:21 PM Hans de Goede <hdegoede@redhat.com> wrote:
->
-> Hi,
->
-> On 6/10/20 3:12 PM, Andrzej Pietrasiewicz wrote:
-> > Hi All,
-> >
+On Wed, Jun 10, 2020 at 02:18:12PM +0100, Lukasz Luba wrote:
+> Hi Krzysztof, Bartek,
+> 
+> I recall that you have been working on some cpuidle code for Exynos(4?).
+> 
+> I have a question regarding CPUIdle driver for Odroid XU4.
+> I use the board with LISA tests for EAS, but missing at
+> least idle state 0 cause errors (please see the log below).
+> 
+> Currently the system does not report any idle driver and the state 0
+> is missing in: /sys/devices/system/cpu/cpu0/cpuidle/state0/
 
-[cut]
+The state 0 long time ago was WFI. It was kind of meaningless so it it
+was dropped.
 
-> > What would it mean to become a wakeup source if there are no users,
-> > or nobody has ever opened the device? There are no interested
-> > input handlers (users) so what's the point of becoming a wakeup
-> > source? Why would the system need to wake up?
->
-> Well this is what we have been doing so far, so arguably we
-> need to keep doing it to avoid regressions / breaking our ABI.
->
-> Lets for example take a laptop, where when suspended the
-> power-button is the only valid wakeup-source and this is
-> running good old slackware with fvwm2 or windowmaker as
-> "desktop environment", then likely no process will have
-> the power-button input evdev node open.  Still we should
-> wakeup the laptop on the power-button press, otherwise
-> it will never wakeup.
->
-> Note I agree with you that the way this works is not
-> ideal, I just do not think that we can change it.
+> 
+> I am using driver CONFIG_ARM_BIG_LITTLE_CPUIDLE but the
+> boot stops silently while trying to init the cpu idle devices in there.
+> I carry on with a workaround that just removes idle state[1] and set
+> state_count=1 in the big and little structures.
 
-Please note that "no users" merely means that user space is not
-interested in receiving and processing the events from that device.
+Try earlyprintk.
 
-If it is configured for system wakeup, it doesn't matter whether or
-not user space will consume the related events.
+In general, the big-little cpuidle driver should work... or rather: long
+time ago it was working.  It requires proper support from early stages
+(BL1, secure monitor) but this should be already in standard Odroid.
 
-Thanks!
+I just saw there:
+	/* Start at index 1, index 0 standard WFI */
+so maybe it was not updated properly to removal of WFI?
+
+I think no one uses this driver so it might be not well tested and not
+that useful.
+
+Best regards,
+Krzysztof
