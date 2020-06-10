@@ -2,312 +2,200 @@ Return-Path: <SRS0=SgCN=7X=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D769FC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Jun 2020 13:50:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B09DC433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Jun 2020 13:52:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B5883206F4
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Jun 2020 13:50:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E660E207C3
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Jun 2020 13:52:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LKDxCoh5"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RNgBmriM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726280AbgFJNur (ORCPT
+        id S1729535AbgFJNwZ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 10 Jun 2020 09:50:47 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:59419 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726095AbgFJNuq (ORCPT
+        Wed, 10 Jun 2020 09:52:25 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:47050 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729546AbgFJNwW (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 10 Jun 2020 09:50:46 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200610135044euoutp01352163cf80c2d9df3db42857ceba8d2b~XMvqAF8Az1689016890euoutp01z
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jun 2020 13:50:44 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200610135044euoutp01352163cf80c2d9df3db42857ceba8d2b~XMvqAF8Az1689016890euoutp01z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1591797044;
-        bh=BQdeWgG35Bj71xUO9vvKIOqxc2rmwgJFfxKGcOSQuCE=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=LKDxCoh57Co5Wvj/Htf1301U5fphf55K1lQ3XetGEw3j0ny7veghYSld+OnS6egIn
-         WYgvifbo2d7iWq9g+MPyMv/Q0KRsk5MDv8SHkKx6/7Y19MD3iE2xRKMU3jRHxGppkB
-         HpJgtX89zWMbJaqWXgXm+se+Y3ZKyD6xqSgEJKTY=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200610135044eucas1p25f0f253232fd62e7fdaa4d4fc242feaa~XMvpsDFA60381103811eucas1p2E;
-        Wed, 10 Jun 2020 13:50:44 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 27.00.61286.435E0EE5; Wed, 10
-        Jun 2020 14:50:44 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200610135044eucas1p2604d36df3a8715f456c80a5761b1bffc~XMvpTSC2V0795507955eucas1p27;
-        Wed, 10 Jun 2020 13:50:44 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200610135044eusmtrp2645bb8a81864c87f52e0acff01061e4f~XMvpSlMtO2129321293eusmtrp2M;
-        Wed, 10 Jun 2020 13:50:44 +0000 (GMT)
-X-AuditID: cbfec7f2-f0bff7000001ef66-92-5ee0e534925f
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id F5.0A.08375.335E0EE5; Wed, 10
-        Jun 2020 14:50:43 +0100 (BST)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200610135043eusmtip291b8068598e608b63ec3d274048a0bf1~XMvo3-ya51787417874eusmtip2F;
-        Wed, 10 Jun 2020 13:50:43 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-gpio@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Wed, 10 Jun 2020 09:52:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1591797140;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=YL2CUX+ytcqKztbtjkEaTAotWFK6JYYqCnPu2fBEOuA=;
+        b=RNgBmriM4ahFUxcS7Fg9c2XAKyovRc1vbF3yWBevYkrsDtYMZYq+0YkfnznkHE7+87EJiz
+        8cG3QCQqdrGNc0n8sVym0ptbpk5JY0AId2TxhStM8tX/tw86bzhGaE0OS+2A4XTehSFOHL
+        SbVZ2Gna7dWtJJxjK6K+HwBkthAcMJ4=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-510-gwDRfgayPsuNPhxmqlZ0zw-1; Wed, 10 Jun 2020 09:52:18 -0400
+X-MC-Unique: gwDRfgayPsuNPhxmqlZ0zw-1
+Received: by mail-ej1-f72.google.com with SMTP id c30so1135972ejj.10
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jun 2020 06:52:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YL2CUX+ytcqKztbtjkEaTAotWFK6JYYqCnPu2fBEOuA=;
+        b=AM3Sw2zrlIamaFw5J0xPZONYkp0hAVCYfF+u9h57hBCFbpfAiEgDd8t/YO5q4EiRLe
+         F3SwQfEkxE6sLQP5zjQJ0GVmclNmBu7hnAdCOEzsyW9QebOZHrV7OedNHd5UAFJquoF7
+         BTjf8ED4WM/ijOfW/ezBJoAvExB3WHQypO6vTcIjHV8WlII5siVlhcdeu5X273A1guQS
+         QqNs5UdtOE4bGUWddUjQdDeE/jf0aHXdONiL1za8C/nThjRq3gqWFk0pkVYL19D4X7AX
+         6PVmaRwicaLqSpjQgCWD0I41cl1lIs4+55Ub6i4NVg2RHYpSlFLG0VBmxNbRoX5qWfBp
+         /phQ==
+X-Gm-Message-State: AOAM533sWKfX8cFrTRpQGBtHhpMPk1WICyxWaBC4Y3vx+POCZGLz+Y7D
+        MYDcuQmPS68gtGbLwXuJvrSJb/q5tBb4khQKSmk+WTZNrDTrTNq9auaavMbo8XpZs3cK+QeK5Lt
+        p/JHJYR48ZdmPC0oYF8WVCUdU/M+x55U=
+X-Received: by 2002:a50:b2e1:: with SMTP id p88mr2582783edd.198.1591797137513;
+        Wed, 10 Jun 2020 06:52:17 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxEJek1TXZYUkZ6pG2p869jbxR9ODYMKVkeJa1/sT8kaPG7Zk4zmYdct4EtD9GIM7FcH0rbNA==
+X-Received: by 2002:a50:b2e1:: with SMTP id p88mr2582761edd.198.1591797137192;
+        Wed, 10 Jun 2020 06:52:17 -0700 (PDT)
+Received: from x1.localdomain (2001-1c00-0c0c-fe00-d2ea-f29d-118b-24dc.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:d2ea:f29d:118b:24dc])
+        by smtp.gmail.com with ESMTPSA id dm1sm16655504ejc.99.2020.06.10.06.52.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Jun 2020 06:52:16 -0700 (PDT)
+Subject: Re: [PATCH v4 0/7] Support inhibiting input devices
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-iio@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>,
+        linux-input@vger.kernel.org,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        patches@opensource.cirrus.com,
+        ibm-acpi-devel@lists.sourceforge.net,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v2] pinctrl: samsung: Use bank name as irqchip name
-Date:   Wed, 10 Jun 2020 15:48:24 +0200
-Message-Id: <20200610134824.13053-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJIsWRmVeSWpSXmKPExsWy7djPc7omTx/EGSxvlbDYOGM9q8X1L89Z
-        Lc6f38BuMeXPciaLzfP/MFrMOL+PyWLtkbvsFofftLNarNr1h9GB02PnrLvsHptWdbJ53Lm2
-        h82jb8sqRo/Pm+QCWKO4bFJSczLLUov07RK4Mk6t2MRW8MmqYur7K6wNjP/0uxg5OCQETCT2
-        LCvpYuTiEBJYwSix/fwiRgjnC6PEjgvPmCCcz4wSb9a+Ze9i5ATr2H2mixkisZxRovnacxa4
-        lr5nh1lAqtgEDCW63naxgdgiAo4SPzesYgUpYhbYxiRxvusQWEJYwFnixM+ZrCA2i4CqxLXV
-        JxlBbF4BW4nW6VfZINbJS6zecABsnYTAczaJJ23HmSESLhI79m2HuklY4tXxLVC2jMT/nfOZ
-        IBqaGSUenlvLDuH0MEpcbprBCFFlLXHn3C82UBgwC2hKrN+lDxF2lOj5+IAFEjR8EjfeCoKE
-        mYHMSdumM0OEeSU62oQgqtUkZh1fB7f24IVLUCUeEud/iYCEhQRiJVYe/cg2gVFuFsKqBYyM
-        qxjFU0uLc9NTiw3zUsv1ihNzi0vz0vWS83M3MQITxOl/xz/tYPx6KekQowAHoxIPr8HeB3FC
-        rIllxZW5hxglOJiVRHidzp6OE+JNSaysSi3Kjy8qzUktPsQozcGiJM5rvOhlrJBAemJJanZq
-        akFqEUyWiYNTqoGxsm+XabGq8OKmswmWIW9Er/RZf/Bbwn1SZ8nDsulLb71adPzAXbtnTSle
-        8ZdPX77FN/3JcgcWrX157ibWt+x+HfuyP/vwoyuBybs9V70+1RHwKrN1m/m0yd3fklJeiDXs
-        7Hsbfi3RZev7F5O8qi7PWBeawJljXx1t8e5wkqgI/6SdGRtra9RLlFiKMxINtZiLihMB9Eux
-        5wwDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPLMWRmVeSWpSXmKPExsVy+t/xe7rGTx/EGbzcaW2xccZ6VovrX56z
-        Wpw/v4HdYsqf5UwWm+f/YbSYcX4fk8XaI3fZLQ6/aWe1WLXrD6MDp8fOWXfZPTat6mTzuHNt
-        D5tH35ZVjB6fN8kFsEbp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk
-        5mSWpRbp2yXoZZxasYmt4JNVxdT3V1gbGP/pdzFyckgImEjsPtPFDGILCSxllHj/QgoiLiNx
-        cloDK4QtLPHnWhdbFyMXUM0nRokHi2YwgSTYBAwlut6CJDg5RAScJW682ssCUsQssItJomXN
-        YbCEMFDixM+ZYJNYBFQlrq0+yQhi8wrYSrROv8oGsUFeYvWGA8wTGHkWMDKsYhRJLS3OTc8t
-        NtQrTswtLs1L10vOz93ECAzMbcd+bt7BeGlj8CFGAQ5GJR5eg70P4oRYE8uKK3MPMUpwMCuJ
-        8DqdPR0nxJuSWFmVWpQfX1Sak1p8iNEUaPlEZinR5Hxg1OSVxBuaGppbWBqaG5sbm1koifN2
-        CByMERJITyxJzU5NLUgtgulj4uCUamDk8G6Y/Unt5I0/K3qdqtJ8D6rw9H7TLf5fsi+UoWRO
-        r7pgrfLag3b/dqfaH3y9sz/2iEbvo9sbJ9/1tzKZbRaz5Hin8okJLA3zDxfualo5adoSrgfy
-        Nrff+56tfiVyfZniOuZ1Nu8uzdr3QcLOxCrQQu25/TbLM86Pbafc51PYduDlovUrNLczKLEU
-        ZyQaajEXFScCAPwZcYRiAgAA
-X-CMS-MailID: 20200610135044eucas1p2604d36df3a8715f456c80a5761b1bffc
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200610135044eucas1p2604d36df3a8715f456c80a5761b1bffc
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200610135044eucas1p2604d36df3a8715f456c80a5761b1bffc
-References: <CGME20200610135044eucas1p2604d36df3a8715f456c80a5761b1bffc@eucas1p2.samsung.com>
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Barry Song <baohua@kernel.org>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Nick Dyer <nick@shmanahar.org>,
+        Ferruh Yigit <fery@cypress.com>,
+        Sangwon Jee <jeesw@melfas.com>,
+        Peter Hutterer <peter.hutterer@redhat.com>,
+        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        Collabora Kernel ML <kernel@collabora.com>
+References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
+ <20200608112211.12125-1-andrzej.p@collabora.com>
+ <964ca07a-3da5-101f-7edf-64bdeec98a4b@redhat.com>
+ <CAJZ5v0hB2ra2K=dd9ZjVyy1V2b1PmFHm79uDO2HtHU1D_4YUbw@mail.gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <cd0dc625-c0bf-8322-fc31-c5eccb4be1cd@redhat.com>
+Date:   Wed, 10 Jun 2020 15:52:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAJZ5v0hB2ra2K=dd9ZjVyy1V2b1PmFHm79uDO2HtHU1D_4YUbw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use the bank name as the irqchip name. This name is later visible in
-/proc/interrupts, what makes it possible to easily identify each
-GPIO interrupt.
+Hi,
 
-/proc/interrupts before this patch:
-143:    0     exynos4210_wkup_irq_chip   7 Edge      hdmi
-144:    0     exynos4210_wkup_irq_chip   6 Level     wm8994
-145:    1     exynos4210_wkup_irq_chip   7 Edge      max77686-pmic, max77686-rtc
-146:    1     exynos_gpio_irq_chip   3 Edge      3-0048
+On 6/10/20 12:38 PM, Rafael J. Wysocki wrote:
+> On Wed, Jun 10, 2020 at 11:50 AM Hans de Goede <hdegoede@redhat.com> wrote:
 
-/proc/interrupts after this patch:
-143:    0     gpx3   7 Edge      hdmi
-144:    0     gpx3   6 Level     wm8994
-145:    1     gpx0   7 Edge      max77686-pmic, max77686-rtc
-146:    1     gpm2   3 Edge      3-0048
+<snip>
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-v2:
-- reordered code to fix error handling
-- fixed eint_wakeup_mask_value handling
-- added __init annotations
+>> A different, but related issue is how to make devices actually use the
+>> new inhibit support on the builtin keyboard + touchpad when say the lid
+>> is closed.   Arguably this is an userspace problem, but it is a tricky
+>> one. Currently on most modern Linux distributions suspend-on-lid-close
+>> is handled by systemd-logind and most modern desktop-environments are
+>> happy to have logind handle this for them.
+>>
+>> But most knowledge about input devices and e.g. heurisitics to decide
+>> if a touchpad is internal or external are part of libinput. Now we could
+>> have libinput use the new inhibit support (1), but then when the lid
+>> closes we get race between whatever process is using libinput trying
+>> to inhibit the touchpad (which must be done before to suspend to disable
+>> it as wakeup source) and logind trying to suspend the system.
+>>
+>> One solution here would be to move the setting of the inhibit sysfs
+>> attr into logind, but that requires adding a whole bunch of extra
+>> knowledge to logind which does not really belong there IMHO.
+>>
+>> I've been thinking a bit about this and to me it seems that the kernel
+>> is in the ideal position to automatically inhibit some devices when
+>> some EV_SW transitions from 0->1 (and uninhibit again on 1->0). The
+>> issue here is to chose on which devices to enable this. I believe
+>> that the auto inhibit on some switches mechanism is best done inside
+>> the kernel (disabled by default) and then we can have a sysfs
+>> attr called auto_inhibit_ev_sw_mask which can be set to e.g.
+>> (1 << SW_LID) to make the kernel auto-inhibit the input-device whenever
+>> the lid is closed, or to ((1 << SW_LID) | (1 << SW_TABLET_MODE)) to
+>> inhibit both when the lid is closed or when switched to tablet mode.
+> 
+> I agree that the kernel is the right place to handle this, but it
+> requires some extra knowledge about dependencies between devices.
+>
+> It'd be kind of like power resources in ACPI, so for each state of a
+> "master" device (in principle, there may be more states of it than
+> just two) there would be a list of "dependent" intput devices that
+> need to be inhibited when the "master" device goes into that state.
 
-v1: https://patchwork.kernel.org/patch/11594897/
-- initial version
----
- drivers/pinctrl/samsung/pinctrl-exynos.c | 52 +++++++++++++-----------
- 1 file changed, 29 insertions(+), 23 deletions(-)
+So a big part of the reason to punt the decision on which input
+devices to enable this auto-inhibit is that we don't really have
+information about those relationsships / device-links you are
+suggesting here.  libinput is already doing inhibiting inside
+userspace for e.g. the tablet-mode switch but it relies on heuristics
++ quirk tables to decide which keyboards should be inhibited and which
+not.
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 84501c785473..21a800134c42 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -38,7 +38,7 @@ struct exynos_irq_chip {
- 	u32 eint_con;
- 	u32 eint_mask;
- 	u32 eint_pend;
--	u32 eint_wake_mask_value;
-+	u32 *eint_wake_mask_value;
- 	u32 eint_wake_mask_reg;
- 	void (*set_eint_wakeup_mask)(struct samsung_pinctrl_drv_data *drvdata,
- 				     struct exynos_irq_chip *irq_chip);
-@@ -207,7 +207,7 @@ static void exynos_irq_release_resources(struct irq_data *irqd)
- /*
-  * irq_chip for gpio interrupts.
-  */
--static struct exynos_irq_chip exynos_gpio_irq_chip = {
-+static const struct exynos_irq_chip exynos_gpio_irq_chip __initconst = {
- 	.chip = {
- 		.name = "exynos_gpio_irq_chip",
- 		.irq_unmask = exynos_irq_unmask,
-@@ -274,7 +274,7 @@ struct exynos_eint_gpio_save {
-  * exynos_eint_gpio_init() - setup handling of external gpio interrupts.
-  * @d: driver data of samsung pinctrl driver.
-  */
--int exynos_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
-+__init int exynos_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
- {
- 	struct samsung_pin_bank *bank;
- 	struct device *dev = d->dev;
-@@ -297,6 +297,15 @@ int exynos_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
- 	for (i = 0; i < d->nr_banks; ++i, ++bank) {
- 		if (bank->eint_type != EINT_TYPE_GPIO)
- 			continue;
-+
-+		bank->irq_chip = devm_kmemdup(dev, &exynos_gpio_irq_chip,
-+					   sizeof(*bank->irq_chip), GFP_KERNEL);
-+		if (!bank->irq_chip) {
-+			ret = -ENOMEM;
-+			goto err_domains;
-+		}
-+		bank->irq_chip->chip.name = bank->name;
-+
- 		bank->irq_domain = irq_domain_add_linear(bank->of_node,
- 				bank->nr_pins, &exynos_eint_irqd_ops, bank);
- 		if (!bank->irq_domain) {
-@@ -313,7 +322,6 @@ int exynos_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
- 			goto err_domains;
- 		}
- 
--		bank->irq_chip = &exynos_gpio_irq_chip;
- 	}
- 
- 	return 0;
-@@ -338,9 +346,9 @@ static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
- 	pr_info("wake %s for irq %d\n", on ? "enabled" : "disabled", irqd->irq);
- 
- 	if (!on)
--		our_chip->eint_wake_mask_value |= bit;
-+		*our_chip->eint_wake_mask_value |= bit;
- 	else
--		our_chip->eint_wake_mask_value &= ~bit;
-+		*our_chip->eint_wake_mask_value &= ~bit;
- 
- 	return 0;
- }
-@@ -386,6 +394,7 @@ s5pv210_pinctrl_set_eint_wakeup_mask(struct samsung_pinctrl_drv_data *drvdata,
- 		     clk_base + irq_chip->eint_wake_mask_reg);
- }
- 
-+static u32 eint_wake_mask_value = EXYNOS_EINT_WAKEUP_MASK_DISABLED;
- /*
-  * irq_chip for wakeup interrupts
-  */
-@@ -403,7 +412,7 @@ static const struct exynos_irq_chip s5pv210_wkup_irq_chip __initconst = {
- 	.eint_con = EXYNOS_WKUP_ECON_OFFSET,
- 	.eint_mask = EXYNOS_WKUP_EMASK_OFFSET,
- 	.eint_pend = EXYNOS_WKUP_EPEND_OFFSET,
--	.eint_wake_mask_value = EXYNOS_EINT_WAKEUP_MASK_DISABLED,
-+	.eint_wake_mask_value = &eint_wake_mask_value,
- 	/* Only differences with exynos4210_wkup_irq_chip: */
- 	.eint_wake_mask_reg = S5PV210_EINT_WAKEUP_MASK,
- 	.set_eint_wakeup_mask = s5pv210_pinctrl_set_eint_wakeup_mask,
-@@ -423,7 +432,7 @@ static const struct exynos_irq_chip exynos4210_wkup_irq_chip __initconst = {
- 	.eint_con = EXYNOS_WKUP_ECON_OFFSET,
- 	.eint_mask = EXYNOS_WKUP_EMASK_OFFSET,
- 	.eint_pend = EXYNOS_WKUP_EPEND_OFFSET,
--	.eint_wake_mask_value = EXYNOS_EINT_WAKEUP_MASK_DISABLED,
-+	.eint_wake_mask_value = &eint_wake_mask_value,
- 	.eint_wake_mask_reg = EXYNOS_EINT_WAKEUP_MASK,
- 	.set_eint_wakeup_mask = exynos_pinctrl_set_eint_wakeup_mask,
- };
-@@ -442,7 +451,7 @@ static const struct exynos_irq_chip exynos7_wkup_irq_chip __initconst = {
- 	.eint_con = EXYNOS7_WKUP_ECON_OFFSET,
- 	.eint_mask = EXYNOS7_WKUP_EMASK_OFFSET,
- 	.eint_pend = EXYNOS7_WKUP_EPEND_OFFSET,
--	.eint_wake_mask_value = EXYNOS_EINT_WAKEUP_MASK_DISABLED,
-+	.eint_wake_mask_value = &eint_wake_mask_value,
- 	.eint_wake_mask_reg = EXYNOS5433_EINT_WAKEUP_MASK,
- 	.set_eint_wakeup_mask = exynos_pinctrl_set_eint_wakeup_mask,
- };
-@@ -513,7 +522,7 @@ static void exynos_irq_demux_eint16_31(struct irq_desc *desc)
-  * exynos_eint_wkup_init() - setup handling of external wakeup interrupts.
-  * @d: driver data of samsung pinctrl driver.
-  */
--int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
-+__init int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
- {
- 	struct device *dev = d->dev;
- 	struct device_node *wkup_np = NULL;
-@@ -521,7 +530,7 @@ int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
- 	struct samsung_pin_bank *bank;
- 	struct exynos_weint_data *weint_data;
- 	struct exynos_muxed_weint_data *muxed_data;
--	struct exynos_irq_chip *irq_chip;
-+	const struct exynos_irq_chip *irq_chip;
- 	unsigned int muxed_banks = 0;
- 	unsigned int i;
- 	int idx, irq;
-@@ -531,12 +540,7 @@ int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
- 
- 		match = of_match_node(exynos_wkup_irq_ids, np);
- 		if (match) {
--			irq_chip = kmemdup(match->data,
--				sizeof(*irq_chip), GFP_KERNEL);
--			if (!irq_chip) {
--				of_node_put(np);
--				return -ENOMEM;
--			}
-+			irq_chip = match->data;
- 			wkup_np = np;
- 			break;
- 		}
-@@ -549,6 +553,14 @@ int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
- 		if (bank->eint_type != EINT_TYPE_WKUP)
- 			continue;
- 
-+		bank->irq_chip = devm_kmemdup(dev, irq_chip, sizeof(*irq_chip),
-+					      GFP_KERNEL);
-+		if (!bank->irq_chip) {
-+			of_node_put(wkup_np);
-+			return -ENOMEM;
-+		}
-+		bank->irq_chip->chip.name = bank->name;
-+
- 		bank->irq_domain = irq_domain_add_linear(bank->of_node,
- 				bank->nr_pins, &exynos_eint_irqd_ops, bank);
- 		if (!bank->irq_domain) {
-@@ -557,8 +569,6 @@ int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
- 			return -ENXIO;
- 		}
- 
--		bank->irq_chip = irq_chip;
--
- 		if (!of_find_property(bank->of_node, "interrupts", NULL)) {
- 			bank->eint_type = EINT_TYPE_WKUP_MUX;
- 			++muxed_banks;
-@@ -657,10 +667,6 @@ void exynos_pinctrl_suspend(struct samsung_pinctrl_drv_data *drvdata)
- 				irq_chip = bank->irq_chip;
- 				irq_chip->set_eint_wakeup_mask(drvdata,
- 							       irq_chip);
--			} else if (bank->irq_chip != irq_chip) {
--				dev_warn(drvdata->dev,
--					 "More than one external wakeup interrupt chip configured (bank: %s). This is not supported by hardware nor by driver.\n",
--					 bank->name);
- 			}
- 		}
- 	}
--- 
-2.17.1
+E.g. for a 360 degree hinges 2-in-1 we want to disable the builtin
+keyboard, when folded into in tablet mode, but not any external ones.
+
+Mostly the builtin kbd will be PS2 but I have one such 2-in-1 here
+in my home office with a USB kbd ...
+
+In general of the master devices there will be only 1, there will be
+only 1 lid switch and only 1 tablet-mode switch. So my idea with the
+auto_inhibit_ev_sw_mask, is for it to be a per input-device setting.
+
+So using your terms, all input devices with the (1 << SW_LID) bit
+set in their auto_inhibit_ev_sw_mask will be dependents of the
+(master) device which actually is reporting the SW_LID bit.
+
+The idea here is for this to work the same as how the rfkill code
+from net/rfkill/input.c works, except instead of binding e.g.
+KEY_WLAN to toggling the sw-state of rfkill devices with a type
+of RFKILL_TYPE_WLAN. This will bind SW_LID to inhibiting input
+devices with the SW_LID bit set in their auto_inhibit_ev_sw_mask.
+
+Regards,
+
+Hans
 
