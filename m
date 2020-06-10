@@ -3,245 +3,104 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CC7BC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Jun 2020 13:12:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6002C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Jun 2020 13:18:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B7C520820
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Jun 2020 13:12:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91AC2206F4
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Jun 2020 13:18:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729229AbgFJNMj (ORCPT
+        id S1728874AbgFJNSS (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 10 Jun 2020 09:12:39 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:35014 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729120AbgFJNMj (ORCPT
+        Wed, 10 Jun 2020 09:18:18 -0400
+Received: from foss.arm.com ([217.140.110.172]:58618 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728864AbgFJNSR (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 10 Jun 2020 09:12:39 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: andrzej.p)
-        with ESMTPSA id DE8CE2A44F8
-Subject: Re: [PATCH v4 0/7] Support inhibiting input devices
-To:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-iio@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>,
-        linux-input@vger.kernel.org,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        patches@opensource.cirrus.com,
-        ibm-acpi-devel@lists.sourceforge.net,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Barry Song <baohua@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Nick Dyer <nick@shmanahar.org>,
-        Ferruh Yigit <fery@cypress.com>,
-        Sangwon Jee <jeesw@melfas.com>,
-        Peter Hutterer <peter.hutterer@redhat.com>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        Collabora Kernel ML <kernel@collabora.com>
-References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
- <20200608112211.12125-1-andrzej.p@collabora.com>
- <964ca07a-3da5-101f-7edf-64bdeec98a4b@redhat.com>
- <CAJZ5v0hB2ra2K=dd9ZjVyy1V2b1PmFHm79uDO2HtHU1D_4YUbw@mail.gmail.com>
-From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Message-ID: <6136f26c-e090-e025-af55-4c5f3a6aec92@collabora.com>
-Date:   Wed, 10 Jun 2020 15:12:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Wed, 10 Jun 2020 09:18:17 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 75EDD1F1;
+        Wed, 10 Jun 2020 06:18:16 -0700 (PDT)
+Received: from [10.37.12.16] (unknown [10.37.12.16])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 04CD73F66F;
+        Wed, 10 Jun 2020 06:18:14 -0700 (PDT)
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        s.nawrocki@samsung.com
+From:   Lukasz Luba <lukasz.luba@arm.com>
+Subject: Question about Odroid XU4 cpuidle
+Message-ID: <570c73f2-d9d8-4ae1-3caf-829547232e48@arm.com>
+Date:   Wed, 10 Jun 2020 14:18:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0hB2ra2K=dd9ZjVyy1V2b1PmFHm79uDO2HtHU1D_4YUbw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi All,
+Hi Krzysztof, Bartek,
 
-W dniu 10.06.2020 o 12:38, Rafael J. Wysocki pisze:
-> On Wed, Jun 10, 2020 at 11:50 AM Hans de Goede <hdegoede@redhat.com> wrote:
->>
->> Hi All,
->>
->> On 6/8/20 1:22 PM, Andrzej Pietrasiewicz wrote:
->>> This is a quick respin of v3, with just two small changes, please see
->>> the changelog below.
->>>
->>> Userspace might want to implement a policy to temporarily disregard input
->>> from certain devices.
->>>
->>> An example use case is a convertible laptop, whose keyboard can be folded
->>> under the screen to create tablet-like experience. The user then must hold
->>> the laptop in such a way that it is difficult to avoid pressing the keyboard
->>> keys. It is therefore desirable to temporarily disregard input from the
->>> keyboard, until it is folded back. This obviously is a policy which should
->>> be kept out of the kernel, but the kernel must provide suitable means to
->>> implement such a policy.
->>
->> First of all sorry to start a somewhat new discussion about this
->> while this patch set is also somewhat far along in the review process,
->> but I believe what I discuss below needs to be taken into account.
->>
->> Yesterday I have been looking into why an Asus T101HA would not stay
->> suspended when the LID is closed. The cause is that the USB HID multi-touch
->> touchpad in the base of the device starts sending events when the screen
->> gets close to the touchpad (so when the LID is fully closed) and these
->> events are causing a wakeup from suspend. HID multi-touch devices
->> do have a way to tell them to fully stop sending events, also disabling
->> the USB remote wakeup the device is doing. The question is when to tell
->> it to not send events though ...
->>
->> So now I've been thinking about how to fix this and I believe that there
->> is some interaction between this problem and this patch-set.
->>
->> The problem I'm seeing on the T101HA is about wakeups, so the question
->> which I want to discuss is:
->>
->> 1. How does inhibiting interact with enabling /
->> disabling the device as a wakeup source ?
->>
->> 2. Since we have now made inhibiting equal open/close how does open/close
->> interact with a device being a wakeup source ?
->>
->> And my own initial (to be discussed) answers to these questions:
->>
->> 1. It seems to me that when a device is inhibited it should not be a
->> wakeup source, so where possible a input-device-driver should disable
->> a device's wakeup capabilities on suspend if inhibited
-> 
-> If "inhibit" means "do not generate any events going forward", then
-> this must also cover wakeup events, so I agree.
+I recall that you have been working on some cpuidle code for Exynos(4?).
 
-I agree, too.
+I have a question regarding CPUIdle driver for Odroid XU4.
+I use the board with LISA tests for EAS, but missing at
+least idle state 0 cause errors (please see the log below).
 
-> 
->> 2. This one is trickier I don't think we have really clearly specified
->> any behavior here. The default behavior of most drivers seems to be
->> using something like this in their suspend callback:
->>
->>           if (device_may_wakeup(dev))
->>                   enable_irq_wake(data->irq);
->>           else if (input->users)
->>                   foo_stop_receiving_events(data);
->>
->> Since this is what most drivers seem to do I believe we should keep
->> this as is and that we should just clearly document that if the
->> input_device has users (has been opened) or not does not matter
->> for its wakeup behavior.
->>
->> Combining these 2 answers leads to this new pseudo code template
->> for an input-device's suspend method:
->>
->>          /*
->>           * If inhibited we have already disabled events and
->>           * we do NOT want to setup the device as wake source.
->>           */
->>          if (input->inhibited)
->>                  return 0;
+Currently the system does not report any idle driver and the state 0
+is missing in: /sys/devices/system/cpu/cpu0/cpuidle/state0/
 
-Right, if a device is inhibited it shouldn't become a wakeup source,
-because that would contradict the purpose of being inhibited.
+I am using driver CONFIG_ARM_BIG_LITTLE_CPUIDLE but the
+boot stops silently while trying to init the cpu idle devices in there.
+I carry on with a workaround that just removes idle state[1] and set
+state_count=1 in the big and little structures.
 
->>
->>           if (device_may_wakeup(dev))
->>                   enable_irq_wake(data->irq);
+Could you tell me if it needs some out-of-tree patches or maybe special
+bootloader or it is not possible at all to have this driver working
+properly? Or maybe I should use different driver on that board?
 
-What would it mean to become a wakeup source if there are no users,
-or nobody has ever opened the device? There are no interested
-input handlers (users) so what's the point of becoming a wakeup
-source? Why would the system need to wake up?
+----------------->8--------------------------------
+EXCEPTION (KeyError): 'No idle state with index 0'
+----------------------------------------
 
->>           else if (input->users)
->>                   foo_stop_receiving_events(data);
->>
->> ###
-> 
-> Sounds reasonable to me.
-> 
->> A different, but related issue is how to make devices actually use the
->> new inhibit support on the builtin keyboard + touchpad when say the lid
->> is closed.   Arguably this is an userspace problem, but it is a tricky
->> one. Currently on most modern Linux distributions suspend-on-lid-close
->> is handled by systemd-logind and most modern desktop-environments are
->> happy to have logind handle this for them.
->>
->> But most knowledge about input devices and e.g. heurisitics to decide
->> if a touchpad is internal or external are part of libinput. Now we could
->> have libinput use the new inhibit support (1), but then when the lid
->> closes we get race between whatever process is using libinput trying
->> to inhibit the touchpad (which must be done before to suspend to disable
->> it as wakeup source) and logind trying to suspend the system.
->>
->> One solution here would be to move the setting of the inhibit sysfs
->> attr into logind, but that requires adding a whole bunch of extra
->> knowledge to logind which does not really belong there IMHO.
->>
->> I've been thinking a bit about this and to me it seems that the kernel
->> is in the ideal position to automatically inhibit some devices when
->> some EV_SW transitions from 0->1 (and uninhibit again on 1->0). The
->> issue here is to chose on which devices to enable this. I believe
->> that the auto inhibit on some switches mechanism is best done inside
->> the kernel (disabled by default) and then we can have a sysfs
->> attr called auto_inhibit_ev_sw_mask which can be set to e.g.
->> (1 << SW_LID) to make the kernel auto-inhibit the input-device whenever
->> the lid is closed, or to ((1 << SW_LID) | (1 << SW_TABLET_MODE)) to
->> inhibit both when the lid is closed or when switched to tablet mode.
-> 
-> I agree that the kernel is the right place to handle this, but it
-> requires some extra knowledge about dependencies between devices.
-> 
-> It'd be kind of like power resources in ACPI, so for each state of a
-> "master" device (in principle, there may be more states of it than
-> just two) there would be a list of "dependent" intput devices that
-> need to be inhibited when the "master" device goes into that state.
-> 
->> This could then be combined with a userspace utility run from an
->> udev rule which makes the actual decision what auto_inhibit_ev_sw_mask
->> should be set for a given input device.
->>
->> This will put the mechanism for what we want inside the kernel and
->> leaves the policy on which switches we want this for out of the
->> kernel.
->>
->> Note adding this new auto_inhibit_ev_sw_mask sysfs attr falls
->> somewhat outside the context of this patchset and could be done
->> as a follow up to this patch-set.
+################################################################################
+[2020-06-08 17:53:51,333][EXEKALL] INFO  Artifacts dir: 
+/data/llu/lisa/results/20200608_17:47:19_02627c97a1de40588d800f5b777eb9e3
+[2020-06-08 17:53:51,334][EXEKALL] INFO  Result summary:
+EnergyModelWakeMigration[board=odroidxu4]:test_task_placement 
+UUID=b264d606c7164c8192eae59eb26d5104 EXCEPTION (KeyError): 'No idle 
+state with index 0'
+OneSmallTask[board=odroidxu4]:test_task_placement 
+UUID=c95afb9d5ab84d4f9f945e8e9b87aaea EXCEPTION (KeyError): 'No idle 
+state with index 0'
+RampDown[board=odroidxu4]:test_task_placement 
+UUID=6b9d7be94a43441c94d87543d612fde0 EXCEPTION (KeyError): 'No idle 
+state with index 0'
+RampUp[board=odroidxu4]:test_task_placement 
+UUID=7a60af8c17344214bd8602ac24767976 EXCEPTION (KeyError): 'No idle 
+state with index 0'
+ThreeSmallTasks[board=odroidxu4]:test_task_placement 
+UUID=25ec227753ce4ac3b409c88e7a8f9d78 EXCEPTION (KeyError): 'No idle 
+state with index 0'
+TwoBigTasks[board=odroidxu4]:test_task_placement 
+UUID=9e8b9148685748ed9d632912fc83f4ba EXCEPTION (KeyError): 'No idle 
+state with index 0'
+TwoBigThreeSmall[board=odroidxu4]:test_task_placement 
+UUID=a0c98621f160400fb5487d8db1c69f95 EXCEPTION (KeyError): 'No idle 
+state with index 0'
 
-Yes, please ;)
+----------------8<--------------------------------------------------
 
-But I do believe that we need to
->> figure out how (non ChromeOS) userspace can / will use the new inhibit
->> interface before merging it.
-
-Of course.
+I appreciate your advice.
 
 Regards,
-
-Andrzej
+Lukasz
