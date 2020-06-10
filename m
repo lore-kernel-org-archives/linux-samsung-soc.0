@@ -2,123 +2,185 @@ Return-Path: <SRS0=SgCN=7X=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66B6BC433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Jun 2020 01:28:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD0FCC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Jun 2020 06:49:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D14D2074B
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Jun 2020 01:28:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="JcyUlr+W"
+	by mail.kernel.org (Postfix) with ESMTP id AC7512074B
+	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Jun 2020 06:49:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1591771779;
+	bh=lLnmcknRM20+H4KDtgr1N7QZZgQwtxGyLQ2mWae2W6c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=vbTC1f6AsaoHsXofLgBMp1RNwZpqKOIQETwq/uYC8HF1SlR/JDcyOtGV63rc1TIRI
+	 +IikSb1pmQ105THEwQOEbM+WR3JuI4PXzg9gnwfocFPfK6a6QdpX/ntbltLqy+1NYc
+	 0/HnkIheGsqICdYVG9AsvUukG/D6wHLvSRJaKYaY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726038AbgFJB2O (ORCPT
+        id S1726095AbgFJGtj (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Tue, 9 Jun 2020 21:28:14 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:40293 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725944AbgFJB2M (ORCPT
+        Wed, 10 Jun 2020 02:49:39 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35904 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbgFJGtj (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Tue, 9 Jun 2020 21:28:12 -0400
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 49hTrh691xz8r;
-        Wed, 10 Jun 2020 03:28:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1591752489; bh=GKakFZj7r0PwB6e2LKfOoZiiZ9swBqGVdyd905VRjjc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JcyUlr+WvHTHmVp9QAURy3vHUtHVVvuUk1Xc6U+oronaswAv4sPlpbwXkVXPI8OAh
-         +ZCIKP6b32XkKvBIkcDKfm7t5TkDfmLGkNf74ukWIjaGqoW7qPfkxtWoih0Eomc4q/
-         w2zgsXY6Ruhf8XUqJzx4KoGN+dBRlxxN21IxsSv4ms6v4OXw8WDPGKcSmtcRlDrzu+
-         SXD6KNjcaDfhF9rBu5rWcpoycCx3SX/hJ8Ihse3BcYOPhIiNqNAicuPBIwHgj3I9AF
-         SpBhhg7k+AJoi+ZsRdKBumYPce06a6uaA4FP/36CK0TBm0UvejlWb02cPOjzHiUszs
-         CUzBf4na9/iZw==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.102.2 at mail
-Date:   Wed, 10 Jun 2020 03:28:01 +0200
-From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Cc:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-tegra@vger.kernel.org, patches@opensource.cirrus.com,
-        ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Barry Song <baohua@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Nick Dyer <nick@shmanahar.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Ferruh Yigit <fery@cypress.com>,
-        Sangwon Jee <jeesw@melfas.com>,
-        Peter Hutterer <peter.hutterer@redhat.com>,
-        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        kernel@collabora.com
-Subject: Re: [PATCH v4 5/7] iio: adc: exynos: Use input_device_enabled()
-Message-ID: <20200610012801.GA11530@qmqm.qmqm.pl>
-References: <2336e15d-ff4b-bbb6-c701-dbf3aa110fcd@redhat.com>
- <20200608112211.12125-1-andrzej.p@collabora.com>
- <20200608112211.12125-6-andrzej.p@collabora.com>
+        Wed, 10 Jun 2020 02:49:39 -0400
+Received: by mail-wr1-f66.google.com with SMTP id q11so921223wrp.3;
+        Tue, 09 Jun 2020 23:49:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+2RflAbiZFNXscYVcTRcL3mwiWsg2XTLWoR4ERYm7ms=;
+        b=IyGuuFvahSsr9+mYglsAHESTS6ZzGHxYnoBomn7770HJ3zwytoFTjnrEtJoXFTAsQi
+         xc/scuXPUPhSHljSiZkgoW+/64K06rF/Ua79Zhja+mG4p+kQTwyFkx2cdmtWzWN6jBCp
+         o58fLKzEGD3sfNB786znZKMHPytwnI+XiKO0sX08oY+WzekwcK7xexBqIS5gbtGP1jWX
+         p3fX2UAJg4QtJGHE3/xOhK3Oi6r6+VAWRRbVzXzlcsvEf9s6mXVYKjl1XJTAYsSVwwd7
+         6xHjWvMbap0nCbIjAHW2a+A8azf5+qTs7bJyJMTYGKtNCghHwyTD+YHYJ7nOy0l3rUXm
+         3yLQ==
+X-Gm-Message-State: AOAM532EcKiJpF6sewX5dV/PCSKMITOJ7WJPEAmwoGbjNlpZ6fgZMPVx
+        +OXbuWMpHDBbQZnabBp/WkI=
+X-Google-Smtp-Source: ABdhPJwX/wNCPF2VRVwD59vAKR/9jZo0RtMMrv0N+L3RYQCSPc3Nyzmetn/pXQ5whdFbu/vILOolMQ==
+X-Received: by 2002:adf:a491:: with SMTP id g17mr1999512wrb.132.1591771776849;
+        Tue, 09 Jun 2020 23:49:36 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.184])
+        by smtp.googlemail.com with ESMTPSA id u74sm5785556wmu.31.2020.06.09.23.49.35
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 09 Jun 2020 23:49:36 -0700 (PDT)
+Date:   Wed, 10 Jun 2020 08:49:33 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-gpio@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH] pinctrl: samsung: Use bank name as irqchip name
+Message-ID: <20200610064933.GA3716@kozik-lap>
+References: <CGME20200609082341eucas1p2e24e71598af14d994520b79494e96b15@eucas1p2.samsung.com>
+ <20200609082329.10184-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200608112211.12125-6-andrzej.p@collabora.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200609082329.10184-1-m.szyprowski@samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jun 08, 2020 at 01:22:09PM +0200, Andrzej Pietrasiewicz wrote:
-> A new helper is available, so use it. Inspecting 'users' member of
-> input_dev requires taking device's mutex.
-[...]
-> --- a/drivers/iio/adc/exynos_adc.c
-> +++ b/drivers/iio/adc/exynos_adc.c
-> @@ -633,7 +633,9 @@ static irqreturn_t exynos_ts_isr(int irq, void *dev_id)
->  	bool pressed;
->  	int ret;
+On Tue, Jun 09, 2020 at 10:23:29AM +0200, Marek Szyprowski wrote:
+> Use the bank name as the irqchip name. This name is later visible in
+> /proc/interrupts, what makes it possible to easily identify each
+> GPIO interrupt.
+> 
+> /proc/interrupts before this patch:
+> 143:    0     exynos4210_wkup_irq_chip   7 Edge      hdmi
+> 144:    0     exynos4210_wkup_irq_chip   6 Level     wm8994
+> 145:    1     exynos4210_wkup_irq_chip   7 Edge      max77686-pmic, max77686-rtc
+> 146:    1     exynos_gpio_irq_chip   3 Edge      3-0048
+> 
+> /proc/interrupts after this patch:
+> 143:    0     gpx3   7 Edge      hdmi
+> 144:    0     gpx3   6 Level     wm8994
+> 145:    1     gpx0   7 Edge      max77686-pmic, max77686-rtc
+> 146:    1     gpm2   3 Edge      3-0048
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+
+Hi Marek,
+
+Nice idea!
+
+> ---
+>  drivers/pinctrl/samsung/pinctrl-exynos.c | 27 +++++++++++++++---------
+>  1 file changed, 17 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+> index 84501c785473..1c87cf41602a 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+> @@ -207,7 +207,7 @@ static void exynos_irq_release_resources(struct irq_data *irqd)
+>  /*
+>   * irq_chip for gpio interrupts.
+>   */
+> -static struct exynos_irq_chip exynos_gpio_irq_chip = {
+> +static const struct exynos_irq_chip exynos_gpio_irq_chip __initconst = {
+>  	.chip = {
+>  		.name = "exynos_gpio_irq_chip",
+>  		.irq_unmask = exynos_irq_unmask,
+> @@ -313,7 +313,13 @@ int exynos_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
+>  			goto err_domains;
+>  		}
 >  
-> -	while (info->input->users) {
-> +	mutex_lock(&info->input->mutex);
-> +	while (input_device_enabled(info->input)) {
-> +		mutex_unlock(&info->input->mutex);
->  		ret = exynos_read_s3c64xx_ts(dev, &x, &y);
->  		if (ret == -ETIMEDOUT)
->  			break;
-> @@ -651,6 +653,8 @@ static irqreturn_t exynos_ts_isr(int irq, void *dev_id)
->  		input_sync(info->input);
->  
->  		usleep_range(1000, 1100);
-> +
-> +		mutex_lock(&info->input->mutex);
+> -		bank->irq_chip = &exynos_gpio_irq_chip;
+> +		bank->irq_chip = kmemdup(&exynos_gpio_irq_chip,
+> +					 sizeof(*bank->irq_chip), GFP_KERNEL);
+
+You cannot reference initconst memory from non-init function. Build with
+SECTION_MISMATCH to see the warnings.
+
+> +		if (!bank->irq_chip) {
+
+irq_domain_remove()
+
+> +			ret = -ENOMEM;
+> +			goto err_domains;
+> +		}
+> +		bank->irq_chip->chip.name = bank->name;
 >  	}
-
-Missed an mutex_unlock() here.
-
 >  
->  	writel(0, ADC_V1_CLRINTPNDNUP(info->regs));
+>  	return 0;
+> @@ -521,7 +527,7 @@ int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
+>  	struct samsung_pin_bank *bank;
+>  	struct exynos_weint_data *weint_data;
+>  	struct exynos_muxed_weint_data *muxed_data;
+> -	struct exynos_irq_chip *irq_chip;
+> +	const struct exynos_irq_chip *irq_chip;
+>  	unsigned int muxed_banks = 0;
+>  	unsigned int i;
+>  	int idx, irq;
+> @@ -531,12 +537,7 @@ int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
+>  
+>  		match = of_match_node(exynos_wkup_irq_ids, np);
+>  		if (match) {
+> -			irq_chip = kmemdup(match->data,
+> -				sizeof(*irq_chip), GFP_KERNEL);
+> -			if (!irq_chip) {
+> -				of_node_put(np);
+> -				return -ENOMEM;
+> -			}
+> +			irq_chip = match->data;
+>  			wkup_np = np;
+>  			break;
+>  		}
+> @@ -557,7 +558,13 @@ int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
+>  			return -ENXIO;
+>  		}
+>  
+> -		bank->irq_chip = irq_chip;
+> +		bank->irq_chip = kmemdup(irq_chip, sizeof(*irq_chip),
+> +					 GFP_KERNEL);
+> +		if (!bank->irq_chip) {
+> +			of_node_put(wkup_np);
 
-Best Regards,
-Micha³ Miros³aw
+irq_domain_remove()
+
+Best regards,
+Krzysztof
+
+
+> +			return -ENOMEM;
+> +		}
+> +		bank->irq_chip->chip.name = bank->name;
+>  
+>  		if (!of_find_property(bank->of_node, "interrupts", NULL)) {
+>  			bank->eint_type = EINT_TYPE_WKUP_MUX;
+> -- 
+> 2.17.1
+> 
