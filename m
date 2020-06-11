@@ -1,337 +1,159 @@
-Return-Path: <SRS0=SgCN=7X=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=3c0k=7Y=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD668C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Jun 2020 19:41:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6D89C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Jun 2020 05:44:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 88C6F206F7
-	for <linux-samsung-soc@archiver.kernel.org>; Wed, 10 Jun 2020 19:41:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0BCE2074B
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Jun 2020 05:44:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="H2yln9Yi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ji97ynMS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728122AbgFJTlN (ORCPT
+        id S1725796AbgFKFoJ (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Wed, 10 Jun 2020 15:41:13 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:44497 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728183AbgFJTlL (ORCPT
+        Thu, 11 Jun 2020 01:44:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35080 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725300AbgFKFoJ (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Wed, 10 Jun 2020 15:41:11 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200610194109euoutp01be6b7ee04e15ca33e6d0a10e64d23734~XRhmj8uK-2362523625euoutp01O
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jun 2020 19:41:09 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200610194109euoutp01be6b7ee04e15ca33e6d0a10e64d23734~XRhmj8uK-2362523625euoutp01O
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1591818069;
-        bh=fFCienO75+Qf7crfUfU3/vcjrJG4zRPt66+gonKZNJ4=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=H2yln9Yi6xXt0sW7oKnb5B9mk1TGVnvTF8ww36F219V/mbd8Wdm+OAxajgP98jAVM
-         /CzpjgS0kA2DyorHmgS/Z/s2Z7ALEVlKKHKBDTGqGCdfSeiFlZnxM3HPVnXXmK9avD
-         BVQxbDu9m8nJceTplBAUtOHrKuBjgKWkI4JxQfWw=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200610194108eucas1p1b8ccf0f1be01c15609e401f7220fbd3a~XRhly6xMS0684706847eucas1p15;
-        Wed, 10 Jun 2020 19:41:08 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id CE.FB.61286.45731EE5; Wed, 10
-        Jun 2020 20:41:08 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200610194107eucas1p1b22f0c8e3e13551940efd6093df505a3~XRhlX-icN0889108891eucas1p1R;
-        Wed, 10 Jun 2020 19:41:07 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200610194107eusmtrp23144c16293600e26f77b05ff1473daea~XRhlXWIHl0299202992eusmtrp2T;
-        Wed, 10 Jun 2020 19:41:07 +0000 (GMT)
-X-AuditID: cbfec7f2-f0bff7000001ef66-c8-5ee13754e569
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id A9.3E.07950.35731EE5; Wed, 10
-        Jun 2020 20:41:07 +0100 (BST)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200610194107eusmtip28f230edc47e05d59da2b0e3d10976990~XRhk0gXSZ1294112941eusmtip2S;
-        Wed, 10 Jun 2020 19:41:07 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-gpio@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
+        Thu, 11 Jun 2020 01:44:09 -0400
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 087B1C08C5C1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jun 2020 22:44:08 -0700 (PDT)
+Received: by mail-il1-x143.google.com with SMTP id l6so4317564ilo.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jun 2020 22:44:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=nSiAU05tdsBcdotQGowaH1I7zBOyLBN7vECCGjJR/dU=;
+        b=ji97ynMSZnWF7i/GeIZYWGZa018t9todXl8lVe6jQZgyk0+NbQ9/UpbImE0F4+b8cl
+         0fqSaxHfbJRvdn9MjSPPFcW7jPHKdhtKUmKW5J1EnCfVECCuL2KKXnBkTGaGHKRWhpzx
+         A3jfU7pu2f0zg91ZjPjeEO8Kvh60E59y7oDo6/9mXi1FDzT8ZxeAqj8omPjExTVbh1cv
+         zsGkGd0KZ9nV9svVhLOjIchSv8Dtqsf11lrgM6eBsiHxv7qrT28jJR3kuV32TAILZaKm
+         AdB5Nj+c1IXs2yz6uPFU3I1je+v3C5p3oZ9Q9T5o6GX62o/o+5gyIYKJaJkE5dmXBnee
+         MCXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=nSiAU05tdsBcdotQGowaH1I7zBOyLBN7vECCGjJR/dU=;
+        b=oAJuxnpd/Pp97/JCwhPQNIjTX0VSQdeuUTcBpyjJLBte23Cyanpv6Pfqxw57z4yQbU
+         04qBZxv1M1k5eCNroyPJdYQ88olW6Fxsul4nPu7ApbGAd9IfvOucyvyuSS2p55IfH56T
+         aN32ZE5ctmFyYPiTTe4VLkjyHwNv1a/Tn4ep0/bV6DzpbIEIzWXBkbyCjkM3CqMi1m/X
+         0YKEeqLw8U+Cdx6wxyfMyhfvDMlWAoo2cLJKch9edO9zwolHsH2JkfMJgV+aqkTtwoI2
+         UatIaBO/rAnPYVhlHb+cvi/1y2uNOyeP/drv7L2XnT733gg390hZjNLPr8xXo8gj8G6c
+         N0ig==
+X-Gm-Message-State: AOAM532n/K+zofCmnHo02ROuNXkE/CZiUxXbW06w5aL4tYsV+DXxxLje
+        PnkW9H5mUq71Gu0bcG/blfBoE69Ggb4OJW4OwRKVHhtZ
+X-Google-Smtp-Source: ABdhPJygTlWUJiydLnZRkZAYdm51hzZMfvvmTVaW1Z93Ddpo5Hi7rfZfRZu+EBYc8vvTh1RFxzBffnlktKzJgzdDFqg=
+X-Received: by 2002:a92:de10:: with SMTP id x16mr6780306ilm.6.1591854248170;
+ Wed, 10 Jun 2020 22:44:08 -0700 (PDT)
+MIME-Version: 1.0
+From:   Anand Moon <linux.amoon@gmail.com>
+Date:   Thu, 11 Jun 2020 11:13:57 +0530
+Message-ID: <CANAwSgQv9BKV4QfZAgSfFQvO7ftcFyCGXEo+g4pgQA4mgK52iQ@mail.gmail.com>
+Subject: ARM: warning: relocation out of range on Exynos XU4 and U3+
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc@vger.kernel.org,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH v3] pinctrl: samsung: Use bank name as irqchip name
-Date:   Wed, 10 Jun 2020 21:40:52 +0200
-Message-Id: <20200610194052.6434-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFIsWRmVeSWpSXmKPExsWy7djPc7oh5g/jDL7PELbYOGM9q8X1L89Z
-        Lc6f38BuMeXPciaLzfP/MFrMOL+PyWLtkbvsFofftLNarNr1h9GB02PnrLvsHptWdbJ53Lm2
-        h82jb8sqRo/Pm+QCWKO4bFJSczLLUov07RK4Mr69sym45Vjx4+R2tgbGx6ZdjJwcEgImEk3b
-        jzJ1MXJxCAmsYJSYcvYUI4TzhVHi96JP7BDOZ0aJfdP+ssO0nFjXzAaRWM4osfjHQWa4lvMv
-        ZjCDVLEJGEp0ve1iA7FFBBwlfm5YxQpSxCywjUnifNchsISwgLPEyfdXWEFsFgFVie2nXjCC
-        2LwCNhLHZr2GWicvsXrDAbANEgKP2SSu7j/KApFwkVi08DwThC0s8er4FqgGGYn/O+czQTQ0
-        M0o8PLeWHcLpYZS43DSDEaLKWuLOuV9AZ3AA3aQpsX6XPkTYUWLqx4tMIGEJAT6JG28FQcLM
-        QOakbdOZIcK8Eh1tQhDVahKzjq+DW3vwwiVmCNtD4nPbdDBbSCBWYtHTm2wTGOVmIexawMi4
-        ilE8tbQ4Nz212DAvtVyvODG3uDQvXS85P3cTIzBFnP53/NMOxq+Xkg4xCnAwKvHwGux9ECfE
-        mlhWXJl7iFGCg1lJhNfp7Ok4Id6UxMqq1KL8+KLSnNTiQ4zSHCxK4rzGi17GCgmkJ5akZqem
-        FqQWwWSZODilGhhb+mujzdaumPP7yxTpJYacQvZcEt4XL5oklRw9l/nsPDt//M7mj4uZr83c
-        uv+LTZN2V/ndVYEyUq9uqD4u0JpaXHV53zM5XZPovMTUGXqGGYteLVi5Oyxa4U966afU2QIn
-        ozu6potpPTANeysqrlVyRdzWtrR9ne9Nk+O7L27xU2Hc+nnfH3YlluKMREMt5qLiRAAENhCe
-        DQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPLMWRmVeSWpSXmKPExsVy+t/xe7rB5g/jDL7cNrPYOGM9q8X1L89Z
-        Lc6f38BuMeXPciaLzfP/MFrMOL+PyWLtkbvsFofftLNarNr1h9GB02PnrLvsHptWdbJ53Lm2
-        h82jb8sqRo/Pm+QCWKP0bIryS0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJS
-        czLLUov07RL0Mr69sym45Vjx4+R2tgbGx6ZdjJwcEgImEifWNbN1MXJxCAksZZRoOfqQDSIh
-        I3FyWgMrhC0s8edaF1TRJ0aJyV03mUESbAKGEl1vu8AaRAScJW682ssCUsQssItJomXNYbCE
-        MFDi5PsrYJNYBFQltp96wQhi8wrYSByb9ZodYoO8xOoNB5gnMPIsYGRYxSiSWlqcm55bbKRX
-        nJhbXJqXrpecn7uJERiY24793LKDsetd8CFGAQ5GJR5eg70P4oRYE8uKK3MPMUpwMCuJ8Dqd
-        PR0nxJuSWFmVWpQfX1Sak1p8iNEUaPlEZinR5Hxg1OSVxBuaGppbWBqaG5sbm1koifN2CByM
-        ERJITyxJzU5NLUgtgulj4uCUamCMXBN0m813VtWdnjcVaz+5Mjzfc+e2xXz9kCMi2w4WXH9z
-        6bHqoq95b/4fX/UkeIm9ce1qruDKxGJF5UmPsjYJTt364Kmho65jmI63+dbMHRLbjwQ0X5rc
-        J3Q5znmH0rGi3vXa5zN7mtp89XZo9N07eHG7u2/FA5OjaydZSUw7/ivigOazfllOJZbijERD
-        Leai4kQAFHdbX2ICAAA=
-X-CMS-MailID: 20200610194107eucas1p1b22f0c8e3e13551940efd6093df505a3
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200610194107eucas1p1b22f0c8e3e13551940efd6093df505a3
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200610194107eucas1p1b22f0c8e3e13551940efd6093df505a3
-References: <CGME20200610194107eucas1p1b22f0c8e3e13551940efd6093df505a3@eucas1p1.samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Use the bank name as the irqchip name. This name is later visible in
-/proc/interrupts, what makes it possible to easily identify each
-GPIO interrupt.
+Hi All,
 
-/proc/interrupts before this patch:
-143:    0     exynos4210_wkup_irq_chip   7 Edge      hdmi
-144:    0     exynos4210_wkup_irq_chip   6 Level     wm8994
-145:    1     exynos4210_wkup_irq_chip   7 Edge      max77686-pmic, max77686-rtc
-146:    1     exynos_gpio_irq_chip   3 Edge      3-0048
+I would like to report some warnings I observed on pre-compiled kernel
+image (5.7.1-1-ARCH) from Archlinux.
+Sometimes ethernet would not come up and get connected, so in order to
+investigate.
+I found below warnings, So I am sharing the logs at my end.
 
-/proc/interrupts after this patch:
-143:    0     gpx3   7 Edge      hdmi
-144:    0     gpx3   6 Level     wm8994
-145:    1     gpx0   7 Edge      max77686-pmic, max77686-rtc
-146:    1     gpm2   3 Edge      3-0048
+Are these warnings related to in-consistency in locking, How can we
+Investigate more to fix this issue.
 
-Handling of the eint_wake_mask_value has been reworked, because each bank
-has now its own exynos_irq_chip structure allocated.
+On XU4 - HCI
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-v3:
-- fixed rebase issue after applying onto linux-next
+[alarm@archl-hc1d ~]$ uname -a
+Linux archl-hc1d 5.7.1-1-ARCH #1 SMP PREEMPT Tue Jun 9 01:24:41 UTC
+2020 armv7l GNU/Linux
+[alarm@archl-hc1d ~]$ dmesg | grep relocation
+[    6.188003] x_tables: section 4 reloc 2 sym 'mutex_lock':
+relocation 28 out of range (0xbf0000bc -> 0xc101c154)
+[    7.452559] sch_fq_codel: section 4 reloc 34 sym
+'_raw_spin_lock_bh': relocation 28 out of range (0xbf000a44 ->
+0xc101e9dc)
+[    8.452434] uio: section 4 reloc 33 sym 'mutex_lock': relocation 28
+out of range (0xbf009210 -> 0xc101c154)
+[    8.576134] exynos5422_dmc: section 4 reloc 14 sym 'mutex_lock':
+relocation 28 out of range (0xbf000188 -> 0xc101c154)
+[    8.578422] exynos_rng: section 4 reloc 35 sym 'mutex_lock':
+relocation 28 out of range (0xbf00a330 -> 0xc101c154)
+[    8.585860] rng_core: section 4 reloc 15 sym
+'mutex_lock_interruptible': relocation 28 out of range (0xbf0120b8 ->
+0xc101c108)
+[    8.818463] videobuf2_v4l2: section 4 reloc 62 sym 'mutex_lock':
+relocation 29 out of range (0xbf0009b8 -> 0xc101c154)
+[    8.938475] exynos_gsc: section 4 reloc 0 sym
+'_raw_spin_lock_irqsave': relocation 28 out of range (0xbf000014 ->
+0xc101e370)
+[    8.996208] exynos_gsc: section 4 reloc 0 sym
+'_raw_spin_lock_irqsave': relocation 28 out of range (0xbf00f014 ->
+0xc101e370)
+[    9.375951] r8152: section 4 reloc 4 sym 'mutex_lock': relocation
+28 out of range (0xbf007130 -> 0xc101c154)
 
-v2: https://patchwork.kernel.org/patch/11597975/
-- reordered code to fix error handling
-- fixed eint_wakeup_mask_value handling
-- added __init annotations
+Share the console logs on Odroid XU4 HC1
+[0] https://pastebin.com/5ZnEfyEM
 
-v1: https://patchwork.kernel.org/patch/11594897/
-- initial version
----
- drivers/pinctrl/samsung/pinctrl-exynos.c | 58 +++++++++++++-----------
- 1 file changed, 32 insertions(+), 26 deletions(-)
+On U3+
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 84501c785473..b9ea09fabf84 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -38,7 +38,7 @@ struct exynos_irq_chip {
- 	u32 eint_con;
- 	u32 eint_mask;
- 	u32 eint_pend;
--	u32 eint_wake_mask_value;
-+	u32 *eint_wake_mask_value;
- 	u32 eint_wake_mask_reg;
- 	void (*set_eint_wakeup_mask)(struct samsung_pinctrl_drv_data *drvdata,
- 				     struct exynos_irq_chip *irq_chip);
-@@ -207,7 +207,7 @@ static void exynos_irq_release_resources(struct irq_data *irqd)
- /*
-  * irq_chip for gpio interrupts.
-  */
--static struct exynos_irq_chip exynos_gpio_irq_chip = {
-+static const struct exynos_irq_chip exynos_gpio_irq_chip __initconst = {
- 	.chip = {
- 		.name = "exynos_gpio_irq_chip",
- 		.irq_unmask = exynos_irq_unmask,
-@@ -274,7 +274,7 @@ struct exynos_eint_gpio_save {
-  * exynos_eint_gpio_init() - setup handling of external gpio interrupts.
-  * @d: driver data of samsung pinctrl driver.
-  */
--int exynos_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
-+__init int exynos_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
- {
- 	struct samsung_pin_bank *bank;
- 	struct device *dev = d->dev;
-@@ -297,6 +297,15 @@ int exynos_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
- 	for (i = 0; i < d->nr_banks; ++i, ++bank) {
- 		if (bank->eint_type != EINT_TYPE_GPIO)
- 			continue;
-+
-+		bank->irq_chip = devm_kmemdup(dev, &exynos_gpio_irq_chip,
-+					   sizeof(*bank->irq_chip), GFP_KERNEL);
-+		if (!bank->irq_chip) {
-+			ret = -ENOMEM;
-+			goto err_domains;
-+		}
-+		bank->irq_chip->chip.name = bank->name;
-+
- 		bank->irq_domain = irq_domain_add_linear(bank->of_node,
- 				bank->nr_pins, &exynos_eint_irqd_ops, bank);
- 		if (!bank->irq_domain) {
-@@ -313,7 +322,6 @@ int exynos_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
- 			goto err_domains;
- 		}
- 
--		bank->irq_chip = &exynos_gpio_irq_chip;
- 	}
- 
- 	return 0;
-@@ -338,9 +346,9 @@ static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
- 	pr_info("wake %s for irq %d\n", on ? "enabled" : "disabled", irqd->irq);
- 
- 	if (!on)
--		our_chip->eint_wake_mask_value |= bit;
-+		*our_chip->eint_wake_mask_value |= bit;
- 	else
--		our_chip->eint_wake_mask_value &= ~bit;
-+		*our_chip->eint_wake_mask_value &= ~bit;
- 
- 	return 0;
- }
-@@ -360,10 +368,10 @@ exynos_pinctrl_set_eint_wakeup_mask(struct samsung_pinctrl_drv_data *drvdata,
- 	pmu_regs = drvdata->retention_ctrl->priv;
- 	dev_info(drvdata->dev,
- 		 "Setting external wakeup interrupt mask: 0x%x\n",
--		 irq_chip->eint_wake_mask_value);
-+		 *irq_chip->eint_wake_mask_value);
- 
- 	regmap_write(pmu_regs, irq_chip->eint_wake_mask_reg,
--		     irq_chip->eint_wake_mask_value);
-+		     *irq_chip->eint_wake_mask_value);
- }
- 
- static void
-@@ -382,10 +390,11 @@ s5pv210_pinctrl_set_eint_wakeup_mask(struct samsung_pinctrl_drv_data *drvdata,
- 
- 	clk_base = (void __iomem *) drvdata->retention_ctrl->priv;
- 
--	__raw_writel(irq_chip->eint_wake_mask_value,
-+	__raw_writel(*irq_chip->eint_wake_mask_value,
- 		     clk_base + irq_chip->eint_wake_mask_reg);
- }
- 
-+static u32 eint_wake_mask_value = EXYNOS_EINT_WAKEUP_MASK_DISABLED;
- /*
-  * irq_chip for wakeup interrupts
-  */
-@@ -403,7 +412,7 @@ static const struct exynos_irq_chip s5pv210_wkup_irq_chip __initconst = {
- 	.eint_con = EXYNOS_WKUP_ECON_OFFSET,
- 	.eint_mask = EXYNOS_WKUP_EMASK_OFFSET,
- 	.eint_pend = EXYNOS_WKUP_EPEND_OFFSET,
--	.eint_wake_mask_value = EXYNOS_EINT_WAKEUP_MASK_DISABLED,
-+	.eint_wake_mask_value = &eint_wake_mask_value,
- 	/* Only differences with exynos4210_wkup_irq_chip: */
- 	.eint_wake_mask_reg = S5PV210_EINT_WAKEUP_MASK,
- 	.set_eint_wakeup_mask = s5pv210_pinctrl_set_eint_wakeup_mask,
-@@ -423,7 +432,7 @@ static const struct exynos_irq_chip exynos4210_wkup_irq_chip __initconst = {
- 	.eint_con = EXYNOS_WKUP_ECON_OFFSET,
- 	.eint_mask = EXYNOS_WKUP_EMASK_OFFSET,
- 	.eint_pend = EXYNOS_WKUP_EPEND_OFFSET,
--	.eint_wake_mask_value = EXYNOS_EINT_WAKEUP_MASK_DISABLED,
-+	.eint_wake_mask_value = &eint_wake_mask_value,
- 	.eint_wake_mask_reg = EXYNOS_EINT_WAKEUP_MASK,
- 	.set_eint_wakeup_mask = exynos_pinctrl_set_eint_wakeup_mask,
- };
-@@ -442,7 +451,7 @@ static const struct exynos_irq_chip exynos7_wkup_irq_chip __initconst = {
- 	.eint_con = EXYNOS7_WKUP_ECON_OFFSET,
- 	.eint_mask = EXYNOS7_WKUP_EMASK_OFFSET,
- 	.eint_pend = EXYNOS7_WKUP_EPEND_OFFSET,
--	.eint_wake_mask_value = EXYNOS_EINT_WAKEUP_MASK_DISABLED,
-+	.eint_wake_mask_value = &eint_wake_mask_value,
- 	.eint_wake_mask_reg = EXYNOS5433_EINT_WAKEUP_MASK,
- 	.set_eint_wakeup_mask = exynos_pinctrl_set_eint_wakeup_mask,
- };
-@@ -513,7 +522,7 @@ static void exynos_irq_demux_eint16_31(struct irq_desc *desc)
-  * exynos_eint_wkup_init() - setup handling of external wakeup interrupts.
-  * @d: driver data of samsung pinctrl driver.
-  */
--int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
-+__init int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
- {
- 	struct device *dev = d->dev;
- 	struct device_node *wkup_np = NULL;
-@@ -521,7 +530,7 @@ int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
- 	struct samsung_pin_bank *bank;
- 	struct exynos_weint_data *weint_data;
- 	struct exynos_muxed_weint_data *muxed_data;
--	struct exynos_irq_chip *irq_chip;
-+	const struct exynos_irq_chip *irq_chip;
- 	unsigned int muxed_banks = 0;
- 	unsigned int i;
- 	int idx, irq;
-@@ -531,12 +540,7 @@ int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
- 
- 		match = of_match_node(exynos_wkup_irq_ids, np);
- 		if (match) {
--			irq_chip = kmemdup(match->data,
--				sizeof(*irq_chip), GFP_KERNEL);
--			if (!irq_chip) {
--				of_node_put(np);
--				return -ENOMEM;
--			}
-+			irq_chip = match->data;
- 			wkup_np = np;
- 			break;
- 		}
-@@ -549,6 +553,14 @@ int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
- 		if (bank->eint_type != EINT_TYPE_WKUP)
- 			continue;
- 
-+		bank->irq_chip = devm_kmemdup(dev, irq_chip, sizeof(*irq_chip),
-+					      GFP_KERNEL);
-+		if (!bank->irq_chip) {
-+			of_node_put(wkup_np);
-+			return -ENOMEM;
-+		}
-+		bank->irq_chip->chip.name = bank->name;
-+
- 		bank->irq_domain = irq_domain_add_linear(bank->of_node,
- 				bank->nr_pins, &exynos_eint_irqd_ops, bank);
- 		if (!bank->irq_domain) {
-@@ -557,8 +569,6 @@ int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
- 			return -ENXIO;
- 		}
- 
--		bank->irq_chip = irq_chip;
--
- 		if (!of_find_property(bank->of_node, "interrupts", NULL)) {
- 			bank->eint_type = EINT_TYPE_WKUP_MUX;
- 			++muxed_banks;
-@@ -657,10 +667,6 @@ void exynos_pinctrl_suspend(struct samsung_pinctrl_drv_data *drvdata)
- 				irq_chip = bank->irq_chip;
- 				irq_chip->set_eint_wakeup_mask(drvdata,
- 							       irq_chip);
--			} else if (bank->irq_chip != irq_chip) {
--				dev_warn(drvdata->dev,
--					 "More than one external wakeup interrupt chip configured (bank: %s). This is not supported by hardware nor by driver.\n",
--					 bank->name);
- 			}
- 		}
- 	}
--- 
-2.17.1
+Linux archl-u3et 5.7.1-1-ARCH #1 SMP PREEMPT Tue Jun 9 01:24:41 UTC
+2020 armv7l GNU/Linux
+[alarm@archl-u3et ~]$ dmesg | grep relocation
+[    5.324703] x_tables: section 4 reloc 2 sym 'mutex_lock':
+relocation 28 out of range (0xbf0000bc -> 0xc101c154)
+[    6.580612] sch_fq_codel: section 4 reloc 34 sym
+'_raw_spin_lock_bh': relocation 28 out of range (0xbf000a44 ->
+0xc101e9dc)
+[    8.054852] uio: section 4 reloc 33 sym 'mutex_lock': relocation 28
+out of range (0xbf009210 -> 0xc101c154)
+[    8.168492] evdev: section 4 reloc 0 sym 'mutex_lock': relocation
+28 out of range (0xbf018088 -> 0xc101c154)
+[    8.435888] videobuf2_common: section 4 reloc 0 sym
+'_raw_spin_lock_irqsave': relocation 28 out of range (0xbf005130 ->
+0xc101e370)
+[    8.656151] videobuf2_common: section 4 reloc 0 sym
+'_raw_spin_lock_irqsave': relocation 28 out of range (0xbf005130 ->
+0xc101e370)
+[    8.671966] gpu_sched: section 4 reloc 0 sym '_raw_spin_lock':
+relocation 28 out of range (0xbf016044 -> 0xc101e98c)
+[    8.794059] exynos_bus: section 4 reloc 11 sym 'mutex_lock':
+relocation 28 out of range (0xbf00514c -> 0xc101c154)
+[    8.824699] exynos_bus: section 4 reloc 11 sym 'mutex_lock':
+relocation 28 out of range (0xbf00d14c -> 0xc101c154)
+[    8.824791] snd_timer: section 4 reloc 2 sym
+'_raw_spin_lock_irqsave': relocation 28 out of range (0xbf0150d0 ->
+0xc101e370)
+[    9.002896] exynos_bus: section 4 reloc 11 sym 'mutex_lock':
+relocation 28 out of range (0xbf01914c -> 0xc101c154)
+[    9.139199] s5p_csis: section 4 reloc 2 sym
+'_raw_spin_lock_irqsave': relocation 28 out of range (0xbf019050 ->
+0xc101e370)
+[    9.417648] snd_soc_hdmi_codec: section 4 reloc 24 sym
+'mutex_lock': relocation 28 out of range (0xbf0053e0 -> 0xc101c154)
 
+Share the console log for Odroid U3+
+[1] https://pastebin.com/sm8qCHdV
+
+Best Regards
+-Anand
