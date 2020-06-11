@@ -2,192 +2,124 @@ Return-Path: <SRS0=3c0k=7Y=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0155C433E0
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Jun 2020 15:18:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82091C433DF
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Jun 2020 23:05:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 818BA206A4
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Jun 2020 15:18:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F92E20878
+	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Jun 2020 23:05:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="E2qXLywZ"
+	dkim=pass (2048-bit key) header.d=yahoo.ca header.i=@yahoo.ca header.b="ksY/536V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728522AbgFKPS4 (ORCPT
+        id S1726339AbgFKXFa (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 11 Jun 2020 11:18:56 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:59986 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728455AbgFKPSy (ORCPT
+        Thu, 11 Jun 2020 19:05:30 -0400
+Received: from sonic315-55.consmr.mail.gq1.yahoo.com ([98.137.65.31]:39357
+        "EHLO sonic315-55.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726289AbgFKXFa (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 11 Jun 2020 11:18:54 -0400
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200611151852epoutp025f5f215b29ff9d4b6f3db8e81ad15790~Xhl4jEDhS1269512695epoutp02e
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jun 2020 15:18:52 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200611151852epoutp025f5f215b29ff9d4b6f3db8e81ad15790~Xhl4jEDhS1269512695epoutp02e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1591888732;
-        bh=h0Jr8xoU2TPvELPqg4DkGPi4elgZ88JtRpm3jI4sPwQ=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=E2qXLywZVzIV2fW1SRVFtB8sfs2v4wTUs+C83cFxe4fQV8bMZOIjCHUKh5h+ZPt3S
-         JESIWUg9U8ylqBnIVXGEy9vuGVUXYCEFg6Hokbepzg6Ny2SbxkI4oY61u0hooc5HH/
-         aU1v9ViSpaq+AvezROTfzehwaVuSG0jwDmdN6YIc=
-Received: from epsmges5p1new.samsung.com (unknown [182.195.42.73]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-        20200611151850epcas5p24e66287669171ac559a61cc700b19d56~Xhl3bd9oW2174021740epcas5p2G;
-        Thu, 11 Jun 2020 15:18:50 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        9F.67.09467.A5B42EE5; Fri, 12 Jun 2020 00:18:50 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200611151850epcas5p2a784c542779d9bc1bdcfca28ea8a6c2a~Xhl2nsFSe1713117131epcas5p2d;
-        Thu, 11 Jun 2020 15:18:50 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200611151850epsmtrp1fec96d9694da2e652f1efbe1d90ef856~Xhl2mz7qk1872718727epsmtrp1v;
-        Thu, 11 Jun 2020 15:18:50 +0000 (GMT)
-X-AuditID: b6c32a49-a3fff700000024fb-94-5ee24b5a1ab7
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D2.DF.08303.95B42EE5; Fri, 12 Jun 2020 00:18:50 +0900 (KST)
-Received: from alimakhtar02 (unknown [107.108.234.165]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200611151846epsmtip14b4bb6edb355961b9377b5a92da29cb5~Xhlzf0dnn1495414954epsmtip1S;
-        Thu, 11 Jun 2020 15:18:46 +0000 (GMT)
-From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Kishon Vijay Abraham I'" <kishon@ti.com>,
-        "'Martin K. Petersen'" <martin.petersen@oracle.com>,
-        <robh@kernel.org>
-Cc:     <krzk@kernel.org>, <linux-samsung-soc@vger.kernel.org>,
-        <avri.altman@wdc.com>, <stanley.chu@mediatek.com>,
-        <linux-scsi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <cang@codeaurora.org>,
-        <devicetree@vger.kernel.org>, <kwmad.kim@samsung.com>,
-        <linux-kernel@vger.kernel.org>, "'Vinod Koul'" <vkoul@kernel.org>
-In-Reply-To: <89b96bd0-a9a3-cdd8-dc67-1f9f49eef264@ti.com>
-Subject: RE: [PATCH v10 00/10] exynos-ufs: Add support for UFS HCI
-Date:   Thu, 11 Jun 2020 20:48:44 +0530
-Message-ID: <001c01d64003$9bca1500$d35e3f00$@samsung.com>
+        Thu, 11 Jun 2020 19:05:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.ca; s=s2048; t=1591916728; bh=4YUy2dnKX+aLfXhIKF01g98COCeJaRGO0uIb0VS79Kk=; h=Date:From:Subject:To:Cc:References:From:Subject; b=ksY/536Vx4+k7UgUuK7sU+hVBThfiszI09Iuz1pRDsEDzIekIw49uYjp7ORgIcNYz0f6DNDzfy6/4yfZrOHqInTp/7Z/HcyjmMMLgeZWuD8TRAwOaMMkENqEBRHmRUuLAghQQjihayEfj8L20m6zZMfg23tNVn0w4aye3VB6XxwcQwPiMIHahzYpkJItzHEI+CmtRNoS45OeF8pkyYlQXTj5rda13IOwNMLzMGJ8ZXmNJM+2AQJKKYg2covwyMtdvSqzYCtGIcWITwCXA8hKPZtr12KvBVm1CK0E2O6h8qR/7PTGpw4okY+ctPIvnNIDw3ffcEEgwvbMVoGH5mEvNw==
+X-YMail-OSG: VeI5KAIVM1l8FZBKKOcgI77XPMQpX1yRxgEuJkG2HwGiwftSWlMzUhg.wI9RpCO
+ 0m9mb_xDfGj9T2zqhX.uH.ouvYYHvpDFZhv1pWFL5y1aS4v9hb1LGwKsLcCxtdjVmrndIAxlrgTz
+ 8LO3W4t7Y60g_t0QstSujZEh68oL_wRlHCSB5Td_M.HVxGsUQjqWM2qr_3.AkhSA0yutg5qcke8K
+ Tv4I9pYJd9awi6FeCBU8.AW0hdjLa6mwHM8hm8SCtmWxN5P9kgX8HCxAaSA2wWYE5BgfOiUDY0eN
+ 8SdF4xfPgafkYHgez7VCD9nxGHLJtR8PsxeXciMIqqC1F9E63fd4UIcXYfSp5mCCnXf1pW2oA0VZ
+ eHnF2Lf5MUvy0KsxA7VkbSJfJnhx72DN4PMW15_Pqypq2CTc5FOh7t_XE2x5gmqPfv8aAgem9Z6S
+ G754j7JvVIvxR16NyP1NJHKbTMsWHNX0qPQnbyQSB5vpRmVwkBOq_AHkSPmPavoJRKp4qbzy6bBO
+ Bgl5ef0LdH1w0IGoNwlRH.UR8MrIAnwak32wCqG5lf.SwS9m.j1yNpS4_5D0o_3_e09XXbmbVT87
+ JydTvntH.WypWlGKDwbEeflUZOlJnJ07XyPmONgYYP36533AICJBEt96Va3.mhtjhlFw3.29ZciX
+ DUnx7ZrUMS58v2ROWoMShz.kIsuifGl.62rbZy_X8r4vO.Uxo5XJwzW4msMSwsvTqaOqT_X2DSbr
+ LLj_UnAnYi2D4y9bOLYthO6rgknJsjH5NNK_yfRdTmQy.0mTEM7K9s8uzcE9CTS8fKfsDaVPyVxh
+ xVmmJFX.A8jqmra2IrNsfF8nyaPIwxTRtGkfxuk34ZNH.5c0amNlvLcBd8.CT2wpn_WASLVEIrIT
+ lDlihOCfti987bgw5CyoUnMPwNm0_HyhWtZkakVcpPqyn4HsvO_sGZRdcb0.0tEu_C025pvdxswN
+ rmgxGP8nc8FxFl_ewO1mGzIfh.LwtPgP6qxJHGwfAB.8sgV6oyaOcpklbPCK0mtb2TNuawY.gM1Y
+ 4EIewDISpLaEHGybdY02ejlYI9grt4UFGP66cBLM98U9eaSs476RtjcbgJDnZF0_b5o12Ivh3yDE
+ .RRrOjKXttZUE3n3qAJp9VaVUkrJ1tU13bF05OPpKcgEydjxVzV7vX1CE71IihUl_3XGlg_spYT1
+ ddNGRuEIqFA0z2RSjAXwv25g7eOX4gy.2PVQRZ6tqkn.PDou7IfhlVk8_1frFp5r3OUVYDW2Om7X
+ b38HOjsBTSMFQLSdrTiz56K7c1Ygr8lUnUMCqgmgaJUxAZUUchMUduSb9Ii8mcXGP569B9NwAMAc
+ y3hNB5BRs5SQzb2xm6fsFam.vFlKXVBiNz6MHR.jitsw1wi_Lt0BaPaD8ibirje_yAw4-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.gq1.yahoo.com with HTTP; Thu, 11 Jun 2020 23:05:28 +0000
+Received: by smtp422.mail.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 385a77de6a3948fc2d5a9f83b3566fac;
+          Thu, 11 Jun 2020 23:05:25 +0000 (UTC)
+Date:   Thu, 11 Jun 2020 19:05:21 -0400
+From:   "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>
+Subject: AMD IOMMU + SME + amdgpu regression
+To:     Joerg Roedel <joro@8bytes.org>, linux-kernel@vger.kernel.org,
+        David Rientjes <rientjes@google.com>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Daniel Drake <drake@endlessm.com>, jonathan.derrick@intel.com,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Joerg Roedel <jroedel@suse.de>
 MIME-Version: 1.0
+Message-Id: <1591915710.rakbpzst8h.none@localhost>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQNA14zZ9KpC6NxovY65uGX80LQ4kgIpylB3AdlmWUMBx1WEmQIl7Fhypb7UH7A=
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMKsWRmVeSWpSXmKPExsWy7bCmpm6U96M4gxNrTC1e/rzKZvFp/TJW
-        i/lHzrFaXHjaw2Zx/vwGdoubW46yWGx6fI3V4vKuOWwWM87vY7Lovr6DzWL58X9MFv/37GC3
-        WLr1JqPFzjsnmB34PC739TJ5bFrVyeaxeUm9R8vJ/SweH5/eYvHo27KK0eP4je1MHp83yXm0
-        H+hmCuCM4rJJSc3JLEst0rdL4Mq4fESxoFmoYta6+4wNjD/5uhg5OSQETCQOXTjM3MXIxSEk
-        sJtR4vafM2wQzidGiQsz5jFCOJ8ZJd7+e88I07J+5TMmiMQuRolZd3ayQDhvGCU2T9/OBlLF
-        JqArsWNxG5gtIlAhcXP2b3aQImaBc0wS8z5sYwdJcApYSbzt3gdWJCzgJPF6xR6gsRwcLAKq
-        Em+/p4OEeQUsJa4/eskGYQtKnJz5hAXEZhbQlli28DUzxEUKEj+fLmOF2OUnMWvpdnaIGnGJ
-        oz97wJ6TEHjBIXFozXGoBheJI3PfMkHYwhKvjm9hh7ClJF72t7GD3CAhkC3Rs8sYIlwjsXTe
-        MRYI217iwJU5LCAlzAKaEut36UOs4pPo/f2ECaKTV6KjTQiiWlWi+d1VqE5piYnd3awQJR4S
-        fU2iExgVZyH5axaSv2YhuX8Wwq4FjCyrGCVTC4pz01OLTQsM81LL9YoTc4tL89L1kvNzNzGC
-        052W5w7Guw8+6B1iZOJgPMQowcGsJMIrKP4wTog3JbGyKrUoP76oNCe1+BCjNAeLkjiv0o8z
-        cUIC6YklqdmpqQWpRTBZJg5OqQam9RdPcrwQVpacJqfjY3+z0yDBdPLreQqHnF7mfGHs1U7e
-        8PnVPsb5ZUwlry0tnDz0zrzesnrt9C0Xt3vlhc2LMfnv7BRtarIvtU9r/0WHB2ohs6oT1W/m
-        uBr++/jpsmfqZZ4tZTE73shps/W91pgyY/2c9uYmD8UNt4V68pXkvoi4da86dccum3XXdVv2
-        M8fvf9wYt2ErT/377FMTZ/VelbUsKpwRElsz8cyUN25TK07/EbzbI/Rtj4bsroS9vj1r5k+r
-        6vE/84bzv2n1naPpYa5Bcena+w9Miv30T4K5imVtUNfCKx+7GVj3aPheOWL67+1BORG5RIYC
-        jqol36y/SOfeW1W+dulJ+w9tTAzxSizFGYmGWsxFxYkAai2nseYDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBIsWRmVeSWpSXmKPExsWy7bCSnG6U96M4g3mPGC1e/rzKZvFp/TJW
-        i/lHzrFaXHjaw2Zx/vwGdoubW46yWGx6fI3V4vKuOWwWM87vY7Lovr6DzWL58X9MFv/37GC3
-        WLr1JqPFzjsnmB34PC739TJ5bFrVyeaxeUm9R8vJ/SweH5/eYvHo27KK0eP4je1MHp83yXm0
-        H+hmCuCM4rJJSc3JLEst0rdL4MrYf2wJU8F2wYpJu6azNDCu5eti5OSQEDCRWL/yGVMXIxeH
-        kMAORomHt18xQSSkJa5vnMAOYQtLrPz3HMwWEnjFKHGq1Q/EZhPQldixuI0NxBYRqJLoX3Kf
-        GWQQs8ANJonrvWtYIBqWMklMXxEBYnMKWEm87d4H1iAs4CTxesUeoGUcHCwCqhJvv6eDhHkF
-        LCWuP3rJBmELSpyc+QRsDLOAtkTvw1ZGGHvZwtfMELcpSPx8uowV4gY/iVlLt7ND1IhLHP3Z
-        wzyBUXgWklGzkIyahWTULCQtCxhZVjFKphYU56bnFhsWGOWllusVJ+YWl+al6yXn525iBEeu
-        ltYOxj2rPugdYmTiYDzEKMHBrCTCKyj+ME6INyWxsiq1KD++qDQntfgQozQHi5I479dZC+OE
-        BNITS1KzU1MLUotgskwcnFINTJc+KU462sAYnbh/l/GtsrBfe67H14ddkV9SNmX3jpM+y4+1
-        P50/WXf6tBkSSz9duBu54SPHv2dRou1cNg97AzUf6qr7bb48+6/j/OwLM5awHc9ln64wWTxs
-        Qv5HqxtvgpsfVIcq3nIpLM2+Iqdk8sHuQB9/Xl9IpKfxubMNnWGZ99csa/I6ECzr4vY58oPw
-        qf9X4uZHxsrtt1CyvCTH8Opwgs3nl3ui3/N9cIx+7tLm/2aN1yav299n9/76Uf1TZbKr/eSr
-        JYJX3L7HFlauPNIUYv/yyCqGF23ZHcdURE86+VxmqjluvTVymYWp/QHlB9bRy3/yRovkHljw
-        vHYqi1JjG+cntpolSUe3b5zfVq/EUpyRaKjFXFScCABlCtMASwMAAA==
-X-CMS-MailID: 20200611151850epcas5p2a784c542779d9bc1bdcfca28ea8a6c2a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20200528013223epcas5p2be85fa8803326b49a905fb7225992cad
-References: <CGME20200528013223epcas5p2be85fa8803326b49a905fb7225992cad@epcas5p2.samsung.com>
-        <20200528011658.71590-1-alim.akhtar@samsung.com>
-        <159114947915.26776.12485309894552696104.b4-ty@oracle.com>
-        <013a01d63d3e$ecf404d0$c6dc0e70$@samsung.com>
-        <89b96bd0-a9a3-cdd8-dc67-1f9f49eef264@ti.com>
+References: <1591915710.rakbpzst8h.none.ref@localhost>
+X-Mailer: WebService/1.1.16072 hermes_yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.6)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi Kishon
+Hi,
 
-> -----Original Message-----
-> From: Kishon Vijay Abraham I <kishon=40ti.com>
-> Sent: 08 June 2020 08:23
-> To: Alim Akhtar <alim.akhtar=40samsung.com>; 'Martin K. Petersen'
-> <martin.petersen=40oracle.com>; robh=40kernel.org
-> Cc: krzk=40kernel.org; linux-samsung-soc=40vger.kernel.org;
-> avri.altman=40wdc.com; stanley.chu=40mediatek.com; linux-scsi=40vger.kern=
-el.org;
-> linux-arm-kernel=40lists.infradead.org; cang=40codeaurora.org;
-> devicetree=40vger.kernel.org; kwmad.kim=40samsung.com; linux-
-> kernel=40vger.kernel.org; 'Vinod Koul' <vkoul=40kernel.org>
-> Subject: Re: =5BPATCH v10 00/10=5D exynos-ufs: Add support for UFS HCI
->=20
-> Hi Alim,
->=20
-> On 6/8/2020 8:15 AM, Alim Akhtar wrote:
-> >
-> >
-> >> -----Original Message-----
-> >> From: Martin K. Petersen <martin.petersen=40oracle.com>
-> >> Sent: 03 June 2020 08:02
-> >> To: robh=40kernel.org; Alim Akhtar <alim.akhtar=40samsung.com>
-> >> Cc: Martin K . Petersen <martin.petersen=40oracle.com>;
-> >> krzk=40kernel.org;
-> > linux-
-> >> samsung-soc=40vger.kernel.org; avri.altman=40wdc.com;
-> >> stanley.chu=40mediatek.com; linux-scsi=40vger.kernel.org; linux-arm-
-> >> kernel=40lists.infradead.org; cang=40codeaurora.org;
-> > devicetree=40vger.kernel.org;
-> >> kwmad.kim=40samsung.com; linux-kernel=40vger.kernel.org
-> >> Subject: Re: =5BPATCH v10 00/10=5D exynos-ufs: Add support for UFS HCI
-> >>
-> >> On Thu, 28 May 2020 06:46:48 +0530, Alim Akhtar wrote:
-> >>
-> >>> This patch-set introduces UFS (Universal Flash Storage) host
-> >>> controller support for Samsung family SoC. Mostly, it consists of
-> >>> UFS PHY and host specific driver.
-> >>> =5B...=5D
-> >>
-> >> Applied =5B1,2,3,4,5,9=5D to 5.9/scsi-queue. The series won't show up =
-in
-> >> my
-> > public
-> >> tree until shortly after -rc1 is released.
-> >>
-> > Thanks Martin,
-> > Hi Rob and Kishon/Vinod
-> > Can you please pickup dt-bindings and PHY driver respectively?
->=20
-> You might have CC'ed me only for the PHY patch. I don't have the dt-bindi=
-ngs in
-> my inbox. Care to re-send what's missing again? This will be merged after=
- -rc1 is
-> tagged.
->=20
-Sure, will re-send this series.=20
+amdgpu + IOMMU + SME is now working for me on 5.7, yay! But, it is=20
+broken on torvalds master, boo. On boot, depending on which exact commit=20
+I test, it either hangs immediately (with built-in driver, before=20
+starting initramfs), displays some errors then hangs, or spams the=20
+screen with many amdgpu errors.
 
-> Thanks
-> Kishon
->=20
-> >
-> >> Thanks=21
-> >>
-> >> --
-> >> Martin K. Petersen	Oracle Linux Engineering
-> >
+I bisected the black screen hang to:
 
+commit dce8d6964ebdb333383bacf5e7ab8c27df151218
+Author: Joerg Roedel <jroedel@suse.de>
+Date:   Wed Apr 29 15:36:53 2020 +0200
+
+    iommu/amd: Convert to probe/release_device() call-backs
+
+    Convert the AMD IOMMU Driver to use the probe_device() and
+    release_device() call-backs of iommu_ops, so that the iommu core code
+    does the group and sysfs setup.
+
+    Signed-off-by: Joerg Roedel <jroedel@suse.de>
+    Link: https://lore.kernel.org/r/20200429133712.31431-16-joro@8bytes.org
+    Signed-off-by: Joerg Roedel <jroedel@suse.de>
+
+Testing torvalds master (623f6dc593) with the containing merge=20
+(98bdc74b36) plus the DMA mapping merge (4e94d08734) reverted allows=20
+amdgpu + IOMMU + SME to once again work.
+
+I think that nobody is really working on amdgpu + SME, but it would be a=20
+shame if it was supported and then incidentally broken by a small=20
+change.
+
+I am using an ASRock B450 Pro4 with Ryzen 1600 and ASUS RX 480. I don't=20
+understand this code at all, but let me know what I can do to=20
+troubleshoot.
+
+Thanks,
+Alex.
