@@ -1,125 +1,125 @@
-Return-Path: <SRS0=3c0k=7Y=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
+Return-Path: <SRS0=BxTb=7Z=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82091C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Jun 2020 23:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B47C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Jun 2020 02:53:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F92E20878
-	for <linux-samsung-soc@archiver.kernel.org>; Thu, 11 Jun 2020 23:05:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3763020835
+	for <linux-samsung-soc@archiver.kernel.org>; Fri, 12 Jun 2020 02:53:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.ca header.i=@yahoo.ca header.b="ksY/536V"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ksh5jdaL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbgFKXFa (ORCPT
+        id S1726305AbgFLCxx (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Thu, 11 Jun 2020 19:05:30 -0400
-Received: from sonic315-55.consmr.mail.gq1.yahoo.com ([98.137.65.31]:39357
-        "EHLO sonic315-55.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726289AbgFKXFa (ORCPT
+        Thu, 11 Jun 2020 22:53:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33496 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726265AbgFLCxx (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Thu, 11 Jun 2020 19:05:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.ca; s=s2048; t=1591916728; bh=4YUy2dnKX+aLfXhIKF01g98COCeJaRGO0uIb0VS79Kk=; h=Date:From:Subject:To:Cc:References:From:Subject; b=ksY/536Vx4+k7UgUuK7sU+hVBThfiszI09Iuz1pRDsEDzIekIw49uYjp7ORgIcNYz0f6DNDzfy6/4yfZrOHqInTp/7Z/HcyjmMMLgeZWuD8TRAwOaMMkENqEBRHmRUuLAghQQjihayEfj8L20m6zZMfg23tNVn0w4aye3VB6XxwcQwPiMIHahzYpkJItzHEI+CmtRNoS45OeF8pkyYlQXTj5rda13IOwNMLzMGJ8ZXmNJM+2AQJKKYg2covwyMtdvSqzYCtGIcWITwCXA8hKPZtr12KvBVm1CK0E2O6h8qR/7PTGpw4okY+ctPIvnNIDw3ffcEEgwvbMVoGH5mEvNw==
-X-YMail-OSG: VeI5KAIVM1l8FZBKKOcgI77XPMQpX1yRxgEuJkG2HwGiwftSWlMzUhg.wI9RpCO
- 0m9mb_xDfGj9T2zqhX.uH.ouvYYHvpDFZhv1pWFL5y1aS4v9hb1LGwKsLcCxtdjVmrndIAxlrgTz
- 8LO3W4t7Y60g_t0QstSujZEh68oL_wRlHCSB5Td_M.HVxGsUQjqWM2qr_3.AkhSA0yutg5qcke8K
- Tv4I9pYJd9awi6FeCBU8.AW0hdjLa6mwHM8hm8SCtmWxN5P9kgX8HCxAaSA2wWYE5BgfOiUDY0eN
- 8SdF4xfPgafkYHgez7VCD9nxGHLJtR8PsxeXciMIqqC1F9E63fd4UIcXYfSp5mCCnXf1pW2oA0VZ
- eHnF2Lf5MUvy0KsxA7VkbSJfJnhx72DN4PMW15_Pqypq2CTc5FOh7t_XE2x5gmqPfv8aAgem9Z6S
- G754j7JvVIvxR16NyP1NJHKbTMsWHNX0qPQnbyQSB5vpRmVwkBOq_AHkSPmPavoJRKp4qbzy6bBO
- Bgl5ef0LdH1w0IGoNwlRH.UR8MrIAnwak32wCqG5lf.SwS9m.j1yNpS4_5D0o_3_e09XXbmbVT87
- JydTvntH.WypWlGKDwbEeflUZOlJnJ07XyPmONgYYP36533AICJBEt96Va3.mhtjhlFw3.29ZciX
- DUnx7ZrUMS58v2ROWoMShz.kIsuifGl.62rbZy_X8r4vO.Uxo5XJwzW4msMSwsvTqaOqT_X2DSbr
- LLj_UnAnYi2D4y9bOLYthO6rgknJsjH5NNK_yfRdTmQy.0mTEM7K9s8uzcE9CTS8fKfsDaVPyVxh
- xVmmJFX.A8jqmra2IrNsfF8nyaPIwxTRtGkfxuk34ZNH.5c0amNlvLcBd8.CT2wpn_WASLVEIrIT
- lDlihOCfti987bgw5CyoUnMPwNm0_HyhWtZkakVcpPqyn4HsvO_sGZRdcb0.0tEu_C025pvdxswN
- rmgxGP8nc8FxFl_ewO1mGzIfh.LwtPgP6qxJHGwfAB.8sgV6oyaOcpklbPCK0mtb2TNuawY.gM1Y
- 4EIewDISpLaEHGybdY02ejlYI9grt4UFGP66cBLM98U9eaSs476RtjcbgJDnZF0_b5o12Ivh3yDE
- .RRrOjKXttZUE3n3qAJp9VaVUkrJ1tU13bF05OPpKcgEydjxVzV7vX1CE71IihUl_3XGlg_spYT1
- ddNGRuEIqFA0z2RSjAXwv25g7eOX4gy.2PVQRZ6tqkn.PDou7IfhlVk8_1frFp5r3OUVYDW2Om7X
- b38HOjsBTSMFQLSdrTiz56K7c1Ygr8lUnUMCqgmgaJUxAZUUchMUduSb9Ii8mcXGP569B9NwAMAc
- y3hNB5BRs5SQzb2xm6fsFam.vFlKXVBiNz6MHR.jitsw1wi_Lt0BaPaD8ibirje_yAw4-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.gq1.yahoo.com with HTTP; Thu, 11 Jun 2020 23:05:28 +0000
-Received: by smtp422.mail.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 385a77de6a3948fc2d5a9f83b3566fac;
-          Thu, 11 Jun 2020 23:05:25 +0000 (UTC)
-Date:   Thu, 11 Jun 2020 19:05:21 -0400
-From:   "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>
-Subject: AMD IOMMU + SME + amdgpu regression
-To:     Joerg Roedel <joro@8bytes.org>, linux-kernel@vger.kernel.org,
-        David Rientjes <rientjes@google.com>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        Daniel Drake <drake@endlessm.com>, jonathan.derrick@intel.com,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Joerg Roedel <jroedel@suse.de>
+        Thu, 11 Jun 2020 22:53:53 -0400
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D01CC03E96F
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jun 2020 19:53:53 -0700 (PDT)
+Received: by mail-io1-xd42.google.com with SMTP id q8so8742320iow.7
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jun 2020 19:53:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=K+UQMn4XLII3jpSziiawVVEOaVhY6ZIjWCrSiiLtkb8=;
+        b=ksh5jdaLWv3tU1z6o8SmQ2FRLeupUM1iLsVEhLWN3SRppEV6EVw/ruPj1af5oZtxA4
+         yRk0OGXzz1ACoYiBxdHg+syA0oS/JEbNKRgE9RfXraHSMX/WBkhhrS4hPJ72cnbO2br9
+         XWqaVe8kGm9gET4UWTlEVpXO1/wbwrkzpL/ptJwSH/rzPa0cJfUwFo4u1OsM2wSwiLsU
+         BQD6a1M2Bg+nLZt4ZdibQWaVPi1GlCXOEzWCMzhmEtP10kYu1b3KRSR6pqZizyI5tyV4
+         PT5XewTRALSmynnUGK+vJkNYm6G82Mphg4y7iD+hs9pOGrfh8AoI14mpO57AzZ7H3og0
+         SfrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=K+UQMn4XLII3jpSziiawVVEOaVhY6ZIjWCrSiiLtkb8=;
+        b=MiZdD4JT6Q8F2VDTtzpoL32xTPoki2ZXfJGlJTNsB+0weA4ofdVNbMRcjAMwIEvxuR
+         llHWvJyyv6yN0h6HtypTocLlPtBV/r1o+lvy31g4PMbbCgqJc7dfaqUBGDG20/vW6lRc
+         T5vd01CgruphWEWW0K3lw+CtyMELjw21atr4hciJdeDmCEF22CIRcknuGEkoP/kMiKcd
+         JXDVpOxlq5S+TqdQ+iL3vlSBb6aM8pjtExHCy1zFt7BM/zoAwPJ9XHxjDz3wJYxZttTr
+         yPCDeH9UMhD2xeqIMCk43u6YeVjT86DpoWimeEDeVMtCTQY8HQgzqP4C2C+4lOzTmdXQ
+         semg==
+X-Gm-Message-State: AOAM5301zfunqDr88SufKqVFIfwJxepiCNx/01hgVZAhUXgVOMmZaOS3
+        pB/aAXoGfamPQUoOkVn2ni0FH+qM4HE5aogcgoc=
+X-Google-Smtp-Source: ABdhPJzDJ5YO0GeuPgNkVBf5BRbJ4IfyKy6YkMhLhLbz0X61LU8WDhIaNQmOqmY9oyYbXwP+kccz3OQQgOwzXm9VpIk=
+X-Received: by 2002:a05:6638:a0a:: with SMTP id 10mr6117323jan.30.1591930431883;
+ Thu, 11 Jun 2020 19:53:51 -0700 (PDT)
 MIME-Version: 1.0
-Message-Id: <1591915710.rakbpzst8h.none@localhost>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-References: <1591915710.rakbpzst8h.none.ref@localhost>
-X-Mailer: WebService/1.1.16072 hermes_yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.6)
+References: <CANAwSgQv9BKV4QfZAgSfFQvO7ftcFyCGXEo+g4pgQA4mgK52iQ@mail.gmail.com>
+ <20200611064556.GA5056@kozik-lap> <CANAwSgQqW6+W2=QcrAx8DsafK_0eMtQthQWcZWy9NDWxN3WkbQ@mail.gmail.com>
+ <19d94eb3-d08c-e436-ccc0-cca56291eed2@arm.com>
+In-Reply-To: <19d94eb3-d08c-e436-ccc0-cca56291eed2@arm.com>
+From:   Anand Moon <linux.amoon@gmail.com>
+Date:   Fri, 12 Jun 2020 08:23:41 +0530
+Message-ID: <CANAwSgSFPbnAh2VbiPuhvPOve3Y44hXZGnjpc_7e27K=xdBo8A@mail.gmail.com>
+Subject: Re: ARM: warning: relocation out of range on Exynos XU4 and U3+
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Hi Robin,
 
-amdgpu + IOMMU + SME is now working for me on 5.7, yay! But, it is=20
-broken on torvalds master, boo. On boot, depending on which exact commit=20
-I test, it either hangs immediately (with built-in driver, before=20
-starting initramfs), displays some errors then hangs, or spams the=20
-screen with many amdgpu errors.
+On Thu, 11 Jun 2020 at 16:29, Robin Murphy <robin.murphy@arm.com> wrote:
+>
+> On 2020-06-11 08:51, Anand Moon wrote:
+> > Hi Krzysztof,
+> >
+> > On Thu, 11 Jun 2020 at 12:15, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >>
+> >> On Thu, Jun 11, 2020 at 11:13:57AM +0530, Anand Moon wrote:
+> >>> Hi All,
+> >>>
+> >>> I would like to report some warnings I observed on pre-compiled kernel
+> >>> image (5.7.1-1-ARCH) from Archlinux.
+> >>> Sometimes ethernet would not come up and get connected, so in order to
+> >>> investigate.
+> >>> I found below warnings, So I am sharing the logs at my end.
+> >>>
+> >>> Are these warnings related to in-consistency in locking, How can we
+> >>> Investigate more to fix this issue.
+> >>
+> >> These rather look like some address space randomization or some compiler
+> >> (LLVM?) feature. Not Exynos-specific anyway.
+> >>
+> >> You should report it to Arch folks because they know how they compiled
+> >> the kernel and what config they used (althogh config you can find in
+> >> /proc/config.gz).
+> >
+> > Thanks for your inputs.
+> > Ok I will do more checks at my end, before reporting further to Archlinux.
+>
+> Looks like the relocations fail when loading modules, and PLTs are not
+> enbabled[1], so chances are the kernel image has simply grown too big to
+> keep everything within direct branch range of everything else.
+>
+> Robin.
+>
+> [1]
+> https://github.com/archlinuxarm/PKGBUILDs/blob/master/core/linux-odroid-xu3/config#L619
 
-I bisected the black screen hang to:
+Thanks for your input CONFIG_ARM_MODULE_PLTS is being enable on
+(5.7.2-1-ARCH) config
+and this issue seems to have resolved.
 
-commit dce8d6964ebdb333383bacf5e7ab8c27df151218
-Author: Joerg Roedel <jroedel@suse.de>
-Date:   Wed Apr 29 15:36:53 2020 +0200
-
-    iommu/amd: Convert to probe/release_device() call-backs
-
-    Convert the AMD IOMMU Driver to use the probe_device() and
-    release_device() call-backs of iommu_ops, so that the iommu core code
-    does the group and sysfs setup.
-
-    Signed-off-by: Joerg Roedel <jroedel@suse.de>
-    Link: https://lore.kernel.org/r/20200429133712.31431-16-joro@8bytes.org
-    Signed-off-by: Joerg Roedel <jroedel@suse.de>
-
-Testing torvalds master (623f6dc593) with the containing merge=20
-(98bdc74b36) plus the DMA mapping merge (4e94d08734) reverted allows=20
-amdgpu + IOMMU + SME to once again work.
-
-I think that nobody is really working on amdgpu + SME, but it would be a=20
-shame if it was supported and then incidentally broken by a small=20
-change.
-
-I am using an ASRock B450 Pro4 with Ryzen 1600 and ASUS RX 480. I don't=20
-understand this code at all, but let me know what I can do to=20
-troubleshoot.
-
-Thanks,
-Alex.
+Best Regards
+-Anand
