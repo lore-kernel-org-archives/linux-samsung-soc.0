@@ -2,196 +2,133 @@ Return-Path: <SRS0=6aGG=72=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C35EC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 13 Jun 2020 18:45:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2046C433E1
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 13 Jun 2020 21:41:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 71D9E207BC
-	for <linux-samsung-soc@archiver.kernel.org>; Sat, 13 Jun 2020 18:45:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8393C2078A
+	for <linux-samsung-soc@archiver.kernel.org>; Sat, 13 Jun 2020 21:41:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="auZktx6e"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726645AbgFMSpb (ORCPT
+        id S1726642AbgFMVli (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 13 Jun 2020 14:45:31 -0400
-Received: from mail-oln040092004013.outbound.protection.outlook.com ([40.92.4.13]:23362
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726582AbgFMSpM (ORCPT
+        Sat, 13 Jun 2020 17:41:38 -0400
+Received: from mta-p6.oit.umn.edu ([134.84.196.206]:51028 "EHLO
+        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726272AbgFMVlg (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 13 Jun 2020 14:45:12 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=f1QmpPwUJ1ZOB45gOZxvgG3gOxFwUbqJB0pNKAXgKaT0Fc+QWEsCS9B5VFVNo4GvrU9tmjadYUZxF4KWYveOJ4CRvppbOMSLMZi/5s7+KMOZT2/HucyLmO0x+xfic7xAMfHmHv0OZJtATOq4NFTzP98xMS7M3yQlvLCRsGpbEzOFytBuE1q/aNV81qQQ0x0S4Uw0jm1zTx5uqCZaQt2Dsjq1Ib1j5hY3b08unM67zMRjEcqNbUvXiv2XgOatRbjLjprV6PQ5AIQYyb5HhexkUgB9VwR/Ldt/ptBVLa5HD0RMpDW37uwHi6Nr61/E7e0iEE2GGt5M7B6qiguriF1OFw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qLhibS2AH1uHRC3+TqD15Yd73eMQZgZCUXQlC9VcWuM=;
- b=haTmMhzmKugajKF7Eb1ixwnlAlPmS22UU4J0Nt72BZoP/QnVelfZZMYEpUuYMtIzdFXOLliBFz0QrhCDPZdLC5Abb5tz/DH7TuVPe4Lt8IC1EboHTY7TJ0hHmqaaJB6rO8Ad/3CgHYfqEaaAEoZJJRF0RhZphqtH/45ia/nL6LvRBLNyNQ4CVYcjv73eDE8UB1abD7IBFbUwo4XS2PN9PjwDpX9nG36yTolwDHK7DdvKwYeAzHoM5EpvfxEP0HVKZJvAomTZ21Zp/zpUiMT0wY3uQTvSYma8Rt50KhAI5AezpzA+Mu5wN0MHKiLBR8vXI7IxNvyh6+KarlP5rr+nfg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-Received: from BL2NAM02FT048.eop-nam02.prod.protection.outlook.com
- (10.152.76.56) by BL2NAM02HT159.eop-nam02.prod.protection.outlook.com
- (10.152.76.165) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3088.18; Sat, 13 Jun
- 2020 18:45:10 +0000
-Received: from BN6PR04MB0660.namprd04.prod.outlook.com
- (2a01:111:e400:7e46::4a) by BL2NAM02FT048.mail.protection.outlook.com
- (2a01:111:e400:7e46::109) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3088.18 via Frontend
- Transport; Sat, 13 Jun 2020 18:45:10 +0000
-X-IncomingTopHeaderMarker: OriginalChecksum:81909DD91A124551B6F3A5C934F8A1FFBFF35ECFBCB5488D6CAC2B0DF9ABB496;UpperCasedChecksum:40F606CB59A2CC265E455992DC82BA9A985A790B6EE1E1F124840D1FE2FC3043;SizeAsReceived:7760;Count:49
-Received: from BN6PR04MB0660.namprd04.prod.outlook.com
- ([fe80::b9c3:9bff:541d:f383]) by BN6PR04MB0660.namprd04.prod.outlook.com
- ([fe80::b9c3:9bff:541d:f383%9]) with mapi id 15.20.3088.026; Sat, 13 Jun 2020
- 18:45:10 +0000
-From:   Jonathan Bakker <xc-racer2@live.ca>
-To:     kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Jonathan Bakker <xc-racer2@live.ca>
-Subject: [PATCH 3/5] ARM: dts: s5pv210: Add support for GP2A light sensor on Aries
-Date:   Sat, 13 Jun 2020 11:44:25 -0700
-Message-ID: <BN6PR04MB06602B216C5A1AA43E945CB6A39E0@BN6PR04MB0660.namprd04.prod.outlook.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200613184427.23394-1-xc-racer2@live.ca>
-References: <20200613184427.23394-1-xc-racer2@live.ca>
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ClientProxiedBy: MWHPR07CA0022.namprd07.prod.outlook.com
- (2603:10b6:300:116::32) To BN6PR04MB0660.namprd04.prod.outlook.com
- (2603:10b6:404:d9::21)
-X-Microsoft-Original-Message-ID: <20200613184427.23394-4-xc-racer2@live.ca>
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from jon-hp-6570b.telus (2001:569:fb68:9c00:8067:f823:1e15:7520) by MWHPR07CA0022.namprd07.prod.outlook.com (2603:10b6:300:116::32) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3088.18 via Frontend Transport; Sat, 13 Jun 2020 18:45:09 +0000
-X-Mailer: git-send-email 2.20.1
-X-Microsoft-Original-Message-ID: <20200613184427.23394-4-xc-racer2@live.ca>
-X-TMN:  [auD5zsh+km3+wiZ5YA5nm0/ObBGK7MDtIZ+uBXWXBl9UORvQab2ctCBnF3A0oA5K]
-X-MS-PublicTrafficType: Email
-X-IncomingHeaderCount: 49
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-Correlation-Id: d6cb9b12-1faf-4121-4a69-08d80fc9e687
-X-MS-TrafficTypeDiagnostic: BL2NAM02HT159:
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: gIq6PW2/IkMEdjEf2+BJ2qJdPrMpevBTfADPcPQIP4mBIBD3wBWlhG+4GPnGEqR9TwwSbe84ghWJ7xsQPRX/y4g5SF3slLLvxF39rNuLAvFq15X62mEuiYYXgjwKsr8kSwMQrk7YoVgouDQugyhRRmRwPerhIue9ione1YdxVGFj0Lkgip758yZnH9GzBD3GsXlio0lFDcSxGSGDVqailg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:0;SRV:;IPV:NLI;SFV:NSPM;H:BN6PR04MB0660.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:;DIR:OUT;SFP:1901;
-X-MS-Exchange-AntiSpam-MessageData: HGkomBur/rGwcrrQVXalMKnIucVweivQeaPGW4LUz5ZKbr7QcxbCc+9ATZqoZz+wMWd3QNrhZ6VsvQsa4jwrsLafhEx4L3h6gGHy0Kml5hO2cpk8j8qiZZWMsARC6ttQGBj66VGAUBdbs9ugnuMhKyRMQT384nLPP2B+2IV4aooCDJdhql+wJGe008fTU2H7HVHcu7puQZ/1NSoO4m+1ig==
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d6cb9b12-1faf-4121-4a69-08d80fc9e687
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2020 18:45:10.6882
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL2NAM02HT159
+        Sat, 13 Jun 2020 17:41:36 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p6.oit.umn.edu (Postfix) with ESMTP id 49krdW3qkhz9vCGM
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Jun 2020 21:41:35 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p6.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id GPWf5suKs5YH for <linux-samsung-soc@vger.kernel.org>;
+        Sat, 13 Jun 2020 16:41:35 -0500 (CDT)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id 49krdW20Mjz9vCGS
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Jun 2020 16:41:35 -0500 (CDT)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mta-p6.oit.umn.edu 49krdW20Mjz9vCGS
+DKIM-Filter: OpenDKIM Filter v2.11.0 mta-p6.oit.umn.edu 49krdW20Mjz9vCGS
+Received: by mail-il1-f200.google.com with SMTP id c8so9224384ilm.5
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Jun 2020 14:41:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=LSFpRsDH7hPv0sXcI0eBKridM6HBdGl5vIGKq0rJzoY=;
+        b=auZktx6ehAhBajQlNLlI3wm6+d/hAPq8yaPTIV0vlYaeRrgaW3hoVKPn9qzjsia14p
+         PiNxeKtm8fOFcqmrbG++0+2KZ2Jfx9ybuCk8eyx1je4TBejzWJzhBwHirnfDeOZNESDe
+         b6qaIEBwyW498ZP7ZKeSkzzbpNwlpEXxglPubM78kJo/euKcITeUPzisctzP3RPMwr87
+         7UoQ6m8bnLiqQBIElWMX1q7TpOHphL8f38WMAFGB2PmvGYRT1i5wA4mFRvwLyLMlR4lg
+         ZbFZc9kcFMeb0XJEv3c0fbE9WsxIcH9/sgZKUa9+qBQwJV/UP28bN7oFf/506QB9gYTZ
+         NZNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=LSFpRsDH7hPv0sXcI0eBKridM6HBdGl5vIGKq0rJzoY=;
+        b=Z8OGjV0n6IKld256n20P1HenG6dQVDwdWpyEtTyNCf+dFC35ioTrG6o8xfvmw8Tbfg
+         i08Q3mvvOn5fe3bK3in2oANiTD3QK2e+j+eUvYd7v92yeV6kNQ2S/eM2n5fBv+ITM9+r
+         1TyOHn2pmveuQQnXNz7cYtmH0Ms5W+BrEp2s2BCDxX+AWWAfjeFMhgLP0qIp+YI27afu
+         MLgw3vRtsOthkCG7OB3RoVe8ELyZ84w6Z2WLZIVE4yDqRdH3jPgm4Jm1lStptjMU8U0L
+         v1QDfXDqZK3etnXMBBAzSHDRB61Ev2HWmJzxkyEF0VBWPUwNSia8Ebm2hLn8jtfw4g2T
+         LfyQ==
+X-Gm-Message-State: AOAM532lcg3u8vsBsBW+43ZU5NkPntxvfvjdllmM473UnE0i4VUnu52S
+        vZBpgvHz8SI1T5dRxsIT6bZcDO5mS3n0pQLNQ3wszG7mOEyEiQuCmIvxai4Nf1vBoXR9/twK5Oo
+        U8vFVtL0p2C5aAOOJ3ePpOagNQ4KUauBzB60=
+X-Received: by 2002:a92:c9ce:: with SMTP id k14mr19250703ilq.250.1592084494709;
+        Sat, 13 Jun 2020 14:41:34 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyb26JtPoL+OYiwijo1f/aBaj8/q93A9vM3woScZqAS1tFwQgWOSDCRXrCE9R7tquWbd2eGgg==
+X-Received: by 2002:a92:c9ce:: with SMTP id k14mr19250688ilq.250.1592084494366;
+        Sat, 13 Jun 2020 14:41:34 -0700 (PDT)
+Received: from qiushi.cs.umn.edu ([2607:ea00:101:3c74:4874:45:bcb4:df60])
+        by smtp.gmail.com with ESMTPSA id d5sm5174386ioe.20.2020.06.13.14.41.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 13 Jun 2020 14:41:33 -0700 (PDT)
+From:   wu000273@umn.edu
+To:     kjlu@umn.edu
+Cc:     wu000273@umn.edu,
+        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] char: hw_random: Fix a reference count leak.
+Date:   Sat, 13 Jun 2020 16:41:28 -0500
+Message-Id: <20200613214128.32665-1-wu000273@umn.edu>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-Aries boards have a GP2A light/proximity sensor attached over i2c-gpio.
-As the chip outputs a current and the board has no current ADC, a
-current shunt resistor and a voltage ADC are used.
+From: Qiushi Wu <wu000273@umn.edu>
 
-Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+Calling pm_runtime_get_sync increments the counter even in case of
+failure, causing incorrect ref count if pm_runtime_put_sync is not
+called in error handling paths. Thus replace the jump target
+"err_pm_get" by "err_clock".
+
+Fixes: 6cd225cc5d8a ("hwrng: exynos - add Samsung Exynos True RNG driver")
+Signed-off-by: Qiushi Wu <wu000273@umn.edu>
 ---
- arch/arm/boot/dts/s5pv210-aries.dtsi | 50 ++++++++++++++++++++++++++--
- 1 file changed, 48 insertions(+), 2 deletions(-)
+ drivers/char/hw_random/exynos-trng.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/s5pv210-aries.dtsi b/arch/arm/boot/dts/s5pv210-aries.dtsi
-index d3aeafc0f650..b27d7c2e6dca 100644
---- a/arch/arm/boot/dts/s5pv210-aries.dtsi
-+++ b/arch/arm/boot/dts/s5pv210-aries.dtsi
-@@ -69,6 +69,18 @@
- 		pinctrl-0 = <&touchkey_vdd_ena>;
- 	};
+diff --git a/drivers/char/hw_random/exynos-trng.c b/drivers/char/hw_random/exynos-trng.c
+index 8e1fe3f8dd2d..ffa7e0f061f0 100644
+--- a/drivers/char/hw_random/exynos-trng.c
++++ b/drivers/char/hw_random/exynos-trng.c
+@@ -135,7 +135,7 @@ static int exynos_trng_probe(struct platform_device *pdev)
+ 	ret = pm_runtime_get_sync(&pdev->dev);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "Could not get runtime PM.\n");
+-		goto err_pm_get;
++		goto err_clock;
+ 	}
  
-+	gp2a_vled: regulator-fixed-2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VLED";
-+		enable-active-high;
-+		gpio = <&gpj1 4 GPIO_ACTIVE_HIGH>;
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&gp2a_power>;
-+	};
-+
- 	wifi_pwrseq: wifi-pwrseq {
- 		compatible = "mmc-pwrseq-simple";
- 		reset-gpios = <&gpg1 2 GPIO_ACTIVE_LOW>;
-@@ -468,9 +480,21 @@
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&prox_i2c_pins>;
+ 	trng->clk = devm_clk_get(&pdev->dev, "secss");
+@@ -166,8 +166,6 @@ static int exynos_trng_probe(struct platform_device *pdev)
  
--		status = "disabled";
-+		light-sensor@44 {
-+			compatible = "sharp,gp2ap002a00f";
-+			reg = <0x44>;
-+			interrupt-parent = <&gph0>;
-+			interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
-+			vdd-supply = <&gp2a_vled>;
-+			vio-supply = <&gp2a_vled>;
-+			io-channels = <&gp2a_shunt>;
-+			io-channel-names = "alsout";
-+			sharp,proximity-far-hysteresis = /bits/ 8 <0x40>;
-+			sharp,proximity-close-hysteresis = /bits/ 8 <0x20>;
+ err_clock:
+ 	pm_runtime_put_sync(&pdev->dev);
+-
+-err_pm_get:
+ 	pm_runtime_disable(&pdev->dev);
  
--		/* Sharp gp2a prox/light sensor, incomplete mainline binding */
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&gp2a_irq>;
-+		};
- 	};
- 
- 	i2c_magnetometer: i2c-gpio-7 {
-@@ -543,6 +567,14 @@
- 	vdd-supply = <&ldo4_reg>;
- 
- 	status = "okay";
-+
-+	gp2a_shunt: current-sense-shunt {
-+		compatible = "current-sense-shunt";
-+		io-channels = <&adc 9>;
-+		shunt-resistor-micro-ohms = <47000000>; /* 47 ohms */
-+		#io-channel-cells = <0>;
-+		io-channel-ranges;
-+	};
- };
- 
- &fimd {
-@@ -618,6 +650,13 @@
- 		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
- 	};
- 
-+	gp2a_irq: gp2a-irq {
-+		samsung,pins = "gph0-2";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_F>;
-+		samsung,pin-pud = <S3C64XX_PIN_PULL_DOWN>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
-+
- 	pmic_dvs_pins: pmic-dvs-pins {
- 		samsung,pins = "gph0-3", "gph0-4", "gph0-5";
- 		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-@@ -686,6 +725,13 @@
- 		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
- 	};
- 
-+	gp2a_power: gp2a-power {
-+		samsung,pins = "gpj1-4";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-+		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-+	};
-+
- 	touchkey_i2c_pins: touchkey-i2c-pins {
- 		samsung,pins = "gpj3-0", "gpj3-1";
- 		samsung,pin-pud = <S3C64XX_PIN_PULL_NONE>;
+ 	return ret;
 -- 
-2.20.1
+2.17.1
 
