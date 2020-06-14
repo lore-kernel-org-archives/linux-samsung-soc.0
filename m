@@ -7,71 +7,71 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB54AC433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 14 Jun 2020 03:01:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07066C433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 14 Jun 2020 03:11:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 89FD12083E
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 14 Jun 2020 03:01:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA51C20739
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 14 Jun 2020 03:11:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="khudvC7k"
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="dY/qYHxS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbgFNDBW (ORCPT
+        id S1726535AbgFNDLH (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 13 Jun 2020 23:01:22 -0400
-Received: from mta-p8.oit.umn.edu ([134.84.196.208]:35846 "EHLO
-        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726486AbgFNDBT (ORCPT
+        Sat, 13 Jun 2020 23:11:07 -0400
+Received: from mta-p7.oit.umn.edu ([134.84.196.207]:36586 "EHLO
+        mta-p7.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726486AbgFNDLG (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 13 Jun 2020 23:01:19 -0400
+        Sat, 13 Jun 2020 23:11:06 -0400
 Received: from localhost (unknown [127.0.0.1])
-        by mta-p8.oit.umn.edu (Postfix) with ESMTP id 49kzkQ5dn5z9vZx9
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Jun 2020 03:01:18 +0000 (UTC)
+        by mta-p7.oit.umn.edu (Postfix) with ESMTP id 49kzxj06HMz9vYfC
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Jun 2020 03:11:05 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p8.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id aoK-CsFgUtIW for <linux-samsung-soc@vger.kernel.org>;
-        Sat, 13 Jun 2020 22:01:18 -0500 (CDT)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+Received: from mta-p7.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p7.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 8wwc5R4_QzMa for <linux-samsung-soc@vger.kernel.org>;
+        Sat, 13 Jun 2020 22:11:04 -0500 (CDT)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id 49kzkQ3vHZz9vZx3
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Jun 2020 22:01:18 -0500 (CDT)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mta-p8.oit.umn.edu 49kzkQ3vHZz9vZx3
-DKIM-Filter: OpenDKIM Filter v2.11.0 mta-p8.oit.umn.edu 49kzkQ3vHZz9vZx3
-Received: by mail-io1-f69.google.com with SMTP id x2so3525680iof.0
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Jun 2020 20:01:18 -0700 (PDT)
+        by mta-p7.oit.umn.edu (Postfix) with ESMTPS id 49kzxh5ZlTz9vYdP
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Jun 2020 22:11:04 -0500 (CDT)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mta-p7.oit.umn.edu 49kzxh5ZlTz9vYdP
+DKIM-Filter: OpenDKIM Filter v2.11.0 mta-p7.oit.umn.edu 49kzxh5ZlTz9vYdP
+Received: by mail-io1-f72.google.com with SMTP id t23so8960386iog.21
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Jun 2020 20:11:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=umn.edu; s=google;
         h=from:to:cc:subject:date:message-id;
-        bh=cOgHpCEAAAGqQDbbixnX7uhIWd2KMk0lv565gUU7esU=;
-        b=khudvC7kbksJLnNR3xG6AAZ5VFW/9CNcXYYV/ulZ976gfAAaipmqB15w7jO76lIoMJ
-         YB9I982kBR9w2M2joRO5CDUZTExYtrIB+V0LlC2Clx8qohj4QgvSR4xKCR1+jz+K5P50
-         iRItj7gd4U5cgYXpFEh+c3c7xRYl7BDUXe9DZOV0IrWnVv0ODucjWYIR8kkFp+dMI3Bu
-         lvJssg30dL9Ac1IdAuA+cU0zeb5i61gOVz4dwY/txEbznKi7gXL0wmZKFE9PDWid04Jf
-         oeIBsk5tqxN5gI3+uj7e2wd8txqTd7SolqocLPy6eZg/QKXgxQ7oqulCFVCuO/Xp4QM3
-         FP6A==
+        bh=Tvzr1gexpz+XRT9cgNKtj6wgeM1vIvcw44KBepZR6D4=;
+        b=dY/qYHxSJdD8wAPz5h0FzAjVdWnVxvU72g1FCz0rJabbboMQPb4mkbyhXsW3/U4OSd
+         tG2GxLxvsYxVLnaDmrBSXbveACEyS381htloR096Mv2VmnZieGOW6NKYkZ7fWrV2iVFk
+         ax3PGuCq8fIkqEk843jjTIsJ4uPPnzUNyn6t6ba2w1u0gGl4RmuUKDXBMpwPCLXMCWh+
+         N6oaBSFszaA35qXd8F4iEDmVlLuXUaCgV9poTt2R1spjs+/ORhl5sK88oF3W7oNshyca
+         4x61BV8RjdvWh4c0DA1qre73dHxLnFLqeAI/J9rO+n3zIU3l8b9sM3TSvclk+yocs9kT
+         KvTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=cOgHpCEAAAGqQDbbixnX7uhIWd2KMk0lv565gUU7esU=;
-        b=Wsv9XaCkzSl0ARd1XHzbijehMFm8FG0YP6bExUVRNIsJGAC08FDfQvYEKD1VS9DnFE
-         XkV21qeh34qN4OX50+2FtydJBYDxi82LXutYuAEIHjgQu2/fGzDTLGUPX4rfhJG0r+tf
-         OGx1p4fDZiHamSUPYBGaxkDcR0NFgCjLkUfYkaDAPsvGEwGq5jQkSF6qzIFx/snMdtsM
-         zXVE5EH28fnROeuJzxnDZFjQnU6VHcH+m6IllE0xBKZn7oKJj9lnfUkWUQSRHn2Ofn8n
-         nc9EsVcLIBhWcK+FHwtF0K86NpYEjyD2eiRntp6WCgfpYFpDAquzH+kKflzCwWIzwCZI
-         REPA==
-X-Gm-Message-State: AOAM533gDWjuhclOz7Ad9gK5w9xOMsIqXUcTuiLha7wQ2OZlNNNele41
-        SCBFtvuERrkbr1hcSyCVUPYFoEXR85udajQGwTz8IsEDUgTJLLY/9pg6LgqL79iFkfzPvY/tfJV
-        R3ZFe8b0A0aaQl6GwD7EhM4KDKNJcFudDz8k=
-X-Received: by 2002:a92:d112:: with SMTP id a18mr19876652ilb.3.1592103678097;
-        Sat, 13 Jun 2020 20:01:18 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwTFVu29soAQKwJchdpgwjpKebLlBpdEM/Z/hVt5TRB+tZ1yqGgKWvSgKXVBGcdcozs35SC4w==
-X-Received: by 2002:a92:d112:: with SMTP id a18mr19876632ilb.3.1592103677826;
-        Sat, 13 Jun 2020 20:01:17 -0700 (PDT)
+        bh=Tvzr1gexpz+XRT9cgNKtj6wgeM1vIvcw44KBepZR6D4=;
+        b=sHqGjqrgq845jlD064x51Z1iw0UFTO77xvZmH73feWfM8Ew03cVOHyMXyZ4HYEVVqd
+         L8v26iRJ93Y8aP5tRG9b6TlIeNzHPln3qlNVRQrMnIReu9jVZP4I13fKHMRnFUBd6seR
+         iOtQBIFZ0gDqqU7ooHHTOnv3Dqme01eCoBrYs906y0xQxhTc4jDiI0AA1v+IDX1hTvXg
+         CWZ7yjwNyIdzH+4kLzMseDUMrgUR8INNfvxq9jpHtZOZQ8RKXMeDgSsxyTRxu6ObohfC
+         D6vllUX48YgkVwmDCEMij39jQrZNCbCzqwUAtUUCAsqyM916DhC5U70LTr87EVumz8be
+         iv1g==
+X-Gm-Message-State: AOAM531KHGG90aR2NOy8T6gi6lf/7+nnWjjoStpGNQ8OtnT40e7/FgD8
+        3Mncj9XU3Pxl7Uy69HQQ7dB1wLBH6No9pRXdP892fZRsPlhy54dT5/whC4PLUFE1kc/XiSMZqJH
+        /pjCwF9bfSsD8Gr/C2pkHtmlok0tmFfg92gY=
+X-Received: by 2002:a92:2906:: with SMTP id l6mr20963410ilg.105.1592104264295;
+        Sat, 13 Jun 2020 20:11:04 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwfPqC77rIfEaxFBW9gjDsioh8PzhonurOjVS/5EVI+YZOFekhI0LDWSnL9wCyzLaBMx6s77Q==
+X-Received: by 2002:a92:2906:: with SMTP id l6mr20963390ilg.105.1592104264017;
+        Sat, 13 Jun 2020 20:11:04 -0700 (PDT)
 Received: from qiushi.cs.umn.edu ([2607:ea00:101:3c74:4874:45:bcb4:df60])
-        by smtp.gmail.com with ESMTPSA id q5sm5656947ile.37.2020.06.13.20.01.16
+        by smtp.gmail.com with ESMTPSA id x12sm5667765ilm.48.2020.06.13.20.11.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Jun 2020 20:01:17 -0700 (PDT)
+        Sat, 13 Jun 2020 20:11:03 -0700 (PDT)
 From:   wu000273@umn.edu
 To:     kjlu@umn.edu
 Cc:     wu000273@umn.edu, Kyungmin Park <kyungmin.park@samsung.com>,
@@ -81,9 +81,9 @@ Cc:     wu000273@umn.edu, Kyungmin Park <kyungmin.park@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: exynos4-is: Fix a reference count leak
-Date:   Sat, 13 Jun 2020 22:01:11 -0500
-Message-Id: <20200614030111.28843-1-wu000273@umn.edu>
+Subject: [PATCH] media: exynos4-is: Fix a reference count leak due to pm_runtime_get_sync
+Date:   Sat, 13 Jun 2020 22:10:58 -0500
+Message-Id: <20200614031058.30161-1-wu000273@umn.edu>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
@@ -92,32 +92,31 @@ X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
 From: Qiushi Wu <wu000273@umn.edu>
 
-pm_runtime_get_sync() increments the runtime PM usage counter even
-when it returns an error code, causing incorrect ref count if
-pm_runtime_put_noidle() is not called in error handling paths.
-Thus call pm_runtime_put_noidle() if pm_runtime_get_sync() fails.
+On calling pm_runtime_get_sync() the reference count of the device
+is incremented. In case of failure, decrement the
+reference count before returning the error.
 
 Signed-off-by: Qiushi Wu <wu000273@umn.edu>
 ---
- drivers/media/platform/exynos4-is/mipi-csis.c | 4 +++-
+ drivers/media/platform/exynos4-is/media-dev.c | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/exynos4-is/mipi-csis.c b/drivers/media/platform/exynos4-is/mipi-csis.c
-index 540151bbf58f..1aac167abb17 100644
---- a/drivers/media/platform/exynos4-is/mipi-csis.c
-+++ b/drivers/media/platform/exynos4-is/mipi-csis.c
-@@ -510,8 +510,10 @@ static int s5pcsis_s_stream(struct v4l2_subdev *sd, int enable)
- 	if (enable) {
- 		s5pcsis_clear_counters(state);
- 		ret = pm_runtime_get_sync(&state->pdev->dev);
--		if (ret && ret != 1)
-+		if (ret && ret != 1) {
-+			pm_runtime_put_noidle(&state->pdev->dev);
- 			return ret;
-+		}
- 	}
+diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
+index 9aaf3b8060d5..cfb6891180b0 100644
+--- a/drivers/media/platform/exynos4-is/media-dev.c
++++ b/drivers/media/platform/exynos4-is/media-dev.c
+@@ -484,8 +484,10 @@ static int fimc_md_register_sensor_entities(struct fimc_md *fmd)
+ 		return -ENXIO;
  
- 	mutex_lock(&state->lock);
+ 	ret = pm_runtime_get_sync(fmd->pmf);
+-	if (ret < 0)
++	if (ret < 0) {
++		pm_runtime_put(fmd->pmf);
+ 		return ret;
++	}
+ 
+ 	fmd->num_sensors = 0;
+ 
 -- 
 2.17.1
 
