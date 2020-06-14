@@ -2,135 +2,106 @@ Return-Path: <SRS0=9Q6F=73=vger.kernel.org=linux-samsung-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A3A2C433DF
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 14 Jun 2020 03:18:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 525AEC433E0
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 14 Jun 2020 06:23:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5BCCC2080D
-	for <linux-samsung-soc@archiver.kernel.org>; Sun, 14 Jun 2020 03:18:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F43520714
+	for <linux-samsung-soc@archiver.kernel.org>; Sun, 14 Jun 2020 06:23:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="Mr2pHGWc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ngmPHhrW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726460AbgFNDSj (ORCPT
+        id S1725267AbgFNGXr (ORCPT
         <rfc822;linux-samsung-soc@archiver.kernel.org>);
-        Sat, 13 Jun 2020 23:18:39 -0400
-Received: from mta-p8.oit.umn.edu ([134.84.196.208]:41530 "EHLO
-        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726486AbgFNDSh (ORCPT
+        Sun, 14 Jun 2020 02:23:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53864 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725265AbgFNGXq (ORCPT
         <rfc822;linux-samsung-soc@vger.kernel.org>);
-        Sat, 13 Jun 2020 23:18:37 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p8.oit.umn.edu (Postfix) with ESMTP id 49l06P1g9Sz9vBtD
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Jun 2020 03:18:37 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p8.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id qhQSivmeh8Ub for <linux-samsung-soc@vger.kernel.org>;
-        Sat, 13 Jun 2020 22:18:37 -0500 (CDT)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id 49l06N6ttsz9vBtG
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Jun 2020 22:18:36 -0500 (CDT)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mta-p8.oit.umn.edu 49l06N6ttsz9vBtG
-DKIM-Filter: OpenDKIM Filter v2.11.0 mta-p8.oit.umn.edu 49l06N6ttsz9vBtG
-Received: by mail-il1-f197.google.com with SMTP id o12so9518878ilf.6
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Jun 2020 20:18:36 -0700 (PDT)
+        Sun, 14 Jun 2020 02:23:46 -0400
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66F75C03E96F;
+        Sat, 13 Jun 2020 23:23:46 -0700 (PDT)
+Received: by mail-io1-xd43.google.com with SMTP id i25so14540205iog.0;
+        Sat, 13 Jun 2020 23:23:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
+        d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=HH/45wVNp4vPlnv8y138sW8x+ALttRXOB4XcVO5Zkvs=;
-        b=Mr2pHGWcj5Ed4kB6qg+LD4UU7Fdh03ef8xenaEHX4IejelTQRSts1ZUsupl/mg59zB
-         XF9CR2+v+hbbLsa1MjbFoPtRr5YYVmZ27DlWKM8xPwZf7yGIv0FbMEznM/ntiMvxZUeG
-         i5BHFjA9b7vZXBMhyB/BGgjvsZwwqzLf+OoaQy/+UrP9Kl8BLPEDI2/kbo/YI05R6nGr
-         sHBOTRnMNGIaesLVyR5fQUrz5uwTzAf4si+Y7RZ1cpuY/nTd50V/NwKm9C51Cpc69kZQ
-         3c/3kaNY/lEordibuKx0qfVo1GwM/l4Loihba7JhTR2rN81SPmcctJMdzUi2yL4uzpdF
-         R9Qg==
+        bh=YKS8gM347vC6eBkm4Z/mHFPXutm1BnydR4TUyYY4ZoQ=;
+        b=ngmPHhrWqQ3IcGsjjFder735SJJuYeAncWRBp/l/geamiltraOXzmr5I2ygABHqPaw
+         FCx/qRrWsG8kJ+wAS60YzXYnZPLpwUWX5YL3ZSb7Xb8AkTNNPJtjzEffwD/PmNusCi6j
+         NvKOGSNetOYvZUUZzTIZCP9wthuanXxWPbsqSLqKpa8yI8YuyUWdMA6YQxLNxoD1aasJ
+         tmJSG7WRPfu1EyA61NMn+ShfVLfEmDZedCidaN+UkVW7FfpVsnlW3jT/iiROzEvUVItY
+         lPGs+TPmmsRCzYnIebL8WJOTdw3pD+0CKoNBdmmInli3cU+s7x5vQnq9bMYla/TgW/Wt
+         xadw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=HH/45wVNp4vPlnv8y138sW8x+ALttRXOB4XcVO5Zkvs=;
-        b=sjr687W/sk+0IDqoYcRVwRHSP1H5k+E6DqoHhUlVMAc+OlI2urPmyzybZWA2K27el0
-         Hriyfv5DrXTOjfz/jmeipATbjm5viY100//ZKVaSBTGg+OyRP5TmmNmiOcAwiF/ZRCAC
-         yz7uE+TpzyeGgqcDs05RIL2MbHtEMn4pASedAqWO28F2kTkdH1CKt2ahDBVmZvtoDLEL
-         VCyKxncble9CrHwJbGolcZTO5c9tdzWd521YsMcJnQl9LIsVmCQ7qXgvTTzJFYB1JdDU
-         cJNUUDbmNoqfQiZT3qNERcOhkICx/uWS55EEZ648iiLPuhNAC9pjDCwR28F+7mUnuxv1
-         Yefg==
-X-Gm-Message-State: AOAM531zkeCb1ZEeAAgsE8GQrkXx+qExvpuIWH/hsl9SxD3x0Ff33M1+
-        6vPSTEC0R07oEnfphHVGr33nopjrpyUxnpbr1ni2Dt/P8/KuTfp3pRIVwzAsp4BWdw2yD9N5axD
-        Dk6vUyGynWvUI3irH7/cym0VeBLJZlM97gIk=
-X-Received: by 2002:a02:707:: with SMTP id f7mr14751040jaf.119.1592104716478;
-        Sat, 13 Jun 2020 20:18:36 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwvhSbDmYnmF5WV63TX3Cq9IgWRZ8Hr8otgBrXO+ItUH+Xf51d8C1dlXHo+xujD8MZenFDLig==
-X-Received: by 2002:a02:707:: with SMTP id f7mr14751022jaf.119.1592104716193;
-        Sat, 13 Jun 2020 20:18:36 -0700 (PDT)
-Received: from qiushi.cs.umn.edu ([2607:ea00:101:3c74:4874:45:bcb4:df60])
-        by smtp.gmail.com with ESMTPSA id b9sm5559725ils.84.2020.06.13.20.18.35
+        bh=YKS8gM347vC6eBkm4Z/mHFPXutm1BnydR4TUyYY4ZoQ=;
+        b=UF1fNq+wt0wQ7JN/5RGgdtRzqRoi2SAQyc95H9dQlk7diAb5RLSeCCD/kVzOVOXK7x
+         E3bOSzk826+ISx+rIquYD1OIgY+WD7062T4/pFXcpW2Q2eEYs5s1LHlIBGtlvMlYvU6L
+         /k2ZxzcM6DOUZmqwP0HBFK+8o+zy5s4VBKKazqikzOF4aHxAb7mJdc8Yy1NaqMdtnT72
+         NpXoxby6SWWcbjKekho4PEbpoQq9CzND5V4bI7WvhoATdEMdTVqMBT0u54lbRy9xPeXK
+         r0aD4EFU38hxFlZNXXgdMcq1T+ffLtySysGaFedF8Ef2pCcvXyDoRCGedZQKIz7XWvPZ
+         q6Ig==
+X-Gm-Message-State: AOAM531iD9aHLZpfa1tfVMGJ+H+d2Js+NgxLXqml0Pg5sO5JKdSc0ktB
+        gJvQyjA+n3fFGZ/J04EXupU=
+X-Google-Smtp-Source: ABdhPJx5u7CZ+5KI8e9/YmR10s/Tdybn2EupE69+Yp3Ek+4luj4xENHKzjVMeL78OQ0UrI1sFa0k8w==
+X-Received: by 2002:a05:6602:2583:: with SMTP id p3mr9781842ioo.179.1592115825136;
+        Sat, 13 Jun 2020 23:23:45 -0700 (PDT)
+Received: from cs-u-kase.dtc.umn.edu (cs-u-kase.cs.umn.edu. [160.94.64.2])
+        by smtp.googlemail.com with ESMTPSA id r17sm5944048ilc.33.2020.06.13.23.23.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Jun 2020 20:18:35 -0700 (PDT)
-From:   wu000273@umn.edu
-To:     kjlu@umn.edu
-Cc:     wu000273@umn.edu, Kyungmin Park <kyungmin.park@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
+        Sat, 13 Jun 2020 23:23:44 -0700 (PDT)
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+To:     Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Kukjin Kim <kgene@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: exynos4-is: Fix several reference count leaks due to pm_runtime_get_sync
-Date:   Sat, 13 Jun 2020 22:18:29 -0500
-Message-Id: <20200614031829.31570-1-wu000273@umn.edu>
+Cc:     emamd001@umn.edu, wu000273@umn.edu, kjlu@umn.edu, smccaman@umn.edu,
+        Navid Emamdoost <navid.emamdoost@gmail.com>
+Subject: [PATCH] drm/exynos: fix ref count leak in mic_pre_enable
+Date:   Sun, 14 Jun 2020 01:23:39 -0500
+Message-Id: <20200614062339.87374-1-navid.emamdoost@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-samsung-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-samsung-soc.vger.kernel.org>
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 
-From: Qiushi Wu <wu000273@umn.edu>
+in mic_pre_enable, pm_runtime_get_sync is called which
+increments the counter even in case of failure, leading to incorrect
+ref count. In case of failure, decrement the ref count before returning.
 
-On calling pm_runtime_get_sync() the reference count of the device
-is incremented. In case of failure, decrement the
-reference count before returning the error.
-
-Signed-off-by: Qiushi Wu <wu000273@umn.edu>
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
 ---
- drivers/media/platform/exynos4-is/fimc-isp.c  | 4 +++-
- drivers/media/platform/exynos4-is/fimc-lite.c | 2 +-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_mic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-isp.c b/drivers/media/platform/exynos4-is/fimc-isp.c
-index cde0d254ec1c..a77c49b18511 100644
---- a/drivers/media/platform/exynos4-is/fimc-isp.c
-+++ b/drivers/media/platform/exynos4-is/fimc-isp.c
-@@ -305,8 +305,10 @@ static int fimc_isp_subdev_s_power(struct v4l2_subdev *sd, int on)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c b/drivers/gpu/drm/exynos/exynos_drm_mic.c
+index a86abc173605..69ff74c2ceb5 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
+@@ -270,7 +270,7 @@ static void mic_pre_enable(struct drm_bridge *bridge)
  
- 	if (on) {
- 		ret = pm_runtime_get_sync(&is->pdev->dev);
--		if (ret < 0)
-+		if (ret < 0) {
-+			pm_runtime_put(&is->pdev->dev);
- 			return ret;
-+		}
- 		set_bit(IS_ST_PWR_ON, &is->state);
- 
- 		ret = fimc_is_start_firmware(is);
-diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
-index 394e0818f2d5..92130d779137 100644
---- a/drivers/media/platform/exynos4-is/fimc-lite.c
-+++ b/drivers/media/platform/exynos4-is/fimc-lite.c
-@@ -470,7 +470,7 @@ static int fimc_lite_open(struct file *file)
- 	set_bit(ST_FLITE_IN_USE, &fimc->state);
- 	ret = pm_runtime_get_sync(&fimc->pdev->dev);
+ 	ret = pm_runtime_get_sync(mic->dev);
  	if (ret < 0)
 -		goto unlock;
-+		goto err_pm;
++		goto turn_off;
  
- 	ret = v4l2_fh_open(file);
- 	if (ret < 0)
+ 	mic_set_path(mic, 1);
+ 
 -- 
 2.17.1
 
